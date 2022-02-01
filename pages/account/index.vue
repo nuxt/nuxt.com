@@ -1,0 +1,3 @@
+<template>
+  <UCard />
+</template>
