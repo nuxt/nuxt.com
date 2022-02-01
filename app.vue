@@ -2,7 +2,8 @@
 useMeta({
   title: 'Nuxt: Intuitive Web Development',
    meta: [
-    { name: 'description', content: 'Nuxt makes web development intuitive and fun. The open source framework NuxtJS makes the development of modern web applications simple.' }
+    { name: 'description', content: 'Nuxt makes web development intuitive and fun. The open source framework NuxtJS makes the development of modern web applications simple.' },
+    { name: 'og:image', content: 'https://nuxt.com/social.png' }
   ],
 })
 </script>
