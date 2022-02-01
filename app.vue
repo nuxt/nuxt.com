@@ -20,8 +20,8 @@ useMeta({
     <h1 class="title">A better way to create<br/>modern websites.</h1>
     <p class="description">Our suite of developer-friendly solutions helps you create,<br/>secure and deliver enterprise-grade modern website.</p>
     <div class="links">
-      <a href="https://nuxtjs.org">Framework</a>
       <a href="https://nuxtlabs.com">Company</a>
+      <a href="https://nuxtjs.org">Framework</a>
     </div>
     <!-- Work in progress... 👀 -->
   </div>
@@ -43,7 +43,7 @@ body {
 }
 .logo {
   height: 64px;
-  color: #aaa;
+  color: #34D399;
   margin-bottom: 20px;
 }
 .title {
@@ -74,10 +74,12 @@ body {
   transition: all 0.2s;
   padding: 16px 32px;
   border: 2px #aaa solid;
+  background-color: transparent;
   border-radius: 8px;
 }
 .links a:hover {
   border-color: #fff;
-  color: #fff;
+  color: #000;
+  background-color: #fff;
 }
 </style>
