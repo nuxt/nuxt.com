@@ -2,8 +2,14 @@
 useMeta({
   title: 'Nuxt: Intuitive Web Development',
    meta: [
-    { name: 'description', content: 'Nuxt makes web development intuitive and fun. The open source framework NuxtJS makes the development of modern web applications simple.' },
-    { name: 'og:image', content: 'https://nuxt.com/social.png' }
+     { name: 'description', content: 'Nuxt makes web development intuitive and fun. The open source framework NuxtJS makes the development of modern web applications simple.' },
+    { property: 'og:site_name', content: 'Nuxt' },
+    { property: 'og:type', content: 'website' },
+    { name: 'og:image', content: 'https://nuxt.com/social.png' },
+    { property: 'og:image:alt', content: 'Nuxt' },
+    { property: 'twitter:image', content: 'https://nuxt.com/social-twitter.png' },
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:site', content: '@nuxt_js' }
   ],
 })
 </script>
