@@ -43,7 +43,7 @@ body {
 }
 .logo {
   height: 64px;
-  color: #fff;
+  color: #aaa;
   margin-bottom: 20px;
 }
 .title {
@@ -54,7 +54,7 @@ body {
   margin: 20px 0;
 }
 .description {
-  color: #888;
+  color: #aaa;
   font-weight: 300;
   font-size: 28px;
   line-height: 1.5;
