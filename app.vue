@@ -39,7 +39,7 @@ body {
   justify-content: center;
 }
 .container {
-  padding: 32px 16px;
+  padding: 48px 16px;
 }
 .logo {
   height: 64px;
