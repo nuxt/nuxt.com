@@ -42,8 +42,8 @@ body {
 .container {
 }
 .logo {
-  height: 72px;
-  color: #bbb;
+  height: 64px;
+  color: #fff;
   margin-bottom: 20px;
 }
 .title {
