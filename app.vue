@@ -49,7 +49,7 @@ body {
 .title {
   color: #fff;
   font-weight: 500;
-  font-size: 96px;
+  font-size: 92px;
   line-height: 1.1;
   margin: 20px 0;
 }
