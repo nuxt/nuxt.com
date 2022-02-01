@@ -43,7 +43,7 @@ body {
 }
 .logo {
   height: 72px;
-  color: #ccc;
+  color: #bbb;
   margin-bottom: 20px;
 }
 .title {
