@@ -37,9 +37,9 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
 }
 .container {
+  padding: 16px;
 }
 .logo {
   height: 64px;
