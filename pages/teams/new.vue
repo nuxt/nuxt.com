@@ -84,9 +84,9 @@
 import { omit } from 'lodash-es'
 import slugify from '@sindresorhus/slugify'
 
-// definePageMeta({
-//   middleware: 'auth'
-// })
+definePageMeta({
+  middleware: 'auth'
+})
 
 const router = useRouter()
 const client = useStrapiClient()
