@@ -90,7 +90,7 @@ import slugify from '@sindresorhus/slugify'
 // })
 
 const router = useRouter()
-const { create } = useStrapi4()
+const client = useStrapiClient()
 const user = useStrapiUser()
 
 const file = ref(null)
@@ -106,7 +106,10 @@ const onSubmit = async () => {
     if (form.avatar) { formData.append('files.avatar', form.avatar) }
     formData.append('data', JSON.stringify(omit(form, ['avatar'])))
 
-    const team = await create('teams', formData)
+    const team = await client('/teams', {
+      method: 'POST',
+      body: formData
+    })
 
     user.value.teams.push(team)
 
