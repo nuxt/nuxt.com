@@ -11,13 +11,19 @@ export default defineNuxtConfig({
     link: [
       { rel: 'icon', href: '/icon.png' },
       { rel: 'stylesheet', href: 'https://rsms.me/inter/inter.css' }
-    ]
+    ],
+    htmlAttrs: {
+      class: '/* @unocss-include */ bg-white dark:bg-black'
+    },
+    bodyAttrs: {
+      class: '/* @unocss-include */ antialiased text-gray-700 bg-gray-100 dark:bg-gray-900 dark:text-gray-200'
+    }
   },
   components: {
     loader: true,
     dirs: ['~/components/atoms', '~/components/molecules', '~/components/organisms', '~/components/templates']
   },
-  modules: [
+  buildModules: [
     '@nuxthq/ui',
     '@nuxtjs/strapi'
   ],
