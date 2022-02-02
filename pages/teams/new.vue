@@ -81,7 +81,7 @@
 </template>
 
 <script setup lang="ts">
-import omit from 'lodash/omit'
+import { omit } from 'lodash-es'
 import slugify from '@sindresorhus/slugify'
 
 // definePageMeta({
