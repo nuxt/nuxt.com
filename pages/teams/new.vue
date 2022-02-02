@@ -49,8 +49,7 @@
 
               <UFormGroup name="avatar" label="Avatar" help="An avatar is optional but strongly recommended.">
                 <div class="flex items-center gap-3">
-                  <!-- TOFIX: Waiting for Avatar fix in @nuxthq/ui -->
-                  <!-- <UAvatar :src="avatar" gradient /> -->
+                  <UAvatar :src="avatar" gradient />
 
                   <input ref="file" name="avatar" type="file" class="hidden" @change="onFileUpload">
 
