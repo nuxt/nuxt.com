@@ -1,33 +1,32 @@
 <template>
   <UDropdown
-    v-if="hasUser"
+    v-if="user"
     :items="links"
     :placement="placement"
     strategy="fixed"
   >
     <UButton
-      variant="secondary"
-      icon="heroicons-outline:user"
+      variant="transparent"
       rounded
-    />
-    <template #trigger="{ toggle }">
-      <slot :toggle="toggle">
-        <UButton
-          :variant="variant"
-          :size="size"
-          :icon="icon"
-          @click.stop="toggle"
-        >
-          <div class="flex items-center gap-3">
-            <span v-if="showUsername" class="text-base font-medium">{{ user.username }}</span>
-          </div>
-        </UButton>
-      </slot>
+    >
+      <UAvatar
+        :src="user.avatar"
+        :alt="user.username"
+        :size="avatarSize"
+      />
+    </UButton>
+    <template #reverse-icon="{ item }">
+      <div class="flex items-center justify-between w-full">
+        New team
+        <UIcon :name="item.icon" :class="itemIconClass" />
+      </div>
     </template>
   </UDropdown>
 </template>
 
 <script setup>
+import ui from '#build/ui'
+
 defineProps({
   showUsername: {
     type: Boolean,
@@ -61,35 +60,42 @@ defineProps({
 
 const { logout } = useStrapiAuth()
 const router = useRouter()
+const iconItemClass = ui.dropdown.item.icon
 
-const userLogout = () => {
-  logout()
-  router.push('/')
-}
-
-const hasUser = computed(() => {
+const user = computed(() => {
   return useStrapiUser()
 })
 
 const links = computed(() => {
   return [
-    [{
-      label: 'Dashboard',
-      to: '/dashboard'
-    }],
-    [{
-      label: 'New team',
-      to: '/teams/new'
-    },
-    {
-      label: 'Settings',
-      to: '/account'
-    }],
-    [{
-      label: 'Logout',
-      to: '',
-      click: () => userLogout()
-    }]
+    [
+      {
+        label: 'Dashboard',
+        to: '/dashboard'
+      }
+    ],
+    [
+      {
+        label: 'New team',
+        to: '/teams/new',
+        icon: 'heroicons-outline:user-add',
+        slot: 'reverse-icon'
+      },
+      {
+        label: 'Settings',
+        to: '/account'
+      }
+    ],
+    [
+      {
+        label: 'Logout',
+        to: '',
+        click: () => {
+          logout()
+          router.push('/')
+        }
+      }
+    ]
   ]
 })
 </script>
