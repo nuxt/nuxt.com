@@ -15,8 +15,6 @@ definePageMeta({
 
 onMounted(async () => {
   try {
-    console.log('route.params.provider', route.params.provider)
-    console.log('route.query.access_token', route.query.access_token)
     await authenticateProvider(route.params.provider as StrapiAuthProvider, route.query.access_token as string)
 
     router.push('/dashboard')

@@ -8,7 +8,8 @@
     "release": "yarn lint && standard-version && git push --follow-tags"
   },
   "dependencies": {
-    "@iconify-json/fa-brands": "^1.0.3"
+    "@iconify-json/fa-brands": "^1.0.3",
+    "@sindresorhus/slugify": "^2.1.0"
   },
   "devDependencies": {
     "@nuxthq/ui": "npm:@nuxthq/ui-edge@latest",
