@@ -11,7 +11,6 @@
       <UAvatar
         :src="user.avatar"
         :alt="user.username"
-        :size="avatarSize"
       />
     </UButton>
     <template #reverse-icon="{ item }">
@@ -53,7 +52,6 @@ const links = [
   [
     {
       label: 'Logout',
-      to: '',
       click: () => {
         logout()
         router.push('/')
