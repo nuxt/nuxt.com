@@ -1,33 +1,27 @@
 <template>
-  <UDropdown
-    v-if="user"
-    :items="items"
-  >
-    <UButton
-      variant="transparent"
-      rounded
-    >
+  <UDropdown v-if="user" :items="items">
+    <button>
       <UAvatar
         :src="user.avatar"
         :alt="user.username"
+        size="sm"
       />
-    </UButton>
+    </button>
+
     <template #reverse-icon="{ item }">
-      <div class="flex items-center justify-between w-full">
+      <div class="flex items-center justify-between gap-3 w-full">
         {{ item.label }}
-        <UIcon :name="item.icon" :class="itemIconClass" />
+
+        <UIcon :name="item.icon" class="h-4 w-4 u-text-gray-400 group-hover:u-text-gray-500" />
       </div>
     </template>
   </UDropdown>
 </template>
 
 <script setup>
-import ui from '#build/ui'
-
-const { logout } = useStrapiAuth()
-const router = useRouter()
-const iconItemClass = ui.dropdown.item.icon
 const user = useStrapiUser()
+const router = useRouter()
+const { logout } = useStrapiAuth()
 
 const items = [
   [
@@ -40,7 +34,7 @@ const items = [
     {
       label: 'New team',
       to: '/teams/new',
-      icon: 'heroicons-outline:user-add',
+      icon: 'heroicons-outline:plus',
       slot: 'reverse-icon'
     },
     {
@@ -53,7 +47,7 @@ const items = [
       label: 'Logout',
       click: () => {
         logout()
-        router.push('/')
+        router.push('/login')
       }
     }
   ]
