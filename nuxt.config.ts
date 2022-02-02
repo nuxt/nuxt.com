@@ -27,6 +27,9 @@ export default defineNuxtConfig({
     '@nuxthq/ui',
     '@nuxtjs/strapi'
   ],
+  publicRuntimeConfig: {
+    baseUrl: process.env.BASE_URL || 'https://nuxt.com'
+  },
   strapi: {
     version: 'v4',
     prefix: '/api',

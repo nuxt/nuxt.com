@@ -609,9 +609,9 @@
     webpackbar "^5.0.2"
 
 "@nuxthq/ui@npm:@nuxthq/ui-edge@latest":
-  version "0.0.2-27396814.ed499b3"
-  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27396814.ed499b3.tgz#c85e5ec44d0c0c08cfc564f924bab16c9fa5d1e3"
-  integrity sha512-CvEoe+9w0vXwdb7CQZMDwU8qoIJ30SKgRxXbIEussgIZWoxfNTRcKAweLkSacxyQC8Qts9YovwiZHPu1GrVyKQ==
+  version "0.0.2-27396975.832ffe4"
+  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27396975.832ffe4.tgz#f8301d8d17679b00eb8f7203a0df93b41cf56725"
+  integrity sha512-Zk+2Parqepi2JMTEfF4ziUOBVLOfgb69YtSq88cT5VImScOC3SDUFEQJAe9J8MNdj8LA0gEWKBWNGrYU7UCBUQ==
   dependencies:
     "@headlessui/vue" "^1.4.3"
     "@iconify-json/heroicons-outline" "^1.0.2"
