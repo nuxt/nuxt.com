@@ -13,14 +13,17 @@ import type { User } from '~/types'
 const route = useRoute()
 const user = useStrapiUser() as Ref<User>
 
-const { team = 'dashboard' } = route.params
-const links = [{
-  label: 'Overview',
-  to: `/${team}`,
-  exact: true
-},
-{
-  label: 'Settings',
-  to: team === 'dashboard' || team === user.value.username ? '/account' : `/${team}/settings`
-}]
+const links = ref([])
+
+watch(() => route.params.team, (team = 'dashboard') => {
+  links.value = [{
+    label: 'Overview',
+    to: `/${team}`,
+    exact: true
+  },
+  {
+    label: 'Settings',
+    to: team === 'dashboard' || team === user.value.username ? '/account' : `/${team}/settings`
+  }]
+}, { immediate: true })
 </script>
