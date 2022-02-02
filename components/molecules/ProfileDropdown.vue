@@ -1,8 +1,7 @@
 <template>
   <UDropdown
     v-if="user"
-    :items="links"
-    strategy="fixed"
+    :items="items"
   >
     <UButton
       variant="transparent"
@@ -30,7 +29,7 @@ const router = useRouter()
 const iconItemClass = ui.dropdown.item.icon
 const user = useStrapiUser()
 
-const links = [
+const items = [
   [
     {
       label: 'Dashboard',
