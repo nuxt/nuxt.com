@@ -59,7 +59,7 @@
                 label: 'Leave team',
                 icon: 'heroicons-outline:exclamation',
                 class: '!text-red-500',
-                click: () => onLeave()
+                click: () => onLeave(team)
               }]]"
             >
               <UButton icon="heroicons-outline:dots-vertical" variant="transparent" />
@@ -101,6 +101,7 @@ const itemIconClass = ui.dropdown.item.icon
 
 const teams = ref(user.value.memberships.map(m => ({ role: m.role, ...m.team })))
 const leaveModal = ref(false)
+const leavingTeam = ref(null)
 
 const onCopyInviteLink = (team) => {
   $clipboard.copy(`${config.baseUrl}/teams/invite?code=${team.code}`, { title: 'Invite link successfully copied!' })
@@ -109,16 +110,19 @@ const onCopyInviteLink = (team) => {
 const removeTeamFromUser = (team) => {
 }
 
-const onLeave = () => {
+const onLeave = (team) => {
+  leavingTeam.value = team
   leaveModal.value = true
 }
 
-const confirmLeave = (team) => {
+const confirmLeave = () => {
   try {
     // TODO
     // await $strapi.$http.$delete(`/teams/${team.id}/members/${$strapi.user.id}`)
 
-    // removeTeamFromUser(team)
+    // removeTeamFromUser(leavingTeam.value)
+
+    // leavingTeam.value = null
   } catch (e) {}
 }
 </script>
