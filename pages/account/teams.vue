@@ -37,9 +37,9 @@
               <p class="text-sm font-medium u-text-gray-900">
                 {{ team.name }}
               </p>
-              <p class="text-sm u-text-gray-500 capitalize">
+              <!-- <p class="text-sm u-text-gray-500 capitalize">
                 {{ team.permission }}
-              </p>
+              </p> -->
             </div>
           </div>
 
@@ -59,7 +59,7 @@
                 label: 'Leave team',
                 icon: 'heroicons-outline:exclamation',
                 class: '!text-red-500',
-                click: () => onLeave(team)
+                click: () => onLeave()
               }]]"
             >
               <UButton icon="heroicons-outline:dots-vertical" variant="transparent" />
@@ -88,15 +88,18 @@
 </template>
 
 <script setup lang="ts">
+import type { Ref } from 'vue'
+import type { Team, User } from '~/types'
+
 import ui from '#build/ui'
 
 const { $clipboard } = useNuxtApp()
 const config = useRuntimeConfig()
-const user = useStrapiUser()
+const user = useStrapiUser() as Ref<User>
 
 const itemIconClass = ui.dropdown.item.icon
 
-const teams = ref(user.value.teams)
+const teams: Ref<Team[]> = ref(user.value.teams)
 const leaveModal = ref(false)
 
 const onCopyInviteLink = (team) => {
