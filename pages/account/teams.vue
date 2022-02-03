@@ -37,9 +37,9 @@
               <p class="text-sm font-medium u-text-gray-900">
                 {{ team.name }}
               </p>
-              <!-- <p class="text-sm u-text-gray-500 capitalize">
-                {{ team.permission }}
-              </p> -->
+              <p class="text-sm u-text-gray-500 capitalize">
+                {{ team.role }}
+              </p>
             </div>
           </div>
 
@@ -99,7 +99,7 @@ const user = useStrapiUser() as Ref<User>
 
 const itemIconClass = ui.dropdown.item.icon
 
-const teams: Ref<Team[]> = ref(user.value.teams)
+const teams = ref(user.value.memberships.map(m => ({ role: m.role, ...m.team })))
 const leaveModal = ref(false)
 
 const onCopyInviteLink = (team) => {
@@ -107,10 +107,6 @@ const onCopyInviteLink = (team) => {
 }
 
 const removeTeamFromUser = (team) => {
-  const index = user.value?.teams?.findIndex(t => t.id === team.id)
-  if (index > -1) {
-    user.value?.teams?.splice(index, 1)
-  }
 }
 
 const onLeave = () => {
