@@ -9,12 +9,12 @@
     >
       <div class="flex items-center gap-3">
         <UAvatar
-          :src="item.avatar"
-          :alt="item.label"
+          :src="activeItem.avatar"
+          :alt="activeItem.label"
           size="xs"
           class="-my-0.5"
         />
-        <span class="truncate">{{ item.label }}</span>
+        <span class="truncate">{{ activeItem.label }}</span>
       </div>
     </UButton>
 
@@ -56,7 +56,9 @@ const items = computed(() => {
     to: '/dashboard',
     slot: 'avatar'
   }
-  const teams = (user.value.teams || []).map((team) => {
+  const teams = (user.value.memberships || []).map((membership) => {
+    const { team } = membership
+
     return {
       slug: team.slug,
       label: team.name,
@@ -74,7 +76,7 @@ const items = computed(() => {
   ].filter(Boolean)
 })
 
-const item = computed(() => {
+const activeItem = computed(() => {
   const flatItems = items.value.flat()
   return flatItems.find(item => item.active) || flatItems[0]
 })
