@@ -11,17 +11,19 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue'
-import type { Team } from '~/types'
+import type { Ref } from 'vue'
+import type { Team, User } from '~/types'
 
 const route = useRoute()
+const user = useStrapiUser() as Ref<User>
+const team: Ref<Team> = ref(null)
+const { findOne } = useStrapi4()
 
-const props = defineProps({
-  team: {
-    type: Object as PropType<Team>,
-    default: null
-  }
-})
+if (route.params.team !== 'dashboard' && route.params.team !== user.value.username) {
+  const { data } = await useAsyncData('team', () => findOne<Team>('teams', route.params.team as string))
+
+  team.value = data.value
+}
 
 const links = computed(() => {
   const to = `/${route.params.team}/settings`
