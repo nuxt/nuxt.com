@@ -133,8 +133,4 @@ const onFileUpload = () => {
   avatar.value = URL.createObjectURL(form.avatar)
 }
 
-const slug = computed(() => {
-  return slugify(form.slug)
-})
-
 </script>
