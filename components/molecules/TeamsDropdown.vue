@@ -56,7 +56,9 @@ const items = computed(() => {
     to: '/dashboard',
     slot: 'avatar'
   }
-  const teams = (user.value.teams || []).map((team) => {
+  const teams = (user.value.memberships || []).map((membership) => {
+    const { team } = membership
+
     return {
       slug: team.slug,
       label: team.name,

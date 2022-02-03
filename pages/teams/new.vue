@@ -83,6 +83,8 @@
 <script setup lang="ts">
 import { omit } from 'lodash-es'
 import slugify from '@sindresorhus/slugify'
+import type { Ref } from 'vue'
+import type { Team, User } from '~/types'
 
 definePageMeta({
   middleware: 'auth'
@@ -90,7 +92,7 @@ definePageMeta({
 
 const router = useRouter()
 const client = useStrapiClient()
-const user = useStrapiUser()
+const user = useStrapiUser() as Ref<User>
 
 const file = ref(null)
 const form = reactive({ name: '', slug: '', avatar: null })
@@ -105,12 +107,16 @@ const onSubmit = async () => {
     if (form.avatar) { formData.append('files.avatar', form.avatar) }
     formData.append('data', JSON.stringify(omit(form, ['avatar'])))
 
-    const team = await client('/teams', {
+    const team = await client<Team>('/teams', {
       method: 'POST',
       body: formData
     })
 
-    user.value.teams.push(team)
+    user.value.memberships.push(...team.members.map(member => ({
+      team,
+      id: member.id,
+      role: member.role
+    })))
 
     router.push(`/${team.slug}`)
   } catch (e) {}
