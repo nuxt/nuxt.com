@@ -10,7 +10,7 @@
     </template>
 
     <div class="space-y-6">
-      <UFormGroup name="slug" label="Slug" help="This is your team's URL namespace on Nuxt." required class="relative">
+      <UFormGroup name="slug" label="Slug" :help="form.slug !== slug ? `Your team slug will be renamed to “${slug}”` : 'This is your team\'s URL namespace on Nuxt.'" required class="relative">
         <div class="flex items-center">
           <span class="inline-flex items-center px-2 py-2 text-sm border border-r-0 u-bg-gray-50 u-border-gray-300 rounded-l-md u-textgray-500">
             nuxt.com/
@@ -67,7 +67,6 @@
 import { omit } from 'lodash-es'
 import slugify from '@sindresorhus/slugify'
 import type { PropType, Ref } from 'vue'
-import { nextTick } from 'vue'
 import type { Team, User } from '~/types'
 
 definePageMeta({
@@ -88,15 +87,6 @@ const file = ref(null)
 const form = reactive({ name: props.team.name, slug: props.team.slug, avatar: '' })
 const loading = ref(false)
 const { $toast } = useNuxtApp()
-
-watch(() => form.slug, () => {
-  const newSlug = slugify(form.slug)
-  if (newSlug !== form.slug) {
-    nextTick(() => {
-      form.slug = newSlug
-    })
-  }
-})
 
 const onSubmit = async () => {
   loading.value = true
@@ -133,4 +123,7 @@ const onFileUpload = () => {
   avatar.value = URL.createObjectURL(form.avatar)
 }
 
+const slug = computed(() => {
+  return slugify(form.slug)
+})
 </script>
