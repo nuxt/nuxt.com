@@ -59,7 +59,7 @@
                 label: 'Leave team',
                 icon: 'heroicons-outline:exclamation',
                 class: '!text-red-500',
-                click: () => onLeave(team)
+                click: () => onLeave()
               }]]"
             >
               <UButton icon="heroicons-outline:dots-vertical" variant="transparent" />
