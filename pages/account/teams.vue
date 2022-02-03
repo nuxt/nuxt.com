@@ -38,7 +38,7 @@
                 {{ team.name }}
               </p>
               <p class="text-sm u-text-gray-500 capitalize">
-                {{ team.permission }}
+                {{ team.role }}
               </p>
             </div>
           </div>
@@ -88,15 +88,18 @@
 </template>
 
 <script setup lang="ts">
+import type { Ref } from 'vue'
+import type { Team, User } from '~/types'
+
 import ui from '#build/ui'
 
 const { $clipboard } = useNuxtApp()
 const config = useRuntimeConfig()
-const user = useStrapiUser()
+const user = useStrapiUser() as Ref<User>
 
 const itemIconClass = ui.dropdown.item.icon
 
-const teams = ref(user.value.teams)
+const teams = ref(user.value.memberships.map(m => ({ role: m.role, ...m.team })))
 const leaveModal = ref(false)
 
 const onCopyInviteLink = (team) => {
@@ -104,10 +107,6 @@ const onCopyInviteLink = (team) => {
 }
 
 const removeTeamFromUser = (team) => {
-  const index = user.value?.teams?.findIndex(t => t.id === team.id)
-  if (index > -1) {
-    user.value?.teams?.splice(index, 1)
-  }
 }
 
 const onLeave = () => {
