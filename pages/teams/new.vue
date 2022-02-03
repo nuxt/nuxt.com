@@ -15,12 +15,12 @@
 
     <Page>
       <div class="flex flex-col-reverse lg:flex-row gap-10 lg:mt-[-72.5px]">
-        <div class="w-full lg:w-2/3 space-y-6">
+        <div class="w-full space-y-6 lg:w-2/3">
           <UCard variant="black" ring-class="ring-1 u-ring-gray-200" border-color-class="u-border-gray-200" @submit.prevent="onSubmit">
             <div class="space-y-6">
               <UFormGroup name="slug" label="Slug" help="This is your team's URL namespace on Nuxt." required class="relative">
                 <div class="flex items-center">
-                  <span class="u-bg-gray-50 border border-r-0 u-border-gray-300 rounded-l-md px-2 inline-flex items-center u-textgray-500 text-sm py-2">
+                  <span class="inline-flex items-center px-2 py-2 text-sm border border-r-0 u-bg-gray-50 u-border-gray-300 rounded-l-md u-textgray-500">
                     nuxt.com/
                   </span>
 
@@ -60,8 +60,8 @@
 
             <template #footer>
               <div class="flex items-center justify-between">
-                <p class="u-text-gray-500 text-sm">
-                  <!-- Continuing will initiate a 14 day trial of the <NuxtLink to="/pricing" class="text-primary-500 hover:underline font-medium">
+                <p class="text-sm u-text-gray-500">
+                  <!-- Continuing will initiate a 14 day trial of the <NuxtLink to="/pricing" class="font-medium text-primary-500 hover:underline">
                     Pro plan
                   </NuxtLink>. -->
                 </p>
