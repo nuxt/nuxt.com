@@ -18,7 +18,7 @@
         <div class="w-full lg:w-2/3 space-y-6">
           <UCard variant="black" ring-class="ring-1 u-ring-gray-200" border-color-class="u-border-gray-200" @submit.prevent="onSubmit">
             <div class="space-y-6">
-              <UFormGroup name="slug" label="Slug" :help="form.slug !== slug ? `Your team slug will be renamed to “${slug}”` : 'This is your team\'s URL namespace on Nuxt.'" required class="relative">
+              <UFormGroup name="slug" label="Slug" help="This is your team's URL namespace on Nuxt." required class="relative">
                 <div class="flex items-center">
                   <span class="u-bg-gray-50 border border-r-0 u-border-gray-300 rounded-l-md px-2 inline-flex items-center u-textgray-500 text-sm py-2">
                     nuxt.com/
