@@ -107,10 +107,10 @@ const onSubmit = async () => {
     if (form.avatar) { formData.append('files.avatar', form.avatar) }
     formData.append('data', JSON.stringify(omit(form, ['avatar'])))
 
-    const team = await client('/teams', {
+    const team = await client<Team>('/teams', {
       method: 'POST',
       body: formData
-    }) as Team
+    })
 
     user.value.teams.push(team)
 

@@ -81,13 +81,13 @@ const props = defineProps({
   }
 })
 
-const router = useRouter()
 const client = useStrapiClient()
 const user = useStrapiUser() as Ref<User>
 const avatar = ref(props.team.avatar?.url)
 const file = ref(null)
 const form = reactive({ name: props.team.name, slug: props.team.slug, avatar: '' })
 const loading = ref(false)
+const { $toast } = useNuxtApp()
 
 watch(() => form.slug, () => {
   const newSlug = slugify(form.slug)
@@ -98,13 +98,6 @@ watch(() => form.slug, () => {
   }
 })
 
-const updateUserTeam = (item) => {
-  const team = user?.value.teams?.find(team => team.id === item.id)
-  if (team) {
-    Object.assign(team, item)
-  }
-}
-
 const onSubmit = async () => {
   loading.value = true
 
@@ -113,16 +106,24 @@ const onSubmit = async () => {
     if (form.avatar) { formData.append('files.avatar', form.avatar) }
     formData.append('data', JSON.stringify(omit(form, ['avatar'])))
 
-    const team = await client(`/teams/${props.team.id}`, {
+    const userTeam = await client<Team>(`/teams/${props.team.id}`, {
       method: 'PUT',
       body: formData
-    }) as Team
+    })
 
-    updateUserTeam(team)
+    // update user team
+    const team = user.value?.teams?.find(team => team.id === userTeam.id)
+    if (team) {
+      Object.assign(team, userTeam)
+    }
 
-    router.push(`/${team.slug}`)
+    setTimeout(() => {
+      $toast.success({
+        title: 'Success',
+        description: 'Your team settings have been saved.'
+      })
+    }, 2000)
   } catch (e) {}
-
   loading.value = false
 }
 
