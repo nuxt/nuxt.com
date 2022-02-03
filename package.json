@@ -5,7 +5,8 @@
     "build": "nuxi build",
     "start": "node .output/server/index.mjs",
     "lint": "eslint --ext .ts,.js,.vue .",
-    "release": "yarn lint && standard-version && git push --follow-tags"
+    "release": "yarn lint && standard-version && git push --follow-tags",
+    "test": "yarn lint"
   },
   "dependencies": {
     "@iconify-json/fa-brands": "^1.0.3",

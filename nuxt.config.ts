@@ -9,20 +9,23 @@ export default defineNuxtConfig({
       { name: 'description', content: 'Nuxt makes web development intuitive and fun. The open source framework NuxtJS makes the development of modern web applications simple.' }
     ],
     link: [
-      { rel: 'icon', href: '/icon.png' },
-      { rel: 'stylesheet', href: 'https://rsms.me/inter/inter.css' }
+      { rel: 'icon', href: '/icon.png' }
+      // { rel: 'stylesheet', href: 'https://rsms.me/inter/inter.css' }
     ],
     htmlAttrs: {
       class: '/* @unocss-include */ bg-white dark:bg-black'
     },
     bodyAttrs: {
-      class: '/* @unocss-include */ antialiased text-gray-700 bg-gray-100 dark:bg-gray-900 dark:text-gray-200'
+      class: '/* @unocss-include */ antialiased font-sans text-gray-700 bg-gray-100 dark:bg-gray-900 dark:text-gray-200'
     }
   },
   components: {
     loader: true,
     dirs: ['~/components/atoms', '~/components/molecules', '~/components/organisms', '~/components/templates']
   },
+  css: [
+    '~/assets/css/fonts.css'
+  ],
   buildModules: [
     '@nuxthq/ui',
     '@nuxtjs/strapi'
@@ -46,7 +49,7 @@ export default defineNuxtConfig({
     unocss: {
       theme: {
         fontFamily: {
-          sans: '"Inter var", sans-serif'
+          sans: '"RoobertPRO", sans-serif'
         }
       }
     }
