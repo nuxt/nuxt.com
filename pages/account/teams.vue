@@ -1,12 +1,6 @@
 <template>
   <div class="space-y-6">
-    <UCard
-      variant="black"
-      ring-class="ring-1 u-ring-gray-200"
-      wrapper-class
-      body-class
-      border-color-class="u-border-gray-200"
-    >
+    <UCard body-class>
       <template #header>
         <div class="-ml-4 -mt-4 flex justify-between items-center flex-wrap sm:flex-nowrap">
           <div class="ml-4 mt-4">
@@ -83,19 +77,21 @@
       title="Leave team"
       description="Are you sure you want to leave the team?"
       @confirm="confirmLeave"
+      @cancel="leavingTeam = null"
     />
   </div>
 </template>
 
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import type { Team, User } from '~/types'
+import type { User } from '~/types'
 
 import ui from '#build/ui'
 
 const { $clipboard } = useNuxtApp()
 const config = useRuntimeConfig()
 const user = useStrapiUser() as Ref<User>
+const client = useStrapiClient()
 
 const itemIconClass = ui.dropdown.item.icon
 
@@ -108,6 +104,10 @@ const onCopyInviteLink = (team) => {
 }
 
 const removeTeamFromUser = (team) => {
+  const index = user.value?.memberships?.findIndex(m => m.team.id === team.id) || -1
+  if (index > -1) {
+    user.value.memberships.splice(index, 1)
+  }
 }
 
 const onLeave = (team) => {
@@ -115,14 +115,15 @@ const onLeave = (team) => {
   leaveModal.value = true
 }
 
-const confirmLeave = () => {
+const confirmLeave = async () => {
   try {
-    // TODO
-    // await $strapi.$http.$delete(`/teams/${team.id}/members/${$strapi.user.id}`)
+    await client(`/teams/${leavingTeam.value.id}/members/${user.value.id}`, {
+      method: 'DELETE'
+    })
 
-    // removeTeamFromUser(leavingTeam.value)
+    removeTeamFromUser(leavingTeam.value)
 
-    // leavingTeam.value = null
+    leavingTeam.value = null
   } catch (e) {}
 }
 </script>
