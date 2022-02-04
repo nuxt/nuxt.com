@@ -17,7 +17,6 @@ export default defineNuxtConfig({
     ],
     link: [
       { rel: 'icon', href: '/icon.png' }
-      // { rel: 'stylesheet', href: 'https://rsms.me/inter/inter.css' }
     ],
     htmlAttrs: {
       class: '/* @unocss-include */ bg-white dark:bg-black'
