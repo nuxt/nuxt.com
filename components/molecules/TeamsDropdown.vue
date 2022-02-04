@@ -3,16 +3,16 @@
     <UButton
       icon="heroicons-outline:selector"
       trailing
-      variant="white"
+      variant="secondary"
       icon-base-class="u-text-gray-400"
-      size="sm"
+      size="md"
     >
       <div class="flex items-center gap-3">
         <UAvatar
           :src="activeItem.avatar"
           :alt="activeItem.label"
           size="xs"
-          class="-my-0.5"
+          class="-my-1"
         />
         <span class="truncate">{{ activeItem.label }}</span>
       </div>
@@ -24,7 +24,7 @@
           :src="item.avatar"
           :alt="item.label"
           size="xs"
-          class="-my-0.5"
+          class="-my-0.5 !group-hover:u-bg-gray-200"
         />
         <span class="truncate">{{ item.label }}</span>
       </div>
