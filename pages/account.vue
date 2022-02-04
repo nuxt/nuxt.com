@@ -30,10 +30,5 @@ const links = [{
   to: `${to}/teams`,
   icon: 'heroicons-outline:user-group',
   exact: true
-}, {
-  label: 'Billing',
-  to: `${to}/billing`,
-  icon: 'heroicons-outline:credit-card',
-  exact: true
 }]
 </script>

@@ -16,7 +16,7 @@ import type { Team } from '~/types'
 
 const route = useRoute()
 
-const props = defineProps({
+defineProps({
   team: {
     type: Object as PropType<Team>,
     default: null
@@ -30,11 +30,6 @@ const links = computed(() => {
     label: 'General',
     to,
     icon: 'heroicons-outline:cog',
-    exact: true
-  }, {
-    label: 'Billing',
-    to: `${to}/billing`,
-    icon: 'heroicons-outline:cash',
     exact: true
   }, {
     label: 'Members',
