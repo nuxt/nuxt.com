@@ -1,66 +1,97 @@
 <template>
-  <UCard>
-    <template #header>
-      <h2 class="text-lg font-medium leading-6 u-text-gray-900">
-        General
-      </h2>
-      <p class="mt-1 text-sm u-text-gray-400">
-        Update your team informations.
-      </p>
-    </template>
+  <div class="flex flex-col space-y-6">
+    <UCard>
+      <template #header>
+        <h2 class="text-lg font-medium leading-6 u-text-gray-900">
+          General
+        </h2>
+        <p class="mt-1 text-sm u-text-gray-400">
+          Update your team informations.
+        </p>
+      </template>
 
-    <div class="space-y-6">
-      <UFormGroup name="slug" label="Slug" :help="form.slug !== slug ? `Your team slug will be renamed to “${slug}”` : 'This is your team\'s URL namespace on Nuxt.'" required class="relative">
-        <div class="flex items-center">
-          <span class="inline-flex items-center px-2 py-2 text-sm border border-r-0 u-bg-gray-50 u-border-gray-300 rounded-l-md u-textgray-500">
-            nuxt.com/
-          </span>
+      <div class="space-y-6">
+        <UFormGroup name="slug" label="Slug" :help="form.slug !== slug ? `Your team slug will be renamed to “${slug}”` : 'This is your team\'s URL namespace on Nuxt.'" required class="relative">
+          <div class="flex items-center">
+            <span class="inline-flex items-center px-2 py-2 text-sm border border-r-0 u-bg-gray-50 u-border-gray-300 rounded-l-md u-textgray-500">
+              nuxt.com/
+            </span>
 
+            <UInput
+              v-model="form.slug"
+              name="slug"
+              required
+              autocomplete="off"
+              class="w-full lg:w-56"
+              placeholder="choam"
+              custom-class="rounded-l-none"
+            />
+          </div>
+        </UFormGroup>
+
+        <UFormGroup name="name" label="Name" help="This is your team's visible name within Nuxt. For example, the name of your company or department." required>
           <UInput
-            v-model="form.slug"
-            name="slug"
+            v-model="form.name"
+            name="name"
             required
+            placeholder="CHOAM"
             autocomplete="off"
-            class="w-full lg:w-56"
-            placeholder="choam"
-            custom-class="rounded-l-none"
+            class="w-full lg:w-80"
+          />
+        </UFormGroup>
+
+        <UFormGroup name="avatar" label="Avatar" help="An avatar is optional but strongly recommended.">
+          <div class="flex items-center gap-3">
+            <UAvatar :src="avatar" gradient />
+
+            <input ref="file" name="avatar" type="file" class="hidden" @change="onFileUpload">
+
+            <UButton label="Change" size="sm" variant="white" @click="$refs.file.click()" />
+          </div>
+        </UFormGroup>
+      </div>
+
+      <template #footer>
+        <div class="flex items-center justify-end">
+          <UButton
+            type="submit"
+            :loading="loading"
+            label="Save"
+            @click="onSubmit()"
           />
         </div>
-      </UFormGroup>
-
-      <UFormGroup name="name" label="Name" help="This is your team's visible name within Nuxt. For example, the name of your company or department." required>
-        <UInput
-          v-model="form.name"
-          name="name"
-          required
-          placeholder="CHOAM"
-          autocomplete="off"
-          class="w-full lg:w-80"
-        />
-      </UFormGroup>
-
-      <UFormGroup name="avatar" label="Avatar" help="An avatar is optional but strongly recommended.">
-        <div class="flex items-center gap-3">
-          <UAvatar :src="avatar" gradient />
-
-          <input ref="file" name="avatar" type="file" class="hidden" @change="onFileUpload">
-
-          <UButton label="Change" size="sm" variant="secondary" @click="$refs.file.click()" />
+      </template>
+    </UCard>
+    <UCard>
+      <template #header>
+        <h2 class="text-lg font-medium leading-6 u-text-gray-900">
+          Leave team
+        </h2>
+        <p class="mt-1 text-sm u-text-gray-400">
+          Revoke your access to this team. Any resources you've added to the Team will remain.
+        </p>
+      </template>
+      <template #footer>
+        <div class="flex items-center justify-end">
+          <UButton
+            :loading="loading"
+            variant="red"
+            label="Leave team"
+            @click="onSubmit()"
+          />
         </div>
-      </UFormGroup>
-    </div>
-
-    <template #footer>
-      <div class="flex items-center justify-end">
-        <UButton
-          type="submit"
-          :loading="loading"
-          label="Save"
-          @click="onSubmit()"
-        />
-      </div>
-    </template>
-  </UCard>
+      </template>
+    </UCard>
+    <UAlertDialog
+      v-model="leaveModal"
+      icon="heroicons-outline:x"
+      icon-class="bg-red-600"
+      icon-wrapper-class="w-12 h-12 bg-red-100 sm:h-10 sm:w-10"
+      title="Leave team"
+      description="Are you sure you want to leave the team?"
+      @confirm="confirmLeave"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -80,6 +111,7 @@ const props = defineProps({
   }
 })
 
+const router = useRouter()
 const client = useStrapiClient()
 const user = useStrapiUser() as Ref<User>
 const avatar = ref(props.team.avatar?.url)
@@ -87,6 +119,7 @@ const file = ref(null)
 const form = reactive({ name: props.team.name, slug: props.team.slug, avatar: '' })
 const loading = ref(false)
 const { $toast } = useNuxtApp()
+const leaveModal = ref(false)
 
 const onSubmit = async () => {
   loading.value = true
@@ -116,6 +149,21 @@ const onSubmit = async () => {
   } catch (e) {}
   loading.value = false
 }
+
+const removeTeamFromUser = (team) => {
+  //TODO
+}
+
+const onLeave = () => {
+  leaveModal.value = true
+}
+
+const confirmLeave = () => {
+  try {
+    // TODO: HTTP call
+    // removeTeamFromUser(leavingTeam.value)
+    //router.push('/dashboard')
+  } catch (e) {}
 
 const onFileUpload = () => {
   form.avatar = file.value.files[0]
