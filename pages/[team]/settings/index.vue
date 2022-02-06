@@ -151,7 +151,7 @@ const onSubmit = async () => {
 }
 
 const removeTeamFromUser = (team) => {
-  //TODO
+  // TODO
 }
 
 const onLeave = () => {
@@ -162,8 +162,9 @@ const confirmLeave = () => {
   try {
     // TODO: HTTP call
     // removeTeamFromUser(leavingTeam.value)
-    //router.push('/dashboard')
+    // router.push('/dashboard')
   } catch (e) {}
+}
 
 const onFileUpload = () => {
   form.avatar = file.value.files[0]
