@@ -18,7 +18,6 @@ onMounted(async () => {
     await authenticateProvider(route.params.provider as StrapiAuthProvider, route.query.access_token as string)
 
     const redirect = useCookie('redirect', { path: '/' }).value
-    console.log('redirect', redirect)
     if (redirect) {
       router.push(redirect)
       useCookie('redirect', { path: '/' }).value = null
