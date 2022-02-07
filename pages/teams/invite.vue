@@ -6,6 +6,10 @@
 import type { Ref } from 'vue'
 import type { User, Membership } from '~/types'
 
+definePageMeta({
+  middleware: 'auth'
+})
+
 const router = useRouter()
 const route = useRoute()
 const user = useStrapiUser() as Ref<User>
