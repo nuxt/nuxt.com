@@ -16,7 +16,7 @@
     <Page>
       <div class="flex flex-col-reverse lg:flex-row gap-10 lg:mt-[-72.5px]">
         <div class="w-full space-y-6 lg:w-2/3">
-          <UCard variant="black" ring-class="ring-1 u-ring-gray-200" border-color-class="u-border-gray-200" @submit.prevent="onSubmit">
+          <UCard @submit.prevent="onSubmit">
             <div class="space-y-6">
               <UFormGroup name="slug" label="Slug" :help="form.slug !== slug ? `Your team slug will be renamed to “${slug}”` : 'This is your team\'s URL namespace on Nuxt.'" required class="relative">
                 <div class="flex items-center">
