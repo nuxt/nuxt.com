@@ -15,6 +15,7 @@ export interface Team {
   slug: string
   avatar: Avatar
   members: Member[]
+  code: string
 }
 
 export interface Membership {
