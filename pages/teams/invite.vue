@@ -13,16 +13,6 @@ const client = useStrapiClient()
 
 const { code } = route.query
 
-const existingTeam = user.value.memberships.find(m => m.team.code === code)
-if (existingTeam) {
-  // TODO
-  // return error({
-  //   statusCode: 409,
-  //   name: 'Error',
-  //   message: 'Your account is already a member of this team.'
-  // })
-}
-
 onMounted(async () => {
   try {
     const membership = await client<Membership>('/teams/join', {
@@ -36,6 +26,7 @@ onMounted(async () => {
 
     router.push(`/${membership.team.slug}`)
   } catch (e) {
+    router.push('/dashboard')
   }
 })
 </script>
