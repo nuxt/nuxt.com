@@ -97,6 +97,17 @@
         <UButton label="Reset link" :loading="reseting" @click="onResetCode" />
       </div>
     </UModal>
+
+    <UAlertDialog
+      v-model="removeModal"
+      icon="heroicons-outline:x"
+      icon-class="bg-red-600"
+      icon-wrapper-class="h-12 w-12 sm:h-10 sm:w-10 bg-red-100"
+      :title="removingMember?.id === user.id ? 'Leave team' : 'Remove member'"
+      :description="removingMember?.id === user.id ? 'Are you sure you want to leave the team?' : 'Are you sure you want to remove this member?'"
+      @confirm="confirmMemberRemove"
+      @cancel="removingMember = null"
+    />
   </div>
 </template>
 
@@ -131,6 +142,8 @@ const client = useStrapiClient()
 
 const reseting = ref(false)
 const inviteModal = ref(false)
+const removeModal = ref(false)
+const removingMember = ref(null)
 
 const members = computed(() => props.team.members || [])
 
@@ -166,15 +179,16 @@ const onMemberRoleChange = async (member, role) => {
   } catch (e) {}
 }
 
-const onMemberRemove = async (member) => {
-  const isMyself = member.id === user.value.id
+const onMemberRemove = (member) => {
+  removingMember.value = member
+  removeModal.value = true
+}
 
-  if (!confirm(isMyself ? 'Are you sure you want to leave the team?' : 'Are you sure you want to remove this member?')) {
-    return
-  }
+const confirmMemberRemove = async () => {
+  const isMyself = removingMember.value.id === user.value.id
 
   try {
-    await client(`/teams/${props.team.id}/members/${member.id}`, {
+    await client(`/teams/${props.team.id}/members/${removingMember.value.id}`, {
       method: 'DELETE'
     })
 
@@ -182,8 +196,10 @@ const onMemberRemove = async (member) => {
       removeTeamFromUser(props.team)
       router.push('/dashboard')
     } else {
-      removeMemberFromTeam(member)
+      removeMemberFromTeam(removingMember.value)
     }
+
+    removingMember.value = null
   } catch (e) {}
 }
 
