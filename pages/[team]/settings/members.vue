@@ -28,9 +28,7 @@
         <ul role="list" class="divide-y u-divide-gray-200">
           <li v-for="member of members" :key="member.id" class="flex items-center justify-between gap-3 px-4 py-5 sm:px-6">
             <div class="flex items-center gap-3">
-              {{ member }}
-              <!-- TODO: populate member.user -->
-              <!-- <UAvatar :src="member.user.avatar" :alt="member.user.username" />
+              <UAvatar :src="member.user.avatar" :alt="member.user.username" />
               <div>
                 <p class="text-sm font-medium u-text-gray-900">
                   {{ member.user.name }}
@@ -38,17 +36,17 @@
                 <p class="text-sm u-text-gray-500">
                   {{ member.user.email }}
                 </p>
-              </div> -->
+              </div>
             </div>
 
             <div class="flex items-center gap-3">
               <USelect
                 v-if="isOwner && member.id !== user.id"
                 name="role"
-                :value="member.role"
+                :model-value="member.role"
                 size="sm"
                 :options="roles"
-                @input="onMemberRoleChange(member, $event)"
+                @update:model-value="onMemberRoleChange(member, $event)"
               />
               <p v-else class="text-sm capitalize u-text-gray-500">
                 {{ member.role }}
@@ -104,7 +102,7 @@
 
 <script setup lang="ts">
 import type { PropType, Ref } from 'vue'
-import type { Membership, Team, User } from '~/types'
+import type { Team, User } from '~/types'
 
 import ui from '#build/ui'
 
