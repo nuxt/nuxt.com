@@ -1,43 +1,46 @@
 <template>
-  <UDropdown v-if="user" :items="items" placement="bottom-start">
-    <UButton
-      icon="heroicons-outline:selector"
-      trailing
-      variant="secondary"
-      icon-base-class="u-text-gray-400"
-      size="md"
-    >
-      <div class="flex items-center gap-3">
-        <UAvatar
-          :src="activeItem.avatar"
-          :alt="activeItem.label"
-          size="xs"
-          class="-my-1"
-        />
-        <span class="truncate">{{ activeItem.label }}</span>
-      </div>
-    </UButton>
+  <div class="flex items-center gap-3 relative">
+    <NuxtLink :to="activeItem.to" class="flex items-center gap-3">
+      <UAvatar
+        :src="activeItem.avatar"
+        :alt="activeItem.label"
+        size="xs"
+        class="-my-1"
+      />
+      <span class="truncate font-medium text-sm">{{ activeItem.label }}</span>
+    </NuxtLink>
 
-    <template #avatar="{ item }">
-      <div class="flex items-center gap-3">
-        <UAvatar
-          :src="item.avatar"
-          :alt="item.label"
-          size="xs"
-          class="-my-0.5 !group-hover:u-bg-gray-200"
-        />
-        <span class="truncate">{{ item.label }}</span>
-      </div>
-    </template>
+    <UDropdown v-if="user" :items="items" placement="auto" strategy="absolute" wrapper-class="inline-flex">
+      <UButton
+        icon="heroicons-outline:selector"
+        trailing
+        variant="secondary"
+        class="group"
+        icon-base-class="u-text-gray-400 group-hover:u-text-gray-500"
+        size="xxs"
+      />
 
-    <template #icon="{ item }">
-      <div class="flex items-center gap-3 w-full">
-        <UIcon :name="item.icon" class="h-4 w-4 u-text-gray-400 group-hover:u-text-gray-500" />
+      <template #avatar="{ item }">
+        <div class="flex items-center gap-3">
+          <UAvatar
+            :src="item.avatar"
+            :alt="item.label"
+            size="xs"
+            class="-my-0.5 !group-hover:u-bg-gray-200"
+          />
+          <span class="truncate">{{ item.label }}</span>
+        </div>
+      </template>
 
-        {{ item.label }}
-      </div>
-    </template>
-  </UDropdown>
+      <template #icon="{ item }">
+        <div class="flex items-center gap-3 w-full">
+          <UIcon :name="item.icon" class="h-4 w-4 u-text-gray-400 group-hover:u-text-gray-500" />
+
+          {{ item.label }}
+        </div>
+      </template>
+    </UDropdown>
+  </div>
 </template>
 
 <script setup lang="ts">
