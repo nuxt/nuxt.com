@@ -7,7 +7,26 @@
         </NuxtLink>
       </div>
 
+      <div v-if="user" class="text-center">
+        <p v-if="!user.beta" class="text-sm mt-2 u-text-gray-500">
+          Thank you for joining Nuxt beta program!<br>
+          You will receive an email once accepted.
+        </p>
+        <p class="font-semibold mb-1.5 -mt-px text-sm u-text-gray-700 tracking-wide mt-8">
+          Connected as:
+        </p>
+        <div class="flex items-center justify-center gap-3">
+          <UAvatar
+            :src="user.avatar"
+            :alt="user.username"
+            size="xs"
+          />
+
+          <span class="font-medium text-sm">{{ user.username }}</span>
+        </div>
+      </div>
       <UButton
+        v-else
         block
         label="Connect with GitHub"
         size="xl"
@@ -19,13 +38,16 @@
 </template>
 
 <script setup lang="ts">
+import type { Ref } from 'vue'
+import type { User } from '~/types'
+
 const { getProviderAuthenticationUrl } = useStrapiAuth()
 
 definePageMeta({
   layout: false
 })
 
-const user = useStrapiUser()
+const user = useStrapiUser() as Ref<User>
 const router = useRouter()
 
 const onClick = () => {
@@ -33,7 +55,7 @@ const onClick = () => {
 }
 
 onMounted(() => {
-  if (user.value) {
+  if (user.value && user.value.beta) {
     router.push('/dashboard')
   }
 })
