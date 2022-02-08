@@ -108,16 +108,16 @@
 import type { Ref } from 'vue'
 import type { User } from '~/types'
 
+definePageMeta({
+  layout: false
+})
+
 const { getProviderAuthenticationUrl } = useStrapiAuth()
 const { login } = useStrapiAuth()
 const user = useStrapiUser() as Ref<User>
 const router = useRouter()
 const route = useRoute()
 const { $toast } = useNuxtApp()
-
-definePageMeta({
-  layout: false
-})
 
 const loading = ref(false)
 const form = reactive({ identifier: '', password: '' })
