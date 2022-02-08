@@ -25,7 +25,7 @@
           <span class="font-medium text-sm">{{ user.username }}</span>
         </div>
       </div>
-      <div v-else class="space-y-8">
+      <div v-else>
         <div>
           <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Sign in to your account
@@ -39,7 +39,7 @@
           </p>
         </div>
 
-        <UCard body-class="px-4 py-5 sm:px-6 space-y-6" padded @submit.prevent="onSubmit">
+        <UCard custom-class="mt-8" body-class="px-4 py-5 sm:px-6 space-y-6" padded @submit.prevent="onSubmit">
           <div class="-space-y-px">
             <div>
               <label for="email" class="sr-only">Email address</label>
