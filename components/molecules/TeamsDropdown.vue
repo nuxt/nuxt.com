@@ -34,7 +34,7 @@
 
       <template #icon="{ item }">
         <div class="flex items-center gap-3 w-full">
-          <UIcon :name="item.icon" class="h-4 w-4 u-text-gray-400 group-hover:u-text-gray-500" />
+          <UIcon :name="item.icon" class="mx-1 h-4 w-4 u-text-gray-400 group-hover:u-text-gray-500" />
 
           {{ item.label }}
         </div>
