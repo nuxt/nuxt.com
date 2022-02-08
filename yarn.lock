@@ -642,9 +642,9 @@
     webpackbar "^5.0.2"
 
 "@nuxthq/ui@npm:@nuxthq/ui-edge@latest":
-  version "0.0.2-27404030.57d477f"
-  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27404030.57d477f.tgz#c19707bd54ab72a49fc70586bb9d5798914ec050"
-  integrity sha512-YSk4s/0bFQhELLGRC+A+hYA1ZjZd/OGyKjW+huE+ZvDoEq34khmo2mAArDTWQBlc4LJGp9OAQ583T7dFuZcqcg==
+  version "0.0.2-27405525.45cf898"
+  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27405525.45cf898.tgz#09de178dc9f2cce197d3bdc4067df099d40e8b3c"
+  integrity sha512-984CEVpgYqcNUmNWZZf+WhEozl9X59t1YDdHQ4ADVPhsraVewWnIIRBXjxJ+Z88Z7c/m04M3g9Ch56bH/lHxDA==
   dependencies:
     "@headlessui/vue" "^1.4.3"
     "@iconify-json/heroicons-outline" "^1.0.2"
@@ -1289,9 +1289,9 @@
     "@vue/shared" "3.2.30"
 
 "@vue/devtools-api@^6.0.0-beta.18":
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/@vue/devtools-api/-/devtools-api-6.0.1.tgz#c198200b9f84c7b6f7c4976b0206cbe1e7f61dc9"
-  integrity sha512-V2BKGa9pHf/sY2oBUr4uO8yF5MtgL2X96uJq2cBPxPqEUEkLfhJrbpU7t34JRjnanp2tkDJQrQsrsoMltHnFNQ==
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/@vue/devtools-api/-/devtools-api-6.0.2.tgz#92267911dd2772c5a7641d2889051c6193a7c6aa"
+  integrity sha512-1W8ylfudTFepNgpgY1Dp29iVPlseIy+0+4xXoMkxKmdnxWx8vm8dNgz4F83zML46hHb9aP382JURFfqLuJcWYQ==
 
 "@vue/reactivity-transform@3.2.30":
   version "3.2.30"
@@ -5059,9 +5059,9 @@ node-pre-gyp@^0.13.0:
     tar "^4"
 
 node-releases@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-2.0.1.tgz#3d1d395f204f1f2f29a54358b9fb678765ad2fc5"
-  integrity sha512-CqyzN6z7Q6aMeF/ktcMVTzhAHCEpf8SOarwpzpf8pNBY2k5/oM34UHldUwp8VKI7uxct2HxSRdJjBaZeESzcxA==
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-2.0.2.tgz#7139fe71e2f4f11b47d4d2986aaf8c48699e0c01"
+  integrity sha512-XxYDdcQ6eKqp/YjI+tb2C5WM2LgjnZrfYg4vgQt49EK268b6gYCHsBLrK2qvJo4FmCtqmKezb0WZFK4fkrZNsg==
 
 nopt@^4.0.1:
   version "4.0.3"
