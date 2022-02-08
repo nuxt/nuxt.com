@@ -1,4 +1,4 @@
-export interface Avatar {
+export interface Media {
   url: string
 }
 
@@ -13,7 +13,7 @@ export interface Team {
   id: number
   name: string
   slug: string
-  avatar: Avatar
+  avatar: Media
   members: Member[]
   code: string
 }
@@ -32,4 +32,16 @@ export interface User {
   avatar: string
   memberships: Membership[]
   beta: boolean
+}
+
+export interface Template {
+  id: number
+  owner: string
+  name: string
+  branch: string
+  url: string
+  title: string
+  slug: string
+  description: string
+  screenshot: Media
 }
