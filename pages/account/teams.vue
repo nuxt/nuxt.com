@@ -38,8 +38,8 @@
           </div>
 
           <div class="flex items-center gap-3">
-            <UButton label="View" :to="`/${team.slug}`" variant="white" size="sm" />
-            <UButton label="Manage" :to="`/${team.slug}/settings`" variant="white" size="sm" />
+            <UButton label="View" :to="`/${team.slug}`" variant="secondary" size="sm" />
+            <UButton label="Manage" :to="`/${team.slug}/settings`" variant="secondary" size="sm" />
 
             <UDropdown
               placement="bottom-start"

@@ -53,7 +53,7 @@
 
                   <input ref="file" name="avatar" type="file" class="hidden" @change="onFileUpload">
 
-                  <UButton label="Change" size="sm" variant="white" @click="$refs.file.click()" />
+                  <UButton label="Change" size="sm" variant="secondary" @click="$refs.file.click()" />
                 </div>
               </UFormGroup>
             </div>
