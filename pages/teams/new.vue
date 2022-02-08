@@ -1,20 +1,9 @@
 <template>
   <div>
-    <div class="bg-white dark:bg-black">
-      <UContainer padded>
-        <div class="py-16 sm:py-24">
-          <h2 class="text-4xl font-extrabold u-text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl">
-            Create a new team
-          </h2>
-          <p class="mt-5 text-xl u-text-gray-400">
-            A Nuxt team will allow you to collaborate with others on your projects and enjoy additional optional features.
-          </p>
-        </div>
-      </UContainer>
-    </div>
+    <PageHeader title="Create a new team" description="A Nuxt team will allow you to collaborate with others on your projects and enjoy additional optional features." />
 
-    <Page>
-      <div class="flex flex-col-reverse lg:flex-row gap-10 lg:mt-[-72.5px]">
+    <Page header>
+      <div class="flex flex-col-reverse lg:flex-row gap-10">
         <div class="w-full space-y-6 lg:w-2/3">
           <UCard @submit.prevent="onSubmit">
             <div class="space-y-6">

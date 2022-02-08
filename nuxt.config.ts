@@ -22,7 +22,7 @@ export default defineNuxtConfig({
       class: '/* @unocss-include */ bg-white dark:bg-black'
     },
     bodyAttrs: {
-      class: '/* @unocss-include */ antialiased font-sans text-gray-700 bg-gray-100 dark:bg-gray-900 dark:text-gray-200'
+      class: '/* @unocss-include */ antialiased font-sans text-gray-700 bg-gray-50 dark:bg-gray-900 dark:text-gray-200'
     }
   },
   components: {
