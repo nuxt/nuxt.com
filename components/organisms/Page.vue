@@ -5,10 +5,19 @@
         <slot name="header" />
       </UContainer>
     </header>
-    <main>
+    <main :class="[header && 'sm:mt-[calc(-6rem-1px)]']">
       <UContainer>
         <slot />
       </UContainer>
     </main>
   </div>
 </template>
+
+<script setup lang="ts">
+defineProps({
+  header: {
+    type: Boolean,
+    default: false
+  }
+})
+</script>
