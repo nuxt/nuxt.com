@@ -21,45 +21,37 @@
       </div>
 
       <UCard custom-class="mt-8" body-class="px-4 py-5 sm:px-6 space-y-6" padded @submit.prevent="onSubmit">
-        <div class="rounded-md shadow-sm -space-y-px mx-auto">
-          <div>
-            <label for="email" class="sr-only">Email address</label>
-            <UInput
-              v-model="form.email"
-              name="email"
-              type="email"
-              required
-              autofocus
-              placeholder="Email address"
-              custom-class="relative focus:z-10 !rounded-b-none"
-              size="lg"
-            />
-          </div>
-          <div>
-            <label for="password" class="sr-only">Password</label>
-            <UInput
-              v-model="form.password"
-              name="password"
-              type="password"
-              required
-              placeholder="Password"
-              custom-class="relative focus:z-10 !rounded-none"
-              size="lg"
-            />
-          </div>
-          <div>
-            <label for="passwordConfirmation" class="sr-only">Password confirmation</label>
-            <UInput
-              v-model="passwordConfirmation"
-              name="passwordConfirmation"
-              type="password"
-              required
-              placeholder="Confirm password"
-              custom-class="relative focus:z-10 !rounded-t-none"
-              size="lg"
-            />
-          </div>
-        </div>
+        <UFormGroup name="email" label="Email address">
+          <UInput
+            v-model="form.email"
+            name="email"
+            type="email"
+            required
+            autofocus
+            placeholder="Email address"
+            size="lg"
+          />
+        </UFormGroup>
+        <UFormGroup name="password" label="Password">
+          <UInput
+            v-model="form.password"
+            name="password"
+            type="password"
+            required
+            placeholder="Password"
+            size="lg"
+          />
+        </UFormGroup>
+        <UFormGroup name="passwordConfirmation" label="Password confirmation">
+          <UInput
+            v-model="passwordConfirmation"
+            name="passwordConfirmation"
+            type="password"
+            required
+            placeholder="Confirm password"
+            size="lg"
+          />
+        </UFormGroup>
 
         <div class="flex items-center justify-between">
           <div class="flex items-center">
@@ -85,8 +77,32 @@
             block
           />
         </div>
+
+        <div class="relative">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-gray-300" />
+          </div>
+          <div class="relative flex justify-center text-sm">
+            <span class="px-2 bg-white text-gray-500"> Or continue with </span>
+          </div>
+        </div>
+        <UButton
+          block
+          label="GitHub"
+          size="lg"
+          icon="fa-brands:github"
+          @click="onClick"
+        />
       </UCard>
     </div>
+
+    <UAlertDialog
+      v-model="successModal"
+      title="Your account has been created"
+      description="You will need to verify your email address before you can log in."
+      @confirm="confirmSuccess"
+      @cancel="confirmSuccess"
+    />
   </div>
 </template>
 
@@ -95,13 +111,19 @@ definePageMeta({
   layout: false
 })
 
+const { getProviderAuthenticationUrl } = useStrapiAuth()
 const { register } = useStrapiAuth()
 const router = useRouter()
 
 const loading = ref(false)
+const successModal = ref(false)
 const form = reactive({ email: '', password: '' })
 const passwordConfirmation = ref('')
 const termsAccepted = ref(false)
+
+const onClick = () => {
+  window.location = getProviderAuthenticationUrl('github') as unknown as Location
+}
 
 const onSubmit = async () => {
   loading.value = true
@@ -109,15 +131,21 @@ const onSubmit = async () => {
   try {
     await register(form)
 
-    const redirect = useCookie('redirect').value
-    if (redirect) {
-      router.push(redirect)
-      useCookie('redirect').value = null
-    } else {
-      router.push('/dashboard')
-    }
+    successModal.value = true
   } catch (e) { }
 
   loading.value = false
+}
+
+const confirmSuccess = () => {
+  successModal.value = false
+
+  const redirect = useCookie('redirect').value
+  if (redirect) {
+    router.push(redirect)
+    useCookie('redirect').value = null
+  } else {
+    router.push('/login')
+  }
 }
 </script>

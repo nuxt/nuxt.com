@@ -17,8 +17,7 @@
       </div>
 
       <UCard custom-class="mt-8" body-class="px-4 py-5 sm:px-6 space-y-6" padded @submit.prevent="onSubmit">
-        <div>
-          <label for="email" class="sr-only">Email address</label>
+        <UFormGroup name="email" label="Email address">
           <UInput
             v-model="form.email"
             name="email"
@@ -28,7 +27,7 @@
             placeholder="Email address"
             size="lg"
           />
-        </div>
+        </UFormGroup>
 
         <div>
           <UButton

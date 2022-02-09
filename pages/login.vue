@@ -40,33 +40,27 @@
         </div>
 
         <UCard custom-class="mt-8" body-class="px-4 py-5 sm:px-6 space-y-6" padded @submit.prevent="onSubmit">
-          <div class="-space-y-px">
-            <div>
-              <label for="email" class="sr-only">Email address</label>
-              <UInput
-                v-model="form.identifier"
-                name="email"
-                type="email"
-                required
-                autofocus
-                placeholder="Email address"
-                custom-class="relative focus:z-10 !rounded-b-none"
-                size="lg"
-              />
-            </div>
-            <div>
-              <label for="password" class="sr-only">Password</label>
-              <UInput
-                v-model="form.password"
-                name="password"
-                type="password"
-                required
-                placeholder="Password"
-                custom-class="relative focus:z-10 !rounded-t-none"
-                size="lg"
-              />
-            </div>
-          </div>
+          <UFormGroup name="email" label="Email address">
+            <UInput
+              v-model="form.identifier"
+              name="email"
+              type="email"
+              required
+              autofocus
+              placeholder="Email address"
+              size="lg"
+            />
+          </UFormGroup>
+          <UFormGroup name="password" label="Password">
+            <UInput
+              v-model="form.password"
+              name="password"
+              type="password"
+              required
+              placeholder="Password"
+              size="lg"
+            />
+          </UFormGroup>
           <div class="flex items-center justify-end">
             <div class="text-sm">
               <NuxtLink :to="forgotLink" class="font-medium text-gray-800 hover:underline">
@@ -138,7 +132,7 @@ const onSubmit = async () => {
       router.push(redirect)
       useCookie('redirect').value = null
     } else {
-      router.push('/dashboard')
+      router.push('/login')
     }
   } catch (e) {}
 

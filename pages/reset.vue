@@ -17,33 +17,27 @@
       </div>
 
       <UCard custom-class="mt-8" body-class="px-4 py-5 sm:px-6 space-y-6" padded @submit.prevent="onSubmit">
-        <div class="rounded-md shadow-sm -space-y-px mx-auto">
-          <div>
-            <label for="password" class="sr-only">Password</label>
-            <UInput
-              v-model="form.password"
-              name="password"
-              type="password"
-              required
-              placeholder="Password"
-              custom-class="relative focus:z-10 !rounded-b-none"
-              size="lg"
-              autofocus
-            />
-          </div>
-          <div>
-            <label for="passwordConfirmation" class="sr-only">Password confirmation</label>
-            <UInput
-              v-model="form.passwordConfirmation"
-              name="passwordConfirmation"
-              type="password"
-              required
-              placeholder="Confirm password"
-              custom-class="relative focus:z-10 !rounded-t-none"
-              size="lg"
-            />
-          </div>
-        </div>
+        <UFormGroup name="password" label="Password">
+          <UInput
+            v-model="form.password"
+            name="password"
+            type="password"
+            required
+            placeholder="Password"
+            size="lg"
+            autofocus
+          />
+        </UFormGroup>
+        <UFormGroup name="passwordConfirmation" label="Password confirmation">
+          <UInput
+            v-model="form.passwordConfirmation"
+            name="passwordConfirmation"
+            type="password"
+            required
+            placeholder="Confirm password"
+            size="lg"
+          />
+        </UFormGroup>
 
         <div>
           <UButton
@@ -77,7 +71,7 @@ const onSubmit = async () => {
   loading.value = true
 
   try {
-    await resetPassword({ ...form, code: route.query.code })
+    await resetPassword({ ...form, code: route.query.code as string })
 
     const redirect = useCookie('redirect').value
     if (redirect) {
