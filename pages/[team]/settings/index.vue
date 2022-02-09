@@ -78,7 +78,7 @@
             :loading="loading"
             variant="red"
             label="Leave team"
-            @click="onLeaveOrDelete(true)"
+            @click="onLeave()"
           />
           <p v-else class="text-sm py-2.5 -my-px">
             To leave this team, ensure at least one more member has the Owner role.
@@ -102,7 +102,7 @@
             :loading="loading"
             variant="red"
             label="Delete team"
-            @click="onLeaveOrDelete()"
+            @click="onDelete()"
           />
           <p v-else class="text-sm py-2.5 -my-px">
             You need to be an Owner of this team in order to delete it.
@@ -111,13 +111,22 @@
       </template>
     </UCard>
     <UAlertDialog
-      v-model="leaveOrDeleteModal"
+      v-model="leaveModal"
       icon="heroicons-outline:x"
       icon-class="bg-red-600"
       icon-wrapper-class="w-12 h-12 bg-red-100 sm:h-10 sm:w-10"
-      :title="leaveTeam ? 'Leave team' : 'Delete team'"
-      :description="leaveTeam ? 'Are you sure you want to leave the team?' : 'Are you sure you want to delete the team? This action cannot be undone!'"
-      @confirm="confirmLeaveOrDelete()"
+      title="'Leave team'"
+      description="Are you sure you want to leave the team?"
+      @confirm="confirmLeave()"
+    />
+    <UAlertDialog
+      v-model="deleteModal"
+      icon="heroicons-outline:x"
+      icon-class="bg-red-600"
+      icon-wrapper-class="w-12 h-12 bg-red-100 sm:h-10 sm:w-10"
+      title="Delete team"
+      description="Are you sure you want to delete the team? This action cannot be undone!"
+      @confirm="confirmDelete()"
     />
   </div>
 </template>
@@ -147,8 +156,8 @@ const file = ref(null)
 const form = reactive({ name: props.team.name, slug: props.team.slug, avatar: '' })
 const loading = ref(false)
 const { $toast } = useNuxtApp()
-const leaveTeam = ref(false)
-const leaveOrDeleteModal = ref(false)
+const leaveModal = ref(false)
+const deleteModal = ref(false)
 
 const onSubmit = async () => {
   loading.value = true
@@ -187,14 +196,29 @@ const removeTeamFromUser = () => {
   }
 }
 
-const onLeaveOrDelete = (leave) => {
-  leaveOrDeleteModal.value = true
-  leaveTeam.value = leave
+const onLeave = () => {
+  leaveModal.value = true
 }
 
-const confirmLeaveOrDelete = async () => {
+const confirmLeave = async () => {
   try {
-    await client(leaveTeam.value ? `/teams/${props.team.id}/members/${user.value.id}` : `/teams/${props.team.id}`, {
+    await client(`/teams/${props.team.id}/members/${user.value.id}`, {
+      method: 'DELETE'
+    })
+
+    removeTeamFromUser()
+
+    router.push('/dashboard')
+  } catch (e) {}
+}
+
+const onDelete = () => {
+  deleteModal.value = true
+}
+
+const confirmDelete = async () => {
+  try {
+    await client(`/teams/${props.team.id}`, {
       method: 'DELETE'
     })
 
