@@ -40,16 +40,19 @@
             required
             placeholder="Password"
             size="lg"
+            @change="validatePassword"
           />
         </UFormGroup>
         <UFormGroup name="passwordConfirmation" label="Password confirmation">
           <UInput
-            v-model="passwordConfirmation"
+            ref="passwordConfirmation"
+            v-model="passwordConfirmationValue"
             name="passwordConfirmation"
             type="password"
             required
             placeholder="Confirm password"
             size="lg"
+            @keyup="validatePassword"
           />
         </UFormGroup>
 
@@ -109,9 +112,10 @@ const { getProviderAuthenticationUrl } = useStrapiAuth()
 const { register } = useStrapiAuth()
 const router = useRouter()
 
+const passwordConfirmation = ref(null)
 const loading = ref(false)
 const form = reactive({ email: '', password: '' })
-const passwordConfirmation = ref('')
+const passwordConfirmationValue = ref('')
 const termsAccepted = ref(false)
 
 const onClick = () => {
@@ -130,5 +134,13 @@ const onSubmit = async () => {
   } catch (e) { }
 
   loading.value = false
+}
+
+const validatePassword = () => {
+  if (form.password !== passwordConfirmationValue.value) {
+    passwordConfirmation.value?.input?.setCustomValidity("Passwords don't match.")
+  } else {
+    passwordConfirmation.value?.input?.setCustomValidity('')
+  }
 }
 </script>
