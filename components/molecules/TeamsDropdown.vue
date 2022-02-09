@@ -54,7 +54,7 @@ const items = computed(() => {
   const { team: slug = 'dashboard' } = route.params
 
   const profile = {
-    label: user.value.username,
+    label: user.value.username || user.value.email,
     avatar: user.value.avatar,
     to: '/dashboard',
     slot: 'avatar'
