@@ -3,7 +3,7 @@
     <div class="max-w-md w-full space-y-8">
       <div>
         <NuxtLink to="/">
-          <LogoFull class="mx-auto text-black" />
+          <Logo class="h-12 mx-auto text-black" />
         </NuxtLink>
       </div>
 
