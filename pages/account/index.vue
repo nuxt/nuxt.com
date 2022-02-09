@@ -58,5 +58,8 @@
 </template>
 
 <script setup lang="ts">
-const user = useStrapiUser()
+import type { Ref } from 'vue'
+import type { User } from '~/types'
+
+const user = useStrapiUser() as Ref<User>
 </script>
