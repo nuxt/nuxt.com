@@ -63,21 +63,21 @@
       </template>
     </UCard>
     <UCard>
-      <template #header>
+      <div>
         <h2 class="text-lg font-medium leading-6 u-text-gray-900">
           Leave team
         </h2>
         <p class="mt-1 text-sm u-text-gray-400">
           Revoke your access to this team. Any resources you've added to the Team will remain.
         </p>
-      </template>
+      </div>
       <template #footer>
         <div class="flex items-center justify-end">
           <UButton
             :loading="loading"
             variant="red"
             label="Leave team"
-            @click="onSubmit()"
+            @click="onLeave()"
           />
         </div>
       </template>
@@ -150,19 +150,27 @@ const onSubmit = async () => {
   loading.value = false
 }
 
-const removeTeamFromUser = (team) => {
-  // TODO
+const removeTeamFromUser = () => {
+  const index = user.value?.memberships?.findIndex(m => m.team.id === props.team.id) || -1
+
+  if (index > -1) {
+    user.value.memberships.splice(index, 1)
+  }
 }
 
 const onLeave = () => {
   leaveModal.value = true
 }
 
-const confirmLeave = () => {
+const confirmLeave = async () => {
   try {
-    // TODO: HTTP call
-    // removeTeamFromUser(leavingTeam.value)
-    // router.push('/dashboard')
+    await client(`/teams/${props.team.id}/members/${user.value.id}`, {
+      method: 'DELETE'
+    })
+
+    removeTeamFromUser()
+
+    router.push('/dashboard')
   } catch (e) {}
 }
 
