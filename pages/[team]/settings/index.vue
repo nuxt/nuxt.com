@@ -115,7 +115,7 @@
       icon="heroicons-outline:x"
       icon-class="bg-red-600"
       icon-wrapper-class="w-12 h-12 bg-red-100 sm:h-10 sm:w-10"
-      title="'Leave team'"
+      title="Leave team"
       description="Are you sure you want to leave the team?"
       @confirm="confirmLeave()"
     />
