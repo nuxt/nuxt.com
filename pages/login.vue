@@ -8,7 +8,7 @@
       </div>
 
       <div v-if="user" class="text-center">
-        <p v-if="!user.beta" class="text-sm mt-2 u-text-gray-500">
+        <p v-if="!user.beta" class="mt-2 u-text-gray-500">
           Thank you for joining Nuxt beta program!<br>
           You will receive an email once accepted.
         </p>
@@ -22,7 +22,7 @@
             size="xs"
           />
 
-          <span class="font-medium text-sm">{{ user.username }}</span>
+          <span class="font-medium text-sm">{{ user.username || user.email }}</span>
         </div>
       </div>
       <div v-else>
@@ -90,6 +90,7 @@
             label="GitHub"
             size="lg"
             icon="fa-brands:github"
+            variant="secondary"
             @click="onClick"
           />
         </UCard>

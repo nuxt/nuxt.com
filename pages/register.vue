@@ -2,7 +2,7 @@
   <div class="h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-md w-full space-y-8">
       <div>
-        <NuxtLink to="/">
+        <NuxtLink to="/login">
           <Logo class="h-12 mx-auto text-black" />
         </NuxtLink>
       </div>
@@ -91,6 +91,7 @@
           label="GitHub"
           size="lg"
           icon="fa-brands:github"
+          variant="secondary"
           @click="onClick"
         />
       </UCard>
