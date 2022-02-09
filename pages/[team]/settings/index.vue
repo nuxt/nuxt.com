@@ -63,7 +63,7 @@
       </template>
     </UCard>
     <UCard>
-      <div>
+      <div :class="{ 'opacity-50 cursor-not-allowed': !isOwner }">
         <h2 class="text-lg font-medium leading-6 u-text-gray-900">
           Leave team
         </h2>
@@ -72,24 +72,52 @@
         </p>
       </div>
       <template #footer>
-        <div class="flex items-center justify-end">
+        <div class="flex items-center" :class="{ 'justify-end': isOwner }">
           <UButton
+            v-if="isOwner"
             :loading="loading"
             variant="red"
             label="Leave team"
-            @click="onLeave()"
+            @click="onLeaveOrDelete(true)"
           />
+          <p v-else class="text-sm py-2.5 -my-px">
+            To leave this team, ensure at least one more member has the Owner role.
+          </p>
+        </div>
+      </template>
+    </UCard>
+    <UCard>
+      <div :class="{ 'opacity-50 cursor-not-allowed': !isOwner }">
+        <h2 class="text-lg font-medium leading-6 u-text-gray-900">
+          Delete team
+        </h2>
+        <p class="mt-1 text-sm u-text-gray-400">
+          Permanently remove your team and all of its contents from Docus. This action is not reversible – please continue with caution.
+        </p>
+      </div>
+      <template #footer>
+        <div class="flex items-center" :class="{ 'justify-end': isOwner }">
+          <UButton
+            v-if="isOwner"
+            :loading="loading"
+            variant="red"
+            label="Delete team"
+            @click="onLeaveOrDelete()"
+          />
+          <p v-else class="text-sm py-2.5 -my-px">
+            You need to be an Owner of this team in order to delete it.
+          </p>
         </div>
       </template>
     </UCard>
     <UAlertDialog
-      v-model="leaveModal"
+      v-model="leaveOrDeleteModal"
       icon="heroicons-outline:x"
       icon-class="bg-red-600"
       icon-wrapper-class="w-12 h-12 bg-red-100 sm:h-10 sm:w-10"
-      title="Leave team"
-      description="Are you sure you want to leave the team?"
-      @confirm="confirmLeave"
+      :title="leaveTeam ? 'Leave team' : 'Delete team'"
+      :description="leaveTeam ? 'Are you sure you want to leave the team?' : 'Are you sure you want to delete the team? This action cannot be undone!'"
+      @confirm="confirmLeaveOrDelete()"
     />
   </div>
 </template>
@@ -119,7 +147,8 @@ const file = ref(null)
 const form = reactive({ name: props.team.name, slug: props.team.slug, avatar: '' })
 const loading = ref(false)
 const { $toast } = useNuxtApp()
-const leaveModal = ref(false)
+const leaveTeam = ref(false)
+const leaveOrDeleteModal = ref(false)
 
 const onSubmit = async () => {
   loading.value = true
@@ -158,13 +187,14 @@ const removeTeamFromUser = () => {
   }
 }
 
-const onLeave = () => {
-  leaveModal.value = true
+const onLeaveOrDelete = (leave) => {
+  leaveOrDeleteModal.value = true
+  leaveTeam.value = leave
 }
 
-const confirmLeave = async () => {
+const confirmLeaveOrDelete = async () => {
   try {
-    await client(`/teams/${props.team.id}/members/${user.value.id}`, {
+    await client(leaveTeam.value ? `/teams/${props.team.id}/members/${user.value.id}` : `/teams/${props.team.id}`, {
       method: 'DELETE'
     })
 
@@ -182,5 +212,11 @@ const onFileUpload = () => {
 
 const slug = computed(() => {
   return slugify(form.slug)
+})
+
+const isOwner = computed(() => {
+  const member = props.team?.members?.find(member => member.user.id === user.value.id)
+
+  return member?.role === 'owner'
 })
 </script>
