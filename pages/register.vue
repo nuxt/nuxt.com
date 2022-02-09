@@ -95,14 +95,6 @@
         />
       </UCard>
     </div>
-
-    <UAlertDialog
-      v-model="successModal"
-      title="Your account has been created"
-      description="You will need to verify your email address before you can log in."
-      @confirm="confirmSuccess"
-      @cancel="confirmSuccess"
-    />
   </div>
 </template>
 
@@ -111,12 +103,12 @@ definePageMeta({
   layout: false
 })
 
+const { $toast } = useNuxtApp()
 const { getProviderAuthenticationUrl } = useStrapiAuth()
 const { register } = useStrapiAuth()
 const router = useRouter()
 
 const loading = ref(false)
-const successModal = ref(false)
 const form = reactive({ email: '', password: '' })
 const passwordConfirmation = ref('')
 const termsAccepted = ref(false)
@@ -131,21 +123,11 @@ const onSubmit = async () => {
   try {
     await register(form)
 
-    successModal.value = true
+    $toast.success({ title: 'Your account has been created', description: 'You will need to verify your email address before you can log in.', timeout: 0 })
+
+    router.push('/login')
   } catch (e) { }
 
   loading.value = false
-}
-
-const confirmSuccess = () => {
-  successModal.value = false
-
-  const redirect = useCookie('redirect').value
-  if (redirect) {
-    router.push(redirect)
-    useCookie('redirect').value = null
-  } else {
-    router.push('/login')
-  }
 }
 </script>
