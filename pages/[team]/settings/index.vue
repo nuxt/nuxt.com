@@ -159,6 +159,20 @@ const { $toast } = useNuxtApp()
 const leaveModal = ref(false)
 const deleteModal = ref(false)
 
+const updateUserTeam = (updatedTeam) => {
+  const { team } = user.value?.memberships?.find(membership => membership.team.id === updatedTeam.id) || {}
+  if (team) {
+    Object.assign(team, updatedTeam)
+  }
+}
+
+const removeTeamFromUser = () => {
+  const index = user.value?.memberships?.findIndex(m => m.team.id === props.team.id) || -1
+  if (index > -1) {
+    user.value.memberships.splice(index, 1)
+  }
+}
+
 const onSubmit = async () => {
   loading.value = true
 
@@ -167,33 +181,25 @@ const onSubmit = async () => {
     if (form.avatar) { formData.append('files.avatar', form.avatar) }
     formData.append('data', JSON.stringify(omit(form, ['avatar'])))
 
-    const userTeam = await client<Team>(`/teams/${props.team.id}`, {
+    const team = await client<Team>(`/teams/${props.team.id}`, {
       method: 'PUT',
       body: formData
     })
 
-    // update user team
-    const team = user.value?.teams?.find(team => team.id === userTeam.id)
-    if (team) {
-      Object.assign(team, userTeam)
+    updateUserTeam(team)
+
+    if (team.slug !== props.team.slug) {
+      // Replace `name` param in url
+      router.replace(`/${team.slug}/settings`)
     }
 
-    setTimeout(() => {
-      $toast.success({
-        title: 'Success',
-        description: 'Your team settings have been saved.'
-      })
-    }, 2000)
+    $toast.success({
+      title: 'Success',
+      description: 'Your team settings have been saved.'
+    })
   } catch (e) {}
+
   loading.value = false
-}
-
-const removeTeamFromUser = () => {
-  const index = user.value?.memberships?.findIndex(m => m.team.id === props.team.id) || -1
-
-  if (index > -1) {
-    user.value.memberships.splice(index, 1)
-  }
 }
 
 const onLeave = () => {

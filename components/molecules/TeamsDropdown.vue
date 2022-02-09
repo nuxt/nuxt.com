@@ -59,6 +59,7 @@ const items = computed(() => {
     to: '/dashboard',
     slot: 'avatar'
   }
+
   const teams = (user.value.memberships || []).map((membership) => {
     const { team } = membership
 
