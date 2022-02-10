@@ -1,8 +1,8 @@
 <template>
   <div>
-    <Tabs />
+    <Tabs v-if="!($route.name as string).startsWith('team-new')" />
 
-    <NuxtChild :team="team" />
+    <NuxtNestedPage :team="team" />
   </div>
 </template>
 

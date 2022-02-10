@@ -1,7 +1,7 @@
 <template>
   <Page>
     <div class="flex items-center justify-end">
-      <UButton to="/projects/new/" label="New project" icon="heroicons-solid:plus" />
+      <UButton :to="team ? `/${team.slug}/new` : '/dashboard/new'" label="New project" icon="heroicons-solid:plus" />
     </div>
   </Page>
 </template>
@@ -10,7 +10,7 @@
 import type { PropType } from 'vue'
 import type { Team } from '~/types'
 
-const props = defineProps({
+defineProps({
   team: {
     type: Object as PropType<Team>,
     default: null
