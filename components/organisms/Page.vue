@@ -5,7 +5,7 @@
         <slot name="header" />
       </UContainer>
     </header>
-    <main :class="[header && 'sm:mt-[calc(-6rem-1px)]']">
+    <main :class="[overlap && 'sm:mt-[calc(-6rem-1px)]']">
       <UContainer>
         <slot />
       </UContainer>
@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 defineProps({
-  header: {
+  overlap: {
     type: Boolean,
     default: false
   }
