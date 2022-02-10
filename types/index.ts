@@ -45,3 +45,13 @@ export interface Template {
   description: string
   screenshot: Media
 }
+
+export interface Project {
+  id: number
+  name: string
+  template: number | Template
+}
+
+export interface Installation {
+  id: number
+}
