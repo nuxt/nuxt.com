@@ -226,8 +226,8 @@ const inviteLink = computed(() => {
 })
 
 const isOwner = computed(() => {
-  const teamUser = props.team.members.find(member => member.id === user.value.id)
+  const member = props.team?.members?.find(member => member.user.id === user.value.id)
 
-  return teamUser?.role === 'owner'
+  return member?.role === 'owner'
 })
 </script>
