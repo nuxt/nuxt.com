@@ -2,6 +2,15 @@
   <div class="bg-white dark:bg-black">
     <UContainer padded>
       <div class="py-10 sm:pt-16 sm:pb-32">
+        <UButton
+          v-if="to"
+          :to="to"
+          variant="transparent"
+          icon="heroicons-outline:arrow-sm-left"
+          size="sm"
+          label="Back"
+          class="!p-0 -mt-8 absolute"
+        />
         <h2 class="text-4xl font-extrabold u-text-gray-900 sm:text-5xl sm:tracking-tight">
           {{ title }}
         </h2>
@@ -23,6 +32,10 @@ defineProps({
   },
   description: {
     type: String,
+    default: null
+  },
+  to: {
+    type: [String, Object],
     default: null
   }
 })
