@@ -1,6 +1,6 @@
 <template>
   <UDropdown v-if="user" :items="items">
-    <button class="bg-white rounded-full flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900">
+    <button class="bg-white rounded-full flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 focus: ring-offset-white dark:focus:ring-offset-black">
       <UAvatar
         :src="user.avatar"
         :alt="user.username"
