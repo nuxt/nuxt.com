@@ -152,14 +152,14 @@ const onCopyInviteLink = () => {
 }
 
 const removeTeamFromUser = (team) => {
-  const index = user.value?.memberships?.findIndex(m => m.team.id === team.id) || -1
+  const index = user.value?.memberships?.findIndex(m => m.team.id === team.id)
   if (index > -1) {
     user.value.memberships.splice(index, 1)
   }
 }
 
 const removeMemberFromTeam = (member) => {
-  const index = props.team.members?.findIndex(m => m.id === member.id) || -1
+  const index = props.team.members?.findIndex(m => m.id === member.id)
   if (index > -1) {
     // eslint-disable-next-line vue/no-mutating-props
     props.team.members?.splice(index, 1)

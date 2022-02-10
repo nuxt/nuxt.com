@@ -167,7 +167,7 @@ const updateUserTeam = (updatedTeam) => {
 }
 
 const removeTeamFromUser = () => {
-  const index = user.value?.memberships?.findIndex(m => m.team.id === props.team.id) || -1
+  const index = user.value?.memberships?.findIndex(m => m.team.id === props.team.id)
   if (index > -1) {
     user.value.memberships.splice(index, 1)
   }

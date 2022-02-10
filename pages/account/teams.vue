@@ -95,7 +95,7 @@ const client = useStrapiClient()
 
 const itemIconClass = ui.dropdown.item.icon
 
-const teams = ref(user.value.memberships.map(m => ({ role: m.role, ...m.team })))
+const teams = computed(() => user.value.memberships.map(m => ({ role: m.role, ...m.team })))
 const leaveModal = ref(false)
 const leavingTeam = ref(null)
 
@@ -104,7 +104,7 @@ const onCopyInviteLink = (team) => {
 }
 
 const removeTeamFromUser = (team) => {
-  const index = user.value?.memberships?.findIndex(m => m.team.id === team.id) || -1
+  const index = user.value?.memberships?.findIndex(m => m.team.id === team.id)
   if (index > -1) {
     user.value.memberships.splice(index, 1)
   }
