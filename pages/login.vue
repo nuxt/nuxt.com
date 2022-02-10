@@ -3,7 +3,7 @@
     <div class="max-w-md w-full space-y-8">
       <div>
         <NuxtLink to="/">
-          <Logo class="h-12 mx-auto text-black" />
+          <Logo class="h-12 mx-auto u-text-black" />
         </NuxtLink>
       </div>
 
@@ -27,13 +27,13 @@
       </div>
       <div v-else>
         <div>
-          <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          <h2 class="mt-6 text-center text-3xl font-extrabold u-text-gray-900">
             Sign in to your account
           </h2>
-          <p class="mt-2 text-center text-sm text-gray-600">
+          <p class="mt-2 text-center text-sm u-text-gray-600">
             Or
             {{ ' ' }}
-            <NuxtLink to="/register" class="font-medium text-gray-800 hover:underline">
+            <NuxtLink to="/register" class="font-medium u-text-gray-800 hover:underline">
               create a new account
             </NuxtLink>
           </p>
@@ -63,7 +63,7 @@
           </UFormGroup>
           <div class="flex items-center justify-end">
             <div class="text-sm">
-              <NuxtLink :to="forgotLink" class="font-medium text-gray-800 hover:underline">
+              <NuxtLink :to="forgotLink" class="font-medium u-text-gray-800 hover:underline">
                 Forgot your password?
               </NuxtLink>
             </div>
@@ -82,7 +82,7 @@
               <div class="w-full border-t border-gray-300" />
             </div>
             <div class="relative flex justify-center text-sm">
-              <span class="px-2 bg-white text-gray-500"> Or continue with </span>
+              <span class="px-2 bg-white u-text-gray-500"> Or continue with </span>
             </div>
           </div>
           <UButton
