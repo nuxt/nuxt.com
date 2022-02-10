@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center gap-3 relative">
+  <div class="relative flex items-center gap-3">
     <NuxtLink :to="activeItem.to" class="flex items-center gap-3">
       <UAvatar
         :src="activeItem.avatar"
@@ -7,7 +7,7 @@
         size="xs"
         class="-my-1"
       />
-      <span class="truncate font-medium text-sm">{{ activeItem.label }}</span>
+      <span class="text-sm font-medium truncate">{{ activeItem.label }}</span>
     </NuxtLink>
 
     <UDropdown v-if="user" :items="items" placement="auto" strategy="absolute" wrapper-class="inline-flex">
@@ -21,7 +21,7 @@
       />
 
       <template #avatar="{ item }">
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-3 overflow-hidden">
           <UAvatar
             :src="item.avatar"
             :alt="item.label"
@@ -33,8 +33,8 @@
       </template>
 
       <template #icon="{ item }">
-        <div class="flex items-center gap-3 w-full">
-          <UIcon :name="item.icon" class="mx-1 h-4 w-4 u-text-gray-400 group-hover:u-text-gray-500" />
+        <div class="flex items-center w-full gap-3">
+          <UIcon :name="item.icon" class="w-4 h-4 mx-1 u-text-gray-400 group-hover:u-text-gray-500" />
 
           {{ item.label }}
         </div>
