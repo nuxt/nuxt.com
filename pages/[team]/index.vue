@@ -12,25 +12,19 @@
           Create a project from a Template, or import a Git repository.
         </p>
         <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          <UCard v-for="(template) in templates.slice(0, 4)" :key="template.title" class="rounded-md lg:my-4" body-class="relative rounded-md h-60 lg:h-48 group">
-            <img :src="template.screenshot.url" :alt="template.screenshot.alternativeText" class="object-cover w-full h-3/4">
-            <div class="flex items-center px-2 text-left h-1/4">
-              <span class="truncate">{{ template.title }}</span>
-            </div>
-
-            <div class="absolute inset-0 transition duration-300 transform rounded-md opacity-0 group-hover:block hover:backdrop-blur-sm hover:opacity-100 mix-blend-difference">
-              <div class="flex items-center justify-center w-full h-full">
-                <UIcon class="w-16 h-16 u-text-gray-400" name="heroicons-solid:arrow-circle-right" />
-              </div>
-            </div>
-          </UCard>
+          <TemplateCard
+            v-for="(template, index) of templates.slice(0, 4)"
+            :key="index"
+            class="my-4"
+            :template="template"
+            :to="{ name: 'team-new-clone', query: { template: template.slug } }"
+          />
         </div>
         <UButton to="/projects/new/" label="Create a New project" size="lg" />
         <ULink to="/new/templates" class="text-sm u-text-gray-900 hover:underline">
           Browse Templates &rarr;
         </ULink>
       </UCard>
-      >>>>>>> 2fc41d6... feat: project placeholder (wip)
     </div>
   </Page>
 </template>
