@@ -17,13 +17,7 @@ export default defineNuxtConfig({
     ],
     link: [
       { rel: 'icon', href: '/icon.png' }
-    ],
-    htmlAttrs: {
-      class: '/* @unocss-include */ bg-white dark:bg-black'
-    },
-    bodyAttrs: {
-      class: '/* @unocss-include */ antialiased font-sans text-gray-700 bg-gray-50 dark:bg-gray-900 dark:text-gray-200'
-    }
+    ]
   },
   components: {
     loader: true,
@@ -52,10 +46,12 @@ export default defineNuxtConfig({
       gray: 'zinc'
     },
     preset: 'nuxt',
-    unocss: {
+    tailwindcss: {
       theme: {
-        fontFamily: {
-          sans: '"RoobertPRO", sans-serif'
+        extend: {
+          fontFamily: {
+            sans: '"RoobertPRO", sans-serif'
+          }
         }
       }
     }
