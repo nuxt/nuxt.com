@@ -34,15 +34,6 @@ export interface User {
   beta: boolean
 }
 
-export interface Screenshot {
-  id: string,
-  name: string,
-  alternativeText: string,
-  caption: string
-  ext: string
-  url: string
-  previewUrl: string
-}
 export interface Template {
   id: number
   owner: string
@@ -52,7 +43,6 @@ export interface Template {
   title: string
   slug: string
   description: string
-  screenshot: Screenshot
 }
 
 export interface Project {
