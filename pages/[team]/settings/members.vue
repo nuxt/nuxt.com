@@ -41,7 +41,7 @@
 
             <div class="flex items-center gap-3">
               <USelect
-                v-if="isOwner && member.id !== user.id"
+                v-if="isOwner && member.user.id !== user.id"
                 name="role"
                 :model-value="member.role"
                 size="sm"
@@ -53,13 +53,13 @@
               </p>
 
               <UDropdown
-                :disabled="!isOwner && member.id !== user.id"
+                :disabled="!isOwner && member.user.id !== user.id"
                 class="-mr-2"
                 placement="bottom-start"
                 :items="[[{
                   slot: 'leave-team',
-                  label: member.id !== user.id ? 'Remove from team' : 'Leave team',
-                  icon: member.id !== user.id ? 'heroicons-outline:x' : 'heroicons-outline:exclamation',
+                  label: member.user.id !== user.id ? 'Remove from team' : 'Leave team',
+                  icon: member.user.id !== user.id ? 'heroicons-outline:x' : 'heroicons-outline:exclamation',
                   class: '!text-red-500',
                   click: () => onMemberRemove(member)
                 }]]"
@@ -103,8 +103,8 @@
       icon="heroicons-outline:x"
       icon-class="bg-red-600"
       icon-wrapper-class="h-12 w-12 sm:h-10 sm:w-10 bg-red-100"
-      :title="removingMember?.id === user.id ? 'Leave team' : 'Remove member'"
-      :description="removingMember?.id === user.id ? 'Are you sure you want to leave the team?' : 'Are you sure you want to remove this member?'"
+      :title="removingMember?.user.id === user.id ? 'Leave team' : 'Remove member'"
+      :description="removingMember?.user.id === user.id ? 'Are you sure you want to leave the team?' : 'Are you sure you want to remove this member?'"
       @confirm="confirmMemberRemove"
       @cancel="removingMember = null"
     />
@@ -168,7 +168,7 @@ const removeMemberFromTeam = (member) => {
 
 const onMemberRoleChange = async (member, role) => {
   try {
-    await client(`/teams/${props.team.id}/members/${member.id}`, {
+    await client(`/teams/${props.team.id}/members/${member.user.id}`, {
       method: 'PUT',
       body: {
         role
