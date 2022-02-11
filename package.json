@@ -9,7 +9,6 @@
     "test": "yarn lint"
   },
   "dependencies": {
-    "@iconify-json/fa-brands": "^1.0.3",
     "@sindresorhus/slugify": "^2.1.0"
   },
   "devDependencies": {

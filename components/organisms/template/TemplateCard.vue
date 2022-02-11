@@ -1,15 +1,15 @@
 <template>
   <UCard
-    body-class="relative block w-full overflow-hidden group aspect-video"
+    body-class="relative block w-full overflow-hidden group aspect-w-16 aspect-h-9"
     footer-class="flex flex-col flex-1 p-4"
     border-color-class="border-transparent"
     class="relative flex flex-col transition duration-200 transform group "
-    :ring-class="`ring-1 u-ring-gray-200 ${!!to && 'lg:hover:u-ring-gray-400 lg:hover:ring-2'}`"
+    :ring-class="`ring-1 u-ring-gray-200 ${!!to && 'lg:hover:u-ring-gray-900 lg:hover:ring-2'}`"
   >
     <img :src="template.screenshot?.url" :alt="template.screenshot?.alternativeText" class="object-cover w-full h-full pointer-events-none">
 
     <NuxtLink v-if="!!to" :to="to">
-      <div class="absolute inset-0 transition duration-100 transform rounded-md opacity-0 group-hover:block hover:backdrop-blur-6 hover:opacity-100 mix-blend-difference">
+      <div class="absolute inset-0 transition duration-100 transform rounded-md opacity-0 group-hover:block hover:backdrop-blur-sm hover:opacity-100 mix-blend-normal">
         <div class="flex items-center justify-center w-full h-full">
           <UIcon class="w-16 h-16 u-text-gray-300" name="heroicons-solid:arrow-circle-right" />
         </div>
