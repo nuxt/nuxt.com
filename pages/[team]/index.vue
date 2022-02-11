@@ -1,12 +1,12 @@
 <template>
   <Page>
-    <div class="flex flex-col space-y-6">
+    <div class="space-y-6">
       <div class="flex items-center justify-end">
         <UButton :to="team ? `/${team.slug}/new` : '/dashboard/new'" label="New project" icon="heroicons-solid:plus" />
       </div>
       <UCard body-class="flex flex-col items-center p-12 space-y-4 text-center">
         <h2 class="text-2xl font-semibold leading-6 u-text-gray-900">
-          No projects, yet !
+          No projects yet!
         </h2>
         <p class="u-text-gray-500">
           Create a project from a Template, or import a Git repository.
@@ -20,7 +20,7 @@
             :to="{ name: 'team-new-clone', query: { template: template.slug } }"
           />
         </div>
-        <UButton to="/projects/new/" label="Create a New project" size="lg" />
+        <UButton to="/projects/new/" label="Create a new project" size="lg" />
         <ULink to="/new/templates" class="text-sm u-text-gray-900 hover:underline">
           Browse Templates &rarr;
         </ULink>
