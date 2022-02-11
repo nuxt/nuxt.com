@@ -8,7 +8,7 @@
   >
     <img :src="template.screenshot?.url" alt="" class="object-cover w-full h-full pointer-events-none">
 
-    <NuxtLink v-if="!!to" :to="to" class="">
+    <NuxtLink v-if="!!to" :to="to">
       <div class="absolute inset-0 transition duration-100 transform rounded-md opacity-0 group-hover:block hover:backdrop-blur-6 hover:opacity-100 mix-blend-difference">
         <div class="flex items-center justify-center w-full h-full">
           <UIcon class="w-16 h-16 u-text-gray-300" name="heroicons-solid:arrow-circle-right" />
