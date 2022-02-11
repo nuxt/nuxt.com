@@ -3,18 +3,17 @@
     body-class="relative block w-full overflow-hidden group aspect-video"
     footer-class="flex flex-col flex-1 p-4"
     border-color-class="border-transparent"
-    class="relative flex flex-col group"
-    :ring-class="`ring-1 u-ring-gray-200 ${!!to && 'lg:hover:u-ring-gray-900 lg:hover:ring-2'}`"
+    class="relative flex flex-col transition duration-200 transform group "
+    :ring-class="`ring-1 u-ring-gray-200 ${!!to && 'lg:hover:u-ring-gray-400 lg:hover:ring-2'}`"
   >
     <img :src="template.screenshot?.url" alt="" class="object-cover w-full h-full pointer-events-none">
 
-    <NuxtLink v-if="!!to" :to="to">
-      <span class="absolute inset-0 flex items-center justify-center invisible group-hover:visible">
-        <span class="p-2 rounded-full opacity-75 u-bg-white z-5">
-          <UIcon name="heroicons-outline:arrow-right" class="w-8 h-8 u-text-gray-900" />
-        </span>
-        <span class="absolute inset-0 u-bg-gray-900 opacity-20" />
-      </span>
+    <NuxtLink v-if="!!to" :to="to" class="">
+      <div class="absolute inset-0 transition duration-100 transform rounded-md opacity-0 group-hover:block hover:backdrop-blur-6 hover:opacity-100 mix-blend-difference">
+        <div class="flex items-center justify-center w-full h-full">
+          <UIcon class="w-16 h-16 u-text-gray-300" name="heroicons-solid:arrow-circle-right" />
+        </div>
+      </div>
     </NuxtLink>
 
     <template #footer>
