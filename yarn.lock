@@ -327,32 +327,6 @@
   resolved "https://registry.yarnpkg.com/@hutson/parse-repository-url/-/parse-repository-url-3.0.2.tgz#98c23c950a3d9b6c8f0daed06da6c3af06981340"
   integrity sha512-H9XAx3hc0BQHY6l+IFSWHDySypcXsvsuLhgYLUGywmJ5pswRVQJUHpOsobnLYp2ZUaUlKiKDrgWWhosOwAEM8Q==
 
-"@iconify-json/fa-brands@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@iconify-json/fa-brands/-/fa-brands-1.0.3.tgz#f284d05fa91526d8d6f93e08b8cdd0068104faee"
-  integrity sha512-nrMSpsoLdRzfB+DNB5+gmyOp2DsSj3N9jZlP7qwG0JVdctWwEZZptWMvF0dkIEoOMCVl7pJ3X8oa3rQsiEqCRg==
-  dependencies:
-    "@iconify/types" "^1.0.10"
-
-"@iconify-json/heroicons-outline@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@iconify-json/heroicons-outline/-/heroicons-outline-1.0.2.tgz#bfe747b588ada1918b93f7f6c85948fad7ad4afa"
-  integrity sha512-bKcALoCJy9AB+Ojlb58rF/IklUOYBDeq8RaCme1Ez/rnFLAmwqrDY96B1f0/PtfhYwjo8v1fXiv9hL7QWImpPQ==
-  dependencies:
-    "@iconify/types" "^1.0.10"
-
-"@iconify-json/heroicons-solid@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@iconify-json/heroicons-solid/-/heroicons-solid-1.0.2.tgz#cf81ef6ce2aa70bf037c1c022b730b1698f63ffa"
-  integrity sha512-j9SuVhvVAVGhgesuUCzCk3Jk/Rjjh1Mcqg4SXbKv34AMvYpRLBn2LZi1gOv6RW0KmCpDsZ9C+qf5k9VmLc9kxQ==
-  dependencies:
-    "@iconify/types" "^1.0.10"
-
-"@iconify/types@^1.0.10":
-  version "1.0.12"
-  resolved "https://registry.yarnpkg.com/@iconify/types/-/types-1.0.12.tgz#839f1f784b7030b94482d51996570f4dbd7d6796"
-  integrity sha512-6er6wSGF3hgc1JEZqiGpg21CTCjHBYOUwqLmb2Idzkjiw6ogalGP0ZMLVutCzah+0WB4yP+Zd2oVPN8jvJ+Ftg==
-
 "@iconify/vue@^3.1.3":
   version "3.1.3"
   resolved "https://registry.yarnpkg.com/@iconify/vue/-/vue-3.1.3.tgz#df97d85e69c8447495bcd33ac26bd317bb543054"
@@ -643,13 +617,11 @@
     webpackbar "^5.0.2"
 
 "@nuxthq/ui@npm:@nuxthq/ui-edge@latest":
-  version "0.0.2-27409967.b2705fe"
-  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27409967.b2705fe.tgz#c62df30a5e1641b151bc4591c6adee3b3bf34961"
-  integrity sha512-QQnWwtO/u/1o/hEBAUcUVoU5zzYpMWOQo82nG2AjZrj8uKe3LoAD3Ovwupxx+6RiuYIZPxOKB84DFqpFMmyYKg==
+  version "0.0.2-27409994.382e3b8"
+  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27409994.382e3b8.tgz#a1d4ecb837f3b8d68d54dfbc05fb52b3ed921958"
+  integrity sha512-m71uKoHTmiIjwPgjizV62WSmJKGxXLct1VIcIkONh1iICWhTDyyWboya34ZmtbMzZVz3Iadu8AIDf5z/COHR2g==
   dependencies:
     "@headlessui/vue" "^1.4.3"
-    "@iconify-json/heroicons-outline" "^1.0.2"
-    "@iconify-json/heroicons-solid" "^1.0.2"
     "@iconify/vue" "^3.1.3"
     "@nuxt/kit" "npm:@nuxt/kit-edge@latest"
     "@nuxtjs/tailwindcss" "^5.0.0-4"
@@ -1197,9 +1169,9 @@
     "@vue/shared" "3.2.30"
 
 "@vue/devtools-api@^6.0.0-beta.18":
-  version "6.0.6"
-  resolved "https://registry.yarnpkg.com/@vue/devtools-api/-/devtools-api-6.0.6.tgz#4bf8bfe8f14f73c614d9baeaa275fe3cd1c799d6"
-  integrity sha512-QxGATXEuANiVhnc+8PrddyZsyOjMa8ftBXJohl9X7fG0CnlUK2kmKaRfHsKagmkfEpBg74xMkqrkVTEMJYdAWQ==
+  version "6.0.7"
+  resolved "https://registry.yarnpkg.com/@vue/devtools-api/-/devtools-api-6.0.7.tgz#a54b3b99b19ab71e96d40d005e9b1cec19eae5f1"
+  integrity sha512-i7vgWvkzP7n2L9yCH7hh+JZOYZYylrd6Pw4mwzZyk8CVYzy8Vm/Kl3bEmurgFg7n2kGV8pnm/qgegNIak8UomQ==
 
 "@vue/reactivity-transform@3.2.30":
   version "3.2.30"
