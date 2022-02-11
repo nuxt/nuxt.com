@@ -11,16 +11,22 @@
         <p class="u-text-gray-500">
           Create a project from a Template, or import a Git repository.
         </p>
-        <div class="grid grid-cols-1 gap-6 my-8 sm:grid-cols-2 lg:grid-cols-4">
-          <UCard v-for="(template) in templates" :key="template.title" class="my-4 rounded-md" body-class="border-gray-500 rounded-md h-60 lg:h-48">
-            <img src="https://nuxtjs.org/design-kit/white-text.svg" alt="nuxtjs" class="object-contain w-full bg-gray-900 h-3/4">
-            <div class="flex items-center pl-2 text-left h-1/4">
-              {{ template.title }}
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <UCard v-for="(template) in templates.slice(0, 4)" :key="template.title" class="rounded-md lg:my-4" body-class="relative rounded-md h-60 lg:h-48 group">
+            <img :src="template.screenshot.url" :alt="template.screenshot.alternativeText" class="object-cover w-full h-3/4">
+            <div class="flex items-center px-2 text-left h-1/4">
+              <span class="truncate">{{ template.title }}</span>
+            </div>
+
+            <div class="absolute inset-0 transition duration-300 transform rounded-md opacity-0 group-hover:block hover:backdrop-blur-sm hover:opacity-100 mix-blend-difference">
+              <div class="flex items-center justify-center w-full h-full">
+                <UIcon class="w-16 h-16 u-text-gray-400" name="heroicons-solid:arrow-circle-right" />
+              </div>
             </div>
           </UCard>
         </div>
         <UButton to="/projects/new/" label="Create a New project" size="lg" />
-        <ULink to="" class="text-sm u-text-gray-900 hover:underline">
+        <ULink to="/new/templates" class="text-sm u-text-gray-900 hover:underline">
           Browse Templates &rarr;
         </ULink>
       </UCard>
@@ -41,9 +47,6 @@ defineProps({
 })
 
 const { find } = useStrapi4()
-
-// populate doesn't work
-// const { data: templates } = await useAsyncData('templates', () => find<Template[]>('templates', { populate: ['screenshot'] }))
-
 const { data: templates } = await useAsyncData('templates', () => find<Template[]>('templates', { populate: ['screenshot'] }))
+
 </script>
