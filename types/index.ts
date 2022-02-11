@@ -1,5 +1,10 @@
 export interface Media {
+  name: string,
+  alternativeText: string,
+  caption: string
+  ext: string
   url: string
+  previewUrl: string
 }
 
 export interface Member {
