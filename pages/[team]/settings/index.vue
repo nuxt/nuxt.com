@@ -164,10 +164,8 @@ const updateUserTeam = (updatedTeam) => {
   if (team) {
     Object.assign(team, updatedTeam)
 
-    if (props.team?.name !== updatedTeam.name) {
-      // eslint-disable-next-line vue/no-mutating-props
-      props.team.name = updatedTeam.name
-    }
+    // eslint-disable-next-line vue/no-mutating-props
+    Object.assign(props.team, omit(updatedTeam, ['slug']))
   }
 }
 
