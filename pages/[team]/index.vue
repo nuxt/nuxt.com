@@ -13,7 +13,7 @@
         </p>
         <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           <TemplateCard
-            v-for="(template, index) of templates.slice(0, 4)"
+            v-for="(template, index) of templates"
             :key="index"
             class="my-4"
             :template="template"
@@ -41,6 +41,5 @@ defineProps({
 })
 
 const { find } = useStrapi4()
-const { data: templates } = await useAsyncData('templates', () => find<Template[]>('templates', { populate: ['screenshot'] }))
-
+const { data: templates } = await useAsyncData('templates', () => find<Template[]>('templates', { populate: 'screenshot', pagination: { start: 0, limit: 4 } }))
 </script>
