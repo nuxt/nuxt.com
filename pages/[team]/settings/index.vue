@@ -163,6 +163,11 @@ const updateUserTeam = (updatedTeam) => {
   const { team } = user.value?.memberships?.find(membership => membership.team.id === updatedTeam.id) || {}
   if (team) {
     Object.assign(team, updatedTeam)
+
+    if (props.team?.name !== updatedTeam.name) {
+      // eslint-disable-next-line vue/no-mutating-props
+      props.team.name = updatedTeam.name
+    }
   }
 }
 
