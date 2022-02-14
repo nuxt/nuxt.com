@@ -101,7 +101,7 @@
     <UAlertDialog
       v-model="removeModal"
       icon="heroicons-outline:x"
-      icon-class="bg-red-600"
+      icon-class="text-red-600"
       icon-wrapper-class="h-12 w-12 sm:h-10 sm:w-10 bg-red-100"
       :title="removingMember?.user.id === user.id ? 'Leave team' : 'Remove member'"
       :description="removingMember?.user.id === user.id ? 'Are you sure you want to leave the team?' : 'Are you sure you want to remove this member?'"
