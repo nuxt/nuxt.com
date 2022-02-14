@@ -51,11 +51,28 @@ export interface Template {
   screenshot: Media
 }
 
+export interface Repository {
+  id: number,
+  owner: string,
+  name: string,
+  defaultBranch: string,
+  description: string,
+  language: string,
+  url: string,
+  private: boolean,
+  provider: 'github',
+  providerId: number
+}
 export interface Project {
   id: number
-  name: string
-  template: number | Template
-  team: string | Team
+  name: string,
+  url: string,
+  status: 'pending' | 'ready',
+  screenshot: Media,
+  repository: Repository,
+  template: number | Template,
+  team: string | Team,
+  user: User
 }
 
 export interface GitHubAccount {
