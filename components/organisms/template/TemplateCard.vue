@@ -17,7 +17,7 @@
     </NuxtLink>
 
     <template #footer>
-      <div class="flex-1">
+      <div class="flex-1 text-left">
         <p class="text-lg font-semibold leading-none truncate">
           {{ template.title }}
         </p>
@@ -29,11 +29,11 @@
       <div class="flex flex-wrap items-center mt-3 gap-x-3 gap-y-1">
         <a :href="template.url" target="_blank" rel="noopener" class="flex items-center gap-1 text-sm font-medium u-text-gray-600 hover:underline">
           <UIcon name="heroicons-outline:external-link" class="w-4 h-4" />
-          Live demo
+          Demo
         </a>
         <a :href="`https://github.com/${template.owner}/${template.name}/tree/${template.branch}`" target="_blank" rel="noopener" class="flex items-center gap-1 text-sm font-medium u-text-gray-600 hover:underline">
           <UIcon name="fa-brands:github" class="w-4 h-4" />
-          GitHub repository
+          Repository
         </a>
       </div>
     </template>

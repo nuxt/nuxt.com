@@ -72,7 +72,7 @@
     <UAlertDialog
       v-model="leaveModal"
       icon="heroicons-outline:x"
-      icon-class="bg-red-600"
+      icon-class="text-red-600"
       icon-wrapper-class="h-12 w-12 sm:h-10 sm:w-10 bg-red-100"
       title="Leave team"
       description="Are you sure you want to leave the team?"

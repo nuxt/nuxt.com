@@ -113,7 +113,7 @@
     <UAlertDialog
       v-model="leaveModal"
       icon="heroicons-outline:x"
-      icon-class="bg-red-600"
+      icon-class="text-red-600"
       icon-wrapper-class="w-12 h-12 bg-red-100 sm:h-10 sm:w-10"
       title="Leave team"
       description="Are you sure you want to leave the team?"
@@ -122,7 +122,7 @@
     <UAlertDialog
       v-model="deleteModal"
       icon="heroicons-outline:x"
-      icon-class="bg-red-600"
+      icon-class="text-red-600"
       icon-wrapper-class="w-12 h-12 bg-red-100 sm:h-10 sm:w-10"
       title="Delete team"
       description="Are you sure you want to delete the team? This action cannot be undone!"

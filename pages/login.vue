@@ -12,7 +12,7 @@
           Thank you for joining Nuxt beta program!<br>
           You will receive an email once accepted.
         </p>
-        <p class="font-semibold mb-1.5 -mt-px text-sm u-text-gray-700 tracking-wide mt-8">
+        <p class="font-semibold mb-1.5 mt-6 text-sm u-text-gray-700 tracking-wide">
           Connected as:
         </p>
         <div class="flex items-center justify-center gap-3">
