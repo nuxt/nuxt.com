@@ -31,7 +31,10 @@ export default defineNuxtConfig({
     '@nuxtjs/strapi'
   ],
   publicRuntimeConfig: {
-    baseUrl: process.env.BASE_URL || 'https://nuxt.com'
+    baseUrl: process.env.BASE_URL || 'https://nuxt.com',
+    github: {
+      appSlug: process.env.GITHUB_APP_SLUG || 'nuxt'
+    }
   },
   strapi: {
     version: 'v4',

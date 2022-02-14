@@ -18,10 +18,10 @@
 
     <template #footer>
       <div class="flex-1 text-left">
-        <p class="text-lg font-semibold leading-none truncate">
+        <p class="text-lg font-semibold truncate">
           {{ template.title }}
         </p>
-        <p class="mt-1 u-text-gray-400 line-clamp-2">
+        <p class="mt-1 leading-5 u-text-gray-400 line-clamp-2">
           {{ template.description }}
         </p>
       </div>
