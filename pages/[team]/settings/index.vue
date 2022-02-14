@@ -55,7 +55,7 @@
         <div class="flex items-center justify-end">
           <UButton
             type="submit"
-            :loading="loading"
+            :loading="updating"
             label="Save"
             @click="onSubmit()"
           />
@@ -75,7 +75,7 @@
         <div class="flex items-center" :class="{ 'justify-end': isOwner }">
           <UButton
             v-if="isOwner"
-            :loading="loading"
+            :loading="leaving"
             variant="red"
             label="Leave team"
             @click="onLeave()"
@@ -99,7 +99,7 @@
         <div class="flex items-center" :class="{ 'justify-end': isOwner }">
           <UButton
             v-if="isOwner"
-            :loading="loading"
+            :loading="deleting"
             variant="red"
             label="Delete team"
             @click="onDelete()"
@@ -154,7 +154,9 @@ const user = useStrapiUser() as Ref<User>
 const avatar = ref(props.team.avatar?.url)
 const file = ref(null)
 const form = reactive({ name: props.team.name, slug: props.team.slug, avatar: '' })
-const loading = ref(false)
+const updating = ref(false)
+const deleting = ref(false)
+const leaving = ref(false)
 const { $toast } = useNuxtApp()
 const leaveModal = ref(false)
 const deleteModal = ref(false)
@@ -163,7 +165,6 @@ const updateUserTeam = (updatedTeam) => {
   const { team } = user.value?.memberships?.find(membership => membership.team.id === updatedTeam.id) || {}
   if (team) {
     Object.assign(team, updatedTeam)
-
     // eslint-disable-next-line vue/no-mutating-props
     Object.assign(props.team, omit(updatedTeam, ['slug']))
   }
@@ -177,7 +178,7 @@ const removeTeamFromUser = () => {
 }
 
 const onSubmit = async () => {
-  loading.value = true
+  updating.value = true
 
   try {
     const formData = new FormData()
@@ -202,7 +203,7 @@ const onSubmit = async () => {
     })
   } catch (e) {}
 
-  loading.value = false
+  updating.value = false
 }
 
 const onLeave = () => {
@@ -210,6 +211,8 @@ const onLeave = () => {
 }
 
 const confirmLeave = async () => {
+  leaving.value = true
+
   try {
     await client(`/teams/${props.team.id}/members/${user.value.id}`, {
       method: 'DELETE'
@@ -218,7 +221,9 @@ const confirmLeave = async () => {
     removeTeamFromUser()
 
     router.push('/dashboard')
-  } catch (e) {}
+  } catch (e) {
+    leaving.value = false
+  }
 }
 
 const onDelete = () => {
@@ -226,6 +231,8 @@ const onDelete = () => {
 }
 
 const confirmDelete = async () => {
+  deleting.value = true
+
   try {
     await client(`/teams/${props.team.id}`, {
       method: 'DELETE'
@@ -234,7 +241,9 @@ const confirmDelete = async () => {
     removeTeamFromUser()
 
     router.push('/dashboard')
-  } catch (e) {}
+  } catch (e) {
+    deleting.value = false
+  }
 }
 
 const onFileUpload = () => {
