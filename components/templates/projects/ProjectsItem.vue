@@ -12,7 +12,7 @@
                 {{ project.name }}
               </p>
 
-              <p class="text-sm text-tw-gray-500 font-medium truncate">
+              <p class="text-sm font-medium truncate text-tw-gray-500">
                 <a :href="project.url" target="_blank" class="hover:underline" @click.stop>{{ project.url }}</a>
               </p>
             </div>
@@ -26,14 +26,14 @@
           </div>
         </div>
 
-        <img class="aspect-w-16 aspect-h-9 border shadow-sm rounded bg-no-repeat bg-cover bg-center" :style="`background-image: url(${project.screenshot.url});`">
+        <img class="bg-center bg-no-repeat bg-cover border rounded shadow-sm aspect-w-16 aspect-h-9" :style="`background-image: url(${project.screenshot.url});`">
 
         <div class="flex items-center justify-between space-x-3 text-xs">
-          <span class="u-text-gray-700 font-medium capitalize">{{ project.status }}</span>
+          <span class="font-medium capitalize u-text-gray-700">{{ project.status }}</span>
 
-          <span class="u-text-gray-400 font-normal">
-            Updated <Timeago :datetime="project.updatedAt" />
-          </span>
+          <time class="font-medium capitalize u-text-gray-700">
+            Updated {{ useTimeAgo(new Date(project.updatedAt)).value }}
+          </time>
         </div>
       </div>
     </UCard>
@@ -43,6 +43,7 @@
 <script setup lang="ts">
 
 import type { PropType, Ref } from 'vue'
+import { useTimeAgo } from '@vueuse/core'
 import type { Project, User } from '~/types'
 
 const props = defineProps({
