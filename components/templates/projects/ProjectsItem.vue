@@ -55,6 +55,7 @@ const props = defineProps({
 
 const user = useStrapiUser() as Ref<User>
 
-const team = computed(() => props.project.team ? props.project.team.slug : user.value.username)
+const route = useRoute()
+const team = route.params.team && route.params.team !== 'dashboard' && route.params.team !== user.value.username ? route.params.team : undefined
 
 </script>
