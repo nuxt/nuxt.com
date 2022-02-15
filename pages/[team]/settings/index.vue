@@ -144,7 +144,7 @@ definePageMeta({
 const props = defineProps({
   team: {
     type: Object as PropType<Team>,
-    default: null
+    required: true
   }
 })
 

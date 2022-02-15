@@ -120,7 +120,7 @@ import ui from '#build/ui'
 const props = defineProps({
   team: {
     type: Object as PropType<Team>,
-    default: null
+    required: true
   }
 })
 

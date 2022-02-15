@@ -1,5 +1,7 @@
 <template>
-  <NuxtNestedPage :templates="templates" />
+  <div>
+    <NuxtNestedPage :team="team" :templates="templates" />
+  </div>
 </template>
 
 <script setup lang="ts">
