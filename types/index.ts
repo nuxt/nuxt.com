@@ -69,6 +69,7 @@ export interface Project {
   url: string,
   status: 'pending' | 'ready',
   screenshot: Media,
+  updatedAt: string,
   repository: Repository,
   template: number | Template,
   team: string | Team,
