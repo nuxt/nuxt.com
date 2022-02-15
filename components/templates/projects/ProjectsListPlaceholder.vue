@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="flex flex-col space-y-4">
     <h2 class="text-2xl font-semibold leading-6 u-text-gray-900">
       No projects yet!
     </h2>
@@ -15,6 +15,12 @@
         :to="{ name: 'team-new-clone', query: { template: template.slug } }"
       />
     </div>
+    <div>
+      <UButton to="/projects/new/" label="Create a new project" size="lg" />
+    </div>
+    <ULink to="/new/templates" class="text-sm u-text-gray-900 hover:underline">
+      Browse Templates &rarr;
+    </ULink>
   </div>
 </template>
 
