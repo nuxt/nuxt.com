@@ -1,6 +1,6 @@
 <template>
   <!-- TODO: route :to="{ name: 'team-name', params: { team, name: project.name } } -->
-  <ULink to="#">
+  <NuxtLink to="#">
     <UCard ring-class="ring-1 u-ring-gray-200 lg:hover:u-ring-gray-900 lg:hover:ring-2">
       <div class="flex flex-col space-y-6">
         <div class="truncate">
@@ -37,7 +37,7 @@
         </div>
       </div>
     </UCard>
-  </ULink>
+  </NuxtLink>
 </template>
 
 <script setup lang="ts">
