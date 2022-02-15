@@ -1,13 +1,17 @@
 <template>
-  <Page>
-    <PageGrid>
-      <template #aside>
-        <UVerticalNavigation :links="links" active-class="u-text-gray-900 u-bg-gray-200" />
-      </template>
+  <div>
+    <Tabs />
 
-      <NuxtChild :team="team" />
-    </PageGrid>
-  </Page>
+    <Page>
+      <PageGrid>
+        <template #aside>
+          <UVerticalNavigation :links="links" active-class="u-text-gray-900 u-bg-gray-200" />
+        </template>
+
+        <NuxtChild :team="team" />
+      </PageGrid>
+    </Page>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -19,7 +23,7 @@ const route = useRoute()
 defineProps({
   team: {
     type: Object as PropType<Team>,
-    default: null
+    required: true
   }
 })
 

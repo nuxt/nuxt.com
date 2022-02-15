@@ -55,8 +55,14 @@ export interface Project {
   id: number
   name: string
   template: number | Template
+  team: string | Team
 }
 
-export interface Installation {
-  id: number
+export interface GitHubAccount {
+  login: string
+  avatar_url: string
+}
+
+export interface GitHubInstallation {
+  account: GitHubAccount
 }

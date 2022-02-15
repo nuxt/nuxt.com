@@ -20,9 +20,13 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import type { Template } from '~/types'
+import type { Team, Template } from '~/types'
 
 defineProps({
+  team: {
+    type: Object as PropType<Team>,
+    default: null
+  },
   templates: {
     type: Array as PropType<Template[]>,
     default: () => []
