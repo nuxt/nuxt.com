@@ -26,6 +26,11 @@ const links = [{
   icon: 'heroicons-outline:cog',
   exact: true
 }, {
+  label: 'Login connections',
+  to: `${to}/login-connections`,
+  icon: 'heroicons-outline:link',
+  exact: true
+}, {
   label: 'Teams',
   to: `${to}/teams`,
   icon: 'heroicons-outline:user-group',

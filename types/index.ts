@@ -37,6 +37,8 @@ export interface User {
   avatar: string
   memberships: Membership[]
   beta: boolean
+  provider: string
+  createdAt: string
 }
 
 export interface Template {
