@@ -35,13 +35,7 @@
           </div>
 
           <p class="text-sm text-u-gray-500">
-            Connected
-            <ClientOnly>
-              <template #fallback>
-                ...
-              </template>
-              <Timeago :datetime="user.createdAt" />
-            </ClientOnly>
+            Connected {{ useTimeAgo(new Date(user.updatedAt)).value }}
           </p>
         </div>
       </template>
@@ -50,6 +44,7 @@
 </template>
 
 <script setup lang="ts">
+import { useTimeAgo } from '@vueuse/core'
 import type { Ref } from 'vue'
 import type { User } from '~/types'
 
