@@ -5,7 +5,9 @@
     <Page>
       <div class="space-y-6">
         <div class="flex items-center justify-end gap-3">
-          <UButton :to="team ? `/${team.slug}/new/import` : '/dashboard/new/import'" label="Import project" icon="fa-brands:github" variant="secondary" />
+          <UButton v-if="team" :to="`/${team.slug}/settings/members`" label="Add collaborators" icon="heroicons-outline:users" variant="secondary" />
+          <UButton v-else to="/teams/new" label="Create a team" icon="heroicons-outline:users" variant="secondary" />
+
           <UButton :to="team ? `/${team.slug}/new` : '/dashboard/new'" label="New project" icon="heroicons-solid:plus" />
         </div>
         <UCard body-class="flex flex-col items-center p-12 space-y-4 text-center">

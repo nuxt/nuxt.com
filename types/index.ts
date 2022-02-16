@@ -66,3 +66,20 @@ export interface GitHubAccount {
 export interface GitHubInstallation {
   account: GitHubAccount
 }
+
+export interface GitHubRepository {
+  id: number
+  owner: GitHubAccount
+  name: string
+  private: boolean
+}
+
+export interface GitHubPaginationMeta {
+  total: number
+  limit: number
+}
+
+export interface GitHubPagination<T> {
+  data: T[]
+  meta: GitHubPaginationMeta
+}

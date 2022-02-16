@@ -13,7 +13,7 @@
         </template>
 
         <UCard @submit.prevent="onSubmit">
-          <h3 class="mb-2 text-lg font-medium leading-6 u-text-gray-900">
+          <h3 class="mb-1 text-lg font-medium leading-6 u-text-gray-900">
             Create a Git repository
           </h3>
 
@@ -26,7 +26,7 @@
               to access all your organizations.
             </p>
 
-            <hr class="my-6 border-tw-gray-200">
+            <hr class="my-6 u-border-gray-200">
 
             <div class="flex flex-col gap-6">
               <div class="flex flex-col items-center gap-6 lg:flex-row">

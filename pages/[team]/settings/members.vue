@@ -80,7 +80,7 @@
 
     <UModal v-model="inviteModal">
       <template #header>
-        <h2 class="font-medium sm:text-lg sm:leading-6 text-tw-gray-900">
+        <h2 class="font-medium sm:text-lg sm:leading-6 u-text-gray-900">
           Invite members to your team
         </h2>
       </template>
