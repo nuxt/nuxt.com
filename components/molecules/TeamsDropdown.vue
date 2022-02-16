@@ -1,16 +1,16 @@
 <template>
-  <div class="relative flex items-center gap-3">
-    <NuxtLink :to="`/${activeItem.slug}`" class="flex items-center gap-3 block max-w-[10rem]">
-      <UAvatar
-        :src="activeItem.avatar"
-        :alt="activeItem.label"
-        size="xs"
-        class="-my-0.5 flex-shrink-0"
-      />
-      <span class="text-sm font-medium truncate">{{ activeItem.label }}</span>
-    </NuxtLink>
+  <UDropdown v-if="user" :items="items" placement="bottom-start" class="-mx-4">
+    <div class="relative flex items-center gap-3 px-4">
+      <NuxtLink :to="`/${activeItem.slug}`" class="flex items-center gap-3 block max-w-[10rem]" @click.stop>
+        <UAvatar
+          :src="activeItem.avatar"
+          :alt="activeItem.label"
+          size="xs"
+          class="-m-0.5 flex-shrink-0"
+        />
+        <span class="text-sm font-medium truncate">{{ activeItem.label }}</span>
+      </NuxtLink>
 
-    <UDropdown v-if="user" :items="items" placement="auto" strategy="fixed" wrapper-class="inline-flex">
       <UButton
         icon="heroicons-outline:selector"
         trailing
@@ -19,28 +19,8 @@
         icon-base-class="u-text-gray-400 group-hover:u-text-gray-500"
         size="xxs"
       />
-
-      <template #avatar="{ item }">
-        <div class="flex items-center gap-3 w-full">
-          <UAvatar
-            :src="item.avatar"
-            :alt="item.label"
-            size="xs"
-            class="-my-0.5 !group-hover:u-bg-gray-200 flex-shrink-0"
-          />
-          <span class="truncate">{{ item.label }}</span>
-        </div>
-      </template>
-
-      <template #icon="{ item }">
-        <div class="flex items-center w-full gap-3 w-full">
-          <UIcon :name="item.icon" class="w-4 h-4 mx-1 u-text-gray-400 group-hover:u-text-gray-500 flex-shrink-0" />
-
-          <span class="truncate">{{ item.label }}</span>
-        </div>
-      </template>
-    </UDropdown>
-  </div>
+    </div>
+  </UDropdown>
 </template>
 
 <script setup lang="ts">

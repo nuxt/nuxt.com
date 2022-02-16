@@ -11,10 +11,10 @@
           label="Back"
           class="!p-0 -mt-8 absolute"
         />
-        <h2 class="text-4xl font-extrabold u-text-gray-900 sm:text-5xl sm:tracking-tight">
+        <h2 class="text-3xl font-extrabold u-text-gray-900 sm:text-5xl tracking-tight">
           {{ title }}
         </h2>
-        <p v-if="description || $slots.description" class="mt-5 text-lg sm:text-xl u-text-gray-400">
+        <p v-if="description || $slots.description" class="mt-3 sm:mt-5 text-lg sm:text-xl u-text-gray-400">
           <slot name="description">
             {{ description }}
           </slot>

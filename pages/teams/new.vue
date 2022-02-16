@@ -2,7 +2,7 @@
   <div>
     <PageHeader title="Create a new team" description="A Nuxt team will allow you to collaborate with others on your projects and enjoy additional optional features." />
 
-    <Page header>
+    <Page overlap>
       <div class="flex flex-col-reverse lg:flex-row gap-10">
         <div class="w-full space-y-6 lg:w-2/3">
           <UCard @submit.prevent="onSubmit">
