@@ -12,9 +12,9 @@
     <Page overlap>
       <UCard base-class="overflow-hidden lg:h-[calc(100vh-352px)] flex flex-col" body-class="flex-1 lg:overflow-y-auto" footer-background-class="u-bg-gray-50">
         <template #header>
-          <div class="flex items-start justify-between gap-3 flex-wrap sm:flex-nowrap">
-            <div class="flex flex-wrap items-center gap-3">
-              <USelectCustom v-model="owner" :options="accounts" text-attribute="login" name="owner" class="w-full sm:w-52">
+          <div class="flex items-start justify-between gap-3 flex-wrap-reverse sm:flex-nowrap">
+            <div class="flex flex-wrap items-center gap-3 flex-1">
+              <USelectCustom v-model="owner" :options="accounts" text-attribute="login" name="owner" class="w-full sm:w-auto">
                 <div class="flex items-center gap-3 w-full">
                   <UAvatar :src="owner.avatar_url" size="xxs" class="flex-shrink-0" />
                   <span class="truncate">{{ owner.login }}</span>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <NuxtNestedPage :team="team" :templates="templates" />
+    <NuxtPage :team="team" :templates="templates" />
   </div>
 </template>
 
