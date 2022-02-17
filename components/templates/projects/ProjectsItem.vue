@@ -1,71 +1,51 @@
 <template>
-  <!-- TODO: route :to="{ name: 'team-name', params: { team, name: project.name } } -->
-  <NuxtLink to="#">
-    <UCard ring-class="ring-1 u-ring-gray-200 lg:hover:u-ring-gray-900 lg:hover:ring-2">
-      <div class="flex flex-col space-y-6">
-        <div class="truncate">
-          <div class="flex items-center space-x-3">
-            <UAvatar :alt="project.name" size="sm" class="flex-shrink-0" />
+  <UCard>
+    <div class="space-y-6">
+      <div class="flex items-center gap-3">
+        <UAvatar :src="`https://github.com/${project.repository.owner}.png`" :alt="project.name" size="sm" class="flex-shrink-0" />
 
-            <div class="text-left truncate">
-              <p class="font-medium truncate">
-                {{ project.name }}
-              </p>
+        <div class="text-left">
+          <p class="font-semibold leading-none">
+            {{ project.name }}
+          </p>
 
-              <p class="text-sm font-medium truncate text-tw-gray-500">
-                <a :href="project.url" target="_blank" class="hover:underline" @click.stop>{{ project.url }}</a>
-              </p>
-            </div>
-          </div>
-
-          <div class="flex items-center justify-between mt-6">
-            <a
-              v-if="project.repository"
-              :href="`https://github.com/${project.repository.owner}/${project.repository.name}`"
-              target="_blank"
-              rel="noopener"
-              class="flex items-center space-x-1.5 u-text-gray-500 text-sm font-medium hover:underline truncate"
-              @click.stop
-            >
-              <UIcon name="fa-brands:github" class="w-4 h-4" />
-              <span class="truncate">{{ project.repository.owner }}/{{ project.repository.name }}</span>
-            </a>
-            <span v-else>
-              No repository
-            </span>
-          </div>
-        </div>
-
-        <img class="bg-center bg-no-repeat bg-cover border rounded shadow-sm aspect-w-16 aspect-h-9" :style="project.screenshot ? `background-image: url(${project.screenshot.url});` : 'bg-gray'">
-
-        <div class="flex items-center justify-between space-x-3 text-xs">
-          <span class="font-medium capitalize u-text-gray-700">{{ project.status }}</span>
-
-          <time class="font-medium capitalize u-text-gray-700">
-            Updated {{ useTimeAgo(new Date(project.updatedAt)).value }}
-          </time>
+          <p v-if="project.repository.url" class="text-sm font-medium u-text-gray-500 leading-none mt-1">
+            <a :href="project.repository.url" target="_blank" class="hover:underline">{{ project.repository.url }}</a>
+          </p>
         </div>
       </div>
-    </UCard>
-  </NuxtLink>
+
+      <p class="u-text-gray-400">
+        {{ project.repository.description }}
+      </p>
+
+      <div class="flex items-center gap-1 text-sm leading-none u-text-gray-400">
+        <time class="">
+          {{ useTimeAgo(new Date(project.updatedAt)).value }}
+        </time>
+        <span>via</span>
+        <a
+          :href="`https://github.com/${project.repository.owner}/${project.repository.name}`"
+          target="_blank"
+          rel="noopener"
+          class="u-text-gray-500 hover:u-text-gray-700"
+        >
+          <UIcon name="fa-brands:github" class="w-4 h-4" />
+        </a>
+      </div>
+    </div>
+  </UCard>
 </template>
 
 <script setup lang="ts">
-
-import type { PropType, Ref } from 'vue'
+import type { PropType } from 'vue'
 import { useTimeAgo } from '@vueuse/core'
-import type { Project, User } from '~/types'
+import type { Project } from '~/types'
 
-const props = defineProps({
+defineProps({
   project: {
     type: Object as PropType<Project>,
     required: true
   }
 })
-
-const user = useStrapiUser() as Ref<User>
-
-const route = useRoute()
-const team = route.params.team && route.params.team !== 'dashboard' && route.params.team !== user.value.username ? route.params.team : undefined
-
 </script>

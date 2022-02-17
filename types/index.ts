@@ -1,6 +1,6 @@
 export interface Media {
-  name: string,
-  alternativeText: string,
+  name: string
+  alternativeText: string
   caption: string
   ext: string
   url: string
@@ -19,9 +19,9 @@ export interface Team {
   name: string
   slug: string
   avatar: Media
-  members: Member[],
+  members: Member[]
   // eslint-disable-next-line no-use-before-define
-  projects: Project[],
+  projects: Project[]
   code: string
 }
 
@@ -54,28 +54,28 @@ export interface Template {
 }
 
 export interface Repository {
-  id: number,
-  owner: string,
-  name: string,
-  defaultBranch: string,
-  description: string,
-  language: string,
-  url: string,
-  private: boolean,
-  provider: 'github',
+  id: number
+  owner: string
+  name: string
+  defaultBranch: string
+  description: string
+  language: string
+  url: string
+  private: boolean
+  provider: 'github'
   providerId: number
 }
 
 export interface Project {
   id: number
-  name: string,
-  url: string,
-  status: 'pending' | 'ready',
-  screenshot: Media,
-  updatedAt: string,
-  repository: Repository,
-  template: number | Template,
-  team: string | Team,
+  name: string
+  url: string
+  status: 'pending' | 'ready'
+  screenshot: Media
+  updatedAt: string
+  repository: Repository
+  template: number | Template
+  team: string | Team
   user: User
 }
 
