@@ -9,7 +9,7 @@
             {{ project.name }}
           </p>
 
-          <p v-if="project.repository.url" class="text-sm font-medium u-text-gray-500 leading-none mt-1">
+          <p v-if="project.repository.url" class="mt-1 text-sm font-medium leading-none u-text-gray-500">
             <a :href="project.repository.url" target="_blank" class="hover:underline">{{ project.repository.url }}</a>
           </p>
         </div>
@@ -20,7 +20,7 @@
       </p>
 
       <div class="flex items-center gap-1 text-sm leading-none u-text-gray-400">
-        <time class="">
+        <time>
           {{ useTimeAgo(new Date(project.updatedAt)).value }}
         </time>
         <span>via</span>
