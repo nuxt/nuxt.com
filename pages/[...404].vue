@@ -14,7 +14,7 @@
               {{ error.message }}
             </p>
           </div>
-          <div class="mt-10 flex space-x-3 sm:border-l sm:border-transparent sm:pl-6">
+          <div class="mt-10 flex gap-3 sm:border-l sm:border-transparent sm:pl-6">
             <UButton to="/dashboard" label="Go back home" variant="primary" />
           </div>
         </div>
