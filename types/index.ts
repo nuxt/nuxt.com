@@ -19,7 +19,9 @@ export interface Team {
   name: string
   slug: string
   avatar: Media
-  members: Member[]
+  members: Member[],
+  // eslint-disable-next-line no-use-before-define
+  projects: Project[],
   code: string
 }
 
@@ -63,6 +65,7 @@ export interface Repository {
   provider: 'github',
   providerId: number
 }
+
 export interface Project {
   id: number
   name: string,

@@ -19,14 +19,24 @@
           </div>
 
           <div class="flex items-center justify-between mt-6">
-            <a :href="`https://github.com/${project.repository.owner}/${project.repository.name}`" target="_blank" rel="noopener" class="flex items-center space-x-1.5 u-text-gray-500 text-sm font-medium hover:underline truncate" @click.stop>
+            <a
+              v-if="project.repository"
+              :href="`https://github.com/${project.repository.owner}/${project.repository.name}`"
+              target="_blank"
+              rel="noopener"
+              class="flex items-center space-x-1.5 u-text-gray-500 text-sm font-medium hover:underline truncate"
+              @click.stop
+            >
               <UIcon name="fa-brands:github" class="w-4 h-4" />
               <span class="truncate">{{ project.repository.owner }}/{{ project.repository.name }}</span>
             </a>
+            <span v-else>
+              No repository
+            </span>
           </div>
         </div>
 
-        <img class="bg-center bg-no-repeat bg-cover border rounded shadow-sm aspect-w-16 aspect-h-9" :style="`background-image: url(${project.screenshot.url});`">
+        <img class="bg-center bg-no-repeat bg-cover border rounded shadow-sm aspect-w-16 aspect-h-9" :style="project.screenshot ? `background-image: url(${project.screenshot.url});` : 'bg-gray'">
 
         <div class="flex items-center justify-between space-x-3 text-xs">
           <span class="font-medium capitalize u-text-gray-700">{{ project.status }}</span>
