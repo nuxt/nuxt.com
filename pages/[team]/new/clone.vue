@@ -2,7 +2,7 @@
   <div>
     <PageHeader
       title="You're almost done."
-      description="Please follow the steps to configure your project and deploy it."
+      description="Please follow the steps to configure your project."
       :to="{ name: 'team-new' }"
     />
 
@@ -144,7 +144,7 @@ const onSubmit = async () => {
       }
     })
 
-    router.push({ name: 'team', params: { team: props.team.slug || 'dashboard' } })
+    router.push({ name: 'team', params: { team: props.team?.slug || 'dashboard' } })
   } catch (e) {}
 
   loading.value = false

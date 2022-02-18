@@ -11,7 +11,7 @@
     <NuxtLink v-if="!!to" :to="to">
       <div class="absolute inset-0 rounded-t-md transition duration-100 transform opacity-0 backdrop-blur-sm bg-black/20 group-hover:opacity-100">
         <div class="flex items-center justify-center w-full h-full">
-          <UIcon class="w-14 h-14 u-text-white" name="heroicons-solid:arrow-circle-right" />
+          <UIcon class="w-14 h-14 text-white" name="heroicons-solid:arrow-circle-right" />
         </div>
       </div>
     </NuxtLink>
@@ -21,15 +21,15 @@
         <span class="absolute inset-0" aria-hidden="true" />
       </NuxtLink>
       <div class="flex-1 text-left">
-        <p class="text-lg font-semibold truncate">
+        <p class="text-base font-semibold leading-none line-clamp-1">
           {{ template.title }}
         </p>
-        <p class="mt-1 leading-5 u-text-gray-400 line-clamp-2">
+        <p class="mt-1 leading-5 text-sm u-text-gray-400" :class="{ 'line-clamp-1': minimal, 'line-clamp-2': !minimal }">
           {{ template.description }}
         </p>
       </div>
 
-      <div class="flex flex-wrap items-center mt-3 gap-x-3 gap-y-1 z-[1]">
+      <div v-if="!minimal" class="flex flex-wrap items-center mt-3 gap-x-3 gap-y-1 z-[1]">
         <a :href="template.url" target="_blank" rel="noopener" class="flex items-center gap-1 text-sm font-medium u-text-gray-600 hover:underline">
           <UIcon name="heroicons-outline:external-link" class="w-4 h-4" />
           Demo
@@ -55,6 +55,10 @@ defineProps({
   to: {
     type: [String, Object],
     default: null
+  },
+  minimal: {
+    type: Boolean,
+    default: false
   }
 })
 </script>
