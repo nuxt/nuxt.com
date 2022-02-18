@@ -3,18 +3,12 @@ definePageMeta({
   layout: false,
   colorMode: 'dark'
 })
-
-useMeta({
-  bodyAttrs: {
-    class: 'antialiased font-sans text-gray-700 dark:text-gray-200'
-  }
-})
 </script>
 
 <template>
   <div class="min-h-screen h-full flex flex-col justify-center py-12">
     <div class="px-4 sm:px-6 lg:px-8 w-6xl mx-auto">
-      <Logo class="w-20 h-20 logo mb-6" />
+      <Logo class="w-20 h-20 text-[#00DC82] mb-6" />
       <h1 class="text-4xl sm:text-6xl font-extrabold u-text-gray-900 mb-6">
         A better way to create<br>modern websites.
       </h1>
@@ -29,9 +23,3 @@ useMeta({
     </div>
   </div>
 </template>
-
-<style scoped>
-.logo {
-  color: #00DC82;
-}
-</style>
