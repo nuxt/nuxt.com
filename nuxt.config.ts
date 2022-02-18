@@ -17,7 +17,10 @@ export default defineNuxtConfig({
     ],
     link: [
       { rel: 'icon', href: '/icon.png' }
-    ]
+    ],
+    htmlAttrs: {
+      class: 'bg-white dark:bg-black'
+    }
   },
   components: {
     loader: true,
