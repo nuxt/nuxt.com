@@ -1,12 +1,10 @@
 <script setup>
 definePageMeta({
-  layout: false
+  layout: false,
+  colorMode: 'dark'
 })
 
 useMeta({
-  htmlAttrs: {
-    class: 'bg-black dark'
-  },
   bodyAttrs: {
     class: 'antialiased font-sans text-gray-700 dark:text-gray-200'
   }
