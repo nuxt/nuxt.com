@@ -6,14 +6,14 @@
       <div class="grid sm:grid-cols-2 gap-8">
         <UCard base-class="flex flex-col overflow-hidden lg:h-[calc(100vh-352px)]" body-class="flex-1 lg:overflow-y-auto" footer-background-class="u-bg-gray-50">
           <template #header>
-            <div class="mb-5 flex items-center justify-between">
+            <div class="flex items-center justify-between">
               <h3 class="text-2xl font-semibold u-text-gray-900">
                 Import Git repository
               </h3>
               <a :href="githubAppUrl" class="font-medium text-sm text-primary-500 hover:underline" target="_blank">Add GitHub account →</a>
             </div>
 
-            <div class="flex items-start justify-between gap-3 flex-wrap-reverse sm:flex-nowrap">
+            <div v-if="installations.length" class="flex items-start justify-between gap-3 flex-wrap-reverse sm:flex-nowrap mt-5">
               <USelectCustom v-model="owner" :options="accounts" text-attribute="login" name="owner" class="w-full sm:w-auto">
                 <div class="flex items-center gap-3 w-full">
                   <UAvatar :src="owner.avatar_url" size="xxs" class="flex-shrink-0" />
@@ -38,7 +38,7 @@
             </div>
           </template>
 
-          <div class="divide-y u-divide-gray-200">
+          <div v-if="installations.length" class="divide-y u-divide-gray-200">
             <NuxtLink v-for="repository of repositories" :key="repository.id" class="flex items-center justify-between gap-3 py-3.5 px-4 sm:px-6 group hover:u-bg-gray-50" :to="{ name: 'team-new-import', query: { repository: `${repository.owner.login}/${repository.name}` } }">
               <p class="text-sm font-medium u-text-gray-900 flex items-center">
                 <UIcon name="fa-brands:github" class="h-5 w-5 mr-3" />
@@ -52,6 +52,12 @@
               />
             </NuxtLink>
           </div>
+          <p v-else class="u-text-gray-400 px-4 py-5 sm:p-6">
+            It appears you haven't installed our GitHub app yet,
+            <a :href="githubAppUrl" class="font-medium text-primary-500 hover:underline" target="_blank">
+              select your repositories.
+            </a>
+          </p>
 
           <template #footer>
             <div class="flex items-center justify-center content-center gap-3">
@@ -94,6 +100,7 @@
             </div>
           </template>
         </UCard>
+
         <UCard shadow-class base-class="flex flex-col overflow-hidden lg:h-[calc(100vh-352px)]" body-class="px-4 sm:px-5 pt-1 pb-6" body-background-class="lg:overflow-y-auto flex-1 u-bg-gray-50" header-background-class="u-bg-gray-50 !border-0 -mb-1">
           <template #header>
             <div class="flex items-center justify-between">
