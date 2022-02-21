@@ -9,6 +9,7 @@
     "test": "yarn lint"
   },
   "dependencies": {
+    "@nuxtjs/color-mode": "^3.0.1",
     "@sindresorhus/slugify": "^2.1.0"
   },
   "devDependencies": {
