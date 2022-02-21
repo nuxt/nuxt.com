@@ -71,7 +71,7 @@
 
         <div>
           <UButton
-            :loading="loading"
+            :disabled="loading"
             type="submit"
             icon="heroicons-outline:arrow-right"
             trailing
