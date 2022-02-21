@@ -55,7 +55,7 @@ const props = defineProps({
 const q = ref('')
 const client = useStrapiClient()
 
-const { data: projects } = await useAsyncData('projects', () => client<Project[]>(props.team ? `/teams/${props.team.slug}/projects` : '/projects'))
+const { data: projects } = await useAsyncData(`projects-${props.team?.slug || 'dashboard'}`, () => client<Project[]>(props.team ? `/teams/${props.team.slug}/projects` : '/projects'))
 
 const filteredProjects = computed(() => {
   return projects.value.filter((project) => {
