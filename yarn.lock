@@ -454,7 +454,7 @@
     error-stack-parser "^2.0.0"
     string-width "^4.2.3"
 
-"@nuxt/kit@npm:@nuxt/kit-edge@3.0.0-27419629.87eb7d0", "@nuxt/kit@npm:@nuxt/kit-edge@latest":
+"@nuxt/kit@npm:@nuxt/kit-edge@3.0.0-27419629.87eb7d0":
   version "3.0.0-27419629.87eb7d0"
   resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-27419629.87eb7d0.tgz#3bf636c78ec2d93ceb59ee9d5b569960544d056c"
   integrity sha512-7oOlXPLmxC2LOLGRo5Rp7mKhy+0jZ/Qh3y1X3IxpI45+/z8KTgQzp/tsiwhk17nJmyiCOClRb8wkzROxRVEqWw==
@@ -466,6 +466,28 @@
     globby "^13.1.1"
     hash-sum "^2.0.0"
     jiti "^1.12.15"
+    knitwork "^0.1.0"
+    lodash.template "^4.5.0"
+    mlly "^0.4.3"
+    pathe "^0.2.0"
+    pkg-types "^0.3.2"
+    scule "^0.2.1"
+    semver "^7.3.5"
+    unctx "^1.0.2"
+    untyped "^0.3.0"
+
+"@nuxt/kit@npm:@nuxt/kit-edge@latest":
+  version "3.0.0-27424151.dbab979"
+  resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-27424151.dbab979.tgz#c9f9dcd0f5e8d71be839e89ac5822919e9662c37"
+  integrity sha512-xAw7gQ7N6afxHeYXwqogjD3Xme0lP7HE2pORZ91R8v5xRMiiGIsvaXbjZ0u/CXga/kuA2Yn6Yn9kQsPcPAIDOA==
+  dependencies:
+    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-27424151.dbab979"
+    c12 "^0.1.3"
+    consola "^2.15.3"
+    defu "^5.0.1"
+    globby "^13.1.1"
+    hash-sum "^2.0.0"
+    jiti "^1.13.0"
     knitwork "^0.1.0"
     lodash.template "^4.5.0"
     mlly "^0.4.3"
@@ -568,6 +590,20 @@
     std-env "^3.0.1"
     ufo "^0.7.9"
 
+"@nuxt/schema@npm:@nuxt/schema-edge@3.0.0-27424151.dbab979":
+  version "3.0.0-27424151.dbab979"
+  resolved "https://registry.yarnpkg.com/@nuxt/schema-edge/-/schema-edge-3.0.0-27424151.dbab979.tgz#7444d987bd705ff6fbadb48cd4641d328349820e"
+  integrity sha512-XrS8fPE+5OH4om6zcfKnhhE0Jeu4D5ime36G4tclz1spddNg3j6PwLDsJ03bX4L0KOGk8i+kijsTDZD4Vk632g==
+  dependencies:
+    c12 "^0.1.3"
+    create-require "^1.1.1"
+    defu "^5.0.1"
+    jiti "^1.13.0"
+    pathe "^0.2.0"
+    scule "^0.2.1"
+    std-env "^3.0.1"
+    ufo "^0.7.9"
+
 "@nuxt/vite-builder@npm:@nuxt/vite-builder-edge@3.0.0-27419629.87eb7d0":
   version "3.0.0-27419629.87eb7d0"
   resolved "https://registry.yarnpkg.com/@nuxt/vite-builder-edge/-/vite-builder-edge-3.0.0-27419629.87eb7d0.tgz#94943d6c0b5c39295dd840223d239329b1569410"
@@ -643,14 +679,14 @@
     webpackbar "^5.0.2"
 
 "@nuxthq/ui@npm:@nuxthq/ui-edge@latest":
-  version "0.0.2-27419977.ba15aed"
-  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27419977.ba15aed.tgz#0a7b2f11b80f4b70a96b145341968addc0bd1180"
-  integrity sha512-QXOPpH99rYTWVerrqVXN75q/QwPqWNmZrVC348l1ZFmodA+2CqHR8ln0IvKWDYBbW8sXKNgAS8ltbJaGEIMNUw==
+  version "0.0.2-27424309.b3e288a"
+  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27424309.b3e288a.tgz#8a22be5a081710cca2e9d3a9871d7e0793853b5d"
+  integrity sha512-o4jxfQ2kORK7ClJ5VCDY60qTSVER4IkoLx5IdtRZjdZ2wZH4hiyy+b+OEKmcgcTMeoeJ5+U16HVOxR8gg5Ndcg==
   dependencies:
     "@headlessui/vue" "1.4.3"
     "@iconify/vue" "^3.1.3"
     "@nuxt/kit" "npm:@nuxt/kit-edge@latest"
-    "@nuxtjs/color-mode" "^3.0.0"
+    "@nuxtjs/color-mode" "^3.0.1"
     "@nuxtjs/tailwindcss" "^5.0.0-4"
     "@popperjs/core" "^2.11.2"
     "@tailwindcss/aspect-ratio" "^0.4.0"
@@ -663,10 +699,10 @@
     pathe "^0.2.0"
     tailwindcss "^3.0.23"
 
-"@nuxtjs/color-mode@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@nuxtjs/color-mode/-/color-mode-3.0.0.tgz#c5ba5c24f23148bfc5c8b4af02c5f7f1a0186a06"
-  integrity sha512-R3GxWl9+wOx/kAB9QLOJYW35knnRiKfRTTt+tkKyxsW0QQRiAAURZHr4BoJZeQtaEoneuRmJV99/p07/ehJcUw==
+"@nuxtjs/color-mode@^3.0.1":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@nuxtjs/color-mode/-/color-mode-3.0.1.tgz#e4362f9bdbfd348a44a309bc4d5f32bb7c54415c"
+  integrity sha512-2FGlUSV6G6MtLAJcXOxodMR789nxxhwNZ76sqC4JtCgEmxcAT6PeHkR7TPSms/++r0gAE7BiPA4l0pR/7O4AIg==
   dependencies:
     "@nuxt/kit" "npm:@nuxt/kit-edge@latest"
     defu "^5.0.0"
@@ -1799,9 +1835,9 @@ browserslist@^4.0.0, browserslist@^4.14.5, browserslist@^4.16.6, browserslist@^4
     picocolors "^1.0.0"
 
 browserslist@^4.19.1:
-  version "4.19.2"
-  resolved "https://registry.yarnpkg.com/browserslist/-/browserslist-4.19.2.tgz#9ba98791192a39e1242f0670bb265ceee1baf0a4"
-  integrity sha512-97XU1CTZ5TwU9Qy/Taj+RtiI6SQM1WIhZ9osT7EY0oO2aWXGABZT2OZeRL+6PfaQsiiMIjjwIoYFPq4APgspgQ==
+  version "4.19.3"
+  resolved "https://registry.yarnpkg.com/browserslist/-/browserslist-4.19.3.tgz#29b7caad327ecf2859485f696f9604214bedd383"
+  integrity sha512-XK3X4xtKJ+Txj8G5c30B4gsm71s69lqXlkYui4s6EkKxuv49qjYlY6oVd+IFJ73d4YymtM3+djvvt/R/iJwwDg==
   dependencies:
     caniuse-lite "^1.0.30001312"
     electron-to-chromium "^1.4.71"
@@ -4388,10 +4424,15 @@ jest-worker@^27.0.2, jest-worker@^27.4.5:
     merge-stream "^2.0.0"
     supports-color "^8.0.0"
 
-jiti@^1.12.13, jiti@^1.12.14, jiti@^1.12.15:
+jiti@^1.12.13:
   version "1.12.15"
   resolved "https://registry.yarnpkg.com/jiti/-/jiti-1.12.15.tgz#8f6a141c06524ab32e05d5e3c9b33eeda54ae775"
   integrity sha512-/+K89y6KJA2nISbWrlc/773XdpDgSQq/LdQ+ZZyw2jRxUNyquPtbsDCCCMRzzNORUgroUGc4nAXxJEnQvpViCA==
+
+jiti@^1.12.14, jiti@^1.12.15, jiti@^1.13.0:
+  version "1.13.0"
+  resolved "https://registry.yarnpkg.com/jiti/-/jiti-1.13.0.tgz#3cdfc4e651ca0cca4c62ed5e47747b5841d41a8e"
+  integrity sha512-/n9mNxZj/HDSrincJ6RP+L+yXbpnB8FybySBa+IjIaoH9FIxBbrbRT5XUbe8R7zuVM2AQqNMNDDqz0bzx3znOQ==
 
 joycon@^3.0.1:
   version "3.1.1"
