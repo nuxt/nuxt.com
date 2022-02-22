@@ -17,7 +17,7 @@ const route = useRoute()
 const { findOne } = useStrapi4()
 
 const team: Ref<Team> = ref(null)
-if (route.params.team !== 'dashboard' && route.params.team !== user.value.username) {
+if (route.params.team !== user.value.username) {
   const { data } = await useAsyncData('team', () => findOne<Team>('teams', route.params.team as string))
 
   team.value = data.value

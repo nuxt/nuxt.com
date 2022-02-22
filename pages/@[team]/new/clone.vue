@@ -3,7 +3,7 @@
     <PageHeader
       title="You're almost done."
       description="Please follow the steps to configure your project."
-      :to="{ name: 'team-new' }"
+      :to="{ name: '@team-new' }"
     />
 
     <Page overlap>
@@ -80,7 +80,7 @@
 <script setup lang="ts">
 import type { PropType, Ref } from 'vue'
 import { useDocumentVisibility } from '@vueuse/core'
-import type { Team, Template, Project, GitHubInstallation, GitHubAccount } from '~/types'
+import type { Team, Template, Project, User, GitHubInstallation, GitHubAccount } from '~/types'
 
 const props = defineProps({
   team: {
@@ -93,6 +93,7 @@ const props = defineProps({
   }
 })
 
+const user = useStrapiUser() as Ref<User>
 const route = useRoute()
 const router = useRouter()
 const client = useStrapiClient()
@@ -100,7 +101,7 @@ const visibility = useDocumentVisibility()
 const { githubAppUrl } = useGitHub()
 
 if (!route.query.template) {
-  router.push({ name: 'team-new' })
+  router.push({ name: '@team-new' })
 }
 
 const accounts: Ref<GitHubAccount[]> = ref([])
@@ -144,7 +145,7 @@ const onSubmit = async () => {
       }
     })
 
-    router.push({ name: 'team', params: { team: props.team?.slug || 'dashboard' } })
+    router.push({ name: '@team', params: { team: props.team?.slug || user.value.username } })
   } catch (e) {}
 
   loading.value = false

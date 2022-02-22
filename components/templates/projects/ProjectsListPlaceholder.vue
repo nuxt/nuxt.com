@@ -11,12 +11,12 @@
         v-for="(template, index) of templates"
         :key="index"
         :template="template"
-        :to="{ name: 'team-new-clone', query: { template: template.slug } }"
+        :to="{ name: '@team-new-clone', query: { template: template.slug } }"
       />
     </div>
 
-    <UButton :to="`/${$route.params.team}/new`" label="Create a new project" size="lg" />
-    <ULink :to="`/${$route.params.team}/new/templates`" class="text-sm u-text-gray-900 hover:underline block mt-3">
+    <UButton :to="`/@${$route.params.team}/new`" label="Create a new project" size="lg" />
+    <ULink :to="`/@${$route.params.team}/new/templates`" class="text-sm u-text-gray-900 hover:underline block mt-3">
       Browse templates &rarr;
     </ULink>
   </UCard>

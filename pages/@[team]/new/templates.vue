@@ -8,7 +8,7 @@
           v-for="(template, index) of templates"
           :key="index"
           :template="template"
-          :to="{ name: 'team-new-clone', query: { template: template.slug } }"
+          :to="{ name: '@team-new-clone', query: { template: template.slug } }"
         />
       </div>
     </Page>

@@ -1,5 +1,5 @@
 <template>
-  <UDropdown v-if="user" :items="items">
+  <UDropdown v-if="user" :items="items" item-disabled-class>
     <button class="flex text-sm bg-white rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:u-ring-gray-900 focus:ring-offset-white dark:focus:ring-offset-black">
       <UAvatar
         :src="user.avatar"
@@ -26,8 +26,11 @@
   </UDropdown>
 </template>
 
-<script setup>
-const user = useStrapiUser()
+<script setup lang="ts">
+import type { Ref } from 'vue'
+import type { User } from '~/types'
+
+const user = useStrapiUser() as Ref<User>
 const router = useRouter()
 const { logout } = useStrapiAuth()
 
@@ -35,7 +38,7 @@ const items = [
   [
     {
       label: 'Dashboard',
-      to: '/dashboard'
+      to: `/@${user.value.username}`
     }
   ],
   [
@@ -44,16 +47,13 @@ const items = [
       to: '/teams/new',
       icon: 'heroicons-outline:plus',
       slot: 'reverse-icon'
-    },
-    {
-      label: 'Settings',
-      to: '/account'
     }
   ],
   [
     {
       label: 'Theme',
-      slot: 'theme'
+      slot: 'theme',
+      disabled: true
     }
   ],
   [

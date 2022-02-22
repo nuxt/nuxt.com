@@ -3,7 +3,7 @@
     <PageHeader
       title="You're almost done."
       description="Please follow the steps to configure your project."
-      :to="{ name: 'team-new' }"
+      :to="{ name: '@team-new' }"
     />
 
     <Page overlap>
@@ -18,7 +18,7 @@
             </a>
           </UCard>
 
-          <NuxtLink :to="{ name: 'team-new-templates' }" class="font-medium text-sm text-primary-500 hover:underline">
+          <NuxtLink :to="{ name: '@team-new-templates' }" class="font-medium text-sm text-primary-500 hover:underline">
             Browse templates &rarr;
           </NuxtLink>
         </template>
@@ -55,8 +55,8 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue'
-import type { Team, Template, Project } from '~/types'
+import type { PropType, Ref } from 'vue'
+import type { Team, Template, Project, User } from '~/types'
 
 const props = defineProps({
   team: {
@@ -69,12 +69,13 @@ const props = defineProps({
   }
 })
 
+const user = useStrapiUser() as Ref<User>
 const route = useRoute()
 const router = useRouter()
 const client = useStrapiClient()
 
 if (!route.query.repository) {
-  router.push({ name: 'team-new' })
+  router.push({ name: '@team-new' })
 }
 
 const [owner, name] = (route.query.repository as string).split('/')
@@ -101,7 +102,7 @@ const onSubmit = async () => {
       }
     })
 
-    router.push({ name: 'team', params: { team: props.team?.slug || 'dashboard' } })
+    router.push({ name: '@team', params: { team: props.team?.slug || user.value.username } })
   } catch (e) {}
 
   loading.value = false
