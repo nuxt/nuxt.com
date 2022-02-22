@@ -28,12 +28,16 @@ export default defineNuxtConfig({
   ],
   buildModules: [
     '@nuxthq/ui',
-    '@nuxtjs/strapi'
+    '@nuxtjs/strapi',
+    'vue-plausible'
   ],
   publicRuntimeConfig: {
     baseUrl: process.env.BASE_URL || 'https://nuxt.com',
     github: {
       appSlug: process.env.GITHUB_APP_SLUG || 'nuxt'
+    },
+    plausible: {
+      domain: process.env.PLAUSIBLE_DOMAIN
     }
   },
   strapi: {
