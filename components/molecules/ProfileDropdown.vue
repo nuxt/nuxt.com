@@ -1,6 +1,6 @@
 <template>
   <UDropdown v-if="user" :items="items">
-    <button class="bg-white rounded-full flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 focus: ring-offset-white dark:focus:ring-offset-black">
+    <button class="flex text-sm bg-white rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 focus: ring-offset-white dark:focus:ring-offset-black">
       <UAvatar
         :src="user.avatar"
         :alt="user.username"
@@ -9,10 +9,18 @@
     </button>
 
     <template #reverse-icon="{ item }">
-      <div class="flex items-center justify-between gap-3 w-full">
+      <div class="flex items-center justify-between w-full gap-3">
         {{ item.label }}
 
-        <UIcon :name="item.icon" class="h-4 w-4 u-text-gray-400 group-hover:u-text-gray-500" />
+        <UIcon :name="item.icon" class="w-4 h-4 u-text-gray-400 group-hover:u-text-gray-500" />
+      </div>
+    </template>
+
+    <template #theme="{ item }">
+      <div class="flex items-center justify-between w-full gap-3" @click.stop>
+        {{ item.label }}
+
+        <ThemeSelect class="-my-2" size="xs" />
       </div>
     </template>
   </UDropdown>
@@ -40,6 +48,12 @@ const items = [
     {
       label: 'Settings',
       to: '/account'
+    }
+  ],
+  [
+    {
+      label: 'Theme',
+      slot: 'theme'
     }
   ],
   [
