@@ -673,16 +673,6 @@
     lodash.template "^4.5.0"
     pathe "^0.2.0"
 
-"@nuxtjs/color-mode@^3.0.1":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@nuxtjs/color-mode/-/color-mode-3.0.1.tgz#e4362f9bdbfd348a44a309bc4d5f32bb7c54415c"
-  integrity sha512-2FGlUSV6G6MtLAJcXOxodMR789nxxhwNZ76sqC4JtCgEmxcAT6PeHkR7TPSms/++r0gAE7BiPA4l0pR/7O4AIg==
-  dependencies:
-    "@nuxt/kit" "npm:@nuxt/kit-edge@latest"
-    defu "^5.0.0"
-    lodash.template "^4.5.0"
-    pathe "^0.2.0"
-
 "@nuxtjs/eslint-config-typescript@^8.0.0":
   version "8.0.0"
   resolved "https://registry.yarnpkg.com/@nuxtjs/eslint-config-typescript/-/eslint-config-typescript-8.0.0.tgz#dd178386e4243874fa95464f8fce25ee9d66bf7a"

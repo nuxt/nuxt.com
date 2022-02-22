@@ -1,10 +1,11 @@
 <template>
   <USelect
-    v-model="value"
+    v-model="colorMode.preference"
     name="theme"
     :options="options"
   />
 </template>
+
 <script setup>
 const colorMode = useColorMode()
 const options = [
@@ -24,22 +25,4 @@ const options = [
     icon: 'heroicons-outline:sun'
   }
 ]
-
-const value = computed({
-  get () {
-    return colorMode.preference || 'system'
-  },
-  set (value) {
-    switch (value) {
-      case 'dark':
-        colorMode.preference = 'dark'
-        break
-      case 'light':
-        colorMode.preference = 'light'
-        break
-      default:
-        colorMode.preference = 'system'
-    }
-  }
-})
 </script>

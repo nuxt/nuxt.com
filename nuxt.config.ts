@@ -28,8 +28,7 @@ export default defineNuxtConfig({
   ],
   buildModules: [
     '@nuxthq/ui',
-    '@nuxtjs/strapi',
-    '@nuxtjs/color-mode'
+    '@nuxtjs/strapi'
   ],
   publicRuntimeConfig: {
     baseUrl: process.env.BASE_URL || 'https://nuxt.com',
