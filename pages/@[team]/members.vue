@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <Page>
     <div class="space-y-6">
       <UCard body-class>
         <template #header>
@@ -108,7 +108,7 @@
       @confirm="confirmMemberRemove"
       @cancel="removingMember = null"
     />
-  </div>
+  </Page>
 </template>
 
 <script setup lang="ts">
@@ -194,7 +194,7 @@ const confirmMemberRemove = async () => {
 
     if (isMyself) {
       removeTeamFromUser(props.team)
-      router.push('/dashboard')
+      router.push(`/@${user.value.username}`)
     } else {
       removeMemberFromTeam(removingMember.value)
     }

@@ -40,7 +40,7 @@
           </template>
 
           <div v-if="installations.length" class="divide-y u-divide-gray-200">
-            <NuxtLink v-for="repository of repositories" :key="repository.id" class="flex items-center justify-between gap-3 py-3.5 px-4 sm:px-6 group hover:u-bg-gray-50" :to="{ name: 'team-new-import', query: { repository: `${repository.owner.login}/${repository.name}` } }">
+            <NuxtLink v-for="repository of repositories" :key="repository.id" class="flex items-center justify-between gap-3 py-3.5 px-4 sm:px-6 group hover:u-bg-gray-50" :to="{ name: '@team-new-import', query: { repository: `${repository.owner.login}/${repository.name}` } }">
               <p class="text-sm font-medium u-text-gray-900 flex items-center">
                 <UIcon name="fa-brands:github" class="h-5 w-5 mr-3" />
                 {{ repository.name }}
@@ -108,7 +108,7 @@
               <h3 class="text-2xl font-semibold u-text-gray-900">
                 Clone a template
               </h3>
-              <NuxtLink :to="{ name: 'team-new-templates' }" class="font-medium text-sm text-primary-500 hover:underline">
+              <NuxtLink :to="{ name: '@team-new-templates' }" class="font-medium text-sm text-primary-500 hover:underline">
                 Browse all &rarr;
               </NuxtLink>
             </div>
@@ -119,7 +119,7 @@
               v-for="(template, index) of templates.slice(0, 4)"
               :key="index"
               :template="template"
-              :to="{ name: 'team-new-clone', query: { template: template.slug } }"
+              :to="{ name: '@team-new-clone', query: { template: template.slug } }"
               minimal
             />
           </div>

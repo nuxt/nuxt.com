@@ -3,7 +3,9 @@
 </template>
 
 <script setup lang="ts">
+import type { Ref } from 'vue'
 import type { StrapiAuthProvider } from '@nuxtjs/strapi/dist/runtime/types'
+import type { User } from '~/types'
 
 const { authenticateProvider } = useStrapiAuth()
 const route = useRoute()
@@ -15,14 +17,16 @@ definePageMeta({
 
 onMounted(async () => {
   try {
-    await authenticateProvider(route.params.provider as StrapiAuthProvider, route.query.access_token as string)
+    const data = await authenticateProvider(route.params.provider as StrapiAuthProvider, route.query.access_token as string)
+
+    const user = data.user as Ref<User>
 
     const redirect = useCookie('redirect', { path: '/' }).value
     if (redirect) {
       router.push(redirect)
       useCookie('redirect', { path: '/' }).value = null
     } else {
-      router.push('/dashboard')
+      router.push(`/@${user.value.username}`)
     }
   } catch (e) {}
 })

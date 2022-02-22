@@ -28,9 +28,9 @@ onMounted(async () => {
 
     user.value.memberships.push(membership)
 
-    router.push(`/${membership.team.slug}`)
+    router.push(`/@${membership.team.slug}`)
   } catch (e) {
-    router.push('/dashboard')
+    router.push(`/@${user.value.username}`)
   }
 })
 </script>

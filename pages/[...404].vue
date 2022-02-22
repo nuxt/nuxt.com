@@ -15,7 +15,7 @@
             </p>
           </div>
           <div class="mt-10 flex gap-3 sm:border-l sm:border-transparent sm:pl-6">
-            <UButton to="/dashboard" label="Go back home" variant="primary" />
+            <UButton :to="`/@${user.username}`" label="Go back home" variant="primary" />
           </div>
         </div>
       </main>
@@ -24,6 +24,11 @@
 </template>
 
 <script setup lang="ts">
+import type { Ref } from 'vue'
+import type { User } from '~/types'
+
+const user = useStrapiUser() as Ref<User>
+
 const error = {
   name: 'Page not found',
   message: 'This is not the page you\'re looking for.',

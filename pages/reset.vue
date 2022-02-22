@@ -56,6 +56,9 @@
 </template>
 
 <script setup lang="ts">
+import type { Ref } from 'vue'
+import type { User } from '~/types'
+
 definePageMeta({
   layout: false
 })
@@ -71,14 +74,16 @@ const onSubmit = async () => {
   loading.value = true
 
   try {
-    await resetPassword({ ...form, code: route.query.code as string })
+    const data = await resetPassword({ ...form, code: route.query.code as string })
+
+    const user = data.user as Ref<User>
 
     const redirect = useCookie('redirect').value
     if (redirect) {
       router.push(redirect)
       useCookie('redirect').value = null
     } else {
-      router.push('/dashboard')
+      router.push(`/@${user.value.username}`)
     }
   } catch (e) { }
 

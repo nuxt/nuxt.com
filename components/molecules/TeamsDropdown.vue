@@ -1,7 +1,7 @@
 <template>
   <UDropdown v-if="user" :items="items" placement="bottom-start" class="-mx-4">
     <div class="relative flex items-center gap-3 px-4">
-      <NuxtLink :to="`/${activeItem.slug}`" class="flex items-center gap-3 block max-w-[10rem]" @click.stop>
+      <NuxtLink :to="`/@${activeItem.slug}`" class="flex items-center gap-3 block max-w-[10rem]" @click.stop>
         <UAvatar
           :src="activeItem.avatar"
           :alt="activeItem.label"
@@ -36,22 +36,22 @@ const to = (slug) => {
     const to = { name: route.name, params: { ...route.params, team: slug }, query: route.query }
 
     const resolvedRoute = router.resolve(to)
-    if (resolvedRoute && !resolvedRoute.fullPath.startsWith('/dashboard/settings')) {
+    if (resolvedRoute) {
       return to
     }
   }
 
-  return `/${slug}`
+  return `/@${slug}`
 }
 
 const items = computed(() => {
-  const { team: slug = 'dashboard' } = route.params
+  const { team: slug } = route.params
 
   const profile = {
     label: user.value.username || user.value.email,
     avatar: user.value.avatar,
-    to: to('dashboard'),
-    slug: 'dashboard',
+    to: to(user.value.username),
+    slug: user.value.username,
     slot: 'avatar'
   }
 

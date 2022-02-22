@@ -27,20 +27,19 @@
       </div>
       <div v-else>
         <div>
-          <h2 class="mt-6 text-center text-3xl font-extrabold u-text-gray-900">
+          <!-- <h2 class="mt-6 text-center text-3xl font-extrabold u-text-gray-900">
             Sign in to your account
-          </h2>
-          <p class="mt-2 text-center text-sm u-text-gray-600">
+          </h2> -->
+          <!-- <p class="mt-2 text-center text-sm u-text-gray-600">
             Or
             {{ ' ' }}
             <NuxtLink to="/register" class="font-medium u-text-gray-800 hover:underline">
               create a new account
             </NuxtLink>
-          </p>
+          </p> -->
         </div>
 
-        <UCard custom-class="mt-8" body-class="px-4 py-5 sm:px-6 space-y-6" padded @submit.prevent="onSubmit">
-          <UFormGroup name="email" label="Email address">
+        <!-- <UFormGroup name="email" label="Email address">
             <UInput
               v-model="form.identifier"
               name="email"
@@ -84,16 +83,15 @@
             <div class="relative flex justify-center text-sm">
               <span class="px-2 bg-white u-text-gray-500"> Or continue with </span>
             </div>
-          </div>
-          <UButton
-            block
-            label="GitHub"
-            size="lg"
-            icon="fa-brands:github"
-            variant="secondary"
-            @click="onClick"
-          />
-        </UCard>
+          </div> -->
+        <UButton
+          block
+          label="Continue with GitHub"
+          size="lg"
+          icon="fa-brands:github"
+          variant="secondary"
+          @click="onClick"
+        />
       </div>
     </div>
   </div>
@@ -126,14 +124,16 @@ const onSubmit = async () => {
   loading.value = true
 
   try {
-    await login(form)
+    const data = await login(form)
+
+    const user = data.user as Ref<User>
 
     const redirect = useCookie('redirect').value
     if (redirect) {
       router.push(redirect)
       useCookie('redirect').value = null
     } else {
-      router.push('/dashboard')
+      router.push(`/@${user.value.username}`)
     }
   } catch (e) {}
 
@@ -142,7 +142,7 @@ const onSubmit = async () => {
 
 onMounted(() => {
   if (user.value && user.value.beta) {
-    router.push('/dashboard')
+    router.push(`/@${user.value.username}`)
   }
 
   if (route.query.confirmed) {
