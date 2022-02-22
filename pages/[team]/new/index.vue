@@ -32,6 +32,7 @@
                 v-model="q"
                 name="q"
                 placeholder="Search repositories..."
+                :loading="loading"
                 icon="heroicons-outline:search"
                 class="w-full sm:w-auto"
               />
