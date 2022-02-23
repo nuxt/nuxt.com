@@ -32,7 +32,7 @@ const route = useRoute()
 const router = useRouter()
 
 const to = (slug) => {
-  if (route.params.team) {
+  if (route.params.team && !route.params.project) {
     const to = { name: route.name, params: { ...route.params, team: slug }, query: route.query }
 
     const resolvedRoute = router.resolve(to)
