@@ -57,13 +57,13 @@ export interface Repository {
   id: number
   owner: string
   name: string
-  defaultBranch: string
+  default_branch: string
   description: string
   language: string
   url: string
   private: boolean
   provider: 'github'
-  providerId: number
+  provider_id: number
 }
 
 export interface Project {
