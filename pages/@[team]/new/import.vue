@@ -9,8 +9,8 @@
     <Page overlap>
       <PageGrid>
         <template #aside>
-          <UCard class="mb-6">
-            <a :href="`https://github.com/${$route.query.repository}`" target="_blank" class="block flex items-center gap-3">
+          <UCard v-if="repository" class="mb-6">
+            <a :href="`https://github.com/${repository.owner.login}/${repository.name}`" target="_blank" class="block flex items-center gap-3">
               <UIcon name="fa-brands:github" class="h-5 w-5" />
               <p class="font-medium truncate">
                 {{ repository.name }}
@@ -56,7 +56,7 @@
 
 <script setup lang="ts">
 import type { PropType, Ref } from 'vue'
-import type { Team, Template, Project, User } from '~/types'
+import type { Team, Template, Project, User, GitHubRepository } from '~/types'
 
 const props = defineProps({
   team: {
@@ -78,23 +78,21 @@ if (!route.query.repository) {
   router.push({ name: '@team-new' })
 }
 
-const [owner, name] = (route.query.repository as string).split('/')
-const repository = reactive({
-  owner,
-  name
-})
-
 const loading = ref(false)
-const form = reactive({
-  name,
-  repository
-})
+const [owner, name] = (route.query.repository as string).split('/')
 
-// Check repository availability
-const { error } = await useAsyncData('ghRepository', () => client(`/github/installations/${owner}/${name}`))
+const { error, data: repository } = await useAsyncData<GitHubRepository>(
+  'repository',
+  () => client(`/github/installations/${owner}/${name}`),
+  {
+    pick: ['name', 'owner']
+  }
+)
 if (error.value) {
   router.push({ name: '@team-new' })
 }
+
+const form = reactive({ name })
 
 const onSubmit = async () => {
   loading.value = true
@@ -104,6 +102,10 @@ const onSubmit = async () => {
       method: 'POST',
       body: {
         ...form,
+        repository: {
+          owner: repository.value.owner.login,
+          name: repository.value.name
+        },
         team: props.team?.slug
       }
     })
