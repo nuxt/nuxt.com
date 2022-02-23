@@ -15,7 +15,7 @@
             <div class="ml-4 mt-4 flex-shrink-0">
               <UButton
                 label="Create a team"
-                to="/teams/new"
+                :to="{ name: 'teams-new' }"
                 icon="heroicons-solid:plus"
                 size="sm"
                 trailing
@@ -39,8 +39,8 @@
             </div>
 
             <div class="flex items-center gap-3">
-              <UButton label="View" :to="`/@${team.slug}`" variant="secondary" size="sm" />
-              <UButton label="Manage" :to="`/@${team.slug}/settings`" variant="secondary" size="sm" />
+              <UButton label="View" :to="{ name: '@team', params: { team: team.slug } }" variant="secondary" size="sm" />
+              <UButton label="Manage" :to="{ name: '@team-settings', params: { team: team.slug } }" variant="secondary" size="sm" />
 
               <UDropdown
                 placement="bottom-start"

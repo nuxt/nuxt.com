@@ -1,15 +1,15 @@
 <template>
-  <nav class="bg-white dark:bg-black">
+  <header class="bg-white dark:bg-black">
     <UContainer padded>
-      <div class="grid grid-cols-3 items-center h-16">
+      <div class="grid grid-cols-3 gap-3 items-center h-16">
         <TeamsDropdown class="justify-start" />
 
-        <UTabs :links="links" v-bind="tabsProps" />
+        <UPills :links="links" class="justify-center" />
 
         <ProfileDropdown class="justify-end" />
       </div>
     </UContainer>
-  </nav>
+  </header>
 </template>
 
 <script setup lang="ts">
@@ -21,7 +21,7 @@ const user = useStrapiUser() as Ref<User>
 
 const links = ref([])
 
-watch(() => route.params.team, (team) => {
+watch(() => route.params, ({ team, project }) => {
   if (!user.value) {
     links.value = []
     return
@@ -29,34 +29,36 @@ watch(() => route.params.team, (team) => {
 
   team = team || user.value.username
 
-  if (team === user.value.username) {
+  if (project) {
+    links.value = [{
+      label: 'Overview',
+      to: { name: '@team-project', params: { team, project } },
+      exact: true
+    }, {
+      label: 'Settings',
+      to: { name: '@team-project-settings', params: { team, project } }
+    }]
+  } else if (team === user.value.username) {
     links.value = [{
       label: 'Projects',
-      to: `/@${team}`,
+      to: { name: '@team', params: { team } },
       exact: true
     }, {
       label: 'Teams',
-      to: '/account/teams'
+      to: { name: 'account-teams' }
     }]
   } else {
     links.value = [{
       label: 'Projects',
-      to: `/@${team}`,
+      to: { name: '@team', params: { team } },
       exact: true
     }, {
       label: 'Members',
-      to: `/@${team}/members`
+      to: { name: '@team-members', params: { team } }
     }, {
       label: 'Settings',
-      to: `/@${team}/settings`
+      to: { name: '@team-settings', params: { team } }
     }]
   }
 }, { immediate: true })
-
-const tabsProps = {
-  wrapperClass: 'flex items-center justify-center gap-3',
-  baseClass: 'rounded-md text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-900 px-3 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:u-ring-gray-900 focus:ring-offset-white dark:focus:ring-offset-black',
-  activeClass: 'u-text-white u-bg-black hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black',
-  inactiveClass: 'u-text-gray-500'
-}
 </script>

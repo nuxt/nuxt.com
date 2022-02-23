@@ -194,7 +194,7 @@ const confirmMemberRemove = async () => {
 
     if (isMyself) {
       removeTeamFromUser(props.team)
-      router.push(`/@${user.value.username}`)
+      router.push({ name: '@team', params: { team: user.value.username } })
     } else {
       removeMemberFromTeam(removingMember.value)
     }

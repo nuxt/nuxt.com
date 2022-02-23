@@ -4,7 +4,7 @@
 
     <Page overlap>
       <div class="grid sm:grid-cols-2 gap-8">
-        <UCard base-class="flex flex-col overflow-hidden lg:h-[calc(100vh-352px)]" body-class="flex-1 lg:overflow-y-auto" footer-background-class="u-bg-gray-50">
+        <UCard base-class="flex flex-col overflow-hidden lg:h-[calc(100vh-352px)] lg:min-h-[528px]" body-class="flex-1 lg:overflow-y-auto" footer-background-class="u-bg-gray-50">
           <template #header>
             <div class="flex items-center justify-between">
               <h3 class="text-2xl font-semibold u-text-gray-900">
@@ -40,7 +40,7 @@
           </template>
 
           <div v-if="installations.length" class="divide-y u-divide-gray-200">
-            <NuxtLink v-for="repository of repositories" :key="repository.id" class="flex items-center justify-between gap-3 py-3.5 px-4 sm:px-6 group hover:u-bg-gray-50" :to="{ name: '@team-new-import', query: { repository: `${repository.owner.login}/${repository.name}` } }">
+            <NuxtLink v-for="repository of repositories" :key="repository.id" class="flex items-center justify-between gap-3 py-3.5 px-4 sm:px-6 group hover:u-bg-gray-50" :to="{ name: '@team-new-import', query: { repository: `${repository.owner.login}/${repository.name}` } }" tabindex="-1">
               <p class="text-sm font-medium u-text-gray-900 flex items-center">
                 <UIcon name="fa-brands:github" class="h-5 w-5 mr-3" />
                 {{ repository.name }}
@@ -102,7 +102,7 @@
           </template>
         </UCard>
 
-        <UCard shadow-class base-class="flex flex-col overflow-hidden lg:h-[calc(100vh-352px)]" body-class="px-4 sm:px-5 pt-1 pb-6" body-background-class="lg:overflow-y-auto flex-1 u-bg-gray-50" header-background-class="u-bg-gray-50 !border-0 -mb-1">
+        <UCard shadow-class base-class="flex flex-col overflow-hidden lg:h-[calc(100vh-352px)] lg:min-h-[528px]" body-class="px-4 sm:px-5 pt-1 pb-6" body-background-class="lg:overflow-y-auto flex-1 u-bg-gray-50" header-background-class="u-bg-gray-50 !border-0 -mb-1">
           <template #header>
             <div class="flex items-center justify-between">
               <h3 class="text-2xl font-semibold u-text-gray-900">
@@ -115,7 +115,7 @@
           </template>
 
           <div class="grid gap-6 grid-cols-2">
-            <TemplateCard
+            <TemplatesItem
               v-for="(template, index) of templates.slice(0, 4)"
               :key="index"
               :template="template"
