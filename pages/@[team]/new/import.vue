@@ -90,6 +90,12 @@ const form = reactive({
   repository
 })
 
+// Check repository availability
+const { error } = await useAsyncData('ghRepository', () => client<{ id: number }>(`/github/installations/${owner}/${name}`))
+if (error.value) {
+  router.push({ name: '@team-new' })
+}
+
 const onSubmit = async () => {
   loading.value = true
 
