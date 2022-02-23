@@ -3,12 +3,12 @@
     body-class="relative block w-full overflow-hidden group aspect-w-16 aspect-h-9"
     footer-class="relative flex flex-col flex-1 p-4"
     border-color-class="border-transparent"
-    class="relative flex flex-col transition duration-200 transform group "
+    class="relative flex flex-col transition duration-200 transform group"
     :ring-class="`ring-1 u-ring-gray-200 ${!!to && 'lg:hover:u-ring-gray-900 lg:hover:ring-2'}`"
   >
     <img :src="template.screenshot?.url" :alt="template.screenshot?.alternativeText" class="object-cover w-full h-full pointer-events-none">
 
-    <NuxtLink v-if="!!to" :to="to">
+    <NuxtLink v-if="!!to" :to="to" tabindex="-1">
       <div class="absolute inset-0 rounded-t-md transition duration-100 transform opacity-0 backdrop-blur-sm bg-black/20 group-hover:opacity-100">
         <div class="flex items-center justify-center w-full h-full">
           <UIcon class="w-14 h-14 text-white" name="heroicons-solid:arrow-circle-right" />
@@ -17,7 +17,7 @@
     </NuxtLink>
 
     <template #footer>
-      <NuxtLink v-if="!!to" :to="to" class="focus:outline-none">
+      <NuxtLink v-if="!!to" :to="to" class="focus:outline-none" tabindex="-1">
         <span class="absolute inset-0" aria-hidden="true" />
       </NuxtLink>
       <div class="flex-1 text-left">

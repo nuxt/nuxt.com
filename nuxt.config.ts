@@ -1,4 +1,5 @@
 import { defineNuxtConfig } from 'nuxt3'
+import preset from './presets'
 
 // https://v3.nuxtjs.org/docs/directory-structure/nuxt.config
 export default defineNuxtConfig({
@@ -52,7 +53,7 @@ export default defineNuxtConfig({
       primary: 'blue',
       gray: 'zinc'
     },
-    preset: 'nuxt',
+    preset,
     tailwindcss: {
       theme: {
         extend: {

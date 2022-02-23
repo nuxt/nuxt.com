@@ -13,7 +13,7 @@
 
         <UButton
           v-if="team"
-          :to="`/@${team.slug}/members`"
+          :to="{ name: '@team-members' }"
           label="Add collaborators"
           icon="heroicons-outline:users"
           variant="secondary"
@@ -21,14 +21,14 @@
         />
         <UButton
           v-else
-          to="/teams/new"
+          :to="{ name: 'teams-new' }"
           label="Create a team"
           icon="heroicons-outline:users"
           variant="secondary"
           class="w-full sm:w-auto"
         />
 
-        <UButton :to="team ? `/@${team.slug}/new` : `/@${user.username}/new`" label="New project" icon="heroicons-solid:plus" class="w-full sm:w-auto" />
+        <UButton :to="{ name: '@team-new' }" label="New project" icon="heroicons-solid:plus" class="w-full sm:w-auto" />
       </div>
 
       <ProjectsList v-if="projects.length" :projects="filteredProjects" />

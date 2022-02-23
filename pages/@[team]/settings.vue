@@ -196,7 +196,7 @@ const onSubmit = async () => {
 
     if (team.slug !== props.team.slug) {
       // Replace `name` param in url
-      router.replace(`/@${team.slug}/settings`)
+      router.replace({ name: '@team-settings', params: { team: team.slug } })
     }
 
     $toast.success({
@@ -222,7 +222,7 @@ const confirmLeave = async () => {
 
     removeTeamFromUser()
 
-    router.push(`/@${user.value.username}`)
+    router.push({ name: '@team', params: { team: user.value.username } })
   } catch (e) {
     leaving.value = false
   }
@@ -242,7 +242,7 @@ const confirmDelete = async () => {
 
     removeTeamFromUser()
 
-    router.push(`/@${user.value.username}`)
+    router.push({ name: '@team', params: { team: user.value.username } })
   } catch (e) {
     deleting.value = false
   }

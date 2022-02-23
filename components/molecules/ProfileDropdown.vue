@@ -38,13 +38,13 @@ const items = [
   [
     {
       label: 'Dashboard',
-      to: `/@${user.value.username}`
+      to: { name: '@team', params: { team: user.value.username } }
     }
   ],
   [
     {
       label: 'New team',
-      to: '/teams/new',
+      to: { name: 'teams-new' },
       icon: 'heroicons-outline:plus',
       slot: 'reverse-icon'
     }

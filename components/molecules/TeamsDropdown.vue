@@ -1,14 +1,14 @@
 <template>
-  <UDropdown v-if="user" :items="items" placement="bottom-start" class="-mx-4">
+  <UDropdown v-if="user" :items="items" placement="bottom-start" class="-ml-4">
     <div class="relative flex items-center gap-3 px-4">
-      <NuxtLink :to="`/@${activeItem.slug}`" class="flex items-center gap-3 block max-w-[10rem]" @click.stop>
+      <NuxtLink :to="{ name: '@team', params: { team: activeItem.slug } }" class="flex items-center gap-3 block max-w-[10rem] focus:outline-none" tabindex="-1" @click.stop>
         <UAvatar
           :src="activeItem.avatar"
           :alt="activeItem.label"
           size="xs"
           class="-m-0.5 flex-shrink-0"
         />
-        <span class="text-sm font-medium truncate">{{ activeItem.label }}</span>
+        <span class="text-sm font-medium truncate hidden sm:block">{{ activeItem.label }}</span>
       </NuxtLink>
 
       <UButton
@@ -41,7 +41,7 @@ const to = (slug) => {
     }
   }
 
-  return `/@${slug}`
+  return { name: '@team', params: { team: slug } }
 }
 
 const items = computed(() => {
@@ -71,7 +71,7 @@ const items = computed(() => {
   return [
     [profile],
     teams.length && teams,
-    [{ label: 'Create new team', icon: 'heroicons-outline:plus', to: '/teams/new', slot: 'icon' }]
+    [{ label: 'Create new team', icon: 'heroicons-outline:plus', to: { name: 'teams-new' }, slot: 'icon' }]
   ].filter(Boolean)
 })
 

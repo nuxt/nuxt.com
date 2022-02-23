@@ -28,9 +28,9 @@ onMounted(async () => {
 
     user.value.memberships.push(membership)
 
-    router.push(`/@${membership.team.slug}`)
+    router.push({ name: '@team', params: { team: membership.team.slug } })
   } catch (e) {
-    router.push(`/@${user.value.username}`)
+    router.push({ name: '@team', params: { team: user.value.username } })
   }
 })
 </script>

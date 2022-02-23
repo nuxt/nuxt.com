@@ -4,7 +4,7 @@
 
     <Page overlap>
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-8 sm:gap-x-6 xl:gap-x-8">
-        <TemplateCard
+        <TemplatesItem
           v-for="(template, index) of templates"
           :key="index"
           :template="template"
