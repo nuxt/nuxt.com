@@ -30,8 +30,10 @@ const links = computed(() => {
     exact: true
   }, {
     label: 'Repository',
-    to: { name: '@team-project-settings-repository' },
-    exact: true
+    to: { name: '@team-project-settings-repository' }
+  }, {
+    label: 'Advanced',
+    to: { name: '@team-project-settings-advanced' }
   }]
 })
 
