@@ -22,7 +22,7 @@
           leave-from="translate-x-0"
           leave-to="-translate-x-full"
         >
-          <div class="relative flex-1 flex flex-col max-w-xs w-full bg-white focus:outline-none">
+          <div class="relative flex-1 flex flex-col max-w-xs w-full u-bg-white focus:outline-none">
             <TransitionChild
               as="template"
               enter="ease-in-out duration-300"
