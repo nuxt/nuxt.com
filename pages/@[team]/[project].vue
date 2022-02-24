@@ -1,15 +1,21 @@
 <template>
-  <div>
+  <ProjectLayout :project="project" :links="links">
     <NuxtPage v-if="project" :team="team" :project="project" />
-  </div>
+  </ProjectLayout>
 </template>
 
 <script setup lang="ts">
 import type { PropType, Ref } from 'vue'
 import type { Team, Project, User } from '~/types'
 
+const links = [
+  { name: 'Content', to: { name: '@team-project-content' }, icon: 'heroicons-outline:pencil', label: 'Content' },
+  { name: 'Settings', to: { name: '@team-project-settings' }, icon: 'heroicons-outline:cog', label: 'Settings' }
+]
+
 definePageMeta({
-  middleware: 'auth'
+  middleware: 'auth',
+  layout: false
 })
 
 const props = defineProps({
