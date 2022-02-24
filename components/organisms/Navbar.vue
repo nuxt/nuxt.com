@@ -21,7 +21,7 @@ const user = useStrapiUser() as Ref<User>
 
 const links = ref([])
 
-watch(() => route.params, ({ team, project }) => {
+watch(() => route.params.team, (team) => {
   if (!user.value) {
     links.value = []
     return
@@ -29,16 +29,7 @@ watch(() => route.params, ({ team, project }) => {
 
   team = team || user.value.username
 
-  if (project) {
-    links.value = [{
-      label: 'Overview',
-      to: { name: '@team-project', params: { team, project } },
-      exact: true
-    }, {
-      label: 'Settings',
-      to: { name: '@team-project-settings', params: { team, project } }
-    }]
-  } else if (team === user.value.username) {
+  if (team === user.value.username) {
     links.value = [{
       label: 'Projects',
       to: { name: '@team', params: { team } },
