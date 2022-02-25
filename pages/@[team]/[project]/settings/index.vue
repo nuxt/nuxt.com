@@ -63,9 +63,10 @@ const props = defineProps({
 const user = useStrapiUser() as Ref<User>
 const router = useRouter()
 const client = useStrapiClient()
+const { $toast } = useNuxtApp()
+
 const form = reactive({ name: props.project.name })
 const updating = ref(false)
-const { $toast } = useNuxtApp()
 
 const onSubmit = async () => {
   updating.value = true
