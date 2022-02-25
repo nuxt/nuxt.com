@@ -1,82 +1,80 @@
 <template>
-  <Page>
-    <div class="space-y-6">
-      <UCard body-class>
-        <template #header>
-          <div class="flex flex-wrap items-center justify-between -mt-4 -ml-4 sm:flex-nowrap">
-            <div class="mt-4 ml-4">
-              <h2 class="text-lg font-medium leading-6 u-text-gray-900">
-                Members
-              </h2>
-              <p class="mt-1 text-sm u-text-gray-500">
-                Manage and invite team members.
+  <div class="space-y-6">
+    <UCard body-class>
+      <template #header>
+        <div class="flex flex-wrap items-center justify-between -mt-4 -ml-4 sm:flex-nowrap">
+          <div class="mt-4 ml-4">
+            <h2 class="text-lg font-medium leading-6 u-text-gray-900">
+              Members
+            </h2>
+            <p class="mt-1 text-sm u-text-gray-500">
+              Manage and invite team members.
+            </p>
+          </div>
+          <div class="flex-shrink-0 mt-4 ml-4">
+            <UButton
+              v-if="isOwner"
+              label="Invite"
+              icon="heroicons-outline:plus"
+              size="sm"
+              trailing
+              @click="inviteModal = true"
+            />
+          </div>
+        </div>
+      </template>
+
+      <ul role="list" class="divide-y u-divide-gray-200">
+        <li v-for="member of members" :key="member.id" class="flex items-center justify-between gap-3 px-4 py-5 sm:px-6">
+          <div class="flex items-center gap-3">
+            <UAvatar :src="member.user.avatar" :alt="member.user.username" />
+            <div>
+              <p class="text-sm font-medium u-text-gray-900">
+                {{ member.user.name }}
               </p>
-            </div>
-            <div class="flex-shrink-0 mt-4 ml-4">
-              <UButton
-                v-if="isOwner"
-                label="Invite"
-                icon="heroicons-outline:plus"
-                size="sm"
-                trailing
-                @click="inviteModal = true"
-              />
+              <p class="text-sm u-text-gray-500">
+                {{ member.user.email }}
+              </p>
             </div>
           </div>
-        </template>
 
-        <ul role="list" class="divide-y u-divide-gray-200">
-          <li v-for="member of members" :key="member.id" class="flex items-center justify-between gap-3 px-4 py-5 sm:px-6">
-            <div class="flex items-center gap-3">
-              <UAvatar :src="member.user.avatar" :alt="member.user.username" />
-              <div>
-                <p class="text-sm font-medium u-text-gray-900">
-                  {{ member.user.name }}
-                </p>
-                <p class="text-sm u-text-gray-500">
-                  {{ member.user.email }}
-                </p>
-              </div>
-            </div>
+          <div class="flex items-center gap-3">
+            <USelect
+              v-if="isOwner && member.user.id !== user.id"
+              name="role"
+              :model-value="member.role"
+              size="sm"
+              :options="roles"
+              @update:model-value="onMemberRoleChange(member, $event)"
+            />
+            <p v-else class="text-sm capitalize u-text-gray-500">
+              {{ member.role }}
+            </p>
 
-            <div class="flex items-center gap-3">
-              <USelect
-                v-if="isOwner && member.user.id !== user.id"
-                name="role"
-                :model-value="member.role"
-                size="sm"
-                :options="roles"
-                @update:model-value="onMemberRoleChange(member, $event)"
-              />
-              <p v-else class="text-sm capitalize u-text-gray-500">
-                {{ member.role }}
-              </p>
+            <UDropdown
+              :disabled="!isOwner && member.user.id !== user.id"
+              class="-mr-2"
+              placement="bottom-start"
+              :items="[[{
+                slot: 'leave-team',
+                label: member.user.id !== user.id ? 'Remove from team' : 'Leave team',
+                icon: member.user.id !== user.id ? 'heroicons-outline:x' : 'heroicons-outline:exclamation',
+                class: '!text-red-500',
+                click: () => onMemberRemove(member)
+              }]]"
+            >
+              <UButton icon="heroicons-outline:dots-vertical" variant="transparent" />
 
-              <UDropdown
-                :disabled="!isOwner && member.user.id !== user.id"
-                class="-mr-2"
-                placement="bottom-start"
-                :items="[[{
-                  slot: 'leave-team',
-                  label: member.user.id !== user.id ? 'Remove from team' : 'Leave team',
-                  icon: member.user.id !== user.id ? 'heroicons-outline:x' : 'heroicons-outline:exclamation',
-                  class: '!text-red-500',
-                  click: () => onMemberRemove(member)
-                }]]"
-              >
-                <UButton icon="heroicons-outline:dots-vertical" variant="transparent" />
+              <template #leave-team="{ item }">
+                <UIcon :name="item.icon" :class="[itemIconClass, '!text-red-500']" />
 
-                <template #leave-team="{ item }">
-                  <UIcon :name="item.icon" :class="[itemIconClass, '!text-red-500']" />
-
-                  {{ item.label }}
-                </template>
-              </UDropdown>
-            </div>
-          </li>
-        </ul>
-      </UCard>
-    </div>
+                {{ item.label }}
+              </template>
+            </UDropdown>
+          </div>
+        </li>
+      </ul>
+    </UCard>
 
     <UModal v-model="inviteModal">
       <template #header>
@@ -108,7 +106,7 @@
       @confirm="confirmMemberRemove"
       @cancel="removingMember = null"
     />
-  </Page>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -120,7 +118,7 @@ import ui from '#build/ui'
 const props = defineProps({
   team: {
     type: Object as PropType<Team>,
-    required: true
+    default: null
   }
 })
 
@@ -140,12 +138,16 @@ const router = useRouter()
 const user = useStrapiUser() as Ref<User>
 const client = useStrapiClient()
 
+if (!props.team) {
+  router.replace({ name: '@team-settings' })
+}
+
 const reseting = ref(false)
 const inviteModal = ref(false)
 const removeModal = ref(false)
 const removingMember = ref(null)
 
-const members = computed(() => props.team.members || [])
+const members = computed(() => props.team?.members || [])
 
 const onCopyInviteLink = () => {
   $clipboard.copy(inviteLink.value, { title: 'Invite link successfully copied!' })

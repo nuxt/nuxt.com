@@ -29,27 +29,13 @@ watch(() => route.params.team, (team) => {
 
   team = team || user.value.username
 
-  if (team === user.value.username) {
-    links.value = [{
-      label: 'Projects',
-      to: { name: '@team', params: { team } },
-      exact: true
-    }, {
-      label: 'Teams',
-      to: { name: 'account-teams' }
-    }]
-  } else {
-    links.value = [{
-      label: 'Projects',
-      to: { name: '@team', params: { team } },
-      exact: true
-    }, {
-      label: 'Members',
-      to: { name: '@team-members', params: { team } }
-    }, {
-      label: 'Settings',
-      to: { name: '@team-settings', params: { team } }
-    }]
-  }
+  links.value = [{
+    label: 'Projects',
+    to: { name: '@team', params: { team } },
+    exact: true
+  }, {
+    label: 'Settings',
+    to: { name: '@team-settings', params: { team } }
+  }]
 }, { immediate: true })
 </script>
