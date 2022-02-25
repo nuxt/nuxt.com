@@ -78,7 +78,6 @@ if (!route.query.repository) {
   router.push({ name: '@team-new' })
 }
 
-const loading = ref(false)
 const [owner, name] = (route.query.repository as string).split('/')
 
 const { error, data: repository } = await useAsyncData<GitHubRepository>(
@@ -92,6 +91,7 @@ if (error.value) {
   router.push({ name: '@team-new' })
 }
 
+const loading = ref(false)
 const form = reactive({ name })
 
 const onSubmit = async () => {
