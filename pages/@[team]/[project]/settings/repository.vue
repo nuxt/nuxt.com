@@ -13,17 +13,32 @@
           <div class="flex flex-col">
             <div class="flex items-center justify-center gap-1">
               <div class="font-semibold u-text-gray-900">
-                repo/project placeholder
+                {{ props.project.repository.owner }}/{{ props.project.name }}
               </div>
               <UIcon name="heroicons-solid:external-link" class="w-4 h-4" />
             </div>
             <div class="text-sm u-text-gray-400">
-              Time ago placeholder
+              Updated {{ useTimeAgo(new Date(project.updatedAt)).value }}
             </div>
           </div>
         </div>
+        <!-- TODO: disconnect -->
         <UButton label="Disconnect" size="sm" />
       </UCard>
     </UCard>
   </div>
 </template>
+
+<script setup lang='ts'>
+import type { PropType } from 'vue'
+import { useTimeAgo } from '@vueuse/core'
+import type { Project } from '~/types'
+
+const props = defineProps({
+  project: {
+    type: Object as PropType<Project>,
+    required: true
+  }
+})
+
+</script>
