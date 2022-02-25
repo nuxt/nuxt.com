@@ -63,5 +63,10 @@ export default defineNuxtConfig({
         }
       }
     }
+  },
+  tailwindcss: {
+    config: {
+      content: ['presets/*.ts']
+    }
   }
 })

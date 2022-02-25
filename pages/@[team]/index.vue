@@ -13,7 +13,7 @@
 
         <UButton
           v-if="team"
-          :to="{ name: '@team-members' }"
+          :to="{ name: '@team-settings-members' }"
           label="Add collaborators"
           icon="heroicons-outline:users"
           variant="secondary"
