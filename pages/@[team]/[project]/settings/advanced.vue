@@ -86,30 +86,33 @@ const deleteModal = ref(false)
 const transferring = ref(false)
 const deleting = ref(false)
 
-const transferOptions = computed(() => {
-  const account = {
-    text: user.value.username,
-    value: user.value.username
-  }
-  const teams = user.value.memberships
+const teams = computed(() => {
+  return user.value.memberships
     .filter(membership => props.team?.id !== membership.team.id)
     .map(membership => ({
       text: membership.team.name,
       value: membership.team.id
     }))
+})
 
+const transferOptions = computed(() => {
   const options = []
 
   if (route.params.team !== user.value.username && props.project.repository.owner === user.value.username) {
     options.push({
       text: 'Personal account',
-      children: [account]
+      children: [
+        {
+          text: user.value.username,
+          value: user.value.username
+        }
+      ]
     })
   }
-  if (teams.length) {
+  if (teams.value.length) {
     options.push({
       text: 'Teams',
-      children: teams
+      children: teams.value
     })
   }
 
