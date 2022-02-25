@@ -31,14 +31,6 @@ const selectCustom = {
   ...input
 }
 
-const radio = {
-  base: 'h-4 w-4 u-text-gray-900 focus:ring-2 focus:ring-offset-2 focus:u-ring-gray-900 focus:ring-offset-white dark:focus:ring-offset-black u-border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed'
-}
-
-const checkbox = {
-  base: `${radio.base} rounded`
-}
-
 const toggle = {
   base: 'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:u-ring-gray-900 focus:ring-offset-white dark:focus:ring-offset-black',
   active: 'u-bg-gray-800'
@@ -55,8 +47,6 @@ export default {
   textarea,
   select,
   selectCustom,
-  radio,
-  checkbox,
   toggle,
   container
 }
