@@ -12,7 +12,7 @@
           {{ project.name }}
         </p>
 
-        <a v-if="project.repository.url" :href="project.repository.url" target="_blank" class="relative text-sm font-medium u-text-gray-500 line-clamp-1 hover:underline z-[1]">{{ project.repository.url }}</a>
+        <a v-if="project.repository.url" :href="project.repository.url" target="_blank" tabindex="-1" class="relative text-sm font-medium u-text-gray-500 line-clamp-1 hover:underline z-[1]">{{ project.repository.url }}</a>
       </div>
     </div>
 
@@ -28,6 +28,7 @@
         :href="`https://github.com/${project.repository.owner}/${project.repository.name}`"
         target="_blank"
         rel="noopener"
+        tabindex="-1"
         class="u-text-gray-500 hover:u-text-gray-700 z-[1]"
       >
         <UIcon name="fa-brands:github" class="w-4 h-4" />

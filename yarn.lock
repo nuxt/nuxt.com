@@ -433,12 +433,34 @@
     error-stack-parser "^2.0.0"
     string-width "^4.2.3"
 
-"@nuxt/kit@npm:@nuxt/kit-edge@3.0.0-27428764.271289c", "@nuxt/kit@npm:@nuxt/kit-edge@latest":
+"@nuxt/kit@npm:@nuxt/kit-edge@3.0.0-27428764.271289c":
   version "3.0.0-27428764.271289c"
   resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-27428764.271289c.tgz#ec6d9e7d26546a024142bf61063baa2aef9adfb8"
   integrity sha512-rJlIGyEvetTKShOnltRK03PoWnhQWvS2t59HDjuTTjZ2EqpUih7k1wa+rfa9Hg18l0pyBDyg14fn586w4RMT0A==
   dependencies:
     "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-27428764.271289c"
+    c12 "^0.1.3"
+    consola "^2.15.3"
+    defu "^5.0.1"
+    globby "^13.1.1"
+    hash-sum "^2.0.0"
+    jiti "^1.13.0"
+    knitwork "^0.1.0"
+    lodash.template "^4.5.0"
+    mlly "^0.4.3"
+    pathe "^0.2.0"
+    pkg-types "^0.3.2"
+    scule "^0.2.1"
+    semver "^7.3.5"
+    unctx "^1.0.2"
+    untyped "^0.3.0"
+
+"@nuxt/kit@npm:@nuxt/kit-edge@latest":
+  version "3.0.0-27429889.e45a780"
+  resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-27429889.e45a780.tgz#82928cb6c9d3dfa44a8d11fe3a7758aa6a9adf67"
+  integrity sha512-IGfwD99uc2YpEyU+fnVLp/lSIb1qQR5rLqWxBuFVS9lytGij+doS5Wyr1fEBQS4F/871I5OEgSYDvAqJwus68A==
+  dependencies:
+    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-27429889.e45a780"
     c12 "^0.1.3"
     consola "^2.15.3"
     defu "^5.0.1"
@@ -547,6 +569,20 @@
     std-env "^3.0.1"
     ufo "^0.7.9"
 
+"@nuxt/schema@npm:@nuxt/schema-edge@3.0.0-27429889.e45a780":
+  version "3.0.0-27429889.e45a780"
+  resolved "https://registry.yarnpkg.com/@nuxt/schema-edge/-/schema-edge-3.0.0-27429889.e45a780.tgz#541964e0c16cd1e5e8fd9d5231adc4d57d8480ce"
+  integrity sha512-CiYXQ/WdDX5DDRICYea6if64q/tMelX/MinkoyJ+uf2aKJPnSHdrNpvn/RYlZ+eMHfKXav1qsHSfnSKWnKQyWA==
+  dependencies:
+    c12 "^0.1.3"
+    create-require "^1.1.1"
+    defu "^5.0.1"
+    jiti "^1.13.0"
+    pathe "^0.2.0"
+    scule "^0.2.1"
+    std-env "^3.0.1"
+    ufo "^0.7.9"
+
 "@nuxt/vite-builder@npm:@nuxt/vite-builder-edge@3.0.0-27428764.271289c":
   version "3.0.0-27428764.271289c"
   resolved "https://registry.yarnpkg.com/@nuxt/vite-builder-edge/-/vite-builder-edge-3.0.0-27428764.271289c.tgz#09cccd41b8f7f1f39375ecbb6c84269e5107c9c2"
@@ -622,9 +658,9 @@
     webpackbar "^5.0.2"
 
 "@nuxthq/ui@npm:@nuxthq/ui-edge@latest":
-  version "0.0.2-27428394.1e6ad72"
-  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27428394.1e6ad72.tgz#a4442499173bc4c7a77bb9ee0d23b54bf9a058ae"
-  integrity sha512-EAssl1VxIWUjgZ9TCNgwJFJLFADeaRDdYf4JAmFqrEPyLsUGz8qQYck3/JGLHah87SqYnl3uUJMqqM3bKODuyA==
+  version "0.0.2-27430070.858b7da"
+  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27430070.858b7da.tgz#b5fd6e619e09cfe32fd7cbea16ba2c93dc0ef86d"
+  integrity sha512-wV2tl3jw0IUnShKaXVI6In4qVPdHp0mqTIQMJE4h/gYHl2lNTJFlyszCEeNStNDn6g1Giz3QNYtD2Z08rlivXA==
   dependencies:
     "@headlessui/vue" "1.4.3"
     "@iconify/vue" "^3.1.3"

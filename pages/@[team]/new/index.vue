@@ -108,7 +108,7 @@
               <h3 class="text-2xl font-semibold u-text-gray-900">
                 Clone a template
               </h3>
-              <NuxtLink :to="{ name: '@team-new-templates' }" class="font-medium text-sm text-primary-500 hover:underline">
+              <NuxtLink :to="{ name: 'templates' }" class="font-medium text-sm text-primary-500 hover:underline">
                 Browse all &rarr;
               </NuxtLink>
             </div>

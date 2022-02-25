@@ -18,7 +18,7 @@
             </a>
           </UCard>
 
-          <NuxtLink :to="{ name: '@team-new-templates' }" class="font-medium text-sm text-primary-500 hover:underline">
+          <NuxtLink :to="{ name: 'templates' }" class="font-medium text-sm text-primary-500 hover:underline">
             Browse templates &rarr;
           </NuxtLink>
         </template>
@@ -69,6 +69,7 @@
 <script setup lang="ts">
 import slugify from '@sindresorhus/slugify'
 import type { PropType, Ref } from 'vue'
+import projectsVue from '../projects.vue'
 import type { Team, Template, Project, User, GitHubRepository } from '~/types'
 
 const props = defineProps({
@@ -115,7 +116,7 @@ const onSubmit = async () => {
   loading.value = true
 
   try {
-    await client<Project>('/projects/import', {
+    const project = await client<Project>('/projects/import', {
       method: 'POST',
       body: {
         ...form,
@@ -127,7 +128,7 @@ const onSubmit = async () => {
       }
     })
 
-    router.push({ name: '@team', params: { team: props.team?.slug || user.value.username } })
+    router.push({ name: '@team-project', params: { team: props.team?.slug || user.value.username, project: project.name } })
   } catch (e) {}
 
   loading.value = false

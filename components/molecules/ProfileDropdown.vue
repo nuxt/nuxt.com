@@ -38,7 +38,7 @@ const items = [
   [
     {
       label: 'Dashboard',
-      to: { name: '@team', params: { team: user.value.username } }
+      to: { name: '@team-projects', params: { team: user.value.username } }
     }
   ],
   [
@@ -61,7 +61,7 @@ const items = [
       label: 'Logout',
       click: () => {
         logout()
-        router.push('/login')
+        router.push('/')
       }
     }
   ]

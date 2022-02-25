@@ -1,5 +1,5 @@
 <template>
   <Page>
-    Public page
+    Integrations
   </Page>
 </template>

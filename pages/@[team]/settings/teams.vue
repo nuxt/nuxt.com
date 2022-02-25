@@ -38,7 +38,7 @@
           </div>
 
           <div class="flex items-center gap-3">
-            <UButton label="View" :to="{ name: '@team', params: { team: team.slug } }" variant="secondary" size="sm" />
+            <UButton label="View" :to="{ name: '@team-projects', params: { team: team.slug } }" variant="secondary" size="sm" />
             <UButton label="Manage" :to="{ name: '@team-settings', params: { team: team.slug } }" variant="secondary" size="sm" />
 
             <UDropdown

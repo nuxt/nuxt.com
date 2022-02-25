@@ -107,7 +107,7 @@ const onSubmit = async () => {
       role: member.role
     })))
 
-    router.push({ name: '@team', params: { team: team.slug } })
+    router.push({ name: '@team-projects', params: { team: team.slug } })
   } catch (e) {}
 
   loading.value = false
