@@ -136,7 +136,7 @@ const onSubmit = async () => {
   loading.value = true
 
   try {
-    await client<Project>('/projects/clone', {
+    const project = await client<Project>('/projects/clone', {
       method: 'POST',
       body: {
         ...form,
@@ -145,7 +145,7 @@ const onSubmit = async () => {
       }
     })
 
-    router.push({ name: '@team', params: { team: props.team?.slug || user.value.username } })
+    router.push({ name: '@team-project', params: { team: props.team?.slug || user.value.username, project: project.name } })
   } catch (e) {}
 
   loading.value = false

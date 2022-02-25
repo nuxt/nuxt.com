@@ -42,7 +42,7 @@
 
             <div class="pt-5 pb-4">
               <div class="flex-shrink-0 flex items-center px-4">
-                <NuxtLink :to="{ name: '@team-project' }" class="inline-flex">
+                <NuxtLink :to="{ name: '@team-projects' }" class="inline-flex">
                   <UAvatar :src="`https://github.com/${project.repository.owner}.png`" :alt="project.name" size="sm" class="flex-shrink-0" />
                 </NuxtLink>
               </div>
@@ -73,7 +73,7 @@
         <div class="flex-1 flex flex-col min-h-0 overflow-y-auto u-bg-white border-r u-border-gray-200">
           <div class="flex-1">
             <div class="py-4 flex items-center justify-center">
-              <NuxtLink :to="{ name: '@team-project' }" class="inline-flex">
+              <NuxtLink :to="{ name: '@team-projects' }" class="inline-flex">
                 <UAvatar :src="`https://github.com/${project.repository.owner}.png`" :alt="project.name" size="sm" class="flex-shrink-0" />
               </NuxtLink>
             </div>
@@ -82,7 +82,6 @@
             </div>
           </div>
           <div class="flex-shrink-0 flex flex-col items-center space-y-3 pb-5">
-            <UVerticalNavigation :links="[{ icon: 'heroicons-outline:arrow-sm-left', to: { name: '@team' }, exact: true }]" spacing-class="p-2" />
             <ProfileDropdown class="mx-auto" />
           </div>
         </div>
@@ -91,8 +90,8 @@
 
     <div class="flex-1 min-w-0 flex flex-col overflow-hidden">
       <div class="lg:hidden">
-        <div class="u-bg-white py-2 flex items-center justify-between px-4 h-16 border-b u-border-gray-200">
-          <NuxtLink :to="{ name: '@team-project' }" class="inline-flex">
+        <div class="u-bg-white py-2 flex items-center justify-between px-4 sm:px-6 h-16 border-b u-border-gray-200">
+          <NuxtLink :to="{ name: '@team-projects' }" class="inline-flex">
             <UAvatar :src="`https://github.com/${project.repository.owner}.png`" :alt="project.name" size="sm" class="flex-shrink-0" />
           </NuxtLink>
           <div>

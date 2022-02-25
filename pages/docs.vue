@@ -1,5 +1,5 @@
 <template>
   <Page>
-    Public page
+    Docs
   </Page>
 </template>

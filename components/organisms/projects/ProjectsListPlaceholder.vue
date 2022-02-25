@@ -17,7 +17,7 @@
 
     <UButton :to="{ name: '@team-new' }" label="Create a new project" size="lg" />
     <div class="mt-3">
-      <ULink :to="{ name: '@team-new-templates' }" class="text-sm u-text-gray-900 hover:underline">
+      <ULink :to="{ name: 'templates' }" class="text-sm u-text-gray-900 hover:underline">
         Browse templates &rarr;
       </ULink>
     </div>

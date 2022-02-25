@@ -26,7 +26,7 @@ onMounted(async () => {
       router.push(redirect)
       useCookie('redirect', { path: '/' }).value = null
     } else {
-      router.push({ name: '@team', params: { team: user.value.username } })
+      router.push({ name: '@team-projects', params: { team: user.value.username } })
     }
   } catch (e) {}
 })

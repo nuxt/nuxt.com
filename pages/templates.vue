@@ -8,7 +8,7 @@
           v-for="(template, index) of templates"
           :key="index"
           :template="template"
-          :to="{ name: '@team-new-clone', query: { template: template.slug } }"
+          :to="user && { name: '@team-new-clone', query: { template: template.slug }, params: { team: user.username } }"
         />
       </div>
     </Page>
@@ -16,17 +16,11 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue'
-import type { Team, Template } from '~/types'
+import type { Ref } from 'vue'
+import type { Template, User } from '~/types'
 
-defineProps({
-  team: {
-    type: Object as PropType<Team>,
-    default: null
-  },
-  templates: {
-    type: Array as PropType<Template[]>,
-    default: () => []
-  }
-})
+const user = useStrapiUser() as Ref<User>
+const { find } = useStrapi4()
+
+const { data: templates } = await useAsyncData('templates', () => find<Template[]>('templates', { populate: 'screenshot' }))
 </script>

@@ -221,7 +221,7 @@ const confirmLeave = async () => {
 
     removeTeamFromUser()
 
-    router.push({ name: '@team', params: { team: user.value.username } })
+    router.push({ name: '@team-projects', params: { team: user.value.username } })
   } catch (e) {
     leaving.value = false
   }
@@ -241,7 +241,7 @@ const confirmDelete = async () => {
 
     removeTeamFromUser()
 
-    router.push({ name: '@team', params: { team: user.value.username } })
+    router.push({ name: '@team-projects', params: { team: user.value.username } })
   } catch (e) {
     deleting.value = false
   }

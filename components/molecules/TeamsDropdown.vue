@@ -1,25 +1,36 @@
 <template>
-  <UDropdown v-if="user" :items="items" placement="bottom-start" class="-ml-4">
-    <div class="relative flex items-center gap-3 px-4">
-      <NuxtLink :to="{ name: '@team', params: { team: activeItem.slug } }" class="flex items-center gap-3 block max-w-[10rem] focus:outline-none" tabindex="-1" @click.stop>
-        <UAvatar
-          :src="activeItem.avatar"
-          :alt="activeItem.label"
-          size="xs"
-          class="-m-0.5 flex-shrink-0"
-        />
-        <span class="text-sm font-medium truncate hidden sm:block">{{ activeItem.label }}</span>
-      </NuxtLink>
-
-      <UButton
-        icon="heroicons-outline:selector"
-        trailing
-        variant="secondary"
-        class="group"
-        icon-base-class="u-text-gray-400 group-hover:u-text-gray-500"
-        size="xxs"
+  <UDropdown v-if="user" :items="items" placement="bottom-start" item-disabled-class>
+    <UButton
+      icon="heroicons-outline:selector"
+      trailing
+      variant="transparent"
+      icon-base-class="u-text-gray-400"
+      class="flex items-center -mr-4"
+    >
+      <UAvatar
+        :src="activeItem.avatar"
+        :alt="activeItem.label"
+        size="xs"
+        class="-m-0.5 flex-shrink-0"
       />
-    </div>
+      <span class="text-sm font-medium truncate ml-3">{{ activeItem.label }}</span>
+    </UButton>
+
+    <template #reverse-icon="{ item }">
+      <div class="flex items-center justify-between w-full gap-3">
+        {{ item.label }}
+
+        <UIcon :name="item.icon" class="w-4 h-4 u-text-gray-400 group-hover:u-text-gray-500" />
+      </div>
+    </template>
+
+    <template #theme="{ item }">
+      <div class="flex items-center justify-between w-full gap-3" @click.stop>
+        {{ item.label }}
+
+        <ThemeSelect class="-my-2" size="xs" />
+      </div>
+    </template>
   </UDropdown>
 </template>
 
@@ -30,9 +41,11 @@ import type { User } from '~/types'
 const user = useStrapiUser() as Ref<User>
 const route = useRoute()
 const router = useRouter()
+const { logout } = useStrapiAuth()
+const activeTeam = useTeam()
 
 const to = (slug) => {
-  if (route.params.team && !route.params.project) {
+  if (route.params.team) {
     const to = { name: route.name, params: { ...route.params, team: slug }, query: route.query }
 
     const resolvedRoute = router.resolve(to)
@@ -41,7 +54,7 @@ const to = (slug) => {
     }
   }
 
-  return { name: '@team', params: { team: slug } }
+  return route
 }
 
 const items = computed(() => {
@@ -52,7 +65,9 @@ const items = computed(() => {
     avatar: user.value.avatar,
     to: to(user.value.username),
     slug: user.value.username,
-    slot: 'avatar'
+    click () {
+      activeTeam.value = user.value.username
+    }
   }
 
   const teams = (user.value.memberships || []).map((membership) => {
@@ -62,16 +77,49 @@ const items = computed(() => {
       slug: team.slug,
       label: team.name,
       avatar: team.avatar?.url || true,
-      active: team.slug === slug,
+      active: activeTeam.value === team.slug || team.slug === slug,
       to: to(team.slug),
-      slot: 'avatar'
+      click () {
+        activeTeam.value = team.slug
+      }
     }
   })
 
   return [
-    [profile],
-    teams.length && teams,
-    [{ label: 'Create new team', icon: 'heroicons-outline:plus', to: { name: 'teams-new' }, slot: 'icon' }]
+    [
+      profile,
+      ...teams
+    ],
+    [
+      {
+        label: 'New team',
+        to: { name: 'teams-new' },
+        icon: 'heroicons-outline:plus',
+        slot: 'reverse-icon'
+      },
+      {
+        label: slug === user.value.username ? 'User settings' : 'Team settings',
+        icon: 'heroicons-outline:cog',
+        to: { name: '@team-settings', params: { team: activeTeam.value } },
+        slot: 'reverse-icon'
+      }
+    ],
+    [
+      {
+        label: 'Theme',
+        slot: 'theme',
+        disabled: true
+      }
+    ],
+    [
+      {
+        label: 'Logout',
+        click: () => {
+          logout()
+          router.push('/')
+        }
+      }
+    ]
   ].filter(Boolean)
 })
 
