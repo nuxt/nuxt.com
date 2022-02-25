@@ -13,7 +13,7 @@
           <div class="flex flex-col">
             <div class="flex items-center justify-center gap-1">
               <div class="font-semibold u-text-gray-900">
-                {{ props.project.repository.owner }}/{{ props.project.name }}
+                {{ project.repository.owner }}/{{ project.name }}
               </div>
               <UIcon name="heroicons-solid:external-link" class="w-4 h-4" />
             </div>
@@ -34,7 +34,7 @@ import type { PropType } from 'vue'
 import { useTimeAgo } from '@vueuse/core'
 import type { Project } from '~/types'
 
-const props = defineProps({
+defineProps({
   project: {
     type: Object as PropType<Project>,
     required: true
