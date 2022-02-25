@@ -11,10 +11,10 @@
       </template>
 
       <div class="space-y-6">
-        <UFormGroup name="name" label="Name" :help="form.name !== name ? `Your project name will be renamed to “${name}”` : 'This is your project\'s URL namespace on Nuxt.'" required class="relative">
+        <UFormGroup name="name" label="Name" :help="form.name !== nameSlugified ? `Your project name will be renamed to “${nameSlugified}”` : 'This is your project\'s URL namespace on Nuxt.'" required class="relative">
           <div class="flex items-center">
             <span class="inline-flex items-center px-2 py-2 text-sm border border-r-0 u-bg-gray-50 u-border-gray-300 rounded-l-md u-textgray-500">
-              nuxt.com/@{{ team ? team.slug : user.username }}/
+              nuxt.com/@{{ team?.slug || user.username }}/
             </span>
 
             <UInput
@@ -91,7 +91,7 @@ const onSubmit = async () => {
   updating.value = false
 }
 
-const name = computed(() => {
+const nameSlugified = computed(() => {
   return slugify(form.name)
 })
 </script>

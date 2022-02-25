@@ -28,15 +28,27 @@
             Configure your project
           </h3>
           <p class="u-text-gray-500">
-            Just choose a name for your project, it will be deployed using benjamincanac/adonis-algoliasearch repository if you haven't done it manually.
+            Just choose a name for your project, it will be deployed using {{ `${repository.owner.login}/${repository.name}` }} repository if you haven't done it manually.
           </p>
 
           <hr class="my-6 u-border-gray-200">
 
           <div class="flex flex-col gap-6">
             <div class="flex flex-col items-center gap-6 lg:flex-row">
-              <UFormGroup name="name" label="Name" required class="relative w-full lg:w-56">
-                <UInput v-model="form.name" name="name" required />
+              <UFormGroup name="name" label="Name" :help="form.name !== nameSlugified ? `Your project name will be renamed to “${nameSlugified}”` : 'This is your project\'s URL namespace on Nuxt.'" required class="relative w-full lg:max-w-lg">
+                <div class="flex items-center">
+                  <span class="inline-flex items-center px-2 py-2 text-sm border border-r-0 u-bg-gray-50 u-border-gray-300 rounded-l-md u-textgray-500">
+                    nuxt.com/@{{ team?.slug || user.username }}/
+                  </span>
+
+                  <UInput
+                    v-model="form.name"
+                    name="name"
+                    required
+                    autocomplete="off"
+                    custom-class="rounded-l-none"
+                  />
+                </div>
               </UFormGroup>
             </div>
 
@@ -55,6 +67,7 @@
 </template>
 
 <script setup lang="ts">
+import slugify from '@sindresorhus/slugify'
 import type { PropType, Ref } from 'vue'
 import type { Team, Template, Project, User, GitHubRepository } from '~/types'
 
@@ -93,6 +106,10 @@ if (error.value) {
 
 const loading = ref(false)
 const form = reactive({ name })
+
+const nameSlugified = computed(() => {
+  return slugify(form.name)
+})
 
 const onSubmit = async () => {
   loading.value = true
