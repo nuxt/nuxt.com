@@ -3,7 +3,7 @@
     <div class="lg:flex lg:items-center lg:justify-between">
       <div class="flex-1 min-w-0">
         <h2 class="text-2xl font-bold leading-7 u-text-gray-900 sm:text-3xl sm:truncate">
-          {{ team ? team.slug : user.username }}/{{ project.name }}
+          {{ team?.slug || user.username }}/{{ project.name }}
         </h2>
         <div class="mt-1 flex flex-col sm:flex-row sm:flex-wrap sm:mt-0 sm:space-x-6">
           <div class="mt-2 flex items-center text-sm u-text-gray-500">
