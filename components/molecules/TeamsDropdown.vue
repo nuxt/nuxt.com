@@ -1,20 +1,25 @@
 <template>
   <UDropdown v-if="user" :items="items" placement="bottom-start" item-disabled-class>
-    <UButton
-      icon="heroicons-outline:selector"
-      trailing
-      variant="transparent"
-      icon-base-class="u-text-gray-400"
-      class="flex items-center -mr-4"
-    >
-      <UAvatar
-        :src="activeItem.avatar"
-        :alt="activeItem.label"
-        size="xs"
-        class="-m-0.5 flex-shrink-0"
-      />
-      <span class="text-sm font-medium truncate ml-3">{{ activeItem.label }}</span>
-    </UButton>
+    <template #default="{ open }">
+      <UButton
+        icon="heroicons-outline:selector"
+        trailing
+        variant="transparent"
+        icon-base-class="u-text-gray-400"
+        class="flex items-center -mr-4"
+        :class="{ 'u-text-gray-700': open }"
+      >
+        <UAvatar
+          :src="activeItem.avatar"
+          :alt="activeItem.label"
+          size="xs"
+          class="-m-0.5 flex-shrink-0"
+        >
+          <img v-if="activeItem.slug !== user.username" :src="user.avatar" class="absolute block rounded-full ring-1 u-ring-white bottom-0 right-0 -mb-0.5 -mr-0.5 w-3 h-3">
+        </UAvatar>
+        <span class="text-sm font-medium truncate ml-3">{{ activeItem.label }}</span>
+      </UButton>
+    </template>
 
     <template #reverse-icon="{ item }">
       <div class="flex items-center justify-between w-full gap-3">

@@ -456,11 +456,11 @@
     untyped "^0.3.0"
 
 "@nuxt/kit@npm:@nuxt/kit-edge@latest":
-  version "3.0.0-27429889.e45a780"
-  resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-27429889.e45a780.tgz#82928cb6c9d3dfa44a8d11fe3a7758aa6a9adf67"
-  integrity sha512-IGfwD99uc2YpEyU+fnVLp/lSIb1qQR5rLqWxBuFVS9lytGij+doS5Wyr1fEBQS4F/871I5OEgSYDvAqJwus68A==
+  version "3.0.0-27430121.2b3dbed"
+  resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-27430121.2b3dbed.tgz#b7462a1d45b566a7a95063167cfabd9d7755bc53"
+  integrity sha512-xtYSHMw2FhlpPaIqg5ITdvehrhStLJRkWiwYBHwXz9GhrD3fR6opgdMNJTg5fzuh5zvV20dypwD6zGyYKQjDrQ==
   dependencies:
-    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-27429889.e45a780"
+    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-27430121.2b3dbed"
     c12 "^0.1.3"
     consola "^2.15.3"
     defu "^5.0.1"
@@ -569,10 +569,10 @@
     std-env "^3.0.1"
     ufo "^0.7.9"
 
-"@nuxt/schema@npm:@nuxt/schema-edge@3.0.0-27429889.e45a780":
-  version "3.0.0-27429889.e45a780"
-  resolved "https://registry.yarnpkg.com/@nuxt/schema-edge/-/schema-edge-3.0.0-27429889.e45a780.tgz#541964e0c16cd1e5e8fd9d5231adc4d57d8480ce"
-  integrity sha512-CiYXQ/WdDX5DDRICYea6if64q/tMelX/MinkoyJ+uf2aKJPnSHdrNpvn/RYlZ+eMHfKXav1qsHSfnSKWnKQyWA==
+"@nuxt/schema@npm:@nuxt/schema-edge@3.0.0-27430121.2b3dbed":
+  version "3.0.0-27430121.2b3dbed"
+  resolved "https://registry.yarnpkg.com/@nuxt/schema-edge/-/schema-edge-3.0.0-27430121.2b3dbed.tgz#116f66deec40c1e113624df94d9040144cac3a35"
+  integrity sha512-mEveIIjPMHhy0Ideb2VuP/36RWqHRxODfGWOjnoCSVgkn9lDUqUgUGBgeSMiYQZ8QlKiq32o0paiDH+2hQQgqw==
   dependencies:
     c12 "^0.1.3"
     create-require "^1.1.1"
@@ -658,9 +658,9 @@
     webpackbar "^5.0.2"
 
 "@nuxthq/ui@npm:@nuxthq/ui-edge@latest":
-  version "0.0.2-27430070.858b7da"
-  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27430070.858b7da.tgz#b5fd6e619e09cfe32fd7cbea16ba2c93dc0ef86d"
-  integrity sha512-wV2tl3jw0IUnShKaXVI6In4qVPdHp0mqTIQMJE4h/gYHl2lNTJFlyszCEeNStNDn6g1Giz3QNYtD2Z08rlivXA==
+  version "0.0.2-27430138.55565d7"
+  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27430138.55565d7.tgz#c47743cca26b48c33330fbf469562719ce3664a0"
+  integrity sha512-vHaDxF+atoXch6iHqKWRmbZc14+zQEr6qsmxkafVtwUgsJSPC9GBns5OO0GPYhov6QffRqH4SkLWyCF+cR+47g==
   dependencies:
     "@headlessui/vue" "1.4.3"
     "@iconify/vue" "^3.1.3"
