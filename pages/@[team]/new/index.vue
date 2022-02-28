@@ -16,14 +16,14 @@
             <div v-if="installations.length" class="flex items-start justify-between gap-3 flex-wrap-reverse sm:flex-nowrap mt-5">
               <USelectCustom v-model="owner" :options="accounts" text-attribute="login" name="owner" class="w-full sm:w-auto">
                 <div class="flex items-center gap-3 w-full">
-                  <UAvatar :src="owner.avatar_url" size="xxs" class="flex-shrink-0" />
-                  <span class="truncate">{{ owner.login }}</span>
+                  <UAvatar :src="owner?.avatar_url" size="xxs" class="flex-shrink-0" />
+                  <span class="truncate">{{ owner?.login }}</span>
                 </div>
 
                 <template #option="{ option }">
                   <div class="flex items-center gap-3 w-full">
-                    <UAvatar :src="option.avatar_url" size="xxs" class="flex-shrink-0" />
-                    <span class="truncate">{{ option.login }}</span>
+                    <UAvatar :src="option?.avatar_url" size="xxs" class="flex-shrink-0" />
+                    <span class="truncate">{{ option?.login }}</span>
                   </div>
                 </template>
               </USelectCustom>
@@ -130,9 +130,9 @@
 </template>
 
 <script setup lang="ts">
-import { debouncedWatch, useDocumentVisibility } from '@vueuse/core'
+import { debouncedWatch } from '@vueuse/core'
 import type { PropType, Ref } from 'vue'
-import type { Team, Template, GitHubInstallation, GitHubAccount, GitHubRepository, GitHubPagination, GitHubPaginationMeta } from '~/types'
+import type { Team, Template, GitHubRepository, GitHubPagination, GitHubPaginationMeta } from '~/types'
 
 defineProps({
   team: {
@@ -146,7 +146,6 @@ defineProps({
 })
 
 const client = useStrapiClient()
-const visibility = useDocumentVisibility()
 const { githubAppUrl } = useGitHub()
 
 const q = ref('')
@@ -168,14 +167,11 @@ const end = computed(() => {
   return end > meta.total ? meta.total : end
 })
 
-const { data: installations, refresh: refreshInstallations } = await useAsyncData('installations', () => client<GitHubInstallation[]>('/github/installations'))
+const { installations, accounts, refresh: refreshInstallations } = useGitHubInstallations()
 
-const accounts: Ref<GitHubAccount[]> = ref([])
 const repositories: Ref<GitHubRepository[]> = ref([])
 
 watch(installations, () => {
-  accounts.value = installations.value.map(({ account }) => account)
-
   page.value = 1
   if (owner.value) {
     owner.value = accounts.value.find(account => account.login === owner.value.login)
@@ -222,11 +218,5 @@ onMounted(() => {
     await fetchRepositories()
     page.value = 1
   }, { debounce: 500 })
-})
-
-watch(visibility, (current, previous) => {
-  if (current === 'visible' && previous === 'hidden') {
-    refreshInstallations()
-  }
 })
 </script>

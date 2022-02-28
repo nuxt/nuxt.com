@@ -33,14 +33,14 @@
                 <UFormGroup name="owner" label="Owner" required class="relative w-full lg:w-56">
                   <USelectCustom v-model="form.owner" :options="accounts" text-attribute="login" name="owner" required>
                     <div class="flex items-center gap-3">
-                      <UAvatar :src="form.owner.avatar_url" size="xxs" />
-                      {{ form.owner.login }}
+                      <UAvatar :src="form.owner?.avatar_url" size="xxs" />
+                      {{ form.owner?.login }}
                     </div>
 
                     <template #option="{ option }">
                       <div class="flex items-center gap-3">
-                        <UAvatar :src="option.avatar_url" size="xxs" />
-                        {{ option.login }}
+                        <UAvatar :src="option?.avatar_url" size="xxs" />
+                        {{ option?.login }}
                       </div>
                     </template>
                   </USelectCustom>
@@ -79,8 +79,7 @@
 
 <script setup lang="ts">
 import type { PropType, Ref } from 'vue'
-import { useDocumentVisibility } from '@vueuse/core'
-import type { Team, Template, Project, User, GitHubInstallation, GitHubAccount } from '~/types'
+import type { Team, Template, Project, User } from '~/types'
 
 const props = defineProps({
   team: {
@@ -97,21 +96,13 @@ const user = useStrapiUser() as Ref<User>
 const route = useRoute()
 const router = useRouter()
 const client = useStrapiClient()
-const visibility = useDocumentVisibility()
 const { githubAppUrl } = useGitHub()
 
 if (!route.query.template) {
   router.push({ name: '@team-new' })
 }
 
-const accounts: Ref<GitHubAccount[]> = ref([])
-const { data: installations, refresh: refreshInstallations } = await useAsyncData('installations', () => client<GitHubInstallation[]>('/github/installations'))
-
-watch(visibility, (current, previous) => {
-  if (current === 'visible' && previous === 'hidden') {
-    refreshInstallations()
-  }
-})
+const { installations, accounts, refresh: refreshInstallations } = useGitHubInstallations()
 
 const loading = ref(false)
 const form = reactive({
@@ -121,8 +112,6 @@ const form = reactive({
 })
 
 watchEffect(() => {
-  accounts.value = installations.value.map(({ account }) => account)
-
   if (form.owner) {
     form.owner = accounts.value.find(account => account.login === form.owner.login)
   } else {
