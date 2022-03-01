@@ -4,7 +4,7 @@
       <FilesTree :files="files" :selected-file="selectedFile" @select-file="selectFile" />
     </template>
 
-    <pre class="whitespace-pre break-words text-sm"><code>{{ selectedFile }}</code></pre>
+    <pre class="whitespace-pre break-words text-sm"><code>{{ content }}</code></pre>
   </ProjectPage>
 </template>
 
@@ -29,7 +29,19 @@ const { data: files } = await useAsyncData('files', () => client<File[]>(`/proje
 
 const selectedFile: Ref<File> = ref(files.value.find(file => file.path.endsWith('index.md')))
 
+const content = ref('')
+
 function selectFile (file) {
   selectedFile.value = file
 }
+
+watch(selectedFile, async () => {
+  const { content: fetchedContent } = await client(`/projects/${props.project.id}/file`, {
+    params: {
+      path: selectedFile.value.path
+    }
+  })
+
+  content.value = fetchedContent
+}, { immediate: true })
 </script>
