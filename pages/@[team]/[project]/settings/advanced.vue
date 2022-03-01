@@ -63,6 +63,7 @@
     />
   </div>
 </template>
+
 <script setup lang="ts">
 import type { Ref, PropType } from 'vue'
 import { User, Project, Team } from '~/types'
@@ -79,6 +80,7 @@ const props = defineProps({
 })
 
 const client = useStrapiClient()
+const { delete: _delete } = useStrapi4()
 const user = useStrapiUser() as Ref<User>
 const transferForm = ref({ destination: null })
 const route = useRoute()
@@ -138,12 +140,12 @@ const confirmTransfer = async () => {
       }
     })
 
-    router.replace({
-      name: `/@${transferForm.value.destination === user.value.username
+    const team = `${transferForm.value.destination === user.value.username
       ? user.value.username
       // eslint-disable-next-line eqeqeq
-      : teams.value.filter(team => transferForm.value.destination == team.value)[0].slug}/projects`
-    })
+      : teams.value.filter(team => transferForm.value.destination == team.value)[0].slug}`
+
+    router.replace({ name: '@team-projects', params: { team } })
 
     $toast.success({
       title: 'Success',
@@ -162,11 +164,11 @@ const confirmDelete = async () => {
   deleting.value = true
 
   try {
-    await client(`/projects/${props.project.id}`, {
-      method: 'DELETE'
-    })
+    await _delete<Project>('projects', props.project.id)
 
-    router.push({ name: `/@${props.team ? props.team.slug : user.value.username}/projects` })
+    const team = `${props.team ? props.team.slug : user.value.username}`
+
+    router.push({ name: '@team-projects', params: { team } })
 
     $toast.success({
       title: 'Success',
