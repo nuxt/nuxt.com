@@ -2,7 +2,7 @@
   <main class="flex-1 flex overflow-hidden">
     <!-- Primary column -->
     <section class="min-w-0 flex-1 h-full overflow-y-auto lg:order-last">
-      <div class="h-full p-4 sm:p-6 lg:p-8 xl:p-10">
+      <div class="h-full p-4 sm:p-6 lg:p-8 xl:p-10 overflow-y-auto">
         <slot />
       </div>
     </section>
