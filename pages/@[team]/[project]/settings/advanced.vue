@@ -1,45 +1,35 @@
 <template>
   <div class="space-y-6">
-    <UCard padded>
+    <UCard>
       <h2 class="text-lg font-medium leading-6 u-text-gray-900">
-        Advanced
+        Transfer project
       </h2>
       <p class="mt-1 text-sm u-text-gray-400">
-        Danger zone.
+        Your project and all of its dependencies will be transferred without downtime or workflow interruptions to the selected destination.
       </p>
-      <div class="flex flex-col gap-6 mt-6">
-        <UCard>
-          <h2 class="text-lg font-medium leading-6 u-text-gray-900">
-            Transfer project
-          </h2>
-          <p class="mt-1 text-sm u-text-gray-400">
-            Your project and all of its dependencies will be transferred without downtime or workflow interruptions to the selected destination.
-          </p>
-          <div class="flex flex-col justify-between gap-4 mt-5 sm:flex-row">
-            <USelect
-              v-model="transferForm.destination"
-              size="sm"
-              icon="heroicons-outline:switch-horizontal"
-              placeholder="Select a destination"
-              :options="transferOptions"
-              name="destination"
-            />
-            <div class="flex justify-end">
-              <UButton label="Transfer project" size="sm" :disabled="!transferForm.destination" @click="onTransfer()" />
-            </div>
-          </div>
-        </UCard>
-        <UCard>
-          <h2 class="text-lg font-medium leading-6 u-text-gray-900">
-            Delete project
-          </h2>
-          <p class="mt-1 text-sm u-text-gray-400">
-            Your project and all of its dependencies will be transferred without downtime or workflow interruptions to the selected destination.
-          </p>
-          <div class="flex justify-end mt-5">
-            <UButton variant="red" label="Delete project" size="sm" @click="onDelete()" />
-          </div>
-        </UCard>
+      <div class="flex flex-col justify-between gap-4 mt-5 sm:flex-row">
+        <USelect
+          v-model="transferForm.destination"
+          size="sm"
+          icon="heroicons-outline:switch-horizontal"
+          placeholder="Select a destination"
+          :options="transferOptions"
+          name="destination"
+        />
+        <div class="flex justify-end">
+          <UButton label="Transfer project" size="sm" :disabled="!transferForm.destination" @click="onTransfer()" />
+        </div>
+      </div>
+    </UCard>
+    <UCard>
+      <h2 class="text-lg font-medium leading-6 u-text-gray-900">
+        Delete project
+      </h2>
+      <p class="mt-1 text-sm u-text-gray-400">
+        Your project and all of its dependencies will be transferred without downtime or workflow interruptions to the selected destination.
+      </p>
+      <div class="flex justify-end mt-5">
+        <UButton variant="red" label="Delete project" size="sm" @click="onDelete()" />
       </div>
     </UCard>
 
@@ -82,10 +72,11 @@ const props = defineProps({
 const client = useStrapiClient()
 const { delete: _delete } = useStrapi4()
 const user = useStrapiUser() as Ref<User>
-const transferForm = ref({ destination: null })
 const route = useRoute()
 const router = useRouter()
 const { $toast } = useNuxtApp()
+
+const transferForm = reactive({ destination: null })
 const transferModal = ref(false)
 const deleteModal = ref(false)
 const transferring = ref(false)
@@ -104,7 +95,7 @@ const teams = computed(() => {
 const transferOptions = computed(() => {
   const options = []
 
-  if (route.params.team !== user.value.username && props.project.repository.owner === user.value.username) {
+  if (props.project.user?.id !== user.value.id) {
     options.push({
       text: 'Personal account',
       children: [
@@ -115,6 +106,7 @@ const transferOptions = computed(() => {
       ]
     })
   }
+
   if (teams.value.length) {
     options.push({
       text: 'Teams',
@@ -136,14 +128,14 @@ const confirmTransfer = async () => {
     await client(`/projects/${props.project.id}/transfer`, {
       method: 'POST',
       body: {
-        destination: transferForm.value.destination
+        destination: transferForm.destination
       }
     })
 
-    const team = transferForm.value.destination === user.value.username
+    const team = transferForm.destination === user.value.username
       ? user.value.username
       // eslint-disable-next-line eqeqeq
-      : teams.value.filter(team => transferForm.value.destination == team.value)[0].slug
+      : teams.value.filter(team => transferForm.destination == team.value)[0].slug
 
     router.replace({ name: '@team-projects', params: { team } })
 
