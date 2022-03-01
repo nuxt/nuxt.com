@@ -10,7 +10,7 @@
     <!-- Secondary column (hidden on smaller screens) -->
     <aside v-if="$slots.aside" class="hidden lg:block lg:flex-shrink-0 lg:order-first">
       <div class="h-full relative flex flex-col w-72 border-r u-border-gray-200 u-bg-white overflow-y-auto">
-        <div class="flex-shrink-0 h-16 px-6 flex items-center">
+        <div class="flex-shrink-0 h-16 px-6 flex items-center sticky top-0 u-bg-white">
           <p class="text-lg font-semibold text-blue-gray-900">
             {{ title }}
           </p>

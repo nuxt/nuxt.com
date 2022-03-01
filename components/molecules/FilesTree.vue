@@ -2,17 +2,18 @@
   <ul>
     <li v-for="file of files" :key="file.path">
       <div
-        class="group border-r-2 py-2 px-6 flex items-center text-sm font-medium focus:bg-gray-100 focus:outline-none w-full cursor-pointer"
+        class="group border-r-2 py-2 pr-6 flex items-center text-sm font-medium focus:u-bg-gray-50 focus:outline-none w-full cursor-pointer"
         :class="{
-          'bg-gray-100 border-gray-800 text-gray-900': isSelected(file),
-          'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50': !isSelected(file)
+          [`pl-${6 + (level * 3)}`]: true,
+          'u-bg-gray-50 u-border-gray-800 u-text-gray-900': isSelected(file),
+          'border-transparent u-text-gray-500 hover:u-text-gray-900 hover:u-bg-gray-50': !isSelected(file)
         }"
         @click="selectFile(file)"
       >
         <div class="flex items-center justify-between">
           <div class="flex items-center truncate">
             <FilesTreeIcon :file="file" class="mr-1.5" />
-            <div class="truncate whitespace-nowrap overflow-ellipsis" :class="{ 'line-through': file.isDeleted }">
+            <div class="line-clamp-1" :class="{ 'line-through': file.isDeleted }">
               {{ file.name }}
             </div>
           </div>
@@ -22,9 +23,11 @@
 
       <FilesTree
         v-if="isDir(file)"
-        class="pl-3"
+        v-show="isOpen(file)"
+        :level="level + 1"
         :files="file.children"
         :selected-file="selectedFile"
+        @selectFile="file => $emit('selectFile', file)"
       />
     </li>
   </ul>
@@ -35,6 +38,10 @@ import { PropType } from 'vue'
 import type { File } from '~/types'
 
 const props = defineProps({
+  level: {
+    type: Number,
+    default: 0
+  },
   files: {
     type: Array as PropType<File[]>,
     default: () => []
@@ -49,6 +56,7 @@ const emit = defineEmits(['selectFile'])
 
 // Methods
 const isDir = (file: File) => file.type === 'directory'
+const isOpen = (file: File) => file.isOpen
 const isSelected = (file: File) => props.selectedFile && file.path === props.selectedFile.path
 const selectFile = (file: File) => {
   // Prevent click when clicking on already selected file
@@ -58,6 +66,7 @@ const selectFile = (file: File) => {
 
   if (isDir(file)) {
     file.isOpen = !file.isOpen
+    return
   }
 
   emit('selectFile', file)
