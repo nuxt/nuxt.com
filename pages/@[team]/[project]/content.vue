@@ -27,7 +27,7 @@ const client = useStrapiClient()
 
 const { data: files } = await useAsyncData('files', () => client<File[]>(`/projects/${props.project.id}/tree`))
 
-const selectedFile: Ref<File> = ref(files.value.find(file => file.path.endsWith('index.md')))
+const selectedFile: Ref<File> = ref(files.value.find(file => file.path.toLowerCase().endsWith('index.md')) || files.value.find(file => file.type === 'file'))
 
 const content = ref('')
 
