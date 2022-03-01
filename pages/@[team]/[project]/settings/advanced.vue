@@ -78,9 +78,12 @@ const props = defineProps({
   }
 })
 
+const client = useStrapiClient()
 const user = useStrapiUser() as Ref<User>
 const transferForm = ref({ destination: null })
 const route = useRoute()
+const router = useRouter()
+const { $toast } = useNuxtApp()
 const transferModal = ref(false)
 const deleteModal = ref(false)
 const transferring = ref(false)
@@ -91,7 +94,8 @@ const teams = computed(() => {
     .filter(membership => props.team?.id !== membership.team.id)
     .map(membership => ({
       text: membership.team.name,
-      value: membership.team.id
+      value: membership.team.id,
+      slug: membership.team.slug
     }))
 })
 
@@ -123,17 +127,51 @@ const onTransfer = () => {
   transferModal.value = true
 }
 
-// TODO: transfer project
-const confirmTransfer = () => {
+const confirmTransfer = async () => {
   transferring.value = true
+
+  try {
+    await client(`/projects/${props.project.id}/transfer`, {
+      method: 'POST',
+      body: {
+        destination: transferForm.value.destination
+      }
+    })
+
+    router.push(`/@${transferForm.value.destination === user.value.username
+      ? user.value.username
+      // eslint-disable-next-line eqeqeq
+      : teams.value.filter(team => transferForm.value.destination == team.value)[0].slug}/projects`)
+
+    $toast.success({
+      title: 'Success',
+      description: 'Your project has been transferred!'
+    })
+  } catch (e) {}
+
+  transferring.value = false
 }
 
 const onDelete = () => {
   deleteModal.value = true
 }
 
-// TODO: delete project
-const confirmDelete = () => {
+const confirmDelete = async () => {
   deleting.value = true
+
+  try {
+    await client(`/projects/${props.project.id}`, {
+      method: 'DELETE'
+    })
+
+    router.push(`/@${props.team ? props.team.slug : user.value.username}/projects`)
+
+    $toast.success({
+      title: 'Success',
+      description: 'Your project has been deleted!'
+    })
+  } catch (e) {}
+
+  deleting.value = false
 }
 </script>
