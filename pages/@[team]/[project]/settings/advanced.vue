@@ -140,10 +140,10 @@ const confirmTransfer = async () => {
       }
     })
 
-    const team = `${transferForm.value.destination === user.value.username
+    const team = transferForm.value.destination === user.value.username
       ? user.value.username
       // eslint-disable-next-line eqeqeq
-      : teams.value.filter(team => transferForm.value.destination == team.value)[0].slug}`
+      : teams.value.filter(team => transferForm.value.destination == team.value)[0].slug
 
     router.replace({ name: '@team-projects', params: { team } })
 
@@ -166,7 +166,7 @@ const confirmDelete = async () => {
   try {
     await _delete<Project>('projects', props.project.id)
 
-    const team = `${props.team ? props.team.slug : user.value.username}`
+    const team = props.team ? props.team.slug : user.value.username
 
     router.push({ name: '@team-projects', params: { team } })
 
