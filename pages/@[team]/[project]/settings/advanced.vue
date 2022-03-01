@@ -95,7 +95,7 @@ const teams = computed(() => {
 const transferOptions = computed(() => {
   const options = []
 
-  if (props.project.user?.id !== user.value.id) {
+  if (props.team) {
     options.push({
       text: 'Personal account',
       children: [
