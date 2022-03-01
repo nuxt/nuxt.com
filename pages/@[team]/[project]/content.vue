@@ -4,7 +4,9 @@
       <FilesTree :files="files" :selected-file="selectedFile" @select-file="selectFile" />
     </template>
 
-    <pre class="whitespace-pre break-words text-sm"><code>{{ content }}</code></pre>
+    <div class="whitespace-pre break-words text-sm font-mono focus:outline-none" contenteditable>
+      {{ content }}
+    </div>
   </ProjectPage>
 </template>
 
