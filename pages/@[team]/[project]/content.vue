@@ -36,6 +36,10 @@ function selectFile (file) {
 }
 
 watch(selectedFile, async () => {
+  if (!selectedFile.value) {
+    return
+  }
+
   const { content: fetchedContent } = await client(`/projects/${props.project.id}/file`, {
     params: {
       path: selectedFile.value.path
