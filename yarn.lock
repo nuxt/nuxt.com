@@ -421,12 +421,35 @@
   resolved "https://registry.yarnpkg.com/@nuxt/devalue/-/devalue-2.0.0.tgz#c7bd7e9a516514e612d5d2e511ffc399e0eac322"
   integrity sha512-YBI/6o2EBz02tdEJRBK8xkt3zvOFOWlLBf7WKYGBsSYSRtjjgrqPe2skp6VLLmKx5WbHHDNcW+6oACaurxGzeA==
 
-"@nuxt/kit@npm:@nuxt/kit-edge@3.0.0-27434755.39f7eb2", "@nuxt/kit@npm:@nuxt/kit-edge@latest":
+"@nuxt/kit@npm:@nuxt/kit-edge@3.0.0-27434755.39f7eb2":
   version "3.0.0-27434755.39f7eb2"
   resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-27434755.39f7eb2.tgz#9c3409af5e06787e0c86947035a8cc041a26d4ce"
   integrity sha512-i7ubhi461PaEqmYf3ohwyLa2Y+dFr0xhLmAofn4TK1HuS11z+1Wy3VBKBYJiOd7fPe0y09E3jzRuKfRTOdd7Fg==
   dependencies:
     "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-27434755.39f7eb2"
+    c12 "^0.1.3"
+    consola "^2.15.3"
+    defu "^5.0.1"
+    globby "^13.1.1"
+    hash-sum "^2.0.0"
+    ignore "^5.2.0"
+    jiti "^1.13.0"
+    knitwork "^0.1.0"
+    lodash.template "^4.5.0"
+    mlly "^0.4.3"
+    pathe "^0.2.0"
+    pkg-types "^0.3.2"
+    scule "^0.2.1"
+    semver "^7.3.5"
+    unctx "^1.0.2"
+    untyped "^0.3.0"
+
+"@nuxt/kit@npm:@nuxt/kit-edge@latest":
+  version "3.0.0-27436017.7b6252a"
+  resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-27436017.7b6252a.tgz#6d4c92d192f6a23b3be628aac10ced24230e8a54"
+  integrity sha512-93MOq97ClDgoHd3W2PfkpSNvfE7a2OU03B9IXosao68FzNK6X6MzivgC8hYjc4FMBgW+dnT7507Hl31xrNcNuQ==
+  dependencies:
+    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-27436017.7b6252a"
     c12 "^0.1.3"
     consola "^2.15.3"
     defu "^5.0.1"
@@ -537,6 +560,21 @@
     std-env "^3.0.1"
     ufo "^0.7.11"
 
+"@nuxt/schema@npm:@nuxt/schema-edge@3.0.0-27436017.7b6252a":
+  version "3.0.0-27436017.7b6252a"
+  resolved "https://registry.yarnpkg.com/@nuxt/schema-edge/-/schema-edge-3.0.0-27436017.7b6252a.tgz#9da899b44546aef0644b8a19ebc976d9562042af"
+  integrity sha512-wCUYcs7bxEm4J/SKauoB5a+V2vWwiqsJM/foM+absECxHAOtuKUQAmzuqhu7xaSdab9RGLmUuHVIfEzmiiTzcw==
+  dependencies:
+    c12 "^0.1.3"
+    create-require "^1.1.1"
+    defu "^5.0.1"
+    jiti "^1.13.0"
+    pathe "^0.2.0"
+    postcss-import-resolver "^2.0.0"
+    scule "^0.2.1"
+    std-env "^3.0.1"
+    ufo "^0.7.11"
+
 "@nuxt/vite-builder@npm:@nuxt/vite-builder-edge@3.0.0-27434755.39f7eb2":
   version "3.0.0-27434755.39f7eb2"
   resolved "https://registry.yarnpkg.com/@nuxt/vite-builder-edge/-/vite-builder-edge-3.0.0-27434755.39f7eb2.tgz#80b4f54fa38dbd98da925f2d4ccbdf8a700ee167"
@@ -567,9 +605,9 @@
     vite "^2.8.5"
 
 "@nuxthq/ui@npm:@nuxthq/ui-edge@latest":
-  version "0.0.2-27435844.4d0709a"
-  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27435844.4d0709a.tgz#6f481cf6394b20c63a947dd646af74a31d043cbe"
-  integrity sha512-Zyf6KAW1B5yCYU4DTBpmZsdVb6tendBJMLntMX6kphDrClIhBStd1RNgTyxU0NMi1NT4PXgZFjPQvBi48HhZuQ==
+  version "0.0.2-27435863.da3ed26"
+  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27435863.da3ed26.tgz#bae1cbf8afa9b22bdb0fc401d5475f0b324baaa2"
+  integrity sha512-aoTZsMEdQphGK6H6jS6FPWrVrA7shNYI5/iolZpn6A7aB1DcTOgIt3TPtX2rgZC0jZxVUu2GedCkTZErLIswYA==
   dependencies:
     "@headlessui/vue" "1.4.3"
     "@iconify/vue" "^3.1.3"
@@ -3458,10 +3496,15 @@ has-flag@^4.0.0:
   resolved "https://registry.yarnpkg.com/has-flag/-/has-flag-4.0.0.tgz#944771fd9c81c81265c4d6941860da06bb59479b"
   integrity sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ==
 
-has-symbols@^1.0.1, has-symbols@^1.0.2:
+has-symbols@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/has-symbols/-/has-symbols-1.0.2.tgz#165d3070c00309752a1236a479331e3ac56f1423"
   integrity sha512-chXa79rL/UC2KlX17jo3vRGz0azaWEx5tGqZg5pO3NUyEJVB17dMruQlzCCOfUvElghKcm5194+BCRvi2Rv/Gw==
+
+has-symbols@^1.0.2:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/has-symbols/-/has-symbols-1.0.3.tgz#bb7b2c4349251dce87b125f7bdf874aa7c8b39f8"
+  integrity sha512-l3LCuF6MgDNwTDKkdYGEihYjt5pRPbEg46rtlmnSPlUbgmB8LOIrKJbYYFBSbnPaJexMKtiPO8hmeRjRz2Td+A==
 
 has-tostringtag@^1.0.0:
   version "1.0.0"
