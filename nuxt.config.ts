@@ -66,7 +66,8 @@ export default defineNuxtConfig({
   },
   tailwindcss: {
     config: {
-      content: ['presets/*.ts']
+      content: ['presets/*.ts'],
+      safelist: ['pl-6', 'pl-9', 'pl-12', 'pl-15', 'pl-18']
     }
   }
 })

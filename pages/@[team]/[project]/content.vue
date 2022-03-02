@@ -1,20 +1,20 @@
 <template>
   <ProjectPage title="Content">
     <template #aside>
-      <div class="px-6">
-        Files...
-      </div>
+      <FilesTree :files="files" :selected-file="selectedFile" @select-file="selectFile" />
     </template>
 
-    Editor
+    <div class="whitespace-pre break-words text-sm font-mono focus:outline-none" contenteditable>
+      {{ content }}
+    </div>
   </ProjectPage>
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue'
-import type { Team, Project } from '~/types'
+import type { PropType, Ref } from 'vue'
+import type { Team, Project, File } from '~/types'
 
-defineProps({
+const props = defineProps({
   team: {
     type: Object as PropType<Team>,
     default: null
@@ -24,4 +24,30 @@ defineProps({
     required: true
   }
 })
+
+const client = useStrapiClient()
+
+const { data: files } = await useAsyncData('files', () => client<File[]>(`/projects/${props.project.id}/tree`))
+
+const selectedFile: Ref<File> = ref(files.value.find(file => file.path.toLowerCase().endsWith('index.md')) || files.value.find(file => file.type === 'file'))
+
+const content = ref('')
+
+function selectFile (file) {
+  selectedFile.value = file
+}
+
+watch(selectedFile, async () => {
+  if (!selectedFile.value) {
+    return
+  }
+
+  const { content: fetchedContent } = await client(`/projects/${props.project.id}/file`, {
+    params: {
+      path: selectedFile.value.path
+    }
+  })
+
+  content.value = fetchedContent
+}, { immediate: true })
 </script>

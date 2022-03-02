@@ -79,6 +79,20 @@ export interface Project {
   user: User
 }
 
+export interface File {
+  type: 'file' | 'directory'
+  path: string
+  name: string
+  content?: string
+  children?: File[]
+  isOpen?: boolean
+  isDraft?: boolean
+  isAdded?: boolean
+  isRenamed?: boolean
+  isModified?: boolean
+  isDeleted?: boolean
+}
+
 export interface GitHubAccount {
   login: string
   avatar_url: string
