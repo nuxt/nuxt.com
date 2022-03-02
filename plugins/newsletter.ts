@@ -8,47 +8,48 @@ export default function useNewsletter () {
 
   const apiURL = 'https://api.nuxtjs.org'
 
-  const subscribe = () => {
+  const subscribe = async () => {
     // Cancel empty email
     if (!email.value || !email.value.trim()) { return }
 
     pending.value = true
 
-    $fetch(`${apiURL}/api/newsletter/confirm`, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json'
-      },
-      body: {
-        email: email.value
-      }
-    })
-      .then(() => {
-        newsletterResult.value = 'confirm'
+    try {
+      await $fetch(`${apiURL}/api/newsletter/confirm`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json'
+        },
+        body: {
+          email: email.value
+        }
+
       })
-      .catch((err) => {
-        newsletterError(err)
-      })
-      .finally(() => (pending.value = false))
+      newsletterResult.value = 'confirm'
+    } catch (e) {
+      newsletterError(e)
+    } finally {
+      pending.value = false
+    }
   }
 
-  const confirmSubscribtion = (email) => {
+  const confirmSubscribtion = async (email) => {
     pending.value = true
 
-    $fetch(`${apiURL}/api/newsletter/subscribe`, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json'
-      },
-      body: { email }
-    })
-      .then(() => {
-        newsletterResult.value = 'subscribed'
+    try {
+      await $fetch(`${apiURL}/api/newsletter/subscribe`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json'
+        },
+        body: { email }
       })
-      .catch((err) => {
-        newsletterError(err)
-      })
-      .finally(() => (pending.value = false))
+      newsletterResult.value = 'subscribed'
+    } catch (e) {
+      newsletterError(e)
+    } finally {
+      pending.value = false
+    }
   }
 
   if (route.query.hash && route.query.email) {
