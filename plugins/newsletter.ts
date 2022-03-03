@@ -64,46 +64,46 @@ export default function useNewsletter () {
   }
 
   const notificationToast = (result) => {
-    let notificationOptions = { text: '', type: '', timer: 0 }
+    let toastOptions = { text: '', type: '', timer: 0 }
 
     switch (result) {
       case 'failure':
-        notificationOptions = {
+        toastOptions = {
           text: 'An error occurred',
           type: 'error',
           timer: 4000
         }
         break
       case 'invalid-email':
-        notificationOptions = {
+        toastOptions = {
           text: 'Invalid address',
           type: 'warning',
           timer: 4000
         }
         break
       case 'sending-error':
-        notificationOptions = {
+        toastOptions = {
           text: 'An error occurred while sending confirmation email',
           type: 'warning',
           timer: 4000
         }
         break
       case 'member-exists':
-        notificationOptions = {
+        toastOptions = {
           text: 'You are already registered',
           type: 'warning',
           timer: 4000
         }
         break
       case 'subscribed':
-        notificationOptions = {
+        toastOptions = {
           text: 'Email confirmed',
           type: 'success',
           timer: 4000
         }
         break
       case 'confirm':
-        notificationOptions = {
+        toastOptions = {
           text: 'An email to confirm your subscription has been sent',
           type: 'success',
           timer: 5000
@@ -111,17 +111,17 @@ export default function useNewsletter () {
         break
     }
 
-    if (notificationOptions.type === 'success') {
+    if (toastOptions.type === 'success') {
       $toast.success({
         title: 'Success',
-        description: notificationOptions.text,
-        timeout: notificationOptions.timer
+        description: toastOptions.text,
+        timeout: toastOptions.timer
       })
     } else {
       $toast.error({
         title: 'Error',
-        description: notificationOptions.text,
-        timeout: notificationOptions.timer
+        description: toastOptions.text,
+        timeout: toastOptions.timer
       })
     }
 
