@@ -83,8 +83,8 @@
 </template>
 
 <script setup lang="ts">
-import type { Ref } from 'vue'
-import type { User } from '~/types'
+import type { Ref, PropType } from 'vue'
+import type { User, Team } from '~/types'
 import ui from '#build/ui'
 
 const props = defineProps({
