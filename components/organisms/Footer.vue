@@ -56,7 +56,7 @@
         </ul>
 
         <USelect
-          v-model="langSelected"
+          v-model="langSelected.lang"
           :options="lang"
           name="lang"
           siez="sm"
@@ -73,7 +73,7 @@ const { $toast } = useNuxtApp()
 const { email, newsletterResult, subscribe, pending, notificationToast } = useNewsletter()
 
 const lang = ref([{ text: 'English', value: 'en' }])
-const langSelected = ref(lang[0])
+const langSelected = reactive({ lang: lang[0] })
 const links = ref([
   {
     title: 'solutions',
