@@ -137,7 +137,7 @@ const confirmTransfer = async () => {
       // eslint-disable-next-line eqeqeq
       : teams.value.filter(team => transferForm.destination == team.value)[0].slug
 
-    router.replace({ name: '@team-projects', params: { team } })
+    router.replace({ name: '@team-projects', params: { team } })
 
     $toast.success({
       title: 'Success',
