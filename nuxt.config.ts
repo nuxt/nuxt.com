@@ -67,7 +67,7 @@ export default defineNuxtConfig({
   tailwindcss: {
     config: {
       content: ['presets/*.ts'],
-      safelist: ['pl-6', 'pl-9', 'pl-12', 'pl-15', 'pl-18']
+      safelist: [3, 6, 9, 12, 15, 18, 21, 24, 27, 30].map(number => `pl-${number}`)
     }
   }
 })
