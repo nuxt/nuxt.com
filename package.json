@@ -9,6 +9,7 @@
     "test": "yarn lint"
   },
   "dependencies": {
+    "@docus/editor": "npm:@docus/editor-edge@latest",
     "@sindresorhus/slugify": "^2.1.0"
   },
   "devDependencies": {
