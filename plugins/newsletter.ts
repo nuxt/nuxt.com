@@ -78,7 +78,7 @@ export default function useNewsletter () {
         notificationOptions = {
           text: 'Invalid address',
           type: 'warning',
-          timer: 400000000
+          timer: 4000
         }
         break
       case 'sending-error':
