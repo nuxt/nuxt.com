@@ -1,40 +1,43 @@
 <template>
-  <div>
-    <div class="border-t u-border-gray-200">
-      <UContainer padded class="py-4">
-        <div class="flex items-center justify-between gap-3">
-          <div class="flex items-center gap-3">
-            <img src="/docs/framework.svg" class="h-6 rounded-md w-auto">
-            <p class="font-bold">
-              Framework
-            </p>
-          </div>
+  <DocsPage>
+    <template #header>
+      <div class="flex items-center gap-3 justify-start">
+        <img src="/docs/framework.svg" class="h-6 rounded-md w-auto">
+        <p class="font-bold">
+          Framework
+        </p>
+      </div>
 
-          <UPills :links="links" class="justify-center hidden sm:block" />
+      <UPills :links="links" class="justify-center col-span-4" />
 
-          <UButton icon="fa-brands:github" variant="transparent" href="https://github.com/" class="!p-0" />
-        </div>
-      </UContainer>
-    </div>
+      <div class="flex justify-end">
+        <UButton icon="fa-brands:github" variant="transparent" href="https://github.com/nuxt/framework" class="!p-0" />
+      </div>
+    </template>
 
-    <Page>
-      <PageGrid>
-        <template #aside>
-          <UVerticalNavigation :links="asideLinks" active-class="u-text-gray-900 u-bg-gray-200" />
-        </template>
+    <template #left>
+      <UVerticalNavigation :links="asideLinks" active-class="u-text-gray-900 u-bg-gray-200" />
+    </template>
 
-        <NuxtPage />
-      </PageGrid>
-    </Page>
-  </div>
+    <template #right>
+      <p class="text-xs font-medium uppercase tracking-wide u-text-gray-600">
+        On this page
+      </p>
+    </template>
+
+    <NuxtPage />
+  </DocsPage>
 </template>
 
 <script setup lang="ts">
 import { withBase } from 'ufo'
 
 const route = useRoute()
-const [_, first, second] = route.path.split('/')
-const path = [first, second].join('/')
+
+const path = computed(() => {
+  const [, first, second, third] = route.path.split('/')
+  return [first, second, third].join('/')
+})
 
 const withContentBase = (url: string) => withBase(url, '/api/' + useRuntimeConfig().content.basePath)
 
@@ -45,25 +48,19 @@ const { data: navigation } = await useAsyncData('framework-docs-top-nav', async 
   })
 })
 
-const currentNav = computed(
-  () => {
-    return navigation.value[0].children[0].children
-  }
-)
+const currentNav = computed(() => {
+  return navigation.value[0].children[0].children
+})
 
 const nodeToLink = link => ({ to: link.slug, label: link.title })
 
-const links = computed(
-  () => {
-    if (!currentNav.value) { return [] }
+const links = computed(() => {
+  if (!currentNav.value) { return [] }
 
-    return currentNav.value.map(nodeToLink)
-  }
-)
+  return currentNav.value.map(nodeToLink)
+})
 
-const asideLinks = computed(
-  () => {
-    return currentNav.value.find(link => link.slug.includes(path))?.children.map(nodeToLink)
-  }
-)
+const asideLinks = computed(() => {
+  return currentNav.value.find(link => link.slug.includes(path.value))?.children.map(nodeToLink)
+})
 </script>

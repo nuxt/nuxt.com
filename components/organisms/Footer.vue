@@ -1,7 +1,7 @@
 
 <template>
-  <footer class="bg-white dark:bg-black">
-    <UContainer padded class="my-8">
+  <footer class="bg-gray-50 dark:bg-black border-t u-border-gray-200">
+    <UContainer padded class="pt-12 pb-8">
       <div
         class="grid grid-cols-2 pb-12 sm:grid-cols-4 lg:grid-cols-6 gap-y-12"
       >
@@ -38,23 +38,22 @@
               type="submit"
               submit
               variant="primary"
+              label="Subscribe"
               :loading="pending"
               size="xs"
-            >
-              Subscribe
-            </UButton>
+            />
           </form>
           <ul class="flex gap-x-6">
             <li v-for="social in socialLinks" :key="social.name">
               <a :href="social.href">
-                <UIcon :name="social.name" class="w-6 h-5 u-text-gray-900 hover:u-text-gray-500" />
+                <UIcon :name="social.name" class="w-6 h-5 u-text-gray-400 hover:u-text-gray-900 transition-colors" />
               </a>
             </li>
           </ul>
         </div>
       </div>
       <div class="flex flex-col gap-3 pt-6 border-t u-border-gray-200 sm:flex-row sm:items-center sm:justify-between">
-        <div class="flex items-center gap-x-2">
+        <div class="flex items-center gap-3">
           <ThemeSelect name="theme" class="order-1 sm:order-none" size="sm" />
           <span class="text-sm u-text-gray-400">© 2022 Nuxt</span>
         </div>
