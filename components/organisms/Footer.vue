@@ -13,11 +13,13 @@
           <span class="font-semibold uppercase">{{
             item.title
           }}</span>
-          <div v-for="link in item.items" :key="link.title">
-            <ULink :to="link.to">
-              {{ link.title }}
-            </ULink>
-          </div>
+          <ul class="flex flex-col gap-y-5">
+            <li v-for="link in item.items" :key="link.title">
+              <ULink :to="link.to">
+                {{ link.title }}
+              </ULink>
+            </li>
+          </ul>
         </div>
         <div
           class="flex flex-col items-start col-span-2 gap-5 sm:col-span-4 lg:col-span-2"
@@ -42,10 +44,20 @@
               Subscribe
             </UButton>
           </form>
+          <ul class="flex gap-x-6">
+            <li v-for="social in socialLinks" :key="social.name">
+              <a :href="social.href">
+                <UIcon :name="social.name" class="w-6 h-5 u-text-gray-900 hover:u-text-gray-500" />
+              </a>
+            </li>
+          </ul>
         </div>
       </div>
       <div class="flex flex-col gap-3 pt-6 border-t u-border-gray-200 sm:flex-row sm:items-center sm:justify-between">
-        <ThemeSelect name="theme" class="order-1 sm:order-none" size="sm" />
+        <div class="flex items-center gap-x-2">
+          <ThemeSelect name="theme" class="order-1 sm:order-none" size="sm" />
+          <span class="text-sm u-text-gray-400">© 2022 Nuxt</span>
+        </div>
 
         <ul class="flex text-sm gap-x-6">
           <li v-for="link in legalLinks" :key="link.title">
@@ -57,6 +69,7 @@
 
         <USelect
           v-model="langSelected.lang"
+          base-class="u-text-gray-400"
           :options="lang"
           name="lang"
           siez="sm"
@@ -112,6 +125,12 @@ const links = ref([
       { title: 'Find an Expert', to: '#' }
     ]
   }
+])
+
+const socialLinks = ref([
+  { name: 'fa-brands:twitter', href: 'https://twitter.com/nuxt_js' },
+  { name: 'fa-brands:github', href: 'https://github.com/nuxt' },
+  { name: 'fa-brands:discord', href: 'https://discord.com/invite/ps2h6QT' }
 ])
 
 const legalLinks = ref([
