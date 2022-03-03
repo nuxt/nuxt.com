@@ -16,9 +16,7 @@
       />
     </template>
 
-    <div class="whitespace-pre break-words text-sm font-mono focus:outline-none" contenteditable>
-      {{ content }}
-    </div>
+    <DocusEditor v-model="content" />
   </ProjectPage>
 </template>
 

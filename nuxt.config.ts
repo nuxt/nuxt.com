@@ -30,6 +30,7 @@ export default defineNuxtConfig({
   buildModules: [
     '@nuxthq/ui',
     '@nuxtjs/strapi',
+    '@docus/editor',
     'vue-plausible'
   ],
   publicRuntimeConfig: {
