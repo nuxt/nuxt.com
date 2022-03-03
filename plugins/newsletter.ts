@@ -1,6 +1,6 @@
 export default function useNewsletter () {
   const { $toast } = useNuxtApp()
-  const $config = useRuntimeConfig()
+  const client = useStrapiClient()
   const route = useRoute()
   const email = ref('')
   const newsletterResult = ref('')
@@ -15,15 +15,12 @@ export default function useNewsletter () {
     pending.value = true
 
     try {
-      await $fetch(`${apiURL}/api/newsletter/confirm`, {
+      await client('/api/newsletter/confirm', {
         method: 'POST',
-        headers: {
-          Accept: 'application/json'
-        },
+        baseURL: apiURL,
         body: {
           email: email.value
         }
-
       })
       newsletterResult.value = 'confirm'
     } catch (e) {
@@ -37,7 +34,8 @@ export default function useNewsletter () {
     pending.value = true
 
     try {
-      await $fetch(`${apiURL}/api/newsletter/subscribe`, {
+      await client('/api/newsletter/subscribe', {
+        baseURL: apiURL,
         method: 'POST',
         headers: {
           Accept: 'application/json'
@@ -57,7 +55,7 @@ export default function useNewsletter () {
   }
 
   const newsletterError = (err) => {
-    const { statusCode } = err.data
+    const { statusCode } = err
     newsletterResult.value = 'failure'
 
     if (statusCode === 419) { newsletterResult.value = 'member-exists' }
@@ -80,7 +78,7 @@ export default function useNewsletter () {
         notificationOptions = {
           text: 'Invalid address',
           type: 'warning',
-          timer: 4000
+          timer: 400000000
         }
         break
       case 'sending-error':
