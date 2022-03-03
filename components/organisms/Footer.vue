@@ -67,13 +67,15 @@
           </li>
         </ul>
 
+        <!--
         <USelect
           v-model="langSelected.lang"
           base-class="u-text-gray-400"
           :options="lang"
           name="lang"
-          siez="sm"
+          size="sm"
         />
+        -->
       </div>
     </UContainer>
   </footer>
@@ -84,65 +86,19 @@ import useNewsletter from '~/plugins/newsletter'
 
 const { email, newsletterResult, subscribe, pending, notificationToast } = useNewsletter()
 
-const lang = ref([{ text: 'English', value: 'en' }])
-const langSelected = reactive({ lang: lang[0] })
-const links = ref([
-  {
-    title: 'solutions',
-    items: [
-      { title: 'Developers', to: '#' },
-      { title: 'Independants', to: '#' },
-      { title: 'Agencies', to: '#' },
-      { title: 'Enterprises', to: '#' },
-      { title: 'Certifications', to: '#' }
-    ]
-  },
-  {
-    title: 'Resources',
-    items: [
-      { title: 'Articles', to: '#' },
-      { title: 'Case Studies', to: '#' },
-      { title: 'Design Kit', to: '#' },
-      { title: 'Live Events', to: '#' },
-      { title: 'Video Courses', to: '#' }
-    ]
-  },
-  {
-    title: 'Company',
-    items: [
-      { title: 'About', to: '#' },
-      { title: 'Contact', to: '#' },
-      { title: 'Careers', to: '#' },
-      { title: 'Customers', to: '#' },
-      { title: 'Partners', to: '#' }
-    ]
-  },
-  {
-    title: 'Support',
-    items: [
-      { title: 'Help Center', to: '#' },
-      { title: 'Book a Session', to: '#' },
-      { title: 'Find an Expert', to: '#' }
-    ]
-  }
-])
+const { findOne } = useContentQuery().where({ id: 'content:footer.md' })
 
-const socialLinks = ref([
-  { name: 'fa-brands:twitter', href: 'https://twitter.com/nuxt_js' },
-  { name: 'fa-brands:github', href: 'https://github.com/nuxt' },
-  { name: 'fa-brands:discord', href: 'https://discord.com/invite/ps2h6QT' }
-])
+const { data: footerData } = await useAsyncData('footer-content', findOne)
 
-const legalLinks = ref([
-  { title: 'License', to: '#' },
-  { title: 'Terms', to: '#' },
-  { title: 'Privacy', to: '#' }
-])
+const { legalLinks, links, socialLinks } = footerData.value
 
-watch(newsletterResult, (newVal) => {
-  if (newVal !== '') {
-    notificationToast(newVal)
-  }
-})
+// const lang = ref([{ text: 'English', value: 'en' }])
 
+// const langSelected = reactive({ lang: lang[0] })
+
+// watch(newsletterResult, (newVal) => {
+//   if (newVal !== '') {
+//     notificationToast(newVal)
+//   }
+// })
 </script>

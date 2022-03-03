@@ -22,7 +22,7 @@ export default defineNuxtConfig({
   },
   components: {
     loader: true,
-    dirs: ['~/components/atoms', '~/components/molecules', '~/components/organisms', '~/components/templates']
+    dirs: [{ path: '~/components/atoms', global: true }, '~/components/molecules', '~/components/organisms', '~/components/templates']
   },
   css: [
     '~/assets/css/fonts.css'
@@ -30,6 +30,7 @@ export default defineNuxtConfig({
   buildModules: [
     '@nuxthq/ui',
     '@nuxtjs/strapi',
+    '@nuxt/content',
     '@docus/editor',
     'vue-plausible'
   ],
@@ -67,6 +68,9 @@ export default defineNuxtConfig({
   },
   tailwindcss: {
     config: {
+      plugins: [
+        require('@tailwindcss/typography')
+      ],
       content: ['presets/*.ts'],
       safelist: [3, 6, 9, 12, 15, 18, 21, 24, 27, 30].map(number => `pl-${number}`)
     }

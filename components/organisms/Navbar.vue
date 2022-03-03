@@ -41,7 +41,7 @@ const links = computed(() => {
 
   return [{
     label: 'Docs',
-    to: { name: 'docs' },
+    to: { name: 'docs-framework' },
     exact: true
   }, {
     label: 'Integrations',
