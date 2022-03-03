@@ -69,7 +69,6 @@
 <script setup lang="ts">
 import useNewsletter from '~/plugins/newsletter'
 
-const { $toast } = useNuxtApp()
 const { email, newsletterResult, subscribe, pending, notificationToast } = useNewsletter()
 
 const lang = ref([{ text: 'English', value: 'en' }])
