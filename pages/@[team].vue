@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="flex flex-col flex-1">
     <NuxtPage :team="team" />
   </div>
 </template>
