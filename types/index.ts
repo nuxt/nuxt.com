@@ -93,6 +93,10 @@ export interface File {
   isDeleted?: boolean
 }
 
+export interface Branch {
+  name: string
+}
+
 export interface GitHubAccount {
   login: string
   avatar_url: string
