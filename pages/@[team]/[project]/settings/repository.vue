@@ -11,19 +11,20 @@
         <div class="flex items-center justify-center gap-4">
           <UIcon name="fa-brands:github" class="w-6 h-6" />
           <div class="flex flex-col">
-            <div class="flex items-center justify-center gap-1">
-              <div class="font-semibold u-text-gray-900">
-                {{ project.repository.owner }}/{{ project.name }}
-              </div>
+            <a
+              :href="`https://github.com/${project.repository.owner}/${project.name}`"
+              target="_blank"
+              rel="noopener"
+              class="flex items-center gap-1 font-semibold u-text-gray-900 hover:underline"
+            >
+              {{ project.repository.owner }}/{{ project.name }}
               <UIcon name="heroicons-solid:external-link" class="w-4 h-4" />
-            </div>
+            </a>
             <div class="text-sm u-text-gray-400">
               Updated {{ useTimeAgo(new Date(project.updatedAt)).value }}
             </div>
           </div>
         </div>
-        <!-- TODO: disconnect -->
-        <UButton label="Disconnect" size="sm" />
       </UCard>
     </UCard>
   </div>
