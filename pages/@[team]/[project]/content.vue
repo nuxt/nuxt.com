@@ -40,6 +40,7 @@ const client = useStrapiClient()
 const branch: Ref<Branch> = ref(null)
 const file: Ref<File> = ref(null)
 const content: Ref<string> = ref('')
+const updatedContent: Ref<string> = ref('')
 const parsedContent: Ref<string> = ref('')
 const parsedMatter: Ref<string> = ref('')
 
@@ -117,8 +118,7 @@ function stringifyFrontMatter (content, data = {}) {
 }
 
 function saveContent (content) {
-  const updatedContent = stringifyFrontMatter(content, parsedMatter.value)
-  // TODO
+  updatedContent.value = stringifyFrontMatter(content, parsedMatter.value)
 }
 
 function findFileFromPath (path, files) {
