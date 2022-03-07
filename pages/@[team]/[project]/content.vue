@@ -69,11 +69,7 @@ watch(file, async () => {
     return
   }
 
-  const { content: fetchedContent } = await client(`/projects/${props.project.id}/file`, {
-    params: {
-      path: file.value.path
-    }
-  })
+  const { content: fetchedContent } = await client(`/projects/${props.project.id}/files/${encodeURIComponent(file.value.path)}`)
 
   content.value = fetchedContent
 }, { immediate: true })
