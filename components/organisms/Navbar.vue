@@ -1,15 +1,27 @@
 <template>
   <header class="bg-white dark:bg-black">
     <UContainer padded>
-      <div class="grid grid-cols-2 sm:grid-cols-6 gap-3 items-center h-16">
+      <div class="grid items-center h-16 grid-cols-2 gap-3 sm:grid-cols-6">
         <div class="flex justify-start">
-          <NuxtLink to="/" class="block u-text-black hover:text-[#00DC82] transition-colors">
-            <LogoFull class="h-8 w-auto hidden sm:block" />
-            <Logo class="h-6 w-auto block sm:hidden" />
+          <NuxtLink to="/" class="block u-text-black">
+            <LogoFull class="hidden w-auto h-8 sm:block" />
+            <Logo class="block w-auto h-6 sm:hidden" />
           </NuxtLink>
         </div>
 
-        <UPills :links="links" class="justify-center col-span-4" />
+        <div class="flex justify-center col-span-4 gap-x-8">
+          <ULink
+            v-for="link in links"
+            :key="link.label"
+            :to="link.to"
+            :exact="link.exact"
+            class="hover:u-text-gray-900"
+            active-class="font-medium u-text-gray-900"
+            inactive-class="u-text-gray-500"
+          >
+            {{ link.label }}
+          </ULink>
+        </div>
 
         <div class="flex justify-end">
           <TeamsDropdown v-if="user" />
@@ -17,7 +29,7 @@
             v-else
             label="Login"
             icon="fa-brands:github"
-            variant="secondary"
+            variant="primary"
             size="sm"
             @click="onClick"
           />
@@ -42,7 +54,7 @@ const links = computed(() => {
   return [{
     label: 'Docs',
     to: { name: 'docs-framework' },
-    exact: true
+    exact: false
   }, {
     label: 'Integrations',
     to: { name: 'integrations' },
