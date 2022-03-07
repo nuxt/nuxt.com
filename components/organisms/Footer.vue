@@ -1,6 +1,6 @@
 
 <template>
-  <footer class="bg-gray-50 dark:bg-black border-t u-border-gray-200">
+  <footer class="u-bg-white border-t u-border-gray-200">
     <UContainer padded class="pt-12 pb-8">
       <div
         class="grid grid-cols-2 pb-12 sm:grid-cols-4 lg:grid-cols-6 gap-y-12"
@@ -26,20 +26,21 @@
         >
           <LogoFull class="w-auto h-12 u-text-gray-900" />
           <span class="text-sm u-text-gray-700">Stay up to date with our newsletter</span>
-          <form class="flex w-full gap-3" @submit.prevent="subscribe">
+          <form class="flex w-full gap-3" @submit.prevent="onSubmit">
             <UInput
-              v-model="email"
+              v-model="form.email"
               name="email"
               placeholder="Enter your email"
               class="w-60 lg:flex-1"
               size="sm"
+              required
             />
             <UButton
               type="submit"
               submit
               variant="primary"
+              :loading="loading"
               label="Subscribe"
-              :loading="pending"
               size="xs"
             />
           </form>
@@ -66,24 +67,26 @@
           </li>
         </ul>
 
-        <!--
         <USelect
-          v-model="langSelected.lang"
-          base-class="u-text-gray-400"
-          :options="lang"
+          v-model="lang"
+          :options="langs"
           name="lang"
           size="sm"
         />
-        -->
       </div>
     </UContainer>
   </footer>
 </template>
 
 <script setup lang="ts">
-import useNewsletter from '~/plugins/newsletter'
+const form = reactive({
+  email: ''
+})
+const loading = ref(false)
 
-const { email, newsletterResult, subscribe, pending, notificationToast } = useNewsletter()
+function onSubmit () {
+
+}
 
 const { findOne } = useContentQuery().where({ id: 'content:footer.md' })
 
@@ -91,13 +94,6 @@ const { data: footerData } = await useAsyncData('footer-content', findOne)
 
 const { legalLinks, links, socialLinks } = footerData.value
 
-// const lang = ref([{ text: 'English', value: 'en' }])
-
-// const langSelected = reactive({ lang: lang[0] })
-
-// watch(newsletterResult, (newVal) => {
-//   if (newVal !== '') {
-//     notificationToast(newVal)
-//   }
-// })
+const langs = ref([{ text: 'English', value: 'en' }])
+const lang = ref(langs.value[0])
 </script>
