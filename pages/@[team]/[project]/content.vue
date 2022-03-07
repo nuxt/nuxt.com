@@ -7,12 +7,10 @@
     <template #aside-header>
       <UButton
         v-if="branch"
-        icon="heroicons-solid:switch-horizontal"
-        trailing
+        icon="mdi:source-branch"
         :label="branch.name"
-        variant="transparent"
-        size="sm"
-        class="-mr-3"
+        variant="secondary"
+        size="xs"
       />
     </template>
 
