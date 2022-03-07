@@ -15,7 +15,7 @@
               :href="`https://github.com/${project.repository.owner}/${project.name}`"
               target="_blank"
               rel="noopener"
-              class="flex items-center justify-center gap-1 font-semibold u-text-gray-900 hover:underline"
+              class="flex items-center gap-1 font-semibold u-text-gray-900 hover:underline"
             >
               {{ project.repository.owner }}/{{ project.name }}
               <UIcon name="heroicons-solid:external-link" class="w-4 h-4" />
