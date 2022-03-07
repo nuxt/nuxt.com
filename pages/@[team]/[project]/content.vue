@@ -14,12 +14,14 @@
       />
     </template>
 
-    <DocusEditor v-model="content" />
+    <DocusEditor :model-value="parsedContent" @update:model-value="saveContent" />
   </ProjectPage>
 </template>
 
 <script setup lang="ts">
 import type { PropType, Ref } from 'vue'
+import matter from 'gray-matter'
+import { unflatten, flatten } from 'flat'
 import type { Team, Project, File, Branch } from '~/types'
 
 const props = defineProps({
@@ -38,6 +40,8 @@ const client = useStrapiClient()
 const branch: Ref<Branch> = ref(null)
 const file: Ref<File> = ref(null)
 const content: Ref<string> = ref('')
+const parsedContent: Ref<string> = ref('')
+const parsedMatter: Ref<string> = ref('')
 
 const { data: branches, refresh: refreshBranches } = await useAsyncData('files', () => client<Branch[]>(`/projects/${props.project.id}/branches`))
 
@@ -46,6 +50,10 @@ const { data: files, refresh: refreshFiles } = await useAsyncData('files', () =>
     branch: branch.value?.name
   }
 }))
+
+watch(content, () => {
+  setupEditor()
+}, { immediate: true })
 
 // Select file when files changes
 watch(files, () => {
@@ -74,6 +82,44 @@ watch(file, async () => {
 
 // Fetch files when branch changes
 watch(branch, async () => await refreshFiles())
+
+function setupEditor () {
+  const { content, matter } = parseFrontMatter()
+
+  parsedContent.value = content
+  parsedMatter.value = matter
+}
+
+function parseFrontMatter () {
+  const { data, content: c, ...rest } = matter(content.value)
+
+  // unflatten frontmatter data
+  // convert `parent.child` keys into `parent: { child: ... }`
+  const unflattenData = unflatten(data || {}, {})
+
+  return {
+    content: c.replace(/^\n/, ''),
+    matter: unflattenData,
+    ...rest
+  }
+}
+
+function stringifyFrontMatter (content, data = {}) {
+  // flatten frontmatter data
+  // convert `parent: { child: ... }` into flat keys `parent.child`
+  data = flatten(data, {
+    // preserve arrays and their contents as is and do not waltk through arrays
+    // flatten array will be like `parent.0.child` and `parent.1.child` with is not readable
+    safe: true
+  })
+
+  return matter.stringify(`\n${content}`, data)
+}
+
+function saveContent (content) {
+  const updatedContent = stringifyFrontMatter(content, parsedMatter.value)
+  // TODO
+}
 
 function findFileFromPath (path, files) {
   for (const file of files) {
