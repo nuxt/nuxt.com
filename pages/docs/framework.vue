@@ -1,14 +1,25 @@
 <template>
   <DocsPage>
     <template #header>
-      <div class="flex items-center gap-3 justify-start">
-        <img src="/docs/framework.svg" class="h-6 rounded-md w-auto">
+      <div class="flex items-center justify-start gap-3">
+        <img src="/docs/framework.svg" class="w-auto h-6 rounded-md">
         <p class="font-bold">
           Framework
         </p>
       </div>
 
-      <UPills :links="links" class="justify-center col-span-4" />
+      <div class="flex justify-center col-span-4 gap-x-8">
+        <ULink
+          v-for="link in links"
+          :key="link.label"
+          :to="link.to"
+          class="text-sm hover:u-text-gray-900"
+          active-class="font-medium u-text-gray-900"
+          inactive-class="u-text-gray-500"
+        >
+          {{ link.label }}
+        </ULink>
+      </div>
 
       <div class="flex justify-end">
         <UButton icon="fa-brands:github" variant="transparent" href="https://github.com/nuxt/framework" class="!p-0" />
@@ -20,7 +31,7 @@
     </template>
 
     <template #right>
-      <p class="text-xs font-medium uppercase tracking-wide u-text-gray-600">
+      <p class="text-xs font-medium tracking-wide uppercase u-text-gray-600">
         On this page
       </p>
     </template>
