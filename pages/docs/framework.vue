@@ -16,6 +16,7 @@
           class="text-sm hover:u-text-gray-900"
           active-class="font-medium u-text-gray-900"
           inactive-class="u-text-gray-500"
+          :exact="true"
         >
           {{ link.label }}
         </ULink>
