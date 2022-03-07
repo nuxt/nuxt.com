@@ -10,14 +10,16 @@
   },
   "dependencies": {
     "@docus/editor": "npm:@docus/editor-edge@latest",
+    "@nuxt/content": "npm:@nuxt/content-edge@latest",
     "@sindresorhus/slugify": "^2.1.0"
   },
   "devDependencies": {
     "@nuxthq/ui": "npm:@nuxthq/ui-edge@latest",
     "@nuxtjs/eslint-config-typescript": "^8.0.0",
     "@nuxtjs/strapi": "npm:@nuxtjs/strapi-edge@latest",
+    "@tailwindcss/typography": "^0.5.2",
     "eslint": "^8.10.0",
-    "nuxt3": "^3.0.0-27434755.39f7eb2",
+    "nuxt3": "^3.0.0-27437402.494f85a",
     "standard-version": "^9.3.2",
     "typescript": "^4.6.2",
     "vue-plausible": "^1.3.1"

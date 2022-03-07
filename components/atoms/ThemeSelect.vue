@@ -1,28 +1,19 @@
 <template>
-  <USelect
-    v-model="colorMode.preference"
-    name="theme"
-    :options="options"
+  <UToggle
+    v-model="isDark"
+    icon-on="heroicons-outline:moon"
+    icon-off="heroicons-outline:sun"
   />
 </template>
 
 <script setup>
 const colorMode = useColorMode()
-const options = [
-  {
-    text: 'System',
-    value: 'system',
-    icon: 'heroicons-outline:desktop-computer'
+const isDark = computed({
+  get () {
+    return colorMode.value === 'dark'
   },
-  {
-    text: 'Dark',
-    value: 'dark',
-    icon: 'heroicons-outline:moon'
-  },
-  {
-    text: 'Light',
-    value: 'light',
-    icon: 'heroicons-outline:sun'
+  set () {
+    colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'
   }
-]
+})
 </script>

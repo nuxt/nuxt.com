@@ -33,11 +33,19 @@ const selectCustom = {
 
 const toggle = {
   base: 'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:u-ring-gray-900 focus:ring-offset-white dark:focus:ring-offset-black',
-  active: 'u-bg-gray-800'
+  active: 'u-bg-gray-200',
+  inactive: 'u-bg-gray-200',
+  container: {
+    base: 'pointer-events-none relative inline-block h-5 w-5 rounded-full u-bg-white shadow transform ring-0 transition ease-in-out duration-200'
+  },
+  icon: {
+    on: 'h-3 w-3 u-text-gray-600',
+    off: 'h-3 w-3 u-text-gray-400'
+  }
 }
 
 const container = {
-  constrained: 'max-w-6xl'
+  constrained: 'max-w-7xl'
 }
 
 export default {
