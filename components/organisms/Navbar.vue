@@ -1,7 +1,7 @@
 <template>
   <header class="bg-white dark:bg-black">
     <UContainer padded>
-      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 items-center h-16">
+      <div class="grid grid-cols-2 sm:grid-cols-6 gap-3 items-center h-16">
         <div class="flex justify-start">
           <NuxtLink to="/" class="block u-text-black hover:text-[#00DC82] transition-colors">
             <LogoFull class="h-8 w-auto hidden sm:block" />
@@ -9,7 +9,7 @@
           </NuxtLink>
         </div>
 
-        <UPills :links="links" class="justify-center hidden sm:block" />
+        <UPills :links="links" class="justify-center col-span-4" />
 
         <div class="flex justify-end">
           <TeamsDropdown v-if="user" />
@@ -41,7 +41,7 @@ const links = computed(() => {
 
   return [{
     label: 'Docs',
-    to: { name: 'docs' },
+    to: { name: 'docs-framework' },
     exact: true
   }, {
     label: 'Integrations',
