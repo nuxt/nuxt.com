@@ -114,6 +114,7 @@ function stringifyFrontMatter (content, data = {}) {
     safe: true
   })
 
+  // eslint-disable-next-line import/no-named-as-default-member
   return matter.stringify(`\n${content}`, data)
 }
 
