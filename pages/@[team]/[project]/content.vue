@@ -11,10 +11,46 @@
         :label="branch.name"
         variant="secondary"
         size="xs"
+        @click="branchModal = true"
       />
     </template>
 
     <DocusEditor :model-value="parsedContent" @update:model-value="saveContent" />
+
+    <UModal
+      v-model="branchModal"
+      header-class
+      body-class="flex-1 h-80 lg:overflow-y-auto"
+    >
+      <template #header>
+        <UInput
+          v-model="branchQuery"
+          name="branchQuery"
+          placeholder="Search branch..."
+          icon="heroicons-outline:search"
+          appearance="none"
+          class="w-full pl-1"
+          size="xl"
+          autofocus
+        />
+      </template>
+
+      <div v-if="filteredBranches?.length" class="divide-y u-divide-gray-200">
+        <div v-for="b in filteredBranches" :key="b.name" class="group flex items-center justify-between gap-3 px-4 py-2.5 cursor-pointer hover:u-bg-gray-50" @click="onBranchClick(b)">
+          <div class="flex items-center gap-3 truncate">
+            <UIcon name="mdi:source-branch" class="flex-shrink-0 w-4 h-4 u-text-gray-400" />
+            <span class="text-sm font-medium truncate u-text-gray-700">{{ b.name }}</span>
+            <UIcon v-if="branch.name === b.name" name="heroicons-outline:check" class="flex-shrink-0 w-4 h-4 text-primary-500" />
+          </div>
+
+          <UIcon
+            name="heroicons-outline:chevron-right"
+            class="flex-shrink-0 invisible w-5 h-5 group-hover:visible u-text-gray-400"
+          />
+        </div>
+      </div>
+      <span v-else class="block p-4 text-sm text-center u-text-gray-500">No branch matching your query</span>
+    </UModal>
   </ProjectPage>
 </template>
 
@@ -36,20 +72,26 @@ const props = defineProps({
 const client = useStrapiClient()
 const { parseFrontMatter, stringifyFrontMatter } = useMarkdown()
 
-const branch: Ref<Branch> = ref(null)
+const branch: Ref<Branch> = ref({ name: props.project.repository.default_branch })
 const file: Ref<File> = ref(null)
 const content: Ref<string> = ref('')
 const updatedContent: Ref<string> = ref('')
 const parsedContent: Ref<string> = ref('')
 const parsedMatter: Ref<string> = ref('')
+const branchModal = ref(false)
+const branchQuery = ref('')
 
-const { data: branches, refresh: refreshBranches } = await useAsyncData('branches', () => client<Branch[]>(`/projects/${props.project.id}/branches`))
+const { data: branches, refresh: refreshBranches } = await useAsyncData('branches', () => client<Branch[]>(`/projects/${props.project.id}/branches`), { lazy: true })
 
 const { data: files, refresh: refreshFiles } = await useAsyncData('files', () => client<File[]>(`/projects/${props.project.id}/files`, {
   params: {
-    branch: branch.value?.name
+    ref: branch.value?.name
   }
 }))
+
+const filteredBranches = computed(() => {
+  return branches.value.filter(b => b.name.search(new RegExp(branchQuery.value, 'i')) !== -1)
+})
 
 // Select file when files changes
 watch(files, () => {
@@ -69,7 +111,11 @@ watch(file, async () => {
     return
   }
 
-  const { content: fetchedContent } = await client(`/projects/${props.project.id}/files/${encodeURIComponent(file.value.path)}`)
+  const { content: fetchedContent } = await client(`/projects/${props.project.id}/files/${encodeURIComponent(file.value.path)}`, {
+    params: {
+      ref: branch.value?.name
+    }
+  })
 
   content.value = fetchedContent
 }, { immediate: true })
@@ -107,5 +153,11 @@ function selectFile (f: File) {
 
 function selectBranch (b: Branch) {
   branch.value = b
+}
+
+function onBranchClick (b: Branch) {
+  selectBranch(b)
+  branchModal.value = false
+  branchQuery.value = ''
 }
 </script>
