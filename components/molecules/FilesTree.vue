@@ -4,7 +4,7 @@
       <div
         class="group border-r-2 py-2 pr-6 flex items-center text-sm font-medium focus:u-bg-gray-50 focus:outline-none w-full cursor-pointer"
         :class="{
-          [`pl-${6 + (level * 3)}`]: true,
+          [`pl-[${24 + (level * 12)}px]`]: true,
           'u-bg-gray-100 u-border-gray-800 u-text-gray-900': isSelected(file),
           'border-transparent u-text-gray-500 hover:u-text-gray-900 hover:u-bg-gray-50': !isSelected(file)
         }"

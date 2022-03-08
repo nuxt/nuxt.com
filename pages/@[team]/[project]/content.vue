@@ -20,8 +20,6 @@
 
 <script setup lang="ts">
 import type { PropType, Ref } from 'vue'
-import matter from 'gray-matter'
-import { unflatten, flatten } from 'flat'
 import type { Team, Project, File, Branch } from '~/types'
 
 const props = defineProps({
@@ -36,6 +34,7 @@ const props = defineProps({
 })
 
 const client = useStrapiClient()
+const { parseFrontMatter, stringifyFrontMatter } = useMarkdown()
 
 const branch: Ref<Branch> = ref(null)
 const file: Ref<File> = ref(null)
@@ -44,17 +43,13 @@ const updatedContent: Ref<string> = ref('')
 const parsedContent: Ref<string> = ref('')
 const parsedMatter: Ref<string> = ref('')
 
-const { data: branches, refresh: refreshBranches } = await useAsyncData('files', () => client<Branch[]>(`/projects/${props.project.id}/branches`))
+const { data: branches, refresh: refreshBranches } = await useAsyncData('branches', () => client<Branch[]>(`/projects/${props.project.id}/branches`))
 
 const { data: files, refresh: refreshFiles } = await useAsyncData('files', () => client<File[]>(`/projects/${props.project.id}/files`, {
   params: {
     branch: branch.value?.name
   }
 }))
-
-watch(content, () => {
-  setupEditor()
-}, { immediate: true })
 
 // Select file when files changes
 watch(files, () => {
@@ -65,9 +60,7 @@ watch(files, () => {
 
 // Select branch when branches changes
 watch(branches, () => {
-  const branchName = localStorage.getItem(`projects-${props.project.id}-branch`)
-
-  selectBranch((branchName && branches.value.find(branch => branch.name === branchName)) || branches.value.find(branch => branch.name === props.project.repository.default_branch) || branches.value[0])
+  selectBranch(branches.value.find(branch => branch.name === props.project.repository.default_branch) || branches.value[0])
 }, { immediate: true })
 
 // Fetch content when file changes
@@ -84,39 +77,13 @@ watch(file, async () => {
 // Fetch files when branch changes
 watch(branch, async () => await refreshFiles())
 
-function setupEditor () {
-  const { content, matter } = parseFrontMatter()
+// Split markdown front-matter when content changes
+watch(content, () => {
+  const { content: c, matter } = parseFrontMatter(content.value)
 
-  parsedContent.value = content
+  parsedContent.value = c
   parsedMatter.value = matter
-}
-
-function parseFrontMatter () {
-  const { data, content: c, ...rest } = matter(content.value)
-
-  // unflatten frontmatter data
-  // convert `parent.child` keys into `parent: { child: ... }`
-  const unflattenData = unflatten(data || {}, {})
-
-  return {
-    content: c.replace(/^\n/, ''),
-    matter: unflattenData,
-    ...rest
-  }
-}
-
-function stringifyFrontMatter (content, data = {}) {
-  // flatten frontmatter data
-  // convert `parent: { child: ... }` into flat keys `parent.child`
-  data = flatten(data, {
-    // preserve arrays and their contents as is and do not waltk through arrays
-    // flatten array will be like `parent.0.child` and `parent.1.child` with is not readable
-    safe: true
-  })
-
-  // eslint-disable-next-line import/no-named-as-default-member
-  return matter.stringify(`\n${content}`, data)
-}
+}, { immediate: true })
 
 function saveContent (content) {
   updatedContent.value = stringifyFrontMatter(content, parsedMatter.value)
@@ -140,6 +107,5 @@ function selectFile (f: File) {
 
 function selectBranch (b: Branch) {
   branch.value = b
-  localStorage.setItem(`projects-${props.project.id}-branch`, branch.value?.name)
 }
 </script>
