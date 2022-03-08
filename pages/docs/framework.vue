@@ -2,8 +2,7 @@
   <DocsPage>
     <template #header>
       <div class="flex items-center justify-start gap-3">
-        <img src="/docs/framework.svg" class="w-auto h-6 rounded-md">
-        <p class="font-bold">
+        <p class="font-semibold">
           Framework
         </p>
       </div>
@@ -13,8 +12,8 @@
           v-for="link in links"
           :key="link.label"
           :to="link.to"
-          class="text-sm hover:u-text-gray-900"
-          active-class="font-medium u-text-gray-900"
+          class="text-sm font-medium hover:u-text-gray-900"
+          active-class="font-semibold u-text-gray-900"
           inactive-class="u-text-gray-500"
           exact
         >
