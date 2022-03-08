@@ -1,6 +1,6 @@
 
 <template>
-  <footer class="u-bg-white border-t u-border-gray-200">
+  <footer class="u-bg-white">
     <UContainer padded class="pt-12 pb-8">
       <div
         class="grid grid-cols-2 pb-12 sm:grid-cols-4 lg:grid-cols-6 gap-y-12"
@@ -47,7 +47,7 @@
           <ul class="flex gap-x-6">
             <li v-for="social in socialLinks" :key="social.name">
               <a :href="social.href">
-                <UIcon :name="social.name" class="w-6 h-5 u-text-gray-400 hover:u-text-gray-900 transition-colors" />
+                <UIcon :name="social.name" class="w-6 h-5 transition-colors u-text-gray-400 hover:u-text-gray-900" />
               </a>
             </li>
           </ul>

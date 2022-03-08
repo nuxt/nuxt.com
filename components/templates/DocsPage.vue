@@ -1,8 +1,16 @@
 <template>
-  <div class="u-bg-white flex-1">
-    <div v-if="$slots.header" class="border-y u-border-gray-200 u-bg-white z-[1] sticky top-0">
+  <div class="relative flex-1">
+    <div
+      v-if="$slots.header"
+      ref="header"
+      class="z-[1] sticky top-0"
+      :class="{ 'backdrop-blur-md shadow shadow-gray-200': y > 80 }"
+    >
+      <div class="absolute top-0 w-full h-16 bg-white bg-opacity-75 dark:bg-black" />
       <UContainer padded>
-        <div class="grid grid-cols-2 sm:grid-cols-6 gap-3 items-center justify-between h-12">
+        <div
+          class="relative grid items-center justify-between h-16 grid-cols-2 gap-3 sm:grid-cols-6"
+        >
           <slot name="header" />
         </div>
       </UContainer>
@@ -11,7 +19,7 @@
     <main class="relative py-8">
       <UContainer>
         <div class="lg:grid lg:grid-cols-12 lg:gap-10 lg:relative">
-          <aside class="pb-8 lg:pb-0 lg:sticky lg:top-12 sm:px-6 lg:px-0 lg:pt-8 lg:-mt-8 lg:self-start lg:col-span-3">
+          <aside class="pb-8 lg:pb-0 lg:sticky lg:top-16 sm:px-6 lg:px-0 lg:pt-8 lg:-mt-8 lg:self-start lg:col-span-3">
             <slot name="left" />
           </aside>
 
@@ -27,3 +35,9 @@
     </main>
   </div>
 </template>
+
+<script setup lang="ts">
+import { useWindowScroll } from '@vueuse/core'
+
+const { y } = useWindowScroll()
+</script>
