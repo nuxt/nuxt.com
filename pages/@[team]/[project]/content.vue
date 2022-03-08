@@ -19,7 +19,8 @@
 
     <UModal
       v-model="branchModal"
-      body-class="flex-1 lg:overflow-y-auto"
+      header-class
+      body-class="flex-1 h-80 lg:overflow-y-auto"
     >
       <template #header>
         <UInput
@@ -27,18 +28,28 @@
           name="branchQuery"
           placeholder="Search branch..."
           icon="heroicons-outline:search"
-          class="w-full"
-          auto-focus
+          appearance="none"
+          class="w-full pl-1"
+          size="xl"
+          autofocus
         />
       </template>
 
       <div v-if="filteredBranches?.length" class="divide-y u-divide-gray-200">
-        <div v-for="b in filteredBranches" :key="b.name" class="flex items-center py-3.5 px-4 sm:px-6 gap-3 cursor-pointer hover:u-bg-gray-50" @click="onBranchClick(b)">
-          <UIcon :name="branch.name === b.name ? 'heroicons-outline:check' : 'mdi:source-branch'" class="w-4 h-4" />
-          <span class="text-sm font-medium u-text-gray-900">{{ b.name }}</span>
+        <div v-for="b in filteredBranches" :key="b.name" class="group flex items-center justify-between gap-3 px-4 py-2.5 cursor-pointer hover:u-bg-gray-50" @click="onBranchClick(b)">
+          <div class="flex items-center gap-3 truncate">
+            <UIcon name="mdi:source-branch" class="flex-shrink-0 w-4 h-4 u-text-gray-400" />
+            <span class="text-sm font-medium truncate u-text-gray-700">{{ b.name }}</span>
+            <UIcon v-if="branch.name === b.name" name="heroicons-outline:check" class="flex-shrink-0 w-4 h-4 text-primary-500" />
+          </div>
+
+          <UIcon
+            name="heroicons-outline:chevron-right"
+            class="flex-shrink-0 invisible w-5 h-5 group-hover:visible u-text-gray-400"
+          />
         </div>
       </div>
-      <span v-else class="block text-center p-4">No branch matching your query</span>
+      <span v-else class="block p-4 text-sm text-center u-text-gray-500">No branch matching your query</span>
     </UModal>
   </ProjectPage>
 </template>
@@ -61,7 +72,7 @@ const props = defineProps({
 const client = useStrapiClient()
 const { parseFrontMatter, stringifyFrontMatter } = useMarkdown()
 
-const branch: Ref<Branch> = ref(null)
+const branch: Ref<Branch> = ref({ name: props.project.repository.default_branch })
 const file: Ref<File> = ref(null)
 const content: Ref<string> = ref('')
 const updatedContent: Ref<string> = ref('')
@@ -70,11 +81,11 @@ const parsedMatter: Ref<string> = ref('')
 const branchModal = ref(false)
 const branchQuery = ref('')
 
-const { data: branches, refresh: refreshBranches } = await useAsyncData('branches', () => client<Branch[]>(`/projects/${props.project.id}/branches`))
+const { data: branches, refresh: refreshBranches } = await useAsyncData('branches', () => client<Branch[]>(`/projects/${props.project.id}/branches`), { lazy: true })
 
 const { data: files, refresh: refreshFiles } = await useAsyncData('files', () => client<File[]>(`/projects/${props.project.id}/files`, {
   params: {
-    branch: branch.value?.name
+    ref: branch.value?.name
   }
 }))
 
@@ -102,7 +113,7 @@ watch(file, async () => {
 
   const { content: fetchedContent } = await client(`/projects/${props.project.id}/files/${encodeURIComponent(file.value.path)}`, {
     params: {
-      branch: branch.value?.name
+      ref: branch.value?.name
     }
   })
 
