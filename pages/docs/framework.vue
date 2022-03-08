@@ -27,7 +27,7 @@
     </template>
 
     <template #left>
-      <UVerticalNavigation :links="asideLinks" active-class="u-text-gray-900 u-bg-gray-200" />
+      <DocsAside :links="asideLinks" active-class="u-text-gray-900 u-bg-gray-200" />
     </template>
 
     <template #right>
@@ -63,7 +63,8 @@ const currentNav = computed(() => {
   return navigation.value[0].children[0].children
 })
 
-const nodeToLink = link => ({ to: link.slug, label: link.title })
+const nodeToLink = link => ({ to: link.slug, label: link.title, subLinks: link.children?.map(subLink) })
+const subLink = sublink => ({ to: sublink.slug, label: sublink.title })
 
 const links = computed(() => {
   if (!currentNav.value) { return [] }
