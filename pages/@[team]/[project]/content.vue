@@ -11,10 +11,35 @@
         :label="branch.name"
         variant="secondary"
         size="xs"
+        @click="branchModal = true"
       />
     </template>
 
     <DocusEditor :model-value="parsedContent" @update:model-value="saveContent" />
+
+    <UModal
+      v-model="branchModal"
+      body-class="flex-1 lg:overflow-y-auto"
+    >
+      <template #header>
+        <UInput
+          v-model="branchQuery"
+          name="branchQuery"
+          placeholder="Search branch..."
+          icon="heroicons-outline:search"
+          class="w-full"
+          auto-focus
+        />
+      </template>
+
+      <div v-if="filteredBranches?.length" class="divide-y u-divide-gray-200">
+        <div v-for="b in filteredBranches" :key="b.name" class="flex items-center py-3.5 px-4 sm:px-6 gap-3 cursor-pointer hover:u-bg-gray-50" @click="onBranchClick(b)">
+          <UIcon :name="branch.name === b.name ? 'heroicons-outline:check' : 'mdi:source-branch'" class="w-4 h-4" />
+          <span class="text-sm font-medium u-text-gray-900">{{ b.name }}</span>
+        </div>
+      </div>
+      <span v-else class="block text-center p-4">No branch matching your query</span>
+    </UModal>
   </ProjectPage>
 </template>
 
@@ -42,6 +67,8 @@ const content: Ref<string> = ref('')
 const updatedContent: Ref<string> = ref('')
 const parsedContent: Ref<string> = ref('')
 const parsedMatter: Ref<string> = ref('')
+const branchModal = ref(false)
+const branchQuery = ref('')
 
 const { data: branches, refresh: refreshBranches } = await useAsyncData('branches', () => client<Branch[]>(`/projects/${props.project.id}/branches`))
 
@@ -50,6 +77,10 @@ const { data: files, refresh: refreshFiles } = await useAsyncData('files', () =>
     branch: branch.value?.name
   }
 }))
+
+const filteredBranches = computed(() => {
+  return branches.value.filter(b => b.name.search(new RegExp(branchQuery.value, 'i')) !== -1)
+})
 
 // Select file when files changes
 watch(files, () => {
@@ -107,5 +138,11 @@ function selectFile (f: File) {
 
 function selectBranch (b: Branch) {
   branch.value = b
+}
+
+function onBranchClick (b: Branch) {
+  selectBranch(b)
+  branchModal.value = false
+  branchQuery.value = ''
 }
 </script>
