@@ -63,8 +63,6 @@ const to = (slug) => {
 }
 
 const items = computed(() => {
-  const { team: slug } = route.params
-
   const profile = {
     label: user.value.username || user.value.email,
     avatar: user.value.avatar,
@@ -82,7 +80,7 @@ const items = computed(() => {
       slug: team.slug,
       label: team.name,
       avatar: team.avatar?.url || true,
-      active: activeTeam.value === team.slug || team.slug === slug,
+      active: activeTeam.value === team.slug,
       to: to(team.slug),
       click () {
         activeTeam.value = team.slug
@@ -103,7 +101,7 @@ const items = computed(() => {
         slot: 'reverse-icon'
       },
       {
-        label: slug === user.value.username ? 'User settings' : 'Team settings',
+        label: activeTeam.value === user.value.username ? 'User settings' : 'Team settings',
         icon: 'heroicons-outline:cog',
         to: { name: '@team-settings', params: { team: activeTeam.value } },
         slot: 'reverse-icon'
