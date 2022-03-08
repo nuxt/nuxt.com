@@ -4,7 +4,7 @@
       v-if="$slots.header"
       ref="header"
       class="z-[1] sticky top-0"
-      :class="{ 'backdrop-blur-md shadow shadow-gray-200': y > 80 }"
+      :class="{ 'backdrop-blur-md shadow shadow-gray-200 dark:shadow-gray-900': y > 80 }"
     >
       <div class="absolute top-0 w-full h-16 bg-white bg-opacity-75 dark:bg-black" />
       <UContainer padded>
