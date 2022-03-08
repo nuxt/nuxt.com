@@ -1,5 +1,5 @@
 <template>
-  <header id="appHeader" ref="header" class="bg-white dark:bg-black">
+  <header class="bg-white dark:bg-black">
     <UContainer padded>
       <div class="grid items-center h-20 grid-cols-2 gap-3 border-y sm:grid-cols-6 u-border-gray-200">
         <div class="flex justify-start">
