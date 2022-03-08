@@ -14,7 +14,7 @@
       />
     </template>
 
-    <DocusEditor v-model="content" />
+    <DocusEditor :model-value="parsedContent" @update:model-value="saveContent" />
   </ProjectPage>
 </template>
 
@@ -34,12 +34,16 @@ const props = defineProps({
 })
 
 const client = useStrapiClient()
+const { parseFrontMatter, stringifyFrontMatter } = useMarkdown()
 
 const branch: Ref<Branch> = ref(null)
 const file: Ref<File> = ref(null)
 const content: Ref<string> = ref('')
+const updatedContent: Ref<string> = ref('')
+const parsedContent: Ref<string> = ref('')
+const parsedMatter: Ref<string> = ref('')
 
-const { data: branches, refresh: refreshBranches } = await useAsyncData('files', () => client<Branch[]>(`/projects/${props.project.id}/branches`))
+const { data: branches, refresh: refreshBranches } = await useAsyncData('branches', () => client<Branch[]>(`/projects/${props.project.id}/branches`))
 
 const { data: files, refresh: refreshFiles } = await useAsyncData('files', () => client<File[]>(`/projects/${props.project.id}/files`, {
   params: {
@@ -56,9 +60,7 @@ watch(files, () => {
 
 // Select branch when branches changes
 watch(branches, () => {
-  const branchName = localStorage.getItem(`projects-${props.project.id}-branch`)
-
-  selectBranch((branchName && branches.value.find(branch => branch.name === branchName)) || branches.value.find(branch => branch.name === props.project.repository.default_branch) || branches.value[0])
+  selectBranch(branches.value.find(branch => branch.name === props.project.repository.default_branch) || branches.value[0])
 }, { immediate: true })
 
 // Fetch content when file changes
@@ -74,6 +76,18 @@ watch(file, async () => {
 
 // Fetch files when branch changes
 watch(branch, async () => await refreshFiles())
+
+// Split markdown front-matter when content changes
+watch(content, () => {
+  const { content: c, matter } = parseFrontMatter(content.value)
+
+  parsedContent.value = c
+  parsedMatter.value = matter
+}, { immediate: true })
+
+function saveContent (content) {
+  updatedContent.value = stringifyFrontMatter(content, parsedMatter.value)
+}
 
 function findFileFromPath (path, files) {
   for (const file of files) {
@@ -93,6 +107,5 @@ function selectFile (f: File) {
 
 function selectBranch (b: Branch) {
   branch.value = b
-  localStorage.setItem(`projects-${props.project.id}-branch`, branch.value?.name)
 }
 </script>
