@@ -4,15 +4,27 @@
       <FilesTree :files="files" :selected-file="file" @select-file="selectFile" />
     </template>
 
-    <template #aside-header>
-      <UButton
-        v-if="branch"
-        icon="mdi:source-branch"
-        :label="branch.name"
-        variant="secondary"
-        size="xs"
-        @click="branchModal = true"
-      />
+    <template #header>
+      <div class="flex items-center justify-between flex-1 gap-3">
+        <div class="flex items-center gap-3">
+          <UButton
+            v-if="branch"
+            icon="mdi:source-branch"
+            :label="branch.name"
+            variant="secondary"
+            size="xs"
+            @click="branchModal = true"
+          />
+
+          <p class="text-sm u-text-gray-500">
+            {{ file.path }}
+          </p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <UButton label="Commit" size="sm" icon="heroicons-outline:cloud-upload" trailing variant="secondary" />
+        </div>
+      </div>
     </template>
 
     <DocusEditor :model-value="parsedContent" @update:model-value="saveContent" />
@@ -161,3 +173,12 @@ function onBranchClick (b: Branch) {
   branchQuery.value = ''
 }
 </script>
+
+<style>
+.milkdown .editor {
+  width: 100%;
+  height: 100%;
+  max-width: 100% !important;
+  padding: 0 !important;
+}
+</style>
