@@ -1,7 +1,7 @@
 <template>
   <header class="bg-white dark:bg-black">
     <UContainer padded>
-      <div class="grid items-center h-16 grid-cols-2 gap-3 sm:grid-cols-6">
+      <div class="grid items-center h-20 grid-cols-2 gap-3 sm:grid-cols-6">
         <div class="flex justify-start">
           <NuxtLink to="/" class="block u-text-black">
             <LogoFull class="hidden w-auto h-8 sm:block" />
@@ -9,14 +9,14 @@
           </NuxtLink>
         </div>
 
-        <div class="flex justify-center col-span-4 gap-x-8">
+        <div class="flex justify-center col-span-4 gap-x-10">
           <ULink
             v-for="link in links"
             :key="link.label"
             :to="link.to"
             :exact="link.exact"
-            class="hover:u-text-gray-900"
-            active-class="font-medium u-text-gray-900"
+            class="font-medium hover:u-text-gray-900"
+            active-class="font-semibold u-text-gray-900"
             inactive-class="u-text-gray-500"
           >
             {{ link.label }}
