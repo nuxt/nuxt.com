@@ -102,7 +102,7 @@ watch(file, async () => {
 
   const { content: fetchedContent } = await client(`/projects/${props.project.id}/files/${encodeURIComponent(file.value.path)}`, {
     params: {
-      branch: branch.value.name
+      branch: branch.value?.name
     }
   })
 
