@@ -32,6 +32,7 @@
   src: url("/fonts/RoobertPRO-Medium.woff2") format("woff2"),
        url("/fonts/RoobertPRO-Medium.woff") format("woff");
   font-weight: 500;
+  letter-spacing: 0.25px;
 }
 @font-face {
   font-family: "RoobertPRO";
@@ -39,6 +40,7 @@
        url("/fonts/RoobertPRO-MediumItalic.woff") format("woff");
   font-weight: 500;
   font-style: italic;
+  letter-spacing: 0.25px;
 }
 /* `font-semibold` */
 @font-face {
@@ -46,6 +48,7 @@
   src: url("/fonts/RoobertPRO-SemiBold.woff2") format("woff2"),
        url("/fonts/RoobertPRO-SemiBold.woff") format("woff");
   font-weight: 600;
+  letter-spacing: 0.25px;
 }
 @font-face {
   font-family: "RoobertPRO";
@@ -53,6 +56,7 @@
        url("/fonts/RoobertPRO-SemiBoldItalic.woff") format("woff");
   font-weight: 600;
   font-style: italic;
+  letter-spacing: 0.25px;
 }
 /* `font-bold` */
 @font-face {
@@ -60,6 +64,7 @@
   src: url("/fonts/RoobertPRO-Bold.woff2") format("woff2"),
        url("/fonts/RoobertPRO-Bold.woff") format("woff");
   font-weight: 700;
+  letter-spacing: 0.25px;
 }
 @font-face {
   font-family: "RoobertPRO";
@@ -67,6 +72,7 @@
        url("/fonts/RoobertPRO-BoldItalic.woff") format("woff");
   font-weight: 700;
   font-style: italic;
+  letter-spacing: 0.25px;
 }
 /* `font-extrabold` */
 @font-face {
@@ -74,6 +80,7 @@
   src: url("/fonts/RoobertPRO-Heavy.woff2") format("woff2"),
        url("/fonts/RoobertPRO-Heavy.woff") format("woff");
   font-weight: 800;
+  letter-spacing: 0.25px;
 }
 @font-face {
   font-family: "RoobertPRO";
@@ -81,4 +88,5 @@
        url("/fonts/RoobertPRO-HeavyItalic.woff") format("woff");
   font-weight: 800;
   font-style: italic;
+  letter-spacing: 0.25px;
 }
