@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="flex flex-col flex-1">
     <PageHeader
       title="You're almost done."
       description="Please follow the steps to configure your project."
@@ -10,15 +10,15 @@
       <PageGrid>
         <template #aside>
           <UCard v-if="repository" class="mb-6">
-            <a :href="`https://github.com/${repository.owner.login}/${repository.name}`" target="_blank" class="block flex items-center gap-3">
-              <UIcon name="fa-brands:github" class="h-5 w-5" />
+            <a :href="`https://github.com/${repository.owner.login}/${repository.name}`" target="_blank" class="flex items-center block gap-3">
+              <UIcon name="fa-brands:github" class="w-5 h-5" />
               <p class="font-medium truncate">
                 {{ repository.name }}
               </p>
             </a>
           </UCard>
 
-          <NuxtLink :to="{ name: 'templates' }" class="font-medium text-sm text-primary-500 hover:underline">
+          <NuxtLink :to="{ name: 'templates' }" class="text-sm font-medium text-primary-500 hover:underline">
             Browse templates &rarr;
           </NuxtLink>
         </template>

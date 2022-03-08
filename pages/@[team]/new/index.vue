@@ -1,27 +1,27 @@
 <template>
-  <div>
+  <div class="flex flex-col flex-1">
     <PageHeader title="Let's build something new." description="Import an existing Git repository or get started with one of our templates." />
 
     <Page overlap>
-      <div class="grid sm:grid-cols-2 gap-8">
+      <div class="grid gap-8 sm:grid-cols-2">
         <UCard base-class="flex flex-col overflow-hidden lg:h-[calc(100vh-352px)] lg:min-h-[528px]" body-class="flex-1 lg:overflow-y-auto" footer-background-class="u-bg-gray-50">
           <template #header>
             <div class="flex items-center justify-between">
               <h3 class="text-2xl font-semibold u-text-gray-900">
                 Import Git repository
               </h3>
-              <a :href="githubAppUrl" class="font-medium text-sm text-primary-500 hover:underline" target="_blank">Add GitHub account →</a>
+              <a :href="githubAppUrl" class="text-sm font-medium text-primary-500 hover:underline" target="_blank">Add GitHub account →</a>
             </div>
 
-            <div v-if="installations.length" class="flex items-start justify-between gap-3 flex-wrap-reverse sm:flex-nowrap mt-5">
+            <div v-if="installations.length" class="flex flex-wrap-reverse items-start justify-between gap-3 mt-5 sm:flex-nowrap">
               <USelectCustom v-model="owner" :options="accounts" text-attribute="login" name="owner" class="w-full sm:w-auto">
-                <div class="flex items-center gap-3 w-full">
+                <div class="flex items-center w-full gap-3">
                   <UAvatar :src="owner.avatar_url" size="xxs" class="flex-shrink-0" />
                   <span class="truncate">{{ owner.login }}</span>
                 </div>
 
                 <template #option="{ option }">
-                  <div class="flex items-center gap-3 w-full">
+                  <div class="flex items-center w-full gap-3">
                     <UAvatar :src="option.avatar_url" size="xxs" class="flex-shrink-0" />
                     <span class="truncate">{{ option.login }}</span>
                   </div>
@@ -41,8 +41,8 @@
 
           <div v-if="installations.length" class="divide-y u-divide-gray-200">
             <NuxtLink v-for="repository of repositories" :key="repository.id" class="flex items-center justify-between gap-3 py-3.5 px-4 sm:px-6 group hover:u-bg-gray-50" :to="{ name: '@team-new-import', query: { repository: `${repository.owner.login}/${repository.name}` } }" tabindex="-1">
-              <p class="text-sm font-medium u-text-gray-900 flex items-center">
-                <UIcon name="fa-brands:github" class="h-5 w-5 mr-3" />
+              <p class="flex items-center text-sm font-medium u-text-gray-900">
+                <UIcon name="fa-brands:github" class="w-5 h-5 mr-3" />
                 {{ repository.name }}
                 <UIcon name="heroicons-outline:lock-closed" class="w-4 h-4 u-text-gray-400 ml-1.5" />
               </p>
@@ -53,7 +53,7 @@
               />
             </NuxtLink>
           </div>
-          <p v-else class="u-text-gray-400 px-4 py-5 sm:p-6">
+          <p v-else class="px-4 py-5 u-text-gray-400 sm:p-6">
             It appears you haven't installed our GitHub app yet,
             <a :href="githubAppUrl" class="font-medium text-primary-500 hover:underline" target="_blank">
               select your repositories.
@@ -61,7 +61,7 @@
           </p>
 
           <template #footer>
-            <div class="flex items-center justify-center content-center gap-3">
+            <div class="flex items-center content-center justify-center gap-3">
               <div class="hidden sm:block">
                 <p class="text-sm u-text-gray-700">
                   Showing
@@ -102,19 +102,19 @@
           </template>
         </UCard>
 
-        <UCard shadow-class base-class="flex flex-col overflow-hidden lg:h-[calc(100vh-352px)] lg:min-h-[528px]" body-class="px-4 sm:px-5 pt-1 pb-6" body-background-class="lg:overflow-y-auto flex-1 u-bg-gray-50" header-background-class="u-bg-gray-50 !border-0 -mb-1">
+        <UCard shadow-class base-class="flex flex-col overflow-hidden lg:h-[calc(100vh-352px)] lg:min-h-[528px]" body-class="px-4 pt-1 pb-6 sm:px-5" body-background-class="flex-1 lg:overflow-y-auto u-bg-gray-50" header-background-class="u-bg-gray-50 !border-0 -mb-1">
           <template #header>
             <div class="flex items-center justify-between">
               <h3 class="text-2xl font-semibold u-text-gray-900">
                 Clone a template
               </h3>
-              <NuxtLink :to="{ name: 'templates' }" class="font-medium text-sm text-primary-500 hover:underline">
+              <NuxtLink :to="{ name: 'templates' }" class="text-sm font-medium text-primary-500 hover:underline">
                 Browse all &rarr;
               </NuxtLink>
             </div>
           </template>
 
-          <div class="grid gap-6 grid-cols-2">
+          <div class="grid grid-cols-2 gap-6">
             <TemplatesItem
               v-for="(template, index) of templates.slice(0, 4)"
               :key="index"

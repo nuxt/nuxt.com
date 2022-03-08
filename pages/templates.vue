@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="flex flex-col flex-1">
     <PageHeader title="Select a template." description="We support all your favorite frameworks without additional configuration." />
 
     <Page overlap>
