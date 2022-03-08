@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="flex flex-col flex-1">
     <PageHeader
       title="You're almost done."
       description="Please follow the steps to configure your project."
