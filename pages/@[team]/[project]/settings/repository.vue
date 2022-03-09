@@ -25,6 +25,8 @@
             </div>
           </div>
         </div>
+
+        <UButton label="Open GitHub Desktop" icon="fa-brands:github-square" variant="secondary" @click="openGitHubDesktop" />
       </UCard>
     </UCard>
   </div>
@@ -35,10 +37,14 @@ import type { PropType } from 'vue'
 import { useTimeAgo } from '@vueuse/core'
 import type { Project } from '~/types'
 
-defineProps({
+const props = defineProps({
   project: {
     type: Object as PropType<Project>,
     required: true
   }
 })
+
+function openGitHubDesktop () {
+  window.open(`x-github-client://openRepo/https://github.com/${props.project.repository.owner}/${props.project.repository.name}`)
+}
 </script>
