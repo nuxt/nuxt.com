@@ -2,11 +2,11 @@
   <main class="flex flex-1 overflow-hidden">
     <!-- Primary column -->
     <section class="flex flex-col flex-1 h-full min-w-0 overflow-y-auto lg:order-last">
-      <div v-if="$slots.header" class="sticky top-0 flex items-center justify-between flex-shrink-0 h-16 px-4 sm:px-6 lg:px-8 xl:px-10 u-bg-white">
+      <div v-if="$slots.header" class="sticky top-0 flex items-center justify-between flex-shrink-0 h-16 px-4 -mb-8 sm:px-6 lg:px-8 xl:px-10 u-bg-white">
         <slot name="header" />
       </div>
 
-      <div class="flex-1 p-4 overflow-y-auto sm:p-6 lg:p-8 xl:p-10">
+      <div class="flex flex-col flex-1 p-4 overflow-y-auto sm:p-6 lg:p-8 xl:p-10">
         <slot />
       </div>
     </section>
