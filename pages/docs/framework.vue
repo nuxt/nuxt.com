@@ -11,11 +11,11 @@
         <ULink
           v-for="link in links"
           :key="link.label"
-          :to="link.to"
+          :to="link.children ? link.children[0].children ? link.children[0].children[0].to : link.children[0].to : link.to"
           class="text-sm font-medium hover:u-text-gray-900"
           active-class="font-semibold u-text-gray-900"
           inactive-class="u-text-gray-500"
-          exact
+          :exact="false"
         >
           {{ link.label }}
         </ULink>
@@ -63,8 +63,9 @@ const currentNav = computed(() => {
   return navigation.value[0].children[0].children
 })
 
-const nodeToLink = link => ({ to: link.slug, label: link.title, subLinks: link.children?.map(subLink) })
-const subLink = sublink => ({ to: sublink.slug, label: sublink.title })
+const nodeToLink = link => ({ to: link.slug, label: link.title, children: link.children?.map(subLink) })
+const subLink = sublink => ({ to: sublink.slug, label: sublink.title, children: sublink.children?.map(childrenLink) })
+const childrenLink = child => ({ to: child.slug, label: child.title })
 
 const links = computed(() => {
   if (!currentNav.value) { return [] }
@@ -73,6 +74,8 @@ const links = computed(() => {
 })
 
 const asideLinks = computed(() => {
-  return currentNav.value.find(link => link.slug.includes(path.value))?.children.map(nodeToLink)
+  return currentNav.value.find(link => link.slug.includes(path.value))?.children.map(subLink)
 })
+
+console.log('asideLinks', asideLinks)
 </script>
