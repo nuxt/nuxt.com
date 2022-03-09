@@ -1,7 +1,17 @@
 <template>
   <ProjectPage title="Content">
     <template #aside>
-      <FilesTree :files="files" :selected-file="file" @select-file="selectFile" />
+      <FilesTree :files="files" :selected-file="file" @select-file="selectFile" @new-file="openNewFileModal" />
+    </template>
+
+    <template #aside-header>
+      <UButton
+        size="xxs"
+        class="-my-0.5 -mr-1"
+        variant="transparent-hover"
+        icon="heroicons-outline:plus"
+        @click="openNewFileModal()"
+      />
     </template>
 
     <template #header>
@@ -30,6 +40,7 @@
     <p class="flex-1 w-full pb-16 milkdown editor focus:outline-none" contenteditable @input="saveContent" v-text="parsedContent" />
     <!-- <DocusEditor :model-value="parsedContent" @update:model-value="saveContent" /> -->
 
+    <ProjectContentNewFileModal v-model="newFileModal" :folder="newFileFolder" @submit="createFile" />
     <ProjectContentBranchesModal
       v-model="branchesModal"
       :branches="branches"
@@ -69,6 +80,8 @@ const content: Ref<string> = ref('')
 const parsedContent: Ref<string> = ref('')
 const parsedMatter: Ref<string> = ref('')
 const branchesModal = ref(false)
+const newFileModal = ref(false)
+const newFileFolder = ref('')
 
 const { data: branches, refresh: refreshBranches, pending: pendingBranches } = await useAsyncData('branches', () => client<Branch[]>(`/projects/${props.project.id}/branches`))
 
@@ -148,6 +161,28 @@ function findBranch () {
 function selectBranch (b: Branch) {
   branch.value = b
   branchCookie.value = b.name
+}
+
+function openNewFileModal (path: string = '') {
+  newFileFolder.value = path || ''
+  newFileModal.value = true
+}
+
+async function createFile (path: string) {
+  const newFile = await client<File>(`/projects/${props.project.id}/files/${encodeURIComponent(path)}`, {
+    method: 'POST',
+    params: {
+      ref: branch.value?.name
+    }
+  })
+
+  // TODO: Remove this when we have the draft system
+  await refreshFiles()
+
+  file.value = newFile
+
+  newFileModal.value = false
+  newFileFolder.value = ''
 }
 </script>
 
