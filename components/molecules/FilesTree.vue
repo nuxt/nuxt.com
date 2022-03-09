@@ -37,6 +37,7 @@
         :files="file.children"
         :selected-file="selectedFile"
         @selectFile="file => $emit('selectFile', file)"
+        @newFile="file => $emit('newFile', file)"
       />
     </li>
   </ul>
