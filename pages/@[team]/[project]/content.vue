@@ -27,10 +27,19 @@
       </div>
     </template>
 
-    <div class="flex-1 w-full milkdown editor focus:outline:none" contenteditable @input="saveContent" v-text="parsedContent" />
-    <!-- <DocusEditor :model-value="parsedContent" @update:model-value="saveContent" /> -->
+    <div class="pt-px pb-12">
+      <p class="flex-1 w-full milkdown editor focus:outline:none" contenteditable @input="saveContent" v-text="parsedContent" />
+      <!-- <DocusEditor :model-value="parsedContent" @update:model-value="saveContent" /> -->
+    </div>
 
-    <ProjectContentBranchesModal v-model="branchesModal" :branches="branches" :selected-branch="branch" @select-branch="selectBranch" />
+    <ProjectContentBranchesModal
+      v-model="branchesModal"
+      :branches="branches"
+      :selected-branch="branch"
+      :pending="pendingBranches"
+      @select-branch="selectBranch"
+      @refresh-branches="refreshBranches"
+    />
   </ProjectPage>
 </template>
 
@@ -55,14 +64,17 @@ const props = defineProps({
 const client = useStrapiClient()
 const { parseFrontMatter, stringifyFrontMatter } = useMarkdown()
 
-const branch: Ref<Branch> = ref({ name: props.project.repository.default_branch })
+const branchCookie = useCookie(`project-${props.project.id}-branch`, { path: '/' })
+const branch: Ref<Branch> = ref(null)
 const file: Ref<File> = ref(null)
 const content: Ref<string> = ref('')
 const parsedContent: Ref<string> = ref('')
 const parsedMatter: Ref<string> = ref('')
 const branchesModal = ref(false)
 
-const { data: branches, refresh: refreshBranches } = await useAsyncData('branches', () => client<Branch[]>(`/projects/${props.project.id}/branches`), { lazy: true })
+const { data: branches, refresh: refreshBranches, pending: pendingBranches } = await useAsyncData('branches', () => client<Branch[]>(`/projects/${props.project.id}/branches`))
+
+findBranch()
 
 const { data: files, refresh: refreshFiles } = await useAsyncData('files', () => client<File[]>(`/projects/${props.project.id}/files`, {
   params: {
@@ -70,17 +82,13 @@ const { data: files, refresh: refreshFiles } = await useAsyncData('files', () =>
   }
 }))
 
-// Select file when files changes
-watch(files, () => {
-  const currentFile = file.value?.path ? findFileFromPath(file.value.path, files.value) : null
+findFile()
 
-  selectFile(currentFile || files.value.find(file => file.path.toLowerCase().endsWith('index.md')) || files.value.find(file => file.type === 'file'))
-}, { immediate: true })
+// Select file when files changes
+watch(files, findFile)
 
 // Select branch when branches changes
-watch(branches, () => {
-  selectBranch(branches.value.find(branch => branch.name === props.project.repository.default_branch) || branches.value[0])
-}, { immediate: true })
+watch(branches, findBranch)
 
 // Fetch content when file changes
 watch(file, async () => {
@@ -118,12 +126,30 @@ const saveContent = debounce(async (content: string) => {
   })
 }, 500)
 
+function findFile () {
+  const currentFile = file.value?.path ? findFileFromPath(file.value.path, files.value) : null
+
+  selectFile(currentFile || files.value.find(file => file.path.toLowerCase().endsWith('index.md')) || files.value.find(file => file.type === 'file'))
+}
+
 function selectFile (f: File) {
   file.value = f
 }
 
+function findBranch () {
+  let branch
+  if (branchCookie.value) {
+    branch = branches.value.find(branch => branch.name === branchCookie.value)
+  } else {
+    branch = branches.value.find(branch => branch.name === props.project.repository.default_branch)
+  }
+
+  selectBranch(branch || branches.value[0])
+}
+
 function selectBranch (b: Branch) {
   branch.value = b
+  branchCookie.value = b.name
 }
 </script>
 
