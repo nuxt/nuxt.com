@@ -27,10 +27,8 @@
       </div>
     </template>
 
-    <div class="pt-px pb-12">
-      <p class="flex-1 w-full milkdown editor focus:outline:none" contenteditable @input="saveContent" v-text="parsedContent" />
-      <!-- <DocusEditor :model-value="parsedContent" @update:model-value="saveContent" /> -->
-    </div>
+    <p class="flex-1 w-full pb-16 milkdown editor focus:outline-none" contenteditable @input="saveContent" v-text="parsedContent" />
+    <!-- <DocusEditor :model-value="parsedContent" @update:model-value="saveContent" /> -->
 
     <ProjectContentBranchesModal
       v-model="branchesModal"
