@@ -5,9 +5,13 @@
     </template>
 
     <template #aside-header>
-      <button class="p-1 u-text-gray-700 hover:u-text-gray-900" @click="openNewFileModal()">
-        <UIcon name="heroicons-outline:plus" class="w-4 h-4" />
-      </button>
+      <UButton
+        size="xxs"
+        class="-my-0.5 -mr-1"
+        variant="transparent-hover"
+        icon="heroicons-outline:plus"
+        @click="openNewFileModal()"
+      />
     </template>
 
     <template #header>
