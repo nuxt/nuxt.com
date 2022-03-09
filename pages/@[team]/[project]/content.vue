@@ -1,7 +1,7 @@
 <template>
   <ProjectPage title="Content">
     <template #aside>
-      <FilesTree :files="files" :selected-file="file" @select-file="selectFile" @new-file="openNewFileModal" />
+      <FilesTree :files="mergedFiles" :selected-file="file" @select-file="selectFile" @new-file="openNewFileModal" />
     </template>
 
     <template #aside-header>
@@ -26,7 +26,7 @@
             @click="branchesModal = true"
           />
 
-          <p class="text-sm u-text-gray-500">
+          <p v-if="file" class="text-sm u-text-gray-500">
             {{ file.path }}
           </p>
         </div>
@@ -37,8 +37,8 @@
       </div>
     </template>
 
-    <p class="flex-1 w-full pb-16 milkdown editor focus:outline-none" contenteditable @input="saveContent" v-text="parsedContent" />
-    <!-- <DocusEditor :model-value="parsedContent" @update:model-value="saveContent" /> -->
+    <p class="flex-1 w-full pb-16 milkdown editor focus:outline-none" contenteditable @input="updateFile" v-text="parsedContent" />
+    <!-- <DocusEditor :model-value="parsedContent" @update:model-value="updateFile" /> -->
 
     <ProjectContentNewFileModal v-model="newFileModal" :folder="newFileFolder" @submit="createFile" />
     <ProjectContentBranchesModal
@@ -55,9 +55,8 @@
 <script setup lang="ts">
 import type { PropType, Ref } from 'vue'
 import { debounce } from 'lodash-es'
-import { findFileFromPath } from '~/utils/tree'
-import type { Team, Project, File, Branch } from '~/types'
-import ProjectContentBranchesModal from '~~/components/organisms/project/content/ProjectContentBranchesModal.vue'
+import { findFileFromPath, addFileToTree } from '~/utils/tree'
+import type { Team, Project, File, Branch, Draft } from '~/types'
 
 const props = defineProps({
   team: {
@@ -75,7 +74,9 @@ const { parseFrontMatter, stringifyFrontMatter } = useMarkdown()
 
 const branchCookie = useCookie(`project-${props.project.id}-branch`, { path: '/' })
 const branch: Ref<Branch> = ref(null)
+const files: Ref<File[]> = ref(null)
 const file: Ref<File> = ref(null)
+const draft: Ref<Draft> = ref(null)
 const content: Ref<string> = ref('')
 const parsedContent: Ref<string> = ref('')
 const parsedMatter: Ref<string> = ref('')
@@ -87,19 +88,24 @@ const { data: branches, refresh: refreshBranches, pending: pendingBranches } = a
 
 findBranch()
 
-const { data: files, refresh: refreshFiles } = await useAsyncData('files', () => client<File[]>(`/projects/${props.project.id}/files`, {
-  params: {
-    ref: branch.value?.name
-  }
-}))
+const { refresh: refreshFiles } = await useAsyncData('files', async () => {
+  const data = await client<{ files: File[], draft: Draft }>(`/projects/${props.project.id}/files`, {
+    params: {
+      ref: branch.value?.name
+    }
+  })
+
+  files.value = data.files
+  draft.value = data.draft
+})
 
 findFile()
 
 // Select file when files changes
-watch(files, findFile)
+watch(files, () => findFile())
 
 // Select branch when branches changes
-watch(branches, findBranch)
+watch(branches, () => findBranch())
 
 // Fetch content when file changes
 watch(file, async () => {
@@ -127,15 +133,25 @@ watch(content, () => {
   parsedMatter.value = matter
 }, { immediate: true })
 
-const saveContent = debounce(async (content: string) => {
-  await client(`/projects/${props.project.id}/files/${encodeURIComponent(file.value.path)}`, {
-    method: 'PUT',
-    body: {
-      content: stringifyFrontMatter(content, parsedMatter.value),
-      ref: branch.value?.name
-    }
-  })
-}, 500)
+const mergedFiles = computed(() => {
+  if (!draft.value) {
+    return files.value
+  }
+
+  const { additions, deletions } = draft.value || {}
+
+  const tree = { ...files.value }
+  for (const addition of additions) {
+    addFileToTree({
+      path: addition.path,
+      name: addition.path.replace(/\.[^.]+$/, ''),
+      type: 'file',
+      isAdded: true
+    }, tree)
+  }
+
+  return tree
+})
 
 function findFile () {
   const currentFile = file.value?.path ? findFileFromPath(file.value.path, files.value) : null
@@ -169,21 +185,35 @@ function openNewFileModal (path: string = '') {
 }
 
 async function createFile (path: string) {
-  const newFile = await client<File>(`/projects/${props.project.id}/files/${encodeURIComponent(path)}`, {
+  const data = await client<Draft>(`/projects/${props.project.id}/files`, {
     method: 'POST',
     params: {
       ref: branch.value?.name
+    },
+    body: {
+      path
     }
   })
 
-  // TODO: Remove this when we have the draft system
-  await refreshFiles()
-
-  file.value = newFile
+  draft.value = data
 
   newFileModal.value = false
   newFileFolder.value = ''
 }
+
+const updateFile = debounce(async (content: string) => {
+  const data = await client<Draft>(`/projects/${props.project.id}/files/${encodeURIComponent(file.value.path)}`, {
+    method: 'PUT',
+    params: {
+      ref: branch.value?.name
+    },
+    body: {
+      content: stringifyFrontMatter(content, parsedMatter.value)
+    }
+  })
+
+  draft.value = data
+}, 500)
 </script>
 
 <style>

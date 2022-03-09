@@ -85,7 +85,6 @@ export interface File {
   name: string
   content?: string
   children?: File[]
-  isOpen?: boolean
   isDraft?: boolean
   isAdded?: boolean
   isRenamed?: boolean
@@ -95,6 +94,11 @@ export interface File {
 
 export interface Branch {
   name: string
+}
+
+export interface Draft {
+  additions: { path: string, new?: boolean, oldPath?: string, contents?: string }[]
+  deletiens: { path: string }[]
 }
 
 export interface GitHubAccount {

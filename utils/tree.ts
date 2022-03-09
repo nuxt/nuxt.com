@@ -9,3 +9,7 @@ export function findFileFromPath (path, files) {
     }
   }
 }
+
+export function addFileToTree (file, tree) {
+
+}
