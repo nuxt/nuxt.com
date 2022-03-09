@@ -10,14 +10,19 @@
         }"
         @click="selectFile(file)"
       >
-        <div class="flex items-center justify-between">
+        <div class="flex flex-1 items-center justify-between">
           <div class="flex items-center truncate">
             <FilesTreeIcon :file="file" :opened-files="openedFiles" class="mr-1.5" />
             <div class="line-clamp-1" :class="{ 'line-through': file.isDeleted }">
               {{ file.name }}
             </div>
           </div>
-          <FilesTreeIndicator :file="file" />
+          <div class="flex gap-1">
+            <FilesTreeIndicator :file="file" />
+            <button v-if="isDir(file)" class="p-0.5 u-text-gray-700 hover:u-text-gray-900" @click.stop="newFile(file)">
+              <UIcon name="heroicons-outline:plus" class="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -53,7 +58,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['selectFile'])
+const emit = defineEmits(['selectFile', 'newFile'])
 
 // Methods
 const isDir = (file: File) => file.type === 'directory'
@@ -74,6 +79,7 @@ const selectFile = (file: File) => {
 
   emit('selectFile', file)
 }
+const newFile = (file: File) => emit('newFile', file.path)
 </script>
 
 <style scoped>
