@@ -162,6 +162,7 @@ function selectBranch (b: Branch) {
   branch.value = b
   branchCookie.value = b.name
 }
+
 function openNewFileModal (path: string = '') {
   newFileFolder.value = path || ''
   newFileModal.value = true
@@ -174,8 +175,12 @@ async function createFile (path: string) {
       ref: branch.value?.name
     }
   })
+
+  // TODO: Remove this when we have the draft system
   await refreshFiles()
+
   file.value = newFile
+
   newFileModal.value = false
   newFileFolder.value = ''
 }
