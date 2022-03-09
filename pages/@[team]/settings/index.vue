@@ -92,7 +92,7 @@
           Delete team
         </h2>
         <p class="mt-1 text-sm u-text-gray-400">
-          Permanently remove your team and all of its contents from Docus. This action is not reversible – please continue with caution.
+          Permanently remove your team and all of its contents from Nuxt. This action is not reversible – please continue with caution.
         </p>
       </div>
       <template #footer>

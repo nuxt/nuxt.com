@@ -1,17 +1,28 @@
 <template>
   <UModal v-model="isOpen" header-class body-class="flex-1 h-80 lg:overflow-y-auto">
     <template #header>
-      <UInput
-        v-model="q"
-        name="q"
-        placeholder="Search branch..."
-        icon="heroicons-outline:search"
-        appearance="none"
-        autocomplete="off"
-        class="w-full pl-1"
-        size="xl"
-        autofocus
-      />
+      <div class="flex items-center gap-1.5">
+        <UInput
+          v-model="q"
+          name="q"
+          placeholder="Search branch..."
+          icon="heroicons-outline:search"
+          appearance="none"
+          autocomplete="off"
+          class="w-full pl-1"
+          size="xl"
+          autofocus
+        />
+
+        <UButton
+          :loading="pending"
+          icon="heroicons-outline:refresh"
+          variant="transparent"
+          size="sm"
+          class="mr-2"
+          @click="$emit('refreshBranches')"
+        />
+      </div>
     </template>
 
     <ul v-if="filteredBranches?.length" class="divide-y u-divide-gray-200">
@@ -48,10 +59,14 @@ const props = defineProps({
   selectedBranch: {
     type: Object as PropType<Branch>,
     default: null
+  },
+  pending: {
+    type: Boolean,
+    default: false
   }
 })
 
-const emit = defineEmits(['update:modelValue', 'selectBranch'])
+const emit = defineEmits(['update:modelValue', 'selectBranch', 'refreshBranches'])
 
 const isOpen = computed({
   get () {

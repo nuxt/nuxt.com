@@ -31,7 +31,7 @@ export default defineNuxtConfig({
     '@nuxthq/ui',
     '@nuxtjs/strapi',
     '@nuxt/content',
-    '@docus/editor',
+    // '@docus/editor',
     'vue-plausible'
   ],
   publicRuntimeConfig: {
