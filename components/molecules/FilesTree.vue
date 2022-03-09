@@ -2,7 +2,7 @@
   <ul>
     <li v-for="file of files" :key="file.path">
       <div
-        class="group border-r-2 py-2 pr-6 flex items-center text-sm font-medium focus:u-bg-gray-50 focus:outline-none w-full cursor-pointer"
+        class="flex items-center w-full py-2 pr-6 text-sm font-medium border-r-2 cursor-pointer group focus:u-bg-gray-50 focus:outline-none"
         :class="{
           [`pl-[${24 + (level * 12)}px]`]: true,
           'u-bg-gray-100 u-border-gray-800 u-text-gray-900': isSelected(file),
@@ -12,7 +12,7 @@
       >
         <div class="flex items-center justify-between">
           <div class="flex items-center truncate">
-            <FilesTreeIcon :file="file" class="mr-1.5" />
+            <FilesTreeIcon :file="file" :opened-files="openedFiles" class="mr-1.5" />
             <div class="line-clamp-1" :class="{ 'line-through': file.isDeleted }">
               {{ file.name }}
             </div>
@@ -22,8 +22,7 @@
       </div>
 
       <FilesTree
-        v-if="isDir(file)"
-        v-show="isOpen(file)"
+        v-if="isDir(file) && isOpen(file)"
         :level="level + 1"
         :files="file.children"
         :selected-file="selectedFile"
@@ -36,6 +35,8 @@
 <script setup lang="ts">
 import { PropType } from 'vue'
 import type { File } from '~/types'
+
+const openedFiles = reactive({})
 
 const props = defineProps({
   level: {
@@ -56,16 +57,18 @@ const emit = defineEmits(['selectFile'])
 
 // Methods
 const isDir = (file: File) => file.type === 'directory'
-const isOpen = (file: File) => file.isOpen
+const isOpen = (file: File) => {
+  return !!openedFiles[file.path]
+}
 const isSelected = (file: File) => props.selectedFile && file.path === props.selectedFile.path
 const selectFile = (file: File) => {
-  // Prevent click when clicking on already selected file
-  if (props.selectedFile && file.path === props.selectedFile.path) {
+  // Prevent click when clicking on selected file
+  if (props.selectedFile && props.selectedFile.path === file.path) {
     return
   }
 
   if (isDir(file)) {
-    file.isOpen = !file.isOpen
+    openedFiles[file.path] = !openedFiles[file.path]
     return
   }
 
