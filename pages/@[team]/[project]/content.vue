@@ -13,7 +13,7 @@
             :label="branch.name"
             variant="secondary"
             size="xs"
-            @click="branchModal = true"
+            @click="branchesModal = true"
           />
 
           <p class="text-sm u-text-gray-500">
@@ -27,48 +27,19 @@
       </div>
     </template>
 
-    <DocusEditor :model-value="parsedContent" @update:model-value="saveContent" />
+    <div class="flex-1 w-full milkdown editor focus:outline:none" contenteditable @input="saveContent" v-text="parsedContent" />
+    <!-- <DocusEditor :model-value="parsedContent" @update:model-value="saveContent" /> -->
 
-    <UModal
-      v-model="branchModal"
-      header-class
-      body-class="flex-1 h-80 lg:overflow-y-auto"
-    >
-      <template #header>
-        <UInput
-          v-model="branchQuery"
-          name="branchQuery"
-          placeholder="Search branch..."
-          icon="heroicons-outline:search"
-          appearance="none"
-          class="w-full pl-1"
-          size="xl"
-          autofocus
-        />
-      </template>
-
-      <div v-if="filteredBranches?.length" class="divide-y u-divide-gray-200">
-        <div v-for="b in filteredBranches" :key="b.name" class="group flex items-center justify-between gap-3 px-4 py-2.5 cursor-pointer hover:u-bg-gray-50" @click="onBranchClick(b)">
-          <div class="flex items-center gap-3 truncate">
-            <UIcon name="mdi:source-branch" class="flex-shrink-0 w-4 h-4 u-text-gray-400" />
-            <span class="text-sm font-medium truncate u-text-gray-700">{{ b.name }}</span>
-            <UIcon v-if="branch.name === b.name" name="heroicons-outline:check" class="flex-shrink-0 w-4 h-4 text-primary-500" />
-          </div>
-
-          <UIcon
-            name="heroicons-outline:chevron-right"
-            class="flex-shrink-0 invisible w-5 h-5 group-hover:visible u-text-gray-400"
-          />
-        </div>
-      </div>
-      <span v-else class="block p-4 text-sm text-center u-text-gray-500">No branch matching your query</span>
-    </UModal>
+    <ProjectContentBranchesModal v-model="branchesModal" :branches="branches" :selected-branch="branch" @select-branch="selectBranch" />
   </ProjectPage>
 </template>
 
 <script setup lang="ts">
 import type { PropType, Ref } from 'vue'
+import { debounce } from 'lodash-es'
+import { findFileFromPath } from '~/utils/tree'
 import type { Team, Project, File, Branch } from '~/types'
+import ProjectContentBranchesModal from '~~/components/organisms/project/content/ProjectContentBranchesModal.vue'
 
 const props = defineProps({
   team: {
@@ -87,11 +58,9 @@ const { parseFrontMatter, stringifyFrontMatter } = useMarkdown()
 const branch: Ref<Branch> = ref({ name: props.project.repository.default_branch })
 const file: Ref<File> = ref(null)
 const content: Ref<string> = ref('')
-const updatedContent: Ref<string> = ref('')
 const parsedContent: Ref<string> = ref('')
 const parsedMatter: Ref<string> = ref('')
-const branchModal = ref(false)
-const branchQuery = ref('')
+const branchesModal = ref(false)
 
 const { data: branches, refresh: refreshBranches } = await useAsyncData('branches', () => client<Branch[]>(`/projects/${props.project.id}/branches`), { lazy: true })
 
@@ -100,10 +69,6 @@ const { data: files, refresh: refreshFiles } = await useAsyncData('files', () =>
     ref: branch.value?.name
   }
 }))
-
-const filteredBranches = computed(() => {
-  return branches.value.filter(b => b.name.search(new RegExp(branchQuery.value, 'i')) !== -1)
-})
 
 // Select file when files changes
 watch(files, () => {
@@ -143,21 +108,15 @@ watch(content, () => {
   parsedMatter.value = matter
 }, { immediate: true })
 
-function saveContent (content) {
-  updatedContent.value = stringifyFrontMatter(content, parsedMatter.value)
-}
-
-function findFileFromPath (path, files) {
-  for (const file of files) {
-    if (file.path === path) {
-      return file
+const saveContent = debounce(async (content: string) => {
+  await client(`/projects/${props.project.id}/files/${encodeURIComponent(file.value.path)}`, {
+    method: 'PUT',
+    body: {
+      content: stringifyFrontMatter(content, parsedMatter.value),
+      ref: branch.value?.name
     }
-    if (file.children) {
-      const result = findFileFromPath(path, file.children)
-      if (result) { return result }
-    }
-  }
-}
+  })
+}, 500)
 
 function selectFile (f: File) {
   file.value = f
@@ -165,12 +124,6 @@ function selectFile (f: File) {
 
 function selectBranch (b: Branch) {
   branch.value = b
-}
-
-function onBranchClick (b: Branch) {
-  selectBranch(b)
-  branchModal.value = false
-  branchQuery.value = ''
 }
 </script>
 
