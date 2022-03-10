@@ -1,6 +1,6 @@
 <template>
   <ul>
-    <li v-for="file of files" :key="file.path">
+    <li v-for="file of tree" :key="file.path">
       <div
         class="flex items-center w-full py-2 pr-6 text-sm font-medium border-r-2 cursor-pointer group focus:u-bg-gray-50 focus:outline-none"
         :class="{
@@ -13,7 +13,7 @@
         <div class="flex items-center justify-between flex-1">
           <div class="flex items-center truncate">
             <FilesTreeIcon :file="file" :opened-files="openedFiles" class="mr-1.5" />
-            <div class="line-clamp-1" :class="{ 'line-through': file.isDeleted }">
+            <div class="line-clamp-1" :class="{ 'line-through': file.status === 'deleted' }">
               {{ file.name }}
             </div>
           </div>
@@ -34,7 +34,7 @@
       <FilesTree
         v-if="isDir(file) && isOpen(file)"
         :level="level + 1"
-        :files="file.children"
+        :tree="file.children"
         :selected-file="selectedFile"
         @selectFile="file => $emit('selectFile', file)"
         @newFile="file => $emit('newFile', file)"
@@ -54,7 +54,7 @@ const props = defineProps({
     type: Number,
     default: 0
   },
-  files: {
+  tree: {
     type: Array as PropType<File[]>,
     default: () => []
   },

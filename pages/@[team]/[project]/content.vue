@@ -1,7 +1,7 @@
 <template>
   <ProjectPage title="Content">
     <template #aside>
-      <FilesTree :files="mergedFiles" :selected-file="file" @select-file="selectFile" @new-file="openNewFileModal" />
+      <FilesTree :tree="tree" :selected-file="file" @select-file="selectFile" @new-file="openNewFileModal" />
     </template>
 
     <template #aside-header>
@@ -37,8 +37,8 @@
       </div>
     </template>
 
-    <p class="flex-1 w-full pb-16 milkdown editor focus:outline-none" contenteditable @input="updateFile" v-text="parsedContent" />
-    <!-- <DocusEditor :model-value="parsedContent" @update:model-value="updateFile" /> -->
+    <p class="flex-1 w-full pb-16 milkdown editor focus:outline-none" contenteditable @input="updateFile($event.target.innerText)" v-text="parsedContent" />
+    <!-- <DocusEditor :model-value="parsedContent" :theme="theme" @update:model-value="updateFile" /> -->
 
     <ProjectContentNewFileModal v-model="newFileModal" :folder="newFileFolder" @submit="createFile" />
     <ProjectContentBranchesModal
@@ -55,8 +55,8 @@
 <script setup lang="ts">
 import type { PropType, Ref } from 'vue'
 import { debounce } from 'lodash-es'
-import { findFileFromPath, addFileToTree } from '~/utils/tree'
-import type { Team, Project, File, Branch, Draft } from '~/types'
+import { mapTree } from '~/utils/tree'
+import type { Team, Project, Branch, GitHubDraft, GitHubFile } from '~/types'
 
 const props = defineProps({
   team: {
@@ -69,14 +69,15 @@ const props = defineProps({
   }
 })
 
+const colorMode = useColorMode()
 const client = useStrapiClient()
 const { parseFrontMatter, stringifyFrontMatter } = useMarkdown()
 
 const branchCookie = useCookie(`project-${props.project.id}-branch`, { path: '/' })
 const branch: Ref<Branch> = ref(null)
-const files: Ref<File[]> = ref(null)
-const file: Ref<File> = ref(null)
-const draft: Ref<Draft> = ref(null)
+const files: Ref<GitHubFile[]> = ref(null)
+const file: Ref<GitHubFile> = ref(null)
+const draft: Ref<GitHubDraft> = ref(null)
 const content: Ref<string> = ref('')
 const parsedContent: Ref<string> = ref('')
 const parsedMatter: Ref<string> = ref('')
@@ -89,7 +90,7 @@ const { data: branches, refresh: refreshBranches, pending: pendingBranches } = a
 findBranch()
 
 const { refresh: refreshFiles } = await useAsyncData('files', async () => {
-  const data = await client<{ files: File[], draft: Draft }>(`/projects/${props.project.id}/files`, {
+  const data = await client<{ files: GitHubFile[], draft: GitHubDraft }>(`/projects/${props.project.id}/files`, {
     params: {
       ref: branch.value?.name
     }
@@ -133,33 +134,39 @@ watch(content, () => {
   parsedMatter.value = matter
 }, { immediate: true })
 
-const mergedFiles = computed(() => {
+const computedFiles = computed(() => {
   if (!draft.value) {
     return files.value
   }
 
   const { additions, deletions } = draft.value || {}
 
-  const tree = { ...files.value }
+  const computedFiles = [...files.value]
   for (const addition of additions) {
-    addFileToTree({
-      path: addition.path,
-      name: addition.path.replace(/\.[^.]+$/, ''),
-      type: 'file',
-      isAdded: true
-    }, tree)
+    if (addition.new) {
+      computedFiles.push({ path: addition.path, type: 'blob', status: 'created' })
+    } else {
+      const file = computedFiles.find(f => f.path === addition.path)
+      if (file) {
+        file.status = 'updated'
+      }
+    }
   }
 
-  return tree
+  return computedFiles
 })
 
-function findFile () {
-  const currentFile = file.value?.path ? findFileFromPath(file.value.path, files.value) : null
+const tree = computed(() => mapTree(computedFiles.value))
 
-  selectFile(currentFile || files.value.find(file => file.path.toLowerCase().endsWith('index.md')) || files.value.find(file => file.type === 'file'))
+const theme = computed(() => colorMode.value === 'dark' ? 'dark' : 'light')
+
+function findFile () {
+  const currentFile = file.value?.path ? files.value.find(f => f.path === file.value.path) : null
+
+  selectFile(currentFile || files.value.find(file => file.path.toLowerCase().endsWith('index.md')) || files.value.find(file => file.type === 'blob'))
 }
 
-function selectFile (f: File) {
+function selectFile (f: GitHubFile) {
   file.value = f
 }
 
@@ -185,7 +192,7 @@ function openNewFileModal (path: string = '') {
 }
 
 async function createFile (path: string) {
-  const data = await client<Draft>(`/projects/${props.project.id}/files`, {
+  const data = await client<GitHubDraft>(`/projects/${props.project.id}/files`, {
     method: 'POST',
     params: {
       ref: branch.value?.name
@@ -202,7 +209,7 @@ async function createFile (path: string) {
 }
 
 const updateFile = debounce(async (content: string) => {
-  const data = await client<Draft>(`/projects/${props.project.id}/files/${encodeURIComponent(file.value.path)}`, {
+  const data = await client<GitHubDraft>(`/projects/${props.project.id}/files/${encodeURIComponent(file.value.path)}`, {
     method: 'PUT',
     params: {
       ref: branch.value?.name

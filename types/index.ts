@@ -79,26 +79,19 @@ export interface Project {
   user: User
 }
 
+export type FileStatus = 'created' | 'updated' | 'deleted' | 'renamed'
+
 export interface File {
   type: 'file' | 'directory'
   path: string
-  name: string
+  name?: string
   content?: string
   children?: File[]
-  isDraft?: boolean
-  isAdded?: boolean
-  isRenamed?: boolean
-  isModified?: boolean
-  isDeleted?: boolean
+  status: FileStatus
 }
 
 export interface Branch {
   name: string
-}
-
-export interface Draft {
-  additions: { path: string, new?: boolean, oldPath?: string, contents?: string }[]
-  deletiens: { path: string }[]
 }
 
 export interface GitHubAccount {
@@ -125,4 +118,25 @@ export interface GitHubPaginationMeta {
 export interface GitHubPagination<T> {
   data: T[]
   meta: GitHubPaginationMeta
+}
+
+export interface GitHubFile {
+  path: string
+  mode?: string
+  type: 'tree' | 'blob'
+  sha?: string
+  url?: string
+  status?: FileStatus
+}
+
+export interface GitHubDraftFile {
+  path: string
+  contents?: string
+  new?: boolean
+  oldPath?: string
+}
+
+export interface GitHubDraft {
+  additions: GitHubDraftFile[]
+  deletions: GitHubDraftFile[]
 }
