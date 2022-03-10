@@ -47,7 +47,9 @@
       :pending="pendingBranches"
       @select-branch="selectBranch"
       @refresh-branches="refreshBranches"
+      @new-branch="newBranch"
     />
+    <ProjectContentNewBranchModal v-model="newBranchModal" :branch="newBranchName" @create-branch="createBranch" />
   </ProjectPage>
 </template>
 
@@ -56,7 +58,6 @@ import type { PropType, Ref } from 'vue'
 import { debounce } from 'lodash-es'
 import { findFileFromPath } from '~/utils/tree'
 import type { Team, Project, File, Branch } from '~/types'
-import ProjectContentBranchesModal from '~~/components/organisms/project/content/ProjectContentBranchesModal.vue'
 
 const props = defineProps({
   team: {
@@ -79,6 +80,8 @@ const content: Ref<string> = ref('')
 const parsedContent: Ref<string> = ref('')
 const parsedMatter: Ref<string> = ref('')
 const branchesModal = ref(false)
+const newBranchModal = ref(false)
+const newBranchName = ref('')
 const newFileModal = ref(false)
 const newFileFolder = ref('')
 
@@ -165,6 +168,25 @@ function selectBranch (b: Branch) {
 function openNewFileModal (path: string = '') {
   newFileFolder.value = path || ''
   newFileModal.value = true
+}
+
+function newBranch (name: string) {
+  newBranchName.value = name
+  newBranchModal.value = true
+}
+
+async function createBranch (name: string) {
+  const branch = await client<Branch>(`/projects/${props.project.id}/branches`, {
+    method: 'POST',
+    body: {
+      name
+    }
+  })
+
+  branches.value.push(branch)
+
+  newBranchName.value = ''
+  newBranchModal.value = false
 }
 
 async function createFile (path: string) {

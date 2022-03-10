@@ -25,7 +25,18 @@
       </div>
     </template>
 
-    <ul v-if="filteredBranches?.length" class="divide-y u-divide-gray-200">
+    <ul class="divide-y u-divide-gray-200">
+      <li class="group flex items-center justify-between gap-3 px-4 py-2.5 cursor-pointer hover:u-bg-gray-50" @click="onAddBranchClick">
+        <div class="flex items-center gap-3 truncate">
+          <UIcon name="heroicons-outline:plus" class="flex-shrink-0 w-4 h-4 u-text-gray-400" />
+          <span class="text-sm font-medium truncate u-text-gray-700">Create new branch {{ q && !branchExists ? `"${q}"` : '' }}</span>
+        </div>
+
+        <UIcon
+          name="heroicons-outline:chevron-right"
+          class="flex-shrink-0 invisible w-5 h-5 group-hover:visible u-text-gray-400"
+        />
+      </li>
       <li v-for="branch in filteredBranches" :key="branch.name" class="group flex items-center justify-between gap-3 px-4 py-2.5 cursor-pointer hover:u-bg-gray-50" @click="onBranchClick(branch)">
         <div class="flex items-center gap-3 truncate">
           <UIcon name="mdi:source-branch" class="flex-shrink-0 w-4 h-4 u-text-gray-400" />
@@ -39,7 +50,6 @@
         />
       </li>
     </ul>
-    <span v-else class="block p-4 text-sm text-center u-text-gray-500">No branch matching your query</span>
   </UModal>
 </template>
 
@@ -66,7 +76,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update:modelValue', 'selectBranch', 'refreshBranches'])
+const emit = defineEmits(['update:modelValue', 'selectBranch', 'refreshBranches', 'newBranch'])
 
 const isOpen = computed({
   get () {
@@ -82,8 +92,16 @@ const filteredBranches = computed(() => {
   return props.branches.filter(b => b.name.search(new RegExp(q.value, 'i')) !== -1)
 })
 
+const branchExists = computed(() => q.value && props.branches.some(b => b.name === q.value))
+
 function onBranchClick (b: Branch) {
   emit('selectBranch', b)
+  isOpen.value = false
+  q.value = ''
+}
+
+function onAddBranchClick () {
+  emit('newBranch', !branchExists.value ? q.value : '')
   isOpen.value = false
   q.value = ''
 }
