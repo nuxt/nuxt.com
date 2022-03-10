@@ -1,7 +1,7 @@
 <template>
   <ProjectPage title="Content">
     <template #aside>
-      <FilesTree :tree="tree" :selected-file="file" @select-file="selectFile" @new-file="openNewFileModal" />
+      <FilesTree :tree="tree" :selected-file="file" @selectFile="selectFile" @createFile="openCreateFileModal" @deleteFile="openDeleteFileDialog" />
     </template>
 
     <template #aside-header>
@@ -10,7 +10,7 @@
         class="-my-0.5 -mr-1"
         variant="transparent-hover"
         icon="heroicons-outline:plus"
-        @click="openNewFileModal()"
+        @click="openCreateFileModal()"
       />
     </template>
 
@@ -40,7 +40,7 @@
     <p class="flex-1 w-full pb-16 milkdown editor focus:outline-none" contenteditable @input="updateFile($event.target.innerText)" v-text="parsedContent" />
     <!-- <DocusEditor :model-value="parsedContent" :theme="theme" @update:model-value="updateFile" /> -->
 
-    <ProjectContentNewFileModal v-model="newFileModal" :folder="newFileFolder" @submit="createFile" />
+    <ProjectContentCreateFileModal v-model="createFileModal" :folder="createFileFolder" @submit="createFile" />
     <ProjectContentBranchesModal
       v-model="branchesModal"
       :branches="branches"
@@ -49,14 +49,25 @@
       @select-branch="selectBranch"
       @refresh-branches="refreshBranches"
     />
+
+    <UAlertDialog
+      v-model="deleteFileDialog"
+      icon="heroicons-outline:x"
+      icon-class="text-red-600"
+      icon-wrapper-class="w-12 h-12 bg-red-100 sm:h-10 sm:w-10"
+      :title="`Delete “${deleteFilePath}”`"
+      description="Are you sure you want to delete this file?"
+      @confirm="deleteFile()"
+    />
   </ProjectPage>
 </template>
 
 <script setup lang="ts">
 import type { PropType, Ref } from 'vue'
-import { debounce } from 'lodash-es'
+import { debounce, sortBy } from 'lodash-es'
 import { mapTree } from '~/utils/tree'
 import type { Team, Project, Branch, GitHubDraft, GitHubFile } from '~/types'
+import FilesTreeIconVue from '~~/components/molecules/FilesTreeIcon.vue'
 
 const props = defineProps({
   team: {
@@ -82,8 +93,10 @@ const content: Ref<string> = ref('')
 const parsedContent: Ref<string> = ref('')
 const parsedMatter: Ref<string> = ref('')
 const branchesModal = ref(false)
-const newFileModal = ref(false)
-const newFileFolder = ref('')
+const createFileModal = ref(false)
+const createFileFolder = ref('')
+const deleteFileDialog = ref(false)
+const deleteFilePath = ref('')
 
 const { data: branches, refresh: refreshBranches, pending: pendingBranches } = await useAsyncData('branches', () => client<Branch[]>(`/projects/${props.project.id}/branches`))
 
@@ -99,8 +112,6 @@ const { refresh: refreshFiles } = await useAsyncData('files', async () => {
   files.value = data.files
   draft.value = data.draft
 })
-
-findFile()
 
 // Select file when files changes
 watch(files, () => findFile())
@@ -128,11 +139,17 @@ watch(branch, async () => await refreshFiles())
 
 // Split markdown front-matter when content changes
 watch(content, () => {
+  if (!content.value) {
+    return
+  }
+
   const { content: c, matter } = parseFrontMatter(content.value)
 
   parsedContent.value = c
   parsedMatter.value = matter
 }, { immediate: true })
+
+// Computed
 
 const computedFiles = computed(() => {
   if (!draft.value) {
@@ -152,18 +169,29 @@ const computedFiles = computed(() => {
       }
     }
   }
+  for (const deletion of deletions) {
+    const file = computedFiles.find(f => f.path === deletion.path)
+    if (file) {
+      file.status = 'deleted'
+    }
+  }
 
   return computedFiles
 })
 
-const tree = computed(() => mapTree(computedFiles.value))
+// Do not move this, it needs to be after computedFiles
+findFile()
+
+const tree = computed(() => mapTree(sortBy(computedFiles.value, 'path')))
 
 const theme = computed(() => colorMode.value === 'dark' ? 'dark' : 'light')
 
-function findFile () {
-  const currentFile = file.value?.path ? files.value.find(f => f.path === file.value.path) : null
+// Methods
 
-  selectFile(currentFile || files.value.find(file => file.path.toLowerCase().endsWith('index.md')) || files.value.find(file => file.type === 'blob'))
+function findFile () {
+  const currentFile = file.value?.path ? computedFiles.value.find(f => f.path === file.value.path) : null
+
+  selectFile(currentFile || computedFiles.value.reverse().find(file => file.path.toLowerCase().endsWith('index.md')) || computedFiles.value.reverse().find(file => file.type === 'blob'))
 }
 
 function selectFile (f: GitHubFile) {
@@ -186,10 +214,17 @@ function selectBranch (b: Branch) {
   branchCookie.value = b.name
 }
 
-function openNewFileModal (path: string = '') {
-  newFileFolder.value = path || ''
-  newFileModal.value = true
+function openCreateFileModal (path: string = '') {
+  createFileFolder.value = path || ''
+  createFileModal.value = true
 }
+
+function openDeleteFileDialog (path: string = '') {
+  deleteFilePath.value = path || ''
+  deleteFileDialog.value = true
+}
+
+// Http
 
 async function createFile (path: string) {
   const data = await client<GitHubDraft>(`/projects/${props.project.id}/files`, {
@@ -204,8 +239,10 @@ async function createFile (path: string) {
 
   draft.value = data
 
-  newFileModal.value = false
-  newFileFolder.value = ''
+  selectFile(computedFiles.value.find(file => file.path === path))
+
+  createFileModal.value = false
+  createFileFolder.value = ''
 }
 
 const updateFile = debounce(async (content: string) => {
@@ -221,6 +258,24 @@ const updateFile = debounce(async (content: string) => {
 
   draft.value = data
 }, 500)
+
+async function deleteFile () {
+  const data = await client<GitHubDraft>(`/projects/${props.project.id}/files/${encodeURIComponent(deleteFilePath.value)}`, {
+    method: 'DELETE',
+    params: {
+      ref: branch.value?.name
+    }
+  })
+
+  draft.value = data
+
+  file.value = null
+
+  findFile()
+
+  deleteFileDialog.value = false
+  deleteFilePath.value = ''
+}
 </script>
 
 <style>

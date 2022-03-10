@@ -20,7 +20,6 @@
           autofocus
           class="w-full"
           :custom-class="folder && 'rounded-l-none'"
-          @keyup.enter="submitFile"
         />
       </div>
     </div>
@@ -59,7 +58,7 @@ const isOpen = computed({
 })
 
 function submitFile () {
-  emit('submit', filePath.value)
+  emit('submit', [props.folder, filePath.value].join('/'))
   isOpen.value = false
 }
 </script>

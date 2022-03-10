@@ -12,32 +12,43 @@
       >
         <div class="flex items-center justify-between flex-1">
           <div class="flex items-center truncate">
-            <FilesTreeIcon :file="file" :opened-files="openedFiles" class="mr-1.5" />
+            <FilesTreeIcon :file="file" :opened-dirs="openedDirs" class="mr-1.5" />
             <div class="line-clamp-1" :class="{ 'line-through': file.status === 'deleted' }">
               {{ file.name }}
             </div>
+            <FilesTreeIndicator :file="file" class="ml-3" />
           </div>
-          <div class="flex gap-1.5  -mr-1">
-            <FilesTreeIndicator :file="file" />
+          <div class="flex gap-1.5 -mr-1">
             <UButton
               v-if="isDir(file)"
               size="xxs"
               class="-my-0.5 -mr-0.5 invisible group-hover:visible"
               variant="transparent-hover"
               icon="heroicons-outline:plus"
-              @click.stop="newFile(file)"
+              @click.stop="createFile(file)"
+            />
+            <UButton
+              v-if="isFile(file)"
+              size="xxs"
+              class="-my-0.5 -mr-0.5 invisible group-hover:visible"
+              variant="transparent-hover"
+              icon="heroicons-outline:trash"
+              @click.stop="deleteFile(file)"
             />
           </div>
         </div>
       </div>
 
       <FilesTree
-        v-if="isDir(file) && isOpen(file)"
+        v-if="isDir(file)"
+        v-show="isDirOpen(file)"
         :level="level + 1"
         :tree="file.children"
         :selected-file="selectedFile"
         @selectFile="file => $emit('selectFile', file)"
-        @newFile="file => $emit('newFile', file)"
+        @createFile="file => $emit('createFile', file)"
+        @deleteFile="file => $emit('deleteFile', file)"
+        @openDir="openDir"
       />
     </li>
   </ul>
@@ -45,9 +56,9 @@
 
 <script setup lang="ts">
 import { PropType } from 'vue'
-import type { File } from '~/types'
+import type { File, GitHubFile } from '~/types'
 
-const openedFiles = reactive({})
+const openedDirs = reactive({})
 
 const props = defineProps({
   level: {
@@ -59,19 +70,26 @@ const props = defineProps({
     default: () => []
   },
   selectedFile: {
-    type: Object as PropType<File>,
+    type: Object as PropType<GitHubFile>,
     default: null
   }
 })
 
-const emit = defineEmits(['selectFile', 'newFile'])
+const emit = defineEmits(['selectFile', 'createFile', 'deleteFile', 'openDir'])
+
+// Transform this to a `watch` to handle file selection from create
+onMounted(() => {
+  if (props.tree.find(file => file.path === props.selectedFile.path)) {
+    emit('openDir', props.selectedFile.path.split('/').slice(0, -1).join('/'))
+  }
+})
 
 // Methods
+const isFile = (file: File) => file.type === 'file'
 const isDir = (file: File) => file.type === 'directory'
-const isOpen = (file: File) => {
-  return !!openedFiles[file.path]
-}
+const isDirOpen = (file: File) => !!openedDirs[file.path]
 const isSelected = (file: File) => props.selectedFile && file.path === props.selectedFile.path
+
 const selectFile = (file: File) => {
   // Prevent click when clicking on selected file
   if (props.selectedFile && props.selectedFile.path === file.path) {
@@ -79,13 +97,20 @@ const selectFile = (file: File) => {
   }
 
   if (isDir(file)) {
-    openedFiles[file.path] = !openedFiles[file.path]
+    openedDirs[file.path] = !openedDirs[file.path]
     return
   }
 
   emit('selectFile', file)
 }
-const newFile = (file: File) => emit('newFile', file.path)
+const createFile = (file: File) => emit('createFile', file.path)
+const deleteFile = (file: File) => emit('deleteFile', file.path)
+
+const openDir = (path) => {
+  openedDirs[path] = true
+
+  emit('openDir', path.split('/').slice(0, -1).join('/'))
+}
 </script>
 
 <style scoped>

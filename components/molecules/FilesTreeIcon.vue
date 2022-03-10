@@ -1,6 +1,5 @@
 <template>
   <UIcon
-    :key="iconName"
     :name="iconName"
     class="flex-shrink-0 w-4 h-4"
   />
@@ -15,14 +14,14 @@ const props = defineProps({
     type: Object as PropType<File>,
     default: null
   },
-  openedFiles: {
+  openedDirs: {
     type: Object,
     default: () => ({})
   }
 })
 
 const isOpen = computed(() => {
-  return !!props.openedFiles[props.file.path]
+  return !!props.openedDirs[props.file.path]
 })
 
 const iconName = computed(() => {
