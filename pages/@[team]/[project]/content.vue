@@ -37,7 +37,9 @@
       </div>
     </template>
 
-    <DocusEditor :model-value="parsedContent" @update:model-value="updateFile" />
+    <p class="flex-1 w-full pb-16 milkdown editor focus:outline-none" contenteditable @input="updateFile($event.target.innerText)" v-text="parsedContent" />
+
+    <!-- <DocusEditor :model-value="parsedContent" :theme="theme" @update:model-value="updateFile" /> -->
 
     <ProjectContentCreateFileModal v-model="createFileModal" :folder="createFileFolder" @submit="createFile" />
     <ProjectContentCreateBranchModal v-model="createBranchModal" :branch="createBranchName" @create-branch="createBranch" />
