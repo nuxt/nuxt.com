@@ -60,5 +60,6 @@ const isOpen = computed({
 function submitFile () {
   emit('submit', [props.folder, filePath.value].join('/'))
   isOpen.value = false
+  filePath.value = ''
 }
 </script>

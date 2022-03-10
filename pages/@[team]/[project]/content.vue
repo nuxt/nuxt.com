@@ -32,7 +32,15 @@
         </div>
 
         <div class="flex items-center gap-3">
-          <UButton label="Commit" size="sm" icon="heroicons-outline:cloud-upload" trailing variant="secondary" />
+          <UButton
+            label="Commit"
+            :loading="committing"
+            size="sm"
+            icon="heroicons-outline:cloud-upload"
+            trailing
+            variant="secondary"
+            @click="commit"
+          />
         </div>
       </div>
     </template>
@@ -101,6 +109,8 @@ const createFileModal = ref(false)
 const createFileFolder = ref('')
 const deleteFileDialog = ref(false)
 const deleteFilePath = ref('')
+const committing = ref(false)
+const commitAfterCreateBranch = ref(false)
 
 const { data: branches, refresh: refreshBranches, pending: pendingBranches } = await useAsyncData('branches', () => client<Branch[]>(`/projects/${props.project.id}/branches`))
 
@@ -143,7 +153,7 @@ watch(branch, async () => await refreshFiles())
 
 // Split markdown front-matter when content changes
 watch(content, () => {
-  if (!content.value) {
+  if (typeof content.value !== 'string') {
     return
   }
 
@@ -239,14 +249,22 @@ async function createBranch (name: string) {
   const branch = await client<Branch>(`/projects/${props.project.id}/branches`, {
     method: 'POST',
     body: {
-      name
+      name,
+      mergeDraft: !!commitAfterCreateBranch.value
     }
   })
 
   branches.value.push(branch)
 
+  selectBranch(branch)
+
   createBranchName.value = ''
   createBranchModal.value = false
+
+  if (commitAfterCreateBranch) {
+    commitAfterCreateBranch.value = false
+    commit()
+  }
 }
 
 async function createFile (path: string) {
@@ -292,11 +310,35 @@ async function deleteFile () {
 
   draft.value = data
 
-  file.value = null
-
-  findFile()
+  // Select new file when deleted was selected
+  if (file.value?.path === deleteFilePath.value) {
+    findFile()
+  }
 
   deleteFileDialog.value = false
   deleteFilePath.value = ''
+}
+
+async function commit () {
+  if (branch.value.name === props.project.repository.default_branch) {
+    createBranchModal.value = true
+    commitAfterCreateBranch.value = true
+    return
+  }
+
+  committing.value = true
+
+  try {
+    await client(`/projects/${props.project.id}/files/commit`, {
+      method: 'POST',
+      params: {
+        ref: branch.value?.name
+      }
+    })
+
+    await refreshFiles()
+  } catch (e) {}
+
+  committing.value = false
 }
 </script>
