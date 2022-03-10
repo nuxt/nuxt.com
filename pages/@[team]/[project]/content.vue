@@ -37,10 +37,10 @@
       </div>
     </template>
 
-    <p class="flex-1 w-full pb-16 milkdown editor focus:outline-none" contenteditable @input="updateFile($event.target.innerText)" v-text="parsedContent" />
-    <!-- <DocusEditor :model-value="parsedContent" :theme="theme" @update:model-value="updateFile" /> -->
+    <DocusEditor :model-value="parsedContent" @update:model-value="updateFile" />
 
     <ProjectContentCreateFileModal v-model="createFileModal" :folder="createFileFolder" @submit="createFile" />
+    <ProjectContentCreateBranchModal v-model="createBranchModal" :branch="createBranchName" @create-branch="createBranch" />
     <ProjectContentBranchesModal
       v-model="branchesModal"
       :branches="branches"
@@ -48,6 +48,7 @@
       :pending="pendingBranches"
       @select-branch="selectBranch"
       @refresh-branches="refreshBranches"
+      @create-branch="openCreateBranchModal"
     />
 
     <UAlertDialog
@@ -67,7 +68,6 @@ import type { PropType, Ref } from 'vue'
 import { debounce, sortBy } from 'lodash-es'
 import { mapTree } from '~/utils/tree'
 import type { Team, Project, Branch, GitHubDraft, GitHubFile } from '~/types'
-import FilesTreeIconVue from '~~/components/molecules/FilesTreeIcon.vue'
 
 const props = defineProps({
   team: {
@@ -93,6 +93,8 @@ const content: Ref<string> = ref('')
 const parsedContent: Ref<string> = ref('')
 const parsedMatter: Ref<string> = ref('')
 const branchesModal = ref(false)
+const createBranchModal = ref(false)
+const createBranchName = ref('')
 const createFileModal = ref(false)
 const createFileFolder = ref('')
 const deleteFileDialog = ref(false)
@@ -214,6 +216,11 @@ function selectBranch (b: Branch) {
   branchCookie.value = b.name
 }
 
+function openCreateBranchModal (name: string) {
+  createBranchName.value = name
+  createBranchModal.value = true
+}
+
 function openCreateFileModal (path: string = '') {
   createFileFolder.value = path || ''
   createFileModal.value = true
@@ -225,6 +232,20 @@ function openDeleteFileDialog (path: string = '') {
 }
 
 // Http
+
+async function createBranch (name: string) {
+  const branch = await client<Branch>(`/projects/${props.project.id}/branches`, {
+    method: 'POST',
+    body: {
+      name
+    }
+  })
+
+  branches.value.push(branch)
+
+  createBranchName.value = ''
+  createBranchModal.value = false
+}
 
 async function createFile (path: string) {
   const data = await client<GitHubDraft>(`/projects/${props.project.id}/files`, {
@@ -277,12 +298,3 @@ async function deleteFile () {
   deleteFilePath.value = ''
 }
 </script>
-
-<style>
-.milkdown .editor {
-  width: 100%;
-  height: 100%;
-  max-width: 100% !important;
-  padding: 0 !important;
-}
-</style>

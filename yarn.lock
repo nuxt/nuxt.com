@@ -296,9 +296,9 @@
     mime "^3.0.0"
 
 "@docus/editor@npm:@docus/editor-edge@latest":
-  version "0.2.0-27438629.0d1a097"
-  resolved "https://registry.yarnpkg.com/@docus/editor-edge/-/editor-edge-0.2.0-27438629.0d1a097.tgz#5d6ed1d570a9888fcf35a1ef90c6b9c6eb15258d"
-  integrity sha512-/bMPrZC0un45fIm7tg8gbadStRxwS/Fk1DFsVTEXBwKEnGiNTEw+4IuX6ZLm2U/Mf/4bx7BfgrtXtb8OYR4SYw==
+  version "0.2.0-27448567.7f658b5"
+  resolved "https://registry.yarnpkg.com/@docus/editor-edge/-/editor-edge-0.2.0-27448567.7f658b5.tgz#cab8eb00dfdca4e4244ccad664550941edfe80e3"
+  integrity sha512-d1EhVs55b0TfDghORvOEJcSaOZsXUWF/R8bHus+K3y0PA/DS+qQ9Z08PdTG+hwHcKwwVYpGeBx6iBmXuI201JA==
   dependencies:
     "@docus/remark-mdc" "npm:@docus/remark-mdc-edge"
     "@milkdown/core" "^5.5.0"
@@ -319,9 +319,9 @@
     "@nuxt/kit" "npm:@nuxt/kit-edge"
 
 "@docus/remark-mdc@npm:@docus/remark-mdc-edge":
-  version "0.1.0-27389828.5bd4375"
-  resolved "https://registry.yarnpkg.com/@docus/remark-mdc-edge/-/remark-mdc-edge-0.1.0-27389828.5bd4375.tgz#560fdb0dfd870ee51bae0e27d056a387e8f477f8"
-  integrity sha512-g4BzLQ2UpP5K8lsCfa9ozs4Jf2Qjrpn/Gpcf+xI0T8HBiN01UmldCtdHwIO6u8SJi32y1XGszc6tNDlWEoP3UQ==
+  version "0.1.0-27447111.1f2ee9b"
+  resolved "https://registry.yarnpkg.com/@docus/remark-mdc-edge/-/remark-mdc-edge-0.1.0-27447111.1f2ee9b.tgz#6efe8ad84ef53bfb246cff49a7e28e2b85a15325"
+  integrity sha512-M3vEI3Mlj2ONoNn/KQwunw70hej0WFnIZcoFdsGJgmseNMyg1pGXQYGqe0HS5vyOXdGLCa4L3WgzFnH+uVtXrw==
   dependencies:
     flat "^5.0.2"
     gray-matter "^4.0.3"
@@ -835,7 +835,30 @@
   resolved "https://registry.yarnpkg.com/@nuxt/devalue/-/devalue-2.0.0.tgz#c7bd7e9a516514e612d5d2e511ffc399e0eac322"
   integrity sha512-YBI/6o2EBz02tdEJRBK8xkt3zvOFOWlLBf7WKYGBsSYSRtjjgrqPe2skp6VLLmKx5WbHHDNcW+6oACaurxGzeA==
 
-"@nuxt/kit@npm:@nuxt/kit-edge", "@nuxt/kit@npm:@nuxt/kit-edge@3.0.0-27437402.494f85a":
+"@nuxt/kit@npm:@nuxt/kit-edge":
+  version "3.0.0-27447229.20f3171"
+  resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-27447229.20f3171.tgz#194374f524ce6faebeb57720e1ae6f92e28adbe5"
+  integrity sha512-2lKe28iTTrjhbPSmUmL1sMPZlDR8zaR+y7/fBS8zPDuTldm4XEWs9tn9FWXzie3gVamfhi+UCNGIbYgrQwvxIg==
+  dependencies:
+    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-27447229.20f3171"
+    c12 "^0.1.4"
+    consola "^2.15.3"
+    defu "^5.0.1"
+    globby "^13.1.1"
+    hash-sum "^2.0.0"
+    ignore "^5.2.0"
+    jiti "^1.13.0"
+    knitwork "^0.1.1"
+    lodash.template "^4.5.0"
+    mlly "^0.4.3"
+    pathe "^0.2.0"
+    pkg-types "^0.3.2"
+    scule "^0.2.1"
+    semver "^7.3.5"
+    unctx "^1.0.2"
+    untyped "^0.4.2"
+
+"@nuxt/kit@npm:@nuxt/kit-edge@3.0.0-27437402.494f85a":
   version "3.0.0-27437402.494f85a"
   resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-27437402.494f85a.tgz#c98e6f6016443b057363de4625c039a449f6ab29"
   integrity sha512-8qzSbkkfl1QlLECfI94kkwYhy1i4Pgn/bpeaWEu/OrnKSvrQgbXZyCKL6FaxF9GTpT3DrQmXaIkF84DgSI2fGg==
@@ -965,6 +988,21 @@
   integrity sha512-TotMYtuPJTJPrVApK/694kSQsSJkD4P3g4tAPMe/0f2K4x0akldJQSdzemSpjhbqvoeb6z7G5Mw3OEVP23Dkyg==
   dependencies:
     c12 "^0.1.3"
+    create-require "^1.1.1"
+    defu "^5.0.1"
+    jiti "^1.13.0"
+    pathe "^0.2.0"
+    postcss-import-resolver "^2.0.0"
+    scule "^0.2.1"
+    std-env "^3.0.1"
+    ufo "^0.7.11"
+
+"@nuxt/schema@npm:@nuxt/schema-edge@3.0.0-27447229.20f3171":
+  version "3.0.0-27447229.20f3171"
+  resolved "https://registry.yarnpkg.com/@nuxt/schema-edge/-/schema-edge-3.0.0-27447229.20f3171.tgz#b4ff7c432d062118579706cce2583f18637dae71"
+  integrity sha512-mQppNNWCmdqM0YD2J0JQw3MIFte0wU/gdan4hHdvU5ib2q0WR3+A6Z/wP8Aip7e4cS/84hsQXpgYgV3k3TY+Dw==
+  dependencies:
+    c12 "^0.1.4"
     create-require "^1.1.1"
     defu "^5.0.1"
     jiti "^1.13.0"
@@ -3189,9 +3227,9 @@ electron-to-chromium@^1.4.71, electron-to-chromium@^1.4.76:
   integrity sha512-COsbJCGVYCc/aAY4cd94x1Js3q0r406YKGbdL8LXHg0O9dEjuFEFU/vZneRxBxKo/f1lLHi0YyAR7sbFM+i8Bg==
 
 emoji-regex@^10.0.0:
-  version "10.0.0"
-  resolved "https://registry.yarnpkg.com/emoji-regex/-/emoji-regex-10.0.0.tgz#96559e19f82231b436403e059571241d627c42b8"
-  integrity sha512-KmJa8l6uHi1HrBI34udwlzZY1jOEuID/ft4d8BSSEdRyap7PwBEt910453PJa5MuGvxkLqlt4Uvhu7tttFHViw==
+  version "10.0.1"
+  resolved "https://registry.yarnpkg.com/emoji-regex/-/emoji-regex-10.0.1.tgz#77180edb279b99510a21b79b19e1dc283d8f3991"
+  integrity sha512-cLuZzriSWVE+rllzeq4zpUEoCPfYEbQ6ZVhIq+ed6ynWST7Bw9XnOr+bKWgCup4paq72DI21gw9M3aaFkm4HAw==
 
 emoji-regex@^8.0.0:
   version "8.0.0"
@@ -7133,9 +7171,9 @@ prosemirror-transform@^1.0.0, prosemirror-transform@^1.1.0, prosemirror-transfor
     prosemirror-model "^1.0.0"
 
 prosemirror-view@^1.0.0, prosemirror-view@^1.1.0, prosemirror-view@^1.13.3, prosemirror-view@^1.23.2:
-  version "1.23.7"
-  resolved "https://registry.yarnpkg.com/prosemirror-view/-/prosemirror-view-1.23.7.tgz#f003af94445ef456e397c18cf4bb995e7072097f"
-  integrity sha512-ugY+g/4UI2Ree1zzdvbyQWF2KpbFa7kxKMLHaEJcxiPaErnZiD5wZFqIgFinc7fY2v/QM3DLnJ++2I45ULRdrg==
+  version "1.23.8"
+  resolved "https://registry.yarnpkg.com/prosemirror-view/-/prosemirror-view-1.23.8.tgz#1386255bfc094e75f1b708b28571e67139e46cc8"
+  integrity sha512-42KEZaZdVV0uLTUgOQDRaU6jaQM+Iqo6KAuNS3NdS9ET68tdUpK20+xmk0w/UKDfIkOgrItB+97CYkm4JYDWIQ==
   dependencies:
     prosemirror-model "^1.16.0"
     prosemirror-state "^1.0.0"
@@ -8448,7 +8486,20 @@ unenv@^0.4.3:
     upath "^2.0.1"
     util "^0.12.4"
 
-unified@^10.0.0, unified@^10.1.0, unified@^10.1.1:
+unified@^10.0.0, unified@^10.1.0:
+  version "10.1.2"
+  resolved "https://registry.yarnpkg.com/unified/-/unified-10.1.2.tgz#b1d64e55dafe1f0b98bb6c719881103ecf6c86df"
+  integrity sha512-pUSWAi/RAnVy1Pif2kAoeWNBa3JVrx0MId2LASj8G+7AiHWoKZNTomq6LG326T68U7/e263X6fTdcXIy7XnF7Q==
+  dependencies:
+    "@types/unist" "^2.0.0"
+    bail "^2.0.0"
+    extend "^3.0.0"
+    is-buffer "^2.0.0"
+    is-plain-obj "^4.0.0"
+    trough "^2.0.0"
+    vfile "^5.0.0"
+
+unified@^10.1.1:
   version "10.1.1"
   resolved "https://registry.yarnpkg.com/unified/-/unified-10.1.1.tgz#345e349e3ab353ab612878338eb9d57b4dea1d46"
   integrity sha512-v4ky1+6BN9X3pQrOdkFIPWAaeDsHPE1svRDxq7YpTc2plkIqFMwukfqM+l0ewpP9EfwARlt9pPFAeWYhHm8X9w==
@@ -8493,9 +8544,9 @@ unist-util-remove@^3.0.0:
     unist-util-visit-parents "^5.0.0"
 
 unist-util-stringify-position@^3.0.0:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/unist-util-stringify-position/-/unist-util-stringify-position-3.0.1.tgz#9dd6d1817aed14ea35c39227c47eb9bd192b7165"
-  integrity sha512-HDVOJ704Uj5QWqoB6KV4CDP62OW9wam9BEuwGE4fvunhVraZcO/fFNBCpvmDDSlkFBG/GAYdHfKvKvDAJxzcWA==
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/unist-util-stringify-position/-/unist-util-stringify-position-3.0.2.tgz#5c6aa07c90b1deffd9153be170dce628a869a447"
+  integrity sha512-7A6eiDCs9UtjcwZOcCpM4aPII3bAAGv13E96IkawkOAW0OhH+yRxtY0lzo8KiHpzEMfH7Q+FizUmwp8Iqy5EWg==
   dependencies:
     "@types/unist" "^2.0.0"
 
@@ -8652,17 +8703,17 @@ vfile-location@^4.0.0:
     vfile "^5.0.0"
 
 vfile-message@^3.0.0:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/vfile-message/-/vfile-message-3.1.1.tgz#b45c17a074ba4fec4319b32ffddf71ed1c52b97e"
-  integrity sha512-pz5xA88aupQPuXmY46xnGAv8MzAcU1Xi2Do3UftjTdvQHreXCWvJT/BbzYixPNYRek+EAioI0kP3crJu37xa6Q==
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/vfile-message/-/vfile-message-3.1.2.tgz#a2908f64d9e557315ec9d7ea3a910f658ac05f7d"
+  integrity sha512-QjSNP6Yxzyycd4SVOtmKKyTsSvClqBPJcd00Z0zuPj3hOIjg0rUPG6DbFGPvUKRgYyaIWLPKpuEclcuvb3H8qA==
   dependencies:
     "@types/unist" "^2.0.0"
     unist-util-stringify-position "^3.0.0"
 
 vfile@^5.0.0:
-  version "5.3.1"
-  resolved "https://registry.yarnpkg.com/vfile/-/vfile-5.3.1.tgz#5e8ae0aa1d3359e6123d5051451e03f355768ca0"
-  integrity sha512-EWkoULWVDBV3ozmE21TA0qekXreWJXV1jKcF8rgnvmmH0L9Vm8eTSnuuSSpH2XpLXZLJ0uMMIHUqDLHjK5lh4w==
+  version "5.3.2"
+  resolved "https://registry.yarnpkg.com/vfile/-/vfile-5.3.2.tgz#b499fbc50197ea50ad3749e9b60beb16ca5b7c54"
+  integrity sha512-w0PLIugRY3Crkgw89TeMvHCzqCs/zpreR31hl4D92y6SOE07+bfJe+dK5Q2akwS+i/c801kzjoOr9gMcTe6IAA==
   dependencies:
     "@types/unist" "^2.0.0"
     is-buffer "^2.0.0"
