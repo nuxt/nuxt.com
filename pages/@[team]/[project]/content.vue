@@ -37,8 +37,7 @@
       </div>
     </template>
 
-    <p class="flex-1 w-full pb-16 milkdown editor focus:outline-none" contenteditable @input="saveContent" v-text="parsedContent" />
-    <!-- <DocusEditor :model-value="parsedContent" @update:model-value="saveContent" /> -->
+    <DocusEditor :model-value="parsedContent" @update:model-value="saveContent" />
 
     <ProjectContentNewFileModal v-model="newFileModal" :folder="newFileFolder" @submit="createFile" />
     <ProjectContentBranchesModal
@@ -185,12 +184,3 @@ async function createFile (path: string) {
   newFileFolder.value = ''
 }
 </script>
-
-<style>
-.milkdown .editor {
-  width: 100%;
-  height: 100%;
-  max-width: 100% !important;
-  padding: 0 !important;
-}
-</style>
