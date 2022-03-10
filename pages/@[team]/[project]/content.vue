@@ -47,9 +47,9 @@
       :pending="pendingBranches"
       @select-branch="selectBranch"
       @refresh-branches="refreshBranches"
-      @new-branch="newBranch"
+      @create-branch="openCreateBranchModal"
     />
-    <ProjectContentNewBranchModal v-model="newBranchModal" :branch="newBranchName" @create-branch="createBranch" />
+    <ProjectContentCreateBranchModal v-model="createBranchModal" :branch="createBranchName" @create-branch="createBranch" />
   </ProjectPage>
 </template>
 
@@ -80,8 +80,8 @@ const content: Ref<string> = ref('')
 const parsedContent: Ref<string> = ref('')
 const parsedMatter: Ref<string> = ref('')
 const branchesModal = ref(false)
-const newBranchModal = ref(false)
-const newBranchName = ref('')
+const createBranchModal = ref(false)
+const createBranchName = ref('')
 const newFileModal = ref(false)
 const newFileFolder = ref('')
 
@@ -170,9 +170,9 @@ function openNewFileModal (path: string = '') {
   newFileModal.value = true
 }
 
-function newBranch (name: string) {
-  newBranchName.value = name
-  newBranchModal.value = true
+function openCreateBranchModal (name: string) {
+  createBranchName.value = name
+  createBranchModal.value = true
 }
 
 async function createBranch (name: string) {
@@ -185,8 +185,8 @@ async function createBranch (name: string) {
 
   branches.value.push(branch)
 
-  newBranchName.value = ''
-  newBranchModal.value = false
+  createBranchName.value = ''
+  createBranchModal.value = false
 }
 
 async function createFile (path: string) {

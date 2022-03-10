@@ -26,7 +26,7 @@
     </template>
 
     <ul class="divide-y u-divide-gray-200">
-      <li class="group flex items-center justify-between gap-3 px-4 py-2.5 cursor-pointer hover:u-bg-gray-50" @click="onAddBranchClick">
+      <li class="group flex items-center justify-between gap-3 px-4 py-2.5 cursor-pointer hover:u-bg-gray-50" @click="onCreateBranchClick">
         <div class="flex items-center gap-3 truncate">
           <UIcon name="heroicons-outline:plus" class="flex-shrink-0 w-4 h-4 u-text-gray-400" />
           <span class="text-sm font-medium truncate u-text-gray-700">Create new branch {{ q && !branchExists ? `"${q}"` : '' }}</span>
@@ -76,7 +76,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update:modelValue', 'selectBranch', 'refreshBranches', 'newBranch'])
+const emit = defineEmits(['update:modelValue', 'selectBranch', 'refreshBranches', 'createBranch'])
 
 const isOpen = computed({
   get () {
@@ -100,8 +100,8 @@ function onBranchClick (b: Branch) {
   q.value = ''
 }
 
-function onAddBranchClick () {
-  emit('newBranch', !branchExists.value ? q.value : '')
+function onCreateBranchClick () {
+  emit('createBranch', !branchExists.value ? q.value : '')
   isOpen.value = false
   q.value = ''
 }
