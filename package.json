@@ -11,7 +11,8 @@
   "dependencies": {
     "@docus/editor": "npm:@docus/editor-edge@latest",
     "@nuxt/content": "npm:@nuxt/content-edge@latest",
-    "@sindresorhus/slugify": "^2.1.0"
+    "@sindresorhus/slugify": "^2.1.0",
+    "@vueuse/motion": "^2.0.0-beta.9"
   },
   "devDependencies": {
     "@nuxthq/ui": "npm:@nuxthq/ui-edge@latest",
