@@ -16,12 +16,12 @@
 
     <main class="relative py-8">
       <UContainer>
-        <div class="lg:grid lg:grid-cols-12 lg:gap-10 lg:relative">
-          <aside class="pb-8 lg:pb-0 lg:sticky lg:top-16 sm:px-6 lg:px-0 lg:pt-8 lg:-mt-8 lg:self-start lg:col-span-3">
+        <div class="lg:grid lg:grid-cols-12 lg:gap-10 lg:relative ">
+          <aside class="pb-8 overflow-x-hidden overflow-y-auto lg:pb-0 lg:sticky lg:top-16 sm:px-6 lg:px-0 lg:pt-8 lg:-mt-8 lg:self-start lg:col-span-3 lg:h-[calc(100vh-130px)]">
             <slot name="left" />
           </aside>
 
-          <div class="space-y-6 sm:px-6 lg:px-0 lg:col-span-7">
+          <div class="space-y-6 overflow-hidden sm:px-6 lg:px-0 lg:col-span-7">
             <slot />
           </div>
 
