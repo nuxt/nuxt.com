@@ -63,19 +63,20 @@ const currentNav = computed(() => {
   return navigation.value[0].children[0].children
 })
 
-const nodeToLink = link => ({ to: link.slug, label: link.title, children: link.children?.map(subLink) })
-const subLink = sublink => ({ to: sublink.slug, label: sublink.title, children: sublink.children?.map(childrenLink) })
-const childrenLink = child => ({ to: child.slug, label: child.title })
+// first nav level
+const navLinks = navLink => ({ to: navLink.slug, label: navLink.title, children: navLink.children?.map(items) })
+// second
+const items = item => ({ to: item.slug, label: item.title, children: item.children?.map(itemLinks) })
+// third
+const itemLinks = itemLink => ({ to: itemLink.slug, label: itemLink.title })
 
 const links = computed(() => {
   if (!currentNav.value) { return [] }
 
-  return currentNav.value.map(nodeToLink)
+  return currentNav.value.map(navLinks)
 })
 
 const asideLinks = computed(() => {
-  return currentNav.value.find(link => link.slug.includes(path.value))?.children.map(subLink)
+  return currentNav.value.find(link => link.slug.includes(path.value))?.children.map(items)
 })
-
-console.log('asideLinks', asideLinks)
 </script>
