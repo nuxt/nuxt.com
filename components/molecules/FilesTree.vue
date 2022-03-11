@@ -12,15 +12,14 @@
         }"
         @click="selectFile(file)"
       >
-        <div class="flex items-center justify-between flex-1 gap-3">
-          <div class="flex items-center truncate">
+        <div class="flex items-center justify-between flex-1 w-0 gap-1">
+          <div class="flex items-center min-w-0 overflow-hidden">
             <FilesTreeIcon :file="file" :opened-dirs="openedDirs" class="mr-1.5" />
-            <span class="truncate" :class="{ 'line-through': isDeleted(file) }">
+            <span class="min-w-0 truncate" :class="{ 'line-through': isDeleted(file) }">
               {{ file.name }}
             </span>
-            <FilesTreeIndicator :file="file" class="ml-1.5" />
           </div>
-          <div class="flex items-center gap-1.5 -mr-1 flex-shrink-0">
+          <div class="flex items-center gap-1.5 -mr-1">
             <UButton
               v-if="isDir(file)"
               size="xxs"

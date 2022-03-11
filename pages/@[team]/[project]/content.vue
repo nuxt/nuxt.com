@@ -41,7 +41,7 @@
         <div class="flex items-center gap-3">
           <UButton
             v-if="isDraft"
-            label="Commit"
+            label="Save"
             :loading="committing"
             size="sm"
             icon="heroicons-outline:cloud-upload"
