@@ -46,8 +46,6 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'submit'])
 
-console.log('props.oldPath', props.oldPath)
-
 const folder = ref('')
 const oldName = ref('')
 const newName = ref('')
