@@ -1,7 +1,14 @@
 <template>
   <ProjectPage title="Content">
     <template #aside>
-      <FilesTree :tree="tree" :selected-file="file" @selectFile="selectFile" @createFile="openCreateFileModal" @deleteFile="openDeleteFileDialog" />
+      <FilesTree
+        :tree="tree"
+        :selected-file="file"
+        @selectFile="selectFile"
+        @createFile="openCreateFileModal"
+        @renameFile="openRenameFileModal"
+        @deleteFile="openDeleteFileDialog"
+      />
     </template>
 
     <template #aside-header>
@@ -33,12 +40,12 @@
 
         <div class="flex items-center gap-3">
           <UButton
+            v-if="isDraft"
             label="Commit"
             :loading="committing"
             size="sm"
             icon="heroicons-outline:cloud-upload"
             trailing
-            variant="secondary"
             @click="commit"
           />
         </div>
@@ -50,6 +57,7 @@
     <!-- <DocusEditor :model-value="parsedContent" :theme="theme" @update:model-value="updateFile" /> -->
 
     <ProjectContentCreateFileModal v-model="createFileModal" :folder="createFileFolder" @submit="createFile" />
+    <ProjectContentRenameFileModal v-model="renameFileModal" :old-path="renameFilePath" @submit="renameFile" />
     <ProjectContentCreateBranchModal v-model="createBranchModal" :branch="createBranchName" @create-branch="createBranch" />
     <ProjectContentBranchesModal
       v-model="branchesModal"
@@ -107,16 +115,18 @@ const createBranchModal = ref(false)
 const createBranchName = ref('')
 const createFileModal = ref(false)
 const createFileFolder = ref('')
+const renameFileModal = ref(false)
+const renameFilePath = ref('')
 const deleteFileDialog = ref(false)
 const deleteFilePath = ref('')
 const committing = ref(false)
 const commitAfterCreateBranch = ref(false)
 
-const { data: branches, refresh: refreshBranches, pending: pendingBranches } = await useAsyncData('branches', () => client<Branch[]>(`/projects/${props.project.id}/branches`))
+const { data: branches, refresh: refreshBranches, pending: pendingBranches } = await useAsyncData(`project-${props.project.id}-branches`, () => client<Branch[]>(`/projects/${props.project.id}/branches`))
 
 findBranch()
 
-const { refresh: refreshFiles } = await useAsyncData('files', async () => {
+const { refresh: refreshFiles } = await useAsyncData(`project-${props.project.id}-files`, async () => {
   const data = await client<{ files: GitHubFile[], draft: GitHubDraft }>(`/projects/${props.project.id}/files`, {
     params: {
       ref: branch.value?.name
@@ -165,6 +175,10 @@ watch(content, () => {
 
 // Computed
 
+const isDraft = computed(() => {
+  return draft.value?.additions?.length || draft.value?.deletions.length
+})
+
 const computedFiles = computed(() => {
   if (!draft.value) {
     return files.value
@@ -172,25 +186,34 @@ const computedFiles = computed(() => {
 
   const { additions, deletions } = draft.value || {}
 
-  const computedFiles = [...files.value]
+  const githubFiles = [...files.value]
   for (const addition of additions) {
     if (addition.new) {
-      computedFiles.push({ path: addition.path, type: 'blob', status: 'created' })
+      if (addition.oldPath) {
+        deletions.splice(deletions.findIndex(d => d.oldPath === addition.oldPath), 1)
+        const file = githubFiles.find(f => f.path === addition.oldPath)
+        if (file) {
+          file.status = 'renamed'
+          file.path = addition.path
+        }
+      } else {
+        githubFiles.push({ path: addition.path, type: 'blob', status: 'created' })
+      }
     } else {
-      const file = computedFiles.find(f => f.path === addition.path)
+      const file = githubFiles.find(f => f.path === addition.path)
       if (file) {
         file.status = 'updated'
       }
     }
   }
   for (const deletion of deletions) {
-    const file = computedFiles.find(f => f.path === deletion.path)
+    const file = githubFiles.find(f => f.path === deletion.path)
     if (file) {
       file.status = 'deleted'
     }
   }
 
-  return computedFiles
+  return githubFiles
 })
 
 // Do not move this, it needs to be after computedFiles
@@ -236,6 +259,11 @@ function openCreateBranchModal (name: string) {
 function openCreateFileModal (path: string = '') {
   createFileFolder.value = path || ''
   createFileModal.value = true
+}
+
+function openRenameFileModal (path: string) {
+  renameFilePath.value = path
+  renameFileModal.value = true
 }
 
 function openDeleteFileDialog (path: string = '') {
@@ -299,6 +327,30 @@ const updateFile = debounce(async (content: string) => {
 
   draft.value = data
 }, 500)
+
+async function renameFile (oldPath, newPath) {
+  const data = await client<GitHubDraft>(`/projects/${props.project.id}/files/rename`, {
+    method: 'PUT',
+    params: {
+      ref: branch.value?.name
+    },
+    body: {
+      files: [{
+        oldPath,
+        newPath
+      }]
+    }
+  })
+
+  draft.value = data
+
+  if (file.value?.path === oldPath) {
+    selectFile(computedFiles.value.find(file => file.path === newPath))
+  }
+
+  renameFileModal.value = false
+  renameFilePath.value = ''
+}
 
 async function deleteFile () {
   const data = await client<GitHubDraft>(`/projects/${props.project.id}/files/${encodeURIComponent(deleteFilePath.value)}`, {

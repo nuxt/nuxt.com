@@ -12,15 +12,15 @@
         }"
         @click="selectFile(file)"
       >
-        <div class="flex items-center justify-between flex-1">
+        <div class="flex items-center justify-between flex-1 gap-3">
           <div class="flex items-center truncate">
             <FilesTreeIcon :file="file" :opened-dirs="openedDirs" class="mr-1.5" />
-            <div class="line-clamp-1" :class="{ 'line-through': isDeleted(file) }">
+            <span class="truncate" :class="{ 'line-through': isDeleted(file) }">
               {{ file.name }}
-            </div>
+            </span>
             <FilesTreeIndicator :file="file" class="ml-1.5" />
           </div>
-          <div class="flex gap-1.5 -mr-1">
+          <div class="flex items-center gap-1.5 -mr-1 flex-shrink-0">
             <UButton
               v-if="isDir(file)"
               size="xxs"
@@ -28,6 +28,14 @@
               variant="transparent-hover"
               icon="heroicons-outline:plus"
               @click.stop="createFile(file)"
+            />
+            <UButton
+              v-if="isFile(file) && !isDeleted(file)"
+              size="xxs"
+              class="-my-0.5 -mr-0.5 invisible group-hover:visible"
+              variant="transparent-hover"
+              icon="heroicons-outline:pencil"
+              @click.stop="renameFile(file)"
             />
             <UButton
               v-if="isFile(file) && !isDeleted(file)"
@@ -49,6 +57,7 @@
         :selected-file="selectedFile"
         @selectFile="file => $emit('selectFile', file)"
         @createFile="file => $emit('createFile', file)"
+        @renameFile="file => $emit('renameFile', file)"
         @deleteFile="file => $emit('deleteFile', file)"
         @openDir="openDir"
       />
@@ -77,7 +86,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['selectFile', 'createFile', 'deleteFile', 'openDir'])
+const emit = defineEmits(['selectFile', 'createFile', 'renameFile', 'deleteFile', 'openDir'])
 
 // Transform this to a `watch` to handle file selection from create
 onMounted(() => {
@@ -111,6 +120,7 @@ const selectFile = (file: File) => {
   emit('selectFile', file)
 }
 const createFile = (file: File) => emit('createFile', file.path)
+const renameFile = (file: File) => emit('renameFile', file.path)
 const deleteFile = (file: File) => emit('deleteFile', file.path)
 
 const openDir = (path) => {

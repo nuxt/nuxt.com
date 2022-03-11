@@ -7,8 +7,8 @@
     </template>
 
     <UInput
-      v-model="branchName"
-      name="branchName"
+      v-model="name"
+      name="name"
       placeholder="feat/my-feature"
       required
       class="w-full"
@@ -36,7 +36,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'createBranch'])
 
-const branchName = ref('')
+const name = ref('')
 
 const isOpen = computed({
   get () {
@@ -50,12 +50,12 @@ const isOpen = computed({
 watchEffect(() => {
   // on modal show, set the branch name
   if (props.modelValue) {
-    branchName.value = props.branch
+    name.value = props.branch
   }
 })
 
 function submitBranch () {
-  emit('createBranch', branchName.value)
+  emit('createBranch', name.value)
   isOpen.value = false
 }
 </script>

@@ -2,7 +2,7 @@
   <UModal v-model="isOpen" @submit.prevent="onSubmit">
     <template #header>
       <h2 class="font-medium sm:text-lg sm:leading-6 u-text-gray-900">
-        Create new file
+        Rename file
       </h2>
     </template>
 
@@ -13,13 +13,13 @@
         </span>
 
         <UInput
-          v-model="path"
-          name="path"
+          v-model="newName"
+          name="name"
           placeholder="faq/index.md"
           required
           autofocus
           class="w-full"
-          :custom-class="folder && 'rounded-l-none'"
+          custom-class="rounded-l-none"
         />
       </div>
     </div>
@@ -38,15 +38,29 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  folder: {
+  oldPath: {
     type: String,
-    default: ''
+    required: true
   }
 })
 
 const emit = defineEmits(['update:modelValue', 'submit'])
 
-const path = ref('')
+console.log('props.oldPath', props.oldPath)
+
+const folder = ref('')
+const oldName = ref('')
+const newName = ref('')
+
+watchEffect(() => {
+  // on modal show, set the branch name
+  if (props.modelValue) {
+    const [name, ...dir] = props.oldPath.split('/').reverse()
+    folder.value = dir.reverse().join('/')
+    oldName.value = name
+    newName.value = name
+  }
+})
 
 const isOpen = computed({
   get () {
@@ -58,8 +72,8 @@ const isOpen = computed({
 })
 
 function onSubmit () {
-  emit('submit', [props.folder, path.value].join('/'))
+  emit('submit', props.oldPath, [folder.value, newName.value].join('/'))
   isOpen.value = false
-  path.value = ''
+  newName.value = ''
 }
 </script>
