@@ -22,11 +22,15 @@ const props = defineProps({
 })
 
 const indicator = computed(() => {
-  if (props.file.isDeleted) { return 'bg-red-500' }
-  if (props.file.isDraft) { return 'bg-gray-700' }
-  if (props.file.isRenamed) { return 'bg-blue-500' }
-  if (props.file.isAdded) { return 'bg-green-500' }
-  if (props.file.isModified) { return 'bg-yellow-500' }
-  return null
+  switch (props.file.status) {
+    case 'created':
+      return 'bg-green-500'
+    case 'updated':
+      return 'bg-yellow-500'
+    case 'deleted':
+      return 'bg-red-500'
+    case 'renamed':
+      return 'bg-blue-500'
+  }
 })
 </script>
