@@ -1,6 +1,6 @@
 <template>
   <div class="py-4 space-y-6 sm:py-6 lg:py-8">
-    <UCard>
+    <UCard v-if="transferOptions && transferOptions.length">
       <h2 class="text-lg font-medium leading-6 u-text-gray-900">
         Transfer project
       </h2>
