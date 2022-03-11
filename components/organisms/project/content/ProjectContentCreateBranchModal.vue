@@ -1,5 +1,5 @@
 <template>
-  <UModal v-model="isOpen" @submit.prevent="submitBranch">
+  <UModal v-model="isOpen" appear @close="onClose" @submit.prevent="onSubmit">
     <template #header>
       <h2 class="font-medium sm:text-lg sm:leading-6 u-text-gray-900">
         Create new branch
@@ -7,8 +7,8 @@
     </template>
 
     <UInput
-      v-model="branchName"
-      name="branchName"
+      v-model="name"
+      name="name"
       placeholder="feat/my-feature"
       required
       class="w-full"
@@ -24,38 +24,30 @@
 
 <script setup lang="ts">
 const props = defineProps({
-  modelValue: {
-    type: Boolean,
-    default: false
-  },
-  branch: {
+  name: {
     type: String,
     default: ''
-  }
-})
-
-const emit = defineEmits(['update:modelValue', 'createBranch'])
-
-const branchName = ref('')
-
-const isOpen = computed({
-  get () {
-    return props.modelValue
   },
-  set (value) {
-    emit('update:modelValue', value)
+  mergeDraft: {
+    type: Boolean,
+    default: false
   }
 })
 
-watchEffect(() => {
-  // on modal show, set the branch name
-  if (props.modelValue) {
-    branchName.value = props.branch
-  }
-})
+const emit = defineEmits(['submit', 'close'])
 
-function submitBranch () {
-  emit('createBranch', branchName.value)
+const name = ref(props.name)
+
+const isOpen = ref(true)
+
+function onSubmit () {
+  emit('submit', name.value, props.mergeDraft)
   isOpen.value = false
+  onClose()
+}
+function onClose () {
+  setTimeout(() => {
+    emit('close')
+  }, 300)
 }
 </script>

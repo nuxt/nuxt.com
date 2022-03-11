@@ -1,11 +1,28 @@
-export function findFileFromPath (path, files) {
-  for (const file of files) {
-    if (file.path === path) {
-      return file
+import type { File } from '~/types'
+
+export function mapTree (tree, parent = null) {
+  const res = []
+
+  while (tree.length) {
+    if (parent && !tree[0].path.startsWith(parent.path)) {
+      break
     }
-    if (file.children) {
-      const result = findFileFromPath(path, file.children)
-      if (result) { return result }
+
+    const item: File = {
+      type: tree[0].type === 'tree' ? 'directory' : 'file',
+      path: tree[0].path,
+      name: tree[0].path.split('/').pop(),
+      status: tree[0].status
     }
+
+    tree.shift()
+
+    if (item.type === 'directory') {
+      item.children = mapTree(tree, item)
+    }
+
+    res.push(item)
   }
+
+  return res
 }

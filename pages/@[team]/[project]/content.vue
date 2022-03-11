@@ -1,7 +1,14 @@
 <template>
   <ProjectPage title="Content">
     <template #aside>
-      <FilesTree :files="files" :selected-file="file" @select-file="selectFile" @new-file="openNewFileModal" />
+      <FilesTree
+        :tree="tree"
+        :selected-file="file"
+        @selectFile="selectFile"
+        @createFile="openCreateFileModal"
+        @renameFile="openRenameFileModal"
+        @deleteFile="openDeleteFileModal"
+      />
     </template>
 
     <template #aside-header>
@@ -10,7 +17,7 @@
         class="-my-0.5 -mr-1"
         variant="transparent-hover"
         icon="heroicons-outline:plus"
-        @click="openNewFileModal()"
+        @click="openCreateFileModal('content')"
       />
     </template>
 
@@ -26,20 +33,29 @@
             @click="branchesModal = true"
           />
 
-          <p class="text-sm u-text-gray-500">
+          <p v-if="file" class="text-sm u-text-gray-500">
             {{ file.path }}
           </p>
         </div>
 
         <div class="flex items-center gap-3">
-          <UButton label="Commit" size="sm" icon="heroicons-outline:cloud-upload" trailing variant="secondary" />
+          <UButton
+            v-if="isDraft"
+            label="Save"
+            :loading="committing"
+            size="sm"
+            icon="heroicons-outline:cloud-upload"
+            trailing
+            @click="commit"
+          />
         </div>
       </div>
     </template>
 
-    <DocusEditor :model-value="parsedContent" @update:model-value="saveContent" />
+    <p class="flex-1 w-full pb-16 milkdown editor focus:outline-none" contenteditable @input="updateFile($event.target.innerText)" v-text="parsedContent" />
 
-    <ProjectContentNewFileModal v-model="newFileModal" :folder="newFileFolder" @submit="createFile" />
+    <!-- <DocusEditor :model-value="parsedContent" :theme="theme" @update:model-value="updateFile" /> -->
+
     <ProjectContentBranchesModal
       v-model="branchesModal"
       :branches="branches"
@@ -49,15 +65,21 @@
       @refresh-branches="refreshBranches"
       @create-branch="openCreateBranchModal"
     />
-    <ProjectContentCreateBranchModal v-model="createBranchModal" :branch="createBranchName" @create-branch="createBranch" />
+
+    <div ref="modalWrapper" />
   </ProjectPage>
 </template>
 
 <script setup lang="ts">
+import { createApp } from 'vue'
 import type { PropType, Ref } from 'vue'
-import { debounce } from 'lodash-es'
-import { findFileFromPath } from '~/utils/tree'
-import type { Team, Project, File, Branch } from '~/types'
+import { debounce, sortBy } from 'lodash-es'
+import { mapTree } from '~/utils/tree'
+import type { Team, Project, Branch, GitHubDraft, GitHubFile } from '~/types'
+import ProjectContentCreateBranchModal from '~/components/organisms/project/content/ProjectContentCreateBranchModal.vue'
+import ProjectContentCreateFileModal from '~/components/organisms/project/content/ProjectContentCreateFileModal.vue'
+import ProjectContentRenameFileModal from '~/components/organisms/project/content/ProjectContentRenameFileModal.vue'
+import ProjectContentDeleteFileModal from '~/components/organisms/project/content/ProjectContentDeleteFileModal.vue'
 
 const props = defineProps({
   team: {
@@ -70,38 +92,43 @@ const props = defineProps({
   }
 })
 
+const colorMode = useColorMode()
 const client = useStrapiClient()
 const { parseFrontMatter, stringifyFrontMatter } = useMarkdown()
+const { vueApp } = useNuxtApp()
 
 const branchCookie = useCookie(`project-${props.project.id}-branch`, { path: '/' })
 const branch: Ref<Branch> = ref(null)
-const file: Ref<File> = ref(null)
+const files: Ref<GitHubFile[]> = ref(null)
+const file: Ref<GitHubFile> = ref(null)
+const draft: Ref<GitHubDraft> = ref(null)
 const content: Ref<string> = ref('')
 const parsedContent: Ref<string> = ref('')
 const parsedMatter: Ref<string> = ref('')
+const modalWrapper = ref(null)
+const committing = ref(false)
 const branchesModal = ref(false)
-const createBranchModal = ref(false)
-const createBranchName = ref('')
-const newFileModal = ref(false)
-const newFileFolder = ref('')
 
-const { data: branches, refresh: refreshBranches, pending: pendingBranches } = await useAsyncData('branches', () => client<Branch[]>(`/projects/${props.project.id}/branches`))
+const { data: branches, refresh: refreshBranches, pending: pendingBranches } = await useAsyncData(`project-${props.project.id}-branches`, () => client<Branch[]>(`/projects/${props.project.id}/branches`))
 
 findBranch()
 
-const { data: files, refresh: refreshFiles } = await useAsyncData('files', () => client<File[]>(`/projects/${props.project.id}/files`, {
-  params: {
-    ref: branch.value?.name
-  }
-}))
+const { refresh: refreshFiles } = await useAsyncData(`project-${props.project.id}-files`, async () => {
+  const data = await client<{ files: GitHubFile[], draft: GitHubDraft }>(`/projects/${props.project.id}/files`, {
+    params: {
+      ref: branch.value?.name
+    }
+  })
 
-findFile()
+  files.value = data.files
+  draft.value = data.draft
+})
 
 // Select file when files changes
-watch(files, findFile)
+watch(files, () => findFile())
 
 // Select branch when branches changes
-watch(branches, findBranch)
+watch(branches, () => findBranch())
 
 // Fetch content when file changes
 watch(file, async () => {
@@ -123,34 +150,80 @@ watch(branch, async () => await refreshFiles())
 
 // Split markdown front-matter when content changes
 watch(content, () => {
+  if (typeof content.value !== 'string') {
+    return
+  }
+
   const { content: c, matter } = parseFrontMatter(content.value)
 
   parsedContent.value = c
   parsedMatter.value = matter
 }, { immediate: true })
 
-const saveContent = debounce(async (content: string) => {
-  await client(`/projects/${props.project.id}/files/${encodeURIComponent(file.value.path)}`, {
-    method: 'PUT',
-    body: {
-      content: stringifyFrontMatter(content, parsedMatter.value),
-      ref: branch.value?.name
+// Computed
+
+const isDraft = computed(() => {
+  return draft.value?.additions?.length || draft.value?.deletions.length
+})
+
+const computedFiles = computed(() => {
+  if (!draft.value) {
+    return files.value
+  }
+
+  const { additions, deletions } = draft.value || {}
+
+  const githubFiles = [...files.value]
+  for (const addition of additions) {
+    if (addition.new) {
+      if (addition.oldPath) {
+        deletions.splice(deletions.findIndex(d => d.oldPath === addition.oldPath), 1)
+        const file = githubFiles.find(f => f.path === addition.oldPath)
+        if (file) {
+          file.status = 'renamed'
+          file.path = addition.path
+        }
+      } else {
+        githubFiles.push({ path: addition.path, type: 'blob', status: 'created' })
+      }
+    } else {
+      const file = githubFiles.find(f => f.path === addition.path)
+      if (file) {
+        file.status = 'updated'
+      }
     }
-  })
-}, 500)
+  }
+  for (const deletion of deletions) {
+    const file = githubFiles.find(f => f.path === deletion.path)
+    if (file) {
+      file.status = 'deleted'
+    }
+  }
+
+  return githubFiles
+})
+
+// Do not move this, it needs to be after computedFiles
+findFile()
+
+const tree = computed(() => mapTree(sortBy(computedFiles.value, 'path')))
+
+const theme = computed(() => colorMode.value === 'dark' ? 'dark' : 'light')
+
+// Methods
 
 function findFile () {
-  const currentFile = file.value?.path ? findFileFromPath(file.value.path, files.value) : null
+  const currentFile = file.value?.path ? computedFiles.value.find(f => f.path === file.value.path) : null
 
-  selectFile(currentFile || files.value.find(file => file.path.toLowerCase().endsWith('index.md')) || files.value.find(file => file.type === 'file'))
+  selectFile(currentFile || computedFiles.value.reverse().find(file => file.path.toLowerCase().endsWith('index.md') && file.status !== 'deleted') || computedFiles.value.reverse().find(file => file.type === 'blob' && file.status !== 'deleted'))
 }
 
-function selectFile (f: File) {
+function selectFile (f: GitHubFile) {
   file.value = f
 }
 
 function findBranch () {
-  let branch
+  let branch: Branch
   if (branchCookie.value) {
     branch = branches.value.find(branch => branch.name === branchCookie.value)
   } else {
@@ -165,44 +238,152 @@ function selectBranch (b: Branch) {
   branchCookie.value = b.name
 }
 
-function openNewFileModal (path: string = '') {
-  newFileFolder.value = path || ''
-  newFileModal.value = true
+function openModal (component, props) {
+  // eslint-disable-next-line vue/one-component-per-file
+  const modal = createApp(component, {
+    ...props,
+    onClose () {
+      modal.unmount()
+    }
+  })
+  modal.mount(modalWrapper.value)
 }
 
-function openCreateBranchModal (name: string) {
-  createBranchName.value = name
-  createBranchModal.value = true
+function openCreateBranchModal (name: string, mergeDraft: boolean) {
+  openModal(ProjectContentCreateBranchModal, {
+    name,
+    mergeDraft,
+    onSubmit: createBranch
+  })
 }
 
-async function createBranch (name: string) {
+function openCreateFileModal (path?: string) {
+  openModal(ProjectContentCreateFileModal, {
+    path,
+    onSubmit: createFile
+  })
+}
+
+function openRenameFileModal (oldPath: string) {
+  openModal(ProjectContentRenameFileModal, {
+    oldPath,
+    onSubmit: renameFile
+  })
+}
+
+function openDeleteFileModal (path: string) {
+  openModal(ProjectContentDeleteFileModal, {
+    path,
+    onSubmit: deleteFile
+  })
+}
+
+// Http
+
+async function createBranch (name: string, mergeDraft: boolean) {
   const branch = await client<Branch>(`/projects/${props.project.id}/branches`, {
     method: 'POST',
     body: {
-      name
+      name,
+      mergeDraft
     }
   })
 
   branches.value.push(branch)
 
-  createBranchName.value = ''
-  createBranchModal.value = false
+  selectBranch(branch)
+
+  if (mergeDraft) {
+    commit()
+  }
 }
 
 async function createFile (path: string) {
-  const newFile = await client<File>(`/projects/${props.project.id}/files/${encodeURIComponent(path)}`, {
+  const data = await client<GitHubDraft>(`/projects/${props.project.id}/files`, {
     method: 'POST',
+    params: {
+      ref: branch.value?.name
+    },
+    body: {
+      path
+    }
+  })
+
+  draft.value = data
+
+  selectFile(computedFiles.value.find(file => file.path === path))
+}
+
+const updateFile = debounce(async (content: string) => {
+  const data = await client<GitHubDraft>(`/projects/${props.project.id}/files/${encodeURIComponent(file.value.path)}`, {
+    method: 'PUT',
+    params: {
+      ref: branch.value?.name
+    },
+    body: {
+      content: stringifyFrontMatter(content, parsedMatter.value)
+    }
+  })
+
+  draft.value = data
+}, 500)
+
+async function renameFile (oldPath: string, newPath: string) {
+  const data = await client<GitHubDraft>(`/projects/${props.project.id}/files/rename`, {
+    method: 'PUT',
+    params: {
+      ref: branch.value?.name
+    },
+    body: {
+      files: [{
+        oldPath,
+        newPath
+      }]
+    }
+  })
+
+  draft.value = data
+
+  if (file.value?.path === oldPath) {
+    selectFile(computedFiles.value.find(file => file.path === newPath))
+  }
+}
+
+async function deleteFile (path: string) {
+  const data = await client<GitHubDraft>(`/projects/${props.project.id}/files/${encodeURIComponent(path)}`, {
+    method: 'DELETE',
     params: {
       ref: branch.value?.name
     }
   })
 
-  // TODO: Remove this when we have the draft system
-  await refreshFiles()
+  draft.value = data
 
-  file.value = newFile
+  // Select new file when deleted was selected
+  if (file.value?.path === path) {
+    file.value = null
+    findFile()
+  }
+}
 
-  newFileModal.value = false
-  newFileFolder.value = ''
+async function commit () {
+  if (branch.value.name === props.project.repository.default_branch) {
+    return openCreateBranchModal('', true)
+  }
+
+  committing.value = true
+
+  try {
+    await client(`/projects/${props.project.id}/files/commit`, {
+      method: 'POST',
+      params: {
+        ref: branch.value?.name
+      }
+    })
+
+    await refreshFiles()
+  } catch (e) {}
+
+  committing.value = false
 }
 </script>
