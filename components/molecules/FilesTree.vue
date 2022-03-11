@@ -19,11 +19,11 @@
               {{ file.name }}
             </span>
           </div>
-          <div class="flex items-center gap-1.5 -mr-1">
+          <div class="items-center gap-1.5 -mr-1 hidden group-hover:flex">
             <UButton
               v-if="isDir(file)"
               size="xxs"
-              class="-my-0.5 -mr-0.5 invisible group-hover:visible"
+              class="-my-0.5 -mr-0.5"
               variant="transparent-hover"
               icon="heroicons-outline:plus"
               @click.stop="createFile(file)"
@@ -31,7 +31,7 @@
             <UButton
               v-if="isFile(file) && !isDeleted(file)"
               size="xxs"
-              class="-my-0.5 -mr-0.5 invisible group-hover:visible"
+              class="-my-0.5 -mr-0.5"
               variant="transparent-hover"
               icon="heroicons-outline:pencil"
               @click.stop="renameFile(file)"
@@ -39,7 +39,7 @@
             <UButton
               v-if="isFile(file) && !isDeleted(file)"
               size="xxs"
-              class="-my-0.5 -mr-0.5 invisible group-hover:visible"
+              class="-my-0.5 -mr-0.5"
               variant="transparent-hover"
               icon="heroicons-outline:trash"
               @click.stop="deleteFile(file)"

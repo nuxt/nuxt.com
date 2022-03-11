@@ -7,7 +7,7 @@
         @selectFile="selectFile"
         @createFile="openCreateFileModal"
         @renameFile="openRenameFileModal"
-        @deleteFile="openDeleteFileDialog"
+        @deleteFile="openDeleteFileModal"
       />
     </template>
 
@@ -56,9 +56,6 @@
 
     <!-- <DocusEditor :model-value="parsedContent" :theme="theme" @update:model-value="updateFile" /> -->
 
-    <ProjectContentCreateFileModal v-model="createFileModal" :folder="createFileFolder" @submit="createFile" />
-    <ProjectContentRenameFileModal v-model="renameFileModal" :old-path="renameFilePath" @submit="renameFile" />
-    <ProjectContentCreateBranchModal v-model="createBranchModal" :branch="createBranchName" @create-branch="createBranch" />
     <ProjectContentBranchesModal
       v-model="branchesModal"
       :branches="branches"
@@ -69,23 +66,20 @@
       @create-branch="openCreateBranchModal"
     />
 
-    <UAlertDialog
-      v-model="deleteFileDialog"
-      icon="heroicons-outline:x"
-      icon-class="text-red-600"
-      icon-wrapper-class="w-12 h-12 bg-red-100 sm:h-10 sm:w-10"
-      :title="`Delete “${deleteFilePath}”`"
-      description="Are you sure you want to delete this file?"
-      @confirm="deleteFile()"
-    />
+    <div ref="modalWrapper" />
   </ProjectPage>
 </template>
 
 <script setup lang="ts">
+import { createApp } from 'vue'
 import type { PropType, Ref } from 'vue'
 import { debounce, sortBy } from 'lodash-es'
 import { mapTree } from '~/utils/tree'
 import type { Team, Project, Branch, GitHubDraft, GitHubFile } from '~/types'
+import ProjectContentCreateBranchModal from '~/components/organisms/project/content/ProjectContentCreateBranchModal.vue'
+import ProjectContentCreateFileModal from '~/components/organisms/project/content/ProjectContentCreateFileModal.vue'
+import ProjectContentRenameFileModal from '~/components/organisms/project/content/ProjectContentRenameFileModal.vue'
+import ProjectContentDeleteFileModal from '~/components/organisms/project/content/ProjectContentDeleteFileModal.vue'
 
 const props = defineProps({
   team: {
@@ -101,6 +95,7 @@ const props = defineProps({
 const colorMode = useColorMode()
 const client = useStrapiClient()
 const { parseFrontMatter, stringifyFrontMatter } = useMarkdown()
+const { vueApp } = useNuxtApp()
 
 const branchCookie = useCookie(`project-${props.project.id}-branch`, { path: '/' })
 const branch: Ref<Branch> = ref(null)
@@ -110,17 +105,9 @@ const draft: Ref<GitHubDraft> = ref(null)
 const content: Ref<string> = ref('')
 const parsedContent: Ref<string> = ref('')
 const parsedMatter: Ref<string> = ref('')
-const branchesModal = ref(false)
-const createBranchModal = ref(false)
-const createBranchName = ref('')
-const createFileModal = ref(false)
-const createFileFolder = ref('')
-const renameFileModal = ref(false)
-const renameFilePath = ref('')
-const deleteFileDialog = ref(false)
-const deleteFilePath = ref('')
+const modalWrapper = ref(null)
 const committing = ref(false)
-const commitAfterCreateBranch = ref(false)
+const branchesModal = ref(false)
 
 const { data: branches, refresh: refreshBranches, pending: pendingBranches } = await useAsyncData(`project-${props.project.id}-branches`, () => client<Branch[]>(`/projects/${props.project.id}/branches`))
 
@@ -228,7 +215,7 @@ const theme = computed(() => colorMode.value === 'dark' ? 'dark' : 'light')
 function findFile () {
   const currentFile = file.value?.path ? computedFiles.value.find(f => f.path === file.value.path) : null
 
-  selectFile(currentFile || computedFiles.value.reverse().find(file => file.path.toLowerCase().endsWith('index.md')) || computedFiles.value.reverse().find(file => file.type === 'blob'))
+  selectFile(currentFile || computedFiles.value.reverse().find(file => file.path.toLowerCase().endsWith('index.md') && file.status !== 'deleted') || computedFiles.value.reverse().find(file => file.type === 'blob' && file.status !== 'deleted'))
 }
 
 function selectFile (f: GitHubFile) {
@@ -236,7 +223,7 @@ function selectFile (f: GitHubFile) {
 }
 
 function findBranch () {
-  let branch
+  let branch: Branch
   if (branchCookie.value) {
     branch = branches.value.find(branch => branch.name === branchCookie.value)
   } else {
@@ -251,34 +238,54 @@ function selectBranch (b: Branch) {
   branchCookie.value = b.name
 }
 
-function openCreateBranchModal (name: string) {
-  createBranchName.value = name
-  createBranchModal.value = true
+function openModal (component, props) {
+  // eslint-disable-next-line vue/one-component-per-file
+  const modal = createApp(component, {
+    ...props,
+    onClose () {
+      modal.unmount()
+    }
+  })
+  modal.mount(modalWrapper.value)
 }
 
-function openCreateFileModal (path: string = '') {
-  createFileFolder.value = path || ''
-  createFileModal.value = true
+function openCreateBranchModal (name: string, mergeDraft: boolean) {
+  openModal(ProjectContentCreateBranchModal, {
+    name,
+    mergeDraft,
+    onSubmit: createBranch
+  })
 }
 
-function openRenameFileModal (path: string) {
-  renameFilePath.value = path
-  renameFileModal.value = true
+function openCreateFileModal (path?: string) {
+  openModal(ProjectContentCreateFileModal, {
+    path,
+    onSubmit: createFile
+  })
 }
 
-function openDeleteFileDialog (path: string = '') {
-  deleteFilePath.value = path || ''
-  deleteFileDialog.value = true
+function openRenameFileModal (oldPath: string) {
+  openModal(ProjectContentRenameFileModal, {
+    oldPath,
+    onSubmit: renameFile
+  })
+}
+
+function openDeleteFileModal (path: string) {
+  openModal(ProjectContentDeleteFileModal, {
+    path,
+    onSubmit: deleteFile
+  })
 }
 
 // Http
 
-async function createBranch (name: string) {
+async function createBranch (name: string, mergeDraft: boolean) {
   const branch = await client<Branch>(`/projects/${props.project.id}/branches`, {
     method: 'POST',
     body: {
       name,
-      mergeDraft: !!commitAfterCreateBranch.value
+      mergeDraft
     }
   })
 
@@ -286,11 +293,7 @@ async function createBranch (name: string) {
 
   selectBranch(branch)
 
-  createBranchName.value = ''
-  createBranchModal.value = false
-
-  if (commitAfterCreateBranch) {
-    commitAfterCreateBranch.value = false
+  if (mergeDraft) {
     commit()
   }
 }
@@ -309,9 +312,6 @@ async function createFile (path: string) {
   draft.value = data
 
   selectFile(computedFiles.value.find(file => file.path === path))
-
-  createFileModal.value = false
-  createFileFolder.value = ''
 }
 
 const updateFile = debounce(async (content: string) => {
@@ -328,7 +328,7 @@ const updateFile = debounce(async (content: string) => {
   draft.value = data
 }, 500)
 
-async function renameFile (oldPath, newPath) {
+async function renameFile (oldPath: string, newPath: string) {
   const data = await client<GitHubDraft>(`/projects/${props.project.id}/files/rename`, {
     method: 'PUT',
     params: {
@@ -347,13 +347,10 @@ async function renameFile (oldPath, newPath) {
   if (file.value?.path === oldPath) {
     selectFile(computedFiles.value.find(file => file.path === newPath))
   }
-
-  renameFileModal.value = false
-  renameFilePath.value = ''
 }
 
-async function deleteFile () {
-  const data = await client<GitHubDraft>(`/projects/${props.project.id}/files/${encodeURIComponent(deleteFilePath.value)}`, {
+async function deleteFile (path: string) {
+  const data = await client<GitHubDraft>(`/projects/${props.project.id}/files/${encodeURIComponent(path)}`, {
     method: 'DELETE',
     params: {
       ref: branch.value?.name
@@ -363,19 +360,15 @@ async function deleteFile () {
   draft.value = data
 
   // Select new file when deleted was selected
-  if (file.value?.path === deleteFilePath.value) {
+  if (file.value?.path === path) {
+    file.value = null
     findFile()
   }
-
-  deleteFileDialog.value = false
-  deleteFilePath.value = ''
 }
 
 async function commit () {
   if (branch.value.name === props.project.repository.default_branch) {
-    createBranchModal.value = true
-    commitAfterCreateBranch.value = true
-    return
+    return openCreateBranchModal('', true)
   }
 
   committing.value = true
