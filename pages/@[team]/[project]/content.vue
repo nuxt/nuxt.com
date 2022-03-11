@@ -17,7 +17,7 @@
         class="-my-0.5 -mr-1"
         variant="transparent-hover"
         icon="heroicons-outline:plus"
-        @click="openCreateFileModal()"
+        @click="openCreateFileModal('content')"
       />
     </template>
 
