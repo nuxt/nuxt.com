@@ -13,6 +13,9 @@ export const useTeam = () => {
   watch(team, () => {
     cookie.value = team.value
   })
+  watch(user, () => {
+    team.value = user.value?.username
+  })
 
   return team
 }
