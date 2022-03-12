@@ -35,7 +35,7 @@ const { data: framework } = await useFetch('/api/community/framework')
             Activities
           </dt>
           <dd class="mt-1 text-3xl font-semibold text-gray-900">
-            {{ framework.stats.activites }}
+            {{ framework.stats.activities }}
           </dd>
         </div>
       </dl>
