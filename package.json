@@ -17,6 +17,7 @@
     "@nuxthq/ui": "npm:@nuxthq/ui-edge@latest",
     "@nuxtjs/eslint-config-typescript": "^8.0.0",
     "@nuxtjs/strapi": "npm:@nuxtjs/strapi-edge@latest",
+    "@octokit/rest": "^18.12.0",
     "@tailwindcss/typography": "^0.5.2",
     "eslint": "^8.10.0",
     "nuxt3": "^3.0.0-27437402.494f85a",

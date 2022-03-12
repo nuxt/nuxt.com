@@ -34,6 +34,11 @@ export default defineNuxtConfig({
     '@docus/editor',
     'vue-plausible'
   ],
+  privateRuntimeConfig: {
+    github: {
+      token: process.env.GITHUB_TOKEN
+    }
+  },
   publicRuntimeConfig: {
     baseUrl: process.env.BASE_URL || 'https://nuxt.com',
     github: {
