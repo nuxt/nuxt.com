@@ -55,28 +55,28 @@ const { data: framework } = await useFetch('/api/community/framework')
         </div>
       </div>
       <UCard class="mt-8" body-class>
-        <ul role="list" class="divide-y divide-gray-200">
+        <ul role="list" class="divide-y u-divide-gray-200">
           <li v-for="c in framework.contributors" :key="c.github">
             <div class="flex items-center px-4 py-4 sm:px-6">
               <div class="flex items-center flex-1 min-w-0">
                 <UAvatar :src="`https://github.com/${c.github}.png`" :alt="c.github" class="flex-shrink-0" />
-                <div class="grid flex-1 min-w-0 grid-cols-12 gap-4 px-4">
-                  <div class="col-span-9">
-                    <p class="text-sm font-medium text-indigo-600 truncate">
+                <div class="grid flex-1 min-w-0 grid-cols-12 gap-8 px-4">
+                  <div class="col-span-6 sm:col-span-9">
+                    <p class="text-sm font-medium truncate u-text-gray-900">
                       {{ c.name }}
                     </p>
-                    <p class="flex items-center mt-2 text-sm text-gray-500">
+                    <p class="flex items-center mt-2 text-sm u-text-gray-500">
                       <span class="truncate">{{ c.bio }}</span>
                     </p>
                   </div>
-                  <div class="flex items-center justify-center gap-3">
+                  <div class="flex items-center justify-center flex-shrink-0 col-span-2 gap-3 sm:col-span-1">
                     <a :href="`https://github.com/${c.github}`" class="hover:u-text-gray-900" target="_blank" rel="noopener"><UIcon name="fa-brands:github" class="w-5 h-5" /></a>
                     <a v-if="c.twitter" :href="`https://twitter.com/${c.twitter}`" class="hover:u-text-gray-900" target="_blank" rel="noopener"><UIcon name="fa-brands:twitter" class="w-5 h-5" /></a>
                   </div>
-                  <div class="flex items-center justify-center gap-3">
+                  <div class="flex items-center justify-center flex-shrink-0 col-span-2 gap-3 sm:col-span-1">
                     <span v-if="c.roles.length" class="inline-flex px-2 text-xs font-semibold leading-5 text-green-800 bg-green-100 rounded-full">{{ c.roles[0] }}</span>
                   </div>
-                  <div class="flex items-center justify-end gap-3">
+                  <div class="flex items-center justify-end flex-shrink-0 col-span-2 gap-3 sm:col-span-1">
                     <a :href="`https://github.com/nuxt/framework/pulls?q=is%3Apr+author%3A${c.github}`" target="_blank" rel="noopener">
                       {{ c.activities }}
                     </a>

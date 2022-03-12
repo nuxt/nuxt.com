@@ -9,7 +9,7 @@
           </NuxtLink>
         </div>
 
-        <div class="flex justify-center col-span-4 gap-x-10">
+        <div class="justify-center hidden col-span-4 md:flex gap-x-10">
           <ULink
             v-for="link in links"
             :key="link.label"
