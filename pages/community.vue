@@ -24,18 +24,18 @@ const { data: framework } = await useFetch('/api/community/framework')
         </div>
         <div class="px-4 py-5 bg-white shadow rounded-lg overflow-hidden sm:p-6">
           <dt class="text-sm font-medium text-gray-500 truncate">
-            Downloads <span class="italic">(last 30 days)</span>
+            Members
           </dt>
           <dd class="mt-1 text-3xl font-semibold text-gray-900">
-            {{ framework.stats.downloads }}
+            {{ framework.stats.members }}
           </dd>
         </div>
         <div class="px-4 py-5 bg-white shadow rounded-lg overflow-hidden sm:p-6">
           <dt class="text-sm font-medium text-gray-500 truncate">
-            Contributors
+            Activities
           </dt>
           <dd class="mt-1 text-3xl font-semibold text-gray-900">
-            {{ framework.stats.contributors }}
+            {{ framework.stats.activites }}
           </dd>
         </div>
       </dl>
@@ -65,47 +65,43 @@ const { data: framework } = await useFetch('/api/community/framework')
                       Name
                     </th>
                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      Title
+                      Social
                     </th>
                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      Status
+                      Role
                     </th>
                     <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-gray-900">
-                      Contributions
+                      Activities
                     </th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 bg-white">
-                  <tr v-for="c in framework.contributors" :key="c.username">
+                  <tr v-for="c in framework.contributors" :key="c.github">
                     <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
                       <div class="flex items-center">
                         <div class="h-10 w-10 flex-shrink-0">
-                          <img class="h-10 w-10 rounded-full" :src="`https://github.com/${c.username}.png`" :alt="c.username">
+                          <img class="h-10 w-10 rounded-full" :src="`https://github.com/${c.github}.png`" :alt="c.github">
                         </div>
                         <div class="ml-4">
-                          <a :href="`https://github.com/${c.username}`" target="_blank" rel="noopener" class="font-medium text-gray-900">
-                            {{ c.username }}
-                          </a>
+                          <div class="font-medium text-gray-900">
+                            {{ c.name }}
+                          </div>
                           <div class="text-gray-500">
-                            Email
+                            {{ c.bio }}
                           </div>
                         </div>
                       </div>
                     </td>
                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      <div class="text-gray-900">
-                        Title
-                      </div>
-                      <div class="text-gray-500">
-                        Department
-                      </div>
+                      <a :href="`https://github.com/${c.github}`" target="_blank" rel="noopener"><UIcon name="fa-brands:github" class="flw-4 h-4" /></a>
+                      <a v-if="c.twitter" :href="`https://twitter.com/${c.twitter}`" target="_blank" rel="noopener"><UIcon name="fa-brands:twitter" class="w-4 h-4" /></a>
                     </td>
                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      <span class="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">Active</span>
+                      <span v-if="c.roles.length" class="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">{{ c.roles[0] }}</span>
                     </td>
                     <td class="whitespace-nowrap px-3 py-4 text-sm text-right font-medium">
                       <a :href="`https://github.com/nuxt/framework/pulls?q=is%3Apr+author%3A${c.username}`" target="_blank" rel="noopener">
-                        {{ c.contributions }}
+                        {{ c.activities }}
                       </a>
                     </td>
                   </tr>

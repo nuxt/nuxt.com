@@ -37,6 +37,9 @@ export default defineNuxtConfig({
   privateRuntimeConfig: {
     github: {
       token: process.env.GITHUB_TOKEN
+    },
+    orbit: {
+      token: process.env.ORBIT_TOKEN
     }
   },
   publicRuntimeConfig: {
