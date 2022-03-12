@@ -15,7 +15,8 @@
             </p>
           </div>
           <div class="mt-10 flex gap-3 sm:border-l sm:border-transparent sm:pl-6">
-            <UButton :to="{ name: '@team-projects', params: { team: user.username } }" label="Go back home" variant="primary" />
+            <UButton v-if="user" :to="{ name: '@team-projects', params: { team: user.username } }" label="Go back home" variant="primary" />
+            <UButton v-else to="/" label="Go back home" variant="primary" />
           </div>
         </div>
       </main>
