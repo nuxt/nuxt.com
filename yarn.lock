@@ -287,9 +287,9 @@
     mime "^3.0.0"
 
 "@docus/editor@npm:@docus/editor-edge@latest":
-  version "0.2.0-27448567.7f658b5"
-  resolved "https://registry.yarnpkg.com/@docus/editor-edge/-/editor-edge-0.2.0-27448567.7f658b5.tgz#cab8eb00dfdca4e4244ccad664550941edfe80e3"
-  integrity sha512-d1EhVs55b0TfDghORvOEJcSaOZsXUWF/R8bHus+K3y0PA/DS+qQ9Z08PdTG+hwHcKwwVYpGeBx6iBmXuI201JA==
+  version "0.2.0-27454540.9e4baf1"
+  resolved "https://registry.yarnpkg.com/@docus/editor-edge/-/editor-edge-0.2.0-27454540.9e4baf1.tgz#54b30cab9cf2833d9db358801a0e5077bc7a98ec"
+  integrity sha512-EbCMpiVXyaelCk7tt7rW3xTMgM7o3BmWn+Vkz7YIHe8SS7Vhj2URcJh6jDDZQi3cJLYSnly3lbk2PU8ut99DQQ==
   dependencies:
     "@docus/remark-mdc" "npm:@docus/remark-mdc-edge"
     "@milkdown/core" "^5.5.0"
@@ -310,14 +310,14 @@
     "@nuxt/kit" "npm:@nuxt/kit-edge"
 
 "@docus/remark-mdc@npm:@docus/remark-mdc-edge":
-  version "0.1.0-27447111.1f2ee9b"
-  resolved "https://registry.yarnpkg.com/@docus/remark-mdc-edge/-/remark-mdc-edge-0.1.0-27447111.1f2ee9b.tgz#6efe8ad84ef53bfb246cff49a7e28e2b85a15325"
-  integrity sha512-M3vEI3Mlj2ONoNn/KQwunw70hej0WFnIZcoFdsGJgmseNMyg1pGXQYGqe0HS5vyOXdGLCa4L3WgzFnH+uVtXrw==
+  version "0.1.0-27454506.5082fc7"
+  resolved "https://registry.yarnpkg.com/@docus/remark-mdc-edge/-/remark-mdc-edge-0.1.0-27454506.5082fc7.tgz#437e5eac6db4017152be17f3acaeedfa8235e569"
+  integrity sha512-D6VpLnNOk7ui+01NGcKwlaYxNei6PQcmyzyF2jPXEDnmVRC3gq/kBuEwecCvQrbRHQo0m+ih3gLgKaFb5hzE7g==
   dependencies:
     flat "^5.0.2"
     gray-matter "^4.0.3"
     mdast-util-from-markdown "^1.2.0"
-    mdast-util-to-markdown "^1.2.6"
+    mdast-util-to-markdown "^1.3.0"
     micromark "^3.0.10"
     micromark-core-commonmark "^1.0.6"
     micromark-factory-space "^1.0.0"
@@ -821,35 +821,12 @@
   resolved "https://registry.yarnpkg.com/@nuxt/devalue/-/devalue-2.0.0.tgz#c7bd7e9a516514e612d5d2e511ffc399e0eac322"
   integrity sha512-YBI/6o2EBz02tdEJRBK8xkt3zvOFOWlLBf7WKYGBsSYSRtjjgrqPe2skp6VLLmKx5WbHHDNcW+6oACaurxGzeA==
 
-"@nuxt/kit@npm:@nuxt/kit-edge":
-  version "3.0.0-27447229.20f3171"
-  resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-27447229.20f3171.tgz#194374f524ce6faebeb57720e1ae6f92e28adbe5"
-  integrity sha512-2lKe28iTTrjhbPSmUmL1sMPZlDR8zaR+y7/fBS8zPDuTldm4XEWs9tn9FWXzie3gVamfhi+UCNGIbYgrQwvxIg==
+"@nuxt/kit@npm:@nuxt/kit-edge", "@nuxt/kit@npm:@nuxt/kit-edge@latest":
+  version "3.0.0-27454426.4cefce4"
+  resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-27454426.4cefce4.tgz#4337ca18fa8a9814583dffa20c5f676ff15f87ba"
+  integrity sha512-tEkTHg+uRmTAewVslJ7ahtwYRiMtyB5Mt2SViQmjiAODHZaVJmDq9i+M7YHFFr3FfRnV6ZUNOIYrIc8F/9TRog==
   dependencies:
-    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-27447229.20f3171"
-    c12 "^0.1.4"
-    consola "^2.15.3"
-    defu "^5.0.1"
-    globby "^13.1.1"
-    hash-sum "^2.0.0"
-    ignore "^5.2.0"
-    jiti "^1.13.0"
-    knitwork "^0.1.1"
-    lodash.template "^4.5.0"
-    mlly "^0.4.3"
-    pathe "^0.2.0"
-    pkg-types "^0.3.2"
-    scule "^0.2.1"
-    semver "^7.3.5"
-    unctx "^1.0.2"
-    untyped "^0.4.2"
-
-"@nuxt/kit@npm:@nuxt/kit-edge@3.0.0-27454252.7bf338d":
-  version "3.0.0-27454252.7bf338d"
-  resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-27454252.7bf338d.tgz#bb67be69944eb9469b5bbd52696d230d0e1216a4"
-  integrity sha512-JsUEsji3KxUAi0JEXW4jZ9ofl5evPk+Iib4WZbNwMMJMKfPoDTxEDWpggsAsX9qpIi+1DzFnlU8rbI1SK4LCJw==
-  dependencies:
-    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-27454252.7bf338d"
+    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-27454426.4cefce4"
     c12 "^0.1.4"
     consola "^2.15.3"
     defu "^5.0.1"
@@ -868,12 +845,12 @@
     unimport "0.0.8"
     untyped "^0.4.2"
 
-"@nuxt/kit@npm:@nuxt/kit-edge@latest":
-  version "3.0.0-27454426.4cefce4"
-  resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-27454426.4cefce4.tgz#4337ca18fa8a9814583dffa20c5f676ff15f87ba"
-  integrity sha512-tEkTHg+uRmTAewVslJ7ahtwYRiMtyB5Mt2SViQmjiAODHZaVJmDq9i+M7YHFFr3FfRnV6ZUNOIYrIc8F/9TRog==
+"@nuxt/kit@npm:@nuxt/kit-edge@3.0.0-27454252.7bf338d":
+  version "3.0.0-27454252.7bf338d"
+  resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-27454252.7bf338d.tgz#bb67be69944eb9469b5bbd52696d230d0e1216a4"
+  integrity sha512-JsUEsji3KxUAi0JEXW4jZ9ofl5evPk+Iib4WZbNwMMJMKfPoDTxEDWpggsAsX9qpIi+1DzFnlU8rbI1SK4LCJw==
   dependencies:
-    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-27454426.4cefce4"
+    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-27454252.7bf338d"
     c12 "^0.1.4"
     consola "^2.15.3"
     defu "^5.0.1"
@@ -969,21 +946,6 @@
     postcss-loader "^4.1.0"
     postcss-url "^10.1.1"
     semver "^7.3.4"
-
-"@nuxt/schema@npm:@nuxt/schema-edge@3.0.0-27447229.20f3171":
-  version "3.0.0-27447229.20f3171"
-  resolved "https://registry.yarnpkg.com/@nuxt/schema-edge/-/schema-edge-3.0.0-27447229.20f3171.tgz#b4ff7c432d062118579706cce2583f18637dae71"
-  integrity sha512-mQppNNWCmdqM0YD2J0JQw3MIFte0wU/gdan4hHdvU5ib2q0WR3+A6Z/wP8Aip7e4cS/84hsQXpgYgV3k3TY+Dw==
-  dependencies:
-    c12 "^0.1.4"
-    create-require "^1.1.1"
-    defu "^5.0.1"
-    jiti "^1.13.0"
-    pathe "^0.2.0"
-    postcss-import-resolver "^2.0.0"
-    scule "^0.2.1"
-    std-env "^3.0.1"
-    ufo "^0.7.11"
 
 "@nuxt/schema@npm:@nuxt/schema-edge@3.0.0-27454252.7bf338d":
   version "3.0.0-27454252.7bf338d"
@@ -1137,15 +1099,10 @@
     tailwindcss "^3.0.23"
     ufo "^0.7.11"
 
-"@popperjs/core@^2.11.4":
+"@popperjs/core@^2.11.4", "@popperjs/core@^2.4.0":
   version "2.11.4"
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.4.tgz#d8c7b8db9226d2d7664553a0741ad7d0397ee503"
   integrity sha512-q/ytXxO5NKvyT37pmisQAItCFqA7FD/vNb8dgaJy3/630Fsc+Mz9/9f2SziBoIZ30TJooXyTwZmhi1zjXmObYg==
-
-"@popperjs/core@^2.4.0":
-  version "2.11.2"
-  resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.2.tgz#830beaec4b4091a9e9398ac50f865ddea52186b9"
-  integrity sha512-92FRmppjjqz29VMJ2dn+xdyXZBrMlE42AV6Kq6BwjWV7CNUW1hs2FtxSNLQE+gJhaZ6AAmYuO9y8dshhcBl7vA==
 
 "@rollup/plugin-alias@^3.1.9":
   version "3.1.9"
@@ -5176,9 +5133,9 @@ katex@^0.13.0:
     commander "^8.0.0"
 
 katex@^0.15.0:
-  version "0.15.2"
-  resolved "https://registry.yarnpkg.com/katex/-/katex-0.15.2.tgz#c05ece41ab497597b17abca2cecde3e4c0127f9d"
-  integrity sha512-FfZ/f6f8bQdLmJ3McXDNTkKenQkoXkItpW0I9bsG2wgb+8JAY5bwpXFtI8ZVrg5hc1wo1X/UIhdkVMpok46tEQ==
+  version "0.15.3"
+  resolved "https://registry.yarnpkg.com/katex/-/katex-0.15.3.tgz#08781a7ed26800b20380d959d1ffcd62bca0ec14"
+  integrity sha512-Al6V7RJsmjklT9QItyHWGaQCt+NYTle1bZwB1e9MR/tLoIT1MXaHy9UpfGSB7eaqDgjjqqRxQOaQGrALCrEyBQ==
   dependencies:
     commander "^8.0.0"
 
@@ -5639,7 +5596,7 @@ mdast-util-to-hast@^12.1.0, mdast-util-to-hast@^12.1.1:
     unist-util-position "^4.0.0"
     unist-util-visit "^4.0.0"
 
-mdast-util-to-markdown@^1.0.0, mdast-util-to-markdown@^1.2.6, mdast-util-to-markdown@^1.3.0:
+mdast-util-to-markdown@^1.0.0, mdast-util-to-markdown@^1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/mdast-util-to-markdown/-/mdast-util-to-markdown-1.3.0.tgz#38b6cdc8dc417de642a469c4fc2abdf8c931bd1e"
   integrity sha512-6tUSs4r+KK4JGTTiQ7FfHmVOaDrLQJPmpjD6wPMlHGUVXoG9Vjc3jIeP+uyBWRf8clwB2blM+W7+KrlMYQnftA==
@@ -7317,9 +7274,9 @@ prosemirror-transform@^1.0.0, prosemirror-transform@^1.1.0, prosemirror-transfor
     prosemirror-model "^1.0.0"
 
 prosemirror-view@^1.0.0, prosemirror-view@^1.1.0, prosemirror-view@^1.13.3, prosemirror-view@^1.23.2:
-  version "1.23.8"
-  resolved "https://registry.yarnpkg.com/prosemirror-view/-/prosemirror-view-1.23.8.tgz#1386255bfc094e75f1b708b28571e67139e46cc8"
-  integrity sha512-42KEZaZdVV0uLTUgOQDRaU6jaQM+Iqo6KAuNS3NdS9ET68tdUpK20+xmk0w/UKDfIkOgrItB+97CYkm4JYDWIQ==
+  version "1.23.9"
+  resolved "https://registry.yarnpkg.com/prosemirror-view/-/prosemirror-view-1.23.9.tgz#1293370035bea71ecfa6651e02b9701c04832097"
+  integrity sha512-4ft8PuzYPLqQlYjkW7+jy3drquLrzB0cXu6bXyEgBEYnbv/uI/zBF1rGxmSZCDKwteKm1Wn24B+BSheSw/9sOA==
   dependencies:
     prosemirror-model "^1.16.0"
     prosemirror-state "^1.0.0"
@@ -8540,9 +8497,9 @@ twemoji-parser@13.1.0:
   integrity sha512-AQOzLJpYlpWMy8n+0ATyKKZzWlZBJN+G0C+5lhX7Ftc2PeEVdUU/7ns2Pn2vVje26AIZ/OHwFoUbdv6YYD/wGg==
 
 twemoji@^13.0.0, twemoji@^13.1.0:
-  version "13.1.0"
-  resolved "https://registry.yarnpkg.com/twemoji/-/twemoji-13.1.0.tgz#65bb71e966dae56f0d42c30176f04cbdae109913"
-  integrity sha512-e3fZRl2S9UQQdBFLYXtTBT6o4vidJMnpWUAhJA+yLGR+kaUTZAt3PixC0cGvvxWSuq2MSz/o0rJraOXrWw/4Ew==
+  version "13.1.1"
+  resolved "https://registry.yarnpkg.com/twemoji/-/twemoji-13.1.1.tgz#6e31409908bb5383cdb1d09c9c8e7856aa6e2e3b"
+  integrity sha512-IIIoq+n1lk1M1+evBKZD3DO0ud02fDQ4ssbgAv8rp3YBWUeNmskjlisFUPPDacQ50XS3bhrd4Kq9Q2gqhxb0dg==
   dependencies:
     fs-extra "^8.0.1"
     jsonfile "^5.0.0"
