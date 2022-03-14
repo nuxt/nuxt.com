@@ -8,17 +8,14 @@
       </div>
 
       <div class="flex justify-center col-span-4 gap-x-8">
-        <ULink
+        <DocsLink
           v-for="link in links"
           :key="link.label"
-          :to="link.children ? link.children[0].children ? link.children[0].children[0].to : link.children[0].to : link.to"
+          :link="link"
           class="text-sm font-medium hover:u-text-gray-900"
-          active-class="font-semibold u-text-gray-900"
-          inactive-class="u-text-gray-500"
-          :exact="false"
         >
           {{ link.label }}
-        </ULink>
+        </DocsLink>
       </div>
 
       <div class="flex justify-end">
@@ -64,9 +61,9 @@ const currentNav = computed(() => {
 })
 
 // first nav level
-const navLinks = navLink => ({ to: navLink.slug, label: navLink.title, children: navLink.children?.map(items) })
+const navLinks = navLink => ({ to: navLink.slug, label: navLink.title, children: navLink.children?.map(items) || null })
 // second
-const items = item => ({ to: item.slug, label: item.title, children: item.children?.map(itemLinks) })
+const items = item => ({ to: item.slug, label: item.title, children: item.children?.map(itemLinks) || null })
 // third
 const itemLinks = itemLink => ({ to: itemLink.slug, label: itemLink.title })
 
