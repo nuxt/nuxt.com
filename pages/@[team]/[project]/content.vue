@@ -22,8 +22,8 @@
     </template>
 
     <template #header>
-      <div class="flex items-center justify-between flex-1 gap-3">
-        <div class="flex items-center gap-3">
+      <div class="flex items-center justify-between flex-1 min-w-0 gap-3">
+        <div class="flex items-center gap-3 overflow-hidden">
           <UButton
             v-if="branch"
             icon="mdi:source-branch"
@@ -33,7 +33,7 @@
             @click="branchesModal = true"
           />
 
-          <p v-if="file" class="text-sm u-text-gray-500">
+          <p v-if="file" class="text-sm truncate u-text-gray-500">
             {{ file.path }}
           </p>
         </div>
@@ -74,6 +74,7 @@
 import { createApp } from 'vue'
 import type { PropType, Ref } from 'vue'
 import { debounce, sortBy } from 'lodash-es'
+import { useMagicKeys, whenever } from '@vueuse/core'
 import { mapTree } from '~/utils/tree'
 import type { Team, Project, Branch, GitHubDraft, GitHubFile } from '~/types'
 import ProjectContentCreateBranchModal from '~/components/organisms/project/content/ProjectContentCreateBranchModal.vue'
@@ -95,7 +96,6 @@ const props = defineProps({
 const colorMode = useColorMode()
 const client = useStrapiClient()
 const { parseFrontMatter, stringifyFrontMatter } = useMarkdown()
-const { vueApp } = useNuxtApp()
 
 const branchCookie = useCookie(`project-${props.project.id}-branch`, { path: '/' })
 const branch: Ref<Branch> = ref(null)
@@ -108,6 +108,8 @@ const parsedMatter: Ref<string> = ref('')
 const modalWrapper = ref(null)
 const committing = ref(false)
 const branchesModal = ref(false)
+
+// Data
 
 const { data: branches, refresh: refreshBranches, pending: pendingBranches } = await useAsyncData(`project-${props.project.id}-branches`, () => client<Branch[]>(`/projects/${props.project.id}/branches`))
 
@@ -123,6 +125,8 @@ const { refresh: refreshFiles } = await useAsyncData(`project-${props.project.id
   files.value = data.files
   draft.value = data.draft
 })
+
+// Watch
 
 // Select file when files changes
 watch(files, () => findFile())
@@ -159,6 +163,12 @@ watch(content, () => {
   parsedContent.value = c
   parsedMatter.value = matter
 }, { immediate: true })
+
+const keys = useMagicKeys()
+
+whenever(keys.meta_k, () => {
+  branchesModal.value = !branchesModal.value
+})
 
 // Computed
 

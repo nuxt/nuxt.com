@@ -1,24 +1,29 @@
 <template>
   <UModal v-model="isOpen" appear @close="onClose" @submit.prevent="onSubmit">
-    <template #header>
-      <h2 class="font-medium sm:text-lg sm:leading-6 u-text-gray-900">
-        Create new branch
-      </h2>
-    </template>
-
-    <UInput
-      v-model="name"
-      name="name"
-      placeholder="feat/my-feature"
-      required
-      class="w-full"
-    />
-
-    <template #footer>
-      <div class="flex items-center justify-end">
-        <UButton type="submit" label="Submit" class="flex-shrink-0" />
+    <div class="sm:flex sm:items-start">
+      <div class="mt-3 text-center sm:mt-0 sm:text-left">
+        <h3 class="text-lg font-medium leading-6 u-text-gray-900">
+          Create branch
+        </h3>
+        <div class="mt-2">
+          <p class="text-sm break-all u-text-gray-500">
+            {{ mergeDraft ? 'Your draft will be transferred to the new branch.' : 'This branch will be added to your GitHub repository.' }}
+          </p>
+        </div>
       </div>
-    </template>
+    </div>
+    <div class="flex items-center w-full mt-5 sm:mt-4">
+      <UInput
+        v-model="name"
+        name="name"
+        placeholder="feat/my-feature"
+        required
+        class="w-full"
+      />
+    </div>
+    <div class="gap-3 mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+      <UButton type="submit" label="Save" class="justify-center flex-shrink-0 w-full sm:w-auto" />
+    </div>
   </UModal>
 </template>
 
