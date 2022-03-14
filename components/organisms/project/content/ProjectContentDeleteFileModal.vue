@@ -1,19 +1,20 @@
 <template>
   <UModal v-model="isOpen" appear @close="onClose" @submit.prevent="onSubmit">
     <div class="sm:flex sm:items-start">
-      <div class="text-center sm:text-left">
+      <div class="mt-3 text-center sm:mt-0 sm:text-left">
         <h3 class="text-lg font-medium leading-6 u-text-gray-900">
           Delete file
         </h3>
         <div class="mt-2">
           <p class="text-sm break-all u-text-gray-500">
-            Are you sure you want to delete “{{ path }}”?
+            Are you sure you want to delete “{{ name }}” from your draft?
           </p>
         </div>
       </div>
     </div>
-    <div class="gap-3 mt-5 sm:mt-4 sm:flex">
-      <UButton type="submit" label="Confirm" variant="red" class="flex-shrink-0" />
+    <div class="gap-3 mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+      <UButton type="submit" label="Confirm" variant="red" class="justify-center flex-shrink-0 w-full sm:w-auto" />
+      <UButton type="submit" label="Cancel" variant="secondary" class="justify-center flex-shrink-0 w-full mt-3 sm:w-auto sm:mt-0" />
     </div>
   </UModal>
 </template>
@@ -26,6 +27,8 @@ const props = defineProps({
   }
 })
 
+const [name] = props.path.split('/').reverse()
+
 const emit = defineEmits(['submit', 'close'])
 
 const isOpen = ref(true)
@@ -36,7 +39,6 @@ function onSubmit () {
   onClose()
 }
 function onClose () {
-  console.log('onClose')
   setTimeout(() => {
     emit('close')
   }, 300)
