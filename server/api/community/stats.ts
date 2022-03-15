@@ -1,0 +1,46 @@
+import { Octokit } from '@octokit/rest'
+import config from '#config'
+import { cachifyHandle } from '~/server/utils/cache'
+
+const octokit = new Octokit({
+  auth: `${config.github.token}`
+})
+const packageName = 'nuxt3'
+
+export default cachifyHandle(async () => {
+  console.log('Fetching community stats...')
+  // Fetch framework informations on GitHub
+  // const { data: framework } = await octokit.rest.repos.get({ owner, repo })
+  let stars = 0
+  let repos = []
+  for (const owner of ['nuxt', 'nuxt-community']) {
+    repos = repos.concat(await octokit.paginate(octokit.rest.repos.listForOrg, { org: owner, type: 'public' }))
+    repos.forEach((repo) => {
+      stars += repo.stargazers_count
+    })
+  }
+  // Fetch contributors on GitHub
+  // let contributors: any = await octokit.paginate(octokit.rest.repos.listContributors, { owner, repo })
+  // // Filter bots
+  // contributors = contributors.filter(contributor => contributor.type === 'User').map(c => ({
+  //   username: c.login,
+  //   contributions: c.contributions
+  // }))
+  // Fetch NPM downloads (last 30 days)
+  const { downloads } = await $fetch<any>(`https://api.npmjs.org/downloads/point/last-month/${packageName}`)
+  // Fetch workspace stats
+  const { data: workspace } = await $fetch<any>('https://app.orbit.love/api/v1/workspaces/nuxtjs', {
+    headers: { Authorization: `Bearer ${config.orbit.token}` }
+  })
+
+  return {
+    repositories: repos.length,
+    stars,
+    contributors: workspace.attributes.members_count,
+    activities: workspace.attributes.activities_count,
+    downloads
+  }
+}, {
+  name: 'stats',
+  ttl: 60 * 1000
+})

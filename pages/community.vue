@@ -1,9 +1,8 @@
 <script setup>
 import { sortBy } from 'lodash-es'
 
-const { data: framework } = await useFetch('/api/community/framework')
-
-const contributors = sortBy(framework.value.contributors, 'activities').reverse()
+const { data: stats } = await useFetch('/api/community/stats')
+const { data: contributors } = await useFetch('/api/community/contributors')
 </script>
 
 <template>
@@ -23,7 +22,7 @@ const contributors = sortBy(framework.value.contributors, 'activities').reverse(
             GitHub Stars
           </dt>
           <dd class="mt-1 text-3xl font-semibold u-text-gray-900">
-            {{ framework.stats.stars }}
+            {{ stats.stars }}
           </dd>
         </UCard>
         <UCard>
@@ -31,7 +30,7 @@ const contributors = sortBy(framework.value.contributors, 'activities').reverse(
             Members
           </dt>
           <dd class="mt-1 text-3xl font-semibold u-text-gray-900">
-            {{ framework.stats.members }}
+            {{ stats.contributors }}
           </dd>
         </UCard>
         <UCard>
@@ -39,7 +38,7 @@ const contributors = sortBy(framework.value.contributors, 'activities').reverse(
             Activities
           </dt>
           <dd class="mt-1 text-3xl font-semibold u-text-gray-900">
-            {{ framework.stats.activities }}
+            {{ stats.activities }}
           </dd>
         </UCard>
       </dl>
@@ -81,9 +80,7 @@ const contributors = sortBy(framework.value.contributors, 'activities').reverse(
                     <span v-if="c.roles.length" class="inline-flex px-2 text-xs font-semibold leading-5 text-green-800 bg-green-100 rounded-full">{{ c.roles[0] }}</span>
                   </div>
                   <div class="flex items-center justify-end flex-shrink-0 col-span-2 gap-3 sm:col-span-1">
-                    <a :href="`https://github.com/nuxt/framework/pulls?q=is%3Apr+author%3A${c.github}`" target="_blank" rel="noopener">
-                      {{ c.activities }}
-                    </a>
+                    {{ c.activities }}
                   </div>
                 </div>
               </div>
