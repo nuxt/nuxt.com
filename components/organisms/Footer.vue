@@ -1,6 +1,7 @@
 
 <template>
-  <footer class="u-bg-white">
+  <footer class="relative u-bg-white">
+    <div class="absolute inset-x-0 h-1 border-b bottom-44 sm:bottom-24 u-border-gray-200" />
     <UContainer padded class="pt-12 pb-8">
       <div
         class="grid grid-cols-2 pb-12 sm:grid-cols-4 lg:grid-cols-6 gap-y-12"
@@ -53,7 +54,7 @@
           </ul>
         </div>
       </div>
-      <div class="flex flex-col gap-3 pt-6 border-t u-border-gray-200 sm:flex-row sm:items-center sm:justify-between">
+      <div class="relative flex flex-col gap-3 pt-6 sm:flex-row sm:items-center sm:justify-between">
         <div class="flex items-center gap-3">
           <ThemeSelect name="theme" class="order-1 sm:order-none" size="sm" />
           <span class="text-sm u-text-gray-400">© 2022 Nuxt</span>
