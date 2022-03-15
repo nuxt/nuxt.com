@@ -44,11 +44,20 @@
           <UButton
             v-if="isDraft"
             label="Save"
-            :loading="committing"
+            :loading="loading"
             size="sm"
             icon="heroicons-outline:cloud-upload"
             trailing
             @click="commit"
+          />
+          <UButton
+            v-if="isPublishable"
+            label="Publish"
+            :loading="loading"
+            size="sm"
+            icon="heroicons-outline:save"
+            trailing
+            @click="publish"
           />
         </div>
       </div>
@@ -108,7 +117,7 @@ const content: Ref<string> = ref('')
 const parsedContent: Ref<string> = ref('')
 const parsedMatter: Ref<string> = ref('')
 const modalWrapper = ref(null)
-const committing = ref(false)
+const loading = ref(false)
 const branchesModal = ref(false)
 const openedDirs = ref({})
 
@@ -177,6 +186,10 @@ whenever(keys.meta_k, () => {
 
 const isDraft = computed(() => {
   return draft.value?.additions?.length || draft.value?.deletions.length
+})
+
+const isPublishable = computed(() => {
+  return !isDraft.value && branch.value.name !== props.project.repository.default_branch
 })
 
 const computedFiles = computed(() => {
@@ -393,7 +406,7 @@ async function commit () {
     return openCreateBranchModal('', true)
   }
 
-  committing.value = true
+  loading.value = true
 
   try {
     await client(`/projects/${props.project.id}/files/commit`, {
@@ -406,6 +419,19 @@ async function commit () {
     await refreshFiles()
   } catch (e) {}
 
-  committing.value = false
+  loading.value = false
+}
+
+async function publish () {
+  loading.value = true
+
+  try {
+    await client(`/projects/${props.project.id}/branches/${encodeURIComponent(branch.value.name)}/publish`, { method: 'POST' })
+
+    refreshBranches()
+    findBranch()
+  } catch (e) {}
+
+  loading.value = false
 }
 </script>
