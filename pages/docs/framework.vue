@@ -12,7 +12,7 @@
           v-for="link in links"
           :key="link.label"
           :link="link"
-          class="text-sm font-medium hover:u-text-gray-900"
+          class="text-sm hover:u-text-gray-900"
         >
           {{ link.label }}
         </DocsLink>
