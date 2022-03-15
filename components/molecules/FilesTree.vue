@@ -2,7 +2,7 @@
   <ul>
     <li v-for="(file, index) of tree" :key="index">
       <div
-        class="flex items-center w-full py-2 pr-6 text-sm font-medium border-r-2 group focus:u-bg-gray-50 focus:outline-none"
+        class="flex items-center w-full py-2 pr-6 text-sm font-medium border-r-2 group focus:u-bg-gray-50 focus:outline-none target"
         :class="{
           [`pl-[${24 + (level * 12)}px]`]: true,
           'u-bg-gray-100 u-border-gray-800 u-text-gray-900': isSelected(file),
@@ -10,6 +10,12 @@
           'border-transparent u-text-gray-500 cursor-not-allowed opacity-50': isDeleted(file),
           'cursor-pointer': !isDeleted(file)
         }"
+        :draggable="canDragFile(file)"
+        @dragstart.stop="dragStart($event, file)"
+        @dragover.stop="canDragFile(file) && dragOver($event, file)"
+        @dragleave.stop="dragLeave($event, file)"
+        @drop.stop="canDragFile(file) && drop($event, file)"
+        @dragend.stop="dragEnd($event, file)"
         @click="selectFile(file)"
       >
         <div class="flex items-center justify-between flex-1 w-0 gap-1">
@@ -59,6 +65,7 @@
         @createFile="file => $emit('createFile', file)"
         @renameFile="file => $emit('renameFile', file)"
         @deleteFile="file => $emit('deleteFile', file)"
+        @dropFile="(...args) => $emit('dropFile', ...args)"
         @openDir="path => $emit('openDir', path)"
       />
     </li>
@@ -66,7 +73,7 @@
 </template>
 
 <script setup lang="ts">
-import { PropType } from 'vue'
+import { Ref, PropType } from 'vue'
 import type { File, GitHubFile } from '~/types'
 
 const props = defineProps({
@@ -85,10 +92,14 @@ const props = defineProps({
   openedDirs: {
     type: Object,
     default: () => {}
+  },
+  renameFiles: {
+    type: Function,
+    default: () => {}
   }
 })
 
-const emit = defineEmits(['selectFile', 'createFile', 'renameFile', 'deleteFile', 'openDir'])
+const emit = defineEmits(['selectFile', 'createFile', 'renameFile', 'deleteFile', 'dropFile', 'openDir'])
 
 // Methods
 const isFile = (file: File) => file.type === 'file'
@@ -117,28 +128,107 @@ const selectFile = (file: File) => {
 const createFile = (file: File) => emit('createFile', file.path)
 const renameFile = (file: File) => emit('renameFile', file.path)
 const deleteFile = (file: File) => emit('deleteFile', file.path)
+
+const canDragFile = (file) => {
+  return !isDeleted(file) && !isDir(file)
+}
+
+const dragStart = (e, file) => {
+  e.dataTransfer.setData('file', JSON.stringify(file))
+}
+
+const dragOver = (e, file) => {
+  let target = e.target
+  while (target !== null && !target.classList.contains('target')) {
+    target = target.parentNode
+  }
+
+  target.parentNode.classList.remove('drag-below')
+  target.parentNode.classList.remove('drag-above')
+  target.parentNode.classList.remove('drag-over')
+
+  const bounding = target.getBoundingClientRect()
+  const nodeSection = bounding.height / 3
+
+  let position = 'over'
+
+  if (bounding.top + nodeSection >= e.clientY) {
+    position = 'above'
+  } else if (bounding.top + nodeSection * 2 <= e.clientY) {
+    position = 'below'
+  }
+
+  if (position === 'over' && file.type !== 'directory') {
+    return false
+  }
+
+  e.preventDefault()
+
+  target.parentNode.classList.add(`drag-${position}`)
+}
+
+const dragLeave = (e, file) => {
+  let target = e.target
+  while (target !== null && !target.classList.contains('target')) {
+    target = target.parentNode
+  }
+
+  e.preventDefault()
+
+  target.parentNode.classList.remove('drag-below')
+  target.parentNode.classList.remove('drag-above')
+  target.parentNode.classList.remove('drag-over')
+}
+
+const drop = (e, file) => {
+  let target = e.target
+  while (target !== null && !target.classList.contains('target')) {
+    target = target.parentNode
+  }
+
+  let position
+  if (target.parentNode.classList.contains('drag-over')) {
+    position = 'over'
+  } else if (target.parentNode.classList.contains('drag-below')) {
+    position = 'below'
+  } else if (target.parentNode.classList.contains('drag-above')) {
+    position = 'above'
+  }
+
+  if (position === 'over' && file.type !== 'directory') {
+    return false
+  }
+
+  e.preventDefault()
+
+  target.parentNode.classList.remove('drag-below')
+  target.parentNode.classList.remove('drag-above')
+  target.parentNode.classList.remove('drag-over')
+
+  const src = e.dataTransfer.getData('file')
+
+  emit('dropFile', JSON.parse(src), file, position)
+}
+
+const dragEnd = (e, file) => {
+  e.dataTransfer.clearData()
+}
 </script>
 
 <style scoped>
-.drag-over {
-  background-color: var(--tw-ring-color);
+li.drag-below::after {
+  content: ' ';
+  width: 100%;
+  height: 3px;
+  background-color: red;
+  position: absolute;
 }
 
-li.drag-below {
-  border-bottom-color: var(--tw-ring-color) !important;
-}
-li.drag-below + li {
-  border-top-color: var(--tw-ring-color) !important;
-}
-
-li.drag-above {
-  border-top-color: var(--tw-ring-color) !important;
-}
-
-ul.divide-y-2 > li:first-child {
-  @apply border-t-2 border-transparent;
-}
-ul.divide-y-2 > li:last-child {
-  @apply border-b-2 border-transparent;
+li.drag-above::before {
+  content: ' ';
+  width: 100%;
+  height: 3px;
+  background-color: red;
+  position: absolute;
 }
 </style>

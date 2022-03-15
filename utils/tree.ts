@@ -23,3 +23,41 @@ export function mapTree (tree) {
 
   return result[0].children
 }
+
+export const findTree = function (path, tree) {
+  for (const file of tree) {
+    if (file.path === path) {
+      return tree
+    }
+    if (file.children) {
+      const result = findTree(path, file.children)
+      if (result) { return result }
+    }
+  }
+}
+
+export const replacePrefix = function (path, newPrefix) {
+  const split = path.split('/')
+  let [prefix, name, ext] = split.pop().split('.')
+  // Case when file has no prefix
+  if (!Number(prefix)) {
+    ext = name
+    name = prefix
+    prefix = null
+  }
+
+  return `${newPrefix}.${name}.${ext}`
+}
+
+export const getPathDir = function (path) {
+  return path.replace(/\/[^/]+$/, '')
+}
+
+export const renamePath = function (path, newPath, newPrefix) {
+  // Get new path dir
+  const newDir = getPathDir(newPath)
+  // Get path name with new prefix
+  const newName = replacePrefix(path, newPrefix)
+
+  return `${newDir}/${newName}`
+}
