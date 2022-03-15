@@ -3,12 +3,12 @@ import config from '#config'
 import { cachifyHandle } from '~/server/utils/cache'
 
 export default cachifyHandle(async () => {
-  console.log('Fetching Nuxt contributors...')
+  console.log('Fetching Nuxters...')
   // Fetch Orbit members
   const { data: members } = await $fetch<any>('https://app.orbit.love/api/v1/nuxtjs/members?sort=activities_count', {
     headers: { Authorization: `Bearer ${config.orbit.token}` }
   })
-  const contributors = members.filter(member => !member.attributes.tags.includes('bot')).map((member) => {
+  const nuxters = members.filter(member => !member.attributes.tags.includes('bot')).map((member) => {
     const m = member.attributes
     return {
       name: m.name || m.github,
@@ -23,7 +23,7 @@ export default cachifyHandle(async () => {
     }
   })
 
-  return contributors
+  return nuxters
 }, {
   name: 'contributors',
   ttl: 60 * 1000
