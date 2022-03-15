@@ -16,7 +16,7 @@
 
     <main class="relative py-8">
       <UContainer>
-        <div class="lg:grid lg:grid-cols-12 lg:gap-10 lg:relative ">
+        <div v-if="route.params.slug && route.params.slug.length" class="lg:grid lg:grid-cols-12 lg:gap-10 lg:relative">
           <aside class="pb-8 overflow-x-hidden overflow-y-auto lg:pb-0 lg:sticky lg:top-16 sm:px-6 lg:px-0 lg:pt-8 lg:-mt-8 lg:self-start lg:col-span-3 lg:h-[calc(100vh-130px)]">
             <slot name="left" />
           </aside>
@@ -29,6 +29,7 @@
             <slot name="right" />
           </div>
         </div>
+        <DocsHero v-else />
       </UContainer>
     </main>
   </div>
@@ -38,4 +39,6 @@
 import { useWindowScroll } from '@vueuse/core'
 
 const { y } = useWindowScroll()
+
+const route = useRoute()
 </script>
