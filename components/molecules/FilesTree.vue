@@ -54,11 +54,12 @@
         :level="level + 1"
         :tree="file.children"
         :selected-file="selectedFile"
+        :opened-dirs="openedDirs"
         @selectFile="file => $emit('selectFile', file)"
         @createFile="file => $emit('createFile', file)"
         @renameFile="file => $emit('renameFile', file)"
         @deleteFile="file => $emit('deleteFile', file)"
-        @openDir="openDir"
+        @openDir="path => $emit('openDir', path)"
       />
     </li>
   </ul>
@@ -67,8 +68,6 @@
 <script setup lang="ts">
 import { PropType } from 'vue'
 import type { File, GitHubFile } from '~/types'
-
-const openedDirs = reactive({})
 
 const props = defineProps({
   level: {
@@ -82,22 +81,19 @@ const props = defineProps({
   selectedFile: {
     type: Object as PropType<GitHubFile>,
     default: null
+  },
+  openedDirs: {
+    type: Object,
+    default: () => {}
   }
 })
 
 const emit = defineEmits(['selectFile', 'createFile', 'renameFile', 'deleteFile', 'openDir'])
 
-// Transform this to a `watch` to handle file selection from create
-onMounted(() => {
-  if (props.tree.find(file => file.path === props.selectedFile.path)) {
-    emit('openDir', props.selectedFile.path.split('/').slice(0, -1).join('/'))
-  }
-})
-
 // Methods
 const isFile = (file: File) => file.type === 'file'
 const isDir = (file: File) => file.type === 'directory'
-const isDirOpen = (file: File) => !!openedDirs[file.path]
+const isDirOpen = (file: File) => !!props.openedDirs[file.path]
 const isSelected = (file: File) => props.selectedFile && file.path === props.selectedFile.path
 const isDeleted = (file: File) => file.status === 'deleted'
 
@@ -108,7 +104,7 @@ const selectFile = (file: File) => {
   }
 
   if (isDir(file)) {
-    openedDirs[file.path] = !openedDirs[file.path]
+    emit('openDir', file.path)
     return
   }
 
@@ -121,12 +117,6 @@ const selectFile = (file: File) => {
 const createFile = (file: File) => emit('createFile', file.path)
 const renameFile = (file: File) => emit('renameFile', file.path)
 const deleteFile = (file: File) => emit('deleteFile', file.path)
-
-const openDir = (path) => {
-  openedDirs[path] = true
-
-  emit('openDir', path.split('/').slice(0, -1).join('/'))
-}
 </script>
 
 <style scoped>
