@@ -13,7 +13,7 @@ import type { File } from '~/types'
 const props = defineProps({
   file: {
     type: Object as PropType<File>,
-    default: null
+    required: true
   },
   openedDirs: {
     type: Object,

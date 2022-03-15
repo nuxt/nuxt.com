@@ -1,28 +1,25 @@
-import type { File } from '~/types'
+export function mapTree (tree) {
+  const result = []
+  const acc = { result }
 
-export function mapTree (tree, parent = null) {
-  const res = []
+  tree.forEach((file) => {
+    const paths = file.path.split('/')
 
-  while (tree.length) {
-    if (parent && !tree[0].path.startsWith(parent.path)) {
-      break
-    }
+    paths.reduce((acc, name, i, arr) => {
+      if (!acc[name]) {
+        const isFile = i === arr.length - 1
 
-    const item: File = {
-      type: tree[0].type === 'tree' ? 'directory' : 'file',
-      path: tree[0].path,
-      name: tree[0].path.split('/').pop(),
-      status: tree[0].status
-    }
+        acc[name] = { result: [] }
+        if (isFile) {
+          acc.result.push({ name, type: 'file', path: file.path, status: file.status })
+        } else {
+          acc.result.push({ name, type: 'directory', path: arr.slice(0, i + 1).join('/'), children: acc[name].result })
+        }
+      }
 
-    tree.shift()
+      return acc[name]
+    }, acc)
+  })
 
-    if (item.type === 'directory') {
-      item.children = mapTree(tree, item)
-    }
-
-    res.push(item)
-  }
-
-  return res
+  return result[0].children
 }

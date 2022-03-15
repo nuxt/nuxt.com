@@ -4,6 +4,8 @@
       <FilesTree
         :tree="tree"
         :selected-file="file"
+        :opened-dirs="openedDirs"
+        @openDir="openDir"
         @selectFile="selectFile"
         @createFile="openCreateFileModal"
         @renameFile="openRenameFileModal"
@@ -108,6 +110,7 @@ const parsedMatter: Ref<string> = ref('')
 const modalWrapper = ref(null)
 const committing = ref(false)
 const branchesModal = ref(false)
+const openedDirs = ref({})
 
 // Data
 
@@ -187,7 +190,7 @@ const computedFiles = computed(() => {
   for (const addition of additions) {
     if (addition.new) {
       if (addition.oldPath) {
-        deletions.splice(deletions.findIndex(d => d.oldPath === addition.oldPath), 1)
+        deletions.splice(deletions.findIndex(d => d.path === addition.oldPath), 1)
         const file = githubFiles.find(f => f.path === addition.oldPath)
         if (file) {
           file.status = 'renamed'
@@ -209,14 +212,13 @@ const computedFiles = computed(() => {
       file.status = 'deleted'
     }
   }
-
   return githubFiles
 })
 
 // Do not move this, it needs to be after computedFiles
 findFile()
 
-const tree = computed(() => mapTree(sortBy(computedFiles.value, 'path')))
+const tree = computed(() => mapTree(sortBy(computedFiles.value.filter(f => f.type === 'blob'), 'path')))
 
 const theme = computed(() => colorMode.value === 'dark' ? 'dark' : 'light')
 
@@ -230,6 +232,12 @@ function findFile () {
 
 function selectFile (f: GitHubFile) {
   file.value = f
+
+  const paths = f.path.split('/')
+  for (let i = paths.length - 1; i > 1; i--) {
+    paths.pop()
+    openDir(paths.join('/'), true)
+  }
 }
 
 function findBranch () {
@@ -246,6 +254,10 @@ function findBranch () {
 function selectBranch (b: Branch) {
   branch.value = b
   branchCookie.value = b.name
+}
+
+function openDir (path: string, value?: boolean) {
+  openedDirs.value[path] = value !== undefined ? value : !openedDirs.value[path]
 }
 
 function openModal (component, props) {
