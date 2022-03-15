@@ -1,30 +1,40 @@
 <template>
   <DocsPage>
     <template #header>
-      <div class="flex items-center justify-start gap-3">
-        <p class="font-semibold">
-          Framework
-        </p>
-      </div>
+      <SubNavbar>
+        <div class="flex items-center justify-start gap-3">
+          <p class="font-semibold">
+            Framework
+          </p>
+          <USelect
+            v-model="version"
+            :options="versions"
+            name="version"
+            size="xs"
+            wrapper-class="rounded"
+            base-class="font-semibold text-white u-bg-gray-900"
+          />
+        </div>
 
-      <div class="flex justify-center col-span-4 gap-x-8">
-        <DocsLink
-          v-for="link in links"
-          :key="link.label"
-          :link="link"
-          class="text-sm hover:u-text-gray-900"
-        >
-          {{ link.label }}
-        </DocsLink>
-      </div>
+        <div class="flex justify-center col-span-4 gap-x-8">
+          <ContentLink
+            v-for="link in links"
+            :key="link.label"
+            :link="link"
+            class="text-sm hover:u-text-gray-900"
+          >
+            {{ link.label }}
+          </ContentLink>
+        </div>
 
-      <div class="flex justify-end">
-        <UButton icon="fa-brands:github" variant="transparent" href="https://github.com/nuxt/framework" class="!p-0" />
-      </div>
+        <div class="flex justify-end">
+          <UButton icon="fa-brands:github" variant="transparent" href="https://github.com/nuxt/framework" class="!p-0" />
+        </div>
+      </SubNavbar>
     </template>
 
     <template #left>
-      <DocsAside :links="asideLinks" active-class="u-text-gray-900 u-bg-gray-200" />
+      <ContentAside :links="asideLinks" active-class="u-text-gray-900 u-bg-gray-200" />
     </template>
 
     <template #right>
@@ -41,6 +51,9 @@
 import { withBase } from 'ufo'
 
 const route = useRoute()
+
+const versions = ref([{ text: 'v3', value: '3' }, { text: 'v2', value: '2' }])
+const version = ref(versions.value[0])
 
 const path = computed(() => {
   const [, first, second, third] = route.path.split('/')

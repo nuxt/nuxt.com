@@ -1,18 +1,6 @@
 <template>
   <div class="relative flex-1">
-    <div
-      v-if="$slots.header"
-      ref="header"
-      class="z-[1] sticky top-0"
-      :class="{ 'backdrop-blur-md shadow shadow-gray-200 dark:shadow-gray-900': y > 80 }"
-    >
-      <div class="absolute top-0 w-full h-16 bg-white bg-opacity-75 dark:bg-black" />
-      <UContainer padded>
-        <div class="relative grid items-center justify-between h-16 grid-cols-2 gap-3 border-t sm:grid-cols-6" :class="{ 'u-border-gray-200': y <= 80, 'border-transparent': y > 80 }">
-          <slot name="header" />
-        </div>
-      </UContainer>
-    </div>
+    <slot name="header" />
 
     <main class="relative py-8">
       <UContainer>
@@ -36,9 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { useWindowScroll } from '@vueuse/core'
-
-const { y } = useWindowScroll()
 
 const route = useRoute()
+
 </script>
