@@ -4,7 +4,7 @@
       <UBadge rounded label="Warning" />
       <span class="u-text-gray-500">
         Nuxt 3.0 is out.
-        <NuxtLink class="underline" to="#">Read about it here</NuxtLink>
+        <a class="underline" href="https://github.com/nuxt">Read about it here</a>
       </span>
     </div>
     <h1 class="font-bold text-7xl u-text-gray-900">
