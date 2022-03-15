@@ -1,6 +1,6 @@
 <template>
   <nav>
-    <ul class="flex flex-col gap-y-4">
+    <ul class="flex flex-col gap-y-2">
       <DocsAsideItem
         v-for="item in links"
         :key="item.label"

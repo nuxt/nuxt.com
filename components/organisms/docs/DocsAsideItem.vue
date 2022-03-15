@@ -8,7 +8,12 @@
           <span>{{ item.label }}</span>
         </div>
         <ul v-if="opened" ref="asideLinks" class="flex flex-col mt-2 text-sm">
-          <li v-for="link in item.children" :key="link.label" class="py-1 pl-2 border-l-2" :class="{ 'u-border-gray-900': currentRoute.path.includes(link.to)}">
+          <li
+            v-for="link in item.children"
+            :key="link.label"
+            class="pl-2 border-l-2 u-border-gray-300 hover:u-border-gray-900 "
+            :class="{ 'u-border-gray-900': route.path === link.to }"
+          >
             <DocsAsideItemLink :link="link" />
           </li>
         </ul>
@@ -26,7 +31,7 @@ defineProps({
   }
 })
 
-const currentRoute = useRoute()
+const route = useRoute()
 
 const emit = defineEmits(['collapse'])
 

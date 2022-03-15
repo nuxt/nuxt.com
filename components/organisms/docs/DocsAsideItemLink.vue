@@ -1,11 +1,14 @@
 <template>
   <ULink
     :to="link.to"
-    active-class="font-semibold u-text-gray-900 u-border-gray-900"
-    inactive-class="font-medium u-text-gray-400 u-border-gray-200"
+    class="u-text-gray-500 hover:u-text-gray-900"
+    active-class="font-semibold u-text-gray-900"
+    inactive-class="font-medium"
     exact
   >
-    {{ link.label }}
+    <span class="inline-block py-1">
+      {{ link.label }}
+    </span>
   </ULink>
 </template>
 

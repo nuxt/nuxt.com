@@ -1,7 +1,6 @@
 <template>
   <ULink
     :to="slug"
-    class="hover:u-text-gray-900"
     :class="isActive ? 'font-semibold u-text-gray-900' : 'font-medium u-text-gray-500'"
   >
     <slot />
