@@ -5,9 +5,7 @@
   >
     <div class="absolute top-0 w-full h-16 bg-white bg-opacity-75 dark:bg-black" />
     <UContainer padded>
-      <div class="relative grid items-center justify-between h-16 grid-cols-2 gap-3 sm:grid-cols-6">
-        <slot />
-      </div>
+      <slot />
     </UContainer>
   </div>
 </template>
