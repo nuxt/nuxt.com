@@ -186,7 +186,7 @@ const computedFiles = computed(() => {
 
   const { additions, deletions } = draft.value || {}
 
-  const githubFiles = [...files.value]
+  const githubFiles = files.value.map(file => ({ ...file }))
   for (const addition of additions) {
     if (addition.new) {
       if (addition.oldPath) {
