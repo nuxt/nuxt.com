@@ -73,7 +73,7 @@
 </template>
 
 <script setup lang="ts">
-import { Ref, PropType } from 'vue'
+import { PropType } from 'vue'
 import type { File, GitHubFile } from '~/types'
 
 const props = defineProps({

@@ -25,6 +25,25 @@ const isOpen = computed(() => {
   return !!props.openedDirs[props.file.path]
 })
 
+function hasChildDraft (files) {
+  for (const file of files) {
+    if (file.type === 'file' && !!file.status) {
+      return file.status
+    }
+    if (file.type === 'directory' && file.children.length) {
+      const draft = hasChildDraft(file.children)
+      if (draft) {
+        return draft
+      }
+    }
+  }
+  return false
+}
+
+const isDraft = computed(() => {
+  return hasChildDraft(props.file.children)
+})
+
 const iconName = computed(() => {
   if (props.file.type === 'directory') {
     return `heroicons-outline:${isOpen.value ? 'folder-open' : 'folder'}`
@@ -45,7 +64,12 @@ const iconName = computed(() => {
 })
 
 const iconColor = computed(() => {
-  switch (props.file.status) {
+  let status = props.file.status
+  if (props.file.type === 'directory') {
+    status = isDraft.value
+  }
+
+  switch (status) {
     case 'created':
       return 'text-green-500'
     case 'updated':
