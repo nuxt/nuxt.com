@@ -17,7 +17,7 @@
         >
           <img v-show="activeItem.slug !== user.username" :src="user.avatar" class="absolute block rounded-full ring-1 u-ring-white bottom-0 right-0 -mb-0.5 -mr-0.5 w-3 h-3">
         </UAvatar>
-        <span class="text-sm font-medium truncate ml-3">{{ activeItem.label }}</span>
+        <span class="hidden ml-3 text-sm font-medium truncate lg:block">{{ activeItem.label }}</span>
       </UButton>
     </template>
 
