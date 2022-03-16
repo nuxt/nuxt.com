@@ -220,15 +220,17 @@ li.drag-below::after {
   content: ' ';
   width: 100%;
   height: 3px;
-  background-color: red;
+  background-color: #3b82f6;
   position: absolute;
+  pointer-events: none;
 }
 
 li.drag-above::before {
   content: ' ';
   width: 100%;
   height: 3px;
-  background-color: red;
+  background-color: #3b82f6;
   position: absolute;
+  pointer-events: none;
 }
 </style>

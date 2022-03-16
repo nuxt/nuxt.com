@@ -92,9 +92,9 @@
 <script setup lang="ts">
 import { createApp } from 'vue'
 import type { PropType, Ref } from 'vue'
-import { debounce, sortBy } from 'lodash-es'
+import { debounce } from 'lodash-es'
 import { useMagicKeys, whenever } from '@vueuse/core'
-import { mapTree, findTree, renamePath, getPathDir, replacePrefix } from '~/utils/tree'
+import { mapTree, findTree, renamePath, getPathDir } from '~/utils/tree'
 import type { Team, Project, Branch, GitHubDraft, GitHubFile } from '~/types'
 import ProjectContentCreateBranchModal from '~/components/organisms/project/content/ProjectContentCreateBranchModal.vue'
 import ProjectContentCreateFileModal from '~/components/organisms/project/content/ProjectContentCreateFileModal.vue'
@@ -232,7 +232,15 @@ const computedFiles = computed(() => {
 // Do not move this, it needs to be after computedFiles
 findFile()
 
-const tree = computed(() => mapTree(sortBy(computedFiles.value, 'path')))
+const tree = computed(() => {
+  const files = [...computedFiles.value]
+  files.sort((a, b) => a.path.localeCompare(b.path, undefined, {
+    numeric: true,
+    sensitivity: 'base'
+  }))
+
+  return mapTree(files)
+})
 
 const theme = computed(() => colorMode.value === 'dark' ? 'dark' : 'light')
 
@@ -302,7 +310,17 @@ function dropFile (src: GitHubFile, dst: GitHubFile, position: 'above' | 'below'
   filesToRename.push({ oldPath: src.path, newPath: renamePath(src.path, dst.path, index + 1) })
 
   if (sameTree) {
-    // TODO
+    if (srcIndex > dstIndex) {
+      // I move a file up
+      for (let i = position === 'below' ? (dstIndex + 1) : dstIndex; i < srcIndex; i++) {
+        filesToRename.push({ oldPath: srcTree[i].path, newPath: renamePath(srcTree[i].path, srcTree[i].path, i + 2) })
+      }
+    } else {
+      // I move a file down
+      for (let i = position === 'above' ? (dstIndex - 1) : dstIndex; i > srcIndex; i--) {
+        filesToRename.push({ oldPath: srcTree[i].path, newPath: renamePath(srcTree[i].path, srcTree[i].path, i) })
+      }
+    }
   } else {
     // Rename `srcTree` files after `srcIndex`
     for (let i = srcIndex + 1; i < srcTree.length; i++) {
@@ -314,7 +332,7 @@ function dropFile (src: GitHubFile, dst: GitHubFile, position: 'above' | 'below'
     }
   }
 
-  renameFiles(filesToRename)
+  renameFiles(filesToRename.filter(f => f.oldPath !== f.newPath))
 }
 
 function openModal (component, props) {
@@ -429,6 +447,10 @@ async function renameFile (oldPath: string, newPath: string) {
 }
 
 async function renameFiles (files) {
+  if (!files.length) {
+    return
+  }
+
   const data = await client<GitHubDraft>(`/projects/${props.project.id}/files/rename`, {
     method: 'PUT',
     params: {
