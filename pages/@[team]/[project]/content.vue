@@ -56,9 +56,7 @@
       </div>
     </template>
 
-    <p class="flex-1 w-full pb-16 milkdown editor focus:outline-none" contenteditable @input="updateFile($event.target.innerText)" v-text="parsedContent" />
-
-    <!-- <DocusEditor :model-value="parsedContent" :theme="theme" @update:model-value="updateFile" /> -->
+    <DocusEditor :model-value="parsedContent" :theme="theme" @update:model-value="updateFile" />
 
     <ProjectContentBranchesModal
       v-model="branchesModal"
@@ -465,3 +463,10 @@ async function commit () {
   committing.value = false
 }
 </script>
+
+<style>
+.milkdown .editor {
+  padding: 0 !important;
+  max-width: 100% !important;
+}
+</style>
