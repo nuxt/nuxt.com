@@ -46,16 +46,16 @@
             label="Save"
             :loading="loading"
             size="sm"
-            icon="heroicons-outline:cloud-upload"
+            icon="heroicons-outline:check"
             trailing
             @click="commit"
           />
           <UButton
-            v-if="isPublishable"
+            v-else-if="branch.name !== project.repository.default_branch"
             label="Publish"
             :loading="loading"
             size="sm"
-            icon="heroicons-outline:save"
+            icon="heroicons-outline:cloud-upload"
             trailing
             @click="publish"
           />
@@ -186,10 +186,6 @@ whenever(keys.meta_k, () => {
 
 const isDraft = computed(() => {
   return draft.value?.additions?.length || draft.value?.deletions.length
-})
-
-const isPublishable = computed(() => {
-  return !isDraft.value && branch.value.name !== props.project.repository.default_branch
 })
 
 const computedFiles = computed(() => {
@@ -428,7 +424,7 @@ async function publish () {
   try {
     await client(`/projects/${props.project.id}/branches/${encodeURIComponent(branch.value.name)}/publish`, { method: 'POST' })
 
-    refreshBranches()
+    await refreshBranches()
     findBranch()
   } catch (e) {}
 
