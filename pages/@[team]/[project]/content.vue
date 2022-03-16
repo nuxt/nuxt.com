@@ -517,8 +517,8 @@ async function publish () {
 </script>
 
 <style>
-.milkdown .editor {
-  padding: 0 !important;
+.milkdown > .editor {
+  margin: -1rem;
   max-width: 100% !important;
 }
 </style>
