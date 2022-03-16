@@ -2,7 +2,7 @@
   <main class="flex flex-1 overflow-hidden">
     <!-- Primary column -->
     <section class="flex flex-col flex-1 h-full min-w-0 overflow-y-auto lg:order-last">
-      <div v-if="$slots.header" class="sticky top-0 flex items-center justify-between flex-shrink-0 h-16 px-4 sm:px-6 lg:px-8 u-bg-white">
+      <div v-if="$slots.header" class="sticky top-0 z-10 flex items-center justify-between flex-shrink-0 h-16 px-4 sm:px-6 lg:px-8 u-bg-white">
         <slot name="header" />
       </div>
 
