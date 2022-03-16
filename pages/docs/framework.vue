@@ -12,8 +12,6 @@
               :options="versions"
               name="version"
               size="xs"
-              wrapper-class="rounded"
-              base-class="font-semibold text-white u-bg-gray-900"
             />
           </div>
 
