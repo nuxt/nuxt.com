@@ -38,9 +38,7 @@
     </template>
 
     <template #right>
-      <p class="text-xs font-medium tracking-wide uppercase u-text-gray-600">
-        On this page
-      </p>
+      <DocsToc :toc="[]" />
     </template>
 
     <NuxtPage />
