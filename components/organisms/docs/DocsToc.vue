@@ -4,10 +4,10 @@
       <span>Previous page</span>
       <img src="/docs/toc-back.svg" alt="previous page">
     </NuxtLink>
-    <NuxtLink to="#" class="flex justify-end hover:font-semibold hover:u-text-gray-900 gap-x-3">
+    <div class="flex justify-end font-semibold u-text-gray-900 gap-x-3">
       <span>On this page</span>
       <img src="/docs/toc-current.svg" alt="on this page">
-    </NuxtLink>
+    </div>
     <ul class="flex flex-col pr-2.5">
       <li v-for="link in links" :key="link.label" class="py-1 overflow-hidden truncate border-r-2" :class="route.hash === link.to ? 'u-border-gray-900' : 'u-border-gray-300'">
         <NuxtLink
