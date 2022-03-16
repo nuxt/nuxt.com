@@ -309,7 +309,7 @@ function dropFile (src: GitHubFile, dst: GitHubFile, position: 'above' | 'below'
       filesToRename.push({ oldPath: srcTree[i].path, newPath: renamePath(srcTree[i].path, srcTree[i].path, i) })
     }
     // Rename `dstTree` files after `dstIndex`
-    for (let i = dstIndex + 1; i < dstTree.length; i++) {
+    for (let i = position === 'below' ? (dstIndex + 1) : dstIndex; i < dstTree.length; i++) {
       filesToRename.push({ oldPath: dstTree[i].path, newPath: renamePath(dstTree[i].path, dstTree[i].path, i + 2) })
     }
   }
