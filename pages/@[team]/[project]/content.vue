@@ -226,7 +226,7 @@ const theme = computed(() => colorMode.value === 'dark' ? 'dark' : 'light')
 function findFile () {
   const currentFile = file.value?.path ? computedFiles.value.find(f => f.path === file.value.path) : null
 
-  selectFile(currentFile || computedFiles.value.reverse().find(file => file.path.toLowerCase().endsWith('index.md') && file.status !== 'deleted') || computedFiles.value.reverse().find(file => file.type === 'blob' && file.status !== 'deleted'))
+  selectFile(currentFile || computedFiles.value.find(file => file.path.toLowerCase().endsWith('index.md') && file.status !== 'deleted') || computedFiles.value.find(file => file.type === 'blob' && file.status !== 'deleted'))
 }
 
 function selectFile (f: GitHubFile) {
