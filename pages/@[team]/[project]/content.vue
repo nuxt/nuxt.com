@@ -37,8 +37,16 @@
             @click="branchesModal = true"
           />
 
-          <p v-if="file" class="text-sm truncate u-text-gray-500">
+          <p v-if="file" class="flex items-center gap-1.5 text-sm truncate u-text-gray-500">
             {{ file.path }}
+            <UButton
+              icon="heroicons-outline:external-link"
+              target="_blank"
+              :to="`https://github.com/${project.repository.owner}/${project.repository.name}/tree/${branch.name}/${file.path}`"
+              variant="transparent"
+              size="xxs"
+              class="!p-0"
+            />
           </p>
         </div>
 
