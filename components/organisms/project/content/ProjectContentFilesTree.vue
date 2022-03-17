@@ -27,6 +27,14 @@
           </div>
           <div class="items-center gap-1.5 -mr-1 hidden group-hover:flex">
             <UButton
+              v-if="isFile(file)"
+              size="xxs"
+              class="-my-0.5 -mr-0.5"
+              variant="transparent-hover"
+              icon="heroicons-outline:reply"
+              @click.stop="revertFile(file)"
+            />
+            <UButton
               v-if="isDir(file)"
               size="xxs"
               class="-my-0.5 -mr-0.5"
@@ -99,7 +107,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['selectFile', 'createFile', 'renameFile', 'deleteFile', 'dropFile', 'openDir'])
+const emit = defineEmits(['selectFile', 'createFile', 'renameFile', 'deleteFile', 'revertFile', 'dropFile', 'openDir'])
 
 // Methods
 const isFile = (file: File) => file.type === 'file'
@@ -128,6 +136,7 @@ const selectFile = (file: File) => {
 const createFile = (file: File) => emit('createFile', file.path)
 const renameFile = (file: File) => emit('renameFile', file.path)
 const deleteFile = (file: File) => emit('deleteFile', file.path)
+const revertFile = (file: File) => emit('revertFile', file.path)
 
 const canDragFile = (file) => {
   return !isDeleted(file) && !isDir(file)

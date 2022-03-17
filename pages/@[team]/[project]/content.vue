@@ -11,6 +11,7 @@
         @createFile="openCreateFileModal"
         @renameFile="openRenameFileModal"
         @deleteFile="openDeleteFileModal"
+        @revertFile="openRevertFileModal"
         @dropFile="dropFile"
       />
     </template>
@@ -102,6 +103,7 @@ import ProjectContentCreateBranchModal from '~/components/organisms/project/cont
 import ProjectContentCreateFileModal from '~/components/organisms/project/content/ProjectContentCreateFileModal.vue'
 import ProjectContentRenameFileModal from '~/components/organisms/project/content/ProjectContentRenameFileModal.vue'
 import ProjectContentDeleteFileModal from '~/components/organisms/project/content/ProjectContentDeleteFileModal.vue'
+import ProjectContentRevertFileModal from '~/components/organisms/project/content/ProjectContentRevertFileModal.vue'
 import ProjectContentPublishModal from '~/components/organisms/project/content/ProjectContentPublishModal.vue'
 
 const props = defineProps({
@@ -371,6 +373,13 @@ function openDeleteFileModal (path: string) {
   })
 }
 
+function openRevertFileModal (path: string) {
+  openModal(ProjectContentRevertFileModal, {
+    path,
+    onSubmit: revertFile
+  })
+}
+
 function openPublishModal () {
   openModal(ProjectContentPublishModal, {
     project: props.project,
@@ -471,6 +480,23 @@ async function renameFiles (files) {
 async function deleteFile (path: string) {
   const data = await client<GitHubDraft>(`/projects/${props.project.id}/files/${encodeURIComponent(path)}`, {
     method: 'DELETE',
+    params: {
+      ref: branch.value?.name
+    }
+  })
+
+  draft.value = data
+
+  // Select new file when deleted was selected
+  if (file.value?.path === path) {
+    file.value = null
+    findFile()
+  }
+}
+
+async function revertFile (path: string) {
+  const data = await client<GitHubDraft>(`/projects/${props.project.id}/files/${encodeURIComponent(path)}/revert`, {
+    method: 'POST',
     params: {
       ref: branch.value?.name
     }
