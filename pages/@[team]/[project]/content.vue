@@ -27,18 +27,19 @@
 
     <template #header>
       <div class="flex items-center justify-between flex-1 min-w-0 gap-3">
-        <div class="flex items-center gap-3 overflow-hidden">
+        <div class="flex items-center min-w-0 gap-3">
           <UButton
             v-if="branch"
             icon="mdi:source-branch"
             :label="branch.name"
             variant="secondary"
             size="xs"
-            @click="branchesModal = true"
+            truncate
+            @click="modal = true"
           />
 
-          <p v-if="file" class="flex items-center gap-1.5 text-sm truncate u-text-gray-500">
-            {{ file.path }}
+          <p v-if="file" class="flex items-center gap-1.5 text-sm min-w-0 u-text-gray-500">
+            <span class="truncate">{{ file.path }}</span>
             <UButton
               icon="heroicons-outline:external-link"
               target="_blank"
@@ -75,16 +76,16 @@
 
     <DocusEditor :model-value="parsedContent" :theme="theme" @update:model-value="updateFile" />
 
-    <ProjectContentBranchesModal
-      v-model="branchesModal"
+    <ProjectContentActionsModal
+      v-model="modal"
       :branches="branches"
       :selected-branch="branch"
-      :pending="pendingBranches"
+      :pending-branches="pendingBranches"
       :files="computedFiles"
-      @select-branch="selectBranch"
-      @refresh-branches="refreshBranches"
-      @create-branch="openCreateBranchModal"
-      @select-file="selectFile"
+      @selectBranch="selectBranch"
+      @refreshBranches="refreshBranches"
+      @createBranch="openCreateBranchModal"
+      @selectFile="selectFile"
     />
 
     <div ref="modalWrapper" />
@@ -128,7 +129,7 @@ const parsedContent: Ref<string> = ref('')
 const parsedMatter: Ref<string> = ref('')
 const modalWrapper = ref(null)
 const loading = ref(false)
-const branchesModal = ref(false)
+const modal = ref(false)
 const openedDirs = ref({})
 
 // Data
@@ -189,7 +190,7 @@ watch(content, () => {
 const keys = useMagicKeys()
 
 whenever(keys.meta_k, () => {
-  branchesModal.value = !branchesModal.value
+  modal.value = !modal.value
 })
 
 // Computed
