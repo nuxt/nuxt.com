@@ -202,17 +202,15 @@ const computedFiles = computed(() => {
   const githubFiles = files.value.filter(f => f.type === 'blob').map(file => ({ ...file }))
 
   for (const addition of additions) {
-    if (addition.new) {
-      if (addition.oldPath) {
-        deletions.splice(deletions.findIndex(d => d.path === addition.oldPath), 1)
-        const file = githubFiles.find(f => f.path === addition.oldPath)
-        if (file) {
-          file.status = 'renamed'
-          file.path = addition.path
-        }
-      } else {
-        githubFiles.push({ path: addition.path, type: 'blob', status: 'created' })
+    if (addition.oldPath) {
+      deletions.splice(deletions.findIndex(d => d.path === addition.oldPath), 1)
+      const file = githubFiles.find(f => f.path === addition.oldPath)
+      if (file) {
+        file.status = 'renamed'
+        file.path = addition.path
       }
+    } else if (addition.new) {
+      githubFiles.push({ path: addition.path, type: 'blob', status: 'created' })
     } else {
       const file = githubFiles.find(f => f.path === addition.path)
       if (file) {
