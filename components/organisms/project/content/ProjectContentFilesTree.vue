@@ -27,7 +27,7 @@
           </div>
           <div class="items-center gap-1.5 -mr-1 hidden group-hover:flex">
             <UButton
-              v-if="isFile(file)"
+              v-if="isFile(file) && isDraft(file)"
               size="xxs"
               class="-my-0.5 -mr-0.5"
               variant="transparent-hover"
@@ -113,6 +113,7 @@ const emit = defineEmits(['selectFile', 'createFile', 'renameFile', 'deleteFile'
 const isFile = (file: File) => file.type === 'file'
 const isDir = (file: File) => file.type === 'directory'
 const isDirOpen = (file: File) => !!props.openedDirs[file.path]
+const isDraft = (file: File) => file.status
 const isSelected = (file: File) => props.selectedFile && file.path === props.selectedFile.path
 const isDeleted = (file: File) => file.status === 'deleted'
 
