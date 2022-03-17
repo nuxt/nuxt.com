@@ -11,7 +11,7 @@
     <ul class="flex flex-col pr-2.5">
       <li v-for="link in links" :key="link.label" class="py-1 overflow-hidden truncate border-r-2" :class="route.hash === link.to ? 'u-border-gray-900' : 'u-border-gray-300'">
         <NuxtLink
-          :to="{ hash: link.to }"
+          :to="{ hash: link.to }"
           class="hover:font-semibold hover:u-text-gray-900"
           :class="[ { 'u-text-gray-900 font-semibold': route.hash === link.to }, link.level === '2' ? 'mr-4 text-xs' : 'mr-2']"
         >
@@ -25,6 +25,7 @@
     </NuxtLink>
   </div>
 </template>
+
 <script setup lang="ts">
 defineProps({
   toc: {
