@@ -1,12 +1,12 @@
 <template>
   <main class="flex flex-1 overflow-hidden">
     <!-- Primary column -->
-    <section class="flex flex-col flex-1 h-full min-w-0 overflow-y-auto lg:order-last">
-      <div v-if="$slots.header" class="sticky top-0 z-10 flex items-center justify-between flex-shrink-0 h-16 px-4 sm:px-6 lg:px-8 u-bg-white">
+    <section class="flex flex-col flex-1 h-full min-w-0 lg:order-last u-bg-gray-50">
+      <div v-if="$slots.header" class="flex items-center justify-between flex-shrink-0 h-16 px-4 border-b sm:px-6 lg:px-8 u-bg-white u-border-gray-200">
         <slot name="header" />
       </div>
 
-      <div class="flex flex-col flex-1 px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col flex-1 px-4 overflow-y-auto sm:px-6 lg:px-8">
         <slot />
       </div>
     </section>

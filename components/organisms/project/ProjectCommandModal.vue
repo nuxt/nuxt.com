@@ -67,6 +67,7 @@ import {
   ComboboxOptions,
   ComboboxOption
 } from '@headlessui/vue'
+import { useMagicKeys, whenever } from '@vueuse/core'
 import { getPathName } from '~/utils/tree'
 import type { Branch, GitHubFile } from '~/types'
 
@@ -93,6 +94,12 @@ const props = defineProps({
   }
 })
 const emit = defineEmits(['update:modelValue', 'selectBranch', 'refreshBranches', 'createBranch', 'selectFile'])
+
+const keys = useMagicKeys()
+
+whenever(keys.meta_k, () => {
+  isOpen.value = !isOpen.value
+})
 
 const isOpen = computed({
   get () {
