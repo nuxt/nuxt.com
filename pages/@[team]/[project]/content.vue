@@ -68,13 +68,13 @@
             size="sm"
             icon="heroicons-outline:cloud-upload"
             trailing
-            @click="publish"
+            @click="openPublishModal"
           />
         </div>
       </div>
     </template>
 
-    <DocusEditor :model-value="parsedContent" :theme="theme" @update:model-value="updateFile" />
+    <DocusEditor :model-value="parsedContent" :theme="theme" class="flex flex-col flex-1" @update:model-value="updateFile" />
 
     <ProjectContentActionsModal
       v-model="modal"
@@ -103,6 +103,7 @@ import ProjectContentCreateBranchModal from '~/components/organisms/project/cont
 import ProjectContentCreateFileModal from '~/components/organisms/project/content/ProjectContentCreateFileModal.vue'
 import ProjectContentRenameFileModal from '~/components/organisms/project/content/ProjectContentRenameFileModal.vue'
 import ProjectContentDeleteFileModal from '~/components/organisms/project/content/ProjectContentDeleteFileModal.vue'
+import ProjectContentPublishModal from '~/components/organisms/project/content/ProjectContentPublishModal.vue'
 
 const props = defineProps({
   team: {
@@ -118,6 +119,7 @@ const props = defineProps({
 const colorMode = useColorMode()
 const client = useStrapiClient()
 const { parseFrontMatter, stringifyFrontMatter } = useMarkdown()
+const { $toast } = useNuxtApp()
 
 const branchCookie = useCookie(`project-${props.project.id}-branch`, { path: '/' })
 const branch: Ref<Branch> = ref(null)
@@ -376,6 +378,14 @@ function openDeleteFileModal (path: string) {
   })
 }
 
+function openPublishModal () {
+  openModal(ProjectContentPublishModal, {
+    project: props.project,
+    branch: branch.value,
+    onSubmit: publish
+  })
+}
+
 // Http
 
 async function createBranch (name: string, mergeDraft: boolean) {
@@ -483,6 +493,9 @@ async function deleteFile (path: string) {
 }
 
 async function commit () {
+  if (!branch.value) {
+    return
+  }
   if (branch.value.name === props.project.repository.default_branch) {
     return openCreateBranchModal('', true)
   }
@@ -493,8 +506,13 @@ async function commit () {
     await client(`/projects/${props.project.id}/files/commit`, {
       method: 'POST',
       params: {
-        ref: branch.value?.name
+        ref: branch.value.name
       }
+    })
+
+    $toast.success({
+      title: 'Changes saved!',
+      description: `Your changes have been committed on ${branch.value.name} branch.`
     })
 
     await refreshFiles()
@@ -504,10 +522,19 @@ async function commit () {
 }
 
 async function publish () {
+  if (!branch.value) {
+    return
+  }
+
   loading.value = true
 
   try {
     await client(`/projects/${props.project.id}/branches/${encodeURIComponent(branch.value.name)}/publish`, { method: 'POST' })
+
+    $toast.success({
+      title: 'Published!',
+      description: `Your branch ${branch.value.name} has been merged into ${props.project.repository.default_branch}.`
+    })
 
     await refreshBranches()
     findBranch()
@@ -518,6 +545,9 @@ async function publish () {
 </script>
 
 <style>
+.milkdown {
+  flex: 1 1 0%;
+}
 .milkdown > .editor {
   margin: -1rem;
   max-width: 100% !important;

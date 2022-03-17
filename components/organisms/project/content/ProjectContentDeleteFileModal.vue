@@ -13,8 +13,8 @@
       </div>
     </div>
     <div class="gap-3 mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-      <UButton type="submit" label="Confirm" variant="red" class="justify-center flex-shrink-0 w-full sm:w-auto" />
-      <UButton type="submit" label="Cancel" variant="secondary" class="justify-center flex-shrink-0 w-full mt-3 sm:w-auto sm:mt-0" />
+      <UButton type="submit" label="Delete" variant="red" class="justify-center flex-shrink-0 w-full sm:w-auto" />
+      <UButton type="button" label="Cancel" variant="secondary" class="justify-center flex-shrink-0 w-full mt-3 sm:w-auto sm:mt-0" @click="close" />
     </div>
   </UModal>
 </template>
@@ -33,10 +33,13 @@ const emit = defineEmits(['submit', 'close'])
 
 const isOpen = ref(true)
 
-function onSubmit () {
-  emit('submit', props.path)
+function close () {
   isOpen.value = false
   onClose()
+}
+function onSubmit () {
+  emit('submit', props.path)
+  close()
 }
 function onClose () {
   setTimeout(() => {
