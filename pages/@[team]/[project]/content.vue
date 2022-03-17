@@ -80,9 +80,11 @@
       :branches="branches"
       :selected-branch="branch"
       :pending="pendingBranches"
+      :files="computedFiles"
       @select-branch="selectBranch"
       @refresh-branches="refreshBranches"
       @create-branch="openCreateBranchModal"
+      @select-file="selectFile"
     />
 
     <div ref="modalWrapper" />

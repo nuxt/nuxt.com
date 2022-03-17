@@ -32,6 +32,17 @@
             </ComboboxOption>
           </ul>
         </li>
+        <li v-if="query && filteredFiles.length" class="p-2">
+          <ul class="text-sm u-text-gray-700">
+            <ComboboxOption v-for="file of filteredFiles" :key="file.path" v-slot="{ active }" :value="file" as="template">
+              <li :class="['flex cursor-pointer select-none items-center rounded-md px-3 py-2', active && 'u-bg-gray-100 u-text-gray-900']">
+                <UIcon name="heroicons-outline:document-text" :class="['h-5 w-5 flex-none u-text-gray-400', active && 'u-text-gray-900']" aria-hidden="true" />
+                <span class="flex-auto ml-3 truncate">{{ file.path }}</span>
+                <span v-if="active" class="flex-none ml-3 u-text-gray-500">Jump to...</span>
+              </li>
+            </ComboboxOption>
+          </ul>
+        </li>
       </ComboboxOptions>
     </Combobox>
   </UModal>
@@ -45,7 +56,7 @@ import {
   ComboboxOptions,
   ComboboxOption
 } from '@headlessui/vue'
-import type { Branch } from '~/types'
+import type { Branch, GitHubFile } from '~/types'
 
 const props = defineProps({
   modelValue: {
@@ -54,6 +65,10 @@ const props = defineProps({
   },
   branches: {
     type: Array as PropType<Branch[]>,
+    default: () => []
+  },
+  files: {
+    type: Array as PropType<GitHubFile[]>,
     default: () => []
   },
   selectedBranch: {
@@ -65,7 +80,7 @@ const props = defineProps({
     default: false
   }
 })
-const emit = defineEmits(['update:modelValue', 'selectBranch', 'refreshBranches', 'createBranch'])
+const emit = defineEmits(['update:modelValue', 'selectBranch', 'refreshBranches', 'createBranch', 'selectFile'])
 
 const isOpen = computed({
   get () {
@@ -86,6 +101,13 @@ const filteredBranches = computed(() => {
   branches = branches.filter(b => b.name !== props.selectedBranch?.name)
   return branches
 })
+const filteredFiles = computed(() => {
+  let filteredFiles = [...props.files]
+  if (query.value) {
+    filteredFiles = filteredFiles.filter(f => f.path.search(new RegExp(query.value, 'i')) !== -1)
+  }
+  return filteredFiles
+})
 const actions = computed(() => ([
   { label: `Create new branch ${query.value && !branchExists.value ? `"${query.value}"` : ''}`, icon: 'heroicons-outline:plus', click: onCreateBranchClick },
   { label: 'Refresh branches', icon: 'heroicons-outline:refresh', iconClass: props.pending ? 'animate-spin' : '', click: onRefreshBranchesClick }
@@ -93,6 +115,12 @@ const actions = computed(() => ([
 
 function onBranchSelect (b: Branch) {
   emit('selectBranch', b)
+  isOpen.value = false
+  query.value = ''
+}
+
+function onFileSelect (f: GitHubFile) {
+  emit('selectFile', f)
   isOpen.value = false
   query.value = ''
 }
@@ -109,6 +137,8 @@ function onRefreshBranchesClick () {
 function onSelect (option) {
   if (option.click) {
     option.click()
+  } else if (option.path) {
+    onFileSelect(option)
   } else {
     onBranchSelect(option)
   }
