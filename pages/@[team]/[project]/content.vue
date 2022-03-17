@@ -74,9 +74,11 @@
       </div>
     </template>
 
-    <DocusEditor :model-value="parsedContent" :theme="theme" class="flex flex-col flex-1" @update:model-value="updateFile" />
+    <div class="flex flex-col flex-1 py-4 -mx-4">
+      <DocusEditor :model-value="parsedContent" :theme="theme" class="flex flex-col flex-1" @update:model-value="updateFile" />
+    </div>
 
-    <ProjectContentActionsModal
+    <ProjectCommandModal
       v-model="modal"
       :branches="branches"
       :selected-branch="branch"
@@ -96,7 +98,6 @@
 import { createApp } from 'vue'
 import type { PropType, Ref } from 'vue'
 import { debounce } from 'lodash-es'
-import { useMagicKeys, whenever } from '@vueuse/core'
 import { mapTree, findTree, renamePath, getPathDir } from '~/utils/tree'
 import type { Team, Project, Branch, GitHubDraft, GitHubFile } from '~/types'
 import ProjectContentCreateBranchModal from '~/components/organisms/project/content/ProjectContentCreateBranchModal.vue'
@@ -188,12 +189,6 @@ watch(content, () => {
   parsedContent.value = c
   parsedMatter.value = matter
 }, { immediate: true })
-
-const keys = useMagicKeys()
-
-whenever(keys.meta_k, () => {
-  modal.value = !modal.value
-})
 
 // Computed
 
@@ -549,7 +544,6 @@ async function publish () {
   flex: 1 1 0%;
 }
 .milkdown > .editor {
-  margin: -1rem;
   max-width: 100% !important;
 }
 </style>
