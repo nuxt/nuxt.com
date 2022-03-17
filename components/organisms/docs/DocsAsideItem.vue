@@ -1,9 +1,7 @@
 <template>
   <li ref="collapsible" class="relative overflow-hidden">
     <template v-if="item.children && item.children.length">
-      <ContentLink
-        :link="item"
-      >
+      <DocsLink :link="item">
         <div ref="asideItem" class="flex items-center justify-between pr-12" @click="collapse">
           <span>{{ item.label }}</span>
         </div>
@@ -14,12 +12,13 @@
             class="pl-2 border-l-2 u-border-gray-300 hover:u-border-gray-900 "
             :class="{ 'u-border-gray-900': route.path === link.to }"
           >
-            <AsideItemLink :link="link" />
+            <DocsAsideItemLink :link="link" />
           </li>
         </ul>
-      </ContentLink>
+      </DocsLink>
     </template>
-    <AsideItemLink v-else :link="item" />
+
+    <DocsAsideItemLink v-else :link="item" />
   </li>
 </template>
 

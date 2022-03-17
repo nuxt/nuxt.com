@@ -1,7 +1,7 @@
 <template>
   <nav>
     <ul class="flex flex-col gap-y-2">
-      <AsideItem
+      <DocsAsideItem
         v-for="item in links"
         :key="item.label"
         :item="item"

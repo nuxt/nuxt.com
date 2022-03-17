@@ -6,6 +6,7 @@
     <slot />
   </ULink>
 </template>
+
 <script setup lang="ts">
 const props = defineProps({
   link: {

@@ -1,7 +1,7 @@
 <template>
   <ProjectPage title="Content">
     <template #aside>
-      <FilesTree
+      <ProjectContentFilesTree
         :tree="tree"
         :selected-file="file"
         :opened-dirs="openedDirs"
