@@ -52,7 +52,7 @@ import { withBase } from 'ufo'
 const route = useRoute()
 
 const versions = ref([{ text: 'v3', value: '3' }, { text: 'v2', value: '2' }])
-const version = ref(versions.value[0])
+const version = ref(versions.value[0].value)
 
 const path = computed(() => {
   const [, first, second, third] = route.path.split('/')
