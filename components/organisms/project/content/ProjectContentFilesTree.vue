@@ -20,7 +20,7 @@
       >
         <div class="flex items-center justify-between flex-1 w-0 gap-1">
           <div class="flex items-center min-w-0 overflow-hidden">
-            <FilesTreeIcon :file="file" :opened-dirs="openedDirs" class="mr-1.5" />
+            <ProjectContentFilesTreeIcon :file="file" :opened-dirs="openedDirs" class="mr-1.5" />
             <span class="min-w-0 truncate" :class="{ 'line-through': isDeleted(file) }">
               {{ file.name }}
             </span>
@@ -54,7 +54,7 @@
         </div>
       </div>
 
-      <FilesTree
+      <ProjectContentFilesTree
         v-if="isDir(file)"
         v-show="isDirOpen(file)"
         :level="level + 1"

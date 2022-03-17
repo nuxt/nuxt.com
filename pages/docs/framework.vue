@@ -7,6 +7,7 @@
             <p class="font-semibold">
               Framework
             </p>
+
             <USelect
               v-model="version"
               :options="versions"
@@ -16,14 +17,14 @@
           </div>
 
           <div class="flex justify-center col-span-4 gap-x-8">
-            <ContentLink
+            <DocsLink
               v-for="link in links"
               :key="link.label"
               :link="link"
               class="text-sm hover:u-text-gray-900"
             >
               {{ link.label }}
-            </ContentLink>
+            </DocsLink>
           </div>
 
           <div class="flex justify-end">
@@ -34,7 +35,7 @@
     </template>
 
     <template #left>
-      <ContentAside :links="asideLinks" active-class="u-text-gray-900 u-bg-gray-200" />
+      <DocsAside :links="asideLinks" active-class="u-text-gray-900 u-bg-gray-200" />
     </template>
 
     <template #right>
