@@ -53,6 +53,10 @@ export const getPathDir = function (path) {
   return path.replace(/\/[^/]+$/, '')
 }
 
+export const getPathName = function (path) {
+  return path.replace(/^.*[\\/]/, '')
+}
+
 export const renamePath = function (path, newPath, newPrefix) {
   // Get new path dir
   const newDir = getPathDir(newPath)
