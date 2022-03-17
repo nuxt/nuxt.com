@@ -6,7 +6,7 @@
         <slot name="header" />
       </div>
 
-      <div class="flex flex-col flex-1 px-4 overflow-y-auto sm:px-6 lg:px-8">
+      <div class="flex flex-col flex-1 p-4 overflow-y-auto sm:p-6 lg:p-8">
         <slot />
       </div>
     </section>

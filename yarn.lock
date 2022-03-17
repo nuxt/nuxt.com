@@ -292,9 +292,9 @@
     mime "^3.0.0"
 
 "@docus/editor@npm:@docus/editor-edge@latest":
-  version "0.2.0-27457299.fdf0835"
-  resolved "https://registry.yarnpkg.com/@docus/editor-edge/-/editor-edge-0.2.0-27457299.fdf0835.tgz#95fb452ac5eeab9731d0877329b68671a4f4940a"
-  integrity sha512-ytKoGijf7Je6J4YxZx9p1QNMJbeIpMh8c8pffP7GUIsjyp6IFSjzY4WCKcnysUr9vknteyhWxCWP6fXZgwWxJA==
+  version "0.2.0-27458880.fddc3b0"
+  resolved "https://registry.yarnpkg.com/@docus/editor-edge/-/editor-edge-0.2.0-27458880.fddc3b0.tgz#31037a2e7afab53160b39aa306fa67dd08c4c2cb"
+  integrity sha512-YP2xHYykKddpUW0dFktZkCXf4qOSJcI7K6SWJy1e/nmojj2dFsZgR12mt3ijVdIAX6KX72QkXH467VM24UdaEA==
   dependencies:
     "@docus/remark-mdc" "npm:@docus/remark-mdc-edge"
     "@milkdown/core" "^5.5.0"
@@ -819,13 +819,13 @@
   resolved "https://registry.yarnpkg.com/@nuxt/devalue/-/devalue-2.0.0.tgz#c7bd7e9a516514e612d5d2e511ffc399e0eac322"
   integrity sha512-YBI/6o2EBz02tdEJRBK8xkt3zvOFOWlLBf7WKYGBsSYSRtjjgrqPe2skp6VLLmKx5WbHHDNcW+6oACaurxGzeA==
 
-"@nuxt/kit@npm:@nuxt/kit-edge", "@nuxt/kit@npm:@nuxt/kit-edge@3.0.0-27457159.ff88d91":
-  version "3.0.0-27457159.ff88d91"
-  resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-27457159.ff88d91.tgz#b868743c260d7547e1888b0e010d40be170d8ee7"
-  integrity sha512-mhaVF9OOg76QXlttWGnSoK5KdvhN3knrBbMdLR239S32z2zs7ia9TSW+8iovvXF55BvLYex+NVi9qhIZT8gh4Q==
+"@nuxt/kit@npm:@nuxt/kit-edge", "@nuxt/kit@npm:@nuxt/kit-edge@latest":
+  version "3.0.0-27458584.91fd16a"
+  resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-27458584.91fd16a.tgz#3101b342ff6d74cb426425a7079ad80aec8e50d7"
+  integrity sha512-hPsYcsTm4ZfXOj3gZsRDUgXn0NyKByLDcAMUDVTPv6/ZYA9j4y6xP9kYe9e0oXabRzbWIduHfA9GLZObE633Jg==
   dependencies:
-    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-27457159.ff88d91"
-    c12 "^0.1.4"
+    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-27458584.91fd16a"
+    c12 "^0.2.2"
     consola "^2.15.3"
     defu "^5.0.1"
     globby "^13.1.1"
@@ -843,13 +843,13 @@
     unimport "^0.1.0"
     untyped "^0.4.3"
 
-"@nuxt/kit@npm:@nuxt/kit-edge@latest":
-  version "3.0.0-27458584.91fd16a"
-  resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-27458584.91fd16a.tgz#3101b342ff6d74cb426425a7079ad80aec8e50d7"
-  integrity sha512-hPsYcsTm4ZfXOj3gZsRDUgXn0NyKByLDcAMUDVTPv6/ZYA9j4y6xP9kYe9e0oXabRzbWIduHfA9GLZObE633Jg==
+"@nuxt/kit@npm:@nuxt/kit-edge@3.0.0-27457159.ff88d91":
+  version "3.0.0-27457159.ff88d91"
+  resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-27457159.ff88d91.tgz#b868743c260d7547e1888b0e010d40be170d8ee7"
+  integrity sha512-mhaVF9OOg76QXlttWGnSoK5KdvhN3knrBbMdLR239S32z2zs7ia9TSW+8iovvXF55BvLYex+NVi9qhIZT8gh4Q==
   dependencies:
-    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-27458584.91fd16a"
-    c12 "^0.2.2"
+    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-27457159.ff88d91"
+    c12 "^0.1.4"
     consola "^2.15.3"
     defu "^5.0.1"
     globby "^13.1.1"
@@ -2916,7 +2916,7 @@ debug@2.6.9, debug@^2.6.9:
   dependencies:
     ms "2.0.0"
 
-debug@4, debug@^4.0.0, debug@^4.3.1:
+debug@4, debug@^4.3.1:
   version "4.3.3"
   resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.3.tgz#04266e0b70a98d4462e6e288e38259213332b664"
   integrity sha512-/zxw5+vh1Tfv+4Qn7a5nsbcJKPaSvCDhojn6FEl9vupwK2VCSDtEiEtqr8DFtzYFOdz63LBkxec7DYuc2jon6Q==
@@ -2930,7 +2930,7 @@ debug@^3.1.0, debug@^3.1.1, debug@^3.2.6, debug@^3.2.7:
   dependencies:
     ms "^2.1.1"
 
-debug@^4.1.0, debug@^4.1.1, debug@^4.3.2:
+debug@^4.0.0, debug@^4.1.0, debug@^4.1.1, debug@^4.3.2:
   version "4.3.4"
   resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.4.tgz#1319f6579357f2338d3337d2cdd4914bb5dcc865"
   integrity sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==
@@ -7082,9 +7082,9 @@ property-information@^6.0.0, property-information@^6.1.1:
   integrity sha512-hrzC564QIl0r0vy4l6MvRLhafmUowhO/O3KgVSoXIbbA2Sz4j8HGpJc6T2cubRVwMwpdiG/vKGfhT4IixmKN9w==
 
 prosemirror-commands@^1.1.12:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/prosemirror-commands/-/prosemirror-commands-1.2.1.tgz#eae0cb714df695260659b78ff5d201d3a037e50d"
-  integrity sha512-S/IkpXfpuLFsRynC2HQ5iYROUPiZskKS1+ClcWycGJvj4HMb/mVfeEkQrixYxgTl96EAh+RZQNWPC06GZXk5tQ==
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/prosemirror-commands/-/prosemirror-commands-1.2.2.tgz#1bd167372ee20abf488aca9cece63c43fab182c9"
+  integrity sha512-TX+KpWudMon06frryfpO/u7hsQv2hu8L4VSVbCpi3/7wXHBgl+35mV85qfa3RpT8xD2f3MdeoTqH0vy5JdbXPg==
   dependencies:
     prosemirror-model "^1.0.0"
     prosemirror-state "^1.0.0"

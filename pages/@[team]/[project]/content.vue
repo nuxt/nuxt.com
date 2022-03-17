@@ -74,9 +74,7 @@
       </div>
     </template>
 
-    <div class="flex flex-col flex-1 py-4 -mx-4">
-      <DocusEditor :model-value="parsedContent" :theme="theme" class="flex flex-col flex-1" @update:model-value="updateFile" />
-    </div>
+    <DocusEditor :model-value="parsedContent" :theme="theme" class="flex flex-col flex-1" @update:model-value="updateFile" />
 
     <ProjectCommandModal
       v-model="modal"
@@ -545,5 +543,6 @@ async function publish () {
 }
 .milkdown > .editor {
   max-width: 100% !important;
+  padding: 0 !important;
 }
 </style>
