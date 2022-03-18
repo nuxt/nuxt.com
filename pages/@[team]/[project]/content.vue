@@ -161,19 +161,7 @@ watch(files, () => findFile())
 watch(branches, () => findBranch())
 
 // Fetch content when file changes
-watch(file, async () => {
-  if (!file.value) {
-    return
-  }
-
-  const { content: fetchedContent } = await client(`/projects/${props.project.id}/files/${encodeURIComponent(file.value.path)}`, {
-    params: {
-      ref: branch.value?.name
-    }
-  })
-
-  content.value = fetchedContent
-}, { immediate: true })
+watch(file, async () => await fetchContent(), { immediate: true })
 
 // Fetch files when branch changes
 watch(branch, async () => await refreshFiles())
@@ -390,6 +378,20 @@ function openPublishModal () {
 
 // Http
 
+async function fetchContent () {
+  if (!file.value) {
+    return
+  }
+
+  const { content: fetchedContent } = await client(`/projects/${props.project.id}/files/${encodeURIComponent(file.value.path)}`, {
+    params: {
+      ref: branch.value?.name
+    }
+  })
+
+  content.value = fetchedContent
+}
+
 async function createBranch (name: string, mergeDraft: boolean) {
   const branch = await client<Branch>(`/projects/${props.project.id}/branches`, {
     method: 'POST',
@@ -502,12 +504,25 @@ async function revertFile (path: string) {
     }
   })
 
+  const oldFilePath = draft.value.additions.find(addition => addition.path === path)?.oldPath
+
   draft.value = data
 
-  // Select new file when deleted was selected
-  if (file.value?.path === path) {
-    file.value = null
-    findFile()
+  const currentFileExists = !!computedFiles.value.find(f => f.path === file.value?.path)
+
+  if (!currentFileExists) {
+    if (oldFilePath) {
+      // Select old file
+      const oldFile = computedFiles.value.find(f => f.path === oldFilePath)
+      selectFile(oldFile)
+    } else {
+      // Select new file when reverted file no longer exists
+      file.value = null
+      findFile()
+    }
+  } else {
+    // No new selection, fetch new content
+    await fetchContent()
   }
 }
 
