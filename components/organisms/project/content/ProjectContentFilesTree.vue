@@ -7,7 +7,7 @@
           [`pl-[${24 + (level * 12)}px]`]: true,
           'u-bg-gray-100 u-border-gray-800 u-text-gray-900': isSelected(file),
           'border-transparent u-text-gray-500 hover:u-text-gray-900 hover:u-bg-gray-50': !isSelected(file) && !isDeleted(file),
-          'border-transparent u-text-gray-500 cursor-not-allowed opacity-50': isDeleted(file),
+          'border-transparent u-text-gray-500 cursor-not-allowed': isDeleted(file),
           'cursor-pointer': !isDeleted(file)
         }"
         :draggable="canDragFile(file)"
@@ -21,11 +21,19 @@
         <div class="flex items-center justify-between flex-1 w-0 gap-1">
           <div class="flex items-center min-w-0 overflow-hidden">
             <ProjectContentFilesTreeIcon :file="file" :opened-dirs="openedDirs" class="mr-1.5" />
-            <span class="min-w-0 truncate" :class="{ 'line-through': isDeleted(file) }">
+            <span class="min-w-0 truncate" :class="{ 'line-through opacity-50': isDeleted(file) }">
               {{ file.name }}
             </span>
           </div>
           <div class="items-center gap-1.5 -mr-1 hidden group-hover:flex">
+            <UButton
+              v-if="isFile(file) && isDraft(file)"
+              size="xxs"
+              class="-my-0.5 -mr-0.5"
+              variant="transparent-hover"
+              icon="heroicons-outline:reply"
+              @click.stop="revertFile(file)"
+            />
             <UButton
               v-if="isDir(file)"
               size="xxs"
@@ -65,6 +73,7 @@
         @createFile="file => $emit('createFile', file)"
         @renameFile="file => $emit('renameFile', file)"
         @deleteFile="file => $emit('deleteFile', file)"
+        @revertFile="file => $emit('revertFile', file)"
         @dropFile="(...args) => $emit('dropFile', ...args)"
         @openDir="path => $emit('openDir', path)"
       />
@@ -99,12 +108,13 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['selectFile', 'createFile', 'renameFile', 'deleteFile', 'dropFile', 'openDir'])
+const emit = defineEmits(['selectFile', 'createFile', 'renameFile', 'deleteFile', 'revertFile', 'dropFile', 'openDir'])
 
 // Methods
 const isFile = (file: File) => file.type === 'file'
 const isDir = (file: File) => file.type === 'directory'
 const isDirOpen = (file: File) => !!props.openedDirs[file.path]
+const isDraft = (file: File) => !!file.status
 const isSelected = (file: File) => props.selectedFile && file.path === props.selectedFile.path
 const isDeleted = (file: File) => file.status === 'deleted'
 
@@ -128,6 +138,7 @@ const selectFile = (file: File) => {
 const createFile = (file: File) => emit('createFile', file.path)
 const renameFile = (file: File) => emit('renameFile', file.path)
 const deleteFile = (file: File) => emit('deleteFile', file.path)
+const revertFile = (file: File) => emit('revertFile', file.path)
 
 const canDragFile = (file) => {
   return !isDeleted(file) && !isDir(file)

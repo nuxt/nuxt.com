@@ -11,6 +11,7 @@
         @createFile="openCreateFileModal"
         @renameFile="openRenameFileModal"
         @deleteFile="openDeleteFileModal"
+        @revertFile="openRevertFileModal"
         @dropFile="dropFile"
       />
     </template>
@@ -102,6 +103,7 @@ import ProjectContentCreateBranchModal from '~/components/organisms/project/cont
 import ProjectContentCreateFileModal from '~/components/organisms/project/content/ProjectContentCreateFileModal.vue'
 import ProjectContentRenameFileModal from '~/components/organisms/project/content/ProjectContentRenameFileModal.vue'
 import ProjectContentDeleteFileModal from '~/components/organisms/project/content/ProjectContentDeleteFileModal.vue'
+import ProjectContentRevertFileModal from '~/components/organisms/project/content/ProjectContentRevertFileModal.vue'
 import ProjectContentPublishModal from '~/components/organisms/project/content/ProjectContentPublishModal.vue'
 
 const props = defineProps({
@@ -159,19 +161,7 @@ watch(files, () => findFile())
 watch(branches, () => findBranch())
 
 // Fetch content when file changes
-watch(file, async () => {
-  if (!file.value) {
-    return
-  }
-
-  const { content: fetchedContent } = await client(`/projects/${props.project.id}/files/${encodeURIComponent(file.value.path)}`, {
-    params: {
-      ref: branch.value?.name
-    }
-  })
-
-  content.value = fetchedContent
-}, { immediate: true })
+watch(file, async () => await fetchContent(), { immediate: true })
 
 // Fetch files when branch changes
 watch(branch, async () => await refreshFiles())
@@ -371,6 +361,13 @@ function openDeleteFileModal (path: string) {
   })
 }
 
+function openRevertFileModal (path: string) {
+  openModal(ProjectContentRevertFileModal, {
+    path,
+    onSubmit: revertFile
+  })
+}
+
 function openPublishModal () {
   openModal(ProjectContentPublishModal, {
     project: props.project,
@@ -380,6 +377,20 @@ function openPublishModal () {
 }
 
 // Http
+
+async function fetchContent () {
+  if (!file.value) {
+    return
+  }
+
+  const { content: fetchedContent } = await client(`/projects/${props.project.id}/files/${encodeURIComponent(file.value.path)}`, {
+    params: {
+      ref: branch.value?.name
+    }
+  })
+
+  content.value = fetchedContent
+}
 
 async function createBranch (name: string, mergeDraft: boolean) {
   const branch = await client<Branch>(`/projects/${props.project.id}/branches`, {
@@ -415,17 +426,24 @@ async function createFile (path: string) {
   selectFile(computedFiles.value.find(file => file.path === path))
 }
 
-const updateFile = debounce(async (content: string) => {
+const updateFile = debounce(async (newContent: string) => {
+  const formattedContent = stringifyFrontMatter(newContent, parsedMatter.value)
+
+  if (formattedContent === content.value) {
+    return
+  }
+
   const data = await client<GitHubDraft>(`/projects/${props.project.id}/files/${encodeURIComponent(file.value.path)}`, {
     method: 'PUT',
     params: {
       ref: branch.value?.name
     },
     body: {
-      content: stringifyFrontMatter(content, parsedMatter.value)
+      content: formattedContent
     }
   })
 
+  content.value = formattedContent
   draft.value = data
 }, 500)
 
@@ -482,6 +500,36 @@ async function deleteFile (path: string) {
   if (file.value?.path === path) {
     file.value = null
     findFile()
+  }
+}
+
+async function revertFile (path: string) {
+  const data = await client<GitHubDraft>(`/projects/${props.project.id}/files/${encodeURIComponent(path)}/revert`, {
+    method: 'POST',
+    params: {
+      ref: branch.value?.name
+    }
+  })
+
+  const oldFilePath = draft.value.additions.find(addition => addition.path === path)?.oldPath
+
+  draft.value = data
+
+  const currentFileExists = !!computedFiles.value.find(f => f.path === file.value?.path)
+
+  if (!currentFileExists) {
+    if (oldFilePath) {
+      // Select old file
+      const oldFile = computedFiles.value.find(f => f.path === oldFilePath)
+      selectFile(oldFile)
+    } else {
+      // Select new file when reverted file no longer exists
+      file.value = null
+      findFile()
+    }
+  } else {
+    // No new selection, fetch new content
+    await fetchContent()
   }
 }
 
