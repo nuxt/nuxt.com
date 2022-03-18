@@ -28,29 +28,51 @@
 
         <div class="flex items-center gap-3">
           <UButton
-            label="Upload"
+            v-if="isDraft"
+            label="Save"
+            :loading="loading"
+            size="sm"
+            icon="heroicons-outline:check"
+            trailing
+            @click="commit"
+          />
+          <UButton
+            v-else-if="branch.name !== project.repository.default_branch"
+            label="Publish"
+            :loading="loading"
             size="sm"
             icon="heroicons-outline:cloud-upload"
             trailing
+            @click="openPublishModal"
           />
         </div>
       </div>
     </template>
 
-    <div class="flex items-stretch flex-1">
-      <div class="flex flex-col flex-1 p-4 sm:p-6 lg:p-8">
-        <div class="flex">
-          <h1 class="flex-1 text-2xl font-bold text-gray-900">
+    <div class="flex items-stretch flex-1 min-h-0">
+      <div class="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
+        <div class="flex items-center justify-between gap-3">
+          <h2 class="text-2xl font-bold u-text-gray-900">
             Media library
-          </h1>
+          </h2>
+
+          <UButton
+            size="sm"
+            rounded
+            label="Upload file"
+            icon="heroicons-outline:plus"
+            class="-my-1"
+            variant="secondary"
+            trailing
+          />
         </div>
 
-        <section class="pb-16 mt-8" aria-labelledby="gallery-heading">
-          <ProjectMediaGallery :files="computedFiles" />
-        </section>
+        <div class="pb-16 mt-8" aria-labelledby="gallery-heading">
+          <ProjectMediaGallery :files="computedFiles" :selected-file="file" @selectFile="selectFile" />
+        </div>
       </div>
 
-      <ProjectFileModal />
+      <ProjectFileAside v-if="file" :file="file" />
     </div>
 
     <ProjectCommandModal

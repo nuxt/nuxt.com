@@ -127,6 +127,13 @@ export interface GitHubFile {
   sha?: string
   url?: string
   status?: FileStatus
+  // Added only when fetching with `withContent`
+  name?: string
+  width?: number
+  height?: number
+  size?: number
+  mimeType?: string
+  content?: string
 }
 
 export interface GitHubDraftFile {

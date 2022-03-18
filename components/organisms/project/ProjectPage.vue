@@ -5,17 +5,14 @@
       <div v-if="$slots.header" class="flex items-center justify-between flex-shrink-0 h-16 px-4 border-b sm:px-6 lg:px-8 u-bg-white u-border-gray-200">
         <slot name="header" />
       </div>
-
-      <div class="flex flex-col flex-1 overflow-y-auto">
-        <slot />
-      </div>
+      <slot />
     </section>
 
     <!-- Secondary column (hidden on smaller screens) -->
     <aside v-if="$slots.aside" class="hidden lg:block lg:flex-shrink-0 lg:order-first">
       <div class="relative flex flex-col h-full overflow-y-auto border-r w-72 u-border-gray-200 u-bg-white">
         <div class="sticky top-0 flex items-center justify-between flex-shrink-0 h-16 px-6 u-bg-white">
-          <p class="text-lg font-semibold text-blue-gray-900">
+          <p class="text-lg font-semibold u-text-gray-900">
             {{ title }}
           </p>
 
