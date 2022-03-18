@@ -20,7 +20,7 @@
         </h3>
         <div class="mt-2">
           <p class="text-sm break-all u-text-gray-500">
-            Are you sure you want to revert changes you made on “{{ name }}”?
+            Are you sure you want to revert changes on “{{ name }}”?
           </p>
         </div>
       </div>
@@ -46,14 +46,13 @@ const emit = defineEmits(['submit', 'close'])
 
 const isOpen = ref(true)
 
-function onSubmit () {
-  emit('submit', props.path)
-  isOpen.value = false
-  onClose()
-}
 function close () {
   isOpen.value = false
   onClose()
+}
+function onSubmit () {
+  emit('submit', props.path)
+  close()
 }
 function onClose () {
   setTimeout(() => {

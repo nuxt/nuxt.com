@@ -36,7 +36,8 @@
       />
     </div>
     <div class="gap-3 mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-      <UButton type="submit" label="Save" class="justify-center flex-shrink-0 w-full sm:w-auto" />
+      <UButton type="submit" label="Save" variant="green" class="justify-center flex-shrink-0 w-full sm:w-auto" />
+      <UButton type="button" label="Cancel" variant="secondary" class="justify-center flex-shrink-0 w-full mt-3 sm:w-auto sm:mt-0" @click="close" />
     </div>
   </UModal>
 </template>
@@ -59,10 +60,13 @@ const name = ref(props.name)
 
 const isOpen = ref(true)
 
-function onSubmit () {
-  emit('submit', name.value, props.mergeDraft)
+function close () {
   isOpen.value = false
   onClose()
+}
+function onSubmit () {
+  emit('submit', name.value, props.mergeDraft)
+  close()
 }
 function onClose () {
   setTimeout(() => {
