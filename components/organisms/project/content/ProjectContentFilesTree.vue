@@ -114,7 +114,7 @@ const emit = defineEmits(['selectFile', 'createFile', 'renameFile', 'deleteFile'
 const isFile = (file: File) => file.type === 'file'
 const isDir = (file: File) => file.type === 'directory'
 const isDirOpen = (file: File) => !!props.openedDirs[file.path]
-const isDraft = (file: File) => file.status
+const isDraft = (file: File) => !!file.status
 const isSelected = (file: File) => props.selectedFile && file.path === props.selectedFile.path
 const isDeleted = (file: File) => file.status === 'deleted'
 
