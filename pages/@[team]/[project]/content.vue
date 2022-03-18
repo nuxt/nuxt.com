@@ -432,6 +432,10 @@ async function createFile (path: string) {
 }
 
 const updateFile = debounce(async (newContent: string) => {
+  if (!file.value) {
+    return
+  }
+
   const formattedContent = stringifyFrontMatter(newContent, parsedMatter.value)
 
   if (formattedContent === content.value) {
