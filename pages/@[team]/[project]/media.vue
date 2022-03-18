@@ -1,31 +1,5 @@
 <template>
-  <ProjectPage title="Content">
-    <template #aside>
-      <ProjectContentFilesTree
-        :tree="tree"
-        :selected-file="file"
-        :opened-dirs="openedDirs"
-        :rename-files="renameFiles"
-        @openDir="openDir"
-        @selectFile="selectFile"
-        @createFile="openCreateFileModal"
-        @renameFile="openRenameFileModal"
-        @deleteFile="openDeleteFileModal"
-        @revertFile="openRevertFileModal"
-        @dropFile="dropFile"
-      />
-    </template>
-
-    <template #aside-header>
-      <UButton
-        size="xxs"
-        class="-my-0.5 -mr-1"
-        variant="transparent-hover"
-        icon="heroicons-outline:plus"
-        @click="openCreateFileModal('content')"
-      />
-    </template>
-
+  <ProjectPage class="items-stretch">
     <template #header>
       <div class="flex items-center justify-between flex-1 min-w-0 gap-3">
         <div class="flex items-center min-w-0 gap-3">
@@ -54,28 +28,30 @@
 
         <div class="flex items-center gap-3">
           <UButton
-            v-if="isDraft"
-            label="Save"
-            :loading="loading"
-            size="sm"
-            icon="heroicons-outline:check"
-            trailing
-            @click="commit"
-          />
-          <UButton
-            v-else-if="branch.name !== project.repository.default_branch"
-            label="Publish"
-            :loading="loading"
+            label="Upload"
             size="sm"
             icon="heroicons-outline:cloud-upload"
             trailing
-            @click="openPublishModal"
           />
         </div>
       </div>
     </template>
 
-    <DocusEditor :model-value="parsedContent" :theme="theme" class="flex flex-col flex-1" @update:model-value="updateFile" />
+    <div class="flex items-stretch">
+      <ProjectFileModal />
+
+      <div class="flex flex-col flex-1">
+        <div class="flex">
+          <h1 class="flex-1 text-2xl font-bold text-gray-900">
+            Media library
+          </h1>
+        </div>
+
+        <section class="pb-16 mt-8" aria-labelledby="gallery-heading">
+          <ProjectMediaGallery :files="computedFiles" />
+        </section>
+      </div>
+    </div>
 
     <ProjectCommandModal
       v-model="modal"
@@ -96,14 +72,11 @@
 <script setup lang="ts">
 import { createApp } from 'vue'
 import type { PropType, Ref } from 'vue'
-import { debounce } from 'lodash-es'
-import { mapTree, findTree, renamePath, getPathDir } from '~/utils/tree'
 import type { Team, Project, Branch, GitHubDraft, GitHubFile } from '~/types'
 import ProjectContentCreateBranchModal from '~/components/organisms/project/content/ProjectContentCreateBranchModal.vue'
 import ProjectContentCreateFileModal from '~/components/organisms/project/content/ProjectContentCreateFileModal.vue'
 import ProjectContentRenameFileModal from '~/components/organisms/project/content/ProjectContentRenameFileModal.vue'
 import ProjectContentDeleteFileModal from '~/components/organisms/project/content/ProjectContentDeleteFileModal.vue'
-import ProjectContentRevertFileModal from '~/components/organisms/project/content/ProjectContentRevertFileModal.vue'
 import ProjectContentPublishModal from '~/components/organisms/project/content/ProjectContentPublishModal.vue'
 
 const props = defineProps({
@@ -117,9 +90,7 @@ const props = defineProps({
   }
 })
 
-const colorMode = useColorMode()
 const client = useStrapiClient()
-const { parseFrontMatter, stringifyFrontMatter } = useMarkdown()
 const { $toast } = useNuxtApp()
 
 const branchCookie = useCookie(`project-${props.project.id}-branch`, { path: '/' })
@@ -127,13 +98,9 @@ const branch: Ref<Branch> = ref(null)
 const files: Ref<GitHubFile[]> = ref(null)
 const file: Ref<GitHubFile> = ref(null)
 const draft: Ref<GitHubDraft> = ref(null)
-const content: Ref<string> = ref('')
-const parsedContent: Ref<string> = ref('')
-const parsedMatter: Ref<string> = ref('')
 const modalWrapper = ref(null)
 const loading = ref(false)
 const modal = ref(false)
-const openedDirs = ref({})
 
 // Data
 
@@ -144,7 +111,9 @@ findBranch()
 const { refresh: refreshFiles } = await useAsyncData(`project-${props.project.id}-files`, async () => {
   const data = await client<{ files: GitHubFile[], draft: GitHubDraft }>(`/projects/${props.project.id}/files`, {
     params: {
-      ref: branch.value?.name
+      ref: branch.value?.name,
+      root: 'public',
+      withContent: ['png', 'jpg', 'jpeg', 'svg', 'ico']
     }
   })
 
@@ -160,23 +129,8 @@ watch(files, () => findFile())
 // Select branch when branches changes
 watch(branches, () => findBranch())
 
-// Fetch content when file changes
-watch(file, async () => await fetchContent(), { immediate: true })
-
 // Fetch files when branch changes
 watch(branch, async () => await refreshFiles())
-
-// Split markdown front-matter when content changes
-watch(content, () => {
-  if (typeof content.value !== 'string') {
-    return
-  }
-
-  const { content: c, matter } = parseFrontMatter(content.value)
-
-  parsedContent.value = c
-  parsedMatter.value = matter
-}, { immediate: true })
 
 // Computed
 
@@ -218,18 +172,6 @@ const computedFiles = computed(() => {
 // Do not move this, it needs to be after computedFiles
 findFile()
 
-const tree = computed(() => {
-  const files = [...computedFiles.value]
-  files.sort((a, b) => a.path.localeCompare(b.path, undefined, {
-    numeric: true,
-    sensitivity: 'base'
-  }))
-
-  return mapTree(files)
-})
-
-const theme = computed(() => colorMode.value === 'dark' ? 'dark' : 'light')
-
 // Methods
 
 function findFile () {
@@ -240,16 +182,6 @@ function findFile () {
 
 function selectFile (f: GitHubFile) {
   file.value = f
-
-  if (!f) {
-    return
-  }
-
-  const paths = f.path.split('/')
-  for (let i = paths.length - 1; i > 1; i--) {
-    paths.pop()
-    openDir(paths.join('/'), true)
-  }
 }
 
 function findBranch () {
@@ -266,63 +198,6 @@ function findBranch () {
 function selectBranch (b: Branch) {
   branch.value = b
   branchCookie.value = b.name
-}
-
-function openDir (path: string, value?: boolean) {
-  openedDirs.value[path] = value !== undefined ? value : !openedDirs.value[path]
-}
-
-function dropFile (src: GitHubFile, dst: GitHubFile, position: 'above' | 'below' | 'over') {
-  const filesToRename = []
-  // Find files parents
-  const srcDir = getPathDir(src.path)
-  const dstDir = getPathDir(dst.path)
-  // Find files tree
-  const srcTree = findTree(src.path, tree.value)
-  const dstTree = findTree(dst.path, tree.value)
-  // Find files indexes in respective tree
-  const srcIndex = srcTree.filter(f => f.type !== 'directory').findIndex(f => f.path === src.path)
-  const dstIndex = dstTree.filter(f => f.type !== 'directory').findIndex(f => f.path === dst.path)
-  // Src and dst index are the same
-  const sameTree = srcDir === dstDir
-  // Increment index only if src file is below / above current file or tree is different
-  let index = dstIndex === -1 ? 0 : dstIndex
-  if (sameTree) {
-    if (position === 'below' && srcIndex > dstIndex) {
-      index += 1
-    } else if (position === 'above' && dstIndex > srcIndex) {
-      index -= 1
-    }
-  } else if (position === 'below') {
-    index += 1
-  }
-
-  filesToRename.push({ oldPath: src.path, newPath: renamePath(src.path, dst.path, index + 1) })
-
-  if (sameTree) {
-    if (srcIndex > dstIndex) {
-      // I move a file up
-      for (let i = position === 'below' ? (dstIndex + 1) : dstIndex; i < srcIndex; i++) {
-        filesToRename.push({ oldPath: srcTree[i].path, newPath: renamePath(srcTree[i].path, srcTree[i].path, i + 2) })
-      }
-    } else {
-      // I move a file down
-      for (let i = position === 'above' ? (dstIndex - 1) : dstIndex; i > srcIndex; i--) {
-        filesToRename.push({ oldPath: srcTree[i].path, newPath: renamePath(srcTree[i].path, srcTree[i].path, i) })
-      }
-    }
-  } else {
-    // Rename `srcTree` files after `srcIndex`
-    for (let i = srcIndex + 1; i < srcTree.length; i++) {
-      filesToRename.push({ oldPath: srcTree[i].path, newPath: renamePath(srcTree[i].path, srcTree[i].path, i) })
-    }
-    // Rename `dstTree` files after `dstIndex`
-    for (let i = position === 'below' ? (dstIndex + 1) : dstIndex; i < dstTree.length; i++) {
-      filesToRename.push({ oldPath: dstTree[i].path, newPath: renamePath(dstTree[i].path, dstTree[i].path, i + 2) })
-    }
-  }
-
-  renameFiles(filesToRename.filter(f => f.oldPath !== f.newPath))
 }
 
 function openModal (component, props) {
@@ -365,13 +240,6 @@ function openDeleteFileModal (path: string) {
   })
 }
 
-function openRevertFileModal (path: string) {
-  openModal(ProjectContentRevertFileModal, {
-    path,
-    onSubmit: revertFile
-  })
-}
-
 function openPublishModal () {
   openModal(ProjectContentPublishModal, {
     project: props.project,
@@ -381,21 +249,6 @@ function openPublishModal () {
 }
 
 // Http
-
-async function fetchContent () {
-  if (!file.value) {
-    content.value = ''
-    return
-  }
-
-  const { content: fetchedContent } = await client(`/projects/${props.project.id}/files/${encodeURIComponent(file.value.path)}`, {
-    params: {
-      ref: branch.value?.name
-    }
-  })
-
-  content.value = fetchedContent
-}
 
 async function createBranch (name: string, mergeDraft: boolean) {
   const branch = await client<Branch>(`/projects/${props.project.id}/branches`, {
@@ -431,31 +284,6 @@ async function createFile (path: string) {
   selectFile(computedFiles.value.find(file => file.path === path))
 }
 
-const updateFile = debounce(async (newContent: string) => {
-  if (!file.value) {
-    return
-  }
-
-  const formattedContent = stringifyFrontMatter(newContent, parsedMatter.value)
-
-  if (formattedContent === content.value) {
-    return
-  }
-
-  const data = await client<GitHubDraft>(`/projects/${props.project.id}/files/${encodeURIComponent(file.value.path)}`, {
-    method: 'PUT',
-    params: {
-      ref: branch.value?.name
-    },
-    body: {
-      content: formattedContent
-    }
-  })
-
-  content.value = formattedContent
-  draft.value = data
-}, 500)
-
 async function renameFile (oldPath: string, newPath: string) {
   const data = await client<GitHubDraft>(`/projects/${props.project.id}/files/rename`, {
     method: 'PUT',
@@ -477,24 +305,6 @@ async function renameFile (oldPath: string, newPath: string) {
   }
 }
 
-async function renameFiles (files) {
-  if (!files.length) {
-    return
-  }
-
-  const data = await client<GitHubDraft>(`/projects/${props.project.id}/files/rename`, {
-    method: 'PUT',
-    params: {
-      ref: branch.value?.name
-    },
-    body: {
-      files
-    }
-  })
-
-  draft.value = data
-}
-
 async function deleteFile (path: string) {
   const data = await client<GitHubDraft>(`/projects/${props.project.id}/files/${encodeURIComponent(path)}`, {
     method: 'DELETE',
@@ -509,36 +319,6 @@ async function deleteFile (path: string) {
   if (file.value?.path === path) {
     file.value = null
     findFile()
-  }
-}
-
-async function revertFile (path: string) {
-  const data = await client<GitHubDraft>(`/projects/${props.project.id}/files/${encodeURIComponent(path)}/revert`, {
-    method: 'POST',
-    params: {
-      ref: branch.value?.name
-    }
-  })
-
-  const oldFilePath = draft.value.additions.find(addition => addition.path === path)?.oldPath
-
-  draft.value = data
-
-  const currentFileExists = !!computedFiles.value.find(f => f.path === file.value?.path)
-
-  if (!currentFileExists) {
-    if (oldFilePath) {
-      // Select old file
-      const oldFile = computedFiles.value.find(f => f.path === oldFilePath)
-      selectFile(oldFile)
-    } else {
-      // Select new file when reverted file no longer exists
-      file.value = null
-      findFile()
-    }
-  } else {
-    // No new selection, fetch new content
-    await fetchContent()
   }
 }
 
@@ -593,13 +373,3 @@ async function publish () {
   loading.value = false
 }
 </script>
-
-<style>
-.milkdown {
-  flex: 1 1 0%;
-}
-.milkdown > .editor {
-  max-width: 100% !important;
-  padding: 0 !important;
-}
-</style>

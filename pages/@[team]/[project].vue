@@ -11,6 +11,7 @@ import type { Team, Project, User } from '~/types'
 const links = [
   { to: { name: '@team-project' }, icon: 'heroicons-outline:home', label: 'Home', exact: true },
   { to: { name: '@team-project-content' }, icon: 'heroicons-outline:pencil', label: 'Content' },
+  { to: { name: '@team-project-media' }, icon: 'heroicons-outline:photograph', label: 'Media' },
   { to: { name: '@team-project-settings' }, icon: 'heroicons-outline:cog', label: 'Settings' }
 ]
 
