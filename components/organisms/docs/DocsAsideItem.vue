@@ -1,7 +1,7 @@
 <template>
   <li ref="collapsible" class="relative overflow-hidden">
     <template v-if="item.children && item.children.length">
-      <DocsLink :link="item">
+      <DocsLink :link="item" disabled>
         <div ref="asideItem" class="flex items-center justify-between pr-12" @click="collapse">
           <span>{{ item.label }}</span>
         </div>
@@ -23,16 +23,22 @@
 </template>
 
 <script setup lang="ts">
-defineProps({
+const props = defineProps({
   item: {
     type: Object,
     required: true
+  },
+  disabled: {
+    type: Boolean,
+    dafault: false
   }
 })
 
 const route = useRoute()
 
 const emit = defineEmits(['collapse'])
+
+const { visible } = useMenu()
 
 const collapsible = ref(null)
 const asideItem = ref<HTMLElement | null>(null)

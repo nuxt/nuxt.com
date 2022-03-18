@@ -1,5 +1,8 @@
 export default defineNuxtPlugin((ctx: any) => {
   const scrollBarGap = ref()
+
+  const isSubMenu = ref(false)
+
   // Menu visible reference
   const visible = ref(false)
 
@@ -10,17 +13,24 @@ export default defineNuxtPlugin((ctx: any) => {
   const open = () => (visible.value = true)
 
   // Close the menu
-  const close = () => (visible.value = false)
+  const close = () => {
+    isSubMenu.value = false
+    visible.value = false
+  }
 
   // Toggle the menu (useful for one-off buttons)
   const toggle = () => (visible.value = !visible.value)
+
+  const subMenu = (link) => {
+    isSubMenu.value = !!(link.children && link.children.length)
+  }
 
   // Toggle a tab from its id
   const toggleTab = (tab: string) =>
     currentTab.value === tab ? (currentTab.value = undefined) : (currentTab.value = tab)
 
   // Watch route change, close on change
-  ctx.$router.afterEach(() => setTimeout(close, 50))
+  // ctx.$router.afterEach(() => setTimeout(close, 50))
 
   // Watch visible and remove overflow so the scrollbar disappears when menu is opened
   if (process.client) {
@@ -52,6 +62,8 @@ export default defineNuxtPlugin((ctx: any) => {
     open,
     toggle,
     currentTab,
-    toggleTab
+    toggleTab,
+    subMenu,
+    isSubMenu
   })
 })

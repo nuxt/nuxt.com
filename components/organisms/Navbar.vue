@@ -1,8 +1,14 @@
 <template>
   <header class="bg-white dark:bg-black">
-    <UContainer padded>
-      <div class="grid items-center h-20 grid-cols-6 gap-3 md:justify-center">
-        <UButton variant="transparent" :icon="visible ? 'heroicons-solid:x' : 'heroicons-solid:menu'" class="md:hidden" @click="toggle()" />
+    <NavbarMenu :links="links" />
+    <UContainer padded class="relative">
+      <div class="grid items-center h-16 grid-cols-6 gap-3 md:h-20 md:justify-center">
+        <UButton
+          variant="transparent"
+          class="-ml-2 md:hidden"
+          icon="heroicons-solid:menu"
+          @click="toggle()"
+        />
 
         <div class="flex justify-center col-span-4 md:col-span-1 md:justify-start">
           <NuxtLink to="/" class="block u-text-black">
@@ -11,7 +17,7 @@
           </NuxtLink>
         </div>
 
-        <div class="justify-center hidden md:col-span-4 gap-x-10 md:flex">
+        <div v-if="!visible" class="justify-center hidden md:col-span-4 gap-x-10 md:flex">
           <ULink
             v-for="link in links"
             :key="link.label"
@@ -38,18 +44,11 @@
         </div>
       </div>
     </UContainer>
-    <ClientOnly v-if="visible">
-      <teleport to="body">
-        <!-- Scrim overlay -->
-        <div
-          :class="[visible ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none']"
-          class="w-[320px] fixed top-0 left-0 z-10 h-full transition shadow backdrop-blur-md shadow-gray-200 dark:shadow-gray-900"
-          @click="toggle"
-        >
-          <div class="absolute top-0 w-full h-full bg-white bg-opacity-75 dark:bg-black w-[320px]" />
-        </div>
-      </teleport>
-    </ClientOnly>
+    <div
+      class="fixed inset-x-0 top-0 z-10 h-full transition-opacity duration-300 ease-linear backdrop-blur-md"
+      :class="[visible ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none']"
+      @click="toggle"
+    />
   </header>
 </template>
 
@@ -61,7 +60,7 @@ const user = useStrapiUser() as Ref<User>
 const { getProviderAuthenticationUrl } = useStrapiAuth()
 const route = useRoute()
 const activeTeam = useTeam()
-const { scrollBarGap, visible, open, close, toggle } = useMenu()
+const { visible, toggle } = useMenu()
 
 const links = computed(() => {
   const team = activeTeam.value || route.params.team || user.value?.username
@@ -97,6 +96,4 @@ const links = computed(() => {
 const onClick = () => {
   window.location = getProviderAuthenticationUrl('github') as unknown as Location
 }
-
-watch(visible, v => (v ? open() : close()))
 </script>
