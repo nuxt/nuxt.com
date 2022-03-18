@@ -426,17 +426,24 @@ async function createFile (path: string) {
   selectFile(computedFiles.value.find(file => file.path === path))
 }
 
-const updateFile = debounce(async (content: string) => {
+const updateFile = debounce(async (newContent: string) => {
+  const formattedContent = stringifyFrontMatter(newContent, parsedMatter.value)
+
+  if (formattedContent === content.value) {
+    return
+  }
+
   const data = await client<GitHubDraft>(`/projects/${props.project.id}/files/${encodeURIComponent(file.value.path)}`, {
     method: 'PUT',
     params: {
       ref: branch.value?.name
     },
     body: {
-      content: stringifyFrontMatter(content, parsedMatter.value)
+      content: formattedContent
     }
   })
 
+  content.value = formattedContent
   draft.value = data
 }, 500)
 
