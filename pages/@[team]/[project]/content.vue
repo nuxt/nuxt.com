@@ -241,6 +241,10 @@ function findFile () {
 function selectFile (f: GitHubFile) {
   file.value = f
 
+  if (!f) {
+    return
+  }
+
   const paths = f.path.split('/')
   for (let i = paths.length - 1; i > 1; i--) {
     paths.pop()
@@ -380,6 +384,7 @@ function openPublishModal () {
 
 async function fetchContent () {
   if (!file.value) {
+    content.value = ''
     return
   }
 
@@ -427,6 +432,10 @@ async function createFile (path: string) {
 }
 
 const updateFile = debounce(async (newContent: string) => {
+  if (!file.value) {
+    return
+  }
+
   const formattedContent = stringifyFrontMatter(newContent, parsedMatter.value)
 
   if (formattedContent === content.value) {
