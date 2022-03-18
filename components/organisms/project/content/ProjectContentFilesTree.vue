@@ -7,7 +7,7 @@
           [`pl-[${24 + (level * 12)}px]`]: true,
           'u-bg-gray-100 u-border-gray-800 u-text-gray-900': isSelected(file),
           'border-transparent u-text-gray-500 hover:u-text-gray-900 hover:u-bg-gray-50': !isSelected(file) && !isDeleted(file),
-          'border-transparent u-text-gray-500 cursor-not-allowed opacity-50': isDeleted(file),
+          'border-transparent u-text-gray-500 cursor-not-allowed': isDeleted(file),
           'cursor-pointer': !isDeleted(file)
         }"
         :draggable="canDragFile(file)"
@@ -21,7 +21,7 @@
         <div class="flex items-center justify-between flex-1 w-0 gap-1">
           <div class="flex items-center min-w-0 overflow-hidden">
             <ProjectContentFilesTreeIcon :file="file" :opened-dirs="openedDirs" class="mr-1.5" />
-            <span class="min-w-0 truncate" :class="{ 'line-through': isDeleted(file) }">
+            <span class="min-w-0 truncate" :class="{ 'line-through opacity-50': isDeleted(file) }">
               {{ file.name }}
             </span>
           </div>
