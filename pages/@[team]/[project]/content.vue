@@ -75,7 +75,7 @@
       </div>
     </template>
 
-    <DocusEditor :model-value="parsedContent" :theme="theme" class="flex flex-col flex-1" @update:model-value="updateFile" />
+    <DocusEditor :model-value="parsedContent" :theme="theme" class="flex flex-col flex-1 p-4 sm:p-6 lg:p-8" @update:model-value="updateFile" />
 
     <ProjectCommandModal
       v-model="modal"

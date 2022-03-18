@@ -37,10 +37,8 @@
       </div>
     </template>
 
-    <div class="flex items-stretch">
-      <ProjectFileModal />
-
-      <div class="flex flex-col flex-1">
+    <div class="flex items-stretch flex-1">
+      <div class="flex flex-col flex-1 p-4 sm:p-6 lg:p-8">
         <div class="flex">
           <h1 class="flex-1 text-2xl font-bold text-gray-900">
             Media library
@@ -51,6 +49,8 @@
           <ProjectMediaGallery :files="computedFiles" />
         </section>
       </div>
+
+      <ProjectFileModal />
     </div>
 
     <ProjectCommandModal
