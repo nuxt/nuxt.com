@@ -73,6 +73,7 @@
         @createFile="file => $emit('createFile', file)"
         @renameFile="file => $emit('renameFile', file)"
         @deleteFile="file => $emit('deleteFile', file)"
+        @revertFile="file => $emit('revertFile', file)"
         @dropFile="(...args) => $emit('dropFile', ...args)"
         @openDir="path => $emit('openDir', path)"
       />

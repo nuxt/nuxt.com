@@ -3,7 +3,7 @@
     <div class="sm:flex sm:items-start">
       <div class="mt-3 text-center sm:mt-0 sm:text-left">
         <h3 class="text-lg font-medium leading-6 u-text-gray-900">
-          Delete file
+          Revert file
         </h3>
         <div class="mt-2">
           <p class="text-sm break-all u-text-gray-500">
