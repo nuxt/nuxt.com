@@ -7,7 +7,7 @@
         </h3>
         <div class="mt-2">
           <p class="text-sm break-all u-text-gray-500">
-            Are you sure you want to revert changes you made on “{{ name }}”  ?
+            Are you sure you want to revert changes you made on “{{ name }}” ?
           </p>
         </div>
       </div>
