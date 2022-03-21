@@ -34,7 +34,9 @@
         </dl>
       </div>
       <div class="flex">
-        <UButton label="Download" block />
+        <a :download="file.name" :href="fileDownloadLink" class="w-full">
+          <UButton label="Download" block />
+        </a>
       </div>
     </div>
   </aside>
@@ -44,10 +46,12 @@
 import type { PropType } from 'vue'
 import type { GitHubFile } from '~/types'
 
-defineProps({
+const props = defineProps({
   file: {
     type: Object as PropType<GitHubFile>,
     default: null
   }
 })
+
+const fileDownloadLink = computed(() => `data:image/png;base64,${props.file.content}`)
 </script>
