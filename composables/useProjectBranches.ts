@@ -9,7 +9,10 @@ export const useProjectBranches = (project: Project) => {
 
   const branches: Ref<GitHubBranch[]> = useState(`project-${project.id}-branches`, () => [])
   const branch: Ref<GitHubBranch> = useState(`project-${project.id}-branch`, () => null)
+
   const pending = ref(false)
+
+  // Http
 
   async function fetch (force?: boolean) {
     if (branches.value.length && !force) {
@@ -43,6 +46,8 @@ export const useProjectBranches = (project: Project) => {
     select(b)
   }
 
+  // Modals
+
   function openCreateModal (name: string, mergeDraft: boolean, onSuccess?: () => void) {
     openModal(ProjectContentCreateBranchModal, {
       name,
@@ -56,6 +61,8 @@ export const useProjectBranches = (project: Project) => {
       }
     })
   }
+
+  // Methods
 
   function init () {
     let b: GitHubBranch
@@ -74,13 +81,17 @@ export const useProjectBranches = (project: Project) => {
   }
 
   return {
+    // Http
     fetch,
     refresh,
     create,
+    // Modals
     openCreateModal,
+    // Methods
     select,
-    init,
+    // Refs
     pending,
+    // Data
     branches,
     branch
   }

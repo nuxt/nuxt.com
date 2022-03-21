@@ -13,10 +13,10 @@
           </h2>
 
           <ul class="text-sm u-text-gray-700">
-            <ComboboxOption v-for="(action, index) in actions" :key="index" v-slot="{ active }" :value="action" as="template">
+            <ComboboxOption v-for="(a, index) in actions" :key="index" v-slot="{ active }" :value="a" as="template">
               <li :class="['flex cursor-pointer select-none items-center rounded-md px-3 py-2', active && 'u-bg-gray-100 u-text-gray-900']">
-                <UIcon :name="action.icon" :class="['h-5 w-5 flex-none u-text-gray-400', active && 'u-text-gray-900', action.iconClass]" aria-hidden="true" />
-                <span class="flex-auto ml-3 truncate">{{ action.label }}</span>
+                <UIcon :name="a.icon" :class="['h-5 w-5 flex-none u-text-gray-400', active && 'u-text-gray-900', a.iconClass]" aria-hidden="true" />
+                <span class="flex-auto ml-3 truncate">{{ a.label }}</span>
               </li>
             </ComboboxOption>
           </ul>
@@ -27,10 +27,10 @@
           </h2>
 
           <ul class="text-sm u-text-gray-700">
-            <ComboboxOption v-for="branch of filteredBranches" :key="branch.name" v-slot="{ active }" :value="branch" as="template">
+            <ComboboxOption v-for="b of filteredBranches" :key="b.name" v-slot="{ active }" :value="b" as="template">
               <li :class="['flex cursor-pointer select-none items-center rounded-md px-3 py-2', active && 'u-bg-gray-100 u-text-gray-900']">
                 <UIcon name="mdi:source-branch" :class="['h-5 w-5 flex-none u-text-gray-400', active && 'u-text-gray-900']" aria-hidden="true" />
-                <span class="flex-auto ml-3 truncate">{{ branch.name }}</span>
+                <span class="flex-auto ml-3 truncate">{{ b.name }}</span>
                 <span v-if="active" class="flex-none ml-3 u-text-gray-500">Jump to...</span>
               </li>
             </ComboboxOption>
@@ -42,12 +42,12 @@
           </h2>
 
           <ul class="text-sm u-text-gray-700">
-            <ComboboxOption v-for="file of filteredFiles" :key="file.path" v-slot="{ active }" :value="file" as="template">
+            <ComboboxOption v-for="f of filteredFiles" :key="f.path" v-slot="{ active }" :value="f" as="template">
               <li :class="['flex cursor-pointer select-none items-center rounded-md px-3 py-2', active && 'u-bg-gray-100 u-text-gray-900']">
-                <UIcon :name="file.icon" :class="['h-5 w-5 flex-none', file.iconColor]" aria-hidden="true" />
+                <UIcon :name="f.icon" :class="['h-5 w-5 flex-none', f.iconColor]" aria-hidden="true" />
                 <p class="flex-auto ml-3 truncate u-text-gray-400">
-                  <span class="u-text-gray-700">{{ file.name }}</span>
-                  <span class="ml-1 text-xs italic truncate">{{ file.path }}</span>
+                  <span class="u-text-gray-700">{{ f.name }}</span>
+                  <span class="ml-1 text-xs italic truncate">{{ f.path }}</span>
                 </p>
                 <span v-if="active" class="flex-none ml-3 u-text-gray-500">Jump to...</span>
               </li>
@@ -60,7 +60,6 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue'
 import {
   Combobox,
   ComboboxInput,
@@ -75,21 +74,17 @@ const props = defineProps({
   modelValue: {
     type: Boolean,
     default: false
-  },
-  project: {
-    type: Object as PropType<Project>,
-    required: true
-  },
-  root: {
-    type: String,
-    required: true
   }
 })
+
+const project: Project = inject('project')
+const root: string = inject('root')
+
 const emit = defineEmits(['update:modelValue'])
 
 const keys = useMagicKeys()
-const { branches, branch, pending: pendingBranches, refresh: refreshBranches, select: selectBranch, openCreateModal: openCreateBranchModal } = useProjectBranches(props.project)
-const { computedFiles, select: selectFile } = useProjectFiles(props.project, props.root)
+const { branches, branch, pending: pendingBranches, refresh: refreshBranches, select: selectBranch, openCreateModal: openCreateBranchModal } = useProjectBranches(project)
+const { computedFiles, select: selectFile } = useProjectFiles(project, root)
 
 whenever(keys.meta_k, () => {
   isOpen.value = !isOpen.value

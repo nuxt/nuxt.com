@@ -43,15 +43,12 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue'
-import type { GitHubFile } from '~/types'
+import type { Project } from '~/types'
 
-const props = defineProps({
-  file: {
-    type: Object as PropType<GitHubFile>,
-    default: null
-  }
-})
+const project: Project = inject('project')
+const root: string = inject('root')
 
-const fileDownloadLink = computed(() => `data:image/png;base64,${props.file.content}`)
+const { file } = useProjectFiles(project, root)
+
+const fileDownloadLink = computed(() => `data:image/png;base64,${file.value.content}`)
 </script>

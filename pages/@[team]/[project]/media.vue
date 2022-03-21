@@ -68,22 +68,22 @@
         </div>
 
         <div class="pb-16 mt-8" aria-labelledby="gallery-heading">
-          <ProjectMediaGallery :files="computedFiles" :selected-file="file" @selectFile="selectFile" />
+          <ProjectMediaGallery />
         </div>
       </div>
 
-      <ProjectMediaFileAside v-if="file" :file="file" />
+      <ProjectMediaFileAside />
     </div>
 
-    <ProjectCommandModal v-model="modal" :project="project" :root="root" />
+    <ProjectCommandModal v-model="modal" />
 
     <div ref="modalContainer" />
   </ProjectPage>
 </template>
 
 <script setup lang="ts">
-import type { PropType, Ref } from 'vue'
-import type { Team, Project, GitHubDraft, GitHubFile } from '~/types'
+import type { PropType } from 'vue'
+import type { Team, Project } from '~/types'
 
 const props = defineProps({
   team: {
@@ -97,165 +97,22 @@ const props = defineProps({
 })
 
 const root = 'public'
-const client = useStrapiClient()
-const { $toast } = useNuxtApp()
-const { container: modalContainer, open: openModal } = useModal()
-const { branches, branch, select: selectBranch, create: createBranch, pending: pendingBranches, refresh: refreshBranches } = useProjectBranches(props.project)
 
-const files: Ref<GitHubFile[]> = ref(null)
-const file: Ref<GitHubFile> = ref(null)
-const draft: Ref<GitHubDraft> = ref(null)
-const loading = ref(false)
+provide('project', props.project)
+provide('root', root)
+
+const { container: modalContainer } = useModal()
+const { branch } = useProjectBranches(props.project)
+const { isDraft, file, fetch: fetchFiles, refresh: refreshFiles, commit, loading, openPublishModal } = useProjectFiles(props.project, root)
+
 const modal = ref(false)
-
-// Data
-
-const { refresh: refreshFiles } = await useAsyncData(`project-${props.project.id}-files`, async () => {
-  const data = await client<{ files: GitHubFile[], draft: GitHubDraft }>(`/projects/${props.project.id}/files`, {
-    params: {
-      ref: branch.value?.name,
-      root: 'public',
-      withContent: ['png', 'jpg', 'jpeg', 'svg', 'ico']
-    }
-  })
-
-  files.value = data.files
-  draft.value = data.draft
-})
-
-// Watch
-
-// Select file when files changes
-watch(files, () => findFile())
-
-// Fetch files when branch changes
-watch(branch, async () => await refreshFiles())
-
-// Computed
-
-const isDraft = computed(() => {
-  return draft.value?.additions?.length || draft.value?.deletions.length
-})
-
-const computedFiles = computed(() => {
-  const { additions, deletions } = draft.value || {}
-
-  const githubFiles = files.value.map(file => ({ ...file }))
-
-  for (const addition of additions) {
-    if (addition.oldPath) {
-      deletions.splice(deletions.findIndex(d => d.path === addition.oldPath), 1)
-      const file = githubFiles.find(f => f.path === addition.oldPath)
-      if (file) {
-        file.status = 'renamed'
-        file.path = addition.path
-      }
-    } else if (addition.new) {
-      githubFiles.push({ path: addition.path, type: 'blob', status: 'created' })
-    } else {
-      const file = githubFiles.find(f => f.path === addition.path)
-      if (file) {
-        file.status = 'updated'
-      }
-    }
-  }
-  for (const deletion of deletions) {
-    const file = githubFiles.find(f => f.path === deletion.path)
-    if (file) {
-      file.status = 'deleted'
-    }
-  }
-  return githubFiles
-})
-
-// Do not move this, it needs to be after computedFiles
-findFile()
-
-// Methods
-
-function findFile () {
-  const currentFile = file.value?.path ? computedFiles.value.find(f => f.path === file.value.path) : null
-
-  selectFile(currentFile || computedFiles.value.find(file => file.path.toLowerCase().endsWith('index.md') && file.status !== 'deleted') || computedFiles.value.find(file => file.type === 'blob' && file.status !== 'deleted'))
-}
-
-function selectFile (f: GitHubFile) {
-  file.value = f
-}
-
-function openCreateBranchModal (name: string, mergeDraft: boolean) {
-  openModal(ProjectContentCreateBranchModal, {
-    name,
-    mergeDraft,
-    onSubmit: onBranchSubmit
-  })
-}
-
-function openPublishModal () {
-  openModal(ProjectContentPublishModal, {
-    project: props.project,
-    branch: branch.value,
-    onSubmit: publish
-  })
-}
 
 // Http
 
-async function onBranchSubmit (name: string, mergeDraft: boolean) {
-  await createBranch({ name, mergeDraft })
+await fetchFiles()
 
-  if (mergeDraft) {
-    commit()
-  }
-}
+// Watch
 
-async function commit () {
-  if (!branch.value) {
-    return
-  }
-  if (branch.value.name === props.project.repository.default_branch) {
-    return openCreateBranchModal('', true)
-  }
-
-  loading.value = true
-
-  try {
-    await client(`/projects/${props.project.id}/files/commit`, {
-      method: 'POST',
-      params: {
-        ref: branch.value.name
-      }
-    })
-
-    $toast.success({
-      title: 'Changes saved!',
-      description: `Your changes have been committed on ${branch.value.name} branch.`
-    })
-
-    await refreshFiles()
-  } catch (e) {}
-
-  loading.value = false
-}
-
-async function publish () {
-  if (!branch.value) {
-    return
-  }
-
-  loading.value = true
-
-  try {
-    await client(`/projects/${props.project.id}/branches/${encodeURIComponent(branch.value.name)}/publish`, { method: 'POST' })
-
-    $toast.success({
-      title: 'Published!',
-      description: `Your branch ${branch.value.name} has been merged into ${props.project.repository.default_branch}.`
-    })
-
-    await refreshBranches()
-  } catch (e) {}
-
-  loading.value = false
-}
+// Fetch files when branch changes
+watch(branch, () => refreshFiles())
 </script>

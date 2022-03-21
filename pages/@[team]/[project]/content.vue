@@ -1,13 +1,7 @@
 <template>
   <ProjectPage title="Content">
     <template #aside>
-      <ProjectContentFilesTree
-        :project="project"
-        :tree="tree"
-        :opened-dirs="openedDirs"
-        @openDir="openDir"
-        @dropFile="dropFile"
-      />
+      <ProjectContentFilesTree :tree="tree" />
     </template>
 
     <template #aside-header>
@@ -74,10 +68,10 @@
         <DocusEditor :model-value="parsedContent" :theme="theme" class="flex flex-col flex-1" @update:model-value="updateContent" />
       </div>
 
-      <ProjectContentFileAside v-if="file" v-model="parsedMatter" :file="file" :project="project" :branch="branch" />
+      <ProjectContentFileAside :model-value="parsedMatter" @update:model-value="updateMatter" />
     </div>
 
-    <ProjectCommandModal v-model="modal" :project="project" :root="root" />
+    <ProjectCommandModal v-model="modal" />
 
     <div ref="modalContainer" />
   </ProjectPage>
@@ -86,8 +80,7 @@
 <script setup lang="ts">
 import type { PropType, Ref } from 'vue'
 import { debounce } from 'lodash-es'
-import { mapTree, findTree, renamePath, getPathDir } from '~/utils/tree'
-import type { Team, Project, GitHubDraft, GitHubFile } from '~/types'
+import type { Team, Project, GitHubDraft } from '~/types'
 
 const props = defineProps({
   team: {
@@ -100,19 +93,23 @@ const props = defineProps({
   }
 })
 
-const root: string = 'content'
+const root = 'content'
+
+provide('project', props.project)
+provide('root', root)
+
 const colorMode = useColorMode()
 const client = useStrapiClient()
 const { parseFrontMatter, stringifyFrontMatter } = useMarkdown()
-const { branch } = useProjectBranches(props.project)
-const { draft, computedFiles, isDraft, file, bulkRename: bulkRenameFiles, fetch: fetchFiles, commit, loading, openCreateModal: openCreateFileModal, openPublishModal } = useProjectFiles(props.project, 'content')
 const { container: modalContainer } = useModal()
+const { branch } = useProjectBranches(props.project)
+const { draft, isDraft, file, fetch: fetchFiles, refresh: refreshFiles, commit, loading, openCreateModal: openCreateFileModal, openPublishModal } = useProjectFiles(props.project, root)
+const { tree, openDir } = useProjectFilesTree(props.project, root)
 
+const modal = ref(false)
 const content: Ref<string> = ref('')
 const parsedContent: Ref<string> = ref('')
 const parsedMatter: Ref<object> = ref({})
-const modal = ref(false)
-const openedDirs = ref({})
 
 // Data
 
@@ -121,10 +118,18 @@ await fetchFiles()
 // Watch
 
 // Fetch content when file changes
-watch(file, async () => await fetchContent(), { immediate: true })
+watch(file, () => fetchContent(), { immediate: true })
 
-watch(() => file.value.path, (path) => {
-  const paths = path.split('/')
+// Fetch files when branch changes
+watch(branch, () => refreshFiles())
+
+// Open dirs in tree when file is selected
+watch(file, (f) => {
+  if (!f) {
+    return
+  }
+
+  const paths = f.path.split('/')
   for (let i = paths.length - 1; i > 1; i--) {
     paths.pop()
     openDir(paths.join('/'), true)
@@ -145,76 +150,7 @@ watch(content, () => {
 
 // Computed
 
-const tree = computed(() => {
-  const files = [...computedFiles.value]
-  files.sort((a, b) => a.path.localeCompare(b.path, undefined, {
-    numeric: true,
-    sensitivity: 'base'
-  }))
-
-  return mapTree(files)
-})
-
 const theme = computed(() => colorMode.value === 'dark' ? 'dark' : 'light')
-
-// Methods
-
-function openDir (path: string, value?: boolean) {
-  openedDirs.value[path] = value !== undefined ? value : !openedDirs.value[path]
-}
-
-function dropFile (src: GitHubFile, dst: GitHubFile, position: 'above' | 'below' | 'over') {
-  const filesToRename = []
-  // Find files parents
-  const srcDir = getPathDir(src.path)
-  const dstDir = getPathDir(dst.path)
-  // Find files tree
-  const srcTree = findTree(src.path, tree.value)
-  const dstTree = findTree(dst.path, tree.value)
-  // Find files indexes in respective tree
-  const srcIndex = srcTree.filter(f => f.type !== 'directory').findIndex(f => f.path === src.path)
-  const dstIndex = dstTree.filter(f => f.type !== 'directory').findIndex(f => f.path === dst.path)
-  // Src and dst index are the same
-  const sameTree = srcDir === dstDir
-  // Increment index only if src file is below / above current file or tree is different
-  let index = dstIndex === -1 ? 0 : dstIndex
-  if (sameTree) {
-    if (position === 'below' && srcIndex > dstIndex) {
-      index += 1
-    } else if (position === 'above' && dstIndex > srcIndex) {
-      index -= 1
-    }
-  } else if (position === 'below') {
-    index += 1
-  }
-
-  filesToRename.push({ oldPath: src.path, newPath: renamePath(src.path, dst.path, index + 1) })
-
-  if (sameTree) {
-    if (srcIndex > dstIndex) {
-      // I move a file up
-      for (let i = position === 'below' ? (dstIndex + 1) : dstIndex; i < srcIndex; i++) {
-        filesToRename.push({ oldPath: srcTree[i].path, newPath: renamePath(srcTree[i].path, srcTree[i].path, i + 2) })
-      }
-    } else {
-      // I move a file down
-      for (let i = position === 'above' ? (dstIndex - 1) : dstIndex; i > srcIndex; i--) {
-        filesToRename.push({ oldPath: srcTree[i].path, newPath: renamePath(srcTree[i].path, srcTree[i].path, i) })
-      }
-    }
-  } else {
-    // Rename `srcTree` files after `srcIndex`
-    for (let i = srcIndex + 1; i < srcTree.length; i++) {
-      filesToRename.push({ oldPath: srcTree[i].path, newPath: renamePath(srcTree[i].path, srcTree[i].path, i) })
-    }
-    // Rename `dstTree` files after `dstIndex`
-    for (let i = position === 'below' ? (dstIndex + 1) : dstIndex; i < dstTree.length; i++) {
-      filesToRename.push({ oldPath: dstTree[i].path, newPath: renamePath(dstTree[i].path, dstTree[i].path, i + 2) })
-    }
-  }
-
-  bulkRenameFiles(filesToRename.filter(f => f.oldPath !== f.newPath))
-}
 
 // Http
 
@@ -233,17 +169,7 @@ async function fetchContent () {
   content.value = fetchedContent
 }
 
-const updateContent = debounce(async (newContent: string) => {
-  if (!file.value) {
-    return
-  }
-
-  const formattedContent = stringifyFrontMatter(newContent, parsedMatter.value)
-
-  if (formattedContent === content.value) {
-    return
-  }
-
+async function updateFile (formattedContent) {
   const data = await client<GitHubDraft>(`/projects/${props.project.id}/files/${encodeURIComponent(file.value.path)}`, {
     method: 'PUT',
     params: {
@@ -256,7 +182,25 @@ const updateContent = debounce(async (newContent: string) => {
 
   content.value = formattedContent
   draft.value = data
+}
+
+const updateContent = debounce((newContent: string) => {
+  const formattedContent = stringifyFrontMatter(newContent, parsedMatter.value)
+  if (formattedContent === content.value) {
+    return
+  }
+
+  return updateFile(formattedContent)
 }, 500)
+
+const updateMatter = debounce((newMatter: object) => {
+  const formattedContent = stringifyFrontMatter(parsedContent.value, newMatter)
+  if (formattedContent === content.value) {
+    return
+  }
+
+  return updateFile(formattedContent)
+})
 </script>
 
 <style>

@@ -7,16 +7,19 @@ import ProjectContentRevertFileModal from '~/components/organisms/project/conten
 import ProjectContentPublishModal from '~/components/organisms/project/content/ProjectContentPublishModal.vue'
 
 export const useProjectFiles = (project: Project, root: string) => {
-  const { branch, refresh: refreshBranches, openCreateModal: openCreateBranchModal } = useProjectBranches(project)
   const { open: openModal } = useModal()
   const client = useStrapiClient()
   const { $toast } = useNuxtApp()
+  const { branch, refresh: refreshBranches, openCreateModal: openCreateBranchModal } = useProjectBranches(project)
 
   const files: Ref<GitHubFile[]> = useState(`project-${project.id}-${root}-files`, () => [])
   const draft: Ref<GitHubDraft> = useState(`project-${project.id}-${root}-draft`, () => null)
   const file: Ref<GitHubFile> = useState(`project-${project.id}-${root}-file`, () => null)
+
   const pending = ref(false)
   const loading = ref(false)
+
+  // Http
 
   async function fetch (force?: boolean) {
     if (files.value.length && !force) {
@@ -28,7 +31,8 @@ export const useProjectFiles = (project: Project, root: string) => {
     const data = await client<{ files: GitHubFile[], draft: GitHubDraft }>(`/projects/${project.id}/files`, {
       params: {
         ref: branch.value.name,
-        root
+        root,
+        withContent: root === 'public' ? ['png', 'jpg', 'jpeg', 'svg', 'ico'] : undefined
       }
     })
 
@@ -195,6 +199,8 @@ export const useProjectFiles = (project: Project, root: string) => {
     loading.value = false
   }
 
+  // Modals
+
   function openCreateModal (path: string) {
     openModal(ProjectContentCreateFileModal, {
       path,
@@ -231,6 +237,8 @@ export const useProjectFiles = (project: Project, root: string) => {
     })
   }
 
+  // Methods
+
   function init () {
     const currentFile = file.value?.path ? computedFiles.value.find(f => f.path === file.value.path) : null
 
@@ -240,6 +248,8 @@ export const useProjectFiles = (project: Project, root: string) => {
   function select (f: GitHubFile) {
     file.value = f
   }
+
+  // Computed
 
   const computedFiles = computed(() => {
     const { additions, deletions } = draft.value || {}
@@ -276,31 +286,27 @@ export const useProjectFiles = (project: Project, root: string) => {
     return draft.value?.additions?.length || draft.value?.deletions.length
   })
 
-  // Fetch files when branch changes
-  watch(branch, () => refresh())
-
   return {
+    // Http
     fetch,
     refresh,
-    // create,
-    // rename,
     bulkRename,
-    // revert,
-    // delete: _delete,
     commit,
-    // publish,
+    // Modals
     openCreateModal,
     openRenameModal,
     openDeleteModal,
     openRevertModal,
     openPublishModal,
+    // Methods
     select,
-    init,
+    // Refs
     pending,
     loading,
-    files,
+    // Computed
     computedFiles,
     isDraft,
+    // Data
     file,
     draft
   }

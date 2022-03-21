@@ -37,21 +37,27 @@
           History
         </h3>
         <ul role="list" class="mt-2 border-t border-b border-gray-200 divide-y divide-gray-200">
-          <div v-if="historyPending" class="flex justify-center py-3">
+          <div v-if="pending" class="flex justify-center py-3">
             <UIcon name="heroicons-outline:refresh" class="animate-spin h-5 w-5" />
           </div>
           <li v-else-if="!history?.length" class="py-3 text-sm text-center">
             No history yet
           </li>
-          <li v-for="commit in history" v-else :key="commit.oid" class="flex items-center justify-between py-3">
-            <div class="flex flex-col flex-1 gap-2 truncate">
-              <UAvatarGroup :group="commit.authors.map(author => ({ src: author.avatarUrl }))" size="sm" />
-              <div class="flex items-center justify-between gap-2 truncate">
-                <p class="text-sm font-medium u-text-gray-500 truncate">
+          <li v-for="commit in history" v-else :key="commit.oid" class="flex justify-between py-3 gap-3">
+            <div class="flex flex-1">
+              <div class="flex flex-col -space-y-1.5">
+                <UAvatar v-for="author of commit.authors" :key="author.login" :src="author.avatarUrl" :alt="author.login" size="xs" />
+              </div>
+              <div class="ml-4 flex flex-col flex-1">
+                <div class="flex items-center justify-between">
+                  <p class="text-sm font-medium u-text-gray-900">
+                    {{ commit.authors.map(author => author.login).join(', ') }}
+                  </p>
+                  <time class="block u-text-gray-400 text-sm">{{ useTimeAgo(new Date(commit.date)).value }}</time>
+                </div>
+                <NuxtLink :to="`https://github.com/${project.repository.owner}/${project.repository.name}/commit/${commit.oid}`" target="_blank" class="flex-shrink-0 u-text-gray-500 hover:underline text-sm block">
                   {{ commit.message }}
-                </p>
-                <NuxtLink :to="`https://github.com/${project.repository.owner}/${project.repository.name}/commit/${commit.oid}`" target="_blank" class="flex-shrink-0 text-primary-500 text-sm font-medium">
-                  {{ commit.shortSha }}
+                  <UIcon name="heroicons-outline:external-link" class="ml-1 w-3 h-3 flex-shrink-0 inline-flex" />
                 </NuxtLink>
               </div>
             </div>
@@ -63,34 +69,28 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue'
-import type { GitHubFile, Project, Branch } from '~/types'
+import { useTimeAgo } from '@vueuse/core'
+import type { Project } from '~/types'
 import { getPathName } from '~/utils/tree'
 
 const props = defineProps({
   modelValue: {
     type: Object,
     default: () => ({})
-  },
-  file: {
-    type: Object as PropType<GitHubFile>,
-    default: null
-  },
-  project: {
-    type: Object as PropType<Project>,
-    required: true
-  },
-  branch: {
-    type: Object as PropType<Branch>,
-    required: true
   }
 })
 
 const emit = defineEmits(['update:modelValue'])
 
+const project: Project = inject('project')
+const root: string = inject('root')
+
+const { branch } = useProjectBranches(project)
+const { file } = useProjectFiles(project, root)
 const client = useStrapiClient()
+
 const historyData = ref(null)
-const historyPending = ref(false)
+const pending = ref(false)
 
 // Computed
 
@@ -103,40 +103,37 @@ const form = computed({
   }
 })
 
-const name = computed(() => getPathName(props.file.path))
+const name = computed(() => getPathName(file.value?.path || ''))
 
 const history = computed(() => {
   return historyData.value?.repository.ref.target.history.nodes.map(commit => ({
     authors: commit.authors.nodes.flatMap(author => author.user),
     message: commit.message,
     oid: commit.oid,
-    shortSha: commit.oid.slice(0, 7)
+    shortSha: commit.oid.slice(0, 7),
+    date: commit.pushedDate
   })) || []
 })
 
 // Watch
 
-watch(() => props.file, async () => {
-  return await refreshHistory()
-})
-
-watch(() => props.branch, async () => {
-  return await refreshHistory()
-})
+watch(file, () => fetchHistory())
 
 // Http
 
-async function refreshHistory () {
-  historyPending.value = true
+async function fetchHistory () {
+  pending.value = true
 
-  historyData.value = await client<Object[]>(`/projects/${props.project.id}/files/${encodeURIComponent(props.file.path)}/history`, {
+  historyData.value = await client<Object[]>(`/projects/${project.id}/files/${encodeURIComponent(file.value.path)}/history`, {
     params: {
-      ref: props.branch.name
+      ref: branch.value.name
     }
   })
 
-  historyPending.value = false
+  pending.value = false
 }
 
-refreshHistory()
+onMounted(() => {
+  fetchHistory()
+})
 </script>

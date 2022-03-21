@@ -32,7 +32,7 @@
               class="-my-0.5 -mr-0.5"
               variant="transparent-hover"
               icon="heroicons-outline:reply"
-              @click.stop="() => openRevertModal(file.path)"
+              @click.stop="openRevertModal(file.path)"
             />
             <UButton
               v-if="isDir(file)"
@@ -40,7 +40,7 @@
               class="-my-0.5 -mr-0.5"
               variant="transparent-hover"
               icon="heroicons-outline:plus"
-              @click.stop="() => openCreateModal(file.path)"
+              @click.stop="openCreateModal(file.path)"
             />
             <UButton
               v-if="isFile(file) && !isDeleted(file)"
@@ -48,7 +48,7 @@
               class="-my-0.5 -mr-0.5"
               variant="transparent-hover"
               icon="heroicons-outline:pencil"
-              @click.stop="() => openRenameModal(file.path)"
+              @click.stop="openRenameModal(file.path)"
             />
             <UButton
               v-if="isFile(file) && !isDeleted(file)"
@@ -56,7 +56,7 @@
               class="-my-0.5 -mr-0.5"
               variant="transparent-hover"
               icon="heroicons-outline:trash"
-              @click.stop="() => openDeleteModal(file.path)"
+              @click.stop="openDeleteModal(file.path)"
             />
           </div>
         </div>
@@ -65,12 +65,8 @@
       <ProjectContentFilesTree
         v-if="isDir(file)"
         v-show="isDirOpen(file)"
-        :project="project"
         :level="level + 1"
         :tree="file.children"
-        :opened-dirs="openedDirs"
-        @dropFile="(...args) => $emit('dropFile', ...args)"
-        @openDir="path => $emit('openDir', path)"
       />
     </li>
   </ul>
@@ -80,33 +76,27 @@
 import { PropType } from 'vue'
 import type { File, Project, GitHubFile } from '~/types'
 
-const props = defineProps({
+defineProps({
   level: {
     type: Number,
     default: 0
   },
-  project: {
-    type: Object as PropType<Project>,
-    required: true
-  },
   tree: {
     type: Array as PropType<File[]>,
     default: () => []
-  },
-  openedDirs: {
-    type: Object,
-    default: () => {}
   }
 })
 
-const emit = defineEmits(['dropFile', 'openDir'])
+const project: Project = inject('project')
+const root: string = inject('root')
 
-const { file: selectedFile, select, openCreateModal, openRenameModal, openRevertModal, openDeleteModal } = useProjectFiles(props.project, 'content')
+const { file: selectedFile, select, openCreateModal, openRenameModal, openRevertModal, openDeleteModal } = useProjectFiles(project, root)
+const { openedDirs, openDir, renameFiles } = useProjectFilesTree(project, root)
 
 // Methods
 const isFile = (file: File) => file.type === 'file'
 const isDir = (file: File) => file.type === 'directory'
-const isDirOpen = (file: File) => !!props.openedDirs[file.path]
+const isDirOpen = (file: File) => !!openedDirs[file.path]
 const isDraft = (file: File) => !!file.status
 const isSelected = (file: File) => selectedFile.value && file.path === selectedFile.value.path
 const isDeleted = (file: File) => file.status === 'deleted'
@@ -118,7 +108,7 @@ const selectFile = (file: File) => {
   }
 
   if (isDir(file)) {
-    emit('openDir', file.path)
+    openDir(file.path)
     return
   }
 
@@ -207,7 +197,7 @@ const drop = (e, file) => {
 
   const src = e.dataTransfer.getData('file')
 
-  emit('dropFile', JSON.parse(src), file, position)
+  renameFiles(JSON.parse(src), file, position)
 }
 
 const dragEnd = (e, file) => {
