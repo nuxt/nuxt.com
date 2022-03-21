@@ -1,36 +1,63 @@
+import { withBase } from 'ufo'
+
 export default defineNuxtPlugin((ctx: any) => {
   const scrollBarGap = ref()
 
+  // Current menu visible
   const isSubMenu = ref(false)
+
+  // current subNav
+  const currentSubNav = ref()
+
+  // current parent of subnav
+  const currentParent = ref()
 
   // Menu visible reference
   const visible = ref(false)
 
-  // Current tab visible reference
-  const currentTab = ref()
+  // first nav level
+  const navLinks = navLink => ({ to: navLink.slug, label: navLink.title, children: navLink.children?.map(items) || null })
+  const items = item => ({ to: item.slug, label: item.title, children: item.children?.map(itemLinks) || null })
+  const itemLinks = itemLink => ({ to: itemLink.slug, label: itemLink.title })
 
   // Open the menu
   const open = () => (visible.value = true)
 
   // Close the menu
   const close = () => {
-    isSubMenu.value = false
     visible.value = false
   }
 
   // Toggle the menu (useful for one-off buttons)
   const toggle = () => (visible.value = !visible.value)
 
-  const subMenu = (link) => {
-    isSubMenu.value = !!(link.children && link.children.length)
+  async function getSubNav (to) {
+    const withContentBase = (url: string) => withBase(url, '/api/' + useRuntimeConfig().content.basePath)
+
+    const { data: navigation } = await useAsyncData('framework-docs-top-nav', async () => {
+      return await $fetch(withContentBase('/navigation'), {
+        method: 'POST',
+        body: { slug: to }
+      })
+    })
+
+    return navigation.value[0].children[0].children[0]
   }
 
-  // Toggle a tab from its id
-  const toggleTab = (tab: string) =>
-    currentTab.value === tab ? (currentTab.value = undefined) : (currentTab.value = tab)
+  const getSubMenuNav = async (link) => {
+    if (link.children && link.children.length) {
+      isSubMenu.value = true
+      await getSubNav(link.slug).then((subNav) => {
+        currentParent.value = { label: subNav.title }
+        currentSubNav.value = subNav.children.map(navLinks)
+      })
+    } else {
+      isSubMenu.value = false
+    }
+  }
 
   // Watch route change, close on change
-  // ctx.$router.afterEach(() => setTimeout(close, 50))
+  ctx.$router.afterEach(() => setTimeout(close, 50))
 
   // Watch visible and remove overflow so the scrollbar disappears when menu is opened
   if (process.client) {
@@ -61,9 +88,10 @@ export default defineNuxtPlugin((ctx: any) => {
     close,
     open,
     toggle,
-    currentTab,
-    toggleTab,
-    subMenu,
-    isSubMenu
+    getSubMenuNav,
+    isSubMenu,
+    currentSubNav,
+    getSubNav,
+    currentParent
   })
 })

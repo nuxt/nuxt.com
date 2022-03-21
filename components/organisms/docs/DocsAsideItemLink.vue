@@ -1,30 +1,40 @@
 <template>
-  <component
-    :is="link.children ? 'div' : 'u-link'"
-    :v-bind="link"
+  <div v-if="link.children" @click="!isSubMenu ? getSubMenuNav(link) : () => {}">
+    <span
+      class="inline-block py-1 font-medium u-text-gray-500 hover:u-text-gray-900"
+      :class="{ 'font-semibold u-text-gray-900': route.path.includes(props.link.to || props.link.slug) }"
+    >
+      {{ link.title || link.label }}
+    </span>
+    <slot />
+  </div>
+  <ULink
+    v-else
+    :to="link.to || link.slug"
     class="u-text-gray-500 hover:u-text-gray-900"
     active-class="font-semibold u-text-gray-900"
     inactive-class="font-medium"
     :exact="!link.children"
-    @click="!isSubMenu ? subMenu(link) : () => {}"
   >
     <span class="inline-block py-1">
-      {{ link.title }}
+      {{ link.title || link.label }}
     </span>
     <slot />
-  </component>
+  </ULink>
 </template>
 
 <script setup lang="ts">
-defineProps({
+const props = defineProps({
   link: {
     type: Object,
     required: true
   }
 })
 
+const route = useRoute()
+
 const emit = defineEmits(['collapse'])
 
-const { visible, subMenu } = useMenu()
+const { visible, close, getSubMenuNav } = useMenu()
 
 </script>

@@ -1,7 +1,7 @@
 <template>
   <DocsPage>
     <template #header>
-      <SubNavbar>
+      <SubNavbar class="hidden md:block">
         <div class="relative grid items-center justify-between h-16 grid-cols-2 gap-3 sm:grid-cols-6">
           <div class="flex items-center justify-start gap-3">
             <p class="font-semibold">
@@ -35,11 +35,11 @@
     </template>
 
     <template #left>
-      <DocsAside :links="asideLinks" active-class="u-text-gray-900 u-bg-gray-200" />
+      <DocsAside :links="asideLinks" active-class="u-text-gray-900 u-bg-gray-200" class="hidden md:block" />
     </template>
 
     <template #right>
-      <DocsToc :toc="[]" />
+      <DocsToc :toc="[]" class="hidden md:block" />
     </template>
 
     <NuxtPage />

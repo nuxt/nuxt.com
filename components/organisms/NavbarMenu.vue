@@ -7,24 +7,40 @@
       <div>
         <!-- header -->
         <div class="grid items-center h-16 grid-cols-6 px-4 border-b u-border-gray-200">
-          <UButton variant="transparent" icon="heroicons-solid:x" class="-ml-2" @click="close()" />
+          <UButton
+            variant="transparent"
+            :icon="!isSubMenu ? 'heroicons-solid:x' : 'heroicons-solid:arrow-left'"
+            class="-ml-2"
+            @click="!isSubMenu ? close() : isSubMenu = false"
+          />
 
           <div class="flex justify-center col-span-4">
-            <NuxtLink to="/" class="block u-text-black">
+            <NuxtLink v-if="!isSubMenu" to="/" class="block u-text-black">
               <LogoFull class="hidden w-auto h-8 sm:block" />
               <Logo class="block w-auto h-6 sm:hidden" />
             </NuxtLink>
+            <div v-else class="font-semibold u-text-gray-900">
+              {{ currentParent.label }}
+            </div>
           </div>
 
           <div class="flex justify-end">
-            <TeamsDropdown v-if="user" />
+            <div v-if="!isSubMenu">
+              <TeamsDropdown v-if="user" />
+              <UButton
+                v-else
+                label="Login"
+                icon="fa-brands:github"
+                variant="primary"
+                size="sm"
+                @click="onClick"
+              />
+            </div>
             <UButton
               v-else
-              label="Login"
-              icon="fa-brands:github"
-              variant="primary"
-              size="sm"
-              @click="onClick"
+              icon="heroicons-outline:search"
+              variant="transparant"
+              size="md"
             />
           </div>
         </div>
@@ -42,7 +58,20 @@
             <img :src="`nav/${link.icon}`">
           </ul>
         </div>
-        <div v-else @sub-menu-nav="getSubNav(link.to)" />
+        <div v-else>
+          <div v-if="currentSubNav">
+            <ul
+              v-for="link in currentSubNav"
+              :key="link.label"
+              class="flex justify-between px-4 py-2 font-medium text-md hover:u-text-gray-900 md:text-base"
+            >
+              <AsideItem v-if="link.children && link.children.length" :item="link" disabled />
+              <ULink v-else :to="link.to" inactive-class="font-medium u-text-gray-500" active-class="font-semibold u-text-gray-900" exact>
+                {{ link.label }}
+              </ULink>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   </UContainer>
@@ -63,41 +92,25 @@ defineProps({
 const activeTeam = useTeam()
 
 const user = useStrapiUser() as Ref<User>
-const { visible, close, isSubMenu } = useMenu()
+const { visible, close, isSubMenu, currentSubNav, currentParent } = useMenu()
 
 const route = useRoute()
 
 const versions = ref([{ text: 'v3', value: '3' }, { text: 'v2', value: '2' }])
 const version = ref(versions.value[0])
 
-const path = computed(() => {
-  const [, first, second, third] = route.path.split('/')
-  return [first, second, third].join('/')
-})
-
 const withContentBase = (url: string) => withBase(url, '/api/' + useRuntimeConfig().content.basePath)
 
 // first nav level
-const navLinks = navLink => ({ to: navLink.to, label: navLink.title, children: navLink.children?.map(items) || null })
+const navLinks = navLink => ({ to: navLink.to || navLink.slug, label: navLink.title, children: navLink.children?.map(items) || null })
 // second
-const items = item => ({ to: item.to, label: item.title, children: item.children?.map(itemLinks) || null })
+const items = item => ({ to: item.to || item.slug, label: item.title, children: item.children?.map(itemLinks) || null })
 // third
-const itemLinks = itemLink => ({ to: itemLink.to, label: itemLink.title })
+const itemLinks = itemLink => ({ to: itemLink.to || itemLink.slug, label: itemLink.title })
 
 const currentNav = computed(() => {
-  console.log('currentNav', links.value.map(navLinks))
   return links.value.map(navLinks)
 })
-
-async function getSubNav (to) {
-  console.log(to)
-  const { data: navigation } = await useAsyncData('framework-docs-top-nav', async () => {
-    return await $fetch(withContentBase('/navigation'), {
-      method: 'POST',
-      body: { slug: to }
-    })
-  })
-}
 
 const links = computed(() => {
   const team = activeTeam.value || route.params.team || user.value?.username

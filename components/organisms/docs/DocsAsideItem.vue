@@ -10,7 +10,7 @@
             v-for="link in item.children"
             :key="link.label"
             class="pl-2 border-l-2 u-border-gray-300 hover:u-border-gray-900 "
-            :class="{ 'u-border-gray-900': route.path === link.to }"
+            :class="{ 'u-border-gray-900': isSubMenu ? route.path === link.to || link.slug : route.path.includes(link.to || link.slug) }"
           >
             <DocsAsideItemLink :link="link" />
           </li>
@@ -38,7 +38,7 @@ const route = useRoute()
 
 const emit = defineEmits(['collapse'])
 
-const { visible } = useMenu()
+const { visible, isSubMenu } = useMenu()
 
 const collapsible = ref(null)
 const asideItem = ref<HTMLElement | null>(null)
