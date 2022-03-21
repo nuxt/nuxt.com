@@ -80,7 +80,7 @@
         <DocusEditor :model-value="parsedContent" :theme="theme" class="flex flex-col flex-1" @update:model-value="updateFile" />
       </div>
 
-      <ProjectContentFileAside v-if="file" :file="file" />
+      <ProjectContentFileAside v-if="file" :file="file" :project="project" :branch="branch" />
     </div>
 
     <ProjectCommandModal

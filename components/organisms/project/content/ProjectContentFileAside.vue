@@ -29,12 +29,23 @@
           History
         </h3>
         <ul role="list" class="mt-2 border-t border-b border-gray-200 divide-y divide-gray-200">
-          <li v-for="person in commits" :key="person.id" class="flex items-center justify-between py-3">
-            <div class="flex items-center">
-              <img :src="person.imageUrl" alt="" class="w-8 h-8 rounded-full">
-              <p class="ml-4 text-sm font-medium u-text-gray-900">
-                {{ person.name }}
-              </p>
+          <div v-if="historyPending" class="flex justify-center py-3">
+            <UIcon name="heroicons-outline:refresh" class="animate-spin h-5 w-5" />
+          </div>
+          <li v-else-if="!history?.length" class="py-3 text-sm text-center">
+            No history yet
+          </li>
+          <li v-for="commit in history" v-else :key="commit.oid" class="flex items-center justify-between py-3">
+            <div class="flex flex-col flex-1 gap-2 truncate">
+              <UAvatarGroup :group="commit.authors.map(author => ({ src: author.avatarUrl }))" size="sm" />
+              <div class="flex items-center justify-between gap-2 truncate">
+                <p class="text-sm font-medium u-text-gray-500 truncate">
+                  {{ commit.message }}
+                </p>
+                <NuxtLink :to="`https://github.com/${project.repository.owner}/${project.repository.name}/commit/${commit.oid}`" target="_blank" class="flex-shrink-0 text-primary-500 text-sm font-medium">
+                  {{ commit.shortSha }}
+                </NuxtLink>
+              </div>
             </div>
           </li>
         </ul>
@@ -45,30 +56,64 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import type { GitHubFile } from '~/types'
+import type { GitHubFile, Project, Branch } from '~/types'
 import { getPathName } from '~/utils/tree'
 
 const props = defineProps({
   file: {
     type: Object as PropType<GitHubFile>,
     default: null
+  },
+  project: {
+    type: Object as PropType<Project>,
+    required: true
+  },
+  branch: {
+    type: Object as PropType<Branch>,
+    required: true
   }
 })
 
+const client = useStrapiClient()
+const historyData = ref(null)
+const historyPending = ref(false)
+
+// Computed
+
 const name = computed(() => getPathName(props.file.path))
 
-const commits = [
-  {
-    id: 1,
-    name: 'Aimee Douglas',
-    imageUrl:
-        'https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=1024&h=1024&q=80'
-  },
-  {
-    id: 2,
-    name: 'Andrea McMillan',
-    imageUrl:
-        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixqx=oilqXxSqey&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-  }
-]
+const history = computed(() => {
+  return historyData.value?.repository.ref.target.history.nodes.map(commit => ({
+    authors: commit.authors.nodes.flatMap(author => author.user),
+    message: commit.message,
+    oid: commit.oid,
+    shortSha: commit.oid.slice(0, 7)
+  })) || []
+})
+
+// Watch
+
+watch(() => props.file, async () => {
+  return await refreshHistory()
+})
+
+watch(() => props.branch, async () => {
+  return await refreshHistory()
+})
+
+// Http
+
+async function refreshHistory () {
+  historyPending.value = true
+
+  historyData.value = await client<Object[]>(`/projects/${props.project.id}/files/${encodeURIComponent(props.file.path)}/history`, {
+    params: {
+      ref: props.branch.name
+    }
+  })
+
+  historyPending.value = false
+}
+
+refreshHistory()
 </script>
