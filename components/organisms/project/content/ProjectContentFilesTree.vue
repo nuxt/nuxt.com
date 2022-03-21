@@ -32,7 +32,7 @@
               class="-my-0.5 -mr-0.5"
               variant="transparent-hover"
               icon="heroicons-outline:reply"
-              @click.stop="revertFile(file)"
+              @click.stop="() => openRevertModal(file.path)"
             />
             <UButton
               v-if="isDir(file)"
@@ -40,7 +40,7 @@
               class="-my-0.5 -mr-0.5"
               variant="transparent-hover"
               icon="heroicons-outline:plus"
-              @click.stop="createFile(file)"
+              @click.stop="() => openCreateModal(file.path)"
             />
             <UButton
               v-if="isFile(file) && !isDeleted(file)"
@@ -48,7 +48,7 @@
               class="-my-0.5 -mr-0.5"
               variant="transparent-hover"
               icon="heroicons-outline:pencil"
-              @click.stop="renameFile(file)"
+              @click.stop="() => openRenameModal(file.path)"
             />
             <UButton
               v-if="isFile(file) && !isDeleted(file)"
@@ -56,7 +56,7 @@
               class="-my-0.5 -mr-0.5"
               variant="transparent-hover"
               icon="heroicons-outline:trash"
-              @click.stop="deleteFile(file)"
+              @click.stop="() => openDeleteModal(file.path)"
             />
           </div>
         </div>
@@ -65,15 +65,10 @@
       <ProjectContentFilesTree
         v-if="isDir(file)"
         v-show="isDirOpen(file)"
+        :project="project"
         :level="level + 1"
         :tree="file.children"
-        :selected-file="selectedFile"
         :opened-dirs="openedDirs"
-        @selectFile="file => $emit('selectFile', file)"
-        @createFile="file => $emit('createFile', file)"
-        @renameFile="file => $emit('renameFile', file)"
-        @deleteFile="file => $emit('deleteFile', file)"
-        @revertFile="file => $emit('revertFile', file)"
         @dropFile="(...args) => $emit('dropFile', ...args)"
         @openDir="path => $emit('openDir', path)"
       />
@@ -83,44 +78,42 @@
 
 <script setup lang="ts">
 import { PropType } from 'vue'
-import type { File, GitHubFile } from '~/types'
+import type { File, Project, GitHubFile } from '~/types'
 
 const props = defineProps({
   level: {
     type: Number,
     default: 0
   },
+  project: {
+    type: Object as PropType<Project>,
+    required: true
+  },
   tree: {
     type: Array as PropType<File[]>,
     default: () => []
   },
-  selectedFile: {
-    type: Object as PropType<GitHubFile>,
-    default: null
-  },
   openedDirs: {
     type: Object,
-    default: () => {}
-  },
-  renameFiles: {
-    type: Function,
     default: () => {}
   }
 })
 
-const emit = defineEmits(['selectFile', 'createFile', 'renameFile', 'deleteFile', 'revertFile', 'dropFile', 'openDir'])
+const emit = defineEmits(['dropFile', 'openDir'])
+
+const { file: selectedFile, select, openCreateModal, openRenameModal, openRevertModal, openDeleteModal } = useProjectFiles(props.project, 'content')
 
 // Methods
 const isFile = (file: File) => file.type === 'file'
 const isDir = (file: File) => file.type === 'directory'
 const isDirOpen = (file: File) => !!props.openedDirs[file.path]
 const isDraft = (file: File) => !!file.status
-const isSelected = (file: File) => props.selectedFile && file.path === props.selectedFile.path
+const isSelected = (file: File) => selectedFile.value && file.path === selectedFile.value.path
 const isDeleted = (file: File) => file.status === 'deleted'
 
 const selectFile = (file: File) => {
   // Prevent click when clicking on selected file
-  if (props.selectedFile && props.selectedFile.path === file.path) {
+  if (selectedFile.value && selectedFile.value.path === file.path) {
     return
   }
 
@@ -133,12 +126,8 @@ const selectFile = (file: File) => {
     return
   }
 
-  emit('selectFile', file)
+  select(file as unknown as GitHubFile)
 }
-const createFile = (file: File) => emit('createFile', file.path)
-const renameFile = (file: File) => emit('renameFile', file.path)
-const deleteFile = (file: File) => emit('deleteFile', file.path)
-const revertFile = (file: File) => emit('revertFile', file.path)
 
 const canDragFile = (file) => {
   return !isDeleted(file) && !isDir(file)

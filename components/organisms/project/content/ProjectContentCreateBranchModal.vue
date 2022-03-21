@@ -65,7 +65,7 @@ function close () {
   onClose()
 }
 function onSubmit () {
-  emit('submit', name.value, props.mergeDraft)
+  emit('submit', name.value)
   close()
 }
 function onClose () {

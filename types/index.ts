@@ -90,7 +90,7 @@ export interface File {
   status: FileStatus
 }
 
-export interface Branch {
+export interface GitHubBranch {
   name: string
 }
 

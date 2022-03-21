@@ -75,31 +75,15 @@
       <ProjectMediaFileAside v-if="file" :file="file" />
     </div>
 
-    <ProjectCommandModal
-      v-model="modal"
-      :branches="branches"
-      :selected-branch="branch"
-      :pending-branches="pendingBranches"
-      :files="computedFiles"
-      @selectBranch="selectBranch"
-      @refreshBranches="refreshBranches"
-      @createBranch="openCreateBranchModal"
-      @selectFile="selectFile"
-    />
+    <ProjectCommandModal v-model="modal" :project="project" :root="root" />
 
-    <div ref="modalWrapper" />
+    <div ref="modalContainer" />
   </ProjectPage>
 </template>
 
 <script setup lang="ts">
-import { createApp } from 'vue'
 import type { PropType, Ref } from 'vue'
-import type { Team, Project, Branch, GitHubDraft, GitHubFile } from '~/types'
-import ProjectContentCreateBranchModal from '~/components/organisms/project/content/ProjectContentCreateBranchModal.vue'
-import ProjectContentCreateFileModal from '~/components/organisms/project/content/ProjectContentCreateFileModal.vue'
-import ProjectContentRenameFileModal from '~/components/organisms/project/content/ProjectContentRenameFileModal.vue'
-import ProjectContentDeleteFileModal from '~/components/organisms/project/content/ProjectContentDeleteFileModal.vue'
-import ProjectContentPublishModal from '~/components/organisms/project/content/ProjectContentPublishModal.vue'
+import type { Team, Project, GitHubDraft, GitHubFile } from '~/types'
 
 const props = defineProps({
   team: {
@@ -112,23 +96,19 @@ const props = defineProps({
   }
 })
 
+const root = 'public'
 const client = useStrapiClient()
 const { $toast } = useNuxtApp()
+const { container: modalContainer, open: openModal } = useModal()
+const { branches, branch, select: selectBranch, create: createBranch, pending: pendingBranches, refresh: refreshBranches } = useProjectBranches(props.project)
 
-const branchCookie = useCookie(`project-${props.project.id}-branch`, { path: '/' })
-const branch: Ref<Branch> = ref(null)
 const files: Ref<GitHubFile[]> = ref(null)
 const file: Ref<GitHubFile> = ref(null)
 const draft: Ref<GitHubDraft> = ref(null)
-const modalWrapper = ref(null)
 const loading = ref(false)
 const modal = ref(false)
 
 // Data
-
-const { data: branches, refresh: refreshBranches, pending: pendingBranches } = await useAsyncData(`project-${props.project.id}-branches`, () => client<Branch[]>(`/projects/${props.project.id}/branches`))
-
-findBranch()
 
 const { refresh: refreshFiles } = await useAsyncData(`project-${props.project.id}-files`, async () => {
   const data = await client<{ files: GitHubFile[], draft: GitHubDraft }>(`/projects/${props.project.id}/files`, {
@@ -147,9 +127,6 @@ const { refresh: refreshFiles } = await useAsyncData(`project-${props.project.id
 
 // Select file when files changes
 watch(files, () => findFile())
-
-// Select branch when branches changes
-watch(branches, () => findBranch())
 
 // Fetch files when branch changes
 watch(branch, async () => await refreshFiles())
@@ -206,59 +183,11 @@ function selectFile (f: GitHubFile) {
   file.value = f
 }
 
-function findBranch () {
-  let branch: Branch
-  if (branchCookie.value) {
-    branch = branches.value.find(branch => branch.name === branchCookie.value)
-  } else {
-    branch = branches.value.find(branch => branch.name === props.project.repository.default_branch)
-  }
-
-  selectBranch(branch || branches.value[0])
-}
-
-function selectBranch (b: Branch) {
-  branch.value = b
-  branchCookie.value = b.name
-}
-
-function openModal (component, props) {
-  // eslint-disable-next-line vue/one-component-per-file
-  const modal = createApp(component, {
-    ...props,
-    onClose () {
-      modal.unmount()
-    }
-  })
-  modal.mount(modalWrapper.value)
-}
-
 function openCreateBranchModal (name: string, mergeDraft: boolean) {
   openModal(ProjectContentCreateBranchModal, {
     name,
     mergeDraft,
-    onSubmit: createBranch
-  })
-}
-
-function openCreateFileModal (path?: string) {
-  openModal(ProjectContentCreateFileModal, {
-    path,
-    onSubmit: createFile
-  })
-}
-
-function openRenameFileModal (oldPath: string) {
-  openModal(ProjectContentRenameFileModal, {
-    oldPath,
-    onSubmit: renameFile
-  })
-}
-
-function openDeleteFileModal (path: string) {
-  openModal(ProjectContentDeleteFileModal, {
-    path,
-    onSubmit: deleteFile
+    onSubmit: onBranchSubmit
   })
 }
 
@@ -272,75 +201,11 @@ function openPublishModal () {
 
 // Http
 
-async function createBranch (name: string, mergeDraft: boolean) {
-  const branch = await client<Branch>(`/projects/${props.project.id}/branches`, {
-    method: 'POST',
-    body: {
-      name,
-      mergeDraft
-    }
-  })
-
-  branches.value.push(branch)
-
-  selectBranch(branch)
+async function onBranchSubmit (name: string, mergeDraft: boolean) {
+  await createBranch({ name, mergeDraft })
 
   if (mergeDraft) {
     commit()
-  }
-}
-
-async function createFile (path: string) {
-  const data = await client<GitHubDraft>(`/projects/${props.project.id}/files`, {
-    method: 'POST',
-    params: {
-      ref: branch.value?.name
-    },
-    body: {
-      path
-    }
-  })
-
-  draft.value = data
-
-  selectFile(computedFiles.value.find(file => file.path === path))
-}
-
-async function renameFile (oldPath: string, newPath: string) {
-  const data = await client<GitHubDraft>(`/projects/${props.project.id}/files/rename`, {
-    method: 'PUT',
-    params: {
-      ref: branch.value?.name
-    },
-    body: {
-      files: [{
-        oldPath,
-        newPath
-      }]
-    }
-  })
-
-  draft.value = data
-
-  if (file.value?.path === oldPath) {
-    selectFile(computedFiles.value.find(file => file.path === newPath))
-  }
-}
-
-async function deleteFile (path: string) {
-  const data = await client<GitHubDraft>(`/projects/${props.project.id}/files/${encodeURIComponent(path)}`, {
-    method: 'DELETE',
-    params: {
-      ref: branch.value?.name
-    }
-  })
-
-  draft.value = data
-
-  // Select new file when deleted was selected
-  if (file.value?.path === path) {
-    file.value = null
-    findFile()
   }
 }
 
@@ -389,7 +254,6 @@ async function publish () {
     })
 
     await refreshBranches()
-    findBranch()
   } catch (e) {}
 
   loading.value = false

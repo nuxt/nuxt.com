@@ -36,17 +36,16 @@
 </template>
 
 <script setup lang="ts">
-import { collapseTextChangeRangesAcrossMultipleVersions } from 'typescript'
 import type { PropType } from 'vue'
-import type { Project, Branch } from '~/types'
+import type { Project, GitHubBranch } from '~/types'
 
-const props = defineProps({
+defineProps({
   project: {
     type: Object as PropType<Project>,
     required: true
   },
   branch: {
-    type: Object as PropType<Branch>,
+    type: Object as PropType<GitHubBranch>,
     required: true
   }
 })
