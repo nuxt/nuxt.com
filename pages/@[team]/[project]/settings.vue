@@ -38,6 +38,7 @@ const links = computed(() => {
 })
 
 const verticalNavigationProps = {
+  wrapperClass: '',
   baseClass: 'group border-r-2 flex items-center text-sm font-medium focus:u-bg-gray-100 focus:outline-none w-full',
   spacingClass: 'px-6 py-2',
   activeClass: 'u-bg-gray-100 u-border-gray-800 u-text-gray-900',
