@@ -2,6 +2,15 @@
   <aside class="hidden p-8 overflow-y-auto bg-white border-l border-gray-200 top-0 w-96 lg:block sticky h-[calc(100vh-4rem)]">
     <div class="pb-16 space-y-6">
       <div>
+        <div class="flex items-start justify-between">
+          <div>
+            <h2 class="text-lg font-medium u-text-gray-900">
+              <span class="sr-only">Details for </span>{{ name }}
+            </h2>
+          </div>
+        </div>
+      </div>
+      <div>
         <h3 class="font-medium text-gray-900">
           Description
         </h3>
@@ -37,13 +46,16 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
 import type { GitHubFile } from '~/types'
+import { getPathName } from '~/utils/tree'
 
-defineProps({
+const props = defineProps({
   file: {
     type: Object as PropType<GitHubFile>,
     default: null
   }
 })
+
+const name = computed(() => getPathName(props.file.path))
 
 const commits = [
   {
