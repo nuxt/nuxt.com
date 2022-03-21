@@ -428,7 +428,9 @@ async function createFile (path: string) {
       ref: branch.value?.name
     },
     body: {
-      path
+      data: {
+        path
+      }
     }
   })
 

@@ -56,6 +56,8 @@
             Media library
           </h2>
 
+          <input ref="fileToUpload" name="newFile" type="file" class="hidden" @change="onFileUpload">
+
           <UButton
             size="sm"
             rounded
@@ -64,6 +66,7 @@
             class="-my-1"
             variant="secondary"
             trailing
+            @click="$refs.fileToUpload.click()"
           />
         </div>
 
@@ -94,6 +97,7 @@
 <script setup lang="ts">
 import { createApp } from 'vue'
 import type { PropType, Ref } from 'vue'
+import { isEmpty } from 'lodash-es'
 import type { Team, Project, Branch, GitHubDraft, GitHubFile } from '~/types'
 import ProjectContentCreateBranchModal from '~/components/organisms/project/content/ProjectContentCreateBranchModal.vue'
 import ProjectContentCreateFileModal from '~/components/organisms/project/content/ProjectContentCreateFileModal.vue'
@@ -119,6 +123,7 @@ const branchCookie = useCookie(`project-${props.project.id}-branch`, { path: '/'
 const branch: Ref<Branch> = ref(null)
 const files: Ref<GitHubFile[]> = ref(null)
 const file: Ref<GitHubFile> = ref(null)
+const fileToUpload: Ref<HTMLInputElement> = ref(null)
 const draft: Ref<GitHubDraft> = ref(null)
 const modalWrapper = ref(null)
 const loading = ref(false)
@@ -174,7 +179,7 @@ const computedFiles = computed(() => {
         file.path = addition.path
       }
     } else if (addition.new) {
-      githubFiles.push({ path: addition.path, type: 'blob', status: 'created' })
+      githubFiles.push({ path: addition.path, type: 'blob', status: 'created', content: addition.content })
     } else {
       const file = githubFiles.find(f => f.path === addition.path)
       if (file) {
@@ -393,5 +398,26 @@ async function publish () {
   } catch (e) {}
 
   loading.value = false
+}
+
+async function onFileUpload () {
+  if (isEmpty(fileToUpload.value.files)) {
+    return
+  }
+
+  const formData = new FormData()
+  const file = fileToUpload.value.files[0]
+  formData.append('files.image', fileToUpload.value.files[0])
+  formData.append('data', JSON.stringify({
+    path: `public/${file.name}`
+  }))
+
+  await client<GitHubDraft>(`/projects/${props.project.id}/files`, {
+    method: 'POST',
+    params: {
+      ref: branch.value?.name
+    },
+    body: formData
+  })
 }
 </script>
