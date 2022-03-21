@@ -72,7 +72,7 @@
         </div>
       </div>
 
-      <ProjectFileAside v-if="file" :file="file" />
+      <ProjectMediaFileAside v-if="file" :file="file" />
     </div>
 
     <ProjectCommandModal
