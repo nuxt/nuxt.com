@@ -38,16 +38,10 @@ const emit = defineEmits(['submit', 'close'])
 const isOpen = ref(true)
 
 function close () {
-  isOpen.value = false
-  onClose()
+  emit('close')
 }
 function onSubmit () {
   emit('submit')
   close()
-}
-function onClose () {
-  setTimeout(() => {
-    emit('close')
-  }, 300)
 }
 </script>

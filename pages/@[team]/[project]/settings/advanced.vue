@@ -17,7 +17,7 @@
           name="destination"
         />
         <div class="flex justify-end">
-          <UButton label="Transfer project" size="sm" :disabled="!transferForm.destination" @click="openTransferModal()" />
+          <UButton label="Transfer project" size="sm" :disabled="!transferForm.destination" @click="transferModal = true" />
         </div>
       </div>
     </UCard>
@@ -29,20 +29,18 @@
         Your project and all of its dependencies will be transferred without downtime or workflow interruptions to the selected destination.
       </p>
       <div class="flex justify-end mt-5">
-        <UButton variant="red" label="Delete project" size="sm" @click="openDeleteModal()" />
+        <UButton variant="red" label="Delete project" size="sm" @click="deleteModal = true" />
       </div>
     </UCard>
 
-    <div ref="modalWrapper" />
+    <ProjectSettingsTransferModal v-model="transferModal" @submit="transferProject()" @close="transferModal = false" />
+    <ProjectSettingsDeleteModal v-model="deleteModal" @submit="deleteProject()" @close="deleteModal = false" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { createApp } from 'vue'
 import type { Ref, PropType } from 'vue'
 import { User, Project, Team } from '~/types'
-import ProjectSettingsTransferModal from '~/components/organisms/project/settings/ProjectSettingsTransferModal.vue'
-import ProjectSettingsDeleteModal from '~/components/organisms/project/settings/ProjectSettingsDeleteModal.vue'
 
 const props = defineProps({
   team: {
@@ -58,14 +56,14 @@ const props = defineProps({
 const client = useStrapiClient()
 const { delete: _delete } = useStrapi4()
 const user = useStrapiUser() as Ref<User>
-const route = useRoute()
 const router = useRouter()
 const { $toast } = useNuxtApp()
 
 const transferForm = reactive({ destination: null })
+const transferModal = ref(false)
+const deleteModal = ref(false)
 const transferring = ref(false)
 const deleting = ref(false)
-const modalWrapper = ref(null)
 
 // Computed
 
@@ -103,30 +101,6 @@ const transferOptions = computed(() => {
 
   return options
 })
-
-// Methods
-
-function openModal (component, props) {
-  const modal = createApp(component, {
-    ...props,
-    onClose () {
-      modal.unmount()
-    }
-  })
-  modal.mount(modalWrapper.value)
-}
-
-function openTransferModal () {
-  openModal(ProjectSettingsTransferModal, {
-    onSubmit: transferProject
-  })
-}
-
-function openDeleteModal () {
-  openModal(ProjectSettingsDeleteModal, {
-    onSubmit: deleteProject
-  })
-}
 
 // Http
 
