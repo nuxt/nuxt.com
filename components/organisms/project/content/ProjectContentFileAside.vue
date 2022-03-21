@@ -10,20 +10,28 @@
           </div>
         </div>
       </div>
-      <div>
-        <h3 class="font-medium text-gray-900">
-          Description
-        </h3>
-        <div class="mt-2 flex items-center justify-between">
-          <p class="text-sm text-gray-500 italic">
-            Add a description to this image.
-          </p>
-          <button type="button" class="bg-white rounded-full h-8 w-8 flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            <UIcon name="heroicons-outline:pencil" class="h-5 w-5" aria-hidden="true" />
-            <span class="sr-only">Add description</span>
-          </button>
-        </div>
-      </div>
+      <UFormGroup name="title" label="Title" label-class="font-medium u-text-gray-900" container-class="mt-2">
+        <template #hint>
+          <UButton size="xxs" variant="transparent-hover" icon="heroicons-outline:pencil" />
+        </template>
+
+        <p class="text-sm text-gray-500 italic">
+          {{ form.title || 'Add a title...' }}
+        </p>
+
+        <!-- <UInput v-model="form.title" name="title" placeholder="Add a title..." size="sm" class="w-full" /> -->
+      </UFormGroup>
+      <UFormGroup name="description" label="Description" label-class="font-medium u-text-gray-900" container-class="mt-2">
+        <template #hint>
+          <UButton size="xxs" variant="transparent-hover" icon="heroicons-outline:pencil" />
+        </template>
+
+        <p class="text-sm text-gray-500 italic">
+          {{ form.description || 'Add a description...' }}
+        </p>
+
+        <!-- <UTextarea v-model="form.description" name="description" placeholder="Add a description..." size="sm" class="w-full" /> -->
+      </UFormGroup>
       <div>
         <h3 class="font-medium u-text-gray-900">
           History
@@ -60,6 +68,10 @@ import type { GitHubFile, Project, Branch } from '~/types'
 import { getPathName } from '~/utils/tree'
 
 const props = defineProps({
+  modelValue: {
+    type: Object,
+    default: () => ({})
+  },
   file: {
     type: Object as PropType<GitHubFile>,
     default: null
@@ -74,11 +86,22 @@ const props = defineProps({
   }
 })
 
+const emit = defineEmits(['update:modelValue'])
+
 const client = useStrapiClient()
 const historyData = ref(null)
 const historyPending = ref(false)
 
 // Computed
+
+const form = computed({
+  get () {
+    return props.modelValue
+  },
+  set (value) {
+    emit('update:modelValue', value)
+  }
+})
 
 const name = computed(() => getPathName(props.file.path))
 

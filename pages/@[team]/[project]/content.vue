@@ -77,10 +77,10 @@
 
     <div class="flex items-stretch flex-1 min-h-0">
       <div class="flex-1 flex flex-col p-4 sm:p-6 lg:p-8 overflow-y-auto">
-        <DocusEditor :model-value="parsedContent" :theme="theme" class="flex flex-col flex-1" @update:model-value="updateFile" />
+        <DocusEditor v-model="parsedContent" :theme="theme" class="flex flex-col flex-1" />
       </div>
 
-      <ProjectContentFileAside v-if="file" :file="file" :project="project" :branch="branch" />
+      <ProjectContentFileAside v-if="file" v-model="parsedMatter" :file="file" :project="project" :branch="branch" />
     </div>
 
     <ProjectCommandModal
@@ -135,7 +135,7 @@ const file: Ref<GitHubFile> = ref(null)
 const draft: Ref<GitHubDraft> = ref(null)
 const content: Ref<string> = ref('')
 const parsedContent: Ref<string> = ref('')
-const parsedMatter: Ref<string> = ref('')
+const parsedMatter: Ref<object> = ref({})
 const modalWrapper = ref(null)
 const loading = ref(false)
 const modal = ref(false)
@@ -183,6 +183,9 @@ watch(content, () => {
   parsedContent.value = c
   parsedMatter.value = matter
 }, { immediate: true })
+
+watch(parsedContent, () => updateFile())
+watch(parsedMatter, () => updateFile())
 
 // Computed
 
@@ -437,12 +440,12 @@ async function createFile (path: string) {
   selectFile(computedFiles.value.find(file => file.path === path))
 }
 
-const updateFile = debounce(async (newContent: string) => {
+const updateFile = debounce(async () => {
   if (!file.value) {
     return
   }
 
-  const formattedContent = stringifyFrontMatter(newContent, parsedMatter.value)
+  const formattedContent = stringifyFrontMatter(parsedContent.value, parsedMatter.value)
 
   if (formattedContent === content.value) {
     return
