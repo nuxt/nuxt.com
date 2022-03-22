@@ -1,7 +1,7 @@
 <template>
   <ul role="list" class="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-6 xl:gap-x-8">
     <li v-for="file in computedFiles" :key="file.name" class="relative" @click="selectFile(file)">
-      <div :class="[isSelected(file) ? 'ring-2 ring-offset-2 u-ring-gray-900' : 'focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-gray-100 focus-within:dark:ring-offset-gray-800 focus-within:u-ring-gray-900', 'group block w-full aspect-w-10 aspect-h-7 rounded-lg u-bg-gray-100 overflow-hidden']">
+      <div :class="[isSelected(file) ? 'ring-2 ring-offset-2 u-ring-gray-900 ring-offset-gray-50 dark:ring-offset-gray-900' : 'focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-gray-100 dark:focus-within:ring-offset-gray-800 focus-within:u-ring-gray-900', 'group block w-full aspect-w-10 aspect-h-7 rounded-lg u-bg-gray-100 overflow-hidden']">
         <img :src="`data:${file.mimeType};base64,${file.content}`" alt="" :class="[isSelected(file) ? '' : 'group-hover:opacity-75', 'object-scale-down object-center pointer-events-none']">
         <button type="button" class="absolute inset-0 focus:outline-none">
           <span class="sr-only">View details for {{ file.name }}</span>
