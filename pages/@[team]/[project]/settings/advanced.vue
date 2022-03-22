@@ -17,7 +17,7 @@
           name="destination"
         />
         <div class="flex justify-end">
-          <UButton label="Transfer project" size="sm" :disabled="!transferForm.destination" @click="onTransfer()" />
+          <UButton label="Transfer project" size="sm" :disabled="!transferForm.destination" @click="transferModal = true" />
         </div>
       </div>
     </UCard>
@@ -29,28 +29,12 @@
         Your project and all of its dependencies will be transferred without downtime or workflow interruptions to the selected destination.
       </p>
       <div class="flex justify-end mt-5">
-        <UButton variant="red" label="Delete project" size="sm" @click="onDelete()" />
+        <UButton variant="red" label="Delete project" size="sm" @click="deleteModal = true" />
       </div>
     </UCard>
 
-    <UAlertDialog
-      v-model="transferModal"
-      icon="heroicons-outline:switch-horizontal"
-      icon-class="text-gray-600"
-      icon-wrapper-class="w-12 h-12 bg-gray-200 sm:h-10 sm:w-10"
-      title="Transfer project"
-      description="Are you sure you want to transfer this project?"
-      @confirm="confirmTransfer()"
-    />
-    <UAlertDialog
-      v-model="deleteModal"
-      icon="heroicons-outline:x"
-      icon-class="text-red-600"
-      icon-wrapper-class="w-12 h-12 bg-red-100 sm:h-10 sm:w-10"
-      title="Delete project"
-      description="Are you sure you want to delete this project? This action is not reversible. Please be certain."
-      @confirm="confirmDelete()"
-    />
+    <ProjectSettingsTransferModal v-model="transferModal" @submit="transferProject" />
+    <ProjectSettingsDeleteModal v-model="deleteModal" @submit="deleteProject" />
   </div>
 </template>
 
@@ -72,7 +56,6 @@ const props = defineProps({
 const client = useStrapiClient()
 const { delete: _delete } = useStrapi4()
 const user = useStrapiUser() as Ref<User>
-const route = useRoute()
 const router = useRouter()
 const { $toast } = useNuxtApp()
 
@@ -81,6 +64,8 @@ const transferModal = ref(false)
 const deleteModal = ref(false)
 const transferring = ref(false)
 const deleting = ref(false)
+
+// Computed
 
 const teams = computed(() => {
   return user.value.memberships
@@ -117,11 +102,9 @@ const transferOptions = computed(() => {
   return options
 })
 
-const onTransfer = () => {
-  transferModal.value = true
-}
+// Http
 
-const confirmTransfer = async () => {
+const transferProject = async () => {
   transferring.value = true
 
   try {
@@ -134,7 +117,7 @@ const confirmTransfer = async () => {
 
     const team = transferForm.destination === user.value.username
       ? user.value.username
-      // eslint-disable-next-line eqeqeq
+      // eslint-disable-next-line
       : teams.value.filter(team => transferForm.destination == team.value)[0].slug
 
     router.replace({ name: '@team-projects', params: { team } })
@@ -148,11 +131,7 @@ const confirmTransfer = async () => {
   transferring.value = false
 }
 
-const onDelete = () => {
-  deleteModal.value = true
-}
-
-const confirmDelete = async () => {
+const deleteProject = async () => {
   deleting.value = true
 
   try {
