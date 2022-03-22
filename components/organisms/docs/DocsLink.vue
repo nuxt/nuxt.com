@@ -46,8 +46,6 @@ function findSlug (link) {
     slug = findSlug(link.children[0])
   }
 
-  console.log(slug)
-
   return slug
 }
 </script>

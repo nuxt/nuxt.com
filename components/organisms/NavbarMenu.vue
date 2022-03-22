@@ -63,7 +63,7 @@
               >
                 {{ link.label }}
               </ULink>
-              <img :src="`nav/${link.icon}`" class="self-start">
+              <img :src="`/nav/${link.icon}`" class="self-start">
             </ul>
           </div>
           <div v-else>
