@@ -1,5 +1,5 @@
 <template>
-  <aside class="hidden p-8 overflow-y-auto bg-white border-l border-gray-200 top-0 w-96 lg:block sticky h-[calc(100vh-4rem)]">
+  <aside class="hidden p-8 overflow-y-auto u-bg-white border-l u-border-gray-200 top-0 w-96 lg:block sticky h-[calc(100vh-4rem)]">
     <div class="pb-16 space-y-6">
       <div>
         <div class="flex items-start justify-between">
@@ -25,7 +25,7 @@
         <h3 class="font-medium u-text-gray-900">
           Information
         </h3>
-        <dl class="mt-2 border-t border-b border-gray-200 divide-y u-divide-gray-200">
+        <dl class="mt-2 border-t border-b u-border-gray-200 divide-y u-divide-gray-200">
           <div class="flex justify-between py-3 text-sm font-medium">
             <dt class="u-text-gray-500">
               Size
