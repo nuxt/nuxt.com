@@ -7,17 +7,17 @@ legalLinks:
   - title: Privacy
     to: /
 links:
-  - title: Solutions
+  - title: Company
     items:
-      - title: Developers
+      - title: About
         to: /
-      - title: Independants
+      - title: Careers
         to: /
-      - title: Agencies
+      - title: Customers
         to: /
-      - title: Enterprises
+      - title: Partnerships
         to: /
-      - title: Certifications
+      - title: Pricing
         to: /
   - title: Resources
     items:
@@ -31,25 +31,29 @@ links:
         to: /
       - title: Video Courses
         to: /
-  - title: Company
+  - title: Solutions
     items:
-      - title: About
+      - title: Web Framework
         to: /
-      - title: Contact
+      - title: Content Management
         to: /
-      - title: Careers
+      - title: Vue Telescope
         to: /
-      - title: Customers
+      - title: Web Platform
         to: /
-      - title: Partners
+      - title: Admin Panel
         to: /
   - title: Support
     items:
       - title: Help Center
         to: /
-      - title: Book a Session
+      - title: Certifications
         to: /
-      - title: Find an Expert
+      - title: Contact
+        to: /
+      - title: Training
+        to: /
+      - title: Experts
         to: /
 socialLinks:
   - name: fa-brands:twitter

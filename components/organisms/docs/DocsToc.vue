@@ -13,7 +13,7 @@
         <NuxtLink
           :to="{ hash: link.to }"
           class="hover:font-semibold hover:u-text-gray-900"
-          :class="[ { 'u-text-gray-900 font-semibold': route.hash === link.to }, link.level === '2' ? 'mr-4 text-xs' : 'mr-2']"
+          :class="[ { 'u-text-gray-900 font-semibold': route.hash === link.to }, link.level === '2' ? 'pr-6 text-xs' : 'mr-2']"
         >
           {{ link.label }}
         </NuxtLink>

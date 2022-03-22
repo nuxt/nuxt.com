@@ -1,7 +1,16 @@
 <template>
+  <div
+    v-if="disabled"
+    class="cursor-pointer"
+    :class="[isActive ? 'font-semibold u-text-gray-900' : 'font-medium u-text-gray-500']"
+  >
+    <slot />
+  </div>
   <ULink
+    v-else
     :to="slug"
-    :class="isActive ? 'font-semibold u-text-gray-900' : 'font-medium u-text-gray-500'"
+    class="cursor-pointer"
+    :class="[isActive ? 'font-semibold u-text-gray-900' : 'font-medium u-text-gray-500']"
   >
     <slot />
   </ULink>
@@ -12,13 +21,18 @@ const props = defineProps({
   link: {
     type: Object,
     required: true
+  },
+  disabled: {
+    type: Boolean,
+    default: false
   }
 })
 
 const route = useRoute()
 
 const isActive = computed(() => {
-  return route.path.includes(props.link.to)
+  const to = props.link.to ? props.link.to.name ? props.link.to.name.split('-')[0] : props.link.to : props.link.slug
+  return route.path.includes(to)
 })
 
 const slug = computed(() => {
