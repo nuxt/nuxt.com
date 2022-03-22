@@ -24,22 +24,22 @@
       </template>
 
       <ul v-if="teams && teams.length" role="list" class="divide-y u-divide-gray-200">
-        <li v-for="team of teams" :key="team.id" class="flex items-center justify-between gap-3 px-4 py-5 sm:px-6">
+        <li v-for="t of teams" :key="t.id" class="flex items-center justify-between gap-3 px-4 py-5 sm:px-6">
           <div class="flex items-center gap-3">
-            <UAvatar :src="team.avatar ? team.avatar.url : null" :alt="team.name" gradient />
+            <UAvatar :src="t.avatar ? t.avatar.url : null" :alt="t.name" gradient />
             <div>
               <p class="text-sm font-medium u-text-gray-900">
-                {{ team.name }}
+                {{ t.name }}
               </p>
               <p class="text-sm capitalize u-text-gray-500">
-                {{ team.role }}
+                {{ t.role }}
               </p>
             </div>
           </div>
 
           <div class="flex items-center gap-3">
-            <UButton label="View" :to="{ name: '@team-projects', params: { team: team.slug } }" variant="secondary" size="sm" />
-            <UButton label="Manage" :to="{ name: '@team-settings', params: { team: team.slug } }" variant="secondary" size="sm" />
+            <UButton label="View" :to="{ name: '@team-projects', params: { team: t.slug } }" variant="secondary" size="sm" />
+            <UButton label="Manage" :to="{ name: '@team-settings', params: { team: t.slug } }" variant="secondary" size="sm" />
 
             <UDropdown
               placement="bottom-start"
@@ -47,13 +47,13 @@
               :items="[[{
                 label: 'Copy invite link',
                 icon: 'heroicons-outline:clipboard-copy',
-                click: () => onCopyInviteLink(team)
+                click: () => onCopyInviteLink(t)
               }], [{
                 slot: 'leave-team',
                 label: 'Leave team',
                 icon: 'heroicons-outline:exclamation',
                 class: '!text-red-500',
-                click: () => onLeave(team)
+                click: () => onLeave(t)
               }]]"
             >
               <UButton icon="heroicons-outline:dots-vertical" variant="transparent" />
