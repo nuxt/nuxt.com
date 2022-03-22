@@ -20,7 +20,7 @@
               <Logo class="block w-auto h-6 sm:hidden" />
             </NuxtLink>
             <div v-else class="font-semibold u-text-gray-900">
-              {{ currentParent.label }}
+              {{ currentParent }}
             </div>
           </div>
 
@@ -39,37 +39,46 @@
             <UButton
               v-else
               icon="heroicons-outline:search"
-              variant="transparant"
+              variant="transparent"
               size="md"
             />
           </div>
         </div>
         <!-- Links -->
-        <div v-if="!isSubMenu" class="pt-4">
-          <ul
-            v-for="link in links"
-            :key="link.label"
-            class="flex justify-between px-4 py-2 font-medium text-md hover:u-text-gray-900 md:text-base"
-          >
-            <AsideItem v-if="link.children && link.children.length" :item="link" disabled />
-            <ULink v-else :to="link.to" inactive-class="font-medium u-text-gray-500" active-class="font-semibold u-text-gray-900" exact>
-              {{ link.label }}
-            </ULink>
-            <img :src="`nav/${link.icon}`">
-          </ul>
-        </div>
-        <div v-else>
-          <div v-if="currentSubNav">
+        <div class="overflow-y-auto h-[calc(100vh-64px)] pt-4">
+          <div v-if="!isSubMenu">
             <ul
-              v-for="link in currentSubNav"
+              v-for="link in links"
               :key="link.label"
               class="flex justify-between px-4 py-2 font-medium text-md hover:u-text-gray-900 md:text-base"
             >
-              <AsideItem v-if="link.children && link.children.length" :item="link" disabled />
+              <DocsAsideItem v-if="link.children && link.children.length" :item="link" disabled />
               <ULink v-else :to="link.to" inactive-class="font-medium u-text-gray-500" active-class="font-semibold u-text-gray-900" exact>
                 {{ link.label }}
               </ULink>
+              <img :src="`nav/${link.icon}`" class="self-start">
             </ul>
+          </div>
+          <div v-else>
+            <div v-if="!loading">
+              <ul
+                v-for="link in currentSubNav"
+                :key="link.label"
+                class="flex justify-between px-4 py-2 font-medium text-md hover:u-text-gray-900 md:text-base"
+              >
+                <DocsAsideItem v-if="link.children && link.children.length" :item="link" disabled />
+                <ULink v-else :to="link.to" inactive-class="font-medium u-text-gray-500" active-class="font-semibold u-text-gray-900" exact>
+                  {{ link.label }}
+                </ULink>
+              </ul>
+            </div>
+            <div v-else class="flex items-center justify-center w-full h-screen">
+              <UButton
+                variant="transparent"
+                :loading="loading"
+                size="lg"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -92,7 +101,7 @@ defineProps({
 const activeTeam = useTeam()
 
 const user = useStrapiUser() as Ref<User>
-const { visible, close, isSubMenu, currentSubNav, currentParent } = useMenu()
+const { visible, close, isSubMenu, currentSubNav, currentParent, loading } = useMenu()
 
 const route = useRoute()
 
@@ -110,6 +119,10 @@ const itemLinks = itemLink => ({ to: itemLink.to || itemLink.slug, label: itemLi
 
 const currentNav = computed(() => {
   return links.value.map(navLinks)
+})
+
+const title = computed(() => {
+  return currentParent.value
 })
 
 const links = computed(() => {

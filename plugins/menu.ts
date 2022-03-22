@@ -15,6 +15,8 @@ export default defineNuxtPlugin((ctx: any) => {
   // Menu visible reference
   const visible = ref(false)
 
+  const loading = ref(false)
+
   // first nav level
   const navLinks = navLink => ({ to: navLink.slug, label: navLink.title, children: navLink.children?.map(items) || null })
   const items = item => ({ to: item.slug, label: item.title, children: item.children?.map(itemLinks) || null })
@@ -47,10 +49,14 @@ export default defineNuxtPlugin((ctx: any) => {
   const getSubMenuNav = async (link) => {
     if (link.children && link.children.length) {
       isSubMenu.value = true
-      await getSubNav(link.slug).then((subNav) => {
-        currentParent.value = { label: subNav.title }
-        currentSubNav.value = subNav.children.map(navLinks)
-      })
+      loading.value = true
+      await getSubNav(link.slug)
+        .then((subNav) => {
+          currentParent.value = subNav.title
+          currentSubNav.value = subNav.children.map(navLinks)
+        }).finally(() => {
+          loading.value = false
+        })
     } else {
       isSubMenu.value = false
     }
@@ -92,6 +98,7 @@ export default defineNuxtPlugin((ctx: any) => {
     isSubMenu,
     currentSubNav,
     getSubNav,
-    currentParent
+    currentParent,
+    loading
   })
 })

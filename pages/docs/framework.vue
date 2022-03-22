@@ -1,7 +1,7 @@
 <template>
   <DocsPage>
     <template #header>
-      <SubNavbar class="hidden md:block">
+      <SubNavbar>
         <div class="relative grid items-center justify-between h-16 grid-cols-2 gap-3 sm:grid-cols-6">
           <div class="flex items-center justify-start gap-3">
             <p class="font-semibold">
@@ -35,11 +35,11 @@
     </template>
 
     <template #left>
-      <DocsAside :links="asideLinks" active-class="u-text-gray-900 u-bg-gray-200" class="hidden md:block" />
+      <DocsAside :links="asideLinks" active-class="u-text-gray-900 u-bg-gray-200" />
     </template>
 
     <template #right>
-      <DocsToc :toc="[]" class="hidden md:block" />
+      <DocsToc :toc="[]" />
     </template>
 
     <NuxtPage />
@@ -61,7 +61,7 @@ const path = computed(() => {
 
 const withContentBase = (url: string) => withBase(url, '/api/' + useRuntimeConfig().content.basePath)
 
-const { data: navigation } = await useAsyncData('framework-docs-top-nav', async () => {
+const { data: navigation } = await useAsyncData('docs', async () => {
   return await $fetch(withContentBase('/navigation'), {
     method: 'POST',
     body: { slug: '/docs/framework' }
