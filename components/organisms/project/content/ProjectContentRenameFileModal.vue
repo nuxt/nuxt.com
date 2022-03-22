@@ -40,15 +40,25 @@
         :custom-class="path && 'rounded-l-none'"
       />
     </div>
+    <div v-if="error" class="text-red-500 text-sm italic mt-2">
+      {{ error }}
+    </div>
     <div class="gap-3 mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-      <UButton type="submit" label="Rename" variant="blue" class="justify-center flex-shrink-0 w-full sm:w-auto" />
+      <UButton type="submit" label="Rename" variant="blue" class="justify-center flex-shrink-0 w-full sm:w-auto" :disabled="!!error" />
       <UButton type="button" label="Cancel" variant="secondary" class="justify-center flex-shrink-0 w-full mt-3 sm:w-auto sm:mt-0" @click="close" />
     </div>
   </UModal>
 </template>
 
 <script setup lang="ts">
+import type { PropType } from 'vue'
+import { GitHubFile } from '~/types'
+
 const props = defineProps({
+  computedFiles: {
+    type: Array as PropType<GitHubFile[]>,
+    required: true
+  },
   oldPath: {
     type: String,
     required: true
@@ -60,6 +70,14 @@ const emit = defineEmits(['submit', 'close'])
 const [name, ...dir] = props.oldPath.split('/').reverse()
 const path = ref(dir.reverse().join('/'))
 const newName = ref(name)
+const newPath = computed(() => [path.value, newName.value].join('/'))
+const error = computed(() => {
+  if (newPath.value !== props.oldPath && props.computedFiles.find(file => file.path === newPath.value)) {
+    return 'File already exists'
+  } else {
+    return ''
+  }
+})
 
 const isOpen = ref(true)
 
@@ -68,7 +86,7 @@ function close () {
   onClose()
 }
 function onSubmit () {
-  emit('submit', props.oldPath, [path.value, newName.value].join('/'))
+  emit('submit', props.oldPath, newPath.value)
   close()
 }
 function onClose () {
