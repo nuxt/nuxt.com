@@ -5,11 +5,11 @@
         <div ref="asideItem" class="flex items-center justify-between pr-12" @click="collapse">
           <span>{{ item.label }}</span>
         </div>
-        <ul v-if="opened" ref="asideLinks" class="flex flex-col mt-2 text-sm">
+        <ul v-if="opened" ref="asideLinks" class="flex flex-col mt-4 text-sm">
           <li
             v-for="link in item.children"
             :key="link.label"
-            class="pl-2 border-l-2 u-border-gray-300 hover:u-border-gray-900 "
+            class="relative pl-4 transition-all duration-500 ease-out border-l-2 translate u-border-gray-300"
             :class="{ 'u-border-gray-900': isSubMenu ? route.path === link.to || link.slug : route.path.includes(link.to || link.slug) }"
           >
             <DocsAsideItemLink :link="link" />

@@ -50,10 +50,17 @@
             <ul
               v-for="link in links"
               :key="link.label"
-              class="flex justify-between px-4 py-2 font-medium text-md hover:u-text-gray-900 md:text-base"
+              class="flex justify-between w-full px-4 py-2 font-medium text-md hover:u-text-gray-900 md:text-base"
             >
-              <DocsAsideItem v-if="link.children && link.children.length" :item="link" disabled />
-              <ULink v-else :to="link.to" inactive-class="font-medium u-text-gray-500" active-class="font-semibold u-text-gray-900" exact>
+              <DocsAsideItem v-if="link.children && link.children.length" :item="link" disabled class="flex-1" />
+              <ULink
+                v-else
+                :to="link.to"
+                class="flex-1"
+                inactive-class="font-medium u-text-gray-500"
+                active-class="font-semibold u-text-gray-900"
+                exact
+              >
                 {{ link.label }}
               </ULink>
               <img :src="`nav/${link.icon}`" class="self-start">
@@ -64,9 +71,9 @@
               <ul
                 v-for="link in currentSubNav"
                 :key="link.label"
-                class="flex justify-between px-4 py-2 font-medium text-md hover:u-text-gray-900 md:text-base"
+                class="flex justify-between w-full px-4 py-2 font-medium text-md hover:u-text-gray-900 md:text-base"
               >
-                <DocsAsideItem v-if="link.children && link.children.length" :item="link" disabled />
+                <DocsAsideItem v-if="link.children && link.children.length" :item="link" disabled class="w-full" />
                 <ULink v-else :to="link.to" inactive-class="font-medium u-text-gray-500" active-class="font-semibold u-text-gray-900" exact>
                   {{ link.label }}
                 </ULink>

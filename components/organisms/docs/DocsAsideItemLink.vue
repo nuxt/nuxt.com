@@ -1,7 +1,7 @@
 <template>
-  <div v-if="link.children" @click="!isSubMenu ? getSubMenuNav(link) : () => {}">
+  <div v-if="link.children && link.children.length" ref="hoverLink" @click="!isSubMenu && getSubMenuNav(link)">
     <span
-      class="inline-block py-1 font-medium u-text-gray-500 hover:u-text-gray-900"
+      class="inline-block py-2 font-medium u-text-gray-500 hover:u-text-gray-900"
       :class="{ 'font-semibold u-text-gray-900': route.path.includes(props.link.to || props.link.slug) }"
     >
       {{ link.title || link.label }}
@@ -16,7 +16,7 @@
     inactive-class="font-medium"
     :exact="!link.children"
   >
-    <span class="inline-block py-1">
+    <span class="inline-block py-2">
       {{ link.title || link.label }}
     </span>
     <slot />
@@ -31,10 +31,12 @@ const props = defineProps({
   }
 })
 
+const border = ref(null)
+const hoverLink = ref(null)
+
 const route = useRoute()
 
 const emit = defineEmits(['collapse'])
 
 const { visible, close, getSubMenuNav } = useMenu()
-
 </script>
