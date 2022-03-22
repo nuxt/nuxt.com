@@ -252,8 +252,8 @@ export const useProjectFiles = (project: Project, root: string) => {
   // Computed
 
   const computedFiles = computed(() => {
-    const { additions, deletions } = draft.value || {}
-
+    const additions = draft.value?.additions.map(a => ({ ...a })) || []
+    const deletions = draft.value?.deletions.map(a => ({ ...a })) || []
     const githubFiles = files.value.map(file => ({ ...file }))
 
     for (const addition of additions) {
