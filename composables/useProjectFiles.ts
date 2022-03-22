@@ -127,12 +127,11 @@ export const useProjectFiles = (project: Project, root: string) => {
         file.value = null
         init()
       }
+    } else {
+      // No new selection, fetch new content
+      // FIXME: hacky update to trigger any watchers on `file`
+      file.value = { ...file.value }
     }
-    // TODO
-    // else {
-    //   // No new selection, fetch new content
-    //   await fetchContent()
-    // }
   }
 
   async function _delete (path: string) {
