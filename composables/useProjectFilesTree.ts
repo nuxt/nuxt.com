@@ -1,4 +1,4 @@
-import type { GitHubFile, GitHubDraft, Project } from '~/types'
+import type { GitHubFile, Project } from '~/types'
 import { mapTree, findTree, renamePath, getPathDir } from '~/utils/tree'
 
 const openedDirs = reactive({})

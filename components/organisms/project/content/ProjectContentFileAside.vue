@@ -3,10 +3,21 @@
     <div class="pb-16 space-y-6">
       <div>
         <div class="flex items-start justify-between">
-          <div>
+          <div class="min-w-0">
             <h2 class="text-lg font-medium u-text-gray-900">
               <span class="sr-only">Details for </span>{{ name }}
             </h2>
+            <p class="flex items-center gap-1.5 text-sm min-w-0 u-text-gray-400 truncate">
+              <span class="truncate">{{ file.path }}</span>
+              <UButton
+                icon="heroicons-outline:external-link"
+                target="_blank"
+                :to="`https://github.com/${project.repository.owner}/${project.repository.name}/tree/${branch.name}/${file.path}`"
+                variant="transparent"
+                size="xxs"
+                class="!p-0"
+              />
+            </p>
           </div>
         </div>
       </div>

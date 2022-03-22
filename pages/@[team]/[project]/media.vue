@@ -1,52 +1,7 @@
 <template>
   <ProjectPage class="items-stretch">
     <template #header>
-      <div class="flex items-center justify-between flex-1 min-w-0 gap-3">
-        <div class="flex items-center min-w-0 gap-3">
-          <UButton
-            v-if="branch"
-            icon="mdi:source-branch"
-            :label="branch.name"
-            variant="secondary"
-            size="xs"
-            truncate
-            @click="modal = true"
-          />
-
-          <p v-if="file" class="flex items-center gap-1.5 text-sm min-w-0 u-text-gray-500">
-            <span class="truncate">{{ file.path }}</span>
-            <UButton
-              icon="heroicons-outline:external-link"
-              target="_blank"
-              :to="`https://github.com/${project.repository.owner}/${project.repository.name}/tree/${branch.name}/${file.path}`"
-              variant="transparent"
-              size="xxs"
-              class="!p-0"
-            />
-          </p>
-        </div>
-
-        <div class="flex items-center gap-3">
-          <UButton
-            v-if="isDraft"
-            label="Save"
-            :loading="loading"
-            size="sm"
-            icon="heroicons-outline:check"
-            trailing
-            @click="commit"
-          />
-          <UButton
-            v-else-if="branch.name !== project.repository.default_branch"
-            label="Publish"
-            :loading="loading"
-            size="sm"
-            icon="heroicons-outline:cloud-upload"
-            trailing
-            @click="openPublishModal"
-          />
-        </div>
-      </div>
+      <ProjectHeader @openModal="modal = true" />
     </template>
 
     <div class="flex items-stretch flex-1 min-h-0">
@@ -103,7 +58,7 @@ provide('root', root)
 
 const { container: modalContainer } = useModal()
 const { branch } = useProjectBranches(props.project)
-const { isDraft, file, fetch: fetchFiles, refresh: refreshFiles, commit, loading, openPublishModal } = useProjectFiles(props.project, root)
+const { fetch: fetchFiles, refresh: refreshFiles } = useProjectFiles(props.project, root)
 
 const modal = ref(false)
 

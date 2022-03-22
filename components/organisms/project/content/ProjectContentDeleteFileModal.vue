@@ -19,7 +19,7 @@
           Delete file
         </h3>
         <div class="mt-2">
-          <p class="text-sm break-all u-text-gray-500">
+          <p class="text-sm break-words u-text-gray-500">
             Are you sure you want to delete “{{ name }}” from your draft?
           </p>
         </div>
