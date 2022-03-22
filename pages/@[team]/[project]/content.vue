@@ -53,6 +53,7 @@ const root = 'content'
 provide('project', props.project)
 provide('root', root)
 
+const router = useRouter()
 const colorMode = useColorMode()
 const client = useStrapiClient()
 const { parseFrontMatter, stringifyFrontMatter } = useMarkdown()
@@ -68,7 +69,11 @@ const parsedMatter: Ref<object> = ref({})
 
 // Data
 
-await fetchFiles()
+try {
+  await fetchFiles()
+} catch (e) {
+  router.push({ name: '@team-project' })
+}
 
 // Watch
 

@@ -56,6 +56,7 @@ const root = 'public'
 provide('project', props.project)
 provide('root', root)
 
+const router = useRouter()
 const { container: modalContainer } = useModal()
 const { branch } = useProjectBranches(props.project)
 const { file, fetch: fetchFiles, refresh: refreshFiles } = useProjectFiles(props.project, root)
@@ -64,7 +65,11 @@ const modal = ref(false)
 
 // Http
 
-await fetchFiles()
+try {
+  await fetchFiles()
+} catch (e) {
+  router.push({ name: '@team-project' })
+}
 
 // Watch
 
