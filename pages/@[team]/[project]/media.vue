@@ -30,7 +30,7 @@
       <ProjectMediaFileAside v-if="file" />
     </div>
 
-    <ProjectCommandModal v-model="modal" />
+    <ProjectModalCommand v-model="modal" />
 
     <div ref="modalContainer" />
   </ProjectPage>
