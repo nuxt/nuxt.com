@@ -23,7 +23,7 @@
       </div>
       <UFormGroup name="title" label="Title" label-class="font-medium u-text-gray-900" container-class="mt-2">
         <template #hint>
-          <UButton size="xxs" variant="transparent-hover" icon="heroicons-outline:pencil" />
+          <UButton size="xxs" variant="transparent" icon="heroicons-outline:pencil" />
         </template>
 
         <p class="text-sm text-gray-500 italic">
@@ -34,7 +34,7 @@
       </UFormGroup>
       <UFormGroup name="description" label="Description" label-class="font-medium u-text-gray-900" container-class="mt-2">
         <template #hint>
-          <UButton size="xxs" variant="transparent-hover" icon="heroicons-outline:pencil" />
+          <UButton size="xxs" variant="transparent" icon="heroicons-outline:pencil" />
         </template>
 
         <p class="text-sm text-gray-500 italic">

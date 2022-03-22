@@ -23,7 +23,7 @@
         <DocusEditor :model-value="parsedContent" :theme="theme" class="flex flex-col flex-1" @update:model-value="updateContent" />
       </div>
 
-      <ProjectContentFileAside :model-value="parsedMatter" @update:model-value="updateMatter" />
+      <ProjectContentFileAside v-if="file" :model-value="parsedMatter" @update:model-value="updateMatter" />
     </div>
 
     <ProjectCommandModal v-model="modal" />

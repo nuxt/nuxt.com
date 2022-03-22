@@ -27,7 +27,7 @@
         </div>
       </div>
 
-      <ProjectMediaFileAside />
+      <ProjectMediaFileAside v-if="file" />
     </div>
 
     <ProjectCommandModal v-model="modal" />
@@ -58,7 +58,7 @@ provide('root', root)
 
 const { container: modalContainer } = useModal()
 const { branch } = useProjectBranches(props.project)
-const { fetch: fetchFiles, refresh: refreshFiles } = useProjectFiles(props.project, root)
+const { file, fetch: fetchFiles, refresh: refreshFiles } = useProjectFiles(props.project, root)
 
 const modal = ref(false)
 
