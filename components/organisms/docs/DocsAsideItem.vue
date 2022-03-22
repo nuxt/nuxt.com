@@ -1,16 +1,16 @@
 <template>
   <li ref="collapsible" class="relative overflow-hidden">
     <template v-if="item.children && item.children.length">
-      <DocsLink :link="item">
+      <DocsLink :link="item" disabled>
         <div ref="asideItem" class="flex items-center justify-between pr-12" @click="collapse">
           <span>{{ item.label }}</span>
         </div>
-        <ul v-if="opened" ref="asideLinks" class="flex flex-col mt-2 text-sm">
+        <ul v-if="opened" ref="asideLinks" class="flex flex-col mt-4 text-sm">
           <li
             v-for="link in item.children"
             :key="link.label"
-            class="pl-2 border-l-2 u-border-gray-300 hover:u-border-gray-900 "
-            :class="{ 'u-border-gray-900': route.path === link.to }"
+            class="relative pl-4 transition-all duration-500 ease-out border-l-2 translate u-border-gray-300"
+            :class="{ 'u-border-gray-900': isSubMenu ? route.path === link.to || link.slug : route.path.includes(link.to || link.slug) }"
           >
             <DocsAsideItemLink :link="link" />
           </li>
@@ -23,16 +23,22 @@
 </template>
 
 <script setup lang="ts">
-defineProps({
+const props = defineProps({
   item: {
     type: Object,
     required: true
+  },
+  disabled: {
+    type: Boolean,
+    dafault: false
   }
 })
 
 const route = useRoute()
 
 const emit = defineEmits(['collapse'])
+
+const { visible, isSubMenu } = useMenu()
 
 const collapsible = ref(null)
 const asideItem = ref<HTMLElement | null>(null)

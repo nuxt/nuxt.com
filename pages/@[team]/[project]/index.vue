@@ -31,7 +31,7 @@
         </div>
       </div>
 
-      <UCard class="mt-8" />
+      <UCard class="mt-8" padded />
     </div>
   </ProjectPage>
 </template>

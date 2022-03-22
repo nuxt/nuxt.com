@@ -57,7 +57,7 @@
       <div class="flex flex-col gap-3 pt-6 sm:flex-row sm:items-center sm:justify-between">
         <div class="flex items-center gap-3">
           <ThemeSelect name="theme" class="order-1 sm:order-none" size="sm" />
-          <span class="text-sm u-text-gray-400">© 2022 Nuxt</span>
+          <span class="text-sm u-text-gray-400">Copyright © 2022 Nuxt</span>
         </div>
 
         <ul class="flex text-sm gap-x-6">
