@@ -33,8 +33,8 @@
       </div>
     </UCard>
 
-    <ProjectSettingsTransferModal v-model="transferModal" @submit="transferProject()" @close="transferModal = false" />
-    <ProjectSettingsDeleteModal v-model="deleteModal" @submit="deleteProject()" @close="deleteModal = false" />
+    <ProjectSettingsTransferModal v-model="transferModal" @submit="transferProject" />
+    <ProjectSettingsDeleteModal v-model="deleteModal" @submit="deleteProject" />
   </div>
 </template>
 

@@ -1,17 +1,11 @@
 <template>
-  <UModal v-model="isOpen" appear @close="onClose" @submit.prevent="onSubmit">
+  <UModal v-model="isOpen" @submit.prevent="onSubmit">
     <div class="sm:flex sm:items-start">
       <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-gray-900 dark:bg-white sm:mx-0 sm:h-10 sm:w-10">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
+        <UIcon
+          name="heroicons-outline:switch-horizontal"
           class="text-white dark:text-gray-900 h-6 w-6"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          stroke-width="2"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-        </svg>
+        />
       </div>
 
       <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
@@ -27,21 +21,31 @@
     </div>
     <div class="gap-3 mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
       <UButton type="submit" label="Transfer" variant="primary" class="justify-center flex-shrink-0 w-full sm:w-auto" />
-      <UButton type="button" label="Cancel" variant="secondary" class="justify-center flex-shrink-0 w-full mt-3 sm:w-auto sm:mt-0" @click="close" />
+      <UButton type="button" label="Cancel" variant="secondary" class="justify-center flex-shrink-0 w-full mt-3 sm:w-auto sm:mt-0" @click="isOpen = false" />
     </div>
   </UModal>
 </template>
 
 <script setup lang="ts">
-const emit = defineEmits(['submit', 'close'])
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    default: false
+  }
+})
+const emit = defineEmits(['submit', 'update:modelValue'])
 
-const isOpen = ref(true)
+const isOpen = computed({
+  get () {
+    return props.modelValue
+  },
+  set (value) {
+    emit('update:modelValue', value)
+  }
+})
 
-function close () {
-  emit('close')
-}
 function onSubmit () {
   emit('submit')
-  close()
+  isOpen.value = false
 }
 </script>
