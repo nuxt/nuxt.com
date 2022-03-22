@@ -1,6 +1,6 @@
 <template>
   <ProjectPage>
-    <div class="flex-1">
+    <div class="flex-1 p-4 sm:p-6 lg:p-8">
       <div class="lg:flex lg:items-center lg:justify-between">
         <div class="flex-1 min-w-0">
           <h2 class="text-2xl font-bold leading-7 u-text-gray-900 sm:text-3xl sm:truncate">
@@ -8,7 +8,7 @@
           </h2>
           <div class="flex flex-col mt-1 sm:flex-row sm:flex-wrap sm:mt-0 sm:space-x-6">
             <div class="flex items-center mt-2 text-sm u-text-gray-500">
-              <UIcon name="heroicons-outline:clock" class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" />
+              <UIcon name="heroicons-outline:clock" class="flex-shrink-0 mr-1.5 h-5 w-5 u-text-gray-400" aria-hidden="true" />
               <time>
                 Updated {{ useTimeAgo(new Date(project.updatedAt)).value }}
               </time>

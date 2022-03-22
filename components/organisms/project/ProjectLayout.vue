@@ -11,7 +11,7 @@
           leave-from="opacity-100"
           leave-to="opacity-0"
         >
-          <DialogOverlay class="fixed inset-0 bg-gray-600 bg-opacity-75" />
+          <DialogOverlay class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
         </TransitionChild>
         <TransitionChild
           as="template"
@@ -53,10 +53,10 @@
               <div class="flex items-center">
                 <UAvatar :src="user.avatar" :alt="user.username" />
                 <div class="ml-3">
-                  <p class="text-base font-medium text-gray-700 group-hover:text-gray-900">
+                  <p class="text-base font-medium u-text-gray-700 group-hover:u-text-gray-900">
                     {{ user.name }}
                   </p>
-                  <p class="text-sm font-medium text-gray-500 group-hover:text-gray-700">
+                  <p class="text-sm font-medium u-text-gray-500 group-hover:u-text-gray-700">
                     {{ user.username }}
                   </p>
                 </div>

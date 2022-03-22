@@ -20,7 +20,7 @@
           Create branch
         </h3>
         <div class="mt-2">
-          <p class="text-sm break-all u-text-gray-500">
+          <p class="text-sm break-words u-text-gray-500">
             {{ mergeDraft ? 'Your draft will be transferred to the new branch.' : 'This branch will be added to your GitHub repository.' }}
           </p>
         </div>
@@ -65,7 +65,7 @@ function close () {
   onClose()
 }
 function onSubmit () {
-  emit('submit', name.value, props.mergeDraft)
+  emit('submit', name.value)
   close()
 }
 function onClose () {
