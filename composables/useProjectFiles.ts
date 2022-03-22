@@ -202,6 +202,7 @@ export const useProjectFiles = (project: Project, root: string) => {
 
   function openCreateModal (path: string) {
     openModal(ProjectContentCreateFileModal, {
+      computedFiles: computedFiles.value,
       path,
       onSubmit: create
     })
@@ -209,6 +210,7 @@ export const useProjectFiles = (project: Project, root: string) => {
 
   function openRenameModal (oldPath: string) {
     openModal(ProjectContentRenameFileModal, {
+      computedFiles: computedFiles.value,
       oldPath,
       onSubmit: rename
     })

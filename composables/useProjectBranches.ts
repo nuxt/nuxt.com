@@ -52,6 +52,7 @@ export const useProjectBranches = (project: Project) => {
     openModal(ProjectContentCreateBranchModal, {
       name,
       mergeDraft,
+      branches: branches.value,
       onSubmit: async (name: string) => {
         await create(name, mergeDraft)
 
