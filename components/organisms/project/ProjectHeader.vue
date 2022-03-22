@@ -13,9 +13,9 @@
 
     <div class="flex items-center gap-3">
       <UButton variant="secondary" size="sm" @click="$emit('openModal')">
-        <UIcon name="heroicons-outline:search" class="w-4 h-4 u-text-gray-400 mr-1.5" />
-        <span class="flex-auto mr-3 u-text-gray-400">Search...</span>
-        <kbd class="font-sans font-semibold u-text-gray-500 text-xs"><abbr title="Command" class="no-underline">⌘</abbr> K</kbd>
+        <UIcon name="heroicons-outline:search" class="w-4 h-4 u-text-gray-400 mr-1.5 flex-shrink-0" />
+        <span class="flex-auto mr-3 u-text-gray-400 truncate">Search...</span>
+        <kbd class="font-sans font-semibold u-text-gray-500 text-xs flex-shrink-0"><abbr title="Command" class="no-underline">⌘</abbr> K</kbd>
       </UButton>
 
       <UButton
