@@ -26,7 +26,7 @@
       <ProjectContentFileAside v-if="file" :model-value="parsedMatter" @update:model-value="updateMatter" />
     </div>
 
-    <ProjectCommandModal v-model="modal" />
+    <ProjectModalCommand v-model="modal" />
 
     <div ref="modalContainer" />
   </ProjectPage>
