@@ -40,15 +40,23 @@
         :custom-class="path && 'rounded-l-none'"
       />
     </div>
+    <span v-if="error" class="text-red-500 text-sm italic mt-2">{{ error }}</span>
     <div class="gap-3 mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-      <UButton type="submit" label="Create" variant="green" class="justify-center flex-shrink-0 w-full sm:w-auto" />
+      <UButton type="submit" label="Create" variant="green" class="justify-center flex-shrink-0 w-full sm:w-auto" :disabled="!!error" />
       <UButton type="button" label="Cancel" variant="secondary" class="justify-center flex-shrink-0 w-full mt-3 sm:w-auto sm:mt-0" @click="close" />
     </div>
   </UModal>
 </template>
 
 <script setup lang="ts">
+import type { PropType } from 'vue'
+import { GitHubFile } from '~/types'
+
 const props = defineProps({
+  computedFiles: {
+    type: Array as PropType<GitHubFile[]>,
+    required: true
+  },
   path: {
     type: String,
     default: ''
@@ -58,6 +66,14 @@ const props = defineProps({
 const emit = defineEmits(['submit', 'close'])
 
 const name = ref('')
+const newPath = computed(() => [props.path, name.value].join('/'))
+const error = computed(() => {
+  if (props.computedFiles.find(file => file.path === newPath.value)) {
+    return 'File already exists'
+  } else {
+    return ''
+  }
+})
 
 const isOpen = ref(true)
 
@@ -66,7 +82,7 @@ function close () {
   onClose()
 }
 function onSubmit () {
-  emit('submit', [props.path, name.value].join('/'))
+  emit('submit', newPath.value)
   close()
 }
 function onClose () {
