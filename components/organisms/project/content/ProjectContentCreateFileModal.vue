@@ -40,7 +40,9 @@
         :custom-class="path && 'rounded-l-none'"
       />
     </div>
-    <span v-if="error" class="text-red-500 text-sm italic mt-2">{{ error }}</span>
+    <div v-if="error" class="text-red-500 text-sm italic mt-2">
+      {{ error }}
+    </div>
     <div class="gap-3 mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
       <UButton type="submit" label="Create" variant="green" class="justify-center flex-shrink-0 w-full sm:w-auto" :disabled="!!error" />
       <UButton type="button" label="Cancel" variant="secondary" class="justify-center flex-shrink-0 w-full mt-3 sm:w-auto sm:mt-0" @click="close" />
