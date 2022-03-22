@@ -114,7 +114,7 @@ const form = computed({
   }
 })
 
-const name = computed(() => getPathName(file.value?.path || ''))
+const name = computed(() => getPathName(file.value.path || ''))
 
 const history = computed(() => {
   return historyData.value?.repository.ref.target.history.nodes.map(commit => ({
