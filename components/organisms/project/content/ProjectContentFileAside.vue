@@ -1,5 +1,5 @@
 <template>
-  <aside class="hidden p-8 overflow-y-auto bg-white border-l border-gray-200 top-0 w-96 lg:block sticky h-[calc(100vh-4rem)]">
+  <aside class="hidden p-8 overflow-y-auto u-bg-white border-l u-border-gray-200 top-0 w-96 lg:block sticky h-[calc(100vh-4rem)]">
     <div class="pb-16 space-y-6">
       <div>
         <div class="flex items-start justify-between">
@@ -26,7 +26,7 @@
           <UButton size="xxs" variant="transparent" icon="heroicons-outline:pencil" />
         </template>
 
-        <p class="text-sm text-gray-500 italic">
+        <p class="text-sm u-text-gray-500 italic">
           {{ form.title || 'Add a title...' }}
         </p>
 
@@ -47,7 +47,7 @@
         <h3 class="font-medium u-text-gray-900">
           History
         </h3>
-        <ul role="list" class="mt-2 border-t border-b border-gray-200 divide-y divide-gray-200">
+        <ul role="list" class="mt-2 border-t border-b u-border-gray-200 divide-y u-divide-gray-200">
           <div v-if="pending" class="flex justify-center py-3">
             <UIcon name="heroicons-outline:refresh" class="animate-spin h-5 w-5" />
           </div>
