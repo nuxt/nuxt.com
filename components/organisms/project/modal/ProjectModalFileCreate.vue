@@ -4,35 +4,41 @@
       <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 dark:bg-green-500 sm:mx-0 sm:h-10 sm:w-10">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          xmlns:xlink="http://www.w3.org/1999/xlink"
-          aria-hidden="true"
-          role="img"
           class="text-green-500 dark:text-white h-6 w-6"
-          preserveAspectRatio="xMidYMid meet"
+          fill="none"
           viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
         >
-          <path fill="currentColor" d="M13 14c-3.36 0-4.46 1.35-4.82 2.24C9.25 16.7 10 17.76 10 19a3 3 0 0 1-3 3a3 3 0 0 1-3-3c0-1.31.83-2.42 2-2.83V7.83A2.99 2.99 0 0 1 4 5a3 3 0 0 1 3-3a3 3 0 0 1 3 3c0 1.31-.83 2.42-2 2.83v5.29c.88-.65 2.16-1.12 4-1.12c2.67 0 3.56-1.34 3.85-2.23A3.006 3.006 0 0 1 14 7a3 3 0 0 1 3-3a3 3 0 0 1 3 3c0 1.34-.88 2.5-2.09 2.86C17.65 11.29 16.68 14 13 14m-6 4a1 1 0 0 0-1 1a1 1 0 0 0 1 1a1 1 0 0 0 1-1a1 1 0 0 0-1-1M7 4a1 1 0 0 0-1 1a1 1 0 0 0 1 1a1 1 0 0 0 1-1a1 1 0 0 0-1-1m10 2a1 1 0 0 0-1 1a1 1 0 0 0 1 1a1 1 0 0 0 1-1a1 1 0 0 0-1-1Z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
         </svg>
       </div>
 
       <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
         <h3 class="text-lg font-medium leading-6 u-text-gray-900">
-          Create branch
+          Create file
         </h3>
         <div class="mt-2">
           <p class="text-sm break-words u-text-gray-500">
-            {{ mergeDraft ? 'Your draft will be transferred to the new branch.' : 'This branch will be added to your GitHub repository.' }}
+            This file will be added to your draft.
           </p>
         </div>
       </div>
     </div>
     <div class="flex items-center w-full mt-5 sm:mt-4">
+      <span v-if="path" class="flex-shrink-0 max-w-[200px] truncate px-2 py-2 text-sm border border-r-0 u-bg-gray-50 u-border-gray-300 rounded-l-md u-text-gray-500">
+        {{ path }}/
+      </span>
+
       <UInput
         v-model="name"
         name="name"
-        placeholder="feat/my-feature"
+        placeholder="faq/index.md"
         required
+        autofocus
+        autocomplete="off"
         class="w-full"
+        :custom-class="path && 'rounded-l-none'"
       />
     </div>
     <div v-if="error" class="text-red-500 text-sm italic mt-2">
@@ -47,29 +53,26 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import { GitHubBranch } from '~/types'
+import { GitHubFile } from '~/types'
 
 const props = defineProps({
-  branches: {
-    type: Array as PropType<GitHubBranch[]>,
-    default: () => []
+  computedFiles: {
+    type: Array as PropType<GitHubFile[]>,
+    required: true
   },
-  name: {
+  path: {
     type: String,
     default: ''
-  },
-  mergeDraft: {
-    type: Boolean,
-    default: false
   }
 })
 
 const emit = defineEmits(['submit', 'close'])
 
-const name = ref(props.name)
+const name = ref('')
+const newPath = computed(() => [props.path, name.value].join('/'))
 const error = computed(() => {
-  if (props.branches.find(b => b.name === name.value)) {
-    return 'Branch already exists'
+  if (props.computedFiles.find(file => file.path === newPath.value)) {
+    return 'File already exists'
   } else {
     return ''
   }
@@ -82,7 +85,7 @@ function close () {
   onClose()
 }
 function onSubmit () {
-  emit('submit', name.value)
+  emit('submit', newPath.value)
   close()
 }
 function onClose () {

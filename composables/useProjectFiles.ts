@@ -1,10 +1,10 @@
 import type { Ref } from 'vue'
 import type { GitHubFile, GitHubDraft, Project } from '~/types'
-import ProjectContentCreateFileModal from '~/components/organisms/project/content/ProjectContentCreateFileModal.vue'
-import ProjectContentRenameFileModal from '~/components/organisms/project/content/ProjectContentRenameFileModal.vue'
-import ProjectContentDeleteFileModal from '~/components/organisms/project/content/ProjectContentDeleteFileModal.vue'
-import ProjectContentRevertFileModal from '~/components/organisms/project/content/ProjectContentRevertFileModal.vue'
-import ProjectContentPublishModal from '~/components/organisms/project/content/ProjectContentPublishModal.vue'
+import ProjectModalFileCreate from '~/components/organisms/project/modal/ProjectModalFileCreate.vue'
+import ProjectModalFileRename from '~/components/organisms/project/modal/ProjectModalFileRename.vue'
+import ProjectModalFileDelete from '~/components/organisms/project/modal/ProjectModalFileDelete.vue'
+import ProjectModalFileRevert from '~/components/organisms/project/modal/ProjectModalFileRevert.vue'
+import ProjectModalPublish from '~/components/organisms/project/modal/ProjectModalPublish.vue'
 
 export const useProjectFiles = (project: Project, root: string) => {
   const { open: openModal } = useModal()
@@ -201,7 +201,7 @@ export const useProjectFiles = (project: Project, root: string) => {
   // Modals
 
   function openCreateModal (path: string) {
-    openModal(ProjectContentCreateFileModal, {
+    openModal(ProjectModalFileCreate, {
       computedFiles: computedFiles.value,
       path,
       onSubmit: create
@@ -209,7 +209,7 @@ export const useProjectFiles = (project: Project, root: string) => {
   }
 
   function openRenameModal (oldPath: string) {
-    openModal(ProjectContentRenameFileModal, {
+    openModal(ProjectModalFileRename, {
       computedFiles: computedFiles.value,
       oldPath,
       onSubmit: rename
@@ -217,21 +217,21 @@ export const useProjectFiles = (project: Project, root: string) => {
   }
 
   function openDeleteModal (path: string) {
-    openModal(ProjectContentDeleteFileModal, {
+    openModal(ProjectModalFileDelete, {
       path,
       onSubmit: _delete
     })
   }
 
   function openRevertModal (path: string) {
-    openModal(ProjectContentRevertFileModal, {
+    openModal(ProjectModalFileRevert, {
       path,
       onSubmit: revert
     })
   }
 
   function openPublishModal () {
-    openModal(ProjectContentPublishModal, {
+    openModal(ProjectModalPublish, {
       project,
       branch: branch.value,
       onSubmit: publish

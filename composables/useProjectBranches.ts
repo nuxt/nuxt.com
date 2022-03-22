@@ -1,6 +1,6 @@
 import type { Ref } from 'vue'
 import type { GitHubBranch, Project } from '~/types'
-import ProjectContentCreateBranchModal from '~/components/organisms/project/content/ProjectContentCreateBranchModal.vue'
+import ProjectModalBranchCreate from '~/components/organisms/project/modal/ProjectModalBranchCreate.vue'
 
 export const useProjectBranches = (project: Project) => {
   const { open: openModal } = useModal()
@@ -49,7 +49,7 @@ export const useProjectBranches = (project: Project) => {
   // Modals
 
   function openCreateModal (name: string, mergeDraft: boolean, onSuccess?: () => void) {
-    openModal(ProjectContentCreateBranchModal, {
+    openModal(ProjectModalBranchCreate, {
       name,
       mergeDraft,
       branches: branches.value,

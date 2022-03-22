@@ -36,6 +36,7 @@
         placeholder="faq/index.md"
         required
         autofocus
+        autocomplete="off"
         class="w-full"
         :custom-class="path && 'rounded-l-none'"
       />
