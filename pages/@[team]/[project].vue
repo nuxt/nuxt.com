@@ -39,5 +39,9 @@ if (error.value) {
 
 const { fetch: fetchBranches } = useProjectBranches(project.value)
 
-await fetchBranches()
+try {
+  await fetchBranches()
+} catch (e) {
+  router.push({ name: '@team-projects', params: { team: props.team ? props.team.slug : user.value.username } })
+}
 </script>
