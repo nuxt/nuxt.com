@@ -61,7 +61,7 @@ const path = computed(() => {
 
 const withContentBase = (url: string) => withBase(url, '/api/' + useRuntimeConfig().content.basePath)
 
-const { data: navigation } = await useAsyncData('framework-docs-top-nav', async () => {
+const { data: navigation } = await useAsyncData('docs', async () => {
   return await $fetch(withContentBase('/navigation'), {
     method: 'POST',
     body: { slug: '/docs/framework' }

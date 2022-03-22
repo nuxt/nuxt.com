@@ -1,21 +1,29 @@
 <template>
   <header class="bg-white dark:bg-black">
-    <UContainer padded>
-      <div class="grid items-center h-20 grid-cols-2 gap-3 sm:grid-cols-6">
-        <div class="flex justify-start">
+    <NavbarMenu :links="links" />
+    <UContainer padded class="relative">
+      <div class="grid items-center h-16 grid-cols-6 gap-3 md:h-20 md:justify-center">
+        <UButton
+          variant="transparent"
+          class="-ml-2 md:hidden"
+          icon="heroicons-solid:menu"
+          @click="toggle()"
+        />
+
+        <div class="flex justify-center col-span-4 md:col-span-1 md:justify-start">
           <NuxtLink to="/" class="block u-text-black">
             <LogoFull class="hidden w-auto h-8 sm:block" />
             <Logo class="block w-auto h-6 sm:hidden" />
           </NuxtLink>
         </div>
 
-        <div class="flex justify-center col-span-4 gap-x-10">
+        <div v-if="!visible" class="justify-center hidden md:col-span-4 gap-x-10 md:flex">
           <ULink
             v-for="link in links"
             :key="link.label"
             :to="link.to"
             :exact="link.exact"
-            class="font-medium hover:u-text-gray-900"
+            class="text-sm font-medium hover:u-text-gray-900 md:text-base"
             active-class="font-semibold u-text-gray-900"
             inactive-class="u-text-gray-500"
           >
@@ -36,6 +44,11 @@
         </div>
       </div>
     </UContainer>
+    <div
+      class="fixed inset-x-0 top-0 z-10 h-full transition-opacity duration-300 ease-linear backdrop-blur-md"
+      :class="[visible ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none']"
+      @click="toggle"
+    />
   </header>
 </template>
 
@@ -47,6 +60,7 @@ const user = useStrapiUser() as Ref<User>
 const { getProviderAuthenticationUrl } = useStrapiAuth()
 const route = useRoute()
 const activeTeam = useTeam()
+const { visible, toggle } = useMenu()
 
 const links = computed(() => {
   const team = activeTeam.value || route.params.team || user.value?.username
@@ -54,23 +68,28 @@ const links = computed(() => {
   return [{
     label: 'Docs',
     to: { name: 'docs-framework' },
-    exact: false
+    exact: false,
+    icon: 'docs.svg'
   }, {
     label: 'Integrations',
     to: { name: 'integrations' },
-    exact: true
+    exact: true,
+    icon: 'integrations.svg'
   }, {
     label: 'Templates',
     to: { name: 'templates' },
-    exact: true
+    exact: true,
+    icon: 'templates.svg'
   }, {
     label: 'Projects',
     to: team ? { name: '@team-projects', params: { team } } : { name: 'projects' },
-    exact: true
+    exact: true,
+    icon: 'projects.svg'
   }, {
     label: 'Community',
     to: team ? { name: '@team', params: { team } } : { name: 'community' },
-    exact: true
+    exact: true,
+    icon: 'community.svg'
   }]
 })
 
