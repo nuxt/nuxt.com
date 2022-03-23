@@ -4,7 +4,7 @@
       <UVerticalNavigation :links="links" v-bind="verticalNavigationProps" />
     </template>
 
-    <NuxtPage :team="team" :project="project" class="p-4 sm:p-6 lg:p-8 overflow-y-auto" />
+    <NuxtPage :team="team" :project="project" class="flex-1 p-4 sm:p-6 overflow-y-auto" />
   </ProjectPage>
 </template>
 

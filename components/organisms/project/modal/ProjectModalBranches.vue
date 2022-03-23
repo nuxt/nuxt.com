@@ -7,20 +7,6 @@
       </div>
 
       <ComboboxOptions static class="relative flex-1 overflow-y-auto divide-y u-divide-gray-100 scroll-py-2">
-        <li class="p-2">
-          <h2 class="px-3 my-2 text-xs font-semibold u-text-gray-900">
-            Actions
-          </h2>
-
-          <ul class="text-sm u-text-gray-700">
-            <ComboboxOption v-for="(a, index) in actions" :key="index" v-slot="{ active }" :value="a" as="template">
-              <li :class="['flex cursor-pointer select-none items-center rounded-md px-3 py-2', active && 'u-bg-gray-100 u-text-gray-900']">
-                <UIcon :name="a.icon" :class="['h-5 w-5 flex-none u-text-gray-400', active && 'u-text-gray-900', a.iconClass]" aria-hidden="true" />
-                <span class="flex-auto ml-3 truncate">{{ a.label }}</span>
-              </li>
-            </ComboboxOption>
-          </ul>
-        </li>
         <li v-if="filteredBranches.length" class="p-2">
           <h2 class="px-3 my-2 text-xs font-semibold u-text-gray-900">
             Branches
@@ -36,20 +22,12 @@
             </ComboboxOption>
           </ul>
         </li>
-        <li v-if="query && filteredFiles.length" class="p-2">
-          <h2 class="px-3 my-2 text-xs font-semibold u-text-gray-900">
-            Files
-          </h2>
-
+        <li class="p-2">
           <ul class="text-sm u-text-gray-700">
-            <ComboboxOption v-for="f of filteredFiles" :key="f.path" v-slot="{ active }" :value="f" as="template">
+            <ComboboxOption v-for="a in actions" :key="a.key" v-slot="{ active }" :value="a" as="template">
               <li :class="['flex cursor-pointer select-none items-center rounded-md px-3 py-2', active && 'u-bg-gray-100 u-text-gray-900']">
-                <UIcon :name="f.icon" :class="['h-5 w-5 flex-none', f.iconColor]" aria-hidden="true" />
-                <p class="flex-auto ml-3 truncate u-text-gray-400">
-                  <span class="u-text-gray-700">{{ f.name }}</span>
-                  <span class="ml-1 text-xs italic truncate">{{ f.path }}</span>
-                </p>
-                <span v-if="active" class="flex-none ml-3 u-text-gray-500">Jump to...</span>
+                <UIcon :name="a.icon" :class="['h-5 w-5 flex-none u-text-gray-400', active && 'u-text-gray-900', a.iconClass]" aria-hidden="true" />
+                <span class="flex-auto ml-3 truncate">{{ a.label }}</span>
               </li>
             </ComboboxOption>
           </ul>
@@ -67,8 +45,7 @@ import {
   ComboboxOption
 } from '@headlessui/vue'
 import { useMagicKeys, whenever } from '@vueuse/core'
-import { getPathName } from '~/utils/tree'
-import type { GitHubBranch, GitHubFile, Project } from '~/types'
+import type { GitHubBranch, Project } from '~/types'
 
 const props = defineProps({
   modelValue: {
@@ -78,15 +55,13 @@ const props = defineProps({
 })
 
 const project: Project = inject('project')
-const root: string = inject('root')
 
 const emit = defineEmits(['update:modelValue'])
 
 const keys = useMagicKeys()
 const { branches, branch, pending: pendingBranches, refresh: refreshBranches, select: selectBranch, openCreateModal: openCreateBranchModal } = useProjectBranches(project)
-const { computedFiles, select: selectFile } = useProjectFiles(project, root)
 
-whenever(keys.meta_k, () => {
+whenever(keys.meta_b, () => {
   isOpen.value = !isOpen.value
 })
 
@@ -109,74 +84,28 @@ const filteredBranches = computed(() => {
   filteredBranches = filteredBranches.filter(b => b.name !== branch.value.name)
   return filteredBranches
 })
-const filteredFiles = computed(() => {
-  if (!query.value) {
-    return []
-  }
-
-  const filteredFiles = [...computedFiles.value]
-    .filter(f => f.path.search(new RegExp(query.value, 'i')) !== -1)
-    .map(f => ({ ...f, name: getPathName(f.path), icon: getIconName(f), iconColor: getIconColor(f) }))
-  return filteredFiles
-})
 const actions = computed(() => ([
-  { label: `Create new branch ${query.value && !branchExists.value ? `"${query.value}"` : ''}`, icon: 'heroicons-outline:plus', click: onCreateBranchClick },
-  !query.value && { label: 'Refresh branches', icon: 'heroicons-outline:refresh', iconClass: pendingBranches.value ? 'animate-spin' : '', click: refreshBranches }
+  { key: 'create', label: `Create new branch ${query.value && !branchExists.value ? `"${query.value}"` : ''}`, icon: 'heroicons-outline:plus', click: onCreateBranchClick },
+  !query.value && { key: 'refresh', label: 'Refresh branches', icon: 'heroicons-outline:refresh', iconClass: pendingBranches.value ? 'animate-spin' : '', click: refreshBranches }
 ].filter(Boolean)))
 
-const getIconName = (file) => {
-  switch (file.status) {
-    case 'created':
-      return 'heroicons-outline:document-add'
-    case 'updated':
-      return 'heroicons-outline:document-text'
-    case 'deleted':
-      return 'heroicons-outline:document-remove'
-    case 'renamed':
-      return 'heroicons-outline:document-text'
-    default:
-      return 'heroicons-outline:document-text'
-  }
-}
-
-const getIconColor = (file) => {
-  switch (file.status) {
-    case 'created':
-      return 'text-green-500'
-    case 'updated':
-      return 'text-amber-500'
-    case 'deleted':
-      return 'text-red-500'
-    case 'renamed':
-      return 'text-blue-500'
-  }
-}
-
 function onBranchSelect (b: GitHubBranch) {
+  isOpen.value = false
   selectBranch(b)
-  isOpen.value = false
-  query.value = ''
-}
-
-function onFileSelect (f: GitHubFile) {
-  selectFile(f)
-  isOpen.value = false
   query.value = ''
 }
 
 function onCreateBranchClick () {
   isOpen.value = false
-  query.value = ''
   setTimeout(() => {
     openCreateBranchModal(!branchExists.value ? query.value : '', false)
   }, 0)
+  query.value = ''
 }
 
 function onSelect (option) {
   if (option.click) {
     option.click()
-  } else if (option.path) {
-    onFileSelect(option)
   } else {
     onBranchSelect(option)
   }

@@ -78,7 +78,7 @@
               </NuxtLink>
             </div>
             <div aria-label="Sidebar" class="pb-6 flex flex-col items-center space-y-3">
-              <UVerticalNavigation :links="linksWithoutLabel" spacing-class="p-2" />
+              <UVerticalNavigation :links="linksWithoutLabel" spacing-class="p-2" badge-base-class="absolute rounded-full leading-none w-4 h-4 u-bg-gray-900 u-text-white flex items-center justify-center font-semibold z-[1] text-[11px] -top-1 -right-1" badge-active-class badge-inactive-class />
             </div>
           </div>
           <div class="flex-shrink-0 flex flex-col items-center space-y-3 pb-5">
@@ -125,7 +125,7 @@ const props = defineProps({
 
 const user = useStrapiUser() as Ref<User>
 
-const linksWithoutLabel = props.links.map(link => omit(link, 'label'))
+const linksWithoutLabel = computed(() => props.links.map(link => omit(link, 'label')))
 
 const mobileMenuOpen = ref(false)
 </script>

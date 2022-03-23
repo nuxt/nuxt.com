@@ -1,34 +1,29 @@
 <template>
-  <ProjectPage title="Content">
+  <ProjectPage>
     <template #aside>
       <ProjectContentFilesTree :tree="tree" />
     </template>
 
-    <template #aside-header>
-      <UButton
-        size="xxs"
-        class="-my-0.5 -mr-1"
-        variant="transparent-hover"
-        icon="heroicons-outline:plus"
-        @click="openCreateFileModal('content')"
-      />
-    </template>
-
     <template #header>
-      <ProjectHeader @openModal="modal = true" />
+      <ProjectHeader>
+        <template #extra-actions>
+          <UButton
+            size="xs"
+            label="Create file"
+            icon="heroicons-outline:plus"
+            @click="openCreateFileModal('content')"
+          />
+        </template>
+      </ProjectHeader>
     </template>
 
-    <div class="flex items-stretch flex-1 min-h-0">
-      <div class="flex-1 flex flex-col p-4 sm:p-6 lg:p-8 overflow-y-auto">
+    <div class="flex items-stretch flex-1 min-h-0 overflow-hidden">
+      <div class="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto">
         <DocusEditor :model-value="parsedContent" :theme="theme" class="flex flex-col flex-1" @update:model-value="updateContent" />
       </div>
 
       <ProjectContentFileAside v-if="file" :model-value="parsedMatter" @update:model-value="updateMatter" />
     </div>
-
-    <ProjectModalCommand v-model="modal" />
-
-    <div ref="modalContainer" />
   </ProjectPage>
 </template>
 
@@ -53,35 +48,21 @@ const root = 'content'
 provide('project', props.project)
 provide('root', root)
 
-const router = useRouter()
 const colorMode = useColorMode()
 const client = useStrapiClient()
 const { parseFrontMatter, stringifyFrontMatter } = useMarkdown()
-const { container: modalContainer } = useModal()
 const { branch } = useProjectBranches(props.project)
-const { draft, file, fetch: fetchFiles, refresh: refreshFiles, openCreateModal: openCreateFileModal } = useProjectFiles(props.project, root)
+const { draft, file, openCreateModal: openCreateFileModal } = useProjectFiles(props.project, root)
 const { tree, openDir } = useProjectFilesTree(props.project, root)
 
-const modal = ref(false)
 const content: Ref<string> = ref('')
 const parsedContent: Ref<string> = ref('')
 const parsedMatter: Ref<object> = ref({})
-
-// Data
-
-try {
-  await fetchFiles()
-} catch (e) {
-  router.push({ name: '@team-project' })
-}
 
 // Watch
 
 // Fetch content when file changes
 watch(file, () => fetchContent(), { immediate: true })
-
-// Fetch files when branch changes
-watch(branch, () => refreshFiles())
 
 // Open dirs in tree when file is selected
 watch(file, (f) => {
