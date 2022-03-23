@@ -103,7 +103,8 @@ async function fetchContent () {
 
   const { content: fetchedContent } = await client(`/projects/${props.project.id}/files/${encodeURIComponent(file.value.path)}`, {
     params: {
-      ref: branch.value?.name
+      ref: branch.value?.name,
+      root
     }
   })
 
@@ -114,7 +115,8 @@ async function updateFile (formattedContent) {
   const data = await client<GitHubDraft>(`/projects/${props.project.id}/files/${encodeURIComponent(file.value.path)}`, {
     method: 'PUT',
     params: {
-      ref: branch.value?.name
+      ref: branch.value?.name,
+      root
     },
     body: {
       content: formattedContent
