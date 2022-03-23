@@ -5,20 +5,17 @@ import ProjectModalFileCreate from '~/components/organisms/project/modal/Project
 import ProjectModalFileRename from '~/components/organisms/project/modal/ProjectModalFileRename.vue'
 import ProjectModalFileDelete from '~/components/organisms/project/modal/ProjectModalFileDelete.vue'
 import ProjectModalFileRevert from '~/components/organisms/project/modal/ProjectModalFileRevert.vue'
-import ProjectModalPublish from '~/components/organisms/project/modal/ProjectModalPublish.vue'
 
 export const useProjectFiles = (project: Project, root: string) => {
   const { open: openModal } = useModal()
   const client = useStrapiClient()
-  const { $toast } = useNuxtApp()
-  const { branch, refresh: refreshBranches, openCreateModal: openCreateBranchModal } = useProjectBranches(project)
+  const { branch } = useProjectBranches(project)
 
   const files: Ref<GitHubFile[]> = useState(`project-${project.id}-${root}-files`, () => [])
   const draft: Ref<GitHubDraft> = useState(`project-${project.id}-${root}-draft`, () => null)
   const file: Ref<GitHubFile> = useState(`project-${project.id}-${root}-file`, () => null)
 
   const pending = ref(false)
-  const loading = ref(false)
 
   // Http
 
@@ -32,8 +29,7 @@ export const useProjectFiles = (project: Project, root: string) => {
     const data = await client<{ files: GitHubFile[], draft: GitHubDraft }>(`/projects/${project.id}/files`, {
       params: {
         ref: branch.value.name,
-        root,
-        withContent: root === 'public' ? ['png', 'jpg', 'jpeg', 'svg', 'ico'] : undefined
+        root
       }
     })
 
@@ -164,49 +160,6 @@ export const useProjectFiles = (project: Project, root: string) => {
     }
   }
 
-  async function commit () {
-    if (branch.value.name === project.repository.default_branch) {
-      return openCreateBranchModal('', true, commit)
-    }
-
-    loading.value = true
-
-    try {
-      await client(`/projects/${project.id}/files/commit`, {
-        method: 'POST',
-        params: {
-          ref: branch.value.name
-        }
-      })
-
-      await refresh()
-
-      $toast.success({
-        title: 'Changes saved!',
-        description: `Your changes have been committed on ${branch.value.name} branch.`
-      })
-    } catch (e) {}
-
-    loading.value = false
-  }
-
-  async function publish () {
-    loading.value = true
-
-    try {
-      await client(`/projects/${project.id}/branches/${encodeURIComponent(branch.value.name)}/publish`, { method: 'POST' })
-
-      await refreshBranches()
-
-      $toast.success({
-        title: 'Published!',
-        description: `Your branch ${branch.value.name} has been merged into ${project.repository.default_branch}.`
-      })
-    } catch (e) {}
-
-    loading.value = false
-  }
-
   // Modals
 
   function openCreateModal (path: string) {
@@ -237,14 +190,6 @@ export const useProjectFiles = (project: Project, root: string) => {
     openModal(ProjectModalFileRevert, {
       path,
       onSubmit: revert
-    })
-  }
-
-  function openPublishModal () {
-    openModal(ProjectModalPublish, {
-      project,
-      branch: branch.value,
-      onSubmit: publish
     })
   }
 
@@ -307,18 +252,15 @@ export const useProjectFiles = (project: Project, root: string) => {
     refresh,
     create,
     bulkRename,
-    commit,
     // Modals
     openCreateModal,
     openRenameModal,
     openDeleteModal,
     openRevertModal,
-    openPublishModal,
     // Methods
     select,
     // Refs
     pending,
-    loading,
     // Computed
     computedFiles,
     isDraft,

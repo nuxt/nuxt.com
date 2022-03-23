@@ -83,7 +83,7 @@ const filteredFiles = computed(() => {
   if (query.value) {
     filteredFiles = filteredFiles.filter(f => f.path.search(new RegExp(query.value, 'i')) !== -1)
   }
-  filteredFiles = filteredFiles.filter(f => ![contentFile.value.path, mediaFile.value.path].includes(f.path))
+  filteredFiles = filteredFiles.filter(f => ![contentFile.value?.path, mediaFile.value?.path].filter(Boolean).includes(f.path))
   return filteredFiles.map(f => ({ ...f, name: getPathName(f.path), icon: getIconName(f), iconColor: getIconColor(f) }))
 })
 

@@ -44,7 +44,7 @@ defineEmits(['openModal'])
 
 const { openBranchesModal, openFilesModal } = useProjectModals()
 
-const { branch } = useProjectBranches(project)
-const { isDraft: isDraftContent, commit, loading, openPublishModal } = useProjectFiles(project, 'content')
+const { branch, commit, loading, openPublishModal } = useProjectBranches(project)
+const { isDraft: isDraftContent } = useProjectFiles(project, 'content')
 const { isDraft: isDraftMedia } = useProjectFiles(project, 'media')
 </script>
