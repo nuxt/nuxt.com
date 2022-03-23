@@ -23,7 +23,7 @@
         </div>
 
         <div class="pb-16 mt-8" aria-labelledby="gallery-heading">
-          <ProjectMediaGallery />
+          <ProjectMediaFilesGallery />
         </div>
       </div>
 
