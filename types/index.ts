@@ -141,7 +141,7 @@ export interface GitHubDraftFile {
   content?: string
   new?: boolean
   oldPath?: string
-  // Added only for image `withContent`
+  // Added only for medias
   name?: string
   width?: number
   height?: number
