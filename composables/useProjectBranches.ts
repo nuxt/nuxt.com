@@ -1,16 +1,19 @@
 import type { Ref } from 'vue'
 import type { GitHubBranch, Project } from '~/types'
 import ProjectModalBranchCreate from '~/components/organisms/project/modal/ProjectModalBranchCreate.vue'
+import ProjectModalPublish from '~/components/organisms/project/modal/ProjectModalPublish.vue'
 
 export const useProjectBranches = (project: Project) => {
   const { open: openModal } = useModal()
   const client = useStrapiClient()
   const cookie = useCookie(`project-${project.id}-branch`, { path: '/' })
+  const { $toast } = useNuxtApp()
 
   const branches: Ref<GitHubBranch[]> = useState(`project-${project.id}-branches`, () => [])
   const branch: Ref<GitHubBranch> = useState(`project-${project.id}-branch`, () => null)
 
   const pending = ref(false)
+  const loading = ref(false)
 
   // Http
 
@@ -46,9 +49,47 @@ export const useProjectBranches = (project: Project) => {
     select(b)
   }
 
+  async function commit () {
+    if (branch.value.name === project.repository.default_branch) {
+      return openCreateModal('', true)
+    }
+
+    loading.value = true
+
+    try {
+      await client(`/projects/${project.id}/branches/${encodeURIComponent(branch.value.name)}/commit`, { method: 'POST' })
+
+      await refresh()
+
+      $toast.success({
+        title: 'Changes saved!',
+        description: `Your changes have been committed on ${branch.value.name} branch.`
+      })
+    } catch (e) {}
+
+    loading.value = false
+  }
+
+  async function publish () {
+    loading.value = true
+
+    try {
+      await client(`/projects/${project.id}/branches/${encodeURIComponent(branch.value.name)}/publish`, { method: 'POST' })
+
+      await refresh()
+
+      $toast.success({
+        title: 'Published!',
+        description: `Your branch ${branch.value.name} has been merged into ${project.repository.default_branch}.`
+      })
+    } catch (e) {}
+
+    loading.value = false
+  }
+
   // Modals
 
-  function openCreateModal (name: string, mergeDraft: boolean, onSuccess?: () => void) {
+  function openCreateModal (name: string, mergeDraft: boolean) {
     openModal(ProjectModalBranchCreate, {
       name,
       mergeDraft,
@@ -56,10 +97,18 @@ export const useProjectBranches = (project: Project) => {
       onSubmit: async (name: string) => {
         await create(name, mergeDraft)
 
-        if (onSuccess) {
-          onSuccess()
+        if (mergeDraft) {
+          commit()
         }
       }
+    })
+  }
+
+  function openPublishModal () {
+    openModal(ProjectModalPublish, {
+      project,
+      branch: branch.value,
+      onSubmit: publish
     })
   }
 
@@ -86,12 +135,15 @@ export const useProjectBranches = (project: Project) => {
     fetch,
     refresh,
     create,
+    commit,
     // Modals
     openCreateModal,
+    openPublishModal,
     // Methods
     select,
     // Refs
     pending,
+    loading,
     // Data
     branches,
     branch
