@@ -8,14 +8,14 @@
         </button>
       </div>
       <div class="flex items-start mt-2 gap-2">
-        <div class="flex flex-col flex-1">
-          <div class="flex items-center gap-1">
+        <div class="flex flex-col flex-1 truncate">
+          <div class="flex items-center">
             <span class="text-sm font-medium u-text-gray-900 truncate pointer-events-none">
               <span>{{ file.name }}</span>
             </span>
-            <ProjectMediaFilesGalleryBadge :file="file" />
+            <ProjectMediaFilesGalleryBadge :file="file" class="flex-shrink-0" />
           </div>
-          <span class="block text-sm italic u-text-gray-400 pointer-events-none">
+          <span class="block text-sm italic u-text-gray-400 pointer-events-none truncate">
             {{ file.path }}
           </span>
         </div>
