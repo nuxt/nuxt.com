@@ -25,7 +25,6 @@ const root: string = inject('root')
 
 const { file: selectedFile, computedFiles, select } = useProjectFiles(project, root)
 
-const isDraft = (file: GitHubFile) => !!file.status
 const isSelected = (file: GitHubFile) => selectedFile.value && file.path === selectedFile.value.path
 const isDeleted = (file: GitHubFile) => file.status === 'deleted'
 
