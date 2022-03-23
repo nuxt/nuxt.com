@@ -1,5 +1,5 @@
 <template>
-  <aside class="hidden p-8 overflow-y-auto u-bg-white border-l u-border-gray-200 top-0 w-96 lg:block sticky h-[calc(100vh-4rem)]">
+  <aside class="hidden p-6 overflow-y-auto u-bg-white border-l u-border-gray-200 top-0 w-96 lg:block sticky h-[calc(100vh-4rem)] flex-shrink-0">
     <div class="pb-16 space-y-6">
       <div>
         <div class="flex items-start justify-between">

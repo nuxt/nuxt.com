@@ -818,7 +818,7 @@
   resolved "https://registry.yarnpkg.com/@nuxt/devalue/-/devalue-2.0.0.tgz#c7bd7e9a516514e612d5d2e511ffc399e0eac322"
   integrity sha512-YBI/6o2EBz02tdEJRBK8xkt3zvOFOWlLBf7WKYGBsSYSRtjjgrqPe2skp6VLLmKx5WbHHDNcW+6oACaurxGzeA==
 
-"@nuxt/kit@npm:@nuxt/kit-edge", "@nuxt/kit@npm:@nuxt/kit-edge@3.0.0-27465767.70f067a", "@nuxt/kit@npm:@nuxt/kit-edge@latest":
+"@nuxt/kit@npm:@nuxt/kit-edge", "@nuxt/kit@npm:@nuxt/kit-edge@3.0.0-27465767.70f067a":
   version "3.0.0-27465767.70f067a"
   resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-27465767.70f067a.tgz#9062520749b51fa5ec51c61cd6b435f7c92ecdc1"
   integrity sha512-3WJfEKf7ymS+lDnDi7TEIqigWyQoCDLwdYGplpRnjFBALGIbMhnv7x4LGgYroB0RT6QS84k6HgTiYaZf5OERuw==
@@ -839,6 +839,30 @@
     scule "^0.2.1"
     semver "^7.3.5"
     unctx "^1.0.2"
+    unimport "^0.1.1"
+    untyped "^0.4.3"
+
+"@nuxt/kit@npm:@nuxt/kit-edge@latest":
+  version "3.0.0-27467056.93c4dfe"
+  resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-27467056.93c4dfe.tgz#849cd223fcc9b9948829e534f3633ef743f659e2"
+  integrity sha512-mtTXVnfOtMnu23q9t94SxsDX988slEIQj5WqXdUCmtY0phhJoRPBGhSzVMno1eakpOfX9WBo2Rgw8KXcrTEFJQ==
+  dependencies:
+    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-27467056.93c4dfe"
+    c12 "^0.2.4"
+    consola "^2.15.3"
+    defu "^6.0.0"
+    globby "^13.1.1"
+    hash-sum "^2.0.0"
+    ignore "^5.2.0"
+    jiti "^1.13.0"
+    knitwork "^0.1.1"
+    lodash.template "^4.5.0"
+    mlly "^0.4.3"
+    pathe "^0.2.0"
+    pkg-types "^0.3.2"
+    scule "^0.2.1"
+    semver "^7.3.5"
+    unctx "^1.1.0"
     unimport "^0.1.1"
     untyped "^0.4.3"
 
@@ -936,6 +960,22 @@
     ufo "^0.8.1"
     unimport "^0.1.1"
 
+"@nuxt/schema@npm:@nuxt/schema-edge@3.0.0-27467056.93c4dfe":
+  version "3.0.0-27467056.93c4dfe"
+  resolved "https://registry.yarnpkg.com/@nuxt/schema-edge/-/schema-edge-3.0.0-27467056.93c4dfe.tgz#9f4b1f880a890c44194e8e5738d9a3cd29f50979"
+  integrity sha512-IBWqpdLMoY1E9VHiFYLtZptNBqZ6xyGNcBSnE8HOI3MrZELVPIpGNimSjjlhQ/EgjsdTi/oRA2yc64Jf6tV0PQ==
+  dependencies:
+    c12 "^0.2.4"
+    create-require "^1.1.1"
+    defu "^6.0.0"
+    jiti "^1.13.0"
+    pathe "^0.2.0"
+    postcss-import-resolver "^2.0.0"
+    scule "^0.2.1"
+    std-env "^3.0.1"
+    ufo "^0.8.1"
+    unimport "^0.1.1"
+
 "@nuxt/ui-templates@npm:@nuxt/ui-templates-edge@latest":
   version "0.0.0-27455683.83d2457"
   resolved "https://registry.yarnpkg.com/@nuxt/ui-templates-edge/-/ui-templates-edge-0.0.0-27455683.83d2457.tgz#cfa92600468d1cf6cd6ca69f9d092a6caea4fa37"
@@ -974,9 +1014,9 @@
     vite-node "^0.7.7"
 
 "@nuxthq/ui@npm:@nuxthq/ui-edge@latest":
-  version "0.0.2-27458851.685f738"
-  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27458851.685f738.tgz#d3311b61eeba53e61c7523efcd1ac94f2fcfaa17"
-  integrity sha512-bRyP0zda4f6kiEYWCiMnUlECGNTfhz3aO4jaWLW62j+EE2W/uS4sSSkswFBBxFLxjfXiyu6sVJJTmC1+VNcTVA==
+  version "0.0.2-27467373.c59b45c"
+  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27467373.c59b45c.tgz#95cb4f67a9c46af28a193ec4af5aa63164ca59dd"
+  integrity sha512-0UCeSm6wHE4V2HSyHnjfsu0ipIYPOppHGTOmKAZqkzDiJiffexaGHqx1RSDAiSfnfPaygu23Ae2D/PYWqaxErA==
   dependencies:
     "@headlessui/vue" "1.5.0"
     "@iconify/vue" "^3.1.4"
@@ -3156,9 +3196,9 @@ ee-first@1.1.1:
   integrity sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=
 
 electron-to-chromium@^1.4.84:
-  version "1.4.89"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.89.tgz#33c06592812a17a7131873f4596579084ce33ff8"
-  integrity sha512-z1Axg0Fu54fse8wN4fd+GAINdU5mJmLtcl6bqIcYyzNVGONcfHAeeJi88KYMQVKalhXlYuVPzKkFIU5VD0raUw==
+  version "1.4.90"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.90.tgz#4a518590f118828d54fff045728f547fef08143f"
+  integrity sha512-ZwKgSA0mQMyEhz+NR0F8dRzkrCLeHLzLkjx/CWf16+zV85hQ6meXPQbKanvhnpkYb7b2uJNj+enQJ/N877ND4Q==
 
 emoji-regex@^10.0.0:
   version "10.0.1"
@@ -5894,7 +5934,7 @@ minimist-options@4.1.0:
     is-plain-obj "^1.1.0"
     kind-of "^6.0.3"
 
-minimist@^1.1.1, minimist@^1.2.0, minimist@^1.2.5:
+minimist@^1.1.1, minimist@^1.2.0, minimist@^1.2.5, minimist@^1.2.6:
   version "1.2.6"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.6.tgz#8637a5b759ea0d6e98702cfb3a9283323c93af44"
   integrity sha512-Jsjnk4bw3YJqYzbdyBiNsPWHPfO++UGG749Cxs6peCu5Xg4nrena6OVxOYxrQTqww0Jmwt+Ref8rggumkTLz9Q==
@@ -5930,11 +5970,11 @@ minizlib@^2.1.1:
     yallist "^4.0.0"
 
 mkdirp@^0.5.1, mkdirp@^0.5.5:
-  version "0.5.5"
-  resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-0.5.5.tgz#d91cefd62d1436ca0f41620e251288d420099def"
-  integrity sha512-NKmAlESf6jMGym1++R0Ra7wvhV+wFW63FaSOFPwRahvea0gMUcGUhVeAg/0BC0wiv9ih5NYPB1Wn1UEI1/L+xQ==
+  version "0.5.6"
+  resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-0.5.6.tgz#7def03d2432dcae4ba1d611445c48396062255f6"
+  integrity sha512-FP+p8RB8OWpF3YZBCrP5gtADmtXApB5AMLn+vdyA+PyxCjrCs00mjyUozssO33cwDeT3wNGdLxJ5M//YqtHAJw==
   dependencies:
-    minimist "^1.2.5"
+    minimist "^1.2.6"
 
 mkdirp@^1.0.3:
   version "1.0.4"
@@ -8473,7 +8513,7 @@ unbox-primitive@^1.0.1:
     has-symbols "^1.0.2"
     which-boxed-primitive "^1.0.2"
 
-unctx@^1.0.2:
+unctx@^1.0.2, unctx@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/unctx/-/unctx-1.1.0.tgz#465b1c71849dfae406c5c8cd713a9001f6f12654"
   integrity sha512-Ae6vlXs1HC5Sg4PS1aNm8o9vqLonziZzGQ9m8Yiwvlan2CCwkOsdJXiiTmkjWqKn98PhJrpp8CGKfzA0tLuoZA==
@@ -8516,10 +8556,25 @@ unified@^10.0.0, unified@^10.1.0, unified@^10.1.2:
     trough "^2.0.0"
     vfile "^5.0.0"
 
-unimport@^0.1.0, unimport@^0.1.1:
+unimport@^0.1.0:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/unimport/-/unimport-0.1.1.tgz#985c4985db6b5e8bc98d746b3da74d571985e6aa"
   integrity sha512-M3DEUx4idjPlAHyncuhvwemOYalbrl4gkxnaokrYVTSiFiu+WqM6kEybwMahRhNhVP4NLBs8QN/64BT2ujrYsA==
+  dependencies:
+    "@rollup/pluginutils" "^4.1.2"
+    escape-string-regexp "^5.0.0"
+    globby "^13.1.1"
+    local-pkg "^0.4.1"
+    magic-string "^0.26.0"
+    mlly "^0.4.3"
+    pathe "^0.2.0"
+    scule "^0.2.1"
+    unplugin "^0.3.3"
+
+unimport@^0.1.1:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/unimport/-/unimport-0.1.2.tgz#841e5213a7ff82b0e7518daf5e09dda6787207f6"
+  integrity sha512-1MTVh/DP8NTyrzsOGp6GaHLKuDWdh4RQbc1gSncbzZ7ttWpIJD9e330MKCCoXe6LkUoLNELmyYUVlk0F0Hwvow==
   dependencies:
     "@rollup/pluginutils" "^4.1.2"
     escape-string-regexp "^5.0.0"

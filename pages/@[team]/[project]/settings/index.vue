@@ -28,6 +28,15 @@
             />
           </div>
         </UFormGroup>
+
+        <UFormGroup name="url" label="Url" help="The url of your project is used for preview purposes.">
+          <UInput
+            v-model="form.url"
+            name="url"
+            class="w-full lg:w-56"
+            placeholder="choam"
+          />
+        </UFormGroup>
       </div>
 
       <template #footer>
@@ -62,24 +71,21 @@ const props = defineProps({
 
 const user = useStrapiUser() as Ref<User>
 const router = useRouter()
-const client = useStrapiClient()
+const { update } = useStrapi4()
 const { $toast } = useNuxtApp()
 
-const form = reactive({ name: props.project.name })
+const form = reactive({ name: props.project.name, url: props.project.url })
 const updating = ref(false)
 
 const onSubmit = async () => {
   updating.value = true
 
   try {
-    const project = await client<Project>(props.team ? `/teams/${props.team.slug}/projects/${props.project.name}` : `/projects/${props.project.name}`, {
-      method: 'PUT',
-      body: form
-    })
+    const project = await update<Project>('projects', props.project.id, form)
 
     if (project.name !== props.project.name) {
       // Replace `name` param in url
-      router.replace({ name: '@team-project-settings', params: { team: props.team.slug, project: project.name } })
+      router.replace({ name: '@team-project-settings', params: { team: props.team ? props.team.slug : user.value.username, project: project.name } })
     }
 
     $toast.success({

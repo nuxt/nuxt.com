@@ -280,7 +280,7 @@ export const useProjectFiles = (project: Project, root: string) => {
   })
 
   const isDraft = computed(() => {
-    return draft.value?.additions?.length || draft.value?.deletions.length
+    return (draft.value?.additions?.length || 0) + (draft.value?.deletions.length || 0)
   })
 
   return {

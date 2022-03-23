@@ -1,38 +1,24 @@
 <template>
-  <ProjectPage class="items-stretch">
+  <ProjectPage>
     <template #header>
-      <ProjectHeader @openModal="modal = true" />
-    </template>
-
-    <div class="flex items-stretch flex-1 min-h-0">
-      <div class="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
-        <div class="flex items-center justify-between gap-3">
-          <h2 class="text-2xl font-bold u-text-gray-900">
-            Media library
-          </h2>
-
+      <ProjectHeader>
+        <template #extra-actions>
           <UButton
-            size="sm"
-            rounded
+            size="xs"
             label="Upload file"
             icon="heroicons-outline:plus"
-            class="-my-1"
-            variant="secondary"
-            trailing
           />
-        </div>
+        </template>
+      </ProjectHeader>
+    </template>
 
-        <div class="pb-16 mt-8" aria-labelledby="gallery-heading">
-          <ProjectMediaFilesGallery />
-        </div>
+    <div class="flex items-stretch flex-1 min-h-0 overflow-hidden">
+      <div class="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto">
+        <ProjectMediaFilesGallery />
       </div>
 
       <ProjectMediaFileAside v-if="file" />
     </div>
-
-    <ProjectModalCommand v-model="modal" />
-
-    <div ref="modalContainer" />
   </ProjectPage>
 </template>
 
@@ -56,23 +42,5 @@ const root = 'public'
 provide('project', props.project)
 provide('root', root)
 
-const router = useRouter()
-const { container: modalContainer } = useModal()
-const { branch } = useProjectBranches(props.project)
-const { file, fetch: fetchFiles, refresh: refreshFiles } = useProjectFiles(props.project, root)
-
-const modal = ref(false)
-
-// Http
-
-try {
-  await fetchFiles()
-} catch (e) {
-  router.push({ name: '@team-project' })
-}
-
-// Watch
-
-// Fetch files when branch changes
-watch(branch, () => refreshFiles())
+const { file } = useProjectFiles(props.project, root)
 </script>

@@ -1,28 +1,23 @@
 <template>
   <div class="flex items-center justify-between flex-1 min-w-0 gap-3">
     <div class="flex items-center min-w-0 gap-3">
-      <UButton
-        icon="mdi:source-branch"
-        :label="branch.name"
-        variant="secondary"
-        size="xs"
-        truncate
-        @click="$emit('openModal')"
-      />
+      <UButton icon="mdi:source-branch" variant="secondary" size="xs" truncate @click="openBranchesModal">
+        <span class="flex-auto mr-3 u-text-gray-700 truncate">{{ branch.name }}</span>
+        <kbd class="font-sans font-semibold u-text-gray-400 text-xs flex-shrink-0"><abbr title="Command" class="no-underline">⌘</abbr> B</kbd>
+      </UButton>
+      <UButton icon="heroicons-outline:search" variant="secondary" size="xs" truncate @click="openFilesModal">
+        <span class="flex-auto mr-3 u-text-gray-700 truncate">Search</span>
+        <kbd class="font-sans font-semibold u-text-gray-400 text-xs flex-shrink-0"><abbr title="Command" class="no-underline">⌘</abbr> K</kbd>
+      </UButton>
+      <slot name="extra-actions" />
     </div>
 
     <div class="flex items-center gap-3">
-      <UButton variant="secondary" size="sm" @click="$emit('openModal')">
-        <UIcon name="heroicons-outline:search" class="w-4 h-4 u-text-gray-400 mr-1.5 flex-shrink-0" />
-        <span class="flex-auto mr-3 u-text-gray-400 truncate">Search...</span>
-        <kbd class="font-sans font-semibold u-text-gray-500 text-xs flex-shrink-0"><abbr title="Command" class="no-underline">⌘</abbr> K</kbd>
-      </UButton>
-
       <UButton
-        v-if="isDraft"
+        v-if="isDraftContent || isDraftMedia"
         label="Save"
         :loading="loading"
-        size="sm"
+        size="xs"
         icon="heroicons-outline:check"
         trailing
         @click="commit"
@@ -31,7 +26,7 @@
         v-else-if="branch.name !== project.repository.default_branch"
         label="Publish"
         :loading="loading"
-        size="sm"
+        size="xs"
         icon="heroicons-outline:cloud-upload"
         trailing
         @click="openPublishModal"
@@ -44,10 +39,12 @@
 import type { Project } from '~/types'
 
 const project: Project = inject('project')
-const root: string = inject('root')
 
 defineEmits(['openModal'])
 
+const { openBranchesModal, openFilesModal } = useProjectModals()
+
 const { branch } = useProjectBranches(project)
-const { isDraft, commit, loading, openPublishModal } = useProjectFiles(project, root)
+const { isDraft: isDraftContent, commit, loading, openPublishModal } = useProjectFiles(project, 'content')
+const { isDraft: isDraftMedia } = useProjectFiles(project, 'media')
 </script>
