@@ -138,9 +138,15 @@ export interface GitHubFile {
 
 export interface GitHubDraftFile {
   path: string
-  contents?: string
+  content?: string
   new?: boolean
   oldPath?: string
+  // Added only for image `withContent`
+  name?: string
+  width?: number
+  height?: number
+  size?: number
+  mimeType?: string
 }
 
 export interface GitHubDraft {

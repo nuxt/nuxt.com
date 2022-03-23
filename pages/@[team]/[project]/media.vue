@@ -1,12 +1,15 @@
 <template>
   <ProjectPage>
     <template #header>
+      <input ref="fileToUpload" name="newFile" type="file" class="hidden" @change="onFileUpload">
+
       <ProjectHeader>
         <template #extra-actions>
           <UButton
             size="xs"
             label="Upload file"
             icon="heroicons-outline:plus"
+            @click="$refs.fileToUpload.click()"
           />
         </template>
       </ProjectHeader>
@@ -23,7 +26,8 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue'
+import type { PropType, Ref } from 'vue'
+import { isEmpty } from 'lodash-es'
 import type { Team, Project } from '~/types'
 
 const props = defineProps({
@@ -42,5 +46,21 @@ const root = 'public'
 provide('project', props.project)
 provide('root', root)
 
-const { file } = useProjectFiles(props.project, root)
+const { file, create: uploadFile } = useProjectFiles(props.project, root)
+
+const fileToUpload: Ref<HTMLInputElement> = ref(null)
+
+// Http
+
+async function onFileUpload () {
+  if (isEmpty(fileToUpload.value.files)) {
+    return
+  }
+
+  const formData = new FormData()
+  const file = fileToUpload.value.files[0]
+  formData.append('files.image', fileToUpload.value.files[0])
+
+  await uploadFile(`public/${file.name}`, formData)
+}
 </script>
