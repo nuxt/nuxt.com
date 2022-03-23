@@ -32,7 +32,6 @@
         name="name"
         placeholder="feat/my-feature"
         required
-        autofocus
         autocomplete="off"
         class="w-full"
       />

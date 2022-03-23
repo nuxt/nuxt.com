@@ -165,9 +165,11 @@ function onFileSelect (f: GitHubFile) {
 }
 
 function onCreateBranchClick () {
-  openCreateBranchModal(!branchExists.value ? query.value : '', false)
   isOpen.value = false
   query.value = ''
+  setTimeout(() => {
+    openCreateBranchModal(!branchExists.value ? query.value : '', false)
+  }, 0)
 }
 
 function onSelect (option) {
