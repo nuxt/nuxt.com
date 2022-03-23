@@ -166,33 +166,29 @@ export const useProjectFiles = (project: Project, root: string) => {
         }
       })
 
+      await refresh()
+
       $toast.success({
         title: 'Changes saved!',
         description: `Your changes have been committed on ${branch.value.name} branch.`
       })
-
-      await refresh()
     } catch (e) {}
 
     loading.value = false
   }
 
   async function publish () {
-    if (!branch.value) {
-      return
-    }
-
     loading.value = true
 
     try {
       await client(`/projects/${project.id}/branches/${encodeURIComponent(branch.value.name)}/publish`, { method: 'POST' })
 
+      await refreshBranches()
+
       $toast.success({
         title: 'Published!',
         description: `Your branch ${branch.value.name} has been merged into ${project.repository.default_branch}.`
       })
-
-      await refreshBranches()
     } catch (e) {}
 
     loading.value = false
