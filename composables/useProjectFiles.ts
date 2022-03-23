@@ -1,4 +1,5 @@
 import type { Ref } from 'vue'
+import { omit } from 'lodash-es'
 import type { GitHubFile, GitHubDraft, Project } from '~/types'
 import ProjectModalFileCreate from '~/components/organisms/project/modal/ProjectModalFileCreate.vue'
 import ProjectModalFileRename from '~/components/organisms/project/modal/ProjectModalFileRename.vue'
@@ -48,15 +49,23 @@ export const useProjectFiles = (project: Project, root: string) => {
     return fetch(true)
   }
 
-  async function create (path: string) {
+  async function create (path: string, formData?: FormData) {
+    let body
+
+    if (formData) {
+      formData.append('data', JSON.stringify({ path }))
+      body = formData
+    } else {
+      body = { data: { path } }
+    }
+
     const data = await client<GitHubDraft>(`/projects/${project.id}/files`, {
       method: 'POST',
       params: {
-        ref: branch.value.name
+        ref: branch.value.name,
+        root
       },
-      body: {
-        path
-      }
+      body
     })
 
     draft.value = data
@@ -68,7 +77,8 @@ export const useProjectFiles = (project: Project, root: string) => {
     const data = await client<GitHubDraft>(`/projects/${project.id}/files/rename`, {
       method: 'PUT',
       params: {
-        ref: branch.value?.name
+        ref: branch.value?.name,
+        root
       },
       body: {
         files: [{
@@ -93,7 +103,8 @@ export const useProjectFiles = (project: Project, root: string) => {
     const data = await client<GitHubDraft>(`/projects/${project.id}/files/rename`, {
       method: 'PUT',
       params: {
-        ref: branch.value?.name
+        ref: branch.value?.name,
+        root
       },
       body: {
         files
@@ -107,7 +118,8 @@ export const useProjectFiles = (project: Project, root: string) => {
     const data = await client<GitHubDraft>(`/projects/${project.id}/files/${encodeURIComponent(path)}/revert`, {
       method: 'POST',
       params: {
-        ref: branch.value?.name
+        ref: branch.value?.name,
+        root
       }
     })
 
@@ -138,7 +150,8 @@ export const useProjectFiles = (project: Project, root: string) => {
     const data = await client<GitHubDraft>(`/projects/${project.id}/files/${encodeURIComponent(path)}`, {
       method: 'DELETE',
       params: {
-        ref: branch.value?.name
+        ref: branch.value?.name,
+        root
       }
     })
 
@@ -262,7 +275,11 @@ export const useProjectFiles = (project: Project, root: string) => {
           file.path = addition.path
         }
       } else if (addition.new) {
-        githubFiles.push({ path: addition.path, type: 'blob', status: 'created' })
+        githubFiles.push({
+          type: 'blob',
+          status: 'created',
+          ...omit(addition, ['new', 'oldPath'])
+        })
       } else {
         const file = githubFiles.find(f => f.path === addition.path)
         if (file) {
@@ -287,6 +304,7 @@ export const useProjectFiles = (project: Project, root: string) => {
     // Http
     fetch,
     refresh,
+    create,
     bulkRename,
     commit,
     // Modals
