@@ -34,7 +34,7 @@
               {{ (file.size / 1000).toFixed(2) }} KB
             </dd>
           </div>
-          <div class="flex justify-between py-3 text-sm font-medium">
+          <div v-if="file.width && file.height" class="flex justify-between py-3 text-sm font-medium">
             <dt class="u-text-gray-500">
               Dimensions
             </dt>
