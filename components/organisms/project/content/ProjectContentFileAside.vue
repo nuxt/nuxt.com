@@ -64,7 +64,7 @@
                   <p class="text-sm font-medium u-text-gray-900">
                     {{ commit.authors.map(author => author.login).join(', ') }}
                   </p>
-                  <time class="block u-text-gray-400 text-sm">{{ useTimeAgo(new Date(commit.date)).value }}</time>
+                  <time v-if="commit.date" class="block u-text-gray-400 text-sm">{{ useTimeAgo(new Date(commit.date)).value }}</time>
                 </div>
                 <NuxtLink :to="`https://github.com/${project.repository.owner}/${project.repository.name}/commit/${commit.oid}`" target="_blank" class="flex-shrink-0 u-text-gray-500 hover:underline text-sm block">
                   {{ commit.message }}
