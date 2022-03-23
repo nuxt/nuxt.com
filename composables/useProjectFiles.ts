@@ -170,10 +170,11 @@ export const useProjectFiles = (project: Project, root: string) => {
     })
   }
 
-  function openRenameModal (oldPath: string) {
+  function openRenameModal (oldPath: string, lockedPath?: string) {
     openModal(ProjectModalFileRename, {
       computedFiles: computedFiles.value,
       oldPath,
+      lockedPath,
       onSubmit: rename
     })
   }

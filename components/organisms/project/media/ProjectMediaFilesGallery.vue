@@ -7,12 +7,28 @@
           <span class="sr-only">View details for {{ file.name }}</span>
         </button>
       </div>
-      <p class="block mt-2 text-sm font-medium u-text-gray-900 truncate pointer-events-none">
-        {{ file.name }}
-      </p>
-      <p class="block text-sm italic u-text-gray-400 pointer-events-none">
-        {{ file.path }}
-      </p>
+      <div class="flex items-start mt-2 gap-2">
+        <div class="flex flex-col flex-1">
+          <div class="flex items-center gap-1">
+            <span class="text-sm font-medium u-text-gray-900 truncate pointer-events-none">
+              <span>{{ file.name }}</span>
+            </span>
+            <ProjectMediaFilesGalleryBadge :file="file" />
+          </div>
+          <span class="block text-sm italic u-text-gray-400 pointer-events-none">
+            {{ file.path }}
+          </span>
+        </div>
+        <div class="flex-shrink-0">
+          <UDropdown
+            placement="bottom-start"
+            class="-mr-1"
+            :items="dropdownItems(file)"
+          >
+            <UButton icon="heroicons-outline:dots-vertical" variant="transparent" />
+          </UDropdown>
+        </div>
+      </div>
     </li>
   </ul>
 </template>
@@ -23,10 +39,38 @@ import type { GitHubFile, Project } from '~/types'
 const project: Project = inject('project')
 const root: string = inject('root')
 
-const { file: selectedFile, computedFiles, select } = useProjectFiles(project, root)
+const { file: selectedFile, computedFiles, select, openRenameModal, openRevertModal, openDeleteModal } = useProjectFiles(project, root)
 
 const isSelected = (file: GitHubFile) => selectedFile.value && file.path === selectedFile.value.path
 const isDeleted = (file: GitHubFile) => file.status === 'deleted'
+
+const dropdownItems = (file: GitHubFile) => {
+  return [
+    [
+      file?.status !== 'deleted' && {
+        label: 'Rename file',
+        icon: 'heroicons-outline:pencil',
+        click: () => {
+          openRenameModal(file.path, 'public')
+        }
+      },
+      !!file.status && {
+        label: 'Revert file',
+        icon: 'heroicons-outline:reply',
+        click: () => {
+          openRevertModal(file.path)
+        }
+      },
+      file?.status !== 'deleted' && {
+        label: 'Delete file',
+        icon: 'heroicons-outline:trash',
+        click: () => {
+          openDeleteModal(file.path)
+        }
+      }
+    ].filter(Boolean)
+  ]
+}
 
 const selectFile = (file: GitHubFile) => {
   // Prevent click when clicking on selected file

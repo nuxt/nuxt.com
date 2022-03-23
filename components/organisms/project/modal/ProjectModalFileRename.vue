@@ -62,14 +62,25 @@ const props = defineProps({
   oldPath: {
     type: String,
     required: true
+  },
+  lockedPath: {
+    type: String,
+    default: ''
   }
 })
 
 const emit = defineEmits(['submit', 'close'])
 
-const [name, ...dir] = props.oldPath.split('/').reverse()
-const path = ref(dir.reverse().join('/'))
-const newName = ref(name)
+const path = ref(null)
+const newName = ref(null)
+if (props.lockedPath) {
+  path.value = props.lockedPath.split('/').filter(Boolean).join('/')
+  newName.value = props.oldPath.replace(props.lockedPath, '').split('/').filter(Boolean).join('/')
+} else {
+  const [name, ...dir] = props.oldPath.split('/').reverse()
+  path.value = dir.reverse().join('/')
+  newName.value = name
+}
 const newPath = computed(() => [path.value, newName.value].join('/'))
 const error = computed(() => {
   if (newPath.value !== props.oldPath && props.computedFiles.find(file => file.path === newPath.value)) {
