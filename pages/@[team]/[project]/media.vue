@@ -1,7 +1,14 @@
 <template>
   <ProjectPage>
     <template #header>
-      <input ref="fileToUpload" name="newFile" type="file" class="hidden" @change="onFileUpload">
+      <input
+        ref="fileToUpload"
+        name="newFile"
+        type="file"
+        accept="image/*"
+        class="hidden"
+        @change="onFileUpload"
+      >
 
       <ProjectHeader>
         <template #extra-actions>
@@ -41,6 +48,7 @@ const root = 'public'
 provide('project', props.project)
 provide('root', root)
 
+const { $toast } = useNuxtApp()
 const { create: uploadFile } = useProjectFiles(props.project, root)
 
 const fileToUpload: Ref<HTMLInputElement> = ref(null)
@@ -54,6 +62,12 @@ async function onFileUpload () {
 
   const formData = new FormData()
   const file = fileToUpload.value.files[0]
+
+  if (!file.type.startsWith('image/')) {
+    $toast.error({ title: `File type ${file.type} is not supported` })
+    return
+  }
+
   formData.append('files.image', fileToUpload.value.files[0])
 
   try {
