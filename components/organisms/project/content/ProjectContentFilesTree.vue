@@ -85,8 +85,8 @@
 </template>
 
 <script setup lang="ts">
-import { PropType } from 'vue'
-import type { File, Project, GitHubFile } from '~/types'
+import type { PropType } from 'vue'
+import type { File, Project, Root, GitHubFile } from '~/types'
 
 defineProps({
   level: {
@@ -100,7 +100,7 @@ defineProps({
 })
 
 const project: Project = inject('project')
-const root: string = inject('root')
+const root: Root = inject('root')
 
 const { file: selectedFile, select, openCreateModal, openRenameModal, openRevertModal, openDeleteModal } = useProjectFiles(project, root)
 const { openedDirs, openDir, renameFiles } = useProjectFilesTree(project, root)
