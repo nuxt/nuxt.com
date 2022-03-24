@@ -21,27 +21,30 @@
           </div>
         </div>
       </div>
-      <UFormGroup name="title" label="Title" label-class="font-medium u-text-gray-900" container-class="mt-2">
-        <template #hint>
-          <UButton size="xxs" variant="transparent" icon="heroicons-outline:pencil" />
-        </template>
-
-        <p class="text-sm u-text-gray-500 italic">
-          {{ form.title || 'Add a title...' }}
-        </p>
-
-        <!-- <UInput v-model="form.title" name="title" placeholder="Add a title..." size="sm" class="w-full" /> -->
-      </UFormGroup>
-      <UFormGroup name="description" label="Description" label-class="font-medium u-text-gray-900" container-class="mt-2">
-        <template #hint>
-          <UButton size="xxs" variant="transparent" icon="heroicons-outline:pencil" />
-        </template>
-
-        <p class="text-sm text-gray-500 italic">
-          {{ form.description || 'Add a description...' }}
-        </p>
-
-        <!-- <UTextarea v-model="form.description" name="description" placeholder="Add a description..." size="sm" class="w-full" /> -->
+      <UFormGroup
+        v-for="field of fields"
+        :key="field.key"
+        :name="field.key"
+        :label="field.label"
+        label-class="font-medium u-text-gray-900 truncate"
+        label-wrapper-class="flex content-center justify-between min-w-0 gap-3"
+        container-class
+        :wrapper-class="field.type === 'boolean' ? 'flex items-center justify-between' : ''"
+      >
+        <UTextarea
+          v-if="field.type === 'text'"
+          :model-value="field.value"
+          :name="field.key"
+          :placeholder="`Add a ${field.key.replace(/\./g, ' ')}...`"
+          size="sm"
+          :resize="false"
+          autoresize
+          :rows="1"
+          appearance="none"
+          custom-class="!px-0 placeholder-gray-400 dark:placeholder-gray-500"
+          @update:model-value="value => updateField(field.key, value)"
+        />
+        <UCheckbox v-else-if="field.type === 'boolean'" :model-value="field.value" :name="field.key" @update:model-value="value => updateField(field.key, value)" />
       </UFormGroup>
       <div>
         <h3 class="font-medium u-text-gray-900">
@@ -61,10 +64,10 @@
               </div>
               <div class="ml-4 flex flex-col flex-1">
                 <div class="flex items-center justify-between">
-                  <p class="text-sm font-medium u-text-gray-900">
+                  <p class="text-sm font-medium u-text-gray-900 truncate">
                     {{ commit.authors.map(author => author.login).join(', ') }}
                   </p>
-                  <time v-if="commit.date" class="block u-text-gray-400 text-sm">{{ useTimeAgo(new Date(commit.date)).value }}</time>
+                  <time v-if="commit.date" class="block u-text-gray-400 text-sm flex-shrink-0">{{ useTimeAgo(new Date(commit.date)).value }}</time>
                 </div>
                 <NuxtLink :to="`https://github.com/${project.repository.owner}/${project.repository.name}/commit/${commit.oid}`" target="_blank" class="flex-shrink-0 u-text-gray-500 hover:underline text-sm block">
                   {{ commit.message }}
@@ -87,7 +90,9 @@
 
 <script setup lang="ts">
 import { useTimeAgo } from '@vueuse/core'
+import { snakeCase } from 'lodash-es'
 import type { Project, Root } from '~/types'
+import { capitalize } from '~/utils'
 import { getPathName } from '~/utils/tree'
 
 const props = defineProps({
@@ -111,13 +116,8 @@ const pending = ref(false)
 
 // Computed
 
-const form = computed({
-  get () {
-    return props.modelValue
-  },
-  set (value) {
-    emit('update:modelValue', value)
-  }
+const fields = computed(() => {
+  return mapFields({ title: '', description: '', ...props.modelValue })
 })
 
 const name = computed(() => getPathName(file.value.path || ''))
@@ -135,6 +135,39 @@ const history = computed(() => {
 // Watch
 
 watch(file, () => fetchHistory())
+
+// Methods
+
+function updateField (key, value) {
+  emit('update:modelValue', { ...props.modelValue, [key]: value })
+}
+
+function mapFields (fields, parent = '') {
+  return Object.entries(fields).flatMap(([key, value]) => {
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+      return mapFields(value, key)
+    }
+
+    if (Array.isArray(value)) {
+      return null
+    }
+
+    let type = 'text'
+    if (typeof value === 'boolean') {
+      type = 'boolean'
+    }
+
+    let label = parent ? `${parent} ${key}` : key
+    label = snakeCase(label).replace(/_/g, ' ')
+
+    return {
+      key: parent ? `${parent}.${key}` : key,
+      value,
+      type,
+      label: capitalize(label)
+    }
+  }).filter(Boolean)
+}
 
 // Http
 
