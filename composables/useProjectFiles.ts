@@ -11,7 +11,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
   const client = useStrapiClient()
   const { branch } = useProjectBranches(project)
 
-  const files: Ref<GitHubFile[]> = useState(`project-${project.id}-${root}-files`, () => [])
+  const files: Ref<GitHubFile[]> = useState(`project-${project.id}-${root}-files`, () => null)
   const draft: Ref<GitHubDraft> = useState(`project-${project.id}-${root}-draft`, () => null)
   const file: Ref<GitHubFile> = useState(`project-${project.id}-${root}-file`, () => null)
 
@@ -20,7 +20,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
   // Http
 
   async function fetch (force?: boolean) {
-    if (files.value.length && !force) {
+    if (files.value !== null && !force) {
       return
     }
 
@@ -134,17 +134,17 @@ export const useProjectFiles = (project: Project, root: Root) => {
 
       if (!currentFileExists) {
         if (oldFilePath) {
-        // Select old file
+          // Select old file
           const oldFile = computedFiles.value.find(f => f.path === oldFilePath)
           select(oldFile)
         } else {
-        // Select new file when reverted file no longer exists
+          // Select new file when reverted file no longer exists
           file.value = null
           init()
         }
       } else {
-      // No new selection, fetch new content
-      // FIXME: hacky update to trigger any watchers on `file`
+        // No new selection, fetch new content
+        // FIXME: hacky update to trigger any watchers on `file`
         file.value = { ...file.value }
       }
     } catch (e) {}
