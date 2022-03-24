@@ -1,6 +1,6 @@
 <template>
   <aside class="hidden p-6 overflow-y-auto u-bg-white border-l u-border-gray-200 top-0 w-96 lg:block sticky h-[calc(100vh-4rem)] flex-shrink-0">
-    <div class="pb-16 space-y-6">
+    <div v-if="file" class="pb-16 space-y-6">
       <div>
         <div class="flex items-start justify-between">
           <div class="min-w-0">
@@ -76,6 +76,12 @@
         </ul>
       </div>
     </div>
+    <div v-else class="text-center">
+      <UIcon name="heroicons-outline:document-text" class="mx-auto h-12 w-12 u-text-gray-400" />
+      <h3 class="mt-2 text-sm font-medium u-text-gray-900">
+        No file selected
+      </h3>
+    </div>
   </aside>
 </template>
 
@@ -133,6 +139,10 @@ watch(file, () => fetchHistory())
 // Http
 
 async function fetchHistory () {
+  if (!file.value) {
+    return
+  }
+
   pending.value = true
 
   historyData.value = await client<Object[]>(`/projects/${project.id}/files/${encodeURIComponent(file.value.path)}/history`, {

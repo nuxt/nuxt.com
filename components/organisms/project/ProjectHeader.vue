@@ -46,5 +46,5 @@ const { openBranchesModal, openFilesModal } = useProjectModals()
 
 const { branch, commit, loading, openPublishModal } = useProjectBranches(project)
 const { isDraft: isDraftContent } = useProjectFiles(project, 'content')
-const { isDraft: isDraftMedia } = useProjectFiles(project, 'media')
+const { isDraft: isDraftMedia } = useProjectFiles(project, 'public')
 </script>

@@ -3,14 +3,14 @@
     <li v-for="file in computedFiles" :key="file.name" class="relative" @click="selectFile(file)">
       <div :class="[isSelected(file) ? 'ring-2 ring-offset-2 u-ring-gray-900 ring-offset-gray-50 dark:ring-offset-gray-900' : 'focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-gray-100 dark:focus-within:ring-offset-gray-800 focus-within:u-ring-gray-900', 'group block w-full aspect-w-10 aspect-h-7 rounded-lg u-bg-gray-100 overflow-hidden']">
         <img :src="`data:${file.mimeType};base64,${file.content}`" alt="" :class="[isSelected(file) ? '' : 'group-hover:opacity-75', 'object-scale-down object-center pointer-events-none']">
-        <button type="button" class="absolute inset-0 focus:outline-none">
+        <button v-if="!isDeleted(file)" type="button" class="absolute inset-0 focus:outline-none">
           <span class="sr-only">View details for {{ file.name }}</span>
         </button>
       </div>
-      <div class="flex items-start mt-2 gap-2">
+      <div class="flex items-center mt-2 gap-2">
         <div class="flex flex-col flex-1 truncate">
           <div class="flex items-center">
-            <span class="text-sm font-medium u-text-gray-900 truncate pointer-events-none">
+            <span class="text-sm font-medium u-text-gray-900 truncate pointer-events-none" :class="{ 'line-through opacity-50': isDeleted(file) }">
               <span>{{ file.name }}</span>
             </span>
             <ProjectMediaFilesGalleryBadge :file="file" class="flex-shrink-0" />
@@ -21,11 +21,11 @@
         </div>
         <div class="flex-shrink-0">
           <UDropdown
-            placement="bottom-start"
-            class="-mr-1"
+            placement="bottom-end"
+            class="-mr-1.5"
             :items="dropdownItems(file)"
           >
-            <UButton icon="heroicons-outline:dots-vertical" variant="transparent" />
+            <UButton icon="heroicons-outline:dots-vertical" variant="transparent" class="!p-0" />
           </UDropdown>
         </div>
       </div>
@@ -34,10 +34,10 @@
 </template>
 
 <script setup lang="ts">
-import type { GitHubFile, Project } from '~/types'
+import type { GitHubFile, Project, Root } from '~/types'
 
 const project: Project = inject('project')
-const root: string = inject('root')
+const root: Root = inject('root')
 
 const { file: selectedFile, computedFiles, select, openRenameModal, openRevertModal, openDeleteModal } = useProjectFiles(project, root)
 

@@ -5,12 +5,7 @@
 
       <ProjectHeader>
         <template #extra-actions>
-          <UButton
-            size="xs"
-            label="Upload file"
-            icon="heroicons-outline:plus"
-            @click="$refs.fileToUpload.click()"
-          />
+          <UButton size="xs" label="Upload file" variant="secondary" icon="heroicons-outline:plus" @click="$refs.fileToUpload.click()" />
         </template>
       </ProjectHeader>
     </template>
@@ -20,7 +15,7 @@
         <ProjectMediaFilesGallery />
       </div>
 
-      <ProjectMediaFileAside v-if="file" />
+      <ProjectMediaFileAside />
     </div>
   </ProjectPage>
 </template>
@@ -46,7 +41,7 @@ const root = 'public'
 provide('project', props.project)
 provide('root', root)
 
-const { file, create: uploadFile } = useProjectFiles(props.project, root)
+const { create: uploadFile } = useProjectFiles(props.project, root)
 
 const fileToUpload: Ref<HTMLInputElement> = ref(null)
 
