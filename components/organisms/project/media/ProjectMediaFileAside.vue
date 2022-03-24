@@ -21,6 +21,7 @@
           </div>
         </div>
       </div>
+
       <div>
         <h3 class="font-medium u-text-gray-900">
           Information
@@ -44,11 +45,13 @@
           </div>
         </dl>
       </div>
+
       <div class="flex">
         <a :download="file.name" :href="fileDownloadLink" class="w-full">
           <UButton label="Download" block />
         </a>
       </div>
+
       <ProjectFileHistory />
     </div>
     <div v-else class="text-center">
