@@ -75,8 +75,7 @@
       </div>
 
       <ProjectContentFilesTree
-        v-if="isDir(file)"
-        v-show="isDirOpen(file)"
+        v-if="isDir(file) && isDirOpen(file)"
         :level="level + 1"
         :tree="file.children"
       />
