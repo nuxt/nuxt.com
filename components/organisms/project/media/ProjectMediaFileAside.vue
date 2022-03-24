@@ -49,6 +49,7 @@
           <UButton label="Download" block />
         </a>
       </div>
+      <ProjectFileHistory />
     </div>
     <div v-else class="text-center">
       <UIcon name="heroicons-outline:photograph" class="mx-auto h-12 w-12 u-text-gray-400" />
