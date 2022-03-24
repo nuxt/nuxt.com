@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col h-screen text-sm font-medium text-right gap-y-2 u-text-gray-500">
+  <div class="flex flex-col text-sm font-medium text-right gap-y-2 u-text-gray-500">
     <NuxtLink to="#" class="flex justify-end hover:font-semibold hover:u-text-gray-900 gap-x-3">
       <span>Previous page</span>
       <img src="/docs/toc-back.svg" alt="previous page">
