@@ -7,22 +7,17 @@
     <template #header>
       <ProjectHeader>
         <template #extra-actions>
-          <UButton
-            size="xs"
-            label="Create file"
-            icon="heroicons-outline:plus"
-            @click="openCreateFileModal('content')"
-          />
+          <UButton size="xs" label="Create file" variant="secondary" icon="heroicons-outline:plus" @click="openCreateFileModal('content')" />
         </template>
       </ProjectHeader>
     </template>
 
     <div class="flex items-stretch flex-1 min-h-0 overflow-hidden">
       <div class="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto">
-        <DocusEditor :model-value="parsedContent" :theme="theme" class="flex flex-col flex-1" @update:model-value="updateContent" />
+        <DocusEditor v-if="file" :model-value="parsedContent" :theme="theme" class="flex flex-col flex-1" @update:model-value="updateContent" />
       </div>
 
-      <ProjectContentFileAside v-if="file" :model-value="parsedMatter" @update:model-value="updateMatter" />
+      <ProjectContentFileAside :model-value="parsedMatter" @update:model-value="updateMatter" />
     </div>
   </ProjectPage>
 </template>

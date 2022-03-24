@@ -21,7 +21,7 @@ export function mapTree (tree) {
     }, acc)
   })
 
-  return result[0].children
+  return result[0]?.children
 }
 
 export const findTree = function (path, tree) {
