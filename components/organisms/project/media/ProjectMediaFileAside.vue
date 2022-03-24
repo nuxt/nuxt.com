@@ -2,7 +2,7 @@
   <aside class="hidden p-6 overflow-y-auto u-bg-white border-l u-border-gray-200 top-0 w-96 lg:block sticky h-[calc(100vh-4rem)] flex-shrink-0">
     <div v-if="file" class="pb-16 space-y-6">
       <div>
-        <div class="flex items-start justify-between">
+        <div class="flex items-center justify-between gap-3">
           <div class="min-w-0">
             <h2 class="text-lg font-medium u-text-gray-900">
               <span class="sr-only">Details for </span>{{ file.name }}
@@ -19,8 +19,13 @@
               />
             </p>
           </div>
+
+          <a :download="file.name" :href="fileDownloadLink">
+            <UButton icon="heroicons-outline:cloud-download" variant="secondary" rounded />
+          </a>
         </div>
       </div>
+
       <div>
         <h3 class="font-medium u-text-gray-900">
           Information
@@ -44,11 +49,8 @@
           </div>
         </dl>
       </div>
-      <div class="flex">
-        <a :download="file.name" :href="fileDownloadLink" class="w-full">
-          <UButton label="Download" block />
-        </a>
-      </div>
+
+      <ProjectFileHistory />
     </div>
     <div v-else class="text-center">
       <UIcon name="heroicons-outline:photograph" class="mx-auto h-12 w-12 u-text-gray-400" />
