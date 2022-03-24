@@ -765,13 +765,12 @@
     fastq "^1.6.0"
 
 "@nuxt/content@npm:@nuxt/content-edge@latest":
-  version "2.0.0-27460213.011535d"
-  resolved "https://registry.yarnpkg.com/@nuxt/content-edge/-/content-edge-2.0.0-27460213.011535d.tgz#61607ccf2c680642356eac8a85f9656a4b3c59d7"
-  integrity sha512-kfBihukDwvpnuTwZeMHvrWfVANpVYRXbO/4dr0Z+e+YrMUKQ0Jz/vVfa6WFlQQ20Rd6FcXM1pjMzMN3bJ0CK6w==
+  version "2.0.0-27468812.6fc3b34"
+  resolved "https://registry.yarnpkg.com/@nuxt/content-edge/-/content-edge-2.0.0-27468812.6fc3b34.tgz#3a2f2cee837b47f320888d57e51f726440c49592"
+  integrity sha512-7F5Le5bUfNigEZGuOUHTVvd1qU21binsK/68om3ciQpBi0DG1b642jxi5TgnOatvlCq7a1uXFzfIfa4N9VGTdA==
   dependencies:
     "@nuxt/kit" "npm:@nuxt/kit-edge@latest"
     consola "^2.15.3"
-    debounce "^1.2.1"
     defu "^5.0.1"
     detab "^3.0.1"
     flat "^5.0.2"
@@ -788,6 +787,7 @@
     micromark-util-character "^1.1.0"
     parse-entities "^4.0.0"
     pathe "^0.2.0"
+    perfect-debounce "^0.1.3"
     property-information "^6.1.1"
     rehype-external-links "^1.0.1"
     rehype-raw "^6.1.1"
@@ -842,7 +842,7 @@
     unimport "^0.1.1"
     untyped "^0.4.3"
 
-"@nuxt/kit@npm:@nuxt/kit-edge@3.0.0-27468803.23e7afb":
+"@nuxt/kit@npm:@nuxt/kit-edge@3.0.0-27468803.23e7afb", "@nuxt/kit@npm:@nuxt/kit-edge@latest":
   version "3.0.0-27468803.23e7afb"
   resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-27468803.23e7afb.tgz#d53fb15440ec7dfe632a53afccbf315a0a657285"
   integrity sha512-Og+wHqltQXvxAuTBjvroUwhnvXNQYXtfmxrd7LdYuNU0kGkuz3HlZiZz400z3P2l8r4bkbHQ4HswDkaUGNJlRw==
@@ -864,30 +864,6 @@
     semver "^7.3.5"
     unctx "^1.1.0"
     unimport "^0.1.3"
-    untyped "^0.4.3"
-
-"@nuxt/kit@npm:@nuxt/kit-edge@latest":
-  version "3.0.0-27467056.93c4dfe"
-  resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-27467056.93c4dfe.tgz#849cd223fcc9b9948829e534f3633ef743f659e2"
-  integrity sha512-mtTXVnfOtMnu23q9t94SxsDX988slEIQj5WqXdUCmtY0phhJoRPBGhSzVMno1eakpOfX9WBo2Rgw8KXcrTEFJQ==
-  dependencies:
-    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-27467056.93c4dfe"
-    c12 "^0.2.4"
-    consola "^2.15.3"
-    defu "^6.0.0"
-    globby "^13.1.1"
-    hash-sum "^2.0.0"
-    ignore "^5.2.0"
-    jiti "^1.13.0"
-    knitwork "^0.1.1"
-    lodash.template "^4.5.0"
-    mlly "^0.4.3"
-    pathe "^0.2.0"
-    pkg-types "^0.3.2"
-    scule "^0.2.1"
-    semver "^7.3.5"
-    unctx "^1.1.0"
-    unimport "^0.1.1"
     untyped "^0.4.3"
 
 "@nuxt/nitro@npm:@nuxt/nitro-edge@3.0.0-27468803.23e7afb":
@@ -972,22 +948,6 @@
   version "3.0.0-27465767.70f067a"
   resolved "https://registry.yarnpkg.com/@nuxt/schema-edge/-/schema-edge-3.0.0-27465767.70f067a.tgz#95cf99b4c8fbef1de5627fd488b9810e781648c8"
   integrity sha512-S9RzCddYD2fyjUJYUiiNRwOdwjQjoPARm/4zXYx7sXnIOKvY7P84RgtzTNKDqlTilTY6j0NGShiqn/F9sC3mlw==
-  dependencies:
-    c12 "^0.2.4"
-    create-require "^1.1.1"
-    defu "^6.0.0"
-    jiti "^1.13.0"
-    pathe "^0.2.0"
-    postcss-import-resolver "^2.0.0"
-    scule "^0.2.1"
-    std-env "^3.0.1"
-    ufo "^0.8.1"
-    unimport "^0.1.1"
-
-"@nuxt/schema@npm:@nuxt/schema-edge@3.0.0-27467056.93c4dfe":
-  version "3.0.0-27467056.93c4dfe"
-  resolved "https://registry.yarnpkg.com/@nuxt/schema-edge/-/schema-edge-3.0.0-27467056.93c4dfe.tgz#9f4b1f880a890c44194e8e5738d9a3cd29f50979"
-  integrity sha512-IBWqpdLMoY1E9VHiFYLtZptNBqZ6xyGNcBSnE8HOI3MrZELVPIpGNimSjjlhQ/EgjsdTi/oRA2yc64Jf6tV0PQ==
   dependencies:
     c12 "^0.2.4"
     create-require "^1.1.1"
@@ -2269,10 +2229,15 @@ caniuse-api@^3.0.0:
     lodash.memoize "^4.1.2"
     lodash.uniq "^4.5.0"
 
-caniuse-lite@^1.0.0, caniuse-lite@^1.0.30001317:
+caniuse-lite@^1.0.0:
   version "1.0.30001319"
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001319.tgz#eb4da4eb3ecdd409f7ba1907820061d56096e88f"
   integrity sha512-xjlIAFHucBRSMUo1kb5D4LYgcN1M45qdKP++lhqowDpwJwGkpIRTt5qQqnhxjj1vHcI7nrJxWhCC1ATrCEBTcw==
+
+caniuse-lite@^1.0.30001317:
+  version "1.0.30001320"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001320.tgz#8397391bec389b8ccce328636499b7284ee13285"
+  integrity sha512-MWPzG54AGdo3nWx7zHZTefseM5Y1ccM7hlQKHRqJkPozUaw3hNbBTMmLn16GG2FUzjR13Cr3NPfhIieX5PzXDA==
 
 ccount@^2.0.0:
   version "2.0.1"
@@ -2953,11 +2918,6 @@ dateformat@^3.0.0:
   resolved "https://registry.yarnpkg.com/dateformat/-/dateformat-3.0.3.tgz#a6e37499a4d9a9cf85ef5872044d62901c9889ae"
   integrity sha512-jyCETtSl3VMZMWeRo7iY1FL19ges1t55hMo5yaam4Jrsm5EPL89UQkoQRyiI+Yf4k8r2ZpdngkV8hr1lIdjb3Q==
 
-debounce@^1.2.1:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/debounce/-/debounce-1.2.1.tgz#38881d8f4166a5c5848020c11827b834bcb3e0a5"
-  integrity sha512-XRRe6Glud4rd/ZGQfiV1ruXSfbvfJedlV9Y6zOlP+2K04vBYiJEte6stfFkCP03aMnY5tsipamumUjL14fofug==
-
 debug@2.6.9, debug@^2.6.9:
   version "2.6.9"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.9.tgz#5d128515df134ff327e90a4c93f4e077a536341f"
@@ -3236,9 +3196,9 @@ ee-first@1.1.1:
   integrity sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=
 
 electron-to-chromium@^1.4.84:
-  version "1.4.90"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.90.tgz#4a518590f118828d54fff045728f547fef08143f"
-  integrity sha512-ZwKgSA0mQMyEhz+NR0F8dRzkrCLeHLzLkjx/CWf16+zV85hQ6meXPQbKanvhnpkYb7b2uJNj+enQJ/N877ND4Q==
+  version "1.4.92"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.92.tgz#88996e9aceb3a500710fd439abfa89b6cc1ac56c"
+  integrity sha512-YAVbvQIcDE/IJ/vzDMjD484/hsRbFPW2qXJPaYTfOhtligmfYEYOep+5QojpaEU9kq6bMvNeC2aG7arYvTHYsA==
 
 emoji-regex@^10.0.0:
   version "10.0.1"
@@ -5643,9 +5603,9 @@ micromark-extension-gfm-autolink-literal@^1.0.0:
     uvu "^0.5.0"
 
 micromark-extension-gfm-footnote@^1.0.0:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/micromark-extension-gfm-footnote/-/micromark-extension-gfm-footnote-1.0.3.tgz#5280b29667e4ecb8687f369829aa3322caca7d11"
-  integrity sha512-bn62pC5y39rIo2g1RqZk1NhF7T7cJLuJlbevunQz41U0iPVCdVOFASe5/L1kke+DFKSgfCRhv24+o42cZ1+ADw==
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/micromark-extension-gfm-footnote/-/micromark-extension-gfm-footnote-1.0.4.tgz#cbfd8873b983e820c494498c6dac0105920818d5"
+  integrity sha512-E/fmPmDqLiMUP8mLJ8NbJWJ4bTw6tS+FEQS8CcuDtZpILuOb2kjLqPEeAePF1djXROHXChM/wPJw0iS4kHCcIg==
   dependencies:
     micromark-core-commonmark "^1.0.0"
     micromark-factory-space "^1.0.0"
@@ -5653,6 +5613,7 @@ micromark-extension-gfm-footnote@^1.0.0:
     micromark-util-normalize-identifier "^1.0.0"
     micromark-util-sanitize-uri "^1.0.0"
     micromark-util-symbol "^1.0.0"
+    micromark-util-types "^1.0.0"
     uvu "^0.5.0"
 
 micromark-extension-gfm-strikethrough@^1.0.0:
@@ -8554,9 +8515,9 @@ unbox-primitive@^1.0.1:
     which-boxed-primitive "^1.0.2"
 
 unctx@^1.0.2, unctx@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/unctx/-/unctx-1.1.0.tgz#465b1c71849dfae406c5c8cd713a9001f6f12654"
-  integrity sha512-Ae6vlXs1HC5Sg4PS1aNm8o9vqLonziZzGQ9m8Yiwvlan2CCwkOsdJXiiTmkjWqKn98PhJrpp8CGKfzA0tLuoZA==
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/unctx/-/unctx-1.1.2.tgz#4e4bf2e7a09b9816d535468ce974889e17c14609"
+  integrity sha512-LN1dY02kiTLgwjinsLhdajinpmiZtD7eYsNGOSFgWqGOoMdfjK0+p53DdVAC1L0dQsORqCvfwrBKKC9pT33Yig==
   dependencies:
     acorn "^8.7.0"
     estree-walker "^2.0.2"
@@ -8611,22 +8572,7 @@ unimport@^0.1.0:
     scule "^0.2.1"
     unplugin "^0.3.3"
 
-unimport@^0.1.1:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/unimport/-/unimport-0.1.2.tgz#841e5213a7ff82b0e7518daf5e09dda6787207f6"
-  integrity sha512-1MTVh/DP8NTyrzsOGp6GaHLKuDWdh4RQbc1gSncbzZ7ttWpIJD9e330MKCCoXe6LkUoLNELmyYUVlk0F0Hwvow==
-  dependencies:
-    "@rollup/pluginutils" "^4.1.2"
-    escape-string-regexp "^5.0.0"
-    globby "^13.1.1"
-    local-pkg "^0.4.1"
-    magic-string "^0.26.0"
-    mlly "^0.4.3"
-    pathe "^0.2.0"
-    scule "^0.2.1"
-    unplugin "^0.3.3"
-
-unimport@^0.1.3:
+unimport@^0.1.1, unimport@^0.1.3:
   version "0.1.3"
   resolved "https://registry.yarnpkg.com/unimport/-/unimport-0.1.3.tgz#b11d72fa596d368ad91966ac11e63850148deac1"
   integrity sha512-P21Psvf8rqgbx3pLpxvmOlTnwUU3bkRiou8hAijGfbuq5ioUILsffT48aTyIYDsYowoWoYtamn9d1IDxXOV37Q==
