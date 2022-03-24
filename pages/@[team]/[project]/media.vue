@@ -56,6 +56,8 @@ async function onFileUpload () {
   const file = fileToUpload.value.files[0]
   formData.append('files.image', fileToUpload.value.files[0])
 
-  await uploadFile(`public/${file.name}`, formData)
+  try {
+    await uploadFile(`public/${file.name}`, formData)
+  } catch (e) {}
 }
 </script>
