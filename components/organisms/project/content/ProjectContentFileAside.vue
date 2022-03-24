@@ -21,6 +21,7 @@
           </div>
         </div>
       </div>
+
       <UFormGroup
         v-for="field of fields"
         :key="field.key"
@@ -46,38 +47,8 @@
         />
         <UCheckbox v-else-if="field.type === 'boolean'" :model-value="field.value" :name="field.key" @update:model-value="value => updateField(field.key, value)" />
       </UFormGroup>
-      <div>
-        <h3 class="font-medium u-text-gray-900">
-          History
-        </h3>
-        <ul role="list" class="mt-2 border-t border-b u-border-gray-200 divide-y u-divide-gray-200">
-          <div v-if="pending" class="flex justify-center py-3">
-            <UIcon name="heroicons-outline:refresh" class="animate-spin h-5 w-5" />
-          </div>
-          <li v-else-if="!history?.length" class="py-3 text-sm text-center">
-            No history yet
-          </li>
-          <li v-for="commit in history" v-else :key="commit.oid" class="flex justify-between py-3 gap-3">
-            <div class="flex flex-1">
-              <div class="flex flex-col -space-y-1.5">
-                <UAvatar v-for="author of commit.authors" :key="author.login" :src="author.avatarUrl" :alt="author.login" size="xs" />
-              </div>
-              <div class="ml-4 flex flex-col flex-1">
-                <div class="flex items-center justify-between">
-                  <p class="text-sm font-medium u-text-gray-900 truncate">
-                    {{ commit.authors.map(author => author.login).join(', ') }}
-                  </p>
-                  <time v-if="commit.date" class="block u-text-gray-400 text-sm flex-shrink-0">{{ useTimeAgo(new Date(commit.date)).value }}</time>
-                </div>
-                <NuxtLink :to="`https://github.com/${project.repository.owner}/${project.repository.name}/commit/${commit.oid}`" target="_blank" class="flex-shrink-0 u-text-gray-500 hover:underline text-sm block">
-                  {{ commit.message }}
-                  <UIcon name="heroicons-outline:external-link" class="ml-1 w-3 h-3 flex-shrink-0 inline-flex" />
-                </NuxtLink>
-              </div>
-            </div>
-          </li>
-        </ul>
-      </div>
+
+      <ProjectFileHistory />
     </div>
     <div v-else class="text-center">
       <UIcon name="heroicons-outline:document-text" class="mx-auto h-12 w-12 u-text-gray-400" />
@@ -89,7 +60,6 @@
 </template>
 
 <script setup lang="ts">
-import { useTimeAgo } from '@vueuse/core'
 import { snakeCase } from 'lodash-es'
 import type { Project, Root } from '~/types'
 import { capitalize } from '~/utils'
@@ -109,10 +79,6 @@ const root: Root = inject('root')
 
 const { branch } = useProjectBranches(project)
 const { file } = useProjectFiles(project, root)
-const client = useStrapiClient()
-
-const historyData = ref(null)
-const pending = ref(false)
 
 // Computed
 
@@ -121,20 +87,6 @@ const fields = computed(() => {
 })
 
 const name = computed(() => getPathName(file.value.path || ''))
-
-const history = computed(() => {
-  return historyData.value?.repository.ref.target.history.nodes.map(commit => ({
-    authors: commit.authors.nodes.flatMap(author => author.user),
-    message: commit.message,
-    oid: commit.oid,
-    shortSha: commit.oid.slice(0, 7),
-    date: commit.pushedDate
-  })) || []
-})
-
-// Watch
-
-watch(file, () => fetchHistory())
 
 // Methods
 
@@ -168,26 +120,4 @@ function mapFields (fields, parent = '') {
     }
   }).filter(Boolean)
 }
-
-// Http
-
-async function fetchHistory () {
-  if (!file.value) {
-    return
-  }
-
-  pending.value = true
-
-  historyData.value = await client<Object[]>(`/projects/${project.id}/files/${encodeURIComponent(file.value.path)}/history`, {
-    params: {
-      ref: branch.value.name
-    }
-  })
-
-  pending.value = false
-}
-
-onMounted(() => {
-  fetchHistory()
-})
 </script>
