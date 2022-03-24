@@ -243,7 +243,19 @@ export const useProjectFiles = (project: Project, root: Root) => {
   })
 
   const isDraft = computed(() => {
-    return (draft.value?.additions?.length || 0) + (draft.value?.deletions.length || 0)
+    let changesCount = (draft.value?.additions?.length || 0) + (draft.value?.deletions?.length || 0)
+
+    // ignore renames in count
+    if (draft.value?.additions?.length && draft.value?.deletions?.length) {
+      for (const addition of draft.value.additions) {
+        // if an addition and a deletion have the same path, uncount 2 changes
+        if (addition.oldPath && draft.value.deletions.find(d => d.path === addition.oldPath)) {
+          changesCount -= 2
+        }
+      }
+    }
+
+    return changesCount
   })
 
   return {
