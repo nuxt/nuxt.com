@@ -36,17 +36,19 @@ export const useProjectBranches = (project: Project) => {
   }
 
   async function create (name: string, mergeDraft?: boolean) {
-    const b = await client<GitHubBranch>(`/projects/${project.id}/branches`, {
-      method: 'POST',
-      body: {
-        name,
-        mergeDraft
-      }
-    })
+    try {
+      const b = await client<GitHubBranch>(`/projects/${project.id}/branches`, {
+        method: 'POST',
+        body: {
+          name,
+          mergeDraft
+        }
+      })
 
-    branches.value.push(b)
+      branches.value.push(b)
 
-    select(b)
+      select(b)
+    } catch (e) {}
   }
 
   async function commit () {

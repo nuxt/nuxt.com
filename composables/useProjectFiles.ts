@@ -55,40 +55,44 @@ export const useProjectFiles = (project: Project, root: Root) => {
       body = { data: { path } }
     }
 
-    const data = await client<GitHubDraft>(`/projects/${project.id}/files`, {
-      method: 'POST',
-      params: {
-        ref: branch.value.name,
-        root
-      },
-      body
-    })
+    try {
+      const data = await client<GitHubDraft>(`/projects/${project.id}/files`, {
+        method: 'POST',
+        params: {
+          ref: branch.value.name,
+          root
+        },
+        body
+      })
 
-    draft.value = data
+      draft.value = data
 
-    select(computedFiles.value.find(file => file.path === path))
+      select(computedFiles.value.find(file => file.path === path))
+    } catch (e) {}
   }
 
   async function rename (oldPath: string, newPath: string) {
-    const data = await client<GitHubDraft>(`/projects/${project.id}/files/rename`, {
-      method: 'PUT',
-      params: {
-        ref: branch.value?.name,
-        root
-      },
-      body: {
-        files: [{
-          oldPath,
-          newPath
-        }]
+    try {
+      const data = await client<GitHubDraft>(`/projects/${project.id}/files/rename`, {
+        method: 'PUT',
+        params: {
+          ref: branch.value?.name,
+          root
+        },
+        body: {
+          files: [{
+            oldPath,
+            newPath
+          }]
+        }
+      })
+
+      draft.value = data
+
+      if (file.value?.path === oldPath) {
+        select(computedFiles.value.find(file => file.path === newPath))
       }
-    })
-
-    draft.value = data
-
-    if (file.value?.path === oldPath) {
-      select(computedFiles.value.find(file => file.path === newPath))
-    }
+    } catch (e) {}
   }
 
   async function bulkRename (files) {
@@ -96,68 +100,74 @@ export const useProjectFiles = (project: Project, root: Root) => {
       return
     }
 
-    const data = await client<GitHubDraft>(`/projects/${project.id}/files/rename`, {
-      method: 'PUT',
-      params: {
-        ref: branch.value?.name,
-        root
-      },
-      body: {
-        files
-      }
-    })
+    try {
+      const data = await client<GitHubDraft>(`/projects/${project.id}/files/rename`, {
+        method: 'PUT',
+        params: {
+          ref: branch.value?.name,
+          root
+        },
+        body: {
+          files
+        }
+      })
 
-    draft.value = data
+      draft.value = data
+    } catch (e) {}
   }
 
   async function revert (path: string) {
-    const data = await client<GitHubDraft>(`/projects/${project.id}/files/${encodeURIComponent(path)}/revert`, {
-      method: 'POST',
-      params: {
-        ref: branch.value?.name,
-        root
-      }
-    })
+    try {
+      const data = await client<GitHubDraft>(`/projects/${project.id}/files/${encodeURIComponent(path)}/revert`, {
+        method: 'POST',
+        params: {
+          ref: branch.value?.name,
+          root
+        }
+      })
 
-    const oldFilePath = draft.value.additions.find(addition => addition.path === path)?.oldPath
+      const oldFilePath = draft.value.additions.find(addition => addition.path === path)?.oldPath
 
-    draft.value = data
+      draft.value = data
 
-    const currentFileExists = !!computedFiles.value.find(f => f.path === file.value?.path)
+      const currentFileExists = !!computedFiles.value.find(f => f.path === file.value?.path)
 
-    if (!currentFileExists) {
-      if (oldFilePath) {
+      if (!currentFileExists) {
+        if (oldFilePath) {
         // Select old file
-        const oldFile = computedFiles.value.find(f => f.path === oldFilePath)
-        select(oldFile)
-      } else {
+          const oldFile = computedFiles.value.find(f => f.path === oldFilePath)
+          select(oldFile)
+        } else {
         // Select new file when reverted file no longer exists
-        file.value = null
-        init()
-      }
-    } else {
+          file.value = null
+          init()
+        }
+      } else {
       // No new selection, fetch new content
       // FIXME: hacky update to trigger any watchers on `file`
-      file.value = { ...file.value }
-    }
+        file.value = { ...file.value }
+      }
+    } catch (e) {}
   }
 
   async function _delete (path: string) {
-    const data = await client<GitHubDraft>(`/projects/${project.id}/files/${encodeURIComponent(path)}`, {
-      method: 'DELETE',
-      params: {
-        ref: branch.value?.name,
-        root
+    try {
+      const data = await client<GitHubDraft>(`/projects/${project.id}/files/${encodeURIComponent(path)}`, {
+        method: 'DELETE',
+        params: {
+          ref: branch.value?.name,
+          root
+        }
+      })
+
+      draft.value = data
+
+      // Select new file when deleted was selected
+      if (file.value?.path === path) {
+        file.value = null
+        init()
       }
-    })
-
-    draft.value = data
-
-    // Select new file when deleted was selected
-    if (file.value?.path === path) {
-      file.value = null
-      init()
-    }
+    } catch (e) {}
   }
 
   // Modals

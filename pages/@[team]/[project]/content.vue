@@ -107,19 +107,21 @@ async function fetchContent () {
 }
 
 async function updateFile (formattedContent) {
-  const data = await client<GitHubDraft>(`/projects/${props.project.id}/files/${encodeURIComponent(file.value.path)}`, {
-    method: 'PUT',
-    params: {
-      ref: branch.value?.name,
-      root
-    },
-    body: {
-      content: formattedContent
-    }
-  })
+  try {
+    const data = await client<GitHubDraft>(`/projects/${props.project.id}/files/${encodeURIComponent(file.value.path)}`, {
+      method: 'PUT',
+      params: {
+        ref: branch.value?.name,
+        root
+      },
+      body: {
+        content: formattedContent
+      }
+    })
 
-  content.value = formattedContent
-  draft.value = data
+    content.value = formattedContent
+    draft.value = data
+  } catch (e) {}
 }
 
 const updateContent = debounce((newContent: string) => {
