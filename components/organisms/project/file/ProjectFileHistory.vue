@@ -40,31 +40,5 @@ import type { Project, Root } from '~/types'
 const project: Project = inject('project')
 const root: Root = inject('root')
 
-const { file } = useProjectFiles(project, root)
-
-const { fetch: fetchHistory, pending } = useProjectFileHistory(project, root)
-
-const historyData = ref(null)
-
-// Computed
-
-const history = computed(() => {
-  return historyData.value?.repository.ref.target.history.nodes.map(commit => ({
-    authors: commit.authors.nodes.flatMap(author => author.user),
-    message: commit.message,
-    oid: commit.oid,
-    shortSha: commit.oid.slice(0, 7),
-    date: commit.pushedDate
-  })) || []
-})
-
-// Watch
-
-watch(file, async () => {
-  historyData.value = await fetchHistory(file.value)
-})
-
-onMounted(async () => {
-  historyData.value = await fetchHistory(file.value)
-})
+const { history, pending } = useProjectFileHistory(project, root)
 </script>
