@@ -5,28 +5,24 @@ export const useProjectFileHistory = (project: Project, root: Root) => {
   const { file, draft } = useProjectFiles(project, root)
   const client = useStrapiClient()
 
-  const pending = ref(false)
+  const pending = ref(true)
   const historyData = ref(null)
 
-  const fetch = async (file: GitHubFile) => {
-    if (!file?.path) {
-      return
-    }
-
+  const fetch = async () => {
     // renamed file case
-    const oldPath = draft.value?.additions?.find(f => f.path === file.path)?.oldPath
+    const oldPath = draft.value?.additions?.find(f => f.path === file.value.path)?.oldPath
 
     pending.value = true
 
-    const data = await client<Object[]>(`/projects/${project.id}/files/${encodeURIComponent(oldPath || file.path)}/history`, {
-      params: {
-        ref: branch.value.name
-      }
-    })
+    try {
+      historyData.value = await client<Object[]>(`/projects/${project.id}/files/${encodeURIComponent(oldPath || file.value.path)}/history`, {
+        params: {
+          ref: branch.value.name
+        }
+      })
+    } catch (e) {}
 
     pending.value = false
-
-    return data
   }
 
   // Computed
@@ -43,9 +39,9 @@ export const useProjectFileHistory = (project: Project, root: Root) => {
 
   // Watch
 
-  watch(file, async () => {
-    historyData.value = await fetch(file.value)
-  }, { immediate: true })
+  if (process.client) {
+    watch(file, fetch, { immediate: true })
+  }
 
   return {
     history,

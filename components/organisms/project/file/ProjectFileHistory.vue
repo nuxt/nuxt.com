@@ -11,20 +11,19 @@
         No history yet
       </li>
       <li v-for="commit in history" v-else :key="commit.oid" class="flex justify-between py-3 gap-3">
-        <div class="flex flex-1">
+        <div class="flex flex-1 min-w-0">
           <div class="flex flex-col -space-y-1.5">
-            <UAvatar v-for="author of commit.authors" :key="author.login" :src="author.avatarUrl" :alt="author.login" size="xs" />
+            <UAvatar v-for="author of [...commit.authors].slice(0, 3)" :key="author.login" :src="author.avatarUrl" :alt="author.login" size="xs" />
           </div>
-          <div class="ml-4 flex flex-col flex-1">
-            <div class="flex items-center justify-between">
-              <p class="text-sm font-medium u-text-gray-900">
+          <div class="ml-4 flex flex-col flex-1 min-w-0">
+            <div class="flex items-center justify-between gap-1 truncate">
+              <p class="text-sm font-medium u-text-gray-900 truncate">
                 {{ commit.authors.map(author => author.login).join(', ') }}
               </p>
-              <time v-if="commit.date" class="block u-text-gray-400 text-sm">{{ useTimeAgo(new Date(commit.date)).value }}</time>
+              <time v-if="commit.date" class="block u-text-gray-400 text-sm flex-shrink-0">{{ useTimeAgo(new Date(commit.date)).value }}</time>
             </div>
             <NuxtLink :to="`https://github.com/${project.repository.owner}/${project.repository.name}/commit/${commit.oid}`" target="_blank" class="flex-shrink-0 u-text-gray-500 hover:underline text-sm block">
-              {{ commit.message }}
-              <UIcon name="heroicons-outline:external-link" class="ml-1 w-3 h-3 flex-shrink-0 inline-flex" />
+              <span class="line-clamp-2">{{ commit.message }}</span>
             </NuxtLink>
           </div>
         </div>
