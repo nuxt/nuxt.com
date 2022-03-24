@@ -87,7 +87,7 @@
 
 <script setup lang="ts">
 import { useTimeAgo } from '@vueuse/core'
-import type { Project } from '~/types'
+import type { Project, Root } from '~/types'
 import { getPathName } from '~/utils/tree'
 
 const props = defineProps({
@@ -100,7 +100,7 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue'])
 
 const project: Project = inject('project')
-const root: string = inject('root')
+const root: Root = inject('root')
 
 const { branch } = useProjectBranches(project)
 const { file } = useProjectFiles(project, root)
