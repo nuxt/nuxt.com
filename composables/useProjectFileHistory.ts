@@ -45,11 +45,7 @@ export const useProjectFileHistory = (project: Project, root: Root) => {
 
   watch(file, async () => {
     historyData.value = await fetch(file.value)
-  })
-
-  onMounted(async () => {
-    historyData.value = await fetch(file.value)
-  })
+  }, { immediate: true })
 
   return {
     history,
