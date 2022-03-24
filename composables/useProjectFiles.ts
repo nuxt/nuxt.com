@@ -1,12 +1,12 @@
 import type { Ref } from 'vue'
 import { omit } from 'lodash-es'
-import type { GitHubFile, GitHubDraft, Project } from '~/types'
+import type { GitHubFile, GitHubDraft, Project, Root } from '~/types'
 import ProjectModalFileCreate from '~/components/organisms/project/modal/ProjectModalFileCreate.vue'
 import ProjectModalFileRename from '~/components/organisms/project/modal/ProjectModalFileRename.vue'
 import ProjectModalFileDelete from '~/components/organisms/project/modal/ProjectModalFileDelete.vue'
 import ProjectModalFileRevert from '~/components/organisms/project/modal/ProjectModalFileRevert.vue'
 
-export const useProjectFiles = (project: Project, root: string) => {
+export const useProjectFiles = (project: Project, root: Root) => {
   const { open: openModal } = useModal()
   const client = useStrapiClient()
   const { branch } = useProjectBranches(project)

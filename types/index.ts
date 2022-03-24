@@ -79,6 +79,8 @@ export interface Project {
   user: User
 }
 
+export type Root = 'content' | 'public'
+
 export type FileStatus = 'created' | 'updated' | 'deleted' | 'renamed'
 
 export interface File {
