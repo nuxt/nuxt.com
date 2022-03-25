@@ -1,6 +1,6 @@
 <template>
   <ProjectPage>
-    <template #aside>
+    <template v-if="tree && tree.length" #aside>
       <ProjectContentFilesTree :tree="tree" />
     </template>
 
@@ -13,9 +13,10 @@
     </template>
 
     <div class="flex items-stretch flex-1 min-h-0 overflow-hidden">
-      <div class="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto">
+      <div v-if="computedFiles.length" class="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto">
         <DocusEditor v-if="file" :model-value="parsedContent" :theme="theme" class="flex flex-col flex-1" @update:model-value="updateContent" />
       </div>
+      <ProjectContentFilesEmpty v-else @create="openCreateFileModal('content')" />
 
       <ProjectContentFileAside :model-value="parsedMatter" @update:model-value="updateMatter" />
     </div>
@@ -47,7 +48,7 @@ const colorMode = useColorMode()
 const client = useStrapiClient()
 const { parseFrontMatter, stringifyFrontMatter } = useMarkdown()
 const { branch } = useProjectBranches(props.project)
-const { draft, file, openCreateModal: openCreateFileModal } = useProjectFiles(props.project, root)
+const { draft, file, openCreateModal: openCreateFileModal, computedFiles } = useProjectFiles(props.project, root)
 const { tree, openDir } = useProjectFilesTree(props.project, root)
 
 const content: Ref<string> = ref('')
