@@ -2,7 +2,7 @@ import * as matter from 'gray-matter'
 import flat from 'flat'
 
 export const useMarkdown = () => {
-  function parseFrontMatter (content) {
+  function parseFrontMatter (content: string) {
     // @ts-ignore
     const { data, content: c, ...rest } = matter.default ? matter.default(content) : matter(content)
 
@@ -17,7 +17,7 @@ export const useMarkdown = () => {
     }
   }
 
-  function stringifyFrontMatter (content, data = {}) {
+  function stringifyFrontMatter (content: string, data = {}) {
   // flatten frontmatter data
   // convert `parent: { child: ... }` into flat keys `parent.child`
     data = flat.flatten(data, {
