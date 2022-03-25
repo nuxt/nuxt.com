@@ -50,7 +50,7 @@
 
       <ProjectFileHistory />
     </div>
-    <div v-else class="text-center">
+    <div v-else class="h-full flex flex-col items-center justify-center">
       <UIcon name="heroicons-outline:document-text" class="mx-auto h-12 w-12 u-text-gray-400" />
       <h3 class="mt-2 text-sm font-medium u-text-gray-900">
         No file selected

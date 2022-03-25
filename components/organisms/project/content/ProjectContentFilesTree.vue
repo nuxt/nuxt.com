@@ -1,17 +1,5 @@
 <template>
-  <div v-if="level === 0 && !tree.length" class="text-center p-6">
-    <UIcon name="heroicons-outline:folder" class="mx-auto h-12 w-12 u-text-gray-400" />
-    <h3 class="mt-2 text-sm font-medium u-text-gray-900">
-      No files in <span class="italic">content</span> directory
-    </h3>
-    <p class="mt-1 text-sm u-text-gray-500">
-      Get started by creating a new file.
-    </p>
-    <div class="mt-6">
-      <UButton label="Create file" size="xs" icon="heroicons-outline:plus" @click="openCreateModal('content')" />
-    </div>
-  </div>
-  <ul v-else>
+  <ul>
     <li v-for="(file, index) of tree" :key="index">
       <div
         class="flex items-center w-full py-2 pr-6 text-sm font-medium border-r-2 group focus:u-bg-gray-50 focus:outline-none target"

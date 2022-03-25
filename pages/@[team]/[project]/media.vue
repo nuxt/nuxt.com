@@ -18,9 +18,10 @@
     </template>
 
     <div class="flex items-stretch flex-1 min-h-0 overflow-hidden">
-      <div class="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto">
+      <div v-if="computedFiles.length" class="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto">
         <ProjectMediaFilesGallery />
       </div>
+      <ProjectMediaFilesEmpty v-else @create="$refs.fileToUpload.click()" />
 
       <ProjectMediaFileAside />
     </div>
@@ -49,7 +50,7 @@ provide('project', props.project)
 provide('root', root)
 
 const { $toast } = useNuxtApp()
-const { create: uploadFile } = useProjectFiles(props.project, root)
+const { create: uploadFile, computedFiles } = useProjectFiles(props.project, root)
 
 const fileToUpload: Ref<HTMLInputElement> = ref(null)
 
