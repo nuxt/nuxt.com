@@ -81,7 +81,7 @@ provide('root', root)
 const user = useStrapiUser() as Ref<User>
 const { update } = useStrapi4()
 
-const form = reactive({ url: '' })
+const form = reactive({ url: props.project.repository.url })
 const loading = ref(false)
 
 async function onSubmit () {
