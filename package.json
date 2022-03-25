@@ -12,6 +12,7 @@
     "@docus/editor": "npm:@docus/editor-edge@latest",
     "@nuxt/content": "npm:@nuxt/content-edge@latest",
     "@sindresorhus/slugify": "^2.1.0",
+    "@vueuse/core": "^8.2.0",
     "@vueuse/motion": "^2.0.0-beta.12"
   },
   "devDependencies": {
@@ -20,7 +21,7 @@
     "@nuxtjs/strapi": "npm:@nuxtjs/strapi-edge@latest",
     "@tailwindcss/typography": "^0.5.2",
     "eslint": "^8.11.0",
-    "nuxt3": "^3.0.0-27470218.7c1a8ae",
+    "nuxt3": "^3.0.0-27470397.9ebea90",
     "standard-version": "^9.3.2",
     "typescript": "^4.6.3",
     "vue-plausible": "^1.3.1"
