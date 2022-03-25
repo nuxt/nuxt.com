@@ -1,4 +1,4 @@
-import { File } from '~/types'
+import type { File } from '~/types'
 
 export function mapTree (tree: File[]) {
   const result: Array<Partial<File>> = []
