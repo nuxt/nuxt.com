@@ -117,7 +117,7 @@ export const useProjectBranches = (project: Project) => {
   // Methods
 
   function init () {
-    let b: GitHubBranch
+    let b: GitHubBranch | undefined
     if (cookie.value) {
       b = branches.value.find(branch => branch.name === cookie.value)
     } else {

@@ -1,4 +1,24 @@
-import { Project, Root, GitHubFile } from '~/types'
+import type { Ref } from 'vue'
+import { Project, Root, GitHubUser, Commit } from '~/types'
+
+interface GraphQLHistory {
+  repository: {
+    ref: {
+      target: {
+        history: {
+          nodes: Array<{
+            authors: {
+              nodes: Array<{ user: GitHubUser }>
+            },
+            message: string,
+            oid: string,
+            pushedDate: string
+          }>
+        }
+      }
+    }
+  }
+}
 
 export const useProjectFileHistory = (project: Project, root: Root) => {
   const { branch } = useProjectBranches(project)
@@ -6,7 +26,7 @@ export const useProjectFileHistory = (project: Project, root: Root) => {
   const client = useStrapiClient()
 
   const pending = ref(true)
-  const historyData = ref(null)
+  const historyData: Ref<GraphQLHistory | null> = ref(null)
 
   const fetch = async () => {
     // created file case
@@ -22,7 +42,7 @@ export const useProjectFileHistory = (project: Project, root: Root) => {
     pending.value = true
 
     try {
-      historyData.value = await client<Object[]>(`/projects/${project.id}/files/${encodeURIComponent(oldPath || file.value.path)}/history`, {
+      historyData.value = await client<GraphQLHistory>(`/projects/${project.id}/files/${encodeURIComponent(oldPath || file.value.path)}/history`, {
         params: {
           ref: branch.value.name
         }
@@ -41,7 +61,7 @@ export const useProjectFileHistory = (project: Project, root: Root) => {
       oid: commit.oid,
       shortSha: commit.oid.slice(0, 7),
       date: commit.pushedDate
-    })) || []
+    })) as Commit[] || []
   })
 
   // Watch
