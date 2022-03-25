@@ -36,7 +36,7 @@
               Size
             </dt>
             <dd class="u-text-gray-900">
-              {{ (file.size / 1000).toFixed(2) }} KB
+              {{ toFormattedBytes(file.size) }}
             </dd>
           </div>
           <div v-if="file.width && file.height" class="flex justify-between py-3 text-sm font-medium">
@@ -63,6 +63,7 @@
 
 <script setup lang="ts">
 import type { Project, Root } from '~/types'
+import { toFormattedBytes } from '~/utils'
 
 const project: Project = inject('project')
 const root: Root = inject('root')
