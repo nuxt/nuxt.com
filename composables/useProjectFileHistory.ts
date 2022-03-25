@@ -1,5 +1,5 @@
 import type { Ref } from 'vue'
-import { Project, Root, GitHubUser, Commit } from '~/types'
+import type { Project, Root, GitHubUser, Commit } from '~/types'
 
 interface GraphQLHistory {
   repository: {
