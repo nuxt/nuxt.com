@@ -21,7 +21,7 @@
           </div>
 
           <a :download="file.name" :href="fileDownloadLink">
-            <UButton icon="heroicons-outline:cloud-download" variant="secondary" rounded />
+            <UButton icon="heroicons-outline:cloud-download" variant="gray" rounded />
           </a>
         </div>
       </div>
