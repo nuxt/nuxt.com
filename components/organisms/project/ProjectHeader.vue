@@ -1,6 +1,9 @@
 <template>
   <div class="flex items-center justify-between flex-1 min-w-0 gap-3">
     <div class="flex items-center min-w-0 gap-3">
+      <h2 class="font-bold text-lg">
+        {{ project.name }}
+      </h2>
       <UButton icon="mdi:source-branch" variant="secondary" size="xs" truncate @click="openBranchesModal">
         <span class="flex-auto mr-3 u-text-gray-700 truncate">{{ branch.name }}</span>
         <kbd class="font-sans font-semibold u-text-gray-400 text-xs flex-shrink-0"><abbr title="Command" class="no-underline">⌘</abbr> B</kbd>
