@@ -1,6 +1,8 @@
-export function mapTree (tree) {
-  const result = []
-  const acc = { result }
+import type { File } from '~/types'
+
+export function mapTree (tree: File[]) {
+  const result: Array<Partial<File>> = []
+  const acc: any = { result }
 
   tree.forEach((file) => {
     const paths = file.path.split('/')
@@ -24,7 +26,7 @@ export function mapTree (tree) {
   return result[0]?.children
 }
 
-export const findTree = function (path, tree) {
+export const findTree = function (path: string, tree: File[]): any {
   for (const file of tree) {
     if (file.path === path) {
       return tree
@@ -36,9 +38,9 @@ export const findTree = function (path, tree) {
   }
 }
 
-export const replacePrefix = function (path, newPrefix) {
+export const replacePrefix = function (path: string, newPrefix: string) {
   const split = path.split('/')
-  let [prefix, name, ext] = split.pop().split('.')
+  let [prefix, name, ext] = split.pop()?.split('.') || []
   // Case when file has no prefix
   if (!Number(prefix)) {
     ext = name
@@ -49,15 +51,15 @@ export const replacePrefix = function (path, newPrefix) {
   return `${newPrefix}.${name}.${ext}`
 }
 
-export const getPathDir = function (path) {
+export const getPathDir = function (path: string) {
   return path.replace(/\/[^/]+$/, '')
 }
 
-export const getPathName = function (path) {
+export const getPathName = function (path: string) {
   return path.replace(/^.*[\\/]/, '')
 }
 
-export const renamePath = function (path, newPath, newPrefix) {
+export const renamePath = function (path: string, newPath: string, newPrefix: string) {
   // Get new path dir
   const newDir = getPathDir(newPath)
   // Get path name with new prefix

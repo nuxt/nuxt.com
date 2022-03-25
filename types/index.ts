@@ -31,6 +31,11 @@ export interface Membership {
   team: Team
 }
 
+export interface GitHubUser {
+  login: string,
+  avatarUrl: string
+}
+
 export interface User {
   id: number
   username: string
@@ -90,6 +95,14 @@ export interface File {
   content?: string
   children?: File[]
   status: FileStatus
+}
+
+export interface Commit {
+  authors: GitHubUser[],
+  message: string,
+  oid: string,
+  shortSha: string,
+  date: string
 }
 
 export interface GitHubBranch {

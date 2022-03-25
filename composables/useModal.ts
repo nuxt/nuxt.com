@@ -1,15 +1,16 @@
+import type { Component, Ref } from 'vue'
 import { createApp } from 'vue'
 
-const container = ref(null)
+const container: Ref<HTMLElement | null> = ref(null)
 
-function open (component, props) {
+function open (component: Component, props = {}) {
   const modal = createApp(component, {
     ...props,
     onClose () {
       modal.unmount()
     }
   })
-  modal.mount(container.value)
+  modal.mount(container.value as HTMLElement)
 }
 
 export const useModal = () => {
