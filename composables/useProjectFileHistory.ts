@@ -9,6 +9,13 @@ export const useProjectFileHistory = (project: Project, root: Root) => {
   const historyData = ref(null)
 
   const fetch = async () => {
+    // created file case
+    if (file.value.status === 'created') {
+      historyData.value = null
+      pending.value = false
+      return
+    }
+
     // renamed file case
     const oldPath = draft.value?.additions?.find(f => f.path === file.value.path)?.oldPath
 
