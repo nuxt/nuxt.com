@@ -6,7 +6,7 @@
         <ComboboxInput :value="query" class="w-full h-12 pr-4 placeholder-gray-400 dark:placeholder-gray-500 bg-transparent border-0 pl-[3.25rem] u-text-gray-900 focus:ring-0 sm:text-sm" placeholder="Search..." @change="query = $event.target.value" />
       </div>
 
-      <ComboboxOptions v-if="query === '' || filteredFiles.length > 0" static class="relative flex-1 overflow-y-auto divide-y u-divide-gray-100 scroll-py-2">
+      <ComboboxOptions v-if="filteredFiles.length > 0" static class="relative flex-1 overflow-y-auto divide-y u-divide-gray-100 scroll-py-2">
         <li class="p-2">
           <h2 class="px-3 my-2 text-xs font-semibold u-text-gray-900">
             Files
@@ -31,6 +31,13 @@
         <UIcon name="heroicons-outline:document-text" class="mx-auto h-6 w-6 text-gray-400" aria-hidden="true" />
         <p class="mt-4 text-sm text-gray-900">
           We couldn't find any files with that term. Please try again.
+        </p>
+      </div>
+
+      <div v-if="query === '' && filteredFiles.length === 0" class="py-14 px-6 flex-1 flex flex-col items-center justify-center sm:px-14">
+        <UIcon name="heroicons-outline:document-text" class="mx-auto h-6 w-6 text-gray-400" aria-hidden="true" />
+        <p class="mt-4 text-sm text-gray-900">
+          We couldn't find any files.
         </p>
       </div>
     </Combobox>
