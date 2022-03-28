@@ -66,10 +66,13 @@ const project: Project = inject('project')
 
 const emit = defineEmits(['update:modelValue'])
 
+const route = useRoute()
 const router = useRouter()
 const keys = useMagicKeys()
 const { file: contentFile, computedFiles: contentFiles, select: selectContentFile } = useProjectFiles(project, 'content')
 const { file: mediaFile, computedFiles: mediaFiles, select: selectMediaFile } = useProjectFiles(project, 'public')
+
+const query = ref('')
 
 whenever(keys.meta_k, () => {
   isOpen.value = !isOpen.value
@@ -84,14 +87,47 @@ const isOpen = computed({
   }
 })
 
-const query = ref('')
+const currentFiles = computed(() => {
+  let currentFiles = []
+
+  if (route.name === '@team-project-content') {
+    let files = [...contentFiles.value]
+    if (contentFile.value) {
+      files = files.filter(f => f.path !== contentFile.value.path)
+    }
+
+    currentFiles = [
+      ...files,
+      ...mediaFiles.value
+    ]
+  } else if (route.name === '@team-project-media') {
+    let files = [...mediaFiles.value]
+    if (mediaFile.value) {
+      files = files.filter(f => f.path !== mediaFile.value.path)
+    }
+
+    currentFiles = [
+      ...files,
+      ...contentFiles.value
+    ]
+  } else {
+    currentFiles = [
+      ...contentFiles.value,
+      ...mediaFiles.value
+    ]
+  }
+
+  return currentFiles.map(f => ({ ...f, name: getPathName(f.path), icon: getIconName(f), iconColor: getIconColor(f) }))
+})
+
 const filteredFiles = computed(() => {
-  let filteredFiles = [...contentFiles.value, ...mediaFiles.value]
+  let filteredFiles = [...currentFiles.value]
+
   if (query.value) {
     filteredFiles = filteredFiles.filter(f => f.path.search(new RegExp(query.value, 'i')) !== -1)
   }
-  filteredFiles = filteredFiles.filter(f => ![contentFile.value?.path, mediaFile.value?.path].filter(Boolean).includes(f.path))
-  return filteredFiles.map(f => ({ ...f, name: getPathName(f.path), icon: getIconName(f), iconColor: getIconColor(f) }))
+  filteredFiles = filteredFiles.slice(0, 24)
+  return filteredFiles
 })
 
 const getIconName = (file) => {
