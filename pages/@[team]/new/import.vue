@@ -33,25 +33,47 @@
 
           <hr class="my-6 u-border-gray-200">
 
-          <div class="flex flex-col gap-6">
-            <div class="flex flex-col items-center gap-6 lg:flex-row">
-              <UFormGroup name="name" label="Name" :help="form.name !== nameSlugified ? `Your project name will be renamed to “${nameSlugified}”` : 'This is your project\'s URL namespace on Nuxt.'" required class="relative w-full lg:max-w-lg">
-                <div class="flex items-center">
-                  <span class="inline-flex items-center px-2 py-2 text-sm border border-r-0 u-bg-gray-50 u-border-gray-300 rounded-l-md u-textgray-500">
-                    nuxt.com/@{{ team?.slug || user.username }}/
-                  </span>
+          <div class="space-y-6">
+            <UFormGroup name="slug" label="Slug" :help="form.slug !== slug ? `Your project slug will be renamed to “${slug}”` : 'This is your project\'s URL namespace on Nuxt.'" required class="relative w-full lg:max-w-md">
+              <div class="flex items-center">
+                <span class="inline-flex items-center px-2 py-2 text-sm border border-r-0 u-bg-gray-50 u-border-gray-300 rounded-l-md u-textgray-500">
+                  nuxt.com/@{{ team?.slug || user.username }}/
+                </span>
 
-                  <UInput
-                    v-model="form.name"
-                    name="name"
-                    required
-                    autocomplete="off"
-                    custom-class="rounded-l-none"
-                  />
-                </div>
-              </UFormGroup>
-            </div>
+                <UInput
+                  v-model="form.slug"
+                  name="slug"
+                  required
+                  placeholder="framework"
+                  autocomplete="off"
+                  class="w-full"
+                  custom-class="rounded-l-none"
+                />
+              </div>
+            </UFormGroup>
 
+            <UFormGroup name="name" label="Name" help="This is your project's visible name within Nuxt." required>
+              <UInput
+                v-model="form.name"
+                name="name"
+                required
+                placeholder="Framework"
+                autocomplete="off"
+                class="w-full lg:max-w-xs"
+              />
+            </UFormGroup>
+
+            <UFormGroup name="url" label="Url" help="The url of your project is used for preview purposes.">
+              <UInput
+                v-model="form.url"
+                name="url"
+                class="w-full lg:max-w-xs"
+                placeholder="https://nuxtjs.org"
+              />
+            </UFormGroup>
+          </div>
+
+          <template #footer>
             <div class="flex items-center justify-end">
               <UButton
                 type="submit"
@@ -59,7 +81,7 @@
                 label="Create"
               />
             </div>
-          </div>
+          </template>
         </UCard>
       </PageGrid>
     </Page>
@@ -69,7 +91,6 @@
 <script setup lang="ts">
 import slugify from '@sindresorhus/slugify'
 import type { PropType, Ref } from 'vue'
-import projectsVue from '../projects.vue'
 import type { Team, Template, Project, User, GitHubRepository } from '~/types'
 
 const props = defineProps({
@@ -98,7 +119,7 @@ const { error, data: repository } = await useAsyncData<GitHubRepository>(
   'repository',
   () => client(`/github/installations/${owner}/${name}`),
   {
-    pick: ['name', 'owner']
+    pick: ['name', 'homepage', 'owner']
   }
 )
 if (error.value) {
@@ -106,10 +127,10 @@ if (error.value) {
 }
 
 const loading = ref(false)
-const form = reactive({ name })
+const form = reactive({ slug: name, name, url: repository.value.homepage })
 
-const nameSlugified = computed(() => {
-  return slugify(form.name)
+const slug = computed(() => {
+  return slugify(form.slug)
 })
 
 const onSubmit = async () => {
@@ -128,7 +149,7 @@ const onSubmit = async () => {
       }
     })
 
-    router.push({ name: '@team-project', params: { team: props.team?.slug || user.value.username, project: project.name } })
+    router.push({ name: '@team-project', params: { team: props.team?.slug || user.value.username, project: project.slug } })
   } catch (e) {}
 
   loading.value = false

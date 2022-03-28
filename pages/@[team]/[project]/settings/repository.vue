@@ -12,12 +12,12 @@
           <UIcon name="fa-brands:github" class="w-6 h-6" />
           <div class="flex flex-col">
             <a
-              :href="`https://github.com/${project.repository.owner}/${project.name}`"
+              :href="`https://github.com/${project.repository.owner}/${project.repository.name}`"
               target="_blank"
               rel="noopener"
               class="flex items-center gap-1 font-semibold u-text-gray-900 hover:underline"
             >
-              {{ project.repository.owner }}/{{ project.name }}
+              {{ project.repository.owner }}/{{ project.repository.name }}
               <UIcon name="heroicons-solid:external-link" class="w-4 h-4" />
             </a>
             <div class="text-sm u-text-gray-400">
