@@ -1,8 +1,8 @@
 <template>
   <ProjectLayout :project="project" :links="links">
     <div ref="modalContainer" />
-    <ProjectModalBranches v-model="isBranchesModalOpen" />
-    <ProjectModalFiles v-model="isFilesModalOpen" />
+    <ProjectModalBranches v-model="isBranchesModalOpen" @update:modelValue="onBranchesModalChange" />
+    <ProjectModalFiles v-model="isFilesModalOpen" @update:modelValue="onFilesModalChange" />
 
     <NuxtPage v-if="project" :team="team" :project="project" />
   </ProjectLayout>
@@ -62,4 +62,16 @@ const links = computed(() => ([
 
 // Refresh files when branch changes
 watch(branch, async () => await Promise.all([refreshContentFiles(), refreshMediaFiles()]))
+
+function onBranchesModalChange () {
+  if (isFilesModalOpen.value) {
+    isFilesModalOpen.value = false
+  }
+}
+
+function onFilesModalChange () {
+  if (isBranchesModalOpen.value) {
+    isBranchesModalOpen.value = false
+  }
+}
 </script>
