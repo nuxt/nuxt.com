@@ -8,7 +8,7 @@
       <div class="lg:flex lg:items-center lg:justify-between">
         <div class="flex-1 min-w-0">
           <h2 class="text-2xl font-bold leading-7 u-text-gray-900 sm:text-3xl sm:truncate">
-            {{ team?.slug || user.username }}/{{ project.name }}
+            {{ project.name }}
           </h2>
           <div class="flex flex-col mt-1 sm:flex-row sm:flex-wrap sm:mt-0 sm:space-x-6">
             <div class="flex items-center mt-2 text-sm u-text-gray-500">
@@ -23,8 +23,8 @@
           <UButton label="Edit" :to="{ name: '@team-project-content' }" icon="heroicons-outline:pencil" variant="secondary" />
 
           <UButton
-            v-if="project.repository.url"
-            :to="project.repository.url"
+            v-if="project.url"
+            :to="project.url"
             target="_blank"
             label="View"
             icon="heroicons-outline:link"

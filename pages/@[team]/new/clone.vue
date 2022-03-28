@@ -145,7 +145,7 @@ const onSubmit = async () => {
       }
     })
 
-    router.push({ name: '@team-project', params: { team: props.team?.slug || user.value.username, project: project.name } })
+    router.push({ name: '@team-project', params: { team: props.team?.slug || user.value.username, project: project.slug } })
   } catch (e) {}
 
   loading.value = false

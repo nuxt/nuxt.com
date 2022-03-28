@@ -74,6 +74,7 @@ export interface Repository {
 export interface Project {
   id: number
   name: string
+  slug: string
   url: string
   status: 'pending' | 'ready'
   screenshot: Media
@@ -110,6 +111,7 @@ export interface GitHubBranch {
 }
 
 export interface GitHubAccount {
+  id: number
   login: string
   avatar_url: string
 }
@@ -123,6 +125,8 @@ export interface GitHubRepository {
   owner: GitHubAccount
   name: string
   private: boolean
+  default_branch: string
+  homepage: string
 }
 
 export interface GitHubPaginationMeta {
