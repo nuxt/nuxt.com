@@ -1,6 +1,6 @@
 <template>
   <UCard class="relative" ring-class="ring-1 u-ring-gray-200 lg:hover:u-ring-gray-900 lg:hover:ring-2">
-    <NuxtLink :to="{ name: '@team-project', params: { project: project.name } }" class="focus:outline-none" tabindex="-1">
+    <NuxtLink :to="{ name: '@team-project', params: { project: project.slug } }" class="focus:outline-none" tabindex="-1">
       <span class="absolute inset-0" aria-hidden="true" />
     </NuxtLink>
 

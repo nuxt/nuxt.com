@@ -11,30 +11,41 @@
       </template>
 
       <div class="space-y-6">
-        <UFormGroup name="name" label="Name" :help="form.name !== nameSlugified ? `Your project name will be renamed to “${nameSlugified}”` : 'This is your project\'s URL namespace on Nuxt.'" required class="relative">
+        <UFormGroup name="slug" label="Slug" :help="form.slug !== slug ? `Your project slug will be renamed to “${slug}”` : 'This is your project\'s URL namespace on Nuxt.'" required class="relative w-full lg:max-w-md">
           <div class="flex items-center">
             <span class="inline-flex items-center px-2 py-2 text-sm border border-r-0 u-bg-gray-50 u-border-gray-300 rounded-l-md u-textgray-500">
               nuxt.com/@{{ team?.slug || user.username }}/
             </span>
 
             <UInput
-              v-model="form.name"
+              v-model="form.slug"
               name="name"
               required
               autocomplete="off"
-              class="w-full lg:w-56"
-              placeholder="choam"
+              class="w-full"
+              placeholder="framework"
               custom-class="rounded-l-none"
             />
           </div>
+        </UFormGroup>
+
+        <UFormGroup name="name" label="Name" help="This is your project's visible name within Nuxt." required>
+          <UInput
+            v-model="form.name"
+            name="name"
+            required
+            placeholder="Framework"
+            autocomplete="off"
+            class="w-full lg:max-w-xs"
+          />
         </UFormGroup>
 
         <UFormGroup name="url" label="Url" help="The url of your project is used for preview purposes.">
           <UInput
             v-model="form.url"
             name="url"
-            class="w-full lg:w-56"
-            placeholder="choam"
+            class="w-full lg:max-w-xs"
+            placeholder="https://nuxtjs.org"
           />
         </UFormGroup>
       </div>
@@ -74,7 +85,7 @@ const router = useRouter()
 const { update } = useStrapi4()
 const { $toast } = useNuxtApp()
 
-const form = reactive({ name: props.project.name, url: props.project.url })
+const form = reactive({ name: props.project.name, slug: props.project.slug, url: props.project.url })
 const updating = ref(false)
 
 const onSubmit = async () => {
@@ -83,10 +94,12 @@ const onSubmit = async () => {
   try {
     const project = await update<Project>('projects', props.project.id, form)
 
-    if (project.name !== props.project.name) {
+    if (project.slug !== props.project.slug) {
       // Replace `name` param in url
-      router.replace({ name: '@team-project-settings', params: { team: props.team ? props.team.slug : user.value.username, project: project.name } })
+      router.replace({ name: '@team-project-settings', params: { team: props.team ? props.team.slug : user.value.username, project: project.slug } })
     }
+
+    Object.assign(props.project, project)
 
     $toast.success({
       title: 'Success',
@@ -97,7 +110,7 @@ const onSubmit = async () => {
   updating.value = false
 }
 
-const nameSlugified = computed(() => {
-  return slugify(form.name)
+const slug = computed(() => {
+  return slugify(form.slug)
 })
 </script>

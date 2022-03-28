@@ -7,7 +7,7 @@
         <div class="w-full space-y-6 lg:w-2/3">
           <UCard @submit.prevent="onSubmit">
             <div class="space-y-6">
-              <UFormGroup name="slug" label="Slug" :help="form.slug !== slug ? `Your team slug will be renamed to “${slug}”` : 'This is your team\'s URL namespace on Nuxt.'" required class="relative">
+              <UFormGroup name="slug" label="Slug" :help="form.slug !== slug ? `Your team slug will be renamed to “${slug}”` : 'This is your team\'s URL namespace on Nuxt.'" required class="relative w-full lg:max-w-xs">
                 <div class="flex items-center">
                   <span class="inline-flex items-center px-2 py-2 text-sm border border-r-0 u-bg-gray-50 u-border-gray-300 rounded-l-md u-textgray-500">
                     nuxt.com/@
@@ -18,8 +18,8 @@
                     name="slug"
                     required
                     autocomplete="off"
-                    class="w-full lg:w-56"
-                    placeholder="choam"
+                    class="w-full"
+                    placeholder="nuxt"
                     custom-class="rounded-l-none"
                   />
                 </div>
@@ -30,9 +30,9 @@
                   v-model="form.name"
                   name="name"
                   required
-                  placeholder="CHOAM"
+                  placeholder="Nuxt"
                   autocomplete="off"
-                  class="w-full lg:w-80"
+                  class="w-full lg:max-w-xs"
                 />
               </UFormGroup>
 
@@ -48,13 +48,7 @@
             </div>
 
             <template #footer>
-              <div class="flex items-center justify-between">
-                <p class="text-sm u-text-gray-500">
-                  <!-- Continuing will initiate a 14 day trial of the <NuxtLink to="/pricing" class="font-medium text-primary-500 hover:underline">
-                    Pro plan
-                  </NuxtLink>. -->
-                </p>
-
+              <div class="flex items-center justify-end">
                 <UButton
                   type="submit"
                   :loading="loading"
