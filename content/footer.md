@@ -24,7 +24,7 @@ links:
       - title: Articles
         to: /
       - title: Case Studies
-        to: /
+        to: /resources/case-studies
       - title: Design Kit
         to: /
       - title: Live Events

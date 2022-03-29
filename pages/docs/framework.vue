@@ -1,48 +1,36 @@
 <template>
   <DocsPage>
     <template #header>
-      <SubNavbar>
-        <div class="relative grid items-center justify-between h-16 grid-cols-2 gap-3 sm:grid-cols-6">
-          <div class="flex items-center justify-start gap-3">
-            <p class="font-semibold">
-              Framework
-            </p>
+      <SubNavbar :links="links">
+        <template #left>
+          <p class="font-semibold">
+            Framework
+          </p>
 
-            <USelect
-              v-model="version"
-              :options="versions"
-              name="version"
-              size="xs"
-            />
-          </div>
+          <USelect
+            v-model="version"
+            :options="versions"
+            name="version"
+            size="xs"
+          />
+        </template>
 
-          <div class="flex justify-center col-span-4 gap-x-8">
-            <DocsLink
-              v-for="link in links"
-              :key="link.label"
-              :link="link"
-              class="text-sm hover:u-text-gray-900"
-            >
-              {{ link.label }}
-            </DocsLink>
-          </div>
-
-          <div class="flex justify-end">
-            <UButton icon="fa-brands:github" variant="transparent" href="https://github.com/nuxt/framework" class="!p-0" />
-          </div>
-        </div>
+        <template #right>
+          <UButton icon="fa-brands:github" variant="transparent" href="https://github.com/nuxt/framework" class="!p-0" />
+        </template>
       </SubNavbar>
     </template>
 
-    <template #left>
+    <template v-if="$route.params.slug" #left>
       <DocsAside :links="asideLinks" active-class="u-text-gray-900 u-bg-gray-200" />
     </template>
 
-    <template #right>
+    <template v-if="$route.params.slug" #right>
       <DocsToc :toc="[]" />
     </template>
 
-    <NuxtPage />
+    <NuxtPage v-if="$route.params.slug" />
+    <DocsFrameworkHero v-else />
   </DocsPage>
 </template>
 
