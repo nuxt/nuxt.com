@@ -45,16 +45,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
     return fetch(true)
   }
 
-  async function create (path: string, formData?: FormData) {
-    let body
-
-    if (formData) {
-      formData.append('data', JSON.stringify({ path }))
-      body = formData
-    } else {
-      body = { data: { path } }
-    }
-
+  async function create (path: string) {
     try {
       const data = await client<GitHubDraft>(`/projects/${project.id}/files`, {
         method: 'POST',
@@ -62,7 +53,26 @@ export const useProjectFiles = (project: Project, root: Root) => {
           ref: branch.value.name,
           root
         },
-        body
+        body: { path }
+      })
+
+      draft.value = data
+
+      select(computedFiles.value.find(file => file.path === path))
+    } catch (e) {}
+  }
+
+  async function upload (path: string, formData: FormData) {
+    formData.append('data', JSON.stringify({ path }))
+
+    try {
+      const data = await client<GitHubDraft>(`/projects/${project.id}/files/upload`, {
+        method: 'POST',
+        params: {
+          ref: branch.value.name,
+          root
+        },
+        body: formData
       })
 
       draft.value = data
@@ -272,7 +282,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
     // Http
     fetch,
     refresh,
-    create,
+    upload,
     bulkRename,
     // Modals
     openCreateModal,

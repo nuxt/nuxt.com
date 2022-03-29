@@ -50,7 +50,7 @@ provide('project', props.project)
 provide('root', root)
 
 const { $toast } = useNuxtApp()
-const { create: uploadFile, computedFiles } = useProjectFiles(props.project, root)
+const { upload, computedFiles } = useProjectFiles(props.project, root)
 
 const fileToUpload: Ref<HTMLInputElement> = ref(null)
 
@@ -72,7 +72,7 @@ async function onFileUpload () {
   formData.append('files.image', fileToUpload.value.files[0])
 
   try {
-    await uploadFile(`public/${file.name}`, formData)
+    await upload(`public/${file.name}`, formData)
   } catch (e) {}
 }
 </script>
