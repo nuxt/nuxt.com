@@ -13,10 +13,17 @@
           </h2>
 
           <ul class="text-sm u-text-gray-700">
-            <ComboboxOption v-for="f of filteredFiles" :key="f.path" v-slot="{ active }" :value="f" as="template">
-              <li :class="['flex cursor-pointer select-none items-center rounded-md px-3 py-2', active && 'u-bg-gray-100 u-text-gray-900']">
+            <ComboboxOption
+              v-for="f of filteredFiles"
+              :key="f.path"
+              v-slot="{ active }"
+              :value="f"
+              :disabled="f.status === 'deleted'"
+              as="template"
+            >
+              <li :class="['flex select-none items-center rounded-md px-3 py-2', active && 'u-bg-gray-100 u-text-gray-900', f.status === 'deleted' ? 'cursor-not-allowed' : 'cursor-pointer']">
                 <UIcon :name="f.icon" :class="['h-5 w-5 flex-none', f.iconColor]" aria-hidden="true" />
-                <p class="flex-auto ml-3 truncate u-text-gray-400">
+                <p class="flex-auto ml-3 truncate u-text-gray-400" :class="{ 'line-through opacity-50': f.status === 'deleted' }">
                   <span class="u-text-gray-700">{{ f.name }}</span>
                   <span class="ml-1 text-xs italic truncate">{{ f.path }}</span>
                 </p>
