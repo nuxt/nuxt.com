@@ -47,9 +47,13 @@
           </form>
           <ul class="flex gap-x-6">
             <li v-for="social in socialLinks" :key="social.name">
-              <a :href="social.href">
-                <UIcon :name="social.name" class="w-6 h-5 transition-colors u-text-gray-400 hover:u-text-gray-900" />
-              </a>
+              <UButton
+                :to="social.href"
+                :icon="social.name"
+                variant="transparent"
+                target="_blank"
+                class="!p-0"
+              />
             </li>
           </ul>
         </div>
