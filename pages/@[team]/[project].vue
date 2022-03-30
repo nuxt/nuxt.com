@@ -48,7 +48,7 @@ try {
   await fetchBranches()
 } catch (e) {}
 
-if (!branches.value.length) {
+if (!branches.value.length && process.client) {
   $toast.error({ title: 'No branches found', description: 'Make sure your repository is properly setup.' })
 }
 
