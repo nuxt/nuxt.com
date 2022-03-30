@@ -48,6 +48,15 @@
             placeholder="https://nuxtjs.org"
           />
         </UFormGroup>
+
+        <UFormGroup name="baseDir" label="Base Directory" help="This is the path of your nuxt app in the repository.">
+          <UInput
+            v-model="form.baseDir"
+            name="baseDir"
+            class="w-full lg:max-w-xs"
+            placeholder="docs/"
+          />
+        </UFormGroup>
       </div>
 
       <template #footer>
@@ -85,7 +94,7 @@ const router = useRouter()
 const { update } = useStrapi4()
 const { $toast } = useNuxtApp()
 
-const form = reactive({ name: props.project.name, slug: props.project.slug, url: props.project.url })
+const form = reactive({ name: props.project.name, slug: props.project.slug, url: props.project.url, baseDir: props.project.baseDir })
 const updating = ref(false)
 
 const onSubmit = async () => {
@@ -97,6 +106,14 @@ const onSubmit = async () => {
     if (project.slug !== props.project.slug) {
       // Replace `name` param in url
       router.replace({ name: '@team-project-settings', params: { team: props.team ? props.team.slug : user.value.username, project: project.slug } })
+    }
+
+    if (project.baseDir !== props.project.baseDir) {
+      // reload files for both roots
+      const { refresh: refreshContentFiles } = useProjectFiles(props.project, 'content')
+      const { refresh: refreshMediaFiles } = useProjectFiles(props.project, 'public')
+      refreshContentFiles()
+      refreshMediaFiles()
     }
 
     Object.assign(props.project, project)
