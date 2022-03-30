@@ -29,6 +29,7 @@ const route = useRoute()
 const router = useRouter()
 const client = useStrapiClient()
 
+const { $toast } = useNuxtApp()
 const { container: modalContainer } = useModal()
 const { isBranchesModalOpen, isFilesModalOpen } = useProjectModals()
 
@@ -39,14 +40,16 @@ if (error.value) {
 
 provide('project', project.value)
 
-const { branch, fetch: fetchBranches } = useProjectBranches(project.value)
+const { branch, branches, fetch: fetchBranches } = useProjectBranches(project.value)
 const { fetch: fetchContentFiles, refresh: refreshContentFiles } = useProjectFiles(project.value, 'content')
 const { fetch: fetchMediaFiles, refresh: refreshMediaFiles } = useProjectFiles(project.value, 'public')
 
 try {
   await fetchBranches()
-} catch (e) {
-  router.push({ name: '@team-projects', params: { team: props.team ? props.team.slug : user.value.username } })
+} catch (e) {}
+
+if (!branches.value.length) {
+  $toast.error({ title: 'No branches found', description: 'Make sure your repository is properly setup.' })
 }
 
 try {

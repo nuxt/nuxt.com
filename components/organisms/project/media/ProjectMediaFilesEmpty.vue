@@ -4,15 +4,21 @@
     <h3 class="mt-2 text-sm font-medium u-text-gray-900">
       No files in <span class="italic">public</span> directory
     </h3>
-    <p class="mt-1 text-sm u-text-gray-500">
+    <p v-if="branches.length" class="mt-1 text-sm u-text-gray-500">
       Get started by creating a new file.
     </p>
-    <div class="mt-6">
+    <div v-if="branches.length" class="mt-6">
       <UButton label="Upload file" size="xs" icon="heroicons-outline:plus" @click="$emit('create')" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import type { Project } from '~/types'
+
 defineEmits(['create'])
+
+const project: Project = inject('project')
+
+const { branches } = useProjectBranches(project)
 </script>
