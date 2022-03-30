@@ -54,7 +54,7 @@
             v-model="form.baseDir"
             name="baseDir"
             class="w-full lg:max-w-xs"
-            placeholder="docs/"
+            placeholder="."
           />
         </UFormGroup>
       </div>
