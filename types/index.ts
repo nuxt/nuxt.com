@@ -83,6 +83,7 @@ export interface Project {
   template: number | Template
   team: string | Team
   user: User
+  baseDir: string
 }
 
 export type Root = 'content' | 'public'
