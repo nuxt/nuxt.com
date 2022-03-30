@@ -5,7 +5,7 @@
         <div class="flex items-start justify-between">
           <div class="min-w-0">
             <h2 class="text-lg font-medium u-text-gray-900">
-              <span class="sr-only">Details for </span>{{ name }}
+              <span class="sr-only">Details for </span>{{ file.name }}
             </h2>
             <p class="flex items-center gap-1.5 text-sm min-w-0 u-text-gray-400 truncate">
               <span class="truncate">{{ file.path }}</span>
@@ -85,8 +85,6 @@ const { file } = useProjectFiles(project, root)
 const fields = computed(() => {
   return mapFields({ title: '', description: '', ...props.modelValue })
 })
-
-const name = computed(() => getPathName(file.value.path || ''))
 
 const absolutePath = computed(() => {
   return [...project.baseDir.split('/'), ...file.value.path.split('/')]
