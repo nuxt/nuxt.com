@@ -147,7 +147,6 @@ export interface GitHubFile {
   url?: string
   status?: FileStatus
   // Added only when fetching with `withContent`
-  name?: string
   width?: number
   height?: number
   size?: number
@@ -161,7 +160,6 @@ export interface GitHubDraftFile {
   new?: boolean
   oldPath?: string
   // Added only for medias
-  name?: string
   width?: number
   height?: number
   size?: number
