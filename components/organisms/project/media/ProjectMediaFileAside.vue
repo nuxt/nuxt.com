@@ -12,7 +12,7 @@
               <UButton
                 icon="heroicons-outline:external-link"
                 target="_blank"
-                :to="`https://github.com/${project.repository.owner}/${project.repository.name}/tree/${branch.name}/${file.path}`"
+                :to="`https://github.com/${project.repository.owner}/${project.repository.name}/tree/${branch.name}/${absolutePath}`"
                 variant="transparent"
                 size="xxs"
                 class="!p-0"
@@ -70,6 +70,12 @@ const root: Root = inject('root')
 
 const { branch } = useProjectBranches(project)
 const { file } = useProjectFiles(project, root)
+
+const absolutePath = computed(() => {
+  return [...project.baseDir.split('/'), ...file.value.path.split('/')]
+    .filter(Boolean)
+    .join('/')
+})
 
 const fileDownloadLink = computed(() => `data:image/png;base64,${file.value.content}`)
 </script>
