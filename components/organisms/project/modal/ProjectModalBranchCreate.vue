@@ -48,7 +48,7 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import { GitHubBranch } from '~/types'
+import type { GitHubBranch } from '~/types'
 
 const props = defineProps({
   branches: {
