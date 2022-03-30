@@ -13,7 +13,7 @@
       </h3>
 
       <div v-if="$slots.description" class="flex items-start">
-        <div class="prose prose-gray dark:prose-invert !max-w-full">
+        <div class="prose prose-gray dark:prose-invert !max-w-full text-justify">
           <Markdown use="description" unwrap="p" />
         </div>
 
