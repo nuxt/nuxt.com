@@ -28,16 +28,11 @@ const currentNav = computed(() => {
   return navigation.value[0].children
 })
 
-// first nav level
-const navLinks = navLink => ({ to: navLink.slug, label: navLink.title, children: navLink.children?.map(items) || null })
-// second
-const items = item => ({ to: item.slug, label: item.title, children: item.children?.map(itemLinks) || null })
-// third
-const itemLinks = itemLink => ({ to: itemLink.slug, label: itemLink.title })
-
 const links = computed(() => {
   if (!currentNav.value) { return [] }
 
   return currentNav.value.map(navLinks)
 })
+
+const navLinks = navLink => ({ to: navLink.slug, label: navLink.title })
 </script>
