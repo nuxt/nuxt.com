@@ -72,7 +72,7 @@ const { branch } = useProjectBranches(project)
 const { file } = useProjectFiles(project, root)
 
 const absolutePath = computed(() => {
-  return [...project.baseDir.split('/'), ...file.value.path.split('/')]
+  return [...project.baseDir.split('/').filter(p => p === '.'), ...file.value.path.split('/')]
     .filter(Boolean)
     .join('/')
 })
