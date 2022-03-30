@@ -12,7 +12,7 @@
               <UButton
                 icon="heroicons-outline:external-link"
                 target="_blank"
-                :to="`https://github.com/${project.repository.owner}/${project.repository.name}/tree/${branch.name}/${file.path}`"
+                :to="`https://github.com/${project.repository.owner}/${project.repository.name}/tree/${branch.name}/${absolutePath}`"
                 variant="transparent"
                 size="xxs"
                 class="!p-0"
@@ -87,6 +87,12 @@ const fields = computed(() => {
 })
 
 const name = computed(() => getPathName(file.value.path || ''))
+
+const absolutePath = computed(() => {
+  return [...project.baseDir.split('/'), ...file.value.path.split('/')]
+    .filter(Boolean)
+    .join('/')
+})
 
 // Methods
 
