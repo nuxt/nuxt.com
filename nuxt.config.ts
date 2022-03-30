@@ -22,7 +22,13 @@ export default defineNuxtConfig({
   },
   components: {
     loader: true,
-    dirs: [{ path: '~/components/atoms', global: true }, '~/components/molecules', '~/components/organisms', '~/components/templates']
+    dirs: [
+      { path: '~/components/content', global: true },
+      '~/components/atoms',
+      '~/components/molecules',
+      '~/components/organisms',
+      '~/components/templates'
+    ]
   },
   css: [
     '~/assets/css/fonts.css'
@@ -71,7 +77,10 @@ export default defineNuxtConfig({
       plugins: [
         require('@tailwindcss/typography')
       ],
-      content: ['presets/*.ts'],
+      content: [
+        'presets/*.ts',
+        'content/**/*.md'
+      ],
       safelist: [24, 36, 48, 60, 72, 84, 96, 108, 120].map(number => `pl-[${number}px]`)
     }
   }
