@@ -6,15 +6,15 @@
       <div class="grid gap-8 sm:grid-cols-2">
         <UCard base-class="flex flex-col overflow-hidden lg:h-[calc(100vh-352px)] lg:min-h-[528px]" body-class="flex-1 lg:overflow-y-auto" footer-background-class="u-bg-gray-50">
           <template #header>
-            <div class="flex items-center justify-between">
-              <h3 class="text-2xl font-semibold u-text-gray-900">
+            <div class="flex items-center justify-between min-w-0 gap-3">
+              <h3 class="text-2xl font-semibold u-text-gray-900 truncate">
                 Import Git repository
               </h3>
-              <a :href="githubAppUrl" class="text-sm font-medium text-primary-500 hover:underline" target="_blank">Add GitHub account →</a>
+              <a :href="githubAppUrl" class="block text-sm font-medium text-primary-500 hover:underline flex-shrink-0" target="_blank">Add GitHub account →</a>
             </div>
 
             <div v-if="installations.length" class="flex flex-wrap-reverse items-start justify-between gap-3 mt-5 sm:flex-nowrap">
-              <USelectCustom v-model="owner" :options="accounts" text-attribute="login" name="owner" class="w-full sm:w-auto">
+              <USelectCustom v-model="owner" :options="accounts" text-attribute="login" name="owner" class="w-full sm:w-auto xl:min-w-[205px]">
                 <div class="flex items-center w-full gap-3">
                   <UAvatar :src="owner.avatar_url" size="xxs" class="flex-shrink-0" />
                   <span class="truncate">{{ owner.login }}</span>
@@ -35,6 +35,7 @@
                 :loading="loading"
                 icon="heroicons-outline:search"
                 class="w-full sm:w-auto"
+                custom-class="truncate"
               />
             </div>
           </template>
