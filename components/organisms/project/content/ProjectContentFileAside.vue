@@ -12,7 +12,7 @@
               <UButton
                 icon="heroicons-outline:external-link"
                 target="_blank"
-                :to="`https://github.com/${project.repository.owner}/${project.repository.name}/tree/${branch.name}/${file.path}`"
+                :to="`https://github.com/${project.repository.owner}/${project.repository.name}/tree/${branch.name}/${absolutePath}`"
                 variant="transparent"
                 size="xxs"
                 class="!p-0"
@@ -84,6 +84,12 @@ const { file } = useProjectFiles(project, root)
 
 const fields = computed(() => {
   return mapFields({ title: '', description: '', ...props.modelValue })
+})
+
+const absolutePath = computed(() => {
+  return [...project.baseDir.split('/'), ...file.value.path.split('/')]
+    .filter(Boolean)
+    .join('/')
 })
 
 // Methods

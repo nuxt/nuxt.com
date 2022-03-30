@@ -71,6 +71,15 @@
                 placeholder="https://nuxtjs.org"
               />
             </UFormGroup>
+
+            <UFormGroup name="baseDir" label="Base Directory" help="This is the path of your nuxt app in the repository.">
+              <UInput
+                v-model="form.baseDir"
+                name="baseDir"
+                class="w-full lg:max-w-xs"
+                placeholder="."
+              />
+            </UFormGroup>
           </div>
 
           <template #footer>
@@ -127,7 +136,7 @@ if (error.value) {
 }
 
 const loading = ref(false)
-const form = reactive({ slug: name, name, url: repository.value.homepage })
+const form = reactive({ slug: name, name, url: repository.value.homepage, baseDir: '' })
 
 const slug = computed(() => {
   return slugify(form.slug)
