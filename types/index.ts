@@ -146,6 +146,7 @@ export interface GitHubFile {
   sha?: string
   url?: string
   status?: FileStatus
+  name?: string
   // Added only when fetching with `withContent`
   width?: number
   height?: number
