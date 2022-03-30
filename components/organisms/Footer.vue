@@ -16,9 +16,9 @@
           }}</span>
           <ul class="flex flex-col gap-y-5">
             <li v-for="link in item.items" :key="link.title">
-              <ULink :to="link.to">
+              <NuxtLink :to="link.to" class="u-text-gray-500 hover:u-text-gray-700">
                 {{ link.title }}
-              </ULink>
+              </NuxtLink>
             </li>
           </ul>
         </div>
@@ -26,7 +26,7 @@
           class="flex flex-col items-start col-span-2 gap-5 sm:col-span-4 lg:col-span-2"
         >
           <LogoFull class="w-auto h-12 u-text-gray-900" />
-          <span class="text-sm u-text-gray-700">Stay up to date with our newsletter</span>
+          <span class="text-sm u-text-gray-500">Stay up to date with our newsletter</span>
           <form class="flex w-full gap-3" @submit.prevent="onSubmit">
             <UInput
               v-model="form.email"
@@ -47,9 +47,13 @@
           </form>
           <ul class="flex gap-x-6">
             <li v-for="social in socialLinks" :key="social.name">
-              <a :href="social.href">
-                <UIcon :name="social.name" class="w-6 h-5 transition-colors u-text-gray-400 hover:u-text-gray-900" />
-              </a>
+              <UButton
+                :to="social.href"
+                :icon="social.name"
+                variant="transparent"
+                target="_blank"
+                class="!p-0"
+              />
             </li>
           </ul>
         </div>
@@ -62,7 +66,7 @@
 
         <ul class="flex text-sm gap-x-6">
           <li v-for="link in legalLinks" :key="link.title">
-            <NuxtLink :to="link.to">
+            <NuxtLink :to="link.to" class="u-text-gray-500 hover:u-text-gray-700">
               {{ link.title }}
             </NuxtLink>
           </li>

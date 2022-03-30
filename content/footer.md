@@ -24,7 +24,7 @@ links:
       - title: Articles
         to: /
       - title: Case Studies
-        to: /
+        to: /resources/case-studies
       - title: Design Kit
         to: /
       - title: Live Events
@@ -58,8 +58,8 @@ links:
 socialLinks:
   - name: fa-brands:twitter
     href: https://twitter.com/nuxt_js
-  - name: fa-brands:github
-    href: https://github.com/nuxt
   - name: fa-brands:discord
     href: https://discord.com/invite/ps2h6QT
+  - name: fa-brands:github
+    href: https://github.com/nuxt
 ---
