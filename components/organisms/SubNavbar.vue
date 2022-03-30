@@ -1,11 +1,34 @@
 <template>
   <div
-    class="z-[1] sticky top-0 hidden md:block"
+    class="z-[5] sticky top-0 hidden md:block"
     :class="{ 'border-t u-border-gray-200': y <= 80, 'backdrop-blur-md shadow shadow-gray-200 dark:shadow-gray-900 border-transparent': y > 80 }"
   >
     <div class="absolute top-0 w-full h-16 bg-white bg-opacity-75 dark:bg-black" />
     <UContainer padded>
-      <slot />
+      <div class="relative grid items-center justify-between h-16 grid-cols-2 gap-3 sm:grid-cols-6">
+        <div class="flex items-center justify-start gap-3">
+          <slot name="left">
+            <p v-if="title" class="font-semibold">
+              {{ title }}
+            </p>
+          </slot>
+        </div>
+
+        <div v-if="links.length" class="flex justify-center col-span-4 gap-x-8">
+          <DocsLink
+            v-for="link in links"
+            :key="link.label"
+            :link="link"
+            class="text-sm hover:u-text-gray-900"
+          >
+            {{ link.label }}
+          </DocsLink>
+        </div>
+
+        <div class="flex gap-3 justify-end">
+          <slot name="right" />
+        </div>
+      </div>
     </UContainer>
   </div>
 </template>
@@ -14,4 +37,15 @@
 import { useWindowScroll } from '@vueuse/core'
 
 const { y } = useWindowScroll()
+
+defineProps({
+  title: {
+    type: String,
+    default: null
+  },
+  links: {
+    type: Array,
+    default: () => []
+  }
+})
 </script>
