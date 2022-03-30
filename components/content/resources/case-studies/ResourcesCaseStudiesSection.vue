@@ -1,5 +1,5 @@
 <template>
-  <div class="py-8 sm:py-16 relative" :class="[highlight && 'u-bg-gray-50']">
+  <div class="py-8 relative" :class="[highlight && 'u-bg-gray-50 sm:py-24', !highlight && 'sm:py-16']">
     <UContainer padded constrained-class="max-w-4xl relative">
       <img v-if="icon" :src="icon" class="w-6 h-6 mb-4">
 
@@ -35,7 +35,7 @@ defineProps({
   },
   titleLabel: {
     type: String,
-    default: null
+    default: 'The Nuxt Team'
   },
   descriptionLabel: {
     type: String,
