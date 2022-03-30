@@ -230,7 +230,8 @@ export const useProjectFiles = (project: Project, root: Root) => {
   const computedFiles = computed(() => {
     const additions = draft.value?.additions.map(a => ({ ...a })) || []
     const deletions = draft.value?.deletions.map(a => ({ ...a })) || []
-    const githubFiles = files.value.map(file => ({ ...file }))
+
+    const githubFiles = files.value.map(file => ({ ...file, name: file.path.split('/').pop() }))
 
     for (const addition of additions) {
       if (addition.oldPath) {
@@ -239,9 +240,11 @@ export const useProjectFiles = (project: Project, root: Root) => {
         if (file) {
           file.status = 'renamed'
           file.path = addition.path
+          file.name = addition.path.split('/').pop()
         }
       } else if (addition.new) {
         githubFiles.push({
+          name: addition.path.split('/').pop(),
           type: 'blob',
           status: 'created',
           ...omit(addition, ['new', 'oldPath'])
