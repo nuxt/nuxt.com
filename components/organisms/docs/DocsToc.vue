@@ -34,7 +34,7 @@ defineProps({
   }
 })
 
-const { activeHeadings, updateHeadings } = useScrollspy()
+const { updateHeadings } = useScrollspy()
 const route = useRoute()
 
 const links = [
@@ -52,11 +52,11 @@ const links = [
   { to: '#handling-cookies-in-api-routes', label: 'Handling cookies in API routes', level: '1' }
 ]
 
-const emit = defineEmits(['navigate'])
+defineEmits(['navigate'])
 
-const isActiveParent = (link) => {
-  return link.children && link.children.some(child => activeHeadings.value.includes(child.id))
-}
+// const isActiveParent = (link) => {
+//   return link.children && link.children.some(child => activeHeadings.value.includes(child.id))
+// }
 
 onMounted(() =>
   setTimeout(() => {
@@ -68,8 +68,8 @@ onMounted(() =>
   }, 200)
 )
 
-function scrollToHeading (id: string, scrollMarginCssVar: string) {
-  emit('navigate')
-  useScrollToHeading(id, scrollMarginCssVar)
-}
+// function scrollToHeading (id: string, scrollMarginCssVar: string) {
+//   emit('navigate')
+//   useScrollToHeading(id, scrollMarginCssVar)
+// }
 </script>

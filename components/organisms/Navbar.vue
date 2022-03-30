@@ -1,29 +1,30 @@
 <template>
-  <header class="bg-white dark:bg-black">
-    <NavbarMenu :links="links" />
+  <header class="u-bg-white">
+    <NavbarDialog v-model="isOpen" :links="links" />
+
     <UContainer padded class="relative">
-      <div class="grid items-center h-16 grid-cols-6 gap-3 md:h-20 md:justify-center">
+      <div class="grid items-center h-16 grid-cols-6 gap-3 lg:h-20 lg:justify-center">
         <UButton
           variant="transparent"
-          class="-ml-2 md:hidden"
-          icon="heroicons-solid:menu"
-          @click="toggle()"
+          class="-ml-2 lg:hidden"
+          icon="heroicons-outline:menu"
+          @click="isOpen = true"
         />
 
-        <div class="flex justify-center col-span-4 md:col-span-1 md:justify-start">
+        <div class="flex justify-center col-span-4 lg:col-span-1 lg:justify-start">
           <NuxtLink to="/" class="block u-text-black">
             <LogoFull class="hidden w-auto h-8 sm:block" />
             <Logo class="block w-auto h-6 sm:hidden" />
           </NuxtLink>
         </div>
 
-        <div v-if="!visible" class="justify-center hidden md:col-span-4 gap-x-10 md:flex">
+        <div class="justify-center hidden lg:col-span-4 gap-x-10 lg:flex">
           <ULink
             v-for="link in links"
             :key="link.label"
             :to="link.to"
             :exact="link.exact"
-            class="text-sm font-medium hover:u-text-gray-900 md:text-base"
+            class="text-sm font-medium hover:u-text-gray-900 lg:text-base"
             active-class="font-semibold u-text-gray-900"
             inactive-class="u-text-gray-500"
           >
@@ -44,11 +45,6 @@
         </div>
       </div>
     </UContainer>
-    <div
-      class="fixed inset-x-0 top-0 z-10 h-full transition-opacity duration-300 ease-linear backdrop-blur-md"
-      :class="[visible ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none']"
-      @click="toggle"
-    />
   </header>
 </template>
 
@@ -60,7 +56,8 @@ const user = useStrapiUser() as Ref<User>
 const { getProviderAuthenticationUrl } = useStrapiAuth()
 const route = useRoute()
 const activeTeam = useTeam()
-const { visible, toggle } = useMenu()
+
+const isOpen = ref(false)
 
 const links = computed(() => {
   const team = activeTeam.value || route.params.team || user.value?.username

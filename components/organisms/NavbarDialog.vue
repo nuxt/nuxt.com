@@ -1,15 +1,57 @@
 <template>
-  <UContainer padded class="relative">
+  <USlideover v-model="isOpen">
+    <template #header>
+      <UButton variant="transparent" icon="heroicons-outline:x" class="-ml-2" @click="isOpen = false" />
+
+      <NuxtLink to="/" class="block u-text-black">
+        <LogoFull class="hidden w-auto h-8 sm:block" />
+        <Logo class="block w-auto h-6 sm:hidden" />
+      </NuxtLink>
+
+      <div class="flex justify-end">
+        <TeamsDropdown v-if="user" />
+        <UButton
+          v-else
+          label="Login"
+          icon="fa-brands:github"
+          variant="primary"
+          size="sm"
+          @click="onClick"
+        />
+      </div>
+    </template>
+
+    <div class="py-4 overflow-y-scroll flex-1">
+      <ul
+        v-for="link in links"
+        :key="link.label"
+        class="flex justify-between gap-3 w-full px-4 py-2 font-medium text-md hover:u-text-gray-900"
+      >
+        <DocsAsideItem v-if="link.children && link.children.length" :item="link" disabled class="flex-1" />
+        <ULink
+          v-else
+          :to="link.to"
+          class="flex-1"
+          inactive-class="font-medium u-text-gray-500"
+          active-class="font-semibold u-text-gray-900"
+          exact
+        >
+          {{ link.label }}
+        </ULink>
+        <img :src="`/nav/${link.icon}`" class="self-start">
+      </ul>
+    </div>
+  </USlideover>
+  <!-- <UContainer padded class="relative">
     <div
       class="fixed top-0 left-0 w-full z-20 h-full shadow shadow-gray-200 dark:shadow-gray-900 bg-white dark:bg-black max-w-[425px] transition transform ease-in-out duration-300"
       :class="[visible ? 'pointer-events-auto translate-x-0' : '-translate-x-full pointer-events-none']"
     >
       <div>
-        <!-- header -->
         <div class="grid items-center h-16 grid-cols-6 px-4 border-b u-border-gray-200">
           <UButton
             variant="transparent"
-            :icon="!isSubMenu ? 'heroicons-solid:x' : 'heroicons-solid:arrow-left'"
+            :icon="!isSubMenu ? 'heroicons-outline:x' : 'heroicons-outline:arrow-left'"
             class="-ml-2"
             @click="!isSubMenu ? close() : isSubMenu = false"
           />
@@ -44,7 +86,6 @@
             />
           </div>
         </div>
-        <!-- Links -->
         <div class="overflow-y-auto h-[calc(100vh-64px)] pt-4">
           <div v-if="!isSubMenu">
             <ul
@@ -90,51 +131,39 @@
         </div>
       </div>
     </div>
-  </UContainer>
+  </UContainer> -->
 </template>
 
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import { withBase } from 'ufo'
 import type { User } from '~/types'
 
-defineProps({
+const user = useStrapiUser() as Ref<User>
+const { getProviderAuthenticationUrl } = useStrapiAuth()
+
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    default: false
+  },
   links: {
     type: Array,
     default: () => []
   }
 })
 
-const activeTeam = useTeam()
+const emit = defineEmits(['update:modelValue'])
 
-const user = useStrapiUser() as Ref<User>
-const { visible, close, isSubMenu, currentSubNav, currentParent, loading } = useMenu()
-
-const route = useRoute()
-
-const versions = ref([{ text: 'v3', value: '3' }, { text: 'v2', value: '2' }])
-const version = ref(versions.value[0])
-
-const withContentBase = (url: string) => withBase(url, '/api/' + useRuntimeConfig().content.basePath)
-
-// first nav level
-const navLinks = navLink => ({ to: navLink.to || navLink.slug, label: navLink.title, children: navLink.children?.map(items) || null })
-// second
-const items = item => ({ to: item.to || item.slug, label: item.title, children: item.children?.map(itemLinks) || null })
-// third
-const itemLinks = itemLink => ({ to: itemLink.to || itemLink.slug, label: itemLink.title })
-
-const currentNav = computed(() => {
-  return links.value.map(navLinks)
-})
-
-const title = computed(() => {
-  return currentParent.value
+const isOpen = computed({
+  get () {
+    return props.modelValue
+  },
+  set (value) {
+    emit('update:modelValue', value)
+  }
 })
 
 const links = computed(() => {
-  const team = activeTeam.value || route.params.team || user.value?.username
-
   return [{
     label: 'Docs',
     to: { name: 'docs-framework' },
@@ -474,30 +503,10 @@ const links = computed(() => {
         ]
       }
     ]
-  }, {
-    label: 'Integrations',
-    to: { name: 'integrations' },
-    exact: true,
-    icon: 'integrations.svg',
-    children: null
-  }, {
-    label: 'Templates',
-    to: { name: 'templates' },
-    exact: true,
-    icon: 'templates.svg',
-    children: null
-  }, {
-    label: 'Projects',
-    to: team ? { name: '@team-projects', params: { team } } : { name: 'projects' },
-    exact: true,
-    icon: 'projects.svg',
-    children: null
-  }, {
-    label: 'Community',
-    to: team ? { name: '@team', params: { team } } : { name: 'community' },
-    exact: true,
-    icon: 'community.svg',
-    children: null
-  }]
+  }, ...props.links]
 })
+
+const onClick = () => {
+  window.location = getProviderAuthenticationUrl('github') as unknown as Location
+}
 </script>

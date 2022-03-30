@@ -114,9 +114,12 @@ watch(visibility, (current, previous) => {
 })
 
 const loading = ref(false)
+
+const selectedTemplate = computed(() => props.templates.find(template => template.slug === route.query.template))
+
 const form = reactive({
   owner: null,
-  name: '',
+  name: selectedTemplate.value.name,
   private: false
 })
 
@@ -129,8 +132,6 @@ watchEffect(() => {
     form.owner = accounts.value[0]
   }
 })
-
-const selectedTemplate = computed(() => props.templates.find(template => template.slug === route.query.template))
 
 const onSubmit = async () => {
   loading.value = true

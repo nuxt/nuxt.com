@@ -59,8 +59,8 @@
 
 <script setup lang="ts">
 import { useTimeAgo } from '@vueuse/core'
-import type { PropType, Ref } from 'vue'
-import type { Team, Project, User } from '~/types'
+import type { PropType } from 'vue'
+import type { Team, Project } from '~/types'
 
 const props = defineProps({
   team: {
@@ -78,7 +78,6 @@ const root = 'public'
 provide('project', props.project)
 provide('root', root)
 
-const user = useStrapiUser() as Ref<User>
 const { update } = useStrapi4()
 
 const form = reactive({ url: props.project.repository.url })

@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps({
+defineProps({
   item: {
     type: Object,
     required: true
@@ -38,7 +38,7 @@ const route = useRoute()
 
 const emit = defineEmits(['collapse'])
 
-const { visible, isSubMenu } = useMenu()
+const { isSubMenu } = useMenu()
 
 const collapsible = ref(null)
 const asideItem = ref<HTMLElement | null>(null)

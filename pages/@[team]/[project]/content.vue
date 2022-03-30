@@ -7,7 +7,14 @@
     <template #header>
       <ProjectHeader>
         <template #extra-actions>
-          <UButton size="xs" label="Create file" variant="gray" icon="heroicons-outline:plus" @click="openCreateFileModal('content')" />
+          <UButton
+            size="xs"
+            label="Create file"
+            variant="gray"
+            icon="heroicons-outline:plus"
+            truncate
+            @click="openCreateFileModal('content')"
+          />
         </template>
       </ProjectHeader>
     </template>

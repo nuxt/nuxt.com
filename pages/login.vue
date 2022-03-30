@@ -106,39 +106,39 @@ definePageMeta({
 })
 
 const { getProviderAuthenticationUrl } = useStrapiAuth()
-const { login } = useStrapiAuth()
+// const { login } = useStrapiAuth()
 const user = useStrapiUser() as Ref<User>
 const router = useRouter()
 const route = useRoute()
 const { $toast } = useNuxtApp()
 
-const loading = ref(false)
-const form = reactive({ identifier: '', password: '' })
-const forgotLink = computed(() => `/forgot${form.identifier ? `?email=${form.identifier}` : ''}`)
+// const loading = ref(false)
+// const form = reactive({ identifier: '', password: '' })
+// const forgotLink = computed(() => `/forgot${form.identifier ? `?email=${form.identifier}` : ''}`)
 
 const onClick = () => {
   window.location = getProviderAuthenticationUrl('github') as unknown as Location
 }
 
-const onSubmit = async () => {
-  loading.value = true
+// const onSubmit = async () => {
+//   loading.value = true
 
-  try {
-    const data = await login(form)
+//   try {
+//     const data = await login(form)
 
-    const user = data.user as Ref<User>
+//     const user = data.user as Ref<User>
 
-    const redirect = useCookie('redirect').value
-    if (redirect) {
-      router.push(redirect)
-      useCookie('redirect').value = null
-    } else {
-      router.push(`/@${user.value.username}`)
-    }
-  } catch (e) {}
+//     const redirect = useCookie('redirect').value
+//     if (redirect) {
+//       router.push(redirect)
+//       useCookie('redirect').value = null
+//     } else {
+//       router.push(`/@${user.value.username}`)
+//     }
+//   } catch (e) {}
 
-  loading.value = false
-}
+//   loading.value = false
+// }
 
 onMounted(() => {
   if (user.value && user.value.beta) {

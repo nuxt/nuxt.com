@@ -31,12 +31,11 @@ const props = defineProps({
   }
 })
 
-const border = ref(null)
 const hoverLink = ref(null)
 
 const route = useRoute()
 
-const emit = defineEmits(['collapse'])
+defineEmits(['collapse'])
 
-const { visible, close, getSubMenuNav } = useMenu()
+const { isSubMenu, getSubMenuNav } = useMenu()
 </script>
