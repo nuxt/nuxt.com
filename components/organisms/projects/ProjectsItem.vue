@@ -16,7 +16,7 @@
       </div>
     </div>
 
-    <p class="u-text-gray-400 mb-6 break-words">
+    <p class="u-text-gray-400 mb-6 break-words line-clamp-3">
       {{ project.repository.description || '&nbsp;' }}
     </p>
 
