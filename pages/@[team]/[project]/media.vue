@@ -7,6 +7,7 @@
         type="file"
         accept="image/*"
         class="hidden"
+        multiple
         @change="onFileUpload"
       >
 
@@ -89,19 +90,20 @@ async function onFileUpload () {
     return
   }
 
-  const formData = new FormData()
-  const file = fileToUpload.value.files[0]
+  for (const file of fileToUpload.value.files) {
+    const formData = new FormData()
 
-  if (!file.type.startsWith('image/')) {
-    $toast.error({ title: `File type ${file.type} is not supported` })
-    return
+    if (!file.type.startsWith('image/')) {
+      $toast.error({ title: `File type ${file.type} is not supported` })
+      continue
+    }
+
+    formData.append('files.image', file)
+
+    try {
+      const filePath = getAvailablePath(`public/${file.name}`, computedFiles.value)
+      await upload(filePath, formData)
+    } catch (e) {}
   }
-
-  formData.append('files.image', fileToUpload.value.files[0])
-
-  try {
-    const filePath = getAvailablePath(`public/${file.name}`, computedFiles.value)
-    await upload(filePath, formData)
-  } catch (e) {}
 }
 </script>
