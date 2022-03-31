@@ -81,7 +81,7 @@ export default defineNuxtConfig({
         'presets/*.ts',
         'content/**/*.md'
       ],
-      safelist: [24, 36, 48, 60, 72, 84, 96, 108, 120].map(number => `pl-[${number}px]`)
+      safelist: [12, 24, 36, 48, 60, 72, 84, 96, 108, 120].map(number => `pl-[${number}px]`)
     }
   }
 })

@@ -63,7 +63,6 @@
 import { snakeCase } from 'lodash-es'
 import type { Project, Root } from '~/types'
 import { capitalize } from '~/utils'
-import { getPathName } from '~/utils/tree'
 
 const props = defineProps({
   modelValue: {

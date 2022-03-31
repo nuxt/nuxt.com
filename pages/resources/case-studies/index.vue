@@ -39,9 +39,7 @@
 </template>
 
 <script setup>
-const { find } = useContentQuery('/resources/case-studies')
-
-const { data: pages } = await useAsyncData('case-studies', find)
+const { data: pages } = await useAsyncData('resources-case-studies', () => queryContent('/resources/case-studies').find())
 </script>
 
 <style scoped>

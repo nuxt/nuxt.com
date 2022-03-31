@@ -17,7 +17,7 @@
       </UContainer>
     </div>
 
-    <Content v-if="page" :id="page.id" />
+    <Content v-if="page" :document="page" />
 
     <UContainer constrained-class="max-w-4xl">
       <div class="dark py-10">
@@ -78,9 +78,9 @@
 
 <script setup lang="ts">
 const route = useRoute()
-const { findOne } = useContentQuery(route.path.endsWith('/') ? route.path.slice(0, -1) : route.path)
+const path = route.path.endsWith('/') ? route.path.slice(0, -1) : route.path
 
-const { data: page } = await useAsyncData('docs-page-content', findOne)
+const { data: page } = await useAsyncData('resources-case-studies-page', () => queryContent(path).findOne())
 </script>
 
 <style scoped>
