@@ -100,5 +100,5 @@ const { data: footerData } = await useAsyncData('footer-content', findOne)
 const { legalLinks, links, socialLinks } = footerData.value
 
 const langs = ref([{ text: 'English', value: 'en' }])
-const lang = ref(langs.value[0])
+const lang = ref(langs.value[0].value)
 </script>
