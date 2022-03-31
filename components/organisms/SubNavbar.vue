@@ -15,14 +15,16 @@
         </div>
 
         <div v-if="links.length" class="flex justify-center col-span-4 gap-x-8">
-          <DocsLink
-            v-for="link in links"
-            :key="link.label"
-            :link="link"
-            class="text-sm hover:u-text-gray-900"
+          <ULink
+            v-for="(link, index) in links"
+            :key="index"
+            :to="link.slug"
+            class="text-sm"
+            active-class="u-text-gray-900 font-semibold"
+            inactive-class="font-medium u-text-gray-500 hover:u-text-gray-900"
           >
-            {{ link.label }}
-          </DocsLink>
+            {{ link.title }}
+          </ULink>
         </div>
 
         <div class="flex gap-3 justify-end">

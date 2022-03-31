@@ -21,14 +21,14 @@
         <div class="justify-center hidden lg:col-span-4 gap-x-10 lg:flex">
           <ULink
             v-for="link in links"
-            :key="link.label"
-            :to="link.to"
+            :key="link.title"
+            :to="link.slug"
             :exact="link.exact"
-            class="text-sm font-medium hover:u-text-gray-900 lg:text-base"
+            class="text-sm lg:text-base"
             active-class="font-semibold u-text-gray-900"
-            inactive-class="u-text-gray-500"
+            inactive-class="font-medium u-text-gray-500 hover:u-text-gray-900"
           >
-            {{ link.label }}
+            {{ link.title }}
           </ULink>
         </div>
 
@@ -63,30 +63,30 @@ const links = computed(() => {
   const team = activeTeam.value || route.params.team || user.value?.username
 
   return [{
-    label: 'Docs',
-    to: { name: 'docs-framework' },
+    title: 'Docs',
+    slug: '/docs/framework',
     exact: false,
-    icon: 'docs.svg'
+    icon: 'heroicons-outline:book-open'
   }, {
-    label: 'Integrations',
-    to: { name: 'integrations' },
+    title: 'Integrations',
+    slug: '/integrations',
     exact: true,
-    icon: 'integrations.svg'
+    icon: 'heroicons-outline:sparkles'
   }, {
-    label: 'Templates',
-    to: { name: 'templates' },
+    title: 'Templates',
+    slug: '/templates',
     exact: true,
-    icon: 'templates.svg'
+    icon: 'heroicons-outline:template'
   }, {
-    label: 'Projects',
-    to: team ? { name: '@team-projects', params: { team } } : { name: 'projects' },
+    title: 'Projects',
+    slug: team ? `/@${team}/projects` : '/projects',
     exact: true,
-    icon: 'projects.svg'
+    icon: 'heroicons-outline:collection'
   }, {
-    label: 'Community',
-    to: team ? { name: '@team', params: { team } } : { name: 'community' },
+    title: 'Community',
+    slug: team ? `/@${team}` : '/community',
     exact: true,
-    icon: 'community.svg'
+    icon: 'heroicons-outline:globe'
   }]
 })
 

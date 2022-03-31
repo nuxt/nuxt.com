@@ -13,26 +13,9 @@
 </template>
 
 <script setup lang="ts">
-import { withBase } from 'ufo'
+import { findChildFromPath } from '~~/utils/content'
 
-const withContentBase = (url: string) => withBase(url, '/api/' + useRuntimeConfig().content.basePath)
+const navigation = inject('navigation')
 
-const { data: navigation } = await useAsyncData('resources', async () => {
-  return await $fetch(withContentBase('/navigation'), {
-    method: 'POST',
-    body: { slug: '/resources' }
-  })
-})
-
-const currentNav = computed(() => {
-  return navigation.value[0].children
-})
-
-const links = computed(() => {
-  if (!currentNav.value) { return [] }
-
-  return currentNav.value.map(navLinks)
-})
-
-const navLinks = navLink => ({ to: navLink.slug, label: navLink.title })
+const links = computed(() => findChildFromPath('/resources', navigation)?.children)
 </script>
