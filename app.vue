@@ -16,7 +16,7 @@ useMeta({
 
 const { data: navigation } = await useAsyncData('navigation', () => queryContent().findNavigation())
 
-provide('navigation', navigation.value)
+provide('navigation', navigation)
 </script>
 
 <style>

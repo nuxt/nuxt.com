@@ -12,5 +12,5 @@ const navigation = inject('navigation')
 const route = useRoute()
 const path = route.path.split('/').slice(0, 4).join('/')
 
-const tree = computed(() => findChildFromPath(path, navigation)?.children)
+const tree = computed(() => findChildFromPath(path, navigation.value)?.children)
 </script>

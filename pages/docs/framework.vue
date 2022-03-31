@@ -22,5 +22,5 @@ import { findChildFromPath } from '~~/utils/content'
 
 const navigation = inject('navigation')
 
-const links = computed(() => findChildFromPath('/docs/framework', navigation)?.children)
+const links = computed(() => findChildFromPath('/docs/framework', navigation.value)?.children)
 </script>

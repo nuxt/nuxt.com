@@ -20,7 +20,7 @@ const navigation = inject('navigation')
 const route = useRoute()
 const router = useRouter()
 
-const file = findChildFromPath(route.path, navigation)
+const file = findChildFromPath(route.path, navigation.value)
 
 let page
 if (file && !file.children) {

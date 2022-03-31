@@ -66,7 +66,7 @@ const selectedLink = ref(null)
 
 watch(() => route.path, () => {
   const path = route.path.split('/').slice(0, 3).join('/')
-  selectedLink.value = findChildFromPath(path, navigation)
+  selectedLink.value = findChildFromPath(path, navigation.value)
 }, { immediate: true })
 
 const tree = computed(() => {
@@ -78,7 +78,7 @@ const tree = computed(() => {
     if (link.title === 'Docs') {
       return {
         ...link,
-        ...navigation[0]
+        ...navigation.value[0]
       }
     }
 
