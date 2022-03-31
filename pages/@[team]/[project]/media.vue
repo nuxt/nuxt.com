@@ -12,7 +12,14 @@
 
       <ProjectHeader>
         <template #extra-actions>
-          <UButton size="xs" label="Upload file" variant="gray" icon="heroicons-outline:plus" @click="$refs.fileToUpload.click()" />
+          <UButton
+            size="xs"
+            label="Upload file"
+            variant="gray"
+            icon="heroicons-outline:plus"
+            truncate
+            @click="$refs.fileToUpload.click()"
+          />
         </template>
       </ProjectHeader>
     </template>

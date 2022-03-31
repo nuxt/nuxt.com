@@ -1,12 +1,17 @@
 <template>
   <UDropdown v-if="user" :items="items" item-disabled-class>
-    <button class="flex text-sm bg-white rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:u-ring-gray-900 focus:ring-offset-white dark:focus:ring-offset-black">
+    <UButton
+      square
+      variant="transparent"
+      icon-base-class="u-text-gray-400 flex-shrink-0 hidden lg:block"
+      class="flex items-center justify-between -mr-2 !border-0"
+    >
       <UAvatar
         :src="user.avatar"
         :alt="user.username"
-        size="sm"
+        :size="size"
       />
-    </button>
+    </UButton>
 
     <template #reverse-icon="{ item }">
       <div class="flex items-center justify-between w-full gap-3">
@@ -31,8 +36,16 @@ import type { Ref } from 'vue'
 import type { User } from '~/types'
 
 const user = useStrapiUser() as Ref<User>
+const route = useRoute()
 const router = useRouter()
 const { logout } = useStrapiAuth()
+
+defineProps({
+  size: {
+    type: String,
+    default: 'sm'
+  }
+})
 
 const items = [
   [
@@ -46,6 +59,12 @@ const items = [
       label: 'New team',
       to: { name: 'teams-new' },
       icon: 'heroicons-outline:plus',
+      slot: 'reverse-icon'
+    },
+    {
+      label: route.params.team === user.value.username ? 'User settings' : 'Team settings',
+      icon: 'heroicons-outline:cog',
+      to: { name: '@team-settings', params: { team: route.params.team } },
       slot: 'reverse-icon'
     }
   ],
