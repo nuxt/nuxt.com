@@ -32,6 +32,7 @@
 import type { PropType, Ref } from 'vue'
 import { isEmpty } from 'lodash-es'
 import type { Team, Project } from '~/types'
+import { getAvailablePath } from '~~/utils/tree'
 
 const props = defineProps({
   team: {
@@ -72,7 +73,8 @@ async function onFileUpload () {
   formData.append('files.image', fileToUpload.value.files[0])
 
   try {
-    await upload(`public/${file.name}`, formData)
+    const filePath = getAvailablePath(`public/${file.name}`, computedFiles.value)
+    await upload(filePath, formData)
   } catch (e) {}
 }
 </script>
