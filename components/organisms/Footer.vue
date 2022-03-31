@@ -93,9 +93,7 @@ function onSubmit () {
 
 }
 
-const { findOne } = useContentQuery().where({ id: 'content:footer.md' })
-
-const { data: footerData } = await useAsyncData('footer-content', findOne)
+const { data: footerData } = await useAsyncData('footer', () => queryContent('footer').findOne())
 
 const { legalLinks, links, socialLinks } = footerData.value
 

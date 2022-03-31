@@ -1,5 +1,5 @@
 <template>
-  <ProjectLayout :project="project" :links="links">
+  <ProjectLayout>
     <div ref="modalContainer" />
     <ProjectModalBranches v-model="isBranchesModalOpen" @update:modelValue="onBranchesModalChange" />
     <ProjectModalFiles v-model="isFilesModalOpen" @update:modelValue="onFilesModalChange" />
@@ -40,8 +40,8 @@ if (error.value) {
 provide('project', project.value)
 
 const { branch, fetch: fetchBranches } = useProjectBranches(project.value)
-const { fetch: fetchContentFiles, refresh: refreshContentFiles, isDraft: isContentDraft } = useProjectFiles(project.value, 'content')
-const { fetch: fetchMediaFiles, refresh: refreshMediaFiles, isDraft: isMediaDraft } = useProjectFiles(project.value, 'public')
+const { fetch: fetchContentFiles, refresh: refreshContentFiles } = useProjectFiles(project.value, 'content')
+const { fetch: fetchMediaFiles, refresh: refreshMediaFiles } = useProjectFiles(project.value, 'public')
 
 try {
   await fetchBranches()
@@ -52,13 +52,6 @@ try {
 try {
   await Promise.all([fetchContentFiles(), fetchMediaFiles()])
 } catch (e) {}
-
-const links = computed(() => ([
-  { to: { name: '@team-project' }, icon: 'heroicons-outline:home', label: 'Home', exact: true },
-  { to: { name: '@team-project-content' }, icon: 'heroicons-outline:pencil', label: 'Content', badge: isContentDraft.value },
-  { to: { name: '@team-project-media' }, icon: 'heroicons-outline:photograph', label: 'Media', badge: isMediaDraft.value },
-  { to: { name: '@team-project-settings' }, icon: 'heroicons-outline:cog', label: 'Settings' }
-]))
 
 // Refresh files when branch changes
 watch(branch, async () => await Promise.all([refreshContentFiles(), refreshMediaFiles()]))

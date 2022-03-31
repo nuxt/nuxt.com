@@ -156,7 +156,7 @@ const dragOver = (e, file) => {
   target.parentNode.classList.add(`drag-${position}`)
 }
 
-const dragLeave = (e, file) => {
+const dragLeave = (e, _file) => {
   let target = e.target
   while (target !== null && !target.classList.contains('target')) {
     target = target.parentNode
@@ -199,7 +199,7 @@ const drop = (e, file) => {
   renameFiles(JSON.parse(src), file, position)
 }
 
-const dragEnd = (e, file) => {
+const dragEnd = (e, _file) => {
   e.dataTransfer.clearData()
 }
 </script>
