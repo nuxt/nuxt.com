@@ -25,10 +25,21 @@
     </template>
 
     <div class="flex items-stretch flex-1 min-h-0 overflow-hidden">
-      <div v-if="computedFiles.length" class="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto">
-        <ProjectMediaFilesGallery />
+      <div class="flex-1 flex flex-col relative">
+        <div
+          class="absolute inset-0 border border-transparent"
+          :class="{ 'bg-blue-200 border-blue-500': dragover }"
+          @dragover.prevent
+          @dragenter.prevent="dragover = true"
+          @dragleave.prevent="dragover = false"
+          @drop.prevent="drop"
+        />
+
+        <div v-if="computedFiles.length" class="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto">
+          <ProjectMediaFilesGallery />
+        </div>
+        <ProjectMediaFilesEmpty v-else @create="$refs.fileToUpload.click()" />
       </div>
-      <ProjectMediaFilesEmpty v-else @create="$refs.fileToUpload.click()" />
 
       <ProjectMediaFileAside />
     </div>
@@ -61,6 +72,15 @@ const { $toast } = useNuxtApp()
 const { upload, computedFiles } = useProjectFiles(props.project, root)
 
 const fileToUpload: Ref<HTMLInputElement> = ref(null)
+const dragover = ref(false)
+
+// Methods
+
+function drop (e) {
+  dragover.value = false
+  fileToUpload.value.files = e.dataTransfer.files
+  onFileUpload()
+}
 
 // Http
 
