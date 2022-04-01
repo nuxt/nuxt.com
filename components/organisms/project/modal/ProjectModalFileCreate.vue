@@ -52,7 +52,7 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import { GitHubFile } from '~/types'
+import type { GitHubFile } from '~/types'
 
 const props = defineProps({
   computedFiles: {

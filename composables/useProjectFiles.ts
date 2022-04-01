@@ -20,6 +20,10 @@ export const useProjectFiles = (project: Project, root: Root) => {
   // Http
 
   async function fetch (force?: boolean) {
+    if (!branch.value) {
+      return
+    }
+
     if (files.value !== null && !force) {
       return
     }
@@ -231,7 +235,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
     const additions = draft.value?.additions.map(a => ({ ...a })) || []
     const deletions = draft.value?.deletions.map(a => ({ ...a })) || []
 
-    const githubFiles = files.value.map(file => ({ ...file, name: file.path.split('/').pop() }))
+    const githubFiles = files.value?.map(file => ({ ...file, name: file.path.split('/').pop() })) || []
 
     for (const addition of additions) {
       if (addition.oldPath) {

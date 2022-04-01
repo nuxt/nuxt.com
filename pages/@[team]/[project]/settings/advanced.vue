@@ -40,7 +40,7 @@
 
 <script setup lang="ts">
 import type { Ref, PropType } from 'vue'
-import { User, Project, Team } from '~/types'
+import type { User, Project, Team } from '~/types'
 
 const props = defineProps({
   team: {
