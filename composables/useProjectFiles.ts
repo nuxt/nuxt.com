@@ -105,6 +105,8 @@ export const useProjectFiles = (project: Project, root: Root) => {
 
       if (file.value?.path === oldPath) {
         select(computedFiles.value.find(file => file.path === newPath))
+      } else if (file.value?.path === newPath) {
+        file.value.status = 'renamed'
       }
     } catch (e) {}
   }
@@ -298,6 +300,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
     openRevertModal,
     // Methods
     select,
+    init,
     // Refs
     pending,
     // Computed
