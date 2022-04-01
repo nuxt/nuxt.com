@@ -1,7 +1,7 @@
 <template>
   <div
-    class="z-[5] sticky top-0 hidden lg:block"
-    :class="{ 'border-t u-border-gray-200': y <= 80, 'backdrop-blur-md shadow shadow-gray-200 dark:shadow-gray-900 border-transparent': y > 80 }"
+    class="z-[5] sticky top-0 hidden lg:block border-t border-transparent"
+    :class="isBlurry ? 'backdrop-blur-md shadow shadow-gray-200 dark:shadow-gray-900' : 'u-border-gray-200'"
   >
     <div class="absolute top-0 w-full h-16 bg-white bg-opacity-75 dark:bg-black" />
     <UContainer padded>
@@ -38,8 +38,6 @@
 <script setup lang="ts">
 import { useWindowScroll } from '@vueuse/core'
 
-const { y } = useWindowScroll()
-
 defineProps({
   title: {
     type: String,
@@ -49,5 +47,17 @@ defineProps({
     type: Array,
     default: () => []
   }
+})
+
+const isBlurry = ref(false)
+
+const { y } = useWindowScroll()
+
+onMounted(() => {
+  watch(
+    y,
+    (newVal) => { isBlurry.value = newVal > 80 },
+    { immediate: true }
+  )
 })
 </script>
