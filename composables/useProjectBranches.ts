@@ -89,6 +89,10 @@ export const useProjectBranches = (project: Project) => {
     loading.value = false
   }
 
+  async function reset () {
+    await client(`/projects/${project.id}/branches/${encodeURIComponent(branch.value.name)}/reset`, { method: 'DELETE' })
+  }
+
   // Modals
 
   function openCreateModal (name: string, mergeDraft: boolean) {
@@ -138,6 +142,7 @@ export const useProjectBranches = (project: Project) => {
     refresh,
     create,
     commit,
+    reset,
     // Modals
     openCreateModal,
     openPublishModal,
