@@ -13,22 +13,9 @@
 </template>
 
 <script setup lang="ts">
-import { findChildFromPath, findBottomLinkFromTree } from '~/utils/content'
+definePageMeta({
+  middleware: ['docs']
+})
 
-const navigation = inject('navigation')
-
-const route = useRoute()
-const router = useRouter()
-
-const file = findChildFromPath(route.path, navigation.value)
-
-let page
-if (file && !file.children) {
-  const { data } = await useAsyncData('docs-framework-page', () => queryContent(route.path).findOne())
-
-  page = data.value
-} else {
-  const slug = findBottomLinkFromTree(file)
-  router.push(slug)
-}
+const { page } = useDocs()
 </script>

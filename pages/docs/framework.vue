@@ -20,7 +20,7 @@
 <script setup lang="ts">
 import { findChildFromPath } from '~~/utils/content'
 
-const navigation = inject('navigation')
+const { navigation } = useDocs() // inject('navigation')
 
 const links = computed(() => findChildFromPath('/docs/framework', navigation.value)?.children)
 </script>

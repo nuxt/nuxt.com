@@ -1,7 +1,8 @@
+import type { NavItem } from '@nuxt/content/dist/runtime/types'
 import { queryContent } from '#imports'
 
 export default defineNuxtRouteMiddleware(async () => {
-  const navigation = useState('navigation')
+  const navigation = useState<NavItem[]>('navigation')
 
   /**
    * Avoid fetching twice via middleware.
