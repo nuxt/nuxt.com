@@ -136,7 +136,7 @@ if (error.value) {
 }
 
 const loading = ref(false)
-const form = reactive({ slug: name, name, url: repository.value.homepage, baseDir: '' })
+const form = reactive({ slug: name, name, url: repository.value.homepage, baseDir: '.' })
 
 const slug = computed(() => {
   return slugify(form.slug)
