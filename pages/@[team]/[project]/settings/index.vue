@@ -54,7 +54,7 @@
             v-model="form.baseDir"
             name="baseDir"
             class="w-full lg:max-w-xs"
-            :options="baseDirs"
+            :options="folders"
           />
         </UFormGroup>
       </div>
@@ -101,7 +101,11 @@ const project: Project = inject('project')
 const form = reactive({ name: props.project.name, slug: props.project.slug, url: props.project.url, baseDir: props.project.baseDir })
 const updating = ref(false)
 
-const { data: folders } = await useAsyncData(`projects-${route.params.project}-folders`, () => client<File[]>(`/projects/${project.id}/folders`))
+const { data: folders } = await useAsyncData(`projects-${route.params.project}-folders`, () => client<File[]>(`/projects/${project.id}/folders`), {
+  transform: (value) => {
+    return value?.map(folder => ({ text: folder.path, value: folder.path }) || [])
+  }
+})
 
 const onSubmit = async () => {
   updating.value = true
@@ -132,8 +136,6 @@ const onSubmit = async () => {
 
   updating.value = false
 }
-
-const baseDirs = computed(() => folders.value?.map(folder => ({ text: folder.path, value: folder.path }) || []))
 
 const slug = computed(() => {
   return slugify(form.slug)
