@@ -84,6 +84,7 @@ watch(route, () => {
 })
 
 function scrollToHeading (id: string, scrollMarginCssVar: string) {
+  show.value = false
   useScrollToHeading(id, scrollMarginCssVar)
 }
 </script>
