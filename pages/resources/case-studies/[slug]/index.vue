@@ -36,7 +36,7 @@
       </div>
 
       <div class="flex items-center justify-between">
-        <div class="ring-1 u-ring-gray-200 lg:hover:u-ring-gray-900 lg:hover:ring-2 group rounded-lg u-bg-white overflow-hidden relative px-6 py-3">
+        <div v-if="prev" class="ring-1 u-ring-gray-200 lg:hover:u-ring-gray-900 lg:hover:ring-2 group rounded-lg u-bg-white overflow-hidden relative px-6 py-3">
           <div class="flex items-center justify-between gap-6">
             <UIcon name="heroicons-outline:arrow-sm-left" class="w-5 h-5" />
 
@@ -45,42 +45,50 @@
                 Previous case
               </p>
               <p class="u-text-gray-600">
-                GitHub study
+                {{ prev.title }} study
               </p>
             </div>
           </div>
-          <NuxtLink to="/resources/case-studies" tabindex="-1" class="focus:outline-none">
+          <NuxtLink :to="prev.slug" tabindex="-1" class="focus:outline-none">
             <span class="absolute inset-0" aria-hidden="true" />
           </NuxtLink>
         </div>
+        <span v-else>&nbsp;</span>
 
-        <div class="ring-1 u-ring-gray-200 lg:hover:u-ring-gray-900 lg:hover:ring-2 group rounded-lg u-bg-white overflow-hidden relative px-6 py-3">
+        <div v-if="next" class="ring-1 u-ring-gray-200 lg:hover:u-ring-gray-900 lg:hover:ring-2 group rounded-lg u-bg-white overflow-hidden relative px-6 py-3">
           <div class="flex items-center justify-between gap-6">
             <div>
               <p class="text-lg font-semibold u-text-gray-900">
                 Next case
               </p>
               <p class="u-text-gray-600">
-                Stores.jp study
+                {{ next.title }} study
               </p>
             </div>
 
             <UIcon name="heroicons-outline:arrow-sm-right" class="w-5 h-5" />
           </div>
-          <NuxtLink to="/resources/case-studies" tabindex="-1" class="focus:outline-none">
+          <NuxtLink :to="next.slug" tabindex="-1" class="focus:outline-none">
             <span class="absolute inset-0" aria-hidden="true" />
           </NuxtLink>
         </div>
+        <span v-else>&nbsp;</span>
       </div>
     </UContainer>
   </div>
 </template>
 
 <script setup lang="ts">
-const route = useRoute()
-const path = route.path.endsWith('/') ? route.path.slice(0, -1) : route.path
+import { withoutTrailingSlash } from 'ufo'
 
-const { data: page } = await useAsyncData('resources-case-studies-page', () => queryContent(path).findOne())
+const route = useRoute()
+const path = withoutTrailingSlash(route.path)
+
+const { data: page } = await useAsyncData(`resources-case-studies-${path}-page`, () => queryContent(path).findOne())
+const { data: surround } = await useAsyncData(`resources-case-studies-${path}-surround`, () => queryContent('resources/case-studies').findSurround(path))
+
+const prev = surround.value[0]
+const next = surround.value[1]
 </script>
 
 <style scoped>
