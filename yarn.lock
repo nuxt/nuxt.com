@@ -9228,6 +9228,11 @@ vue-server-renderer@^2.6.14:
     serialize-javascript "^3.1.0"
     source-map "0.5.6"
 
+vue3-mq@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/vue3-mq/-/vue3-mq-3.1.0.tgz#27fdd3824ea9e1d569fd6f5ef75c7ca4ef352f04"
+  integrity sha512-cTZ2I0FyuotvwsRiomOzOYJupzyH2LWPYQ/rnnx+wYqPze9zrY/gdnHNbKLqa7FIAF/NlFzyNvPo1fnIT3uXxQ==
+
 vue@^3.2.31:
   version "3.2.31"
   resolved "https://registry.yarnpkg.com/vue/-/vue-3.2.31.tgz#e0c49924335e9f188352816788a4cca10f817ce6"
