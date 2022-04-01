@@ -20,8 +20,10 @@
             :key="index"
             :to="link.slug"
             class="text-sm"
-            active-class="u-text-gray-900 font-semibold"
-            inactive-class="font-medium u-text-gray-500 hover:u-text-gray-900"
+            :class="{
+              'u-text-gray-900 font-semibold': isActive(link),
+              'font-medium u-text-gray-500 hover:u-text-gray-900': !isActive(link),
+            }"
           >
             {{ link.title }}
           </ULink>
@@ -51,6 +53,7 @@ defineProps({
 
 const isBlurry = ref(false)
 
+const route = useRoute()
 const { y } = useWindowScroll()
 
 onMounted(() => {
@@ -60,4 +63,8 @@ onMounted(() => {
     { immediate: true }
   )
 })
+
+function isActive (link) {
+  return link.exact ? route.path === link.slug : route.path.startsWith(link.slug)
+}
 </script>
