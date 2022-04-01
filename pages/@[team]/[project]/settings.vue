@@ -19,7 +19,7 @@ defineProps({
   },
   project: {
     type: Object as PropType<Project>,
-    default: null
+    required: true
   }
 })
 
