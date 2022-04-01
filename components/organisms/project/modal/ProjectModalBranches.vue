@@ -121,7 +121,7 @@ async function onResetDraftClick () {
     contentDraft.value = null
     publicDraft.value = null
 
-    // Select new file if a the current file no more exists
+    // Select new file if the current file no longer exists
     if (['renamed', 'created', 'updated'].includes(contentFile.value?.status)) {
       selectNewContentFile()
     }
