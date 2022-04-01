@@ -1,14 +1,11 @@
 <template>
-  <div class="grid grid-cols-10 gap-8 relative">
+  <div class="flex flex-col-reverse lg:grid lg:grid-cols-10 gap-8 relative">
     <div class="col-span-10 lg:col-span-8">
       <div class="prose dark:prose-invert !max-w-full">
         <Content v-if="page" :document="page" />
       </div>
     </div>
-
-    <div class="pb-8 overflow-x-hidden overflow-y-auto lg:pb-0 hidden lg:block lg:sticky lg:top-16 sm:px-6 lg:px-0 lg:pt-8 lg:-mt-8 lg:self-start col-span-2 lg:h-[calc(100vh-64px)]">
-      <DocsToc />
-    </div>
+    <DocsToc class="lg:inset-x-0 col-span-2 lg:pb-8 overflow-x-hidden overflow-y-auto lg:pb-0 sticky top-0 lg:top-16 lg:px-0 lg:pt-8 lg:-mt-8 lg:self-start col-span-2 lg:h-[calc(100vh-64px)]" />
   </div>
 </template>
 
