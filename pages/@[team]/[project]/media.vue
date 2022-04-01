@@ -32,7 +32,7 @@
 import type { PropType, Ref } from 'vue'
 import { isEmpty } from 'lodash-es'
 import type { Team, Project } from '~/types'
-import { getAvailablePath } from '~~/utils/tree'
+import { getAvailablePath } from '~/utils/tree'
 
 const props = defineProps({
   team: {

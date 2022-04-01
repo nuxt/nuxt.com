@@ -68,9 +68,9 @@ export const renamePath = function (path: string, newPath: string, newPrefix: st
   return `${newDir}/${newName}`
 }
 
-export const getAvailablePath = (path: string, tree: File[]): string => {
+export const getAvailablePath = (path: string, files: File[]): string => {
   // Check if path is available
-  let pathAvailable = !tree.find((file: File) => file.path === path)
+  let pathAvailable = !files.find((file: File) => file.path === path)
   if (pathAvailable) {
     return path
   }
@@ -85,7 +85,7 @@ export const getAvailablePath = (path: string, tree: File[]): string => {
   while (!newPath) {
     const suffixedPath = `${dir}/${filename}-${suffix}.${ext}`
 
-    pathAvailable = !tree.find((file: File) => file.path === suffixedPath)
+    pathAvailable = !files.find((file: File) => file.path === suffixedPath)
     if (pathAvailable) {
       newPath = suffixedPath
     }
