@@ -59,7 +59,17 @@ const project: Project = inject('project')
 const emit = defineEmits(['update:modelValue'])
 
 const keys = useMagicKeys()
-const { branches, branch, pending: pendingBranches, refresh: refreshBranches, select: selectBranch, openCreateModal: openCreateBranchModal } = useProjectBranches(project)
+const { isDraft: isDraftContent, draft: contentDraft, file: contentFile, init: selectNewContentFile, select: selectContentFile } = useProjectFiles(project, 'content')
+const { isDraft: isDraftMedia, draft: publicDraft, file: publicFile, init: selectNewPublicFile } = useProjectFiles(project, 'public')
+const {
+  branches,
+  branch,
+  pending: pendingBranches,
+  refresh: refreshBranches,
+  reset: resetDraft,
+  select: selectBranch,
+  openCreateModal: openCreateBranchModal
+} = useProjectBranches(project)
 
 whenever(keys.meta_b, () => {
   isOpen.value = !isOpen.value
@@ -86,7 +96,8 @@ const filteredBranches = computed(() => {
 })
 const actions = computed(() => ([
   { key: 'create', label: `Create new branch ${query.value && !branchExists.value ? `"${query.value}"` : ''}`, icon: 'heroicons-outline:plus', click: onCreateBranchClick },
-  !query.value && { key: 'refresh', label: 'Refresh branches', icon: 'heroicons-outline:refresh', iconClass: pendingBranches.value ? 'animate-spin' : '', click: refreshBranches }
+  !query.value && { key: 'refresh', label: 'Refresh branches', icon: 'heroicons-outline:refresh', iconClass: pendingBranches.value ? 'animate-spin' : '', click: refreshBranches },
+  (isDraftContent.value || isDraftMedia.value) && { key: 'reset', label: 'Revert draft', icon: 'heroicons-outline:reply', click: onResetDraftClick }
 ].filter(Boolean)))
 
 function onBranchSelect (b: GitHubBranch) {
@@ -101,6 +112,25 @@ function onCreateBranchClick () {
     openCreateBranchModal(!branchExists.value ? query.value : '', false)
   }, 0)
   query.value = ''
+}
+
+async function onResetDraftClick () {
+  try {
+    await resetDraft()
+
+    contentDraft.value = null
+    publicDraft.value = null
+
+    // Select new file if a the current file no more exists
+    if (['renamed', 'created', 'updated'].includes(contentFile.value?.status)) {
+      selectNewContentFile()
+    }
+    if (['renamed', 'created'].includes(publicFile.value?.status)) {
+      selectNewPublicFile()
+    }
+
+    isOpen.value = false
+  } catch {}
 }
 
 function onSelect (option) {
