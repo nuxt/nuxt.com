@@ -50,11 +50,11 @@
         </UFormGroup>
 
         <UFormGroup name="baseDir" label="Base Directory" help="This is the path of your nuxt app in the repository.">
-          <UInput
+          <USelect
             v-model="form.baseDir"
             name="baseDir"
             class="w-full lg:max-w-xs"
-            placeholder="."
+            :options="folders"
           />
         </UFormGroup>
       </div>
@@ -76,7 +76,7 @@
 <script setup lang="ts">
 import slugify from '@sindresorhus/slugify'
 import type { PropType, Ref } from 'vue'
-import type { Team, Project, User } from '~/types'
+import type { Team, Project, User, File } from '~/types'
 
 const props = defineProps({
   team: {
@@ -93,9 +93,19 @@ const user = useStrapiUser() as Ref<User>
 const router = useRouter()
 const { update } = useStrapi4()
 const { $toast } = useNuxtApp()
+const route = useRoute()
+const client = useStrapiClient()
+
+const project: Project = inject('project')
 
 const form = reactive({ name: props.project.name, slug: props.project.slug, url: props.project.url, baseDir: props.project.baseDir })
 const updating = ref(false)
+
+const { data: folders } = await useAsyncData(`projects-${route.params.project}-folders`, () => client<File[]>(`/github/installations/${project.repository.owner}/${project.repository.name}/folders`), {
+  transform: (value) => {
+    return value?.map(folder => ({ text: folder.path, value: folder.path }) || [])
+  }
+})
 
 const onSubmit = async () => {
   updating.value = true
