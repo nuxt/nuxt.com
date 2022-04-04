@@ -1,6 +1,6 @@
 <template>
   <UCard class="relative" ring-class="ring-1 u-ring-gray-200 lg:hover:u-ring-gray-900 lg:hover:ring-2">
-    <NuxtLink :to="{ name: '@team-project', params: { project: project.slug } }" class="focus:outline-none" tabindex="-1">
+    <NuxtLink :to="{ name: '@team-project', params: { team: team?.slug || user.username, project: project.slug } }" class="focus:outline-none" tabindex="-1">
       <span class="absolute inset-0" aria-hidden="true" />
     </NuxtLink>
 
@@ -38,9 +38,9 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue'
+import type { PropType, Ref } from 'vue'
 import { useTimeAgo } from '@vueuse/core'
-import type { Project } from '~/types'
+import type { User, Project, Team } from '~/types'
 
 defineProps({
   project: {
@@ -48,4 +48,7 @@ defineProps({
     required: true
   }
 })
+
+const team: Team = inject('team')
+const user = useStrapiUser() as Ref<User>
 </script>
