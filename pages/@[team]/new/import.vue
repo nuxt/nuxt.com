@@ -73,11 +73,11 @@
             </UFormGroup>
 
             <UFormGroup name="baseDir" label="Base Directory" help="This is the path of your nuxt app in the repository.">
-              <UInput
+              <USelect
                 v-model="form.baseDir"
                 name="baseDir"
                 class="w-full lg:max-w-xs"
-                placeholder="."
+                :options="folders"
               />
             </UFormGroup>
           </div>
@@ -100,7 +100,7 @@
 <script setup lang="ts">
 import slugify from '@sindresorhus/slugify'
 import type { PropType, Ref } from 'vue'
-import type { Team, Template, Project, User, GitHubRepository } from '~/types'
+import type { Team, Template, Project, User, GitHubRepository, File } from '~/types'
 
 const props = defineProps({
   team: {
@@ -135,8 +135,14 @@ if (error.value) {
   router.push({ name: '@team-new' })
 }
 
+const { data: folders } = await useAsyncData(`import-${route.query.repository}-folders`, () => client<File[]>(`/github/installations/${owner}/${name}/folders`), {
+  transform: (value) => {
+    return value?.map(folder => ({ text: folder.path, value: folder.path }) || [])
+  }
+})
+
 const loading = ref(false)
-const form = reactive({ slug: name, name, url: repository.value.homepage, baseDir: '' })
+const form = reactive({ slug: name, name, url: repository.value.homepage, baseDir: '.' })
 
 const slug = computed(() => {
   return slugify(form.slug)
