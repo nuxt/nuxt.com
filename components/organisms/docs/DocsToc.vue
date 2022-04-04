@@ -5,12 +5,18 @@
     <div class="lg:hidden absolute inset-y-0 -inset-x-8 backdrop-blur-md" />
     <div>
       <NuxtLink :to="previous?.slug || '#'" :disabled="!previous?.slug" class="hidden lg:flex justify-end lg:justify-start hover:font-semibold hover:u-text-gray-900 gap-x-3">
-        <IconTocBack />
+        <div class="flex-shrink-0 p-1 u-bg-gray-100 rounded-md">
+          <UIcon name="heroicons-solid:rewind" class="w-4 h-4 u-text-gray-400" />
+        </div>
+
         <span>Previous page</span>
       </NuxtLink>
       <template v-if="toc.length">
         <div class="hidden lg:flex font-semibold u-text-gray-900 gap-x-3 lg:pt-2">
-          <IconTocCurrent />
+          <div class="flex-shrink-0 p-1 u-bg-gray-900 rounded-md">
+            <UIcon name="heroicons-solid:play" class="w-4 h-4 u-text-white" />
+          </div>
+
           <span>On this page</span>
         </div>
         <div class="w-full flex flex-col items-start py-4 lg:py-0 rounded-b overflow-y-auto">
@@ -40,7 +46,10 @@
         </div>
       </template>
       <NuxtLink :to="next?.slug || '#'" :disabled="!next?.slug" class="hidden lg:flex hover:font-semibold hover:u-text-gray-900 gap-x-3 lg:pt-2">
-        <IconTocNext />
+        <div class="flex-shrink-0 p-1 u-bg-gray-100 rounded-md">
+          <UIcon name="heroicons-solid:rewind" class="w-4 h-4 u-text-gray-400 scale-x-[-1]" />
+        </div>
+
         <span>Next page</span>
       </NuxtLink>
     </div>
