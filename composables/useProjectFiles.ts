@@ -186,6 +186,19 @@ export const useProjectFiles = (project: Project, root: Root) => {
     } catch (e) {}
   }
 
+  async function getContent (path: string) {
+    const originalFile = files.value.find(f => f.path === path)
+
+    const fetchedFile = await client(`/projects/${project.id}/files/${encodeURIComponent(path)}`, {
+      params: {
+        ref: branch.value?.name,
+        root
+      }
+    })
+
+    Object.assign(originalFile, fetchedFile)
+  }
+
   // Modals
 
   function openCreateModal (path: string) {
@@ -293,6 +306,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
     refresh,
     upload,
     bulkRename,
+    getContent,
     // Modals
     openCreateModal,
     openRenameModal,
