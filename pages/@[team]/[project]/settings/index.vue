@@ -101,7 +101,7 @@ const project: Project = inject('project')
 const form = reactive({ name: props.project.name, slug: props.project.slug, url: props.project.url, baseDir: props.project.baseDir })
 const updating = ref(false)
 
-const { data: folders } = await useAsyncData(`projects-${route.params.project}-folders`, () => client<File[]>(`/projects/${project.id}/folders`), {
+const { data: folders } = await useAsyncData(`projects-${route.params.project}-folders`, () => client<File[]>(`/github/installations/${project.repository.owner}/${project.repository.name}/folders`), {
   transform: (value) => {
     return value?.map(folder => ({ text: folder.path, value: folder.path }) || [])
   }
