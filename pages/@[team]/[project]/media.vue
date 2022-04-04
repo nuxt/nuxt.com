@@ -26,20 +26,23 @@
     </template>
 
     <div class="flex items-stretch flex-1 min-h-0 overflow-hidden">
-      <div class="flex-1 flex flex-col relative">
-        <div
-          class="absolute inset-0 border border-transparent"
-          :class="{ 'bg-blue-200 border-blue-500': dragover }"
-          @dragover.prevent
-          @dragenter.prevent="dragover = true"
-          @dragleave.prevent="dragover = false"
-          @drop.prevent="drop"
-        />
-
+      <div
+        class="flex-1 flex flex-col relative"
+        @dragover.prevent
+        @dragenter.prevent="onDragEnter"
+        @dragleave.prevent="onDragLeave"
+        @drop.prevent="onDrop"
+      >
         <div v-if="computedFiles.length" class="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto">
           <ProjectMediaFilesGallery />
         </div>
         <ProjectMediaFilesEmpty v-else @create="$refs.fileToUpload.click()" />
+
+        <div
+          class="absolute inset-0 border border-dashed border-transparent"
+          :class="{ 'bg-blue-500 bg-opacity-20 border-blue-500': dragover }"
+          style="pointer-events: none;"
+        />
       </div>
 
       <ProjectMediaFileAside />
@@ -77,7 +80,19 @@ const dragover = ref(false)
 
 // Methods
 
-function drop (e) {
+function onDragEnter (e) {
+  dragover.value = true
+}
+
+function onDragLeave (e) {
+  if (e.currentTarget.contains(e.relatedTarget)) {
+    return
+  }
+
+  dragover.value = false
+}
+
+function onDrop (e) {
   dragover.value = false
   fileToUpload.value.files = e.dataTransfer.files
   onFileUpload()
