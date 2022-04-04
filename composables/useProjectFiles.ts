@@ -186,7 +186,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
     } catch (e) {}
   }
 
-  async function getContent (path: string) {
+  async function getFileContent (path: string) {
     const originalFile = files.value.find(f => f.path === path)
 
     const fetchedFile = await client(`/projects/${project.id}/files/${encodeURIComponent(path)}`, {
@@ -306,7 +306,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
     refresh,
     upload,
     bulkRename,
-    getContent,
+    getFileContent,
     // Modals
     openCreateModal,
     openRenameModal,

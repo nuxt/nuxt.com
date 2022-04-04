@@ -40,7 +40,7 @@ import type { GitHubFile, Project, Root } from '~/types'
 const project: Project = inject('project')
 const root: Root = inject('root')
 
-const { file: selectedFile, computedFiles, select, getContent, openRenameModal, openRevertModal, openDeleteModal } = useProjectFiles(project, root)
+const { file: selectedFile, computedFiles, select, getFileContent, openRenameModal, openRevertModal, openDeleteModal } = useProjectFiles(project, root)
 
 const isSelected = (file: GitHubFile) => selectedFile.value && file.path === selectedFile.value.path
 const isDeleted = (file: GitHubFile) => file.status === 'deleted'
@@ -81,7 +81,7 @@ onMounted(() => {
       const file = computedFiles.value.find(file => file.path === path)
       const requestContent = file && !file.content
       if (isIntersecting && requestContent) {
-        getContent(path)
+        getFileContent(path)
       }
     })
   }
