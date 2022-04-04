@@ -7,9 +7,10 @@
         </h1>
       </div>
 
-      <ul role="list" class="flex flex-col gap-y-4">
-        <li v-for="page in pages" :key="page.slug">
-          <ResourcesBlogMainArticle :page="page" />
+      <ul role="list" class="flex flex-col gap-y-4 pb-16">
+        <li v-for="(page, index) in pages" :key="page.slug" :class="{ 'border-b last:border-none': index !== 0 }">
+          <!-- order by date, main article is the most recent -->
+          <ResourcesArticleItem :page="page" :main-article="index === 0" />
         </li>
       </ul>
       <!-- <ul role="list" class="grid sm:grid-cols-2 gap-4 md:grid-cols-3 sm:gap-6 md:gap-x-12 md:gap-y-10">
