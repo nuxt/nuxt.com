@@ -1,7 +1,7 @@
 <template>
   <div
-    class="z-[5] sticky top-0 hidden lg:block"
-    :class="{ 'border-t u-border-gray-200': y <= 80, 'backdrop-blur-md shadow shadow-gray-200 dark:shadow-gray-900 border-transparent': y > 80 }"
+    class="z-[5] sticky top-0 hidden lg:block border-t border-transparent"
+    :class="isBlurry ? 'backdrop-blur-md shadow shadow-gray-200 dark:shadow-gray-900' : 'u-border-gray-200'"
   >
     <div class="absolute top-0 w-full h-16 bg-white bg-opacity-75 dark:bg-black" />
     <UContainer padded>
@@ -20,8 +20,10 @@
             :key="index"
             :to="link.slug"
             class="text-sm"
-            active-class="u-text-gray-900 font-semibold"
-            inactive-class="font-medium u-text-gray-500 hover:u-text-gray-900"
+            :class="{
+              'u-text-gray-900 font-semibold': isActive(link),
+              'font-medium u-text-gray-500 hover:u-text-gray-900': !isActive(link),
+            }"
           >
             {{ link.title }}
           </ULink>
@@ -38,8 +40,6 @@
 <script setup lang="ts">
 import { useWindowScroll } from '@vueuse/core'
 
-const { y } = useWindowScroll()
-
 defineProps({
   title: {
     type: String,
@@ -50,4 +50,21 @@ defineProps({
     default: () => []
   }
 })
+
+const isBlurry = ref(false)
+
+const route = useRoute()
+const { y } = useWindowScroll()
+
+onMounted(() => {
+  watch(
+    y,
+    (newVal) => { isBlurry.value = newVal > 80 },
+    { immediate: true }
+  )
+})
+
+function isActive (link) {
+  return link.exact ? route.path === link.slug : route.path.startsWith(link.slug)
+}
 </script>

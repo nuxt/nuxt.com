@@ -65,11 +65,6 @@ const show = ref(false)
 
 const { activeHeadings, updateHeadings } = useScrollspy()
 
-const { toc, previous, next } = useContentPage()
-
-watch(route, () => {
-  show.value = false
-
   if (process.client) {
     setTimeout(() => {
       updateHeadings([
