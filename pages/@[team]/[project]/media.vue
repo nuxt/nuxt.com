@@ -7,6 +7,7 @@
         type="file"
         accept="image/*"
         class="hidden"
+        multiple
         @change="onFileUpload"
       >
 
@@ -25,10 +26,24 @@
     </template>
 
     <div class="flex items-stretch flex-1 min-h-0 overflow-hidden">
-      <div v-if="computedFiles.length" class="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto">
-        <ProjectMediaFilesGallery />
+      <div
+        class="flex-1 flex flex-col relative"
+        @dragover.prevent
+        @dragenter.prevent="onDragEnter"
+        @dragleave.prevent="onDragLeave"
+        @drop.prevent="onDrop"
+      >
+        <div v-if="computedFiles.length" class="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto">
+          <ProjectMediaFilesGallery />
+        </div>
+        <ProjectMediaFilesEmpty v-else @create="$refs.fileToUpload.click()" />
+
+        <div
+          class="absolute inset-0 border border-dashed border-transparent"
+          :class="{ 'bg-blue-500 bg-opacity-20 border-blue-500': dragover }"
+          style="pointer-events: none;"
+        />
       </div>
-      <ProjectMediaFilesEmpty v-else @create="$refs.fileToUpload.click()" />
 
       <ProjectMediaFileAside />
     </div>
@@ -61,6 +76,27 @@ const { $toast } = useNuxtApp()
 const { upload, computedFiles } = useProjectFiles(props.project, root)
 
 const fileToUpload: Ref<HTMLInputElement> = ref(null)
+const dragover = ref(false)
+
+// Methods
+
+function onDragEnter (e) {
+  dragover.value = true
+}
+
+function onDragLeave (e) {
+  if (e.currentTarget.contains(e.relatedTarget)) {
+    return
+  }
+
+  dragover.value = false
+}
+
+function onDrop (e) {
+  dragover.value = false
+  fileToUpload.value.files = e.dataTransfer.files
+  onFileUpload()
+}
 
 // Http
 
@@ -69,19 +105,20 @@ async function onFileUpload () {
     return
   }
 
-  const formData = new FormData()
-  const file = fileToUpload.value.files[0]
+  for (const file of fileToUpload.value.files) {
+    const formData = new FormData()
 
-  if (!file.type.startsWith('image/')) {
-    $toast.error({ title: `File type ${file.type} is not supported` })
-    return
+    if (!file.type.startsWith('image/')) {
+      $toast.error({ title: `File type ${file.type} is not supported` })
+      continue
+    }
+
+    formData.append('files.image', file)
+
+    try {
+      const filePath = getAvailablePath(`public/${file.name}`, computedFiles.value)
+      await upload(filePath, formData)
+    } catch (e) {}
   }
-
-  formData.append('files.image', fileToUpload.value.files[0])
-
-  try {
-    const filePath = getAvailablePath(`public/${file.name}`, computedFiles.value)
-    await upload(filePath, formData)
-  } catch (e) {}
 }
 </script>
