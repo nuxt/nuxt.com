@@ -14,5 +14,5 @@ definePageMeta({
   middleware: ['docs']
 })
 
-const { page } = useDocs()
+const { page } = useContentPage()
 </script>

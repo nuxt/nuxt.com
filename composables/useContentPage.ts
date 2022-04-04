@@ -1,6 +1,6 @@
 import { NavItem, ParsedContent } from '@nuxt/content/dist/runtime/types'
 
-export const useDocs = () => {
+export const useContentPage = () => {
   // Navigation
   const navigation = useState<NavItem[]>('navigation')
 

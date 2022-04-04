@@ -65,7 +65,7 @@ const show = ref(false)
 
 const { activeHeadings, updateHeadings } = useScrollspy()
 
-const { toc, previous, next } = useDocs()
+const { toc, previous, next } = useContentPage()
 
 watch(route, () => {
   show.value = false
