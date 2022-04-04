@@ -13,7 +13,7 @@
 
         <UButton
           v-if="team"
-          :to="{ name: '@team-settings-members' }"
+          :to="{ name: '@team-settings-members', params: { team: team?.slug || user.username } }"
           label="Add collaborators"
           icon="heroicons-outline:users"
           variant="secondary"
@@ -28,7 +28,7 @@
           class="w-full sm:w-auto"
         />
 
-        <UButton :to="{ name: '@team-new' }" label="New project" icon="heroicons-solid:plus" class="w-full sm:w-auto" />
+        <UButton :to="{ name: '@team-new', params: { team: team?.slug || user.username } }" label="New project" icon="heroicons-solid:plus" class="w-full sm:w-auto" />
       </div>
 
       <ProjectsList v-if="projects.length" :projects="filteredProjects" />
@@ -51,6 +51,8 @@ const props = defineProps({
 const user = useStrapiUser() as Ref<User>
 const client = useStrapiClient()
 const q = ref('')
+
+provide('team', props.team)
 
 const { data: projects } = await useAsyncData(`projects-${props.team?.slug || user.value.username}`, () => client<Project[]>(props.team ? `/teams/${props.team.slug}/projects` : '/projects'))
 
