@@ -55,7 +55,7 @@ const colorMode = useColorMode()
 const client = useStrapiClient()
 const { parseFrontMatter, stringifyFrontMatter } = useMarkdown()
 const { branch } = useProjectBranches(props.project)
-const { draft, file, getFileContent, openCreateModal: openCreateFileModal, computedFiles } = useProjectFiles(props.project, root)
+const { draft, file, getFile, openCreateModal: openCreateFileModal, computedFiles } = useProjectFiles(props.project, root)
 const { tree, openDir } = useProjectFilesTree(props.project, root)
 
 const content: Ref<string> = ref('')
@@ -104,9 +104,9 @@ async function fetchContent () {
     return
   }
 
-  await getFileContent(file.value.path)
+  const { content: newContent } = await getFile(file.value.path)
 
-  content.value = computedFiles.value.find(f => f.path === file.value.path).content
+  content.value = newContent
 }
 
 async function updateFile (formattedContent) {
