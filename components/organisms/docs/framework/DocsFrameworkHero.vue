@@ -22,7 +22,7 @@
         label="39k + GithubStars"
         to="#"
       />
-      <UButton size="xl" variant="primary" label="Get started" to="/get-started" />
+      <UButton size="xl" variant="primary" label="Get started" to="/docs/framework/getting-started" />
     </div>
   </div>
 </template>
