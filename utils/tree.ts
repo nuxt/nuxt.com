@@ -39,15 +39,7 @@ export const findTree = function (path: string, tree: File[]): any {
 }
 
 export const replacePrefix = function (path: string, newPrefix: string) {
-  const split = path.split('/')
-  let [prefix, name, ext] = split.pop()?.split('.') || []
-  // Case when file has no prefix
-  if (!Number(prefix)) {
-    ext = name
-    name = prefix
-    prefix = null
-  }
-
+  const { name, ext } = destructurePathName(getPathName(path))
   return `${newPrefix}.${name}.${ext}`
 }
 
@@ -57,6 +49,42 @@ export const getPathDir = function (path: string) {
 
 export const getPathName = function (path: string) {
   return path.replace(/^.*[\\/]/, '')
+}
+
+export const getPathPrefix = function (path: string) {
+  const destr = destructurePathName(getPathName(path))
+  return destr.prefix
+}
+
+export const isPrefix = function (prefix: string | null) {
+  // allows ['0'], disallows [null, 'foo']
+  return typeof prefix === 'string' && !isNaN(Number(prefix))
+}
+
+export const destructurePathName = function (path: string) {
+  const split = getPathName(path).split('.')
+  let prefix: string | null = null
+  let name: string | null = null
+  let ext: string | null = null
+
+  if (split.length <= 1) {
+    name = path
+    return { prefix, name, ext }
+  }
+
+  if (split.length === 2) {
+    name = split[0]
+    ext = split[1]
+    return { prefix, name, ext }
+  }
+
+  prefix = split.length >= 3 ? split[0] : null
+  if (!isPrefix(prefix)) {
+    prefix = null
+  }
+  ext = split[split.length - 1]
+  name = split.slice(prefix ? 1 : 0, split.length - 1).join('.')
+  return { prefix, name, ext }
 }
 
 export const renamePath = function (path: string, newPath: string, newPrefix: string) {
