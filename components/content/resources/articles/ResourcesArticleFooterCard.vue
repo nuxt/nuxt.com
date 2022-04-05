@@ -2,10 +2,10 @@
 <template>
   <UCard class="relative" :class="dark ? 'u-bg-gray-900 u-text-white' : 'u-bg-white u-text-grey-900'">
     <h5 class="text-2xl font-bold">
-      {{ title }}
+      <slot name="title" />
     </h5>
     <p class="w-3/4 pt-3" :class="{ 'u-text-gray-700': !dark }">
-      {{ description }}
+      <slot name="description" />
     </p>
     <UButton v-if="dark" variant="transparent" class="u-border-white px-8 mt-6 hover:u-border-gray-200" :to="to">
       <span class="u-text-white hover:u-text-gray-200">
@@ -19,14 +19,6 @@
 
 <script setup>
 defineProps({
-  title: {
-    type: String,
-    default: ''
-  },
-  description: {
-    type: String,
-    default: ''
-  },
   buttonText: {
     type: String,
     default: ''

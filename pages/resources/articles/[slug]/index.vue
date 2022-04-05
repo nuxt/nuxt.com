@@ -24,7 +24,7 @@
     </div>
 
     <UContainer padded>
-      <div class="grid grid-cols-4 relative overflow-hidden border-b">
+      <div class="grid grid-cols-4 relative overflow-hidden border-b u-border-gray-400">
         <Content v-if="page" :document="page" class="col-span-3 prose prose-gray dark:prose-invert !max-w-full pb-12" />
         <div class="sticky top-20 col-span-1">
           blabla
@@ -33,6 +33,9 @@
       <div class="flex justify-between pt-6">
         <span class="font-bold u-text-gray-900">Share the article</span>
         <ul class="flex gap-x-4">
+          <li>
+            <UButton class="!p-0 u-text-gray-900 hover:u-text-gray-700" variant="transparent" icon="heroicons-outline:link" @click="copyUrl" />
+          </li>
           <li v-for="social in socialLinks" :key="social.alt">
             <UButton
               :to="social.href"
@@ -50,21 +53,31 @@
         </h2>
         <div class="grid grid-cols-2 gap-8">
           <ResourcesArticleFooterCard
-            title="Sart now"
-            description="How a user interacts with and experience your website is key."
             button-text="Get Started"
             to="/docs/framework"
             image-path="/resources/articles/nuxt.svg"
             image-position="bottom-0 right-0"
             dark
-          />
+          >
+            <template #title>
+              Start now
+            </template>
+            <template #description>
+              How a user interacts with and experience your website is key.
+            </template>
+          </ResourcesArticleFooterCard>
           <ResourcesArticleFooterCard
-            title="Watch a Showcase"
-            description="How a user interacts with and experience your website is key."
             button-text="Discover Nuxt Sites"
             to="/showcases"
             image-path="/resources/articles/showcases.png"
-          />
+          >
+            <template #title>
+              Watch a Showcase
+            </template>
+            <template #description>
+              How a user interacts with and experience your website is key.
+            </template>
+          </ResourcesArticleFooterCard>
         </div>
       </div>
     </UContainer>
@@ -73,39 +86,33 @@
 
 <script setup lang="ts">
 const route = useRoute()
+
+const { $toast, $clipboard } = useNuxtApp()
 const path = route.path.endsWith('/') ? route.path.slice(0, -1) : route.path
 
 const { data: page } = await useAsyncData('resources-articles-blog', () => queryContent(path).findOne())
 
-const socialLinks = [
-  {
-    icon: 'heroicons-solid:link',
-    alt: 'link'
-  },
+const socialLinks = computed(() => [
   {
     icon: 'fa-brands:linkedin',
-    alt: 'twitter'
+    alt: 'LinkedIn',
+    href: `https://www.linkedin.com/sharing/share-offsite/?url=https://nuxt.com${page.value.slug}`
   },
   {
     icon: 'fa-brands:twitter',
-    alt: 'link'
+    alt: 'link',
+    href: `https://twitter.com/intent/tweet?text=I%20found%20this%20article%20interesting%20%20https://nuxt.com${page.value.slug}&hashtags=nuxt`
   }
-]
+])
 
-const footerCard = [
-  {
-    title: 'Start now',
-    description: 'How a user interacts with and experience your website is key.',
-    button: 'Get Started',
-    to: '/docs'
-  },
-  {
-    title: 'Watch a Showcase',
-    description: 'How a user interacts with and experience your website is key.',
-    button: 'Discover Nuxt sites',
-    to: '/showcases'
-  }
-]
+function copyUrl () {
+  $clipboard.copy(`https://nuxt.com${page.value.slug}`)
+
+  $toast.success({
+    title: 'Copied to clipboard!',
+    timeout: 1000
+  })
+}
 
 const formatDateByLocale = (locale, d) => {
   return new Date(d).toLocaleDateString(locale, {
