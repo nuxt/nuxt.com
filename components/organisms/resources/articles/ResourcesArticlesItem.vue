@@ -1,9 +1,9 @@
 <template>
-  <div class="flex flex-col gap-y-4 py-8" :class="{ 'rounded-lg border-2 u-border-gray-200 px-8': mainArticle }">
-    <div class="font-semibold u-text-gray-400" :class="{ 'text-sm': !mainArticle }">
+  <div class="flex flex-col gap-y-4 py-8" :class="{ 'rounded-lg border-2 u-border-gray-200 px-8': highlight }">
+    <div class="font-semibold u-text-gray-400" :class="{ 'text-sm': !highlight }">
       <time>{{ formatDateByLocale('en', page.date) }}</time> - {{ page.category }}
     </div>
-    <h2 class="u-text-gray-900 font-bold" :class="mainArticle ? 'text-3xl' : 'text-2xl'">
+    <h2 class="u-text-gray-900 font-bold" :class="highlight ? 'text-3xl' : 'text-2xl'">
       {{ page.title }}
     </h2>
     <p class="font-medium u-text-gray-500">
@@ -16,7 +16,7 @@
         </span>
         <span
           class="rounded absolute left-0 font-extrabold -bottom-1 h-0.5 w-4 group-hover:w-full transition-all"
-          :class="mainArticle ? 'bg-gradient-to-r from-[#00DC82] via-[#34CDFE] to-[#0047E1]' : 'u-bg-gray-700'"
+          :class="highlight ? 'bg-gradient-to-r from-[#00DC82] via-[#34CDFE] to-[#0047E1]' : 'u-bg-gray-700'"
         />
       </NuxtLink>
       <UAvatarGroup :group="authors" size="sm" />
@@ -31,7 +31,7 @@ const props = defineProps({
     type: Object,
     required: true
   },
-  mainArticle: {
+  highlight: {
     type: Boolean,
     default: false
   }
