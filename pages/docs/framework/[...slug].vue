@@ -8,7 +8,7 @@
         </div>
       </div>
     </div>
-    <DocsToc class="lg:inset-x-0 col-span-2 lg:pb-8 overflow-x-hidden overflow-y-auto lg:pb-0 sticky top-0 lg:top-16 lg:px-0 lg:pt-8 lg:-mt-8 lg:self-start col-span-2 lg:h-[calc(100vh-64px)]" />
+    <DocsToc class="lg:inset-x-0 col-span-2 lg:pb-8 overflow-x-hidden overflow-y-auto lg:pb-0 sticky top-0 lg:top-16 lg:px-0 lg:pt-8 lg:-mt-8 lg:self-start col-span-2 lg:max-h-[calc(100vh-64px)]" />
   </div>
 </template>
 

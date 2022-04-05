@@ -22,10 +22,10 @@
       </ul>
     </UContainer>
 
-    <div class="bg-black mt-12 sm:mt-24 relative overflow-hidden dark">
+    <div class="mt-12 sm:mt-24 relative overflow-hidden">
       <UContainer padded class="py-12 lg:py-16 lg:flex lg:items-center lg:justify-between relative">
         <span class="_ellipse z-0" />
-        <h2 class="text-white z-[1] tracking-tight">
+        <h2 class="u-text-black z-[1] tracking-tight">
           <span class="block font-semibold text-2xl">Contact us</span>
           <span class="block mt-2">Start building, or get in touch with our app experts.</span>
         </h2>

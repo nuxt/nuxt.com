@@ -23,7 +23,8 @@
         </span>
       </div>
     </UContainer>
-    <slot name="image" />
+
+    <img v-if="image" :src="image" class="absolute right-0 bottom-0 hidden xl:block max-h-full">
   </div>
 </template>
 
@@ -44,6 +45,10 @@ defineProps({
   highlight: {
     type: Boolean,
     default: false
+  },
+  image: {
+    type: String,
+    default: null
   }
 })
 </script>
