@@ -13,9 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { findChildFromPath } from '~~/utils/content'
+const { navFromPath } = useContent()
 
-const navigation = inject('navigation')
-
-const links = computed(() => findChildFromPath('/resources', navigation.value)?.children)
+const links = computed(() => navFromPath('/resources')?.children)
 </script>
