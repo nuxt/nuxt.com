@@ -77,7 +77,7 @@ const items = ref({})
 
 onMounted(() => {
   for (const [path, el] of Object.entries(items.value)) {
-    useIntersectionObserver(el as HTMLElement, async ([{ isIntersecting }], _) => {
+    useIntersectionObserver(el as HTMLElement, ([{ isIntersecting }], _) => {
       const file = computedFiles.value.find(file => file.path === path)
       const requestContent = file && !file.content
       if (isIntersecting && requestContent) {
