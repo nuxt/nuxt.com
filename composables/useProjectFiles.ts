@@ -187,7 +187,8 @@ export const useProjectFiles = (project: Project, root: Root) => {
   }
 
   async function fetchFile (path: string) {
-    const originalFile = files.value.find(f => f.path === path)
+    // original file can be from files (when no draft on it) or computedFiles (when file created or renamed)
+    const originalFile = files.value.find(f => f.path === path) || computedFiles.value.find(f => f.path === path)
 
     const fetchedFile = await client(`/projects/${project.id}/files/${encodeURIComponent(path)}`, {
       params: {
@@ -196,9 +197,13 @@ export const useProjectFiles = (project: Project, root: Root) => {
       }
     })
 
+    // ensures computedFiles is updated
     Object.assign(originalFile, fetchedFile)
 
-    return originalFile
+    // ensures selected file is updated to trigger watches if needed
+    if (file.value?.path === path) {
+      file.value = originalFile
+    }
   }
 
   // Modals
