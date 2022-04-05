@@ -79,18 +79,9 @@
 </template>
 
 <script setup lang="ts">
-const router = useRouter()
-
-const route = useRoute()
-
 const { prev, next, page, fetchPage } = useContent()
 
-const { data: redirect } = await useAsyncData(
-  `content-page-${route.path}`,
-  fetchPage
-)
-
-if (redirect.value) { router.push(redirect.value) }
+await fetchPage()
 </script>
 
 <style scoped>

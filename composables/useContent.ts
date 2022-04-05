@@ -2,6 +2,7 @@ import { withoutTrailingSlash } from 'ufo'
 import type { NavItem, ParsedContent } from '@nuxt/content/dist/runtime/types'
 
 export const useContent = () => {
+  const router = useRouter()
   const route = useRoute()
 
   /**
@@ -51,19 +52,19 @@ export const useContent = () => {
    */
   const fetchNavigation = async () => {
     // @ts-ignore
-    navigation.value = await queryContent().findNavigation()
+    navigation.value = await contentNavigation(queryContent())
   }
 
   /**
    * Local page fetching helper.
    */
-  const fetchPage = async () => {
-    const currentPath = withoutTrailingSlash(route.path)
+  const fetchPage = async (path: string = route.path) => {
+    const currentPath = withoutTrailingSlash(path)
     const splitted = currentPath.split('/')
     const directory = splitted.slice(0, splitted.length - 1).join('/')
 
     // Get navigation node from current path
-    const file = navFromPath(currentPath, navigation.value)
+    const file = navFromPath(path, navigation.value)
 
     if (file && !file.children) {
       // Path queried has a page (and is not a directory)
@@ -78,9 +79,13 @@ export const useContent = () => {
       // Path queried ain't a page, try to find a redirect to closest page
       try {
         const slug = findBottomLink(file)
-
-        return slug
-      } catch (e) {}
+        router.push(slug)
+      } catch (e) {
+        // TODO: Show 404/error page
+        console.warn('404 - Could not find document or matching redirect.')
+        console.log(e)
+        page.value = null
+      }
     }
   }
 
