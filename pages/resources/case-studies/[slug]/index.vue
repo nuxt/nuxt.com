@@ -20,11 +20,11 @@
     <Content v-if="page" :document="page" />
 
     <UContainer constrained-class="max-w-4xl">
-      <div class="dark py-10">
+      <div class="py-10">
         <UCard class="relative">
           <span class="_ellipse z-0" />
           <div class="flex items-center justify-between">
-            <h2 class="text-white z-[1] tracking-tight">
+            <h2 class="u-text-black z-[1] tracking-tight">
               <span class="block font-semibold text-2xl">Contact us</span>
               <span class="block mt-2">Start building, or get in touch with our app experts.</span>
             </h2>
@@ -35,7 +35,7 @@
         </UCard>
       </div>
 
-      <div class="flex items-center justify-between">
+      <div class="flex items-center justify-between px-4 sm:px-0">
         <div v-if="prev" class="ring-1 u-ring-gray-200 lg:hover:u-ring-gray-900 lg:hover:ring-2 group rounded-lg u-bg-white overflow-hidden relative px-6 py-3">
           <div class="flex items-center justify-between gap-6">
             <UIcon name="heroicons-outline:arrow-sm-left" class="w-5 h-5" />
