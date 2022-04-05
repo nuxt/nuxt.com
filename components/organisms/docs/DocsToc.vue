@@ -29,7 +29,8 @@
             :icon="show ? 'heroicons-solid:chevron-down' : 'heroicons-solid:chevron-right'"
             @click="show = !show"
           />
-          <ul v-if="show || !mq.mdMinus" class="flex flex-col pl-0.5 lg:pl-2.5 items-start z-[1] lg:pt-2">
+          <!-- TODO: Fix vue-mq usage -->
+          <ul v-if="show" class="flex flex-col pl-0.5 lg:pl-2.5 items-start z-[1] lg:pt-2">
             <li v-for="link in toc" :key="link.text" class="py-1 overflow-hidden truncate border-l-2 lg:border-r-2 lg:border-r-0" :class="activeHeadings.includes(link.id) ? 'u-border-gray-900' : 'u-border-gray-300'">
               <a
                 :to="{ hash: link.id }"
@@ -57,16 +58,12 @@
 </template>
 
 <script setup lang="ts">
-import { useMq } from 'vue3-mq'
-
 defineProps({
   toc: {
     type: Array,
     default: () => []
   }
 })
-
-const mq = useMq()
 
 const route = useRoute()
 
