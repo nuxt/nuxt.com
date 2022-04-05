@@ -37,7 +37,12 @@ const props = defineProps({
   }
 })
 
-const authors = props.page.authors.map(author => ({ src: author.avatarUrl, ...author }))
+const authors = computed(
+  () => {
+    return (props?.page?.authors || []).map(author => ({ src: author.avatarUrl, ...author }))
+  }
+)
+
 const formatDateByLocale = (locale, d) => {
   return new Date(d).toLocaleDateString(locale, {
     year: 'numeric',
