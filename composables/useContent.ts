@@ -1,6 +1,5 @@
 import { withoutTrailingSlash } from 'ufo'
-import { NavItem, ParsedContent } from '@nuxt/content/dist/runtime/types'
-import { findChildFromPath, findBottomLinkFromTree } from '../utils/content'
+import type { NavItem, ParsedContent } from '@nuxt/content/dist/runtime/types'
 
 export const useContent = () => {
   const route = useRoute()
@@ -17,7 +16,7 @@ export const useContent = () => {
 
   /**
    * Previous and next page data.
-   * Format: [previous, next]
+   * Format: [prev, next]
    */
   const surround = useState<ParsedContent[]>('content-surround')
 
@@ -64,7 +63,7 @@ export const useContent = () => {
     const directory = splitted.slice(0, splitted.length - 1).join('/')
 
     // Get navigation node from current path
-    const file = findChildFromPath(currentPath, navigation.value)
+    const file = navFromPath(currentPath, navigation.value)
 
     if (file && !file.children) {
       // Path queried has a page (and is not a directory)
@@ -78,7 +77,7 @@ export const useContent = () => {
     } else {
       // Path queried ain't a page, try to find a redirect to closest page
       try {
-        const slug = findBottomLinkFromTree(file)
+        const slug = findBottomLink(file)
 
         return slug
       } catch (e) {}
@@ -90,16 +89,51 @@ export const useContent = () => {
    */
   const fetchDir = async (path: string) => await queryContent(path).find()
 
+  /**
+   * Find first child link from a navigation node.
+   */
+  const findBottomLink = (link: NavItem) => {
+    let slug = link.slug
+
+    if (link.children && link.children.length) {
+      slug = findBottomLink(link.children[0])
+    }
+
+    return slug
+  }
+
+  /**
+   * Find current navigation node from a path.
+   */
+  const navFromPath = (path: string, tree: NavItem[] = navigation.value) => {
+    for (const file of tree) {
+      if (file.slug === path) {
+        return file
+      }
+
+      if (file.children) {
+        const result = navFromPath(path, file.children)
+        if (result) { return result }
+      }
+    }
+  }
+
   return {
-    fetchDir,
-    fetchPage,
-    fetchNavigation,
+    // useState references
     navigation,
     page,
     surround,
+    // Fetching helpers
+    fetchDir,
+    fetchPage,
+    fetchNavigation,
+    // Computed values
     next,
     prev,
     type,
-    toc
+    toc,
+    // Methods
+    navFromPath,
+    findBottomLink
   }
 }

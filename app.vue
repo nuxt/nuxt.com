@@ -14,9 +14,9 @@ useMeta({
   }
 })
 
-const { fetchNavigation } = useContentPage()
+const { fetchNavigation } = useContent()
 
-await useAsyncData('content-navigation', fetchNavigation)
+await fetchNavigation()
 </script>
 
 <style>
