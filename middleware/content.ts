@@ -2,8 +2,6 @@ import type { ParsedContent, NavItem } from '@nuxt/content/dist/runtime/types'
 import { fetchContent } from '~/utils/content'
 
 export default defineNuxtRouteMiddleware(async (to) => {
-  if (!to.path.includes('/docs/framework')) { return }
-
   const navigation = useState<NavItem[]>('navigation')
 
   const page = useState<ParsedContent>('docs-current-page')
