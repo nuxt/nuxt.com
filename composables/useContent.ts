@@ -1,32 +1,12 @@
 import { withoutTrailingSlash } from 'ufo'
 import { NavItem, ParsedContent } from '@nuxt/content/dist/runtime/types'
-import { findElement, findChildFromPath, findBottomLinkFromTree } from '../utils/content'
+import { findChildFromPath, findBottomLinkFromTree } from '../utils/content'
 
-export const useContentPage = () => {
+export const useContent = () => {
   const route = useRoute()
 
   // Navigation
   const navigation = useState<NavItem[]>('navigation')
-
-  // Navigation from current
-  const currentNavigation = computed(
-    () => {
-      if (!navigation.value) { return [] }
-
-      // Get first level of navigation
-      const splitted = route.path.split('/')
-      // Scoped to dir:
-      // splitted.splice(0, splitted.length - 1).join('/')
-      // Scoped to first level dir:
-      // `/${splitted[1]}`
-      const level = `/${splitted[1]}`
-
-      // Find current level of navigation
-      const { found } = findElement(navigation.value, level)
-
-      return found?.children || []
-    }
-  )
 
   // Current page
   const page = useState<ParsedContent>('content-current-page')
@@ -86,11 +66,13 @@ export const useContentPage = () => {
     }
   }
 
+  const fetchDir = async (path: string) => await queryContent(path).find()
+
   return {
+    fetchDir,
     fetchPage,
     fetchNavigation,
     navigation,
-    currentNavigation,
     page,
     surround,
     next,

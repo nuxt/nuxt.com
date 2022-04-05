@@ -7,7 +7,7 @@
 <script setup lang="ts">
 import { findChildFromPath } from '~/utils/content'
 
-const { navigation } = useContentPage() // inject('navigation')
+const { navigation } = useContent()
 
 const route = useRoute()
 const path = route.path.split('/').slice(0, 4).join('/')

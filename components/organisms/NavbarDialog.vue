@@ -47,7 +47,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue'])
 
-const { navigation } = useContentPage() // inject('navigation')
+const { navigation } = useContent()
 
 const user = useStrapiUser() as Ref<User>
 const { getProviderAuthenticationUrl } = useStrapiAuth()

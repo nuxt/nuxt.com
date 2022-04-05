@@ -39,8 +39,9 @@
 </template>
 
 <script setup>
-// TODO: Make this blocking
-const { data: pages } = await useAsyncData('resources-case-studies', () => queryContent('/resources/case-studies').find())
+const { fetchDir } = useContent()
+
+const { data: pages } = await useAsyncData('resources-case-studies', () => fetchDir('/resources/case-studies'))
 </script>
 
 <style scoped>

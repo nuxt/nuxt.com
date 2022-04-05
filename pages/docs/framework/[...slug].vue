@@ -14,7 +14,7 @@ const router = useRouter()
 
 const route = useRoute()
 
-const { page, fetchPage } = useContentPage()
+const { page, fetchPage } = useContent()
 
 const { data: redirect } = await useAsyncData(
   `content-page-${route.path}`,
