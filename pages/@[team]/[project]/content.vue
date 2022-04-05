@@ -123,7 +123,6 @@ async function updateFile (formattedContent) {
     })
 
     file.value.status = 'updated'
-    file.value.content = formattedContent
     content.value = formattedContent
     draft.value = data
   } catch (e) {}

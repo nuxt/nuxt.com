@@ -1,7 +1,7 @@
 <template>
   <ul role="list" class="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-6 xl:gap-x-8">
-    <li v-for="file in computedFiles" :ref="(el) => { items[file.path] = el }" :key="file.name" class="relative" @click="selectFile(file)">
-      <div :ref="`media-${file.path}`" :class="[isSelected(file) ? 'ring-2 ring-offset-2 u-ring-gray-900 ring-offset-gray-50 dark:ring-offset-gray-900' : 'focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-gray-100 dark:focus-within:ring-offset-gray-800 focus-within:u-ring-gray-900', 'group block w-full aspect-w-10 aspect-h-7 rounded-lg u-bg-gray-100 overflow-hidden']">
+    <li v-for="file in computedFiles" :ref="(el) => { mediaRefs[file.path] = el }" :key="file.name" class="relative" @click="selectFile(file)">
+      <div :class="[isSelected(file) ? 'ring-2 ring-offset-2 u-ring-gray-900 ring-offset-gray-50 dark:ring-offset-gray-900' : 'focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-gray-100 dark:focus-within:ring-offset-gray-800 focus-within:u-ring-gray-900', 'group block w-full aspect-w-10 aspect-h-7 rounded-lg u-bg-gray-100 overflow-hidden']">
         <img v-if="file.content" :src="`data:${file.mimeType};base64,${file.content}`" alt="" :class="[isSelected(file) ? '' : 'group-hover:opacity-75', 'object-scale-down object-center pointer-events-none']">
         <button v-if="!isDeleted(file)" type="button" class="absolute inset-0 focus:outline-none">
           <span class="sr-only">View details for {{ file.name }}</span>
@@ -73,10 +73,10 @@ const dropdownItems = (file: GitHubFile) => {
   ]
 }
 
-const items = ref({})
+const mediaRefs = ref({})
 
 onMounted(() => {
-  for (const [path, el] of Object.entries(items.value)) {
+  for (const [path, el] of Object.entries(mediaRefs.value)) {
     useIntersectionObserver(el as HTMLElement, ([{ isIntersecting }], _) => {
       const file = computedFiles.value.find(file => file.path === path)
       const requestContent = file && !file.content
