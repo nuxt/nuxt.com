@@ -1,5 +1,5 @@
 <template>
-  <NuxtLink class="flex flex-col gap-y-4 py-8" :class="{ 'rounded-lg border-2 u-border-gray-200 px-8': mainArticle }" :to="page.slug">
+  <div class="flex flex-col gap-y-4 py-8" :class="{ 'rounded-lg border-2 u-border-gray-200 px-8': mainArticle }">
     <div class="font-semibold u-text-gray-400" :class="{ 'text-sm': !mainArticle }">
       <time>{{ formatDateByLocale('en', page.date) }}</time> - {{ page.category }}
     </div>
@@ -15,12 +15,13 @@
           Read article<UIcon name="heroicons-solid:arrow-right" class="w-4 h-4 mt-1" />
         </span>
         <span
-          class="rounded absolute left-0 bg-gradient-to-r from-[#00DC82] via-[#34CDFE] to-[#0047E1] font-extrabold -bottom-1 h-0.5 w-4 group-hover:w-full transition-all"
+          class="rounded absolute left-0 font-extrabold -bottom-1 h-0.5 w-4 group-hover:w-full transition-all"
+          :class="mainArticle ? 'bg-gradient-to-r from-[#00DC82] via-[#34CDFE] to-[#0047E1]' : 'u-bg-gray-700'"
         />
       </NuxtLink>
       <UAvatarGroup :group="authors" size="sm" />
     </div>
-  </NuxtLink>
+  </div>
 </template>
 
 <script setup>
