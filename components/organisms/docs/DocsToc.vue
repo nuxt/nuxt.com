@@ -70,15 +70,16 @@ const mq = useMq()
 
 const route = useRoute()
 
-const show = ref(false)
+const show = ref(true)
 
 const { activeHeadings, updateHeadings } = useScrollspy()
 
 const { toc, prev, next } = useContent()
 
-watch(route, () => {
-  show.value = false
+// TODO: Fix ToC on mobile
+// Replace vue3-mq
 
+watch(route, () => {
   if (process.client) {
     setTimeout(() => {
       updateHeadings([
