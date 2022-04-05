@@ -14,14 +14,9 @@ useMeta({
   }
 })
 
-const { navigation } = useContentPage()
+const { fetchNavigation } = useContentPage()
 
-await useAsyncData(
-  'navigation',
-  async () => {
-    navigation.value = await queryContent().findNavigation()
-  }
-)
+await useAsyncData('content-navigation', fetchNavigation)
 </script>
 
 <style>

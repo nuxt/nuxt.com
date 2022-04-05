@@ -29,10 +29,10 @@ export const useContentPage = () => {
   )
 
   // Current page
-  const page = useState<ParsedContent>('docs-current-page')
+  const page = useState<ParsedContent>('content-current-page')
 
   // Surround ([prev, next])
-  const surround = useState<ParsedContent[]>('docs-surround')
+  const surround = useState<ParsedContent[]>('content-surround')
 
   // ToC from `page`
   const toc = computed(
@@ -51,6 +51,12 @@ export const useContentPage = () => {
   const previous = computed(
     () => surround.value?.[0] || false
   )
+
+  // Local navigation fetching helper
+  const fetchNavigation = async () => {
+    // @ts-ignore
+    navigation.value = await queryContent().findNavigation()
+  }
 
   // Local page fetching helper
   const fetchPage = async () => {
@@ -82,6 +88,7 @@ export const useContentPage = () => {
 
   return {
     fetchPage,
+    fetchNavigation,
     navigation,
     currentNavigation,
     page,
