@@ -36,7 +36,7 @@
       </div>
 
       <div class="flex items-center justify-between">
-        <div v-if="previous" class="ring-1 u-ring-gray-200 lg:hover:u-ring-gray-900 lg:hover:ring-2 group rounded-lg u-bg-white overflow-hidden relative px-6 py-3">
+        <div v-if="prev" class="ring-1 u-ring-gray-200 lg:hover:u-ring-gray-900 lg:hover:ring-2 group rounded-lg u-bg-white overflow-hidden relative px-6 py-3">
           <div class="flex items-center justify-between gap-6">
             <UIcon name="heroicons-outline:arrow-sm-left" class="w-5 h-5" />
 
@@ -45,11 +45,11 @@
                 Previous case
               </p>
               <p class="u-text-gray-600">
-                {{ previous.title }} study
+                {{ prev.title }} study
               </p>
             </div>
           </div>
-          <NuxtLink :to="previous.slug" tabindex="-1" class="focus:outline-none">
+          <NuxtLink :to="prev.slug" tabindex="-1" class="focus:outline-none">
             <span class="absolute inset-0" aria-hidden="true" />
           </NuxtLink>
         </div>
@@ -83,7 +83,7 @@ const router = useRouter()
 
 const route = useRoute()
 
-const { previous, next, page, fetchPage } = useContentPage()
+const { prev, next, page, fetchPage } = useContentPage()
 
 const { data: redirect } = await useAsyncData(
   `content-page-${route.path}`,

@@ -48,7 +48,7 @@ export const useContentPage = () => {
   )
 
   // Previous page from `surround`
-  const previous = computed(
+  const prev = computed(
     () => surround.value?.[0] || false
   )
 
@@ -94,7 +94,7 @@ export const useContentPage = () => {
     page,
     surround,
     next,
-    previous,
+    prev,
     type,
     toc
   }

@@ -4,7 +4,7 @@
   >
     <div class="lg:hidden absolute inset-y-0 -inset-x-8 backdrop-blur-md" />
     <div>
-      <NuxtLink :to="previous?.slug || '#'" :disabled="!previous?.slug" class="hidden lg:flex justify-end lg:justify-start hover:font-semibold hover:u-text-gray-900 gap-x-3">
+      <NuxtLink :to="prev?.slug || '#'" :disabled="!prev?.slug" class="hidden lg:flex justify-end lg:justify-start hover:font-semibold hover:u-text-gray-900 gap-x-3">
         <div class="flex-shrink-0 p-1 u-bg-gray-100 rounded-md">
           <UIcon name="heroicons-solid:rewind" class="w-4 h-4 u-text-gray-400" />
         </div>
@@ -74,7 +74,7 @@ const show = ref(false)
 
 const { activeHeadings, updateHeadings } = useScrollspy()
 
-const { toc, previous, next } = useContentPage()
+const { toc, prev, next } = useContentPage()
 
 watch(route, () => {
   show.value = false
