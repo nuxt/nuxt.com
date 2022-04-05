@@ -52,7 +52,7 @@ export const useContent = () => {
    */
   const fetchNavigation = async () => {
     // @ts-ignore
-    navigation.value = await contentNavigation(queryContent())
+    navigation.value = await queryContent().findNavigation()
   }
 
   /**
