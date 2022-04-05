@@ -5,40 +5,59 @@ import { findChildFromPath, findBottomLinkFromTree } from '../utils/content'
 export const useContent = () => {
   const route = useRoute()
 
-  // Navigation
+  /**
+   * Navigation tree from root of app.
+   */
   const navigation = useState<NavItem[]>('navigation')
 
-  // Current page
+  /**
+   * Current page complete data.
+   */
   const page = useState<ParsedContent>('content-current-page')
 
-  // Surround ([prev, next])
+  /**
+   * Previous and next page data.
+   * Format: [previous, next]
+   */
   const surround = useState<ParsedContent[]>('content-surround')
 
-  // ToC from `page`
+  /**
+   * Table of contents from parsed page.
+   */
   const toc = computed(
     () => page?.value?.body?.toc?.links || []
   )
 
-  // Content type
+  /**
+   * Content type from parsed page.
+   */
   const type = computed(() => page.value?.meta?.type)
 
-  // Next page from `surround`
+  /**
+   * Next page from `surround`.
+   */
   const next = computed(
     () => surround.value?.[1] || false
   )
 
-  // Previous page from `surround`
+  /**
+   * Previous page from `surround`.
+   */
   const prev = computed(
     () => surround.value?.[0] || false
   )
 
-  // Local navigation fetching helper
+  /**
+   * Navigation fetching helper.
+   */
   const fetchNavigation = async () => {
     // @ts-ignore
     navigation.value = await queryContent().findNavigation()
   }
 
-  // Local page fetching helper
+  /**
+   * Local page fetching helper.
+   */
   const fetchPage = async () => {
     const currentPath = withoutTrailingSlash(route.path)
     const splitted = currentPath.split('/')
@@ -66,6 +85,9 @@ export const useContent = () => {
     }
   }
 
+  /**
+   * Page list fetching helper.
+   */
   const fetchDir = async (path: string) => await queryContent(path).find()
 
   return {
