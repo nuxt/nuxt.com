@@ -1,5 +1,5 @@
 <template>
-  <div class="pb-12 sm:pb-24">
+  <div v-if="page" class="pb-12 sm:pb-24">
     <div class="py-10 sm:py-20 relative overflow-hidden">
       <img :src="page.gradientUrl" alt="" class="z-0 absolute inset-x-0 bottom-0 translate-y-1/4 w-full">
 
@@ -36,7 +36,7 @@
       </div>
 
       <div class="flex items-center justify-between">
-        <div v-if="prev" class="ring-1 u-ring-gray-200 lg:hover:u-ring-gray-900 lg:hover:ring-2 group rounded-lg u-bg-white overflow-hidden relative px-6 py-3">
+        <div v-if="previous" class="ring-1 u-ring-gray-200 lg:hover:u-ring-gray-900 lg:hover:ring-2 group rounded-lg u-bg-white overflow-hidden relative px-6 py-3">
           <div class="flex items-center justify-between gap-6">
             <UIcon name="heroicons-outline:arrow-sm-left" class="w-5 h-5" />
 
@@ -45,11 +45,11 @@
                 Previous case
               </p>
               <p class="u-text-gray-600">
-                {{ prev.title }} study
+                {{ previous.title }} study
               </p>
             </div>
           </div>
-          <NuxtLink :to="prev.slug" tabindex="-1" class="focus:outline-none">
+          <NuxtLink :to="previous.slug" tabindex="-1" class="focus:outline-none">
             <span class="absolute inset-0" aria-hidden="true" />
           </NuxtLink>
         </div>
@@ -79,16 +79,11 @@
 </template>
 
 <script setup lang="ts">
-import { withoutTrailingSlash } from 'ufo'
+definePageMeta({
+  middleware: ['content']
+})
 
-const route = useRoute()
-const path = withoutTrailingSlash(route.path)
-
-const { data: page } = await useAsyncData(`resources-case-studies-${path}-page`, () => queryContent(path).findOne())
-const { data: surround } = await useAsyncData(`resources-case-studies-${path}-surround`, () => queryContent('resources/case-studies').findSurround(path))
-
-const prev = surround.value[0]
-const next = surround.value[1]
+const { previous, next, page } = useContentPage()
 </script>
 
 <style scoped>

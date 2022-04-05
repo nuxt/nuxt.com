@@ -39,6 +39,7 @@
 </template>
 
 <script setup>
+// TODO: Make this blocking
 const { data: pages } = await useAsyncData('resources-case-studies', () => queryContent('/resources/case-studies').find())
 </script>
 

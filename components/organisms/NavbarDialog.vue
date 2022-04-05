@@ -64,10 +64,14 @@ const isOpen = computed({
 
 const selectedLink = ref(null)
 
-watch(() => route.path, () => {
-  const path = route.path.split('/').slice(0, 3).join('/')
-  selectedLink.value = findChildFromPath(path, navigation.value)
-}, { immediate: true })
+watch(
+  () => route.path,
+  () => {
+    const path = route.path.split('/').slice(0, 3).join('/')
+    selectedLink.value = navigation.value ? findChildFromPath(path, navigation.value) : []
+  },
+  { immediate: true }
+)
 
 const tree = computed(() => {
   if (selectedLink.value) {

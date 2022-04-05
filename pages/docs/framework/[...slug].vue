@@ -11,7 +11,7 @@
 
 <script setup lang="ts">
 definePageMeta({
-  middleware: ['docs']
+  middleware: ['content']
 })
 
 const { page } = useContentPage()
