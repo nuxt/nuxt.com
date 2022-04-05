@@ -13,6 +13,15 @@ useMeta({
     class: 'antialiased font-sans text-gray-700 dark:text-gray-200 bg-white dark:bg-black'
   }
 })
+
+const { navigation } = useContentPage()
+
+await useAsyncData(
+  'navigation',
+  async () => {
+    navigation.value = await queryContent().findNavigation()
+  }
+)
 </script>
 
 <style>

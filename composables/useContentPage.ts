@@ -1,5 +1,6 @@
+import { withoutTrailingSlash } from 'ufo'
 import { NavItem, ParsedContent } from '@nuxt/content/dist/runtime/types'
-import { findElement } from '../utils/content'
+import { findElement, findChildFromPath, findBottomLinkFromTree } from '../utils/content'
 
 export const useContentPage = () => {
   const route = useRoute()
@@ -43,15 +44,44 @@ export const useContentPage = () => {
 
   // Next page from `surround`
   const next = computed(
-    () => surround.value[1] || false
+    () => surround.value?.[1] || false
   )
 
   // Previous page from `surround`
   const previous = computed(
-    () => surround.value[0] || false
+    () => surround.value?.[0] || false
   )
 
+  // Local page fetching helper
+  const fetchPage = async () => {
+    const currentPath = withoutTrailingSlash(route.path)
+    const splitted = currentPath.split('/')
+    const directory = splitted.slice(0, splitted.length - 1).join('/')
+
+    // Get navigation node from current path
+    const file = findChildFromPath(currentPath, navigation.value)
+
+    if (file && !file.children) {
+      // Path queried has a page (and is not a directory)
+      await Promise.all([
+        queryContent(currentPath).findOne() as Promise<ParsedContent>,
+        queryContent(directory).findSurround(currentPath) as Promise<ParsedContent[]>
+      ]).then(([_page, _surround]) => {
+        page.value = _page
+        surround.value = _surround
+      })
+    } else {
+      // Path queried ain't a page, try to find a redirect to closest page
+      try {
+        const slug = findBottomLinkFromTree(file)
+
+        return slug
+      } catch (e) {}
+    }
+  }
+
   return {
+    fetchPage,
     navigation,
     currentNavigation,
     page,

@@ -10,9 +10,16 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({
-  middleware: ['content']
-})
+const router = useRouter()
 
-const { page } = useContentPage()
+const route = useRoute()
+
+const { page, fetchPage } = useContentPage()
+
+const { data: redirect } = await useAsyncData(
+  `content-page-${route.path}`,
+  fetchPage
+)
+
+if (redirect.value) { router.push(redirect.value) }
 </script>
