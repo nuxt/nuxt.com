@@ -32,7 +32,6 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 import type { User } from '~/types'
-import { findChildFromPath } from '~/utils/content'
 
 const props = defineProps({
   modelValue: {
@@ -47,7 +46,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue'])
 
-const navigation = inject('navigation')
+const { navigation, navFromPath } = useContent()
 
 const user = useStrapiUser() as Ref<User>
 const { getProviderAuthenticationUrl } = useStrapiAuth()
@@ -64,10 +63,14 @@ const isOpen = computed({
 
 const selectedLink = ref(null)
 
-watch(() => route.path, () => {
-  const path = route.path.split('/').slice(0, 3).join('/')
-  selectedLink.value = findChildFromPath(path, navigation.value)
-}, { immediate: true })
+watch(
+  () => route.path,
+  () => {
+    const path = route.path.split('/').slice(0, 3).join('/')
+    selectedLink.value = navigation.value ? navFromPath(path) : []
+  },
+  { immediate: true }
+)
 
 const tree = computed(() => {
   if (selectedLink.value) {

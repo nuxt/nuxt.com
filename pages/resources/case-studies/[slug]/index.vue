@@ -1,5 +1,5 @@
 <template>
-  <div class="pb-12 sm:pb-24">
+  <div v-if="page" class="pb-12 sm:pb-24">
     <div class="py-10 sm:py-20 relative overflow-hidden">
       <img :src="page.gradientUrl" alt="" class="z-0 absolute inset-x-0 bottom-0 translate-y-1/4 w-full">
 
@@ -79,16 +79,9 @@
 </template>
 
 <script setup lang="ts">
-import { withoutTrailingSlash } from 'ufo'
+const { prev, next, page, fetchPage } = useContent()
 
-const route = useRoute()
-const path = withoutTrailingSlash(route.path)
-
-const { data: page } = await useAsyncData(`resources-case-studies-${path}-page`, () => queryContent(path).findOne())
-const { data: surround } = await useAsyncData(`resources-case-studies-${path}-surround`, () => queryContent('resources/case-studies').findSurround(path))
-
-const prev = surround.value[0]
-const next = surround.value[1]
+await fetchPage()
 </script>
 
 <style scoped>
