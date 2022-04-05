@@ -95,7 +95,7 @@ function onSubmit () {
 
 const { data: footerData } = await useAsyncData('footer', () => queryContent('footer').findOne())
 
-const { legalLinks, links, socialLinks } = footerData.value
+const { legalLinks, links, socialLinks } = footerData.value || {}
 
 const langs = ref([{ text: 'English', value: 'en' }])
 const lang = ref(langs.value[0].value)
