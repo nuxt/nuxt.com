@@ -1,7 +1,6 @@
 import type { Ref } from 'vue'
 import type { GitHubBranch, Project } from '~/types'
 import ProjectModalBranchCreate from '~/components/organisms/project/modal/ProjectModalBranchCreate.vue'
-import ProjectModalPublish from '~/components/organisms/project/modal/ProjectModalPublish.vue'
 
 export const useProjectBranches = (project: Project) => {
   const { open: openModal } = useModal()
@@ -17,7 +16,7 @@ export const useProjectBranches = (project: Project) => {
 
   // Http
 
-  async function fetch (force?: boolean) {
+  async function fetch (force?: boolean, selectDefault?: boolean) {
     if (branches.value.length && !force) {
       return
     }
@@ -28,7 +27,7 @@ export const useProjectBranches = (project: Project) => {
 
     pending.value = false
 
-    init()
+    init(selectDefault)
   }
 
   function refresh () {
@@ -61,8 +60,6 @@ export const useProjectBranches = (project: Project) => {
     try {
       await client(`/projects/${project.id}/branches/${encodeURIComponent(branch.value.name)}/commit`, { method: 'POST' })
 
-      await refresh()
-
       $toast.success({
         title: 'Changes saved!',
         description: `Your changes have been committed on ${branch.value.name} branch.`
@@ -77,8 +74,6 @@ export const useProjectBranches = (project: Project) => {
 
     try {
       await client(`/projects/${project.id}/branches/${encodeURIComponent(branch.value.name)}/publish`, { method: 'POST' })
-
-      await refresh()
 
       $toast.success({
         title: 'Published!',
@@ -110,19 +105,11 @@ export const useProjectBranches = (project: Project) => {
     })
   }
 
-  function openPublishModal () {
-    openModal(ProjectModalPublish, {
-      project,
-      branch: branch.value,
-      onSubmit: publish
-    })
-  }
-
   // Methods
 
-  function init () {
+  function init (selectDefault = false) {
     let b: GitHubBranch | undefined
-    if (cookie.value) {
+    if (cookie.value && !selectDefault) {
       b = branches.value.find(branch => branch.name === cookie.value)
     } else {
       b = branches.value.find(branch => branch.name === project.repository.default_branch)
@@ -142,10 +129,10 @@ export const useProjectBranches = (project: Project) => {
     refresh,
     create,
     commit,
+    publish,
     reset,
     // Modals
     openCreateModal,
-    openPublishModal,
     // Methods
     select,
     // Refs

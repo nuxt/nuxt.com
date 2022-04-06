@@ -59,8 +59,20 @@ const project: Project = inject('project')
 const emit = defineEmits(['update:modelValue'])
 
 const keys = useMagicKeys()
-const { isDraft: isDraftContent, draft: contentDraft, file: contentFile, init: selectNewContentFile } = useProjectFiles(project, 'content')
-const { isDraft: isDraftMedia, draft: publicDraft, file: publicFile, init: selectNewPublicFile } = useProjectFiles(project, 'public')
+const {
+  isDraft: isDraftContent,
+  draft: contentDraft,
+  file: contentFile,
+  init: selectNewContentFile,
+  refresh: refreshContentFiles
+} = useProjectFiles(project, 'content')
+const {
+  isDraft: isDraftMedia,
+  draft: publicDraft,
+  file: publicFile,
+  init: selectNewPublicFile,
+  refresh: refreshMediaFiles
+} = useProjectFiles(project, 'public')
 const {
   branches,
   branch,
@@ -71,9 +83,13 @@ const {
   openCreateModal: openCreateBranchModal
 } = useProjectBranches(project)
 
+const query = ref('')
+
 whenever(keys.meta_b, () => {
   isOpen.value = !isOpen.value
 })
+
+// Computed
 
 const isOpen = computed({
   get () {
@@ -83,8 +99,6 @@ const isOpen = computed({
     emit('update:modelValue', value)
   }
 })
-
-const query = ref('')
 const branchExists = computed(() => query.value && branches.value.some(b => b.name === query.value))
 const filteredBranches = computed(() => {
   let filteredBranches = [...branches.value]
@@ -114,6 +128,8 @@ watch(() => isOpen.value, (value) => {
   }
 })
 
+// Methods
+
 function activateFirstOption () {
   // hack combobox by using keyboard event
   // https://github.com/tailwindlabs/headlessui/blob/main/packages/%40headlessui-vue/src/components/combobox/combobox.ts#L692
@@ -125,6 +141,8 @@ function activateFirstOption () {
 function onBranchSelect (b: GitHubBranch) {
   isOpen.value = false
   selectBranch(b)
+  refreshMediaFiles()
+  refreshContentFiles()
   query.value = ''
 }
 
