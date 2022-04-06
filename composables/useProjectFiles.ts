@@ -244,7 +244,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
     files.value = computedFiles.value.reduce((files, file) => {
       if (file.status === 'deleted') { return files }
       delete file.status
-      files.push({ ...file, status: null })
+      files.push(file)
       return files
     }, [])
 
