@@ -1,9 +1,9 @@
 <template>
   <DocsPage>
     <template #header>
-      <SubNavbar title="Framework" :links="links">
+      <SubNavbar title="Content" :links="links">
         <template #right>
-          <UButton icon="fa-brands:github" variant="transparent" href="https://github.com/nuxt/framework" class="!p-0" />
+          <UButton icon="fa-brands:github" variant="transparent" href="https://github.com/nuxt/content" class="!p-0" />
         </template>
       </SubNavbar>
     </template>
@@ -15,17 +15,16 @@
     <NuxtPage v-if="$route.params.slug" />
     <DocsHero v-else :buttons="buttons">
       <template #hero>
-        Nuxt 3.0 is out.
-        <a class="underline" href="https://github.com/nuxt">Read about it here</a>
+        Content 2.0 is out!
+        <a class="underline" href="https://github.com/nuxt/content">Read about it here</a>
       </template>
 
       <template #title>
-        The Intuitive Vue Framework
+        Git-based Headless CMS
       </template>
 
       <template #description>
-        Build your next Vue.js application with confidence using Nuxt.
-        An open source framework making web development simple and powerful.
+        Write pages in markdown, use Vue components, and enjoy the power of Nuxt with a blazing fast developer experience.
       </template>
     </DocsHero>
   </DocsPage>
@@ -39,7 +38,7 @@ const buttons = [
     size: 'xl',
     variant: 'transparent',
     icon: 'fa-brands:github',
-    label: '39k + Github Stars',
+    label: '2k GitHub Stars',
     to: '#'
   },
   {
@@ -50,5 +49,5 @@ const buttons = [
   }
 ]
 
-const links = computed(() => navFromPath('/docs/framework')?.children)
+const links = computed(() => navFromPath('/docs/content')?.children)
 </script>
