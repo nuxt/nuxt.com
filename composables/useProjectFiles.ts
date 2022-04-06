@@ -188,7 +188,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
 
   async function fetchFile (path: string) {
     // original file can be from files (when no draft on it) or computedFiles (when file created or renamed)
-    const originalFile = files.value.find(f => f.path === path) || computedFiles.value.find(f => f.path === path)
+    const originalFile = files.value.find(f => f.path === path)
 
     const fetchedFile = await client(`/projects/${project.id}/files/${encodeURIComponent(path)}`, {
       params: {
@@ -265,8 +265,9 @@ export const useProjectFiles = (project: Project, root: Root) => {
         const file = githubFiles.find(f => f.path === addition.oldPath)
         if (file) {
           file.status = 'renamed'
-          file.path = addition.path
           file.name = addition.path.split('/').pop()
+          file.path = addition.path
+          file.oldPath = addition.oldPath
         }
       } else if (addition.new) {
         githubFiles.push({

@@ -81,7 +81,7 @@ onMounted(() => {
       const file = computedFiles.value.find(file => file.path === path)
       const requestContent = file && !file.content
       if (isIntersecting && requestContent) {
-        fetchFile(path)
+        fetchFile(file.oldPath || file.path)
       }
     })
   }

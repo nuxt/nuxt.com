@@ -148,12 +148,12 @@ export interface GitHubFile {
   url?: string
   status?: FileStatus
   name?: string
-  // Added only when fetching with `withContent`
   width?: number
   height?: number
   size?: number
   mimeType?: string
   content?: string
+  oldPath?: string
 }
 
 export interface GitHubDraftFile {
