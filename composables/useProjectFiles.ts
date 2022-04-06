@@ -187,23 +187,12 @@ export const useProjectFiles = (project: Project, root: Root) => {
   }
 
   async function fetchFile (path: string) {
-    // original file can be from files (when no draft on it) or computedFiles (when file created or renamed)
-    const originalFile = files.value.find(f => f.path === path)
-
-    const fetchedFile = await client(`/projects/${project.id}/files/${encodeURIComponent(path)}`, {
+    return await client<GitHubFile>(`/projects/${project.id}/files/${encodeURIComponent(path)}`, {
       params: {
         ref: branch.value?.name,
         root
       }
     })
-
-    // ensures computedFiles is updated
-    Object.assign(originalFile, fetchedFile)
-
-    // ensures selected file is updated to trigger watches if needed
-    if (file.value?.path === path) {
-      file.value = originalFile
-    }
   }
 
   // Modals

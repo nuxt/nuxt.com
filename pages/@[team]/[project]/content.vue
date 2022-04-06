@@ -104,9 +104,9 @@ async function fetchContent () {
     return
   }
 
-  await fetchFile(file.value.path)
+  const { content: fetchedContent } = await fetchFile(file.value.path)
 
-  content.value = file.value.content
+  content.value = fetchedContent
 }
 
 async function updateFile (formattedContent) {

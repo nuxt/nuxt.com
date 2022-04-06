@@ -39,12 +39,12 @@
               {{ toFormattedBytes(file.size) }}
             </dd>
           </div>
-          <div v-if="file.width && file.height" class="flex justify-between py-3 text-sm font-medium">
+          <div v-if="mediaData[file.path]" class="flex justify-between py-3 text-sm font-medium">
             <dt class="u-text-gray-500">
               Dimensions
             </dt>
             <dd class="u-text-gray-900">
-              {{ file.width }} x {{ file.height }}
+              {{ mediaData[file.path].width }} x {{ mediaData[file.path].height }}
             </dd>
           </div>
         </dl>
@@ -70,6 +70,8 @@ const root: Root = inject('root')
 
 const { branch } = useProjectBranches(project)
 const { file } = useProjectFiles(project, root)
+
+const mediaData = useState('media-data', () => ({}))
 
 const absolutePath = computed(() => {
   return [...project.baseDir.split('/').filter(p => p === '.'), ...file.value.path.split('/')]
