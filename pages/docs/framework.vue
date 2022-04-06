@@ -46,7 +46,7 @@ const buttons = [
     size: 'xl',
     variant: 'primary',
     label: 'Get Started',
-    to: '/docs/framework/getting-started'
+    to: '/docs/framework/guides'
   }
 ]
 
