@@ -11,7 +11,7 @@
           Our suite of developer-friendly solutions helps you create,<br>secure and deliver enterprise-grade modern website.
         </p>
         <div class="max-w-md mx-auto mt-5 sm:flex sm:justify-center md:mt-8">
-          <UButton to="/" label="Get started" size="xl" />
+          <UButton to="/docs/framework" label="Get started" size="xl" />
         </div>
       </div>
     </main>
