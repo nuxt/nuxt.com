@@ -26,7 +26,7 @@
     <div class="relative">
       <!-- TODO: rework TOC -->
       <ResourcesArticlesToc :toc="page.body.toc.links" />
-      <UContainer constrained-class="max-w-4xl" class="pt-8 lg:pt-0">
+      <UContainer constrained-class="max-w-4xl" class="pt-12 lg:pt-0">
         <div class="relative overflow-hidden border-b u-border-gray-400">
           <Content v-if="page" :document="page" class="prose prose-gray dark:prose-invert !max-w-full pb-12" />
         </div>
