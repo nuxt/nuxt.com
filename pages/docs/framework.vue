@@ -14,7 +14,7 @@
 
     <NuxtPage v-if="$route.params.slug" />
     <DocsHero v-else :buttons="buttons">
-      <template #hero>
+      <template #badge>
         Nuxt 3.0 is out.
         <a class="underline" href="https://github.com/nuxt">Read about it here</a>
       </template>

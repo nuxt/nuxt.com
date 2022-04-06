@@ -41,6 +41,7 @@ defineProps({
       }
     }
   }
+
   &.info {
     @apply bg-blue-50 dark:bg-blue-800 dark:bg-opacity-25 text-blue-600 dark:text-blue-200 border border-blue-100 dark:border-blue-900;
     :deep() {
@@ -54,6 +55,7 @@ defineProps({
       }
     }
   }
+
   &.warning {
     @apply bg-yellow-50 dark:bg-yellow-800 dark:bg-opacity-25 text-yellow-600 dark:text-yellow-100 border border-yellow-100 dark:border-yellow-900;
     :deep() {
@@ -67,6 +69,7 @@ defineProps({
       }
     }
   }
+
   &.danger {
     @apply bg-red-50 dark:bg-red-800 dark:bg-opacity-25 text-red-600 dark:text-red-100 border border-red-100 dark:border-red-900;
     :deep() {
@@ -80,6 +83,7 @@ defineProps({
       }
     }
   }
+
   :deep() {
     strong {
       @apply font-semibold text-current;
@@ -90,8 +94,16 @@ defineProps({
         @apply border border-transparent border-dashed;
       }
     }
+    .prose-code {
+      @apply my-4;
+
+      code {
+        @apply bg-gray-50 dark:bg-gray-900;
+      }
+    }
   }
 }
+
 .alert :deep(p) {
   @apply m-0 !important;
 }

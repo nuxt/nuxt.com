@@ -6,7 +6,7 @@
         <slot name="badge" />
       </span>
     </div>
-    <h1 v-if="$slots.title" class="font-bold text-7xl u-text-gray-900">
+    <h1 v-if="$slots.title" class="font-bold text-7xl text-center u-text-gray-900">
       <slot name="title" />
     </h1>
     <p v-if="$slots.description" class="w-1/2 text-lg text-center u-text-gray-500">
