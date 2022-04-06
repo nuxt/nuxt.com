@@ -1,6 +1,6 @@
 <template>
   <div class="flex">
-    <div class="relative w-full p-6 bg-gray-100 rounded-lg dark:bg-gray-800 dark:bg-opacity-50">
+    <div class="relative w-full p-6 bg-gray-200 rounded-lg dark:bg-gray-800 dark:bg-opacity-50">
       <InjectComponent :component="icon" class="w-16 h-16 mb-3" :class="iconClass || ''">
         <img v-if="isImage(icon)" :src="icon" class="inline-block w-16 h-16 mb-3">
         <span v-else class="inline-block w-16 h-16 mb-3 text-6xl">{{ icon }}</span>

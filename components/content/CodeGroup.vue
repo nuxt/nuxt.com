@@ -61,10 +61,25 @@ export default defineComponent({
               'div',
               {
                 // Current slot is displayed, others are hidden
-                style: { display: index === this.activeTabIndex ? 'block' : 'none' }
+                style: { display: index === this.activeTabIndex ? 'block' : 'none' },
+                class: {
+                  '': !isTag(slot, 'code')
+                }
               },
               // Display direct children if not a ```code``` block
-              [isTag(slot, 'code') ? slot : slot.children.default()]
+              [
+                isTag(slot, 'code')
+                  ? slot
+                  : h(
+                    'div',
+                    {
+                      class: {
+                        'preview-canvas': true
+                      }
+                    },
+                    [slot.children.default()]
+                  )
+              ]
             )
           )
         )
@@ -74,11 +89,25 @@ export default defineComponent({
 })
 </script>
 
-<style>
+<style lang="postcss">
+.bg-grid-slate-100 {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='%23f1f5f9'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
+}
+
 .prose {
   li {
     .code-group {
       @apply my-4;
+    }
+  }
+}
+
+html.dark {
+  .code-group-content {
+    .preview-canvas {
+      @apply p-4 my-0 overflow-x-auto leading-normal bg-gray-900 rounded-lg rounded-tl-none rounded-tr-none z-0;
+      background-image: linear-gradient(rgba(255, 255, 255, .033) .025em, transparent .03em), linear-gradient(90deg, rgba(255, 255, 255, .033) .03em, transparent .03em);
+      background-size: 2em 2em;
     }
   }
 }
@@ -89,8 +118,22 @@ export default defineComponent({
   :deep(.prose-code) {
     @apply mt-0 !important;
   }
+
   :deep(pre) {
     @apply rounded-tl-none rounded-tr-none mt-0 !important;
+  }
+}
+
+.code-group-content {
+  .preview-canvas {
+    @apply p-4 my-0 overflow-x-auto leading-normal bg-gray-100 dark:bg-gray-900 rounded-bl-lg rounded-br-lg z-0;
+
+    background-image: linear-gradient(rgba(0, 0, 0, .033) .025em, transparent .03em), linear-gradient(90deg, rgba(0, 0, 0, .033) .03em, transparent .03em);
+    background-size: 2em 2em;
+
+    & > * {
+      @apply my-0;
+    }
   }
 }
 </style>

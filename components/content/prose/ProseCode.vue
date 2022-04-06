@@ -24,6 +24,7 @@ const props = defineProps({
 })
 
 const key = `highlighted-code-${hash([props.code, props.language, props.filename, props.highlights])}`
+
 const { data: highlightedCode } = await useAsyncData(key, () => highlightCode(props.code, { lang: props.language }))
 </script>
 
@@ -70,7 +71,7 @@ div {
 }
 
 pre {
-  @apply flex-1 p-4 my-0 overflow-x-auto leading-normal bg-gray-100 dark:bg-gray-900 rounded-lg;
+  @apply flex-1 p-4 my-0 overflow-x-auto leading-normal bg-gray-50 dark:bg-gray-900 text-gray-600 dark:text-gray-100 rounded-lg;
 }
 
 code {
