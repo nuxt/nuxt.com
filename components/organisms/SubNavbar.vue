@@ -1,9 +1,8 @@
 <template>
   <div
     class="z-[5] sticky top-0 hidden lg:block border-t border-transparent"
-    :class="isBlurry ? 'backdrop-blur-md shadow shadow-gray-200 dark:shadow-gray-900' : 'u-border-gray-200'"
+    :class="isBlurry ? 'backdrop-blur-md bg-white/75 dark:bg-black/75 shadow shadow-gray-200 dark:shadow-gray-900' : 'u-border-gray-200'"
   >
-    <div class="absolute top-0 w-full h-16 bg-white bg-opacity-75 dark:bg-black" />
     <UContainer padded>
       <div class="relative grid items-center justify-between h-16 grid-cols-2 gap-3 sm:grid-cols-6">
         <div class="flex items-center justify-start gap-3">

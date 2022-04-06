@@ -1,5 +1,8 @@
 <template>
-  <header class="u-bg-white">
+  <header
+    class="sticky lg:relative top-0 z-10"
+    :class="isBlurry ? 'backdrop-blur-md bg-white/75 dark:bg-black/75' : ''"
+  >
     <NavbarDialog v-model="isOpen" :links="links" />
 
     <UContainer padded class="relative">
@@ -86,14 +89,25 @@
 
 <script setup lang="ts">
 import type { Ref } from 'vue'
+import { useWindowScroll } from '@vueuse/core'
 import type { User } from '~/types'
 
 const user = useStrapiUser() as Ref<User>
 const { getProviderAuthenticationUrl } = useStrapiAuth()
 const route = useRoute()
 const activeTeam = useTeam()
+const { y } = useWindowScroll()
 
 const isOpen = ref(false)
+const isBlurry = ref(false)
+
+onMounted(() => {
+  watch(
+    y,
+    (newVal) => { isBlurry.value = newVal > 0 },
+    { immediate: true }
+  )
+})
 
 const links = computed(() => {
   const team = activeTeam.value || route.params.team || user.value?.username
