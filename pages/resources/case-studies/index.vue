@@ -22,16 +22,16 @@
       </ul>
     </UContainer>
 
-    <div class="mt-12 sm:mt-24 relative overflow-hidden">
+    <div class="mt-12 sm:mt-24 relative overflow-hidden border mb-16">
       <UContainer padded class="py-12 lg:py-16 lg:flex lg:items-center lg:justify-between relative">
-        <span class="_ellipse z-0" />
+        <span class="_ellipse z-0 " />
         <h2 class="u-text-black z-[1] tracking-tight">
           <span class="block font-semibold text-2xl">Contact us</span>
           <span class="block mt-2">Start building, or get in touch with our app experts.</span>
         </h2>
-        <div class="mt-8 flex lg:mt-0 lg:flex-shrink-0 gap-3 z-[1] relative">
-          <UButton label="Contact" />
-          <UButton label="Get started" variant="secondary" />
+        <div class="mt-8 flex lg:mt-0 lg:flex-shrink-0 gap-y-3 gap-x-8 z-[1] relative h-10">
+          <UButton label="Contact" variant="secondary" class="w-36 u-border-gray-900 u-text-gray-900 hover:u-border-gray-700 hover:u-text-gray-700" size="lg" block />
+          <UButton label="Get started" class="w-36" size="lg" block />
         </div>
       </UContainer>
     </div>
@@ -50,9 +50,9 @@ const { data: pages } = await useAsyncData('resources-case-studies', () => fetch
   width: 480.14px;
   height: 161.22px;
   left: 0;
-  top: 0;
+  top: 60px;
   background: linear-gradient(97.62deg, rgba(0, 71, 225, 1) 2.27%, rgba(26, 214, 255, 1) 50.88%, rgba(0, 220, 130, 1) 98.48%);
-  filter: blur(150px);
-  transform: matrix(-0.97, 0.24, 0.24, 0.97, 0, 0);
+  filter: blur(50px);
+  opacity: 25%;
 }
 </style>
