@@ -21,7 +21,7 @@
     "@nuxtjs/strapi": "npm:@nuxtjs/strapi-edge@latest",
     "@tailwindcss/typography": "^0.5.2",
     "eslint": "^8.12.0",
-    "nuxt3": "^3.0.0-27486226.7a70644",
+    "nuxt3": "^3.0.0-27487398.da46b8d",
     "standard-version": "^9.3.2",
     "typescript": "^4.6.3",
     "vue-plausible": "^1.3.1"
