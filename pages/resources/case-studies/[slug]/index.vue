@@ -17,7 +17,7 @@
       </UContainer>
     </div>
 
-    <Content v-if="page" :document="page" />
+    <Content :document="page" />
 
     <UContainer constrained-class="max-w-4xl">
       <div class="py-10">

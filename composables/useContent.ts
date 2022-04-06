@@ -81,10 +81,8 @@ export const useContent = () => {
         const slug = findBottomLink(file)
         router.push(slug)
       } catch (e) {
-        // TODO: Show 404/error page
-        console.warn('404 - Could not find document or matching redirect.')
-        console.log(e)
         page.value = null
+        throwError({ message: 'This page does not exist.', statusCode: 404 })
       }
     }
   }
