@@ -110,8 +110,8 @@ function onCreateBranchClick () {
   isOpen.value = false
   setTimeout(() => {
     openCreateBranchModal(!branchExists.value ? query.value : '', false)
+    query.value = ''
   }, 0)
-  query.value = ''
 }
 
 async function onResetDraftClick () {
