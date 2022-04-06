@@ -2,31 +2,30 @@ import { withoutTrailingSlash } from 'ufo'
 import type { NavItem, ParsedContent } from '@nuxt/content/dist/runtime/types'
 
 export const useContent = () => {
-  const router = useRouter()
   const route = useRoute()
+
+  const path = withoutTrailingSlash(route.path)
 
   /**
    * Navigation tree from root of app.
    */
-  const navigation = useState<NavItem[]>('navigation')
+  const navigation = useState<NavItem[]>('navigation', () => null)
 
   /**
    * Current page complete data.
    */
-  const page = useState<ParsedContent>('content-current-page')
+  const page = useState<ParsedContent>(`content-page-${path}`, () => null)
 
   /**
    * Previous and next page data.
    * Format: [prev, next]
    */
-  const surround = useState<ParsedContent[]>('content-surround')
+  const surround = useState<ParsedContent[]>(`content-surround-${path}`, () => null)
 
   /**
    * Table of contents from parsed page.
    */
-  const toc = computed(
-    () => page?.value?.body?.toc?.links || []
-  )
+  const toc = computed(() => page?.value?.body?.toc?.links || [])
 
   /**
    * Content type from parsed page.
@@ -36,21 +35,21 @@ export const useContent = () => {
   /**
    * Next page from `surround`.
    */
-  const next = computed(
-    () => surround.value?.[1] || false
-  )
+  const next = computed(() => surround.value?.[1] || false)
 
   /**
    * Previous page from `surround`.
    */
-  const prev = computed(
-    () => surround.value?.[0] || false
-  )
+  const prev = computed(() => surround.value?.[0] || false)
 
   /**
    * Navigation fetching helper.
    */
   const fetchNavigation = async () => {
+    if (navigation.value !== null) {
+      return
+    }
+
     // @ts-ignore
     navigation.value = await queryContent().findNavigation()
   }
@@ -58,9 +57,12 @@ export const useContent = () => {
   /**
    * Local page fetching helper.
    */
-  const fetchPage = async (path: string = route.path) => {
-    const currentPath = withoutTrailingSlash(path)
-    const splitted = currentPath.split('/')
+  const fetchPage = async () => {
+    if (page.value !== null) {
+      return
+    }
+
+    const splitted = path.split('/')
     const directory = splitted.slice(0, splitted.length - 1).join('/')
 
     // Get navigation node from current path
@@ -69,21 +71,16 @@ export const useContent = () => {
     if (file && !file.children) {
       // Path queried has a page (and is not a directory)
       await Promise.all([
-        queryContent(currentPath).findOne() as Promise<ParsedContent>,
-        queryContent(directory).findSurround(currentPath) as Promise<ParsedContent[]>
+        queryContent(path).findOne() as Promise<ParsedContent>,
+        queryContent(directory).findSurround(path) as Promise<ParsedContent[]>
       ]).then(([_page, _surround]) => {
         page.value = _page
         surround.value = _surround
       })
+    } else if (file) {
+      navigateTo(findBottomLink(file))
     } else {
-      // Path queried ain't a page, try to find a redirect to closest page
-      try {
-        const slug = findBottomLink(file)
-        router.push(slug)
-      } catch (e) {
-        page.value = null
-        throwError({ message: 'This page does not exist.', statusCode: 404 })
-      }
+      throwError({ message: 'This page does not exist.', statusCode: 404 })
     }
   }
 
