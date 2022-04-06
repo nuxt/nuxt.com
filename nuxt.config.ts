@@ -24,7 +24,7 @@ export default defineNuxtConfig({
     loader: true,
     dirs: [
       { path: '~/components/content', global: true },
-      '~/components/atoms',
+      { path: '~/components/atoms', global: true },
       '~/components/molecules',
       '~/components/organisms',
       '~/components/templates'
@@ -82,6 +82,12 @@ export default defineNuxtConfig({
         'content/**/*.md'
       ],
       safelist: [12, 24, 36, 48, 60, 72, 84, 96, 108, 120].map(number => `pl-[${number}px]`)
+    }
+  },
+  content: {
+    highlight: {
+      theme: 'one-dark-pro',
+      preload: ['json', 'js', 'ts', 'html', 'css', 'vue', 'diff', 'shell', 'markdown']
     }
   }
 })
