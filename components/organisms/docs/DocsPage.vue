@@ -2,10 +2,10 @@
   <div class="relative flex-1">
     <slot name="header" />
 
-    <main class="relative py-8">
+    <main class="relative pb-4 sm:pb-6 lg:py-8">
       <UContainer padded>
         <div class="grid grid-cols-10 gap-8 relative">
-          <aside v-if="$slots.aside" class="pb-8 overflow-x-hidden overflow-y-auto lg:pb-0 hidden lg:block lg:sticky lg:top-16 sm:px-6 lg:px-0 lg:pt-8 lg:-mt-8 lg:self-start col-span-2 lg:max-h-[calc(100vh-64px)]">
+          <aside v-if="$slots.aside" class="pb-8 overflow-x-hidden overflow-y-auto lg:pb-0 hidden lg:block lg:sticky lg:top-16 lg:pt-8 lg:-mt-8 lg:self-start col-span-2 lg:max-h-[calc(100vh-64px)]">
             <slot name="aside" />
           </aside>
 
