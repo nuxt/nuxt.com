@@ -1,19 +1,16 @@
 <template>
-  <div class="py-10">
-    <UCard class="relative u-bg-black" body-class="p-12">
-      <span class="_ellipse z-0" />
-      <div class="flex items-center justify-between">
-        <h2 class="u-text-white z-[1] tracking-tight">
-          <span class="block font-semibold text-3xl">Contact us</span>
-          <span class="block mt-2 text-lg">Start building, or get in touch with our app experts.</span>
-        </h2>
-        <div class="mt-8 flex lg:mt-0 lg:flex-shrink-0 gap-3 z-[1] relative">
-          <UButton variant="transparent" size="lg" class="group w-40 u-border-white flex justify-center hover:u-border-gray-300 ">
-            <span class="u-text-white group-hover:u-text-gray-300">Get in touch</span>
-          </UButton>
-        </div>
+  <div class="mt-12 sm:mt-24 relative overflow-hidden border-y mb-16">
+    <UContainer padded class="py-12 lg:py-16 lg:flex lg:items-center lg:justify-between relative">
+      <span class="_ellipse z-0 " />
+      <h2 class="u-text-black z-[1] tracking-tight">
+        <span class="block font-semibold text-2xl">Contact us</span>
+        <span class="block mt-2">Start building, or get in touch with our app experts.</span>
+      </h2>
+      <div class="mt-8 flex lg:mt-0 lg:flex-shrink-0 gap-y-3 gap-x-8 z-[1] relative h-10">
+        <UButton label="Contact" variant="secondary" class="w-36 u-border-gray-900 u-text-gray-900 hover:u-border-gray-700 hover:u-text-gray-700" size="lg" block />
+        <UButton label="Get started" class="w-36" size="lg" block />
       </div>
-    </UCard>
+    </UContainer>
   </div>
 </template>
 
@@ -22,10 +19,10 @@
   position: absolute;
   width: 480.14px;
   height: 161.22px;
-  left: -100px;
-  top: 100px;
-  filter: blur(100px);
-  background: linear-gradient(97.62deg, rgba(0, 71, 225, 1) 2.27%, rgba(26, 214, 255, 1) 60.88%, #00DC82 80%);
-  transform: matrix(-0.97, 0.24, 0.24, 0.97, 0, 0);
+  left: 0;
+  top: 60px;
+  background: linear-gradient(97.62deg, rgba(0, 71, 225, 1) 2.27%, rgba(26, 214, 255, 1) 50.88%, rgba(0, 220, 130, 1) 98.48%);
+  filter: blur(50px);
+  opacity: 25%;
 }
 </style>

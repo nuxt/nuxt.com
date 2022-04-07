@@ -23,7 +23,7 @@
     <Content :document="page" />
 
     <UContainer constrained-class="max-w-4xl">
-      <ResourcesCaseStudiesCTA />
+      <ResourcesCaseStudieCTA />
 
       <ResourcesCaseStudiesPrevNext :prev="prev" :next="next" />
     </UContainer>
