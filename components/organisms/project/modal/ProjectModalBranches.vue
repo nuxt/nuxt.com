@@ -59,7 +59,7 @@ const project: Project = inject('project')
 const emit = defineEmits(['update:modelValue'])
 
 const keys = useMagicKeys()
-const { isDraft: isDraftContent, draft: contentDraft, file: contentFile, init: selectNewContentFile, select: selectContentFile } = useProjectFiles(project, 'content')
+const { isDraft: isDraftContent, draft: contentDraft, file: contentFile, init: selectNewContentFile } = useProjectFiles(project, 'content')
 const { isDraft: isDraftMedia, draft: publicDraft, file: publicFile, init: selectNewPublicFile } = useProjectFiles(project, 'public')
 const {
   branches,
