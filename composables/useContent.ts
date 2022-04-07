@@ -120,7 +120,8 @@ export const useContent = () => {
   if (process.dev) {
     onMounted(
       () => {
-        if (closeHook) { return }
+        // Cleanup previous hook before registering new one.
+        if (closeHook) { closeHook() }
 
         const { hook } = useNuxtApp()
 
