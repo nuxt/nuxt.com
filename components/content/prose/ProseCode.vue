@@ -46,7 +46,7 @@ const { data: highlightedCode } = await useAsyncData(key, () => highlightCode(pr
       </span>
     </code></pre>
 
-    <CopyButton class="copy-button opacity-100 transition-all duration-300" />
+    <CopyButton :content="code" class="copy-button opacity-100 transition-all duration-300" />
   </div>
 </template>
 

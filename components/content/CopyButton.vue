@@ -1,6 +1,5 @@
 <template>
   <button
-    ref="copy"
     class="
       copy
       focus:outline-none
@@ -17,6 +16,7 @@
       rounded-lg
       font-mono font-semibold
     "
+    @click="onClick"
   >
     <UIcon v-if="state === 'copied'" name="fa-check" class="w-4 h-4" />
     <UIcon v-else name="fa-copy" class="w-4 h-4" />
@@ -24,24 +24,30 @@
 </template>
 
 <script setup lang="ts">
-import Clipboard from 'clipboard'
+const props = defineProps({
+  content: {
+    type: String,
+    default: ''
+  }
+})
 
-const copy = ref()
+const { $clipboard } = useNuxtApp()
+
 const state = ref('init')
 
-onMounted(() => {
-  const copyCode = new Clipboard(copy.value, {
-    target (trigger) {
-      return trigger.previousElementSibling
+const onClick = () => {
+  // Copy text
+  $clipboard.copy(
+    props.content,
+    {
+      title: 'Code copied to clipboard!'
     }
-  })
+  )
 
-  copyCode.on('success', (event) => {
-    event.clearSelection()
-    state.value = 'copied'
-    window.setTimeout(() => {
-      state.value = 'init'
-    }, 2000)
-  })
-})
+  // Update local icon state
+  state.value = 'copied'
+  window.setTimeout(() => {
+    state.value = 'init'
+  }, 2000)
+}
 </script>
