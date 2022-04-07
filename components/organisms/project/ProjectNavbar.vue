@@ -4,7 +4,9 @@
 
     <UContainer padded class="relative">
       <div class="flex items-center justify-between h-16">
-        <UButton variant="transparent" icon="heroicons-outline:menu" class="-ml-2" @click="isOpen = true" />
+        <button class="lg:hidden" @click="isOpen = true">
+          <UIcon name="heroicons-outline:menu-alt-2" class="w-6 h-6 flex-shrink-0" />
+        </button>
 
         <NuxtLink :to="{ name: '@team-projects' }" class="inline-flex">
           <UAvatar :src="`https://github.com/${project.repository.owner}.png`" :alt="project.name" size="sm" class="flex-shrink-0" />

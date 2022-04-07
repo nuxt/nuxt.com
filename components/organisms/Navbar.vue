@@ -7,12 +7,11 @@
 
     <UContainer padded class="relative">
       <div class="grid items-center h-16 grid-cols-6 gap-3 lg:h-20 lg:justify-center">
-        <UButton
-          variant="transparent"
-          class="-ml-2 lg:hidden"
-          icon="heroicons-outline:menu"
-          @click="isOpen = true"
-        />
+        <div class="lg:hidden">
+          <button @click="isOpen = true">
+            <UIcon name="heroicons-outline:menu-alt-2" class="w-6 h-6 flex-shrink-0" />
+          </button>
+        </div>
 
         <div class="flex justify-center col-span-4 lg:col-span-1 lg:justify-start">
           <NuxtLink to="/" class="block u-text-black">
