@@ -1,5 +1,5 @@
 import type { GitHubFile, Project, Root } from '~/types'
-import { mapTree, findTree, renamePath, getPathDir } from '~/utils/tree'
+import { mapTree, findTree, renamePath, getPathDir, getPathPrefix } from '~/utils/tree'
 
 const openedDirs = reactive({})
 
@@ -42,23 +42,35 @@ export const useProjectFilesTree = (project: Project, root: Root) => {
     if (sameTree) {
       if (srcIndex > dstIndex) {
         // I move a file up
-        for (let i = position === 'below' ? (dstIndex + 1) : dstIndex; i < srcIndex; i++) {
-          filesToRename.push({ oldPath: srcTree[i].path, newPath: renamePath(srcTree[i].path, srcTree[i].path, i + 2) })
+        const startIndex = position === 'below' ? (dstIndex + 1) : dstIndex
+        for (let i = startIndex; i < srcIndex; i++) {
+          if (getPathPrefix(srcTree[i].path) !== null) {
+            filesToRename.push({ oldPath: srcTree[i].path, newPath: renamePath(srcTree[i].path, srcTree[i].path, i + 2) })
+          }
         }
       } else {
         // I move a file down
-        for (let i = position === 'above' ? (dstIndex - 1) : dstIndex; i > srcIndex; i--) {
-          filesToRename.push({ oldPath: srcTree[i].path, newPath: renamePath(srcTree[i].path, srcTree[i].path, i) })
+        const startIndex = position === 'above' ? (dstIndex - 1) : dstIndex
+        for (let i = startIndex; i > srcIndex; i--) {
+          if (getPathPrefix(srcTree[i].path) !== null) {
+            filesToRename.push({ oldPath: srcTree[i].path, newPath: renamePath(srcTree[i].path, srcTree[i].path, i) })
+          }
         }
       }
     } else {
       // Rename `srcTree` files after `srcIndex`
-      for (let i = srcIndex + 1; i < srcTree.length; i++) {
-        filesToRename.push({ oldPath: srcTree[i].path, newPath: renamePath(srcTree[i].path, srcTree[i].path, i) })
+      let startIndex = srcIndex + 1
+      for (let i = startIndex; i < srcTree.length; i++) {
+        if (getPathPrefix(srcTree[i].path) !== null) {
+          filesToRename.push({ oldPath: srcTree[i].path, newPath: renamePath(srcTree[i].path, srcTree[i].path, i) })
+        }
       }
       // Rename `dstTree` files after `dstIndex`
-      for (let i = position === 'below' ? (dstIndex + 1) : dstIndex; i < dstTree.length; i++) {
-        filesToRename.push({ oldPath: dstTree[i].path, newPath: renamePath(dstTree[i].path, dstTree[i].path, i + 2) })
+      startIndex = position === 'below' ? (dstIndex + 1) : dstIndex
+      for (let i = startIndex; i < dstTree.length; i++) {
+        if (getPathPrefix(dstTree[i].path) !== null) {
+          filesToRename.push({ oldPath: dstTree[i].path, newPath: renamePath(dstTree[i].path, dstTree[i].path, i + 2) })
+        }
       }
     }
 
