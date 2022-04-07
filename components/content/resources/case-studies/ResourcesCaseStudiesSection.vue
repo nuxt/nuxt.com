@@ -13,7 +13,7 @@
       </h3>
 
       <div v-if="$slots.description" class="flex items-start">
-        <div class="prose prose-gray dark:prose-invert text-justify" :class="descriptionClass">
+        <div class="prose prose-gray dark:prose-invert text-justify max-w-full" :class="{ 'xl:w-4/5': highlight }">
           <Markdown use="description" unwrap="p" />
         </div>
 
@@ -24,9 +24,7 @@
       </div>
     </UContainer>
 
-    <img v-if="image" :src="image" class="absolute right-0 bottom-0 opacity-20 xl:opacity-100 h-full xl:h-3/5">
-
-    <Markdown use="customImage" unwrap="p" />
+    <img v-if="image" :src="image" class="absolute right-0" :class="imageClass">
   </div>
 </template>
 
@@ -56,9 +54,9 @@ defineProps({
     type: String,
     default: null
   },
-  descriptionClass: {
+  imageClass: {
     type: String,
-    default: 'max-w-full'
+    default: 'bottom-0 opacity-20 xl:opacity-100 xl:h-2/3 2xl:h-4/5 h-full'
   }
 })
 </script>
