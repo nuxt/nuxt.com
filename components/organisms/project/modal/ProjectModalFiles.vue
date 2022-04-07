@@ -3,10 +3,10 @@
     <Combobox as="div" class="flex flex-col flex-1 min-h-0 divide-y u-divide-gray-100" @update:modelValue="onSelect">
       <div class="relative">
         <UIcon name="heroicons-outline:search" class="pointer-events-none absolute top-3.5 left-5 h-5 w-5 u-text-gray-400" aria-hidden="true" />
-        <ComboboxInput :value="query" class="w-full h-12 pr-4 placeholder-gray-400 dark:placeholder-gray-500 bg-transparent border-0 pl-[3.25rem] u-text-gray-900 focus:ring-0 sm:text-sm" placeholder="Search..." @change="query = $event.target.value" />
+        <ComboboxInput ref="comboboxInput" :value="query" class="w-full h-12 pr-4 placeholder-gray-400 dark:placeholder-gray-500 bg-transparent border-0 pl-[3.25rem] u-text-gray-900 focus:ring-0 sm:text-sm" placeholder="Search..." @change="query = $event.target.value" />
       </div>
 
-      <ComboboxOptions v-if="filteredFiles.length > 0" static class="relative flex-1 overflow-y-auto divide-y u-divide-gray-100 scroll-py-2">
+      <ComboboxOptions v-if="filteredFiles.length > 0" static hold class="relative flex-1 overflow-y-auto divide-y u-divide-gray-100 scroll-py-2">
         <li class="p-2">
           <h2 class="px-3 my-2 text-xs font-semibold u-text-gray-900">
             Files
@@ -91,6 +91,18 @@ const isOpen = computed({
   },
   set (value) {
     emit('update:modelValue', value)
+  }
+})
+
+const comboboxInput = ref(null)
+
+// auto select first item on query change
+// hack by using keyboard event: https://github.com/tailwindlabs/headlessui/blob/main/packages/%40headlessui-vue/src/components/combobox/combobox.ts#L692
+watch(() => query.value, (queryValue, oldQueryValue) => {
+  if (comboboxInput.value && queryValue !== oldQueryValue) {
+    setTimeout(() => {
+      comboboxInput.value.$el.dispatchEvent(new KeyboardEvent('keydown', { key: 'PageUp' }))
+    }, 0)
   }
 })
 
