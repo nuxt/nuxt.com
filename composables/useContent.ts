@@ -4,7 +4,7 @@ import type { NavItem, ParsedContent } from '@nuxt/content/dist/runtime/types'
 export const useContent = () => {
   const route = useRoute()
 
-  const path = withoutTrailingSlash(route.path)
+  const path = computed(() => withoutTrailingSlash(route.path))
 
   /**
    * Navigation tree from root of app.
@@ -14,13 +14,13 @@ export const useContent = () => {
   /**
    * Current page complete data.
    */
-  const page = useState<ParsedContent>(`content-page-${path}`, () => null)
+  const page = useState<ParsedContent>(`content-page-${path.value}`, () => null)
 
   /**
    * Previous and next page data.
    * Format: [prev, next]
    */
-  const surround = useState<ParsedContent[]>(`content-surround-${path}`, () => null)
+  const surround = useState<ParsedContent[]>(`content-surround-${path.value}`, () => null)
 
   /**
    * Table of contents from parsed page.
@@ -45,10 +45,8 @@ export const useContent = () => {
   /**
    * Navigation fetching helper.
    */
-  const fetchNavigation = async () => {
-    if (navigation.value !== null) {
-      return
-    }
+  const fetchNavigation = async (force: boolean = false) => {
+    if (navigation.value !== null && !force) { return }
 
     // @ts-ignore
     navigation.value = await fetchContentNavigation()
@@ -57,22 +55,20 @@ export const useContent = () => {
   /**
    * Local page fetching helper.
    */
-  const fetchPage = async () => {
-    if (page.value !== null) {
-      return
-    }
+  const fetchPage = async (force: boolean = false) => {
+    if (page.value !== null && !force) { return }
 
-    const splitted = path.split('/')
+    const splitted = path.value.split('/')
     const directory = splitted.slice(0, splitted.length - 1).join('/')
 
     // Get navigation node from current path
-    const file = navFromPath(path, navigation.value)
+    const file = navFromPath(path.value, navigation.value)
 
     if (file && !file.children) {
       // Path queried has a page (and is not a directory)
       await Promise.all([
-        queryContent(path).findOne() as Promise<ParsedContent>,
-        queryContent(directory).findSurround(path) as Promise<ParsedContent[]>
+        queryContent(path.value).findOne() as Promise<ParsedContent>,
+        queryContent(directory).findSurround(path.value) as Promise<ParsedContent[]>
       ]).then(([_page, _surround]) => {
         page.value = _page
         surround.value = _surround
@@ -116,6 +112,22 @@ export const useContent = () => {
         if (result) { return result }
       }
     }
+  }
+
+  // Re-fetch page on change (development only)
+  if (process.dev) {
+    let closeHook
+    onMounted(
+      () => {
+        const { hook } = useNuxtApp()
+
+        closeHook = hook('app:data:refresh', async () => {
+          await fetchNavigation(true)
+          await fetchPage(true)
+        })
+      }
+    )
+    onBeforeUnmount(() => closeHook && closeHook())
   }
 
   return {
