@@ -29,6 +29,10 @@ export const useProjectFileHistory = (project: Project, root: Root) => {
   const historyData: Ref<GraphQLHistory | null> = ref(null)
 
   const fetch = async () => {
+    if (!file.value) {
+      return
+    }
+
     // created file case
     if (file.value.status === 'created') {
       historyData.value = null
