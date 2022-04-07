@@ -186,6 +186,15 @@ export const useProjectFiles = (project: Project, root: Root) => {
     } catch (e) {}
   }
 
+  async function fetchFile (path: string) {
+    return await client<GitHubFile>(`/projects/${project.id}/files/${encodeURIComponent(path)}`, {
+      params: {
+        ref: branch.value?.name,
+        root
+      }
+    })
+  }
+
   // Modals
 
   function openCreateModal (path: string) {
@@ -245,8 +254,9 @@ export const useProjectFiles = (project: Project, root: Root) => {
         const file = githubFiles.find(f => f.path === addition.oldPath)
         if (file) {
           file.status = 'renamed'
-          file.path = addition.path
           file.name = addition.path.split('/').pop()
+          file.path = addition.path
+          file.oldPath = addition.oldPath
         }
       } else if (addition.new) {
         githubFiles.push({
@@ -293,6 +303,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
     refresh,
     upload,
     bulkRename,
+    fetchFile,
     // Modals
     openCreateModal,
     openRenameModal,

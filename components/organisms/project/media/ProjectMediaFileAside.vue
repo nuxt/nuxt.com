@@ -39,12 +39,12 @@
               {{ toFormattedBytes(file.size) }}
             </dd>
           </div>
-          <div v-if="file.width && file.height" class="flex justify-between py-3 text-sm font-medium">
+          <div v-if="filesCache[file.path]" class="flex justify-between py-3 text-sm font-medium">
             <dt class="u-text-gray-500">
               Dimensions
             </dt>
             <dd class="u-text-gray-900">
-              {{ file.width }} x {{ file.height }}
+              {{ filesCache[file.path].width }} x {{ filesCache[file.path].height }}
             </dd>
           </div>
         </dl>
@@ -64,6 +64,13 @@
 <script setup lang="ts">
 import type { Project, Root } from '~/types'
 import { toFormattedBytes } from '~/utils'
+
+defineProps({
+  filesCache: {
+    type: Object,
+    default: () => ({})
+  }
+})
 
 const project: Project = inject('project')
 const root: Root = inject('root')

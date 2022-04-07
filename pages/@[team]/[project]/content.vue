@@ -55,7 +55,7 @@ const colorMode = useColorMode()
 const client = useStrapiClient()
 const { parseFrontMatter, stringifyFrontMatter } = useMarkdown()
 const { branch } = useProjectBranches(props.project)
-const { draft, file, openCreateModal: openCreateFileModal, computedFiles } = useProjectFiles(props.project, root)
+const { draft, file, fetchFile, openCreateModal: openCreateFileModal, computedFiles } = useProjectFiles(props.project, root)
 const { tree, openDir } = useProjectFilesTree(props.project, root)
 
 const content: Ref<string> = ref('')
@@ -104,12 +104,7 @@ async function fetchContent () {
     return
   }
 
-  const { content: fetchedContent } = await client(`/projects/${props.project.id}/files/${encodeURIComponent(file.value.path)}`, {
-    params: {
-      ref: branch.value?.name,
-      root
-    }
-  })
+  const { content: fetchedContent } = await fetchFile(file.value.path)
 
   content.value = fetchedContent
 }
