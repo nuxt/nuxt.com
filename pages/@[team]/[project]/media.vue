@@ -34,7 +34,7 @@
         @drop.prevent="onDrop"
       >
         <div v-if="computedFiles.length" class="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto">
-          <ProjectMediaFilesGallery />
+          <ProjectMediaFilesGallery :files-cache="filesCache" @fetch-file="onFetchFile" />
         </div>
         <ProjectMediaFilesEmpty v-else @create="$refs.fileToUpload.click()" />
 
@@ -45,7 +45,7 @@
         />
       </div>
 
-      <ProjectMediaFileAside />
+      <ProjectMediaFileAside :files-cache="filesCache" />
     </div>
   </ProjectPage>
 </template>
@@ -73,10 +73,12 @@ provide('project', props.project)
 provide('root', root)
 
 const { $toast } = useNuxtApp()
-const { upload, computedFiles } = useProjectFiles(props.project, root)
+const { upload, computedFiles, fetchFile } = useProjectFiles(props.project, root)
 
 const fileToUpload: Ref<HTMLInputElement> = ref(null)
 const dragover = ref(false)
+
+const filesCache = ref({})
 
 // Methods
 
@@ -96,6 +98,11 @@ function onDrop (e) {
   dragover.value = false
   fileToUpload.value.files = e.dataTransfer.files
   onFileUpload()
+}
+
+async function onFetchFile (path) {
+  const file = computedFiles.value.find(file => file.path === path)
+  filesCache.value[path] = await fetchFile(file.oldPath || file.path)
 }
 
 // Http

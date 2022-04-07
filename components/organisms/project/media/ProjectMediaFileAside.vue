@@ -39,12 +39,12 @@
               {{ toFormattedBytes(file.size) }}
             </dd>
           </div>
-          <div v-if="mediaData[file.path]" class="flex justify-between py-3 text-sm font-medium">
+          <div v-if="filesCache[file.path]" class="flex justify-between py-3 text-sm font-medium">
             <dt class="u-text-gray-500">
               Dimensions
             </dt>
             <dd class="u-text-gray-900">
-              {{ mediaData[file.path].width }} x {{ mediaData[file.path].height }}
+              {{ filesCache[file.path].width }} x {{ filesCache[file.path].height }}
             </dd>
           </div>
         </dl>
@@ -65,13 +65,18 @@
 import type { Project, Root } from '~/types'
 import { toFormattedBytes } from '~/utils'
 
+defineProps({
+  filesCache: {
+    type: Object,
+    default: () => ({})
+  }
+})
+
 const project: Project = inject('project')
 const root: Root = inject('root')
 
 const { branch } = useProjectBranches(project)
 const { file } = useProjectFiles(project, root)
-
-const mediaData = useState('media-data', () => ({}))
 
 const absolutePath = computed(() => {
   return [...project.baseDir.split('/').filter(p => p === '.'), ...file.value.path.split('/')]
