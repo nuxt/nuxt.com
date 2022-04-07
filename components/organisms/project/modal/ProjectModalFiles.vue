@@ -96,15 +96,25 @@ const isOpen = computed({
 
 const comboboxInput = ref(null)
 
-// auto select first item on query change
-// hack by using keyboard event: https://github.com/tailwindlabs/headlessui/blob/main/packages/%40headlessui-vue/src/components/combobox/combobox.ts#L692
-watch(() => query.value, (queryValue, oldQueryValue) => {
-  if (comboboxInput.value && queryValue !== oldQueryValue) {
-    setTimeout(() => {
-      comboboxInput.value.$el.dispatchEvent(new KeyboardEvent('keydown', { key: 'PageUp' }))
-    }, 0)
+watch(() => query.value, (value, oldValue) => {
+  if (value !== oldValue) {
+    activateFirstOption()
   }
 })
+
+watch(() => isOpen.value, (value) => {
+  if (value) {
+    activateFirstOption()
+  }
+})
+
+function activateFirstOption () {
+  // hack combobox by using keyboard event
+  // https://github.com/tailwindlabs/headlessui/blob/main/packages/%40headlessui-vue/src/components/combobox/combobox.ts#L692
+  setTimeout(() => {
+    comboboxInput.value?.$el.dispatchEvent(new KeyboardEvent('keydown', { key: 'PageUp' }))
+  }, 0)
+}
 
 const currentFiles = computed(() => {
   let currentFiles = []
