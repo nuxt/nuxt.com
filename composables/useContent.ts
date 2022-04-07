@@ -37,12 +37,12 @@ export const useContent = () => {
   /**
    * Next page from `surround`.
    */
-  const next = computed(() => surround.value?.[1] || false)
+  const next = computed(() => surround.value?.[1] || null)
 
   /**
    * Previous page from `surround`.
    */
-  const prev = computed(() => surround.value?.[0] || false)
+  const prev = computed(() => surround.value?.[0] || null)
 
   /**
    * Navigation fetching helper.
