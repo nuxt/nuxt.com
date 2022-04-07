@@ -1,43 +1,56 @@
 <template>
-  <div
-    class="sticky top-0 pt-8 lg:pt-0 lg:top-20 w-full z-[1] h-full max-h-[calc(100vh-400px)]"
-    :class="mq.lgMinus ? 'inset-x-0' : 'right-0'"
-  >
-    <!-- fake filter to increase readability-->
-    <div class="lg:hidden absolute inset-y-0 backdrop-blur-md -inset-x-8" />
-    <div
-      class="absolute py-3 lg:py-0 top-0 lg:w-40 lg:max-h-screen backdrop-blur-md bg-white/75 dark:bg-black/75 lg:u-bg-white border-b border-dashed lg:border-none "
-      :class="mq.lgMinus ? 'inset-x-0' : 'right-0'"
-    >
-      <UButton
-        variant="transparent"
-        label="Table of contents"
-        base-class="px-0 z-[1]"
-        trailing
-        class="lg:hidden font-semibold"
-        :icon="show ? 'heroicons-solid:chevron-down' : 'heroicons-solid:chevron-right'"
-        @click="show = !show"
-      />
-      <ul v-if="show || !mq.lgMinus" class="flex flex-col gap-y-2 pt-2">
-        <span class="hidden lg:block font-semibold">Table of Contents</span>
-        <li v-for="link in toc" :key="link.id" class="font-medium text-gray-600 lg:text-gray-400 text-sm lg:text-base">
-          {{ link.text }}
-        </li>
-      </ul>
+  <div class="space-y-2 lg:sticky lg:top-0 pt-8 lg:pt-0 lg:top-20 w-full z-[1] h-full max-h-[calc(100vh-400px)]">
+    <div class="lg:absolute top-0 right-0 lg:w-40 lg:max-h-screen u-bg-white border-b border-dashed lg:border-none">
+      <template v-if="toc.length">
+        <span class="font-semibold">Table of contents</span>
+        <ul class="py-4">
+          <li v-for="link in toc" :key="link.text">
+            <a
+              :href="`#${link.id}`"
+              class="text-sm font-medium hover:font-semibold text-gray-500 hover:u-text-gray-900 py-1 pl-3 block truncate"
+              :class="{
+                'u-text-gray-900': activeHeadings.includes(link.id),
+              }"
+              @click.prevent="scrollToHeading(link.id, '--docs-scroll-margin-block')"
+            >
+              {{ link.text }}
+            </a>
+          </li>
+        </ul>
+      </template>
     </div>
   </div>
 </template>
-<script setup>
-import { useMq } from 'vue3-mq'
 
-defineProps({
+<script setup lang="ts">
+const route = useRoute()
+
+const { activeHeadings, updateHeadings } = useScrollspy()
+
+const { prev, next } = useContent()
+
+const props = defineProps({
   toc: {
     type: Array,
     default: () => []
   }
 })
 
-const mq = useMq()
+watch(route, () => {
+  if (process.client) {
+    setTimeout(() => {
+      updateHeadings([
+        ...document.querySelectorAll('.prose h1'),
+        ...document.querySelectorAll('.prose h2'),
+        ...document.querySelectorAll('.prose h3')
+      ])
+    }, 200)
+  }
+}, {
+  immediate: true
+})
 
-const show = ref(false)
+function scrollToHeading (id: string, scrollMarginCssVar: string) {
+  useScrollToHeading(id, scrollMarginCssVar)
+}
 </script>

@@ -22,7 +22,7 @@ links:
   - title: Resources
     items:
       - title: Articles
-        to: /
+        to: /resources/articles
       - title: Case Studies
         to: /resources/case-studies
       - title: Design Kit

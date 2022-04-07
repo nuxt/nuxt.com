@@ -13,7 +13,7 @@
       </span>
     </UButton>
     <UButton v-else :label="buttonText" class="px-8 mt-6" :to="to" />
-    <img :src="imagePath" class="absolute w-1/5" :class="imagePosition">
+    <img :src="imagePath" class="absolute w-1/5" :class="imageClass">
   </UCard>
 </template>
 
@@ -35,9 +35,9 @@ defineProps({
     type: String,
     default: ''
   },
-  imagePosition: {
+  imageClass: {
     type: String,
-    default: 'right-0 top-0'
+    default: 'right-0 inset-y-0 object-cover h-full'
   }
 })
 </script>

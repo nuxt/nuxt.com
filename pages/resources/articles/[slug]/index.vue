@@ -1,7 +1,7 @@
 <template>
   <UContainer class="relative pb-12 sm:pb-28">
     <div class="py-10 sm:py-20">
-      <UContainer constrained-class="max-w-4xl" class="flex flex-col gap-y-8 items-center justify-center text-center">
+      <UContainer constrained-class="max-w-4xl" class="flex flex-col gap-y-8 items-center justify-center text-center" padded>
         <div class="font-semibold u-text-gray-400">
           <time>{{ formatDateByLocale('en', page.date) }}</time> - {{ page.category }}
         </div>
@@ -24,9 +24,9 @@
     </div>
 
     <div class="relative">
-      <!-- TODO: rework TOC -->
       <ResourcesArticlesToc :toc="page.body.toc.links" />
-      <UContainer constrained-class="max-w-4xl" class="pt-12 lg:pt-0">
+
+      <UContainer constrained-class="max-w-4xl" class="pt-16 lg:pt-0" padded>
         <div class="relative overflow-hidden border-b u-border-gray-400">
           <Content v-if="page" :document="page" class="prose prose-gray dark:prose-invert !max-w-full pb-12" />
         </div>
@@ -51,12 +51,12 @@
           <h2 class="text-4xl u-text-gray-900 font-bold pb-10">
             Your journey begins
           </h2>
-          <div class="grid grid-cols-2 gap-8">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
             <ResourcesArticlesFooterCard
               button-text="Get Started"
               to="/docs/framework"
               image-path="/resources/articles/nuxt.svg"
-              image-position="bottom-0 right-0"
+              image-class="bottom-0 right-0"
               dark
             >
               <template #title>
@@ -90,6 +90,8 @@ import { withoutTrailingSlash } from 'ufo'
 
 const route = useRoute()
 const path = withoutTrailingSlash(route.path)
+
+const isOpen = ref(false)
 
 const { $toast, $clipboard } = useNuxtApp()
 
