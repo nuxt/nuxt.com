@@ -39,6 +39,7 @@
     <span v-else>&nbsp;</span>
   </div>
 </template>
+
 <script setup>
 defineProps({
   prev: {

@@ -23,9 +23,9 @@
     <Content :document="page" />
 
     <UContainer constrained-class="max-w-4xl">
-      <ResourcesCaseStudieCTA />
+      <ResourcesCaseStudyCTA />
 
-      <ResourcesCaseStudiesPrevNext :prev="prev" :next="next" />
+      <ResourcesCaseStudyPrevNext :prev="prev" :next="next" />
     </UContainer>
   </div>
 </template>
