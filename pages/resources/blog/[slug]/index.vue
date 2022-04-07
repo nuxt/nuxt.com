@@ -56,7 +56,7 @@
               <ResourcesBlogCTA
                 button-text="Get Started"
                 to="/docs/framework"
-                image-path="/resources/articles/nuxt.svg"
+                image-path="/resources/blog/nuxt.svg"
                 image-class="bottom-0 right-0"
               >
                 <template #title>
@@ -71,7 +71,7 @@
             <ResourcesBlogCTA
               button-text="Discover Nuxt Sites"
               to="/showcases"
-              image-path="/resources/articles/showcases.png"
+              image-path="/resources/blog/showcases.png"
             >
               <template #title>
                 Watch a Showcase
