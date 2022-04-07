@@ -1,8 +1,12 @@
 <template>
   <USlideover v-model="isOpen">
     <template #header>
-      <UButton v-if="selectedLink" variant="transparent" icon="heroicons-outline:arrow-sm-left" class="-ml-2" @click="selectedLink = null" />
-      <UButton v-else variant="transparent" icon="heroicons-outline:x" class="-ml-2" @click="isOpen = false" />
+      <button v-if="selectedLink" @click="selectedLink = null">
+        <UIcon name="heroicons-outline:arrow-sm-left" class="w-6 h-6 flex-shrink-0" />
+      </button>
+      <button v-else @click="isOpen = false">
+        <UIcon name="heroicons-outline:x" class="w-6 h-6 flex-shrink-0" />
+      </button>
 
       <p v-if="selectedLink" class="font-semibold text-lg">
         {{ selectedLink.title }}

@@ -1,7 +1,9 @@
 <template>
   <USlideover v-model="isOpen">
     <template #header>
-      <UButton variant="transparent" icon="heroicons-outline:x" class="-ml-2" @click="isOpen = false" />
+      <button @click="isOpen = false">
+        <UIcon name="heroicons-outline:x" class="w-6 h-6 flex-shrink-0" />
+      </button>
 
       <NuxtLink :to="{ name: '@team-projects' }" class="inline-flex">
         <UAvatar :src="`https://github.com/${project.repository.owner}.png`" :alt="project.name" size="sm" class="flex-shrink-0" />
