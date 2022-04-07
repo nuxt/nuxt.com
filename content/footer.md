@@ -21,8 +21,8 @@ links:
         to: /
   - title: Resources
     items:
-      - title: Articles
-        to: /resources/articles
+      - title: Blog
+        to: /resources/blog
       - title: Case Studies
         to: /resources/case-studies
       - title: Design Kit

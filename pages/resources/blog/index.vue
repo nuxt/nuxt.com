@@ -10,7 +10,7 @@
       <ul role="list" class="flex flex-col gap-y-4 pb-16">
         <li v-for="(page, index) in pages" :key="page.slug" :class="{ 'border-b last:border-none': index !== 0 }">
           <!-- TODO: order by date, main article is the most recent -->
-          <ResourcesArticlesItem :page="page" :highlight="index === 0" />
+          <ResourcesBlogPost :page="page" :highlight="index === 0" />
         </li>
       </ul>
     </UContainer>
@@ -18,7 +18,9 @@
 </template>
 
 <script setup>
-const { data: pages } = await useAsyncData('resources-articles', () => queryContent('/resources/articles').find())
+const { fetchDir } = useContent()
+
+const { data: pages } = await useAsyncData('resources-blog', () => fetchDir('/resources/blog'))
 </script>
 
 <style scoped>

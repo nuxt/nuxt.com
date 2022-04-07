@@ -1,6 +1,6 @@
 <template>
-  <div class="space-y-2 lg:sticky lg:top-0 pt-8 lg:pt-0 lg:top-20 w-full z-[1] h-full max-h-[calc(100vh-400px)]">
-    <div class="lg:absolute top-0 right-0 lg:w-40 lg:max-h-screen u-bg-white border-b border-dashed lg:border-none">
+  <div class="lg:sticky lg:pt-8 lg:-mt-8 lg:top-16 lg:max-h-[calc(100vh-64px)]">
+    <div class="lg:absolute top-0 right-0 lg:pt-8 lg:w-40 lg:max-h-screen u-bg-white border-b border-dashed lg:border-none">
       <template v-if="toc.length">
         <span class="font-semibold">Table of contents</span>
         <ul class="py-4">
@@ -25,16 +25,9 @@
 <script setup lang="ts">
 const route = useRoute()
 
+const { toc } = useContent()
+
 const { activeHeadings, updateHeadings } = useScrollspy()
-
-const { prev, next } = useContent()
-
-const props = defineProps({
-  toc: {
-    type: Array,
-    default: () => []
-  }
-})
 
 watch(route, () => {
   if (process.client) {

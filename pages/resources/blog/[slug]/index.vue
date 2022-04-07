@@ -23,10 +23,10 @@
       </UContainer>
     </div>
 
-    <div class="relative">
-      <ResourcesArticlesToc :toc="page.body.toc.links" />
+    <div class="relative lg:pt-8">
+      <ResourcesBlogToc class="px-4 sm:px-6 lg:px-0" />
 
-      <UContainer constrained-class="max-w-4xl" class="pt-16 lg:pt-0" padded>
+      <UContainer constrained-class="max-w-4xl" class="pt-8 lg:pt-0" padded>
         <div class="relative overflow-hidden border-b u-border-gray-400">
           <Content v-if="page" :document="page" class="prose prose-gray dark:prose-invert !max-w-full pb-12" />
         </div>
@@ -52,21 +52,23 @@
             Your journey begins
           </h2>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
-            <ResourcesArticlesFooterCard
-              button-text="Get Started"
-              to="/docs/framework"
-              image-path="/resources/articles/nuxt.svg"
-              image-class="bottom-0 right-0"
-              dark
-            >
-              <template #title>
-                Start now
-              </template>
-              <template #description>
-                How a user interacts with and experience your website is key.
-              </template>
-            </ResourcesArticlesFooterCard>
-            <ResourcesArticlesFooterCard
+            <div class="dark">
+              <ResourcesBlogCTA
+                button-text="Get Started"
+                to="/docs/framework"
+                image-path="/resources/articles/nuxt.svg"
+                image-class="bottom-0 right-0"
+              >
+                <template #title>
+                  Start now
+                </template>
+                <template #description>
+                  How a user interacts with and experience your website is key.
+                </template>
+              </ResourcesBlogCTA>
+            </div>
+
+            <ResourcesBlogCTA
               button-text="Discover Nuxt Sites"
               to="/showcases"
               image-path="/resources/articles/showcases.png"
@@ -77,7 +79,7 @@
               <template #description>
                 How a user interacts with and experience your website is key.
               </template>
-            </ResourcesArticlesFooterCard>
+            </ResourcesBlogCTA>
           </div>
         </div>
       </UContainer>
@@ -86,16 +88,10 @@
 </template>
 
 <script setup lang="ts">
-import { withoutTrailingSlash } from 'ufo'
+const { $clipboard } = useNuxtApp()
+const { page, fetchPage } = useContent()
 
-const route = useRoute()
-const path = withoutTrailingSlash(route.path)
-
-const isOpen = ref(false)
-
-const { $toast, $clipboard } = useNuxtApp()
-
-const { data: page } = await useAsyncData(`resources-articles-${path}-page`, () => queryContent(path).findOne())
+await fetchPage()
 
 const socialLinks = computed(() => [
   {
@@ -111,12 +107,7 @@ const socialLinks = computed(() => [
 ])
 
 function copyUrl () {
-  $clipboard.copy(`https://nuxt.com${page.value.slug}`)
-
-  $toast.success({
-    title: 'Copied to clipboard!',
-    timeout: 1000
-  })
+  $clipboard.copy(`https://nuxt.com${page.value.slug}`, { title: 'Copied to clipboard' })
 }
 
 const formatDateByLocale = (locale, d) => {
