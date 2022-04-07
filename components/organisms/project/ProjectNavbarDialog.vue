@@ -12,7 +12,7 @@
       <ProfileDropdown size="xs" />
     </template>
 
-    <UVerticalNavigation :links="links" class="py-4 px-2 flex-1 overflow-y-scroll" @click="isOpen = false" />
+    <UVerticalNavigation :links="links" class="py-4 px-2 sm:px-4 flex-1 overflow-y-scroll" @click="isOpen = false" />
   </USlideover>
 </template>
 
