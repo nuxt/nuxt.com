@@ -22,7 +22,7 @@
       </ul>
     </UContainer>
 
-    <div class="mt-12 sm:mt-24 relative overflow-hidden border mb-16">
+    <div class="mt-12 sm:mt-24 relative overflow-hidden border-y mb-16">
       <UContainer padded class="py-12 lg:py-16 lg:flex lg:items-center lg:justify-between relative">
         <span class="_ellipse z-0 " />
         <h2 class="u-text-black z-[1] tracking-tight">

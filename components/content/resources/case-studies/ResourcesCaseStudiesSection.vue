@@ -1,9 +1,7 @@
 <template>
   <div class="py-8 relative" :class="[highlight && 'u-bg-gray-50 sm:py-24 xl:py-36', !highlight && 'sm:py-16']">
     <UContainer padded constrained-class="max-w-4xl relative">
-      <UIcon v-if="icon" :name="icon" class="w-6 h-6 mb-4" />
-
-      <img v-if="iconImage" :src="iconImage" class="w-6 h-6 mb-4">
+      <img v-if="iconImage" :src="iconImage" class="w-8 h-8 mb-4">
 
       <h3 v-if="$slots.title" class="text-3xl tracking-tight font-bold u-text-gray-900 sm:text-3xl mb-8 flex items-center">
         <Markdown use="title" unwrap="p" />

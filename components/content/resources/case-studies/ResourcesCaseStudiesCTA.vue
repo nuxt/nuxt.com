@@ -8,8 +8,8 @@
           <span class="block mt-2 text-lg">Start building, or get in touch with our app experts.</span>
         </h2>
         <div class="mt-8 flex lg:mt-0 lg:flex-shrink-0 gap-3 z-[1] relative">
-          <UButton variant="transparent" size="lg" base-class="group w-40 border-white flex justify-center hover:border-gray-400">
-            <span class="text-white group-hover:text-gray-400">Get in touch</span>
+          <UButton variant="transparent" size="lg" class="group w-40 u-border-white flex justify-center hover:u-border-gray-300 ">
+            <span class="u-text-white group-hover:u-text-gray-300">Get in touch</span>
           </UButton>
         </div>
       </div>
