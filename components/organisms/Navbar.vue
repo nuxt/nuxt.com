@@ -37,7 +37,7 @@
               />
 
               <template #panel="{ close }">
-                <UCard shadow-class="shadow-lg" rounded-class="rounded-lg" ring-class="ring-1 u-ring-gray-100">
+                <UCard shadow-class="shadow-lg" rounded-class="rounded-lg" ring-class="ring-1 u-ring-gray-200">
                   <div class="grid gap-6 sm:gap-8 lg:grid-cols-2">
                     <ULink v-for="(option, optionIndex) in link.options" :key="optionIndex" :to="option.to" class="-m-3 p-3 flex items-start rounded-lg hover:u-bg-gray-50 transition ease-in-out duration-150" @click="close">
                       <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md text-white sm:h-12 sm:w-12">
