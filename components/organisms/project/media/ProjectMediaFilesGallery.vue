@@ -87,8 +87,7 @@ const mediaRefs = ref({})
 onMounted(() => {
   for (const [path, el] of Object.entries(mediaRefs.value)) {
     useIntersectionObserver(el as HTMLElement, ([{ isIntersecting }], _) => {
-      const requestContent = !props.filesCache[path]
-      if (isIntersecting && requestContent) {
+      if (isIntersecting && !props.filesCache[path]) {
         emit('fetchFile', path)
       }
     })
