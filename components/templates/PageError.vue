@@ -8,7 +8,7 @@
         <div class="sm:ml-6">
           <div class="sm:border-l sm:u-border-gray-200 sm:pl-6">
             <h1 class="text-4xl font-extrabold tracking-tight u-text-gray-900 sm:text-5xl">
-              {{ error.name || 'Page not found' }}
+              {{ error.name || error.statusMessage || 'Page not found' }}
             </h1>
             <p class="mt-1 text-xl u-text-gray-500">
               {{ error.message || 'This is not the page you\'re looking for.' }}
