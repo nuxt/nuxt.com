@@ -6269,7 +6269,7 @@ number-is-nan@^1.0.0:
   optionalDependencies:
     fsevents "~2.3.2"
 
-nuxt3@^3.0.0-27488206.1ffcc74:
+nuxt3@^3.0.0-27488730.0cbc9cb:
   version "3.0.0-27488730.0cbc9cb"
   resolved "https://registry.yarnpkg.com/nuxt3/-/nuxt3-3.0.0-27488730.0cbc9cb.tgz#16f4d7b6011343ac3de7619b4b8ba58bd8222b26"
   integrity sha512-ssZmgnhV+Swez7nZmEzVuT7bTZyuBpJIUTVtHRnvS8pLFb5IVcU78nXSrfAn5LVaY9+rzilcViFUDPTRXsgQWQ==
@@ -8499,6 +8499,21 @@ undici@^4.9.5:
   version "4.16.0"
   resolved "https://registry.yarnpkg.com/undici/-/undici-4.16.0.tgz#469bb87b3b918818d3d7843d91a1d08da357d5ff"
   integrity sha512-tkZSECUYi+/T1i4u+4+lwZmQgLXd4BLGlrc7KZPcLIW7Jpq99+Xpc30ONv7nS6F5UNOxp/HBZSSL9MafUrvJbw==
+
+unenv@0.4.3:
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/unenv/-/unenv-0.4.3.tgz#1625a7ba98880aac1d9a902b47b82776bab91e7d"
+  integrity sha512-S1H/L2w3uZ7uD+hYpC+UTPlMhjKMn7SBExT6PNRzXRhMc2Vy+KPcnR7ktrzGWu+8r6hs/Vi/7Sw7cXP72L03oA==
+  dependencies:
+    buffer "^6.0.2"
+    defu "^5.0.0"
+    events "^3.2.0"
+    inherits "^2.0.4"
+    mime "^2.4.6"
+    node-fetch "^3.0.0"
+    process "^0.11.10"
+    upath "^2.0.1"
+    util "^0.12.4"
 
 unenv@^0.4.3, unenv@^0.4.5:
   version "0.4.5"
