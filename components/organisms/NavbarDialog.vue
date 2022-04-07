@@ -27,7 +27,7 @@
       </div>
     </template>
 
-    <div class="p-4 overflow-y-scroll flex-1">
+    <div class="py-4 px-4 sm:px-6 overflow-y-scroll flex-1">
       <DocsAsideTree :tree="tree" :max="selectedLink ? null : 2" @select="onSelect" @close="isOpen = false" />
     </div>
   </USlideover>
