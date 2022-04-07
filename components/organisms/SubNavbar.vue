@@ -5,7 +5,9 @@
   >
     <UContainer padded>
       <div class="relative grid items-center justify-between h-16 grid-cols-2 gap-3 sm:grid-cols-6">
-        <div class="flex items-center justify-start gap-3">
+        <div class="flex items-center justify-start">
+          <Logo class="h-4 transition-all" :class="[isBlurry ? 'w-auto mr-3' : 'w-0']" />
+
           <slot name="left">
             <p v-if="title" class="font-semibold">
               {{ title }}
