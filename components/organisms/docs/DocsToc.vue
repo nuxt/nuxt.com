@@ -1,29 +1,29 @@
 <template>
   <div class="space-y-2">
-    <NuxtLink v-if="prev" :to="prev.slug" class="flex items-center font-medium hover:font-semibold text-sm u-text-gray-500 hover:u-text-gray-900 gap-x-3">
+    <NuxtLink v-if="prev" :to="prev.slug" class="flex lg:flex-row-reverse items-center font-medium hover:font-semibold text-sm u-text-gray-500 hover:u-text-gray-900 gap-x-3">
       <div class="flex-shrink-0 p-1 u-bg-gray-100 rounded-md">
-        <UIcon name="heroicons-solid:rewind" class="w-4 h-4 u-text-gray-400" />
+        <UIcon name="heroicons-solid:chevron-double-left" class="w-4 h-4 u-text-gray-400" />
       </div>
 
       <span>Previous page</span>
     </NuxtLink>
 
     <template v-if="toc.length">
-      <div class="flex items-center font-semibold u-text-gray-900 text-sm gap-x-3">
+      <div class="flex lg:flex-row-reverse items-center font-semibold u-text-gray-900 text-sm gap-x-3">
         <div class="flex-shrink-0 p-1 u-bg-gray-900 rounded-md">
-          <UIcon name="heroicons-solid:play" class="w-4 h-4 u-text-white" />
+          <UIcon name="heroicons-outline:view-grid" class="w-4 h-4 u-text-white" />
         </div>
 
         <span>On this page</span>
       </div>
 
-      <ul class="pl-3">
-        <li v-for="link in toc" :key="link.text" class="border-l-2 min-w-0" :class="activeHeadings.includes(link.id) ? 'u-border-gray-900' : 'u-border-gray-300'">
+      <ul class="pl-3 lg:pr-3">
+        <li v-for="link in toc" :key="link.text" class="border-l-2 lg:border-r-2 lg:border-l-0 min-w-0 lg:text-right" :class="activeHeadings.includes(link.id) ? 'u-border-gray-900' : 'u-border-gray-300'">
           <a
             :href="`#${link.id}`"
-            class="text-sm font-medium hover:font-semibold text-gray-500 hover:u-text-gray-900 py-1 pl-3 block truncate"
+            class="text-sm font-medium hover:font-semibold text-gray-500 hover:u-text-gray-900 py-1 pl-3 lg:pr-3 block truncate"
             :class="{
-              'u-text-gray-900': activeHeadings.includes(link.id),
+              'u-text-gray-900 font-semibold': activeHeadings.includes(link.id),
             }"
             @click.prevent="scrollToHeading(link.id, '--docs-scroll-margin-block')"
           >
@@ -33,9 +33,9 @@
       </ul>
     </template>
 
-    <NuxtLink v-if="next" :to="next.slug" class="flex items-center font-medium hover:font-semibold text-sm u-text-gray-500 hover:u-text-gray-900 gap-x-3">
+    <NuxtLink v-if="next" :to="next.slug" class="flex lg:flex-row-reverse items-center font-medium hover:font-semibold text-sm u-text-gray-500 hover:u-text-gray-900 gap-x-3">
       <div class="flex-shrink-0 p-1 u-bg-gray-100 rounded-md">
-        <UIcon name="heroicons-solid:rewind" class="w-4 h-4 u-text-gray-400 scale-x-[-1]" />
+        <UIcon name="heroicons-solid:chevron-double-right" class="w-4 h-4 u-text-gray-400" />
       </div>
 
       <span>Next page</span>
