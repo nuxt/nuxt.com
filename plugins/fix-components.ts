@@ -1,5 +1,4 @@
 import NuxtLink from '#app/components/nuxt-link'
-
 /**
  * Global nuxt-link issue.
  *
