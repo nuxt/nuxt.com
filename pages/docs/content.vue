@@ -1,7 +1,7 @@
 <template>
   <DocsPage>
     <template #header>
-      <SubNavbar title="Content" :links="links">
+      <SubNavbar title="Content" to="/docs/content" :links="links">
         <template #right>
           <UButton icon="fa-brands:github" variant="transparent" href="https://github.com/nuxt/content" class="!p-0" />
         </template>
