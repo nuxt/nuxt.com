@@ -34,7 +34,7 @@
         @drop.prevent="onDrop"
       >
         <div v-if="computedFiles.length" class="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto">
-          <ProjectMediaFilesGallery :files-cache="filesCache" @fetch-file="onFetchFile" />
+          <ProjectMediaFilesGallery :medias="medias" @fileVisible="onFileVisible" />
         </div>
         <ProjectMediaFilesEmpty v-else @create="$refs.fileToUpload.click()" />
 
@@ -45,7 +45,7 @@
         />
       </div>
 
-      <ProjectMediaFileAside :files-cache="filesCache" />
+      <ProjectMediaFileAside :medias="medias" />
     </div>
   </ProjectPage>
 </template>
@@ -78,11 +78,11 @@ const { upload, computedFiles, fetchFile } = useProjectFiles(props.project, root
 const fileToUpload: Ref<HTMLInputElement> = ref(null)
 const dragover = ref(false)
 
-const filesCache = ref({})
+const medias = useState(`project-${props.project.id}-medias`, () => ({}))
 
 // Methods
 
-function onDragEnter (e) {
+function onDragEnter (_e) {
   dragover.value = true
 }
 
@@ -100,9 +100,9 @@ function onDrop (e) {
   onFileUpload()
 }
 
-async function onFetchFile (path) {
+async function onFileVisible (path) {
   const file = computedFiles.value.find(file => file.path === path)
-  filesCache.value[path] = await fetchFile(file.oldPath || file.path)
+  medias.value[path] = await fetchFile(file.oldPath || file.path)
 }
 
 // Http
