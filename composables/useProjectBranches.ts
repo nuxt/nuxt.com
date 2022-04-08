@@ -1,5 +1,6 @@
 import type { Ref } from 'vue'
 import type { GitHubBranch, Project } from '~/types'
+import ProjectModalPublish from '~/components/organisms/project/modal/ProjectModalPublish.vue'
 import ProjectModalBranchCreate from '~/components/organisms/project/modal/ProjectModalBranchCreate.vue'
 
 export const useProjectBranches = (project: Project) => {
@@ -16,7 +17,7 @@ export const useProjectBranches = (project: Project) => {
 
   // Http
 
-  async function fetch (force?: boolean, selectDefault?: boolean) {
+  async function fetch (force?: boolean) {
     if (branches.value.length && !force) {
       return
     }
@@ -27,7 +28,7 @@ export const useProjectBranches = (project: Project) => {
 
     pending.value = false
 
-    init(selectDefault)
+    init()
   }
 
   function refresh () {
@@ -75,6 +76,9 @@ export const useProjectBranches = (project: Project) => {
     try {
       await client(`/projects/${project.id}/branches/${encodeURIComponent(branch.value.name)}/publish`, { method: 'POST' })
 
+      select({ name: project.repository.default_branch })
+      branches.value = branches.value.filter(b => b.name !== branch.value.name)
+
       $toast.success({
         title: 'Published!',
         description: `Your branch ${branch.value.name} has been merged into ${project.repository.default_branch}.`
@@ -90,7 +94,18 @@ export const useProjectBranches = (project: Project) => {
 
   // Modals
 
-  function openCreateModal (name: string, mergeDraft: boolean) {
+  function openPublishModal (callback?: () => void) {
+    openModal(ProjectModalPublish, {
+      project,
+      branch: branch.value,
+      onSubmit: async () => {
+        await publish()
+        callback()
+      }
+    })
+  }
+
+  function openCreateModal (name: string, mergeDraft: boolean, callback?: () => void) {
     openModal(ProjectModalBranchCreate, {
       name,
       mergeDraft,
@@ -99,17 +114,19 @@ export const useProjectBranches = (project: Project) => {
         await create(name, mergeDraft)
 
         if (mergeDraft) {
-          commit()
+          await commit()
         }
+
+        callback()
       }
     })
   }
 
   // Methods
 
-  function init (selectDefault = false) {
+  function init () {
     let b: GitHubBranch | undefined
-    if (cookie.value && !selectDefault) {
+    if (cookie.value) {
       b = branches.value.find(branch => branch.name === cookie.value)
     } else {
       b = branches.value.find(branch => branch.name === project.repository.default_branch)
@@ -133,6 +150,7 @@ export const useProjectBranches = (project: Project) => {
     reset,
     // Modals
     openCreateModal,
+    openPublishModal,
     // Methods
     select,
     // Refs

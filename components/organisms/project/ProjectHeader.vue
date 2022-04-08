@@ -50,48 +50,26 @@
 
 <script setup lang="ts">
 import type { Project } from '~/types'
-import ProjectModalPublish from '~/components/organisms/project/modal/ProjectModalPublish.vue'
-import ProjectModalBranchCreate from '~/components/organisms/project/modal/ProjectModalBranchCreate.vue'
 
 const project: Project = inject('project')
 
-const { open: openModal } = useModal()
 const { openBranchesModal, openFilesModal } = useProjectModals()
 
-const { branch, branches, commit, publish, fetch: fetchBranches, create: createBranch, loading } = useProjectBranches(project)
+const { branch, branches, openPublishModal, openCreateModal, loading } = useProjectBranches(project)
 const { isDraft: isDraftContent, mergeDraftInFiles: mergeContentDraftInFiles } = useProjectFiles(project, 'content')
 const { isDraft: isDraftMedia, mergeDraftInFiles: mergeMediaDraftInFiles } = useProjectFiles(project, 'public')
 
-async function onCommitClick () {
-  if (branch.value.name !== project.repository.default_branch) {
-    return await commitAndMergeDrafts()
-  }
-
-  openModal(ProjectModalBranchCreate, {
-    branches: branches.value,
-    onSubmit: async (name: string) => {
-      await createBranch(name, true)
-      await commitAndMergeDrafts()
-    }
+function onCommitClick () {
+  openCreateModal('', true, () => {
+    mergeContentDraftInFiles()
+    mergeMediaDraftInFiles()
   })
 }
 
 function onPublishClick () {
-  openModal(ProjectModalPublish, {
-    project,
-    branch: branch.value,
-    onSubmit: async () => {
-      await publish()
-      await fetchBranches(true, true)
-      mergeContentDraftInFiles()
-      mergeMediaDraftInFiles()
-    }
+  openPublishModal(() => {
+    mergeContentDraftInFiles()
+    mergeMediaDraftInFiles()
   })
-}
-
-async function commitAndMergeDrafts () {
-  await commit()
-  mergeContentDraftInFiles()
-  mergeMediaDraftInFiles()
 }
 </script>
