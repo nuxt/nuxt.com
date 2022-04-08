@@ -98,16 +98,6 @@ export const useProjectBranches = (project: Project) => {
 
   // Modals
 
-  function openPublishModal (callback?: () => void) {
-    openModal(ProjectModalPublish, {
-      project,
-      branch: branch.value,
-      onSubmit: async () => {
-        await publish(callback)
-      }
-    })
-  }
-
   function openCreateModal (name: string, mergeDraft: boolean, callback?: () => void) {
     openModal(ProjectModalBranchCreate, {
       name,
@@ -119,6 +109,16 @@ export const useProjectBranches = (project: Project) => {
         if (mergeDraft) {
           await commit(callback)
         }
+      }
+    })
+  }
+
+  function openPublishModal (callback?: () => void) {
+    openModal(ProjectModalPublish, {
+      project,
+      branch: branch.value,
+      onSubmit: async () => {
+        await publish(callback)
       }
     })
   }
