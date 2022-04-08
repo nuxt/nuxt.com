@@ -51,15 +51,15 @@ export const useProjectBranches = (project: Project) => {
     } catch (e) {}
   }
 
-  async function commit () {
-    if (branch.value.name === project.repository.default_branch) {
-      return openCreateModal('', true)
-    }
-
+  async function commit (callback?: () => void) {
     loading.value = true
 
     try {
       await client(`/projects/${project.id}/branches/${encodeURIComponent(branch.value.name)}/commit`, { method: 'POST' })
+
+      if (callback) {
+        await callback()
+      }
 
       $toast.success({
         title: 'Changes saved!',
@@ -70,7 +70,7 @@ export const useProjectBranches = (project: Project) => {
     loading.value = false
   }
 
-  async function publish () {
+  async function publish (callback?: () => void) {
     loading.value = true
 
     try {
@@ -78,6 +78,10 @@ export const useProjectBranches = (project: Project) => {
 
       select({ name: project.repository.default_branch })
       branches.value = branches.value.filter(b => b.name !== branch.value.name)
+
+      if (callback) {
+        await callback()
+      }
 
       $toast.success({
         title: 'Published!',
@@ -99,8 +103,7 @@ export const useProjectBranches = (project: Project) => {
       project,
       branch: branch.value,
       onSubmit: async () => {
-        await publish()
-        callback()
+        await publish(callback)
       }
     })
   }
@@ -114,10 +117,8 @@ export const useProjectBranches = (project: Project) => {
         await create(name, mergeDraft)
 
         if (mergeDraft) {
-          await commit()
+          await commit(callback)
         }
-
-        callback()
       }
     })
   }

@@ -55,21 +55,26 @@ const project: Project = inject('project')
 
 const { openBranchesModal, openFilesModal } = useProjectModals()
 
-const { branch, branches, openPublishModal, openCreateModal, loading } = useProjectBranches(project)
-const { isDraft: isDraftContent, mergeDraftInFiles: mergeContentDraftInFiles } = useProjectFiles(project, 'content')
-const { isDraft: isDraftMedia, mergeDraftInFiles: mergeMediaDraftInFiles } = useProjectFiles(project, 'public')
+const { branch, branches, commit, openPublishModal, openCreateModal, loading } = useProjectBranches(project)
+const { isDraft: isDraftContent, refresh: refreshContentFiles, mergeDraftInFiles: mergeContentDraftInFiles } = useProjectFiles(project, 'content')
+const { isDraft: isDraftMedia, refresh: refreshMediaFiles, mergeDraftInFiles: mergeMediaDraftInFiles } = useProjectFiles(project, 'public')
 
-function onCommitClick () {
-  openCreateModal('', true, () => {
+async function onCommitClick () {
+  const callbackAfterCommit = () => {
     mergeContentDraftInFiles()
     mergeMediaDraftInFiles()
-  })
+  }
+
+  if (branch.value.name === project.repository.default_branch) {
+    return openCreateModal('', true, callbackAfterCommit)
+  }
+
+  await commit(callbackAfterCommit)
 }
 
 function onPublishClick () {
-  openPublishModal(() => {
-    mergeContentDraftInFiles()
-    mergeMediaDraftInFiles()
+  openPublishModal(async () => {
+    await Promise.all([refreshContentFiles(), refreshMediaFiles()])
   })
 }
 </script>
