@@ -11,13 +11,13 @@
     >
       <ULink
         :to="link.slug"
-        class="block py-1.5 flex items-center justify-between"
+        class="block py-1.5 flex items-center justify-between focus:outline-none"
         :exact="link.exact"
         :class="{
           'pl-4 lg:text-sm': level > 0,
           '!pt-0': level === 0 && index === 0,
           'font-semibold u-text-gray-900': isActive(link),
-          'font-medium u-text-gray-500 hover:u-text-gray-900': !isActive(link)
+          'font-medium u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-700': !isActive(link)
         }"
         @click.stop.prevent="onClick(link)"
       >

@@ -9,7 +9,7 @@
           <Logo class="h-4 transition-all" :class="[hasScrolledPastSubNavbar ? 'w-auto mr-3' : 'w-0']" />
 
           <slot name="left">
-            <component :is="!!to ? 'NuxtLink' : 'p'" v-if="title" :to="to" class="font-semibold">
+            <component :is="!!to ? 'NuxtLink' : 'p'" v-if="title" :to="to" class="font-semibold u-text-gray-900 focus:outline-none" tabindex="-1">
               {{ title }}
             </component>
           </slot>
@@ -20,10 +20,10 @@
             v-for="(link, index) in links"
             :key="index"
             :to="link.slug"
-            class="text-sm"
+            class="text-sm focus:outline-none"
             :class="{
               'u-text-gray-900 font-semibold': isActive(link),
-              'font-medium u-text-gray-500 hover:u-text-gray-900': !isActive(link),
+              'font-medium u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-700': !isActive(link),
             }"
           >
             {{ link.title }}
