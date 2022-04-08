@@ -1,7 +1,7 @@
 import type { Ref } from 'vue'
 import type { GitHubBranch, Project } from '~/types'
-import ProjectModalPublish from '~/components/organisms/project/modal/ProjectModalPublish.vue'
 import ProjectModalBranchCreate from '~/components/organisms/project/modal/ProjectModalBranchCreate.vue'
+import ProjectModalPublish from '~/components/organisms/project/modal/ProjectModalPublish.vue'
 
 export const useProjectBranches = (project: Project) => {
   const { open: openModal } = useModal()

@@ -138,12 +138,13 @@ function activateFirstOption () {
   }, 0)
 }
 
-function onBranchSelect (b: GitHubBranch) {
+async function onBranchSelect (b: GitHubBranch) {
   isOpen.value = false
   selectBranch(b)
-  refreshMediaFiles()
-  refreshContentFiles()
   query.value = ''
+
+  await refreshContentFiles()
+  await refreshMediaFiles()
 }
 
 function onCreateBranchClick () {
