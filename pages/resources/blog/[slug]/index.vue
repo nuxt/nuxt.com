@@ -28,7 +28,7 @@
 
       <UContainer constrained-class="max-w-4xl" class="pt-8 lg:pt-0" padded>
         <div class="relative overflow-hidden border-b u-border-gray-400">
-          <Content v-if="page" :document="page" class="prose prose-gray dark:prose-invert !max-w-full pb-12" />
+          <Content v-if="page" :document="page" class="prose dark:prose-invert max-w-none pb-12" />
         </div>
         <div class="flex justify-between pt-6">
           <span class="font-bold u-text-gray-900">Share the article</span>
