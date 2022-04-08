@@ -9,9 +9,9 @@
           <Logo class="h-4 transition-all" :class="[isBlurry ? 'w-auto mr-3' : 'w-0']" />
 
           <slot name="left">
-            <p v-if="title" class="font-semibold">
+            <component :is="!!to ? 'NuxtLink' : 'p'" v-if="title" :to="to" class="font-semibold">
               {{ title }}
-            </p>
+            </component>
           </slot>
         </div>
 
@@ -43,6 +43,10 @@ import { useWindowScroll } from '@vueuse/core'
 
 defineProps({
   title: {
+    type: String,
+    default: null
+  },
+  to: {
     type: String,
     default: null
   },
