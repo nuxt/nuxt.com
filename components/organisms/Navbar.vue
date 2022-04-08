@@ -14,7 +14,7 @@
         </div>
 
         <div class="flex justify-center col-span-4 lg:col-span-1 lg:justify-start">
-          <NuxtLink to="/" class="block u-text-black">
+          <NuxtLink to="/" class="block u-text-black focus:outline-none">
             <LogoFull class="hidden w-auto h-8 sm:block" />
             <Logo class="block w-auto h-6 sm:hidden" />
           </NuxtLink>
@@ -25,7 +25,7 @@
             v-for="(link, index) in links"
             :key="index"
           >
-            <UPopover v-if="link.options?.length" panel-class="absolute z-10 left-1/2 transform -translate-x-1/2 mt-3 px-2 w-screen max-w-md sm:px-0 lg:max-w-xl">
+            <UPopover v-if="link.options?.length" mode="hover" panel-class="absolute z-10 left-1/2 transform -translate-x-1/2 mt-3 px-2 w-screen max-w-md sm:px-0 lg:max-w-xl">
               <UButton
                 :label="link.title"
                 variant="transparent"
@@ -61,9 +61,9 @@
               v-else
               :to="link.slug"
               :exact="link.exact"
-              class="text-sm lg:text-base"
+              class="text-sm lg:text-base focus:outline-none"
               active-class="font-semibold u-text-gray-900"
-              inactive-class="font-medium u-text-gray-500 hover:u-text-gray-900"
+              inactive-class="font-medium u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-700"
             >
               {{ link.title }}
             </ULink>
