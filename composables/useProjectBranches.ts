@@ -147,7 +147,6 @@ export const useProjectBranches = (project: Project) => {
     refresh,
     create,
     commit,
-    publish,
     reset,
     // Modals
     openCreateModal,
