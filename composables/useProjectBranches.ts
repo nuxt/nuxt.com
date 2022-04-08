@@ -51,17 +51,15 @@ export const useProjectBranches = (project: Project) => {
     } catch (e) {}
   }
 
-  async function commit () {
-    if (branch.value.name === project.repository.default_branch) {
-      return openCreateModal('', true)
-    }
-
+  async function commit (callback?: () => void) {
     loading.value = true
 
     try {
       await client(`/projects/${project.id}/branches/${encodeURIComponent(branch.value.name)}/commit`, { method: 'POST' })
 
-      await refresh()
+      if (callback) {
+        await callback()
+      }
 
       $toast.success({
         title: 'Changes saved!',
@@ -72,13 +70,18 @@ export const useProjectBranches = (project: Project) => {
     loading.value = false
   }
 
-  async function publish () {
+  async function publish (callback?: () => void) {
     loading.value = true
 
     try {
       await client(`/projects/${project.id}/branches/${encodeURIComponent(branch.value.name)}/publish`, { method: 'POST' })
 
-      await refresh()
+      select({ name: project.repository.default_branch })
+      branches.value = branches.value.filter(b => b.name !== branch.value.name)
+
+      if (callback) {
+        await callback()
+      }
 
       $toast.success({
         title: 'Published!',
@@ -95,7 +98,7 @@ export const useProjectBranches = (project: Project) => {
 
   // Modals
 
-  function openCreateModal (name: string, mergeDraft: boolean) {
+  function openCreateModal (name: string, mergeDraft: boolean, callback?: () => void) {
     openModal(ProjectModalBranchCreate, {
       name,
       mergeDraft,
@@ -104,17 +107,19 @@ export const useProjectBranches = (project: Project) => {
         await create(name, mergeDraft)
 
         if (mergeDraft) {
-          commit()
+          await commit(callback)
         }
       }
     })
   }
 
-  function openPublishModal () {
+  function openPublishModal (callback?: () => void) {
     openModal(ProjectModalPublish, {
       project,
       branch: branch.value,
-      onSubmit: publish
+      onSubmit: async () => {
+        await publish(callback)
+      }
     })
   }
 

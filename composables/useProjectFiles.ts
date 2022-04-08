@@ -240,9 +240,20 @@ export const useProjectFiles = (project: Project, root: Root) => {
     file.value = f
   }
 
+  function mergeDraftInFiles () {
+    files.value = computedFiles.value.reduce((files, file) => {
+      if (file.status === 'deleted') { return files }
+      delete file.status
+      files.push(file)
+      return files
+    }, [])
+
+    draft.value = null
+  }
+
   // Computed
 
-  const computedFiles = computed(() => {
+  const computedFiles: Ref<GitHubFile[]> = computed(() => {
     const additions = draft.value?.additions.map(a => ({ ...a })) || []
     const deletions = draft.value?.deletions.map(a => ({ ...a })) || []
 
@@ -312,6 +323,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
     // Methods
     select,
     init,
+    mergeDraftInFiles,
     // Refs
     pending,
     // Computed

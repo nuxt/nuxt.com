@@ -40,9 +40,9 @@ if (error.value) {
 
 provide('project', project.value)
 
-const { branch, branches, fetch: fetchBranches } = useProjectBranches(project.value)
-const { fetch: fetchContentFiles, refresh: refreshContentFiles } = useProjectFiles(project.value, 'content')
-const { fetch: fetchMediaFiles, refresh: refreshMediaFiles } = useProjectFiles(project.value, 'public')
+const { branches, fetch: fetchBranches } = useProjectBranches(project.value)
+const { fetch: fetchContentFiles } = useProjectFiles(project.value, 'content')
+const { fetch: fetchMediaFiles } = useProjectFiles(project.value, 'public')
 
 try {
   await fetchBranches()
@@ -55,9 +55,6 @@ if (!branches.value.length && process.client) {
 try {
   await Promise.all([fetchContentFiles(), fetchMediaFiles()])
 } catch (e) {}
-
-// Refresh files when branch changes
-watch(branch, async () => await Promise.all([refreshContentFiles(), refreshMediaFiles()]))
 
 function onBranchesModalChange () {
   if (isFilesModalOpen.value) {
