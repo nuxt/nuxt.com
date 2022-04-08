@@ -1,7 +1,7 @@
 <template>
   <DocsPage>
     <template #header>
-      <SubNavbar title="Framework" :links="links">
+      <SubNavbar title="Framework" to="/docs/framework" :links="links">
         <template #right>
           <UButton icon="fa-brands:github" variant="transparent" href="https://github.com/nuxt/framework" class="!p-0" />
         </template>
