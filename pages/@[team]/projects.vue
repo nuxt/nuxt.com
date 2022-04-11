@@ -31,7 +31,7 @@
         <UButton :to="{ name: '@team-new', params: { team: team?.slug || user.username } }" label="New project" icon="heroicons-solid:plus" class="w-full sm:w-auto" />
       </div>
 
-      <ProjectsList v-if="projects.length" :projects="filteredProjects" />
+      <ProjectsList v-if="projects && projects.length" :projects="filteredProjects" />
       <ProjectsListPlaceholder v-else />
     </div>
   </Page>
