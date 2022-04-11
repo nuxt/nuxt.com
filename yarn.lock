@@ -836,11 +836,11 @@
     untyped "^0.4.4"
 
 "@nuxt/kit@npm:@nuxt/kit-edge@latest":
-  version "3.0.0-27489614.315e5b5"
-  resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-27489614.315e5b5.tgz#0a131c60bcaeacb28875c11504dfacdb42eff791"
-  integrity sha512-7R8MSbG0wAVPmj5EbW+qPz/84rXCWBoD2lbu/nXeMNSWWBK/KQvdrRVcMGqqXHgbKBpZhXz8qM8ex12lN3RGvQ==
+  version "3.0.0-27494471.1091d45"
+  resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-27494471.1091d45.tgz#9ab127634e5ed78cf6130ae3d309c6f2019b8799"
+  integrity sha512-aDN043C1VMsZfKq3FffDW/QofQY/aCDJfYgtnJOoGwkqNbe+KpFd/R9XFrqSh6rk7V41x9EVBMsoaHH6/H+Ctw==
   dependencies:
-    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-27489614.315e5b5"
+    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-27494471.1091d45"
     c12 "^0.2.5"
     consola "^2.15.3"
     defu "^6.0.0"
@@ -953,10 +953,10 @@
     ufo "^0.8.3"
     unimport "^0.1.4"
 
-"@nuxt/schema@npm:@nuxt/schema-edge@3.0.0-27489614.315e5b5":
-  version "3.0.0-27489614.315e5b5"
-  resolved "https://registry.yarnpkg.com/@nuxt/schema-edge/-/schema-edge-3.0.0-27489614.315e5b5.tgz#8e8ed3a5ea02c268dd7e473ac07c13abde1ec450"
-  integrity sha512-uJQSTtUcI+d3gQbigkm3eD/9ZIe4ocKvCIFUOqFZQwEvA6lI7uKyk+Pc5LaYPiNImUxv/nDD5e8jUiR9ciD+zQ==
+"@nuxt/schema@npm:@nuxt/schema-edge@3.0.0-27494471.1091d45":
+  version "3.0.0-27494471.1091d45"
+  resolved "https://registry.yarnpkg.com/@nuxt/schema-edge/-/schema-edge-3.0.0-27494471.1091d45.tgz#1a1b219090acfcf1d38efca5474219478a48322e"
+  integrity sha512-2tokTe3YQYKxyiTGC7cgeKRSJif+xvx5pXl5cb7sx0Nwim2hJyTi6gE9U5YbCZ85Rqu5pnqVZ5c6bLNOtIdDRw==
   dependencies:
     c12 "^0.2.5"
     create-require "^1.1.1"
@@ -1007,9 +1007,9 @@
     vite-node "^0.9.0"
 
 "@nuxthq/ui@npm:@nuxthq/ui-edge@latest":
-  version "0.0.2-27490137.289de07"
-  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27490137.289de07.tgz#09c36f9f831ce6c62dbf301420bf76893f870896"
-  integrity sha512-wR/GEKPhmPYqDVv3UbetMEDD34j5kYudCrxg//xmd1F5o1bzxiC8/gwa6PkZCxB7IRq6XYkG7TLN9OSVLnOMSQ==
+  version "0.0.2-27494742.656b6e1"
+  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27494742.656b6e1.tgz#a26b299078028d4f0c1338e1d8639f45b23c1cc5"
+  integrity sha512-xPbAAJTHfU9hFQqHTd6qOwW/VPkQC5xy5rbAETxI2CzmCWp6Vu545+nM4LoEIobHPTmEeB0AvZ2nzcM9kDGuYA==
   dependencies:
     "@headlessui/vue" "1.5.0"
     "@iconify/vue" "^3.2.1"
@@ -5347,9 +5347,9 @@ lru-cache@^6.0.0:
     yallist "^4.0.0"
 
 lru-cache@^7.4.0:
-  version "7.8.0"
-  resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-7.8.0.tgz#649aaeb294a56297b5cbc5d70f198dcc5ebe5747"
-  integrity sha512-AmXqneQZL3KZMIgBpaPTeI6pfwh+xQ2vutMsyqOu1TBdEXFZgpG/80wuJ531w2ZN7TI0/oc8CPxzh/DKQudZqg==
+  version "7.8.1"
+  resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-7.8.1.tgz#68ee3f4807a57d2ba185b7fd90827d5c21ce82bb"
+  integrity sha512-E1v547OCgJvbvevfjgK9sNKIVXO96NnsTsFPBlg4ZxjhsJSODoH9lk8Bm0OxvHNm6Vm5Yqkl/1fErDxhYL8Skg==
 
 magic-string@^0.25.7:
   version "0.25.9"
@@ -6770,9 +6770,9 @@ postcss-convert-values@^5.1.0:
     postcss-value-parser "^4.2.0"
 
 postcss-custom-properties@^12.1.4:
-  version "12.1.6"
-  resolved "https://registry.yarnpkg.com/postcss-custom-properties/-/postcss-custom-properties-12.1.6.tgz#345b5b64c9520bb66390393646e8d5fbb7f10b58"
-  integrity sha512-QEnQkDkb+J+j2bfJisJJpTAFL+lUFl66rUNvnjPBIvRbZACLG4Eu5bmBCIY4FJCqhwsfbBpmJUyb3FcR/31lAg==
+  version "12.1.7"
+  resolved "https://registry.yarnpkg.com/postcss-custom-properties/-/postcss-custom-properties-12.1.7.tgz#ca470fd4bbac5a87fd868636dafc084bc2a78b41"
+  integrity sha512-N/hYP5gSoFhaqxi2DPCmvto/ZcRDVjE3T1LiAMzc/bg53hvhcHOLpXOHb526LzBBp5ZlAUhkuot/bfpmpgStJg==
   dependencies:
     postcss-value-parser "^4.2.0"
 
@@ -9080,7 +9080,20 @@ yargs@^16.0.0, yargs@^16.2.0:
     y18n "^5.0.5"
     yargs-parser "^20.2.2"
 
-yargs@^17.2.1, yargs@^17.3.1:
+yargs@^17.2.1:
+  version "17.4.1"
+  resolved "https://registry.yarnpkg.com/yargs/-/yargs-17.4.1.tgz#ebe23284207bb75cee7c408c33e722bfb27b5284"
+  integrity sha512-WSZD9jgobAg3ZKuCQZSa3g9QOJeCCqLoLAykiWgmXnDo9EPnn4RPf5qVTtzgOx66o6/oqhcA5tHtJXpG8pMt3g==
+  dependencies:
+    cliui "^7.0.2"
+    escalade "^3.1.1"
+    get-caller-file "^2.0.5"
+    require-directory "^2.1.1"
+    string-width "^4.2.3"
+    y18n "^5.0.5"
+    yargs-parser "^21.0.0"
+
+yargs@^17.3.1:
   version "17.4.0"
   resolved "https://registry.yarnpkg.com/yargs/-/yargs-17.4.0.tgz#9fc9efc96bd3aa2c1240446af28499f0e7593d00"
   integrity sha512-WJudfrk81yWFSOkZYpAZx4Nt7V4xp7S/uJkX0CnxovMCt1wCE8LNftPpNuF9X/u9gN5nsD7ycYtRcDf2pL3UiA==
