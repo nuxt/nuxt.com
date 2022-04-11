@@ -28,6 +28,8 @@ onMounted(async () => {
     } else {
       router.push({ name: '@team-projects', params: { team: user.value.username } })
     }
-  } catch (e) {}
+  } catch (e) {
+    router.push('/')
+  }
 })
 </script>
