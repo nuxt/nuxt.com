@@ -21,6 +21,7 @@
         </li>
       </ul>
     </UContainer>
+
     <ResourcesCaseStudiesCTA />
   </div>
 </template>
