@@ -1,0 +1,76 @@
+<template>
+  <li class="w-full">
+    <UCard
+      class="h-28"
+      :background-class="cardClass"
+      :body-class="{'h-full px-20': gradient ,'group h-28': secondaries }"
+    >
+      <div v-if="gradient" class="flex h-full text-center justify-between items-center text-white text-lg font-semibold">
+        <span>#00DC82</span>
+        <span>#36E4DA</span>
+        <span>#0047E1</span>
+      </div>
+      <div v-if="secondaries" class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex h-full justify-between items-end text-gray-900 text-sm p-2">
+        <span class="pl-1">{{ hexaColor }}</span>
+        <UButton variant="transparent" base-class="py-0" @click="onClick">
+          <span class="text-gray-900 text-sm -mr-2">
+            Copy
+          </span>
+        </UButton>
+      </div>
+    </UCard>
+    <div v-if="!gradient && !secondaries">
+      <div class="flex justify-between items-center">
+        <h5 class="font-bold u-text-gray-900">
+          <Markdown use="color" unwrap="p" />
+        </h5>
+        <UButton variant="transparent" @click="onClick">
+          <span class="u-text-gray-400 text-sm -mr-4">
+            Copy
+          </span>
+        </UButton>
+      </div>
+      <p class="u-text-gray-400">
+        {{ hexaColor }}
+      </p>
+    </div>
+    <div v-if="$slots.gradientContent" class="u-text-gray-300">
+      <Makrdown use="gradientContent" unwrap="p" />
+    </div>
+  </li>
+</template>
+<script setup>
+const props = defineProps({
+  border: {
+    type: Boolean,
+    default: false
+  },
+  cardClass: {
+    type: String,
+    default: ''
+  },
+  hexaColor: {
+    type: String,
+    default: ''
+  },
+  gradient: {
+    type: Boolean,
+    default: false
+  },
+  secondaries: {
+    type: Boolean,
+    default: false
+  }
+})
+
+const { $clipboard } = useNuxtApp()
+
+const onClick = () => {
+  $clipboard.copy(
+    props.hexaColor,
+    {
+      title: 'Color copied to clipboard!'
+    }
+  )
+}
+</script>
