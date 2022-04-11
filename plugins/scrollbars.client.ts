@@ -1,5 +1,3 @@
-import { defineNuxtPlugin } from '#imports'
-
 export default defineNuxtPlugin(() => {
   // https://gist.github.com/IceCreamYou/cd517596e5847a88e2bb0a091da43fb4#file-force-scrollbars-visible-js
   // Returns whether scrollbars show up on scrollable elements.
