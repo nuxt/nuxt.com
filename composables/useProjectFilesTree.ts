@@ -82,7 +82,7 @@ export const useProjectFilesTree = (project: Project, root: Root) => {
   // Computed
 
   const filteredComputedFiles = computed(() => {
-    return computedFiles.value.filter(f => f.path.search(new RegExp(query.value, 'i')) !== -1)
+    return query.value ? computedFiles.value.filter(f => f.path.search(new RegExp(query.value, 'i')) !== -1) : computedFiles.value
   })
 
   const tree = computed(() => {
