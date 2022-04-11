@@ -54,7 +54,11 @@ const q = ref('')
 
 provide('team', props.team)
 
-const { data: projects } = await useAsyncData(`projects-${props.team?.slug || user.value.username}`, () => client<Project[]>(props.team ? `/teams/${props.team.slug}/projects` : '/projects'))
+const { data: projects } = await useAsyncData(
+  `projects-${props.team?.slug || user.value.username}`,
+  () => client<Project[]>(props.team ? `/teams/${props.team.slug}/projects` : '/projects'),
+  { initialCache: false }
+)
 
 const filteredProjects = computed(() => {
   return projects.value.filter((project) => {
