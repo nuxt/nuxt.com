@@ -1,7 +1,14 @@
 <template>
   <ProjectPage>
     <template v-if="tree && tree.length" #aside>
-      <ProjectContentFilesTree :tree="tree" />
+      <div class="flex flex-col flex-1 overflow-y-hidden">
+        <ProjectContentFilesTree :tree="filteredTree" class="flex-1 overflow-y-auto" />
+        <div class="flex flex-shrink-0 p-2 border-t u-border-gray-300">
+          <UInput v-model="treeQuery" autocomplete="off" placeholder="Filter files" class="flex w-full" custom-class="truncate pr-9">
+            <UButton v-if="treeQuery" icon="heroicons-outline:x" variant="transparent" class="absolute right-0" @click="treeQuery = ''" />
+          </UInput>
+        </div>
+      </div>
     </template>
 
     <template #header>
@@ -56,7 +63,7 @@ const client = useStrapiClient()
 const { parseFrontMatter, stringifyFrontMatter } = useMarkdown()
 const { branch } = useProjectBranches(props.project)
 const { draft, file, fetchFile, openCreateModal: openCreateFileModal, computedFiles } = useProjectFiles(props.project, root)
-const { tree, openDir } = useProjectFilesTree(props.project, root)
+const { query: treeQuery, filteredTree, tree, openDir } = useProjectFilesTree(props.project, root)
 
 const content: Ref<string> = ref('')
 const parsedContent: Ref<string> = ref('')
