@@ -105,13 +105,13 @@ export const useContent = () => {
    */
   const navFromPath = (path: string, tree: NavItem[] = navigation.value) => {
     for (const file of tree) {
-      if (file.slug === path) {
-        return file
-      }
-
       if (file.children) {
         const result = navFromPath(path, file.children)
         if (result) { return result }
+      }
+
+      if (file.slug === path) {
+        return file
       }
     }
   }
