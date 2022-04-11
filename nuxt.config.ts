@@ -31,7 +31,8 @@ export default defineNuxtConfig({
     ]
   },
   css: [
-    '~/assets/css/fonts.css'
+    '~/assets/css/fonts.css',
+    '~/assets/css/scrollbars.css'
   ],
   buildModules: [
     '@nuxthq/ui',
