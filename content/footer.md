@@ -26,11 +26,11 @@ links:
       - title: Case Studies
         to: /resources/case-studies
       - title: Design Kit
-        to: /
+        to: /resources/design-kit
       - title: Live Events
-        to: /
+        to: /resources/live-events
       - title: Video Courses
-        to: /
+        to: /resources/video-courses
   - title: Solutions
     items:
       - title: Web Framework
