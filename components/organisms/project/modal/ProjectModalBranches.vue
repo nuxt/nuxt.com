@@ -84,10 +84,7 @@ const {
 } = useProjectBranches(project)
 
 const query = ref('')
-
-whenever(keys.meta_b, () => {
-  isOpen.value = !isOpen.value
-})
+const comboboxInput = ref(null)
 
 // Computed
 
@@ -100,6 +97,7 @@ const isOpen = computed({
   }
 })
 const branchExists = computed(() => query.value && branches.value.some(b => b.name === query.value))
+
 const filteredBranches = computed(() => {
   let filteredBranches = [...branches.value]
   if (query.value) {
@@ -108,13 +106,18 @@ const filteredBranches = computed(() => {
   filteredBranches = filteredBranches.filter(b => b.name !== branch.value.name)
   return filteredBranches
 })
+
 const actions = computed(() => ([
-  { key: 'create', label: `Create new branch ${query.value && !branchExists.value ? `"${query.value}"` : ''}`, icon: 'heroicons-outline:plus', click: onCreateBranchClick },
+  { key: 'create', label: `Create new branch ${query.value && !branchExists.value ? `“${query.value}”` : ''}`, icon: 'heroicons-outline:plus', click: onCreateBranchClick },
   !query.value && { key: 'refresh', label: 'Refresh branches', icon: 'heroicons-outline:refresh', iconClass: pendingBranches.value ? 'animate-spin' : '', click: refreshBranches },
   !query.value && (isDraftContent.value || isDraftMedia.value) && { key: 'reset', label: 'Revert draft', icon: 'heroicons-outline:reply', click: onResetDraftClick }
 ].filter(Boolean)))
 
-const comboboxInput = ref(null)
+// Watch
+
+whenever(keys.meta_b, () => {
+  isOpen.value = !isOpen.value
+})
 
 watch(() => query.value, (value, oldValue) => {
   if (value !== oldValue) {
