@@ -3,9 +3,24 @@
     <template v-if="computedFiles.length" #aside>
       <div class="flex flex-col flex-1 overflow-y-hidden">
         <ProjectContentFilesTree :tree="tree" class="flex-1 overflow-y-auto" />
-        <div class="flex flex-shrink-0 p-2 border-t u-border-gray-300">
-          <UInput v-model="treeQuery" autocomplete="off" placeholder="Filter files" class="flex w-full" custom-class="truncate pr-9">
-            <UButton v-if="treeQuery" icon="heroicons-outline:x" variant="transparent" class="absolute right-0" @click="treeQuery = ''" />
+        <div class="flex flex-shrink-0 px-6 py-4">
+          <UInput
+            v-model="treeQuery"
+            icon="heroicons-outline:filter"
+            autocomplete="off"
+            placeholder="Filter..."
+            class="flex w-full"
+            size="sm"
+            custom-class="truncate pr-10 u-bg-gray-50 -my-px placeholder-gray-400 dark:placeholder-gray-500"
+          >
+            <UButton
+              v-if="treeQuery"
+              icon="heroicons-outline:x"
+              size="sm"
+              variant="transparent"
+              class="absolute right-1"
+              @click="treeQuery = ''"
+            />
           </UInput>
         </div>
       </div>
