@@ -69,7 +69,7 @@ export const useContent = () => {
     if (file && !file.children) {
       // Path queried has a page (and is not a directory)
       await Promise.all([
-        queryContent(path.value).findOne() as Promise<ParsedContent>,
+        queryContent().where({ id: file.id }).findOne() as Promise<ParsedContent>,
         queryContent(directory).findSurround(path.value) as Promise<ParsedContent[]>
       ]).then(([_page, _surround]) => {
         page.value = _page

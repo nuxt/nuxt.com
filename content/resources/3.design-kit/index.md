@@ -16,7 +16,7 @@ Download design kit
 
 ::design-kit-section
 ---
-slug: 'colors'
+sectionClass: 'pb-8 pt-16'
 ---
 #category
 Colors
@@ -38,8 +38,7 @@ Our main palette is comprised of a strong inspiring gradient, white, and dark gr
 
   ::design-kit-color-card
   ---
-  border: true
-  cardClass: 'bg-white'
+  cardClass: 'bg-[#FFFFFF]'
   hexaColor: '#FFFFFF'
   ---
   #color
@@ -50,8 +49,7 @@ Our main palette is comprised of a strong inspiring gradient, white, and dark gr
 
   ::design-kit-color-card
   ---
-  border: true
-  cardClass: 'bg-gray-900'
+  cardClass: 'bg-[#0C0C0D]'
   hexaColor: '#0C0C0D'
   ---
   #color
@@ -87,7 +85,6 @@ far better with Nuxt DNA than warm colors.
 
   ::design-kit-color-card
   ---
-  border: true
   cardClass: 'bg-[#36E4DA]'
   hexaColor: '#36E4DA'
   ---
@@ -99,7 +96,6 @@ far better with Nuxt DNA than warm colors.
 
   ::design-kit-color-card
   ---
-  border: true
   cardClass: 'bg-[#407CFF]'
   hexaColor: '#407CFF'
   ---
@@ -127,7 +123,6 @@ This gradient is here to represent the brand, across all supports (landings, app
   ---
   gradient: true
   cardClass: 'bg-gradient-to-r from-[#00DC82] via-[#36E4DA] to-[#0047E1]'
-  hexaColor: 'gradient structure'
   ---
   #gradientContent
   Gradient structure
@@ -136,8 +131,8 @@ This gradient is here to represent the brand, across all supports (landings, app
 
 ::design-kit-section
 ---
-slug: 'colors'
-listClass: 'grid-cols-5 gap-4'
+sectionClass: 'pb-t pb-16'
+listClass: 'grid-cols-2 md:grid-cols-3 md:grid-cols-5 gap-4'
 secondaries: true
 ---
 #category
@@ -223,5 +218,153 @@ Our secondary palette contains a variety of colors with all the same base hue (t
   cardClass: 'bg-[#FF4079]'
   hexaColor: '#FF4079'
   ---
+  ::
+::
+
+::design-kit-section
+---
+sectionClass: 'pb-8 pt-16'
+highlight: false
+---
+#category
+Logo
+#title
+Monograms
+#description
+Our logo honours the high mountains of the Pyrenees, the place where it all started. The shape is drawn with a smooth but structured path, that locks itself like an infinity symbol.<br />This is one of our most powerful tools to communicate our story and the values behind our brand.
+#designList
+  ::design-kit-logo-card
+  ---
+  imgName: mono-black
+  cardClass: 'bg-white'
+  ---
+  #name
+  Monogram black
+  ::
+
+  ::design-kit-logo-card
+  ---
+  imgName: mono-white
+  cardClass: 'bg-gray-900'
+  ---
+  #name
+  Monogram white
+  ::
+
+  ::design-kit-logo-card
+  ---
+  imgName: mono-framework
+  cardClass: 'bg-white'
+  ---
+  #name
+  Monogram Framework
+  ::
+::
+
+::design-kit-section
+---
+sectionClass: 'pb-16 pt-8'
+highlight: false
+---
+#category
+Logo
+#title
+Full
+#designList
+  ::design-kit-logo-card
+  ---
+  imgName: full-black
+  cardClass: 'bg-white'
+  full: true
+  ---
+  #name
+  Full Nuxt Black
+  ::
+
+  ::design-kit-logo-card
+  ---
+  imgName: full-white
+  cardClass: 'bg-gray-900'
+  full: true
+  ---
+  #name
+  Full Nuxt White
+  ::
+
+  ::design-kit-logo-card
+  ---
+  imgName: full-framework-black
+  cardClass: 'bg-white'
+  full: true
+  ---
+  #name
+  Full Framework Black
+  ::
+
+  ::design-kit-logo-card
+  ---
+  cardClass: bg-gray-900
+  imgName: full-framework-white
+  full: true
+  ---
+  #name
+  Full Framework White
+  ::
+::
+
+::design-kit-section
+---
+sectionClass: 'pt-16 pb-8'
+---
+#category
+Typography
+#title
+Roobert font
+#description
+Our brand typeface is Roobert PRO by the Display Foundry. This typeface was chosen for it’s aesthetic reminding the shape of Nuxt logo by many aspects (joints, apex, vertex of the structure). It provides modernity and sobriety while giving an iconic aspect of our visual content and without decreasing the accessibility of texts.<br /><br />
+Font is also variable which allows us to fit with any contexts.
+#typography
+[Roobert PRO]{ .text-5xl }
+<br /><br />
+[The quick brown fox jumps over the lazy dog.]{ .text-4xl }
+::
+
+::design-kit-section
+#category
+Typography
+#title
+Usage
+#description
+For Nuxt brand, we will only use Regular / Medium / Semibold / Bold weights 99% of the time. You should avoid Light & Heavy if you want to use it as Nuxt Identity. Only exceptions are for super, subscript characters, also you can use heavy if you go upper than 72px for a font size.
+As Roobert font is licensed, you cannot use it for free so you can use the [Inter font]{ .underline .font-semibold } as an alternative. If you want to have visuals with Roobert official font, contact us we will give you the asset ready.
+::
+
+::design-kit-section
+---
+sectionClass: 'pb-16 pt-8'
+---
+#cta
+  ::design-kit-cta
+  ---
+  buttonText: 'See Design System'
+  to: '#'
+  dark: true
+  ---
+  #title
+  The Design System
+  #description
+  Everything you need to make a design using Nuxt identity.
+  ::
+
+  ::design-kit-cta
+  ---
+  buttonText: 'Read article'
+  to: '#'
+  imagePath: '/resources/design-kit/book.svg'
+  ---
+  #title
+  Want to know more about identity ?
+  #description
+  Read our article explaining the past changes, design decisions & what is our mindset.
   ::
 ::
