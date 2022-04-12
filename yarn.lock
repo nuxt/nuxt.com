@@ -836,11 +836,11 @@
     untyped "^0.4.4"
 
 "@nuxt/kit@npm:@nuxt/kit-edge@latest":
-  version "3.0.0-27494471.1091d45"
-  resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-27494471.1091d45.tgz#9ab127634e5ed78cf6130ae3d309c6f2019b8799"
-  integrity sha512-aDN043C1VMsZfKq3FffDW/QofQY/aCDJfYgtnJOoGwkqNbe+KpFd/R9XFrqSh6rk7V41x9EVBMsoaHH6/H+Ctw==
+  version "3.0.0-27495976.e31c604"
+  resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-27495976.e31c604.tgz#5a9ecb445080d632ffe2cba7bc28d2892e6a1959"
+  integrity sha512-YzX16O5HIYrnk3AMW1USPsHGoUIjOKBreEbBUlkKh/ZGCwju84qgOaDQSB+z1vnIs+tO3hFyZGcrnZ5CtswK9g==
   dependencies:
-    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-27494471.1091d45"
+    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-27495976.e31c604"
     c12 "^0.2.5"
     consola "^2.15.3"
     defu "^6.0.0"
@@ -953,10 +953,10 @@
     ufo "^0.8.3"
     unimport "^0.1.4"
 
-"@nuxt/schema@npm:@nuxt/schema-edge@3.0.0-27494471.1091d45":
-  version "3.0.0-27494471.1091d45"
-  resolved "https://registry.yarnpkg.com/@nuxt/schema-edge/-/schema-edge-3.0.0-27494471.1091d45.tgz#1a1b219090acfcf1d38efca5474219478a48322e"
-  integrity sha512-2tokTe3YQYKxyiTGC7cgeKRSJif+xvx5pXl5cb7sx0Nwim2hJyTi6gE9U5YbCZ85Rqu5pnqVZ5c6bLNOtIdDRw==
+"@nuxt/schema@npm:@nuxt/schema-edge@3.0.0-27495976.e31c604":
+  version "3.0.0-27495976.e31c604"
+  resolved "https://registry.yarnpkg.com/@nuxt/schema-edge/-/schema-edge-3.0.0-27495976.e31c604.tgz#885c8053e4e40ddf352269bdbd301308b89fac8c"
+  integrity sha512-n2JxlhRkQ0r7Yp6j+FohKA1MlJqmP7O8qBUpPEye6PkKQDZRYwRxFU/fXxxmuY+fYqRBBroFRgJmwYISZ1dlEg==
   dependencies:
     c12 "^0.2.5"
     create-require "^1.1.1"
@@ -1007,9 +1007,9 @@
     vite-node "^0.9.0"
 
 "@nuxthq/ui@npm:@nuxthq/ui-edge@latest":
-  version "0.0.2-27494742.656b6e1"
-  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27494742.656b6e1.tgz#a26b299078028d4f0c1338e1d8639f45b23c1cc5"
-  integrity sha512-xPbAAJTHfU9hFQqHTd6qOwW/VPkQC5xy5rbAETxI2CzmCWp6Vu545+nM4LoEIobHPTmEeB0AvZ2nzcM9kDGuYA==
+  version "0.0.2-27496146.2e09939"
+  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27496146.2e09939.tgz#a2ac7ca18ba1dbb5136ac6765ab0a8eb02f04e85"
+  integrity sha512-vYUsX+cCB6N3ajJA92ezd1uAgFWmBy7JlWBBN0RIJuY/BbAGkcoK0b1hpJ8dkFHUys/6pRPWVo8rJsY4YbpbRg==
   dependencies:
     "@headlessui/vue" "1.5.0"
     "@iconify/vue" "^3.2.1"
@@ -2229,9 +2229,9 @@ caniuse-lite@^1.0.0:
   integrity sha512-sB1bZHjseSjDtijV1Hb7PB2Zd58Kyx+n/9EotvZ4Qcz2K3d0lWB8dB4nb8wN/TsOGFq3UuAm0zQZNQ4SoR7TrQ==
 
 caniuse-lite@^1.0.30001317:
-  version "1.0.30001327"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001327.tgz#c1546d7d7bb66506f0ccdad6a7d07fc6d668c858"
-  integrity sha512-1/Cg4jlD9qjZzhbzkzEaAC2JHsP0WrOc8Rd/3a3LuajGzGWR/hD7TVyvq99VqmTy99eVh8Zkmdq213OgvgXx7w==
+  version "1.0.30001328"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001328.tgz#0ed7a2ca65ec45872c613630201644237ba1e329"
+  integrity sha512-Ue55jHkR/s4r00FLNiX+hGMMuwml/QGqqzVeMQ5thUewznU2EdULFvI3JR7JJid6OrjJNfFvHY2G2dIjmRaDDQ==
 
 ccount@^2.0.0:
   version "2.0.1"
@@ -3190,9 +3190,9 @@ ee-first@1.1.1:
   integrity sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=
 
 electron-to-chromium@^1.4.84:
-  version "1.4.106"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.106.tgz#e7a3bfa9d745dd9b9e597616cb17283cc349781a"
-  integrity sha512-ZYfpVLULm67K7CaaGP7DmjyeMY4naxsbTy+syVVxT6QHI1Ww8XbJjmr9fDckrhq44WzCrcC5kH3zGpdusxwwqg==
+  version "1.4.107"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.107.tgz#564257014ab14033b4403a309c813123c58a3fb9"
+  integrity sha512-Huen6taaVrUrSy8o7mGStByba8PfOWWluHNxSHGBrCgEdFVLtvdQDBr9LBCF9Uci8SYxh28QNNMO0oC17wbGAg==
 
 emoji-regex@^10.0.0:
   version "10.1.0"
@@ -6193,9 +6193,9 @@ node-pre-gyp@^0.13.0:
     tar "^4"
 
 node-releases@^2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-2.0.2.tgz#7139fe71e2f4f11b47d4d2986aaf8c48699e0c01"
-  integrity sha512-XxYDdcQ6eKqp/YjI+tb2C5WM2LgjnZrfYg4vgQt49EK268b6gYCHsBLrK2qvJo4FmCtqmKezb0WZFK4fkrZNsg==
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-2.0.3.tgz#225ee7488e4a5e636da8da52854844f9d716ca96"
+  integrity sha512-maHFz6OLqYxz+VQyCAtA3PTX4UP/53pa05fyDNc9CwjvJ0yEh6+xBwKsgCxMNhS8taUKBFYxfuiaD9U/55iFaw==
 
 nopt@^4.0.1:
   version "4.0.3"
