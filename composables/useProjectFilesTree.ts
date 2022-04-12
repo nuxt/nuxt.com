@@ -6,6 +6,8 @@ const openedDirs = reactive({})
 export const useProjectFilesTree = (project: Project, root: Root) => {
   const { computedFiles, bulkRename } = useProjectFiles(project, root)
 
+  const query = useState(`project-${project.id}-tree-query`, () => '')
+
   // Methods
 
   function openDir (path: string, value?: boolean) {
@@ -79,8 +81,12 @@ export const useProjectFilesTree = (project: Project, root: Root) => {
 
   // Computed
 
+  const filteredComputedFiles = computed(() => {
+    return query.value ? computedFiles.value.filter(f => f.path.search(new RegExp(query.value, 'i')) !== -1) : computedFiles.value
+  })
+
   const tree = computed(() => {
-    const files = [...computedFiles.value]
+    const files = [...filteredComputedFiles.value]
     files.sort((a, b) => a.path.localeCompare(b.path, undefined, {
       numeric: true,
       sensitivity: 'base'
@@ -90,6 +96,7 @@ export const useProjectFilesTree = (project: Project, root: Root) => {
   })
 
   return {
+    query,
     // Methods
     openDir,
     renameFiles,
