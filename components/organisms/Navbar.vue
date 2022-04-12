@@ -26,15 +26,18 @@
             :key="index"
           >
             <UPopover v-if="link.options?.length" mode="hover" container-class="z-10 py-4" panel-class="w-screen max-w-md xl:max-w-xl">
-              <UButton
-                :label="link.title"
-                variant="transparent"
-                size="lg"
-                class="!p-0"
-                icon="heroicons-outline:chevron-down"
-                icon-base-class="!h-4 !w-4 flex-shrink-0"
-                trailing
-              />
+              <template #default="{ open }">
+                <UButton
+                  :label="link.title"
+                  variant="transparent"
+                  size="lg"
+                  class="!p-0 !cursor-default"
+                  :class="[open && 'u-text-gray-700']"
+                  icon="heroicons-outline:chevron-down"
+                  icon-base-class="!h-4 !w-4 flex-shrink-0"
+                  trailing
+                />
+              </template>
 
               <template #panel="{ close }">
                 <UCard shadow-class="shadow-lg" rounded-class="rounded-lg" ring-class="ring-1 u-ring-gray-200">
