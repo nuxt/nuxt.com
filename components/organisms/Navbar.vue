@@ -25,7 +25,7 @@
             v-for="(link, index) in links"
             :key="index"
           >
-            <UPopover v-if="link.options?.length" mode="hover" panel-class="absolute z-10 left-1/2 transform -translate-x-1/2 mt-3 px-2 w-screen max-w-md sm:px-0 lg:max-w-xl">
+            <UPopover v-if="link.options?.length" mode="hover" container-class="z-10 py-4" panel-class="w-screen max-w-md xl:max-w-xl">
               <UButton
                 :label="link.title"
                 variant="transparent"
