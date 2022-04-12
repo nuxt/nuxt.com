@@ -86,16 +86,6 @@ export const useProjectFilesTree = (project: Project, root: Root) => {
   })
 
   const tree = computed(() => {
-    const files = [...computedFiles.value]
-    files.sort((a, b) => a.path.localeCompare(b.path, undefined, {
-      numeric: true,
-      sensitivity: 'base'
-    }))
-
-    return mapTree(files)
-  })
-
-  const filteredTree = computed(() => {
     const files = [...filteredComputedFiles.value]
     files.sort((a, b) => a.path.localeCompare(b.path, undefined, {
       numeric: true,
@@ -112,7 +102,6 @@ export const useProjectFilesTree = (project: Project, root: Root) => {
     renameFiles,
     // Computed
     tree,
-    filteredTree,
     // Data
     openedDirs: readonly(openedDirs)
   }
