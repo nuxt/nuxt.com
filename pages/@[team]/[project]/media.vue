@@ -80,6 +80,14 @@ const dragover = ref(false)
 
 const medias = useState(`project-${props.project.id}-medias`, () => ({}))
 
+watch(computedFiles, (newFiles, oldFiles) => {
+  for (const oldFile of oldFiles) {
+    if (!newFiles.find(newFile => newFile.path === oldFile.path)) {
+      delete medias.value[oldFile.path]
+    }
+  }
+})
+
 // Methods
 
 function onDragEnter (_e) {
