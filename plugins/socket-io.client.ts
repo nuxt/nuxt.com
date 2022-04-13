@@ -30,14 +30,26 @@ class SocketIO {
   }
 
   emit (event, data) {
+    if (!this.socket) {
+      return
+    }
+
     return this.socket.emit(event, data)
   }
 
   on (event, fn) {
+    if (!this.socket) {
+      return
+    }
+
     return this.socket.on(event, fn)
   }
 
   off (event, fn) {
+    if (!this.socket) {
+      return
+    }
+
     return this.socket.off(event, fn)
   }
 }
