@@ -28,6 +28,7 @@ const user = useStrapiUser() as Ref<User>
 const route = useRoute()
 const router = useRouter()
 const client = useStrapiClient()
+const { $socket } = useNuxtApp()
 
 const { $toast } = useNuxtApp()
 const { container: modalContainer } = useModal()
@@ -67,4 +68,12 @@ function onFilesModalChange () {
     isBranchesModalOpen.value = false
   }
 }
+
+onMounted(() => {
+  $socket.emit('join', `project-${project.value.id}`)
+})
+
+onUnmounted(() => {
+  $socket.emit('leave', `project-${project.value.id}`)
+})
 </script>
