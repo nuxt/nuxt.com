@@ -95,7 +95,7 @@ const props = defineProps({
 })
 
 const { $clipboard } = useNuxtApp()
-const config = useRuntimeConfig()
+const config = useRuntimeConfig().public
 const user = useStrapiUser() as Ref<User>
 const client = useStrapiClient()
 const router = useRouter()

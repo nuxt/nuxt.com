@@ -133,7 +133,7 @@ const roles = [{
 const itemIconClass = ui.dropdown.item.icon
 
 const { $clipboard, $toast } = useNuxtApp()
-const config = useRuntimeConfig()
+const config = useRuntimeConfig().public
 const router = useRouter()
 const user = useStrapiUser() as Ref<User>
 const client = useStrapiClient()
