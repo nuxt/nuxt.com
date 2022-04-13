@@ -13,10 +13,8 @@ export const useProjectFiles = (project: Project, root: Root) => {
   const { branch } = useProjectBranches(project)
 
   const recentFiles: Ref<GitHubFile[]> = useState(`project-${project.id}-${root}-files-recent`, () => null)
-  if (root === 'content' && process.server) { console.log('recentFiles.value', recentFiles.value) }
   if (process.client) {
     const recentFilesStorage = useStorage<GitHubFile[]>(`project-${project.id}-${root}-files-recent`, [])
-    if (root === 'content' && process.server) { console.log('recentFilesStorage.value', recentFilesStorage.value) }
     recentFiles.value = recentFilesStorage.value
     watch(recentFiles, (value) => { recentFilesStorage.value = value })
   }
