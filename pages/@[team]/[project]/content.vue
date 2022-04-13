@@ -6,6 +6,7 @@
         <div class="flex flex-shrink-0 px-6 py-4">
           <UInput
             v-model="treeQuery"
+            name="filter"
             icon="heroicons-outline:filter"
             autocomplete="off"
             placeholder="Filter..."
