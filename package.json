@@ -23,6 +23,7 @@
     "@tailwindcss/typography": "^0.5.2",
     "eslint": "^8.12.0",
     "nuxt3": "^3.0.0-27488730.0cbc9cb",
+    "socket.io-client": "^4.4.1",
     "standard-version": "^9.3.2",
     "typescript": "^4.6.3",
     "vue-plausible": "^1.3.1"
