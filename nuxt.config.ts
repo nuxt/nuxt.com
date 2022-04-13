@@ -41,13 +41,15 @@ export default defineNuxtConfig({
     '@docus/editor',
     'vue-plausible'
   ],
-  publicRuntimeConfig: {
-    baseUrl: process.env.BASE_URL || 'https://nuxt.com',
-    github: {
-      appSlug: process.env.GITHUB_APP_SLUG || 'nuxt'
-    },
-    plausible: {
-      domain: process.env.PLAUSIBLE_DOMAIN
+  runtimeConfig: {
+    public: {
+      baseUrl: process.env.BASE_URL || 'https://nuxt.com',
+      github: {
+        appSlug: process.env.GITHUB_APP_SLUG || 'nuxt'
+      },
+      plausible: {
+        domain: process.env.PLAUSIBLE_DOMAIN
+      }
     }
   },
   strapi: {
@@ -89,6 +91,11 @@ export default defineNuxtConfig({
     highlight: {
       theme: 'one-dark-pro',
       preload: ['json', 'js', 'ts', 'html', 'css', 'vue', 'diff', 'shell', 'markdown']
+    }
+  },
+  vite: {
+    optimizeDeps: {
+      include: ['base64-js']
     }
   }
 })
