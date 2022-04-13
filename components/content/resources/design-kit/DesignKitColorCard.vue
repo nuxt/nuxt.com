@@ -11,10 +11,10 @@
           <span>#36E4DA</span>
           <span>#0047E1</span>
         </div>
-        <div v-if="secondaries" class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex h-full justify-between items-end text-gray-900 text-sm p-2">
-          <span class="pl-1">{{ hexaColor }}</span>
+        <div v-if="secondaries" class="relative opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex h-full justify-between items-end text-gray-900 text-sm p-2">
+          <span class="pl-1 text-gray-900">{{ hexaColor }}</span>
           <UButton variant="transparent" base-class="py-0" @click="onClick">
-            <span class="text-gray-900 text-sm -mr-2">
+            <span class="text-sm -mr-2 text-gray-900">
               Copy
             </span>
           </UButton>

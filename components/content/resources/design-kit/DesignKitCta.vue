@@ -1,19 +1,20 @@
 
 <template>
   <div :class="{ 'dark': dark }">
-    <UCard base-class="relative overflow-hidden">
+    <UCard base-class="relative overflow-hidden h-full">
       <img v-if="imagePath" :src="imagePath" class="absolute w-2/5 right-0 bottom-0">
 
       <span v-if="dark" class="_ellipse" />
-      <div class="relative">
+      <div class="relative flex flex-col gap-y-4 h-full">
         <h5 class="text-2xl font-bold u-text-black">
           <Markdown use="title" unwrap="p" />
         </h5>
-        <p class="w-3/4 pt-3 u-text-gray-700">
+        <p class="w-3/4 u-text-gray-700">
           <Markdown use="description" unwrap="p" />
         </p>
-
-        <UButton :label="buttonText" variant="primary" class="px-8 mt-6" :to="to" />
+        <div class="flex items-end h-full">
+          <UButton :label="buttonText" variant="primary" class="px-8" :to="to" />
+        </div>
       </div>
     </UCard>
   </div>

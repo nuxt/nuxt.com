@@ -145,7 +145,7 @@ Our secondary palette contains a variety of colors with all the same base hue (t
   ::design-kit-color-card
   ---
   secondaries: true
-  cardClass: 'bg-[#6B6B76]'
+  cardClass: 'bg-[#6B6B76] hover:bg-[#bfbfbf]'
   hexaColor: '#6B6B76'
   ---
   ::
@@ -194,7 +194,7 @@ Our secondary palette contains a variety of colors with all the same base hue (t
   ::design-kit-color-card
   ---
   secondaries: true
-  cardClass: 'bg-[#614BEC]'
+  cardClass: 'bg-[#614BEC] hover:bg-[#8774fc]'
   hexaColor: '#614BEC'
   ---
   ::

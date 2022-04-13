@@ -20,7 +20,7 @@
       <!-- TODO: color system link -->
       <UButton v-if="secondaries" class="mt-12" variant="secondary" custom-class="u-border-gray-900 u-text-gray-900" label="See color system" />
 
-      <div v-if="$slots.cta" class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+      <div v-if="$slots.cta" class="grid grid-cols-1 md:grid-cols-2 gap-12">
         <Markdown use="cta" unwrap="p" />
       </div>
     </UContainer>

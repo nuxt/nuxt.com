@@ -15,7 +15,7 @@
             <UIcon name="heroicons-outline:arrow-sm-right" class="w-5 h-5" />
           </span>
           <span
-            class="rounded absolute left-0 font-extrabold -bottom-1 h-0.5 w-4 group-hover:w-full duration-300 ease-in-out"
+            class="rounded absolute left-0 font-extrabold -bottom-1 h-0.5 w-4 group-hover:w-full duration-300 transition-ease"
             :class="'bg-gradient-to-r from-[#00DC82] via-[#34CDFE] to-[#0047E1]'"
           />
         </a>
@@ -26,3 +26,9 @@
     </div>
   </UContainer>
 </template>
+
+<style scoped>
+.transition-ease {
+  transition-timing-function: cubic-bezier(0.83, 0, 0.17, 1);
+}
+</style>
