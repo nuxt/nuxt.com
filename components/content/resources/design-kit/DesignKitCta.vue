@@ -5,6 +5,7 @@
       <img v-if="imagePath" :src="imagePath" class="absolute w-2/5 right-0 bottom-0">
 
       <span v-if="dark" class="_ellipse" />
+
       <div class="relative flex flex-col gap-y-4 h-full">
         <h5 class="text-2xl font-bold u-text-black">
           <Markdown use="title" unwrap="p" />
@@ -12,6 +13,7 @@
         <p class="w-3/4 u-text-gray-700">
           <Markdown use="description" unwrap="p" />
         </p>
+        <!-- TODO: update to -->
         <div class="flex items-end h-full">
           <UButton :label="buttonText" variant="primary" class="px-8" :to="to" />
         </div>
@@ -20,7 +22,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 defineProps({
   buttonText: {
     type: String,

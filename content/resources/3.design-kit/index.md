@@ -61,9 +61,6 @@ Our main palette is comprised of a strong inspiring gradient, white, and dark gr
 
 
 ::design-kit-section
----
-slug: 'colors'
----
 #category
 Colors
 #title
@@ -109,7 +106,6 @@ far better with Nuxt DNA than warm colors.
 
 ::design-kit-section
 ---
-slug: 'colors'
 listClass: 'grid-cols-1 gap-0'
 ---
 #category

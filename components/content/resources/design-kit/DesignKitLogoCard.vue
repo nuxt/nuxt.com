@@ -17,7 +17,7 @@
         <a
           class="hover:u-text-gray-500 u-text-gray-400 hover:underline"
           :href="`/resources/design-kit/logo/${imgName}.png`"
-          aria-label="Download svg"
+          aria-label="Download png"
           download
         >png</a>
       </div>
@@ -25,7 +25,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 defineProps({
   imgName: {
     type: String,
