@@ -92,10 +92,5 @@ export default defineNuxtConfig({
       theme: 'one-dark-pro',
       preload: ['json', 'js', 'ts', 'html', 'css', 'vue', 'diff', 'shell', 'markdown']
     }
-  },
-  vite: {
-    optimizeDeps: {
-      include: ['base64-js']
-    }
   }
 })
