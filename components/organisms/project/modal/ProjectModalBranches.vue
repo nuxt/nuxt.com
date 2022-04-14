@@ -109,7 +109,7 @@ const filteredBranches = computed(() => {
 
 const actions = computed(() => ([
   { key: 'create', label: `Create new branch ${query.value && !branchExists.value ? `“${query.value}”` : ''}`, icon: 'heroicons-outline:plus', click: onCreateBranchClick },
-  !query.value && { key: 'refresh', label: 'Refresh branches', icon: 'heroicons-outline:refresh', iconClass: pendingBranches.value ? 'animate-spin' : '', click: refreshBranches },
+  !query.value && { key: 'refresh', label: 'Refresh branches', icon: 'heroicons-outline:refresh', iconClass: pendingBranches.value ? 'animate-spin' : '', click: () => { refreshBranches(true) } },
   !query.value && (isDraftContent.value || isDraftMedia.value) && { key: 'reset', label: 'Revert draft', icon: 'heroicons-outline:reply', click: onResetDraftClick }
 ].filter(Boolean)))
 
