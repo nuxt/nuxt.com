@@ -11,14 +11,14 @@
         :class="{ 'u-text-gray-700': open }"
       >
         <div class="flex-1 flex items-center min-w-0">
-          <UAvatar
-            :src="activeItem.avatar"
-            :alt="activeItem.label"
-            size="xs"
-            class="lg:-m-0.5 flex-shrink-0"
-          >
-            <img v-show="activeItem.slug !== user.username" :src="user.avatar" class="absolute block rounded-full ring-1 u-ring-white bottom-0 right-0 -mb-0.5 -mr-0.5 w-3 h-3">
-          </UAvatar>
+          <div class="relative w-6 h-6 lg:-m-0.5 flex-shrink-0">
+            <UAvatar v-if="currentTeam" :src="currentTeam.avatar" :alt="currentTeam.label" size="xs" />
+            <img
+              :src="user.avatar"
+              class="absolute block rounded-full ring-1 u-ring-white bottom-0 right-0 transform transition-all"
+              :class="{ '-mb-0.5 -mr-0.5 w-3 h-3': activeItem.slug !== user.username, 'w-6 h-6': activeItem.slug === user.username }"
+            >
+          </div>
           <span class="hidden ml-3 text-sm font-medium truncate lg:block">{{ activeItem.label }}</span>
         </div>
       </UButton>
@@ -133,4 +133,12 @@ const activeItem = computed(() => {
   const flatItems = items.value.flat()
   return flatItems.find(item => item.active) || flatItems[0]
 })
+
+const currentTeam = ref(null)
+
+watch(activeItem, (value) => {
+  if (value && value.slug !== user.value.username) {
+    currentTeam.value = value
+  }
+}, { immediate: true })
 </script>
