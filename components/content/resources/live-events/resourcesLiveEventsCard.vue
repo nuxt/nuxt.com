@@ -1,17 +1,20 @@
 <template>
-  <UCard body-class="p-0" class="flex-col space-y-4 cursor-pointer" @click="isOpen = !isOpen">
-    <ResourcesLiveEventsModal v-model="isOpen" :video-src="videoSrc" :video-title="videoTitle" />
-    <div class="flex h-18 items-center pt-4 px-4">
+  <UCard body-class="p-0" class="flex-col space-y-4 cursor-pointer" custom-class="transition ease-in-out duration-300 hover:ring-1 hover:u-ring-gray-700 group" @click="isOpen = !isOpen">
+    <ResourcesLiveEventsModal v-model="isOpen" :video-src="videoSrc" :video-title="videoTitle" :slug="slug" />
+    <div class="flex h-18 items-center pt-4 px-4 relative">
       <div class="w-10 h-10 flex items-center justify-center flex-shrink-0">
         <img :src="`/resources/live-events/${eventLogo}`" :alt="eventLogo" class="rounded-full u-border-gray-900">
       </div>
-      <div class="pl-2 overflow-hidden">
+      <div class="pl-2 flex-grow overflow-hidden">
         <h6 class="text-lg font-semibold truncate">
           <Markdown use="title" unwrap="p" />
         </h6>
         <p class="text-sm font-medium u-text-gray-400">
           <Markdown use="name" unwrap="p" />
         </p>
+      </div>
+      <div class="flex items-end self-start pl-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <UIcon name="heroicons-outline:arrows-expand" class="w-5 h-5" />
       </div>
     </div>
     <div class="text-gray-700 mb-5 line-clamp-3 h-24 px-4 pt-5">
@@ -55,6 +58,10 @@ defineProps({
     default: ''
   },
   videoTitle: {
+    type: String,
+    default: ''
+  },
+  slug: {
     type: String,
     default: ''
   }

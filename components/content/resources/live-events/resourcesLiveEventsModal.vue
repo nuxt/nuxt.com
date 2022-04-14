@@ -1,14 +1,15 @@
 <template>
-  <UModal v-model="isOpen" appear width-class="max-w-7xl" @close="onClose">
-    <div>
-      <LiteYouTubeEmbed
-        id="vbsPXHCu8Xg"
-        title="test"
-      />
-    </div>
-    <h1 class="text-4xl font-semibold pt-4">
-      {{ videoTitle }}
+  <UModal v-model="isOpen" appear width-class="max-w-xl lg:max-w-4xl xl:max-w-7xl" @close="close">
+    <LiteYouTubeEmbed
+      :id="modalData.videoId"
+      :title="modalData.title"
+    />
+
+    <h1 class="text-4xl font-semibold pt-4 pb-8">
+      {{ modalData.title }}
     </h1>
+
+    <Content :document="modalData" class="prose" />
   </UModal>
 </template>
 
@@ -20,16 +21,16 @@ defineComponent({
   LiteYouTubeEmbed
 })
 
-defineProps({
-  videoSrc: {
-    type: String,
-    default: ''
-  },
-  videoTitle: {
+const props = defineProps({
+  slug: {
     type: String,
     default: ''
   }
 })
+
+const { data: modalData } = await useAsyncData(`live-events-modal-${props.slug}`, () => queryContent(`/resources/live-events/collections/${props.slug}`).findOne())
+
+const emit = defineEmits(['close'])
 
 const isOpen = ref(true)
 
