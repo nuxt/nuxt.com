@@ -19,7 +19,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
 
   // Http
 
-  async function fetch (force?: boolean) {
+  async function fetch ({ force }: { force?: boolean } = {}) {
     if (!branch.value) {
       return
     }
@@ -46,7 +46,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
   }
 
   function refresh () {
-    return fetch(true)
+    return fetch({ force: true })
   }
 
   async function create (path: string) {
