@@ -39,8 +39,9 @@
     </div>
   </li>
 </template>
+
 <script setup lang="ts">
-defineProps({
+const props = defineProps({
   cardClass: {
     type: String,
     default: ''
@@ -62,11 +63,6 @@ defineProps({
 const { $clipboard } = useNuxtApp()
 
 const onClick = () => {
-  $clipboard.copy(
-    props.hexaColor,
-    {
-      title: 'Color copied to clipboard!'
-    }
-  )
+  $clipboard.copy(props.hexaColor, { title: 'Color copied to clipboard!' })
 }
 </script>
