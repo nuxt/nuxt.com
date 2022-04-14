@@ -19,14 +19,29 @@
 </template>
 
 <script setup lang="ts">
+import { useMagicKeys, whenever, and, useActiveElement } from '@vueuse/core'
 import type { Project } from '~/types'
 
 const project: Project = inject('project')
 
-defineProps({
+const props = defineProps({
   links: {
     type: Array,
     default: () => []
   }
 })
+
+const router = useRouter()
+const activeElement = useActiveElement()
+const keys = useMagicKeys()
+
+const notUsingInput = computed(() => !(activeElement.value?.tagName === 'INPUT' || activeElement.value?.tagName === 'TEXTAREA' || activeElement.value?.contentEditable === 'true'))
+
+for (const [index, link] of props.links.entries()) {
+  const key = keys[index + 1]
+
+  whenever(and(key, notUsingInput), () => {
+    router.push(link.to)
+  })
+}
 </script>
