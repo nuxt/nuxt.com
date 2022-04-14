@@ -1,6 +1,6 @@
 <template>
   <div class="mt-12 sm:mt-24 relative overflow-hidden border-y mb-16">
-    <UContainer class="py-12 lg:py-16 lg:flex lg:items-center lg:justify-between relative">
+    <UContainer class="py-12 lg:py-16 lg:flex lg:items-center lg:justify-between relative" padded>
       <span class="_ellipse z-0 " />
       <h2 class="u-text-black z-[1] tracking-tight">
         <span class="block font-semibold text-2xl">
