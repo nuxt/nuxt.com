@@ -6,8 +6,8 @@
         <ComboboxInput ref="comboboxInput" :value="query" class="w-full h-12 pr-4 placeholder-gray-400 dark:placeholder-gray-500 bg-transparent border-0 pl-[3.25rem] u-text-gray-900 focus:ring-0 sm:text-sm" placeholder="Search..." @change="query = $event.target.value" />
       </div>
 
-      <ComboboxOptions v-if="filteredFiles.length > 0 || filteredRecentFiles.length > 0" static hold class="relative flex-1 overflow-y-auto divide-y u-divide-gray-100 scroll-py-2">
-        <li v-if="filteredRecentFiles.length" class="p-2">
+      <ComboboxOptions v-if="filteredFiles.length > 0 || (filteredRecentFiles.length > 0 && !query)" static hold class="relative flex-1 overflow-y-auto divide-y u-divide-gray-100 scroll-py-2">
+        <li v-if="filteredRecentFiles.length && !query" class="p-2">
           <h2 class="px-3 my-2 text-xs font-semibold u-text-gray-900">
             Recent Files
           </h2>
@@ -218,16 +218,7 @@ const recentFiles = computed(() => {
   return recentFiles.map(f => ({ ...f, name: getPathName(f.path), icon: getIconName(f), iconColor: getIconColor(f) }))
 })
 
-const filteredRecentFiles = computed(() => {
-  let filteredRecentFiles = [...recentFiles.value]
-
-  if (query.value) {
-    filteredRecentFiles = filteredRecentFiles.filter(f => f.path.search(new RegExp(query.value, 'i')) !== -1)
-  }
-
-  filteredRecentFiles = filteredRecentFiles.slice(0, 5)
-  return filteredRecentFiles
-})
+const filteredRecentFiles = computed(() => [...recentFiles.value].slice(0, 5))
 
 const getIconName = (file) => {
   switch (file.status) {
