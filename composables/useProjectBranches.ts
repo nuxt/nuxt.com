@@ -24,7 +24,11 @@ export const useProjectBranches = (project: Project) => {
 
     pending.value = true
 
-    branches.value = await client<GitHubBranch[]>(`/projects/${project.id}/branches`)
+    branches.value = await client<GitHubBranch[]>(`/projects/${project.id}/branches`, {
+      params: {
+        force
+      }
+    })
 
     pending.value = false
 
