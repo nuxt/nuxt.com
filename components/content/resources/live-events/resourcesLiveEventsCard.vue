@@ -1,16 +1,22 @@
 <template>
-  <UCard body-class="p-0" class="flex-col space-y-4 cursor-pointer" custom-class="transition ease-in-out duration-300 hover:ring-1 hover:u-ring-gray-700 group" @click="isOpen = !isOpen">
-    <ResourcesLiveEventsModal v-model="isOpen" :video-src="videoSrc" :video-title="videoTitle" :slug="slug" />
+  <UCard
+    body-class="p-0"
+    class="flex-col space-y-4 cursor-pointer"
+    custom-class="transition ease-in-out duration-300 hover:ring-1 hover:u-ring-gray-700 group"
+    @click="isOpen = !isOpen"
+  >
+    <ResourcesLiveEventsModal v-model="isOpen" :page="page" />
+
     <div class="flex h-18 items-center pt-4 px-4 relative">
       <div class="w-10 h-10 flex items-center justify-center flex-shrink-0">
-        <img :src="`/resources/live-events/${eventLogo}`" :alt="eventLogo" class="rounded-full u-border-gray-900">
+        <img :src="`/resources/live-events/${page.eventLogo}`" :alt="page.eventLogo" class="rounded-full u-border-gray-900">
       </div>
       <div class="pl-2 flex-grow overflow-hidden">
         <h6 class="text-lg font-semibold truncate">
-          <Markdown use="title" unwrap="p" />
+          {{ page.title }}
         </h6>
         <p class="text-sm font-medium u-text-gray-400">
-          <Markdown use="name" unwrap="p" />
+          {{ page.name }}
         </p>
       </div>
       <div class="flex items-end self-start pl-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -19,20 +25,20 @@
     </div>
     <div class="text-gray-700 mb-5 line-clamp-3 h-24 px-4 pt-5">
       <p>
-        <Markdown use="description" unwrap="p" />
+        {{ page.description }}
       </p>
     </div>
 
     <div class="flex h-18 items-center py-3 px-4 border-t u-bg-gray-100">
       <div class="flex">
-        <img :src="avatarSrc" size="lg" class="hexagon w-9 h-10 object-cover">
+        <img :src="page.avatarSrc" size="lg" class="hexagon w-9 h-10 object-cover">
       </div>
       <div class="flex flex-col pl-3">
         <span class="text-sm font-semibold">
-          <Markdown use="speaker" unwrap="p" />
+          {{ page.speaker }}
         </span>
         <span class="text-sm">
-          {{ formatDateByLocale('en', date) }}
+          {{ formatDateByLocale('en', page.date) }}
         </span>
       </div>
     </div>
@@ -40,30 +46,10 @@
 </template>
 
 <script setup lang="ts">
-defineProps({
-  eventLogo: {
-    type: String,
-    default: ''
-  },
-  avatarSrc: {
-    type: String,
-    default: ''
-  },
-  date: {
-    type: String,
-    default: ''
-  },
-  videoSrc: {
-    type: String,
-    default: ''
-  },
-  videoTitle: {
-    type: String,
-    default: ''
-  },
-  slug: {
-    type: String,
-    default: ''
+const props = defineProps({
+  page: {
+    type: Object,
+    default: () => {}
   }
 })
 
