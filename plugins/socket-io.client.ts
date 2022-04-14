@@ -4,7 +4,7 @@ class SocketIO {
   socket = null
 
   connect () {
-    const url = useStrapiUrl()
+    const config = useRuntimeConfig().public
     const token = useStrapiToken()
 
     if (!token.value) {
@@ -15,7 +15,7 @@ class SocketIO {
       return
     }
 
-    this.socket = io(url, {
+    this.socket = io(config.strapi.url, {
       auth: {
         token: `Bearer ${token.value}`
       },
