@@ -28,7 +28,7 @@
     </template>
 
     <template #header>
-      <ProjectHeader>
+      <ProjectHeader :active-users="activeUsers">
         <template #extra-actions>
           <UButton
             size="xs"
@@ -56,7 +56,7 @@
 <script setup lang="ts">
 import type { PropType, Ref } from 'vue'
 import { debounce } from 'lodash-es'
-import type { Team, Project, GitHubDraft } from '~/types'
+import type { Team, Project, GitHubDraft, SocketUser } from '~/types'
 
 const props = defineProps({
   team: {
@@ -65,6 +65,10 @@ const props = defineProps({
   },
   project: {
     type: Object as PropType<Project>,
+    required: true
+  },
+  activeUsers: {
+    type: Object as PropType<SocketUser[]>,
     required: true
   }
 })

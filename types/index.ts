@@ -46,6 +46,12 @@ export interface User {
   beta: boolean
 }
 
+// User connected through websockets
+export interface SocketUser {
+  username: string
+  avatar: string
+}
+
 export interface Template {
   id: number
   owner: string

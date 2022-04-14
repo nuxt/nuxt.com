@@ -24,6 +24,7 @@
     </div>
 
     <div v-if="branches.length" class="flex items-center gap-3 min-w-0">
+      <UAvatarGroup :group="activeUsers" size="sm" />
       <UButton
         v-if="isDraftContent || isDraftMedia"
         label="Save"
@@ -49,7 +50,15 @@
 </template>
 
 <script setup lang="ts">
-import type { Project } from '~/types'
+import { PropType } from 'vue'
+import type { Project, SocketUser } from '~/types'
+
+defineProps({
+  activeUsers: {
+    type: Object as PropType<SocketUser[]>,
+    required: true
+  }
+})
 
 const project: Project = inject('project')
 

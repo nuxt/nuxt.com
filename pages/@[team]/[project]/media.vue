@@ -11,7 +11,7 @@
         @change="onFileUpload"
       >
 
-      <ProjectHeader>
+      <ProjectHeader :active-users="activeUsers">
         <template #extra-actions>
           <UButton
             size="xs"
@@ -53,7 +53,7 @@
 <script setup lang="ts">
 import type { PropType, Ref } from 'vue'
 import { isEmpty } from 'lodash-es'
-import type { Team, Project } from '~/types'
+import type { Team, Project, SocketUser } from '~/types'
 import { getAvailablePath } from '~/utils/tree'
 
 const props = defineProps({
@@ -63,6 +63,10 @@ const props = defineProps({
   },
   project: {
     type: Object as PropType<Project>,
+    required: true
+  },
+  activeUsers: {
+    type: Object as PropType<SocketUser[]>,
     required: true
   }
 })

@@ -1,7 +1,7 @@
 <template>
   <ProjectPage>
     <template #header>
-      <ProjectHeader />
+      <ProjectHeader :active-users="activeUsers" />
     </template>
 
     <div class="flex flex-col flex-1 p-4 sm:p-6">
@@ -60,7 +60,7 @@
 <script setup lang="ts">
 import { useTimeAgo } from '@vueuse/core'
 import type { PropType } from 'vue'
-import type { Team, Project } from '~/types'
+import type { Team, Project, SocketUser } from '~/types'
 
 const props = defineProps({
   team: {
@@ -69,6 +69,10 @@ const props = defineProps({
   },
   project: {
     type: Object as PropType<Project>,
+    required: true
+  },
+  activeUsers: {
+    type: Object as PropType<SocketUser[]>,
     required: true
   }
 })
