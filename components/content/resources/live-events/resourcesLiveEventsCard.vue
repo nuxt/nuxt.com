@@ -1,7 +1,7 @@
 <template>
   <UCard body-class="p-0" class="flex-col space-y-4">
     <div class="flex h-18 items-center pt-4 px-4">
-      <div class="rounded-full border-2 u-border-gray-900 w-10 h-10 flex items-center justify-center">
+      <div class="rounded-full border-2 u-border-gray-900 w-10 h-10 flex items-center justify-center flex-shrink-0">
         <img :src="`/resources/live-events/${eventLogo}`" :alt="eventLogo" class="rounded-full u-border-gray-900">
       </div>
       <div class="pl-2 overflow-hidden">

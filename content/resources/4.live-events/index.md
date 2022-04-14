@@ -63,19 +63,13 @@ Ask us for a conference
   ::
 ::
 
-::resources-live-events-section
----
-sectionClass: 'w-full'
-cta: true
----
-#sectionContent
-  ::resources-live-events-Cta
-  #title
-  Wanna invite us on a conference ?
-  #description
-  Contact us to make it happen !
-  ::
+::resources-live-events-Cta
+#title
+Wanna invite us on a conference ?
+#description
+Contact us to make it happen !
 ::
+
 
 <!-- name: 'ReactiveConf 2019'
     title: 'Be Lazy, Be Smart, Be Nuxt'
