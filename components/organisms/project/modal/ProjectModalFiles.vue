@@ -190,7 +190,6 @@ const recentFiles = computed(() => {
     ...contentRecentFiles.value,
     ...mediaRecentFiles.value
   ].sort((a, b) => b.openedAt - a.openedAt)
-  console.log('recentFiles', recentFiles)
 
   return recentFiles
     .map(f => ({ ...f, name: getPathName(f.path), icon: getIconName(f), iconColor: getIconColor(f) }))
