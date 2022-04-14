@@ -1,7 +1,8 @@
 <template>
-  <UCard body-class="p-0" class="flex-col space-y-4">
+  <UCard body-class="p-0" class="flex-col space-y-4 cursor-pointer" @click="isOpen = !isOpen">
+    <ResourcesLiveEventsModal v-model="isOpen" :video-src="videoSrc" :video-title="videoTitle" />
     <div class="flex h-18 items-center pt-4 px-4">
-      <div class="rounded-full border-2 u-border-gray-900 w-10 h-10 flex items-center justify-center flex-shrink-0">
+      <div class="w-10 h-10 flex items-center justify-center flex-shrink-0">
         <img :src="`/resources/live-events/${eventLogo}`" :alt="eventLogo" class="rounded-full u-border-gray-900">
       </div>
       <div class="pl-2 overflow-hidden">
@@ -48,8 +49,18 @@ defineProps({
   date: {
     type: String,
     default: ''
+  },
+  videoSrc: {
+    type: String,
+    default: ''
+  },
+  videoTitle: {
+    type: String,
+    default: ''
   }
 })
+
+const isOpen = ref(false)
 
 const formatDateByLocale = (locale, d) => {
   return new Date(d).toLocaleDateString(locale, {

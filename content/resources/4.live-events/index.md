@@ -17,8 +17,10 @@ Ask us for a conference
   ::resources-live-events-card
   ---
   date: '2019/10/30'
-  eventLogo: 'reactive-conf.svg'
+  eventLogo: 'reactive-conf.png'
   avatarSrc: 'https://pbs.twimg.com/profile_images/1042510623962275840/1Iw_Mvud_400x400.jpg'
+  videoSrc: 'vbsPXHCu8Xg'
+  videoTitle: 'Be Lazy, Be Smart, Be Nuxt'
   ---
   #title
   Be Lazy, Be Smart, Be Nuxt
@@ -33,8 +35,10 @@ Ask us for a conference
   ::resources-live-events-card
   ---
   date: '2019/10/30'
-  eventLogo: 'reactive-conf.svg'
+  eventLogo: 'reactive-conf.png'
   avatarSrc: 'https://pbs.twimg.com/profile_images/1042510623962275840/1Iw_Mvud_400x400.jpg'
+  videoSrc: 'https://youtu.be/m0UtuJoigvQ'
+  videoTitle: 'Be Lazy, Be Smart, Be Nuxt'
   ---
   #title
   Be Lazy, Be Smart, Be Nuxt Be Lazy
@@ -49,8 +53,10 @@ Ask us for a conference
   ::resources-live-events-card
   ---
   date: '2019/10/30'
-  eventLogo: 'reactive-conf.svg'
+  eventLogo: 'reactive-conf.png'
   avatarSrc: 'https://pbs.twimg.com/profile_images/1042510623962275840/1Iw_Mvud_400x400.jpg'
+  videoSrc: 'https://youtu.be/m0UtuJoigvQ'
+  videoTitle: 'Be Lazy, Be Smart, Be Nuxt'
   ---
   #title
   Be Lazy, Be Smart, Be Nuxt

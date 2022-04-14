@@ -8747,7 +8747,7 @@ vue-bundle-renderer@^0.3.5:
   dependencies:
     bundle-runner "^0.0.1"
 
-vue-demi@*:
+vue-demi@*, vue-demi@latest:
   version "0.12.5"
   resolved "https://registry.yarnpkg.com/vue-demi/-/vue-demi-0.12.5.tgz#8eeed566a7d86eb090209a11723f887d28aeb2d1"
   integrity sha512-BREuTgTYlUr0zw0EZn3hnhC3I6gPWv+Kwh4MCih6QcAeaTlaIX0DwOVN0wHej7hSvDPecz4jygy/idsgKfW58Q==
@@ -8764,6 +8764,13 @@ vue-eslint-parser@^8.0.1:
     esquery "^1.4.0"
     lodash "^4.17.21"
     semver "^7.3.5"
+
+vue-lite-youtube-embed@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/vue-lite-youtube-embed/-/vue-lite-youtube-embed-1.0.4.tgz#e05f6709f3722001e0310e934c5097c00e8a1c8b"
+  integrity sha512-2JZMa8ysGN1TNQwn9KWqSz8aXgZRnwEBlrrKc8Y6hLiIdr3U0D0ltST4sAYLA5L+eUM4Dfsvxp95egKMSYsEXQ==
+  dependencies:
+    vue-demi latest
 
 vue-plausible@^1.3.1:
   version "1.3.1"
