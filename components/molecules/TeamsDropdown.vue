@@ -1,5 +1,5 @@
 <template>
-  <UDropdown v-if="user" :items="items" placement="bottom-start" container-class="w-48 z-20 py-2 !-mx-2" item-disabled-class>
+  <UDropdown v-if="user" :items="items" placement="bottom-start" container-class="w-48 z-20 py-2 lg:!-mx-2" item-disabled-class>
     <template #default="{ open }">
       <UButton
         icon="heroicons-outline:selector"
@@ -7,7 +7,7 @@
         square
         variant="transparent"
         icon-base-class="u-text-gray-400 flex-shrink-0 hidden lg:block"
-        class="flex items-center justify-between -mr-2 !border-0 w-44"
+        class="flex items-center justify-between -mr-2 !border-0 lg:w-44"
         :class="{ 'u-text-gray-700': open }"
       >
         <div class="flex-1 flex items-center min-w-0">
