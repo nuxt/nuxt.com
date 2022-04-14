@@ -253,7 +253,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
       if (index !== -1) {
         updatedRecentFiles.splice(index, 1)
       }
-      recentFiles.value = [f, ...updatedRecentFiles].slice(0, 6)
+      recentFiles.value = [{ ...f, openedAt: Date.now() }, ...updatedRecentFiles].slice(0, 6)
     }
   }
 

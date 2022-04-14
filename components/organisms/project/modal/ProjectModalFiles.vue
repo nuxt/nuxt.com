@@ -6,15 +6,15 @@
         <ComboboxInput ref="comboboxInput" :value="query" class="w-full h-12 pr-4 placeholder-gray-400 dark:placeholder-gray-500 bg-transparent border-0 pl-[3.25rem] u-text-gray-900 focus:ring-0 sm:text-sm" placeholder="Search..." @change="query = $event.target.value" />
       </div>
 
-      <ComboboxOptions v-if="filteredFiles.length > 0 || (filteredRecentFiles.length > 0 && !query)" static hold class="relative flex-1 overflow-y-auto divide-y u-divide-gray-100 scroll-py-2">
-        <li v-if="filteredRecentFiles.length && !query" class="p-2">
+      <ComboboxOptions v-if="filteredFiles.length > 0 || (recentFiles.length > 0 && !query)" static hold class="relative flex-1 overflow-y-auto divide-y u-divide-gray-100 scroll-py-2">
+        <li v-if="recentFiles.length && !query" class="p-2">
           <h2 class="px-3 my-2 text-xs font-semibold u-text-gray-900">
             Recent Files
           </h2>
 
           <ul class="text-sm u-text-gray-700">
             <ComboboxOption
-              v-for="f of filteredRecentFiles"
+              v-for="f of recentFiles"
               :key="f.path"
               v-slot="{ active }"
               :value="f"
@@ -186,39 +186,16 @@ const filteredFiles = computed(() => {
 })
 
 const recentFiles = computed(() => {
-  let recentFiles = []
+  const recentFiles = [
+    ...contentRecentFiles.value,
+    ...mediaRecentFiles.value
+  ].sort((a, b) => b.openedAt - a.openedAt)
+  console.log('recentFiles', recentFiles)
 
-  if (route.name === '@team-project-content') {
-    let files = [...contentRecentFiles.value]
-    if (contentFile.value) {
-      files = files.filter(f => f.path !== contentFile.value.path)
-    }
-
-    recentFiles = [
-      ...files,
-      ...mediaRecentFiles.value
-    ]
-  } else if (route.name === '@team-project-media') {
-    let files = [...mediaRecentFiles.value]
-    if (mediaFile.value) {
-      files = files.filter(f => f.path !== mediaFile.value.path)
-    }
-
-    recentFiles = [
-      ...files,
-      ...contentRecentFiles.value
-    ]
-  } else {
-    recentFiles = [
-      ...contentRecentFiles.value,
-      ...mediaRecentFiles.value
-    ]
-  }
-
-  return recentFiles.map(f => ({ ...f, name: getPathName(f.path), icon: getIconName(f), iconColor: getIconColor(f) }))
+  return recentFiles
+    .map(f => ({ ...f, name: getPathName(f.path), icon: getIconName(f), iconColor: getIconColor(f) }))
+    .slice(0, 5)
 })
-
-const filteredRecentFiles = computed(() => [...recentFiles.value].slice(0, 5))
 
 const getIconName = (file) => {
   switch (file.status) {
