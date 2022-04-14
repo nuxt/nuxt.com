@@ -17,8 +17,8 @@ export const useProjectBranches = (project: Project) => {
 
   // Http
 
-  async function fetch (force?: boolean) {
-    if (branches.value.length && !force) {
+  async function fetch ({ force, resetCache }: { force?: boolean, resetCache?: boolean } = {}) {
+    if (branches.value.length && !force && !resetCache) {
       return
     }
 
@@ -26,7 +26,7 @@ export const useProjectBranches = (project: Project) => {
 
     branches.value = await client<GitHubBranch[]>(`/projects/${project.id}/branches`, {
       params: {
-        force
+        force: resetCache
       }
     })
 
@@ -35,8 +35,8 @@ export const useProjectBranches = (project: Project) => {
     init()
   }
 
-  function refresh () {
-    return fetch(true)
+  function refresh (resetCache?: boolean) {
+    return fetch({ force: true, resetCache })
   }
 
   async function create (name: string, mergeDraft?: boolean) {
