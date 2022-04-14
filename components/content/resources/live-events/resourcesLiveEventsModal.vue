@@ -17,10 +17,6 @@
 import LiteYouTubeEmbed from 'vue-lite-youtube-embed'
 import 'vue-lite-youtube-embed/dist/style.css'
 
-defineComponent({
-  LiteYouTubeEmbed
-})
-
 const props = defineProps({
   slug: {
     type: String,

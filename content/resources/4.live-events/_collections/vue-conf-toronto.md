@@ -1,5 +1,5 @@
 ---
-title: 'FBEOIuDUZh4'
+title: 'Leave your legacy code behind and go Nuxt'
 videoId: 'vbsPXHCu8Xg'
 ---
 

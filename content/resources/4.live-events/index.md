@@ -83,7 +83,7 @@ Ask us for a conference
   ::
 ::
 
-::resources-live-events-Cta
+::resources-live-events-cta
 #title
 Wanna invite us on a conference ?
 #description
