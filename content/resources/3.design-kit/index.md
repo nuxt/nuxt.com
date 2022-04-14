@@ -2,7 +2,7 @@
 title: Design Kit
 ---
 
-::design-kit-hero
+::resources-design-kit-hero
 ---
 hightlight: true
 ---
@@ -14,7 +14,7 @@ Welcome to Nuxt design definition page. Identity was redefined by handpicking co
 Download design kit
 ::
 
-::design-kit-section
+::resources-design-kit-section
 ---
 sectionClass: 'pb-8 pt-16'
 ---
@@ -25,7 +25,7 @@ Nuxt brand colors
 #description
 Our main palette is comprised of a strong inspiring gradient, white, and dark gray to bring sobriety to our brand and is used in logical ways throughout marketing to guide the eye and highlight the important bits.
 #designList
-  ::design-kit-color-card
+  ::resources-design-kit-color-card
   ---
   cardClass: 'bg-gradient-to-r from-[#00DC82] via-[#36E4DA] to-[#0047E1]'
   hexaColor: '#00DC82 to #36E4DA then #0047E1'
@@ -36,7 +36,7 @@ Our main palette is comprised of a strong inspiring gradient, white, and dark gr
   copy
   ::
 
-  ::design-kit-color-card
+  ::resources-design-kit-color-card
   ---
   cardClass: 'bg-[#FFFFFF]'
   hexaColor: '#FFFFFF'
@@ -47,7 +47,7 @@ Our main palette is comprised of a strong inspiring gradient, white, and dark gr
   copy
   ::
 
-  ::design-kit-color-card
+  ::resources-design-kit-color-card
   ---
   cardClass: 'bg-[#0C0C0D]'
   hexaColor: '#0C0C0D'
@@ -60,7 +60,7 @@ Our main palette is comprised of a strong inspiring gradient, white, and dark gr
 ::
 
 
-::design-kit-section
+::resources-design-kit-section
 #category
 Colors
 #title
@@ -69,7 +69,7 @@ The Primaries
 Based on our iconic NuxtJS green, our primary colors represents the past the present and the future of the Nuxt brand. Adding more colors grant us more possibilities for emphasing content. We choose to go in direction of the blue because it reminds VueJS where it all started and fits
 far better with Nuxt DNA than warm colors.
 #designList
-  ::design-kit-color-card
+  ::resources-design-kit-color-card
   ---
   cardClass: 'bg-[#00DC82]'
   hexaColor: '#00DC82'
@@ -80,7 +80,7 @@ far better with Nuxt DNA than warm colors.
   copy
   ::
 
-  ::design-kit-color-card
+  ::resources-design-kit-color-card
   ---
   cardClass: 'bg-[#36E4DA]'
   hexaColor: '#36E4DA'
@@ -91,7 +91,7 @@ far better with Nuxt DNA than warm colors.
   copy
   ::
 
-  ::design-kit-color-card
+  ::resources-design-kit-color-card
   ---
   cardClass: 'bg-[#407CFF]'
   hexaColor: '#407CFF'
@@ -104,7 +104,7 @@ far better with Nuxt DNA than warm colors.
 ::
 
 
-::design-kit-section
+::resources-design-kit-section
 ---
 listClass: 'grid-cols-1 gap-0'
 ---
@@ -115,7 +115,7 @@ The Gradient
 #description
 This gradient is here to represent the brand, across all supports (landings, apps, socials medias, videos). It’s designed to represent evolution of NuxtJS to a bigger solution including more products. It also keeps a bit of contact with nature identity, evocating an aurora which provide a feeling of dream.
 #designList
-  ::design-kit-color-card
+  ::resources-design-kit-color-card
   ---
   gradient: true
   cardClass: 'bg-gradient-to-r from-[#00DC82] via-[#36E4DA] to-[#0047E1]'
@@ -125,7 +125,7 @@ This gradient is here to represent the brand, across all supports (landings, app
   ::
 ::
 
-::design-kit-section
+::resources-design-kit-section
 ---
 sectionClass: 'pb-t pb-16'
 listClass: 'grid-cols-2 md:grid-cols-3 md:grid-cols-5 gap-4'
@@ -138,77 +138,77 @@ The Secondaries
 #description
 Our secondary palette contains a variety of colors with all the same base hue (the one of our iconic NuxtJS green) to keep consistency. We lean these colors more on the current & future Nuxt products to define their identity. By doing so, brand awareness & identity should be recognisable by every user.
 #designList
-  ::design-kit-color-card
+  ::resources-design-kit-color-card
   ---
   secondaries: true
   cardClass: 'bg-[#6B6B76] hover:bg-[#bfbfbf]'
   hexaColor: '#6B6B76'
   ---
   ::
-  ::design-kit-color-card
+  ::resources-design-kit-color-card
   ---
   secondaries: true
   cardClass: 'bg-[#FF4C40]'
   hexaColor: '#FF4C40'
   ---
   ::
-  ::design-kit-color-card
+  ::resources-design-kit-color-card
   ---
   secondaries: true
   cardClass: 'bg-[#FF9040]'
   hexaColor: '#FF9040'
   ---
   ::
-  ::design-kit-color-card
+  ::resources-design-kit-color-card
   ---
   secondaries: true
   cardClass: 'bg-[#F7D14C]'
   hexaColor: '#F7D14C'
   ---
   ::
-  ::design-kit-color-card
+  ::resources-design-kit-color-card
   ---
   secondaries: true
   cardClass: 'bg-[#D8DA52]'
   hexaColor: '#D8DA52'
   ---
   ::
-  ::design-kit-color-card
+  ::resources-design-kit-color-card
   ---
   secondaries: true
   cardClass: 'bg-[#40DDFF]'
   hexaColor: '#40DDFF'
   ---
   ::
-  ::design-kit-color-card
+  ::resources-design-kit-color-card
   ---
   secondaries: true
   cardClass: 'bg-[#40BBFF]'
   hexaColor: '#40BBFF'
   ---
   ::
-  ::design-kit-color-card
+  ::resources-design-kit-color-card
   ---
   secondaries: true
   cardClass: 'bg-[#614BEC] hover:bg-[#8774fc]'
   hexaColor: '#614BEC'
   ---
   ::
-  ::design-kit-color-card
+  ::resources-design-kit-color-card
   ---
   secondaries: true
   cardClass: 'bg-[#9640FF]'
   hexaColor: '#9640FF'
   ---
   ::
-  ::design-kit-color-card
+  ::resources-design-kit-color-card
   ---
   secondaries: true
   cardClass: 'bg-[#FF8DD8]'
   hexaColor: '#FF8DD8'
   ---
   ::
-  ::design-kit-color-card
+  ::resources-design-kit-color-card
   ---
   secondaries: true
   cardClass: 'bg-[#FF4079]'
@@ -217,7 +217,7 @@ Our secondary palette contains a variety of colors with all the same base hue (t
   ::
 ::
 
-::design-kit-section
+::resources-design-kit-section
 ---
 sectionClass: 'pb-8 pt-16'
 highlight: false
@@ -229,7 +229,7 @@ Monograms
 #description
 Our logo honours the high mountains of the Pyrenees, the place where it all started. The shape is drawn with a smooth but structured path, that locks itself like an infinity symbol.<br />This is one of our most powerful tools to communicate our story and the values behind our brand.
 #designList
-  ::design-kit-logo-card
+  ::resources-design-kit-logo-card
   ---
   imgName: mono-black
   cardClass: 'bg-white'
@@ -238,7 +238,7 @@ Our logo honours the high mountains of the Pyrenees, the place where it all star
   Monogram black
   ::
 
-  ::design-kit-logo-card
+  ::resources-design-kit-logo-card
   ---
   imgName: mono-white
   cardClass: 'bg-gray-900'
@@ -247,7 +247,7 @@ Our logo honours the high mountains of the Pyrenees, the place where it all star
   Monogram white
   ::
 
-  ::design-kit-logo-card
+  ::resources-design-kit-logo-card
   ---
   imgName: mono-framework
   cardClass: 'bg-white'
@@ -257,7 +257,7 @@ Our logo honours the high mountains of the Pyrenees, the place where it all star
   ::
 ::
 
-::design-kit-section
+::resources-design-kit-section
 ---
 sectionClass: 'pb-16 pt-8'
 highlight: false
@@ -267,7 +267,7 @@ Logo
 #title
 Full
 #designList
-  ::design-kit-logo-card
+  ::resources-design-kit-logo-card
   ---
   imgName: full-black
   cardClass: 'bg-white'
@@ -277,7 +277,7 @@ Full
   Full Nuxt Black
   ::
 
-  ::design-kit-logo-card
+  ::resources-design-kit-logo-card
   ---
   imgName: full-white
   cardClass: 'bg-gray-900'
@@ -287,7 +287,7 @@ Full
   Full Nuxt White
   ::
 
-  ::design-kit-logo-card
+  ::resources-design-kit-logo-card
   ---
   imgName: full-framework-black
   cardClass: 'bg-white'
@@ -297,7 +297,7 @@ Full
   Full Framework Black
   ::
 
-  ::design-kit-logo-card
+  ::resources-design-kit-logo-card
   ---
   cardClass: bg-gray-900
   imgName: full-framework-white
@@ -308,7 +308,7 @@ Full
   ::
 ::
 
-::design-kit-section
+::resources-design-kit-section
 ---
 sectionClass: 'pt-16 pb-8'
 ---
@@ -325,7 +325,7 @@ Font is also variable which allows us to fit with any contexts.
 [The quick brown fox jumps over the lazy dog.]{ .text-4xl }
 ::
 
-::design-kit-section
+::resources-design-kit-section
 #category
 Typography
 #title
@@ -335,12 +335,12 @@ For Nuxt brand, we will only use Regular / Medium / Semibold / Bold weights 99% 
 As Roobert font is licensed, you cannot use it for free so you can use the [Inter font]{ .underline .font-semibold } as an alternative. If you want to have visuals with Roobert official font, contact us we will give you the asset ready.
 ::
 
-::design-kit-section
+::resources-design-kit-section
 ---
 sectionClass: 'pb-16 pt-8'
 ---
 #cta
-  ::design-kit-cta
+  ::resources-design-kit-cta
   ---
   buttonText: 'See Design System'
   to: '#'
@@ -352,7 +352,7 @@ sectionClass: 'pb-16 pt-8'
   Everything you need to make a design using Nuxt identity.
   ::
 
-  ::design-kit-cta
+  ::resources-design-kit-cta
   ---
   buttonText: 'Read article'
   to: '#'
