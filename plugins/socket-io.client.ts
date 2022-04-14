@@ -17,7 +17,7 @@ class SocketIO {
 
     this.socket = io(config.strapi.url, {
       auth: {
-        token: `Bearer ${token.value}`
+        token: token.value
       },
       transports: ['websocket', 'polling']
     })
@@ -68,7 +68,7 @@ export default defineNuxtPlugin(() => {
 
   return {
     provide: {
-      socket: new SocketIO()
+      socket
     }
   }
 })
