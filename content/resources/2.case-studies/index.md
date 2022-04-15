@@ -1,5 +1,5 @@
 ---
-title: case-studies
+title: Case Studies
 ---
 
 ::resources-case-studies-hero
@@ -9,8 +9,7 @@ Our users have something to say
 Nuxt helps you to build modern websites in a short amount of time, here’s how biggest entreprises make it work.
 ::
 
-::resources-case-studies-list
-::
+:resources-case-studies-list
 
 ::resources-case-studies-cta
 #title

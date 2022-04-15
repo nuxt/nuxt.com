@@ -14,7 +14,5 @@
 </template>
 
 <script setup lang="ts">
-
-const { data: caseStudiesData } = await useAsyncData('resources-case-studies', () =>
-  queryContent('/resources/case-studies').where({ $not: { slug: { $in: ['/resources/case-studies'] } } }).find())
+const { data: caseStudiesData } = await useAsyncData('resources-case-studies', () => queryContent('/resources/case-studies').where({ $not: { slug: { $in: ['/resources/case-studies'] } } }).find())
 </script>
