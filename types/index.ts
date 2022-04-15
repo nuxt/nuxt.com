@@ -50,7 +50,7 @@ export interface User {
 export interface SocketUser {
   username: string
   avatar: string
-  file: string
+  file?: string
 }
 
 export interface Template {
