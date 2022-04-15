@@ -82,12 +82,10 @@ const props = defineProps({
   team: {
     type: Object as PropType<Team>,
     default: null
-  },
-  project: {
-    type: Object as PropType<Project>,
-    required: true
   }
 })
+
+const project: Project = inject('project')
 
 const user = useStrapiUser() as Ref<User>
 const router = useRouter()
@@ -96,9 +94,7 @@ const { $toast } = useNuxtApp()
 const route = useRoute()
 const client = useStrapiClient()
 
-const project: Project = inject('project')
-
-const form = reactive({ name: props.project.name, slug: props.project.slug, url: props.project.url, baseDir: props.project.baseDir })
+const form = reactive({ name: project.name, slug: project.slug, url: project.url, baseDir: project.baseDir })
 const updating = ref(false)
 
 const { data: folders } = await useAsyncData(`projects-${route.params.project}-folders`, () => client<File[]>(`/github/installations/${project.repository.owner}/${project.repository.name}/folders`), {
@@ -111,22 +107,22 @@ const onSubmit = async () => {
   updating.value = true
 
   try {
-    const project = await update<Project>('projects', props.project.id, form)
+    const updatedProject = await update<Project>('projects', project.id, form)
 
-    if (project.slug !== props.project.slug) {
+    if (updatedProject.slug !== project.slug) {
       // Replace `name` param in url
-      router.replace({ name: '@team-project-settings', params: { team: props.team ? props.team.slug : user.value.username, project: project.slug } })
+      router.replace({ name: '@team-project-settings', params: { team: props.team ? props.team.slug : user.value.username, project: updatedProject.slug } })
     }
 
-    if (project.baseDir !== props.project.baseDir) {
+    if (updatedProject.baseDir !== project.baseDir) {
       // reload files for both roots
-      const { refresh: refreshContentFiles } = useProjectFiles(props.project, 'content')
-      const { refresh: refreshMediaFiles } = useProjectFiles(props.project, 'public')
+      const { refresh: refreshContentFiles } = useProjectFiles(project, 'content')
+      const { refresh: refreshMediaFiles } = useProjectFiles(project, 'public')
       refreshContentFiles()
       refreshMediaFiles()
     }
 
-    Object.assign(props.project, project)
+    Object.assign(project, updatedProject)
 
     $toast.success({
       title: 'Success',
