@@ -56,29 +56,25 @@ import { isEmpty } from 'lodash-es'
 import type { Team, Project } from '~/types'
 import { getAvailablePath } from '~/utils/tree'
 
-const props = defineProps({
+defineProps({
   team: {
     type: Object as PropType<Team>,
     default: null
-  },
-  project: {
-    type: Object as PropType<Project>,
-    required: true
   }
 })
 
 const root = 'public'
+const project: Project = inject('project')
 
-provide('project', props.project)
 provide('root', root)
 
 const { $toast } = useNuxtApp()
-const { upload, computedFiles, fetchFile } = useProjectFiles(props.project, root)
+const { upload, computedFiles, fetchFile } = useProjectFiles(project, root)
 
 const fileToUpload: Ref<HTMLInputElement> = ref(null)
 const dragover = ref(false)
 
-const medias = useState(`project-${props.project.id}-medias`, () => ({}))
+const medias = useState(`project-${project.id}-medias`, () => ({}))
 
 watch(computedFiles, (newFiles, oldFiles) => {
   for (const oldFile of oldFiles) {

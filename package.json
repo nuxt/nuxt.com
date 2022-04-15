@@ -22,7 +22,7 @@
     "@nuxtjs/strapi": "npm:@nuxtjs/strapi-edge@latest",
     "@tailwindcss/typography": "^0.5.2",
     "eslint": "^8.13.0",
-    "nuxt3": "^3.0.0-27498764.32c798c",
+    "nuxt3": "^3.0.0-27500344.7fb29b3",
     "socket.io-client": "^4.4.1",
     "standard-version": "^9.3.2",
     "typescript": "^4.6.3",
