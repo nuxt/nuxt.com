@@ -8,6 +8,7 @@ import ProjectModalFileDelete from '~/components/organisms/project/modal/Project
 import ProjectModalFileRevert from '~/components/organisms/project/modal/ProjectModalFileRevert.vue'
 
 export const useProjectFiles = (project: Project, root: Root) => {
+  const { $socket } = useNuxtApp()
   const { open: openModal } = useModal()
   const client = useStrapiClient()
   const { branch } = useProjectBranches(project)
@@ -27,12 +28,12 @@ export const useProjectFiles = (project: Project, root: Root) => {
 
   // Http
 
-  async function fetch ({ force }: { force?: boolean } = {}) {
+  async function fetch ({ force, resetCache }: { force?: boolean, resetCache?: boolean } = {}) {
     if (!branch.value) {
       return
     }
 
-    if (files.value !== null && !force) {
+    if (files.value !== null && !force && !resetCache) {
       return
     }
 
@@ -41,7 +42,8 @@ export const useProjectFiles = (project: Project, root: Root) => {
     const data = await client<{ files: GitHubFile[], draft: GitHubDraft }>(`/projects/${project.id}/files`, {
       params: {
         ref: branch.value.name,
-        root
+        root,
+        force: resetCache
       }
     })
 
@@ -53,8 +55,8 @@ export const useProjectFiles = (project: Project, root: Root) => {
     init()
   }
 
-  function refresh () {
-    return fetch({ force: true })
+  function refresh (resetCache?: boolean) {
+    return fetch({ force: true, resetCache })
   }
 
   async function create (path: string) {
@@ -246,6 +248,10 @@ export const useProjectFiles = (project: Project, root: Root) => {
 
   function select (f: GitHubFile) {
     file.value = f
+
+    if (process.client) {
+      $socket.emit('file:join', `project-${project.id}:${f.path}`)
+    }
 
     if (f) {
       const updatedRecentFiles = [...recentFiles.value]

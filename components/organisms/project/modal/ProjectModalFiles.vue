@@ -58,6 +58,16 @@
             </ComboboxOption>
           </ul>
         </li>
+        <li class="p-2">
+          <ul class="text-sm u-text-gray-700">
+            <ComboboxOption v-for="a in actions" :key="a.key" v-slot="{ active }" :value="a" as="template">
+              <li :class="['flex cursor-pointer select-none items-center rounded-md px-3 py-2', active && 'u-bg-gray-100 u-text-gray-900']">
+                <UIcon :name="a.icon" :class="['h-5 w-5 flex-none u-text-gray-400', active && 'u-text-gray-900', a.iconClass]" aria-hidden="true" />
+                <span class="flex-auto ml-3 truncate">{{ a.label }}</span>
+              </li>
+            </ComboboxOption>
+          </ul>
+        </li>
       </ComboboxOptions>
 
       <div v-if="query !== '' && filteredFiles.length === 0" class="py-14 px-6 flex-1 flex flex-col items-center justify-center sm:px-14">
@@ -102,10 +112,11 @@ const emit = defineEmits(['update:modelValue'])
 const route = useRoute()
 const router = useRouter()
 const keys = useMagicKeys()
-const { file: contentFile, computedFiles: contentFiles, select: selectContentFile, recentFiles: contentRecentFiles } = useProjectFiles(project, 'content')
-const { file: mediaFile, computedFiles: mediaFiles, select: selectMediaFile, recentFiles: mediaRecentFiles } = useProjectFiles(project, 'public')
+const { file: contentFile, computedFiles: contentFiles, select: selectContentFile, refresh: refreshContentFiles, recentFiles: contentRecentFiles } = useProjectFiles(project, 'content')
+const { file: mediaFile, computedFiles: mediaFiles, select: selectMediaFile, refresh: refreshMediaFiles, recentFiles: mediaRecentFiles } = useProjectFiles(project, 'public')
 
 const query = ref('')
+const refreshingFiles = ref(false)
 
 whenever(keys.meta_k, () => {
   isOpen.value = !isOpen.value
@@ -196,6 +207,10 @@ const recentFiles = computed(() => {
     .slice(0, 5)
 })
 
+const actions = computed(() => ([
+  !query.value && { key: 'refresh', label: 'Refresh files', icon: 'heroicons-outline:refresh', iconClass: refreshingFiles.value ? 'animate-spin' : '', click: () => { refreshFiles() } }
+].filter(Boolean)))
+
 const getIconName = (file) => {
   switch (file.status) {
     case 'created':
@@ -242,5 +257,14 @@ function onSelect (option) {
   } else {
     onFileSelect(option)
   }
+}
+
+async function refreshFiles () {
+  refreshingFiles.value = true
+
+  await refreshContentFiles(true)
+  await refreshMediaFiles(true)
+
+  refreshingFiles.value = false
 }
 </script>
