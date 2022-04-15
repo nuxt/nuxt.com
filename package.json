@@ -8,19 +8,17 @@
     "release": "yarn lint && standard-version && git push --follow-tags",
     "test": "yarn lint"
   },
-  "dependencies": {
+  "devDependencies": {
     "@docus/editor": "npm:@docus/editor-edge@latest",
     "@nuxt/content": "npm:@nuxt/content-edge@latest",
-    "@sindresorhus/slugify": "^2.1.0",
+    "@nuxthq/ui": "npm:@nuxthq/ui-edge@latest",
+    "@nuxtjs/strapi": "npm:@nuxtjs/strapi-edge@latest",
+    "@nuxtjs/eslint-config-typescript": "^9.0.0",
     "@vueuse/core": "^8.2.6",
     "@vueuse/motion": "^2.0.0-beta.18",
-    "vue-lite-youtube-embed": "^1.0.4"
-  },
-  "devDependencies": {
-    "@nuxthq/ui": "npm:@nuxthq/ui-edge@latest",
-    "@nuxtjs/eslint-config-typescript": "^9.0.0",
-    "@nuxtjs/strapi": "npm:@nuxtjs/strapi-edge@latest",
     "@tailwindcss/typography": "^0.5.2",
+    "@sindresorhus/slugify": "^2.1.0",
+    "vue-lite-youtube-embed": "^1.0.4",
     "eslint": "^8.13.0",
     "nuxt3": "^3.0.0-27500344.7fb29b3",
     "socket.io-client": "^4.4.1",
