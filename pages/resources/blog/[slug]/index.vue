@@ -53,7 +53,7 @@
           </h2>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
             <div class="dark">
-              <ResourcesBlogCTA
+              <ResourcesBlogCta
                 button-text="Get Started"
                 to="/docs/framework"
                 image-path="/resources/blog/nuxt.svg"
@@ -65,10 +65,10 @@
                 <template #description>
                   How a user interacts with and experience your website is key.
                 </template>
-              </ResourcesBlogCTA>
+              </ResourcesBlogCta>
             </div>
 
-            <ResourcesBlogCTA
+            <ResourcesBlogCta
               button-text="Discover Nuxt Sites"
               to="/showcases"
               image-path="/resources/blog/showcases.png"
@@ -79,7 +79,7 @@
               <template #description>
                 How a user interacts with and experience your website is key.
               </template>
-            </ResourcesBlogCTA>
+            </ResourcesBlogCta>
           </div>
         </div>
       </UContainer>
