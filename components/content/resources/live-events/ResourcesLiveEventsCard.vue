@@ -46,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps({
+defineProps({
   page: {
     type: Object,
     default: () => {}
