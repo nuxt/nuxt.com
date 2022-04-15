@@ -197,10 +197,20 @@ const filteredFiles = computed(() => {
 })
 
 const recentFiles = computed(() => {
-  const recentFiles = [
+  let recentFiles = [
     ...contentRecentFiles.value,
     ...mediaRecentFiles.value
   ].sort((a, b) => b.openedAt - a.openedAt)
+
+  if (route.name === '@team-project-content') {
+    if (contentFile.value) {
+      recentFiles = recentFiles.filter(f => f.path !== contentFile.value.path)
+    }
+  } else if (route.name === '@team-project-media') {
+    if (mediaFile.value) {
+      recentFiles = recentFiles.filter(f => f.path !== mediaFile.value.path)
+    }
+  }
 
   return recentFiles
     .map(f => ({ ...f, name: getPathName(f.path), icon: getIconName(f), iconColor: getIconColor(f) }))
