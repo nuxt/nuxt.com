@@ -56,7 +56,7 @@
 <script setup lang="ts">
 import type { PropType, Ref } from 'vue'
 import { debounce } from 'lodash-es'
-import type { Team, Project, GitHubDraft, SocketUser } from '~/types'
+import type { Team, Project, GitHubDraft } from '~/types'
 
 defineProps({
   team: {
@@ -67,7 +67,6 @@ defineProps({
 
 const root = 'content'
 const project: Project = inject('project')
-const activeUsers: Ref<SocketUser[]> = inject('activeUsers')
 
 provide('root', root)
 
@@ -77,23 +76,11 @@ const client = useStrapiClient()
 const { parseFrontMatter, stringifyFrontMatter } = useMarkdown()
 const { branch } = useProjectBranches(project)
 const { draft, file, fetchFile, openCreateModal: openCreateFileModal, computedFiles } = useProjectFiles(project, root)
-const { query: treeQuery, tree, openDir } = useProjectFilesTree(project, root, activeUsers)
+const { query: treeQuery, tree, openDir } = useProjectFilesTree(project, root)
 
 const content: Ref<string> = ref('')
 const parsedContent: Ref<string> = ref('')
 const parsedMatter: Ref<object> = ref({})
-
-onMounted(() => {
-  if (!file.value) {
-    return
-  }
-
-  $socket.emit('file:join', `project-${project.id}:${file.value.path}`)
-})
-
-onUnmounted(() => {
-  $socket.emit('file:leave', `project-${project.id}`)
-})
 
 // Watch
 
@@ -178,6 +165,20 @@ const updateMatter = debounce((newMatter: object) => {
 
   return updateFile(formattedContent)
 }, 500)
+
+// Hooks
+
+onMounted(() => {
+  if (!file.value) {
+    return
+  }
+
+  $socket.emit('file:join', `project-${project.id}:${file.value.path}`)
+})
+
+onUnmounted(() => {
+  $socket.emit('file:leave', `project-${project.id}`)
+})
 </script>
 
 <style>

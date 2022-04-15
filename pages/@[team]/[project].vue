@@ -72,6 +72,8 @@ function onFilesModalChange () {
   }
 }
 
+// Hooks
+
 onMounted(() => {
   $socket.on('project:active-users', (users) => {
     activeUsers.value = users
