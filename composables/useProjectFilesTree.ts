@@ -1,9 +1,10 @@
-import type { GitHubFile, Project, Root } from '~/types'
+import { Ref } from 'vue'
+import type { GitHubFile, Project, Root, SocketUser } from '~/types'
 import { mapTree, findTree, renamePath, getPathDir, getPathPrefix } from '~/utils/tree'
 
 const openedDirs = reactive({})
 
-export const useProjectFilesTree = (project: Project, root: Root) => {
+export const useProjectFilesTree = (project: Project, root: Root, activeUsers?: Ref<SocketUser[]>) => {
   const { computedFiles, bulkRename } = useProjectFiles(project, root)
 
   const query = useState(`project-${project.id}-tree-query`, () => '')
@@ -92,7 +93,7 @@ export const useProjectFilesTree = (project: Project, root: Root) => {
       sensitivity: 'base'
     }))
 
-    return mapTree(files)
+    return mapTree(files, activeUsers.value)
   })
 
   return {

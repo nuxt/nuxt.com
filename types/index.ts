@@ -50,6 +50,7 @@ export interface User {
 export interface SocketUser {
   username: string
   avatar: string
+  file: string
 }
 
 export interface Template {
@@ -103,6 +104,7 @@ export interface File {
   content?: string
   children?: File[]
   status: FileStatus
+  activeUsers?: SocketUser[]
 }
 
 export interface Commit {
