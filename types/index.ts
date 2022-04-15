@@ -104,7 +104,6 @@ export interface File {
   content?: string
   children?: File[]
   status: FileStatus
-  activeUsers?: SocketUser[]
 }
 
 export interface Commit {
