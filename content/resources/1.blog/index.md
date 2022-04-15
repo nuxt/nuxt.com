@@ -1,5 +1,5 @@
 ---
-title: blog
+title: Blog
 ---
 
 ::resources-blog-hero
@@ -7,5 +7,4 @@ title: blog
 Blog
 ::
 
-::resources-blog-list
-::
+:resources-blog-list

@@ -7,9 +7,7 @@
     </ul>
   </UContainer>
 </template>
+
 <script setup lang="ts">
-
-const { data: blogData } = await useAsyncData('resources-blog', () =>
-  queryContent('/resources/blog').where({ $not: { slug: { $in: ['/resources/blog'] } } }).sortBy('date', 'desc').find())
-
+const { data: blogData } = await useAsyncData('resources-blog', () => queryContent('/resources/blog').where({ $not: { slug: { $in: ['/resources/blog'] } } }).sortBy('date', 'desc').find())
 </script>
