@@ -46,12 +46,10 @@ const props = defineProps({
   team: {
     type: Object as PropType<Team>,
     default: null
-  },
-  project: {
-    type: Object as PropType<Project>,
-    required: true
   }
 })
+
+const project: Project = inject('project')
 
 const client = useStrapiClient()
 const { delete: _delete } = useStrapi4()
@@ -108,7 +106,7 @@ const transferProject = async () => {
   transferring.value = true
 
   try {
-    await client(`/projects/${props.project.id}/transfer`, {
+    await client(`/projects/${project.id}/transfer`, {
       method: 'POST',
       body: {
         destination: transferForm.destination
@@ -135,7 +133,7 @@ const deleteProject = async () => {
   deleting.value = true
 
   try {
-    await _delete<Project>('projects', props.project.id)
+    await _delete<Project>('projects', project.id)
 
     const team = props.team ? props.team.slug : user.value.username
 
