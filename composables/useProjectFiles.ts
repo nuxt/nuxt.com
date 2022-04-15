@@ -1,5 +1,6 @@
 import type { Ref } from 'vue'
 import { omit } from 'lodash-es'
+import { useStorage } from '@vueuse/core'
 import type { GitHubFile, GitHubDraft, Project, Root } from '~/types'
 import ProjectModalFileCreate from '~/components/organisms/project/modal/ProjectModalFileCreate.vue'
 import ProjectModalFileRename from '~/components/organisms/project/modal/ProjectModalFileRename.vue'
@@ -11,6 +12,13 @@ export const useProjectFiles = (project: Project, root: Root) => {
   const { open: openModal } = useModal()
   const client = useStrapiClient()
   const { branch } = useProjectBranches(project)
+
+  const recentFiles: Ref<GitHubFile[]> = useState(`project-${project.id}-${root}-files-recent`, () => null)
+  if (process.client) {
+    const recentFilesStorage = useStorage<GitHubFile[]>(`project-${project.id}-${root}-files-recent`, [])
+    recentFiles.value = recentFilesStorage.value
+    watch(recentFiles, (value) => { recentFilesStorage.value = value })
+  }
 
   const files: Ref<GitHubFile[]> = useState(`project-${project.id}-${root}-files`, () => null)
   const draft: Ref<GitHubDraft> = useState(`project-${project.id}-${root}-draft`, () => null)
@@ -244,6 +252,15 @@ export const useProjectFiles = (project: Project, root: Root) => {
     if (process.client) {
       $socket.emit('file:join', `project-${project.id}:${f.path}`)
     }
+
+    if (f) {
+      const updatedRecentFiles = [...recentFiles.value]
+      const index = updatedRecentFiles.findIndex(rf => rf.path === f.path)
+      if (index !== -1) {
+        updatedRecentFiles.splice(index, 1)
+      }
+      recentFiles.value = [{ ...f, openedAt: Date.now() }, ...updatedRecentFiles].slice(0, 6)
+    }
   }
 
   function mergeDraftInFiles () {
@@ -336,6 +353,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
     computedFiles,
     isDraft,
     // Data
+    recentFiles,
     file,
     draft
   }
