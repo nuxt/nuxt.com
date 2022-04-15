@@ -24,7 +24,7 @@
     </div>
 
     <div v-if="branches.length" class="flex items-center gap-3 min-w-0">
-      <UAvatarGroup :group="activeUsersGroup" size="sm" />
+      <UAvatarGroup :group="activeUsersGroup" size="xs" />
       <UButton
         v-if="isDraftContent || isDraftMedia"
         label="Save"
@@ -63,7 +63,7 @@ const { isDraft: isDraftContent, refresh: refreshContentFiles, mergeDraftInFiles
 const { isDraft: isDraftMedia, refresh: refreshMediaFiles, mergeDraftInFiles: mergeMediaDraftInFiles } = useProjectFiles(project, 'public')
 
 const activeUsersGroup = computed(() => {
-  return activeUsers.value.map(user => ({ alt: user.username, src: user.avatar, chip: true }))
+  return activeUsers.value.map(user => ({ alt: user.username, src: user.avatar, chip: true, chipVariant: 'emerald' }))
 })
 
 async function onCommitClick () {

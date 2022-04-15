@@ -4,7 +4,7 @@
     <ProjectModalBranches v-model="isBranchesModalOpen" @update:modelValue="onBranchesModalChange" />
     <ProjectModalFiles v-model="isFilesModalOpen" @update:modelValue="onFilesModalChange" />
 
-    <NuxtPage v-if="project" :team="team" :project="project" />
+    <NuxtPage v-if="project" :team="team" />
   </ProjectLayout>
 </template>
 
@@ -73,14 +73,11 @@ function onFilesModalChange () {
 }
 
 onMounted(() => {
-  // Needed when refresh directly on the page
-  // setTimeout(() => {
   $socket.on('project:active-users', (users) => {
     console.log('users :', users)
     activeUsers.value = users
   })
   $socket.emit('project:join', `project-${project.value.id}`)
-  // }, 100)
 })
 
 onUnmounted(() => {
