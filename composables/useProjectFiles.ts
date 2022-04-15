@@ -20,12 +20,12 @@ export const useProjectFiles = (project: Project, root: Root) => {
 
   // Http
 
-  async function fetch ({ force }: { force?: boolean } = {}) {
+  async function fetch ({ force, resetCache }: { force?: boolean, resetCache?: boolean } = {}) {
     if (!branch.value) {
       return
     }
 
-    if (files.value !== null && !force) {
+    if (files.value !== null && !force && !resetCache) {
       return
     }
 
@@ -34,7 +34,8 @@ export const useProjectFiles = (project: Project, root: Root) => {
     const data = await client<{ files: GitHubFile[], draft: GitHubDraft }>(`/projects/${project.id}/files`, {
       params: {
         ref: branch.value.name,
-        root
+        root,
+        force: resetCache
       }
     })
 
@@ -46,8 +47,8 @@ export const useProjectFiles = (project: Project, root: Root) => {
     init()
   }
 
-  function refresh () {
-    return fetch({ force: true })
+  function refresh (resetCache?: boolean) {
+    return fetch({ force: true, resetCache })
   }
 
   async function create (path: string) {
