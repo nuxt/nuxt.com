@@ -76,7 +76,6 @@ onMounted(() => {
   // Needed when refresh directly on the page
   // setTimeout(() => {
   $socket.on('project:active-users', (users) => {
-    console.log('users', users)
     activeUsers.value = users
   })
   $socket.emit('project:join', `project-${project.value.id}`)

@@ -44,7 +44,7 @@
 
     <div class="flex items-stretch flex-1 min-h-0 overflow-hidden">
       <div v-if="computedFiles.length" class="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto">
-        <DocusEditor v-if="file" :model-value="parsedContent" :theme="theme" class="flex flex-col flex-1" @update:model-value="updateContent" />
+        <DocusEditor v-if="file" :model-value="parsedContent" :color-mode="theme" class="flex flex-col flex-1" @update:model-value="updateContent" />
       </div>
       <ProjectContentFilesEmpty v-else @create="openCreateFileModal('content')" />
 
