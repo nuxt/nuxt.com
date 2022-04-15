@@ -4,22 +4,18 @@
       <UVerticalNavigation :links="links" v-bind="verticalNavigationProps" />
     </template>
 
-    <NuxtPage :team="team" :project="project" class="flex-1 p-4 sm:p-6 overflow-y-auto" />
+    <NuxtPage :team="team" class="flex-1 p-4 sm:p-6 overflow-y-auto" />
   </ProjectPage>
 </template>
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import type { Team, Project } from '~/types'
+import type { Team } from '~/types'
 
 defineProps({
   team: {
     type: Object as PropType<Team>,
     default: null
-  },
-  project: {
-    type: Object as PropType<Project>,
-    required: true
   }
 })
 
