@@ -7,6 +7,7 @@ import ProjectModalFileDelete from '~/components/organisms/project/modal/Project
 import ProjectModalFileRevert from '~/components/organisms/project/modal/ProjectModalFileRevert.vue'
 
 export const useProjectFiles = (project: Project, root: Root) => {
+  const { $socket } = useNuxtApp()
   const { open: openModal } = useModal()
   const client = useStrapiClient()
   const { branch } = useProjectBranches(project)
@@ -238,6 +239,10 @@ export const useProjectFiles = (project: Project, root: Root) => {
 
   function select (f: GitHubFile) {
     file.value = f
+
+    if (process.client) {
+      $socket.emit('file:join', `project-${project.id}:${f.path}`)
+    }
   }
 
   function mergeDraftInFiles () {
