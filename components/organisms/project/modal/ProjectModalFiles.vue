@@ -9,7 +9,7 @@
       <ComboboxOptions v-if="filteredFiles.length > 0 || (recentFiles.length > 0 && !query)" static hold class="relative flex-1 overflow-y-auto divide-y u-divide-gray-100 scroll-py-2">
         <li v-if="recentFiles.length && !query" class="p-2">
           <h2 class="px-3 my-2 text-xs font-semibold u-text-gray-900">
-            Recent Files
+            Recent
           </h2>
 
           <ul class="text-sm u-text-gray-700">
