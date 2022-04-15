@@ -6,8 +6,34 @@
         <ComboboxInput ref="comboboxInput" :value="query" class="w-full h-12 pr-4 placeholder-gray-400 dark:placeholder-gray-500 bg-transparent border-0 pl-[3.25rem] u-text-gray-900 focus:ring-0 sm:text-sm" placeholder="Search..." @change="query = $event.target.value" />
       </div>
 
-      <ComboboxOptions v-if="filteredFiles.length > 0" static hold class="relative flex-1 overflow-y-auto divide-y u-divide-gray-100 scroll-py-2">
-        <li class="p-2">
+      <ComboboxOptions v-if="filteredFiles.length > 0 || (recentFiles.length > 0 && !query)" static hold class="relative flex-1 overflow-y-auto divide-y u-divide-gray-100 scroll-py-2">
+        <li v-if="recentFiles.length && !query" class="p-2">
+          <h2 class="px-3 my-2 text-xs font-semibold u-text-gray-900">
+            Recent
+          </h2>
+
+          <ul class="text-sm u-text-gray-700">
+            <ComboboxOption
+              v-for="f of recentFiles"
+              :key="f.path"
+              v-slot="{ active }"
+              :value="f"
+              :disabled="f.status === 'deleted'"
+              as="template"
+            >
+              <li :class="['flex select-none items-center rounded-md px-3 py-2', active && 'u-bg-gray-100 u-text-gray-900', f.status === 'deleted' ? 'cursor-not-allowed' : 'cursor-pointer']">
+                <UIcon :name="f.icon" :class="['h-5 w-5 flex-none', f.iconColor]" aria-hidden="true" />
+                <p class="flex-auto ml-3 truncate u-text-gray-400" :class="{ 'line-through opacity-50': f.status === 'deleted' }">
+                  <span class="u-text-gray-700">{{ f.name }}</span>
+                  <span class="ml-1 text-xs italic truncate">{{ f.path }}</span>
+                </p>
+                <span v-if="active" class="flex-none ml-3 u-text-gray-500">Jump to...</span>
+              </li>
+            </ComboboxOption>
+          </ul>
+        </li>
+
+        <li v-if="filteredFiles.length" class="p-2">
           <h2 class="px-3 my-2 text-xs font-semibold u-text-gray-900">
             Files
           </h2>
@@ -86,8 +112,8 @@ const emit = defineEmits(['update:modelValue'])
 const route = useRoute()
 const router = useRouter()
 const keys = useMagicKeys()
-const { file: contentFile, computedFiles: contentFiles, select: selectContentFile, refresh: refreshContentFiles } = useProjectFiles(project, 'content')
-const { file: mediaFile, computedFiles: mediaFiles, select: selectMediaFile, refresh: refreshMediaFiles } = useProjectFiles(project, 'public')
+const { file: contentFile, computedFiles: contentFiles, select: selectContentFile, refresh: refreshContentFiles, recentFiles: contentRecentFiles } = useProjectFiles(project, 'content')
+const { file: mediaFile, computedFiles: mediaFiles, select: selectMediaFile, refresh: refreshMediaFiles, recentFiles: mediaRecentFiles } = useProjectFiles(project, 'public')
 
 const query = ref('')
 const refreshingFiles = ref(false)
@@ -168,6 +194,27 @@ const filteredFiles = computed(() => {
   }
   filteredFiles = filteredFiles.slice(0, 24)
   return filteredFiles
+})
+
+const recentFiles = computed(() => {
+  let recentFiles = [
+    ...contentRecentFiles.value,
+    ...mediaRecentFiles.value
+  ].sort((a, b) => b.openedAt - a.openedAt)
+
+  if (route.name === '@team-project-content') {
+    if (contentFile.value) {
+      recentFiles = recentFiles.filter(f => f.path !== contentFile.value.path)
+    }
+  } else if (route.name === '@team-project-media') {
+    if (mediaFile.value) {
+      recentFiles = recentFiles.filter(f => f.path !== mediaFile.value.path)
+    }
+  }
+
+  return recentFiles
+    .map(f => ({ ...f, name: getPathName(f.path), icon: getIconName(f), iconColor: getIconColor(f) }))
+    .slice(0, 5)
 })
 
 const actions = computed(() => ([
