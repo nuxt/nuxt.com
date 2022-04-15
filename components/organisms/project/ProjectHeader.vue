@@ -63,7 +63,7 @@ const { isDraft: isDraftContent, refresh: refreshContentFiles, mergeDraftInFiles
 const { isDraft: isDraftMedia, refresh: refreshMediaFiles, mergeDraftInFiles: mergeMediaDraftInFiles } = useProjectFiles(project, 'public')
 
 const activeUsersGroup = computed(() => {
-  return activeUsers.value.map(user => ({ alt: user.username, src: user.avatar, chip: true, chipVariant: 'emerald' }))
+  return activeUsers.value.map(user => ({ alt: user.username, src: user.avatar }))
 })
 
 async function onCommitClick () {
