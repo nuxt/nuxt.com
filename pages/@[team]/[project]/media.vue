@@ -11,7 +11,7 @@
         @change="onFileUpload"
       >
 
-      <ProjectHeader :active-users="activeUsers">
+      <ProjectHeader>
         <template #extra-actions>
           <UButton
             size="xs"
@@ -63,10 +63,6 @@ const props = defineProps({
   },
   project: {
     type: Object as PropType<Project>,
-    required: true
-  },
-  activeUsers: {
-    type: Object as PropType<SocketUser[]>,
     required: true
   }
 })

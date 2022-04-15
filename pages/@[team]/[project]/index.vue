@@ -1,7 +1,7 @@
 <template>
   <ProjectPage>
     <template #header>
-      <ProjectHeader :active-users="activeUsers" />
+      <ProjectHeader />
     </template>
 
     <div class="flex flex-col flex-1 p-4 sm:p-6">
@@ -69,10 +69,6 @@ const props = defineProps({
   },
   project: {
     type: Object as PropType<Project>,
-    required: true
-  },
-  activeUsers: {
-    type: Object as PropType<SocketUser[]>,
     required: true
   }
 })

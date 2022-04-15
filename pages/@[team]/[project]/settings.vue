@@ -10,7 +10,7 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import type { Team, Project, SocketUser } from '~/types'
+import type { Team, Project } from '~/types'
 
 defineProps({
   team: {
@@ -19,10 +19,6 @@ defineProps({
   },
   project: {
     type: Object as PropType<Project>,
-    required: true
-  },
-  activeUsers: {
-    type: Object as PropType<SocketUser[]>,
     required: true
   }
 })
