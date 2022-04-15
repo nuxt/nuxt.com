@@ -24,7 +24,7 @@
         </li>
         <li class="p-2">
           <ul class="text-sm u-text-gray-700">
-            <ComboboxOption v-for="a in actions" :key="a.key" v-slot="{ active }" :value="a" as="template">
+            <ComboboxOption v-for="a in filteredActions" :key="a.key" v-slot="{ active }" :value="a" as="template">
               <li :class="['flex cursor-pointer select-none items-center rounded-md px-3 py-2', active && 'u-bg-gray-100 u-text-gray-900']">
                 <UIcon :name="a.icon" :class="['h-5 w-5 flex-none u-text-gray-400', active && 'u-text-gray-900', a.iconClass]" aria-hidden="true" />
                 <span class="flex-auto ml-3 truncate">{{ a.label }}</span>
@@ -109,9 +109,19 @@ const filteredBranches = computed(() => {
 
 const actions = computed(() => ([
   { key: 'create', label: `Create new branch ${query.value && !branchExists.value ? `“${query.value}”` : ''}`, icon: 'heroicons-outline:plus', click: onCreateBranchClick },
-  !query.value && { key: 'refresh', label: 'Refresh branches', icon: 'heroicons-outline:refresh', iconClass: pendingBranches.value ? 'animate-spin' : '', click: () => { refreshBranches(true) } },
-  !query.value && (isDraftContent.value || isDraftMedia.value) && { key: 'reset', label: 'Revert draft', icon: 'heroicons-outline:reply', click: onResetDraftClick }
+  { key: 'refresh', label: 'Refresh branches', icon: 'heroicons-outline:refresh', iconClass: pendingBranches.value ? 'animate-spin' : '', click: () => { refreshBranches(true) } },
+  (isDraftContent.value || isDraftMedia.value) && { key: 'reset', label: 'Revert draft', icon: 'heroicons-outline:reply', click: onResetDraftClick }
 ].filter(Boolean)))
+
+const filteredActions = computed(() => {
+  let filteredActions = [...actions.value]
+  if (query.value) {
+    filteredActions = filteredActions.filter((a) => {
+      return ['create'].includes(a.key) || [a.key, a.label].filter(Boolean).some(value => value.search(new RegExp(query.value, 'i')) !== -1)
+    })
+  }
+  return filteredActions
+})
 
 // Watch
 
