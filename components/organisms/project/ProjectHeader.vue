@@ -24,6 +24,7 @@
     </div>
 
     <div v-if="branches.length" class="flex items-center gap-3 min-w-0">
+      <UAvatarGroup :group="activeUsersGroup" size="xs" />
       <UButton
         v-if="isDraftContent || isDraftMedia"
         label="Save"
@@ -49,15 +50,21 @@
 </template>
 
 <script setup lang="ts">
-import type { Project } from '~/types'
+import type { Ref } from 'vue'
+import type { Project, SocketUser } from '~/types'
 
 const project: Project = inject('project')
+const activeUsers: Ref<SocketUser[]> = inject('activeUsers')
 
 const { openBranchesModal, openFilesModal } = useProjectModals()
 
 const { branch, branches, commit, openPublishModal, openCreateModal, loading } = useProjectBranches(project)
 const { isDraft: isDraftContent, refresh: refreshContentFiles, mergeDraftInFiles: mergeContentDraftInFiles } = useProjectFiles(project, 'content')
 const { isDraft: isDraftMedia, refresh: refreshMediaFiles, mergeDraftInFiles: mergeMediaDraftInFiles } = useProjectFiles(project, 'public')
+
+const activeUsersGroup = computed(() => {
+  return activeUsers.value.map(user => ({ alt: user.username, src: user.avatar, chip: true, chipVariant: 'emerald' }))
+})
 
 async function onCommitClick () {
   const callbackAfterCommit = () => {
