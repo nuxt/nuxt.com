@@ -25,7 +25,9 @@
               {{ file.name }}
             </span>
           </div>
-          <UAvatarGroup v-if="file.activeUsers" :group="file.activeUsers" size="xxs" />
+          <div class="items-center gap-1.5 -mr-1 flex group-hover:hidden">
+            <ProjectContentFilesTreeUsers :file="file" :opened-dirs="openedDirs" />
+          </div>
           <div class="items-center gap-1.5 -mr-1 hidden group-hover:flex">
             <UButton
               v-if="isFile(file) && isDraft(file)"

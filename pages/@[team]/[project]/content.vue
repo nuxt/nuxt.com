@@ -83,8 +83,15 @@ const content: Ref<string> = ref('')
 const parsedContent: Ref<string> = ref('')
 const parsedMatter: Ref<object> = ref({})
 
+onMounted(() => {
+  if (!file.value) {
+    return
+  }
+
+  $socket.emit('file:join', `project-${project.id}:${file.value.path}`)
+})
+
 onUnmounted(() => {
-  console.log('unmounted :')
   $socket.emit('file:leave', `project-${project.id}`)
 })
 

@@ -238,8 +238,11 @@ export const useProjectFiles = (project: Project, root: Root) => {
   }
 
   function select (f: GitHubFile) {
-    $socket.emit('file:join', `project-${project.id}:${f.path}`)
     file.value = f
+
+    if (process.client) {
+      $socket.emit('file:join', `project-${project.id}:${f.path}`)
+    }
   }
 
   function mergeDraftInFiles () {

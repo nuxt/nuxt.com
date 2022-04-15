@@ -1,6 +1,6 @@
-import type { File, GitHubFile, SocketUser } from '~/types'
+import type { File, GitHubFile } from '~/types'
 
-export function mapTree (files: GitHubFile[], users: SocketUser[]) {
+export function mapTree (files: GitHubFile[]) {
   const result: Array<Partial<File>> = []
   const acc: any = { result }
 
@@ -13,16 +13,11 @@ export function mapTree (files: GitHubFile[], users: SocketUser[]) {
 
         acc[name] = { result: [] }
         if (isFile) {
-          const activeUsers = users.filter(user => user.file === file.path)
-          console.log('••••••••••••••••••')
-          console.log('file.path :', file.path)
-          console.log('activeUsers :', activeUsers)
           acc.result.push({
             name,
             type: 'file',
             path: file.path,
-            status: file.status,
-            activeUsers: activeUsers.map(user => ({ alt: user.username, src: user.avatar, chip: true }))
+            status: file.status
           })
         } else {
           acc.result.push({ name, type: 'directory', path: arr.slice(0, i + 1).join('/'), children: acc[name].result })

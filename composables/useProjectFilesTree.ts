@@ -93,7 +93,7 @@ export const useProjectFilesTree = (project: Project, root: Root, activeUsers?: 
       sensitivity: 'base'
     }))
 
-    return mapTree(files, activeUsers.value)
+    return mapTree(files)
   })
 
   return {
