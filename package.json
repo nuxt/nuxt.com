@@ -13,7 +13,8 @@
     "@nuxt/content": "npm:@nuxt/content-edge@latest",
     "@sindresorhus/slugify": "^2.1.0",
     "@vueuse/core": "^8.2.6",
-    "@vueuse/motion": "^2.0.0-beta.18"
+    "@vueuse/motion": "^2.0.0-beta.18",
+    "vue-lite-youtube-embed": "^1.0.4"
   },
   "devDependencies": {
     "@nuxthq/ui": "npm:@nuxthq/ui-edge@latest",
