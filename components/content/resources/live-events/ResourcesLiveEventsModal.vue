@@ -1,5 +1,5 @@
 <template>
-  <UModal v-model="isOpen" appear class="max-w-xl lg:max-w-4xl xl:max-w-7xl" @close="close">
+  <UModal v-model="isOpen" appear class="max-w-xl lg:max-w-4xl xl:max-w-7xl">
     <LiteYouTubeEmbed
       :id="page.videoId"
       :title="page.title"
@@ -29,17 +29,4 @@ defineProps({
 })
 
 const isOpen = ref(true)
-
-const emit = defineEmits(['close'])
-
-function close () {
-  isOpen.value = false
-  onClose()
-}
-
-function onClose () {
-  setTimeout(() => {
-    emit('close')
-  }, 300)
-}
 </script>
