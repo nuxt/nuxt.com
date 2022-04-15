@@ -33,18 +33,12 @@
 </template>
 
 <script setup lang='ts'>
-import type { PropType } from 'vue'
 import { useTimeAgo } from '@vueuse/core'
 import type { Project } from '~/types'
 
-const props = defineProps({
-  project: {
-    type: Object as PropType<Project>,
-    required: true
-  }
-})
+const project: Project = inject('project')
 
 function openGitHubDesktop () {
-  window.open(`x-github-client://openRepo/https://github.com/${props.project.repository.owner}/${props.project.repository.name}`)
+  window.open(`x-github-client://openRepo/https://github.com/${project.repository.owner}/${project.repository.name}`)
 }
 </script>

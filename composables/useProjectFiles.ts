@@ -1,5 +1,6 @@
 import type { Ref } from 'vue'
 import { omit } from 'lodash-es'
+import { useStorage } from '@vueuse/core'
 import type { GitHubFile, GitHubDraft, Project, Root } from '~/types'
 import ProjectModalFileCreate from '~/components/organisms/project/modal/ProjectModalFileCreate.vue'
 import ProjectModalFileRename from '~/components/organisms/project/modal/ProjectModalFileRename.vue'
@@ -7,9 +8,17 @@ import ProjectModalFileDelete from '~/components/organisms/project/modal/Project
 import ProjectModalFileRevert from '~/components/organisms/project/modal/ProjectModalFileRevert.vue'
 
 export const useProjectFiles = (project: Project, root: Root) => {
+  const { $socket } = useNuxtApp()
   const { open: openModal } = useModal()
   const client = useStrapiClient()
   const { branch } = useProjectBranches(project)
+
+  const recentFiles: Ref<GitHubFile[]> = useState(`project-${project.id}-${root}-files-recent`, () => null)
+  if (process.client) {
+    const recentFilesStorage = useStorage<GitHubFile[]>(`project-${project.id}-${root}-files-recent`, [])
+    recentFiles.value = recentFilesStorage.value
+    watch(recentFiles, (value) => { recentFilesStorage.value = value })
+  }
 
   const files: Ref<GitHubFile[]> = useState(`project-${project.id}-${root}-files`, () => null)
   const draft: Ref<GitHubDraft> = useState(`project-${project.id}-${root}-draft`, () => null)
@@ -19,12 +28,12 @@ export const useProjectFiles = (project: Project, root: Root) => {
 
   // Http
 
-  async function fetch ({ force }: { force?: boolean } = {}) {
+  async function fetch ({ force, resetCache }: { force?: boolean, resetCache?: boolean } = {}) {
     if (!branch.value) {
       return
     }
 
-    if (files.value !== null && !force) {
+    if (files.value !== null && !force && !resetCache) {
       return
     }
 
@@ -33,7 +42,8 @@ export const useProjectFiles = (project: Project, root: Root) => {
     const data = await client<{ files: GitHubFile[], draft: GitHubDraft }>(`/projects/${project.id}/files`, {
       params: {
         ref: branch.value.name,
-        root
+        root,
+        force: resetCache
       }
     })
 
@@ -45,8 +55,8 @@ export const useProjectFiles = (project: Project, root: Root) => {
     init()
   }
 
-  function refresh () {
-    return fetch({ force: true })
+  function refresh (resetCache?: boolean) {
+    return fetch({ force: true, resetCache })
   }
 
   async function create (path: string) {
@@ -238,6 +248,19 @@ export const useProjectFiles = (project: Project, root: Root) => {
 
   function select (f: GitHubFile) {
     file.value = f
+
+    if (process.client) {
+      $socket.emit('file:join', `project-${project.id}:${f.path}`)
+    }
+
+    if (f) {
+      const updatedRecentFiles = [...recentFiles.value]
+      const index = updatedRecentFiles.findIndex(rf => rf.path === f.path)
+      if (index !== -1) {
+        updatedRecentFiles.splice(index, 1)
+      }
+      recentFiles.value = [{ ...f, openedAt: Date.now() }, ...updatedRecentFiles].slice(0, 6)
+    }
   }
 
   function mergeDraftInFiles () {
@@ -330,6 +353,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
     computedFiles,
     isDraft,
     // Data
+    recentFiles,
     file,
     draft
   }
