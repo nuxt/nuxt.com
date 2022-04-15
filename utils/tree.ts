@@ -1,10 +1,10 @@
-import type { File } from '~/types'
+import type { File, GitHubFile } from '~/types'
 
-export function mapTree (tree: File[]) {
+export function mapTree (files: GitHubFile[]) {
   const result: Array<Partial<File>> = []
   const acc: any = { result }
 
-  tree.forEach((file) => {
+  files.forEach((file) => {
     const paths = file.path.split('/')
 
     paths.reduce((acc, name, i, arr) => {
@@ -96,9 +96,9 @@ export const renamePath = function (path: string, newPath: string, newPrefix: st
   return `${newDir}/${newName}`
 }
 
-export const getAvailablePath = (path: string, files: File[]): string => {
+export const getAvailablePath = (path: string, files: GitHubFile[]): string => {
   // Check if path is available
-  let pathAvailable = !files.find((file: File) => file.path === path)
+  let pathAvailable = !files.find(file => file.path === path)
   if (pathAvailable) {
     return path
   }
@@ -113,7 +113,7 @@ export const getAvailablePath = (path: string, files: File[]): string => {
   while (!newPath) {
     const suffixedPath = `${dir}/${filename}-${suffix}.${ext}`
 
-    pathAvailable = !files.find((file: File) => file.path === suffixedPath)
+    pathAvailable = !files.find(file => file.path === suffixedPath)
     if (pathAvailable) {
       newPath = suffixedPath
     }

@@ -25,6 +25,7 @@
               {{ file.name }}
             </span>
           </div>
+          <UAvatarGroup class="hover:hidden" :group="activeUsersGroup" size="xs" />
           <div class="items-center gap-1.5 -mr-1 hidden group-hover:flex">
             <UButton
               v-if="isFile(file) && isDraft(file)"
@@ -72,8 +73,8 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue'
-import type { File, Project, Root, GitHubFile } from '~/types'
+import type { PropType, Ref } from 'vue'
+import type { File, Project, Root, GitHubFile, SocketUser } from '~/types'
 
 defineProps({
   level: {
@@ -88,9 +89,16 @@ defineProps({
 
 const project: Project = inject('project')
 const root: Root = inject('root')
+const activeUsers: Ref<SocketUser[]> = inject('activeUsers')
 
 const { file: selectedFile, select, openCreateModal, openRenameModal, openRevertModal, openDeleteModal } = useProjectFiles(project, root)
 const { openedDirs, openDir, renameFiles } = useProjectFilesTree(project, root)
+
+// Computed
+
+const activeUsersGroup = computed(() => {
+  return activeUsers.value.map(user => ({ alt: user.username, src: user.avatar, chip: true }))
+})
 
 // Methods
 const isFile = (file: File) => file.type === 'file'

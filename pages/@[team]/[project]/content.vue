@@ -58,28 +58,24 @@ import type { PropType, Ref } from 'vue'
 import { debounce } from 'lodash-es'
 import type { Team, Project, GitHubDraft } from '~/types'
 
-const props = defineProps({
+defineProps({
   team: {
     type: Object as PropType<Team>,
     default: null
-  },
-  project: {
-    type: Object as PropType<Project>,
-    required: true
   }
 })
 
 const root = 'content'
+const project: Project = inject('project')
 
-provide('project', props.project)
 provide('root', root)
 
 const colorMode = useColorMode()
 const client = useStrapiClient()
 const { parseFrontMatter, stringifyFrontMatter } = useMarkdown()
-const { branch } = useProjectBranches(props.project)
-const { draft, file, fetchFile, openCreateModal: openCreateFileModal, computedFiles } = useProjectFiles(props.project, root)
-const { query: treeQuery, tree, openDir } = useProjectFilesTree(props.project, root)
+const { branch } = useProjectBranches(project)
+const { draft, file, fetchFile, openCreateModal: openCreateFileModal, computedFiles } = useProjectFiles(project, root)
+const { query: treeQuery, tree, openDir } = useProjectFilesTree(project, root)
 
 const content: Ref<string> = ref('')
 const parsedContent: Ref<string> = ref('')
@@ -134,7 +130,7 @@ async function fetchContent () {
 
 async function updateFile (formattedContent) {
   try {
-    const data = await client<GitHubDraft>(`/projects/${props.project.id}/files/${encodeURIComponent(file.value.path)}`, {
+    const data = await client<GitHubDraft>(`/projects/${project.id}/files/${encodeURIComponent(file.value.path)}`, {
       method: 'PUT',
       params: {
         ref: branch.value?.name,

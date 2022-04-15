@@ -60,37 +60,33 @@
 <script setup lang="ts">
 import { useTimeAgo } from '@vueuse/core'
 import type { PropType } from 'vue'
-import type { Team, Project, SocketUser } from '~/types'
+import type { Project, Team } from '~/types'
 
-const props = defineProps({
+defineProps({
   team: {
     type: Object as PropType<Team>,
     default: null
-  },
-  project: {
-    type: Object as PropType<Project>,
-    required: true
   }
 })
 
 const root = 'public'
+const project: Project = inject('project')
 
-provide('project', props.project)
 provide('root', root)
 
 const { update } = useStrapi4()
 
-const form = reactive({ url: props.project.repository.url })
+const form = reactive({ url: project.repository.url })
 const loading = ref(false)
 
 async function onSubmit () {
   loading.value = true
 
   try {
-    await update('projects', props.project.id, form)
+    await update('projects', project.id, form)
 
     // eslint-disable-next-line vue/no-mutating-props
-    props.project.url = form.url
+    project.url = form.url
   } catch (e) {}
 
   loading.value = false
