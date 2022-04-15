@@ -3,16 +3,33 @@
     <UContainer padded class="py-12 lg:py-16 lg:flex lg:items-center lg:justify-between relative">
       <span class="_ellipse z-0 " />
       <h2 class="u-text-black z-[1] tracking-tight">
-        <span class="block font-semibold text-2xl">Contact us</span>
-        <span class="block mt-2">Start building, or get in touch with our app experts.</span>
+        <span class="block font-semibold text-2xl">
+          <Markdown use="title" unwrap="p" />
+        </span>
+        <span class="block mt-2">
+          <Markdown use="description" unwrap="p" />
+        </span>
       </h2>
       <div class="mt-8 flex lg:mt-0 lg:flex-shrink-0 gap-y-3 gap-x-8 z-[1] relative h-10">
-        <UButton label="Contact" variant="secondary" class="w-36 u-border-gray-900 u-text-gray-900 hover:u-border-gray-700 hover:u-text-gray-700" size="lg" block />
-        <UButton label="Get started" class="w-36" size="lg" block />
+        <UButton :label="contactButtonText" variant="secondary" class="w-36 u-border-gray-900 u-text-gray-900 hover:u-border-gray-700 hover:u-text-gray-700" size="lg" block />
+        <UButton :label="getStartedButtonText" class="w-36" size="lg" block />
       </div>
     </UContainer>
   </div>
 </template>
+
+<script setup lang="ts">
+defineProps({
+  contactButtonText: {
+    type: String,
+    default: 'Contact'
+  },
+  getStartedButtonText: {
+    type: String,
+    default: 'Get Started'
+  }
+})
+</script>
 
 <style scoped>
 ._ellipse {
