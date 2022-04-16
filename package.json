@@ -11,20 +11,20 @@
   "devDependencies": {
     "@docus/editor": "npm:@docus/editor-edge@latest",
     "@nuxt/content": "npm:@nuxt/content-edge@latest",
-    "@nuxthq/ui": "npm:@nuxthq/ui-edge@latest",
     "@nuxthq/admin": "npm:@nuxthq/admin-edge@latest",
-    "@nuxtjs/strapi": "npm:@nuxtjs/strapi-edge@latest",
+    "@nuxthq/ui": "npm:@nuxthq/ui-edge@latest",
     "@nuxtjs/eslint-config-typescript": "^9.0.0",
+    "@nuxtjs/strapi": "npm:@nuxtjs/strapi-edge@latest",
+    "@sindresorhus/slugify": "^2.1.0",
+    "@tailwindcss/typography": "^0.5.2",
     "@vueuse/core": "^8.2.6",
     "@vueuse/motion": "^2.0.0-beta.18",
-    "@tailwindcss/typography": "^0.5.2",
-    "@sindresorhus/slugify": "^2.1.0",
-    "vue-lite-youtube-embed": "^1.0.4",
     "eslint": "^8.13.0",
     "nuxt3": "^3.0.0-27500615.ea14a5c",
     "socket.io-client": "^4.4.1",
     "standard-version": "^9.3.2",
     "typescript": "^4.6.3",
+    "vue-lite-youtube-embed": "^1.0.4",
     "vue-plausible": "^1.3.1"
   }
 }
