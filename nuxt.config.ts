@@ -30,6 +30,7 @@ export default defineNuxtConfig({
   ],
   buildModules: [
     '@nuxthq/ui',
+    '@nuxthq/admin',
     '@nuxtjs/strapi',
     '@nuxt/content',
     '@docus/editor',
