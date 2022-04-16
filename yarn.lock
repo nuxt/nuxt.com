@@ -955,6 +955,13 @@
     vite-node "^0.9.3"
     vite-plugin-checker "^0.4.6"
 
+"@nuxthq/admin@npm:@nuxthq/admin-edge@latest":
+  version "0.0.1-27502344.8012e8d"
+  resolved "https://registry.yarnpkg.com/@nuxthq/admin-edge/-/admin-edge-0.0.1-27502344.8012e8d.tgz#8d72c02dfff81a4041bc1dc5482ffef0456b614c"
+  integrity sha512-N+2yY7sl4JdNfNrGi8vCThcuEXmmdkcuF6TUelqbfKMuSCFWNSgd5K3Lj24OEsJ88m+7+HofTtpLLKBWcarfSA==
+  dependencies:
+    "@nuxt/kit" "npm:@nuxt/kit-edge@latest"
+
 "@nuxthq/ui@npm:@nuxthq/ui-edge@latest":
   version "0.0.2-27500280.723f075"
   resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27500280.723f075.tgz#b7887362e030fd9b3c300336c46c92b70f27f143"

@@ -12,6 +12,7 @@
     "@docus/editor": "npm:@docus/editor-edge@latest",
     "@nuxt/content": "npm:@nuxt/content-edge@latest",
     "@nuxthq/ui": "npm:@nuxthq/ui-edge@latest",
+    "@nuxthq/admin": "npm:@nuxthq/admin-edge@latest",
     "@nuxtjs/strapi": "npm:@nuxtjs/strapi-edge@latest",
     "@nuxtjs/eslint-config-typescript": "^9.0.0",
     "@vueuse/core": "^8.2.6",
