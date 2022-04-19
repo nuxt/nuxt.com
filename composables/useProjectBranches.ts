@@ -145,8 +145,8 @@ export const useProjectBranches = (project: Project) => {
     branch.value = b
     cookie.value = b.name
 
-    if (process.client && b) {
-      $socket.emit('branch:join', `project-${project.id}:${b.name}`)
+    if (process.client && branch.value) {
+      $socket.emit('branch:join', `project-${project.id}:${branch.value.name}`)
     }
   }
 
