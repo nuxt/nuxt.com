@@ -964,9 +964,9 @@
     nuxt-component-meta "^0.1.2"
 
 "@nuxthq/ui@npm:@nuxthq/ui-edge@latest":
-  version "0.0.2-27500280.723f075"
-  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27500280.723f075.tgz#b7887362e030fd9b3c300336c46c92b70f27f143"
-  integrity sha512-YL8DmVcvb1mSf3gI+Nyv/LdztUW1GDGg2qM4xEH2wsXkUMBjTbnfTT3QyjFrGnNlNn4yHwiKTrQsxXmUY6RiIw==
+  version "0.0.2-27506290.18c194e"
+  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27506290.18c194e.tgz#295f3cb6fc901e20b965202033591365e69562a5"
+  integrity sha512-/MbsPHXb+i6QuiD40wSuaeM9ty1VcDyGlOZxPRDGsafmRvUjnoB7d7VvnGhUlxBkrh5FPHDS5epSVByfUym8jA==
   dependencies:
     "@headlessui/vue" "1.5.0"
     "@iconify/vue" "^3.2.1"
@@ -977,12 +977,12 @@
     "@tailwindcss/aspect-ratio" "^0.4.0"
     "@tailwindcss/forms" "^0.5.0"
     "@tailwindcss/line-clamp" "^0.3.1"
-    "@vueuse/core" "^8.2.5"
+    "@vueuse/core" "^8.2.6"
     defu "^6.0.0"
     lodash-es "^4.17.21"
-    nanoid "^3.3.2"
+    nanoid "^3.3.3"
     pathe "^0.2.0"
-    tailwindcss "^3.0.23"
+    tailwindcss "^3.0.24"
 
 "@nuxtjs/color-mode@^3.0.2":
   version "3.0.2"
@@ -1652,7 +1652,7 @@
   resolved "https://registry.yarnpkg.com/@vue/shared/-/shared-3.2.33.tgz#69a8c99ceb37c1b031d5cc4aec2ff1dc77e1161e"
   integrity sha512-UBc1Pg1T3yZ97vsA2ueER0F6GbJebLHYlEi4ou1H5YL4KWvMOOWwpYo9/QpWq93wxKG6Wo13IY74Hcn/f7c7Bg==
 
-"@vueuse/core@^8.1.2", "@vueuse/core@^8.2.5", "@vueuse/core@^8.2.6":
+"@vueuse/core@^8.1.2", "@vueuse/core@^8.2.6":
   version "8.2.6"
   resolved "https://registry.yarnpkg.com/@vueuse/core/-/core-8.2.6.tgz#baf674acadd678b0429c60477213c6dab08ea9e0"
   integrity sha512-fzlpM3B5oVe+UhCT1mXlhG1Zxdq2lq1Z2AvddSB8+RxrsSFzII7DKfsQEz8Vop7Lzc++4m8drTNbhPovYoFqHw==
@@ -6167,12 +6167,12 @@ ms@2.1.3, ms@^2.1.1:
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.3.tgz#574c8138ce1d2b5861f0b44579dbadd60c6615b2"
   integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
 
-nanoid@^3.1.25, nanoid@^3.1.32, nanoid@^3.3.2:
+nanoid@^3.1.25, nanoid@^3.1.32:
   version "3.3.2"
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.2.tgz#c89622fafb4381cd221421c69ec58547a1eec557"
   integrity sha512-CuHBogktKwpm5g2sRgv83jEy2ijFzBwMoYA60orPDR7ynsLijJDqgsi4RDGj3OJpy3Ieb+LYwiRmIOGyytgITA==
 
-nanoid@^3.3.1:
+nanoid@^3.3.1, nanoid@^3.3.3:
   version "3.3.3"
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.3.tgz#fd8e8b7aa761fe807dba2d1b98fb7241bb724a25"
   integrity sha512-p1sjXuopFs0xg+fPASzQ28agW1oHD7xDsd9Xkf3T15H3c/cifrFHVwrh74PdoklAPi+i7MdRsE47vm2r6JoB+w==
@@ -8455,7 +8455,7 @@ tailwind-config-viewer@^1.6.3:
     portfinder "^1.0.26"
     replace-in-file "^6.1.0"
 
-tailwindcss@^3.0.23:
+tailwindcss@^3.0.23, tailwindcss@^3.0.24:
   version "3.0.24"
   resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-3.0.24.tgz#22e31e801a44a78a1d9a81ecc52e13b69d85704d"
   integrity sha512-H3uMmZNWzG6aqmg9q07ZIRNIawoiEcNFKDfL+YzOPuPsXuDXxJxB9icqzLgdzKNwjG3SAro2h9SYav8ewXNgig==
