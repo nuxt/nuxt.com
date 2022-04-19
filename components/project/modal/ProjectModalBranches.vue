@@ -18,6 +18,7 @@
                 <UIcon name="mdi:source-branch" :class="['h-5 w-5 flex-none u-text-gray-400', active && 'u-text-gray-900']" aria-hidden="true" />
                 <span class="flex-auto ml-3 truncate">{{ b.name }}</span>
                 <span v-if="active" class="flex-none ml-3 u-text-gray-500">Jump to...</span>
+                <UAvatarGroup v-else :group="usersGroup(b.name)" size="xxs" />
               </li>
             </ComboboxOption>
           </ul>
@@ -45,7 +46,8 @@ import {
   ComboboxOption
 } from '@headlessui/vue'
 import { useMagicKeys, whenever } from '@vueuse/core'
-import type { GitHubBranch, Project } from '~/types'
+import type { Ref } from 'vue'
+import type { GitHubBranch, Project, SocketUser } from '~/types'
 
 const props = defineProps({
   modelValue: {
@@ -55,6 +57,7 @@ const props = defineProps({
 })
 
 const project: Project = inject('project')
+const activeUsers: Ref<SocketUser[]> = inject('activeUsers')
 
 const emit = defineEmits(['update:modelValue'])
 
@@ -132,6 +135,15 @@ watch(() => isOpen.value, (value) => {
 })
 
 // Methods
+
+function usersGroup (branchName) {
+  return activeUsers.value.reduce((acc, user) => {
+    if (user.branch === branchName) {
+      acc.push({ src: user.avatar, alt: user.username })
+    }
+    return acc
+  }, [])
+}
 
 function activateFirstOption () {
   // hack combobox by using keyboard event
