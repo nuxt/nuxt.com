@@ -37,10 +37,12 @@ const keys = useMagicKeys()
 
 const notUsingInput = computed(() => !(activeElement.value?.tagName === 'INPUT' || activeElement.value?.tagName === 'TEXTAREA' || activeElement.value?.contentEditable === 'true'))
 
+const notUsingMeta = computed(() => !keys.current.has('MetaLeft') && !keys.current.has('MetaRight'))
+
 for (const [index, link] of props.links.entries()) {
   const key = keys[index + 1]
 
-  whenever(and(key, notUsingInput), () => {
+  whenever(and(key, notUsingMeta, notUsingInput), () => {
     router.push(link.to)
   })
 }
