@@ -7,6 +7,8 @@ import ProjectModalFileRename from '~/components/project/modal/ProjectModalFileR
 import ProjectModalFileDelete from '~/components/project/modal/ProjectModalFileDelete.vue'
 import ProjectModalFileRevert from '~/components/project/modal/ProjectModalFileRevert.vue'
 
+const uploadInput: Ref<HTMLInputElement | null> = ref(null)
+
 export const useProjectFiles = (project: Project, root: Root) => {
   const { $socket } = useNuxtApp()
   const { open: openModal } = useModal()
@@ -215,6 +217,10 @@ export const useProjectFiles = (project: Project, root: Root) => {
     })
   }
 
+  function openUploadModal () {
+    uploadInput.value?.click()
+  }
+
   function openRenameModal (oldPath: string, lockedPath?: string) {
     openModal(ProjectModalFileRename, {
       computedFiles: computedFiles.value,
@@ -340,6 +346,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
     fetchFile,
     // Modals
     openCreateModal,
+    openUploadModal,
     openRenameModal,
     openDeleteModal,
     openRevertModal,
@@ -349,6 +356,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
     mergeDraftInFiles,
     // Refs
     pending,
+    uploadInput,
     // Computed
     computedFiles,
     isDraft,

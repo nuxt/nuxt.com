@@ -6,7 +6,7 @@
         <ComboboxInput ref="comboboxInput" :value="query" class="w-full h-12 pr-4 placeholder-gray-400 dark:placeholder-gray-500 bg-transparent border-0 pl-[3.25rem] u-text-gray-900 focus:ring-0 sm:text-sm" placeholder="Search..." @change="query = $event.target.value" />
       </div>
 
-      <ComboboxOptions v-if="filteredFiles.length > 0 || (recentFiles.length > 0 && !query)" static hold class="relative flex-1 overflow-y-auto divide-y u-divide-gray-100 scroll-py-2">
+      <ComboboxOptions v-if="filteredFiles.length > 0 || (recentFiles.length > 0 && !query) || filteredActions.length" static hold class="relative flex-1 overflow-y-auto divide-y u-divide-gray-100 scroll-py-2">
         <li v-if="recentFiles.length && !query" class="p-2">
           <h2 class="px-3 my-2 text-xs font-semibold u-text-gray-900">
             Recent
@@ -58,9 +58,10 @@
             </ComboboxOption>
           </ul>
         </li>
-        <li class="p-2">
+
+        <li v-if="filteredActions.length" class="p-2">
           <ul class="text-sm u-text-gray-700">
-            <ComboboxOption v-for="a in actions" :key="a.key" v-slot="{ active }" :value="a" as="template">
+            <ComboboxOption v-for="a in filteredActions" :key="a.key" v-slot="{ active }" :value="a" as="template">
               <li :class="['flex cursor-pointer select-none items-center rounded-md px-3 py-2', active && 'u-bg-gray-100 u-text-gray-900']">
                 <UIcon :name="a.icon" :class="['h-5 w-5 flex-none u-text-gray-400', active && 'u-text-gray-900', a.iconClass]" aria-hidden="true" />
                 <span class="flex-auto ml-3 truncate">{{ a.label }}</span>
@@ -70,17 +71,10 @@
         </li>
       </ComboboxOptions>
 
-      <div v-if="query !== '' && filteredFiles.length === 0" class="py-14 px-6 flex-1 flex flex-col items-center justify-center sm:px-14">
+      <div v-if="filteredFiles.length === 0 && filteredActions.length === 0" class="py-14 px-6 flex-1 flex flex-col items-center justify-center sm:px-14">
         <UIcon name="heroicons-outline:document-text" class="mx-auto h-6 w-6 text-gray-400" aria-hidden="true" />
         <p class="mt-4 text-sm text-gray-900">
-          We couldn't find any files with that term. Please try again.
-        </p>
-      </div>
-
-      <div v-if="query === '' && filteredFiles.length === 0" class="py-14 px-6 flex-1 flex flex-col items-center justify-center sm:px-14">
-        <UIcon name="heroicons-outline:document-text" class="mx-auto h-6 w-6 text-gray-400" aria-hidden="true" />
-        <p class="mt-4 text-sm text-gray-900">
-          We couldn't find any files.
+          {{ query ? "We couldn't find any files with that term. Please try again." : "We couldn't find any files." }}
         </p>
       </div>
     </Combobox>
@@ -112,8 +106,28 @@ const emit = defineEmits(['update:modelValue'])
 const route = useRoute()
 const router = useRouter()
 const keys = useMagicKeys()
-const { file: contentFile, computedFiles: contentFiles, select: selectContentFile, refresh: refreshContentFiles, recentFiles: contentRecentFiles } = useProjectFiles(project, 'content')
-const { file: mediaFile, computedFiles: mediaFiles, select: selectMediaFile, refresh: refreshMediaFiles, recentFiles: mediaRecentFiles } = useProjectFiles(project, 'public')
+const {
+  file: contentFile,
+  computedFiles: contentFiles,
+  recentFiles: contentRecentFiles,
+  select: selectContentFile,
+  refresh: refreshContentFiles,
+  openCreateModal: openCreateContentFileModal,
+  openRenameModal: openRenameContentFileModal,
+  openDeleteModal: openDeleteContentFileModal,
+  openRevertModal: openRevertContentFileModal
+} = useProjectFiles(project, 'content')
+const {
+  file: mediaFile,
+  computedFiles: mediaFiles,
+  recentFiles: mediaRecentFiles,
+  select: selectMediaFile,
+  refresh: refreshMediaFiles,
+  openUploadModal,
+  openRenameModal: openRenameMediaFileModal,
+  openDeleteModal: openDeleteMediaFileModal,
+  openRevertModal: openRevertMediaFileModal
+} = useProjectFiles(project, 'public')
 
 const query = ref('')
 const refreshingFiles = ref(false)
@@ -130,6 +144,9 @@ const isOpen = computed({
     emit('update:modelValue', value)
   }
 })
+
+const isContentPage = computed(() => route.name === '@team-project-content')
+const isMediaPage = computed(() => route.name === '@team-project-media')
 
 const comboboxInput = ref(null)
 
@@ -156,7 +173,7 @@ function activateFirstOption () {
 const currentFiles = computed(() => {
   let currentFiles = []
 
-  if (route.name === '@team-project-content') {
+  if (isContentPage.value) {
     let files = [...contentFiles.value]
     if (contentFile.value) {
       files = files.filter(f => f.path !== contentFile.value.path)
@@ -166,7 +183,7 @@ const currentFiles = computed(() => {
       ...files,
       ...mediaFiles.value
     ]
-  } else if (route.name === '@team-project-media') {
+  } else if (isMediaPage.value) {
     let files = [...mediaFiles.value]
     if (mediaFile.value) {
       files = files.filter(f => f.path !== mediaFile.value.path)
@@ -202,11 +219,11 @@ const recentFiles = computed(() => {
     ...mediaRecentFiles.value
   ].sort((a, b) => b.openedAt - a.openedAt)
 
-  if (route.name === '@team-project-content') {
+  if (isContentPage.value) {
     if (contentFile.value) {
       recentFiles = recentFiles.filter(f => f.path !== contentFile.value.path)
     }
-  } else if (route.name === '@team-project-media') {
+  } else if (isMediaPage.value) {
     if (mediaFile.value) {
       recentFiles = recentFiles.filter(f => f.path !== mediaFile.value.path)
     }
@@ -217,9 +234,47 @@ const recentFiles = computed(() => {
     .slice(0, 5)
 })
 
-const actions = computed(() => ([
-  !query.value && { key: 'refresh', label: 'Refresh files', icon: 'heroicons-outline:refresh', iconClass: refreshingFiles.value ? 'animate-spin' : '', click: () => { refreshFiles() } }
-].filter(Boolean)))
+const actions = computed(() => ([{
+  key: 'refresh',
+  label: 'Refresh files',
+  icon: 'heroicons-outline:refresh',
+  iconClass: refreshingFiles.value ? 'animate-spin' : '',
+  click: refreshFiles
+}, {
+  key: 'create',
+  label: 'Create file',
+  icon: 'heroicons-outline:plus',
+  visible: isContentPage.value,
+  click: onCreateFile
+}, {
+  key: 'upload',
+  label: 'Upload file',
+  icon: 'heroicons-outline:plus',
+  visible: isMediaPage.value,
+  click: onUploadFile
+}, {
+  key: 'rename',
+  label: 'Rename file',
+  icon: 'heroicons-outline:pencil',
+  visible: (isContentPage.value && contentFile.value) || (isMediaPage.value && mediaFile.value),
+  click: onRenameFile
+}, {
+  key: 'delete',
+  label: 'Delete file',
+  icon: 'heroicons-outline:trash',
+  visible: (isContentPage.value && contentFile.value && !['deleted'].includes(contentFile.value.status)) || (isMediaPage.value && mediaFile.value && !['deleted'].includes(mediaFile.value.status)),
+  click: onDeleteFile
+}, {
+  key: 'revert',
+  label: 'Revert file',
+  icon: 'heroicons-outline:reply',
+  visible: (isContentPage.value && !!contentFile.value?.status) || (isMediaPage.value && !!mediaFile.value?.status),
+  click: onRevertFile
+}]))
+
+const filteredActions = computed(() => [...actions.value].filter((a) => {
+  return (a.visible === undefined || a.visible) && (!query.value || [a.key, a.label].filter(Boolean).some(value => value.search(new RegExp(query.value, 'i')) !== -1))
+}))
 
 const getIconName = (file) => {
   switch (file.status) {
@@ -266,6 +321,43 @@ function onSelect (option) {
     option.click()
   } else {
     onFileSelect(option)
+  }
+}
+
+function onCreateFile () {
+  isOpen.value = false
+  openCreateContentFileModal('content')
+}
+
+function onUploadFile () {
+  isOpen.value = false
+  openUploadModal()
+}
+
+function onRenameFile () {
+  isOpen.value = false
+  if (isContentPage.value) {
+    openRenameContentFileModal(contentFile.value.path)
+  } else if (isMediaPage.value) {
+    openRenameMediaFileModal(mediaFile.value.path)
+  }
+}
+
+function onDeleteFile () {
+  isOpen.value = false
+  if (isContentPage.value) {
+    openDeleteContentFileModal(contentFile.value.path)
+  } else if (isMediaPage.value) {
+    openDeleteMediaFileModal(mediaFile.value.path)
+  }
+}
+
+function onRevertFile () {
+  isOpen.value = false
+  if (isContentPage.value) {
+    openRevertContentFileModal(contentFile.value.path)
+  } else if (isMediaPage.value) {
+    openRevertMediaFileModal(mediaFile.value.path)
   }
 }
 
