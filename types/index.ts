@@ -50,6 +50,7 @@ export interface User {
 export interface SocketUser {
   username: string
   avatar: string
+  branch?: string
   file?: string
 }
 

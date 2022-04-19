@@ -249,15 +249,17 @@ export const useProjectFiles = (project: Project, root: Root) => {
   function select (f: GitHubFile) {
     file.value = f
 
-    if (process.client && f) {
-      $socket.emit('file:join', `project-${project.id}:${f.path}`)
+    if (process.client && file.value) {
+      if (root === 'content') {
+        $socket.emit('file:join', `project-${project.id}:${branch.value.name}:${file.value.path}`)
+      }
 
       const updatedRecentFiles = [...recentFiles.value]
-      const index = updatedRecentFiles.findIndex(rf => rf.path === f.path)
+      const index = updatedRecentFiles.findIndex(rf => rf.path === file.value.path)
       if (index !== -1) {
         updatedRecentFiles.splice(index, 1)
       }
-      recentFiles.value = [{ ...f, openedAt: Date.now() }, ...updatedRecentFiles].slice(0, 6)
+      recentFiles.value = [{ ...file.value, openedAt: Date.now() }, ...updatedRecentFiles].slice(0, 6)
     }
   }
 
