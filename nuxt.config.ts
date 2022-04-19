@@ -1,5 +1,7 @@
 import { defineNuxtConfig } from 'nuxt3'
 import preset from './presets'
+import colors from './presets/colors'
+import typography from './presets/typography'
 
 // https://v3.nuxtjs.org/docs/directory-structure/nuxt.config
 export default defineNuxtConfig({
@@ -59,19 +61,23 @@ export default defineNuxtConfig({
       primary: 'blue',
       gray: 'zinc'
     },
-    preset,
-    tailwindcss: {
+    preset
+  },
+  tailwindcss: {
+    extend: {
+      colors,
+      typography
+    },
+    config: {
       theme: {
         extend: {
+          colors,
+          typography,
           fontFamily: {
             sans: '"RoobertPRO", sans-serif'
           }
         }
-      }
-    }
-  },
-  tailwindcss: {
-    config: {
+      },
       plugins: [
         require('@tailwindcss/typography')
       ],
