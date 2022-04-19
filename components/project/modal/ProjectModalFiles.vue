@@ -59,7 +59,7 @@
           </ul>
         </li>
 
-        <li class="p-2" v-if="filteredActions.length">
+        <li v-if="filteredActions.length" class="p-2">
           <ul class="text-sm u-text-gray-700">
             <ComboboxOption v-for="a in filteredActions" :key="a.key" v-slot="{ active }" :value="a" as="template">
               <li :class="['flex cursor-pointer select-none items-center rounded-md px-3 py-2', active && 'u-bg-gray-100 u-text-gray-900']">
@@ -256,19 +256,19 @@ const actions = computed(() => ([{
   key: 'rename',
   label: 'Rename file',
   icon: 'heroicons-outline:pencil',
-  visible: isContentPage.value || isMediaPage.value,
+  visible: (isContentPage.value && contentFile.value) || (isMediaPage.value && mediaFile.value),
   click: onRenameFile
 }, {
   key: 'delete',
   label: 'Delete file',
   icon: 'heroicons-outline:trash',
-  visible: isContentPage.value || isMediaPage.value,
+  visible: (isContentPage.value && contentFile.value && !['deleted'].includes(contentFile.value.status)) || (isMediaPage.value && mediaFile.value && !['deleted'].includes(mediaFile.value.status)),
   click: onDeleteFile
 }, {
   key: 'revert',
   label: 'Revert file',
   icon: 'heroicons-outline:reply',
-  visible: isContentPage.value || isMediaPage.value,
+  visible: (isContentPage.value && !!contentFile.value?.status) || (isMediaPage.value && !!mediaFile.value?.status),
   click: onRevertFile
 }]))
 
