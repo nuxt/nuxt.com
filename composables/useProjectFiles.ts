@@ -249,11 +249,9 @@ export const useProjectFiles = (project: Project, root: Root) => {
   function select (f: GitHubFile) {
     file.value = f
 
-    if (process.client) {
+    if (process.client && f) {
       $socket.emit('file:join', `project-${project.id}:${f.path}`)
-    }
 
-    if (f) {
       const updatedRecentFiles = [...recentFiles.value]
       const index = updatedRecentFiles.findIndex(rf => rf.path === f.path)
       if (index !== -1) {
