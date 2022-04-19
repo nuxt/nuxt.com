@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import type { PropType, Ref } from 'vue'
-import type { File, Project, SocketUser } from '~/types'
+import type { File, Project, SocketUser, User } from '~/types'
 
 const props = defineProps({
   file: {
@@ -20,20 +20,21 @@ const props = defineProps({
 const project: Project = inject('project')
 const activeUsers: Ref<SocketUser[]> = inject('activeUsers')
 
+const user = useStrapiUser() as Ref<User>
 const { branch } = useProjectBranches(project)
 
 const isDir = computed(() => props.file.type === 'directory')
 const isOpen = computed(() => !!props.openedDirs[props.file.path])
 
 const usersGroup = computed(() => {
-  return activeUsers.value.reduce((acc, user) => {
-    if (!!user.file && user.branch === branch.value.name) {
+  return activeUsers.value.reduce((acc, u) => {
+    if (!!u.file && u.branch === branch.value.name && u.id !== user.value.id) {
       if (isDir.value && !isOpen.value) {
-        if (user.file.startsWith(props.file.path)) {
-          acc.push({ src: user.avatar, alt: user.username })
+        if (u.file.startsWith(props.file.path)) {
+          acc.push({ src: u.avatar, alt: u.username })
         }
-      } else if (user.file === props.file.path) {
-        acc.push({ src: user.avatar, alt: user.username })
+      } else if (u.file === props.file.path) {
+        acc.push({ src: u.avatar, alt: u.username })
       }
     }
     return acc
