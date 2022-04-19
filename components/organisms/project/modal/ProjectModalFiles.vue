@@ -123,6 +123,7 @@ const {
   recentFiles: mediaRecentFiles,
   select: selectMediaFile,
   refresh: refreshMediaFiles,
+  openUploadModal,
   openRenameModal: openRenameMediaFileModal,
   openDeleteModal: openDeleteMediaFileModal,
   openRevertModal: openRevertMediaFileModal
@@ -330,7 +331,7 @@ function onCreateFile () {
 
 function onUploadFile () {
   isOpen.value = false
-  // TODO
+  openUploadModal()
 }
 
 function onRenameFile () {
