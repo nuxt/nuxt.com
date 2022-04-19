@@ -44,7 +44,7 @@ const { file, select: selectContentFile, refresh: refreshContentFiles } = usePro
 const { refresh: refreshMediaFiles } = useProjectFiles(project, 'public')
 
 function canJump (activeUser) {
-  return activeUser.id === user.value.id && (activeUser.branch !== branch.value.name || !!activeUser.file)
+  return activeUser.id !== user.value.id && (activeUser.branch !== branch.value.name || !!activeUser.file)
 }
 
 async function navigateTo (activeUser: SocketUser) {
