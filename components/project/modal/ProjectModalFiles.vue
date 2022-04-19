@@ -28,6 +28,7 @@
                   <span class="ml-1 text-xs italic truncate">{{ f.path }}</span>
                 </p>
                 <span v-if="active" class="flex-none ml-3 u-text-gray-500">Jump to...</span>
+                <UAvatarGroup v-else :group="usersGroup(f)" size="xxs" />
               </li>
             </ComboboxOption>
           </ul>
@@ -54,6 +55,7 @@
                   <span class="ml-1 text-xs italic truncate">{{ f.path }}</span>
                 </p>
                 <span v-if="active" class="flex-none ml-3 u-text-gray-500">Jump to...</span>
+                <UAvatarGroup v-else :group="usersGroup(f)" size="xxs" />
               </li>
             </ComboboxOption>
           </ul>
@@ -82,6 +84,7 @@
 </template>
 
 <script setup lang="ts">
+import type { Ref } from 'vue'
 import {
   Combobox,
   ComboboxInput,
@@ -90,7 +93,7 @@ import {
 } from '@headlessui/vue'
 import { useMagicKeys, whenever } from '@vueuse/core'
 import { getPathName } from '~/utils/tree'
-import type { GitHubFile, Project } from '~/types'
+import type { GitHubFile, Project, SocketUser } from '~/types'
 
 const props = defineProps({
   modelValue: {
@@ -100,12 +103,14 @@ const props = defineProps({
 })
 
 const project: Project = inject('project')
+const activeUsers: Ref<SocketUser[]> = inject('activeUsers')
 
 const emit = defineEmits(['update:modelValue'])
 
 const route = useRoute()
 const router = useRouter()
 const keys = useMagicKeys()
+const { branch } = useProjectBranches(project)
 const {
   file: contentFile,
   computedFiles: contentFiles,
@@ -275,6 +280,17 @@ const actions = computed(() => ([{
 const filteredActions = computed(() => [...actions.value].filter((a) => {
   return (a.visible === undefined || a.visible) && (!query.value || [a.key, a.label].filter(Boolean).some(value => value.search(new RegExp(query.value, 'i')) !== -1))
 }))
+
+// Methods
+
+function usersGroup (f: GitHubFile) {
+  return activeUsers.value.reduce((acc, user) => {
+    if (user.branch === branch.value?.name && user.file === f.path) {
+      acc.push({ src: user.avatar, alt: user.username })
+    }
+    return acc
+  }, [])
+}
 
 const getIconName = (file) => {
   switch (file.status) {
