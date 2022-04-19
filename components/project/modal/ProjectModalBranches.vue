@@ -18,7 +18,7 @@
                 <UIcon name="mdi:source-branch" :class="['h-5 w-5 flex-none u-text-gray-400', active && 'u-text-gray-900']" aria-hidden="true" />
                 <span class="flex-auto ml-3 truncate">{{ b.name }}</span>
                 <span v-if="active" class="flex-none ml-3 u-text-gray-500">Jump to...</span>
-                <UAvatarGroup v-else :group="usersGroup(b.name)" size="xs" />
+                <UAvatarGroup v-else :group="usersGroup(b.name)" size="xxs" />
               </li>
             </ComboboxOption>
           </ul>
