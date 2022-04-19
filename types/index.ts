@@ -48,6 +48,7 @@ export interface User {
 
 // User connected through websockets
 export interface SocketUser {
+  id: number
   username: string
   avatar: string
   branch?: string
