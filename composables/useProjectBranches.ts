@@ -4,6 +4,7 @@ import ProjectModalBranchCreate from '~/components/project/modal/ProjectModalBra
 import ProjectModalPublish from '~/components/project/modal/ProjectModalPublish.vue'
 
 export const useProjectBranches = (project: Project) => {
+  const { $socket } = useNuxtApp()
   const { open: openModal } = useModal()
   const client = useStrapiClient()
   const cookie = useCookie(`project-${project.id}-branch`, { path: '/' })
@@ -143,6 +144,10 @@ export const useProjectBranches = (project: Project) => {
   function select (b: GitHubBranch) {
     branch.value = b
     cookie.value = b.name
+
+    if (process.client && branch.value) {
+      $socket.emit('branch:join', `project-${project.id}:${branch.value.name}`)
+    }
   }
 
   return {
