@@ -45,6 +45,7 @@ provide('project', project.value)
 provide('activeUsers', activeUsers)
 
 const { branch, branches, fetch: fetchBranches } = useProjectBranches(project.value)
+const { fetch: fetchComponents } = useProjectComponents(project.value)
 const { fetch: fetchContentFiles } = useProjectFiles(project.value, 'content')
 const { fetch: fetchMediaFiles } = useProjectFiles(project.value, 'public')
 
@@ -59,6 +60,10 @@ if (!branches.value.length && process.client) {
 try {
   await Promise.all([fetchContentFiles(), fetchMediaFiles()])
 } catch (e) {}
+
+if (process.client) {
+  fetchComponents()
+}
 
 function onBranchesModalChange () {
   if (isFilesModalOpen.value) {
