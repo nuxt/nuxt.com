@@ -51,7 +51,7 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType, Ref } from 'vue'
+import type { PropType } from 'vue'
 import { isEmpty } from 'lodash-es'
 import type { Team, Project } from '~/types'
 import { getAvailablePath } from '~/utils/tree'
@@ -69,9 +69,8 @@ const project: Project = inject('project')
 provide('root', root)
 
 const { $toast } = useNuxtApp()
-const { upload, computedFiles, fetchFile } = useProjectFiles(project, root)
+const { upload, computedFiles, fetchFile, uploadInput: fileToUpload } = useProjectFiles(project, root)
 
-const fileToUpload: Ref<HTMLInputElement> = ref(null)
 const dragover = ref(false)
 
 const medias = useState(`project-${project.id}-medias`, () => ({}))
