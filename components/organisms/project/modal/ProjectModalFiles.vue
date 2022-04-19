@@ -106,8 +106,27 @@ const emit = defineEmits(['update:modelValue'])
 const route = useRoute()
 const router = useRouter()
 const keys = useMagicKeys()
-const { file: contentFile, computedFiles: contentFiles, select: selectContentFile, refresh: refreshContentFiles, recentFiles: contentRecentFiles } = useProjectFiles(project, 'content')
-const { file: mediaFile, computedFiles: mediaFiles, select: selectMediaFile, refresh: refreshMediaFiles, recentFiles: mediaRecentFiles } = useProjectFiles(project, 'public')
+const {
+  file: contentFile,
+  computedFiles: contentFiles,
+  recentFiles: contentRecentFiles,
+  select: selectContentFile,
+  refresh: refreshContentFiles,
+  openCreateModal: openCreateContentFileModal,
+  openRenameModal: openRenameContentFileModal,
+  openDeleteModal: openDeleteContentFileModal,
+  openRevertModal: openRevertContentFileModal
+} = useProjectFiles(project, 'content')
+const {
+  file: mediaFile,
+  computedFiles: mediaFiles,
+  recentFiles: mediaRecentFiles,
+  select: selectMediaFile,
+  refresh: refreshMediaFiles,
+  openRenameModal: openRenameMediaFileModal,
+  openDeleteModal: openDeleteMediaFileModal,
+  openRevertModal: openRevertMediaFileModal
+} = useProjectFiles(project, 'public')
 
 const query = ref('')
 const refreshingFiles = ref(false)
@@ -124,6 +143,9 @@ const isOpen = computed({
     emit('update:modelValue', value)
   }
 })
+
+const isContentPage = computed(() => route.name === '@team-project-content')
+const isMediaPage = computed(() => route.name === '@team-project-media')
 
 const comboboxInput = ref(null)
 
@@ -150,7 +172,7 @@ function activateFirstOption () {
 const currentFiles = computed(() => {
   let currentFiles = []
 
-  if (route.name === '@team-project-content') {
+  if (isContentPage.value) {
     let files = [...contentFiles.value]
     if (contentFile.value) {
       files = files.filter(f => f.path !== contentFile.value.path)
@@ -160,7 +182,7 @@ const currentFiles = computed(() => {
       ...files,
       ...mediaFiles.value
     ]
-  } else if (route.name === '@team-project-media') {
+  } else if (isMediaPage.value) {
     let files = [...mediaFiles.value]
     if (mediaFile.value) {
       files = files.filter(f => f.path !== mediaFile.value.path)
@@ -196,11 +218,11 @@ const recentFiles = computed(() => {
     ...mediaRecentFiles.value
   ].sort((a, b) => b.openedAt - a.openedAt)
 
-  if (route.name === '@team-project-content') {
+  if (isContentPage.value) {
     if (contentFile.value) {
       recentFiles = recentFiles.filter(f => f.path !== contentFile.value.path)
     }
-  } else if (route.name === '@team-project-media') {
+  } else if (isMediaPage.value) {
     if (mediaFile.value) {
       recentFiles = recentFiles.filter(f => f.path !== mediaFile.value.path)
     }
@@ -211,19 +233,47 @@ const recentFiles = computed(() => {
     .slice(0, 5)
 })
 
-const actions = computed(() => ([
-  { key: 'refresh', label: 'Refresh files', icon: 'heroicons-outline:refresh', iconClass: refreshingFiles.value ? 'animate-spin' : '', click: () => { refreshFiles() } }
-].filter(Boolean)))
+const actions = computed(() => ([{
+  key: 'refresh',
+  label: 'Refresh files',
+  icon: 'heroicons-outline:refresh',
+  iconClass: refreshingFiles.value ? 'animate-spin' : '',
+  click: refreshFiles
+}, {
+  key: 'create',
+  label: 'Create file',
+  icon: 'heroicons-outline:plus',
+  visible: isContentPage.value,
+  click: onCreateFile
+}, {
+  key: 'upload',
+  label: 'Upload file',
+  icon: 'heroicons-outline:plus',
+  visible: isMediaPage.value,
+  click: onUploadFile
+}, {
+  key: 'rename',
+  label: 'Rename file',
+  icon: 'heroicons-outline:pencil',
+  visible: isContentPage.value || isMediaPage.value,
+  click: onRenameFile
+}, {
+  key: 'delete',
+  label: 'Delete file',
+  icon: 'heroicons-outline:trash',
+  visible: isContentPage.value || isMediaPage.value,
+  click: onDeleteFile
+}, {
+  key: 'revert',
+  label: 'Revert file',
+  icon: 'heroicons-outline:reply',
+  visible: isContentPage.value || isMediaPage.value,
+  click: onRevertFile
+}]))
 
-const filteredActions = computed(() => {
-  let filteredActions = [...actions.value]
-  if (query.value) {
-    filteredActions = filteredActions.filter((a) => {
-      return [a.key, a.label].filter(Boolean).some(value => value.search(new RegExp(query.value, 'i')) !== -1)
-    })
-  }
-  return filteredActions
-})
+const filteredActions = computed(() => [...actions.value].filter((a) => {
+  return (a.visible === undefined || a.visible) && (!query.value || [a.key, a.label].filter(Boolean).some(value => value.search(new RegExp(query.value, 'i')) !== -1))
+}))
 
 const getIconName = (file) => {
   switch (file.status) {
@@ -270,6 +320,43 @@ function onSelect (option) {
     option.click()
   } else {
     onFileSelect(option)
+  }
+}
+
+function onCreateFile () {
+  isOpen.value = false
+  openCreateContentFileModal('content')
+}
+
+function onUploadFile () {
+  isOpen.value = false
+  // TODO
+}
+
+function onRenameFile () {
+  isOpen.value = false
+  if (isContentPage.value) {
+    openRenameContentFileModal(contentFile.value.path)
+  } else if (isMediaPage.value) {
+    openRenameMediaFileModal(mediaFile.value.path)
+  }
+}
+
+function onDeleteFile () {
+  isOpen.value = false
+  if (isContentPage.value) {
+    openDeleteContentFileModal(contentFile.value.path)
+  } else if (isMediaPage.value) {
+    openDeleteMediaFileModal(mediaFile.value.path)
+  }
+}
+
+function onRevertFile () {
+  isOpen.value = false
+  if (isContentPage.value) {
+    openRevertContentFileModal(contentFile.value.path)
+  } else if (isMediaPage.value) {
+    openRevertMediaFileModal(mediaFile.value.path)
   }
 }
 
