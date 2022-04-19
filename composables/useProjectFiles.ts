@@ -2,10 +2,10 @@ import type { Ref } from 'vue'
 import { omit } from 'lodash-es'
 import { useStorage } from '@vueuse/core'
 import type { GitHubFile, GitHubDraft, Project, Root } from '~/types'
-import ProjectModalFileCreate from '~/components/organisms/project/modal/ProjectModalFileCreate.vue'
-import ProjectModalFileRename from '~/components/organisms/project/modal/ProjectModalFileRename.vue'
-import ProjectModalFileDelete from '~/components/organisms/project/modal/ProjectModalFileDelete.vue'
-import ProjectModalFileRevert from '~/components/organisms/project/modal/ProjectModalFileRevert.vue'
+import ProjectModalFileCreate from '~/components/project/modal/ProjectModalFileCreate.vue'
+import ProjectModalFileRename from '~/components/project/modal/ProjectModalFileRename.vue'
+import ProjectModalFileDelete from '~/components/project/modal/ProjectModalFileDelete.vue'
+import ProjectModalFileRevert from '~/components/project/modal/ProjectModalFileRevert.vue'
 
 const uploadInput: Ref<HTMLInputElement | null> = ref(null)
 
@@ -255,11 +255,9 @@ export const useProjectFiles = (project: Project, root: Root) => {
   function select (f: GitHubFile) {
     file.value = f
 
-    if (process.client) {
+    if (process.client && f) {
       $socket.emit('file:join', `project-${project.id}:${f.path}`)
-    }
 
-    if (f) {
       const updatedRecentFiles = [...recentFiles.value]
       const index = updatedRecentFiles.findIndex(rf => rf.path === f.path)
       if (index !== -1) {

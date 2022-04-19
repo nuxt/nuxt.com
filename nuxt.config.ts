@@ -20,22 +20,17 @@ export default defineNuxtConfig({
       { rel: 'icon', href: '/icon.png' }
     ]
   },
-  components: {
-    loader: true,
-    dirs: [
-      { path: '~/components/content', global: true },
-      { path: '~/components/atoms', global: true },
-      '~/components/molecules',
-      '~/components/organisms',
-      '~/components/templates'
-    ]
-  },
+  components: [
+    { path: '~/components/globals', global: true },
+    '~/components'
+  ],
   css: [
     '~/assets/css/fonts.css',
     '~/assets/css/scrollbars.css'
   ],
   buildModules: [
     '@nuxthq/ui',
+    '@nuxthq/admin',
     '@nuxtjs/strapi',
     '@nuxt/content',
     '@docus/editor',
