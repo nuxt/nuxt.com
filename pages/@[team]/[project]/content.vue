@@ -173,7 +173,7 @@ onMounted(() => {
     return
   }
 
-  $socket.emit('file:join', `project-${project.id}:${file.value.path}`)
+  $socket.emit('file:join', `project-${project.id}:${branch.value.name}:${file.value.path}`)
 })
 
 onUnmounted(() => {

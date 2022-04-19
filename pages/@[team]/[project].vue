@@ -44,7 +44,7 @@ if (error.value) {
 provide('project', project.value)
 provide('activeUsers', activeUsers)
 
-const { branches, fetch: fetchBranches } = useProjectBranches(project.value)
+const { branch, branches, fetch: fetchBranches } = useProjectBranches(project.value)
 const { fetch: fetchContentFiles } = useProjectFiles(project.value, 'content')
 const { fetch: fetchMediaFiles } = useProjectFiles(project.value, 'public')
 
@@ -78,7 +78,7 @@ onMounted(() => {
   $socket.on('project:active-users', (users) => {
     activeUsers.value = users
   })
-  $socket.emit('project:join', `project-${project.value.id}`)
+  $socket.emit('project:join', `project-${project.value.id}:${branch.value.name}`)
 })
 
 onUnmounted(() => {

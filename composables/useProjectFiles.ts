@@ -249,8 +249,8 @@ export const useProjectFiles = (project: Project, root: Root) => {
   function select (f: GitHubFile) {
     file.value = f
 
-    if (process.client) {
-      $socket.emit('file:join', `project-${project.id}:${f.path}`)
+    if (process.client && root === 'content') {
+      $socket.emit('file:join', `project-${project.id}:${branch.value.name}:${f.path}`)
     }
 
     if (f) {
