@@ -137,7 +137,6 @@ watch(() => isOpen.value, (value) => {
 // Methods
 
 function usersGroup (branchName) {
-  // Use reduce instead of filter and map
   return activeUsers.value.reduce((acc, user) => {
     if (user.branch === branchName) {
       acc.push({ src: user.avatar, alt: user.username })
