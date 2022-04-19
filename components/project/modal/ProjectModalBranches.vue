@@ -17,8 +17,8 @@
               <li :class="['flex cursor-pointer select-none items-center rounded-md px-3 py-2', active && 'u-bg-gray-100 u-text-gray-900']">
                 <UIcon name="mdi:source-branch" :class="['h-5 w-5 flex-none u-text-gray-400', active && 'u-text-gray-900']" aria-hidden="true" />
                 <span class="flex-auto ml-3 truncate">{{ b.name }}</span>
-                <UAvatarGroup v-if="!active" :group="usersGroup(b.name)" size="xs" />
                 <span v-if="active" class="flex-none ml-3 u-text-gray-500">Jump to...</span>
+                <UAvatarGroup v-else :group="usersGroup(b.name)" size="xs" />
               </li>
             </ComboboxOption>
           </ul>
