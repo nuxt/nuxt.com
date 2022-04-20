@@ -1,4 +1,4 @@
-import { defineNuxtConfig } from 'nuxt3'
+import { defineNuxtConfig } from 'nuxt'
 import preset from './presets'
 import colors from './presets/colors'
 import typography from './presets/typography'
