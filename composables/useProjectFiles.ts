@@ -72,6 +72,8 @@ export const useProjectFiles = (project: Project, root: Root) => {
         body: { path }
       })
 
+      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
+
       draft.value = data
 
       select(computedFiles.value.find(file => file.path === path))
@@ -113,6 +115,8 @@ export const useProjectFiles = (project: Project, root: Root) => {
         }
       })
 
+      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
+
       draft.value = data
 
       if (file.value?.path === oldPath) {
@@ -140,6 +144,8 @@ export const useProjectFiles = (project: Project, root: Root) => {
         }
       })
 
+      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
+
       draft.value = data
     } catch (e) {}
   }
@@ -153,6 +159,8 @@ export const useProjectFiles = (project: Project, root: Root) => {
           root
         }
       })
+
+      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
 
       const oldFilePath = draft.value.additions.find(addition => addition.path === path)?.oldPath
 
@@ -187,6 +195,8 @@ export const useProjectFiles = (project: Project, root: Root) => {
           root
         }
       })
+
+      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
 
       draft.value = data
 

@@ -10,7 +10,7 @@
 
 <script setup lang="ts">
 import type { PropType, Ref } from 'vue'
-import type { Team, Project, User, SocketUser } from '~/types'
+import type { Team, Project, User, SocketUser, GitHubDraft } from '~/types'
 
 definePageMeta({
   middleware: 'auth',
@@ -46,7 +46,7 @@ provide('activeUsers', activeUsers)
 
 const { branch, branches, fetch: fetchBranches } = useProjectBranches(project.value)
 const { fetch: fetchComponents } = useProjectComponents(project.value)
-const { fetch: fetchContentFiles } = useProjectFiles(project.value, 'content')
+const { fetch: fetchContentFiles, draft: contentDraft } = useProjectFiles(project.value, 'content')
 const { fetch: fetchMediaFiles } = useProjectFiles(project.value, 'public')
 
 try {
@@ -80,8 +80,11 @@ function onFilesModalChange () {
 // Hooks
 
 onMounted(() => {
-  $socket.on('project:active-users', (users) => {
+  $socket.on('project:active-users', (users: SocketUser[]) => {
     activeUsers.value = users
+  })
+  $socket.on('draft:update', (draft: GitHubDraft) => {
+    contentDraft.value = draft
   })
   $socket.emit('project:join', `project-${project.value.id}:${branch.value.name}`)
 })
