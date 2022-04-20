@@ -19,6 +19,18 @@ export const useProjectBranches = (project: Project) => {
     const recentBranchesStorage = useStorage<GitHubBranch[]>(`project-${project.id}-branches-recent`, [])
     recentBranches.value = recentBranchesStorage.value
     watch(recentBranches, (value) => { recentBranchesStorage.value = value })
+    watch(branches, (value) => {
+      const updatedRecentBranches = [...recentBranches.value]
+      for (const updatedBranch of updatedRecentBranches) {
+        const index = value.findIndex(b => b.name === updatedBranch.name)
+        if (index === -1) {
+          updatedRecentBranches.splice(index, 1)
+        }
+      }
+      if (recentBranches.value.length !== updatedRecentBranches.length) {
+        recentBranches.value = updatedRecentBranches
+      }
+    })
   }
 
   const pending = ref(false)
