@@ -2,7 +2,7 @@
   <UModal v-model="isOpen" width-class="max-w-xl" body-class="relative flex flex-col overflow-hidden h-80">
     <ProjectCombobox
       :items="currentBranches"
-      items-label="Files"
+      items-label="Branches"
       :recent-items="recentItems"
       :actions="actions"
       @select="onSelect"
