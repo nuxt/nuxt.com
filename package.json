@@ -18,7 +18,6 @@
     "@sindresorhus/slugify": "^2.1.0",
     "@tailwindcss/typography": "^0.5.2",
     "@vueuse/core": "^8.3.0",
-    "@vueuse/motion": "^2.0.0-beta.18",
     "eslint": "^8.13.0",
     "nuxt": "^3.0.0-rc.1",
     "socket.io-client": "^4.4.1",
