@@ -346,6 +346,21 @@ export const useProjectFiles = (project: Project, root: Root) => {
     return changesCount
   })
 
+  if (process.client) {
+    watch(computedFiles, (value) => {
+      const updatedRecentFiles = [...recentFiles.value]
+      for (const recentFile of updatedRecentFiles) {
+        const index = value.findIndex(b => b.name === recentFile.name)
+        if (index === -1) {
+          updatedRecentFiles.splice(index, 1)
+        }
+      }
+      if (recentFiles.value.length !== updatedRecentFiles.length) {
+        recentFiles.value = updatedRecentFiles
+      }
+    })
+  }
+
   return {
     // Http
     fetch,

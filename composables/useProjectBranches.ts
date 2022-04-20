@@ -21,8 +21,8 @@ export const useProjectBranches = (project: Project) => {
     watch(recentBranches, (value) => { recentBranchesStorage.value = value })
     watch(branches, (value) => {
       const updatedRecentBranches = [...recentBranches.value]
-      for (const updatedBranch of updatedRecentBranches) {
-        const index = value.findIndex(b => b.name === updatedBranch.name)
+      for (const recentBranch of updatedRecentBranches) {
+        const index = value.findIndex(b => b.name === recentBranch.name)
         if (index === -1) {
           updatedRecentBranches.splice(index, 1)
         }
