@@ -129,6 +129,10 @@ const activeUsers: Ref<SocketUser[]> = inject('activeUsers')
 const query = ref('')
 const comboboxInput = ref(null)
 
+onMounted(() => {
+  activateFirstOption()
+})
+
 // Computed
 
 const filteredItems = computed(() => {
@@ -161,13 +165,6 @@ watch(() => query.value, (value, oldValue) => {
     activateFirstOption()
   }
 })
-
-// FIXME: Can no longer watch on modal visibility
-// watch(() => isOpen.value, (value) => {
-//   if (value) {
-//     activateFirstOption()
-//   }
-// })
 
 // Methods
 
