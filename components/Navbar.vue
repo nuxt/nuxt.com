@@ -21,52 +21,15 @@
         </div>
 
         <ul class="justify-center hidden lg:col-span-4 gap-x-10 lg:flex">
-          <li
-            v-for="(link, index) in links"
-            :key="index"
-          >
-            <UPopover v-if="link.options?.length" mode="hover" container-class="z-10 py-4" panel-class="w-screen max-w-md xl:max-w-xl">
-              <template #default="{ open }">
-                <UButton
-                  :label="link.title"
-                  variant="transparent"
-                  size="lg"
-                  class="!p-0 !cursor-default"
-                  :class="[open && 'u-text-gray-700']"
-                  icon="heroicons-outline:chevron-down"
-                  icon-base-class="!h-4 !w-4 flex-shrink-0"
-                  trailing
-                />
-              </template>
-
-              <template #panel="{ close }">
-                <UCard shadow-class="shadow-lg" rounded-class="rounded-lg" ring-class="ring-1 u-ring-gray-200">
-                  <div class="grid gap-6 sm:gap-8 lg:grid-cols-2">
-                    <ULink v-for="(option, optionIndex) in link.options" :key="optionIndex" :to="option.to" class="-m-3 p-3 flex items-start rounded-lg hover:u-bg-gray-50 transition ease-in-out duration-150" @click="close">
-                      <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md text-white sm:h-12 sm:w-12">
-                        <img :src="option.icon" class="h-8 w-8" aria-hidden="true">
-                      </div>
-                      <div class="ml-4">
-                        <p class="text-base font-medium u-text-gray-900">
-                          {{ option.title }}
-                        </p>
-                        <p class="mt-1 text-sm text-gray-500 line-clamp-3 max-w-xs">
-                          {{ option.description }}
-                        </p>
-                      </div>
-                    </ULink>
-                  </div>
-                </UCard>
-              </template>
-            </UPopover>
-
+          <li v-for="(link, index) in links" :key="index">
+            <NavbarPopover v-if="link.children?.length" :link="link" />
             <ULink
               v-else
               :to="link.slug"
               :exact="link.exact"
               class="text-sm lg:text-base focus:outline-none"
               active-class="font-semibold u-text-gray-900"
-              inactive-class="font-medium u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-700"
+              inactive-class="font-medium u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900"
             >
               {{ link.title }}
             </ULink>
@@ -93,6 +56,8 @@
 import type { Ref } from 'vue'
 import type { User } from '~/types'
 
+const modules: Ref<object[]> = inject('modules')
+
 const user = useStrapiUser() as Ref<User>
 const { getProviderAuthenticationUrl } = useStrapiAuth()
 const route = useRoute()
@@ -101,28 +66,86 @@ const { hasScrolledPastNavbar } = useNavbarScroll()
 
 const isOpen = ref(false)
 
+const categories = computed(() => {
+  return [...new Set(modules.value.map(module => module.category))].map(category => ({ title: category, slug: `/integrations?category=${category.toLowerCase()}`, exact: true }))
+})
+
 const links = computed(() => {
   const team = activeTeam.value || route.params.team || user.value?.username
 
   return [{
-    title: 'Docs',
+    title: 'Framework',
     icon: 'heroicons-outline:book-open',
-    options: [{
-      title: 'Framework',
-      description: 'The Hybrid Vue Framework',
-      to: '/docs/framework',
-      icon: '/docs/framework.svg'
-    }, {
-      title: 'Content',
-      description: 'Git-based Headless CMS',
-      to: '/docs/content',
-      icon: '/docs/content.svg'
-    }]
+    slug: '/docs/framework'
   }, {
     title: 'Integrations',
+    icon: 'heroicons-outline:sparkles',
     slug: '/integrations',
-    exact: true,
-    icon: 'heroicons-outline:sparkles'
+    banner: '/docs/banner.png',
+    children: [{
+      title: 'Officials',
+      icon: 'heroicons-outline:star',
+      children: [{
+        title: 'Content',
+        slug: '/docs/content'
+      }, {
+        title: 'Image',
+        slug: 'https://image.nuxtjs.org',
+        target: '_blank'
+      }, {
+        title: 'Auth',
+        slug: 'https://auth.nuxtjs.org',
+        target: '_blank'
+      }, {
+        title: 'i18n',
+        slug: 'https://i18n.nuxtjs.org',
+        target: '_blank'
+      }, {
+        title: 'PWA',
+        slug: 'https://pwa.nuxtjs.org',
+        target: '_blank'
+      }]
+    }, {
+      title: 'Partners',
+      icon: 'heroicons-outline:beaker',
+      children: [{
+        title: 'Vercel',
+        slug: 'https://vercel.com',
+        target: '_blank'
+      }, {
+        title: 'Netlify',
+        slug: 'https://www.netlify.com',
+        target: '_blank'
+      }, {
+        title: 'VueStoreFront',
+        slug: 'https://www.vuestorefront.io',
+        target: '_blank'
+      }, {
+        title: 'Layer 0',
+        slug: 'https://www.layer0.co',
+        target: '_blank'
+      }, {
+        title: 'Storyblok',
+        slug: 'https://www.storyblok.com',
+        target: '_blank'
+      }, {
+        title: 'Strapi',
+        slug: 'https://strapi.io',
+        target: '_blank'
+      }, {
+        title: 'Swell',
+        slug: 'https://www.swell.is',
+        target: '_blank'
+      }]
+    }, {
+      title: 'Categories',
+      icon: 'heroicons-outline:template',
+      class: 'col-span-3',
+      children: [
+        ...categories.value,
+        { title: 'All integrations', slug: '/integrations' }
+      ]
+    }]
   }, {
     title: 'Templates',
     slug: '/templates',
