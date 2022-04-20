@@ -312,7 +312,7 @@ const getIconColor = (file) => {
     case 'created':
       return 'text-green-500'
     case 'updated':
-      return 'text-amber-500'
+      return 'text-yellow-500'
     case 'deleted':
       return 'text-red-500'
     case 'renamed':
