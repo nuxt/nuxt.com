@@ -170,7 +170,14 @@ watch(() => query.value, (value, oldValue) => {
 
 function usersGroup (item: GitHubBranch | GitHubFile) {
   return activeUsers.value.reduce((acc, user) => {
-    if ((item.path && user.file === item.path) || user.branch === item.name) {
+    if (item.path) {
+      // item is GitHubFile
+      if (user.file === item.path && user.branch === branch.value.name) {
+        acc.push({ src: user.avatar, alt: user.username })
+      }
+    }
+     // item is GitHubBranch
+    else if (user.branch === item.name) {
       acc.push({ src: user.avatar, alt: user.username })
     }
     return acc
