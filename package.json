@@ -20,7 +20,7 @@
     "@vueuse/core": "^8.2.6",
     "@vueuse/motion": "^2.0.0-beta.18",
     "eslint": "^8.13.0",
-    "nuxt3": "^3.0.0-27505965.7a316c2",
+    "nuxt3": "^3.0.0-27506609.eed7036",
     "socket.io-client": "^4.4.1",
     "standard-version": "^9.3.2",
     "typescript": "^4.6.3",
