@@ -17,6 +17,12 @@ useHead({
 const { fetchNavigation } = useContent()
 
 await fetchNavigation()
+
+const { data: modules } = await useFetch('https://modules.nuxtjs.org/api/modules', {
+  transform: data => data.modules
+})
+
+provide('modules', modules)
 </script>
 
 <style>

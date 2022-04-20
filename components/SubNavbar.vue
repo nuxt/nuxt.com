@@ -23,7 +23,7 @@
             class="text-sm focus:outline-none"
             :class="{
               'u-text-gray-900 font-semibold': isActive(link),
-              'font-medium u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-700': !isActive(link),
+              'font-medium u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900': !isActive(link),
             }"
           >
             {{ link.title }}
