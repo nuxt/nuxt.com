@@ -70,8 +70,8 @@ export default defineNuxtConfig({
     },
     config: {
       theme: {
+        colors,
         extend: {
-          colors,
           typography,
           fontFamily: {
             sans: '"RoobertPRO", sans-serif'
