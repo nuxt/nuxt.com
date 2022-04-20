@@ -82,14 +82,10 @@ const tree = computed(() => {
   }
 
   return props.links.map((link) => {
-    if (link.title === 'Docs') {
-      return {
-        ...link,
-        ...navigation.value[0]
-      }
+    return {
+      ...link,
+      ...navFromPath(link.slug)
     }
-
-    return link
   })
 })
 
