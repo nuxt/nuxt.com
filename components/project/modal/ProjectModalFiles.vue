@@ -196,10 +196,10 @@ function onFileSelect (f: GitHubFile) {
   }
 }
 
-function onSelect (option) {
+function onSelect (option, data) {
   isOpen.value = false
   if (option.click) {
-    option.click()
+    option.click(data)
   } else {
     onFileSelect(option)
   }

@@ -62,11 +62,8 @@ const currentBranches = computed(() => {
     .map(b => ({ ...b, icon: 'mdi:source-branch' }))
 })
 
-// const branchExists = computed(() => query.value && branches.value.some(b => b.name === query.value))
-
 const actions = computed(() => ([
-  // FIXME: Can no longer access `query`
-  // { key: 'create', label: `Create new branch ${query.value && !branchExists.value ? `“${query.value}”` : ''}`, static: true, icon: 'heroicons-outline:plus', click: onCreateBranchClick },
+  { key: 'create', label: 'Create new branch', static: true, icon: 'heroicons-outline:plus', click: onCreateBranchClick },
   { key: 'refresh', label: 'Refresh branches', icon: 'heroicons-outline:refresh', iconClass: pendingBranches.value ? 'animate-spin' : '', click: () => { refreshBranches(true) } },
   (isDraftContent.value || isDraftMedia.value) && { key: 'reset', label: 'Revert draft', icon: 'heroicons-outline:reply', click: onResetDraftClick }
 ].filter(Boolean)))
@@ -86,9 +83,9 @@ async function onBranchSelect (b: GitHubBranch) {
   await refreshMediaFiles()
 }
 
-// function onCreateBranchClick () {
-//   openCreateBranchModal(!branchExists.value ? query.value : '', false)
-// }
+function onCreateBranchClick ({ query: name }) {
+  openCreateBranchModal(name && !branches.value.some(b => b.name === name) ? name : '', false)
+}
 
 async function onResetDraftClick () {
   try {
@@ -103,10 +100,10 @@ async function onResetDraftClick () {
   } catch {}
 }
 
-function onSelect (option) {
+function onSelect (option, data) {
   isOpen.value = false
   if (option.click) {
-    option.click()
+    option.click(data)
   } else {
     onBranchSelect(option)
   }

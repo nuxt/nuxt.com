@@ -189,7 +189,7 @@ function activateFirstOption () {
 }
 
 function onSelect (option) {
-  emit('select', option)
+  emit('select', option, { query: query.value })
 
   // waiting for modal to be closed
   setTimeout(() => {
