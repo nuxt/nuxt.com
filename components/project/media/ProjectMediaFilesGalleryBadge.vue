@@ -20,7 +20,7 @@ const badgeColor = computed(() => {
     case 'created':
       return 'bg-green-500'
     case 'updated':
-      return 'bg-amber-500'
+      return 'bg-yellow-500'
     case 'deleted':
       return 'bg-red-500'
     case 'renamed':
