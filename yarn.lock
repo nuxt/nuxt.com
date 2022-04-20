@@ -846,12 +846,12 @@
     unimport "^0.1.5"
     untyped "^0.4.4"
 
-"@nuxt/kit@npm:@nuxt/kit-edge@3.0.0-27506609.eed7036":
-  version "3.0.0-27506609.eed7036"
-  resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-27506609.eed7036.tgz#3734661dcea711e1e4d93f9a31045ca48f30a239"
-  integrity sha512-6+Xf5NvRj/XXebeDPt8+h96KazJbbTWT+vD9BH5WT4NF2QLTgMLH/wvCVsYmckvtZa2EyZlKJfwIXFKCqxeWFA==
+"@nuxt/kit@npm:@nuxt/kit-edge@3.0.0-rc.0-27507546.fc8bcdb":
+  version "3.0.0-rc.0-27507546.fc8bcdb"
+  resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-rc.0-27507546.fc8bcdb.tgz#0bab8448ac79034c99b4e6370f11f7e61c8bc2bb"
+  integrity sha512-5S8TQ9XFg+X9Gno2WCsHR3of8DT1bYdyG2xkTr367FuapMswGYFDBNaYKF1PQbBGWSRnlMTzzDhfEeSQB+ohzw==
   dependencies:
-    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-27506609.eed7036"
+    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-rc.0-27507546.fc8bcdb"
     c12 "^0.2.5"
     consola "^2.15.3"
     defu "^6.0.0"
@@ -940,10 +940,10 @@
     ufo "^0.8.3"
     unimport "^0.1.5"
 
-"@nuxt/schema@npm:@nuxt/schema-edge@3.0.0-27506609.eed7036":
-  version "3.0.0-27506609.eed7036"
-  resolved "https://registry.yarnpkg.com/@nuxt/schema-edge/-/schema-edge-3.0.0-27506609.eed7036.tgz#948c648b341167de110726ec46727c07d0cef9f6"
-  integrity sha512-aW/t38OgC32XogZMpT2lXm7EoRppWdcW6VyoNA1yKUUf3wsAYItTW5NZm7ZaotcujS5G2Kz8YyBPU8w1qifuYQ==
+"@nuxt/schema@npm:@nuxt/schema-edge@3.0.0-rc.0-27507546.fc8bcdb":
+  version "3.0.0-rc.0-27507546.fc8bcdb"
+  resolved "https://registry.yarnpkg.com/@nuxt/schema-edge/-/schema-edge-3.0.0-rc.0-27507546.fc8bcdb.tgz#34e3f2688e793f1c2e1562f41753f4eec5fcd8df"
+  integrity sha512-7Gjr6jD9LanRhhOIMl1GCZA+pNnTlwak2wJ++dlfPUwv60GKU8kOlomD6uI9l+bHpgwRHfaWTjZexZyn/CQbbg==
   dependencies:
     c12 "^0.2.5"
     create-require "^1.1.1"
@@ -961,12 +961,12 @@
   resolved "https://registry.yarnpkg.com/@nuxt/ui-templates/-/ui-templates-0.1.0.tgz#b0170d4accd3898376a950fdff75bf7beae62564"
   integrity sha512-m/Rv5ZZJwnI8jW5DhIv2aFQfdhtyZIZvvDun/VJBoIJw0RnsW49XB/th2jPl/HPMdyTZET6xVdnxYxRIrg+8rQ==
 
-"@nuxt/vite-builder@npm:@nuxt/vite-builder-edge@3.0.0-27506609.eed7036":
-  version "3.0.0-27506609.eed7036"
-  resolved "https://registry.yarnpkg.com/@nuxt/vite-builder-edge/-/vite-builder-edge-3.0.0-27506609.eed7036.tgz#6ffe0ce3837d8ceccbdf236afadf31a0e7e99716"
-  integrity sha512-VPDEyC72MKGFwBIEgTx/eP84qQb+Snhxdg4UcZplT11gB/n2kBa61tEjYqFhA8lixkKyhceyK3SAaq4D5/hLNQ==
+"@nuxt/vite-builder@npm:@nuxt/vite-builder-edge@3.0.0-rc.0-27507546.fc8bcdb":
+  version "3.0.0-rc.0-27507546.fc8bcdb"
+  resolved "https://registry.yarnpkg.com/@nuxt/vite-builder-edge/-/vite-builder-edge-3.0.0-rc.0-27507546.fc8bcdb.tgz#818f7c495591f418e2b76ee84ddb509424238735"
+  integrity sha512-1ia5ledhmoDifAWlVuSKQ5wm1IDSTlsNlibZP0/L6y3VHLw019ZsI8KETIfnblc1V8Y4g9qxmCB8hIbfpuB7sg==
   dependencies:
-    "@nuxt/kit" "npm:@nuxt/kit-edge@3.0.0-27506609.eed7036"
+    "@nuxt/kit" "npm:@nuxt/kit-edge@3.0.0-rc.0-27507546.fc8bcdb"
     "@vitejs/plugin-vue" "^2.3.1"
     "@vitejs/plugin-vue-jsx" "^1.3.10"
     autoprefixer "^10.4.4"
@@ -6259,10 +6259,10 @@ number-is-nan@^1.0.0:
   resolved "https://registry.yarnpkg.com/number-is-nan/-/number-is-nan-1.0.1.tgz#097b602b53422a522c1afb8790318336941a011d"
   integrity sha1-CXtgK1NCKlIsGvuHkDGDNpQaAR0=
 
-"nuxi@npm:nuxi-edge@3.0.0-27506609.eed7036":
-  version "3.0.0-27506609.eed7036"
-  resolved "https://registry.yarnpkg.com/nuxi-edge/-/nuxi-edge-3.0.0-27506609.eed7036.tgz#bfaac6152760bdb1e4dd6669dc55238f1e9bda04"
-  integrity sha512-cC/PRxQfZzSJLZ/0ASMPQN+YWLTnNf5LOH1PGDhmpflp5JJ+1E6+5ZO/hzS2ER3CMObLPhGeASynyNZqoOx6jA==
+"nuxi@npm:nuxi-edge@3.0.0-rc.0-27507546.fc8bcdb":
+  version "3.0.0-rc.0-27507546.fc8bcdb"
+  resolved "https://registry.yarnpkg.com/nuxi-edge/-/nuxi-edge-3.0.0-rc.0-27507546.fc8bcdb.tgz#07d2b4bf04cabed4beb136957305c59bb65ca9d9"
+  integrity sha512-2q/2A7uEh1cVY5mm93Zn8inQUdczr95wjg8Hqpz/SxbmakA8cigtblfokFeNXqSnmZ24MPYuFdKpuaA4MZv2aQ==
   optionalDependencies:
     fsevents "~2.3.2"
 
@@ -6275,15 +6275,15 @@ nuxt-component-meta@^0.1.2:
     "@vue/compiler-sfc" "^3.2.33"
     scule "^0.2.1"
 
-nuxt3@^3.0.0-27506609.eed7036:
-  version "3.0.0-27506609.eed7036"
-  resolved "https://registry.yarnpkg.com/nuxt3/-/nuxt3-3.0.0-27506609.eed7036.tgz#475d0998c0d6680ee7ead5db4102f68cba6f2065"
-  integrity sha512-x0K7W+cQbsPtx4xk8I/kTTPtk2E1GxDUehPj1x+DP2bnSpmPbAoU5TDLCUmivD/lq9+qSclih5Kep3Bu5XvZ5g==
+nuxt3@^3.0.0-rc.0-27507546.fc8bcdb:
+  version "3.0.0-rc.0-27507546.fc8bcdb"
+  resolved "https://registry.yarnpkg.com/nuxt3/-/nuxt3-3.0.0-rc.0-27507546.fc8bcdb.tgz#a24a4a29d03c9aa05f7715eb4484f91c28a7a2f7"
+  integrity sha512-y9aOQiaoCJREtJkm7q8R/GVWtxtlek87wqpwAFNnyvJ7T9TAXXGwKom7fpEeovfWWNxANDY0ikrTqGQ4LPVfuw==
   dependencies:
-    "@nuxt/kit" "npm:@nuxt/kit-edge@3.0.0-27506609.eed7036"
-    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-27506609.eed7036"
+    "@nuxt/kit" "npm:@nuxt/kit-edge@3.0.0-rc.0-27507546.fc8bcdb"
+    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-rc.0-27507546.fc8bcdb"
     "@nuxt/ui-templates" "^0.1.0"
-    "@nuxt/vite-builder" "npm:@nuxt/vite-builder-edge@3.0.0-27506609.eed7036"
+    "@nuxt/vite-builder" "npm:@nuxt/vite-builder-edge@3.0.0-rc.0-27507546.fc8bcdb"
     "@vue/reactivity" "^3.2.33"
     "@vue/shared" "^3.2.33"
     "@vueuse/head" "^0.7.6"
@@ -6301,7 +6301,7 @@ nuxt3@^3.0.0-27506609.eed7036:
     magic-string "^0.26.1"
     mlly "^0.5.2"
     nitropack "^0.3.1"
-    nuxi "npm:nuxi-edge@3.0.0-27506609.eed7036"
+    nuxi "npm:nuxi-edge@3.0.0-rc.0-27507546.fc8bcdb"
     ohash "^0.1.0"
     ohmyfetch "^0.4.15"
     pathe "^0.2.0"
