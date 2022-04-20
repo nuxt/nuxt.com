@@ -102,12 +102,8 @@ const currentFiles = computed(() => {
 })
 
 const recentFiles = computed(() => {
-  const recentFiles = [
-    ...contentRecentFiles.value,
-    ...mediaRecentFiles.value
-  ].sort((a, b) => b.openedAt - a.openedAt)
-
-  return recentFiles
+  return [...contentRecentFiles.value, ...mediaRecentFiles.value]
+    .sort((a, b) => b.openedAt - a.openedAt)
     .map(f => ({ ...f, name: getPathName(f.path), icon: getIconName(f), iconColor: getIconColor(f) }))
     .slice(0, 5)
 })

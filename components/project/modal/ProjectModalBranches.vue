@@ -3,6 +3,7 @@
     <ProjectCombobox
       :items="currentBranches"
       items-label="Files"
+      :recent-items="recentItems"
       :actions="actions"
       @select="onSelect"
     />
@@ -39,6 +40,7 @@ const {
 } = useProjectFiles(project, 'public')
 const {
   branches,
+  recentBranches,
   pending: pendingBranches,
   refresh: refreshBranches,
   reset: resetDraft,
@@ -60,6 +62,13 @@ const isOpen = computed({
 const currentBranches = computed(() => {
   return [...branches.value]
     .map(b => ({ ...b, icon: 'mdi:source-branch' }))
+})
+
+const recentItems = computed(() => {
+  return [...recentBranches.value]
+    .sort((a, b) => b.openedAt - a.openedAt)
+    .map(b => ({ ...b, icon: 'mdi:source-branch' }))
+    .slice(0, 5)
 })
 
 const actions = computed(() => ([
