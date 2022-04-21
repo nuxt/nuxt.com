@@ -99,6 +99,8 @@ export const useProjectBranches = (project: Project) => {
 
   async function reset () {
     await client(`/projects/${project.id}/branches/${encodeURIComponent(branch.value.name)}/reset`, { method: 'DELETE' })
+
+    $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
   }
 
   // Modals

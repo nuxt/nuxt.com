@@ -72,6 +72,8 @@ export const useProjectFiles = (project: Project, root: Root) => {
         body: { path }
       })
 
+      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
+
       draft.value = data
 
       select(computedFiles.value.find(file => file.path === path))
@@ -113,12 +115,12 @@ export const useProjectFiles = (project: Project, root: Root) => {
         }
       })
 
+      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
+
       draft.value = data
 
       if (file.value?.path === oldPath) {
         select(computedFiles.value.find(file => file.path === newPath))
-      } else if (file.value?.path === newPath) {
-        file.value.status = 'renamed'
       }
     } catch (e) {}
   }
@@ -140,6 +142,8 @@ export const useProjectFiles = (project: Project, root: Root) => {
         }
       })
 
+      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
+
       draft.value = data
     } catch (e) {}
   }
@@ -153,6 +157,8 @@ export const useProjectFiles = (project: Project, root: Root) => {
           root
         }
       })
+
+      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
 
       const oldFilePath = draft.value.additions.find(addition => addition.path === path)?.oldPath
 
@@ -188,11 +194,12 @@ export const useProjectFiles = (project: Project, root: Root) => {
         }
       })
 
+      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
+
       draft.value = data
 
       // Select new file when deleted was selected
       if (file.value?.path === path) {
-        file.value = null
         init()
       }
     } catch (e) {}
@@ -247,7 +254,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
   // Methods
 
   function init () {
-    const currentFile = file.value?.path ? computedFiles.value.find(f => f.path === file.value.path) : null
+    const currentFile = file.value?.path ? computedFiles.value.find(f => f.path === file.value.path && f.status !== 'deleted') : null
 
     select(currentFile || computedFiles.value.find(file => file.path.toLowerCase().endsWith('index.md') && file.status !== 'deleted') || computedFiles.value.find(file => file.type === 'blob' && file.status !== 'deleted'))
   }
