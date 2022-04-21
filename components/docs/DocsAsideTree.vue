@@ -65,7 +65,7 @@ const router = useRouter()
 const isChildOpen = reactive({})
 
 function isActive (link) {
-  return link.exact ? route.path === link.slug : route.path.startsWith(link.slug)
+  return link.exact ? route.fullPath === link.slug : route.fullPath.startsWith(link.slug)
 }
 
 function onClick (link) {
