@@ -10,6 +10,7 @@ export const useProjectBranches = (project: Project) => {
   const cookie = useCookie(`project-${project.id}-branch`, { path: '/' })
   const { $toast } = useNuxtApp()
 
+  const recentBranches: Ref<GitHubBranch[]> = useState(`project-${project.id}-branches-recent`, () => [])
   const branches: Ref<GitHubBranch[]> = useState(`project-${project.id}-branches`, () => [])
   const branch: Ref<GitHubBranch> = useState(`project-${project.id}-branch`, () => null)
 
@@ -145,10 +146,16 @@ export const useProjectBranches = (project: Project) => {
 
   function select (b: GitHubBranch) {
     branch.value = b
-    cookie.value = b.name
+    cookie.value = branch.value.name
 
-    if (process.client && branch.value) {
-      $socket.emit('branch:join', `project-${project.id}:${branch.value.name}`)
+    if (branch.value) {
+      recentBranches.value = [{ ...branch.value, openedAt: Date.now() }, ...recentBranches.value.filter(rb => rb.name !== branch.value.name)]
+    }
+
+    if (process.client) {
+      if (branch.value) {
+        $socket.emit('branch:join', `project-${project.id}:${branch.value.name}`)
+      }
     }
   }
 
@@ -168,6 +175,7 @@ export const useProjectBranches = (project: Project) => {
     pending,
     loading,
     // Data
+    recentBranches,
     branches,
     branch
   }

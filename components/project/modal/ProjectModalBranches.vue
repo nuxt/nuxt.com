@@ -1,53 +1,18 @@
 <template>
   <UModal v-model="isOpen" width-class="max-w-xl" body-class="relative flex flex-col overflow-hidden h-80">
-    <Combobox as="div" class="flex flex-col flex-1 min-h-0 divide-y u-divide-gray-100" @update:modelValue="onSelect">
-      <div class="relative">
-        <UIcon name="heroicons-outline:search" class="pointer-events-none absolute top-3.5 left-5 h-5 w-5 u-text-gray-400" aria-hidden="true" />
-        <ComboboxInput ref="comboboxInput" :value="query" class="w-full h-12 pr-4 placeholder-gray-400 dark:placeholder-gray-500 bg-transparent border-0 pl-[3.25rem] u-text-gray-900 focus:ring-0 sm:text-sm" placeholder="Search..." @change="query = $event.target.value" />
-      </div>
-
-      <ComboboxOptions static hold class="relative flex-1 overflow-y-auto divide-y u-divide-gray-100 scroll-py-2">
-        <li v-if="filteredBranches.length" class="p-2">
-          <h2 class="px-3 my-2 text-xs font-semibold u-text-gray-900">
-            Branches
-          </h2>
-
-          <ul class="text-sm u-text-gray-700">
-            <ComboboxOption v-for="b of filteredBranches" :key="b.name" v-slot="{ active }" :value="b" as="template">
-              <li :class="['flex cursor-pointer select-none items-center rounded-md px-3 py-2', active && 'u-bg-gray-100 u-text-gray-900']">
-                <UIcon name="mdi:source-branch" :class="['h-5 w-5 flex-none u-text-gray-400', active && 'u-text-gray-900']" aria-hidden="true" />
-                <span class="flex-auto ml-3 truncate">{{ b.name }}</span>
-                <span v-if="active" class="flex-none ml-3 u-text-gray-500">Jump to...</span>
-                <UAvatarGroup v-else :group="usersGroup(b)" size="xxs" />
-              </li>
-            </ComboboxOption>
-          </ul>
-        </li>
-        <li class="p-2">
-          <ul class="text-sm u-text-gray-700">
-            <ComboboxOption v-for="a in filteredActions" :key="a.key" v-slot="{ active }" :value="a" as="template">
-              <li :class="['flex cursor-pointer select-none items-center rounded-md px-3 py-2', active && 'u-bg-gray-100 u-text-gray-900']">
-                <UIcon :name="a.icon" :class="['h-5 w-5 flex-none u-text-gray-400', active && 'u-text-gray-900', a.iconClass]" aria-hidden="true" />
-                <span class="flex-auto ml-3 truncate">{{ a.label }}</span>
-              </li>
-            </ComboboxOption>
-          </ul>
-        </li>
-      </ComboboxOptions>
-    </Combobox>
+    <ProjectCombobox
+      :items="currentBranches"
+      items-label="Branches"
+      :recent-items="recentItems"
+      :actions="actions"
+      @select="onSelect"
+    />
   </UModal>
 </template>
 
 <script setup lang="ts">
-import {
-  Combobox,
-  ComboboxInput,
-  ComboboxOptions,
-  ComboboxOption
-} from '@headlessui/vue'
 import { useMagicKeys, whenever } from '@vueuse/core'
-import type { Ref } from 'vue'
-import type { GitHubBranch, Project, SocketUser } from '~/types'
+import type { GitHubBranch, Project } from '~/types'
 
 const props = defineProps({
   modelValue: {
@@ -57,7 +22,6 @@ const props = defineProps({
 })
 
 const project: Project = inject('project')
-const activeUsers: Ref<SocketUser[]> = inject('activeUsers')
 
 const emit = defineEmits(['update:modelValue'])
 
@@ -75,17 +39,15 @@ const {
   refresh: refreshMediaFiles
 } = useProjectFiles(project, 'public')
 const {
-  branches,
   branch,
+  branches,
+  recentBranches,
   pending: pendingBranches,
   refresh: refreshBranches,
   reset: resetDraft,
   select: selectBranch,
   openCreateModal: openCreateBranchModal
 } = useProjectBranches(project)
-
-const query = ref('')
-const comboboxInput = ref(null)
 
 // Computed
 
@@ -97,32 +59,24 @@ const isOpen = computed({
     emit('update:modelValue', value)
   }
 })
-const branchExists = computed(() => query.value && branches.value.some(b => b.name === query.value))
 
-const filteredBranches = computed(() => {
-  let filteredBranches = [...branches.value]
-  if (query.value) {
-    filteredBranches = filteredBranches.filter(b => b.name.search(new RegExp(query.value, 'i')) !== -1)
-  }
-  filteredBranches = filteredBranches.filter(b => b.name !== branch.value.name)
-  return filteredBranches
+const currentBranches = computed(() => {
+  return [...branches.value]
+    .map(b => ({ ...b, icon: 'mdi:source-branch', disabled: b.name === branch.value.name }))
+})
+
+const recentItems = computed(() => {
+  return [...recentBranches.value]
+    .sort((a, b) => b.openedAt - a.openedAt)
+    .map(b => ({ ...b, icon: 'mdi:source-branch', disabled: b.name === branch.value.name }))
+    .slice(0, 5)
 })
 
 const actions = computed(() => ([
-  { key: 'create', label: `Create new branch ${query.value && !branchExists.value ? `“${query.value}”` : ''}`, icon: 'heroicons-outline:plus', click: onCreateBranchClick },
+  { key: 'create', label: 'Create new branch', static: true, icon: 'heroicons-outline:plus', click: onCreateBranchClick },
   { key: 'refresh', label: 'Refresh branches', icon: 'heroicons-outline:refresh', iconClass: pendingBranches.value ? 'animate-spin' : '', click: () => { refreshBranches(true) } },
   (isDraftContent.value || isDraftMedia.value) && { key: 'reset', label: 'Revert draft', icon: 'heroicons-outline:reply', click: onResetDraftClick }
 ].filter(Boolean)))
-
-const filteredActions = computed(() => {
-  let filteredActions = [...actions.value]
-  if (query.value) {
-    filteredActions = filteredActions.filter((a) => {
-      return ['create'].includes(a.key) || [a.key, a.label].filter(Boolean).some(value => value.search(new RegExp(query.value, 'i')) !== -1)
-    })
-  }
-  return filteredActions
-})
 
 // Watch
 
@@ -130,52 +84,17 @@ whenever(keys.meta_b, () => {
   isOpen.value = !isOpen.value
 })
 
-watch(() => query.value, (value, oldValue) => {
-  if (value !== oldValue) {
-    activateFirstOption()
-  }
-})
-
-watch(() => isOpen.value, (value) => {
-  if (value) {
-    activateFirstOption()
-  }
-})
-
 // Methods
 
-function usersGroup (b: GitHubBranch) {
-  return activeUsers.value.reduce((acc, user) => {
-    if (user.branch === b.name) {
-      acc.push({ src: user.avatar, alt: user.username })
-    }
-    return acc
-  }, [])
-}
-
-function activateFirstOption () {
-  // hack combobox by using keyboard event
-  // https://github.com/tailwindlabs/headlessui/blob/main/packages/%40headlessui-vue/src/components/combobox/combobox.ts#L692
-  setTimeout(() => {
-    comboboxInput.value?.$el.dispatchEvent(new KeyboardEvent('keydown', { key: 'PageUp' }))
-  }, 0)
-}
-
 async function onBranchSelect (b: GitHubBranch) {
-  isOpen.value = false
   selectBranch(b)
-  query.value = ''
 
   await refreshContentFiles()
   await refreshMediaFiles()
 }
 
-function onCreateBranchClick () {
-  isOpen.value = false
-  setTimeout(() => {
-    openCreateBranchModal(!branchExists.value ? query.value : '', false)
-    query.value = ''
-  }, 0)
+function onCreateBranchClick ({ query: name }) {
+  openCreateBranchModal(name && !branches.value.some(b => b.name === name) ? name : '', false)
 }
 
 async function onResetDraftClick () {
@@ -188,14 +107,13 @@ async function onResetDraftClick () {
     // Select new file if the current file no longer exists
     initContentFile()
     initPublicFile()
-
-    isOpen.value = false
   } catch {}
 }
 
-function onSelect (option) {
+function onSelect (option, data) {
+  isOpen.value = false
   if (option.click) {
-    option.click()
+    option.click(data)
   } else {
     onBranchSelect(option)
   }
