@@ -5,7 +5,7 @@
 
       <div class="flex-1">
         <span class="font-semibold u-text-gray-900 text-3xl">
-          {{ selectedCategory ? categories.find(c => c.key === selectedCategory)?.name : categories[0].name }}
+          {{ selectedCategory?.label }}
         </span>
 
         <ul v-if="selectedShowcases.length" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 mt-8">
@@ -44,19 +44,17 @@ const { data: showcases } = await useAsyncData('showcases', async () => {
 const router = useRouter()
 const route = useRoute()
 
-const categories = computed(() => (showcases.value?.groups?.map((group) => {
-  return {
-    id: group.id,
-    key: group.name,
-    name: group.name
-  }
+const categories = computed(() => showcases.value?.groups?.map(group => ({
+  id: group.id,
+  name: group.name,
+  label: group.name
 })) || [])
 
-const selectedCategory = ref(route.hash.substring(1))
+const selectedCategory = ref(null)
 
 const selectedShowcases = computed(() => uniqBy(
   showcases.value?.groups
-    ?.filter((group, index) => (!selectedCategory.value && index === 0) || group.name === selectedCategory.value)
+    ?.filter((group, index) => (!selectedCategory.value && index === 0) || group.name === selectedCategory.value?.name)
     ?.map(group => ({
       ...group,
       showcases: group.showcases.map(showcase => ({
@@ -69,28 +67,46 @@ const selectedShowcases = computed(() => uniqBy(
 
 // Watch
 
-watch(selectedCategory, (value) => {
-  const url = route.path
-  const hash = value ? `#${value}` : ''
-  window.history.pushState('', '', `${url}${hash}`)
-  // Cannot use router.push because it scrolls to top
-  // router.push({ hash })
-})
-
 watch(() => route.hash, (hash) => {
-  selectedCategory.value = hash.substring(1)
+  const name = hash.substring(1)
+
+  let category
+  if (hash) {
+    category = categories.value?.find(category => category.name === name)
+  } else {
+    category = categories.value?.[0]
+  }
+
+  selectedCategory.value = category
 })
 
 // Methods
 
 function selectCategory (category) {
-  if (category.key === selectedCategory.value) {
+  if (category.name === selectedCategory.value?.name) {
     return
   }
-  if (category.key === categories.value[0].key) {
-    selectedCategory.value = ''
+
+  let hash
+  if (category.name === categories.value[0].name) {
+    hash = ''
   } else {
-    selectedCategory.value = category.key
+    hash = `#${category.name}`
   }
+
+  router.push({ hash })
 }
+
+onMounted(() => {
+  const hash = route.hash.substring(1)
+
+  let category
+  if (hash) {
+    category = categories.value.find(c => c.name === hash)
+  } else if (categories.value.length) {
+    category = categories.value[0]
+  }
+
+  selectedCategory.value = category
+})
 </script>
