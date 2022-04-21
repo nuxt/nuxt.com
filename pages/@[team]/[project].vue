@@ -99,18 +99,17 @@ onMounted(() => {
   $socket.on('draft:update', (draft: GitHubDraft) => {
     contentDraft.value = draft
 
-    // If current file does not exist in the list of files anymore, it means it has been renamed, find it and select it
     const currentFile = contentFiles.value.find(file => file.path === contentFile.value.path)
     if (currentFile) {
+      // If current file has been deleted, select new one
       if (currentFile.status === 'deleted') {
         initContentFile()
       }
     } else {
+      // If current file does not exist anymore it means it has been renamed, select it from old path
       const renamedFile = contentFiles.value.find(file => file.oldPath === (contentFile.value.oldPath || contentFile.value.path))
       if (renamedFile) {
         selectContentFile(renamedFile)
-      } else {
-        initContentFile()
       }
     }
   })
