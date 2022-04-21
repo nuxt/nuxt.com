@@ -39,6 +39,7 @@ const {
   refresh: refreshMediaFiles
 } = useProjectFiles(project, 'public')
 const {
+  branch,
   branches,
   recentBranches,
   pending: pendingBranches,
@@ -61,13 +62,13 @@ const isOpen = computed({
 
 const currentBranches = computed(() => {
   return [...branches.value]
-    .map(b => ({ ...b, icon: 'mdi:source-branch' }))
+    .map(b => ({ ...b, icon: 'mdi:source-branch', disabled: b.name === branch.value.name }))
 })
 
 const recentItems = computed(() => {
   return [...recentBranches.value]
     .sort((a, b) => b.openedAt - a.openedAt)
-    .map(b => ({ ...b, icon: 'mdi:source-branch' }))
+    .map(b => ({ ...b, icon: 'mdi:source-branch', disabled: b.name === branch.value.name }))
     .slice(0, 5)
 })
 

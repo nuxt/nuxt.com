@@ -6,11 +6,11 @@
     </div>
 
     <ComboboxOptions v-if="hasOptions" static hold class="relative flex-1 overflow-y-auto divide-y u-divide-gray-100 scroll-py-2">
-      <ProjectComboboxOption v-if="recentItems.length && !query" :items="recentItems" :label="recentItemsLabel" />
+      <ProjectComboboxOption v-if="recentItems.length && !query" type="recentItems" :items="recentItems" :label="recentItemsLabel" />
 
-      <ProjectComboboxOption v-if="filteredItems.length" :items="filteredItems" :label="itemsLabel" />
+      <ProjectComboboxOption v-if="filteredItems.length" type="items" :items="filteredItems" :label="itemsLabel" />
 
-      <ProjectComboboxOption v-if="filteredActions.length" :items="filteredActions" :label="actionsLabel" />
+      <ProjectComboboxOption v-if="filteredActions.length" type="action" :items="filteredActions" :label="actionsLabel" />
     </ComboboxOptions>
 
     <div v-else class="py-14 px-6 flex-1 flex flex-col items-center justify-center sm:px-14">
@@ -23,11 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  Combobox,
-  ComboboxInput,
-  ComboboxOptions
-} from '@headlessui/vue'
+import { Combobox, ComboboxInput, ComboboxOptions } from '@headlessui/vue'
 import type { PropType } from 'vue'
 
 const props = defineProps({
@@ -110,6 +106,10 @@ function activateFirstOption () {
 }
 
 function onSelect (option) {
+  if (option.disabled) {
+    return
+  }
+
   emit('select', option, { query: query.value })
 
   // waiting for modal to be closed

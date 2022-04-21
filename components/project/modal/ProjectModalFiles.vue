@@ -67,6 +67,7 @@ const isOpen = computed({
 
 const isContentPage = computed(() => route.name === '@team-project-content')
 const isMediaPage = computed(() => route.name === '@team-project-media')
+const isDisabled = f => f.status === 'deleted' || (isContentPage.value && contentFile.value?.path === f.path) || (isMediaPage.value && mediaFile.value?.path === f.path)
 
 const currentFiles = computed(() => {
   let currentFiles = []
@@ -98,13 +99,13 @@ const currentFiles = computed(() => {
     ]
   }
 
-  return currentFiles.map(f => ({ ...f, name: getPathName(f.path), icon: getIconName(f), iconColor: getIconColor(f) }))
+  return currentFiles.map(f => ({ ...f, name: getPathName(f.path), icon: getIconName(f), iconColor: getIconColor(f), disabled: isDisabled(f) }))
 })
 
 const recentFiles = computed(() => {
   return [...contentRecentFiles.value, ...mediaRecentFiles.value]
     .sort((a, b) => b.openedAt - a.openedAt)
-    .map(f => ({ ...f, name: getPathName(f.path), icon: getIconName(f), iconColor: getIconColor(f) }))
+    .map(f => ({ ...f, name: getPathName(f.path), icon: getIconName(f), iconColor: getIconColor(f), disabled: isDisabled(f) }))
     .slice(0, 5)
 })
 

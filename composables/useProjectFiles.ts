@@ -1,6 +1,5 @@
 import type { Ref } from 'vue'
 import { omit } from 'lodash-es'
-import { useStorage } from '@vueuse/core'
 import type { GitHubFile, GitHubDraft, Project, Root } from '~/types'
 import ProjectModalFileCreate from '~/components/project/modal/ProjectModalFileCreate.vue'
 import ProjectModalFileRename from '~/components/project/modal/ProjectModalFileRename.vue'
@@ -15,13 +14,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
   const client = useStrapiClient()
   const { branch } = useProjectBranches(project)
 
-  const recentFiles: Ref<GitHubFile[]> = useState(`project-${project.id}-${root}-files-recent`, () => null)
-  if (process.client) {
-    const recentFilesStorage = useStorage<GitHubFile[]>(`project-${project.id}-${root}-files-recent`, [])
-    recentFiles.value = recentFilesStorage.value
-    watch(recentFiles, (value) => { recentFilesStorage.value = value })
-  }
-
+  const recentFiles: Ref<GitHubFile[]> = useState(`project-${project.id}-${root}-files-recent`, () => [])
   const files: Ref<GitHubFile[]> = useState(`project-${project.id}-${root}-files`, () => null)
   const draft: Ref<GitHubDraft> = useState(`project-${project.id}-${root}-draft`, () => null)
   const file: Ref<GitHubFile> = useState(`project-${project.id}-${root}-file`, () => null)
@@ -262,18 +255,15 @@ export const useProjectFiles = (project: Project, root: Root) => {
   function select (f: GitHubFile) {
     file.value = f
 
-    if (process.client) {
-      if (!file.value) {
-        root === 'content' && $socket.emit('file:leave', `project-${project.id}`)
-      } else {
-        root === 'content' && $socket.emit('file:join', `project-${project.id}:${branch.value.name}:${file.value.path}`)
+    if (file.value) {
+      recentFiles.value = [{ ...file.value, openedAt: Date.now() }, ...recentFiles.value.filter(rf => rf.path !== file.value.path)]
+    }
 
-        const updatedRecentFiles = [...recentFiles.value]
-        const index = updatedRecentFiles.findIndex(rf => rf.path === file.value.path)
-        if (index !== -1) {
-          updatedRecentFiles.splice(index, 1)
-        }
-        recentFiles.value = [{ ...file.value, openedAt: Date.now() }, ...updatedRecentFiles].slice(0, 6)
+    if (process.client) {
+      if (file.value) {
+        root === 'content' && $socket.emit('file:join', `project-${project.id}:${branch.value.name}:${file.value.path}`)
+      } else {
+        root === 'content' && $socket.emit('file:leave', `project-${project.id}`)
       }
     }
   }
@@ -345,21 +335,6 @@ export const useProjectFiles = (project: Project, root: Root) => {
 
     return changesCount
   })
-
-  if (process.client) {
-    watch(computedFiles, (value) => {
-      const updatedRecentFiles = [...recentFiles.value]
-      for (const recentFile of updatedRecentFiles) {
-        const index = value.findIndex(b => b.name === recentFile.name)
-        if (index === -1) {
-          updatedRecentFiles.splice(index, 1)
-        }
-      }
-      if (recentFiles.value.length !== updatedRecentFiles.length) {
-        recentFiles.value = updatedRecentFiles
-      }
-    })
-  }
 
   return {
     // Http

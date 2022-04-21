@@ -1,5 +1,4 @@
 import type { Ref } from 'vue'
-import { useStorage } from '@vueuse/core'
 import type { GitHubBranch, Project } from '~/types'
 import ProjectModalBranchCreate from '~/components/project/modal/ProjectModalBranchCreate.vue'
 import ProjectModalPublish from '~/components/project/modal/ProjectModalPublish.vue'
@@ -11,27 +10,9 @@ export const useProjectBranches = (project: Project) => {
   const cookie = useCookie(`project-${project.id}-branch`, { path: '/' })
   const { $toast } = useNuxtApp()
 
+  const recentBranches: Ref<GitHubBranch[]> = useState(`project-${project.id}-branches-recent`, () => [])
   const branches: Ref<GitHubBranch[]> = useState(`project-${project.id}-branches`, () => [])
   const branch: Ref<GitHubBranch> = useState(`project-${project.id}-branch`, () => null)
-
-  const recentBranches: Ref<GitHubBranch[]> = useState(`project-${project.id}-branches-recent`, () => null)
-  if (process.client) {
-    const recentBranchesStorage = useStorage<GitHubBranch[]>(`project-${project.id}-branches-recent`, [])
-    recentBranches.value = recentBranchesStorage.value
-    watch(recentBranches, (value) => { recentBranchesStorage.value = value })
-    watch(branches, (value) => {
-      const updatedRecentBranches = [...recentBranches.value]
-      for (const recentBranch of updatedRecentBranches) {
-        const index = value.findIndex(b => b.name === recentBranch.name)
-        if (index === -1) {
-          updatedRecentBranches.splice(index, 1)
-        }
-      }
-      if (recentBranches.value.length !== updatedRecentBranches.length) {
-        recentBranches.value = updatedRecentBranches
-      }
-    })
-  }
 
   const pending = ref(false)
   const loading = ref(false)
@@ -165,17 +146,16 @@ export const useProjectBranches = (project: Project) => {
 
   function select (b: GitHubBranch) {
     branch.value = b
-    cookie.value = b.name
+    cookie.value = branch.value.name
 
-    if (process.client && branch.value) {
-      $socket.emit('branch:join', `project-${project.id}:${branch.value.name}`)
+    if (branch.value) {
+      recentBranches.value = [{ ...branch.value, openedAt: Date.now() }, ...recentBranches.value.filter(rb => rb.name !== branch.value.name)]
+    }
 
-      const updatedRecentBranches = [...recentBranches.value]
-      const index = updatedRecentBranches.findIndex(rb => rb.name === branch.value.name)
-      if (index !== -1) {
-        updatedRecentBranches.splice(index, 1)
+    if (process.client) {
+      if (branch.value) {
+        $socket.emit('branch:join', `project-${project.id}:${branch.value.name}`)
       }
-      recentBranches.value = [{ ...branch.value, openedAt: Date.now() }, ...updatedRecentBranches].slice(0, 6)
     }
   }
 
@@ -195,8 +175,8 @@ export const useProjectBranches = (project: Project) => {
     pending,
     loading,
     // Data
-    branches,
     recentBranches,
+    branches,
     branch
   }
 }
