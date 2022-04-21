@@ -68,10 +68,14 @@ const isOpen = computed({
 const selectedLink = ref(null)
 
 watch(
-  () => route.path,
+  () => route.fullPath,
   () => {
-    const path = route.path.split('/').slice(0, 3).join('/')
-    selectedLink.value = navigation.value ? navFromPath(path) : []
+    const path = route.fullPath.split('/').slice(0, 3).join('/')
+    const nav = navigation.value ? navFromPath(path) : []
+
+    if (nav && nav.slug === path) {
+      selectedLink.value = nav
+    }
   },
   { immediate: true }
 )
