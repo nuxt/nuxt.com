@@ -65,15 +65,13 @@ const keys = useMagicKeys()
 const {
   isDraft: isDraftContent,
   draft: contentDraft,
-  file: contentFile,
-  init: selectNewContentFile,
+  init: initContentFile,
   refresh: refreshContentFiles
 } = useProjectFiles(project, 'content')
 const {
   isDraft: isDraftMedia,
   draft: publicDraft,
-  file: publicFile,
-  init: selectNewPublicFile,
+  init: initPublicFile,
   refresh: refreshMediaFiles
 } = useProjectFiles(project, 'public')
 const {
@@ -188,12 +186,8 @@ async function onResetDraftClick () {
     publicDraft.value = null
 
     // Select new file if the current file no longer exists
-    if (['renamed', 'created', 'updated'].includes(contentFile.value?.status)) {
-      selectNewContentFile()
-    }
-    if (['renamed', 'created'].includes(publicFile.value?.status)) {
-      selectNewPublicFile()
-    }
+    initContentFile()
+    initPublicFile()
 
     isOpen.value = false
   } catch {}

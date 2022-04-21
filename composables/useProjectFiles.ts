@@ -202,8 +202,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
 
       // Select new file when deleted was selected
       if (file.value?.path === path) {
-        file.value = null
-        init()
+        handleDeletedFile()
       }
     } catch (e) {}
   }
@@ -292,6 +291,11 @@ export const useProjectFiles = (project: Project, root: Root) => {
     draft.value = null
   }
 
+  function handleDeletedFile () {
+    file.value = null
+    init()
+  }
+
   // Computed
 
   const computedFiles: Ref<GitHubFile[]> = computed(() => {
@@ -325,9 +329,14 @@ export const useProjectFiles = (project: Project, root: Root) => {
       }
     }
     for (const deletion of deletions) {
-      const file = githubFiles.find(f => f.path === deletion.path)
-      if (file) {
-        file.status = 'deleted'
+      const deletedFile = githubFiles.find(f => f.path === deletion.path)
+
+      if (deletedFile) {
+        if (deletedFile.path === file.value?.path) {
+          handleDeletedFile()
+        }
+
+        deletedFile.status = 'deleted'
       }
     }
     return githubFiles

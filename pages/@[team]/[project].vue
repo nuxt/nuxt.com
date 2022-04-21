@@ -46,7 +46,14 @@ provide('activeUsers', activeUsers)
 
 const { branch, branches, fetch: fetchBranches } = useProjectBranches(project.value)
 const { fetch: fetchComponents } = useProjectComponents(project.value)
-const { fetch: fetchContentFiles, draft: contentDraft } = useProjectFiles(project.value, 'content')
+const {
+  file: contentFile,
+  draft: contentDraft,
+  computedFiles: contentFiles,
+  fetch: fetchContentFiles,
+  select: selectContentFile,
+  init: initContentFile
+} = useProjectFiles(project.value, 'content')
 const { fetch: fetchMediaFiles } = useProjectFiles(project.value, 'public')
 
 try {
@@ -80,13 +87,29 @@ function onFilesModalChange () {
 // Hooks
 
 onMounted(() => {
+  // Join project room
+  $socket.emit('project:join', `project-${project.value.id}:${branch.value.name}`)
+
+  // Listen to new collaborators joining the room
   $socket.on('project:active-users', (users: SocketUser[]) => {
     activeUsers.value = users
   })
+
+  // Listen to change on draft by other collaborators
   $socket.on('draft:update', (draft: GitHubDraft) => {
     contentDraft.value = draft
+
+    // If current file does not exist in the list of files no more, it means it has been renamed, find it and select it
+    const currentFile = contentFiles.value.find(file => file.path === contentFile.value.path)
+    if (!currentFile) {
+      const renamedFile = contentFiles.value.find(file => file.oldPath === (contentFile.value.oldPath || contentFile.value.path))
+      if (renamedFile) {
+        selectContentFile(renamedFile)
+      } else {
+        initContentFile()
+      }
+    }
   })
-  $socket.emit('project:join', `project-${project.value.id}:${branch.value.name}`)
 })
 
 onUnmounted(() => {
