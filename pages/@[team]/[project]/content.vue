@@ -150,6 +150,7 @@ async function updateFile (formattedContent) {
     draft.value = data
 
     $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
+    $socket.emit('file:update', `project-${project.id}:${branch.value.name}:${file.value.path}`)
   } catch (e) {}
 }
 
@@ -179,6 +180,17 @@ onMounted(() => {
   }
 
   $socket.emit('file:join', `project-${project.id}:${branch.value.name}:${file.value.path}`)
+
+  $socket.on('file:update', ({ branch: draftBranch, file: draftFile }) => {
+    if (draftBranch !== branch.value.name) {
+      return
+    }
+    if (file.value && draftFile.path !== file.value.path) {
+      return
+    }
+
+    content.value = draftFile.content
+  })
 })
 
 onUnmounted(() => {

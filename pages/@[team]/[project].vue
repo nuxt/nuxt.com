@@ -96,7 +96,11 @@ onMounted(() => {
   })
 
   // Listen to change on draft by other collaborators
-  $socket.on('draft:update', (draft: GitHubDraft) => {
+  $socket.on('draft:update', ({ branch: draftBranch, draft }: { branch: string, draft: GitHubDraft }) => {
+    if (draftBranch !== branch.value.name) {
+      return
+    }
+
     contentDraft.value = draft
 
     const currentFile = contentFiles.value.find(file => file.path === contentFile.value.path)
