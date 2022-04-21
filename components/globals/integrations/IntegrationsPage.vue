@@ -9,7 +9,14 @@
           <Markdown use="description" unwrap="p" />
         </p>
 
-        <UInput placeholder="Search an integration" class="w-full max-w-sm" custom-class=" !u-bg-gray-50" size="lg" icon="heroicons-outline:search" />
+        <UInput
+          name="search"
+          placeholder="Search an integration"
+          class="w-full max-w-sm"
+          custom-class=" !u-bg-gray-50"
+          size="lg"
+          icon="heroicons-outline:search"
+        />
       </div>
       <div class="flex items-center justify-center lg:col-span-1">
         <img src="/integrations/hero.png" alt="Integrations illustration" class="h-64 sm:h-80 lg:h-full ">
