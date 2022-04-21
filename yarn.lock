@@ -284,9 +284,9 @@
     mime "^3.0.0"
 
 "@docus/editor@npm:@docus/editor-edge@latest":
-  version "0.3.0-27507449.c7e1b7f"
-  resolved "https://registry.yarnpkg.com/@docus/editor-edge/-/editor-edge-0.3.0-27507449.c7e1b7f.tgz#884856e7e8f016726677fb19a32aff7893a59122"
-  integrity sha512-zzhfglKCE1eAmJifNceCEM63N3HIMF04prGqkcdnnWIHzND2VLQB0NEx+zMFTAY9ly4VN8Dcsnr1TmTI5QiUow==
+  version "0.3.0-27509178.cfee2b8"
+  resolved "https://registry.yarnpkg.com/@docus/editor-edge/-/editor-edge-0.3.0-27509178.cfee2b8.tgz#9ef5022fb0081738d6ed3afbe87f08d55f89b6d8"
+  integrity sha512-qlIVVsil3scm9ZfkyOm0RMV4uaykx5hnaI2b35HIA/tCTS8Pti8P0mz62Pps0iycy8ROVFw9YhZz6WcLWSz0+A==
   dependencies:
     "@docus/remark-mdc" "npm:@docus/remark-mdc-edge"
     "@milkdown/core" "^6.0.0-next.1"
@@ -3120,9 +3120,9 @@ ee-first@1.1.1:
   integrity sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=
 
 electron-to-chromium@^1.4.84:
-  version "1.4.116"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.116.tgz#cf0b106d462a78e43ef33cc269caf2ad70e3c7a8"
-  integrity sha512-sy2ol5DTH0sy8xvAglyHFxsNFXFsOBfa6rGmrtjiSdQOp53ossspduOzU+5Lx23H7GxEjjvtSF36XqkajV6Z5A==
+  version "1.4.117"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.117.tgz#829d747deb9faa653cab72764a891ef523ba7413"
+  integrity sha512-ypZHxY+Sf/PXu7LVN+xoeanyisnJeSOy8Ki439L/oLueZb4c72FI45zXcK3gPpmTwyufh9m6NnbMLXnJh/0Fxg==
 
 emoji-regex@^10.0.0:
   version "10.1.0"
