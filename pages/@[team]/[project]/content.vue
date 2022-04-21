@@ -152,6 +152,8 @@ async function updateFile (formattedContent) {
 
     content.value = formattedContent
     draft.value = data
+
+    $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
   } catch (e) {}
 }
 

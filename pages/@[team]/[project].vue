@@ -9,7 +9,6 @@
 </template>
 
 <script setup lang="ts">
-import { init } from '@milkdown/core'
 import type { PropType, Ref } from 'vue'
 import type { Team, Project, User, SocketUser, GitHubDraft } from '~/types'
 
