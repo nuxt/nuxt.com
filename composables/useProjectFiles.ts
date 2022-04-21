@@ -322,9 +322,9 @@ export const useProjectFiles = (project: Project, root: Root) => {
       }
     }
     for (const deletion of deletions) {
-      const deletedFile = githubFiles.find(f => f.path === deletion.path)
-      if (deletedFile) {
-        deletedFile.status = 'deleted'
+      const file = githubFiles.find(f => f.path === deletion.path)
+      if (file) {
+        file.status = 'deleted'
       }
     }
     return githubFiles
