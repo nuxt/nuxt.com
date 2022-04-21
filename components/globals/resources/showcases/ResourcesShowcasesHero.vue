@@ -21,7 +21,9 @@
         </div>
       </div>
 
-      <div>TODO: illustration</div>
+      <div class="hidden lg:flex flex-shrink-0 place-content-center">
+        <img src="/resources/showcases/gems.svg" class="h-[280px]">
+      </div>
     </div>
   </UContainer>
 </template>
