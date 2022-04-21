@@ -19,7 +19,8 @@ const { fetchNavigation } = useContent()
 await fetchNavigation()
 
 const { data: modules } = await useFetch('https://modules.nuxtjs.org/api/modules', {
-  transform: data => data.modules
+  transform: data => data.modules,
+  key: 'modules'
 })
 
 provide('modules', modules)
