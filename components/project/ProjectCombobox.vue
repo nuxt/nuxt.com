@@ -10,7 +10,7 @@
 
       <ProjectComboboxOption v-if="filteredItems.length" type="items" :items="filteredItems" :label="itemsLabel" />
 
-      <ProjectComboboxOption v-if="filteredActions.length" type="action" :items="filteredActions" :label="actionsLabel" />
+      <ProjectComboboxOption v-if="filteredActions.length" type="actions" :items="filteredActions" :label="actionsLabel" />
     </ComboboxOptions>
 
     <div v-else class="py-14 px-6 flex-1 flex flex-col items-center justify-center sm:px-14">

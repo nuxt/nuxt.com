@@ -19,7 +19,7 @@
             <span class="u-text-gray-700">{{ item.name || item.label }}</span>
             <span v-if="item.path" class="ml-1 text-xs italic truncate">{{ item.path }}</span>
           </p>
-          <div v-if="type !== 'action'" class="flex-none ml-3">
+          <div v-if="type !== 'actions'" class="flex-none ml-3">
             <span v-if="active" class="u-text-gray-500">Jump to...</span>
             <UAvatarGroup v-else :group="usersGroup(item)" size="xxs" />
           </div>
