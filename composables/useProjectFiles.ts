@@ -198,7 +198,8 @@ export const useProjectFiles = (project: Project, root: Root) => {
 
       draft.value = data
 
-      if (path === file.value?.path) {
+      // Select new file when deleted was selected
+      if (file.value?.path === path) {
         init()
       }
     } catch (e) {}
