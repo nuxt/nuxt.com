@@ -9,6 +9,7 @@
 </template>
 
 <script setup lang="ts">
+import { init } from '@milkdown/core'
 import type { PropType, Ref } from 'vue'
 import type { Team, Project, User, SocketUser, GitHubDraft } from '~/types'
 
@@ -99,9 +100,13 @@ onMounted(() => {
   $socket.on('draft:update', (draft: GitHubDraft) => {
     contentDraft.value = draft
 
-    // If current file does not exist in the list of files no more, it means it has been renamed, find it and select it
+    // If current file does not exist in the list of files anymore, it means it has been renamed, find it and select it
     const currentFile = contentFiles.value.find(file => file.path === contentFile.value.path)
-    if (!currentFile) {
+    if (currentFile) {
+      if (currentFile.status === 'deleted') {
+        initContentFile()
+      }
+    } else {
       const renamedFile = contentFiles.value.find(file => file.oldPath === (contentFile.value.oldPath || contentFile.value.path))
       if (renamedFile) {
         selectContentFile(renamedFile)
