@@ -44,14 +44,15 @@
 
     <div class="flex items-stretch flex-1 min-h-0 overflow-hidden">
       <div v-if="computedFiles.length" class="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto">
-        <DocusEditor
-          v-if="file"
-          :model-value="parsedContent"
-          :color-mode="colorModeValue"
-          :components="components || []"
-          class="flex flex-col flex-1"
-          @update:model-value="updateContent"
-        />
+        <ClientOnly>
+          <ProjectContentEditor
+            v-if="file"
+            :model-value="parsedContent"
+            :components="components || []"
+            class="flex flex-col flex-1"
+            @update:model-value="updateContent"
+          />
+        </ClientOnly>
       </div>
       <ProjectContentFilesEmpty v-else @create="openCreateFileModal('content')" />
 
@@ -78,7 +79,6 @@ const project: Project = inject('project')
 provide('root', root)
 
 const { $socket } = useNuxtApp()
-const colorMode = useColorMode()
 const client = useStrapiClient()
 const { parseFrontMatter, stringifyFrontMatter } = useMarkdown()
 const { branch } = useProjectBranches(project)
@@ -119,10 +119,6 @@ watch(content, () => {
   parsedContent.value = c
   parsedMatter.value = matter
 }, { immediate: true })
-
-// Computed
-
-const colorModeValue = computed(() => colorMode.value === 'dark' ? 'dark' : 'light')
 
 // Http
 
