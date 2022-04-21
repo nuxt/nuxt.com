@@ -10,7 +10,7 @@
 
 <script setup lang="ts">
 import type { PropType, Ref } from 'vue'
-import type { Team, Project, User, SocketUser } from '~/types'
+import type { Team, Project, User, SocketUser, GitHubDraft } from '~/types'
 
 definePageMeta({
   middleware: 'auth',
@@ -46,7 +46,14 @@ provide('activeUsers', activeUsers)
 
 const { branch, branches, fetch: fetchBranches } = useProjectBranches(project.value)
 const { fetch: fetchComponents } = useProjectComponents(project.value)
-const { fetch: fetchContentFiles } = useProjectFiles(project.value, 'content')
+const {
+  file: contentFile,
+  draft: contentDraft,
+  computedFiles: contentFiles,
+  fetch: fetchContentFiles,
+  select: selectContentFile,
+  init: initContentFile
+} = useProjectFiles(project.value, 'content')
 const { fetch: fetchMediaFiles } = useProjectFiles(project.value, 'public')
 
 try {
@@ -80,10 +87,32 @@ function onFilesModalChange () {
 // Hooks
 
 onMounted(() => {
-  $socket.on('project:active-users', (users) => {
+  // Join project room
+  $socket.emit('project:join', `project-${project.value.id}:${branch.value.name}`)
+
+  // Listen to new collaborators joining the room
+  $socket.on('project:active-users', (users: SocketUser[]) => {
     activeUsers.value = users
   })
-  $socket.emit('project:join', `project-${project.value.id}:${branch.value.name}`)
+
+  // Listen to change on draft by other collaborators
+  $socket.on('draft:update', (draft: GitHubDraft) => {
+    contentDraft.value = draft
+
+    const currentFile = contentFiles.value.find(file => file.path === contentFile.value.path)
+    if (currentFile) {
+      // If current file has been deleted, select new one
+      if (currentFile.status === 'deleted') {
+        initContentFile()
+      }
+    } else {
+      // If current file does not exist anymore it means it has been renamed, select it from old path
+      const renamedFile = contentFiles.value.find(file => file.oldPath === (contentFile.value.oldPath || contentFile.value.path))
+      if (renamedFile) {
+        selectContentFile(renamedFile)
+      }
+    }
+  })
 })
 
 onUnmounted(() => {
