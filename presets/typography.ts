@@ -10,6 +10,22 @@ export default theme => ({
       a: {
         color: 'var(--tw-prose-links)',
         textDecoration: 'none'
+      },
+      pre: {
+        margin: '0'
+      },
+      code: {
+        backgroundColor: 'var(--tw-prose-pre-bg)',
+        color: 'var(--tw-prose-code)',
+        fontWeight: '600',
+        padding: '0.25rem 0.375rem',
+        borderRadius: '0.375rem'
+      },
+      'code::before': {
+        content: ''
+      },
+      'code::after': {
+        content: ''
       }
     }
   },
@@ -18,6 +34,12 @@ export default theme => ({
       h1: {
         color: theme('colors.indigo.100')
       }
+    }
+  },
+  gray: {
+    css: {
+      '--tw-prose-pre-bg': theme('colors.gray.50'),
+      '--tw-prose-invert-pre-bg': theme('colors.gray.900')
     }
   }
 })
