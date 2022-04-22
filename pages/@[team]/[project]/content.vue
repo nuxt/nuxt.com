@@ -43,7 +43,7 @@
     </template>
 
     <div class="flex items-stretch flex-1 min-h-0 overflow-hidden">
-      <div v-if="computedFiles.length" class="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto">
+      <div v-if="computedFiles.length" ref="editorScroll" class="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto">
         <ClientOnly>
           <ProjectContentEditor
             v-if="file"
@@ -90,6 +90,8 @@ const content: Ref<string> = ref('')
 const parsedContent: Ref<string> = ref('')
 const parsedMatter: Ref<object> = ref({})
 
+const editorScroll: Ref<HTMLElement> = ref(null)
+
 // Watch
 
 // Fetch content when file changes
@@ -119,6 +121,21 @@ watch(content, () => {
   parsedContent.value = c
   parsedMatter.value = matter
 }, { immediate: true })
+
+// When file path change due to new selection, scroll top
+watch(file, (f, old) => {
+  if (process.client && editorScroll.value) {
+    if (!f) {
+      return
+    }
+    // Ignore when: rename || rename back to original || rename when already renamed
+    if ((old && old.path === f.oldPath) || (old && old.oldPath === f.path) || (old && old.oldPath === f.oldPath)) {
+      return
+    }
+
+    editorScroll.value.scrollTop = 0
+  }
+})
 
 // Http
 
