@@ -67,11 +67,11 @@ const selectedShowcases = computed(() => uniqBy(
 
 // Watch
 
-watch(() => route.hash, (hash) => {
-  const name = hash.substring(1)
+watch(() => route.query, (query) => {
+  const name = query.c
 
   let category
-  if (hash) {
+  if (name) {
     category = categories.value?.find(category => category.name === name)
   } else {
     category = categories.value?.[0]
@@ -87,22 +87,20 @@ function selectCategory (category) {
     return
   }
 
-  let hash
-  if (category.name === categories.value[0].name) {
-    hash = ''
-  } else {
-    hash = `#${category.name}`
+  const query = {}
+  if (category.name !== categories.value[0].name) {
+    query.c = category.name
   }
 
-  router.push({ hash })
+  router.push({ query })
 }
 
 onMounted(() => {
-  const hash = route.hash.substring(1)
+  const name = route.query.c
 
   let category
-  if (hash) {
-    category = categories.value.find(c => c.name === hash)
+  if (name) {
+    category = categories.value.find(c => c.name === name)
   } else if (categories.value.length) {
     category = categories.value[0]
   }
