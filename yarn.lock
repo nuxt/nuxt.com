@@ -717,9 +717,9 @@
     fastq "^1.6.0"
 
 "@nuxt/content@npm:@nuxt/content-edge@latest":
-  version "2.0.0-27507743.46fc186"
-  resolved "https://registry.yarnpkg.com/@nuxt/content-edge/-/content-edge-2.0.0-27507743.46fc186.tgz#d86653b4bdbd4b35665ac9e2a8dc3738a5fa469f"
-  integrity sha512-5os6g+5aq6M9PLE1KiAclGE3hpF6TdBzL22JNQPMjqqDtV/2d28LhFWlxH/4wDzlyBBL7jRemS4mKBAk5FTtZA==
+  version "2.0.0-27510304.1a7f23d"
+  resolved "https://registry.yarnpkg.com/@nuxt/content-edge/-/content-edge-2.0.0-27510304.1a7f23d.tgz#5727ac00befdd06309b46267e452639c1f0211e1"
+  integrity sha512-JjWCocJJXC6x3CB2S4tuonde7MdEn2nN4Nngt6755E2DmfqrRPeZhpzqBy8acbfV7Se2Z9RzkQgXyCIK5sGY4A==
   dependencies:
     "@nuxt/kit" "npm:@nuxt/kit-edge@latest"
     base64-js "^1.5.1"
@@ -821,12 +821,36 @@
     unimport "^0.1.6"
     untyped "^0.4.4"
 
-"@nuxt/kit@npm:@nuxt/kit-edge", "@nuxt/kit@npm:@nuxt/kit-edge@latest":
+"@nuxt/kit@npm:@nuxt/kit-edge":
   version "3.0.0-rc.0-27508091.78fcbcf"
   resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-rc.0-27508091.78fcbcf.tgz#a6479758eac42b8da132a3f95eaf1b4b90f34945"
   integrity sha512-hn5mev+SZ8KSPi1wZdlTJf1fHVvhyDQK3zTOIbF+plCk1mWKoAtcPxqw/K7jjm082NvtRAwbEijKq6f/3SlIsA==
   dependencies:
     "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-rc.0-27508091.78fcbcf"
+    c12 "^0.2.7"
+    consola "^2.15.3"
+    defu "^6.0.0"
+    globby "^13.1.1"
+    hash-sum "^2.0.0"
+    ignore "^5.2.0"
+    jiti "^1.13.0"
+    knitwork "^0.1.1"
+    lodash.template "^4.5.0"
+    mlly "^0.5.2"
+    pathe "^0.2.0"
+    pkg-types "^0.3.2"
+    scule "^0.2.1"
+    semver "^7.3.7"
+    unctx "^1.1.4"
+    unimport "^0.1.6"
+    untyped "^0.4.4"
+
+"@nuxt/kit@npm:@nuxt/kit-edge@latest":
+  version "3.0.0-rc.1-27510277.648a70e"
+  resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-rc.1-27510277.648a70e.tgz#b61316943219c179a7506cddd885ee7e2ed21404"
+  integrity sha512-eJF8wpml9kvtxwXomERThMRLa7fs2eCYyiuujooWDdyqjWD1w0JUtuz1/9rIOC/GpFGH6mmKkT+R/QA56P0IGw==
+  dependencies:
+    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-rc.1-27510277.648a70e"
     c12 "^0.2.7"
     consola "^2.15.3"
     defu "^6.0.0"
@@ -895,6 +919,22 @@
   version "3.0.0-rc.0-27508091.78fcbcf"
   resolved "https://registry.yarnpkg.com/@nuxt/schema-edge/-/schema-edge-3.0.0-rc.0-27508091.78fcbcf.tgz#ea0b1a0b53fb319e51845ccd6da83059b8446db5"
   integrity sha512-8ZGjok3i3D84qa5LExWUZOI50UABVUQ3prxb7kyLlHOOYd58/3QXUcq17NFg9I5PDBHXenEO3MpGAN67mWE67g==
+  dependencies:
+    c12 "^0.2.7"
+    create-require "^1.1.1"
+    defu "^6.0.0"
+    jiti "^1.13.0"
+    pathe "^0.2.0"
+    postcss-import-resolver "^2.0.0"
+    scule "^0.2.1"
+    std-env "^3.1.1"
+    ufo "^0.8.3"
+    unimport "^0.1.6"
+
+"@nuxt/schema@npm:@nuxt/schema-edge@3.0.0-rc.1-27510277.648a70e":
+  version "3.0.0-rc.1-27510277.648a70e"
+  resolved "https://registry.yarnpkg.com/@nuxt/schema-edge/-/schema-edge-3.0.0-rc.1-27510277.648a70e.tgz#2cd893d15ff6e2a4c4ce8a924b449d07532d812c"
+  integrity sha512-uuVXv4SDaVYtkOC4BxBYcNjoO1rhHs/7Hipr6PfZuylFQyNrbHPbVV66qjgfQJtFIGq8ljKo84dbsJCfOzr09A==
   dependencies:
     c12 "^0.2.7"
     create-require "^1.1.1"
@@ -3120,9 +3160,9 @@ ee-first@1.1.1:
   integrity sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=
 
 electron-to-chromium@^1.4.84:
-  version "1.4.117"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.117.tgz#829d747deb9faa653cab72764a891ef523ba7413"
-  integrity sha512-ypZHxY+Sf/PXu7LVN+xoeanyisnJeSOy8Ki439L/oLueZb4c72FI45zXcK3gPpmTwyufh9m6NnbMLXnJh/0Fxg==
+  version "1.4.118"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.118.tgz#2d917c71712dac9652cc01af46c7d0bd51552974"
+  integrity sha512-maZIKjnYDvF7Fs35nvVcyr44UcKNwybr93Oba2n3HkKDFAtk0svERkLN/HyczJDS3Fo4wU9th9fUQd09ZLtj1w==
 
 emoji-regex@^10.0.0:
   version "10.1.0"
