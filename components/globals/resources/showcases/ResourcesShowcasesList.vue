@@ -5,7 +5,7 @@
 
       <div class="flex-1">
         <span class="font-semibold u-text-gray-900 text-3xl">
-          {{ selectedCategory?.label }}
+          {{ selectedCategory?.label || categories?.[0]?.label }}
         </span>
 
         <ul v-if="selectedShowcases.length" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 mt-8">
