@@ -95,16 +95,14 @@ function selectCategory (category) {
   router.push({ query })
 }
 
-onMounted(() => {
-  const name = route.query.c
+const name = route.query.c
 
-  let category
-  if (name) {
-    category = categories.value.find(c => c.name === name)
-  } else if (categories.value.length) {
-    category = categories.value[0]
-  }
+let category
+if (name) {
+  category = categories.value.find(c => c.name === name)
+} else if (categories.value.length) {
+  category = categories.value[0]
+}
 
-  selectedCategory.value = category
-})
+selectedCategory.value = category
 </script>
