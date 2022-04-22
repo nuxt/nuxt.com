@@ -11,14 +11,14 @@
       >
       <div class="absolute inset-0">
         <div class="absolute bottom-0 inset-x-0 h-[50%] hidden group-hover:block" :style="{ background: 'linear-gradient(#00000000, #00000055)' }" />
-        <div class="absolute bottom-0 inset-x-0 u-bg-gray-50 group-hover:bg-transparent">
-          <div class="flex justify-between items-center gap-1 py-2 px-4">
-            <h2 class="font-bold truncate group-hover:u-text-white">
+        <div class="absolute bottom-0 inset-x-0 u-bg-gray-50 group-hover:bg-transparent px-4 py-3">
+          <div class="flex justify-between items-center gap-1">
+            <h2 class="font-semibold truncate u-text-gray-900 group-hover:u-text-white">
               {{ showcase.title }}
             </h2>
             <UIcon name="heroicons-outline:external-link" class="w-5 h-5 u-text-white hidden group-hover:inline flex-shrink-0" />
           </div>
-          <p class="text-sm pb-2 px-4 truncate group-hover:hidden">
+          <p class="text-sm truncate group-hover:hidden u-text-gray-500">
             {{ showcase.hostname }}
           </p>
         </div>

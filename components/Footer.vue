@@ -2,21 +2,19 @@
 <template>
   <footer class="relative u-bg-white">
     <div class="absolute inset-x-0 h-1 border-b bottom-44 sm:bottom-24 u-border-gray-200" />
+
     <UContainer padded class="pt-12 pb-8">
-      <div
-        class="grid grid-cols-2 pb-12 sm:grid-cols-4 lg:grid-cols-6 gap-y-12"
-      >
+      <div class="grid grid-cols-2 pb-12 sm:grid-cols-4 lg:grid-cols-6 gap-y-12">
         <div
           v-for="item in links"
           :key="item.title"
           class="flex flex-col gap-5 text-sm u-text-gray-600"
         >
-          <span class="font-semibold uppercase">{{
-            item.title
-          }}</span>
-          <ul class="flex flex-col gap-y-5">
+          <span class="font-semibold uppercase">{{ item.title }}</span>
+
+          <ul class="flex flex-col gap-y-4">
             <li v-for="link in item.items" :key="link.title">
-              <NuxtLink :to="link.to" class="u-text-gray-500 hover:u-text-gray-700">
+              <NuxtLink :to="link.to" :target="link.target" class="u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900" active-class="u-text-gray-900 font-medium">
                 {{ link.title }}
               </NuxtLink>
             </li>
@@ -66,7 +64,7 @@
 
         <ul class="flex text-sm gap-x-6">
           <li v-for="link in legalLinks" :key="link.title">
-            <NuxtLink :to="link.to" class="u-text-gray-500 hover:u-text-gray-700">
+            <NuxtLink :to="link.to" class="u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900" active-class="u-text-gray-900 font-medium">
               {{ link.title }}
             </NuxtLink>
           </li>

@@ -1,21 +1,28 @@
 <template>
-  <nav class="flex-shrink-0 w-60 hidden md:block space-y-4">
-    <span class="u-text-gray-900 font-semibold text-lg">Showcases</span>
-    <ul v-if="categories.length" class="space-y-1">
-      <li
-        v-for="category in categories"
-        :key="category.name"
-        class="u-text-gray-400 font-medium py-1 cursor-pointer"
-        :class="{ 'u-text-gray-800': selectedCategory?.name === category.name }"
-        @click="() => $emit('select', category)"
-      >
-        <span class="relative">
-          {{ category.name }}
-          <span
-            v-if="selectedCategory?.name === category.name"
-            class="absolute inset-x-0 -bottom-1 h-0.5 bg-gradient-to-r from-[#00DC82] via-[#34CDFE] to-[#0047E1]"
-          />
-        </span>
+  <nav>
+    <p class="py-1.5 font-semibold u-text-gray-900">
+      Showcases
+    </p>
+
+    <ul v-if="categories.length" class="py-2">
+      <li v-for="category in categories" :key="category.id">
+        <NuxtLink
+          :to="category.to"
+          class="py-1.5 block relative"
+          :class="{
+            'u-text-gray-900 font-medium': selectedCategory?.name === category.name,
+            'u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900': selectedCategory?.name !== category.name
+          }"
+        >
+          <span class="relative">
+            {{ category.name }}
+
+            <span
+              v-if="selectedCategory?.name === category.name"
+              class="absolute inset-x-0 -bottom-1 h-0.5 bg-gradient-to-r from-green-400 via-teal-400 to-indigoblue-600"
+            />
+          </span>
+        </NuxtLink>
       </li>
     </ul>
   </nav>
@@ -34,6 +41,4 @@ defineProps({
     default: () => null
   }
 })
-
-defineEmits(['select'])
 </script>

@@ -1,26 +1,23 @@
 <template>
-  <UContainer padded class="pt-12 pb-32">
-    <div class="flex gap-4">
-      <ResourcesShowcasesAside :categories="categories" :selected-category="selectedCategory" @select="selectCategory" />
+  <DocsPage id="smooth" class="-mt-16 pt-16">
+    <template #aside>
+      <ResourcesShowcasesAside :categories="categories" :selected-category="selectedCategory" />
+    </template>
 
-      <div class="flex-1">
-        <span class="font-semibold u-text-gray-900 text-3xl">
-          {{ selectedCategory?.label || categories?.[0]?.label }}
-        </span>
+    <h2 class="font-semibold u-text-gray-900 text-3xl">
+      {{ selectedCategory?.label || categories?.[0]?.label }}
+    </h2>
 
-        <ul v-if="selectedShowcases.length" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 mt-8">
-          <li v-for="showcase in selectedShowcases" :key="showcase.id">
-            <ResourcesShowcasesListItem :showcase="showcase" />
-          </li>
-        </ul>
-      </div>
-    </div>
-  </UContainer>
+    <ul v-if="selectedShowcases.length" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 mt-8">
+      <li v-for="showcase in selectedShowcases" :key="showcase.id">
+        <ResourcesShowcasesListItem :showcase="showcase" />
+      </li>
+    </ul>
+  </DocsPage>
 </template>
 
 <script setup lang="ts">
-import { $fetch } from 'ohmyfetch'
-import uniqBy from 'lodash/uniqBy'
+import { uniqBy } from 'lodash-es'
 
 const props = defineProps({
   id: {
@@ -41,19 +38,27 @@ const { data: showcases } = await useAsyncData('showcases', async () => {
   return showcases
 })
 
-const router = useRouter()
 const route = useRoute()
 
-const categories = computed(() => showcases.value?.groups?.map(group => ({
-  id: group.id,
-  name: group.name,
-  label: group.name
-})) || [])
+// Computed
 
-const selectedCategory = ref(null)
+const categories = computed(() => {
+  return showcases.value?.groups?.map(group => ({
+    id: group.id,
+    name: group.name,
+    label: group.name,
+    to: { name: 'resources-showcases', query: { category: group.name }, params: { smooth: '#smooth' } }
+  })) || []
+})
 
-const selectedShowcases = computed(() => uniqBy(
-  showcases.value?.groups
+const selectedCategory = computed(() => {
+  const category = categories.value.find(category => category.name === route.query.category)
+
+  return category || categories.value[0]
+})
+
+const selectedShowcases = computed(() => {
+  const flattenedShowcases = showcases.value?.groups
     ?.filter((group, index) => (!selectedCategory.value && index === 0) || group.name === selectedCategory.value?.name)
     ?.map(group => ({
       ...group,
@@ -61,48 +66,8 @@ const selectedShowcases = computed(() => uniqBy(
         ...showcase
       }))
     }))
-    ?.flatMap(group => group.showcases) || [],
-  'id'
-))
+    ?.flatMap(group => group.showcases)
 
-// Watch
-
-watch(() => route.query, (query) => {
-  const name = query.c
-
-  let category
-  if (name) {
-    category = categories.value?.find(category => category.name === name)
-  } else {
-    category = categories.value?.[0]
-  }
-
-  selectedCategory.value = category
+  return uniqBy(flattenedShowcases || [], 'id')
 })
-
-// Methods
-
-function selectCategory (category) {
-  if (category.name === selectedCategory.value?.name) {
-    return
-  }
-
-  const query = {}
-  if (category.name !== categories.value[0].name) {
-    query.c = category.name
-  }
-
-  router.push({ query })
-}
-
-const name = route.query.c
-
-let category
-if (name) {
-  category = categories.value.find(c => c.name === name)
-} else if (categories.value.length) {
-  category = categories.value[0]
-}
-
-selectedCategory.value = category
 </script>

@@ -147,9 +147,8 @@ const links = computed(() => {
       ]
     }]
   }, {
-    title: 'Templates',
-    slug: '/templates',
-    exact: true,
+    title: 'Resources',
+    slug: '/resources',
     icon: 'heroicons-outline:template'
   }, {
     title: 'Projects',
