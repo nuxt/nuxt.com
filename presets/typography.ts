@@ -39,7 +39,11 @@ export default theme => ({
   gray: {
     css: {
       '--tw-prose-pre-bg': theme('colors.gray.50'),
-      '--tw-prose-invert-pre-bg': theme('colors.gray.900')
+      '--tw-prose-invert-pre-bg': theme('colors.gray.900'),
+      '--tw-prose-code': theme('colors.gray.900'),
+      '--tw-prose-pre-code': theme('colors.gray.900'),
+      '--tw-prose-invert-code': theme('colors.white'),
+      '--tw-prose-invert-pre-code': theme('colors.white')
     }
   }
 })
