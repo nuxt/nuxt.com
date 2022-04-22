@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import { hash } from 'ohash'
 import type { Lang } from 'shiki-es'
-import { highlightCode, useAsyncData } from '#imports'
 
-const props = defineProps({
+defineProps({
   code: {
     type: String,
     default: ''
@@ -22,29 +20,11 @@ const props = defineProps({
     default: () => []
   }
 })
-
-const key = `highlighted-code-${hash([props.code, props.language, props.filename, props.highlights])}`
-
-const { data: highlightedCode } = await useAsyncData(key, () => highlightCode(props.code, { lang: props.language }))
 </script>
 
 <template>
   <div class="prose-code w-full group">
-    <pre><code>
-      <span
-        v-for="(line, lineIndex) in highlightedCode"
-        :key="`line-${lineIndex + 1}`"
-        class="line"
-        :class="{ 'highlight': highlights.includes(lineIndex + 1) }"
-      >
-        <span
-          v-for="(token, tokenIndex) in line"
-          :key="`token-${tokenIndex}`"
-          :style="{ color: token.color }"
-          v-text="token.content"
-        />
-      </span>
-    </code></pre>
+    <slot />
 
     <CopyButton :content="code" class="copy-button opacity-100 transition-all duration-300" />
   </div>
@@ -61,30 +41,21 @@ const { data: highlightedCode } = await useAsyncData(key, () => highlightCode(pr
 <style lang="postcss" scoped>
 div {
   @apply flex relative;
-
-  /* Style filename span added by @nuxt/content */
-  & > .filename {
-    @apply group-hover:opacity-0 transition-opacity duration-300 absolute top-0 right-0 z-0 m-1 py-1.5 px-2 text-gray-600 dark:text-gray-400 bg-gray-200 dark:bg-gray-700 rounded-md font-mono font-medium text-xs leading-none tracking-tight;
-  }
 }
 
-pre {
-  @apply flex-1;
+:deep(pre) {
+  @apply py-4 flex flex-1;
 }
 
-code {
-  display: flex;
-  flex-direction: column;
+:deep(code) {
+  @apply flex flex-col;
 }
 
-.line {
-  display: inline-table;
-  min-height: 15px;
+:deep(.line) {
+  @apply inline-table min-h-[1rem];
 }
 
-.group:hover {
-  .copy-button {
-    @apply opacity-100;
-  }
+:deep(.line.highlight) {
+  background-color: #3f3f46;
 }
 </style>
