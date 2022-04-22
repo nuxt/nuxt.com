@@ -128,8 +128,8 @@ watch(file, (f, old) => {
     if (!f) {
       return
     }
-    // Ignore if file renamed (rename back to original name || rename to new name)
-    if ((old && old.path === f.oldPath) || (old && old.oldPath === f.oldPath)) {
+    // Ignore when: rename || rename back to original || rename when already renamed
+    if ((old && old.path === f.oldPath) || (old && old.oldPath === f.path) || (old && old.oldPath === f.oldPath)) {
       return
     }
 
