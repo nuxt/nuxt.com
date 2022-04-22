@@ -95,7 +95,7 @@ defineProps({
       }
     }
     .prose-code {
-      @apply my-4;
+      @apply mt-4 mb-0;
 
       code {
         @apply bg-gray-50 dark:bg-gray-900;
