@@ -29,8 +29,11 @@ links:
         to: /resources/design-kit
       - title: Live Events
         to: /resources/live-events
-      - title: Video Courses
-        to: /resources/video-courses
+      - title: Showcases
+        to: /resources/showcases
+      - title: Mastering Nuxt
+        to: https://masteringnuxt.com/?utm_source=nuxt&utm_medium=link&utm_campaign=nsite
+        target: _blank
   - title: Solutions
     items:
       - title: Web Framework
