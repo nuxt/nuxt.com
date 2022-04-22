@@ -30,7 +30,7 @@ const { data: highlightedCode } = await useAsyncData(key, () => highlightCode(pr
 
 <template>
   <div class="prose-code w-full group">
-    <pre class="bg-gray-800"><code>
+    <pre><code>
       <span
         v-for="(line, lineIndex) in highlightedCode"
         :key="`line-${lineIndex + 1}`"
@@ -52,10 +52,8 @@ const { data: highlightedCode } = await useAsyncData(key, () => highlightCode(pr
 
 <style>
 .prose {
-  li {
-    .prose-code {
-      @apply my-4;
-    }
+  .prose-code {
+    @apply my-6;
   }
 }
 </style>
@@ -71,7 +69,7 @@ div {
 }
 
 pre {
-  @apply flex-1 p-4 my-0 overflow-x-auto leading-normal bg-gray-50 dark:bg-gray-900 text-gray-600 dark:text-gray-100 rounded-lg;
+  @apply flex-1;
 }
 
 code {
