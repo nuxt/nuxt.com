@@ -56,19 +56,14 @@
 import type { Ref } from 'vue'
 import type { User } from '~/types'
 
-const modules: Ref<object[]> = inject('modules')
-
 const user = useStrapiUser() as Ref<User>
 const { getProviderAuthenticationUrl } = useStrapiAuth()
 const route = useRoute()
 const activeTeam = useTeam()
 const { hasScrolledPastNavbar } = useNavbarScroll()
+const { categories } = useModules()
 
 const isOpen = ref(false)
-
-const categories = computed(() => {
-  return [...new Set(modules.value.map(module => module.category))].map(category => ({ title: category, slug: `/integrations?category=${category.toLowerCase()}`, exact: true }))
-})
 
 const links = computed(() => {
   const team = activeTeam.value || route.params.team || user.value?.username
@@ -142,7 +137,10 @@ const links = computed(() => {
       icon: 'heroicons-outline:template',
       class: 'col-span-3',
       children: [
-        ...categories.value,
+        ...categories.value.map(category => ({
+          ...category,
+          slug: `/integrations?category=${category.key}`
+        })),
         { title: 'All integrations', slug: '/integrations' }
       ]
     }]
