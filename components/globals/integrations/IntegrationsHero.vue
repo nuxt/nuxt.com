@@ -5,22 +5,48 @@
         <h1 class="font-semibold text-5xl u-text-gray-900">
           <Markdown use="title" unwrap="p" />
         </h1>
-        <p class="font-medium text-lg u-text-gray-500 lg:pr-20">
+        <p class="font-medium text-lg u-text-gray-500 max-w-xl">
           <Markdown use="description" unwrap="p" />
         </p>
 
         <UInput
+          v-model="q"
           name="search"
           placeholder="Search an integration"
           class="w-full max-w-sm"
           custom-class=" !u-bg-gray-50"
           size="lg"
           icon="heroicons-outline:search"
+          autocomplete="off"
         />
       </div>
+
       <div class="flex items-center justify-center lg:col-span-1">
-        <img src="/integrations/hero.png" alt="Integrations illustration" class="h-64 sm:h-80 lg:h-full ">
+        <img src="/gems.svg" class="h-[280px]">
       </div>
     </div>
   </UContainer>
 </template>
+
+<script setup lang="ts">
+const route = useRoute()
+const router = useRouter()
+
+const q = computed({
+  get () {
+    return route.query.q
+  },
+  set (q) {
+    router.push({
+      name: 'integrations',
+      query: {
+        ...route.query,
+        q: q || undefined
+      },
+      params: {
+        stop: 'true'
+      }
+    })
+  }
+})
+</script>

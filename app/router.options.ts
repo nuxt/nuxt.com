@@ -3,6 +3,9 @@ import type { RouterConfig } from '@nuxt/schema'
 // https://router.vuejs.org/api/#routeroptions
 export default <RouterConfig>{
   scrollBehavior: (to) => {
+    if (to.params?.stop) {
+      return
+    }
     if (to.params?.smooth) {
       return {
         el: to.params?.smooth,
