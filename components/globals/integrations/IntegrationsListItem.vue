@@ -1,11 +1,11 @@
 <template>
-  <UCard shadow-class class="relative" body-class="px-5 py-4" ring-class="ring-1 u-ring-gray-200 lg:hover:u-ring-gray-900 lg:hover:ring-2">
-    <div class="pb-4">
+  <UCard shadow-class class="relative" ring-class="ring-1 u-ring-gray-200 lg:hover:u-ring-gray-900 lg:hover:ring-2">
+    <div>
       <img
         v-if="!coverError && module.icon"
         :src="module.icon.startsWith('http') ? module.icon : 'https://api.nuxtjs.org/api/ipx/s_80,f_webp/gh/nuxt/modules/main/website/public/icons/' + module.icon"
         :alt="module.title"
-        class="w-12 h-12 my-6"
+        class="w-12 h-12 mb-4"
         @error="coverError = true"
       >
       <div v-else class="p-2 u-bg-gray-100 w-12 h-12 rounded-lg flex items-center my-6">
@@ -25,7 +25,7 @@
       {{ module.description }}
     </p>
 
-    <div class="flex items-center justify-between gap-3 u-text-gray-500">
+    <div class="flex items-center justify-between gap-3 u-text-gray-500 -mb-2">
       <div class="flex items-center gap-3">
         <div class="flex items-center gap-1.5">
           <UIcon name="heroicons-outline:star" class="w-4 h-4" />
