@@ -51,7 +51,7 @@ export const useModules = () => {
 
   const versions = computed(() => ([
     { key: '3.x', label: 'v3' },
-    { key: '2.x-bridge', label: 'v2 (bridge)' },
+    { key: '2.x-bridge', label: 'Bridge' },
     { key: '2.x', label: 'v2' }
   ]))
 
