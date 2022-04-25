@@ -64,10 +64,6 @@ export default defineNuxtConfig({
     preset
   },
   tailwindcss: {
-    extend: {
-      colors,
-      typography
-    },
     config: {
       theme: {
         colors,
