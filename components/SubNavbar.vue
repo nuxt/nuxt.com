@@ -15,7 +15,7 @@
           </slot>
         </div>
 
-        <div v-if="links.length" class="flex justify-center col-span-4 gap-x-8">
+        <div class="flex justify-center col-span-4 gap-x-8">
           <ULink
             v-for="(link, index) in links"
             :key="index"
