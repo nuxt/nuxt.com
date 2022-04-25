@@ -5,10 +5,17 @@
 </template>
 
 <script setup lang="ts">
+const props = defineProps({
+  level: {
+    type: Number,
+    default: 4
+  }
+})
+
 const { navFromPath } = useContent()
 
 const route = useRoute()
-const path = computed(() => route.path.split('/').slice(0, 4).join('/'))
 
+const path = computed(() => route.path.split('/').slice(0, props.level).join('/'))
 const tree = computed(() => navFromPath(path.value)?.children)
 </script>

@@ -8,7 +8,7 @@
         class="w-12 h-12 mb-4"
         @error="coverError = true"
       >
-      <div v-else class="p-2 u-bg-gray-100 w-12 h-12 rounded-lg flex items-center my-6">
+      <div v-else class="p-2 u-bg-gray-100 w-12 h-12 rounded-lg flex items-center mb-4">
         <UIcon name="heroicons-outline:photograph" class="w-8 h-8 u-text-gray-400" />
       </div>
     </div>
