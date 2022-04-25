@@ -5,9 +5,9 @@
       <slot name="header" />
     </div>
 
-    <div class="flex flex-1 u-bg-gray-50 overflow-hidden">
+    <Splitpanes class="h-full flex flex-1 u-bg-gray-50 overflow-hidden">
       <!-- Secondary column (hidden on smaller screens) -->
-      <aside v-if="$slots.aside" class="hidden lg:block lg:flex-shrink-0">
+      <Pane v-if="$slots.aside" class="hidden lg:block lg:flex-shrink-0">
         <div class="relative flex flex-col h-full overflow-y-auto border-r w-72 u-border-gray-200 u-bg-white">
           <div v-if="title" class="sticky top-0 flex items-center justify-between flex-shrink-0 h-16 px-6 u-bg-white z-[5]">
             <p class="text-lg font-semibold u-text-gray-900">
@@ -19,10 +19,12 @@
 
           <slot name="aside" />
         </div>
-      </aside>
+      </Pane>
 
-      <slot />
-    </div>
+      <Pane>
+        <slot />
+      </Pane>
+    </Splitpanes>
   </main>
 </template>
 
