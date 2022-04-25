@@ -8,7 +8,7 @@
       {{ selectedCategory?.label || 'All integrations' }}
     </h2>
 
-    <div class="_ellipse" />
+    <div class="_ellipse hidden lg:block" />
 
     <ul v-if="filteredModules.length" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 mt-8">
       <li v-for="(filteredModule, index) in filteredModules" :key="index">

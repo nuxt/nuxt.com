@@ -1,5 +1,5 @@
 <template>
-  <UCard shadow-class class="relative" ring-class="ring-1 u-ring-gray-200 lg:hover:u-ring-gray-900 lg:hover:ring-2">
+  <UCard padded shadow-class class="relative" ring-class="ring-1 u-ring-gray-200 lg:hover:u-ring-gray-900 lg:hover:ring-2">
     <div>
       <img
         v-if="!coverError && module.icon"
