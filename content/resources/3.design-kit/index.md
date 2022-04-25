@@ -38,7 +38,7 @@ Our main palette is comprised of a strong inspiring gradient, white, and dark gr
 
   ::resources-design-kit-color-card
   ---
-  cardClass: 'u-bg-white'
+  cardClass: 'bg-white'
   hexaColor: '#FFFFFF'
   ---
   #color
@@ -49,7 +49,7 @@ Our main palette is comprised of a strong inspiring gradient, white, and dark gr
 
   ::resources-design-kit-color-card
   ---
-  cardClass: 'u-bg-black'
+  cardClass: 'bg-gray-900'
   hexaColor: '#0C0C0D'
   ---
   #color
