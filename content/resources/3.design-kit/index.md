@@ -27,7 +27,7 @@ Our main palette is comprised of a strong inspiring gradient, white, and dark gr
 #designList
   ::resources-design-kit-color-card
   ---
-  cardClass: 'bg-gradient-to-r from-[#00DC82] via-[#36E4DA] to-[#0047E1]'
+  cardClass: 'bg-gradient-to-r from-green-400 via-teal-400 to-indigoblue-600'
   hexaColor: '#00DC82 to #36E4DA then #0047E1'
   ---
   #color
@@ -38,7 +38,7 @@ Our main palette is comprised of a strong inspiring gradient, white, and dark gr
 
   ::resources-design-kit-color-card
   ---
-  cardClass: 'bg-[#FFFFFF]'
+  cardClass: 'u-bg-white'
   hexaColor: '#FFFFFF'
   ---
   #color
@@ -49,7 +49,7 @@ Our main palette is comprised of a strong inspiring gradient, white, and dark gr
 
   ::resources-design-kit-color-card
   ---
-  cardClass: 'bg-[#0C0C0D]'
+  cardClass: 'u-bg-black'
   hexaColor: '#0C0C0D'
   ---
   #color
@@ -71,7 +71,7 @@ far better with Nuxt DNA than warm colors.
 #designList
   ::resources-design-kit-color-card
   ---
-  cardClass: 'bg-[#00DC82]'
+  cardClass: 'bg-green-400'
   hexaColor: '#00DC82'
   ---
   #color
@@ -82,7 +82,7 @@ far better with Nuxt DNA than warm colors.
 
   ::resources-design-kit-color-card
   ---
-  cardClass: 'bg-[#36E4DA]'
+  cardClass: 'bg-teal-400'
   hexaColor: '#36E4DA'
   ---
   #color
@@ -93,7 +93,7 @@ far better with Nuxt DNA than warm colors.
 
   ::resources-design-kit-color-card
   ---
-  cardClass: 'bg-[#407CFF]'
+  cardClass: 'bg-indigoblue-400'
   hexaColor: '#407CFF'
   ---
   #color
@@ -118,7 +118,7 @@ This gradient is here to represent the brand, across all supports (landings, app
   ::resources-design-kit-color-card
   ---
   gradient: true
-  cardClass: 'bg-gradient-to-r from-[#00DC82] via-[#36E4DA] to-[#0047E1]'
+  cardClass: 'bg-gradient-to-r from-green-400 via-teal-400 to-indigoblue-600'
   ---
   #gradientContent
   Gradient structure
@@ -141,77 +141,77 @@ Our secondary palette contains a variety of colors with all the same base hue (t
   ::resources-design-kit-color-card
   ---
   secondaries: true
-  cardClass: 'bg-[#6B6B76] hover:bg-[#bfbfbf]'
-  hexaColor: '#6B6B76'
+  cardClass: 'bg-gray-400 hover:bg-gray-200'
+  hexaColor: '#71717a'
   ---
   ::
   ::resources-design-kit-color-card
   ---
   secondaries: true
-  cardClass: 'bg-[#FF4C40]'
+  cardClass: 'bg-red-400'
   hexaColor: '#FF4C40'
   ---
   ::
   ::resources-design-kit-color-card
   ---
   secondaries: true
-  cardClass: 'bg-[#FF9040]'
+  cardClass: 'bg-orange-400'
   hexaColor: '#FF9040'
   ---
   ::
   ::resources-design-kit-color-card
   ---
   secondaries: true
-  cardClass: 'bg-[#F7D14C]'
+  cardClass: 'bg-yellow-400'
   hexaColor: '#F7D14C'
   ---
   ::
   ::resources-design-kit-color-card
   ---
   secondaries: true
-  cardClass: 'bg-[#D8DA52]'
+  cardClass: 'bg-pear-400'
   hexaColor: '#D8DA52'
   ---
   ::
   ::resources-design-kit-color-card
   ---
   secondaries: true
-  cardClass: 'bg-[#40DDFF]'
+  cardClass: 'bg-lightblue-400'
   hexaColor: '#40DDFF'
   ---
   ::
   ::resources-design-kit-color-card
   ---
   secondaries: true
-  cardClass: 'bg-[#40BBFF]'
+  cardClass: 'bg-blue-400'
   hexaColor: '#40BBFF'
   ---
   ::
   ::resources-design-kit-color-card
   ---
   secondaries: true
-  cardClass: 'bg-[#614BEC] hover:bg-[#8774fc]'
+  cardClass: 'bg-royalblue-400 hover:bg-royalblue-200'
   hexaColor: '#614BEC'
   ---
   ::
   ::resources-design-kit-color-card
   ---
   secondaries: true
-  cardClass: 'bg-[#9640FF]'
+  cardClass: 'bg-purple-400'
   hexaColor: '#9640FF'
   ---
   ::
   ::resources-design-kit-color-card
   ---
   secondaries: true
-  cardClass: 'bg-[#FF8DD8]'
+  cardClass: 'bg-pink-200'
   hexaColor: '#FF8DD8'
   ---
   ::
   ::resources-design-kit-color-card
   ---
   secondaries: true
-  cardClass: 'bg-[#FF4079]'
+  cardClass: 'bg-ruby-400'
   hexaColor: '#FF4079'
   ---
   ::

@@ -16,7 +16,7 @@
         </span>
         <span
           class="rounded absolute left-0 font-extrabold -bottom-1 h-0.5 w-4 group-hover:w-full transition-all"
-          :class="highlight ? 'bg-gradient-to-r from-[#00DC82] via-[#34CDFE] to-[#0047E1]' : 'u-bg-gray-700'"
+          :class="highlight ? 'bg-gradient-to-r from-green-400 via-teal-400 to-indigoblue-600' : 'u-bg-gray-700'"
         />
       </NuxtLink>
       <UAvatarGroup :group="authors" size="sm" />
