@@ -65,7 +65,7 @@ export const useContent = () => {
 
     // Get navigation node from current path
     const file = navFromPath(path.value, navigation.value)
-
+    console.log('file', file)
     if (file && !file.children) {
       // Path queried has a page (and is not a directory)
       await Promise.all([
@@ -77,6 +77,7 @@ export const useContent = () => {
       })
     } else if (file) {
       navigateTo(findBottomLink(file))
+      console.log('redirect')
     } else {
       throwError({ message: 'This page does not exist.', statusCode: 404 })
     }

@@ -1,10 +1,11 @@
 <template>
   <div class="flex flex-col-reverse lg:grid lg:grid-cols-10 gap-8 relative">
-    <div class="col-span-10 lg:col-span-8">
+    <div :class="{ 'col-span-10 lg:col-span-8': !!$route.params.slug, 'col-span-10': !$route.params.slug }">
       <slot />
     </div>
 
     <div
+      v-if="!!$route.params.slug"
       class="lg:col-span-2 lg:self-start overflow-x-hidden sticky top-16 -mx-4 sm:-mx-6 px-4 sm:px-6 lg:mx-0 lg:px-0 lg:pt-8 lg:-mt-8 bg-white/75 dark:bg-black/75 backdrop-blur-md lg:max-h-[calc(100vh-64px)]"
     >
       <div class="border-b border-dashed u-border-gray-200 lg:border-none py-4 lg:py-0">

@@ -1,5 +1,6 @@
 <template>
   <div>
+    <NuxtLoadingBar :duration="1000" />
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>

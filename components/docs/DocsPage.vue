@@ -6,17 +6,17 @@
       <UContainer padded>
         <div class="grid grid-cols-10 gap-8 relative">
           <aside
-            v-if="$slots.aside"
+            v-if="!!$route.params.slug"
             class="pb-8 overflow-x-hidden overflow-y-auto lg:pb-0 hidden lg:block lg:sticky lg:pt-8 lg:-mt-8 lg:self-start col-span-2"
             :class="{
               'lg:max-h-[calc(100vh-64px)] lg:top-16': offset,
               'lg:top-0 lg:max-h-screen': !offset
             }"
           >
-            <slot name="aside" />
+            <DocsAside />
           </aside>
 
-          <div class="relative" :class="{ 'col-span-10 lg:col-span-8': !!$slots.aside, 'col-span-10': !$slots.aside }">
+          <div class="relative" :class="{ 'col-span-10 lg:col-span-8': !!$route.params.slug, 'col-span-10': !$route.params.slug }">
             <slot />
           </div>
         </div>
