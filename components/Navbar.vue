@@ -28,8 +28,10 @@
               :to="link.slug"
               :exact="link.exact"
               class="text-sm lg:text-base focus:outline-none"
-              active-class="font-semibold u-text-gray-900"
-              inactive-class="font-medium u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900"
+              :class="{
+                'font-semibold u-text-gray-900': isActive(link),
+                'font-medium u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900': !isActive(link),
+              }"
             >
               {{ link.title }}
             </ULink>
@@ -163,5 +165,9 @@ const links = computed(() => {
 
 const onClick = () => {
   window.location = getProviderAuthenticationUrl('github') as unknown as Location
+}
+
+function isActive (link) {
+  return link.exact ? route.fullPath === link.slug : route.fullPath.startsWith(link.slug)
 }
 </script>
