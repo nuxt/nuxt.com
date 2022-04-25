@@ -5,7 +5,7 @@
         <h1 class="text-4xl font-extrabold tracking-tight u-text-gray-900 sm:text-5xl md:text-6xl">
           <span class="block xl:inline">A better way to create<br></span>
           {{ ' ' }}
-          <span class="block text-[#00DC82] xl:inline">modern websites</span>
+          <span class="block text-green-400 xl:inline">modern websites</span>
         </h1>
         <p class="max-w-md mx-auto mt-3 text-base u-text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
           Our suite of developer-friendly solutions helps you create,<br>secure and deliver enterprise-grade modern website.
