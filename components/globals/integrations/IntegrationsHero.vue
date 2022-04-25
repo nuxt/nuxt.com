@@ -24,37 +24,43 @@
       <div class="flex items-center justify-center lg:col-span-1 relative">
         <img src="/gems.svg" class="h-[280px]">
 
-        <UCard body-class="p-4" class="absolute left-11 top-3 w-44 backdrop-blur-lg !bg-opacity-10">
+        <UCard padded body-class="p-4" class="absolute left-0 md:left-11 top-0 md:top-3 w-full md:w-44 backdrop-blur-lg !bg-opacity-10">
           <UIcon name="heroicons-outline:download" class="w-5 h-5 text-teal-400" />
 
-          <p class="u-text-gray-900 font-semibold text-4xl mb-2">
-            {{ stats.modules }}
-          </p>
-          <p class="text-xs u-text-gray-500">
-            Downloads Last 30 Days
-          </p>
+          <div class="flex items-end justify-between gap-3 md:block">
+            <p class="u-text-gray-900 font-semibold text-4xl md:mb-2">
+              {{ formatNumber(stats.downloads) }}
+            </p>
+            <p class="text-xs u-text-gray-500">
+              Downloads Last 30 Days
+            </p>
+          </div>
         </UCard>
 
-        <UCard body-class="p-4" class="absolute -left-10 bottom-0 w-32 backdrop-blur-lg !bg-opacity-10">
+        <UCard padded body-class="p-4" class="absolute left-0 md:-left-10 md:bottom-0 w-full md:w-32 backdrop-blur-lg !bg-opacity-10">
           <UIcon name="heroicons-outline:puzzle" class="w-5 h-5 text-green-400" />
 
-          <p class="u-text-gray-900 font-semibold text-4xl mb-2">
-            {{ stats.modules }}
-          </p>
-          <p class="text-xs u-text-gray-500">
-            Modules
-          </p>
+          <div class="flex items-end justify-between gap-3 md:block">
+            <p class="u-text-gray-900 font-semibold text-4xl md:mb-2">
+              {{ formatNumber(stats.modules) }}
+            </p>
+            <p class="text-xs u-text-gray-500">
+              Modules
+            </p>
+          </div>
         </UCard>
 
-        <UCard body-class="p-4" class="absolute right-0 -bottom-10 w-32 backdrop-blur-lg !bg-opacity-10">
+        <UCard padded body-class="p-4" class="absolute right-0 bottom-0 md:-bottom-10 w-full md:w-32 backdrop-blur-lg !bg-opacity-10">
           <UIcon name="heroicons-outline:users" class="w-5 h-5 text-indigoblue-600" />
 
-          <p class="u-text-gray-900 font-semibold text-4xl mb-2">
-            {{ stats.contributors }}
-          </p>
-          <p class="text-xs u-text-gray-500">
-            Contributors
-          </p>
+          <div class="flex items-end justify-between gap-3 md:block">
+            <p class="u-text-gray-900 font-semibold text-4xl md:mb-2">
+              {{ formatNumber(stats.contributors) }}
+            </p>
+            <p class="text-xs u-text-gray-500">
+              Contributors
+            </p>
+          </div>
         </UCard>
       </div>
     </div>
@@ -62,6 +68,8 @@
 </template>
 
 <script setup lang="ts">
+import { formatNumber } from '~/utils'
+
 const route = useRoute()
 const router = useRouter()
 
