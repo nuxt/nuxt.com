@@ -8,6 +8,10 @@
       </SubNavbar>
     </template>
 
+    <template v-if="$route.params.slug" #aside>
+      <DocsAside />
+    </template>
+
     <NuxtPage />
   </DocsPage>
 </template>

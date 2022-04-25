@@ -1,5 +1,5 @@
 <template>
-  <DocsPage :level="5">
+  <DocsPage>
     <template #header>
       <SubNavbar title="Framework" :links="links">
         <template #left>
@@ -18,6 +18,10 @@
       </SubNavbar>
     </template>
 
+    <template v-if="$route.params.slug" #aside>
+      <DocsAside :level="5" />
+    </template>
+
     <NuxtPage />
   </DocsPage>
 </template>
@@ -27,10 +31,7 @@ const route = useRoute()
 const router = useRouter()
 const { navFromPath } = useContent()
 
-const links = computed(() => {
-  const nav = navFromPath(`/docs/framework/${route.params.version}`)
-  return nav?.children.filter(file => !file.id)
-})
+const links = computed(() => navFromPath(`/docs/framework/${route.params.version}`)?.children)
 
 const version = computed({
   get () {

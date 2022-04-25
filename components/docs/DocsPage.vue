@@ -6,17 +6,17 @@
       <UContainer padded>
         <div class="grid grid-cols-10 gap-8 relative">
           <aside
-            v-if="!!$route.params.slug"
+            v-if="!!$slots.aside"
             class="pb-8 overflow-x-hidden overflow-y-auto lg:pb-0 hidden lg:block lg:sticky lg:pt-8 lg:-mt-8 lg:self-start col-span-2"
             :class="{
               'lg:max-h-[calc(100vh-64px)] lg:top-16': offset,
               'lg:top-0 lg:max-h-screen': !offset
             }"
           >
-            <DocsAside :level="level" />
+            <slot name="aside" />
           </aside>
 
-          <div class="relative" :class="{ 'col-span-10 lg:col-span-8': !!$route.params.slug, 'col-span-10': !$route.params.slug }">
+          <div class="relative" :class="{ 'col-span-10 lg:col-span-8': !!$slots.aside, 'col-span-10': !$slots.aside }">
             <slot />
           </div>
         </div>
@@ -27,10 +27,6 @@
 
 <script setup lang="ts">
 defineProps({
-  level: {
-    type: Number,
-    default: 4
-  },
   offset: {
     type: Boolean,
     default: true

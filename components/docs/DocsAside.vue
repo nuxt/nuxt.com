@@ -8,7 +8,7 @@
 const props = defineProps({
   level: {
     type: Number,
-    required: true
+    default: 4
   }
 })
 

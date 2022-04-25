@@ -1,7 +1,3 @@
----
-title: 'v2'
----
-
 ::docs-hero
 ---
 buttons:

@@ -17,7 +17,7 @@
 
         <div class="flex justify-center col-span-4 gap-x-8">
           <ULink
-            v-for="(link, index) in links"
+            v-for="(link, index) in filteredLinks"
             :key="index"
             :to="link.slug"
             class="text-sm focus:outline-none"
@@ -39,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-defineProps({
+const props = defineProps({
   title: {
     type: String,
     default: null
@@ -56,6 +56,8 @@ defineProps({
 
 const route = useRoute()
 const { hasScrolledPastSubNavbar } = useNavbarScroll()
+
+const filteredLinks = computed(() => props.links.filter(l => !!l.title))
 
 function isActive (link) {
   return link.exact ? route.path === link.slug : route.path.startsWith(link.slug)
