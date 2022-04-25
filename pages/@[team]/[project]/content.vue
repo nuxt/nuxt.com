@@ -42,8 +42,8 @@
       </ProjectHeader>
     </template>
 
-    <div class="flex items-stretch flex-1 min-h-0 overflow-hidden">
-      <div v-if="computedFiles.length" ref="editorScroll" class="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto">
+    <Splitpanes class="flex items-stretch flex-1 min-h-0 overflow-hidden">
+      <Pane v-if="computedFiles.length" ref="editorScroll" class="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto">
         <ProjectContentEditor
           v-if="file"
           :model-value="parsedContent"
@@ -51,18 +51,29 @@
           class="flex flex-col flex-1"
           @update:model-value="updateContent"
         />
-      </div>
-      <ProjectContentFilesEmpty v-else @create="openCreateFileModal('content')" />
+      </Pane>
+      <Pane v-else>
+        <ProjectContentFilesEmpty @create="openCreateFileModal('content')" />
+      </Pane>
 
-      <ProjectContentFileAside :model-value="parsedMatter" @update:model-value="updateMatter" />
-    </div>
+      <Pane max-size="25">
+        <ProjectContentFileAside :model-value="parsedMatter" @update:model-value="updateMatter" />
+      </Pane>
+    </Splitpanes>
   </ProjectPage>
 </template>
 
 <script setup lang="ts">
 import type { PropType, Ref } from 'vue'
 import { debounce } from 'lodash-es'
+import Splitpanes from '../../../node_modules/splitpanes/src/components/splitpanes/Splitpanes.vue'
+import Pane from '../../../node_modules/splitpanes/src/components/splitpanes/Pane.vue'
 import type { Team, Project, GitHubDraft } from '~/types'
+
+defineComponent({
+  Splitpanes,
+  Pane
+})
 
 defineProps({
   team: {

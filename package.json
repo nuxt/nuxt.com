@@ -42,6 +42,7 @@
     "vue-plausible": "^1.3.1"
   },
   "dependencies": {
-    "splitpanes": "^2.4.1"
+    "sass": "^1.50.1",
+    "splitpanes": "^3.1.1"
   }
 }

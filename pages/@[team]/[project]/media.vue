@@ -25,8 +25,8 @@
       </ProjectHeader>
     </template>
 
-    <div class="flex items-stretch flex-1 min-h-0 overflow-hidden">
-      <div
+    <Splitpanes class="flex items-stretch flex-1 min-h-0 overflow-hidden">
+      <Pane
         class="flex-1 flex flex-col relative"
         @dragover.prevent
         @dragenter.prevent="onDragEnter"
@@ -43,18 +43,27 @@
           :class="{ 'bg-blue-500 bg-opacity-20 border-blue-500': dragover }"
           style="pointer-events: none;"
         />
-      </div>
+      </Pane>
 
-      <ProjectMediaFileAside :medias="medias" />
-    </div>
+      <Pane max-size="21">
+        <ProjectMediaFileAside :medias="medias" />
+      </Pane>
+    </Splitpanes>
   </ProjectPage>
 </template>
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
 import { isEmpty } from 'lodash-es'
+import Splitpanes from '../../../node_modules/splitpanes/src/components/splitpanes/Splitpanes.vue'
+import Pane from '../../../node_modules/splitpanes/src/components/splitpanes/Pane.vue'
 import type { Team, Project } from '~/types'
 import { getAvailablePath } from '~/utils/tree'
+
+defineComponent({
+  Splitpanes,
+  Pane
+})
 
 defineProps({
   team: {
