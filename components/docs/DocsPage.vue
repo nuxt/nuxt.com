@@ -13,7 +13,7 @@
               'lg:top-0 lg:max-h-screen': !offset
             }"
           >
-            <DocsAside />
+            <DocsAside :level="level" />
           </aside>
 
           <div class="relative" :class="{ 'col-span-10 lg:col-span-8': !!$route.params.slug, 'col-span-10': !$route.params.slug }">
@@ -27,6 +27,10 @@
 
 <script setup lang="ts">
 defineProps({
+  level: {
+    type: Number,
+    default: 4
+  },
   offset: {
     type: Boolean,
     default: true

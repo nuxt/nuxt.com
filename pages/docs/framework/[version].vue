@@ -1,5 +1,5 @@
 <template>
-  <DocsPage>
+  <DocsPage :level="5">
     <template #header>
       <SubNavbar title="Framework" :links="links">
         <template #left>
@@ -25,13 +25,13 @@
 <script setup lang="ts">
 const route = useRoute()
 const router = useRouter()
-const { navFromPath, navigation } = useContent()
+const { navFromPath } = useContent()
 
-console.log('navigation.value', navigation.value)
-const path = computed(() => route.path.split('/').slice(0, 4).join('/'))
-console.log('path.value', path.value)
-const links = computed(() => navFromPath(path.value)?.children)
-console.log('links.value', links.value)
+const links = computed(() => {
+  const nav = navFromPath(`/docs/framework/${route.params.version}`)
+  return nav?.children.filter(file => !file.id)
+})
+
 const version = computed({
   get () {
     return route.params.version

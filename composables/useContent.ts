@@ -64,8 +64,7 @@ export const useContent = () => {
     const directory = splitted.slice(0, splitted.length - 1).join('/')
 
     // Get navigation node from current path
-    const file = navFromPath(path.value, navigation.value)
-    console.log('file', file)
+    const file = fileFromPath(path.value, navigation.value)
     if (file && !file.children) {
       // Path queried has a page (and is not a directory)
       await Promise.all([
@@ -77,7 +76,6 @@ export const useContent = () => {
       })
     } else if (file) {
       navigateTo(findBottomLink(file))
-      console.log('redirect')
     } else {
       throwError({ message: 'This page does not exist.', statusCode: 404 })
     }
@@ -92,13 +90,18 @@ export const useContent = () => {
    * Find first child link from a navigation node.
    */
   const findBottomLink = (link: NavItem) => {
-    let slug = link.slug
-
-    if (link.children && link.children.length) {
-      slug = findBottomLink(link.children[0])
+    for (const child of link.children) {
+      if (!child.children) {
+        return child.slug
+      }
     }
 
-    return slug
+    for (const child of link.children) {
+      const result = findBottomLink(child)
+      if (result) {
+        return result
+      }
+    }
   }
 
   /**
@@ -106,8 +109,21 @@ export const useContent = () => {
    */
   const navFromPath = (path: string, tree: NavItem[] = navigation.value) => {
     for (const file of tree) {
+      if (file.slug === path) {
+        return file
+      }
+
       if (file.children) {
         const result = navFromPath(path, file.children)
+        if (result) { return result }
+      }
+    }
+  }
+
+  const fileFromPath = (path: string, tree: NavItem[] = navigation.value) => {
+    for (const file of tree) {
+      if (file.children) {
+        const result = fileFromPath(path, file.children)
         if (result) { return result }
       }
 
