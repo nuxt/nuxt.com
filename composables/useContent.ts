@@ -109,7 +109,7 @@ export const useContent = () => {
    */
   const navFromPath = (path: string, tree: NavItem[] = navigation.value) => {
     for (const file of tree) {
-      if (file.slug === path) {
+      if (file.slug === path && !file.id) {
         return file
       }
 
