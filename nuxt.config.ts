@@ -35,6 +35,7 @@ export default defineNuxtConfig({
     '@nuxthq/admin',
     '@nuxtjs/strapi',
     '@nuxt/content',
+    '@nuxt-modules/newsletter',
     'vue-plausible'
   ],
   runtimeConfig: {
@@ -88,6 +89,12 @@ export default defineNuxtConfig({
     highlight: {
       theme: 'one-dark-pro',
       preload: ['ini', 'json', 'js', 'ts', 'html', 'css', 'vue', 'diff', 'shell', 'markdown']
+    }
+  },
+  newsletter: {
+    revue: {
+      apiKey: process.env.REVUE_API_KEY,
+      component: false
     }
   }
 })

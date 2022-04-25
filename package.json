@@ -25,6 +25,7 @@
     "@milkdown/theme-nord": "^6.0.0-next.1",
     "@milkdown/utils": "^6.0.0-next.1",
     "@milkdown/vue": "^6.0.0-next.1",
+    "@nuxt-modules/newsletter": "^0.1.7",
     "@nuxt/content": "npm:@nuxt/content-edge@latest",
     "@nuxthq/admin": "npm:@nuxthq/admin-edge@latest",
     "@nuxthq/ui": "npm:@nuxthq/ui-edge@latest",

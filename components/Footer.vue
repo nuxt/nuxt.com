@@ -82,13 +82,24 @@
 </template>
 
 <script setup lang="ts">
+const { $toast } = useNuxtApp()
+
 const form = reactive({
   email: ''
 })
 const loading = ref(false)
 
-function onSubmit () {
+async function onSubmit () {
+  loading.value = true
 
+  const { error } = await useNewsletterSubscribe(form.email)
+  if (!error.value) {
+    $toast.success({ title: 'Newsletter subscription', description: 'You have been successfully subscribed to Nuxt newsletter.' })
+  } else {
+    $toast.error({ title: 'Newsletter subscription', description: 'Something went wrong. Please try again later.' })
+  }
+
+  loading.value = false
 }
 
 const { data: footerData } = await useAsyncData('footer', () => queryContent('footer').findOne())
