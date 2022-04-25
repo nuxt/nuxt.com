@@ -80,6 +80,9 @@ export default defineComponent({
 .milkdown > .editor > :first-child {
   margin: 0 !important;
 }
+.milkdown>.editor>:first-child > div {
+    margin: 0!important;
+}
 
 .ProseMirror ul {
   list-style: disc;
