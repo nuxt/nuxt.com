@@ -25,8 +25,8 @@
       </ProjectHeader>
     </template>
 
-    <Splitpanes class="flex items-stretch flex-1 min-h-0 overflow-hidden">
-      <Pane
+    <div class="flex items-stretch flex-1 min-h-0 overflow-hidden">
+      <div
         class="flex-1 flex flex-col relative"
         @dragover.prevent
         @dragenter.prevent="onDragEnter"
@@ -43,12 +43,10 @@
           :class="{ 'bg-blue-500 bg-opacity-20 border-blue-500': dragover }"
           style="pointer-events: none;"
         />
-      </Pane>
+      </div>
 
-      <Pane size="21">
-        <ProjectMediaFileAside :medias="medias" class="w-full" />
-      </Pane>
-    </Splitpanes>
+      <ProjectMediaFileAside :medias="medias" />
+    </div>
   </ProjectPage>
 </template>
 
