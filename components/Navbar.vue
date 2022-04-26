@@ -152,7 +152,7 @@ const links = computed(() => {
     icon: 'heroicons-outline:template'
   }, {
     title: 'Projects',
-    slug: team ? `/@${team}/projects` : '/projects',
+    slug: team && user.value?.beta ? `/@${team}/projects` : '/projects',
     exact: true,
     icon: 'heroicons-outline:collection'
   }, {
