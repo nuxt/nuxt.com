@@ -1,12 +1,20 @@
 <template>
   <DocsPage id="smooth" :sticky="false">
     <template #aside>
-      <IntegrationsAside :selected-category="selectedCategory" :selected-version="selectedVersion" />
+      <IntegrationsAside />
     </template>
 
-    <h2 class="font-semibold u-text-gray-900 text-3xl">
-      {{ selectedCategory?.label || 'All integrations' }}
-    </h2>
+    <div class="flex items-center justify-between">
+      <h2 class="font-semibold u-text-gray-900 text-3xl flex items-end gap-3">
+        {{ selectedCategory?.title || 'All' }}
+
+        <span class="u-text-gray-400 font-normal text-base">
+          {{ filteredModules.length }} module{{ filteredModules.length > 1 ? 's' : '' }} found
+        </span>
+      </h2>
+
+      <IntegrationsFilterSort />
+    </div>
 
     <div class="_ellipse hidden lg:block" />
 
@@ -19,31 +27,24 @@
 </template>
 
 <script setup lang="ts">
-const route = useRoute()
-const { modules, categories, versions } = useModules()
-
-const selectedCategory = computed(() => {
-  return categories.value.find(category => category.key === route.query.category)
-})
-
-const selectedVersion = computed(() => {
-  return versions.value.find(version => version.key === route.query.version) || versions.value[0]
-})
+const { modules, selectedCategory, selectedVersion, selectedSort, q } = useModules()
 
 const filteredModules = computed(() => {
-  return [...modules.value].filter((module) => {
-    if (selectedCategory.value && module.category !== selectedCategory.value.key) {
-      return false
-    }
-    if (selectedVersion.value && !module.tags.includes(selectedVersion.value.key)) {
-      return false
-    }
-    if (route.query.q && !['name', 'npm', 'category', 'description', 'repo'].map(field => module[field]).filter(Boolean).some(value => value.search(new RegExp(route.query.q, 'i')) !== -1)) {
-      return false
-    }
+  return [...modules.value]
+    .filter((module) => {
+      if (selectedCategory.value && module.category !== selectedCategory.value.key) {
+        return false
+      }
+      if (selectedVersion.value && !module.tags.includes(selectedVersion.value.key)) {
+        return false
+      }
+      if (q.value && !['name', 'npm', 'category', 'description', 'repo'].map(field => module[field]).filter(Boolean).some(value => value.search(new RegExp(q.value, 'i')) !== -1)) {
+        return false
+      }
 
-    return true
-  })
+      return true
+    })
+    .sort((a, b) => b[selectedSort.value.key] - a[selectedSort.value.key])
 })
 </script>
 
