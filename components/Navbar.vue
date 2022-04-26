@@ -157,8 +157,7 @@ const links = computed(() => {
     icon: 'heroicons-outline:collection'
   }, {
     title: 'Community',
-    slug: team ? `/@${team}` : '/community',
-    exact: true,
+    slug: '/community',
     icon: 'heroicons-outline:globe'
   }]
 })
