@@ -7,10 +7,9 @@
         <div class="grid grid-cols-10 gap-8 relative">
           <aside
             v-if="!!$slots.aside"
-            class="pb-8 overflow-x-hidden overflow-y-auto lg:pb-0 hidden lg:block lg:sticky lg:pt-8 lg:-mt-8 lg:self-start col-span-2"
+            class="pb-8 overflow-x-hidden overflow-y-auto lg:pb-0 hidden lg:block  lg:self-start col-span-2"
             :class="{
-              'lg:max-h-[calc(100vh-64px)] lg:top-16': offset,
-              'lg:top-0 lg:max-h-screen': !offset
+              'lg:max-h-[calc(100vh-64px)] lg:top-16 lg:sticky lg:pt-8 lg:-mt-8': sticky
             }"
           >
             <slot name="aside" />
@@ -27,7 +26,7 @@
 
 <script setup lang="ts">
 defineProps({
-  offset: {
+  sticky: {
     type: Boolean,
     default: true
   }
