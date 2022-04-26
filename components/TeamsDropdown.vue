@@ -67,16 +67,16 @@ const to = (slug) => {
 
 const items = computed(() => {
   const profile = {
-    label: user.value.username || user.value.email,
-    avatar: user.value.avatar,
-    to: to(user.value.username),
-    slug: user.value.username,
+    label: user.value?.username || user.value?.email,
+    avatar: user.value?.avatar,
+    to: to(user.value?.username),
+    slug: user.value?.username,
     click () {
-      activeTeam.value = user.value.username
+      activeTeam.value = user.value?.username
     }
   }
 
-  const teams = (user.value.memberships || []).map((membership) => {
+  const teams = (user.value?.memberships || []).map((membership) => {
     const { team } = membership
 
     return {
@@ -104,7 +104,7 @@ const items = computed(() => {
         slot: 'reverse-icon'
       },
       {
-        label: activeTeam.value === user.value.username ? 'User settings' : 'Team settings',
+        label: activeTeam.value === user.value?.username ? 'User settings' : 'Team settings',
         icon: 'heroicons-outline:cog',
         to: { name: '@team-settings', params: { team: activeTeam.value } },
         slot: 'reverse-icon'
@@ -137,7 +137,7 @@ const activeItem = computed(() => {
 const currentTeam = ref(null)
 
 watch(activeItem, (value) => {
-  if (value && value.slug !== user.value.username) {
+  if (value && value.slug !== user.value?.username) {
     currentTeam.value = value
   }
 }, { immediate: true })
