@@ -12,7 +12,7 @@
         </div>
       </div>
       <div class="flex-shrink-0 pb-2 text-center">
-        <ProfileDropdown class="-ml-2" />
+        <TeamsDropdown compact />
       </div>
     </div>
   </div>
