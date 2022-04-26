@@ -1,5 +1,5 @@
 <template>
-  <DocsPage id="smooth" :offset="false">
+  <DocsPage id="smooth" :sticky="false">
     <template #aside>
       <IntegrationsAside :selected-category="selectedCategory" :selected-version="selectedVersion" />
     </template>
