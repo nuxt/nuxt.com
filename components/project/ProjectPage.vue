@@ -5,7 +5,7 @@
       <slot name="header" />
     </div>
 
-    <Splitpanes class="flex flex-1 u-bg-gray-50 overflow-hidden">
+    <Splitpanes class="flex flex-col flex-1 u-bg-gray-50 overflow-hidden">
       <!-- Secondary column (hidden on smaller screens) -->
       <Pane v-if="$slots.aside" size="15" class="hidden lg:block lg:flex-shrink-0">
         <div class="relative flex flex-col h-full overflow-y-auto border-r w-full u-border-gray-200 u-bg-white">
@@ -21,7 +21,7 @@
         </div>
       </Pane>
 
-      <Pane>
+      <Pane class="flex flex-col flex-1">
         <slot />
       </Pane>
     </Splitpanes>
@@ -29,13 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import Splitpanes from '../../node_modules/splitpanes/src/components/splitpanes/Splitpanes.vue'
-import Pane from '../../node_modules/splitpanes/src/components/splitpanes/Pane.vue'
-
-defineComponent({
-  Splitpanes,
-  Pane
-})
+import { Splitpanes, Pane } from 'splitpanes'
 
 defineProps({
   title: {

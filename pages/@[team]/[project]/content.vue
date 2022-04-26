@@ -1,5 +1,5 @@
 <template>
-  <ProjectPage>
+  <ProjectPage :splitpanes="true">
     <template v-if="computedFiles.length" #aside>
       <div class="flex flex-col flex-1 overflow-y-hidden">
         <ProjectContentFilesTree :tree="tree" class="flex-1 overflow-y-auto" />
