@@ -29,7 +29,7 @@
 
           <div class="flex items-end justify-between gap-3 md:block">
             <p class="u-text-gray-900 font-semibold text-4xl md:mb-2">
-              {{ formatNumber(stats.downloads) }}
+              {{ formatNumber(stats.downloads, 1) }}
             </p>
             <p class="text-xs u-text-gray-500">
               Downloads Last 30 Days
