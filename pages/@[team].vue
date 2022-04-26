@@ -9,7 +9,7 @@ import type { Ref } from 'vue'
 import type { Team, User } from '~/types'
 
 definePageMeta({
-  middleware: ['auth', 'team']
+  middleware: ['auth', 'beta', 'team']
 })
 
 const user = useStrapiUser() as Ref<User>

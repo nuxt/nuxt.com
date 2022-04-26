@@ -13,7 +13,6 @@ import type { PropType, Ref } from 'vue'
 import type { Team, Project, User, SocketUser, GitHubDraft } from '~/types'
 
 definePageMeta({
-  middleware: 'auth',
   layout: false
 })
 

@@ -7,7 +7,7 @@ import type { Ref } from 'vue'
 import type { User, Membership } from '~/types'
 
 definePageMeta({
-  middleware: 'auth'
+  middleware: ['auth']
 })
 
 const router = useRouter()
