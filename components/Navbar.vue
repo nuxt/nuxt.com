@@ -23,7 +23,7 @@
         <ul class="justify-center hidden lg:col-span-4 gap-x-10 lg:flex">
           <li v-for="(link, index) in links" :key="index">
             <NavbarPopover v-if="link.children?.length" :link="link" />
-            <ULink
+            <NuxtLink
               v-else
               :to="link.slug"
               :exact="link.exact"
@@ -34,7 +34,7 @@
               }"
             >
               {{ link.title }}
-            </ULink>
+            </NuxtLink>
           </li>
         </ul>
 
