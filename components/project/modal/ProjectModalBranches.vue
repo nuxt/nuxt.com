@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { useMagicKeys, whenever } from '@vueuse/core'
+import { useMagicKeys, whenever, and, useActiveElement } from '@vueuse/core'
 import type { GitHubBranch, Project } from '~/types'
 
 const props = defineProps({
@@ -26,6 +26,8 @@ const project: Project = inject('project')
 const emit = defineEmits(['update:modelValue'])
 
 const keys = useMagicKeys()
+const activeElement = useActiveElement()
+
 const {
   isDraft: isDraftContent,
   draft: contentDraft,
@@ -79,9 +81,11 @@ const actions = computed(() => ([
   (isDraftContent.value || isDraftMedia.value) && { key: 'reset', label: 'Revert draft', icon: 'heroicons-outline:reply', click: onResetDraftClick }
 ].filter(Boolean)))
 
+const notUsingInput = computed(() => !(activeElement.value?.tagName === 'INPUT' || activeElement.value?.tagName === 'TEXTAREA' || activeElement.value?.contentEditable === 'true'))
+
 // Watch
 
-whenever(keys.meta_b, () => {
+whenever(and(keys.meta_b, notUsingInput), () => {
   isOpen.value = !isOpen.value
 })
 
