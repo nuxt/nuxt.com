@@ -10,7 +10,7 @@
 
 <script setup lang="ts">
 import type { PropType, Ref } from 'vue'
-import type { Team, Project, User, SocketUser, GitHubDraft } from '~/types'
+import type { Team, Project, User, SocketUser, GitHubDraft, GitHubBranch } from '~/types'
 
 definePageMeta({
   layout: false
@@ -43,7 +43,7 @@ if (error.value) {
 provide('project', project.value)
 provide('activeUsers', activeUsers)
 
-const { branch, branches, fetch: fetchBranches } = useProjectBranches(project.value)
+const { branch, branches, fetch: fetchBranches, select: selectBranch } = useProjectBranches(project.value)
 const { fetch: fetchComponents } = useProjectComponents(project.value)
 const {
   file: contentFile,
@@ -51,9 +51,10 @@ const {
   computedFiles: contentFiles,
   fetch: fetchContentFiles,
   select: selectContentFile,
-  init: initContentFile
+  init: initContentFile,
+  refresh: refreshContentFiles
 } = useProjectFiles(project.value, 'content')
-const { fetch: fetchMediaFiles } = useProjectFiles(project.value, 'public')
+const { fetch: fetchMediaFiles, refresh: refreshMediaFiles } = useProjectFiles(project.value, 'public')
 
 try {
   await fetchBranches()
@@ -92,6 +93,24 @@ onMounted(() => {
   // Listen to new collaborators joining the room
   $socket.on('project:active-users', (users: SocketUser[]) => {
     activeUsers.value = users
+  })
+
+  // Listen to changes on branches
+  $socket.on('branch:create', (createdBranch: GitHubBranch) => {
+    if (!branches.value.find(b => b.name === createdBranch.name)) {
+      branches.value = [...branches.value, createdBranch]
+    }
+  })
+  $socket.on('branch:delete', (deletedBranch: GitHubBranch) => {
+    if (branch.value.name === deletedBranch.name) {
+      selectBranch(branches.value.find(b => b.name === project.value.repository.default_branch))
+
+      refreshContentFiles()
+      refreshMediaFiles()
+    }
+    if (branches.value.find(b => b.name === deletedBranch.name)) {
+      branches.value = branches.value.filter(b => b.name !== deletedBranch.name)
+    }
   })
 
   // Listen to change on draft by other collaborators
