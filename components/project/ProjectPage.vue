@@ -7,8 +7,8 @@
 
     <Splitpanes class="flex flex-1 u-bg-gray-50 overflow-hidden">
       <!-- Secondary column (hidden on smaller screens) -->
-      <Pane v-if="$slots.aside" max-size="15" class="hidden lg:block lg:flex-shrink-0">
-        <div class="relative flex flex-col h-full overflow-y-auto border-r w-72 u-border-gray-200 u-bg-white">
+      <Pane v-if="$slots.aside" size="15" class="hidden lg:block lg:flex-shrink-0">
+        <div class="relative flex flex-col h-full overflow-y-auto border-r w-full u-border-gray-200 u-bg-white">
           <div v-if="title" class="sticky top-0 flex items-center justify-between flex-shrink-0 h-16 px-6 u-bg-white z-[5]">
             <p class="text-lg font-semibold u-text-gray-900">
               {{ title }}
@@ -41,6 +41,10 @@ defineProps({
   title: {
     type: String,
     default: ''
+  },
+  splitpanes: {
+    type: Boolean,
+    default: false
   }
 })
 </script>
