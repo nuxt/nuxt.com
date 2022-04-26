@@ -12,7 +12,7 @@
           <UAvatar :src="`https://github.com/${project.repository.owner}.png`" :alt="project.name" size="sm" class="flex-shrink-0" />
         </NuxtLink>
 
-        <ProfileDropdown size="xs" />
+        <TeamsDropdown compact />
       </div>
     </UContainer>
   </header>

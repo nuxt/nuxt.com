@@ -9,7 +9,7 @@
         <UAvatar :src="`https://github.com/${project.repository.owner}.png`" :alt="project.name" size="sm" class="flex-shrink-0" />
       </NuxtLink>
 
-      <ProfileDropdown size="xs" />
+      <TeamsDropdown compact />
     </template>
 
     <UVerticalNavigation :links="links" class="py-4 px-2 sm:px-4 flex-1 overflow-y-scroll" @click="isOpen = false" />
