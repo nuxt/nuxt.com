@@ -41,19 +41,19 @@ const start = () => {
     startTimer()
   }
 }
-const set = (num) => {
-  data.show = true
-  data.canSucceed = true
-  data.percent = Math.min(100, Math.max(0, Math.floor(num)))
-}
+// const set = (num) => {
+//   data.show = true
+//   data.canSucceed = true
+//   data.percent = Math.min(100, Math.max(0, Math.floor(num)))
+// }
 const increase = (num) => {
   data.percent = Math.min(100, Math.floor(data.percent + num))
 }
-const decrease = (num) => {
-  data.percent = Math.max(0, Math.floor(data.percent - num))
-}
-const pause = () => clearInterval(_timer)
-const resume = () => startTimer()
+// const decrease = (num) => {
+//   data.percent = Math.max(0, Math.floor(data.percent - num))
+// }
+// const pause = () => clearInterval(_timer)
+// const resume = () => startTimer()
 const finish = () => {
   data.percent = 100
   hide()
@@ -67,9 +67,9 @@ const hide = () => {
     }, 400)
   }, 500)
 }
-const fail = (error) => {
-  data.canSucceed = false
-}
+// const fail = (error) => {
+//   data.canSucceed = false
+// }
 const startTimer = () => {
   data.show = true
   _cut = 10000 / Math.floor(props.duration)
