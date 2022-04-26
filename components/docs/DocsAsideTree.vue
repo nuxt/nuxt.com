@@ -9,7 +9,7 @@
         'u-border-gray-300 hover:u-border-gray-900': !isActive(link)
       }"
     >
-      <ULink
+      <NuxtLink
         :to="link.slug"
         class="block py-1.5 flex items-center justify-between focus:outline-none w-full"
         :exact="link.exact"
@@ -24,7 +24,7 @@
         <span>{{ link.title }}</span>
 
         <UIcon v-if="link.icon" :name="link.icon" class="w-5 h-5 u-text-gray-500" />
-      </ULink>
+      </NuxtLink>
 
       <DocsAsideTree
         v-if="link.children?.length && (max === null || ((level + 1) < max))"

@@ -28,7 +28,7 @@
 
                 <ul v-if="child.children?.length" class="space-y-1.5 h-full columns-[145px]">
                   <li v-for="(sublink, subindex) of child.children" :key="subindex">
-                    <ULink
+                    <NuxtLink
                       :to="sublink.slug"
                       :target="sublink.target"
                       class="text-[15px] focus:outline-none"
@@ -39,7 +39,7 @@
                       @click="close"
                     >
                       {{ sublink.title }}
-                    </ULink>
+                    </NuxtLink>
                   </li>
                 </ul>
               </div>

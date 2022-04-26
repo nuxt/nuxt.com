@@ -16,7 +16,7 @@
         </div>
 
         <div class="flex justify-center col-span-4 gap-x-8">
-          <ULink
+          <NuxtLink
             v-for="(link, index) in filteredLinks"
             :key="index"
             :to="link.slug"
@@ -27,7 +27,7 @@
             }"
           >
             {{ link.title }}
-          </ULink>
+          </NuxtLink>
         </div>
 
         <div class="flex gap-3 justify-end">
