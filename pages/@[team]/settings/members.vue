@@ -187,10 +187,10 @@ const onMemberRemove = (member) => {
 }
 
 const confirmMemberRemove = async () => {
-  const isMyself = removingMember.value.id === user.value.id
+  const isMyself = removingMember.value.user.id === user.value.id
 
   try {
-    await client(`/teams/${props.team.id}/members/${removingMember.value.id}`, {
+    await client(`/teams/${props.team.id}/members/${removingMember.value.user.id}`, {
       method: 'DELETE'
     })
 
