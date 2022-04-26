@@ -25,7 +25,6 @@ const props = defineProps({
 
 const user = useStrapiUser() as Ref<User>
 const route = useRoute()
-const router = useRouter()
 const client = useStrapiClient()
 const { $socket } = useNuxtApp()
 
@@ -37,7 +36,7 @@ const activeUsers: Ref<SocketUser[]> = ref([])
 
 const { data: project, error } = await useAsyncData(`projects-${route.params.project}`, () => client<Project>(props.team ? `/teams/${props.team.slug}/projects/${route.params.project}` : `/projects/${route.params.project}`))
 if (error.value) {
-  router.push({ name: '@team-projects', params: { team: props.team ? props.team.slug : user.value.username } })
+  navigateTo({ name: '@team-projects', params: { team: props.team ? props.team.slug : user.value.username } })
 }
 
 provide('project', project.value)
