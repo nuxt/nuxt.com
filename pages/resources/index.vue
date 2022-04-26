@@ -3,7 +3,5 @@
 </template>
 
 <script setup lang="ts">
-const router = useRouter()
-
-router.replace('/resources/blog')
+navigateTo('/resources/blog')
 </script>
