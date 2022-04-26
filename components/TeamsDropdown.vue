@@ -2,13 +2,13 @@
   <UDropdown v-if="user" :items="items" placement="bottom-start" container-class="w-48 z-20 py-2 lg:!-mx-2" item-disabled-class>
     <template #default="{ open }">
       <UButton
-        icon="heroicons-outline:selector"
+        :icon="compact ? '' : 'heroicons-outline:selector'"
         trailing
         square
         variant="transparent"
         icon-base-class="u-text-gray-400 flex-shrink-0 hidden lg:block"
-        class="flex items-center justify-between -mr-2 !border-0 lg:w-44"
-        :class="{ 'u-text-gray-700': open }"
+        class="flex items-center justify-between !border-0"
+        :class="{ 'u-text-gray-700': open, 'lg:w-44 -mr-2 ': !compact, '!p-0': compact }"
       >
         <div class="flex-1 flex items-center min-w-0">
           <div class="relative w-6 h-6 lg:-m-0.5 flex-shrink-0">
@@ -19,7 +19,7 @@
               :class="{ '-mb-0.5 -mr-0.5 w-3 h-3': activeItem.slug !== user.username, 'w-6 h-6': activeItem.slug === user.username }"
             >
           </div>
-          <span class="hidden ml-3 text-sm font-medium truncate lg:block">{{ activeItem.label }}</span>
+          <span v-if="!compact" class="hidden ml-3 text-sm font-medium truncate lg:block">{{ activeItem.label }}</span>
         </div>
       </UButton>
     </template>
@@ -52,14 +52,25 @@ const router = useRouter()
 const { logout } = useStrapiAuth()
 const activeTeam = useTeam()
 
+defineProps({
+  compact: {
+    type: Boolean,
+    default: false
+  }
+})
+
 const to = (slug) => {
-  if (route.params.team) {
+  if (route.params.project) {
+    return { name: '@team-projects', params: { team: slug } }
+  } else if (route.params.team) {
     const to = { name: route.name, params: { ...route.params, team: slug }, query: route.query }
 
-    const resolvedRoute = router.resolve(to)
-    if (resolvedRoute) {
-      return to
-    }
+    try {
+      const resolvedRoute = router.resolve(to)
+      if (resolvedRoute) {
+        return to
+      }
+    } catch (e) {}
   }
 
   return route
