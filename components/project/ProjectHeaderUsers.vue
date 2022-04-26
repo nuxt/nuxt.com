@@ -6,7 +6,7 @@
       class="flex items-center"
       tooltip-class="w-auto max-w-xs px-3 py-2.5 rounded shadow u-bg-gray-800 u-text-white text-xs text-center space-y-1"
       :class="{ 'cursor-pointer': canJump(activeUser) }"
-      @click="navigateTo(activeUser)"
+      @click="jumpTo(activeUser)"
     >
       <UAvatar :src="activeUser.avatar" size="xs" />
 
@@ -47,7 +47,7 @@ function canJump (activeUser) {
   return activeUser.id !== user.value?.id && (activeUser.branch !== branch.value.name || !!activeUser.file)
 }
 
-async function navigateTo (activeUser: SocketUser) {
+async function jumpTo (activeUser: SocketUser) {
   if (activeUser.id === user.value?.id) {
     return
   }
