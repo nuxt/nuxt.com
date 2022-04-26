@@ -1,5 +1,7 @@
 <template>
-  <Page>
-    Public page
-  </Page>
+  <div />
 </template>
+
+<script setup lang="ts">
+navigateTo({ name: '@team-projects' })
+</script>
