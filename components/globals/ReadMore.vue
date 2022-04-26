@@ -1,6 +1,6 @@
 <template>
   <Alert icon="👉">
-    Read more in <ULink :to="link" v-html="computedTitle" />.
+    Read more in <NuxtLink :to="link" v-html="computedTitle" />.
   </Alert>
 </template>
 
