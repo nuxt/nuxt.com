@@ -22,6 +22,21 @@ export const useModules = () => {
     pending.value = false
   }
 
+  // Data
+
+  const versions = ref([
+    { key: '3.x', label: 'v3' },
+    { key: '2.x-bridge', label: 'Bridge' },
+    { key: '2.x', label: 'v2' }
+  ])
+
+  const sorts = ref([
+    { key: 'downloads', label: 'Downloads' },
+    { key: 'stars', label: 'Stars' },
+    { key: 'publishedAt', label: 'Updated' },
+    { key: 'createdAt', label: 'Created' }
+  ])
+
   // Computed
 
   const modules = computed(() => {
@@ -48,12 +63,6 @@ export const useModules = () => {
       }
     })
   })
-
-  const versions = computed(() => ([
-    { key: '3.x', label: 'v3' },
-    { key: '2.x-bridge', label: 'Bridge' },
-    { key: '2.x', label: 'v2' }
-  ]))
 
   const categories = computed(() => {
     return [...new Set(modules.value.map(module => module.category))].map(category => ({
@@ -82,14 +91,36 @@ export const useModules = () => {
     }
   })
 
+  const selectedCategory = computed(() => {
+    return categories.value.find(category => category.key === route.query.category)
+  })
+
+  const selectedVersion = computed(() => {
+    return versions.value.find(version => version.key === route.query.version) || versions.value[0]
+  })
+
+  const selectedSort = computed(() => {
+    return sorts.value.find(version => version.key === route.query.sortBy) || sorts.value[0]
+  })
+
+  const q = computed(() => {
+    return route.query.q
+  })
+
   return {
     // Http
     fetch,
     // Data
-    modules,
     versions,
+    sorts,
+    // Computed
+    modules,
     categories,
     contributors,
-    stats
+    stats,
+    selectedCategory,
+    selectedVersion,
+    selectedSort,
+    q
   }
 }
