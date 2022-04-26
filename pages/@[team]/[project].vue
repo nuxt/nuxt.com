@@ -39,6 +39,10 @@ if (error.value) {
   navigateTo({ name: '@team-projects', params: { team: props.team ? props.team.slug : user.value.username } })
 }
 
+useHead({
+  title: project.value.name
+})
+
 provide('project', project.value)
 provide('activeUsers', activeUsers)
 
