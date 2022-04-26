@@ -9,16 +9,7 @@
           <Markdown use="description" unwrap="p" />
         </p>
 
-        <UInput
-          v-model="q"
-          name="search"
-          placeholder="Search an integration"
-          class="w-full max-w-sm"
-          custom-class=" !u-bg-gray-50"
-          size="lg"
-          icon="heroicons-outline:search"
-          autocomplete="off"
-        />
+        <IntegrationsFilterSearch />
       </div>
 
       <div class="flex items-center justify-center lg:col-span-1 relative">
@@ -70,26 +61,5 @@
 <script setup lang="ts">
 import { formatNumber } from '~/utils'
 
-const route = useRoute()
-const router = useRouter()
-
 const { stats } = useModules()
-
-const q = computed({
-  get () {
-    return route.query.q
-  },
-  set (q) {
-    router.push({
-      name: 'integrations',
-      query: {
-        ...route.query,
-        q: q || undefined
-      },
-      params: {
-        stop: 'true'
-      }
-    })
-  }
-})
 </script>
