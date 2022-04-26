@@ -45,8 +45,8 @@
         />
       </Pane>
 
-      <Pane max-size="21">
-        <ProjectMediaFileAside :medias="medias" />
+      <Pane size="21">
+        <ProjectMediaFileAside :medias="medias" class="w-full" />
       </Pane>
     </Splitpanes>
   </ProjectPage>
@@ -55,15 +55,8 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
 import { isEmpty } from 'lodash-es'
-import Splitpanes from '../../../node_modules/splitpanes/src/components/splitpanes/Splitpanes.vue'
-import Pane from '../../../node_modules/splitpanes/src/components/splitpanes/Pane.vue'
 import type { Team, Project } from '~/types'
 import { getAvailablePath } from '~/utils/tree'
-
-defineComponent({
-  Splitpanes,
-  Pane
-})
 
 defineProps({
   team: {
