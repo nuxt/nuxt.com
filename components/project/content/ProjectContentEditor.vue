@@ -15,6 +15,10 @@ export default defineComponent({
       type: String,
       default: ''
     },
+    room: {
+      type: String,
+      required: true
+    },
     components: {
       type: Array as () => UnwrapOptions['components'],
       default: () => []
@@ -36,6 +40,7 @@ export default defineComponent({
     const { useEditor } = await import('~/editor/use')
 
     const editor = useEditor({
+      room: computed(() => props.room),
       components: computed(() => [...props.components]),
       content: computed(() => props.modelValue),
       onChanged: (content: string) => (content !== props.modelValue) && emit('update:modelValue', content)

@@ -42,10 +42,12 @@
       </ProjectHeader>
     </template>
 
-    <div class="flex items-stretch flex-1 min-h-0 overflow-hidden">
+    <div class="flex items-stretch flex-1 min-h-0">
       <div v-if="computedFiles.length" ref="editorScroll" class="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto">
         <ProjectContentEditor
           v-if="file"
+          :key="`project-${project.id}-${branch.name}-${file.path}`"
+          :room="`project-${project.id}-${branch.name}-${file.path}`"
           :model-value="parsedContent"
           :components="components || []"
           class="flex flex-col flex-1"
@@ -196,16 +198,16 @@ onMounted(() => {
 
   $socket.emit('file:join', `project-${project.id}:${branch.value.name}:${file.value.path}`)
 
-  $socket.on('file:update', ({ branch: draftBranch, file: draftFile }) => {
-    if (draftBranch !== branch.value.name) {
-      return
-    }
-    if (file.value && draftFile.path !== file.value.path) {
-      return
-    }
+  // $socket.on('file:update', ({ branch: draftBranch, file: draftFile }) => {
+  //   if (draftBranch !== branch.value.name) {
+  //     return
+  //   }
+  //   if (file.value && draftFile.path !== file.value.path) {
+  //     return
+  //   }
 
-    content.value = draftFile.content
-  })
+  //   content.value = draftFile.content
+  // })
 })
 
 onUnmounted(() => {

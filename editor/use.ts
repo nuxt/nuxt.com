@@ -13,7 +13,10 @@ import { isRef, ref, unref, computed, watch } from 'vue'
 import context, { componentSchemasCtx } from './context'
 
 // Internal plugins
-import plugins from './plugins'
+import mdc from './plugins/mdc'
+import slash from './plugins/slash'
+import trailingParagraph from './plugins/trailing-paragraph'
+import collaborative from './plugins/collaborative'
 
 // Theme
 import { dark, light } from './theme'
@@ -43,10 +46,10 @@ export const useEditor = (options: Options) => {
       .use(gfm)
       .use(prism)
       .use(tooltip())
-
-    for (const plugin of plugins) {
-      instance.use(plugin)
-    }
+      .use(collaborative({ room: unref(options.room) ?? 'default' }))
+      .use(mdc)
+      .use(slash)
+      .use(trailingParagraph)
 
     return instance
   })
@@ -75,6 +78,13 @@ export const useEditor = (options: Options) => {
   if (isRef(options.components)) {
     watch(options.components, (components) => {
       instance?.action(ctx => ctx.set(componentSchemasCtx, components))
+    })
+  }
+
+  // Reactive room
+  if (isRef(options.room)) {
+    watch(options.room, () => {
+      editor.value = makeEditor()
     })
   }
 
