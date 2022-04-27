@@ -1,5 +1,5 @@
 <template>
-  <ul>
+  <ul class="relative">
     <li v-for="(file, index) of tree" :key="index">
       <div
         class="flex items-center w-full py-2 pr-6 text-sm font-medium border-r-2 group focus:u-bg-gray-50 focus:outline-none target"
