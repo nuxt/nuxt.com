@@ -624,14 +624,7 @@
     prosemirror-view "^1.23.6"
     tslib "^2.3.1"
 
-"@milkdown/theme-nord@^6.0.0-next.1":
-  version "6.0.0-next.1"
-  resolved "https://registry.yarnpkg.com/@milkdown/theme-nord/-/theme-nord-6.0.0-next.1.tgz#ca6770db508144ab9aeeb3bb2953351df0ea616c"
-  integrity sha512-F3xdaxZHNKDt0OglYtrfrFfEw5ojka9IHLmiN+srEOMQYzNR1PztB8pqkvUbsSpAz7MLssZyMNnladKS9tnIpA==
-  dependencies:
-    "@milkdown/theme-pack-helper" "6.0.0-next.1"
-
-"@milkdown/theme-pack-helper@6.0.0-next.1":
+"@milkdown/theme-pack-helper@^6.0.0-next.1":
   version "6.0.0-next.1"
   resolved "https://registry.yarnpkg.com/@milkdown/theme-pack-helper/-/theme-pack-helper-6.0.0-next.1.tgz#9fe88b4175e753348638c4bd9d1d50b3b896b05a"
   integrity sha512-Xb2j4+cSwYNupj9D3J432nqXFSfVZRO44MdhFP9iJ0rgYI/ZgQCDmVf3j7rLqz02tps4TPZQqlhK3kPzlZIizg==
