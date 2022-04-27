@@ -72,24 +72,9 @@ const isDisabled = f => f.status === 'deleted' || (isContentPage.value && conten
 const currentFiles = computed(() => {
   let currentFiles = []
 
-  if (isContentPage.value) {
-    let files = [...contentFiles.value]
-    if (contentFile.value) {
-      files = files.filter(f => f.path !== contentFile.value.path)
-    }
-
+  if (isMediaPage.value) {
     currentFiles = [
-      ...files,
-      ...mediaFiles.value
-    ]
-  } else if (isMediaPage.value) {
-    let files = [...mediaFiles.value]
-    if (mediaFile.value) {
-      files = files.filter(f => f.path !== mediaFile.value.path)
-    }
-
-    currentFiles = [
-      ...files,
+      ...mediaFiles.value,
       ...contentFiles.value
     ]
   } else {
