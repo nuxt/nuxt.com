@@ -1,72 +1,65 @@
 <template>
-  <div class="absolute top-0 left-0 mt-8 grid grid-cols-12 w-full">
+  <div class="absolute top-0 left-0 mt-8 grid grid-cols-12 w-full h-[300px]">
     <div class="relative -top-40 lg:top-0 u-bg-gray-900 rounded-md col-span-full lg:col-span-7 p-5 overflow-hidden">
       <div class="fromscratch-code-wrapper-anim">
         <div class="opacity-100 fromscratch-code-bash-anim">
           <p class="flex">
-            <span>$&nbsp;</span><span class="fromscratch-yarn-addnuxt">yarn add <span class="text-green">nuxt</span></span>
+            <span class="text-white">$&nbsp;</span><span class="fromscratch-yarn-addnuxt text-white">yarn add <span class="text-green">nuxt</span></span>
           </p>
-          <p class="fromscratch-loading-anim opacity-0">
+          <p class="fromscratch-loading-anim opacity-0 text-white">
             > Loading...
           </p>
           <div class="fromscratch-progressbars-install mt-2 w-1/2">
-            <div class="fromscratch-progressbar" />
-            <div class="fromscratch-progressbar" />
-            <div class="fromscratch-progressbar" />
-          </div>
-          <p class="flex">
-            <span class="opacity-0 fromscratch-seconddollar-anim">$&nbsp;</span><span class="fromscratch-yarn-rundev">yarn run dev</span>
-          </p>
-          <div class="fromscratch-progressbars-dev">
             <div class="fromscratch-progressbar-anim u-bg-gray-400" />
             <div class="fromscratch-progressbar-anim u-bg-gray-500" />
-            <div class="fromscratch-progressbar-anim bg-green-500" />
+            <div class="fromscratch-progressbar-anim u-bg-gray-600" />
           </div>
-          <p class="flex items-center fromscratch-compiled-anim">
-            <IconCheck class="mr-2 nui-icon-md text-green w-4 h-4" />
+          <p class="flex">
+            <span class="opacity-0 fromscratch-seconddollar-anim text-white">$&nbsp;</span><span class="fromscratch-yarn-rundev text-white">yarn run dev</span>
+          </p>
+          <div class="fromscratch-progressbars-dev mt-2 w-1/2">
+            <div class="fromscratch-progressbar-anim u-bg-gray-400" />
+            <div class="fromscratch-progressbar-anim u-bg-gray-500" />
+            <div class="fromscratch-progressbar-anim u-bg-gray-600" />
+          </div>
+          <p class="flex items-center opacity-0 fromscratch-compiled-anim text-white">
+            <UIcon name="heroicons-outline:check" />
             compiled
           </p>
         </div>
         <div class="absolute top-0 left-0 w-full pt-8 h-full opacity-0 fromscratch-code-ide-anim">
           <div class="absolute h-10 lg:w-full top-6 -left-5 border-b-2 border-gray-200 w-[112%]">
             <div class="flex h-full w-full items-center pl-4">
-              <span class="rounded-full mr-2 bg-gray-500 h-[12px] w-[12px]" />
-              <span class="rounded-full mr-2 bg-gray-500 h-[12px] w-[12px]" />
-              <span class="rounded-full mr-2 bg-gray-500 h-[12px] w-[12px]" />
+              <span class="rounded-full mr-2 u-bg-gray-500 h-[12px] w-[12px]" />
+              <span class="rounded-full mr-2 u-bg-gray-500 h-[12px] w-[12px]" />
+              <span class="rounded-full mr-2 u-bg-gray-500 h-[12px] w-[12px]" />
             </div>
             <p class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-gray-400">
               index.vue
             </p>
           </div>
-          <div class="absolute top-[70px] w-12 -left-5 border-r-2 u-border-gray-400 flex flex-col items-center justify-start pt-3 h-[103%]">
-            <span>1</span>
-            <span>2</span>
-            <span>3</span>
-            <span>4</span>
-            <span>5</span>
-            <span>6</span>
-          </div>
+          <div class="absolute top-[70px] w-12 -left-5 border-r-2 u-border-gray-400 flex flex-col items-center justify-start pt-3 h-[103%]" />
           <div class="pl-12 pt-12 fromscratch-code-ide-content">
             <p>
               <!-- Template tag open -->
-              <span>&lt;</span><span class="text-red-400">template</span><span>&gt;</span>
+              <span class="text-white">&lt;</span><span class="text-blue-500">template</span><span class="text-white">&gt;</span>
             </p>
-            <p><span>&lt;</span><span class="text-red-400">div</span><span>&gt;</span></p>
+            <p><span class="text-white">&lt;</span><span class="text-green-500">div</span><span class="text-white">&gt;</span></p>
             <p>
               <!-- Sidebar component -->
-              <span>&lt;</span><span class="text-red-400">Sidebar</span><span>/&gt;</span>
+              <span class="text-white">&lt;</span><span class="text-green-500">Sidebar</span><span class="text-white">/&gt;</span>
             </p>
             <p>
               <!-- Hello world h1 -->
-              <span>&lt;</span>
-              <span class="text-red-400">h1</span>
-              <span>&gt;</span>Hello world !<span>&lt;</span>&#47;<span class="text-red-400">h1</span>
-              <span>&gt;</span>
+              <span class="text-white">&lt;</span>
+              <span class="text-green-500">h1</span>
+              <span class="text-white">&gt;</span><span class="text-white">Hello world !</span><span class="text-white">&lt;</span><span class="text-white">&#47;</span><span class="text-green-500">h1</span>
+              <span class="text-white">&gt;</span>
             </p>
-            <p><span>&lt;</span>&#47;<span class="text-red-400">div</span><span>&gt;</span></p>
+            <p><span class="text-white">&lt;</span><span class="text-white">&#47;</span><span class="text-green-500">div</span><span class="text-white">&gt;</span></p>
             <p>
               <!-- Template tag open -->
-              <span>&lt;</span>&#47;<span class="text-red-400">template</span><span>&gt;</span>
+              <span class="text-white">&lt;</span><span class="text-white">&#47;</span><span class="text-blue-500">template</span><span class="text-white">&gt;</span>
             </p>
           </div>
         </div>
@@ -74,15 +67,15 @@
     </div>
     <div class="absolute bg-gray-100 right-0 lg:top-1/2 transform -translate-y-1/2 rounded-md w-full lg:w-1/2 opacity-0 overflow-hidden top-[95%] h-[120%] fromscratch-display-anim">
       <div class="overflow-hidden opacity-0 fromscratch-display-loading-anim">
-        <img loading="lazy" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-[80px]" src="~/static/img/home/learn/master/logo.svg">
+        <Logo class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-[80px]" />
         <div class="absolute left-1/2 transform -translate-x-1/2 bottom-8 w-1/2 fromscratch-display-progressbar-anim">
           <div class="absolute left-0 top-0 w-full u-bg-gray-400 rounded-full h-[10px]" />
           <div class="absolute left-0 top-0 w-0 u-bg-gray-500 rounded-full opacity-0 h-[10px] fromscratch-display-progressbar-progress " />
         </div>
       </div>
       <div class="absolute top-0 left-0 h-full w-full">
-        <img loading="lazy" src="~/static/img/home/learn/master/sidebar.svg" class="absolute top-0 h-full left-[150px] fromscratch-display-content-img-anim">
-        <p class="fromscratch-display-content-p-anim absolute top-4 left-6 font-bold text-display-5 u-text-gray-600 opacity-0">
+        <img loading="lazy" src="/docs/framework/v2/sidebar.svg" class="absolute top-0 h-full left-[-150px] fromscratch-display-content-img-anim">
+        <p class="fromscratch-display-content-p-anim absolute top-4 left-6 font-bold text-2xl u-text-gray-600 opacity-0">
           Hello world !
         </p>
       </div>

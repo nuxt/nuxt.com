@@ -1,29 +1,27 @@
 <template>
-  <div ref="anim">
+  <div ref="codeBlockAnim" class="w-full">
     <ul class="flex">
       <li>
-        <UButton variant="transparent" @click="activeCodeBlock = 'fromCLI'">
-          From scratch
-          <span v-if="activeCodeBlock === 'fromCLI'" class="absolute -bottom-1.5 left-0 h-0.5 bg-primary w-1/3" />
+        <UButton variant="transparent" @click="cliActive = false">
+          <span class="text-base" :class="{ 'font-semibold u-text-gray-900': !cliActive }">From scratch</span>
         </UButton>
       </li>
       <li>
-        <UButton variant="transparent" @click="activeCodeBlock = 'fromScratch'">
-          From CLI
-          <span v-if="activeCodeBlock === 'fromScratch'" class="absolute -bottom-1.5 left-0 h-0.5 bg-primary w-1/3" />
+        <UButton variant="transparent" @click="cliActive = true">
+          <span class="text-base" :class="{ 'font-semibold u-text-gray-900': cliActive }">From CLI</span>
         </UButton>
       </li>
     </ul>
 
     <!-- Code blocks -->
-    <div class="mt-40 mb-40 lg:mt-0 lg:mb-0 w-full" :style="{ height: '300px' }">
+    <div class="mt-40 mb-40 lg:mt-0 lg:mb-0 w-full h-[300px]">
       <div ref="codeBlock" class="relative">
         <Transition name="fade">
-          <AnimFromCliCodeblock v-if="activeCodeBlock === 'fromCLI'" />
+          <DocsFrameworkV2CodeBlockCLI v-if="cliActive" />
         </Transition>
 
         <Transition name="fade">
-          <AnimFromScratchCodeblock v-if="activeCodeBlock === 'fromScratch'" />
+          <DocsFrameworkV2CodeBlockFromScratch v-if="!cliActive" />
         </Transition>
       </div>
     </div>
@@ -31,29 +29,29 @@
 </template>
 
 <script setup lang="ts">
+import type { Ref } from 'vue'
 
+const observer = ref() as Ref<IntersectionObserver>
 const activeCodeBlock = ref('')
-const anim = ref(null)
+const codeBlockAnim = ref(null)
 const codeBlock = ref(null)
+const cliActive = ref(false)
 
-onMounted(() => {
-  animationObserver()
-})
-
-function animationObserver () {
-  const callback = (entries) => {
-    entries.forEach(({ _, isIntersecting }) => {
-      if (isIntersecting) {
-        activeCodeBlock.value = 'fromCLI'
-      }
-    })
-  }
-
-  const observer = new IntersectionObserver(callback, {
-    root: anim.value
+const observerCallback = (entries: IntersectionObserverEntry[]) =>
+  entries.forEach(({ isIntersecting }) => {
+    if (isIntersecting) {
+      activeCodeBlock.value = 'fromCLI'
+    }
   })
 
-  observer.observe(codeBlock)
-}
+onMounted(() => {
+  observer.value.observe(codeBlock.value)
+})
+
+// Create intersection observer
+onBeforeMount(() => (observer.value = new IntersectionObserver(observerCallback, { root: codeBlockAnim.value })))
+
+// Destroy it
+onBeforeUnmount(() => observer.value?.disconnect())
 
 </script>
