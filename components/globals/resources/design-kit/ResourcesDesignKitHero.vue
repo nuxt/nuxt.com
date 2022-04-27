@@ -8,8 +8,7 @@
         <p class="font-medium text-lg u-text-gray-500 lg:pr-20">
           <Markdown use="description" unwrap="p" />
         </p>
-        <!-- TODO: update figma link -->
-        <a class="flex-nowrap items-center u-text-gray-900 relative inline-flex items-center group max-w-max" href="https://www.figma.com/@nuxtjs" target="_blank">
+        <a class="flex-nowrap items-center u-text-gray-900 relative inline-flex items-center group max-w-max" href="https://www.figma.com/community/file/1063820502268406301" target="_blank">
           <span class="flex items-center font-semibold gap-x-2">
             <Markdown use="buttonText" unwrap="p" />
             <UIcon name="heroicons-outline:arrow-sm-right" class="w-5 h-5" />
