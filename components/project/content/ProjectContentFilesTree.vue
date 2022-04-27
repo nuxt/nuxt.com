@@ -2,6 +2,7 @@
   <ul class="relative">
     <li v-for="(file, index) of tree" :key="index">
       <div
+        :ref="`file-${file.path}`"
         class="flex items-center w-full py-2 pr-6 text-sm font-medium border-r-2 group focus:u-bg-gray-50 focus:outline-none target"
         :class="{
           [`pl-[${24 + (level * 12)}px]`]: true,
@@ -95,6 +96,17 @@ const root: Root = inject('root')
 const { file: selectedFile, select, openCreateModal, openRenameModal, openRevertModal, openDeleteModal } = useProjectFiles(project, root)
 const { openedDirs, openDir, renameFiles } = useProjectFilesTree(project, root)
 
+const refs = ref({})
+
+onMounted(() => {
+  refs.value = getCurrentInstance().refs
+  scrollToSelectedFile()
+})
+
+watch(() => selectedFile.value.path, () => {
+  nextTick(scrollToSelectedFile)
+})
+
 // Methods
 const isFile = (file: File) => file.type === 'file'
 const isDir = (file: File) => file.type === 'directory'
@@ -103,9 +115,21 @@ const isDraft = (file: File) => !!file.status
 const isSelected = (file: File) => selectedFile.value && file.path === selectedFile.value.path
 const isDeleted = (file: File) => file.status === 'deleted'
 
+const scrollToSelectedFile = () => {
+  if (!selectedFile.value) {
+    return
+  }
+
+  const fileRef = refs.value[`file-${selectedFile.value.path}`]
+  if (fileRef && fileRef[0]) {
+    fileRef[0].scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+  }
+}
+
 const selectFile = (file: File) => {
   // Prevent click when clicking on selected file
   if (selectedFile.value && selectedFile.value.path === file.path) {
+    scrollToSelectedFile()
     return
   }
 
