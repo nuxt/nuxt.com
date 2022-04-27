@@ -2,7 +2,7 @@ import type { File, GitHubFile } from '~/types'
 
 export function mapTree (files: GitHubFile[]) {
   const result: Array<Partial<File>> = []
-  const acc: any = { result }
+  const tree: any = { result }
 
   files.forEach((file) => {
     const paths = file.path.split('/')
@@ -20,12 +20,13 @@ export function mapTree (files: GitHubFile[]) {
             status: file.status
           })
         } else {
-          acc.result.push({ name, type: 'directory', path: arr.slice(0, i + 1).join('/'), children: acc[name].result })
+          const index = acc.result.filter(f => f.type === 'directory').length
+          acc.result.splice(index, 0, { name, type: 'directory', path: arr.slice(0, i + 1).join('/'), children: acc[name].result })
         }
       }
 
       return acc[name]
-    }, acc)
+    }, tree)
   })
 
   return result[0]?.children
