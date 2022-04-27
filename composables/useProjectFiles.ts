@@ -247,9 +247,12 @@ export const useProjectFiles = (project: Project, root: Root) => {
   // Methods
 
   function init () {
-    const currentFile = file.value?.path ? computedFiles.value.find(f => f.path === file.value.path && f.status !== 'deleted') : null
+    let fileToSelect = file.value?.path ? computedFiles.value.find(f => f.path === file.value.path && f.status !== 'deleted') : null
 
-    select(currentFile || computedFiles.value.find(file => file.path.toLowerCase().endsWith('index.md') && file.status !== 'deleted') || computedFiles.value.find(file => file.type === 'blob' && file.status !== 'deleted'))
+    fileToSelect = fileToSelect || computedFiles.value.find(file => file.path.match(/^content\/[0-9.]*index\.md$/i) && file.status !== 'deleted')
+    fileToSelect = fileToSelect || computedFiles.value.find(file => file.type === 'blob' && file.status !== 'deleted')
+
+    select(fileToSelect)
   }
 
   function select (f: GitHubFile) {

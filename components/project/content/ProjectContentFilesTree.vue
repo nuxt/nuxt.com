@@ -1,8 +1,7 @@
 <template>
   <ul class="relative">
-    <li v-for="(file, index) of tree" :key="index">
+    <li v-for="(file, index) of tree" :ref="el => { itemRefs[file.path] = el }" :key="index">
       <div
-        :ref="`file-${file.path}`"
         class="flex items-center w-full py-2 pr-6 text-sm font-medium border-r-2 group focus:u-bg-gray-50 focus:outline-none target"
         :class="{
           [`pl-[${24 + (level * 12)}px]`]: true,
@@ -96,15 +95,14 @@ const root: Root = inject('root')
 const { file: selectedFile, select, openCreateModal, openRenameModal, openRevertModal, openDeleteModal } = useProjectFiles(project, root)
 const { openedDirs, openDir, renameFiles } = useProjectFilesTree(project, root)
 
-const refs = ref({})
+const itemRefs = ref([])
 
 onMounted(() => {
-  refs.value = getCurrentInstance().refs
   scrollToSelectedFile()
 })
 
 watch(() => selectedFile.value.path, () => {
-  nextTick(scrollToSelectedFile)
+  scrollToSelectedFile()
 })
 
 // Methods
@@ -120,10 +118,12 @@ const scrollToSelectedFile = () => {
     return
   }
 
-  const fileRef = refs.value[`file-${selectedFile.value.path}`]
-  if (fileRef && fileRef[0]) {
-    fileRef[0].scrollIntoView({ block: 'nearest', behavior: 'smooth' })
-  }
+  nextTick(() => {
+    const ref = itemRefs.value[selectedFile.value.path]
+    if (ref) {
+      ref.scrollIntoView({ block: 'nearest' })
+    }
+  })
 }
 
 const selectFile = (file: File) => {
