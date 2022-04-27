@@ -24,21 +24,6 @@ Build your next Vue.js application with confidence using Nuxt. An open source fr
 ::
 
 ::docs-framework-v2-section
----
-sectionSm: true
----
-#title
-They spread the word
-#description
-Learn what developer experts love about Nuxt Framework
-#content
-  ::docs-framework-v2-testimonials
-  #buttonText
-  See more
-  ::
-::
-
-::docs-framework-v2-section
 #title
 Easy to learn. Easy to master
 #description
