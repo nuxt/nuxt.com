@@ -53,4 +53,7 @@ Learn everything you need to know, from beginner to master.
 ::docs-framework-v2-section
 #title
 They use Nuxt
+#content
+  ::docs-framework-v2-carousel
+  ::
 ::
