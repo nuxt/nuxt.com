@@ -32,10 +32,10 @@
                       :to="sublink.slug"
                       :target="sublink.target"
                       class="text-[15px] focus:outline-none"
-                      :class="{
+                      :class="[{
                         'u-text-gray-900 font-medium': isActive(sublink),
                         'u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900': !isActive(sublink),
-                      }"
+                      }, sublink.class]"
                       @click="close"
                     >
                       {{ sublink.title }}

@@ -103,58 +103,27 @@ const links = computed(() => {
         target: '_blank'
       }]
     }, {
-      title: 'Partners',
-      icon: 'heroicons-outline:beaker',
-      children: [{
-        title: 'Vercel',
-        slug: 'https://vercel.com',
-        target: '_blank'
-      }, {
-        title: 'Netlify',
-        slug: 'https://www.netlify.com',
-        target: '_blank'
-      }, {
-        title: 'VueStoreFront',
-        slug: 'https://www.vuestorefront.io',
-        target: '_blank'
-      }, {
-        title: 'Layer 0',
-        slug: 'https://www.layer0.co',
-        target: '_blank'
-      }, {
-        title: 'Storyblok',
-        slug: 'https://www.storyblok.com',
-        target: '_blank'
-      }, {
-        title: 'Strapi',
-        slug: 'https://strapi.io',
-        target: '_blank'
-      }, {
-        title: 'Swell',
-        slug: 'https://www.swell.is',
-        target: '_blank'
-      }]
-    }, {
       title: 'Categories',
       icon: 'heroicons-outline:template',
-      class: 'col-span-3',
+      class: 'col-span-4',
       children: [
         ...categories.value.map(category => ({
           ...category,
           slug: `/integrations?category=${category.key}`
         })),
-        { title: 'All integrations', slug: '/integrations' }
+        { title: 'All integrations', slug: '/integrations', class: 'font-semibold' }
       ]
     }]
-  }, {
-    title: 'Resources',
-    slug: '/resources',
-    icon: 'heroicons-outline:template'
   }, {
     title: 'Projects',
     slug: team && user.value?.beta ? `/@${team}/projects` : '/projects',
     exact: true,
     icon: 'heroicons-outline:collection'
+  },
+  {
+    title: 'Resources',
+    slug: '/resources',
+    icon: 'heroicons-outline:template'
   }, {
     title: 'Community',
     slug: '/community',
