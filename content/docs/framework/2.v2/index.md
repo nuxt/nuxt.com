@@ -38,6 +38,9 @@ Learn everything you need to know, from beginner to master.
 Intuitive Developer Experience
 #description
 Nuxt is shipped with plenty of features to boost developer productivity and the end user experience.
+#content
+  ::docs-framework-v2-dx
+  ::
 ::
 
 ::docs-framework-v2-section
