@@ -3,7 +3,7 @@
     <li v-for="dx in dxData[0].developerExperiences" :key="dx.title" class="flex flex-col gap-y-4 items-center">
       <div class="relative">
         <img src="/docs/framework/v2/hexagon.svg">
-        <div class="w-full absolute top-5 flex justify-center">
+        <div class="w-full h-full absolute top-0 flex justify-center items-center">
           <img :src="`${dx.icon}`" class="w-8 h-8">
         </div>
       </div>
