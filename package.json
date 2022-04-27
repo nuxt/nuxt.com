@@ -22,7 +22,7 @@
     "@milkdown/preset-commonmark": "^6.0.0-next.1",
     "@milkdown/preset-gfm": "^6.0.0-next.1",
     "@milkdown/prose": "^6.0.0-next.1",
-    "@milkdown/theme-nord": "^6.0.0-next.1",
+    "@milkdown/theme-pack-helper": "^6.0.0-next.1",
     "@milkdown/utils": "^6.0.0-next.1",
     "@milkdown/vue": "^6.0.0-next.1",
     "@nuxt/content": "npm:@nuxt/content-edge@latest",
