@@ -53,7 +53,7 @@
               <!-- Hello world h1 -->
               <span class="text-white">&lt;</span>
               <span class="text-green-500">h1</span>
-              <span class="text-white">&gt;</span><span class="text-white">Hello world !</span><span class="text-white">&lt;</span><span class="text-white">&#47;</span><span class="text-green-500">h1</span>
+              <span class="text-white">&gt;</span><span class="text-white">Hello world!</span><span class="text-white">&lt;</span><span class="text-white">&#47;</span><span class="text-green-500">h1</span>
               <span class="text-white">&gt;</span>
             </p>
             <p><span class="text-white">&lt;</span><span class="text-white">&#47;</span><span class="text-green-500">div</span><span class="text-white">&gt;</span></p>
