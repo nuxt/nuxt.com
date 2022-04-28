@@ -1,4 +1,3 @@
-import { Octokit } from '@octokit/rest'
 import config from '#config'
 import { cachifyHandle } from '~/server/utils/cache'
 
