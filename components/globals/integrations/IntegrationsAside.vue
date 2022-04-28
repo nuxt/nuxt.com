@@ -8,7 +8,7 @@
       <IntegrationsFilterVersion />
     </div>
 
-    <ul v-if="categories.length" class="py-2">
+    <ul v-if="categories.length" class="py-3">
       <li v-for="category in categories" :key="category.key">
         <NuxtLink
           :to="category.to"
@@ -29,9 +29,22 @@
         </NuxtLink>
       </li>
     </ul>
+
+    <div class="border-t u-border-gray-200 py-3">
+      <NuxtLink
+        :to="contributeUrl"
+        target="_blank"
+        class="flex items-center gap-1.5 hover:u-text-gray-900 focus:u-text-gray-900 text-sm font-medium"
+      >
+        <UIcon name="fa-brands:github" class="w-4 h-4" />
+        Contribute on GitHub
+      </NuxtLink>
+    </div>
   </nav>
 </template>
 
 <script setup lang="ts">
-const { categories, selectedCategory } = useModules()
+const { categories, selectedCategory, selectedVersion } = useModules()
+
+const contributeUrl = computed(() => selectedVersion.value?.key !== '3.x' ? 'https://github.com/nuxt/nuxt.js' : 'https://github.com/nuxt/framework')
 </script>
