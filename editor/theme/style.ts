@@ -1,5 +1,6 @@
 import { Emotion, ThemeBorder, ThemeFont, ThemeManager, ThemeScrollbar, ThemeShadow, ThemeSize } from '@milkdown/core'
 import { getPalette } from '@milkdown/design-system'
+import { injectProsemirrorView } from '@milkdown/theme-pack-helper'
 
 export const getStyle = (manager: ThemeManager, emotion: Emotion) => {
   const { injectGlobal, css } = emotion
@@ -287,6 +288,8 @@ export const getStyle = (manager: ThemeManager, emotion: Emotion) => {
             }
         }
     `
+
+  injectProsemirrorView(emotion)
 
   injectGlobal`
         .milkdown {
