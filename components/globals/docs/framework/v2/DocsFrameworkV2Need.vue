@@ -23,7 +23,7 @@
 <script setup lang="ts">
 
 const { data: needData } = await useAsyncData('need', () => queryContent('/docs/framework/v2/collections/need').find())
-console.log('needData', needData)
+
 </script>
 
 <style scoped>

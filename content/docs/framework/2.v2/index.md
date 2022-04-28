@@ -60,3 +60,16 @@ All you need is here
   ::docs-framework-v2-need
   ::
 ::
+
+::docs-framework-v2-section
+---
+titleClass: 'text-4xl'
+---
+#title
+Lets go
+#description
+Developers love Nuxt, the open source Vue framework built together with community. Nuxt powers the biggest websites like Big Website.
+#content
+  ::docs-framework-v2-go
+  ::
+::
