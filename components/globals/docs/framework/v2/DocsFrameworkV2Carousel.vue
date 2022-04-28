@@ -4,7 +4,6 @@
     :centered-slides="true"
     :slide-to-clicked-slide="true"
     :slides-per-view="'auto'"
-    :pagination="true"
     :coverflow-effect="{
       rotate: 0,
       stretch: 0,
@@ -12,11 +11,26 @@
       modifier: 1,
     }"
     :initial-slide="2"
-    :modules="[EffectCoverflow, Pagination]"
+    :modules="[EffectCoverflow]"
+    :breakpoints="{
+      640: {
+        slidesPerView: 'auto',
+        spaceBetween: 0
+      },
+      768: {
+        slidesPerView: 'auto',
+        spaceBetween: 0
+      },
+      1280: {
+        slidesPerView: 'auto',
+        spaceBetween: 0
+      }
+    }"
   >
     <SwiperSlide v-for="(slide, i) in showcases" :key="i">
       <img
         :src="slide"
+        class="object-cover h-full w-full rounded-md"
       >
     </SwiperSlide>
   </Swiper>
@@ -32,7 +46,7 @@ import 'swiper/css/effect-coverflow'
 import 'swiper/css/pagination'
 
 // import required modules
-import { EffectCoverflow, Pagination } from 'swiper'
+import { EffectCoverflow } from 'swiper'
 
 const showcases = ref([
   '/docs/framework/v2/showcase-1.png',
@@ -54,12 +68,18 @@ const showcases = ref([
   background-position: center;
   background-size: cover;
   width: 300px;
-  height: 100%;
+  height: 150px;
   filter: blur(4px);
 
   :hover {
     cursor: pointer;
   }
+}
+
+@media (min-width: 1280px)
+.swiper-slide {
+  width: 200px;
+  height: 100pw;
 }
 
 .swiper-slide-prev,
@@ -68,6 +88,7 @@ const showcases = ref([
 }
 
 .swiper-slide-active {
+  object-fit: cover;
   filter: blur(0px);
 }
 
