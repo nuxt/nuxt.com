@@ -5,6 +5,7 @@ import {
   ThemeColor,
   themeFactory,
   ThemeFont,
+  ThemeGlobal,
   ThemeIcon,
   ThemeManager,
   ThemeScrollbar,
@@ -15,7 +16,7 @@ import { useAllPresetRenderer } from '@milkdown/theme-pack-helper'
 
 import { code, typography } from './font'
 import { getIcon } from './icon'
-import { ColorSet, darkColors, lightColors } from './colors'
+import { darkColors, lightColors, ColorSet } from './colors'
 import { getStyle } from './style'
 
 export const font = {
@@ -56,53 +57,54 @@ export const createTheme = (emotion: Emotion, manager: ThemeManager, colorSet: C
     const bg = manager.get(ThemeColor, ['secondary', 0.12])
     const hover = manager.get(ThemeColor, ['secondary'])
     return css`
-            scrollbar-width: thin;
-            scrollbar-color: ${main} ${bg};
-            -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        scrollbar-color: ${main} ${bg};
+        -webkit-overflow-scrolling: touch;
 
-            &::-webkit-scrollbar {
-                ${direction === 'y' ? 'width' : 'height'}: ${type === 'thin' ? 2 : 12}px;
-                background-color: transparent;
-            }
+        &::-webkit-scrollbar {
+            ${direction === 'y' ? 'width' : 'height'}: ${type === 'thin' ? 2 : 12}px;
+            background-color: transparent;
+        }
 
-            &::-webkit-scrollbar-track {
-                border-radius: 999px;
-                background: transparent;
-                border: 4px solid transparent;
-            }
+        &::-webkit-scrollbar-track {
+            border-radius: 999px;
+            background: transparent;
+            border: 4px solid transparent;
+        }
 
-            &::-webkit-scrollbar-thumb {
-                border-radius: 999px;
-                background-color: ${main};
-                border: ${type === 'thin' ? 0 : 4}px solid transparent;
-                background-clip: content-box;
-            }
+        &::-webkit-scrollbar-thumb {
+            border-radius: 999px;
+            background-color: ${main};
+            border: ${type === 'thin' ? 0 : 4}px solid transparent;
+            background-clip: content-box;
+        }
 
-            &::-webkit-scrollbar-thumb:hover {
-                background-color: ${hover};
-            }
-        `
+        &::-webkit-scrollbar-thumb:hover {
+            background-color: ${hover};
+        }
+    `
   })
 
   manager.set(ThemeShadow, () => {
-    const { lineWidth } = size
+    const lineWidth = manager.get(ThemeSize, 'lineWidth')
     const getShadow = (opacity: number) => manager.get(ThemeColor, ['shadow', opacity])
     return css`
-            box-shadow: 0 ${lineWidth} ${lineWidth} ${getShadow(0.14)}, 0 2px ${lineWidth} ${getShadow(0.12)},
-                0 ${lineWidth} 3px ${getShadow(0.2)};
-        `
+        box-shadow: 0 ${lineWidth} ${lineWidth} ${getShadow(0.14)}, 0 2px ${lineWidth} ${getShadow(0.12)},
+            0 ${lineWidth} 3px ${getShadow(0.2)};
+    `
   })
 
   manager.set(ThemeBorder, (direction) => {
+    const lineWidth = manager.get(ThemeSize, 'lineWidth')
     const line = manager.get(ThemeColor, ['line'])
     if (!direction) {
       return css`
-                border: ${size.lineWidth} solid ${line};
-            `
+          border: ${lineWidth} solid ${line};
+      `
     }
     return css`
-            ${`border-${direction}`}: ${size.lineWidth} solid ${line};
-        `
+        ${`border-${direction}`}: ${lineWidth} solid ${line};
+    `
   })
 
   manager.set(ThemeIcon, (icon) => {
@@ -111,7 +113,9 @@ export const createTheme = (emotion: Emotion, manager: ThemeManager, colorSet: C
     return getIcon(icon)
   })
 
-  getStyle(manager, emotion)
+  manager.set(ThemeGlobal, () => {
+    getStyle(manager, emotion)
+  })
 
   useAllPresetRenderer(manager, emotion)
 }
