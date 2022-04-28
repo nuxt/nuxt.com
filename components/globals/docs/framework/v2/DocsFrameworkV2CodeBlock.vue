@@ -1,5 +1,5 @@
 <template>
-  <div ref="codeBlockAnim" class="w-full">
+  <div ref="codeBlockAnim" class="w-full pb-16 pt-8">
     <ul class="flex">
       <li>
         <UButton variant="transparent" @click="cliActive = false">

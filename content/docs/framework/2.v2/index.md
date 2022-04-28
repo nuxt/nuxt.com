@@ -45,15 +45,18 @@ Nuxt is shipped with plenty of features to boost developer productivity and the 
 
 ::docs-framework-v2-section
 #title
-All you need is here
-#description
-Learn everything you need to know, from beginner to master.
+They use Nuxt
+#content
+  ::docs-framework-v2-carousel
+  ::
 ::
 
 ::docs-framework-v2-section
 #title
-They use Nuxt
+All you need is here
+#description
+[Learn everything you need to know, from beginner to master.]{ .block .md:w-1/2 }
 #content
-  ::docs-framework-v2-carousel
+  ::docs-framework-v2-need
   ::
 ::
