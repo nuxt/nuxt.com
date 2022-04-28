@@ -11,10 +11,10 @@
       </template>
 
       <div class="space-y-6">
-        <UFormGroup name="slug" label="Slug" :help="form.slug !== slug ? `Your team slug will be renamed to “${slug}”` : 'This is your team\'s URL namespace on Nuxt.'" required class="relative">
+        <UFormGroup name="slug" label="Slug" :help="form.slug !== slug ? `Your team slug will be renamed to “${slug}”` : 'This is your team\'s URL namespace on Nuxt.'" required class="relative w-full lg:max-w-xs">
           <div class="flex items-center">
             <span class="inline-flex items-center px-2 py-2 text-sm border border-r-0 u-bg-gray-50 u-border-gray-300 rounded-l-md u-textgray-500">
-              nuxt.com/
+              nuxt.com/@
             </span>
 
             <UInput
@@ -22,8 +22,8 @@
               name="slug"
               required
               autocomplete="off"
-              class="w-full lg:w-56"
-              placeholder="choam"
+              class="w-full"
+              placeholder="nuxt"
               custom-class="rounded-l-none"
             />
           </div>
@@ -34,9 +34,9 @@
             v-model="form.name"
             name="name"
             required
-            placeholder="CHOAM"
+            placeholder="Nuxt"
             autocomplete="off"
-            class="w-full lg:w-80"
+            class="w-full lg:max-w-xs"
           />
         </UFormGroup>
 

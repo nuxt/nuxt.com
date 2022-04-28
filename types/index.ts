@@ -31,6 +31,11 @@ export interface Membership {
   team: Team
 }
 
+export interface GitHubUser {
+  login: string,
+  avatarUrl: string
+}
+
 export interface User {
   id: number
   username: string
@@ -39,6 +44,15 @@ export interface User {
   avatar: string
   memberships: Membership[]
   beta: boolean
+}
+
+// User connected through websockets
+export interface SocketUser {
+  id: number
+  username: string
+  avatar: string
+  branch?: string
+  file?: string
 }
 
 export interface Template {
@@ -69,6 +83,7 @@ export interface Repository {
 export interface Project {
   id: number
   name: string
+  slug: string
   url: string
   status: 'pending' | 'ready'
   screenshot: Media
@@ -77,7 +92,10 @@ export interface Project {
   template: number | Template
   team: string | Team
   user: User
+  baseDir: string
 }
+
+export type Root = 'content' | 'public'
 
 export type FileStatus = 'created' | 'updated' | 'deleted' | 'renamed'
 
@@ -90,11 +108,20 @@ export interface File {
   status: FileStatus
 }
 
-export interface Branch {
+export interface Commit {
+  authors: GitHubUser[],
+  message: string,
+  oid: string,
+  shortSha: string,
+  date: string
+}
+
+export interface GitHubBranch {
   name: string
 }
 
 export interface GitHubAccount {
+  id: number
   login: string
   avatar_url: string
 }
@@ -108,6 +135,8 @@ export interface GitHubRepository {
   owner: GitHubAccount
   name: string
   private: boolean
+  default_branch: string
+  homepage: string
 }
 
 export interface GitHubPaginationMeta {
@@ -127,13 +156,25 @@ export interface GitHubFile {
   sha?: string
   url?: string
   status?: FileStatus
+  name?: string
+  width?: number
+  height?: number
+  size?: number
+  mimeType?: string
+  content?: string
+  oldPath?: string
 }
 
 export interface GitHubDraftFile {
   path: string
-  contents?: string
+  content?: string
   new?: boolean
   oldPath?: string
+  // Added only for medias
+  width?: number
+  height?: number
+  size?: number
+  mimeType?: string
 }
 
 export interface GitHubDraft {

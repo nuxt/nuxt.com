@@ -1,7 +1,7 @@
 <template>
   <Page>
     <div class="space-y-6">
-      <div class="flex items-center flex-wrap-reverse px-4 gap-3 sm:px-0">
+      <div class="flex flex-wrap-reverse items-center gap-3 px-4 sm:px-0">
         <UInput
           v-model="q"
           name="q"
@@ -13,7 +13,7 @@
 
         <UButton
           v-if="team"
-          :to="{ name: '@team-settings-members' }"
+          :to="{ name: '@team-settings-members', params: { team: team?.slug || user.username } }"
           label="Add collaborators"
           icon="heroicons-outline:users"
           variant="secondary"
@@ -28,10 +28,10 @@
           class="w-full sm:w-auto"
         />
 
-        <UButton :to="{ name: '@team-new' }" label="New project" icon="heroicons-solid:plus" class="w-full sm:w-auto" />
+        <UButton :to="{ name: '@team-new', params: { team: team?.slug || user.username } }" label="New project" icon="heroicons-solid:plus" class="w-full sm:w-auto" />
       </div>
 
-      <ProjectsList v-if="projects.length" :projects="filteredProjects" />
+      <ProjectsList v-if="projects && projects.length" :projects="filteredProjects" />
       <ProjectsListPlaceholder v-else />
     </div>
   </Page>
@@ -52,7 +52,13 @@ const user = useStrapiUser() as Ref<User>
 const client = useStrapiClient()
 const q = ref('')
 
-const { data: projects } = await useAsyncData(`projects-${props.team?.slug || user.value.username}`, () => client<Project[]>(props.team ? `/teams/${props.team.slug}/projects` : '/projects'))
+provide('team', props.team)
+
+const { data: projects } = await useAsyncData(
+  `projects-${props.team?.slug || user.value.username}`,
+  () => client<Project[]>(props.team ? `/teams/${props.team.slug}/projects` : '/projects'),
+  { initialCache: false }
+)
 
 const filteredProjects = computed(() => {
   return projects.value.filter((project) => {

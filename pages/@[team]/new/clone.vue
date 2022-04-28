@@ -101,7 +101,7 @@ const visibility = useDocumentVisibility()
 const { githubAppUrl } = useGitHub()
 
 if (!route.query.template) {
-  router.push({ name: '@team-new' })
+  navigateTo({ name: '@team-new' })
 }
 
 const accounts: Ref<GitHubAccount[]> = ref([])
@@ -114,9 +114,12 @@ watch(visibility, (current, previous) => {
 })
 
 const loading = ref(false)
+
+const selectedTemplate = computed(() => props.templates.find(template => template.slug === route.query.template))
+
 const form = reactive({
   owner: null,
-  name: '',
+  name: selectedTemplate.value.name,
   private: false
 })
 
@@ -129,8 +132,6 @@ watchEffect(() => {
     form.owner = accounts.value[0]
   }
 })
-
-const selectedTemplate = computed(() => props.templates.find(template => template.slug === route.query.template))
 
 const onSubmit = async () => {
   loading.value = true
@@ -145,7 +146,7 @@ const onSubmit = async () => {
       }
     })
 
-    router.push({ name: '@team-project', params: { team: props.team?.slug || user.value.username, project: project.name } })
+    router.push({ name: '@team-project', params: { team: props.team?.slug || user.value.username, project: project.slug } })
   } catch (e) {}
 
   loading.value = false

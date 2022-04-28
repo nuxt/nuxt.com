@@ -1,5 +1,5 @@
 <template>
-  <div class="py-4 space-y-6 sm:py-6 lg:py-8">
+  <div class="space-y-6">
     <UCard padded>
       <h2 class="text-lg font-medium leading-6 u-text-gray-900">
         Connected Git Repository
@@ -12,12 +12,12 @@
           <UIcon name="fa-brands:github" class="w-6 h-6" />
           <div class="flex flex-col">
             <a
-              :href="`https://github.com/${project.repository.owner}/${project.name}`"
+              :href="`https://github.com/${project.repository.owner}/${project.repository.name}`"
               target="_blank"
               rel="noopener"
               class="flex items-center gap-1 font-semibold u-text-gray-900 hover:underline"
             >
-              {{ project.repository.owner }}/{{ project.name }}
+              {{ project.repository.owner }}/{{ project.repository.name }}
               <UIcon name="heroicons-solid:external-link" class="w-4 h-4" />
             </a>
             <div class="text-sm u-text-gray-400">
@@ -33,18 +33,12 @@
 </template>
 
 <script setup lang='ts'>
-import type { PropType } from 'vue'
 import { useTimeAgo } from '@vueuse/core'
 import type { Project } from '~/types'
 
-const props = defineProps({
-  project: {
-    type: Object as PropType<Project>,
-    required: true
-  }
-})
+const project: Project = inject('project')
 
 function openGitHubDesktop () {
-  window.open(`x-github-client://openRepo/https://github.com/${props.project.repository.owner}/${props.project.repository.name}`)
+  window.open(`x-github-client://openRepo/https://github.com/${project.repository.owner}/${project.repository.name}`)
 }
 </script>

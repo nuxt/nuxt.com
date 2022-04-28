@@ -7,55 +7,62 @@ legalLinks:
   - title: Privacy
     to: /
 links:
-  - title: Solutions
-    items:
-      - title: Developers
-        to: /
-      - title: Independants
-        to: /
-      - title: Agencies
-        to: /
-      - title: Enterprises
-        to: /
-      - title: Certifications
-        to: /
-  - title: Resources
-    items:
-      - title: Articles
-        to: /
-      - title: Case Studies
-        to: /
-      - title: Design Kit
-        to: /
-      - title: Live Events
-        to: /
-      - title: Video Courses
-        to: /
   - title: Company
     items:
       - title: About
-        to: /
-      - title: Contact
         to: /
       - title: Careers
         to: /
       - title: Customers
         to: /
-      - title: Partners
+      - title: Partnerships
+        to: /
+      - title: Pricing
+        to: /
+  - title: Resources
+    items:
+      - title: Blog
+        to: /resources/blog
+      - title: Case Studies
+        to: /resources/case-studies
+      - title: Design Kit
+        to: /resources/design-kit
+      - title: Live Events
+        to: /resources/live-events
+      - title: Showcases
+        to: /resources/showcases
+      - title: Mastering Nuxt
+        to: https://masteringnuxt.com/?utm_source=nuxt&utm_medium=link&utm_campaign=nsite
+        target: _blank
+  - title: Solutions
+    items:
+      - title: Web Framework
+        to: /
+      - title: Content Management
+        to: /
+      - title: Vue Telescope
+        to: /
+      - title: Web Platform
+        to: /
+      - title: Admin Panel
         to: /
   - title: Support
     items:
       - title: Help Center
         to: /
-      - title: Book a Session
+      - title: Certifications
         to: /
-      - title: Find an Expert
+      - title: Contact
+        to: /
+      - title: Training
+        to: /
+      - title: Experts
         to: /
 socialLinks:
   - name: fa-brands:twitter
     href: https://twitter.com/nuxt_js
-  - name: fa-brands:github
-    href: https://github.com/nuxt
   - name: fa-brands:discord
     href: https://discord.com/invite/ps2h6QT
+  - name: fa-brands:github
+    href: https://github.com/nuxt
 ---

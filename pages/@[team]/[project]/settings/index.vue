@@ -1,5 +1,5 @@
 <template>
-  <div class="py-4 space-y-6 sm:py-6 lg:py-8">
+  <div class="space-y-6">
     <UCard padded>
       <template #header>
         <h2 class="text-lg font-medium leading-6 u-text-gray-900">
@@ -11,22 +11,51 @@
       </template>
 
       <div class="space-y-6">
-        <UFormGroup name="name" label="Name" :help="form.name !== nameSlugified ? `Your project name will be renamed to “${nameSlugified}”` : 'This is your project\'s URL namespace on Nuxt.'" required class="relative">
+        <UFormGroup name="slug" label="Slug" :help="form.slug !== slug ? `Your project slug will be renamed to “${slug}”` : 'This is your project\'s URL namespace on Nuxt.'" required class="relative w-full lg:max-w-md">
           <div class="flex items-center">
             <span class="inline-flex items-center px-2 py-2 text-sm border border-r-0 u-bg-gray-50 u-border-gray-300 rounded-l-md u-textgray-500">
               nuxt.com/@{{ team?.slug || user.username }}/
             </span>
 
             <UInput
-              v-model="form.name"
+              v-model="form.slug"
               name="name"
               required
               autocomplete="off"
-              class="w-full lg:w-56"
-              placeholder="choam"
+              class="w-full"
+              placeholder="framework"
               custom-class="rounded-l-none"
             />
           </div>
+        </UFormGroup>
+
+        <UFormGroup name="name" label="Name" help="This is your project's visible name within Nuxt." required>
+          <UInput
+            v-model="form.name"
+            name="name"
+            required
+            placeholder="Framework"
+            autocomplete="off"
+            class="w-full lg:max-w-xs"
+          />
+        </UFormGroup>
+
+        <UFormGroup name="url" label="Url" help="The url of your project is used for preview purposes.">
+          <UInput
+            v-model="form.url"
+            name="url"
+            class="w-full lg:max-w-xs"
+            placeholder="https://nuxtjs.org"
+          />
+        </UFormGroup>
+
+        <UFormGroup name="baseDir" label="Base Directory" help="This is the path of your nuxt app in the repository.">
+          <USelect
+            v-model="form.baseDir"
+            name="baseDir"
+            class="w-full lg:max-w-xs"
+            :options="folders"
+          />
         </UFormGroup>
       </div>
 
@@ -47,40 +76,53 @@
 <script setup lang="ts">
 import slugify from '@sindresorhus/slugify'
 import type { PropType, Ref } from 'vue'
-import type { Team, Project, User } from '~/types'
+import type { Team, Project, User, File } from '~/types'
 
 const props = defineProps({
   team: {
     type: Object as PropType<Team>,
     default: null
-  },
-  project: {
-    type: Object as PropType<Project>,
-    required: true
   }
 })
 
+const project: Project = inject('project')
+
 const user = useStrapiUser() as Ref<User>
 const router = useRouter()
-const client = useStrapiClient()
+const { update } = useStrapi4()
 const { $toast } = useNuxtApp()
+const route = useRoute()
+const client = useStrapiClient()
 
-const form = reactive({ name: props.project.name })
+const form = reactive({ name: project.name, slug: project.slug, url: project.url, baseDir: project.baseDir })
 const updating = ref(false)
+
+const { data: folders } = await useAsyncData(`projects-${route.params.project}-folders`, () => client<File[]>(`/github/installations/${project.repository.owner}/${project.repository.name}/folders`), {
+  transform: (value) => {
+    return value?.map(folder => ({ text: folder.path, value: folder.path }) || [])
+  }
+})
 
 const onSubmit = async () => {
   updating.value = true
 
   try {
-    const project = await client<Project>(props.team ? `/teams/${props.team.slug}/projects/${props.project.name}` : `/projects/${props.project.name}`, {
-      method: 'PUT',
-      body: form
-    })
+    const updatedProject = await update<Project>('projects', project.id, form)
 
-    if (project.name !== props.project.name) {
+    if (updatedProject.slug !== project.slug) {
       // Replace `name` param in url
-      router.replace({ name: '@team-project-settings', params: { team: props.team.slug, project: project.name } })
+      router.replace({ name: '@team-project-settings', params: { team: props.team ? props.team.slug : user.value.username, project: updatedProject.slug } })
     }
+
+    if (updatedProject.baseDir !== project.baseDir) {
+      // reload files for both roots
+      const { refresh: refreshContentFiles } = useProjectFiles(project, 'content')
+      const { refresh: refreshMediaFiles } = useProjectFiles(project, 'public')
+      refreshContentFiles()
+      refreshMediaFiles()
+    }
+
+    Object.assign(project, updatedProject)
 
     $toast.success({
       title: 'Success',
@@ -91,7 +133,7 @@ const onSubmit = async () => {
   updating.value = false
 }
 
-const nameSlugified = computed(() => {
-  return slugify(form.name)
+const slug = computed(() => {
+  return slugify(form.slug)
 })
 </script>

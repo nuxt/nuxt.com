@@ -4,18 +4,18 @@
 
     <Page overlap>
       <div class="grid gap-8 sm:grid-cols-2">
-        <UCard base-class="flex flex-col overflow-hidden lg:h-[calc(100vh-352px)] lg:min-h-[528px]" body-class="flex-1 lg:overflow-y-auto" footer-background-class="u-bg-gray-50">
+        <UCard base-class="flex flex-col overflow-hidden lg:h-[calc(100vh-352px)] lg:min-h-[528px]" body-class="flex-1 lg:overflow-y-auto" footer-background-class="u-bg-gray-50" shadow-class>
           <template #header>
-            <div class="flex items-center justify-between">
-              <h3 class="text-2xl font-semibold u-text-gray-900">
+            <div class="flex items-center justify-between min-w-0 gap-3">
+              <h3 class="text-2xl font-semibold u-text-gray-900 truncate">
                 Import Git repository
               </h3>
-              <a :href="githubAppUrl" class="text-sm font-medium text-primary-500 hover:underline" target="_blank">Add GitHub account →</a>
+              <a :href="githubAppUrl" class="block text-sm font-medium text-primary-500 hover:underline flex-shrink-0" target="_blank">Add GitHub account →</a>
             </div>
 
             <div v-if="installations.length" class="flex flex-wrap-reverse items-start justify-between gap-3 mt-5 sm:flex-nowrap">
-              <USelectCustom v-model="owner" :options="accounts" text-attribute="login" name="owner" class="w-full sm:w-auto">
-                <div class="flex items-center w-full gap-3">
+              <USelectCustom v-model="owner" :options="accounts" text-attribute="login" name="owner" class="w-full lg:w-56 min-w-0">
+                <div class="flex items-center w-full gap-3 min-w-0">
                   <UAvatar :src="owner.avatar_url" size="xxs" class="flex-shrink-0" />
                   <span class="truncate">{{ owner.login }}</span>
                 </div>
@@ -35,6 +35,7 @@
                 :loading="loading"
                 icon="heroicons-outline:search"
                 class="w-full sm:w-auto"
+                custom-class="truncate"
               />
             </div>
           </template>
@@ -64,7 +65,7 @@
             <div class="flex items-center content-center justify-center gap-3">
               <div class="hidden sm:block">
                 <p class="text-sm u-text-gray-700">
-                  Showing
+                  <span class="hidden lg:inline">Showing</span>
                   {{ ' ' }}
                   <span class="font-medium">{{ start }}</span>
                   {{ ' ' }}
@@ -76,7 +77,7 @@
                   {{ ' ' }}
                   <span class="font-medium">{{ meta.total }}</span>
                   {{ ' ' }}
-                  results
+                  <span class="hidden lg:inline">results</span>
                 </p>
               </div>
               <div class="flex-1 flex justify-between sm:justify-end gap-3 -my-0.5">
@@ -104,17 +105,17 @@
 
         <UCard shadow-class base-class="flex flex-col overflow-hidden lg:h-[calc(100vh-352px)] lg:min-h-[528px]" body-class="px-4 pt-1 pb-6 sm:px-5" body-background-class="flex-1 lg:overflow-y-auto u-bg-gray-50" header-background-class="u-bg-gray-50 !border-0 -mb-1">
           <template #header>
-            <div class="flex items-center justify-between">
-              <h3 class="text-2xl font-semibold u-text-gray-900">
+            <div class="flex items-center justify-between min-w-0 gap-3">
+              <h3 class="text-2xl font-semibold u-text-gray-900 truncate">
                 Clone a template
               </h3>
-              <NuxtLink :to="{ name: 'templates' }" class="text-sm font-medium text-primary-500 hover:underline">
+              <NuxtLink :to="{ name: 'templates' }" class="text-sm font-medium text-primary-500 hover:underline flex-shrink-0">
                 Browse all &rarr;
               </NuxtLink>
             </div>
           </template>
 
-          <div class="grid grid-cols-2 gap-6">
+          <div class="grid lg:grid-cols-2 gap-6">
             <TemplatesItem
               v-for="(template, index) of templates.slice(0, 4)"
               :key="index"
