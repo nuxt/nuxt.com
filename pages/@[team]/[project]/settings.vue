@@ -1,10 +1,16 @@
 <template>
   <ProjectPage title="Settings">
     <template #aside>
-      <UVerticalNavigation :links="links" v-bind="verticalNavigationProps" />
+      <UVerticalNavigation :links="links" v-bind="verticalNavigationProps" class="hidden lg:block" />
     </template>
 
-    <NuxtPage :team="team" class="flex-1 p-4 sm:p-6 overflow-y-auto" />
+    <div class="flex-1">
+      <UContainer class="lg:hidden mt-4">
+        <UVerticalNavigation :links="links" />
+      </UContainer>
+
+      <NuxtPage :team="team" class="flex-1 p-4 sm:p-6 overflow-y-auto" />
+    </div>
   </ProjectPage>
 </template>
 
