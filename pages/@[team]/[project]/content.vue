@@ -108,18 +108,6 @@ watch(file, (f) => {
   }
 }, { immediate: true })
 
-// Split markdown front-matter when content changes
-watch(content, () => {
-  if (typeof content.value !== 'string') {
-    return
-  }
-
-  const { content: c, matter } = parseFrontMatter(content.value)
-
-  parsedContent.value = c
-  parsedMatter.value = matter
-}, { immediate: true })
-
 // When file path change due to new selection, scroll top
 watch(file, (f, old) => {
   if (process.client && editorScroll.value) {
@@ -140,12 +128,23 @@ watch(file, (f, old) => {
 async function fetchContent () {
   if (!file.value) {
     content.value = ''
+    parsedContent.value = ''
+    parsedMatter.value = {}
     return
   }
 
   const { content: fetchedContent } = await fetchFile(file.value.path)
 
   content.value = fetchedContent
+
+  parseContent()
+}
+
+function parseContent () {
+  const { content: c, matter } = parseFrontMatter(content.value)
+
+  parsedContent.value = c
+  parsedMatter.value = matter
 }
 
 async function updateFile (formattedContent) {
