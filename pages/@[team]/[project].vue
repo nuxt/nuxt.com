@@ -55,9 +55,10 @@ const {
   fetch: fetchContentFiles,
   select: selectContentFile,
   init: initContentFile,
-  refresh: refreshContentFiles
+  refresh: refreshContentFiles,
+  mergeDraftInFiles: mergeContentDraftInFiles
 } = useProjectFiles(project.value, 'content')
-const { fetch: fetchMediaFiles, refresh: refreshMediaFiles } = useProjectFiles(project.value, 'public')
+const { fetch: fetchMediaFiles, refresh: refreshMediaFiles, mergeDraftInFiles: mergeMediaDraftInFiles } = useProjectFiles(project.value, 'public')
 
 try {
   await fetchBranches()
@@ -105,15 +106,25 @@ onMounted(() => {
     }
   })
   $socket.on('branch:delete', (deletedBranch: GitHubBranch) => {
-    if (branch.value.name === deletedBranch.name) {
-      selectBranch(branches.value.find(b => b.name === project.value.repository.default_branch))
-
-      refreshContentFiles()
-      refreshMediaFiles()
-    }
     if (branches.value.find(b => b.name === deletedBranch.name)) {
+      if (branch.value.name === deletedBranch.name) {
+        selectBranch(branches.value.find(b => b.name === project.value.repository.default_branch))
+
+        refreshContentFiles()
+        refreshMediaFiles()
+      }
       branches.value = branches.value.filter(b => b.name !== deletedBranch.name)
     }
+  })
+
+  // Listen to commit on a branch
+  $socket.on('branch:commit', ({ branch: commitBranch }: { branch: string }) => {
+    if (commitBranch !== branch.value.name) {
+      return
+    }
+
+    mergeContentDraftInFiles()
+    mergeMediaDraftInFiles()
   })
 
   // Listen to change on draft by other collaborators
