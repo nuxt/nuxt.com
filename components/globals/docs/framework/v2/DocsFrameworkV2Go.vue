@@ -1,19 +1,23 @@
 <template>
   <div class="flex gap-x-4 items-center justify-center">
-    <UButton :label="leftButtonText" variant="primary" />
-    <UButton :label="rightButtonText" variant="secondary" class="u-border-gray-900" />
+    <UButton
+      v-for="button of buttons"
+      :key="button.label"
+      class="flex justify-center"
+      :variant="button.variant || 'transparent'"
+      :label="button.label || ''"
+      :to="button.to || '#'"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
+import { PropType } from 'vue'
+
 defineProps({
-  leftButtonText: {
-    type: String,
-    default: 'Get started'
-  },
-  rightButtonText: {
-    type: String,
-    default: 'Migration Guide'
+  buttons: {
+    type: Array as PropType<{ label?: string, variant?: string, to?: string }[]>,
+    default: () => []
   }
 })
 </script>

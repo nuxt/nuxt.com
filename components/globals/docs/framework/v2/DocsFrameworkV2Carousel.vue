@@ -4,28 +4,16 @@
     :centered-slides="true"
     :slide-to-clicked-slide="true"
     :slides-per-view="'auto'"
+    :pagination="true"
     :coverflow-effect="{
       rotate: 0,
-      stretch: 0,
+      stretch: 80,
       depth: 200,
       modifier: 1,
+      slideShadows: false
     }"
     :initial-slide="2"
-    :modules="[EffectCoverflow]"
-    :breakpoints="{
-      640: {
-        slidesPerView: 'auto',
-        spaceBetween: 0
-      },
-      768: {
-        slidesPerView: 'auto',
-        spaceBetween: 0
-      },
-      1280: {
-        slidesPerView: 'auto',
-        spaceBetween: 0
-      }
-    }"
+    :modules="[EffectCoverflow, Pagination]"
   >
     <SwiperSlide v-for="(slide, i) in showcases" :key="i">
       <img
@@ -41,12 +29,11 @@ import { Swiper, SwiperSlide } from 'swiper/vue'
 
 // Import Swiper styles
 import 'swiper/css'
-
 import 'swiper/css/effect-coverflow'
 import 'swiper/css/pagination'
 
 // import required modules
-import { EffectCoverflow } from 'swiper'
+import { EffectCoverflow, Pagination } from 'swiper'
 
 const showcases = ref([
   '/docs/framework/v2/showcase-1.png',
@@ -58,10 +45,11 @@ const showcases = ref([
 </script>
 
 <style lang="postcss" scoped>
+
 .swiper {
   width: 100%;
-  padding-top: 50px;
-  padding-bottom: 50px;
+  padding-top: 40px;
+  padding-bottom: 40px;
 }
 
 .swiper-slide {
@@ -76,19 +64,12 @@ const showcases = ref([
   }
 }
 
-@media (min-width: 1280px)
-.swiper-slide {
-  width: 200px;
-  height: 100pw;
-}
-
 .swiper-slide-prev,
 .swiper-slide-next {
   filter: blur(1px);
 }
 
 .swiper-slide-active {
-  object-fit: cover;
   filter: blur(0px);
 }
 
@@ -97,7 +78,4 @@ const showcases = ref([
   width: 100%;
 }
 
-.swiper-pagination-bullet-active {
-  background: #1c1c1d;
-}
 </style>

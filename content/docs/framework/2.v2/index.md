@@ -71,5 +71,14 @@ Lets go
 Developers love Nuxt, the open source Vue framework built together with community. Nuxt powers the biggest websites like Big Website.
 #content
   ::docs-framework-v2-go
+  ---
+  buttons:
+  - label: 'Get started'
+    variant: 'primary'
+    to: '/docs/framework/v2/get-started'
+  - label: 'Migration guide'
+    variant: 'secondary'
+    to: '#'
+  ---
   ::
 ::
