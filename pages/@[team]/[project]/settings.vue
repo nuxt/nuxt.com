@@ -4,12 +4,12 @@
       <UVerticalNavigation :links="links" v-bind="verticalNavigationProps" class="hidden lg:block" />
     </template>
 
-    <div class="flex-1">
-      <UContainer class="lg:hidden mt-4">
+    <div class="flex-1 flex flex-col overflow-y-auto">
+      <UContainer class="w-full lg:hidden mt-4">
         <UVerticalNavigation :links="links" />
       </UContainer>
 
-      <NuxtPage :team="team" class="flex-1 p-4 sm:p-6 overflow-y-auto" />
+      <NuxtPage :team="team" class="flex-1 p-4 sm:p-6" />
     </div>
   </ProjectPage>
 </template>
