@@ -1,10 +1,11 @@
-import { Editor, editorViewCtx, parserCtx, serializerCtx, rootCtx } from '@milkdown/core'
+import { Editor, editorViewCtx, parserCtx, rootCtx, serializerCtx } from '@milkdown/core'
 import { emoji } from '@milkdown/plugin-emoji'
 import { history } from '@milkdown/plugin-history'
 import { listener } from '@milkdown/plugin-listener'
 import { prism } from '@milkdown/plugin-prism'
 import { tooltip } from '@milkdown/plugin-tooltip'
 import { gfm } from '@milkdown/preset-gfm'
+import { switchTheme, replaceAll } from '@milkdown/utils'
 import { useEditor as useMilkdownEditor } from '@milkdown/vue'
 import { Slice } from 'prosemirror-model'
 
@@ -15,7 +16,7 @@ import context, { componentSchemasCtx } from './context'
 import mdc from './plugins/mdc'
 import slash from './plugins/slash'
 import trailingParagraph from './plugins/trailing-paragraph'
-import collaborative from './plugins/collaborative'
+import collaborative, { setRoom } from './plugins/collaborative'
 
 // Theme
 import { dark, light } from './theme'
@@ -43,9 +44,9 @@ export const useEditor = (options: Options) => {
       .use(history)
       .use(listener)
       .use(gfm)
-      .use(prism)
+      .use(prism) // TODO: Use custom plugin to add Shiki support
       .use(tooltip)
-      .use(collaborative({ room: unref(options.room) ?? 'default' }))
+      .use(collaborative(unref(options.room) ?? 'default'))
       .use(mdc)
       .use(slash)
       .use(trailingParagraph)
@@ -80,10 +81,16 @@ export const useEditor = (options: Options) => {
     })
   }
 
-  // Reactive room
+  // Reactive theme
+  watch(theme, (value) => {
+    instance?.action(switchTheme(value))
+  })
+
+  // Reactive room (collaborative support)
   if (isRef(options.room)) {
-    watch(options.room, () => {
-      editor.value = makeEditor()
+    watch(options.room, (room) => {
+      instance?.action(setRoom(room))
+      instance?.action(replaceAll(unref(options.content)))
     })
   }
 

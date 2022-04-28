@@ -40,10 +40,12 @@ export default defineComponent({
     const { useEditor } = await import('~/editor/use')
 
     const editor = useEditor({
-      room: computed(() => props.room),
       components: computed(() => [...props.components]),
       content: computed(() => props.modelValue),
-      onChanged: (content: string) => (content !== props.modelValue) && emit('update:modelValue', content)
+      onChanged: (content: string) => {
+        (content !== props.modelValue) && emit('update:modelValue', content)
+      },
+      room: computed(() => props.room)
     })
 
     return {
@@ -56,7 +58,8 @@ export default defineComponent({
 
 <template>
   <ClientOnly>
-    <VueEditor v-if="editor" :key="$colorMode.value" v-bind="{ ...attrs, editor }" />
+    Room: {{ room }}
+    <VueEditor v-if="editor" v-bind="{ ...attrs, editor }" />
     <template #fallback>
       <slot name="loading" />
     </template>
