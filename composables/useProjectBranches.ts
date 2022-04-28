@@ -67,6 +67,8 @@ export const useProjectBranches = (project: Project) => {
         await callback()
       }
 
+      $socket.emit('branch:commit', `project-${project.id}:${branch.value.name}`)
+
       $toast.success({
         title: 'Changes saved!',
         description: `Your changes have been committed on ${branch.value.name} branch.`
