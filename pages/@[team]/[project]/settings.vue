@@ -1,7 +1,7 @@
 <template>
   <ProjectPage title="Settings">
     <template #aside>
-      <UVerticalNavigation :links="links" v-bind="verticalNavigationProps" class="hidden lg:block" />
+      <UVerticalNavigation :links="links" v-bind="verticalNavigationProps" />
     </template>
 
     <div class="flex-1 flex flex-col overflow-y-auto">
