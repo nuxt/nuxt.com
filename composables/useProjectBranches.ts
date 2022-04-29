@@ -136,14 +136,12 @@ export const useProjectBranches = (project: Project) => {
   // Methods
 
   function init () {
-    let b: GitHubBranch | undefined
-    if (cookie.value) {
-      b = branches.value.find(branch => branch.name === cookie.value)
-    } else {
-      b = branches.value.find(branch => branch.name === project.repository.default_branch)
-    }
+    let branchToSelect = cookie.value ? branches.value.find(branch => branch.name === cookie.value) : null
 
-    select(b || branches.value[0])
+    branchToSelect = branchToSelect || branches.value.find(branch => branch.name === project.repository.default_branch)
+    branchToSelect = branchToSelect || branches.value[0]
+
+    select(branchToSelect)
   }
 
   function select (b: GitHubBranch) {
