@@ -4,7 +4,7 @@
       <div class="fromscratch-code-wrapper-anim">
         <div class="opacity-100 fromscratch-code-bash-anim">
           <p class="flex">
-            <span class="text-white">$&nbsp;</span><span class="fromscratch-yarn-addnuxt text-white">yarn add <span class="text-green">nuxt</span></span>
+            <span class="text-white">&gt;&nbsp;</span><span class="fromscratch-yarn-addnuxt text-white">yarn add <span class="text-green">nuxt</span></span>
           </p>
           <p class="fromscratch-loading-anim opacity-0 text-white">
             > Loading...
@@ -15,7 +15,7 @@
             <div class="fromscratch-progressbar-anim u-bg-gray-600" />
           </div>
           <p class="flex">
-            <span class="opacity-0 fromscratch-seconddollar-anim text-white">$&nbsp;</span><span class="fromscratch-yarn-rundev text-white">yarn run dev</span>
+            <span class="opacity-0 fromscratch-seconddollar-anim text-white">&gt;&nbsp;</span><span class="fromscratch-yarn-rundev text-white">yarn run dev</span>
           </p>
           <div class="fromscratch-progressbars-dev mt-2 w-1/2">
             <div class="fromscratch-progressbar-anim u-bg-gray-400" />
@@ -42,24 +42,24 @@
           <div class="pl-12 pt-12 fromscratch-code-ide-content">
             <p>
               <!-- Template tag open -->
-              <span class="text-white">&lt;</span><span class="text-blue-500">template</span><span class="text-white">&gt;</span>
+              <span class="text-white">&lt;</span><span class="text-blue-500">template</span><span class="text-white">&gt;&nbsp;</span>
             </p>
-            <p><span class="text-white">&lt;</span><span class="text-green-500">div</span><span class="text-white">&gt;</span></p>
+            <p><span class="text-white">&lt;</span><span class="text-green-500">div</span><span class="text-white">&gt;&nbsp;</span></p>
             <p>
               <!-- Sidebar component -->
-              <span class="text-white">&lt;</span><span class="text-green-500">Sidebar</span><span class="text-white">/&gt;</span>
+              <span class="text-white">&lt;</span><span class="text-green-500">Sidebar</span><span class="text-white">/&gt;&nbsp;</span>
             </p>
             <p>
               <!-- Hello world h1 -->
               <span class="text-white">&lt;</span>
               <span class="text-green-500">h1</span>
-              <span class="text-white">&gt;</span><span class="text-white">Hello world!</span><span class="text-white">&lt;</span><span class="text-white">&#47;</span><span class="text-green-500">h1</span>
-              <span class="text-white">&gt;</span>
+              <span class="text-white">&gt;&nbsp;</span><span class="text-white">Hello world!</span><span class="text-white">&lt;</span><span class="text-white">&#47;</span><span class="text-green-500">h1</span>
+              <span class="text-white">&gt;&nbsp;</span>
             </p>
-            <p><span class="text-white">&lt;</span><span class="text-white">&#47;</span><span class="text-green-500">div</span><span class="text-white">&gt;</span></p>
+            <p><span class="text-white">&lt;</span><span class="text-white">&#47;</span><span class="text-green-500">div</span><span class="text-white">&gt;&nbsp;</span></p>
             <p>
               <!-- Template tag open -->
-              <span class="text-white">&lt;</span><span class="text-white">&#47;</span><span class="text-blue-500">template</span><span class="text-white">&gt;</span>
+              <span class="text-white">&lt;</span><span class="text-white">&#47;</span><span class="text-blue-500">template</span><span class="text-white">&gt;&nbsp;</span>
             </p>
           </div>
         </div>
@@ -74,9 +74,9 @@
         </div>
       </div>
       <div class="absolute top-0 left-0 h-full w-full">
-        <img loading="lazy" src="/docs/framework/v2/sidebar.svg" class="absolute top-0 h-full left-[-150px] fromscratch-display-content-img-anim">
+        <img loading="lazy" src="/docs/framework/v2/sidebar.svg" class="absolute top-0 h-full left-[-150px] fromscratch-display-content-img-anim" alt="sidebar illustration">
         <p class="fromscratch-display-content-p-anim absolute top-4 left-6 font-bold text-2xl u-text-gray-600 opacity-0">
-          Hello world !
+          Hello world!
         </p>
       </div>
     </div>

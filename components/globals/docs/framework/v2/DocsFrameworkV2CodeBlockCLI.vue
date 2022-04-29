@@ -4,12 +4,12 @@
       <div class="fromcli-code-wrapper-anim">
         <div class="opacity-100 fromcli-code-bash-anim">
           <p class="flex">
-            <span class="text-white">$&nbsp;</span><span class="text-white fromcli-yarn-createnuxtapp-anim">npx
+            <span class="text-white"><span>&gt;&nbsp;</span></span><span class="text-white fromcli-yarn-createnuxtapp-anim">npx
               <span class="text-green-500">create-nuxt-app</span>
               project-name</span>
           </p>
           <p class="text-white fromcli-loading-anim opacity-0">
-            > Loading...
+            <span>&gt;&nbsp;</span> Loading...
           </p>
           <div class="mt-2 w-1/2 fromcli-progressbars-install">
             <div class="fromcli-progressbar-anim u-bg-gray-400 h-[10px] opacity-0 mb-2 rounded-md" />
@@ -27,7 +27,7 @@
             > Javascript
           </p>
           <p class="text-white opacity-0 overflow-hidden fromcli-question2-answer2-anim">
-            &nbsp;&nbsp;Typescript
+            <span>&gt;&nbsp;</span>Typescript
           </p>
           <p class="text-white h-0 overflow-hidden fromcli-question3-anim">
             <span class="text-green-500">? </span> Package manager :
@@ -62,10 +62,10 @@
             <span class="text-white">installed</span>
           </p>
           <p class="flex">
-            <span class="opacity-0 fromcli-seconddollar-anim text-white">$&nbsp;</span><span class="text-white fromcli-yarn-cd-anim">cd <span class="text-green-500">My Project</span></span>
+            <span class="opacity-0 fromcli-seconddollar-anim text-white"><span>&gt;&nbsp;</span></span><span class="text-white fromcli-yarn-cd-anim">cd <span class="text-green-500">My Project</span></span>
           </p>
           <p class="flex">
-            <span class="opacity-0 fromcli-thirddollar-anim text-white">$&nbsp;</span><span class="text-white fromcli-yarn-run-anim">yarn run <span class="text-green-500">dev</span></span>
+            <span class="opacity-0 fromcli-thirddollar-anim text-white"><span>&gt;&nbsp;</span></span><span class="text-white fromcli-yarn-run-anim">yarn run <span class="text-green-500">dev</span></span>
           </p>
         </div>
         <div class="absolute left-0 w-full pt-8 h-full opacity-0 top-[162px] fromcli-code-ide-anim">
@@ -82,28 +82,28 @@
           <div class="absolute w-12 -left-5 border-r-2 u-border-gray-400 flex flex-col items-center justify-start pt-3 top-[65px] h-[103%]" />
           <div class="pl-12 pt-10 fromcli-code-ide-content">
             <p>
-              <span class="text-white">&lt;</span><span class="text-blue-500">{{ 'template' }}</span><span class="text-white">&gt;</span>
+              <span class="text-white">&lt;</span><span class="text-blue-500">{{ 'template' }}</span><span class="text-white"><span>&gt;&nbsp;</span></span>
             </p>
-            <p><span class="text-white">&lt;</span><span class="text-green-500">div</span><span class="text-white">&gt;</span></p>
+            <p><span class="text-white">&lt;</span><span class="text-green-500">div</span><span class="text-white"><span>&gt;&nbsp;</span></span></p>
             <p>
               <!-- Logo component -->
-              <span class="text-white">&lt;</span><span class="text-green-500">Logo</span><span class="text-white">/&gt;</span>
+              <span class="text-white">&lt;</span><span class="text-green-500">Logo</span><span class="text-white">/<span>&gt;&nbsp;</span></span>
             </p>
             <p>
               <!-- Nuxt Card component -->
-              <span class="text-white">&lt;</span><span class="text-green-500">NuxtCard</span><span class="text-white">&#47;&gt;</span>
+              <span class="text-white">&lt;</span><span class="text-green-500">NuxtCard</span><span class="text-white">&#47;<span>&gt;&nbsp;</span></span>
             </p>
             <p>
               <!-- Nuxt Card component -->
-              <span class="text-white">&lt;</span><span class="text-green-500">NuxtCard</span><span class="text-white">&#47;&gt;</span>
+              <span class="text-white">&lt;</span><span class="text-green-500">NuxtCard</span><span class="text-white">&#47;<span>&gt;&nbsp;</span></span>
             </p>
             <p>
               <!-- AlertBanner component -->
-              <span class="text-white">&lt;</span><span class="text-green-500">AlertBanner</span><span class="text-white">&#47;&gt;</span>
+              <span class="text-white">&lt;</span><span class="text-green-500">AlertBanner</span><span class="text-white">&#47;<span>&gt;&nbsp;</span></span>
             </p>
-            <p><span class="text-white">&lt;&#47;</span><span class="text-green-500">div</span><span class="text-white">&gt;</span></p>
+            <p><span class="text-white">&lt;&#47;</span><span class="text-green-500">div</span><span class="text-white"><span>&gt;&nbsp;</span></span></p>
             <p>
-              <span class="text-white">&lt;</span><span class="text-white">&#47;</span><span class="text-blue-500">{{ 'template' }}</span><span class="text-white">&gt;</span>
+              <span class="text-white">&lt;</span><span class="text-white">&#47;</span><span class="text-blue-500">{{ 'template' }}</span><span class="text-white"><span>&gt;&nbsp;</span></span>
             </p>
           </div>
         </div>
@@ -111,21 +111,23 @@
     </div>
     <div class="absolute u-bg-gray-100 right-0 top-full lg:top-1/2 transform -translate-y-1/2 rounded-md w-full lg:w-1/2 opacity-0 overflow-hidden h-[120%] fromcli-display-anim">
       <div class="overflow-hidden opacity-0 fromcli-display-loading-anim">
-        <img loading="lazy" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-[60px]" src="/docs/framework/v2/logo.svg">
+        <img loading="lazy" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-[60px]" src="/docs/framework/v2/logo.svg" alt="nuxt logo">
         <div class="absolute left-1/2 transform -translate-x-1/2 bottom-8 w-1/2 fromcli-display-progressbar-anim">
           <div class="absolute left-0 top-0 w-full bg-gray-400 rounded-full h-[10px]" />
           <div class="absolute left-0 top-0 w-0 u-bg-gray-500 rounded-full opacity-0 h-[10px] fromcli-display-progressbar-progress-anim" />
         </div>
       </div>
       <div class="absolute top-0 left-0 h-full w-full flex flex-col justify-center items-start px-16 fromcli-display-content">
-        <img loading="lazy" src="/docs/framework/v2/logo.svg">
+        <img loading="lazy" src="/docs/framework/v2/logo.svg" alt="nuxt logo">
         <img
           loading="lazy"
           src="/docs/framework/v2/cliContent1.svg"
+          alt="content illustration"
         >
         <img
           loading="lazy"
           src="/docs/framework/v2/cliContent2.svg"
+          alt="content illustration"
         >
       </div>
     </div>

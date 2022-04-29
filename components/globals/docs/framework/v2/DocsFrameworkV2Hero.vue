@@ -1,7 +1,7 @@
 <template>
   <div class="not-prose relative">
-    <img src="/docs/framework/v2/gems-big.png" class="absolute opacity-20 lg:opacity-100 top-72 -left-14 h-1/2">
-    <img src="/docs/framework/v2/gems.png" class="absolute opacity-20 lg:opacity-100 top-0 right-0 h-1/5 top-48">
+    <img src="/docs/framework/v2/gems-big.png" class="absolute opacity-20 lg:opacity-100 top-72 -left-14 h-1/2" alt="Gem illustration">
+    <img src="/docs/framework/v2/gems.png" class="absolute opacity-20 lg:opacity-100 top-0 right-0 h-1/5 top-48" alt="Gem illustration">
     <div class="flex flex-col items-center justify-center pb-48 gap-y-8 pt-36 md:pt-44 lg:pb-56 lg:pt-36 relative">
       <div v-if="$slots.badge" class="flex gap-x-2">
         <UBadge rounded label="Warning" />

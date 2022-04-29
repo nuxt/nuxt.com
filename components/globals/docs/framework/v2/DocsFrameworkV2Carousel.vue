@@ -19,6 +19,7 @@
       <img
         :src="slide"
         class="object-cover h-full w-full rounded-md"
+        alt="A showcase"
       >
     </SwiperSlide>
   </Swiper>

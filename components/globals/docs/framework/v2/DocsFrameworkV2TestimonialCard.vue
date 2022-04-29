@@ -1,13 +1,13 @@
 <template>
   <a :href="testimonial.authorUrl" rel="author">
     <div class="relative">
-      <img src="/docs/framework/v2/quote.svg" class="absolute top-0 h-8 w-8 -left-0 opacity-70">
+      <img src="/docs/framework/v2/quote.svg" class="absolute top-0 h-8 w-8 -left-0 opacity-70" alt="Quote image">
       <div class="pl-8 pt-4">
         <p class="text-sm u-text-gray-500 pb-6">
           {{ testimonial.testimonial }}
         </p>
         <div class="flex flex-row items-center">
-          <img :src="`/docs/framework/v2/${testimonial.authorIcon}.png`" class="h-12">
+          <img :src="`/docs/framework/v2/${testimonial.authorIcon}.png`" class="h-12" :alt="`${testimonial.author} picture`">
           <div class="pl-8 flex flex-col">
             <span class="font-semibold u-text-gray-900">{{ testimonial.author }}</span>
             <span class="text-sm u-text-gray-400">{{ testimonial.job }}</span>
