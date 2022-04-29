@@ -68,10 +68,12 @@ async function onCommitClick () {
   }
 
   if (branch.value.name === project.repository.default_branch) {
-    return openCreateModal('', true, callbackAfterCommit)
+    return openCreateModal('', true, true, callbackAfterCommit)
   }
 
-  await commit(callbackAfterCommit)
+  await commit()
+
+  callbackAfterCommit()
 }
 
 function onPublishClick () {
