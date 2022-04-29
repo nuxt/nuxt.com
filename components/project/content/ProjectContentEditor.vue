@@ -58,7 +58,6 @@ export default defineComponent({
 
 <template>
   <ClientOnly>
-    Room: {{ room }}
     <VueEditor v-if="editor" v-bind="{ ...attrs, editor }" />
     <template #fallback>
       <slot name="loading" />

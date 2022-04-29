@@ -90,7 +90,7 @@ export const useEditor = (options: Options) => {
   if (isRef(options.room)) {
     watch(options.room, (room) => {
       instance?.action(setRoom(room))
-      instance?.action(replaceAll(unref(options.content)))
+      instance?.action(replaceAll(unref(options.content), true))
     })
   }
 
