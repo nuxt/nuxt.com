@@ -1,13 +1,12 @@
 import { Octokit } from '@octokit/rest'
-import config from '#config'
-import { cachifyHandle } from '~/server/utils/cache'
+const config = useRuntimeConfig()
 
 const octokit = new Octokit({
   auth: `${config.github.token}`
 })
-const packageName = 'nuxt3'
+const packageName = 'nuxt'
 
-export default cachifyHandle(async () => {
+export default defineCachedEventHandler(async () => {
   console.log('Fetching community stats...')
   // Fetch framework informations on GitHub
   // const { data: framework } = await octokit.rest.repos.get({ owner, repo })
@@ -42,5 +41,5 @@ export default cachifyHandle(async () => {
   }
 }, {
   name: 'stats',
-  ttl: 60 * 1000
+  maxAge: 60 * 1000
 })

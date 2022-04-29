@@ -1,7 +1,6 @@
-import config from '#config'
-import { cachifyHandle } from '~/server/utils/cache'
+const config = useRuntimeConfig()
 
-export default cachifyHandle(async () => {
+export default defineCachedEventHandler(async () => {
   console.log('Fetching Nuxters...')
   // Fetch Orbit members
   const { data: members } = await $fetch<any>('https://app.orbit.love/api/v1/nuxtjs/members?sort=activities_count', {

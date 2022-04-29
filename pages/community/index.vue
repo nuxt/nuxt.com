@@ -4,6 +4,7 @@ const { data: stats } = await useFetch('/api/community/stats')
 
 <template>
   <Page>
+    <!-- TODO: transform to components and use in Markdown -->
     <div>
       <div class="px-4 sm:px-0">
         <h1 class="text-2xl font-semibold u-text-gray-900">
