@@ -4,10 +4,8 @@ const config = useRuntimeConfig()
 const octokit = new Octokit({
   auth: `${config.github.token}`
 })
-const packageName = 'nuxt'
 
 export default defineCachedEventHandler(async () => {
-  console.log('Fetching community stats...')
   // Fetch framework informations on GitHub
   // const { data: framework } = await octokit.rest.repos.get({ owner, repo })
   let stars = 0
@@ -26,7 +24,7 @@ export default defineCachedEventHandler(async () => {
   //   contributions: c.contributions
   // }))
   // Fetch NPM downloads (last 30 days)
-  const { downloads } = await $fetch<any>(`https://api.npmjs.org/downloads/point/last-month/${packageName}`)
+  const { downloads } = await $fetch<any>('https://api.npmjs.org/downloads/point/last-month/nuxt')
   // Fetch workspace stats
   const { data: workspace } = await $fetch<any>('https://app.orbit.love/api/v1/workspaces/nuxtjs', {
     headers: { Authorization: `Bearer ${config.orbit.token}` }

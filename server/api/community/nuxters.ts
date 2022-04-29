@@ -1,7 +1,6 @@
 const config = useRuntimeConfig()
 
 export default defineCachedEventHandler(async () => {
-  console.log('Fetching Nuxters...')
   // Fetch Orbit members
   const { data: members } = await $fetch<any>('https://app.orbit.love/api/v1/nuxtjs/members?sort=activities_count', {
     headers: { Authorization: `Bearer ${config.orbit.token}` }
@@ -24,5 +23,5 @@ export default defineCachedEventHandler(async () => {
   return nuxters
 }, {
   name: 'contributors',
-  ttl: 60 * 1000
+  maxAge: 60 * 1000
 })
