@@ -26,7 +26,7 @@ export const useProjectFileHistory = (project: Project, root: Root) => {
   const client = useStrapiClient()
 
   const pending = ref(true)
-  const historyData: Ref<GraphQLHistory | null> = ref(null)
+  const historyData: Ref<GraphQLHistory | null> = useState(`project-${project.id}-${root}-file-history`, () => null)
 
   const fetch = async () => {
     if (!file.value) {
@@ -51,7 +51,9 @@ export const useProjectFileHistory = (project: Project, root: Root) => {
           ref: branch.value.name
         }
       })
-    } catch (e) {}
+    } catch (e) {
+      historyData.value = null
+    }
 
     pending.value = false
   }
@@ -68,14 +70,11 @@ export const useProjectFileHistory = (project: Project, root: Root) => {
     })) as Commit[] || []
   })
 
-  // Watch
-
-  if (process.client) {
-    watch(file, fetch, { immediate: true })
-  }
-
   return {
+    // Data
     history,
-    pending
+    pending,
+    // Methods
+    fetch
   }
 }

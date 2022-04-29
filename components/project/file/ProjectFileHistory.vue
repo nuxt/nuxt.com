@@ -39,5 +39,10 @@ import type { Project, Root } from '~/types'
 const project: Project = inject('project')
 const root: Root = inject('root')
 
-const { history, pending } = useProjectFileHistory(project, root)
+const { history, pending, fetch: fetchHistory } = useProjectFileHistory(project, root)
+const { file } = useProjectFiles(project, root)
+
+onMounted(() => {
+  watch(file, fetchHistory, { immediate: true })
+})
 </script>
