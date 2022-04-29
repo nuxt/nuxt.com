@@ -32,7 +32,6 @@
 import type { Ref } from 'vue'
 
 const observer = ref() as Ref<IntersectionObserver>
-const activeCodeBlock = ref('')
 const codeBlockAnim = ref(null)
 const codeBlock = ref(null)
 const cliActive = ref(false)
@@ -40,7 +39,7 @@ const cliActive = ref(false)
 const observerCallback = (entries: IntersectionObserverEntry[]) =>
   entries.forEach(({ isIntersecting }) => {
     if (isIntersecting) {
-      activeCodeBlock.value = 'fromCLI'
+      cliActive.value = true
     }
   })
 
