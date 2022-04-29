@@ -7,7 +7,6 @@ import { tooltip } from '@milkdown/plugin-tooltip'
 import { gfm } from '@milkdown/preset-gfm'
 import { useEditor as useMilkdownEditor } from '@milkdown/vue'
 import { Slice } from 'prosemirror-model'
-import { isRef, ref, unref, computed, watch } from 'vue'
 
 // Internal context
 import context, { componentSchemasCtx } from './context'
@@ -37,12 +36,12 @@ export const useEditor = (options: Options) => {
       .config(ctx => ctx.set(rootCtx, root))
       .use(context(options, renderVue))
       .use(unref(theme))
-      .use(emoji())
+      .use(emoji)
       .use(history)
       .use(listener)
       .use(gfm)
       .use(prism)
-      .use(tooltip())
+      .use(tooltip)
 
     for (const plugin of plugins) {
       instance.use(plugin)

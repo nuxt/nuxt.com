@@ -4,7 +4,7 @@
       Showcases
     </p>
 
-    <ul v-if="categories.length" class="py-2">
+    <ul v-if="categories.length" class="py-3">
       <li v-for="category in categories" :key="category.id">
         <NuxtLink
           :to="category.to"
