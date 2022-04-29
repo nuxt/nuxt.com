@@ -100,7 +100,15 @@ async function onBranchSelect (b: GitHubBranch) {
 }
 
 function onCreateBranchClick ({ query: name }) {
-  openCreateBranchModal(name && !branches.value.some(b => b.name === name) ? name : '', false)
+  openCreateBranchModal(
+    name && !branches.value.some(b => b.name === name) ? name : '',
+    branch.value.name === project.repository.default_branch,
+    false,
+    async () => {
+      await refreshContentFiles()
+      await refreshMediaFiles()
+    }
+  )
 }
 
 async function onResetDraftClick () {
