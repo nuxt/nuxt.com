@@ -55,16 +55,26 @@ import type { Project } from '~/types'
 
 const project: Project = inject('project')
 
+const route = useRoute()
+
 const { openBranchesModal, openFilesModal } = useProjectModals()
 
 const { branch, branches, commit, openPublishModal, openCreateModal, loading } = useProjectBranches(project)
 const { isDraft: isDraftContent, refresh: refreshContentFiles, mergeDraftInFiles: mergeContentDraftInFiles } = useProjectFiles(project, 'content')
 const { isDraft: isDraftMedia, refresh: refreshMediaFiles, mergeDraftInFiles: mergeMediaDraftInFiles } = useProjectFiles(project, 'public')
+const { fetch: fetchContentFileHistory } = useProjectFileHistory(project, 'content')
+const { fetch: fetchPublicFileHistory } = useProjectFileHistory(project, 'public')
 
 async function onCommitClick () {
   const callbackAfterCommit = () => {
     mergeContentDraftInFiles()
     mergeMediaDraftInFiles()
+
+    if (route.name === '@team-project-content') {
+      fetchContentFileHistory()
+    } else if (route.name === '@team-project-media') {
+      fetchPublicFileHistory()
+    }
   }
 
   if (branch.value.name === project.repository.default_branch) {
