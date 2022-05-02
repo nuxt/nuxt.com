@@ -21,6 +21,12 @@ export default defineNuxtConfig({
     'vue-plausible'
   ],
   runtimeConfig: {
+    github: {
+      token: process.env.GITHUB_TOKEN
+    },
+    orbit: {
+      token: process.env.ORBIT_TOKEN
+    },
     public: {
       baseUrl: process.env.BASE_URL || 'https://nuxt.com',
       github: {

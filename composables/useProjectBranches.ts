@@ -57,15 +57,13 @@ export const useProjectBranches = (project: Project) => {
     } catch (e) {}
   }
 
-  async function commit (callback?: () => void) {
+  async function commit () {
     loading.value = true
 
     try {
       await client(`/projects/${project.id}/branches/${encodeURIComponent(branch.value.name)}/commit`, { method: 'POST' })
 
-      if (callback) {
-        await callback()
-      }
+      $socket.emit('branch:commit', `project-${project.id}:${branch.value.name}`)
 
       $toast.success({
         title: 'Changes saved!',
@@ -76,7 +74,7 @@ export const useProjectBranches = (project: Project) => {
     loading.value = false
   }
 
-  async function publish (callback?: () => void) {
+  async function publish () {
     loading.value = true
 
     try {
@@ -84,10 +82,6 @@ export const useProjectBranches = (project: Project) => {
 
       select({ name: project.repository.default_branch })
       branches.value = branches.value.filter(b => b.name !== branch.value.name)
-
-      if (callback) {
-        await callback()
-      }
 
       $toast.success({
         title: 'Published!',
@@ -106,7 +100,7 @@ export const useProjectBranches = (project: Project) => {
 
   // Modals
 
-  function openCreateModal (name: string, mergeDraft: boolean, callback?: () => void) {
+  function openCreateModal (name: string, mergeDraft: boolean, commitDraft: boolean, callback?: () => void) {
     openModal(ProjectModalBranchCreate, {
       name,
       mergeDraft,
@@ -114,8 +108,12 @@ export const useProjectBranches = (project: Project) => {
       onSubmit: async (name: string) => {
         await create(name, mergeDraft)
 
-        if (mergeDraft) {
-          await commit(callback)
+        if (commitDraft) {
+          await commit()
+        }
+
+        if (callback) {
+          await callback()
         }
       }
     })
@@ -126,7 +124,11 @@ export const useProjectBranches = (project: Project) => {
       project,
       branch: branch.value,
       onSubmit: async () => {
-        await publish(callback)
+        await publish()
+
+        if (callback) {
+          await callback()
+        }
       }
     })
   }
@@ -134,14 +136,12 @@ export const useProjectBranches = (project: Project) => {
   // Methods
 
   function init () {
-    let b: GitHubBranch | undefined
-    if (cookie.value) {
-      b = branches.value.find(branch => branch.name === cookie.value)
-    } else {
-      b = branches.value.find(branch => branch.name === project.repository.default_branch)
-    }
+    let branchToSelect = cookie.value ? branches.value.find(branch => branch.name === cookie.value) : null
 
-    select(b || branches.value[0])
+    branchToSelect = branchToSelect || branches.value.find(branch => branch.name === project.repository.default_branch)
+    branchToSelect = branchToSelect || branches.value[0]
+
+    select(branchToSelect)
   }
 
   function select (b: GitHubBranch) {
