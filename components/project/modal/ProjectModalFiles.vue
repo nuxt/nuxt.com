@@ -89,11 +89,12 @@ const currentFiles = computed(() => {
 
 const recentFiles = computed(() => {
   return [...contentRecentFiles.value, ...mediaRecentFiles.value]
-    .filter((f) => {
-      if (isContentPage.value && contentFile.value && f.path === contentFile.value.path) {
+    .filter(rf => currentFiles.value.find(f => f.path === rf.path))
+    .filter((rf) => {
+      if (isContentPage.value && contentFile.value && rf.path === contentFile.value.path) {
         return false
       }
-      if (isMediaPage.value && mediaFile.value && f.path === mediaFile.value.path) {
+      if (isMediaPage.value && mediaFile.value && rf.path === mediaFile.value.path) {
         return false
       }
       return true
