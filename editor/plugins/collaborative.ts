@@ -13,7 +13,7 @@ let wsProvider: WebsocketProvider
 const useRoom = (room: string) => {
   doc = doc || new Doc()
   wsProvider && wsProvider.destroy()
-  wsProvider = new WebsocketProvider('ws://localhost:1234', room, doc)
+  wsProvider = new WebsocketProvider(useRuntimeConfig().public.ywsUrl, room, doc)
   wsProvider.awareness.setLocalStateField('user', {
     name: unref(useStrapiUser() as Ref<User>).username
   })

@@ -34,6 +34,7 @@ export const useEditor = (options: Options) => {
   let instance: Editor
 
   const theme = useTheme()
+  const isCollaborativeEnabled = Boolean(useRuntimeConfig().public.ywsUrl)
 
   const makeEditor = () => useMilkdownEditor((root, renderVue) => {
     instance = Editor.make()
@@ -46,10 +47,13 @@ export const useEditor = (options: Options) => {
       .use(gfm)
       .use(prism) // TODO: Use custom plugin to add Shiki support
       .use(tooltip)
-      .use(collaborative(unref(options.room) ?? 'default'))
       .use(mdc)
       .use(slash)
       .use(trailingParagraph)
+
+    if (isCollaborativeEnabled) {
+      instance.use(collaborative(unref(options.room) ?? 'default'))
+    }
 
     return instance
   })
@@ -87,7 +91,7 @@ export const useEditor = (options: Options) => {
   })
 
   // Reactive room (collaborative support)
-  if (isRef(options.room)) {
+  if (isCollaborativeEnabled && isRef(options.room)) {
     watch(options.room, (room) => {
       instance?.action(setRoom(room))
       instance?.action(replaceAll(unref(options.content), true))

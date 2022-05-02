@@ -29,6 +29,7 @@ export default defineNuxtConfig({
     },
     public: {
       baseUrl: process.env.BASE_URL || 'https://nuxt.com',
+      ywsUrl: process.env.YWS_URL,
       github: {
         appSlug: process.env.GITHUB_APP_SLUG || 'nuxt'
       },
