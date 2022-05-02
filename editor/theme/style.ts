@@ -35,7 +35,6 @@ export const getStyle = (manager: ThemeManager, emotion: Emotion) => {
       font-family: inherit;
       font-weight: bold;
     }
-
   `
 
   const editorLayout = css`
