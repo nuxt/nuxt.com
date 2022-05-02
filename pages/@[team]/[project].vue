@@ -133,9 +133,11 @@ onMounted(() => {
       return
     }
 
+    const { path, oldPath } = contentFile.value
+
     contentDraft.value = draft
 
-    const currentFile = contentFiles.value.find(file => file.path === contentFile.value.path)
+    const currentFile = contentFiles.value.find(file => file.path === path)
     if (currentFile) {
       // If current file has been deleted, select new one
       if (currentFile.status === 'deleted') {
@@ -143,7 +145,7 @@ onMounted(() => {
       }
     } else {
       // If current file does not exist anymore it means it has been renamed, select it from old path
-      const renamedFile = contentFiles.value.find(file => file.oldPath === (contentFile.value.oldPath || contentFile.value.path))
+      const renamedFile = contentFiles.value.find(file => file.oldPath === (oldPath || path)) || contentFiles.value.find(file => file.path === (oldPath || path))
       if (renamedFile) {
         selectContentFile(renamedFile.path)
       }
