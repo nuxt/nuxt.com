@@ -92,38 +92,37 @@ const editorScroll: Ref<HTMLElement> = ref(null)
 
 // Watch
 
-// Fetch content when file changes
-watch(file, () => fetchContent(), { immediate: true })
-
-// Open dirs in tree when file is selected
-watch(file, (f) => {
-  if (!f) {
-    return
-  }
-
-  const paths = f.path.split('/')
-  for (let i = paths.length - 1; i > 1; i--) {
-    paths.pop()
-    openDir(paths.join('/'), true)
-  }
+watch(file, () => {
+  // Fetch content when file changes
+  fetchContent()
+  // Open dirs in tree when file is selected
+  openDirs()
 }, { immediate: true })
 
 // When file path change due to new selection, scroll top
-watch(file, (f, old) => {
-  if (process.client && editorScroll.value) {
-    if (!f) {
-      return
-    }
-    // Ignore when: rename || rename back to original || rename when already renamed
-    if ((old && old.path === f.oldPath) || (old && old.oldPath === f.path) || (old && old.oldPath === f.oldPath)) {
+if (process.client) {
+  watch(file, () => {
+    if (!editorScroll.value) {
       return
     }
 
     editorScroll.value.scrollTop = 0
-  }
-})
+  })
+}
 
 // Http
+
+function openDirs () {
+  if (!file.value) {
+    return
+  }
+
+  const paths = file.value.split('/')
+  for (let i = paths.length - 1; i > 1; i--) {
+    paths.pop()
+    openDir(paths.join('/'), true)
+  }
+}
 
 async function fetchContent () {
   if (!file.value) {
@@ -133,7 +132,7 @@ async function fetchContent () {
     return
   }
 
-  const { content: fetchedContent } = await fetchFile(file.value.path)
+  const { content: fetchedContent } = await fetchFile(file.value)
 
   content.value = fetchedContent
 
@@ -149,10 +148,10 @@ function parseContent () {
 
 async function updateFile (formattedContent) {
   try {
-    const data = await client<GitHubDraft>(`/projects/${project.id}/files/${encodeURIComponent(file.value.path)}`, {
+    const data = await client<GitHubDraft>(`/projects/${project.id}/files/${encodeURIComponent(file.value)}`, {
       method: 'PUT',
       params: {
-        ref: branch.value?.name,
+        ref: branch.value,
         root
       },
       body: {
@@ -163,8 +162,8 @@ async function updateFile (formattedContent) {
     content.value = formattedContent
     draft.value = data
 
-    $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
-    $socket.emit('file:update', `project-${project.id}:${branch.value.name}:${file.value.path}`)
+    $socket.emit('draft:update', `project-${project.id}:${branch.value}`)
+    $socket.emit('file:update', `project-${project.id}:${branch.value}:${file.value}`)
   } catch (e) {}
 }
 
@@ -193,13 +192,13 @@ onMounted(() => {
     return
   }
 
-  $socket.emit('file:join', `project-${project.id}:${branch.value.name}:${file.value.path}`)
+  $socket.emit('file:join', `project-${project.id}:${branch.value}:${file.value}`)
 
   $socket.on('file:update', ({ branch: draftBranch, file: draftFile }) => {
-    if (draftBranch !== branch.value.name) {
+    if (draftBranch !== branch.value) {
       return
     }
-    if (file.value && draftFile.path !== file.value.path) {
+    if (draftFile.path !== file.value) {
       return
     }
 

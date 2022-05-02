@@ -30,7 +30,7 @@ const route = useRoute()
 const router = useRouter()
 const keys = useMagicKeys()
 const {
-  file: contentFile,
+  computedFile: contentFile,
   computedFiles: contentFiles,
   recentFiles: contentRecentFiles,
   select: selectContentFile,
@@ -41,7 +41,7 @@ const {
   openRevertModal: openRevertContentFileModal
 } = useProjectFiles(project, 'content')
 const {
-  file: mediaFile,
+  computedFile: mediaFile,
   computedFiles: mediaFiles,
   recentFiles: mediaRecentFiles,
   select: selectMediaFile,

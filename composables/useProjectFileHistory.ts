@@ -2,7 +2,6 @@ import type { Ref } from 'vue'
 import type { Project, Root, GitHubUser, Commit } from '~/types'
 
 interface GraphQLHistory {
-  path: string,
   repository: {
     ref: {
       target: {
@@ -23,46 +22,36 @@ interface GraphQLHistory {
 
 export const useProjectFileHistory = (project: Project, root: Root) => {
   const { branch } = useProjectBranches(project)
-  const { file, draft } = useProjectFiles(project, root)
+  const { computedFile, draft } = useProjectFiles(project, root)
   const client = useStrapiClient()
 
   const pending = ref(true)
   const historyData: Ref<GraphQLHistory | null> = useState(`project-${project.id}-${root}-file-history`, () => null)
 
   const fetch = async () => {
-    if (!file.value) {
+    if (!computedFile.value) {
       return
     }
 
     // created file case
-    if (file.value.status === 'created') {
+    if (computedFile.value.status === 'created') {
       historyData.value = null
       pending.value = false
       return
     }
 
     // renamed file case
-    const oldPath = draft.value?.additions?.find(f => f.path === file.value.path)?.oldPath
-    const path = oldPath || file.value.path
-
-    if (historyData.value && historyData.value.path === path) {
-      pending.value = false
-      return
-    }
+    const oldPath = draft.value?.additions?.find(f => f.path === computedFile.value.path)?.oldPath
+    const path = oldPath || computedFile.value.path
 
     pending.value = true
 
     try {
-      const result = await client<GraphQLHistory>(`/projects/${project.id}/files/${encodeURIComponent(path)}/history`, {
+      historyData.value = await client<GraphQLHistory>(`/projects/${project.id}/files/${encodeURIComponent(path)}/history`, {
         params: {
-          ref: branch.value.name
+          ref: branch.value
         }
       })
-
-      historyData.value = {
-        path,
-        ...result
-      }
     } catch (e) {
       historyData.value = null
     }
