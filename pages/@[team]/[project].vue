@@ -133,9 +133,14 @@ onMounted(() => {
       return
     }
 
-    const { path, oldPath } = contentFile.value
+    const { path, oldPath } = contentFile.value || {}
 
     contentDraft.value = draft
+
+    if (!path && !oldPath) {
+      initContentFile()
+      return
+    }
 
     const currentFile = contentFiles.value.find(file => file.path === path)
     if (currentFile) {
