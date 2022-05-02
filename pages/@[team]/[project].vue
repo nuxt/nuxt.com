@@ -49,8 +49,8 @@ provide('activeUsers', activeUsers)
 const { branch, branches, fetch: fetchBranches, select: selectBranch } = useProjectBranches(project.value)
 const { fetch: fetchComponents } = useProjectComponents(project.value)
 const {
-  file: contentFile,
   draft: contentDraft,
+  computedFile: contentFile,
   computedFiles: contentFiles,
   fetch: fetchContentFiles,
   select: selectContentFile,
@@ -92,7 +92,7 @@ function onFilesModalChange () {
 
 onMounted(() => {
   // Join project room
-  $socket.emit('project:join', `project-${project.value.id}:${branch.value.name}`)
+  $socket.emit('project:join', `project-${project.value.id}:${branch.value}`)
 
   // Listen to new collaborators joining the room
   $socket.on('project:active-users', (users: SocketUser[]) => {
@@ -107,8 +107,8 @@ onMounted(() => {
   })
   $socket.on('branch:delete', (deletedBranch: GitHubBranch) => {
     if (branches.value.find(b => b.name === deletedBranch.name)) {
-      if (branch.value.name === deletedBranch.name) {
-        selectBranch(branches.value.find(b => b.name === project.value.repository.default_branch))
+      if (branch.value === deletedBranch.name) {
+        selectBranch(project.value.repository.default_branch)
 
         refreshContentFiles()
         refreshMediaFiles()
@@ -119,7 +119,7 @@ onMounted(() => {
 
   // Listen to commit on a branch
   $socket.on('branch:commit', ({ branch: commitBranch }: { branch: string }) => {
-    if (commitBranch !== branch.value.name) {
+    if (commitBranch !== branch.value) {
       return
     }
 
@@ -129,13 +129,20 @@ onMounted(() => {
 
   // Listen to change on draft by other collaborators
   $socket.on('draft:update', ({ branch: draftBranch, draft }: { branch: string, draft: GitHubDraft }) => {
-    if (draftBranch !== branch.value.name) {
+    if (draftBranch !== branch.value) {
       return
     }
 
+    const { path, oldPath } = contentFile.value || {}
+
     contentDraft.value = draft
 
-    const currentFile = contentFiles.value.find(file => file.path === contentFile.value.path)
+    if (!path && !oldPath) {
+      initContentFile()
+      return
+    }
+
+    const currentFile = contentFiles.value.find(file => file.path === path)
     if (currentFile) {
       // If current file has been deleted, select new one
       if (currentFile.status === 'deleted') {
@@ -143,9 +150,9 @@ onMounted(() => {
       }
     } else {
       // If current file does not exist anymore it means it has been renamed, select it from old path
-      const renamedFile = contentFiles.value.find(file => file.oldPath === (contentFile.value.oldPath || contentFile.value.path))
+      const renamedFile = contentFiles.value.find(file => file.oldPath === (oldPath || path)) || contentFiles.value.find(file => file.path === (oldPath || path))
       if (renamedFile) {
-        selectContentFile(renamedFile)
+        selectContentFile(renamedFile.path)
       }
     }
   })
