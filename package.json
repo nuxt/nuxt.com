@@ -4,6 +4,7 @@
     "dev": "nuxi dev",
     "build": "nuxi build",
     "start": "node .output/server/index.mjs",
+    "yws": "HOST=localhost PORT=1234 y-websocket",
     "lint": "eslint --ext .ts,.js,.vue .",
     "release": "yarn lint && standard-version && git push --follow-tags",
     "test": "yarn lint"
