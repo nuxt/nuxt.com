@@ -57,7 +57,7 @@ const { branch } = useProjectBranches(project)
 function usersGroup (item: GitHubBranch | GitHubFile) {
   return activeUsers.value.reduce((acc, user) => {
     if (item.path) { // item is GitHubFile
-      if (user.file === item.path && user.branch === branch.value.name) {
+      if (user.file === item.path && user.branch === branch.value) {
         acc.push({ src: user.avatar, alt: user.username })
       }
     } else if (user.branch === item.name) { // item is GitHubBranch

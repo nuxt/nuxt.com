@@ -56,7 +56,7 @@ const { file: selectedFile, select, openRenameModal, openRevertModal, openDelete
 
 const item = ref(null)
 
-const isSelected = computed(() => selectedFile.value && props.file.path === selectedFile.value.path)
+const isSelected = computed(() => props.file.path === selectedFile.value)
 const isDeleted = computed(() => props.file.status === 'deleted')
 
 const dropdownItems = computed(() => {
@@ -97,7 +97,7 @@ onMounted(() => {
 
 const selectFile = () => {
   // Prevent click when clicking on selected file
-  if (selectedFile.value && selectedFile.value.path === props.file.path) {
+  if (selectedFile.value === props.file.path) {
     return
   }
 
@@ -105,6 +105,6 @@ const selectFile = () => {
     return
   }
 
-  select(props.file)
+  select(props.file.path)
 }
 </script>

@@ -28,7 +28,7 @@ const isOpen = computed(() => !!props.openedDirs[props.file.path])
 
 const usersGroup = computed(() => {
   return activeUsers.value.reduce((acc, u) => {
-    if (!!u.file && u.branch === branch.value.name && u.id !== user.value.id) {
+    if (!!u.file && u.branch === branch.value && u.id !== user.value.id) {
       if (isDir.value && !isOpen.value) {
         if (u.file.startsWith(props.file.path)) {
           acc.push({ src: u.avatar, alt: u.username })

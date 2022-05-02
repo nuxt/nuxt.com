@@ -20,10 +20,10 @@
         </h3>
         <div class="mt-2 space-y-3 divide-y u-divide-gray-100">
           <p class="text-sm break-words u-text-gray-500">
-            You're about to publish <span class="font-medium u-text-gray-900">{{ branch.name }}</span>.<br>This branch will be merged into your repository default branch <span class="font-medium u-text-gray-900">{{ project.repository.default_branch }}</span>.
+            You're about to publish <span class="font-medium u-text-gray-900">{{ branch }}</span>.<br>This branch will be merged into your repository default branch <span class="font-medium u-text-gray-900">{{ project.repository.default_branch }}</span>.
           </p>
           <p class="pt-3 text-sm break-words u-text-gray-500">
-            You can also <a :href="`https://github.com/${project.repository.owner}/${project.repository.name}/compare/${project.repository.default_branch}...${branch.name}`" target="_blank" class="font-medium text-primary-500 hover:underline">compare the changes / create a pull request</a> on GitHub.
+            You can also <a :href="`https://github.com/${project.repository.owner}/${project.repository.name}/compare/${project.repository.default_branch}...${branch}`" target="_blank" class="font-medium text-primary-500 hover:underline">compare the changes / create a pull request</a> on GitHub.
           </p>
         </div>
       </div>
@@ -37,7 +37,7 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import type { Project, GitHubBranch } from '~/types'
+import type { Project } from '~/types'
 
 defineProps({
   project: {
@@ -45,7 +45,7 @@ defineProps({
     required: true
   },
   branch: {
-    type: Object as PropType<GitHubBranch>,
+    type: String as PropType<string>,
     required: true
   }
 })
