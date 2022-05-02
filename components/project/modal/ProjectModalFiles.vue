@@ -180,10 +180,10 @@ function getIconColor (file) {
 function onFileSelect (f: GitHubFile) {
   if (f.path.startsWith('public/')) {
     router.push({ name: '@team-project-media' })
-    selectMediaFile(f)
+    selectMediaFile(f.path)
   } else if (f.path.startsWith('content/')) {
     router.push({ name: '@team-project-content' })
-    selectContentFile(f)
+    selectContentFile(f.path)
   }
 }
 
