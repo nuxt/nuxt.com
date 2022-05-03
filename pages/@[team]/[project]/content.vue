@@ -123,6 +123,13 @@ watch(file, (f, old) => {
   }
 })
 
+watch([markdown, matter], debounce(async ([markdown, matter]) => {
+  const formattedContent = stringifyFrontMatter(markdown, matter)
+  if (formattedContent !== content.value) {
+    await updateFile(formattedContent)
+  }
+}, 500))
+
 // Http
 
 async function fetchContent () {
@@ -162,14 +169,8 @@ async function updateFile (formattedContent) {
   } catch (e) {}
 }
 
-watch([markdown, matter], debounce(async ([markdown, matter]) => {
-  const formattedContent = stringifyFrontMatter(markdown, matter)
-  if (formattedContent !== content.value) {
-    await updateFile(formattedContent)
-  }
-}, 500))
-
 // Hooks
+
 onMounted(() => {
   if (!file.value) {
     return
