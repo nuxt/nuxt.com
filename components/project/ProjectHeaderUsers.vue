@@ -16,7 +16,7 @@
           {{ activeUser.id === user.id ? '(you)' : '' }}
         </p>
         <div v-if="canJump(activeUser)">
-          <p v-if="activeUser.branch !== branch" class="u-text-gray-200 italic">
+          <p v-if="activeUser.branch !== branch.name" class="u-text-gray-200 italic">
             Jump to {{ activeUser.branch }} branch
           </p>
           <p v-else-if="!!activeUser.file" class="u-text-gray-200 italic">
@@ -40,11 +40,11 @@ const project: Project = inject('project')
 const activeUsers: Ref<SocketUser[]> = inject('activeUsers')
 
 const { branch, select: selectBranch } = useProjectBranches(project)
-const { computedFile: contentFile, select: selectContentFile, refresh: refreshContentFiles } = useProjectFiles(project, 'content')
+const { file, select: selectContentFile, refresh: refreshContentFiles } = useProjectFiles(project, 'content')
 const { refresh: refreshMediaFiles } = useProjectFiles(project, 'public')
 
 function canJump (activeUser) {
-  return activeUser.id !== user.value?.id && (activeUser.branch !== branch.value || !!activeUser.file)
+  return activeUser.id !== user.value?.id && (activeUser.branch !== branch.value.name || !!activeUser.file)
 }
 
 async function jumpTo (activeUser: SocketUser) {
@@ -54,15 +54,15 @@ async function jumpTo (activeUser: SocketUser) {
 
   const { file: f, branch: b } = activeUser
 
-  if (b !== branch.value) {
-    selectBranch(b)
+  if (b !== branch.value?.name) {
+    selectBranch({ name: b })
 
     await refreshContentFiles()
     refreshMediaFiles()
   }
 
-  if (contentFile.value && f !== contentFile.value.path) {
-    selectContentFile(f)
+  if (file.value && f !== file.value.path) {
+    selectContentFile({ path: f, type: 'blob' })
   }
 
   router.push({ name: '@team-project-content' })

@@ -101,7 +101,7 @@ onMounted(() => {
   scrollToSelectedFile()
 })
 
-watch(() => selectedFile.value, () => {
+watch(() => selectedFile.value.path, () => {
   scrollToSelectedFile()
 })
 
@@ -110,7 +110,7 @@ const isFile = (file: File) => file.type === 'file'
 const isDir = (file: File) => file.type === 'directory'
 const isDirOpen = (file: File) => !!openedDirs[file.path]
 const isDraft = (file: File) => !!file.status
-const isSelected = (file: File) => file.path === selectedFile.value
+const isSelected = (file: File) => selectedFile.value && file.path === selectedFile.value.path
 const isDeleted = (file: File) => file.status === 'deleted'
 
 const scrollToSelectedFile = () => {
@@ -119,7 +119,7 @@ const scrollToSelectedFile = () => {
   }
 
   nextTick(() => {
-    const ref = itemRefs.value[selectedFile.value]
+    const ref = itemRefs.value[selectedFile.value.path]
     if (ref) {
       ref.scrollIntoView({ block: 'nearest' })
     }
@@ -128,7 +128,7 @@ const scrollToSelectedFile = () => {
 
 const selectFile = (file: File) => {
   // Prevent click when clicking on selected file
-  if (selectedFile.value === file.path) {
+  if (selectedFile.value && selectedFile.value.path === file.path) {
     scrollToSelectedFile()
     return
   }
@@ -142,7 +142,7 @@ const selectFile = (file: File) => {
     return
   }
 
-  select(file.path)
+  select(file as unknown as GitHubFile)
 }
 
 const canDragFile = (file) => {
