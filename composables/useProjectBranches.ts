@@ -12,7 +12,7 @@ export const useProjectBranches = (project: Project) => {
 
   const recentBranches: Ref<GitHubBranch[]> = useState(`project-${project.id}-branches-recent`, () => [])
   const branches: Ref<GitHubBranch[]> = useState(`project-${project.id}-branches`, () => [])
-  const branch: Ref<string> = useState(`project-${project.id}-branch`, () => cookie.value)
+  const branch: Ref<GitHubBranch> = useState(`project-${project.id}-branch`, () => null)
 
   const pending = ref(false)
   const loading = ref(false)
@@ -53,7 +53,7 @@ export const useProjectBranches = (project: Project) => {
 
       branches.value.push(b)
 
-      select(b.name)
+      select(b)
     } catch (e) {}
   }
 
@@ -61,13 +61,13 @@ export const useProjectBranches = (project: Project) => {
     loading.value = true
 
     try {
-      await client(`/projects/${project.id}/branches/${encodeURIComponent(branch.value)}/commit`, { method: 'POST' })
+      await client(`/projects/${project.id}/branches/${encodeURIComponent(branch.value.name)}/commit`, { method: 'POST' })
 
-      $socket.emit('branch:commit', `project-${project.id}:${branch.value}`)
+      $socket.emit('branch:commit', `project-${project.id}:${branch.value.name}`)
 
       $toast.success({
         title: 'Changes saved!',
-        description: `Your changes have been committed on ${branch.value} branch.`
+        description: `Your changes have been committed on ${branch.value.name} branch.`
       })
     } catch (e) {}
 
@@ -78,15 +78,14 @@ export const useProjectBranches = (project: Project) => {
     loading.value = true
 
     try {
-      await client(`/projects/${project.id}/branches/${encodeURIComponent(branch.value)}/publish`, { method: 'POST' })
+      await client(`/projects/${project.id}/branches/${encodeURIComponent(branch.value.name)}/publish`, { method: 'POST' })
 
-      select(project.repository.default_branch)
-
-      branches.value = branches.value.filter(b => b.name !== branch.value)
+      select({ name: project.repository.default_branch })
+      branches.value = branches.value.filter(b => b.name !== branch.value.name)
 
       $toast.success({
         title: 'Published!',
-        description: `Your branch ${branch.value} has been merged into ${project.repository.default_branch}.`
+        description: `Your branch ${branch.value.name} has been merged into ${project.repository.default_branch}.`
       })
     } catch (e) {}
 
@@ -94,9 +93,9 @@ export const useProjectBranches = (project: Project) => {
   }
 
   async function reset () {
-    await client(`/projects/${project.id}/branches/${encodeURIComponent(branch.value)}/reset`, { method: 'DELETE' })
+    await client(`/projects/${project.id}/branches/${encodeURIComponent(branch.value.name)}/reset`, { method: 'DELETE' })
 
-    $socket.emit('draft:update', `project-${project.id}:${branch.value}`)
+    $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
   }
 
   // Modals
@@ -137,23 +136,25 @@ export const useProjectBranches = (project: Project) => {
   // Methods
 
   function init () {
-    let branchToSelect = branch.value ? branches.value.find(b => b.name === branch.value) : null
+    let branchToSelect = cookie.value ? branches.value.find(branch => branch.name === cookie.value) : null
 
-    branchToSelect = branchToSelect || branches.value.find(b => b.name === project.repository.default_branch)
+    branchToSelect = branchToSelect || branches.value.find(branch => branch.name === project.repository.default_branch)
     branchToSelect = branchToSelect || branches.value[0]
 
-    select(branchToSelect.name)
+    select(branchToSelect)
   }
 
-  function select (name: string) {
-    branch.value = name
-    cookie.value = name
+  function select (b: GitHubBranch) {
+    branch.value = b
+    cookie.value = branch.value.name
 
     if (branch.value) {
-      recentBranches.value = [{ name: branch.value, openedAt: Date.now() }, ...recentBranches.value.filter(rb => rb.name !== branch.value)]
+      recentBranches.value = [{ ...branch.value, openedAt: Date.now() }, ...recentBranches.value.filter(rb => rb.name !== branch.value.name)]
+    }
 
-      if (process.client) {
-        $socket.emit('branch:join', `project-${project.id}:${branch.value}`)
+    if (process.client) {
+      if (branch.value) {
+        $socket.emit('branch:join', `project-${project.id}:${branch.value.name}`)
       }
     }
   }
@@ -176,6 +177,6 @@ export const useProjectBranches = (project: Project) => {
     // Data
     recentBranches,
     branches,
-    branch: readonly(branch)
+    branch
   }
 }

@@ -17,7 +17,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
   const recentFiles: Ref<GitHubFile[]> = useState(`project-${project.id}-${root}-files-recent`, () => [])
   const files: Ref<GitHubFile[]> = useState(`project-${project.id}-${root}-files`, () => null)
   const draft: Ref<GitHubDraft> = useState(`project-${project.id}-${root}-draft`, () => null)
-  const file: Ref<string> = useState(`project-${project.id}-${root}-file`, () => null)
+  const file: Ref<GitHubFile> = useState(`project-${project.id}-${root}-file`, () => null)
 
   const pending = ref(false)
 
@@ -36,7 +36,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
 
     const data = await client<{ files: GitHubFile[], draft: GitHubDraft }>(`/projects/${project.id}/files`, {
       params: {
-        ref: branch.value,
+        ref: branch.value.name,
         root,
         force: resetCache
       }
@@ -59,17 +59,17 @@ export const useProjectFiles = (project: Project, root: Root) => {
       const data = await client<GitHubDraft>(`/projects/${project.id}/files`, {
         method: 'POST',
         params: {
-          ref: branch.value,
+          ref: branch.value.name,
           root
         },
         body: { path }
       })
 
-      $socket.emit('draft:update', `project-${project.id}:${branch.value}`)
+      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
 
       draft.value = data
 
-      select(path)
+      select(computedFiles.value.find(file => file.path === path))
     } catch (e) {}
   }
 
@@ -80,7 +80,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
       const data = await client<GitHubDraft>(`/projects/${project.id}/files/upload`, {
         method: 'POST',
         params: {
-          ref: branch.value,
+          ref: branch.value.name,
           root
         },
         body: formData
@@ -88,7 +88,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
 
       draft.value = data
 
-      select(path)
+      select(computedFiles.value.find(file => file.path === path))
     } catch (e) {}
   }
 
@@ -97,7 +97,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
       const data = await client<GitHubDraft>(`/projects/${project.id}/files/rename`, {
         method: 'PUT',
         params: {
-          ref: branch.value,
+          ref: branch.value?.name,
           root
         },
         body: {
@@ -108,12 +108,12 @@ export const useProjectFiles = (project: Project, root: Root) => {
         }
       })
 
-      $socket.emit('draft:update', `project-${project.id}:${branch.value}`)
+      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
 
       draft.value = data
 
-      if (file.value === oldPath) {
-        select(newPath)
+      if (file.value?.path === oldPath) {
+        select(computedFiles.value.find(file => file.path === newPath))
       }
     } catch (e) {}
   }
@@ -127,7 +127,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
       const data = await client<GitHubDraft>(`/projects/${project.id}/files/rename`, {
         method: 'PUT',
         params: {
-          ref: branch.value,
+          ref: branch.value?.name,
           root
         },
         body: {
@@ -135,7 +135,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
         }
       })
 
-      $socket.emit('draft:update', `project-${project.id}:${branch.value}`)
+      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
 
       draft.value = data
     } catch (e) {}
@@ -146,37 +146,33 @@ export const useProjectFiles = (project: Project, root: Root) => {
       const data = await client<GitHubDraft>(`/projects/${project.id}/files/${encodeURIComponent(path)}/revert`, {
         method: 'POST',
         params: {
-          ref: branch.value,
+          ref: branch.value?.name,
           root
         }
       })
 
-      $socket.emit('draft:update', `project-${project.id}:${branch.value}`)
+      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
 
       const oldFilePath = draft.value.additions.find(addition => addition.path === path)?.oldPath
 
       draft.value = data
 
-      const currentFileExists = !!computedFiles.value.find(f => f.path === file.value)
+      const currentFileExists = !!computedFiles.value.find(f => f.path === file.value?.path)
 
       if (!currentFileExists) {
-        if (oldFilePath) { // Renamed file
-          select(oldFilePath)
-        } else { // Created file
+        if (oldFilePath) {
+          // Select old file
+          const oldFile = computedFiles.value.find(f => f.path === oldFilePath)
+          select(oldFile)
+        } else {
           // Select new file when reverted file no longer exists
           file.value = null
-
           init()
         }
-      } else { // Updated file
-        // FIXME: This is a hack to force the file to be reloaded (milkdown editor clears itself)
-        const oldPath = file.value
-
-        file.value = null
-
-        nextTick(() => {
-          select(oldPath)
-        })
+      } else {
+        // No new selection, fetch new content
+        // FIXME: hacky update to trigger any watchers on `file`
+        file.value = { ...file.value }
       }
     } catch (e) {}
   }
@@ -186,17 +182,17 @@ export const useProjectFiles = (project: Project, root: Root) => {
       const data = await client<GitHubDraft>(`/projects/${project.id}/files/${encodeURIComponent(path)}`, {
         method: 'DELETE',
         params: {
-          ref: branch.value,
+          ref: branch.value?.name,
           root
         }
       })
 
-      $socket.emit('draft:update', `project-${project.id}:${branch.value}`)
+      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
 
       draft.value = data
 
       // Select new file when deleted was selected
-      if (file.value === path) {
+      if (file.value?.path === path) {
         init()
       }
     } catch (e) {}
@@ -205,7 +201,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
   async function fetchFile (path: string) {
     return await client<GitHubFile>(`/projects/${project.id}/files/${encodeURIComponent(path)}`, {
       params: {
-        ref: branch.value,
+        ref: branch.value?.name,
         root
       }
     })
@@ -251,24 +247,24 @@ export const useProjectFiles = (project: Project, root: Root) => {
   // Methods
 
   function init () {
-    let fileToSelect = file.value ? computedFiles.value.find(f => f.path === file.value && f.status !== 'deleted') : null
+    let fileToSelect = file.value?.path ? computedFiles.value.find(f => f.path === file.value.path && f.status !== 'deleted') : null
 
     fileToSelect = fileToSelect || computedFiles.value.find(file => file.path.match(/^content\/[0-9.]*index\.md$/i) && file.status !== 'deleted')
     fileToSelect = fileToSelect || computedFiles.value.find(file => file.type === 'blob' && file.status !== 'deleted')
 
-    select(fileToSelect.path)
+    select(fileToSelect)
   }
 
-  function select (path: string) {
-    file.value = path
+  function select (f: GitHubFile) {
+    file.value = f
 
     if (file.value) {
-      recentFiles.value = [{ path, openedAt: Date.now() }, ...recentFiles.value.filter(rf => rf.path !== file.value)]
+      recentFiles.value = [{ ...file.value, openedAt: Date.now() }, ...recentFiles.value.filter(rf => rf.path !== file.value.path)]
     }
 
     if (process.client) {
       if (file.value) {
-        root === 'content' && $socket.emit('file:join', `project-${project.id}:${branch.value}:${file.value}`)
+        root === 'content' && $socket.emit('file:join', `project-${project.id}:${branch.value.name}:${file.value.path}`)
       } else {
         root === 'content' && $socket.emit('file:leave', `project-${project.id}`)
       }
@@ -327,10 +323,6 @@ export const useProjectFiles = (project: Project, root: Root) => {
     return githubFiles
   })
 
-  const computedFile: Ref<GitHubFile> = computed(() => {
-    return computedFiles.value.find(f => f.path === file.value)
-  })
-
   const isDraft = computed(() => {
     let changesCount = (draft.value?.additions?.length || 0) + (draft.value?.deletions?.length || 0)
 
@@ -369,11 +361,10 @@ export const useProjectFiles = (project: Project, root: Root) => {
     uploadInput,
     // Computed
     computedFiles,
-    computedFile,
     isDraft,
     // Data
     recentFiles,
-    draft,
-    file: readonly(file)
+    file,
+    draft
   }
 }

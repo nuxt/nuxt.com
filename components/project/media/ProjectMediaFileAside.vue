@@ -1,18 +1,18 @@
 <template>
   <aside class="hidden p-6 overflow-y-auto u-bg-white border-l u-border-gray-200 top-0 w-96 lg:block sticky h-[calc(100vh-4rem)] flex-shrink-0">
-    <div v-if="computedFile" class="pb-16 space-y-6">
+    <div v-if="file" class="pb-16 space-y-6">
       <div>
         <div class="flex items-center justify-between gap-3">
           <div class="min-w-0">
             <h2 class="text-lg font-medium u-text-gray-900">
-              <span class="sr-only">Details for </span>{{ computedFile.name }}
+              <span class="sr-only">Details for </span>{{ file.name }}
             </h2>
             <p class="flex items-center gap-1.5 text-sm min-w-0 u-text-gray-400 truncate">
-              <span class="truncate">{{ computedFile.path }}</span>
+              <span class="truncate">{{ file.path }}</span>
               <UButton
                 icon="heroicons-outline:external-link"
                 target="_blank"
-                :to="`https://github.com/${project.repository.owner}/${project.repository.name}/tree/${branch}/${absolutePath}`"
+                :to="`https://github.com/${project.repository.owner}/${project.repository.name}/tree/${branch.name}/${absolutePath}`"
                 variant="transparent"
                 size="xxs"
                 class="!p-0"
@@ -20,7 +20,7 @@
             </p>
           </div>
 
-          <a :download="computedFile.name" :href="fileDownloadLink">
+          <a :download="file.name" :href="fileDownloadLink">
             <UButton icon="heroicons-outline:cloud-download" variant="gray" rounded />
           </a>
         </div>
@@ -36,15 +36,15 @@
               Size
             </dt>
             <dd class="u-text-gray-900">
-              {{ toFormattedBytes(computedFile.size) }}
+              {{ toFormattedBytes(file.size) }}
             </dd>
           </div>
-          <div v-if="medias[computedFile.path]" class="flex justify-between py-3 text-sm font-medium">
+          <div v-if="medias[file.path]" class="flex justify-between py-3 text-sm font-medium">
             <dt class="u-text-gray-500">
               Dimensions
             </dt>
             <dd class="u-text-gray-900">
-              {{ medias[computedFile.path].width }} x {{ medias[computedFile.path].height }}
+              {{ medias[file.path].width }} x {{ medias[file.path].height }}
             </dd>
           </div>
         </dl>
@@ -76,13 +76,13 @@ const project: Project = inject('project')
 const root: Root = inject('root')
 
 const { branch } = useProjectBranches(project)
-const { computedFile } = useProjectFiles(project, root)
+const { file } = useProjectFiles(project, root)
 
 const absolutePath = computed(() => {
-  return [...project.baseDir.split('/').filter(p => p === '.'), ...computedFile.value.path.split('/')]
+  return [...project.baseDir.split('/').filter(p => p === '.'), ...file.value.path.split('/')]
     .filter(Boolean)
     .join('/')
 })
 
-const fileDownloadLink = computed(() => `data:image/png;base64,${computedFile.value.content}`)
+const fileDownloadLink = computed(() => `data:image/png;base64,${file.value.content}`)
 </script>
