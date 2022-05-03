@@ -136,6 +136,7 @@ async function fetchContent () {
   const { content: fetchedContent } = await fetchFile(file.value.path)
 
   content.value = fetchedContent
+
   const parsed = parseFrontMatter(content.value)
   markdown.value = parsed.content
   matter.value = parsed.matter
@@ -167,6 +168,19 @@ watch([markdown, matter], debounce(async ([markdown, matter]) => {
     await updateFile(formattedContent)
   }
 }, 500))
+
+// Hooks
+onMounted(() => {
+  if (!file.value) {
+    return
+  }
+
+  $socket.emit('file:join', `project-${project.id}:${branch.value.name}:${file.value.path}`)
+})
+
+onUnmounted(() => {
+  $socket.emit('file:leave', `project-${project.id}`)
+})
 </script>
 
 <style>
