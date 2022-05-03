@@ -1,10 +1,11 @@
-import { Editor, editorViewCtx, parserCtx, serializerCtx, rootCtx } from '@milkdown/core'
+import { Editor, editorViewCtx, parserCtx, rootCtx, serializerCtx } from '@milkdown/core'
 import { emoji } from '@milkdown/plugin-emoji'
 import { history } from '@milkdown/plugin-history'
 import { listener } from '@milkdown/plugin-listener'
 import { prism } from '@milkdown/plugin-prism'
 import { tooltip } from '@milkdown/plugin-tooltip'
 import { gfm } from '@milkdown/preset-gfm'
+import { switchTheme, replaceAll } from '@milkdown/utils'
 import { useEditor as useMilkdownEditor } from '@milkdown/vue'
 import { Slice } from 'prosemirror-model'
 
@@ -12,7 +13,10 @@ import { Slice } from 'prosemirror-model'
 import context, { componentSchemasCtx } from './context'
 
 // Internal plugins
-import plugins from './plugins'
+import mdc from './plugins/mdc'
+import slash from './plugins/slash'
+import trailingParagraph from './plugins/trailing-paragraph'
+import collaborative, { setRoom } from './plugins/collaborative'
 
 // Theme
 import { dark, light } from './theme'
@@ -30,6 +34,7 @@ export const useEditor = (options: Options) => {
   let instance: Editor
 
   const theme = useTheme()
+  const isCollaborativeEnabled = Boolean(useRuntimeConfig().public.ywsUrl)
 
   const makeEditor = () => useMilkdownEditor((root, renderVue) => {
     instance = Editor.make()
@@ -40,11 +45,14 @@ export const useEditor = (options: Options) => {
       .use(history)
       .use(listener)
       .use(gfm)
-      .use(prism)
+      .use(prism) // TODO: Use custom plugin to add Shiki support
       .use(tooltip)
+      .use(mdc)
+      .use(slash)
+      .use(trailingParagraph)
 
-    for (const plugin of plugins) {
-      instance.use(plugin)
+    if (isCollaborativeEnabled) {
+      instance.use(collaborative(unref(options.room) ?? 'default'))
     }
 
     return instance
@@ -74,6 +82,19 @@ export const useEditor = (options: Options) => {
   if (isRef(options.components)) {
     watch(options.components, (components) => {
       instance?.action(ctx => ctx.set(componentSchemasCtx, components))
+    })
+  }
+
+  // Reactive theme
+  watch(theme, (value) => {
+    instance?.action(switchTheme(value))
+  })
+
+  // Reactive room (collaborative support)
+  if (isCollaborativeEnabled && isRef(options.room)) {
+    watch(options.room, (room) => {
+      instance?.action(setRoom(room))
+      instance?.action(replaceAll(unref(options.content), true))
     })
   }
 
