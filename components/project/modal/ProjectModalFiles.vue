@@ -89,17 +89,18 @@ const currentFiles = computed(() => {
 
 const recentFiles = computed(() => {
   return [...contentRecentFiles.value, ...mediaRecentFiles.value]
-    .filter((f) => {
-      if (isContentPage.value && contentFile.value && f.path === contentFile.value.path) {
+    .filter(rf => currentFiles.value.find(f => f.path === rf.path))
+    .filter((rf) => {
+      if (isContentPage.value && contentFile.value && rf.path === contentFile.value.path) {
         return false
       }
-      if (isMediaPage.value && mediaFile.value && f.path === mediaFile.value.path) {
+      if (isMediaPage.value && mediaFile.value && rf.path === mediaFile.value.path) {
         return false
       }
       return true
     })
     .sort((a, b) => b.openedAt - a.openedAt)
-    .map(f => ({ ...f, name: getPathName(f.path), icon: getIconName(f), iconColor: getIconColor(f), disabled: isDisabled(f) }))
+    .map(rf => ({ ...rf, name: getPathName(rf.path), icon: getIconName(rf), iconColor: getIconColor(rf), disabled: isDisabled(rf) }))
     .slice(0, 5)
 })
 
