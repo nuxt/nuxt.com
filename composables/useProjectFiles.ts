@@ -323,6 +323,10 @@ export const useProjectFiles = (project: Project, root: Root) => {
     return githubFiles
   })
 
+  const computedFile: Ref<GitHubFile> = computed(() => {
+    return computedFiles.value.find(f => f.path === file.value?.path)
+  })
+
   const isDraft = computed(() => {
     let changesCount = (draft.value?.additions?.length || 0) + (draft.value?.deletions?.length || 0)
 
@@ -361,6 +365,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
     uploadInput,
     // Computed
     computedFiles,
+    computedFile,
     isDraft,
     // Data
     recentFiles,
