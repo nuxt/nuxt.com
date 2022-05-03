@@ -15,6 +15,10 @@ export default defineComponent({
       type: String,
       default: ''
     },
+    room: {
+      type: String,
+      required: true
+    },
     components: {
       type: Array as () => UnwrapOptions['components'],
       default: () => []
@@ -38,7 +42,10 @@ export default defineComponent({
     const editor = useEditor({
       components: computed(() => [...props.components]),
       content: computed(() => props.modelValue),
-      onChanged: (content: string) => (content !== props.modelValue) && emit('update:modelValue', content)
+      onChanged: (content: string) => {
+        (content !== props.modelValue) && emit('update:modelValue', content)
+      },
+      room: computed(() => props.room)
     })
 
     return {
@@ -51,7 +58,7 @@ export default defineComponent({
 
 <template>
   <ClientOnly>
-    <VueEditor v-if="editor" :key="$colorMode.value" v-bind="{ ...attrs, editor }" />
+    <VueEditor v-if="editor" v-bind="{ ...attrs, editor }" />
     <template #fallback>
       <slot name="loading" />
     </template>

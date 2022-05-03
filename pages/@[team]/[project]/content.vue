@@ -42,19 +42,19 @@
       </ProjectHeader>
     </template>
 
-    <div class="flex items-stretch flex-1 min-h-0 overflow-hidden">
+    <div class="flex items-stretch flex-1 min-h-0">
       <div v-if="computedFiles.length" ref="editorScroll" class="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto">
         <ProjectContentEditor
           v-if="file"
-          :model-value="parsedContent"
+          v-model="markdown"
+          :room="`project-${project.id}-${branch.name}-${file.path}`"
           :components="components || []"
           class="flex flex-col flex-1"
-          @update:model-value="updateContent"
         />
       </div>
       <ProjectContentFilesEmpty v-else @create="openCreateFileModal('content')" />
 
-      <ProjectContentFileAside :model-value="parsedMatter" @update:model-value="updateMatter" />
+      <ProjectContentFileAside v-model="matter" />
     </div>
   </ProjectPage>
 </template>
@@ -85,8 +85,8 @@ const { draft, file, fetchFile, openCreateModal: openCreateFileModal, computedFi
 const { query: treeQuery, tree, openDir } = useProjectFilesTree(project, root)
 
 const content: Ref<string> = ref('')
-const parsedContent: Ref<string> = ref('')
-const parsedMatter: Ref<object> = ref({})
+const markdown: Ref<string> = ref('')
+const matter: Ref<object> = ref({})
 
 const editorScroll: Ref<HTMLElement> = ref(null)
 
@@ -123,13 +123,20 @@ watch(file, (f, old) => {
   }
 })
 
+watch([markdown, matter], debounce(async ([markdown, matter]) => {
+  const formattedContent = stringifyFrontMatter(markdown, matter)
+  if (formattedContent !== content.value) {
+    await updateFile(formattedContent)
+  }
+}, 500))
+
 // Http
 
 async function fetchContent () {
   if (!file.value) {
     content.value = ''
-    parsedContent.value = ''
-    parsedMatter.value = {}
+    markdown.value = ''
+    matter.value = {}
     return
   }
 
@@ -137,14 +144,9 @@ async function fetchContent () {
 
   content.value = fetchedContent
 
-  parseContent()
-}
-
-function parseContent () {
-  const { content: c, matter } = parseFrontMatter(content.value)
-
-  parsedContent.value = c
-  parsedMatter.value = matter
+  const parsed = parseFrontMatter(content.value)
+  markdown.value = parsed.content
+  matter.value = parsed.matter
 }
 
 async function updateFile (formattedContent) {
@@ -164,27 +166,8 @@ async function updateFile (formattedContent) {
     draft.value = data
 
     $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
-    $socket.emit('file:update', `project-${project.id}:${branch.value.name}:${file.value.path}`)
   } catch (e) {}
 }
-
-const updateContent = debounce((newContent: string) => {
-  const formattedContent = stringifyFrontMatter(newContent, parsedMatter.value)
-  if (formattedContent === content.value) {
-    return
-  }
-
-  return updateFile(formattedContent)
-}, 500)
-
-const updateMatter = debounce((newMatter: object) => {
-  const formattedContent = stringifyFrontMatter(parsedContent.value, newMatter)
-  if (formattedContent === content.value) {
-    return
-  }
-
-  return updateFile(formattedContent)
-}, 500)
 
 // Hooks
 
@@ -194,17 +177,6 @@ onMounted(() => {
   }
 
   $socket.emit('file:join', `project-${project.id}:${branch.value.name}:${file.value.path}`)
-
-  $socket.on('file:update', ({ branch: draftBranch, file: draftFile }) => {
-    if (draftBranch !== branch.value.name) {
-      return
-    }
-    if (file.value && draftFile.path !== file.value.path) {
-      return
-    }
-
-    content.value = draftFile.content
-  })
 })
 
 onUnmounted(() => {
