@@ -53,12 +53,13 @@ const {
   draft: contentDraft,
   computedFiles: contentFiles,
   fetch: fetchContentFiles,
-  select: selectContentFile,
-  init: initContentFile,
   refresh: refreshContentFiles,
-  mergeDraftInFiles: mergeContentDraftInFiles
+  select: selectContentFile,
+  init: initContentFile
 } = useProjectFiles(project.value, 'content')
-const { fetch: fetchMediaFiles, refresh: refreshMediaFiles, mergeDraftInFiles: mergeMediaDraftInFiles } = useProjectFiles(project.value, 'public')
+const { fetch: fetchMediaFiles, refresh: refreshMediaFiles } = useProjectFiles(project.value, 'public')
+
+// Data
 
 try {
   await fetchBranches()
@@ -75,6 +76,14 @@ try {
 if (process.client) {
   fetchComponents()
 }
+
+// Watch
+
+watch(branch, async () => {
+  await Promise.all([refreshContentFiles(), refreshMediaFiles()])
+})
+
+// Methods
 
 function onBranchesModalChange () {
   if (isFilesModalOpen.value) {
@@ -109,9 +118,6 @@ onMounted(() => {
     if (branches.value.find(b => b.name === deletedBranch.name)) {
       if (branch.value.name === deletedBranch.name) {
         selectBranch(branches.value.find(b => b.name === project.value.repository.default_branch))
-
-        refreshContentFiles()
-        refreshMediaFiles()
       }
       branches.value = branches.value.filter(b => b.name !== deletedBranch.name)
     }
@@ -123,8 +129,8 @@ onMounted(() => {
       return
     }
 
-    mergeContentDraftInFiles()
-    mergeMediaDraftInFiles()
+    refreshContentFiles()
+    refreshMediaFiles()
   })
 
   // Listen to change on draft by other collaborators
@@ -146,6 +152,8 @@ onMounted(() => {
       const renamedFile = contentFiles.value.find(file => file.oldPath === (contentFile.value.oldPath || contentFile.value.path))
       if (renamedFile) {
         selectContentFile(renamedFile)
+      } else {
+        initContentFile()
       }
     }
   })
