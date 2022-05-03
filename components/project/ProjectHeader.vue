@@ -13,7 +13,7 @@
         class="truncate"
         @click="openBranchesModal"
       >
-        <span class="flex-auto u-text-gray-700 truncate">{{ branch }}</span>
+        <span class="flex-auto u-text-gray-700 truncate">{{ branch.name }}</span>
         <kbd class="hidden sm:inline ml-3 font-sans font-semibold u-text-gray-400 text-xs flex-shrink-0"><abbr title="Command" class="no-underline">⌘</abbr> B</kbd>
       </UButton>
       <UButton icon="heroicons-outline:search" variant="gray" size="xs" class="truncate" @click="openFilesModal">
@@ -77,7 +77,7 @@ async function onCommitClick () {
     }
   }
 
-  if (branch.value === project.repository.default_branch) {
+  if (branch.value.name === project.repository.default_branch) {
     return openCreateModal('', true, true, callbackAfterCommit)
   }
 

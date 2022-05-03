@@ -30,7 +30,7 @@ const route = useRoute()
 const router = useRouter()
 const keys = useMagicKeys()
 const {
-  computedFile: contentFile,
+  file: contentFile,
   computedFiles: contentFiles,
   recentFiles: contentRecentFiles,
   select: selectContentFile,
@@ -41,7 +41,7 @@ const {
   openRevertModal: openRevertContentFileModal
 } = useProjectFiles(project, 'content')
 const {
-  computedFile: mediaFile,
+  file: mediaFile,
   computedFiles: mediaFiles,
   recentFiles: mediaRecentFiles,
   select: selectMediaFile,
@@ -89,12 +89,11 @@ const currentFiles = computed(() => {
 
 const recentFiles = computed(() => {
   return [...contentRecentFiles.value, ...mediaRecentFiles.value]
-    .filter(rf => currentFiles.value.find(f => f.path === rf.path))
-    .filter((rf) => {
-      if (isContentPage.value && contentFile.value && rf.path === contentFile.value.path) {
+    .filter((f) => {
+      if (isContentPage.value && contentFile.value && f.path === contentFile.value.path) {
         return false
       }
-      if (isMediaPage.value && mediaFile.value && rf.path === mediaFile.value.path) {
+      if (isMediaPage.value && mediaFile.value && f.path === mediaFile.value.path) {
         return false
       }
       return true
@@ -181,10 +180,10 @@ function getIconColor (file) {
 function onFileSelect (f: GitHubFile) {
   if (f.path.startsWith('public/')) {
     router.push({ name: '@team-project-media' })
-    selectMediaFile(f.path)
+    selectMediaFile(f)
   } else if (f.path.startsWith('content/')) {
     router.push({ name: '@team-project-content' })
-    selectContentFile(f.path)
+    selectContentFile(f)
   }
 }
 
