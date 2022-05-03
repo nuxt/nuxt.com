@@ -2,7 +2,6 @@ import type { Ref } from 'vue'
 import type { Project, Root, GitHubUser, Commit } from '~/types'
 
 interface GraphQLHistory {
-  path: string,
   repository: {
     ref: {
       target: {
@@ -45,24 +44,14 @@ export const useProjectFileHistory = (project: Project, root: Root) => {
     const oldPath = draft.value?.additions?.find(f => f.path === computedFile.value.path)?.oldPath
     const path = oldPath || computedFile.value.path
 
-    if (historyData.value && historyData.value.path === path) {
-      pending.value = false
-      return
-    }
-
     pending.value = true
 
     try {
-      const result = await client<GraphQLHistory>(`/projects/${project.id}/files/${encodeURIComponent(path)}/history`, {
+      historyData.value = await client<GraphQLHistory>(`/projects/${project.id}/files/${encodeURIComponent(path)}/history`, {
         params: {
           ref: branch.value.name
         }
       })
-
-      historyData.value = {
-        path,
-        ...result
-      }
     } catch (e) {
       historyData.value = null
     }
