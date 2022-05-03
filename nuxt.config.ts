@@ -20,6 +20,11 @@ export default defineNuxtConfig({
     '@nuxt/content',
     'vue-plausible'
   ],
+  build: {
+    transpile: [
+      'swiper'
+    ]
+  },
   runtimeConfig: {
     github: {
       token: process.env.GITHUB_TOKEN
