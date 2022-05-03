@@ -42,7 +42,7 @@
       </ProjectHeader>
     </template>
 
-    <div class="flex items-stretch flex-1 min-h-0">
+    <div class="flex items-stretch flex-1 min-h-0 overflow-hidden">
       <div v-if="computedFiles.length" ref="editorScroll" class="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto">
         <ProjectContentEditor
           v-if="file"
@@ -191,5 +191,6 @@ onUnmounted(() => {
 .milkdown > .editor {
   max-width: 100% !important;
   padding: 0 !important;
+  overflow-y: visible !important;
 }
 </style>
