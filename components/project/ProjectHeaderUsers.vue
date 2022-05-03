@@ -40,14 +40,13 @@ const project: Project = inject('project')
 const activeUsers: Ref<SocketUser[]> = inject('activeUsers')
 
 const { branch, select: selectBranch } = useProjectBranches(project)
-const { file, select: selectContentFile, refresh: refreshContentFiles } = useProjectFiles(project, 'content')
-const { refresh: refreshMediaFiles } = useProjectFiles(project, 'public')
+const { file, select: selectContentFile } = useProjectFiles(project, 'content')
 
 function canJump (activeUser) {
   return activeUser.id !== user.value?.id && (activeUser.branch !== branch.value.name || !!activeUser.file)
 }
 
-async function jumpTo (activeUser: SocketUser) {
+function jumpTo (activeUser: SocketUser) {
   if (activeUser.id === user.value?.id) {
     return
   }
@@ -56,9 +55,6 @@ async function jumpTo (activeUser: SocketUser) {
 
   if (b !== branch.value?.name) {
     selectBranch({ name: b })
-
-    await refreshContentFiles()
-    refreshMediaFiles()
   }
 
   if (file.value && f !== file.value.path) {

@@ -54,6 +54,10 @@ export const useProjectBranches = (project: Project) => {
       branches.value.push(b)
 
       select(b)
+
+      if (mergeDraft) {
+        $socket.emit('draft:update', `project-${project.id}:${project.repository.default_branch}`)
+      }
     } catch (e) {}
   }
 
@@ -75,17 +79,16 @@ export const useProjectBranches = (project: Project) => {
   }
 
   async function publish () {
+    const name = branch.value.name
+
     loading.value = true
 
     try {
-      await client(`/projects/${project.id}/branches/${encodeURIComponent(branch.value.name)}/publish`, { method: 'POST' })
-
-      select({ name: project.repository.default_branch })
-      branches.value = branches.value.filter(b => b.name !== branch.value.name)
+      await client(`/projects/${project.id}/branches/${encodeURIComponent(name)}/publish`, { method: 'POST' })
 
       $toast.success({
         title: 'Published!',
-        description: `Your branch ${branch.value.name} has been merged into ${project.repository.default_branch}.`
+        description: `Your branch ${name} has been merged into ${project.repository.default_branch}.`
       })
     } catch (e) {}
 
@@ -119,17 +122,11 @@ export const useProjectBranches = (project: Project) => {
     })
   }
 
-  function openPublishModal (callback?: () => void) {
+  function openPublishModal () {
     openModal(ProjectModalPublish, {
       project,
       branch: branch.value,
-      onSubmit: async () => {
-        await publish()
-
-        if (callback) {
-          await callback()
-        }
-      }
+      onSubmit: publish
     })
   }
 
@@ -150,10 +147,8 @@ export const useProjectBranches = (project: Project) => {
 
     if (branch.value) {
       recentBranches.value = [{ ...branch.value, openedAt: Date.now() }, ...recentBranches.value.filter(rb => rb.name !== branch.value.name)]
-    }
 
-    if (process.client) {
-      if (branch.value) {
+      if (process.client) {
         $socket.emit('branch:join', `project-${project.id}:${branch.value.name}`)
       }
     }

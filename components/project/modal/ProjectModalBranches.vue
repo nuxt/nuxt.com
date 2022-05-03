@@ -31,14 +31,12 @@ const activeElement = useActiveElement()
 const {
   isDraft: isDraftContent,
   draft: contentDraft,
-  init: initContentFile,
-  refresh: refreshContentFiles
+  init: initContentFile
 } = useProjectFiles(project, 'content')
 const {
   isDraft: isDraftMedia,
   draft: publicDraft,
-  init: initPublicFile,
-  refresh: refreshMediaFiles
+  init: initPublicFile
 } = useProjectFiles(project, 'public')
 const {
   branch,
@@ -92,22 +90,15 @@ whenever(and(keys.meta_b, notUsingInput), () => {
 
 // Methods
 
-async function onBranchSelect (b: GitHubBranch) {
+function onBranchSelect (b: GitHubBranch) {
   selectBranch(b)
-
-  await refreshContentFiles()
-  await refreshMediaFiles()
 }
 
 function onCreateBranchClick ({ query: name }) {
   openCreateBranchModal(
     name && !branches.value.some(b => b.name === name) ? name : '',
     branch.value.name === project.repository.default_branch,
-    false,
-    async () => {
-      await refreshContentFiles()
-      await refreshMediaFiles()
-    }
+    false
   )
 }
 
