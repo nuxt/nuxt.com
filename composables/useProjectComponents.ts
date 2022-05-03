@@ -1,10 +1,11 @@
 import type { Ref } from 'vue'
 import type { Project } from '~/types'
+import type { ComponentSchema } from '~/editor/types'
 
 export const useProjectComponents = (project: Project) => {
   const { $toast } = useNuxtApp()
 
-  const components: Ref<object[]> = useState(`project-${project.id}-components`, () => null)
+  const components: Ref<ComponentSchema[]> = useState(`project-${project.id}-components`, () => null)
 
   const pending = ref(false)
 

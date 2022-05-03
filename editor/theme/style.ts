@@ -29,6 +29,14 @@ export const getStyle = (manager: ThemeManager, emotion: Emotion) => {
     }
   `
 
+  const collaborative = css`
+    .ProseMirror-yjs-cursor > div {
+      padding: 2px 4px;
+      font-family: inherit;
+      font-weight: bold;
+    }
+  `
+
   const editorLayout = css`
     padding: 3.125em 1.25em;
     outline: none;
@@ -310,6 +318,7 @@ export const getStyle = (manager: ThemeManager, emotion: Emotion) => {
       ${manager.get(ThemeShadow, undefined)}
       ${manager.get(ThemeScrollbar, undefined)}
       ${selection};
+      ${collaborative};
 
       .editor {
         ${editorLayout};
