@@ -64,15 +64,15 @@ const isOpen = computed({
 
 const currentBranches = computed(() => {
   return [...branches.value]
-    .map(b => ({ ...b, icon: 'mdi:source-branch', disabled: b.name === branch.value }))
+    .map(b => ({ ...b, icon: 'mdi:source-branch', disabled: b.name === branch.value.name }))
 })
 
 const recentItems = computed(() => {
   return [...recentBranches.value]
     .filter(rb => branches.value.find(b => b.name === rb.name))
-    .filter(rb => rb.name !== branch.value)
+    .filter(rb => rb.name !== branch.value.name)
     .sort((a, b) => b.openedAt - a.openedAt)
-    .map(b => ({ ...b, icon: 'mdi:source-branch', disabled: b.name === branch.value }))
+    .map(b => ({ ...b, icon: 'mdi:source-branch', disabled: b.name === branch.value.name }))
     .slice(0, 5)
 })
 
@@ -93,7 +93,7 @@ whenever(and(keys.meta_b, notUsingInput), () => {
 // Methods
 
 async function onBranchSelect (b: GitHubBranch) {
-  selectBranch(b.name)
+  selectBranch(b)
 
   await refreshContentFiles()
   await refreshMediaFiles()
@@ -102,7 +102,7 @@ async function onBranchSelect (b: GitHubBranch) {
 function onCreateBranchClick ({ query: name }) {
   openCreateBranchModal(
     name && !branches.value.some(b => b.name === name) ? name : '',
-    branch.value === project.repository.default_branch,
+    branch.value.name === project.repository.default_branch,
     false,
     async () => {
       await refreshContentFiles()
