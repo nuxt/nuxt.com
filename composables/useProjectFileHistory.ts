@@ -23,27 +23,27 @@ interface GraphQLHistory {
 
 export const useProjectFileHistory = (project: Project, root: Root) => {
   const { branch } = useProjectBranches(project)
-  const { file, draft } = useProjectFiles(project, root)
+  const { computedFile, draft } = useProjectFiles(project, root)
   const client = useStrapiClient()
 
   const pending = ref(true)
   const historyData: Ref<GraphQLHistory | null> = useState(`project-${project.id}-${root}-file-history`, () => null)
 
   const fetch = async () => {
-    if (!file.value) {
+    if (!computedFile.value) {
       return
     }
 
     // created file case
-    if (file.value.status === 'created') {
+    if (computedFile.value.status === 'created') {
       historyData.value = null
       pending.value = false
       return
     }
 
     // renamed file case
-    const oldPath = draft.value?.additions?.find(f => f.path === file.value.path)?.oldPath
-    const path = oldPath || file.value.path
+    const oldPath = draft.value?.additions?.find(f => f.path === computedFile.value.path)?.oldPath
+    const path = oldPath || computedFile.value.path
 
     if (historyData.value && historyData.value.path === path) {
       pending.value = false

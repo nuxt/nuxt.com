@@ -1,14 +1,14 @@
 <template>
   <aside class="hidden p-6 overflow-y-auto u-bg-white border-l u-border-gray-200 top-0 w-96 lg:block sticky h-[calc(100vh-4rem)] flex-shrink-0">
-    <div v-if="file" class="pb-16 space-y-6">
+    <div v-if="computedFile" class="pb-16 space-y-6">
       <div>
         <div class="flex items-start justify-between">
           <div class="min-w-0">
             <h2 class="text-lg font-medium u-text-gray-900">
-              <span class="sr-only">Details for </span>{{ file.name }}
+              <span class="sr-only">Details for </span>{{ computedFile.name }}
             </h2>
             <p class="flex items-center gap-1.5 text-sm min-w-0 u-text-gray-400 truncate">
-              <span class="truncate">{{ file.path }}</span>
+              <span class="truncate">{{ computedFile.path }}</span>
               <UButton
                 icon="heroicons-outline:external-link"
                 target="_blank"
@@ -77,7 +77,7 @@ const project: Project = inject('project')
 const root: Root = inject('root')
 
 const { branch } = useProjectBranches(project)
-const { file } = useProjectFiles(project, root)
+const { computedFile } = useProjectFiles(project, root)
 
 // Computed
 
@@ -86,7 +86,7 @@ const fields = computed(() => {
 })
 
 const absolutePath = computed(() => {
-  return [...project.baseDir.split('/').filter(p => p === '.'), ...file.value.path.split('/')]
+  return [...project.baseDir.split('/').filter(p => p === '.'), ...computedFile.value?.path?.split('/')]
     .filter(Boolean)
     .join('/')
 })
