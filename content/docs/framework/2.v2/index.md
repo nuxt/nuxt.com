@@ -1,4 +1,4 @@
-::docs-hero
+::docs-framework-v2-hero
 ---
 buttons:
  - size: 'xl'
@@ -21,4 +21,64 @@ The Intuitive Vue Framework
 
 #description
 Build your next Vue.js application with confidence using Nuxt. An open source framework making web development simple and powerful.
+::
+
+::docs-framework-v2-section
+#title
+Easy to learn. Easy to master
+#description
+Learn everything you need to know, from beginner to master.
+#content
+  ::docs-framework-v2-code-block
+  ::
+::
+
+::docs-framework-v2-section
+#title
+Intuitive Developer Experience
+#description
+Nuxt is shipped with plenty of features to boost developer productivity and the end user experience.
+#content
+  ::docs-framework-v2-dx
+  ::
+::
+
+::docs-framework-v2-section
+#title
+They use Nuxt
+#content
+  ::docs-framework-v2-carousel
+  ::
+::
+
+::docs-framework-v2-section
+#title
+All you need is here
+#description
+[Learn everything you need to know, from beginner to master.]{ .block .md:w-1/2 }
+#content
+  ::docs-framework-v2-need
+  ::
+::
+
+::docs-framework-v2-section
+---
+titleClass: 'text-4xl'
+---
+#title
+Lets go
+#description
+Developers love Nuxt, the open source Vue framework built together with community. Nuxt powers the biggest websites like Big Website.
+#content
+  ::docs-framework-v2-go
+  ---
+  buttons:
+  - label: 'Get started'
+    variant: 'primary'
+    to: '/docs/framework/v2/get-started'
+  - label: 'Migration guide'
+    variant: 'secondary'
+    to: '#'
+  ---
+  ::
 ::

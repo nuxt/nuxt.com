@@ -36,9 +36,13 @@
         placeholder="faq/index.md"
         required
         autocomplete="off"
-        class="w-full"
-        :custom-class="path && 'rounded-l-none'"
+        class="w-auto flex-1"
+        :custom-class="`rounded-r-none ${path && 'rounded-l-none'}`"
       />
+
+      <span class="flex-shrink-0 max-w-[200px] truncate px-2 py-2 text-sm border border-l-0 u-bg-gray-50 u-border-gray-300 rounded-r-md u-text-gray-500">
+        {{ ext }}
+      </span>
     </div>
     <div v-if="error" class="text-red-500 text-sm italic mt-2">
       {{ error }}
@@ -53,6 +57,7 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
 import type { GitHubFile } from '~/types'
+import { getPathDir, getPathName } from '~/utils/tree'
 
 const props = defineProps({
   computedFiles: {
@@ -73,15 +78,19 @@ const emit = defineEmits(['submit', 'close'])
 
 const path = ref(null)
 const newName = ref(null)
+const ext = ref(null)
+let _name = ''
 if (props.lockedPath) {
   path.value = props.lockedPath.split('/').filter(Boolean).join('/')
-  newName.value = props.oldPath.replace(props.lockedPath, '').split('/').filter(Boolean).join('/')
+  _name = props.oldPath.replace(path.value, '').split('/').filter(Boolean).join('/')
 } else {
-  const [name, ...dir] = props.oldPath.split('/').reverse()
-  path.value = dir.reverse().join('/')
-  newName.value = name
+  path.value = getPathDir(props.oldPath)
+  _name = getPathName(props.oldPath)
 }
-const newPath = computed(() => [path.value, newName.value].join('/'))
+const [_ext, ..._nameParts] = _name.split('.').reverse()
+newName.value = _nameParts.reverse().join('.')
+ext.value = `.${_ext}`
+const newPath = computed(() => `${path.value}/${newName.value}${ext.value}`)
 const error = computed(() => {
   if (newPath.value !== props.oldPath && props.computedFiles.find(file => file.path === newPath.value)) {
     return 'File already exists'

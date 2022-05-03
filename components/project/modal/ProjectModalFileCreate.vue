@@ -36,9 +36,13 @@
         placeholder="faq/index.md"
         required
         autocomplete="off"
-        class="w-full"
-        :custom-class="path && 'rounded-l-none'"
+        class="w-auto flex-1"
+        :custom-class="`rounded-r-none ${path && 'rounded-l-none'}`"
       />
+
+      <span class="flex-shrink-0 max-w-[200px] truncate px-2 py-2 text-sm border border-l-0 u-bg-gray-50 u-border-gray-300 rounded-r-md u-text-gray-500">
+        {{ ext }}
+      </span>
     </div>
     <div v-if="error" class="text-red-500 text-sm italic mt-2">
       {{ error }}
@@ -68,7 +72,8 @@ const props = defineProps({
 const emit = defineEmits(['submit', 'close'])
 
 const name = ref('')
-const newPath = computed(() => [props.path, name.value].join('/'))
+const ext = ref('.md')
+const newPath = computed(() => `${props.path}/${name.value}${ext.value}`)
 const error = computed(() => {
   if (props.computedFiles.find(file => file.path === newPath.value)) {
     return 'File already exists'
