@@ -170,8 +170,8 @@ export const useProjectBranches = (project: Project) => {
     pending,
     loading,
     // Data
-    recentBranches: readonly(recentBranches),
-    branches: readonly(branches),
+    recentBranches,
+    branches,
     branch: readonly(branch)
   }
 }

@@ -358,8 +358,8 @@ export const useProjectFiles = (project: Project, root: Root) => {
     computedFile,
     isDraft,
     // Data
-    recentFiles: readonly(recentFiles),
-    files: readonly(files),
+    recentFiles,
+    files,
     file: readonly(file),
     draft
   }
