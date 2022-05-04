@@ -163,6 +163,7 @@ export interface GitHubFile {
   mimeType?: string
   content?: string
   oldPath?: string
+  forceFetch?: boolean
 }
 
 export interface GitHubDraftFile {

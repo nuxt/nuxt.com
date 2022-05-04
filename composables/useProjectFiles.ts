@@ -1,5 +1,5 @@
 import type { Ref } from 'vue'
-import { omit } from 'lodash-es'
+import { omit, identity, pickBy } from 'lodash-es'
 import type { GitHubFile, GitHubDraft, Project, Root } from '~/types'
 import ProjectModalFileCreate from '~/components/project/modal/ProjectModalFileCreate.vue'
 import ProjectModalFileRename from '~/components/project/modal/ProjectModalFileRename.vue'
@@ -199,12 +199,13 @@ export const useProjectFiles = (project: Project, root: Root) => {
     } catch (e) {}
   }
 
-  async function fetchFile (path: string) {
+  async function fetchFile (path: string, force = false) {
     return await client<GitHubFile>(`/projects/${project.id}/files/${encodeURIComponent(path)}`, {
-      params: {
+      params: pickBy({
         ref: branch.value?.name,
-        root
-      }
+        root,
+        force
+      }, identity)
     })
   }
 
@@ -282,15 +283,32 @@ export const useProjectFiles = (project: Project, root: Root) => {
     const githubFiles = files.value?.map(file => ({ ...file, name: file.path.split('/').pop() })) || []
 
     for (const addition of additions) {
+      // File has been renamed
       if (addition.oldPath) {
+        // Remove old file from deletions (only display renamed one)
         deletions.splice(deletions.findIndex(d => d.path === addition.oldPath), 1)
-        const file = githubFiles.find(f => f.path === addition.oldPath)
-        if (file) {
-          file.status = 'renamed'
-          file.name = addition.path.split('/').pop()
-          file.path = addition.path
-          file.oldPath = addition.oldPath
+
+        // Custom case of #447
+        const oldPathExistInCache = additions.find(a => a.path === addition.oldPath)
+        if (oldPathExistInCache) {
+          githubFiles.push({
+            name: addition.path.split('/').pop(),
+            type: 'blob',
+            status: 'renamed',
+            forceFetch: true,
+            ...addition
+          })
+        // Update exsiting renamed file data
+        } else {
+          const file = githubFiles.find(f => f.path === addition.oldPath)
+          if (file) {
+            file.status = 'renamed'
+            file.name = addition.path.split('/').pop()
+            file.path = addition.path
+            file.oldPath = addition.oldPath
+          }
         }
+      // File has been added
       } else if (addition.new) {
         githubFiles.push({
           name: addition.path.split('/').pop(),
@@ -298,6 +316,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
           status: 'created',
           ...omit(addition, ['new', 'oldPath'])
         })
+      // File has been modified
       } else {
         const file = githubFiles.find(f => f.path === addition.path)
         if (file) {
@@ -305,7 +324,9 @@ export const useProjectFiles = (project: Project, root: Root) => {
         }
       }
     }
+
     for (const deletion of deletions) {
+      // File has been deleted
       const file = githubFiles.find(f => f.path === deletion.path)
       if (file) {
         file.status = 'deleted'
