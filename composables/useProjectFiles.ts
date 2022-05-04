@@ -12,6 +12,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
   const { $socket } = useNuxtApp()
   const { open: openModal } = useModal()
   const client = useStrapiClient()
+  const cookie = useCookie(`project-${project.id}-${root}-file`, { path: '/' })
   const { branch } = useProjectBranches(project)
 
   const recentFiles: Ref<GitHubFile[]> = useState(`project-${project.id}-${root}-files-recent`, () => [])
@@ -247,16 +248,17 @@ export const useProjectFiles = (project: Project, root: Root) => {
   // Methods
 
   function init () {
-    let fileToSelect = file.value?.path ? computedFiles.value.find(f => f.path === file.value.path && f.status !== 'deleted') : null
+    let fileToSelect = cookie.value ? computedFiles.value.find(f => f.path === cookie.value && f.status !== 'deleted') : null
 
-    fileToSelect = fileToSelect || computedFiles.value.find(file => file.path.match(/^content\/[0-9.]*index\.md$/i) && file.status !== 'deleted')
-    fileToSelect = fileToSelect || computedFiles.value.find(file => file.type === 'blob' && file.status !== 'deleted')
+    fileToSelect = fileToSelect || computedFiles.value.find(f => f.path.match(/^content\/[0-9.]*index\.md$/i) && f.status !== 'deleted')
+    fileToSelect = fileToSelect || computedFiles.value.find(f => f.type === 'blob' && f.status !== 'deleted')
 
     select(fileToSelect)
   }
 
   function select (f: GitHubFile) {
     file.value = f
+    cookie.value = file.value.path
 
     if (file.value) {
       recentFiles.value = [{ ...file.value, openedAt: Date.now() }, ...recentFiles.value.filter(rf => rf.path !== file.value.path)]
