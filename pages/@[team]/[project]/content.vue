@@ -46,15 +46,16 @@
       <div v-if="computedFiles.length" ref="editorScroll" class="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto">
         <ProjectContentEditor
           v-if="file"
-          v-model="markdown"
+          :model-value="markdown"
           :room="`project-${project.id}-${branch.name}-${file.path}`"
           :components="components || []"
           class="flex flex-col flex-1"
+          @update:model-value="updateMarkdown"
         />
       </div>
       <ProjectContentFilesEmpty v-else @create="openCreateFileModal('content')" />
 
-      <ProjectContentFileAside v-model="matter" />
+      <ProjectContentFileAside :model-value="matter" @update:model-value="updateMatter" />
     </div>
   </ProjectPage>
 </template>
@@ -118,13 +119,6 @@ if (process.client) {
   })
 }
 
-watch([markdown, matter], debounce(async ([markdown, matter]) => {
-  const formattedContent = stringifyFrontMatter(markdown, matter)
-  if (formattedContent !== content.value) {
-    await updateFile(formattedContent)
-  }
-}, 500))
-
 // Http
 
 async function fetchContent () {
@@ -140,11 +134,17 @@ async function fetchContent () {
   content.value = fetchedContent
 
   const parsed = parseFrontMatter(content.value)
+
   markdown.value = parsed.content
   matter.value = parsed.matter
 }
 
-async function updateFile (formattedContent) {
+async function updateFile () {
+  const formattedContent = stringifyFrontMatter(markdown.value, matter.value)
+  if (formattedContent === content.value) {
+    return
+  }
+
   try {
     const data = await client<GitHubDraft>(`/projects/${project.id}/files/${encodeURIComponent(file.value.path)}`, {
       method: 'PUT',
@@ -177,6 +177,18 @@ function openDirs () {
     openDir(paths.join('/'), true)
   }
 }
+
+const updateMarkdown = debounce((newMarkdown: string) => {
+  markdown.value = newMarkdown
+
+  return updateFile()
+}, 500)
+
+const updateMatter = debounce((newMatter: object) => {
+  matter.value = newMatter
+
+  return updateFile()
+}, 500)
 
 // Hooks
 
