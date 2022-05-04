@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import type { PropType, Ref } from 'vue'
-import type { File, Project, SocketUser, User } from '~/types'
+import type { File, Root, Project, SocketUser, User } from '~/types'
 
 const props = defineProps({
   file: {
@@ -18,13 +18,15 @@ const props = defineProps({
 })
 
 const project: Project = inject('project')
+const root: Root = inject('root')
 const activeUsers: Ref<SocketUser[]> = inject('activeUsers')
 
 const user = useStrapiUser() as Ref<User>
 const { branch } = useProjectBranches(project)
+const { openedDirs } = useProjectFilesTree(project, root)
 
 const isDir = computed(() => props.file.type === 'directory')
-const isOpen = computed(() => !!props.openedDirs[props.file.path])
+const isOpen = computed(() => !!openedDirs.value[props.file.path])
 
 const usersGroup = computed(() => {
   return activeUsers.value.reduce((acc, u) => {

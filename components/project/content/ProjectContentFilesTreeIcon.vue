@@ -8,21 +8,22 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import type { File } from '~/types'
+import type { File, Project, Root } from '~/types'
 
 const props = defineProps({
   file: {
     type: Object as PropType<File>,
     required: true
-  },
-  openedDirs: {
-    type: Object,
-    default: () => ({})
   }
 })
 
+const project: Project = inject('project')
+const root: Root = inject('root')
+
+const { openedDirs } = useProjectFilesTree(project, root)
+
 const isOpen = computed(() => {
-  return !!props.openedDirs[props.file.path]
+  return !!openedDirs.value[props.file.path]
 })
 
 function hasChildDraft (files) {
