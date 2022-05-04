@@ -84,5 +84,8 @@ export default defineNuxtConfig({
       theme: 'one-dark-pro',
       preload: ['ini', 'json', 'js', 'ts', 'html', 'css', 'vue', 'diff', 'shell', 'markdown']
     }
+  },
+  typescript: {
+    shim: false
   }
 })
