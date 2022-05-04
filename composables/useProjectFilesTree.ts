@@ -1,17 +1,16 @@
 import type { GitHubFile, Project, Root } from '~/types'
 import { mapTree, findTree, renamePath, getPathDir, getPathPrefix } from '~/utils/tree'
 
-const openedDirs = reactive({})
-
 export const useProjectFilesTree = (project: Project, root: Root) => {
   const { computedFiles, bulkRename } = useProjectFiles(project, root)
 
+  const openedDirs = useState(`project-${project.id}-opened-dirs`, () => ({}))
   const query = useState(`project-${project.id}-tree-query`, () => '')
 
   // Methods
 
   function openDir (path: string, value?: boolean) {
-    openedDirs[path] = value !== undefined ? value : !openedDirs[path]
+    openedDirs.value[path] = value !== undefined ? value : !openedDirs.value[path]
   }
 
   function renameFiles (src: GitHubFile, dst: GitHubFile, position: 'above' | 'below' | 'over') {
