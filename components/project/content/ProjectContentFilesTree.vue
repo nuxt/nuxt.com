@@ -20,13 +20,13 @@
       >
         <div class="flex items-center justify-between flex-1 w-0 gap-1">
           <div class="flex items-center min-w-0 overflow-hidden">
-            <ProjectContentFilesTreeIcon :file="file" :opened-dirs="openedDirs" class="mr-1.5" />
+            <ProjectContentFilesTreeIcon :file="file" class="mr-1.5" />
             <span class="min-w-0 truncate" :class="{ 'line-through opacity-50': isDeleted(file) }">
               {{ file.name }}
             </span>
           </div>
           <div class="items-center gap-1.5 -mr-1 flex group-hover:hidden">
-            <ProjectContentFilesTreeUsers :file="file" :opened-dirs="openedDirs" />
+            <ProjectContentFilesTreeUsers :file="file" />
           </div>
           <div class="items-center gap-1.5 -mr-1 hidden group-hover:flex">
             <UButton
@@ -108,7 +108,7 @@ watch(() => selectedFile.value.path, () => {
 // Methods
 const isFile = (file: File) => file.type === 'file'
 const isDir = (file: File) => file.type === 'directory'
-const isDirOpen = (file: File) => !!openedDirs[file.path]
+const isDirOpen = (file: File) => !!openedDirs.value[file.path]
 const isDraft = (file: File) => !!file.status
 const isSelected = (file: File) => selectedFile.value && file.path === selectedFile.value.path
 const isDeleted = (file: File) => file.status === 'deleted'
