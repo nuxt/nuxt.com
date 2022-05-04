@@ -1,3 +1,4 @@
+import { isEmpty } from 'lodash-es'
 import * as matter from 'gray-matter'
 import flat from 'flat'
 
@@ -18,16 +19,16 @@ export const useMarkdown = () => {
   }
 
   function stringifyFrontMatter (content: string, data = {}) {
-  // flatten frontmatter data
-  // convert `parent: { child: ... }` into flat keys `parent.child`
+    // flatten frontmatter data
+    // convert `parent: { child: ... }` into flat keys `parent.child`
     data = flat.flatten(data, {
-    // preserve arrays and their contents as is and do not waltk through arrays
-    // flatten array will be like `parent.0.child` and `parent.1.child` with is not readable
+      // preserve arrays and their contents as is and do not waltk through arrays
+      // flatten array will be like `parent.0.child` and `parent.1.child` with is not readable
       safe: true
     })
 
     // eslint-disable-next-line import/no-named-as-default-member
-    return matter.stringify(`\n${content}`, data)
+    return matter.stringify(isEmpty(data) ? content : `\n${content}`, data)
   }
 
   return {
