@@ -88,9 +88,19 @@ const dropdownItems = computed(() => {
 })
 
 onMounted(() => {
+  let debounce = null
+
   useIntersectionObserver(item, ([{ isIntersecting }], _) => {
-    if (isIntersecting && !props.medias[props.file.path]) {
-      emit('fileVisible', props.file.path)
+    if (!props.medias[props.file.path]) {
+      if (isIntersecting && !debounce) {
+        debounce = setTimeout(() => {
+          emit('fileVisible', props.file.path)
+          debounce = null
+        }, 500)
+      } else if (!isIntersecting && debounce) {
+        clearTimeout(debounce)
+        debounce = null
+      }
     }
   })
 })
