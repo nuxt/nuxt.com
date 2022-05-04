@@ -164,6 +164,7 @@ export interface GitHubFile {
   content?: string
   oldPath?: string
   forceFetch?: boolean
+  openedAt?: number
 }
 
 export interface GitHubDraftFile {

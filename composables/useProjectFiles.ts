@@ -294,7 +294,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
           githubFiles.push({
             name: addition.path.split('/').pop(),
             type: 'blob',
-            status: 'renamed',
+            status: 'created',
             forceFetch: true,
             ...addition
           })
