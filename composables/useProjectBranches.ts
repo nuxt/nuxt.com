@@ -133,9 +133,9 @@ export const useProjectBranches = (project: Project) => {
   // Methods
 
   function init () {
-    let branchToSelect = cookie.value ? branches.value.find(branch => branch.name === cookie.value) : null
+    let branchToSelect = cookie.value ? branches.value.find(b => b.name === cookie.value) : null
 
-    branchToSelect = branchToSelect || branches.value.find(branch => branch.name === project.repository.default_branch)
+    branchToSelect = branchToSelect || branches.value.find(b => b.name === project.repository.default_branch)
     branchToSelect = branchToSelect || branches.value[0]
 
     select(branchToSelect)
@@ -170,8 +170,8 @@ export const useProjectBranches = (project: Project) => {
     pending,
     loading,
     // Data
-    recentBranches,
-    branches,
-    branch
+    recentBranches: readonly(recentBranches),
+    branches: readonly(branches),
+    branch: readonly(branch)
   }
 }
