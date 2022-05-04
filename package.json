@@ -35,7 +35,7 @@
     "@octokit/rest": "^18.12.0",
     "@sindresorhus/slugify": "^2.1.0",
     "@tailwindcss/typography": "^0.5.2",
-    "@vueuse/core": "^8.3.1",
+    "@vueuse/core": "^8.4.1",
     "eslint": "^8.14.0",
     "nuxt": "^3.0.0-rc.2",
     "postcss-custom-properties": "^12.1.7",
