@@ -92,25 +92,20 @@ const editorScroll: Ref<HTMLElement> = ref(null)
 
 // Watch
 
-// Fetch content when file changes
-watch(file, () => fetchContent(), { immediate: true })
-
-// Open dirs in tree when file is selected
-watch(file, (f) => {
-  if (!f) {
-    return
-  }
-
-  const paths = f.path.split('/')
-  for (let i = paths.length - 1; i > 1; i--) {
-    paths.pop()
-    openDir(paths.join('/'), true)
-  }
+watch(file, () => {
+  // Fetch content when file changes
+  fetchContent()
+  // Open dirs in tree when file is selected
+  openDirs()
 }, { immediate: true })
 
 // When file path change due to new selection, scroll top
-watch(file, (f, old) => {
-  if (process.client && editorScroll.value) {
+if (process.client) {
+  watch(file, (f, old) => {
+    if (!editorScroll.value) {
+      return
+    }
+
     if (!f) {
       return
     }
@@ -120,8 +115,8 @@ watch(file, (f, old) => {
     }
 
     editorScroll.value.scrollTop = 0
-  }
-})
+  })
+}
 
 watch([markdown, matter], debounce(async ([markdown, matter]) => {
   const formattedContent = stringifyFrontMatter(markdown, matter)
@@ -167,6 +162,20 @@ async function updateFile (formattedContent) {
 
     $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
   } catch (e) {}
+}
+
+// Methods
+
+function openDirs () {
+  if (!file.value) {
+    return
+  }
+
+  const paths = file.value.path.split('/')
+  for (let i = paths.length - 1; i > 1; i--) {
+    paths.pop()
+    openDir(paths.join('/'), true)
+  }
 }
 
 // Hooks
