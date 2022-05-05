@@ -104,6 +104,6 @@ const previewUrl = computed(() => {
   const { iv, content } = previewToken.value
 
   // Nuxt Content will call `https://api.nuxt.com/projects/draft?token=${token}`
-  return `${project.url}?preview=${iv}:${content}`
+  return `${project.url}?_preview=${iv}:${content}`
 })
 </script>
