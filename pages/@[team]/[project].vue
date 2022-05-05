@@ -10,7 +10,7 @@
 
 <script setup lang="ts">
 import type { PropType, Ref } from 'vue'
-import type { Team, Project, User, SocketUser, GitHubDraft, GitHubBranch } from '~/types'
+import type { Team, Project, User, SocketUser, GitHubDraft, GitHubBranch } from '../../types'
 
 definePageMeta({
   layout: false
@@ -57,7 +57,13 @@ const {
   select: selectContentFile,
   init: initContentFile
 } = useProjectFiles(project.value, 'content')
-const { fetch: fetchMediaFiles, refresh: refreshMediaFiles } = useProjectFiles(project.value, 'public')
+const {
+  fetch: fetchMediaFiles,
+  refresh: refreshMediaFiles,
+  draft: mediaDraft,
+  select: selectMediaFile,
+  init: initMediaFile
+} = useProjectFiles(project.value, 'public')
 
 // Data
 
@@ -134,26 +140,31 @@ onMounted(() => {
   })
 
   // Listen to change on draft by other collaborators
-  $socket.on('draft:update', ({ branch: draftBranch, draft }: { branch: string, draft: GitHubDraft }) => {
+  $socket.on('draft:update', ({ branch: draftBranch, draft: newDraft, root }: { branch: string, draft: GitHubDraft, root: 'content' | 'public' }) => {
+    console.log('draft:update :', draftBranch, newDraft, root)
     if (draftBranch !== branch.value.name) {
       return
     }
 
-    contentDraft.value = draft
+    const draft = root === 'content' ? contentDraft : mediaDraft
+    const initFile = root === 'content' ? initContentFile : initMediaFile
+    const selectFile = root === 'content' ? selectContentFile : selectMediaFile
+
+    draft.value = newDraft
 
     const currentFile = contentFiles.value.find(file => file.path === contentFile.value.path)
     if (currentFile) {
       // If current file has been deleted, select new one
       if (currentFile.status === 'deleted') {
-        initContentFile()
+        initFile()
       }
     } else {
       // If current file does not exist anymore it means it has been renamed, select it from old path
       const renamedFile = contentFiles.value.find(file => file.oldPath === (contentFile.value.oldPath || contentFile.value.path))
       if (renamedFile) {
-        selectContentFile(renamedFile)
+        selectFile(renamedFile)
       } else {
-        initContentFile()
+        initFile()
       }
     }
   })

@@ -56,7 +56,8 @@ export const useProjectBranches = (project: Project) => {
       select(b)
 
       if (mergeDraft) {
-        $socket.emit('draft:update', `project-${project.id}:${project.repository.default_branch}`)
+        $socket.emit('draft:update', `project-${project.id}:${project.repository.default_branch}:content`)
+        $socket.emit('draft:update', `project-${project.id}:${project.repository.default_branch}:public`)
       }
     } catch (e) {}
   }
@@ -98,7 +99,8 @@ export const useProjectBranches = (project: Project) => {
   async function reset () {
     await client(`/projects/${project.id}/branches/${encodeURIComponent(branch.value.name)}/reset`, { method: 'DELETE' })
 
-    $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
+    $socket.emit('draft:update', `project-${project.id}:${branch.value.name}:content`)
+    $socket.emit('draft:update', `project-${project.id}:${branch.value.name}:public`)
   }
 
   // Modals
