@@ -23,8 +23,8 @@
           <UButton label="Edit" :to="{ name: '@team-project-content' }" icon="heroicons-outline:pencil" variant="secondary" />
 
           <UButton
-            v-if="project.url"
-            :to="project.url"
+            v-if="previewUrl"
+            :to="previewUrl"
             target="_blank"
             label="View"
             icon="heroicons-outline:link"
@@ -36,7 +36,7 @@
       </div>
 
       <UCard class="mt-8 flex-1 flex flex-col" body-class="flex-1 flex flex-col" padded>
-        <iframe v-if="project.url" :src="project.url" class="w-full h-full" />
+        <iframe v-if="previewUrl" :src="previewUrl" class="w-full h-full" />
         <div v-else class="max-w-lg m-auto flex flex-col justify-center flex-1">
           <div class="text-center">
             <UIcon name="heroicons-outline:link" class="mx-auto h-12 w-12 u-text-gray-400" />
@@ -75,6 +75,7 @@ const project: Project = inject('project')
 provide('root', root)
 
 const { update } = useStrapi4()
+const { token: previewToken } = useProjectFiles(project, 'content')
 
 const form = reactive({ url: project.repository.url })
 const loading = ref(false)
@@ -91,4 +92,18 @@ async function onSubmit () {
 
   loading.value = false
 }
+
+const previewUrl = computed(() => {
+  if (!project.url) {
+    return
+  }
+  if (!previewToken) {
+    return
+  }
+
+  const { iv, content } = previewToken.value
+
+  // Nuxt Content will call `https://api.nuxt.com/projects/draft?token=${token}`
+  return `${project.url}?preview=${iv}:${content}`
+})
 </script>

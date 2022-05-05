@@ -183,3 +183,8 @@ export interface GitHubDraft {
   additions: GitHubDraftFile[]
   deletions: GitHubDraftFile[]
 }
+
+export interface PreviewToken {
+  iv: string
+  content: string
+}
