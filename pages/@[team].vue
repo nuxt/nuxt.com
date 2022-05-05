@@ -20,7 +20,7 @@ const team: Ref<Team> = ref(null)
 if (route.params.team !== user.value.username) {
   const { data, error } = await useAsyncData('team', () => findOne<Team>('teams', route.params.team as string))
   if (error.value) {
-    navigateTo({ name: '@team-projects', params: { team: user.value.username } })
+    await navigateTo({ name: '@team-projects', params: { team: user.value.username } })
   }
 
   team.value = data.value
