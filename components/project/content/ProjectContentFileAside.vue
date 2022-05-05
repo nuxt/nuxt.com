@@ -1,54 +1,76 @@
 <template>
-  <aside class="hidden p-6 overflow-y-auto u-bg-white border-l u-border-gray-200 top-0 w-96 lg:block sticky h-[calc(100vh-4rem)] flex-shrink-0">
-    <div v-if="computedFile" class="pb-16 space-y-6">
-      <div>
-        <div class="flex items-start justify-between">
-          <div class="min-w-0">
-            <h2 class="text-lg font-medium u-text-gray-900">
-              <span class="sr-only">Details for </span>{{ computedFile.name }}
-            </h2>
-            <p class="flex items-center gap-1.5 text-sm min-w-0 u-text-gray-400 truncate">
-              <span class="truncate">{{ computedFile.path }}</span>
-              <UButton
-                icon="heroicons-outline:external-link"
-                target="_blank"
-                :to="`https://github.com/${project.repository.owner}/${project.repository.name}/tree/${branch.name}/${absolutePath}`"
-                variant="transparent"
-                size="xxs"
-                class="!p-0"
-              />
-            </p>
-          </div>
+  <aside class="hidden overflow-y-auto u-bg-white border-l u-border-gray-200 top-0 w-96 lg:block sticky h-[calc(100vh-4rem)] flex-shrink-0">
+    <div v-if="computedFile">
+      <div class="flex items-start justify-between p-6">
+        <div class="min-w-0">
+          <h2 class="text-lg font-medium u-text-gray-900">
+            <span class="sr-only">Details for </span>{{ computedFile.name }}
+          </h2>
+          <p class="flex items-center gap-1.5 text-sm min-w-0 u-text-gray-400 truncate">
+            <span class="truncate">{{ computedFile.path }}</span>
+            <UButton
+              icon="heroicons-outline:external-link"
+              target="_blank"
+              :to="`https://github.com/${project.repository.owner}/${project.repository.name}/tree/${branch.name}/${absolutePath}`"
+              variant="transparent"
+              size="xxs"
+              class="!p-0"
+            />
+          </p>
         </div>
       </div>
 
-      <UFormGroup
-        v-for="field of fields"
-        :key="field.key"
-        :name="field.key"
-        :label="field.label"
-        label-class="font-medium u-text-gray-900 truncate"
-        label-wrapper-class="flex content-center justify-between min-w-0 gap-3"
-        container-class
-        :wrapper-class="field.type === 'boolean' ? 'flex items-center justify-between' : ''"
-      >
-        <UTextarea
-          v-if="field.type === 'text'"
-          :model-value="field.value"
-          :name="field.key"
-          :placeholder="`Add a ${field.key.replace(/\./g, ' ')}...`"
-          size="sm"
-          :resize="false"
-          autoresize
-          :rows="1"
-          appearance="none"
-          custom-class="!px-0 placeholder-gray-400 dark:placeholder-gray-500"
-          @update:model-value="value => updateField(field.key, value)"
-        />
-        <UCheckbox v-else-if="field.type === 'boolean'" :model-value="field.value" :name="field.key" @update:model-value="value => updateField(field.key, value)" />
-      </UFormGroup>
+      <div>
+        <nav class="flex h-12 space-x-4 border-b u-border-gray-200 px-6">
+          <button
+            v-for="(category, index) in ['Meta', 'History']"
+            :key="index"
+            :class="{
+              'font-medium u-text-gray-900 u-border-gray-700': selectedIndex === index,
+              'u-text-gray-500 hover:u-text-gray-900 border-transparent': selectedIndex !== index
+            }"
+            class="border-b-2 px-2 -mb-px focus:outline-none"
+            tabindex="-1"
+            @click="selectedIndex = index"
+          >
+            {{ category }}
+          </button>
+        </nav>
 
-      <ProjectFileHistory />
+        <div class="p-6">
+          <div v-if="selectedIndex === 0" class="space-y-6">
+            <UFormGroup
+              v-for="field of fields"
+              :key="field.key"
+              :name="field.key"
+              :label="field.label"
+              label-class="font-medium u-text-gray-900 truncate"
+              label-wrapper-class="flex content-center justify-between min-w-0 gap-3"
+              container-class
+              :wrapper-class="field.type === 'boolean' ? 'flex items-center justify-between' : ''"
+            >
+              <UTextarea
+                v-if="field.type === 'text'"
+                :model-value="field.value"
+                :name="field.key"
+                :placeholder="`Add a ${field.key.replace(/\./g, ' ')}...`"
+                size="sm"
+                :resize="false"
+                autoresize
+                :rows="1"
+                appearance="none"
+                custom-class="!px-0 placeholder-gray-400 dark:placeholder-gray-500"
+                @update:model-value="value => updateField(field.key, value)"
+              />
+              <UCheckbox v-else-if="field.type === 'boolean'" :model-value="field.value" :name="field.key" @update:model-value="value => updateField(field.key, value)" />
+            </UFormGroup>
+          </div>
+
+          <div v-if="selectedIndex === 1">
+            <ProjectFileHistory />
+          </div>
+        </div>
+      </div>
     </div>
     <div v-else class="h-full flex flex-col items-center justify-center">
       <UIcon name="heroicons-outline:document-text" class="mx-auto h-12 w-12 u-text-gray-400" />
@@ -78,6 +100,8 @@ const root: Root = inject('root')
 
 const { branch } = useProjectBranches(project)
 const { computedFile } = useProjectFiles(project, root)
+
+const selectedIndex = useState(`project-${project.id}-${root}-aside-tabs`, () => 0)
 
 // Computed
 

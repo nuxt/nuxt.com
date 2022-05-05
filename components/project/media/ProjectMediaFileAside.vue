@@ -1,56 +1,73 @@
 <template>
-  <aside class="hidden p-6 overflow-y-auto u-bg-white border-l u-border-gray-200 top-0 w-96 lg:block sticky h-[calc(100vh-4rem)] flex-shrink-0">
-    <div v-if="computedFile" class="pb-16 space-y-6">
+  <aside class="hidden overflow-y-auto u-bg-white border-l u-border-gray-200 top-0 w-96 lg:block sticky h-[calc(100vh-4rem)] flex-shrink-0">
+    <div v-if="computedFile">
+      <div class="flex items-center justify-between gap-3 p-6">
+        <div class="min-w-0">
+          <h2 class="text-lg font-medium u-text-gray-900">
+            <span class="sr-only">Details for </span>{{ computedFile.name }}
+          </h2>
+          <p class="flex items-center gap-1.5 text-sm min-w-0 u-text-gray-400 truncate">
+            <span class="truncate">{{ computedFile.path }}</span>
+            <UButton
+              icon="heroicons-outline:external-link"
+              target="_blank"
+              :to="`https://github.com/${project.repository.owner}/${project.repository.name}/tree/${branch.name}/${absolutePath}`"
+              variant="transparent"
+              size="xxs"
+              class="!p-0"
+            />
+          </p>
+        </div>
+
+        <a v-if="fileDownloadLink" :download="computedFile.name" :href="fileDownloadLink" tabindex="-1" class="focus:outline-none focus:ring-offset-white dark:focus:ring-offset-black p-2 u-bg-gray-100 hover:u-bg-gray-200 focus:ring-2 focus:ring-offset-2 focus:u-ring-gray-900 rounded-full">
+          <UIcon name="heroicons-outline:cloud-download" class="w-5 h-5" />
+        </a>
+      </div>
+
       <div>
-        <div class="flex items-center justify-between gap-3">
-          <div class="min-w-0">
-            <h2 class="text-lg font-medium u-text-gray-900">
-              <span class="sr-only">Details for </span>{{ computedFile.name }}
-            </h2>
-            <p class="flex items-center gap-1.5 text-sm min-w-0 u-text-gray-400 truncate">
-              <span class="truncate">{{ computedFile.path }}</span>
-              <UButton
-                icon="heroicons-outline:external-link"
-                target="_blank"
-                :to="`https://github.com/${project.repository.owner}/${project.repository.name}/tree/${branch.name}/${absolutePath}`"
-                variant="transparent"
-                size="xxs"
-                class="!p-0"
-              />
-            </p>
+        <nav class="flex h-12 space-x-4 border-b u-border-gray-200 px-6">
+          <button
+            v-for="(category, index) in ['Meta', 'History']"
+            :key="index"
+            :class="{
+              'font-medium u-text-gray-900 u-border-gray-700': selectedIndex === index,
+              'u-text-gray-500 hover:u-text-gray-900 border-transparent': selectedIndex !== index
+            }"
+            class="border-b-2 px-2 -mb-px focus:outline-none"
+            tabindex="-1"
+            @click="selectedIndex = index"
+          >
+            {{ category }}
+          </button>
+        </nav>
+
+        <div class="p-6">
+          <div v-if="selectedIndex === 0" class="space-y-6">
+            <dl class="divide-y u-divide-gray-200">
+              <div class="flex justify-between pb-3 text-sm font-medium">
+                <dt class="u-text-gray-500">
+                  Size
+                </dt>
+                <dd class="u-text-gray-900">
+                  {{ toFormattedBytes(computedFile.size) }}
+                </dd>
+              </div>
+              <div v-if="medias[computedFile.path]" class="flex justify-between pt-3 text-sm font-medium">
+                <dt class="u-text-gray-500">
+                  Dimensions
+                </dt>
+                <dd class="u-text-gray-900">
+                  {{ medias[computedFile.path].width }} x {{ medias[computedFile.path].height }}
+                </dd>
+              </div>
+            </dl>
           </div>
 
-          <a :download="computedFile.name" :href="fileDownloadLink">
-            <UButton icon="heroicons-outline:cloud-download" variant="gray" rounded />
-          </a>
+          <div v-if="selectedIndex === 1">
+            <ProjectFileHistory />
+          </div>
         </div>
       </div>
-
-      <div>
-        <h3 class="font-medium u-text-gray-900">
-          Information
-        </h3>
-        <dl class="mt-2 border-t border-b u-border-gray-200 divide-y u-divide-gray-200">
-          <div class="flex justify-between py-3 text-sm font-medium">
-            <dt class="u-text-gray-500">
-              Size
-            </dt>
-            <dd class="u-text-gray-900">
-              {{ toFormattedBytes(computedFile.size) }}
-            </dd>
-          </div>
-          <div v-if="medias[computedFile.path]" class="flex justify-between py-3 text-sm font-medium">
-            <dt class="u-text-gray-500">
-              Dimensions
-            </dt>
-            <dd class="u-text-gray-900">
-              {{ medias[computedFile.path].width }} x {{ medias[computedFile.path].height }}
-            </dd>
-          </div>
-        </dl>
-      </div>
-
-      <ProjectFileHistory />
     </div>
     <div v-else class="h-full flex flex-col items-center justify-center">
       <UIcon name="heroicons-outline:photograph" class="mx-auto h-12 w-12 u-text-gray-400" />
@@ -65,7 +82,7 @@
 import type { Project, Root } from '~/types'
 import { toFormattedBytes } from '~/utils'
 
-defineProps({
+const props = defineProps({
   medias: {
     type: Object,
     default: () => ({})
@@ -78,11 +95,21 @@ const root: Root = inject('root')
 const { branch } = useProjectBranches(project)
 const { computedFile } = useProjectFiles(project, root)
 
+const selectedIndex = useState(`project-${project.id}-${root}-aside-tabs`, () => 0)
+
 const absolutePath = computed(() => {
   return [...project.baseDir.split('/').filter(p => p === '.'), ...computedFile.value?.path?.split('/')]
     .filter(Boolean)
     .join('/')
 })
 
-const fileDownloadLink = computed(() => `data:image/png;base64,${computedFile.value?.content}`)
+const fileDownloadLink = computed(() => {
+  if (!computedFile.value) {
+    return
+  }
+
+  if (props.medias[computedFile.value.path]) {
+    return `data:image/png;base64,${props.medias[computedFile.value.path].content}`
+  }
+})
 </script>
