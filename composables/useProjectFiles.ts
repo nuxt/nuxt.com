@@ -68,7 +68,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
         body: { path }
       })
 
-      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
+      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}:${root}`)
 
       draft.value = data
 
@@ -88,6 +88,8 @@ export const useProjectFiles = (project: Project, root: Root) => {
         },
         body: formData
       })
+
+      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}:${root}`)
 
       draft.value = data
 
@@ -111,7 +113,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
         }
       })
 
-      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
+      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}:${root}`)
 
       draft.value = data
 
@@ -138,7 +140,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
         }
       })
 
-      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
+      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}:${root}`)
 
       draft.value = data
     } catch (e) {}
@@ -154,7 +156,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
         }
       })
 
-      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
+      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}:${root}`)
 
       const oldFilePath = draft.value.additions.find(addition => addition.path === path)?.oldPath
 
@@ -190,7 +192,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
         }
       })
 
-      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
+      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}:${root}`)
 
       draft.value = data
 
