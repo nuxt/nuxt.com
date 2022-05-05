@@ -21,12 +21,16 @@
       </div>
 
       <div>
-        <nav class="flex h-16 space-x-4 border-b u-border-gray-200 px-6">
+        <nav class="flex h-12 space-x-4 border-b u-border-gray-200 px-6">
           <button
             v-for="(category, index) in ['Meta', 'History']"
             :key="index"
-            :class="{ 'font-medium u-text-black u-border-gray-600': selectedIndex === index }"
-            class="u-text-gray-800 border-b border-transparent px-2 -mb-[1px]"
+            :class="{
+              'font-medium u-text-gray-900 u-border-gray-700': selectedIndex === index,
+              'u-text-gray-500 hover:u-text-gray-900 border-transparent': selectedIndex !== index
+            }"
+            class="border-b-2 px-2 -mb-px focus:outline-none"
+            tabindex="-1"
             @click="selectedIndex = index"
           >
             {{ category }}

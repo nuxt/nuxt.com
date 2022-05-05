@@ -19,18 +19,22 @@
           </p>
         </div>
 
-        <a :download="computedFile.name" :href="fileDownloadLink">
-          <UButton icon="heroicons-outline:cloud-download" variant="gray" rounded />
+        <a v-if="fileDownloadLink" :download="computedFile.name" :href="fileDownloadLink" tabindex="-1" class="focus:outline-none focus:ring-offset-white dark:focus:ring-offset-black p-2 u-bg-gray-100 hover:u-bg-gray-200 focus:ring-2 focus:ring-offset-2 focus:u-ring-gray-900 rounded-full">
+          <UIcon name="heroicons-outline:cloud-download" class="w-5 h-5" />
         </a>
       </div>
 
       <div>
-        <nav class="flex h-16 space-x-4 border-b u-border-gray-200 px-6">
+        <nav class="flex h-12 space-x-4 border-b u-border-gray-200 px-6">
           <button
             v-for="(category, index) in ['Meta', 'History']"
             :key="index"
-            :class="{ 'font-medium u-text-black u-border-gray-600': selectedIndex === index }"
-            class="u-text-gray-800 border-b border-transparent px-2 -mb-[1px]"
+            :class="{
+              'font-medium u-text-gray-900 u-border-gray-700': selectedIndex === index,
+              'u-text-gray-500 hover:u-text-gray-900 border-transparent': selectedIndex !== index
+            }"
+            class="border-b-2 px-2 -mb-px focus:outline-none"
+            tabindex="-1"
             @click="selectedIndex = index"
           >
             {{ category }}
@@ -39,8 +43,8 @@
 
         <div class="p-6">
           <div v-if="selectedIndex === 0" class="space-y-6">
-            <dl class="border-b u-border-gray-200 divide-y u-divide-gray-200">
-              <div class="flex justify-between py-3 text-sm font-medium">
+            <dl class="divide-y u-divide-gray-200">
+              <div class="flex justify-between pb-3 text-sm font-medium">
                 <dt class="u-text-gray-500">
                   Size
                 </dt>
@@ -48,7 +52,7 @@
                   {{ toFormattedBytes(computedFile.size) }}
                 </dd>
               </div>
-              <div v-if="medias[computedFile.path]" class="flex justify-between py-3 text-sm font-medium">
+              <div v-if="medias[computedFile.path]" class="flex justify-between pt-3 text-sm font-medium">
                 <dt class="u-text-gray-500">
                   Dimensions
                 </dt>
@@ -78,7 +82,7 @@
 import type { Project, Root } from '~/types'
 import { toFormattedBytes } from '~/utils'
 
-defineProps({
+const props = defineProps({
   medias: {
     type: Object,
     default: () => ({})
@@ -99,5 +103,13 @@ const absolutePath = computed(() => {
     .join('/')
 })
 
-const fileDownloadLink = computed(() => `data:image/png;base64,${computedFile.value?.content}`)
+const fileDownloadLink = computed(() => {
+  if (!computedFile.value) {
+    return
+  }
+
+  if (props.medias[computedFile.value.path]) {
+    return `data:image/png;base64,${props.medias[computedFile.value.path].content}`
+  }
+})
 </script>

@@ -6,7 +6,7 @@
     <li v-else-if="!history?.length" class="py-3 text-sm text-center">
       No history yet
     </li>
-    <li v-for="commit in history" v-else :key="commit.oid" class="flex justify-between py-3 gap-3">
+    <li v-for="commit in history" v-else :key="commit.oid" class="flex justify-between py-3 first:pt-0 last:pb-0 gap-3">
       <div class="flex flex-1 min-w-0">
         <div class="flex flex-col -space-y-1.5">
           <UAvatar v-for="author of [...commit.authors].slice(0, 3)" :key="author.login" :src="author.avatarUrl" :alt="author.login" size="xs" />
@@ -18,7 +18,7 @@
             </p>
             <time v-if="commit.date" class="block u-text-gray-400 text-sm flex-shrink-0">{{ useTimeAgo(new Date(commit.date)).value }}</time>
           </div>
-          <NuxtLink :to="`https://github.com/${project.repository.owner}/${project.repository.name}/commit/${commit.oid}`" target="_blank" class="flex-shrink-0 u-text-gray-500 hover:underline text-sm block">
+          <NuxtLink :to="`https://github.com/${project.repository.owner}/${project.repository.name}/commit/${commit.oid}`" target="_blank" class="flex-shrink-0 u-text-gray-500 hover:underline text-sm block" tabindex="-1">
             <span class="line-clamp-2">{{ commit.message }}</span>
           </NuxtLink>
         </div>
