@@ -1,6 +1,6 @@
 import type { Ref } from 'vue'
 import { omit, identity, pickBy } from 'lodash-es'
-import type { GitHubFile, GitHubDraft, Project, Root } from '~/types'
+import type { GitHubFile, GitHubDraft, Project, Root, PreviewToken } from '~/types'
 import ProjectModalFileCreate from '~/components/project/modal/ProjectModalFileCreate.vue'
 import ProjectModalFileRename from '~/components/project/modal/ProjectModalFileRename.vue'
 import ProjectModalFileDelete from '~/components/project/modal/ProjectModalFileDelete.vue'
@@ -19,6 +19,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
   const files: Ref<GitHubFile[]> = useState(`project-${project.id}-${root}-files`, () => null)
   const draft: Ref<GitHubDraft> = useState(`project-${project.id}-${root}-draft`, () => null)
   const file: Ref<GitHubFile> = useState(`project-${project.id}-${root}-file`, () => null)
+  const token: Ref<PreviewToken> = useState(`project-${project.id}-${root}-token`, () => null)
 
   const pending = ref(false)
 
@@ -35,7 +36,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
 
     pending.value = true
 
-    const data = await client<{ files: GitHubFile[], draft: GitHubDraft }>(`/projects/${project.id}/files`, {
+    const data = await client<{ files: GitHubFile[], draft: GitHubDraft, token: PreviewToken }>(`/projects/${project.id}/files`, {
       params: {
         ref: branch.value.name,
         root,
@@ -45,6 +46,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
 
     files.value = data.files
     draft.value = data.draft
+    token.value = data.token
 
     pending.value = false
 
@@ -389,6 +391,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
     recentFiles,
     files,
     file: readonly(file),
-    draft
+    draft,
+    token
   }
 }
