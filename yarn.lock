@@ -1021,9 +1021,9 @@
     eslint-plugin-vue "^8.7.1"
 
 "@nuxtjs/strapi@npm:@nuxtjs/strapi-edge@latest":
-  version "1.3.2-27508222.a96481f"
-  resolved "https://registry.yarnpkg.com/@nuxtjs/strapi-edge/-/strapi-edge-1.3.2-27508222.a96481f.tgz#7295c6da0681bec64067ae9ac48408d47ba0e475"
-  integrity sha512-mqeGDqY7EyHqATbcGnlVv77qkyN530G9A80KvuplEnmciACVMNwIMdAWuaUwxjWLWnORyntwgGGAHGNn5N8vTg==
+  version "1.3.2-27529127.14eaac5"
+  resolved "https://registry.yarnpkg.com/@nuxtjs/strapi-edge/-/strapi-edge-1.3.2-27529127.14eaac5.tgz#0c78bbf23a49a0605051f83cad14d3ce9cc173f1"
+  integrity sha512-YQpWr59k6EG4sPz3YjS/dGzHQtWFLsKoiXjsx9g0eXhzjQFmNrZMrlJXN2y4LLWJL+XGwEVZQkiUd8ikU+widw==
   dependencies:
     "@nuxt/kit" "^3.0.0-rc.1"
     defu "^6.0.0"
