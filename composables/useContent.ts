@@ -77,7 +77,7 @@ export const useContent = () => {
     } else if (file) {
       await navigateTo(findBottomLink(file))
     } else {
-      throwError({ message: 'This page does not exist.', statusCode: 404 })
+      throwError({ statusMessage: 'Page not found', message: 'This page does not exist.', statusCode: 404 })
     }
   }
 
