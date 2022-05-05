@@ -75,7 +75,7 @@ export const useContent = () => {
         surround.value = _surround
       })
     } else if (file) {
-      navigateTo(findBottomLink(file))
+      await navigateTo(findBottomLink(file))
     } else {
       throwError({ message: 'This page does not exist.', statusCode: 404 })
     }

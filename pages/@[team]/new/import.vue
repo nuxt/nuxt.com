@@ -119,7 +119,7 @@ const router = useRouter()
 const client = useStrapiClient()
 
 if (!route.query.repository) {
-  navigateTo({ name: '@team-new' })
+  await navigateTo({ name: '@team-new' })
 }
 
 const [owner, name] = (route.query.repository as string).split('/')
@@ -132,7 +132,7 @@ const { error, data: repository } = await useAsyncData<GitHubRepository>(
   }
 )
 if (error.value) {
-  navigateTo({ name: '@team-new' })
+  await navigateTo({ name: '@team-new' })
 }
 
 const { data: folders } = await useAsyncData(`import-${route.query.repository}-folders`, () => client<File[]>(`/github/installations/${owner}/${name}/folders`), {
