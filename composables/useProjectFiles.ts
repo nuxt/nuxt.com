@@ -249,7 +249,14 @@ export const useProjectFiles = (project: Project, root: Root) => {
   // Methods
 
   function init () {
-    let fileToSelect = cookie.value ? computedFiles.value.find(f => f.path === cookie.value && f.status !== 'deleted') : null
+    let fileToSelect
+
+    if (file.value) {
+      fileToSelect = fileToSelect || computedFiles.value.find(f => f.path === file.value.path && f.status !== 'deleted')
+    }
+    if (cookie.value) {
+      fileToSelect = fileToSelect || computedFiles.value.find(f => f.path === cookie.value && f.status !== 'deleted')
+    }
 
     fileToSelect = fileToSelect || computedFiles.value.find(f => f.path.match(/^content\/[0-9.]*index\.md$/i) && f.status !== 'deleted')
     fileToSelect = fileToSelect || computedFiles.value.find(f => f.type === 'blob' && f.status !== 'deleted')
@@ -259,7 +266,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
 
   function select (f: GitHubFile) {
     file.value = f
-    cookie.value = file.value.path
+    cookie.value = file.value?.path
 
     if (file.value) {
       recentFiles.value = [{ ...file.value, openedAt: Date.now() }, ...recentFiles.value.filter(rf => rf.path !== file.value.path)]
