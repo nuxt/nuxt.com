@@ -5,15 +5,11 @@ import typography from './presets/typography'
 
 // https://v3.nuxtjs.org/guide/directory-structure/nuxt.config
 export default defineNuxtConfig({
-  components: [
-    { path: '~/components/globals', global: true },
-    '~/components'
-  ],
   css: [
     '~/assets/css/fonts.css',
     '~/assets/css/scrollbars.css'
   ],
-  buildModules: [
+  modules: [
     '@nuxthq/ui',
     '@nuxthq/admin',
     '@nuxtjs/strapi',
