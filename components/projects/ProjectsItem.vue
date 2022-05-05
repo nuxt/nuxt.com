@@ -12,7 +12,7 @@
           {{ project.name }}
         </p>
 
-        <a v-if="project.repository.url" :href="project.repository.url" target="_blank" tabindex="-1" class="relative text-sm font-medium u-text-gray-500 truncate hover:underline z-[1]">{{ project.repository.url }}</a>
+        <a v-if="project.url" :href="project.url" target="_blank" tabindex="-1" class="relative text-sm font-medium u-text-gray-500 truncate hover:underline z-[1]">{{ project.url }}</a>
       </div>
     </div>
 
