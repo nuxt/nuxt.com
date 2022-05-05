@@ -141,7 +141,6 @@ onMounted(() => {
 
   // Listen to change on draft by other collaborators
   $socket.on('draft:update', ({ branch: draftBranch, draft: newDraft, root }: { branch: string, draft: GitHubDraft, root: 'content' | 'public' }) => {
-    console.log('draft:update :', draftBranch, newDraft, root)
     if (draftBranch !== branch.value.name) {
       return
     }
