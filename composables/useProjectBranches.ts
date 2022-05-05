@@ -133,7 +133,14 @@ export const useProjectBranches = (project: Project) => {
   // Methods
 
   function init () {
-    let branchToSelect = cookie.value ? branches.value.find(b => b.name === cookie.value) : null
+    let branchToSelect
+
+    if (branch.value) {
+      branchToSelect = branchToSelect || branches.value.find(b => b.name === branch.value.name)
+    }
+    if (cookie.value) {
+      branchToSelect = branchToSelect || branches.value.find(b => b.name === cookie.value)
+    }
 
     branchToSelect = branchToSelect || branches.value.find(b => b.name === project.repository.default_branch)
     branchToSelect = branchToSelect || branches.value[0]
@@ -143,7 +150,7 @@ export const useProjectBranches = (project: Project) => {
 
   function select (b: GitHubBranch) {
     branch.value = b
-    cookie.value = branch.value.name
+    cookie.value = branch.value?.name
 
     if (branch.value) {
       recentBranches.value = [{ ...branch.value, openedAt: Date.now() }, ...recentBranches.value.filter(rb => rb.name !== branch.value.name)]
