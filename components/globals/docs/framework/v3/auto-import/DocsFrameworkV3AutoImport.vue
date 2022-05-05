@@ -25,16 +25,16 @@
       </li>
     </ul>
     <div class="col-span-9 flex w-full h-full items-center justify-center relative">
-      <DocsFrameworkV3AutoImportContainer />
-      <DocsFrameworkV3AutoImportTerminal />
+      <DocsFrameworkV3AutoImportContainer :step="currentSection" />
+      <DocsFrameworkV3AutoImportTerminal :current-section="currentSection" />
     </div>
   </div>
 </template>
 <script setup lang="ts">
-const { currentSection, startCounter2 } = useCounterAnimations()
+const { currentSection, startCounter } = useCounterAnimations()
 
 onMounted(() => {
-  startCounter2([4200, 4200, 2000])
+  startCounter([10500, 10500, 4000])
 })
 
 const { data: autoImportData } = await useAsyncData('autoImport', () => queryContent('/docs/framework/v3/collections/auto-import').findOne())

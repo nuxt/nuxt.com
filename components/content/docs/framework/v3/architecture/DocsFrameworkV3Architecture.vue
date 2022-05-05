@@ -7,6 +7,7 @@
         :key="data.title"
         class="flex flex-row gap-x-2 relative group p-4 hover:u-bg-gray-50 rounded-md transition duration-200"
         :class="currentSection === index ? 'u-bg-gray-50' : 'bg-none'"
+        @click="startCounter(2500, index)"
       >
         <div
           class="rounded-md h-12 w-12 group-hover:opacity-0
