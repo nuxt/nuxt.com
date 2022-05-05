@@ -20,25 +20,21 @@
         </div>
       </div>
 
-      <TabGroup :selected-index="selectedIndex" as="div" @change="(i) => selectedIndex = i">
-        <TabList class="flex h-16 space-x-4 border-b u-border-gray-200 px-6">
-          <Tab
-            v-for="category in ['Meta', 'History']"
-            :key="category"
-            v-slot="{ selected }"
-            as="template"
+      <div>
+        <nav class="flex h-16 space-x-4 border-b u-border-gray-200 px-6">
+          <button
+            v-for="(category, index) in ['Meta', 'History']"
+            :key="index"
+            :class="{ 'font-medium u-text-black u-border-gray-600': selectedIndex === index }"
+            class="u-text-gray-800 border-b border-transparent px-2 -mb-[1px]"
+            @click="selectedIndex = index"
           >
-            <button
-              :class="{ 'font-medium u-text-black u-border-gray-600': selected }"
-              class="u-text-gray-800 border-b border-transparent px-2 -mb-[1px]"
-            >
-              {{ category }}
-            </button>
-          </Tab>
-        </TabList>
+            {{ category }}
+          </button>
+        </nav>
 
-        <TabPanels class="p-6">
-          <TabPanel class="space-y-6">
+        <div class="p-6">
+          <div v-if="selectedIndex === 0" class="space-y-6">
             <UFormGroup
               v-for="field of fields"
               :key="field.key"
@@ -64,13 +60,13 @@
               />
               <UCheckbox v-else-if="field.type === 'boolean'" :model-value="field.value" :name="field.key" @update:model-value="value => updateField(field.key, value)" />
             </UFormGroup>
-          </TabPanel>
+          </div>
 
-          <TabPanel>
+          <div v-if="selectedIndex === 1">
             <ProjectFileHistory />
-          </TabPanel>
-        </TabPanels>
-      </TabGroup>
+          </div>
+        </div>
+      </div>
     </div>
     <div v-else class="h-full flex flex-col items-center justify-center">
       <UIcon name="heroicons-outline:document-text" class="mx-auto h-12 w-12 u-text-gray-400" />
@@ -82,7 +78,6 @@
 </template>
 
 <script setup lang="ts">
-import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
 import { snakeCase } from 'lodash-es'
 import type { Project, Root } from '~/types'
 import { capitalize } from '~/utils'
