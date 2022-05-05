@@ -101,7 +101,7 @@ const visibility = useDocumentVisibility()
 const { githubAppUrl } = useGitHub()
 
 if (!route.query.template) {
-  navigateTo({ name: '@team-new' })
+  await navigateTo({ name: '@team-new' })
 }
 
 const accounts: Ref<GitHubAccount[]> = ref([])
