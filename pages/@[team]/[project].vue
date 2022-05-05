@@ -34,7 +34,7 @@ const { isBranchesModalOpen, isFilesModalOpen } = useProjectModals()
 
 const activeUsers: Ref<SocketUser[]> = ref([])
 
-const { data: project, error } = await useAsyncData(`projects-${route.params.project}`, () => client<Project>(props.team ? `/teams/${props.team.slug}/projects/${route.params.project}` : `/projects/${route.params.project}`))
+const { data: project, error } = await useAsyncData(`projects-${route.params.team}-${route.params.project}`, () => client<Project>(props.team ? `/teams/${props.team.slug}/projects/${route.params.project}` : `/projects/${route.params.project}`))
 if (error.value) {
   navigateTo({ name: '@team-projects', params: { team: props.team ? props.team.slug : user.value.username } })
 }
