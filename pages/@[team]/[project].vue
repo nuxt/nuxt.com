@@ -10,7 +10,7 @@
 
 <script setup lang="ts">
 import type { PropType, Ref } from 'vue'
-import type { Team, Project, User, SocketUser, GitHubDraft, GitHubBranch } from '../../types'
+import type { Team, Project, User, SocketUser, GitHubDraft, GitHubBranch } from '~/types'
 
 definePageMeta({
   layout: false
