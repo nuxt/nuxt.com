@@ -35,7 +35,7 @@
     "@octokit/rest": "^18.12.0",
     "@sindresorhus/slugify": "^2.1.0",
     "@tailwindcss/typography": "^0.5.2",
-    "@vueuse/core": "^8.4.1",
+    "@vueuse/core": "^8.4.2",
     "eslint": "^8.14.0",
     "nuxt": "npm:nuxt3@latest",
     "socket.io-client": "^4.5.0",
