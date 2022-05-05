@@ -23,9 +23,14 @@ export const useProjectComponents = (project: Project) => {
     pending.value = true
 
     try {
-      components.value = await $fetch(`${project.url}/api/component-meta`, {
+      const data: any = await $fetch(`${project.url}/api/component-meta`, {
         retry: false
       })
+
+      // Ensure data is valid JSON
+      JSON.parse(data)
+
+      components.value = data
     } catch (e) {
       components.value = []
 
