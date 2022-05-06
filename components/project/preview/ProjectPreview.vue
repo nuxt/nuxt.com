@@ -23,7 +23,7 @@
         storage-key="project-preview-position"
         storage-type="session"
       >
-        <div v-if="!isExpanded" class="absolute inset-0 group-hover:bg-gray-900/75 flex items-center justify-center dark">
+        <div v-if="!isExpanded" class="absolute inset-0 group-hover:bg-gray-900/75 flex items-center justify-center dark z-50">
           <UButton
             rounded
             size="xxs"
@@ -44,7 +44,14 @@
           />
         </div>
 
-        <iframe id="iframe" :src="previewUrl" class="w-full h-full" />
+        <iframe
+          id="iframe"
+          width="1920"
+          :class="{ 'collapsed': !isExpanded }"
+          height="1080"
+          :src="previewUrl"
+          class="w-full h-full"
+        />
       </UseDraggable>
     </div>
   </div>
@@ -63,3 +70,12 @@ const { isOpen, isExpanded } = useProjectPreview()
 const x = window.innerWidth - 336 - 24
 const y = window.innerHeight - 189 - 24
 </script>
+
+<style scoped>
+iframe.collapsed {
+  transform: scale(0.25);
+  width: 400%;
+  height: 400%;
+  transform-origin: top left;
+}
+</style>
