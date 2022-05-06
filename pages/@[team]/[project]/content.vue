@@ -182,13 +182,13 @@ const updateMarkdown = debounce((newMarkdown: string) => {
   markdown.value = newMarkdown
 
   return updateFile()
-}, 500)
+}, 200)
 
 const updateMatter = debounce((newMatter: object) => {
   matter.value = newMatter
 
   return updateFile()
-}, 500)
+}, 200)
 
 // Hooks
 
