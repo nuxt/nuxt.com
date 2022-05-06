@@ -67,7 +67,7 @@ export default defineComponent({
 
 <style>
 @import 'https://fonts.googleapis.com/icon?family=Material+Icons+Outlined';
-@import 'https://unpkg.com/prism-themes/themes/prism-material-light.css';
+@import 'https://unpkg.com/prism-themes@1.9.0/themes/prism-one-dark.css';
 
 .milkdown {
   padding: 0;
