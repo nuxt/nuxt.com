@@ -1,7 +1,13 @@
 <template>
   <div class="grid grid-cols-12 pt-12">
     <ul class="flex flex-col col-span-3 gap-y-6">
-      <li v-for="(data, index) in autoImportData.autoImport" :key="data.title" class="flex gap-x-4 items-center">
+      <li
+        v-for="(data, index) in autoImportData.autoImport"
+        :key="data.title"
+        class="flex gap-x-4 items-center"
+        :class="uniqueAnimationRunning && currentSection !== index ? 'opacity-60' : 'opacity-100'"
+        @click="!uniqueAnimationRunning ? startUniqueCounter(animationsDelay, index, index) : () => {}"
+      >
         <div class="relative">
           <img src="/docs/framework/v3/auto-import/hexagon.svg" class="h-14 w-16" alt="hexagon container">
           <div class="h-14 w-16 absolute top-0 flex justify-center items-center">
@@ -25,16 +31,18 @@
       </li>
     </ul>
     <div class="col-span-9 flex w-full h-full items-center justify-center relative">
-      <DocsFrameworkV3AutoImportContainer :step="currentSection" />
-      <DocsFrameworkV3AutoImportTerminal :current-section="currentSection" />
+      <DocsFrameworkV3AutoImportContainer :step="currentSection" :unique-animation="counterStopped" />
+      <DocsFrameworkV3AutoImportTerminal :current-section="currentSection" :unique-animation="counterStopped" />
     </div>
   </div>
 </template>
 <script setup lang="ts">
-const { currentSection, startCounter } = useCounterAnimations()
+const { currentSection, startCounter, startUniqueCounter, counterStopped, uniqueAnimationRunning } = useCounterAnimations()
+const animationsDelay = [10500, 10500, 4000]
+const uniqueAnimation = ref(false)
 
 onMounted(() => {
-  startCounter([10500, 10500, 4000])
+  startCounter(animationsDelay)
 })
 
 const { data: autoImportData } = await useAsyncData('autoImport', () => queryContent('/docs/framework/v3/collections/auto-import').findOne())

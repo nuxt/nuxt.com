@@ -106,15 +106,17 @@ const props = defineProps({
   step: {
     type: Number,
     default: 0
+  },
+  uniqueAnimation: {
+    type: Boolean,
+    default: false
   }
 })
 
-const { startCounter, currentSection } = useCounterAnimations()
+const { startCounter, currentSection, startUniqueCounter } = useCounterAnimations()
 
 const secondLineFolder = ref(null)
-
-onMounted(() => startCounter([1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 4000]))
-
+const animationsDelay = [1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 4000]
 const secondLineMotion = useMotion(secondLineFolder,
   {
     initial: {
@@ -138,11 +140,23 @@ const secondLineMotion = useMotion(secondLineFolder,
   }
 )
 
-watch(() => props.step, () => {
+onMounted(() => startCounter(animationsDelay))
+
+watch([() => props.step, () => props.uniqueAnimation], ([currentSection, uniqueAnimation]) => {
   if (props.step !== 0) {
     secondLineMotion.apply('out')
   } else {
     secondLineMotion.apply('in')
+  }
+
+  if (uniqueAnimation) {
+    const startSection = ref(0)
+    const endSection = ref(0)
+
+    startSection.value = currentSection === 0 ? 0 : currentSection === 1 ? 7 : 14
+    endSection.value = currentSection === 0 ? 6 : currentSection === 1 ? 13 : 14
+
+    startUniqueCounter(animationsDelay, startSection.value, endSection.value)
   }
 })
 

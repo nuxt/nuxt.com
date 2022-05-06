@@ -6,8 +6,8 @@
         ref="sections"
         :key="data.title"
         class="flex flex-row gap-x-2 relative group p-4 hover:u-bg-gray-50 rounded-md transition duration-200"
-        :class="currentSection === index ? 'u-bg-gray-50' : 'bg-none'"
-        @click="startCounter(2500, index)"
+        :class="[currentSection === index ? 'u-bg-gray-50' : 'bg-none', uniqueAnimationRunning && currentSection !== index ? 'opacity-60' : 'opacity-100']"
+        @click="startUniqueCounter(animationsDelay, index, index)"
       >
         <div
           class="rounded-md h-12 w-12 group-hover:opacity-0
@@ -49,11 +49,13 @@
 
 <script setup lang="ts">
 const sections = ref(null)
-const { currentSection, startCounter } = useCounterAnimations()
+const { currentSection, startCounter, startUniqueAnimation, startUniqueCounter, uniqueAnimationRunning } = useCounterAnimations()
+const animationsDelay = [2500, 2500, 2500, 2500]
 
 onMounted(() => {
-  startCounter([2500, 2500, 2500, 2500])
+  startCounter(animationsDelay)
 })
 
 const { data: architectureData } = await useAsyncData('architecture', () => queryContent('/docs/framework/v3/collections/architecture').findOne())
+
 </script>

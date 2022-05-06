@@ -35,8 +35,33 @@
 
 <script setup lang="ts">
 
-const { startCounter, currentSection } = useCounterAnimations()
+const { startCounter, currentSection, startUniqueCounter, startUniqueAnimation } = useCounterAnimations()
+const animationsDelay = [1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 4000]
 
-onMounted(() => startCounter([1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 4000]))
+const props = defineProps({
+  currentSection: {
+    type: Number,
+    default: 0
+  },
+  uniqueAnimation: {
+    type: Boolean,
+    default: false
+  }
+})
+
+onMounted(() => startCounter(animationsDelay))
+
+watch([() => props.currentSection, () => props.uniqueAnimation], ([currentSection, uniqueAnimation]) => {
+  console.log('uniqueAnimation')
+  if (uniqueAnimation) {
+    const startSection = ref(0)
+    const endSection = ref(0)
+
+    startSection.value = currentSection === 0 ? 0 : currentSection === 1 ? 7 : 14
+    endSection.value = currentSection === 0 ? 6 : currentSection === 1 ? 13 : 14
+
+    startUniqueCounter(animationsDelay, startSection.value, endSection.value)
+  }
+})
 
 </script>
