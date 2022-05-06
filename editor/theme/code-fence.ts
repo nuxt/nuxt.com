@@ -1,12 +1,14 @@
 /* Copyright 2021, Milkdown by Mirone. */
 import type { Emotion, ThemeCodeFenceType, ThemeManager } from '@milkdown/core'
-import { getPalette, ThemeBorder, ThemeFont, ThemeIcon, ThemeScrollbar, ThemeShadow, ThemeSize } from '@milkdown/core'
+import { getPalette, ThemeBorder, ThemeFont, ThemeIcon, ThemeScrollbar, ThemeSize } from '@milkdown/core'
 
 const getStyle = (manager: ThemeManager, { css }: Emotion) => {
   const palette = getPalette(manager)
   const radius = manager.get(ThemeSize, 'radius')
 
   return css`
+        margin-top: .5rem;
+        margin-bottom: .5rem;
         background-color: ${palette('background')};
         color: ${palette('neutral')};
         font-size: 0.875em;
@@ -21,7 +23,7 @@ const getStyle = (manager: ThemeManager, { css }: Emotion) => {
         .code-fence_selector {
             width: 6rem;
             box-sizing: border-box;
-            border-radius: ${radius};
+            border-radius: 0.375rem;
             margin: 0 1em 1em;
             cursor: pointer;
             background-color: ${palette('surface')};
@@ -39,7 +41,6 @@ const getStyle = (manager: ThemeManager, { css }: Emotion) => {
             line-height: 1rem;
 
             ${manager.get(ThemeBorder, undefined)};
-            ${manager.get(ThemeShadow, undefined)};
 
             & > .icon {
                 color: ${palette('solid', 0.87)};
@@ -71,7 +72,7 @@ const getStyle = (manager: ThemeManager, { css }: Emotion) => {
             }
 
             margin: 0 !important;
-            border-radius: ${radius};
+            border-radius: 0.375rem;
             font-weight: 500;
             position: absolute;
             z-index: 1;
@@ -89,7 +90,6 @@ const getStyle = (manager: ThemeManager, { css }: Emotion) => {
 
             ${manager.get(ThemeScrollbar, ['y'])}
             ${manager.get(ThemeBorder, undefined)};
-            ${manager.get(ThemeShadow, undefined)};
         }
     `
 }
