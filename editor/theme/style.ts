@@ -143,9 +143,6 @@ export const getStyle = (manager: ThemeManager, emotion: Emotion) => {
 
   const code = css`
     .code-fence {
-      margin-top: .5rem;
-      margin-bottom: .5rem;
-
       pre {
         font-family: ${manager.get(ThemeFont, 'code')};
         margin: 0 1.2em !important;
@@ -156,7 +153,7 @@ export const getStyle = (manager: ThemeManager, emotion: Emotion) => {
         background-color: ${palette('background')};
         color: ${palette('neutral')};
         font-size: 0.875em;
-        border-radius: ${radius};
+        border-radius: 0;
 
         code {
           line-height: 1.5;
