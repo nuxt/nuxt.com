@@ -366,6 +366,18 @@ export const useProjectFiles = (project: Project, root: Root) => {
     return changesCount
   })
 
+  const previewUrl = computed(() => {
+    if (!project.url) {
+      return
+    }
+    if (!token.value) {
+      return
+    }
+
+    // Nuxt Content will call `https://api.nuxt.com/projects/draft?token=${token}`
+    return `${project.url}?_preview=${token.value}`
+  })
+
   return {
     // Http
     fetch,
@@ -389,6 +401,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
     computedFiles,
     computedFile,
     isDraft,
+    previewUrl,
     // Data
     recentFiles,
     files,
