@@ -1,7 +1,16 @@
 <!-- This example requires Tailwind CSS v2.0+ -->
 <template>
   <Popover v-slot="{ open, close }" @mouseleave="onMouseLeave">
-    <PopoverButton ref="trigger" :class="[open ? 'u-text-gray-900' : 'u-text-gray-500', isActive(link) ? 'u-text-gray-900 font-semibold' : '', 'group text-sm lg:text-base focus:outline-none font-medium hover:u-text-gray-900 focus:u-text-gray-900 cursor-default']" @mouseover="onMouseOver">
+    <PopoverButton
+      ref="trigger"
+      :class="[
+        open ? 'u-text-gray-900' : 'u-text-gray-500',
+        isActive(link) ? 'u-text-gray-900 font-semibold' : '',
+        'group text-sm lg:text-base focus:outline-none font-medium hover:u-text-gray-900 focus:u-text-gray-900',
+        link.slug ? 'cursor-pointer' : 'cursor-default'
+      ]"
+      @mouseover="onMouseOver"
+    >
       {{ link.title }}
     </PopoverButton>
 
@@ -54,7 +63,7 @@
 <script setup lang="ts">
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue'
 
-defineProps({
+const props = defineProps({
   link: {
     type: Object,
     required: true
@@ -63,6 +72,7 @@ defineProps({
 
 defineEmits(['close'])
 
+const router = useRouter()
 const route = useRoute()
 
 const trigger = ref(null)
@@ -78,6 +88,9 @@ onMounted(() => {
     popoverApi.value = popoverProvidesSymbols.length && popoverProvides[popoverProvidesSymbols[0]]
     // stop trigger click propagation on hover
     popoverApi.value.button.addEventListener('click', (e) => {
+      if (props.link.slug) {
+        router.push(props.link.slug)
+      }
       e.stopPropagation()
     }, true)
   }, 0)
