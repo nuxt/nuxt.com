@@ -4,7 +4,6 @@ export interface Media {
   caption: string
   ext: string
   url: string
-  previewUrl: string
 }
 
 export interface Member {
