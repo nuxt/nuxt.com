@@ -22,7 +22,7 @@ export const lightColors: ColorSet = {
   primary: Nord.primary,
   secondary: Nord.gray3,
   neutral: Nord.gray7,
-  solid: Nord.gray2,
+  solid: Nord.gray5,
   line: Nord.gray2,
   background: Nord.gray1,
   surface: '#fff'

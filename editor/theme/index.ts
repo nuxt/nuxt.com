@@ -18,6 +18,7 @@ import { code, typography } from './font'
 import { getIcon } from './icon'
 import { darkColors, lightColors, ColorSet } from './colors'
 import { getStyle } from './style'
+import { codeFence } from './code-fence'
 
 export const font = {
   typography,
@@ -118,6 +119,7 @@ export const createTheme = (emotion: Emotion, manager: ThemeManager, colorSet: C
   })
 
   useAllPresetRenderer(manager, emotion)
+  codeFence(manager, emotion)
 }
 
 const getTheme = (colorSet: ColorSet) => themeFactory((emotion, manager) => createTheme(emotion, manager, colorSet))
