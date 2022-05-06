@@ -5,6 +5,10 @@
     <ProjectModalFiles v-model="isFilesModalOpen" @update:modelValue="onFilesModalChange" />
 
     <NuxtPage v-if="project" :team="team" />
+
+    <ClientOnly>
+      <ProjectPreviewPip v-show="['@team-project-content', '@team-project-media'].includes(route.name)" />
+    </ClientOnly>
   </ProjectLayout>
 </template>
 
