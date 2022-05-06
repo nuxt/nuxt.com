@@ -966,9 +966,9 @@
     nuxt-component-meta "^0.1.4"
 
 "@nuxthq/ui@npm:@nuxthq/ui-edge@latest":
-  version "0.0.2-27530922.60c72a2"
-  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27530922.60c72a2.tgz#fcd98f31b46208d2980ca92e760ec420cbc2c3d0"
-  integrity sha512-3bd4GLp13siifQ6BfVTHsKsrY+wBVOSSa0qQqhgeBjUGRawwfld+GqsHXolnBqxqKzpt16piei8O808iEaRf5A==
+  version "0.0.2-27531302.5031610"
+  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27531302.5031610.tgz#d64b800a66b62054020b8bcc0f5dbc4d3e91a5c3"
+  integrity sha512-McnYICiNCatjvkYgfjbtt4C035lcoiaZRFqTrD407xsXAnbzdh0pFd4FcJORpqzx9KKWflvOPF0fBy0KUyxBQA==
   dependencies:
     "@headlessui/vue" "1.6.1"
     "@iconify/vue" "^3.2.1"
@@ -6983,9 +6983,9 @@ path-parse@^1.0.7:
   integrity sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==
 
 path-to-regexp@^6.1.0:
-  version "6.2.0"
-  resolved "https://registry.yarnpkg.com/path-to-regexp/-/path-to-regexp-6.2.0.tgz#f7b3803336104c346889adece614669230645f38"
-  integrity sha512-f66KywYG6+43afgE/8j/GoiNyygk/bnoCbps++3ErRKsIYkGGupyv07R2Ok5m9i67Iqc+T2g1eAUGUPzWhYTyg==
+  version "6.2.1"
+  resolved "https://registry.yarnpkg.com/path-to-regexp/-/path-to-regexp-6.2.1.tgz#d54934d6798eb9e5ef14e7af7962c945906918e5"
+  integrity sha512-JLyh7xT1kizaEvcaXOQwOc2/Yhw6KZOvPf1S8401UyLk86CU79LN3vl7ztXGm/pZ+YjoyAJ4rxmHwbkBXJX+yw==
 
 path-type@^3.0.0:
   version "3.0.0"
