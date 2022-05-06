@@ -24,8 +24,10 @@ export default (options: Options, renderVue: VueRenderer): MilkdownPlugin => {
     pre.inject(renderVueCtx, renderVue)
 
     return (ctx) => {
-      ctx.set(defaultValueCtx, unref(options.content) ?? '')
-      ctx.get(listenerCtx).markdownUpdated((_, markdown) => options.onChanged?.(markdown))
+      ctx.set(defaultValueCtx, unref(options.content).markdown ?? '')
+      ctx.get(listenerCtx).markdownUpdated((_, markdown, prevMarkdown) => {
+        options.onChanged?.(markdown, prevMarkdown)
+      })
     }
   }
 }

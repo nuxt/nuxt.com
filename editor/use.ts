@@ -1,4 +1,4 @@
-import { Editor, editorViewCtx, parserCtx, rootCtx, serializerCtx } from '@milkdown/core'
+import { defaultValueCtx, Editor, editorViewCtx, parserCtx, rootCtx, serializerCtx } from '@milkdown/core'
 import { emoji } from '@milkdown/plugin-emoji'
 import { history } from '@milkdown/plugin-history'
 import { listener } from '@milkdown/plugin-listener'
@@ -16,7 +16,7 @@ import context, { componentSchemasCtx } from './context'
 import mdc from './plugins/mdc'
 import slash from './plugins/slash'
 import trailingParagraph from './plugins/trailing-paragraph'
-import collaborative, { setRoom } from './plugins/collaborative'
+import collaborative, { getProvider, joinRoom, leaveRoom } from './plugins/collaborative'
 
 // Theme
 import { dark, light } from './theme'
@@ -34,7 +34,7 @@ export const useEditor = (options: Options) => {
   let instance: Editor
 
   const theme = useTheme()
-  const isCollaborativeEnabled = Boolean(useRuntimeConfig().public.ywsUrl)
+  const hasCollab = Boolean(useRuntimeConfig().public.ywsUrl)
 
   const makeEditor = () => useMilkdownEditor((root, renderVue) => {
     instance = Editor.make()
@@ -51,8 +51,9 @@ export const useEditor = (options: Options) => {
       .use(slash)
       .use(trailingParagraph)
 
-    if (isCollaborativeEnabled) {
-      instance.use(collaborative(unref(options.room) ?? 'default'))
+    if (hasCollab) {
+      const { key: room } = unref(options.content)
+      instance.use(collaborative(room))
     }
 
     return instance
@@ -60,21 +61,19 @@ export const useEditor = (options: Options) => {
 
   const editor = ref(makeEditor())
 
-  // Reactive content
+  // Reactive content when content key change
   if (isRef(options.content)) {
-    watch(options.content, (content) => {
-      instance?.action((ctx) => {
-        const view = ctx.get(editorViewCtx)
-        const parser = ctx.get(parserCtx)
-        const serializer = ctx.get(serializerCtx)
-        const state = view.state
-        if (content === serializer(state.doc)) {
-          return
-        }
-        const doc = parser(content)
-        if (!doc) { return }
-        view.dispatch(state.tr.replace(0, state.doc.content.size, new Slice(doc.content, 0, 0)))
-      })
+    watch(() => unref(options.content).key, () => {
+      const { key: room, markdown } = unref(options.content)
+
+      // Leave current room
+      leaveRoom()
+
+      // Update markdown
+      instance?.action(replaceAll(markdown))
+
+      // Join new room
+      joinRoom(room)
     })
   }
 
@@ -89,14 +88,6 @@ export const useEditor = (options: Options) => {
   watch(theme, (value) => {
     instance?.action(switchTheme(value))
   })
-
-  // Reactive room (collaborative support)
-  if (isCollaborativeEnabled && isRef(options.room)) {
-    watch(options.room, (room) => {
-      instance?.action(setRoom(room))
-      instance?.action(replaceAll(unref(options.content), true))
-    })
-  }
 
   return editor
 }

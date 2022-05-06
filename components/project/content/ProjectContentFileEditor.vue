@@ -11,12 +11,8 @@ export default defineComponent({
   },
   inheritAttrs: false,
   props: {
-    modelValue: {
-      type: String,
-      default: ''
-    },
-    room: {
-      type: String,
+    content: {
+      type: Object as () => UnwrapOptions['content'],
       required: true
     },
     components: {
@@ -24,7 +20,7 @@ export default defineComponent({
       default: () => []
     }
   },
-  emits: ['update:modelValue'],
+  emits: ['update'],
   async setup (props, { emit }) {
     const attrs = useAttrs()
 
@@ -41,11 +37,13 @@ export default defineComponent({
 
     const editor = useEditor({
       components: computed(() => [...props.components]),
-      content: computed(() => props.modelValue),
-      onChanged: (content: string) => {
-        (content !== props.modelValue) && emit('update:modelValue', content)
-      },
-      room: computed(() => props.room)
+      content: computed(() => props.content),
+      onChanged: (markdown: string, prevMarkdown: string) => {
+        console.log('[milkdown:onChanged]', { before: prevMarkdown, now: markdown })
+        if (prevMarkdown !== null) {
+          emit('update', markdown)
+        }
+      }
     })
 
     return {

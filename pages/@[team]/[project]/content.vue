@@ -44,25 +44,29 @@
 
     <div class="flex items-stretch flex-1 min-h-0 overflow-hidden">
       <div v-if="computedFiles.length" ref="editorScroll" class="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto">
-        <ProjectContentEditor
-          v-if="file"
-          :model-value="markdown"
-          :room="`project-${project.id}-${branch.name}-${file.path}`"
+        <ProjectContentFileEditor
+          v-if="parsedContent"
+          :content="parsedContent"
           :components="components || []"
           class="flex flex-col flex-1"
-          @update:model-value="updateMarkdown"
+          @update="onMarkdownUpdate"
         />
       </div>
       <ProjectContentFilesEmpty v-else @create="openCreateFileModal('content')" />
 
-      <ProjectContentFileAside :model-value="matter" @update:model-value="updateMatter" />
+      <ProjectContentFileAside
+        :model-value="parsedContent ? parsedContent.matter : {}"
+        @update:model-value="onMatterUpdate"
+      />
     </div>
   </ProjectPage>
 </template>
 
 <script setup lang="ts">
-import type { PropType, Ref } from 'vue'
+import { PropType, Ref } from 'vue'
 import { debounce } from 'lodash-es'
+import { useEditorScroll } from '~/editor/scroll'
+import type { Content } from '~/editor/types'
 import type { Team, Project, GitHubDraft } from '~/types'
 
 defineProps({
@@ -84,66 +88,43 @@ const { branch } = useProjectBranches(project)
 const { components } = useProjectComponents(project)
 const { draft, file, fetchFile, openCreateModal: openCreateFileModal, computedFiles } = useProjectFiles(project, root)
 const { query: treeQuery, tree, openDir } = useProjectFilesTree(project, root)
+const { scroll: editorScroll } = useEditorScroll(file)
 
 const content: Ref<string> = ref('')
-const markdown: Ref<string> = ref('')
-const matter: Ref<object> = ref({})
+const parsedContent: Ref<Content | null> = ref(null)
 
-const editorScroll: Ref<HTMLElement> = ref(null)
+// Methods
 
-// Watch
-
-watch(file, () => {
-  // Fetch content when file changes
-  fetchContent()
-  // Open dirs in tree when file is selected
-  openDirs()
-}, { immediate: true })
-
-// When file path change due to new selection, scroll top
-if (process.client) {
-  watch(file, (f, old) => {
-    if (!editorScroll.value) {
-      return
-    }
-
-    if (!f) {
-      return
-    }
-    // Ignore when: rename || rename back to original || rename when already renamed
-    if ((old && old.path === f.oldPath) || (old && old.oldPath === f.path) || (old && old.oldPath === f.oldPath)) {
-      return
-    }
-
-    editorScroll.value.scrollTop = 0
-  })
-}
-
-// Http
-
-async function fetchContent () {
+const openDirs = () => {
   if (!file.value) {
-    content.value = ''
-    markdown.value = ''
-    matter.value = {}
     return
   }
 
-  const { content: fetchedContent } = await fetchFile(file.value.path)
-
-  content.value = fetchedContent
-
-  const parsed = parseFrontMatter(content.value)
-
-  markdown.value = parsed.content
-  matter.value = parsed.matter
+  const paths = file.value.path.split('/')
+  for (let i = paths.length - 1; i > 1; i--) {
+    paths.pop()
+    openDir(paths.join('/'), true)
+  }
 }
 
-async function updateFile () {
-  const formattedContent = stringifyFrontMatter(markdown.value, matter.value)
+const onMarkdownUpdate = (markdown: string) => {
+  parsedContent.value.markdown = markdown
+  onUpdate()
+}
+
+const onMatterUpdate = (matter: object) => {
+  parsedContent.value.matter = matter
+  onUpdate()
+}
+
+const onUpdate = debounce(async () => {
+  const { markdown, matter } = unref(parsedContent)
+  const formattedContent = stringifyFrontMatter(markdown, matter)
   if (formattedContent === content.value) {
     return
   }
+
+  console.log('[API] Change content', { before: content.value, now: formattedContent })
 
   try {
     const data = await client<GitHubDraft>(`/projects/${project.id}/files/${encodeURIComponent(file.value.path)}`, {
@@ -160,49 +141,34 @@ async function updateFile () {
     content.value = formattedContent
     draft.value = data
 
-    $socket.emit('draft:update', `project-${project.id}:${branch.value.name}:${root}`)
+    $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
   } catch (e) {}
-}
-
-// Methods
-
-function openDirs () {
-  if (!file.value) {
-    return
-  }
-
-  const paths = file.value.path.split('/')
-  for (let i = paths.length - 1; i > 1; i--) {
-    paths.pop()
-    openDir(paths.join('/'), true)
-  }
-}
-
-const updateMarkdown = debounce((newMarkdown: string) => {
-  markdown.value = newMarkdown
-
-  return updateFile()
 }, 200)
 
-const updateMatter = debounce((newMatter: object) => {
-  matter.value = newMatter
+// Watch
 
-  return updateFile()
-}, 200)
+watch(file, async (file) => {
+  // Open dirs in tree to match selected file
+  openDirs()
+
+  // Fetch content
+  const { content: fetchedContent } = await fetchFile(file.path)
+  content.value = fetchedContent
+
+  // Parse content
+  const parsed = parseFrontMatter(content.value)
+
+  parsedContent.value = {
+    key: `project-${project.id}-${branch.value.name}-${file.path}`,
+    markdown: parsed.content,
+    matter: parsed.matter
+  }
+}, { immediate: true })
 
 // Hooks
 
-onMounted(() => {
-  if (!file.value) {
-    return
-  }
-
-  $socket.emit('file:join', `project-${project.id}:${branch.value.name}:${file.value.path}`)
-})
-
-onUnmounted(() => {
-  $socket.emit('file:leave', `project-${project.id}`)
-})
+onMounted(() => file.value && $socket.emit('file:join', `project-${project.id}:${branch.value.name}:${file.value.path}`))
+onUnmounted(() => $socket.emit('file:leave', `project-${project.id}`))
 </script>
 
 <style>
