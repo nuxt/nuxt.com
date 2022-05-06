@@ -3,42 +3,38 @@ import type { Color } from '@milkdown/design-system'
 export type ColorSet = Record<Color, string>
 
 export const Nord = {
-  nord0: '#2e3440',
-  nord1: '#3b4252',
-  nord2: '#434c5e',
-  nord3: '#4c566a',
-  nord4: '#d8dee9',
-  nord5: '#e5e9f0',
-  nord6: '#eceff4',
-  nord7: '#8fbcbb',
-  nord8: '#88c0d0',
-  nord9: '#81a1c1',
-  nord10: '#5e81ac',
-  nord11: '#bf616a',
-  nord12: '#d08770',
-  nord13: '#ebcb8b',
-  nord14: '#a3be8c',
-  nord15: '#b48ead'
+  gray0: '#fafafa',
+  gray1: '#f4f4f5',
+  gray2: '#e4e4e7',
+  gray3: '#d4d4d8',
+  gray4: '#a1a1aa',
+  gray5: '#71717a',
+  gray6: '#52525b',
+  gray7: '#3f3f46',
+  gray8: '#27272a',
+  gray9: '#18181b',
+  primary: '#00DC82',
+  secondary: '#36E4DA'
 }
 
 export const lightColors: ColorSet = {
-  shadow: Nord.nord1,
-  primary: Nord.nord10,
-  secondary: Nord.nord9,
-  neutral: Nord.nord0,
-  solid: Nord.nord3,
-  line: Nord.nord4,
-  background: Nord.nord6,
+  shadow: Nord.gray1,
+  primary: Nord.primary,
+  secondary: Nord.gray3,
+  neutral: Nord.gray7,
+  solid: Nord.gray2,
+  line: Nord.gray2,
+  background: Nord.gray1,
   surface: '#fff'
 }
 
 export const darkColors: ColorSet = {
-  shadow: Nord.nord1,
-  primary: Nord.nord10,
-  secondary: Nord.nord9,
-  neutral: Nord.nord6,
-  solid: Nord.nord4,
-  line: Nord.nord2,
-  background: '#252932',
-  surface: Nord.nord0
+  shadow: Nord.gray1,
+  primary: Nord.primary,
+  secondary: Nord.gray7,
+  neutral: Nord.gray2,
+  solid: Nord.gray4,
+  line: Nord.gray8,
+  background: Nord.gray8,
+  surface: '#000'
 }

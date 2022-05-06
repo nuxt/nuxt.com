@@ -25,7 +25,7 @@ export const font = {
 }
 
 export const size = {
-  radius: '4px',
+  radius: '0.5rem',
   lineWidth: '1px'
 }
 
