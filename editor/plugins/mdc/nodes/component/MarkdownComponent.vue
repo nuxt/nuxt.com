@@ -1,6 +1,6 @@
 <template>
   <div
-    class="u-bg-white border u-border-gray-200 rounded-md px-4 py-2 my-4"
+    class="u-bg-white border u-border-gray-200 rounded-md px-4 py-3 my-4"
     data-test="markdown-component"
     @mouseenter="showActions = true"
     @mouseleave="showActions = false"

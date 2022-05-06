@@ -6,10 +6,10 @@ export const getStyle = (manager: ThemeManager, emotion: Emotion) => {
   const { injectGlobal, css } = emotion
   const palette = getPalette(manager)
   const radius = manager.get(ThemeSize, 'radius')
-  const neutral = palette('neutral', 0.87)
+  const neutral = palette('neutral')
   const surface = palette('surface')
   const line = palette('line')
-  const highlight = palette('secondary', 0.38)
+  const highlight = palette('primary', 0.5)
 
   const selection = css`
     .ProseMirror-selectednode {
@@ -47,9 +47,7 @@ export const getStyle = (manager: ThemeManager, emotion: Emotion) => {
 
   const paragraph = css`
     p {
-      font-size: 1em;
-      line-height: 1.5;
-      letter-spacing: 0.5px;
+      line-height: 1.625;
     }
   `
 
@@ -69,32 +67,46 @@ export const getStyle = (manager: ThemeManager, emotion: Emotion) => {
 
   const heading = css`
     h1 {
-      font-size: 3em;
-      line-height: 1.167;
+      font-size: 2rem;
+      font-weight: 600;
+      letter-spacing: -.025em;
+      line-height: 1.375;
+      margin-bottom: 0.5em;
+      margin-top: 1em;
     }
     h2 {
-      font-size: 2.5em;
-      line-height: 1.2;
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: -.025em;
+      line-height: 1.375;
+      margin-bottom: 0.5em;
+      margin-top: 1.25em;
     }
     h3 {
-      font-size: 2.125em;
-      line-height: 1.05;
+      font-size: 1.25rem;
+      font-weight: 600;
+      letter-spacing: -.025em;
+      line-height: 1.375;
+      margin-bottom: 0.5em;
+      margin-top: 1.25em;
     }
     h4 {
-      font-size: 1.75em;
-      line-height: 1.14;
+      font-size: 1.125rem;
+      font-weight: 600;
+      letter-spacing: -.025em;
+      line-height: 1.375;
+      margin-bottom: 0.5em;
+      margin-top: 1.25em;
     }
     h5 {
-      font-size: 1.5em;
+      font-size: inherit;
+      font-weight: 600;
       line-height: 1;
     }
     h6 {
-      font-size: 1.25em;
+      font-size: inherit;
+      font-weight: 600;
       line-height: 1;
-    }
-    .heading {
-      margin: 40px 0;
-      font-weight: 400;
     }
   `
 
@@ -131,6 +143,9 @@ export const getStyle = (manager: ThemeManager, emotion: Emotion) => {
 
   const code = css`
     .code-fence {
+      margin-top: .5rem;
+      margin-bottom: .5rem;
+
       pre {
         font-family: ${manager.get(ThemeFont, 'code')};
         margin: 0 1.2em !important;
@@ -165,13 +180,13 @@ export const getStyle = (manager: ThemeManager, emotion: Emotion) => {
 
   const inline = css`
     .code-inline {
-      background-color: ${palette('neutral')};
-      color: ${palette('background')};
+      background-color: ${palette('background')};
+      color: ${palette('neutral')};
       border-radius: ${radius};
-      font-weight: 500;
-      font-family: ${code};
-      padding: 0 0.2em;
-      font-size: 1.2em;
+      font-size: .875rem;
+      font-weight: 400;
+      line-height: 1.25rem;
+      padding: 3px 6px;
     }
 
     .strong {
@@ -180,13 +195,17 @@ export const getStyle = (manager: ThemeManager, emotion: Emotion) => {
 
     .link,
     a {
-      color: ${palette('secondary')};
+      color: ${palette('primary')};
       cursor: pointer;
       transition: all 0.4s ease-in-out;
       font-weight: 500;
+      text-decoration-line: none;
+      transition-duration: .15s;
+      transition-property: border-color;
+      border-bottom-width: 1px;
+      border-color: transparent;
       &:hover {
-        background-color: ${palette('line')};
-        box-shadow: 0 0.2em ${palette('line')}, 0 -0.2em ${palette('line')};
+        border-color: ${palette('primary')};
       }
     }
 
