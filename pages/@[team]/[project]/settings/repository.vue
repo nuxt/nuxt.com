@@ -26,7 +26,7 @@
           </div>
         </div>
 
-        <UButton label="Open GitHub Desktop" icon="fa-brands:github-square" variant="secondary" @click="openGitHubDesktop" />
+        <UButton label="Open GitHub Desktop" icon="fa-brands:github-square" variant="secondary" @click="openGithubDesktop" />
       </UCard>
     </UCard>
   </div>
@@ -38,7 +38,5 @@ import type { Project } from '~/types'
 
 const project: Project = inject('project')
 
-function openGitHubDesktop () {
-  window.open(`x-github-client://openRepo/https://github.com/${project.repository.owner}/${project.repository.name}`)
-}
+const { openGithubDesktop } = useProjectBranches(project)
 </script>

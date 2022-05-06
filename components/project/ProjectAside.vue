@@ -11,7 +11,11 @@
           <UVerticalNavigation :links="links" spacing-class="p-2" badge-base-class="absolute rounded-full leading-none w-4 h-4 u-bg-gray-900 u-text-white flex items-center justify-center font-semibold z-[1] text-[11px] -top-1 -right-1" badge-active-class badge-inactive-class />
         </div>
       </div>
-      <div class="flex-shrink-0 pb-2 text-center">
+      <div class="flex-shrink-0 flex flex-col items-center space-y-3 pb-6">
+        <ClientOnly>
+          <UButton v-if="!!previewUrl" v-show="!isPreviewOpen && ['@team-project-content', '@team-project-media'].includes(route.name)" icon="heroicons-outline:arrows-expand" variant="transparent" @click="isPreviewOpen = true" />
+        </ClientOnly>
+
         <TeamsDropdown compact />
       </div>
     </div>
@@ -22,8 +26,6 @@
 import { useMagicKeys, whenever, and, useActiveElement } from '@vueuse/core'
 import type { Project } from '~/types'
 
-const project: Project = inject('project')
-
 const props = defineProps({
   links: {
     type: Array,
@@ -31,13 +33,22 @@ const props = defineProps({
   }
 })
 
+const project: Project = inject('project')
+
+const route = useRoute()
 const router = useRouter()
 const activeElement = useActiveElement()
 const keys = useMagicKeys()
+const { previewUrl } = useProjectFiles(project, 'content')
+const { isOpen: isPreviewOpen } = useProjectPreview()
+
+// Computed
 
 const notUsingInput = computed(() => !(activeElement.value?.tagName === 'INPUT' || activeElement.value?.tagName === 'TEXTAREA' || activeElement.value?.contentEditable === 'true'))
 
 const notUsingMeta = computed(() => !keys.current.has('MetaLeft') && !keys.current.has('MetaRight'))
+
+// Watch
 
 for (const [index, link] of props.links.entries()) {
   const key = keys[index + 1]
