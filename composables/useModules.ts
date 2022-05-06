@@ -15,9 +15,13 @@ export const useModules = () => {
 
     pending.value = true
 
-    const data = await $fetch('https://modules.nuxtjs.org/api/modules')
+    try {
+      const data = await $fetch('https://modules.nuxtjs.org/api/modules')
 
-    _modules.value = data.modules
+      _modules.value = data.modules
+    } catch (e) {
+      _modules.value = []
+    }
 
     pending.value = false
   }
