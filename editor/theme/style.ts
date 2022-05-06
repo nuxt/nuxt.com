@@ -9,7 +9,7 @@ export const getStyle = (manager: ThemeManager, emotion: Emotion) => {
   const neutral = palette('neutral')
   const surface = palette('surface')
   const line = palette('line')
-  const highlight = palette('primary', 0.5)
+  const highlight = palette('primary', 0.25)
 
   const selection = css`
     .ProseMirror-selectednode {
