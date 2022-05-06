@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center justify-between flex-1 min-w-0 gap-3">
     <div class="flex items-center min-w-0 gap-3">
-      <h2 class="hidden sm:block font-bold text-lg">
+      <h2 class="hidden sm:block font-bold text-lg u-text-gray-900">
         {{ project.name }}
       </h2>
 
