@@ -132,6 +132,16 @@ export const useProjectBranches = (project: Project) => {
     })
   }
 
+  // Links
+
+  function openGithub () {
+    window.open(`https://github.com/${project.repository.owner}/${project.repository.name}`, '_blank')
+  }
+
+  function openGithubDesktop () {
+    window.open(`x-github-client://openRepo/https://github.com/${project.repository.owner}/${project.repository.name}`)
+  }
+
   // Methods
 
   function init () {
@@ -173,6 +183,9 @@ export const useProjectBranches = (project: Project) => {
     // Modals
     openCreateModal,
     openPublishModal,
+    // Links
+    openGithub,
+    openGithubDesktop,
     // Methods
     select,
     // Refs
