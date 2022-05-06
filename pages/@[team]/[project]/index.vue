@@ -75,7 +75,7 @@ const project: Project = inject('project')
 provide('root', root)
 
 const { update } = useStrapi4()
-const { token: previewToken } = useProjectFiles(project, 'content')
+const { token } = useProjectFiles(project, 'content')
 
 const form = reactive({ url: project.repository.url })
 const loading = ref(false)
@@ -97,13 +97,11 @@ const previewUrl = computed(() => {
   if (!project.url) {
     return
   }
-  if (!previewToken) {
+  if (!token.value) {
     return
   }
 
-  const { iv, content } = previewToken.value
-
   // Nuxt Content will call `https://api.nuxt.com/projects/draft?token=${token}`
-  return `${project.url}?_preview=${iv}:${content}`
+  return `${project.url}?_preview=${token.value}`
 })
 </script>
