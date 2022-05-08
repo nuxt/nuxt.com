@@ -9,21 +9,19 @@
         leave-from-class="opacity-100"
         leave-to-class="opacity-0"
       >
-        <div v-if="isExpanded" class="fixed inset-0 bg-gray-500/75 dark:bg-gray-600/75 transition-opacity cursor-pointer" @click="isExpanded = false" />
+        <div v-if="isExpand" class="fixed inset-0 bg-gray-500/75 dark:bg-gray-600/75 transition-opacity cursor-pointer" @click="isExpand = false" />
       </Transition>
 
-      <UseDraggable
-        class="fixed group rounded-lg shadow-2xl overflow-hidden z-50"
+      <div
+        ref="el"
+        class="fixed group rounded-lg shadow-2xl z-50"
         :class="{
-          '!left-20 !top-20 inset-20': isExpanded,
-          'w-[21rem] aspect-[16/9] cursor-move select-none': !isExpanded
+          '!left-16 !top-16 !w-auto !h-auto inset-16 overflow-hidden': isExpand,
+          'aspect-[16/9] select-none resize overflow-auto min-w-[160px] min-h-[90px] max-w-[640px] max-h-[360px]': !isExpand
         }"
-        :initial-value="{ x, y }"
-        :prevent-default="true"
-        storage-key="project-preview-position"
-        storage-type="session"
+        :style="style"
       >
-        <div v-if="!isExpanded" class="absolute inset-0 group-hover:bg-gray-900/75 flex items-center justify-center dark z-50">
+        <div v-if="!isExpand" class="absolute inset-0 group-hover:bg-gray-900/75 flex items-center justify-center dark z-50 cursor-move p-2">
           <UButton
             rounded
             size="xxs"
@@ -37,38 +35,34 @@
             size="sm"
             icon="heroicons-outline:arrows-expand"
             label="Click to expand"
+            truncate
             trailing
             class="hidden group-hover:flex !border-none"
             variant="secondary"
-            @click="isExpanded = true"
+            @click="isExpand = true"
           />
         </div>
 
         <iframe
           id="iframe"
           width="1920"
-          :class="{ 'collapsed': !isExpanded }"
+          :class="{ 'collapsed': !isExpand }"
           height="1080"
           :src="previewUrl"
           class="w-full h-full"
         />
-      </UseDraggable>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { UseDraggable } from '@vueuse/components'
 import type { Project } from '~/types'
 
 const project: Project = inject('project')
 
 const { previewUrl } = useProjectFiles(project, 'content')
-const { isOpen, isExpanded } = useProjectPreview()
-
-// element size - `p-6` (padding: 1.5rem)
-const x = window.innerWidth - 336 - 24
-const y = window.innerHeight - 189 - 24
+const { el, style, isOpen, isExpand } = useProjectPreview()
 </script>
 
 <style scoped>
