@@ -14,7 +14,7 @@
 
       <div
         ref="el"
-        class="fixed group rounded-lg shadow-2xl z-50"
+        class="fixed group ring-1 u-ring-gray-200 rounded-lg shadow-lg z-50"
         :class="{
           '!left-16 !top-16 !w-auto !h-auto inset-16 overflow-hidden': isExpand,
           'aspect-[16/9] select-none resize overflow-auto min-w-[160px] min-h-[90px] max-w-[640px] max-h-[360px]': !isExpand

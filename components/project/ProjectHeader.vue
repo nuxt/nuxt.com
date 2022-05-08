@@ -39,7 +39,7 @@
         label="Preview"
         trailing
         icon="heroicons-outline:external-link"
-        variant="white"
+        variant="secondary"
       />
 
       <UButton
@@ -49,7 +49,6 @@
         size="xs"
         icon="heroicons-outline:check"
         trailing
-        variant="black"
         truncate
         @click="onCommitClick"
       />
@@ -60,7 +59,6 @@
         :loading="loading"
         size="xs"
         icon="heroicons-outline:cloud-upload"
-        variant="black"
         trailing
         truncate
         @click="openPublishModal"
