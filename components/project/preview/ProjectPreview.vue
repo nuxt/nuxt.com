@@ -23,6 +23,15 @@
       >
         <div v-if="!isExpand" class="absolute inset-0 group-hover:bg-gray-900/75 flex items-center justify-center dark z-50 cursor-move p-2">
           <UButton
+            v-show="isDiff"
+            rounded
+            size="xxs"
+            icon="heroicons-outline:paper-clip"
+            class="absolute top-2 right-10 hidden group-hover:block !border-none"
+            variant="secondary"
+            @click="reset"
+          />
+          <UButton
             rounded
             size="xxs"
             icon="heroicons-outline:x"
@@ -62,7 +71,7 @@ import type { Project } from '~/types'
 const project: Project = inject('project')
 
 const { previewUrl } = useProjectFiles(project, 'content')
-const { el, style, isOpen, isExpand } = useProjectPreview()
+const { el, style, isOpen, isExpand, isDiff, reset } = useProjectPreview()
 </script>
 
 <style scoped>

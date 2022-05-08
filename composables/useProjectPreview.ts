@@ -1,5 +1,5 @@
+import { isEqual } from 'lodash-es'
 import { useStorage, useDraggable, useResizeObserver, useWindowSize } from '@vueuse/core'
-import type { Ref } from 'vue'
 
 const isOpen = useStorage('project-preview-opened', true, process.client && sessionStorage)
 const isExpand = useStorage('project-preview-expanded', false, process.client && sessionStorage)
@@ -8,8 +8,15 @@ const isExpand = useStorage('project-preview-expanded', false, process.client &&
 export const useProjectPreview = () => {
   const el = ref(null)
 
-  let size: Ref<{ width: number, height?: number }> = ref({ width: 0, height: 0 })
-  let position: Ref<{ x: number, y: number }> = ref({ x: 0, y: 0 })
+  const { width, height } = useWindowSize()
+
+  const defaultSize = computed(() => ({ width: 335, height: 189 }))
+  const defaultPosition = computed(() => ({ x: width.value - size.value.width - 24, y: height.value - size.value.height - 24 }))
+
+  const size = useStorage('project-preview-size', defaultSize.value, process.client && sessionStorage)
+  const position = useStorage('project-preview-position', defaultPosition.value, process.client && sessionStorage)
+
+  const isDiff = computed(() => !(size.value.width === defaultSize.value.width && size.value.height === defaultSize.value.height && position.value.x === defaultPosition.value.x && position.value.y === defaultPosition.value.y))
 
   const style = computed(() => ([
     `width: ${size.value.width}px`,
@@ -18,10 +25,7 @@ export const useProjectPreview = () => {
     `top:${position.value.y}px;`
   ].filter(Boolean)))
 
-  const { width, height } = useWindowSize()
-
-  size = useStorage('project-preview-size', { width: 335, height: 189 }, process.client && sessionStorage)
-  position = useStorage('project-preview-position', { x: width.value - size.value.width - 24, y: height.value - size.value.height - 24 }, process.client && sessionStorage)
+  // Watch
 
   watch([width, height], ([newWidth, newHeight], [oldWidth, oldHeight]) => {
     let x = position.value.x + (newWidth - oldWidth)
@@ -32,8 +36,7 @@ export const useProjectPreview = () => {
     if (y < 0) { y = 0 }
     if (y + size.value.height > height.value) { y = height.value - size.value.height }
 
-    position.value.x = x
-    position.value.y = y
+    position.value = { x, y }
   })
 
   useResizeObserver(el, (entries) => {
@@ -62,10 +65,17 @@ export const useProjectPreview = () => {
     }
   })
 
+  function reset () {
+    size.value = defaultSize.value
+    position.value = defaultPosition.value
+  }
+
   return {
     el,
     style,
+    reset,
     isOpen,
-    isExpand
+    isExpand,
+    isDiff
   }
 }
