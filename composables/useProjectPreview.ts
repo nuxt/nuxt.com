@@ -40,6 +40,9 @@ export const useProjectPreview = () => {
     if (isExpand.value) {
       return
     }
+    if (!isOpen.value) {
+      return
+    }
 
     const entry = entries[0]
     const { width, height } = entry.contentRect
