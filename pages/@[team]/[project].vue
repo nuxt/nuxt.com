@@ -30,9 +30,8 @@ const props = defineProps({
 const user = useStrapiUser() as Ref<User>
 const route = useRoute()
 const client = useStrapiClient()
-const { $socket } = useNuxtApp()
+const { $socket, $toast } = useNuxtApp()
 
-const { $toast } = useNuxtApp()
 const { container: modalContainer } = useModal()
 const { isBranchesModalOpen, isFilesModalOpen } = useProjectModals()
 
@@ -161,14 +160,17 @@ onMounted(() => {
       // If current file has been deleted, select new one
       if (currentFile.status === 'deleted') {
         initFile()
+        $toast.info({ title: 'Files update', description: 'The file you were working on no longer exists.' })
       }
     } else {
       // If current file does not exist anymore it means it has been renamed, select it from old path
       const renamedFile = contentFiles.value.find(file => file.oldPath === (contentFile.value.oldPath || contentFile.value.path))
       if (renamedFile) {
         selectFile(renamedFile)
+        $toast.info({ title: 'Files update', description: 'The file you are working on has been renamed.' })
       } else {
         initFile()
+        $toast.warning({ title: 'Files update', description: 'The file you were working on cannot be found.' })
       }
     }
   })
