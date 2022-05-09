@@ -85,21 +85,23 @@ const { branch, branches, commit, openPublishModal, openCreateModal, openGithub,
 const { isDraft: isDraftContent, refresh: refreshContentFiles, previewUrl } = useProjectFiles(project, 'content')
 const { isDraft: isDraftMedia, refresh: refreshMediaFiles } = useProjectFiles(project, 'public')
 
-const deployOptions = [[
-  {
-    icon: 'logos:vercel-icon',
-    label: 'Deploy to Vercel',
-    to: `https://vercel.com/new/import?repository-url=${encodeURIComponent(`https://github.com/${project.repository.owner}/${project.repository.name}`)}`,
-    target: '_blank'
-  },
-  {
-    icon: 'logos:netlify',
-    label: 'Deploy to Netlify',
-    // Netlify deploy button only supports creating new repositories
-    to: 'https://app.netlify.com/start',
-    target: '_blank'
-  }
-]]
+const deployOptions = [[{
+  icon: 'logos:vercel-icon',
+  label: 'Deploy to Vercel',
+  to: `https://vercel.com/new/import?repository-url=${encodeURIComponent(`https://github.com/${project.repository.owner}/${project.repository.name}`)}`,
+  target: '_blank'
+},
+{
+  icon: 'logos:netlify',
+  label: 'Deploy to Netlify',
+  // Netlify deploy button only supports creating new repositories
+  to: 'https://app.netlify.com/start',
+  target: '_blank'
+}], [{
+  icon: 'heroicons-outline:cog',
+  label: 'Enter project url',
+  to: { name: '@team-project-settings' }
+}]]
 
 // Computed
 
