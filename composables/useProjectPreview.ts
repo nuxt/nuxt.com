@@ -1,4 +1,3 @@
-import { isEqual } from 'lodash-es'
 import { useStorage, useDraggable, useResizeObserver, useWindowSize } from '@vueuse/core'
 
 const isOpen = useStorage('project-preview-opened', true, process.client && sessionStorage)
