@@ -128,6 +128,7 @@ onMounted(() => {
     if (branches.value.find(b => b.name === deletedBranch.name)) {
       if (branch.value.name === deletedBranch.name) {
         selectBranch(branches.value.find(b => b.name === project.value.repository.default_branch))
+        $toast.info({ title: 'Branch deleted', description: `You have been moved to the default branch: ${project.value.repository.default_branch}` })
       }
       branches.value = branches.value.filter(b => b.name !== deletedBranch.name)
     }
@@ -138,6 +139,8 @@ onMounted(() => {
     if (commitBranch !== branch.value.name) {
       return
     }
+
+    $toast.info({ title: 'Files saved', description: 'The draft has been commited.' })
 
     refreshContentFiles()
     refreshMediaFiles()
