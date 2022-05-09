@@ -26,7 +26,7 @@
             v-show="isDiff"
             rounded
             size="xxs"
-            icon="heroicons-outline:paper-clip"
+            icon="tabler:pin"
             class="absolute top-2 right-10 hidden group-hover:block !border-none"
             variant="secondary"
             @click="reset"
