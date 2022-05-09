@@ -1,5 +1,5 @@
 <template>
-  <div v-if="page" class="pb-12 sm:pb-24">
+  <div v-if="page" class="pb-12 sm:pb-28">
     <div class="py-10 sm:py-20 relative overflow-hidden">
       <img :src="page.gradientUrl" alt="" class="z-0 absolute inset-x-0 bottom-0 translate-y-1/4 w-full">
 
