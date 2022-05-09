@@ -13,7 +13,7 @@
       </div>
       <div class="flex-shrink-0 flex flex-col items-center space-y-3 pb-6">
         <ClientOnly>
-          <UButton v-if="!!previewUrl" v-show="!isPreviewOpen && ['@team-project-content', '@team-project-media'].includes(route.name)" icon="heroicons-outline:arrows-expand" variant="transparent" @click="isPreviewOpen = true" />
+          <UButton v-if="!!previewUrl" v-show="!isPreviewOpen && ['@team-project-content', '@team-project-media'].includes(route.name)" icon="tabler:picture-in-picture-on" variant="transparent" @click="isPreviewOpen = true" />
         </ClientOnly>
 
         <TeamsDropdown compact />
