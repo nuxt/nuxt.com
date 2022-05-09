@@ -8,8 +8,7 @@ export const useCounterAnimations = () => {
     return new Promise(resolve => setTimeout(resolve, ms))
   }
 
-  const startCounter = async (ms: Array<number>, step?: number) => {
-
+  const startCounter = async (ms: Array<number>) => {
     for (let i = 0; i < ms.length; i++) {
       currentSection.value = i
 
@@ -26,12 +25,10 @@ export const useCounterAnimations = () => {
   }
 
   const startUniqueCounter = async (ms: Array<number>, startSection: number, endSection: number) => {
-
     counterStopped.value = true
     uniqueAnimationRunning.value = true
 
     for (let i = startSection; i <= endSection; i++) {
-
       currentSection.value = i
 
       await sleep(ms[i])
@@ -40,14 +37,6 @@ export const useCounterAnimations = () => {
         uniqueAnimationRunning.value = false
       }
     }
-
-    console.log('uniqueAnimationRunning.value', uniqueAnimationRunning.value)
-  }
-
-
-  const startUniqueAnimation = async (counter: number, ms: number) => {
-
-    console.log('startUniqueAnimation')
   }
 
   const startStepper = async (ms?: Array<number>) => {
@@ -59,17 +48,11 @@ export const useCounterAnimations = () => {
     currentStep.value = null
   }
 
-  const startSection = (counter: number) => {
-    currentSection.value = counter
-  }
-
   return {
     startCounter,
     startStepper,
     currentSection,
     currentStep,
-    startSection,
-    startUniqueAnimation,
     uniqueAnimationRunning,
     counterStopped,
     startUniqueCounter

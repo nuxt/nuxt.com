@@ -31,14 +31,15 @@
       </li>
     </ul>
     <div class="row-span-9 flex w-full h-full items-center justify-center relative">
-      <DocsFrameworkV3RoutingContainer class="flex items-start" />
+      <DocsFrameworkV3RoutingContainer :current-section="currentSection" class="flex items-start" />
       <!-- DocsFrameworkV3AutoImportTerminal :current-section="currentSection" :unique-animation="counterStopped" /-->
     </div>
   </div>
 </template>
 <script setup lang="ts">
 const { currentSection, startCounter, startUniqueCounter, counterStopped, uniqueAnimationRunning } = useCounterAnimations()
-const animationsDelay = [8000, 8000, 8000, 8000]
+// 4s for each animation
+const animationsDelay = [4000, 4000, 4000, 4000]
 const uniqueAnimation = ref(false)
 
 onMounted(() => {
