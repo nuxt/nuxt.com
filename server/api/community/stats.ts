@@ -1,9 +1,35 @@
-import { Octokit } from '@octokit/rest'
 const config = useRuntimeConfig()
 
-const octokit = new Octokit({
-  auth: `${config.github.token}`
+const githubHeaders = (headers = {}) => ({
+  Accept: 'application/vnd.github.v3+json',
+  Authorization: `token ${config.github.token}`,
+  ...headers
 })
+// Might be used later
+// const fetchGitHub = (url: string, params = {}) => {
+//   return $fetch(url, {
+//     baseURL: 'https://api.github.com',
+//     headers: githubHeaders(),
+//     params
+//   })
+// }
+const fetchGitHubAndPaginate = async (url: string, params = {}) => {
+  let data = []
+  let page = 1
+  let hasNext = false
+  do {
+    const res = await $fetch.raw(url, {
+      baseURL: 'https://api.github.com',
+      headers: githubHeaders(),
+      params: { ...params, page }
+    })
+    page++
+    hasNext = res.headers.get('link')?.includes('rel="next"')
+    data = data.concat(res._data)
+  } while (hasNext)
+
+  return data
+}
 
 export default defineCachedEventHandler(async () => {
   // Fetch framework informations on GitHub
@@ -11,7 +37,7 @@ export default defineCachedEventHandler(async () => {
   let stars = 0
   let repos = []
   for (const owner of ['nuxt', 'nuxt-community']) {
-    repos = repos.concat(await octokit.paginate(octokit.rest.repos.listForOrg, { org: owner, type: 'public' }))
+    repos = repos.concat(await fetchGitHubAndPaginate(`/orgs/${owner}/repos`, { type: 'public' }))
     repos.forEach((repo) => {
       stars += repo.stargazers_count
     })
