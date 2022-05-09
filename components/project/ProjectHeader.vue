@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center justify-between flex-1 min-w-0 gap-3">
     <div class="flex items-center min-w-0 gap-3">
-      <h2 class="hidden sm:block font-bold text-lg u-text-gray-900">
+      <h2 class="hidden text-lg font-bold sm:block u-text-gray-900">
         {{ project.name }}
       </h2>
 
@@ -13,23 +13,27 @@
         class="truncate"
         @click="openBranchesModal"
       >
-        <span class="flex-auto u-text-gray-700 truncate">{{ branch.name }}</span>
-        <kbd class="hidden sm:inline ml-3 font-sans font-semibold u-text-gray-400 text-xs flex-shrink-0"><abbr title="Command" class="no-underline">⌘</abbr> B</kbd>
+        <span class="flex-auto truncate u-text-gray-700">{{ branch.name }}</span>
+        <kbd class="flex-shrink-0 hidden ml-3 font-sans text-xs font-semibold sm:inline u-text-gray-400"><abbr title="Command" class="no-underline">⌘</abbr> B</kbd>
       </UButton>
       <UButton icon="heroicons-outline:search" variant="gray" size="xs" class="truncate" @click="openFilesModal">
-        <span class="flex-auto u-text-gray-700 truncate">Search</span>
-        <kbd class="hidden sm:inline ml-3 font-sans font-semibold u-text-gray-400 text-xs flex-shrink-0"><abbr title="Command" class="no-underline">⌘</abbr> K</kbd>
+        <span class="flex-auto truncate u-text-gray-700">Search</span>
+        <kbd class="flex-shrink-0 hidden ml-3 font-sans text-xs font-semibold sm:inline u-text-gray-400"><abbr title="Command" class="no-underline">⌘</abbr> K</kbd>
       </UButton>
       <UButton icon="fa-brands:github" variant="gray" size="xs" @click="openGithub">
-        <span class="flex-auto u-text-gray-700 truncate">Open</span>
-        <kbd class="hidden sm:inline ml-3 font-sans font-semibold u-text-gray-400 text-xs flex-shrink-0"><abbr title="Command" class="no-underline">⌘</abbr> G</kbd>
+        <span class="flex-auto truncate u-text-gray-700">Open</span>
+        <kbd class="flex-shrink-0 hidden ml-3 font-sans text-xs font-semibold sm:inline u-text-gray-400"><abbr title="Command" class="no-underline">⌘</abbr> G</kbd>
       </UButton>
 
       <slot v-if="branches.length" name="extra-actions" />
     </div>
 
-    <div v-if="branches.length" class="flex items-center gap-3 min-w-0">
+    <div v-if="branches.length" class="flex items-center min-w-0 gap-3">
       <ProjectHeaderUsers />
+
+      <UDropdown v-if="!project.url" :items="deployOptions">
+        <UButton label="Deploy" variant="secondary" size="xs" icon="heroicons-outline:chevron-down" trailing />
+      </UDropdown>
 
       <UButton
         v-if="previewUrl"
@@ -80,6 +84,24 @@ const { openBranchesModal, openFilesModal } = useProjectModals()
 const { branch, branches, commit, openPublishModal, openCreateModal, openGithub, loading } = useProjectBranches(project)
 const { isDraft: isDraftContent, refresh: refreshContentFiles, previewUrl } = useProjectFiles(project, 'content')
 const { isDraft: isDraftMedia, refresh: refreshMediaFiles } = useProjectFiles(project, 'public')
+
+const deployOptions = [[{
+  icon: 'logos:vercel-icon',
+  label: 'Deploy to Vercel',
+  to: `https://vercel.com/new/import?repository-url=${encodeURIComponent(`https://github.com/${project.repository.owner}/${project.repository.name}`)}`,
+  target: '_blank'
+},
+{
+  icon: 'logos:netlify',
+  label: 'Deploy to Netlify',
+  // Netlify deploy button only supports creating new repositories
+  to: 'https://app.netlify.com/start',
+  target: '_blank'
+}], [{
+  icon: 'heroicons-outline:cog',
+  label: 'Enter project url',
+  to: { name: '@team-project-settings' }
+}]]
 
 // Computed
 
