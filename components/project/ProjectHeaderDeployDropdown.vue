@@ -1,8 +1,5 @@
 <template>
-  <UDropdown
-    v-if="!project.url"
-    :items="deployOptions"
-  >
+  <UDropdown :items="deployOptions">
     <UButton label="Deploy" size="xs" icon="heroicons-outline:chevron-down" trailing />
   </UDropdown>
 </template>
