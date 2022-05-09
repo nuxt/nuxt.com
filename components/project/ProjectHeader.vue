@@ -31,7 +31,7 @@
     <div v-if="branches.length" class="flex items-center gap-3 min-w-0">
       <ProjectHeaderUsers />
 
-      <ProjectDeployDropdown />
+      <ProjectHeaderDeployDropdown />
 
       <UButton
         v-if="previewUrl"
