@@ -54,7 +54,7 @@ export const getPathDir = function (path: string) {
 }
 
 export const getPathName = function (path: string) {
-  return path.replace(/^.*[\\/]/, '')
+  return path.replace(/^.*[/]/, '')
 }
 
 export const getPathPrefix = function (path: string) {
