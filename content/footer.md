@@ -7,17 +7,17 @@ legalLinks:
   - title: Privacy
     to: /
 links:
-  - title: Company
+  - title: Solutions
     items:
-      - title: About
+      - title: Developers
         to: /
-      - title: Careers
+      - title: Independants
         to: /
-      - title: Customers
+      - title: Agencies
         to: /
-      - title: Partnerships
+      - title: Enterprises
         to: /
-      - title: Pricing
+      - title: Certifications
         to: /
   - title: Resources
     items:
@@ -34,29 +34,27 @@ links:
       - title: Mastering Nuxt
         to: https://masteringnuxt.com/?utm_source=nuxt&utm_medium=link&utm_campaign=nsite
         target: _blank
-  - title: Solutions
+  - title: Company
     items:
-      - title: Web Framework
-        to: /
-      - title: Content Management
-        to: /
-      - title: Vue Telescope
-        to: /
-      - title: Web Platform
-        to: /
-      - title: Admin Panel
-        to: /
+      - title: About
+        to: /company/about
+      - title: Contact
+        to: /company/contact
+      - title: Support
+        to: /company/support
+      - title: Careers
+        to: /company/careers
+      - title: Customers
+        to: /company/customers
+      - title: Partners
+        to: /company/partners
   - title: Support
     items:
       - title: Help Center
         to: /
-      - title: Certifications
+      - title: Book a Session
         to: /
-      - title: Contact
-        to: /
-      - title: Training
-        to: /
-      - title: Experts
+      - title: Find an Expert
         to: /
 socialLinks:
   - name: fa-brands:twitter
