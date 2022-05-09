@@ -9,6 +9,9 @@
     "release": "yarn lint && standard-version && git push --follow-tags",
     "test": "yarn lint"
   },
+  "resolutions": {
+    "node-fetch": "^3.2.4"
+  },
   "devDependencies": {
     "@docus/remark-mdc": "npm:@docus/remark-mdc-edge",
     "@milkdown/core": "^6.0.2",
