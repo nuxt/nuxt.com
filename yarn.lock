@@ -966,9 +966,9 @@
     nuxt-component-meta "^0.1.4"
 
 "@nuxthq/ui@npm:@nuxthq/ui-edge@latest":
-  version "0.0.2-27535094.23deef3"
-  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27535094.23deef3.tgz#e4745fc5fa4a4e77d37b6c1fb17fbf3a8221dccf"
-  integrity sha512-aley5+DD/za592m6pS6fS6Kw26P08MU8kEX2Kk7WmK8Qy69A2ts1f8Uu0x6IA2X2Dhn0Ek73BoxxnDoT/7DHOg==
+  version "0.0.2-27535200.d980176"
+  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27535200.d980176.tgz#0a488a0cfbe23d270bfa53902488336729c5e765"
+  integrity sha512-TBeNAI+gdBNtTRMa23N/fJ55nw5igOAiimPWCBy+mWIIjtERxz0Kcc9rB8NAMDIxdQea5MXvxhGLaEFusfO8bw==
   dependencies:
     "@headlessui/vue" "1.6.1"
     "@iconify/vue" "^3.2.1"
