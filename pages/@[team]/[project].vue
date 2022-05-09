@@ -5,6 +5,10 @@
     <ProjectModalFiles v-model="isFilesModalOpen" @update:modelValue="onFilesModalChange" />
 
     <NuxtPage v-if="project" :team="team" />
+
+    <ClientOnly>
+      <ProjectPreview v-if="!!previewUrl" v-show="['@team-project-content', '@team-project-media'].includes(route.name)" />
+    </ClientOnly>
   </ProjectLayout>
 </template>
 
@@ -64,6 +68,7 @@ const {
   select: selectMediaFile,
   init: initMediaFile
 } = useProjectFiles(project.value, 'public')
+const { previewUrl } = useProjectFiles(project.value, 'content')
 
 // Data
 

@@ -20,7 +20,6 @@ const { isDraft: isContentDraft } = useProjectFiles(project, 'content')
 const { isDraft: isMediaDraft } = useProjectFiles(project, 'public')
 
 const links = computed(() => ([
-  { to: { name: '@team-project' }, icon: 'heroicons-outline:eye', label: 'Home', exact: true },
   { to: { name: '@team-project-content' }, icon: 'heroicons-outline:pencil', label: 'Content', badge: isContentDraft.value },
   { to: { name: '@team-project-media' }, icon: 'heroicons-outline:photograph', label: 'Media', badge: isMediaDraft.value },
   { to: { name: '@team-project-settings' }, icon: 'heroicons-outline:cog', label: 'Settings' }

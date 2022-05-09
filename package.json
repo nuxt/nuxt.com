@@ -37,7 +37,7 @@
     "@tailwindcss/typography": "^0.5.2",
     "@types/lodash-es": "^4.17.6",
     "@vueuse/core": "^8.4.2",
-    "eslint": "^8.14.0",
+    "eslint": "^8.15.0",
     "nuxt": "npm:nuxt3@latest",
     "socket.io-client": "^4.5.0",
     "standard-version": "^9.3.2",
