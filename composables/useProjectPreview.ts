@@ -9,7 +9,7 @@ export const useProjectPreview = () => {
 
   const { width, height } = useWindowSize()
 
-  const defaultSize = computed(() => ({ width: 335, height: 189 }))
+  const defaultSize = ref({ width: 335, height: 189 })
   const defaultPosition = computed(() => ({ x: width.value - size.value.width - 24, y: height.value - size.value.height - 24 }))
 
   const size = useStorage('project-preview-size', defaultSize.value, process.client && sessionStorage)
@@ -19,10 +19,10 @@ export const useProjectPreview = () => {
 
   const style = computed(() => ([
     `width: ${size.value.width}px`,
-    size.value.height && `height: ${size.value.height}px`,
+    `height: ${size.value.height}px`,
     `left:${position.value.x}px`,
     `top:${position.value.y}px;`
-  ].filter(Boolean)))
+  ]))
 
   // Watch
 
