@@ -7,6 +7,7 @@ const isExpand = useStorage('project-preview-expanded', false, process.client &&
 export const useProjectPreview = () => {
   const el = ref(null)
 
+  const route = useRoute()
   const { width, height } = useWindowSize()
 
   const defaultSize = ref({ width: 335, height: 189 })
@@ -43,6 +44,9 @@ export const useProjectPreview = () => {
       return
     }
     if (!isOpen.value) {
+      return
+    }
+    if (!['@team-project-content', '@team-project-media'].includes(route.name)) {
       return
     }
 
