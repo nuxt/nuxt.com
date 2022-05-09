@@ -89,13 +89,14 @@ const deployOptions = [[
   {
     icon: 'logos:vercel-icon',
     label: 'Deploy to Vercel',
-    to: `https://vercel.com/new/clone?repository-url=${encodeURIComponent(`https://github.com/${project.repository.owner}/${project.repository.name}`)}`,
+    to: `https://vercel.com/new/import?repository-url=${encodeURIComponent(`https://github.com/${project.repository.owner}/${project.repository.name}`)}`,
     target: '_blank'
   },
   {
     icon: 'logos:netlify',
     label: 'Deploy to Netlify',
-    to: `https://app.netlify.com/start/deploy?repository=https://github.com/${project.repository.owner}/${project.repository.name}`,
+    // Netlify deploy button only supports creating new repositories
+    to: 'https://app.netlify.com/start',
     target: '_blank'
   }
 ]]
