@@ -27,9 +27,6 @@ export const useProjectComponents = (project: Project) => {
         retry: false
       })
 
-      // Ensure data is valid JSON
-      JSON.parse(data)
-
       components.value = data
     } catch (e) {
       components.value = []
