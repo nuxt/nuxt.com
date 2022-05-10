@@ -966,14 +966,14 @@
     nuxt-component-meta "^0.1.4"
 
 "@nuxthq/ui@npm:@nuxthq/ui-edge@latest":
-  version "0.0.2-27535200.d980176"
-  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27535200.d980176.tgz#0a488a0cfbe23d270bfa53902488336729c5e765"
-  integrity sha512-TBeNAI+gdBNtTRMa23N/fJ55nw5igOAiimPWCBy+mWIIjtERxz0Kcc9rB8NAMDIxdQea5MXvxhGLaEFusfO8bw==
+  version "0.0.2-27536218.7275668"
+  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27536218.7275668.tgz#09a4e3bfc8259d32fde742484a0c962bea4142b4"
+  integrity sha512-SWTMcJ8p9Ne44Hm/HV2T/BJ/JVKgBs8jR6ScOh0tLdrmO2XJ66hDMDXqjcTgxop23KyYeJiM63pIRTq6tKoAhw==
   dependencies:
     "@headlessui/vue" "1.6.1"
     "@iconify/vue" "^3.2.1"
     "@nuxt/kit" "npm:@nuxt/kit-edge@latest"
-    "@nuxtjs/color-mode" "^3.0.2"
+    "@nuxtjs/color-mode" "^3.0.3"
     "@nuxtjs/tailwindcss" "^5.0.4"
     "@popperjs/core" "^2.11.5"
     "@tailwindcss/aspect-ratio" "^0.4.0"
@@ -986,10 +986,10 @@
     pathe "^0.3.0"
     tailwindcss "^3.0.24"
 
-"@nuxtjs/color-mode@^3.0.2":
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/@nuxtjs/color-mode/-/color-mode-3.0.2.tgz#17110d78864ad00ce524f7fc2d379d8c28ff765a"
-  integrity sha512-JgppnxOsVe2T/UGj0xjok/8TKDI27bRuhNh+Qrvr0FsS90Mty2acZLLN0lkrOTV0WLrpnTgN7mZCrgCWmhvziA==
+"@nuxtjs/color-mode@^3.0.3":
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/@nuxtjs/color-mode/-/color-mode-3.0.3.tgz#f5b332f4383f169759ccb31e60fad1537d67adc8"
+  integrity sha512-FQVyLgRQ4C4C5NmTBrFRNm+LNjgT4cPFqyqfoRxD6hfVZhLxWJfKPGUaT8H/BCeBzkZZ29583MG9GqyDX7rnNg==
   dependencies:
     "@nuxt/kit" "npm:@nuxt/kit-edge@latest"
     defu "^5.0.0"
@@ -2202,12 +2202,12 @@ caniuse-api@^3.0.0:
     lodash.memoize "^4.1.2"
     lodash.uniq "^4.5.0"
 
-caniuse-lite@^1.0.0, caniuse-lite@^1.0.30001335:
+caniuse-lite@^1.0.0:
   version "1.0.30001338"
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001338.tgz#b5dd7a7941a51a16480bdf6ff82bded1628eec0d"
   integrity sha512-1gLHWyfVoRDsHieO+CaeYe7jSo/MT7D7lhaXUiwwbuR5BwQxORs0f1tAwUSQr3YbxRXJvxHM/PA5FfPQRnsPeQ==
 
-caniuse-lite@^1.0.30001332:
+caniuse-lite@^1.0.30001332, caniuse-lite@^1.0.30001335:
   version "1.0.30001339"
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001339.tgz#f9aece4ea8156071613b27791547ba0b33f176cf"
   integrity sha512-Es8PiVqCe+uXdms0Gu5xP5PF2bxLR7OBp3wUzUnuO7OHzhOfCyg3hdiGWVPVxhiuniOzng+hTc1u3fEQ0TlkSQ==
