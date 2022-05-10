@@ -1,13 +1,16 @@
 <template>
   <UContainer padded>
-    <ul role="list" class="flex flex-col gap-y-4 pb-16">
-      <li v-for="(data, index) in blogData" :key="data.slug" :class="{ 'border-b last:border-none': index !== 0 }">
-        <ResourcesBlogPost :page="data" :highlight="index === 0" />
+    <ul role="list" class="grid grid-cols-1 gap-8 pb-16 sm:grid-cols-2 xl:grid-cols-3">
+      <li v-for="data in articles" :key="data.slug">
+        <ResourcesBlogPost :page="data" />
       </li>
     </ul>
   </UContainer>
 </template>
 
 <script setup lang="ts">
-const { data: blogData } = await useAsyncData('resources-blog', () => queryContent('/resources/blog').where({ $not: { slug: { $in: ['/resources/blog'] } } }).sortBy('date', 'desc').find())
+const { data: blogData } = await useAsyncData('resources-blog-list', () => queryContent('/resources/blog').where({ $not: { slug: { $in: ['/resources/blog'] } } }).sortBy('date', 'desc').find())
+
+// skip first article (displayed in Hero)
+const articles = blogData.value.slice(1)
 </script>

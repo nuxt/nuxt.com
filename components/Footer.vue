@@ -24,25 +24,7 @@
           class="flex flex-col items-start col-span-2 gap-5 sm:col-span-4 lg:col-span-2"
         >
           <LogoFull class="w-auto h-12 u-text-gray-900" />
-          <span class="text-sm u-text-gray-500">Stay up to date with our newsletter</span>
-          <form class="flex w-full gap-3" @submit.prevent="onSubmit">
-            <UInput
-              v-model="form.email"
-              name="email"
-              placeholder="Enter your email"
-              class="w-60 lg:flex-1"
-              size="sm"
-              required
-            />
-            <UButton
-              type="submit"
-              submit
-              variant="primary"
-              :loading="loading"
-              label="Subscribe"
-              size="xs"
-            />
-          </form>
+
           <ul class="flex gap-x-6">
             <li v-for="social in socialLinks" :key="social.name">
               <UButton
@@ -82,15 +64,6 @@
 </template>
 
 <script setup lang="ts">
-const form = reactive({
-  email: ''
-})
-const loading = ref(false)
-
-function onSubmit () {
-
-}
-
 const { data: footerData } = await useAsyncData('footer', () => queryContent('footer').findOne())
 
 const { legalLinks, links, socialLinks } = footerData.value || {}
