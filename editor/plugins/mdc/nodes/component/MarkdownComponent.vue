@@ -6,7 +6,7 @@
     @mouseleave="showActions = false"
   >
     <div class="flex justify-between items-center h-6">
-      <span class="text-xs font-semibold u-text-gray-900">
+      <span class="text-xs font-semibold u-text-gray-900" contenteditable="false">
         {{ name }}
       </span>
       <div class="flex flex-row justify-center items-center transition-opacity duration-200" :class="{ 'opacity-0': !showActions }" data-test="actions">
@@ -22,7 +22,9 @@
       </div>
     </div>
     <MarkdownComponentProps v-if="hasProps" v-show="showProps" />
-    <slot v-if="hasSlots" />
+    <div :class="{ hidden: !hasSlots }">
+      <slot />
+    </div>
   </div>
 </template>
 
