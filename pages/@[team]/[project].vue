@@ -173,7 +173,7 @@ onMounted(() => {
         $toast.info({ title: 'File renamed', description: 'The file you are working on has been renamed.' })
       } else {
         initFile()
-        $toast.warning({ title: 'File changed', description: 'The file you were working on has changed.' })
+        $toast.info({ title: 'File changed', description: 'The file you were working on has changed.' })
       }
     }
   })
