@@ -140,7 +140,7 @@ onMounted(() => {
       return
     }
 
-    $toast.info({ title: 'Files saved', description: 'The draft has been commited.' })
+    $toast.info({ title: 'Changes saved', description: `Changes have been committed on ${commitBranch} branch` })
 
     refreshContentFiles()
     refreshMediaFiles()
