@@ -46,6 +46,14 @@ const toggle = {
   }
 }
 
+const radio = {
+  base: 'h-4 w-4 u-text-gray-900 focus:ring-2 focus:ring-offset-2 focus:u-ring-gray-900 focus:ring-offset-white dark:focus:ring-offset-black u-border-gray-300 dark:checked:border-primary-600 disabled:opacity-50 disabled:cursor-not-allowed'
+}
+
+const checkbox = {
+  base: `${radio.base} rounded`
+}
+
 const container = {
   constrained: 'max-w-7xl'
 }
@@ -58,5 +66,7 @@ export default {
   select,
   selectCustom,
   toggle,
+  radio,
+  checkbox,
   container
 }
