@@ -6,7 +6,7 @@
     @mouseleave="showActions = false"
   >
     <div class="flex justify-between items-center h-6">
-      <span class="text-xs font-semibold u-text-gray-900">
+      <span class="text-xs font-semibold u-text-gray-900" contenteditable="false">
         {{ name }}
       </span>
       <div class="flex flex-row justify-center items-center transition-opacity duration-200" :class="{ 'opacity-0': !showActions }" data-test="actions">
@@ -22,7 +22,9 @@
       </div>
     </div>
     <MarkdownComponentProps v-if="hasProps" v-show="showProps" />
-    <slot />
+    <div :class="{ hidden: !hasSlots }">
+      <slot />
+    </div>
   </div>
 </template>
 
@@ -47,6 +49,7 @@ export default defineComponent({
     const schema = node.attrs.schema as ComponentSchema
 
     const hasProps = schema && schema.props.length > 0
+    const hasSlots = schema && schema.slots.length > 0
 
     const showActions = ref(false)
     const showProps = ref(!!node.attrs.showProps)
@@ -72,6 +75,7 @@ export default defineComponent({
       name: pascalCase(node.attrs.name),
       actions,
       hasProps,
+      hasSlots,
       showActions,
       showProps
     }
