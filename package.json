@@ -9,6 +9,9 @@
     "release": "yarn lint && standard-version && git push --follow-tags",
     "test": "yarn lint"
   },
+  "resolutions": {
+    "node-fetch": "^3.2.4"
+  },
   "devDependencies": {
     "@docus/remark-mdc": "npm:@docus/remark-mdc-edge",
     "@milkdown/core": "^6.0.2",
@@ -32,7 +35,6 @@
     "@nuxthq/ui": "npm:@nuxthq/ui-edge@latest",
     "@nuxtjs/eslint-config-typescript": "^10.0.0",
     "@nuxtjs/strapi": "npm:@nuxtjs/strapi-edge@latest",
-    "@octokit/rest": "^18.12.0",
     "@sindresorhus/slugify": "^2.1.0",
     "@tailwindcss/typography": "^0.5.2",
     "@vueuse/core": "^8.4.2",
@@ -46,6 +48,6 @@
     "vue-plausible": "^1.3.1",
     "vue-tsc": "^0.34.11",
     "y-websocket": "^1.4.3",
-    "yjs": "^13.5.35"
+    "yjs": "^13.5.36"
   }
 }
