@@ -54,23 +54,12 @@ export default defineComponent({
     const hasSlots = schema && schema.slots.length > 0
 
     const showActions = ref(false)
-    const showProps = ref(!!node.attrs.showProps)
+    const showProps = ref(true)
 
     const actions: Action[] = [
       { icon: 'trash', onClick: remove },
       { icon: 'duplicate', onClick: duplicate }
     ]
-
-    if (hasProps) {
-      actions.push({
-        icon: 'adjustments',
-        onClick: () => {
-          showProps.value = !showProps.value
-          // Preserve state of props panel
-          updateAttributes(() => ({ showProps: unref(showProps) }))
-        }
-      })
-    }
 
     return {
       testKey: `component-${node.attrs.name}`,
