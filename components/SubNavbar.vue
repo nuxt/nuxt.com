@@ -20,7 +20,7 @@
             v-for="(link, index) in filteredLinks"
             :key="index"
             :to="link.slug"
-            class="text-sm focus:outline-none"
+            class="focus:outline-none"
             :class="{
               'u-text-gray-900 font-semibold': isActive(link),
               'font-medium u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900': !isActive(link),
@@ -30,7 +30,7 @@
           </NuxtLink>
         </div>
 
-        <div class="flex gap-3 justify-end">
+        <div class="flex justify-end gap-3">
           <slot name="right" />
         </div>
       </div>
