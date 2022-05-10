@@ -1,52 +1,22 @@
 
 <template>
   <footer class="relative u-bg-white">
-    <div class="absolute inset-x-0 h-1 border-b bottom-44 sm:bottom-24 u-border-gray-200" />
-
-    <UContainer padded class="pt-12 pb-8">
-      <div class="grid grid-cols-2 pb-12 sm:grid-cols-4 lg:grid-cols-6 gap-y-12">
-        <div
-          v-for="item in links"
-          :key="item.title"
-          class="flex flex-col gap-5 text-sm u-text-gray-600"
-        >
-          <span class="font-semibold uppercase">{{ item.title }}</span>
-
-          <ul class="flex flex-col gap-y-4">
-            <li v-for="link in item.items" :key="link.title">
-              <NuxtLink :to="link.to" :target="link.target" class="u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900" active-class="u-text-gray-900 font-medium">
-                {{ link.title }}
-              </NuxtLink>
-            </li>
-          </ul>
-        </div>
-        <div
-          class="flex flex-col items-start col-span-2 gap-5 sm:col-span-4 lg:col-span-2"
-        >
-          <LogoFull class="w-auto h-12 u-text-gray-900" />
-
-          <ul class="flex gap-x-6">
-            <li v-for="social in socialLinks" :key="social.name">
-              <UButton
-                :to="social.href"
-                :icon="social.name"
-                variant="transparent"
-                target="_blank"
-                class="!p-0"
-              />
-            </li>
-          </ul>
-        </div>
+    <div class="absolute inset-x-0 flex items-center justify-center h-1 border-b u-border-gray-200">
+      <div class="px-2 u-bg-white">
+        <Logo class="w-5 h-5 u-text-gray-200" />
       </div>
-      <div class="flex flex-col gap-3 pt-6 sm:flex-row sm:items-center sm:justify-between">
+    </div>
+
+    <UContainer padded class="py-6">
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div class="flex items-center gap-3">
           <ThemeSelect name="theme" class="order-1 sm:order-none" size="sm" />
-          <span class="text-sm u-text-gray-400">Copyright © 2022 Nuxt</span>
+          <span class="text-sm u-text-gray-400">© 2022 Nuxt</span>
         </div>
 
         <ul class="flex text-sm gap-x-6">
-          <li v-for="link in legalLinks" :key="link.title">
-            <NuxtLink :to="link.to" class="u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900" active-class="u-text-gray-900 font-medium">
+          <li v-for="link in links" :key="link.title">
+            <NuxtLink :to="link.slug" class="font-medium u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900" active-class="font-medium u-text-gray-900">
               {{ link.title }}
             </NuxtLink>
           </li>
@@ -64,9 +34,9 @@
 </template>
 
 <script setup lang="ts">
-const { data: footerData } = await useAsyncData('footer', () => queryContent('footer').findOne())
+const { navFromPath } = useContent()
 
-const { legalLinks, links, socialLinks } = footerData.value || {}
+const links = computed(() => navFromPath('/company')?.children)
 
 const langs = ref([{ text: 'English', value: 'en' }])
 const lang = ref(langs.value[0].value)
