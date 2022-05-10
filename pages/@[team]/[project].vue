@@ -163,7 +163,7 @@ onMounted(() => {
       // If current file has been deleted, select new one
       if (currentFile.status === 'deleted') {
         initFile()
-        $toast.info({ title: 'Files update', description: 'The file you were working on no longer exists.' })
+        $toast.info({ title: 'File deleted', description: 'The file you were working on has been deleted.' })
       }
     } else {
       // If current file does not exist anymore it means it has been renamed, select it from old path
