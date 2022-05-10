@@ -9,7 +9,6 @@ export const getStyle = (manager: ThemeManager, emotion: Emotion) => {
   const neutral = palette('neutral')
   const surface = palette('surface')
   const line = palette('line')
-  const highlight = palette('primary', 0.25)
 
   const selection = css`
     .ProseMirror-selectednode {
@@ -22,10 +21,6 @@ export const getStyle = (manager: ThemeManager, emotion: Emotion) => {
 
     li.ProseMirror-selectednode::after {
       ${manager.get(ThemeBorder, undefined)};
-    }
-
-    & ::selection {
-      background: ${highlight};
     }
   `
 
