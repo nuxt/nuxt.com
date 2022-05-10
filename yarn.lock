@@ -716,9 +716,9 @@
     fastq "^1.6.0"
 
 "@nuxt/content@npm:@nuxt/content-edge@latest":
-  version "2.0.0-27534924.2b70b9e"
-  resolved "https://registry.yarnpkg.com/@nuxt/content-edge/-/content-edge-2.0.0-27534924.2b70b9e.tgz#8947f24decfc41f7e408492d419eb516970b1a16"
-  integrity sha512-eLA7eF2w67mh85xajDohHv4Qc4c0slCsQn31Qwtv6rQT1UmoUxgdINxut4g/ZJTO3RPayVzsn+I6HPDfuq7vpQ==
+  version "2.0.0-27535180.e56a536"
+  resolved "https://registry.yarnpkg.com/@nuxt/content-edge/-/content-edge-2.0.0-27535180.e56a536.tgz#d6aea398ff8c3e0908b182158f93305a8ba7fc41"
+  integrity sha512-DE3edqKPhbFn55FJz6hioYS7NKpGQnAgeS87RBKqBoQuo1Q+skAoasCohB2vCs6jJEiGcQbGcScAmIF2RTX5cg==
   dependencies:
     "@nuxt/kit" "npm:@nuxt/kit-edge@latest"
     csvtojson "^2.0.10"
@@ -2202,10 +2202,15 @@ caniuse-api@^3.0.0:
     lodash.memoize "^4.1.2"
     lodash.uniq "^4.5.0"
 
-caniuse-lite@^1.0.0, caniuse-lite@^1.0.30001332, caniuse-lite@^1.0.30001335:
+caniuse-lite@^1.0.0, caniuse-lite@^1.0.30001335:
   version "1.0.30001338"
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001338.tgz#b5dd7a7941a51a16480bdf6ff82bded1628eec0d"
   integrity sha512-1gLHWyfVoRDsHieO+CaeYe7jSo/MT7D7lhaXUiwwbuR5BwQxORs0f1tAwUSQr3YbxRXJvxHM/PA5FfPQRnsPeQ==
+
+caniuse-lite@^1.0.30001332:
+  version "1.0.30001339"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001339.tgz#f9aece4ea8156071613b27791547ba0b33f176cf"
+  integrity sha512-Es8PiVqCe+uXdms0Gu5xP5PF2bxLR7OBp3wUzUnuO7OHzhOfCyg3hdiGWVPVxhiuniOzng+hTc1u3fEQ0TlkSQ==
 
 ccount@^2.0.0:
   version "2.0.1"
