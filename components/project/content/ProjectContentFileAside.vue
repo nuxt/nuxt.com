@@ -1,6 +1,6 @@
 <template>
   <aside class="hidden overflow-y-auto u-bg-white border-l u-border-gray-200 top-0 w-96 lg:block sticky h-[calc(100vh-4rem)] flex-shrink-0">
-    <div v-if="computedFile">
+    <div v-if="computedFile" class="pb-[237px]">
       <div class="flex items-start justify-between p-6">
         <div class="min-w-0">
           <h2 class="text-lg font-medium u-text-gray-900">
@@ -21,7 +21,7 @@
       </div>
 
       <div>
-        <nav class="flex h-12 space-x-4 border-b u-border-gray-200 px-6">
+        <nav class="flex h-12 px-6 space-x-4 border-b u-border-gray-200">
           <button
             v-for="(category, index) in ['Meta', 'History']"
             :key="index"
@@ -29,7 +29,7 @@
               'font-medium u-text-gray-900 u-border-gray-700': selectedIndex === index,
               'u-text-gray-500 hover:u-text-gray-900 border-transparent': selectedIndex !== index
             }"
-            class="border-b-2 px-2 -mb-px focus:outline-none"
+            class="px-2 -mb-px border-b-2 focus:outline-none"
             tabindex="-1"
             @click="selectedIndex = index"
           >
@@ -44,7 +44,7 @@
               :key="field.key"
               :name="field.key"
               :label="field.label"
-              label-class="font-medium u-text-gray-900 truncate"
+              label-class="font-medium truncate u-text-gray-900"
               label-wrapper-class="flex content-center justify-between min-w-0 gap-3"
               container-class
               :wrapper-class="field.type === 'boolean' ? 'flex items-center justify-between' : ''"
@@ -72,8 +72,8 @@
         </div>
       </div>
     </div>
-    <div v-else class="h-full flex flex-col items-center justify-center">
-      <UIcon name="heroicons-outline:document-text" class="mx-auto h-12 w-12 u-text-gray-400" />
+    <div v-else class="flex flex-col items-center justify-center h-full">
+      <UIcon name="heroicons-outline:document-text" class="w-12 h-12 mx-auto u-text-gray-400" />
       <h3 class="mt-2 text-sm font-medium u-text-gray-900">
         No file selected
       </h3>
