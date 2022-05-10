@@ -128,7 +128,7 @@ onMounted(() => {
     if (branches.value.find(b => b.name === deletedBranch.name)) {
       if (branch.value.name === deletedBranch.name) {
         selectBranch(branches.value.find(b => b.name === project.value.repository.default_branch))
-        $toast.info({ title: 'Branch deleted', description: `You have been moved to the default branch: ${project.value.repository.default_branch}` })
+        $toast.info({ title: 'Branch deleted', description: `You have been moved to default branch ${project.value.repository.default_branch}` })
       }
       branches.value = branches.value.filter(b => b.name !== deletedBranch.name)
     }
@@ -167,13 +167,13 @@ onMounted(() => {
       }
     } else {
       // If current file does not exist anymore it means it has been renamed, select it from old path
-      const renamedFile = contentFiles.value.find(file => file.oldPath === (contentFile.value.oldPath || contentFile.value.path))
+      const renamedFile = contentFiles.value.find(file => file.oldPath === (contentFile.value.oldPath || contentFile.value.path)) || contentFiles.value.find(file => file.path === (contentFile.value.oldPath || contentFile.value.path))
       if (renamedFile) {
         selectFile(renamedFile)
-        $toast.info({ title: 'Files update', description: 'The file you are working on has been renamed.' })
+        $toast.info({ title: 'File renamed', description: 'The file you are working on has been renamed.' })
       } else {
         initFile()
-        $toast.warning({ title: 'Files update', description: 'The file you were working on cannot be found.' })
+        $toast.warning({ title: 'File changed', description: 'The file you were working on has changed.' })
       }
     }
   })
