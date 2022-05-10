@@ -4,7 +4,7 @@ import { Plugin, PluginKey, EditorView } from '@milkdown/prose'
 const ensureTrailingParagraph = (view: EditorView) => {
   const doc = view.state.tr.doc
 
-  if (doc.lastChild && doc.lastChild.type.name === 'component') {
+  if (doc.lastChild && doc.lastChild.type.name.match('(container|text)Component')) {
     view.dispatch(view.state.tr.insert(doc.content.size, view.state.schema.nodes.paragraph.create()))
   }
 }
