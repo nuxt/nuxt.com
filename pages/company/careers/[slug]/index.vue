@@ -1,9 +1,9 @@
 <template>
-  <UContainer class="relative pb-12 sm:pb-28" />
+  <Content :document="page" />
 </template>
 
 <script setup lang="ts">
-const { fetchPage } = useContent()
+const { page, fetchPage } = useContent()
 
 await fetchPage()
 </script>
