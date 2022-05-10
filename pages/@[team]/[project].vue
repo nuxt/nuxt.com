@@ -30,9 +30,8 @@ const props = defineProps({
 const user = useStrapiUser() as Ref<User>
 const route = useRoute()
 const client = useStrapiClient()
-const { $socket } = useNuxtApp()
+const { $socket, $toast } = useNuxtApp()
 
-const { $toast } = useNuxtApp()
 const { container: modalContainer } = useModal()
 const { isBranchesModalOpen, isFilesModalOpen } = useProjectModals()
 
@@ -129,6 +128,7 @@ onMounted(() => {
     if (branches.value.find(b => b.name === deletedBranch.name)) {
       if (branch.value.name === deletedBranch.name) {
         selectBranch(branches.value.find(b => b.name === project.value.repository.default_branch))
+        $toast.info({ title: 'Branch deleted', description: `You have been moved to default branch ${project.value.repository.default_branch}` })
       }
       branches.value = branches.value.filter(b => b.name !== deletedBranch.name)
     }
@@ -139,6 +139,8 @@ onMounted(() => {
     if (commitBranch !== branch.value.name) {
       return
     }
+
+    $toast.info({ title: 'Changes saved', description: `Changes have been committed on ${commitBranch} branch` })
 
     refreshContentFiles()
     refreshMediaFiles()
@@ -161,14 +163,17 @@ onMounted(() => {
       // If current file has been deleted, select new one
       if (currentFile.status === 'deleted') {
         initFile()
+        $toast.info({ title: 'File deleted', description: 'The file you were working on has been deleted.' })
       }
     } else {
       // If current file does not exist anymore it means it has been renamed, select it from old path
-      const renamedFile = contentFiles.value.find(file => file.oldPath === (contentFile.value.oldPath || contentFile.value.path))
+      const renamedFile = contentFiles.value.find(file => file.oldPath === (contentFile.value.oldPath || contentFile.value.path)) || contentFiles.value.find(file => file.path === (contentFile.value.oldPath || contentFile.value.path))
       if (renamedFile) {
         selectFile(renamedFile)
+        $toast.info({ title: 'File renamed', description: 'The file you are working on has been renamed.' })
       } else {
         initFile()
+        $toast.info({ title: 'File changed', description: 'The file you were working on has changed.' })
       }
     }
   })
