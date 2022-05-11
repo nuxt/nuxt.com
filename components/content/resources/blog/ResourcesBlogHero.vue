@@ -33,9 +33,7 @@
 </template>
 
 <script setup lang="ts">
-const { data: blogData } = await useAsyncData('resources-blog-hero', () => queryContent('/resources/blog').where({ $not: { slug: { $in: ['/resources/blog'] } } }).sortBy('date', 'desc').find())
-
-const firstArticle = blogData.value[0]
+const { data: firstArticle } = await useAsyncData('resources-blog-hero', () => queryContent('/resources/blog').where({ $not: { slug: { $in: ['/resources/blog'] } } }).sortBy('date', 'desc').findOne())
 
 const form = reactive({
   email: ''

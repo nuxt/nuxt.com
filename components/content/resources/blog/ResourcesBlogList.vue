@@ -9,8 +9,5 @@
 </template>
 
 <script setup lang="ts">
-const { data: blogData } = await useAsyncData('resources-blog-list', () => queryContent('/resources/blog').where({ $not: { slug: { $in: ['/resources/blog'] } } }).sortBy('date', 'desc').find())
-
-// skip first article (displayed in Hero)
-const articles = blogData.value.slice(1)
+const { data: articles } = await useAsyncData('resources-blog-list', () => queryContent('/resources/blog').where({ $not: { slug: { $in: ['/resources/blog'] } } }).sortBy('date', 'desc').skip(1).find())
 </script>
