@@ -27,10 +27,9 @@ export const useProjectComponents = (project: Project) => {
         retry: false
       })
 
-      // Ensure data is valid JSON
-      const json = JSON.parse(JSON.stringify(data))
-      if (typeof json !== 'object') {
-        throw new TypeError('Invalid json')
+      // Ensure data is valid array
+      if (!Array.isArray(data)) {
+        throw new TypeError('Invalid data')
       }
 
       components.value = data
