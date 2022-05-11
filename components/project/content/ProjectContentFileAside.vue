@@ -46,7 +46,7 @@
               :label="field.label"
               label-class="font-medium truncate u-text-gray-900"
               label-wrapper-class="flex content-center justify-between min-w-0 gap-3"
-              container-class
+              container-class=""
               :wrapper-class="field.type === 'boolean' ? 'flex items-center justify-between' : ''"
             >
               <UTextarea
@@ -63,6 +63,17 @@
                 @update:model-value="value => updateField(field.key, value)"
               />
               <UCheckbox v-else-if="field.type === 'boolean'" :model-value="field.value" :name="field.key" @update:model-value="value => updateField(field.key, value)" />
+              <UInput
+                v-else
+                :type="field.type"
+                :model-value="field.value"
+                :name="field.key"
+                :placeholder="`Add a ${field.key.replace(/\./g, ' ')}...`"
+                size="sm"
+                appearance="none"
+                custom-class="!px-0 placeholder-gray-400 dark:placeholder-gray-500"
+                @update:model-value="value => updateField(field.key, value)"
+              />
             </UFormGroup>
           </div>
 
@@ -82,7 +93,7 @@
 </template>
 
 <script setup lang="ts">
-import { snakeCase } from 'lodash-es'
+import { snakeCase, isPlainObject, isDate, isBoolean, isNumber } from 'lodash-es'
 import type { Project, Root } from '~/types'
 import { capitalize } from '~/utils'
 
@@ -118,12 +129,17 @@ const absolutePath = computed(() => {
 // Methods
 
 function updateField (key, value) {
+  const field = fields.value.find(f => f.key === key)
+  if (field.type === 'date') {
+    value = new Date(value)
+  }
+
   emit('update:modelValue', { ...props.modelValue, [key]: value })
 }
 
 function mapFields (fields, parent = '') {
   return Object.entries(fields).flatMap(([key, value]) => {
-    if (value && typeof value === 'object' && !Array.isArray(value)) {
+    if (value && isPlainObject(value)) {
       return mapFields(value, key)
     }
 
@@ -132,8 +148,13 @@ function mapFields (fields, parent = '') {
     }
 
     let type = 'text'
-    if (typeof value === 'boolean') {
+    if (isBoolean(value)) {
       type = 'boolean'
+    } else if (isDate(value)) {
+      type = 'date'
+      value = value.toISOString().substring(0, 10)
+    } else if (isNumber(value)) {
+      type = 'number'
     }
 
     let label = parent ? `${parent} ${key}` : key
