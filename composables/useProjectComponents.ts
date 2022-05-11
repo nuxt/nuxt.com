@@ -27,6 +27,12 @@ export const useProjectComponents = (project: Project) => {
         retry: false
       })
 
+      // Ensure data is valid JSON
+      const json = JSON.parse(JSON.stringify(data))
+      if (typeof json !== 'object') {
+        throw new TypeError('Invalid json')
+      }
+
       components.value = data
     } catch (e) {
       components.value = []
