@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-6">
-    <UCard padded>
+    <UCard padded @submit.prevent="onSubmit">
       <template #header>
         <h2 class="text-lg font-medium leading-6 u-text-gray-900">
           General
@@ -75,7 +75,6 @@
             type="submit"
             :loading="updating"
             label="Save"
-            @click="onSubmit()"
           />
         </div>
       </template>
