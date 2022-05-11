@@ -23,11 +23,11 @@ defineProps({
     default: ''
   },
   labelClass: {
-    type: String,
+    type: [String || Array],
     default: ''
   },
   iconClass: {
-    type: String,
+    type: [String || Array],
     default: ''
   }
 })

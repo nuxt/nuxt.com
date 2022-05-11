@@ -65,8 +65,8 @@
     <DocsFrameworkV3RoutingFile
       :class="[0, 3].includes(currentSection) ? 'opacity-100 left-14 top-16' : 'opacity-0'"
       :label="currentSection === 0 ? 'index.vue' : 'login.vue'"
-      :icon-class="['w-6 h-6 transition-colors duration-500', !currentStep ? 'text-green-400' : currentStep === 0 ? 'text-green-400' : 'u-text-gray-400']"
-      :label-class="['transition-colors duration-500', !currentStep ? 'text-white' : currentStep === 0 ? 'u-text-white' : 'u-text-gray-400']"
+      :icon-class="['w-6 h-6 transition-colors duration-500', !currentStep ? 'text-green-400' : currentStep === 0 ? 'text-green-400' : 'u-text-gray-400'].join(' ')"
+      :label-class="['transition-colors duration-500', !currentStep ? 'text-white' : currentStep === 0 ? 'u-text-white' : 'u-text-gray-400'].join(' ')"
     />
     <DocsFrameworkV3RoutingFile
       :class="[1, 2].includes(currentSection) ? 'opacity-100 left-[28%] top-24' : 'opacity-0'"
@@ -83,8 +83,8 @@
     <DocsFrameworkV3RoutingFile
       :class="currentSection === 3 ? 'opacity-100 left-14 top-[30%]' : 'opacity-0'"
       label="dashboard.vue"
-      :icon-class="['w-6 h-6 transition-colors duration-500', currentStep === 1 ? 'text-green-400' : 'u-text-gray-400']"
-      :label-class="['transition-colors duration-500', currentStep === 1 ? 'u-text-white' : 'u-text-gray-400']"
+      :icon-class="['w-6 h-6 transition-colors duration-500', currentStep === 1 ? 'text-green-400' : 'u-text-gray-400'].join(' ')"
+      :label-class="['transition-colors duration-500', currentStep === 1 ? 'u-text-white' : 'u-text-gray-400'].join(' ')"
     />
   </div>
 </template>
