@@ -1,6 +1,7 @@
 <template>
-  <NuxtLink :to="page.slug" class="block overflow-hidden group rounded-xl bg-gradiant">
-    <div class="flex flex-col p-8 bg-overlay">
+  <NuxtLink :to="page.slug" class="relative overflow-hidden group rounded-xl bg-gradiant">
+    <div class="absolute inset-0 transition-opacity bg-overlay opacity-20 group-hover:opacity-40" />
+    <div class="relative flex flex-col p-8">
       <div class="font-semibold text-white">
         <time>{{ formatDateByLocale('en', page.date) }}</time>
       </div>
@@ -43,15 +44,12 @@ const formatDateByLocale = (locale, d) => {
 }
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .bg-gradiant {
   background-image: url('/resources/blog/bg-gradient.png');
   background-size: cover;
 }
 .bg-overlay {
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.268) 100%);
-  &:hover {
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.9) 100%);
-  }
+  background-image: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%);
 }
 </style>
