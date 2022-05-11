@@ -1,4 +1,4 @@
-import { defaultValueCtx, Editor, editorViewCtx, parserCtx, rootCtx, serializerCtx } from '@milkdown/core'
+import { Editor, rootCtx } from '@milkdown/core'
 import { emoji } from '@milkdown/plugin-emoji'
 import { history } from '@milkdown/plugin-history'
 import { listener } from '@milkdown/plugin-listener'
@@ -7,7 +7,6 @@ import { tooltip } from '@milkdown/plugin-tooltip'
 import { gfm } from '@milkdown/preset-gfm'
 import { switchTheme, replaceAll } from '@milkdown/utils'
 import { useEditor as useMilkdownEditor } from '@milkdown/vue'
-import { Slice } from 'prosemirror-model'
 
 // Internal context
 import context, { componentSchemasCtx } from './context'
@@ -16,7 +15,7 @@ import context, { componentSchemasCtx } from './context'
 import mdc from './plugins/mdc'
 import slash from './plugins/slash'
 import trailingParagraph from './plugins/trailing-paragraph'
-import collaborative, { getProvider, joinRoom, leaveRoom } from './plugins/collaborative'
+import collaborative, { switchRoom } from './plugins/collaborative'
 
 // Theme
 import { dark, light } from './theme'
@@ -34,7 +33,6 @@ export const useEditor = (options: Options) => {
   let instance: Editor
 
   const theme = useTheme()
-  const hasCollab = Boolean(useRuntimeConfig().public.ywsUrl)
 
   const makeEditor = () => useMilkdownEditor((root, renderVue) => {
     instance = Editor.make()
@@ -51,7 +49,7 @@ export const useEditor = (options: Options) => {
       .use(slash)
       .use(trailingParagraph)
 
-    if (hasCollab) {
+    if (useRuntimeConfig().public.ywsUrl) {
       const { key: room } = unref(options.content)
       instance.use(collaborative(room))
     }
@@ -63,17 +61,15 @@ export const useEditor = (options: Options) => {
 
   // Reactive content when content key change
   if (isRef(options.content)) {
-    watch(() => unref(options.content).key, () => {
+    watch(() => unref(options.content).key, async () => {
       const { key: room, markdown } = unref(options.content)
 
-      // Leave current room
-      leaveRoom()
+      // Switch room
+      await switchRoom(room)
 
-      // Update markdown
+      // Ensure collaborative is synced with markdown fetched from API for the current file
+      // TODO: We may try to setup Redis around YWS server for better synchronization (one place to sync)
       instance?.action(replaceAll(markdown))
-
-      // Join new room
-      joinRoom(room)
     })
   }
 

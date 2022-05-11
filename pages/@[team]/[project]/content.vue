@@ -124,8 +124,6 @@ const onUpdate = debounce(async () => {
     return
   }
 
-  console.log('[API] Change content', { before: content.value, now: formattedContent })
-
   try {
     const data = await client<GitHubDraft>(`/projects/${project.id}/files/${encodeURIComponent(file.value.path)}`, {
       method: 'PUT',

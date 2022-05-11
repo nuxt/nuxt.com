@@ -7,23 +7,37 @@ import type { User } from '~/types'
 const doc: Doc = new Doc()
 let wsProvider: WebsocketProvider
 
+const getUser = () => {
+  const name = unref(useStrapiUser() as Ref<User>).username
+  return { name }
+}
+
 export default (room: string) => {
   wsProvider = new WebsocketProvider(useRuntimeConfig().public.ywsUrl, room, doc)
-  wsProvider.awareness.setLocalStateField('user', {
-    name: unref(useStrapiUser() as Ref<User>).username
-  })
+  wsProvider.awareness.setLocalStateField('user', getUser())
   return collaborative.configure(y, { doc, awareness: wsProvider.awareness })
 }
 
-export const getProvider = () => wsProvider
+export const switchRoom = async (room: string) => {
+  if (!wsProvider) { return }
 
-export const leaveRoom = () => {
+  // Disconnect current room
   wsProvider.disconnect()
-  wsProvider.doc.off('update', wsProvider._updateHandler)
-}
 
-export const joinRoom = (room: string) => {
-  wsProvider.url = `${useRuntimeConfig().public.ywsUrl}/${room}`
-  wsProvider.doc.on('update', wsProvider._updateHandler)
-  wsProvider.connect()
+  // Set new room url for new connection
+  const roomUrl = `${useRuntimeConfig().public.ywsUrl}/${room}`
+  wsProvider.bcChannel = roomUrl
+  wsProvider.url = roomUrl
+
+  // Connect to the new room and await for synced status
+  await new Promise<void>((resolve) => {
+    const onSync = (synced: boolean) => {
+      if (!synced) { return }
+      wsProvider.off('sync', onSync)
+      resolve()
+    }
+
+    wsProvider.on('sync', onSync)
+    wsProvider.connect()
+  })
 }

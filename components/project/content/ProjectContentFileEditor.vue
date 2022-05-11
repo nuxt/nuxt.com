@@ -39,7 +39,6 @@ export default defineComponent({
       components: computed(() => [...props.components]),
       content: computed(() => props.content),
       onChanged: (markdown: string, prevMarkdown: string) => {
-        console.log('[milkdown:onChanged]', { before: prevMarkdown, now: markdown })
         if (prevMarkdown !== null) {
           emit('update', markdown)
         }
