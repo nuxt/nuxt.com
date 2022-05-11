@@ -38,11 +38,7 @@ export default defineComponent({
     const editor = useEditor({
       components: computed(() => [...props.components]),
       content: computed(() => props.content),
-      onChanged: (markdown: string, prevMarkdown: string) => {
-        if (prevMarkdown !== null) {
-          emit('update', markdown)
-        }
-      }
+      onChanged: (markdown: string) => emit('update', markdown)
     })
 
     return {

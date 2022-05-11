@@ -31,7 +31,7 @@ export interface Content {
 export interface Options {
   content?: MaybeRef<Content>
   components?: MaybeRef<ComponentSchema[]>
-  onChanged?: (markdown: string, prevMarkdown: string) => void
+  onChanged?: (markdown: string) => void
 }
 
 export type UnwrapOptions = { [K in keyof Options]-?: UnwrapRef<Options[K]> }

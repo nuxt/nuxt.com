@@ -59,9 +59,9 @@ export const useEditor = (options: Options) => {
 
   const editor = ref(makeEditor())
 
-  // Reactive content when content key change
+  // Reactive content
   if (isRef(options.content)) {
-    watch(() => unref(options.content).key, async () => {
+    watch(options.content, async () => {
       const { key: room, markdown } = unref(options.content)
 
       // Switch room
@@ -69,20 +69,20 @@ export const useEditor = (options: Options) => {
 
       // Ensure collaborative is synced with markdown fetched from API for the current file
       // TODO: We may try to setup Redis around YWS server for better synchronization (one place to sync)
-      instance?.action(replaceAll(markdown))
+      instance.action(replaceAll(markdown))
     })
   }
 
   // Reactive components
   if (isRef(options.components)) {
     watch(options.components, (components) => {
-      instance?.action(ctx => ctx.set(componentSchemasCtx, components))
+      instance.action(ctx => ctx.set(componentSchemasCtx, components))
     })
   }
 
   // Reactive theme
   watch(theme, (value) => {
-    instance?.action(switchTheme(value))
+    instance.action(switchTheme(value))
   })
 
   return editor
