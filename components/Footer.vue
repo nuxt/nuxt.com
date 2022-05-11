@@ -1,7 +1,7 @@
 
 <template>
-  <footer class="relative u-bg-white">
-    <div class="absolute inset-x-0 flex items-center justify-center h-1 border-b u-border-gray-200">
+  <footer class="relative border-t u-bg-white u-border-gray-200">
+    <div class="absolute inset-x-0 flex items-center justify-center -top-3">
       <div class="px-2 u-bg-white">
         <Logo class="w-5 h-5 u-text-gray-200" />
       </div>
