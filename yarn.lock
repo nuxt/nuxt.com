@@ -284,6 +284,11 @@
   dependencies:
     mime "^3.0.0"
 
+"@csstools/selector-specificity@1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@csstools/selector-specificity/-/selector-specificity-1.0.0.tgz#91c560df2ed8d9700e4c7ed4ac21a3a322c9d975"
+  integrity sha512-RkYG5KiGNX0fJ5YoI0f4Wfq2Yo74D25Hru4fxTOioYdQvHBxcrrtTTyT5Ozzh2ejcNrhFy7IEts2WyEY7yi5yw==
+
 "@docus/remark-mdc@npm:@docus/remark-mdc-edge":
   version "0.1.0-27457273.325e75e"
   resolved "https://registry.yarnpkg.com/@docus/remark-mdc-edge/-/remark-mdc-edge-0.1.0-27457273.325e75e.tgz#bfe1aaec52b7bd7bb9db22a1d5253b6d85c619e0"
@@ -716,9 +721,9 @@
     fastq "^1.6.0"
 
 "@nuxt/content@npm:@nuxt/content-edge@latest":
-  version "2.0.0-27536644.2fdfa97"
-  resolved "https://registry.yarnpkg.com/@nuxt/content-edge/-/content-edge-2.0.0-27536644.2fdfa97.tgz#1f3e7110ec96de7251907895db4708f097b9b70c"
-  integrity sha512-AE/AbS/RsVeBJMFWWIwzhzMvXA7PuvA8Qs3NZZG0h1jj+XOzRd6dj6jCggMWf50xxo8WefypiMXp1DcnmaSJYw==
+  version "2.0.0-27536649.61e4b1f"
+  resolved "https://registry.yarnpkg.com/@nuxt/content-edge/-/content-edge-2.0.0-27536649.61e4b1f.tgz#07e5605f4410ced52e2840b5f33bfef5d304a985"
+  integrity sha512-Bf4+t3+TH82A1TpfRUAYBWRxjbaf4FZr1KQrsc0DLmqyo7LHi0y/2LR/gFnOj5p4IwgjRtptJWIr2W1cR7WPJA==
   dependencies:
     "@nuxt/kit" "^3.0.0-rc.3"
     csvtojson "^2.0.10"
@@ -820,7 +825,7 @@
     unimport "^0.1.9"
     untyped "^0.4.4"
 
-"@nuxt/kit@npm:@nuxt/kit-edge@3.0.0-rc.3-27536597.3359b3b", "@nuxt/kit@npm:@nuxt/kit-edge@latest":
+"@nuxt/kit@npm:@nuxt/kit-edge@latest":
   version "3.0.0-rc.3-27536597.3359b3b"
   resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-rc.3-27536597.3359b3b.tgz#e15b5d25bf0618ef6113e7f6180636c458a23e8b"
   integrity sha512-vQWAzbsHk8sP0tGXLfKX6EfnR6cb6sG4CJLcj2sptuyKwnXrHjQTfdWxKkJLqVBKq4O/8Vej9Xm9r5VLGOpNPA==
@@ -921,12 +926,12 @@
   resolved "https://registry.yarnpkg.com/@nuxt/ui-templates/-/ui-templates-0.1.1.tgz#78725509b078ff874ac8ea0aed82d4e0eee0662c"
   integrity sha512-ejiWi7RJfUp71K5IRpfrhoiZcvxhn1K+YH5mWdwwCT7jeQyE+Ok6WdFMpSg4LYy8YsVw6XHr5I+g23OCebc24w==
 
-"@nuxt/vite-builder@npm:@nuxt/vite-builder-edge@3.0.0-rc.3-27536597.3359b3b":
-  version "3.0.0-rc.3-27536597.3359b3b"
-  resolved "https://registry.yarnpkg.com/@nuxt/vite-builder-edge/-/vite-builder-edge-3.0.0-rc.3-27536597.3359b3b.tgz#306dcc36434be96b4a8a4c8cab716d4b2f75bfa3"
-  integrity sha512-MgY/1P4JXc1EuppmAwlFeIHocK4Ak62FLZILInPjj0LveECZks21+KaTN6b1fYYUeINlK6RzK0EwIdSAaLP4SA==
+"@nuxt/vite-builder@^3.0.0-rc.3":
+  version "3.0.0-rc.3"
+  resolved "https://registry.yarnpkg.com/@nuxt/vite-builder/-/vite-builder-3.0.0-rc.3.tgz#f8b4f463f0aedbcdc17356579a34c8cda67b123e"
+  integrity sha512-C1IPoUADHYWvlNHJIJzj1gm+rqCVYqbJ+YeKANG118TtVa1mB2t9R+FgMO4AE/oOfmd4nUrbNDPreUoIBaL6kg==
   dependencies:
-    "@nuxt/kit" "npm:@nuxt/kit-edge@3.0.0-rc.3-27536597.3359b3b"
+    "@nuxt/kit" "^3.0.0-rc.3"
     "@vitejs/plugin-vue" "^2.3.2"
     "@vitejs/plugin-vue-jsx" "^1.3.10"
     autoprefixer "^10.4.7"
@@ -952,7 +957,7 @@
     ufo "^0.8.4"
     unplugin "^0.6.3"
     vite "^2.9.8"
-    vite-node "^0.12.3"
+    vite-node "^0.12.1"
     vite-plugin-checker "^0.4.6"
 
 "@nuxthq/admin@npm:@nuxthq/admin-edge@latest":
@@ -1264,9 +1269,9 @@
   integrity sha512-0fRfA90FWm6KJfw6P9QGyo0HDTCmthZ7cWaBQndITlaWLTZ6njRyKwrwpzpg+n6kBXBIGKeUHEQuBx7bphGJkA==
 
 "@types/node@*":
-  version "17.0.31"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.31.tgz#a5bb84ecfa27eec5e1c802c6bbf8139bdb163a5d"
-  integrity sha512-AR0x5HbXGqkEx9CadRH3EBYx/VkiUgZIhP4wvPn/+5KIsgpNoyFaRlVe0Zlx9gRtg8fA06a9tskE2MSN7TcG4Q==
+  version "17.0.32"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.32.tgz#51d59d7a90ef2d0ae961791e0900cad2393a0149"
+  integrity sha512-eAIcfAvhf/BkHcf4pkLJ7ECpBAhh9kcxRBpip9cTiO+hf+aJrsxYxBeS6OXvOd9WqNAJmavXVpZvY1rBjNsXmw==
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.1"
@@ -1523,9 +1528,9 @@
     hash-sum "^2.0.0"
 
 "@vitejs/plugin-vue@^2.3.2":
-  version "2.3.2"
-  resolved "https://registry.yarnpkg.com/@vitejs/plugin-vue/-/plugin-vue-2.3.2.tgz#12ea7a42e6c83d5ea48e14dc41fd2bbb5806ee37"
-  integrity sha512-umyypfSHS4kQLdYAnJHhaASq7FRzNCdvcRoQ3uYGNk1/M4a+hXUd7ysN7BLhCrWH6uBokyCkFeUAaFDzSaaSrQ==
+  version "2.3.3"
+  resolved "https://registry.yarnpkg.com/@vitejs/plugin-vue/-/plugin-vue-2.3.3.tgz#fbf80cc039b82ac21a1acb0f0478de8f61fbf600"
+  integrity sha512-SmQLDyhz+6lGJhPELsBdzXGc+AcaT8stgkbiTFGpXPe8Tl1tJaBw1A6pxDqDuRsVkD8uscrkx3hA7QDOoKYtyw==
 
 "@volar/code-gen@0.34.12":
   version "0.34.12"
@@ -3148,9 +3153,9 @@ dot-prop@^7.2.0:
     type-fest "^2.11.2"
 
 dotenv@^16.0.0:
-  version "16.0.0"
-  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-16.0.0.tgz#c619001253be89ebb638d027b609c75c26e47411"
-  integrity sha512-qD9WU0MPM4SWLPJy/r2Be+2WgQj8plChsyrCNQzW/0WjvcJQiKQJ9mH3ZgB3fxbUUxgc/11ZJ0Fi5KiimWGz2Q==
+  version "16.0.1"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-16.0.1.tgz#8f8f9d94876c35dac989876a5d3a82a267fdce1d"
+  integrity sha512-1K6hR6wtk2FviQ4kEiSjFiH5rpzEVi8WW0x96aztHVMhEspNpc4DVOUTEHtEva5VThQ8IaBX1Pe4gSzpVVUsKQ==
 
 dotgitignore@^2.1.0:
   version "2.1.0"
@@ -5489,9 +5494,9 @@ magic-string@^0.25.7:
     sourcemap-codec "^1.4.8"
 
 magic-string@^0.26.1:
-  version "0.26.1"
-  resolved "https://registry.yarnpkg.com/magic-string/-/magic-string-0.26.1.tgz#ba9b651354fa9512474199acecf9c6dbe93f97fd"
-  integrity sha512-ndThHmvgtieXe8J/VGPjG+Apu7v7ItcD5mhEIvOscWjPF/ccOiLxHaSuCAS2G+3x4GKsAbT8u7zdyamupui8Tg==
+  version "0.26.2"
+  resolved "https://registry.yarnpkg.com/magic-string/-/magic-string-0.26.2.tgz#5331700e4158cd6befda738bb6b0c7b93c0d4432"
+  integrity sha512-NzzlXpclt5zAbmo6h6jNc8zl2gNRGHvmsZW4IvZhTC4W7k4OlLP+S5YLussa/r3ixNT66KOQfNORlXHSOy/X4A==
   dependencies:
     sourcemap-codec "^1.4.8"
 
@@ -6449,10 +6454,10 @@ number-is-nan@^1.0.0:
   resolved "https://registry.yarnpkg.com/number-is-nan/-/number-is-nan-1.0.1.tgz#097b602b53422a522c1afb8790318336941a011d"
   integrity sha1-CXtgK1NCKlIsGvuHkDGDNpQaAR0=
 
-"nuxi@npm:nuxi-edge@3.0.0-rc.3-27536597.3359b3b":
-  version "3.0.0-rc.3-27536597.3359b3b"
-  resolved "https://registry.yarnpkg.com/nuxi-edge/-/nuxi-edge-3.0.0-rc.3-27536597.3359b3b.tgz#cf73032897ba25ad0470e63557f5d2f838ebdd8f"
-  integrity sha512-aAezGWk0HlKdYIZOvs/UmRFQR9n2JjvTqjtWPEecXc9xwZANVOisx6qFkE/0bGqv6pcwt/vngCo8gvERo9Zyyg==
+nuxi@^3.0.0-rc.3:
+  version "3.0.0-rc.3"
+  resolved "https://registry.yarnpkg.com/nuxi/-/nuxi-3.0.0-rc.3.tgz#2326687eff412bf770d1c20c28147dd65cbf06d4"
+  integrity sha512-WXeW3k2DOaVgkIcPJ9XHxgHWUzvAKV+R3I0c+gXjvzNc5bfRW9ks7Hr2jb83frH+r6i4aALlRTaBHIrJhYHh6w==
   optionalDependencies:
     fsevents "~2.3.2"
 
@@ -6465,17 +6470,17 @@ nuxt-component-meta@^0.1.4:
     "@vue/compiler-sfc" "^3.2.33"
     scule "^0.2.1"
 
-"nuxt@npm:nuxt3@latest":
-  version "3.0.0-rc.3-27536597.3359b3b"
-  resolved "https://registry.yarnpkg.com/nuxt3/-/nuxt3-3.0.0-rc.3-27536597.3359b3b.tgz#e2692d836cef2d4df1bd049560c518e10a4de8d3"
-  integrity sha512-BVSzhG6IcAKhDK/2d8EvDem13nf6iY6atx3e8sE5xIPgZ3sUloUYXjng8FiL/gJBKQG7LN3LIBvKCF8v57boXw==
+nuxt@3.0.0-rc.3:
+  version "3.0.0-rc.3"
+  resolved "https://registry.yarnpkg.com/nuxt/-/nuxt-3.0.0-rc.3.tgz#ab1a36a19f91f86d5fa42a7d6bb2dec4ae7cf824"
+  integrity sha512-Ch68sD9Npt3BN0ZphvtRurVhFqtm1sAu4VDoXghmsRoVAwpT2ZDeDWaQJ9PSmXHYwyEaXPIZ9B2EDXPKETh0cQ==
   dependencies:
     "@nuxt/devalue" "^2.0.0"
-    "@nuxt/kit" "npm:@nuxt/kit-edge@3.0.0-rc.3-27536597.3359b3b"
-    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-rc.3-27536597.3359b3b"
+    "@nuxt/kit" "^3.0.0-rc.3"
+    "@nuxt/schema" "^3.0.0-rc.3"
     "@nuxt/telemetry" "^2.1.3"
     "@nuxt/ui-templates" "^0.1.1"
-    "@nuxt/vite-builder" "npm:@nuxt/vite-builder-edge@3.0.0-rc.3-27536597.3359b3b"
+    "@nuxt/vite-builder" "^3.0.0-rc.3"
     "@vue/reactivity" "^3.2.33"
     "@vue/shared" "^3.2.33"
     "@vueuse/head" "^0.7.6"
@@ -6493,7 +6498,7 @@ nuxt-component-meta@^0.1.4:
     magic-string "^0.26.1"
     mlly "^0.5.2"
     nitropack "^0.4.2"
-    nuxi "npm:nuxi-edge@3.0.0-rc.3-27536597.3359b3b"
+    nuxi "^3.0.0-rc.3"
     ohash "^0.1.0"
     ohmyfetch "^0.4.16"
     pathe "^0.3.0"
@@ -6502,7 +6507,7 @@ nuxt-component-meta@^0.1.4:
     ufo "^0.8.4"
     unctx "^1.1.4"
     unenv "^0.5.1"
-    unimport "^0.2.1"
+    unimport "^0.1.9"
     unplugin "^0.6.3"
     untyped "^0.4.4"
     vue "^3.2.33"
@@ -7093,10 +7098,11 @@ postcss-nested@5.0.6:
     postcss-selector-parser "^6.0.6"
 
 postcss-nesting@^10.1.3:
-  version "10.1.4"
-  resolved "https://registry.yarnpkg.com/postcss-nesting/-/postcss-nesting-10.1.4.tgz#80de9d1c2717bc44df918dd7f118929300192a7a"
-  integrity sha512-2ixdQ59ik/Gt1+oPHiI1kHdwEI8lLKEmui9B1nl6163ANLC+GewQn7fXMxJF2JSb4i2MKL96GU8fIiQztK4TTA==
+  version "10.1.5"
+  resolved "https://registry.yarnpkg.com/postcss-nesting/-/postcss-nesting-10.1.5.tgz#0711260e394cd0e117ff1f879eb1ee9a94550352"
+  integrity sha512-+NyBBE/wUcJ+NJgVd2FyKIZ414lul6ExqkOt1qXXw7oRzpQ0iT68cVpx+QfHh42QUMHXNoVLlN9InFY9XXK8ng==
   dependencies:
+    "@csstools/selector-specificity" "1.0.0"
     postcss-selector-parser "^6.0.10"
 
 postcss-normalize-charset@^5.1.0:
@@ -8716,9 +8722,9 @@ ufo@^0.8.3, ufo@^0.8.4:
   integrity sha512-/+BmBDe8GvlB2nIflWasLLAInjYG0bC9HRnfEpNi4sw77J2AJNnEVnTDReVrehoh825+Q/evF3THXTAweyam2g==
 
 uglify-js@^3.1.4:
-  version "3.15.4"
-  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.15.4.tgz#fa95c257e88f85614915b906204b9623d4fa340d"
-  integrity sha512-vMOPGDuvXecPs34V74qDKk4iJ/SN4vL3Ow/23ixafENYvtrNvtbcgUeugTcUGRGsOF/5fU8/NYSL5Hyb3l1OJA==
+  version "3.15.5"
+  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.15.5.tgz#2b10f9e0bfb3f5c15a8e8404393b6361eaeb33b3"
+  integrity sha512-hNM5q5GbBRB5xB+PMqVRcgYe4c8jbyZ1pzZhS6jbq54/4F2gFK869ZheiE5A8/t+W5jtTNpWef/5Q9zk639FNQ==
 
 unbox-primitive@^1.0.2:
   version "1.0.2"
@@ -8984,10 +8990,10 @@ vfile@^5.0.0:
     unist-util-stringify-position "^3.0.0"
     vfile-message "^3.0.0"
 
-vite-node@^0.12.3:
-  version "0.12.3"
-  resolved "https://registry.yarnpkg.com/vite-node/-/vite-node-0.12.3.tgz#6b13aabe4aab9f9965d8cf96b16bca5da05e344e"
-  integrity sha512-thXjAUe+HDY+q+lyRLoH1z62W+/x+R2qvdBUsbrv1+fk2cVdAQqvVL/bYOSb+bNrpgrgRPP+6ZYC8HHkycCIEQ==
+vite-node@^0.12.1:
+  version "0.12.4"
+  resolved "https://registry.yarnpkg.com/vite-node/-/vite-node-0.12.4.tgz#f45d07319f7b7e9db9158e88d7c2b44408735855"
+  integrity sha512-fUuPHL6sGp/UwoimRHCvB+icIDtPRRUHHGIYuoQ8ccMCRluCV3iumehLn0xx4n5r7mBZ+JzIM6wx380JkV/b7A==
   dependencies:
     kolorist "^1.5.1"
     mlly "^0.5.2"
@@ -9016,9 +9022,9 @@ vite-plugin-checker@^0.4.6:
     vscode-uri "^3.0.2"
 
 vite@^2.9.8:
-  version "2.9.8"
-  resolved "https://registry.yarnpkg.com/vite/-/vite-2.9.8.tgz#2c2cb0790beb0fbe4b8c0995b80fe691a91c2545"
-  integrity sha512-zsBGwn5UT3YS0NLSJ7hnR54+vUKfgzMUh/Z9CxF1YKEBVIe213+63jrFLmZphgGI5zXwQCSmqIdbPuE8NJywPw==
+  version "2.9.9"
+  resolved "https://registry.yarnpkg.com/vite/-/vite-2.9.9.tgz#8b558987db5e60fedec2f4b003b73164cb081c5e"
+  integrity sha512-ffaam+NgHfbEmfw/Vuh6BHKKlI/XIAhxE5QSS7gFLIngxg171mg1P3a4LSRME0z2ZU1ScxoKzphkipcYwSD5Ew==
   dependencies:
     esbuild "^0.14.27"
     postcss "^8.4.13"
