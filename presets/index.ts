@@ -35,8 +35,8 @@ const selectCustom = {
 
 const toggle = {
   base: 'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:u-ring-gray-900 focus:ring-offset-white dark:focus:ring-offset-black',
-  active: 'u-bg-gray-200',
-  inactive: 'u-bg-gray-200',
+  active: 'u-bg-gray-100',
+  inactive: 'u-bg-gray-100',
   container: {
     base: 'pointer-events-none relative inline-block h-5 w-5 rounded-full u-bg-white shadow transform ring-0 transition ease-in-out duration-200'
   },
