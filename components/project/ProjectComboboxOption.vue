@@ -14,7 +14,7 @@
         as="template"
       >
         <li :class="['flex select-none items-center rounded-md px-3 py-2 u-text-gray-400', active && 'u-bg-gray-100 u-text-gray-900', item.disabled ? 'cursor-not-allowed' : 'cursor-pointer']">
-          <UIcon :name="item.icon" :class="['h-5 w-5 flex-none', item.iconColor]" aria-hidden="true" />
+          <UIcon :name="item.icon" :class="['h-5 w-5 flex-none', item.iconColor, item.iconClass]" aria-hidden="true" />
           <p class="flex-auto ml-3 truncate u-text-gray-400" :class="{ 'opacity-50': item.disabled }">
             <span class="u-text-gray-700">{{ item.name || item.label }}</span>
             <span v-if="item.path" class="ml-1 text-xs italic truncate">{{ item.path }}</span>
