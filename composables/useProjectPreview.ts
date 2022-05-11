@@ -25,6 +25,22 @@ export const useProjectPreview = () => {
     `top:${position.value.y}px;`
   ]))
 
+  const iframeStyle = computed(() => {
+    if (isExpand.value) {
+      return
+    }
+
+    const scale = (size.value.width / width.value) * 100
+    const factor = 100 / scale
+
+    return {
+      transform: `scale(${scale / 100})`,
+      width: `${size.value.width * factor}px`,
+      height: `${size.value.height * factor}px`,
+      transformOrigin: 'top left'
+    }
+  })
+
   // Watch
 
   watch([width, height], ([newWidth, newHeight], [oldWidth, oldHeight]) => {
@@ -76,6 +92,7 @@ export const useProjectPreview = () => {
   return {
     el,
     style,
+    iframeStyle,
     reset,
     isOpen,
     isExpand,
