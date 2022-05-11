@@ -16,7 +16,7 @@
             <NuxtLink :to="author.link" class="flex gap-x-2">
               <UAvatar :src="author.avatarUrl" :alt="author.name" />
               <div class="flex flex-col items-start">
-                <span class="u-text-gray-900">{{ author.name }}</span>
+                <span class="leading-5 u-text-gray-900">{{ author.name }}</span>
                 <span class="text-sm u-text-gray-400">{{ `@${author.link.split('/').pop()}` }}</span>
               </div>
             </NuxtLink>
