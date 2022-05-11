@@ -17,7 +17,7 @@
         class="fixed z-50 overflow-hidden rounded-lg shadow-lg group ring-1 u-bg-white"
         :class="{
           '!left-16 !top-16 !w-auto !h-auto inset-16 ring-transparent': isExpand,
-          'aspect-[16/9] select-none resize min-w-[160px] min-h-[90px] max-w-[640px] max-h-[360px] u-ring-gray-200': !isExpand
+          'aspect-[16/9] select-none resize min-w-[160px] min-h-[90px] u-ring-gray-200': !isExpand
         }"
         :style="style"
       >
