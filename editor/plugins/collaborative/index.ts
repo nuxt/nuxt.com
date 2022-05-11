@@ -1,20 +1,14 @@
 import { collaborative, y } from '@milkdown/plugin-collaborative'
-import { unref, Ref } from 'vue'
 import { Doc } from 'yjs'
 import { WebsocketProvider } from 'y-websocket'
-import type { User } from '~/types'
+import { setCursor } from './cursor'
 
 const doc: Doc = new Doc()
 let wsProvider: WebsocketProvider
 
-const getUser = () => {
-  const name = unref(useStrapiUser() as Ref<User>).username
-  return { name }
-}
-
 export default (room: string) => {
   wsProvider = new WebsocketProvider(useRuntimeConfig().public.ywsUrl, room, doc)
-  wsProvider.awareness.setLocalStateField('user', getUser())
+  setCursor(wsProvider.awareness)
   return collaborative.configure(y, { doc, awareness: wsProvider.awareness })
 }
 
