@@ -109,7 +109,8 @@ const actions = computed(() => ([{
   label: 'Refresh files',
   icon: 'heroicons-outline:refresh',
   iconClass: refreshingFiles.value ? 'animate-spin' : '',
-  click: refreshFiles
+  click: refreshFiles,
+  prevent: true
 }, {
   key: 'create',
   label: 'Create file',
@@ -189,7 +190,10 @@ function onFileSelect (f: GitHubFile) {
 }
 
 function onSelect (option, data) {
-  isOpen.value = false
+  if (!option.prevent) {
+    isOpen.value = false
+  }
+
   if (option.click) {
     option.click(data)
   } else {
