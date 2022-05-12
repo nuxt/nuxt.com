@@ -22,23 +22,34 @@
         :style="style"
       >
         <div v-if="!isExpand" class="absolute inset-0 z-50 flex items-center justify-center p-2 cursor-move group-hover:bg-gray-900/75 dark">
-          <UButton
-            v-show="isDiff"
-            rounded
-            size="xxs"
-            icon="tabler:pin"
-            class="absolute top-2 right-10 hidden group-hover:block !border-none"
-            variant="secondary"
-            @click="reset"
-          />
-          <UButton
-            rounded
-            size="xxs"
-            icon="heroicons-outline:x"
-            class="absolute top-2 right-2 hidden group-hover:block !border-none"
-            variant="secondary"
-            @click="isOpen = false"
-          />
+          <div class="absolute items-center hidden gap-2 right-2 top-2 group-hover:flex">
+            <UButton
+              v-show="isDiff"
+              rounded
+              size="xxs"
+              icon="tabler:pin"
+              class="!border-none"
+              variant="secondary"
+              @click="reset"
+            />
+            <UButton
+              rounded
+              size="xxs"
+              icon="heroicons-outline:refresh"
+              class="!border-none"
+              variant="secondary"
+              :loading="loading"
+              @click="refresh"
+            />
+            <UButton
+              rounded
+              size="xxs"
+              icon="heroicons-outline:x"
+              class="!border-none"
+              variant="secondary"
+              @click="isOpen = false"
+            />
+          </div>
 
           <UButton
             size="sm"
@@ -53,10 +64,11 @@
         </div>
 
         <iframe
-          id="iframe"
+          ref="iframe"
           :src="previewUrl"
           :style="iframeStyle"
           class="w-full h-full"
+          @load="onLoad"
         />
       </div>
     </div>
@@ -68,6 +80,18 @@ import type { Project } from '~/types'
 
 const project: Project = inject('project')
 
+const iframe = ref(null)
+const loading = ref(true)
+
 const { previewUrl } = useProjectFiles(project, 'content')
 const { el, style, iframeStyle, isOpen, isExpand, isDiff, reset } = useProjectPreview()
+
+function refresh () {
+  loading.value = true
+  iframe.value.src = previewUrl.value
+}
+
+function onLoad () {
+  loading.value = false
+}
 </script>
