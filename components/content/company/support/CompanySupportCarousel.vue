@@ -2,14 +2,16 @@
   <UContainer padded class="pt-12 pb-36">
     <Swiper
       :modules="modules"
-      :slides-per-view="6"
+      :slides-per-view="5"
       :space-between="68"
       :loop="true"
       :autoplay="autoplay"
     >
-      <SwiperSlide v-for="(item, index) in items" :key="index" class="relative">
-        <img :src="`/brands/${item.name}.png`" :alt="item.name">
-        <NuxtLink :to="item.to" target="_blank" class="absolute inset-0" rel="noopener noreferrer nofollow" />
+      <SwiperSlide v-for="(item, index) in items" :key="index" class="!h-8">
+        <div class="relative flex items-center h-full">
+          <img :src="`/brands/${item.name}.png`" :alt="item.name">
+          <NuxtLink :to="item.to" target="_blank" class="absolute inset-0" rel="noopener noreferrer nofollow" />
+        </div>
       </SwiperSlide>
     </Swiper>
   </UContainer>
