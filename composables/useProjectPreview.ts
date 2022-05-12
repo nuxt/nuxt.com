@@ -84,6 +84,8 @@ export const useProjectPreview = () => {
     }
   })
 
+  // Methods
+
   function reset () {
     size.value = defaultSize.value
     position.value = defaultPosition.value
