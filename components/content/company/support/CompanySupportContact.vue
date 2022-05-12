@@ -45,7 +45,6 @@
         v-model="form.message"
         name="message"
         required
-        placeholder="John Doo"
         autocomplete="off"
         :rows="4"
         :autoresize="true"
