@@ -18,28 +18,20 @@ const cursorColorKeys = [
   'teal'
 ] as const
 
-const cursorPalettes = [
-  cursorColorKeys.map(key => colors[key]['400']),
-  cursorColorKeys.map(key => colors[key]['500'])
-]
+const cursorPalette = cursorColorKeys.map(key => colors[key]['500'])
 
 // Pick a random color by prioritizing palettes (first must be fully used before picking from the second)
-const pickColor = (palettes: string[][], exclude: string[]) => {
-  for (const palette of palettes) {
-    // Define available colors for this palette
-    const colors = palette.filter(color => !exclude.includes(color))
+const pickColor = (palette: string[], exclude: string[]) => {
+  // Define available colors for this palette
+  const colors = palette.filter(color => !exclude.includes(color))
 
-    // If the palette has available colors, pick a random one
-    if (colors.length) {
-      return colors[Math.floor(Math.random() * colors.length)]
-    }
-
-    // Otherwise, iterate on next palette
+  // If the palette has available colors, pick a random one
+  if (colors.length) {
+    return colors[Math.floor(Math.random() * colors.length)]
   }
 
-  // If there are no colors available, return no color
-  // It will fallback to default yjs cursor color (#ffa500)
-  return null
+  // If there are no colors available, it will fallback to a random color in the palette
+  return palette[Math.floor(Math.random() * palette.length)]
 }
 
 export const setCursor = (awareness: Awareness) => {
@@ -54,7 +46,7 @@ export const setCursor = (awareness: Awareness) => {
       .map(state => state.user.color)
       .filter(Boolean)
 
-    const color = pickColor(cursorPalettes, usedColors)
+    const color = pickColor(cursorPalette, usedColors)
 
     awareness.setLocalStateField('user', {
       name,
