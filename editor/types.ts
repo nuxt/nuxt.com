@@ -22,11 +22,16 @@ export interface ComponentSchema {
   slots: ComponentSlotSchema[]
 }
 
+export interface Content {
+  key: string
+  markdown: string
+  matter: Record<string, any>
+}
+
 export interface Options {
-  content?: MaybeRef<string>
+  content?: MaybeRef<Content>
   components?: MaybeRef<ComponentSchema[]>
-  onChanged?: (content: string) => void
-  room?: MaybeRef<string>
+  onChanged?: (markdown: string) => void
 }
 
 export type UnwrapOptions = { [K in keyof Options]-?: UnwrapRef<Options[K]> }
