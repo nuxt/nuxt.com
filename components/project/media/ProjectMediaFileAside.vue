@@ -1,6 +1,6 @@
 <template>
   <aside class="hidden overflow-y-auto u-bg-white border-l u-border-gray-200 top-0 w-96 lg:block sticky h-[calc(100vh-4rem)] flex-shrink-0">
-    <div v-if="computedFile">
+    <div v-if="computedFile" class="pb-[237px]">
       <div class="flex items-center justify-between gap-3 p-6">
         <div class="min-w-0">
           <h2 class="text-lg font-medium u-text-gray-900">
@@ -19,13 +19,13 @@
           </p>
         </div>
 
-        <a v-if="fileDownloadLink" :download="computedFile.name" :href="fileDownloadLink" tabindex="-1" class="focus:outline-none focus:ring-offset-white dark:focus:ring-offset-black p-2 u-bg-gray-100 hover:u-bg-gray-200 focus:ring-2 focus:ring-offset-2 focus:u-ring-gray-900 rounded-full">
+        <a v-if="fileDownloadLink" :download="computedFile.name" :href="fileDownloadLink" tabindex="-1" class="p-2 rounded-full focus:outline-none focus:ring-offset-white dark:focus:ring-offset-black u-bg-gray-100 hover:u-bg-gray-200 focus:ring-2 focus:ring-offset-2 focus:u-ring-gray-900">
           <UIcon name="heroicons-outline:cloud-download" class="w-5 h-5" />
         </a>
       </div>
 
       <div>
-        <nav class="flex h-12 space-x-4 border-b u-border-gray-200 px-6">
+        <nav class="flex h-12 px-6 space-x-4 border-b u-border-gray-200">
           <button
             v-for="(category, index) in ['Meta', 'History']"
             :key="index"
@@ -33,7 +33,7 @@
               'font-medium u-text-gray-900 u-border-gray-700': selectedIndex === index,
               'u-text-gray-500 hover:u-text-gray-900 border-transparent': selectedIndex !== index
             }"
-            class="border-b-2 px-2 -mb-px focus:outline-none"
+            class="px-2 -mb-px border-b-2 focus:outline-none"
             tabindex="-1"
             @click="selectedIndex = index"
           >
@@ -69,8 +69,8 @@
         </div>
       </div>
     </div>
-    <div v-else class="h-full flex flex-col items-center justify-center">
-      <UIcon name="heroicons-outline:photograph" class="mx-auto h-12 w-12 u-text-gray-400" />
+    <div v-else class="flex flex-col items-center justify-center h-full">
+      <UIcon name="heroicons-outline:photograph" class="w-12 h-12 mx-auto u-text-gray-400" />
       <h3 class="mt-2 text-sm font-medium u-text-gray-900">
         No file selected
       </h3>

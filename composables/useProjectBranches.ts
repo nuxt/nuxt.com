@@ -4,11 +4,10 @@ import ProjectModalBranchCreate from '~/components/project/modal/ProjectModalBra
 import ProjectModalPublish from '~/components/project/modal/ProjectModalPublish.vue'
 
 export const useProjectBranches = (project: Project) => {
-  const { $socket } = useNuxtApp()
+  const { $socket, $toast } = useNuxtApp()
   const { open: openModal } = useModal()
   const client = useStrapiClient()
   const cookie = useCookie(`project-${project.id}-branch`, { path: '/' })
-  const { $toast } = useNuxtApp()
 
   const recentBranches: Ref<GitHubBranch[]> = useState(`project-${project.id}-branches-recent`, () => [])
   const branches: Ref<GitHubBranch[]> = useState(`project-${project.id}-branches`, () => [])

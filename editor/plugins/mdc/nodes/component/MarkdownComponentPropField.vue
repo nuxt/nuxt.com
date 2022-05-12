@@ -10,7 +10,7 @@ export default defineComponent({
       required: true
     },
     value: {
-      type: String as () => String | null,
+      type: String as () => string | null,
       default: (props: { schema: ComponentPropSchema }) => {
         return typeof props.schema.default !== 'undefined' && props.schema.default !== 'null'
           ? props.schema.default.replace(/^'|'$/g, '')
@@ -20,7 +20,8 @@ export default defineComponent({
   },
   emits: ['change'],
   setup (props, { emit }) {
-    const name = pascalCase(props.schema.name)
+    const name = props.schema.name
+    const label = pascalCase(name)
     const type = props.schema.type[0]
 
     const emitChange = ({ target }: Event) => {
@@ -33,6 +34,7 @@ export default defineComponent({
 
     return {
       name,
+      label,
       type,
       emitChange
     }
@@ -41,37 +43,31 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="flex items-center text-black dark:text-white">
-    <div
-      class="flex items-center h-7 px-2 border border-r-0 border-black dark:border-gray-300 rounded-l-md text-xs font-medium"
-      v-text="name"
-    />
-    <div
+  <UFormGroup :name="name" :label="label" label-class="text-xs font-medium u-text-gray-900">
+    <UCheckbox
       v-if="type === 'boolean'"
-      class="flex items-center h-7 px-2 rounded-r-md bg-transparent border border-black dark:border-gray-300 font-medium text-xs flex items-center"
-    >
-      <input
-        type="checkbox"
-        :checked="value === 'true'"
-        @change="emitChange"
-      >
-    </div>
-    <select
-      v-else-if="schema.values && schema.values.length"
-      class="flex items-center h-7 px-2 rounded-r-md bg-transparent border border-black dark:border-gray-300 font-medium text-xs"
-      :value="value"
-      @change="emitChange"
-    >
-      <option v-for="option in schema.values" :key="option" class="text-black" :value="option" v-text="option" />
-    </select>
-    <input
+      :name="name"
+      :model-value="value === 'true'"
+      size="xs"
+      @update:model-value="emitChange"
+    />
+    <USelect
+      v-else-if="schema.values && Array.isArray(schema.values) && schema.values.length"
+      :name="name"
+      :model-value="value"
+      :options="schema.values"
+      size="xs"
+      @update:model-value="emitChange"
+    />
+    <UInput
       v-else
-      class="flex items-center h-7 px-2 rounded-r-md bg-transparent border border-black dark:border-gray-300 font-medium text-xs"
+      :name="name"
       :type="type === 'number' ? 'number' : 'text'"
-      :value="value"
-      @input="emitChange"
+      :model-value="value"
+      size="xs"
+      @update:model-value="emitChange"
       @keydown.stop
       @paste.stop
-    >
-  </div>
+    />
+  </UFormGroup>
 </template>
