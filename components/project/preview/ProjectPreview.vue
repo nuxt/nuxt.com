@@ -65,7 +65,7 @@
 
         <iframe
           ref="iframe"
-          :src="previewUrl"
+          :src="src"
           :style="iframeStyle"
           class="w-full h-full"
           @load="onLoad"
@@ -76,6 +76,8 @@
 </template>
 
 <script setup lang="ts">
+import { useEventListener } from '@vueuse/core'
+import { getRoutePath } from '~/utils/tree'
 import type { Project } from '~/types'
 
 const project: Project = inject('project')
@@ -83,15 +85,57 @@ const project: Project = inject('project')
 const iframe = ref(null)
 const loading = ref(true)
 
-const { previewUrl } = useProjectFiles(project, 'content')
+const { file, computedFiles, select: selectFile, previewUrl } = useProjectFiles(project, 'content')
 const { el, style, iframeStyle, isOpen, isExpand, isDiff, reset } = useProjectPreview()
+
+useEventListener(window, 'message', onMessage)
+
+const previewUrlWithPath = computed(() => {
+  const [host, ...query] = previewUrl.value.split('?')
+
+  return `${host}${getRoutePath(file.value.path)}?${query.join('&')}`
+})
+
+const src = unref(previewUrlWithPath.value)
+
+// Watch
+
+watch(file, postMessage)
+
+// Methods
 
 function refresh () {
   loading.value = true
-  iframe.value.src = previewUrl.value
+
+  iframe.value.src = previewUrlWithPath.value
+}
+
+function postMessage () {
+  if (!iframe.value) {
+    return
+  }
+
+  iframe.value.contentWindow.postMessage(`push:${getRoutePath(file.value.path)}`, '*')
 }
 
 function onLoad () {
   loading.value = false
+}
+
+function onMessage (e) {
+  if (!previewUrl.value.startsWith(e.origin)) {
+    return
+  }
+
+  const [action, ...args] = e.data.split(':')
+
+  if (action === 'push') {
+    const path = args[0]
+
+    const fileToSelect = computedFiles.value.find(f => getRoutePath(f.path) === path)
+    if (fileToSelect) {
+      selectFile(fileToSelect)
+    }
+  }
 }
 </script>
