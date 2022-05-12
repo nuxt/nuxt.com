@@ -1,4 +1,4 @@
-import { Editor, editorViewCtx, parserCtx, rootCtx, serializerCtx } from '@milkdown/core'
+import { Editor, rootCtx } from '@milkdown/core'
 import { emoji } from '@milkdown/plugin-emoji'
 import { history } from '@milkdown/plugin-history'
 import { listener } from '@milkdown/plugin-listener'
@@ -7,7 +7,6 @@ import { tooltip } from '@milkdown/plugin-tooltip'
 import { gfm } from '@milkdown/preset-gfm'
 import { switchTheme, replaceAll } from '@milkdown/utils'
 import { useEditor as useMilkdownEditor } from '@milkdown/vue'
-import { Slice } from 'prosemirror-model'
 
 // Internal context
 import context, { componentSchemasCtx } from './context'
@@ -16,7 +15,7 @@ import context, { componentSchemasCtx } from './context'
 import mdc from './plugins/mdc'
 import slash from './plugins/slash'
 import trailingParagraph from './plugins/trailing-paragraph'
-import collaborative, { setRoom } from './plugins/collaborative'
+import collaborative, { switchRoom } from './plugins/collaborative'
 
 // Theme
 import { dark, light } from './theme'
@@ -34,7 +33,6 @@ export const useEditor = (options: Options) => {
   let instance: Editor
 
   const theme = useTheme()
-  const isCollaborativeEnabled = Boolean(useRuntimeConfig().public.ywsUrl)
 
   const makeEditor = () => useMilkdownEditor((root, renderVue) => {
     instance = Editor.make()
@@ -51,8 +49,9 @@ export const useEditor = (options: Options) => {
       .use(slash)
       .use(trailingParagraph)
 
-    if (isCollaborativeEnabled) {
-      instance.use(collaborative(unref(options.room) ?? 'default'))
+    if (useRuntimeConfig().public.ywsUrl) {
+      const { key: room } = unref(options.content)
+      instance.use(collaborative(room))
     }
 
     return instance
@@ -62,41 +61,29 @@ export const useEditor = (options: Options) => {
 
   // Reactive content
   if (isRef(options.content)) {
-    watch(options.content, (content) => {
-      instance?.action((ctx) => {
-        const view = ctx.get(editorViewCtx)
-        const parser = ctx.get(parserCtx)
-        const serializer = ctx.get(serializerCtx)
-        const state = view.state
-        if (content === serializer(state.doc)) {
-          return
-        }
-        const doc = parser(content)
-        if (!doc) { return }
-        view.dispatch(state.tr.replace(0, state.doc.content.size, new Slice(doc.content, 0, 0)))
-      })
+    watch(options.content, async () => {
+      const { key: room, markdown } = unref(options.content)
+
+      // Switch room
+      await switchRoom(room)
+
+      // Ensure collaborative is synced with markdown fetched from API for the current file
+      // TODO: We may try to setup Redis around YWS server for better synchronization (one place to sync)
+      instance.action(replaceAll(markdown))
     })
   }
 
   // Reactive components
   if (isRef(options.components)) {
     watch(options.components, (components) => {
-      instance?.action(ctx => ctx.set(componentSchemasCtx, components))
+      instance.action(ctx => ctx.set(componentSchemasCtx, components))
     })
   }
 
   // Reactive theme
   watch(theme, (value) => {
-    instance?.action(switchTheme(value))
+    instance.action(switchTheme(value))
   })
-
-  // Reactive room (collaborative support)
-  if (isCollaborativeEnabled && isRef(options.room)) {
-    watch(options.room, (room) => {
-      instance?.action(setRoom(room))
-      instance?.action(replaceAll(unref(options.content), true))
-    })
-  }
 
   return editor
 }
