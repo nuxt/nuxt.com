@@ -3,6 +3,8 @@
     <div class="flex flex-col grid-cols-1 gap-8 md:grid sm:grid-cols-2 lg:grid-cols-3 md:h-[475px]">
       <div class="relative md:absolute right-0 flex items-center justify-center lg:col-span-1 h-[475px] md:h-auto">
         <img src="/company/support/gems.svg">
+        <div class="h-[170px] absolute top-0 inset-x-0 bg-gradient-to-b from-white dark:from-black to-transparent" />
+        <div class="w-[170px] absolute right-0 inset-y-0 bg-gradient-to-l from-white dark:from-black to-transparent" />
       </div>
 
       <div class="relative flex flex-col justify-center py-8 space-y-5 lg:col-span-2">
