@@ -8,7 +8,7 @@
       :autoplay="autoplay"
     >
       <SwiperSlide v-for="(item, index) in items" :key="index" class="relative">
-        <img :src="`/company/support/showcases/${item.name}.png`" :alt="item.name">
+        <img :src="`/brands/${item.name}.png`" :alt="item.name">
         <NuxtLink :to="item.to" target="_blank" class="absolute inset-0" rel="noopener noreferrer nofollow" />
       </SwiperSlide>
     </Swiper>
