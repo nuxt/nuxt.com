@@ -23,7 +23,7 @@ export const useProjectComponents = (project: Project) => {
     pending.value = true
 
     try {
-      const data: any = await $fetch(`${project.url}/api/component-meta`, {
+      const data: any = await $fetch(`${project.url}/api/_admin/components`, {
         retry: false
       })
 
