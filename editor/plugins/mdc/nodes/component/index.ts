@@ -1,5 +1,5 @@
 import { createCmdKey, createCmd, NodeSchema, Ctx } from '@milkdown/core'
-import { wrapIn } from '@milkdown/prose'
+import { wrapIn, Node } from '@milkdown/prose'
 import { kebabCase } from 'scule'
 import type { ComponentSchema } from '../../../../types'
 import { componentSchemasCtx } from '../../../../context'
@@ -8,38 +8,75 @@ import MarkdownComponent from './MarkdownComponent.vue'
 
 export const TurnIntoComponent = createCmdKey<ComponentSchema>()
 
+// Attributes that can be stored in nodes
 const attrs = {
   name: {},
   props: {},
-  schema: { default: undefined },
-  showProps: { default: false }
+  propsInfo: {
+    default: {
+      inline: [],
+      frontMatter: []
+    }
+  },
+  schema: {
+    default: undefined
+  }
 }
 
+// Parsing
 const parseMarkdown = (ctx: Ctx, id: string): NodeSchema['parseMarkdown'] => ({
   match: node => node.type === id,
   runner: (state, node, type) => {
-    const { hName: name, hProperties: props } = node.data! as { hName: string; hProperties: Record<string, any> }
+    const name = node.data.hName as string
+    const props = node.data.hProperties as Record<string, any>
+    const propsInfo = {
+      inline: Object.keys(node.attributes),
+      frontMatter: Object.keys(node.fmAttributes)
+    }
     const schema = ctx.get(componentSchemasCtx).find(schema => kebabCase(schema.name) === kebabCase(name))
 
-    state.openNode(type, { name, props, schema } as any)
+    state.openNode(type, {
+      name,
+      props,
+      propsInfo,
+      schema
+    } as any)
     state.next(node.children)
     state.closeNode()
   }
 })
 
+// Serialization
+const serializeProps = ({ props, propsInfo: { inline, frontMatter } }: Record<string, any>) => {
+  const propsByKey = (acc, key) => {
+    acc[key] = props[key] || props[`:${key}`]
+    return acc
+  }
+
+  const attributes = inline.reduce(propsByKey, {})
+  const fmAttributes = frontMatter.reduce(propsByKey, {})
+
+  console.log({ attributes, fmAttributes })
+
+  return {
+    attributes,
+    fmAttributes
+  }
+}
+
 const toMarkdown = (id: string): NodeSchema['toMarkdown'] => ({
   match: node => node.type.name === id,
   runner: (state, node) => {
-    const { name, props } = node.attrs
     state.openNode(id, undefined, {
-      name,
-      attributes: props
+      name: node.attrs.name,
+      ...serializeProps(node.attrs)
     })
     node.content.size && state.next(node.content)
     state.closeNode()
   }
 })
 
+// Container components
 export const containerComponent = createVueNode({
   id: 'containerComponent',
   schema: ctx => ({
@@ -62,6 +99,7 @@ export const containerComponent = createVueNode({
   ]
 })
 
+// Inline components
 export const textComponent = createVueNode({
   id: 'textComponent',
   schema: ctx => ({
