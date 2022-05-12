@@ -34,6 +34,7 @@
     "@nuxtjs/strapi": "npm:@nuxtjs/strapi-edge@latest",
     "@sindresorhus/slugify": "^2.1.0",
     "@tailwindcss/typography": "^0.5.2",
+    "@types/lodash-es": "^4.17.6",
     "@vueuse/core": "^8.4.2",
     "eslint": "^8.15.0",
     "nuxt": "3.0.0-rc.3",
