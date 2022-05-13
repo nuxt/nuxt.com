@@ -25,7 +25,7 @@
     transform: translate3d(0, 0, 0);
   }
   100% {
-    transform: translate3d(0, -120px, 0); /* The image width */
+    transform: translate3d(0, -120px, 0);
   }
 }
 </style>
