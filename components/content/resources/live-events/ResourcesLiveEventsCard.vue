@@ -23,13 +23,13 @@
         <UIcon name="heroicons-outline:arrows-expand" class="w-5 h-5" />
       </div>
     </div>
-    <div class="h-24 px-4 pt-5 mb-5 text-gray-700 line-clamp-3">
+    <div class="h-24 px-4 pt-5 mb-5 u-text-gray-700 line-clamp-3">
       <p>
         {{ page.description }}
       </p>
     </div>
 
-    <div class="flex items-center px-4 py-3 border-t h-18 u-bg-gray-100">
+    <div class="flex items-center px-4 py-3 border-t u-border-gray-200 h-18 u-bg-gray-100">
       <div class="flex">
         <img :src="page.avatarSrc" size="lg" class="object-cover h-10 hexagon w-9">
       </div>

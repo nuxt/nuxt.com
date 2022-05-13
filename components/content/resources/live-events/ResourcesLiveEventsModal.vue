@@ -13,7 +13,9 @@
       {{ page.description }}
     </p>
 
-    <Document :value="page" class="prose" />
+    <div class="prose dark:prose-invert max-w-none">
+      <Document :value="page" />
+    </div>
   </UModal>
 </template>
 

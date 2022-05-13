@@ -32,5 +32,5 @@ defineProps({
 
 const show = ref(false)
 
-const { data: testimonialsData } = await useAsyncData('testimonials', () => queryContent('/docs/framework/v2/_collections/testimonials').find())
+const { data: testimonialsData } = await useAsyncData('testimonials', () => queryContent('/docs/framework/v2/_collections/testimonials').findOne())
 </script>
