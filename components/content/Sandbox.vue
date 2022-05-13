@@ -7,9 +7,9 @@
       :tabs="providersTabs"
       @update:active-tab-index="updateTab"
     >
-      <div slot="footer" class="absolute top-1/2 transform -translate-y-1/2 right-0 px-2">
+      <div slot="footer" class="absolute right-0 px-2 transform -translate-y-1/2 top-1/2">
         <Link class="flex items-center text-gray-500 dark:text-gray-400" :to="sandBoxUrl" blank>
-          <IconExternalLink class="h-5 w-5" />
+          <IconExternalLink class="w-5 h-5" />
         </Link>
       </div>
     </TabsHeader>
@@ -22,7 +22,7 @@
       class="w-full h-full min-h-[700px] overflow-hidden bg-gray-100 dark:bg-gray-800"
     />
 
-    <span v-else class="text-white flex-1">Loading Sandbox...</span>
+    <span v-else class="flex-1 text-white">Loading Sandbox...</span>
   </div>
 </template>
 

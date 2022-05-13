@@ -11,7 +11,7 @@
     >
       <NuxtLink
         :to="link.slug"
-        class="block py-1.5 flex items-center justify-between focus:outline-none w-full"
+        class="py-1.5 flex items-center justify-between focus:outline-none w-full"
         :exact="link.exact"
         :class="{
           'pl-4 lg:text-sm': level > 0,

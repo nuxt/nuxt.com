@@ -1,11 +1,11 @@
 <template>
-  <header class="u-bg-white border-b u-border-gray-200">
+  <header class="border-b u-bg-white u-border-gray-200">
     <ProjectNavbarDialog v-model="isOpen" :links="links" />
 
     <UContainer padded class="relative">
       <div class="flex items-center justify-between h-16">
         <button class="lg:hidden" @click="isOpen = true">
-          <UIcon name="heroicons-outline:menu-alt-2" class="w-6 h-6 flex-shrink-0" />
+          <UIcon name="heroicons-outline:menu-alt-2" class="flex-shrink-0 w-6 h-6" />
         </button>
 
         <NuxtLink :to="{ name: '@team-projects' }" class="inline-flex">

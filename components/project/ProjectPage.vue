@@ -5,7 +5,7 @@
       <slot name="header" />
     </div>
 
-    <div class="flex flex-1 u-bg-gray-50 overflow-hidden">
+    <div class="flex flex-1 overflow-hidden u-bg-gray-50">
       <!-- Secondary column (hidden on smaller screens) -->
       <aside v-if="$slots.aside" class="hidden lg:block lg:flex-shrink-0">
         <div class="relative flex flex-col h-full overflow-y-auto border-r w-72 u-border-gray-200 u-bg-white">
