@@ -15,21 +15,21 @@
     </PopoverButton>
 
     <transition
-      enter-active-class="transition ease-out duration-200"
-      enter-from-class="opacity-0 translate-y-1"
-      enter-to-class="opacity-100 translate-y-0"
-      leave-active-class="transition ease-in duration-150"
-      leave-from-class="opacity-100 translate-y-0"
-      leave-to-class="opacity-0 translate-y-1"
+      enter-active-class="transition duration-200 ease-out"
+      enter-from-class="translate-y-1 opacity-0"
+      enter-to-class="translate-y-0 opacity-100"
+      leave-active-class="transition duration-150 ease-in"
+      leave-from-class="translate-y-0 opacity-100"
+      leave-to-class="translate-y-1 opacity-0"
     >
-      <PopoverPanel class="absolute z-10 left-1/2 transform -translate-x-1/2 py-6 w-screen px-4 sm:px-6 lg:px-8 max-w-7xl" @mouseover="onMouseOver">
-        <div class="rounded-lg shadow-lg ring-1 u-ring-gray-200 overflow-hidden u-bg-white p-8 h-[384px] overflow-hidden">
+      <PopoverPanel class="absolute z-10 w-screen px-4 py-6 transform -translate-x-1/2 left-1/2 sm:px-6 lg:px-8 max-w-7xl" @mouseover="onMouseOver">
+        <div class="rounded-lg shadow-lg ring-1 u-ring-gray-200 u-bg-white p-8 h-[384px] overflow-hidden">
           <div class="flex items-start gap-6 sm:gap-8">
             <img v-if="link.banner" :src="link.banner">
 
-            <div class="grid gap-6 grid-cols-5 sm:gap-8 flex-1 py-2">
+            <div class="grid flex-1 grid-cols-5 gap-6 py-2 sm:gap-8">
               <div v-for="(child, index) of link.children" :key="index" :class="child.class">
-                <p class="font-semibold flex items-center gap-3 u-text-gray-900 mb-3">
+                <p class="flex items-center gap-3 mb-3 font-semibold u-text-gray-900">
                   <UIcon :name="child.icon" class="w-5 h-5" />
 
                   {{ child.title }}

@@ -8,7 +8,7 @@
       <UAvatar :src="`https://github.com/${project.repository.owner}.png`" :alt="project.name" size="md" class="flex-shrink-0" />
 
       <div class="text-left truncate">
-        <p class="font-semibold truncate leading-5">
+        <p class="font-semibold leading-5 truncate">
           {{ project.name }}
         </p>
 
@@ -16,7 +16,7 @@
       </div>
     </div>
 
-    <p class="u-text-gray-400 mb-6 break-words line-clamp-1">
+    <p class="mb-6 break-words u-text-gray-400 line-clamp-1">
       {{ project.repository.description || '&nbsp;' }}
     </p>
 

@@ -18,7 +18,7 @@
     <SwiperSlide v-for="(slide, i) in showcases" :key="i">
       <img
         :src="slide"
-        class="object-cover h-full w-full rounded-md"
+        class="object-cover w-full h-full rounded-md"
         alt="A showcase"
       >
     </SwiperSlide>

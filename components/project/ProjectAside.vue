@@ -1,17 +1,17 @@
 <template>
   <div class="flex flex-col w-16">
-    <div class="flex-1 flex flex-col min-h-0 overflow-y-auto u-bg-white border-r u-border-gray-200">
+    <div class="flex flex-col flex-1 min-h-0 overflow-y-auto border-r u-bg-white u-border-gray-200">
       <div class="flex-1">
-        <div class="py-4 flex items-center justify-center">
+        <div class="flex items-center justify-center py-4">
           <NuxtLink :to="{ name: '@team-projects' }" class="inline-flex">
             <UAvatar :src="`https://github.com/${project.repository.owner}.png`" :alt="project.name" size="sm" class="flex-shrink-0" />
           </NuxtLink>
         </div>
-        <div aria-label="Sidebar" class="pb-6 flex flex-col items-center space-y-3">
-          <UVerticalNavigation :links="links" spacing-class="p-2" badge-base-class="absolute rounded-full leading-none w-4 h-4 u-bg-gray-900 u-text-white flex items-center justify-center font-semibold z-[1] text-[11px] -top-1 -right-1" badge-active-class badge-inactive-class />
+        <div aria-label="Sidebar" class="flex flex-col items-center pb-6 space-y-3">
+          <UVerticalNavigation :links="links" spacing-class="p-2" badge-base-class="absolute rounded-full leading-none w-4 h-4 u-bg-gray-900 u-text-white flex items-center justify-center font-semibold z-[1] text-[11px] -top-1 -right-1" badge-active-class="" badge-inactive-class="" />
         </div>
       </div>
-      <div class="flex-shrink-0 flex flex-col items-center space-y-3 pb-6">
+      <div class="flex flex-col items-center flex-shrink-0 pb-6 space-y-3">
         <ClientOnly>
           <UButton v-if="!!previewUrl" v-show="!isPreviewOpen && ['@team-project-content', '@team-project-media'].includes(route.name)" icon="tabler:picture-in-picture-on" variant="transparent" @click="isPreviewOpen = true" />
         </ClientOnly>

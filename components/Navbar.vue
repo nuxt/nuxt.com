@@ -1,6 +1,6 @@
 <template>
   <header
-    class="sticky lg:relative top-0 z-10"
+    class="sticky top-0 z-10 lg:relative"
     :class="hasScrolledPastNavbar ? 'backdrop-blur-md bg-white/75 dark:bg-black/75' : ''"
   >
     <NavbarDialog v-model="isOpen" :links="links" />
@@ -9,7 +9,7 @@
       <div class="grid items-center h-16 grid-cols-6 gap-3 lg:h-20 lg:justify-center">
         <div class="lg:hidden">
           <button @click="isOpen = true">
-            <UIcon name="heroicons-outline:menu-alt-2" class="w-6 h-6 flex-shrink-0" />
+            <UIcon name="heroicons-outline:menu-alt-2" class="flex-shrink-0 w-6 h-6" />
           </button>
         </div>
 

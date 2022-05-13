@@ -30,7 +30,7 @@
       </li>
     </ul>
 
-    <div class="border-t u-border-gray-200 py-3">
+    <div class="py-3 border-t u-border-gray-200">
       <NuxtLink
         :to="contributeUrl"
         target="_blank"

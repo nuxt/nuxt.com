@@ -4,7 +4,7 @@
       <ProjectsItem v-for="project of projects" :key="project.id" :project="project" />
     </div>
 
-    <p v-else class="u-text-gray-400 font-medium text-center mt-12">
+    <p v-else class="mt-12 font-medium text-center u-text-gray-400">
       No projects match your search.
     </p>
   </div>
