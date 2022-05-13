@@ -290,9 +290,9 @@
   integrity sha512-RkYG5KiGNX0fJ5YoI0f4Wfq2Yo74D25Hru4fxTOioYdQvHBxcrrtTTyT5Ozzh2ejcNrhFy7IEts2WyEY7yi5yw==
 
 "@docus/remark-mdc@npm:@docus/remark-mdc-edge":
-  version "0.1.0-27457273.325e75e"
-  resolved "https://registry.yarnpkg.com/@docus/remark-mdc-edge/-/remark-mdc-edge-0.1.0-27457273.325e75e.tgz#bfe1aaec52b7bd7bb9db22a1d5253b6d85c619e0"
-  integrity sha512-eOSzDAF4yE3itzCA2wGlD6CVAyb2WKzoI0yb2R1l6vsDCzkbW5U7PWJn92YyuwO7g0uqZZa+b4PiY/5xnnKUaQ==
+  version "0.1.0-27540675.3108772"
+  resolved "https://registry.yarnpkg.com/@docus/remark-mdc-edge/-/remark-mdc-edge-0.1.0-27540675.3108772.tgz#563aaf2b77fd5ea825662d59fd798f059f6063ed"
+  integrity sha512-sulY6JDPMnEUb6FUjFhhgUqDgQWCa9+QXFaxVRC9kazJpCsYAAepWf7Yf6ojPe09U3InUk82WAfB2qLBReplmg==
   dependencies:
     flat "^5.0.2"
     gray-matter "^4.0.3"
@@ -721,9 +721,9 @@
     fastq "^1.6.0"
 
 "@nuxt/content@npm:@nuxt/content-edge@latest":
-  version "2.0.0-27538356.d9d805e"
-  resolved "https://registry.yarnpkg.com/@nuxt/content-edge/-/content-edge-2.0.0-27538356.d9d805e.tgz#b4118014e05e379f9f694aff6177b41e4e4ab4d8"
-  integrity sha512-9keGJ+DljbevbKNQV9V/9Z5I77J8CUeTqq57FP550RDfoZUCx6B71t0zb2d2sRB/uIMXyk/k12pCnIV2Y46JWg==
+  version "2.0.0-27540861.df10828"
+  resolved "https://registry.yarnpkg.com/@nuxt/content-edge/-/content-edge-2.0.0-27540861.df10828.tgz#849d44e98211327b11fbad9c7719fde2715b5846"
+  integrity sha512-SLI+q1Tfepz0nAsPMJFuTsmtnUoiVVSr1ZAENpnig7zD8F/IJDIQKHPGD0neP9GS7M+aHH1PuRyStY/34skMsA==
   dependencies:
     "@nuxt/kit" "^3.0.0-rc.3"
     csvtojson "^2.0.10"
@@ -826,11 +826,11 @@
     untyped "^0.4.4"
 
 "@nuxt/kit@npm:@nuxt/kit-edge@latest":
-  version "3.0.0-rc.3-27538180.cad4edd"
-  resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-rc.3-27538180.cad4edd.tgz#c6858d548f8e01e2e19ab04d41ad3ffb2bdf1b8e"
-  integrity sha512-1sTdCK7Xomdao9qZHPce4sxn8+fNDMUNWNGxh7RYpcLXzMiZLy3xLnK8iyZTU8H1bYnNXLn0MkVFKOQPz6SU2w==
+  version "3.0.0-rc.3-27540667.2886dfd"
+  resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-rc.3-27540667.2886dfd.tgz#9550e4f2dbc9c252c4d5919b77a372d438c98e9d"
+  integrity sha512-zATunvj3gHFsGIdj8SF/9gJvrKMDvafi7ZZcKMI9Y3bD7ULwe39mLH8FPKnsuV1MZiqhN41Cbpesv7DK+TsBkA==
   dependencies:
-    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-rc.3-27538180.cad4edd"
+    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-rc.3-27540667.2886dfd"
     c12 "^0.2.7"
     consola "^2.15.3"
     defu "^6.0.0"
@@ -879,10 +879,10 @@
     ufo "^0.8.4"
     unimport "^0.1.9"
 
-"@nuxt/schema@npm:@nuxt/schema-edge@3.0.0-rc.3-27538180.cad4edd":
-  version "3.0.0-rc.3-27538180.cad4edd"
-  resolved "https://registry.yarnpkg.com/@nuxt/schema-edge/-/schema-edge-3.0.0-rc.3-27538180.cad4edd.tgz#63d5734dff0e1cba312614d4f7520a31838a06ae"
-  integrity sha512-qeIMDb9D96VnsG2diL8vQDjhRzn0x7c7clIawGRv2GKFflNi2tK0+cfYifzYXEaNOpAC+ViiGJKyIyyJKZUH0A==
+"@nuxt/schema@npm:@nuxt/schema-edge@3.0.0-rc.3-27540667.2886dfd":
+  version "3.0.0-rc.3-27540667.2886dfd"
+  resolved "https://registry.yarnpkg.com/@nuxt/schema-edge/-/schema-edge-3.0.0-rc.3-27540667.2886dfd.tgz#38dac6b02be07183275203a2d473831b33e01f35"
+  integrity sha512-UbkbqhNap1Urxq+gGp9cm3+pb6h6xKB2k654bPtH3L5PuWohJFwIzMRJnyzpKN9xak3OoBue8HYK3ugk1geI1w==
   dependencies:
     c12 "^0.2.7"
     create-require "^1.1.1"
@@ -961,9 +961,9 @@
     vite-plugin-checker "^0.4.6"
 
 "@nuxthq/admin@npm:@nuxthq/admin-edge@latest":
-  version "0.0.1-27538003.bc43256"
-  resolved "https://registry.yarnpkg.com/@nuxthq/admin-edge/-/admin-edge-0.0.1-27538003.bc43256.tgz#c757126d37d74ce61f1a3367a16a9fa3ecfb18ce"
-  integrity sha512-WRKiVervRH3//5wRa8oJ9SYvgIQtboZBZmDYf/Uek591j1BsMWnRTCYQI+zLv2OqFhWuaDGus1GK/kW0H5K/bg==
+  version "0.0.1-27539132.30187e6"
+  resolved "https://registry.yarnpkg.com/@nuxthq/admin-edge/-/admin-edge-0.0.1-27539132.30187e6.tgz#22030c4dfc40ef145e5f482f838ae8c5933f2958"
+  integrity sha512-hR9G/mJqk1o+q9bvWioS/ryinJFtnxAK3a3nyozXQ9aMX/MyOFumKULbHST5hwAqZ3RAAM+XGV1/WZLmqsJqYA==
   dependencies:
     "@nuxt/kit" "^3.0.0-rc.3"
     nuxt-component-meta "^0.1.5"
@@ -6644,9 +6644,9 @@ ora@^5.4.1:
     wcwidth "^1.0.1"
 
 orderedmap@^1.1.0:
-  version "1.1.5"
-  resolved "https://registry.yarnpkg.com/orderedmap/-/orderedmap-1.1.5.tgz#4174c90b61bd7c25294932edf789f3b5677744d0"
-  integrity sha512-/fzlCGKRmfayGoI9UUXvJfc2nMZlJHW30QqEvwPvlg8tsX7jyiUSomYie6mYqx7Z9bOMGoag0H/q1PS/0PjYkg==
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/orderedmap/-/orderedmap-1.1.6.tgz#8e61bf6e7ca96b468a11e6253fad6e5234a4b59e"
+  integrity sha512-AJ/zu9CxWfDsHvjklOEdbWo1ZqCdJNPK1RGkwc9OA9vyuTHjRH0Jdy1o3KPcjbzz016n+X9SD+Y11f1rhmtpAg==
 
 os-homedir@^1.0.0:
   version "1.0.2"
@@ -7253,11 +7253,6 @@ pretty-bytes@^6.0.0:
   resolved "https://registry.yarnpkg.com/pretty-bytes/-/pretty-bytes-6.0.0.tgz#928be2ad1f51a2e336add8ba764739f9776a8140"
   integrity sha512-6UqkYefdogmzqAZWzJ7laYeJnaXDy2/J+ZqiiMtS7t7OfpXWTlaeGMwX8U6EFvPV/YWWEKRkS8hKS4k60WHTOg==
 
-prismjs@~1.28.0:
-  version "1.28.0"
-  resolved "https://registry.yarnpkg.com/prismjs/-/prismjs-1.28.0.tgz#0d8f561fa0f7cf6ebca901747828b149147044b6"
-  integrity sha512-8aaXdYvl1F7iC7Xm1spqSaY/OJBpYW3v+KJ+F17iYxvdc8sfjW194COK5wVhMZX45tGteiBQgdvD/nhxcRwylw==
-
 process-nextick-args@~2.0.0:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/process-nextick-args/-/process-nextick-args-2.0.1.tgz#7820d9b16120cc55ca9ae7792680ae7dba6d7fe2"
@@ -7559,15 +7554,14 @@ redis-parser@^3.0.0:
     redis-errors "^1.0.0"
 
 refractor@^4.0.0:
-  version "4.6.0"
-  resolved "https://registry.yarnpkg.com/refractor/-/refractor-4.6.0.tgz#79bc990305df36b1ccda99c9aa9ede29f7f975d1"
-  integrity sha512-+Px4DX1LmTUzuARW0zqjYLrsCd1/jtKIo4hLH0R7Hwod8joieyQrqf8wXx0wPt81k9+OVYusktapwBhk/CjvVw==
+  version "4.7.0"
+  resolved "https://registry.yarnpkg.com/refractor/-/refractor-4.7.0.tgz#aad649d7857acdc0d5792f1a7900867256941ac0"
+  integrity sha512-X3JUDE7nq1csWs7Etg5v7hW10RzF4lYesEn/KDbllocj0itZrs3paO2ZEgYUXrlgXzY3IN+eDRByyIvzcfF9Tg==
   dependencies:
     "@types/hast" "^2.0.0"
     "@types/prismjs" "^1.0.0"
     hastscript "^7.0.0"
     parse-entities "^4.0.0"
-    prismjs "~1.28.0"
 
 regenerator-runtime@^0.13.4:
   version "0.13.9"
@@ -7845,9 +7839,9 @@ rollup@^2.59.0, rollup@^2.72.1:
     fsevents "~2.3.2"
 
 rope-sequence@^1.3.0:
-  version "1.3.2"
-  resolved "https://registry.yarnpkg.com/rope-sequence/-/rope-sequence-1.3.2.tgz#a19e02d72991ca71feb6b5f8a91154e48e3c098b"
-  integrity sha512-ku6MFrwEVSVmXLvy3dYph3LAMNS0890K7fabn+0YIRQ2T96T9F4gkFf0vf0WW0JUraNWwGRtInEpH7yO4tbQZg==
+  version "1.3.3"
+  resolved "https://registry.yarnpkg.com/rope-sequence/-/rope-sequence-1.3.3.tgz#3f67fc106288b84b71532b4a5fd9d4881e4457f0"
+  integrity sha512-85aZYCxweiD5J8yTEbw+E6A27zSnLPNDL0WfPdw3YYodq7WjnTKo0q4dtyQ2gz23iPT8Q9CUyJtAaUNcTxRf5Q==
 
 run-async@^2.4.0:
   version "2.4.1"
@@ -9297,9 +9291,9 @@ y-leveldb@^0.1.0:
     lib0 "^0.2.31"
 
 y-prosemirror@^1.0.9:
-  version "1.0.19"
-  resolved "https://registry.yarnpkg.com/y-prosemirror/-/y-prosemirror-1.0.19.tgz#322098c6a0625759f86eae1fbb7dcb06b55aaf51"
-  integrity sha512-et+aqYltjamYBk+uml5/y86PioRstv0r0B+4Oct/IA9Go55whK8MCaFcYZ65aH5Ip7ELmgqzdvrEreyvEzORGA==
+  version "1.0.20"
+  resolved "https://registry.yarnpkg.com/y-prosemirror/-/y-prosemirror-1.0.20.tgz#1832b5ab29852fc4607e9cf6b0c431e9caeed79e"
+  integrity sha512-LVMtu3qWo0emeYiP+0jgNcvZkqhzE/otOoro+87q0iVKxy/sMKuiJZnokfJdR4cn9qKx0Un5fIxXqbAlR2bFkA==
   dependencies:
     lib0 "^0.2.42"
 
