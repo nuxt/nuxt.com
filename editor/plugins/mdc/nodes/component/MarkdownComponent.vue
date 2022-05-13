@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, unref } from 'vue'
+import { defineComponent, ref } from 'vue'
 import { pascalCase } from 'scule'
 import type { ComponentSchema } from '../../../../types'
 import Icon from '../utils/Icon.vue'
@@ -47,7 +47,7 @@ export default defineComponent({
     MarkdownComponentProps
   },
   setup () {
-    const { node, duplicate, remove, updateAttributes } = useNode()
+    const { node, duplicate, remove } = useNode()
     const schema = node.attrs.schema as ComponentSchema
 
     const hasProps = schema && schema.props.length > 0
