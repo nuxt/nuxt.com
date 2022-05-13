@@ -108,6 +108,10 @@ const openDirs = () => {
 }
 
 const onMarkdownUpdate = (markdown: string) => {
+  console.log('onMarkdownUpdate', {
+    from: parsedContent.value.markdown,
+    to: markdown
+  })
   parsedContent.value.markdown = markdown
   onUpdate()
 }

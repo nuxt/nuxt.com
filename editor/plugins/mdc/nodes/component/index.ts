@@ -47,14 +47,16 @@ const parseMarkdown = (ctx: Ctx, id: string): NodeSchema['parseMarkdown'] => ({
 })
 
 // Serialization
-const serializeProps = ({ props, propsInfo: { inline, frontMatter } }: Record<string, any>) => {
-  const propsByKey = (acc, key) => {
-    acc[key] = props[key] || props[`:${key}`]
-    return acc
+const serializeAttributes = ({ props, propsInfo: { inline, frontMatter } }: Record<string, any>) => {
+  const attributesByKey = (attrs, key) => {
+    attrs[key] = `:${key}` in props
+      ? JSON.parse(props[`:${key}`])
+      : props[key]
+    return attrs
   }
 
-  const attributes = inline.reduce(propsByKey, {})
-  const fmAttributes = frontMatter.reduce(propsByKey, {})
+  const attributes = inline.reduce(attributesByKey, {})
+  const fmAttributes = frontMatter.reduce(attributesByKey, {})
 
   return {
     attributes,
@@ -67,7 +69,7 @@ const toMarkdown = (id: string): NodeSchema['toMarkdown'] => ({
   runner: (state, node) => {
     state.openNode(id, undefined, {
       name: node.attrs.name,
-      ...serializeProps(node.attrs)
+      ...serializeAttributes(node.attrs)
     })
     node.content.size && state.next(node.content)
     state.closeNode()

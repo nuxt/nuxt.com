@@ -290,9 +290,9 @@
   integrity sha512-RkYG5KiGNX0fJ5YoI0f4Wfq2Yo74D25Hru4fxTOioYdQvHBxcrrtTTyT5Ozzh2ejcNrhFy7IEts2WyEY7yi5yw==
 
 "@docus/remark-mdc@npm:@docus/remark-mdc-edge":
-  version "0.1.0-27457273.325e75e"
-  resolved "https://registry.yarnpkg.com/@docus/remark-mdc-edge/-/remark-mdc-edge-0.1.0-27457273.325e75e.tgz#bfe1aaec52b7bd7bb9db22a1d5253b6d85c619e0"
-  integrity sha512-eOSzDAF4yE3itzCA2wGlD6CVAyb2WKzoI0yb2R1l6vsDCzkbW5U7PWJn92YyuwO7g0uqZZa+b4PiY/5xnnKUaQ==
+  version "0.1.0-27540675.3108772"
+  resolved "https://registry.yarnpkg.com/@docus/remark-mdc-edge/-/remark-mdc-edge-0.1.0-27540675.3108772.tgz#563aaf2b77fd5ea825662d59fd798f059f6063ed"
+  integrity sha512-sulY6JDPMnEUb6FUjFhhgUqDgQWCa9+QXFaxVRC9kazJpCsYAAepWf7Yf6ojPe09U3InUk82WAfB2qLBReplmg==
   dependencies:
     flat "^5.0.2"
     gray-matter "^4.0.3"
