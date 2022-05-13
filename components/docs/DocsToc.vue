@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-2">
-    <NuxtLink v-if="prev" :to="prev.slug" class="flex lg:flex-row-reverse items-center font-medium hover:font-semibold text-sm u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900 gap-x-3">
-      <div class="flex-shrink-0 p-1 u-bg-gray-100 rounded-md">
+    <NuxtLink v-if="prev" :to="prev.path" class="flex items-center text-sm font-medium lg:flex-row-reverse hover:font-semibold u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900 gap-x-3">
+      <div class="flex-shrink-0 p-1 rounded-md u-bg-gray-100">
         <UIcon name="heroicons-solid:chevron-double-left" class="w-4 h-4 u-text-gray-400" />
       </div>
 
@@ -9,8 +9,8 @@
     </NuxtLink>
 
     <template v-if="toc.length">
-      <div class="flex lg:flex-row-reverse items-center font-semibold u-text-gray-900 text-sm gap-x-3">
-        <div class="flex-shrink-0 p-1 u-bg-gray-900 rounded-md">
+      <div class="flex items-center text-sm font-semibold lg:flex-row-reverse u-text-gray-900 gap-x-3">
+        <div class="flex-shrink-0 p-1 rounded-md u-bg-gray-900">
           <UIcon name="heroicons-outline:view-grid" class="w-4 h-4 u-text-white" />
         </div>
 
@@ -18,10 +18,10 @@
       </div>
 
       <ul class="pl-3 lg:pr-3">
-        <li v-for="link in toc" :key="link.text" class="border-l-2 lg:border-r-2 lg:border-l-0 min-w-0 lg:text-right" :class="activeHeadings.includes(link.id) ? 'u-border-gray-900' : 'u-border-gray-300'">
+        <li v-for="link in toc" :key="link.text" class="min-w-0 border-l-2 lg:border-r-2 lg:border-l-0 lg:text-right" :class="activeHeadings.includes(link.id) ? 'u-border-gray-900' : 'u-border-gray-300'">
           <a
             :href="`#${link.id}`"
-            class="text-sm py-1 pl-3 lg:pr-3 block truncate focus:outline-none"
+            class="block py-1 pl-3 text-sm truncate lg:pr-3 focus:outline-none"
             :class="{
               'u-text-gray-900 font-semibold': activeHeadings.includes(link.id),
               'font-medium u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900': !activeHeadings.includes(link.id)
@@ -34,8 +34,8 @@
       </ul>
     </template>
 
-    <NuxtLink v-if="next" :to="next.slug" class="flex lg:flex-row-reverse items-center font-medium hover:font-semibold text-sm u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900 gap-x-3 focus:outline-none">
-      <div class="flex-shrink-0 p-1 u-bg-gray-100 rounded-md">
+    <NuxtLink v-if="next" :to="next.path" class="flex items-center text-sm font-medium lg:flex-row-reverse hover:font-semibold u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900 gap-x-3 focus:outline-none">
+      <div class="flex-shrink-0 p-1 rounded-md u-bg-gray-100">
         <UIcon name="heroicons-solid:chevron-double-right" class="w-4 h-4 u-text-gray-400" />
       </div>
 

@@ -2,13 +2,13 @@
   <USlideover v-model="isOpen">
     <template #header>
       <button v-if="selectedLink" @click="selectedLink = null">
-        <UIcon name="heroicons-outline:arrow-sm-left" class="w-6 h-6 flex-shrink-0" />
+        <UIcon name="heroicons-outline:arrow-sm-left" class="flex-shrink-0 w-6 h-6" />
       </button>
       <button v-else @click="isOpen = false">
-        <UIcon name="heroicons-outline:x" class="w-6 h-6 flex-shrink-0" />
+        <UIcon name="heroicons-outline:x" class="flex-shrink-0 w-6 h-6" />
       </button>
 
-      <p v-if="selectedLink" class="font-semibold text-lg">
+      <p v-if="selectedLink" class="text-lg font-semibold">
         {{ selectedLink.title }}
       </p>
       <NuxtLink v-else to="/" class="block u-text-black" @click="isOpen = false">
@@ -27,7 +27,7 @@
       </div>
     </template>
 
-    <div class="py-4 px-4 sm:px-6 overflow-y-scroll flex-1">
+    <div class="flex-1 px-4 py-4 overflow-y-scroll sm:px-6">
       <DocsAsideTree :tree="tree" :max="selectedLink ? null : 2" @select="onSelect" @close="isOpen = false" />
     </div>
   </USlideover>
@@ -73,7 +73,7 @@ watch(
     const path = route.fullPath.split('/').slice(0, 3).join('/')
     const nav = navigation.value ? navFromPath(path) : []
 
-    if (nav && nav.slug === path) {
+    if (nav && nav.path === path) {
       selectedLink.value = nav
     }
   },
@@ -88,7 +88,7 @@ const tree = computed(() => {
   return props.links.map((link) => {
     return {
       ...link,
-      ...navFromPath(link.slug)
+      ...navFromPath(link.path)
     }
   })
 })
