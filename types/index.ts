@@ -117,6 +117,7 @@ export interface Commit {
 
 export interface GitHubBranch {
   name: string
+  openedAt?: number
 }
 
 export interface GitHubAccount {
