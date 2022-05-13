@@ -1,7 +1,7 @@
 <template>
-  <div class="relative mt-12 mb-16 overflow-hidden sm:mt-24 border-y">
+  <div class="relative mt-12 overflow-hidden border-t sm:mt-24 u-border-gray-200">
     <UContainer class="relative py-12 lg:py-16 lg:flex lg:items-center lg:justify-between" padded>
-      <span class="z-0 _ellipse " />
+      <span class="z-0 _ellipse" />
       <h2 class="u-text-black z-[1] tracking-tight">
         <span class="block text-2xl font-semibold">
           <Markdown use="title" unwrap="p" />

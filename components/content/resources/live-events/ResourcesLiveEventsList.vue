@@ -9,5 +9,5 @@
 </template>
 
 <script setup lang="ts">
-const { data: liveEventsData } = await useAsyncData('live-events', () => queryContent('/resources/live-events/collections').find())
+const { data: liveEventsData } = await useAsyncData('live-events', () => queryContent('/resources/live-events/_collections').find())
 </script>
