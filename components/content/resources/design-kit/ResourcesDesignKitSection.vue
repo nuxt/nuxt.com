@@ -33,10 +33,6 @@ defineProps({
     type: Boolean,
     default: true
   },
-  slug: {
-    type: String,
-    default: ''
-  },
   secondaries: {
     type: Boolean,
     default: false

@@ -338,6 +338,7 @@ As Roobert font is licensed, you cannot use it for free so you can use the [Inte
 ::resources-design-kit-section
 ---
 sectionClass: 'pb-16 pt-8'
+highlight: false
 ---
 #cta
   ::resources-design-kit-cta
