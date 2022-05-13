@@ -1,5 +1,5 @@
 <template>
-  <Content :document="page" />
+  <Document v-model="page" />
 </template>
 
 <script setup lang="ts">

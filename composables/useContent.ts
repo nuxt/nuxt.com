@@ -92,7 +92,7 @@ export const useContent = () => {
   const findBottomLink = (link: NavItem) => {
     for (const child of link.children) {
       if (!child.children) {
-        return child.slug
+        return child.path
       }
     }
 
@@ -109,7 +109,7 @@ export const useContent = () => {
    */
   const navFromPath = (path: string, tree: NavItem[] = navigation.value) => {
     for (const file of tree) {
-      if (file.slug === path && !file.id) {
+      if (file.path === path && !file.id) {
         return file
       }
 
@@ -127,7 +127,7 @@ export const useContent = () => {
         if (result) { return result }
       }
 
-      if (file.slug === path) {
+      if (file.path === path) {
         return file
       }
     }

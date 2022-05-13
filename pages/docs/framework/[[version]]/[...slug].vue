@@ -1,7 +1,7 @@
 <template>
   <DocsPageContent>
     <div class="prose dark:prose-invert max-w-none">
-      <Content v-if="page" :document="page" />
+      <Document v-if="page" v-model="page" />
     </div>
   </DocsPageContent>
 </template>
