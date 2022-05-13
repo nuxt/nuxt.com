@@ -1,5 +1,5 @@
 <template>
-  <UCard body-class="grid grid-cols-2 gap-8 p-10" @submit.prevent="onSubmit">
+  <UCard body-class="grid grid-cols-2 gap-8 p-10" class="backdrop-blur-lg !bg-opacity-10" @submit.prevent="onSubmit">
     <UFormGroup name="firstname" label="First name">
       <UInput
         v-model="form.firstname"

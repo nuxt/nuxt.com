@@ -40,5 +40,5 @@ Read the latest news about all Nuxt solutions, from framework announcements to i
   ---
   :::
 
-  :company-contact-contact
+  :company-contact-form
 ::

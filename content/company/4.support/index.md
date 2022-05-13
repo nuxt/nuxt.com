@@ -37,7 +37,7 @@ Read the latest news about all Nuxt solutions, from framework announcements to i
   Nuxt offers a compelling solution and a great ecosystem to help you ship fullstack Vue apps that are performant and SEO friendly. The flexibility to choose between SSR and SSG is icing on the cake.
   :::
 
-  :company-support-contact
+  :company-support-form
 ::
 
 ::company-support-carousel
