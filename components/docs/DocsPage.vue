@@ -2,12 +2,12 @@
   <div class="relative flex-1">
     <slot name="header" />
 
-    <main class="relative pb-4 sm:pb-6 lg:py-8">
+    <main class="relative pb-16 lg:pt-8">
       <UContainer padded>
-        <div class="grid grid-cols-10 gap-8 relative">
+        <div class="relative grid grid-cols-10 gap-8">
           <aside
             v-if="!!$slots.aside"
-            class="pb-8 overflow-x-hidden overflow-y-auto lg:pb-0 hidden lg:block  lg:self-start col-span-2"
+            class="hidden col-span-2 pb-8 overflow-x-hidden overflow-y-auto lg:pb-0 lg:block lg:self-start"
             :class="{
               'lg:max-h-[calc(100vh-64px)] lg:top-16 lg:sticky lg:pt-8 lg:-mt-8': sticky
             }"
