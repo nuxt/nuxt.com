@@ -2,7 +2,7 @@
   <div class="relative flex-1">
     <slot name="header" />
 
-    <main class="relative pb-12 sm:pb-16 lg:pb-20 lg:pt-8">
+    <main class="relative pb-16 lg:pt-8">
       <UContainer padded>
         <div class="relative grid grid-cols-10 gap-8">
           <aside
