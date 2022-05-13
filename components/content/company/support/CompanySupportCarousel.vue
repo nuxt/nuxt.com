@@ -1,5 +1,5 @@
 <template>
-  <UContainer padded class="pt-12 pb-36">
+  <UContainer padded class="pt-24 pb-36">
     <Swiper
       :modules="modules"
       :slides-per-view="5"

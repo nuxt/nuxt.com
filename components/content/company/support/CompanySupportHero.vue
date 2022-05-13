@@ -8,14 +8,14 @@
       </div>
 
       <div class="relative flex flex-col justify-center py-8 space-y-5 lg:col-span-2">
-        <h1 class="text-5xl font-semibold u-text-gray-900">
+        <h1 class="text-5xl font-semibold lg:max-w-xl u-text-gray-900">
           <Markdown use="title" unwrap="p" />
         </h1>
-        <p class="max-w-xl text-lg font-medium u-text-gray-500">
+        <p class="text-lg font-medium lg:max-w-xl u-text-gray-500">
           <Markdown use="description" unwrap="p" />
         </p>
 
-        <div class="flex gap-8">
+        <div class="flex gap-6">
           <UButton
             v-for="(button, index) in buttons"
             :key="index"
