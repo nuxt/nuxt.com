@@ -1,6 +1,6 @@
 <template>
   <ul class="grid grid-cols-1 gap-12 pt-12 sm:grid-cols-2">
-    <li v-for="need in needData[0].needs" :key="need.title">
+    <li v-for="need in needData.needs" :key="need.title">
       <NuxtLink :to="`/docs/framework/v2${need.to}`">
         <UCard shadow-class="transition-shadow duration-300 shadow-none hover:shadow-md hover:drop-shadow-md hover:shadow-inner-md" class="p-2 group">
           <div class="flex justify-between pb-4">
@@ -23,5 +23,5 @@
 </template>
 
 <script setup lang="ts">
-const { data: needData } = await useAsyncData('need', () => queryContent('/docs/framework/v2/collections/need').find())
+const { data: needData } = await useAsyncData('need', () => queryContent('/docs/framework/v2/_collections/need').findOne())
 </script>
