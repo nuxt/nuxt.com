@@ -1,19 +1,19 @@
 <template>
   <div
-    class="u-bg-white border u-border-gray-200 rounded-md px-4 py-2 my-2"
+    class="px-4 py-2 my-2 border rounded-md u-bg-white u-border-gray-200"
     data-test="markdown-slot"
     @mouseenter="showActions = true"
     @mouseleave="showActions = false"
   >
-    <div class="flex justify-between items-center h-6">
+    <div class="flex items-center justify-between h-6">
       <span class="text-xs font-semibold u-text-gray-900">
         {{ name }}
       </span>
-      <div class="flex flex-row justify-center items-center transition-opacity duration-200" :class="{ 'opacity-0': !showActions }" data-test="actions">
+      <div class="flex flex-row items-center justify-center transition-opacity duration-200" :class="{ 'opacity-0': !showActions }" data-test="actions">
         <button
           v-for="{ icon, onClick } in actions"
           :key="icon"
-          class="u-text-gray-500 hover:u-text-gray-700 focus:u-text-gray-700 p-1 -mr-2"
+          class="p-1 -mr-2 u-text-gray-500 hover:u-text-gray-700 focus:u-text-gray-700"
           :data-test="icon"
           @click="onClick"
         >
