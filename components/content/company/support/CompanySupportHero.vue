@@ -1,13 +1,13 @@
 <template>
-  <UContainer padded class="pb-12">
-    <div class="flex flex-col grid-cols-1 gap-8 md:grid sm:grid-cols-2 lg:grid-cols-3 md:h-[475px]">
-      <div class="relative md:absolute right-0 flex items-center justify-center lg:col-span-1 h-[475px] md:h-auto">
-        <img src="/company/support/gems.svg">
-        <div class="h-[170px] absolute top-0 inset-x-0 bg-gradient-to-b from-white dark:from-black to-transparent" />
-        <div class="w-[170px] absolute right-0 inset-y-0 bg-gradient-to-l from-white dark:from-black to-transparent" />
-      </div>
+  <div class="flex flex-col items-center gap-8 md:flex-row-reverse md:h-[475px]">
+    <div class="relative flex items-center justify-end lg:col-span-1">
+      <img src="/company/support/gems.svg">
+      <div class="h-[170px] absolute top-0 inset-x-0 bg-gradient-to-b from-white dark:from-black to-transparent" />
+      <div class="w-[170px] absolute right-0 inset-y-0 bg-gradient-to-l from-white dark:from-black to-transparent" />
+    </div>
 
-      <div class="relative flex flex-col justify-center py-8 space-y-5 lg:col-span-2">
+    <UContainer padded class="pb-12">
+      <div class="flex flex-col justify-center py-8 space-y-5 lg:col-span-2">
         <h1 class="text-5xl font-semibold lg:max-w-xl u-text-gray-900">
           <Markdown use="title" unwrap="p" />
         </h1>
@@ -23,8 +23,8 @@
           />
         </div>
       </div>
-    </div>
-  </UContainer>
+    </UContainer>
+  </div>
 </template>
 
 <script setup lang="ts">
