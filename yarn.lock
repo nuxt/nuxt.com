@@ -721,9 +721,9 @@
     fastq "^1.6.0"
 
 "@nuxt/content@npm:@nuxt/content-edge@latest":
-  version "2.0.0-27540609.a6f4008"
-  resolved "https://registry.yarnpkg.com/@nuxt/content-edge/-/content-edge-2.0.0-27540609.a6f4008.tgz#6c00f8033f0f51e9bbae5a7aa80b763083b8fb36"
-  integrity sha512-Gq2lw8UEv0V1m4kxNeWK241ZbOkX3anwHJi7nFVkW69p4RVRKFawVgTQv5VclV+QOK+dm99Cv1mmNJcUlGMMrw==
+  version "2.0.0-27540861.df10828"
+  resolved "https://registry.yarnpkg.com/@nuxt/content-edge/-/content-edge-2.0.0-27540861.df10828.tgz#849d44e98211327b11fbad9c7719fde2715b5846"
+  integrity sha512-SLI+q1Tfepz0nAsPMJFuTsmtnUoiVVSr1ZAENpnig7zD8F/IJDIQKHPGD0neP9GS7M+aHH1PuRyStY/34skMsA==
   dependencies:
     "@nuxt/kit" "^3.0.0-rc.3"
     csvtojson "^2.0.10"
@@ -6644,9 +6644,9 @@ ora@^5.4.1:
     wcwidth "^1.0.1"
 
 orderedmap@^1.1.0:
-  version "1.1.5"
-  resolved "https://registry.yarnpkg.com/orderedmap/-/orderedmap-1.1.5.tgz#4174c90b61bd7c25294932edf789f3b5677744d0"
-  integrity sha512-/fzlCGKRmfayGoI9UUXvJfc2nMZlJHW30QqEvwPvlg8tsX7jyiUSomYie6mYqx7Z9bOMGoag0H/q1PS/0PjYkg==
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/orderedmap/-/orderedmap-1.1.6.tgz#8e61bf6e7ca96b468a11e6253fad6e5234a4b59e"
+  integrity sha512-AJ/zu9CxWfDsHvjklOEdbWo1ZqCdJNPK1RGkwc9OA9vyuTHjRH0Jdy1o3KPcjbzz016n+X9SD+Y11f1rhmtpAg==
 
 os-homedir@^1.0.0:
   version "1.0.2"
@@ -7839,9 +7839,9 @@ rollup@^2.59.0, rollup@^2.72.1:
     fsevents "~2.3.2"
 
 rope-sequence@^1.3.0:
-  version "1.3.2"
-  resolved "https://registry.yarnpkg.com/rope-sequence/-/rope-sequence-1.3.2.tgz#a19e02d72991ca71feb6b5f8a91154e48e3c098b"
-  integrity sha512-ku6MFrwEVSVmXLvy3dYph3LAMNS0890K7fabn+0YIRQ2T96T9F4gkFf0vf0WW0JUraNWwGRtInEpH7yO4tbQZg==
+  version "1.3.3"
+  resolved "https://registry.yarnpkg.com/rope-sequence/-/rope-sequence-1.3.3.tgz#3f67fc106288b84b71532b4a5fd9d4881e4457f0"
+  integrity sha512-85aZYCxweiD5J8yTEbw+E6A27zSnLPNDL0WfPdw3YYodq7WjnTKo0q4dtyQ2gz23iPT8Q9CUyJtAaUNcTxRf5Q==
 
 run-async@^2.4.0:
   version "2.4.1"
