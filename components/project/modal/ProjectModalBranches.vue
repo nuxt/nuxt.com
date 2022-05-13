@@ -11,6 +11,7 @@
 </template>
 
 <script setup lang="ts">
+import type { WritableComputedRef } from 'vue'
 import { useMagicKeys, whenever, and, useActiveElement } from '@vueuse/core'
 import type { GitHubBranch, Project } from '~/types'
 
@@ -51,7 +52,7 @@ const {
 
 // Computed
 
-const isOpen = computed({
+const isOpen: WritableComputedRef<boolean> = computed({
   get () {
     return props.modelValue
   },

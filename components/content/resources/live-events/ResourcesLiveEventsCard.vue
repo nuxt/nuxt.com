@@ -2,16 +2,16 @@
   <UCard
     body-class="p-0"
     class="flex-col space-y-4 cursor-pointer"
-    custom-class="transition ease-in-out duration-300 hover:ring-1 hover:u-ring-gray-700 group"
+    custom-class="transition duration-300 ease-in-out hover:ring-1 hover:u-ring-gray-700 group"
     @click="isOpen = !isOpen"
   >
     <ResourcesLiveEventsModal v-model="isOpen" :page="page" />
 
-    <div class="flex h-18 items-center pt-4 px-4 relative">
-      <div class="w-10 h-10 flex items-center justify-center flex-shrink-0">
+    <div class="relative flex items-center px-4 pt-4 h-18">
+      <div class="flex items-center justify-center flex-shrink-0 w-10 h-10">
         <img :src="`/resources/live-events/${page.eventLogo}`" :alt="page.eventLogo" class="rounded-full u-border-gray-900">
       </div>
-      <div class="pl-2 flex-grow overflow-hidden">
+      <div class="flex-grow pl-2 overflow-hidden">
         <h6 class="text-lg font-semibold truncate">
           {{ page.title }}
         </h6>
@@ -19,19 +19,19 @@
           {{ page.name }}
         </p>
       </div>
-      <div class="flex items-end self-start pl-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+      <div class="flex items-end self-start pl-4 transition-opacity duration-300 opacity-0 group-hover:opacity-100">
         <UIcon name="heroicons-outline:arrows-expand" class="w-5 h-5" />
       </div>
     </div>
-    <div class="text-gray-700 mb-5 line-clamp-3 h-24 px-4 pt-5">
+    <div class="h-24 px-4 pt-5 mb-5 text-gray-700 line-clamp-3">
       <p>
         {{ page.description }}
       </p>
     </div>
 
-    <div class="flex h-18 items-center py-3 px-4 border-t u-bg-gray-100">
+    <div class="flex items-center px-4 py-3 border-t h-18 u-bg-gray-100">
       <div class="flex">
-        <img :src="page.avatarSrc" size="lg" class="hexagon w-9 h-10 object-cover">
+        <img :src="page.avatarSrc" size="lg" class="object-cover h-10 hexagon w-9">
       </div>
       <div class="flex flex-col pl-3">
         <span class="text-sm font-semibold">

@@ -1,5 +1,5 @@
 <template>
-  <div ref="codeBlockAnim" class="w-full pb-16 pt-8">
+  <div ref="codeBlockAnim" class="w-full pt-8 pb-16">
     <ul class="flex">
       <li>
         <UButton variant="transparent" @click="cliActive = false">
@@ -52,5 +52,4 @@ onBeforeMount(() => (observer.value = new IntersectionObserver(observerCallback,
 
 // Destroy it
 onBeforeUnmount(() => observer.value?.disconnect())
-
 </script>

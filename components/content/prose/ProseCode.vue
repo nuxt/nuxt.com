@@ -23,10 +23,10 @@ defineProps({
 </script>
 
 <template>
-  <div class="prose-code w-full group">
+  <div class="w-full prose-code group">
     <slot />
 
-    <CopyButton :content="code" class="copy-button opacity-100 transition-all duration-300" />
+    <CopyButton :content="code" class="transition-all duration-300 opacity-100 copy-button" />
   </div>
 </template>
 

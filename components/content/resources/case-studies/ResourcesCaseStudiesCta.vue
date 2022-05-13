@@ -1,9 +1,9 @@
 <template>
-  <div class="mt-12 sm:mt-24 relative overflow-hidden border-y mb-16">
-    <UContainer padded class="py-12 lg:py-16 lg:flex lg:items-center lg:justify-between relative">
-      <span class="_ellipse z-0 " />
+  <div class="relative mt-12 mb-16 overflow-hidden sm:mt-24 border-y">
+    <UContainer padded class="relative py-12 lg:py-16 lg:flex lg:items-center lg:justify-between">
+      <span class="z-0 _ellipse " />
       <h2 class="u-text-black z-[1] tracking-tight">
-        <span class="block font-semibold text-2xl">
+        <span class="block text-2xl font-semibold">
           <Markdown use="title" unwrap="p" />
         </span>
         <span class="block mt-2">

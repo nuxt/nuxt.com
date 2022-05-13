@@ -9,9 +9,9 @@
     <img :src="template.screenshot?.url" :alt="template.screenshot?.alternativeText" class="object-cover w-full h-full pointer-events-none">
 
     <NuxtLink v-if="!!to" :to="to" tabindex="-1">
-      <div class="absolute inset-0 rounded-t-md transition duration-100 transform opacity-0 backdrop-blur-sm bg-black/20 group-hover:opacity-100">
+      <div class="absolute inset-0 transition duration-100 transform opacity-0 rounded-t-md backdrop-blur-sm bg-black/20 group-hover:opacity-100">
         <div class="flex items-center justify-center w-full h-full">
-          <UIcon class="w-14 h-14 text-white" name="heroicons-solid:arrow-circle-right" />
+          <UIcon class="text-white w-14 h-14" name="heroicons-solid:arrow-circle-right" />
         </div>
       </div>
     </NuxtLink>
@@ -24,7 +24,7 @@
         <p class="text-base font-semibold leading-none line-clamp-1">
           {{ template.title }}
         </p>
-        <p class="mt-1 leading-5 text-sm u-text-gray-400" :class="{ 'line-clamp-1': minimal, 'line-clamp-2': !minimal }">
+        <p class="mt-1 text-sm leading-5 u-text-gray-400" :class="{ 'line-clamp-1': minimal, 'line-clamp-2': !minimal }">
           {{ template.description }}
         </p>
       </div>
