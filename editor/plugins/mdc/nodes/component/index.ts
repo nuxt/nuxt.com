@@ -1,5 +1,5 @@
 import { createCmdKey, createCmd, NodeSchema, Ctx } from '@milkdown/core'
-import { wrapIn, Node } from '@milkdown/prose'
+import { wrapIn } from '@milkdown/prose'
 import { kebabCase } from 'scule'
 import type { ComponentSchema } from '../../../../types'
 import { componentSchemasCtx } from '../../../../context'
@@ -55,8 +55,6 @@ const serializeProps = ({ props, propsInfo: { inline, frontMatter } }: Record<st
 
   const attributes = inline.reduce(propsByKey, {})
   const fmAttributes = frontMatter.reduce(propsByKey, {})
-
-  console.log({ attributes, fmAttributes })
 
   return {
     attributes,
