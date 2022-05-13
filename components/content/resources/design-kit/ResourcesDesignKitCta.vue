@@ -1,12 +1,12 @@
 
 <template>
   <div :class="{ 'dark': dark }">
-    <UCard base-class="relative overflow-hidden h-full">
-      <img v-if="imagePath" :src="imagePath" class="absolute w-2/5 right-0 bottom-0">
+    <UCard base-class="relative h-full overflow-hidden">
+      <img v-if="imagePath" :src="imagePath" class="absolute bottom-0 right-0 w-2/5">
 
       <span v-if="dark" class="_ellipse" />
 
-      <div class="relative flex flex-col gap-y-4 h-full">
+      <div class="relative flex flex-col h-full gap-y-4">
         <h5 class="text-2xl font-bold u-text-black">
           <Markdown use="title" unwrap="p" />
         </h5>

@@ -1,10 +1,10 @@
 <template>
   <UModal v-model="isOpen" @submit.prevent="onSubmit">
     <div class="sm:flex sm:items-start">
-      <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-gray-900 dark:bg-white sm:mx-0 sm:h-10 sm:w-10">
+      <div class="flex items-center justify-center flex-shrink-0 w-12 h-12 mx-auto bg-gray-900 rounded-full dark:bg-white sm:mx-0 sm:h-10 sm:w-10">
         <UIcon
           name="heroicons-outline:switch-horizontal"
-          class="text-white dark:text-gray-900 h-6 w-6"
+          class="w-6 h-6 text-white dark:text-gray-900"
         />
       </div>
 

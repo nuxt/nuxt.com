@@ -23,7 +23,7 @@
       leave-to-class="translate-y-1 opacity-0"
     >
       <PopoverPanel class="absolute z-10 w-screen px-4 py-6 transform -translate-x-1/2 left-1/2 sm:px-6 lg:px-8 max-w-7xl" @mouseover="onMouseOver">
-        <div class="rounded-lg shadow-lg ring-1 u-ring-gray-200 overflow-hidden u-bg-white p-8 h-[384px] overflow-hidden">
+        <div class="rounded-lg shadow-lg ring-1 u-ring-gray-200 u-bg-white p-8 h-[384px] overflow-hidden">
           <div class="flex items-start gap-6 sm:gap-8">
             <img v-if="link.banner" :src="link.banner">
 

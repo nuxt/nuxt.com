@@ -1,21 +1,6 @@
 <template>
   <button
-    class="
-      copy
-      focus:outline-none
-      absolute
-      right-0
-      bottom-0
-      px-2
-      py-2
-      m-1
-      text-warmgray-600 dark:text-warmgray-400
-      bg-warmgray-200 dark:bg-warmgray-700
-      text-xs
-      leading-none
-      rounded-lg
-      font-mono font-semibold
-    "
+    class="absolute bottom-0 right-0 px-2 py-2 m-1 font-mono text-xs font-semibold leading-none rounded-lg  copy focus:outline-none text-warmgray-600 dark:text-warmgray-400 bg-warmgray-200 dark:bg-warmgray-700"
     @click="onClick"
   >
     <UIcon v-if="state === 'copied'" name="fa-check" class="w-4 h-4" />

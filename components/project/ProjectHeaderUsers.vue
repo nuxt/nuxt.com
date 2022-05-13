@@ -11,15 +11,15 @@
       <UAvatar :src="activeUser.avatar" size="xs" />
 
       <template #text>
-        <p class="font-medium leading-none text-sm">
+        <p class="text-sm font-medium leading-none">
           {{ activeUser.username }}
           {{ activeUser.id === user.id ? '(you)' : '' }}
         </p>
         <div v-if="canJump(activeUser)">
-          <p v-if="activeUser.branch !== branch.name" class="u-text-gray-200 italic">
+          <p v-if="activeUser.branch !== branch.name" class="italic u-text-gray-200">
             Jump to {{ activeUser.branch }} branch
           </p>
-          <p v-else-if="!!activeUser.file" class="u-text-gray-200 italic">
+          <p v-else-if="!!activeUser.file" class="italic u-text-gray-200">
             Jump to {{ getPathName(activeUser.file) }} file
           </p>
         </div>

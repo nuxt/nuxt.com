@@ -1,11 +1,11 @@
 <template>
   <UContainer padded class="py-12">
-    <div class="flex flex-col-reverse md:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-      <div class="flex flex-col space-y-5 lg:col-span-2 justify-center py-8">
-        <h1 class="font-semibold text-5xl u-text-gray-900">
+    <div class="flex flex-col-reverse grid-cols-1 gap-8 md:grid sm:grid-cols-2 lg:grid-cols-3">
+      <div class="flex flex-col justify-center py-8 space-y-5 lg:col-span-2">
+        <h1 class="text-5xl font-semibold u-text-gray-900">
           <Markdown use="title" unwrap="p" />
         </h1>
-        <p class="font-medium text-lg u-text-gray-500 max-w-xl">
+        <p class="max-w-xl text-lg font-medium u-text-gray-500">
           <Markdown use="description" unwrap="p" />
         </p>
         <div class="flex gap-4">

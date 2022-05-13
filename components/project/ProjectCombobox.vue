@@ -14,8 +14,8 @@
         <ProjectComboboxOption v-if="filteredActions.length" type="actions" :items="filteredActions" :label="actionsLabel" />
       </ComboboxOptions>
 
-      <div v-else class="py-14 px-6 flex-1 flex flex-col items-center justify-center sm:px-14">
-        <UIcon name="heroicons-outline:search" class="mx-auto h-6 w-6 text-gray-400" aria-hidden="true" />
+      <div v-else class="flex flex-col items-center justify-center flex-1 px-6 py-14 sm:px-14">
+        <UIcon name="heroicons-outline:search" class="w-6 h-6 mx-auto text-gray-400" aria-hidden="true" />
         <p class="mt-4 text-sm text-gray-900">
           {{ query ? "We couldn't find any items with that term. Please try again." : "We couldn't find any items." }}
         </p>
