@@ -13,7 +13,7 @@
       {{ page.description }}
     </p>
 
-    <Document v-model="page" class="prose" />
+    <Document :value="page" class="prose" />
   </UModal>
 </template>
 

@@ -20,7 +20,7 @@
       </UContainer>
     </div>
 
-    <Document v-model="page" />
+    <Document :value="page" />
 
     <UContainer constrained-class="max-w-4xl">
       <ResourcesCaseStudyCTA />
