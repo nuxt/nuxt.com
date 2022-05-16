@@ -50,6 +50,4 @@ watch([() => props.currentSection], () => {
   }
 })
 
-watch(currentStep, () => console.log('currentStep', currentStep.value))
-
 </script>
