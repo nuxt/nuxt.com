@@ -52,33 +52,107 @@ Our Values
 ::
 
 ::company-about-backers
----
-items:
-  - name: firstminute
-    image: /backers/firstminute.png
-  - name: kimaventures
-    image: /backers/kimaventures.png
-  - name: kimaventures
-    image: /backers/kimaventures.png
-  - name: firstminute
-    image: /backers/firstminute.png
----
 #title
 [Thanks to]{.u-text-gray-500} our incredible backers
+
+#content
+:::company-about-backer
+---
+item:
+  name: firstminute
+  image: /backers/firstminute.png
+---
+:::
+:::company-about-backer
+---
+item:
+  name: kimaventures
+  image: /backers/kimaventures.png
+---
+:::
+:::company-about-backer
+---
+item:
+  name: kimaventures
+  image: /backers/kimaventures.png
+---
+:::
+:::company-about-backer
+---
+item:
+  name: firstminute
+  image: /backers/firstminute.png
+---
+:::
+:::company-about-backer
+---
+item:
+  name: firstminute
+  image: /backers/firstminute.png
+---
+:::
+:::company-about-backer
+---
+item:
+  name: kimaventures
+  image: /backers/kimaventures.png
+---
+:::
 ::
 
-::company-about-investors
----
-items:
-  - image: /company/support/evan.png
-    name: Evan You
-    job: Founder of VueJS
-  - image: /company/support/evan.png
-    name: Eduardo
-    job: CEO of Company
----
+::company-about-backers
 #title
 [And also]{.u-text-gray-500} our individual investors
+
+#content
+:::company-about-investor
+---
+item:
+  name: Evan You
+  job: Founder of VueJS
+  image: /company/support/evan.png
+---
+:::
+:::company-about-investor
+---
+item:
+  name: Eduardo
+  job: CEO of Company
+  image: /company/support/evan.png
+---
+:::
+:::company-about-investor
+---
+item:
+  name: Eduardo
+  job: CEO of Company
+  image: /company/support/evan.png
+---
+:::
+:::company-about-investor
+---
+item:
+  name: Evan You
+  job: Founder of VueJS
+  image: /company/support/evan.png
+---
+:::
+:::company-about-investor
+---
+item:
+  name: Evan You
+  job: Founder of VueJS
+  image: /company/support/evan.png
+---
+:::
+:::company-about-investor
+---
+item:
+  name: Eduardo
+  job: CEO of Company
+  image: /company/support/evan.png
+---
+:::
 ::
 
 ::company-about-positions
