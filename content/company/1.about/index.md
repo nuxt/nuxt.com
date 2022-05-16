@@ -85,7 +85,7 @@ items:
 ---
 button:
   label: See Open Positions
-  to: /company/positions
+  to: /company/careers
 ---
 #title
 You are Nuxt.

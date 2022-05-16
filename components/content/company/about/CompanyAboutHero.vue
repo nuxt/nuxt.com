@@ -1,9 +1,9 @@
 <template>
   <div class="relative flex flex-col md:flex-row justify-center items-center md:h-[475px]">
-    <div class="relative flex items-center justify-end md:absolute md:right-0">
+    <div class="relative flex items-center justify-end overflow-hidden md:absolute md:right-0">
       <img src="/company/about/gems.svg">
-      <!-- <div class="h-[170px] absolute top-0 inset-x-0 bg-gradient-to-b from-white dark:from-black to-transparent" /> -->
-      <!-- <div class="w-[170px] absolute right-0 inset-y-0 bg-gradient-to-l from-white dark:from-black to-transparent" /> -->
+      <div class="h-[200px] w-full absolute -top-16 right-0 bg-gradient-to-b from-white dark:from-black to-transparent picture-overlay-top" />
+      <div class="h-[200px] w-full absolute -bottom-16 left-0 bg-gradient-to-t from-white dark:from-black to-transparent picture-overlay-bottom" />
     </div>
 
     <UContainer padded class="relative w-full py-12">
@@ -18,3 +18,12 @@
     </UContainer>
   </div>
 </template>
+
+<style scoped>
+.picture-overlay-top {
+  transform: translateX(10%) rotate(10deg);
+}
+.picture-overlay-bottom {
+  transform: translateX(-15%) rotate(20deg);
+}
+</style>
