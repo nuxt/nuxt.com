@@ -11,8 +11,10 @@
       >
         <div class="flex items-center w-full">
           <div class="flex-1" :class="{ 'h-[1px] u-bg-gray-200': index !== 0 }" />
-          <div class="flex items-center justify-center w-20 h-20 border border-gray-200 rounded-full bg-gray-50">
-            <img :src="item.icon" class="w-10 h-10 u-text-gray-900">
+          <div class="relative flex items-center justify-center w-20 h-20">
+            <img src="/company/about/hexagone-light.svg" class="absolute dark:invisible">
+            <img src="/company/about/hexagone-dark.svg" class="absolute invisible dark:visible">
+            <img :src="item.icon" class="relative w-10 h-10 u-text-gray-900">
           </div>
           <div class="flex-1" :class="{ 'h-[1px] u-bg-gray-200': index !== (items.length - 1) }" />
         </div>
