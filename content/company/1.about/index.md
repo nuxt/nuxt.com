@@ -51,108 +51,20 @@ items:
 Our Values
 ::
 
-::company-about-backers
+::company-about-investors
+---
+type: backers
+---
 #title
 [Thanks to]{.u-text-gray-500} our incredible backers
-
-#content
-:::company-about-backer
----
-item:
-  name: firstminute
-  image: /backers/firstminute.png
----
-:::
-:::company-about-backer
----
-item:
-  name: kimaventures
-  image: /backers/kimaventures.png
----
-:::
-:::company-about-backer
----
-item:
-  name: kimaventures
-  image: /backers/kimaventures.png
----
-:::
-:::company-about-backer
----
-item:
-  name: firstminute
-  image: /backers/firstminute.png
----
-:::
-:::company-about-backer
----
-item:
-  name: firstminute
-  image: /backers/firstminute.png
----
-:::
-:::company-about-backer
----
-item:
-  name: kimaventures
-  image: /backers/kimaventures.png
----
-:::
 ::
 
-::company-about-backers
+::company-about-investors
+---
+type: investors
+---
 #title
 [And also]{.u-text-gray-500} our individual investors
-
-#content
-:::company-about-investor
----
-item:
-  name: Evan You
-  job: Founder of VueJS
-  image: /company/support/evan.png
----
-:::
-:::company-about-investor
----
-item:
-  name: Eduardo
-  job: CEO of Company
-  image: /company/support/evan.png
----
-:::
-:::company-about-investor
----
-item:
-  name: Eduardo
-  job: CEO of Company
-  image: /company/support/evan.png
----
-:::
-:::company-about-investor
----
-item:
-  name: Evan You
-  job: Founder of VueJS
-  image: /company/support/evan.png
----
-:::
-:::company-about-investor
----
-item:
-  name: Evan You
-  job: Founder of VueJS
-  image: /company/support/evan.png
----
-:::
-:::company-about-investor
----
-item:
-  name: Eduardo
-  job: CEO of Company
-  image: /company/support/evan.png
----
-:::
 ::
 
 ::company-about-positions
