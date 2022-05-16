@@ -11,6 +11,7 @@
 </template>
 
 <script setup lang="ts">
+import type { WritableComputedRef } from 'vue'
 import { useMagicKeys, whenever } from '@vueuse/core'
 import { getPathName } from '~/utils/tree'
 import type { GitHubFile, Project } from '~/types'
@@ -56,7 +57,7 @@ const refreshingFiles = ref(false)
 
 // Computed
 
-const isOpen = computed({
+const isOpen: WritableComputedRef<boolean> = computed({
   get () {
     return props.modelValue
   },

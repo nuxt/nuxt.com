@@ -1,5 +1,7 @@
 <template>
-  <Content :document="page" />
+  <div>
+    <Document :value="page" />
+  </div>
 </template>
 
 <script setup lang="ts">

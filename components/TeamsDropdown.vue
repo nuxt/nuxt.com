@@ -1,21 +1,21 @@
 <template>
-  <UDropdown v-if="user" :items="items" placement="bottom-start" container-class="w-48 z-20 py-2 lg:!-mx-2" item-disabled-class>
+  <UDropdown v-if="user" :items="items" placement="bottom-start" container-class="w-48 z-20 py-2 lg:!-mx-2" item-disabled-class="">
     <template #default="{ open }">
       <UButton
         :icon="compact ? '' : 'heroicons-outline:selector'"
         trailing
         square
         variant="transparent"
-        icon-base-class="u-text-gray-400 flex-shrink-0 hidden lg:block"
+        icon-base-class="flex-shrink-0 hidden u-text-gray-400 lg:block"
         class="flex items-center justify-between !border-0"
         :class="{ 'u-text-gray-700': open, 'lg:w-44 -mr-2 ': !compact, '!p-0': compact }"
       >
-        <div class="flex-1 flex items-center min-w-0">
+        <div class="flex items-center flex-1 min-w-0">
           <div class="relative w-6 h-6 lg:-m-0.5 flex-shrink-0">
             <UAvatar v-if="currentTeam" :src="currentTeam.avatar" :alt="currentTeam.label" size="xs" />
             <img
               :src="user.avatar"
-              class="absolute block rounded-full ring-1 u-ring-white bottom-0 right-0 transform transition-all"
+              class="absolute bottom-0 right-0 block transition-all transform rounded-full ring-1 u-ring-white"
               :class="{ '-mb-0.5 -mr-0.5 w-3 h-3': activeItem.slug !== user.username, 'w-6 h-6': activeItem.slug === user.username }"
             >
           </div>

@@ -1,45 +1,45 @@
 <template>
   <div class="absolute top-0 left-0 mt-8 grid grid-cols-12 w-full h-[300px]">
-    <div class="relative -top-40 lg:top-0 u-bg-gray-900 rounded-md col-span-full lg:col-span-7 p-5 overflow-hidden">
+    <div class="relative p-5 overflow-hidden rounded-md -top-40 lg:top-0 u-bg-gray-900 col-span-full lg:col-span-7">
       <div class="fromscratch-code-wrapper-anim">
         <div class="opacity-100 fromscratch-code-bash-anim">
           <p class="flex">
-            <span class="text-white">&gt;&nbsp;</span><span class="fromscratch-yarn-addnuxt text-white">yarn add <span class="text-green">nuxt</span></span>
+            <span class="text-white">&gt;&nbsp;</span><span class="text-white fromscratch-yarn-addnuxt">yarn add <span class="text-green">nuxt</span></span>
           </p>
-          <p class="fromscratch-loading-anim opacity-0 text-white">
+          <p class="text-white opacity-0 fromscratch-loading-anim">
             > Loading...
           </p>
-          <div class="fromscratch-progressbars-install mt-2 w-1/2">
+          <div class="w-1/2 mt-2 fromscratch-progressbars-install">
             <div class="fromscratch-progressbar-anim u-bg-gray-400" />
             <div class="fromscratch-progressbar-anim u-bg-gray-500" />
             <div class="fromscratch-progressbar-anim u-bg-gray-600" />
           </div>
           <p class="flex">
-            <span class="opacity-0 fromscratch-seconddollar-anim text-white">&gt;&nbsp;</span><span class="fromscratch-yarn-rundev text-white">yarn run dev</span>
+            <span class="text-white opacity-0 fromscratch-seconddollar-anim">&gt;&nbsp;</span><span class="text-white fromscratch-yarn-rundev">yarn run dev</span>
           </p>
-          <div class="fromscratch-progressbars-dev mt-2 w-1/2">
+          <div class="w-1/2 mt-2 fromscratch-progressbars-dev">
             <div class="fromscratch-progressbar-anim u-bg-gray-400" />
             <div class="fromscratch-progressbar-anim u-bg-gray-500" />
             <div class="fromscratch-progressbar-anim u-bg-gray-600" />
           </div>
-          <p class="flex items-center opacity-0 fromscratch-compiled-anim text-white">
+          <p class="flex items-center text-white opacity-0 fromscratch-compiled-anim">
             <UIcon name="heroicons-outline:check" />
             compiled
           </p>
         </div>
-        <div class="absolute top-0 left-0 w-full pt-8 h-full opacity-0 fromscratch-code-ide-anim">
+        <div class="absolute top-0 left-0 w-full h-full pt-8 opacity-0 fromscratch-code-ide-anim">
           <div class="absolute h-10 lg:w-full top-6 -left-5 border-b-2 border-gray-200 w-[112%]">
-            <div class="flex h-full w-full items-center pl-4">
+            <div class="flex items-center w-full h-full pl-4">
               <span class="rounded-full mr-2 u-bg-gray-500 h-[12px] w-[12px]" />
               <span class="rounded-full mr-2 u-bg-gray-500 h-[12px] w-[12px]" />
               <span class="rounded-full mr-2 u-bg-gray-500 h-[12px] w-[12px]" />
             </div>
-            <p class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-gray-400">
+            <p class="absolute text-gray-400 transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
               index.vue
             </p>
           </div>
           <div class="absolute top-[70px] w-12 -left-5 border-r-2 u-border-gray-400 flex flex-col items-center justify-start pt-3 h-[103%]" />
-          <div class="pl-12 pt-12 fromscratch-code-ide-content">
+          <div class="pt-12 pl-12 fromscratch-code-ide-content">
             <p>
               <!-- Template tag open -->
               <span class="text-white">&lt;</span><span class="text-blue-500">template</span><span class="text-white">&gt;&nbsp;</span>
@@ -68,14 +68,14 @@
     <div class="absolute bg-gray-100 right-0 lg:top-1/2 transform -translate-y-1/2 rounded-md w-full lg:w-1/2 opacity-0 overflow-hidden top-[95%] h-[120%] fromscratch-display-anim">
       <div class="overflow-hidden opacity-0 fromscratch-display-loading-anim">
         <Logo class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-[80px]" />
-        <div class="absolute left-1/2 transform -translate-x-1/2 bottom-8 w-1/2 fromscratch-display-progressbar-anim">
+        <div class="absolute w-1/2 transform -translate-x-1/2 left-1/2 bottom-8 fromscratch-display-progressbar-anim">
           <div class="absolute left-0 top-0 w-full u-bg-gray-400 rounded-full h-[10px]" />
           <div class="absolute left-0 top-0 w-0 u-bg-gray-500 rounded-full opacity-0 h-[10px] fromscratch-display-progressbar-progress " />
         </div>
       </div>
-      <div class="absolute top-0 left-0 h-full w-full">
+      <div class="absolute top-0 left-0 w-full h-full">
         <img loading="lazy" src="/docs/framework/v2/sidebar.svg" class="absolute top-0 h-full left-[-150px] fromscratch-display-content-img-anim" alt="sidebar illustration">
-        <p class="fromscratch-display-content-p-anim absolute top-4 left-6 font-bold text-2xl u-text-gray-600 opacity-0">
+        <p class="absolute text-2xl font-bold opacity-0 fromscratch-display-content-p-anim top-4 left-6 u-text-gray-600">
           Hello world!
         </p>
       </div>
@@ -84,7 +84,6 @@
 </template>
 
 <style lang="postcss" scoped>
-
 .fromscratch-display-anim {
   animation: appear 300ms cubic-bezier(0.83, 0, 0.17, 1) forwards 3.2s,
     slideRight 300ms cubic-bezier(0.83, 0, 0.17, 1) forwards 3.2s;

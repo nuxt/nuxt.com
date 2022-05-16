@@ -1,5 +1,5 @@
 <template>
-  <Content :document="page" />
+  <Document :value="page" />
 </template>
 
 <script setup lang="ts">

@@ -1,5 +1,5 @@
 <template>
-  <NuxtLink :to="page.slug" class="relative overflow-hidden group rounded-xl bg-gradiant">
+  <NuxtLink :to="page.path" class="relative overflow-hidden group rounded-xl bg-gradiant">
     <div class="absolute inset-0 transition-opacity bg-overlay opacity-20 group-hover:opacity-40" />
     <div class="relative flex flex-col p-8">
       <div class="font-semibold text-white">

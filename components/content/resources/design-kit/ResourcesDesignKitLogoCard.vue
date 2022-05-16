@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col space-y-2">
-    <UCard class="h-28 flex items-center justify-center" :background-class="cardClass">
+    <UCard class="flex items-center justify-center h-28" :background-class="cardClass">
       <img :src="`/resources/design-kit/logo/${imgName}.svg`" :alt="imgName" :class="full ? 'h-8' : 'h-10'">
     </UCard>
     <div class="flex justify-between">
@@ -9,7 +9,7 @@
       </p>
       <div>
         <a
-          class="hover:u-text-gray-500 u-text-gray-400 hover:underline pr-2"
+          class="pr-2 hover:u-text-gray-500 u-text-gray-400 hover:underline"
           :href="`/resources/design-kit/logo/${imgName}.svg`"
           aria-label="Download svg"
           download

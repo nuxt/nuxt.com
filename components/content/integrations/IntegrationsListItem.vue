@@ -8,7 +8,7 @@
         class="w-12 h-12 mb-4"
         @error="coverError = true"
       >
-      <div v-else class="p-2 u-bg-gray-100 w-12 h-12 rounded-lg flex items-center mb-4">
+      <div v-else class="flex items-center w-12 h-12 p-2 mb-4 rounded-lg u-bg-gray-100">
         <UIcon name="heroicons-outline:photograph" class="w-8 h-8 u-text-gray-400" />
       </div>
     </div>
@@ -25,7 +25,7 @@
       {{ module.description }}
     </p>
 
-    <div class="flex items-center justify-between gap-3 u-text-gray-500 -mb-2">
+    <div class="flex items-center justify-between gap-3 -mb-2 u-text-gray-500">
       <div class="flex items-center gap-3">
         <div class="flex items-center gap-1.5">
           <UIcon name="heroicons-outline:star" class="w-4 h-4" />

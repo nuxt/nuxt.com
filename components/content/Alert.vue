@@ -1,6 +1,6 @@
 <template>
   <div
-    class="px-4 py-3 mt-4 mb-4 rounded-xl alert text-sm leading-relaxed"
+    class="px-4 py-3 mt-4 mb-4 text-sm leading-relaxed rounded-xl alert"
     :class="[type]"
   >
     <div class="flex items-start">
