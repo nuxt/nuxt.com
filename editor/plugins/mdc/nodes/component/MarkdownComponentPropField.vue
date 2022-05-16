@@ -24,12 +24,8 @@ export default defineComponent({
     const label = pascalCase(name)
     const type = props.schema.type[0]
 
-    const emitChange = ({ target }: Event) => {
-      emit('change',
-        type === 'boolean'
-          ? (target as HTMLInputElement).checked ? 'true' : 'false'
-          : (target as HTMLInputElement).value
-      )
+    const emitChange = (value) => {
+      emit('change', value)
     }
 
     return {

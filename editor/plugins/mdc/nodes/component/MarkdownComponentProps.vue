@@ -12,6 +12,10 @@ export default defineComponent({
     const { node, updateAttributes } = useNode()
 
     const updateProp = ({ schema: { name, default: defaultValue, type: [type] }, value }: { schema: ComponentPropSchema, value: string }) => {
+      defaultValue = defaultValue === '?' ? 'null' : defaultValue
+      // @ts-ignore
+      type = type === '?' ? 'string' : type
+
       updateAttributes(({ props }) => {
         const isDefault =
           (defaultValue && (defaultValue === 'null' ? '' : defaultValue.replace(/^'|'$/g, '')) === value) ||
