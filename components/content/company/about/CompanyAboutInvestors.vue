@@ -24,5 +24,5 @@ const props = defineProps({
   }
 })
 
-const { data } = await useAsyncData(`company-about-investors-${props.type}`, () => queryContent(`/_collections/${props.type}`).findOne())
+const { data } = await useAsyncData(`company-about-investors-${props.type}`, () => queryContent(`/company/about/_collections/${props.type}`).findOne())
 </script>
