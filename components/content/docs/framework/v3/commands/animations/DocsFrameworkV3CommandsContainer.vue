@@ -30,6 +30,11 @@
       </defs>
     </svg>
 
+    <div class="flex flex-col -translate-x-12 pt-12 gap-y-4">
+      <DocsFrameworkV3CommandsDevTerminal v-if="[3, 4].includes(currentSection)" :current-section="currentSection" />
+      <DocsFrameworkV3CommandsTerminal :current-section="currentSection" />
+    </div>
+
     <div class="absolute w-[801px] h-[415px] pt-8 py-8 pr-32 rounded-lg">
       <DocsFrameworkV3CommandsInit v-if="mainCurrentSection === 0" :current-section="currentSection" />
       <DocsFrameworkV3CommandsDev v-if="mainCurrentSection === 1" :current-section="currentSection" />
