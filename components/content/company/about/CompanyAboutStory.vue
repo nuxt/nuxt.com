@@ -1,5 +1,5 @@
 <template>
-  <UContainer padded class="py-24">
+  <UContainer padded class="pb-12">
     <h2 class="text-3xl font-semibold u-text-gray-900">
       <Markdown use="title" unwrap="p" />
     </h2>
