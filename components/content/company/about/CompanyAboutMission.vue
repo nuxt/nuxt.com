@@ -1,7 +1,11 @@
 <template>
-  <UContainer padded class="py-24">
-    <div class="grid grid-cols-1 gap-8 md:grid-cols-6 lg:grid-cols-6">
-      <div class="flex flex-col gap-5 md:col-span-3 lg:col-span-2">
+  <div class="flex flex-col-reverse items-start pt-24 pb-24 xl:pb-36 xl:block xl:relative">
+    <div class="self-end translate-x-8 xl:translate-x-0 xl:absolute xl:-right-8 xl:top-24">
+      <img v-if="image" :src="image" class="relative">
+    </div>
+
+    <UContainer padded class="relative pb-24 mx-0 xl:mx-auto">
+      <div class="flex flex-col max-w-md gap-5">
         <h2 class="text-xl font-semibold uppercase u-text-gray-300">
           <Markdown use="title" unwrap="p" />
         </h2>
@@ -12,12 +16,8 @@
           <Markdown use="description" unwrap="p" />
         </p>
       </div>
-
-      <div class="flex items-center md:col-span-3 lg:col-span-4">
-        <img v-if="image" :src="image">
-      </div>
-    </div>
-  </UContainer>
+    </UContainer>
+  </div>
 </template>
 
 <script setup lang="ts">
