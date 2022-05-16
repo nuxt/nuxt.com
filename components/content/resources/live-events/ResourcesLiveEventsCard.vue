@@ -2,7 +2,7 @@
   <UCard
     body-class="p-0"
     class="flex-col space-y-4 cursor-pointer"
-    custom-class="transition duration-300 ease-in-out hover:ring-1 hover:u-ring-gray-700 group"
+    custom-class="transition duration-300 ease-in-out hover:ring-2 hover:u-ring-gray-900 group"
     @click="isOpen = !isOpen"
   >
     <ResourcesLiveEventsModal v-model="isOpen" :page="page" />

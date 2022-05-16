@@ -26,7 +26,7 @@
     </div>
 
     <div class="relative lg:pt-8">
-      <ResourcesBlogToc class="px-4 sm:px-6 lg:px-0" />
+      <ResourcesBlogPostToc class="px-4 sm:px-6 lg:px-0" />
 
       <UContainer constrained-class="max-w-4xl" class="pt-8 lg:pt-0" padded>
         <div class="relative overflow-hidden border-b u-border-gray-400">
@@ -55,7 +55,7 @@
           </h2>
           <div class="grid grid-cols-1 gap-8 sm:grid-cols-2">
             <div class="dark">
-              <ResourcesBlogCTA
+              <ResourcesBlogPostCta
                 button-text="Get Started"
                 to="/docs/framework"
                 image-path="/resources/blog/nuxt.svg"
@@ -67,10 +67,10 @@
                 <template #description>
                   How a user interacts with and experience your website is key.
                 </template>
-              </ResourcesBlogCTA>
+              </ResourcesBlogPostCta>
             </div>
 
-            <ResourcesBlogCTA
+            <ResourcesBlogPostCta
               button-text="Discover Nuxt Sites"
               to="/showcases"
               image-path="/resources/blog/showcases.png"
@@ -81,7 +81,7 @@
               <template #description>
                 How a user interacts with and experience your website is key.
               </template>
-            </ResourcesBlogCTA>
+            </ResourcesBlogPostCta>
           </div>
         </div>
       </UContainer>
