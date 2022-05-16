@@ -126,6 +126,9 @@ function onMessage (e) {
   if (!previewUrl.value.startsWith(e.origin)) {
     return
   }
+  if (!e.data || typeof e.data !== 'string') {
+    return
+  }
 
   const [action, ...args] = e.data.split(':')
 
