@@ -1,7 +1,16 @@
 <template>
-  <UContainer padded class="pt-24 pb-36">
-    <div class="grid grid-cols-1 gap-8 md:grid-cols-6 lg:grid-cols-6">
-      <div class="flex flex-col gap-5 md:col-span-3 lg:col-span-2">
+  <div class="flex flex-col-reverse items-start pt-24 md:block md:relative pb-36">
+    <div class="md:absolute md:right-0 md:top-24">
+      <div class="relative">
+        <img src="/company/about/map.svg">
+        <div class="h-[100px] absolute top-0 inset-x-0 bg-gradient-to-b from-white dark:from-black to-transparent" />
+        <div class="w-[100px] absolute left-0 inset-y-0 bg-gradient-to-r from-white dark:from-black to-transparent" />
+        <div class="h-[100px] absolute bottom-0 inset-x-0 bg-gradient-to-t from-white dark:from-black to-transparent" />
+      </div>
+    </div>
+
+    <UContainer padded class="relative pb-24 mx-0 md:mx-auto md:pt-24 md:pb-36">
+      <div class="flex flex-col max-w-sm gap-5">
         <h2 class="text-4xl font-semibold u-text-gray-900">
           <Markdown use="title" unwrap="p" />
         </h2>
@@ -12,15 +21,8 @@
           <UButton v-if="button" v-bind="button" />
         </div>
       </div>
-
-      <div class="relative flex items-center md:col-span-3 lg:col-span-4">
-        <img src="/company/about/map.svg">
-        <div class="h-[100px] absolute top-0 inset-x-0 bg-gradient-to-b from-white dark:from-black to-transparent" />
-        <div class="w-[100px] absolute left-0 inset-y-0 bg-gradient-to-r from-white dark:from-black to-transparent" />
-        <div class="h-[100px] absolute bottom-0 inset-x-0 bg-gradient-to-t from-white dark:from-black to-transparent" />
-      </div>
-    </div>
-  </UContainer>
+    </UContainer>
+  </div>
 </template>
 
 <script setup lang="ts">
