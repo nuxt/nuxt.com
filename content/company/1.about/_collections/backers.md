@@ -1,21 +1,15 @@
 ---
 items:
-  -
-    slug: firstminute
+  - slug: firstminute
     image: /company/about/backers/firstminute.png
-  -
-    slug: kimaventures
+  - slug: kimaventures
     image: /company/about/backers/kimaventures.png
-  -
-    slug: kimaventures
+  - slug: kimaventures
     image: /company/about/backers/kimaventures.png
-  -
-    slug: firstminute
+  - slug: firstminute
     image: /company/about/backers/firstminute.png
-  -
-    slug: firstminute
+  - slug: firstminute
     image: /company/about/backers/firstminute.png
-  -
-    slug: kimaventures
+  - slug: kimaventures
     image: /company/about/backers/kimaventures.png
 ---
