@@ -8,17 +8,18 @@
       <UCard class="flex flex-col items-start justify-between ">
         <component :is="data.componentAnimation" class="w-12 h-10 mb-12" />
         <div class="flex flex-col gap-y-2">
-          <h6 class="u-tewt-gray-900 font-semibold text-2xl">
+          <h6 class="text-2xl font-semibold u-tewt-gray-900">
             {{ data.title }}
           </h6>
           <p class="u-text-gray-500">
-            {{ data.description }}
+            {{ data.description }}
           </p>
         </div>
       </UCard>
     </li>
   </ul>
 </template>
+
 <script setup lang="ts">
-const { data: utilitiesData } = await useAsyncData('utilities', () => queryContent('/docs/framework/v3/collections/utilities').findOne())
+const { data: utilitiesData } = await useAsyncData('utilities', () => queryContent('/docs/framework/v3/_collections/utilities').findOne())
 </script>

@@ -1,14 +1,14 @@
 <template>
   <div class="not-prose">
-    <div class="flex flex-row items-center justify-between pb-48 pt-36 md:pt-44 lg:pb-56 lg:pt-36 gap-x-4 relative">
-      <div class="flex flex-col gap-y-8 items-start">
+    <div class="relative flex flex-row items-center justify-between pb-48 pt-36 md:pt-44 lg:pb-56 lg:pt-36 gap-x-4">
+      <div class="flex flex-col items-start gap-y-8">
         <div v-if="$slots.badge" class="flex gap-x-2">
           <UBadge rounded :label="badgeLabel" variant="green" />
           <span class="u-text-gray-500">
             <slot name="badge" />
           </span>
         </div>
-        <h1 v-if="$slots.title" class="font-bold text-7xl text-left u-text-gray-900 max-w-lg">
+        <h1 v-if="$slots.title" class="max-w-lg font-bold text-left text-7xl u-text-gray-900">
           <Markdown use="title" unwrap="p" />
         </h1>
         <p v-if="$slots.description" class="w-1/2 text-lg text-left u-text-gray-500">

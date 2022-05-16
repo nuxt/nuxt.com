@@ -1,7 +1,7 @@
 <template>
   <div class="h-8">
     <div class="container flex flex-col gap-y-2">
-      <span v-for="(block, i) in 10" :key="i" ref="blocks" class="w-10 h-4 bg-green-400 transition duration-500" />
+      <span v-for="(block, i) in 10" :key="i" ref="blocks" class="w-10 h-4 transition duration-500 bg-green-400" />
     </div>
   </div>
 </template>

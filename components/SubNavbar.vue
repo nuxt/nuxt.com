@@ -1,6 +1,6 @@
 <template>
   <div
-    class="z-[20] sticky top-0 hidden lg:block border-t border-transparent"
+    class="sticky top-0 z-20 hidden border-t border-transparent lg:block"
     :class="hasScrolledPastSubNavbar ? 'backdrop-blur-md bg-white/75 dark:bg-black/75 shadow shadow-gray-200 dark:shadow-gray-900' : 'u-border-gray-200'"
   >
     <UContainer padded>

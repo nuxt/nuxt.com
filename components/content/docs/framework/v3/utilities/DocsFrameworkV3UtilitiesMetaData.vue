@@ -43,5 +43,4 @@ const searchMotion = useMotion(search, {
 })
 
 searchMotion.apply('initial')
-
 </script>

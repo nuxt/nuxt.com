@@ -1,5 +1,5 @@
 <template>
-  <div ref="articles" class="absolute w-full bottom-32 transition-colors duration-500" :class="classColor">
+  <div ref="articles" class="absolute w-full transition-colors duration-500 bottom-32" :class="classColor">
     <svg viewBox="0 0 672 114" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M1.1459 105.996L0.0830677 7.68376C0.0378063 3.49709 3.49527 0.119157 7.67975 0.26181L154.653 5.27226C158.562 5.40554 161.682 8.57854 161.748 12.4896L163.339 105.791C163.409 109.897 160.1 113.263 155.993 113.263H8.49226C4.46572 113.263 1.18943 110.022 1.1459 105.996Z" fill="currentColor" />
       <path d="M185.383 106.042L183.803 13.8918C183.731 9.67299 187.219 6.26033 191.435 6.4246L318.245 11.3652C322.103 11.5155 325.186 14.6262 325.302 18.4853L327.929 105.695C328.054 109.837 324.73 113.263 320.585 113.263H192.729C188.72 113.263 185.452 110.05 185.383 106.042Z" fill="currentColor" />

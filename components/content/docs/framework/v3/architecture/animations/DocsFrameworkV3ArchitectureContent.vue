@@ -56,5 +56,4 @@ watch(() => props.step, () => {
     classColor.value = 'u-text-gray-200'
   }
 })
-
 </script>

@@ -1,9 +1,9 @@
 <template>
-  <div class="flex flex-col gap-y-8 py-20 not-prose">
-    <h1 class="u-text-gray-900 text-4xl font-semibold text-left">
+  <div class="flex flex-col py-20 gap-y-8 not-prose">
+    <h1 class="text-4xl font-semibold text-left u-text-gray-900">
       <Markdown use="title" unwrap="p" />
     </h1>
-    <p class="w-full lg:w-1/2 text-lg u-text-gray-500 text-left">
+    <p class="w-full text-lg text-left lg:w-1/2 u-text-gray-500">
       <Markdown use="description" unwrap="p" />
     </p>
     <Markdown use="content" unwrap="p" />
