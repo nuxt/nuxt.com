@@ -82,4 +82,13 @@ items:
 ::
 
 ::company-about-positions
+---
+button:
+  label: See Open Positions
+  to: /company/positions
+---
+#title
+You are Nuxt.
+#description
+We work with people for many time zones all across the world
 ::
