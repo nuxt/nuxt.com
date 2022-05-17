@@ -47,8 +47,5 @@
     "vue-tsc": "^0.34.12",
     "y-websocket": "^1.4.3",
     "yjs": "^13.5.36"
-  },
-  "dependencies": {
-    "vue3-mq": "^3.1.0"
   }
 }
