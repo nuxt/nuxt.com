@@ -70,7 +70,7 @@ import type { Ref } from 'vue'
 import type { Team, User } from '~/types'
 
 definePageMeta({
-  middleware: 'auth'
+  middleware: ['auth', 'beta']
 })
 
 const router = useRouter()

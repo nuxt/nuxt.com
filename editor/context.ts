@@ -1,5 +1,5 @@
 import { createSlice, Ctx } from '@milkdown/ctx'
-import { defaultValueCtx, MilkdownPlugin } from '@milkdown/core'
+import { defaultValueCtx, parserCtx, serializerCtx, MilkdownPlugin } from '@milkdown/core'
 import type { ViewFactory } from '@milkdown/prose'
 import { listenerCtx } from '@milkdown/plugin-listener'
 import { kebabCase } from 'scule'
@@ -24,8 +24,28 @@ export default (options: Options, renderVue: VueRenderer): MilkdownPlugin => {
     pre.inject(renderVueCtx, renderVue)
 
     return (ctx) => {
-      ctx.set(defaultValueCtx, unref(options.content) ?? '')
-      ctx.get(listenerCtx).markdownUpdated((_, markdown) => options.onChanged?.(markdown))
+      let savedKey
+
+      ctx.set(defaultValueCtx, unref(options.content).markdown ?? '')
+      ctx.get(listenerCtx).markdownUpdated((_, markdown, prevMarkdown) => {
+        if (prevMarkdown === null) {
+          return
+        }
+
+        const { key, markdown: base } = unref(options.content)
+
+        // Only compare when the file changed to avoid serializing + parsing everytime
+        if (savedKey !== key) {
+          savedKey = key
+          const parser = ctx.get(parserCtx)
+          const serializer = ctx.get(serializerCtx)
+          if (serializer(parser(base)) === markdown) {
+            return
+          }
+        }
+
+        options.onChanged?.(markdown)
+      })
     }
   }
 }

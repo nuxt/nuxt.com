@@ -12,6 +12,10 @@ export default defineComponent({
     const { node, updateAttributes } = useNode()
 
     const updateProp = ({ schema: { name, default: defaultValue, type: [type] }, value }: { schema: ComponentPropSchema, value: string }) => {
+      defaultValue = defaultValue === '?' ? 'null' : defaultValue
+      // @ts-ignore
+      type = type === '?' ? 'string' : type
+
       updateAttributes(({ props }) => {
         const isDefault =
           (defaultValue && (defaultValue === 'null' ? '' : defaultValue.replace(/^'|'$/g, '')) === value) ||
@@ -38,7 +42,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="my-4 gap-2 flex flex-wrap items-center" data-test="props-panel">
+  <div class="flex flex-wrap items-center gap-2 my-2" data-test="props-panel">
     <MarkdownComponentPropField
       v-for="schema in schemas"
       :key="schema.name"

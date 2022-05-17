@@ -1,5 +1,5 @@
 import type { Ref } from 'vue'
-import { omit } from 'lodash-es'
+import { omit, identity, pickBy } from 'lodash-es'
 import type { GitHubFile, GitHubDraft, Project, Root } from '~/types'
 import ProjectModalFileCreate from '~/components/project/modal/ProjectModalFileCreate.vue'
 import ProjectModalFileRename from '~/components/project/modal/ProjectModalFileRename.vue'
@@ -12,12 +12,14 @@ export const useProjectFiles = (project: Project, root: Root) => {
   const { $socket } = useNuxtApp()
   const { open: openModal } = useModal()
   const client = useStrapiClient()
+  const cookie = useCookie(`project-${project.id}-${root}-file`, { path: '/' })
   const { branch } = useProjectBranches(project)
 
   const recentFiles: Ref<GitHubFile[]> = useState(`project-${project.id}-${root}-files-recent`, () => [])
   const files: Ref<GitHubFile[]> = useState(`project-${project.id}-${root}-files`, () => null)
   const draft: Ref<GitHubDraft> = useState(`project-${project.id}-${root}-draft`, () => null)
   const file: Ref<GitHubFile> = useState(`project-${project.id}-${root}-file`, () => null)
+  const token: Ref<string> = useState(`project-${project.id}-${root}-token`, () => null)
 
   const pending = ref(false)
 
@@ -34,7 +36,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
 
     pending.value = true
 
-    const data = await client<{ files: GitHubFile[], draft: GitHubDraft }>(`/projects/${project.id}/files`, {
+    const data = await client<{ files: GitHubFile[], draft: GitHubDraft, token: string }>(`/projects/${project.id}/files`, {
       params: {
         ref: branch.value.name,
         root,
@@ -44,6 +46,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
 
     files.value = data.files
     draft.value = data.draft
+    token.value = data.token
 
     pending.value = false
 
@@ -65,7 +68,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
         body: { path }
       })
 
-      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
+      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}:${root}`)
 
       draft.value = data
 
@@ -85,6 +88,8 @@ export const useProjectFiles = (project: Project, root: Root) => {
         },
         body: formData
       })
+
+      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}:${root}`)
 
       draft.value = data
 
@@ -108,7 +113,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
         }
       })
 
-      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
+      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}:${root}`)
 
       draft.value = data
 
@@ -135,7 +140,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
         }
       })
 
-      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
+      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}:${root}`)
 
       draft.value = data
     } catch (e) {}
@@ -151,7 +156,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
         }
       })
 
-      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
+      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}:${root}`)
 
       const oldFilePath = draft.value.additions.find(addition => addition.path === path)?.oldPath
 
@@ -187,7 +192,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
         }
       })
 
-      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
+      $socket.emit('draft:update', `project-${project.id}:${branch.value.name}:${root}`)
 
       draft.value = data
 
@@ -198,12 +203,13 @@ export const useProjectFiles = (project: Project, root: Root) => {
     } catch (e) {}
   }
 
-  async function fetchFile (path: string) {
+  async function fetchFile (path: string, force = false) {
     return await client<GitHubFile>(`/projects/${project.id}/files/${encodeURIComponent(path)}`, {
-      params: {
+      params: pickBy({
         ref: branch.value?.name,
-        root
-      }
+        root,
+        force
+      }, identity)
     })
   }
 
@@ -247,13 +253,24 @@ export const useProjectFiles = (project: Project, root: Root) => {
   // Methods
 
   function init () {
-    const currentFile = file.value?.path ? computedFiles.value.find(f => f.path === file.value.path && f.status !== 'deleted') : null
+    let fileToSelect
 
-    select(currentFile || computedFiles.value.find(file => file.path.toLowerCase().endsWith('index.md') && file.status !== 'deleted') || computedFiles.value.find(file => file.type === 'blob' && file.status !== 'deleted'))
+    if (file.value) {
+      fileToSelect = fileToSelect || computedFiles.value.find(f => f.path === file.value.path && f.status !== 'deleted')
+    }
+    if (cookie.value) {
+      fileToSelect = fileToSelect || computedFiles.value.find(f => f.path === cookie.value && f.status !== 'deleted')
+    }
+
+    fileToSelect = fileToSelect || computedFiles.value.find(f => f.path.match(/^content\/[0-9.]*index\.md$/i) && f.status !== 'deleted')
+    fileToSelect = fileToSelect || computedFiles.value.find(f => f.type === 'blob' && f.status !== 'deleted')
+
+    select(fileToSelect)
   }
 
   function select (f: GitHubFile) {
     file.value = f
+    cookie.value = file.value?.path
 
     if (file.value) {
       recentFiles.value = [{ ...file.value, openedAt: Date.now() }, ...recentFiles.value.filter(rf => rf.path !== file.value.path)]
@@ -268,17 +285,6 @@ export const useProjectFiles = (project: Project, root: Root) => {
     }
   }
 
-  function mergeDraftInFiles () {
-    files.value = computedFiles.value.reduce((files, file) => {
-      if (file.status === 'deleted') { return files }
-      delete file.status
-      files.push(file)
-      return files
-    }, [])
-
-    draft.value = null
-  }
-
   // Computed
 
   const computedFiles: Ref<GitHubFile[]> = computed(() => {
@@ -288,15 +294,32 @@ export const useProjectFiles = (project: Project, root: Root) => {
     const githubFiles = files.value?.map(file => ({ ...file, name: file.path.split('/').pop() })) || []
 
     for (const addition of additions) {
+      // File has been renamed
       if (addition.oldPath) {
+        // Remove old file from deletions (only display renamed one)
         deletions.splice(deletions.findIndex(d => d.path === addition.oldPath), 1)
-        const file = githubFiles.find(f => f.path === addition.oldPath)
-        if (file) {
-          file.status = 'renamed'
-          file.name = addition.path.split('/').pop()
-          file.path = addition.path
-          file.oldPath = addition.oldPath
+
+        // Custom case of #447
+        const oldPathExistInCache = additions.find(a => a.path === addition.oldPath)
+        if (oldPathExistInCache) {
+          githubFiles.push({
+            name: addition.path.split('/').pop(),
+            type: 'blob',
+            status: 'created',
+            forceFetch: true,
+            ...addition
+          })
+        // Update exsiting renamed file data
+        } else {
+          const file = githubFiles.find(f => f.path === addition.oldPath)
+          if (file) {
+            file.status = 'renamed'
+            file.name = addition.path.split('/').pop()
+            file.path = addition.path
+            file.oldPath = addition.oldPath
+          }
         }
+      // File has been added
       } else if (addition.new) {
         githubFiles.push({
           name: addition.path.split('/').pop(),
@@ -304,6 +327,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
           status: 'created',
           ...omit(addition, ['new', 'oldPath'])
         })
+      // File has been modified
       } else {
         const file = githubFiles.find(f => f.path === addition.path)
         if (file) {
@@ -311,13 +335,19 @@ export const useProjectFiles = (project: Project, root: Root) => {
         }
       }
     }
+
     for (const deletion of deletions) {
+      // File has been deleted
       const file = githubFiles.find(f => f.path === deletion.path)
       if (file) {
         file.status = 'deleted'
       }
     }
     return githubFiles
+  })
+
+  const computedFile: Ref<GitHubFile> = computed(() => {
+    return computedFiles.value.find(f => f.path === file.value?.path)
   })
 
   const isDraft = computed(() => {
@@ -336,6 +366,18 @@ export const useProjectFiles = (project: Project, root: Root) => {
     return changesCount
   })
 
+  const previewUrl = computed(() => {
+    if (!project.url) {
+      return
+    }
+    if (!token.value) {
+      return
+    }
+
+    // Nuxt Content will call `https://api.nuxt.com/projects/draft?token=${token}`
+    return `${project.url}?_preview=${token.value}`
+  })
+
   return {
     // Http
     fetch,
@@ -352,16 +394,19 @@ export const useProjectFiles = (project: Project, root: Root) => {
     // Methods
     select,
     init,
-    mergeDraftInFiles,
     // Refs
     pending,
     uploadInput,
     // Computed
     computedFiles,
+    computedFile,
     isDraft,
+    previewUrl,
     // Data
     recentFiles,
-    file,
-    draft
+    files,
+    file: readonly(file),
+    draft,
+    token
   }
 }

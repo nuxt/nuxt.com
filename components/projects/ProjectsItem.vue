@@ -8,15 +8,15 @@
       <UAvatar :src="`https://github.com/${project.repository.owner}.png`" :alt="project.name" size="md" class="flex-shrink-0" />
 
       <div class="text-left truncate">
-        <p class="font-semibold truncate leading-5">
+        <p class="font-semibold leading-5 truncate">
           {{ project.name }}
         </p>
 
-        <a v-if="project.repository.url" :href="project.repository.url" target="_blank" tabindex="-1" class="relative text-sm font-medium u-text-gray-500 truncate hover:underline z-[1]">{{ project.repository.url }}</a>
+        <a v-if="project.url" :href="project.url" target="_blank" tabindex="-1" class="relative text-sm font-medium u-text-gray-500 truncate hover:underline z-[1]">{{ project.url }}</a>
       </div>
     </div>
 
-    <p class="u-text-gray-400 mb-6 break-words line-clamp-3">
+    <p class="mb-6 break-words u-text-gray-400 line-clamp-1">
       {{ project.repository.description || '&nbsp;' }}
     </p>
 

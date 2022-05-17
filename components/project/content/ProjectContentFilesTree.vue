@@ -1,6 +1,6 @@
 <template>
-  <ul>
-    <li v-for="(file, index) of tree" :key="index">
+  <ul class="relative">
+    <li v-for="(file, index) of tree" :ref="el => { itemRefs[file.path] = el }" :key="index">
       <div
         class="flex items-center w-full py-2 pr-6 text-sm font-medium border-r-2 group focus:u-bg-gray-50 focus:outline-none target"
         :class="{
@@ -20,13 +20,13 @@
       >
         <div class="flex items-center justify-between flex-1 w-0 gap-1">
           <div class="flex items-center min-w-0 overflow-hidden">
-            <ProjectContentFilesTreeIcon :file="file" :opened-dirs="openedDirs" class="mr-1.5" />
+            <ProjectContentFilesTreeIcon :file="file" class="mr-1.5" />
             <span class="min-w-0 truncate" :class="{ 'line-through opacity-50': isDeleted(file) }">
               {{ file.name }}
             </span>
           </div>
           <div class="items-center gap-1.5 -mr-1 flex group-hover:hidden">
-            <ProjectContentFilesTreeUsers :file="file" :opened-dirs="openedDirs" />
+            <ProjectContentFilesTreeUsers :file="file" />
           </div>
           <div class="items-center gap-1.5 -mr-1 hidden group-hover:flex">
             <UButton
@@ -95,17 +95,41 @@ const root: Root = inject('root')
 const { file: selectedFile, select, openCreateModal, openRenameModal, openRevertModal, openDeleteModal } = useProjectFiles(project, root)
 const { openedDirs, openDir, renameFiles } = useProjectFilesTree(project, root)
 
+const itemRefs = ref([])
+
+onMounted(() => {
+  scrollToSelectedFile()
+})
+
+watch(() => selectedFile.value.path, () => {
+  scrollToSelectedFile()
+})
+
 // Methods
 const isFile = (file: File) => file.type === 'file'
 const isDir = (file: File) => file.type === 'directory'
-const isDirOpen = (file: File) => !!openedDirs[file.path]
+const isDirOpen = (file: File) => !!openedDirs.value[file.path]
 const isDraft = (file: File) => !!file.status
 const isSelected = (file: File) => selectedFile.value && file.path === selectedFile.value.path
 const isDeleted = (file: File) => file.status === 'deleted'
 
+const scrollToSelectedFile = () => {
+  if (!selectedFile.value) {
+    return
+  }
+
+  nextTick(() => {
+    const ref = itemRefs.value[selectedFile.value.path]
+    if (ref) {
+      ref.scrollIntoView({ block: 'nearest' })
+    }
+  })
+}
+
 const selectFile = (file: File) => {
   // Prevent click when clicking on selected file
   if (selectedFile.value && selectedFile.value.path === file.path) {
+    scrollToSelectedFile()
     return
   }
 

@@ -44,24 +44,29 @@
 
     <div class="flex items-stretch flex-1 min-h-0 overflow-hidden">
       <div v-if="computedFiles.length" ref="editorScroll" class="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto">
-        <ProjectContentEditor
-          v-if="file"
-          :model-value="parsedContent"
+        <ProjectContentFileEditor
+          v-if="parsedContent"
+          :content="parsedContent"
           :components="components || []"
           class="flex flex-col flex-1"
-          @update:model-value="updateContent"
+          @update="onMarkdownUpdate"
         />
       </div>
       <ProjectContentFilesEmpty v-else @create="openCreateFileModal('content')" />
 
-      <ProjectContentFileAside :model-value="parsedMatter" @update:model-value="updateMatter" />
+      <ProjectContentFileAside
+        :model-value="parsedContent ? parsedContent.matter : {}"
+        @update:model-value="onMatterUpdate"
+      />
     </div>
   </ProjectPage>
 </template>
 
 <script setup lang="ts">
-import type { PropType, Ref } from 'vue'
+import { PropType, Ref } from 'vue'
 import { debounce } from 'lodash-es'
+import { useEditorScroll } from '~/editor/scroll'
+import type { Content } from '~/editor/types'
 import type { Team, Project, GitHubDraft } from '~/types'
 
 defineProps({
@@ -83,72 +88,42 @@ const { branch } = useProjectBranches(project)
 const { components } = useProjectComponents(project)
 const { draft, file, fetchFile, openCreateModal: openCreateFileModal, computedFiles } = useProjectFiles(project, root)
 const { query: treeQuery, tree, openDir } = useProjectFilesTree(project, root)
+const { scroll: editorScroll } = useEditorScroll(file)
 
 const content: Ref<string> = ref('')
-const parsedContent: Ref<string> = ref('')
-const parsedMatter: Ref<object> = ref({})
+const parsedContent: Ref<Content | null> = ref(null)
 
-const editorScroll: Ref<HTMLElement> = ref(null)
+// Methods
 
-// Watch
-
-// Fetch content when file changes
-watch(file, () => fetchContent(), { immediate: true })
-
-// Open dirs in tree when file is selected
-watch(file, (f) => {
-  if (!f) {
+const openDirs = () => {
+  if (!file.value) {
     return
   }
 
-  const paths = f.path.split('/')
+  const paths = file.value.path.split('/')
   for (let i = paths.length - 1; i > 1; i--) {
     paths.pop()
     openDir(paths.join('/'), true)
   }
-}, { immediate: true })
-
-// Split markdown front-matter when content changes
-watch(content, () => {
-  if (typeof content.value !== 'string') {
-    return
-  }
-
-  const { content: c, matter } = parseFrontMatter(content.value)
-
-  parsedContent.value = c
-  parsedMatter.value = matter
-}, { immediate: true })
-
-// When file path change due to new selection, scroll top
-watch(file, (f, old) => {
-  if (process.client && editorScroll.value) {
-    if (!f) {
-      return
-    }
-    // Ignore when: rename || rename back to original || rename when already renamed
-    if ((old && old.path === f.oldPath) || (old && old.oldPath === f.path) || (old && old.oldPath === f.oldPath)) {
-      return
-    }
-
-    editorScroll.value.scrollTop = 0
-  }
-})
-
-// Http
-
-async function fetchContent () {
-  if (!file.value) {
-    content.value = ''
-    return
-  }
-
-  const { content: fetchedContent } = await fetchFile(file.value.path)
-
-  content.value = fetchedContent
 }
 
-async function updateFile (formattedContent) {
+const onMarkdownUpdate = (markdown: string) => {
+  parsedContent.value.markdown = markdown
+  onUpdate()
+}
+
+const onMatterUpdate = (matter: object) => {
+  parsedContent.value.matter = matter
+  onUpdate()
+}
+
+const onUpdate = debounce(async () => {
+  const { markdown, matter } = unref(parsedContent)
+  const formattedContent = stringifyFrontMatter(markdown, matter)
+  if (formattedContent === content.value) {
+    return
+  }
+
   try {
     const data = await client<GitHubDraft>(`/projects/${project.id}/files/${encodeURIComponent(file.value.path)}`, {
       method: 'PUT',
@@ -164,53 +139,34 @@ async function updateFile (formattedContent) {
     content.value = formattedContent
     draft.value = data
 
-    $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
-    $socket.emit('file:update', `project-${project.id}:${branch.value.name}:${file.value.path}`)
+    $socket.emit('draft:update', `project-${project.id}:${branch.value.name}:${root}`)
   } catch (e) {}
-}
+}, 200)
 
-const updateContent = debounce((newContent: string) => {
-  const formattedContent = stringifyFrontMatter(newContent, parsedMatter.value)
-  if (formattedContent === content.value) {
-    return
+// Watch
+
+watch(file, async (file) => {
+  // Open dirs in tree to match selected file
+  openDirs()
+
+  // Fetch content
+  const { content: fetchedContent } = await fetchFile(file.path)
+  content.value = fetchedContent
+
+  // Parse content
+  const parsed = parseFrontMatter(content.value)
+
+  parsedContent.value = {
+    key: `project-${project.id}-${branch.value.name}-${file.path}`,
+    markdown: parsed.content,
+    matter: parsed.matter
   }
-
-  return updateFile(formattedContent)
-}, 500)
-
-const updateMatter = debounce((newMatter: object) => {
-  const formattedContent = stringifyFrontMatter(parsedContent.value, newMatter)
-  if (formattedContent === content.value) {
-    return
-  }
-
-  return updateFile(formattedContent)
-}, 500)
+}, { immediate: true })
 
 // Hooks
 
-onMounted(() => {
-  if (!file.value) {
-    return
-  }
-
-  $socket.emit('file:join', `project-${project.id}:${branch.value.name}:${file.value.path}`)
-
-  $socket.on('file:update', ({ branch: draftBranch, file: draftFile }) => {
-    if (draftBranch !== branch.value.name) {
-      return
-    }
-    if (file.value && draftFile.path !== file.value.path) {
-      return
-    }
-
-    content.value = draftFile.content
-  })
-})
-
-onUnmounted(() => {
-  $socket.emit('file:leave', `project-${project.id}`)
-})
+onMounted(() => file.value && $socket.emit('file:join', `project-${project.id}:${branch.value.name}:${file.value.path}`))
+onUnmounted(() => $socket.emit('file:leave', `project-${project.id}`))
 </script>
 
 <style>
@@ -220,5 +176,6 @@ onUnmounted(() => {
 .milkdown > .editor {
   max-width: 100% !important;
   padding: 0 !important;
+  overflow-y: visible !important;
 }
 </style>

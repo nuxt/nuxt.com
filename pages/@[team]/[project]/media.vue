@@ -105,7 +105,7 @@ function onDrop (e) {
 
 async function onFileVisible (path) {
   const file = computedFiles.value.find(file => file.path === path)
-  medias.value[path] = await fetchFile(file.oldPath || file.path)
+  medias.value[path] = await fetchFile(file.oldPath || file.path, file.forceFetch)
 }
 
 // Http

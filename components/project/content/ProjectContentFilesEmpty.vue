@@ -1,6 +1,6 @@
 <template>
-  <div class="flex-1 flex flex-col items-center justify-center p-6">
-    <UIcon name="heroicons-outline:folder" class="mx-auto h-12 w-12 u-text-gray-400" />
+  <div class="flex flex-col items-center justify-center flex-1 p-6">
+    <UIcon name="heroicons-outline:folder" class="w-12 h-12 mx-auto u-text-gray-400" />
     <h3 class="mt-2 text-sm font-medium u-text-gray-900">
       No files in <span class="italic">content</span> directory
     </h3>

@@ -4,7 +4,6 @@ export interface Media {
   caption: string
   ext: string
   url: string
-  previewUrl: string
 }
 
 export interface Member {
@@ -118,6 +117,7 @@ export interface Commit {
 
 export interface GitHubBranch {
   name: string
+  openedAt?: number
 }
 
 export interface GitHubAccount {
@@ -163,6 +163,8 @@ export interface GitHubFile {
   mimeType?: string
   content?: string
   oldPath?: string
+  forceFetch?: boolean
+  openedAt?: number
 }
 
 export interface GitHubDraftFile {

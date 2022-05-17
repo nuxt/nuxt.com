@@ -11,7 +11,8 @@
 </template>
 
 <script setup lang="ts">
-import { useMagicKeys, whenever } from '@vueuse/core'
+import type { WritableComputedRef } from 'vue'
+import { useMagicKeys, whenever, and, useActiveElement } from '@vueuse/core'
 import type { GitHubBranch, Project } from '~/types'
 
 const props = defineProps({
@@ -26,17 +27,17 @@ const project: Project = inject('project')
 const emit = defineEmits(['update:modelValue'])
 
 const keys = useMagicKeys()
+const activeElement = useActiveElement()
+
 const {
   isDraft: isDraftContent,
   draft: contentDraft,
-  init: initContentFile,
-  refresh: refreshContentFiles
+  init: initContentFile
 } = useProjectFiles(project, 'content')
 const {
   isDraft: isDraftMedia,
   draft: publicDraft,
-  init: initPublicFile,
-  refresh: refreshMediaFiles
+  init: initPublicFile
 } = useProjectFiles(project, 'public')
 const {
   branch,
@@ -51,7 +52,7 @@ const {
 
 // Computed
 
-const isOpen = computed({
+const isOpen: WritableComputedRef<boolean> = computed({
   get () {
     return props.modelValue
   },
@@ -67,6 +68,8 @@ const currentBranches = computed(() => {
 
 const recentItems = computed(() => {
   return [...recentBranches.value]
+    .filter(rb => branches.value.find(b => b.name === rb.name))
+    .filter(rb => rb.name !== branch.value.name)
     .sort((a, b) => b.openedAt - a.openedAt)
     .map(b => ({ ...b, icon: 'mdi:source-branch', disabled: b.name === branch.value.name }))
     .slice(0, 5)
@@ -74,27 +77,30 @@ const recentItems = computed(() => {
 
 const actions = computed(() => ([
   { key: 'create', label: 'Create new branch', static: true, icon: 'heroicons-outline:plus', click: onCreateBranchClick },
-  { key: 'refresh', label: 'Refresh branches', icon: 'heroicons-outline:refresh', iconClass: pendingBranches.value ? 'animate-spin' : '', click: () => { refreshBranches(true) } },
+  { key: 'refresh', label: 'Refresh branches', icon: 'heroicons-outline:refresh', iconClass: pendingBranches.value ? 'animate-spin' : '', click: () => { refreshBranches(true) }, prevent: true },
   (isDraftContent.value || isDraftMedia.value) && { key: 'reset', label: 'Revert draft', icon: 'heroicons-outline:reply', click: onResetDraftClick }
 ].filter(Boolean)))
 
+const notUsingInput = computed(() => !(activeElement.value?.tagName === 'INPUT' || activeElement.value?.tagName === 'TEXTAREA' || activeElement.value?.contentEditable === 'true'))
+
 // Watch
 
-whenever(keys.meta_b, () => {
+whenever(and(keys.meta_b, notUsingInput), () => {
   isOpen.value = !isOpen.value
 })
 
 // Methods
 
-async function onBranchSelect (b: GitHubBranch) {
+function onBranchSelect (b: GitHubBranch) {
   selectBranch(b)
-
-  await refreshContentFiles()
-  await refreshMediaFiles()
 }
 
 function onCreateBranchClick ({ query: name }) {
-  openCreateBranchModal(name && !branches.value.some(b => b.name === name) ? name : '', false)
+  openCreateBranchModal(
+    name && !branches.value.some(b => b.name === name) ? name : '',
+    branch.value.name === project.repository.default_branch,
+    false
+  )
 }
 
 async function onResetDraftClick () {
@@ -111,7 +117,10 @@ async function onResetDraftClick () {
 }
 
 function onSelect (option, data) {
-  isOpen.value = false
+  if (!option.prevent) {
+    isOpen.value = false
+  }
+
   if (option.click) {
     option.click(data)
   } else {

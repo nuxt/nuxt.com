@@ -3,34 +3,13 @@ import preset from './presets'
 import colors from './presets/colors'
 import typography from './presets/typography'
 
-// https://v3.nuxtjs.org/docs/directory-structure/nuxt.config
+// https://v3.nuxtjs.org/guide/directory-structure/nuxt.config
 export default defineNuxtConfig({
-  meta: {
-    title: 'Nuxt: Intuitive Web Development',
-    meta: [
-      { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1' },
-      { name: 'description', content: 'Nuxt makes web development intuitive and fun. The open source framework NuxtJS makes the development of modern web applications simple.' },
-      { name: 'og:site_name', content: 'Nuxt' },
-      { name: 'og:type', content: 'website' },
-      { name: 'og:image', content: 'https://nuxt.com/social.png' },
-      { name: 'og:image:alt', content: 'Nuxt' },
-      { name: 'twitter:image', content: 'https://nuxt.com/social-twitter.png' },
-      { name: 'twitter:card', content: 'summary_large_image' },
-      { name: 'twitter:site', content: '@nuxt_js' }
-    ],
-    link: [
-      { rel: 'icon', href: '/icon.png' }
-    ]
-  },
-  components: [
-    { path: '~/components/globals', global: true },
-    '~/components'
-  ],
   css: [
     '~/assets/css/fonts.css',
     '~/assets/css/scrollbars.css'
   ],
-  buildModules: [
+  modules: [
     '@nuxthq/ui',
     '@nuxthq/admin',
     '@nuxtjs/strapi',
@@ -38,9 +17,21 @@ export default defineNuxtConfig({
     '@nuxt-modules/newsletter',
     'vue-plausible'
   ],
+  build: {
+    transpile: [
+      'swiper'
+    ]
+  },
   runtimeConfig: {
+    github: {
+      token: process.env.GITHUB_TOKEN
+    },
+    orbit: {
+      token: process.env.ORBIT_TOKEN
+    },
     public: {
       baseUrl: process.env.BASE_URL || 'https://nuxt.com',
+      ywsUrl: process.env.YWS_URL,
       github: {
         appSlug: process.env.GITHUB_APP_SLUG || 'nuxt'
       },
@@ -90,6 +81,9 @@ export default defineNuxtConfig({
       theme: 'one-dark-pro',
       preload: ['ini', 'json', 'js', 'ts', 'html', 'css', 'vue', 'diff', 'shell', 'markdown']
     }
+  },
+  typescript: {
+    shim: false
   },
   newsletter: {
     revue: {

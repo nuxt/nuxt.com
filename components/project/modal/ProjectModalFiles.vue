@@ -11,6 +11,7 @@
 </template>
 
 <script setup lang="ts">
+import type { WritableComputedRef } from 'vue'
 import { useMagicKeys, whenever } from '@vueuse/core'
 import { getPathName } from '~/utils/tree'
 import type { GitHubFile, Project } from '~/types'
@@ -56,7 +57,7 @@ const refreshingFiles = ref(false)
 
 // Computed
 
-const isOpen = computed({
+const isOpen: WritableComputedRef<boolean> = computed({
   get () {
     return props.modelValue
   },
@@ -72,24 +73,9 @@ const isDisabled = f => f.status === 'deleted' || (isContentPage.value && conten
 const currentFiles = computed(() => {
   let currentFiles = []
 
-  if (isContentPage.value) {
-    let files = [...contentFiles.value]
-    if (contentFile.value) {
-      files = files.filter(f => f.path !== contentFile.value.path)
-    }
-
+  if (isMediaPage.value) {
     currentFiles = [
-      ...files,
-      ...mediaFiles.value
-    ]
-  } else if (isMediaPage.value) {
-    let files = [...mediaFiles.value]
-    if (mediaFile.value) {
-      files = files.filter(f => f.path !== mediaFile.value.path)
-    }
-
-    currentFiles = [
-      ...files,
+      ...mediaFiles.value,
       ...contentFiles.value
     ]
   } else {
@@ -104,8 +90,18 @@ const currentFiles = computed(() => {
 
 const recentFiles = computed(() => {
   return [...contentRecentFiles.value, ...mediaRecentFiles.value]
+    .filter(rf => currentFiles.value.find(f => f.path === rf.path))
+    .filter((rf) => {
+      if (isContentPage.value && contentFile.value && rf.path === contentFile.value.path) {
+        return false
+      }
+      if (isMediaPage.value && mediaFile.value && rf.path === mediaFile.value.path) {
+        return false
+      }
+      return true
+    })
     .sort((a, b) => b.openedAt - a.openedAt)
-    .map(f => ({ ...f, name: getPathName(f.path), icon: getIconName(f), iconColor: getIconColor(f), disabled: isDisabled(f) }))
+    .map(rf => ({ ...rf, name: getPathName(rf.path), icon: getIconName(rf), iconColor: getIconColor(rf), disabled: isDisabled(rf) }))
     .slice(0, 5)
 })
 
@@ -114,7 +110,8 @@ const actions = computed(() => ([{
   label: 'Refresh files',
   icon: 'heroicons-outline:refresh',
   iconClass: refreshingFiles.value ? 'animate-spin' : '',
-  click: refreshFiles
+  click: refreshFiles,
+  prevent: true
 }, {
   key: 'create',
   label: 'Create file',
@@ -194,7 +191,10 @@ function onFileSelect (f: GitHubFile) {
 }
 
 function onSelect (option, data) {
-  isOpen.value = false
+  if (!option.prevent) {
+    isOpen.value = false
+  }
+
   if (option.click) {
     option.click(data)
   } else {

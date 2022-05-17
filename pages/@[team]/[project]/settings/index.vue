@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-6">
-    <UCard padded>
+    <UCard padded @submit.prevent="onSubmit">
       <template #header>
         <h2 class="text-lg font-medium leading-6 u-text-gray-900">
           General
@@ -40,7 +40,17 @@
           />
         </UFormGroup>
 
-        <UFormGroup name="url" label="Url" help="The url of your project is used for preview purposes.">
+        <UFormGroup name="url" label="Url" help="The url of your project is used for live preview.">
+          <template #label>
+            <div class="flex items-center gap-1.5">
+              Deployment url
+
+              <UTooltip v-if="!previewUrl" text="Live preview disabled." placement="top">
+                <UIcon name="heroicons-outline:exclamation" class="w-4 h-4 text-orange-400" />
+              </UTooltip>
+            </div>
+          </template>
+
           <UInput
             v-model="form.url"
             name="url"
@@ -65,7 +75,6 @@
             type="submit"
             :loading="updating"
             label="Save"
-            @click="onSubmit()"
           />
         </div>
       </template>
@@ -93,6 +102,7 @@ const { update } = useStrapi4()
 const { $toast } = useNuxtApp()
 const route = useRoute()
 const client = useStrapiClient()
+const { previewUrl } = useProjectFiles(project, 'content')
 
 const form = reactive({ name: project.name, slug: project.slug, url: project.url, baseDir: project.baseDir })
 const updating = ref(false)

@@ -1,19 +1,21 @@
-import { Editor, editorViewCtx, parserCtx, serializerCtx, rootCtx } from '@milkdown/core'
+import { Editor, rootCtx } from '@milkdown/core'
 import { emoji } from '@milkdown/plugin-emoji'
 import { history } from '@milkdown/plugin-history'
 import { listener } from '@milkdown/plugin-listener'
 import { prism } from '@milkdown/plugin-prism'
 import { tooltip } from '@milkdown/plugin-tooltip'
 import { gfm } from '@milkdown/preset-gfm'
+import { switchTheme, replaceAll } from '@milkdown/utils'
 import { useEditor as useMilkdownEditor } from '@milkdown/vue'
-import { Slice } from 'prosemirror-model'
-import { isRef, ref, unref, computed, watch } from 'vue'
 
 // Internal context
 import context, { componentSchemasCtx } from './context'
 
 // Internal plugins
-import plugins from './plugins'
+import mdc from './plugins/mdc'
+import slash from './plugins/slash'
+import trailingParagraph from './plugins/trailing-paragraph'
+import collaborative, { switchRoom } from './plugins/collaborative'
 
 // Theme
 import { dark, light } from './theme'
@@ -37,15 +39,19 @@ export const useEditor = (options: Options) => {
       .config(ctx => ctx.set(rootCtx, root))
       .use(context(options, renderVue))
       .use(unref(theme))
-      .use(emoji())
+      .use(emoji)
       .use(history)
       .use(listener)
       .use(gfm)
-      .use(prism)
-      .use(tooltip())
+      .use(prism) // TODO: Use custom plugin to add Shiki support
+      .use(tooltip)
+      .use(mdc)
+      .use(slash)
+      .use(trailingParagraph)
 
-    for (const plugin of plugins) {
-      instance.use(plugin)
+    if (useRuntimeConfig().public.ywsUrl) {
+      const { key: room } = unref(options.content)
+      instance.use(collaborative(room))
     }
 
     return instance
@@ -55,28 +61,29 @@ export const useEditor = (options: Options) => {
 
   // Reactive content
   if (isRef(options.content)) {
-    watch(options.content, (content) => {
-      instance?.action((ctx) => {
-        const view = ctx.get(editorViewCtx)
-        const parser = ctx.get(parserCtx)
-        const serializer = ctx.get(serializerCtx)
-        const state = view.state
-        if (content === serializer(state.doc)) {
-          return
-        }
-        const doc = parser(content)
-        if (!doc) { return }
-        view.dispatch(state.tr.replace(0, state.doc.content.size, new Slice(doc.content, 0, 0)))
-      })
+    watch(options.content, async () => {
+      const { key: room, markdown } = unref(options.content)
+
+      // Switch room
+      await switchRoom(room)
+
+      // Ensure collaborative is synced with markdown fetched from API for the current file
+      // TODO: We may try to setup Redis around YWS server for better synchronization (one place to sync)
+      instance.action(replaceAll(markdown))
     })
   }
 
   // Reactive components
   if (isRef(options.components)) {
     watch(options.components, (components) => {
-      instance?.action(ctx => ctx.set(componentSchemasCtx, components))
+      instance.action(ctx => ctx.set(componentSchemasCtx, components))
     })
   }
+
+  // Reactive theme
+  watch(theme, (value) => {
+    instance.action(switchTheme(value))
+  })
 
   return editor
 }

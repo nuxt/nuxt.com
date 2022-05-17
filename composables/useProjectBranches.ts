@@ -4,11 +4,10 @@ import ProjectModalBranchCreate from '~/components/project/modal/ProjectModalBra
 import ProjectModalPublish from '~/components/project/modal/ProjectModalPublish.vue'
 
 export const useProjectBranches = (project: Project) => {
-  const { $socket } = useNuxtApp()
+  const { $socket, $toast } = useNuxtApp()
   const { open: openModal } = useModal()
   const client = useStrapiClient()
   const cookie = useCookie(`project-${project.id}-branch`, { path: '/' })
-  const { $toast } = useNuxtApp()
 
   const recentBranches: Ref<GitHubBranch[]> = useState(`project-${project.id}-branches-recent`, () => [])
   const branches: Ref<GitHubBranch[]> = useState(`project-${project.id}-branches`, () => [])
@@ -54,18 +53,21 @@ export const useProjectBranches = (project: Project) => {
       branches.value.push(b)
 
       select(b)
+
+      if (mergeDraft) {
+        $socket.emit('draft:update', `project-${project.id}:${project.repository.default_branch}:content`)
+        $socket.emit('draft:update', `project-${project.id}:${project.repository.default_branch}:public`)
+      }
     } catch (e) {}
   }
 
-  async function commit (callback?: () => void) {
+  async function commit () {
     loading.value = true
 
     try {
       await client(`/projects/${project.id}/branches/${encodeURIComponent(branch.value.name)}/commit`, { method: 'POST' })
 
-      if (callback) {
-        await callback()
-      }
+      $socket.emit('branch:commit', `project-${project.id}:${branch.value.name}`)
 
       $toast.success({
         title: 'Changes saved!',
@@ -76,22 +78,17 @@ export const useProjectBranches = (project: Project) => {
     loading.value = false
   }
 
-  async function publish (callback?: () => void) {
+  async function publish () {
+    const name = branch.value.name
+
     loading.value = true
 
     try {
-      await client(`/projects/${project.id}/branches/${encodeURIComponent(branch.value.name)}/publish`, { method: 'POST' })
-
-      select({ name: project.repository.default_branch })
-      branches.value = branches.value.filter(b => b.name !== branch.value.name)
-
-      if (callback) {
-        await callback()
-      }
+      await client(`/projects/${project.id}/branches/${encodeURIComponent(name)}/publish`, { method: 'POST' })
 
       $toast.success({
         title: 'Published!',
-        description: `Your branch ${branch.value.name} has been merged into ${project.repository.default_branch}.`
+        description: `Your branch ${name} has been merged into ${project.repository.default_branch}.`
       })
     } catch (e) {}
 
@@ -101,12 +98,13 @@ export const useProjectBranches = (project: Project) => {
   async function reset () {
     await client(`/projects/${project.id}/branches/${encodeURIComponent(branch.value.name)}/reset`, { method: 'DELETE' })
 
-    $socket.emit('draft:update', `project-${project.id}:${branch.value.name}`)
+    $socket.emit('draft:update', `project-${project.id}:${branch.value.name}:content`)
+    $socket.emit('draft:update', `project-${project.id}:${branch.value.name}:public`)
   }
 
   // Modals
 
-  function openCreateModal (name: string, mergeDraft: boolean, callback?: () => void) {
+  function openCreateModal (name: string, mergeDraft: boolean, commitDraft: boolean, callback?: () => void) {
     openModal(ProjectModalBranchCreate, {
       name,
       mergeDraft,
@@ -114,46 +112,61 @@ export const useProjectBranches = (project: Project) => {
       onSubmit: async (name: string) => {
         await create(name, mergeDraft)
 
-        if (mergeDraft) {
-          await commit(callback)
+        if (commitDraft) {
+          await commit()
+        }
+
+        if (callback) {
+          await callback()
         }
       }
     })
   }
 
-  function openPublishModal (callback?: () => void) {
+  function openPublishModal () {
     openModal(ProjectModalPublish, {
       project,
       branch: branch.value,
-      onSubmit: async () => {
-        await publish(callback)
-      }
+      onSubmit: publish
     })
+  }
+
+  // Links
+
+  function openGithub () {
+    window.open(`https://github.com/${project.repository.owner}/${project.repository.name}`, '_blank')
+  }
+
+  function openGithubDesktop () {
+    window.open(`x-github-client://openRepo/https://github.com/${project.repository.owner}/${project.repository.name}`)
   }
 
   // Methods
 
   function init () {
-    let b: GitHubBranch | undefined
+    let branchToSelect
+
+    if (branch.value) {
+      branchToSelect = branchToSelect || branches.value.find(b => b.name === branch.value.name)
+    }
     if (cookie.value) {
-      b = branches.value.find(branch => branch.name === cookie.value)
-    } else {
-      b = branches.value.find(branch => branch.name === project.repository.default_branch)
+      branchToSelect = branchToSelect || branches.value.find(b => b.name === cookie.value)
     }
 
-    select(b || branches.value[0])
+    branchToSelect = branchToSelect || branches.value.find(b => b.name === project.repository.default_branch)
+    branchToSelect = branchToSelect || branches.value[0]
+
+    select(branchToSelect)
   }
 
   function select (b: GitHubBranch) {
     branch.value = b
-    cookie.value = branch.value.name
+    cookie.value = branch.value?.name
 
     if (branch.value) {
       recentBranches.value = [{ ...branch.value, openedAt: Date.now() }, ...recentBranches.value.filter(rb => rb.name !== branch.value.name)]
-    }
 
-    if (process.client) {
-      if (branch.value) {
+      if (process.client) {
         $socket.emit('branch:join', `project-${project.id}:${branch.value.name}`)
       }
     }
@@ -169,6 +182,9 @@ export const useProjectBranches = (project: Project) => {
     // Modals
     openCreateModal,
     openPublishModal,
+    // Links
+    openGithub,
+    openGithubDesktop,
     // Methods
     select,
     // Refs
@@ -177,6 +193,6 @@ export const useProjectBranches = (project: Project) => {
     // Data
     recentBranches,
     branches,
-    branch
+    branch: readonly(branch)
   }
 }

@@ -1,8 +1,8 @@
 <template>
-  <div class="h-screen flex">
+  <div class="flex h-screen">
     <ProjectAside class="hidden lg:flex" :links="linksWithoutLabel" />
 
-    <div class="flex-1 min-w-0 flex flex-col overflow-hidden">
+    <div class="flex flex-col flex-1 min-w-0 overflow-hidden">
       <ProjectNavbar :links="links" class="lg:hidden" />
 
       <slot />
@@ -20,7 +20,6 @@ const { isDraft: isContentDraft } = useProjectFiles(project, 'content')
 const { isDraft: isMediaDraft } = useProjectFiles(project, 'public')
 
 const links = computed(() => ([
-  { to: { name: '@team-project' }, icon: 'heroicons-outline:home', label: 'Home', exact: true },
   { to: { name: '@team-project-content' }, icon: 'heroicons-outline:pencil', label: 'Content', badge: isContentDraft.value },
   { to: { name: '@team-project-media' }, icon: 'heroicons-outline:photograph', label: 'Media', badge: isMediaDraft.value },
   { to: { name: '@team-project-settings' }, icon: 'heroicons-outline:cog', label: 'Settings' }

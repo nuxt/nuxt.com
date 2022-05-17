@@ -2,16 +2,16 @@
   <ul :class="{ 'pl-4': level > 1 }">
     <li
       v-for="(link, index) in tree"
-      :key="link.slug"
+      :key="link.path"
       :class="{
         'border-l-2': level > 0,
         'u-border-gray-900': isActive(link),
         'u-border-gray-300 hover:u-border-gray-900': !isActive(link)
       }"
     >
-      <ULink
-        :to="link.slug"
-        class="block py-1.5 flex items-center justify-between focus:outline-none w-full"
+      <NuxtLink
+        :to="link.path"
+        class="py-1.5 flex items-center justify-between focus:outline-none w-full"
         :exact="link.exact"
         :class="{
           'pl-4 lg:text-sm': level > 0,
@@ -24,11 +24,11 @@
         <span>{{ link.title }}</span>
 
         <UIcon v-if="link.icon" :name="link.icon" class="w-5 h-5 u-text-gray-500" />
-      </ULink>
+      </NuxtLink>
 
       <DocsAsideTree
         v-if="link.children?.length && (max === null || ((level + 1) < max))"
-        v-show="isChildOpen[link.slug]"
+        v-show="isChildOpen[link.path]"
         :tree="link.children"
         :level="level + 1"
         :max="max"
@@ -65,19 +65,19 @@ const router = useRouter()
 const isChildOpen = reactive({})
 
 function isActive (link) {
-  return link.exact ? route.fullPath === link.slug : route.fullPath.startsWith(link.slug)
+  return link.exact ? route.fullPath === link.path : route.fullPath.startsWith(link.path)
 }
 
 function onClick (link) {
   if (link.children?.length) {
     // Open dir when element is collapsible
-    openDir(link.slug)
+    openDir(link.path)
     // Select element for mobile nav
     if (props.max !== null && props.level + 1 === props.max) {
       emit('select', link)
     }
   } else {
-    router.push(link.slug)
+    router.push(link.path)
     emit('close')
   }
 }

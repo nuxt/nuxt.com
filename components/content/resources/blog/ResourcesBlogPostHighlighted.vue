@@ -1,0 +1,55 @@
+<template>
+  <NuxtLink :to="page.path" class="relative overflow-hidden group rounded-xl bg-gradiant">
+    <div class="absolute inset-0 transition-opacity bg-overlay opacity-20 group-hover:opacity-40" />
+    <div class="relative flex flex-col p-8">
+      <div class="font-semibold text-white">
+        <time>{{ formatDateByLocale('en', page.date) }}</time>
+      </div>
+      <h2 class="mt-4 text-3xl font-bold text-white">
+        {{ page.title }}
+      </h2>
+      <p class="mt-6 text-white line-clamp-3">
+        {{ page.description }}
+      </p>
+      <div class="flex items-center justify-between mt-6">
+        <span class="flex items-center text-xl font-semibold text-white gap-x-2">
+          Read article<UIcon name="heroicons-solid:arrow-right" class="w-4 h-4 mt-1" />
+        </span>
+        <UAvatarGroup :group="authors" size="sm" />
+      </div>
+    </div>
+  </NuxtLink>
+</template>
+
+<script setup>
+const props = defineProps({
+  page: {
+    type: Object,
+    required: true
+  }
+})
+
+const authors = computed(
+  () => {
+    return (props?.page?.authors || []).map(author => ({ src: author.avatarUrl, ...author }))
+  }
+)
+
+const formatDateByLocale = (locale, d) => {
+  return new Date(d).toLocaleDateString(locale, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  })
+}
+</script>
+
+<style scoped>
+.bg-gradiant {
+  background-image: url('/resources/blog/bg-gradient.png');
+  background-size: cover;
+}
+.bg-overlay {
+  background-image: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%);
+}
+</style>

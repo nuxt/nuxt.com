@@ -1,10 +1,10 @@
 <template>
   <UModal v-model="isOpen" appear @close="onClose" @submit.prevent="onSubmit">
     <div class="sm:flex sm:items-start">
-      <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 dark:bg-green-500 sm:mx-0 sm:h-10 sm:w-10">
+      <div class="flex items-center justify-center flex-shrink-0 w-12 h-12 mx-auto bg-green-100 rounded-full dark:bg-green-500 sm:mx-0 sm:h-10 sm:w-10">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="text-green-500 dark:text-white h-6 w-6"
+          class="w-6 h-6 text-green-500 dark:text-white"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -26,7 +26,7 @@
       </div>
     </div>
     <div class="flex items-center w-full mt-5 sm:mt-4">
-      <span v-if="path" class="flex-shrink-0 max-w-[200px] truncate px-2 py-2 text-sm border border-r-0 u-bg-gray-50 u-border-gray-300 rounded-l-md u-text-gray-500">
+      <span v-if="path" class="flex-shrink-0 max-w-[200px] truncate px-3 py-2 text-sm border border-r-0 u-bg-gray-50 u-border-gray-300 rounded-l-md u-text-gray-500">
         {{ path }}/
       </span>
 
@@ -36,11 +36,15 @@
         placeholder="faq/index.md"
         required
         autocomplete="off"
-        class="w-full"
-        :custom-class="path && 'rounded-l-none'"
+        class="flex-1 w-auto"
+        :custom-class="`rounded-r-none ${path && 'rounded-l-none'}`"
       />
+
+      <span class="flex-shrink-0 max-w-[200px] truncate px-3 py-2 text-sm border border-l-0 u-bg-gray-50 u-border-gray-300 rounded-r-md u-text-gray-500">
+        {{ ext }}
+      </span>
     </div>
-    <div v-if="error" class="text-red-500 text-sm italic mt-2">
+    <div v-if="error" class="mt-2 text-sm italic text-red-500">
       {{ error }}
     </div>
     <div class="gap-3 mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
@@ -68,7 +72,8 @@ const props = defineProps({
 const emit = defineEmits(['submit', 'close'])
 
 const name = ref('')
-const newPath = computed(() => [props.path, name.value].join('/'))
+const ext = ref('.md')
+const newPath = computed(() => `${props.path}/${name.value}${ext.value}`)
 const error = computed(() => {
   if (props.computedFiles.find(file => file.path === newPath.value)) {
     return 'File already exists'

@@ -22,36 +22,39 @@ interface GraphQLHistory {
 
 export const useProjectFileHistory = (project: Project, root: Root) => {
   const { branch } = useProjectBranches(project)
-  const { file, draft } = useProjectFiles(project, root)
+  const { computedFile, draft } = useProjectFiles(project, root)
   const client = useStrapiClient()
 
   const pending = ref(true)
-  const historyData: Ref<GraphQLHistory | null> = ref(null)
+  const historyData: Ref<GraphQLHistory | null> = useState(`project-${project.id}-${root}-file-history`, () => null)
 
   const fetch = async () => {
-    if (!file.value) {
+    if (!computedFile.value) {
       return
     }
 
     // created file case
-    if (file.value.status === 'created') {
+    if (computedFile.value.status === 'created') {
       historyData.value = null
       pending.value = false
       return
     }
 
     // renamed file case
-    const oldPath = draft.value?.additions?.find(f => f.path === file.value.path)?.oldPath
+    const oldPath = draft.value?.additions?.find(f => f.path === computedFile.value.path)?.oldPath
+    const path = oldPath || computedFile.value.path
 
     pending.value = true
 
     try {
-      historyData.value = await client<GraphQLHistory>(`/projects/${project.id}/files/${encodeURIComponent(oldPath || file.value.path)}/history`, {
+      historyData.value = await client<GraphQLHistory>(`/projects/${project.id}/files/${encodeURIComponent(path)}/history`, {
         params: {
           ref: branch.value.name
         }
       })
-    } catch (e) {}
+    } catch (e) {
+      historyData.value = null
+    }
 
     pending.value = false
   }
@@ -68,14 +71,11 @@ export const useProjectFileHistory = (project: Project, root: Root) => {
     })) as Commit[] || []
   })
 
-  // Watch
-
-  if (process.client) {
-    watch(file, fetch, { immediate: true })
-  }
-
   return {
+    // Data
     history,
-    pending
+    pending,
+    // Methods
+    fetch
   }
 }

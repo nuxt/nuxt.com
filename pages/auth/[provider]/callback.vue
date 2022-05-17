@@ -21,13 +21,13 @@ onMounted(async () => {
 
     const user = data.user as Ref<User>
 
-    const redirect = useCookie('redirect', { path: '/' }).value
-    if (redirect) {
-      router.push(redirect)
-      useCookie('redirect', { path: '/' }).value = null
-    } else {
-      router.push({ name: '@team-projects', params: { team: user.value.username } })
-    }
+    // const redirect = useCookie('redirect', { path: '/' }).value
+    // if (redirect) {
+    //   router.push(redirect)
+    //   useCookie('redirect', { path: '/' }).value = null
+    // } else {
+    router.push({ name: '@team-projects', params: { team: user.value.username } })
+    // }
   } catch (e) {
     router.push('/')
   }

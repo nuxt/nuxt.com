@@ -1,10 +1,11 @@
 import type { Ref } from 'vue'
 import type { Project } from '~/types'
+import type { ComponentSchema } from '~/editor/types'
 
 export const useProjectComponents = (project: Project) => {
   const { $toast } = useNuxtApp()
 
-  const components: Ref<object[]> = useState(`project-${project.id}-components`, () => null)
+  const components: Ref<ComponentSchema[]> = useState(`project-${project.id}-components`, () => null)
 
   const pending = ref(false)
 
@@ -22,9 +23,16 @@ export const useProjectComponents = (project: Project) => {
     pending.value = true
 
     try {
-      components.value = await $fetch(`${project.url}/api/component-meta`, {
+      const data: any = await $fetch(`${project.url}/api/_admin/components`, {
         retry: false
       })
+
+      // Ensure data is valid array
+      if (!Array.isArray(data)) {
+        throw new TypeError('Invalid data')
+      }
+
+      components.value = data
     } catch (e) {
       components.value = []
 

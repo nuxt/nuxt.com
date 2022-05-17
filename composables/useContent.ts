@@ -64,21 +64,20 @@ export const useContent = () => {
     const directory = splitted.slice(0, splitted.length - 1).join('/')
 
     // Get navigation node from current path
-    const file = navFromPath(path.value, navigation.value)
-
+    const file = fileFromPath(path.value, navigation.value)
     if (file && !file.children) {
       // Path queried has a page (and is not a directory)
       await Promise.all([
-        queryContent().where({ id: file.id }).findOne() as Promise<ParsedContent>,
+        queryContent().where({ path: file.path }).findOne() as Promise<ParsedContent>,
         queryContent(directory).findSurround(path.value) as Promise<ParsedContent[]>
       ]).then(([_page, _surround]) => {
         page.value = _page
         surround.value = _surround
       })
     } else if (file) {
-      navigateTo(findBottomLink(file))
+      await navigateTo(findBottomLink(file))
     } else {
-      throwError({ message: 'This page does not exist.', statusCode: 404 })
+      throwError({ statusMessage: 'Page not found', message: 'This page does not exist.', statusCode: 404 })
     }
   }
 
@@ -91,13 +90,18 @@ export const useContent = () => {
    * Find first child link from a navigation node.
    */
   const findBottomLink = (link: NavItem) => {
-    let slug = link.slug
-
-    if (link.children && link.children.length) {
-      slug = findBottomLink(link.children[0])
+    for (const child of link.children) {
+      if (!child.children) {
+        return child.path
+      }
     }
 
-    return slug
+    for (const child of link.children) {
+      const result = findBottomLink(child)
+      if (result) {
+        return result
+      }
+    }
   }
 
   /**
@@ -105,12 +109,25 @@ export const useContent = () => {
    */
   const navFromPath = (path: string, tree: NavItem[] = navigation.value) => {
     for (const file of tree) {
+      if (file.path === path && !file.id) {
+        return file
+      }
+
       if (file.children) {
         const result = navFromPath(path, file.children)
         if (result) { return result }
       }
+    }
+  }
 
-      if (file.slug === path) {
+  const fileFromPath = (path: string, tree: NavItem[] = navigation.value) => {
+    for (const file of tree) {
+      if (file.children) {
+        const result = fileFromPath(path, file.children)
+        if (result) { return result }
+      }
+
+      if (file.path === path) {
         return file
       }
     }

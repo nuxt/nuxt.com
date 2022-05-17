@@ -6,3 +6,4 @@ nuxt.d.ts
 .env
 .DS_STORE
 .history
+.cache
