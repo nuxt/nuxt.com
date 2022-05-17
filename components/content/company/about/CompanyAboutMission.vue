@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col-reverse items-start pt-24 pb-24 xl:pb-36 xl:block xl:relative">
+  <div class="flex flex-col-reverse items-start pt-24 overflow-hidden xl:pb-24 xl:pb-36 xl:block xl:relative">
     <div class="self-end translate-x-8 xl:translate-x-0 xl:absolute xl:-right-8 xl:top-24">
       <img v-if="image" :src="image" class="relative">
     </div>
