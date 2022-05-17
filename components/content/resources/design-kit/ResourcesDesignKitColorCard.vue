@@ -1,6 +1,7 @@
 <template>
   <li>
     <UCard
+      padded
       class="h-28"
       :background-class="cardClass"
       :body-class="gradient ? 'h-full px-4 sm:px-6 lg:px-20' : secondaries ? 'group h-28': 'px-4 py-5 sm:p-6'"
@@ -21,7 +22,7 @@
     </UCard>
     <div v-if="!gradient && !secondaries">
       <div class="flex items-center justify-between">
-        <h5 class="font-bold u-text-gray-900">
+        <h5 class="font-semibold u-text-gray-900">
           <Markdown use="color" unwrap="p" />
         </h5>
         <UButton variant="transparent" @click="onClick">

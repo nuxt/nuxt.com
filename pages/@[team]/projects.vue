@@ -7,6 +7,7 @@
           name="q"
           placeholder="Search..."
           autocomplete="off"
+          appearance="darken"
           icon="heroicons-outline:search"
           class="w-full sm:w-auto sm:flex-1"
         />

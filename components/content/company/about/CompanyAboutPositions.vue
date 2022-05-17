@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col-reverse items-start pt-12 md:block md:relative pb-36">
+  <div class="flex flex-col-reverse items-start pt-12 pb-16 md:block md:relative sm:pb-32">
     <div class="md:absolute md:right-0 md:top-12">
       <div class="relative">
         <img src="/company/about/map.svg">

@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-6">
-    <UCard body-class>
+    <UCard body-class="">
       <template #header>
         <div class="flex flex-wrap items-center justify-between -mt-4 -ml-4 sm:flex-nowrap">
           <div class="mt-4 ml-4">
@@ -45,6 +45,7 @@
               :model-value="member.role"
               size="sm"
               :options="roles"
+              appearance="darken"
               @update:model-value="onMemberRoleChange(member, $event)"
             />
             <p v-else class="text-sm capitalize u-text-gray-500">

@@ -9,7 +9,7 @@
         <div class="text-sm font-semibold u-text-gray-400">
           <time>{{ formatDateByLocale('en', page.date) }}</time>
         </div>
-        <h2 class="text-2xl font-bold u-text-gray-900 line-clamp-2">
+        <h2 class="text-2xl font-semibold u-text-gray-900 line-clamp-2">
           {{ page.title }}
         </h2>
         <p class="font-medium transition-opacity opacity-0 u-text-gray-500 line-clamp-3 group-hover:opacity-100">

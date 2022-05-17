@@ -2,6 +2,7 @@
   <UCard
     body-class="relative block w-full overflow-hidden group aspect-w-16 aspect-h-9"
     footer-class="relative flex flex-col flex-1 p-4"
+    footer-background-class="u-bg-white"
     border-color-class="border-transparent"
     class="relative flex flex-col transition duration-200 transform group"
     :ring-class="`ring-1 u-ring-gray-200 ${!!to && 'lg:hover:u-ring-gray-900 lg:hover:ring-2'}`"
