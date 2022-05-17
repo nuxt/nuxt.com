@@ -11,7 +11,7 @@
         </span>
       </h2>
       <div class="mt-8 flex lg:mt-0 lg:flex-shrink-0 gap-y-3 gap-x-8 z-[1] relative h-10">
-        <UButton :label="contactButtonText" variant="secondary" class="w-36 u-border-gray-900 u-text-gray-900 hover:u-border-gray-700 hover:u-text-gray-700" size="lg" block />
+        <UButton :label="contactButtonText" variant="secondary" class="w-36" size="lg" block />
         <UButton :label="getStartedButtonText" class="w-36" size="lg" block />
       </div>
     </UContainer>
