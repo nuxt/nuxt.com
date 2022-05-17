@@ -6,7 +6,7 @@
       class="relative flex gap-4 p-5 border rounded-lg u-bg-gray-50 u-border-gray-200"
     >
       <div class="flex items-center justify-center w-12 h-12 border rounded-lg u-bg-white u-border-gray-200">
-        <img :src="item.icon" class="w-6 h-6">
+        <UIcon :name="item.icon" class="w-6 h-6 u-text-gray-900" />
       </div>
 
       <div class="flex flex-col flex-1 gap-2">
