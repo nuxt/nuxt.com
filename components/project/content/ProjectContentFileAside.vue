@@ -130,11 +130,20 @@ const absolutePath = computed(() => {
 
 function updateField (key, value) {
   const field = fields.value.find(f => f.key === key)
-  if (field.type === 'date') {
+  const updatedFields = { ...props.modelValue, [key]: value }
+
+  if (['title', 'description'].includes(key) && value === '') {
+    value = undefined
+  } else if (field.type === 'date') {
     value = new Date(value)
   }
 
-  emit('update:modelValue', { ...props.modelValue, [key]: value })
+  if (value === undefined) {
+    delete updatedFields[key]
+  } else {
+    updatedFields[key] = value
+  }
+  emit('update:modelValue', updatedFields)
 }
 
 function mapFields (fields, parent = '') {
