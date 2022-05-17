@@ -14,6 +14,7 @@ export default defineNuxtConfig({
     '@nuxthq/admin',
     '@nuxtjs/strapi',
     '@nuxt/content',
+    '@nuxt-modules/newsletter',
     'vue-plausible'
   ],
   build: {
@@ -83,5 +84,11 @@ export default defineNuxtConfig({
   },
   typescript: {
     shim: false
+  },
+  newsletter: {
+    revue: {
+      apiKey: process.env.REVUE_API_KEY,
+      component: false
+    }
   }
 })
