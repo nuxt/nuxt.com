@@ -13,7 +13,7 @@
       <div class="space-y-6">
         <UFormGroup name="slug" label="Slug" :help="form.slug !== slug ? `Your team slug will be renamed to “${slug}”` : 'This is your team\'s URL namespace on Nuxt.'" required class="relative w-full lg:max-w-xs">
           <div class="flex items-center">
-            <span class="inline-flex items-center px-2 py-2 text-sm border border-r-0 u-bg-gray-50 u-border-gray-300 rounded-l-md u-textgray-500">
+            <span class="inline-flex items-center px-2 py-2 text-sm border border-r-0 u-bg-gray-50 u-border-gray-200 rounded-l-lg u-text-gray-500">
               nuxt.com/@
             </span>
 
@@ -24,6 +24,7 @@
               autocomplete="off"
               class="w-full"
               placeholder="nuxt"
+              appearance="darken"
               custom-class="rounded-l-none"
             />
           </div>
@@ -36,6 +37,7 @@
             required
             placeholder="Nuxt"
             autocomplete="off"
+            appearance="darken"
             class="w-full lg:max-w-xs"
           />
         </UFormGroup>

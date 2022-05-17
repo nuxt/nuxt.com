@@ -5,7 +5,7 @@
       <div class="font-semibold text-white">
         <time>{{ formatDateByLocale('en', page.date) }}</time>
       </div>
-      <h2 class="mt-4 text-3xl font-bold text-white">
+      <h2 class="mt-4 text-3xl font-semibold text-white">
         {{ page.title }}
       </h2>
       <p class="mt-6 text-white line-clamp-3">

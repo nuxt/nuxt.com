@@ -1,10 +1,10 @@
 <template>
   <div class="flex flex-col space-y-2">
-    <UCard class="flex items-center justify-center h-28" :background-class="cardClass">
+    <UCard padded class="flex items-center justify-center h-28" :background-class="cardClass">
       <img :src="`/resources/design-kit/logo/${imgName}.svg`" :alt="imgName" :class="full ? 'h-8' : 'h-10'">
     </UCard>
     <div class="flex justify-between">
-      <p class="font-bold">
+      <p class="font-semibold">
         <Markdown use="name" unwrap="p" />
       </p>
       <div>

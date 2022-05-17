@@ -26,7 +26,7 @@
       </div>
     </div>
     <div class="flex items-center w-full mt-5 sm:mt-4">
-      <span v-if="path" class="flex-shrink-0 max-w-[200px] truncate px-3 py-2 text-sm border border-r-0 u-bg-gray-50 u-border-gray-300 rounded-l-md u-text-gray-500">
+      <span v-if="path" class="flex-shrink-0 max-w-[200px] truncate px-3 py-2 text-sm border border-r-0 u-bg-gray-50 u-border-gray-200 rounded-l-lg u-text-gray-500">
         {{ path }}/
       </span>
 
@@ -40,7 +40,7 @@
         :custom-class="`rounded-r-none ${path && 'rounded-l-none'}`"
       />
 
-      <span class="flex-shrink-0 max-w-[200px] truncate px-3 py-2 text-sm border border-l-0 u-bg-gray-50 u-border-gray-300 rounded-r-md u-text-gray-500">
+      <span class="flex-shrink-0 max-w-[200px] truncate px-3 py-2 text-sm border border-l-0 u-bg-gray-50 u-border-gray-200 rounded-r-lg u-text-gray-500">
         {{ ext }}
       </span>
     </div>

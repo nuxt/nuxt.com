@@ -13,10 +13,3 @@ Ask us for a conference
 ::
 
 :resources-live-events-list
-
-::resources-live-events-cta
-#title
-Wanna invite us on a conference ?
-#description
-Contact us to make it happen !
-::

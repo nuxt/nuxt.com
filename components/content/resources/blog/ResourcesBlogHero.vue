@@ -1,6 +1,6 @@
 <template>
   <UContainer padded>
-    <div class="grid grid-cols-2 gap-8 py-12 md:py-20">
+    <div class="grid gap-8 py-8 lg:grid-cols-2 md:py-20">
       <div class="flex flex-col justify-center">
         <h1 class="text-4xl font-semibold tracking-tight u-text-gray-900 sm:text-5xl">
           <Markdown use="title" unwrap="p" />
