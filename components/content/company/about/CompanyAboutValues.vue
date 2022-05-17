@@ -14,7 +14,7 @@
           <div class="relative flex items-center justify-center w-20 h-20">
             <img src="/company/about/hexagon-light.svg" class="absolute dark:invisible">
             <img src="/company/about/hexagon-dark.svg" class="absolute invisible dark:visible">
-            <img :src="item.icon" class="relative w-10 h-10 u-text-gray-900">
+            <UIcon :name="item.icon" class="relative w-10 h-10 u-text-gray-900" />
           </div>
           <div class="flex-1" :class="{ 'h-[1px] u-bg-gray-200': index !== (items.length - 1) }" />
         </div>

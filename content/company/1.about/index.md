@@ -39,13 +39,13 @@ We want to become the chosen software of developers.
 items:
   - title: Passion
     description: Trail blaze the web and learn all along the way
-    icon: /company/about/fire.svg
+    icon: uil:fire
   - title: Open Source
     description: Promote transparency & seek for collaboration
-    icon: /company/about/users.svg
+    icon: uil:users-alt
   - title: Innovation
     description: Think bold and push the web boundaries
-    icon: /company/about/light-bulb.svg
+    icon: uil:lightbulb
 ---
 #title
 Our Values
