@@ -51,7 +51,7 @@ items:
 Our Values
 ::
 
-::company-about-investors
+::company-about-list
 ---
 type: backers
 ---
@@ -59,7 +59,7 @@ type: backers
 [Thanks to]{.u-text-gray-500} our incredible backers
 ::
 
-::company-about-investors
+::company-about-list
 ---
 type: investors
 ---

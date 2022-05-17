@@ -20,7 +20,10 @@
 const props = defineProps({
   type: {
     type: String,
-    required: true
+    required: true,
+    validator (value: string) {
+      return ['backers', 'investors'].includes(value)
+    }
   }
 })
 
