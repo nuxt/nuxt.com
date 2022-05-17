@@ -45,11 +45,13 @@ const loading = ref(false)
 async function onSubmit () {
   loading.value = true
 
+  // TODO: handle already subscribed case
+  // FIXME: cannot retry call (uses fetch caching) (waiting for module update)
   const { error } = await useNewsletterSubscribe(form.email)
   if (!error.value) {
-    $toast.success({ title: 'Newsletter subscription', description: 'You have been successfully subscribed to Nuxt newsletter.' })
+    $toast.success({ title: 'Subscription succeed', description: 'You have been successfully subscribed to Nuxt newsletter. Please check your emails to confirm your subscription.' })
   } else {
-    $toast.error({ title: 'Newsletter subscription', description: 'Something went wrong. Please try again later.' })
+    $toast.error({ title: 'Subscription failed', description: 'Something went wrong. Please try again later.' })
   }
 
   loading.value = false
