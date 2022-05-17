@@ -75,7 +75,7 @@
       </div>
       <div class="absolute top-0 left-0 w-full h-full">
         <img loading="lazy" src="/docs/framework/v2/sidebar.svg" class="absolute top-0 h-full left-[-150px] fromscratch-display-content-img-anim" alt="sidebar illustration">
-        <p class="absolute text-2xl font-bold opacity-0 fromscratch-display-content-p-anim top-4 left-6 u-text-gray-600">
+        <p class="absolute text-2xl font-semibold opacity-0 fromscratch-display-content-p-anim top-4 left-6 u-text-gray-600">
           Hello world!
         </p>
       </div>

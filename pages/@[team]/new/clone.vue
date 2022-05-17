@@ -31,7 +31,14 @@
             <div class="flex flex-col gap-6">
               <div class="flex flex-col items-center gap-6 lg:flex-row">
                 <UFormGroup name="owner" label="Owner" required class="relative w-full lg:w-56">
-                  <USelectCustom v-model="form.owner" :options="accounts" text-attribute="login" name="owner" required>
+                  <USelectCustom
+                    v-model="form.owner"
+                    :options="accounts"
+                    appearance="darken"
+                    text-attribute="login"
+                    name="owner"
+                    required
+                  >
                     <div class="flex items-center gap-3">
                       <UAvatar :src="form.owner.avatar_url" size="xxs" />
                       {{ form.owner.login }}
@@ -47,7 +54,7 @@
                 </UFormGroup>
 
                 <UFormGroup name="name" label="Name" required class="relative w-full lg:w-56">
-                  <UInput v-model="form.name" name="name" required />
+                  <UInput v-model="form.name" name="name" appearance="darken" required />
                 </UFormGroup>
               </div>
 

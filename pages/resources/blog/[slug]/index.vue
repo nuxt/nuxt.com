@@ -1,11 +1,11 @@
 <template>
-  <UContainer class="relative pb-12 sm:pb-28">
+  <UContainer class="relative pb-16 sm:pb-32">
     <div class="py-10 sm:py-20">
       <UContainer constrained-class="max-w-4xl" class="flex flex-col items-center justify-center text-center gap-y-8" padded>
         <div class="font-semibold u-text-gray-400">
           <time>{{ formatDateByLocale('en', page.date) }}</time> - {{ page.category }}
         </div>
-        <h1 class="text-5xl font-bold u-text-gray-900">
+        <h1 class="text-5xl font-semibold u-text-gray-900">
           {{ page.title }}
         </h1>
         <p class="max-w-5xl font-medium u-text-gray-700">
@@ -33,7 +33,7 @@
           <Document v-if="page" :value="page" class="pb-12 prose dark:prose-invert max-w-none" />
         </div>
         <div class="flex justify-between pt-6">
-          <span class="font-bold u-text-gray-900">Share the article</span>
+          <span class="font-semibold u-text-gray-900">Share the article</span>
           <ul class="flex gap-x-4">
             <li>
               <UButton class="!p-0 u-text-gray-900 hover:u-text-gray-700" variant="transparent" icon="heroicons-outline:link" @click="copyUrl" />
@@ -49,8 +49,8 @@
             </li>
           </ul>
         </div>
-        <div class="pt-36">
-          <h2 class="pb-10 text-4xl font-bold u-text-gray-900">
+        <div class="pt-16">
+          <h2 class="pb-10 text-4xl font-semibold u-text-gray-900">
             Your journey begins
           </h2>
           <div class="grid grid-cols-1 gap-8 sm:grid-cols-2">

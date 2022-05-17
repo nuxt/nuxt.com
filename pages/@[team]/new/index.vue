@@ -4,18 +4,25 @@
 
     <Page overlap>
       <div class="grid gap-8 sm:grid-cols-2">
-        <UCard base-class="flex flex-col overflow-hidden lg:h-[calc(100vh-352px)] lg:min-h-[528px]" body-class="flex-1 lg:overflow-y-auto" footer-background-class="u-bg-gray-50" shadow-class>
+        <UCard base-class="flex flex-col overflow-hidden lg:h-[calc(100vh-352px)] lg:min-h-[528px]" body-class="flex-1 lg:overflow-y-auto" footer-background-class="u-bg-gray-50" shadow-class="">
           <template #header>
             <div class="flex items-center justify-between min-w-0 gap-3">
-              <h3 class="text-2xl font-semibold u-text-gray-900 truncate">
+              <h3 class="text-2xl font-semibold truncate u-text-gray-900">
                 Import Git repository
               </h3>
-              <a :href="githubAppUrl" class="block text-sm font-medium text-primary-500 hover:underline flex-shrink-0" target="_blank">Add GitHub account →</a>
+              <a :href="githubAppUrl" class="flex-shrink-0 block text-sm font-medium text-primary-500 hover:underline" target="_blank">Add GitHub account →</a>
             </div>
 
             <div v-if="installations.length" class="flex flex-wrap-reverse items-start justify-between gap-3 mt-5 sm:flex-nowrap">
-              <USelectCustom v-model="owner" :options="accounts" text-attribute="login" name="owner" class="w-full lg:w-56 min-w-0">
-                <div class="flex items-center w-full gap-3 min-w-0">
+              <USelectCustom
+                v-model="owner"
+                :options="accounts"
+                appearance="darken"
+                text-attribute="login"
+                name="owner"
+                class="w-full min-w-0 lg:w-56"
+              >
+                <div class="flex items-center w-full min-w-0 gap-3">
                   <UAvatar :src="owner.avatar_url" size="xxs" class="flex-shrink-0" />
                   <span class="truncate">{{ owner.login }}</span>
                 </div>
@@ -36,12 +43,13 @@
                 icon="heroicons-outline:search"
                 class="w-full sm:w-auto"
                 custom-class="truncate"
+                appearance="darken"
               />
             </div>
           </template>
 
           <div v-if="installations.length" class="divide-y u-divide-gray-200">
-            <NuxtLink v-for="repository of repositories" :key="repository.id" class="flex items-center justify-between gap-3 py-3.5 px-4 sm:px-6 group hover:u-bg-gray-50" :to="{ name: '@team-new-import', query: { repository: `${repository.owner.login}/${repository.name}` } }" tabindex="-1">
+            <NuxtLink v-for="repository of repositories" :key="repository.id" class="flex items-center justify-between gap-3 py-3.5 px-4 sm:px-6 group hover:bg-gray-50 dark:hover:bg-black" :to="{ name: '@team-new-import', query: { repository: `${repository.owner.login}/${repository.name}` } }" tabindex="-1">
               <p class="flex items-center text-sm font-medium u-text-gray-900">
                 <UIcon name="fa-brands:github" class="w-5 h-5 mr-3" />
                 {{ repository.name }}
@@ -106,16 +114,16 @@
         <UCard shadow-class base-class="flex flex-col overflow-hidden lg:h-[calc(100vh-352px)] lg:min-h-[528px]" body-class="px-4 pt-1 pb-6 sm:px-5" body-background-class="flex-1 lg:overflow-y-auto u-bg-gray-50" header-background-class="u-bg-gray-50 !border-0 -mb-1">
           <template #header>
             <div class="flex items-center justify-between min-w-0 gap-3">
-              <h3 class="text-2xl font-semibold u-text-gray-900 truncate">
+              <h3 class="text-2xl font-semibold truncate u-text-gray-900">
                 Clone a template
               </h3>
-              <NuxtLink :to="{ name: 'templates' }" class="text-sm font-medium text-primary-500 hover:underline flex-shrink-0">
+              <NuxtLink :to="{ name: 'templates' }" class="flex-shrink-0 text-sm font-medium text-primary-500 hover:underline">
                 Browse all &rarr;
               </NuxtLink>
             </div>
           </template>
 
-          <div class="grid lg:grid-cols-2 gap-6">
+          <div class="grid gap-6 lg:grid-cols-2">
             <TemplatesItem
               v-for="(template, index) of templates.slice(0, 4)"
               :key="index"

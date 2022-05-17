@@ -23,7 +23,7 @@
             <UIcon name="heroicons-outline:arrow-sm-right" class="w-5 h-5" />
           </span>
           <span
-            class="rounded absolute left-0 font-extrabold -bottom-1 h-0.5 w-4 group-hover:w-full duration-300 transition-ease u-bg-gray-900"
+            class="rounded absolute left-0 font-semibold -bottom-1 h-0.5 w-4 group-hover:w-full duration-300 transition-ease u-bg-gray-900"
           />
         </a>
       </div>

@@ -7,7 +7,7 @@
           <slot name="badge" />
         </span>
       </div>
-      <h1 v-if="$slots.title" class="max-w-lg font-bold text-center text-7xl u-text-gray-900">
+      <h1 v-if="$slots.title" class="max-w-lg font-semibold text-center text-7xl u-text-gray-900">
         <Markdown use="title" unwrap="p" />
       </h1>
       <p v-if="$slots.description" class="w-1/2 text-lg text-center u-text-gray-500">

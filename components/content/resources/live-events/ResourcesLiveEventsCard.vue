@@ -1,5 +1,6 @@
 <template>
   <UCard
+    padded
     body-class="p-0"
     class="flex-col space-y-4 cursor-pointer"
     custom-class="transition duration-300 ease-in-out hover:ring-2 hover:u-ring-gray-900 group"
@@ -20,7 +21,7 @@
         </p>
       </div>
       <div class="flex items-end self-start pl-4 transition-opacity duration-300 opacity-0 group-hover:opacity-100">
-        <UIcon name="heroicons-outline:arrows-expand" class="w-5 h-5" />
+        <UIcon name="uil:arrow-resize-diagonal" class="w-4 h-4" />
       </div>
     </div>
     <div class="h-24 px-4 pt-5 mb-5 u-text-gray-700 line-clamp-3">
@@ -34,10 +35,10 @@
         <img :src="page.avatarSrc" size="lg" class="object-cover h-10 hexagon w-9">
       </div>
       <div class="flex flex-col pl-3">
-        <span class="text-sm font-semibold">
+        <span class="text-sm font-semibold u-text-gray-900">
           {{ page.speaker }}
         </span>
-        <span class="text-sm">
+        <span class="text-sm u-text-gray-400">
           {{ formatDateByLocale('en', page.date) }}
         </span>
       </div>
