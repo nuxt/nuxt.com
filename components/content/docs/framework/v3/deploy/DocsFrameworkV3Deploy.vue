@@ -30,8 +30,11 @@
       </li>
     </ul>
     <div class="flex items-end justify-center col-span-7">
-      <div class="translate-x-36 bg-gray-900 rounded-l-md h-[426px] w-[626px]">
-        <DocsFrameworkV3Server />
+      <div class="translate-x-36 bg-gray-900 rounded-md h-[426px] w-[626px]">
+        <DocsFrameworkV3DeployServer v-if="currentSection === 0" />
+        <DocsFrameworkV3DeployStatic v-if="currentSection === 1" />
+        <DocsFrameworkV3DeployHybrid v-if="currentSection === 2" />
+        <DocsFrameworkV3DeployDots />
       </div>
     </div>
   </div>
@@ -40,7 +43,7 @@
 <script setup lang="ts">
 const sections = ref(null)
 const { currentSection, startCounter } = useCounterAnimations()
-const animationsDelay = [8000, 8000, 12000]
+const animationsDelay = [6700, 6700, 6700]
 
 onMounted(() => {
   startCounter(animationsDelay)
