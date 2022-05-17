@@ -2,13 +2,12 @@
   <UContainer padded class="pt-24 pb-36">
     <Swiper
       :modules="modules"
-      :slides-per-view="5"
-      :space-between="68"
+      :slides-per-view="slidesPerView"
       :loop="true"
       :autoplay="autoplay"
     >
       <SwiperSlide v-for="(item, index) in items" :key="index" class="!h-8">
-        <div class="relative flex items-center h-full">
+        <div class="relative flex items-center justify-center h-full">
           <img :src="`/brands/${item.name}.png`" :alt="item.name">
           <NuxtLink :to="item.to" target="_blank" class="absolute inset-0" rel="noopener noreferrer nofollow" />
         </div>
@@ -22,6 +21,7 @@ import type { PropType } from 'vue'
 // Import Swiper Vue.js components
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Autoplay } from 'swiper'
+import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 
 // Import Swiper styles
 import 'swiper/css'
@@ -33,6 +33,23 @@ defineProps({
   }
 })
 
+const { smaller } = useBreakpoints(breakpointsTailwind)
+
+const xs = smaller('sm')
+const sm = smaller('md')
+const md = smaller('lg')
+
+const slidesPerView = computed(() => {
+  if (xs.value) {
+    return 1
+  } else if (sm.value) {
+    return 2
+  } else if (md.value) {
+    return 3
+  } else {
+    return 5
+  }
+})
 const modules = [Autoplay]
 const autoplay = { delay: 4000, pauseOnMouseEnter: true, disableOnInteraction: false }
 </script>
