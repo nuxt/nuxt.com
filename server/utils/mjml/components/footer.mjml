@@ -1,0 +1,5 @@
+<mj-section>
+  <mj-column>
+    <mj-text font-size="14px" color="#A1A1AA" align="center" padding="0">© 2022 Nuxt.</mj-text>
+  </mj-column>
+</mj-section>

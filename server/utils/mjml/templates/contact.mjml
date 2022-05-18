@@ -1,0 +1,18 @@
+<mjml>
+  <mj-head>
+    <mj-preview><%= firstname %> <%= lastname %> contacted us for <%= help %>.</mj-preview>
+  </mj-head>
+  <mj-body background-color="#F4F4F5">
+    <mj-include path="./../components/header.mjml" />
+    <mj-section background-color="#fff">
+      <mj-column>
+        <mj-text><%= firstname %> <%= lastname %> contacted us for <%= help %>.</mj-text>
+        <mj-text>Email: <%= email %></mj-text>
+        <mj-text>Website: <%= website %></mj-text>
+        <mj-text>Message:</mj-text>
+        <mj-text><%= message %></mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-include path="./../components/footer.mjml" />
+  </mj-body>
+</mjml>

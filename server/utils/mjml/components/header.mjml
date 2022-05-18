@@ -1,0 +1,5 @@
+<mj-section>
+  <mj-column>
+    <mj-image padding="0" width="50px" src="https://nuxt.com/logo.svg" />
+  </mj-column>
+</mj-section>
