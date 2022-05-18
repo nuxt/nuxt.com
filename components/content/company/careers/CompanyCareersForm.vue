@@ -1,6 +1,6 @@
 <template>
   <UCard
-    background-class="bg-gray-50"
+    background-class="u-bg-gray-50"
     border-color-class="border-none"
     rounded-class="rounded-xl"
     ring-class=""
@@ -15,7 +15,7 @@
       </h2>
     </template>
 
-    <UFormGroup name="firstname" label="Your firstname">
+    <UFormGroup name="firstname" label="First Name">
       <UInput
         v-model="form.firstname"
         name="firstname"
@@ -26,7 +26,7 @@
       />
     </UFormGroup>
 
-    <UFormGroup name="lastname" label="Your lastname">
+    <UFormGroup name="lastname" label="Last Name">
       <UInput
         v-model="form.lastname"
         name="lastname"
@@ -48,7 +48,7 @@
       />
     </UFormGroup>
 
-    <UFormGroup name="email" label="Your company email" class="col-span-2">
+    <UFormGroup name="email" label="Email" class="col-span-2">
       <UInput
         v-model="form.email"
         name="email"

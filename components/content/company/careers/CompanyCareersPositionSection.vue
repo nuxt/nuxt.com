@@ -30,7 +30,12 @@
       </div>
     </div>
     <ul class="grid grid-cols-1 gap-8 mt-5 md:grid-cols-2">
-      <NuxtLink v-for="(offer, index) in filteredOffers" :key="`offer-${index}`" :to="offer.path" class="px-5 border rounded-xl py-7 hover:border-gray-700">
+      <NuxtLink
+        v-for="(offer, index) in filteredOffers"
+        :key="`offer-${index}`"
+        :to="offer.path"
+        class="px-5 border u-border-gray-300 u-bg-gray-50 rounded-xl py-7 hover:u-border-gray-700"
+      >
         <div class="flex items-center justify-between">
           <span class="text-xl font-semibold u-text-gray-900">
             {{ offer.role }}
