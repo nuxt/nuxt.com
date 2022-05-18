@@ -75,17 +75,17 @@ const { data: offers } = await useAsyncData('company-careers-list', () => queryC
     }
   }
 }).find())
-
+console.log('offers', offers)
 const departments = computed(() => {
-  const mappedOffers = [...offers.value].map((offer) => { return { key: slugify(offer.department), label: offer.department } })
-  mappedOffers.unshift({ key: 'all', label: 'All Departments' })
+  const mappedOffers = offers.value.map((offer) => { return { key: slugify(offer.department), label: offer.department } })
+  mappedOffers.unshift({ key: 'all', label: 'All' })
 
   return uniqBy(mappedOffers, 'key')
 })
 
 const locations = computed(() => {
   const mappedOffers = offers.value.map((offer) => { return { key: slugify(offer.location), label: offer.location } })
-  mappedOffers.unshift({ key: 'all', label: 'All Locations' })
+  mappedOffers.unshift({ key: 'all', label: 'All' })
 
   return uniqBy(mappedOffers, 'key')
 })
@@ -141,7 +141,7 @@ const filteredOffers = computed(() => {
 
   return offers.value.filter((offer) => {
     const departmentMatch = !selectedDepartment.value || offer.department === selectedDepartment.value.label
-    const locationMatch = !selectedLocation.value || offer.location === selectedLocation.value.key
+    const locationMatch = !selectedLocation.value || offer.location === selectedLocation.value.label
     return departmentMatch && locationMatch
   })
 })
