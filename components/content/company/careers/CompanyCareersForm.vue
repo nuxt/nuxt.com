@@ -1,8 +1,7 @@
 <template>
   <UCard
     background-class="u-bg-gray-50"
-    border-color-class="border-none"
-    rounded-class="rounded-xl"
+    border-color-class=""
     ring-class=""
     shadow-class=""
     body-class="grid grid-cols-2 gap-8 py-10 px-28"
@@ -10,7 +9,7 @@
     @submit.prevent="onSubmit"
   >
     <template #header>
-      <h2 class="flex justify-center text-4xl font-bold u-text-gray-900">
+      <h2 class="flex justify-center text-4xl font-semibold u-text-gray-900">
         Contact Us
       </h2>
     </template>

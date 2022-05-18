@@ -1,53 +1,54 @@
 <template>
-  <UContainer padded class="my-36">
+  <UContainer padded class="pt-12 pb-16 sm:pb-32">
     <h2 class="text-4xl font-semibold lg:w-1/2 u-text-gray-900">
       <Markdown use="title" unwrap="p" />
     </h2>
-    <div class="flex items-center justify-between mt-10">
+    <div class="flex items-center justify-between mt-6">
       <p class="text-lg u-text-gray-500 lg:w-3/5">
         <Markdown use="description" unwrap="p" />
       </p>
-      <div class="flex">
-        <USelect
-          v-model="department"
-          class="mr-5"
-          placeholder="Department"
-          name="departments"
-          :options="departments"
-          size="lg"
-          value-attribute="key"
-          text-attribute="label"
-        />
+      <div class="flex items-center gap-3">
         <USelect
           v-model="location"
           placeholder="Location"
           name="locations"
           :options="locations"
-          size="lg"
+          value-attribute="key"
+          text-attribute="label"
+        />
+        <USelect
+          v-model="department"
+          placeholder="Department"
+          name="departments"
+          :options="departments"
           value-attribute="key"
           text-attribute="label"
         />
       </div>
     </div>
     <ul class="grid grid-cols-1 gap-8 mt-5 md:grid-cols-2">
-      <NuxtLink
+      <li
         v-for="(offer, index) in filteredOffers"
         :key="`offer-${index}`"
-        :to="offer.path"
-        class="px-5 border u-border-gray-300 u-bg-gray-50 rounded-xl py-7 hover:u-border-gray-700"
       >
-        <div class="flex items-center justify-between">
-          <span class="text-xl font-semibold u-text-gray-900">
-            {{ offer.role }}
-          </span>
-          <span :class="offer.badgeClass" class="px-2 py-1 rounded-lg">
-            {{ offer.department }}
-          </span>
-        </div>
-        <div class="text-base u-text-gray-900">
-          {{ offer.frequency }} | {{ offer.location }}
-        </div>
-      </NuxtLink>
+        <UCard padded background-class="u-bg-gray-50" shadow-class="" class="relative transition duration-200 hover:ring-2 hover:u-ring-gray-900">
+          <NuxtLink :to="offer.path" class="focus:outline-none" tabindex="-1">
+            <span class="absolute inset-0" aria-hidden="true" />
+          </NuxtLink>
+
+          <div class="flex items-center justify-between">
+            <span class="text-xl font-semibold u-text-gray-900">
+              {{ offer.role }}
+            </span>
+            <span :class="offer.badgeClass" class="px-2 py-1 rounded-lg">
+              {{ offer.department }}
+            </span>
+          </div>
+          <div class="text-base u-text-gray-900">
+            {{ offer.frequency }} | {{ offer.location }}
+          </div>
+        </UCard>
+      </li>
     </ul>
   </UContainer>
 </template>
@@ -144,5 +145,4 @@ const filteredOffers = computed(() => {
     return departmentMatch && locationMatch
   })
 })
-
 </script>
