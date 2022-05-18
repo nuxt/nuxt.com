@@ -6,26 +6,17 @@
       </h2>
     </div>
 
-    <div class="grid w-full grid-cols-2 gap-12 lg:w-auto lg:gap-24">
-      <div v-for="(item, index) in data?.items" :key="index" class="flex flex-col items-center justify-center w-full lg:w-[160px]">
-        <img :src="item.image" :alt="item.name">
-        <span v-if="item.name" class="mt-4 text-xl font-semibold u-text-gray-700">{{ item.name }}</span>
-        <span v-if="item.job" class="text-lg u-text-gray-700">{{ item.job }}</span>
-      </div>
-    </div>
+    <ul class="grid w-full lg:w-auto" :class="listClass">
+      <Markdown use="list" unwrap="p" />
+    </ul>
   </UContainer>
 </template>
 
 <script setup lang="ts">
-const props = defineProps({
-  type: {
+defineProps({
+  listClass: {
     type: String,
-    required: true,
-    validator (value: string) {
-      return ['backers', 'investors'].includes(value)
-    }
+    default: 'grid-cols-2 gap-12 lg:gap-24'
   }
 })
-
-const { data } = await useAsyncData(`company-about-${props.type}`, () => queryContent(`/company/about/_collections/${props.type}`).findOne())
 </script>
