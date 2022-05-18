@@ -2,7 +2,7 @@
   <UCard
     background-class="bg-gray-50"
     border-color-class="border-none"
-    rounded-class="rounded-lg"
+    rounded-class="rounded-xl"
     ring-class=""
     shadow-class=""
     body-class="grid grid-cols-2 gap-8 py-10 px-28"
@@ -22,6 +22,7 @@
         required
         placeholder="John"
         autocomplete="off"
+        size="xl"
       />
     </UFormGroup>
 
@@ -32,6 +33,7 @@
         required
         placeholder="Doe"
         autocomplete="off"
+        size="xl"
       />
     </UFormGroup>
 
@@ -42,6 +44,7 @@
         required
         placeholder="NuxtLabs"
         autocomplete="off"
+        size="xl"
       />
     </UFormGroup>
 
@@ -53,10 +56,11 @@
         required
         placeholder="johndoe@company.com"
         autocomplete="off"
+        size="xl"
       />
     </UFormGroup>
 
-    <UFormGroup name="message" label="message" class="col-span-2">
+    <UFormGroup name="message" label="Message" class="col-span-2">
       <UTextarea
         v-model="form.message"
         name="message"
@@ -72,6 +76,7 @@
         type="submit"
         :loading="loading"
         label="Let's talk"
+        size="xl"
       />
     </div>
   </UCard>
