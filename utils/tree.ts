@@ -58,8 +58,13 @@ export const getPathName = function (path: string) {
 }
 
 export const getPathPrefix = function (path: string) {
-  const destr = destructurePathName(getPathName(path))
-  return destr.prefix
+  const { prefix } = destructurePathName(getPathName(path))
+  return prefix
+}
+
+export const getPathExt = function (path: string) {
+  const { ext } = destructurePathName(getPathName(path))
+  return ext
 }
 
 export const isPrefix = function (prefix: string | null) {

@@ -43,7 +43,7 @@
               v-for="field of fields"
               :key="field.key"
               :name="field.key"
-              :label="field.label"
+              :label="field.key"
               label-class="font-medium truncate u-text-gray-900"
               label-wrapper-class="flex content-center justify-between min-w-0 gap-3"
               container-class=""
@@ -93,7 +93,7 @@
 </template>
 
 <script setup lang="ts">
-import { snakeCase, isPlainObject, isDate, isBoolean, isNumber } from 'lodash-es'
+import { snakeCase, isPlainObject, isDate, isBoolean, isNumber, assignIn } from 'lodash-es'
 import type { Project, Root } from '~/types'
 import { capitalize } from '~/utils'
 
@@ -130,7 +130,7 @@ const absolutePath = computed(() => {
 
 function updateField (key, value) {
   const field = fields.value.find(f => f.key === key)
-  const updatedFields = { ...props.modelValue, [key]: value }
+  const updatedFields = { ...toRaw(props.modelValue) }
 
   if (['title', 'description'].includes(key) && value === '') {
     value = undefined
@@ -138,18 +138,19 @@ function updateField (key, value) {
     value = new Date(value)
   }
 
-  if (value === undefined) {
-    delete updatedFields[key]
-  } else {
-    updatedFields[key] = value
+  if (value !== undefined) {
+    assignIn(updatedFields, {
+      [key]: value
+    })
   }
+  console.log('updatedFields', updatedFields)
   emit('update:modelValue', updatedFields)
 }
 
 function mapFields (fields, parent = '') {
   return Object.entries(fields).flatMap(([key, value]) => {
     if (value && isPlainObject(value)) {
-      return mapFields(value, key)
+      return mapFields(value, [parent, key].filter(Boolean).join('.'))
     }
 
     if (Array.isArray(value)) {

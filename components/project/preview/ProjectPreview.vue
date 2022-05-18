@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-show="isOpen" class="relative z-50">
+    <div v-if="isOpen" class="relative z-50">
       <Transition
         enter-active-class="duration-300 ease-out"
         enter-from-class="opacity-0"
