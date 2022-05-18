@@ -51,6 +51,9 @@
           class="flex flex-col flex-1"
           @update="onMarkdownUpdate"
         />
+        <p v-else class="flex items-center justify-center flex-1 u-text-gray-400">
+          This file extension is not supported in editor.
+        </p>
       </div>
       <ProjectContentFilesEmpty v-else @create="openCreateFileModal('content')" />
 
@@ -94,7 +97,7 @@ const { query: treeQuery, tree, openDir } = useProjectFilesTree(project, root)
 const { scroll: editorScroll } = useEditorScroll(file)
 
 const content: Ref<string> = ref('')
-const parsedContent: Ref<Partial<Content> | null> = ref(null)
+const parsedContent: Ref<Content | null> = ref(null)
 
 // Methods
 
@@ -191,7 +194,7 @@ watch(file, async (file) => {
   const { content: fetchedContent } = await fetchFile(file.path)
   content.value = fetchedContent
 
-  parsedContent.value = parse(file.path, fetchedContent)
+  parsedContent.value = parse(file.path, fetchedContent) as Content
 }, { immediate: true })
 
 // Hooks
