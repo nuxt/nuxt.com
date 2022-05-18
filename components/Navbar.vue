@@ -63,7 +63,7 @@ const { getProviderAuthenticationUrl } = useStrapiAuth()
 const route = useRoute()
 const activeTeam = useTeam()
 const { hasScrolledPastNavbar } = useNavbarScroll()
-const { categories } = useModules()
+const { categories } = useIntegrations()
 
 const isOpen = ref(false)
 
