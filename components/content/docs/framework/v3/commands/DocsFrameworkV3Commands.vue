@@ -29,15 +29,15 @@
       </li>
     </ul>
     <div class="relative flex items-center justify-center w-full h-full row-span-9">
-      <DocsFrameworkV3CommandsContainer :main-current-section="currentSection" />
+      <DocsFrameworkV3CommandsContainer :main-current-section="currentSection" @restart="restartCounter(animationsDelay, 2)" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-const { currentSection, startCounter } = useCounterAnimations()
-// 4s for each animation
-const animationsDelay = [7000, 6000, 15000, 8000]
+const { currentSection, startCounter, restartCounter } = useCounterAnimations()
+
+const animationsDelay = [5000, 15000, 15000, 6000]
 
 onMounted(() => {
   startCounter(animationsDelay)

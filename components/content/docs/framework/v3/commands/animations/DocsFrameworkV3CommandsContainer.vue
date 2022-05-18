@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full w-full flex flex-row">
+  <div class="flex flex-row w-full h-full">
     <svg width="801" height="415" viewBox="0 0 801 415" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g filter="url(#filter0_b_4133_54839)">
         <rect width="801" height="415" rx="12" :fill="currentSection === 1 ? '#9d9da0' : '#FFFFFF'" />
@@ -30,14 +30,20 @@
       </defs>
     </svg>
 
-    <div class="flex flex-col -translate-x-12 pt-12 gap-y-4">
-      <DocsFrameworkV3CommandsDevTerminal v-if="[3, 4].includes(currentSection)" :current-section="currentSection" />
-      <DocsFrameworkV3CommandsTerminal :current-section="currentSection" />
+    <div class="pt-12 -translate-x-12 gap-y-4">
+      <DocsFrameworkV3CommandsTerminal :current-section="currentSection" :class="{' translate-y-48': [3, 4].includes(currentSection) }" />
     </div>
 
     <div class="absolute w-[801px] h-[415px] pt-8 py-8 pr-32 rounded-lg">
       <DocsFrameworkV3CommandsInit v-if="mainCurrentSection === 0" :current-section="currentSection" />
-      <DocsFrameworkV3CommandsDev v-if="mainCurrentSection === 1" :current-section="currentSection" />
+      <DocsFrameworkV3CommandsDev
+        v-if="mainCurrentSection === 1"
+        :current-section="currentSection"
+        @restart="() => {
+          emit('restart')
+          restartCounter(animationsDelay, 5)
+        }"
+      />
       <DocsFrameworkV3CommandsBuild v-if="mainCurrentSection === 2" :current-section="currentSection" />
       <DocsFrameworkV3CommandsPreview v-if="mainCurrentSection === 3" :current-section="currentSection" />
     </div>
@@ -52,8 +58,14 @@ const props = defineProps({
   }
 })
 
-const { currentSection, startCounter } = useCounterAnimations()
+const { currentSection, startCounter, restartCounter } = useCounterAnimations()
+const emit = defineEmits(['restart'])
+const animationsDelay = [500, 500, 4000, 10000, 3000, 3000, 3000, 3000, 3000, 3000, 2000, 1000, 3000]
 
-onMounted(() => startCounter([1000, 1000, 5000, 2000, 4000, 3000, 3000, 3000, 3000, 3000, 2000, 2000, 4000]))
+onMounted(() => startCounter(animationsDelay))
+
+watch(currentSection, () => {
+  console.log(currentSection.value)
+})
 
 </script>
