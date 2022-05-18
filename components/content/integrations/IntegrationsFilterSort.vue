@@ -15,7 +15,7 @@
 const route = useRoute()
 const router = useRouter()
 
-const { sorts, selectedSort } = useModules()
+const { sorts, selectedSort } = useIntegrations()
 
 const sortBy = computed({
   get () {

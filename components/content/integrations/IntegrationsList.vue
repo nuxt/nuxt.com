@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-const { modules, selectedCategory, selectedVersion, selectedSort, q } = useModules()
+const { modules, selectedCategory, selectedVersion, selectedSort, q } = useIntegrations()
 
 const filteredModules = computed(() => {
   return [...modules.value]

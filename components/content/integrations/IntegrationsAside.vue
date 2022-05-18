@@ -44,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-const { categories, selectedCategory, selectedVersion } = useModules()
+const { categories, selectedCategory, selectedVersion } = useIntegrations()
 
 const contributeUrl = computed(() => selectedVersion.value?.key !== '3.x' ? 'https://github.com/nuxt/nuxt.js' : 'https://github.com/nuxt/framework')
 </script>
