@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-6">
-    <UCard v-if="transferOptions && transferOptions.length">
+    <UCard v-if="transferOptions && transferOptions.length" padded background-class="u-bg-white">
       <h2 class="text-lg font-medium leading-6 u-text-gray-900">
         Transfer project
       </h2>
@@ -21,7 +21,7 @@
         </div>
       </div>
     </UCard>
-    <UCard>
+    <UCard padded background-class="u-bg-white">
       <h2 class="text-lg font-medium leading-6 u-text-gray-900">
         Delete project
       </h2>
