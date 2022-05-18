@@ -61,5 +61,5 @@
 <script setup lang="ts">
 import { formatNumber } from '~/utils'
 
-const { stats } = useModules()
+const { stats } = useIntegrations()
 </script>

@@ -13,7 +13,7 @@
 <script setup lang="ts">
 const route = useRoute()
 const router = useRouter()
-const { versions, selectedVersion } = useModules()
+const { versions, selectedVersion } = useIntegrations()
 
 const version = computed({
   get () {

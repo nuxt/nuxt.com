@@ -1,6 +1,6 @@
 import type { Ref } from 'vue'
 
-export const useModules = () => {
+export const useIntegrations = () => {
   const route = useRoute()
   const _modules: Ref<object[]> = useState('modules', () => [])
 

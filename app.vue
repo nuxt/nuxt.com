@@ -32,7 +32,7 @@ useHead({
 })
 
 const { fetchNavigation } = useContent()
-const { fetch: fetchModules } = useModules()
+const { fetch: fetchModules } = useIntegrations()
 
 await Promise.all([fetchNavigation(), fetchModules()])
 </script>
