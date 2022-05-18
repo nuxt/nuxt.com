@@ -1,6 +1,6 @@
 import Joi from 'joi'
 
-export async function validateBody (body: Object, schema: Joi.Schema) {
+export async function validate (body: Object, schema: Joi.Schema) {
   let sanitisedBody
 
   try {

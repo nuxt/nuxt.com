@@ -1,23 +1,42 @@
 import Joi from 'joi'
-import { sendMail } from '~/server/utils/mailjet'
-import { validateBody } from '~/server/utils'
-import { createMailBody } from '~/server/utils/contactEmail'
+import { useEmail, sendEmail } from '~/server/utils/emails'
+import { validate } from '~/server/utils/validation'
 
 const bodySchema = Joi.object({
   firstname: Joi.string().trim().required(),
   lastname: Joi.string().trim().required(),
   email: Joi.string().email().trim().required(),
   website: Joi.string().trim().required(),
-  help: Joi.string().trim().required(),
+  subject: Joi.string().trim().required(),
   message: Joi.string().trim().required()
 })
 
 export default defineEventHandler(async (event) => {
-  const body = await useBody(event)
+  const reqBody = await useBody(event)
+  const body = await validate(reqBody, bodySchema)
 
-  const sanitisedBody = await validateBody(body, bodySchema)
+  const to = {
+    Email: 'contact@nuxt.com',
+    Name: 'Nuxt Contact'
+  }
+  const replyTo = {
+    Email: body.email,
+    Name: `${body.firstname} ${body.lastname}`
+  }
+  const subject = `${body.firstname} ${body.lastname}: ${body.subject}`
+  const html = await useEmail('contact')
 
-  await sendMail(createMailBody(sanitisedBody))
+  await sendEmail({
+    Messages: [{
+      From: to,
+      To: [to],
+      ReplyTo: replyTo,
+      Variables: body,
+      TemplateLanguage: true,
+      Subject: subject,
+      HTMLPart: html
+    }]
+  })
 
   return {}
 })

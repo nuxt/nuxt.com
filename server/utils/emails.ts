@@ -1,5 +1,7 @@
+import mjml2html from 'mjml'
 import Mailjet from 'node-mailjet'
 
+// Lateron: provider a useEmailProvider()
 let _mailjet = null
 export function useMailjet () {
   if (!_mailjet) {
@@ -8,7 +10,15 @@ export function useMailjet () {
   return _mailjet
 }
 
-export async function sendMail (body) {
+export async function useEmail (name: string): Promise<string> {
+  const mjml = await useStorage().getItem(`assets:emails:${name}.mjml`)
+  // We don't support mj-include because of Edge environment (mjml2html depends on node fs)
+  const { html } = mjml2html(mjml, { ignoreIncludes: true })
+
+  return html
+}
+
+export async function sendEmail (body) {
   try {
     // avoid accidental emails on development
     if (process.env.NODE_ENV !== 'production') {

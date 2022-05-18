@@ -90,5 +90,11 @@ export default defineNuxtConfig({
       apiKey: process.env.REVUE_API_KEY,
       component: false
     }
+  },
+  nitro: {
+    serverAssets: [{
+      baseName: 'emails',
+      dir: './server/emails'
+    }]
   }
 })

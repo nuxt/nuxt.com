@@ -1,7 +1,6 @@
 import Joi from 'joi'
-import { sendMail } from '~/server/utils/mailjet'
-import { validateBody } from '~/server/utils'
-import { createMailBody } from '~/server/utils/supportEmail'
+import { useEmail, sendEmail } from '~/server/utils/emails'
+import { validate } from '~/server/utils/validation'
 
 const bodySchema = Joi.object({
   name: Joi.string().trim().required(),
@@ -12,11 +11,31 @@ const bodySchema = Joi.object({
 })
 
 export default defineEventHandler(async (event) => {
-  const body = await useBody(event)
+  const reqBody = await useBody(event)
+  const body = await validate(reqBody, bodySchema)
 
-  const sanitisedBody = await validateBody(body, bodySchema)
+  const to = {
+    Email: 'support@nuxt.com',
+    Name: 'Nuxt Support'
+  }
+  const replyTo = {
+    Email: body.email,
+    Name: `${body.name}`
+  }
+  const subject = `${body.name} needs support ${body.website}`
+  const html = await useEmail('support')
 
-  await sendMail(createMailBody(sanitisedBody))
+  await sendEmail({
+    Messages: [{
+      From: to,
+      To: [to],
+      ReplyTo: replyTo,
+      Variables: body,
+      TemplateLanguage: true,
+      Subject: subject,
+      HTMLPart: html
+    }]
+  })
 
   return {}
 })

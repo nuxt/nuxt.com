@@ -41,10 +41,10 @@
       />
     </UFormGroup>
 
-    <UFormGroup name="help" label="What do you need help with?" class="col-span-2">
+    <UFormGroup name="subject" label="What do you need help with?" class="col-span-2">
       <USelect
-        v-model="form.help"
-        name="help"
+        v-model="form.subject"
+        name="subject"
         :options="helpOptions"
         required
       />
@@ -74,7 +74,7 @@
 <script setup lang="ts">
 const { $toast } = useNuxtApp()
 
-const initialForm = { firstname: '', lastname: '', website: '', email: '', help: '', message: '' }
+const initialForm = { firstname: '', lastname: '', website: '', email: '', subject: '', message: '' }
 const form = reactive({ ...initialForm })
 const loading = ref(false)
 
