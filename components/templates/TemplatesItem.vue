@@ -4,13 +4,12 @@
     footer-class="relative flex flex-col flex-1 p-4"
     footer-background-class="u-bg-white"
     border-color-class="border-transparent"
-    class="relative flex flex-col transition duration-200 transform group"
-    :ring-class="`ring-1 u-ring-gray-200 ${!!to && 'lg:hover:u-ring-gray-900 lg:hover:ring-2'}`"
+    :custom-class="`group transition duration-200 ${!!to && 'hover:ring-2 hover:u-ring-gray-900'}`"
   >
     <img :src="template.screenshot?.url" :alt="template.screenshot?.alternativeText" class="object-cover w-full h-full pointer-events-none">
 
     <NuxtLink v-if="!!to" :to="to" tabindex="-1">
-      <div class="absolute inset-0 transition duration-100 transform opacity-0 rounded-t-md backdrop-blur-sm bg-black/20 group-hover:opacity-100">
+      <div class="absolute inset-0 transition duration-100 transform opacity-0 rounded-t-xl backdrop-blur-sm bg-black/20 group-hover:opacity-100">
         <div class="flex items-center justify-center w-full h-full">
           <UIcon class="text-white w-14 h-14" name="heroicons-solid:arrow-circle-right" />
         </div>
