@@ -41,6 +41,8 @@ export const useProjectBranches = (project: Project) => {
   }
 
   async function create (name: string, mergeDraft?: boolean) {
+    loading.value = true
+
     try {
       const b = await client<GitHubBranch>(`/projects/${project.id}/branches`, {
         method: 'POST',
@@ -59,6 +61,8 @@ export const useProjectBranches = (project: Project) => {
         $socket.emit('draft:update', `project-${project.id}:${project.repository.default_branch}:public`)
       }
     } catch (e) {}
+
+    loading.value = false
   }
 
   async function commit () {
