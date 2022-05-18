@@ -1,5 +1,5 @@
 <template>
-  <div class="flex-1 pt-6 pb-16 border-t sm:pt-8 u-border-gray-200">
+  <div class="flex-1 pt-6 pb-16 border-t sm:pb-32 sm:pt-8 u-border-gray-200">
     <header v-if="$slots.header">
       <UContainer padded>
         <slot name="header" />

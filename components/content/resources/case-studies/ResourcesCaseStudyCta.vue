@@ -2,15 +2,13 @@
   <div class="py-10">
     <UCard class="relative u-bg-black" body-class="p-12">
       <span class="z-0 _ellipse" />
-      <div class="flex items-center justify-between">
-        <h2 class="u-text-white z-[1] tracking-tight">
+      <div class="flex flex-wrap items-center justify-between">
+        <h2 class="text-white z-[1] tracking-tight">
           <span class="block text-3xl font-semibold">Contact us</span>
           <span class="block mt-2 text-lg">Start building, or get in touch with our app experts.</span>
         </h2>
-        <div class="mt-8 flex lg:mt-0 lg:flex-shrink-0 gap-3 z-[1] relative">
-          <UButton variant="transparent" size="lg" class="flex justify-center w-40 group u-border-white hover:u-border-gray-300 ">
-            <span class="u-text-white group-hover:u-text-gray-300">Get in touch</span>
-          </UButton>
+        <div class="mt-8 flex lg:mt-0 lg:flex-shrink-0 gap-3 z-[1] relative dark">
+          <UButton variant="secondary" label="Get in touch" size="lg" class="flex justify-center w-40" />
         </div>
       </div>
     </UCard>

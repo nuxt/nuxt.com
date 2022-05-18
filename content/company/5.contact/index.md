@@ -26,15 +26,15 @@ Read the latest news about all Nuxt solutions, from framework announcements to i
   ---
   items:
     - title: Documentation
-      icon: /company/contact/book.svg
+      icon: uil:book-alt
       description: Nuxt server renders your pages to bring your website the full visibility it deserves so.
       to: /docs/framework
     - title: Partners
-      icon: /company/contact/nuxt.svg
+      icon: uil:award
       description: Nuxt server renders your pages to bring your website the full visibility it deserves so.
       to: /community/partners
     - title: Support
-      icon: /company/contact/support.svg
+      icon: uil:comment-question
       description: Nuxt server renders your pages to bring your website the full visibility it deserves so.
       to: /company/support
   ---

@@ -1,6 +1,13 @@
 <template>
   <div class="relative overflow-hidden">
-    <img src="/resources/live-events/hero.png" alt="World map" class="absolute top-0 right-0 object-cover h-full opacity-75 ld:opacity-100">
+    <div class="absolute top-0 right-0">
+      <div class="relative">
+        <img src="/resources/live-events/hero.svg" alt="World map" class="object-cover h-full opacity-30">
+        <div class="h-[100px] absolute top-0 inset-x-0 bg-gradient-to-b from-white dark:from-black to-transparent" />
+        <div class="w-[100px] absolute left-0 inset-y-0 bg-gradient-to-r from-white dark:from-black to-transparent" />
+        <div class="h-[100px] absolute bottom-0 inset-x-0 bg-gradient-to-t from-white dark:from-black to-transparent" />
+      </div>
+    </div>
     <UContainer padded class="relative py-12 sm:py-20 md:py-24 lg:py-28">
       <div class="flex flex-col items-center justify-center py-8 space-y-5 sm:items-start">
         <h1 class="text-5xl font-semibold u-text-gray-900">
@@ -16,7 +23,7 @@
             <UIcon name="heroicons-outline:arrow-sm-right" class="w-5 h-5" />
           </span>
           <span
-            class="rounded absolute left-0 font-extrabold -bottom-1 h-0.5 w-4 group-hover:w-full duration-300 transition-ease u-bg-gray-900"
+            class="rounded absolute left-0 font-semibold -bottom-1 h-0.5 w-4 group-hover:w-full duration-300 transition-ease u-bg-gray-900"
           />
         </a>
       </div>

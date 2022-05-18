@@ -1,6 +1,6 @@
 <template>
   <UContainer padded>
-    <div class="grid grid-cols-2 gap-8 py-12 md:py-20">
+    <div class="grid gap-8 py-8 lg:grid-cols-2 md:py-20">
       <div class="flex flex-col justify-center">
         <h1 class="text-4xl font-semibold tracking-tight u-text-gray-900 sm:text-5xl">
           <Markdown use="title" unwrap="p" />
@@ -35,12 +35,25 @@
 <script setup lang="ts">
 const { data: firstArticle } = await useAsyncData('resources-blog-hero', () => queryContent('/resources/blog').where({ $not: { path: { $in: ['/resources/blog'] } } }).sortBy('date', 'desc').findOne())
 
+const { $toast } = useNuxtApp()
+
 const form = reactive({
   email: ''
 })
 const loading = ref(false)
 
-function onSubmit () {
+async function onSubmit () {
+  loading.value = true
 
+  // TODO: handle already subscribed case
+  // FIXME: cannot retry call (uses fetch caching) (waiting for module update)
+  const { error } = await useNewsletterSubscribe(form.email)
+  if (!error.value) {
+    $toast.success({ title: 'Subscription succeed', description: 'You have been successfully subscribed to Nuxt newsletter. Please check your emails to confirm your subscription.' })
+  } else {
+    $toast.error({ title: 'Subscription failed', description: 'Something went wrong. Please try again later.' })
+  }
+
+  loading.value = false
 }
 </script>
