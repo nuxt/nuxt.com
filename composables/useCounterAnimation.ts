@@ -3,25 +3,39 @@ export const useCounterAnimations = () => {
   const currentStep = ref(null)
   const counterStopped = ref(false)
   const uniqueAnimationRunning = ref(false)
+  const timeoutId = ref()
+  const restart = ref(false)
+  const sectionToRestart = ref(null)
 
   const sleep = (ms: number) => {
-    return new Promise(resolve => setTimeout(resolve, ms))
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms)
+    })
   }
 
   const startCounter = async (ms: Array<number>) => {
     for (let i = 0; i < ms.length; i++) {
+      if (sectionToRestart.value) {
+        i = sectionToRestart.value
+        sectionToRestart.value = null
+      }
+
       currentSection.value = i
 
-      if (counterStopped.value) {
-        i = ms.length
-        currentStep.value = null
-      } else {
-        await sleep(ms[i])
-        if (i === ms.length - 1) {
-          i = -1
-        }
+      await new Promise((resolve) => {
+        timeoutId.value = setTimeout(resolve, ms[i])
+      })
+
+      if (i === ms.length - 1) {
+        i = -1
       }
     }
+  }
+
+  const restartCounter = (ms: Array<number>, sectionNumber: number) => {
+    clearTimeout(timeoutId.value)
+    sectionToRestart.value = sectionNumber
+    startCounter(ms)
   }
 
   const startUniqueCounter = async (ms: Array<number>, startSection: number, endSection: number) => {
@@ -55,6 +69,7 @@ export const useCounterAnimations = () => {
     currentStep,
     uniqueAnimationRunning,
     counterStopped,
-    startUniqueCounter
+    startUniqueCounter,
+    restartCounter
   }
 }
