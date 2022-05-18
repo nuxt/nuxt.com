@@ -28,7 +28,10 @@ export const useMarkdown = () => {
     })
 
     // eslint-disable-next-line import/no-named-as-default-member
-    return matter.stringify(isEmpty(data) ? content : `\n${content}`, data)
+    return matter.stringify(isEmpty(data) ? content : `\n${content}`, data, {
+      // @ts-ignore | See https://github.com/nodeca/js-yaml `lineWidth`
+      lineWidth: -1
+    })
   }
 
   return {
