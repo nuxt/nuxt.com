@@ -23,6 +23,7 @@
         placeholder="John"
         autocomplete="off"
         size="xl"
+        appearance="darken"
       />
     </UFormGroup>
 
@@ -34,6 +35,7 @@
         placeholder="Doe"
         autocomplete="off"
         size="xl"
+        appearance="darken"
       />
     </UFormGroup>
 
@@ -45,6 +47,7 @@
         placeholder="NuxtLabs"
         autocomplete="off"
         size="xl"
+        appearance="darken"
       />
     </UFormGroup>
 
@@ -57,6 +60,7 @@
         placeholder="johndoe@company.com"
         autocomplete="off"
         size="xl"
+        appearance="darken"
       />
     </UFormGroup>
 
@@ -68,6 +72,7 @@
         autocomplete="off"
         :rows="4"
         :autoresize="true"
+        appearance="darken"
       />
     </UFormGroup>
 
