@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Document :value="page" />
+    <ContentRenderer :value="page" />
   </div>
 </template>
 
