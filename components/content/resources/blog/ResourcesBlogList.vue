@@ -9,5 +9,5 @@
 </template>
 
 <script setup lang="ts">
-const { data: articles } = await useAsyncData('resources-blog-list', () => queryContent('/resources/blog').where({ $not: { path: { $in: ['/resources/blog'] } } }).sortBy('date', 'desc').skip(1).find())
+const { data: articles } = await useAsyncData('resources-blog-list', () => queryContent('/resources/blog').where({ $not: { path: { $in: ['/resources/blog'] } } }).sort({ date: 0 }).skip(1).find())
 </script>
