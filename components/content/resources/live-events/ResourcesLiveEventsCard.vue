@@ -1,9 +1,9 @@
 <template>
   <UCard
     padded
-    body-class="p-0"
-    class="flex-col space-y-4 cursor-pointer"
-    custom-class="transition duration-300 ease-in-out hover:ring-2 hover:u-ring-gray-900 group"
+    body-class=""
+    shadow-class=""
+    class="space-y-4 transition duration-200 cursor-pointer group hover:ring-2 hover:u-ring-gray-900"
     @click="isOpen = !isOpen"
   >
     <ResourcesLiveEventsModal v-model="isOpen" :page="page" />

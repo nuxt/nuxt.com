@@ -1,6 +1,6 @@
 <template>
   <div class="flex items-center justify-between gap-4 px-4 sm:px-0">
-    <div v-if="prev" class="relative w-1/2 px-6 py-4 overflow-hidden rounded-lg lg:w-56 ring-1 u-ring-gray-200 lg:hover:u-ring-gray-900 lg:hover:ring-2 group u-bg-white">
+    <div v-if="prev" class="relative w-1/2 px-6 py-4 overflow-hidden transition duration-200 rounded-lg lg:w-56 ring-1 u-ring-gray-200 lg:hover:u-ring-gray-900 lg:hover:ring-2 group u-bg-white">
       <div class="flex items-center justify-between gap-1">
         <UIcon name="heroicons-outline:arrow-sm-left" class="flex-shrink-0 w-5 h-5" />
 
@@ -19,7 +19,7 @@
     </div>
     <span v-else>&nbsp;</span>
 
-    <div v-if="next" class="relative w-1/2 px-6 py-4 overflow-hidden rounded-lg lg:w-56 ring-1 u-ring-gray-200 lg:hover:u-ring-gray-900 lg:hover:ring-2 group u-bg-white">
+    <div v-if="next" class="relative w-1/2 px-6 py-4 overflow-hidden transition duration-200 rounded-lg lg:w-56 ring-1 u-ring-gray-200 lg:hover:u-ring-gray-900 lg:hover:ring-2 group u-bg-white">
       <div class="flex items-center justify-between gap-1">
         <div class="min-w-0">
           <p class="font-semibold lg:text-lg u-text-gray-900">

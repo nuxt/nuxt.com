@@ -52,19 +52,93 @@ Our Values
 ::
 
 ::company-about-list
----
-type: backers
----
 #title
 [Thanks to]{.u-text-gray-500} our incredible backers
+#list
+  :::company-about-list-backer
+  ---
+  name: firstminute
+  image: /company/about/backers/firstminute.png
+  ---
+  :::
+  :::company-about-list-backer
+  ---
+  name: kimaventures
+  image: /company/about/backers/kimaventures.png
+  ---
+  :::
+  :::company-about-list-backer
+  ---
+  name: kimaventures
+  image: /company/about/backers/kimaventures.png
+  ---
+  :::
+  :::company-about-list-backer
+  ---
+  name: firstminute
+  image: /company/about/backers/firstminute.png
+  ---
+  :::
+  :::company-about-list-backer
+  ---
+  name: firstminute
+  image: /company/about/backers/firstminute.png
+  ---
+  :::
+  :::company-about-list-backer
+  ---
+  name: kimaventures
+  image: /company/about/backers/kimaventures.png
+  ---
+  :::
 ::
 
 ::company-about-list
----
-type: investors
----
 #title
 [And also]{.u-text-gray-500} our individual investors
+#list
+  :::company-about-list-investor
+  ---
+  name: Evan You
+  job: Founder of VueJS
+  image: /company/about/investors/evan.png
+  ---
+  :::
+  :::company-about-list-investor
+  ---
+  name: Eduardo
+  job: CEO of Company
+  image: /company/about/investors/evan.png
+  ---
+  :::
+  :::company-about-list-investor
+  ---
+  name: Evan You
+  job: Founder of VueJS
+  image: /company/about/investors/evan.png
+  ---
+  :::
+  :::company-about-list-investor
+  ---
+  name: Eduardo
+  job: CEO of Company
+  image: /company/about/investors/evan.png
+  ---
+  :::
+  :::company-about-list-investor
+  ---
+  name: Evan You
+  job: Founder of VueJS
+  image: /company/about/investors/evan.png
+  ---
+  :::
+  :::company-about-list-investor
+  ---
+  name: Eduardo
+  job: CEO of Company
+  image: /company/about/investors/evan.png
+  ---
+  :::
 ::
 
 ::company-about-positions

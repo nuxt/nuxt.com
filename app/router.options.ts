@@ -12,6 +12,12 @@ export default <RouterConfig>{
         behavior: 'smooth'
       }
     }
+    if (to.hash) {
+      return {
+        el: to.hash,
+        behavior: 'smooth'
+      }
+    }
 
     // Scroll to top of window
     window.scrollTo({
