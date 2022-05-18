@@ -75,7 +75,7 @@ const { data: offers } = await useAsyncData('company-careers-list', () => queryC
     }
   }
 }).find())
-console.log('offers', offers)
+
 const departments = computed(() => {
   const mappedOffers = offers.value.map((offer) => { return { key: slugify(offer.department), label: offer.department } })
   mappedOffers.unshift({ key: 'all', label: 'All' })
