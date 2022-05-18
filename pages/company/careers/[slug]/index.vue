@@ -18,7 +18,7 @@
 
     <ContentRenderer class="prose dark:prose-invert max-w-none" :value="page" />
 
-    <CompanyCareersForm class="mt-24 mb-36" />
+    <CompanyCareersForm :offer="page.role" class="mt-24 mb-36" />
   </UContainer>
 </template>
 

@@ -87,14 +87,35 @@
 </template>
 
 <script setup lang="ts">
-const form = reactive({ firstname: '', lastname: '', company: '', email: '', message: '' })
+const props = defineProps({
+  offer: {
+    type: String,
+    required: true
+  }
+})
+
+const { $toast } = useNuxtApp()
+
+const initialForm = { firstname: '', lastname: '', company: '', email: '', offer: props.offer, message: '' }
+const form = reactive({ ...initialForm })
 const loading = ref(false)
 
 async function onSubmit () {
   loading.value = true
 
-  // TODO call api/contact when ready
-  await new Promise(function (resolve) { setTimeout(resolve, 1000) })
+  try {
+    await $fetch('/api/email/career', {
+      method: 'POST',
+      body: form
+    })
+
+    Object.assign(form, initialForm)
+
+    $toast.success({
+      title: 'Contact request success',
+      description: 'Your request has been sent. We will come back to you.'
+    })
+  } catch (e) {}
 
   loading.value = false
 }
