@@ -4,8 +4,8 @@
       <UVerticalNavigation :links="links" v-bind="verticalNavigationProps" />
     </template>
 
-    <div class="flex-1 flex flex-col overflow-y-auto">
-      <UContainer class="w-full lg:hidden mt-4">
+    <div class="flex flex-col flex-1 overflow-y-auto">
+      <UContainer class="w-full px-4 mt-4 lg:hidden">
         <UVerticalNavigation :links="links" />
       </UContainer>
 

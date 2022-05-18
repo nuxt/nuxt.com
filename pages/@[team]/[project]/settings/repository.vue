@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-6">
-    <UCard padded>
+    <UCard padded background-class="u-bg-white">
       <h2 class="text-lg font-medium leading-6 u-text-gray-900">
         Connected Git Repository
       </h2>
