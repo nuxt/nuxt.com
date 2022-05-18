@@ -15,6 +15,8 @@
           name="departments"
           :options="departments"
           size="lg"
+          value-attribute="key"
+          text-attribute="label"
         />
         <USelect
           v-model="location"
@@ -22,6 +24,8 @@
           name="locations"
           :options="locations"
           size="lg"
+          value-attribute="key"
+          text-attribute="label"
         />
       </div>
     </div>
@@ -44,8 +48,9 @@
 </template>
 
 <script setup lang="ts">
-import { uniq } from 'lodash-es'
+import { uniqBy } from 'lodash-es'
 import { LocationQueryRaw } from 'vue-router'
+import slugify from '@sindresorhus/slugify'
 
 const route = useRoute()
 const router = useRouter()
@@ -66,47 +71,59 @@ const { data: offers } = await useAsyncData('company-careers-list', () => queryC
 }).find())
 
 const departments = computed(() => {
-  return uniq(offers.value.map(offer => offer.department))
+  const mappedOffers = [...offers.value].map((offer) => { return { key: slugify(offer.department), label: offer.department } })
+  mappedOffers.unshift({ key: 'all', label: 'All Departments' })
+
+  return uniqBy(mappedOffers, 'key')
 })
 
 const locations = computed(() => {
-  return uniq(offers.value.map(offer => offer.location))
+  const mappedOffers = offers.value.map((offer) => { return { key: slugify(offer.location), label: offer.location } })
+  mappedOffers.unshift({ key: 'all', label: 'All Locations' })
+
+  return uniqBy(mappedOffers, 'key')
 })
 
 const selectedDepartment = computed(() => {
-  return departments.value.find(department => department === route.query.department)
+  return departments.value.find(department => department.key === route.query.department)
 })
 
 const selectedLocation = computed(() => {
-  return locations.value.find(department => department === route.query.location)
+  return locations.value.find(department => department.key === route.query.location)
 })
 
 const department = computed({
   get () {
-    return selectedDepartment.value
+    return selectedDepartment.value?.key
   },
   set (department) {
     router.push({
       name: 'company-careers',
       query: {
         ...route.query,
-        department: department || undefined
-      } as LocationQueryRaw
+        department: department === 'all' ? undefined : department || undefined
+      } as LocationQueryRaw,
+      params: {
+        smooth: '#smooth'
+      }
     })
   }
 })
 
 const location = computed({
   get () {
-    return selectedLocation.value
+    return selectedLocation.value?.key
   },
   set (location) {
     router.push({
       name: 'company-careers',
       query: {
         ...route.query,
-        location: location || undefined
-      } as LocationQueryRaw
+        location: location && location === 'all' ? undefined : location || undefined
+      } as LocationQueryRaw,
+      params: {
+        smooth: '#smooth'
+      }
     })
   }
 })
@@ -117,8 +134,8 @@ const filteredOffers = computed(() => {
   }
 
   return offers.value.filter((offer) => {
-    const departmentMatch = !selectedDepartment.value || offer.department === selectedDepartment.value
-    const locationMatch = !selectedLocation.value || offer.location === selectedLocation.value
+    const departmentMatch = !selectedDepartment.value || offer.department === selectedDepartment.value.label
+    const locationMatch = !selectedLocation.value || offer.location === selectedLocation.value.key
     return departmentMatch && locationMatch
   })
 })
