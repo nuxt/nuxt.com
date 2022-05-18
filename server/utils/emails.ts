@@ -1,7 +1,7 @@
 import mjml2html from 'mjml'
 import Mailjet from 'node-mailjet'
 
-// Lateron: provider a useEmailProvider()
+// Lateron: provide a useEmailProvider()
 let _mailjet = null
 export function useMailjet () {
   if (!_mailjet) {
@@ -20,7 +20,7 @@ export async function useEmail (name: string): Promise<string> {
 
 export async function sendEmail (body) {
   try {
-    // avoid accidental emails on development
+    // prevent accidental emails on development
     if (process.env.NODE_ENV !== 'production') {
       // eslint-disable-next-line no-console
       console.log('[Mailjet] send email')

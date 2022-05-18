@@ -112,8 +112,8 @@ async function onSubmit () {
     Object.assign(form, initialForm)
 
     $toast.success({
-      title: 'Contact request success',
-      description: 'Your request has been sent. We will come back to you.'
+      title: 'Application success',
+      description: 'Your application has been sent. We will come back to you.'
     })
   } catch (e) {}
 
