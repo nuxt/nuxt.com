@@ -16,7 +16,7 @@
     </p>
 
     <div class="prose dark:prose-invert max-w-none">
-      <Document :value="page" />
+      <ContentRenderer :value="page" />
     </div>
   </UModal>
 </template>
