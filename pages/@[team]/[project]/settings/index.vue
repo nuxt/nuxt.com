@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-6">
-    <UCard padded @submit.prevent="onSubmit">
+    <UCard padded background-class="u-bg-white" @submit.prevent="onSubmit">
       <template #header>
         <h2 class="text-lg font-medium leading-6 u-text-gray-900">
           General
@@ -13,7 +13,7 @@
       <div class="space-y-6">
         <UFormGroup name="slug" label="Slug" :help="form.slug !== slug ? `Your project slug will be renamed to “${slug}”` : 'This is your project\'s URL namespace on Nuxt.'" required class="relative w-full lg:max-w-md">
           <div class="flex items-center">
-            <span class="inline-flex items-center px-2 py-2 text-sm border border-r-0 u-bg-gray-50 u-border-gray-200 rounded-l-lg u-text-gray-500">
+            <span class="inline-flex items-center px-2 py-2 text-sm border border-r-0 rounded-l-lg u-bg-gray-50 u-border-gray-200 u-text-gray-500">
               nuxt.com/@{{ team?.slug || user.username }}/
             </span>
 

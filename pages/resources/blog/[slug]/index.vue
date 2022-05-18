@@ -30,7 +30,7 @@
 
       <UContainer constrained-class="max-w-4xl" class="pt-8 lg:pt-0" padded>
         <div class="relative overflow-hidden border-b u-border-gray-400">
-          <Document v-if="page" :value="page" class="pb-12 prose dark:prose-invert max-w-none" />
+          <ContentRenderer v-if="page" :value="page" class="pb-12 prose dark:prose-invert max-w-none" />
         </div>
         <div class="flex justify-between pt-6">
           <span class="font-semibold u-text-gray-900">Share the article</span>
