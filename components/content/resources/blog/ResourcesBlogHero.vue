@@ -33,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-const { data: firstArticle } = await useAsyncData('resources-blog-hero', () => queryContent('/resources/blog').where({ $not: { path: { $in: ['/resources/blog'] } } }).sortBy('date', 'desc').findOne())
+const { data: firstArticle } = await useAsyncData('resources-blog-hero', () => queryContent('/resources/blog').where({ $not: { path: { $in: ['/resources/blog'] } } }).sort({ date: 0 }).findOne())
 
 const { $toast } = useNuxtApp()
 
