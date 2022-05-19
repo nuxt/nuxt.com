@@ -62,7 +62,10 @@
 </template>
 
 <script setup lang="ts">
-const form = reactive({ email: '', name: '', website: '', companySize: '', message: '' })
+const { $toast } = useNuxtApp()
+
+const initialForm = { email: '', name: '', website: '', companySize: '', message: '' }
+const form = reactive({ ...initialForm })
 const loading = ref(false)
 
 const companySizes = [
@@ -74,8 +77,19 @@ const companySizes = [
 async function onSubmit () {
   loading.value = true
 
-  // TODO: send request
-  await new Promise(function (resolve) { setTimeout(resolve, 1000) })
+  try {
+    await $fetch('/api/email/support', {
+      method: 'POST',
+      body: form
+    })
+
+    Object.assign(form, initialForm)
+
+    $toast.success({
+      title: 'Contact request success',
+      description: 'Your request has been sent. We will come back to you.'
+    })
+  } catch (e) {}
 
   loading.value = false
 }
