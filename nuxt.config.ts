@@ -29,6 +29,10 @@ export default defineNuxtConfig({
     orbit: {
       token: process.env.ORBIT_TOKEN
     },
+    mailjet: {
+      apiKey: process.env.MAILJET_API_KEY,
+      secretKey: process.env.MAILJET_SECRET_KEY
+    },
     public: {
       baseUrl: process.env.BASE_URL || 'https://nuxt.com',
       ywsUrl: process.env.YWS_URL,
@@ -90,5 +94,11 @@ export default defineNuxtConfig({
       apiKey: process.env.REVUE_API_KEY,
       component: false
     }
+  },
+  nitro: {
+    serverAssets: [{
+      baseName: 'emails',
+      dir: './server/emails'
+    }]
   }
 })
