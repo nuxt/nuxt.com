@@ -6,17 +6,25 @@
           <h2 class="text-lg font-medium u-text-gray-900">
             <span class="sr-only">Details for </span>{{ computedFile.name }}
           </h2>
-          <p class="flex items-center gap-1.5 text-sm min-w-0 u-text-gray-400 truncate">
+          <div class="flex items-center gap-1.5 text-sm min-w-0 u-text-gray-400 truncate">
             <span class="truncate">{{ computedFile.path }}</span>
-            <UButton
-              icon="heroicons-outline:external-link"
-              target="_blank"
-              :to="`https://github.com/${project.repository.owner}/${project.repository.name}/tree/${branch.name}/${absolutePath}`"
-              variant="transparent"
-              size="xxs"
-              class="!p-0"
-            />
-          </p>
+
+            <UTooltip>
+              <UButton
+                icon="heroicons-outline:external-link"
+                target="_blank"
+                :to="githubLink"
+                variant="transparent"
+                size="xxs"
+                class="!p-0"
+              />
+
+              <template #text>
+                <span class="flex-auto truncate">Open on GitHub</span>
+                <kbd class="flex-shrink-0 hidden font-sans text-xs font-semibold u-text-gray-300 sm:inline"><abbr title="Command" class="no-underline">⌘</abbr> G</kbd>
+              </template>
+            </UTooltip>
+          </div>
         </div>
       </div>
 
@@ -93,9 +101,10 @@
 </template>
 
 <script setup lang="ts">
-import { snakeCase, isPlainObject, isDate, isBoolean, isNumber, assignIn } from 'lodash-es'
-import type { Project, Root } from '~/types'
+import { snakeCase, isPlainObject, isDate, isBoolean, isNumber, set } from 'lodash-es'
+import { useMagicKeys, whenever, and, useActiveElement } from '@vueuse/core'
 import { capitalize } from '~/utils'
+import type { Project, Root } from '~/types'
 
 const props = defineProps({
   modelValue: {
@@ -109,6 +118,8 @@ const emit = defineEmits(['update:modelValue'])
 const project: Project = inject('project')
 const root: Root = inject('root')
 
+const keys = useMagicKeys()
+const activeElement = useActiveElement()
 const { branch } = useProjectBranches(project)
 const { computedFile } = useProjectFiles(project, root)
 
@@ -117,13 +128,25 @@ const selectedIndex = useState(`project-${project.id}-${root}-aside-tabs`, () =>
 // Computed
 
 const fields = computed(() => {
-  return mapFields({ title: '', description: '', ...props.modelValue })
+  return mapFields({ title: '', description: '', draft: false, navigation: true, ...props.modelValue })
 })
 
 const absolutePath = computed(() => {
-  return [...project.baseDir.split('/').filter(p => p === '.'), ...computedFile.value?.path?.split('/')]
+  return [...project.baseDir.split('/').filter(p => p !== '.'), ...computedFile.value?.path?.split('/')]
     .filter(Boolean)
     .join('/')
+})
+
+const githubLink = computed(() => {
+  return `https://github.com/${project.repository.owner}/${project.repository.name}/tree/${branch.value.name}/${absolutePath.value}`
+})
+
+const notUsingInput = computed(() => !(activeElement.value?.tagName === 'INPUT' || activeElement.value?.tagName === 'TEXTAREA' || activeElement.value?.contentEditable === 'true'))
+
+// Watch
+
+whenever(and(keys.meta_g, notUsingInput), () => {
+  window.open(githubLink.value, '_blank')
 })
 
 // Methods
@@ -136,14 +159,13 @@ function updateField (key, value) {
     value = undefined
   } else if (field.type === 'date') {
     value = new Date(value)
+  } else if (field.type === 'number') {
+    value = Number(value)
   }
 
   if (value !== undefined) {
-    assignIn(updatedFields, {
-      [key]: value
-    })
+    set(updatedFields, key, value)
   }
-  console.log('updatedFields', updatedFields)
   emit('update:modelValue', updatedFields)
 }
 

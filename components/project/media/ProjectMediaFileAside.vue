@@ -6,17 +6,25 @@
           <h2 class="text-lg font-medium u-text-gray-900">
             <span class="sr-only">Details for </span>{{ computedFile.name }}
           </h2>
-          <p class="flex items-center gap-1.5 text-sm min-w-0 u-text-gray-400 truncate">
+          <div class="flex items-center gap-1.5 text-sm min-w-0 u-text-gray-400 truncate">
             <span class="truncate">{{ computedFile.path }}</span>
-            <UButton
-              icon="heroicons-outline:external-link"
-              target="_blank"
-              :to="`https://github.com/${project.repository.owner}/${project.repository.name}/tree/${branch.name}/${absolutePath}`"
-              variant="transparent"
-              size="xxs"
-              class="!p-0"
-            />
-          </p>
+
+            <UTooltip>
+              <UButton
+                icon="heroicons-outline:external-link"
+                target="_blank"
+                :to="githubLink"
+                variant="transparent"
+                size="xxs"
+                class="!p-0"
+              />
+
+              <template #text>
+                <span class="flex-auto truncate">Open on GitHub</span>
+                <kbd class="flex-shrink-0 hidden font-sans text-xs font-semibold u-text-gray-300 sm:inline"><abbr title="Command" class="no-underline">⌘</abbr> G</kbd>
+              </template>
+            </UTooltip>
+          </div>
         </div>
 
         <a v-if="fileDownloadLink" :download="computedFile.name" :href="fileDownloadLink" tabindex="-1" class="p-2 rounded-full focus:outline-none focus:ring-offset-white dark:focus:ring-offset-black u-bg-gray-100 hover:u-bg-gray-200 focus:ring-2 focus:ring-offset-2 focus:u-ring-gray-900">
@@ -79,8 +87,9 @@
 </template>
 
 <script setup lang="ts">
-import type { Project, Root } from '~/types'
+import { useMagicKeys, whenever, and, useActiveElement } from '@vueuse/core'
 import { toFormattedBytes } from '~/utils'
+import type { Project, Root } from '~/types'
 
 const props = defineProps({
   medias: {
@@ -92,15 +101,23 @@ const props = defineProps({
 const project: Project = inject('project')
 const root: Root = inject('root')
 
+const keys = useMagicKeys()
+const activeElement = useActiveElement()
 const { branch } = useProjectBranches(project)
 const { computedFile } = useProjectFiles(project, root)
 
 const selectedIndex = useState(`project-${project.id}-${root}-aside-tabs`, () => 0)
 
+// Computed
+
 const absolutePath = computed(() => {
-  return [...project.baseDir.split('/').filter(p => p === '.'), ...computedFile.value?.path?.split('/')]
+  return [...project.baseDir.split('/').filter(p => p !== '.'), ...computedFile.value?.path?.split('/')]
     .filter(Boolean)
     .join('/')
+})
+
+const githubLink = computed(() => {
+  return `https://github.com/${project.repository.owner}/${project.repository.name}/tree/${branch.value.name}/${absolutePath.value}`
 })
 
 const fileDownloadLink = computed(() => {
@@ -111,5 +128,13 @@ const fileDownloadLink = computed(() => {
   if (props.medias[computedFile.value.path]) {
     return `data:image/png;base64,${props.medias[computedFile.value.path].content}`
   }
+})
+
+const notUsingInput = computed(() => !(activeElement.value?.tagName === 'INPUT' || activeElement.value?.tagName === 'TEXTAREA' || activeElement.value?.contentEditable === 'true'))
+
+// Watch
+
+whenever(and(keys.meta_g, notUsingInput), () => {
+  window.open(githubLink.value, '_blank')
 })
 </script>

@@ -136,7 +136,7 @@ export const getAvailablePath = (path: string, files: GitHubFile[]): string => {
 
 export const getRoutePath = function (path) {
   return path
-    .replace(/content/g, '')
+    .replace(/^content/g, '')
     .replace(/\/\d+\./g, '/')
     .replace(/\.md$/, '')
     .replace(/\/index$/, '/')

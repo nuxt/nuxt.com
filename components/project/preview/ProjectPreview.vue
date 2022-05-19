@@ -44,6 +44,15 @@
             <UButton
               rounded
               size="xxs"
+              icon="heroicons-outline:external-link"
+              class="!border-none"
+              variant="secondary"
+              :to="previewUrlWithPath"
+              target="_blank"
+            />
+            <UButton
+              rounded
+              size="xxs"
               icon="heroicons-outline:x"
               class="!border-none"
               variant="secondary"
@@ -77,7 +86,7 @@
 
 <script setup lang="ts">
 import { useEventListener } from '@vueuse/core'
-import { getRoutePath } from '~/utils/tree'
+import { getRoutePath, destructurePathName } from '~/utils/tree'
 import type { Project } from '~/types'
 
 const project: Project = inject('project')
@@ -88,12 +97,12 @@ const loading = ref(true)
 const { file, computedFiles, select: selectFile, previewUrl } = useProjectFiles(project, 'content')
 const { el, style, iframeStyle, isOpen, isExpand, isDiff, reset } = useProjectPreview()
 
-useEventListener(window, 'message', onMessage)
-
 const previewUrlWithPath = computed(() => {
   const [host, ...query] = previewUrl.value.split('?')
 
-  return `${host}${getRoutePath(file.value.path)}?${query.join('&')}`
+  const route = getRouteFromFile() || ''
+
+  return `${host}${route}?${query.join('&')}`
 })
 
 const src = unref(previewUrlWithPath.value)
@@ -110,23 +119,46 @@ function refresh () {
   iframe.value.src = previewUrlWithPath.value
 }
 
+function getRouteFromFile () {
+  const { name, ext } = destructurePathName(file.value.path)
+  // Partials are not routes
+  if (name.startsWith('_')) {
+    return
+  }
+  // Only md files are routes
+  if (!['md'].includes(ext)) {
+    return
+  }
+
+  return getRoutePath(file.value.path)
+}
+
 function postMessage () {
   if (!iframe.value) {
     return
   }
 
-  iframe.value.contentWindow.postMessage(`push:${getRoutePath(file.value.path)}`, '*')
+  const route = getRouteFromFile()
+  if (!route) {
+    return
+  }
+
+  iframe.value.contentWindow.postMessage(`push:${route}`, '*')
 }
 
 function onLoad () {
   loading.value = false
+
+  setTimeout(() => {
+    useEventListener(window, 'message', onMessage)
+  }, 1000)
 }
 
 function onMessage (e) {
   if (!previewUrl.value.startsWith(e.origin)) {
     return
   }
-  if (!e.data || typeof e.data !== 'string') {
+  if (typeof e.data !== 'string') {
     return
   }
 
