@@ -1,22 +1,30 @@
 <template>
   <aside class="hidden overflow-y-auto u-bg-white border-l u-border-gray-200 top-0 w-96 lg:block sticky h-[calc(100vh-4rem)] flex-shrink-0">
-    <div v-if="computedFile" class="pb-[237px]">
+    <div v-if="computedFile" class="pb-[213px]">
       <div class="flex items-start justify-between p-6">
         <div class="min-w-0">
           <h2 class="text-lg font-medium u-text-gray-900">
             <span class="sr-only">Details for </span>{{ computedFile.name }}
           </h2>
-          <p class="flex items-center gap-1.5 text-sm min-w-0 u-text-gray-400 truncate">
+          <div class="flex items-center gap-1.5 text-sm min-w-0 u-text-gray-400 truncate">
             <span class="truncate">{{ computedFile.path }}</span>
-            <UButton
-              icon="heroicons-outline:external-link"
-              target="_blank"
-              :to="`https://github.com/${project.repository.owner}/${project.repository.name}/tree/${branch.name}/${absolutePath}`"
-              variant="transparent"
-              size="xxs"
-              class="!p-0"
-            />
-          </p>
+
+            <UTooltip>
+              <UButton
+                icon="heroicons-outline:external-link"
+                target="_blank"
+                :to="githubLink"
+                variant="transparent"
+                size="xxs"
+                class="!p-0"
+              />
+
+              <template #text>
+                <span class="flex-auto truncate">Open on GitHub</span>
+                <kbd class="flex-shrink-0 hidden font-sans text-xs font-semibold u-text-gray-300 sm:inline"><abbr title="Command" class="no-underline">⌘</abbr> G</kbd>
+              </template>
+            </UTooltip>
+          </div>
         </div>
       </div>
 
@@ -38,22 +46,31 @@
         </nav>
 
         <div class="p-6">
-          <div v-if="selectedIndex === 0" class="space-y-6">
+          <div v-if="selectedIndex === 0" class="space-y-3">
             <UFormGroup
               v-for="field of fields"
               :key="field.key"
               :name="field.key"
-              :label="field.label"
-              label-class="font-medium truncate u-text-gray-900"
-              label-wrapper-class="flex content-center justify-between min-w-0 gap-3"
+              label-class="flex items-center gap-1 font-medium truncate u-text-gray-900"
+              label-wrapper-class="flex content-center justify-between min-w-0 gap-3 group"
               container-class=""
               :wrapper-class="field.type === 'boolean' ? 'flex items-center justify-between' : ''"
             >
+              <template #label>
+                {{ field.key }}
+
+                <div v-if="!['title', 'description', 'draft', 'navigation'].includes(field.key)" class="hidden -my-1 group-hover:block">
+                  <UTooltip :text="`Delete ${field.key}`">
+                    <UButton icon="heroicons-outline:trash" variant="transparent" size="xxs" @click="removeField(field.key)" />
+                  </UTooltip>
+                </div>
+              </template>
+
               <UTextarea
                 v-if="field.type === 'text'"
                 :model-value="field.value"
                 :name="field.key"
-                :placeholder="`Add a ${field.key.replace(/\./g, ' ')}...`"
+                placeholder="Enter text..."
                 size="sm"
                 :resize="false"
                 autoresize
@@ -68,13 +85,48 @@
                 :type="field.type"
                 :model-value="field.value"
                 :name="field.key"
-                :placeholder="`Add a ${field.key.replace(/\./g, ' ')}...`"
+                placeholder="Enter text..."
                 size="sm"
                 appearance="none"
                 custom-class="!px-0 placeholder-gray-400 dark:placeholder-gray-500"
                 @update:model-value="value => updateField(field.key, value)"
               />
             </UFormGroup>
+
+            <form @submit.prevent="addField">
+              <UFormGroup label-class="flex items-center gap-1 font-medium truncate u-text-gray-900" container-class="flex items-center gap-3" :label="!!form.key && form.key.trim().length > 0 ? form.key : 'New field'">
+                <USelect
+                  v-model="form.type"
+                  name="type"
+                  placeholder="Type"
+                  :options="['text', 'boolean', 'number', 'date']"
+                  size="sm"
+                  appearance="none"
+                  custom-class="!pl-0 placeholder-gray-400 dark:placeholder-gray-500"
+                  required
+                />
+                <UInput
+                  v-model="form.key"
+                  name="key"
+                  size="sm"
+                  appearance="none"
+                  placeholder="Key"
+                  class="flex-1"
+                  autocomplete="off"
+                  custom-class="!px-0 placeholder-gray-400 dark:placeholder-gray-500"
+                  required
+                />
+
+                <UButton
+                  icon="heroicons-outline:plus"
+                  type="submit"
+                  variant="transparent"
+                  :disabled="form.key.trim().length === 0"
+                  class="-mr-1"
+                  size="xxs"
+                />
+              </UFormGroup>
+            </form>
           </div>
 
           <div v-if="selectedIndex === 1">
@@ -93,9 +145,10 @@
 </template>
 
 <script setup lang="ts">
-import { snakeCase, isPlainObject, isDate, isBoolean, isNumber } from 'lodash-es'
-import type { Project, Root } from '~/types'
+import { snakeCase, isPlainObject, isDate, isBoolean, isNumber, set, unset } from 'lodash-es'
+import { useMagicKeys, whenever, and, useActiveElement } from '@vueuse/core'
 import { capitalize } from '~/utils'
+import type { Project, Root } from '~/types'
 
 const props = defineProps({
   modelValue: {
@@ -109,47 +162,98 @@ const emit = defineEmits(['update:modelValue'])
 const project: Project = inject('project')
 const root: Root = inject('root')
 
+const keys = useMagicKeys()
+const activeElement = useActiveElement()
 const { branch } = useProjectBranches(project)
 const { computedFile } = useProjectFiles(project, root)
 
 const selectedIndex = useState(`project-${project.id}-${root}-aside-tabs`, () => 0)
 
+const form = reactive({ type: 'text', key: '' })
+
 // Computed
 
 const fields = computed(() => {
-  return mapFields({ title: '', description: '', ...props.modelValue })
+  return mapFields({ title: '', description: '', draft: false, navigation: true, ...props.modelValue })
 })
 
 const absolutePath = computed(() => {
-  return [...project.baseDir.split('/').filter(p => p === '.'), ...computedFile.value?.path?.split('/')]
+  return [...project.baseDir.split('/').filter(p => p !== '.'), ...computedFile.value?.path?.split('/')]
     .filter(Boolean)
     .join('/')
 })
 
+const githubLink = computed(() => {
+  return `https://github.com/${project.repository.owner}/${project.repository.name}/tree/${branch.value.name}/${absolutePath.value}`
+})
+
+const notUsingInput = computed(() => !(activeElement.value?.tagName === 'INPUT' || activeElement.value?.tagName === 'TEXTAREA' || activeElement.value?.contentEditable === 'true'))
+
+// Watch
+
+whenever(and(keys.meta_g, notUsingInput), () => {
+  window.open(githubLink.value, '_blank')
+})
+
 // Methods
+
+function addField () {
+  const updatedFields = { ...toRaw(props.modelValue) }
+
+  const { key, type } = form
+
+  let value
+  switch (type) {
+    case 'text':
+      value = ''
+      break
+    case 'boolean':
+      value = false
+      break
+    case 'date':
+      value = new Date()
+      break
+    case 'number':
+      value = 0
+      break
+  }
+
+  form.key = ''
+
+  set(updatedFields, key, value)
+  emit('update:modelValue', updatedFields)
+}
 
 function updateField (key, value) {
   const field = fields.value.find(f => f.key === key)
-  const updatedFields = { ...props.modelValue, [key]: value }
+  const updatedFields = { ...toRaw(props.modelValue) }
 
   if (['title', 'description'].includes(key) && value === '') {
     value = undefined
   } else if (field.type === 'date') {
     value = new Date(value)
+  } else if (field.type === 'number') {
+    value = Number(value)
   }
 
-  if (value === undefined) {
-    delete updatedFields[key]
-  } else {
-    updatedFields[key] = value
+  if (value !== undefined) {
+    set(updatedFields, key, value)
   }
+  emit('update:modelValue', updatedFields)
+}
+
+function removeField (key) {
+  const updatedFields = { ...toRaw(props.modelValue) }
+
+  unset(updatedFields, key)
+
   emit('update:modelValue', updatedFields)
 }
 
 function mapFields (fields, parent = '') {
   return Object.entries(fields).flatMap(([key, value]) => {
     if (value && isPlainObject(value)) {
-      return mapFields(value, key)
+      return mapFields(value, [parent, key].filter(Boolean).join('.'))
     }
 
     if (Array.isArray(value)) {
