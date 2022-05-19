@@ -58,7 +58,7 @@
               <ResourcesBlogPostCta
                 button-text="Get Started"
                 to="/docs/framework"
-                image-path="/resources/blog/nuxt.svg"
+                image-path="/assets/resources/blog/nuxt.svg"
                 image-class="bottom-0 right-0"
               >
                 <template #title>
@@ -73,7 +73,7 @@
             <ResourcesBlogPostCta
               button-text="Discover Nuxt Sites"
               to="/showcases"
-              image-path="/resources/blog/showcases.png"
+              image-path="/assets/resources/blog/showcases.png"
             >
               <template #title>
                 Watch a Showcase

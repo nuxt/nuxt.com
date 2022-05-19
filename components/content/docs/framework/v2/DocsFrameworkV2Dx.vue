@@ -2,9 +2,9 @@
   <ul class="grid grid-cols-1 gap-8 pt-12 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
     <li v-for="dx in dxData.developerExperiences" :key="dx.title" class="flex flex-col items-center gap-y-4">
       <div class="relative">
-        <img src="/docs/framework/v2/hexagon.svg" alt="hexagon background">
+        <img src="/assets/docs/framework/v2/hexagon.svg" alt="hexagon background">
         <div class="absolute top-0 flex items-center justify-center w-full h-full">
-          <img :src="`${dx.icon}`" class="w-8 h-8" :alt="`${dx.title} icon`">
+          <img :src="`/assets/docs/framework/v2/${dx.icon}`" class="w-8 h-8" :alt="`${dx.title} icon`">
         </div>
       </div>
       <h6 class="text-lg font-semibold text-center u-text-gray-900">

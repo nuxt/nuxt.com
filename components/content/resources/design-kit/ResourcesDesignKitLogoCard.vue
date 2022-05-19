@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col space-y-2">
     <UCard padded class="flex items-center justify-center h-28" :background-class="cardClass">
-      <img :src="`/resources/design-kit/logo/${imgName}.svg`" :alt="imgName" :class="full ? 'h-8' : 'h-10'">
+      <img :src="`/assets/resources/design-kit/logo/${imgName}.svg`" :alt="imgName" :class="full ? 'h-8' : 'h-10'">
     </UCard>
     <div class="flex justify-between">
       <p class="font-semibold">
@@ -10,13 +10,13 @@
       <div>
         <a
           class="pr-2 hover:u-text-gray-500 u-text-gray-400 hover:underline"
-          :href="`/resources/design-kit/logo/${imgName}.svg`"
+          :href="`/assets/resources/design-kit/logo/${imgName}.svg`"
           aria-label="Download svg"
           download
         >svg</a>
         <a
           class="hover:u-text-gray-500 u-text-gray-400 hover:underline"
-          :href="`/resources/design-kit/logo/${imgName}.png`"
+          :href="`/assets/resources/design-kit/logo/${imgName}.png`"
           aria-label="Download png"
           download
         >png</a>

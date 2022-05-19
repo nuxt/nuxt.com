@@ -24,7 +24,7 @@ In January 2020, NuxtLabs raised $2M (pre-seed) to build a team of Nuxt experts 
 
 ::company-about-mission
 ---
-image: /company/about/team.png
+image: /assets/company/about/team.png
 ---
 #title
 Mission & Vision
@@ -58,37 +58,37 @@ Our Values
   :::company-about-list-backer
   ---
   name: firstminute
-  image: /company/about/backers/firstminute.png
+  image: /assets/company/about/backers/firstminute.png
   ---
   :::
   :::company-about-list-backer
   ---
   name: kimaventures
-  image: /company/about/backers/kimaventures.png
+  image: /assets/company/about/backers/kimaventures.png
   ---
   :::
   :::company-about-list-backer
   ---
   name: kimaventures
-  image: /company/about/backers/kimaventures.png
+  image: /assets/company/about/backers/kimaventures.png
   ---
   :::
   :::company-about-list-backer
   ---
   name: firstminute
-  image: /company/about/backers/firstminute.png
+  image: /assets/company/about/backers/firstminute.png
   ---
   :::
   :::company-about-list-backer
   ---
   name: firstminute
-  image: /company/about/backers/firstminute.png
+  image: /assets/company/about/backers/firstminute.png
   ---
   :::
   :::company-about-list-backer
   ---
   name: kimaventures
-  image: /company/about/backers/kimaventures.png
+  image: /assets/company/about/backers/kimaventures.png
   ---
   :::
 ::
@@ -101,42 +101,42 @@ Our Values
   ---
   name: Evan You
   job: Founder of VueJS
-  image: /company/about/investors/evan.png
+  image: /assets/company/about/investors/evan.png
   ---
   :::
   :::company-about-list-investor
   ---
   name: Eduardo
   job: CEO of Company
-  image: /company/about/investors/evan.png
+  image: /assets/company/about/investors/evan.png
   ---
   :::
   :::company-about-list-investor
   ---
   name: Evan You
   job: Founder of VueJS
-  image: /company/about/investors/evan.png
+  image: /assets/company/about/investors/evan.png
   ---
   :::
   :::company-about-list-investor
   ---
   name: Eduardo
   job: CEO of Company
-  image: /company/about/investors/evan.png
+  image: /assets/company/about/investors/evan.png
   ---
   :::
   :::company-about-list-investor
   ---
   name: Evan You
   job: Founder of VueJS
-  image: /company/about/investors/evan.png
+  image: /assets/company/about/investors/evan.png
   ---
   :::
   :::company-about-list-investor
   ---
   name: Eduardo
   job: CEO of Company
-  image: /company/about/investors/evan.png
+  image: /assets/company/about/investors/evan.png
   ---
   :::
 ::

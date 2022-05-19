@@ -20,7 +20,7 @@
         </a>
       </div>
       <div class="flex items-center justify-center lg:col-span-1">
-        <img src="/resources/design-kit/hero.png" alt="Design kit illustration" class="h-64 sm:h-80 lg:h-full ">
+        <img src="/assets/resources/design-kit/hero.png" alt="Design kit illustration" class="h-64 sm:h-80 lg:h-full ">
       </div>
     </div>
   </UContainer>
