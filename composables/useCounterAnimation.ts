@@ -1,63 +1,36 @@
 export const useCounterAnimations = () => {
   const currentSection = ref(0)
   const currentStep = ref(null)
-  const counterStopped = ref(false)
-  const uniqueAnimationRunning = ref(false)
-  const timeoutId = ref()
-  const restart = ref(false)
-  const sectionToRestart = ref(null)
-
-  const sleep = (ms: number) => {
-    return new Promise((resolve) => {
-      setTimeout(resolve, ms)
-    })
-  }
+  const counterTimeoutId = ref()
+  const stepperTimeoutId = ref()
 
   const startCounter = async (ms: Array<number>) => {
-    for (let i = 0; i < ms.length; i++) {
-      if (sectionToRestart.value) {
-        i = sectionToRestart.value
-        sectionToRestart.value = null
-      }
-
-      currentSection.value = i
-
+    for (currentSection.value; currentSection.value <= ms.length; currentSection.value++) {
       await new Promise((resolve) => {
-        timeoutId.value = setTimeout(resolve, ms[i])
+        counterTimeoutId.value = setTimeout(resolve, ms[currentSection.value])
       })
 
-      if (i === ms.length - 1) {
-        i = -1
+      if (currentSection.value === ms.length) {
+        currentSection.value = -1
       }
     }
   }
 
   const restartCounter = (ms: Array<number>, sectionNumber: number) => {
-    clearTimeout(timeoutId.value)
-    sectionToRestart.value = sectionNumber
-    startCounter(ms)
-  }
+    clearTimeout(counterTimeoutId.value)
+    currentSection.value = sectionNumber
+    currentStep.value = null
 
-  const startUniqueCounter = async (ms: Array<number>, startSection: number, endSection: number) => {
-    counterStopped.value = true
-    uniqueAnimationRunning.value = true
-
-    for (let i = startSection; i <= endSection; i++) {
-      currentSection.value = i
-
-      await sleep(ms[i])
-
-      if (i === endSection) {
-        uniqueAnimationRunning.value = false
-      }
-    }
+    setTimeout(() => {
+      startCounter(ms)
+    }, 300)
   }
 
   const startStepper = async (ms?: Array<number>) => {
-    for (let i = 0; i < ms.length; i++) {
-      currentStep.value = i
-
-      await sleep(ms[i])
+    for (currentStep.value = 0; currentStep.value < ms.length; currentStep.value++) {
+      await new Promise((resolve) => {
+        stepperTimeoutId.value = setTimeout(resolve, ms[currentSection.value])
+      })
     }
     currentStep.value = null
   }
@@ -67,9 +40,6 @@ export const useCounterAnimations = () => {
     startStepper,
     currentSection,
     currentStep,
-    uniqueAnimationRunning,
-    counterStopped,
-    startUniqueCounter,
     restartCounter
   }
 }
