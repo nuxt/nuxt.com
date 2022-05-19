@@ -1,6 +1,6 @@
 <template>
   <aside class="hidden overflow-y-auto u-bg-white border-l u-border-gray-200 top-0 w-96 lg:block sticky h-[calc(100vh-4rem)] flex-shrink-0">
-    <div v-if="computedFile" class="pb-[237px]">
+    <div v-if="computedFile" class="pb-[213px]">
       <div class="flex items-center justify-between gap-3 p-6">
         <div class="min-w-0">
           <h2 class="text-lg font-medium u-text-gray-900">
@@ -50,7 +50,7 @@
         </nav>
 
         <div class="p-6">
-          <div v-if="selectedIndex === 0" class="space-y-6">
+          <div v-if="selectedIndex === 0" class="space-y-3">
             <dl class="divide-y u-divide-gray-200">
               <div class="flex justify-between pb-3 text-sm font-medium">
                 <dt class="u-text-gray-500">

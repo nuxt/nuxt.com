@@ -1,6 +1,6 @@
 <template>
   <aside class="hidden overflow-y-auto u-bg-white border-l u-border-gray-200 top-0 w-96 lg:block sticky h-[calc(100vh-4rem)] flex-shrink-0">
-    <div v-if="computedFile" class="pb-[237px]">
+    <div v-if="computedFile" class="pb-[213px]">
       <div class="flex items-start justify-between p-6">
         <div class="min-w-0">
           <h2 class="text-lg font-medium u-text-gray-900">
@@ -46,17 +46,26 @@
         </nav>
 
         <div class="p-6">
-          <div v-if="selectedIndex === 0" class="space-y-6">
+          <div v-if="selectedIndex === 0" class="space-y-3">
             <UFormGroup
               v-for="field of fields"
               :key="field.key"
               :name="field.key"
-              :label="field.key"
-              label-class="font-medium truncate u-text-gray-900"
-              label-wrapper-class="flex content-center justify-between min-w-0 gap-3"
+              label-class="flex items-center gap-1 font-medium truncate u-text-gray-900"
+              label-wrapper-class="flex content-center justify-between min-w-0 gap-3 group"
               container-class=""
               :wrapper-class="field.type === 'boolean' ? 'flex items-center justify-between' : ''"
             >
+              <template #label>
+                {{ field.key }}
+
+                <div v-if="!['title', 'description', 'draft', 'navigation'].includes(field.key)" class="hidden -my-1 group-hover:block">
+                  <UTooltip :text="`Delete ${field.key}`">
+                    <UButton icon="heroicons-outline:trash" variant="transparent" size="xxs" @click="removeField(field.key)" />
+                  </UTooltip>
+                </div>
+              </template>
+
               <UTextarea
                 v-if="field.type === 'text'"
                 :model-value="field.value"
@@ -101,7 +110,7 @@
 </template>
 
 <script setup lang="ts">
-import { snakeCase, isPlainObject, isDate, isBoolean, isNumber, set } from 'lodash-es'
+import { snakeCase, isPlainObject, isDate, isBoolean, isNumber, set, unset } from 'lodash-es'
 import { useMagicKeys, whenever, and, useActiveElement } from '@vueuse/core'
 import { capitalize } from '~/utils'
 import type { Project, Root } from '~/types'
@@ -166,6 +175,14 @@ function updateField (key, value) {
   if (value !== undefined) {
     set(updatedFields, key, value)
   }
+  emit('update:modelValue', updatedFields)
+}
+
+function removeField (key) {
+  const updatedFields = { ...toRaw(props.modelValue) }
+
+  unset(updatedFields, key)
+
   emit('update:modelValue', updatedFields)
 }
 
