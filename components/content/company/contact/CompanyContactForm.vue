@@ -41,10 +41,10 @@
       />
     </UFormGroup>
 
-    <UFormGroup name="help" label="What do you need help with?" class="col-span-2">
+    <UFormGroup name="subject" label="What do you need help with?" class="col-span-2">
       <USelect
-        v-model="form.help"
-        name="help"
+        v-model="form.subject"
+        name="subject"
         :options="helpOptions"
         required
       />
@@ -72,7 +72,10 @@
 </template>
 
 <script setup lang="ts">
-const form = reactive({ firstname: '', lastname: '', website: '', email: '', help: '', message: '' })
+const { $toast } = useNuxtApp()
+
+const initialForm = { firstname: '', lastname: '', website: '', email: '', subject: '', message: '' }
+const form = reactive({ ...initialForm })
 const loading = ref(false)
 
 const helpOptions = [
@@ -84,8 +87,19 @@ const helpOptions = [
 async function onSubmit () {
   loading.value = true
 
-  // TODO: send request
-  await new Promise(function (resolve) { setTimeout(resolve, 1000) })
+  try {
+    await $fetch('/api/email/contact', {
+      method: 'POST',
+      body: form
+    })
+
+    Object.assign(form, initialForm)
+
+    $toast.success({
+      title: 'Contact request success',
+      description: 'Your request has been sent. We will come back to you.'
+    })
+  } catch (e) {}
 
   loading.value = false
 }
