@@ -13,7 +13,7 @@
       </div>
 
       <div class="relative flex items-center justify-center lg:col-span-1">
-        <img src="/gems.svg" class="h-[280px]">
+        <img src="/assets/integrations/gems.svg" class="h-[280px]">
 
         <UCard padded body-class="p-4" class="absolute left-0 md:left-11 top-0 md:top-3 w-full md:w-44 backdrop-blur-lg !bg-opacity-10">
           <UIcon name="heroicons-outline:download" class="w-5 h-5 text-teal-400" />

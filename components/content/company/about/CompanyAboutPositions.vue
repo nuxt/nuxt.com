@@ -2,7 +2,7 @@
   <div class="flex flex-col-reverse items-start pt-12 pb-16 md:block md:relative sm:pb-32">
     <div class="md:absolute md:right-0 md:top-12">
       <div class="relative">
-        <img src="/company/about/map.svg">
+        <img src="/assets/company/about/map.svg">
         <div class="h-[100px] absolute top-0 inset-x-0 bg-gradient-to-b from-white dark:from-black to-transparent" />
         <div class="w-[100px] absolute left-0 inset-y-0 bg-gradient-to-r from-white dark:from-black to-transparent" />
         <div class="h-[100px] absolute bottom-0 inset-x-0 bg-gradient-to-t from-white dark:from-black to-transparent" />

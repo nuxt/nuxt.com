@@ -10,7 +10,7 @@
 
     <div class="relative flex items-center px-4 pt-4 h-18">
       <div class="flex items-center justify-center flex-shrink-0 w-10 h-10">
-        <img :src="`/resources/live-events/${page.eventLogo}`" :alt="page.eventLogo" class="rounded-full u-border-gray-900">
+        <img :src="`/assets/resources/live-events/${page.eventLogo}`" :alt="page.eventLogo" class="rounded-full u-border-gray-900">
       </div>
       <div class="flex-grow pl-2 overflow-hidden">
         <h6 class="text-lg font-semibold truncate">
