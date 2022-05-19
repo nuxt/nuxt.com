@@ -33,21 +33,19 @@
       <UInput
         v-model="name"
         name="name"
-        placeholder="faq/index.md"
+        placeholder="faq/index"
         required
         autocomplete="off"
         class="flex-1 w-auto"
-        :custom-class="`rounded-r-none ${path && 'rounded-l-none'}`"
+        :custom-class="`focus:z-[1] rounded-r-none ${path && 'rounded-l-none'}`"
       />
 
-      <span class="flex-shrink-0 max-w-[200px] truncate px-3 py-2 text-sm border border-l-0 u-bg-gray-50 u-border-gray-200 rounded-r-lg u-text-gray-500">
-        {{ ext }}
-      </span>
+      <USelect v-model="ext" name="ext" :options="exts" custom-class="-ml-px !rounded-l-none u-bg-gray-50" />
     </div>
     <div v-if="error" class="mt-2 text-sm italic text-red-500">
       {{ error }}
     </div>
-    <div class="gap-3 mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+    <div class="gap-3 mt-5 sm:mt-6 sm:flex sm:flex-row-reverse">
       <UButton type="submit" label="Create" variant="green" class="justify-center flex-shrink-0 w-full sm:w-auto" :disabled="!!error" />
       <UButton type="button" label="Cancel" variant="secondary" class="justify-center flex-shrink-0 w-full mt-3 sm:w-auto sm:mt-0" @click="close" />
     </div>
@@ -73,6 +71,7 @@ const emit = defineEmits(['submit', 'close'])
 
 const name = ref('')
 const ext = ref('.md')
+const exts = ref(['.md', '.yml', '.json'])
 const newPath = computed(() => `${props.path}/${name.value}${ext.value}`)
 const error = computed(() => {
   if (props.computedFiles.find(file => file.path === newPath.value)) {

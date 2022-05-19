@@ -12,7 +12,7 @@
             placeholder="Filter..."
             class="flex w-full"
             size="sm"
-            custom-class="truncate pr-10 u-bg-gray-50 -my-px placeholder-gray-400 dark:placeholder-gray-500"
+            custom-class="pr-10 -my-px placeholder-gray-400 truncate u-bg-gray-50 dark:placeholder-gray-500"
           >
             <UButton
               v-if="treeQuery"
@@ -43,14 +43,17 @@
     </template>
 
     <div class="flex items-stretch flex-1 min-h-0 overflow-hidden">
-      <div v-if="computedFiles.length" ref="editorScroll" class="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto">
+      <div v-if="computedFiles.length" ref="editorScroll" class="flex flex-col flex-1 p-4 overflow-y-auto sm:p-6">
         <ProjectContentFileEditor
-          v-if="parsedContent"
+          v-if="parsedContent && parsedContent.key"
           :content="parsedContent"
           :components="components || []"
           class="flex flex-col flex-1"
           @update="onMarkdownUpdate"
         />
+        <p v-else class="flex items-center justify-center flex-1 u-text-gray-400">
+          This file extension is not supported in editor.
+        </p>
       </div>
       <ProjectContentFilesEmpty v-else @create="openCreateFileModal('content')" />
 
@@ -66,6 +69,7 @@
 import { PropType, Ref } from 'vue'
 import { debounce } from 'lodash-es'
 import { useEditorScroll } from '~/editor/scroll'
+import { getPathExt } from '~/utils/tree'
 import type { Content } from '~/editor/types'
 import type { Team, Project, GitHubDraft } from '~/types'
 
@@ -83,7 +87,9 @@ provide('root', root)
 
 const { $socket } = useNuxtApp()
 const client = useStrapiClient()
-const { parseFrontMatter, stringifyFrontMatter } = useMarkdown()
+const { parse: parseMarkdown, stringify: stringifyMarkdown } = useMarkdown()
+const { parse: parseJSON, stringify: stringifyJSON } = useJSON()
+const { parse: parseYAML, stringify: stringifyYAML } = useYAML()
 const { branch } = useProjectBranches(project)
 const { components } = useProjectComponents(project)
 const { draft, file, fetchFile, openCreateModal: openCreateFileModal, computedFiles } = useProjectFiles(project, root)
@@ -94,6 +100,42 @@ const content: Ref<string> = ref('')
 const parsedContent: Ref<Content | null> = ref(null)
 
 // Methods
+
+function parse (path, content: string): Partial<Content> {
+  const ext = getPathExt(path)
+
+  switch (ext) {
+    case 'md': {
+      const parsed = parseMarkdown(content)
+      return {
+        key: `project-${project.id}-${branch.value.name}-${path}`,
+        markdown: parsed.content,
+        matter: parsed.matter
+      }
+    }
+    case 'json': {
+      return {
+        matter: parseJSON(content)
+      }
+    }
+    case 'yml': {
+      return {
+        matter: parseYAML(content)
+      }
+    }
+  }
+}
+
+function stringify (path, content: Ref<Partial<Content>>) {
+  const ext = getPathExt(path)
+  const { markdown, matter } = unref(content)
+
+  switch (ext) {
+    case 'md': return stringifyMarkdown(markdown, matter)
+    case 'json': return stringifyJSON(matter)
+    case 'yml': return stringifyYAML(matter)
+  }
+}
 
 const openDirs = () => {
   if (!file.value) {
@@ -118,8 +160,7 @@ const onMatterUpdate = (matter: object) => {
 }
 
 const onUpdate = debounce(async () => {
-  const { markdown, matter } = unref(parsedContent)
-  const formattedContent = stringifyFrontMatter(markdown, matter)
+  const formattedContent = stringify(file.value.path, parsedContent)
   if (formattedContent === content.value) {
     return
   }
@@ -146,6 +187,10 @@ const onUpdate = debounce(async () => {
 // Watch
 
 watch(file, async (file) => {
+  if (!file) {
+    return
+  }
+
   // Open dirs in tree to match selected file
   openDirs()
 
@@ -153,14 +198,7 @@ watch(file, async (file) => {
   const { content: fetchedContent } = await fetchFile(file.path)
   content.value = fetchedContent
 
-  // Parse content
-  const parsed = parseFrontMatter(content.value)
-
-  parsedContent.value = {
-    key: `project-${project.id}-${branch.value.name}-${file.path}`,
-    markdown: parsed.content,
-    matter: parsed.matter
-  }
+  parsedContent.value = parse(file.path, fetchedContent) as Content
 }, { immediate: true })
 
 // Hooks
