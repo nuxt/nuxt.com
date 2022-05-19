@@ -1,11 +1,13 @@
 import mjml2html from 'mjml'
 import Mailjet from 'node-mailjet'
 
+const config = useRuntimeConfig()
+
 // Lateron: provide a useEmailProvider()
 let _mailjet = null
 export function useMailjet () {
   if (!_mailjet) {
-    _mailjet = Mailjet.connect(process.env.MAILJET_API_KEY, process.env.MAILJET_SECRET_KEY)
+    _mailjet = Mailjet.connect(config.mailjet.apiKey, config.mailjet.secretKey)
   }
   return _mailjet
 }
