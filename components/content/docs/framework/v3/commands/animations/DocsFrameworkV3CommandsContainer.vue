@@ -35,33 +35,44 @@
     </div>
 
     <div class="absolute w-[801px] h-[415px] pt-8 py-8 pr-32 rounded-lg">
-      <DocsFrameworkV3CommandsInit v-if="mainCurrentSection === 0" :current-section="currentSection" />
+      <DocsFrameworkV3CommandsInit v-if="section1Steps.includes(currentSection)" :current-section="currentSection" />
       <DocsFrameworkV3CommandsDev
-        v-if="mainCurrentSection === 1"
+        v-if="section2Steps.includes(currentSection)"
         :current-section="currentSection"
         @restart="() => {
           emit('restart')
-          restartCounter(animationsDelay, 5)
         }"
       />
-      <DocsFrameworkV3CommandsBuild v-if="mainCurrentSection === 2" :current-section="currentSection" />
-      <DocsFrameworkV3CommandsPreview v-if="mainCurrentSection === 3" :current-section="currentSection" />
+      <DocsFrameworkV3CommandsBuild v-if="section3Steps.includes(currentSection)" :current-section="currentSection" />
+      <DocsFrameworkV3CommandsPreview v-if="section4Steps.includes(currentSection)" :current-section="currentSection" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 const props = defineProps({
-  mainCurrentSection: {
+  currentSection: {
     type: Number,
     default: 0
+  },
+  section1Steps: {
+    type: Array,
+    default: () => []
+  },
+  section2Steps: {
+    type: Array,
+    default: () => []
+  },
+  section3Steps: {
+    type: Array,
+    default: () => []
+  },
+  section4Steps: {
+    type: Array,
+    default: () => []
   }
 })
 
-const { currentSection, startCounter, restartCounter } = useCounterAnimations()
 const emit = defineEmits(['restart'])
-const animationsDelay = [500, 500, 4000, 10000, 3000, 3000, 3000, 3000, 3000, 3000, 2000, 1000, 3000]
-
-onMounted(() => startCounter(animationsDelay))
 
 </script>

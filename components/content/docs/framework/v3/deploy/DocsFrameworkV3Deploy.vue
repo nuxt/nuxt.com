@@ -31,10 +31,10 @@
     </ul>
     <div class="flex items-end justify-center col-span-7">
       <div class="translate-x-36 bg-gray-900 rounded-md h-[426px] w-[626px]">
-        <DocsFrameworkV3DeployServer v-if="currentSection === 0" />
-        <DocsFrameworkV3DeployStatic v-if="currentSection === 1" />
-        <DocsFrameworkV3DeployHybrid v-if="currentSection === 2" />
-        <DocsFrameworkV3DeployDots />
+        <DocsFrameworkV3DeployServer v-if="section1Steps.includes(currentSection)" />
+        <DocsFrameworkV3DeployStatic v-if="section2Steps.includes(currentSection)" />
+        <DocsFrameworkV3DeployHybrid v-if="section3Steps.includes(currentSection)" />
+        <DocsFrameworkV3DeployDots :current-section="currentSection" />
       </div>
     </div>
   </div>
@@ -43,7 +43,10 @@
 <script setup lang="ts">
 const sections = ref(null)
 const { currentSection, startCounter } = useCounterAnimations()
-const animationsDelay = [6700, 6700, 6700]
+const animationsDelay = [500, 1000, 1000, 500, 2000, 800, 1500, 3500, 800, 500, 500, 1000, 1000, 1000, 1000, 800]
+const section1Steps = [500, 1000, 1000, 500, 2000, 800] // 5800 + 900 timeout dots = 6700
+const section2Steps = [1500, 3500, 800] // 5800 + 900 timeout dots = 6700
+const section3Steps = [500, 500, 1000, 1000, 1000, 1000, 800] // 5800 + 900 timeout dots = 6700
 
 onMounted(() => {
   startCounter(animationsDelay)

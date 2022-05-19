@@ -5,9 +5,11 @@
         v-for="(data, index) in autoImportData.autoImport"
         :key="data.title"
         class="flex items-center opacity-100 cursor-pointer gap-x-4"
-        :class=" { 'opacity-50 cursor-auto': sectionAnimating && ((!section1Steps.includes(currentSection) && index === 0) ||
+        :class="{ 'opacity-50 cursor-auto': sectionAnimating && (
+          (!section1Steps.includes(currentSection) && index === 0) ||
           (!section2Steps.includes(currentSection) && index === 1) ||
-          !section3Steps.includes(currentSection) && index === 2) }"
+          (!section3Steps.includes(currentSection) && index === 2)
+        )}"
         @click="!sectionAnimating ? restartAnimation(index) : () => {}"
       >
         <div class="relative">
@@ -53,8 +55,6 @@ const animationsDelay = [1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1
 const section1Steps = [0, 1, 2, 3, 4, 5, 6]
 const section2Steps = [7, 8, 9, 10, 11, 12, 13]
 const section3Steps = [14]
-
-const sectionToAnimate = ref()
 const sectionAnimating = ref(false)
 
 const { data: autoImportData } = await useAsyncData('autoImport', () => queryContent('/docs/framework/v3/_collections/auto-import').findOne())
