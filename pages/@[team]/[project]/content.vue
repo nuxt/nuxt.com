@@ -187,6 +187,10 @@ const onUpdate = debounce(async () => {
 // Watch
 
 watch(file, async (file) => {
+  if (!file) {
+    return
+  }
+
   // Open dirs in tree to match selected file
   openDirs()
 

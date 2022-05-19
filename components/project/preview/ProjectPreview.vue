@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="isOpen" class="relative z-50">
+    <div v-if="isOpen" class="relative z-[15]">
       <Transition
         enter-active-class="duration-300 ease-out"
         enter-from-class="opacity-0"
@@ -120,6 +120,10 @@ function refresh () {
 }
 
 function getRouteFromFile () {
+  if (!file.value) {
+    return
+  }
+
   const { name, ext } = destructurePathName(file.value.path)
   // Partials are not routes
   if (name.startsWith('_')) {
