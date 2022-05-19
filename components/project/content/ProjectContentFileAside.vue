@@ -70,7 +70,7 @@
                 v-if="field.type === 'text'"
                 :model-value="field.value"
                 :name="field.key"
-                :placeholder="`Add a ${field.key.replace(/\./g, ' ')}...`"
+                placeholder="Enter text..."
                 size="sm"
                 :resize="false"
                 autoresize
@@ -85,13 +85,48 @@
                 :type="field.type"
                 :model-value="field.value"
                 :name="field.key"
-                :placeholder="`Add a ${field.key.replace(/\./g, ' ')}...`"
+                placeholder="Enter text..."
                 size="sm"
                 appearance="none"
                 custom-class="!px-0 placeholder-gray-400 dark:placeholder-gray-500"
                 @update:model-value="value => updateField(field.key, value)"
               />
             </UFormGroup>
+
+            <form @submit.prevent="addField">
+              <UFormGroup label-class="flex items-center gap-1 font-medium truncate u-text-gray-900" container-class="flex items-center gap-3" :label="!!form.key && form.key.trim().length > 0 ? form.key : 'New field'">
+                <USelect
+                  v-model="form.type"
+                  name="type"
+                  placeholder="Type"
+                  :options="['text', 'boolean', 'number', 'date']"
+                  size="sm"
+                  appearance="none"
+                  custom-class="!pl-0 placeholder-gray-400 dark:placeholder-gray-500"
+                  required
+                />
+                <UInput
+                  v-model="form.key"
+                  name="key"
+                  size="sm"
+                  appearance="none"
+                  placeholder="Key"
+                  class="flex-1"
+                  autocomplete="off"
+                  custom-class="!px-0 placeholder-gray-400 dark:placeholder-gray-500"
+                  required
+                />
+
+                <UButton
+                  icon="heroicons-outline:plus"
+                  type="submit"
+                  variant="transparent"
+                  :disabled="form.key.trim().length === 0"
+                  class="-mr-1"
+                  size="xxs"
+                />
+              </UFormGroup>
+            </form>
           </div>
 
           <div v-if="selectedIndex === 1">
@@ -134,6 +169,8 @@ const { computedFile } = useProjectFiles(project, root)
 
 const selectedIndex = useState(`project-${project.id}-${root}-aside-tabs`, () => 0)
 
+const form = reactive({ type: 'text', key: '' })
+
 // Computed
 
 const fields = computed(() => {
@@ -159,6 +196,33 @@ whenever(and(keys.meta_g, notUsingInput), () => {
 })
 
 // Methods
+
+function addField () {
+  const updatedFields = { ...toRaw(props.modelValue) }
+
+  const { key, type } = form
+
+  let value
+  switch (type) {
+    case 'text':
+      value = ''
+      break
+    case 'boolean':
+      value = false
+      break
+    case 'date':
+      value = new Date()
+      break
+    case 'number':
+      value = 0
+      break
+  }
+
+  form.key = ''
+
+  set(updatedFields, key, value)
+  emit('update:modelValue', updatedFields)
+}
 
 function updateField (key, value) {
   const field = fields.value.find(f => f.key === key)
