@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col gap-y-0.5 transition-opacity duration-300 u-text-gray-300" :class="currentSection === 2 ? 'opacity-100' : 'opacity-0'">
+  <div class="flex flex-col gap-y-0.5 transition-opacity duration-300 u-text-gray-300" :class="stepsSection.includes(currentSection) ? 'opacity-100' : 'opacity-0'">
     <div>
       <span>{{ '<' }}</span><span class="u-text-gray-500">{{ 'template' }}</span><span>{{ '>' }}</span>
     </div>
@@ -23,6 +23,10 @@ defineProps({
   currentSection: {
     type: Number,
     default: 0
+  },
+  stepsSection: {
+    type: Array,
+    default: () => []
   }
 })
 

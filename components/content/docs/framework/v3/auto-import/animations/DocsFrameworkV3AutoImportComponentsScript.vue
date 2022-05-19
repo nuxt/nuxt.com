@@ -1,5 +1,5 @@
 <template>
-  <div class="rounded-lg pl-4 py-4 pr-12 flex flex-col gap-y-0.5 z-10 transition duration-300" :class="[currentStep === 0 ? 'u-bg-gray-800' : 'u-bg-gray-900', [0, 1, 2].includes(currentStep) && currentSection === 0 ? 'opacity-100' : 'opacity-0']">
+  <div class="rounded-lg pl-4 py-4 pr-12 flex flex-col gap-y-0.5 z-10 transition duration-300" :class="[currentStep === 0 ? 'u-bg-gray-800' : 'u-bg-gray-900', [0, 1, 2].includes(currentStep) && stepsSection.includes(currentSection) ? 'opacity-100' : 'opacity-0']">
     <span class="font-mono text-sm u-text-gray-300">
       {{ '<script>' }}
     </span>
@@ -42,14 +42,20 @@ const props = defineProps({
   currentSection: {
     type: Number,
     default: 0
+  },
+  stepsSection: {
+    type: Array,
+    default: () => []
   }
 })
+
+const { startStepper, currentStep } = useCounterAnimations()
 
 const headerLine = ref(null)
 const footerLine = ref(null)
 const lines = ref([headerLine, footerLine])
-
 const linesMotion = ref([])
+const stepsDelay = [1500, 1500, 1500, 1500, 1500, 1500, 1500]
 
 lines.value.forEach((line) => {
   linesMotion.value.push(
@@ -73,9 +79,7 @@ lines.value.forEach((line) => {
   )
 })
 
-const { startStepper, currentStep } = useCounterAnimations()
-
-onMounted(() => startStepper([1500, 1500, 1500, 1500, 1500, 1500, 1500]))
+onMounted(() => startStepper(stepsDelay))
 
 linesMotion.value.forEach((instance) => {
   instance.apply('initial')
@@ -95,7 +99,7 @@ watch(() => currentStep.value, () => {
 
 watch(() => props.currentSection, () => {
   if (props.currentSection === 0) {
-    startStepper([1500, 1500, 1500, 1500, 1500, 1500, 1500])
+    startStepper(stepsDelay)
   }
 })
 </script>

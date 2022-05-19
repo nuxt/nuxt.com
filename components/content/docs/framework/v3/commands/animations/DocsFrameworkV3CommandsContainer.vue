@@ -64,8 +64,4 @@ const animationsDelay = [500, 500, 4000, 10000, 3000, 3000, 3000, 3000, 3000, 30
 
 onMounted(() => startCounter(animationsDelay))
 
-watch(currentSection, () => {
-  console.log(currentSection.value)
-})
-
 </script>

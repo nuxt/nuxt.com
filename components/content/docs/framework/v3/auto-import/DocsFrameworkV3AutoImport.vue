@@ -4,9 +4,11 @@
       <li
         v-for="(data, index) in autoImportData.autoImport"
         :key="data.title"
-        class="flex items-center gap-x-4"
-        :class="uniqueAnimationRunning && currentSection !== index ? 'opacity-60' : 'opacity-100'"
-        @click="!uniqueAnimationRunning ? startUniqueCounter(animationsDelay, index, index) : () => {}"
+        class="flex items-center opacity-100 cursor-pointer gap-x-4"
+        :class=" { 'opacity-50 cursor-auto': sectionAnimating && ((!section1Steps.includes(currentSection) && index === 0) ||
+          (!section2Steps.includes(currentSection) && index === 1) ||
+          !section3Steps.includes(currentSection) && index === 2) }"
+        @click="!sectionAnimating ? restartAnimation(index) : () => {}"
       >
         <div class="relative">
           <img src="/docs/framework/v3/auto-import/hexagon.svg" class="w-16 h-14" alt="hexagon container">
@@ -15,34 +17,59 @@
               :src="`/docs/framework/v3/auto-import/${data.icon}`"
               class="absolute w-8 h-8 transition-opacity duration-0"
               :alt="`${data.title} icon`"
-              :class="currentSection === index ? 'opacity-0' : 'opacity-100'"
+              :class="(section1Steps.includes(currentSection) && index === 0) ||
+                (section2Steps.includes(currentSection) && index === 1) ||
+                section3Steps.includes(currentSection) && index === 2 ? 'opacity-0' : 'opacity-100'"
             >
             <img
               :src="`/docs/framework/v3/auto-import/${data.iconColor}`"
               class="absolute w-8 h-8 transition-opacity duration-0"
               :alt="`${data.title} icon`"
-              :class="currentSection === index ? 'opacity-100' : 'opacity-0'"
+              :class="(section1Steps.includes(currentSection) && index === 0) ||
+                (section2Steps.includes(currentSection) && index === 1) ||
+                section3Steps.includes(currentSection) && index === 2 ? 'opacity-100' : 'opacity-0'"
             >
           </div>
         </div>
-        <h6 class="text-lg transition-colors duration-0" :class="currentSection === index ? 'text-green-400' : 'u-text-gray-500'">
+        <h6
+          class="text-lg transition-colors duration-0"
+          :class="(section1Steps.includes(currentSection) && index === 0) ||
+            (section2Steps.includes(currentSection) && index === 1) ||
+            section3Steps.includes(currentSection) && index === 2 ? 'text-green-400' : 'u-text-gray-500'"
+        >
           {{ data.title }}
         </h6>
       </li>
     </ul>
     <div class="relative flex items-center justify-center w-full h-full col-span-9">
-      <DocsFrameworkV3AutoImportContainer :step="currentSection" :unique-animation="counterStopped" />
-      <DocsFrameworkV3AutoImportTerminal :current-section="currentSection" :unique-animation="counterStopped" />
+      <DocsFrameworkV3AutoImportContainer :current-section="currentSection" :section1-steps="section1Steps" :section2-steps="section2Steps" :section3-steps="section3Steps" />
     </div>
   </div>
 </template>
 <script setup lang="ts">
-const { currentSection, startCounter, startUniqueCounter, counterStopped, uniqueAnimationRunning } = useCounterAnimations()
-const animationsDelay = [10500, 10500, 4000]
+const { currentSection, startCounter, restartCounter } = useCounterAnimations()
+
+const animationsDelay = [1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 4000]
+const section1Steps = [0, 1, 2, 3, 4, 5, 6]
+const section2Steps = [7, 8, 9, 10, 11, 12, 13]
+const section3Steps = [14]
+
+const sectionToAnimate = ref()
+const sectionAnimating = ref(false)
+
+const { data: autoImportData } = await useAsyncData('autoImport', () => queryContent('/docs/framework/v3/_collections/auto-import').findOne())
 
 onMounted(() => {
   startCounter(animationsDelay)
 })
 
-const { data: autoImportData } = await useAsyncData('autoImport', () => queryContent('/docs/framework/v3/_collections/auto-import').findOne())
+const restartAnimation = (section: number) => {
+  sectionAnimating.value = true
+
+  setTimeout(() => {
+    sectionAnimating.value = false
+  }, section === 2 ? 4000 : 10500)
+
+  restartCounter(animationsDelay, section === 1 ? 7 : section === 2 ? 14 : 0)
+}
 </script>

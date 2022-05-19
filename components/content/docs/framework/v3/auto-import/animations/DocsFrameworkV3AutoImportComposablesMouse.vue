@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col gap-y-12 transition-opacity duration-300" :class="currentStep > 6 && currentStep < 14 || currentSection === 1 ? 'opacity-100' : 'opacity-0'">
+  <div class="flex flex-col transition-opacity duration-300 gap-y-12" :class="currentStep > 6 && currentStep < 14 || stepsSection.includes(currentSection) ? 'opacity-100' : 'opacity-0'">
     <div class="u-text-gray-300 font-mono text-sm flex-col gap-y-0.5">
       <div>
         <span>{{ '<' }}</span><span class="u-text-gray-500">{{ 'template' }}</span><span>{{ '>' }}</span>
@@ -20,7 +20,7 @@
       <div>
         <span>{{ '<' }}</span><span class="u-text-gray-500">script </span><span class="text-green-400">setup</span><span>{{ '>' }}</span>
       </div>
-      <div class="relative rounded-lg ml-4 p-4 transition-opacity duration-300" :class="[{ 'opacity-0': currentStep > 2}, [1, 2].includes(currentStep) ? 'u-bg-gray-900 z-10 opacity-100' : 'u-bg-gray-800']">
+      <div class="relative p-4 ml-4 transition-opacity duration-300 rounded-lg" :class="[{ 'opacity-0': currentStep > 2}, [1, 2].includes(currentStep) ? 'u-bg-gray-900 z-10 opacity-100' : 'u-bg-gray-800']">
         <span class="u-text-gray-500">import {</span>
         <span class="text-green-400"> useMouse </span>
         <span class="u-text-gray-500">} from `</span>
@@ -62,6 +62,10 @@ const props = defineProps({
   currentSection: {
     type: Number,
     default: 0
+  },
+  stepsSection: {
+    type: Array,
+    default: () => []
   }
 })
 
@@ -87,7 +91,7 @@ const lineMotion = useMotion(line, {
 lineMotion.apply('initial')
 
 watch(() => props.currentSection, () => {
-  if (props.currentSection === 1) {
+  if (props.currentSection === 7) {
     startStepper([1500, 1500, 1500, 1500, 1500, 1500, 1500])
   }
 })
