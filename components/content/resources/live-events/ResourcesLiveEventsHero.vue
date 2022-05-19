@@ -2,7 +2,7 @@
   <div class="relative overflow-hidden">
     <div class="absolute top-0 right-0">
       <div class="relative">
-        <img src="/resources/live-events/hero.svg" alt="World map" class="object-cover h-full opacity-30">
+        <img src="/assets/resources/live-events/hero.svg" alt="World map" class="object-cover h-full opacity-30">
         <div class="h-[100px] absolute top-0 inset-x-0 bg-gradient-to-b from-white dark:from-black to-transparent" />
         <div class="w-[100px] absolute left-0 inset-y-0 bg-gradient-to-r from-white dark:from-black to-transparent" />
         <div class="h-[100px] absolute bottom-0 inset-x-0 bg-gradient-to-t from-white dark:from-black to-transparent" />

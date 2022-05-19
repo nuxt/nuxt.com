@@ -29,7 +29,7 @@ Read the latest news about all Nuxt solutions, from framework announcements to i
   author:
     name: Evan You
     job: Creator of VueJS
-    image: /company/support/evan.png
+    image: /assets/company/support/evan.png
   ---
   #title
   Consultant sessions are tailored to your need.<br> Here are some example topics you might cover:

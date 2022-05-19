@@ -1,7 +1,7 @@
 <template>
   <div class="relative flex flex-col md:flex-row justify-center items-center md:h-[425px]">
     <div class="relative flex items-center justify-end md:absolute md:right-0">
-      <img src="/company/careers/map.png">
+      <img src="/assets/company/careers/map.png">
       <div class="h-[100px] absolute top-0 inset-x-0 bg-gradient-to-b from-white dark:from-black to-transparent" />
       <div class="h-[100px] absolute bottom-0 inset-x-0 bg-gradient-to-t from-white dark:from-black to-transparent" />
       <div class="w-[100px] absolute left-0 inset-y-0 bg-gradient-to-r from-white dark:from-black to-transparent" />

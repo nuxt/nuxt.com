@@ -8,7 +8,7 @@
     >
       <SwiperSlide v-for="(item, index) in items" :key="index" class="!h-8">
         <div class="relative flex items-center justify-center h-full">
-          <img :src="`/brands/${item.name}.png`" :alt="item.name">
+          <img :src="`/assets/brands/${item.name}.png`" :alt="item.name">
           <NuxtLink :to="item.to" target="_blank" class="absolute inset-0" rel="noopener noreferrer nofollow" />
         </div>
       </SwiperSlide>
