@@ -28,18 +28,18 @@ export const useIntegrations = () => {
 
   // Data
 
-  const versions = ref([
+  const versions = [
     { key: '3.x', label: 'v3' },
     { key: '2.x-bridge', label: 'Bridge' },
     { key: '2.x', label: 'v2' }
-  ])
+  ]
 
-  const sorts = ref([
+  const sorts = [
     { key: 'downloads', label: 'Downloads' },
     { key: 'stars', label: 'Stars' },
     { key: 'publishedAt', label: 'Updated' },
     { key: 'createdAt', label: 'Created' }
-  ])
+  ]
 
   // Computed
 
@@ -100,11 +100,11 @@ export const useIntegrations = () => {
   })
 
   const selectedVersion = computed(() => {
-    return versions.value.find(version => version.key === route.query.version) || versions.value[0]
+    return versions.find(version => version.key === route.query.version) || versions[0]
   })
 
   const selectedSort = computed(() => {
-    return sorts.value.find(version => version.key === route.query.sortBy) || sorts.value[0]
+    return sorts.find(sort => sort.key === route.query.sortBy) || sorts[0]
   })
 
   const q = computed(() => {
