@@ -104,7 +104,7 @@ export const useIntegrations = () => {
   })
 
   const selectedSort = computed(() => {
-    return sorts.value.find(version => version.key === route.query.sortBy) || sorts.value[0]
+    return sorts.value.find(sort => sort.key === route.query.sortBy) || sorts.value[0]
   })
 
   const q = computed(() => {
