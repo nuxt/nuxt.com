@@ -1,5 +1,5 @@
 <template>
-  <NuxtLink :to="page.path" class="relative overflow-hidden group rounded-xl bg-gradiant">
+  <NuxtLink :to="page._path" class="relative overflow-hidden group rounded-xl bg-gradient">
     <div class="absolute inset-0 transition-opacity bg-overlay opacity-20 group-hover:opacity-40" />
     <div class="relative flex flex-col p-8">
       <div class="font-semibold text-white">
@@ -29,11 +29,9 @@ const props = defineProps({
   }
 })
 
-const authors = computed(
-  () => {
-    return (props?.page?.authors || []).map(author => ({ src: author.avatarUrl, ...author }))
-  }
-)
+const authors = computed(() => {
+  return (props?.page?.authors || []).map(author => ({ src: author.avatarUrl, ...author }))
+})
 
 const formatDateByLocale = (locale, d) => {
   return new Date(d).toLocaleDateString(locale, {
@@ -45,7 +43,7 @@ const formatDateByLocale = (locale, d) => {
 </script>
 
 <style scoped>
-.bg-gradiant {
+.bg-gradient {
   background-image: url('/assets/resources/blog/bg-gradient.png');
   background-size: cover;
 }
