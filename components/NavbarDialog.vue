@@ -15,16 +15,7 @@
         <Logo class="block w-auto h-6" />
       </NuxtLink>
 
-      <div class="flex justify-end">
-        <TeamsDropdown v-if="user" />
-        <UButton
-          v-else
-          icon="fa-brands:github"
-          variant="transparent"
-          class="-mr-2"
-          @click="onClick"
-        />
-      </div>
+      <div class="flex justify-end" />
     </template>
 
     <div class="flex-1 px-4 py-4 overflow-y-scroll sm:px-6">
@@ -34,8 +25,8 @@
 </template>
 
 <script setup lang="ts">
-import type { Ref } from 'vue'
-import type { User } from '~/types'
+import { omit } from 'lodash-es'
+import type { WritableComputedRef } from 'vue'
 
 const props = defineProps({
   modelValue: {
@@ -52,11 +43,9 @@ const emit = defineEmits(['update:modelValue'])
 
 const { navigation, navFromPath } = useContent()
 
-const user = useStrapiUser() as Ref<User>
-const { getProviderAuthenticationUrl } = useStrapiAuth()
 const route = useRoute()
 
-const isOpen = computed({
+const isOpen: WritableComputedRef<boolean> = computed({
   get () {
     return props.modelValue
   },
@@ -70,10 +59,13 @@ const selectedLink = ref(null)
 watch(
   () => route.fullPath,
   () => {
-    const path = route.fullPath.split('/').slice(0, 3).join('/')
-    const nav = navigation.value ? navFromPath(path) : []
+    if (!route.fullPath.startsWith('/docs/framework')) {
+      return
+    }
 
-    if (nav && nav._path === path) {
+    const path = route.fullPath.split('/').slice(0, 4).join('/')
+    const nav = navigation.value ? navFromPath(path) : []
+    if (nav && nav._path === path && nav.children?.length > 1) {
       selectedLink.value = nav
     }
   },
@@ -82,22 +74,20 @@ watch(
 
 const tree = computed(() => {
   if (selectedLink.value) {
-    return selectedLink.value.children
+    return selectedLink.value.children.filter(child => child._path !== route.fullPath)
   }
 
   return props.links.map((link) => {
+    const children = navFromPath(link._path)?.children
+
     return {
       ...link,
-      ...navFromPath(link._path)
+      children: children?.map(child => omit(child, 'children'))
     }
   })
 })
 
 const onSelect = (link) => {
   selectedLink.value = link
-}
-
-const onClick = () => {
-  window.location = getProviderAuthenticationUrl('github') as unknown as Location
 }
 </script>
