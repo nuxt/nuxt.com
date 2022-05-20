@@ -73,7 +73,7 @@ watch(
     const path = route.fullPath.split('/').slice(0, 3).join('/')
     const nav = navigation.value ? navFromPath(path) : []
 
-    if (nav && nav.path === path) {
+    if (nav && nav._path === path) {
       selectedLink.value = nav
     }
   },
@@ -88,7 +88,7 @@ const tree = computed(() => {
   return props.links.map((link) => {
     return {
       ...link,
-      ...navFromPath(link.path)
+      ...navFromPath(link._path)
     }
   })
 })

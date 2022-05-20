@@ -7,7 +7,7 @@
         open ? 'u-text-gray-900' : 'u-text-gray-500',
         isActive(link) ? 'u-text-gray-900 font-semibold' : '',
         'group text-sm lg:text-base focus:outline-none font-medium hover:u-text-gray-900 focus:u-text-gray-900',
-        link.path ? 'cursor-pointer' : 'cursor-default'
+        link._path ? 'cursor-pointer' : 'cursor-default'
       ]"
       @mouseover="onMouseOver"
     >
@@ -38,7 +38,7 @@
                 <ul v-if="child.children?.length" class="space-y-1.5 h-full columns-[145px]">
                   <li v-for="(sublink, subindex) of child.children" :key="subindex">
                     <NuxtLink
-                      :to="sublink.path"
+                      :to="sublink._path"
                       :target="sublink.target"
                       class="text-[15px] focus:outline-none"
                       :class="[{
@@ -88,8 +88,8 @@ onMounted(() => {
     popoverApi.value = popoverProvidesSymbols.length && popoverProvides[popoverProvidesSymbols[0]]
     // stop trigger click propagation on hover
     popoverApi.value.button.addEventListener('click', (e) => {
-      if (props.link.path) {
-        router.push(props.link.path)
+      if (props.link._path) {
+        router.push(props.link._path)
       }
       e.stopPropagation()
     }, true)
@@ -97,7 +97,7 @@ onMounted(() => {
 })
 
 function isActive (link) {
-  return link.exact ? route.fullPath === link.path : route.fullPath.startsWith(link.path)
+  return link.exact ? route.fullPath === link._path : route.fullPath.startsWith(link._path)
 }
 
 function onMouseOver () {

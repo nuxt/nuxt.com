@@ -1,3 +1,5 @@
+export * from './community'
+
 export interface Media {
   name: string
   alternativeText: string

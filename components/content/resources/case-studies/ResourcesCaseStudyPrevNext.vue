@@ -13,7 +13,7 @@
           </p>
         </div>
       </div>
-      <NuxtLink :to="prev.path" tabindex="-1" class="focus:outline-none">
+      <NuxtLink :to="prev._path" tabindex="-1" class="focus:outline-none">
         <span class="absolute inset-0" aria-hidden="true" />
       </NuxtLink>
     </div>
@@ -32,7 +32,7 @@
 
         <UIcon name="heroicons-outline:arrow-sm-right" class="flex-shrink-0 w-5 h-5" />
       </div>
-      <NuxtLink :to="next.path" tabindex="-1" class="focus:outline-none">
+      <NuxtLink :to="next._path" tabindex="-1" class="focus:outline-none">
         <span class="absolute inset-0" aria-hidden="true" />
       </NuxtLink>
     </div>

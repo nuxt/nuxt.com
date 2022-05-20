@@ -4,6 +4,7 @@
 
 <script setup lang="ts">
 const { page, fetchPage } = useContent()
+const { fetch: fetchRepositories } = useCommunityRepositories()
 
-await fetchPage()
+await Promise.all([fetchPage(), fetchRepositories()])
 </script>

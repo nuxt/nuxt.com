@@ -21,10 +21,10 @@ onMounted(async () => {
 
     const user = data.user as Ref<User>
 
-    // const redirect = useCookie('redirect', { path: '/' }).value
+    // const redirect = useCookie('redirect').value
     // if (redirect) {
     //   router.push(redirect)
-    //   useCookie('redirect', { path: '/' }).value = null
+    //   redirect.value = null
     // } else {
     router.push({ name: '@team-projects', params: { team: user.value.username } })
     // }
