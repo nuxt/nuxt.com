@@ -23,12 +23,15 @@
 </template>
 
 <script setup lang="ts">
-const { modules, selectedCategory, selectedVersion, selectedSort, q } = useIntegrations()
+const { modules, selectedCategory, selectedType, selectedVersion, selectedSort, q } = useIntegrations()
 
 const filteredModules = computed(() => {
   return [...modules.value]
     .filter((module) => {
       if (selectedCategory.value && module.category !== selectedCategory.value.key) {
+        return false
+      }
+      if (selectedType.value && module.type !== selectedType.value.key) {
         return false
       }
       if (selectedVersion.value && !module.tags.includes(selectedVersion.value.key)) {

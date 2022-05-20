@@ -33,7 +33,11 @@ const router = useRouter()
 const { navFromPath } = useContent()
 
 const links = computed(() => {
-  return navFromPath(`/docs/framework/${route.params.version}`)?.children.map(child => ({ ...child, _path: child.redirect || child._path, target: '_blank' }))
+  const children = navFromPath(`/docs/framework/${route.params.version}`)?.children
+
+  return children
+    ?.filter(child => child._path !== route.fullPath)
+    ?.map(child => ({ ...child, _path: child.redirect || child._path, target: '_blank' }))
 })
 
 const version = computed({

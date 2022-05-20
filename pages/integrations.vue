@@ -13,10 +13,27 @@
 </template>
 
 <script setup lang="ts">
+const route = useRoute()
 const { page, fetchPage } = useContent()
-const { fetch: fetchIntegrations } = useIntegrations()
+const { fetch: fetchIntegrations, types } = useIntegrations()
 
 await Promise.all([fetchPage(), fetchIntegrations()])
 
-const links = computed(() => ([]))
+const links = computed(() => {
+  return [
+    {
+      title: 'All',
+      _path: {
+        name: 'integrations',
+        query: {
+          ...route.query,
+          type: undefined
+        },
+        params: { smooth: '#smooth' }
+      },
+      active: !route.query.type
+    },
+    ...types.value.map(type => ({ ...type, _path: type.to, exact: true, active: route.query.type === type.key }))
+  ]
+})
 </script>
