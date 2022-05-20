@@ -13,7 +13,8 @@
         </template>
 
         <template #right>
-          <UButton icon="fa-brands:github" variant="transparent" href="https://github.com/nuxt/framework" class="!p-0" />
+          <UButton v-if="version === 'v3'" icon="fa-brands:github" variant="transparent" to="https://github.com/nuxt/framework" class="!p-0" />
+          <UButton v-else-if="version === 'v2'" icon="fa-brands:github" variant="transparent" to="https://github.com/nuxt/nuxt.js" class="!p-0" />
         </template>
       </SubNavbar>
     </template>
@@ -31,7 +32,9 @@ const route = useRoute()
 const router = useRouter()
 const { navFromPath } = useContent()
 
-const links = computed(() => navFromPath(`/docs/framework/${route.params.version}`)?.children)
+const links = computed(() => {
+  return navFromPath(`/docs/framework/${route.params.version}`)?.children.map(child => ({ ...child, _path: child.redirect || child._path, target: '_blank' }))
+})
 
 const version = computed({
   get () {

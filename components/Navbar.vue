@@ -22,9 +22,7 @@
 
         <ul class="justify-center hidden lg:col-span-4 gap-x-10 lg:flex">
           <li v-for="(link, index) in links" :key="index">
-            <NavbarPopover v-if="link.children?.length" :link="link" />
             <NuxtLink
-              v-else
               :to="link._path"
               :exact="link.exact"
               class="text-sm lg:text-base focus:outline-none"
@@ -78,7 +76,6 @@ const links = computed(() => {
     title: 'Integrations',
     icon: 'heroicons-outline:sparkles',
     _path: '/integrations',
-    banner: '/assets/docs/banner.png',
     children: [{
       title: 'Officials',
       icon: 'heroicons-outline:star',

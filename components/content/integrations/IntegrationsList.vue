@@ -1,5 +1,5 @@
 <template>
-  <DocsPage id="smooth" :sticky="false">
+  <DocsPage id="smooth" :sticky="false" class="pt-16 -mt-16">
     <template #aside>
       <IntegrationsAside />
     </template>

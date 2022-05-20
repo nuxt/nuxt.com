@@ -20,6 +20,7 @@
             v-for="(link, index) in filteredLinks"
             :key="index"
             :to="link._path"
+            :target="link.target"
             class="focus:outline-none"
             :class="{
               'u-text-gray-900 font-semibold': isActive(link),
