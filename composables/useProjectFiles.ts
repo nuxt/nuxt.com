@@ -12,7 +12,7 @@ export const useProjectFiles = (project: Project, root: Root) => {
   const { $socket } = useNuxtApp()
   const { open: openModal } = useModal()
   const client = useStrapiClient()
-  const cookie = useCookie(`project-${project.id}-${root}-file`, { path: '/' })
+  const cookie = useCookie(`project-${project.id}-${root}-file`)
   const { branch } = useProjectBranches(project)
 
   const recentFiles: Ref<GitHubFile[]> = useState(`project-${project.id}-${root}-files-recent`, () => [])

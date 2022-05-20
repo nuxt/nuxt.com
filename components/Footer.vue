@@ -16,7 +16,7 @@
 
         <ul class="flex text-sm gap-x-6">
           <li v-for="link in links" :key="link.title">
-            <NuxtLink :to="link.path" class="font-medium u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900" active-class="font-medium u-text-gray-900">
+            <NuxtLink :to="link._path" class="font-medium u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900" active-class="font-medium u-text-gray-900">
               {{ link.title }}
             </NuxtLink>
           </li>

@@ -1,5 +1,5 @@
 <template>
-  <NuxtLink :to="page.path" class="group">
+  <NuxtLink :to="page._path" class="group">
     <div class="relative flex flex-col h-[272px] justify-between p-8 border group rounded-xl u-border-gray-200 overflow-hidden">
       <div class="flex items-center justify-between">
         <UIcon :name="icon" class="w-12 h-12 transition-all u-text-gray-300 group-hover:w-8 group-hover:h-8 group-hover:u-text-gray-900" />

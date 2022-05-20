@@ -25,7 +25,7 @@
             <NavbarPopover v-if="link.children?.length" :link="link" />
             <NuxtLink
               v-else
-              :to="link.path"
+              :to="link._path"
               :exact="link.exact"
               class="text-sm lg:text-base focus:outline-none"
               :class="{
@@ -73,33 +73,33 @@ const links = computed(() => {
   return [{
     title: 'Framework',
     icon: 'heroicons-outline:book-open',
-    path: '/docs/framework'
+    _path: '/docs/framework'
   }, {
     title: 'Integrations',
     icon: 'heroicons-outline:sparkles',
-    path: '/integrations',
+    _path: '/integrations',
     banner: '/assets/docs/banner.png',
     children: [{
       title: 'Officials',
       icon: 'heroicons-outline:star',
       children: [{
         title: 'Content',
-        path: '/docs/content'
+        _path: '/docs/content'
       }, {
         title: 'Image',
-        path: 'https://image.nuxtjs.org',
+        _path: 'https://image.nuxtjs.org',
         target: '_blank'
       }, {
         title: 'Auth',
-        path: 'https://auth.nuxtjs.org',
+        _path: 'https://auth.nuxtjs.org',
         target: '_blank'
       }, {
         title: 'i18n',
-        path: 'https://i18n.nuxtjs.org',
+        _path: 'https://i18n.nuxtjs.org',
         target: '_blank'
       }, {
         title: 'PWA',
-        path: 'https://pwa.nuxtjs.org',
+        _path: 'https://pwa.nuxtjs.org',
         target: '_blank'
       }]
     }, {
@@ -109,24 +109,24 @@ const links = computed(() => {
       children: [
         ...categories.value.map(category => ({
           ...category,
-          path: `/integrations?category=${category.key}`
+          _path: `/integrations?category=${category.key}`
         })),
-        { title: 'All integrations', path: '/integrations', class: 'font-semibold' }
+        { title: 'All integrations', _path: '/integrations', class: 'font-semibold' }
       ]
     }]
   }, {
     title: 'Projects',
-    path: team && user.value?.beta ? `/@${team}/projects` : '/projects',
+    _path: team && user.value?.beta ? `/@${team}/projects` : '/projects',
     exact: true,
     icon: 'heroicons-outline:collection'
   },
   {
     title: 'Resources',
-    path: '/resources',
+    _path: '/resources',
     icon: 'heroicons-outline:template'
   }, {
     title: 'Community',
-    path: '/community',
+    _path: '/community',
     icon: 'heroicons-outline:globe'
   }]
 })
@@ -136,6 +136,6 @@ const onClick = () => {
 }
 
 function isActive (link) {
-  return link.exact ? route.fullPath === link.path : route.fullPath.startsWith(link.path)
+  return link.exact ? route.fullPath === link._path : route.fullPath.startsWith(link._path)
 }
 </script>

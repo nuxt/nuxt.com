@@ -4,7 +4,7 @@ import type { User } from '~/types'
 export const useTeam = () => {
   const user = useStrapiUser() as Ref<User>
 
-  const cookie = useCookie('team', { path: '/' })
+  const cookie = useCookie('team')
   if (!cookie.value) {
     cookie.value = user.value?.username
   }
