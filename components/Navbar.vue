@@ -61,7 +61,6 @@ const { getProviderAuthenticationUrl } = useStrapiAuth()
 const route = useRoute()
 const activeTeam = useTeam()
 const { hasScrolledPastNavbar } = useNavbarScroll()
-const { categories } = useIntegrations()
 
 const isOpen = ref(false)
 
@@ -75,42 +74,7 @@ const links = computed(() => {
   }, {
     title: 'Integrations',
     icon: 'heroicons-outline:sparkles',
-    _path: '/integrations',
-    children: [{
-      title: 'Officials',
-      icon: 'heroicons-outline:star',
-      children: [{
-        title: 'Content',
-        _path: '/docs/content'
-      }, {
-        title: 'Image',
-        _path: 'https://image.nuxtjs.org',
-        target: '_blank'
-      }, {
-        title: 'Auth',
-        _path: 'https://auth.nuxtjs.org',
-        target: '_blank'
-      }, {
-        title: 'i18n',
-        _path: 'https://i18n.nuxtjs.org',
-        target: '_blank'
-      }, {
-        title: 'PWA',
-        _path: 'https://pwa.nuxtjs.org',
-        target: '_blank'
-      }]
-    }, {
-      title: 'Categories',
-      icon: 'heroicons-outline:template',
-      class: 'col-span-4',
-      children: [
-        ...categories.value.map(category => ({
-          ...category,
-          _path: `/integrations?category=${category.key}`
-        })),
-        { title: 'All integrations', _path: '/integrations', class: 'font-semibold' }
-      ]
-    }]
+    _path: '/integrations'
   }, {
     title: 'Projects',
     _path: team && user.value?.beta ? `/@${team}/projects` : '/projects',
