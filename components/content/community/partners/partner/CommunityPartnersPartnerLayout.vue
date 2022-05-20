@@ -53,6 +53,7 @@
               to="/community/partners"
               size="xl"
               variant="secondary"
+              @click="onBack"
             />
             <UButton
               label="Become a partner"
@@ -114,6 +115,8 @@
 </template>
 
 <script setup lang="ts">
+import type { RouteLocationRaw } from 'vue-router'
+
 const props = defineProps({
   page: {
     type: Object,
@@ -132,6 +135,16 @@ const websiteDomain = computed(() => {
 
   return domain
 })
+
+const router = useRouter()
+
+const onBack = (e) => {
+  const lastUrl = router.options.history.state.back as String | null
+  if (lastUrl?.startsWith('/community/partners')) {
+    e.preventDefault()
+    router.push(lastUrl as RouteLocationRaw)
+  }
+}
 </script>
 
 <style scoped>
