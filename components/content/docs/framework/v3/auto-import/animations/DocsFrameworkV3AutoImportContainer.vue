@@ -95,7 +95,7 @@
         src="/docs/framework/v3/auto-import/container.svg"
         alt="animation container"
         class="absolute inset-0 z-0"
-        :class="section1Steps.concat(section3Steps).includes(currentSection) ? 'opacity-0' : 'opacity-80'"
+        :class="[0, 6, 7, 13, 14].includes(currentSection) ? 'opacity-0' : 'opacity-80'"
       >
     </div>
     <DocsFrameworkV3AutoImportTerminal :current-section="currentSection" />
