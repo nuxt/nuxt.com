@@ -25,6 +25,12 @@ export const useProjectComponents = (project: Project) => {
     try {
       const data: any = await $fetch(`${project.url}/api/_admin/components`, {
         retry: false
+      }).then((data) => {
+        // Handle when headers are application/octet-stream
+        if (data instanceof Blob) {
+          return data.text().then(d => JSON.parse(d))
+        }
+        return data
       })
 
       // Ensure data is valid array
