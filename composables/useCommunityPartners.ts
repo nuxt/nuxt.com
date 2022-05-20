@@ -21,7 +21,7 @@ export const useCommunityPartners = () => {
     try {
       const data = await queryContent('/community/partners').where({
         $not: {
-          path: {
+          _path: {
             $in: ['/community/partners']
           }
         }
