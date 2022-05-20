@@ -5,18 +5,19 @@
     </div>
 
     <UContainer padded class="pb-16 sm:pb-32">
-      <div class="relative flex gap-8 pb-8 -mt-6 sm:-mt-8 xl:pb-12">
-        <div class="flex w-40 h-40 p-10 border rounded-xl u-border-gray-200 u-bg-gray-50">
-          <img v-if="page.logo.light" :src="page.logo.light" :alt="page.title" class="dark:hidden">
-          <img v-if="page.logo.dark" :src="page.logo.dark" :alt="page.title" class="hidden dark:block">
-          <img v-if="typeof page.logo === 'string'" :src="page.logo" :alt="page.title">
+      <div class="flex gap-8 pb-8 -mt-6 sm:-mt-8 xl:pb-12">
+        <div class="relative flex w-40 h-40 p-10 overflow-hidden border rounded-xl u-border-gray-200">
+          <div class="absolute inset-0 logo-background" />
+          <img v-if="page.logo.light" :src="page.logo.light" :alt="page.title" class="relative dark:hidden">
+          <img v-if="page.logo.dark" :src="page.logo.dark" :alt="page.title" class="relative hidden dark:block">
+          <img v-if="typeof page.logo === 'string'" :src="page.logo" :alt="page.title" class="relative">
         </div>
         <div class="flex items-center justify-between w-full pt-8">
           <div class="flex flex-col justify-end gap-1">
             <h1 class="text-3xl font-semibold u-text-black">
               {{ page.title }}
             </h1>
-            <NuxtLink :to="page.link" rel="noopener" class="flex items-center gap-2 mt-1 font-medium u-text-gray-500">
+            <NuxtLink :to="page.link" target="_blank" rel="noopener" class="flex items-center gap-2 mt-1 font-medium u-text-gray-500">
               {{ websiteDomain }} <UIcon name="uil:external-link-alt" class="w-5 h-5" />
             </NuxtLink>
           </div>
@@ -95,6 +96,7 @@
                 <li v-for="(link, index) in page.resources" :key="index">
                   <NuxtLink
                     :to="link.url"
+                    target="_blank"
                     rel="noopener"
                     class="flex items-center gap-3 u-text-gray-700"
                   >
@@ -131,3 +133,13 @@ const websiteDomain = computed(() => {
   return domain
 })
 </script>
+
+<style scoped>
+.logo-background {
+  backdrop-filter: blur(89px);
+  background: rgba(255, 255, 255, 0.6);
+}
+.logo-background.dark {
+  background: rgba(30, 30, 33, 0.7);
+}
+</style>
