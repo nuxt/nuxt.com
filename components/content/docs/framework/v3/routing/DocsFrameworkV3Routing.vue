@@ -1,5 +1,5 @@
 <template>
-  <div class="grid pt-12 grid-rows-12 gap-y-12">
+  <div ref="root" class="grid pt-12 grid-rows-12 gap-y-12">
     <ul class="flex items-center row-span-3 gap-x-16">
       <li
         v-for="(data, index) in routingData.routings"
@@ -36,18 +36,31 @@
   </div>
 </template>
 <script setup lang="ts">
+import type { Ref } from 'vue'
 
 const { data: routingData } = await useAsyncData('file-system-routing', () => queryContent('/docs/framework/v3/_collections/routing').findOne())
 
-const { currentSection, startCounter, restartCounter } = useCounterAnimations()
+const { currentSection, restartCounter, stopCounter } = useCounterAnimations()
 
+const observer = ref() as Ref<IntersectionObserver>
+const root = ref(null) as Ref<Element>
 const sectionAnimating = ref(false)
 const animationsDelay = [4000, 4000, 4000, 4000]
 
-onMounted(() => {
-  startCounter(animationsDelay)
-})
+const observerCallback = (entries: IntersectionObserverEntry[]) =>
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      restartCounter(animationsDelay, currentSection.value)
+    } else {
+      stopCounter()
+    }
+  })
 
+onBeforeMount(() => (observer.value = new IntersectionObserver(observerCallback)))
+
+onMounted(() => observer.value.observe(root.value))
+
+onBeforeUnmount(() => observer.value?.disconnect())
 const restartAnimation = (section: number) => {
   sectionAnimating.value = true
 

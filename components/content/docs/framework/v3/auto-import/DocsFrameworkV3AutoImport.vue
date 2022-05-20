@@ -52,10 +52,10 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 
-const { currentSection, startCounter, restartCounter } = useCounterAnimations()
+const { currentSection, startCounter, restartCounter, stopCounter } = useCounterAnimations()
 
 const observer = ref() as Ref<IntersectionObserver>
-const root = ref(null)
+const root = ref(null) as Ref<Element>
 const animationsDelay = [1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 4000]
 const section1Steps = [0, 1, 2, 3, 4, 5, 6]
 const section2Steps = [7, 8, 9, 10, 11, 12, 13]
@@ -67,16 +67,15 @@ const { data: autoImportData } = await useAsyncData('autoImport', () => queryCon
 const observerCallback = (entries: IntersectionObserverEntry[]) =>
   entries.forEach((entry) => {
     if (entry.isIntersecting) {
-      console.log('oberve')
-      // startCounter(animationsDelay)
+      restartCounter(animationsDelay, currentSection.value)
     } else {
-      // visibleHeadings.value = visibleHeadings.value.filter(t => t !== id)
+      stopCounter()
     }
   })
 
 onBeforeMount(() => (observer.value = new IntersectionObserver(observerCallback)))
 
-onMounted(() => observer.value.observe(root))
+onMounted(() => observer.value.observe(root.value))
 
 onBeforeUnmount(() => observer.value?.disconnect())
 

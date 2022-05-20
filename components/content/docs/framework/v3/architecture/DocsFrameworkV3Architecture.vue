@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-12">
+  <div ref="root" class="grid grid-cols-12">
     <ul class="flex flex-col col-span-5 rounded-md">
       <li
         v-for="(data, index) in architectureData.architecture"
@@ -43,13 +43,29 @@
 </template>
 
 <script setup lang="ts">
-const sections = ref(null)
-const { currentSection, startCounter, startUniqueCounter, uniqueAnimationRunning } = useCounterAnimations()
-const animationsDelay = [2500, 2500, 2500, 2500]
-
-onMounted(() => {
-  startCounter(animationsDelay)
-})
+import type { Ref } from 'vue'
 
 const { data: architectureData } = await useAsyncData('architecture', () => queryContent('/docs/framework/v3/_collections/architecture').findOne())
+
+const { currentSection, stopCounter, restartCounter } = useCounterAnimations()
+
+const root = ref(null) as Ref<Element>
+const observer = ref() as Ref<IntersectionObserver>
+const sections = ref(null)
+const animationsDelay = [2500, 2500, 2500, 2500]
+
+const observerCallback = (entries: IntersectionObserverEntry[]) =>
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      restartCounter(animationsDelay, currentSection.value)
+    } else {
+      stopCounter()
+    }
+  })
+
+onBeforeMount(() => (observer.value = new IntersectionObserver(observerCallback)))
+
+onMounted(() => observer.value.observe(root.value))
+
+onBeforeUnmount(() => observer.value?.disconnect())
 </script>

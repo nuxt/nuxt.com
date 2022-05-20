@@ -16,13 +16,17 @@ export const useCounterAnimations = () => {
   }
 
   const restartCounter = (ms: Array<number>, sectionNumber: number) => {
-    clearTimeout(counterTimeoutId.value)
+    stopCounter()
     currentSection.value = sectionNumber
     currentStep.value = null
 
     setTimeout(() => {
       startCounter(ms)
     }, 300)
+  }
+
+  const stopCounter = () => {
+    clearTimeout(counterTimeoutId.value)
   }
 
   const startStepper = async (ms?: Array<number>) => {
@@ -39,6 +43,7 @@ export const useCounterAnimations = () => {
     startStepper,
     currentSection,
     currentStep,
-    restartCounter
+    restartCounter,
+    stopCounter
   }
 }

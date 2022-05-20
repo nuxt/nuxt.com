@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-12 ">
+  <div ref="root" class="grid grid-cols-12">
     <ul class="flex flex-col col-span-5 rounded-md">
       <li
         v-for="(data, index) in deployData.deploy"
@@ -63,20 +63,34 @@
 </template>
 
 <script setup lang="ts">
+import type { Ref } from 'vue'
 
 const { data: deployData } = await useAsyncData('deply', () => queryContent('/docs/framework/v3/_collections/deploy').findOne())
 
+const root = ref(null) as Ref<Element>
+const observer = ref() as Ref<IntersectionObserver>
 const sections = ref(null)
 const sectionAnimating = ref(false)
-const { currentSection, startCounter, restartCounter } = useCounterAnimations()
+const { currentSection, restartCounter, stopCounter } = useCounterAnimations()
 const animationsDelay = [500, 1000, 1000, 500, 2000, 800, 1500, 3500, 800, 500, 500, 1000, 1000, 1000, 1000, 800]
 const section1Steps = [0, 1, 2, 3, 4, 5]
 const section2Steps = [6, 7, 8]
 const section3Steps = [9, 10, 11, 12, 13, 14, 15]
 
-onMounted(() => {
-  startCounter(animationsDelay)
-})
+const observerCallback = (entries: IntersectionObserverEntry[]) =>
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      restartCounter(animationsDelay, currentSection.value)
+    } else {
+      stopCounter()
+    }
+  })
+
+onBeforeMount(() => (observer.value = new IntersectionObserver(observerCallback)))
+
+onMounted(() => observer.value.observe(root.value))
+
+onBeforeUnmount(() => observer.value?.disconnect())
 
 const restartAnimation = (section: number) => {
   sectionAnimating.value = true

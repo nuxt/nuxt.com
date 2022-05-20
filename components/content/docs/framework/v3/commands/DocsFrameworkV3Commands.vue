@@ -1,5 +1,5 @@
 <template>
-  <div class="grid pt-12 grid-rows-12 gap-y-12">
+  <div ref="root" class="grid pt-12 grid-rows-12 gap-y-12">
     <ul class="flex items-center row-span-3 gap-x-16">
       <li
         v-for="(data, index) in commandsData.commands"
@@ -61,11 +61,14 @@
 </template>
 
 <script setup lang="ts">
+import type { Ref } from 'vue'
 
 const { data: commandsData } = await useAsyncData('commands', () => queryContent('/docs/framework/v3/_collections/commands').findOne())
 
-const { currentSection, startCounter, restartCounter } = useCounterAnimations()
+const { currentSection, restartCounter, stopCounter } = useCounterAnimations()
 
+const root = ref(null) as Ref<Element>
+const observer = ref() as Ref<IntersectionObserver>
 const sectionAnimating = ref(false)
 const animationsDelay = [500, 500, 4000, 10000, 3000, 3000, 3000, 3000, 3000, 3000, 2000, 1000, 3000]
 const section1Steps = [0, 1, 2]
@@ -73,9 +76,20 @@ const section2Steps = [3, 4]
 const section3Steps = [5, 6, 7, 8, 9]
 const section4Steps = [10, 11, 12]
 
-onMounted(() => {
-  startCounter(animationsDelay)
-})
+const observerCallback = (entries: IntersectionObserverEntry[]) =>
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      restartCounter(animationsDelay, currentSection.value)
+    } else {
+      stopCounter()
+    }
+  })
+
+onBeforeMount(() => (observer.value = new IntersectionObserver(observerCallback)))
+
+onMounted(() => observer.value.observe(root.value))
+
+onBeforeUnmount(() => observer.value?.disconnect())
 
 const restartAnimation = (section: number, timeout = true) => {
   if (timeout) {
