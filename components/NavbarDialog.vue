@@ -34,6 +34,7 @@
 </template>
 
 <script setup lang="ts">
+import { omit } from 'lodash-es'
 import type { Ref } from 'vue'
 import type { User } from '~/types'
 
@@ -70,10 +71,13 @@ const selectedLink = ref(null)
 watch(
   () => route.fullPath,
   () => {
-    const path = route.fullPath.split('/').slice(0, 3).join('/')
-    const nav = navigation.value ? navFromPath(path) : []
+    if (!route.fullPath.startsWith('/docs/framework')) {
+      return
+    }
 
-    if (nav && nav._path === path) {
+    const path = route.fullPath.split('/').slice(0, 4).join('/')
+    const nav = navigation.value ? navFromPath(path) : []
+    if (nav && nav._path === path && nav.children?.length > 1) {
       selectedLink.value = nav
     }
   },
@@ -82,13 +86,15 @@ watch(
 
 const tree = computed(() => {
   if (selectedLink.value) {
-    return selectedLink.value.children
+    return selectedLink.value.children.filter(child => child._path !== route.fullPath)
   }
 
   return props.links.map((link) => {
+    const children = navFromPath(link._path)?.children
+
     return {
       ...link,
-      ...navFromPath(link._path)
+      children: children?.map(child => omit(child, 'children'))
     }
   })
 })
