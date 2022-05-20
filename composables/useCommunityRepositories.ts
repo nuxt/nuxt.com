@@ -1,6 +1,6 @@
 import type { Ref } from 'vue'
 import { sum, uniq } from 'lodash-es'
-import { CommunityRepository, CommunityRepositoryStats } from '~~/types'
+import { CommunityRepository, CommunityRepositoryStats } from '~/types'
 
 export const useCommunityRepositories = () => {
   const repositories: Ref<CommunityRepository[]> = useState('repositories', () => [])

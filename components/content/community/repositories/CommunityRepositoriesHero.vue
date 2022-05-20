@@ -14,7 +14,7 @@
 
       <div class="relative flex items-center justify-center lg:col-span-1">
         <div class="relative">
-          <img src="/community/repositories/gems.svg" class="h-[280px]">
+          <img src="/assets/community/repositories/gems.svg" class="h-[280px]">
         </div>
 
         <UCard padded body-class="p-4" class="absolute left-0 top-0 md:-left-24 md:top-20 w-full md:w-44 backdrop-blur-lg !bg-opacity-10">
@@ -64,5 +64,4 @@
 import { formatNumber } from '~/utils'
 
 const { stats } = useCommunityRepositories()
-
 </script>
