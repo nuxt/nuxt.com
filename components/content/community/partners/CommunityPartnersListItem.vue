@@ -25,7 +25,7 @@
       </div>
     </div>
 
-    <NuxtLink :to="partner.path" class="focus:outline-none" tabindex="-1">
+    <NuxtLink :to="partner._path" class="focus:outline-none" tabindex="-1">
       <span class="absolute inset-0" aria-hidden="true" />
     </NuxtLink>
   </UCard>
