@@ -10,7 +10,7 @@
       </li>
     </ul>
     <div class="relative mt-16">
-      <img src="/company/support/quote.svg" class="absolute -top-4 -left-8">
+      <img src="/assets/company/support/quote.svg" class="absolute -top-4 -left-8">
       <p class="relative">
         <Markdown use="quote" unwrap="p" />
       </p>

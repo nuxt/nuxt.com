@@ -22,7 +22,7 @@
       </div>
 
       <div class="flex items-center justify-center lg:col-span-1">
-        <img src="/gems.svg" class="h-[280px]">
+        <img src="/assets/resources/showcases/gems.svg" class="h-[280px]">
       </div>
     </div>
   </UContainer>

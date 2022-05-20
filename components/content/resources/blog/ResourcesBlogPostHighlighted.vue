@@ -46,7 +46,7 @@ const formatDateByLocale = (locale, d) => {
 
 <style scoped>
 .bg-gradiant {
-  background-image: url('/resources/blog/bg-gradient.png');
+  background-image: url('/assets/resources/blog/bg-gradient.png');
   background-size: cover;
 }
 .bg-overlay {

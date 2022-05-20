@@ -1,7 +1,7 @@
 <template>
   <div class="relative flex flex-col md:flex-row justify-center items-center md:h-[475px]">
     <div class="relative flex items-center justify-end md:absolute md:right-0">
-      <img src="/company/support/gems.svg">
+      <img src="/assets/company/support/gems.svg">
       <div class="h-[170px] absolute top-0 inset-x-0 bg-gradient-to-b from-white dark:from-black to-transparent" />
       <div class="w-[170px] absolute right-0 inset-y-0 bg-gradient-to-l from-white dark:from-black to-transparent" />
     </div>

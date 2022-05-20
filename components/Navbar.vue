@@ -78,7 +78,7 @@ const links = computed(() => {
     title: 'Integrations',
     icon: 'heroicons-outline:sparkles',
     path: '/integrations',
-    banner: '/docs/banner.png',
+    banner: '/assets/docs/banner.png',
     children: [{
       title: 'Officials',
       icon: 'heroicons-outline:star',

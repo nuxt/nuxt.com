@@ -24,5 +24,4 @@ developerExperiences:
   - icon: module-ecosystem.svg
     title: Modules Ecosystem
     description: Extend your app with 160+ Nuxt modules and create your own.
-
 ---

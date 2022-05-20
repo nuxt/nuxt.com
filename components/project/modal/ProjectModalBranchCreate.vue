@@ -39,7 +39,7 @@
     <div v-if="error" class="mt-2 text-sm italic text-red-500">
       {{ error }}
     </div>
-    <div class="gap-3 mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+    <div class="gap-3 mt-5 sm:mt-6 sm:flex sm:flex-row-reverse">
       <UButton type="submit" label="Create" variant="green" class="justify-center flex-shrink-0 w-full sm:w-auto" :disabled="!!error" />
       <UButton type="button" label="Cancel" variant="secondary" class="justify-center flex-shrink-0 w-full mt-3 sm:w-auto sm:mt-0" @click="close" />
     </div>

@@ -357,7 +357,7 @@ highlight: false
   ---
   buttonText: 'Read article'
   to: '#'
-  imagePath: '/resources/design-kit/book.svg'
+  imagePath: '/assets/resources/design-kit/book.svg'
   ---
   #title
   Want to know more about identity ?

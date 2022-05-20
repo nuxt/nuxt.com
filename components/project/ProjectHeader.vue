@@ -20,10 +20,6 @@
         <span class="flex-auto truncate u-text-gray-700">Search</span>
         <kbd class="flex-shrink-0 hidden ml-3 font-sans text-xs font-semibold sm:inline u-text-gray-400"><abbr title="Command" class="no-underline">⌘</abbr> K</kbd>
       </UButton>
-      <UButton icon="fa-brands:github" variant="gray" size="xs" @click="openGithub">
-        <span class="flex-auto truncate u-text-gray-700">Open</span>
-        <kbd class="flex-shrink-0 hidden ml-3 font-sans text-xs font-semibold sm:inline u-text-gray-400"><abbr title="Command" class="no-underline">⌘</abbr> G</kbd>
-      </UButton>
 
       <slot v-if="branches.length" name="extra-actions" />
     </div>
@@ -72,16 +68,13 @@
 </template>
 
 <script setup lang="ts">
-import { useMagicKeys, whenever, and, useActiveElement } from '@vueuse/core'
 import type { Project } from '~/types'
 
 const project: Project = inject('project')
 
-const keys = useMagicKeys()
-const activeElement = useActiveElement()
 const { openBranchesModal, openFilesModal } = useProjectModals()
 
-const { branch, branches, commit, openPublishModal, openCreateModal, openGithub, loading } = useProjectBranches(project)
+const { branch, branches, commit, openPublishModal, openCreateModal, loading } = useProjectBranches(project)
 const { isDraft: isDraftContent, refresh: refreshContentFiles, previewUrl } = useProjectFiles(project, 'content')
 const { isDraft: isDraftMedia, refresh: refreshMediaFiles } = useProjectFiles(project, 'public')
 
@@ -102,14 +95,6 @@ const deployOptions = [[{
   label: 'Enter project url',
   to: { name: '@team-project-settings' }
 }]]
-
-// Computed
-
-const notUsingInput = computed(() => !(activeElement.value?.tagName === 'INPUT' || activeElement.value?.tagName === 'TEXTAREA' || activeElement.value?.contentEditable === 'true'))
-
-// Watch
-
-whenever(and(keys.meta_g, notUsingInput), openGithub)
 
 async function onCommitClick () {
   const callbackAfterCommit = () => {
