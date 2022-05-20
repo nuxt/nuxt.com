@@ -32,7 +32,7 @@
         :key="`offer-${index}`"
       >
         <UCard padded background-class="u-bg-gray-50" shadow-class="" class="relative transition duration-200 hover:ring-2 hover:u-ring-gray-900">
-          <NuxtLink :to="offer.path" class="focus:outline-none" tabindex="-1">
+          <NuxtLink :to="offer._path" class="focus:outline-none" tabindex="-1">
             <span class="absolute inset-0" aria-hidden="true" />
           </NuxtLink>
 
@@ -70,7 +70,7 @@ defineProps({
 
 const { data: offers } = await useAsyncData('company-careers-list', () => queryContent('/company/careers').where({
   $not: {
-    path: {
+    _path: {
       $in: ['/company/careers']
     }
   }

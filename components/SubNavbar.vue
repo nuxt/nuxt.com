@@ -19,7 +19,7 @@
           <NuxtLink
             v-for="(link, index) in filteredLinks"
             :key="index"
-            :to="link.path"
+            :to="link._path"
             class="focus:outline-none"
             :class="{
               'u-text-gray-900 font-semibold': isActive(link),
@@ -60,6 +60,6 @@ const { hasScrolledPastSubNavbar } = useNavbarScroll()
 const filteredLinks = computed(() => props.links.filter(l => !!l.title))
 
 function isActive (link) {
-  return link.exact ? route.path === link.path : route.path.startsWith(link.path)
+  return link.exact ? route.path === link._path : route.path.startsWith(link._path)
 }
 </script>

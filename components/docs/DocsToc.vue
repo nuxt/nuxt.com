@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-2">
-    <NuxtLink v-if="prev" :to="prev.path" class="flex items-center text-sm font-medium lg:flex-row-reverse hover:font-semibold u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900 gap-x-3">
+    <NuxtLink v-if="prev" :to="prev._path" class="flex items-center text-sm font-medium lg:flex-row-reverse hover:font-semibold u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900 gap-x-3">
       <div class="flex-shrink-0 p-1 rounded-md u-bg-gray-100">
         <UIcon name="heroicons-solid:chevron-double-left" class="w-4 h-4 u-text-gray-400" />
       </div>
@@ -34,7 +34,7 @@
       </ul>
     </template>
 
-    <NuxtLink v-if="next" :to="next.path" class="flex items-center text-sm font-medium lg:flex-row-reverse hover:font-semibold u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900 gap-x-3 focus:outline-none">
+    <NuxtLink v-if="next" :to="next._path" class="flex items-center text-sm font-medium lg:flex-row-reverse hover:font-semibold u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900 gap-x-3 focus:outline-none">
       <div class="flex-shrink-0 p-1 rounded-md u-bg-gray-100">
         <UIcon name="heroicons-solid:chevron-double-right" class="w-4 h-4 u-text-gray-400" />
       </div>

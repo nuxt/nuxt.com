@@ -68,7 +68,7 @@ export const useContent = () => {
     if (file && !file.children) {
       // Path queried has a page (and is not a directory)
       await Promise.all([
-        queryContent().where({ path: file.path }).findOne() as Promise<ParsedContent>,
+        queryContent().where({ _path: file._path }).findOne() as Promise<ParsedContent>,
         queryContent(directory).findSurround(path.value) as Promise<ParsedContent[]>
       ]).then(([_page, _surround]) => {
         page.value = _page
@@ -92,7 +92,7 @@ export const useContent = () => {
   const findBottomLink = (link: NavItem) => {
     for (const child of link.children) {
       if (!child.children) {
-        return child.path
+        return child._path
       }
     }
 
@@ -109,7 +109,7 @@ export const useContent = () => {
    */
   const navFromPath = (path: string, tree: NavItem[] = navigation.value) => {
     for (const file of tree) {
-      if (file.path === path && !file.id) {
+      if (file._path === path && !file.id) {
         return file
       }
 
@@ -127,7 +127,7 @@ export const useContent = () => {
         if (result) { return result }
       }
 
-      if (file.path === path) {
+      if (file._path === path) {
         return file
       }
     }
