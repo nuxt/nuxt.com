@@ -64,7 +64,7 @@
 
 <script setup lang="ts">
 
-const { data: deployData } = await useAsyncData('deply', () => queryContent('/assets/docs/framework/v3/_collections/deploy').findOne())
+const { data: deployData } = await useAsyncData('deply', () => queryContent('/docs/framework/v3/_collections/deploy').findOne())
 
 const sections = ref(null)
 const sectionAnimating = ref(false)

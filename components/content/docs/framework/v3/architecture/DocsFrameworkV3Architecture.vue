@@ -51,5 +51,5 @@ onMounted(() => {
   startCounter(animationsDelay)
 })
 
-const { data: architectureData } = await useAsyncData('architecture', () => queryContent('/assets/docs/framework/v3/_collections/architecture').findOne())
+const { data: architectureData } = await useAsyncData('architecture', () => queryContent('/docs/framework/v3/_collections/architecture').findOne())
 </script>

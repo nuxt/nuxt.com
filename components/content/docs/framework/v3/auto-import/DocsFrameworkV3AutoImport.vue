@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-12 pt-12" ref="root">
+  <div ref="root" class="grid grid-cols-12 pt-12">
     <ul class="flex flex-col col-span-3 gap-y-6">
       <li
         v-for="(data, index) in autoImportData.autoImport"
@@ -62,23 +62,23 @@ const section2Steps = [7, 8, 9, 10, 11, 12, 13]
 const section3Steps = [14]
 const sectionAnimating = ref(false)
 
-const { data: autoImportData } = await useAsyncData('autoImport', () => queryContent('/assets/docs/framework/v3/_collections/auto-import').findOne())
+const { data: autoImportData } = await useAsyncData('autoImport', () => queryContent('/docs/framework/v3/_collections/auto-import').findOne())
 
- const observerCallback = (entries: IntersectionObserverEntry[]) =>
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        console.log('oberve')
-        //startCounter(animationsDelay)
-      } else {
-        //visibleHeadings.value = visibleHeadings.value.filter(t => t !== id)
-      }
-    })
+const observerCallback = (entries: IntersectionObserverEntry[]) =>
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      console.log('oberve')
+      // startCounter(animationsDelay)
+    } else {
+      // visibleHeadings.value = visibleHeadings.value.filter(t => t !== id)
+    }
+  })
 
-  onBeforeMount(() => (observer.value = new IntersectionObserver(observerCallback)))
+onBeforeMount(() => (observer.value = new IntersectionObserver(observerCallback)))
 
-  onMounted(() => observer.value.observe(root))
+onMounted(() => observer.value.observe(root))
 
-  onBeforeUnmount(() => observer.value?.disconnect())
+onBeforeUnmount(() => observer.value?.disconnect())
 
 const restartAnimation = (section: number) => {
   sectionAnimating.value = true

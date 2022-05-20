@@ -62,7 +62,7 @@
 
 <script setup lang="ts">
 
-const { data: commandsData } = await useAsyncData('commands', () => queryContent('/assets/docs/framework/v3/_collections/commands').findOne())
+const { data: commandsData } = await useAsyncData('commands', () => queryContent('/docs/framework/v3/_collections/commands').findOne())
 
 const { currentSection, startCounter, restartCounter } = useCounterAnimations()
 

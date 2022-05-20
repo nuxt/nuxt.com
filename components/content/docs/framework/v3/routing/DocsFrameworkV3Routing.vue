@@ -37,7 +37,7 @@
 </template>
 <script setup lang="ts">
 
-const { data: routingData } = await useAsyncData('file-system-routing', () => queryContent('/assets/docs/framework/v3/_collections/routing').findOne())
+const { data: routingData } = await useAsyncData('file-system-routing', () => queryContent('/docs/framework/v3/_collections/routing').findOne())
 
 const { currentSection, startCounter, restartCounter } = useCounterAnimations()
 
