@@ -15,16 +15,7 @@
         <Logo class="block w-auto h-6" />
       </NuxtLink>
 
-      <div class="flex justify-end">
-        <TeamsDropdown v-if="user" />
-        <UButton
-          v-else
-          icon="fa-brands:github"
-          variant="transparent"
-          class="-mr-2"
-          @click="onClick"
-        />
-      </div>
+      <div class="flex justify-end" />
     </template>
 
     <div class="flex-1 px-4 py-4 overflow-y-scroll sm:px-6">
@@ -35,8 +26,7 @@
 
 <script setup lang="ts">
 import { omit } from 'lodash-es'
-import type { Ref } from 'vue'
-import type { User } from '~/types'
+import type { WritableComputedRef } from 'vue'
 
 const props = defineProps({
   modelValue: {
@@ -53,11 +43,9 @@ const emit = defineEmits(['update:modelValue'])
 
 const { navigation, navFromPath } = useContent()
 
-const user = useStrapiUser() as Ref<User>
-const { getProviderAuthenticationUrl } = useStrapiAuth()
 const route = useRoute()
 
-const isOpen = computed({
+const isOpen: WritableComputedRef<boolean> = computed({
   get () {
     return props.modelValue
   },
@@ -101,9 +89,5 @@ const tree = computed(() => {
 
 const onSelect = (link) => {
   selectedLink.value = link
-}
-
-const onClick = () => {
-  window.location = getProviderAuthenticationUrl('github') as unknown as Location
 }
 </script>

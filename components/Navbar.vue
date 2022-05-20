@@ -21,7 +21,7 @@
         </div>
 
         <ul class="justify-center hidden lg:col-span-4 gap-x-10 lg:flex">
-          <li v-for="(link, index) in links" :key="index">
+          <li v-for="(link, index) in visibleLinks" :key="index">
             <NuxtLink
               :to="link._path"
               :exact="link.exact"
@@ -89,8 +89,15 @@ const links = computed(() => {
     title: 'Community',
     _path: '/community',
     icon: 'heroicons-outline:globe'
+  }, {
+    title: 'Company',
+    _path: '/company',
+    hidden: true,
+    icon: 'heroicons-outline:office-building'
   }]
 })
+
+const visibleLinks = computed(() => links.value.filter(link => !link.hidden))
 
 const onClick = () => {
   window.location = getProviderAuthenticationUrl('github') as unknown as Location
