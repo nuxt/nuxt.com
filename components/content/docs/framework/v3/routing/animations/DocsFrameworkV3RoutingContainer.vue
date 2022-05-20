@@ -38,10 +38,10 @@
         :key="index"
         class="absolute transition-opacity duration-1000"
         :class="currentSection === index && currentStep !== 1 ? 'opacity-100' : 'opacity-0'"
-        :src="`/docs/framework/v3/routing/${illustration}`"
+        :src="`/assets/docs/framework/v3/routing/${illustration}`"
       >
       <img
-        src="/docs/framework/v3/routing/middleware-dashboard-content.svg"
+        src="/assets/docs/framework/v3/routing/middleware-dashboard-content.svg"
         class="absolute transition-opacity duration-1000"
         :class="currentStep === 1 ? 'opacity-100' : 'opacity-0'"
       >

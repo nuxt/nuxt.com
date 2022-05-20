@@ -26,7 +26,7 @@
       </span>
     </div>
     <img
-      src="/docs/framework/v3/auto-import/terminal.svg"
+      src="/assets/docs/framework/v3/auto-import/terminal.svg"
       class="absolute -right-[120px] top-4 w-[308px] h-[126px] transition-opacity duration-300"
       :class="[1, 2, 8, 9].includes(currentSection) ? 'opacity-80' : 'opacity-0'"
     >

@@ -83,7 +83,7 @@
         footer.vue
       </div>
       <img
-        src="/docs/framework/v3/auto-import/components-template.svg"
+        src="/assets/docs/framework/v3/auto-import/components-template.svg"
         class="absolute left-[250px] top-[62px] transition-opacity duration-300"
         :class="section1Steps.includes(currentSection) ? 'opacity-100' : 'opacity-0'"
         alt="Components template header and footer"
@@ -92,7 +92,7 @@
       <DocsFrameworkV3AutoImportComposablesMouse class="absolute left-[250px] top-[62px]" :current-section="currentSection" :steps-section="section2Steps" />
       <DocsFrameworkV3AutoImportPluginsTemplate class="absolute left-[250px] top-[62px]" :current-section="currentSection" :steps-section="section3Steps" />
       <img
-        src="/docs/framework/v3/auto-import/container.svg"
+        src="/assets/docs/framework/v3/auto-import/container.svg"
         alt="animation container"
         class="absolute inset-0 z-0"
         :class="[0, 6, 7, 13, 14].includes(currentSection) ? 'opacity-0' : 'opacity-80'"

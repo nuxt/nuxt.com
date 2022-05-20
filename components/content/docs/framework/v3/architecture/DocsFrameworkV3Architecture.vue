@@ -13,13 +13,13 @@
           class="absolute top-0 left-0 flex items-center justify-center w-12 h-12 p-3 mt-4 ml-4 transition duration-200 rounded-md group-hover:opacity-0 u-bg-gray-200"
           :class="{ 'opacity-0': currentSection === index }"
         >
-          <img :src="`/docs/framework/v3/architecture/${data.icon}`" class="transition duration-200 group-hover:opacity-0" :class="{ 'opacity-0': currentSection === index }">
+          <img :src="`/assets/docs/framework/v3/architecture/${data.icon}`" class="transition duration-200 group-hover:opacity-0" :class="{ 'opacity-0': currentSection === index }">
         </div>
         <div
           class="absolute top-0 left-0 flex items-center justify-center w-12 h-12 p-3 mt-4 ml-4 transition duration-200 rounded-md opacity-0 group-hover:opacity-100 bg-gradient-to-b from-green-600 to-green-400"
           :class="currentSection === index ? 'opacity-100' : 'opacity-0'"
         >
-          <img :src="`/docs/framework/v3/architecture/${data.iconColor}`" class="transition duration-200 opacity-0 group-hover:opacity-100" :class="currentSection === index ? 'opacity-100' : 'opacity-0'">
+          <img :src="`/assets/docs/framework/v3/architecture/${data.iconColor}`" class="transition duration-200 opacity-0 group-hover:opacity-100" :class="currentSection === index ? 'opacity-100' : 'opacity-0'">
         </div>
         <div class="flex flex-col pl-16 gap-y-2">
           <h6 class="text-lg font-semibold u-text-gray-900">
@@ -51,5 +51,5 @@ onMounted(() => {
   startCounter(animationsDelay)
 })
 
-const { data: architectureData } = await useAsyncData('architecture', () => queryContent('/docs/framework/v3/_collections/architecture').findOne())
+const { data: architectureData } = await useAsyncData('architecture', () => queryContent('/assets/docs/framework/v3/_collections/architecture').findOne())
 </script>

@@ -9,16 +9,16 @@
         @click="!sectionAnimating ? restartAnimation(index) : () => {}"
       >
         <div class="relative">
-          <img src="/docs/framework/v3/routing/hexagon.svg" alt="hexagon container" class="h-20 w-22">
+          <img src="/assets/docs/framework/v3/routing/hexagon.svg" alt="hexagon container" class="h-20 w-22">
           <div class="absolute top-0 flex items-center justify-center w-full h-full ">
             <img
-              :src="`/docs/framework/v3/routing/${data.icon}`"
+              :src="`/assets/docs/framework/v3/routing/${data.icon}`"
               class="absolute w-12 h-12 transition-opacity duration-0"
               :alt="`${data.title} icon`"
               :class="currentSection === index ? 'opacity-0' : 'opacity-100'"
             >
             <img
-              :src="`/docs/framework/v3/routing/${data.iconColor}`"
+              :src="`/assets/docs/framework/v3/routing/${data.iconColor}`"
               class="absolute w-12 h-12 transition-opacity duration-0"
               :alt="`${data.title} icon`"
               :class="currentSection === index ? 'opacity-100' : 'opacity-0'"
@@ -37,7 +37,7 @@
 </template>
 <script setup lang="ts">
 
-const { data: routingData } = await useAsyncData('file-system-routing', () => queryContent('/docs/framework/v3/_collections/routing').findOne())
+const { data: routingData } = await useAsyncData('file-system-routing', () => queryContent('/assets/docs/framework/v3/_collections/routing').findOne())
 
 const { currentSection, startCounter, restartCounter } = useCounterAnimations()
 

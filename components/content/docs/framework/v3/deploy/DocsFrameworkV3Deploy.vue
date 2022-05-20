@@ -20,7 +20,7 @@
             (section3Steps.includes(currentSection) && index === 2) }"
         >
           <img
-            :src="`/docs/framework/v3/deploy/${data.icon}`"
+            :src="`/assets/docs/framework/v3/deploy/${data.icon}`"
             class="transition duration-200 group-hover:opacity-0"
             :class="{ 'opacity-0': (section1Steps.includes(currentSection) && index === 0) ||
               (section2Steps.includes(currentSection) && index === 1) ||
@@ -34,7 +34,7 @@
             (section3Steps.includes(currentSection) && index === 2) ? 'opacity-100' : 'opacity-0'"
         >
           <img
-            :src="`/docs/framework/v3/deploy/${data.iconColor}`"
+            :src="`/assets/docs/framework/v3/deploy/${data.iconColor}`"
             class="transition duration-200 opacity-0 group-hover:opacity-100"
             :class="(section1Steps.includes(currentSection) && index === 0) ||
               (section2Steps.includes(currentSection) && index === 1) ||
@@ -64,7 +64,7 @@
 
 <script setup lang="ts">
 
-const { data: deployData } = await useAsyncData('deply', () => queryContent('/docs/framework/v3/_collections/deploy').findOne())
+const { data: deployData } = await useAsyncData('deply', () => queryContent('/assets/docs/framework/v3/_collections/deploy').findOne())
 
 const sections = ref(null)
 const sectionAnimating = ref(false)

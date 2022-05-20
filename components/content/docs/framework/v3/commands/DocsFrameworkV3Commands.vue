@@ -14,10 +14,10 @@
         @click="!sectionAnimating ? restartAnimation(index, index === 1 ? false : true) : () => {}"
       >
         <div class="relative">
-          <img src="/docs/framework/v3/commands/hexagon.svg" alt="hexagon container" class="h-20 w-22">
+          <img src="/assets/docs/framework/v3/commands/hexagon.svg" alt="hexagon container" class="h-20 w-22">
           <div class="absolute top-0 flex items-center justify-center w-full h-full ">
             <img
-              :src="`/docs/framework/v3/commands/${data.icon}`"
+              :src="`/assets/docs/framework/v3/commands/${data.icon}`"
               class="absolute w-12 h-12 transition-opacity duration-0"
               :alt="`${data.title} icon`"
               :class="(section1Steps.includes(currentSection) && index === 0) ||
@@ -26,7 +26,7 @@
                 (section4Steps.includes(currentSection) && index === 3) ? 'opacity-0' : 'opacity-100'"
             >
             <img
-              :src="`/docs/framework/v3/commands/${data.iconColor}`"
+              :src="`/assets/docs/framework/v3/commands/${data.iconColor}`"
               class="absolute w-12 h-12 transition-opacity duration-0"
               :alt="`${data.title} icon`"
               :class="(section1Steps.includes(currentSection) && index === 0) ||
@@ -62,7 +62,7 @@
 
 <script setup lang="ts">
 
-const { data: commandsData } = await useAsyncData('commands', () => queryContent('/docs/framework/v3/_collections/commands').findOne())
+const { data: commandsData } = await useAsyncData('commands', () => queryContent('/assets/docs/framework/v3/_collections/commands').findOne())
 
 const { currentSection, startCounter, restartCounter } = useCounterAnimations()
 

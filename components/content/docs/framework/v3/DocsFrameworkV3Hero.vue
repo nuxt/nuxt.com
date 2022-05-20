@@ -26,7 +26,7 @@
           />
         </div>
       </div>
-      <img src="/docs/framework/v3/hero.png" class="absolute -right-[485px]" alt="hero illustration">
+      <img src="/assets/docs/framework/v3/hero.png" class="absolute -right-[485px]" alt="hero illustration">
     </div>
   </div>
 </template>

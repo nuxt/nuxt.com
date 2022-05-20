@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col justify-center items-center gap-y-2">
-    <img :src="`/docs/framework/v3/commands/${folder ? 'folder' : 'file' }.svg`">
+    <img :src="`/assets/docs/framework/v3/commands/${folder ? 'folder' : 'file' }.svg`">
     <span class="text-gray-600">
       {{ label }}
     </span>
