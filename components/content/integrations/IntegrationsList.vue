@@ -1,16 +1,12 @@
 <template>
-  <DocsPage id="smooth" :sticky="false">
+  <DocsPage id="smooth" class="pt-16 -mt-16">
     <template #aside>
       <IntegrationsAside />
     </template>
 
     <div class="flex items-center justify-between">
       <h2 class="flex items-end gap-3 text-3xl font-semibold u-text-gray-900">
-        {{ selectedCategory?.title || 'All' }}
-
-        <span class="text-base font-normal u-text-gray-400">
-          {{ filteredModules.length }} module{{ filteredModules.length > 1 ? 's' : '' }} found
-        </span>
+        {{ filteredModules.length }} module{{ filteredModules.length > 1 ? 's' : '' }} found
       </h2>
 
       <IntegrationsFilterSort />
@@ -27,12 +23,15 @@
 </template>
 
 <script setup lang="ts">
-const { modules, selectedCategory, selectedVersion, selectedSort, q } = useIntegrations()
+const { modules, selectedCategory, selectedType, selectedVersion, selectedSort, q } = useIntegrations()
 
 const filteredModules = computed(() => {
   return [...modules.value]
     .filter((module) => {
       if (selectedCategory.value && module.category !== selectedCategory.value.key) {
+        return false
+      }
+      if (selectedType.value && module.type !== selectedType.value.key) {
         return false
       }
       if (selectedVersion.value && !module.tags.includes(selectedVersion.value.key)) {

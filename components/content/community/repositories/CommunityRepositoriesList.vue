@@ -6,11 +6,7 @@
 
     <div class="flex items-center justify-between">
       <h2 class="flex items-end gap-3 text-3xl font-semibold u-text-gray-900">
-        {{ selectedOrganization?.title || 'All' }}
-
-        <span class="text-base font-normal u-text-gray-400">
-          {{ filteredRepositories.length }} repositor{{ filteredRepositories.length > 1 ? 'ies' : 'y' }} found
-        </span>
+        {{ filteredRepositories.length }} repositor{{ filteredRepositories.length > 1 ? 'ies' : 'y' }} found
       </h2>
 
       <CommunityRepositoriesFilterSort />
