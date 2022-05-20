@@ -1,16 +1,12 @@
 <template>
-  <DocsPage id="smooth" :sticky="false" class="pt-16 -mt-16">
+  <DocsPage id="smooth" class="pt-16 -mt-16">
     <template #aside>
       <IntegrationsAside />
     </template>
 
     <div class="flex items-center justify-between">
       <h2 class="flex items-end gap-3 text-3xl font-semibold u-text-gray-900">
-        {{ selectedCategory?.title || 'All' }}
-
-        <span class="text-base font-normal u-text-gray-400">
-          {{ filteredModules.length }} module{{ filteredModules.length > 1 ? 's' : '' }} found
-        </span>
+        {{ filteredModules.length }} module{{ filteredModules.length > 1 ? 's' : '' }} found
       </h2>
 
       <IntegrationsFilterSort />

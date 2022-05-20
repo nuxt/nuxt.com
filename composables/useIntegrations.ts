@@ -68,8 +68,19 @@ export const useIntegrations = () => {
     })
   })
 
+  const modulesByVersion = computed(() => {
+    return [...modules.value]
+      .filter((module) => {
+        if (selectedVersion.value && !module.tags.includes(selectedVersion.value.key)) {
+          return false
+        }
+
+        return true
+      })
+  })
+
   const categories = computed(() => {
-    return [...new Set(modules.value.map(module => module.category))].map(category => ({
+    return [...new Set(modulesByVersion.value.map(module => module.category))].map(category => ({
       key: category,
       title: category,
       to: {
