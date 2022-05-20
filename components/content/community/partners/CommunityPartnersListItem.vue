@@ -2,9 +2,9 @@
   <UCard padded shadow-class="" background-class="bg-transparent" class="relative transition duration-200 hover:ring-2 hover:u-ring-gray-900">
     <div class="flex flex-col">
       <div class="flex items-center h-32">
-        <img v-if="partner.logo.light" :src="partner.logo.light" class="w-auto h-16 dark:hidden">
-        <img v-if="partner.logo.dark" :src="partner.logo.dark" class="hidden w-auto h-16 dark:block">
-        <img v-if="typeof partner.logo === 'string'" :src="partner.logo" class="w-auto h-16">
+        <img v-if="partner.logo.light" :src="partner.logo.light" :alt="partner.title" class="w-auto h-16 dark:hidden">
+        <img v-if="partner.logo.dark" :src="partner.logo.dark" :alt="partner.title" class="hidden w-auto h-16 dark:block">
+        <img v-if="typeof partner.logo === 'string'" :src="partner.logo" :alt="partner.title" class="w-auto h-16">
       </div>
       <div>
         <p class="text-xl font-semibold u-text-gray-700">
@@ -25,7 +25,7 @@
       </div>
     </div>
 
-    <NuxtLink v-if="partner?.link" :to="partner.link" target="_blank" class="focus:outline-none" tabindex="-1">
+    <NuxtLink :to="partner.path" class="focus:outline-none" tabindex="-1">
       <span class="absolute inset-0" aria-hidden="true" />
     </NuxtLink>
   </UCard>
