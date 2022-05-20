@@ -16,7 +16,7 @@ export const useIntegrations = () => {
     pending.value = true
 
     try {
-      const data = await $fetch('https://modules.nuxtjs.org/api/modules')
+      const data = await $fetch('/api/integrations')
 
       _modules.value = data.modules
     } catch (e) {

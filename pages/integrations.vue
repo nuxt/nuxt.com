@@ -14,9 +14,9 @@
 
 <script setup lang="ts">
 const { page, fetchPage } = useContent()
-const { fetch: fetchModules } = useIntegrations()
+const { fetch: fetchIntegrations } = useIntegrations()
 
-await Promise.all([fetchPage(), fetchModules()])
+await Promise.all([fetchPage(), fetchIntegrations()])
 
 const links = computed(() => ([]))
 </script>
