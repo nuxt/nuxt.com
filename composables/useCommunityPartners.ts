@@ -5,7 +5,7 @@ import { capitalize } from '~/utils'
 
 export const useCommunityPartners = () => {
   const route = useRoute()
-  const _partners: Ref<object[]> = useState('partners', () => [])
+  const _partners: Ref<any> = useState('partners', () => [])
 
   const pending = ref(false)
 
