@@ -33,8 +33,9 @@ useHead({
 
 const { fetchNavigation } = useContent()
 const { fetch: fetchModules } = useIntegrations()
+const { fetch: fetchPartners } = useCommunityPartners()
 
-await Promise.all([fetchNavigation(), fetchModules()])
+await Promise.all([fetchNavigation(), fetchModules(), fetchPartners()])
 </script>
 
 <style>
