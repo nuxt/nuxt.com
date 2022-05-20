@@ -30,8 +30,8 @@
       </li>
     </ul>
     <div
-      class="absolute top-[124px] left-12 w-[160px] p-2 bg-white rounded-md h-[180px] border-transition border-4 border-transparent"
-      :class="[{ 'w-[400px] h-[380px] translate-x-[68px] -translate-y-12 absolute z-[1]': currentStep > 1 }, currentStep === 5 ? 'border-x-4 border-t-4 border-green-400 ' : 'border-white border-x-4 border-t-4']"
+      class="absolute top-[124px] left-12 p-2 bg-white rounded-md border-transition border-4 border-transparent"
+      :class="[currentStep > 1 ? 'w-[400px] h-[380px] translate-x-[68px] -translate-y-12 z-[1]' : 'w-[160px] h-[180px]', currentStep === 5 ? 'border-x-4 border-t-4 border-green-400 ' : 'border-white border-x-4 border-t-4']"
     >
       <span
         class="w-full text-xs font-semibold text-right text-gray-700 transition-all duration-1000"
