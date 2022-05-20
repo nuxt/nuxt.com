@@ -5,40 +5,44 @@
     </div>
 
     <UContainer padded class="pb-16 sm:pb-32">
-      <div class="flex gap-8 pb-8 -mt-6 sm:-mt-8 xl:pb-12">
-        <div class="relative flex w-40 h-40 p-10 overflow-hidden border rounded-xl u-border-gray-200">
-          <div class="absolute inset-0 logo-background" />
-          <img v-if="page.logo.light" :src="page.logo.light" :alt="page.title" class="relative dark:hidden">
-          <img v-if="page.logo.dark" :src="page.logo.dark" :alt="page.title" class="relative hidden dark:block">
-          <img v-if="typeof page.logo === 'string'" :src="page.logo" :alt="page.title" class="relative">
-        </div>
-        <div class="flex items-center justify-between w-full pt-8">
-          <div class="flex flex-col justify-end gap-1">
-            <h1 class="text-3xl font-semibold u-text-black">
+      <div class="flex flex-col justify-between gap-8 pb-8 -mt-6 sm:gap-4 sm:items-center sm:flex-row md:-mt-8 xl:pb-12">
+        <div class="flex gap-4 md:gap-8">
+          <div class="relative flex w-32 h-32 p-8 overflow-hidden border md:w-40 md:h-40 md:p-10 rounded-xl u-border-gray-200">
+            <div class="absolute inset-0 logo-background" />
+            <img v-if="page.logo.light" :src="page.logo.light" :alt="page.title" class="relative dark:hidden">
+            <img v-if="page.logo.dark" :src="page.logo.dark" :alt="page.title" class="relative hidden dark:block">
+            <img v-if="typeof page.logo === 'string'" :src="page.logo" :alt="page.title" class="relative">
+          </div>
+          <div class="flex flex-col justify-center pt-8">
+            <h1 class="mb-2 text-3xl font-semibold u-text-black">
               {{ page.title }}
             </h1>
-            <NuxtLink :to="page.link" target="_blank" rel="noopener" class="flex items-center gap-2 mt-1 font-medium u-text-gray-500">
+            <NuxtLink :to="page.link" target="_blank" rel="noopener" class="flex items-center gap-2 font-medium u-text-gray-500">
               {{ websiteDomain }} <UIcon name="uil:external-link-alt" class="w-5 h-5" />
             </NuxtLink>
           </div>
-          <div class="flex gap-4">
-            <UButton
-              label="Visit website"
-              :to="page.link"
-              target="_blank"
-              size="xl"
-              variant="transparent"
-            />
-            <UButton
-              label="Contact partner"
-              size="xl"
-              variant="gray"
-            />
-          </div>
+        </div>
+        <div class="flex flex-col gap-4 pt-8 sm:flex-row">
+          <UButton
+            label="Visit website"
+            :to="page.link"
+            target="_blank"
+            size="xl"
+            variant="transparent"
+            custom-class="justify-center sm:justify-start"
+            truncate
+          />
+          <UButton
+            label="Contact partner"
+            size="xl"
+            variant="gray"
+            custom-class="justify-center sm:justify-start"
+            truncate
+          />
         </div>
       </div>
 
-      <div class="flex flex-col-reverse gap-8 xl:gap-12 xl:flex-row xl:justify-between">
+      <div class="flex flex-col-reverse gap-16 xl:flex-row xl:justify-between">
         <div class="w-full xl:w-[70%]">
           <h2 class="text-3xl font-semibold u-text-gray-900">
             Discover the company
@@ -46,19 +50,21 @@
           <p class="mt-8 leading-7 u-text-gray-700">
             <span style="white-space: pre-wrap">{{ page.fullDescription }}</span>
           </p>
-          <div class="flex gap-8 mt-12">
+          <div class="flex flex-col gap-8 mt-12 sm:flex-row">
             <UButton
               label="Back to partners list"
               icon="uil:angle-left"
               to="/community/partners"
               size="xl"
               variant="secondary"
+              custom-class="justify-center sm:justify-start"
               @click="onBack"
             />
             <UButton
               label="Become a partner"
               to="/company/partners"
               size="xl"
+              custom-class="justify-center sm:justify-start"
             />
           </div>
         </div>

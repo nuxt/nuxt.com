@@ -62,6 +62,7 @@ export const useCommunityPartners = () => {
           params: { smooth: '#smooth' }
         }
       }))
+      .sort((a, b) => a.title.localeCompare(b.title))
 
     return categories
   })
@@ -79,6 +80,7 @@ export const useCommunityPartners = () => {
           params: { smooth: '#smooth' }
         }
       }))
+      .sort((a, b) => a.title.localeCompare(b.title))
 
     return services
   })
