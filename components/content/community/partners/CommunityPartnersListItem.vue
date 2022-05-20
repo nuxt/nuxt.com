@@ -6,7 +6,7 @@
         <img v-if="partner.logo.dark" :src="partner.logo.dark" class="hidden w-auto h-16 dark:block">
         <img v-if="typeof partner.logo === 'string'" :src="partner.logo" class="w-auto h-16">
       </div>
-      <div class="flex-1 w-full">
+      <div>
         <p class="text-xl font-semibold u-text-gray-700">
           {{ partner.title }}
         </p>
@@ -17,7 +17,7 @@
           <span
             v-for="service in partner.services"
             :key="service.key"
-            class="flex-shrink-0 px-4 py-2 rounded-lg u-bg-gray-100 u-text-gray-500"
+            class="flex-shrink-0 px-2 py-1 border rounded-lg u-border-gray-200 u-text-gray-500"
           >
             {{ service.title }}
           </span>
