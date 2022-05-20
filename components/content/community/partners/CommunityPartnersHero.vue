@@ -19,7 +19,7 @@
       </div>
 
       <div class="relative flex items-center justify-center lg:col-span-1">
-        <img src="/gems.svg" class="h-[280px]">
+        <img src="/assets/community/partners/gems.svg" class="h-[280px]">
       </div>
     </div>
   </UContainer>
