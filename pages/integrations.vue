@@ -17,9 +17,5 @@ const { page, fetchPage } = useContent()
 
 await fetchPage()
 
-const links = computed(() => ([{
-  title: 'Content',
-  _path: 'https://content-v2.nuxtjs.org',
-  target: '_blank'
-}]))
+const links = computed(() => ([]))
 </script>
