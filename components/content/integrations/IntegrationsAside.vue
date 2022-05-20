@@ -1,8 +1,8 @@
 <template>
   <nav>
-    <div class="py-1.5 flex items-center gap-3">
+    <div class="py-1.5 flex items-center justify-between gap-3">
       <p class="font-semibold u-text-gray-900">
-        Integrations
+        Categories
       </p>
 
       <IntegrationsFilterVersion />

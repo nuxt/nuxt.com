@@ -1,6 +1,6 @@
 <template>
   <div class="lg:grid lg:grid-cols-12 lg:gap-10 lg:relative">
-    <aside class="pb-8 lg:pb-0 lg:sticky lg:top-0 sm:px-6 lg:px-0 lg:pt-8 lg:-mt-8 lg:self-start lg:col-span-3">
+    <aside class="px-4 pb-6 lg:pb-0 lg:sticky lg:top-0 sm:px-6 lg:px-0 lg:pt-8 lg:-mt-8 lg:self-start lg:col-span-3">
       <slot name="aside" />
     </aside>
 

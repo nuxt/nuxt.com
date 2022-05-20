@@ -16,7 +16,7 @@ export const useIntegrations = () => {
     pending.value = true
 
     try {
-      const data = await $fetch('https://modules.nuxtjs.org/api/modules')
+      const data = await $fetch('/api/integrations')
 
       _modules.value = data.modules
     } catch (e) {
@@ -40,6 +40,12 @@ export const useIntegrations = () => {
     { key: 'publishedAt', label: 'Updated' },
     { key: 'createdAt', label: 'Created' }
   ]
+
+  const typesMapping = {
+    official: 'Official',
+    community: 'Community',
+    '3rd-party': 'Third Party'
+  }
 
   // Computed
 
@@ -68,8 +74,19 @@ export const useIntegrations = () => {
     })
   })
 
+  const modulesByVersion = computed(() => {
+    return [...modules.value]
+      .filter((module) => {
+        if (selectedVersion.value && !module.tags.includes(selectedVersion.value.key)) {
+          return false
+        }
+
+        return true
+      })
+  })
+
   const categories = computed(() => {
-    return [...new Set(modules.value.map(module => module.category))].map(category => ({
+    return [...new Set(modulesByVersion.value.map(module => module.category))].map(category => ({
       key: category,
       title: category,
       to: {
@@ -81,6 +98,26 @@ export const useIntegrations = () => {
         params: { smooth: '#smooth' }
       }
     }))
+  })
+
+  const types = computed(() => {
+    return [...new Set(modulesByVersion.value.map(module => module.type))].map(type => ({
+      key: type,
+      title: typesMapping[type] || type,
+      to: {
+        name: 'integrations',
+        query: {
+          ...route.query,
+          type
+        },
+        params: { smooth: '#smooth' }
+      }
+    })).sort((a, b) => {
+      const typesMappingKeys = Object.keys(typesMapping)
+      const aIndex = typesMappingKeys.indexOf(a.key)
+      const bIndex = typesMappingKeys.indexOf(b.key)
+      return aIndex - bIndex
+    })
   })
 
   const contributors = computed(() => {
@@ -97,6 +134,10 @@ export const useIntegrations = () => {
 
   const selectedCategory = computed(() => {
     return categories.value.find(category => category.key === route.query.category)
+  })
+
+  const selectedType = computed(() => {
+    return types.value.find(type => type.key === route.query.type)
   })
 
   const selectedVersion = computed(() => {
@@ -120,9 +161,11 @@ export const useIntegrations = () => {
     // Computed
     modules,
     categories,
+    types,
     contributors,
     stats,
     selectedCategory,
+    selectedType,
     selectedVersion,
     selectedSort,
     q
