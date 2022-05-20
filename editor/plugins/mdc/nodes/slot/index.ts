@@ -1,5 +1,5 @@
 import { createCmdKey, createCmd } from '@milkdown/core'
-import { wrapIn } from '@milkdown/prose'
+import { wrapIn } from '@milkdown/prose/commands'
 import { kebabCase } from 'scule'
 import type { ComponentSlotSchema } from '../../../../types'
 import { createVueNode } from '../utils/prose'

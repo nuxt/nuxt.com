@@ -513,57 +513,58 @@
     semver "^7.3.5"
     tar "^6.1.11"
 
-"@milkdown/core@6.0.2":
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/@milkdown/core/-/core-6.0.2.tgz#b9ac6fe20a3c5ec9cc76e05f95f682c4e2f11b7e"
-  integrity sha512-f5/6oLA4ZV7EAqoheHHkCZSFnPbXUPNUpSCqd2fvwZeyQSBfVik77JxgZUlabdaH+lrM9Fcln0hVkt2QV8iZfA==
+"@milkdown/core@6.1.1":
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/@milkdown/core/-/core-6.1.1.tgz#e83cf2328d9d765ff0c0c907bcc61d13c674f8c8"
+  integrity sha512-SVkpqhYwanwspqttnt2htkFO439TqJPJ2fKgDdEzIM7kxtJKuUg75fGBsfn14MDrYgg5p4Yn/Ev5/cRARl4MlA==
   dependencies:
-    "@milkdown/ctx" "6.0.2"
-    "@milkdown/design-system" "6.0.2"
-    "@milkdown/exception" "6.0.2"
-    "@milkdown/transformer" "6.0.2"
+    "@milkdown/ctx" "6.1.1"
+    "@milkdown/design-system" "6.1.1"
+    "@milkdown/exception" "6.1.1"
+    "@milkdown/transformer" "6.1.1"
     tslib "^2.3.1"
 
-"@milkdown/ctx@6.0.2":
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/@milkdown/ctx/-/ctx-6.0.2.tgz#e5c73427c5dcadd3f713d7672226bb9f4092d103"
-  integrity sha512-vnoF5aualWlJV0ah1WRgjYhMJdQ37WRkitL0/qEYaJ7J87zU2733r5ioNet5G3VMgV+iiSU4gRYdV2nn2LNvjQ==
+"@milkdown/ctx@6.1.1":
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/@milkdown/ctx/-/ctx-6.1.1.tgz#77957c24c2c575e55f9ef6d4660ab18d89ecb96e"
+  integrity sha512-11xBfcHU/OVnE/N0rXnENGB7ReGxHQAef2UNOS4+IZBZWY9c9skXwntHVUBV7k9T81ajCJgtNpEc5tjHG7XRng==
   dependencies:
+    "@milkdown/exception" "6.1.1"
     tslib "^2.3.1"
 
-"@milkdown/design-system@6.0.2":
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/@milkdown/design-system/-/design-system-6.0.2.tgz#60e8b11511a6793f75cf9ed47135f962e29a2e86"
-  integrity sha512-lsAvV3gTSMowGP2LQYi9ddKldss/MZ3xSiY84/Ht8Qd6gWuI2knvHSDo9ewf05qRnN6Tn2qUrLTjxnkwwG3M/g==
+"@milkdown/design-system@6.1.1":
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/@milkdown/design-system/-/design-system-6.1.1.tgz#ecf7ae5b6ff9fd615fc9519cb4df478aceede992"
+  integrity sha512-whwXuTByvbQjRTtUUikr10GjGn5iiuqc/dlWq+ZPFenZH9DV5deu0g5Q6RBCsig43JBoDIrgWWBDj3OLiTbbMA==
   dependencies:
     "@emotion/cache" "^11.7.1"
     "@emotion/css" "^11.1.3"
-    "@milkdown/ctx" "6.0.2"
+    "@milkdown/ctx" "6.1.1"
     tslib "^2.3.1"
 
-"@milkdown/exception@6.0.2":
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/@milkdown/exception/-/exception-6.0.2.tgz#4ec9907da19b31d7ba9654354994ad74d2ccf456"
-  integrity sha512-SJFJbxOGV+A49f7H+k4L6ZEjbR6+AfWzdQ6ZJ/9guAE894E/bu5NGhC4sYXR0MN1+Awj7n8PMfJ2VkOL+Yeh0Q==
+"@milkdown/exception@6.1.1":
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/@milkdown/exception/-/exception-6.1.1.tgz#fc39a9fe3b831e6c1647a91c2dda650e828e94d7"
+  integrity sha512-37JIDpmfLKTqJ5J9eujlKw+/wabteHUcR2iPGHi1Tvd8s3YULiDzdiCZ7bngIcjZ2Oo3EoZLUl1Z68B3kNIQ/A==
   dependencies:
     tslib "^2.3.1"
 
-"@milkdown/plugin-collaborative@6.0.2":
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/@milkdown/plugin-collaborative/-/plugin-collaborative-6.0.2.tgz#785fed7ecaf975f816476b71a87701cb3bd4557f"
-  integrity sha512-sKwefTD6UTcBCy6lUHRMCZE4ZGWRyvf3iKxBm8czo21fDbJVcWsvCuRvCk/KBmFmE83+5uUrL7uVW8c631rAZQ==
+"@milkdown/plugin-collaborative@6.1.1":
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/@milkdown/plugin-collaborative/-/plugin-collaborative-6.1.1.tgz#46419b14375d3a830a50e871b52dc8866420a1f2"
+  integrity sha512-xOJ7TooZt1eQ+arg/xXLl9DLvykwR9aetutOi0C0Wt9ND7E47vdk9oEJxTu8a+A7Z+mvvz5PIqJc9dSKIpSq+w==
   dependencies:
-    "@milkdown/utils" "6.0.2"
+    "@milkdown/utils" "6.1.1"
     tslib "^2.3.1"
-    y-prosemirror "^1.0.9"
+    y-prosemirror "^1.0.19"
     y-protocols "^1.0.5"
 
-"@milkdown/plugin-emoji@6.0.2":
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/@milkdown/plugin-emoji/-/plugin-emoji-6.0.2.tgz#6003c999a31841828bace1efd1d6fba8c1fd5843"
-  integrity sha512-afzjyPJhVEQqPYGfKMeKZmjQSZB3ReWBhEKKhCnbXfPNxAaI7asyQ0KAlSlBsHE3T+rG1rge4exRTUK8H8Zmig==
+"@milkdown/plugin-emoji@6.1.1":
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/@milkdown/plugin-emoji/-/plugin-emoji-6.1.1.tgz#3294410699c0521ccff698fb0317e9aa250115df"
+  integrity sha512-bd20Cg7xp1rD4RSkHqPKDhpwSyN3ZijTspTp1UeglFXpDTnMvaa9AIm1+P3WbuRkojJYBk4/O5lSLDidx8lW8g==
   dependencies:
-    "@milkdown/utils" "6.0.2"
+    "@milkdown/utils" "6.1.1"
     "@types/node-emoji" "^1.8.1"
     emoji-regex "^10.0.0"
     node-emoji "^1.10.0"
@@ -572,84 +573,84 @@
     twemoji "^14.0.1"
     unist-util-visit "^4.0.0"
 
-"@milkdown/plugin-history@6.0.2":
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/@milkdown/plugin-history/-/plugin-history-6.0.2.tgz#4eb975568072f63fd1ad0358f3c8b2705e2455ab"
-  integrity sha512-H9iNFW/nE94ST6iX3Q5ufo4Tcy+kwNYzrXDkhdmAjTWBbADGh0MJVfw3mR7zbkR6QXyyjwfxy73ZjuBU4psKqQ==
+"@milkdown/plugin-history@6.1.1":
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/@milkdown/plugin-history/-/plugin-history-6.1.1.tgz#586eb7073bd20bd294e67c55700df4bc64c4bb0a"
+  integrity sha512-bfN/6Fp2w/Dn2Vw/h/3hofEq2PM6L+vdHwC67O6krLycsXLb1QYwQE9qwDrswBX/s9RkYvGa40ebV/s5tjruNg==
   dependencies:
-    "@milkdown/utils" "6.0.2"
+    "@milkdown/utils" "6.1.1"
     tslib "^2.3.1"
 
-"@milkdown/plugin-listener@6.0.2":
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/@milkdown/plugin-listener/-/plugin-listener-6.0.2.tgz#a552f835e261d6cc810e3516800354e47e3f9437"
-  integrity sha512-gRfIOcJ1ZaD8DYHCqcX6RA6yrRsoIVAzUiau/MAB6PLgmp4zhhgKa+hqZQZdweyKFWUgtDo3UmNKjj0Ur9wrpg==
+"@milkdown/plugin-listener@6.1.1":
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/@milkdown/plugin-listener/-/plugin-listener-6.1.1.tgz#a5e5ccb5d64cd7af3921d66f4d6056fbd99a07ec"
+  integrity sha512-66/kbmhxa/LEtiUwGC6ueKx8CD8zttEonGgJwTo9LJzB/y0W2hJHUm/g4ReEsJW8i9GhamxS7hj0xTbhROaDcg==
   dependencies:
-    "@milkdown/utils" "6.0.2"
+    "@milkdown/utils" "6.1.1"
     tslib "^2.3.1"
 
-"@milkdown/plugin-math@6.0.2":
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/@milkdown/plugin-math/-/plugin-math-6.0.2.tgz#4a56ed7b7c5e4d0467330524692c080d60af0466"
-  integrity sha512-1uWSI7eH8Mf7dt0UvPahoxC4SwO2NIFXYlpTY6qt0PJoD0keQrAg3D7z72qPiVlOgjvt7kdjksMBjdWroAMxHQ==
+"@milkdown/plugin-math@6.1.1":
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/@milkdown/plugin-math/-/plugin-math-6.1.1.tgz#7bf9dc817a2529c8e533975267c4f8c38cb76d2c"
+  integrity sha512-gAitwabWp60Z/RUdy1UNUUl7KR8B7cC7QnstBhz3/1mWwkmTw7wPlqffHQ2uFd/xaGNYmi5Y4TJEKm4T/Sf/ag==
   dependencies:
-    "@milkdown/utils" "6.0.2"
+    "@milkdown/utils" "6.1.1"
     "@types/katex" "^0.14.0"
     katex "^0.15.0"
     remark-math "^5.1.0"
     tslib "^2.3.1"
 
-"@milkdown/plugin-prism@6.0.2":
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/@milkdown/plugin-prism/-/plugin-prism-6.0.2.tgz#92eeb1756c29751dc0cfcaf1bffd8e87426e54e3"
-  integrity sha512-ZlxBveRQw9YPdoNbnkvZaPdeDeXtdAWFrivVmkbvhpKnldD0jtPh0BCE7QUqmBlS0fLE707HhiaKIcPeyDjp3Q==
+"@milkdown/plugin-prism@6.1.1":
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/@milkdown/plugin-prism/-/plugin-prism-6.1.1.tgz#6b0c4b92c117a1d329ca793a1f3406bbfd7b534d"
+  integrity sha512-2Vi8R6JS6ktnU6iMLavwDoryvFi+4QZZ6rT30QjFuUjEwWOf/1gsv4tkcNdZ6CFZzGkEKEpQxut8b0O6hAs4iA==
   dependencies:
-    "@milkdown/utils" "6.0.2"
+    "@milkdown/utils" "6.1.1"
     "@types/refractor" "^3.0.0"
     refractor "^4.0.0"
     tslib "^2.3.1"
 
-"@milkdown/plugin-slash@6.0.2":
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/@milkdown/plugin-slash/-/plugin-slash-6.0.2.tgz#e81c52594537fca7b8bf20acbb166993975cb328"
-  integrity sha512-k46TZpREpodl8eWyAoku2ydsXNGuRJQIPLAw4BphJU/uezpNbMoHzIcJQWdXGK+lx9eFz1d94vSGkzWp2++fLA==
+"@milkdown/plugin-slash@6.1.1":
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/@milkdown/plugin-slash/-/plugin-slash-6.1.1.tgz#8ae0f8bb36594801c8163240484ea31887db4887"
+  integrity sha512-8Htp4/JsUiFKCMir7XdV2j5TEIfW440wiVop8hCp9x9WpxNONp2LoDqvwoqdHijg0X6mLy7SwIq2whwDcMmj6g==
   dependencies:
-    "@milkdown/utils" "6.0.2"
+    "@milkdown/utils" "6.1.1"
     smooth-scroll-into-view-if-needed "^1.1.32"
     tslib "^2.3.1"
 
-"@milkdown/plugin-tooltip@6.0.2":
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/@milkdown/plugin-tooltip/-/plugin-tooltip-6.0.2.tgz#1e84d575a6f963762cb80bd189b32472dbbf78aa"
-  integrity sha512-k7yzd1QiOS2L9bkFqRJ5e2A+aUbmDZ+0JpMs67srAGtNHCTDca7zl4zNwIZGokOhdaHKfPT0POYh5y+ftpuphg==
+"@milkdown/plugin-tooltip@6.1.1":
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/@milkdown/plugin-tooltip/-/plugin-tooltip-6.1.1.tgz#4fe3290d6fee87895bd7723b7d7630dfbeb11556"
+  integrity sha512-OdzKT7CROtr41119rBYB6W81vs/+K9rC1ipV3AX77yw13A6XNl82dUY0cXB3yNO1b1zosyozlcjt+0tM3K27nw==
   dependencies:
-    "@milkdown/utils" "6.0.2"
+    "@milkdown/utils" "6.1.1"
     tslib "^2.3.1"
 
-"@milkdown/preset-commonmark@6.0.2":
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/@milkdown/preset-commonmark/-/preset-commonmark-6.0.2.tgz#1838fcf53aca3c262e99bbc987f8efb20f675244"
-  integrity sha512-35tnGuBIkO7spb+T8KFSpLTRBxSX55xIbCm8KGSybs6FrH/P/rKKbC7wd0VdVEfgQB5HTah/QqJ/DcjhL/Y0qQ==
+"@milkdown/preset-commonmark@6.1.1":
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/@milkdown/preset-commonmark/-/preset-commonmark-6.1.1.tgz#bcedc0794411d41e0d2f8350266de3338f60a4e2"
+  integrity sha512-ZWSHenxfvsAkPbE3y7DAs1XjHqZPP1ds7A1GAN8Kl1hZ6mAK+9XUe9DPFT2EGpjxSw/MiSWQAPI2zNQlyrKj3Q==
   dependencies:
-    "@milkdown/utils" "6.0.2"
+    "@milkdown/utils" "6.1.1"
     remark-inline-links "^6.0.0"
     tslib "^2.3.1"
 
-"@milkdown/preset-gfm@6.0.2":
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/@milkdown/preset-gfm/-/preset-gfm-6.0.2.tgz#170bfa21d2112b6985b1edbe1f0b09dd9b2ba557"
-  integrity sha512-st4GdXrvL05V7bE/FGSFrIDPqOAboriq8JUKa3P5Dfp6lIpZSplSwFbGcOOh2k6pc4TwlaQXmBaZYHBsWcN1nA==
+"@milkdown/preset-gfm@6.1.1":
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/@milkdown/preset-gfm/-/preset-gfm-6.1.1.tgz#f80f778fff75b98c1c246104403dd8ca86cf0b79"
+  integrity sha512-2zYOTMIHsUktMN4WCcpzhgoymIBIBWtV5JBhQBbN/65s8p9iLBnPl7jyYS9dCm+7ptvP3hW2ztKgV/CqChf4ug==
   dependencies:
-    "@milkdown/utils" "6.0.2"
+    "@milkdown/utils" "6.1.1"
     remark-gfm "^3.0.0"
     tslib "^2.3.1"
 
-"@milkdown/prose@6.0.2":
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/@milkdown/prose/-/prose-6.0.2.tgz#35c5020376b59b483511dce6ad5bf03611380491"
-  integrity sha512-QXwPqKEkA3XYvQdRd/TC+RiJoQUfge5p/U50FOuXeU2toe8WJjjIxDt5hZ/1IxA3kxpDq5gye03GAp2k1TYM7Q==
+"@milkdown/prose@6.1.1":
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/@milkdown/prose/-/prose-6.1.1.tgz#9e58f4154683450b29c057b580c79316cf9ca0aa"
+  integrity sha512-IVANTN9kGSghmhQPRIcGHfsfCMF7mWO4lY74c4nyY1UHooAysp7EKNkGtaAvyd8hgue3P81RxmbXpUz02OgTGw==
   dependencies:
-    "@milkdown/exception" "6.0.2"
+    "@milkdown/exception" "6.1.1"
     "@types/prosemirror-commands" "^1.0.4"
     "@types/prosemirror-dropcursor" "^1.0.2"
     "@types/prosemirror-gapcursor" "^1.0.4"
@@ -675,37 +676,39 @@
     prosemirror-view "^1.23.12"
     tslib "^2.3.1"
 
-"@milkdown/theme-pack-helper@6.0.2":
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/@milkdown/theme-pack-helper/-/theme-pack-helper-6.0.2.tgz#b8fc37547588b54452d8507684b52d452e1e0e1e"
-  integrity sha512-zyTmWhrl6+mC8WhQ1NwTCUVz1gM+4B2prkMJ6C5GfbLvJ6ZKlKBMRyNn9SRR/zJ/bxSAK2yvlTkixV0qZSTRew==
+"@milkdown/theme-pack-helper@6.1.1":
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/@milkdown/theme-pack-helper/-/theme-pack-helper-6.1.1.tgz#f7ac996b0b3fd48c779538c9e7ebe915b8a42464"
+  integrity sha512-Y6fSC7uJgBbHe3/hnXlPGHkaKHkTjNSjMSuBqtJcPM/tkQ+cg9T5AmhapcoB+zlLzZdq7G50K8gAD0SMLCcoKw==
   dependencies:
     tslib "^2.3.1"
 
-"@milkdown/transformer@6.0.2":
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/@milkdown/transformer/-/transformer-6.0.2.tgz#a7e2bfc0af7ebe4a52e418729fa2dfe20f141097"
-  integrity sha512-PbePfrwQ0Sr4GAJDTdSf+kothrlnauZgicipgWREM1iI8GLpIxlV5wnueTRtpKbA5HMjkvoEgcq78SrvO/ejrQ==
+"@milkdown/transformer@6.1.1":
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/@milkdown/transformer/-/transformer-6.1.1.tgz#4af54a66dbfbbe9dd09fb6b658534df9c7c930f9"
+  integrity sha512-7wMhtwywkzZ7s/DCCxzY86tKC9waexFhRJB9NwcD5zZ3pU1syLNvafZwF1KkUzKz/pkYcYjFWhAHrP1FZCvlSg==
   dependencies:
-    "@milkdown/exception" "6.0.2"
+    "@milkdown/exception" "6.1.1"
+    "@types/mdast" "^3.0.10"
+    "@types/unist" "^2.0.6"
     remark "^14.0.1"
     tslib "^2.3.1"
     unified "^10.1.0"
 
-"@milkdown/utils@6.0.2":
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/@milkdown/utils/-/utils-6.0.2.tgz#d1f4c7fd3fba80c06997fedd6e589f0595e5b90e"
-  integrity sha512-fesKXzCdIH3ThkbXWcqzvK1pkJEg2CSC8hsoDfBmrt/5MrmpZVZKkNE32O5o4r5E3wL9hLGRA7+KSJzCyN4Maw==
+"@milkdown/utils@6.1.1":
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/@milkdown/utils/-/utils-6.1.1.tgz#911d067cda246784147221468cd22b773f56a992"
+  integrity sha512-TTo9eiYbXdxP8PK8gJ330RWPTU6sRZuaRATTT47X6OR+FNKze5DSLfNUsLQGidnRNYqVCXwITXwAt9J+I2AKZw==
   dependencies:
-    "@milkdown/exception" "6.0.2"
+    "@milkdown/exception" "6.1.1"
     tslib "^2.3.1"
 
-"@milkdown/vue@6.0.2":
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/@milkdown/vue/-/vue-6.0.2.tgz#64d94665bdd18a70703ab33bc5230177b47a359d"
-  integrity sha512-iin8ieXMWq5RyZb6kDi+1ugvvwCqq9mPQj7RA4s2azTKC3K1yh4h6Fal8jbigKrexk9cv+5fYdrbKnYjyUuFmQ==
+"@milkdown/vue@6.1.1":
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/@milkdown/vue/-/vue-6.1.1.tgz#99d6ae9113d81d0502edb0fe676ae93923808045"
+  integrity sha512-i58ZP++ZcUPPKDdx66R7UX6haFakFRPksVk5sIR+tw3u9LQSWHubI1exJck3Xrtc6zPwZeFHuBA9k9v2eQo3TQ==
   dependencies:
-    "@milkdown/utils" "6.0.2"
+    "@milkdown/utils" "6.1.1"
     nanoid "^3.1.25"
     tslib "^2.3.1"
 
@@ -1281,7 +1284,7 @@
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.182.tgz#05301a4d5e62963227eaafe0ce04dd77c54ea5c2"
   integrity sha512-/THyiqyQAP9AfARo4pF+aCGcyiQ94tX/Is2I7HofNRqoYLgN1PBoOWu2/zTA5zMxzP5EFutMtWtGAFRKUe961Q==
 
-"@types/mdast@^3.0.0":
+"@types/mdast@^3.0.0", "@types/mdast@^3.0.10":
   version "3.0.10"
   resolved "https://registry.yarnpkg.com/@types/mdast/-/mdast-3.0.10.tgz#4724244a82a4598884cbbe9bcfd73dff927ee8af"
   integrity sha512-W864tg/Osz1+9f4lrGTZpCSO5/z4608eUp19tbozkq2HJK6i3z1kT0H9tlADXuYIb1YYOBByU4Jsqkk75q48qA==
@@ -1453,7 +1456,7 @@
   resolved "https://registry.yarnpkg.com/@types/tough-cookie/-/tough-cookie-4.0.2.tgz#6286b4c7228d58ab7866d19716f3696e03a09397"
   integrity sha512-Q5vtl1W5ue16D+nIaW8JWebSSraJVlK+EthKn7e7UcD4KWsaSJ8BqGPXNaPghgtcn/fhvrN17Tv8ksUsQpiplw==
 
-"@types/unist@*", "@types/unist@^2.0.0":
+"@types/unist@*", "@types/unist@^2.0.0", "@types/unist@^2.0.6":
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/@types/unist/-/unist-2.0.6.tgz#250a7b16c3b91f672a24552ec64678eeb1d3a08d"
   integrity sha512-PBjIUxZHOuj0R15/xuwJYjFi+KZdNFrehocChv4g5hu6aFroHue8m0lBP0POdK2nKzbw0cgV1mws8+V/JAcEkQ==
@@ -9354,7 +9357,7 @@ y-leveldb@^0.1.0:
     level "^6.0.1"
     lib0 "^0.2.31"
 
-y-prosemirror@^1.0.9:
+y-prosemirror@^1.0.19:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/y-prosemirror/-/y-prosemirror-1.1.0.tgz#21eb83896b877e06b98891a88604a366c0bb2d46"
   integrity sha512-cH6MsI3U/xAAJrZvuEk1akiAOzUSXjONwbHoKP4y/JtOR3SvdgL36ushKLUdXx+EuMtRrkgBYVLls8oljIQpxw==

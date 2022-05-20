@@ -1,5 +1,6 @@
 import { AtomList, createPlugin } from '@milkdown/utils'
-import { Plugin, PluginKey, EditorView } from '@milkdown/prose'
+import { Plugin, PluginKey } from '@milkdown/prose/state'
+import type { EditorView } from '@milkdown/prose/view'
 
 const ensureTrailingParagraph = (view: EditorView) => {
   const doc = view.state.tr.doc
