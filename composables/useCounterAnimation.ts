@@ -2,7 +2,6 @@ export const useCounterAnimations = () => {
   const currentSection = ref(0)
   const currentStep = ref(null)
   const counterTimeoutId = ref()
-  const stepperTimeoutId = ref()
 
   const startCounter = async (ms: Array<number>) => {
     for (currentSection.value; currentSection.value <= ms.length; currentSection.value++) {
@@ -29,7 +28,7 @@ export const useCounterAnimations = () => {
   const startStepper = async (ms?: Array<number>) => {
     for (currentStep.value = 0; currentStep.value < ms.length; currentStep.value++) {
       await new Promise((resolve) => {
-        stepperTimeoutId.value = setTimeout(resolve, ms[currentSection.value])
+        setTimeout(resolve, ms[currentStep.value])
       })
     }
     currentStep.value = null
