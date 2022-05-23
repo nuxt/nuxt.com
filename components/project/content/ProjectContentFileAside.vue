@@ -50,7 +50,7 @@
             <UFormGroup
               v-for="field of fields"
               :key="field.key"
-              :name="field.key"
+              :name="`aside-${field.key}`"
               label-class="flex items-center gap-1 font-medium truncate u-text-gray-900"
               label-wrapper-class="flex content-center justify-between min-w-0 gap-3 group"
               container-class=""
@@ -69,7 +69,7 @@
               <UTextarea
                 v-if="field.type === 'text'"
                 :model-value="field.value"
-                :name="field.key"
+                :name="`aside-${field.key}`"
                 placeholder="Enter text..."
                 size="sm"
                 :resize="false"
@@ -79,12 +79,12 @@
                 custom-class="!px-0 placeholder-gray-400 dark:placeholder-gray-500"
                 @update:model-value="value => updateField(field.key, value)"
               />
-              <UCheckbox v-else-if="field.type === 'boolean'" :model-value="field.value" :name="field.key" @update:model-value="value => updateField(field.key, value)" />
+              <UCheckbox v-else-if="field.type === 'boolean'" :model-value="field.value" :name="`aside-${field.key}`" @update:model-value="value => updateField(field.key, value)" />
               <UInput
                 v-else
                 :type="field.type"
                 :model-value="field.value"
-                :name="field.key"
+                :name="`aside-${field.key}`"
                 placeholder="Enter text..."
                 size="sm"
                 appearance="none"
@@ -95,16 +95,6 @@
 
             <form @submit.prevent="addField">
               <UFormGroup label-class="flex items-center gap-1 font-medium truncate u-text-gray-900" container-class="flex items-center gap-3" :label="!!form.key && form.key.trim().length > 0 ? form.key : 'New field'">
-                <USelect
-                  v-model="form.type"
-                  name="type"
-                  placeholder="Type"
-                  :options="['text', 'boolean', 'number', 'date']"
-                  size="sm"
-                  appearance="none"
-                  custom-class="!pl-0 placeholder-gray-400 dark:placeholder-gray-500"
-                  required
-                />
                 <UInput
                   v-model="form.key"
                   name="key"
@@ -114,6 +104,16 @@
                   class="flex-1"
                   autocomplete="off"
                   custom-class="!px-0 placeholder-gray-400 dark:placeholder-gray-500"
+                  required
+                />
+                <USelect
+                  v-model="form.type"
+                  name="type"
+                  placeholder="Type"
+                  :options="['text', 'boolean', 'number', 'date']"
+                  size="sm"
+                  appearance="none"
+                  custom-class="!pl-0 placeholder-gray-400 dark:placeholder-gray-500"
                   required
                 />
 
