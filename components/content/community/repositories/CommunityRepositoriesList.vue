@@ -15,16 +15,19 @@
       </div>
     </div>
 
-    <ul v-if="filteredRepositories.length" class="grid grid-cols-1 gap-8 mt-8 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
-      <li v-for="(filteredRepository, index) in filteredRepositories" :key="index">
-        <CommunityRepositoriesListItem :repository="filteredRepository" />
+    <ul v-if="displayedRepositories.length" class="grid grid-cols-1 gap-8 p-4 mt-8 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+      <li v-for="(displayedRepository, index) in displayedRepositories" :key="index">
+        <CommunityRepositoriesListItem :repository="displayedRepository" />
       </li>
     </ul>
   </DocsPage>
 </template>
 
 <script setup lang="ts">
+import { useEventListener } from '@vueuse/core'
 const { repositories, selectedSort, selectedOrganization, q } = useCommunityRepositories()
+
+const ITEMS_TO_LOAD = 9
 
 const filteredRepositories = computed(() => {
   return [...repositories.value]
@@ -45,4 +48,30 @@ const filteredRepositories = computed(() => {
       return b[selectedSort.value.key] - a[selectedSort.value.key]
     })
 })
+
+const displayedRepositories = ref(filteredRepositories.value.slice(0, ITEMS_TO_LOAD))
+
+watch(selectedOrganization, () => {
+  displayedRepositories.value = filteredRepositories.value.slice(0, ITEMS_TO_LOAD)
+})
+
+watch(q, () => {
+  displayedRepositories.value = filteredRepositories.value.slice(0, ITEMS_TO_LOAD)
+})
+
+watch(selectedSort, () => {
+  displayedRepositories.value = filteredRepositories.value.slice(0, ITEMS_TO_LOAD)
+})
+
+onMounted(() => {
+  useEventListener(window.document, 'scroll', () => {
+    const bottomOfWindow = document.documentElement.scrollTop + window.innerHeight >= document.documentElement.offsetHeight
+
+    if (bottomOfWindow) {
+      const length = displayedRepositories.value.length
+      displayedRepositories.value.push(...filteredRepositories.value.slice(length, length + ITEMS_TO_LOAD))
+    }
+  })
+})
+
 </script>
