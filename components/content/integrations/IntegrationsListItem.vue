@@ -3,7 +3,7 @@
     <div class="mt-2 mb-6">
       <img
         v-if="!coverError && module.icon"
-        :src="module.icon.startsWith('http') ? module.icon : 'https://api.nuxtjs.org/api/ipx/s_80,f_webp/gh/nuxt/modules/main/website/public/icons/' + module.icon"
+        :src="module.icon.match(/^http(s)?:\/\//) ? module.icon : 'https://api.nuxtjs.org/api/ipx/s_80,f_webp/gh/nuxt/modules/main/website/public/icons/' + module.icon"
         :alt="module.title"
         class="w-auto h-12"
         @error="coverError = true"
