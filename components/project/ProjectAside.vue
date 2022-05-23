@@ -8,7 +8,7 @@
           </NuxtLink>
         </div>
         <div aria-label="Sidebar" class="flex flex-col items-center pb-6 space-y-3">
-          <UVerticalNavigation :links="links" spacing-class="p-2" badge-base-class="absolute rounded-full leading-none w-4 h-4 u-bg-gray-900 u-text-white flex items-center justify-center font-semibold z-[1] text-[11px] -top-1 -right-1" badge-active-class="" badge-inactive-class="" />
+          <UVerticalNavigation :links="links" spacing-class="p-2" badge-base-class="absolute rounded-full leading-none w-4 h-4 u-bg-gray-900 u-text-white flex items-center justify-center font-semibold z-[1] text-[11px] -top-1 -right-1 ring-1 ring-transparent ring-offset-1 ring-offset-white dark:ring-offset-black" badge-active-class="" badge-inactive-class="" />
         </div>
       </div>
       <div class="flex flex-col items-center flex-shrink-0 pb-6 space-y-3">
