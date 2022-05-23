@@ -33,7 +33,7 @@ const props = defineProps({
 const { startCounter, currentSection, restartCounter } = useCounterAnimations()
 const dotsDelay = [100, 100, 100, 100, 100, 100, 100, 100, 100, 5000, 100, 100, 100, 100, 100, 100, 100, 100]
 
-onMounted(() => startCounter([100, 100, 100, 100, 100, 100, 100, 100, 100, 5000, 100, 100, 100, 100, 100, 100, 100, 100]))
+onMounted(() => startCounter(dotsDelay))
 
 watch(() => props.restartAnimation, () => {
   if (props.restartAnimation) {

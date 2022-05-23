@@ -13,8 +13,8 @@
         @click="!sectionAnimating ? restartAnimation(index) : () => {}"
       >
         <div class="relative">
-          <img src="/assets/docs/framework/v3/auto-import/hexagon.svg" class="w-16 h-14" alt="hexagon container">
-          <div class="absolute top-0 flex items-center justify-center w-16 h-14">
+          <Hexagon class="w-16 u-text-gray-50 h-14" />
+          <div class="absolute top-0 flex items-center justify-center w-16 h-14 z-1">
             <img
               :src="`/assets/docs/framework/v3/auto-import/${data.icon}`"
               class="absolute w-8 h-8 transition-opacity duration-0"

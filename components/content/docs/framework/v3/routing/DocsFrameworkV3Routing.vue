@@ -9,7 +9,7 @@
         @click="!sectionAnimating ? restartAnimation(index) : () => {}"
       >
         <div class="relative">
-          <img src="/assets/docs/framework/v3/routing/hexagon.svg" alt="hexagon container" class="h-20 w-22">
+          <Hexagon class="h-20 w-22 u-text-gray-50" />
           <div class="absolute top-0 flex items-center justify-center w-full h-full ">
             <img
               :src="`/assets/docs/framework/v3/routing/${data.icon}`"

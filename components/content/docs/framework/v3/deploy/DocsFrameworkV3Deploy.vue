@@ -6,11 +6,13 @@
         ref="sections"
         :key="data.title"
         class="relative flex flex-row p-4 transition duration-200 rounded-md cursor-pointer gap-x-2 group hover:u-bg-gray-50"
-        :class="{ 'opacity-50 cursor-auto': sectionAnimating && (
+        :class="[{ 'opacity-50 cursor-auto': sectionAnimating && (
           (!section1Steps.includes(currentSection) && index === 0) ||
           (!section2Steps.includes(currentSection) && index === 1) ||
           (!section3Steps.includes(currentSection) && index === 2)
-        )}"
+        )}, { 'u-bg-gray-100': section1Steps.includes(currentSection) && index === 0 ||
+          section2Steps.includes(currentSection) && index === 1 ||
+          section3Steps.includes(currentSection) && index === 2 }]"
         @click="!sectionAnimating ? restartAnimation(index) : () => {}"
       >
         <div
