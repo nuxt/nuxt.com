@@ -52,7 +52,7 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 
-const { currentSection, startCounter, restartCounter, stopCounter } = useCounterAnimations()
+const { currentSection, restartCounter, stopCounter } = useCounterAnimations()
 
 const observer = ref() as Ref<IntersectionObserver>
 const root = ref(null) as Ref<Element>

@@ -30,7 +30,9 @@ export const useCounterAnimations = () => {
   }
 
   const startStepper = async (ms?: Array<number>) => {
-    for (currentStep.value = 0; currentStep.value < ms.length; currentStep.value++) {
+    for (let i = 0; i < ms.length; i++) {
+      currentStep.value = i
+
       await new Promise((resolve) => {
         setTimeout(resolve, ms[currentStep.value])
       })
