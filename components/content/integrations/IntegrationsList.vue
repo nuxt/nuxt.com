@@ -5,11 +5,14 @@
     </template>
 
     <div class="flex items-center justify-between">
-      <h2 class="flex items-end gap-3 text-3xl font-semibold u-text-gray-900">
+      <h2 class="text-3xl font-semibold u-text-gray-900">
         {{ filteredModules.length }} module{{ filteredModules.length > 1 ? 's' : '' }} found
       </h2>
 
-      <IntegrationsFilterSort />
+      <div class="flex items-center gap-3">
+        <IntegrationsFilters />
+        <IntegrationsFilterSort />
+      </div>
     </div>
 
     <div class="hidden _ellipse lg:block" />

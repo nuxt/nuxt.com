@@ -17,6 +17,7 @@
             'u-text-gray-900 font-medium': selectedCategory?.key === category.key,
             'u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900': selectedCategory?.key !== category.key
           }"
+          tabindex="-1"
         >
           <span class="relative">
             {{ category.title }}
@@ -35,6 +36,7 @@
         :to="contributeUrl"
         target="_blank"
         class="flex items-center gap-1.5 hover:u-text-gray-900 focus:u-text-gray-900 text-sm font-medium"
+        tabindex="-1"
       >
         <UIcon name="fa-brands:github" class="w-4 h-4" />
         Contribute on GitHub

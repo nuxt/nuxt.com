@@ -5,9 +5,13 @@
     </template>
 
     <div class="flex items-center justify-between">
-      <h2 class="flex items-end gap-3 text-3xl font-semibold u-text-gray-900">
+      <h2 class="text-3xl font-semibold u-text-gray-900">
         {{ filteredPartners.length }} partner{{ filteredPartners.length > 1 ? 's' : '' }} found
       </h2>
+
+      <div class="flex items-center gap-3">
+        <CommunityPartnersFilters />
+      </div>
     </div>
 
     <div class="hidden _ellipse lg:block" />

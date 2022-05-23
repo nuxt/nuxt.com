@@ -1,5 +1,5 @@
 <template>
-  <UContainer padded class="pt-20 pb-12">
+  <UContainer padded class="py-12">
     <div class="flex flex-col-reverse grid-cols-1 gap-8 md:grid sm:grid-cols-2 lg:grid-cols-3">
       <div class="flex flex-col justify-center py-8 space-y-5 lg:col-span-2">
         <h1 class="text-5xl font-semibold u-text-gray-900">
