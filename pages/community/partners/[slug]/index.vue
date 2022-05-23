@@ -1,5 +1,5 @@
 <template>
-  <ContentRenderer :value="page" />
+  <CommunityPartnersPartnerLayout :page="page" />
 </template>
 
 <script setup lang="ts">
