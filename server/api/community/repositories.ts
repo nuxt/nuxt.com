@@ -35,7 +35,6 @@ const fetchReposAndPaginate = async (owner: string): Promise<CommunityRepository
               login
             },
             collaborators {
-              totalCount,
               nodes {
                 id
               }
