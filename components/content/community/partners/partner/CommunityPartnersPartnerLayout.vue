@@ -5,24 +5,24 @@
     </div>
 
     <UContainer padded class="pb-16 sm:pb-32">
-      <div class="flex flex-col justify-between gap-8 pb-8 -mt-6 sm:gap-4 sm:items-center sm:flex-row md:-mt-8 xl:pb-12">
+      <div class="flex flex-col justify-between gap-8 pb-8 -mt-8 sm:gap-4 sm:items-center sm:flex-row md:-mt-12 xl:pb-12">
         <div class="flex gap-4 md:gap-8">
           <div class="relative flex w-32 h-32 p-8 overflow-hidden border md:w-40 md:h-40 md:p-10 rounded-xl u-border-gray-200">
-            <div class="absolute inset-0 logo-background" />
+            <div class="absolute inset-0 bg-white/60 dark:bg-gray-900/70 backdrop-blur-lg" />
             <img v-if="page.logo.light" :src="page.logo.light" :alt="page.title" class="relative dark:hidden">
             <img v-if="page.logo.dark" :src="page.logo.dark" :alt="page.title" class="relative hidden dark:block">
             <img v-if="typeof page.logo === 'string'" :src="page.logo" :alt="page.title" class="relative">
           </div>
-          <div class="flex flex-col justify-center pt-8">
+          <div class="flex flex-col justify-center pt-8 md:pt-12">
             <h1 class="mb-2 text-3xl font-semibold u-text-black">
               {{ page.title }}
             </h1>
-            <NuxtLink :to="page.link" target="_blank" rel="noopener" class="flex items-center gap-2 font-medium u-text-gray-500">
+            <NuxtLink :to="page.link" target="_blank" rel="noopener" class="flex items-center gap-2 font-medium u-text-gray-500 hover:underline">
               {{ websiteDomain }} <UIcon name="uil:external-link-alt" class="w-5 h-5" />
             </NuxtLink>
           </div>
         </div>
-        <div class="flex flex-col gap-4 pt-8 sm:flex-row">
+        <div class="flex flex-col gap-4 md:pt-12 sm:flex-row">
           <UButton
             label="Visit website"
             :to="page.link"
@@ -105,7 +105,7 @@
                     :to="link.url"
                     target="_blank"
                     rel="noopener"
-                    class="flex items-center gap-3 u-text-gray-700"
+                    class="flex items-center gap-3 u-text-gray-700 hover:underline"
                   >
                     <UIcon name="uil:external-link-alt" class="w-6 h-6 u-text-gray-900" />
                     {{ link.name }}
@@ -152,13 +152,3 @@ const onBack = (e) => {
   }
 }
 </script>
-
-<style scoped>
-.logo-background {
-  backdrop-filter: blur(89px);
-  background: rgba(255, 255, 255, 0.6);
-}
-.logo-background.dark {
-  background: rgba(30, 30, 33, 0.7);
-}
-</style>
