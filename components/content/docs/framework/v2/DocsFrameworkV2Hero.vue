@@ -25,6 +25,7 @@
           :icon="button.icon || undefined"
           :label="button.label || ''"
           :to="button.to || '#'"
+          :target="button.target"
         />
       </div>
     </div>
@@ -36,7 +37,7 @@ import { PropType } from 'vue'
 
 defineProps({
   buttons: {
-    type: Array as PropType<{ label?: string, variant?: string, to?: string, size?: string, icon?: string }[]>,
+    type: Array as PropType<{ label?: string, variant?: string, to?: string, size?: string, icon?: string, target?: string }[]>,
     default: () => []
   }
 })
