@@ -9,7 +9,7 @@
     <Page overlap>
       <PageGrid v-if="selectedTemplate">
         <template #aside>
-          <TemplatesItem :template="selectedTemplate" />
+          <TemplatesCard :template="selectedTemplate" />
         </template>
 
         <UCard base-class @submit.prevent="onSubmit">

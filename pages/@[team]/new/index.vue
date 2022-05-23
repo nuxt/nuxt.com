@@ -124,7 +124,7 @@
           </template>
 
           <div class="grid gap-6 lg:grid-cols-2">
-            <TemplatesItem
+            <TemplatesCard
               v-for="(template, index) of templates.slice(0, 4)"
               :key="index"
               :template="template"
