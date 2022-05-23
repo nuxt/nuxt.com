@@ -15,6 +15,7 @@
             'u-text-gray-900 font-medium': selectedOrganization?.key === organization.key,
             'u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900': selectedOrganization?.key !== organization.key
           }"
+          tabindex="-1"
         >
           <span class="relative">
             <img :src="`https://github.com/${organization.key}.png`" class="inline-block w-4 h-4 mb-1 mr-1.5 rounded grayscale">
@@ -35,6 +36,7 @@
         to="https://github.com/nuxt/framework"
         target="_blank"
         class="flex items-center gap-1.5 hover:u-text-gray-900 focus:u-text-gray-900 text-sm font-medium"
+        tabindex="-1"
       >
         <UIcon name="fa-brands:github" class="w-4 h-4" />
         Star us on GitHub

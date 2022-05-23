@@ -26,7 +26,7 @@ const props = defineProps({
   }
 })
 
-const { data: showcases } = await useAsyncData('showcases', async () => {
+const { data: showcases } = await useAsyncData('resources-showcases', async () => {
   const showcases = await $fetch(`https://api.vuetelescope.com/lists/${props.id}`)
 
   // ensure groups & showcases are well sorted
