@@ -15,7 +15,7 @@
       </div>
     </div>
 
-    <ul v-if="displayedRepositories.length" class="grid grid-cols-1 gap-8 p-4 mt-8 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+    <ul v-if="displayedRepositories.length" class="grid grid-cols-1 gap-8 mt-8 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
       <li v-for="(displayedRepository, index) in displayedRepositories" :key="index">
         <CommunityRepositoriesListItem :repository="displayedRepository" />
       </li>
@@ -27,7 +27,7 @@
 import { useEventListener } from '@vueuse/core'
 const { repositories, selectedSort, selectedOrganization, q } = useCommunityRepositories()
 
-const ITEMS_TO_LOAD = 9
+const ITEMS_TO_LOAD = 24
 
 const filteredRepositories = computed(() => {
   return [...repositories.value]
@@ -51,15 +51,7 @@ const filteredRepositories = computed(() => {
 
 const displayedRepositories = ref(filteredRepositories.value.slice(0, ITEMS_TO_LOAD))
 
-watch(selectedOrganization, () => {
-  displayedRepositories.value = filteredRepositories.value.slice(0, ITEMS_TO_LOAD)
-})
-
-watch(q, () => {
-  displayedRepositories.value = filteredRepositories.value.slice(0, ITEMS_TO_LOAD)
-})
-
-watch(selectedSort, () => {
+watch([selectedOrganization, selectedSort, q], () => {
   displayedRepositories.value = filteredRepositories.value.slice(0, ITEMS_TO_LOAD)
 })
 
