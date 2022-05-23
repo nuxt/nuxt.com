@@ -7,7 +7,7 @@
       Create a project from a template, or import a git repository.
     </p>
     <div class="grid mx-auto my-10 sm:mx-0 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4">
-      <TemplatesItem
+      <TemplatesCard
         v-for="(template, index) of templates"
         :key="index"
         :template="template"
