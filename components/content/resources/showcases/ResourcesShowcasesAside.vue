@@ -1,7 +1,7 @@
 <template>
   <nav>
     <p class="py-1.5 font-semibold u-text-gray-900">
-      Showcases
+      Categories
     </p>
 
     <ul v-if="categories.length" class="py-3">

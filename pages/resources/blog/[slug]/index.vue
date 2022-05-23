@@ -99,17 +99,17 @@ const socialLinks = computed(() => [
   {
     icon: 'fa-brands:linkedin',
     alt: 'LinkedIn',
-    href: `https://www.linkedin.com/sharing/share-offsite/?url=https://nuxt.com${page.value.path}`
+    href: `https://www.linkedin.com/sharing/share-offsite/?url=https://nuxt.com${page.value._path}`
   },
   {
     icon: 'fa-brands:twitter',
     alt: 'link',
-    href: `https://twitter.com/intent/tweet?text=I%20found%20this%20article%20interesting%20%20https://nuxt.com${page.value.path}&hashtags=nuxt`
+    href: `https://twitter.com/intent/tweet?text=I%20found%20this%20article%20interesting%20%20https://nuxt.com${page.value._path}&hashtags=nuxt`
   }
 ])
 
 function copyUrl () {
-  $clipboard.copy(`https://nuxt.com${page.value.path}`, { title: 'Copied to clipboard' })
+  $clipboard.copy(`https://nuxt.com${page.value._path}`, { title: 'Copied to clipboard' })
 }
 
 const formatDateByLocale = (locale, d) => {

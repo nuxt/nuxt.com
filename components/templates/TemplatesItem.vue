@@ -1,5 +1,6 @@
 <template>
   <UCard
+    padded
     body-class="relative block w-full overflow-hidden group aspect-w-16 aspect-h-9"
     footer-class="relative flex flex-col flex-1 p-4"
     footer-background-class="u-bg-white"
