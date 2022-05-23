@@ -7,6 +7,7 @@
       :variant="button.variant || 'transparent'"
       :label="button.label || ''"
       :to="button.to || '#'"
+      :target="button.target"
     />
   </div>
 </template>
@@ -16,7 +17,7 @@ import { PropType } from 'vue'
 
 defineProps({
   buttons: {
-    type: Array as PropType<{ label?: string, variant?: string, to?: string }[]>,
+    type: Array as PropType<{ label?: string, variant?: string, to?: string, target?: string }[]>,
     default: () => []
   }
 })
