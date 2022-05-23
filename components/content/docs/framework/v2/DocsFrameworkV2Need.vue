@@ -1,7 +1,7 @@
 <template>
   <ul class="grid grid-cols-1 gap-12 pt-12 sm:grid-cols-2">
     <li v-for="need in needData.needs" :key="need.title">
-      <NuxtLink :to="`/assets/docs/framework/v2${need.to}`">
+      <NuxtLink :to="need.to" :target="need.target">
         <UCard shadow-class="transition-shadow duration-300 shadow-none hover:shadow-md hover:drop-shadow-md hover:shadow-inner-md" class="p-2 group">
           <div class="flex justify-between pb-4">
             <div class="relative w-8 h-8">
