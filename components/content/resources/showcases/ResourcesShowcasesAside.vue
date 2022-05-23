@@ -13,6 +13,7 @@
             'u-text-gray-900 font-medium': selectedCategory?.name === category.name,
             'u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900': selectedCategory?.name !== category.name
           }"
+          tabindex="-1"
         >
           <span class="relative">
             {{ category.name }}

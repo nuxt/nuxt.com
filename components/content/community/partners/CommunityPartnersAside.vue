@@ -1,7 +1,7 @@
 <template>
   <nav>
     <p class="font-semibold text-lg u-text-gray-900 py-1.5">
-      Partners
+      Categories
     </p>
 
     <ul v-if="categories.length" class="py-3">
@@ -13,6 +13,7 @@
             'u-text-gray-900 font-medium': selectedCategory?.key === category.key,
             'u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900': selectedCategory?.key !== category.key
           }"
+          tabindex="-1"
         >
           <span class="relative">
             {{ category.title }}
@@ -37,6 +38,7 @@
             'u-text-gray-900 font-medium': selectedService?.key === service.key,
             'u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900': selectedService?.key !== service.key
           }"
+          tabindex="-1"
         >
           <span class="relative">
             {{ service.title }}

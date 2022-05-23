@@ -3,7 +3,7 @@ import { sum, uniq } from 'lodash-es'
 import { CommunityRepository, CommunityRepositoryStats } from '~/types'
 
 export const useCommunityRepositories = () => {
-  const repositories: Ref<CommunityRepository[]> = useState('repositories', () => [])
+  const repositories: Ref<CommunityRepository[]> = useState('community-repositories', () => [])
   const route = useRoute()
 
   const pending = ref(false)
