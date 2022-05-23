@@ -13,7 +13,7 @@ export function useMailjet () {
 }
 
 export async function useEmail (name: string): Promise<string> {
-  const mjml = await useStorage().getItem(`assets:emails:${name}.mjml`)
+  const mjml = await useStorage().getItem(`assets:server:emails:${name}.mjml`)
   // We don't support mj-include because of Edge environment (mjml2html depends on node fs)
   const { html } = mjml2html(mjml, { ignoreIncludes: true })
 
