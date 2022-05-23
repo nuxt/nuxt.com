@@ -49,7 +49,7 @@ const toggle = {
 }
 
 const radio = {
-  base: 'h-4 w-4 u-text-gray-900 focus:ring-2 focus:ring-offset-2 focus:u-ring-gray-900 focus:ring-offset-white dark:focus:ring-offset-black u-border-gray-200 dark:checked:border-primary-600 disabled:opacity-50 disabled:cursor-not-allowed'
+  base: 'h-4 w-4 text-gray-800 focus:ring-2 focus:ring-offset-2 dark:bg-gray-900 dark:checked:bg-current focus:u-ring-gray-900 focus:ring-offset-white dark:focus:ring-offset-black u-border-gray-200 hover:u-border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed'
 }
 
 const checkbox = {
