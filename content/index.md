@@ -1,4 +1,4 @@
-::docs-hero
+::home-hero
 #title
 The Hybrid Vue Framework
 
