@@ -1,5 +1,5 @@
 import type { Ref } from 'vue'
-import type { GitHubBranch, Project } from '~/types'
+import type { GitHubBranch, Project, GithubPull } from '~/types'
 import ProjectModalBranchCreate from '~/components/project/modal/ProjectModalBranchCreate.vue'
 import ProjectModalPublish from '~/components/project/modal/ProjectModalPublish.vue'
 
@@ -34,6 +34,10 @@ export const useProjectBranches = (project: Project) => {
     pending.value = false
 
     init()
+  }
+
+  async function fetchPulls () {
+    return await client<GithubPull[]>(`/projects/${project.id}/pulls`)
   }
 
   function refresh (resetCache?: boolean) {
@@ -179,6 +183,7 @@ export const useProjectBranches = (project: Project) => {
   return {
     // Http
     fetch,
+    fetchPulls,
     refresh,
     create,
     commit,
