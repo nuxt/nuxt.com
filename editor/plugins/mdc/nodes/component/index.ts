@@ -1,5 +1,5 @@
 import { createCmdKey, createCmd, NodeSchema, Ctx } from '@milkdown/core'
-import { wrapIn } from '@milkdown/prose'
+import { wrapIn } from '@milkdown/prose/commands'
 import { kebabCase } from 'scule'
 import type { ComponentSchema } from '../../../../types'
 import { componentSchemasCtx } from '../../../../context'
