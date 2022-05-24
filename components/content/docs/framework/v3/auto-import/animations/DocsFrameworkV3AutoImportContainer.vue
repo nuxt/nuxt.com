@@ -1,8 +1,15 @@
 <template>
   <div class="relative flex">
     <div>
-      <svg width="756" height="367" viewBox="0 0 756 367" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="756" height="367" rx="14.2105" fill="#27272A" />
+      <svg
+        width="756"
+        height="367"
+        viewBox="0 0 756 367"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        class="text-gray-800 dark:text-gray-900"
+      >
+        <rect width="756" height="367" rx="14.2105" fill="currentColor" />
         <rect y="35" width="756" height="1" fill="#3F3F46" />
         <path d="M71.9999 109.94C71.9895 109.848 71.9693 109.758 71.9399 109.67V109.58C71.8918 109.477 71.8277 109.383 71.7499 109.3L65.7499 103.3C65.6672 103.222 65.5727 103.158 65.4699 103.11H65.3799L65.0599 103H58.9999C58.2042 103 57.4412 103.316 56.8786 103.879C56.3159 104.441 55.9999 105.204 55.9999 106V120C55.9999 120.796 56.3159 121.559 56.8786 122.121C57.4412 122.684 58.2042 123 58.9999 123H68.9999C69.7955 123 70.5586 122.684 71.1212 122.121C71.6838 121.559 71.9999 120.796 71.9999 120V110C71.9999 110 71.9999 110 71.9999 109.94ZM65.9999 106.41L68.5899 109H65.9999V106.41ZM69.9999 120C69.9999 120.265 69.8945 120.52 69.707 120.707C69.5194 120.895 69.2651 121 68.9999 121H58.9999C58.7347 121 58.4803 120.895 58.2928 120.707C58.1052 120.52 57.9999 120.265 57.9999 120V106C57.9999 105.735 58.1052 105.48 58.2928 105.293C58.4803 105.105 58.7347 105 58.9999 105H63.9999V110C63.9999 110.265 64.1052 110.52 64.2928 110.707C64.4803 110.895 64.7347 111 64.9999 111H69.9999V120Z" fill="#00DC82" />
         <path d="M71.9999 228.94C71.9895 228.848 71.9693 228.757 71.9399 228.67V228.58C71.8918 228.477 71.8277 228.382 71.7499 228.3L65.7499 222.3C65.6672 222.222 65.5727 222.158 65.4699 222.11H65.3799L65.0599 222H58.9999C58.2042 222 57.4412 222.316 56.8786 222.878C56.3159 223.441 55.9999 224.204 55.9999 225V239C55.9999 239.795 56.3159 240.558 56.8786 241.121C57.4412 241.683 58.2042 242 58.9999 242H68.9999C69.7955 242 70.5586 241.683 71.1212 241.121C71.6838 240.558 71.9999 239.795 71.9999 239V229C71.9999 229 71.9999 229 71.9999 228.94ZM65.9999 225.41L68.5899 228H65.9999V225.41ZM69.9999 239C69.9999 239.265 69.8945 239.519 69.707 239.707C69.5194 239.894 69.2651 240 68.9999 240H58.9999C58.7347 240 58.4803 239.894 58.2928 239.707C58.1052 239.519 57.9999 239.265 57.9999 239V225C57.9999 224.734 58.1052 224.48 58.2928 224.292C58.4803 224.105 58.7347 224 58.9999 224H63.9999V229C63.9999 229.265 64.1052 229.519 64.2928 229.707C64.4803 229.894 64.7347 230 64.9999 230H69.9999V239Z" fill="#A1A1AA" />
@@ -61,25 +68,25 @@
           </linearGradient>
         </defs>
       </svg>
-      <div class="absolute top-[52px] left-[54px] u-text-gray-400">
+      <div class="absolute top-[52px] left-[54px] text-gray-400">
         <span class="absolute transition-opacity duration-300" :class="section1Steps.concat(section3Steps).includes(currentSection) ? 'opacity-100' : 'opacity-0'">pages</span>
         <span class="absolute transition-opacity duration-300" :class="section2Steps.includes(currentSection) ? 'opacity-100' : 'opacity-0'">components</span>
       </div>
-      <div class="absolute top-[100px] left-[88px] u-text-white">
+      <div class="absolute top-[100px] left-[88px] text-white">
         <span class="absolute transition-opacity duration-300" :class="section1Steps.concat(section3Steps).includes(currentSection) ? 'opacity-100' : 'opacity-0'">index.vue</span>
         <span class="absolute transition-opacity duration-300" :class="section2Steps.includes(currentSection) ? 'opacity-100' : 'opacity-0'">Mouse.vue</span>
       </div>
-      <div class="absolute top-[47%] left-[52px] u-text-gray-400">
+      <div class="absolute top-[47%] left-[52px] text-gray-400">
         <span class="absolute transition-opacity duration-300" :class="section1Steps.includes(currentSection) ? 'opacity-100' : 'opacity-0'">components</span>
         <span class="absolute transition-opacity duration-300" :class="section2Steps.includes(currentSection) ? 'opacity-100' : 'opacity-0'">composables</span>
         <span class="absolute transition-opacity duration-300" :class="section3Steps.includes(currentSection) ? 'opacity-100' : 'opacity-0'">plugins</span>
       </div>
-      <div class="absolute top-[218px] left-[88px] u-text-gray-400">
+      <div class="absolute top-[218px] left-[88px] text-gray-400">
         <span class="absolute transition-opacity duration-300" :class="section1Steps.includes(currentSection) ? 'opacity-100' : 'opacity-0'">header.vue</span>
         <span class="absolute transition-opacity duration-300" :class="section2Steps.includes(currentSection) ? 'opacity-100' : 'opacity-0'">useMouse.js</span>
         <span class="absolute transition-opacity duration-300" :class="section3Steps.includes(currentSection) ? 'opacity-100' : 'opacity-0'">global.js</span>
       </div>
-      <div class="absolute top-[260px] left-[88px] u-text-gray-400 transition-opacity duration-300" :class="section1Steps.includes(currentSection) ? 'opacity-100' : 'opacity-0'">
+      <div class="absolute top-[260px] left-[88px] text-gray-400 transition-opacity duration-300" :class="section1Steps.includes(currentSection) ? 'opacity-100' : 'opacity-0'">
         footer.vue
       </div>
       <img
@@ -94,8 +101,8 @@
       <img
         src="/assets/docs/framework/v3/auto-import/container.svg"
         alt="animation container"
-        class="absolute inset-0 z-0"
-        :class="[0, 6, 7, 13, 14].includes(currentSection) ? 'opacity-0' : 'opacity-80'"
+        class="absolute inset-0 z-0 text-gray-900 dark:text-gray-800"
+        :class="[0, 6, 7, 13, 14].includes(currentSection) ? 'opacity-0' : 'opacity-80 dark:opacity-60'"
       >
     </div>
     <DocsFrameworkV3AutoImportTerminal :current-section="currentSection" />

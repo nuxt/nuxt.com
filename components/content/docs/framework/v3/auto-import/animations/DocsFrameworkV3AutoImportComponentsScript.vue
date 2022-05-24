@@ -1,13 +1,13 @@
 <template>
-  <div class="rounded-lg pl-4 py-4 pr-12 flex flex-col gap-y-0.5 z-10 transition duration-300" :class="[currentStep === 0 ? 'u-bg-gray-800' : 'u-bg-gray-900', [0, 1, 2].includes(currentStep) && stepsSection.includes(currentSection) ? 'opacity-100' : 'opacity-0']">
-    <span class="font-mono text-sm u-text-gray-300">
+  <div class="rounded-lg pl-4 py-4 pr-12 flex flex-col gap-y-0.5 z-10 transition duration-300" :class="[currentStep === 0 ? 'bg-gray-800' : 'bg-gray-900', [0, 1, 2].includes(currentStep) && stepsSection.includes(currentSection) ? 'opacity-100' : 'opacity-0']">
+    <span class="font-mono text-sm text-gray-300">
       {{ '<script>' }}
     </span>
-    <span class="font-mono text-sm u-text-gray-300 pl-4 flex flex-col gap-y-0.5">
+    <span class="font-mono text-sm text-gray-300 pl-4 flex flex-col gap-y-0.5">
       <span>import { <span class="text-green-400"> header </span> } from `<span class="text-green-400">./header.vue</span>`</span>
       <span>import { <span class="text-green-400"> footer </span> } from `<span class="text-green-400">./footer.vue</span>`</span>
     </span>
-    <span class="font-mono text-sm u-text-gray-300">
+    <span class="font-mono text-sm text-gray-300">
       {{ '</script>' }}
     </span>
     <svg viewBox="0 0 325 1" fill="none" xmlns="http://www.w3.org/2000/svg" class="absolute left-[18px] top-[48px]">

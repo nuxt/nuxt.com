@@ -47,6 +47,4 @@ const props = defineProps({
     default: 0
   }
 })
-
-watch(() => props.currentSection, () => console.log('currentSection', props.currentSection))
 </script>
