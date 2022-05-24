@@ -4,7 +4,7 @@
       <CommunityRepositoriesAside />
     </template>
 
-    <div class="flex items-center justify-between">
+    <div class="flex flex-wrap items-center justify-between gap-3">
       <h2 class="text-3xl font-semibold u-text-gray-900">
         {{ filteredRepositories.length }} repositor{{ filteredRepositories.length > 1 ? 'ies' : 'y' }} found
       </h2>

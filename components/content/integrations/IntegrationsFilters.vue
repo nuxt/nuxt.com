@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center gap-1.5">
+  <div v-if="filters.length" class="flex items-center gap-1.5">
     <UButton
       v-for="filter of filters"
       :key="filter.key"
