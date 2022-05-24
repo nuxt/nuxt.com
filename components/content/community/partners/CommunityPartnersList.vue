@@ -1,5 +1,5 @@
 <template>
-  <Page id="smooth" :sticky="false" class="pt-16 -mt-16">
+  <Page id="smooth" class="pt-16 -mt-16">
     <template #aside>
       <CommunityPartnersAside />
     </template>
