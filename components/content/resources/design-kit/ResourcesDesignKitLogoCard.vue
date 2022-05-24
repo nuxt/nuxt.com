@@ -5,7 +5,7 @@
     </UCard>
     <div class="flex justify-between">
       <p class="font-semibold">
-        <Markdown use="name" unwrap="p" />
+        <Markdown :use="$slots.name" unwrap="p" />
       </p>
       <div>
         <a

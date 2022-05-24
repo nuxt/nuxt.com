@@ -16,11 +16,6 @@
     </div>
 
     <UButton :to="{ name: '@team-new', params: { team: team?.slug || user.username } }" label="Create a new project" size="lg" />
-    <div class="mt-3">
-      <NuxtLink :to="{ name: 'templates' }" class="text-sm u-text-gray-900 hover:underline">
-        Browse templates &rarr;
-      </NuxtLink>
-    </div>
   </UCard>
 </template>
 

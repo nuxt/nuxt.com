@@ -1,17 +1,15 @@
 <template>
-  <DocsPage id="smooth" :sticky="false" class="pt-16 -mt-16">
+  <Page id="smooth" :sticky="false" class="pt-16 -mt-16">
     <template #aside>
       <CommunityPartnersAside />
     </template>
 
-    <div class="flex flex-wrap items-center justify-between gap-3">
+    <div class="flex flex-col justify-between gap-3 sm:items-center sm:flex-row">
       <h2 class="text-3xl font-semibold u-text-gray-900">
         {{ filteredPartners.length }} partner{{ filteredPartners.length > 1 ? 's' : '' }} found
       </h2>
 
-      <div class="flex items-center gap-3">
-        <CommunityPartnersFilters />
-      </div>
+      <CommunityPartnersFilters />
     </div>
 
     <div class="hidden _ellipse lg:block" />
@@ -21,7 +19,7 @@
         <CommunityPartnersListItem :partner="filteredPartner" />
       </li>
     </ul>
-  </DocsPage>
+  </Page>
 </template>
 
 <script setup lang="ts">

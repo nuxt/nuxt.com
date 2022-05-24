@@ -8,10 +8,10 @@
         </span>
       </div>
       <h1 v-if="$slots.title" class="max-w-lg font-semibold text-center text-7xl u-text-gray-900">
-        <Markdown use="title" unwrap="p" />
+        <Markdown :use="$slots.title" unwrap="p" />
       </h1>
       <p v-if="$slots.description" class="w-1/2 text-lg text-center u-text-gray-500">
-        <Markdown use="description" unwrap="p" />
+        <Markdown :use="$slots.description" unwrap="p" />
       </p>
       <div class="flex gap-x-8">
         <UButton

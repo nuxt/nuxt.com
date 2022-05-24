@@ -1,9 +1,9 @@
 <template>
-  <DocsPageContent>
+  <DocsPage>
     <div class="prose dark:prose-invert max-w-none">
       <ContentRenderer v-if="page" :value="page" />
     </div>
-  </DocsPageContent>
+  </DocsPage>
 </template>
 
 <script setup lang="ts">

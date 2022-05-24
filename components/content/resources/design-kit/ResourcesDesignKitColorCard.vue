@@ -23,7 +23,7 @@
     <div v-if="!gradient && !secondaries">
       <div class="flex items-center justify-between">
         <h5 class="font-semibold u-text-gray-900">
-          <Markdown use="color" unwrap="p" />
+          <Markdown :use="$slots.color" unwrap="p" />
         </h5>
         <UButton variant="transparent" @click="onClick">
           <span class="-mr-4 text-sm u-text-gray-400">
@@ -36,7 +36,7 @@
       </p>
     </div>
     <div v-if="$slots.gradientContent" class="pt-2 u-text-gray-400">
-      <Markdown use="gradientContent" unwrap="p" />
+      <Markdown :use="$slots.gradientContent" unwrap="p" />
     </div>
   </li>
 </template>

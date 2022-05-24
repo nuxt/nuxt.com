@@ -1,15 +1,15 @@
 <template>
   <div class="flex flex-col flex-1">
-    <PageHeader title="Create a new team" description="A Nuxt team will allow you to collaborate with others on your projects and enjoy additional optional features." />
+    <TeamPageHeader title="Create a new team" description="A Nuxt team will allow you to collaborate with others on your projects and enjoy additional optional features." />
 
-    <Page overlap>
+    <TeamPage overlap>
       <div class="flex flex-col-reverse gap-10 lg:flex-row">
         <div class="w-full space-y-6 lg:w-2/3">
           <UCard @submit.prevent="onSubmit">
             <div class="space-y-6">
               <UFormGroup name="slug" label="Slug" :help="form.slug !== slug ? `Your team slug will be renamed to “${slug}”` : 'This is your team\'s URL namespace on Nuxt.'" required class="relative w-full lg:max-w-xs">
                 <div class="flex items-center">
-                  <span class="inline-flex items-center px-2 py-2 text-sm border border-r-0 u-bg-gray-50 u-border-gray-200 rounded-l-lg u-text-gray-500">
+                  <span class="inline-flex items-center px-2 py-2 text-sm border border-r-0 rounded-l-lg u-bg-gray-50 u-border-gray-200 u-text-gray-500">
                     nuxt.com/@
                   </span>
 
@@ -61,7 +61,7 @@
           </UCard>
         </div>
       </div>
-    </Page>
+    </TeamPage>
   </div>
 </template>
 

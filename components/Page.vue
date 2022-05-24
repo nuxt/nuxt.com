@@ -1,13 +1,24 @@
 <template>
-  <div class="flex-1 pt-6 pb-16 border-t sm:pb-32 sm:pt-8 u-border-gray-200">
-    <header v-if="$slots.header">
+  <div class="relative flex-1">
+    <slot name="header" />
+
+    <main class="relative pb-16 sm:pb-32 lg:pt-8">
       <UContainer padded>
-        <slot name="header" />
-      </UContainer>
-    </header>
-    <main :class="[overlap && 'sm:mt-[calc(-6rem-1px)]']">
-      <UContainer>
-        <slot />
+        <div class="relative grid grid-cols-10 gap-8">
+          <aside
+            v-if="!!$slots.aside"
+            class="hidden col-span-2 pb-8 overflow-x-hidden overflow-y-auto lg:pb-0 lg:block lg:self-start"
+            :class="{
+              'lg:max-h-[calc(100vh-64px)] lg:top-16 lg:sticky lg:pt-8 lg:-mt-8': sticky
+            }"
+          >
+            <slot name="aside" />
+          </aside>
+
+          <div class="relative" :class="{ 'col-span-10 lg:col-span-8': !!$slots.aside, 'col-span-10': !$slots.aside }">
+            <slot />
+          </div>
+        </div>
       </UContainer>
     </main>
   </div>
@@ -15,9 +26,9 @@
 
 <script setup lang="ts">
 defineProps({
-  overlap: {
+  sticky: {
     type: Boolean,
-    default: false
+    default: true
   }
 })
 </script>
