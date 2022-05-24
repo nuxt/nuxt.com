@@ -1,103 +1,90 @@
 <template>
   <div class="flex flex-col flex-1">
-    <PageHeader
+    <TeamPageHeader
       title="You're almost done."
       description="Please follow the steps to configure your project."
       :to="{ name: '@team-new' }"
     />
 
-    <Page overlap>
-      <PageGrid>
-        <template #aside>
-          <UCard v-if="repository" padded class="mb-6">
-            <a :href="`https://github.com/${repository.owner.login}/${repository.name}`" target="_blank" class="flex items-center block gap-3">
-              <UIcon name="fa-brands:github" class="w-5 h-5" />
-              <p class="font-medium truncate">
-                {{ repository.name }}
-              </p>
-            </a>
-          </UCard>
+    <TeamPage overlap>
+      <div class="flex flex-col-reverse gap-10 lg:flex-row">
+        <div class="w-full space-y-6 lg:w-2/3">
+          <UCard @submit.prevent="onSubmit">
+            <h3 class="mb-1 text-lg font-medium leading-6 u-text-gray-900">
+              Configure your project
+            </h3>
+            <p class="u-text-gray-500">
+              Just choose a name for your project, it will be deployed using {{ `${repository.owner.login}/${repository.name}` }} repository if you haven't done it manually.
+            </p>
 
-          <NuxtLink :to="{ name: 'templates' }" class="text-sm font-medium text-primary-500 hover:underline">
-            Browse templates &rarr;
-          </NuxtLink>
-        </template>
+            <hr class="my-6 u-border-gray-200">
 
-        <UCard @submit.prevent="onSubmit">
-          <h3 class="mb-1 text-lg font-medium leading-6 u-text-gray-900">
-            Configure your project
-          </h3>
-          <p class="u-text-gray-500">
-            Just choose a name for your project, it will be deployed using {{ `${repository.owner.login}/${repository.name}` }} repository if you haven't done it manually.
-          </p>
+            <div class="space-y-6">
+              <UFormGroup name="slug" label="Slug" :help="form.slug !== slug ? `Your project slug will be renamed to “${slug}”` : 'This is your project\'s URL namespace on Nuxt.'" required class="relative w-full lg:max-w-md">
+                <div class="flex items-center">
+                  <span class="inline-flex items-center px-2 py-2 text-sm border border-r-0 rounded-l-lg u-bg-gray-50 u-border-gray-200 u-text-gray-500">
+                    nuxt.com/@{{ team?.slug || user.username }}/
+                  </span>
 
-          <hr class="my-6 u-border-gray-200">
+                  <UInput
+                    v-model="form.slug"
+                    name="slug"
+                    required
+                    placeholder="framework"
+                    autocomplete="off"
+                    class="w-full"
+                    appearance="darken"
+                    custom-class="rounded-l-none"
+                  />
+                </div>
+              </UFormGroup>
 
-          <div class="space-y-6">
-            <UFormGroup name="slug" label="Slug" :help="form.slug !== slug ? `Your project slug will be renamed to “${slug}”` : 'This is your project\'s URL namespace on Nuxt.'" required class="relative w-full lg:max-w-md">
-              <div class="flex items-center">
-                <span class="inline-flex items-center px-2 py-2 text-sm border border-r-0 rounded-l-lg u-bg-gray-50 u-border-gray-200 u-text-gray-500">
-                  nuxt.com/@{{ team?.slug || user.username }}/
-                </span>
-
+              <UFormGroup name="name" label="Name" help="This is your project's visible name within Nuxt." required>
                 <UInput
-                  v-model="form.slug"
-                  name="slug"
+                  v-model="form.name"
+                  name="name"
                   required
-                  placeholder="framework"
+                  placeholder="Framework"
                   autocomplete="off"
-                  class="w-full"
                   appearance="darken"
-                  custom-class="rounded-l-none"
+                  class="w-full lg:max-w-xs"
+                />
+              </UFormGroup>
+
+              <UFormGroup name="url" label="Url" help="The url of your project is used for preview purposes.">
+                <UInput
+                  v-model="form.url"
+                  name="url"
+                  class="w-full lg:max-w-xs"
+                  placeholder="https://nuxtjs.org"
+                  appearance="darken"
+                />
+              </UFormGroup>
+
+              <UFormGroup name="baseDir" label="Base Directory" help="This is the path of your nuxt app in the repository.">
+                <USelect
+                  v-model="form.baseDir"
+                  name="baseDir"
+                  class="w-full lg:max-w-xs"
+                  appearance="darken"
+                  :options="folders"
+                />
+              </UFormGroup>
+            </div>
+
+            <template #footer>
+              <div class="flex items-center justify-end">
+                <UButton
+                  type="submit"
+                  :loading="loading"
+                  label="Create"
                 />
               </div>
-            </UFormGroup>
-
-            <UFormGroup name="name" label="Name" help="This is your project's visible name within Nuxt." required>
-              <UInput
-                v-model="form.name"
-                name="name"
-                required
-                placeholder="Framework"
-                autocomplete="off"
-                appearance="darken"
-                class="w-full lg:max-w-xs"
-              />
-            </UFormGroup>
-
-            <UFormGroup name="url" label="Url" help="The url of your project is used for preview purposes.">
-              <UInput
-                v-model="form.url"
-                name="url"
-                class="w-full lg:max-w-xs"
-                placeholder="https://nuxtjs.org"
-                appearance="darken"
-              />
-            </UFormGroup>
-
-            <UFormGroup name="baseDir" label="Base Directory" help="This is the path of your nuxt app in the repository.">
-              <USelect
-                v-model="form.baseDir"
-                name="baseDir"
-                class="w-full lg:max-w-xs"
-                appearance="darken"
-                :options="folders"
-              />
-            </UFormGroup>
-          </div>
-
-          <template #footer>
-            <div class="flex items-center justify-end">
-              <UButton
-                type="submit"
-                :loading="loading"
-                label="Create"
-              />
-            </div>
-          </template>
-        </UCard>
-      </PageGrid>
-    </Page>
+            </template>
+          </UCard>
+        </div>
+      </div>
+    </TeamPage>
   </div>
 </template>
 

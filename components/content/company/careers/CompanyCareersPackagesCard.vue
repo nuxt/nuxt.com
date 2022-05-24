@@ -4,10 +4,10 @@
       <UIcon :name="icon" :class="[iconClass, bgClass]" class="w-10 h-10" />
     </div>
     <h3 class="mt-6 text-xl font-semibold u-text-gray-900">
-      <Markdown use="title" unwrap="p" />
+      <Markdown :use="$slots.title" unwrap="p" />
     </h3>
     <p class="mt-3 text-base u-text-gray-900">
-      <Markdown use="description" unwrap="p" />
+      <Markdown :use="$slots.description" unwrap="p" />
     </p>
   </li>
 </template>

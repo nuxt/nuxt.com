@@ -1,34 +1,26 @@
 <template>
-  <div class="relative flex-1">
-    <slot name="header" />
+  <div class="relative flex flex-col-reverse gap-8 lg:grid lg:grid-cols-10">
+    <div :class="{ 'col-span-10 lg:col-span-8': !!$route.params.slug, 'col-span-10': !$route.params.slug }">
+      <slot />
+    </div>
 
-    <main class="relative pb-16 sm:pb-32 lg:pt-8">
-      <UContainer padded>
-        <div class="relative grid grid-cols-10 gap-8">
-          <aside
-            v-if="!!$slots.aside"
-            class="hidden col-span-2 pb-8 overflow-x-hidden overflow-y-auto lg:pb-0 lg:block lg:self-start"
-            :class="{
-              'lg:max-h-[calc(100vh-64px)] lg:top-16 lg:sticky lg:pt-8 lg:-mt-8': sticky
-            }"
-          >
-            <slot name="aside" />
-          </aside>
+    <div
+      v-if="!!$route.params.slug"
+      class="lg:col-span-2 lg:self-start overflow-x-hidden sticky top-16 -mx-4 sm:-mx-6 px-4 sm:px-6 lg:mx-0 lg:px-0 lg:pt-8 lg:-mt-8 bg-white/75 dark:bg-black/75 backdrop-blur-md lg:max-h-[calc(100vh-64px)]"
+    >
+      <div class="py-4 border-b border-dashed u-border-gray-200 lg:border-none lg:py-0">
+        <button class="flex items-center gap-3 lg:hidden" @click="isOpen = !isOpen">
+          <span class="text-sm font-semibold u-text-gray-900">Table of Contents</span>
 
-          <div class="relative" :class="{ 'col-span-10 lg:col-span-8': !!$slots.aside, 'col-span-10': !$slots.aside }">
-            <slot />
-          </div>
-        </div>
-      </UContainer>
-    </main>
+          <UIcon name="heroicons-outline:chevron-right" class="w-4 h-4 transition-transform duration-100 transform u-text-gray-400" :class="[isOpen ? 'rotate-90' : 'rotate-0']" />
+        </button>
+
+        <DocsToc class="mt-4 lg:mt-0" :class="[isOpen ? 'lg:block' : 'hidden lg:block']" />
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-defineProps({
-  sticky: {
-    type: Boolean,
-    default: true
-  }
-})
+const isOpen = ref(false)
 </script>

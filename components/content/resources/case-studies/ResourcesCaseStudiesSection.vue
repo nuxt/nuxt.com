@@ -2,7 +2,7 @@
   <div class="relative py-8" :class="[highlight && 'u-bg-gray-50 sm:py-24 xl:py-36', !highlight && 'sm:py-16']">
     <UContainer padded constrained-class="relative max-w-4xl">
       <h3 v-if="$slots.title" class="flex items-center mb-8 text-2xl font-semibold tracking-tight u-text-gray-900 sm:text-3xl">
-        <Markdown use="title" unwrap="p" />
+        <Markdown :use="$slots.title" unwrap="p" />
 
         <span v-if="titleLabel" class="absolute left-0 items-center hidden gap-4 text-base font-semibold -translate-x-full xl:flex u-text-gray-400">
           {{ titleLabel }}
@@ -12,7 +12,7 @@
 
       <div v-if="$slots.description" class="flex items-start">
         <div class="prose text-justify dark:prose-invert max-w-none" :class="{ 'xl:w-4/5': highlight }">
-          <Markdown use="description" unwrap="p" />
+          <Markdown :use="$slots.description" unwrap="p" />
         </div>
 
         <span v-if="descriptionLabel" class="absolute left-0 items-center hidden gap-4 text-base font-semibold -translate-x-full xl:flex u-text-gray-400">

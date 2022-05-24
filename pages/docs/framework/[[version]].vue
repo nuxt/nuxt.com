@@ -1,5 +1,5 @@
 <template>
-  <DocsPage>
+  <Page>
     <template #header>
       <SubNavbar title="Framework" :links="links">
         <template #left>
@@ -24,7 +24,7 @@
     </template>
 
     <NuxtPage />
-  </DocsPage>
+  </Page>
 </template>
 
 <script setup lang="ts">

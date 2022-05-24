@@ -1,7 +1,7 @@
 <template>
   <UContainer padded class="py-24">
     <h2 class="text-4xl font-semibold text-center u-text-gray-900">
-      <Markdown use="title" unwrap="p" />
+      <Markdown :use="$slots.title" unwrap="p" />
     </h2>
     <div class="grid grid-cols-3 mt-10 md:px-16 lg:px-32">
       <div
