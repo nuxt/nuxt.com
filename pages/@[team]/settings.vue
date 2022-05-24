@@ -1,13 +1,13 @@
 <template>
-  <Page>
-    <PageGrid>
+  <TeamPage>
+    <TeamPageGrid>
       <template #aside>
         <UVerticalNavigation :links="links" active-class="u-text-gray-900 u-bg-gray-100" />
       </template>
 
       <NuxtPage :team="team" />
-    </PageGrid>
-  </Page>
+    </TeamPageGrid>
+  </TeamPage>
 </template>
 
 <script setup lang="ts">

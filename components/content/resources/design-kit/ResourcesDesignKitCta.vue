@@ -8,10 +8,10 @@
 
       <div class="relative flex flex-col h-full gap-y-4">
         <h5 class="text-2xl font-semibold u-text-black">
-          <Markdown use="title" unwrap="p" />
+          <Markdown :use="$slots.title" unwrap="p" />
         </h5>
         <p class="w-3/4 u-text-gray-700">
-          <Markdown use="description" unwrap="p" />
+          <Markdown :use="$slots.description" unwrap="p" />
         </p>
         <!-- TODO: update to -->
         <div class="flex items-end h-full">

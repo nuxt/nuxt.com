@@ -1,14 +1,14 @@
 <template>
   <UContainer padded>
-    <div class="grid gap-8 py-8 lg:grid-cols-2 md:py-20">
-      <div class="flex flex-col justify-center">
-        <h1 class="text-4xl font-semibold tracking-tight u-text-gray-900 sm:text-5xl">
-          <Markdown use="title" unwrap="p" />
+    <div class="grid gap-8 pt-12 pb-8 sm:py-12 lg:grid-cols-2">
+      <div class="flex flex-col items-center justify-center sm:items-start gap-y-5">
+        <h1 class="text-4xl font-semibold text-center sm:text-left u-text-gray-900 sm:text-5xl">
+          <Markdown :use="$slots.title" unwrap="p" />
         </h1>
-        <p v-if="$slots.description" class="mt-6 text-lg font-medium u-text-gray-500">
-          <Markdown use="description" unwrap="p" />
+        <p v-if="$slots.description" class="text-lg font-medium text-center sm:text-left u-text-gray-500">
+          <Markdown :use="$slots.description" unwrap="p" />
         </p>
-        <form class="flex gap-3 mt-6" @submit.prevent="onSubmit">
+        <form class="flex gap-3" @submit.prevent="onSubmit">
           <UInput
             v-model="form.email"
             name="email"

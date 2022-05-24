@@ -1,8 +1,8 @@
 <template>
   <div class="flex flex-col flex-1">
-    <PageHeader title="Let's build something new." description="Import an existing Git repository or get started with one of our templates." />
+    <TeamPageHeader title="Let's build something new." description="Import an existing Git repository or get started with one of our templates." />
 
-    <Page overlap>
+    <TeamPage overlap>
       <div class="grid gap-8 sm:grid-cols-2">
         <UCard base-class="flex flex-col overflow-hidden lg:h-[calc(100vh-352px)] lg:min-h-[528px]" body-class="flex-1 lg:overflow-y-auto" footer-background-class="u-bg-gray-50" shadow-class="">
           <template #header>
@@ -111,15 +111,12 @@
           </template>
         </UCard>
 
-        <UCard shadow-class base-class="flex flex-col overflow-hidden lg:h-[calc(100vh-352px)] lg:min-h-[528px]" body-class="px-4 pt-1 pb-6 sm:px-5" body-background-class="flex-1 lg:overflow-y-auto u-bg-gray-50" header-background-class="u-bg-gray-50 !border-0 -mb-1">
+        <UCard shadow-class="" base-class="flex flex-col overflow-hidden lg:h-[calc(100vh-352px)] lg:min-h-[528px]" body-class="px-4 pt-1 pb-6 sm:px-5" body-background-class="flex-1 lg:overflow-y-auto u-bg-gray-50" header-background-class="u-bg-gray-50 !border-0 -mb-1">
           <template #header>
             <div class="flex items-center justify-between min-w-0 gap-3">
               <h3 class="text-2xl font-semibold truncate u-text-gray-900">
                 Clone a template
               </h3>
-              <NuxtLink :to="{ name: 'templates' }" class="flex-shrink-0 text-sm font-medium text-primary-500 hover:underline">
-                Browse all &rarr;
-              </NuxtLink>
             </div>
           </template>
 
@@ -134,7 +131,7 @@
           </div>
         </UCard>
       </div>
-    </Page>
+    </TeamPage>
   </div>
 </template>
 

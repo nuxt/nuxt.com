@@ -1,17 +1,17 @@
 <template>
-  <DocsPage id="smooth" class="pt-16 -mt-16">
+  <Page id="smooth" class="pt-16 -mt-16">
     <template #aside>
       <CommunityRepositoriesAside />
     </template>
 
-    <div class="flex flex-wrap items-center justify-between gap-3">
+    <div class="flex flex-col justify-between gap-3 sm:items-center sm:flex-row">
       <h2 class="text-3xl font-semibold u-text-gray-900">
         {{ filteredRepositories.length }} repositor{{ filteredRepositories.length > 1 ? 'ies' : 'y' }} found
       </h2>
 
-      <div class="flex items-center gap-3">
-        <CommunityRepositoriesFilters />
+      <div class="flex items-center gap-3 sm:flex-row-reverse">
         <CommunityRepositoriesFilterSort />
+        <CommunityRepositoriesFilters />
       </div>
     </div>
 
@@ -20,7 +20,7 @@
         <CommunityRepositoriesListItem :repository="displayedRepository" />
       </li>
     </ul>
-  </DocsPage>
+  </Page>
 </template>
 
 <script setup lang="ts">

@@ -1,10 +1,10 @@
 <template>
-  <UContainer padded class="pt-12 pb-16 sm:pb-32">
+  <UContainer padded class="pt-8 pb-16 sm:pb-32">
     <h2 class="text-4xl font-semibold lg:w-1/2 u-text-gray-900">
-      <Markdown use="title" unwrap="p" />
+      <Markdown :use="$slots.title" unwrap="p" />
     </h2>
     <ul class="grid mt-14" :class="listClass">
-      <Markdown use="list" unwrap="p" />
+      <Markdown :use="$slots.list" unwrap="p" />
     </ul>
   </UContainer>
 </template>
