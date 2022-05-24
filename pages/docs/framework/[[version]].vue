@@ -1,5 +1,5 @@
 <template>
-  <Page>
+  <Page :sticky="!!$route.params.slug">
     <template #header>
       <SubNavbar title="Framework" :links="links">
         <template #left>

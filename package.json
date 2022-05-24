@@ -51,6 +51,7 @@
     "vue-plausible": "^1.3.1",
     "vue-tsc": "^0.34.16",
     "y-websocket": "^1.4.3",
-    "yjs": "^13.5.38"
+    "yjs": "^13.5.38",
+    "@vueuse/motion": "^2.0.0-beta.12"
   }
 }
