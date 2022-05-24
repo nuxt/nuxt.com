@@ -9,7 +9,7 @@
     >
       <div
         v-if="index !== 0"
-        class="absolute -top-1 -left-2 w-[200px] h-[180px] bg-gray-900/50 transition-opacity duration-300"
+        class="absolute -top-1 -left-2 w-[200px] h-[180px] bg-gray-900/50 dark:bg-gray-800/50 transition-opacity duration-300"
         :class="[0, 1].includes(currentStep) ? 'opacity-100' : 'opacity-0'"
       />
 

@@ -25,7 +25,7 @@
             section4Steps.includes(currentSection) && index === 3 ? 'opacity-0' : 'opacity-100'"
         >
           <img
-            :src="`/assets/docs/framework/v3/architecture/${data.icon}`"
+            :src="`/assets/docs/framework/v3/architecture/${colorMode.preference === 'dark' ? data.iconDark : data.icon}`"
             class="transition duration-200 group-hover:opacity-0"
             :class="section1Steps.includes(currentSection) && index === 0 ||
               section2Steps.includes(currentSection) && index === 1 ||
@@ -73,6 +73,7 @@ import type { Ref } from 'vue'
 const { data: architectureData } = await useAsyncData('architecture', () => queryContent('/docs/framework/v3/_collections/architecture').findOne())
 
 const { currentSection, stopCounter, restartCounter } = useCounterAnimations()
+const colorMode = useColorMode()
 
 const root = ref(null) as Ref<Element>
 const observer = ref() as Ref<IntersectionObserver>
@@ -92,12 +93,6 @@ const observerCallback = (entries: IntersectionObserverEntry[]) =>
     }
   })
 
-onBeforeMount(() => (observer.value = new IntersectionObserver(observerCallback)))
-
-onMounted(() => observer.value.observe(root.value))
-
-onBeforeUnmount(() => observer.value?.disconnect())
-
 const restartAnimation = (section: number) => {
   sectionAnimating.value = true
 
@@ -107,6 +102,13 @@ const restartAnimation = (section: number) => {
 
   restartCounter(animationsDelay, section === 1 ? 2 : section === 2 ? 4 : section === 3 ? 6 : 0)
 }
+
+onBeforeMount(() => (observer.value = new IntersectionObserver(observerCallback)))
+
+onMounted(() => observer.value.observe(root.value))
+
+onBeforeUnmount(() => observer.value?.disconnect())
+
 </script>
 
 <style scoped>

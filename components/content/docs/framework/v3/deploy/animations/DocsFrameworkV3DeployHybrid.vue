@@ -7,7 +7,7 @@
         class="w-[160px] p-2 bg-white rounded-md h-[180px] border-transition border-4 border-transparent relative"
       >
         <div
-          class="absolute -top-1 -left-2 w-[200px] h-[180px] bg-gray-900/50 transition-all duration-1000"
+          class="absolute -top-1 -left-2 w-[200px] h-[180px] bg-gray-900/50 dark:bg-gray-800/50 transition-all duration-1000"
           :class="currentStep > 0 ? 'opacity-100' : 'opacity-0'"
         />
         <span

@@ -22,7 +22,7 @@
             (section3Steps.includes(currentSection) && index === 2) }"
         >
           <img
-            :src="`/assets/docs/framework/v3/deploy/${data.icon}`"
+            :src="`/assets/docs/framework/v3/deploy/${colorMode.preference === 'dark' ? data.iconDark : data.icon}`"
             class="transition duration-200 group-hover:opacity-0"
             :class="{ 'opacity-0': (section1Steps.includes(currentSection) && index === 0) ||
               (section2Steps.includes(currentSection) && index === 1) ||
@@ -54,7 +54,7 @@
       </li>
     </ul>
     <div class="flex items-end justify-center col-span-7">
-      <div class="translate-x-36 bg-gray-900 rounded-md h-[426px] w-[626px]">
+      <div class="translate-x-36 bg-gray-900 dark:bg-gray-800 rounded-md h-[426px] w-[626px]">
         <DocsFrameworkV3DeployServer v-if="section1Steps.includes(currentSection)" />
         <DocsFrameworkV3DeployStatic v-if="section2Steps.includes(currentSection)" />
         <DocsFrameworkV3DeployHybrid v-if="section3Steps.includes(currentSection)" />
@@ -69,11 +69,13 @@ import type { Ref } from 'vue'
 
 const { data: deployData } = await useAsyncData('deply', () => queryContent('/docs/framework/v3/_collections/deploy').findOne())
 
+const { currentSection, restartCounter, stopCounter } = useCounterAnimations()
+const colorMode = useColorMode()
+
 const root = ref(null) as Ref<Element>
 const observer = ref() as Ref<IntersectionObserver>
 const sections = ref(null)
 const sectionAnimating = ref(false)
-const { currentSection, restartCounter, stopCounter } = useCounterAnimations()
 const animationsDelay = [500, 1000, 1000, 500, 2000, 800, 1500, 3500, 800, 500, 500, 1000, 1000, 1000, 1000, 800]
 const section1Steps = [0, 1, 2, 3, 4, 5]
 const section2Steps = [6, 7, 8]
@@ -88,12 +90,6 @@ const observerCallback = (entries: IntersectionObserverEntry[]) =>
     }
   })
 
-onBeforeMount(() => (observer.value = new IntersectionObserver(observerCallback)))
-
-onMounted(() => observer.value.observe(root.value))
-
-onBeforeUnmount(() => observer.value?.disconnect())
-
 const restartAnimation = (section: number) => {
   sectionAnimating.value = true
 
@@ -103,4 +99,11 @@ const restartAnimation = (section: number) => {
 
   restartCounter(animationsDelay, section === 1 ? 6 : section === 2 ? 9 : 0)
 }
+
+onBeforeMount(() => (observer.value = new IntersectionObserver(observerCallback)))
+
+onMounted(() => observer.value.observe(root.value))
+
+onBeforeUnmount(() => observer.value?.disconnect())
+
 </script>

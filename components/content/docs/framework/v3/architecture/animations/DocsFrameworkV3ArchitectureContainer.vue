@@ -1,8 +1,8 @@
 <template>
-  <div class="w-[750px] h-[500px] shadow-xl rounded-lg flex flex-col gap-y-12 transition-colors duration-500" :class="currentSection === 6 ? 'bg-green-400' : 'bg-white dark:bg-gray-500'">
+  <div class="w-[750px] h-[500px] shadow-xl rounded-lg flex flex-col gap-y-12 transition-colors duration-500 ease" :class="currentSection === 6 ? 'bg-green-400' : 'bg-white dark:bg-gray-500'">
     <!-- header -->
     <div
-      class="flex items-center justify-between h-16 p-8 transition-all duration-500 rounded-t-lg"
+      class="flex items-center justify-between h-16 p-8 transition-all duration-500 rounded-t-lg ease"
       :class="currentSection === 4 ? 'translate-x-20 bg-green-400 shadow-xl' : currentSection === 6 ? 'bg-green-400' : 'translate-x-0 bg-gray-100 dark:bg-gray-600'"
     >
       <svg width="27" height="22" viewBox="0 0 27 22" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -17,9 +17,9 @@
       </div>
       <div class="w-16 h-8 bg-white rounded-lg" />
     </div>
-    <!-- BODY -->
+    <!-- body -->
     <div class="p-4">
-      <div class="flex flex-col p-8 -mt-12 transition-all duration-500 rounded-lg gap-y-8" :class="currentSection === 2 ? 'translate-x-20 bg-green-400 shadow-xl' : 'translate-x-0'">
+      <div class="flex flex-col p-8 -mt-12 transition-all duration-500 rounded-lg gap-y-8 ease" :class="currentSection === 2 ? 'translate-x-20 bg-green-400 shadow-xl' : 'translate-x-0'">
         <div class="flex flex-col gap-y-8">
           <div class="flex justify-between">
             <div class="flex flex-col pt-8 gap-y-2">
@@ -27,7 +27,7 @@
               <div class="w-64 h-4 pb-1 bg-gray-100 rounded-[4px]" />
               <div class="w-48 h-4 rounded-[4px] bg-gray-100" />
             </div>
-            <div class="h-[180px] w-[350px] rounded-md transition-all duration-500" :class="currentSection === 0 ? 'translate-x-20 bg-green-400 shadow-xl' : 'bg-gray-100 translate-x-0'" />
+            <div class="h-[180px] w-[350px] rounded-md transition-all duration-500 ease" :class="currentSection === 0 ? 'translate-x-20 bg-green-400 shadow-xl' : 'bg-gray-100 translate-x-0'" />
           </div>
         </div>
         <div class="flex items-center justify-between gap-x-4">

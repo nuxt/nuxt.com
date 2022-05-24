@@ -17,7 +17,7 @@
           <Hexagon class="h-20 w-22 u-text-gray-50" />
           <div class="absolute top-0 flex items-center justify-center w-full h-full ">
             <img
-              :src="`/assets/docs/framework/v3/commands/${data.icon}`"
+              :src="`/assets/docs/framework/v3/commands/${colorMode.preference === 'dark' ? data.iconDark : data.icon}`"
               class="absolute w-12 h-12 transition-opacity duration-0"
               :alt="`${data.title} icon`"
               :class="(section1Steps.includes(currentSection) && index === 0) ||
@@ -66,6 +66,7 @@ import type { Ref } from 'vue'
 const { data: commandsData } = await useAsyncData('commands', () => queryContent('/docs/framework/v3/_collections/commands').findOne())
 
 const { currentSection, restartCounter, stopCounter } = useCounterAnimations()
+const colorMode = useColorMode()
 
 const root = ref(null) as Ref<Element>
 const observer = ref() as Ref<IntersectionObserver>
@@ -85,12 +86,6 @@ const observerCallback = (entries: IntersectionObserverEntry[]) =>
     }
   })
 
-onBeforeMount(() => (observer.value = new IntersectionObserver(observerCallback)))
-
-onMounted(() => observer.value.observe(root.value))
-
-onBeforeUnmount(() => observer.value?.disconnect())
-
 const restartAnimation = (section: number, timeout = true) => {
   if (timeout) {
     sectionAnimating.value = true
@@ -101,4 +96,11 @@ const restartAnimation = (section: number, timeout = true) => {
 
   restartCounter(animationsDelay, section === 1 ? 3 : section === 2 ? 5 : section === 3 ? 10 : 0)
 }
+
+onBeforeMount(() => (observer.value = new IntersectionObserver(observerCallback)))
+
+onMounted(() => observer.value.observe(root.value))
+
+onBeforeUnmount(() => observer.value?.disconnect())
+
 </script>

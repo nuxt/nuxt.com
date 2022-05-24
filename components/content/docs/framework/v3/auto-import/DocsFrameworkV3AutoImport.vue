@@ -16,7 +16,7 @@
           <Hexagon class="w-16 u-text-gray-50 h-14" />
           <div class="absolute top-0 flex items-center justify-center w-16 h-14 z-1">
             <img
-              :src="`/assets/docs/framework/v3/auto-import/${data.icon}`"
+              :src="`/assets/docs/framework/v3/auto-import/${colorMode.preference === 'dark' ? data.iconDark : data.icon}`"
               class="absolute w-8 h-8 transition-opacity duration-0"
               :alt="`${data.title} icon`"
               :class="(section1Steps.includes(currentSection) && index === 0) ||
@@ -52,7 +52,10 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 
+const { data: autoImportData } = await useAsyncData('autoImport', () => queryContent('/docs/framework/v3/_collections/auto-import').findOne())
+
 const { currentSection, restartCounter, stopCounter } = useCounterAnimations()
+const colorMode = useColorMode()
 
 const observer = ref() as Ref<IntersectionObserver>
 const root = ref(null) as Ref<Element>
@@ -61,8 +64,6 @@ const section1Steps = [0, 1, 2, 3, 4, 5, 6]
 const section2Steps = [7, 8, 9, 10, 11, 12, 13]
 const section3Steps = [14]
 const sectionAnimating = ref(false)
-
-const { data: autoImportData } = await useAsyncData('autoImport', () => queryContent('/docs/framework/v3/_collections/auto-import').findOne())
 
 const observerCallback = (entries: IntersectionObserverEntry[]) =>
   entries.forEach((entry) => {
@@ -73,12 +74,6 @@ const observerCallback = (entries: IntersectionObserverEntry[]) =>
     }
   })
 
-onBeforeMount(() => (observer.value = new IntersectionObserver(observerCallback)))
-
-onMounted(() => observer.value.observe(root.value))
-
-onBeforeUnmount(() => observer.value?.disconnect())
-
 const restartAnimation = (section: number) => {
   sectionAnimating.value = true
 
@@ -88,4 +83,11 @@ const restartAnimation = (section: number) => {
 
   restartCounter(animationsDelay, section === 1 ? 7 : section === 2 ? 14 : 0)
 }
+
+onBeforeMount(() => (observer.value = new IntersectionObserver(observerCallback)))
+
+onMounted(() => observer.value.observe(root.value))
+
+onBeforeUnmount(() => observer.value?.disconnect())
+
 </script>

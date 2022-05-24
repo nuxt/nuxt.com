@@ -12,7 +12,7 @@
           <Hexagon class="h-20 w-22 u-text-gray-50" />
           <div class="absolute top-0 flex items-center justify-center w-full h-full ">
             <img
-              :src="`/assets/docs/framework/v3/routing/${data.icon}`"
+              :src="`/assets/docs/framework/v3/routing/${colorMode.preference === 'dark' ? data.iconDark : data.icon}`"
               class="absolute w-12 h-12 transition-opacity duration-0"
               :alt="`${data.title} icon`"
               :class="currentSection === index ? 'opacity-0' : 'opacity-100'"
@@ -41,6 +41,7 @@ import type { Ref } from 'vue'
 const { data: routingData } = await useAsyncData('file-system-routing', () => queryContent('/docs/framework/v3/_collections/routing').findOne())
 
 const { currentSection, restartCounter, stopCounter } = useCounterAnimations()
+const colorMode = useColorMode()
 
 const observer = ref() as Ref<IntersectionObserver>
 const root = ref(null) as Ref<Element>
@@ -56,10 +57,6 @@ const observerCallback = (entries: IntersectionObserverEntry[]) =>
     }
   })
 
-onBeforeMount(() => (observer.value = new IntersectionObserver(observerCallback)))
-
-onMounted(() => observer.value.observe(root.value))
-
 onBeforeUnmount(() => observer.value?.disconnect())
 const restartAnimation = (section: number) => {
   sectionAnimating.value = true
@@ -70,4 +67,9 @@ const restartAnimation = (section: number) => {
 
   restartCounter(animationsDelay, section)
 }
+
+onBeforeMount(() => (observer.value = new IntersectionObserver(observerCallback)))
+
+onMounted(() => observer.value.observe(root.value))
+
 </script>
