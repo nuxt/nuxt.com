@@ -1048,9 +1048,9 @@
     unstorage "^0.4.1"
 
 "@nuxthq/ui@npm:@nuxthq/ui-edge@latest":
-  version "0.0.2-27555018.06b07e2"
-  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27555018.06b07e2.tgz#10a8fcc94ce9e309032c39391ddbf2b13e59a755"
-  integrity sha512-dYPDpzNl53erc8TF5aqPZNsHgTt4lNIEjg2ylYGr489W+4RUqWB6Jn7XBP1HHw/7TA+xcDtCrsburE92isSs8A==
+  version "0.0.2-27556380.e419d68"
+  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27556380.e419d68.tgz#3e8f77cbc6748593f6eb78a1bbeace8a8f51a303"
+  integrity sha512-Ym253hrAyNSTJ4pS+DrcTX+4/gFh79c2/T+nH1/a2ape363A5VsJ5+q6/QZb6Aqh21yS68mY6/8aD7tt4XQ7GQ==
   dependencies:
     "@headlessui/vue" "1.6.2"
     "@iconify/vue" "^3.2.1"
@@ -9797,15 +9797,15 @@ unimport@^0.1.6, unimport@^0.1.9:
     unplugin "^0.6.3"
 
 unimport@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/unimport/-/unimport-0.2.1.tgz#dd7cc65fcd9d945186aee1eceb1bdc06ecfdf49f"
-  integrity sha512-6u1uY6GFIi9WslI7fPun0I0ZrIGJ0yAn92n/9rQv4MAEEnxg8zMO+Tj7q/6Z/7XxTn8qFCJIqEM/3Io81Zwmmw==
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/unimport/-/unimport-0.2.3.tgz#12d835e69cc4d6a60862f9a6b762a6c610b3d406"
+  integrity sha512-bgIGIaPgn+xZrsFZTQazzE7aLOmBzvYtvswoJtQRBI0dRbX2W5Y/G6Dd/gYEkCFPbpmNhxwZqewuAjT9hd3tcA==
   dependencies:
     "@rollup/pluginutils" "^4.2.1"
     escape-string-regexp "^5.0.0"
-    globby "^13.1.1"
+    fast-glob "^3.2.11"
     local-pkg "^0.4.1"
-    magic-string "^0.26.1"
+    magic-string "^0.26.2"
     mlly "^0.5.2"
     pathe "^0.3.0"
     scule "^0.2.1"
