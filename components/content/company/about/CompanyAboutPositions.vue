@@ -12,10 +12,10 @@
     <UContainer padded class="relative pb-12 mx-0 md:mx-auto md:pt-24 md:pb-36">
       <div class="flex flex-col max-w-sm gap-5">
         <h2 class="text-4xl font-semibold u-text-gray-900">
-          <Markdown use="title" unwrap="p" />
+          <Markdown :use="$slots.title" unwrap="p" />
         </h2>
         <p class="text-lg u-text-gray-700">
-          <Markdown use="description" unwrap="p" />
+          <Markdown :use="$slots.description" unwrap="p" />
         </p>
         <div>
           <UButton v-if="button" v-bind="button" />

@@ -1,5 +1,5 @@
 <template>
-  <DocsPage id="smooth" class="pt-16 -mt-16">
+  <Page id="smooth" class="pt-16 -mt-16">
     <template #aside>
       <ResourcesShowcasesAside :categories="categories" :selected-category="selectedCategory" />
     </template>
@@ -13,7 +13,7 @@
         <ResourcesShowcasesListItem :showcase="showcase" />
       </li>
     </ul>
-  </DocsPage>
+  </Page>
 </template>
 
 <script setup lang="ts">

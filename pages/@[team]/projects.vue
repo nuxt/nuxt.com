@@ -1,5 +1,5 @@
 <template>
-  <Page>
+  <TeamPage>
     <div class="space-y-6">
       <div class="flex flex-wrap-reverse items-center gap-3 px-4 sm:px-0">
         <UInput
@@ -35,7 +35,7 @@
       <ProjectsList v-if="projects && projects.length" :projects="filteredProjects" />
       <ProjectsListPlaceholder v-else />
     </div>
-  </Page>
+  </TeamPage>
 </template>
 
 <script setup lang="ts">

@@ -7,13 +7,13 @@
     <UContainer padded class="relative pb-24 mx-0 xl:mx-auto">
       <div class="flex flex-col max-w-md gap-5">
         <h2 class="text-xl font-semibold uppercase u-text-gray-300">
-          <Markdown use="title" unwrap="p" />
+          <Markdown :use="$slots.title" unwrap="p" />
         </h2>
         <h3 class="text-4xl font-semibold u-text-gray-900">
-          <Markdown use="subtitle" unwrap="p" />
+          <Markdown :use="$slots.subtitle" unwrap="p" />
         </h3>
         <p class="text-2xl font-semibold u-text-gray-700">
-          <Markdown use="description" unwrap="p" />
+          <Markdown :use="$slots.description" unwrap="p" />
         </p>
       </div>
     </UContainer>

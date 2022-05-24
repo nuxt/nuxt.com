@@ -1,18 +1,18 @@
 <template>
   <div class="flex flex-col flex-1">
-    <PageHeader
+    <TeamPageHeader
       title="You're almost done."
       description="Please follow the steps to configure your project."
       :to="{ name: '@team-new' }"
     />
 
-    <Page overlap>
-      <PageGrid v-if="selectedTemplate">
+    <TeamPage overlap>
+      <TeamPageGrid v-if="selectedTemplate">
         <template #aside>
           <TemplatesCard :template="selectedTemplate" />
         </template>
 
-        <UCard base-class @submit.prevent="onSubmit">
+        <UCard base-class="" @submit.prevent="onSubmit">
           <h3 class="mb-1 text-lg font-medium leading-6 u-text-gray-900">
             Create a Git repository
           </h3>
@@ -79,8 +79,8 @@
             </p>
           </div>
         </UCard>
-      </PageGrid>
-    </Page>
+      </TeamPageGrid>
+    </TeamPage>
   </div>
 </template>
 

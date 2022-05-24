@@ -1,17 +1,17 @@
 <template>
-  <DocsPage id="smooth" class="pt-16 -mt-16">
+  <Page id="smooth" class="pt-16 -mt-16">
     <template #aside>
       <IntegrationsAside />
     </template>
 
-    <div class="flex flex-wrap items-center justify-between gap-3">
+    <div class="flex flex-col justify-between gap-3 sm:items-center sm:flex-row">
       <h2 class="text-3xl font-semibold u-text-gray-900">
         {{ filteredModules.length }} module{{ filteredModules.length > 1 ? 's' : '' }} found
       </h2>
 
-      <div class="flex items-center gap-3">
-        <IntegrationsFilters />
+      <div class="flex items-center gap-3 sm:flex-row-reverse">
         <IntegrationsFilterSort />
+        <IntegrationsFilters />
       </div>
     </div>
 
@@ -22,7 +22,7 @@
         <IntegrationsListItem :module="filteredModule" />
       </li>
     </ul>
-  </DocsPage>
+  </Page>
 </template>
 
 <script setup lang="ts">

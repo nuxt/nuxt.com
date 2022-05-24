@@ -1,11 +1,11 @@
 <template>
-  <UContainer padded class="pt-12 pb-16 sm:pb-32">
+  <UContainer padded class="pt-8 pb-16 sm:pb-32">
     <h2 class="text-4xl font-semibold lg:w-1/2 u-text-gray-900">
-      <Markdown use="title" unwrap="p" />
+      <Markdown :use="$slots.title" unwrap="p" />
     </h2>
     <div class="flex items-center justify-between mt-6">
       <p class="text-lg u-text-gray-500 lg:w-3/5">
-        <Markdown use="description" unwrap="p" />
+        <Markdown :use="$slots.description" unwrap="p" />
       </p>
       <div class="flex items-center gap-3">
         <USelect
