@@ -1,8 +1,15 @@
 <template>
   <div>
-    <svg width="324" height="334" viewBox="0 0 324 334" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      width="324"
+      height="334"
+      viewBox="0 0 324 334"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      class="text-gray-900 dark:text-gray-800"
+    >
       <g clip-path="url(#clip0_4107_48151)">
-        <rect width="324" height="334" rx="12" fill="#18181B" />
+        <rect width="324" height="334" rx="12" fill="currentColor" />
 
         <path d="M32.7103 34.8302L36.9503 30.5902C37.044 30.4972 37.1184 30.3866 37.1692 30.2648C37.22 30.1429 37.2461 30.0122 37.2461 29.8802C37.2461 29.7482 37.22 29.6175 37.1692 29.4956C37.1184 29.3738 37.044 29.2632 36.9503 29.1702C36.7629 28.9839 36.5095 28.8794 36.2453 28.8794C35.9811 28.8794 35.7277 28.9839 35.5403 29.1702L32.0003 32.7102L28.4603 29.1702C28.2729 28.9839 28.0195 28.8794 27.7553 28.8794C27.4911 28.8794 27.2377 28.9839 27.0503 29.1702C26.9576 29.2636 26.8843 29.3744 26.8345 29.4963C26.7848 29.6181 26.7595 29.7486 26.7603 29.8802C26.7595 30.0118 26.7848 30.1423 26.8345 30.2641C26.8843 30.3859 26.9576 30.4967 27.0503 30.5902L31.2903 34.8302C31.3833 34.9239 31.4939 34.9983 31.6157 35.0491C31.7376 35.0998 31.8683 35.126 32.0003 35.126C32.1323 35.126 32.263 35.0998 32.3849 35.0491C32.5067 34.9983 32.6173 34.9239 32.7103 34.8302Z" fill="white" />
         <path
@@ -59,32 +66,32 @@
         </clipPath>
       </defs>
     </svg>
-    <span class="absolute left-[28%] top-[15%] u-text-gray-400 transition-opacity duration-500" :class="[1, 2].includes(currentSection) ? 'opacity-100' : 'opacity-0'">
+    <span class="absolute left-[28%] top-[15%] text-gray-400 transition-opacity duration-500" :class="[1, 2].includes(currentSection) ? 'opacity-100' : 'opacity-0'">
       blog
     </span>
     <DocsFrameworkV3RoutingFile
       :class="[0, 3].includes(currentSection) ? 'opacity-100 left-14 top-16' : 'opacity-0'"
       :label="currentSection === 0 ? 'index.vue' : 'login.vue'"
-      :icon-class="['w-6 h-6 transition-colors duration-500', !currentStep ? 'text-green-400' : currentStep === 0 ? 'text-green-400' : 'u-text-gray-400'].join(' ')"
-      :label-class="['transition-colors duration-500', !currentStep ? 'text-white' : currentStep === 0 ? 'u-text-white' : 'u-text-gray-400'].join(' ')"
+      :icon-class="['w-6 h-6 transition-colors duration-500', !currentStep ? 'text-green-400' : currentStep === 0 ? 'text-green-400' : 'text-gray-400'].join(' ')"
+      :label-class="['transition-colors duration-500', !currentStep ? 'text-white' : currentStep === 0 ? 'text-white' : 'text-gray-400'].join(' ')"
     />
     <DocsFrameworkV3RoutingFile
       :class="[1, 2].includes(currentSection) ? 'opacity-100 left-[28%] top-24' : 'opacity-0'"
       icon-class="w-6 h-6 text-green-400"
       :label="currentSection === 1 ? 'post.vue' : 'index.vue'"
-      label-class="u-text-white"
+      label-class="text-white"
     />
     <DocsFrameworkV3RoutingFile
       :class="currentSection === 2 ? 'opacity-100 left-[28%] top-[40%]' : 'opacity-0'"
-      icon-class="w-6 h-6 u-text-gray-400"
+      icon-class="w-6 h-6 text-gray-400"
       label="[slug.vue]"
-      label-class="u-text-gray-400"
+      label-class="text-gray-400"
     />
     <DocsFrameworkV3RoutingFile
       :class="currentSection === 3 ? 'opacity-100 left-14 top-[30%]' : 'opacity-0'"
       label="dashboard.vue"
-      :icon-class="['w-6 h-6 transition-colors duration-500', currentStep === 1 ? 'text-green-400' : 'u-text-gray-400'].join(' ')"
-      :label-class="['transition-colors duration-500', currentStep === 1 ? 'u-text-white' : 'u-text-gray-400'].join(' ')"
+      :icon-class="['w-6 h-6 transition-colors duration-500', currentStep === 1 ? 'text-green-400' : 'text-gray-400'].join(' ')"
+      :label-class="['transition-colors duration-500', currentStep === 1 ? 'text-white' : 'text-gray-400'].join(' ')"
     />
   </div>
 </template>
