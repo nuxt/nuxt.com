@@ -57,7 +57,6 @@ const observerCallback = (entries: IntersectionObserverEntry[]) =>
     }
   })
 
-onBeforeUnmount(() => observer.value?.disconnect())
 const restartAnimation = (section: number) => {
   sectionAnimating.value = true
 
@@ -67,6 +66,8 @@ const restartAnimation = (section: number) => {
 
   restartCounter(animationsDelay, section)
 }
+
+onBeforeUnmount(() => observer.value?.disconnect())
 
 onBeforeMount(() => (observer.value = new IntersectionObserver(observerCallback)))
 

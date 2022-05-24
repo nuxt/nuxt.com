@@ -20,28 +20,19 @@
               :src="`/assets/docs/framework/v3/commands/${colorMode.preference === 'dark' ? data.iconDark : data.icon}`"
               class="absolute w-12 h-12 transition-opacity duration-0"
               :alt="`${data.title} icon`"
-              :class="(section1Steps.includes(currentSection) && index === 0) ||
-                (section2Steps.includes(currentSection) && index === 1) ||
-                (section3Steps.includes(currentSection) && index === 2) ||
-                (section4Steps.includes(currentSection) && index === 3) ? 'opacity-0' : 'opacity-100'"
+              :class="isCurrentSection(index) ? 'opacity-0' : 'opacity-100'"
             >
             <img
               :src="`/assets/docs/framework/v3/commands/${data.iconColor}`"
               class="absolute w-12 h-12 transition-opacity duration-0"
               :alt="`${data.title} icon`"
-              :class="(section1Steps.includes(currentSection) && index === 0) ||
-                (section2Steps.includes(currentSection) && index === 1) ||
-                (section3Steps.includes(currentSection) && index === 2) ||
-                (section4Steps.includes(currentSection) && index === 3) ? 'opacity-100' : 'opacity-0'"
+              :class="isCurrentSection(index) ? 'opacity-100' : 'opacity-0'"
             >
           </div>
         </div>
         <h6
           class="text-lg transition-colors duration-0"
-          :class="(section1Steps.includes(currentSection) && index === 0) ||
-            (section2Steps.includes(currentSection) && index === 1) ||
-            (section3Steps.includes(currentSection) && index === 2) ||
-            (section4Steps.includes(currentSection) && index === 3) ? 'text-green-400' : 'u-text-gray-500'"
+          :class="isCurrentSection(index) ? 'text-green-400' : 'u-text-gray-500'"
         >
           {{ data.title }}
         </h6>
@@ -95,6 +86,13 @@ const restartAnimation = (section: number, timeout = true) => {
   }
 
   restartCounter(animationsDelay, section === 1 ? 3 : section === 2 ? 5 : section === 3 ? 10 : 0)
+}
+
+const isCurrentSection = (index) => {
+  return (section1Steps.includes(currentSection.value) && index === 0) ||
+    (section2Steps.includes(currentSection.value) && index === 1) ||
+    (section3Steps.includes(currentSection.value) && index === 2) ||
+    (section4Steps.includes(currentSection.value) && index === 3)
 }
 
 onBeforeMount(() => (observer.value = new IntersectionObserver(observerCallback)))

@@ -19,25 +19,19 @@
               :src="`/assets/docs/framework/v3/auto-import/${colorMode.preference === 'dark' ? data.iconDark : data.icon}`"
               class="absolute w-8 h-8 transition-opacity duration-0"
               :alt="`${data.title} icon`"
-              :class="(section1Steps.includes(currentSection) && index === 0) ||
-                (section2Steps.includes(currentSection) && index === 1) ||
-                section3Steps.includes(currentSection) && index === 2 ? 'opacity-0' : 'opacity-100'"
+              :class="isCurrentSection(index) ? 'opacity-0' : 'opacity-100'"
             >
             <img
               :src="`/assets/docs/framework/v3/auto-import/${data.iconColor}`"
               class="absolute w-8 h-8 transition-opacity duration-0"
               :alt="`${data.title} icon`"
-              :class="(section1Steps.includes(currentSection) && index === 0) ||
-                (section2Steps.includes(currentSection) && index === 1) ||
-                section3Steps.includes(currentSection) && index === 2 ? 'opacity-100' : 'opacity-0'"
+              :class="isCurrentSection(index) ? 'opacity-100' : 'opacity-0'"
             >
           </div>
         </div>
         <h6
           class="text-lg transition-colors duration-0"
-          :class="(section1Steps.includes(currentSection) && index === 0) ||
-            (section2Steps.includes(currentSection) && index === 1) ||
-            section3Steps.includes(currentSection) && index === 2 ? 'text-green-400' : 'u-text-gray-500'"
+          :class="isCurrentSection(index) ? 'text-green-400' : 'u-text-gray-500'"
         >
           {{ data.title }}
         </h6>
@@ -82,6 +76,12 @@ const restartAnimation = (section: number) => {
   }, section === 2 ? 4000 : 10500)
 
   restartCounter(animationsDelay, section === 1 ? 7 : section === 2 ? 14 : 0)
+}
+
+const isCurrentSection = (index) => {
+  return (section1Steps.includes(currentSection.value) && index === 0) ||
+    (section2Steps.includes(currentSection.value) && index === 1) ||
+    (section3Steps.includes(currentSection.value) && index === 2)
 }
 
 onBeforeMount(() => (observer.value = new IntersectionObserver(observerCallback)))
