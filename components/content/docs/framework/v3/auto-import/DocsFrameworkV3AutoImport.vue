@@ -89,5 +89,4 @@ onBeforeMount(() => (observer.value = new IntersectionObserver(observerCallback)
 onMounted(() => observer.value.observe(root.value))
 
 onBeforeUnmount(() => observer.value?.disconnect())
-
 </script>

@@ -162,5 +162,4 @@ watch(() => props.currentSection, () => {
     secondLineMotion.apply('in')
   }
 })
-
 </script>

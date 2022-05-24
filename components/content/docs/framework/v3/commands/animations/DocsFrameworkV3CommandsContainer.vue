@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps({
+defineProps({
   currentSection: {
     type: Number,
     default: 0
@@ -45,5 +45,4 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['restart'])
-
 </script>

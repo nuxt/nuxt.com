@@ -11,7 +11,6 @@
 </template>
 
 <script setup lang="ts">
-
 import { useMotion } from '@vueuse/motion'
 
 const props = defineProps({
@@ -62,5 +61,4 @@ watch(currentStep, () => {
     filesMotion[currentStep.value].apply('in')
   }
 })
-
 </script>

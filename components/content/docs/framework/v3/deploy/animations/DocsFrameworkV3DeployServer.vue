@@ -25,7 +25,6 @@
 </template>
 
 <script setup lang="ts">
-
 const { startStepper, currentStep } = useCounterAnimations()
 
 onMounted(() => {

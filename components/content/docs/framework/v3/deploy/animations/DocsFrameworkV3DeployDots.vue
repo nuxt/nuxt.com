@@ -18,7 +18,6 @@
 </template>
 
 <script setup lang="ts">
-
 const props = defineProps({
   currentSection: {
     type: Number,
@@ -40,5 +39,4 @@ watch(() => props.restartAnimation, () => {
     restartCounter(dotsDelay, 0)
   }
 })
-
 </script>

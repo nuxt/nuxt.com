@@ -64,5 +64,4 @@ onBeforeMount(() => {
 onBeforeUnmount(() => {
   window.removeEventListener('keypress', () => {})
 })
-
 </script>

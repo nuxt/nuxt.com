@@ -6,7 +6,7 @@
     <UContainer padded>
       <div class="relative grid items-center justify-between h-16 grid-cols-2 gap-3 sm:grid-cols-6">
         <div class="flex items-center justify-start">
-          <Logo class="h-4 transition-all" :class="[hasScrolledPastSubNavbar ? 'w-auto mr-3' : 'w-0']" />
+          <Logo class="h-4 transition-all cursor-pointer" :class="[hasScrolledPastSubNavbar ? 'w-auto mr-3' : 'w-0']" @click="$router.push('/')" />
 
           <slot name="left">
             <component :is="!!to ? 'NuxtLink' : 'p'" v-if="title" :to="to" class="font-semibold u-text-gray-900 focus:outline-none" tabindex="-1">

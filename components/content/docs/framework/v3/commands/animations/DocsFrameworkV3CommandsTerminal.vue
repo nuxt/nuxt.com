@@ -49,5 +49,4 @@ watch([() => props.currentSection], () => {
     startStepper([2000, 2000])
   }
 })
-
 </script>

@@ -35,6 +35,7 @@
     </div>
   </div>
 </template>
+
 <script setup lang="ts">
 import type { Ref } from 'vue'
 
@@ -72,5 +73,4 @@ onBeforeUnmount(() => observer.value?.disconnect())
 onBeforeMount(() => (observer.value = new IntersectionObserver(observerCallback)))
 
 onMounted(() => observer.value.observe(root.value))
-
 </script>

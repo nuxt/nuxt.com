@@ -1,6 +1,6 @@
 <template>
   <div
-    class="absolute flex gap-x-2 z-10 transition-opacity duration-500"
+    class="absolute z-10 flex transition-opacity duration-500 gap-x-2"
   >
     <svg
       width="24"

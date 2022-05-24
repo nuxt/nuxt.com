@@ -33,7 +33,6 @@
 </template>
 
 <script setup lang="ts">
-
 const { startStepper, currentStep } = useCounterAnimations()
 
 onMounted(() => {
@@ -41,7 +40,6 @@ onMounted(() => {
     startStepper([1500, 3500, 800])
   }, 900)
 })
-
 </script>
 
 <style scoped>
