@@ -4,7 +4,7 @@
       <IntegrationsAside />
     </template>
 
-    <div class="flex items-center justify-between">
+    <div class="flex flex-wrap items-center justify-between gap-3">
       <h2 class="text-3xl font-semibold u-text-gray-900">
         {{ filteredModules.length }} module{{ filteredModules.length > 1 ? 's' : '' }} found
       </h2>
