@@ -4,6 +4,7 @@ import type { ComponentSchema } from '~/editor/types'
 
 export const useProjectComponents = (project: Project) => {
   const { $toast } = useNuxtApp()
+  const client = useStrapiClient()
 
   const components: Ref<ComponentSchema[]> = useState(`project-${project.id}-components`, () => null)
 
@@ -23,15 +24,15 @@ export const useProjectComponents = (project: Project) => {
     pending.value = true
 
     try {
-      const data: any = await $fetch(`${project.url}/api/_admin/components`, {
-        retry: false
-      }).then((data) => {
-        // Handle when headers are application/octet-stream
-        if (data instanceof Blob) {
-          return data.text().then(d => JSON.parse(d))
-        }
-        return data
-      })
+      let data
+      if (project.url.startsWith('http://localhost') || project.url.startsWith('http://127.0.0.1')) {
+        data = await $fetch(`${project.url}/api/_admin/components`, {
+          retry: false,
+          responseType: 'json'
+        })
+      } else {
+        data = await client(`/projects/${project.id}/components`)
+      }
 
       // Ensure data is valid array
       if (!Array.isArray(data)) {
