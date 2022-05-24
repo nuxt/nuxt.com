@@ -5,7 +5,7 @@ import { listener } from '@milkdown/plugin-listener'
 import { prism } from '@milkdown/plugin-prism'
 import { tooltip } from '@milkdown/plugin-tooltip'
 import { gfm } from '@milkdown/preset-gfm'
-import { switchTheme, replaceAll } from '@milkdown/utils'
+import { replaceAll, switchTheme } from '@milkdown/utils'
 import { useEditor as useMilkdownEditor } from '@milkdown/vue'
 
 // Internal context
@@ -15,7 +15,7 @@ import context, { componentSchemasCtx } from './context'
 import mdc from './plugins/mdc'
 import slash from './plugins/slash'
 import trailingParagraph from './plugins/trailing-paragraph'
-import collaborative, { switchRoom } from './plugins/collaborative'
+import collaborative, { joinRoom } from './plugins/collaborative'
 
 // Theme
 import { dark, light } from './theme'
@@ -33,6 +33,7 @@ export const useEditor = (options: Options) => {
   let instance: Editor
 
   const theme = useTheme()
+  const isCollabEnabled = Boolean(useRuntimeConfig().public.ywsUrl)
 
   const makeEditor = () => useMilkdownEditor((root, renderVue) => {
     instance = Editor.make()
@@ -49,9 +50,9 @@ export const useEditor = (options: Options) => {
       .use(slash)
       .use(trailingParagraph)
 
-    if (useRuntimeConfig().public.ywsUrl) {
-      const { key: room } = unref(options.content)
-      instance.use(collaborative(room))
+    if (isCollabEnabled) {
+      instance.use(collaborative)
+      instance.action(joinRoom(options))
     }
 
     return instance
@@ -61,15 +62,12 @@ export const useEditor = (options: Options) => {
 
   // Reactive content
   if (isRef(options.content)) {
-    watch(options.content, async () => {
-      const { key: room, markdown } = unref(options.content)
-
-      // Switch room
-      await switchRoom(room)
-
-      // Ensure collaborative is synced with markdown fetched from API for the current file
-      // TODO: We may try to setup Redis around YWS server for better synchronization (one place to sync)
-      instance.action(replaceAll(markdown))
+    watch(options.content, () => {
+      instance.action(
+        isCollabEnabled
+          ? joinRoom(options)
+          : replaceAll(unref(options.content).markdown)
+      )
     })
   }
 

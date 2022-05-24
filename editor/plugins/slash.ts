@@ -1,5 +1,5 @@
 import { themeManagerCtx, commandsCtx } from '@milkdown/core'
-import { Node } from '@milkdown/prose'
+import { Node } from '@milkdown/prose/model'
 import { slashPlugin, slash, createDropdownItem, defaultActions } from '@milkdown/plugin-slash'
 import { kebabCase } from 'scule'
 import { componentSchemasCtx } from '../context'
