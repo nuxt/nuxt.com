@@ -415,10 +415,10 @@
   dependencies:
     "@hapi/hoek" "^9.0.0"
 
-"@headlessui/vue@1.6.2":
-  version "1.6.2"
-  resolved "https://registry.yarnpkg.com/@headlessui/vue/-/vue-1.6.2.tgz#7f00d1f1042636ee00beed8eecb873ead65174d3"
-  integrity sha512-xKNPfQya1uKUWaz75klSlg/dqDFNn8/wbY1Kzj0RxEM5t85SiGzs8CG7E8hvsq0Fdx1KRCagCTi6vmGHmK51Dw==
+"@headlessui/vue@1.6.3":
+  version "1.6.3"
+  resolved "https://registry.yarnpkg.com/@headlessui/vue/-/vue-1.6.3.tgz#c1fe5d088a903eaac2e9929cfe126f095ccc43eb"
+  integrity sha512-9wVPPKS0f5ue26/cml+/ZlyHFPna3eJL/gEuWib8e1IBRhh2jUUKr7urmgIB87G1A2sRAK7GiF0VDdZoLEtFQw==
 
 "@humanwhocodes/config-array@^0.9.2":
   version "0.9.5"
@@ -759,9 +759,9 @@
     "@nuxt/kit" "^3.0.0-rc.1"
 
 "@nuxt/content@npm:@nuxt/content-edge@latest":
-  version "2.0.0-27556898.5fd673e"
-  resolved "https://registry.yarnpkg.com/@nuxt/content-edge/-/content-edge-2.0.0-27556898.5fd673e.tgz#94cfa311377c6234379917003089c752310c2935"
-  integrity sha512-xV37L5/qfcyuu4iRUpAKwWvtmXZjZHYdCftkrqaqbZVNgR+fJmz0554L2WNUeu22A4SUnmCxrRh8FDV6KobT7w==
+  version "2.0.0-27558148.1dc7377"
+  resolved "https://registry.yarnpkg.com/@nuxt/content-edge/-/content-edge-2.0.0-27558148.1dc7377.tgz#3a566c6488125b100b0ab115b77bcdd322683d9a"
+  integrity sha512-ouctVoYpLWiHL+duwmeTClR5aDT71CDjzMIqd6WHU5okL+am9OCN1gXVTCYFMp8Zb9TRLYVoeqt3DarHmD9GzQ==
   dependencies:
     "@nuxt/kit" "^3.0.0-rc.3"
     csvtojson "^2.0.10"
@@ -1009,15 +1009,15 @@
     unstorage "^0.4.1"
 
 "@nuxthq/ui@npm:@nuxthq/ui-edge@latest":
-  version "0.0.2-27556380.e419d68"
-  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27556380.e419d68.tgz#3e8f77cbc6748593f6eb78a1bbeace8a8f51a303"
-  integrity sha512-Ym253hrAyNSTJ4pS+DrcTX+4/gFh79c2/T+nH1/a2ape363A5VsJ5+q6/QZb6Aqh21yS68mY6/8aD7tt4XQ7GQ==
+  version "0.0.2-27558137.b05aa48"
+  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27558137.b05aa48.tgz#55035adb8394c235c7d5d20ba876e890eb48772b"
+  integrity sha512-fv5zM/4SlPh3Id3TLBsw6dONeMO+8UZrlefDAQQ65MztmHV7tCfr29qNJpuXMqJql1uqwXeL2bW3/pVS4EUyNQ==
   dependencies:
-    "@headlessui/vue" "1.6.2"
+    "@headlessui/vue" "1.6.3"
     "@iconify/vue" "^3.2.1"
     "@nuxt/kit" "npm:@nuxt/kit-edge@latest"
     "@nuxtjs/color-mode" "^3.0.3"
-    "@nuxtjs/tailwindcss" "^5.0.4"
+    "@nuxtjs/tailwindcss" "^5.1.2"
     "@popperjs/core" "^2.11.5"
     "@tailwindcss/aspect-ratio" "^0.4.0"
     "@tailwindcss/forms" "^0.5.2"
@@ -1064,16 +1064,16 @@
     eslint-plugin-vue "^8.7.1"
 
 "@nuxtjs/strapi@npm:@nuxtjs/strapi-edge@latest":
-  version "1.3.2-27547699.7a8b6be"
-  resolved "https://registry.yarnpkg.com/@nuxtjs/strapi-edge/-/strapi-edge-1.3.2-27547699.7a8b6be.tgz#9330d33fa06fed1f6b85d727f82e42faa701407c"
-  integrity sha512-t7Zll8/HswBS8btv4x3YebhXLBQ+C/AuYfGa8PrDYao68lCH9TBKIu7GIEJgmipehPs5lpV1pULqklJEsrcUCQ==
+  version "1.3.2-27558087.3ee5b2a"
+  resolved "https://registry.yarnpkg.com/@nuxtjs/strapi-edge/-/strapi-edge-1.3.2-27558087.3ee5b2a.tgz#682084da30a2742eeada8aa59e50fa21efb694c5"
+  integrity sha512-OWuWsGwLH5PLRPOaBw+ljmTAK17vQw1q/8L27CWEZyoI3M7Lq6KJMxmmAp6f42V8zEdsHgm/7a36/umLGA18+w==
   dependencies:
     "@nuxt/kit" "^3.0.0-rc.1"
     defu "^6.0.0"
     pathe "^0.2.0"
     qs "^6.10.3"
 
-"@nuxtjs/tailwindcss@^5.0.4":
+"@nuxtjs/tailwindcss@^5.1.2":
   version "5.1.2"
   resolved "https://registry.yarnpkg.com/@nuxtjs/tailwindcss/-/tailwindcss-5.1.2.tgz#4137812ea70ab9067817803124a1606cf851a2e4"
   integrity sha512-GURUcEyAE6hsOWbLNGOiu832HX53ff2yrbfFJ7qqkFXnq0RNeaoOip+z5MX2mLcmyxlDtFjNmu2rw2rfCTsvHA==
