@@ -26,11 +26,12 @@
 
 <script setup lang="ts">
 import { Combobox, ComboboxInput, ComboboxOptions } from '@headlessui/vue'
-import type { PropType } from 'vue'
+import type { ComputedRef, PropType } from 'vue'
+import type { GitHubBranch, GitHubFile } from '~/types'
 
 const props = defineProps({
   items: {
-    type: Array as PropType<any>,
+    type: Array as PropType<(GitHubBranch | GitHubFile)[]>,
     default: () => []
   },
   itemsLabel: {
@@ -38,7 +39,7 @@ const props = defineProps({
     default: ''
   },
   recentItems: {
-    type: Array as PropType<any>,
+    type: Array as PropType<(GitHubBranch | GitHubFile)[]>,
     default: () => []
   },
   recentItemsLabel: {
@@ -66,11 +67,11 @@ onMounted(() => {
 
 // Computed
 
-const filteredItems = computed(() => {
+const filteredItems: ComputedRef<(GitHubBranch | GitHubFile)[]> = computed(() => {
   let filteredItems = [...props.items]
 
   if (query.value) {
-    filteredItems = filteredItems.filter(item => [item.path, item.name]
+    filteredItems = filteredItems.filter(item => [(item as GitHubFile).path, item.name]
       .filter(Boolean)
       .some(value => value.search(new RegExp(query.value, 'i')) !== -1)
     )
