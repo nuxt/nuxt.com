@@ -170,4 +170,10 @@ function onSelect (option, data) {
     onBranchSelect(option)
   }
 }
+
+// Hooks
+
+onMounted(async () => {
+  pulls.value = await fetchPulls()
+})
 </script>
