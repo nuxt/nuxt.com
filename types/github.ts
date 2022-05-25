@@ -6,6 +6,7 @@ export interface GitHubBranch {
   disabled?: boolean
   icon?: string
   pull?: {
+    number: number
     success: boolean
     description: string
     url: string
@@ -18,21 +19,21 @@ export interface GitHubAccount {
   avatar_url: string
 }
 
-export interface GithubCheckRun {
+export interface GitHubCheckRun {
   id: number
   name: string
   status: 'queued' | 'in_progress' | 'completed'
   conclusion: 'success' | 'failure' | 'neutral' | 'cancelled' | 'timed_out' | 'action_required'
 }
 
-export interface GithubStatus {
+export interface GitHubStatus {
   id: number
   context: string
   description: string
   state: 'success' | 'failure' | 'pending'
 }
 
-export interface GithubPull {
+export interface GitHubPull {
   number: number
   state: 'open'
   body: string
@@ -46,8 +47,8 @@ export interface GithubPull {
     label: string
     ref: string
   }
-  check_runs: GithubCheckRun[]
-  statuses: GithubStatus[]
+  check_runs: GitHubCheckRun[]
+  statuses: GitHubStatus[]
 }
 
 export interface GitHubInstallation {

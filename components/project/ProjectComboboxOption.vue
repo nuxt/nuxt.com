@@ -19,13 +19,16 @@
             <div class="flex items-center ml-3 truncate u-text-gray-400" :class="{ 'opacity-50': item.disabled }">
               <span class="u-text-gray-700">{{ item.name || (item as any).label }}</span>
               <span v-if="(item as GitHubFile).path" class="ml-1 text-xs italic truncate">{{ (item as GitHubFile).path }}</span>
-              <UTooltip v-if="(item as GitHubBranch).pull" placement="bottom">
-                <UIcon
-                  :name="(item as GitHubBranch).pull.success ? 'uil:check' : 'uil:times'"
-                  :class="(item as GitHubBranch).pull.success ? 'text-green-500' : 'text-red-500'"
-                  class="w-5 h-5 ml-1"
-                  @click.stop="redirectToGithubPull((item as GitHubBranch).pull.url)"
-                />
+              <UTooltip v-if="(item as GitHubBranch).pull" placement="right" container-class="z-10 px-2" class="ml-3">
+                <UBadge size="sm">
+                  <span class="font-normal">#{{ (item as GitHubBranch).pull.number }}</span>
+                  <UIcon
+                    :name="(item as GitHubBranch).pull.success ? 'uil:check' : 'uil:times'"
+                    :class="(item as GitHubBranch).pull.success ? 'text-green-500' : 'text-red-500'"
+                    class="w-5 h-5 ml-1"
+                    @click.stop="redirectToGithubPull((item as GitHubBranch).pull.url)"
+                  />
+                </UBadge>
                 <template #text>
                   <span>{{ (item as GitHubBranch).pull.description }}</span>
                 </template>

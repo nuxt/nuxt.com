@@ -13,7 +13,7 @@
 <script setup lang="ts">
 import type { WritableComputedRef, Ref, ComputedRef } from 'vue'
 import { useMagicKeys, whenever, and, useActiveElement } from '@vueuse/core'
-import type { GitHubBranch, GithubPull, Project } from '~/types'
+import type { GitHubBranch, GitHubPull, Project } from '~/types'
 
 const props = defineProps({
   modelValue: {
@@ -23,7 +23,7 @@ const props = defineProps({
 })
 
 const project: Project = inject('project')
-const pulls: Ref<GithubPull[]> = ref([])
+const pulls: Ref<GitHubPull[]> = ref([])
 
 const emit = defineEmits(['update:modelValue'])
 
@@ -86,6 +86,7 @@ const currentBranches: ComputedRef<GitHubBranch[]> = computed(() => {
           })
 
           pull = {
+            number: githubPull.number,
             success: validatedCheck === totalCheck,
             description: `${validatedCheck}/${totalCheck} check${totalCheck > 1 ? 's' : ''} OK`,
             url: githubPull.html_url
