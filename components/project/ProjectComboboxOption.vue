@@ -13,13 +13,29 @@
         :disabled="item.disabled"
         as="template"
       >
-        <li :class="['flex select-none items-center rounded-md px-3 py-2 u-text-gray-400', active && 'u-bg-gray-100 u-text-gray-900', item.disabled ? 'cursor-not-allowed' : 'cursor-pointer']">
-          <UIcon :name="item.icon" :class="['h-5 w-5 flex-none', item.iconColor, item.iconClass]" aria-hidden="true" />
-          <p class="flex-auto ml-3 truncate u-text-gray-400" :class="{ 'opacity-50': item.disabled }">
-            <span class="u-text-gray-700">{{ item.name || item.label }}</span>
-            <span v-if="item.path" class="ml-1 text-xs italic truncate">{{ item.path }}</span>
-          </p>
-          <div v-if="type !== 'actions'" class="flex-none ml-3">
+        <li :class="['flex justify-between select-none items-center rounded-md px-3 py-2 u-text-gray-400', active && 'u-bg-gray-100 u-text-gray-900', item.disabled ? 'cursor-not-allowed' : 'cursor-pointer']">
+          <div class="flex items-center">
+            <UIcon :name="item.icon" :class="['h-5 w-5', (item as GitHubFile).iconColor, (item as GitHubFile).iconClass]" aria-hidden="true" />
+            <div class="flex items-center ml-3 truncate u-text-gray-400" :class="{ 'opacity-50': item.disabled }">
+              <span class="u-text-gray-700">{{ item.name || (item as any).label }}</span>
+              <span v-if="(item as GitHubFile).path" class="ml-1 text-xs italic truncate">{{ (item as GitHubFile).path }}</span>
+              <UTooltip v-if="(item as GitHubBranch).pull" placement="right" container-class="z-10 px-2" class="ml-3">
+                <UBadge size="sm">
+                  <span class="font-normal">#{{ (item as GitHubBranch).pull.number }}</span>
+                  <UIcon
+                    :name="(item as GitHubBranch).pull.success ? 'uil:check' : 'uil:times'"
+                    :class="(item as GitHubBranch).pull.success ? 'text-green-500' : 'text-red-500'"
+                    class="w-5 h-5 ml-1"
+                    @click.stop="redirectToGithubPull((item as GitHubBranch).pull.url)"
+                  />
+                </UBadge>
+                <template #text>
+                  <span>{{ (item as GitHubBranch).pull.description }}</span>
+                </template>
+              </UTooltip>
+            </div>
+          </div>
+          <div v-if="type !== 'actions'" class="ml-3">
             <span v-if="active" class="u-text-gray-500">Jump to...</span>
             <UAvatarGroup v-else :group="usersGroup(item)" size="xxs" />
           </div>
@@ -44,7 +60,7 @@ defineProps({
     default: ''
   },
   items: {
-    type: Array as PropType<any>,
+    type: Array as PropType<(GitHubBranch | GitHubFile)[]>,
     default: () => []
   }
 })
@@ -56,8 +72,8 @@ const { branch } = useProjectBranches(project)
 
 function usersGroup (item: GitHubBranch | GitHubFile) {
   return activeUsers.value.reduce((acc, user) => {
-    if (item.path) { // item is GitHubFile
-      if (user.file === item.path && user.branch === branch.value.name) {
+    if ((item as GitHubFile).path) {
+      if (user.file === (item as GitHubFile).path && user.branch === branch.value.name) {
         acc.push({ src: user.avatar, alt: user.username })
       }
     } else if (user.branch === item.name) { // item is GitHubBranch
@@ -65,5 +81,9 @@ function usersGroup (item: GitHubBranch | GitHubFile) {
     }
     return acc
   }, [])
+}
+
+function redirectToGithubPull (url) {
+  window.open(url, '_blank')
 }
 </script>
