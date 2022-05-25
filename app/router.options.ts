@@ -2,7 +2,10 @@ import type { RouterConfig } from '@nuxt/schema'
 
 // https://router.vuejs.org/api/#routeroptions
 export default <RouterConfig>{
-  scrollBehavior: (to) => {
+  scrollBehavior: (to, _from, savedPosition) => {
+    if (savedPosition) {
+      return savedPosition
+    }
     if (to.params?.stop) {
       return
     }
@@ -19,9 +22,6 @@ export default <RouterConfig>{
       }
     }
 
-    // Scroll to top of window
-    window.scrollTo({
-      top: 0
-    })
+    return { top: 0 }
   }
 }
