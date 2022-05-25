@@ -1,0 +1,95 @@
+<template>
+  <div class="flex items-center" :class="[wrapperClass]">
+    <UIcon :name="icon" class="u-text-gray-600" :class="[iconSize]" />
+    <div class="flex flex-col">
+      <span :class="numberClass">{{ number }}</span>
+      <span class="u-text-gray-500" :class="{ 'hidden': size !== 'large' }">{{ label }}</span>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+const props = defineProps({
+  nuxter: {
+    type: Object,
+    required: true
+  },
+  size: {
+    type: String,
+    required: true,
+    validator: (value: string) => ['large', 'medium', 'small'].includes(value)
+  },
+  type: {
+    type: String,
+    required: true,
+    validator: (value: string) => ['activities', 'pull_requests', 'issues', 'comments'].includes(value)
+  }
+})
+
+const icon = computed(() => {
+  switch (props.type) {
+    case 'activities':
+      return 'uil:apps'
+    case 'pull_requests':
+      return 'octicon:git-pull-request-16'
+    case 'issues':
+      return 'octicon:issue-opened-16'
+    case 'comments':
+      return 'uil:comment-alt-lines'
+  }
+})
+const number = computed(() => {
+  switch (props.type) {
+    case 'activities':
+      return props.nuxter.activities
+    case 'pull_requests':
+      return props.nuxter.pullRequests
+    case 'issues':
+      return props.nuxter.issues
+    case 'comments':
+      return props.nuxter.comments
+  }
+})
+const numberClass = computed(() => {
+  switch (props.size) {
+    case 'large':
+      return 'text-xl font-medium u-text-gray-700'
+    case 'medium':
+      return 'text-lg font-medium u-text-gray-700'
+    case 'small':
+      return 'font-semibold u-text-gray-700'
+  }
+})
+const label = computed(() => {
+  switch (props.type) {
+    case 'activities':
+      return 'Activities'
+    case 'pull_requests':
+      return 'Pull requests'
+    case 'issues':
+      return 'Issues'
+    case 'comments':
+      return 'Comments'
+  }
+})
+const iconSize = computed(() => {
+  switch (props.size) {
+    case 'large':
+      return 'w-8 h-8'
+    case 'medium':
+      return 'w-6 h-6'
+    case 'small':
+      return 'w-4 h-4'
+  }
+})
+const wrapperClass = computed(() => {
+  switch (props.size) {
+    case 'large':
+      return 'gap-4'
+    case 'medium':
+      return 'gap-2'
+    case 'small':
+      return 'gap-2'
+  }
+})
+</script>

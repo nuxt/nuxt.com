@@ -1,0 +1,43 @@
+<template>
+  <li class="relative flex items-center justify-between h-32 col-span-2 overflow-hidden border u-border-gray-200 rounded-xl group">
+    <div class="flex items-center h-full">
+      <img :src="`https://github.com/${nuxter.github}.png`" :alt="nuxter.github" class="w-16 h-16 mx-2 transition-all duration-200 rounded-full grayscale group-hover:grayscale-0">
+      <div class="flex flex-col justify-between h-full py-5">
+        <div>
+          <h3 class="text-lg font-semibold leading-none u-text-gray-900">
+            @{{ nuxter.github }}
+          </h3>
+          <div class="flex items-center gap-3 mt-1">
+            <span class="font-medium u-text-gray-500 line-clamp-1">{{ nuxter.name }}</span>
+          </div>
+        </div>
+        <div>
+          <CommunityNuxtersNuxterBadge role="Ambassador" />
+        </div>
+      </div>
+    </div>
+    <div class="flex flex-col items-end justify-between flex-shrink-0 h-full pb-5 mr-6">
+      <div class="relative">
+        <img src="/assets/community/nuxters/rank.svg" alt="rank background">
+        <span class="absolute inset-x-0 text-lg font-semibold text-center top-3 u-text-gray-900">#{{ nuxter.rank }}</span>
+      </div>
+      <CommunityNuxtersNuxterNumber :nuxter="nuxter" size="small" :type="sortedTypes[0]" />
+    </div>
+  </li>
+</template>
+
+<script setup lang="ts">
+defineProps({
+  nuxter: {
+    type: Object,
+    required: true
+  }
+})
+
+const { selectedSort } = useCommunityNuxters()
+
+const sortedTypes = computed(() => {
+  const types = ['activities', 'pull_requests', 'issues', 'comments']
+  return [selectedSort.value.key, ...types.filter(type => type !== selectedSort.value.key)]
+})
+</script>

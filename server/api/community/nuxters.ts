@@ -2,7 +2,7 @@ const config = useRuntimeConfig()
 
 export default defineCachedEventHandler(async () => {
   // Fetch Orbit members
-  const { data: members } = await $fetch<any>('https://app.orbit.love/api/v1/nuxtjs/members?sort=activities_count', {
+  const { data: members } = await $fetch<any>('https://app.orbit.love/api/v1/nuxtjs/members', {
     headers: { Authorization: `Bearer ${config.orbit.token}` }
   })
   const nuxters = members.filter(member => !member.attributes.tags.includes('bot')).map((member) => {
@@ -16,7 +16,10 @@ export default defineCachedEventHandler(async () => {
       roles: m.tags,
       firstActivity: m.first_activity_occurred_at,
       lastActivity: m.last_activity_occurred_at,
-      activities: m.activities_count
+      activities: m.activities_count,
+      issues: '0',
+      pullRequests: '0',
+      comments: '0'
     }
   })
 

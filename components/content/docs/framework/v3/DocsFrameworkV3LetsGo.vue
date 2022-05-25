@@ -13,6 +13,8 @@
 </template>
 
 <script setup lang="ts">
+import { PropType } from 'vue'
+
 defineProps({
   buttons: {
     type: Array as PropType<{ label?: string, variant?: string, to?: string, size?: string, icon?: string }[]>,
