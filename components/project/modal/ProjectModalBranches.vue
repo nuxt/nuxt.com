@@ -11,9 +11,9 @@
 </template>
 
 <script setup lang="ts">
-import type { WritableComputedRef } from 'vue'
+import type { WritableComputedRef, Ref, ComputedRef } from 'vue'
 import { useMagicKeys, whenever, and, useActiveElement } from '@vueuse/core'
-import type { GitHubBranch, Project } from '~/types'
+import type { GitHubBranch, GitHubPull, Project } from '~/types'
 
 const props = defineProps({
   modelValue: {
@@ -23,6 +23,7 @@ const props = defineProps({
 })
 
 const project: Project = inject('project')
+const pulls: Ref<GitHubPull[]> = ref([])
 
 const emit = defineEmits(['update:modelValue'])
 
@@ -47,7 +48,8 @@ const {
   refresh: refreshBranches,
   reset: resetDraft,
   select: selectBranch,
-  openCreateModal: openCreateBranchModal
+  openCreateModal: openCreateBranchModal,
+  fetchPulls
 } = useProjectBranches(project)
 
 // Computed
@@ -61,9 +63,44 @@ const isOpen: WritableComputedRef<boolean> = computed({
   }
 })
 
-const currentBranches = computed(() => {
+const currentBranches: ComputedRef<GitHubBranch[]> = computed(() => {
   return [...branches.value]
-    .map(b => ({ ...b, icon: 'mdi:source-branch', disabled: b.name === branch.value.name }))
+    .map((b) => {
+      let pull
+
+      const githubPull = pulls.value.find(pull => pull.base.ref === project.repository.default_branch && pull.head.ref === b.name)
+      if (githubPull) {
+        const totalCheck = githubPull.check_runs.length + githubPull.statuses.length
+
+        if (totalCheck > 0) {
+          let validatedCheck = 0
+          githubPull.check_runs.forEach((checkRun) => {
+            if (['success', 'neutral'].includes(checkRun.conclusion)) {
+              validatedCheck += 1
+            }
+          })
+          githubPull.statuses.forEach((status) => {
+            if (status.state === 'success') {
+              validatedCheck += 1
+            }
+          })
+
+          pull = {
+            number: githubPull.number,
+            success: validatedCheck === totalCheck,
+            description: `${validatedCheck}/${totalCheck} check${totalCheck > 1 ? 's' : ''} OK`,
+            url: githubPull.html_url
+          }
+        }
+      }
+
+      return {
+        ...b,
+        icon: 'mdi:source-branch',
+        disabled: b.name === branch.value.name,
+        pull
+      }
+    })
 })
 
 const recentItems = computed(() => {
@@ -87,6 +124,12 @@ const notUsingInput = computed(() => !(activeElement.value?.tagName === 'INPUT' 
 
 whenever(and(keys.meta_b, notUsingInput), () => {
   isOpen.value = !isOpen.value
+})
+
+watch(isOpen, async (value) => {
+  if (value) {
+    pulls.value = await fetchPulls()
+  }
 })
 
 // Methods
@@ -127,4 +170,10 @@ function onSelect (option, data) {
     onBranchSelect(option)
   }
 }
+
+// Hooks
+
+onMounted(async () => {
+  pulls.value = await fetchPulls()
+})
 </script>
