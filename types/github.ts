@@ -3,6 +3,13 @@ export type FileStatus = 'created' | 'updated' | 'deleted' | 'renamed'
 export interface GitHubBranch {
   name: string
   openedAt?: number
+  disabled?: boolean
+  icon?: string
+  pull?: {
+    success: boolean
+    description: string
+    url: string
+  }
 }
 
 export interface GitHubAccount {
@@ -29,6 +36,7 @@ export interface GithubPull {
   number: number
   state: 'open'
   body: string
+  html_url: string
   user: GitHubAccount
   head: {
     label: string
@@ -81,6 +89,10 @@ export interface GitHubFile {
   oldPath?: string
   forceFetch?: boolean
   openedAt?: number
+  disabled?: boolean
+  icon?: string
+  iconClass?: string
+  iconColor?: string
 }
 
 export interface GitHubDraftFile {

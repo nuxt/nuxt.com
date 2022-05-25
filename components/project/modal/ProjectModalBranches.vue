@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import type { WritableComputedRef, Ref } from 'vue'
+import type { WritableComputedRef, Ref, ComputedRef } from 'vue'
 import { useMagicKeys, whenever, and, useActiveElement } from '@vueuse/core'
 import type { GitHubBranch, GithubPull, Project } from '~/types'
 
@@ -63,12 +63,12 @@ const isOpen: WritableComputedRef<boolean> = computed({
   }
 })
 
-const currentBranches = computed(() => {
+const currentBranches: ComputedRef<GitHubBranch[]> = computed(() => {
   return [...branches.value]
     .map((b) => {
-      let pullRequest
+      let pull
 
-      const githubPull = pulls.value.find(pull => pull.base.ref === branch.value.name && pull.head.ref === b.name)
+      const githubPull = pulls.value.find(pull => pull.base.ref === project.repository.default_branch && pull.head.ref === b.name)
       if (githubPull) {
         const totalCheck = githubPull.check_runs.length + githubPull.statuses.length
 
@@ -85,9 +85,10 @@ const currentBranches = computed(() => {
             }
           })
 
-          pullRequest = {
-            icon: validatedCheck === totalCheck ? 'mdi:check' : 'mdi:alert-circle',
-            description: `${validatedCheck}/${totalCheck} check${totalCheck > 1 ? 's' : ''} OK`
+          pull = {
+            success: validatedCheck === totalCheck,
+            description: `${validatedCheck}/${totalCheck} check${totalCheck > 1 ? 's' : ''} OK`,
+            url: githubPull.html_url
           }
         }
       }
@@ -96,7 +97,7 @@ const currentBranches = computed(() => {
         ...b,
         icon: 'mdi:source-branch',
         disabled: b.name === branch.value.name,
-        pr: pullRequest
+        pull
       }
     })
 })
@@ -124,11 +125,11 @@ whenever(and(keys.meta_b, notUsingInput), () => {
   isOpen.value = !isOpen.value
 })
 
-// watch(isOpen, async (value) => {
-//   if (value) {
-//     pulls.value = await fetchPulls()
-//   }
-// })
+watch(isOpen, async (value) => {
+  if (value) {
+    pulls.value = await fetchPulls()
+  }
+})
 
 // Methods
 
