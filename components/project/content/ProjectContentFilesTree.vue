@@ -101,7 +101,7 @@ onMounted(() => {
   scrollToSelectedFile()
 })
 
-watch(() => selectedFile.value.path, () => {
+watch(() => selectedFile.value?.path, () => {
   scrollToSelectedFile()
 })
 

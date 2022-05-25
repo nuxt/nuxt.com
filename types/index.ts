@@ -1,4 +1,5 @@
 export * from './community'
+export * from './github'
 
 export interface Media {
   name: string
@@ -117,71 +118,7 @@ export interface Commit {
   date: string
 }
 
-export interface GitHubBranch {
-  name: string
-  openedAt?: number
-}
-
-export interface GitHubAccount {
-  id: number
-  login: string
-  avatar_url: string
-}
-
-export interface GitHubInstallation {
-  account: GitHubAccount
-}
-
-export interface GitHubRepository {
-  id: number
-  owner: GitHubAccount
-  name: string
-  private: boolean
-  default_branch: string
-  homepage: string
-}
-
-export interface GitHubPaginationMeta {
-  total: number
-  limit: number
-}
-
-export interface GitHubPagination<T> {
-  data: T[]
-  meta: GitHubPaginationMeta
-}
-
-export interface GitHubFile {
-  path: string
-  mode?: string
-  type: 'tree' | 'blob'
-  sha?: string
-  url?: string
-  status?: FileStatus
-  name?: string
-  width?: number
-  height?: number
-  size?: number
-  mimeType?: string
-  content?: string
-  oldPath?: string
-  forceFetch?: boolean
-  openedAt?: number
-}
-
-export interface GitHubDraftFile {
-  path: string
-  content?: string
-  new?: boolean
-  oldPath?: string
-  // Added only for medias
-  width?: number
-  height?: number
-  size?: number
-  mimeType?: string
-}
-
-export interface GitHubDraft {
-  additions: GitHubDraftFile[]
-  deletions: GitHubDraftFile[]
+export interface PullRequest {
+  status: 'success' | 'failure'
+  description: string
 }
