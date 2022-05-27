@@ -4,7 +4,8 @@ title: About
 
 ::community-about-hero
 #title
-Community
+Open Source Software
 #description
-Read the latest news about all Nuxt solutions, from framework announcements to integration tutorials.
+Extend and automate your workflow by using deployments for your favorite tools.
+
 ::

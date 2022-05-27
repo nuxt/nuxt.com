@@ -9,73 +9,37 @@
 
     <template #extra>
       <form class="flex gap-3 pt-4" @submit.prevent="onSubmit">
-        <UInput
-          v-model="form.email"
-          name="email"
-          placeholder="Enter your email"
-          class="sm:w-72"
-          required
-        />
         <UButton
-          type="submit"
-          submit
-          variant="primary"
-          :loading="loading"
-          label="Subscribe"
+          variant="transparent"
+          to="#"
+          size="lg"
+          base-class="relative flex justify-center overflow-hidden bg-gray-900 light:border-none dark:hover:overflow-visible rounded-xl group gradient-border"
+        >
+          <div
+            class="absolute w-full h-full bg-gradient-to-r from-green-400 via-teal-400 to-indigoblue-600
+            group-hover:blur-[20px] group-hover:top-4 top-8 blur-xl
+            dark:blur-[20px] dark:top-4 dark:group-hover:blur-[4px] dark:group-hover:top-0"
+          />
+          <span class="px-2 py-1 z-[1] text-white">Hello community</span>
+        </UButton>
+
+        <UButton
+          label="good bye community"
+          variant="secondary"
+          to="#"
+          size="xl"
+          custom-class="rounded-xl"
         />
       </form>
     </template>
 
-    <template #image>
-      <img src="/assets/community/about/gems.svg" class="object-contain h-full mx-10 opacity-30 sm:opacity-100">
-
-      <UCard padded body-class="p-4" class="hidden lg:block absolute left-[72px] top-6 w-[181px] h-[116px] backdrop-blur-lg !bg-opacity-10">
-        <UIcon name="uil:star" class="w-5 h-5 text-teal-400" />
-
-        <div>
-          <p class="mb-2 text-4xl font-semibold u-text-gray-900">
-            {{ formatNumber(stats.stars, 1) }}
-          </p>
-          <p class="text-xs u-text-gray-500">
-            Github stars
-          </p>
-        </div>
-      </UCard>
-
-      <UCard padded body-class="p-4" class="hidden lg:block absolute -bottom-[46px] -left-10 w-[136px] h-[117px] backdrop-blur-lg !bg-opacity-10">
-        <UIcon name="uil:folder" class="w-5 h-5 text-green-400" />
-
-        <div>
-          <p class="mb-2 text-4xl font-semibold u-text-gray-900">
-            {{ formatNumber(stats.count) }}
-          </p>
-          <p class="text-xs u-text-gray-500">
-            Repositories
-          </p>
-        </div>
-      </UCard>
-
-      <UCard padded body-class="p-4" class="hidden lg:block absolute right-4 -bottom-4 w-[137px] h-[115px] backdrop-blur-lg !bg-opacity-10">
-        <UIcon name="heroicons-outline:users" class="w-5 h-5 text-indigoblue-600" />
-
-        <div>
-          <p class="mb-2 text-4xl font-semibold u-text-gray-900">
-            {{ formatNumber(stats.collaborators) }}
-          </p>
-          <p class="text-xs u-text-gray-500">
-            Nuxters
-          </p>
-        </div>
-      </UCard>
+    <template #background>
+      <img src="/assets/community/about/map.png" class="h-full opacity-30 sm:opacity-100">
     </template>
   </PageHero>
 </template>
 
 <script setup lang="ts">
-import { formatNumber } from '~/utils'
-
-const { stats } = useCommunityRepositories()
-
 const { $toast } = useNuxtApp()
 
 const form = reactive({
@@ -100,3 +64,37 @@ async function onSubmit () {
   loading.value = false
 }
 </script>
+
+<style scoped>
+.gradient-border {
+  position: relative;
+  border-radius: 0.5rem;
+}
+.gradient-border::before {
+  background: linear-gradient(90deg, #303030 0%, #303030 25%, #00DC82 50%, #36E4DA 75%, #0047E1 100%);
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 0.5rem;
+  padding: 2px;
+  width: 100%;
+  background-size: 400% auto;
+  opacity: 0.5;
+  transition: background-position 0.3s ease-in-out, opacity 0.2s ease-in-out;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+          mask:
+            linear-gradient(#fff 0 0) content-box,
+            linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+}
+.gradient-border:hover::before {
+  background-position: -50% 0;
+  opacity: 1;
+}
+</style>
