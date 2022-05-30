@@ -27,5 +27,5 @@ const { nuxters } = useCommunityNuxters()
 const nuxter1 = computed(() => nuxters.value?.length && nuxters.value[0])
 const nuxter2 = computed(() => nuxters.value?.length >= 2 && nuxters.value[1])
 const nuxter3 = computed(() => nuxters.value?.length >= 3 && nuxters.value[2])
-const otherNuxters = computed(() => nuxters.value?.slice(3))
+const otherNuxters = computed(() => nuxters.value?.length && nuxters.value?.slice(3))
 </script>

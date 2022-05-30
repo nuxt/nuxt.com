@@ -22,9 +22,9 @@
           </div>
         </div>
         <div class="flex items-center gap-12">
-          <CommunityNuxtersNuxterNumber :nuxter="nuxter" size="large" :type="sortedTypes[1]" />
-          <CommunityNuxtersNuxterNumber :nuxter="nuxter" size="large" :type="sortedTypes[2]" />
-          <CommunityNuxtersNuxterNumber :nuxter="nuxter" size="large" :type="sortedTypes[3]" />
+          <CommunityNuxtersNuxterNumber :nuxter="nuxter" :size="numberSize" :type="sortedTypes[1]" />
+          <CommunityNuxtersNuxterNumber :nuxter="nuxter" :size="numberSize" :type="sortedTypes[2]" />
+          <CommunityNuxtersNuxterNumber :nuxter="nuxter" :size="numberSize" :type="sortedTypes[3]" />
         </div>
       </div>
       <div class="flex flex-col items-end justify-between flex-shrink-0 pb-6">
@@ -32,13 +32,15 @@
           <img src="/assets/community/nuxters/rank-1.svg" alt="rank background">
           <span class="absolute inset-x-0 text-3xl font-semibold text-center top-3 u-text-white">#{{ nuxter.rank }}</span>
         </div>
-        <CommunityNuxtersNuxterNumber :nuxter="nuxter" size="large" :type="sortedTypes[0]" />
+        <CommunityNuxtersNuxterNumber :nuxter="nuxter" :size="numberSize" :type="sortedTypes[0]" />
       </div>
     </div>
   </li>
 </template>
 
 <script setup lang="ts">
+import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
+
 defineProps({
   nuxter: {
     type: Object,
@@ -48,8 +50,20 @@ defineProps({
 
 const { selectedSort } = useCommunityNuxters()
 
+const { smaller } = useBreakpoints(breakpointsTailwind)
+
+const md = smaller('lg')
+
 const sortedTypes = computed(() => {
   const types = ['activities', 'pull_requests', 'issues', 'comments']
   return [selectedSort.value.key, ...types.filter(type => type !== selectedSort.value.key)]
+})
+
+const numberSize = computed(() => {
+  if (md.value) {
+    return 'medium'
+  } else {
+    return 'large'
+  }
 })
 </script>
