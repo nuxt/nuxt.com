@@ -29,7 +29,10 @@ const emit = defineEmits(['update:modelValue'])
 
 const route = useRoute()
 const router = useRouter()
-const keys = useMagicKeys()
+const keys = useMagicKeys({
+  passive: false,
+  onEventFired: event => event.preventDefault()
+})
 const {
   file: contentFile,
   computedFiles: contentFiles,
@@ -146,9 +149,12 @@ const actions = computed(() => ([{
 
 // Watch
 
-whenever(keys.meta_k, () => {
-  isOpen.value = !isOpen.value
-})
+if (process.client) {
+  const isMac = navigator.platform.includes('Mac')
+  whenever(isMac ? keys.meta_k : keys.ctrl_k, () => {
+    isOpen.value = !isOpen.value
+  })
+}
 
 // Methods
 
