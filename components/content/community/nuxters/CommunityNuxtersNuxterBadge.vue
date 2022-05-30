@@ -1,5 +1,5 @@
 <template>
-  <span v-if="role" class="px-2 py-1 text-xs font-semibold border rounded-md" :class="[borderColor, backgroundColor]">{{ role }}</span>
+  <span v-if="role" class="px-2 py-0.5 text-xs font-semibold capitalize border rounded-md" :class="[borderColor, backgroundColor]">{{ role }}</span>
 </template>
 
 <script setup lang="ts">

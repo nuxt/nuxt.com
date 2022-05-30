@@ -12,7 +12,7 @@
           </div>
         </div>
         <div class="flex items-center gap-3">
-          <CommunityNuxtersNuxterBadge role="Ambassador" />
+          <CommunityNuxtersNuxterBadge :role="nuxter.role" />
           <NuxtLink v-if="nuxter.twitter" :to="`https://twitter.com/${nuxter.twitter}`" target="_blank">
             <UIcon name="uil:twitter" class="w-5 h-5 u-text-gray-900" />
           </NuxtLink>

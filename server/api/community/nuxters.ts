@@ -14,6 +14,7 @@ export default defineCachedEventHandler(async () => {
       twitter: m.twitter,
       location: m.location,
       roles: m.tags,
+      role: m.tags?.length ? m.tags[0] : '',
       firstActivity: m.first_activity_occurred_at,
       lastActivity: m.last_activity_occurred_at,
       activities: m.activities_count,

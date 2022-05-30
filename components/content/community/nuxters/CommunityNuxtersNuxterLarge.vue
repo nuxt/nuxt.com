@@ -9,7 +9,7 @@
             <h3 class="text-2xl font-semibold leading-none u-text-gray-900">
               @{{ nuxter.github }}
             </h3>
-            <CommunityNuxtersNuxterBadge role="Ambassador" />
+            <CommunityNuxtersNuxterBadge :role="nuxter.role" />
           </div>
           <div class="flex items-center gap-3 mt-2">
             <span class="text-lg font-medium u-text-gray-700">{{ nuxter.name }}</span>
