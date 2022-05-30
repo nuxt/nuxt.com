@@ -23,6 +23,7 @@
               :class="isCurrentSection(index) ? 'opacity-0' : 'opacity-100'"
             >
             <img
+              v-if="index !== commandsData.commands.length - 1"
               :src="`/assets/docs/framework/v3/commands/${data.iconColor}`"
               class="absolute w-12 h-12 transition-opacity duration-0"
               :alt="`${data.title} icon`"
