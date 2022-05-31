@@ -28,10 +28,7 @@
         </div>
       </div>
       <div class="flex flex-col items-end justify-between flex-shrink-0 pb-6">
-        <div class="relative">
-          <img src="/assets/community/nuxters/rank-2-3.svg" alt="rank background">
-          <span class="absolute inset-x-0 text-2xl font-semibold text-center top-3 u-text-white">#{{ nuxter.rank }}</span>
-        </div>
+        <CommunityNuxtersNuxterRank :nuxter="nuxter" />
         <CommunityNuxtersNuxterNumber :nuxter="nuxter" size="medium" :type="sortedTypes[0]" />
       </div>
     </div>

@@ -2,7 +2,7 @@
   <li class="relative col-span-6 overflow-hidden border u-border-gray-200 rounded-xl h-44 group">
     <img src="/assets/community/nuxters/nuxter-gradient.svg" alt="nuxter background" class="absolute object-cover transition-all h-44 left-32 grayscale group-hover:grayscale-0">
     <img :src="nuxter.avatar_url" :alt="nuxter.github" class="absolute w-56 h-56 transition-all rounded-full -top-6 -left-10 grayscale group-hover:grayscale-0">
-    <div class="absolute inset-y-0 flex justify-between left-56 right-10">
+    <div class="absolute inset-y-0 flex justify-between left-56 right-6 xl:right-10">
       <div class="flex flex-col justify-between py-6">
         <div>
           <div class="flex items-center gap-3">
@@ -28,10 +28,7 @@
         </div>
       </div>
       <div class="flex flex-col items-end justify-between flex-shrink-0 pb-6">
-        <div class="relative">
-          <img src="/assets/community/nuxters/rank-1.svg" alt="rank background">
-          <span class="absolute inset-x-0 text-3xl font-semibold text-center top-3 u-text-white">#{{ nuxter.rank }}</span>
-        </div>
+        <CommunityNuxtersNuxterRank :nuxter="nuxter" />
         <CommunityNuxtersNuxterNumber :nuxter="nuxter" :size="numberSize" :type="sortedTypes[0]" />
       </div>
     </div>

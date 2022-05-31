@@ -11,9 +11,13 @@
     </div>
     <div v-if="filteredNuxters.length" class="mt-12">
       <ul v-if="!q" role="list" class="grid grid-cols-6 gap-8">
-        <CommunityNuxtersNuxterLarge v-if="nuxter1" :nuxter="nuxter1" />
-        <CommunityNuxtersNuxterMedium v-if="nuxter2" :nuxter="nuxter2" />
-        <CommunityNuxtersNuxterMedium v-if="nuxter3" :nuxter="nuxter3" />
+        <CommunityNuxtersNuxterLarge v-if="lg && nuxter1" :nuxter="nuxter1" />
+        <CommunityNuxtersNuxterMedium v-else-if="md && nuxter1" :nuxter="nuxter1" />
+        <CommunityNuxtersNuxterSmall v-else-if="nuxter1" :nuxter="nuxter1" />
+        <CommunityNuxtersNuxterMedium v-if="md && nuxter2" :nuxter="nuxter2" />
+        <CommunityNuxtersNuxterSmall v-else-if="nuxter2" :nuxter="nuxter2" />
+        <CommunityNuxtersNuxterMedium v-if="md && nuxter3" :nuxter="nuxter3" />
+        <CommunityNuxtersNuxterSmall v-else-if="nuxter3" :nuxter="nuxter3" />
 
         <CommunityNuxtersNuxterSmall v-for="nuxter in otherNuxters" :key="nuxter.github" :nuxter="nuxter" />
       </ul>
@@ -25,6 +29,10 @@
 </template>
 
 <script setup>
+import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
+
+const { greater } = useBreakpoints(breakpointsTailwind)
+
 const { nuxters, q } = useCommunityNuxters()
 
 const filteredNuxters = computed(() => {
@@ -44,4 +52,7 @@ const nuxter1 = computed(() => filteredNuxters.value?.length && filteredNuxters.
 const nuxter2 = computed(() => filteredNuxters.value?.length >= 2 && filteredNuxters.value[1])
 const nuxter3 = computed(() => filteredNuxters.value?.length >= 3 && filteredNuxters.value[2])
 const otherNuxters = computed(() => filteredNuxters.value?.length && filteredNuxters.value?.slice(3))
+
+const lg = greater('md')
+const md = greater('sm')
 </script>
