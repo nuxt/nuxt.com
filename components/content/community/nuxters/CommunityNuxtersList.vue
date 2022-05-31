@@ -6,7 +6,7 @@
       </h2>
       <div class="flex justify-end gap-6">
         <CommunityNuxtersFilterTime />
-        <CommunityNuxtersFilterSort />
+        <!-- <CommunityNuxtersFilterSort /> -->
       </div>
     </div>
     <div v-if="filteredNuxters.length" class="mt-12">
