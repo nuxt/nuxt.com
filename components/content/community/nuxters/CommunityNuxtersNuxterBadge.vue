@@ -23,11 +23,11 @@ const borderColor = computed(() => {
 const backgroundColor = computed(() => {
   switch (props.role) {
     case 'Ambassador':
-      return 'bg-teal-50'
+      return 'bg-teal-50 dark:bg-transparent'
     case 'Translator':
-      return 'bg-green-50'
+      return 'bg-green-50 dark:bg-transparent'
     default:
-      return 'bg-green-50'
+      return 'bg-green-50 dark:bg-transparent'
   }
 })
 </script>

@@ -1,7 +1,7 @@
 <template>
   <li class="relative flex items-center justify-between h-32 col-span-6 overflow-hidden border md:col-span-3 xl:col-span-2 u-border-gray-200 rounded-xl group">
     <div class="flex items-center h-full">
-      <img :src="`https://github.com/${nuxter.github}.png`" :alt="nuxter.github" class="w-16 h-16 mx-2 transition-all duration-200 rounded-full grayscale group-hover:grayscale-0">
+      <img :src="`https://github.com/${nuxter.github}.png`" :alt="nuxter.github" class="w-16 h-16 mx-2 transition-all rounded-full grayscale group-hover:grayscale-0">
       <div class="flex flex-col justify-between h-full py-5">
         <div>
           <h3 class="text-lg font-semibold leading-none u-text-gray-900 line-clamp-1">
@@ -14,18 +14,19 @@
         <div class="flex items-center gap-3">
           <CommunityNuxtersNuxterBadge :role="nuxter.role" />
           <NuxtLink v-if="nuxter.twitter" :to="`https://twitter.com/${nuxter.twitter}`" target="_blank">
-            <UIcon name="uil:twitter" class="w-5 h-5 u-text-gray-900" />
+            <UIcon name="uil:twitter" class="w-5 h-5 text-gray-400 dark:text-gray-50" />
           </NuxtLink>
           <NuxtLink v-if="nuxter.github" :to="`https://github.com/${nuxter.github}`" target="_blank">
-            <UIcon name="uil:github" class="w-5 h-5 u-text-gray-900" />
+            <UIcon name="uil:github" class="w-5 h-5 text-gray-400 dark:text-gray-50" />
           </NuxtLink>
         </div>
       </div>
     </div>
     <div class="flex flex-col items-end justify-between flex-shrink-0 h-full pb-5 mr-6">
       <div class="relative">
-        <img src="/assets/community/nuxters/rank.svg" alt="rank background">
-        <span class="absolute inset-x-0 text-lg font-semibold text-center top-3 u-text-gray-900">#{{ nuxter.rank }}</span>
+        <img src="/assets/community/nuxters/rank-light.svg" alt="rank background" class="dark:hidden">
+        <img src="/assets/community/nuxters/rank-dark.svg" alt="rank background" class="hidden dark:block">
+        <span class="absolute inset-x-0 text-lg font-semibold text-center u-text-gray-900 top-3">#{{ nuxter.rank }}</span>
       </div>
       <CommunityNuxtersNuxterNumber :nuxter="nuxter" size="small" :type="sortedTypes[0]" />
     </div>
