@@ -22,9 +22,9 @@
           </div>
         </div>
         <div class="flex items-center gap-12">
-          <CommunityNuxtersNuxterNumber :nuxter="nuxter" size="medium" :type="sortedTypes[1]" />
+          <!-- <CommunityNuxtersNuxterNumber :nuxter="nuxter" size="medium" :type="sortedTypes[1]" />
           <CommunityNuxtersNuxterNumber :nuxter="nuxter" size="medium" :type="sortedTypes[2]" />
-          <CommunityNuxtersNuxterNumber :nuxter="nuxter" size="medium" :type="sortedTypes[3]" />
+          <CommunityNuxtersNuxterNumber :nuxter="nuxter" size="medium" :type="sortedTypes[3]" /> -->
         </div>
       </div>
       <div class="flex flex-col items-end justify-between flex-shrink-0 pb-6">
