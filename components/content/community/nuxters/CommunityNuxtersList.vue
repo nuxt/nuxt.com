@@ -10,12 +10,15 @@
       </div>
     </div>
     <div v-if="filteredNuxters.length" class="mt-12">
-      <ul role="list" class="grid grid-cols-6 gap-8">
+      <ul v-if="!q" role="list" class="grid grid-cols-6 gap-8">
         <CommunityNuxtersNuxterLarge v-if="nuxter1" :nuxter="nuxter1" />
         <CommunityNuxtersNuxterMedium v-if="nuxter2" :nuxter="nuxter2" />
         <CommunityNuxtersNuxterMedium v-if="nuxter3" :nuxter="nuxter3" />
 
         <CommunityNuxtersNuxterSmall v-for="nuxter in otherNuxters" :key="nuxter.github" :nuxter="nuxter" />
+      </ul>
+      <ul v-else role="list" class="grid grid-cols-6 gap-8">
+        <CommunityNuxtersNuxterLarge v-for="nuxter in filteredNuxters" :key="nuxter.github" :nuxter="nuxter" />
       </ul>
     </div>
   </Page>
