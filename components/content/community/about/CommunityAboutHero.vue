@@ -17,7 +17,7 @@
           :class="{ 'gradient-border': colorMode.preference === 'dark' }"
         >
           <div
-            class="absolute transition-colors duration-[2ms] w-full h-full bg-gradient-to-r from-green-400 via-teal-400 to-indigoblue-600 dark:from-green-600 dark:via-teal-600 dark:top-indigo-blue-600
+            class="absolute transition-colors duration-[2ms] w-full h-full bg-gradient-to-r from-green-400 via-teal-400 to-indigoblue-400 dark:from-green-600 dark:via-teal-600 dark:top-indigo-blue-600
 
             group-hover:blur-[20px] group-hover:top-4 top-8 blur-xl
             dark:blur-[20px] dark:top-0 dark:group-hover:top-2 dark:group-hover:blur-[16px] dark:group-hover:h-full rounded-[12px]"
