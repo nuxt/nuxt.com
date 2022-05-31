@@ -3,7 +3,6 @@
     v-model="q"
     name="search"
     placeholder="Search a nuxter"
-    class="w-full max-w-sm"
     size="lg"
     icon="heroicons-outline:search"
     autocomplete="off"

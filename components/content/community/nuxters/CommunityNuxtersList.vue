@@ -1,10 +1,10 @@
 <template>
   <Page id="smooth" class="pt-16 -mt-16">
-    <div class="flex md:items-center md:justify-between">
+    <div class="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
       <h2 class="text-3xl font-semibold u-text-gray-900">
         Top 100 Nuxters
       </h2>
-      <div class="flex gap-6">
+      <div class="flex justify-end gap-6">
         <CommunityNuxtersFilterTime />
         <CommunityNuxtersFilterSort />
       </div>
