@@ -9,6 +9,7 @@ export default defineCachedEventHandler(async () => {
     const m = member.attributes
     return {
       name: m.name || m.github,
+      avatar_url: m.github ? `https://github.com/${m.github}.png` : m.avatar_url,
       bio: m.bio,
       github: m.github,
       twitter: m.twitter,
