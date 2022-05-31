@@ -5,15 +5,33 @@ export const useCommunityNuxters = () => {
   const pending = ref(false)
 
   // Http
-  async function fetch () {
-    if (_nuxters.value.length) {
+  async function fetch ({ force = false } = {}) {
+    if (_nuxters.value.length && !force) {
       return
     }
 
     pending.value = true
 
+    const date = new Date()
+    switch (selectedTime.value?.key) {
+      case 'day':
+        date.setDate(date.getDate() - 1)
+        break
+      case 'week':
+        date.setDate(date.getDate() - 7)
+        break
+      case 'month':
+        date.setMonth(date.getMonth() - 1)
+        break
+    }
+    const time = date.toISOString()
+
     try {
-      const data = await $fetch('/api/community/nuxters')
+      const data = await $fetch('/api/community/nuxters', {
+        params: {
+          time
+        }
+      })
 
       _nuxters.value = data
     } catch (e) {
