@@ -27,7 +27,10 @@ const pulls: Ref<GitHubPull[]> = ref([])
 
 const emit = defineEmits(['update:modelValue'])
 
-const keys = useMagicKeys()
+const keys = useMagicKeys({
+  passive: false,
+  onEventFired: event => event.preventDefault()
+})
 const activeElement = useActiveElement()
 
 const {
@@ -122,9 +125,12 @@ const notUsingInput = computed(() => !(activeElement.value?.tagName === 'INPUT' 
 
 // Watch
 
-whenever(and(keys.meta_b, notUsingInput), () => {
-  isOpen.value = !isOpen.value
-})
+if (process.client) {
+  const isMac = navigator.platform.includes('Mac')
+  whenever(and(isMac ? keys.meta_b : keys.ctrl_b, notUsingInput), () => {
+    isOpen.value = !isOpen.value
+  })
+}
 
 watch(isOpen, async (value) => {
   if (value) {
