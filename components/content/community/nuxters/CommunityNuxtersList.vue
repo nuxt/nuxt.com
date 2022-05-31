@@ -25,6 +25,9 @@
         <CommunityNuxtersNuxterLarge v-for="nuxter in filteredNuxters" :key="nuxter.github" :nuxter="nuxter" />
       </ul>
     </div>
+    <div v-else class="flex justify-center mt-32">
+      <UIcon name="heroicons-outline:refresh" class="w-8 h-8 animate-spin" />
+    </div>
   </Page>
 </template>
 
