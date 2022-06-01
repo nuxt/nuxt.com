@@ -116,8 +116,21 @@ const recentItems = computed(() => {
 })
 
 const actions = computed(() => ([
-  { key: 'create', label: 'Create new branch', static: true, icon: 'heroicons-outline:plus', click: onCreateBranchClick },
-  { key: 'refresh', label: 'Refresh branches', icon: 'heroicons-outline:refresh', iconClass: pendingBranches.value ? 'animate-spin' : '', click: () => { refreshBranches(true) }, prevent: true },
+  {
+    key: 'create',
+    label: 'Create new branch',
+    static: true,
+    icon: 'heroicons-outline:plus',
+    click: onCreateBranchClick
+  },
+  {
+    key: 'refresh',
+    label: 'Refresh branches',
+    icon: 'heroicons-outline:refresh',
+    iconClass: pendingBranches.value ? 'animate-spin' : '',
+    click: () => { refreshBranches(true) && fetchPulls() },
+    prevent: true
+  },
   (isDraftContent.value || isDraftMedia.value) && { key: 'reset', label: 'Revert draft', icon: 'heroicons-outline:reply', click: onResetDraftClick }
 ].filter(Boolean)))
 
