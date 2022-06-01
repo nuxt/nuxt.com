@@ -24,7 +24,7 @@
     </div>
     <div class="flex flex-col items-end justify-between flex-shrink-0 h-full pb-5 mr-6">
       <CommunityNuxtersNuxterRank :nuxter="nuxter" />
-      <CommunityNuxtersNuxterNumber :nuxter="nuxter" size="small" :type="sortedTypes[0]" />
+      <CommunityNuxtersNuxterNumber :nuxter="nuxter" size="sm" :type="sortedTypes[0]" />
     </div>
   </li>
 </template>

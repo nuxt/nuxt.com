@@ -60,9 +60,9 @@ const sortedTypes = computed(() => {
 
 const numberSize = computed(() => {
   if (md.value) {
-    return 'medium'
+    return 'md'
   } else {
-    return 'large'
+    return 'lg'
   }
 })
 </script>

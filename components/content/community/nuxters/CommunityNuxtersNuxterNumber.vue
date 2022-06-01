@@ -3,7 +3,7 @@
     <UIcon :name="icon" class="u-text-gray-600" :class="[iconSize]" />
     <div class="flex flex-col">
       <span :class="numberClass">{{ number }}</span>
-      <span class="u-text-gray-500" :class="{ 'hidden': size !== 'large' }">{{ label }}</span>
+      <span class="u-text-gray-500" :class="{ 'hidden': size !== 'lg' }">{{ label }}</span>
     </div>
   </div>
 </template>
@@ -17,7 +17,7 @@ const props = defineProps({
   size: {
     type: String,
     required: true,
-    validator: (value: string) => ['large', 'medium', 'small'].includes(value)
+    validator: (value: string) => ['lg', 'md', 'sm'].includes(value)
   },
   type: {
     type: String,
@@ -52,11 +52,11 @@ const number = computed(() => {
 })
 const numberClass = computed(() => {
   switch (props.size) {
-    case 'large':
+    case 'lg':
       return 'text-xl font-medium u-text-gray-700'
-    case 'medium':
+    case 'md':
       return 'text-lg font-medium u-text-gray-700'
-    case 'small':
+    case 'sm':
       return 'font-semibold u-text-gray-700'
   }
 })
@@ -74,21 +74,21 @@ const label = computed(() => {
 })
 const iconSize = computed(() => {
   switch (props.size) {
-    case 'large':
+    case 'lg':
       return 'w-8 h-8'
-    case 'medium':
+    case 'md':
       return 'w-6 h-6'
-    case 'small':
+    case 'sm':
       return 'w-4 h-4'
   }
 })
 const wrapperClass = computed(() => {
   switch (props.size) {
-    case 'large':
+    case 'lg':
       return 'gap-4'
-    case 'medium':
+    case 'md':
       return 'gap-2'
-    case 'small':
+    case 'sm':
       return 'gap-2'
   }
 })
