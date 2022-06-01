@@ -1,7 +1,9 @@
 <template>
   <li class="relative col-span-6 overflow-hidden border u-border-gray-200 rounded-xl h-44 group">
     <img src="/assets/community/nuxters/nuxter-gradient.svg" alt="nuxter background" class="absolute object-cover transition-all h-44 left-32 grayscale group-hover:grayscale-0">
-    <img :src="nuxter.avatar_url" :alt="nuxter.github" class="absolute w-56 h-56 transition-all rounded-full -top-6 -left-10 grayscale group-hover:grayscale-0">
+    <div class="absolute w-56 h-56 overflow-hidden transition-all rounded-full u-bg-gray-50 -top-6 -left-10 grayscale group-hover:grayscale-0">
+      <img :src="nuxter.avatar_url" :alt="nuxter.github" class="w-full h-full">
+    </div>
     <div class="absolute inset-y-0 flex justify-between left-56 right-6 xl:right-10">
       <div class="flex flex-col justify-between py-6">
         <div>
