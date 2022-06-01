@@ -1,5 +1,5 @@
 <template>
-  <div class="flex gap-4">
+  <div class="gap-4 md:flex">
     <UBadge
       variant=""
       base-class="inline-flex items-center font-semibold border bg-indigoblue-100 border-indigoblue-500 dark:bg-black text-indigoblue-700 dark:text-white"

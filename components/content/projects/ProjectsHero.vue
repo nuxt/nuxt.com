@@ -5,7 +5,7 @@
       <div class="py-8 font-semibold text-center text-7xl">
         <Markdown :use="$slots.title" unwrap="p" />
       </div>
-      <div class="w-1/2 text-lg font-medium text-center text-gray-500">
+      <div class="text-lg font-medium text-center text-gray-500 sm:w-1/2">
         <Markdown :use="$slots.description" unwrap="p" />
       </div>
       <form class="flex gap-3 py-12" @submit.prevent="onSubmit">
@@ -28,7 +28,7 @@
       </form>
     </UContainer>
     <div class="absolute left-0 inset-y-1/2">
-      <img src="/assets/projects/gems.svg" class="">
+      <img src="/assets/projects/gems.svg" class="opacity-25 md:opacity-100">
     </div>
   </div>
 </template>
