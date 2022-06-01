@@ -1,6 +1,6 @@
 <template>
-  <div ref="root" class="relative flex items-end py-20 overflow-x-auto">
-    <div class="absolute top-1/2 w-full h-1 bg-gradient-to-l from-green-400 via-teal-400 to-indigoblue-400 transition-all duration-[3.3s] flex items-center " :class="{ 'w-0': !startAnimating }" />
+  <div ref="root" class="relative flex items-end pb-20 -mt-20 overflow-x-auto">
+    <div class="absolute top-30% w-full h-1 bg-gradient-to-l from-green-400 via-teal-400 to-indigoblue-400 transition-all duration-[3.3s] flex items-center " :class="{ 'w-0': !startAnimating }" />
     <UContainer class="relative w-full">
       <ul class="flex items-center h-[400px]">
         <li v-for="(year, index) in 11" :key="index" :class="[{'self-start': [1, 5, 8].includes(index) }, {'self-end': [3, 6, 10].includes(index) }]">
