@@ -4,7 +4,7 @@ import { getHighlighter, Lang } from 'shiki-es'
 import prose from './prose'
 
 const defaultLangs: Lang[] = [
-  'js',
+  'javascript',
   'typescript',
   'bash',
   'sql',
