@@ -2,16 +2,17 @@
 title: Projects
 ---
 
-::projects-hero
+::projects-page
+---
+videoId: IY8QTdNIeU
+videoTitle: Second Poteau Pavard
+---
 
-#header
-::projects-hero-header
 #badge
 Coming soon
 
-#description
+#header
 Soon you will be able to test Projects, [stay tuned]{.text-indigoblue-500}
-::
 
 #title
 The workflow for 

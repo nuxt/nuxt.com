@@ -1,7 +1,19 @@
 <template>
   <div class="relative">
     <UContainer padded class="flex flex-col items-center py-12">
-      <Markdown :use="$slots.header" unwrap="p" />
+      <div class="gap-4 md:flex">
+        <UBadge
+          variant="indigo"
+          base-class="inline-flex items-center font-semibold border bg-indigoblue-100 border-indigoblue-500 dark:bg-black text-indigoblue-700 dark:text-white"
+          size="lg"
+        >
+          <Markdown :use="$slots.badge" unwrap="p" />
+        </UBadge>
+        <div class="u-text-gray-500">
+          <Markdown :use="$slots.header" unwrap="p" />
+        </div>
+      </div>
+
       <div class="py-8 font-semibold text-center text-7xl">
         <Markdown :use="$slots.title" unwrap="p" />
       </div>
@@ -26,6 +38,9 @@
           size="md"
         />
       </form>
+      <div class="py-16">
+        <YoutubePlayer :video-id="videoId" :title="videoTitle" />
+      </div>
     </UContainer>
     <div class="absolute left-0 inset-y-1/2">
       <img src="/assets/projects/gems.svg" class="opacity-25 md:opacity-100">
@@ -34,6 +49,17 @@
 </template>
 
 <script setup lang="ts">
+defineProps({
+  videoId: {
+    type: String,
+    default: ''
+  },
+  videoTitle: {
+    type: String,
+    default: ''
+  }
+})
+
 const { $toast } = useNuxtApp()
 
 const form = reactive({
