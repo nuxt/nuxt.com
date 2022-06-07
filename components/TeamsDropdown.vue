@@ -107,7 +107,7 @@ const items = computed(() => {
       profile,
       ...teams
     ],
-    [
+    user.value?.beta && [
       {
         label: 'New team',
         to: { name: 'teams-new' },

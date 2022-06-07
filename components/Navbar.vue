@@ -1,6 +1,6 @@
 <template>
   <header
-    class="sticky top-0 z-10 lg:relative"
+    class="sticky top-0 z-30 lg:relative"
     :class="hasScrolledPastNavbar ? 'backdrop-blur-md bg-white/75 dark:bg-black/75' : ''"
   >
     <NavbarDialog v-model="isOpen" :links="links" />
