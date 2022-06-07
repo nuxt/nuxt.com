@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 const route = useRoute()
-const { selectedCategory, selectedType, q } = useIntegrations()
+const { selectedCategory, selectedType, q } = useModules()
 
 const filters = computed(() => {
   return [
@@ -24,7 +24,7 @@ const filters = computed(() => {
     selectedType.value && {
       ...selectedType.value,
       to: {
-        name: 'integrations',
+        name: 'modules',
         query: {
           ...route.query,
           type: route.query?.type !== selectedType.value.key ? selectedType.value.key : undefined
@@ -36,7 +36,7 @@ const filters = computed(() => {
       key: 'q',
       title: q.value,
       to: {
-        name: 'integrations',
+        name: 'modules',
         query: {
           ...route.query,
           q: undefined

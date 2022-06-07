@@ -13,7 +13,7 @@
 <script setup lang="ts">
 const route = useRoute()
 const router = useRouter()
-const { versions, selectedVersion } = useIntegrations()
+const { versions, selectedVersion } = useModules()
 
 const version = computed({
   get () {
@@ -21,7 +21,7 @@ const version = computed({
   },
   set (version) {
     router.push({
-      name: 'integrations',
+      name: 'modules',
       query: {
         ...route.query,
         version: version || undefined

@@ -1,6 +1,6 @@
 import type { Ref } from 'vue'
 
-export const useIntegrations = () => {
+export const useModules = () => {
   const route = useRoute()
   const _modules: Ref<object[]> = useState('modules', () => [])
 
@@ -16,7 +16,7 @@ export const useIntegrations = () => {
     pending.value = true
 
     try {
-      const data = await $fetch('/api/integrations')
+      const data = await $fetch('/api/modules')
 
       _modules.value = data.modules
     } catch (e) {
@@ -90,7 +90,7 @@ export const useIntegrations = () => {
       key: category,
       title: category,
       to: {
-        name: 'integrations',
+        name: 'modules',
         query: {
           ...route.query,
           category: route.query?.category !== category ? category : undefined
@@ -105,7 +105,7 @@ export const useIntegrations = () => {
       key: type,
       title: typesMapping[type] || type,
       to: {
-        name: 'integrations',
+        name: 'modules',
         query: {
           ...route.query,
           type
