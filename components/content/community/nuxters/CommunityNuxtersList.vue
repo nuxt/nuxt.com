@@ -9,7 +9,7 @@
         <!-- <CommunityNuxtersFilterSort /> -->
       </div>
     </div>
-    <div v-if="filteredNuxters.length" class="mt-12">
+    <div v-if="filteredNuxters.length && !pending" class="mt-12">
       <ul v-if="!q" role="list" class="grid grid-cols-6 gap-8">
         <CommunityNuxtersNuxterLarge v-if="lg && nuxter1" :nuxter="nuxter1" />
         <CommunityNuxtersNuxterMedium v-else-if="md && nuxter1" :nuxter="nuxter1" />
@@ -36,7 +36,7 @@ import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 
 const { greater } = useBreakpoints(breakpointsTailwind)
 
-const { nuxters, q } = useCommunityNuxters()
+const { pending, fetch: fetchNuxters, nuxters, q, selectedTime } = useCommunityNuxters()
 
 const filteredNuxters = computed(() => {
   if (!nuxters.value?.length) {
@@ -58,4 +58,6 @@ const otherNuxters = computed(() => filteredNuxters.value?.length && filteredNux
 
 const lg = greater('md')
 const md = greater('sm')
+
+watch(selectedTime, (value, old) => fetchNuxters({ force: value !== old }))
 </script>
