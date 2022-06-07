@@ -3410,3 +3410,23 @@
     </defs>
   </svg>
 </template>
+
+<script setup lang="ts">
+onMounted(() => {
+  const areas = [
+    document.getElementById('area1'),
+    document.getElementById('area2'),
+    document.getElementById('area3'),
+    document.getElementById('area4')
+  ]
+  let index = 0
+  setInterval(() => {
+    const area = areas[index]
+    area.classList.add('opacity-100')
+    setTimeout(() => {
+      area.classList.remove('opacity-100')
+    }, 6000)
+    index = (index + 1) % 4
+  }, 4000)
+})
+</script>
