@@ -21,8 +21,11 @@
         <CommunityNuxtersNuxterLarge v-for="nuxter in filteredNuxters" :key="nuxter.github" :nuxter="nuxter" />
       </ul>
     </div>
-    <div v-else class="flex justify-center mt-32">
+    <div v-else-if="pending" class="flex justify-center mt-32">
       <UIcon name="heroicons-outline:refresh" class="w-8 h-8 animate-spin" />
+    </div>
+    <div v-else class="flex justify-center mt-32 font-medium">
+      No nuxters found.
     </div>
   </Page>
 </template>
