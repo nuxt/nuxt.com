@@ -2,7 +2,7 @@
   <UInput
     v-model="q"
     name="search"
-    placeholder="Search an integration"
+    placeholder="Search a module"
     class="w-full max-w-sm"
     size="lg"
     icon="heroicons-outline:search"
@@ -21,7 +21,7 @@ const q = computed({
   },
   set (q) {
     router.push({
-      name: 'integrations',
+      name: 'modules',
       query: {
         ...route.query,
         q: q || undefined
