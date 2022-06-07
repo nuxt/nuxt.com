@@ -11,13 +11,9 @@
     </div>
     <div v-if="filteredNuxters.length && !pending" class="mt-12">
       <ul v-if="!q" role="list" class="grid grid-cols-6 gap-8">
-        <CommunityNuxtersNuxterLarge v-if="lg && nuxter1" :nuxter="nuxter1" />
-        <CommunityNuxtersNuxterMedium v-else-if="md && nuxter1" :nuxter="nuxter1" />
-        <CommunityNuxtersNuxterSmall v-else-if="nuxter1" :nuxter="nuxter1" />
-        <CommunityNuxtersNuxterMedium v-if="md && nuxter2" :nuxter="nuxter2" />
-        <CommunityNuxtersNuxterSmall v-else-if="nuxter2" :nuxter="nuxter2" />
-        <CommunityNuxtersNuxterMedium v-if="md && nuxter3" :nuxter="nuxter3" />
-        <CommunityNuxtersNuxterSmall v-else-if="nuxter3" :nuxter="nuxter3" />
+        <Component :is="nuxter1Component" v-if="nuxter1" :nuxter="nuxter1" />
+        <Component :is="nuxter2Component" v-if="nuxter2" :nuxter="nuxter2" />
+        <Component :is="nuxter2Component" v-if="nuxter3" :nuxter="nuxter3" />
 
         <CommunityNuxtersNuxterSmall v-for="nuxter in otherNuxters" :key="nuxter.github" :nuxter="nuxter" />
       </ul>
@@ -34,7 +30,7 @@
 <script setup>
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 
-const { greater } = useBreakpoints(breakpointsTailwind)
+const { smaller } = useBreakpoints(breakpointsTailwind)
 
 const { pending, fetch: fetchNuxters, nuxters, q, selectedTime } = useCommunityNuxters()
 
@@ -54,10 +50,27 @@ const filteredNuxters = computed(() => {
 const nuxter1 = computed(() => filteredNuxters.value?.length && filteredNuxters.value[0])
 const nuxter2 = computed(() => filteredNuxters.value?.length >= 2 && filteredNuxters.value[1])
 const nuxter3 = computed(() => filteredNuxters.value?.length >= 3 && filteredNuxters.value[2])
-const otherNuxters = computed(() => filteredNuxters.value?.length && filteredNuxters.value?.slice(3))
+const otherNuxters = computed(() => filteredNuxters.value?.length && filteredNuxters.value.slice(3))
 
-const lg = greater('md')
-const md = greater('sm')
+const lg = smaller('xl')
+const md = smaller('lg')
+
+const nuxter1Component = computed(() => {
+  if (md.value) {
+    return 'CommunityNuxtersNuxterSmall'
+  } else if (lg.value) {
+    return 'CommunityNuxtersNuxterMedium'
+  } else {
+    return 'CommunityNuxtersNuxterLarge'
+  }
+})
+const nuxter2Component = computed(() => {
+  if (md.value) {
+    return 'CommunityNuxtersNuxterSmall'
+  } else {
+    return 'CommunityNuxtersNuxterMedium'
+  }
+})
 
 watch(selectedTime, (value, old) => fetchNuxters({ force: value !== old }))
 </script>
