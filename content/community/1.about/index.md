@@ -62,3 +62,49 @@ Chopin Brothers
   Sébastien (@Atinux) made his first commit for Nuxt.js on GitHub on October 26th 2016.
   ::
 ::
+
+::community-about-join
+#title
+Join the community
+#items
+  ::community-about-join-item
+  ---
+  href: 'https://github.com/nuxt'
+  icon: 'github.svg'
+  ---
+  #title
+  GitHub
+  ::
+  ::community-about-join-item
+  ---
+  href: 'https://stackoverflow.com/questions/tagged/nuxt.js?tab=Newest'
+  icon: 'stack-over-flow.svg'
+  ---
+  #title
+  Stack OverFlow
+  ::
+  ::community-about-join-item
+  ---
+  href: 'https://discord.com/invite/ps2h6QT'
+  icon: 'discord.svg'
+  ---
+  #title
+  Discord
+  ::
+  ::community-about-join-item
+  ---
+  href: 'https://www.youtube.com/c/Nuxtjs'
+  icon: 'youtube.svg'
+  ---
+  #title
+  Youtube
+  ::
+  ::community-about-join-item
+  ---
+  href: 'https://twitter.com/nuxt_js'
+  icon: 'twitter.svg'
+  ---
+  #title
+  Twitter
+  ::
+::
