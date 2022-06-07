@@ -37,7 +37,7 @@ export const useCounterAnimations = () => {
         setTimeout(resolve, ms[currentStep.value])
       })
     }
-    if (!reinit) { currentStep.value = null }
+    if (reinit) { currentStep.value = null }
   }
 
   return {

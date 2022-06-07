@@ -19,4 +19,46 @@ Chopin Brothers
 ::
 
 ::community-about-time-lapse
+#first
+  ::community-about-time-lapse-history
+  #title
+  First commit
+  #description
+  Sébastien (@Atinux) made his first commit for Nuxt.js on GitHub on October 26th 2016.
+  ::
+#second
+  ::community-about-time-lapse-history
+  #title
+  First commit
+  #description
+  Sébastien (@Atinux) made his first commit for Nuxt.js on GitHub on October 26th 2016.
+  ::
+#third
+  ::community-about-time-lapse-history
+  #title
+  First commit
+  #description
+  Sébastien (@Atinux) made his first commit for Nuxt.js on GitHub on October 26th 2016.
+  ::
+#fourth
+  ::community-about-time-lapse-history
+  #title
+  First commit
+  #description
+  Sébastien (@Atinux) made his first commit for Nuxt.js on GitHub on October 26th 2016.
+  ::
+#fifth
+  ::community-about-time-lapse-history
+  #title
+  First commit
+  #description
+  Sébastien (@Atinux) made his first commit for Nuxt.js on GitHub on October 26th 2016.
+  ::
+#sixth
+  ::community-about-time-lapse-history
+  #title
+  First commit
+  #description
+  Sébastien (@Atinux) made his first commit for Nuxt.js on GitHub on October 26th 2016.
+  ::
 ::

@@ -1,5 +1,5 @@
 <template>
-  <ContentRenderer :value="page" class="overflow-hidden" />
+  <ContentRenderer :value="page" />
 </template>
 
 <script setup lang="ts">
