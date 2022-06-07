@@ -3418,7 +3418,10 @@ onMounted(() => {
     document.getElementById('area2'),
     document.getElementById('area3'),
     document.getElementById('area4')
-  ]
+  ].filter(Boolean)
+  if (!areas.length) {
+    return
+  }
   let index = 0
   setInterval(() => {
     const area = areas[index]
@@ -3426,7 +3429,7 @@ onMounted(() => {
     setTimeout(() => {
       area.classList.remove('opacity-100')
     }, 6000)
-    index = (index + 1) % 4
+    index = (index + 1) % areas.length
   }, 4000)
 })
 </script>
