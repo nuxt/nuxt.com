@@ -6,9 +6,7 @@
 const { page, fetchPage } = useContent()
 const { fetch: fetchNuxters, selectedTime } = useCommunityNuxters()
 
-await fetchPage()
-
-fetchNuxters()
+await Promise.all([fetchPage(), fetchNuxters()])
 
 watch(selectedTime, (value, old) => fetchNuxters({ force: value !== old }))
 </script>
