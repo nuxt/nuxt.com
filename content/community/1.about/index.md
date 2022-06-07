@@ -108,3 +108,29 @@ Join the community
   Twitter
   ::
 ::
+
+::community-about-stats
+#title
+Our [community]{ .text-green-400 } blablabla blabla
+#description
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet.
+#items
+  ::community-about-stats-item
+  #stat
+  195
+  #description
+  Contributors
+  ::
+  ::community-about-stats-item
+  #stat
+  15.1k
+  #description
+  GitHub Stars
+  ::
+  ::community-about-stats-item
+  #stat
+  71k +
+  #description
+  Followers on Twitter
+  ::
+::
