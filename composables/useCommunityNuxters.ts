@@ -24,7 +24,7 @@ export const useCommunityNuxters = () => {
         date.setMonth(date.getMonth() - 1)
         break
     }
-    const time = date.toISOString()
+    const time = date.toISOString().split('T', 1)[0]
 
     try {
       const data = await $fetch('/api/community/nuxters', {
