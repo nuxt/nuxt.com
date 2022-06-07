@@ -14,10 +14,10 @@
         <div class="flex items-center gap-3">
           <CommunityNuxtersNuxterBadge :role="nuxter.role" />
           <NuxtLink v-if="nuxter.twitter" :to="`https://twitter.com/${nuxter.twitter}`" target="_blank">
-            <UIcon name="uil:twitter" class="w-5 h-5 text-gray-400 dark:text-gray-50" />
+            <UIcon name="uil:twitter" class="w-5 h-5 text-gray-400 dark:text-gray-50 hover:u-text-gray-600" />
           </NuxtLink>
           <NuxtLink v-if="nuxter.github" :to="`https://github.com/${nuxter.github}`" target="_blank">
-            <UIcon name="uil:github" class="w-5 h-5 text-gray-400 dark:text-gray-50" />
+            <UIcon name="uil:github" class="w-5 h-5 text-gray-400 dark:text-gray-50 hover:u-text-gray-600" />
           </NuxtLink>
         </div>
       </div>
