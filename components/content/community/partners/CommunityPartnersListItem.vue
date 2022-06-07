@@ -13,15 +13,6 @@
       <p class="mt-2 u-text-gray-500 line-clamp-2">
         {{ partner.description }}
       </p>
-      <div v-if="partner.services?.length" class="inline-flex w-full gap-2 mt-4 overflow-x-auto z-[1] relative -mb-2">
-        <span
-          v-for="service in partner.services"
-          :key="service.key"
-          class="flex-shrink-0 px-2 py-1 text-xs border rounded-lg u-border-gray-200 u-text-gray-500"
-        >
-          {{ service.title }}
-        </span>
-      </div>
     </div>
 
     <NuxtLink :to="partner._path" class="focus:outline-none" tabindex="-1">
