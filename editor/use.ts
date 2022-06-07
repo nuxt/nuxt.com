@@ -1,7 +1,7 @@
 import { Editor, rootCtx } from '@milkdown/core'
 import { emoji } from '@milkdown/plugin-emoji'
 import { history } from '@milkdown/plugin-history'
-import { listener } from '@milkdown/plugin-listener'
+import { listener, listenerCtx } from '@milkdown/plugin-listener'
 import { tooltip } from '@milkdown/plugin-tooltip'
 import { gfm } from '@milkdown/preset-gfm'
 import { replaceAll, switchTheme } from '@milkdown/utils'
@@ -52,7 +52,9 @@ export const useEditor = (options: Options) => {
 
     if (isCollabEnabled) {
       instance.use(collaborative)
-      instance.action(joinRoom(options))
+      instance.ctx.get(listenerCtx).mounted(() => {
+        instance.action(joinRoom(options))
+      })
     }
 
     return instance

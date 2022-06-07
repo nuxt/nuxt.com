@@ -1,5 +1,4 @@
-import { prosePluginsCtx, SchemaReady } from '@milkdown/core'
-import { Ctx } from '@milkdown/ctx'
+import { prosePluginsCtx, MilkdownPlugin, createTimer, editorStateTimerCtx } from '@milkdown/core'
 import { getHighlighter, Lang } from 'shiki-es'
 import prose from './prose'
 
@@ -21,13 +20,20 @@ const defaultLangs: Lang[] = [
   'markdown'
 ]
 
-export default () => async (ctx: Ctx) => {
-  const highligther = await getHighlighter({
-    theme: 'one-dark-pro',
-    langs: defaultLangs
-  })
+const shikiTimer = createTimer('shiki')
 
-  await ctx.wait(SchemaReady)
+export default <MilkdownPlugin> ((pre) => {
+  pre.record(shikiTimer)
 
-  ctx.update(prosePluginsCtx, ps => [...ps, prose(highligther)])
-}
+  return async (ctx) => {
+    ctx.update(editorStateTimerCtx, x => x.concat(shikiTimer))
+
+    const highligther = await getHighlighter({
+      theme: 'one-dark-pro',
+      langs: defaultLangs
+    })
+
+    ctx.update(prosePluginsCtx, ps => [...ps, prose(highligther)])
+    ctx.done(shikiTimer)
+  }
+})
