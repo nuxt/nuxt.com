@@ -1,12 +1,12 @@
 ---
-title: Integrations
+title: Modules
 ---
 
-::integrations-hero
+::modules-hero
 #title
-Integrations
+Modules
 #description
 Extend and automate your workflow by using deployments for your favorite tools.
 ::
 
-:integrations-list
+:modules-list

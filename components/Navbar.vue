@@ -72,9 +72,9 @@ const links = computed(() => {
     icon: 'heroicons-outline:book-open',
     _path: '/docs/framework'
   }, {
-    title: 'Integrations',
+    title: 'Modules',
     icon: 'heroicons-outline:sparkles',
-    _path: '/integrations'
+    _path: '/modules'
   }, {
     title: 'Projects',
     _path: team && user.value?.beta ? `/@${team}/projects` : '/projects',
