@@ -97,7 +97,9 @@ export const useModules = () => {
         },
         params: { smooth: '#smooth' }
       }
-    }))
+    })).sort((a, b) => {
+      return a.title.localeCompare(b.title)
+    })
   })
 
   const types = computed(() => {
