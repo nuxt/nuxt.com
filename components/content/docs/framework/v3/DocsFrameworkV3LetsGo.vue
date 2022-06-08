@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { PropType } from 'vue'
+import type { PropType } from 'vue'
 
 defineProps({
   buttons: {

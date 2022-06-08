@@ -56,7 +56,6 @@ export const useCommunityNuxters = () => {
 
   // Computed
   const nuxters = computed(() => {
-    // TODO: filter
     return _nuxters.value
       .sort((a, b) => b[selectedSort.value.key] - a[selectedSort.value.key])
       .map((nuxter, index) => ({ ...nuxter, rank: index + 1 }))
