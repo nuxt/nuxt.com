@@ -4,7 +4,7 @@
       <div class="gap-4 md:flex">
         <UBadge
           variant="indigo"
-          base-class="inline-flex items-center font-semibold border bg-indigoblue-100 border-indigoblue-500 dark:bg-black text-indigoblue-700 dark:text-white"
+          base-class="inline-flex items-center font-semibold border bg-indigoblue-100 border-indigoblue-400 dark:bg-black text-indigoblue-700 dark:text-white"
           size="lg"
         >
           <Markdown :use="$slots.badge" unwrap="p" />
