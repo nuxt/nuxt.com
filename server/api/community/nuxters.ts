@@ -40,7 +40,7 @@ export default defineCachedEventHandler(async (event) => {
       sort: 'activities_count',
       start_date: time
     },
-    maxPage: 2
+    maxPage: 1
   })
 
   const nuxters = members
@@ -68,6 +68,6 @@ export default defineCachedEventHandler(async (event) => {
 
   return nuxters
 }, {
-  name: 'contributors',
+  name: 'community-nuxters',
   maxAge: 60 * 1000
 })
