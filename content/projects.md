@@ -4,8 +4,8 @@ title: Projects
 
 ::projects-page
 ---
-videoId: IY8QTdNIeU
-videoTitle: Second Poteau Pavard
+videoId: vbsPXHCu8Xg
+videoTitle: Be Lazy, Be Smart, Be Nuxt
 ---
 
 #badge

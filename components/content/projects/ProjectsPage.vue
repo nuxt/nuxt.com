@@ -38,7 +38,7 @@
           size="md"
         />
       </form>
-      <div class="py-16">
+      <div class="w-full py-16">
         <YoutubePlayer :video-id="videoId" :title="videoTitle" />
       </div>
     </UContainer>
