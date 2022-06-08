@@ -58,7 +58,9 @@ const props = defineProps({
 const route = useRoute()
 const { hasScrolledPastSubNavbar } = useNavbarScroll()
 
-const filteredLinks = computed(() => props.links.filter(l => !!l.title))
+const filteredLinks = computed(() => {
+  return props.links.filter(l => !!l.title).map(child => ({ ...child, _path: child.redirect || child._path, target: child.redirect && '_blank' }))
+})
 
 function isActive (link) {
   return link.exact ? route.path === link._path : route.path.startsWith(link._path)

@@ -15,7 +15,7 @@
 const route = useRoute()
 const router = useRouter()
 
-const { sorts, selectedSort } = useIntegrations()
+const { sorts, selectedSort } = useModules()
 
 const sortBy = computed({
   get () {
@@ -23,7 +23,7 @@ const sortBy = computed({
   },
   set (sortBy) {
     router.push({
-      name: 'integrations',
+      name: 'modules',
       query: {
         ...route.query,
         sortBy: sortBy?.key || undefined

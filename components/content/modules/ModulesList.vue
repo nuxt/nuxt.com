@@ -1,7 +1,7 @@
 <template>
   <Page id="smooth" class="pt-16 -mt-16">
     <template #aside>
-      <IntegrationsAside />
+      <ModulesAside />
     </template>
 
     <div class="flex flex-col justify-between gap-3 sm:items-center sm:flex-row">
@@ -10,8 +10,8 @@
       </h2>
 
       <div class="flex items-center gap-3 sm:flex-row-reverse">
-        <IntegrationsFilterSort />
-        <IntegrationsFilters />
+        <ModulesFilterSort />
+        <ModulesFilters />
       </div>
     </div>
 
@@ -19,14 +19,14 @@
 
     <ul v-if="filteredModules.length" class="grid grid-cols-1 gap-8 mt-8 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
       <li v-for="(filteredModule, index) in filteredModules" :key="index">
-        <IntegrationsListItem :module="filteredModule" />
+        <ModulesListItem :module="filteredModule" />
       </li>
     </ul>
   </Page>
 </template>
 
 <script setup lang="ts">
-const { modules, selectedCategory, selectedType, selectedVersion, selectedSort, q } = useIntegrations()
+const { modules, selectedCategory, selectedType, selectedVersion, selectedSort, q } = useModules()
 
 const filteredModules = computed(() => {
   return [...modules.value]
