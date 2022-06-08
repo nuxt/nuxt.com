@@ -9,6 +9,9 @@
     "release": "yarn lint && standard-version && git push --follow-tags",
     "test": "yarn lint"
   },
+  "resolutions": {
+    "parse5": "6.0.1"
+  },
   "devDependencies": {
     "@docus/remark-mdc": "npm:@docus/remark-mdc-edge",
     "@milkdown/core": "6.1.2",
@@ -43,7 +46,7 @@
     "js-yaml": "^4.1.0",
     "mjml": "^4.12.0",
     "node-mailjet": "^3.4.1",
-    "nuxt": "npm:nuxt3@latest",
+    "nuxt": "npm:nuxt3@3.0.0-rc.3-27550969.a4a3cff",
     "socket.io-client": "^4.5.1",
     "standard-version": "^9.5.0",
     "swiper": "^8.1.6",
