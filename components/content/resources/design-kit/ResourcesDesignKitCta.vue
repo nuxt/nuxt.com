@@ -2,7 +2,7 @@
 <template>
   <div :class="{ 'dark': dark }">
     <UCard padded base-class="relative h-full overflow-hidden">
-      <img v-if="imagePath" :src="imagePath" class="absolute bottom-0 right-0 w-2/5">
+      <UIcon v-if="icon" :name="icon" class="absolute w-56 h-56 text-gray-100 -right-10 -bottom-16 dark:text-black" />
 
       <span v-if="dark" class="_ellipse" />
 
@@ -32,7 +32,7 @@ defineProps({
     type: String,
     default: ''
   },
-  imagePath: {
+  icon: {
     type: String,
     default: ''
   },
