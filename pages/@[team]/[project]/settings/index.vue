@@ -64,7 +64,8 @@
             v-model="form.baseDir"
             name="baseDir"
             class="w-full lg:max-w-xs"
-            :options="folders"
+            :disabled="pendingFolders"
+            :options="folders || []"
           />
         </UFormGroup>
       </div>
@@ -107,7 +108,7 @@ const { previewUrl } = useProjectFiles(project, 'content')
 const form = reactive({ name: project.name, slug: project.slug, url: project.url, baseDir: project.baseDir })
 const updating = ref(false)
 
-const { data: folders } = await useAsyncData(`projects-${route.params.project}-folders`, () => client<File[]>(`/github/installations/${project.repository.owner}/${project.repository.name}/folders`), {
+const { data: folders, pending: pendingFolders } = useLazyAsyncData(`projects-${route.params.project}-folders`, () => client<File[]>(`/github/installations/${project.repository.owner}/${project.repository.name}/folders`), {
   transform: (value) => {
     return value?.map(folder => ({ text: folder.path, value: folder.path }) || [])
   }

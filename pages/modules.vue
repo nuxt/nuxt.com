@@ -1,6 +1,6 @@
 <template>
   <div>
-    <SubNavbar title="Integrations" :links="links">
+    <SubNavbar title="Modules" :links="links">
       <template #right>
         <UButton icon="fa-brands:twitter" variant="transparent" to="https://twitter.com/nuxt_js" target="_blank" class="!p-0" />
         <UButton icon="fa-brands:discord" variant="transparent" to="https://discord.com/invite/ps2h6QT" target="_blank" class="!p-0" />
@@ -15,16 +15,16 @@
 <script setup lang="ts">
 const route = useRoute()
 const { page, fetchPage } = useContent()
-const { fetch: fetchIntegrations, types } = useIntegrations()
+const { fetch: fetchModules, types } = useModules()
 
-await Promise.all([fetchPage(), fetchIntegrations()])
+await Promise.all([fetchPage(), fetchModules()])
 
 const links = computed(() => {
   return [
     {
       title: 'All',
       _path: {
-        name: 'integrations',
+        name: 'modules',
         query: {
           ...route.query,
           type: undefined

@@ -7,10 +7,10 @@
       <Markdown :use="$slots.description" unwrap="p" />
     </template>
     <template #extra>
-      <IntegrationsFilterSearch />
+      <ModulesFilterSearch />
     </template>
     <template #image>
-      <img src="/assets/integrations/gems.svg" class="object-contain h-full mx-10 opacity-30 sm:opacity-100">
+      <img src="/assets/modules/gems.svg" class="object-contain h-full mx-10 opacity-30 sm:opacity-100">
 
       <UCard padded body-class="p-4" class="hidden lg:block absolute left-11 top-3 w-44 backdrop-blur-lg !bg-opacity-10">
         <UIcon name="heroicons-outline:download" class="w-5 h-5 text-teal-400" />
@@ -57,5 +57,5 @@
 <script setup lang="ts">
 import { formatNumber } from '~/utils'
 
-const { stats } = useIntegrations()
+const { stats } = useModules()
 </script>
