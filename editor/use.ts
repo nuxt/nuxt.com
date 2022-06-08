@@ -5,6 +5,7 @@ import { listener } from '@milkdown/plugin-listener'
 import { prism } from '@milkdown/plugin-prism'
 import { tooltip } from '@milkdown/plugin-tooltip'
 import { gfm } from '@milkdown/preset-gfm'
+import { codeFence as cmCodeFence } from '@milkdown/preset-commonmark'
 import { replaceAll, switchTheme } from '@milkdown/utils'
 import { useEditor as useMilkdownEditor } from '@milkdown/vue'
 
@@ -12,6 +13,7 @@ import { useEditor as useMilkdownEditor } from '@milkdown/vue'
 import context, { componentSchemasCtx } from './context'
 
 // Internal plugins
+import codeFence from './plugins/code-fence'
 import mdc from './plugins/mdc'
 import slash from './plugins/slash'
 import trailingParagraph from './plugins/trailing-paragraph'
@@ -43,7 +45,7 @@ export const useEditor = (options: Options) => {
       .use(emoji)
       .use(history)
       .use(listener)
-      .use(gfm)
+      .use(gfm.replace(cmCodeFence, codeFence()))
       .use(prism) // TODO: Use custom plugin to add Shiki support
       .use(tooltip)
       .use(mdc)
