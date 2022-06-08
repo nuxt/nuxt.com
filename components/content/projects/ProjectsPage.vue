@@ -12,15 +12,15 @@
         >
           <Markdown :use="$slots.badge" unwrap="p" />
         </UBadge>
-        <div class="text-center u-text-gray-500">
+        <div class="text-center text-gray-500 dark:text-gray-100">
           <Markdown :use="$slots.header" unwrap="p" />
         </div>
       </div>
 
-      <div class="py-8 font-semibold text-center text-7xl">
+      <div class="py-8 font-semibold leading-tight text-center text-7xl">
         <Markdown :use="$slots.title" unwrap="p" />
       </div>
-      <div class="text-lg font-medium text-center text-gray-500 sm:w-1/2">
+      <div class="text-lg font-medium leading-relaxed text-center text-gray-500 dark:text-gray-100 sm:w-1/2">
         <Markdown :use="$slots.description" unwrap="p" />
       </div>
       <form class="flex flex-wrap gap-3 pt-12 pb-16" @submit.prevent="onSubmit">
