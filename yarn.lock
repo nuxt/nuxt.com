@@ -759,9 +759,9 @@
     "@nuxt/kit" "^3.0.0-rc.1"
 
 "@nuxt/content@npm:@nuxt/content-edge@latest":
-  version "2.0.0-27558148.1dc7377"
-  resolved "https://registry.yarnpkg.com/@nuxt/content-edge/-/content-edge-2.0.0-27558148.1dc7377.tgz#3a566c6488125b100b0ab115b77bcdd322683d9a"
-  integrity sha512-ouctVoYpLWiHL+duwmeTClR5aDT71CDjzMIqd6WHU5okL+am9OCN1gXVTCYFMp8Zb9TRLYVoeqt3DarHmD9GzQ==
+  version "2.0.1-27578025.74b84ff"
+  resolved "https://registry.yarnpkg.com/@nuxt/content-edge/-/content-edge-2.0.1-27578025.74b84ff.tgz#1f157c30a083351c3826dfd1ac783bf507679158"
+  integrity sha512-PapZn3FDhbfs6mXwETw9qmBUIM/C7eOhT6qA6rQwcBbWDFWC4mo68gMrL8bMFU4w3BcIE6HKNU9b+2pv6ggKPw==
   dependencies:
     "@nuxt/kit" "^3.0.0-rc.3"
     csvtojson "^2.0.10"
@@ -799,7 +799,7 @@
     scule "^0.2.1"
     shiki-es "^0.1.2"
     slugify "^1.6.5"
-    stringify-entities "^4.0.2"
+    stringify-entities "^4.0.3"
     ufo "^0.8.4"
     unctx "^1.1.4"
     unified "^10.1.2"
@@ -807,7 +807,7 @@
     unist-util-position "^4.0.3"
     unist-util-visit "^4.1.0"
     unstorage "^0.4.1"
-    ws "^8.6.0"
+    ws "^8.7.0"
 
 "@nuxt/devalue@^2.0.0":
   version "2.0.0"
@@ -5371,7 +5371,7 @@ is-unicode-supported@^0.1.0:
 is-utf8@^0.2.0:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/is-utf8/-/is-utf8-0.2.1.tgz#4b0da1442104d1b336340e80797e865cf39f7d72"
-  integrity sha1-Sw2hRCEE0bM2NA6AeX6GXPOffXI=
+  integrity sha512-rMYPYvCzsXywIsldgLaSoPlw5PfoB/ssr7hY4pLfcodrA5M/eArza1a9VmTiNIBNMjOGr1Ow9mTyU2o69U6U9Q==
 
 is-weakref@^1.0.2:
   version "1.0.2"
@@ -6198,7 +6198,7 @@ mdn-data@2.0.14:
 mdurl@^1.0.0, mdurl@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/mdurl/-/mdurl-1.0.1.tgz#fe85b2ec75a59037f2adfec100fd6c601761152e"
-  integrity sha1-/oWy7HWlkDfyrf7BAP1sYBdhFS4=
+  integrity sha512-/sKlQJCBYVY9Ers9hqzKou4H6V5UWc/M59TH2dvkt+84itfnq7uFOMLpOiOS4ujvHP4etln18fmIxA5R5fll0g==
 
 media-typer@0.3.0:
   version "0.3.0"
@@ -7353,7 +7353,7 @@ nuxt-component-meta@^0.1.5:
     "@vue/compiler-sfc" "^3.2.33"
     scule "^0.2.1"
 
-"nuxt@npm:nuxt3@latest":
+"nuxt@npm:nuxt3@3.0.0-rc.3-27550969.a4a3cff":
   version "3.0.0-rc.3-27550969.a4a3cff"
   resolved "https://registry.yarnpkg.com/nuxt3/-/nuxt3-3.0.0-rc.3-27550969.a4a3cff.tgz#9faa32efdd9e24a30b602d3f2be44b544ff6ab7f"
   integrity sha512-sxwtqIaKthjiipOyUuDrUYN0x5ac+9w2ItyH8VScZcX48ocIoQ2c9PxjD6yMgq/obBw0/3GZ0KIw+bUKn+2PUg==
@@ -7735,17 +7735,10 @@ parse5-htmlparser2-tree-adapter@^7.0.0:
     domhandler "^5.0.2"
     parse5 "^7.0.0"
 
-parse5@^6.0.0, parse5@^6.0.1:
+parse5@6.0.1, parse5@^6.0.0, parse5@^6.0.1, parse5@^7.0.0:
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/parse5/-/parse5-6.0.1.tgz#e1a1c085c569b3dc08321184f19a39cc27f7c30b"
   integrity sha512-Ofn/CTFzRGTTxwpNEs9PP93gXShHcTq255nzRYSKe8AkVpZY7e1fpmTfOyoIvjP5HG7Z2ZM7VS9PPhQGW2pOpw==
-
-parse5@^7.0.0:
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/parse5/-/parse5-7.0.0.tgz#51f74a5257f5fcc536389e8c2d0b3802e1bfa91a"
-  integrity sha512-y/t8IXSPWTuRZqXc0ajH/UwDj4mnqLEbSttNbThcFhGrZuOyoyvNBO85PBp2jQa55wY9d07PBNjsK8ZP3K5U6g==
-  dependencies:
-    entities "^4.3.0"
 
 parseurl@^1.3.2, parseurl@~1.3.3:
   version "1.3.3"
@@ -9350,6 +9343,14 @@ stringify-entities@^4.0.2:
     character-entities-html4 "^2.0.0"
     character-entities-legacy "^3.0.0"
 
+stringify-entities@^4.0.3:
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/stringify-entities/-/stringify-entities-4.0.3.tgz#cfabd7039d22ad30f3cc435b0ca2c1574fc88ef8"
+  integrity sha512-BP9nNHMhhfcMbiuQKCqMjhDP5yBCAxsPu4pHFFzJ6Alo9dZgY4VLDPutXqIjpRiMoKdp7Av85Gr73Q5uH9k7+g==
+  dependencies:
+    character-entities-html4 "^2.0.0"
+    character-entities-legacy "^3.0.0"
+
 stringify-package@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/stringify-package/-/stringify-package-1.0.1.tgz#e5aa3643e7f74d0f28628b72f3dad5cecfc3ba85"
@@ -10407,6 +10408,11 @@ ws@^8.6.0:
   version "8.6.0"
   resolved "https://registry.yarnpkg.com/ws/-/ws-8.6.0.tgz#e5e9f1d9e7ff88083d0c0dd8281ea662a42c9c23"
   integrity sha512-AzmM3aH3gk0aX7/rZLYvjdvZooofDu3fFOzGqcSnQ1tOcTWwhM/o+q++E8mAyVVIyUdajrkzWUGftaVSDLn1bw==
+
+ws@^8.7.0:
+  version "8.7.0"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-8.7.0.tgz#eaf9d874b433aa00c0e0d8752532444875db3957"
+  integrity sha512-c2gsP0PRwcLFzUiA8Mkr37/MI7ilIlHQxaEAtd0uNMbVMoy8puJyafRlm0bV9MbGSabUPeLrRRaqIBcFcA2Pqg==
 
 ws@~8.2.3:
   version "8.2.3"

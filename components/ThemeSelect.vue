@@ -7,7 +7,10 @@
 </template>
 
 <script setup>
+import { useColorMode } from '#imports'
+
 const colorMode = useColorMode()
+
 const isDark = computed({
   get () {
     return colorMode.value === 'dark'
