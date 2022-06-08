@@ -254,3 +254,27 @@ Learn what developer experts love about Nuxt Framework
     ::
   ::
 ::
+
+::community-about-cta
+#list
+  ::community-about-cta-button
+  ---
+  icon: nuxt-logo.svg
+  to: 'https://v3.nuxtjs.org/guide'
+  ---
+  #title
+  Become a Nuxter
+  #description
+  Start the adventure by following the guide and then your journey with us will begin.
+  ::
+  ::community-about-cta-button
+  ---
+  icon: check.svg
+  to: '/community/partners'
+  ---
+  #title
+  Become a Partner
+  #description
+  Start the adventure by following the guide and then your journey with us will begin.
+  ::
+::

@@ -1,7 +1,7 @@
 <template>
-  <div class="relative">
+  <div class="relative overflow-hidden">
     <img src="/assets/community/about/gradient.svg" class="absolute right-0 w-[600px] h-[578px] top-[148px]">
-    <UContainer class="relative grid grid-cols-1 sm:grid-cols-2 gap-x-[30px] pt-[148px] pb-[300px]">
+    <UContainer padded class="relative grid grid-cols-1 md:grid-cols-2 gap-x-[30px] pt-[148px] pb-[300px]">
       <div class="flex flex-col pt-8 gap-y-8">
         <h2 class="text-4xl font-semibold u-text-gray-900">
           <Markdown :use="$slots.title" unwrap="p" />
@@ -16,10 +16,16 @@
           <Markdown :use="$slots.author" unwrap="p" />
         </blockquote>
       </div>
-      <div class="grid grid-cols-2 w-[341px] h-[337px] gap-4 ml-56 relative">
-        <img src="/assets/community/about/chopin-brothers.png" class="col-span-2 border-gray-100/50 dark:border-gray-800/20 border-[8px] rounded-xl">
-        <img src="/assets/community/about/chopin-alexandre.png" class="border-gray-50/25 dark:border-gray-800/20 border-[8px] rounded-xl">
-        <img src="/assets/community/about/chopin-sebastien.png" class="border-gray-50/25 dark:border-gray-800/20 border-[8px] rounded-xl">
+      <div class="grid grid-cols-2 w-full h-[337px] gap-4 relative pt-8 md:pt-0">
+        <div class="flex justify-center col-span-2">
+          <img src="/assets/community/about/chopin-brothers.png" class=" border-gray-100/50 dark:border-gray-800/20 border-[8px] rounded-xl">
+        </div>
+        <div class="flex justify-end">
+          <img src="/assets/community/about/chopin-alexandre.png" class="border-gray-50/25 dark:border-gray-800/20 border-[8px] rounded-xl">
+        </div>
+        <div class="flex justify-start">
+          <img src="/assets/community/about/chopin-sebastien.png" class="border-gray-50/25 dark:border-gray-800/20 border-[8px] rounded-xl">
+        </div>
       </div>
     </UContainer>
   </div>

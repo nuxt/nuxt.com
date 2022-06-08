@@ -6,7 +6,7 @@
     <p class="w-1/2 text-center xl:w-[40%] u-text-gray-500">
       <Markdown :use="$slots.description" unwrap="p" />
     </p>
-    <ul class="grid items-start grid-cols-3 gap-x-12 md:gap-x-32">
+    <ul class="grid items-start grid-cols-3 gap-x-2 sm:gap-x-12 md:gap-x-32">
       <Markdown :use="$slots.items" unwrap="p" />
     </ul>
   </UContainer>
