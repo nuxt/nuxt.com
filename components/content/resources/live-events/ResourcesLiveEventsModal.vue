@@ -1,10 +1,7 @@
 <template>
   <UModal v-model="isOpen" appear body-class="p-8" width-class="max-w-xl lg:max-w-4xl xl:max-w-7xl">
     <div class="overflow-hidden rounded-xl">
-      <LiteYouTubeEmbed
-        :id="page.videoId"
-        :title="page.title"
-      />
+      <YoutubePlayer :video-id="page.videoId" :title="page.title" />
     </div>
 
     <h1 class="pt-8 pb-3 text-3xl font-semibold u-text-gray-900">
@@ -22,9 +19,6 @@
 </template>
 
 <script setup lang="ts">
-import LiteYouTubeEmbed from 'vue-lite-youtube-embed'
-import 'vue-lite-youtube-embed/dist/style.css'
-
 defineProps({
   page: {
     type: Object,
