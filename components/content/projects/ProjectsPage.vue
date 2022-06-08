@@ -7,7 +7,7 @@
       <div class="flex flex-col items-center justify-center gap-2 sm:gap-4 sm:flex-row">
         <UBadge
           variant="indigo"
-          base-class="inline-flex items-center font-semibold border bg-indigoblue-100 border-indigoblue-400 dark:bg-black text-indigoblue-700 dark:text-white"
+          base-class="inline-flex items-center font-semibold border bg-indigoblue-50 border-indigoblue-400 dark:bg-black text-indigoblue-700 dark:text-white"
           size="lg"
         >
           <Markdown :use="$slots.badge" unwrap="p" />
@@ -17,7 +17,7 @@
         </div>
       </div>
 
-      <div class="py-8 font-semibold leading-tight text-center text-7xl">
+      <div class="py-8 text-5xl font-semibold leading-tight text-center sm:text-6xl md:text-7xl">
         <Markdown :use="$slots.title" unwrap="p" />
       </div>
       <div class="text-lg font-medium leading-relaxed text-center text-gray-500 dark:text-gray-100 sm:w-1/2">
