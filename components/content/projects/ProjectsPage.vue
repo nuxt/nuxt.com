@@ -1,7 +1,10 @@
 <template>
   <div class="relative">
-    <UContainer padded class="flex flex-col items-center py-12">
-      <div class="gap-4 md:flex">
+    <div class="absolute left-0 inset-y-1/3">
+      <img src="/assets/projects/gems.svg" class="opacity-25 md:opacity-100">
+    </div>
+    <UContainer padded class="relative flex flex-col items-center pt-8 pb-16 sm:pb-32">
+      <div class="flex flex-col items-center justify-center gap-2 sm:gap-4 sm:flex-row">
         <UBadge
           variant="indigo"
           base-class="inline-flex items-center font-semibold border bg-indigoblue-100 border-indigoblue-400 dark:bg-black text-indigoblue-700 dark:text-white"
@@ -9,7 +12,7 @@
         >
           <Markdown :use="$slots.badge" unwrap="p" />
         </UBadge>
-        <div class="u-text-gray-500">
+        <div class="text-center u-text-gray-500">
           <Markdown :use="$slots.header" unwrap="p" />
         </div>
       </div>
@@ -20,7 +23,7 @@
       <div class="text-lg font-medium text-center text-gray-500 sm:w-1/2">
         <Markdown :use="$slots.description" unwrap="p" />
       </div>
-      <form class="flex gap-3 py-12" @submit.prevent="onSubmit">
+      <form class="flex flex-wrap gap-3 pt-12 pb-16" @submit.prevent="onSubmit">
         <UInput
           v-model="form.email"
           name="email"
@@ -38,13 +41,10 @@
           size="md"
         />
       </form>
-      <div class="w-full py-16">
+      <div class="w-full overflow-hidden rounded-xl">
         <YoutubePlayer :video-id="videoId" :title="videoTitle" />
       </div>
     </UContainer>
-    <div class="absolute left-0 inset-y-1/2">
-      <img src="/assets/projects/gems.svg" class="opacity-25 md:opacity-100">
-    </div>
   </div>
 </template>
 
