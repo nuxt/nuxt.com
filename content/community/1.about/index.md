@@ -134,3 +134,123 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendi
   Followers on Twitter
   ::
 ::
+
+::community-about-testimonials
+#title
+They spread the word
+#description
+Learn what developer experts love about Nuxt Framework
+#list
+  ::community-about-testimonials-list
+  #items
+    ::community-about-testimonials-item
+    ---
+    authorImg: evan
+    authorUrl: https://twitter.com/youyuxi
+    ---
+    #author
+    Evan You
+    #job
+    Creator of VueJS
+    #quote
+    Nuxt offers a compelling solution and a great ecosystem to help you ship fullstack Vue apps that are performant and SEO friendly. The flexibility to choose between SSR and SSG is icing on the cake
+    ::
+    ::community-about-testimonials-item
+    ---
+    authorImg: sarah
+    authorUrl: https://twitter.com/sarah_edo
+    ---
+    #author
+    Sarah Drasner
+    #job
+    Core Team of Vue.js
+    #quote
+    Nuxt has outstanding developer productivity, experience, and performance right out of the gate!
+    There’s so much attention to detail, ensuring teams have everything at their fingertips to productively build all manners of applications.
+    ::
+    ::community-about-testimonials-item
+    ---
+    authorImg: addy
+    authorUrl: https://twitter.com/addyosmani
+    ---
+    #author
+    Addy Osmani
+    #job
+    Chief Engineer of Chrome
+    #quote
+    Nuxt is a fantastic choice for teams building a production-grade product on the web. It aims to bake in performance best-practices while maintaining excellent Vue.js DX.
+    ::
+    ::community-about-testimonials-item
+    ---
+    authorImg: guillermo
+    authorUrl: https://twitter.com/rauchg
+    ---
+    #author
+    Guillermo Rauch
+    #job
+    Founder of Vercel
+    #quote
+    Nuxt has been an incredible source of innovation and inspiration for developers and framework authors alike. It’s been amazing to see its growth in web projects of all sizes on the web.
+    ::
+    ::community-about-testimonials-item
+    ---
+    authorImg: dominik
+    authorUrl: https://twitter.com/domangerer
+    ---
+    #author
+    Dominik Angerer
+    #job
+    Founder of Storyblok
+    #quote
+    Nuxt has a unique approach of combining a great developer experience with reusable, fully integrated features that speed up the development and performance of your next website or application.
+    ::
+    ::community-about-testimonials-item
+    ---
+    authorImg: sadek
+    authorUrl: https://twitter.com/Sadache
+    ---
+    #author
+    Sadek Drobi
+    #job
+    Founder of Prismic
+    #quote
+    Nuxt is our primary choice for offering a seamless website development experience to our users. Its simplicity and progressive learning curve makes it our ideal choice for SliceMachine.
+    ::
+    ::community-about-testimonials-item
+    ---
+    authorImg: ajay
+    authorUrl: https://www.linkedin.com/in/ajaykapur/
+    ---
+    #author
+    Ajay Kapur
+    #job
+    Founder of Layer0
+    #quote
+    Every serious full stack development team needs to stop take a look at Nuxt. Vue's developer productivity combined with Nuxt's server side rendering, is the foundation for instant loading web sites that delight users and improve team velocity.
+    ::
+    ::community-about-testimonials-item
+    ---
+    authorImg: dave
+    authorUrl: https://twitter.com/paper_tokyo
+    ---
+    #author
+    Dave Loneragan
+    #job
+    Co-founder of Swell
+    #quote
+    Nuxt has an ideal balance of approachability for developers new to JAMstack, and power for experienced teams working on complex applications. The modules and first-class integration with the rest of the Vue ecosystem makes for a superb DX.
+    ::
+    ::community-about-testimonials-item
+    ---
+    authorImg: savas
+    authorUrl: https://www.linkedin.com/in/savas-vedova/
+    ---
+    #author
+    Savac Vedova
+    #job
+    Founder of Stormkit
+    #quote
+    The moment I used Nuxt for the first time I felt in love with it. Apart from its scalability, performance and developer experience, the team behind of it is also fantastic. Thanks for developing such a great framework and making our lives much easier!
+    ::
+  ::
+::
