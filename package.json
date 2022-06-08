@@ -10,7 +10,7 @@
     "test": "yarn lint"
   },
   "resolutions": {
-    "parse5": "6.0.1"
+    "parse5": "7.0.0"
   },
   "devDependencies": {
     "@docus/remark-mdc": "npm:@docus/remark-mdc-edge",
