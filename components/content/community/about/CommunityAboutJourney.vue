@@ -7,7 +7,7 @@
           <Markdown :use="$slots.title" unwrap="p" />
         </h2>
         <div class="relative pt-8">
-          <img src="/assets/community/about/quotes.svg" alt="Quotes image" class="absolute top-4 -left-[22px] w-[60px] h-10">
+          <img src="/assets/community/about/quote-journey.svg" alt="Quotes image" class="absolute top-4 -left-[22px] w-[60px] h-10">
           <p class="text-2xl font-medium u-text-gray-900">
             <Markdown :use="$slots.description" unwrap="p" />
           </p>

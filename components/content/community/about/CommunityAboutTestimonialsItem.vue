@@ -2,7 +2,7 @@
   <li>
     <a :href="authorUrl" rel="author">
       <div class="relative">
-        <img src="/assets/community/about/quote.svg" class="absolute top-0 w-8 h-8 left-[9px] opacity-70" alt="Quote image">
+        <QuoteTestimonials class="absolute top-0 w-8 h-8 left-[9px] opacity-70 u-text-gray-200" />
         <div class="relative pt-4 pl-8">
           <p class="pb-6 text-sm u-text-gray-600">
             <Markdown :use="$slots.quote" unwrap="p" />
