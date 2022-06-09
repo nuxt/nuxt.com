@@ -31,7 +31,7 @@
       </li>
     </ul>
 
-    <div class="py-3 border-t u-border-gray-200">
+    <div class="pt-3 border-t u-border-gray-200">
       <NuxtLink
         to="https://github.com/nuxt/framework"
         target="_blank"
