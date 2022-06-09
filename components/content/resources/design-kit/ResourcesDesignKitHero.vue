@@ -8,7 +8,7 @@
     </template>
 
     <template #extra>
-      <a class="relative inline-flex items-center flex-nowrap u-text-gray-900 group max-w-max" href="https://www.figma.com/community/file/1063820502268406301" target="_blank">
+      <a class="relative inline-flex items-center sm:text-lg flex-nowrap u-text-gray-900 group max-w-max" href="https://www.figma.com/community/file/1063820502268406301" target="_blank">
         <span class="flex items-center font-semibold gap-x-2">
           <Markdown :use="$slots.buttonText" unwrap="p" />
           <UIcon name="heroicons-outline:arrow-sm-right" class="w-5 h-5" />
