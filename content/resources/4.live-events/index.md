@@ -12,4 +12,5 @@ Discover and subscribe to future events featuring Nuxt content, and watch previo
 Ask us for a conference
 ::
 
-:resources-live-events-list
+::resources-live-events-list
+::
