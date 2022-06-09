@@ -70,7 +70,7 @@ Join the community
   ::community-about-join-item
   ---
   href: 'https://github.com/nuxt'
-  icon: 'github.svg'
+  icon: 'github'
   ---
   #title
   GitHub
@@ -78,7 +78,7 @@ Join the community
   ::community-about-join-item
   ---
   href: 'https://stackoverflow.com/questions/tagged/nuxt.js?tab=Newest'
-  icon: 'stack-over-flow.svg'
+  icon: 'stack-overflow'
   ---
   #title
   Stack OverFlow
@@ -86,7 +86,7 @@ Join the community
   ::community-about-join-item
   ---
   href: 'https://discord.com/invite/ps2h6QT'
-  icon: 'discord.svg'
+  icon: 'discord'
   ---
   #title
   Discord
@@ -94,7 +94,7 @@ Join the community
   ::community-about-join-item
   ---
   href: 'https://www.youtube.com/c/Nuxtjs'
-  icon: 'youtube.svg'
+  icon: 'youtube'
   ---
   #title
   Youtube
@@ -102,7 +102,7 @@ Join the community
   ::community-about-join-item
   ---
   href: 'https://twitter.com/nuxt_js'
-  icon: 'twitter.svg'
+  icon: 'twitter'
   ---
   #title
   Twitter
