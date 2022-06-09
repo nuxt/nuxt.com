@@ -42,7 +42,10 @@
     </template>
 
     <template #background>
-      <img src="/assets/community/about/map.png" class="h-full opacity-30 sm:opacity-100">
+      <CommunityAboutHeroMap class="object-cover h-full opacity-50 sm:opacity-100" />
+      <div class="h-[100px] absolute top-0 inset-x-0 bg-gradient-to-b from-white dark:from-black to-transparent" />
+      <div class="w-[100px] absolute left-0 inset-y-0 bg-gradient-to-r from-white dark:from-black to-transparent" />
+      <div class="h-[100px] absolute bottom-0 inset-x-0 bg-gradient-to-t from-white dark:from-black to-transparent" />
     </template>
   </PageHero>
 </template>

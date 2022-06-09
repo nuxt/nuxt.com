@@ -16,15 +16,17 @@
           <Markdown :use="$slots.author" unwrap="p" />
         </blockquote>
       </div>
-      <div class="grid grid-cols-2 w-full h-[337px] gap-4 relative pt-8 md:pt-0">
-        <div class="flex justify-center col-span-2">
-          <img src="/assets/community/about/chopin-brothers.png" class=" border-gray-100/50 dark:border-gray-800/20 border-[8px] rounded-xl">
-        </div>
-        <div class="flex justify-end">
-          <img src="/assets/community/about/chopin-alexandre.png" class="border-gray-50/25 dark:border-gray-800/20 border-[8px] rounded-xl">
-        </div>
-        <div class="flex justify-start">
-          <img src="/assets/community/about/chopin-sebastien.png" class="border-gray-50/25 dark:border-gray-800/20 border-[8px] rounded-xl">
+      <div class="flex justify-center w-full md:justify-end">
+        <div class="grid grid-cols-2 w-[341px] h-[337px] gap-4 relative pt-8 md:pt-0">
+          <div class="flex justify-center col-span-2">
+            <img src="/assets/community/about/chopin-brothers.png" class=" border-gray-100/50 dark:border-gray-800/20 border-[8px] rounded-xl">
+          </div>
+          <div class="flex justify-end">
+            <img src="/assets/community/about/chopin-alexandre.png" class="border-gray-50/25 dark:border-gray-800/20 border-[8px] rounded-xl">
+          </div>
+          <div class="flex justify-start">
+            <img src="/assets/community/about/chopin-sebastien.png" class="border-gray-50/25 dark:border-gray-800/20 border-[8px] rounded-xl">
+          </div>
         </div>
       </div>
     </UContainer>
