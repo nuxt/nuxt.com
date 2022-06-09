@@ -1,6 +1,6 @@
 <template>
   <!-- Workaround for nuxtlabs/nuxt.com#566 -->
-  <div class="sm:mx-6 lg:mx-8 ">
+  <div>
     <ClientOnly>
       <Swiper
         :effect="'coverflow'"
