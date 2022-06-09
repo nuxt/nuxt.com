@@ -1,28 +1,31 @@
 <template>
-  <Swiper
-    :effect="'coverflow'"
-    :centered-slides="true"
-    :slide-to-clicked-slide="true"
-    :slides-per-view="'auto'"
-    :pagination="true"
-    :coverflow-effect="{
-      rotate: 0,
-      stretch: 80,
-      depth: 200,
-      modifier: 1,
-      slideShadows: false
-    }"
-    :initial-slide="2"
-    :modules="[EffectCoverflow, Pagination]"
-  >
-    <SwiperSlide v-for="(slide, i) in showcases" :key="i">
-      <img
-        :src="slide"
-        class="object-cover w-full h-full rounded-md"
-        alt="A showcase"
-      >
-    </SwiperSlide>
-  </Swiper>
+  <!-- Workaround for nuxtlabs/nuxt.com#566 -->
+  <ClientOnly>
+    <Swiper
+      :effect="'coverflow'"
+      :centered-slides="true"
+      :slide-to-clicked-slide="true"
+      :slides-per-view="'auto'"
+      :pagination="true"
+      :coverflow-effect="{
+        rotate: 0,
+        stretch: 80,
+        depth: 200,
+        modifier: 1,
+        slideShadows: false
+      }"
+      :initial-slide="2"
+      :modules="[EffectCoverflow, Pagination]"
+    >
+      <SwiperSlide v-for="(slide, i) in showcases" :key="i">
+        <img
+          :src="slide"
+          class="object-cover w-full h-full rounded-md"
+          alt="A showcase"
+        >
+      </SwiperSlide>
+    </Swiper>
+  </ClientOnly>
 </template>
 
 <script setup lang="ts">
