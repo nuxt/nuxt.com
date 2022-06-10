@@ -1,6 +1,6 @@
 <template>
-  <!-- Workaround for nuxtlabs/nuxt.com#566 -->
   <div>
+    <!-- Workaround for nuxtlabs/nuxt.com#566 -->
     <ClientOnly>
       <Swiper
         :effect="'coverflow'"
@@ -51,23 +51,13 @@ const showcases = ref([
 ])
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .swiper {
   width: 100%;
   padding-top: 40px;
   padding-bottom: 40px;
 }
-.swiper-slide {
-  background-position: center;
-  background-size: cover;
-  width: 400px;
-  height: 200px;
-  filter: blur(4px);
 
-  :hover {
-    cursor: pointer;
-  }
-}
 .swiper-slide-prev,
 .swiper-slide-next {
   filter: blur(1px);
@@ -79,4 +69,5 @@ const showcases = ref([
   display: block;
   width: 100%;
 }
+
 </style>
