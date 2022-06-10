@@ -40,4 +40,8 @@ await fetchNavigation()
 html.dark {
   @apply bg-black;
 }
+
+.dark:root {
+  color-scheme: dark;
+}
 </style>
