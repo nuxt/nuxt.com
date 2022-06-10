@@ -8,37 +8,14 @@
     </template>
 
     <template #extra>
-      <form class="flex gap-3 pt-4" @submit.prevent="onSubmit">
+      <div class="flex flex-wrap w-full gap-4 sm:items-center sm:max-w-xl">
         <UButton
-          variant="transparent"
-          to="#"
+          v-for="(button, index) in buttons"
+          :key="index"
+          v-bind="button"
           size="lg"
-          base-class="relative flex justify-center overflow-hidden bg-gray-900 border-none dark:hover:overflow-visible rounded-xl group"
-          :class="{ 'gradient-border': colorMode.preference === 'dark' }"
-        >
-          <div
-            class="absolute transition-colors duration-[2ms] w-full h-full bg-gradient-to-r from-green-400 via-teal-400 to-indigoblue-400 dark:from-green-600 dark:via-teal-600 dark:top-indigo-blue-600
-
-            group-hover:blur-[20px] group-hover:top-4 top-8 blur-xl
-            dark:blur-[20px] dark:top-0 dark:group-hover:top-2 dark:group-hover:blur-[16px] dark:group-hover:h-full rounded-[12px]"
-          />
-          <div
-            class="absolute transition-colors duration-[2ms] w-full h-full bg-gradient-to-r
-
-            group-hover:blur-[20px] group-hover:top-4 top-8 blur-xl
-            dark:blur-[20px] dark:top-0 dark:group-hover:top-2 dark:group-hover:blur-[16px] dark:group-hover:h-full rounded-[12px]"
-          />
-          <span class="px-2 py-1 z-[1] text-white font-semibold">Hello community</span>
-        </UButton>
-
-        <UButton
-          label="good bye community"
-          variant="secondary"
-          to="#"
-          size="xl"
-          custom-class="rounded-xl"
         />
-      </form>
+      </div>
     </template>
 
     <template #background>
@@ -51,39 +28,10 @@
 </template>
 
 <script setup lang="ts">
-const colorMode = useColorMode()
+defineProps({
+  buttons: {
+    type: Array,
+    default: () => []
+  }
+})
 </script>
-
-<style scoped>
-.gradient-border {
-  position: relative;
-  border-radius: 12px;
-}
-.gradient-border::before {
-  background: linear-gradient(90deg, #303030 0%, #303030 25%, #00DC82 50%, #36E4DA 75%, #0047E1 100%);
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border-radius: 12px;
-  padding: 2px;
-  width: 100%;
-  background-size: 400% auto;
-  opacity: 0;
-  transition: background-position 0.2s ease-in-out, opacity 0.2s ease-in-out;
-  -webkit-mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
-          mask:
-            linear-gradient(#fff 0 0) content-box,
-            linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-          mask-composite: exclude;
-}
-.gradient-border:hover::before {
-  background-position: -50% 0;
-  opacity: 0.8;
-}
-</style>

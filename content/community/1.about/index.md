@@ -3,6 +3,15 @@ title: About
 ---
 
 ::community-about-hero
+---
+buttons:
+  - label: Become a Partner
+    to: /company/partners
+  - label: Contact us
+    to: /company/contact
+    variant: secondary
+---
+
 #title
 Open Source Software
 #description
