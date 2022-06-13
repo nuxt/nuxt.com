@@ -1,7 +1,7 @@
 <template>
   <TeamPage>
     <div class="space-y-6">
-      <div class="flex flex-wrap-reverse items-center gap-3 px-4 sm:px-0">
+      <div class="flex flex-wrap-reverse items-center gap-3">
         <UInput
           v-model="q"
           name="q"
