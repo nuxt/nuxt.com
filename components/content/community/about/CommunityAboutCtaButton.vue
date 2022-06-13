@@ -1,5 +1,5 @@
 <template>
-  <UCard body-class="p-0" base-class="transition-all duration-300 bg-white border-2 rounded-lg shadow-none dark:bg-black hover:border-gray-300 hover:dark:border-gray-500 hover:shadow-sm group ring-0">
+  <UCard padded body-class="" shadow-class="" class="relative transition duration-200 group hover:ring-2 hover:u-ring-gray-900">
     <NuxtLink :to="to" class="flex flex-col px-4 py-5 gap-y-5 sm:p-6">
       <div class="flex justify-between">
         <Component :is="icon" class="w-6 h-6 u-text-gray-900" />

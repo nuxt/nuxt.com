@@ -11,7 +11,7 @@
       />
     </div>
     <div class="flex justify-center">
-      <UButton variant="secondary" size="lg" class="flex justify-center w-40 mt-12" @click="show = !show">
+      <UButton variant="secondary" size="lg" class="flex justify-center mt-12" @click="show = !show">
         <span class="px-4 py-1 text-center">
           {{ show ? hideText : showText }}
         </span>
