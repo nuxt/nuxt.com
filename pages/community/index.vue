@@ -1,5 +1,5 @@
 <template>
-  <div />
+  <div class="overflow-hidden" />
 </template>
 
 <script setup lang="ts">
