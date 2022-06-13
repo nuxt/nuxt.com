@@ -5,7 +5,7 @@
         Categories
       </p>
 
-      <ModulesFilterVersion />
+      <ModulesFilterVersion class="mr-px -my-1" />
     </div>
 
     <ul v-if="categories.length" class="py-3">
