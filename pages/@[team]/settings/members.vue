@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-6">
-    <UCard body-class="">
+    <UCard padded body-class="">
       <template #header>
         <div class="flex flex-wrap items-center justify-between -mt-4 -ml-4 sm:flex-nowrap">
           <div class="mt-4 ml-4">

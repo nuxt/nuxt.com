@@ -9,7 +9,7 @@
     <TeamPage overlap>
       <div class="flex flex-col-reverse gap-10 lg:flex-row">
         <div class="w-full space-y-6 lg:w-2/3">
-          <UCard @submit.prevent="onSubmit">
+          <UCard padded @submit.prevent="onSubmit">
             <h3 class="mb-1 text-lg font-medium leading-6 u-text-gray-900">
               Configure your project
             </h3>

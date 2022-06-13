@@ -12,7 +12,7 @@
           <TemplatesCard :template="selectedTemplate" />
         </template>
 
-        <UCard base-class="" @submit.prevent="onSubmit">
+        <UCard padded base-class="" @submit.prevent="onSubmit">
           <h3 class="mb-1 text-lg font-medium leading-6 u-text-gray-900">
             Create a Git repository
           </h3>

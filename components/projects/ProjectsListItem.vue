@@ -1,5 +1,5 @@
 <template>
-  <UCard class="relative transition duration-200 hover:ring-2 hover:u-ring-gray-900">
+  <UCard padded class="relative transition duration-200 hover:ring-2 hover:u-ring-gray-900">
     <NuxtLink :to="{ name: '@team-project', params: { team: team?.slug || user.username, project: project.slug } }" class="focus:outline-none" tabindex="-1">
       <span class="absolute inset-0" aria-hidden="true" />
     </NuxtLink>
