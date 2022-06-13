@@ -9,7 +9,8 @@
         {{ filteredPartners.length }} partner{{ filteredPartners.length > 1 ? 's' : '' }} found
       </h2>
 
-      <CommunityPartnersFilters />
+      <CommunityPartnersFilters class="hidden lg:flex" />
+      <CommunityPartnersFilterCategory class="lg:hidden" />
     </div>
 
     <div class="hidden _ellipse lg:block" />

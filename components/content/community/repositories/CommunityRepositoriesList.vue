@@ -4,14 +4,15 @@
       <CommunityRepositoriesAside />
     </template>
 
-    <div class="flex flex-col justify-between gap-3 sm:items-center sm:flex-row">
+    <div class="flex flex-col justify-between gap-3 md:items-center md:flex-row">
       <h2 class="text-3xl font-semibold u-text-gray-900">
         {{ filteredRepositories.length }} repositor{{ filteredRepositories.length > 1 ? 'ies' : 'y' }} found
       </h2>
 
-      <div class="flex items-center gap-3 sm:flex-row-reverse">
+      <div class="flex flex-wrap items-center gap-3">
+        <CommunityRepositoriesFilters class="hidden lg:flex" />
+        <CommunityRepositoriesFilterOrganization class="lg:hidden" />
         <CommunityRepositoriesFilterSort />
-        <CommunityRepositoriesFilters />
       </div>
     </div>
 

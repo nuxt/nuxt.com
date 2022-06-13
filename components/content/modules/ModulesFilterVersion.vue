@@ -3,7 +3,7 @@
     v-model="version"
     name="version"
     :options="versions"
-    size="xs"
+    :size="size"
     text-attribute="label"
     value-attribute="key"
     class="mr-px -my-1"
@@ -11,6 +11,13 @@
 </template>
 
 <script setup lang="ts">
+defineProps({
+  size: {
+    type: String,
+    default: 'xs'
+  }
+})
+
 const route = useRoute()
 const router = useRouter()
 const { versions, selectedVersion } = useModules()
