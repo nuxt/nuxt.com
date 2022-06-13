@@ -2,7 +2,6 @@
   <UCard padded body-class="" shadow-class="" class="relative transition duration-200 group hover:ring-2 hover:u-ring-gray-900">
     <NuxtLink :to="to" class="flex flex-col px-4 py-5 gap-y-5 sm:p-6">
       <div class="flex items-center justify-between">
-        <Logo v-if="logo" class="w-6 h-6 u-text-gray-900" />
         <UIcon :name="icon" class="w-6 h-6 u-text-gray-900" />
         <UIcon name="heroicons-solid:arrow-sm-right" class="w-10 h-6 pr-4 transition-all duration-300 opacity-0 u-text-gray-900 group-hover:translate-x-4 group-hover:opacity-100" />
       </div>
@@ -25,10 +24,6 @@ defineProps({
   to: {
     type: String,
     default: ''
-  },
-  logo: {
-    type: Boolean,
-    default: false
   }
 })
 </script>
