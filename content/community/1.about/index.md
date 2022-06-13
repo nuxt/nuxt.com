@@ -268,7 +268,7 @@ Learn what developer experts love about Nuxt Framework
 #list
   ::community-about-cta-button
   ---
-  icon: NuxtLogo
+  logo: true
   to: 'https://v3.nuxtjs.org/guide'
   ---
   #title
@@ -278,7 +278,7 @@ Learn what developer experts love about Nuxt Framework
   ::
   ::community-about-cta-button
   ---
-  icon: Check
+  icon: 'material-symbols:check-circle'
   to: '/community/partners'
   ---
   #title
