@@ -1,31 +1,33 @@
 <template>
-  <!-- Workaround for nuxtlabs/nuxt.com#566 -->
-  <ClientOnly>
-    <Swiper
-      :effect="'coverflow'"
-      :centered-slides="true"
-      :slide-to-clicked-slide="true"
-      :slides-per-view="'auto'"
-      :pagination="true"
-      :coverflow-effect="{
-        rotate: 0,
-        stretch: 80,
-        depth: 200,
-        modifier: 1,
-        slideShadows: false
-      }"
-      :initial-slide="2"
-      :modules="[EffectCoverflow, Pagination]"
-    >
-      <SwiperSlide v-for="(slide, i) in showcases" :key="i">
-        <img
-          :src="slide"
-          class="object-cover w-full h-full rounded-md"
-          alt="A showcase"
-        >
-      </SwiperSlide>
-    </Swiper>
-  </ClientOnly>
+  <div>
+    <!-- Workaround for nuxtlabs/nuxt.com#566 -->
+    <ClientOnly>
+      <Swiper
+        :effect="'coverflow'"
+        :centered-slides="true"
+        :slide-to-clicked-slide="true"
+        :slides-per-view="'auto'"
+        :pagination="true"
+        :coverflow-effect="{
+          rotate: 0,
+          stretch: 80,
+          depth: 200,
+          modifier: 1,
+          slideShadows: false
+        }"
+        :initial-slide="2"
+        :modules="[EffectCoverflow, Pagination]"
+      >
+        <SwiperSlide v-for="(slide, i) in showcases" :key="i">
+          <img
+            :src="slide"
+            class="object-cover w-full h-full rounded-md"
+            alt="A showcase"
+          >
+        </SwiperSlide>
+      </Swiper>
+    </ClientOnly>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -49,23 +51,25 @@ const showcases = ref([
 ])
 </script>
 
-<style lang="postcss" scoped>
+<style scoped>
 .swiper {
   width: 100%;
   padding-top: 40px;
   padding-bottom: 40px;
 }
+
 .swiper-slide {
   background-position: center;
   background-size: cover;
-  width: 300px;
-  height: 150px;
+  width: 400px;
+  height: 200px;
   filter: blur(4px);
 
   :hover {
     cursor: pointer;
   }
 }
+
 .swiper-slide-prev,
 .swiper-slide-next {
   filter: blur(1px);
@@ -77,4 +81,5 @@ const showcases = ref([
   display: block;
   width: 100%;
 }
+
 </style>
