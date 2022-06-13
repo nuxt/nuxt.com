@@ -1,8 +1,8 @@
 <template>
-  <div ref="root" class="relative flex items-end w-full pb-20 -mt-20 overflow-x-auto min-w-max">
-    <div class="absolute top-[41.5%] min-w-max w-full h-1 bg-gradient-to-l from-green-400 via-teal-400 to-indigoblue-400 transition-all duration-[3.3s]" />
-    <UContainer class="relative w-full">
-      <ul class="flex items-center h-[400px]">
+  <div ref="root" class="relative flex items-end w-full pb-20 -mt-40 overflow-hidden lg:-mt-20 lg:overflow-x-auto">
+    <div class="hidden lg:inline-block absolute top-[41.5%] min-w-max w-full h-1 bg-gradient-to-l from-green-400 via-teal-400 to-indigoblue-400 transition-all duration-[3.3s]" />
+    <UContainer class="relative flex justify-center w-full lg:block">
+      <ul class="items-center h-[400px] hidden lg:flex">
         <li v-for="(year, index) in 11" :key="index" :class="[{'self-start': [1, 5, 8].includes(index) }, {'self-end': [3, 6, 10].includes(index) }]">
           <div
             v-if="[0, 2, 4, 7, 9].includes(index)"
@@ -23,7 +23,7 @@
               {'bg-gradient-to-t translate-y-2.5': [1, 5, 8].includes(index) },
               index === 1 ? 'pl-[16px]' : index === 3 ? 'pl-[21px]' : index === 5 ? 'pl-[37px]' : index === 6 ? 'pl-[83px]' : index === 8 ? 'pl-[45px]' : 'pl-[21px]']"
           >
-            <div class="h-[200px]" :class="{ 'rotate-180': [1, 5, 8].includes(index) }">
+            <div class="h-[200px]" :class="{ 'rotate-180': [1, 5, 8].includes(index) }">
               <div
                 class="w-1 h-0 transition-all duration-1000 -translate-y-1 bg-gradient-to-b"
                 :class="[
@@ -47,37 +47,38 @@
           </div>
         </li>
       </ul>
-      <div class="absolute top-0 grid grid-cols-3 gap-y-2 pl-[190px] h-[400px] w-[1000px]">
-        <div class="w-[220px] transition delay-300 duration-300 -ml-3" :class="currentStep !== null ? 'opacity-1' : 'opacity-0'">
+      <div class="lg:absolute relative top-0 grid lg:grid-cols-3 grid-cols-1 justify-center gap-y-8 lg:gap-y-2 lg:pl-[190px] lg:h-[400px] lg:w-[1000px]">
+        <div class="absolute lg:hidden left-12 h-full w-1 bg-gradient-to-t from-green-400 via-teal-400 to-indigoblue-400 transition-all duration-[3.3s]" />
+        <div class="lg:w-[220px] transition delay-300 duration-300 lg:-ml-3" :class="currentStep !== null ? 'opacity-1' : 'opacity-0'">
           <Markdown :use="$slots.first" unwrap="p" />
         </div>
         <div
-          class="w-[320px] pl-[70px] transition duration-1000 delay-400"
-          :class="currentStep > 6 ? 'opacity-1' : 'opacity-0'"
+          class="lg:w-[320px] lg:pl-[70px] lg:transition lg:duration-1000 lg:delay-400 opacity-1"
+          :class="currentStep > 6 ? 'lg:opacity-1' : 'lg:opacity-0'"
         >
           <Markdown :use="$slots.second" unwrap="p" />
         </div>
         <div
-          class="w-[320px] pl-[96px] transition duration-1000 delay-400"
-          :class="currentStep > 8 ? 'opacity-1' : 'opacity-0'"
+          class="lg:w-[320px] lg:pl-[96px] lg:transition lg:duration-1000 lg:delay-400 opacity-1"
+          :class="currentStep > 8 ? 'lg:opacity-1' : 'lg:opacity-0'"
         >
           <Markdown :use="$slots.third" unwrap="p" />
         </div>
         <div
-          class="w-[360px] pl-[144px] pt-48 transition duration-1000 delay-400"
-          :class="currentStep > 3 ? 'opacity-1' : 'opacity-0'"
+          class="lg:w-[360px] lg:pl-[144px] lg:pt-48 lg:transition lg:duration-1000 lg:delay-400 opacity-1"
+          :class="currentStep > 3 ? 'lg:opacity-1' : 'lg:opacity-0'"
         >
           <Markdown :use="$slots.fourth" unwrap="p" />
         </div>
         <div
-          class="w-[380px] pl-[172px] pt-48 transition duration-1000 delay-400"
-          :class="currentStep > 6 ? 'opacity-1' : 'opacity-0'"
+          class="lg:w-[380px] lg:pl-[172px] lg:pt-48 lg:transition lg:duration-1000 lg:delay-400 opacity-1"
+          :class="currentStep > 6 ? 'lg:opacity-1' : 'lg:opacity-0'"
         >
           <Markdown :use="$slots.fifth" unwrap="p" />
         </div>
         <div
-          class="w-[470px] pl-[270px] pt-48 transition duration-1000 delay-400"
-          :class="currentStep > 9 ? 'opacity-1' : 'opacity-0'"
+          class="lg:w-[470px] lg:pl-[270px] lg:pt-48 lg:transition lg:duration-1000 lg:delay-400 opacity-1"
+          :class="currentStep > 9 ? 'lg:opacity-1' : 'lg:opacity-0'"
         >
           <Markdown :use="$slots.sixth" unwrap="p" />
         </div>

@@ -30,6 +30,8 @@ Chopin Brothers
 ::community-about-time-lapse
 #first
   ::community-about-time-lapse-history
+  #year
+  2016
   #title
   First commit
   #description
@@ -37,6 +39,8 @@ Chopin Brothers
   ::
 #second
   ::community-about-time-lapse-history
+  #year
+  2017
   #title
   First commit
   #description
@@ -44,6 +48,8 @@ Chopin Brothers
   ::
 #third
   ::community-about-time-lapse-history
+  #year
+  2020
   #title
   First commit
   #description
@@ -51,6 +57,8 @@ Chopin Brothers
   ::
 #fourth
   ::community-about-time-lapse-history
+  #year
+  2020
   #title
   First commit
   #description
@@ -58,6 +66,8 @@ Chopin Brothers
   ::
 #fifth
   ::community-about-time-lapse-history
+  #year
+  2021
   #title
   First commit
   #description
@@ -65,6 +75,8 @@ Chopin Brothers
   ::
 #sixth
   ::community-about-time-lapse-history
+  #year
+  2022
   #title
   First commit
   #description
