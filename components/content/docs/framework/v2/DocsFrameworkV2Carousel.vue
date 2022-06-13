@@ -58,6 +58,18 @@ const showcases = ref([
   padding-bottom: 40px;
 }
 
+.swiper-slide {
+  background-position: center;
+  background-size: cover;
+  width: 400px;
+  height: 200px;
+  filter: blur(4px);
+
+  :hover {
+    cursor: pointer;
+  }
+}
+
 .swiper-slide-prev,
 .swiper-slide-next {
   filter: blur(1px);
