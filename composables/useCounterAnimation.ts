@@ -29,7 +29,7 @@ export const useCounterAnimations = () => {
     clearTimeout(counterTimeoutId.value)
   }
 
-  const startStepper = async (ms?: Array<number>) => {
+  const startStepper = async (ms?: Array<number>, reinit: Boolean = true) => {
     for (let i = 0; i < ms.length; i++) {
       currentStep.value = i
 
@@ -37,7 +37,7 @@ export const useCounterAnimations = () => {
         setTimeout(resolve, ms[currentStep.value])
       })
     }
-    currentStep.value = null
+    if (reinit) { currentStep.value = null }
   }
 
   return {
