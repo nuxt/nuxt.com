@@ -3,11 +3,11 @@
     <h2 class="text-4xl font-semibold lg:w-1/2 u-text-gray-900">
       <Markdown :use="$slots.title" unwrap="p" />
     </h2>
-    <div class="flex items-center justify-between mt-6">
+    <div class="flex flex-col justify-between gap-3 mt-6 md:items-center md:flex-row">
       <p class="text-lg u-text-gray-500 lg:w-3/5">
         <Markdown :use="$slots.description" unwrap="p" />
       </p>
-      <div class="flex items-center gap-3">
+      <div class="flex flex-wrap items-center gap-3">
         <USelect
           v-model="location"
           placeholder="Location"

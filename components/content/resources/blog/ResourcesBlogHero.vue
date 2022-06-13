@@ -13,7 +13,7 @@
             v-model="form.email"
             name="email"
             placeholder="Enter your email"
-            class="w-72"
+            class="w-auto sm:w-64"
             size="sm"
             required
           />
