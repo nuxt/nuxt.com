@@ -6,7 +6,6 @@
     :size="size"
     text-attribute="label"
     value-attribute="key"
-    class="mr-px -my-1"
   />
 </template>
 

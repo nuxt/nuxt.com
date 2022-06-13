@@ -8,7 +8,7 @@
     placeholder="Organization"
     value-attribute="key"
     text-attribute="title"
-    class="w-44"
+    class="w-48"
   />
 </template>
 
