@@ -6,7 +6,7 @@
       </UContainer>
     </header>
     <main :class="[overlap && 'sm:mt-[calc(-6rem-1px)]']">
-      <UContainer>
+      <UContainer padded>
         <slot />
       </UContainer>
     </main>

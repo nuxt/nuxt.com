@@ -142,7 +142,7 @@ Our secondary palette contains a variety of colors with all the same base hue (t
   ---
   secondaries: true
   cardClass: 'bg-gray-400 hover:bg-gray-200'
-  hexaColor: '#71717a'
+  hexaColor: '#71717A'
   ---
   ::
   ::resources-design-kit-color-card
@@ -299,8 +299,8 @@ Full
 
   ::resources-design-kit-logo-card
   ---
-  cardClass: bg-gray-900
   imgName: full-framework-white
+  cardClass: bg-gray-900
   full: true
   ---
   #name
@@ -357,7 +357,7 @@ highlight: false
   ---
   buttonText: 'Read article'
   to: '#'
-  imagePath: '/assets/resources/design-kit/book.svg'
+  icon: 'uil:book-open'
   ---
   #title
   Want to know more about identity ?

@@ -9,5 +9,5 @@ Repositories
 Extend and automate your workflow by using deployments for your favorite tools.
 ::
 
-:community-repositories-list
-
+::community-repositories-list
+::
