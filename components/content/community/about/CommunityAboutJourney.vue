@@ -1,7 +1,7 @@
 <template>
   <div class="relative overflow-hidden">
     <img src="/assets/community/about/gradient.svg" class="absolute right-0 w-[600px] h-[578px] top-[148px]">
-    <UContainer padded class="relative grid grid-cols-1 md:grid-cols-2 gap-x-[30px] pt-[148px] pb-[300px]">
+    <UContainer padded class="relative grid grid-cols-1 md:grid-cols-2 gap-x-[30px] sm:pt-[148px] pb-[300px]">
       <div class="flex flex-col pt-8 gap-y-8">
         <h2 class="text-4xl font-semibold u-text-gray-900">
           <Markdown :use="$slots.title" unwrap="p" />
