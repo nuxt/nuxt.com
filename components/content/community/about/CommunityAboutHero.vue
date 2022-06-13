@@ -18,8 +18,11 @@
       </div>
     </template>
 
-    <template #image>
-      <img src="/assets/community/partners/gems.svg" class="object-contain h-full mx-10 opacity-30 sm:opacity-100">
+    <template #background>
+      <CommunityAboutHeroMap class="object-cover h-full opacity-50 sm:opacity-100" />
+      <div class="h-[100px] absolute top-0 inset-x-0 bg-gradient-to-b from-white dark:from-black to-transparent" />
+      <div class="w-[100px] absolute left-0 inset-y-0 bg-gradient-to-r from-white dark:from-black to-transparent" />
+      <div class="h-[100px] absolute bottom-0 inset-x-0 bg-gradient-to-t from-white dark:from-black to-transparent" />
     </template>
   </PageHero>
 </template>
