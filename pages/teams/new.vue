@@ -5,7 +5,7 @@
     <TeamPage overlap>
       <div class="flex flex-col-reverse gap-10 lg:flex-row">
         <div class="w-full space-y-6 lg:w-2/3">
-          <UCard @submit.prevent="onSubmit">
+          <UCard padded @submit.prevent="onSubmit">
             <div class="space-y-6">
               <UFormGroup name="slug" label="Slug" :help="form.slug !== slug ? `Your team slug will be renamed to “${slug}”` : 'This is your team\'s URL namespace on Nuxt.'" required class="relative w-full lg:max-w-xs">
                 <div class="flex items-center">
