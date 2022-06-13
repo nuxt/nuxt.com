@@ -6,7 +6,7 @@
 
         <UIcon v-if="pending" name="heroicons-outline:refresh" class="w-6 h-6 animate-spin" />
       </h2>
-      <div class="flex justify-end gap-6">
+      <div class="flex gap-6 sm:justify-end">
         <CommunityNuxtersFilterTime />
         <!-- <CommunityNuxtersFilterSort /> -->
       </div>
