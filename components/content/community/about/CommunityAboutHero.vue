@@ -8,7 +8,7 @@
     </template>
 
     <template #extra>
-      <div class="flex flex-wrap w-full gap-4 sm:items-center sm:max-w-xl">
+      <div class="flex gap-6">
         <UButton
           v-for="(button, index) in buttons"
           :key="index"
