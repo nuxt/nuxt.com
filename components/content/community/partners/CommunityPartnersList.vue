@@ -4,13 +4,15 @@
       <CommunityPartnersAside />
     </template>
 
-    <div class="flex flex-col justify-between gap-3 sm:items-center sm:flex-row">
+    <div class="flex flex-col justify-between gap-3 lg:items-center lg:flex-row">
       <h2 class="text-3xl font-semibold u-text-gray-900">
         {{ filteredPartners.length }} partner{{ filteredPartners.length > 1 ? 's' : '' }} found
       </h2>
 
-      <CommunityPartnersFilters class="hidden lg:flex" />
-      <CommunityPartnersFilterCategory class="lg:hidden" />
+      <div class="flex flex-col gap-3 md:flex-row md:items-center">
+        <CommunityPartnersFilters class="hidden lg:flex" />
+        <CommunityPartnersFilterCategory class="lg:hidden" />
+      </div>
     </div>
 
     <div class="hidden _ellipse lg:block" />

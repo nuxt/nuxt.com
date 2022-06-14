@@ -7,7 +7,7 @@
     size="sm"
     value-attribute="key"
     text-attribute="label"
-    class="w-36"
+    class="min-w-[144px]"
   />
 </template>
 

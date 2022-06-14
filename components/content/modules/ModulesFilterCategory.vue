@@ -7,7 +7,7 @@
     placeholder="Category"
     value-attribute="key"
     text-attribute="title"
-    class="w-40"
+    class="min-w-[160px]"
   />
 </template>
 
