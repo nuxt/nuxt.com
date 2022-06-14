@@ -4,9 +4,11 @@
       <ResourcesShowcasesAside :categories="categories" :selected-category="selectedCategory" />
     </template>
 
-    <h2 class="text-3xl font-semibold u-text-gray-900">
+    <h2 class="hidden text-3xl font-semibold u-text-gray-900 lg:block">
       {{ selectedCategory?.label }}
     </h2>
+
+    <ResourcesShowcasesFilterCategory :categories="categories" :selected-category="selectedCategory" class="lg:hidden" />
 
     <ul v-if="selectedShowcases.length" class="grid grid-cols-1 gap-8 mt-8 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
       <li v-for="showcase in selectedShowcases" :key="showcase.id">

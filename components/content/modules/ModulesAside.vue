@@ -5,7 +5,7 @@
         Categories
       </p>
 
-      <ModulesFilterVersion />
+      <ModulesFilterVersion class="mr-px -my-1" />
     </div>
 
     <ul v-if="categories.length" class="py-3">
@@ -31,7 +31,7 @@
       </li>
     </ul>
 
-    <div class="py-3 border-t u-border-gray-200">
+    <div class="pt-3 border-t u-border-gray-200">
       <NuxtLink
         :to="contributeUrl"
         target="_blank"

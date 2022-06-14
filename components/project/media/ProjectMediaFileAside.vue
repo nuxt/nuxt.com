@@ -101,10 +101,6 @@ const props = defineProps({
 const project: Project = inject('project')
 const root: Root = inject('root')
 
-const keys = useMagicKeys({
-  passive: false,
-  onEventFired: event => event.preventDefault()
-})
 const activeElement = useActiveElement()
 const { branch } = useProjectBranches(project)
 const { computedFile } = useProjectFiles(project, root)
@@ -137,10 +133,7 @@ const notUsingInput = computed(() => !(activeElement.value?.tagName === 'INPUT' 
 
 // Watch
 
-if (process.client) {
-  const isMac = navigator.platform.includes('Mac')
-  whenever(and(isMac ? keys.meta_g : keys.ctrl_g, notUsingInput), () => {
-    window.open(githubLink.value, '_blank')
-  })
-}
+whenever(and(useMagicKeys().meta_g, notUsingInput), () => {
+  window.open(githubLink.value, '_blank')
+})
 </script>

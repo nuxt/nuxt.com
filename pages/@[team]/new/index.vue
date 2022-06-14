@@ -4,7 +4,7 @@
 
     <TeamPage overlap>
       <div class="grid gap-8 sm:grid-cols-2">
-        <UCard base-class="flex flex-col overflow-hidden lg:h-[calc(100vh-352px)] lg:min-h-[528px]" body-class="flex-1 lg:overflow-y-auto" footer-background-class="u-bg-gray-50" shadow-class="">
+        <UCard padded base-class="flex flex-col overflow-hidden lg:h-[calc(100vh-352px)] lg:min-h-[528px]" body-class="flex-1 lg:overflow-y-auto" footer-background-class="u-bg-gray-50" shadow-class="">
           <template #header>
             <div class="flex items-center justify-between min-w-0 gap-3">
               <h3 class="text-2xl font-semibold truncate u-text-gray-900">
@@ -111,7 +111,14 @@
           </template>
         </UCard>
 
-        <UCard shadow-class="" base-class="flex flex-col overflow-hidden lg:h-[calc(100vh-352px)] lg:min-h-[528px]" body-class="px-4 pt-1 pb-6 sm:px-5" body-background-class="flex-1 lg:overflow-y-auto u-bg-gray-50" header-background-class="u-bg-gray-50 !border-0 -mb-1">
+        <UCard
+          padded
+          shadow-class=""
+          base-class="flex flex-col overflow-hidden lg:h-[calc(100vh-352px)] lg:min-h-[528px]"
+          body-class="px-4 pt-1 pb-6 sm:px-5"
+          body-background-class="flex-1 lg:overflow-y-auto u-bg-gray-50"
+          header-background-class="u-bg-gray-50 !border-0 -mb-1"
+        >
           <template #header>
             <div class="flex items-center justify-between min-w-0 gap-3">
               <h3 class="text-2xl font-semibold truncate u-text-gray-900">

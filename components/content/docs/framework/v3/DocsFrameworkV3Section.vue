@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col py-20 gap-y-8 not-prose" :class="{ 'items-center': center }">
+  <div class="flex flex-col py-20 gap-y-8 last:pb-0 not-prose" :class="{ 'items-center': center }">
     <h1 class="text-4xl font-semibold text-left u-text-gray-900">
       <Markdown :use="$slots.title" unwrap="p" />
     </h1>

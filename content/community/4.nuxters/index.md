@@ -15,4 +15,5 @@ Nuxters
 Extend and automate your workflow by using deployments for your favorite tools.
 ::
 
-:community-nuxters-list
+::community-nuxters-list
+::

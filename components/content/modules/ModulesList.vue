@@ -4,15 +4,23 @@
       <ModulesAside />
     </template>
 
-    <div class="flex flex-col justify-between gap-3 sm:items-center sm:flex-row">
+    <div class="flex items-center justify-between gap-3">
       <h2 class="text-3xl font-semibold u-text-gray-900">
         {{ filteredModules.length }} module{{ filteredModules.length > 1 ? 's' : '' }} found
       </h2>
 
-      <div class="flex items-center gap-3 sm:flex-row-reverse">
-        <ModulesFilterSort />
-        <ModulesFilters />
+      <div class="flex flex-wrap items-center gap-3">
+        <ModulesFilterVersion size="sm" class="hidden sm:block lg:hidden" />
+        <ModulesFilters class="hidden lg:flex" />
+        <ModulesFilterSort class="hidden lg:flex" />
       </div>
+    </div>
+
+    <div class="flex flex-wrap gap-3 mt-3 lg:hidden">
+      <ModulesFilterVersion size="sm" class="sm:hidden" />
+      <ModulesFilterType class="lg:hidden" />
+      <ModulesFilterCategory class="lg:hidden" />
+      <ModulesFilterSort />
     </div>
 
     <div class="hidden _ellipse lg:block" />

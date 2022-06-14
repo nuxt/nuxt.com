@@ -6,8 +6,7 @@ import typography from './presets/typography'
 // https://v3.nuxtjs.org/guide/directory-structure/nuxt.config
 export default defineNuxtConfig({
   css: [
-    '~/assets/css/fonts.css',
-    '~/assets/css/scrollbars.css'
+    '~/assets/css/fonts.css'
   ],
   modules: [
     '@nuxthq/ui',
