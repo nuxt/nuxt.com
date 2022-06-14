@@ -27,18 +27,14 @@
           />
         </form>
       </div>
-      <ResourcesBlogPostHighlighted :page="firstArticle" />
+      <ResourcesBlogPostHighlighted v-if="firstArticle" :page="firstArticle" />
     </div>
   </UContainer>
 </template>
 
 <script setup lang="ts">
-const { data: firstArticle } = await useAsyncData('resources-blog-hero', () => queryContent('/resources/blog').where({
-  $not: {
-    _path: {
-      $in: ['/resources/blog']
-    }
-  }
+const { data: firstArticle } = await useAsyncData('resources-blog-hero', () => queryContent().where({
+  _path: /^\/resources\/blog\//
 }).sort({ date: 0 }).findOne())
 
 const { $toast } = useNuxtApp()
