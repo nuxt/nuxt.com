@@ -46,7 +46,7 @@
     "js-yaml": "^4.1.0",
     "mjml": "^4.12.0",
     "node-mailjet": "^3.4.1",
-    "nuxt": "npm:nuxt3@3.0.0-rc.3-27550969.a4a3cff",
+    "nuxt": "3.0.0-rc.4",
     "socket.io-client": "^4.5.1",
     "standard-version": "^9.5.0",
     "swiper": "^8.1.6",
