@@ -8,11 +8,11 @@
       <ModulesFilterVersion class="mr-px -my-1" />
     </div>
 
-    <ul v-if="categories.length" class="py-3">
+    <ul v-if="categories.length" class="flex flex-col py-4 gap-y-2">
       <li v-for="category in categories" :key="category.key">
         <NuxtLink
           :to="category.to"
-          class="py-1.5 block relative"
+          class="relative flex items-center"
           :class="{
             'u-text-gray-900 font-medium': selectedCategory?.key === category.key,
             'u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900': selectedCategory?.key !== category.key
@@ -31,11 +31,11 @@
       </li>
     </ul>
 
-    <div class="pt-3 border-t u-border-gray-200">
+    <div class="pt-4 border-t u-border-gray-200">
       <NuxtLink
         :to="contributeUrl"
         target="_blank"
-        class="flex items-center gap-1.5 hover:u-text-gray-900 focus:u-text-gray-900 text-sm font-medium"
+        class="flex items-center gap-2 text-sm font-medium hover:u-text-gray-900 focus:u-text-gray-900"
         tabindex="-1"
       >
         <UIcon name="fa-brands:github" class="w-4 h-4" />

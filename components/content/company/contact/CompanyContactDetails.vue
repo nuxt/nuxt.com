@@ -3,7 +3,7 @@
     <div
       v-for="(item, index) in items"
       :key="index"
-      class="relative flex gap-4 p-5 border rounded-lg u-bg-gray-50 u-border-gray-200"
+      class="relative flex gap-4 p-5 border rounded-lg u-bg-gray-50 u-border-gray-200 group"
     >
       <div class="flex items-center justify-center w-12 h-12 border rounded-lg u-bg-white u-border-gray-200">
         <UIcon :name="item.icon" class="w-6 h-6 u-text-gray-900" />
@@ -14,7 +14,7 @@
         <span class="u-text-gray-700">{{ item.description }}</span>
       </div>
 
-      <UIcon name="heroicons-outline:chevron-right" class="self-center w-5 h-5 u-text-gray-900" />
+      <UIcon name="heroicons-outline:chevron-right" class="self-center w-5 h-5 u-text-gray-500 group-hover:u-text-gray-900" />
 
       <NuxtLink :to="item.to" class="absolute inset-0" />
     </div>

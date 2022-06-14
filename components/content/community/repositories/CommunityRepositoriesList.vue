@@ -16,7 +16,7 @@
       </div>
     </div>
 
-    <ul v-if="displayedRepositories.length" class="grid grid-cols-1 gap-8 mt-8 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+    <ul v-if="displayedRepositories.length" class="grid grid-cols-1 gap-8 mt-8 sm:grid-cols-2 xl:grid-cols-3">
       <li v-for="(displayedRepository, index) in displayedRepositories" :key="index">
         <CommunityRepositoriesListItem :repository="displayedRepository" />
       </li>
