@@ -22,7 +22,7 @@
     </template>
 
     <template #image>
-      <img src="/assets/resources/showcases/gems.svg" class="object-contain h-full mx-10 opacity-30 md:opacity-100">
+      <img src="/assets/resources/showcases/gems.svg" class="object-contain h-full mx-10 opacity-30 lg:opacity-100">
     </template>
   </PageHero>
 </template>

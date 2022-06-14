@@ -1,7 +1,7 @@
 <template>
   <div class="relative">
     <div class="absolute left-0 inset-y-1/3">
-      <img src="/assets/projects/gems.svg" class="opacity-25 md:opacity-100">
+      <img src="/assets/projects/gems.svg" class="opacity-25 lg:opacity-100">
     </div>
     <UContainer padded class="relative flex flex-col items-center pt-8 pb-16 sm:pb-32">
       <div class="flex flex-col items-center justify-center gap-2 sm:gap-4 sm:flex-row">

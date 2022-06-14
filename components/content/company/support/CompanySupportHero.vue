@@ -18,7 +18,7 @@
     </template>
 
     <template #background>
-      <img src="/assets/company/support/gems.svg" class="object-cover h-full opacity-30 md:opacity-100">
+      <img src="/assets/company/support/gems.svg" class="object-cover h-full opacity-30 lg:opacity-100">
       <div class="h-[170px] absolute top-0 inset-x-0 bg-gradient-to-b from-white dark:from-black to-transparent" />
       <div class="w-[170px] absolute right-0 inset-y-0 bg-gradient-to-l from-white dark:from-black to-transparent" />
     </template>

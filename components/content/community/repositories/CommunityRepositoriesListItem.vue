@@ -1,14 +1,14 @@
 <template>
   <UCard padded shadow-class="" class="relative transition duration-200 hover:ring-2 hover:u-ring-gray-900">
     <div class="flex items-center gap-1.5">
-      <p class="text-lg font-semibold truncate">
+      <p class="text-lg font-semibold truncate u-text-gray-900">
         {{ repository.name }}
       </p>
 
       <img :src="`https://github.com/${repository.owner.login}.png`" class="inline-block w-4 h-4 rounded grayscale">
     </div>
 
-    <p class="u-text-gray-500 text-sm line-clamp-2 min-h-[40px] mb-4">
+    <p class="mt-2 u-text-gray-500 text-sm line-clamp-2 min-h-[40px] mb-4">
       {{ repository.description }}
     </p>
 

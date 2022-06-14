@@ -4,11 +4,11 @@
       Categories
     </p>
 
-    <ul v-if="categories.length" class="py-3">
+    <ul v-if="categories.length" class="flex flex-col py-4 gap-y-2">
       <li v-for="category in categories" :key="category.id">
         <NuxtLink
           :to="category.to"
-          class="py-1.5 block relative"
+          class="relative flex"
           :class="{
             'u-text-gray-900 font-medium': selectedCategory?.name === category.name,
             'u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900': selectedCategory?.name !== category.name

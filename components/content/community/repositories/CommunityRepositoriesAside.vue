@@ -6,19 +6,20 @@
       </p>
     </div>
 
-    <ul v-if="organizations.length" class="py-3">
+    <ul v-if="organizations.length" class="flex flex-col py-4 gap-y-2">
       <li v-for="organization in organizations" :key="organization.key">
         <NuxtLink
           :to="organization.to"
-          class="py-1.5 block relative"
+          class="relative flex items-center gap-2"
           :class="{
             'u-text-gray-900 font-medium': selectedOrganization?.key === organization.key,
             'u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900': selectedOrganization?.key !== organization.key
           }"
           tabindex="-1"
         >
+          <img :src="`https://github.com/${organization.key}.png`" class="w-4 h-4 rounded">
+
           <span class="relative">
-            <img :src="`https://github.com/${organization.key}.png`" class="inline-block w-4 h-4 mb-1 mr-1.5 rounded grayscale">
 
             <span>{{ organization.title }}</span>
 
@@ -31,11 +32,11 @@
       </li>
     </ul>
 
-    <div class="pt-3 border-t u-border-gray-200">
+    <div class="pt-4 border-t u-border-gray-200">
       <NuxtLink
         to="https://github.com/nuxt/framework"
         target="_blank"
-        class="flex items-center gap-1.5 hover:u-text-gray-900 focus:u-text-gray-900 text-sm font-medium"
+        class="flex items-center gap-2 text-sm font-medium hover:u-text-gray-900 focus:u-text-gray-900"
         tabindex="-1"
       >
         <UIcon name="fa-brands:github" class="w-4 h-4" />
