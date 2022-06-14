@@ -23,8 +23,11 @@
         <CommunityNuxtersNuxterLarge v-for="nuxter in filteredNuxters" :key="nuxter.github" :nuxter="nuxter" />
       </ul>
     </div>
-    <div v-else-if="!pending" class="flex justify-center mt-32 font-medium">
-      No nuxters found.
+    <div v-else class="relative flex flex-col items-center gap-6 mt-16 lg:mt-24">
+      <UIcon name="fa-brands:github" class="w-16 h-16 u-text-gray-600" />
+      <span class="text-xl font-medium text-center u-text-gray-700">
+        There is no Nuxters for <b>{{ q }}</b> yet.
+      </span>
     </div>
   </Page>
 </template>

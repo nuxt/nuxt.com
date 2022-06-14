@@ -25,11 +25,24 @@
         <ModulesListItem :module="filteredModule" />
       </li>
     </ul>
+    <div v-else class="relative flex flex-col items-center gap-6 mt-16 lg:mt-24">
+      <UIcon name="fa-brands:github" class="w-16 h-16 u-text-gray-600" />
+      <span class="text-xl font-medium text-center u-text-gray-700">
+        There is no modules available for <b>{{ q }}</b> yet.<br>Become the first one to create it!
+      </span>
+      <UButton
+        :to="contributeUrl"
+        target="_blank"
+        variant="primary"
+        size="lg"
+        label="Contribute on GitHub"
+      />
+    </div>
   </Page>
 </template>
 
 <script setup lang="ts">
-const { modules, selectedCategory, selectedType, selectedVersion, selectedSort, q } = useModules()
+const { modules, selectedCategory, selectedType, selectedVersion, selectedSort, q, contributeUrl } = useModules()
 
 const filteredModules = computed(() => {
   return [...modules.value]
