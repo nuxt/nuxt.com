@@ -19,7 +19,7 @@
     </template>
 
     <template #image>
-      <img src="/assets/community/partners/gems.svg" class="object-contain h-full mx-10 opacity-30 sm:opacity-100">
+      <img src="/assets/community/partners/gems.svg" class="object-contain h-full mx-10 opacity-30 md:opacity-100">
     </template>
   </PageHero>
 </template>

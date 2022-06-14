@@ -12,6 +12,7 @@
           v-for="(button, index) in buttons"
           :key="index"
           v-bind="button"
+          size="lg"
         />
       </div>
     </template>

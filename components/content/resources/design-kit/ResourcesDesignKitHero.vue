@@ -21,7 +21,7 @@
     </template>
 
     <template #image>
-      <img src="/assets/resources/design-kit/hero.png" alt="Design kit illustration" class="object-contain h-full mx-10 opacity-10 sm:opacity-100">
+      <img src="/assets/resources/design-kit/hero.png" alt="Design kit illustration" class="object-contain h-full mx-10 opacity-10 md:opacity-100">
     </template>
   </PageHero>
 </template>
