@@ -46,7 +46,5 @@
 </template>
 
 <script setup lang="ts">
-const { categories, selectedCategory, selectedVersion } = useModules()
-
-const contributeUrl = computed(() => selectedVersion.value?.key !== '3.x' ? 'https://github.com/nuxt/nuxt.js' : 'https://github.com/nuxt/framework')
+const { categories, selectedCategory, contributeUrl } = useModules()
 </script>
