@@ -1,5 +1,5 @@
 <template>
-  <UContainer padded class="pt-20 pb-16 sm:pb-32">
+  <UContainer :constrained="false" class="relative pb-16 pt-28">
     <Swiper
       :modules="modules"
       :slides-per-view="slidesPerView"
@@ -14,6 +14,8 @@
         </div>
       </SwiperSlide>
     </Swiper>
+    <div class="absolute top-0 left-0 w-[20px] sm:w-[50px] md:w-[100px] lg:w-[200px] xl:w-[300px] 2xl:w-[400px] h-full bg-gradient-to-r from-white dark:from-black to-transparent z-[1]" />
+    <div class="absolute top-0 right-0  w-[20px] sm:w-[50px] md:w-[100px] lg:w-[200px] 2xl:w-[400px] h-full bg-gradient-to-l from-white dark:from-black to-transparent z-[1]" />
   </UContainer>
 </template>
 
@@ -39,16 +41,17 @@ const { smaller } = useBreakpoints(breakpointsTailwind)
 const xs = smaller('sm')
 const sm = smaller('md')
 const md = smaller('lg')
+const lg = smaller('xl')
 
 const slidesPerView = computed(() => {
-  if (xs.value) {
-    return 1
-  } else if (sm.value) {
+  if (xs.value || sm.value) {
     return 2
   } else if (md.value) {
     return 3
-  } else {
+  } else if (lg.value) {
     return 5
+  } else {
+    return 6
   }
 })
 const modules = [Autoplay]

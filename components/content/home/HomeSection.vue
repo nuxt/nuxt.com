@@ -1,50 +1,75 @@
 <template>
-  <UContainer :constrained="false" class="relative flex flex-col items-center justify-center py-24">
-    <div :class="sectionTitleColorClass" class="pb-2 font-semibold">
-      <Markdown :use="$slots.sectionTitle" unwrap="p" />
-    </div>
-    <h2 class="max-w-[52rem] pb-24 text-6xl font-semibold text-center ">
-      <Markdown :use="$slots.title" unwrap="p" />
-    </h2>
-    <p v-if="$slots.description" class="text-2xl text-center u-text-gray-600">
-      <Markdown :use="$slots.description" unwrap="p" />
-    </p>
-    <div
-      class="items-center justify-center"
-      :class="[
-        { 'grid grid-cols-1 lg:grid-cols-2 gap-x-[180px] items-center justify-center gap-y-8': ['left', 'right'].includes(bodyPlacement) },
-      ]"
-    >
-      <div v-if="withBodyText" padded class="flex flex-col max-w-xl px-4 text-left gap-y-6 sm:px-0" :class="[{ 'order-last': bodyPlacement === 'left' }]">
-        <div v-if="$slots.bodyTitle" class="text-4xl font-semibold u-text-gray-900">
-          <Markdown :use="$slots.bodyTitle" unwrap="p" />
-        </div>
-        <div v-if="$slots.bodyDescription" class="items-center text-2xl u-text-gray-600">
-          <Markdown :use="$slots.bodyDescription" unwrap="p" />
-        </div>
-        <NuxtLink v-if="$slots.bodyLink" :to="to" class="flex items-center w-full font-semibold gap-x-4">
-          <span class="text-2xl u-text-gray-900">
-            <Markdown :use="$slots.bodyLink" unwrap="p" />
-          </span>
-          <UIcon name="heroicons-solid:arrow-right" class="w-5 h-5 u-text-gray-900" />
-        </NuxtLink>
-        <UButton v-if="$slots.bodyButton" :to="to" variant="secondary" size="lg" class="flex justify-center w-[224px]">
-          <Markdown :use="$slots.bodyButton" unwrap="p" />
-        </UButton>
+  <div class="flex flex-col pt-24 pb-12 sm:pb-20 md:pb-28 lg:pb-40" :class="containerClass">
+    <!-- Main title -->
+    <div class="flex flex-col items-center justify-center" :class="mainTitleContainerClass">
+      <div :class="sectionTitleColorClass" class="pb-2 font-semibold">
+        <Markdown :use="$slots.sectionTitle" unwrap="p" />
       </div>
-
-      <img v-if="image" :src="`/assets/home/${image}`" :alt="`${image} illustration`" :class="imageClass" class="px-4 sm:px-0">
-
-      <!-- Markdown :use="$slots.default" unwrap="p" /-->
+      <h2 class="max-w-lg pb-4 text-4xl font-semibold text-center md:text-5xl lg:text-6xl sm:max-w-xl md:max-w-3xl lg:max-w-4xl">
+        <Markdown :use="$slots.title" unwrap="p" />
+      </h2>
+      <p v-if="$slots.description" class="text-lg text-center xl:text-xl 2xl:text-2xl u-text-gray-600 sm:max-w-xl md:max-w-3xl lg:max-w-4xl">
+        <Markdown :use="$slots.description" unwrap="p" />
+      </p>
     </div>
-  </UContainer>
+    <!-- body section -->
+    <div class="relative">
+      <UContainer
+        class="flex flex-col items-center justify-between w-full lg:flex-row gap-y-12"
+        :class="[
+          { 'gap-y-8': ['left', 'right'].includes(bodyPlacement) },
+          { 'order-last': bodyPlacement === 'left' },
+          { 'lg:justify-end': bodyPlacement === 'right' }
+        ]"
+      >
+        <!-- body text -->
+        <div
+          v-if="withBodyText"
+          padded
+          class="flex flex-col max-w-lg px-4 text-center lg:max-w-md gap-y-6 sm:px-0 xl:max-w-lg 2xl:max-w-xl"
+          :class="{ 'lg:text-left': ['left', 'right'].includes(bodyPlacement) }"
+        >
+          <div v-if="$slots.bodyTitle" class="text-2xl font-semibold xl:text-3xl 2xl:text-4xl u-text-gray-900">
+            <Markdown :use="$slots.bodyTitle" unwrap="p" />
+          </div>
+          <div v-if="$slots.bodyDescription" class="items-center text-lg xl:text-xl 2xl:text-2xl u-text-gray-600">
+            <Markdown :use="$slots.bodyDescription" unwrap="p" />
+          </div>
+          <NuxtLink v-if="$slots.bodyLink" :to="to" class="relative flex-nowrap max-w-max group">
+            <div class="flex items-center justify-center font-semibold lg:justify-start gap-x-4 ">
+              <span class="lg:text-lg xl:text-xl 2xl:text-2xl u-text-gray-900">
+                <Markdown :use="$slots.bodyLink" unwrap="p" />
+              </span>
+
+              <UIcon name="heroicons-solid:arrow-right" class="w-5 h-5 u-text-gray-900" />
+            </div>
+            <div class="absolute -bottom-2 w-0 h-0.5 bg-white group-hover:w-full transition-all duration-300 ease-in-out" />
+          </NuxtLink>
+          <UButton v-if="$slots.bodyButton" :to="to" variant="secondary" size="lg" class="flex justify-center w-[224px]">
+            <Markdown :use="$slots.bodyButton" unwrap="p" />
+          </UButton>
+        </div>
+        <!-- body image -->
+        <img v-if="image" :src="`/assets/home/${image}`" :alt="`${image} illustration`" :class="imageClass" class="px-4 sm:px-0">
+      </UContainer>
+      <Markdown :use="$slots.extra" unwrap="p" />
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
 defineProps({
+  containerClass: {
+    type: String,
+    default: 'gap-y-12 md:gap-y-16 lg:gap-y-20'
+  },
   sectionTitleColorClass: {
     type: String,
     default: 'text-green-400'
+  },
+  mainTitleContainerClass: {
+    type: String,
+    default: 'lg:pb-16 xl:pb-20 2xl:pb-24'
   },
   bodyPlacement: {
     type: String,
