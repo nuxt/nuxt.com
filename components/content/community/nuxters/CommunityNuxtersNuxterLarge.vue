@@ -1,6 +1,6 @@
 <template>
   <li class="relative col-span-6 overflow-hidden border u-border-gray-200 rounded-xl h-44 group">
-    <img src="/assets/community/nuxters/nuxter-gradient.svg" alt="nuxter background" class="absolute object-cover transition-all h-44 left-32 grayscale group-hover:grayscale-0">
+    <img src="/assets/community/nuxters/nuxter-gradient.svg" alt="nuxter background" class="absolute object-cover h-44 left-32">
     <div class="absolute w-56 h-56 overflow-hidden transition-all rounded-full u-bg-gray-50 -top-6 -left-10 grayscale group-hover:grayscale-0">
       <img :src="nuxter.avatar_url" :alt="nuxter.github" class="w-full h-full">
     </div>
@@ -24,14 +24,11 @@
           </div>
         </div>
         <div class="flex items-center gap-12">
-          <!-- <CommunityNuxtersNuxterNumber :nuxter="nuxter" :size="numberSize" :type="sortedTypes[1]" />
-          <CommunityNuxtersNuxterNumber :nuxter="nuxter" :size="numberSize" :type="sortedTypes[2]" />
-          <CommunityNuxtersNuxterNumber :nuxter="nuxter" :size="numberSize" :type="sortedTypes[3]" /> -->
+          <CommunityNuxtersNuxterNumber :nuxter="nuxter" :size="numberSize" :type="sortedTypes[0]" />
         </div>
       </div>
       <div class="flex flex-col items-end justify-between flex-shrink-0 pb-6">
         <CommunityNuxtersNuxterRank :nuxter="nuxter" />
-        <CommunityNuxtersNuxterNumber :nuxter="nuxter" :size="numberSize" :type="sortedTypes[0]" />
       </div>
     </div>
   </li>

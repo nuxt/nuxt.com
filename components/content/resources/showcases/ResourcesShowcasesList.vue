@@ -4,13 +4,11 @@
       <ResourcesShowcasesAside :categories="categories" :selected-category="selectedCategory" />
     </template>
 
-    <div class="flex flex-col justify-between gap-3 sm:items-center sm:flex-row">
-      <h2 class="text-3xl font-semibold u-text-gray-900">
-        {{ selectedCategory?.label }}
-      </h2>
+    <h2 class="hidden text-3xl font-semibold u-text-gray-900 lg:block">
+      {{ selectedCategory?.label }}
+    </h2>
 
-      <ResourcesShowcasesFilterCategory :categories="categories" :selected-category="selectedCategory" class="lg:hidden" />
-    </div>
+    <ResourcesShowcasesFilterCategory :categories="categories" :selected-category="selectedCategory" class="lg:hidden" />
 
     <ul v-if="selectedShowcases.length" class="grid grid-cols-1 gap-8 mt-8 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
       <li v-for="showcase in selectedShowcases" :key="showcase.id">
