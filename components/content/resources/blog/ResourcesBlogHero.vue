@@ -8,13 +8,13 @@
         <p v-if="$slots.description" class="text-lg font-medium text-center sm:text-left u-text-gray-500">
           <Markdown :use="$slots.description" unwrap="p" />
         </p>
-        <form class="flex gap-3" @submit.prevent="onSubmit">
+        <form class="flex flex-wrap justify-center w-full gap-6 sm:flex-nowrap sm:items-center sm:justify-start" @submit.prevent="onSubmit">
           <UInput
             v-model="form.email"
             name="email"
             placeholder="Enter your email"
-            class="w-auto sm:w-64"
-            size="sm"
+            class="w-full sm:w-64"
+            size="lg"
             required
           />
           <UButton
@@ -23,7 +23,7 @@
             variant="primary"
             :loading="loading"
             label="Subscribe"
-            size="xs"
+            size="lg"
           />
         </form>
       </div>

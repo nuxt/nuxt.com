@@ -7,14 +7,15 @@
       <Markdown :use="$slots.description" unwrap="p" />
     </template>
     <template #extra>
-      <div class="flex flex-wrap w-full gap-4 sm:items-center sm:max-w-xl">
+      <div class="flex flex-wrap justify-center gap-6 sm:flex-nowrap sm:items-center">
         <UButton
           v-for="(button, index) in buttons"
           :key="index"
           v-bind="button"
           size="lg"
+          class="flex-shrink-0"
         />
-        <CommunityNuxtersFilterSearch class="w-full max-w-sm" />
+        <CommunityNuxtersFilterSearch class="w-full" />
       </div>
     </template>
     <template #background>
