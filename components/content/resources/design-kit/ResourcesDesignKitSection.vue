@@ -7,7 +7,7 @@
       <h2 v-if="$slots.title" class="pb-6 text-2xl font-semibold u-text-gray-900">
         <Markdown :use="$slots.title" unwrap="p" />
       </h2>
-      <p v-if="$slots.description" class="pb-10">
+      <p v-if="$slots.description" class="pb-10 prose dark:prose-invert max-w-none">
         <Markdown :use="$slots.description" unwrap="p" />
       </p>
       <ul v-if="$slots.designList" class="grid" :class="listClass">
