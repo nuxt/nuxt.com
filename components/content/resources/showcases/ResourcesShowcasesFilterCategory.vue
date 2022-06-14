@@ -11,25 +11,14 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue'
-
-const props = defineProps({
-  categories: {
-    type: Array as PropType<any>,
-    default: () => []
-  },
-  selectedCategory: {
-    type: Object as PropType<any>,
-    default: () => null
-  }
-})
+const { categories, selectedCategory } = useResourcesShowcases()
 
 const route = useRoute()
 const router = useRouter()
 
 const category = computed({
   get () {
-    return props.selectedCategory
+    return selectedCategory.value
   },
   set (category) {
     router.push({
