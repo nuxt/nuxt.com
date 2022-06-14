@@ -7,7 +7,6 @@
     placeholder="Type"
     value-attribute="key"
     text-attribute="title"
-    class="w-36"
   />
 </template>
 

@@ -1,12 +1,12 @@
 <template>
   <Page id="smooth" class="pt-16 -mt-16">
-    <div class="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
+    <div class="flex flex-col justify-between gap-3 lg:items-center lg:flex-row">
       <h2 class="flex items-center gap-3 text-3xl font-semibold u-text-gray-900">
         Top 100 Nuxters
 
         <UIcon v-if="pending" name="heroicons-outline:refresh" class="w-6 h-6 animate-spin" />
       </h2>
-      <div class="flex gap-6 sm:justify-end">
+      <div class="flex flex-col gap-3 md:flex-row md:items-center">
         <CommunityNuxtersFilterTime />
         <!-- <CommunityNuxtersFilterSort /> -->
       </div>

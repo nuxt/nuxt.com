@@ -7,7 +7,6 @@
     placeholder="Category"
     value-attribute="name"
     text-attribute="label"
-    class="w-40"
   />
 </template>
 

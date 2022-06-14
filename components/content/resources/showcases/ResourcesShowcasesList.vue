@@ -8,7 +8,9 @@
       {{ selectedCategory?.label }}
     </h2>
 
-    <ResourcesShowcasesFilterCategory :categories="categories" :selected-category="selectedCategory" class="lg:hidden" />
+    <div class="flex flex-col gap-3 md:flex-row md:items-center lg:hidden">
+      <ResourcesShowcasesFilterCategory :categories="categories" :selected-category="selectedCategory" />
+    </div>
 
     <ul v-if="selectedShowcases.length" class="grid grid-cols-1 gap-8 mt-8 sm:grid-cols-2 xl:grid-cols-3">
       <li v-for="showcase in selectedShowcases" :key="showcase.id">
