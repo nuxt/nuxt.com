@@ -48,11 +48,17 @@ export const useCommunityPartners = () => {
       }))
   })
 
+  const categoriesIcons = {
+    agency: 'uil:palette',
+    technology: 'uil:circuit'
+  }
+
   const categories = computed(() => {
     const categories = [...new Set(partners.value.map(partner => partner.category))]
       .map(category => ({
         key: category,
         title: capitalize(category),
+        icon: categoriesIcons[category],
         to: {
           name: 'community-partners',
           query: {
