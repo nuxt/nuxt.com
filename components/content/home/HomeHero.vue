@@ -1,7 +1,7 @@
 <template>
-  <UContainer padded class="relative not-prose">
-    <div class="flex flex-row items-center justify-between pb-20 pt-36 md:pt-44 lg:pt-36">
-      <div class="flex flex-col justify-start gap-y-8">
+  <div class="not-prose">
+    <div class="pb-20 pt-36 md:pt-44 lg:pt-36">
+      <UContainer padded class="relative flex flex-col justify-start gap-y-8">
         <div v-if="$slots.badgeLabel" class="flex gap-x-2">
           <UBadge rounded variant="green">
             <Markdown :use="$slots.badgeLabel" unwrap="p" />
@@ -10,17 +10,17 @@
             <Markdown :use="$slots.news" unwrap="p" />
           </span>
         </div>
-        <h1 v-if="$slots.title" class="max-w-2xl font-bold text-left text-7xl u-text-gray-900">
+        <h1 v-if="$slots.title" class="max-w-2xl text-5xl font-bold text-left md:text-6xl lg:text-7xl u-text-gray-900">
           <Markdown use="title" unwrap="p" />
         </h1>
-        <p v-if="$slots.description" class="w-3/5 text-lg text-left u-text-gray-800">
+        <p v-if="$slots.description" class="w-3/5 max-w-lg text-lg text-left u-text-gray-800">
           <Markdown use="description" unwrap="p" />
         </p>
-        <div class="flex gap-x-8">
+        <div class="flex gap-y-4 gap-x-4 sm:gap-x-8">
           <UButton
             v-for="button of buttons"
             :key="button.label"
-            :size="button.size || 'xl'"
+            size="lg"
             :variant="button.variant || 'transparent'"
             :icon="button.icon || undefined"
             :label="button.label || ''"
@@ -28,10 +28,10 @@
             :trailing="button.trailing"
           />
         </div>
-      </div>
-      <img src="/assets/home/hero-gradient.svg" class="absolute -rotate-[40deg] -top-[200px] -right-[300px] opacity-60 overflow-hidden">
+      </UContainer>
+      <img src="/assets/home/hero-gradient.svg" class="absolute top-0 right-0 overflow-hidden opacity-60">
     </div>
-  </UContainer>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -39,7 +39,7 @@ import { PropType } from 'vue'
 
 defineProps({
   buttons: {
-    type: Array as PropType<{ label?: string, variant?: string, to?: string, size?: string, icon?: string, trailing?: Boolean }[]>,
+    type: Array as PropType<{ label?: string, variant?: string, to?: string, icon?: string, trailing?: Boolean }[]>,
     default: () => []
   }
 })
