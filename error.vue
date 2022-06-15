@@ -21,9 +21,3 @@ defineProps({
   }
 })
 </script>
-
-<style>
-html.dark {
-  @apply bg-black;
-}
-</style>
