@@ -7,6 +7,7 @@ title: Support
 buttons:
   - label: Find a partner
     to: /community/partners
+    variant: 'primary-gradient'
   - label: Community Support
     to: https://discord.com/invite/ps2h6QT
     target: _blank

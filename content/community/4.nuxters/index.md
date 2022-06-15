@@ -8,6 +8,7 @@ buttons:
   - label: Become a Nuxter
     to: https://github.com/nuxt/framework
     target: _blank
+    variant: 'primary-gradient'
 ---
 #title
 Nuxters
