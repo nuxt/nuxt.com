@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue'
+import type { PropType, Ref } from 'vue'
 import type { File, Project, Root } from '~/types'
 
 const props = defineProps({
@@ -18,9 +18,9 @@ const props = defineProps({
 })
 
 const project: Project = inject('project')
-const root: Root = inject('root')
+const root: Ref<Root> = inject('root')
 
-const { openedDirs } = useProjectFilesTree(project, root)
+const { openedDirs } = useProjectFilesTree(project, root.value)
 
 const isOpen = computed(() => {
   return !!openedDirs.value[props.file.path]

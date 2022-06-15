@@ -18,12 +18,12 @@ const props = defineProps({
 })
 
 const project: Project = inject('project')
-const root: Root = inject('root')
+const root: Ref<Root> = inject('root')
 const activeUsers: Ref<SocketUser[]> = inject('activeUsers')
 
 const user = useStrapiUser() as Ref<User>
 const { branch } = useProjectBranches(project)
-const { openedDirs } = useProjectFilesTree(project, root)
+const { openedDirs } = useProjectFilesTree(project, root.value)
 
 const isDir = computed(() => props.file.type === 'directory')
 const isOpen = computed(() => !!openedDirs.value[props.file.path])

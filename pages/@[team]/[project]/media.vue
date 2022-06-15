@@ -27,19 +27,19 @@
 
     <div class="flex items-stretch flex-1 min-h-0 overflow-hidden">
       <div
-        class="flex-1 flex flex-col relative"
+        class="relative flex flex-col flex-1"
         @dragover.prevent
         @dragenter.prevent="onDragEnter"
         @dragleave.prevent="onDragLeave"
         @drop.prevent="onDrop"
       >
-        <div v-if="computedFiles.length" class="flex-1 flex flex-col p-4 sm:p-6 overflow-y-auto">
+        <div v-if="computedFiles.length" class="flex flex-col flex-1 p-4 overflow-y-auto sm:p-6">
           <ProjectMediaFilesGallery :medias="medias" @fileVisible="onFileVisible" />
         </div>
         <ProjectMediaFilesEmpty v-else @create="$refs.fileToUpload.click()" />
 
         <div
-          class="absolute inset-0 border border-dashed border-transparent"
+          class="absolute inset-0 border border-transparent border-dashed"
           :class="{ 'bg-blue-500 bg-opacity-20 border-blue-500': dragover }"
           style="pointer-events: none;"
         />
@@ -51,9 +51,9 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue'
+import type { PropType, Ref } from 'vue'
 import { isEmpty } from 'lodash-es'
-import type { Team, Project } from '~/types'
+import type { Team, Project, Root } from '~/types'
 import { getAvailablePath } from '~/utils/tree'
 
 defineProps({
@@ -63,13 +63,13 @@ defineProps({
   }
 })
 
-const root = 'public'
+const root: Ref<Root> = ref('public')
 const project: Project = inject('project')
 
 provide('root', root)
 
 const { $toast } = useNuxtApp()
-const { upload, computedFiles, fetchFile, uploadInput: fileToUpload } = useProjectFiles(project, root)
+const { upload, computedFiles, fetchFile, uploadInput: fileToUpload } = useProjectFiles(project, root.value)
 
 const dragover = ref(false)
 

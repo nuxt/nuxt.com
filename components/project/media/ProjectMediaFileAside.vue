@@ -87,6 +87,7 @@
 </template>
 
 <script setup lang="ts">
+import type { Ref } from 'vue'
 import { useMagicKeys, whenever, and, useActiveElement } from '@vueuse/core'
 import { toFormattedBytes } from '~/utils'
 import type { Project, Root } from '~/types'
@@ -99,13 +100,13 @@ const props = defineProps({
 })
 
 const project: Project = inject('project')
-const root: Root = inject('root')
+const root: Ref<Root> = inject('root')
 
 const activeElement = useActiveElement()
 const { branch } = useProjectBranches(project)
-const { computedFile } = useProjectFiles(project, root)
+const { computedFile } = useProjectFiles(project, root.value)
 
-const selectedIndex = useState(`project-${project.id}-${root}-aside-tabs`, () => 0)
+const selectedIndex = useState(`project-${project.id}-${root.value}-aside-tabs`, () => 0)
 
 // Computed
 

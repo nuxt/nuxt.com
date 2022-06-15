@@ -76,7 +76,7 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue'
+import type { PropType, Ref } from 'vue'
 import type { File, Project, Root, GitHubFile } from '~/types'
 
 defineProps({
@@ -91,12 +91,12 @@ defineProps({
 })
 
 const project: Project = inject('project')
-const root: Root = inject('root')
+const root: Ref<Root> = inject('root')
 
 const emit = defineEmits(['select'])
 
-const { file: selectedFile, select, openCreateModal, openRenameModal, openRevertModal, openDeleteModal } = useProjectFiles(project, root)
-const { openedDirs, openDir, renameFiles } = useProjectFilesTree(project, root)
+const { file: selectedFile, select, openCreateModal, openRenameModal, openRevertModal, openDeleteModal } = useProjectFiles(project, root.value)
+const { openedDirs, openDir, renameFiles } = useProjectFilesTree(project, root.value)
 
 const itemRefs = ref([])
 

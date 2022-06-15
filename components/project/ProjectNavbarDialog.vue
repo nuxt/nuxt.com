@@ -25,8 +25,8 @@
 </template>
 
 <script setup lang="ts">
-import type { WritableComputedRef, ComputedRef } from 'vue'
-import type { Project, File } from '~/types'
+import type { WritableComputedRef, ComputedRef, Ref } from 'vue'
+import type { Project, File, Root } from '~/types'
 
 const props = defineProps({
   modelValue: {
@@ -40,7 +40,10 @@ const props = defineProps({
 })
 const emit = defineEmits(['update:modelValue'])
 
+const root: Ref<Root> = ref('content')
 const project: Project = inject('project')
+
+provide('root', root)
 
 const { tree: contentTree } = useProjectFilesTree(project, 'content')
 const { tree: mediaTree } = useProjectFilesTree(project, 'public')
@@ -79,14 +82,12 @@ const selectedTree: ComputedRef<File[]> = computed(() => {
 watch(
   () => route.fullPath,
   () => {
-    // provides root
-    // FIXME
     switch (route.name) {
       case '@team-project-content':
-        provide('root', 'content')
+        root.value = 'content'
         break
       case '@team-project-media':
-        provide('root', 'public')
+        root.value = 'public'
         break
     }
 

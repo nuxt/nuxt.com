@@ -11,6 +11,7 @@
 </template>
 
 <script setup lang="ts">
+import type { Ref } from 'vue'
 import type { Project, Root } from '~/types'
 
 defineProps({
@@ -23,7 +24,7 @@ defineProps({
 defineEmits(['fileVisible'])
 
 const project: Project = inject('project')
-const root: Root = inject('root')
+const root: Ref<Root> = inject('root')
 
-const { computedFiles } = useProjectFiles(project, root)
+const { computedFiles } = useProjectFiles(project, root.value)
 </script>

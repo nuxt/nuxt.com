@@ -145,6 +145,7 @@
 </template>
 
 <script setup lang="ts">
+import type { Ref } from 'vue'
 import { snakeCase, isPlainObject, isDate, isBoolean, isNumber, set, unset } from 'lodash-es'
 import { useMagicKeys, whenever, and, useActiveElement } from '@vueuse/core'
 import { capitalize } from '~/utils'
@@ -160,13 +161,13 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue'])
 
 const project: Project = inject('project')
-const root: Root = inject('root')
+const root: Ref<Root> = inject('root')
 
 const activeElement = useActiveElement()
 const { branch } = useProjectBranches(project)
-const { computedFile } = useProjectFiles(project, root)
+const { computedFile } = useProjectFiles(project, root.value)
 
-const selectedIndex = useState(`project-${project.id}-${root}-aside-tabs`, () => 0)
+const selectedIndex = useState(`project-${project.id}-${root.value}-aside-tabs`, () => 0)
 
 const form = reactive({ type: 'text', key: '' })
 

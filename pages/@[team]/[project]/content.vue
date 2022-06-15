@@ -71,7 +71,7 @@ import { debounce } from 'lodash-es'
 import { useEditorScroll } from '~/editor/scroll'
 import { getPathExt } from '~/utils/tree'
 import type { Content } from '~/editor/types'
-import type { Team, Project, GitHubDraft } from '~/types'
+import type { Team, Project, GitHubDraft, Root } from '~/types'
 
 defineProps({
   team: {
@@ -80,7 +80,7 @@ defineProps({
   }
 })
 
-const root = 'content'
+const root: Ref<Root> = ref('content')
 const project: Project = inject('project')
 
 provide('root', root)
@@ -92,8 +92,8 @@ const { parse: parseJSON, stringify: stringifyJSON } = useJSON()
 const { parse: parseYAML, stringify: stringifyYAML } = useYAML()
 const { branch } = useProjectBranches(project)
 const { components } = useProjectComponents(project)
-const { draft, file, fetchFile, openCreateModal: openCreateFileModal, computedFiles } = useProjectFiles(project, root)
-const { query: treeQuery, tree, openDir } = useProjectFilesTree(project, root)
+const { draft, file, fetchFile, openCreateModal: openCreateFileModal, computedFiles } = useProjectFiles(project, root.value)
+const { query: treeQuery, tree, openDir } = useProjectFilesTree(project, root.value)
 const { scroll: editorScroll } = useEditorScroll(file)
 
 const content: Ref<string> = ref('')
@@ -170,7 +170,7 @@ const onUpdate = debounce(async () => {
       method: 'PUT',
       params: {
         ref: branch.value?.name,
-        root
+        root: root.value
       },
       body: {
         content: formattedContent
@@ -180,7 +180,7 @@ const onUpdate = debounce(async () => {
     content.value = formattedContent
     draft.value = data
 
-    $socket.emit('draft:update', `project-${project.id}:${branch.value.name}:${root}`)
+    $socket.emit('draft:update', `project-${project.id}:${branch.value.name}:${root.value}`)
   } catch (e) {}
 }, 200)
 
