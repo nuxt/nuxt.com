@@ -1,6 +1,10 @@
 <template>
-  <div class="flex items-center gap-x-4 sm:gap-x-8 max-w-[520px] pr-2">
-    <div v-if="$slots.year" class="lg:hidden py-[7px] px-6 text-xl backdrop-blur-lg rounded-[7px] font-semibold u-text-gray-900 transition-all duration-300">
+  <div class="flex flex-col md:flex-row items-start md:items-center gap-x-4 sm:gap-x-8 max-w-[520px] pr-2 pl-8 md:pl-0 ">
+    <div
+      v-if="$slots.year"
+      class="inline-block lg:hidden py-1 md:py-[7px] px-4 md:px-6 text-xl md:backdrop-blur-lg rounded-[7px] font-semibold transition-all duration-300 text-gray-900 md:u-text-gray-900 mb-2"
+      :class="`${colorClass} md:bg-transparent`"
+    >
       <Markdown :use="$slots.year" unwrap="p" />
     </div>
     <div>
@@ -13,3 +17,12 @@
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+defineProps({
+  colorClass: {
+    type: String,
+    default: ''
+  }
+})
+</script>
