@@ -4,19 +4,21 @@
       Categories
     </p>
 
-    <ul v-if="categories.length" class="py-3">
+    <ul v-if="categories.length" class="flex flex-col py-4 gap-y-2">
       <li v-for="category in categories" :key="category.key">
         <NuxtLink
           :to="category.to"
-          class="py-1.5 block relative"
+          class="relative flex items-center gap-2"
           :class="{
             'u-text-gray-900 font-medium': selectedCategory?.key === category.key,
             'u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900': selectedCategory?.key !== category.key
           }"
           tabindex="-1"
         >
+          <UIcon :name="category.icon" class="w-4 h-4" />
+
           <span class="relative">
-            {{ category.title }}
+            <span>{{ category.title }}</span>
 
             <span
               v-if="selectedCategory?.key === category.key"

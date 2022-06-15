@@ -3,6 +3,8 @@
     <UCard
       padded
       class="h-28"
+      shadow-class=""
+      ring-class=""
       :background-class="cardClass"
       :body-class="gradient ? 'h-full px-4 sm:px-6 lg:px-20' : secondaries ? 'group h-28': 'px-4 py-5 sm:p-6'"
     >
@@ -11,7 +13,7 @@
         <span>#36E4DA</span>
         <span>#0047E1</span>
       </div>
-      <div v-if="secondaries" class="relative flex items-end justify-between h-full p-2 text-sm text-gray-900 transition-opacity duration-200 opacity-0 group-hover:opacity-100">
+      <div v-if="secondaries" class="relative flex items-end justify-between h-full p-2 text-sm text-gray-900 transition-opacity duration-200 opacity-100 sm:opacity-0 group-hover:opacity-100">
         <span class="pl-1 text-gray-900">{{ hexaColor }}</span>
         <UButton variant="transparent" base-class="py-0" @click="onClick">
           <span class="-mr-2 text-sm text-gray-900">
@@ -31,7 +33,7 @@
           </span>
         </UButton>
       </div>
-      <p class="u-text-gray-400">
+      <p class="u-text-gray-500">
         {{ hexaColor }}
       </p>
     </div>

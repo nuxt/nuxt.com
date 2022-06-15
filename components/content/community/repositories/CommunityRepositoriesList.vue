@@ -4,23 +4,29 @@
       <CommunityRepositoriesAside />
     </template>
 
-    <div class="flex flex-col justify-between gap-3 md:items-center md:flex-row">
+    <div class="flex flex-col justify-between gap-3 lg:items-center lg:flex-row">
       <h2 class="text-3xl font-semibold u-text-gray-900">
         {{ filteredRepositories.length }} repositor{{ filteredRepositories.length > 1 ? 'ies' : 'y' }} found
       </h2>
 
-      <div class="flex flex-wrap items-center gap-3">
+      <div class="flex flex-col gap-3 md:flex-row md:items-center">
         <CommunityRepositoriesFilters class="hidden lg:flex" />
         <CommunityRepositoriesFilterOrganization class="lg:hidden" />
         <CommunityRepositoriesFilterSort />
       </div>
     </div>
 
-    <ul v-if="displayedRepositories.length" class="grid grid-cols-1 gap-8 mt-8 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+    <ul v-if="displayedRepositories.length" class="grid grid-cols-1 gap-8 mt-8 sm:grid-cols-2 xl:grid-cols-3">
       <li v-for="(displayedRepository, index) in displayedRepositories" :key="index">
         <CommunityRepositoriesListItem :repository="displayedRepository" />
       </li>
     </ul>
+    <div v-else class="relative flex flex-col items-center gap-6 mt-16 lg:mt-24">
+      <UIcon name="fa-brands:github" class="w-16 h-16 u-text-gray-600" />
+      <span class="text-xl font-medium text-center u-text-gray-700">
+        There is no repositories for <b>{{ q }}</b> yet.
+      </span>
+    </div>
   </Page>
 </template>
 

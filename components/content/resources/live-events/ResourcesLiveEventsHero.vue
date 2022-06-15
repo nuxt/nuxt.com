@@ -8,7 +8,7 @@
     </template>
     <template #extra>
       <!-- TODO: update link -->
-      <a class="relative inline-flex items-center flex-nowrap u-text-gray-900 group max-w-max" href="#">
+      <a class="relative inline-flex items-center flex-nowrap u-text-gray-900 sm:text-lg group max-w-max" href="#">
         <span class="flex items-center font-semibold gap-x-2">
           <Markdown :use="$slots.link" unwrap="p" />
           <UIcon name="heroicons-outline:arrow-sm-right" class="w-5 h-5" />
