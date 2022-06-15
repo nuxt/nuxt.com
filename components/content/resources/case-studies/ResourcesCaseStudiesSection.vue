@@ -4,7 +4,7 @@
       <h3 v-if="$slots.title" class="flex items-center mb-8 text-2xl font-semibold tracking-tight u-text-gray-900 sm:text-3xl">
         <Markdown :use="$slots.title" unwrap="p" />
 
-        <span v-if="titleLabel" class="absolute left-0 items-center hidden gap-4 text-base font-semibold -translate-x-full xl:flex u-text-gray-400">
+        <span v-if="titleLabel" class="absolute left-0 items-center hidden gap-4 text-base font-semibold tracking-normal text-gray-400 -translate-x-full xl:flex dark:text-gray-300">
           {{ titleLabel }}
           <span class="h-0.5 w-4 block u-bg-gray-300" />
         </span>
@@ -15,14 +15,14 @@
           <Markdown :use="$slots.description" unwrap="p" />
         </div>
 
-        <span v-if="descriptionLabel" class="absolute left-0 items-center hidden gap-4 text-base font-semibold -translate-x-full xl:flex u-text-gray-400">
+        <span v-if="descriptionLabel" class="absolute left-0 items-center hidden gap-4 text-base font-semibold text-gray-400 -translate-x-full xl:flex dark:text-gray-300">
           {{ descriptionLabel }}
           <span class="h-0.5 w-4 block u-bg-gray-300" />
         </span>
       </div>
     </UContainer>
 
-    <img v-if="image" :src="image" class="absolute right-0" :class="imageClass">
+    <img v-if="image" :src="image" class="absolute right-0 hidden lg:block" :class="imageClass">
   </div>
 </template>
 

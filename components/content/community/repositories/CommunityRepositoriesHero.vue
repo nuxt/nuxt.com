@@ -12,7 +12,7 @@
     </template>
 
     <template #image>
-      <img src="/assets/community/repositories/gems.svg" class="object-contain h-full mx-10 opacity-30 sm:opacity-100">
+      <img src="/assets/community/repositories/gems.svg" class="object-contain h-full mx-10 opacity-30 lg:opacity-100">
 
       <UCard padded body-class="p-4" class="hidden lg:block absolute -left-20 top-16 w-44 backdrop-blur-lg !bg-opacity-10">
         <UIcon name="uil:star" class="w-5 h-5 text-teal-400" />

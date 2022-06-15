@@ -1,12 +1,12 @@
 <template>
   <Page id="smooth" class="pt-16 -mt-16">
-    <div class="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
+    <div class="flex flex-col justify-between gap-3 lg:items-center lg:flex-row">
       <h2 class="flex items-center gap-3 text-3xl font-semibold u-text-gray-900">
         Top 100 Nuxters
 
         <UIcon v-if="pending" name="heroicons-outline:refresh" class="w-6 h-6 animate-spin" />
       </h2>
-      <div class="flex gap-6 sm:justify-end">
+      <div class="flex flex-col gap-3 md:flex-row md:items-center">
         <CommunityNuxtersFilterTime />
         <!-- <CommunityNuxtersFilterSort /> -->
       </div>
@@ -23,8 +23,11 @@
         <CommunityNuxtersNuxterLarge v-for="nuxter in filteredNuxters" :key="nuxter.github" :nuxter="nuxter" />
       </ul>
     </div>
-    <div v-else-if="!pending" class="flex justify-center mt-32 font-medium">
-      No nuxters found.
+    <div v-else class="relative flex flex-col items-center gap-6 mt-16 lg:mt-24">
+      <UIcon name="fa-brands:github" class="w-16 h-16 u-text-gray-600" />
+      <span class="text-xl font-medium text-center u-text-gray-700">
+        There is no Nuxters for <b>{{ q }}</b> yet.
+      </span>
     </div>
   </Page>
 </template>

@@ -8,7 +8,7 @@
     </template>
 
     <template #extra>
-      <div class="flex gap-4">
+      <div class="flex gap-3">
         <span class="u-text-gray-500">Download extension:</span>
         <div class="flex gap-6">
           <NuxtLink to="https://chrome.google.com/webstore/detail/vue-telescope/neaebjphlfplgdhedjdhcnpjkndddbpd" target="_blank" class="font-semibold u-text-gray-900 hover:underline">
@@ -22,7 +22,7 @@
     </template>
 
     <template #image>
-      <img src="/assets/resources/showcases/gems.svg" class="object-contain h-full mx-10 opacity-30 sm:opacity-100">
+      <img src="/assets/resources/showcases/gems.svg" class="object-contain h-full mx-10 opacity-30 lg:opacity-100">
     </template>
   </PageHero>
 </template>

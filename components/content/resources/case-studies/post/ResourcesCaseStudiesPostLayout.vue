@@ -22,7 +22,7 @@
 
     <ContentRenderer :value="page" />
 
-    <UContainer constrained-class="max-w-4xl">
+    <UContainer padded constrained-class="max-w-4xl">
       <ResourcesCaseStudiesPostCta />
 
       <ResourcesCaseStudiesPostPrevNext :prev="prev" :next="next" />
