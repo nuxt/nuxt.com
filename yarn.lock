@@ -767,9 +767,9 @@
     "@nuxt/kit" "^3.0.0-rc.1"
 
 "@nuxt/content@npm:@nuxt/content-edge@latest":
-  version "2.0.1-27588039.a2dd092"
-  resolved "https://registry.yarnpkg.com/@nuxt/content-edge/-/content-edge-2.0.1-27588039.a2dd092.tgz#2f5c1e86f5d43210a47ccc367308b8ad8b5ddd40"
-  integrity sha512-wLXXXrPXH9uvWD3GZX9qzNs58i1B6csCG7CSaoAkp4EUeW+yben1b+z53Yhdvy1FPKHnpWP3DT7Bskytzxvv6A==
+  version "2.0.1-27588551.fa45652"
+  resolved "https://registry.yarnpkg.com/@nuxt/content-edge/-/content-edge-2.0.1-27588551.fa45652.tgz#bc43325b0e8e4be81919fdbe7de0be76b3549fd0"
+  integrity sha512-TuT2yvXbfhkkDa/JOhpKAHX3Cb6m6DEHLSjflODxE/tMRFO0NhVNRXE/DVUFCOdf9aAkCR1r/lDnkperaQsnJg==
   dependencies:
     "@nuxt/kit" "^3.0.0-rc.4"
     csvtojson "^2.0.10"
@@ -5240,9 +5240,9 @@ is-plain-obj@^1.1.0:
   integrity sha512-yvkRyxmFKEOQ4pNXCmJG5AEQNlXJS5LaONXo5/cLdTZdWvsZ1ioJEonLGAosKlMWE8lwUy/bJzMjcw8az73+Fg==
 
 is-plain-obj@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/is-plain-obj/-/is-plain-obj-4.0.0.tgz#06c0999fd7574edf5a906ba5644ad0feb3a84d22"
-  integrity sha512-NXRbBtUdBioI73y/HmOhogw/U5msYPC9DAtGkJXeFcFWSFZw0mCUsPxk/snTuJHzNKA8kLBK4rH97RMB1BfCXw==
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/is-plain-obj/-/is-plain-obj-4.1.0.tgz#d65025edec3657ce032fd7db63c97883eaed71f0"
+  integrity sha512-+Pgi+vMuUNkJyExiMBt5IlFoMyKnr5zhJ4Uspz58WOhBF5QoIZkFyNHIbBAtHwzVAgk5RtndVNsDRN61/mmDqg==
 
 is-primitive@^3.0.1:
   version "3.0.1"
@@ -5723,9 +5723,9 @@ lines-and-columns@^1.1.6:
   integrity sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==
 
 listhen@^0.2.11, listhen@^0.2.12:
-  version "0.2.12"
-  resolved "https://registry.yarnpkg.com/listhen/-/listhen-0.2.12.tgz#260aad0ea49563e0d21515681baa1c835b2ef852"
-  integrity sha512-v2PibKV55Zn+BUkOB3twdStGfDlZTP+28A+WY+8KPjQXYLTstXeXGY/K9sExIVwf5YlElnp7np1S7M7XXz6ZdQ==
+  version "0.2.13"
+  resolved "https://registry.yarnpkg.com/listhen/-/listhen-0.2.13.tgz#bd34338fe04ff9f3f08e4f83a46eefc9104b2482"
+  integrity sha512-axfyPgsrypKohOglPjzMVj+6nSQuDfdDzq92tYEg4HO+YkvvMGz0bGeoGA+pdEC7a8gbIgLduf/62Pkk1a9jMQ==
   dependencies:
     clipboardy "^3.0.0"
     colorette "^2.0.16"

@@ -30,10 +30,6 @@ useHead({
     class: 'antialiased font-sans text-gray-700 dark:text-gray-200 bg-white dark:bg-black'
   }
 })
-
-const { fetchNavigation } = useContent()
-
-await fetchNavigation()
 </script>
 
 <style>
