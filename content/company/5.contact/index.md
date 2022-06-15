@@ -8,6 +8,7 @@ buttons:
   - label: GitHub Discussions
     to: https://github.com/nuxt/framework/discussions
     target: _blank
+    variant: 'primary-gradient'
   - label: Follow us on
     to: https://twitter.com/nuxt_js
     target: _blank
