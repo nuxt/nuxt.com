@@ -1,8 +1,6 @@
 import { withoutTrailingSlash } from 'ufo'
 import type { NavItem, ParsedContent } from '@nuxt/content/dist/runtime/types'
 
-let closeHook
-
 export const useContent = () => {
   const route = useRoute()
 
@@ -131,24 +129,6 @@ export const useContent = () => {
         return file
       }
     }
-  }
-
-  // Re-fetch page on change (development only)
-  if (process.dev) {
-    onMounted(
-      () => {
-        // Cleanup previous hook before registering new one.
-        if (closeHook) { closeHook() }
-
-        const { hook } = useNuxtApp()
-
-        closeHook = hook('app:data:refresh', async () => {
-          await fetchNavigation(true)
-          await fetchPage(true)
-        })
-      }
-    )
-    onBeforeUnmount(() => closeHook && closeHook())
   }
 
   return {
