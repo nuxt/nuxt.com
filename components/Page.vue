@@ -7,7 +7,7 @@
         <div class="relative grid grid-cols-10 gap-8">
           <aside
             v-if="!!$slots.aside"
-            class="hidden col-span-2 pb-8 overflow-x-hidden overflow-y-auto lg:pb-0 lg:block lg:self-start sm:-mb-24"
+            class="hidden col-span-2 pb-8 overflow-x-hidden overflow-y-auto lg:block lg:self-start sm:-mb-24"
             :class="{
               'lg:max-h-[calc(100vh-64px)] lg:top-16 lg:sticky lg:pt-8 lg:-mt-8': sticky
             }"
