@@ -17,7 +17,7 @@
         </blockquote>
       </div>
       <div class="flex justify-center w-full md:justify-end">
-        <div class="grid grid-cols-2 w-[341px] h-[337px] gap-4 relative pt-8 md:pt-0">
+        <div class="grid grid-cols-2 max-w-[341px] max-h-[337px] gap-4 relative pt-8 md:pt-0">
           <div class="flex justify-center col-span-2">
             <img src="/assets/community/about/chopin-brothers.png" class=" border-gray-100/50 dark:border-gray-800/20 border-[8px] rounded-xl">
           </div>
