@@ -68,12 +68,8 @@ defineProps({
   }
 })
 
-const { data: offers } = await useAsyncData('company-careers-list', () => queryContent('/company/careers').where({
-  $not: {
-    _path: {
-      $in: ['/company/careers']
-    }
-  }
+const { data: offers } = await useAsyncData('company-careers-list', () => queryContent().where({
+  _path: /^\/company\/careers\//
 }).find())
 
 const departments = computed(() => {

@@ -4,23 +4,18 @@
       <ModulesAside />
     </template>
 
-    <div class="flex items-center justify-between gap-3">
+    <div class="flex flex-col justify-between gap-3 lg:flex-row lg:items-center">
       <h2 class="text-3xl font-semibold u-text-gray-900">
         {{ filteredModules.length }} module{{ filteredModules.length > 1 ? 's' : '' }} found
       </h2>
 
-      <div class="flex flex-wrap items-center gap-3">
-        <ModulesFilterVersion size="sm" class="hidden sm:block lg:hidden" />
+      <div class="flex flex-col gap-3 md:flex-row md:items-center">
+        <ModulesFilterVersion size="sm" class="lg:hidden" />
+        <ModulesFilterType class="lg:hidden" />
+        <ModulesFilterCategory class="lg:hidden" />
         <ModulesFilters class="hidden lg:flex" />
-        <ModulesFilterSort class="hidden lg:flex" />
+        <ModulesFilterSort />
       </div>
-    </div>
-
-    <div class="flex flex-wrap gap-3 mt-3 lg:hidden">
-      <ModulesFilterVersion size="sm" class="sm:hidden" />
-      <ModulesFilterType class="lg:hidden" />
-      <ModulesFilterCategory class="lg:hidden" />
-      <ModulesFilterSort />
     </div>
 
     <div class="hidden _ellipse lg:block" />
@@ -30,11 +25,24 @@
         <ModulesListItem :module="filteredModule" />
       </li>
     </ul>
+    <div v-else class="relative flex flex-col items-center gap-6 mt-16 lg:mt-24">
+      <UIcon name="fa-brands:github" class="w-16 h-16 u-text-gray-600" />
+      <span class="text-xl font-medium text-center u-text-gray-700">
+        There is no modules available for <b>{{ q }}</b> yet.<br>Become the first one to create it!
+      </span>
+      <UButton
+        :to="contributeUrl"
+        target="_blank"
+        variant="primary"
+        size="lg"
+        label="Contribute on GitHub"
+      />
+    </div>
   </Page>
 </template>
 
 <script setup lang="ts">
-const { modules, selectedCategory, selectedType, selectedVersion, selectedSort, q } = useModules()
+const { modules, selectedCategory, selectedType, selectedVersion, selectedSort, q, contributeUrl } = useModules()
 
 const filteredModules = computed(() => {
   return [...modules.value]
