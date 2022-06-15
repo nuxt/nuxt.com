@@ -14,7 +14,7 @@
         <p v-if="$slots.description" class="w-1/2 text-lg text-left u-text-gray-500">
           <Markdown :use="$slots.description" unwrap="p" />
         </p>
-        <div class="flex gap-x-8">
+        <div class="flex gap-x-6">
           <UButton
             v-for="button of buttons"
             :key="button.label"

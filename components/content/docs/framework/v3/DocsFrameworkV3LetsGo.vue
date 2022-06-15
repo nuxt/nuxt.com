@@ -1,5 +1,5 @@
 <template>
-  <div class="flex gap-x-8">
+  <div class="flex gap-x-6">
     <UButton
       v-for="button of buttons"
       :key="button.label"
