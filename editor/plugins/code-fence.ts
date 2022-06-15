@@ -16,7 +16,7 @@ export default codeFence.extend(
           runner: (state, node, type) => {
             state.openNode(type, {
               language: node.lang as string,
-              filename: (node.meta as string)?.match(/^\[(\w+)\]$/)[1] || ''
+              filename: (node.meta as string)?.match(/^\[(\w+)\]$/)?.[1] || ''
             })
             node.value && state.addText(node.value as string)
             state.closeNode()
