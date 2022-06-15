@@ -58,23 +58,17 @@ export const useContent = () => {
   const fetchPage = async (force: boolean = false) => {
     if (page.value !== null && !force) { return }
 
-    const splitted = path.value.split('/')
-    const directory = splitted.slice(0, splitted.length - 1).join('/')
+    try {
+      const [_page, _surround] = await Promise.all([
+        queryContent().where({ _path: path.value }).findOne() as Promise<ParsedContent>,
+        queryContent()
+          .where({ _partial: { $not: true }, navigation: { $not: false } })
+          .findSurround(path.value) as Promise<ParsedContent[]>
+      ])
 
-    // Get navigation node from current path
-    const file = fileFromPath(path.value, navigation.value)
-    if (file && !file.children) {
-      // Path queried has a page (and is not a directory)
-      await Promise.all([
-        queryContent().where({ _path: file._path }).findOne() as Promise<ParsedContent>,
-        queryContent(directory).findSurround(path.value) as Promise<ParsedContent[]>
-      ]).then(([_page, _surround]) => {
-        page.value = _page
-        surround.value = _surround
-      })
-    } else if (file) {
-      await navigateTo(findBottomLink(file))
-    } else {
+      page.value = _page
+      surround.value = _surround
+    } catch (e) {
       throwError({ statusMessage: 'Page not found', message: 'This page does not exist.', statusCode: 404 })
     }
   }
@@ -88,6 +82,8 @@ export const useContent = () => {
    * Find first child link from a navigation node.
    */
   const findBottomLink = (link: NavItem) => {
+    if (!link.children) { return link._path }
+
     for (const child of link.children) {
       if (!child.children) {
         return child._path
@@ -105,7 +101,7 @@ export const useContent = () => {
   /**
    * Find current navigation node from a path.
    */
-  const navFromPath = (path: string, tree: NavItem[] = navigation.value) => {
+  const navFromPath = (path: string, tree: NavItem[] = navigation.value || []) => {
     for (const file of tree) {
       if (file._path === path && !file.id) {
         return file

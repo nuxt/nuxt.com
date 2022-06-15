@@ -55,7 +55,7 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 
-const { data: commandsData } = await useAsyncData('commands', () => queryContent('/docs/framework/v3/_collections/commands').findOne())
+const { data: commandsData } = await useAsyncData('commands', () => queryContent('/docs/framework/3.x/_collections/commands').findOne())
 
 const { currentSection, restartCounter, stopCounter } = useCounterAnimations()
 const colorMode = useColorMode()

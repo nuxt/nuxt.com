@@ -57,7 +57,7 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 
-const { data: deployData } = await useAsyncData('deply', () => queryContent('/docs/framework/v3/_collections/deploy').findOne())
+const { data: deployData } = await useAsyncData('deply', () => queryContent('/docs/framework/3.x/_collections/deploy').findOne())
 
 const { currentSection, restartCounter, stopCounter } = useCounterAnimations()
 const colorMode = useColorMode()

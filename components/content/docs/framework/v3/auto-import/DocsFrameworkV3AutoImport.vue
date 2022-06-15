@@ -46,7 +46,7 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 
-const { data: autoImportData } = await useAsyncData('autoImport', () => queryContent('/docs/framework/v3/_collections/auto-import').findOne())
+const { data: autoImportData } = await useAsyncData('autoImport', () => queryContent('/docs/framework/3.x/_collections/auto-import').findOne())
 
 const { currentSection, restartCounter, stopCounter } = useCounterAnimations()
 const colorMode = useColorMode()
