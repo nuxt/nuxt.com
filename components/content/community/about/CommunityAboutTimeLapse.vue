@@ -48,7 +48,7 @@
         </li>
       </ul>
       <div class="lg:absolute relative top-0 grid lg:grid-cols-3 grid-cols-1 justify-center gap-y-8 lg:gap-y-2 lg:pl-[190px] lg:h-[400px] lg:w-[1000px]">
-        <div class="absolute lg:hidden left-12 h-full w-1 bg-gradient-to-t from-green-400 via-teal-400 to-indigoblue-400 transition-all duration-[3.3s]" />
+        <div class="absolute lg:hidden left-4 sm:left-0 md:left-12 h-full w-1 bg-gradient-to-t from-green-400 via-teal-400 to-indigoblue-400 transition-all duration-[3.3s]" />
         <div class="lg:w-[220px] transition delay-300 duration-300 lg:-ml-3" :class="currentStep !== null ? 'opacity-1' : 'opacity-0'">
           <Markdown :use="$slots.first" unwrap="p" />
         </div>

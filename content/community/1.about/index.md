@@ -30,6 +30,9 @@ Chopin Brothers
 ::community-about-time-lapse
 #first
   ::community-about-time-lapse-history
+  ---
+  colorClass: 'bg-indigoblue-100'
+  ---
   #year
   2016
   #title
@@ -39,6 +42,9 @@ Chopin Brothers
   ::
 #second
   ::community-about-time-lapse-history
+  ---
+  colorClass: 'bg-blue-100'
+  ---
   #year
   2017
   #title
@@ -48,6 +54,9 @@ Chopin Brothers
   ::
 #third
   ::community-about-time-lapse-history
+  ---
+  colorClass: 'bg-teal-100'
+  ---
   #year
   2020
   #title
@@ -57,6 +66,9 @@ Chopin Brothers
   ::
 #fourth
   ::community-about-time-lapse-history
+  ---
+  colorClass: 'bg-teal-100'
+  ---
   #year
   2020
   #title
@@ -66,6 +78,9 @@ Chopin Brothers
   ::
 #fifth
   ::community-about-time-lapse-history
+  ---
+  colorClass: 'bg-green-100'
+  ---
   #year
   2021
   #title
@@ -75,6 +90,9 @@ Chopin Brothers
   ::
 #sixth
   ::community-about-time-lapse-history
+  ---
+  colorClass: 'bg-green-200'
+  ---
   #year
   2022
   #title
