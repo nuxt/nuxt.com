@@ -10,8 +10,7 @@
     "test": "yarn lint"
   },
   "resolutions": {
-    "parse5": "6.0.1",
-    "unimport": "0.2.5"
+    "parse5": "6.0.1"
   },
   "devDependencies": {
     "@docus/remark-mdc": "npm:@docus/remark-mdc-edge",
@@ -47,7 +46,7 @@
     "js-yaml": "^4.1.0",
     "mjml": "^4.12.0",
     "node-mailjet": "^3.4.1",
-    "nuxt": "3.0.0-rc.4",
+    "nuxt": "^3.0.0-rc.4",
     "socket.io-client": "^4.5.1",
     "standard-version": "^9.5.0",
     "swiper": "^8.1.6",
