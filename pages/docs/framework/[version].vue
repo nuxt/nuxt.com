@@ -8,13 +8,13 @@
               Framework
             </NuxtLink>
 
-            <USelect v-model="version" name="version" :options="['v3', 'v2']" size="xs" />
+            <USelect v-model="version" name="version" :options="['3.x', '2.x']" size="xs" />
           </div>
         </template>
 
         <template #right>
-          <UButton v-if="version === 'v3'" icon="fa-brands:github" variant="transparent" to="https://github.com/nuxt/framework" class="!p-0" />
-          <UButton v-else-if="version === 'v2'" icon="fa-brands:github" variant="transparent" to="https://github.com/nuxt/nuxt.js" class="!p-0" />
+          <UButton v-if="version === '3.x'" icon="fa-brands:github" variant="transparent" to="https://github.com/nuxt/framework" class="!p-0" />
+          <UButton v-else-if="version === '2.x'" icon="fa-brands:github" variant="transparent" to="https://github.com/nuxt/nuxt.js" class="!p-0" />
         </template>
       </SubNavbar>
     </template>
@@ -32,11 +32,7 @@ const route = useRoute()
 const router = useRouter()
 const { navFromPath } = useContent()
 
-const links = computed(() => {
-  return navFromPath(`/docs/framework/${route.params.version}`)
-    ?.children
-    ?.filter(child => child._path !== route.fullPath)
-})
+const links = computed(() => navFromPath(`/docs/framework/${route.params.version}`)?.children)
 
 const version = computed({
   get () {
