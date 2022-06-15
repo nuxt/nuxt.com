@@ -14,11 +14,12 @@
 </template>
 
 <script setup lang="ts">
+import type { Ref } from 'vue'
 import type { Project } from '~/types'
 
 defineEmits(['create'])
 
-const project: Project = inject('project')
+const project: Ref<Project> = inject('project')
 
-const { branches } = useProjectBranches(project)
+const { branches } = useProjectBranches(project.value)
 </script>

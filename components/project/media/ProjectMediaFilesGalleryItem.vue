@@ -49,10 +49,10 @@ const props = defineProps({
 
 const emit = defineEmits(['fileVisible'])
 
-const project: Project = inject('project')
+const project: Ref<Project> = inject('project')
 const root: Ref<Root> = inject('root')
 
-const { file: selectedFile, select, openRenameModal, openRevertModal, openDeleteModal } = useProjectFiles(project, root.value)
+const { file: selectedFile, select, openRenameModal, openRevertModal, openDeleteModal } = useProjectFiles(project.value, root.value)
 
 const item = ref(null)
 

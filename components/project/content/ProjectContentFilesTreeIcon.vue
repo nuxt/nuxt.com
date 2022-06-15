@@ -17,10 +17,10 @@ const props = defineProps({
   }
 })
 
-const project: Project = inject('project')
+const project: Ref<Project> = inject('project')
 const root: Ref<Root> = inject('root')
 
-const { openedDirs } = useProjectFilesTree(project, root.value)
+const { openedDirs } = useProjectFilesTree(project.value, root.value)
 
 const isOpen = computed(() => {
   return !!openedDirs.value[props.file.path]

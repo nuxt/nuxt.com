@@ -23,8 +23,8 @@ defineProps({
 
 defineEmits(['fileVisible'])
 
-const project: Project = inject('project')
+const project: Ref<Project> = inject('project')
 const root: Ref<Root> = inject('root')
 
-const { computedFiles } = useProjectFiles(project, root.value)
+const { computedFiles } = useProjectFiles(project.value, root.value)
 </script>

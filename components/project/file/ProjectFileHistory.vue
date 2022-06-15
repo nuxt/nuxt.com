@@ -32,11 +32,11 @@ import type { Ref } from 'vue'
 import { useTimeAgo } from '@vueuse/core'
 import type { Project, Root } from '~/types'
 
-const project: Project = inject('project')
+const project: Ref<Project> = inject('project')
 const root: Ref<Root> = inject('root')
 
-const { history, pending, fetch: fetchHistory } = useProjectFileHistory(project, root.value)
-const { file } = useProjectFiles(project, root.value)
+const { history, pending, fetch: fetchHistory } = useProjectFileHistory(project.value, root.value)
+const { file } = useProjectFiles(project.value, root.value)
 
 onMounted(() => {
   watch(file, fetchHistory, { immediate: true })

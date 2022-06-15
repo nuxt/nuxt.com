@@ -11,13 +11,14 @@
 </template>
 
 <script lang="ts" setup>
+import type { Ref } from 'vue'
 import { omit } from 'lodash-es'
 import type { Project } from '~/types'
 
-const project: Project = inject('project')
+const project: Ref<Project> = inject('project')
 
-const { isDraft: isContentDraft } = useProjectFiles(project, 'content')
-const { isDraft: isMediaDraft } = useProjectFiles(project, 'public')
+const { isDraft: isContentDraft } = useProjectFiles(project.value, 'content')
+const { isDraft: isMediaDraft } = useProjectFiles(project.value, 'public')
 
 const links = computed(() => ([
   { to: { name: '@team-project-content' }, icon: 'heroicons-outline:pencil', label: 'Content', badge: isContentDraft.value },

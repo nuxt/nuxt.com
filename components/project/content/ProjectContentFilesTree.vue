@@ -90,13 +90,13 @@ defineProps({
   }
 })
 
-const project: Project = inject('project')
+const project: Ref<Project> = inject('project')
 const root: Ref<Root> = inject('root')
 
 const emit = defineEmits(['select'])
 
-const { file: selectedFile, select, openCreateModal, openRenameModal, openRevertModal, openDeleteModal } = useProjectFiles(project, root.value)
-const { openedDirs, openDir, renameFiles } = useProjectFilesTree(project, root.value)
+const { file: selectedFile, select, openCreateModal, openRenameModal, openRevertModal, openDeleteModal } = useProjectFiles(project.value, root.value)
+const { openedDirs, openDir, renameFiles } = useProjectFilesTree(project.value, root.value)
 
 const itemRefs = ref([])
 

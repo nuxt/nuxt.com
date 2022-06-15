@@ -64,16 +64,16 @@ defineProps({
 })
 
 const root: Ref<Root> = ref('public')
-const project: Project = inject('project')
+const project: Ref<Project> = inject('project')
 
 provide('root', root)
 
 const { $toast } = useNuxtApp()
-const { upload, computedFiles, fetchFile, uploadInput: fileToUpload } = useProjectFiles(project, root.value)
+const { upload, computedFiles, fetchFile, uploadInput: fileToUpload } = useProjectFiles(project.value, root.value)
 
 const dragover = ref(false)
 
-const medias = useState(`project-${project.id}-medias`, () => ({}))
+const medias = useState(`project-${project.value.id}-medias`, () => ({}))
 
 watch(computedFiles, (newFiles, oldFiles) => {
   for (const oldFile of oldFiles) {

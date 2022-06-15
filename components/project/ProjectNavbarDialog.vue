@@ -41,12 +41,12 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue'])
 
 const root: Ref<Root> = ref('content')
-const project: Project = inject('project')
+const project: Ref<Project> = inject('project')
 
 provide('root', root)
 
-const { tree: contentTree } = useProjectFilesTree(project, 'content')
-const { tree: mediaTree } = useProjectFilesTree(project, 'public')
+const { tree: contentTree } = useProjectFilesTree(project.value, 'content')
+const { tree: mediaTree } = useProjectFilesTree(project.value, 'public')
 
 const route = useRoute()
 const selectedLink = ref(null)

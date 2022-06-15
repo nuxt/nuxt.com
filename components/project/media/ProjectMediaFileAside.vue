@@ -99,25 +99,25 @@ const props = defineProps({
   }
 })
 
-const project: Project = inject('project')
+const project: Ref<Project> = inject('project')
 const root: Ref<Root> = inject('root')
 
 const activeElement = useActiveElement()
-const { branch } = useProjectBranches(project)
-const { computedFile } = useProjectFiles(project, root.value)
+const { branch } = useProjectBranches(project.value)
+const { computedFile } = useProjectFiles(project.value, root.value)
 
-const selectedIndex = useState(`project-${project.id}-${root.value}-aside-tabs`, () => 0)
+const selectedIndex = useState(`project-${project.value.id}-${root.value}-aside-tabs`, () => 0)
 
 // Computed
 
 const absolutePath = computed(() => {
-  return [...project.baseDir.split('/').filter(p => p !== '.'), ...computedFile.value?.path?.split('/')]
+  return [...project.value.baseDir.split('/').filter(p => p !== '.'), ...computedFile.value?.path?.split('/')]
     .filter(Boolean)
     .join('/')
 })
 
 const githubLink = computed(() => {
-  return `https://github.com/${project.repository.owner}/${project.repository.name}/tree/${branch.value.name}/${absolutePath.value}`
+  return `https://github.com/${project.value.repository.owner}/${project.value.repository.name}/tree/${branch.value.name}/${absolutePath.value}`
 })
 
 const fileDownloadLink = computed(() => {
