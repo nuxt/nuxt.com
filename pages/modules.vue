@@ -14,10 +14,13 @@
 
 <script setup lang="ts">
 const route = useRoute()
-const { page, fetchPage } = useContent()
-const { fetch: fetchModules, types } = useModules()
+const { page } = useContent()
+const { types } = useModules()
 
-await Promise.all([fetchPage(), fetchModules()])
+definePageMeta({
+  layoutTransition: false,
+  middleware: ['modules', 'page']
+})
 
 const links = computed(() => {
   return [

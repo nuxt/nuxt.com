@@ -3,7 +3,10 @@
 </template>
 
 <script setup lang="ts">
-const { page, fetchPage } = useContent()
+const { page } = useContent()
 
-await fetchPage()
+definePageMeta({
+  layoutTransition: false,
+  middleware: ['page']
+})
 </script>

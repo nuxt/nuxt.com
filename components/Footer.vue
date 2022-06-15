@@ -34,9 +34,10 @@
 </template>
 
 <script setup lang="ts">
-const { navFromPath } = useContent()
+const { navFromPath } = useContentHelpers()
+const { navigation } = useContent()
 
-const links = computed(() => navFromPath('/company')?.children)
+const links = computed(() => navFromPath('/company', navigation.value))
 
 const langs = ref([{ text: 'English', value: 'en' }])
 const lang = ref(langs.value[0].value)
