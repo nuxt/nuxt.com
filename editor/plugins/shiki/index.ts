@@ -1,24 +1,6 @@
 import { prosePluginsCtx, MilkdownPlugin, createTimer, editorStateTimerCtx } from '@milkdown/core'
-import { getHighlighter, Lang } from 'shiki-es'
+import { getHighlighter } from 'shiki-es'
 import prose from './prose'
-
-const defaultLangs: Lang[] = [
-  'javascript',
-  'typescript',
-  'bash',
-  'sql',
-  'json',
-  'html',
-  'css',
-  'c',
-  'cpp',
-  'java',
-  'ruby',
-  'python',
-  'go',
-  'rust',
-  'markdown'
-]
 
 const shikiTimer = createTimer('shiki')
 
@@ -30,10 +12,10 @@ export default <MilkdownPlugin> ((pre) => {
 
     const highligther = await getHighlighter({
       theme: 'one-dark-pro',
-      langs: defaultLangs
+      langs: ['bash', 'js', 'ts', 'json', 'html', 'css']
     })
 
-    ctx.update(prosePluginsCtx, ps => [...ps, prose(highligther)])
+    ctx.update(prosePluginsCtx, ps => [...ps, prose(ctx, highligther)])
     ctx.done(shikiTimer)
   }
 })

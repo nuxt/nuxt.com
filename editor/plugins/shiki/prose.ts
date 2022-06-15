@@ -1,17 +1,40 @@
+import { Ctx, editorViewCtx, EditorViewReady } from '@milkdown/core'
 import { findChildren } from '@milkdown/prose'
 import { Plugin, PluginKey } from '@milkdown/prose/state'
-import type { Highlighter } from 'shiki-es'
+import type { Node } from '@milkdown/prose/model'
+import type { Highlighter, Lang } from 'shiki-es'
 import { getDecorations } from './decorations'
 
 export const key = 'MILKDOWN_SHIKI'
 
-export default (highligther: Highlighter) => {
-  const nodeName = 'fence'
+const nodeName = 'fence'
 
+function findAndLoadLanguages (ctx: Ctx, highligther: Highlighter, doc: Node) {
+  const loadedLanguages = highligther.getLoadedLanguages()
+  const languagesToLoad: Lang[] = []
+
+  doc.descendants((node) => {
+    const language = node.type.name === nodeName && node.attrs.language
+    if (language && !languagesToLoad.includes(language) && !loadedLanguages.includes(language)) {
+      languagesToLoad.push(language)
+    }
+  })
+
+  Promise.all(languagesToLoad.map(language => highligther.loadLanguage(language)))
+    .then(() => {
+      ctx.wait(EditorViewReady).then(() => {
+        const view = ctx.get(editorViewCtx)
+        view.dispatch(view.state.tr.setMeta('asyncUpdate', true))
+      })
+    })
+}
+
+export default (ctx: Ctx, highligther: Highlighter) => {
   return new Plugin({
     key: new PluginKey(key),
     state: {
       init: (_, { doc }) => {
+        findAndLoadLanguages(ctx, highligther, doc)
         return getDecorations(doc, nodeName, highligther)
       },
       apply: (transaction, decorationSet, oldState, state) => {
@@ -38,7 +61,7 @@ export default (highligther: Highlighter) => {
             })
           )
 
-        if (codeBlockChanged) {
+        if (codeBlockChanged || transaction.getMeta('asyncUpdate')) {
           return getDecorations(transaction.doc, nodeName, highligther)
         }
 

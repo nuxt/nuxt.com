@@ -9,7 +9,9 @@ export function getDecorations (doc: Node, name: string, highligther: Highlighte
   findChildren(node => node.type.name === name)(doc).forEach((block) => {
     const { language } = block.node.attrs
 
-    if (!language) { return }
+    if (!highligther.getLoadedLanguages().includes(language)) {
+      return DecorationSet.create(doc, decorations)
+    }
 
     let from = block.pos + 1
 
