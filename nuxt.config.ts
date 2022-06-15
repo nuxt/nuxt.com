@@ -65,11 +65,19 @@ export default defineNuxtConfig({
           typography,
           fontFamily: {
             sans: '"RoobertPRO", sans-serif'
-          }
+          },
+          linearBorderGradients: ({ theme }) => ({
+            colors: {
+              gray: [theme('colors.gray.900')],
+              gradient: [colors.green[400], colors.teal[400], colors.indigoblue[400]]
+            },
+            background: theme('colors')
+          })
         }
       },
       plugins: [
-        require('@tailwindcss/typography')
+        require('@tailwindcss/typography'),
+        require('tailwindcss-border-gradient-radius')
       ],
       content: [
         'presets/*.ts',
