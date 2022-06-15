@@ -60,9 +60,7 @@ defineProps({
 })
 
 const to = (slug) => {
-  if (route.params.project) {
-    return { name: '@team-projects', params: { team: slug } }
-  } else if (route.params.team) {
+  if (route.params.team && !route.params.project) {
     const to = { name: route.name, params: { ...route.params, team: slug }, query: route.query }
 
     try {
@@ -73,7 +71,7 @@ const to = (slug) => {
     } catch (e) {}
   }
 
-  return route
+  return { name: '@team-projects', params: { team: slug } }
 }
 
 const items = computed(() => {
