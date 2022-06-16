@@ -3,7 +3,7 @@
     <UIcon :name="icon" class="u-text-gray-600" :class="[iconSize]" />
     <div class="flex flex-col">
       <span :class="numberClass">{{ number }}</span>
-      <span class="mt-1 leading-none u-text-gray-500" :class="{ 'hidden': size !== 'lg' }">{{ label }}</span>
+      <span class="mt-1 leading-none u-text-gray-700" :class="{ 'hidden': size === 'sm' }">{{ label }}</span>
     </div>
   </div>
 </template>
@@ -53,9 +53,9 @@ const number = computed(() => {
 const numberClass = computed(() => {
   switch (props.size) {
     case 'lg':
-      return 'text-xl font-medium u-text-gray-700 leading-none'
+      return 'text-xl font-semibold u-text-gray-900 leading-none'
     case 'md':
-      return 'text-lg font-medium u-text-gray-700 leading-none'
+      return 'text-xl font-semibold u-text-gray-900 leading-none'
     case 'sm':
       return 'font-semibold u-text-gray-700 leading-none'
   }
@@ -75,9 +75,9 @@ const label = computed(() => {
 const iconSize = computed(() => {
   switch (props.size) {
     case 'lg':
-      return 'w-8 h-8'
+      return 'w-6 h-6'
     case 'md':
-      return 'w-5 h-5'
+      return 'w-6 h-6'
     case 'sm':
       return 'w-4 h-4'
   }
