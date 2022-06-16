@@ -16,16 +16,18 @@
       </div>
     </div>
 
-    <ul v-if="displayedRepositories.length" class="grid grid-cols-1 gap-8 mt-8 sm:grid-cols-2 xl:grid-cols-3">
-      <li v-for="(displayedRepository, index) in displayedRepositories" :key="index">
-        <CommunityRepositoriesListItem :repository="displayedRepository" />
-      </li>
-    </ul>
-    <div v-else class="relative flex flex-col items-center gap-6 mt-16 lg:mt-24">
-      <UIcon name="fa-brands:github" class="w-16 h-16 u-text-gray-600" />
-      <span class="text-xl font-medium text-center u-text-gray-700">
-        There is no repositories for <b>{{ q }}</b> yet.
-      </span>
+    <div class="min-h-[calc(100vh-18rem)]">
+      <ul v-if="displayedRepositories.length" class="grid grid-cols-1 gap-8 mt-8 sm:grid-cols-2 xl:grid-cols-3">
+        <li v-for="(displayedRepository, index) in displayedRepositories" :key="index">
+          <CommunityRepositoriesListItem :repository="displayedRepository" />
+        </li>
+      </ul>
+      <div v-else class="relative flex flex-col items-center gap-6 mt-16 lg:mt-24">
+        <UIcon name="fa-brands:github" class="w-16 h-16 u-text-gray-600" />
+        <span class="text-xl font-medium text-center u-text-gray-700">
+          There is no repositories for <b>{{ q }}</b> yet.
+        </span>
+      </div>
     </div>
   </Page>
 </template>

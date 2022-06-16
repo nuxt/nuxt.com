@@ -12,7 +12,7 @@
       <ResourcesShowcasesFilterCategory />
     </div>
 
-    <ul v-if="selectedShowcases.length" class="grid grid-cols-1 gap-8 mt-8 sm:grid-cols-2 xl:grid-cols-3">
+    <ul v-if="selectedShowcases.length" class="grid min-h-[calc(100vh-18rem)] grid-cols-1 gap-8 mt-8 sm:grid-cols-2 xl:grid-cols-3">
       <li v-for="showcase in selectedShowcases" :key="showcase.id">
         <ResourcesShowcasesListItem :showcase="showcase" />
       </li>
