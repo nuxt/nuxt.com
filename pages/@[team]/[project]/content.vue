@@ -71,7 +71,7 @@ import { debounce } from 'lodash-es'
 import { useEditorScroll } from '~/editor/scroll'
 import { getPathExt } from '~/utils/tree'
 import type { Content } from '~/editor/types'
-import type { Team, Project, GitHubDraft } from '~/types'
+import type { Team, Project, GitHubDraft, Root } from '~/types'
 
 defineProps({
   team: {
@@ -80,8 +80,8 @@ defineProps({
   }
 })
 
-const root = 'content'
-const project: Project = inject('project')
+const root: Ref<Root> = ref('content')
+const project: Ref<Project> = inject('project')
 
 provide('root', root)
 
@@ -90,10 +90,10 @@ const client = useStrapiClient()
 const { parse: parseMarkdown, stringify: stringifyMarkdown } = useMarkdown()
 const { parse: parseJSON, stringify: stringifyJSON } = useJSON()
 const { parse: parseYAML, stringify: stringifyYAML } = useYAML()
-const { branch } = useProjectBranches(project)
-const { components } = useProjectComponents(project)
-const { draft, file, fetchFile, openCreateModal: openCreateFileModal, computedFiles } = useProjectFiles(project, root)
-const { query: treeQuery, tree, openDir } = useProjectFilesTree(project, root)
+const { branch } = useProjectBranches(project.value)
+const { components } = useProjectComponents(project.value)
+const { draft, file, fetchFile, openCreateModal: openCreateFileModal, computedFiles } = useProjectFiles(project.value, root.value)
+const { query: treeQuery, tree, openDir } = useProjectFilesTree(project.value, root.value)
 const { scroll: editorScroll } = useEditorScroll(file)
 
 const content: Ref<string> = ref('')
@@ -108,7 +108,7 @@ function parse (path, content: string): Partial<Content> {
     case 'md': {
       const parsed = parseMarkdown(content)
       return {
-        key: `project-${project.id}-${branch.value.name}-${path}`,
+        key: `project-${project.value.id}-${branch.value.name}-${path}`,
         markdown: parsed.content,
         matter: parsed.matter
       }
@@ -166,11 +166,11 @@ const onUpdate = debounce(async () => {
   }
 
   try {
-    const data = await client<GitHubDraft>(`/projects/${project.id}/files/${encodeURIComponent(file.value.path)}`, {
+    const data = await client<GitHubDraft>(`/projects/${project.value.id}/files/${encodeURIComponent(file.value.path)}`, {
       method: 'PUT',
       params: {
         ref: branch.value?.name,
-        root
+        root: root.value
       },
       body: {
         content: formattedContent
@@ -180,7 +180,7 @@ const onUpdate = debounce(async () => {
     content.value = formattedContent
     draft.value = data
 
-    $socket.emit('draft:update', `project-${project.id}:${branch.value.name}:${root}`)
+    $socket.emit('draft:update', `project-${project.value.id}:${branch.value.name}:${root.value}`)
   } catch (e) {}
 }, 200)
 
@@ -203,8 +203,8 @@ watch(file, async (file) => {
 
 // Hooks
 
-onMounted(() => file.value && $socket.emit('file:join', `project-${project.id}:${branch.value.name}:${file.value.path}`))
-onUnmounted(() => $socket.emit('file:leave', `project-${project.id}`))
+onMounted(() => file.value && $socket.emit('file:join', `project-${project.value.id}:${branch.value.name}:${file.value.path}`))
+onUnmounted(() => $socket.emit('file:leave', `project-${project.value.id}`))
 </script>
 
 <style>

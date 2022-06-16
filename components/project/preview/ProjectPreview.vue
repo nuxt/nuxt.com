@@ -85,16 +85,17 @@
 </template>
 
 <script setup lang="ts">
+import type { Ref } from 'vue'
 import { useEventListener } from '@vueuse/core'
 import { getRoutePath, destructurePathName } from '~/utils/tree'
 import type { Project } from '~/types'
 
-const project: Project = inject('project')
+const project: Ref<Project> = inject('project')
 
 const iframe = ref(null)
 const loading = ref(true)
 
-const { file, computedFiles, select: selectFile, previewUrl } = useProjectFiles(project, 'content')
+const { file, computedFiles, select: selectFile, previewUrl } = useProjectFiles(project.value, 'content')
 const { el, style, iframeStyle, isOpen, isExpand, isDiff, reset } = useProjectPreview()
 
 const previewUrlWithPath = computed(() => {
