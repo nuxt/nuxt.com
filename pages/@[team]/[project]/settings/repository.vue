@@ -33,10 +33,11 @@
 </template>
 
 <script setup lang='ts'>
+import type { Ref } from 'vue'
 import { useTimeAgo } from '@vueuse/core'
 import type { Project } from '~/types'
 
-const project: Project = inject('project')
+const project: Ref<Project> = inject('project')
 
-const { openGithubDesktop } = useProjectBranches(project)
+const { openGithubDesktop } = useProjectBranches(project.value)
 </script>

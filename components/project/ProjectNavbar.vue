@@ -19,6 +19,7 @@
 </template>
 
 <script setup lang="ts">
+import type { Ref } from 'vue'
 import type { Project } from '~/types'
 
 defineProps({
@@ -28,7 +29,7 @@ defineProps({
   }
 })
 
-const project: Project = inject('project')
+const project: Ref<Project> = inject('project')
 
 const isOpen = ref(false)
 </script>

@@ -1,24 +1,32 @@
 <template>
   <USlideover v-model="isOpen">
     <template #header>
-      <button @click="isOpen = false">
+      <button v-if="isTreeOpen" @click="isTreeOpen = false">
+        <UIcon name="heroicons-outline:arrow-sm-left" class="flex-shrink-0 w-6 h-6" />
+      </button>
+      <button v-else @click="isOpen = false">
         <UIcon name="heroicons-outline:x" class="flex-shrink-0 w-6 h-6" />
       </button>
 
-      <NuxtLink :to="{ name: '@team-projects' }" class="inline-flex">
+      <p v-if="isTreeOpen" class="text-lg font-semibold capitalize">
+        {{ selectedLink }}
+      </p>
+      <NuxtLink v-else :to="{ name: '@team-projects' }" class="block">
         <UAvatar :src="`https://github.com/${project.repository.owner}.png`" :alt="project.name" size="sm" class="flex-shrink-0" />
       </NuxtLink>
 
-      <TeamsDropdown compact />
+      <div class="w-6" />
     </template>
 
-    <UVerticalNavigation :links="links" class="flex-1 px-2 py-4 overflow-y-scroll sm:px-4" @click="isOpen = false" />
+    <ProjectContentFilesTree v-if="isTreeOpen" :tree="selectedTree" class="flex-1 py-2 overflow-y-auto" @select="isOpen = false" />
+    <UVerticalNavigation v-else :links="mobileLinks" class="flex-1 px-2 py-4 overflow-y-scroll sm:px-4" />
   </USlideover>
 </template>
 
 <script setup lang="ts">
-import type { WritableComputedRef } from 'vue'
-import type { Project } from '~/types'
+import type { WritableComputedRef, ComputedRef, Ref, PropType } from 'vue'
+import type { RouteLocationNormalized } from 'vue-router'
+import type { Project, File, Root } from '~/types'
 
 const props = defineProps({
   modelValue: {
@@ -26,11 +34,23 @@ const props = defineProps({
     default: false
   },
   links: {
-    type: Array,
+    type: Array as PropType<{ to: RouteLocationNormalized, icon: string, label: string, badge: boolean }[]>,
     default: () => []
   }
 })
 const emit = defineEmits(['update:modelValue'])
+
+const root: Ref<Root> = ref('content')
+const project: Ref<Project> = inject('project')
+
+provide('root', root)
+
+const { tree: contentTree } = useProjectFilesTree(project.value, 'content')
+const { tree: mediaTree } = useProjectFilesTree(project.value, 'public')
+
+const route = useRoute()
+const selectedLink = ref(null)
+const isTreeOpen = ref(false)
 
 const isOpen: WritableComputedRef<boolean> = computed({
   get () {
@@ -38,8 +58,60 @@ const isOpen: WritableComputedRef<boolean> = computed({
   },
   set (value) {
     emit('update:modelValue', value)
+
+    if (!value) {
+      // avoids change during dialog animation
+      setTimeout(() => {
+        isTreeOpen.value = !!selectedLink.value
+      }, 300)
+    }
   }
 })
 
-const project: Project = inject('project')
+const selectedTree: ComputedRef<File[]> = computed(() => {
+  switch (selectedLink.value) {
+    case 'content':
+      return contentTree.value
+    case 'media':
+      return mediaTree.value
+    default:
+      return []
+  }
+})
+
+const mobileLinks = computed(() => props.links.map(link => ({ ...link, click: () => onLinkClick(link) })))
+
+// Watch
+
+watch(() => route.fullPath, () => {
+  switch (route.name) {
+    case '@team-project-content':
+      root.value = 'content'
+      selectedLink.value = 'content'
+      break
+    case '@team-project-media':
+      root.value = 'public'
+      selectedLink.value = 'media'
+      break
+    default:
+      selectedLink.value = null
+  }
+
+  // avoids change during navigation
+  if (!isOpen.value) {
+    isTreeOpen.value = !!selectedLink.value
+  }
+},
+{ immediate: true })
+
+// Methods
+
+function onLinkClick (link) {
+  if (['@team-project-content', '@team-project-media'].includes(link.to.name) && link.to.name === route.name) {
+    isTreeOpen.value = true
+    return
+  }
+
+  isOpen.value = false
+}
 </script>

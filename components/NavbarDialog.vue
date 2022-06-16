@@ -15,7 +15,7 @@
         <Logo class="block w-auto h-6" />
       </NuxtLink>
 
-      <div class="flex justify-end" />
+      <div class="w-6" />
     </template>
 
     <div class="flex-1 px-4 py-4 overflow-y-scroll sm:px-6">

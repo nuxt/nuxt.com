@@ -95,7 +95,7 @@ const props = defineProps({
   }
 })
 
-const project: Project = inject('project')
+const project: Ref<Project> = inject('project')
 
 const user = useStrapiUser() as Ref<User>
 const router = useRouter()
@@ -103,12 +103,12 @@ const { update } = useStrapi4()
 const { $toast } = useNuxtApp()
 const route = useRoute()
 const client = useStrapiClient()
-const { previewUrl } = useProjectFiles(project, 'content')
+const { previewUrl } = useProjectFiles(project.value, 'content')
 
-const form = reactive({ name: project.name, slug: project.slug, url: project.url, baseDir: project.baseDir })
+const form = reactive({ name: project.value.name, slug: project.value.slug, url: project.value.url, baseDir: project.value.baseDir })
 const updating = ref(false)
 
-const { data: folders, pending: pendingFolders } = useLazyAsyncData(`projects-${route.params.project}-folders`, () => client<File[]>(`/github/installations/${project.repository.owner}/${project.repository.name}/folders`), {
+const { data: folders, pending: pendingFolders } = useLazyAsyncData(`projects-${route.params.project}-folders`, () => client<File[]>(`/github/installations/${project.value.repository.owner}/${project.value.repository.name}/folders`), {
   transform: (value) => {
     return value?.map(folder => ({ text: folder.path, value: folder.path }) || [])
   }
@@ -118,22 +118,22 @@ const onSubmit = async () => {
   updating.value = true
 
   try {
-    const updatedProject = await update<Project>('projects', project.id, form)
+    const updatedProject = await update<Project>('projects', project.value.id, form)
 
-    if (updatedProject.slug !== project.slug) {
+    if (updatedProject.slug !== project.value.slug) {
       // Replace `name` param in url
       router.replace({ name: '@team-project-settings', params: { team: props.team ? props.team.slug : user.value.username, project: updatedProject.slug } })
     }
 
-    if (updatedProject.baseDir !== project.baseDir) {
+    if (updatedProject.baseDir !== project.value.baseDir) {
       // reload files for both roots
-      const { refresh: refreshContentFiles } = useProjectFiles(project, 'content')
-      const { refresh: refreshMediaFiles } = useProjectFiles(project, 'public')
+      const { refresh: refreshContentFiles } = useProjectFiles(project.value, 'content')
+      const { refresh: refreshMediaFiles } = useProjectFiles(project.value, 'public')
       refreshContentFiles()
       refreshMediaFiles()
     }
 
-    Object.assign(project, updatedProject)
+    project.value = { ...project.value, ...updatedProject }
 
     $toast.success({
       title: 'Success',
