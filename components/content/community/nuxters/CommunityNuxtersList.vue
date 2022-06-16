@@ -11,8 +11,8 @@
         <!-- <CommunityNuxtersFilterSort /> -->
       </div>
     </div>
-    <div class="mt-12 min-h-[calc(100vh-18rem)]">
-      <div v-if="filteredNuxters.length">
+    <div class="min-h-[calc(100vh-18rem)]">
+      <div v-if="filteredNuxters.length" class="mt-12">
         <ul v-if="!q" role="list" class="grid grid-cols-6 gap-8">
           <Component :is="nuxter1Component" v-if="nuxter1" :nuxter="nuxter1" />
           <Component :is="nuxter2Component" v-if="nuxter2" :nuxter="nuxter2" />
