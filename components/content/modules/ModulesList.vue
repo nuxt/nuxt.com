@@ -20,23 +20,25 @@
 
     <div class="hidden _ellipse lg:block" />
 
-    <ul v-if="filteredModules.length" class="grid grid-cols-1 gap-8 mt-8 sm:grid-cols-2 xl:grid-cols-3">
-      <li v-for="(filteredModule, index) in filteredModules" :key="index">
-        <ModulesListItem :module="filteredModule" />
-      </li>
-    </ul>
-    <div v-else class="relative flex flex-col items-center gap-6 mt-16 lg:mt-24">
-      <UIcon name="fa-brands:github" class="w-16 h-16 u-text-gray-600" />
-      <span class="text-xl font-medium text-center u-text-gray-700">
-        There is no modules available for <b>{{ q }}</b> yet.<br>Become the first one to create it!
-      </span>
-      <UButton
-        :to="contributeUrl"
-        target="_blank"
-        variant="primary"
-        size="lg"
-        label="Contribute on GitHub"
-      />
+    <div class="min-h-[calc(100vh-18rem)]">
+      <ul v-if="filteredModules.length" class="grid grid-cols-1 gap-8 mt-8 sm:grid-cols-2 xl:grid-cols-3">
+        <li v-for="(filteredModule, index) in filteredModules" :key="index">
+          <ModulesListItem :module="filteredModule" />
+        </li>
+      </ul>
+      <div v-else class="relative flex flex-col items-center gap-6 mt-16 lg:mt-24">
+        <UIcon name="fa-brands:github" class="w-16 h-16 u-text-gray-600" />
+        <span class="text-xl font-medium text-center u-text-gray-700">
+          There is no modules available for <b>{{ q }}</b> yet.<br>Become the first one to create it!
+        </span>
+        <UButton
+          :to="contributeUrl"
+          target="_blank"
+          variant="primary"
+          size="lg"
+          label="Contribute on GitHub"
+        />
+      </div>
     </div>
   </Page>
 </template>
