@@ -23,6 +23,7 @@
 </template>
 
 <script setup lang="ts">
+import type { Ref } from 'vue'
 import { useMagicKeys, whenever, and, useActiveElement } from '@vueuse/core'
 import type { Project } from '~/types'
 
@@ -33,13 +34,13 @@ const props = defineProps({
   }
 })
 
-const project: Project = inject('project')
+const project: Ref<Project> = inject('project')
 
 const route = useRoute()
 const router = useRouter()
 const activeElement = useActiveElement()
 const keys = useMagicKeys()
-const { previewUrl } = useProjectFiles(project, 'content')
+const { previewUrl } = useProjectFiles(project.value, 'content')
 const { isOpen: isPreviewOpen } = useProjectPreview()
 
 // Computed

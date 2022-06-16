@@ -22,7 +22,7 @@ const props = defineProps({
   }
 })
 
-const project: Project = inject('project')
+const project: Ref<Project> = inject('project')
 const pulls: Ref<GitHubPull[]> = ref([])
 
 const emit = defineEmits(['update:modelValue'])
@@ -33,12 +33,12 @@ const {
   isDraft: isDraftContent,
   draft: contentDraft,
   init: initContentFile
-} = useProjectFiles(project, 'content')
+} = useProjectFiles(project.value, 'content')
 const {
   isDraft: isDraftMedia,
   draft: publicDraft,
   init: initPublicFile
-} = useProjectFiles(project, 'public')
+} = useProjectFiles(project.value, 'public')
 const {
   branch,
   branches,
@@ -49,7 +49,7 @@ const {
   select: selectBranch,
   openCreateModal: openCreateBranchModal,
   fetchPulls
-} = useProjectBranches(project)
+} = useProjectBranches(project.value)
 
 // Computed
 
@@ -67,7 +67,7 @@ const currentBranches: ComputedRef<GitHubBranch[]> = computed(() => {
     .map((b) => {
       let pull
 
-      const githubPull = pulls.value.find(pull => pull.base.ref === project.repository.default_branch && pull.head.ref === b.name)
+      const githubPull = pulls.value.find(pull => pull.base.ref === project.value.repository.default_branch && pull.head.ref === b.name)
       if (githubPull) {
         const totalCheck = githubPull.check_runs.length + githubPull.statuses.length
 
@@ -153,7 +153,7 @@ function onBranchSelect (b: GitHubBranch) {
 function onCreateBranchClick ({ query: name }) {
   openCreateBranchModal(
     name && !branches.value.some(b => b.name === name) ? name : '',
-    branch.value.name === project.repository.default_branch,
+    branch.value.name === project.value.repository.default_branch,
     false
   )
 }

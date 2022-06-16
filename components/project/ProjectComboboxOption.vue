@@ -65,10 +65,10 @@ defineProps({
   }
 })
 
-const project: Project = inject('project')
+const project: Ref<Project> = inject('project')
 const activeUsers: Ref<SocketUser[]> = inject('activeUsers')
 
-const { branch } = useProjectBranches(project)
+const { branch } = useProjectBranches(project.value)
 
 function usersGroup (item: GitHubBranch | GitHubFile) {
   return activeUsers.value.reduce((acc, user) => {
