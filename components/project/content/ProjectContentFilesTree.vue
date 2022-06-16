@@ -25,10 +25,10 @@
               {{ file.name }}
             </span>
           </div>
-          <div class="items-center gap-1.5 -mr-1 flex group-hover:hidden">
+          <div class="items-center gap-1.5 -mr-1 flex lg:group-hover:hidden">
             <ProjectContentFilesTreeUsers :file="file" />
           </div>
-          <div class="items-center gap-1.5 -mr-1 hidden group-hover:flex">
+          <div class="items-center gap-1.5 -mr-1 hidden lg:group-hover:flex">
             <UButton
               v-if="isFile(file) && isDraft(file)"
               size="xxs"
@@ -133,6 +133,7 @@ const selectFile = (file: File) => {
   // Prevent click when clicking on selected file
   if (selectedFile.value && selectedFile.value.path === file.path) {
     scrollToSelectedFile()
+    emit('select')
     return
   }
 

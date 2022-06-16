@@ -1,31 +1,31 @@
 <template>
   <USlideover v-model="isOpen">
     <template #header>
-      <button v-if="subTree" @click="subTree = false">
+      <button v-if="isTreeOpen" @click="isTreeOpen = false">
         <UIcon name="heroicons-outline:arrow-sm-left" class="flex-shrink-0 w-6 h-6" />
       </button>
       <button v-else @click="isOpen = false">
         <UIcon name="heroicons-outline:x" class="flex-shrink-0 w-6 h-6" />
       </button>
 
-      <p v-if="subTree" class="text-lg font-semibold capitalize">
+      <p v-if="isTreeOpen" class="text-lg font-semibold capitalize">
         {{ selectedLink }}
       </p>
-      <NuxtLink v-else :to="{ name: '@team-projects' }" class="inline-flex">
+      <NuxtLink v-else :to="{ name: '@team-projects' }" class="block">
         <UAvatar :src="`https://github.com/${project.repository.owner}.png`" :alt="project.name" size="sm" class="flex-shrink-0" />
       </NuxtLink>
 
-      <!-- right element -->
-      <div />
+      <div class="w-6" />
     </template>
 
-    <ProjectContentFilesTree v-if="subTree" :tree="selectedTree" class="flex-1 py-4 overflow-y-auto" @select="isOpen = false" />
-    <UVerticalNavigation v-else :links="links" class="flex-1 px-2 py-4 overflow-y-scroll sm:px-4" @click="isOpen = false" />
+    <ProjectContentFilesTree v-if="isTreeOpen" :tree="selectedTree" class="flex-1 py-2 overflow-y-auto" @select="isOpen = false" />
+    <UVerticalNavigation v-else :links="mobileLinks" class="flex-1 px-2 py-4 overflow-y-scroll sm:px-4" />
   </USlideover>
 </template>
 
 <script setup lang="ts">
-import type { WritableComputedRef, ComputedRef, Ref } from 'vue'
+import type { WritableComputedRef, ComputedRef, Ref, PropType } from 'vue'
+import type { RouteLocationNormalized } from 'vue-router'
 import type { Project, File, Root } from '~/types'
 
 const props = defineProps({
@@ -34,7 +34,7 @@ const props = defineProps({
     default: false
   },
   links: {
-    type: Array,
+    type: Array as PropType<{ to: RouteLocationNormalized, icon: string, label: string, badge: boolean }[]>,
     default: () => []
   }
 })
@@ -50,7 +50,7 @@ const { tree: mediaTree } = useProjectFilesTree(project.value, 'public')
 
 const route = useRoute()
 const selectedLink = ref(null)
-const subTree = ref(false)
+const isTreeOpen = ref(false)
 
 const isOpen: WritableComputedRef<boolean> = computed({
   get () {
@@ -62,7 +62,7 @@ const isOpen: WritableComputedRef<boolean> = computed({
     if (!value) {
       // avoids change during dialog animation
       setTimeout(() => {
-        subTree.value = !!selectedLink.value
+        isTreeOpen.value = !!selectedLink.value
       }, 300)
     }
   }
@@ -79,29 +79,39 @@ const selectedTree: ComputedRef<File[]> = computed(() => {
   }
 })
 
-watch(
-  () => route.fullPath,
-  () => {
-    switch (route.name) {
-      case '@team-project-content':
-        root.value = 'content'
-        break
-      case '@team-project-media':
-        root.value = 'public'
-        break
-    }
+const mobileLinks = computed(() => props.links.map(link => ({ ...link, click: () => onLinkClick(link) })))
 
-    if (['@team-project-content', '@team-project-media'].includes(route.name as string)) {
-      selectedLink.value = (route.name as string).split('-').pop()
-    } else {
+// Watch
+
+watch(() => route.fullPath, () => {
+  switch (route.name) {
+    case '@team-project-content':
+      root.value = 'content'
+      selectedLink.value = 'content'
+      break
+    case '@team-project-media':
+      root.value = 'public'
+      selectedLink.value = 'media'
+      break
+    default:
       selectedLink.value = null
-    }
+  }
 
-    // avoids change during navigation
-    if (!isOpen.value) {
-      subTree.value = !!selectedLink.value
-    }
-  },
-  { immediate: true }
-)
+  // avoids change during navigation
+  if (!isOpen.value) {
+    isTreeOpen.value = !!selectedLink.value
+  }
+},
+{ immediate: true })
+
+// Methods
+
+function onLinkClick (link) {
+  if (['@team-project-content', '@team-project-media'].includes(link.to.name) && link.to.name === route.name) {
+    isTreeOpen.value = true
+    return
+  }
+
+  isOpen.value = false
+}
 </script>
