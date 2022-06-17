@@ -35,7 +35,7 @@ const pickColor = (palette: string[], exclude: string[]) => {
 }
 
 export const setCursor = (awareness: Awareness) => {
-  const name = unref(useStrapiUser() as Ref<User>).username
+  const name = (unref(useStrapiUser() as Ref<User>) || {}).username || 'Anonymous'
 
   awareness.setLocalStateField('user', { name })
 

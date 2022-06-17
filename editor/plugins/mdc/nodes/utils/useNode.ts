@@ -16,6 +16,7 @@ export default function useNode () {
 
   // Smart dispatch with updated node
   const smartDispatch: SmartDispatcher = (transactionBuilder, { skipUpdate } = { skipUpdate: false }) => {
+    // @ts-ignore
     node.attrs.skipUpdate = skipUpdate
     view.dispatch(
       transactionBuilder({
