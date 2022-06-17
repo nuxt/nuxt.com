@@ -1061,11 +1061,11 @@
     eslint-plugin-vue "^8.7.1"
 
 "@nuxtjs/strapi@npm:@nuxtjs/strapi-edge@latest":
-  version "1.4.0-27581356.7e96dcc"
-  resolved "https://registry.yarnpkg.com/@nuxtjs/strapi-edge/-/strapi-edge-1.4.0-27581356.7e96dcc.tgz#dd75e0980fb5bacaca83cdf286e4e42d3aef6cc2"
-  integrity sha512-nixjI4KuZnKLcMIFgazLKYfabpc8AsVv53y/td1H6Uej5DJhp+OYxZhjJFVb9sAruQclHXXD/mpGObZ2fdGK6Q==
+  version "1.4.0-27591243.3f04752"
+  resolved "https://registry.yarnpkg.com/@nuxtjs/strapi-edge/-/strapi-edge-1.4.0-27591243.3f04752.tgz#951e9584925ea08c2060bb2de35dd6e385cdf123"
+  integrity sha512-1JOKDIcuRuXZCn7Xe+KZE4U7lAB0rSx+7JeO6w/ljioE+zIPtH48nI47nXkSXAp+UDeEOMQfqhSjbockFKyk+A==
   dependencies:
-    "@nuxt/kit" "^3.0.0-rc.3"
+    "@nuxt/kit" "^3.0.0-rc.4"
     defu "^6.0.0"
     graphql "^16.5.0"
     pathe "^0.3.0"
@@ -2299,9 +2299,9 @@ caniuse-lite@^1.0.0, caniuse-lite@^1.0.30001335:
   integrity sha512-GUgH8w6YergqPQDGWhJGt8GDRnY0L/iJVQcU3eJ46GYf52R8tk0Wxp0PymuFVZboJYXGiCqwozAYZNRjVj6IcA==
 
 caniuse-lite@^1.0.30001349:
-  version "1.0.30001354"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001354.tgz#95c5efdb64148bb4870771749b9a619304755ce5"
-  integrity sha512-mImKeCkyGDAHNywYFA4bqnLAzTUvVkqPvhY4DV47X+Gl2c5Z8c3KNETnXp14GQt11LvxE8AwjzGxJ+rsikiOzg==
+  version "1.0.30001355"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001355.tgz#e240b7177443ed0198c737a7f609536976701c77"
+  integrity sha512-Sd6pjJHF27LzCB7pT7qs+kuX2ndurzCzkpJl6Qct7LPSZ9jn0bkOA8mdgMgmqnQAWLVOOGjLpc+66V57eLtb1g==
 
 ccount@^2.0.0:
   version "2.0.1"
@@ -3434,9 +3434,9 @@ ee-first@1.1.1:
   integrity sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==
 
 electron-to-chromium@^1.4.147:
-  version "1.4.156"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.156.tgz#fc398e1bfbe586135351ebfaf198473a82923af5"
-  integrity sha512-/Wj5NC7E0wHaMCdqxWz9B0lv7CcycDTiHyXCtbbu3pXM9TV2AOp8BtMqkVuqvJNdEvltBG6LxT2Q+BxY4LUCIA==
+  version "1.4.160"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.160.tgz#da54e24fddeaca52f37965c7bec1bd964c97d487"
+  integrity sha512-O1Z12YfyeX2LXYO7MdHIPazGXzLzQnr1ADW55U2ARQsJBPgfpJz3u+g3Mo2l1wSyfOCdiGqaX9qtV4XKZ0HNRA==
 
 emoji-regex@^10.0.0:
   version "10.1.0"
@@ -6901,9 +6901,9 @@ mlly@^0.3.6:
   integrity sha512-zMq5n3cOf4fOzA4WoeulxagbAgMChdev3MgP6K51k7M0u2whTXxupfIY4VVzws4vxkiWhwH1rVQcsw7zDGfRhA==
 
 mlly@^0.5.1, mlly@^0.5.2:
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/mlly/-/mlly-0.5.2.tgz#67b908e967cfcaee27e90bef8a84aaede599bd21"
-  integrity sha512-4GTELSSErv6ZZJYU98fZNuIBJcXSz+ktHdRrCYEqU1m6ZlebOCG0jwZ+IEd9vOrbpYsVBBMC5OTrEyLnKRcauQ==
+  version "0.5.3"
+  resolved "https://registry.yarnpkg.com/mlly/-/mlly-0.5.3.tgz#8a613b6273886490a5f462ce18fa486492cf053b"
+  integrity sha512-im69tuLD9EJh9fc9TZRpJEFvsBcGMez7glUCWDcHWWCKzhvPmNvyaYjp/+h0qJJN/Xovrs//GzGjOOKmFw4Gog==
   dependencies:
     pathe "^0.2.0"
     pkg-types "^0.3.2"
