@@ -1,8 +1,7 @@
 import { Editor, rootCtx } from '@milkdown/core'
 import { emoji } from '@milkdown/plugin-emoji'
 import { history } from '@milkdown/plugin-history'
-import { listener } from '@milkdown/plugin-listener'
-import { prism } from '@milkdown/plugin-prism'
+import { listener, listenerCtx } from '@milkdown/plugin-listener'
 import { tooltip } from '@milkdown/plugin-tooltip'
 import { gfm } from '@milkdown/preset-gfm'
 import { codeFence as cmCodeFence } from '@milkdown/preset-commonmark'
@@ -18,6 +17,7 @@ import mdc from './plugins/mdc'
 import slash from './plugins/slash'
 import trailingParagraph from './plugins/trailing-paragraph'
 import collaborative, { joinRoom } from './plugins/collaborative'
+import shiki from './plugins/shiki'
 
 // Theme
 import { dark, light } from './theme'
@@ -46,7 +46,7 @@ export const useEditor = (options: Options) => {
       .use(history)
       .use(listener)
       .use(gfm.replace(cmCodeFence, codeFence()))
-      .use(prism) // TODO: Use custom plugin to add Shiki support
+      .use(shiki)
       .use(tooltip)
       .use(mdc)
       .use(slash)
@@ -54,7 +54,9 @@ export const useEditor = (options: Options) => {
 
     if (isCollabEnabled) {
       instance.use(collaborative)
-      instance.action(joinRoom(options))
+      instance.ctx.get(listenerCtx).mounted(() => {
+        instance.action(joinRoom(options))
+      })
     }
 
     return instance
