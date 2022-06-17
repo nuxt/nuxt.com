@@ -2,31 +2,34 @@ import { Ctx, editorViewCtx, EditorViewReady } from '@milkdown/core'
 import { findChildren } from '@milkdown/prose'
 import { Plugin, PluginKey } from '@milkdown/prose/state'
 import type { Node } from '@milkdown/prose/model'
-import type { Highlighter, Lang } from 'shiki-es'
+import { BUNDLED_LANGUAGES, Highlighter, Lang } from 'shiki-es'
 import { getDecorations } from './decorations'
 
 export const key = 'MILKDOWN_SHIKI'
 
 const nodeName = 'fence'
 
-function findAndLoadLanguages (ctx: Ctx, highligther: Highlighter, doc: Node) {
+function isLanguageSupported (language: string) {
+  return BUNDLED_LANGUAGES.some(lang => lang.id === language || lang.aliases?.includes(language))
+}
+
+async function findAndLoadLanguages (ctx: Ctx, highligther: Highlighter, doc: Node) {
   const loadedLanguages = highligther.getLoadedLanguages()
   const languagesToLoad: Lang[] = []
 
   doc.descendants((node) => {
     const language = node.type.name === nodeName && node.attrs.language
-    if (language && !languagesToLoad.includes(language) && !loadedLanguages.includes(language)) {
+    if (language && !languagesToLoad.includes(language) && !loadedLanguages.includes(language) && isLanguageSupported(language)) {
       languagesToLoad.push(language)
     }
   })
 
-  Promise.all(languagesToLoad.map(language => highligther.loadLanguage(language)))
-    .then(() => {
-      ctx.wait(EditorViewReady).then(() => {
-        const view = ctx.get(editorViewCtx)
-        view.dispatch(view.state.tr.setMeta('asyncUpdate', true))
-      })
-    })
+  await Promise.all(languagesToLoad.map(language => highligther.loadLanguage(language).catch(e => e)))
+
+  await ctx.wait(EditorViewReady)
+
+  const view = ctx.get(editorViewCtx)
+  view.dispatch(view.state.tr.setMeta('asyncUpdate', true))
 }
 
 export default (ctx: Ctx, highligther: Highlighter) => {

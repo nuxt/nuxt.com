@@ -10,7 +10,7 @@ export function getDecorations (doc: Node, name: string, highligther: Highlighte
     const { language } = block.node.attrs
 
     if (!highligther.getLoadedLanguages().includes(language)) {
-      return DecorationSet.create(doc, decorations)
+      return
     }
 
     let from = block.pos + 1
