@@ -56,5 +56,9 @@
     "vue-tsc": "^0.34.16",
     "y-websocket": "^1.4.3",
     "yjs": "^13.5.38"
+  },
+  "dependencies": {
+    "dat.gui": "^0.7.9",
+    "three": "^0.141.0"
   }
 }
