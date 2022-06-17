@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue'
+import type { PropType, Ref } from 'vue'
 import { useIntersectionObserver } from '@vueuse/core'
 import type { GitHubFile, Project, Root } from '~/types'
 
@@ -49,10 +49,10 @@ const props = defineProps({
 
 const emit = defineEmits(['fileVisible'])
 
-const project: Project = inject('project')
-const root: Root = inject('root')
+const project: Ref<Project> = inject('project')
+const root: Ref<Root> = inject('root')
 
-const { file: selectedFile, select, openRenameModal, openRevertModal, openDeleteModal } = useProjectFiles(project, root)
+const { file: selectedFile, select, openRenameModal, openRevertModal, openDeleteModal } = useProjectFiles(project.value, root.value)
 
 const item = ref(null)
 

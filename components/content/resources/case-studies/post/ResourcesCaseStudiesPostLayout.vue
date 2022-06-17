@@ -13,7 +13,7 @@
         <NuxtLink :to="page.url" target="_blank" class="relative inline-flex items-center mt-3 text-lg font-semibold md:mt-5 group flex-nowrap max-w-max">
           See website
           <span
-            class="rounded absolute u-bg-gray-700 left-0 font-semibold -bottom-1 h-0.5 w-0 group-hover:w-full transition-all"
+            class="rounded absolute left-0 font-semibold -bottom-1 h-0.5 w-4 group-hover:w-full duration-300 transition-ease bg-gradient-to-r from-green-400 via-teal-400 to-indigoblue-600"
           />
           <UIcon name="heroicons-outline:arrow-sm-right" class="w-5 h-5 ml-1 mt-0.5" />
         </NuxtLink>

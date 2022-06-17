@@ -46,7 +46,7 @@ useHead({
   title: project.value.name
 })
 
-provide('project', project.value)
+provide('project', project)
 provide('activeUsers', activeUsers)
 
 const { branch, branches, fetch: fetchBranches, select: selectBranch } = useProjectBranches(project.value)

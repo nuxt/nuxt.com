@@ -65,11 +65,19 @@ export default defineNuxtConfig({
           typography,
           fontFamily: {
             sans: '"RoobertPRO", sans-serif'
-          }
+          },
+          linearBorderGradients: ({ theme }) => ({
+            colors: {
+              gray: [theme('colors.gray.900')],
+              gradient: [colors.green[400], colors.teal[400], colors.indigoblue[400]]
+            },
+            background: theme('colors')
+          })
         }
       },
       plugins: [
-        require('@tailwindcss/typography')
+        require('@tailwindcss/typography'),
+        require('tailwindcss-border-gradient-radius')
       ],
       content: [
         'presets/*.ts',
@@ -86,7 +94,27 @@ export default defineNuxtConfig({
     },
     navigation: {
       fields: ['redirect']
-    }
+    },
+    sources: [
+      {
+        name: 'nuxt3-docs',
+        driver: 'github',
+        repo: 'nuxt/framework',
+        branch: 'feat/docus-docs',
+        dir: 'docs/content',
+        prefix: '/docs/framework/3.x',
+        token: process.env.GITHUB_TOKEN
+      },
+      {
+        name: 'nuxt2-docs',
+        driver: 'github',
+        repo: 'nuxt/nuxtjs.org',
+        branch: 'main',
+        dir: 'content/en/docs',
+        prefix: '/docs/framework/2.x',
+        token: process.env.GITHUB_TOKEN
+      }
+    ]
   },
   typescript: {
     shim: false

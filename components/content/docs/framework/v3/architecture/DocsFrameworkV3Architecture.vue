@@ -54,7 +54,7 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 
-const { data: architectureData } = await useAsyncData('architecture', () => queryContent('/docs/framework/v3/_collections/architecture').findOne())
+const { data: architectureData } = await useAsyncData('architecture', () => queryContent('/docs/framework/3.x/_collections/architecture').findOne())
 
 const { currentSection, stopCounter, restartCounter } = useCounterAnimations()
 const colorMode = useColorMode()

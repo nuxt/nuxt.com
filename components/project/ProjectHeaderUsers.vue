@@ -36,11 +36,11 @@ import type { Project, User, SocketUser } from '~/types'
 const router = useRouter()
 const user = useStrapiUser() as Ref<User>
 
-const project: Project = inject('project')
+const project: Ref<Project> = inject('project')
 const activeUsers: Ref<SocketUser[]> = inject('activeUsers')
 
-const { branch, select: selectBranch } = useProjectBranches(project)
-const { file, select: selectContentFile } = useProjectFiles(project, 'content')
+const { branch, select: selectBranch } = useProjectBranches(project.value)
+const { file, select: selectContentFile } = useProjectFiles(project.value, 'content')
 
 function canJump (activeUser) {
   return activeUser.id !== user.value?.id && (activeUser.branch !== branch.value.name || !!activeUser.file)

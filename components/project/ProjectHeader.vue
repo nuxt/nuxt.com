@@ -68,20 +68,21 @@
 </template>
 
 <script setup lang="ts">
+import type { Ref } from 'vue'
 import type { Project } from '~/types'
 
-const project: Project = inject('project')
+const project: Ref<Project> = inject('project')
 
 const { openBranchesModal, openFilesModal } = useProjectModals()
 
-const { branch, branches, commit, openPublishModal, openCreateModal, loading } = useProjectBranches(project)
-const { isDraft: isDraftContent, refresh: refreshContentFiles, previewUrl } = useProjectFiles(project, 'content')
-const { isDraft: isDraftMedia, refresh: refreshMediaFiles } = useProjectFiles(project, 'public')
+const { branch, branches, commit, openPublishModal, openCreateModal, loading } = useProjectBranches(project.value)
+const { isDraft: isDraftContent, refresh: refreshContentFiles, previewUrl } = useProjectFiles(project.value, 'content')
+const { isDraft: isDraftMedia, refresh: refreshMediaFiles } = useProjectFiles(project.value, 'public')
 
 const deployOptions = [[{
   icon: 'logos:vercel-icon',
   label: 'Deploy to Vercel',
-  to: `https://vercel.com/new/import?repository-url=${encodeURIComponent(`https://github.com/${project.repository.owner}/${project.repository.name}`)}`,
+  to: `https://vercel.com/new/import?repository-url=${encodeURIComponent(`https://github.com/${project.value.repository.owner}/${project.value.repository.name}`)}`,
   target: '_blank'
 },
 {
@@ -102,7 +103,7 @@ async function onCommitClick () {
     refreshMediaFiles()
   }
 
-  if (branch.value.name === project.repository.default_branch) {
+  if (branch.value.name === project.value.repository.default_branch) {
     return openCreateModal('', true, true, callbackAfterCommit)
   }
 
