@@ -1,6 +1,7 @@
 <template>
   <div class="not-prose">
-    <div class="pb-20 pt-36 md:pt-44 lg:pt-36">
+    <div class="pb-20 pt-36 md:pt-44 lg:pt-28">
+      <img src="/assets/home/hero-gradient.svg" class="absolute top-0 right-0 overflow-hidden select-none">
       <UContainer padded class="relative flex flex-col justify-start gap-y-8">
         <div v-if="$slots.badgeLabel" class="flex gap-x-2">
           <UBadge rounded variant="green">
@@ -10,7 +11,7 @@
             <Markdown :use="$slots.news" unwrap="p" />
           </span>
         </div>
-        <h1 v-if="$slots.title" class="max-w-2xl text-5xl font-bold text-left md:text-6xl lg:text-7xl u-text-gray-900">
+        <h1 v-if="$slots.title" class="max-w-2xl text-5xl font-semibold text-left md:text-6xl lg:text-7xl u-text-gray-900">
           <Markdown use="title" unwrap="p" />
         </h1>
         <p v-if="$slots.description" class="w-3/5 max-w-lg text-lg text-left u-text-gray-800">
@@ -28,8 +29,10 @@
             :trailing="button.trailing"
           />
         </div>
+        <HomeGemWrapper>
+          <HomeGem />
+        </HomeGemWrapper>
       </UContainer>
-      <img src="/assets/home/hero-gradient.svg" class="absolute top-0 right-0 overflow-hidden opacity-60">
     </div>
   </div>
 </template>
