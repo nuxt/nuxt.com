@@ -1,12 +1,14 @@
 <template>
   <USlideover v-model="isOpen">
     <template #header>
-      <button v-if="isTreeOpen" @click="isTreeOpen = false">
-        <UIcon name="heroicons-outline:arrow-sm-left" class="flex-shrink-0 w-6 h-6" />
-      </button>
-      <button v-else @click="isOpen = false">
-        <UIcon name="heroicons-outline:x" class="flex-shrink-0 w-6 h-6" />
-      </button>
+      <div class="flex-1">
+        <button v-if="isTreeOpen" @click="isTreeOpen = false">
+          <UIcon name="heroicons-outline:arrow-sm-left" class="flex-shrink-0 w-6 h-6" />
+        </button>
+        <button v-else @click="isOpen = false">
+          <UIcon name="heroicons-outline:x" class="flex-shrink-0 w-6 h-6" />
+        </button>
+      </div>
 
       <p v-if="isTreeOpen" class="text-lg font-semibold capitalize">
         {{ selectedLink }}
@@ -15,7 +17,26 @@
         <UAvatar :src="`https://github.com/${project.repository.owner}.png`" :alt="project.name" size="sm" class="flex-shrink-0" />
       </NuxtLink>
 
-      <div class="w-6" />
+      <div class="flex justify-end flex-1">
+        <UButton
+          size="xs"
+          label="Create file"
+          variant="gray"
+          icon="heroicons-outline:plus"
+          truncate
+          :class="{ 'hidden': selectedLink !== 'content' || !isTreeOpen}"
+          @click="createFile"
+        />
+        <UButton
+          size="xs"
+          label="Upload file"
+          variant="gray"
+          icon="heroicons-outline:plus"
+          truncate
+          :class="{ 'hidden': selectedLink !== 'media' || !isTreeOpen}"
+          @click="uploadFile"
+        />
+      </div>
     </template>
 
     <ProjectContentFilesTree v-if="isTreeOpen" :tree="selectedTree" class="flex-1 py-2 overflow-y-auto" @select="isOpen = false" />
@@ -48,6 +69,7 @@ const project: Ref<Project> = inject('project')
 
 provide('root', root)
 
+const { openCreateModal: openCreateFileModal } = useProjectFiles(project.value, root.value)
 const { tree: contentTree } = useProjectFilesTree(project.value, 'content')
 const { tree: mediaTree } = useProjectFilesTree(project.value, 'public')
 
@@ -111,6 +133,17 @@ watch(() => route.fullPath, () => {
 { immediate: true })
 
 // Methods
+
+function createFile () {
+  openCreateFileModal('content')
+  isOpen.value = false
+}
+
+function uploadFile () {
+  // FIXME
+  // $refs.fileToUpload?.click?.()
+  isOpen.value = false
+}
 
 function onLinkClick (link) {
   if (link.click) {
