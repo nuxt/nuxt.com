@@ -1,18 +1,18 @@
 <template>
   <UCard padded body-class="aspect-w-4 aspect-h-3" shadow-class="" class="relative transition duration-200 group hover:ring-2 hover:u-ring-gray-900">
-    <img
-      :src="`https://res.cloudinary.com/nuxt/image/upload/f_auto,q_auto/${showcase.screenshotUrl}`"
-      :alt="showcase.hostname"
-      width="800"
-      height="600"
-      loading="lazy"
-      class="absolute inset-0 object-cover"
-    >
+    <div class="flex flex-col">
+      <div class="flex-1 min-h-0">
+        <img
+          :src="`https://res.cloudinary.com/nuxt/image/upload/f_auto,q_auto/${showcase.screenshotUrl}`"
+          :alt="showcase.hostname"
+          loading="lazy"
+          class="object-cover object-top w-full h-full"
+        >
+      </div>
 
-    <div class="absolute inset-0">
-      <div class="absolute inset-x-0 bottom-0 px-4 py-3 u-bg-gray-50">
+      <div class="px-4 py-3 u-bg-gray-50">
         <h2 class="font-semibold truncate u-text-gray-900">
-          {{ showcase.title }}
+          {{ showcase.title || showcase.hostname }}
         </h2>
         <p class="text-sm truncate u-text-gray-500">
           {{ showcase.hostname }}
