@@ -30,22 +30,22 @@ const fetchOrbitAndPaginate = async (url: string, { headers = {}, params = {}, m
 }
 
 export default defineCachedEventHandler(async (event) => {
-  const { time, limit = 100 } = useQuery(event)
+  const date = event.context.params.date
 
   // Fetch Orbit members
   const { data: members } = await fetchOrbitAndPaginate('/nuxtjs/members', {
     params: {
       identity: 'github',
-      items: 100,
+      items: 120,
       sort: 'activities_count',
-      start_date: time
+      start_date: date
     },
     maxPage: 1
   })
 
   const nuxters = members
     .filter(member => !member.attributes.tags.includes('bot'))
-    .slice(0, Number(limit))
+    .slice(0, 100)
     .map((member) => {
       const m = member.attributes
       return {
