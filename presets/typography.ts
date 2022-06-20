@@ -4,16 +4,36 @@ export default theme => ({
   DEFAULT: {
     css: {
       h1: {
-        fontWeight: '600'
+        fontWeight: theme('fontWeight.semibold')
+      },
+      h2: {
+        fontWeight: theme('fontWeight.semibold')
+      },
+      h3: {
+        fontWeight: theme('fontWeight.semibold')
+      },
+      h4: {
+        fontWeight: theme('fontWeight.semibold')
+      },
+      'h1 a, h2 a, h3 a, h4 a': {
+        borderBottom: 'none !important'
       },
       a: {
-        textDecoration: 'none'
+        textDecoration: 'none',
+        borderBottom: `1px solid ${theme('colors.primary.300')}`
+      },
+      'a:hover': {
+        borderBottomWidth: '2px'
+      },
+      'a code': {
+        color: 'inherit',
+        fontWeight: 'inherit'
       },
       pre: {
         margin: '0'
       },
       code: {
-        backgroundColor: 'var(--tw-prose-pre-bg)',
+        backgroundColor: 'var(--tw-prose-code-bg)',
         padding: '0.25rem 0.375rem',
         borderRadius: '0.375rem'
       },
@@ -23,6 +43,18 @@ export default theme => ({
       'code::after': {
         content: ''
       }
+    }
+  },
+  dark: {
+    css: {
+      a: {
+        borderBottomColor: theme('colors.primary.400')
+      }
+    }
+  },
+  invert: {
+    css: {
+      '--tw-prose-code-bg': 'var(--tw-prose-invert-code-bg)'
     }
   },
   // TailwindCSS uses imported colors instead of the theme: https://github.com/tailwindlabs/tailwindcss-typography/blob/master/src/styles.js#L964
@@ -40,8 +72,9 @@ export default theme => ({
       '--tw-prose-quote-borders': theme('colors.gray.200'),
       '--tw-prose-captions': theme('colors.gray.500'),
       '--tw-prose-code': theme('colors.gray.900'),
-      '--tw-prose-pre-code': theme('colors.gray.900'), // Default: 'colors.gray.200'
-      '--tw-prose-pre-bg': theme('colors.gray.50'), // Default: 'colors.gray.800'
+      '--tw-prose-pre-code': theme('colors.gray.200'),
+      '--tw-prose-pre-bg': theme('colors.gray.900'), // Default: 'colors.gray.800'
+      '--tw-prose-code-bg': theme('colors.gray.50'),
       '--tw-prose-th-borders': theme('colors.gray.300'),
       '--tw-prose-td-borders': theme('colors.gray.200'),
       '--tw-prose-invert-body': theme('colors.gray.300'),
@@ -56,8 +89,9 @@ export default theme => ({
       '--tw-prose-invert-quote-borders': theme('colors.gray.700'),
       '--tw-prose-invert-captions': theme('colors.gray.400'),
       '--tw-prose-invert-code': theme('colors.white'),
-      '--tw-prose-invert-pre-code': theme('colors.white'), // Default: 'colors.gray.300'
+      '--tw-prose-invert-pre-code': theme('colors.gray.300'),
       '--tw-prose-invert-pre-bg': theme('colors.gray.900'), // Default: 'rgb(0 0 0 / 50%)'
+      '--tw-prose-invert-code-bg': theme('colors.gray.900'),
       '--tw-prose-invert-th-borders': theme('colors.gray.600'),
       '--tw-prose-invert-td-borders': theme('colors.gray.700')
     }
