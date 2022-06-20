@@ -1,6 +1,6 @@
-import { unref, Ref } from 'vue'
+import { unref } from 'vue'
 import type { Awareness } from 'y-protocols/awareness'
-import colors from '~/presets/colors'
+import colors from '../../../presets/colors'
 import type { User } from '~/types'
 
 const cursorColorKeys = [
@@ -34,8 +34,13 @@ const pickColor = (palette: string[], exclude: string[]) => {
   return palette[Math.floor(Math.random() * palette.length)]
 }
 
+const getUser = (): User => {
+  const strapiUser = typeof useStrapiUser === 'function' && useStrapiUser()
+  return (unref(strapiUser) || { username: 'Anonymous' }) as User
+}
+
 export const setCursor = (awareness: Awareness) => {
-  const name = (unref(useStrapiUser() as Ref<User>) || {}).username || 'Anonymous'
+  const name = getUser().username
 
   awareness.setLocalStateField('user', { name })
 
