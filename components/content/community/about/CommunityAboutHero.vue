@@ -14,6 +14,7 @@
           :key="index"
           v-bind="button"
           size="lg"
+          truncate
         />
       </div>
     </template>
