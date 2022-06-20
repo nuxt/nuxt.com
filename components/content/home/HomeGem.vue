@@ -79,9 +79,9 @@ gltfLoader.load('/assets/home/gem2.glb', function (gltf) {
   })
 })
 
-onMounted(async () => {
-  const dat = await import('dat.gui').then(m => m.default || m)
-  const gui = new dat.GUI()
+onMounted(() => {
+  // const dat = await import('dat.gui').then(m => m.default || m)
+  // const gui = new dat.GUI()
 
   // Camera
   const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 400)
@@ -90,7 +90,7 @@ onMounted(async () => {
 
   // Controls
   const controls = new OrbitControls(camera, renderer.domElement)
-  controls.target = gem.position
+  // controls.target = gem.position
   controls.enableDamping = true
   controls.dampingFactor = 0.05
   controls.enableZoom = false
@@ -98,16 +98,15 @@ onMounted(async () => {
   controls.maxPolarAngle = Math.PI * 0.5
   controls.minPolarAngle = Math.PI * 0.5
 
-  console.log(controls)
   controls.update()
 
   // GUI
-  const gemMaterialFolder = gui.addFolder('Gem material')
-  gemMaterialFolder.add(gemMaterial, 'metalness', 0, 1).step(0.01).onChange(function (value) { gemMaterial.metalness = value })
-  gemMaterialFolder.add(gemMaterial, 'roughness', 0, 1).step(0.1).onChange(function (value) { gemMaterial.roughness = value })
-  gemMaterialFolder.add(gemMaterial, 'transmission', 0, 1).step(0.01).onChange(function (value) { gemMaterial.transmission = value })
-  gemMaterialFolder.add(gemMaterial, 'thickness', 0, 10).step(0.1).onChange(function (value) { gemMaterial.thickness = value })
-  gemMaterialFolder.add(gemMaterial, 'envMapIntensity', 0, 10).step(0.1).onChange(function (value) { gemMaterial.envMapIntensity = value })
+  // const gemMaterialFolder = gui.addFolder('Gem material')
+  // gemMaterialFolder.add(gemMaterial, 'metalness', 0, 1).step(0.01).onChange(function (value) { gemMaterial.metalness = value })
+  // gemMaterialFolder.add(gemMaterial, 'roughness', 0, 1).step(0.1).onChange(function (value) { gemMaterial.roughness = value })
+  // gemMaterialFolder.add(gemMaterial, 'transmission', 0, 1).step(0.01).onChange(function (value) { gemMaterial.transmission = value })
+  // gemMaterialFolder.add(gemMaterial, 'thickness', 0, 10).step(0.1).onChange(function (value) { gemMaterial.thickness = value })
+  // gemMaterialFolder.add(gemMaterial, 'envMapIntensity', 0, 10).step(0.1).onChange(function (value) { gemMaterial.envMapIntensity = value })
 
   // Renderer
   document.getElementById('gemAnim').appendChild(renderer.domElement)
@@ -148,8 +147,5 @@ onMounted(async () => {
 canvas {
   height: 475px;
   width: 475px;
-}
-.dg{
-  z-index: 1000 !important;
 }
 </style>
