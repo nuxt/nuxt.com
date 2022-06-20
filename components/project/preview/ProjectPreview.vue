@@ -112,11 +112,14 @@ const src = unref(previewUrlWithPath.value)
 
 watch(file, postMessage)
 
-whenever(and(useMagicKeys().meta_period, not(isOpen)), () => {
-  isOpen.value = true
+whenever(and(useMagicKeys().meta_period, not(isExpand)), () => {
+  if (!isOpen.value) {
+    isOpen.value = true
+  }
+  isExpand.value = true
 })
-whenever(and(useMagicKeys().escape, isOpen), () => {
-  isOpen.value = false
+whenever(and(useMagicKeys().escape, isOpen, isExpand), () => {
+  isExpand.value = false
 })
 
 // Methods
