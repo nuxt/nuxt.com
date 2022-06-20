@@ -3,7 +3,7 @@
     <h2 class="text-4xl font-semibold text-center text-white">
       <Markdown :use="$slots.title" unwrap="p" />
     </h2>
-    <ul class="grid items-center justify-center grid-cols-2 sm:grid-cols-6 xl:grid-cols-5 place-items-center gap-x-4 sm:gap-x-16">
+    <ul class="grid items-center justify-center grid-cols-2 gap-4 sm:grid-cols-6 xl:grid-cols-5 place-items-center sm:gap-x-16">
       <Markdown :use="$slots.items" unwrap="p" />
     </ul>
   </UContainer>
