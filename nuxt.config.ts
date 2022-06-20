@@ -1,7 +1,5 @@
 import { defineNuxtConfig } from 'nuxt'
 import preset from './presets'
-import colors from './presets/colors'
-import typography from './presets/typography'
 
 // https://v3.nuxtjs.org/guide/directory-structure/nuxt.config
 export default defineNuxtConfig({
@@ -56,36 +54,6 @@ export default defineNuxtConfig({
       gray: 'zinc'
     },
     preset
-  },
-  tailwindcss: {
-    config: {
-      theme: {
-        colors,
-        extend: {
-          typography,
-          fontFamily: {
-            sans: '"RoobertPRO", sans-serif'
-          },
-          linearBorderGradients: ({ theme }) => ({
-            colors: {
-              gray: [theme('colors.gray.900')],
-              gradient: [colors.green[400], colors.teal[400], colors.indigoblue[400]]
-            },
-            background: theme('colors')
-          })
-        }
-      },
-      plugins: [
-        require('@tailwindcss/typography'),
-        require('tailwindcss-border-gradient-radius')
-      ],
-      content: [
-        'presets/*.ts',
-        'content/**/*.md',
-        'editor/**/*.vue'
-      ],
-      safelist: [12, 24, 36, 48, 60, 72, 84, 96, 108, 120].map(number => `pl-[${number}px]`)
-    }
   },
   content: {
     highlight: {
