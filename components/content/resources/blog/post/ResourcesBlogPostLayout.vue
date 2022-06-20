@@ -57,7 +57,7 @@
             <div class="dark">
               <ResourcesBlogPostCta
                 button-text="Get Started"
-                to="/docs/framework"
+                to="/docs"
                 image-path="/assets/resources/blog/nuxt.svg"
                 image-class="bottom-0 right-0"
               >

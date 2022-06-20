@@ -17,14 +17,14 @@
           <Hexagon class="h-20 w-22 u-text-gray-50" />
           <div class="absolute top-0 flex items-center justify-center w-full h-full ">
             <img
-              :src="`/assets/docs/framework/v3/commands/${colorMode.preference === 'dark' ? data.iconDark : data.icon}`"
+              :src="`/assets/docs/v3/commands/${colorMode.preference === 'dark' ? data.iconDark : data.icon}`"
               class="absolute w-12 h-12 transition-opacity duration-0"
               :alt="`${data.title} icon`"
               :class="isCurrentSection(index) ? 'opacity-0' : 'opacity-100'"
             >
             <img
               v-if="index !== commandsData.commands.length - 1"
-              :src="`/assets/docs/framework/v3/commands/${data.iconColor}`"
+              :src="`/assets/docs/v3/commands/${data.iconColor}`"
               class="absolute w-12 h-12 transition-opacity duration-0"
               :alt="`${data.title} icon`"
               :class="isCurrentSection(index) ? 'opacity-100' : 'opacity-0'"
@@ -55,7 +55,7 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 
-const { data: commandsData } = await useAsyncData('commands', () => queryContent('/docs/framework/3.x/_collections/commands').findOne())
+const { data: commandsData } = await useAsyncData('commands', () => queryContent('/docs/3.x/_collections/commands').findOne())
 
 const { currentSection, restartCounter, stopCounter } = useCounterAnimations()
 const colorMode = useColorMode()
