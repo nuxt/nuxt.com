@@ -10,13 +10,13 @@
         icon="mdi:source-branch"
         variant="gray"
         size="xs"
-        class="truncate"
+        class="hidden truncate lg:inline-flex"
         @click="openBranchesModal"
       >
         <span class="flex-auto truncate u-text-gray-700">{{ branch.name }}</span>
         <kbd class="flex-shrink-0 hidden ml-3 font-sans text-xs font-semibold sm:inline u-text-gray-400"><abbr title="Command" class="no-underline">⌘</abbr> B</kbd>
       </UButton>
-      <UButton icon="heroicons-outline:search" variant="gray" size="xs" class="truncate" @click="openFilesModal">
+      <UButton icon="heroicons-outline:search" variant="gray" size="xs" class="hidden truncate lg:inline-flex" @click="openFilesModal">
         <span class="flex-auto truncate u-text-gray-700">Search</span>
         <kbd class="flex-shrink-0 hidden ml-3 font-sans text-xs font-semibold sm:inline u-text-gray-400"><abbr title="Command" class="no-underline">⌘</abbr> K</kbd>
       </UButton>

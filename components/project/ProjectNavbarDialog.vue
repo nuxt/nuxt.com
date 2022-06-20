@@ -19,7 +19,10 @@
     </template>
 
     <ProjectContentFilesTree v-if="isTreeOpen" :tree="selectedTree" class="flex-1 py-2 overflow-y-auto" @select="isOpen = false" />
-    <UVerticalNavigation v-else :links="mobileLinks" class="flex-1 px-2 py-4 overflow-y-scroll sm:px-4" />
+    <div v-else class="flex flex-col justify-between flex-1">
+      <UVerticalNavigation :links="mobileLinks[0]" class="px-2 py-4 overflow-y-scroll sm:px-4" />
+      <UVerticalNavigation :links="mobileLinks[1]" class="px-2 py-4 overflow-y-scroll sm:px-4" />
+    </div>
   </USlideover>
 </template>
 
@@ -34,7 +37,7 @@ const props = defineProps({
     default: false
   },
   links: {
-    type: Array as PropType<{ to: RouteLocationNormalized, icon: string, label: string, badge: boolean }[]>,
+    type: Array as PropType<{ to: RouteLocationNormalized, icon: string, label: string, badge: boolean, click: Function | null }[][]>,
     default: () => []
   }
 })
@@ -79,7 +82,10 @@ const selectedTree: ComputedRef<File[]> = computed(() => {
   }
 })
 
-const mobileLinks = computed(() => props.links.map(link => ({ ...link, click: () => onLinkClick(link) })))
+const mobileLinks = computed(() => props.links.map(subLinks => subLinks.map(link => ({
+  ...link,
+  click: () => onLinkClick(link)
+}))))
 
 // Watch
 
@@ -107,7 +113,9 @@ watch(() => route.fullPath, () => {
 // Methods
 
 function onLinkClick (link) {
-  if (['@team-project-content', '@team-project-media'].includes(link.to.name) && link.to.name === route.name) {
+  if (link.click) {
+    link.click()
+  } else if (['@team-project-content', '@team-project-media'].includes(link.to.name) && link.to.name === route.name) {
     isTreeOpen.value = true
     return
   }
