@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
 import type { WritableComputedRef, Ref } from 'vue'
-import { useMagicKeys, whenever } from '@vueuse/core'
+import { useMagicKeys, whenever, and } from '@vueuse/core'
 import { getPathName } from '~/utils/tree'
 import type { GitHubFile, Project } from '~/types'
 
@@ -147,6 +147,9 @@ const actions = computed(() => ([{
 
 whenever(useMagicKeys().meta_k, () => {
   isOpen.value = !isOpen.value
+})
+whenever(and(useMagicKeys().escape, isOpen), () => {
+  isOpen.value = false
 })
 
 // Methods

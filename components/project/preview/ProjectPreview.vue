@@ -86,7 +86,7 @@
 
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import { useEventListener } from '@vueuse/core'
+import { useEventListener, useMagicKeys, whenever, and, not } from '@vueuse/core'
 import { getRoutePath, destructurePathName } from '~/utils/tree'
 import type { Project } from '~/types'
 
@@ -111,6 +111,13 @@ const src = unref(previewUrlWithPath.value)
 // Watch
 
 watch(file, postMessage)
+
+whenever(and(useMagicKeys().meta_period, not(isOpen)), () => {
+  isOpen.value = true
+})
+whenever(and(useMagicKeys().escape, isOpen), () => {
+  isOpen.value = false
+})
 
 // Methods
 
