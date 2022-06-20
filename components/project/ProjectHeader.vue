@@ -69,6 +69,7 @@
 
 <script setup lang="ts">
 import type { Ref } from 'vue'
+import { useMagicKeys, whenever, and, or, not } from '@vueuse/core'
 import type { Project } from '~/types'
 
 const project: Ref<Project> = inject('project')
@@ -96,6 +97,21 @@ const deployOptions = [[{
   label: 'Enter project url',
   to: { name: '@team-project-settings' }
 }]]
+
+const { meta_s: metaS } = useMagicKeys({
+  passive: false,
+  onEventFired (e) {
+    if (e.metaKey && e.key === 's' && e.type === 'keydown') {
+      e.preventDefault()
+    }
+  }
+})
+
+// Watch
+
+whenever(and(metaS, or(isDraftContent, isDraftMedia), not(loading)), onCommitClick)
+
+// Methods
 
 async function onCommitClick () {
   const callbackAfterCommit = () => {
