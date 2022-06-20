@@ -1,7 +1,7 @@
 <template>
   <div class="relative flex flex-col-reverse gap-8 lg:grid lg:grid-cols-10">
     <div :class="{ 'col-span-10 lg:col-span-8': !!$route.params.slug, 'col-span-10': !$route.params.slug }">
-      <DocsPageHeader v-if="page" />
+      <DocsPageHeader v-if="$route.params.slug" />
 
       <slot />
     </div>
