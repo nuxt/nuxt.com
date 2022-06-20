@@ -25,7 +25,7 @@
     </div>
 
     <div v-if="branches.length" class="flex items-center min-w-0 gap-3">
-      <ProjectHeaderUsers />
+      <ProjectHeaderUsers class="hidden lg:flex" />
 
       <UDropdown v-if="!project.url" :items="deployOptions">
         <UButton label="Deploy" variant="secondary" size="xs" icon="heroicons-outline:chevron-down" trailing />
