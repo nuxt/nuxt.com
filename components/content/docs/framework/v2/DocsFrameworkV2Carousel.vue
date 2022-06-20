@@ -43,11 +43,11 @@ import 'swiper/css/pagination'
 import { EffectCoverflow, Pagination } from 'swiper'
 
 const showcases = ref([
-  '/assets/docs/framework/v2/showcase-1.png',
-  '/assets/docs/framework/v2/showcase-2.png',
-  '/assets/docs/framework/v2/showcase-3.png',
-  '/assets/docs/framework/v2/showcase-4.png',
-  '/assets/docs/framework/v2/showcase-5.png'
+  '/assets/docs/v2/showcase-1.png',
+  '/assets/docs/v2/showcase-2.png',
+  '/assets/docs/v2/showcase-3.png',
+  '/assets/docs/v2/showcase-4.png',
+  '/assets/docs/v2/showcase-5.png'
 ])
 </script>
 
