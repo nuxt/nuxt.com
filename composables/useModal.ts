@@ -3,8 +3,15 @@ import { createApp } from 'vue'
 
 const container: Ref<HTMLElement | null> = ref(null)
 
+let modal
+
 function open (component: Component, props = {}) {
-  const modal = createApp(component, {
+  // unmount previous modal
+  if (modal) {
+    modal.unmount()
+  }
+
+  modal = createApp(component, {
     ...props,
     onClose () {
       modal.unmount()

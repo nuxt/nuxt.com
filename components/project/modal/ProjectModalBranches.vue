@@ -137,6 +137,9 @@ const notUsingInput = computed(() => !(activeElement.value?.tagName === 'INPUT' 
 whenever(and(useMagicKeys().meta_b, notUsingInput), () => {
   isOpen.value = !isOpen.value
 })
+whenever(and(useMagicKeys().escape, isOpen), () => {
+  isOpen.value = false
+})
 
 watch(isOpen, async (value) => {
   if (value) {
