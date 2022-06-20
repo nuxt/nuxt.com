@@ -8,7 +8,7 @@
       <img :src="`https://github.com/${repository.owner.login}.png`" class="inline-block w-4 h-4 rounded">
     </div>
 
-    <p class="mt-2 u-text-gray-500 text-sm line-clamp-2 min-h-[40px] mb-4">
+    <p class="mt-2 u-text-gray-500 text-sm line-clamp-2 sm:min-h-[40px] mb-4">
       {{ repository.description }}
     </p>
 
