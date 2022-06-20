@@ -1,6 +1,6 @@
 <template>
   <li>
-    <a :href="authorUrl" rel="author">
+    <a :href="authorUrl" rel="author" target="_blank">
       <div class="relative">
         <QuoteTestimonials class="absolute top-0 w-8 h-8 left-[9px] opacity-70 u-text-gray-200" />
         <div class="relative pt-4 pl-8">

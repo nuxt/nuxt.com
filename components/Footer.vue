@@ -14,7 +14,7 @@
           <span class="text-sm u-text-gray-400">© 2022 Nuxt</span>
         </div>
 
-        <ul class="flex text-sm gap-x-6">
+        <ul class="flex flex-wrap justify-center text-sm gap-x-6 gap-y-2">
           <li v-for="link in links" :key="link.title">
             <NuxtLink :to="link._path" class="font-medium u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900" active-class="font-medium u-text-gray-900">
               {{ link.title }}
