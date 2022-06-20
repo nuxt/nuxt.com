@@ -1,5 +1,5 @@
 <template>
-  <UContainer padded class="flex flex-col items-center justify-center py-20 text-center gap-y-12 u-bg-white">
+  <UContainer padded class="flex flex-col items-center justify-center py-32 text-center gap-y-12 u-bg-white">
     <h2 class="text-4xl font-semibold u-text-gray-900 leading-[140%]">
       <Markdown :use="$slots.title" unwrap="p" />
     </h2>
