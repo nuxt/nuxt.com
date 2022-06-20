@@ -21,7 +21,7 @@
       <Logo v-if="module.type === 'official'" class="w-4 h-4" />
     </div>
 
-    <p class="u-text-gray-500 text-sm line-clamp-2 min-h-[40px] mb-4">
+    <p class="u-text-gray-500 text-sm line-clamp-2 sm:min-h-[40px] mb-4">
       {{ module.description }}
     </p>
 
