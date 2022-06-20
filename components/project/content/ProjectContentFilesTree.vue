@@ -25,17 +25,17 @@
               {{ file.name }}
             </span>
           </div>
-          <div class="items-center gap-1.5 -mr-1 flex group-hover:hidden">
+          <div class="items-center gap-1.5 -mr-1 flex lg:group-hover:hidden">
             <ProjectContentFilesTreeUsers :file="file" />
           </div>
-          <div class="items-center gap-1.5 -mr-1 hidden group-hover:flex">
+          <div class="items-center gap-1.5 -mr-1 hidden lg:group-hover:flex">
             <UButton
               v-if="isFile(file) && isDraft(file)"
               size="xxs"
               class="-my-0.5 -mr-0.5"
               variant="transparent-hover"
               icon="heroicons-outline:reply"
-              @click.stop="openRevertModal(file.path)"
+              @click.stop="revertFile(file.path)"
             />
             <UButton
               v-if="isDir(file)"
@@ -43,7 +43,7 @@
               class="-my-0.5 -mr-0.5"
               variant="transparent-hover"
               icon="heroicons-outline:plus"
-              @click.stop="openCreateModal(file.path)"
+              @click.stop="createFile(file.path)"
             />
             <UButton
               v-if="isFile(file) && !isDeleted(file)"
@@ -51,7 +51,7 @@
               class="-my-0.5 -mr-0.5"
               variant="transparent-hover"
               icon="heroicons-outline:pencil"
-              @click.stop="openRenameModal(file.path)"
+              @click.stop="renameFile(file.path)"
             />
             <UButton
               v-if="isFile(file) && !isDeleted(file)"
@@ -59,7 +59,7 @@
               class="-my-0.5 -mr-0.5"
               variant="transparent-hover"
               icon="heroicons-outline:trash"
-              @click.stop="openDeleteModal(file.path)"
+              @click.stop="deleteFile(file.path)"
             />
           </div>
         </div>
@@ -69,13 +69,14 @@
         v-if="isDir(file) && isDirOpen(file)"
         :level="level + 1"
         :tree="file.children"
+        @select="$emit('select')"
       />
     </li>
   </ul>
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue'
+import type { PropType, Ref } from 'vue'
 import type { File, Project, Root, GitHubFile } from '~/types'
 
 defineProps({
@@ -89,11 +90,13 @@ defineProps({
   }
 })
 
-const project: Project = inject('project')
-const root: Root = inject('root')
+const project: Ref<Project> = inject('project')
+const root: Ref<Root> = inject('root')
 
-const { file: selectedFile, select, openCreateModal, openRenameModal, openRevertModal, openDeleteModal } = useProjectFiles(project, root)
-const { openedDirs, openDir, renameFiles } = useProjectFilesTree(project, root)
+const emit = defineEmits(['select'])
+
+const { file: selectedFile, select, openCreateModal, openRenameModal, openRevertModal, openDeleteModal } = useProjectFiles(project.value, root.value)
+const { openedDirs, openDir, renameFiles } = useProjectFilesTree(project.value, root.value)
 
 const itemRefs = ref([])
 
@@ -130,6 +133,7 @@ const selectFile = (file: File) => {
   // Prevent click when clicking on selected file
   if (selectedFile.value && selectedFile.value.path === file.path) {
     scrollToSelectedFile()
+    emit('select')
     return
   }
 
@@ -143,6 +147,24 @@ const selectFile = (file: File) => {
   }
 
   select(file as unknown as GitHubFile)
+  emit('select')
+}
+
+const revertFile = (path) => {
+  openRevertModal(path)
+  emit('select')
+}
+const createFile = (path) => {
+  openCreateModal(path)
+  emit('select')
+}
+const renameFile = (path) => {
+  openRenameModal(path)
+  emit('select')
+}
+const deleteFile = (path) => {
+  openDeleteModal(path)
+  emit('select')
 }
 
 const canDragFile = (file) => {

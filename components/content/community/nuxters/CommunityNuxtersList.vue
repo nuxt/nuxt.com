@@ -11,23 +11,25 @@
         <!-- <CommunityNuxtersFilterSort /> -->
       </div>
     </div>
-    <div v-if="filteredNuxters.length" class="mt-12">
-      <ul v-if="!q" role="list" class="grid grid-cols-6 gap-8">
-        <Component :is="nuxter1Component" v-if="nuxter1" :nuxter="nuxter1" />
-        <Component :is="nuxter2Component" v-if="nuxter2" :nuxter="nuxter2" />
-        <Component :is="nuxter2Component" v-if="nuxter3" :nuxter="nuxter3" />
+    <div class="min-h-[calc(100vh-18rem)]">
+      <div v-if="filteredNuxters.length" class="mt-8">
+        <ul v-if="!q" role="list" class="grid grid-cols-6 gap-8">
+          <Component :is="nuxter1Component" v-if="nuxter1" :nuxter="nuxter1" />
+          <Component :is="nuxter2Component" v-if="nuxter2" :nuxter="nuxter2" />
+          <Component :is="nuxter2Component" v-if="nuxter3" :nuxter="nuxter3" />
 
-        <CommunityNuxtersNuxterSmall v-for="nuxter in otherNuxters" :key="nuxter.github" :nuxter="nuxter" />
-      </ul>
-      <ul v-else role="list" class="grid grid-cols-6 gap-8">
-        <CommunityNuxtersNuxterLarge v-for="nuxter in filteredNuxters" :key="nuxter.github" :nuxter="nuxter" />
-      </ul>
-    </div>
-    <div v-else class="relative flex flex-col items-center gap-6 mt-16 lg:mt-24">
-      <UIcon name="fa-brands:github" class="w-16 h-16 u-text-gray-600" />
-      <span class="text-xl font-medium text-center u-text-gray-700">
-        There is no Nuxters for <b>{{ q }}</b> yet.
-      </span>
+          <CommunityNuxtersNuxterSmall v-for="nuxter in otherNuxters" :key="nuxter.github" :nuxter="nuxter" />
+        </ul>
+        <ul v-else role="list" class="grid grid-cols-6 gap-8">
+          <CommunityNuxtersNuxterLarge v-for="nuxter in filteredNuxters" :key="nuxter.github" :nuxter="nuxter" />
+        </ul>
+      </div>
+      <div v-else class="relative flex flex-col items-center gap-6 mt-16 lg:mt-24">
+        <UIcon name="fa-brands:github" class="w-16 h-16 u-text-gray-600" />
+        <span class="text-xl font-medium text-center u-text-gray-700">
+          There is no Nuxters for <b>{{ q }}</b> yet.
+        </span>
+      </div>
     </div>
   </Page>
 </template>

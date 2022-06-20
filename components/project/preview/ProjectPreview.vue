@@ -85,16 +85,17 @@
 </template>
 
 <script setup lang="ts">
-import { useEventListener } from '@vueuse/core'
+import type { Ref } from 'vue'
+import { useEventListener, useMagicKeys, whenever, and, not } from '@vueuse/core'
 import { getRoutePath, destructurePathName } from '~/utils/tree'
 import type { Project } from '~/types'
 
-const project: Project = inject('project')
+const project: Ref<Project> = inject('project')
 
 const iframe = ref(null)
 const loading = ref(true)
 
-const { file, computedFiles, select: selectFile, previewUrl } = useProjectFiles(project, 'content')
+const { file, computedFiles, select: selectFile, previewUrl } = useProjectFiles(project.value, 'content')
 const { el, style, iframeStyle, isOpen, isExpand, isDiff, reset } = useProjectPreview()
 
 const previewUrlWithPath = computed(() => {
@@ -110,6 +111,16 @@ const src = unref(previewUrlWithPath.value)
 // Watch
 
 watch(file, postMessage)
+
+whenever(and(useMagicKeys().meta_period, not(isExpand)), () => {
+  if (!isOpen.value) {
+    isOpen.value = true
+  }
+  isExpand.value = true
+})
+whenever(and(useMagicKeys().escape, isOpen, isExpand), () => {
+  isExpand.value = false
+})
 
 // Methods
 

@@ -1,5 +1,5 @@
 <template>
-  <UModal v-model="isOpen" width-class="max-w-xl" body-class="relative flex flex-col overflow-hidden h-80">
+  <UModal v-model="isOpen" width-class="max-w-xl" body-class="relative flex flex-col h-[calc(100vh-2rem)] overflow-hidden lg:h-80">
     <ProjectCombobox
       :items="currentFiles"
       items-label="Files"
@@ -11,8 +11,8 @@
 </template>
 
 <script setup lang="ts">
-import type { WritableComputedRef } from 'vue'
-import { useMagicKeys, whenever } from '@vueuse/core'
+import type { WritableComputedRef, Ref } from 'vue'
+import { useMagicKeys, whenever, and } from '@vueuse/core'
 import { getPathName } from '~/utils/tree'
 import type { GitHubFile, Project } from '~/types'
 
@@ -23,7 +23,7 @@ const props = defineProps({
   }
 })
 
-const project: Project = inject('project')
+const project: Ref<Project> = inject('project')
 
 const emit = defineEmits(['update:modelValue'])
 
@@ -39,7 +39,7 @@ const {
   openRenameModal: openRenameContentFileModal,
   openDeleteModal: openDeleteContentFileModal,
   openRevertModal: openRevertContentFileModal
-} = useProjectFiles(project, 'content')
+} = useProjectFiles(project.value, 'content')
 const {
   file: mediaFile,
   computedFiles: mediaFiles,
@@ -50,7 +50,7 @@ const {
   openRenameModal: openRenameMediaFileModal,
   openDeleteModal: openDeleteMediaFileModal,
   openRevertModal: openRevertMediaFileModal
-} = useProjectFiles(project, 'public')
+} = useProjectFiles(project.value, 'public')
 
 const refreshingFiles = ref(false)
 
@@ -147,6 +147,9 @@ const actions = computed(() => ([{
 
 whenever(useMagicKeys().meta_k, () => {
   isOpen.value = !isOpen.value
+})
+whenever(and(useMagicKeys().escape, isOpen), () => {
+  isOpen.value = false
 })
 
 // Methods

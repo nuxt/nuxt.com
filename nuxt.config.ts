@@ -1,7 +1,5 @@
 import { defineNuxtConfig } from 'nuxt'
 import preset from './presets'
-import colors from './presets/colors'
-import typography from './presets/typography'
 
 // https://v3.nuxtjs.org/guide/directory-structure/nuxt.config
 export default defineNuxtConfig({
@@ -57,28 +55,6 @@ export default defineNuxtConfig({
     },
     preset
   },
-  tailwindcss: {
-    config: {
-      theme: {
-        colors,
-        extend: {
-          typography,
-          fontFamily: {
-            sans: '"RoobertPRO", sans-serif'
-          }
-        }
-      },
-      plugins: [
-        require('@tailwindcss/typography')
-      ],
-      content: [
-        'presets/*.ts',
-        'content/**/*.md',
-        'editor/**/*.vue'
-      ],
-      safelist: [12, 24, 36, 48, 60, 72, 84, 96, 108, 120].map(number => `pl-[${number}px]`)
-    }
-  },
   content: {
     highlight: {
       theme: 'one-dark-pro',
@@ -86,7 +62,27 @@ export default defineNuxtConfig({
     },
     navigation: {
       fields: ['redirect']
-    }
+    },
+    sources: [
+      {
+        name: 'nuxt3-docs',
+        driver: 'github',
+        repo: 'nuxt/framework',
+        branch: 'feat/docus-docs',
+        dir: 'docs/content',
+        prefix: '/docs/framework/3.x',
+        token: process.env.GITHUB_TOKEN
+      },
+      {
+        name: 'nuxt2-docs',
+        driver: 'github',
+        repo: 'nuxt/nuxtjs.org',
+        branch: 'main',
+        dir: 'content/en/docs',
+        prefix: '/docs/framework/2.x',
+        token: process.env.GITHUB_TOKEN
+      }
+    ]
   },
   typescript: {
     shim: false

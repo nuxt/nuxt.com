@@ -39,7 +39,7 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 
-const { data: routingData } = await useAsyncData('file-system-routing', () => queryContent('/docs/framework/v3/_collections/routing').findOne())
+const { data: routingData } = await useAsyncData('file-system-routing', () => queryContent('/docs/framework/3.x/_collections/routing').findOne())
 
 const { currentSection, restartCounter, stopCounter } = useCounterAnimations()
 const colorMode = useColorMode()

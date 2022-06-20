@@ -14,12 +14,12 @@
         as="template"
       >
         <li :class="['flex justify-between select-none items-center rounded-md px-3 py-2 u-text-gray-400', active && 'u-bg-gray-100 u-text-gray-900', item.disabled ? 'cursor-not-allowed' : 'cursor-pointer']">
-          <div class="flex items-center">
-            <UIcon :name="item.icon" :class="['h-5 w-5', (item as GitHubFile).iconColor, (item as GitHubFile).iconClass]" aria-hidden="true" />
-            <div class="flex items-center ml-3 truncate u-text-gray-400" :class="{ 'opacity-50': item.disabled }">
+          <div class="flex items-center flex-1 min-w-0">
+            <UIcon :name="item.icon" :class="['h-5 w-5', (item as GitHubFile).iconColor, (item as GitHubFile).iconClass]" class="flex-shrink-0" aria-hidden="true" />
+            <div class="flex items-center flex-1 w-full ml-3 truncate u-text-gray-400" :class="{ 'opacity-50': item.disabled }">
               <span class="u-text-gray-700">{{ item.name || (item as any).label }}</span>
-              <span v-if="(item as GitHubFile).path" class="ml-1 text-xs italic truncate">{{ (item as GitHubFile).path }}</span>
-              <UTooltip v-if="(item as GitHubBranch).pull" placement="right" container-class="z-10 px-2" class="ml-3">
+              <span v-if="(item as GitHubFile).path" class="ml-1 text-xs italic">{{ (item as GitHubFile).path }}</span>
+              <UTooltip v-if="(item as GitHubBranch).pull" placement="right" container-class="z-10 px-2" class="flex-shrink-0 ml-3">
                 <UBadge size="sm">
                   <span class="font-normal">#{{ (item as GitHubBranch).pull.number }}</span>
                   <UIcon
@@ -35,7 +35,7 @@
               </UTooltip>
             </div>
           </div>
-          <div v-if="type !== 'actions'" class="ml-3">
+          <div v-if="type !== 'actions'" class="flex-shrink-0 ml-3">
             <span v-if="active" class="u-text-gray-500">Jump to...</span>
             <UAvatarGroup v-else :group="usersGroup(item)" size="xxs" />
           </div>
@@ -65,10 +65,10 @@ defineProps({
   }
 })
 
-const project: Project = inject('project')
+const project: Ref<Project> = inject('project')
 const activeUsers: Ref<SocketUser[]> = inject('activeUsers')
 
-const { branch } = useProjectBranches(project)
+const { branch } = useProjectBranches(project.value)
 
 function usersGroup (item: GitHubBranch | GitHubFile) {
   return activeUsers.value.reduce((acc, user) => {

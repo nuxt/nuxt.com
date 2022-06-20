@@ -17,10 +17,10 @@
 
         <div class="flex justify-center col-span-4 gap-x-8">
           <NuxtLink
-            v-for="(link, index) in filteredLinks"
+            v-for="(link, index) in links"
             :key="index"
-            :to="link._path"
-            :target="link.target"
+            :to="link.redirect || findBottomLink(link)"
+            :target="link.redirect && '_blank'"
             class="focus:outline-none"
             :class="{
               'u-text-gray-900 font-semibold': link.active || isActive(link),
@@ -40,7 +40,7 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps({
+defineProps({
   title: {
     type: String,
     default: null
@@ -57,10 +57,7 @@ const props = defineProps({
 
 const route = useRoute()
 const { hasScrolledPastSubNavbar } = useNavbarScroll()
-
-const filteredLinks = computed(() => {
-  return props.links.filter(l => !!l.title).map(child => ({ ...child, _path: child.redirect || child._path, target: child.redirect && '_blank' }))
-})
+const { findBottomLink } = useContent()
 
 function isActive (link) {
   return link.exact ? route.path === link._path : route.path.startsWith(link._path)

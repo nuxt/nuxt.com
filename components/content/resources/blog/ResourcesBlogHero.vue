@@ -20,7 +20,7 @@
           <UButton
             type="submit"
             submit
-            variant="primary"
+            variant="primary-gradient"
             :loading="loading"
             label="Subscribe"
             size="lg"

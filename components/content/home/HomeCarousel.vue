@@ -15,7 +15,7 @@
       </SwiperSlide>
     </Swiper>
     <div class="absolute top-0 left-0 w-[20px] sm:w-[50px] md:w-[100px] lg:w-[200px] xl:w-[300px] 2xl:w-[400px] h-full bg-gradient-to-r from-white dark:from-black to-transparent z-[1]" />
-    <div class="absolute top-0 right-0  w-[20px] sm:w-[50px] md:w-[100px] lg:w-[200px] 2xl:w-[400px] h-full bg-gradient-to-l from-white dark:from-black to-transparent z-[1]" />
+    <div class="absolute top-0 right-0  w-[20px] sm:w-[50px] md:w-[100px] lg:w-[200px] xl:w-[300px] 2xl:w-[400px] h-full bg-gradient-to-l from-white dark:from-black to-transparent z-[1]" />
   </UContainer>
 </template>
 

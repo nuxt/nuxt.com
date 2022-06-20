@@ -7,7 +7,7 @@ const config = useRuntimeConfig()
 let _mailjet = null
 export function useMailjet () {
   if (!_mailjet) {
-    _mailjet = Mailjet.connect(config.mailjet.apiKey, config.mailjet.secretKey)
+    _mailjet = Mailjet.apiConnect(config.mailjet.apiKey, config.mailjet.secretKey)
   }
   return _mailjet
 }
