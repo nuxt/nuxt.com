@@ -3,7 +3,7 @@
     <h3 class="text-5xl font-semibold u-text-gray-900">
       <Markdown :use="$slots.stat" unwrap="p" />
     </h3>
-    <p class="text-md u-text-gray-600">
+    <p class="u-text-gray-600">
       <Markdown :use="$slots.description" unwrap="p" />
     </p>
   </div>
