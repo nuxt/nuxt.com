@@ -70,7 +70,7 @@ const links = computed(() => {
   return [{
     title: 'Framework',
     icon: 'heroicons-outline:book-open',
-    _path: '/docs/framework'
+    _path: '/docs'
   }, {
     title: 'Modules',
     icon: 'heroicons-outline:sparkles',

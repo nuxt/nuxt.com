@@ -18,7 +18,7 @@
           :class="isCurrentSection(index) ? 'opacity-0' : 'opacity-100'"
         >
           <img
-            :src="`/assets/docs/framework/v3/architecture/${colorMode.preference === 'dark' ? data.iconDark : data.icon}`"
+            :src="`/assets/docs/v3/architecture/${colorMode.preference === 'dark' ? data.iconDark : data.icon}`"
             class="transition duration-200 group-hover:opacity-0"
             :class="isCurrentSection(index) ? 'opacity-0' : 'opacity-100'"
           >
@@ -28,7 +28,7 @@
           :class="isCurrentSection(index) ? 'opacity-100' : 'opacity-0'"
         >
           <img
-            :src="`/assets/docs/framework/v3/architecture/${data.iconColor}`"
+            :src="`/assets/docs/v3/architecture/${data.iconColor}`"
             class="transition duration-200 opacity-0 group-hover:opacity-100"
             :class="isCurrentSection(index) ? 'opacity-100' : 'opacity-0'"
           >
@@ -54,7 +54,7 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 
-const { data: architectureData } = await useAsyncData('architecture', () => queryContent('/docs/framework/3.x/_collections/architecture').findOne())
+const { data: architectureData } = await useAsyncData('architecture', () => queryContent('/docs/3.x/_collections/architecture').findOne())
 
 const { currentSection, stopCounter, restartCounter } = useCounterAnimations()
 const colorMode = useColorMode()

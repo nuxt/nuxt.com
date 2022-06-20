@@ -18,7 +18,7 @@
           :class="{ 'opacity-0': isCurrentSection(index) }"
         >
           <img
-            :src="`/assets/docs/framework/v3/deploy/${colorMode.preference === 'dark' ? data.iconDark : data.icon}`"
+            :src="`/assets/docs/v3/deploy/${colorMode.preference === 'dark' ? data.iconDark : data.icon}`"
             class="transition duration-200 group-hover:opacity-0"
             :class="{ 'opacity-0': isCurrentSection(index) }"
           >
@@ -28,7 +28,7 @@
           :class="isCurrentSection(index) ? 'opacity-100' : 'opacity-0'"
         >
           <img
-            :src="`/assets/docs/framework/v3/deploy/${data.iconColor}`"
+            :src="`/assets/docs/v3/deploy/${data.iconColor}`"
             class="transition duration-200 opacity-0 group-hover:opacity-100"
             :class="isCurrentSection(index) ? 'opacity-100' : 'opacity-0'"
           >
@@ -57,7 +57,7 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 
-const { data: deployData } = await useAsyncData('deply', () => queryContent('/docs/framework/3.x/_collections/deploy').findOne())
+const { data: deployData } = await useAsyncData('deply', () => queryContent('/docs/3.x/_collections/deploy').findOne())
 
 const { currentSection, restartCounter, stopCounter } = useCounterAnimations()
 const colorMode = useColorMode()

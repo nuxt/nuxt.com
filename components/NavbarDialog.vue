@@ -59,7 +59,7 @@ const selectedLink = ref(null)
 watch(
   () => route.fullPath,
   () => {
-    if (!route.fullPath.startsWith('/docs/framework')) {
+    if (!route.fullPath.startsWith('/docs')) {
       return
     }
 

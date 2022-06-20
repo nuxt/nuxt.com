@@ -70,7 +70,7 @@ export default defineNuxtConfig({
         repo: 'nuxt/framework',
         branch: 'feat/docus-docs',
         dir: 'docs/content',
-        prefix: '/docs/framework/3.x',
+        prefix: '/docs/3.x',
         token: process.env.GITHUB_TOKEN
       },
       {
@@ -79,7 +79,7 @@ export default defineNuxtConfig({
         repo: 'nuxt/nuxtjs.org',
         branch: 'main',
         dir: 'content/en/docs',
-        prefix: '/docs/framework/2.x',
+        prefix: '/docs/2.x',
         token: process.env.GITHUB_TOKEN
       }
     ]
