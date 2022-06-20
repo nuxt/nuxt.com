@@ -73,8 +73,6 @@ gltfLoader.load('/assets/home/gem.glb', function (gltf) {
     if (o.isMesh) { o.material = gemMaterial }
     gem.scale.set(1, 1, 1)
     gem.position.set(0, 0, 0)
-    gem.rotation.x = 0
-    gem.rotation.y = 0
     gem.rotation.z = 0.3
     scene.add(gem)
   })
