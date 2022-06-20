@@ -11,12 +11,12 @@
       <div class="flex gap-3">
         <span class="u-text-gray-500">Download extension:</span>
         <div class="flex gap-6">
-          <NuxtLink to="https://chrome.google.com/webstore/detail/vue-telescope/neaebjphlfplgdhedjdhcnpjkndddbpd" target="_blank" class="font-semibold u-text-gray-900 hover:underline">
+          <GradientNuxtLink to="https://chrome.google.com/webstore/detail/vue-telescope/neaebjphlfplgdhedjdhcnpjkndddbpd" target="_blank" class="font-semibold u-text-gray-900">
             Chrome
-          </NuxtLink>
-          <NuxtLink to="https://addons.mozilla.org/en/firefox/addon/vue-telescope/" target="_blank" class="font-semibold u-text-gray-900 hover:underline">
+          </GradientNuxtLink>
+          <GradientNuxtLink to="https://addons.mozilla.org/en/firefox/addon/vue-telescope/" target="_blank" class="font-semibold u-text-gray-900">
             Firefox
-          </NuxtLink>
+          </GradientNuxtLink>
         </div>
       </div>
     </template>
