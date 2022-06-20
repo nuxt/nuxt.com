@@ -66,15 +66,16 @@ if (colorMode.value === 'dark') {
   gemMaterial.reflectivity = 0.5
 }
 
-gltfLoader.load('/assets/home/gem2.glb', function (gltf) {
-  gem = gltf.scene.children[0].children.find((mesh) => mesh.type === 'Mesh')
+gltfLoader.load('/assets/home/gem.glb', function (gltf) {
+  gem = gltf.scene.children[0]
+
   gem.traverse((o) => {
     if (o.isMesh) { o.material = gemMaterial }
     gem.scale.set(1, 1, 1)
     gem.position.set(0, 0, 0)
-    gem.rotation.x = -1.6
-    gem.rotation.y = -0.2
-    gem.rotation.z = 0.47
+    gem.rotation.x = 0
+    gem.rotation.y = 0
+    gem.rotation.z = 0.3
     scene.add(gem)
   })
 })
@@ -134,7 +135,7 @@ onMounted(() => {
 
     requestAnimationFrame(animate)
     if (gem) {
-      gem.rotation.z += 0.01
+      gem.rotation.y += 0.01
     }
     controls.update()
     renderer.render(scene, camera)
