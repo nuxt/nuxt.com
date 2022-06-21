@@ -31,6 +31,7 @@
       <ProjectHeader
         :model-value="parsedContent ? parsedContent.matter : {}"
         @update:model-value="onMatterUpdate"
+        @create-file="openCreateFileModal('content')"
       >
         <template #extra-actions>
           <UButton

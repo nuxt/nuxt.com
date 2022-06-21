@@ -63,6 +63,15 @@
       <div v-if="branches.length" class="flex items-center flex-shrink-0 min-w-0 gap-3">
         <ProjectHeaderUsers class="hidden lg:flex" />
 
+        <UButton
+          v-if="['@team-project-content', '@team-project-media'].includes(route.name as string)"
+          variant="secondary"
+          size="xs"
+          icon="heroicons-outline:plus"
+          class="lg:hidden"
+          @click="onNewFile"
+        />
+
         <UDropdown v-if="!project.url" :items="deployOptions">
           <UButton
             label="Deploy"
@@ -136,7 +145,7 @@ defineProps({
   }
 })
 
-defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'createFile', 'uploadFile'])
 
 const project: Ref<Project> = inject('project')
 
@@ -199,6 +208,13 @@ const { meta_s: metaS } = useMagicKeys({
 whenever(and(metaS, or(isDraftContent, isDraftMedia), not(loading)), onCommitClick)
 
 // Methods
+function onNewFile () {
+  if (route.name === '@team-project-content') {
+    emit('createFile')
+  } else if (route.name === '@team-project-media') {
+    emit('uploadFile')
+  }
+}
 
 async function onCommitClick () {
   const callbackAfterCommit = () => {

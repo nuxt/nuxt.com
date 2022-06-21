@@ -17,26 +17,7 @@
         {{ project.name }}
       </NuxtLink>
 
-      <div class="flex justify-end flex-1">
-        <UButton
-          size="xs"
-          label="Create file"
-          variant="gray"
-          icon="heroicons-outline:plus"
-          truncate
-          :class="{ 'hidden': selectedLink !== 'content' || !isTreeOpen}"
-          @click="createFile"
-        />
-        <UButton
-          size="xs"
-          label="Upload file"
-          variant="gray"
-          icon="heroicons-outline:plus"
-          truncate
-          :class="{ 'hidden': selectedLink !== 'media' || !isTreeOpen}"
-          @click="uploadFile"
-        />
-      </div>
+      <div class="flex justify-end" />
     </template>
 
     <div class="flex flex-col justify-between flex-1 overflow-y-auto">
@@ -70,7 +51,6 @@ const project: Ref<Project> = inject('project')
 
 provide('root', root)
 
-const { openCreateModal: openCreateFileModal } = useProjectFiles(project.value, root.value)
 const { tree: contentTree } = useProjectFilesTree(project.value, 'content')
 const { tree: mediaTree } = useProjectFilesTree(project.value, 'public')
 
@@ -134,17 +114,6 @@ watch(() => route.fullPath, () => {
 { immediate: true })
 
 // Methods
-
-function createFile () {
-  openCreateFileModal('content')
-  isOpen.value = false
-}
-
-function uploadFile () {
-  // FIXME
-  // $refs.fileToUpload?.click?.()
-  isOpen.value = false
-}
 
 function onLinkClick (link) {
   if (link.click) {
