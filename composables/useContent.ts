@@ -45,7 +45,7 @@ export const useContent = () => {
   /**
    * Navigation fetching helper.
    */
-  const fetchNavigation = async (force: boolean = false) => {
+  const fetchNavigation = async ({ force = false }: { force?: boolean } = {}) => {
     if (navigation.value !== null && !force) { return }
 
     // @ts-ignore
@@ -55,13 +55,13 @@ export const useContent = () => {
   /**
    * Local page fetching helper.
    */
-  const fetchPage = async (force: boolean = false) => {
+  const fetchPage = async ({ force = false, querySurround = false }: { force?: boolean, querySurround?: boolean } = {}) => {
     if (page.value !== null && !force) { return }
 
     try {
       const [_page, _surround] = await Promise.all([
         queryContent().where({ _path: path.value }).findOne() as Promise<ParsedContent>,
-        queryContent()
+        querySurround && queryContent()
           .where({ _partial: { $not: true }, navigation: { $not: false } })
           .findSurround(path.value) as Promise<ParsedContent[]>
       ])
