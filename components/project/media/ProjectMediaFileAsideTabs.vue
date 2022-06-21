@@ -15,7 +15,7 @@
         {{ category }}
       </button>
 
-      <div class="flex items-center justify-end flex-1 h-full gap-3">
+      <div class="flex items-center justify-end flex-1 h-full gap-1.5 lg:hidden">
         <UButton
           v-if="isDraft(computedFile)"
           size="xs"

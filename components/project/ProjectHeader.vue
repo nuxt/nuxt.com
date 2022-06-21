@@ -32,7 +32,7 @@
       </div>
 
       <div class="flex items-center flex-1 min-w-0 gap-3 lg:hidden">
-        <UIcon :name="isOpen ? 'heroicons-outline:chevron-up' : 'heroicons-outline:chevron-down'" class="flex-shrink-0 w-6 h-6" @click="isOpen = !isOpen" />
+        <UIcon :name="isOpen ? 'heroicons-solid:chevron-up' : 'heroicons-solid:chevron-down'" class="flex-shrink-0 w-6 h-6 u-text-gray-700" @click="isOpen = !isOpen" />
 
         <div class="flex flex-col flex-1 min-w-0">
           <h2 class="font-medium truncate u-text-gray-900">
@@ -60,7 +60,7 @@
         </div>
       </div>
 
-      <div v-if="branches.length" class="flex items-center flex-shrink-0 min-w-0 gap-3">
+      <div v-if="branches.length" class="flex items-center flex-shrink-0 min-w-0 gap-1.5 lg:gap-3">
         <ProjectHeaderUsers class="hidden lg:flex" />
 
         <UButton
@@ -93,6 +93,16 @@
           trailing
           icon="heroicons-outline:external-link"
           variant="secondary"
+          class="hidden lg:inline-flex"
+        />
+        <UButton
+          v-if="previewUrl"
+          :to="previewUrl"
+          target="_blank"
+          size="xs"
+          icon="heroicons-outline:external-link"
+          variant="secondary"
+          class="lg:hidden"
         />
 
         <UButton
