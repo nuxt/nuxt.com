@@ -14,6 +14,30 @@
       >
         {{ category }}
       </button>
+
+      <div class="flex items-center justify-end flex-1 h-full gap-3">
+        <UButton
+          v-if="isDraft(computedFile)"
+          size="xs"
+          variant="secondary"
+          icon="heroicons-outline:reply"
+          @click.stop="revertFile(computedFile.path)"
+        />
+        <UButton
+          v-if="!isDeleted(computedFile)"
+          size="xs"
+          variant="secondary"
+          icon="heroicons-outline:pencil"
+          @click.stop="renameFile(computedFile.path)"
+        />
+        <UButton
+          v-if="!isDeleted(computedFile)"
+          size="xs"
+          variant="secondary"
+          icon="heroicons-outline:trash"
+          @click.stop="deleteFile(computedFile.path)"
+        />
+      </div>
     </nav>
 
     <div class="p-6">
@@ -111,7 +135,7 @@
 import type { Ref } from 'vue'
 import { snakeCase, isPlainObject, isDate, isBoolean, isNumber, set, unset } from 'lodash-es'
 import { capitalize } from '~/utils'
-import type { Project, Root } from '~/types'
+import type { Project, Root, GitHubFile } from '~/types'
 
 const props = defineProps({
   modelValue: {
@@ -125,6 +149,8 @@ const emit = defineEmits(['update:modelValue'])
 const project: Ref<Project> = inject('project')
 const root: Ref<Root> = inject('root')
 
+const { computedFile, openRenameModal, openRevertModal, openDeleteModal } = useProjectFiles(project.value, root.value)
+
 const selectedIndex = useState(`project-${project.value.id}-${root.value}-aside-tabs`, () => 0)
 
 const form = reactive({ type: 'text', key: '' })
@@ -136,6 +162,18 @@ const fields = computed(() => {
 })
 
 // Methods
+const isDraft = (file: GitHubFile) => !!file.status
+const isDeleted = (file: GitHubFile) => file.status === 'deleted'
+
+const revertFile = (path) => {
+  openRevertModal(path)
+}
+const renameFile = (path) => {
+  openRenameModal(path)
+}
+const deleteFile = (path) => {
+  openDeleteModal(path)
+}
 
 function addField () {
   const updatedFields = { ...toRaw(props.modelValue) }
