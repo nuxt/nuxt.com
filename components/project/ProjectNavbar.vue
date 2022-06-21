@@ -3,14 +3,14 @@
     <ProjectNavbarDialog v-model="isOpen" :links="links" />
 
     <UContainer padded class="relative">
-      <div class="flex items-center justify-between h-16">
-        <button class="lg:hidden" @click="isOpen = true">
+      <div class="flex items-center h-16 gap-3 lg:justify-between">
+        <button @click="isOpen = true">
           <UIcon name="heroicons-outline:menu-alt-2" class="flex-shrink-0 w-6 h-6" />
         </button>
 
-        <NuxtLink :to="{ name: '@team-projects' }" class="inline-flex">
-          <UAvatar :src="`https://github.com/${project.repository.owner}.png`" :alt="project.name" size="sm" class="flex-shrink-0" />
-        </NuxtLink>
+        <h2 class="flex-1 text-lg font-semibold u-text-gray-900">
+          {{ project.name }}
+        </h2>
 
         <TeamsDropdown compact />
       </div>
