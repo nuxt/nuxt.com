@@ -11,7 +11,9 @@
         @change="onFileUpload"
       >
 
-      <ProjectHeader>
+      <ProjectHeader
+        @upload-file="$refs.fileToUpload.click()"
+      >
         <template #extra-actions>
           <UButton
             size="xs"
