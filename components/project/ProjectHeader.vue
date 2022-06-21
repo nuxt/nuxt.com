@@ -39,7 +39,7 @@
             <span class="sr-only">Details for </span>{{ computedFile.name }}
           </h2>
           <div class="flex items-center gap-1.5 text-sm min-w-0 u-text-gray-400 truncate">
-            <span class="leading-none truncate">{{ computedFile.path }}</span>
+            <span class="truncate">{{ computedFile.path }}</span>
 
             <UTooltip>
               <UButton
@@ -130,7 +130,7 @@
     </div>
     <div
       v-if="isOpen"
-      class="flex flex-col flex-1 pb-8 mt-4 overflow-y-auto lg:hidden"
+      class="flex flex-col flex-1 pb-8 overflow-y-auto lg:hidden"
     >
       <ProjectContentFileAsideTabs
         v-if="route.name === '@team-project-content'"

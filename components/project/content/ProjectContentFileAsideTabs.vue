@@ -1,6 +1,6 @@
 <template>
   <div>
-    <nav class="flex h-12 px-6 space-x-4 border-b u-border-gray-200">
+    <nav class="flex h-12 px-4 space-x-4 border-b sm:px-6 u-border-gray-200">
       <button
         v-for="(category, index) in ['Meta', 'History']"
         :key="index"
@@ -19,21 +19,21 @@
         <UButton
           v-if="isDraft(computedFile)"
           size="xs"
-          variant="secondary"
+          variant="gray"
           icon="heroicons-outline:reply"
           @click.stop="revertFile(computedFile.path)"
         />
         <UButton
           v-if="!isDeleted(computedFile)"
           size="xs"
-          variant="secondary"
+          variant="gray"
           icon="heroicons-outline:pencil"
           @click.stop="renameFile(computedFile.path)"
         />
         <UButton
           v-if="!isDeleted(computedFile)"
           size="xs"
-          variant="secondary"
+          variant="gray"
           icon="heroicons-outline:trash"
           @click.stop="deleteFile(computedFile.path)"
         />
