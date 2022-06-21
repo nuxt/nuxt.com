@@ -111,7 +111,7 @@
     </div>
     <div
       v-if="isOpen"
-      class="flex flex-col flex-1 mt-4 lg:hidden"
+      class="flex flex-col flex-1 pb-8 mt-4 overflow-y-auto lg:hidden"
     >
       <!--TODO-->
       <ProjectContentFileAsideTabs
