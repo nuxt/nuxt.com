@@ -19,8 +19,8 @@
       </SubNavbar>
     </template>
 
-    <template v-if="$route.params.slug" #aside>
-      <DocsAside :level="5" />
+    <template v-if="$route.params.slug && tree && tree.length" #aside>
+      <DocsAsideTree :tree="tree" />
     </template>
 
     <NuxtPage />
@@ -33,6 +33,8 @@ const router = useRouter()
 const { navFromPath } = useContent()
 
 const links = computed(() => navFromPath(`/docs/${route.params.version}`)?.children)
+const path = computed(() => route.path.split('/').slice(0, 4).join('/'))
+const tree = computed(() => navFromPath(path.value)?.children)
 
 const version = computed({
   get () {

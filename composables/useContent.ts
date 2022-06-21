@@ -55,15 +55,15 @@ export const useContent = () => {
   /**
    * Local page fetching helper.
    */
-  const fetchPage = async ({ force = false, querySurround = false }: { force?: boolean, querySurround?: boolean } = {}) => {
+  const fetchPage = async ({ force = false, querySurround = false, _path = null }: { force?: boolean, querySurround?: boolean, _path?: string } = {}) => {
     if (page.value !== null && !force) { return }
 
     try {
       const [_page, _surround] = await Promise.all([
-        queryContent().where({ _path: path.value }).findOne() as Promise<ParsedContent>,
+        queryContent().where({ _path: _path || path.value }).findOne() as Promise<ParsedContent>,
         querySurround && queryContent()
           .where({ _partial: { $not: true }, navigation: { $not: false } })
-          .findSurround(path.value) as Promise<ParsedContent[]>
+          .findSurround(_path || path.value) as Promise<ParsedContent[]>
       ])
 
       page.value = _page
