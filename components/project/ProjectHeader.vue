@@ -122,7 +122,6 @@
       v-if="isOpen"
       class="flex flex-col flex-1 pb-8 mt-4 overflow-y-auto lg:hidden"
     >
-      <!--TODO-->
       <ProjectContentFileAsideTabs
         v-if="route.name === '@team-project-content'"
         :model-value="modelValue"
