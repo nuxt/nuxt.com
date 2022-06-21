@@ -19,7 +19,6 @@
             variant="gray"
             icon="heroicons-outline:plus"
             truncate
-            class="hidden lg:inline-flex"
             @click="$refs.fileToUpload.click()"
           />
         </template>
