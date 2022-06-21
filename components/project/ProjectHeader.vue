@@ -6,7 +6,7 @@
       'h-[calc(100vh-64px)] lg:h-16': isOpen
     }"
   >
-    <div class="flex items-center justify-between flex-shrink-0 h-16 min-w-0">
+    <div class="flex items-center justify-between flex-shrink-0 h-16 min-w-0 px-4 sm:px-6">
       <div class="items-center hidden min-w-0 gap-3 lg:flex">
         <h2 class="text-lg font-semibold u-text-gray-900">
           {{ project.name }}
@@ -113,7 +113,13 @@
       v-if="isOpen"
       class="flex flex-col flex-1 mt-4 lg:hidden"
     >
-      <span>TODO</span>
+      <!--TODO-->
+      <ProjectContentFileAsideTabs
+        v-if="route.name === '@team-project-content'"
+        :model-value="{}"
+        @update:model-value="onMatterUpdate"
+      />
+      <ProjectMediaFileAsideTabs v-if="route.name === '@team-project-media'" />
     </div>
   </div>
 </template>
@@ -198,5 +204,9 @@ async function onCommitClick () {
   await commit()
 
   callbackAfterCommit()
+}
+
+function onMatterUpdate (matter: object) {
+  // TODO
 }
 </script>

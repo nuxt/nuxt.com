@@ -1,7 +1,7 @@
 <template>
   <main class="flex flex-col flex-1 overflow-hidden">
     <!-- Primary column -->
-    <div v-if="$slots.header" class="flex items-center flex-shrink-0 px-4 border-b sm:px-6 u-bg-white u-border-gray-200">
+    <div v-if="$slots.header" class="flex items-center flex-shrink-0 border-b u-bg-white u-border-gray-200">
       <slot name="header" />
     </div>
 
