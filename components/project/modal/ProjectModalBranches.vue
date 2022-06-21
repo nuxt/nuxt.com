@@ -1,5 +1,5 @@
 <template>
-  <UModal v-model="isOpen" width-class="max-w-xl" body-class="relative flex flex-col h-[calc(100vh-2rem)] overflow-hidden lg:h-80">
+  <UModal v-model="isOpen" width-class="max-w-xl" body-class="relative flex flex-col h-[calc(100vh-2rem)] overflow-hidden sm:h-80">
     <ProjectCombobox
       :items="currentBranches"
       items-label="Branches"

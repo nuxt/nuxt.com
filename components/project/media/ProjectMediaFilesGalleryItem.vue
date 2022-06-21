@@ -18,7 +18,7 @@
           {{ file.path }}
         </span>
       </div>
-      <div class="flex-shrink-0">
+      <div class="flex-shrink-0 hidden lg:block">
         <UDropdown
           placement="bottom-end"
           class="-mr-1.5"
