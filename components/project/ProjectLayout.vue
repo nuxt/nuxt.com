@@ -27,8 +27,8 @@ const links = computed(() => ([[
   { to: { name: '@team-project-media' }, icon: 'heroicons-outline:photograph', label: 'Media', badge: isMediaDraft.value },
   { to: { name: '@team-project-settings' }, icon: 'heroicons-outline:cog', label: 'Settings' }
 ], [
-  { icon: 'mdi:source-branch', label: 'Branches', badge: branch.value?.name, click: openBranchesModal },
-  { icon: 'heroicons-outline:search', label: 'Files', click: openFilesModal }
+  { icon: 'mdi:source-branch', label: 'Search Branches', badge: branch.value?.name, click: openBranchesModal },
+  { icon: 'heroicons-outline:search', label: 'Search Files', click: openFilesModal }
 ]]))
 
 const linksWithoutLabel = computed(() => links.value.map(subLinks => subLinks.map(link => omit(link, 'label'))))

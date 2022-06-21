@@ -39,10 +39,11 @@
       </div>
     </template>
 
-    <ProjectContentFilesTree v-if="isTreeOpen" :tree="selectedTree" class="flex-1 py-2 overflow-y-auto" @select="isOpen = false" />
-    <div v-else class="flex flex-col justify-between flex-1">
-      <UVerticalNavigation :links="mobileLinks[0]" class="px-2 py-4 overflow-y-scroll sm:px-4" />
-      <UVerticalNavigation :links="mobileLinks[1]" class="px-2 py-4 overflow-y-scroll sm:px-4" />
+    <div class="flex flex-col justify-between flex-1 overflow-y-auto">
+      <ProjectContentFilesTree v-if="isTreeOpen" :tree="selectedTree" class="py-2" @select="isOpen = false" />
+      <UVerticalNavigation v-else :links="mobileLinks[0]" class="px-2 py-4 sm:px-4" />
+
+      <UVerticalNavigation :links="mobileLinks[1]" class="px-2 py-4 sm:px-4" badge-base-class="ml-auto truncate max-w-[128px] inline-block py-0.5 px-3 text-xs rounded-full" />
     </div>
   </USlideover>
 </template>
