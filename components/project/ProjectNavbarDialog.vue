@@ -1,7 +1,7 @@
 <template>
   <USlideover v-model="isOpen">
     <template #header>
-      <div class="flex-1">
+      <div class="flex items-center mr-3">
         <button v-if="isTreeOpen" @click="isTreeOpen = false">
           <UIcon name="heroicons-outline:arrow-sm-left" class="flex-shrink-0 w-6 h-6" />
         </button>
@@ -13,8 +13,8 @@
       <p v-if="isTreeOpen" class="text-lg font-semibold capitalize">
         {{ selectedLink }}
       </p>
-      <NuxtLink v-else :to="{ name: '@team-projects' }" class="block">
-        <UAvatar :src="`https://github.com/${project.repository.owner}.png`" :alt="project.name" size="sm" class="flex-shrink-0" />
+      <NuxtLink v-else :to="{ name: '@team-projects' }" class="text-lg font-semibold capitalize">
+        {{ project.name }}
       </NuxtLink>
 
       <div class="flex justify-end flex-1">

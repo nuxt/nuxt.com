@@ -3,12 +3,12 @@
     <ProjectNavbarDialog v-model="isOpen" :links="links" />
 
     <UContainer padded class="relative">
-      <div class="flex items-center justify-between h-16">
+      <div class="flex items-center h-16 gap-3 lg:justify-between">
         <button @click="isOpen = true">
           <UIcon name="heroicons-outline:menu-alt-2" class="flex-shrink-0 w-6 h-6" />
         </button>
 
-        <h2 class="text-lg font-semibold u-text-gray-900">
+        <h2 class="flex-1 text-lg font-semibold u-text-gray-900">
           {{ project.name }}
         </h2>
 

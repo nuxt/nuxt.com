@@ -6,7 +6,7 @@
       'h-[calc(100vh-64px)] lg:h-16': isOpen
     }"
   >
-    <div class="flex items-center justify-between flex-shrink-0 h-16 min-w-0 px-4 sm:px-6">
+    <div class="flex items-center justify-between flex-shrink-0 h-16 min-w-0 gap-3 px-4 sm:px-6">
       <div class="items-center hidden min-w-0 gap-3 lg:flex">
         <h2 class="text-lg font-semibold u-text-gray-900">
           {{ project.name }}
@@ -31,15 +31,15 @@
         <slot v-if="branches.length" name="extra-actions" />
       </div>
 
-      <div class="flex items-center flex-1 min-w-0 gap-4 lg:hidden">
+      <div class="flex items-center flex-1 min-w-0 gap-3 lg:hidden">
         <UIcon :name="isOpen ? 'heroicons-outline:chevron-up' : 'heroicons-outline:chevron-down'" class="flex-shrink-0 w-6 h-6" @click="isOpen = !isOpen" />
 
         <div class="flex flex-col flex-1 min-w-0">
-          <h2 class="text-lg font-medium truncate u-text-gray-900">
+          <h2 class="font-medium truncate u-text-gray-900">
             <span class="sr-only">Details for </span>{{ computedFile.name }}
           </h2>
           <div class="flex items-center gap-1.5 text-sm min-w-0 u-text-gray-400 truncate">
-            <span class="truncate">{{ computedFile.path }}</span>
+            <span class="leading-none truncate">{{ computedFile.path }}</span>
 
             <UTooltip>
               <UButton
