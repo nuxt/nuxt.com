@@ -1,105 +1,119 @@
 <template>
-  <div class="flex items-center justify-between flex-1 min-w-0 gap-3">
-    <div class="items-center hidden min-w-0 gap-3 lg:flex">
-      <h2 class="text-lg font-semibold u-text-gray-900">
-        {{ project.name }}
-      </h2>
-
-      <UButton
-        v-if="branches.length"
-        icon="mdi:source-branch"
-        variant="gray"
-        size="xs"
-        class="truncate"
-        @click="openBranchesModal"
-      >
-        <span class="flex-auto truncate u-text-gray-700">{{ branch.name }}</span>
-        <kbd class="flex-shrink-0 hidden ml-3 font-sans text-xs font-semibold sm:inline u-text-gray-400"><abbr title="Command" class="no-underline">⌘</abbr> B</kbd>
-      </UButton>
-      <UButton icon="heroicons-outline:search" variant="gray" size="xs" class="truncate" @click="openFilesModal">
-        <span class="flex-auto truncate u-text-gray-700">Search</span>
-        <kbd class="flex-shrink-0 hidden ml-3 font-sans text-xs font-semibold sm:inline u-text-gray-400"><abbr title="Command" class="no-underline">⌘</abbr> K</kbd>
-      </UButton>
-
-      <slot v-if="branches.length" name="extra-actions" />
-    </div>
-
-    <div class="flex items-center flex-1 min-w-0 gap-4 lg:hidden">
-      <UIcon name="heroicons-outline:chevron-down" class="flex-shrink-0 w-6 h-6" />
-
-      <div class="flex flex-col flex-1 min-w-0">
-        <h2 class="text-lg font-medium truncate u-text-gray-900">
-          <span class="sr-only">Details for </span>{{ computedFile.name }}
+  <div
+    class="flex flex-col flex-1 min-w-0 transition-all transform"
+    :class="{
+      'h-16': !isOpen,
+      'h-[calc(100vh-64px)] lg:h-16': isOpen
+    }"
+  >
+    <div class="flex items-center justify-between flex-shrink-0 h-16 min-w-0">
+      <div class="items-center hidden min-w-0 gap-3 lg:flex">
+        <h2 class="text-lg font-semibold u-text-gray-900">
+          {{ project.name }}
         </h2>
-        <div class="flex items-center gap-1.5 text-sm min-w-0 u-text-gray-400 truncate">
-          <span class="truncate">{{ computedFile.path }}</span>
 
-          <UTooltip>
-            <UButton
-              icon="heroicons-outline:external-link"
-              target="_blank"
-              :to="githubLink"
-              variant="transparent"
-              size="xxs"
-              class="!p-0"
-            />
+        <UButton
+          v-if="branches.length"
+          icon="mdi:source-branch"
+          variant="gray"
+          size="xs"
+          class="truncate"
+          @click="openBranchesModal"
+        >
+          <span class="flex-auto truncate u-text-gray-700">{{ branch.name }}</span>
+          <kbd class="flex-shrink-0 hidden ml-3 font-sans text-xs font-semibold sm:inline u-text-gray-400"><abbr title="Command" class="no-underline">⌘</abbr> B</kbd>
+        </UButton>
+        <UButton icon="heroicons-outline:search" variant="gray" size="xs" class="truncate" @click="openFilesModal">
+          <span class="flex-auto truncate u-text-gray-700">Search</span>
+          <kbd class="flex-shrink-0 hidden ml-3 font-sans text-xs font-semibold sm:inline u-text-gray-400"><abbr title="Command" class="no-underline">⌘</abbr> K</kbd>
+        </UButton>
 
-            <template #text>
-              <span class="flex-auto truncate">Open on GitHub</span>
-              <kbd class="flex-shrink-0 hidden font-sans text-xs font-semibold u-text-gray-300 sm:inline"><abbr title="Command" class="no-underline">⌘</abbr> G</kbd>
-            </template>
-          </UTooltip>
+        <slot v-if="branches.length" name="extra-actions" />
+      </div>
+
+      <div class="flex items-center flex-1 min-w-0 gap-4 lg:hidden">
+        <UIcon :name="isOpen ? 'heroicons-outline:chevron-up' : 'heroicons-outline:chevron-down'" class="flex-shrink-0 w-6 h-6" @click="isOpen = !isOpen" />
+
+        <div class="flex flex-col flex-1 min-w-0">
+          <h2 class="text-lg font-medium truncate u-text-gray-900">
+            <span class="sr-only">Details for </span>{{ computedFile.name }}
+          </h2>
+          <div class="flex items-center gap-1.5 text-sm min-w-0 u-text-gray-400 truncate">
+            <span class="truncate">{{ computedFile.path }}</span>
+
+            <UTooltip>
+              <UButton
+                icon="heroicons-outline:external-link"
+                target="_blank"
+                :to="githubLink"
+                variant="transparent"
+                size="xxs"
+                class="!p-0"
+              />
+
+              <template #text>
+                <span class="flex-auto truncate">Open on GitHub</span>
+                <kbd class="flex-shrink-0 hidden font-sans text-xs font-semibold u-text-gray-300 sm:inline"><abbr title="Command" class="no-underline">⌘</abbr> G</kbd>
+              </template>
+            </UTooltip>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div v-if="branches.length" class="flex items-center flex-shrink-0 min-w-0 gap-3">
-      <ProjectHeaderUsers class="hidden lg:flex" />
+      <div v-if="branches.length" class="flex items-center flex-shrink-0 min-w-0 gap-3">
+        <ProjectHeaderUsers class="hidden lg:flex" />
 
-      <UDropdown v-if="!project.url" :items="deployOptions">
+        <UDropdown v-if="!project.url" :items="deployOptions">
+          <UButton
+            label="Deploy"
+            variant="secondary"
+            size="xs"
+            icon="heroicons-outline:chevron-down"
+            trailing
+            class="hidden lg:inline-flex"
+          />
+          <UButton variant="secondary" size="xs" icon="heroicons-outline:dots-vertical" trailing class="lg:hidden" />
+        </UDropdown>
+
         <UButton
-          label="Deploy"
-          variant="secondary"
+          v-if="previewUrl"
+          :to="previewUrl"
+          target="_blank"
           size="xs"
-          icon="heroicons-outline:chevron-down"
+          label="Preview"
           trailing
-          class="hidden lg:inline-flex"
+          icon="heroicons-outline:external-link"
+          variant="secondary"
         />
-        <UButton variant="secondary" size="xs" icon="heroicons-outline:dots-vertical" trailing class="lg:hidden" />
-      </UDropdown>
 
-      <UButton
-        v-if="previewUrl"
-        :to="previewUrl"
-        target="_blank"
-        size="xs"
-        label="Preview"
-        trailing
-        icon="heroicons-outline:external-link"
-        variant="secondary"
-      />
+        <UButton
+          v-if="isDraftContent || isDraftMedia"
+          label="Save"
+          :loading="loading"
+          size="xs"
+          icon="heroicons-outline:check"
+          trailing
+          truncate
+          @click="onCommitClick"
+        />
 
-      <UButton
-        v-if="isDraftContent || isDraftMedia"
-        label="Save"
-        :loading="loading"
-        size="xs"
-        icon="heroicons-outline:check"
-        trailing
-        truncate
-        @click="onCommitClick"
-      />
-
-      <UButton
-        v-else-if="branch?.name !== project.repository.default_branch"
-        label="Publish"
-        :loading="loading"
-        size="xs"
-        icon="heroicons-outline:cloud-upload"
-        trailing
-        truncate
-        @click="openPublishModal"
-      />
+        <UButton
+          v-else-if="branch?.name !== project.repository.default_branch"
+          label="Publish"
+          :loading="loading"
+          size="xs"
+          icon="heroicons-outline:cloud-upload"
+          trailing
+          truncate
+          @click="openPublishModal"
+        />
+      </div>
+    </div>
+    <div
+      v-if="isOpen"
+      class="flex flex-col flex-1 mt-4 lg:hidden"
+    >
+      <span>TODO</span>
     </div>
   </div>
 </template>
@@ -117,6 +131,8 @@ const { openBranchesModal, openFilesModal } = useProjectModals()
 const { branch, branches, commit, openPublishModal, openCreateModal, loading } = useProjectBranches(project.value)
 const { computedFile: contentFile, isDraft: isDraftContent, refresh: refreshContentFiles, previewUrl } = useProjectFiles(project.value, 'content')
 const { computedFile: publicFile, isDraft: isDraftMedia, refresh: refreshMediaFiles } = useProjectFiles(project.value, 'public')
+
+const isOpen = ref(false)
 
 const computedFile = computed(() => {
   if (route.name === '@team-project-content') {
