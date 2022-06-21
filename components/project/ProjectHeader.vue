@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex flex-col flex-1 min-w-0 transition-all transform"
+    class="flex flex-col flex-1 min-w-0 transition-all"
     :class="{
       'h-16': !isOpen,
       'h-[calc(100vh-64px)] lg:h-16': isOpen
