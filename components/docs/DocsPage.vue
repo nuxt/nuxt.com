@@ -1,13 +1,13 @@
 <template>
   <div class="relative flex flex-col-reverse gap-8 lg:grid lg:grid-cols-10">
-    <div :class="{ 'col-span-10 lg:col-span-8': !!$route.params.slug, 'col-span-10': !$route.params.slug }">
-      <DocsPageHeader v-if="$route.params.slug" />
+    <div :class="{ 'col-span-10 lg:col-span-8': toc, 'col-span-10': !toc }">
+      <DocsPageHeader v-if="header && page" />
 
       <slot />
     </div>
 
     <div
-      v-if="!!$route.params.slug"
+      v-if="toc"
       class="lg:col-span-2 lg:self-start overflow-x-hidden sticky top-16 -mx-4 sm:-mx-6 px-4 sm:px-6 lg:mx-0 lg:px-0 lg:pt-8 lg:-mt-8 bg-white/75 dark:bg-black/75 backdrop-blur-md lg:max-h-[calc(100vh-64px)]"
     >
       <div class="py-4 border-b border-dashed u-border-gray-200 lg:border-none lg:py-0">
@@ -17,7 +17,7 @@
           <UIcon name="heroicons-outline:chevron-right" class="w-4 h-4 transition-transform duration-100 transform u-text-gray-400" :class="[isOpen ? 'rotate-90' : 'rotate-0']" />
         </button>
 
-        <DocsToc class="mt-4 lg:mt-0" :class="[isOpen ? 'lg:block' : 'hidden lg:block']" />
+        <DocsPageToc class="mt-4 lg:mt-0" :class="[isOpen ? 'lg:block' : 'hidden lg:block']" />
       </div>
     </div>
   </div>
@@ -27,4 +27,15 @@
 const { page } = useContent()
 
 const isOpen = ref(false)
+
+defineProps({
+  header: {
+    type: Boolean,
+    default: true
+  },
+  toc: {
+    type: Boolean,
+    default: true
+  }
+})
 </script>
