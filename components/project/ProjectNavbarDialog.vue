@@ -13,11 +13,11 @@
       <p v-if="isTreeOpen" class="text-lg font-semibold capitalize">
         {{ selectedLink }}
       </p>
-      <NuxtLink v-else :to="{ name: '@team-projects' }" class="text-lg font-semibold capitalize">
+      <NuxtLink v-else :to="{ name: '@team-projects' }" class="text-lg font-semibold">
         {{ project.name }}
       </NuxtLink>
 
-      <div class="flex justify-end" />
+      <div class="flex justify-end flex-1" />
     </template>
 
     <div class="flex flex-col justify-between flex-1 overflow-y-auto">
