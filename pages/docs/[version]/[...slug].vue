@@ -9,5 +9,5 @@
 <script setup lang="ts">
 const { page, fetchPage } = useContent()
 
-await fetchPage()
+await fetchPage({ querySurround: true })
 </script>

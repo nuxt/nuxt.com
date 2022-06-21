@@ -10,8 +10,8 @@ export default defineNuxtPlugin((nuxt) => {
     if (process.client) {
       const { fetchPage, fetchNavigation } = useContent()
 
-      await fetchNavigation(true)
-      await fetchPage(true)
+      await fetchNavigation({ force: true })
+      await fetchPage({ force: true })
     }
   })
 })
