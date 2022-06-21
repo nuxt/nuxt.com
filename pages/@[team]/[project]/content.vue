@@ -28,7 +28,10 @@
     </template>
 
     <template #header>
-      <ProjectHeader>
+      <ProjectHeader
+        :model-value="parsedContent ? parsedContent.matter : {}"
+        @update:model-value="onMatterUpdate"
+      >
         <template #extra-actions>
           <UButton
             size="xs"

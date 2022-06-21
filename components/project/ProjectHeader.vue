@@ -116,8 +116,8 @@
       <!--TODO-->
       <ProjectContentFileAsideTabs
         v-if="route.name === '@team-project-content'"
-        :model-value="{}"
-        @update:model-value="onMatterUpdate"
+        :model-value="modelValue"
+        @update:model-value="(e) => $emit('update:modelValue', e)"
       />
       <ProjectMediaFileAsideTabs v-if="route.name === '@team-project-media'" />
     </div>
@@ -128,6 +128,15 @@
 import type { Ref } from 'vue'
 import { useMagicKeys, whenever, and, or, not } from '@vueuse/core'
 import type { Project } from '~/types'
+
+defineProps({
+  modelValue: {
+    type: Object,
+    default: () => ({})
+  }
+})
+
+defineEmits(['update:modelValue'])
 
 const project: Ref<Project> = inject('project')
 
@@ -204,9 +213,5 @@ async function onCommitClick () {
   await commit()
 
   callbackAfterCommit()
-}
-
-function onMatterUpdate (matter: object) {
-  // TODO
 }
 </script>
