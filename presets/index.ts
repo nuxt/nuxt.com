@@ -23,8 +23,9 @@ const button = {
 
 const input = {
   appearance: {
-    default: 'focus:ring-1 focus:u-ring-gray-900 focus:u-border-gray-900 bg-white dark:bg-gray-900 border u-border-gray-200 rounded-lg shadow-sm',
-    darken: 'focus:ring-1 focus:u-ring-gray-900 focus:u-border-gray-900 u-bg-white border u-border-gray-200 rounded-lg shadow-sm'
+    default: 'focus:ring-1 focus:u-ring-gray-900 focus:u-border-gray-900 bg-white dark:bg-gray-900 border u-border-gray-200 rounded-lg shadow-sm focus:ring-offset-white dark:focus:ring-offset-black',
+    invert: 'focus:ring-2 focus:u-ring-gray-900 focus:ring-offset-2 bg-gray-900 dark:bg-white u-text-white border u-border-gray-900 rounded-lg shadow-sm focus:ring-offset-white dark:focus:ring-offset-black font-semibold',
+    darken: 'focus:ring-1 focus:u-ring-gray-900 focus:u-border-gray-900 u-bg-white border u-border-gray-200 rounded-lg shadow-sm focus:ring-offset-white dark:focus:ring-offset-black'
   }
 }
 

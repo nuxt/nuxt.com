@@ -8,7 +8,18 @@
               Framework
             </NuxtLink>
 
-            <USelect v-model="version" name="version" :options="['3.x', '2.x']" size="xs" />
+            <USelectCustom
+              v-model="version"
+              name="version"
+              :options="versions"
+              size="xs"
+              text-attribute="key"
+              appearance="invert"
+              icon-base-class="u-text-white"
+              list-base-class="absolute z-10 w-24 py-1 mt-1 overflow-auto text-sm rounded-md shadow-lg u-bg-black max-h-60 focus:outline-none ring-1 u-ring-white"
+              list-option-active-class="text-white bg-primary-600"
+              list-option-inactive-class="u-text-gray-50"
+            />
           </div>
         </template>
 
@@ -36,12 +47,13 @@ const links = computed(() => navFromPath(`/docs/${route.params.version}`)?.child
 const path = computed(() => route.path.split('/').slice(0, 4).join('/'))
 const tree = computed(() => navFromPath(path.value)?.children)
 
+const versions = [{ key: '3.x' }, { key: '2.x' }]
 const version = computed({
   get () {
-    return route.params.version
+    return versions.find(v => v.key === route.params.version)
   },
-  set (value) {
-    return router.push(`/docs/${value}`)
+  set (version) {
+    return router.push(`/docs/${version?.key}`)
   }
 })
 </script>
