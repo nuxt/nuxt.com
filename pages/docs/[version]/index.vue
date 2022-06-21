@@ -1,5 +1,5 @@
 <template>
-  <DocsPage>
+  <DocsPage :header="false" :toc="false">
     <div class="prose dark:prose-invert max-w-none">
       <ContentRenderer v-if="page" :value="page" />
     </div>
