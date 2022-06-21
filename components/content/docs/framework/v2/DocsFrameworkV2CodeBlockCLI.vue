@@ -111,22 +111,22 @@
     </div>
     <div class="absolute u-bg-gray-100 right-0 top-full lg:top-1/2 transform -translate-y-1/2 rounded-md w-full lg:w-1/2 opacity-0 overflow-hidden h-[120%] fromcli-display-anim">
       <div class="overflow-hidden opacity-0 fromcli-display-loading-anim">
-        <img loading="lazy" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-[60px]" src="/assets/docs/framework/v2/logo.svg" alt="nuxt logo">
+        <img loading="lazy" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-[60px]" src="/assets/docs/v2/logo.svg" alt="nuxt logo">
         <div class="absolute w-1/2 transform -translate-x-1/2 left-1/2 bottom-8 fromcli-display-progressbar-anim">
           <div class="absolute left-0 top-0 w-full bg-gray-400 rounded-full h-[10px]" />
           <div class="absolute left-0 top-0 w-0 u-bg-gray-500 rounded-full opacity-0 h-[10px] fromcli-display-progressbar-progress-anim" />
         </div>
       </div>
       <div class="absolute top-0 left-0 flex flex-col items-start justify-center w-full h-full px-16 fromcli-display-content">
-        <img loading="lazy" src="/assets/docs/framework/v2/logo.svg" alt="nuxt logo">
+        <img loading="lazy" src="/assets/docs/v2/logo.svg" alt="nuxt logo">
         <img
           loading="lazy"
-          src="/assets/docs/framework/v2/cliContent1.svg"
+          src="/assets/docs/v2/cliContent1.svg"
           alt="content illustration"
         >
         <img
           loading="lazy"
-          src="/assets/docs/framework/v2/cliContent2.svg"
+          src="/assets/docs/v2/cliContent2.svg"
           alt="content illustration"
         >
       </div>
