@@ -3,7 +3,7 @@
 buttons:
   - label: 'Watch video'
     size: 'xl'
-    variant: 'green'
+    variant: 'primary-gradient'
     to: '#'
   - label: 'Get Started'
     size: 'xl'
@@ -189,7 +189,7 @@ List of partners
 buttons:
   - label: 'Watch video'
     size: 'xl'
-    variant: 'green'
+    variant: 'primary-gradient'
     to: '#'
   - label: 'Get Started'
     size: 'xl'

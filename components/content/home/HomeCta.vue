@@ -1,7 +1,6 @@
 <template>
-  <div class="relative pt-8 pb-48 ">
-    <div class="absolute bottom-16 w-full h-4/5 bg-gradient-to-t from-green-400 via-teal-400 to-indigoblue-600 opacity-[0.15] dark:opacity-[0.3] blur-[80px]" />
-    <div class="absolute bottom-0 w-full h-16 u-bg-white" />
+  <div class="relative py-8 pb-48 ">
+    <img src="/assets/home/gradient-cta.svg" class="absolute w-full h-full bottom-24 -left-8">
     <UContainer padded class="relative flex flex-col items-center justify-center gap-y-4">
       <h3 class="text-4xl font-semibold u-text-gray-900">
         <Markdown :use="$slots.title" unwramp="p" />
