@@ -30,21 +30,21 @@ Nuxt provides the best developer experience for web teams to deliver the best en
 ::home-carousel
 ---
 items:
-  - name: unilever
+  - name: Unilever
     to: https://www.unilever.com/
-  - name: gitlab
+  - name: Gitlab
     to: https://about.gitlab.com/
-  - name: adobe
-    to: https://www.adobe.com/
-  - name: nintendo
-    to: https://www.nintendo.com/
-  - name: nasa
-    to: https://www.nasa.gov/
-  - name: tiktok
-    to: https://www.tiktok.com/
-  - name: awwwards
+  - name: Awwwards
     to: https://www.awwwards.com/
-  - name: backmarket
+  - name: Adobe
+    to: https://www.adobe.com/
+  - name: Nintendox@
+    to: https://www.nintendo.com/
+  - name: Nasa
+    to: https://www.nasa.gov/
+  - name: Tiktok
+    to: https://www.tiktok.com/
+  - name: Backmarket
     to: https://www.backmarket.fr/
 ---
 ::
@@ -53,9 +53,9 @@ items:
 ---
 bodyPlacement: 'right'
 withImage: true
-image: 'place-holder.png'
 to: 'https://v3.nuxtjs.org/'
-imageClass: 'lg:absolute left-0 lg:max-w-lg xl:max-w-xl 2xl:max-w-[700px]'
+bodyClass: 'pt-8'
+bodyExtraClass: 'w-full h-full lg:absolute left-0 bottom-8 lg:max-w-lg xl:max-w-xl 2xl:max-w-[600px]'
 ---
 #sectionTitle
 START WITH
@@ -67,6 +67,13 @@ The [Hybrid]{ .text-green-400 } Web Framework
 [Focus on the big picture.]{ .font-semibold } Projects lets you group issues and get a birds-eye view of the progress your team is making.
 #bodyLink
 Go to the documentation
+#bodyExtra
+  :::home-video-place-holder
+  ---
+  title: 'Be Lazy, Be Smart, Be Nuxt'
+  videoId: 'vbsPXHCu8Xg'
+  ---
+  :::
 ::
 
 ::home-section
@@ -151,22 +158,28 @@ List of partners
   :::home-carousel
   ---
   items:
-    - name: unilever
-      to: https://www.unilever.com/
-    - name: gitlab
-      to: https://about.gitlab.com/
-    - name: adobe
-      to: https://www.adobe.com/
-    - name: nintendo
-      to: https://www.nintendo.com/
-    - name: nasa
-      to: https://www.nasa.gov/
-    - name: tiktok
-      to: https://www.tiktok.com/
-    - name: awwwards
-      to: https://www.awwwards.com/
-    - name: backmarket
-      to: https://www.backmarket.fr/
+    - name: Curotec
+      to: https://www.curotec.com
+    - name: Mirahi
+      to: https://mirahi.io
+    - name: Netlify
+      to: https://www.netlify.com
+    - name: Shipshape
+      to: https://shipshape.io
+    - name: Softwarethings
+      to: https://softwarethings.pro
+    - name: Swell
+      to: https://www.swell.is
+    - name: Passionatepeople
+      to: https://passionatepeople.io
+    - name: Vercel
+      to: vercel.com
+    - name: Vuestorefront
+      to: https://www.vuestorefront.io
+    - name: Sixtyfourrobots
+      to: https://www.64robots.com
+    - name: Zenarchitects
+      to: https://zenarchitects.co.jp
   ---
   :::
 ::

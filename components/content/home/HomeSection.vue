@@ -27,7 +27,7 @@
           v-if="withBodyText"
           padded
           class="flex flex-col max-w-lg px-4 text-center lg:max-w-md gap-y-6 sm:px-0 xl:max-w-lg 2xl:max-w-xl"
-          :class="{ 'lg:text-left': ['left', 'right'].includes(bodyPlacement) }"
+          :class="[bodyClass, { 'lg:text-left': ['left', 'right'].includes(bodyPlacement) }]"
         >
           <div v-if="$slots.bodyTitle" class="text-2xl font-semibold xl:text-3xl 2xl:text-4xl u-text-gray-900">
             <Markdown :use="$slots.bodyTitle" unwrap="p" />
@@ -51,6 +51,10 @@
         </div>
         <!-- body image -->
         <img v-if="image" :src="`/assets/home/${image}`" :alt="`${image} illustration`" :class="imageClass" class="px-4 sm:px-0">
+
+        <div v-if="$slots.bodyExtra" class="px-4 sm:px-0" :class="bodyExtraClass">
+          <Markdown :use="$slots.bodyExtra" unwrap="p" />
+        </div>
       </UContainer>
       <Markdown :use="$slots.extra" unwrap="p" />
     </div>
@@ -78,6 +82,10 @@ defineProps({
       return ['left', 'center', 'right'].includes(value)
     }
   },
+  bodyClass: {
+    type: String,
+    default: ''
+  },
   image: {
     type: String,
     default: ''
@@ -91,6 +99,10 @@ defineProps({
     default: true
   },
   to: {
+    type: String,
+    default: ''
+  },
+  bodyExtraClass: {
     type: String,
     default: ''
   }

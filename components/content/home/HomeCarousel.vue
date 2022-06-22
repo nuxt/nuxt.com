@@ -9,13 +9,13 @@
     >
       <SwiperSlide v-for="(item, index) in items" :key="index" class="!h-8">
         <div class="relative flex items-center justify-center h-full">
-          <img :src="`/assets/brands/${item.name}.png`" :alt="item.name">
+          <UIcon :name="item.name" :alt="item.name" class="h-8 text-gray-400 dark:text-white" />
           <NuxtLink :to="item.to" target="_blank" class="absolute inset-0" rel="noopener noreferrer nofollow" />
         </div>
       </SwiperSlide>
     </Swiper>
     <div class="absolute top-0 left-0 w-[20px] sm:w-[50px] md:w-[100px] lg:w-[200px] xl:w-[300px] 2xl:w-[400px] h-full bg-gradient-to-r from-white dark:from-black to-transparent z-[1]" />
-    <div class="absolute top-0 right-0  w-[20px] sm:w-[50px] md:w-[100px] lg:w-[200px] xl:w-[300px] 2xl:w-[400px] h-full bg-gradient-to-l from-white dark:from-black to-transparent z-[1]" />
+    <div class="absolute top-0 right-0 w-[20px] sm:w-[50px] md:w-[100px] lg:w-[200px] xl:w-[300px] 2xl:w-[400px] h-full bg-gradient-to-l from-white dark:from-black to-transparent z-[1]" />
   </UContainer>
 </template>
 
@@ -49,9 +49,9 @@ const slidesPerView = computed(() => {
   } else if (md.value) {
     return 3
   } else if (lg.value) {
-    return 5
+    return 4
   } else {
-    return 6
+    return 5
   }
 })
 const modules = [Autoplay]
