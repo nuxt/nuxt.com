@@ -9,6 +9,8 @@
         {{ filteredRepositories.length }} repositor{{ filteredRepositories.length > 1 ? 'ies' : 'y' }} found
       </h2>
 
+      <CommunityRepositoriesFilterSearch class="lg:hidden" />
+
       <div class="flex flex-col gap-3 md:flex-row md:items-center">
         <CommunityRepositoriesFilters class="hidden lg:flex" />
         <CommunityRepositoriesFilterOrganization class="lg:hidden" />

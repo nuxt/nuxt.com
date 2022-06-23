@@ -3,7 +3,7 @@
     v-model="q"
     name="search"
     placeholder="Search a repository"
-    class="w-full max-w-sm"
+    class="w-full md:max-w-sm"
     size="lg"
     icon="heroicons-outline:search"
     autocomplete="off"
