@@ -7,10 +7,11 @@
           ref="comboboxInput"
           :value="query"
           class="w-full h-12 pr-4 placeholder-gray-400 dark:placeholder-gray-500 bg-transparent border-0 pl-[3.25rem] u-text-gray-900 focus:ring-0 sm:text-sm"
-          autocomplete="off"
           placeholder="Search..."
+          autocomplete="off"
           @change="query = $event.target.value"
         />
+        <UIcon name="heroicons-outline:x" class="absolute top-3.5 right-5 h-5 w-5 u-text-gray-500" aria-hidden="true" @click="onClear" />
       </div>
 
       <ComboboxOptions v-if="hasOptions" static hold class="relative flex-1 overflow-y-auto divide-y u-divide-gray-100 scroll-py-2">
@@ -63,7 +64,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['select'])
+const emit = defineEmits(['select', 'close'])
 
 const query = ref('')
 const comboboxInput = ref(null)
@@ -118,5 +119,13 @@ function onSelect (option) {
   setTimeout(() => {
     query.value = ''
   }, 300)
+}
+
+function onClear () {
+  if (query.value) {
+    query.value = ''
+  } else {
+    emit('close')
+  }
 }
 </script>
