@@ -6,6 +6,7 @@
       :recent-items="recentItems"
       :actions="actions"
       @select="onSelect"
+      @close="isOpen = false"
     />
   </UModal>
 </template>
