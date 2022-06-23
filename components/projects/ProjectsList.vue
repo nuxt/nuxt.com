@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="projects.length" class="grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div v-if="projects.length" class="grid grid-cols-1 gap-8 mt-8 sm:grid-cols-2 xl:grid-cols-3">
       <ProjectsListItem v-for="project of projects" :key="project.id" :project="project" />
     </div>
 
