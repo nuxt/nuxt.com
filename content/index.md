@@ -186,21 +186,10 @@ List of partners
 
 ::home-cta
 ---
-buttons:
-  - label: 'Watch video'
-    size: 'xl'
-    variant: 'primary-gradient'
-    to: '#'
-  - label: 'Get Started'
-    size: 'xl'
-    variant: 'secondary'
-    to: '/docs/framework/v3/getting-started/quick-start'
-    target: '_blank'
-    icon: 'heroicons-solid:chevron-right'
-    trailing: true
+buttonText: 'Subscribe'
 ---
 #title
-Join us!
+Be the first to know
 #description
-Nuxt provides the best developer experience for web teams to deliver the best end-user experience.
+Focus on the big picture. Projects lets you group issues and get a birds-eye view of the progress your team is making.
 ::
