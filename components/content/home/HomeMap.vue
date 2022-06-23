@@ -1,6 +1,6 @@
 <template>
-  <div class="relative pb-[480px]">
-    <div ref="root" class="absolute inset-0 flex justify-center transition duration-1000" :class="mapOpacityClass">
+  <div class="relative pb-[480px] p-4 max-h-[700px] flex items-end">
+    <div class="absolute z-[-1] inset-0 flex justify-center transition duration-1000 ease-in-out" :class="mapOpacityClass">
       <svg
         ref="map"
         width="1105"
@@ -6192,6 +6192,8 @@
         </g>
       </svg>
     </div>
+    <!-- element for intersection observer -->
+    <div ref="root" class="absolute bottom-1/2" />
   </div>
 </template>
 
@@ -6200,7 +6202,7 @@
 const observer = ref() as Ref<IntersectionObserver>
 const root = ref(null) as Ref<Element>
 const map = ref(null)
-const mapOpacityClass = ref('opacity-0 -translate-y-[300px]')
+const mapOpacityClass = ref('opacity-0 -translate-y-[200px]')
 const randomNumber = ref(0)
 const randomColor = ref(0)
 const intervalIds = ref([])
