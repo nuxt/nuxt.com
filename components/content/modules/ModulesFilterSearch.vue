@@ -3,8 +3,8 @@
     v-model="q"
     name="search"
     placeholder="Search a module"
-    class="w-full max-w-sm"
-    size="lg"
+    class="w-full md:max-w-sm"
+    :size="size"
     icon="heroicons-outline:search"
     autocomplete="off"
     autofocus
@@ -12,6 +12,13 @@
 </template>
 
 <script setup lang="ts">
+defineProps({
+  size: {
+    type: String,
+    default: 'lg'
+  }
+})
+
 const route = useRoute()
 const router = useRouter()
 

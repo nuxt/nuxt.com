@@ -10,6 +10,7 @@
       </h2>
 
       <div class="flex flex-col gap-3 md:flex-row md:items-center">
+        <CommunityRepositoriesFilterSearch size="sm" class="sm:hidden" />
         <CommunityRepositoriesFilters class="hidden lg:flex" />
         <CommunityRepositoriesFilterOrganization class="lg:hidden" />
         <CommunityRepositoriesFilterSort />
