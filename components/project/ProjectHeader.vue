@@ -34,7 +34,7 @@
       <div class="flex items-center flex-1 min-w-0 gap-3 lg:hidden">
         <UIcon :name="isOpen ? 'heroicons-solid:chevron-up' : 'heroicons-solid:chevron-down'" class="flex-shrink-0 w-6 h-6 u-text-gray-700" @click="isOpen = !isOpen" />
 
-        <div class="flex flex-col flex-1 min-w-0">
+        <div v-if="computedFile" class="flex flex-col flex-1 min-w-0">
           <h2 class="font-medium truncate u-text-gray-900">
             <span class="sr-only">Details for </span>{{ computedFile.name }}
           </h2>
