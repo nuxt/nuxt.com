@@ -26,7 +26,7 @@
         <div
           v-if="withBodyText"
           padded
-          class="flex flex-col items-center max-w-lg px-4 text-center sm:items-start lg:max-w-md gap-y-6 sm:px-0 xl:max-w-lg 2xl:max-w-xl"
+          class="flex flex-col items-center max-w-lg px-4 text-center lg:items-start lg:max-w-md gap-y-6 sm:px-0 xl:max-w-lg 2xl:max-w-xl"
           :class="[bodyClass, { 'lg:text-left': ['left', 'right'].includes(bodyPlacement) }]"
         >
           <div v-if="$slots.bodyTitle" class="text-2xl font-semibold xl:text-3xl 2xl:text-4xl u-text-gray-900">

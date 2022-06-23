@@ -80,9 +80,9 @@ Go to the documentation
 ---
 bodyPlacement: 'left'
 withImage: true
-image: 'modules.png'
+image: 'modules.svg'
 to: '/modules'
-imageClass: 'lg:absolute lg:max-w-lg xl:max-w-xl 2xl:max-w-[700px] right-0'
+imageClass: 'lg:absolute lg:max-w-lg xl:max-w-xl 2xl:max-w-[700px] lg:right-0 lg:translate-x-8'
 ---
 #sectionTitle
 SCALE WITH
