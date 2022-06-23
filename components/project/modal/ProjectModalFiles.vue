@@ -53,6 +53,8 @@ const {
   openRevertModal: openRevertMediaFileModal
 } = useProjectFiles(project.value, 'public')
 
+const keys = useMagicKeys()
+
 const refreshingFiles = ref(false)
 
 // Computed
@@ -146,10 +148,10 @@ const actions = computed(() => ([{
 
 // Watch
 
-whenever(useMagicKeys().meta_k, () => {
+whenever(keys.meta_k, () => {
   isOpen.value = !isOpen.value
 })
-whenever(and(useMagicKeys().escape, isOpen), () => {
+whenever(and(keys.escape, isOpen), () => {
   isOpen.value = false
 })
 

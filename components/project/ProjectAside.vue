@@ -26,7 +26,7 @@
 
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import { useMagicKeys, whenever, and, useActiveElement } from '@vueuse/core'
+import { useMagicKeys, whenever, and } from '@vueuse/core'
 import type { Project } from '~/types'
 
 const props = defineProps({
@@ -40,17 +40,11 @@ const project: Ref<Project> = inject('project')
 
 const route = useRoute()
 const router = useRouter()
-const activeElement = useActiveElement()
+const { notUsingInput, notUsingMeta } = useShortcuts()
 const keys = useMagicKeys()
 const { previewUrl } = useProjectFiles(project.value, 'content')
 const { isOpen: isPreviewOpen } = useProjectPreview()
 const { openShortcutsSlideover } = useProjectSlideovers()
-
-// Computed
-
-const notUsingInput = computed(() => !(activeElement.value?.tagName === 'INPUT' || activeElement.value?.tagName === 'TEXTAREA' || activeElement.value?.contentEditable === 'true'))
-
-const notUsingMeta = computed(() => !keys.current.has('MetaLeft') && !keys.current.has('MetaRight'))
 
 // Watch
 

@@ -49,7 +49,7 @@
 
 <script setup lang="ts">
 import type { WritableComputedRef } from 'vue'
-import { useActiveElement, useMagicKeys, whenever, and } from '@vueuse/core'
+import { useMagicKeys, whenever, and } from '@vueuse/core'
 
 const props = defineProps({
   modelValue: {
@@ -60,7 +60,10 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue'])
 
-const activeElement = useActiveElement()
+const { magicKeysOptions, notUsingInput } = useShortcuts()
+const keys = useMagicKeys(magicKeysOptions({
+  prevents: [{ key: '?' }]
+}))
 
 const q = ref('')
 const shortcutsList = [{
@@ -87,10 +90,7 @@ const shortcutsList = [{
   ]
 }]
 
-const notUsingInput = computed(() => !(activeElement.value?.tagName === 'INPUT' || activeElement.value?.tagName === 'TEXTAREA' || activeElement.value?.contentEditable === 'true'))
-
-// FIXME: find universal way to designate `?`
-whenever(and(useMagicKeys().shift_slash, notUsingInput), () => {
+whenever(and(keys['?'], notUsingInput), () => {
   isOpen.value = !isOpen.value
 })
 

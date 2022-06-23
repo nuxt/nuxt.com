@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 import type { WritableComputedRef, Ref, ComputedRef } from 'vue'
-import { useMagicKeys, whenever, and, useActiveElement } from '@vueuse/core'
+import { useMagicKeys, whenever, and } from '@vueuse/core'
 import type { GitHubBranch, GitHubPull, Project } from '~/types'
 
 const props = defineProps({
@@ -28,7 +28,8 @@ const pulls: Ref<GitHubPull[]> = ref([])
 
 const emit = defineEmits(['update:modelValue'])
 
-const activeElement = useActiveElement()
+const { notUsingInput } = useShortcuts()
+const keys = useMagicKeys()
 
 const {
   isDraft: isDraftContent,
@@ -131,14 +132,12 @@ const actions = computed(() => ([
   (isDraftContent.value || isDraftMedia.value) && { key: 'reset', label: 'Revert draft', icon: 'heroicons-outline:reply', click: onResetDraftClick }
 ].filter(Boolean)))
 
-const notUsingInput = computed(() => !(activeElement.value?.tagName === 'INPUT' || activeElement.value?.tagName === 'TEXTAREA' || activeElement.value?.contentEditable === 'true'))
-
 // Watch
 
-whenever(and(useMagicKeys().meta_b, notUsingInput), () => {
+whenever(and(keys.meta_b, notUsingInput), () => {
   isOpen.value = !isOpen.value
 })
-whenever(and(useMagicKeys().escape, isOpen), () => {
+whenever(and(keys.escape, isOpen), () => {
   isOpen.value = false
 })
 
