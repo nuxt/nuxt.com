@@ -1,10 +1,6 @@
 ::home-hero
 ---
 buttons:
-  - label: 'Watch video'
-    size: 'xl'
-    variant: 'primary-gradient'
-    to: '#'
   - label: 'Get Started'
     size: 'xl'
     variant: 'secondary'
@@ -38,7 +34,7 @@ items:
     to: https://www.awwwards.com/
   - name: Adobe
     to: https://www.adobe.com/
-  - name: Nintendox@
+  - name: Nintendo
     to: https://www.nintendo.com/
   - name: Nasa
     to: https://www.nasa.gov/
@@ -49,14 +45,7 @@ items:
 ---
 ::
 
-::home-section
----
-bodyPlacement: 'right'
-withImage: true
-to: 'https://v3.nuxtjs.org/'
-bodyClass: 'pt-8'
-bodyExtraClass: 'w-full h-full lg:absolute left-0 bottom-8 lg:max-w-lg xl:max-w-xl 2xl:max-w-[600px]'
----
+::home-framework
 #sectionTitle
 START WITH
 #title
@@ -123,6 +112,13 @@ containerClass: 'gap-y-4'
 withBodyText: false
 sectionTitleColorClass: 'text-teal-400'
 mainTitleContainerClass: 'pb-8'
+buttons:
+  - label: 'Go to community'
+    variant: 'primary'
+    to: '/community'
+  - label: 'See the Nuxters'
+    icon: 'heroicons-solid:arrow-right'
+    trailing: true
 ---
 #sectionTitle
 BUILD WITH
@@ -138,11 +134,9 @@ An amazing Community
 ::home-section
 ---
 bodyPlacement: 'left'
-withImage: true
-image: 'network.svg'
 to: '#'
-imageClass: 'lg:max-w-lg xl:max-w-xl 2xl:max-w-[600px] justify-self-end'
 sectionTitleColorClass: 'text-indigoblue-400'
+bodyExtraClass: 'relative'
 ---
 #sectionTitle
 COLLABORATE WITH
@@ -154,6 +148,18 @@ Your [next project]{ .text-indigoblue-400 } will be better
 [Focus on the big picture.]{ .font-semibold } Projects lets you group issues and get a birds-eye view of the progress your team is making.
 #bodyLink
 List of partners
+#bodyExtra
+::home-partner-card
+---
+buttonText: 'Read case study'
+---
+#title
+Lastest case study
+#caseStudy
+Github Stars
+#description
+GitHub Stars recognises those folks who are going above and beyond in helping others in the developer world.
+::
 #extra
   :::home-carousel
   ---

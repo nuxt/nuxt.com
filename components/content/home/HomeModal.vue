@@ -1,5 +1,5 @@
 <template>
-  <UModal v-model="isOpen" appear body-class="p-8" width-class="max-w-xl lg:max-w-4xl xl:max-w-7xl">
+  <UModal v-model="isOpen" appear body-class="" width-class="max-w-xl lg:max-w-4xl xl:max-w-7xl">
     <div class="overflow-hidden rounded-xl">
       <YoutubePlayer :video-id="videoId" :title="title" />
     </div>

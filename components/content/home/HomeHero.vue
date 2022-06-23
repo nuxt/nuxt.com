@@ -18,6 +18,7 @@
           <Markdown use="description" unwrap="p" />
         </p>
         <div class="flex gap-y-4 gap-x-4 sm:gap-x-8">
+          <UButton label="watch video" size="lg" variant="primary-gradient" @click="scrollToVideo()" />
           <UButton
             v-for="button of buttons"
             :key="button.label"
@@ -40,10 +41,25 @@
 <script setup lang="ts">
 import { PropType } from 'vue'
 
+const route = useRoute()
+const router = useRouter()
+
 defineProps({
   buttons: {
-    type: Array as PropType<{ label?: string, variant?: string, to?: string, icon?: string, trailing?: Boolean }[]>,
+    type: Array as PropType<{ label?: string, variant?: string, to?: string, icon?: string, trailing?: boolean }[]>,
     default: () => []
   }
 })
+
+const scrollToVideo = () => {
+  router.push({
+    name: 'index',
+    query: {
+      ...route.query
+    },
+    params: {
+      smooth: '#smooth'
+    }
+  })
+}
 </script>

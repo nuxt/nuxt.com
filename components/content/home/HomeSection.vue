@@ -11,6 +11,18 @@
       <p v-if="$slots.description" class="text-lg text-center xl:text-xl 2xl:text-2xl u-text-gray-600 sm:max-w-xl md:max-w-3xl lg:max-w-4xl">
         <Markdown :use="$slots.description" unwrap="p" />
       </p>
+      <div v-if="buttons" class="flex justify-center px-4 pt-8 gap-y-4 gap-x-4 sm:gap-x-8">
+        <UButton
+          v-for="button of buttons"
+          :key="button.label"
+          :variant="button.variant || 'transparent'"
+          :icon="button.icon || undefined"
+          :label="button.label || ''"
+          :to="button.to || null"
+          :trailing="button.trailing"
+          truncate
+        />
+      </div>
     </div>
     <!-- body section -->
     <div class="relative">
@@ -62,6 +74,8 @@
 </template>
 
 <script setup lang="ts">
+import { PropType } from 'vue'
+
 defineProps({
   containerClass: {
     type: String,
@@ -74,6 +88,10 @@ defineProps({
   mainTitleContainerClass: {
     type: String,
     default: 'lg:pb-16 xl:pb-20 2xl:pb-24'
+  },
+  buttons: {
+    type: Array as PropType<{ label?: string, variant?: string, to?: string, icon?: string, trailing?: boolean }[]>,
+    default: () => []
   },
   bodyPlacement: {
     type: String,
