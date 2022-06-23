@@ -1,5 +1,5 @@
 import { createNode } from '@milkdown/utils'
-import { DefineComponent } from 'vue'
+import type { DefineComponent } from 'vue'
 import { renderVueCtx } from '../../../../context'
 
 export interface VueNodeSchema extends Omit<ReturnType<Parameters<typeof createNode>[0]>, 'view'> {
