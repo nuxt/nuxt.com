@@ -16,6 +16,8 @@
           <UButton v-if="!!previewUrl" v-show="!isPreviewOpen && ['@team-project-content', '@team-project-media'].includes(route.name)" icon="tabler:picture-in-picture-on" variant="transparent" @click="isPreviewOpen = true" />
         </ClientOnly>
 
+        <UIcon name="uil:question-circle" class="w-10 h-10 p-2 rounded-md cursor-pointer u-text-gray-400 hover:u-text-gray-500 hover:u-bg-gray-50" @click="openShortcutsSlideover" />
+
         <TeamsDropdown compact />
       </div>
     </div>
@@ -42,6 +44,7 @@ const activeElement = useActiveElement()
 const keys = useMagicKeys()
 const { previewUrl } = useProjectFiles(project.value, 'content')
 const { isOpen: isPreviewOpen } = useProjectPreview()
+const { openShortcutsSlideover } = useProjectSlideovers()
 
 // Computed
 
