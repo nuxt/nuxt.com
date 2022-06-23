@@ -11,5 +11,5 @@
 <script setup lang="ts">
 const { data: articles } = await useAsyncData('resources-blog-list', () => queryContent().where({
   _path: /^\/resources\/blog\//
-}).sort({ date: 0 }).skip(1).find())
+}).sort({ date: -1 }).skip(1).find())
 </script>
