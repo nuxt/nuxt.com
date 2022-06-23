@@ -4,7 +4,7 @@
     name="search"
     placeholder="Search a nuxter"
     class="w-full md:max-w-sm"
-    size="lg"
+    :size="size"
     icon="heroicons-outline:search"
     autocomplete="off"
     autofocus
@@ -12,6 +12,13 @@
 </template>
 
 <script setup lang="ts">
+defineProps({
+  size: {
+    type: String,
+    default: 'lg'
+  }
+})
+
 const route = useRoute()
 const router = useRouter()
 

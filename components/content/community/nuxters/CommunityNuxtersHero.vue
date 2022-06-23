@@ -15,7 +15,7 @@
           size="lg"
           class="flex-shrink-0"
         />
-        <CommunityNuxtersFilterSearch class="hidden lg:block" />
+        <CommunityNuxtersFilterSearch class="hidden sm:block" />
       </div>
     </template>
     <template #background>

@@ -7,7 +7,7 @@
         <UIcon v-if="pending" name="heroicons-outline:refresh" class="w-6 h-6 animate-spin" />
       </h2>
 
-      <CommunityNuxtersFilterSearch class="lg:hidden" />
+      <CommunityNuxtersFilterSearch size="sm" class="sm:hidden" />
 
       <div class="flex flex-col gap-3 md:flex-row md:items-center">
         <CommunityNuxtersFilterTime />

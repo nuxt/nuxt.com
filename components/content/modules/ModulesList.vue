@@ -9,7 +9,7 @@
         {{ filteredModules.length }} module{{ filteredModules.length > 1 ? 's' : '' }} found
       </h2>
 
-      <ModulesFilterSearch class="lg:hidden" />
+      <ModulesFilterSearch size="sm" class="sm:hidden" />
 
       <div class="flex flex-col gap-3 md:flex-row md:items-center">
         <ModulesFilterVersion size="sm" class="lg:hidden" />

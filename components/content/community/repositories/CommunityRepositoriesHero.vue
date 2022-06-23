@@ -8,7 +8,7 @@
     </template>
 
     <template #extra>
-      <CommunityRepositoriesFilterSearch class="hidden lg:block" />
+      <CommunityRepositoriesFilterSearch class="hidden sm:block" />
     </template>
 
     <template #image>
