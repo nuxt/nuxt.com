@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ComponentSchema } from '~/editor/types'
+import type { ComponentSchema } from '~/editor/src/types'
 
 const { parse: parseMarkdown } = useMarkdown()
 

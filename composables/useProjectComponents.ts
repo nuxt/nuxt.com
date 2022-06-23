@@ -1,6 +1,6 @@
 import type { Ref } from 'vue'
 import type { Project } from '~/types'
-import type { ComponentSchema } from '~/editor/types'
+import type { ComponentSchema } from '~/editor/src/types'
 
 export const useProjectComponents = (project: Project) => {
   const { $toast } = useNuxtApp()

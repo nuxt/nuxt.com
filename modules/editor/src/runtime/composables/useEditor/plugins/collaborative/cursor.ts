@@ -1,7 +1,10 @@
 import { unref } from 'vue'
 import type { Awareness } from 'y-protocols/awareness'
-import colors from '../../../presets/colors'
-import type { User } from '~/types'
+import colors from '../../../../../../../../presets/colors'
+
+interface User {
+  username: string
+}
 
 const cursorColorKeys = [
   'blue',

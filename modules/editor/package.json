@@ -1,0 +1,57 @@
+{
+  "name": "@nuxthq/editor-edge",
+  "version": "0.0.0",
+  "homepage": "https://github.com/nuxtlabs/nuxt.com/tree/dev/editor",
+  "repository": "https://github.com/nuxtlabs/nuxt.com",
+  "keywords": [
+    "nuxt",
+    "editor",
+    "milkdown"
+  ],
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs"
+    }
+  },
+  "type": "module",
+  "main": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "unbuild",
+    "lint": "eslint --ext .ts,.js,.vue ."
+  },
+  "peerDependencies": {
+    "vue": "^3.0.0"
+  },
+  "dependencies": {
+    "@docus/remark-mdc": "npm:@docus/remark-mdc-edge",
+    "@milkdown/core": "6.1.5",
+    "@milkdown/ctx": "6.1.5",
+    "@milkdown/plugin-collaborative": "6.1.5",
+    "@milkdown/plugin-emoji": "6.1.5",
+    "@milkdown/plugin-history": "6.1.5",
+    "@milkdown/plugin-listener": "6.1.5",
+    "@milkdown/plugin-math": "6.1.5",
+    "@milkdown/plugin-slash": "6.1.5",
+    "@milkdown/plugin-tooltip": "6.1.5",
+    "@milkdown/preset-commonmark": "6.1.5",
+    "@milkdown/preset-gfm": "6.1.5",
+    "@milkdown/prose": "6.1.5",
+    "@milkdown/theme-pack-helper": "",
+    "@milkdown/utils": "6.1.5",
+    "@milkdown/vue": "6.1.5",
+    "@nuxthq/ui": "npm:@nuxthq/ui-edge@latest",
+    "@nuxtjs/eslint-config-typescript": "^10.0.0",
+    "shiki-es": "^0.1.2",
+    "y-websocket": "^1.4.3",
+    "yjs": "^13.5.39"
+  },
+  "devDependencies": {
+    "eslint": "^8.18.0",
+    "typescript": "^4.7.4",
+    "unbuild": "^0.7.4"
+  }
+}

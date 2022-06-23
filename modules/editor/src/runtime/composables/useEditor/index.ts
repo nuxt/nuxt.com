@@ -8,6 +8,9 @@ import { codeFence as cmCodeFence } from '@milkdown/preset-commonmark'
 import { replaceAll, switchTheme } from '@milkdown/utils'
 import { useEditor as useMilkdownEditor } from '@milkdown/vue'
 
+// Types
+import type { Options } from './types'
+
 // Internal context
 import context, { componentSchemasCtx } from './context'
 
@@ -21,9 +24,6 @@ import shiki from './plugins/shiki'
 
 // Theme
 import { dark, light } from './theme'
-
-// Types
-import type { Options } from './types'
 
 const useTheme = () => {
   const colorMode = useColorMode()
