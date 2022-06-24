@@ -85,8 +85,7 @@ const shortcutsList = [{
 }, {
   category: 'Live Preview',
   items: [
-    { shortcuts: ['⌘', '.'], text: 'Open / Expand live preview' },
-    { shortcuts: ['Esc'], text: 'Collapse live preview' }
+    { shortcuts: ['⌘', '.'], text: 'Open / Expand live preview' }
   ]
 }]
 
