@@ -45,11 +45,17 @@ items:
 ---
 ::
 
-::home-framework
+::home-section
+---
+body-placement: 'right'
+to: 'https://v3.nuxtjs.org/'
+body-class: 'pt-8'
+body-extra-class: 'w-full h-full lg:absolute left-0 bottom-8 lg:max-w-lg xl:max-w-xl 2xl:max-w-[600px]'
+---
 #sectionTitle
 START WITH
 #title
-The Intuitive Web Framework for</br> Vue developers
+<span id="smooth">The Intuitive Web Framework for</br> Vue developers</span>
 #bodyTitle
 The [Hybrid]{ .text-green-400 } Web Framework
 #bodyDescription
