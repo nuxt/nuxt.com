@@ -39,6 +39,7 @@
 <script setup lang="ts">
 import type { PropType, Ref } from 'vue'
 import type { Team, Project, User } from '~/types'
+import { searchTextRegExp } from '~/utils'
 
 const props = defineProps({
   team: {
@@ -60,8 +61,9 @@ const { data: projects } = await useAsyncData(
 )
 
 const filteredProjects = computed(() => {
+  const queryRegExp = searchTextRegExp(q.value)
   return projects.value.filter((project) => {
-    return project.name.search(new RegExp(q.value, 'i')) !== -1
+    return project.name.search(queryRegExp) !== -1
   })
 })
 </script>

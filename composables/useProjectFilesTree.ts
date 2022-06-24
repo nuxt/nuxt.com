@@ -1,5 +1,6 @@
 import type { GitHubFile, Project, Root } from '~/types'
 import { mapTree, findTree, renamePath, getPathDir, getPathPrefix } from '~/utils/tree'
+import { searchTextRegExp } from '~/utils'
 
 export const useProjectFilesTree = (project: Project, root: Root) => {
   const { computedFiles, bulkRename } = useProjectFiles(project, root)
@@ -81,7 +82,8 @@ export const useProjectFilesTree = (project: Project, root: Root) => {
   // Computed
 
   const filteredComputedFiles = computed(() => {
-    return query.value ? computedFiles.value.filter(f => f.path.search(new RegExp(query.value, 'i')) !== -1) : computedFiles.value
+    const queryRegExp = searchTextRegExp(query.value)
+    return query.value ? computedFiles.value.filter(f => f.path.search(queryRegExp) !== -1) : computedFiles.value
   })
 
   const tree = computed(() => {
