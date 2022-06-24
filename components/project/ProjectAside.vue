@@ -12,11 +12,13 @@
         </div>
       </div>
       <div class="flex flex-col items-center flex-shrink-0 pb-6 space-y-3">
-        <ClientOnly>
-          <UButton v-if="!!previewUrl" v-show="!isPreviewOpen && ['@team-project-content', '@team-project-media'].includes(route.name)" icon="tabler:picture-in-picture-on" variant="transparent" @click="isPreviewOpen = true" />
-        </ClientOnly>
+        <div class="flex flex-col items-center space-y-1">
+          <ClientOnly>
+            <UButton v-if="!!previewUrl" v-show="!isPreviewOpen && ['@team-project-content', '@team-project-media'].includes(route.name)" icon="tabler:picture-in-picture-on" variant="transparent" @click="isPreviewOpen = true" />
+          </ClientOnly>
 
-        <UIcon name="uil:question-circle" class="w-10 h-10 p-2 rounded-md cursor-pointer u-text-gray-400 hover:u-text-gray-500 hover:u-bg-gray-50" @click="openShortcutsSlideover" />
+          <UButton icon="uil:question-circle" variant="transparent" @click="openShortcutsSlideover" />
+        </div>
 
         <TeamsDropdown compact />
       </div>
