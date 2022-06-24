@@ -1,9 +1,9 @@
 <template>
   <USlideover v-model="isOpen" side="right" panel-class="max-w-[384px]">
     <template #header>
-      <div class="flex items-center gap-2">
-        <UButton icon="heroicons-outline:x" variant="transparent" class="-ml-2 sm:-ml-4" @click="isOpen = false" />
+      <div class="flex items-center justify-between flex-1 gap-3">
         <span class="text-lg font-semibold u-text-gray-900">Shortcuts</span>
+        <UIcon name="heroicons-outline:x" class="w-6 h-6 -mr-1 cursor-pointer sm:-mr-3" @click="isOpen = false" />
       </div>
     </template>
 
