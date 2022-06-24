@@ -62,7 +62,7 @@ const emit = defineEmits(['update:modelValue'])
 
 const { magicKeysOptions, notUsingInput } = useShortcuts()
 const keys = useMagicKeys(magicKeysOptions({
-  prevents: [{ key: '?' }]
+  prevents: [{ key: '?', notUsingInput: true }]
 }))
 
 const q = ref('')
