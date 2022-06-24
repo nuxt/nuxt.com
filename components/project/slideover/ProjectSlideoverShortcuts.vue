@@ -11,6 +11,7 @@
       <UInput
         v-model="q"
         name="q"
+        autocomplete="off"
         placeholder="Search shortcuts..."
       />
 
