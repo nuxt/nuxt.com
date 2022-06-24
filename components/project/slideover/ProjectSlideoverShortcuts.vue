@@ -1,7 +1,10 @@
 <template>
-  <USlideover v-model="isOpen" side="right">
+  <USlideover v-model="isOpen" side="right" panel-class="max-w-[384px]">
     <template #header>
-      <span class="text-lg font-semibold u-text-gray-900">Shortcuts</span>
+      <div class="flex items-center gap-2">
+        <UButton icon="heroicons-outline:x" variant="transparent" class="-ml-2 sm:-ml-4" @click="isOpen = false" />
+        <span class="text-lg font-semibold u-text-gray-900">Shortcuts</span>
+      </div>
     </template>
 
     <div class="flex flex-col gap-6 px-4 py-4 overflow-y-auto">

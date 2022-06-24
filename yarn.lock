@@ -862,11 +862,11 @@
     untyped "^0.4.4"
 
 "@nuxt/kit@npm:@nuxt/kit-edge@latest":
-  version "3.0.0-rc.4-27599640.2db154f"
-  resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-rc.4-27599640.2db154f.tgz#96756089fb291761442272e0da7543c9689e8f05"
-  integrity sha512-zuZuZ9R+sE2w4lc4TBpRSfBesVD5QSYboIv+SzczGEkhEEf0vhcmkeyLZw9qBJiJ2Yje0OsJcuVLGduY3IUAEA==
+  version "3.0.0-rc.4-27600153.ad42023"
+  resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-rc.4-27600153.ad42023.tgz#691a3ed2e2fe725aeb480ddb457b5042eae89081"
+  integrity sha512-1dXKAuV03YgvNM/ODOoV3SYHSI+uXZrL+nlMjXXD5lMJgUTHq2R/LMdGowQbMXhTV74iDTza3eyOF1SG5T8O4A==
   dependencies:
-    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-rc.4-27599640.2db154f"
+    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-rc.4-27600153.ad42023"
     c12 "^0.2.7"
     consola "^2.15.3"
     defu "^6.0.0"
@@ -915,10 +915,10 @@
     ufo "^0.8.4"
     unimport "^0.2.7"
 
-"@nuxt/schema@npm:@nuxt/schema-edge@3.0.0-rc.4-27599640.2db154f":
-  version "3.0.0-rc.4-27599640.2db154f"
-  resolved "https://registry.yarnpkg.com/@nuxt/schema-edge/-/schema-edge-3.0.0-rc.4-27599640.2db154f.tgz#93053a96724d3874a41108b8658ca2e69713cdc9"
-  integrity sha512-lYDNRf1/rN9GovTQ64iGppV3NgOKdSAZwDV4uxAvPfp8t93GN8o4UgEzSCjNIftXDblgzDdxAlf2/4a5OdG+XQ==
+"@nuxt/schema@npm:@nuxt/schema-edge@3.0.0-rc.4-27600153.ad42023":
+  version "3.0.0-rc.4-27600153.ad42023"
+  resolved "https://registry.yarnpkg.com/@nuxt/schema-edge/-/schema-edge-3.0.0-rc.4-27600153.ad42023.tgz#d46b2ed663679421785a7c0ae216886d98628d98"
+  integrity sha512-fqlPW5hHvmPm+Ap5H3VoaESThdKfko1WU3s0frk2rJIZqYHg9yunEdantFkwexlgk2z93gSpTnyknLhajiLLPw==
   dependencies:
     c12 "^0.2.7"
     create-require "^1.1.1"
@@ -1008,9 +1008,9 @@
     unstorage "^0.4.1"
 
 "@nuxthq/ui@npm:@nuxthq/ui-edge@latest":
-  version "0.0.2-27599880.aecfef2"
-  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27599880.aecfef2.tgz#b2beb5fc52f192a127105dbdbb6c3c84e3baba83"
-  integrity sha512-5BZcs5VpW8IcaDOlGVkgcxBM0wQ96f7cGEWasch23IKwYBmAMBFzvUxfN2RjNChqb/d4ne+C/yrdICEUdtEgDg==
+  version "0.0.2-27601301.2f90ce2"
+  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27601301.2f90ce2.tgz#084a5472793e26d6c4da047e147eff10f354a4f3"
+  integrity sha512-Mbsu7W3Cmy/986809pOEQFiNL2cByy1tHv5g9L3T+Aw09Vl1RCi8Dfk4N9Mb0nagdjGAy+o0yJA9hGyuQN0qPQ==
   dependencies:
     "@headlessui/vue" "1.6.4"
     "@iconify/vue" "^3.2.1"
@@ -2336,7 +2336,12 @@ caniuse-lite@^1.0.0:
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001352.tgz#cc6f5da3f983979ad1e2cdbae0505dccaa7c6a12"
   integrity sha512-GUgH8w6YergqPQDGWhJGt8GDRnY0L/iJVQcU3eJ46GYf52R8tk0Wxp0PymuFVZboJYXGiCqwozAYZNRjVj6IcA==
 
-caniuse-lite@^1.0.30001335, caniuse-lite@^1.0.30001349, caniuse-lite@^1.0.30001358:
+caniuse-lite@^1.0.30001335, caniuse-lite@^1.0.30001358:
+  version "1.0.30001359"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001359.tgz#a1c1cbe1c2da9e689638813618b4219acbd4925e"
+  integrity sha512-Xln/BAsPzEuiVLgJ2/45IaqD9jShtk3Y33anKb4+yLwQzws3+v6odKfpgES/cDEaZMLzSChpIGdbOYtH9MyuHw==
+
+caniuse-lite@^1.0.30001349:
   version "1.0.30001358"
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001358.tgz#473d35dabf5e448b463095cab7924e96ccfb8c00"
   integrity sha512-hvp8PSRymk85R20bsDra7ZTCpSVGN/PAz9pSAjPSjKC+rNmnUk5vCRgJwiTT/O4feQ/yu/drvZYpKxxhbFuChw==
@@ -3471,10 +3476,15 @@ ee-first@1.1.1:
   resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
   integrity sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==
 
-electron-to-chromium@^1.4.147, electron-to-chromium@^1.4.164:
+electron-to-chromium@^1.4.147:
   version "1.4.167"
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.167.tgz#72424aebc85df12c5331d37b1bcfd1ae01322c55"
   integrity sha512-lPHuHXBwpkr4RcfaZBKm6TKOWG/1N9mVggUpP4fY3l1JIUU2x4fkM8928smYdZ5lF+6KCTAxo1aK9JmqT+X71Q==
+
+electron-to-chromium@^1.4.164:
+  version "1.4.169"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.169.tgz#d4b8cf9816566c7e9518128f1a97f39de9c7af9d"
+  integrity sha512-Yb7UFva1sLlAaRyCkgoFF3qWvwZacFDtsGKi44rZsk8vnhL0DMhsUdhI4Dz9CCJQfftncDMGSI3AYiDtg8mD/w==
 
 emoji-regex@^10.0.0:
   version "10.1.0"
