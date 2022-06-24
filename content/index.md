@@ -1,13 +1,7 @@
 ::home-hero
 ---
-buttons:
-  - label: 'Get Started'
-    size: 'xl'
-    variant: 'secondary'
-    to: '/docs/framework/v3/getting-started/quick-start'
-    target: '_blank'
-    icon: 'heroicons-solid:chevron-right'
-    trailing: true
+primaryButtonText: 'Watch video'
+secondaryButtonText: 'Get started'
 ---
 
 #badgeLabel
@@ -74,10 +68,8 @@ Go to the documentation
 ::home-section
 ---
 bodyPlacement: 'left'
-withImage: true
-image: 'modules.svg'
 to: '/modules'
-imageClass: 'lg:absolute lg:max-w-lg xl:max-w-xl 2xl:max-w-[700px] lg:right-0 lg:translate-x-8'
+bodyExtraClass: 'lg:absolute w-full max-w-2xl 2xl:max-w-[700px] lg:right-0 lg:translate-x-8'
 ---
 #sectionTitle
 SCALE WITH
@@ -89,10 +81,14 @@ Build your dreamed web app with [hundreds of modules]{ .text-green-400 }
 [Focus on the big picture.]{ .font-semibold } Projects lets you group issues and get a birds-eye view of the progress your team is making.
 #bodyLink
 List of modules
+#bodyExtra
+  ::modules-illustration
+  ::
 ::
 
 ::home-section
 ---
+containerClass: 'gap-y-4'
 bodyPlacement: 'right'
 bodyContainerClass: 'min-h-[500px]'
 to: '#'

@@ -18,16 +18,15 @@
           <Markdown use="description" unwrap="p" />
         </p>
         <div class="flex gap-y-4 gap-x-4 sm:gap-x-8">
-          <UButton label="watch video" size="lg" variant="primary-gradient" @click="scrollToVideo()" />
+          <UButton :label="primaryButtonText" size="lg" variant="primary-gradient" @click="scrollToVideo()" />
           <UButton
-            v-for="button of buttons"
-            :key="button.label"
+            :label="secondaryButtonText"
             size="lg"
-            :variant="button.variant || 'transparent'"
-            :icon="button.icon || undefined"
-            :label="button.label || ''"
-            :to="button.to || '#'"
-            :trailing="button.trailing"
+            variant="transparant"
+            icon="heroicons-solid:chevron-right"
+            trailing
+            target="_blank"
+            class="u-text-gray-900"
           />
         </div>
         <HomeGemWrapper>
@@ -39,15 +38,18 @@
 </template>
 
 <script setup lang="ts">
-import { PropType } from 'vue'
 
 const route = useRoute()
 const router = useRouter()
 
 defineProps({
-  buttons: {
-    type: Array as PropType<{ label?: string, variant?: string, to?: string, icon?: string, trailing?: boolean }[]>,
-    default: () => []
+  primaryButtonText: {
+    type: String,
+    default: ''
+  },
+  secondaryButtonText: {
+    type: String,
+    default: ''
   }
 })
 

@@ -1,7 +1,7 @@
 <template>
   <div class="cursor-pointer" @click="isOpen = !isOpen">
     <HomeModal v-model="isOpen" :video-id="videoId" :title="title" />
-    <img src="/assets/home/place-holder.png" class="w-full h-full">
+    <img src="/assets/home/place-holder.png" class="w-full h-full rounded-xl lg:rounded-r-xl lg:rounded-l-none">
   </div>
 </template>
 

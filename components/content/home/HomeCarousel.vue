@@ -4,13 +4,12 @@
       :modules="modules"
       :slides-per-view="slidesPerView"
       :loop="true"
-      :autoplay="autoplay"
+      :autoplay="auoplay"
       :speed="5000"
     >
       <SwiperSlide v-for="(item, index) in items" :key="index" class="!h-8">
         <div class="relative flex items-center justify-center h-full">
           <UIcon :name="item.name" :alt="item.name" class="h-8 text-gray-400 dark:text-white" />
-          <NuxtLink :to="item.to" target="_blank" class="absolute inset-0" rel="noopener noreferrer nofollow" />
         </div>
       </SwiperSlide>
     </Swiper>

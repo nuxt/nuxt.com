@@ -5,13 +5,13 @@
       <div :class="sectionTitleColorClass" class="pb-2 font-semibold">
         <Markdown :use="$slots.sectionTitle" unwrap="p" />
       </div>
-      <h2 class="max-w-lg pb-4 text-4xl font-semibold text-center md:text-5xl lg:text-6xl sm:max-w-xl md:max-w-3xl lg:max-w-4xl">
+      <h2 class="max-w-lg pb-4 text-4xl font-semibold text-center md:text-5xl lg:text-6xl sm:max-w-xl md:max-w-3xl lg:max-w-4xl u-text-gray-900">
         <Markdown :use="$slots.title" unwrap="p" />
       </h2>
       <p v-if="$slots.description" class="text-lg text-center xl:text-xl 2xl:text-2xl u-text-gray-600 sm:max-w-xl md:max-w-3xl lg:max-w-4xl">
         <Markdown :use="$slots.description" unwrap="p" />
       </p>
-      <div v-if="buttons" class="flex justify-center px-4 pt-8 gap-y-4 gap-x-4 sm:gap-x-8">
+      <div v-if="buttons.length" class="flex justify-center px-4 pt-8 gap-y-4 gap-x-4 sm:gap-x-8">
         <UButton
           v-for="button of buttons"
           :key="button.label"
