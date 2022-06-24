@@ -94,22 +94,23 @@ List of modules
 ::home-section
 ---
 bodyPlacement: 'right'
-withImage: true
-image: 'templates.svg'
 to: '#'
-imageClass: 'lg:absolute left-0 lg:max-w-lg xl:max-w-xl 2xl:max-w-[700px]'
 sectionTitleColorClass: 'text-teal-400'
+bodyExtraClass: 'w-full flex justify-center sm:grid grid-cols-4 lg:flex mr-24 lg:mr-0 lg:max-w-[600px] min-h-[500px] lg:absolute left-8'
 ---
 #sectionTitle
-KICKSTART WITH
+WORK WITH
 #title
-Templates for everything
+Projects for everything
 #bodyTitle
-Explore [dozens of starters]{ .text-teal-400 } in order to kickoff your project
+Manage your Nuxt projects [online]{ .text-teal-400 }
 #bodyDescription
 [Focus on the big picture.]{ .font-semibold } Projects lets you group issues and get a birds-eye view of the progress your team is making.
 #bodyLink
-Explore templates
+My first project
+#bodyExtra
+  ::home-projects-animation
+  ::
 ::
 
 ::home-section
