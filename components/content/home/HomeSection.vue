@@ -29,6 +29,7 @@
       <UContainer
         class="flex flex-col items-center justify-between w-full lg:flex-row gap-y-12"
         :class="[
+          bodyContainerClass,
           { 'gap-y-8': ['left', 'right'].includes(bodyPlacement) },
           { 'order-last': bodyPlacement === 'left' },
           { 'lg:justify-end': bodyPlacement === 'right' }
@@ -99,6 +100,10 @@ defineProps({
     validator: (value: string) => {
       return ['left', 'center', 'right'].includes(value)
     }
+  },
+  bodyContainerClass: {
+    type: String,
+    default: ''
   },
   bodyClass: {
     type: String,

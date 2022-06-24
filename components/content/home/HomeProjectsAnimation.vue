@@ -36,7 +36,11 @@
         </div>
       </div>
     </div>
-    <div class="-translate-y-4 lg:translate-y-0 sm:absolute h-full w-full h-[300px] w-[250px] xl:h-[402px] xl:w-[335px] rounded-md text-gray-900 bg-gray-100/80 backdrop-blur-md sm:-bottom-[100px] sm:-right-24 md:-right-8 lg:-right-48 bottom-8 xl:top-[150px] xl:-right-[280px] 2xl:-right-[320px] -bottom-8 flex flex-col justify-between gap-y-3 xl:gap-y-5 p-6">
+    <div
+      class="-translate-y-4 lg:translate-y-0 sm:absolute h-full w-full h-[300px] w-[250px] rounded-md text-gray-900 bg-gray-100/80 backdrop-blur-md
+        -bottom-8 flex flex-col justify-between gap-y-3 xl:gap-y-5 p-6 xl:h-[402px] xl:w-[335px]
+        sm:-bottom-[100px] sm:-right-24 md:-right-8 lg:-right-48 bottom-8 xl:top-[150px] xl:-right-[280px] 2xl:-right-[320px]"
+    >
       <img src="/assets/home/projects-image.png" alt="projects image exemple">
       <h2 class="text-xl font-semibold xl:text-3xl ">
         Introducting Nuxt
