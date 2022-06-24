@@ -165,6 +165,11 @@ const { branch, branches, commit, openPublishModal, openCreateModal, loading } =
 const { computedFile: contentFile, isDraft: isDraftContent, refresh: refreshContentFiles, previewUrl } = useProjectFiles(project.value, 'content')
 const { computedFile: publicFile, isDraft: isDraftMedia, refresh: refreshMediaFiles } = useProjectFiles(project.value, 'public')
 
+const { magicKeysOptions } = useShortcuts()
+const keys = useMagicKeys(magicKeysOptions({
+  prevents: [{ metaKey: true, key: 's' }]
+}))
+
 const isOpen = ref(false)
 
 const computedFile = computed(() => {
@@ -203,18 +208,9 @@ const deployOptions = [[{
   to: { name: '@team-project-settings' }
 }]]
 
-const { meta_s: metaS } = useMagicKeys({
-  passive: false,
-  onEventFired (e) {
-    if (e.metaKey && e.key === 's' && e.type === 'keydown') {
-      e.preventDefault()
-    }
-  }
-})
-
 // Watch
 
-whenever(and(metaS, or(isDraftContent, isDraftMedia), not(loading)), onCommitClick)
+whenever(and(keys.meta_s, or(isDraftContent, isDraftMedia), not(loading)), onCommitClick)
 
 // Methods
 function onNewFile () {

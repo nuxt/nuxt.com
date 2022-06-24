@@ -12,9 +12,13 @@
         </div>
       </div>
       <div class="flex flex-col items-center flex-shrink-0 pb-6 space-y-3">
-        <ClientOnly>
-          <UButton v-if="!!previewUrl" v-show="!isPreviewOpen && ['@team-project-content', '@team-project-media'].includes(route.name)" icon="tabler:picture-in-picture-on" variant="transparent" @click="isPreviewOpen = true" />
-        </ClientOnly>
+        <div class="flex flex-col items-center space-y-1">
+          <ClientOnly>
+            <UButton v-if="!!previewUrl" v-show="!isPreviewOpen && ['@team-project-content', '@team-project-media'].includes(route.name)" icon="tabler:picture-in-picture-on" variant="transparent" @click="isPreviewOpen = true" />
+          </ClientOnly>
+
+          <UButton icon="uil:question-circle" variant="transparent" @click="openShortcutsSlideover" />
+        </div>
 
         <TeamsDropdown compact />
       </div>
@@ -24,7 +28,7 @@
 
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import { useMagicKeys, whenever, and, useActiveElement } from '@vueuse/core'
+import { useMagicKeys, whenever, and } from '@vueuse/core'
 import type { Project } from '~/types'
 
 const props = defineProps({
@@ -38,16 +42,11 @@ const project: Ref<Project> = inject('project')
 
 const route = useRoute()
 const router = useRouter()
-const activeElement = useActiveElement()
+const { notUsingInput, notUsingMeta } = useShortcuts()
 const keys = useMagicKeys()
 const { previewUrl } = useProjectFiles(project.value, 'content')
 const { isOpen: isPreviewOpen } = useProjectPreview()
-
-// Computed
-
-const notUsingInput = computed(() => !(activeElement.value?.tagName === 'INPUT' || activeElement.value?.tagName === 'TEXTAREA' || activeElement.value?.contentEditable === 'true'))
-
-const notUsingMeta = computed(() => !keys.current.has('MetaLeft') && !keys.current.has('MetaRight'))
+const { openShortcutsSlideover } = useProjectSlideovers()
 
 // Watch
 
