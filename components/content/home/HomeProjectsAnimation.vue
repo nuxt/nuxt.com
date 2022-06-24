@@ -1,6 +1,6 @@
 <template>
   <div class="relative flex flex-col lg:flex-row min-h-[500px] items-center col-span-3 pl-8 lg:pl-0">
-    <div class="h-full w-full h-[420px] w-[291px] xl:h-[490px] xl:w-[391px] xl:translate-x-[50px] 2xl:translate-x-[100px] border border-gray-600 bg-gray-900 rounded-md flex flex-col justify-between text-white p-4 xl:p-7">
+    <div class="h-full w-full h-[420px] w-[288px] xl:h-[490px] xl:w-[391px] xl:translate-x-[50px] 2xl:translate-x-[100px] border border-gray-600 bg-gray-900 rounded-md flex flex-col justify-between text-white p-4 xl:p-7">
       <span class="pb-5 text-sm font-semibold xl:text-base">blogArticle</span>
       <div class="flex flex-col pb-4">
         <span class="pb-1.5 text-sm font-semibold">banner</span>
@@ -22,7 +22,7 @@
         <div class="absolute flex items-center justify-center px-4 py-[1px] bg-indigoblue-400 rounded-md left-[49%] top-[4px] z-[1]">
           <span class="text-white text">atinux</span>
         </div>
-        <div class="absolute w-0.5 bg-indigoblue-400 h-4 left-1/2 top-[34px]" />
+        <div class="absolute w-0.5 bg-indigoblue-400 h-4 left-[51%] lg:left-1/2 top-[34px]" />
         <span class="pb-1 text-sm font-semibold">description</span>
         <span class="text-sm">Id orci tellus laoreet id ac. <span class="hidden xl:block">Dolor, aenean leo, ac etiam consequat in. Convallis arcu ipsum urna nibh. </span>
         </span>

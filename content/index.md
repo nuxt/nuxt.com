@@ -97,7 +97,7 @@ bodyPlacement: 'right'
 bodyContainerClass: 'min-h-[500px]'
 to: '#'
 sectionTitleColorClass: 'text-teal-400'
-bodyExtraClass: 'w-full flex justify-center lg:justify-start sm:grid grid-cols-4 lg:flex mr-24 lg:mr-0 lg:absolute left-8'
+bodyExtraClass: 'w-full flex justify-center lg:justify-start sm:grid grid-cols-4 lg:flex lg:mr-0 lg:absolute left-8'
 ---
 #sectionTitle
 WORK WITH
