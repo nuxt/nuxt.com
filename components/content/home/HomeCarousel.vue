@@ -4,7 +4,7 @@
       :modules="modules"
       :slides-per-view="slidesPerView"
       :loop="true"
-      :autoplay="auoplay"
+      :autoplay="autoplay"
       :speed="5000"
     >
       <SwiperSlide v-for="(item, index) in items" :key="index" class="!h-8">
