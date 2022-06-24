@@ -44,7 +44,7 @@
 
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import { useMagicKeys, whenever, and, useActiveElement } from '@vueuse/core'
+import { useMagicKeys, whenever, and } from '@vueuse/core'
 import type { Project, Root } from '~/types'
 
 defineProps({
@@ -59,7 +59,8 @@ defineEmits(['update:modelValue'])
 const project: Ref<Project> = inject('project')
 const root: Ref<Root> = inject('root')
 
-const activeElement = useActiveElement()
+const { notUsingInput } = useShortcuts()
+const keys = useMagicKeys()
 const { branch } = useProjectBranches(project.value)
 const { computedFile } = useProjectFiles(project.value, root.value)
 
@@ -73,11 +74,9 @@ const githubLink = computed(() => {
   return `https://github.com/${project.value.repository.owner}/${project.value.repository.name}/tree/${branch.value.name}/${absolutePath.value}`
 })
 
-const notUsingInput = computed(() => !(activeElement.value?.tagName === 'INPUT' || activeElement.value?.tagName === 'TEXTAREA' || activeElement.value?.contentEditable === 'true'))
-
 // Watch
 
-whenever(and(useMagicKeys().meta_g, notUsingInput), () => {
+whenever(and(keys.meta_g, notUsingInput), () => {
   window.open(githubLink.value, '_blank')
 })
 </script>
