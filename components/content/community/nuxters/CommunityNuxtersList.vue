@@ -38,6 +38,7 @@
 
 <script setup>
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
+import { searchTextRegExp } from '~/utils'
 
 const { smaller } = useBreakpoints(breakpointsTailwind)
 
@@ -47,9 +48,10 @@ const filteredNuxters = computed(() => {
   if (!nuxters.value?.length) {
     return []
   }
+  const queryRegExp = searchTextRegExp(q.value)
   return [...nuxters.value]
     .filter((nuxter) => {
-      if (q.value && !['name', 'github', 'role'].map(field => nuxter[field]).filter(Boolean).some(value => value.search(new RegExp(q.value, 'i')) !== -1)) {
+      if (q.value && !['name', 'github', 'role'].map(field => nuxter[field]).filter(Boolean).some(value => value.search(queryRegExp) !== -1)) {
         return false
       }
       return true

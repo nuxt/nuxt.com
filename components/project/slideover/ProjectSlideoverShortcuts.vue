@@ -54,6 +54,7 @@
 <script setup lang="ts">
 import type { WritableComputedRef } from 'vue'
 import { useMagicKeys, whenever, and } from '@vueuse/core'
+import { searchTextRegExp } from '~/utils'
 
 const props = defineProps({
   modelValue: {
@@ -109,11 +110,11 @@ const isOpen: WritableComputedRef<boolean> = computed({
 })
 
 const filteredShortcuts = computed(() => {
-  const regex = new RegExp(q.value, 'i')
+  const queryRegExp = searchTextRegExp(q.value)
   return shortcutsList.map(shortcutItem => ({
     category: shortcutItem.category,
     items: shortcutItem.items.filter((item) => {
-      return item.text.search(regex) !== -1 || item.shortcuts.some(s => s.search(regex) !== -1)
+      return item.text.search(queryRegExp) !== -1 || item.shortcuts.some(s => s.search(queryRegExp) !== -1)
     })
   })).filter(shortcutItem => !!shortcutItem.items.length)
 })

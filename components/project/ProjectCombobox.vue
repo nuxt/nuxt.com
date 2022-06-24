@@ -36,6 +36,7 @@
 import { Combobox, ComboboxInput, ComboboxOptions } from '@headlessui/vue'
 import type { ComputedRef, PropType } from 'vue'
 import type { GitHubBranch, GitHubFile } from '~/types'
+import { searchTextRegExp } from '~/utils'
 
 const props = defineProps({
   items: {
@@ -79,9 +80,10 @@ const filteredItems: ComputedRef<(GitHubBranch | GitHubFile)[]> = computed(() =>
   let filteredItems = [...props.items]
 
   if (query.value) {
+    const queryRegExp = searchTextRegExp(query.value)
     filteredItems = filteredItems.filter(item => [(item as GitHubFile).path, item.name]
       .filter(Boolean)
-      .some(value => value.search(new RegExp(query.value, 'i')) !== -1)
+      .some(value => value.search(queryRegExp) !== -1)
     )
   }
   filteredItems = filteredItems.slice(0, 24)
@@ -89,9 +91,10 @@ const filteredItems: ComputedRef<(GitHubBranch | GitHubFile)[]> = computed(() =>
 })
 
 const filteredActions = computed(() => {
+  const queryRegExp = searchTextRegExp(query.value)
   return [...props.actions].filter((a) => {
     return a.static || (
-      (a.visible === undefined || a.visible) && (!query.value || [a.key, a.label].filter(Boolean).some(value => value.search(new RegExp(query.value, 'i')) !== -1))
+      (a.visible === undefined || a.visible) && (!query.value || [a.key, a.label].filter(Boolean).some(value => value.search(queryRegExp) !== -1))
     )
   })
 })
