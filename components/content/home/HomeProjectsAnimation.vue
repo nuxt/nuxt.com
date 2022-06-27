@@ -59,7 +59,7 @@
       <UButton
         label="Read more"
         icon="heroicons-solid:arrow-right"
-        variant="transparant"
+        variant="transparent"
         trailing
         class="-translate-x-4"
       />

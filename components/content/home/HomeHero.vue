@@ -22,7 +22,7 @@
           <UButton
             :label="secondaryButtonText"
             size="lg"
-            variant="transparant"
+            variant="transparent"
             icon="heroicons-solid:chevron-right"
             trailing
             target="_blank"

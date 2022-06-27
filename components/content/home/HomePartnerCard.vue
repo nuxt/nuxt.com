@@ -17,7 +17,7 @@
     <div class="flex">
       <UButton
         :label="buttonText"
-        variant="transparant"
+        variant="transparent"
         class="text-white bg-black border border-gray-700 hover:text-gray-200 focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
         to="/resources/case-studies/github"
         icon="heroicons-solid:chevron-right"
