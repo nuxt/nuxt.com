@@ -88,6 +88,7 @@ List of modules
 
 ::home-section
 ---
+bodyClass: 'z-10 relative'
 containerClass: 'gap-y-4'
 bodyPlacement: 'right'
 bodyContainerClass: 'min-h-[500px]'
