@@ -1,5 +1,5 @@
 <template>
-  <UContainer padded class="pt-20 pb-16 sm:pb-32">
+  <UContainer :constrained="false" class="relative pb-16 pt-28">
     <Swiper
       :modules="modules"
       :slides-per-view="slidesPerView"
@@ -9,11 +9,12 @@
     >
       <SwiperSlide v-for="(item, index) in items" :key="index" class="!h-8">
         <div class="relative flex items-center justify-center h-full">
-          <img :src="`/assets/brands/${item.name}.png`" :alt="item.name">
-          <NuxtLink :to="item.to" target="_blank" class="absolute inset-0" rel="noopener noreferrer nofollow" />
+          <UIcon :name="item.name" :alt="item.name" class="h-8 text-gray-400 dark:text-white" />
         </div>
       </SwiperSlide>
     </Swiper>
+    <div class="absolute top-1/2 left-0 w-[20px] sm:w-[50px] md:w-[100px] lg:w-[200px] xl:w-[300px] 2xl:w-[400px] h-16 bg-gradient-to-r from-white dark:from-black to-transparent z-[1]" />
+    <div class="absolute top-1/2 right-0 w-[20px] sm:w-[50px] md:w-[100px] lg:w-[200px] xl:w-[300px] 2xl:w-[400px] h-16 bg-gradient-to-l from-white dark:from-black to-transparent z-[1]" />
   </UContainer>
 </template>
 
@@ -39,14 +40,15 @@ const { smaller } = useBreakpoints(breakpointsTailwind)
 const xs = smaller('sm')
 const sm = smaller('md')
 const md = smaller('lg')
+const lg = smaller('xl')
 
 const slidesPerView = computed(() => {
-  if (xs.value) {
-    return 1
-  } else if (sm.value) {
+  if (xs.value || sm.value) {
     return 2
   } else if (md.value) {
     return 3
+  } else if (lg.value) {
+    return 4
   } else {
     return 5
   }
