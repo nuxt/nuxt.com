@@ -5,6 +5,7 @@
     </div>
   </UModal>
 </template>
+
 <script setup lang="ts">
 defineProps({
   videoId: {

@@ -6198,6 +6198,7 @@
 </template>
 
 <script setup lang="ts">
+import type { Ref } from 'vue'
 
 const observer = ref() as Ref<IntersectionObserver>
 const root = ref(null) as Ref<Element>
@@ -6254,7 +6255,6 @@ onBeforeMount(() => (observer.value = new IntersectionObserver(observerCallback)
 
 onMounted(() => {
   observer.value.observe(root.value)
-  animationMap()
 })
 
 onBeforeUnmount(() => observer.value?.disconnect())
