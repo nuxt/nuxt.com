@@ -1,5 +1,5 @@
 <template>
-  <div id="gemAnim" class="absolute top-[-50px] left-2/3" />
+  <div ref="gemAnim" class="absolute top-[-50px] left-2/3" />
 </template>
 
 <script setup>
@@ -10,13 +10,15 @@ import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { useColorMode } from '#imports'
 
+const gemAnim = ref(null)
+
 const colorMode = useColorMode()
 
 // Loaders
 const gltfLoader = new GLTFLoader()
 
 // Renderer
-const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'high-performance'})
+const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'high-performance' })
 renderer.outputEncoding = THREE.sRGBEncoding
 renderer.toneMapping = THREE.ACESFilmicToneMapping
 renderer.toneMappingExposure = 1
@@ -108,7 +110,7 @@ onMounted(() => {
   // gemMaterialFolder.add(gemMaterial, 'envMapIntensity', 0, 10).step(0.1).onChange(function (value) { gemMaterial.envMapIntensity = value })
 
   // Renderer
-  document.getElementById('gemAnim').appendChild(renderer.domElement)
+  gemAnim.value.appendChild(renderer.domElement)
 
   function animate () {
     if (colorMode.value === 'dark') {

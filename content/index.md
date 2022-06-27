@@ -53,7 +53,7 @@ START WITH
 #bodyTitle
 The [Hybrid]{ .text-green-400 } Web Framework
 #bodyDescription
-[Focus on the big picture.]{ .font-semibold } Projects lets you group issues and get a birds-eye view of the progress your team is making.
+[Focus on the big picture.]{ .font-semibold .u-text-gray-900 } Projects lets you group issues and get a birds-eye view of the progress your team is making.
 #bodyLink
 Go to the documentation
 #bodyExtra
@@ -78,7 +78,7 @@ Powerful Modules
 #bodyTitle
 Build your dreamed web app with [hundreds of modules]{ .text-green-400 }
 #bodyDescription
-[Focus on the big picture.]{ .font-semibold } Projects lets you group issues and get a birds-eye view of the progress your team is making.
+[Focus on the big picture.]{ .font-semibold .u-text-gray-900 } Projects lets you group issues and get a birds-eye view of the progress your team is making.
 #bodyLink
 List of modules
 #bodyExtra
@@ -92,7 +92,7 @@ bodyClass: 'z-10 relative'
 containerClass: 'gap-y-4'
 bodyPlacement: 'right'
 bodyContainerClass: 'min-h-[500px]'
-to: '#'
+to: '/projects'
 sectionTitleColorClass: 'text-teal-400'
 bodyExtraClass: 'w-full flex justify-center lg:justify-start sm:grid grid-cols-4 lg:flex lg:mr-0 lg:absolute left-8'
 ---
@@ -103,7 +103,7 @@ Projects for everything
 #bodyTitle
 Manage your Nuxt projects [online]{ .text-teal-400 }
 #bodyDescription
-[Focus on the big picture.]{ .font-semibold } Projects lets you group issues and get a birds-eye view of the progress your team is making.
+[Focus on the big picture.]{ .font-semibold .u-text-gray-900 } Projects lets you group issues and get a birds-eye view of the progress your team is making.
 #bodyLink
 My first project
 #bodyExtra
@@ -119,10 +119,12 @@ sectionTitleColorClass: 'text-teal-400'
 mainTitleContainerClass: 'pb-8'
 buttons:
   - label: 'Go to community'
-    variant: 'primary'
+    variant: 'primary-gradient'
     to: '/community'
   - label: 'See the Nuxters'
-    icon: 'heroicons-solid:arrow-right'
+    icon: 'heroicons-solid:arrow-sm-right'
+    to: '/community/nuxters'
+    variant: 'secondary'
     trailing: true
 ---
 #sectionTitle
@@ -130,7 +132,7 @@ BUILD WITH
 #title
 An amazing Community
 #description
-[Focus on the big picture.]{ .font-semibold } Projects lets you group issues and get a birds-eye view of the progress your team is making.
+[Focus on the big picture.]{ .font-semibold .u-text-gray-900 } Projects lets you group issues and get a birds-eye view of the progress your team is making.
 #extra
   :::home-map
   :::
@@ -139,7 +141,7 @@ An amazing Community
 ::home-section
 ---
 bodyPlacement: 'left'
-to: '#'
+to: '/community/partners'
 sectionTitleColorClass: 'text-indigoblue-400'
 bodyExtraClass: 'relative'
 ---
@@ -150,7 +152,7 @@ Our partners network
 #bodyTitle
 Your [next project]{ .text-indigoblue-400 } will be better
 #bodyDescription
-[Focus on the big picture.]{ .font-semibold } Projects lets you group issues and get a birds-eye view of the progress your team is making.
+[Focus on the big picture.]{ .font-semibold .u-text-gray-900 } Projects lets you group issues and get a birds-eye view of the progress your team is making.
 #bodyLink
 List of partners
 #bodyExtra

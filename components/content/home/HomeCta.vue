@@ -1,12 +1,12 @@
 <template>
-  <div class="relative py-8 pb-48 ">
+  <div class="relative pb-16 sm:pb-32">
     <img src="/assets/home/gradient-cta.svg" class="absolute w-full h-full bottom-24 -left-8">
     <UContainer padded class="relative flex flex-col items-center justify-center gap-y-6">
       <h3 class="text-4xl font-semibold u-text-gray-900">
-        <Markdown :use="$slots.title" unwramp="p" />
+        <Markdown :use="$slots.title" unwrap="p" />
       </h3>
-      <p class="max-w-xl text-xl text-center u-text-gray-600">
-        <Markdown :use="$slots.description" unwramp="p" />
+      <p class="max-w-xl text-xl text-center u-text-gray-900">
+        <Markdown :use="$slots.description" unwrap="p" />
       </p>
       <form class="flex flex-wrap justify-start justify-center w-full gap-6 sm:flex-nowrap" @submit.prevent="onSubmit">
         <UInput

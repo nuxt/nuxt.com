@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col pt-24 pb-12 sm:pb-20 md:pb-28 lg:pb-40" :class="containerClass">
+  <div class="flex flex-col px-4 pt-24 pb-12 sm:px-0 sm:pb-20 md:pb-28 lg:pb-40" :class="containerClass">
     <!-- Main title -->
     <div class="flex flex-col items-center justify-center" :class="mainTitleContainerClass">
       <div :class="sectionTitleColorClass" class="pb-2 font-semibold">
@@ -8,10 +8,10 @@
       <h2 class="max-w-lg pb-4 text-4xl font-semibold text-center md:text-5xl lg:text-6xl sm:max-w-xl md:max-w-3xl lg:max-w-4xl u-text-gray-900">
         <Markdown :use="$slots.title" unwrap="p" />
       </h2>
-      <p v-if="$slots.description" class="text-lg text-center xl:text-xl 2xl:text-2xl u-text-gray-600 sm:max-w-xl md:max-w-3xl lg:max-w-4xl">
+      <p v-if="$slots.description" class="text-lg text-center xl:text-xl 2xl:text-2xl u-text-gray-500 sm:max-w-xl md:max-w-3xl lg:max-w-4xl">
         <Markdown :use="$slots.description" unwrap="p" />
       </p>
-      <div v-if="buttons.length" class="flex justify-center px-4 pt-8 gap-y-4 gap-x-4 sm:gap-x-8">
+      <div v-if="buttons.length" class="flex justify-center gap-6 mt-8">
         <UButton
           v-for="button of buttons"
           :key="button.label"
@@ -45,7 +45,7 @@
           <div v-if="$slots.bodyTitle" class="text-2xl font-semibold xl:text-3xl 2xl:text-4xl u-text-gray-900">
             <Markdown :use="$slots.bodyTitle" unwrap="p" />
           </div>
-          <div v-if="$slots.bodyDescription" class="items-center text-lg xl:text-xl 2xl:text-2xl u-text-gray-600">
+          <div v-if="$slots.bodyDescription" class="items-center text-lg xl:text-xl 2xl:text-2xl u-text-gray-500">
             <Markdown :use="$slots.bodyDescription" unwrap="p" />
           </div>
           <NuxtLink v-if="$slots.bodyLink" :to="to" class="relative flex-nowrap max-w-max group">
@@ -56,7 +56,7 @@
 
               <UIcon name="heroicons-solid:arrow-right" class="w-5 h-5 u-text-gray-900" />
             </div>
-            <div class="absolute -bottom-2 w-0 h-0.5 bg-white group-hover:w-full transition-all duration-300 ease-in-out" />
+            <div class="absolute -bottom-2 w-0 h-0.5 u-bg-black group-hover:w-full transition-all duration-300 ease-in-out" />
           </NuxtLink>
           <UButton v-if="$slots.bodyButton" :to="to" variant="secondary" size="lg" class="flex justify-center w-[224px]">
             <Markdown :use="$slots.bodyButton" unwrap="p" />
