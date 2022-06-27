@@ -38,7 +38,21 @@ const select = {
 }
 
 const selectCustom = {
-  ...input
+  ...input,
+  list: {
+    base: 'absolute z-10 mt-1 w-full u-bg-white shadow-lg max-h-60 rounded-md p-1 text-sm ring-1 u-ring-gray-200 overflow-auto focus:outline-none',
+    option: {
+      base: 'cursor-default select-none relative py-1.5 pl-2 pr-8 rounded-md',
+      active: 'u-text-gray-900 bg-gray-100 dark:bg-gray-900',
+      inactive: 'u-text-gray-900',
+      icon: {
+        base: 'absolute inset-y-0 right-0 flex items-center pr-2',
+        active: '',
+        inactive: '',
+        size: 'h-4 w-4'
+      }
+    }
+  }
 }
 
 const toggle = {
