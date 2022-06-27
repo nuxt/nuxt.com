@@ -40,7 +40,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 defineProps({
   prev: {
     type: Object,
