@@ -13,7 +13,7 @@
   </UCard>
 </template>
 
-<script setup>
+<script setup lang="ts">
 defineProps({
   buttonText: {
     type: String,
