@@ -1,6 +1,6 @@
 <template>
   <div ref="root" class="relative flex flex-col lg:flex-row min-h-[500px] items-center col-span-3 pl-8 lg:pl-0">
-    <div class="h-full w-full h-[420px] w-[288px] sm:h-[490px] xl:w-[391px] xl:translate-x-[50px] 2xl:translate-x-[100px] border border-gray-600 bg-gray-900 rounded-md flex flex-col justify-between text-white p-4 xl:p-7">
+    <div class="h-[420px] w-[288px] sm:h-[490px] xl:w-[391px] xl:translate-x-[50px] 2xl:translate-x-[100px] border border-gray-600 bg-gray-900 rounded-md flex flex-col justify-between text-white p-4 xl:p-7">
       <span class="pb-5 text-sm font-semibold xl:text-base">blogArticle</span>
       <div class="flex flex-col pb-4">
         <span class="pb-1.5 text-sm font-semibold">banner</span>
@@ -16,19 +16,19 @@
           </span>
 
           <div class="absolute top-[28px] left-[16%] xl:left-[12%] text-teal-400">
-            <span ref="titleCursor" class="absolute">|</span>
+            <span ref="cursorTitle" class="absolute">|</span>
           </div>
-          <div ref="titleUser" class="absolute flex items-center justify-center px-4 py-[1px] bg-teal-400 rounded-md left-[13%] top-[4px] z-[1]">
+          <div ref="userTitle" class="absolute flex items-center justify-center px-4 py-[1px] bg-teal-400 rounded-md left-[13%] top-[4px] z-[1]">
             <span class="text-white">droe</span>
           </div>
         </div>
       </div>
       <div class="relative flex flex-col px-3 py-1.5 mb-4 bg-gray-800 border border-gray-600 rounded-md">
-        <div ref="descriptionUser" class="absolute flex items-center justify-center px-4 py-[1px] bg-indigoblue-400 rounded-md left-[11px] top-[4px] z-[1]">
+        <div ref="userDescription" class="absolute flex items-center justify-center px-4 py-[1px] bg-indigoblue-400 rounded-md left-[11px] top-[4px] z-[1]">
           <span class="text-white text">atinux</span>
         </div>
         <div class="absolute text-indigoblue-400 left-[9px] top-[29px]">
-          <span ref="descriptionCursor" class="absolute">|</span>
+          <span ref="cursorDescription" class="absolute">|</span>
         </div>
         <span class="pb-1 text-sm font-semibold">description</span>
         <span class="text-sm">
@@ -79,10 +79,10 @@ const description = 'Id orci tellus laoreet id ac. '
 const animatedTitle = reactive({ word: '' })
 const animatedDescription = reactive({ word: '' })
 
-const titleUser = ref(null)
-const titleCursor = ref(null)
-const descriptionCursor = ref(null)
-const descriptionUser = ref(null)
+const cursorTitle = ref(null)
+const userTitle = ref(null)
+const cursorDescription = ref(null)
+const userDescription = ref(null)
 const styleEl = ref(null)
 const intervalIds = ref([])
 const startAnimating = ref(false)
@@ -93,13 +93,13 @@ const observerCallback = (entries: IntersectionObserverEntry[]) =>
       startAnimating.value = true
 
       setTimeout(() => {
-        animateWord(title.split(''), animatedTitle, titleCursor, titleUser, 7.3)
+        animateWord(title.split(''), animatedTitle, cursorTitle, userTitle, 7.3)
 
         setTimeout(() => {
-          animateCursor(descriptionCursor)
-          descriptionUser.value.style.opacity = '1'
+          animateCursor(cursorDescription)
+          userDescription.value.style.opacity = '1'
 
-          animateWord(description.split(''), animatedDescription, descriptionCursor, descriptionUser, 5.5)
+          animateWord(description.split(''), animatedDescription, cursorDescription, userDescription, 5.5)
         }, 500)
       }, 2000)
     }
@@ -129,12 +129,12 @@ const animateCursor = (el) => {
 onBeforeMount(() => (observer.value = new IntersectionObserver(observerCallback)))
 
 onMounted(() => {
-  animateCursor(titleCursor)
+  animateCursor(cursorTitle)
 
   observer.value.observe(root.value)
 
-  descriptionCursor.value.style.opacity = '0'
-  descriptionUser.value.style.opacity = '0'
+  cursorDescription.value.style.opacity = '0'
+  userDescription.value.style.opacity = '0'
 })
 
 onUnmounted(() => intervalIds.value?.map(id => clearInterval(id)))
