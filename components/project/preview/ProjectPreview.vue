@@ -98,6 +98,8 @@ const loading = ref(true)
 const { file, computedFiles, select: selectFile, previewUrl } = useProjectFiles(project.value, 'content')
 const { el, style, iframeStyle, isOpen, isExpand, isDiff, reset } = useProjectPreview()
 
+const keys = useMagicKeys()
+
 const previewUrlWithPath = computed(() => {
   const [host, ...query] = previewUrl.value.split('?')
 
@@ -112,13 +114,13 @@ const src = unref(previewUrlWithPath.value)
 
 watch(file, postMessage)
 
-whenever(and(useMagicKeys().meta_period, not(isExpand)), () => {
+whenever(and(keys.meta_period, not(isExpand)), () => {
   if (!isOpen.value) {
     isOpen.value = true
   }
   isExpand.value = true
 })
-whenever(and(useMagicKeys().escape, isOpen, isExpand), () => {
+whenever(and(keys.escape, isOpen, isExpand), () => {
   isExpand.value = false
 })
 

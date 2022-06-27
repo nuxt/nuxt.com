@@ -16,13 +16,13 @@
           <Hexagon class="w-16 u-text-gray-50 h-14" />
           <div class="absolute top-0 flex items-center justify-center w-16 h-14 z-1">
             <img
-              :src="`/assets/docs/framework/v3/auto-import/${colorMode.preference === 'dark' ? data.iconDark : data.icon}`"
+              :src="`/assets/docs/v3/auto-import/${colorMode.preference === 'dark' ? data.iconDark : data.icon}`"
               class="absolute w-8 h-8 transition-opacity duration-0"
               :alt="`${data.title} icon`"
               :class="isCurrentSection(index) ? 'opacity-0' : 'opacity-100'"
             >
             <img
-              :src="`/assets/docs/framework/v3/auto-import/${data.iconColor}`"
+              :src="`/assets/docs/v3/auto-import/${data.iconColor}`"
               class="absolute w-8 h-8 transition-opacity duration-0"
               :alt="`${data.title} icon`"
               :class="isCurrentSection(index) ? 'opacity-100' : 'opacity-0'"
@@ -46,7 +46,7 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 
-const { data: autoImportData } = await useAsyncData('autoImport', () => queryContent('/docs/framework/3.x/_collections/auto-import').findOne())
+const { data: autoImportData } = await useAsyncData('autoImport', () => queryContent('/docs/3.x/_collections/auto-import').findOne())
 
 const { currentSection, restartCounter, stopCounter } = useCounterAnimations()
 const colorMode = useColorMode()

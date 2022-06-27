@@ -1,25 +1,33 @@
 <template>
   <USlideover v-model="isOpen">
     <template #header>
-      <button v-if="isTreeOpen" @click="isTreeOpen = false">
-        <UIcon name="heroicons-outline:arrow-sm-left" class="flex-shrink-0 w-6 h-6" />
-      </button>
-      <button v-else @click="isOpen = false">
-        <UIcon name="heroicons-outline:x" class="flex-shrink-0 w-6 h-6" />
-      </button>
+      <div class="flex items-center mr-3">
+        <button v-if="isTreeOpen" @click="isTreeOpen = false">
+          <UIcon name="heroicons-outline:arrow-sm-left" class="flex-shrink-0 w-6 h-6" />
+        </button>
+        <button v-else @click="isOpen = false">
+          <UIcon name="heroicons-outline:x" class="flex-shrink-0 w-6 h-6" />
+        </button>
+      </div>
 
       <p v-if="isTreeOpen" class="text-lg font-semibold capitalize">
         {{ selectedLink }}
       </p>
-      <NuxtLink v-else :to="{ name: '@team-projects' }" class="block">
-        <UAvatar :src="`https://github.com/${project.repository.owner}.png`" :alt="project.name" size="sm" class="flex-shrink-0" />
+      <NuxtLink v-else :to="{ name: '@team-projects' }" class="text-lg font-semibold">
+        {{ project.name }}
       </NuxtLink>
 
-      <div class="w-6" />
+      <div class="flex justify-end flex-1" />
     </template>
 
-    <ProjectContentFilesTree v-if="isTreeOpen" :tree="selectedTree" class="flex-1 py-2 overflow-y-auto" @select="isOpen = false" />
-    <UVerticalNavigation v-else :links="mobileLinks" class="flex-1 px-2 py-4 overflow-y-scroll sm:px-4" />
+    <div class="flex flex-col justify-between flex-1 min-h-0">
+      <div class="flex-1 overflow-y-auto">
+        <ProjectContentFilesTree v-if="isTreeOpen" :tree="selectedTree" class="py-2" @select="isOpen = false" />
+        <UVerticalNavigation v-else :links="mobileLinks[0]" class="px-2 py-4 sm:px-4" />
+      </div>
+
+      <UVerticalNavigation :links="mobileLinks[1]" class="flex-shrink-0 px-2 py-4 sm:px-4" badge-base-class="ml-auto truncate max-w-[128px] inline-block py-0.5 px-3 text-xs rounded-full" />
+    </div>
   </USlideover>
 </template>
 
@@ -34,7 +42,7 @@ const props = defineProps({
     default: false
   },
   links: {
-    type: Array as PropType<{ to: RouteLocationNormalized, icon: string, label: string, badge: boolean }[]>,
+    type: Array as PropType<{ to: RouteLocationNormalized, icon: string, label: string, badge: boolean, click: Function | null }[][]>,
     default: () => []
   }
 })
@@ -79,7 +87,10 @@ const selectedTree: ComputedRef<File[]> = computed(() => {
   }
 })
 
-const mobileLinks = computed(() => props.links.map(link => ({ ...link, click: () => onLinkClick(link) })))
+const mobileLinks = computed(() => props.links.map(subLinks => subLinks.map(link => ({
+  ...link,
+  click: () => onLinkClick(link)
+}))))
 
 // Watch
 
@@ -107,7 +118,9 @@ watch(() => route.fullPath, () => {
 // Methods
 
 function onLinkClick (link) {
-  if (['@team-project-content', '@team-project-media'].includes(link.to.name) && link.to.name === route.name) {
+  if (link.click) {
+    link.click()
+  } else if (['@team-project-content', '@team-project-media'].includes(link.to.name) && link.to.name === route.name) {
     isTreeOpen.value = true
     return
   }

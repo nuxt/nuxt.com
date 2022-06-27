@@ -11,6 +11,7 @@
 
       <div class="flex flex-col gap-3 md:flex-row md:items-center">
         <ModulesFilterVersion size="sm" class="lg:hidden" />
+        <ModulesFilterSearch size="sm" class="sm:hidden" />
         <ModulesFilterType class="lg:hidden" />
         <ModulesFilterCategory class="lg:hidden" />
         <ModulesFilters class="hidden lg:flex" />
@@ -44,6 +45,8 @@
 </template>
 
 <script setup lang="ts">
+import { searchTextRegExp } from '~/utils'
+
 const { modules, selectedCategory, selectedType, selectedVersion, selectedSort, q, contributeUrl } = useModules()
 
 const filteredModules = computed(() => {
@@ -58,7 +61,8 @@ const filteredModules = computed(() => {
       if (selectedVersion.value && !module.tags.includes(selectedVersion.value.key)) {
         return false
       }
-      if (q.value && !['name', 'npm', 'category', 'description', 'repo'].map(field => module[field]).filter(Boolean).some(value => value.search(new RegExp(q.value, 'i')) !== -1)) {
+      const queryRegExp = searchTextRegExp(q.value as string)
+      if (q.value && !['name', 'npm', 'category', 'description', 'repo'].map(field => module[field]).filter(Boolean).some(value => value.search(queryRegExp) !== -1)) {
         return false
       }
 

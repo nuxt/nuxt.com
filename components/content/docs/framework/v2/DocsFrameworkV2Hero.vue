@@ -1,7 +1,7 @@
 <template>
   <div class="relative not-prose">
-    <img src="/assets/docs/framework/v2/gems-big.png" class="absolute opacity-20 lg:opacity-100 top-72 -left-14 h-1/2" alt="Gem illustration">
-    <img src="/assets/docs/framework/v2/gems.png" class="absolute right-0 opacity-20 lg:opacity-100 h-1/5 top-48" alt="Gem illustration">
+    <img src="/assets/docs/v2/gems-big.png" class="absolute opacity-20 lg:opacity-100 top-72 -left-14 h-1/2" alt="Gem illustration">
+    <img src="/assets/docs/v2/gems.png" class="absolute right-0 opacity-20 lg:opacity-100 h-1/5 top-48" alt="Gem illustration">
     <div class="relative flex flex-col items-center justify-center pb-48 gap-y-8 pt-36 md:pt-44 lg:pb-56 lg:pt-36">
       <div v-if="$slots.badge" class="flex gap-x-2">
         <UBadge rounded label="Warning" />
@@ -33,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import { PropType } from 'vue'
+import type { PropType } from 'vue'
 
 defineProps({
   buttons: {

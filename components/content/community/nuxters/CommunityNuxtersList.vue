@@ -6,7 +6,9 @@
 
         <UIcon v-if="pending" name="heroicons-outline:refresh" class="w-6 h-6 animate-spin" />
       </h2>
+
       <div class="flex flex-col gap-3 md:flex-row md:items-center">
+        <CommunityNuxtersFilterSearch size="sm" class="sm:hidden" />
         <CommunityNuxtersFilterTime />
         <!-- <CommunityNuxtersFilterSort /> -->
       </div>
@@ -34,8 +36,9 @@
   </Page>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
+import { searchTextRegExp } from '~/utils'
 
 const { smaller } = useBreakpoints(breakpointsTailwind)
 
@@ -45,9 +48,10 @@ const filteredNuxters = computed(() => {
   if (!nuxters.value?.length) {
     return []
   }
+  const queryRegExp = searchTextRegExp(q.value as string)
   return [...nuxters.value]
     .filter((nuxter) => {
-      if (q.value && !['name', 'github', 'role'].map(field => nuxter[field]).filter(Boolean).some(value => value.search(new RegExp(q.value, 'i')) !== -1)) {
+      if (q.value && !['name', 'github', 'role'].map(field => nuxter[field]).filter(Boolean).some(value => value.search(queryRegExp) !== -1)) {
         return false
       }
       return true

@@ -5,7 +5,7 @@
         Categories
       </p>
 
-      <ModulesFilterVersion class="mr-px -my-1" />
+      <ModulesFilterVersion class="mr-1 -my-1" />
     </div>
 
     <ul v-if="categories.length" class="flex flex-col py-4 gap-y-2">

@@ -3,5 +3,5 @@
 </template>
 
 <script setup lang="ts">
-await navigateTo('/docs/framework')
+await navigateTo('/docs/3.x')
 </script>

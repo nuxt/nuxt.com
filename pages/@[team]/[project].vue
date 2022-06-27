@@ -3,6 +3,7 @@
     <div ref="modalContainer" />
     <ProjectModalBranches v-model="isBranchesModalOpen" @update:modelValue="onBranchesModalChange" />
     <ProjectModalFiles v-model="isFilesModalOpen" @update:modelValue="onFilesModalChange" />
+    <ProjectSlideoverShortcuts v-model="isShortcutsSlideoverOpen" />
 
     <NuxtPage v-if="project" :team="team" />
 
@@ -34,6 +35,7 @@ const { $socket, $toast } = useNuxtApp()
 
 const { container: modalContainer } = useModal()
 const { isBranchesModalOpen, isFilesModalOpen } = useProjectModals()
+const { isShortcutsSlideoverOpen } = useProjectSlideovers()
 
 const activeUsers: Ref<SocketUser[]> = ref([])
 

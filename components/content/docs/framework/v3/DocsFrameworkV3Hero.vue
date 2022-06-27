@@ -26,13 +26,13 @@
           />
         </div>
       </div>
-      <img src="/assets/docs/framework/v3/hero.png" class="absolute -right-[485px]" alt="hero illustration">
+      <img src="/assets/docs/v3/hero.png" class="absolute -right-[485px]" alt="hero illustration">
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { PropType } from 'vue'
+import type { PropType } from 'vue'
 
 defineProps({
   badgeLabel: {

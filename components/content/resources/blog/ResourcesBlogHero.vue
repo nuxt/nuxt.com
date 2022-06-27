@@ -35,7 +35,7 @@
 <script setup lang="ts">
 const { data: firstArticle } = await useAsyncData('resources-blog-hero', () => queryContent().where({
   _path: /^\/resources\/blog\//
-}).sort({ date: 0 }).findOne())
+}).sort({ date: -1 }).findOne())
 
 const { $toast } = useNuxtApp()
 

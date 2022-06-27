@@ -1,11 +1,12 @@
 <template>
-  <UModal v-model="isOpen" width-class="max-w-xl" body-class="relative flex flex-col h-[calc(100vh-2rem)] overflow-hidden lg:h-80">
+  <UModal v-model="isOpen" width-class="max-w-xl" body-class="relative flex flex-col h-[calc(100vh-2rem)] overflow-hidden sm:h-80">
     <ProjectCombobox
       :items="currentFiles"
       items-label="Files"
       :recent-items="recentFiles"
       :actions="actions"
       @select="onSelect"
+      @close="isOpen = false"
     />
   </UModal>
 </template>
@@ -51,6 +52,8 @@ const {
   openDeleteModal: openDeleteMediaFileModal,
   openRevertModal: openRevertMediaFileModal
 } = useProjectFiles(project.value, 'public')
+
+const keys = useMagicKeys()
 
 const refreshingFiles = ref(false)
 
@@ -145,10 +148,10 @@ const actions = computed(() => ([{
 
 // Watch
 
-whenever(useMagicKeys().meta_k, () => {
+whenever(keys.meta_k, () => {
   isOpen.value = !isOpen.value
 })
-whenever(and(useMagicKeys().escape, isOpen), () => {
+whenever(and(keys.escape, isOpen), () => {
   isOpen.value = false
 })
 

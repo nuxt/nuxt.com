@@ -3,7 +3,15 @@
     <div class="flex flex-col flex-1 min-h-0 divide-y u-divide-gray-100">
       <div class="relative">
         <UIcon name="heroicons-outline:search" class="pointer-events-none absolute top-3.5 left-5 h-5 w-5 u-text-gray-400" aria-hidden="true" />
-        <ComboboxInput ref="comboboxInput" :value="query" class="w-full h-12 pr-4 placeholder-gray-400 dark:placeholder-gray-500 bg-transparent border-0 pl-[3.25rem] u-text-gray-900 focus:ring-0 sm:text-sm" placeholder="Search..." @change="query = $event.target.value" />
+        <ComboboxInput
+          ref="comboboxInput"
+          :value="query"
+          class="w-full h-12 pr-4 placeholder-gray-400 dark:placeholder-gray-500 bg-transparent border-0 pl-[3.25rem] u-text-gray-900 focus:ring-0 sm:text-sm"
+          placeholder="Search..."
+          autocomplete="off"
+          @change="query = $event.target.value"
+        />
+        <UIcon name="heroicons-outline:x" class="absolute top-3.5 right-5 h-5 w-5 u-text-gray-500" aria-hidden="true" @click="onClear" />
       </div>
 
       <ComboboxOptions v-if="hasOptions" static hold class="relative flex-1 overflow-y-auto divide-y u-divide-gray-100 scroll-py-2">
@@ -28,6 +36,7 @@
 import { Combobox, ComboboxInput, ComboboxOptions } from '@headlessui/vue'
 import type { ComputedRef, PropType } from 'vue'
 import type { GitHubBranch, GitHubFile } from '~/types'
+import { searchTextRegExp } from '~/utils'
 
 const props = defineProps({
   items: {
@@ -56,7 +65,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['select'])
+const emit = defineEmits(['select', 'close'])
 
 const query = ref('')
 const comboboxInput = ref(null)
@@ -71,9 +80,10 @@ const filteredItems: ComputedRef<(GitHubBranch | GitHubFile)[]> = computed(() =>
   let filteredItems = [...props.items]
 
   if (query.value) {
+    const queryRegExp = searchTextRegExp(query.value)
     filteredItems = filteredItems.filter(item => [(item as GitHubFile).path, item.name]
       .filter(Boolean)
-      .some(value => value.search(new RegExp(query.value, 'i')) !== -1)
+      .some(value => value.search(queryRegExp) !== -1)
     )
   }
   filteredItems = filteredItems.slice(0, 24)
@@ -81,9 +91,10 @@ const filteredItems: ComputedRef<(GitHubBranch | GitHubFile)[]> = computed(() =>
 })
 
 const filteredActions = computed(() => {
+  const queryRegExp = searchTextRegExp(query.value)
   return [...props.actions].filter((a) => {
     return a.static || (
-      (a.visible === undefined || a.visible) && (!query.value || [a.key, a.label].filter(Boolean).some(value => value.search(new RegExp(query.value, 'i')) !== -1))
+      (a.visible === undefined || a.visible) && (!query.value || [a.key, a.label].filter(Boolean).some(value => value.search(queryRegExp) !== -1))
     )
   })
 })
@@ -111,5 +122,13 @@ function onSelect (option) {
   setTimeout(() => {
     query.value = ''
   }, 300)
+}
+
+function onClear () {
+  if (query.value) {
+    query.value = ''
+  } else {
+    emit('close')
+  }
 }
 </script>

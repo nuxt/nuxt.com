@@ -2,7 +2,7 @@
   <UContainer class="relative pb-16 sm:pb-32">
     <div class="py-10 sm:py-20">
       <UContainer constrained-class="max-w-4xl" class="flex flex-col items-center justify-center text-center gap-y-8" padded>
-        <div class="font-semibold u-text-gray-400">
+        <div class="font-semibold text-gray-400 dark:text-gray-200">
           <time>{{ formatDateByLocale('en', page.date) }}</time> - {{ page.category }}
         </div>
         <h1 class="text-5xl font-semibold u-text-gray-900">
@@ -17,7 +17,7 @@
               <UAvatar :src="author.avatarUrl" :alt="author.name" />
               <div class="flex flex-col items-start">
                 <span class="leading-5 u-text-gray-900">{{ author.name }}</span>
-                <span class="text-sm u-text-gray-400">{{ `@${author.link.split('/').pop()}` }}</span>
+                <span class="text-sm text-gray-400 dark:text-gray-200">{{ `@${author.link.split('/').pop()}` }}</span>
               </div>
             </NuxtLink>
           </li>
@@ -25,10 +25,10 @@
       </UContainer>
     </div>
 
-    <div class="relative lg:pt-8">
-      <ResourcesBlogPostToc class="px-4 sm:px-6 lg:px-0" />
+    <div class="relative xl:pt-8">
+      <ResourcesBlogPostToc class="max-w-4xl px-4 mx-auto xl:max-w-none sm:px-6 xl:px-0" />
 
-      <UContainer constrained-class="max-w-4xl" class="pt-8 lg:pt-0" padded>
+      <UContainer constrained-class="max-w-4xl" class="pt-8 xl:pt-0" padded>
         <div class="relative overflow-hidden border-b u-border-gray-400">
           <ContentRenderer v-if="page" :value="page" class="pb-12 prose dark:prose-invert max-w-none" />
         </div>
@@ -57,7 +57,7 @@
             <div class="dark">
               <ResourcesBlogPostCta
                 button-text="Get Started"
-                to="/docs/framework"
+                to="/docs"
                 image-path="/assets/resources/blog/nuxt.svg"
                 image-class="bottom-0 right-0"
               >

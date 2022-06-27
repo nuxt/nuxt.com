@@ -10,6 +10,7 @@
       </h2>
 
       <div class="flex flex-col gap-3 md:flex-row md:items-center">
+        <CommunityRepositoriesFilterSearch size="sm" class="sm:hidden" />
         <CommunityRepositoriesFilters class="hidden lg:flex" />
         <CommunityRepositoriesFilterOrganization class="lg:hidden" />
         <CommunityRepositoriesFilterSort />
@@ -34,6 +35,7 @@
 
 <script setup lang="ts">
 import { useEventListener } from '@vueuse/core'
+import { searchTextRegExp } from '~/utils'
 const { repositories, selectedSort, selectedOrganization, q } = useCommunityRepositories()
 
 const ITEMS_TO_LOAD = 24
@@ -44,7 +46,8 @@ const filteredRepositories = computed(() => {
       if (selectedOrganization.value && repo.owner.login !== selectedOrganization.value.key) {
         return false
       }
-      if (q.value && !['name', 'description'].map(field => repo[field]).filter(Boolean).some(value => value.search(new RegExp(q.value as string, 'i')) !== -1)) {
+      const queryRegExp = searchTextRegExp(q.value as string)
+      if (q.value && !['name', 'description'].map(field => repo[field]).filter(Boolean).some(value => value.search(queryRegExp) !== -1)) {
         return false
       }
 
