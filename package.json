@@ -40,7 +40,6 @@
     "@types/lodash-es": "^4.17.6",
     "@vueuse/core": "^8.7.5",
     "@vueuse/motion": "^2.0.0-beta.12",
-    "dat.gui": "^0.7.9",
     "eslint": "^8.18.0",
     "joi": "^17.6.0",
     "js-yaml": "^4.1.0",

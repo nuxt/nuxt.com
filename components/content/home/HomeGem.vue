@@ -144,6 +144,7 @@ onMounted(() => {
   animate()
 })
 </script>
+
 <style>
 canvas {
   height: 475px;
