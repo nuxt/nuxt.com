@@ -1,13 +1,13 @@
 <template>
-  <div class="lg:sticky lg:pt-8 lg:-mt-8 lg:top-16 lg:max-h-[calc(100vh-64px)]">
-    <div class="top-0 right-0 border-b border-dashed lg:absolute lg:pt-8 lg:w-40 lg:max-h-screen u-bg-white lg:border-none">
+  <div class="xl:sticky xl:pt-8 xl:-mt-8 xl:top-16 xl:max-h-[calc(100vh-64px)]">
+    <div class="top-0 right-0 border-b border-dashed xl:absolute xl:pt-8 xl:w-40 xl:max-h-screen u-bg-white xl:border-none">
       <template v-if="toc.length">
         <span class="font-semibold">Table of contents</span>
         <ul class="py-4">
           <li v-for="link in toc" :key="link.text">
             <a
               :href="`#${link.id}`"
-              class="block py-1 pl-3 text-sm font-medium text-gray-500 truncate hover:font-semibold hover:u-text-gray-900"
+              class="block py-1 pl-3 text-sm font-medium truncate u-text-gray-500 hover:font-semibold hover:u-text-gray-900"
               :class="{
                 'u-text-gray-900': activeHeadings.includes(link.id),
               }"
