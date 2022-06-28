@@ -4,25 +4,22 @@
       <ResourcesShowcasesAside />
     </template>
 
-    <div class="flex flex-col justify-between gap-3 lg:flex-row lg:items-center">
-      <h2 class="hidden text-3xl font-semibold u-text-gray-900 lg:block">
-        {{ selectedCategory?.label }}
-      </h2>
+    <PageList>
+      <template #title>
+        <span class="hidden lg:block">{{ selectedCategory?.label }}</span>
+        <span class="lg:hidden">Category</span>
+      </template>
 
-      <h2 class="text-xl font-semibold u-text-gray-900 lg:hidden">
-        Category
-      </h2>
+      <template #filters>
+        <ResourcesShowcasesFilterCategory class="lg:hidden" />
+      </template>
 
-      <div class="flex flex-col gap-3 md:flex-row md:items-center lg:hidden">
-        <ResourcesShowcasesFilterCategory />
-      </div>
-    </div>
-
-    <ul v-if="selectedShowcases.length" class="grid min-h-[calc(100vh-18rem)] grid-cols-1 gap-8 mt-8 sm:grid-cols-2 xl:grid-cols-3">
-      <li v-for="showcase in selectedShowcases" :key="showcase.id">
-        <ResourcesShowcasesListItem :showcase="showcase" />
-      </li>
-    </ul>
+      <ul v-if="selectedShowcases.length" class="grid min-h-[calc(100vh-18rem)] grid-cols-1 gap-8 mt-8 sm:grid-cols-2 xl:grid-cols-3">
+        <li v-for="showcase in selectedShowcases" :key="showcase.id">
+          <ResourcesShowcasesListItem :showcase="showcase" />
+        </li>
+      </ul>
+    </PageList>
   </Page>
 </template>
 

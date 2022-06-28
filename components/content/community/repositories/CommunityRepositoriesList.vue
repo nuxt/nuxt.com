@@ -4,20 +4,14 @@
       <CommunityRepositoriesAside />
     </template>
 
-    <div class="flex flex-col justify-between gap-3 lg:items-center lg:flex-row">
-      <h2 class="text-3xl font-semibold u-text-gray-900">
-        {{ filteredRepositories.length }} repositor{{ filteredRepositories.length > 1 ? 'ies' : 'y' }} found
-      </h2>
-
-      <div class="flex flex-col gap-3 md:flex-row md:items-center">
-        <CommunityRepositoriesFilterSearch size="sm" class="sm:hidden" />
+    <PageList :title="`${filteredRepositories.length} repositor${filteredRepositories.length > 1 ? 'ies' : 'y'} found`">
+      <template #filters>
+        <CommunityRepositoriesFilterSearch size="sm" class="md:hidden" />
         <CommunityRepositoriesFilters class="hidden lg:flex" />
         <CommunityRepositoriesFilterOrganization class="lg:hidden" />
         <CommunityRepositoriesFilterSort />
-      </div>
-    </div>
+      </template>
 
-    <div class="min-h-[calc(100vh-18rem)]">
       <ul v-if="displayedRepositories.length" class="grid grid-cols-1 gap-8 mt-8 sm:grid-cols-2 xl:grid-cols-3">
         <li v-for="(displayedRepository, index) in displayedRepositories" :key="index">
           <CommunityRepositoriesListItem :repository="displayedRepository" />
@@ -29,7 +23,7 @@
           There is no repositories for <b>{{ q }}</b> yet.
         </span>
       </div>
-    </div>
+    </PageList>
   </Page>
 </template>
 

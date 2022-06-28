@@ -7,7 +7,7 @@
       <Markdown :use="$slots.description" unwrap="p" />
     </template>
     <template #extra>
-      <ModulesFilterSearch class="hidden sm:block" />
+      <ModulesFilterSearch class="hidden md:block" />
     </template>
     <template #image>
       <img src="/assets/modules/gems.svg" class="object-cover h-full lg:mx-10 opacity-10 lg:opacity-100">

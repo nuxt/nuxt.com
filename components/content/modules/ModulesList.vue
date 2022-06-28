@@ -4,24 +4,18 @@
       <ModulesAside />
     </template>
 
-    <div class="flex flex-col justify-between gap-3 lg:flex-row lg:items-center">
-      <h2 class="text-3xl font-semibold u-text-gray-900">
-        {{ filteredModules.length }} module{{ filteredModules.length > 1 ? 's' : '' }} found
-      </h2>
-
-      <div class="flex flex-col gap-3 md:flex-row md:items-center">
+    <PageList :title="`${filteredModules.length} module${filteredModules.length > 1 ? 's' : ''} found`">
+      <template #filters>
         <ModulesFilterVersion size="sm" class="lg:hidden" />
-        <ModulesFilterSearch size="sm" class="sm:hidden" />
+        <ModulesFilterSearch size="sm" class="md:hidden" />
         <ModulesFilterType class="lg:hidden" />
         <ModulesFilterCategory class="lg:hidden" />
         <ModulesFilters class="hidden lg:flex" />
         <ModulesFilterSort />
-      </div>
-    </div>
+      </template>
 
-    <div class="hidden _ellipse lg:block" />
+      <div class="hidden _ellipse lg:block" />
 
-    <div class="min-h-[calc(100vh-18rem)]">
       <ul v-if="filteredModules.length" class="grid grid-cols-1 gap-8 mt-8 sm:grid-cols-2 xl:grid-cols-3">
         <li v-for="(filteredModule, index) in filteredModules" :key="index">
           <ModulesListItem :module="filteredModule" />
@@ -53,7 +47,7 @@
           />
         </div>
       </div>
-    </div>
+    </PageList>
   </Page>
 </template>
 
