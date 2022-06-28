@@ -1,4 +1,4 @@
-import { defineNuxtModule, createResolver, addComponentsDir } from '@nuxt/kit'
+import { defineNuxtModule, createResolver, addComponentsDir, addAutoImportDir } from '@nuxt/kit'
 
 export type { ComponentSchema, Content } from './runtime/composables/useEditor/types'
 
@@ -12,5 +12,7 @@ export default defineNuxtModule<ModuleOptions>({
       path: resolve('./runtime/components'),
       prefix: 'nuxt'
     })
+
+    // addAutoImportDir(resolve('./runtime/composables'))
   }
 })

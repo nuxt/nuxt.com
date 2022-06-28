@@ -63,7 +63,6 @@ async function loadMarkdown () {
   try {
     markdown.value = parseMarkdown(await $fetch(markdownURL.value)).content
   } catch (e) {
-    console.log(e)
     markdownURLError.value = true
   }
   markdownLoading.value = false
