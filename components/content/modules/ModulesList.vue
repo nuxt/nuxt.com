@@ -30,15 +30,28 @@
       <div v-else class="relative flex flex-col items-center gap-6 mt-16 lg:mt-24">
         <UIcon name="fa-brands:github" class="w-16 h-16 u-text-gray-600" />
         <span class="text-xl font-medium text-center u-text-gray-700">
-          There is no modules available for <b>{{ q }}</b> yet.<br>Become the first one to create it!
+          There is no module found for <b>{{ q }}</b> yet.<br>Become the first one to create it!
         </span>
-        <UButton
-          :to="contributeUrl"
-          target="_blank"
-          variant="primary"
-          size="lg"
-          label="Contribute on GitHub"
-        />
+
+        <div class="flex items-center gap-3">
+          <UButton
+            to="https://github.com/nuxt/modules"
+            target="_blank"
+            variant="primary"
+            size="lg"
+            label="Contribute on GitHub"
+            truncate
+          />
+          <UButton
+            to="/docs/3.x/guide/going-further/modules"
+            variant="secondary"
+            size="lg"
+            label="How to create a module"
+            icon="heroicons-outline:arrow-sm-right"
+            trailing
+            truncate
+          />
+        </div>
       </div>
     </div>
   </Page>
@@ -47,7 +60,7 @@
 <script setup lang="ts">
 import { searchTextRegExp } from '~/utils'
 
-const { modules, selectedCategory, selectedType, selectedVersion, selectedSort, q, contributeUrl } = useModules()
+const { modules, selectedCategory, selectedType, selectedVersion, selectedSort, q } = useModules()
 
 const filteredModules = computed(() => {
   return [...modules.value]

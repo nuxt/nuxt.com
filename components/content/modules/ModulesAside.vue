@@ -31,9 +31,9 @@
       </li>
     </ul>
 
-    <div class="pt-4 border-t u-border-gray-200">
+    <div class="flex flex-col gap-2 pt-4 border-t u-border-gray-200">
       <NuxtLink
-        :to="contributeUrl"
+        to="https://github.com/nuxt/modules"
         target="_blank"
         class="flex items-center gap-2 text-sm font-medium hover:u-text-gray-900 focus:u-text-gray-900"
         tabindex="-1"
@@ -41,10 +41,18 @@
         <UIcon name="fa-brands:github" class="w-4 h-4" />
         Contribute on GitHub
       </NuxtLink>
+      <NuxtLink
+        to="/docs/3.x/guide/going-further/modules"
+        class="flex items-center gap-2 text-sm font-medium hover:u-text-gray-900 focus:u-text-gray-900"
+        tabindex="-1"
+      >
+        <UIcon name="heroicons-outline:book-open" class="w-4 h-4" />
+        Module Author guide
+      </NuxtLink>
     </div>
   </nav>
 </template>
 
 <script setup lang="ts">
-const { categories, selectedCategory, contributeUrl } = useModules()
+const { categories, selectedCategory } = useModules()
 </script>
