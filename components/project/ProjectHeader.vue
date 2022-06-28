@@ -23,7 +23,7 @@
           <span class="flex-1 truncate u-text-gray-700 max-w-[128px]">{{ branch.name }}</span>
           <kbd class="flex-shrink-0 hidden ml-3 font-sans text-xs font-semibold sm:inline u-text-gray-400"><abbr title="Command" class="no-underline">⌘</abbr> B</kbd>
         </UButton>
-        <UButton icon="heroicons-outline:search" variant="gray" size="xs" class="truncate" @click="openFilesModal">
+        <UButton icon="uil:search-alt" variant="gray" size="xs" class="truncate" @click="openFilesModal">
           <span class="flex-auto truncate u-text-gray-700">Search</span>
           <kbd class="flex-shrink-0 hidden ml-3 font-sans text-xs font-semibold sm:inline u-text-gray-400"><abbr title="Command" class="no-underline">⌘</abbr> K</kbd>
         </UButton>

@@ -2,7 +2,7 @@
   <Combobox @update:modelValue="onSelect">
     <div class="flex flex-col flex-1 min-h-0 divide-y u-divide-gray-100">
       <div class="relative">
-        <UIcon name="heroicons-outline:search" class="pointer-events-none absolute top-3.5 left-5 h-5 w-5 u-text-gray-400" aria-hidden="true" />
+        <UIcon name="uil:search-alt" class="pointer-events-none absolute top-3.5 left-5 h-5 w-5 u-text-gray-400" aria-hidden="true" />
         <ComboboxInput
           ref="comboboxInput"
           :value="query"
@@ -23,7 +23,7 @@
       </ComboboxOptions>
 
       <div v-else class="flex flex-col items-center justify-center flex-1 px-6 py-14 sm:px-14">
-        <UIcon name="heroicons-outline:search" class="w-6 h-6 mx-auto text-gray-400" aria-hidden="true" />
+        <UIcon name="uil:search-alt" class="w-6 h-6 mx-auto text-gray-400" aria-hidden="true" />
         <p class="mt-4 text-sm text-gray-900">
           {{ query ? "We couldn't find any items with that term. Please try again." : "We couldn't find any items." }}
         </p>
