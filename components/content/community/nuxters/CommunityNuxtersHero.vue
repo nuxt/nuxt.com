@@ -7,7 +7,7 @@
       <Markdown :use="$slots.description" unwrap="p" />
     </template>
     <template #extra>
-      <div class="flex flex-wrap justify-center gap-6 sm:flex-nowrap sm:items-center">
+      <div class="flex flex-wrap gap-6 sm:flex-nowrap sm:items-center">
         <UButton
           v-for="(button, index) in buttons"
           :key="index"
@@ -18,8 +18,9 @@
         <CommunityNuxtersFilterSearch class="hidden sm:block" />
       </div>
     </template>
+
     <template #background>
-      <CommunityNuxtersHeroMap class="object-cover h-full" />
+      <CommunityNuxtersHeroMap class="object-cover h-full opacity-50 lg:opacity-100" />
       <div class="h-[100px] absolute top-0 inset-x-0 bg-gradient-to-b from-white dark:from-black to-transparent" />
       <div class="w-[100px] absolute left-0 inset-y-0 bg-gradient-to-r from-white dark:from-black to-transparent" />
       <div class="h-[100px] absolute bottom-0 inset-x-0 bg-gradient-to-t from-white dark:from-black to-transparent" />
