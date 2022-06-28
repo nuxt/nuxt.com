@@ -73,7 +73,7 @@
 import { PropType, Ref } from 'vue'
 import { debounce } from 'lodash-es'
 import { getPathExt } from '~/utils/tree'
-import type { Content } from '~/editor/src/module'
+import type { Content } from '~/modules/editor/src/module'
 import type { Team, Project, GitHubDraft, Root } from '~/types'
 
 defineProps({
