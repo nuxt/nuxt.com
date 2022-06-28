@@ -7,7 +7,7 @@
         placeholder="Search..."
         autocomplete="off"
         appearance="darken"
-        icon="heroicons-outline:search"
+        icon="uil:search-alt"
         class="w-full sm:w-auto sm:flex-1"
       />
 

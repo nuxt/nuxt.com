@@ -40,7 +40,7 @@
                 name="q"
                 placeholder="Search repositories..."
                 :loading="loading"
-                icon="heroicons-outline:search"
+                icon="uil:search-alt"
                 class="w-full sm:w-auto"
                 custom-class="truncate"
                 appearance="darken"

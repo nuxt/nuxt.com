@@ -29,7 +29,7 @@ const links = computed(() => ([[
 ], [
   { to: { name: '@team-projects' }, icon: 'heroicons-outline:arrow-left', label: 'Back to Projects' },
   { icon: 'mdi:source-branch', label: 'Search branches...', badge: branch.value?.name, click: openBranchesModal },
-  { icon: 'heroicons-outline:search', label: 'Search files...', click: openFilesModal }
+  { icon: 'uil:search-alt', label: 'Search files...', click: openFilesModal }
 ]]))
 
 const linksWithoutLabel = computed(() => links.value.map(subLinks => subLinks.map(link => omit(link, 'label'))))
