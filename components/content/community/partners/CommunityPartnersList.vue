@@ -4,24 +4,20 @@
       <CommunityPartnersAside />
     </template>
 
-    <div class="flex flex-col justify-between gap-3 lg:items-center lg:flex-row">
-      <h2 class="text-3xl font-semibold u-text-gray-900">
-        {{ filteredPartners.length }} partner{{ filteredPartners.length > 1 ? 's' : '' }} found
-      </h2>
-
-      <div class="flex flex-col gap-3 md:flex-row md:items-center">
+    <PageList :title="`${filteredPartners.length} partner${filteredPartners.length > 1 ? 's' : ''} found`">
+      <template #filters>
         <CommunityPartnersFilters class="hidden lg:flex" />
         <CommunityPartnersFilterCategory class="lg:hidden" />
-      </div>
-    </div>
+      </template>
 
-    <div class="hidden _ellipse lg:block" />
+      <div class="hidden _ellipse lg:block" />
 
-    <ul v-if="filteredPartners.length" class="grid min-h-[calc(100vh-18rem)] grid-cols-1 gap-8 mt-8 sm:grid-cols-2 xl:grid-cols-3">
-      <li v-for="(filteredPartner, index) in filteredPartners" :key="index">
-        <CommunityPartnersListItem :partner="filteredPartner" />
-      </li>
-    </ul>
+      <ul v-if="filteredPartners.length" class="grid min-h-[calc(100vh-18rem)] grid-cols-1 gap-8 mt-8 sm:grid-cols-2 xl:grid-cols-3">
+        <li v-for="(filteredPartner, index) in filteredPartners" :key="index">
+          <CommunityPartnersListItem :partner="filteredPartner" />
+        </li>
+      </ul>
+    </PageList>
   </Page>
 </template>
 
