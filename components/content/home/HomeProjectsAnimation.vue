@@ -15,7 +15,7 @@
             {{ `Intro${animatedTitle.word}` }}
           </span>
 
-          <div class="absolute top-[28px] left-[16%] xl:left-[12%] text-teal-400">
+          <div class="absolute top-[28px] left-[17%] xl:left-[13%] text-teal-400">
             <span ref="cursorTitle" class="absolute">|</span>
           </div>
           <div ref="userTitle" class="absolute flex items-center justify-center px-4 py-[1px] bg-teal-400 rounded-md left-[13%] top-[4px] z-[1]">
@@ -27,7 +27,7 @@
         <div ref="userDescription" class="absolute flex items-center justify-center px-4 py-[1px] bg-indigoblue-400 rounded-md left-[11px] top-[4px] z-[1]">
           <span class="text-white text">atinux</span>
         </div>
-        <div class="absolute text-indigoblue-400 left-[9px] top-[29px]">
+        <div class="absolute text-indigoblue-400 left-[14px] top-[29px]">
           <span ref="cursorDescription" class="absolute">|</span>
         </div>
         <span class="pb-1 text-sm font-semibold">description</span>
@@ -74,7 +74,7 @@ const observer = ref() as Ref<IntersectionObserver>
 const root = ref(null) as Ref<Element>
 
 const title = 'ducing Nuxt'
-const description = 'Id orci tellus laoreet id ac. '
+const description = 'Id orci tellus laoreet id ac.'
 
 const animatedTitle = reactive({ word: '' })
 const animatedDescription = reactive({ word: '' })
