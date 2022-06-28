@@ -27,6 +27,7 @@
     "nuxt": "^3.0.0-rc.4"
   },
   "dependencies": {
+    "@nuxt/kit": "^3.0.0-rc.4",
     "@docus/remark-mdc": "^0.1.2",
     "@milkdown/core": "6.1.5",
     "@milkdown/ctx": "6.1.5",
