@@ -5,7 +5,7 @@
     placeholder="Search a nuxter"
     class="w-full md:max-w-sm"
     :size="size"
-    icon="heroicons-outline:search"
+    icon="uil:search-alt"
     autocomplete="off"
     autofocus
   />
