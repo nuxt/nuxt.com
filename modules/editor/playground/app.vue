@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="m-4">
     <div class="flex my-2 gap-3">
       <UInput
         v-model="markdownURL"
@@ -17,8 +17,7 @@
         @click="loadMarkdown"
       />
     </div>
-    <ProjectContentFileEditor
-      class="mt-4"
+    <NuxtEditor
       :components="components"
       :content="{
         key: 'playground',
@@ -30,7 +29,14 @@
 </template>
 
 <script setup lang="ts">
-import type { ComponentSchema } from '~/editor/src/types'
+import type { ComponentSchema } from '../src/module'
+import { useMarkdown } from '../../../composables/useMarkdown'
+
+useHead({
+  bodyAttrs: {
+    class: 'antialiased font-sans text-gray-700 dark:text-gray-200 bg-white dark:bg-black'
+  }
+})
 
 const { parse: parseMarkdown } = useMarkdown()
 
@@ -57,8 +63,41 @@ async function loadMarkdown () {
   try {
     markdown.value = parseMarkdown(await $fetch(markdownURL.value)).content
   } catch (e) {
+    console.log(e)
     markdownURLError.value = true
   }
   markdownLoading.value = false
 }
 </script>
+
+<style>
+@import 'https://fonts.googleapis.com/icon?family=Material+Icons+Outlined';
+@import 'https://unpkg.com/prism-themes@1.9.0/themes/prism-one-dark.css';
+
+.milkdown {
+  flex: 1 1 0%;
+}
+.milkdown > .editor {
+  max-width: 100% !important;
+  padding: 0 !important;
+  overflow-y: visible !important;
+}
+
+.milkdown > .editor > :first-child, .milkdown > .editor > :first-child > div {
+  margin: 0 !important;
+}
+
+.ProseMirror ul {
+  list-style: disc;
+  padding-inline-start: 2rem;
+}
+
+.ProseMirror ol {
+  list-style: decimal;
+  padding-inline-start: 2rem;
+}
+
+.ProseMirror-separator {
+  display: inline;
+}
+</style>
