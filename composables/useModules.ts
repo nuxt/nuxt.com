@@ -154,8 +154,6 @@ export const useModules = () => {
     return route.query.q
   })
 
-  const contributeUrl = computed(() => selectedVersion.value?.key !== '3.x' ? 'https://github.com/nuxt/nuxt.js' : 'https://github.com/nuxt/framework')
-
   return {
     // Http
     fetch,
@@ -172,7 +170,6 @@ export const useModules = () => {
     selectedType,
     selectedVersion,
     selectedSort,
-    q,
-    contributeUrl
+    q
   }
 }
