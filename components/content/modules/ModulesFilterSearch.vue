@@ -7,6 +7,7 @@
     :size="size"
     icon="uil:search-alt"
     autocomplete="off"
+    :trailing="size === 'sm'"
     autofocus
   />
 </template>
