@@ -25,7 +25,7 @@
 <script setup lang="ts">
 const route = useRoute()
 
-const { toc } = useContent()
+const { toc } = usePage()
 
 const { activeHeadings, updateHeadings } = useScrollspy()
 

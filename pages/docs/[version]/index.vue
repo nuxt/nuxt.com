@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-const { page, fetchPage } = useContent()
+const { page, fetchPage } = usePage()
 
 await fetchPage()
 </script>

@@ -1,7 +1,7 @@
 import { withoutTrailingSlash } from 'ufo'
 import type { NavItem, ParsedContent } from '@nuxt/content/dist/runtime/types'
 
-export const useContent = () => {
+export const usePage = () => {
   const route = useRoute()
 
   const path = computed(() => withoutTrailingSlash(route.path))

@@ -8,7 +8,7 @@ export default defineNuxtPlugin((nuxt) => {
 
   nuxt.hook('app:data:refresh', async () => {
     if (process.client) {
-      const { fetchPage, fetchNavigation } = useContent()
+      const { fetchPage, fetchNavigation } = usePage()
 
       await fetchNavigation({ force: true })
       await fetchPage({ force: true })
