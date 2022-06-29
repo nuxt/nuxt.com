@@ -13,6 +13,7 @@ export default defineNuxtModule<ModuleOptions>({
       prefix: 'nuxt'
     })
 
-    addAutoImportDir(resolve('./runtime/composables'))
+    // runtime/composables/useEditor has ESM issue if bundled on server, so we only auto import useEditorScroll
+    addAutoImportDir(resolve('./runtime/composables/useEditorScroll'))
   }
 })
