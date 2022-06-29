@@ -12,13 +12,14 @@
   "files": [
     "dist"
   ],
+  "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/module.mjs"
+      "import": "./dist/module.mjs",
+      "require": "./dist/module.cjs"
     }
   },
-  "type": "module",
-  "main": "./dist/module.mjs",
+  "main": "./dist/module.cjs",
   "types": "./dist/module.d.ts",
   "scripts": {
     "build": "nuxt-module-build",
