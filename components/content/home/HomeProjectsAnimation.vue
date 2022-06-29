@@ -61,7 +61,7 @@
         icon="heroicons-solid:arrow-right"
         variant="transparent"
         trailing
-        class="-translate-x-4"
+        class="-translate-x-4 !text-gray-900"
       />
     </div>
   </div>
