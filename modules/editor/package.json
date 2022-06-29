@@ -23,7 +23,7 @@
   "types": "./dist/module.d.ts",
   "scripts": {
     "build": "nuxt-module-build",
-    "playground": "nuxi dev playground"
+    "dev": "nuxi dev playground"
   },
   "peerDependencies": {
     "nuxt": "^3.0.0-rc.4"
