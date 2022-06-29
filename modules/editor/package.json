@@ -1,5 +1,5 @@
 {
-  "name": "@nuxthq/editor-edge",
+  "name": "@nuxthq/editor",
   "version": "0.0.1",
   "homepage": "https://github.com/nuxtlabs/nuxt.com/tree/dev/editor",
   "repository": "https://github.com/nuxtlabs/nuxt.com",
@@ -8,6 +8,7 @@
     "editor",
     "milkdown"
   ],
+  "license": "MIT",
   "files": [
     "dist"
   ],
