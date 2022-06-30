@@ -23,7 +23,7 @@
   "types": "./dist/module.d.ts",
   "scripts": {
     "build": "nuxt-module-build",
-    "dev": "nuxi dev playground"
+    "dev": "../../node_modules/.bin/nuxi dev playground"
   },
   "peerDependencies": {
     "nuxt": "^3.0.0-rc.4"
@@ -55,7 +55,6 @@
     "@nuxt/content": "npm:@nuxt/content-edge@latest",
     "@nuxt/module-builder": "^0.1.7",
     "@nuxthq/admin": "npm:@nuxthq/admin-edge@latest",
-    "jiti": "^1.14.0",
-    "nuxt": "^3.0.0-rc.4"
+    "jiti": "^1.14.0"
   }
 }
