@@ -19,7 +19,6 @@ module.exports = {
     }
   },
   plugins: [
-    require('@tailwindcss/typography'),
     require('tailwindcss-border-gradient-radius')
   ],
   content: [
