@@ -48,7 +48,7 @@
 
     <div class="flex items-stretch flex-1 min-h-0 overflow-hidden">
       <div v-if="computedFiles.length" ref="editorScroll" class="flex flex-col flex-1 p-4 overflow-y-auto sm:p-6">
-        <ProjectContentFileEditor
+        <NuxtEditor
           v-if="parsedContent && parsedContent.key"
           :content="parsedContent"
           :components="components || []"
@@ -72,9 +72,8 @@
 <script setup lang="ts">
 import { PropType, Ref } from 'vue'
 import { debounce } from 'lodash-es'
-import { useEditorScroll } from '~/editor/scroll'
 import { getPathExt } from '~/utils/tree'
-import type { Content } from '~/editor/types'
+import type { Content } from '~/modules/editor/src/module'
 import type { Team, Project, GitHubDraft, Root } from '~/types'
 
 defineProps({

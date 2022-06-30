@@ -17,5 +17,5 @@
 </template>
 
 <script setup lang="ts">
-const { page } = useContent()
+const { page } = usePage()
 </script>

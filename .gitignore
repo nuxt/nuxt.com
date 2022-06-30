@@ -2,8 +2,10 @@ node_modules
 *.log
 .nuxt
 nuxt.d.ts
+dist
 .output
 .env
 .DS_STORE
 .history
 .cache
+.data

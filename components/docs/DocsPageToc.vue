@@ -50,7 +50,7 @@ const router = useRouter()
 
 const { activeHeadings, updateHeadings } = useScrollspy()
 
-const { toc, prev, next } = useContent()
+const { toc, prev, next } = usePage()
 
 watch(route, () => {
   if (process.client) {

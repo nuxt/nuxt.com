@@ -1,5 +1,5 @@
 export default defineNuxtRouteMiddleware(async () => {
-  const { fetchNavigation } = useContent()
+  const { fetchNavigation } = usePage()
 
   return await fetchNavigation()
 })

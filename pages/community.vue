@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-const { navFromPath } = useContent()
+const { navFromPath } = usePage()
 
 const links = computed(() => navFromPath('/community')?.children)
 </script>
