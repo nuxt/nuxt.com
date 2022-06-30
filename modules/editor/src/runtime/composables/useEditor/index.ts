@@ -8,6 +8,7 @@ import { codeFence as cmCodeFence } from '@milkdown/preset-commonmark'
 import { replaceAll, switchTheme } from '@milkdown/utils'
 import { useEditor as useMilkdownEditor } from '@milkdown/vue'
 import { computed, isRef, ref, unref, watch } from 'vue'
+import { useRuntimeConfig } from '#imports'
 
 // Types
 import type { Options } from './types'
