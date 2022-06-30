@@ -1,4 +1,4 @@
-export default {
+const colors = {
   transparent: 'transparent',
   current: 'currentColor',
   white: '#fff',
@@ -160,3 +160,8 @@ export default {
     900: '#380011'
   }
 }
+
+export default colors
+
+export const safeColors = Object.keys(colors).filter(color => !['transparent', 'current', 'white', 'black'].includes(color))
+export const safeColorsAsRegex = safeColors.join('|')

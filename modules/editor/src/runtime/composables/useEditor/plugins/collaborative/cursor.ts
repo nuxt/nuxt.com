@@ -1,24 +1,24 @@
 import { unref } from 'vue'
 import type { Awareness } from 'y-protocols/awareness'
-import colors from '../../../presets/colors'
-import type { User } from '~/types'
 
-const cursorColorKeys = [
-  'blue',
-  'green',
-  'indigoblue',
-  'lightblue',
-  'orange',
-  'pear',
-  'pink',
-  'purple',
-  'red',
-  'royalblue',
-  'ruby',
-  'teal'
-] as const
+interface User {
+  username: string
+}
 
-const cursorPalette = cursorColorKeys.map(key => colors[key]['500'])
+const cursorPalette = [
+  '#1aadff',
+  '#00bd6f',
+  '#1a62ff',
+  '#1ad6ff',
+  '#ff7a1a',
+  '#d0d32f',
+  '#ff1ab2',
+  '#811aff',
+  '#ff281a',
+  '#4127e8',
+  '#ff1a5e',
+  '#1cd1c6'
+]
 
 // Pick a random color by prioritizing palettes (first must be fully used before picking from the second)
 const pickColor = (palette: string[], exclude: string[]) => {

@@ -57,7 +57,7 @@ defineProps({
 
 const route = useRoute()
 const { hasScrolledPastSubNavbar } = useNavbarScroll()
-const { findBottomLink } = useContent()
+const { findBottomLink } = usePage()
 
 function isActive (link) {
   return link.exact ? route.path === link._path : route.path.startsWith(link._path)

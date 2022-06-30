@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 const route = useRoute()
-const { page, fetchPage } = useContent()
+const { page, fetchPage } = usePage()
 const { fetch: fetchModules, types } = useModules()
 
 await Promise.all([fetchPage(), fetchModules()])

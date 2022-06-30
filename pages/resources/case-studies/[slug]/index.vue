@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-const { prev, next, page, fetchPage } = useContent()
+const { prev, next, page, fetchPage } = usePage()
 
 await fetchPage({ querySurround: true })
 </script>

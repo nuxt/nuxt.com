@@ -1,5 +1,5 @@
-import colors from './presets/colors'
-import typography from './presets/typography'
+import colors, { safeColorsAsRegex } from './ui/colors'
+import typography from './ui/typography'
 
 module.exports = {
   theme: {
@@ -19,13 +19,22 @@ module.exports = {
     }
   },
   plugins: [
-    require('@tailwindcss/typography'),
     require('tailwindcss-border-gradient-radius')
   ],
   content: [
-    'presets/*.ts',
+    'ui/*.ts',
     'content/**/*.md',
     'editor/**/*.vue'
   ],
-  safelist: [12, 24, 36, 48, 60, 72, 84, 96, 108, 120].map(number => `pl-[${number}px]`)
+  safelist: [
+    ...[12, 24, 36, 48, 60, 72, 84, 96, 108, 120].map(number => `pl-[${number}px]`),
+    {
+      pattern: new RegExp(`bg-(${safeColorsAsRegex})-(400|500)`),
+      variants: ['hover', 'disabled', 'dark']
+    },
+    {
+      pattern: new RegExp(`ring-(${safeColorsAsRegex})-(400)`),
+      variants: ['focus']
+    }
+  ]
 }

@@ -1,10 +1,10 @@
 <template>
   <UModal v-model="isOpen" appear @close="onClose" @submit.prevent="onSubmit">
     <div class="sm:flex sm:items-start">
-      <div class="flex items-center justify-center flex-shrink-0 w-12 h-12 mx-auto bg-blue-100 rounded-full dark:bg-blue-500 sm:mx-0 sm:h-10 sm:w-10">
+      <div class="flex items-center justify-center flex-shrink-0 w-12 h-12 mx-auto rounded-full bg-blue-50 dark:bg-blue-400 sm:mx-0 sm:h-10 sm:w-10">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="w-6 h-6 text-blue-500 dark:text-white"
+          class="w-6 h-6 text-blue-400 dark:text-white"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"

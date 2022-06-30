@@ -1,13 +1,13 @@
 <template>
   <UModal v-model="isOpen" appear @close="onClose" @submit.prevent="onSubmit">
     <div class="sm:flex sm:items-start">
-      <div class="flex items-center justify-center flex-shrink-0 w-12 h-12 mx-auto bg-green-100 rounded-full dark:bg-green-500 sm:mx-0 sm:h-10 sm:w-10">
+      <div class="flex items-center justify-center flex-shrink-0 w-12 h-12 mx-auto rounded-full bg-green-50 dark:bg-green-400 sm:mx-0 sm:h-10 sm:w-10">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           xmlns:xlink="http://www.w3.org/1999/xlink"
           aria-hidden="true"
           role="img"
-          class="w-6 h-6 text-green-500 dark:text-white"
+          class="w-6 h-6 text-green-400 dark:text-white"
           preserveAspectRatio="xMidYMid meet"
           viewBox="0 0 24 24"
         >

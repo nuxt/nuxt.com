@@ -1,13 +1,11 @@
 <template>
   <DocsPage :header="false" :toc="false">
-    <div class="prose dark:prose-invert max-w-none">
-      <ContentRenderer v-if="page" :value="page" />
-    </div>
+    <ContentRenderer v-if="page" :value="page" />
   </DocsPage>
 </template>
 
 <script setup lang="ts">
-const { page, fetchPage } = useContent()
+const { page, fetchPage } = usePage()
 
 await fetchPage()
 </script>

@@ -1,5 +1,5 @@
 import { defineNuxtConfig } from 'nuxt'
-import preset from './presets'
+import preset from './ui'
 
 // https://v3.nuxtjs.org/guide/directory-structure/nuxt.config
 export default defineNuxtConfig({
@@ -12,7 +12,8 @@ export default defineNuxtConfig({
     '@nuxtjs/strapi',
     '@nuxt/content',
     '@nuxt-modules/newsletter',
-    'vue-plausible'
+    'vue-plausible',
+    './modules/editor/src/module'
   ],
   build: {
     transpile: [

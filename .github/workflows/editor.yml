@@ -1,0 +1,48 @@
+name: Publish Editor (dev)
+
+on:
+  push:
+    branches:
+      - dev
+
+defaults:
+  run:
+    working-directory: modules/editor
+
+jobs:
+  ci:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node: [16]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+          registry-url: 'https://registry.npmjs.org'
+          cache-dependency-path: |
+            yarn.lock
+            modules/editor/yarn.lock
+          cache: 'yarn'
+
+      - name: Install dependencies
+        working-directory: ./
+        run: yarn install --frozen-lockfile
+
+      - name: Build
+        run: yarn build
+
+      - name: Release Edge
+        if: github.event_name == 'push'
+        run: |
+          yarn jiti ../../.github/scripts/bump-edge
+          npm publish -q --access restricted
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
