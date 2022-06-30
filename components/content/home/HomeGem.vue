@@ -44,33 +44,10 @@ const hdrLight = new RGBELoader().load(
   }
 )
 
-const gemMaterial = new THREE.MeshPhysicalMaterial({
-  color: 0x00DC82
-})
-
-if (colorMode.value === 'dark') {
-  gemMaterial.metalness = 0.05
-  gemMaterial.roughness = 0.10
-  gemMaterial.transmission = 1
-  gemMaterial.thickness = 1
-  gemMaterial.envMap = hdrDark
-  gemMaterial.envMapIntensity = 0.8
-  gemMaterial.reflectivity = 0.5
-} else {
-  gemMaterial.color = 0x000000
-  gemMaterial.emissive = 0x000000
-  gemMaterial.metalness = 0.18
-  gemMaterial.roughness = 0.4
-  gemMaterial.transmission = 0.85
-  gemMaterial.thickness = 3.6
-  gemMaterial.envMap = hdrLight
-  gemMaterial.envMapIntensity = 2.5
-  gemMaterial.reflectivity = 0.5
-}
+const gemMaterial = new THREE.MeshPhysicalMaterial({})
 
 gltfLoader.load('/assets/home/gem.glb', function (gltf) {
   gem = gltf.scene.children[0]
-
   gem.traverse((o) => {
     if (o.isMesh) { o.material = gemMaterial }
     gem.scale.set(1, 1, 1)
@@ -81,9 +58,6 @@ gltfLoader.load('/assets/home/gem.glb', function (gltf) {
 })
 
 onMounted(() => {
-  // const dat = await import('dat.gui').then(m => m.default || m)
-  // const gui = new dat.GUI()
-
   // Camera
   const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 400)
   camera.aspect = 1
@@ -91,7 +65,6 @@ onMounted(() => {
 
   // Controls
   const controls = new OrbitControls(camera, renderer.domElement)
-  // controls.target = gem.position
   controls.enableDamping = true
   controls.dampingFactor = 0.05
   controls.enableZoom = false
@@ -101,36 +74,36 @@ onMounted(() => {
 
   controls.update()
 
-  // GUI
-  // const gemMaterialFolder = gui.addFolder('Gem material')
-  // gemMaterialFolder.add(gemMaterial, 'metalness', 0, 1).step(0.01).onChange(function (value) { gemMaterial.metalness = value })
-  // gemMaterialFolder.add(gemMaterial, 'roughness', 0, 1).step(0.1).onChange(function (value) { gemMaterial.roughness = value })
-  // gemMaterialFolder.add(gemMaterial, 'transmission', 0, 1).step(0.01).onChange(function (value) { gemMaterial.transmission = value })
-  // gemMaterialFolder.add(gemMaterial, 'thickness', 0, 10).step(0.1).onChange(function (value) { gemMaterial.thickness = value })
-  // gemMaterialFolder.add(gemMaterial, 'envMapIntensity', 0, 10).step(0.1).onChange(function (value) { gemMaterial.envMapIntensity = value })
-
   // Renderer
   gemAnim.value.appendChild(renderer.domElement)
 
   function animate () {
     if (colorMode.value === 'dark') {
+      gemMaterial.color = new THREE.Color(0x00DC82)
       gemMaterial.metalness = 0.05
       gemMaterial.roughness = 0.10
       gemMaterial.transmission = 1
       gemMaterial.thickness = 1
       gemMaterial.envMap = hdrDark
       gemMaterial.envMapIntensity = 0.8
-      gemMaterial.reflectivity = 0.5
+      gemMaterial.specularIntensity = 1
+      gemMaterial.specularColor = new THREE.Color(0xFFFFFF)
+      gemMaterial.sheen = 0
+      gemMaterial.clearcoat = 0
+      gemMaterial.flatShading = true
     } else {
-      gemMaterial.color = 0x000000
-      gemMaterial.emissive = 0x000000
-      gemMaterial.metalness = 0.18
-      gemMaterial.roughness = 0.4
-      gemMaterial.transmission = 0.85
-      gemMaterial.thickness = 3.6
+      gemMaterial.color = new THREE.Color(0x000000)
+      gemMaterial.metalness = 0
+      gemMaterial.roughness = 0
+      gemMaterial.transmission = 0.82
+      gemMaterial.thickness = 5.1
       gemMaterial.envMap = hdrLight
-      gemMaterial.envMapIntensity = 2.5
-      gemMaterial.reflectivity = 0.5
+      gemMaterial.envMapIntensity = 0.3
+      gemMaterial.specularIntensity = 0.61
+      gemMaterial.specularColor = 0x000000
+      gemMaterial.sheen = 0.78
+      gemMaterial.clearcoat = 0.16
+      gemMaterial.flatShading = true
     }
 
     requestAnimationFrame(animate)
