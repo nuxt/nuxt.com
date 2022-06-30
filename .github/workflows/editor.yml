@@ -3,7 +3,7 @@ name: Publish Editor (dev)
 on:
   push:
     branches:
-      - editor-as-a-module
+      - dev
 
 defaults:
   run:
