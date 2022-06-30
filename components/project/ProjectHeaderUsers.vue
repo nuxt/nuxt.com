@@ -31,7 +31,7 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 import { getPathName } from '~/utils/tree'
-import type { Project, User, SocketUser } from '~/types'
+import type { Project, User, SocketUser, Root } from '~/types'
 
 const router = useRouter()
 const user = useStrapiUser() as Ref<User>
@@ -40,7 +40,8 @@ const project: Ref<Project> = inject('project')
 const activeUsers: Ref<SocketUser[]> = inject('activeUsers')
 
 const { branch, select: selectBranch } = useProjectBranches(project.value)
-const { file, select: selectContentFile } = useProjectFiles(project.value, 'content')
+const { file: contentFile, select: selectContentFile } = useProjectFiles(project.value, 'content')
+const { file: mediaFile, select: selectMediaFile } = useProjectFiles(project.value, 'public')
 
 function canJump (activeUser) {
   return activeUser.id !== user.value?.id && (activeUser.branch !== branch.value.name || !!activeUser.file)
@@ -52,15 +53,20 @@ function jumpTo (activeUser: SocketUser) {
   }
 
   const { file: f, branch: b } = activeUser
+  const root = f.split('/')[0] as Root
 
   if (b !== branch.value?.name) {
     selectBranch({ name: b })
   }
 
+  const param = root === 'content' ? 'content' : 'media'
+  const file = root === 'content' ? contentFile : mediaFile
+  const selectFile = root === 'content' ? selectContentFile : selectMediaFile
+
   if (file.value && f !== file.value.path) {
-    selectContentFile({ path: f, type: 'blob' })
+    selectFile({ path: f, type: 'blob' })
   }
 
-  router.push({ name: '@team-project-content' })
+  router.push({ name: `@team-project-${param}` })
 }
 </script>

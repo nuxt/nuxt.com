@@ -278,9 +278,9 @@ export const useProjectFiles = (project: Project, root: Root) => {
 
     if (process.client) {
       if (file.value) {
-        root === 'content' && $socket.emit('file:join', `project-${project.id}:${branch.value.name}:${file.value.path}`)
+        $socket.emit('file:join', `project-${project.id}:${branch.value.name}:${file.value.path}`)
       } else {
-        root === 'content' && $socket.emit('file:leave', `project-${project.id}`)
+        $socket.emit('file:leave', `project-${project.id}`)
       }
     }
   }
