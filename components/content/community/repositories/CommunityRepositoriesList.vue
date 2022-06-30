@@ -30,12 +30,12 @@
 <script setup lang="ts">
 import { useEventListener } from '@vueuse/core'
 import { searchTextRegExp } from '~/utils'
-const { repositories, selectedSort, selectedOrganization, q } = useCommunityRepositories()
+const { repositories, selectedSort, selectedOrder, selectedOrganization, q } = useCommunityRepositories()
 
 const ITEMS_TO_LOAD = 24
 
 const filteredRepositories = computed(() => {
-  return [...repositories.value]
+  let filteredRepositories = [...repositories.value]
     .filter((repo) => {
       if (selectedOrganization.value && repo.owner.login !== selectedOrganization.value.key) {
         return false
@@ -53,11 +53,17 @@ const filteredRepositories = computed(() => {
       }
       return b[selectedSort.value.key] - a[selectedSort.value.key]
     })
+
+  if (selectedOrder.value.key === 'asc') {
+    filteredRepositories = filteredRepositories.reverse()
+  }
+
+  return filteredRepositories
 })
 
 const displayedRepositories = ref(filteredRepositories.value.slice(0, ITEMS_TO_LOAD))
 
-watch([selectedOrganization, selectedSort, q], () => {
+watch([selectedOrganization, selectedSort, selectedOrder, q], () => {
   displayedRepositories.value = filteredRepositories.value.slice(0, ITEMS_TO_LOAD)
 })
 
