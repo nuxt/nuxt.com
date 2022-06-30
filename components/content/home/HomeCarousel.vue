@@ -9,7 +9,7 @@
     >
       <SwiperSlide v-for="(item, index) in items" :key="index">
         <div class="relative flex items-center justify-center h-full">
-          <UIcon :name="item" :alt="item" class="h-8 text-gray-400 dark:text-white" />
+          <img :src="`/assets/${ !partners ? 'brands' : 'partners' }/${item}.svg`" :alt="item" class="h-8 text-gray-400 dark:text-white">
         </div>
       </SwiperSlide>
     </Swiper>
@@ -32,6 +32,10 @@ defineProps({
   items: {
     type: Array as PropType<Object>,
     default: () => []
+  },
+  partners: {
+    type: Boolean,
+    default: false
   }
 })
 

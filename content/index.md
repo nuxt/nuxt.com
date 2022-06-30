@@ -20,14 +20,14 @@ Nuxt provides the best developer experience for web teams to deliver the best en
 ::home-carousel
 ---
 items:
-  - Unilever
-  - Gitlab
-  - Awwwards
-  - Adobe
-  - Nintendo
-  - Nasa
-  - Tiktok
-  - Backmarket
+  - unilever
+  - gitlab
+  - awwwards
+  - adobe
+  - nintendo
+  - nasa
+  - tiktok
+  - backmarket
 ---
 ::
 
@@ -162,18 +162,19 @@ GitHub Stars recognises those folks who are going above and beyond in helping ot
 #extra
   :::home-carousel
   ---
+  partners: true
   items:
-    - Curotec
-    - Mirahi
-    - Netlify
-    - Shipshape
-    - Softwarethings
-    - Swell
-    - Passionatepeople
-    - Vercel
-    - Vuestorefront
-    - Sixtyfourrobots
-    - Zenarchitects
+    - curotec
+    - mirahi
+    - netlify
+    - shipshape
+    - softwarethings
+    - swell
+    - passionatepeople
+    - vercel
+    - vuestorefront
+    - sixtyfourrobots
+    - zenarchitects
   ---
   :::
 ::
