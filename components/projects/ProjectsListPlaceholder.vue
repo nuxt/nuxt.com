@@ -1,5 +1,5 @@
 <template>
-  <UCard body-class="p-12 text-center">
+  <UCard body-class="p-12 text-center" class="mt-8">
     <h2 class="text-2xl font-semibold u-text-gray-900">
       No projects yet!
     </h2>

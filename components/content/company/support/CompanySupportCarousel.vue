@@ -7,10 +7,9 @@
       :autoplay="autoplay"
       :speed="5000"
     >
-      <SwiperSlide v-for="(item, index) in items" :key="index" class="!h-8">
+      <SwiperSlide v-for="(item, index) in items" :key="index">
         <div class="relative flex items-center justify-center h-full">
-          <img :src="`/assets/brands/${item.name}.png`" :alt="item.name">
-          <NuxtLink :to="item.to" target="_blank" class="absolute inset-0" rel="noopener noreferrer nofollow" />
+          <img :src="`/assets/brands/${item}.svg`" :alt="item" class="h-8">
         </div>
       </SwiperSlide>
     </Swiper>
@@ -48,7 +47,7 @@ const slidesPerView = computed(() => {
   } else if (md.value) {
     return 3
   } else {
-    return 5
+    return 4
   }
 })
 const modules = [Autoplay]

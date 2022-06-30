@@ -15,19 +15,28 @@ export default theme => ({
       h4: {
         fontWeight: theme('fontWeight.semibold')
       },
+      'h2, h3, h4': {
+        'scroll-margin-top': 'var(--scroll-mt)'
+      },
       'h1 a, h2 a, h3 a, h4 a': {
-        borderBottom: 'none !important'
+        borderBottom: 'none !important',
+        color: 'inherit'
       },
       a: {
+        fontWeight: theme('fontWeight.semibold'),
         textDecoration: 'none',
-        borderBottom: `1px solid ${theme('colors.primary.300')}`
+        borderBottom: '1px solid transparent'
       },
       'a:hover': {
-        borderBottomWidth: '2px'
+        borderColor: 'var(--tw-prose-links)'
       },
       'a code': {
         color: 'inherit',
-        fontWeight: 'inherit'
+        fontWeight: 'inherit',
+        border: '1px dashed transparent'
+      },
+      'a:hover code': {
+        borderColor: 'var(--tw-prose-links)'
       },
       pre: {
         margin: '0'
@@ -94,6 +103,12 @@ export default theme => ({
       '--tw-prose-invert-code-bg': theme('colors.gray.900'),
       '--tw-prose-invert-th-borders': theme('colors.gray.600'),
       '--tw-prose-invert-td-borders': theme('colors.gray.700')
+    }
+  },
+  green: {
+    css: {
+      '--tw-prose-links': theme('colors.green.400'),
+      '--tw-prose-invert-links': theme('colors.green.400')
     }
   }
 })

@@ -20,22 +20,14 @@ Nuxt provides the best developer experience for web teams to deliver the best en
 ::home-carousel
 ---
 items:
-  - name: Unilever
-    to: https://www.unilever.com/
-  - name: Gitlab
-    to: https://about.gitlab.com/
-  - name: Awwwards
-    to: https://www.awwwards.com/
-  - name: Adobe
-    to: https://www.adobe.com/
-  - name: Nintendo
-    to: https://www.nintendo.com/
-  - name: Nasa
-    to: https://www.nasa.gov/
-  - name: Tiktok
-    to: https://www.tiktok.com/
-  - name: Backmarket
-    to: https://www.backmarket.fr/
+  - Unilever
+  - Gitlab
+  - Awwwards
+  - Adobe
+  - Nintendo
+  - Nasa
+  - Tiktok
+  - Backmarket
 ---
 ::
 
@@ -171,28 +163,17 @@ GitHub Stars recognises those folks who are going above and beyond in helping ot
   :::home-carousel
   ---
   items:
-    - name: Curotec
-      to: https://www.curotec.com
-    - name: Mirahi
-      to: https://mirahi.io
-    - name: Netlify
-      to: https://www.netlify.com
-    - name: Shipshape
-      to: https://shipshape.io
-    - name: Softwarethings
-      to: https://softwarethings.pro
-    - name: Swell
-      to: https://www.swell.is
-    - name: Passionatepeople
-      to: https://passionatepeople.io
-    - name: Vercel
-      to: vercel.com
-    - name: Vuestorefront
-      to: https://www.vuestorefront.io
-    - name: Sixtyfourrobots
-      to: https://www.64robots.com
-    - name: Zenarchitects
-      to: https://zenarchitects.co.jp
+    - Curotec
+    - Mirahi
+    - Netlify
+    - Shipshape
+    - Softwarethings
+    - Swell
+    - Passionatepeople
+    - Vercel
+    - Vuestorefront
+    - Sixtyfourrobots
+    - Zenarchitects
   ---
   :::
 ::

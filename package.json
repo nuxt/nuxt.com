@@ -21,7 +21,6 @@
     "@nuxtjs/eslint-config-typescript": "^10.0.0",
     "@nuxtjs/strapi": "npm:@nuxtjs/strapi-edge@latest",
     "@sindresorhus/slugify": "^2.1.0",
-    "@tailwindcss/typography": "^0.5.2",
     "@types/lodash-es": "^4.17.6",
     "@vueuse/core": "^8.7.5",
     "@vueuse/motion": "^2.0.0-beta.12",

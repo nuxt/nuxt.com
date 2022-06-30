@@ -1,7 +1,7 @@
 <template>
   <li class="relative flex items-center justify-between h-32 col-span-6 gap-1 overflow-hidden border md:col-span-3 xl:col-span-2 u-border-gray-200 rounded-xl group">
     <div class="flex items-center h-full">
-      <UAvatar :src="nuxter.avatar_url" :alt="nuxter.github" :text="nuxter.github" size="2xl" class="mx-2 transition-all grayscale group-hover:grayscale-0" />
+      <UAvatar :src="nuxter.avatar_url" :alt="nuxter.github" :text="nuxter.github" size="2xl" class="mx-2" />
       <div class="flex flex-col justify-between h-full py-5 truncate">
         <div>
           <h3 class="text-lg font-semibold leading-none u-text-gray-900 line-clamp-1">
