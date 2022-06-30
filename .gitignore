@@ -8,3 +8,4 @@ dist
 .DS_STORE
 .history
 .cache
+.data

@@ -1,77 +1,69 @@
-<template>
-  <div class="m-4">
-    <div class="flex my-2 gap-3">
-      <UInput
-        v-model="markdownURL"
-        name="url"
-        autocomplete="off"
-        placeholder="https://raw.githubusercontent.com/nuxt/content/main/docs/content/1.index.md"
-        class="w-full"
-        :custom-class="markdownURLError ? 'border-red-500 dark:border-red-500': ''"
-        @input="markdownURLError = false"
-      />
-      <UButton
-        icon="heroicons-outline:download"
-        type="submit"
-        :loading="markdownLoading"
-        @click="loadMarkdown"
-      />
-    </div>
-    <NuxtEditor
-      :components="components"
-      :content="{
-        key: 'playground',
-        markdown,
-        matter: {}
-      }"
-    />
-  </div>
-</template>
-
 <script setup lang="ts">
 import type { ComponentSchema } from '../src/module'
-import { useMarkdown } from '../../../composables/useMarkdown'
 
-useHead({
-  bodyAttrs: {
-    class: 'antialiased font-sans text-gray-700 dark:text-gray-200 bg-white dark:bg-black'
-  }
+const parsedMarkdown = ref(null)
+const content = reactive({
+  key: 'playground',
+  matter: {},
+  markdown: ''
 })
+const showSource = ref(false)
 
-const { parse: parseMarkdown } = useMarkdown()
+const { data } = await useFetch<any>('/api/markdown')
+content.markdown = data.value.markdown
+parsedMarkdown.value = data.value.parsedMarkdown
+const { data: components } = await useFetch<ComponentSchema[]>('/api/_admin/components')
 
-const components: ComponentSchema[] = [
-  {
-    name: 'MyComponent',
-    props: [],
-    slots: [
-      {
-        name: 'default'
-      }
-    ]
+const onMarkdownUpdate = async (md) => {
+  parsedMarkdown.value = await $fetch('/api/markdown', {
+    method: 'POST',
+    body: {
+      content: md
+    }
+  })
+  if (!showSource.value) {
+    content.markdown = md
   }
-]
-
-const markdown = ref('# Hello World')
-const markdownLoading = ref(false)
-const markdownURL = ref('')
-const markdownURLError = ref(false)
-
-async function loadMarkdown () {
-  markdownURLError.value = false
-  markdownLoading.value = true
-  try {
-    markdown.value = parseMarkdown(await $fetch(markdownURL.value)).content
-  } catch (e) {
-    markdownURLError.value = true
-  }
-  markdownLoading.value = false
 }
 </script>
 
-<style>
+<template>
+  <div>
+    <div class="grid grid-cols-2">
+      <div class="p-4">
+        <UTextarea
+          v-if="showSource"
+          v-model="content.markdown"
+          name="playground"
+          appearance="none"
+          custom-class="min-h-screen"
+          @input="onMarkdownUpdate(content.markdown)"
+        />
+        <NuxtEditor
+          v-else
+          :components="components"
+          :content="content"
+          class="pb-10"
+          @update="onMarkdownUpdate"
+        />
+      </div>
+      <ContentRenderer class="w-full min-h-screen p-4 prose max-w-none bg-gray-50" :value="parsedMarkdown" />
+      <div class="fixed bottom-0 left-0 m-4">
+        <UButton variant="white" size="xs" @click="showSource = !showSource">
+          {{ showSource ? 'Hide' : 'Show' }} source
+        </UButton>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style lang="postcss">
 @import 'https://fonts.googleapis.com/icon?family=Material+Icons+Outlined';
 @import 'https://unpkg.com/prism-themes@1.9.0/themes/prism-one-dark.css';
+
+body {
+  @apply antialiased font-sans text-gray-700 dark:text-gray-200 bg-white dark:bg-black;
+}
 
 .milkdown {
   flex: 1 1 0%;

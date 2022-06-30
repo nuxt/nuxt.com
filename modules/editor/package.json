@@ -29,7 +29,6 @@
     "nuxt": "^3.0.0-rc.4"
   },
   "dependencies": {
-    "@nuxt/kit": "^3.0.0-rc.4",
     "@docus/remark-mdc": "^0.1.2",
     "@milkdown/core": "6.2.0",
     "@milkdown/ctx": "6.2.0",
@@ -46,13 +45,16 @@
     "@milkdown/theme-pack-helper": "6.2.0",
     "@milkdown/utils": "6.2.0",
     "@milkdown/vue": "6.2.0",
+    "@nuxt/kit": "^3.0.0-rc.4",
     "@nuxthq/ui": "npm:@nuxthq/ui-edge@latest",
     "shiki-es": "^0.1.2",
     "y-websocket": "^1.4.3",
     "yjs": "^13.5.39"
   },
   "devDependencies": {
+    "@nuxt/content": "npm:@nuxt/content-edge@latest",
     "@nuxt/module-builder": "^0.1.7",
+    "@nuxthq/admin": "npm:@nuxthq/admin-edge@latest",
     "jiti": "^1.14.0",
     "nuxt": "^3.0.0-rc.4"
   }
