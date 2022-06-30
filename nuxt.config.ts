@@ -1,5 +1,5 @@
 import { defineNuxtConfig } from 'nuxt'
-import preset from './presets'
+import preset from './ui'
 
 // https://v3.nuxtjs.org/guide/directory-structure/nuxt.config
 export default defineNuxtConfig({
