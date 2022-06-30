@@ -50,8 +50,8 @@ export const useCommunityRepositories = () => {
   ]
 
   const orders = [
-    { key: 'desc', label: 'Descending', icon: 'heroicons-outline:sort-descending' },
-    { key: 'asc', label: 'Ascending', icon: 'heroicons-outline:sort-ascending' }
+    { key: 'desc', label: 'Desc', icon: 'heroicons-outline:sort-descending' },
+    { key: 'asc', label: 'Asc', icon: 'heroicons-outline:sort-ascending' }
   ]
 
   // Computed
