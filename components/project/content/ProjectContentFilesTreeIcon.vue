@@ -72,13 +72,13 @@ const iconColor = computed(() => {
 
   switch (status) {
     case 'created':
-      return 'text-green-500'
+      return 'text-green-400'
     case 'updated':
-      return 'text-yellow-500'
+      return 'text-orange-400'
     case 'deleted':
-      return 'text-red-500'
+      return 'text-red-400'
     case 'renamed':
-      return 'text-blue-500'
+      return 'text-blue-400'
   }
 })
 </script>
