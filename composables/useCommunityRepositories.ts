@@ -49,6 +49,11 @@ export const useCommunityRepositories = () => {
     { key: 'createdAt', label: 'Created' }
   ]
 
+  const orders = [
+    { key: 'desc', label: 'Desc', icon: 'heroicons-outline:sort-descending' },
+    { key: 'asc', label: 'Asc', icon: 'heroicons-outline:sort-ascending' }
+  ]
+
   // Computed
   const organizations = computed(() => {
     return owners.map(owner => ({
@@ -81,6 +86,10 @@ export const useCommunityRepositories = () => {
     return sorts.find(sort => sort.key === route.query.sortBy) || sorts[0]
   })
 
+  const selectedOrder = computed(() => {
+    return orders.find(order => order.key === route.query.orderBy) || orders[0]
+  })
+
   const q = computed(() => {
     return route.query.q
   })
@@ -92,11 +101,13 @@ export const useCommunityRepositories = () => {
     repositories,
     owners,
     sorts,
+    orders,
     // Computed
     organizations,
     stats,
     selectedOrganization,
     selectedSort,
+    selectedOrder,
     q
   }
 }

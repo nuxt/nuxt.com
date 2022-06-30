@@ -54,10 +54,10 @@
 <script setup lang="ts">
 import { searchTextRegExp } from '~/utils'
 
-const { modules, selectedCategory, selectedType, selectedVersion, selectedSort, q } = useModules()
+const { modules, selectedCategory, selectedType, selectedVersion, selectedSort, selectedOrder, q } = useModules()
 
 const filteredModules = computed(() => {
-  return [...modules.value]
+  let filteredModules = [...modules.value]
     .filter((module) => {
       if (selectedCategory.value && module.category !== selectedCategory.value.key) {
         return false
@@ -76,6 +76,12 @@ const filteredModules = computed(() => {
       return true
     })
     .sort((a, b) => b[selectedSort.value.key] - a[selectedSort.value.key])
+
+  if (selectedOrder.value.key === 'asc') {
+    filteredModules = filteredModules.reverse()
+  }
+
+  return filteredModules
 })
 </script>
 
