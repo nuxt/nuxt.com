@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - dev
+    paths:
+      - '.github/workflows/editor.yaml'
+      - 'modules/editor/**'
 
 defaults:
   run:
