@@ -6328,7 +6328,7 @@ node-gyp-build@^4.2.2:
   resolved "https://registry.yarnpkg.com/node-gyp-build/-/node-gyp-build-4.4.0.tgz#42e99687ce87ddeaf3a10b99dc06abc11021f3f4"
   integrity sha512-amJnQCcgtRVw9SvoebO3BKGESClrfXGCUTX9hSn1OuGQTQBOZmVd0Z0OlecpuRksKvbsUqALE8jls/ErClAPuQ==
 
-node-mailjet@^5.0.0:
+node-mailjet@^5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/node-mailjet/-/node-mailjet-5.0.1.tgz#c935927f6db2b24aba667d74cc887e25dbc49f6a"
   integrity sha512-+HJ6wDQe32LQ7Bna1FrXxelqOfDSn+DaBMsuWnPHlONvzEXMQOuodPUDEIxUWbQJVlCTuavpxzszWm80jqLtpA==
@@ -8219,7 +8219,7 @@ svgo@^2.7.0:
     picocolors "^1.0.0"
     stable "^0.1.8"
 
-swiper@^8.2.4:
+swiper@^8.2.6:
   version "8.2.6"
   resolved "https://registry.yarnpkg.com/swiper/-/swiper-8.2.6.tgz#4c5174e82c2a8029bd9bda88a043be2486bb6972"
   integrity sha512-qo0E9GpcZpJer+vYXRd3CANDfFZTmUeyeIjmyi7fwuc5ozhAs1MCLgMSpZn393ZBgK7VIXA40YnQcAyJX3kjzw==
@@ -8354,10 +8354,10 @@ text-table@^0.2.0:
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha512-N+8UisAXDGk8PFXP4HAzVR9nbfmVJ3zYLAWiTIoqC5v5isinhr+r5uaO8+7r3BMfuNIufIsA7RdpVgacC2cSpw==
 
-three@^0.141.0:
-  version "0.141.0"
-  resolved "https://registry.yarnpkg.com/three/-/three-0.141.0.tgz#16677a12b9dd0c3e1568ebad0fd09de15d5a8216"
-  integrity sha512-JaSDAPWuk4RTzG5BYRQm8YZbERUxTfTDVouWgHMisS2to4E5fotMS9F2zPFNOIJyEFTTQDDKPpsgZVThKU3pXA==
+three@^0.142.0:
+  version "0.142.0"
+  resolved "https://registry.yarnpkg.com/three/-/three-0.142.0.tgz#89e226a16221f212eb1d40f0786604b711f28aed"
+  integrity sha512-ESjPO+3geFr+ZUfVMpMnF/eVU2uJPOh0e2ZpMFqjNca1wApS9lJb7E4MjwGIczgt9iuKd8PEm6Pfgp2bJ92Xtg==
 
 through2@^2.0.0:
   version "2.0.5"
@@ -8977,7 +8977,7 @@ vue-router@^4.0.16:
   dependencies:
     "@vue/devtools-api" "^6.0.0"
 
-vue-tsc@^0.38.1:
+vue-tsc@^0.38.2:
   version "0.38.2"
   resolved "https://registry.yarnpkg.com/vue-tsc/-/vue-tsc-0.38.2.tgz#89175a6bb9a8b5724e84ab5d63dc5113041c5bfa"
   integrity sha512-+OMmpw9BZC9khul3I1HGtWchv7BCiaM7NvfdilVAiOFkjnivIoaW6jJm6YPQJaEPouePtpkDUWovyzgNxWdDsw==
