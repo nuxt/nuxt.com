@@ -41,6 +41,11 @@ export const useModules = () => {
     { key: 'createdAt', label: 'Created' }
   ]
 
+  const orders = [
+    { key: 'desc', label: 'Desc', icon: 'heroicons-outline:sort-descending' },
+    { key: 'asc', label: 'Asc', icon: 'heroicons-outline:sort-ascending' }
+  ]
+
   const typesMapping = {
     official: 'Official',
     community: 'Community',
@@ -150,6 +155,10 @@ export const useModules = () => {
     return sorts.find(sort => sort.key === route.query.sortBy) || sorts[0]
   })
 
+  const selectedOrder = computed(() => {
+    return orders.find(order => order.key === route.query.orderBy) || orders[0]
+  })
+
   const q = computed(() => {
     return route.query.q
   })
@@ -160,6 +169,7 @@ export const useModules = () => {
     // Data
     versions,
     sorts,
+    orders,
     // Computed
     modules,
     categories,
@@ -170,6 +180,7 @@ export const useModules = () => {
     selectedType,
     selectedVersion,
     selectedSort,
+    selectedOrder,
     q
   }
 }
