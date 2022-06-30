@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent, defineAsyncComponent, computed, useAttrs } from 'vue'
-import type { UnwrapOptions } from '~/editor/types'
+import type { UnwrapOptions } from '../composables/useEditor/types'
 
 export default defineComponent({
   components: {
@@ -33,7 +33,7 @@ export default defineComponent({
       process.env = {}
     }
 
-    const { useEditor } = await import('~/editor/use')
+    const { useEditor } = await import('../composables/useEditor')
 
     const editor = useEditor({
       components: computed(() => [...props.components]),

@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-const { page, fetchPage } = useContent()
+const { page, fetchPage } = usePage()
 
 await fetchPage({ _path: '/docs/3.x/community/getting-help' })
 </script>

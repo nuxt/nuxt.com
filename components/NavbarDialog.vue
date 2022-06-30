@@ -41,7 +41,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue'])
 
-const { navigation, navFromPath } = useContent()
+const { navigation, navFromPath } = usePage()
 
 const route = useRoute()
 

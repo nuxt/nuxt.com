@@ -18,6 +18,10 @@ Start the development server on http://localhost:3000
 yarn dev
 ```
 
+## MDC Editor
+
+Jump over [./modules/editor](./modules/editor) directory to setup and improve the MDC editor.
+
 ## Production
 
 Build the application for production:

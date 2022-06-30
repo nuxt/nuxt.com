@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-const { page } = useContent()
+const { page } = usePage()
 
 const isOpen = ref(false)
 
