@@ -1,5 +1,5 @@
 <template>
-  <UContainer class="flex flex-col items-center py-20 last:pb-0 not-prose" padded>
+  <UContainer class="flex flex-col items-center py-20 last:pb-0" padded>
     <h1 v-if="$slots.title" class="pb-4 font-semibold text-center u-text-gray-900" :class="titleClass">
       <Markdown :use="$slots.title" unwrap="p" />
     </h1>
