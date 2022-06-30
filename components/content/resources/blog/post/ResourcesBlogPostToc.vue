@@ -26,7 +26,7 @@
 const route = useRoute()
 const router = useRouter()
 
-const { toc } = useContent()
+const { toc } = usePage()
 
 const { activeHeadings, updateHeadings } = useScrollspy()
 

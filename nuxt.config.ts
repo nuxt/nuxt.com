@@ -12,7 +12,8 @@ export default defineNuxtConfig({
     '@nuxtjs/strapi',
     '@nuxt/content',
     '@nuxt-modules/newsletter',
-    'vue-plausible'
+    'vue-plausible',
+    './modules/editor/src/module'
   ],
   build: {
     transpile: [
