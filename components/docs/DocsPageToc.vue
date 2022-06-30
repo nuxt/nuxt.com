@@ -46,6 +46,7 @@
 
 <script setup lang="ts">
 const route = useRoute()
+const router = useRouter()
 
 const { activeHeadings, updateHeadings } = useScrollspy()
 
@@ -65,7 +66,7 @@ watch(route, () => {
   immediate: true
 })
 
-function scrollToHeading (id: string, scrollMarginCssVar: string) {
-  useScrollToHeading(id, scrollMarginCssVar)
+function scrollToHeading (id: string) {
+  router.push(`#${id}`)
 }
 </script>
