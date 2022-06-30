@@ -7,6 +7,7 @@ import { gfm } from '@milkdown/preset-gfm'
 import { codeFence as cmCodeFence } from '@milkdown/preset-commonmark'
 import { replaceAll, switchTheme } from '@milkdown/utils'
 import { useEditor as useMilkdownEditor } from '@milkdown/vue'
+import { computed, isRef, ref, unref, watch } from 'vue'
 
 // Types
 import type { Options } from './types'
@@ -26,19 +27,17 @@ import shiki from './plugins/shiki'
 import { dark, light } from './theme'
 
 const useTheme = () => {
-  const colorMode = useColorMode()
+  const colorMode = typeof useColorMode === 'function' ? useColorMode() : ref('dark')
   const theme = computed(() => colorMode.value === 'dark' ? dark : light)
   return theme
 }
 
 export const useEditor = (options: Options) => {
-  let instance: Editor
-
   const theme = useTheme()
   const isCollabEnabled = Boolean(useRuntimeConfig().public.ywsUrl)
 
-  const makeEditor = () => useMilkdownEditor((root, renderVue) => {
-    instance = Editor.make()
+  const { editor, getInstance } = useMilkdownEditor((root, renderVue) => {
+    const instance = Editor.make()
       .config(ctx => ctx.set(rootCtx, root))
       .use(context(options, renderVue))
       .use(unref(theme))
@@ -62,15 +61,13 @@ export const useEditor = (options: Options) => {
     return instance
   })
 
-  const editor = ref(makeEditor())
-
   // Reactive content
   if (isRef(options.content)) {
     watch(options.content, () => {
-      instance.action(
+      getInstance()?.action(
         isCollabEnabled
           ? joinRoom(options)
-          : replaceAll(unref(options.content).markdown)
+          : replaceAll(unref(options.content)?.markdown ?? '')
       )
     })
   }
@@ -78,13 +75,13 @@ export const useEditor = (options: Options) => {
   // Reactive components
   if (isRef(options.components)) {
     watch(options.components, (components) => {
-      instance.action(ctx => ctx.set(componentSchemasCtx, components))
+      getInstance()?.action(ctx => ctx.set(componentSchemasCtx, components))
     })
   }
 
   // Reactive theme
   watch(theme, (value) => {
-    instance.action(switchTheme(value))
+    getInstance()?.action(switchTheme(value))
   })
 
   return editor
