@@ -31,9 +31,3 @@ useHead({
   }
 })
 </script>
-
-<style>
-.dark:root {
-  color-scheme: dark;
-}
-</style>
