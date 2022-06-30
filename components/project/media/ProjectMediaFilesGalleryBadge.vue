@@ -18,13 +18,13 @@ const isDraft = computed(() => !!props.file.status)
 const badgeColor = computed(() => {
   switch (props.file.status) {
     case 'created':
-      return 'bg-green-500'
+      return 'bg-green-400'
     case 'updated':
-      return 'bg-yellow-500'
+      return 'bg-orange-400'
     case 'deleted':
-      return 'bg-red-500'
+      return 'bg-red-400'
     case 'renamed':
-      return 'bg-blue-500'
+      return 'bg-blue-400'
   }
 })
 </script>
