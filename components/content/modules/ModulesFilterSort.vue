@@ -3,10 +3,10 @@
     <UButton
       name="orderBy"
       :icon="orderBy.icon"
-      :label="orderBy.label"
       size="sm"
-      variant="secondary"
-      class="-mr-px rounded-r-none !ring-offset-0 focus:z-[1] shadow-sm"
+      variant="input-group"
+      icon-base-class="flex-shrink-0 u-text-gray-400 group-hover:u-text-gray-500"
+      class="-mr-px rounded-r-none focus:z-[1] group"
       @click="switchOrder"
     />
     <USelectCustom
