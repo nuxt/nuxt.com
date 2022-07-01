@@ -1,4 +1,4 @@
-import { createSlice } from '@milkdown/ctx'
+import { createSlice, Ctx } from '@milkdown/ctx'
 import { defaultValueCtx, parserCtx, serializerCtx, MilkdownPlugin } from '@milkdown/core'
 import type { RenderVue } from '@milkdown/vue'
 import { listenerCtx } from '@milkdown/plugin-listener'
@@ -9,9 +9,7 @@ import type { Options } from './types'
 export const componentSchemasCtx = createSlice<UnwrapRef<Options['components']>>([], 'componentSchemas')
 export const renderVueCtx = createSlice<RenderVue>(() => () => ({} as never), 'renderVue')
 
-export default (options: Options, renderVue: RenderVue): MilkdownPlugin => {
-  const components = unref(options.components) ?? []
-
+export function normalizeComponents (components: UnwrapRef<Options['components']> = []) {
   for (const component of components) {
     component.slots = component.slots ?? []
     for (const prop of component.props) {
@@ -19,8 +17,16 @@ export default (options: Options, renderVue: RenderVue): MilkdownPlugin => {
     }
   }
 
+  return components.sort((a, b) => a.name.localeCompare(b.name))
+}
+
+export function setComponents (components: UnwrapRef<Options['components']>) {
+  return (ctx: Ctx) => ctx.set(componentSchemasCtx, normalizeComponents(components))
+}
+
+export default (options: Options, renderVue: RenderVue): MilkdownPlugin => {
   return (pre) => {
-    pre.inject(componentSchemasCtx, components)
+    pre.inject(componentSchemasCtx, normalizeComponents(unref(options.components)))
     pre.inject(renderVueCtx, renderVue)
 
     return (ctx) => {
