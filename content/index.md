@@ -11,7 +11,10 @@ New
 Nuxt 3.0 is out. [Read about it here](https://v3.nuxtjs.org/){.underline}
 
 #title
-Develop a modern website today.
+Develop a modern website
+
+#titleAnimationWord
+today.
 
 #description
 Nuxt provides the best developer experience for web teams to deliver the best end-user experience.

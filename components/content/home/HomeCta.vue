@@ -103,9 +103,9 @@ onMounted(() => {
     mouseLight.value.style.height = `${(size / 3)}px`
 
     if (e.clientY < ctaContainer.value.getBoundingClientRect().y) {
-      mouseLight.value.style.opacity = 0
+      mouseLight.value.style.visibility = 'hidden'
     } else {
-      mouseLight.value.style.opacity = 1
+      mouseLight.value.style.visibility = 'visible'
     }
   })
 })

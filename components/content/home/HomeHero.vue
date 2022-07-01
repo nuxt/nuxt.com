@@ -10,8 +10,11 @@
           <Markdown :use="$slots.news" unwrap="p" />
         </span>
       </div>
-      <h1 v-if="$slots.title" class="max-w-2xl text-5xl font-semibold text-center sm:text-left md:text-6xl lg:text-7xl u-text-gray-900">
+      <h1 v-if="$slots.title" class="relative max-w-2xl text-5xl font-semibold text-center sm:text-left md:text-6xl lg:text-7xl u-text-gray-900">
         <Markdown use="title" unwrap="p" />
+        <span ref="title" class="absolute transition duration-700" style="translate: transform(0); opacity: 0">
+          <Markdown :use="$slots.titleAnimationWord" unwrap="p" />
+        </span>
       </h1>
       <p v-if="$slots.description" class="max-w-lg text-lg text-center text-gray-500 sm:w-3/5 sm:text-left dark:text-gray-100">
         <Markdown use="description" unwrap="p" />
@@ -39,6 +42,7 @@
 <script setup lang="ts">
 const route = useRoute()
 const router = useRouter()
+const title = ref(null)
 
 defineProps({
   primaryButtonText: {
@@ -50,6 +54,15 @@ defineProps({
     default: ''
   }
 })
+
+onMounted(() => animateTitle())
+
+const animateTitle = () => {
+  setTimeout(() => {
+    title.value.style.transform = 'translate(16px)'
+    title.value.style.opacity = 1
+  }, 1000)
+}
 
 const scrollToVideo = () => {
   router.push({
