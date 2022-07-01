@@ -11,7 +11,8 @@
       <div class="flex flex-col pb-4">
         <div class="relative flex flex-col w-full px-3 py-1.5 bg-gray-800 border border-gray-700 rounded-md">
           <span class="pb-1 text-sm font-semibold">title</span>
-          <span class="text-sm">
+          <span class="relative text-sm">
+            <div ref="highlightTitle" class="absolute top-0 left-[30px] h-5 bg-teal-400 opacity-30 transition-all" style="width: 0px" />
             {{ `Intro${animatedTitle.word}` }}
           </span>
 
@@ -31,7 +32,8 @@
           <span ref="cursorDescription" class="absolute">|</span>
         </div>
         <span class="pb-1 text-sm font-semibold">description</span>
-        <span class="text-sm">
+        <span class="relative text-sm">
+          <div ref="highlightDescription" class="absolute top-0 left-0 w-0 h-5 transition-all bg-indigoblue-400 opacity-30" />
           {{ `${animatedDescription.word} ac etiam consequat in. Convallis arcu ipsum urna nibh. Id orci tellus laoreet id ac.` }}
         </span>
       </div>
@@ -61,7 +63,7 @@
         icon="heroicons-solid:arrow-right"
         variant="transparent"
         trailing
-        class="-translate-x-4"
+        class="-translate-x-4 !text-gray-900"
       />
     </div>
   </div>
@@ -81,29 +83,47 @@ const animatedDescription = reactive({ word: '' })
 
 const cursorTitle = ref(null)
 const userTitle = ref(null)
+const highlightTitle = ref(null)
 const cursorDescription = ref(null)
 const userDescription = ref(null)
+const highlightDescription = ref(null)
 const styleEl = ref(null)
 const intervalIds = ref([])
 const startAnimating = ref(false)
+const titleTimer = ref()
 
 const observerCallback = (entries: IntersectionObserverEntry[]) =>
   entries.forEach((entry) => {
     if (entry.isIntersecting && !startAnimating.value) {
       startAnimating.value = true
+      startAnimation()
 
-      setTimeout(() => {
-        animateWord(title.split(''), animatedTitle, cursorTitle, userTitle, 7.3)
-
-        setTimeout(() => {
-          animateCursor(cursorDescription)
-          userDescription.value.style.opacity = '1'
-
-          animateWord(description.split(''), animatedDescription, cursorDescription, userDescription, 5.5)
-        }, 500)
-      }, 2000)
+      setInterval(() => {
+        startAnimation()
+      }, 8000)
     }
   })
+
+const startAnimation = () => {
+  titleTimer.value = setTimeout(() => {
+    animateWord(title.split(''), animatedTitle, cursorTitle, userTitle, 7.3)
+
+    setTimeout(() => {
+      animateCursor(cursorDescription)
+      userDescription.value.style.opacity = '1'
+
+      animateWord(description.split(''), animatedDescription, cursorDescription, userDescription, 5.5)
+    }, 500)
+
+    setTimeout(() => {
+      animatedHightLight(75, highlightTitle, animatedTitle, cursorTitle, userTitle)
+    }, 4000)
+
+    setTimeout(() => {
+      animatedHightLight(160, highlightDescription, animatedDescription, cursorDescription, userDescription)
+    }, 5000)
+  }, 2000)
+}
 
 const animateWord = (letters, animatedText, cursorEl, nameEl, translateNb) => {
   letters.forEach((letter, index) => {
@@ -114,6 +134,19 @@ const animateWord = (letters, animatedText, cursorEl, nameEl, translateNb) => {
       nameEl.value.style = styleEl.value
     }, 100 * index)
   })
+}
+
+const animatedHightLight = (pxWidth, highlightEl, animatedText, cursorEl, nameEl) => {
+  highlightEl.value.style.width = `${pxWidth}px`
+  highlightEl.value.style.transitionDuration = '1000ms'
+
+  setTimeout(() => {
+    highlightEl.value.style.width = '0px'
+    highlightEl.value.style.transitionDuration = '0ms'
+    animatedText.word = ''
+    cursorEl.value.style = 'transform: translate(-4px)'
+    nameEl.value.style = 'transform: translate(-4px)'
+  }, 2000)
 }
 
 const animateCursor = (el) => {

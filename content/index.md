@@ -11,7 +11,10 @@ New
 Nuxt 3.0 is out. [Read about it here](https://v3.nuxtjs.org/){.underline}
 
 #title
-Develop a modern website today.
+Develop a modern website
+
+#titleAnimationWord
+today.
 
 #description
 Nuxt provides the best developer experience for web teams to deliver the best end-user experience.
@@ -20,14 +23,14 @@ Nuxt provides the best developer experience for web teams to deliver the best en
 ::home-carousel
 ---
 items:
-  - Unilever
-  - Gitlab
-  - Awwwards
-  - Adobe
-  - Nintendo
-  - Nasa
-  - Tiktok
-  - Backmarket
+  - unilever
+  - gitlab
+  - awwwards
+  - adobe
+  - nintendo
+  - nasa
+  - tiktok
+  - backmarket
 ---
 ::
 
@@ -136,6 +139,7 @@ bodyPlacement: 'left'
 to: '/community/partners'
 sectionTitleColorClass: 'text-indigoblue-400'
 bodyExtraClass: 'relative'
+containerClass: ''
 ---
 #sectionTitle
 COLLABORATE WITH
@@ -162,18 +166,23 @@ GitHub Stars recognises those folks who are going above and beyond in helping ot
 #extra
   :::home-carousel
   ---
+  partners: true
   items:
-    - Curotec
-    - Mirahi
-    - Netlify
-    - Shipshape
-    - Softwarethings
-    - Swell
-    - Passionatepeople
-    - Vercel
-    - Vuestorefront
-    - Sixtyfourrobots
-    - Zenarchitects
+    - name: curotec
+    - name: mirahi
+      height: 60
+    - name: netlify
+    - name: shipshape
+    - name: softwarethings
+    - name: swell
+    - name: passionatepeople
+      height: 60
+    - name: vercel
+    - name: vuestorefront
+    - name: sixtyfourrobots
+      height: 60
+    - name: zenarchitects
+      height: 60
   ---
   :::
 ::
