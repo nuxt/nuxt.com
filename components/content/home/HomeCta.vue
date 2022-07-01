@@ -1,6 +1,11 @@
 <template>
-  <div class="relative pb-16 transition duration-700 sm:pb-44" :class="!slideIn ? 'opacity-0 translate-y-20' : 'opacity-100 translate-y-0'">
-    <img src="/assets/home/gradient-cta.svg" class="absolute w-full h-full bottom-24 -left-8">
+  <div
+    ref="ctaContainer"
+    class="relative pt-10 pb-40 transition duration-700 sm:pt-44 sm:px-0 md:pt-28 lg:pt-40"
+    :class="!slideIn ? 'opacity-0 translate-y-20' : 'opacity-100 translate-y-0'"
+  >
+    <div ref="mouseLight" class="absolute top-0 rounded-full blur-[50px] bg-gradient-to-t from-green-400 via-teal-400 to-indigoblue-400" />
+
     <UContainer padded class="relative flex flex-col items-center justify-center gap-y-6">
       <h3 class="text-4xl font-semibold u-text-gray-900">
         <Markdown :use="$slots.title" unwrap="p" />
@@ -9,14 +14,16 @@
         <Markdown :use="$slots.description" unwrap="p" />
       </p>
       <form ref="root" class="flex flex-wrap justify-start justify-center w-full gap-6 sm:flex-nowrap" @submit.prevent="onSubmit">
-        <UInput
-          v-model="form.email"
-          name="email"
-          placeholder="Enter your email"
-          class="w-full sm:w-64"
-          size="lg"
-          required
-        />
+        <div ref="inputForm">
+          <UInput
+            v-model="form.email"
+            name="email"
+            placeholder="Enter your email"
+            class="w-full sm:w-64"
+            size="lg"
+            required
+          />
+        </div>
         <UButton
           type="submit"
           submit
@@ -43,6 +50,9 @@ defineProps({
 const observer = ref() as Ref<IntersectionObserver>
 const root = ref(null) as Ref<Element>
 const slideIn = ref(false)
+const mouseLight = ref(null)
+const ctaContainer = ref(null)
+const inputForm = ref(null)
 
 const observerCallback = (entries: IntersectionObserverEntry[]) =>
   entries.forEach((entry) => {
@@ -75,7 +85,30 @@ async function onSubmit () {
 
 onBeforeMount(() => (observer.value = new IntersectionObserver(observerCallback)))
 
-onMounted(() => observer.value.observe(root.value))
+onMounted(() => {
+  observer.value.observe(root.value)
+
+  document.addEventListener('mousemove', (e) => {
+    const refNumber = 1000
+    const input = inputForm.value.getBoundingClientRect()
+    const x = e.clientX - (input.left + (inputForm.value.clientWidth / 2))
+    const y = e.clientY - (input.top + (inputForm.value.clientHeight / 2))
+    const coord = Math.abs(y) + Math.abs(x)
+    const size = refNumber - coord
+
+    mouseLight.value.style.top = `${e.clientY - ctaContainer.value.getBoundingClientRect().y - mouseLight.value.clientHeight / 2}px`
+    mouseLight.value.style.left = `${e.clientX - mouseLight.value.clientWidth / 2}px`
+
+    mouseLight.value.style.width = `${(size / 3)}px`
+    mouseLight.value.style.height = `${(size / 3)}px`
+
+    if (e.clientY < ctaContainer.value.getBoundingClientRect().y) {
+      mouseLight.value.style.opacity = 0
+    } else {
+      mouseLight.value.style.opacity = 1
+    }
+  })
+})
 
 onBeforeUnmount(() => observer.value?.disconnect())
 </script>

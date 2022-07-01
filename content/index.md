@@ -136,6 +136,7 @@ bodyPlacement: 'left'
 to: '/community/partners'
 sectionTitleColorClass: 'text-indigoblue-400'
 bodyExtraClass: 'relative'
+containerClass: ''
 ---
 #sectionTitle
 COLLABORATE WITH

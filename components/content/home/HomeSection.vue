@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex flex-col px-4 pt-24 pb-10 transition duration-700 sm:px-0 sm:pb-20 md:pb-28 lg:pb-40"
+    class="flex flex-col px-4 pt-24 transition duration-700"
     :class="[containerClass, !slideIn ? 'opacity-0 translate-y-20' : 'opacity-100 translate-y-0']"
   >
     <!-- Main title -->
@@ -83,7 +83,7 @@ import type { PropType, Ref } from 'vue'
 defineProps({
   containerClass: {
     type: String,
-    default: 'gap-y-10'
+    default: 'gap-y-10 pb-10 sm:px-0 sm:pb-20 md:pb-28 lg:pb-40'
   },
   sectionTitleColorClass: {
     type: String,
