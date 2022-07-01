@@ -13,7 +13,7 @@
     ],
     "paths": {
       "#imports": [
-        "node_modules/nuxt/dist/app"
+        "../../node_modules/nuxt/dist/app"
       ]
     }
   },
