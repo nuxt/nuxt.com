@@ -1,5 +1,7 @@
 <template>
-  <div ref="gemAnim" class="absolute top-[-50px] left-2/3" />
+  <div ref="gemWrapper" class="transition duration-1000 absolute left-1/3 sm:left-1/3 md:left-1/2 lg:top-[-50px] lg:left-2/3">
+    <div ref="gemAnim" class="opacity-30 md:opacity-100" />
+  </div>
 </template>
 
 <script setup>
@@ -10,6 +12,7 @@ import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { useColorMode } from '#imports'
 
+const gemWrapper = ref(null)
 const gemAnim = ref(null)
 
 const colorMode = useColorMode()
@@ -58,6 +61,12 @@ gltfLoader.load('/assets/home/gem.glb', function (gltf) {
 })
 
 onMounted(() => {
+  gemWrapper.value.style.opacity = 0
+
+  setTimeout(() => {
+    gemWrapper.value.style.opacity = 1
+  }, 1000)
+
   // Camera
   const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 400)
   camera.aspect = 1
