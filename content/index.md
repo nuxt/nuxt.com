@@ -168,17 +168,20 @@ GitHub Stars recognises those folks who are going above and beyond in helping ot
   ---
   partners: true
   items:
-    - curotec
-    - mirahi
-    - netlify
-    - shipshape
-    - softwarethings
-    - swell
-    - passionatepeople
-    - vercel
-    - vuestorefront
-    - sixtyfourrobots
-    - zenarchitects
+    - name: curotec
+    - name: mirahi
+      height: 60
+    - name: netlify
+    - name: shipshape
+    - name: softwarethings
+    - name: swell
+    - name: passionatepeople
+    - name: vercel
+    - name: vuestorefront
+    - name: sixtyfourrobots
+      height: 60
+    - name: zenarchitects
+      height: 60
   ---
   :::
 ::

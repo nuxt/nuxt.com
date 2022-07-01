@@ -7,14 +7,14 @@
       :autoplay="autoplay"
       :speed="5000"
     >
-      <SwiperSlide v-for="(item, index) in items" :key="index">
+      <SwiperSlide v-for="(item, index) in items" :key="index" class="flex items-center justify-center h-[60px]">
         <div class="relative flex items-center justify-center h-full">
-          <img :src="`/assets/${ !partners ? 'brands' : 'partners' }/${item}.svg`" :alt="item" class="h-8 text-gray-400 dark:text-white">
+          <img :src="`/assets/${ !partners ? 'brands' : 'partners' }/${item.name || item}.svg`" :alt="item" class="text-gray-400 dark:text-white" :class="item.height ? `h-[${item.height}px]` : 'h-8'">
         </div>
       </SwiperSlide>
     </Swiper>
-    <div class="absolute top-1/2 left-0 w-[20px] sm:w-[50px] md:w-[100px] lg:w-[200px] xl:w-[300px] 2xl:w-[400px] h-16 bg-gradient-to-r from-white dark:from-black to-transparent z-[1]" />
-    <div class="absolute top-1/2 right-0 w-[20px] sm:w-[50px] md:w-[100px] lg:w-[200px] xl:w-[300px] 2xl:w-[400px] h-16 bg-gradient-to-l from-white dark:from-black to-transparent z-[1]" />
+    <div class="absolute top-24 left-0 w-[20px] sm:w-[50px] md:w-[100px] lg:w-[200px] xl:w-[300px] 2xl:w-[400px] h-20 bg-gradient-to-r from-white dark:from-black to-transparent z-[1]" />
+    <div class="absolute top-24 right-0 w-[20px] sm:w-[50px] md:w-[100px] lg:w-[200px] xl:w-[300px] 2xl:w-[400px] h-20 bg-gradient-to-l from-white dark:from-black to-transparent z-[1]" />
   </UContainer>
 </template>
 
@@ -64,5 +64,9 @@ const autoplay = { delay: 1, pauseOnMouseEnter: true, disableOnInteraction: fals
 <style>
 .swiper-wrapper {
   transition-timing-function: linear !important;
+}
+
+.swiper-slide {
+  height: 60px;
 }
 </style>
