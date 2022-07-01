@@ -176,6 +176,7 @@ GitHub Stars recognises those folks who are going above and beyond in helping ot
     - name: softwarethings
     - name: swell
     - name: passionatepeople
+      height: 60
     - name: vercel
     - name: vuestorefront
     - name: sixtyfourrobots
