@@ -45,7 +45,7 @@ START WITH
 #bodyTitle
 For [Intuitive]{ .text-green-400 } Web Development
 #bodyDescription
-[Focus on what matters.]{ .font-semibold .u-text-gray-900 } Nuxt is the backbone of your Vue.js project, giving structure to build your project with confidence while keeping flexibility.
+[Nuxt is the backbone of your Vue project.]{ .font-semibold .u-text-gray-900 } Build your application with confidence while keeping it flexible and performant.
 #bodyLink
 Go to the documentation
 #bodyExtra
