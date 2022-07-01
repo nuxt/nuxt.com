@@ -14,7 +14,7 @@ import { useRuntimeConfig } from '#imports'
 import type { Options } from './types'
 
 // Internal context
-import context, { componentSchemasCtx } from './context'
+import context, { setComponents } from './context'
 
 // Internal plugins
 import codeFence from './plugins/code-fence'
@@ -76,7 +76,7 @@ export const useEditor = (options: Options) => {
   // Reactive components
   if (isRef(options.components)) {
     watch(options.components, (components) => {
-      getInstance()?.action(ctx => ctx.set(componentSchemasCtx, components))
+      getInstance()?.action(setComponents(components))
     })
   }
 
