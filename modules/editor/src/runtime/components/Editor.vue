@@ -77,11 +77,12 @@ export default defineComponent({
   overflow-y: auto;
 }
 
-.milkdown > .editor > :first-child {
+.milkdown > .editor > :first-child, .milkdown >.editor > :first-child > div {
   margin: 0 !important;
 }
-.milkdown>.editor>:first-child > div {
-    margin: 0!important;
+
+.milkdown span[data-type="emoji"] > img {
+  display: inline;
 }
 
 .ProseMirror ul {
