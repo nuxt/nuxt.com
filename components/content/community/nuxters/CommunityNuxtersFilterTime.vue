@@ -2,7 +2,6 @@
   <USelectCustom
     v-model="time"
     name="time"
-    icon
     :options="times"
     size="sm"
     value-attribute="key"

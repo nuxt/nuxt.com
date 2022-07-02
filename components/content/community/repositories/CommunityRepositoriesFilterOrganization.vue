@@ -2,7 +2,6 @@
   <USelectCustom
     v-model="organization"
     name="organization"
-    icon
     :options="organizationsWithPlaceholder"
     size="sm"
     placeholder="Organization"
