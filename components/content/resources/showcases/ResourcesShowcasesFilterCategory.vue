@@ -5,7 +5,6 @@
     :options="categories"
     size="sm"
     placeholder="Category"
-    value-attribute="name"
     text-attribute="label"
     class="min-w-[160px]"
   />

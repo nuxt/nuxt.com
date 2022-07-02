@@ -5,7 +5,6 @@
     :options="organizationsWithPlaceholder"
     size="sm"
     placeholder="Organization"
-    value-attribute="key"
     text-attribute="title"
     class="min-w-[192px]"
   />

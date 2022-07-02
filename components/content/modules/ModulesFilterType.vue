@@ -5,7 +5,6 @@
     :options="typesWithPlaceholder"
     size="sm"
     placeholder="Type"
-    value-attribute="key"
     text-attribute="title"
     class="min-w-[144px]"
   />

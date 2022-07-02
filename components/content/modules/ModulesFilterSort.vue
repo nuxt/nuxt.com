@@ -14,7 +14,6 @@
       name="sortBy"
       :options="sorts"
       size="sm"
-      value-attribute="key"
       text-attribute="label"
       custom-class="rounded-l-none"
       class="min-w-[144px] w-full md:w-auto"
