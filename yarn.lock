@@ -717,9 +717,9 @@
     unstorage "^0.4.1"
 
 "@nuxthq/ui@npm:@nuxthq/ui-edge@latest":
-  version "0.0.2-27611919.eb6fbd9"
-  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27611919.eb6fbd9.tgz#429f3711082a93d41871cff5191e2db88bac8efd"
-  integrity sha512-mXk+a0CZeviztCGpX0OjEnaytepYDz/SOwgNHWc3tmLUj3Bg25crZSI7/+EqSZJn2tFpZy7qfgnzc1VBEN9anA==
+  version "0.0.2-27613076.db39a9c"
+  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27613076.db39a9c.tgz#3d340695a72bd196885d8b14ee9e34e59937afd9"
+  integrity sha512-gk/7tEFfIue7E9LMFIe7Cr4qlhCHl0jyobOCi4WqZ3DBd0PAoncP2+G8k5izVtOKYk1tfZZkfWddSH64lhtpfQ==
   dependencies:
     "@headlessui/vue" "1.6.4"
     "@iconify/vue" "^3.2.1"
