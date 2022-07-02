@@ -5,7 +5,6 @@
     :options="categoriesWithPlaceholder"
     size="sm"
     placeholder="Category"
-    value-attribute="key"
     text-attribute="title"
     class="min-w-[144px]"
   />
