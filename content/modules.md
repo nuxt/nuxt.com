@@ -6,7 +6,7 @@ title: Modules
 #title
 Modules
 #description
-Extend and automate your workflow by using deployments for your favorite tools.
+Discover our list of modules to supercharge your Nuxt project. Created by the Nuxt team and community.
 ::
 
 ::modules-list
