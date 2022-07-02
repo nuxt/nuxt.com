@@ -44,11 +44,11 @@ body-extra-class: 'w-full h-full lg:absolute left-0 bottom-8 lg:max-w-lg xl:max-
 #sectionTitle
 START WITH
 #title
-<span id="smooth">The Intuitive Web Framework for</br> Vue developers</span>
+<span id="smooth">The Hybrid Vue Framework</span>
 #bodyTitle
-The [Hybrid]{ .text-green-400 } Web Framework
+For [Intuitive]{ .text-green-400 } Web Development
 #bodyDescription
-[Focus on the big picture.]{ .font-semibold .u-text-gray-900 } Projects lets you group issues and get a birds-eye view of the progress your team is making.
+[Nuxt is the backbone of your Vue project.]{ .font-semibold .u-text-gray-900 } Build your application with confidence while keeping it flexible and performant.
 #bodyLink
 Go to the documentation
 #bodyExtra
@@ -73,7 +73,7 @@ Powerful Modules
 #bodyTitle
 Build your dreamed web app with [hundreds of modules]{ .text-green-400 }
 #bodyDescription
-[Focus on the big picture.]{ .font-semibold .u-text-gray-900 } Projects lets you group issues and get a birds-eye view of the progress your team is making.
+[Take shortcuts.]{ .font-semibold .u-text-gray-900 } From extensions to services integrations, there is a module to suit your needs.
 #bodyLink
 List of modules
 #bodyExtra
@@ -98,7 +98,7 @@ Projects for everything
 #bodyTitle
 Manage your Nuxt projects [online]{ .text-teal-400 }
 #bodyDescription
-[Focus on the big picture.]{ .font-semibold .u-text-gray-900 } Projects lets you group issues and get a birds-eye view of the progress your team is making.
+[Focus on the big picture.]{ .font-semibold .u-text-gray-900 } Build your web apps and collaborate in real-time with live preview, from your browser.
 #bodyLink
 My first project
 #bodyExtra
@@ -123,11 +123,11 @@ buttons:
     trailing: true
 ---
 #sectionTitle
-BUILD WITH
+GROW WITH
 #title
 An amazing Community
 #description
-[Focus on the big picture.]{ .font-semibold .u-text-gray-900 } Projects lets you group issues and get a birds-eye view of the progress your team is making.
+[Focus on the big picture.]{ .font-semibold .u-text-gray-900 } Learn and get involved with a vibrant community.
 #extra
   :::home-map
   :::
@@ -144,13 +144,13 @@ containerClass: ''
 #sectionTitle
 COLLABORATE WITH
 #title
-Our partners network
+Our agencies network
 #bodyTitle
-Your [next project]{ .text-indigoblue-400 } will be better
+The [right agency]{ .text-indigoblue-400 } for your needs
 #bodyDescription
-[Focus on the big picture.]{ .font-semibold .u-text-gray-900 } Projects lets you group issues and get a birds-eye view of the progress your team is making.
+[Find an agency]{ .font-semibold .u-text-gray-900 } near you with right skills. Ship faster and with confidence with our trusted agency partners.
 #bodyLink
-List of partners
+List of agencies
 #bodyExtra
 ::home-partner-card
 ---
@@ -194,5 +194,5 @@ buttonText: 'Subscribe'
 #title
 Be the first to know
 #description
-Focus on the big picture. Projects lets you group issues and get a birds-eye view of the progress your team is making.
+Don't miss any news and stay up-to-date.
 ::
