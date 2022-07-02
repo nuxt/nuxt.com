@@ -2,7 +2,6 @@
   <USelectCustom
     v-model="sortBy"
     name="sortBy"
-    icon
     :options="sorts"
     size="sm"
     value-attribute="key"
