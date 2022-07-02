@@ -47,6 +47,9 @@ export default defineNuxtConfig({
     prefix: '/api',
     cookie: {
       path: '/'
+    },
+    auth: {
+      populate: ['memberships.team.avatar']
     }
   },
   ui: {
