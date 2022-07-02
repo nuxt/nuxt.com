@@ -48,7 +48,7 @@ const select = {
 const selectCustom = {
   ...input,
   list: {
-    container: 'absolute z-10 mt-1 w-full p-1 max-h-60 overflow-auto',
+    base: 'u-bg-white shadow-lg rounded-md ring-1 u-ring-gray-200 focus:outline-none overflow-y-auto p-1 max-h-60',
     option: {
       base: 'cursor-default select-none relative py-1.5 pl-2 pr-8 rounded-md text-sm',
       active: 'u-text-gray-900 bg-gray-100 dark:bg-gray-900',

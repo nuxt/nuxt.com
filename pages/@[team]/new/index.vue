@@ -22,10 +22,12 @@
                 name="owner"
                 class="w-full min-w-0 lg:w-56"
               >
-                <div class="flex items-center w-full min-w-0 gap-3">
-                  <UAvatar :src="owner.avatar_url" size="xxs" class="flex-shrink-0" />
-                  <span class="truncate">{{ owner.login }}</span>
-                </div>
+                <template #label>
+                  <div class="flex items-center w-full min-w-0 gap-3">
+                    <UAvatar :src="owner.avatar_url" size="xxs" class="flex-shrink-0" />
+                    <span class="truncate">{{ owner.login }}</span>
+                  </div>
+                </template>
 
                 <template #option="{ option }">
                   <div class="flex items-center w-full gap-3">

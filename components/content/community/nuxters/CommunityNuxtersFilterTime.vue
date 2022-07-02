@@ -4,7 +4,6 @@
     name="time"
     :options="times"
     size="sm"
-    value-attribute="key"
     text-attribute="label"
     class="min-w-[144px]"
   />

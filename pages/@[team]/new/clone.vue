@@ -39,10 +39,12 @@
                     name="owner"
                     required
                   >
-                    <div class="flex items-center gap-3">
-                      <UAvatar :src="form.owner.avatar_url" size="xxs" />
-                      {{ form.owner.login }}
-                    </div>
+                    <template #label>
+                      <div class="flex items-center gap-3">
+                        <UAvatar :src="form.owner.avatar_url" size="xxs" />
+                        {{ form.owner.login }}
+                      </div>
+                    </template>
 
                     <template #option="{ option }">
                       <div class="flex items-center gap-3">
