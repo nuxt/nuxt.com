@@ -4,7 +4,7 @@
     class="relative pt-10 pb-40 transition duration-700 sm:pt-44 sm:px-0 md:pt-28 lg:pt-40"
     :class="!slideIn ? 'opacity-0 translate-y-20' : 'opacity-100 translate-y-0'"
   >
-    <div ref="mouseLight" class="absolute top-0 rounded-full blur-[50px] bg-gradient-to-t from-green-400 via-teal-400 to-indigoblue-400" />
+    <div ref="mouseLight" class="opacity-0 absolute top-0 rounded-full blur-[50px] bg-gradient-to-t from-green-400 via-teal-400 to-indigoblue-400 transition duration-300" />
 
     <UContainer padded class="relative flex flex-col items-center justify-center gap-y-6">
       <h3 class="text-4xl font-semibold u-text-gray-900">
@@ -90,18 +90,22 @@ const mouseMoveLight = (e) => {
   const x = e.clientX - (input.left + (inputForm.value.clientWidth / 2))
   const y = e.clientY - (input.top + (inputForm.value.clientHeight / 2))
   const coord = Math.abs(y) + Math.abs(x)
-  const size = refNumber - coord
+  const size = `${((refNumber - coord) / 3)}px`
 
   mouseLight.value.style.top = `${e.clientY - ctaContainer.value.getBoundingClientRect().y - mouseLight.value.clientHeight / 2}px`
   mouseLight.value.style.left = `${e.clientX - mouseLight.value.clientWidth / 2}px`
 
-  mouseLight.value.style.width = `${(size / 3)}px`
-  mouseLight.value.style.height = `${(size / 3)}px`
+  mouseLight.value.style.width = size
+  mouseLight.value.style.height = size
 
   if (e.clientY < ctaContainer.value.getBoundingClientRect().y) {
-    mouseLight.value.style.visibility = 'hidden'
+    mouseLight.value.classList.add('opacity-0')
+    mouseLight.value.classList.remove('opacity-60')
+    mouseLight.value.classList.remove('dark:opacity-100')
   } else {
-    mouseLight.value.style.visibility = 'visible'
+    mouseLight.value.classList.remove('opacity-0')
+    mouseLight.value.classList.add('opacity-60')
+    mouseLight.value.classList.add('dark:opacity-100')
   }
 }
 
