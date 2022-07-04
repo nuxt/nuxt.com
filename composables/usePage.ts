@@ -102,7 +102,6 @@ export const usePage = () => {
    * Find current navigation node from a path.
    */
   const navFromPath = (path: string, tree: NavItem[] = navigation.value || []) => {
-    console.logon.value :', navigation.value)
     for (const file of tree) {
       if (file._path === path && !file.id) {
         return file
