@@ -1,4 +1,4 @@
-# Nuxt 3 Minimal Starter
+# nuxt.com
 
 We recommend to look at the [documentation](https://v3.nuxtjs.org).
 
@@ -17,10 +17,6 @@ Start the development server on http://localhost:3000
 ```bash
 yarn dev
 ```
-
-## MDC Editor
-
-Jump over [./modules/editor](./modules/editor) directory to setup and improve the MDC editor.
 
 ## Production
 

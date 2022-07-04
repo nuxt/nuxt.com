@@ -4,11 +4,9 @@
     "dev": "nuxi dev",
     "build": "nuxi build",
     "start": "node .output/server/index.mjs",
-    "yws": "y-websocket",
     "lint": "eslint --ext .ts,.js,.vue .",
     "release": "yarn lint && standard-version && git push --follow-tags",
-    "test": "yarn lint",
-    "postinstall": "yarn --cwd modules/editor install"
+    "test": "yarn lint"
   },
   "resolutions": {
     "parse5": "6.0.1"
@@ -19,19 +17,15 @@
     "@nuxthq/admin": "npm:@nuxthq/admin-edge@latest",
     "@nuxthq/ui": "npm:@nuxthq/ui-edge@latest",
     "@nuxtjs/eslint-config-typescript": "^10.0.0",
-    "@nuxtjs/strapi": "npm:@nuxtjs/strapi-edge@latest",
     "@sindresorhus/slugify": "^2.1.0",
     "@types/lodash-es": "^4.17.6",
     "@vueuse/core": "^8.7.5",
     "@vueuse/motion": "^2.0.0-beta.12",
     "eslint": "^8.19.0",
-    "gray-matter": "^4.0.3",
     "joi": "^17.6.0",
-    "js-yaml": "^4.1.0",
     "mjml": "^4.12.0",
     "node-mailjet": "^5.0.1",
     "nuxt": "^3.0.0-rc.4",
-    "socket.io-client": "^4.5.1",
     "standard-version": "^9.5.0",
     "swiper": "^8.2.6",
     "tailwindcss-border-gradient-radius": "^3.0.1",
