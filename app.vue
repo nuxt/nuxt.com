@@ -10,8 +10,7 @@
 
 <script setup lang="ts">
 useHead({
-  title: 'Nuxt: Intuitive Web Development',
-  titleTemplate: '%s - Nuxt',
+  titleTemplate: chunk => chunk ? `${chunk} - Nuxt` : 'Nuxt: Intuitive Web Development',
   meta: [
     { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1' },
     { name: 'description', content: 'Nuxt makes web development intuitive and fun. The open source framework NuxtJS makes the development of modern web applications simple.' },
