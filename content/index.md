@@ -38,8 +38,8 @@ items:
 ---
 body-placement: 'right'
 to: 'https://v3.nuxtjs.org/'
-body-class: 'pt-8'
-body-extra-class: 'w-full h-full lg:absolute left-0 bottom-8 lg:max-w-lg xl:max-w-xl 2xl:max-w-[600px]'
+body-class: 'pt-[4.5rem]'
+body-extra-class: 'w-full h-full lg:absolute left-0 bottom-8 lg:max-w-lg xl:max-w-xl 2xl:max-w-[700px]'
 ---
 #sectionTitle
 START WITH
@@ -108,10 +108,10 @@ My first project
 
 ::home-section
 ---
-containerClass: 'gap-y-4'
+containerClass: 'gap-y-4 sm:pb-28'
 withBodyText: false
 sectionTitleColorClass: 'text-teal-400'
-mainTitleContainerClass: 'pb-8'
+mainTitleContainerClass: 'pb-8 sm:pt-36'
 buttons:
   - label: 'Go to community'
     variant: 'primary-gradient'
