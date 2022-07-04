@@ -9,11 +9,9 @@ export default defineNuxtConfig({
   modules: [
     '@nuxthq/ui',
     '@nuxthq/admin',
-    '@nuxtjs/strapi',
     '@nuxt/content',
     '@nuxt-modules/newsletter',
-    'vue-plausible',
-    './modules/editor/src/module'
+    'vue-plausible'
   ],
   build: {
     transpile: [
@@ -32,24 +30,10 @@ export default defineNuxtConfig({
       secretKey: process.env.MAILJET_SECRET_KEY
     },
     public: {
-      baseUrl: process.env.BASE_URL || 'https://nuxt.com',
-      ywsUrl: process.env.YWS_URL,
-      github: {
-        appSlug: process.env.GITHUB_APP_SLUG || 'nuxt'
-      },
+      studioUrl: process.env.STUDIO_URL || 'https://studio.nuxt.com',
       plausible: {
         domain: process.env.PLAUSIBLE_DOMAIN
       }
-    }
-  },
-  strapi: {
-    version: 'v4',
-    prefix: '/api',
-    cookie: {
-      path: '/'
-    },
-    auth: {
-      populate: ['memberships.team.avatar']
     }
   },
   ui: {
@@ -87,9 +71,6 @@ export default defineNuxtConfig({
         token: process.env.GITHUB_TOKEN
       }
     ]
-  },
-  typescript: {
-    shim: false
   },
   newsletter: {
     revue: {

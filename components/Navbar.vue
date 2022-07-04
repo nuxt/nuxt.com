@@ -25,6 +25,7 @@
             <NuxtLink
               :to="link._path"
               :exact="link.exact"
+              :target="link.target"
               class="text-sm lg:text-base focus:outline-none"
               :class="{
                 'font-semibold u-text-gray-900': isActive(link),
@@ -36,16 +37,10 @@
           </li>
         </ul>
 
-        <div class="flex justify-end">
-          <TeamsDropdown v-if="user" />
-          <UButton
-            v-else
-            label="Login"
-            icon="fa-brands:github"
-            variant="primary"
-            size="sm"
-            @click="onClick"
-          />
+        <div class="flex items-center justify-end gap-3">
+          <UButton icon="fa-brands:twitter" variant="transparent" to="https://twitter.com/nuxt_js" target="_blank" class="!p-0" />
+          <UButton icon="fa-brands:discord" variant="transparent" to="https://discord.com/invite/ps2h6QT" target="_blank" class="!p-0" />
+          <UButton icon="fa-brands:github" variant="transparent" to="https://github.com/nuxt/framework" target="_blank" class="!p-0" />
         </div>
       </div>
     </UContainer>
@@ -53,55 +48,42 @@
 </template>
 
 <script setup lang="ts">
-import type { Ref } from 'vue'
-import type { User } from '~/types'
-
-const user = useStrapiUser() as Ref<User>
-const { getProviderAuthenticationUrl } = useStrapiAuth()
+const config = useRuntimeConfig()
 const route = useRoute()
-const activeTeam = useTeam()
 const { hasScrolledPastNavbar } = useNavbarScroll()
 
 const isOpen = ref(false)
 
-const links = computed(() => {
-  const team = activeTeam.value || route.params.team || user.value?.username
-
-  return [{
-    title: 'Framework',
-    icon: 'heroicons-outline:book-open',
-    _path: '/docs'
-  }, {
-    title: 'Modules',
-    icon: 'heroicons-outline:sparkles',
-    _path: '/modules'
-  }, {
-    title: 'Projects',
-    _path: team && user.value?.beta ? `/@${team}/projects` : '/projects',
-    exact: true,
-    icon: 'heroicons-outline:collection'
-  },
-  {
-    title: 'Resources',
-    _path: '/resources',
-    icon: 'heroicons-outline:template'
-  }, {
-    title: 'Community',
-    _path: '/community',
-    icon: 'heroicons-outline:globe'
-  }, {
-    title: 'Company',
-    _path: '/company',
-    hidden: true,
-    icon: 'heroicons-outline:office-building'
-  }]
-})
+const links = ref([{
+  title: 'Framework',
+  icon: 'heroicons-outline:book-open',
+  _path: '/docs'
+}, {
+  title: 'Modules',
+  icon: 'heroicons-outline:sparkles',
+  _path: '/modules'
+},
+{
+  title: 'Resources',
+  _path: '/resources',
+  icon: 'heroicons-outline:template'
+}, {
+  title: 'Community',
+  _path: '/community',
+  icon: 'heroicons-outline:globe'
+}, {
+  title: 'Company',
+  _path: '/company',
+  hidden: true,
+  icon: 'heroicons-outline:office-building'
+}, {
+  title: 'Studio',
+  _path: config.studioUrl,
+  icon: 'heroicons-outline:collection',
+  target: '_blank'
+}])
 
 const visibleLinks = computed(() => links.value.filter(link => !link.hidden))
-
-const onClick = () => {
-  window.location = getProviderAuthenticationUrl('github') as unknown as Location
-}
 
 function isActive (link) {
   return link.exact ? route.fullPath === link._path : route.fullPath.startsWith(link._path)
