@@ -30,6 +30,7 @@ export default defineNuxtConfig({
       secretKey: process.env.MAILJET_SECRET_KEY
     },
     public: {
+      studioUrl: process.env.STUDIO_URL || 'https://studio.nuxt.com',
       plausible: {
         domain: process.env.PLAUSIBLE_DOMAIN
       }

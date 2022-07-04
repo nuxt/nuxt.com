@@ -87,7 +87,7 @@ bodyClass: 'z-10 relative'
 containerClass: 'gap-y-4'
 bodyPlacement: 'right'
 bodyContainerClass: 'min-h-[500px]'
-to: '/projects'
+to: 'https://studio.nuxt.com'
 sectionTitleColorClass: 'text-teal-400'
 bodyExtraClass: 'w-full flex justify-center lg:justify-start sm:grid grid-cols-4 lg:flex lg:mr-0 lg:absolute left-8'
 ---

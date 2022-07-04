@@ -25,6 +25,7 @@
             <NuxtLink
               :to="link._path"
               :exact="link.exact"
+              :target="link.target"
               class="text-sm lg:text-base focus:outline-none"
               :class="{
                 'font-semibold u-text-gray-900': isActive(link),
@@ -36,13 +37,18 @@
           </li>
         </ul>
 
-        <div class="flex justify-end" />
+        <div class="flex items-center justify-end gap-3">
+          <UButton icon="fa-brands:twitter" variant="transparent" to="https://twitter.com/nuxt_js" target="_blank" class="!p-0" />
+          <UButton icon="fa-brands:discord" variant="transparent" to="https://discord.com/invite/ps2h6QT" target="_blank" class="!p-0" />
+          <UButton icon="fa-brands:github" variant="transparent" to="https://github.com/nuxt/framework" target="_blank" class="!p-0" />
+        </div>
       </div>
     </UContainer>
   </header>
 </template>
 
 <script setup lang="ts">
+const config = useRuntimeConfig()
 const route = useRoute()
 const { hasScrolledPastNavbar } = useNavbarScroll()
 
@@ -56,10 +62,6 @@ const links = ref([{
   title: 'Modules',
   icon: 'heroicons-outline:sparkles',
   _path: '/modules'
-}, {
-  title: 'Projects',
-  _path: '/projects',
-  icon: 'heroicons-outline:collection'
 },
 {
   title: 'Resources',
@@ -74,6 +76,11 @@ const links = ref([{
   _path: '/company',
   hidden: true,
   icon: 'heroicons-outline:office-building'
+}, {
+  title: 'Studio',
+  _path: config.studioUrl,
+  icon: 'heroicons-outline:collection',
+  target: '_blank'
 }])
 
 const visibleLinks = computed(() => links.value.filter(link => !link.hidden))
