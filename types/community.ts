@@ -18,3 +18,8 @@ export interface CommunityRepositoryStats {
   stars: number
   collaborators: number
 }
+
+export interface CommunityPartners {
+  services: string[],
+  location: string
+}

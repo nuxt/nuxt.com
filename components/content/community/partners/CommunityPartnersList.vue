@@ -7,7 +7,6 @@
     <PageList :title="`${filteredPartners.length} partner${filteredPartners.length > 1 ? 's' : ''} found`">
       <template #filters>
         <CommunityPartnersFilters class="hidden lg:flex" />
-        <CommunityPartnersFilterCategory class="lg:hidden" />
       </template>
 
       <div class="hidden _ellipse lg:block" />
@@ -22,21 +21,10 @@
 </template>
 
 <script setup lang="ts">
-const { partners, selectedCategory, selectedService } = useCommunityPartners()
+const partnerType: 'technologies' | 'agencies' = inject('partnerType')
 
-const filteredPartners = computed(() => {
-  return [...partners.value]
-    .filter((partner) => {
-      if (selectedCategory.value && partner.category !== selectedCategory.value.key) {
-        return false
-      }
-      if (selectedService.value && !partner.services.find(service => service.key === selectedService.value.key)) {
-        return false
-      }
+const { filteredPartners } = useCommunityPartners(partnerType)
 
-      return true
-    })
-})
 </script>
 
 <style scoped>

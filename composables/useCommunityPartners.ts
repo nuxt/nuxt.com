@@ -1,12 +1,13 @@
 import type { Ref } from 'vue'
-import { uniqBy } from 'lodash-es'
+import { uniqBy, uniq } from 'lodash-es'
 import slugify from '@sindresorhus/slugify'
-import { capitalize } from '~/utils'
+import { CommunityPartners } from '~/types'
 
-export const useCommunityPartners = () => {
+export const useCommunityPartners = (type: 'technologies' | 'agencies') => {
   const route = useRoute()
-  const _partners: Ref<any> = useState('community-partners', () => [])
+  const _partners: Ref<CommunityPartners[]> = useState(`community-${type}`, () => [])
 
+  const param = type === 'agencies' ? type : 'partners'
   const pending = ref(false)
 
   // Methods
@@ -19,10 +20,10 @@ export const useCommunityPartners = () => {
     pending.value = true
 
     try {
-      const data = await queryContent('/community/partners').where({
+      const data = await queryContent<CommunityPartners>(`/community/${param}`).where({
         $not: {
           _path: {
-            $in: ['/community/partners']
+            $in: [`/community/${param}`]
           }
         }
       }).find()
@@ -44,41 +45,36 @@ export const useCommunityPartners = () => {
         services: partner.services.map(service => ({
           key: slugify(service),
           title: service
-        }))
+        })),
+        location: partner.location
+          ? {
+              key: slugify(partner.location),
+              title: partner.location
+            }
+          : null
       }))
   })
 
-  const categoriesIcons = {
-    agency: 'uil:palette',
-    technology: 'uil:circuit'
-  }
-
-  const categories = computed(() => {
-    const categories = [...new Set(partners.value.map(partner => partner.category))]
-      .map(category => ({
-        key: category,
-        title: capitalize(category),
-        icon: categoriesIcons[category],
-        to: {
-          name: 'community-partners',
-          query: {
-            ...route.query,
-            category: route.query?.category !== category ? category : undefined
-          },
-          params: { smooth: '#smooth' }
+  const filteredPartners = computed(() => {
+    return [...partners.value]
+      .filter((partner) => {
+        if (selectedService.value && !partner.services.find(service => service.key === selectedService.value.key)) {
+          return false
         }
-      }))
-      .sort((a, b) => a.title.localeCompare(b.title))
+        if (selectedLocation.value && partner.location.key !== selectedLocation.value.key) {
+          return false
+        }
 
-    return categories
+        return true
+      })
   })
 
   const services = computed(() => {
-    const services = uniqBy([...new Set(partners.value.flatMap(partner => partner.services))], s => s.key)
+    return uniqBy([...new Set(partners.value)].flatMap(partner => partner.services), s => s.key)
       .map(service => ({
         ...service,
         to: {
-          name: 'community-partners',
+          name: `community-${param}`,
           query: {
             ...route.query,
             service: route.query?.service !== service.key ? service.key : undefined
@@ -87,16 +83,37 @@ export const useCommunityPartners = () => {
         }
       }))
       .sort((a, b) => a.title.localeCompare(b.title))
-
-    return services
   })
 
-  const selectedCategory = computed(() => {
-    return categories.value.find(category => category.key === route.query.category)
+  const locations = computed(() => {
+    if (type === 'technologies') {
+      return []
+    }
+
+    return uniq([...new Set(partners.value)].map(partner => partner.location))
+      .map((location) => {
+        return {
+          key: location.key,
+          title: location.title,
+          to: {
+            name: `community-${param}`,
+            query: {
+              ...route.query,
+              location: route.query?.location !== location.key ? location.key : undefined
+            },
+            params: { smooth: '#smooth' }
+          }
+        }
+      })
+      .sort((a, b) => a.title.localeCompare(b.title))
   })
 
   const selectedService = computed(() => {
     return services.value.find(service => service.key === route.query.service)
+  })
+
+  const selectedLocation = computed(() => {
+    return locations.value.find(location => location.key === route.query.location)
   })
 
   return {
@@ -104,9 +121,10 @@ export const useCommunityPartners = () => {
     fetch,
     // Computed
     partners,
-    categories,
+    filteredPartners,
     services,
-    selectedCategory,
-    selectedService
+    locations,
+    selectedService,
+    selectedLocation
   }
 }
