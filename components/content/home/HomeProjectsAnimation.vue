@@ -98,9 +98,11 @@ const observerCallback = (entries: IntersectionObserverEntry[]) =>
       startAnimating.value = true
       startAnimation()
 
-      setInterval(() => {
-        startAnimation()
-      }, 8000)
+      intervalIds.value.push(
+        setInterval(() => {
+          startAnimation()
+        }, 8000)
+      )
     }
   })
 
