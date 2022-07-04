@@ -1,5 +1,5 @@
 <template>
-  <div class="relative pb-[480px] p-4 max-h-[700px] flex items-end">
+  <div class="relative sm:pb-[480px] p-4 h-[300px] sm:max-h-[700px] flex items-end">
     <div class="absolute z-[-1] inset-0 flex justify-center transition duration-1000 ease-in-out" :class="mapOpacityClass">
       <svg
         ref="map"
@@ -6216,7 +6216,7 @@ const baseColor = '#D4D4D8'
 const observerCallback = (entries: IntersectionObserverEntry[]) =>
   entries.forEach((entry) => {
     if (entry.isIntersecting) {
-      mapOpacityClass.value = 'opacity-100 translate-y-0'
+      mapOpacityClass.value = 'opacity-100 -translate-y-20 sm:translate-y-0'
       animationMap()
     } else {
       stopAnimation()

@@ -58,6 +58,7 @@ const observerCallback = (entries: IntersectionObserverEntry[]) =>
   entries.forEach((entry) => {
     if (entry.isIntersecting) {
       slideIn.value = true
+      ctaContainer.value.addEventListener('mousemove', (e) => { mouseMoveLight(e) })
     }
   })
 
@@ -83,32 +84,33 @@ async function onSubmit () {
   loading.value = false
 }
 
+const mouseMoveLight = (e) => {
+  const refNumber = 1000
+  const input = inputForm.value.getBoundingClientRect()
+  const x = e.clientX - (input.left + (inputForm.value.clientWidth / 2))
+  const y = e.clientY - (input.top + (inputForm.value.clientHeight / 2))
+  const coord = Math.abs(y) + Math.abs(x)
+  const size = refNumber - coord
+
+  mouseLight.value.style.top = `${e.clientY - ctaContainer.value.getBoundingClientRect().y - mouseLight.value.clientHeight / 2}px`
+  mouseLight.value.style.left = `${e.clientX - mouseLight.value.clientWidth / 2}px`
+
+  mouseLight.value.style.width = `${(size / 3)}px`
+  mouseLight.value.style.height = `${(size / 3)}px`
+
+  if (e.clientY < ctaContainer.value.getBoundingClientRect().y) {
+    mouseLight.value.style.visibility = 'hidden'
+  } else {
+    mouseLight.value.style.visibility = 'visible'
+  }
+}
+
 onBeforeMount(() => (observer.value = new IntersectionObserver(observerCallback)))
 
-onMounted(() => {
-  observer.value.observe(root.value)
+onMounted(() => observer.value.observe(root.value))
 
-  document.addEventListener('mousemove', (e) => {
-    const refNumber = 1000
-    const input = inputForm.value.getBoundingClientRect()
-    const x = e.clientX - (input.left + (inputForm.value.clientWidth / 2))
-    const y = e.clientY - (input.top + (inputForm.value.clientHeight / 2))
-    const coord = Math.abs(y) + Math.abs(x)
-    const size = refNumber - coord
-
-    mouseLight.value.style.top = `${e.clientY - ctaContainer.value.getBoundingClientRect().y - mouseLight.value.clientHeight / 2}px`
-    mouseLight.value.style.left = `${e.clientX - mouseLight.value.clientWidth / 2}px`
-
-    mouseLight.value.style.width = `${(size / 3)}px`
-    mouseLight.value.style.height = `${(size / 3)}px`
-
-    if (e.clientY < ctaContainer.value.getBoundingClientRect().y) {
-      mouseLight.value.style.visibility = 'hidden'
-    } else {
-      mouseLight.value.style.visibility = 'visible'
-    }
-  })
+onBeforeUnmount(() => {
+  ctaContainer.value.removeEventListener('mousemove', (e) => { mouseMoveLight(e) })
+  observer.value?.disconnect()
 })
-
-onBeforeUnmount(() => observer.value?.disconnect())
 </script>
