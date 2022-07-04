@@ -108,10 +108,10 @@ My first project
 
 ::home-section
 ---
-containerClass: 'gap-y-4'
+containerClass: 'gap-y-4 sm:pb-28'
 withBodyText: false
 sectionTitleColorClass: 'text-teal-400'
-mainTitleContainerClass: 'pb-8'
+mainTitleContainerClass: 'pb-8 sm:pt-36'
 buttons:
   - label: 'Go to community'
     variant: 'primary-gradient'
