@@ -89,13 +89,11 @@ const userDescription = ref(null)
 const highlightDescription = ref(null)
 const styleEl = ref(null)
 const intervalIds = ref([])
-const startAnimating = ref(false)
-const titleTimer = ref()
+const timeoutIds = ref([])
 
 const observerCallback = (entries: IntersectionObserverEntry[]) =>
   entries.forEach((entry) => {
-    if (entry.isIntersecting && !startAnimating.value) {
-      startAnimating.value = true
+    if (entry.isIntersecting) {
       startAnimation()
 
       intervalIds.value.push(
@@ -103,38 +101,50 @@ const observerCallback = (entries: IntersectionObserverEntry[]) =>
           startAnimation()
         }, 8000)
       )
+    } else {
+      stopAnimation()
     }
   })
 
 const startAnimation = () => {
-  titleTimer.value = setTimeout(() => {
-    animateWord(title.split(''), animatedTitle, cursorTitle, userTitle, 7.3)
-
+  timeoutIds.value.push(
     setTimeout(() => {
-      animateCursor(cursorDescription)
-      userDescription.value.style.opacity = '1'
+      animateWord(title.split(''), animatedTitle, cursorTitle, userTitle, 7.3)
 
-      animateWord(description.split(''), animatedDescription, cursorDescription, userDescription, 5.5)
-    }, 500)
+      timeoutIds.value.push(
+        setTimeout(() => {
+          animateCursor(cursorDescription)
+          userDescription.value.style.opacity = '1'
 
-    setTimeout(() => {
-      animatedHightLight(75, highlightTitle, animatedTitle, cursorTitle, userTitle)
-    }, 4000)
+          animateWord(description.split(''), animatedDescription, cursorDescription, userDescription, 5.5)
+        }, 500)
+      )
 
-    setTimeout(() => {
-      animatedHightLight(160, highlightDescription, animatedDescription, cursorDescription, userDescription)
-    }, 5000)
-  }, 2000)
+      timeoutIds.value.push(
+        setTimeout(() => {
+          animatedHightLight(75, highlightTitle, animatedTitle, cursorTitle, userTitle)
+        }, 4000)
+      )
+
+      timeoutIds.value.push(
+        setTimeout(() => {
+          animatedHightLight(160, highlightDescription, animatedDescription, cursorDescription, userDescription)
+        }, 5000)
+      )
+    }, 2000)
+  )
 }
 
 const animateWord = (letters, animatedText, cursorEl, nameEl, translateNb) => {
   letters.forEach((letter, index) => {
-    setTimeout(() => {
-      animatedText.word = animatedText.word + letter
-      styleEl.value = `transform: translate(${index * translateNb}px)`
-      cursorEl.value.style = styleEl.value
-      nameEl.value.style = styleEl.value
-    }, 100 * index)
+    timeoutIds.value.push(
+      setTimeout(() => {
+        animatedText.word = animatedText.word + letter
+        styleEl.value = `transform: translate(${index * translateNb}px)`
+        cursorEl.value.style = styleEl.value
+        nameEl.value.style = styleEl.value
+      }, 100 * index)
+    )
   })
 }
 
@@ -142,26 +152,48 @@ const animatedHightLight = (pxWidth, highlightEl, animatedText, cursorEl, nameEl
   highlightEl.value.style.width = `${pxWidth}px`
   highlightEl.value.style.transitionDuration = '1000ms'
 
-  setTimeout(() => {
+  timeoutIds.value.push(
+    setTimeout(() => {
+      removeHighlight(highlightEl, animatedText, cursorEl, nameEl)
+    }, 2000)
+  )
+}
+
+const removeHighlight = (highlightEl, animatedText, cursorEl, nameEl) => {
+  if (highlightEl.value) {
     highlightEl.value.style.width = '0px'
     highlightEl.value.style.transitionDuration = '0ms'
-    animatedText.word = ''
-    cursorEl.value.style = 'transform: translate(-4px)'
-    nameEl.value.style = 'transform: translate(-4px)'
-  }, 2000)
+  }
+
+  if (cursorEl.value) { cursorEl.value.style = 'transform: translate(-4px)' }
+  if (nameEl.value) { nameEl.value.style = 'transform: translate(-4px)' }
+
+  animatedText.word = ''
 }
 
 const animateCursor = (el) => {
   intervalIds.value.push(setInterval(() => {
     el.value.style.opacity = '1'
-    setTimeout(() => {
-      if (!el.value) {
-        return
-      }
-      el.value.style.opacity = '0'
-    }, 400)
+    timeoutIds.value.push(
+      setTimeout(() => {
+        if (!el.value) {
+          return
+        }
+        el.value.style.opacity = '0'
+      }, 400))
   }, 800)
   )
+}
+
+const stopAnimation = () => {
+  intervalIds.value?.map(id => clearInterval(id))
+  timeoutIds.value?.map(id => clearTimeout(id))
+  intervalIds.value = []
+  timeoutIds.value = []
+  animatedTitle.word = ''
+  animatedDescription.word = ''
+  removeHighlight(highlightTitle, animatedTitle, cursorTitle, userTitle)
+  removeHighlight(highlightDescription, animatedDescription, cursorDescription, userDescription)
 }
 
 onBeforeMount(() => (observer.value = new IntersectionObserver(observerCallback)))
