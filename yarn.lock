@@ -717,9 +717,9 @@
     unstorage "^0.4.1"
 
 "@nuxthq/ui@npm:@nuxthq/ui-edge@latest":
-  version "0.0.2-27613076.db39a9c"
-  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27613076.db39a9c.tgz#3d340695a72bd196885d8b14ee9e34e59937afd9"
-  integrity sha512-gk/7tEFfIue7E9LMFIe7Cr4qlhCHl0jyobOCi4WqZ3DBd0PAoncP2+G8k5izVtOKYk1tfZZkfWddSH64lhtpfQ==
+  version "0.0.2-27615935.6e61640"
+  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27615935.6e61640.tgz#6019a41d0424c454ed924e80d60e0eabebeac9eb"
+  integrity sha512-Sb5oMvg6pyQa68OwnuMavHq76iPfAN6pH4AIbTQ+5LAJaVEciY7InK/1Rp6mptJok0YGsOfoNXplwOievPEmcg==
   dependencies:
     "@headlessui/vue" "1.6.4"
     "@iconify/vue" "^3.2.1"
@@ -1046,9 +1046,11 @@
     "@types/node" "*"
 
 "@types/tailwindcss@^3.0.10":
-  version "3.0.11"
-  resolved "https://registry.yarnpkg.com/@types/tailwindcss/-/tailwindcss-3.0.11.tgz#0fbe477b92276a0d1fcc1b8d64776b2a98ac8cf1"
-  integrity sha512-PR+BOIrI+rxteHwFvkfIOty+PDJwTG4ute3alxSSXpF/xKpryO1room265m46Auyae0VwqUYs3PuVEOF9Oil3w==
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@types/tailwindcss/-/tailwindcss-3.1.0.tgz#1185e4b3437c6e0f19d6cc8cd42738a94fd7b64f"
+  integrity sha512-JxPzrm609hzvF4nmOI3StLjbBEP3WWQxDDJESqR1nh94h7gyyy3XSl0hn5RBMJ9mPudlLjtaXs5YEBtLw7CnPA==
+  dependencies:
+    tailwindcss "*"
 
 "@types/tough-cookie@*":
   version "4.0.2"
@@ -1826,10 +1828,15 @@ caniuse-api@^3.0.0:
     lodash.memoize "^4.1.2"
     lodash.uniq "^4.5.0"
 
-caniuse-lite@^1.0.0, caniuse-lite@^1.0.30001335, caniuse-lite@^1.0.30001359:
+caniuse-lite@^1.0.0:
   version "1.0.30001361"
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001361.tgz#ba2adb2527566fb96f3ac7c67698ae7fc495a28d"
   integrity sha512-ybhCrjNtkFji1/Wto6SSJKkWk6kZgVQsDq5QI83SafsF6FXv2JB4df9eEdH6g8sdGgqTXrFLjAxqBGgYoU3azQ==
+
+caniuse-lite@^1.0.30001335, caniuse-lite@^1.0.30001359:
+  version "1.0.30001363"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001363.tgz#26bec2d606924ba318235944e1193304ea7c4f15"
+  integrity sha512-HpQhpzTGGPVMnCjIomjt+jvyUu8vNFo3TaDiZ/RcoTrlOq/5+tC8zHdsbgFB6MxmaY+jCpsH09aD80Bb4Ow3Sg==
 
 ccount@^2.0.0:
   version "2.0.1"
@@ -8184,7 +8191,7 @@ tailwindcss-border-gradient-radius@^3.0.1:
     color "^3.1.2"
     lodash "^4.17.19"
 
-tailwindcss@^3.1.4:
+tailwindcss@*, tailwindcss@^3.1.4:
   version "3.1.4"
   resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-3.1.4.tgz#64b09059805505902139fa805d97046080bd90b9"
   integrity sha512-NrxbFV4tYsga/hpWbRyUfIaBrNMXDxx5BsHgBS4v5tlyjf+sDsgBg5m9OxjrXIqAS/uR9kicxLKP+bEHI7BSeQ==
