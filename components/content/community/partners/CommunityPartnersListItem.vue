@@ -4,7 +4,7 @@
       <img v-if="(partner.logo as CommunityPartnerLogo).light" :src="(partner.logo as CommunityPartnerLogo).light" :alt="partner.title" class="w-auto h-12 dark:hidden">
       <img v-if="(partner.logo as CommunityPartnerLogo).dark" :src="(partner.logo as CommunityPartnerLogo).dark" :alt="partner.title" class="hidden w-auto h-12 dark:block">
       <img v-if="typeof partner.logo === 'string'" :src="partner.logo" :alt="partner.title" class="w-auto h-12">
-      <div class="ml-3 text-sm u-text-gray-400">
+      <div v-if="partner.location" class="ml-3 text-sm u-text-gray-400">
         {{ partner.location.title }}
       </div>
     </div>
