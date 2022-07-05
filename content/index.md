@@ -171,14 +171,10 @@ GitHub Stars recognises those folks who are going above and beyond in helping ot
     - name: curotec
     - name: mirahi
       height: 60
-    - name: netlify
     - name: shipshape
     - name: softwarethings
-    - name: swell
     - name: passionatepeople
       height: 60
-    - name: vercel
-    - name: vuestorefront
     - name: sixtyfourrobots
       height: 60
     - name: zenarchitects
