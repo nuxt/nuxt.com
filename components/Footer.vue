@@ -2,8 +2,9 @@
 <template>
   <footer class="relative border-t u-bg-white u-border-gray-200">
     <div class="absolute inset-x-0 flex items-center justify-center -top-3">
-      <div class="px-2 u-bg-white">
-        <Logo class="w-5 h-5 u-text-gray-200" />
+      <div class="relative flex justify-center h-10 w-14">
+        <div class="absolute w-full h-full inset-0 -top-[2px] blur-[6px] u-bg-white rounded-full" />
+        <Logo class="relative w-5 h-5 u-text-gray-200" />
       </div>
     </div>
 
