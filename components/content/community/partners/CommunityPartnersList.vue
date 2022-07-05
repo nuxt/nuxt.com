@@ -7,6 +7,8 @@
     <PageList :title="`${filteredPartners.length} partner${filteredPartners.length > 1 ? 's' : ''} found`">
       <template #filters>
         <CommunityPartnersFilters class="hidden lg:flex" />
+        <CommunityPartnersFilterServices class="lg:hidden" />
+        <CommunityPartnersFilterLocations class="lg:hidden" />
       </template>
 
       <div class="hidden _ellipse lg:block" />
