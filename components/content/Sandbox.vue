@@ -6,13 +6,7 @@
       :active-tab-index="activeTabIndex"
       :tabs="providersTabs"
       @update:active-tab-index="updateTab"
-    >
-      <div slot="footer" class="absolute right-0 px-2 transform -translate-y-1/2 top-1/2">
-        <Link class="flex items-center text-gray-500 dark:text-gray-400" :to="sandBoxUrl" blank>
-          <IconExternalLink class="w-5 h-5" />
-        </Link>
-      </div>
-    </TabsHeader>
+    />
 
     <iframe
       v-if="url"
@@ -72,23 +66,19 @@ function updateTab (i) {
 
 onMounted(() => {
   // TODO: if Safari, use CodeSandBox by default: const defaultSandbox = ...
-  provider.value = window.localStorage.getItem('docus_sandbox') || 'CodeSandBox'
+  provider.value = window.localStorage.getItem('nuxt_sandbox') || 'CodeSandBox'
 
   url.value = props.src || providers[provider.value]()
 
   // Set active tab
-  activeTabIndex.value = Object.keys(providers).indexOf(provider.value)
-
-  setTimeout(() => tabs.value.updateTabs(activeTabIndex.value), 100)
+  setTimeout(() => updateTab(Object.keys(providers).indexOf(provider.value)), 100)
 })
 
 const changeProvider = (value) => {
   provider.value = value
   url.value = props.src || providers[provider.value]()
-  localStorage.setItem('docus_sandbox', value)
+  localStorage.setItem('nuxt_sandbox', value)
 }
-
-const sandBoxUrl = computed(() => url.value?.replace('?embed=1&', '?').replace('/embed/', '/s/'))
 </script>
 
 <style lang="postcss" scoped>
