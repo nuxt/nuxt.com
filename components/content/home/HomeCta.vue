@@ -101,11 +101,11 @@ const mouseMoveLight = (e) => {
   if (e.clientY < ctaContainer.value.getBoundingClientRect().y) {
     mouseLight.value.classList.add('opacity-0')
     mouseLight.value.classList.remove('opacity-60')
-    mouseLight.value.classList.remove('dark:opacity-100')
+    mouseLight.value.classList.remove('dark:opacity-90')
   } else {
     mouseLight.value.classList.remove('opacity-0')
     mouseLight.value.classList.add('opacity-60')
-    mouseLight.value.classList.add('dark:opacity-100')
+    mouseLight.value.classList.add('dark:opacity-90')
   }
 }
 
