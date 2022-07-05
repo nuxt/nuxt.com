@@ -1,11 +1,11 @@
 import type { Ref } from 'vue'
 import { uniqBy, uniq } from 'lodash-es'
 import slugify from '@sindresorhus/slugify'
-import { CommunityPartners } from '~/types'
+import { CommunityPartner } from '~/types'
 
 export const useCommunityPartners = (type: 'technologies' | 'agencies') => {
   const route = useRoute()
-  const _partners: Ref<CommunityPartners[]> = useState(`community-${type}`, () => [])
+  const _partners: Ref<CommunityPartner[]> = useState(`community-${type}`, () => [])
 
   const param = type === 'agencies' ? type : 'partners'
   const pending = ref(false)
@@ -20,7 +20,7 @@ export const useCommunityPartners = (type: 'technologies' | 'agencies') => {
     pending.value = true
 
     try {
-      const data = await queryContent<CommunityPartners>(`/community/${param}`).where({
+      const data = await queryContent<CommunityPartner>(`/community/${param}`).where({
         $not: {
           _path: {
             $in: [`/community/${param}`]
