@@ -1,5 +1,8 @@
+import type { Ref } from 'vue'
+import { CommunityNuxter } from '~/types'
+
 export const useCommunityNuxters = () => {
-  const _nuxters = useState('community-nuxters', () => [])
+  const _nuxters: Ref<CommunityNuxter[]> = useState('community-nuxters', () => [])
   const route = useRoute()
 
   const pending = ref(false)
@@ -27,7 +30,7 @@ export const useCommunityNuxters = () => {
     const time = date.toISOString().split('T', 1)[0]
 
     try {
-      const data = await $fetch(`/api/community/nuxters/${time}`)
+      const data = await $fetch<CommunityNuxter[]>(`/api/community/nuxters/${time}`)
 
       _nuxters.value = data
     } catch (e) {

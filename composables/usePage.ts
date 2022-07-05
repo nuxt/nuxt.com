@@ -25,12 +25,12 @@ export const usePage = () => {
   /**
    * Table of contents from parsed page.
    */
-  const toc = computed(() => page?.value?.body?.toc?.links || [])
+  const toc = computed(() => page?.value?.body?.toc?.link as { id: string, text: string }[] || [])
 
   /**
    * Content type from parsed page.
    */
-  const type = computed(() => page.value?.meta?.type)
+  const type = computed(() => page.value?.meta?.type as string)
 
   /**
    * Next page from `surround`.

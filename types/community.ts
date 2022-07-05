@@ -1,3 +1,5 @@
+import { ParsedContent } from '@nuxt/content/dist/runtime/types'
+
 export interface CommunityRepository {
   name: string
   description: string
@@ -19,7 +21,7 @@ export interface CommunityRepositoryStats {
   collaborators: number
 }
 
-export interface CommunityPartner {
+export interface CommunityPartner extends ParsedContent {
   title: string
   description: string
   _path: string
@@ -31,7 +33,7 @@ export interface CommunityPartner {
   location: string
 }
 
-export interface FormattedCommunityPartner extends Omit<CommunityPartner, 'services' | 'location'> {
+export interface FormatedCommunityPartner extends Omit<CommunityPartner, 'services' | 'location'> {
   services: {
     key: string
     title: string
@@ -40,4 +42,8 @@ export interface FormattedCommunityPartner extends Omit<CommunityPartner, 'servi
     key: string
     title: string
   }
+}
+
+export interface CommunityNuxter {
+  github: string
 }

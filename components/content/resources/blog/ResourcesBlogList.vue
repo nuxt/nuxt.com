@@ -2,6 +2,7 @@
   <UContainer padded class="pb-16 sm:pb-32">
     <ul role="list" class="grid grid-cols-1 gap-8 sm:grid-cols-2 xl:grid-cols-3">
       <li v-for="data in articles" :key="data._path">
+        {{ data }}
         <ResourcesBlogPost :page="data" />
       </li>
     </ul>
@@ -9,7 +10,9 @@
 </template>
 
 <script setup lang="ts">
-const { data: articles } = await useAsyncData('resources-blog-list', () => queryContent().where({
+import type { ResourcesBlogArticle } from '~/types'
+
+const { data: articles } = await useAsyncData('resources-blog-list', () => queryContent<ResourcesBlogArticle>().where({
   _path: /^\/resources\/blog\//
 }).sort({ date: -1 }).skip(1).find())
 </script>

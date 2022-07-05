@@ -23,10 +23,11 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
+import type { CompanyContact } from '~/types'
 
 defineProps({
   items: {
-    type: Array as PropType<Object>,
+    type: Array as PropType<CompanyContact[]>,
     default: () => []
   }
 })

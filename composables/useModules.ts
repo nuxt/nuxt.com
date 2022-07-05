@@ -1,8 +1,9 @@
 import type { Ref } from 'vue'
+import { Module } from '~/types'
 
 export const useModules = () => {
   const route = useRoute()
-  const _modules: Ref<object[]> = useState('modules', () => [])
+  const _modules: Ref<Module[]> = useState('modules', () => [])
 
   const pending = ref(false)
 
@@ -16,7 +17,7 @@ export const useModules = () => {
     pending.value = true
 
     try {
-      const data = await $fetch('/api/modules')
+      const data = await $fetch<{ modules: Module[] }>('/api/modules')
 
       _modules.value = data.modules
     } catch (e) {
@@ -160,7 +161,7 @@ export const useModules = () => {
   })
 
   const q = computed(() => {
-    return route.query.q
+    return route.query.q as string
   })
 
   return {
