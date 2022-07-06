@@ -1,7 +1,7 @@
 <template>
   <nav>
     <div v-if="services.length">
-      <p class="font-semibold text-lg u-text-gray-900 py-1.5">
+      <p class="font-semibold u-text-gray-900 py-1.5">
         Technical Expertise
       </p>
 
@@ -30,7 +30,7 @@
     </div>
 
     <div v-if="locations.length">
-      <p class="font-semibold text-lg u-text-gray-900 py-1.5">
+      <p class="font-semibold u-text-gray-900 py-1.5">
         Locations
       </p>
 

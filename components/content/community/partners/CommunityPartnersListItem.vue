@@ -18,8 +18,8 @@
       </p>
     </div>
 
-    <div class="flex flex-wrap gap-3">
-      <UBadge v-for="service in partner.services" :key="service.key" size="sm">
+    <div class="flex items-center gap-3 overflow-x-auto z-[1] relative">
+      <UBadge v-for="service in partner.services" :key="service.key" size="sm" class="flex-shrink-0">
         {{ service.title }}
       </UBadge>
     </div>
