@@ -14,7 +14,9 @@
 </template>
 
 <script setup lang="ts">
-const { data: caseStudiesData } = await useAsyncData('resources-case-studies', () => queryContent().where({
+import { ResourcesCaseStudy } from '~/types'
+
+const { data: caseStudiesData } = await useAsyncData('resources-case-studies', () => queryContent<ResourcesCaseStudy>().where({
   _path: /^\/resources\/case-studies\//
 }).find())
 </script>

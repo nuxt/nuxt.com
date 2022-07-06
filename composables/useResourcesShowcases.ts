@@ -1,21 +1,22 @@
 import type { Ref } from 'vue'
+import { ResourcesShowcase } from '~/types'
 
 export const useResourcesShowcases = () => {
-  const showcases: Ref<Array<any>> = useState('resources-showcases', () => [])
+  const showcase: Ref<ResourcesShowcase> = useState('resources-showcase', null)
   const route = useRoute()
 
   const pending = ref(false)
 
   // Http
-  async function fetch (id) {
-    if (showcases.value.length) {
+  async function fetch (id: number) {
+    if (showcase.value && showcase.value.id === id) {
       return
     }
 
     pending.value = true
 
     try {
-      const data = await $fetch<Array<any>>(`https://api.vuetelescope.com/lists/${id}`)
+      const data = await $fetch<ResourcesShowcase>(`https://api.vuetelescope.com/lists/${id}`)
 
       // ensure groups & showcases are well sorted
       data.groups?.sort((a, b) => Number(a.position) - Number(b.position))
@@ -23,9 +24,9 @@ export const useResourcesShowcases = () => {
         group.showcases.sort((a, b) => Number(a.position) - Number(b.position))
       })
 
-      showcases.value = data
+      showcase.value = data
     } catch (e) {
-      showcases.value = []
+      showcase.value = null
     }
 
     pending.value = false
@@ -33,7 +34,7 @@ export const useResourcesShowcases = () => {
 
   // Computed
   const categories = computed(() => {
-    return showcases.value?.groups?.map(group => ({
+    return showcase.value?.groups?.map(group => ({
       id: group.id,
       name: group.name,
       label: group.name,
@@ -49,7 +50,7 @@ export const useResourcesShowcases = () => {
     // Http
     fetch,
     // Data
-    showcases,
+    showcase,
     // Computed
     categories,
     selectedCategory

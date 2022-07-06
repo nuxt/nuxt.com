@@ -14,9 +14,9 @@
         <ResourcesShowcasesFilterCategory class="lg:hidden" />
       </template>
 
-      <ul v-if="selectedShowcases.length" class="grid min-h-[calc(100vh-18rem)] grid-cols-1 gap-8 mt-8 sm:grid-cols-2 xl:grid-cols-3">
-        <li v-for="showcase in selectedShowcases" :key="showcase.id">
-          <ResourcesShowcasesListItem :showcase="showcase" />
+      <ul v-if="selectedTelescopeShowcases.length" class="grid min-h-[calc(100vh-18rem)] grid-cols-1 gap-8 mt-8 sm:grid-cols-2 xl:grid-cols-3">
+        <li v-for="telescopeShowcase in selectedTelescopeShowcases" :key="telescopeShowcase.id">
+          <ResourcesShowcasesListItem :showcase="telescopeShowcase" />
         </li>
       </ul>
     </PageList>
@@ -26,11 +26,11 @@
 <script setup lang="ts">
 import { uniqBy } from 'lodash-es'
 
-const { showcases, selectedCategory } = useResourcesShowcases()
+const { showcase, selectedCategory } = useResourcesShowcases()
 
 // Computed
-const selectedShowcases = computed(() => {
-  const flattenedShowcases = showcases.value?.groups
+const selectedTelescopeShowcases = computed(() => {
+  const flattenedShowcases = showcase.value?.groups
     ?.filter((group, index) => (!selectedCategory.value && index === 0) || group.name === selectedCategory.value?.name)
     ?.map(group => ({
       ...group,

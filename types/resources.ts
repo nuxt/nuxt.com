@@ -8,7 +8,6 @@ export interface ResourcesBlogArticleAuthor {
 
 export interface ResourcesBlogArticle extends ParsedContent {
   template: string
-  title: string
   description: string
   imgUrl: string
   imgCredits: string
@@ -18,4 +17,67 @@ export interface ResourcesBlogArticle extends ParsedContent {
   tags: string[]
   category: string
   type: string
+}
+
+export interface ResourcesCaseStudy extends ParsedContent {
+  description: string
+  url: string
+  imgUrl: string
+  gradientUrl: string
+}
+
+export interface ResourcesLiveEvent extends ParsedContent {
+  videoId: string
+  date: string
+  eventLogo: string
+  avatarSrc: string
+  name: string
+  speaker: string
+  description: string
+}
+
+export interface ResourcesShowcaseTelescopeItem {
+  createdAt: string
+  description: string
+  domain: string
+  favicon: string
+  framework: { id: number, slug: string, name: string, url: string, imgPath: string, updatedAt: string, createdAt: string }
+  frameworkVersion: string
+  hasSSR: boolean
+  hostname: string
+  id: number
+  isFeatured: boolean
+  isStatic: boolean
+  language: string
+  lastDetectedAt: string
+  list_group_id: number
+  position: number
+  rank: string
+  screenshotUrl: string
+  showcase_id: number
+  siteName: string
+  slug: string
+  title: string
+  ui: string
+  uiVersion: string
+  updatedAt: string
+  url: string
+  vueVersion: string
+}
+
+export interface ResourcesShowcaseGroup {
+  created_at: string
+  id: number
+  name: string
+  position: number
+  showcases: ResourcesShowcaseTelescopeItem[]
+  updated_at: string
+}
+
+export interface ResourcesShowcase {
+  created_at: string
+  groups: ResourcesShowcaseGroup[]
+  id: number
+  name: string
+  updated_at: string
 }

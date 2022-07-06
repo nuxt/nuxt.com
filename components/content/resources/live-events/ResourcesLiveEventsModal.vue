@@ -19,9 +19,12 @@
 </template>
 
 <script setup lang="ts">
+import { PropType } from 'vue'
+import { ResourcesLiveEvent } from '~/types'
+
 defineProps({
   page: {
-    type: Object,
+    type: Object as PropType<ResourcesLiveEvent>,
     default: () => {}
   }
 })
