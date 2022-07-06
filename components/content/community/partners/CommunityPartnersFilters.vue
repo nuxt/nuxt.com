@@ -15,9 +15,11 @@
 </template>
 
 <script setup lang="ts">
-const { selectedCategory, selectedService } = useCommunityPartners()
+const partnerType: 'technologies' | 'agencies' = inject('partnerType')
+
+const { selectedService, selectedLocation } = useCommunityPartners(partnerType)
 
 const filters = computed(() => {
-  return [selectedCategory.value, selectedService.value].filter(Boolean)
+  return [selectedService.value, selectedLocation.value].filter(Boolean)
 })
 </script>

@@ -47,8 +47,8 @@
           <h2 class="text-3xl font-semibold u-text-gray-900">
             Discover the company
           </h2>
-          <p class="mt-8 leading-7 u-text-gray-700">
-            <span style="white-space: pre-wrap">{{ page.fullDescription }}</span>
+          <p class="mt-8 leading-7 whitespace-pre-wrap u-text-gray-700">
+            {{ page.fullDescription }}
           </p>
           <div class="flex flex-col gap-8 mt-12 sm:flex-row">
             <UButton
