@@ -69,6 +69,7 @@ export const usePage = () => {
       page.value = _page
       surround.value = _surround
     } catch (e) {
+      // @ts-ignore
       throwError({ statusMessage: 'Page not found', message: 'This page does not exist.', statusCode: 404 })
     }
   }
@@ -101,7 +102,7 @@ export const usePage = () => {
   /**
    * Find current navigation node from a path.
    */
-  const navFromPath = (path: string, tree: NavItem[] = navigation.value || []) => {
+  const navFromPath = (path: string, tree: NavItem[] = navigation.value || []): NavItem => {
     for (const file of tree) {
       if (file._path === path && !file.id) {
         return file

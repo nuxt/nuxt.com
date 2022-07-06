@@ -48,13 +48,16 @@
 </template>
 
 <script setup lang="ts">
+import { NavItem } from '@nuxt/content/dist/runtime/types'
+import { Ref } from 'vue'
+
 const config = useRuntimeConfig()
 const route = useRoute()
 const { hasScrolledPastNavbar } = useNavbarScroll()
 
 const isOpen = ref(false)
 
-const links = ref([{
+const links: Ref<NavItem[]> = ref([{
   title: 'Framework',
   icon: 'heroicons-outline:book-open',
   _path: '/docs'
