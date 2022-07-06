@@ -23,7 +23,7 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import { ResourcesBlogArticle } from '~~/types'
+import type { ResourcesBlogArticle } from '~~/types'
 
 const props = defineProps({
   page: {

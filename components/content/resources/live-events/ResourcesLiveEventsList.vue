@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import { ResourcesLiveEvent } from '~/types'
+import type { ResourcesLiveEvent } from '~/types'
 
 const { data: liveEventsData } = await useAsyncData('resources-live-events', () => queryContent<ResourcesLiveEvent>('/resources/live-events/_collections').find())
 </script>

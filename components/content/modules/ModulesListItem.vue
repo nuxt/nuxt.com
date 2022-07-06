@@ -54,8 +54,8 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
+import type { Module } from '~/types'
 import { formatNumber } from '~/utils'
-import { Module } from '~/types'
 
 defineProps({
   module: {

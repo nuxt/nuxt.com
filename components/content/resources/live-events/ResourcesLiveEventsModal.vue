@@ -19,8 +19,8 @@
 </template>
 
 <script setup lang="ts">
-import { PropType } from 'vue'
-import { ResourcesLiveEvent } from '~/types'
+import type { PropType } from 'vue'
+import type { ResourcesLiveEvent } from '~/types'
 
 defineProps({
   page: {

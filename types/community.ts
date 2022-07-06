@@ -33,7 +33,7 @@ export interface CommunityPartner extends ParsedContent {
   location: string
 }
 
-export interface FormatedCommunityPartner extends Omit<CommunityPartner, 'services' | 'location'> {
+export interface FormattedCommunityPartner extends Omit<CommunityPartner, 'services' | 'location'> {
   services: {
     key: string
     title: string

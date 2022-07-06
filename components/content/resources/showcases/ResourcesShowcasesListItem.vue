@@ -28,7 +28,7 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import { ResourcesShowcasesListGroupItem } from '~~/types'
+import type { ResourcesShowcasesListGroupItem } from '~~/types'
 
 defineProps({
   showcase: {

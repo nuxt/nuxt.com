@@ -1,5 +1,5 @@
 import type { Ref } from 'vue'
-import { CommunityNuxter } from '~/types'
+import type { CommunityNuxter } from '~/types'
 
 export const useCommunityNuxters = () => {
   const _nuxters: Ref<CommunityNuxter[]> = useState('community-nuxters', () => [])

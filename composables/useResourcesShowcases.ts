@@ -1,15 +1,15 @@
 import type { Ref } from 'vue'
-import { ResourcesShowcasesList } from '~/types'
+import type { ResourcesShowcasesList } from '~/types'
 
 export const useResourcesShowcases = () => {
-  const showcase: Ref<ResourcesShowcasesList> = useState('resources-showcase', null)
+  const list: Ref<ResourcesShowcasesList> = useState('resources-showcase', null)
   const route = useRoute()
 
   const pending = ref(false)
 
   // Http
   async function fetch (id: number) {
-    if (showcase.value && showcase.value.id === id) {
+    if (list.value && list.value.id === id) {
       return
     }
 
@@ -24,9 +24,9 @@ export const useResourcesShowcases = () => {
         group.showcases.sort((a, b) => Number(a.position) - Number(b.position))
       })
 
-      showcase.value = data
+      list.value = data
     } catch (e) {
-      showcase.value = null
+      list.value = null
     }
 
     pending.value = false
@@ -34,7 +34,7 @@ export const useResourcesShowcases = () => {
 
   // Computed
   const categories = computed(() => {
-    return showcase.value?.groups?.map(group => ({
+    return list.value?.groups?.map(group => ({
       id: group.id,
       name: group.name,
       label: group.name,
@@ -50,7 +50,7 @@ export const useResourcesShowcases = () => {
     // Http
     fetch,
     // Data
-    showcase,
+    list,
     // Computed
     categories,
     selectedCategory
