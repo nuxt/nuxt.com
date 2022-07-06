@@ -27,7 +27,7 @@
     "node-mailjet": "^5.0.1",
     "nuxt": "^3.0.0-rc.4",
     "standard-version": "^9.5.0",
-    "swiper": "^8.2.6",
+    "swiper": "^8.3.0",
     "tailwindcss-border-gradient-radius": "^3.0.1",
     "three": "^0.142.0",
     "typescript": "^4.7.4",
