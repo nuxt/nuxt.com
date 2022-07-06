@@ -15,7 +15,7 @@
 
         <div class="flex justify-center col-span-4 lg:col-span-1 lg:justify-start">
           <NuxtLink to="/" class="block u-text-black focus:outline-none">
-            <LogoFull class="hidden w-auto h-8 sm:block" />
+            <LogoFull class="hidden w-auto h-6 sm:block" />
             <Logo class="block w-auto h-6 sm:hidden" />
           </NuxtLink>
         </div>
