@@ -49,7 +49,7 @@
 
 <script setup lang="ts">
 import type { NavItem } from '@nuxt/content/dist/runtime/types'
-import { Ref } from 'vue'
+import type { Ref } from 'vue'
 
 const config = useRuntimeConfig()
 const route = useRoute()
