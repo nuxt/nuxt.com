@@ -48,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import { NavItem } from '@nuxt/content/dist/runtime/types'
+import type { NavItem } from '@nuxt/content/dist/runtime/types'
 import { Ref } from 'vue'
 
 const config = useRuntimeConfig()

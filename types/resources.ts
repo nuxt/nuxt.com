@@ -1,4 +1,4 @@
-import { ParsedContent } from '@nuxt/content/dist/runtime/types'
+import type { ParsedContent } from '@nuxt/content/dist/runtime/types'
 
 export interface ResourcesBlogArticleAuthor {
   name: string

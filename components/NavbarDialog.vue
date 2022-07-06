@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { NavItem } from '@nuxt/content/dist/runtime/types'
+import type { NavItem } from '@nuxt/content/dist/runtime/types'
 import { omit } from 'lodash-es'
 import type { PropType, Ref, WritableComputedRef } from 'vue'
 
