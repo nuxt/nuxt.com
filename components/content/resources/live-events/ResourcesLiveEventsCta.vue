@@ -25,16 +25,3 @@ defineProps({
   }
 })
 </script>
-
-<style scoped>
-._ellipse {
-  position: absolute;
-  width: 480.14px;
-  height: 161.22px;
-  left: 0;
-  top: 60px;
-  background: linear-gradient(97.62deg, rgba(0, 71, 225, 1) 2.27%, rgba(26, 214, 255, 1) 50.88%, rgba(0, 220, 130, 1) 98.48%);
-  filter: blur(50px);
-  opacity: 25%;
-}
-</style>
