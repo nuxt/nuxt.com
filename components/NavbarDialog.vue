@@ -63,7 +63,7 @@ watch(
       return
     }
 
-    const path = route.fullPath.split('/').slice(0, 4).join('/')
+    const path = route.fullPath.split('/').slice(0, 3).join('/')
     const nav = navigation.value ? navFromPath(path) : []
     if (nav && nav._path === path && nav.children?.length > 1) {
       selectedLink.value = nav
