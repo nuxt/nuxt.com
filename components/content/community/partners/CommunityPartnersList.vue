@@ -26,7 +26,6 @@
 const partnerType: 'technologies' | 'agencies' = inject('partnerType')
 
 const { filteredPartners } = useCommunityPartners(partnerType)
-
 </script>
 
 <style scoped>

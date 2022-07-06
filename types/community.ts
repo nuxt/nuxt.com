@@ -1,5 +1,3 @@
-import { KeyTitleRecord } from '~/types'
-
 export interface CommunityRepository {
   name: string
   description: string
@@ -12,7 +10,7 @@ export interface CommunityRepository {
   collaborators: {
     totalCount: number,
     nodes: [{ id: string }]
-   }
+  }
 }
 
 export interface CommunityRepositoryStats {
@@ -21,25 +19,25 @@ export interface CommunityRepositoryStats {
   collaborators: number
 }
 
-export interface CommunityPartnerLogo {
-  light: string
-  dark: string
-}
-
-export interface CommunityPartner<> {
+export interface CommunityPartner {
   title: string
   description: string
   _path: string
-  logo: string | CommunityPartnerLogo
+  logo: {
+    light: string
+    dark: string
+  }
   services: string[]
   location: string
 }
 
-export interface FormatedCommunityPartner {
-  title: string
-  description: string
-  _path: string
-  logo: string | CommunityPartnerLogo
-  services: KeyTitleRecord[]
-  location: KeyTitleRecord
+export interface FormattedCommunityPartner extends Omit<CommunityPartner, 'services' | 'location'> {
+  services: {
+    key: string
+    title: string
+  }[]
+  location: {
+    key: string
+    title: string
+  }
 }

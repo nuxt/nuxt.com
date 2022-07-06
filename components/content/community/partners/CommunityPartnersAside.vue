@@ -88,5 +88,4 @@ const filteredServices = computed(() => {
     }).flatMap(partner => partner.services).map(s => s.key).includes(service.key)
   })
 })
-
 </script>

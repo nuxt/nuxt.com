@@ -1,9 +1,8 @@
 <template>
   <UCard padded shadow-class="" class="relative transition duration-200 hover:ring-2 hover:u-ring-gray-900">
     <div class="flex justify-between mt-2 mb-6">
-      <img v-if="(partner.logo as CommunityPartnerLogo).light" :src="(partner.logo as CommunityPartnerLogo).light" :alt="partner.title" class="w-auto h-12 dark:hidden">
-      <img v-if="(partner.logo as CommunityPartnerLogo).dark" :src="(partner.logo as CommunityPartnerLogo).dark" :alt="partner.title" class="hidden w-auto h-12 dark:block">
-      <img v-if="typeof partner.logo === 'string'" :src="partner.logo" :alt="partner.title" class="w-auto h-12">
+      <img v-if="partner.logo.light" :src="partner.logo.light" :alt="partner.title" class="w-auto h-12 dark:hidden">
+      <img v-if="partner.logo.dark" :src="partner.logo.dark" :alt="partner.title" class="hidden w-auto h-12 dark:block">
       <div v-if="partner.location" class="ml-3 text-sm u-text-gray-400">
         {{ partner.location.title }}
       </div>
@@ -32,11 +31,11 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import type { FormatedCommunityPartner, CommunityPartnerLogo } from '~/types'
+import type { FormattedCommunityPartner } from '~/types'
 
 defineProps({
   partner: {
-    type: Object as PropType<FormatedCommunityPartner>,
+    type: Object as PropType<FormattedCommunityPartner>,
     default: () => null
   }
 })
