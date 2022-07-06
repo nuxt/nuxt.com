@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-const partnerType = 'technologies'
+const partnerType = 'agencies'
 provide('partnerType', partnerType)
 
 const { page, fetchPage } = usePage()
