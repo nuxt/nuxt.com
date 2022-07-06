@@ -1,8 +1,8 @@
 import type { Ref } from 'vue'
-import { ResourcesShowcase } from '~/types'
+import { ResourcesShowcasesList } from '~/types'
 
 export const useResourcesShowcases = () => {
-  const showcase: Ref<ResourcesShowcase> = useState('resources-showcase', null)
+  const showcase: Ref<ResourcesShowcasesList> = useState('resources-showcase', null)
   const route = useRoute()
 
   const pending = ref(false)
@@ -16,7 +16,7 @@ export const useResourcesShowcases = () => {
     pending.value = true
 
     try {
-      const data = await $fetch<ResourcesShowcase>(`https://api.vuetelescope.com/lists/${id}`)
+      const data = await $fetch<ResourcesShowcasesList>(`https://api.vuetelescope.com/lists/${id}`)
 
       // ensure groups & showcases are well sorted
       data.groups?.sort((a, b) => Number(a.position) - Number(b.position))

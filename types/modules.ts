@@ -1,4 +1,4 @@
-export interface ModuleUser{
+export interface ModuleUser {
   name: string
   github: string
   twitter: string
