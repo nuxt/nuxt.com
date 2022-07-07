@@ -10,7 +10,14 @@
       <Markdown :use="$slots.description" unwrap="p" />
     </p>
     <div class="flex h-10 mt-8 lg:mt-0 lg:flex-shrink-0 gap-y-3 gap-x-8">
-      <UButton :label="buttonText" variant="primary" class="w-36" size="lg" block />
+      <UButton
+        :label="buttonText"
+        variant="primary"
+        class="w-36"
+        size="lg"
+        to="/company/contact"
+        block
+      />
     </div>
   </UContainer>
 </template>
