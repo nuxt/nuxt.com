@@ -10,7 +10,7 @@ export default defineNuxtConfig({
     '@nuxthq/ui',
     '@nuxthq/admin',
     '@nuxt/content',
-    '@nuxt-modules/newsletter',
+    'nuxt-newsletter',
     'vue-plausible'
   ],
   build: {
