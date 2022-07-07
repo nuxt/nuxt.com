@@ -1,6 +1,6 @@
 <template>
-  <div ref="gemWrapper" class="transition duration-1000 absolute left-1/3 sm:left-1/3 md:left-1/2 lg:top-[-50px] lg:left-2/3">
-    <div ref="gemAnim" class="opacity-30 md:opacity-100" />
+  <div id="gemWrapper" ref="gemWrapper" class="transition duration-1000">
+    <div ref="gemAnim" class="opacity-100" />
   </div>
 </template>
 
@@ -25,7 +25,6 @@ const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPr
 renderer.outputEncoding = THREE.sRGBEncoding
 renderer.toneMapping = THREE.ACESFilmicToneMapping
 renderer.toneMappingExposure = 1
-renderer.setSize(475, 475)
 
 // Scene
 const scene = new THREE.Scene()
@@ -61,6 +60,7 @@ gltfLoader.load('/assets/home/gem.glb', function (gltf) {
 })
 
 onMounted(() => {
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
   gemWrapper.value.style.opacity = 0
 
   setTimeout(() => {
@@ -128,8 +128,16 @@ onMounted(() => {
 </script>
 
 <style>
-canvas {
-  height: 475px;
-  width: 475px;
+#gemWrapper canvas {
+  height: 180px;
+  width: 180px;
+  @media (min-width: 400px ) {
+    height: 240px;
+    width: 240px;
+  }
+  @media (min-width: 640px ) {
+    height: 475px;
+    width: 475px;
+  }
 }
 </style>
