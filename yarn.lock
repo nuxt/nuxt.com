@@ -458,14 +458,6 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@nuxt-modules/newsletter@^0.1.7":
-  version "0.1.7"
-  resolved "https://registry.yarnpkg.com/@nuxt-modules/newsletter/-/newsletter-0.1.7.tgz#e0caf47e22c5770c8a63e73ffd487df69bbddce7"
-  integrity sha512-ns2NHTi45jWSUIfcsxOuwhzO8fvbaSfeYd45xevfoD2e7XXN84NBv+GFuk3ZLJj68oWlCCEBC2UVKPVeg/S2sQ==
-  dependencies:
-    "@mailchimp/mailchimp_marketing" "^3.0.74"
-    "@nuxt/kit" "^3.0.0-rc.1"
-
 "@nuxt/content@npm:@nuxt/content-edge@latest":
   version "2.1.0-27615833.0d3882d"
   resolved "https://registry.yarnpkg.com/@nuxt/content-edge/-/content-edge-2.1.0-27615833.0d3882d.tgz#fb956cded0a60c3ad81ff4f66a99a6d1ec28efc3"
@@ -536,7 +528,7 @@
     unimport "^0.1.6"
     untyped "^0.4.4"
 
-"@nuxt/kit@^3.0.0-rc.1", "@nuxt/kit@^3.0.0-rc.3", "@nuxt/kit@^3.0.0-rc.4":
+"@nuxt/kit@3.0.0-rc.4", "@nuxt/kit@^3.0.0-rc.3", "@nuxt/kit@^3.0.0-rc.4":
   version "3.0.0-rc.4"
   resolved "https://registry.yarnpkg.com/@nuxt/kit/-/kit-3.0.0-rc.4.tgz#8aa3c26f1bb9f3e7bb78ad2cec33473e32ffccd0"
   integrity sha512-ZBSeHFy3fPUx0equCtyP6eVUAZQWwRqTp2YnHSFqM5+yhN5aTGo8gBlfwttVBr4yhFBpGFRHhQj/iNPqrCeTnQ==
@@ -6394,6 +6386,14 @@ nuxt-component-meta@^0.1.5:
     "@nuxt/kit" "^3.0.0-rc.3"
     "@vue/compiler-sfc" "^3.2.33"
     scule "^0.2.1"
+
+nuxt-newsletter@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/nuxt-newsletter/-/nuxt-newsletter-0.1.2.tgz#29768bb6d24e0d143d746cae1460de9644509402"
+  integrity sha512-Ns3cFTIcWbiIWZZhcvhFb3W7vEGYC6MM6NjwYzpdPcHUkWz27FnHjhcy4HjZQ3UZTwLjdszvg+NhkhS77KuRZQ==
+  dependencies:
+    "@mailchimp/mailchimp_marketing" "^3.0.74"
+    "@nuxt/kit" "3.0.0-rc.4"
 
 nuxt@^3.0.0-rc.4:
   version "3.0.0-rc.4"
