@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { ResourcesCaseStudy } from '~/types'
+import type { ResourcesCaseStudy } from '~/types'
 
 const { data: caseStudiesData } = await useAsyncData('resources-case-studies', () => queryContent<ResourcesCaseStudy>().where({
   _path: /^\/resources\/case-studies\//
