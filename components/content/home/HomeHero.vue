@@ -1,7 +1,7 @@
 <template>
   <div class="pb-20 pt-36 md:pt-44 lg:pt-28">
     <img src="/assets/home/hero-gradient.svg" class="absolute top-0 right-0 hidden overflow-hidden select-none lg:block">
-    <img src="/assets/home/hero-gradient-tablet.svg" class="absolute top-0 right-0 hidden overflow-hidden select-none sm:block lg:hidden">
+    <img src="/assets/home/hero-gradient-tablet.svg" class="absolute top-0 right-0 w-full hidden overflow-hidden select-none sm:block lg:hidden">
     <img src="/assets/home/hero-gradient-mobile.svg" class="absolute inset-x-0 top-0 w-full overflow-hidden object-cover select-none sm:hidden min-h-[800px]">
     <UContainer padded class="relative flex flex-col items-center sm:items-start gap-y-8">
       <div v-if="$slots.badgeLabel" class="flex gap-x-2">
@@ -12,6 +12,9 @@
           <Markdown :use="$slots.news" unwrap="p" />
         </span>
       </div>
+      <HomeGemWrapper :gemWrapperClass="'block sm:hidden'">
+        <HomeGem />
+      </HomeGemWrapper>
       <h1 v-if="$slots.title" class="relative max-w-2xl text-5xl font-semibold text-center sm:text-left md:text-6xl lg:text-7xl u-text-gray-900">
         <Markdown use="title" unwrap="p" />
         <span class="lg:hidden">&nbsp;</span>
@@ -35,7 +38,7 @@
           truncate
         />
       </div>
-      <HomeGemWrapper>
+      <HomeGemWrapper :gemWrapperClass="'hidden sm:block absolute left-1/3 sm:left-1/3 md:left-1/2 lg:top-[-50px] lg:left-2/3'">
         <HomeGem />
       </HomeGemWrapper>
     </UContainer>
