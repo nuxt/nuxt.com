@@ -47,7 +47,7 @@ const timeoutId = ref()
 const emit = defineEmits(['restart'])
 
 onBeforeMount(() => {
-  window.addEventListener('keypress', (e) => {
+  window.addEventListener('keypress', () => {
     keyPressed.value = true
 
     if (timeoutId) {

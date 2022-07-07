@@ -28,7 +28,7 @@ import 'swiper/css'
 
 defineProps({
   items: {
-    type: Array as PropType<Object>,
+    type: Array as PropType<string[]>,
     default: () => []
   }
 })

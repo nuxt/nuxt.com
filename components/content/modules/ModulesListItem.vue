@@ -54,11 +54,12 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
+import type { Module } from '~/types'
 import { formatNumber } from '~/utils'
 
 defineProps({
   module: {
-    type: Object as PropType<any>,
+    type: Object as PropType<Module>,
     default: () => null
   }
 })
