@@ -1,14 +1,14 @@
 <template>
-  <div class="relative sm:pb-[480px] p-4 h-[300px] sm:max-h-[700px] flex items-end">
-    <div class="absolute z-[-1] inset-0 flex justify-center transition duration-1000 ease-in-out" :class="mapOpacityClass">
+  <div class="relative pt-4 py-4 h-[500px] pb-8 min-w-[1005px] flex items-end">
+    <div class="w-full absolute z-[-1] inset-y-0 flex justify-center transition duration-1000 ease-in-out" :class="mapOpacityClass">
       <svg
         ref="map"
+        fill="none"
         width="1105"
         height="567"
         viewBox="0 0 1105 567"
-        fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        class="md:pt-8 lg:pt-16"
+        class="w-full md:pt-8 lg:pt-16 absolute -translate-x-[40%] sm:-translate-x-[20%] md:-translate-x-[4%] lg:translate-x-0 lg:inset-x-0"
       >
         <g class="transition duration-1000" :style="`color: ${baseColor}; opacity: 0.6`">
           <path
@@ -6216,7 +6216,7 @@ const baseColor = '#D4D4D8'
 const observerCallback = (entries: IntersectionObserverEntry[]) =>
   entries.forEach((entry) => {
     if (entry.isIntersecting) {
-      mapOpacityClass.value = 'opacity-100 -translate-y-20 sm:translate-y-0'
+      mapOpacityClass.value = 'opacity-100 translate-y-0'
       animationMap()
     } else {
       stopAnimation()
