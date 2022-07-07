@@ -9,9 +9,12 @@
 </template>
 
 <script setup lang="ts">
+import type { PropType } from 'vue'
+import type { CommunityNuxter } from '~/types'
+
 const props = defineProps({
   nuxter: {
-    type: Object,
+    type: Object as PropType<CommunityNuxter>,
     required: true
   },
   size: {
@@ -41,13 +44,13 @@ const icon = computed(() => {
 const number = computed(() => {
   switch (props.type) {
     case 'activities':
-      return props.nuxter.activities
+      return props.nuxter.activitiesCount
     case 'pull_requests':
-      return props.nuxter.pullRequests
+      return props.nuxter.pullRequestsCount
     case 'issues':
-      return props.nuxter.issues
+      return props.nuxter.issuesCount
     case 'comments':
-      return props.nuxter.comments
+      return props.nuxter.commentsCount
   }
 })
 const numberClass = computed(() => {
