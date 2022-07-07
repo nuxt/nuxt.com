@@ -25,7 +25,7 @@ export const usePage = () => {
   /**
    * Table of contents from parsed page.
    */
-  const toc = computed(() => page?.value?.body?.toc?.link as { id: string, text: string }[] || [])
+  const toc = computed(() => page?.value?.body?.toc?.links as { id: string, text: string }[] || [])
 
   /**
    * Content type from parsed page.

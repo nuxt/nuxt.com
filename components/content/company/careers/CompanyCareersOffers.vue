@@ -57,7 +57,7 @@
 import { uniqBy } from 'lodash-es'
 import { LocationQueryRaw } from 'vue-router'
 import slugify from '@sindresorhus/slugify'
-import type { CompanyOffer } from '~/types'
+import type { CompanyCareersOffer } from '~/types'
 
 const route = useRoute()
 const router = useRouter()
@@ -69,7 +69,7 @@ defineProps({
   }
 })
 
-const { data: offers } = await useAsyncData('company-careers-list', () => queryContent<CompanyOffer>().where({
+const { data: offers } = await useAsyncData('company-careers-list', () => queryContent<CompanyCareersOffer>().where({
   _path: /^\/company\/careers\//
 }).find())
 

@@ -1,6 +1,6 @@
 import type { ParsedContent } from '@nuxt/content/dist/runtime/types'
 
-export interface CompanyOffer extends ParsedContent {
+export interface CompanyCareersOffer extends ParsedContent {
   department: string
   location: string
   _path: string
