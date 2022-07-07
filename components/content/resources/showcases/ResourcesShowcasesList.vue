@@ -26,11 +26,11 @@
 <script setup lang="ts">
 import { uniqBy } from 'lodash-es'
 
-const { showcases, selectedCategory } = useResourcesShowcases()
+const { list, selectedCategory } = useResourcesShowcases()
 
 // Computed
 const selectedShowcases = computed(() => {
-  const flattenedShowcases = showcases.value?.groups
+  const flattenedShowcases = list.value?.groups
     ?.filter((group, index) => (!selectedCategory.value && index === 0) || group.name === selectedCategory.value?.name)
     ?.map(group => ({
       ...group,
