@@ -1,5 +1,5 @@
 <template>
-  <div ref="gemWrapper" class="transition duration-1000">
+  <div id="gemWrapper" ref="gemWrapper" class="transition duration-1000">
     <div ref="gemAnim" class="opacity-100" />
   </div>
 </template>
@@ -128,7 +128,7 @@ onMounted(() => {
 </script>
 
 <style>
-canvas {
+#gemWrapper canvas {
   height: 180px;
   width: 180px;
   @media (min-width: 400px ) {
