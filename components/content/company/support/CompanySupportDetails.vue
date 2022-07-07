@@ -27,7 +27,7 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import { CompanySupportAuthor } from '~/types'
+import type { CompanySupportAuthor } from '~/types'
 
 defineProps({
   topics: {
