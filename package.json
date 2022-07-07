@@ -13,7 +13,6 @@
     "parse5": "6.0.1"
   },
   "devDependencies": {
-    "@nuxt-modules/newsletter": "^0.1.7",
     "@nuxt/content": "npm:@nuxt/content-edge@latest",
     "@nuxthq/admin": "npm:@nuxthq/admin-edge@latest",
     "@nuxthq/ui": "npm:@nuxthq/ui-edge@latest",
@@ -27,6 +26,7 @@
     "mjml": "^4.12.0",
     "node-mailjet": "^5.0.1",
     "nuxt": "^3.0.0-rc.4",
+    "nuxt-newsletter": "^0.1.2",
     "standard-version": "^9.5.0",
     "swiper": "^8.3.0",
     "tailwindcss-border-gradient-radius": "^3.0.1",
