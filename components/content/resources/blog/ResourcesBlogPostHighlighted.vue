@@ -22,9 +22,12 @@
 </template>
 
 <script setup lang="ts">
+import type { PropType } from 'vue'
+import type { ResourcesBlogArticle } from '~/types'
+
 const props = defineProps({
   page: {
-    type: Object,
+    type: Object as PropType<ResourcesBlogArticle>,
     required: true
   }
 })

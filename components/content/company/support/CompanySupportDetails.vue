@@ -26,13 +26,16 @@
 </template>
 
 <script setup lang="ts">
+import type { PropType } from 'vue'
+import type { CompanySupportAuthor } from '~/types'
+
 defineProps({
   topics: {
-    type: Array,
+    type: Array as PropType<string[]>,
     default: () => []
   },
   author: {
-    type: Object,
+    type: Object as PropType<CompanySupportAuthor>,
     default: () => ({})
   }
 })

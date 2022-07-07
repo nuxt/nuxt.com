@@ -41,11 +41,12 @@
 </template>
 
 <script setup lang="ts">
+import type { NavItem } from '@nuxt/content/dist/runtime/types'
 import type { PropType } from 'vue'
 
 const props = defineProps({
   tree: {
-    type: Array as PropType<any>,
+    type: Array as PropType<NavItem[]>,
     default: () => []
   },
   level: {

@@ -25,8 +25,9 @@
 </template>
 
 <script setup lang="ts">
+import type { NavItem } from '@nuxt/content/dist/runtime/types'
 import { omit } from 'lodash-es'
-import type { WritableComputedRef } from 'vue'
+import type { PropType, Ref, WritableComputedRef } from 'vue'
 
 const props = defineProps({
   modelValue: {
@@ -34,7 +35,7 @@ const props = defineProps({
     default: false
   },
   links: {
-    type: Array,
+    type: Array as PropType<NavItem[]>,
     default: () => []
   }
 })
@@ -54,7 +55,7 @@ const isOpen: WritableComputedRef<boolean> = computed({
   }
 })
 
-const selectedLink = ref(null)
+const selectedLink: Ref<NavItem> = ref(null)
 
 watch(
   () => route.fullPath,
@@ -64,7 +65,7 @@ watch(
     }
 
     const path = route.fullPath.split('/').slice(0, 3).join('/')
-    const nav = navigation.value ? navFromPath(path) : []
+    const nav: NavItem = navigation.value ? navFromPath(path) : null
     if (nav && nav._path === path && nav.children?.length > 1) {
       selectedLink.value = nav
     }
@@ -83,7 +84,7 @@ const tree = computed(() => {
     return {
       ...link,
       children: children?.map(child => omit(child, 'children'))
-    }
+    } as NavItem
   })
 })
 
