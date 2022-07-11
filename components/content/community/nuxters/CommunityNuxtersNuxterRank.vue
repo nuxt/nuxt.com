@@ -9,9 +9,12 @@
 </template>
 
 <script setup lang="ts">
+import type { PropType } from 'vue'
+import type { CommunityNuxter } from '~/types'
+
 const props = defineProps({
   nuxter: {
-    type: Object,
+    type: Object as PropType<CommunityNuxter>,
     required: true
   }
 })

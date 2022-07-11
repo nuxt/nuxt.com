@@ -10,7 +10,7 @@
       <template #filters>
         <CommunityNuxtersFilterSearch size="sm" class="md:hidden" />
         <CommunityNuxtersFilterTime />
-        <!-- <CommunityNuxtersFilterSort /> -->
+        <CommunityNuxtersFilterSort />
       </template>
 
       <div v-if="filteredNuxters.length" class="mt-8">
@@ -19,10 +19,10 @@
           <Component :is="nuxter2Component" v-if="nuxter2" :nuxter="nuxter2" />
           <Component :is="nuxter2Component" v-if="nuxter3" :nuxter="nuxter3" />
 
-          <CommunityNuxtersNuxterSmall v-for="nuxter in otherNuxters" :key="nuxter.github" :nuxter="nuxter" />
+          <CommunityNuxtersNuxterSmall v-for="nuxter in otherNuxters" :key="nuxter.username" :nuxter="nuxter" />
         </ul>
         <ul v-else role="list" class="grid grid-cols-6 gap-8">
-          <CommunityNuxtersNuxterLarge v-for="nuxter in filteredNuxters" :key="nuxter.github" :nuxter="nuxter" />
+          <Component :is="nuxterSearchComponent" v-for="nuxter in filteredNuxters" :key="nuxter.username" :nuxter="nuxter" />
         </ul>
       </div>
       <div v-else class="relative flex flex-col items-center gap-6 mt-16 lg:mt-24">
@@ -50,7 +50,7 @@ const filteredNuxters = computed(() => {
   const queryRegExp = searchTextRegExp(q.value as string)
   return [...nuxters.value]
     .filter((nuxter) => {
-      if (q.value && !['name', 'github', 'role'].map(field => nuxter[field]).filter(Boolean).some(value => value.search(queryRegExp) !== -1)) {
+      if (q.value && !['username', 'name'].map(field => nuxter[field]).filter(Boolean).some(value => value.search(queryRegExp) !== -1)) {
         return false
       }
       return true
@@ -64,6 +64,7 @@ const otherNuxters = computed(() => filteredNuxters.value?.length && filteredNux
 
 const lg = smaller('xl')
 const md = smaller('lg')
+const sm = smaller('md')
 
 const nuxter1Component = computed(() => {
   if (md.value) {
@@ -79,6 +80,15 @@ const nuxter2Component = computed(() => {
     return 'CommunityNuxtersNuxterSmall'
   } else {
     return 'CommunityNuxtersNuxterMedium'
+  }
+})
+const nuxterSearchComponent = computed(() => {
+  if (sm.value) {
+    return 'CommunityNuxtersNuxterSmall'
+  } else if (md.value) {
+    return 'CommunityNuxtersNuxterMedium'
+  } else {
+    return 'CommunityNuxtersNuxterLarge'
   }
 })
 

@@ -29,6 +29,9 @@ export default defineNuxtConfig({
       apiKey: process.env.MAILJET_API_KEY,
       secretKey: process.env.MAILJET_SECRET_KEY
     },
+    volta: {
+      token: process.env.VOLTA_TOKEN
+    },
     public: {
       studioUrl: process.env.STUDIO_URL || 'https://studio.nuxt.com',
       plausible: {
