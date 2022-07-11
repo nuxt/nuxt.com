@@ -1,4 +1,4 @@
-import type{ CommunityRepository } from '~/types'
+import type { CommunityRepository } from '~/types'
 
 const config = useRuntimeConfig()
 

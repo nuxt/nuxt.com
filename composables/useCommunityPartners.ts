@@ -1,7 +1,7 @@
 import type { Ref } from 'vue'
 import { uniqBy, uniq } from 'lodash-es'
 import slugify from '@sindresorhus/slugify'
-import { CommunityPartner } from '~/types'
+import type { CommunityPartner } from '~/types'
 
 export const useCommunityPartners = (type: 'technologies' | 'agencies') => {
   const route = useRoute()
