@@ -55,7 +55,12 @@ export const usePage = () => {
   /**
    * Local page fetching helper.
    */
-  const fetchPage = async ({ force = false, querySurround = false, _path = null }: { force?: boolean, querySurround?: boolean, _path?: string } = {}) => {
+  const fetchPage = async ({
+    force = false,
+    querySurround = false,
+    _path = null,
+    surroundMapper = null
+  }: { force?: boolean, querySurround?: boolean, _path?: string, surroundMapper?: (surround: ParsedContent[]) => ParsedContent[]} = {}) => {
     if (page.value !== null && !force) { return }
 
     try {
@@ -67,7 +72,7 @@ export const usePage = () => {
       ])
 
       page.value = _page
-      surround.value = _surround
+      surround.value = surroundMapper ? surroundMapper(_surround) : _surround
     } catch (e) {
       // @ts-ignore
       throwError({ statusMessage: 'Page not found', message: 'This page does not exist.', statusCode: 404 })
