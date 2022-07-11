@@ -1,8 +1,8 @@
-import type { Ref } from 'vue'
+import type { ComputedRef } from 'vue'
 import type { CommunityNuxter } from '~/types'
 
 export const useCommunityNuxters = () => {
-  const _nuxters: Ref<CommunityNuxter[]> = useState('community-nuxters', () => [])
+  const _nuxters = useState<CommunityNuxter[]>('community-nuxters', () => [])
   const route = useRoute()
 
   const pending = ref(false)
@@ -54,9 +54,20 @@ export const useCommunityNuxters = () => {
   ]
 
   // Computed
-  const nuxters = computed(() => {
+  const nuxters: ComputedRef<CommunityNuxter[]> = computed(() => {
     return _nuxters.value
-      .sort((a, b) => b[selectedSort.value.key] - a[selectedSort.value.key])
+      .sort((a, b) => {
+        switch (selectedSort.value?.key) {
+          case 'issues':
+            return b.issuesCount - a.issuesCount
+          case 'pull_requests':
+            return b.pullRequestsCount - a.pullRequestsCount
+          case 'comments':
+            return b.commentsCount - a.commentsCount
+          default:
+            return b.activitiesCount - a.activitiesCount
+        }
+      })
       .map((nuxter, index) => ({ ...nuxter, rank: index + 1 }))
   })
 
