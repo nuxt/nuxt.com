@@ -45,5 +45,13 @@ export interface FormattedCommunityPartner extends Omit<CommunityPartner, 'servi
 }
 
 export interface CommunityNuxter {
-  github: string
+  id: number,
+  username: string,
+  name: string,
+  avatar: string,
+  issuesCount: number,
+  pullRequestsCount: number,
+  commentsCount: number,
+  activitiesCount: number,
+  rank?: number
 }
