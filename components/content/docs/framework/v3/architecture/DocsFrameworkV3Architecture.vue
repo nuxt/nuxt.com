@@ -1,12 +1,13 @@
 <template>
-  <div ref="root" class="grid grid-cols-12">
-    <ul class="flex flex-col col-span-5 rounded-md gap-y-2">
+  <div ref="root" class="relative flex flex-col justify-center gap-y-20 xl:flex-row xl:justify-between">
+    <ul class="grid grid-cols-1 rounded-md md:grid-cols-2 xl:flex xl:flex-col xl:w-2/5 gap-y-2">
       <li
         v-for="(data, index) in architectureData.architecture"
         :key="data.title"
-        class="relative flex flex-row p-4 transition duration-200 rounded-md cursor-pointer gap-x-2 group hover:u-bg-gray-50"
+        class="relative flex flex-col p-4 transition duration-200 rounded-md cursor-pointer md:flex-row gap-x-2 group hover:u-bg-gray-50"
         @mouseenter="currentSection = index"
         @mouseleave="currentSection = null"
+        @click="currentSection = index"
       >
         <div
           class="absolute top-0 left-0 flex items-center justify-center w-12 h-12 p-3 mt-4 ml-4 transition duration-200 rounded-md group-hover:opacity-0 u-bg-gray-200"
@@ -28,7 +29,7 @@
             :class="currentSection === index ? 'opacity-100' : 'opacity-0'"
           >
         </div>
-        <div class="flex flex-col pl-16 gap-y-2">
+        <div class="flex flex-col pt-16 md:pt-0 md:pl-16 gap-y-2">
           <h6 class="text-lg font-semibold u-text-gray-900">
             {{ data.title }}
           </h6>
@@ -38,8 +39,8 @@
         </div>
       </li>
     </ul>
-    <div class="relative flex items-center justify-center col-span-7 perspect-10">
-      <div class="ml-20">
+    <div class="top-0 right-0 flex items-center justify-center flex-1 xl:absolute 2xl:-right-32 top-24">
+      <div class="xl:ml-20">
         <DocsFrameworkV3ArchitectureContainer :current-section="currentSection" />
       </div>
     </div>
