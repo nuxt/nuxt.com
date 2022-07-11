@@ -11,7 +11,6 @@ export default defineCachedEventHandler(async (event) => {
     },
     params: {
       organizations: ['nuxt', 'nuxt-community', 'nuxt-themes', 'nuxtlabs', 'unjs'],
-      private: false,
       date
     }
   })
