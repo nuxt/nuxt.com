@@ -14,7 +14,7 @@
           :class="currentSection === index ? 'opacity-0' : 'opacity-100'"
         >
           <img
-            :src="`/assets/docs/v3/architecture/${colorMode.preference === 'dark' ? data.iconDark : data.icon}`"
+            :src="`/assets/docs/v3/architecture/${data.icon}`"
             class="transition duration-200 group-hover:opacity-0"
             :class="currentSection === index ? 'opacity-0' : 'opacity-100'"
           >
@@ -50,7 +50,6 @@
 <script setup lang="ts">
 
 const { data: architectureData } = await useAsyncData('architecture', () => queryContent('/docs/3.x/_collections/architecture').findOne())
-const colorMode = useColorMode()
 const currentSection = ref()
 
 const hoveredSection = (index) => {
