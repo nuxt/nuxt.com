@@ -195,12 +195,7 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@babel/parser@^7.16.4":
-  version "7.18.6"
-  resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.18.6.tgz#845338edecad65ebffef058d3be851f1d28a63bc"
-  integrity sha512-uQVSa9jJUe/G/304lXspfWVpKpK4euFLgGiMQFOCpM/bgcAdeoHwi/OQz23O9GK2osz26ZiXRRV9aV+Yl1O8tw==
-
-"@babel/parser@^7.18.6", "@babel/parser@^7.18.8":
+"@babel/parser@^7.16.4", "@babel/parser@^7.18.6", "@babel/parser@^7.18.8":
   version "7.18.8"
   resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.18.8.tgz#822146080ac9c62dac0823bb3489622e0bc1cbdf"
   integrity sha512-RSKRfYX20dyH+elbJK2uqAkVyucL+xXzhqlMD5/ZXx+dAAwpyB7HsvnHe/ZUGOF+xLr5Wx9/JoXVTj6BQE2/oA==
@@ -718,9 +713,9 @@
     vite-plugin-checker "^0.4.6"
 
 "@nuxthq/studio@npm:@nuxthq/studio-edge@latest":
-  version "0.0.1-27627218.25a110d"
-  resolved "https://registry.yarnpkg.com/@nuxthq/studio-edge/-/studio-edge-0.0.1-27627218.25a110d.tgz#969962247a13e6a0fb5723dda6743d766c20c26d"
-  integrity sha512-0pSlaYz5gzxpIWN7LSCqU8bRUwlgHfzyIG+pWj3Rm6zQKBA7W2nPjQ8nbbAMooBv9Y78Ql05Zlf+WzTdXuxaGQ==
+  version "0.0.1-27627248.dae31d1"
+  resolved "https://registry.yarnpkg.com/@nuxthq/studio-edge/-/studio-edge-0.0.1-27627248.dae31d1.tgz#bbf19b5a71853ce5f93f47c838d48947913e854a"
+  integrity sha512-szpb8ig0+g4M9+6khH1dvZu7N/VHDpX1oHqr0dFfr7aRrKdJEY/GGXbtNA+tidzzcMezD7sTHsR9dv5F2pbnvQ==
   dependencies:
     "@nuxt/kit" "^3.0.0-rc.4"
     nuxt-component-meta "^0.1.5"
@@ -4448,7 +4443,22 @@ internal-slot@^1.0.3:
     has "^1.0.3"
     side-channel "^1.0.4"
 
-ioredis@^5.0.4, ioredis@^5.1.0:
+ioredis@^5.0.4:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-5.2.0.tgz#2644fcebbbcae945f1479f7cf31aa6734bbb13d6"
+  integrity sha512-a1E7qDtuuI+We60TLIm3TMrH5auIhbfINXYag6ZdB+mGJnH8rbmDOpr1V7iUvQQ7pWnEDYI/KXmia5IemsNJEQ==
+  dependencies:
+    "@ioredis/commands" "^1.1.1"
+    cluster-key-slot "^1.1.0"
+    debug "^4.3.4"
+    denque "^2.0.1"
+    lodash.defaults "^4.2.0"
+    lodash.isarguments "^3.1.0"
+    redis-errors "^1.2.0"
+    redis-parser "^3.0.0"
+    standard-as-callback "^2.1.0"
+
+ioredis@^5.1.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-5.1.0.tgz#17bc0bc40f164ef26910ca6e56981c2a9bfdf57e"
   integrity sha512-HYHnvwxFwefeUBj0hZFejLvd8Q/YNAfnZlZG/hSRxkRhXMs1H8soMEVccHd1WlLrKkynorXBsAtqDGskOdAfVQ==
@@ -8527,12 +8537,7 @@ typescript@^4.7.4:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.7.4.tgz#1a88596d1cf47d59507a1bcdfb5b9dfe4d488235"
   integrity sha512-C0WQT0gezHuw6AdY1M2jxUO83Rjf0HP7Sk1DtXj6j1EwkQNZrHAg2XPWlq62oqEhYvONq5pkC2Y9oPljWToLmQ==
 
-ufo@^0.8.3:
-  version "0.8.4"
-  resolved "https://registry.yarnpkg.com/ufo/-/ufo-0.8.4.tgz#23e9ed82398d2116dcb378e8fba5ced8eca2ee40"
-  integrity sha512-/+BmBDe8GvlB2nIflWasLLAInjYG0bC9HRnfEpNi4sw77J2AJNnEVnTDReVrehoh825+Q/evF3THXTAweyam2g==
-
-ufo@^0.8.4, ufo@^0.8.5:
+ufo@^0.8.3, ufo@^0.8.4, ufo@^0.8.5:
   version "0.8.5"
   resolved "https://registry.yarnpkg.com/ufo/-/ufo-0.8.5.tgz#e367b4205ece9d9723f2fa54f887d43ed1bce5d0"
   integrity sha512-e4+UtA5IRO+ha6hYklwj6r7BjiGMxS0O+UaSg9HbaTefg4kMkzj4tXzEBajRR+wkxf+golgAWKzLbytCUDMJAA==
@@ -8563,9 +8568,9 @@ unctx@^1.1.4:
     unplugin "^0.6.1"
 
 undici@^5.2.0:
-  version "5.6.0"
-  resolved "https://registry.yarnpkg.com/undici/-/undici-5.6.0.tgz#3fd695d4454970bae3d151326ee4ab645b8d1962"
-  integrity sha512-mc+8SY1fXubTrdx4CXDkeFFGV8lI3Tq4I/70U1V8Z6g4iscGII0uLO7CPnDt56bXEbvaKwo2T2+VrteWbZiXiQ==
+  version "5.7.0"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-5.7.0.tgz#979f89229c01505573cb274d0e11ea8d82b4004f"
+  integrity sha512-ORgxwDkiPS+gK2VxE7iyVeR7JliVn5DqhZ4LgQqYLBXsuK+lwOEmnJ66dhvlpLM0tC3fC7eYF1Bti2frbw2eAA==
 
 unenv@^0.5.2:
   version "0.5.2"
