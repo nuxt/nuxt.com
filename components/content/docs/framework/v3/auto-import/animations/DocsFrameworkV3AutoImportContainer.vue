@@ -105,7 +105,6 @@
         :class="[0, 6, 7, 13, 14].includes(currentSection) ? 'opacity-0' : 'opacity-80 dark:opacity-60'"
       >
     </div>
-    <DocsFrameworkV3AutoImportTerminal :current-section="currentSection" />
   </div>
 </template>
 
