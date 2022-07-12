@@ -20,7 +20,7 @@
         <span class="u-text-gray-400">{{ job.published_at.for_humans }}</span>
       </div>
       <div>
-        <span class="text-xl u-text-gray-500">{{ job.description }}</span>
+        <span class="text-xl u-text-gray-500" v-html="description"></span>
       </div>
     </NuxtLink>
   </UCard>
@@ -55,4 +55,6 @@ const typeClass = computed(() => {
 })
 
 const typeLabel = computed(() => types.value.find(type => type.value === props.job.type)?.text || props.job.type)
+
+const description = computed(() => props.job.description.replace(/\n/g, '<br>'))
 </script>
