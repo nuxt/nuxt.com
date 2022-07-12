@@ -8,7 +8,7 @@ export default defineNuxtConfig({
   ],
   modules: [
     '@nuxthq/ui',
-    '@nuxthq/admin',
+    '@nuxthq/studio',
     '@nuxt/content',
     'nuxt-newsletter',
     'vue-plausible'
