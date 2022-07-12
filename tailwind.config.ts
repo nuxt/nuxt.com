@@ -1,6 +1,7 @@
 import colors, { safeColorsAsRegex } from './ui/colors'
 import typography from './ui/typography'
 
+/** @type {import('tailwindcss').Config} */
 module.exports = {
   theme: {
     colors,
