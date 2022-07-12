@@ -55,3 +55,20 @@ export interface CommunityNuxter {
   activitiesCount: number,
   rank?: number
 }
+
+export interface CommunityJob {
+  id: number,
+  title: string,
+  description: string,
+  type: string,
+  location: string,
+  url: string,
+  company: {
+    name: string,
+    avatar: string
+  },
+  published_at: {
+    date: string,
+    for_humans: string
+  }
+}

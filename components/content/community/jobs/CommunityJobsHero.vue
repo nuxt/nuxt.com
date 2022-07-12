@@ -1,0 +1,18 @@
+<template>
+  <PageHero centered>
+    <template #title>
+      <Markdown :use="$slots.title" unwrap="p" />
+    </template>
+    <template #description>
+      <Markdown :use="$slots.description" unwrap="p" />
+    </template>
+
+    <template #extra>
+      <UButton to="https://vuejobs.com/jobs/create" target="_blank" variant="primary-gradient" label="Post a job" />
+
+      <img src="/assets/community/jobs/gem-left.png" class="absolute top-[96px] left-[96px] w-[120px] opacity-10 lg:opacity-100">
+
+      <img src="/assets/community/jobs/gem-right.png" class="absolute top-[36px] right-[124px] w-[91px] opacity-10 lg:opacity-100">
+    </template>
+  </PageHero>
+</template>
