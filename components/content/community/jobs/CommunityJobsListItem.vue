@@ -11,9 +11,9 @@
       <div class="flex gap-4">
         <img :src="job.company.avatar" :alt="job.company.name" class="object-contain w-20 h-20 rounded-full">
         <div class="flex flex-col flex-1 gap-2">
-          <div class="flex gap-2">
-            <span class="text-xl font-semibold u-text-gray-900">{{ job.title }}</span>
-            <span class="px-2 py-0.5 rounded-full" :class="typeClass">{{ typeLabel }}</span>
+          <div class="flex flex-col gap-2 sm:flex-row">
+            <span class="flex-shrink text-xl font-semibold u-text-gray-900">{{ job.title }}</span>
+            <span class="self-start px-2 py-0.5 rounded-full whitespace-nowrap" :class="typeClass">{{ typeLabel }}</span>
           </div>
           <span class="text-xl u-text-gray-500">{{ job.location }}</span>
         </div>
