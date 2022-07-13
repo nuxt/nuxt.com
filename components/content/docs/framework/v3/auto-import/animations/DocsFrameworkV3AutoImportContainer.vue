@@ -50,53 +50,112 @@
       <!-- left container -->
       <div class="absolute inset-0 flex pt-[35px] ">
         <div class="w-[330px] relative">
-          <div class="absolute flex flex-col text-gray-300 top-4 left-6 gap-y-4" :class="currentSection === null ? 'opacity-100' : 'opacity-0'">
+          <div class="absolute flex flex-col text-gray-300 transition-opacity duration-300 top-4 left-6 gap-y-4" :class="currentSection === null ? 'opacity-100' : 'opacity-0'">
             <div v-for="(text, index) in ['pages', 'components', 'plugins']" :key="index" class="flex items-center gap-x-2">
               <UIcon name="uil:angle-right" class="w-5 h-5 mt-1" /> <span class="font-medium">{{ text }}</span>
             </div>
           </div>
-          <div class="absolute flex flex-col text-gray-300 top-4 left-6 gap-y-4" :class="currentSection === 0 ? 'opacity-100' : 'opacity-0'">
+          <div class="absolute flex flex-col text-gray-300 transition-opacity duration-300 top-4 left-6 gap-y-4" :class="currentSection === 0 ? 'opacity-100' : 'opacity-0'">
             <div v-for="(text, index) in ['pages', 'components']" :key="index" class="relative">
               <div class="relative flex items-center gap-x-2" :class="{ 'pt-[59px]': index === 1 }">
                 <UIcon name="uil:angle-down" class="w-5 h-5 mt-1" /> <span class="font-medium">{{ text }}</span>
                 <div class="absolute left-[9px] w-0.5 bg-gradient-to-b from-gray-400 to-transparent" :class="index === 1 ? 'top-[89px] h-[109px] ' : 'top-[26px] h-[59px] '" />
               </div>
-              <div class="flex pt-4 pl-8 gap-x-4">
-                <svg
-                  width="16"
-                  height="20"
-                  viewBox="0 0 16 20"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  :class="{ 'text-green-400': index === 0}"
-                >
-                  <path d="M16.0002 6.94C15.9898 6.84813 15.9697 6.75763 15.9402 6.67V6.58C15.8922 6.47718 15.828 6.38266 15.7502 6.3V6.3L9.75024 0.3C9.66758 0.222216 9.57306 0.158081 9.47024 0.11H9.38024L9.06024 0H3.00024C2.20459 0 1.44153 0.316071 0.878924 0.87868C0.316315 1.44129 0.000244141 2.20435 0.000244141 3V17C0.000244141 17.7956 0.316315 18.5587 0.878924 19.1213C1.44153 19.6839 2.20459 20 3.00024 20H13.0002C13.7959 20 14.559 19.6839 15.1216 19.1213C15.6842 18.5587 16.0002 17.7956 16.0002 17V7C16.0002 7 16.0002 7 16.0002 6.94ZM10.0002 3.41L12.5902 6H10.0002V3.41ZM14.0002 17C14.0002 17.2652 13.8949 17.5196 13.7074 17.7071C13.5198 17.8946 13.2655 18 13.0002 18H3.00024C2.73503 18 2.48067 17.8946 2.29314 17.7071C2.1056 17.5196 2.00024 17.2652 2.00024 17V3C2.00024 2.73478 2.1056 2.48043 2.29314 2.29289C2.48067 2.10536 2.73503 2 3.00024 2H8.00024V7C8.00024 7.26522 8.1056 7.51957 8.29314 7.70711C8.48067 7.89464 8.73503 8 9.00024 8H14.0002V17Z" fill="currentColor" />
-                </svg>
+              <div class="flex items-center pt-4 pl-8 gap-x-4">
+                <UIcon name="uil:file" class="w-6 h-6" :class="index === 0 ? 'text-green-400' : 'text-gray-300'" />
                 <span>{{ index === 0 ? 'index.vue' : 'Header.vue' }}</span>
               </div>
-              <div class="flex pt-4 pl-8 gap-x-4" :class="index === 0 ? 'hidden' : 'block'">
-                <svg
-                  width="16"
-                  height="20"
-                  viewBox="0 0 16 20"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M16.0002 6.94C15.9898 6.84813 15.9697 6.75763 15.9402 6.67V6.58C15.8922 6.47718 15.828 6.38266 15.7502 6.3V6.3L9.75024 0.3C9.66758 0.222216 9.57306 0.158081 9.47024 0.11H9.38024L9.06024 0H3.00024C2.20459 0 1.44153 0.316071 0.878924 0.87868C0.316315 1.44129 0.000244141 2.20435 0.000244141 3V17C0.000244141 17.7956 0.316315 18.5587 0.878924 19.1213C1.44153 19.6839 2.20459 20 3.00024 20H13.0002C13.7959 20 14.559 19.6839 15.1216 19.1213C15.6842 18.5587 16.0002 17.7956 16.0002 17V7C16.0002 7 16.0002 7 16.0002 6.94ZM10.0002 3.41L12.5902 6H10.0002V3.41ZM14.0002 17C14.0002 17.2652 13.8949 17.5196 13.7074 17.7071C13.5198 17.8946 13.2655 18 13.0002 18H3.00024C2.73503 18 2.48067 17.8946 2.29314 17.7071C2.1056 17.5196 2.00024 17.2652 2.00024 17V3C2.00024 2.73478 2.1056 2.48043 2.29314 2.29289C2.48067 2.10536 2.73503 2 3.00024 2H8.00024V7C8.00024 7.26522 8.1056 7.51957 8.29314 7.70711C8.48067 7.89464 8.73503 8 9.00024 8H14.0002V17Z" fill="currentColor" />
-                </svg>
+              <div class="flex items-center pt-4 pl-8 gap-x-4" :class="index === 0 ? 'hidden' : 'block'">
+                <UIcon name="uil:file" class="w-6 h-6 text-gray-300" />
                 <span>Footer.vue</span>
+              </div>
+            </div>
+          </div>
+          <div class="absolute flex flex-col text-gray-300 transition-opacity duration-300 top-4 left-6 gap-y-4" :class="currentSection === 1 ? 'opacity-100' : 'opacity-0'">
+            <div v-for="(text, index) in ['components', 'composables']" :key="index" class="relative">
+              <div class="relative flex items-center gap-x-2" :class="{ 'pt-[59px]': index === 1 }">
+                <UIcon name="uil:angle-down" class="w-5 h-5 mt-1" /> <span class="font-medium">{{ text }}</span>
+                <div class="absolute left-[9px] w-0.5 bg-gradient-to-b from-gray-400 to-transparent" :class="index === 1 ? 'top-[89px] h-[109px] ' : 'top-[26px] h-[59px] '" />
+              </div>
+              <div class="flex items-center pt-4 pl-8 gap-x-4">
+                <UIcon name="uil:file" class="w-6 h-6" :class="index === 0 ? 'text-green-400' : 'text-gray-300'" />
+                <span>{{ index === 0 ? 'Mouse.vue' : 'useMouse.ts' }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="absolute flex flex-col text-gray-300 transition-opacity duration-300 top-4 left-6 gap-y-4" :class="currentSection === 2 ? 'opacity-100' : 'opacity-0'">
+            <div v-for="(text, index) in ['pages', 'plugins']" :key="index" class="relative">
+              <div class="relative flex items-center gap-x-2" :class="{ 'pt-[59px]': index === 1 }">
+                <UIcon name="uil:angle-down" class="w-5 h-5 mt-1" /> <span class="font-medium">{{ text }}</span>
+                <div class="absolute left-[9px] w-0.5 bg-gradient-to-b from-gray-400 to-transparent" :class="index === 1 ? 'top-[89px] h-[109px] ' : 'top-[26px] h-[59px] '" />
+              </div>
+              <div class="flex items-center pt-4 pl-8 gap-x-4">
+                <UIcon name="uil:file" class="w-6 h-6" :class="index === 0 ? 'text-green-400' : 'text-gray-300'" />
+                <span>{{ index === 0 ? 'index.vue' : 'i18n.ts' }}</span>
               </div>
             </div>
           </div>
         </div>
         <!-- right container -->
         <div class="relative w-full">
-          <div class="absolute font-mono text-sm italic text-gray-300 top-4 left-4" :class="currentSection === null ? 'opacity-100' : 'opacity-0'">
+          <div class="absolute font-mono text-sm italic text-gray-300 transition-opacity duration-300 top-4 left-4" :class="currentSection === null ? 'opacity-100' : 'opacity-0'">
             Open components, composables or plugins
+          </div>
+          <div class="absolute font-mono text-gray-300 transition-opacity duration-300 top-4 left-4" :class="currentSection === 0 ? 'opacity-100' : 'opacity-0'">
+            <span class="text-gray-300">&lt;template&gt;</span>
+            <div v-for="(text, index) in ['Header', 'Footer']" :key="index" class="pl-4">
+              <span>&lt;<span class="text-green-400">{{ text }}&nbsp;</span>/&gt;</span>
+            </div>
+            <span class="text-gray-300">&lt;/template&gt;</span>
+          </div>
+          <div class="absolute font-mono text-gray-300 transition-opacity duration-300 top-4 left-4" :class="currentSection === 1 ? 'opacity-100' : 'opacity-0'">
+            <span class="text-gray-300">&lt;template&gt;</span>
+            <br>
+            <span class="pl-4 text-gray-300">&nbsp;&lt;p&gt;</span>
+            <span class="text-gray-200">Mouse position:&nbsp;</span>
+            <span class="text-gray-200">&#123;&#123;&nbsp;</span>
+            <span class="text-green-400">x&nbsp;</span>
+            <span class="text-gray-200">&#125;&#125;&nbsp;</span>
+            <span class="text-gray-200">&#123;&#123;&nbsp;</span>
+            <span class="text-green-400">y&nbsp;</span>
+            <span class="text-gray-300">&#125;&#125;</span>
+            <span class="text-gray-300">&lt;/p&gt;</span>
+            <br>
+            <span class="text-gray-300">&lt;/template&gt;</span>
+            <div class="pt-8">
+              <span class="text-gray-300">&lt;script&nbsp;</span>
+              <span class="text-green-400">setup</span>
+              <span class="text-gray-400">&gt;</span>
+              <br>
+              <span class="text-blue-600">&nbsp;&nbsp;const&nbsp;</span>
+              <span class="text-gray-300">&#123;&nbsp;</span>
+              <span class="text-blue-300">x</span>
+              <span class="text-gray-300">&#44;&nbsp;</span>
+              <span class="text-blue-300">y&nbsp;</span>
+              <span class="text-gray-300">&#125;&nbsp;</span>
+              <span class="text-blue-600">&#61;&nbsp;</span>
+              <span class="text-green-400">useMouse</span>
+              <span class="text-gray-300">&#40;</span>
+              <span class="text-gray-300">&#41;</span>
+              <br>
+              <span class="text-gray-300">&lt;/script&gt;</span>
+            </div>
+          </div>
+          <div class="absolute font-mono text-gray-300 transition-opacity duration-300 top-4 left-4" :class="currentSection === 2 ? 'opacity-100' : 'opacity-0'">
+            <span class="text-gray-300">&lt;template&gt;</span>
+            <br>
+            <span class="text-gray-300">&nbsp;&nbsp;&lt;h1&gt;</span>
+            <span class="text-gray-200">&#123;&#123;&nbsp;</span>
+            <span class="text-green-400">&#36;t&#40;&#39;hello&#39;&#41;&nbsp;</span>
+            <span class="text-gray-200">&#125;&#125;</span>
+            <span class="text-gray-300">&lt;/h1&gt;</span>
+            <br>
+            <span class="text-gray-300">&lt;/template&gt;</span>
           </div>
         </div>
       </div>
-      <!--div class="absolute top-[52px] left-[54px] text-gray-400">
+    </div>
+    <!--div class="absolute top-[52px] left-[54px] text-gray-400">
         <span class="absolute transition-opacity duration-300" :class="section1Steps.concat(section3Steps).includes(currentSection) ? 'opacity-100' : 'opacity-0'">pages</span>
         <span class="absolute transition-opacity duration-300" :class="section2Steps.includes(currentSection) ? 'opacity-100' : 'opacity-0'">components</span>
       </div>
@@ -133,7 +192,6 @@
         :class="[0, 6, 7, 13, 14].includes(currentSection) ? 'opacity-0' : 'opacity-80 dark:opacity-60'"
       >
     </div-->
-    </div>
   </div>
 </template>
 
