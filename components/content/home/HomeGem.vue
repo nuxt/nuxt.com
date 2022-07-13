@@ -25,6 +25,13 @@ const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPr
 renderer.outputEncoding = THREE.sRGBEncoding
 renderer.toneMapping = THREE.ACESFilmicToneMapping
 renderer.toneMappingExposure = 1
+if (window.matchMedia("(min-width: 640px)").matches) {
+  renderer.setSize(475, 475)
+} else if (window.matchMedia("(min-width: 400px)").matches) {
+  renderer.setSize(240, 240)
+} else {
+  renderer.setSize(180, 180)
+}
 
 // Scene
 const scene = new THREE.Scene()
@@ -60,9 +67,22 @@ gltfLoader.load('/assets/home/gem.glb', function (gltf) {
 })
 
 onMounted(() => {
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-  gemWrapper.value.style.opacity = 0
+  // Renderer
+  gemAnim.value.appendChild(renderer.domElement)
+  renderer.setPixelRatio(window.devicePixelRatio)
+  function onWindowResize() {
+    if (window.matchMedia("(min-width: 640px)").matches) {
+      renderer.setSize(475, 475)
+    } else if (window.matchMedia("(min-width: 400px)").matches) {
+      renderer.setSize(240, 240)
+    } else {
+      renderer.setSize(180, 180)
+    }
+  }
+  window.addEventListener('resize', onWindowResize, false)
 
+  // Transition on load
+  gemWrapper.value.style.opacity = 0
   setTimeout(() => {
     gemWrapper.value.style.opacity = 1
   }, 1000)
@@ -82,9 +102,6 @@ onMounted(() => {
   controls.minPolarAngle = Math.PI * 0.5
 
   controls.update()
-
-  // Renderer
-  gemAnim.value.appendChild(renderer.domElement)
 
   function animate () {
     if (colorMode.value === 'dark') {
