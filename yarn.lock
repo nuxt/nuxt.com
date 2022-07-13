@@ -552,7 +552,7 @@
     unimport "^0.1.6"
     untyped "^0.4.4"
 
-"@nuxt/kit@3.0.0-rc.4", "@nuxt/kit@^3.0.0-rc.3", "@nuxt/kit@^3.0.0-rc.4":
+"@nuxt/kit@3.0.0-rc.4":
   version "3.0.0-rc.4"
   resolved "https://registry.yarnpkg.com/@nuxt/kit/-/kit-3.0.0-rc.4.tgz#8aa3c26f1bb9f3e7bb78ad2cec33473e32ffccd0"
   integrity sha512-ZBSeHFy3fPUx0equCtyP6eVUAZQWwRqTp2YnHSFqM5+yhN5aTGo8gBlfwttVBr4yhFBpGFRHhQj/iNPqrCeTnQ==
@@ -576,7 +576,7 @@
     unimport "^0.2.7"
     untyped "^0.4.4"
 
-"@nuxt/kit@^3.0.0-rc.5":
+"@nuxt/kit@^3.0.0-rc.3", "@nuxt/kit@^3.0.0-rc.4", "@nuxt/kit@^3.0.0-rc.5":
   version "3.0.0-rc.5"
   resolved "https://registry.yarnpkg.com/@nuxt/kit/-/kit-3.0.0-rc.5.tgz#4ee104e517910ed26132583d7adaff88bdd8d89a"
   integrity sha512-PmRfy0AdpvYne5p1/QWXOFoJawnjC/p2TkEJeCgI7MMHP7U2ru/7MxM7x0+ScjD13fUd4KSv1bCMJRTCoaCzPQ==
@@ -601,11 +601,11 @@
     untyped "^0.4.4"
 
 "@nuxt/kit@npm:@nuxt/kit-edge@latest":
-  version "3.0.0-rc.4-27627158.135dfdf"
-  resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-rc.4-27627158.135dfdf.tgz#036f16c43b95a4c7fa4e781f6db6fbf45202f4e9"
-  integrity sha512-SkssohDVpHeYps072xeSvPQK7+664FbPVTnHkoxZMMJEypyfbTJy0xuJek3lWijsvY/u73286TqRsR6mm1iKbw==
+  version "3.0.0-rc.5-27628787.7c45eee"
+  resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-rc.5-27628787.7c45eee.tgz#9dbf5ae85fdfe742680f753e5e4663bbbfc3b514"
+  integrity sha512-5K/lpZDsp5+zuXYeIPoan+4ZSfbifWucJMOOh7pdrFGTTo1UkwMGVJKWPF5/J7R+aF0p/9l6ZsTKchefUPGeDg==
   dependencies:
-    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-rc.4-27627158.135dfdf"
+    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-rc.5-27628787.7c45eee"
     c12 "^0.2.8"
     consola "^2.15.3"
     defu "^6.0.0"
@@ -638,7 +638,7 @@
     postcss-url "^10.1.1"
     semver "^7.3.4"
 
-"@nuxt/schema@^3.0.0-rc.1", "@nuxt/schema@^3.0.0-rc.4":
+"@nuxt/schema@^3.0.0-rc.1":
   version "3.0.0-rc.4"
   resolved "https://registry.yarnpkg.com/@nuxt/schema/-/schema-3.0.0-rc.4.tgz#d94005e1aca00349f1256cb827ee7478d50a1802"
   integrity sha512-5yjfKvPJ/NboevQYZLyO1SS9nJW6KHtdd7Ei61D19gYGtnN+aOpxOnUX08A1rZMb3G2Cw5JRxVeF9+AfBYefJg==
@@ -654,7 +654,7 @@
     ufo "^0.8.4"
     unimport "^0.2.7"
 
-"@nuxt/schema@^3.0.0-rc.5":
+"@nuxt/schema@^3.0.0-rc.4", "@nuxt/schema@^3.0.0-rc.5":
   version "3.0.0-rc.5"
   resolved "https://registry.yarnpkg.com/@nuxt/schema/-/schema-3.0.0-rc.5.tgz#c32b84b3aeb0ce474cd268b9dc5d801d8139aaed"
   integrity sha512-qfKr9/1i7buLEgJ1Vjw27LJ5Svtq9jB5TvFAbIfDI9fg80M/bgTDXgKXARJk6ofB39Ijdx8z2nNj8EXu8+tVbQ==
@@ -670,10 +670,10 @@
     ufo "^0.8.5"
     unimport "^0.4.4"
 
-"@nuxt/schema@npm:@nuxt/schema-edge@3.0.0-rc.4-27627158.135dfdf":
-  version "3.0.0-rc.4-27627158.135dfdf"
-  resolved "https://registry.yarnpkg.com/@nuxt/schema-edge/-/schema-edge-3.0.0-rc.4-27627158.135dfdf.tgz#42c5c26ae379aeb275f36e319fe3e2de7e3c685b"
-  integrity sha512-BWmD1QrZYFlU2aY6HbeGCYck+QTYk9kCXvIFciAObLgJRw5LWliSGJnXCGGm3pBsuWd8gjwaHUSeWkCm9TZHeg==
+"@nuxt/schema@npm:@nuxt/schema-edge@3.0.0-rc.5-27628787.7c45eee":
+  version "3.0.0-rc.5-27628787.7c45eee"
+  resolved "https://registry.yarnpkg.com/@nuxt/schema-edge/-/schema-edge-3.0.0-rc.5-27628787.7c45eee.tgz#d7efc2ed026b0806866c3268b9c2481cf4ce0e0b"
+  integrity sha512-i/SQD4MdJ24QrECYwBhpFzWjlBq8/+KaZkYIxxVeX1apJDlco9GBmJCSqghpRP/3sacMuUllPfzhODFYY/JSjA==
   dependencies:
     c12 "^0.2.8"
     create-require "^1.1.1"
@@ -755,30 +755,30 @@
     vite-plugin-checker "^0.4.9"
 
 "@nuxthq/studio@npm:@nuxthq/studio-edge@latest":
-  version "0.0.1-27627347.2f5178e"
-  resolved "https://registry.yarnpkg.com/@nuxthq/studio-edge/-/studio-edge-0.0.1-27627347.2f5178e.tgz#9f4cb10dac4fe2a172c2b222d0a40e0c92a29e6a"
-  integrity sha512-ca5T5QvWks/LTsm3PIjEwLJDMlI537U2KzvZzzzES+y6bR2o2CxFQIy9TuqpoES/9HI3gPR1KA2QWcwzK8gcEA==
+  version "0.0.1-27629141.aeb359e"
+  resolved "https://registry.yarnpkg.com/@nuxthq/studio-edge/-/studio-edge-0.0.1-27629141.aeb359e.tgz#6b3bb6595f7a5f1c8186ac2dcd233f5fbe17034a"
+  integrity sha512-M+bLlm0ntQ7ptIOQIF5KIodG7gXDNvbGBEusNyCytglF1GuQH/GRXl/xwbkEJdxz/OVL3wGm2C743kmJweVszw==
   dependencies:
-    "@nuxt/kit" "^3.0.0-rc.4"
+    "@nuxt/kit" "^3.0.0-rc.5"
     nuxt-component-meta "^0.1.5"
     socket.io-client "^4.5.1"
     unstorage "^0.4.1"
 
 "@nuxthq/ui@npm:@nuxthq/ui-edge@latest":
-  version "0.0.2-27627206.4de2056"
-  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27627206.4de2056.tgz#0b84472cc30308bc56f47049b393104d8986edb1"
-  integrity sha512-zDR1R6vfsB0b8hERO8kQ4cSWNTAgi94B/Dz+oBKOiEcSlYDAu8mx7BXO7V0S4Y7nfgvXj5I1r8qfTNB+CIkDNA==
+  version "0.0.2-27629152.1d8958c"
+  resolved "https://registry.yarnpkg.com/@nuxthq/ui-edge/-/ui-edge-0.0.2-27629152.1d8958c.tgz#7bb171f2bfee7f45d75586abe8f7bb7824f0ef42"
+  integrity sha512-X2PRAzL3xuVy8zQ9WdAZHwOuu8eIagp6xjbshHfBJle9SNLAwp6utkOIQMeSuuxSc9Xw0cwszSG1Nb/+e4ItQg==
   dependencies:
     "@headlessui/vue" "1.6.4"
     "@iconify/vue" "^3.2.1"
     "@nuxt/kit" "npm:@nuxt/kit-edge@latest"
     "@nuxtjs/color-mode" "^3.1.4"
-    "@nuxtjs/tailwindcss" "^5.2.0"
+    "@nuxtjs/tailwindcss" "^5.3.0"
     "@popperjs/core" "^2.11.5"
     "@tailwindcss/aspect-ratio" "^0.4.0"
     "@tailwindcss/forms" "^0.5.2"
     "@tailwindcss/line-clamp" "^0.4.0"
-    "@tailwindcss/typography" "^0.5.3"
+    "@tailwindcss/typography" "^0.5.4"
     "@vueuse/core" "^8.9.2"
     defu "^6.0.0"
     lodash-es "^4.17.21"
@@ -817,12 +817,12 @@
     eslint-plugin-unicorn "^42.0.0"
     eslint-plugin-vue "^8.7.1"
 
-"@nuxtjs/tailwindcss@^5.2.0":
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/@nuxtjs/tailwindcss/-/tailwindcss-5.2.0.tgz#2a2f7e4cdac84a1023223461ff96d8bde35407be"
-  integrity sha512-eUXxYz/1Nu5c05889eewBFukzXegDbYaBQ/yVEA4ybhBs5TXj8U2vIZuzj+A7ZROifv0NmLIS7ZnMfD3GvE73g==
+"@nuxtjs/tailwindcss@^5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@nuxtjs/tailwindcss/-/tailwindcss-5.3.0.tgz#7bd85d46909d151902e7267e6c1653e3cf6eb567"
+  integrity sha512-cS4P5L09ndgWXUsN1FHBPb7m2JhXS7c26d3otfwgNHLlNdUC8qjDRp83wpvkOBOgV+AOH8auZM3fSAuXNklMyA==
   dependencies:
-    "@nuxt/kit" "^3.0.0-rc.4"
+    "@nuxt/kit" "^3.0.0-rc.5"
     "@nuxt/postcss8" "^1.1.3"
     "@types/tailwindcss" "^3.0.11"
     autoprefixer "^10.4.7"
@@ -834,7 +834,7 @@
     postcss-custom-properties "^12.1.8"
     postcss-nesting "^10.1.10"
     tailwind-config-viewer "^1.7.1"
-    tailwindcss "^3.1.5"
+    tailwindcss "^3.1.6"
     ufo "^0.8.5"
 
 "@popperjs/core@^2.11.5":
@@ -975,10 +975,10 @@
   resolved "https://registry.yarnpkg.com/@tailwindcss/line-clamp/-/line-clamp-0.4.0.tgz#03353e31e77636b785f2336e8c978502cec1de81"
   integrity sha512-HQZo6gfx1D0+DU3nWlNLD5iA6Ef4JAXh0LeD8lOGrJwEDBwwJNKQza6WoXhhY1uQrxOuU8ROxV7CqiQV4CoiLw==
 
-"@tailwindcss/typography@^0.5.3":
-  version "0.5.3"
-  resolved "https://registry.yarnpkg.com/@tailwindcss/typography/-/typography-0.5.3.tgz#80c3419db470cc34b0d1442d05d82a1984bc66b7"
-  integrity sha512-Cn4MufL/xiTh2Npw26xiL7gP3GFkJH+zWM8DAm/NNEr4gF5N9D6gY9zMNNQUu27m8g0IIk665BUuoU92wVUBkA==
+"@tailwindcss/typography@^0.5.4":
+  version "0.5.4"
+  resolved "https://registry.yarnpkg.com/@tailwindcss/typography/-/typography-0.5.4.tgz#ad8c9e6808bae297bb7826742e4789f2a9f09a48"
+  integrity sha512-QEdg40EmGvE7kKoDei8zr5sf4D1pIayHj4R31bH3lX8x2BtTiR+jNejYPOkhbmy3DXgkMF9jC8xqNiGFAuL9Sg==
   dependencies:
     lodash.castarray "^4.4.0"
     lodash.isplainobject "^4.0.6"
@@ -1782,7 +1782,7 @@ braces@^3.0.2, braces@~3.0.2:
   dependencies:
     fill-range "^7.0.1"
 
-browserslist@^4.0.0, browserslist@^4.16.6, browserslist@^4.20.2, browserslist@^4.20.3:
+browserslist@^4.0.0, browserslist@^4.16.6:
   version "4.21.1"
   resolved "https://registry.yarnpkg.com/browserslist/-/browserslist-4.21.1.tgz#c9b9b0a54c7607e8dc3e01a0d311727188011a00"
   integrity sha512-Nq8MFCSrnJXSc88yliwlzQe3qNe3VntIjhsArW9IJOEPSHNx23FalwApUVbzAWABLhYJJ7y8AynWI/XM8OdfjQ==
@@ -1790,6 +1790,16 @@ browserslist@^4.0.0, browserslist@^4.16.6, browserslist@^4.20.2, browserslist@^4
     caniuse-lite "^1.0.30001359"
     electron-to-chromium "^1.4.172"
     node-releases "^2.0.5"
+    update-browserslist-db "^1.0.4"
+
+browserslist@^4.20.2, browserslist@^4.20.3:
+  version "4.21.2"
+  resolved "https://registry.yarnpkg.com/browserslist/-/browserslist-4.21.2.tgz#59a400757465535954946a400b841ed37e2b4ecf"
+  integrity sha512-MonuOgAtUB46uP5CezYbRaYKBNt2LxP0yX+Pmj4LkcDFGkn9Cbpi83d9sCjwQDErXsIJSzY5oKGDbgOlF/LPAA==
+  dependencies:
+    caniuse-lite "^1.0.30001366"
+    electron-to-chromium "^1.4.188"
+    node-releases "^2.0.6"
     update-browserslist-db "^1.0.4"
 
 buffer-crc32@^0.2.1, buffer-crc32@^0.2.13:
@@ -1910,10 +1920,10 @@ caniuse-lite@^1.0.0:
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001363.tgz#26bec2d606924ba318235944e1193304ea7c4f15"
   integrity sha512-HpQhpzTGGPVMnCjIomjt+jvyUu8vNFo3TaDiZ/RcoTrlOq/5+tC8zHdsbgFB6MxmaY+jCpsH09aD80Bb4Ow3Sg==
 
-caniuse-lite@^1.0.30001335, caniuse-lite@^1.0.30001359:
-  version "1.0.30001365"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001365.tgz#72c2c3863b1a545cfd3d9953535bd2ee17568158"
-  integrity sha512-VDQZ8OtpuIPMBA4YYvZXECtXbddMCUFJk1qu8Mqxfm/SZJNSr1cy4IuLCOL7RJ/YASrvJcYg1Zh+UEUQ5m6z8Q==
+caniuse-lite@^1.0.30001335, caniuse-lite@^1.0.30001359, caniuse-lite@^1.0.30001366:
+  version "1.0.30001366"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001366.tgz#c73352c83830a9eaf2dea0ff71fb4b9a4bbaa89c"
+  integrity sha512-yy7XLWCubDobokgzudpkKux8e0UOOnLHE6mlNJBzT3lZJz6s5atSEzjoL+fsCPkI0G8MP5uVdDx1ur/fXEWkZA==
 
 ccount@^2.0.0:
   version "2.0.1"
@@ -2992,10 +3002,10 @@ ee-first@1.1.1:
   resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
   integrity sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==
 
-electron-to-chromium@^1.4.172:
-  version "1.4.186"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.186.tgz#a811bba15f0868d3f4164b0f4ede8adc8773831b"
-  integrity sha512-YoVeFrGd/7ROjz4R9uPoND1K/hSRC/xADy9639ZmIZeJSaBnKdYx3I6LMPsY7CXLpK7JFgKQVzeZ/dk2br6Eaw==
+electron-to-chromium@^1.4.172, electron-to-chromium@^1.4.188:
+  version "1.4.188"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.188.tgz#1954bc444e6f6662cb39f24810f9e5022fcd5bb3"
+  integrity sha512-Zpa1+E+BVmD/orkyz1Z2dAT1XNUuVAHB3GrogfyY66dXN0ZWSsygI8+u6QTDai1ZayLcATDJpcv2Z2AZjEcr1A==
 
 emoji-regex@^8.0.0:
   version "8.0.0"
@@ -6522,7 +6532,7 @@ node-mailjet@^5.0.1:
     json-bigint "^1.0.0"
     url-join "^4.0.0"
 
-node-releases@^2.0.5:
+node-releases@^2.0.5, node-releases@^2.0.6:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-2.0.6.tgz#8a7088c63a55e493845683ebf3c828d8c51c5503"
   integrity sha512-PiVXnNuFm5+iYkLBNeq5211hvO38y63T0i2KKh2KnUs3RpzJ+JtODFjkD8yjLwnDkTYF1eKXheUwdssR+NRZdg==
@@ -8463,7 +8473,7 @@ tailwindcss-border-gradient-radius@^3.0.1:
     color "^3.1.2"
     lodash "^4.17.19"
 
-tailwindcss@*, tailwindcss@^3.1.5, tailwindcss@^3.1.6:
+tailwindcss@*, tailwindcss@^3.1.6:
   version "3.1.6"
   resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-3.1.6.tgz#bcb719357776c39e6376a8d84e9834b2b19a49f1"
   integrity sha512-7skAOY56erZAFQssT1xkpk+kWt2NrO45kORlxFPXUt3CiGsVPhH1smuH5XoDH6sGPXLyBv+zgCKA2HWBsgCytg==
