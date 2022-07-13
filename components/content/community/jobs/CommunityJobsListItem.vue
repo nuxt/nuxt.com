@@ -9,7 +9,7 @@
   >
     <NuxtLink :to="`https://vuejobs.com/jobs/${job.id}`" target="_blank" class="flex flex-col gap-2 px-4 py-5 sm:p-6">
       <div class="flex gap-4">
-        <img :src="job.company.avatar" :alt="job.company.name" class="object-contain w-20 h-20 rounded-full">
+        <img :src="job.company.avatar" :alt="job.company.name" class="object-contain w-16 h-16 rounded-full sm:w-20 sm:h-20">
         <div class="flex flex-col flex-1 gap-2">
           <div class="flex flex-col gap-2 sm:flex-row">
             <span class="flex-shrink text-xl font-semibold u-text-gray-900">{{ job.title }}</span>
