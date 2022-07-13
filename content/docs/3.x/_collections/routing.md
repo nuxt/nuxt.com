@@ -2,18 +2,18 @@
 routings:
   - title: Static route
     icon: static-route.svg
-    iconDark: static-route-dark.svg
-    iconColor: static-route-green.svg
+    description: Nuxt ships by default with best Lighthouse and Web vitals score so users won’t wait for accessing your website.
+    iconColor: static-route-white.svg
   - title: Nested routes
+    description: Nuxt ships by default with best Lighthouse and Web vitals score so users won’t wait for accessing your website.
     icon: nested-routes.svg
-    iconDark: nested-routes-dark.svg
-    iconColor: nested-routes-green.svg
+    iconColor: nested-routes-white.svg
   - title: Dynamic routes
+    description: 'Once the website is loaded, users will discover a new experience: an application feeling right into their browser.'
     icon: dynamic-routes.svg
-    iconDark: dynamic-routes-dark.svg
-    iconColor: dynamic-routes-green.svg
+    iconColor: dynamic-routes-white.svg
   - title: Middleware
+    description: Nuxt server renders your pages to bring your website the full visibility it deserves so users will find you website.
     icon: middleware.svg
-    iconDark: middleware-dark.svg
-    iconColor: middleware-green.svg
+    iconColor: middleware-white.svg
 ---
