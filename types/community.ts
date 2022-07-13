@@ -10,7 +10,7 @@ export interface CommunityRepository {
   createdAt: string
   owner: { login: string }
   collaborators: {
-    totalCount: number,
+    totalCount: number
     nodes: [{ id: string }]
   }
 }
@@ -45,13 +45,30 @@ export interface FormattedCommunityPartner extends Omit<CommunityPartner, 'servi
 }
 
 export interface CommunityNuxter {
-  id: number,
-  username: string,
-  name: string,
-  avatar: string,
-  issuesCount: number,
-  pullRequestsCount: number,
-  commentsCount: number,
-  activitiesCount: number,
+  id: number
+  username: string
+  name: string
+  avatar: string
+  issuesCount: number
+  pullRequestsCount: number
+  commentsCount: number
+  activitiesCount: number
   rank?: number
+}
+
+export interface CommunityJob {
+  id: number
+  title: string
+  description: string
+  type: string
+  location: string
+  url: string
+  company: {
+    name: string
+    avatar: string
+  }
+  published_at: {
+    date: string
+    for_humans: string
+  }
 }
