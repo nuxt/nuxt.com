@@ -18,7 +18,7 @@ const { types, selectedType } = useCommunityJobs()
 const typesWithPlaceholder = computed(() => [
   {
     value: '',
-    text: 'Type'
+    text: 'All'
   },
   ...types.value
 ])

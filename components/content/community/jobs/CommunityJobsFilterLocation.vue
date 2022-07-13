@@ -18,7 +18,7 @@ const { locations, selectedLocation } = useCommunityJobs()
 const locationsWithPlaceholder = computed(() => [
   {
     value: '',
-    text: 'Location'
+    text: 'All'
   },
   ...locations.value
 ])
