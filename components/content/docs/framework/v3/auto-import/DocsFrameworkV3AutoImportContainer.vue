@@ -155,97 +155,14 @@
         </div>
       </div>
     </div>
-    <!--div class="absolute top-[52px] left-[54px] text-gray-400">
-        <span class="absolute transition-opacity duration-300" :class="section1Steps.concat(section3Steps).includes(currentSection) ? 'opacity-100' : 'opacity-0'">pages</span>
-        <span class="absolute transition-opacity duration-300" :class="section2Steps.includes(currentSection) ? 'opacity-100' : 'opacity-0'">components</span>
-      </div>
-      <div class="absolute top-[100px] left-[88px] text-white">
-        <span class="absolute transition-opacity duration-300" :class="section1Steps.concat(section3Steps).includes(currentSection) ? 'opacity-100' : 'opacity-0'">index.vue</span>
-        <span class="absolute transition-opacity duration-300" :class="section2Steps.includes(currentSection) ? 'opacity-100' : 'opacity-0'">Mouse.vue</span>
-      </div>
-      <div class="absolute top-[47%] left-[52px] text-gray-400">
-        <span class="absolute transition-opacity duration-300" :class="section1Steps.includes(currentSection) ? 'opacity-100' : 'opacity-0'">components</span>
-        <span class="absolute transition-opacity duration-300" :class="section2Steps.includes(currentSection) ? 'opacity-100' : 'opacity-0'">composables</span>
-        <span class="absolute transition-opacity duration-300" :class="section3Steps.includes(currentSection) ? 'opacity-100' : 'opacity-0'">plugins</span>
-      </div>
-      <div class="absolute top-[218px] left-[88px] text-gray-400">
-        <span class="absolute transition-opacity duration-300" :class="section1Steps.includes(currentSection) ? 'opacity-100' : 'opacity-0'">header.vue</span>
-        <span class="absolute transition-opacity duration-300" :class="section2Steps.includes(currentSection) ? 'opacity-100' : 'opacity-0'">useMouse.js</span>
-        <span class="absolute transition-opacity duration-300" :class="section3Steps.includes(currentSection) ? 'opacity-100' : 'opacity-0'">global.js</span>
-      </div>
-      <div class="absolute top-[260px] left-[88px] text-gray-400 transition-opacity duration-300" :class="section1Steps.includes(currentSection) ? 'opacity-100' : 'opacity-0'">
-        footer.vue
-      </div>
-      <img
-        src="/assets/docs/v3/auto-import/components-template.svg"
-        class="absolute left-[250px] top-[62px] transition-opacity duration-300"
-        :class="section1Steps.includes(currentSection) ? 'opacity-100' : 'opacity-0'"
-        alt="Components template header and footer"
-      >
-      <DocsFrameworkV3AutoImportComponentsScript class="absolute left-[250px] top-1/2" :current-section="currentSection" :steps-section="section1Steps" />
-      <DocsFrameworkV3AutoImportComposablesMouse class="absolute left-[250px] top-[62px]" :current-section="currentSection" :steps-section="section2Steps" />
-      <DocsFrameworkV3AutoImportPluginsTemplate class="absolute left-[250px] top-[62px]" :current-section="currentSection" :steps-section="section3Steps" />
-      <img
-        src="/assets/docs/v3/auto-import/container.svg"
-        alt="animation container"
-        class="absolute inset-0 z-0 text-gray-900 dark:text-gray-800"
-        :class="[0, 6, 7, 13, 14].includes(currentSection) ? 'opacity-0' : 'opacity-80 dark:opacity-60'"
-      >
-    </div-->
   </div>
 </template>
 
 <script setup lang="ts">
-import { useMotion } from '@vueuse/motion'
-
-const props = defineProps({
+defineProps({
   currentSection: {
     type: Number,
     default: 0
-  },
-  section1Steps: {
-    type: Array,
-    default: () => []
-  },
-  section2Steps: {
-    type: Array,
-    default: () => []
-  },
-  section3Steps: {
-    type: Array,
-    default: () => []
-  }
-})
-
-const secondLineFolder = ref(null)
-const secondLineMotion = useMotion(secondLineFolder,
-  {
-    initial: {
-      opacity: 1,
-      transition: {
-        duration: 500
-      }
-    },
-    in: {
-      opacity: 1,
-      transition: {
-        duration: 500
-      }
-    },
-    out: {
-      opacity: 0,
-      transition: {
-        duration: 500
-      }
-    }
-  }
-)
-
-watch(() => props.currentSection, () => {
-  if (props.section2Steps.concat(props.section3Steps).includes(props.currentSection)) {
-    secondLineMotion.apply('out')
-  } else {
-    secondLineMotion.apply('in')
   }
 })
 </script>

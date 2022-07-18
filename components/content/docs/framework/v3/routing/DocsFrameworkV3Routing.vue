@@ -5,8 +5,6 @@
         v-for="(data, index) in routingData.routings"
         :key="data.title"
         class="relative flex flex-col p-4 transition duration-200 rounded-md cursor-pointer md:flex-row gap-x-2 group hover:u-bg-gray-50"
-        @mouseenter="currentSection = index"
-        @mouseleave="currentSection = null"
         @click="currentSection = index"
       >
         <div
