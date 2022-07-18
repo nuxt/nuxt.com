@@ -6,6 +6,7 @@
         :key="data.title"
         class="relative flex flex-col p-4 transition duration-200 rounded-md cursor-pointer md:flex-row gap-x-2 group hover:u-bg-gray-50"
         @click="currentSection = index"
+        @mouseenter="currentSection = index"
       >
         <div
           class="absolute top-0 left-0 flex items-center justify-center w-12 h-12 p-3 mt-4 ml-4 transition duration-200 rounded-md group-hover:opacity-0 u-bg-gray-100"
