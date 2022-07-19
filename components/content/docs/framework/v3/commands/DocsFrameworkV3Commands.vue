@@ -1,104 +1,32 @@
 <template>
-  <div ref="root" class="grid pt-12 grid-rows-12 gap-y-12">
-    <ul class="flex items-center row-span-3 gap-x-16">
-      <li
-        v-for="(data, index) in commandsData.commands"
-        :key="data.title"
-        class="flex flex-col items-center justify-center cursor-pointer gap-y-2"
-        :class="[{ 'cursor-auto': index === 4 }, {'opacity-50 cursor-auto': sectionAnimating && (
-          (!section1Steps.includes(currentSection) && index === 0) ||
-          (!section2Steps.includes(currentSection) && index === 1) ||
-          (!section3Steps.includes(currentSection) && index === 2) ||
-          (!section4Steps.includes(currentSection) && index === 3)
-        )}]"
-        @click="!sectionAnimating ? restartAnimation(index, index === 1 ? false : true) : () => {}"
+  <ul ref="root" class="grid grid-cols-1 gap-y-8 sm:gap-x-4 md:gap-x-8 lg:gap-x-16 sm:grid-cols-2">
+    <li
+      v-for="data in commandsData.commands"
+      :key="data.title"
+      class="relative flex flex-col p-4 rounded-md md:flex-row gap-x-2"
+    >
+      <div
+        class="absolute top-0 left-0 flex items-center justify-center w-12 h-12 p-3 mt-4 ml-4 rounded-md u-bg-gray-100"
       >
-        <div class="relative">
-          <Hexagon class="h-20 w-22 u-text-gray-50" />
-          <div class="absolute top-0 flex items-center justify-center w-full h-full ">
-            <img
-              :src="`/assets/docs/v3/commands/${colorMode.preference === 'dark' ? data.iconDark : data.icon}`"
-              class="absolute w-12 h-12 transition-opacity duration-0"
-              :alt="`${data.title} icon`"
-              :class="isCurrentSection(index) ? 'opacity-0' : 'opacity-100'"
-            >
-            <img
-              v-if="index !== commandsData.commands.length - 1"
-              :src="`/assets/docs/v3/commands/${data.iconColor}`"
-              class="absolute w-12 h-12 transition-opacity duration-0"
-              :alt="`${data.title} icon`"
-              :class="isCurrentSection(index) ? 'opacity-100' : 'opacity-0'"
-            >
-          </div>
-        </div>
-        <h6
-          class="text-lg transition-colors duration-0"
-          :class="isCurrentSection(index) ? 'text-green-400' : 'u-text-gray-500'"
+        <img
+          :src="`/assets/docs/v3/commands/${data.icon}`"
+          :alt="`${data.icon} icon`"
         >
+      </div>
+      <div class="flex flex-col pt-16 md:pt-0 md:pl-16 gap-y-2">
+        <h6 class="text-lg font-semibold u-text-gray-900">
           {{ data.title }}
         </h6>
-      </li>
-    </ul>
-    <div class="relative flex items-center justify-center w-full h-full row-span-9">
-      <DocsFrameworkV3CommandsContainer
-        :current-section="currentSection"
-        :section1-steps="section1Steps"
-        :section2-steps="section2Steps"
-        :section3-steps="section3Steps"
-        :section4-steps="section4Steps"
-        @restart="restartCounter(animationsDelay, 5)"
-      />
-    </div>
-  </div>
+        <p class="u-text-gray-700">
+          {{ data.description }}
+        </p>
+      </div>
+    </li>
+  </ul>
 </template>
 
 <script setup lang="ts">
-import type { Ref } from 'vue'
 
 const { data: commandsData } = await useAsyncData('commands', () => queryContent('/docs/3.x/_collections/commands').findOne())
 
-const { currentSection, restartCounter, stopCounter } = useCounterAnimations()
-const colorMode = useColorMode()
-
-const root = ref(null) as Ref<Element>
-const observer = ref() as Ref<IntersectionObserver>
-const sectionAnimating = ref(false)
-const animationsDelay = [500, 500, 4000, 10000, 3000, 3000, 3000, 3000, 3000, 3000, 2000, 1000, 3000]
-const section1Steps = [0, 1, 2]
-const section2Steps = [3, 4]
-const section3Steps = [5, 6, 7, 8, 9]
-const section4Steps = [10, 11, 12]
-
-const observerCallback = (entries: IntersectionObserverEntry[]) =>
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      restartCounter(animationsDelay, currentSection.value)
-    } else {
-      stopCounter()
-    }
-  })
-
-const restartAnimation = (section: number, timeout = true) => {
-  if (timeout) {
-    sectionAnimating.value = true
-    setTimeout(() => {
-      sectionAnimating.value = false
-    }, section === 0 ? 5000 : section === 1 ? 13000 : section === 2 ? 15000 : 6000)
-  }
-
-  restartCounter(animationsDelay, section === 1 ? 3 : section === 2 ? 5 : section === 3 ? 10 : 0)
-}
-
-const isCurrentSection = (index) => {
-  return (section1Steps.includes(currentSection.value) && index === 0) ||
-    (section2Steps.includes(currentSection.value) && index === 1) ||
-    (section3Steps.includes(currentSection.value) && index === 2) ||
-    (section4Steps.includes(currentSection.value) && index === 3)
-}
-
-onBeforeMount(() => (observer.value = new IntersectionObserver(observerCallback)))
-
-onMounted(() => observer.value.observe(root.value))
-
-onBeforeUnmount(() => observer.value?.disconnect())
 </script>
