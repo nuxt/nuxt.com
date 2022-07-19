@@ -1,6 +1,8 @@
 
 <template>
-  <div class="relative w-[801px] h-[415px] bg-gray-100 dark:bg-gray-900 rounded-lg flex items-center shadow-xl backdrop-blur-sm bg-opacity-50 ">
+<div class="relative w-[701px] h-[415px]">
+  <img class="absolute right-4 -top-8" src="/assets/docs/v3/routing/gem.svg" alt="gem illustration">
+  <div class="relative w-[701px] h-[415px] bg-gray-100 dark:bg-gray-900 rounded-lg flex items-center shadow-xl backdrop-blur-sm bg-opacity-50 ">
     <div class="absolute inset-0 flex flex-col items-center justify-center gap-y-4" :class="currentSection === null ? 'opacity-100' : 'opacity-0'">
       <Logo class="w-[48px] h-[32px]" />
       <div class="w-full h-[6px] bg-gray-200" />
@@ -21,8 +23,8 @@
       class="absolute inset-0 flex flex-col items-center justify-center space-y-2 transition-opacity duration-300"
       :class="currentSection === 1 ? 'opacity-100' : 'opacity-0'"
     >
-      <div class="bg-gray-200 dark:bg-gray-600 rounded-xl w-[371px] h-[143px]" />
-      <div v-for="(line, index) in 8" :key="index" class="flex flex-col gap-y-3" :class="index === 0 ? 'w-[150px] self-start ml-[215px]' : 'w-[371px]' ">
+      <div class="bg-gray-200 dark:bg-gray-600 rounded-xl w-[300px] h-[143px]" />
+      <div v-for="(line, index) in 8" :key="index" class="flex flex-col gap-y-3" :class="index === 0 ? 'w-[100px] self-start ml-[300px]' : 'w-[300px]' ">
         <div class="w-full bg-gray-200 dark:bg-gray-600 h-[11px] rounded-xl" />
       </div>
     </div>
@@ -46,12 +48,12 @@
           :class="[(dashboardHovered || messageHovered || idHovered) ? 'bg-green-400 rounded-r-md' : 'bg-gray-200',
                    { 'border border-t-4 border-l-4 border-r-none border-b-none border-green-500': idHovered }]"
         >
-          <div class="w-[152px] h-8 rounded-3xl mt-[45px]" :class="dashboardHovered || idHovered || messageHovered ? 'bg-green-200' : 'bg-gray-100'" />
-          <div class="w-[152px] h-8 rounded-3xl place-self-end mb-8" :class="dashboardHovered || idHovered || messageHovered ? 'bg-green-200' : 'bg-gray-100'" />
-          <div class="w-[152px] h-8 rounded-3xl mt-8" :class="dashboardHovered || idHovered || messageHovered ? 'bg-green-200' : 'bg-gray-100'" />
-          <div class="w-[152px] h-8 rounded-3xl place-self-end mb-8" :class="dashboardHovered || idHovered || messageHovered ? 'bg-green-200' : 'bg-gray-100'" />
-          <div class="w-[232px] h-8 rounded-3xl self-end" :class="dashboardHovered || idHovered || messageHovered ? 'bg-green-200' : 'bg-gray-100'" />
-          <div class="w-[100px] h-8 rounded-3xl mb-8 place-self-end" :class="dashboardHovered || idHovered || messageHovered ? 'bg-green-200' : 'bg-gray-100'" />
+          <div class="w-[132px] h-8 rounded-3xl mt-[45px]" :class="dashboardHovered || idHovered || messageHovered ? 'bg-green-200' : 'bg-gray-100'" />
+          <div class="w-[132px] h-8 rounded-3xl place-self-end mb-8" :class="dashboardHovered || idHovered || messageHovered ? 'bg-green-200' : 'bg-gray-100'" />
+          <div class="w-[132px] h-8 rounded-3xl mt-8" :class="dashboardHovered || idHovered || messageHovered ? 'bg-green-200' : 'bg-gray-100'" />
+          <div class="w-[132px] h-8 rounded-3xl place-self-end mb-8" :class="dashboardHovered || idHovered || messageHovered ? 'bg-green-200' : 'bg-gray-100'" />
+          <div class="w-[212px] h-8 rounded-3xl self-end" :class="dashboardHovered || idHovered || messageHovered ? 'bg-green-200' : 'bg-gray-100'" />
+          <div class="w-[80px] h-8 rounded-3xl mb-8 place-self-end" :class="dashboardHovered || idHovered || messageHovered ? 'bg-green-200' : 'bg-gray-100'" />
         </div>
       </div>
     </div>
@@ -74,19 +76,20 @@
       <div class="absolute inset-0 left-[60px]">
         <div class="h-[23px] w-[178px] bg-gray-200 mt-8 rounded-xl" />
         <div class="flex gap-x-[34px] mt-8">
-          <div class="h-[110px] w-[198px] bg-gray-200 rounded-xl" />
+          <div class="h-[110px] w-[168px] bg-gray-200 rounded-xl" />
           <div class="h-[110px] w-[370px] bg-gray-200 rounded-xl" />
         </div>
         <div class="flex gap-x-[34px] mt-8">
-          <div class="h-[110px] w-[198px] bg-gray-200 rounded-xl" />
-          <div class="h-[110px] w-[198px] bg-gray-200 rounded-xl" />
-          <div class="h-[110px] w-[198px] bg-gray-200 rounded-xl" />
+          <div class="h-[110px] w-[168px] bg-gray-200 rounded-xl" />
+          <div class="h-[110px] w-[168px] bg-gray-200 rounded-xl" />
+          <div class="h-[110px] w-[168px] bg-gray-200 rounded-xl" />
         </div>
       </div>
     </div>
     <!-- terminal -->
     <div class="absolute -left-12 w-[230px] h-full top-[86px] h-[300px] rounded-md bg-gray-800 px-2 py-4">
       <div class="relative w-full h-full">
+        <img class="absolute -bottom-10 right-2" src="/assets/docs/v3/routing/gem-small.png" alt="gem illustration">
         <DocsFrameworkV3RoutingFolder v-if="currentSection === null" class="absolute top-0 left-0" :class="currentSection === null ? 'opacity-100' : 'opacity-0'">
           pages
         </DocsFrameworkV3RoutingFolder>
@@ -175,6 +178,7 @@
       </div>
     </div>
   </div>
+</div>
 </template>
 
 <script setup lang="ts">

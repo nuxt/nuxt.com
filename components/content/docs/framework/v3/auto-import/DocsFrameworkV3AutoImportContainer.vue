@@ -1,6 +1,7 @@
 <template>
   <div class="relative flex">
-    <div>
+    <img src="/assets/docs/v3/auto-import/gem.svg" alt="gem illustration" class="absolute -right-16 -bottom-24">
+    <div class="relative">
       <svg
         width="756"
         height="367"

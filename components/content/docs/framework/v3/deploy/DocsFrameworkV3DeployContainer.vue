@@ -1,5 +1,6 @@
 <template>
   <div class="w-[600px] h-[350px] flex items-center justify-center gap-x-12 relative">
+    <img class="absolute w-full h-full -right-60 opacity-40" src="/assets/docs/v3/deploy/gradient.svg" alt="gem illustration">
     <div class="absolute" :class="[{ 'p-4 border-[6px] border-green-400 rounded-xl': currentSection === 0 }, [0, null].includes(currentSection) ? 'opacity-100' : 'opacity-0']">
       <img src="/assets/docs/v3/deploy/server.svg" alt="server image" class="w-[380px] h-[250px]">
     </div>

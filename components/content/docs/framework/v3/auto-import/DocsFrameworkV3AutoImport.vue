@@ -15,6 +15,7 @@
         >
           <img
             :src="`/assets/docs/v3/auto-import/${data.icon}`"
+            :alt="`${data.icon} icon`"
             class="transition duration-200 group-hover:opacity-0"
             :class="currentSection === index ? 'opacity-0' : 'opacity-100'"
           >
@@ -25,6 +26,7 @@
         >
           <img
             :src="`/assets/docs/v3/auto-import/${data.iconColor}`"
+            :alt="`${data.iconColor} icon`"
             class="transition duration-200 opacity-0 group-hover:opacity-100"
             :class="currentSection === index ? 'opacity-100' : 'opacity-0'"
           >
@@ -39,7 +41,7 @@
         </div>
       </li>
     </ul>
-    <div class="top-0 right-0 flex items-center justify-center flex-1 xl:absolute 2xl:-right-32 top-24">
+    <div class="top-0 right-0 flex items-center justify-center flex-1 xl:absolute 2xl:-right-32 top-10">
       <div class="xl:ml-20">
         <DocsFrameworkV3AutoImportContainer :current-section="currentSection" />
       </div>
