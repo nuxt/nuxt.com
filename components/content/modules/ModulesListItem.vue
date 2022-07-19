@@ -1,17 +1,6 @@
 <template>
   <UCard padded shadow-class="" class="relative transition duration-200 hover:ring-2 hover:u-ring-gray-900">
-    <div class="mt-2 mb-6">
-      <img
-        v-if="!coverError && module.icon"
-        :src="module.icon.match(/^http(s)?:\/\//) ? module.icon : 'https://api.nuxtjs.org/api/ipx/s_80,f_webp/gh/nuxt/modules/main/website/public/icons/' + module.icon"
-        :alt="module.title"
-        class="w-auto h-12"
-        @error="coverError = true"
-      >
-      <div v-else class="flex items-center w-12 h-12 p-2 rounded-lg u-bg-gray-100">
-        <UIcon name="heroicons-outline:photograph" class="w-8 h-8 u-text-gray-400" />
-      </div>
-    </div>
+    <ModulesListItemCover :icon="module.icon" :alt="module.name" class="mt-2 mb-6" />
 
     <div class="flex items-center gap-1.5">
       <p class="text-lg font-semibold">
@@ -46,7 +35,7 @@
       </div>
     </div>
 
-    <NuxtLink :to="module.website" target="_blank" class="focus:outline-none" tabindex="-1">
+    <NuxtLink :to="`/modules/${module.name}`" class="focus:outline-none" tabindex="-1">
       <span class="absolute inset-0" aria-hidden="true" />
     </NuxtLink>
   </UCard>
@@ -63,6 +52,4 @@ defineProps({
     default: () => null
   }
 })
-
-const coverError = ref(false)
 </script>
