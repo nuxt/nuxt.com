@@ -25,6 +25,7 @@
         >
           <img
             :src="`/assets/docs/v3/architecture/${data.iconColor}`"
+            :alt="`${data.iconColor} icon`"
             class="transition duration-200 opacity-0 group-hover:opacity-100"
             :class="currentSection === index ? 'opacity-100' : 'opacity-0'"
           >
