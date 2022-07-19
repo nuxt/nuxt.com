@@ -1,76 +1,60 @@
 <template>
-  <div ref="root" class="grid pt-12 grid-rows-12 gap-y-12">
-    <ul class="flex items-center row-span-3 gap-x-16">
+  <div ref="root" class="relative flex flex-col justify-center gap-y-20 xl:flex-row xl:justify-between">
+    <ul class="grid grid-cols-1 rounded-md xl:flex xl:flex-col xl:w-2/5 gap-y-2">
       <li
         v-for="(data, index) in routingData.routings"
         :key="data.title"
-        class="flex flex-col items-center justify-center cursor-pointer gap-y-2"
-        :class="sectionAnimating && currentSection !== index ? 'opacity-50 cursor-auto' : 'opacity-100'"
-        @click="!sectionAnimating ? restartAnimation(index) : () => {}"
+        class="relative flex flex-col p-4 transition duration-200 rounded-md cursor-pointer md:flex-row gap-x-2 group hover:u-bg-gray-50"
+        @click="currentSection = index"
+        @mouseenter="currentSection = index"
       >
-        <div class="relative">
-          <Hexagon class="h-20 w-22 u-text-gray-50" />
-          <div class="absolute top-0 flex items-center justify-center w-full h-full ">
-            <img
-              :src="`/assets/docs/v3/routing/${colorMode.preference === 'dark' ? data.iconDark : data.icon}`"
-              class="absolute w-12 h-12 transition-opacity duration-0"
-              :alt="`${data.title} icon`"
-              :class="currentSection === index ? 'opacity-0' : 'opacity-100'"
-            >
-            <img
-              :src="`/assets/docs/v3/routing/${data.iconColor}`"
-              class="absolute w-12 h-12 transition-opacity duration-0"
-              :alt="`${data.title} icon`"
-              :class="currentSection === index ? 'opacity-100' : 'opacity-0'"
-            >
-          </div>
+        <div
+          class="absolute top-0 left-0 flex items-center justify-center w-12 h-12 p-3 mt-4 ml-4 transition duration-200 rounded-md group-hover:opacity-0 u-bg-gray-100"
+          :class="currentSection === index ? 'opacity-0' : 'opacity-100'"
+        >
+          <img
+            :src="`/assets/docs/v3/routing/${data.icon}`"
+            :alt="`${data.icon} icon`"
+            class="transition duration-200 group-hover:opacity-0"
+            :class="currentSection === index ? 'opacity-0' : 'opacity-100'"
+          >
         </div>
-        <h6 class="text-lg transition-colors duration-0" :class="currentSection === index ? 'text-green-400' : 'u-text-gray-500'">
-          {{ data.title }}
-        </h6>
+        <div
+          class="absolute top-0 left-0 flex items-center justify-center w-12 h-12 p-3 mt-4 ml-4 transition duration-200 rounded-md opacity-0 group-hover:opacity-100 bg-gradient-to-b from-green-600 to-green-400"
+          :class="currentSection === index ? 'opacity-100' : 'opacity-0'"
+        >
+          <img
+            :src="`/assets/docs/v3/routing/${data.iconColor}`"
+            :alt="`${data.iconColor} icon`"
+            class="transition duration-200 opacity-0 group-hover:opacity-100"
+            :class="currentSection === index ? 'opacity-100' : 'opacity-0'"
+          >
+        </div>
+        <div class="flex flex-col pt-16 md:pt-0 md:pl-16 gap-y-2">
+          <h6 class="text-lg font-semibold u-text-gray-900">
+            {{ data.title }}
+          </h6>
+          <p class="u-text-gray-700">
+            {{ data.description }}
+          </p>
+        </div>
       </li>
     </ul>
-    <div class="relative flex items-center justify-center w-full h-full row-span-9">
-      <DocsFrameworkV3RoutingContainer :current-section="currentSection" class="flex items-start" />
+    <div class="top-0 right-0 flex items-center justify-center flex-1 xl:absolute 2xl:-right-32 top-24">
+      <div class="xl:ml-20">
+        <DocsFrameworkV3RoutingContainer :current-section="currentSection" />
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { Ref } from 'vue'
+const { data: routingData } = await useAsyncData('routing', () => queryContent('/docs/3.x/_collections/routing').findOne())
 
-const { data: routingData } = await useAsyncData('file-system-routing', () => queryContent('/docs/3.x/_collections/routing').findOne())
+const currentSection = ref()
 
-const { currentSection, restartCounter, stopCounter } = useCounterAnimations()
-const colorMode = useColorMode()
-
-const observer = ref() as Ref<IntersectionObserver>
-const root = ref(null) as Ref<Element>
-const sectionAnimating = ref(false)
-const animationsDelay = [4000, 4000, 4000, 4000]
-
-const observerCallback = (entries: IntersectionObserverEntry[]) =>
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      restartCounter(animationsDelay, currentSection.value)
-    } else {
-      stopCounter()
-    }
-  })
-
-const restartAnimation = (section: number) => {
-  sectionAnimating.value = true
-
-  setTimeout(() => {
-    sectionAnimating.value = false
-  }, 4000)
-
-  restartCounter(animationsDelay, section)
+const hoveredSection = (index) => {
+  currentSection.value = index
 }
 
-onBeforeUnmount(() => observer.value?.disconnect())
-
-onBeforeMount(() => (observer.value = new IntersectionObserver(observerCallback)))
-
-onMounted(() => observer.value.observe(root.value))
 </script>
