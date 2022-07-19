@@ -2,7 +2,7 @@
 deploy:
   - title: Server
     description: Nuxt server renders your pages to bring your website the full visibility it deserves so users will find you website.
-    icon: server.svg
+    icon: server-icon.svg
     iconDark: server-dark.svg
     iconColor: server-green.svg
   - title: Static
