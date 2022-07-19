@@ -11,7 +11,7 @@
         @click="currentSection = index"
       >
         <div
-          class="absolute top-0 left-0 flex items-center justify-center w-12 h-12 p-3 mt-4 ml-4 transition duration-200 rounded-md group-hover:opacity-0 u-bg-gray-200"
+          class="absolute top-0 left-0 flex items-center justify-center w-12 h-12 p-3 mt-4 ml-4 transition duration-200 rounded-md group-hover:opacity-0 u-bg-gray-100"
           :class="{ 'opacity-0': index === currentSection }"
         >
           <img

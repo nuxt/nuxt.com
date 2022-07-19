@@ -3,7 +3,7 @@
 <div class="relative w-[701px] h-[415px]">
   <img class="absolute right-4 -top-8" src="/assets/docs/v3/routing/gem.svg" alt="gem illustration">
   <div class="relative w-[701px] h-[415px] bg-gray-100 dark:bg-gray-900 rounded-lg flex items-center shadow-xl backdrop-blur-sm bg-opacity-50 ">
-    <div class="absolute inset-0 flex flex-col items-center justify-center gap-y-4" :class="currentSection === null ? 'opacity-100' : 'opacity-0'">
+    <div class="absolute inset-0 flex flex-col items-center justify-center transition-opacity duration-300 gap-y-4" :class="currentSection === null ? 'opacity-100' : 'opacity-0'">
       <Logo class="w-[48px] h-[32px]" />
       <div class="w-full h-[6px] bg-gray-200" />
     </div>
@@ -30,7 +30,7 @@
     </div>
 
     <div
-      class="absolute inset-0 flex rounded-l-2xl"
+      class="absolute inset-0 flex transition-opacity duration-300 rounded-l-2xl"
       :class="currentSection === 2 ? 'opacity-100' : 'opacity-0'"
     >
       <div class="absolute inset-y-0 left-0 w-[39px] rounded-l-xl h-full" :class="dashboardHovered ? 'bg-green-300' : 'bg-gray-200'" />
@@ -58,7 +58,7 @@
       </div>
     </div>
     <div
-      class="flex flex-col items-center justify-center w-full h-full gap-y-6"
+      class="flex flex-col items-center justify-center w-full h-full transition-opacity duration-300 gap-y-6"
       :class="currentSection === 3 && step === 0 ? 'opacity-100' : 'opacity-0'"
     >
       <div class="flex flex-col gap-y-[14px] items-center">
@@ -69,7 +69,7 @@
       <div class="rounded-lg u-bg-gray-300 w-[79px] h-[23px]" />
     </div>
     <div
-      class="absolute inset-0 flex w-full h-full gap-y-6"
+      class="absolute inset-0 flex w-full h-full transition-opacity duration-300 gap-y-6"
       :class="currentSection === 3 && step === 1 ? 'opacity-100' : 'opacity-0'"
     >
       <div class="absolute inset-y-0 left-0 w-[39px] rounded-l-xl h-full bg-gray-200" />
@@ -90,10 +90,10 @@
     <div class="absolute -left-12 w-[230px] h-full top-[86px] h-[300px] rounded-md bg-gray-800 px-2 py-4">
       <div class="relative w-full h-full">
         <img class="absolute -bottom-10 right-2" src="/assets/docs/v3/routing/gem-small.png" alt="gem illustration">
-        <DocsFrameworkV3RoutingFolder v-if="currentSection === null" class="absolute top-0 left-0" :class="currentSection === null ? 'opacity-100' : 'opacity-0'">
+        <DocsFrameworkV3RoutingFolder v-if="currentSection === null" class="absolute top-0 left-0 transition-opacity duration-300" :class="currentSection === null ? 'opacity-100' : 'opacity-0'">
           pages
         </DocsFrameworkV3RoutingFolder>
-        <div v-if="currentSection === 0" class="absolute inset-0" :class="currentSection === 0 ? 'opacity-100' : 'opacity-0'">
+        <div v-if="currentSection === 0" class="absolute inset-0">
           <DocsFrameworkV3RoutingFolder line chevron-down>
             pages
           </DocsFrameworkV3RoutingFolder>
@@ -101,7 +101,7 @@
             <span class="text-gray-100">index.vue</span>
           </DocsFrameworkV3RoutingFile>
         </div>
-        <div v-if="currentSection === 1" class="absolute inset-0" :class="currentSection === 1 ? 'opacity-100' : 'opacity-0'">
+        <div v-if="currentSection === 1" class="absolute inset-0">
           <DocsFrameworkV3RoutingFolder line chevron-down>
             pages
           </DocsFrameworkV3RoutingFolder>
@@ -115,7 +115,7 @@
             index.vue
           </DocsFrameworkV3RoutingFile>
         </div>
-        <div v-if="currentSection === 2" class="absolute inset-0" :class="currentSection === 2 ? 'opacity-100' : 'opacity-0'">
+        <div v-if="currentSection === 2" class="absolute inset-0">
           <DocsFrameworkV3RoutingFolder line chevron-down>
             pages
           </DocsFrameworkV3RoutingFolder>
@@ -141,7 +141,7 @@
             index.vue
           </DocsFrameworkV3RoutingFile>
         </div>
-        <div v-if="currentSection === 3" class="absolute inset-0" :class="currentSection === 3 ? 'opacity-100' : 'opacity-0'">
+        <div v-if="currentSection === 3" class="absolute inset-0">
           <DocsFrameworkV3RoutingFolder line chevron-down line-class="inset-y-0 left-2 bottom-20 top-8">
             pages
           </DocsFrameworkV3RoutingFolder>
