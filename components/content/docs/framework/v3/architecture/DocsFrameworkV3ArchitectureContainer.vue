@@ -1,8 +1,8 @@
 <template>
   <div class="relative w-[300px] h-[420px] md:w-[666px] md:h-[394px]">
-    <img src="/assets/docs/v3/architecture/gem-small.svg" class="absolute -left-[40px] bottom-8 z-[2] w-[58px] h-[52px]">
-    <img src="/assets/docs/v3/architecture/gem-medium.svg" class="absolute left-[40px] -top-[40px] z-0 w-[116px] h-[104px]">
-    <img src="/assets/docs/v3/architecture/gem-medium.svg" class="absolute -right-[40px] bottom-6 z-0 w-[171px] h-[153px]">
+    <img src="/assets/docs/v3/architecture/gem-small.svg" alt="gem illustration" class="absolute -left-[40px] bottom-8 z-[2] w-[58px] h-[52px]">
+    <img src="/assets/docs/v3/architecture/gem-medium.svg" alt="gem illustration" class="absolute left-[40px] -top-[40px] z-0 w-[116px] h-[104px]">
+    <img src="/assets/docs/v3/architecture/gem-medium.svg" alt="gem illustration" class="absolute -right-[40px] bottom-6 z-0 w-[171px] h-[153px]">
     <div
       class="relative w-full h-full shadow-xl rounded-lg flex flex-col py-3 px-4 transtion-colors duration-300 z-[1]"
       :class="currentSection === 3 ? 'bg-green-400' : 'bg-gray-50 dark:bg-gray-900 dark:bg-opacity-50 backdrop-blur-sm bg-opacity-50'"

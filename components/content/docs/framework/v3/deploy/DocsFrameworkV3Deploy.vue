@@ -16,6 +16,7 @@
         >
           <img
             :src="`/assets/docs/v3/deploy/${data.icon}`"
+            :alt="`${data.icon} icon`"
             class="transition duration-200 group-hover:opacity-0"
             :class="{ 'opacity-0': index === currentSection }"
           >
@@ -26,6 +27,7 @@
         >
           <img
             :src="`/assets/docs/v3/deploy/${data.iconColor}`"
+            :alt="`${data.iconColor} icon`"
             class="transition duration-200 opacity-0 group-hover:opacity-100"
             :class="index === currentSection ? 'opacity-100' : 'opacity-0'"
           >

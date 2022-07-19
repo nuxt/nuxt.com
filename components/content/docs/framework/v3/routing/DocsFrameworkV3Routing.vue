@@ -14,6 +14,7 @@
         >
           <img
             :src="`/assets/docs/v3/routing/${data.icon}`"
+            :alt="`${data.icon} icon`"
             class="transition duration-200 group-hover:opacity-0"
             :class="currentSection === index ? 'opacity-0' : 'opacity-100'"
           >
@@ -24,6 +25,7 @@
         >
           <img
             :src="`/assets/docs/v3/routing/${data.iconColor}`"
+            :alt="`${data.iconColor} icon`"
             class="transition duration-200 opacity-0 group-hover:opacity-100"
             :class="currentSection === index ? 'opacity-100' : 'opacity-0'"
           >

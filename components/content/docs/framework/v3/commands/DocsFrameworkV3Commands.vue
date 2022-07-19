@@ -10,7 +10,7 @@
       >
         <img
           :src="`/assets/docs/v3/commands/${data.icon}`"
-          :alt="data.icon"
+          :alt="`${data.icon} icon`"
         >
       </div>
       <div class="flex flex-col pt-16 md:pt-0 md:pl-16 gap-y-2">
