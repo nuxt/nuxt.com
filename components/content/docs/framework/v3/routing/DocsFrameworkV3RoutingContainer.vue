@@ -2,7 +2,7 @@
 <template>
   <div class="relative w-[310px] h-[415px] md:w-[701px] md:h-[415px]">
     <img class="absolute right-4 -top-8" src="/assets/docs/v3/routing/gem.svg" alt="gem illustration">
-    <div class="relative w-[310px] h-[415px] md:w-[701px] md:h-[415px] bg-gray-100 dark:bg-gray-900 rounded-lg flex items-center shadow-xl backdrop-blur-sm bg-opacity-50 ">
+    <div class="relative w-[310px] h-[415px] md:w-[701px] md:h-[415px] bg-gray-100 dark:bg-gray-900 rounded-lg flex items-center shadow-xl backdrop-blur-sm bg-opacity-50">
       <div class="absolute inset-0 flex flex-col items-center justify-center transition-opacity duration-300 gap-y-4" :class="currentSection === null ? 'opacity-100' : 'opacity-0'">
         <Logo class="w-[48px] h-[32px]" />
         <div class="w-full h-[6px] bg-gray-200" />
