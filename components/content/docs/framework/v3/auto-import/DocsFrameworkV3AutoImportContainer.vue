@@ -10,7 +10,6 @@
         <div class="absolute h-[1px] bg-gray-600 top-[288px] inset-x-0 md:hidden" />
         <div class="absolute w-[1px] bg-gray-600 left-[220px] top-8 bottom-0 hidden md:block" />
       </div>
-      <!-- img src="/assets/docs/v3/auto-import/terminal.svg" alt="terminal illustration" -->
       <!-- left container -->
       <div class="absolute inset-0 flex flex-col md:flex-row pt-[35px] ">
         <div class="w-[310px] md:w-[330px] relative">

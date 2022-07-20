@@ -39,22 +39,6 @@
           >
         </div>
       </div>
-
-      <!-- <div
-        class="h-[40px] md:h-[6px] w-[6px] absolute md:top-0 md:top-1/2 md:right-[255px] xl:right-12 bg-green-400 md:w-[40px] transition-opacity duration-300"
-        :class="[
-          [0, 2].includes(currentSection) ? 'opacity-100' : 'opacity-0',
-          { 'mr-0.5 top-[321px]': currentSection === 0 }, { 'top-[260px] right-[44px]': currentSection === 2 }]"
-      />
-
-      <img
-        src="/assets/docs/v3/deploy/database.svg"
-        alt="database image"
-        class="w-[100px] h-[70px] md:h-[110px] absolute md:top-1/3 md:right-[155px] xl:-right-12"
-        :class="[
-          [null, 0, 2].includes(currentSection) ? 'opacity-100' : 'opacity-0',
-          { 'top-[360px]': currentSection === 0 }, { 'top-[299px] -right-1': currentSection === 2 }]"
-      > -->
     </div>
   </div>
 </template>
