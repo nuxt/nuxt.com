@@ -7,7 +7,7 @@
           <div v-for="(dot, index) in 3" :key="index" class="h-3 w-3 rounded-full bg-gray-600" />
         </div>
         <div class="absolute h-[1px] bg-gray-600 top-8 inset-x-0" />
-        <div class="absolute h-[1px] bg-gray-600 top-[290px] inset-x-0 md:hidden" />
+        <div class="absolute h-[1px] bg-gray-600 top-[288px] inset-x-0 md:hidden" />
         <div class="absolute w-[1px] bg-gray-600 left-[220px] top-8 bottom-0 hidden md:block" />
       </div>
       <!-- img src="/assets/docs/v3/auto-import/terminal.svg" alt="terminal illustration" -->
