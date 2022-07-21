@@ -4,7 +4,7 @@
     <img src="/assets/home/hero-gradient-tablet.svg" class="absolute top-0 right-0 w-full hidden overflow-hidden select-none sm:block lg:hidden">
     <img src="/assets/home/hero-gradient-mobile.svg" class="absolute inset-x-0 top-0 w-full overflow-hidden object-cover select-none sm:hidden min-h-[800px]">
     <UContainer padded class="relative flex flex-col items-center sm:items-start gap-y-8">
-      <HomeGemWrapper :gemWrapperClass="'block sm:hidden'">
+      <HomeGemWrapper :gem-wrapper-class="'block sm:hidden'">
         <HomeGem />
       </HomeGemWrapper>
       <div v-if="$slots.badgeLabel" class="flex gap-x-2">
@@ -38,7 +38,7 @@
           truncate
         />
       </div>
-      <HomeGemWrapper :gemWrapperClass="'hidden sm:block absolute left-1/3 sm:left-1/3 md:left-1/2 lg:top-[-50px] lg:left-2/3'">
+      <HomeGemWrapper :gem-wrapper-class="'hidden sm:block absolute left-1/3 sm:left-1/3 md:left-1/2 lg:top-[-50px] lg:left-2/3'">
         <HomeGem />
       </HomeGemWrapper>
     </UContainer>
