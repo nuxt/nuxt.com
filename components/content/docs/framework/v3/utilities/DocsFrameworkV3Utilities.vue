@@ -1,5 +1,5 @@
 <template>
-  <ul class="grid grid-cols-2 gap-12">
+  <ul class="grid grid-cols-1 md:grid-cols-2 gap-12">
     <li
       v-for="data in utilitiesData.utilities"
       :key="data.title"

@@ -1,6 +1,6 @@
 <template>
-  <div ref="root" class="grid grid-cols-12">
-    <ul class="flex flex-col col-span-5 rounded-md">
+  <div ref="root" class="relative flex flex-col justify-center gap-y-20 xl:flex-row xl:justify-between">
+    <ul class="grid grid-cols-1 rounded-md xl:flex xl:flex-col xl:w-2/5 gap-y-2">
       <li
         v-for="(data, index) in deployData.deploy"
         ref="sections"
@@ -42,8 +42,10 @@
         </div>
       </li>
     </ul>
-    <div class="flex items-end justify-center col-span-7">
-      <DocsFrameworkV3DeployContainer :current-section="currentSection" />
+    <div class="top-0 right-0 flex items-center justify-center w-full flex-1 xl:absolute 2xl:-right-32 top-10">
+      <div class="xl:ml-20 w-full">
+        <DocsFrameworkV3DeployContainer :current-section="currentSection" />
+      </div>
     </div>
   </div>
 </template>
