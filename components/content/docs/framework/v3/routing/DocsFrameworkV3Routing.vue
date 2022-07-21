@@ -1,6 +1,6 @@
 <template>
   <div ref="root" class="relative flex flex-col justify-center gap-y-20 xl:flex-row xl:justify-between">
-    <ul class="grid grid-cols-1 rounded-md xl:flex xl:flex-col xl:w-2/5 gap-y-2">
+    <ul class="grid grid-cols-1 rounded-md md:grid-cols-2 xl:flex xl:flex-col xl:w-2/5 gap-y-2">
       <li
         v-for="(data, index) in routingData.routings"
         :key="data.title"
