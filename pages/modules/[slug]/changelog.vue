@@ -1,13 +1,16 @@
 <template>
-  <Page class="-mx-8 mt-8" aside-position="right">
+  <Page class="-mx-8" reverse>
     <GithubReleases v-slot="{ releases }" :query="githubQuery">
       <div v-for="release in releases" :key="release.name" class="mb-11">
-        <h2 class="flex items-center gap-2 text-2xl u-text-gray-900 font-semibold mb-7">
-          <span>{{ release.name }} by </span>
-          <UAvatar size="xs" :src="release.author.avatar" :alt="release.author.name" />
-          <span>{{ release.author.name }}</span>
-        </h2>
-        <ContentRenderer :value="release" class="prose dark:prose-invert max-w-none" />
+        <div class="flex gap-3 items-center mb-7">
+          <UIcon name="bx:git-commit" class="w-8 h-8" />
+          <h2 class="flex items-center gap-2 text-2xl u-text-gray-900 font-semibold">
+            <span>{{ release.name }} by </span>
+            <UAvatar size="xs" :src="release.author.avatar" :alt="release.author.name" />
+            <span>{{ release.author.name }}</span>
+          </h2>
+        </div>
+        <ContentRenderer :value="release" class="ml-10 prose dark:prose-invert max-w-none" />
       </div>
     </GithubReleases>
     <template #aside>
