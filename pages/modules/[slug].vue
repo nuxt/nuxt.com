@@ -28,15 +28,19 @@
           <p class="u-text-gray-500 mt-1 text-xl text-center md:text-left">
             {{ module.description }}
           </p>
-          <div class="flex flex-col md:flex-row gap-3 items-center mt-4 u-text-gray-500">
+          <div class="flex justify-center md:justify-start gap-3 mt-4 u-text-gray-500">
             <UAvatarGroup :group="maintainers" size="xs" :max="4" />
             <span>{{ maintainers.length }} Maintainer{{ maintainers.length > 1 ? 's' : '' }}</span>
-            <span>-</span>
+            <div class="hidden md:block">
+              -
+            </div>
             <div class="flex items-center gap-1.5">
               <UIcon name="heroicons-outline:download" class="w-4 h-4" />
               <span>{{ formatNumber(module.downloads) }} installs</span>
             </div>
-            <span>-</span>
+            <div class="hidden md:block">
+              -
+            </div>
             <div class="flex items-center gap-1.5">
               <UIcon name="heroicons-outline:star" class="w-4 h-4" />
               <span>{{ formatNumber(module.stars) }} stars</span>

@@ -1,5 +1,16 @@
 <template>
   <Page reverse class="overflow-hidden md:overflow-visible">
+    <!-- Contributors for mobile (aside section) -->
+    <div class="md:hidden mb-8">
+      <UButton
+        class="u-text-gray-700 px-1"
+        icon="fa-brands:github"
+        variant="transparent"
+        :to="`${module.github}/graphs/contributors`"
+        label="Contributors"
+        target="_blank"
+      />
+    </div>
     <GithubReleases v-slot="{ releases }" :query="githubQuery">
       <div v-for="release in releases" :key="release.name" class="mb-11">
         <div class="flex gap-3 items-center mb-7">
