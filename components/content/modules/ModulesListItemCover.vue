@@ -4,7 +4,7 @@
       v-if="!coverError && icon"
       :src="icon.match(/^http(s)?:\/\//) ? icon : 'https://api.nuxtjs.org/api/ipx/s_80,f_webp/gh/nuxt/modules/main/website/public/icons/' + icon"
       :alt="alt"
-      class="w-auto h-12"
+      :class="iconClass"
       @error="coverError = true"
     >
     <div v-else class="flex items-center w-12 h-12 p-2 rounded-lg u-bg-gray-100">
@@ -18,6 +18,10 @@ defineProps({
   icon: {
     type: String,
     default: null
+  },
+  iconClass: {
+    type: String,
+    default: 'w-auto h-12'
   },
   alt: {
     type: String,

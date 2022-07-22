@@ -22,6 +22,7 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
+import { formatDateByLocale } from '~/utils'
 import type { ResourcesBlogArticle } from '~/types'
 
 const props = defineProps({
@@ -39,12 +40,4 @@ const icon = computed(() => {
       return 'heroicons-outline:fire'
   }
 })
-
-const formatDateByLocale = (locale, d) => {
-  return new Date(d).toLocaleDateString(locale, {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
-}
 </script>

@@ -13,22 +13,28 @@
         target="_blank"
       />
     </div>
-    <ContentRenderer v-if="readme" :value="readme" class="prose dark:prose-invert max-w-none" />
+    <GithubReadme v-slot="{ readme }" :query="githubQuery">
+      <ContentRenderer v-if="readme" :value="readme" class="prose dark:prose-invert prose-green max-w-none" />
+    </GithubReadme>
     <template #aside>
       <div class="p-5 u-bg-gray-50 border u-border-gray-100 rounded-md">
-        <div class="u-text-gray-900 font-semibold mb-2">
-          Useful Links
+        <div class="u-text-gray-900 font-semibold mb-4">
+          Useful links
         </div>
-        <UButton
-          v-for="link in links"
-          :key="link.label"
-          class="u-text-gray-700 px-0"
-          icon="fa-brands:github"
-          variant="transparent"
-          :to="link.href"
-          :label="link.label"
-          target="_blank"
-        />
+
+        <div class="flex flex-col gap-2">
+          <NuxtLink
+            v-for="(link, index) in links"
+            :key="index"
+            :to="link.href"
+            target="_blank"
+            class="flex items-center gap-2 text-sm font-medium hover:u-text-gray-900 focus:u-text-gray-900"
+            tabindex="-1"
+          >
+            <UIcon name="fa-brands:github" class="w-4 h-4" />
+            {{ link.label }}
+          </NuxtLink>
+        </div>
       </div>
     </template>
   </Page>
@@ -36,18 +42,6 @@
 
 <script setup lang="ts">
 const { githubQuery, module } = useModules()
-const { fetchReadme } = useGithub()
-
-const { data } = await useAsyncData(`module:${githubQuery.value.owner}:${githubQuery.value.repo}:readme`, () => fetchReadme(githubQuery.value))
-
-const readme = computed(() => {
-  // Remove image if exists in top of readme
-  if (JSON.stringify(data.value.body.children[0]).includes('img')) {
-    data.value.body.children.shift()
-  }
-
-  return data.value
-})
 
 const links = computed(() => {
   return [{

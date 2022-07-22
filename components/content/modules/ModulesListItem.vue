@@ -7,7 +7,9 @@
         {{ module.name }}
       </p>
 
-      <Logo v-if="module.type === 'official'" class="w-4 h-4" />
+      <div v-if="module.type === 'official'" class="flex items-center justify-center rounded-full bg-gradient-to-l from-green-400/30 via-teal-400/30 to-indigoblue-400/30 h-6 w-6">
+        <UIcon name="uil:medal" class="h-4 w-4 text-gray-900" />
+      </div>
     </div>
 
     <p class="u-text-gray-500 text-sm line-clamp-2 sm:min-h-[40px] mb-4">
