@@ -6,16 +6,15 @@
       </template>
     </SubNavbar>
 
-    <ContentRenderer :value="page" />
+    <NuxtPage />
   </div>
 </template>
 
 <script setup lang="ts">
 const route = useRoute()
-const { page, fetchPage } = usePage()
 const { fetch: fetchModules, types } = useModules()
 
-await Promise.all([fetchPage(), fetchModules()])
+await fetchModules()
 
 const links = computed(() => {
   return [

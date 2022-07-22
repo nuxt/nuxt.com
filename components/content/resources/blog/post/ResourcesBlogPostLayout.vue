@@ -92,6 +92,7 @@
 <script setup lang="ts">
 import type { ParsedContent } from '@nuxt/content/dist/runtime/types'
 import type { PropType } from 'vue'
+import { formatDateByLocale } from '~/utils'
 
 const props = defineProps({
   page: {
@@ -117,13 +118,5 @@ const socialLinks = computed(() => [
 
 function copyUrl () {
   $clipboard.copy(`https://nuxt.com${props.page._path}`, { title: 'Copied to clipboard' })
-}
-
-const formatDateByLocale = (locale, d) => {
-  return new Date(d).toLocaleDateString(locale, {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
 }
 </script>

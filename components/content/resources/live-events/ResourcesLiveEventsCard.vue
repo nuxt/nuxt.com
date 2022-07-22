@@ -38,15 +38,15 @@
         <span class="text-sm font-semibold u-text-gray-900">
           {{ page.speaker }}
         </span>
-        <span class="text-sm u-text-gray-400">
-          {{ formatDateByLocale('en', page.date) }}
-        </span>
+        <time class="text-sm u-text-gray-400">{{ formatDateByLocale('en', page.date) }}</time>
       </div>
     </div>
   </UCard>
 </template>
 
 <script setup lang="ts">
+import { formatDateByLocale } from '~/utils'
+
 defineProps({
   page: {
     type: Object,
@@ -55,14 +55,6 @@ defineProps({
 })
 
 const isOpen = ref(false)
-
-const formatDateByLocale = (locale, d) => {
-  return new Date(d).toLocaleDateString(locale, {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
-}
 </script>
 
 <style scoped>

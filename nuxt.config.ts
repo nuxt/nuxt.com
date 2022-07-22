@@ -10,6 +10,7 @@ export default defineNuxtConfig({
     '@nuxthq/ui',
     '@nuxthq/studio',
     '@nuxt/content',
+    '@nuxtlabs/github-module',
     'nuxt-newsletter',
     'vue-plausible'
   ],
@@ -20,7 +21,8 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     github: {
-      token: process.env.GITHUB_TOKEN
+      token: process.env.GITHUB_TOKEN,
+      remarkPlugin: true
     },
     orbit: {
       token: process.env.ORBIT_TOKEN

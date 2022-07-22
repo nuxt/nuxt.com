@@ -15,7 +15,7 @@
             <slot name="aside" />
           </aside>
 
-          <div class="relative" :class="{ 'col-span-10 lg:col-span-8': !!$slots.aside, 'col-span-10': !$slots.aside }">
+          <div class="relative" :class="{ 'col-span-10 lg:col-span-8': !!$slots.aside, 'col-span-10': !$slots.aside, 'order-first': reverse }">
             <slot />
           </div>
         </div>
@@ -29,6 +29,10 @@ defineProps({
   sticky: {
     type: Boolean,
     default: true
+  },
+  reverse: {
+    type: Boolean,
+    default: false
   }
 })
 </script>
