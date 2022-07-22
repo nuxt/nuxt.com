@@ -1,7 +1,7 @@
 <template>
   <UContainer padded class="pt-16">
-    <div class="flex flex-col sm:flex-row gap-8 sm:gap-20 justify-between items-center mb-8 sm:mb-16">
-      <div class="flex flex-col sm:flex-row gap-8 sm:gap-11 items-center">
+    <div class="flex flex-col lg:flex-row gap-8 lg:gap-20 justify-between items-center mb-8 lg:mb-16">
+      <div class="flex flex-col md:flex-row gap-8 md:gap-11 items-center">
         <div class="relative border rounded-md u-bg-gray-100">
           <div class="flex justify-center items-center w-36 h-36">
             <ModulesListItemCover :icon="module.icon" :alt="module.name" />
@@ -14,21 +14,21 @@
           </div>
         </div>
         <div>
-          <div class="flex flex-col sm:flex-row gap-3 items-center">
+          <div class="flex flex-col md:flex-row gap-3 items-center">
             <h1 class="text-3xl capitalize font-semibold u-text-gray-900">
               {{ module.name }}
             </h1>
             <NuxtLink :to="module.website" target="_blank">
-              <div class="flex items-center mb-3 sm:mb-3">
+              <div class="flex items-center mb-3 md:mb-3">
                 <span class="u-text-gray-400 mr-2">Go to documentation</span>
                 <UIcon name="uil:external-link-alt" class="u-text-gray-500" />
               </div>
             </NuxtLink>
           </div>
-          <p class="u-text-gray-500 mt-1 text-xl">
+          <p class="u-text-gray-500 mt-1 text-xl text-center md:text-left">
             {{ module.description }}
           </p>
-          <div class="flex flex-col sm:flex-row gap-3 items-center mt-4 u-text-gray-500">
+          <div class="flex flex-col md:flex-row gap-3 items-center mt-4 u-text-gray-500">
             <UAvatarGroup :group="maintainers" size="xs" :max="4" />
             <span>{{ maintainers.length }} Maintainer{{ maintainers.length > 1 ? 's' : '' }}</span>
             <span>-</span>
@@ -55,8 +55,8 @@
         </div>
       </div>
     </div>
-    <div class="flex justify-center sm:justify-start">
-      <UPills base-class="px-8 sm:px-14 py-2 mb-8 font-medium text-sm rounded-md" :links="links" />
+    <div class="flex justify-center md:justify-start">
+      <UPills base-class="px-8 md:px-14 py-2 mb-8 font-medium text-sm rounded-md" :links="links" />
     </div>
     <NuxtPage />
   </Ucontainer>
