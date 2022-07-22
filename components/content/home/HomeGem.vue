@@ -5,8 +5,9 @@
 </template>
 
 <script setup>
-import * as THREE from 'three'
+import { useEventListener } from '@vueuse/core'
 
+import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
@@ -25,9 +26,9 @@ const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPr
 renderer.outputEncoding = THREE.sRGBEncoding
 renderer.toneMapping = THREE.ACESFilmicToneMapping
 renderer.toneMappingExposure = 1
-if (window.matchMedia("(min-width: 640px)").matches) {
+if (window.matchMedia('(min-width: 640px)').matches) {
   renderer.setSize(475, 475)
-} else if (window.matchMedia("(min-width: 400px)").matches) {
+} else if (window.matchMedia('(min-width: 400px)').matches) {
   renderer.setSize(240, 240)
 } else {
   renderer.setSize(180, 180)
@@ -70,16 +71,19 @@ onMounted(() => {
   // Renderer
   gemAnim.value.appendChild(renderer.domElement)
   renderer.setPixelRatio(window.devicePixelRatio)
-  function onWindowResize() {
-    if (window.matchMedia("(min-width: 640px)").matches) {
+  function onWindowResize () {
+    if (window.matchMedia('(min-width: 640px)').matches) {
       renderer.setSize(475, 475)
-    } else if (window.matchMedia("(min-width: 400px)").matches) {
+    } else if (window.matchMedia('(min-width: 400px)').matches) {
       renderer.setSize(240, 240)
     } else {
       renderer.setSize(180, 180)
     }
   }
-  window.addEventListener('resize', onWindowResize, false)
+
+  useEventListener(window, 'resize', () => {
+    onWindowResize()
+  })
 
   // Transition on load
   gemWrapper.value.style.opacity = 0

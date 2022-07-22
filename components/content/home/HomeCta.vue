@@ -39,6 +39,7 @@
 
 <script setup lang="ts">
 import type { Ref } from 'vue'
+import { useEventListener } from '@vueuse/core'
 
 defineProps({
   buttonText: {
@@ -58,7 +59,9 @@ const observerCallback = (entries: IntersectionObserverEntry[]) =>
   entries.forEach((entry) => {
     if (entry.isIntersecting) {
       slideIn.value = true
-      ctaContainer.value.addEventListener('mousemove', (e) => { mouseMoveLight(e) })
+      useEventListener(ctaContainer.value, 'mousemove', (e) => {
+        mouseMoveLight(e)
+      })
     }
   })
 
@@ -116,8 +119,5 @@ onBeforeMount(() => (observer.value = new IntersectionObserver(observerCallback)
 
 onMounted(() => observer.value.observe(root.value))
 
-onBeforeUnmount(() => {
-  ctaContainer.value.removeEventListener('mousemove', (e) => { mouseMoveLight(e) })
-  observer.value?.disconnect()
-})
+onBeforeUnmount(() => observer.value?.disconnect())
 </script>
