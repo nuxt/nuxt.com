@@ -1,32 +1,5 @@
 <template>
   <Page reverse class="overflow-hidden md:overflow-visible">
-    <!-- Contributors for mobile (aside section) -->
-    <div class="md:hidden mb-8">
-      <UButton
-        class="u-text-gray-700 px-1"
-        icon="fa-brands:github"
-        variant="transparent"
-        :to="`${module.github}/graphs/contributors`"
-        label="Contributors"
-        target="_blank"
-      />
-    </div>
-
-    <GithubReleases v-slot="{ releases }" :query="githubQuery">
-      <div v-for="release in releases" :key="release.name" class="mb-12">
-        <div class="flex gap-3 items-center mb-7">
-          <UIcon name="bx:git-commit" class="w-8 h-8" />
-          <h2 class="flex items-center gap-2 text-2xl u-text-gray-900 font-semibold">
-            <span>{{ release.name }} by </span>
-            <UAvatar size="xs" :src="release.author.avatar" :alt="release.author.name" />
-            <span>{{ release.author.name }}</span>
-
-            <time class="u-text-gray-500 font-normal text-xl leading-8">{{ formatDateByLocale('en', release.date) }}</time>
-          </h2>
-        </div>
-        <ContentRenderer :value="release" class="ml-10 prose dark:prose-invert prose-green max-w-none" />
-      </div>
-    </GithubReleases>
     <template #aside>
       <GithubContributors v-slot="{ contributors }" :query="githubQuery">
         <div class="p-5 u-bg-gray-50 border u-border-gray-100 rounded-md">
@@ -61,6 +34,22 @@
         </div>
       </GithubContributors>
     </template>
+
+    <GithubReleases v-slot="{ releases }" :query="githubQuery">
+      <div v-for="release in releases" :key="release.name" class="mb-12">
+        <div class="flex gap-3 items-center mb-7">
+          <UIcon name="bx:git-commit" class="w-8 h-8" />
+          <h2 class="flex items-center gap-2 text-2xl u-text-gray-900 font-semibold">
+            <span>{{ release.name }} by </span>
+            <UAvatar size="xs" :src="release.author.avatar" :alt="release.author.name" />
+            <span>{{ release.author.name }}</span>
+
+            <time class="u-text-gray-500 font-normal text-xl leading-8">{{ formatDateByLocale('en', release.date) }}</time>
+          </h2>
+        </div>
+        <ContentRenderer :value="release" class="ml-10 prose dark:prose-invert prose-green max-w-none" />
+      </div>
+    </GithubReleases>
   </Page>
 </template>
 

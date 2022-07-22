@@ -1,21 +1,5 @@
 <template>
   <Page reverse class="overflow-hidden md:overflow-visible">
-    <!-- Useful Links for mobile (aside section) -->
-    <div class="md:hidden flex flex-col gap-3 justify-center mb-8">
-      <UButton
-        v-for="link in links"
-        :key="link.label"
-        class="u-text-gray-700 px-0"
-        icon="fa-brands:github"
-        variant="transparent"
-        :to="link.href"
-        :label="link.label"
-        target="_blank"
-      />
-    </div>
-    <GithubReadme v-slot="{ readme }" :query="githubQuery">
-      <ContentRenderer v-if="readme" :value="readme" class="prose dark:prose-invert prose-green max-w-none" />
-    </GithubReadme>
     <template #aside>
       <div class="p-5 u-bg-gray-50 border u-border-gray-100 rounded-md">
         <div class="u-text-gray-900 font-semibold mb-4">
@@ -37,6 +21,10 @@
         </div>
       </div>
     </template>
+
+    <GithubReadme v-slot="{ readme }" :query="githubQuery">
+      <ContentRenderer v-if="readme" :value="readme" class="prose dark:prose-invert prose-green max-w-none" />
+    </GithubReadme>
   </Page>
 </template>
 

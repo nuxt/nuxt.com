@@ -15,7 +15,7 @@
             </div>
           </div>
           <div>
-            <div class="flex flex-col md:flex-row gap-3 items-end">
+            <div class="flex flex-col md:flex-row gap-3 items-center md:items-end">
               <h1 class="text-3xl capitalize font-semibold u-text-gray-900">
                 {{ module.name }}
               </h1>
