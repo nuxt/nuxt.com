@@ -4,6 +4,7 @@ import type { Module } from '~/types'
 export const useModules = () => {
   const route = useRoute()
   const _modules: Ref<Module[]> = useState('modules', () => [])
+  const module: Ref<Module> = useState('module', () => ({} as Module))
 
   const pending = ref(false)
 
@@ -22,6 +23,29 @@ export const useModules = () => {
       _modules.value = data.modules
     } catch (e) {
       _modules.value = []
+    }
+
+    pending.value = false
+  }
+
+  async function fetchOne (name: string) {
+    if (module.value.name === name) {
+      return
+    }
+
+    const m = modules.value.find(m => m.name === name)
+    if (m) {
+      module.value = m
+      return
+    }
+
+    pending.value = true
+
+    try {
+      module.value = await $fetch<Module>(`/api/modules/${name}`)
+    } catch (e) {
+      // @ts-ignore
+      throwError({ statusMessage: 'Module not found', message: 'This page does not exist.', statusCode: 404 })
     }
 
     pending.value = false
@@ -78,6 +102,15 @@ export const useModules = () => {
         ]
       }
     })
+  })
+
+  const githubQuery = computed(() => {
+    const [ownerAndRepo] = module.value.repo.split('#')
+    const [owner, repo] = ownerAndRepo.split('/')
+    return {
+      owner,
+      repo
+    }
   })
 
   const modulesByVersion = computed(() => {
@@ -167,12 +200,15 @@ export const useModules = () => {
   return {
     // Http
     fetch,
+    fetchOne,
     // Data
     versions,
     sorts,
     orders,
     // Computed
     modules,
+    module,
+    githubQuery,
     categories,
     types,
     contributors,

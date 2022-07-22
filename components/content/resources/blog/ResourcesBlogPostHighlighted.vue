@@ -23,6 +23,7 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
+import { formatDateByLocale } from '~/utils'
 import type { ResourcesBlogArticle } from '~/types'
 
 const props = defineProps({
@@ -35,14 +36,6 @@ const props = defineProps({
 const authors = computed(() => {
   return (props?.page?.authors || []).map(author => ({ src: author.avatarUrl, ...author }))
 })
-
-const formatDateByLocale = (locale, d) => {
-  return new Date(d).toLocaleDateString(locale, {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
-}
 </script>
 
 <style scoped>
