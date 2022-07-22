@@ -1,5 +1,5 @@
 <template>
-  <Page class="-mx-8" reverse>
+  <Page reverse class="overflow-hidden">
     <GithubReleases v-slot="{ releases }" :query="githubQuery">
       <div v-for="release in releases" :key="release.name" class="mb-11">
         <div class="flex gap-3 items-center mb-7">

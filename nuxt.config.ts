@@ -21,7 +21,8 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     github: {
-      token: process.env.GITHUB_TOKEN
+      token: process.env.GITHUB_TOKEN,
+      remarkPlugin: true
     },
     orbit: {
       token: process.env.ORBIT_TOKEN

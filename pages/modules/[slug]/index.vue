@@ -1,5 +1,5 @@
 <template>
-  <Page class="-mx-8" reverse>
+  <Page reverse class="overflow-hidden">
     <ContentRenderer v-if="readme" :value="readme" class="prose dark:prose-invert max-w-none" />
     <template #aside>
       <div class="p-5 u-bg-gray-50 border u-border-gray-100 rounded-md">

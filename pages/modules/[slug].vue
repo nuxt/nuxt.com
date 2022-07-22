@@ -1,21 +1,25 @@
 <template>
   <UContainer padded class="pt-16">
-    <div class="flex gap-20 justify-between items-center mb-16">
-      <div class="flex gap-11 items-center">
-        <div class="flex justify-center items-center border rounded-md u-bg-gray-100 relative w-36 h-36">
-          <ModulesListItemCover :icon="module.icon" :alt="module.name" />
-          <div class="rounded-full bg-white absolute -right-5 -bottom-5 h-12 w-12" />
-          <div class="flex items-center justify-center rounded-full bg-overlay absolute -right-5 -bottom-5 h-12 w-12">
-            <UIcon name="uil:medal" class="h-5 w-5" />
+    <div class="flex flex-col sm:flex-row gap-8 sm:gap-20 justify-between items-center mb-8 sm:mb-16">
+      <div class="flex flex-col sm:flex-row gap-8 sm:gap-11 items-center">
+        <div class="relative border rounded-md u-bg-gray-100">
+          <div class="flex justify-center items-center w-36 h-36">
+            <ModulesListItemCover :icon="module.icon" :alt="module.name" />
+            <div v-if="module.type === 'official'">
+              <div class="rounded-full bg-white absolute -right-5 -bottom-5 h-12 w-12" />
+              <div class="flex items-center justify-center rounded-full bg-overlay absolute -right-5 -bottom-5 h-12 w-12">
+                <UIcon name="uil:medal" class="h-5 w-5" />
+              </div>
+            </div>
           </div>
         </div>
         <div>
-          <div class="flex gap-3 items-center">
+          <div class="flex flex-col sm:flex-row gap-3 items-center">
             <h1 class="text-3xl capitalize font-semibold u-text-gray-900">
               {{ module.name }}
             </h1>
             <NuxtLink :to="module.website" target="_blank">
-              <div class="flex items-center">
+              <div class="flex items-center mb-3 sm:mb-3">
                 <span class="u-text-gray-400 mr-2">Go to documentation</span>
                 <UIcon name="uil:external-link-alt" class="u-text-gray-500" />
               </div>
@@ -24,7 +28,7 @@
           <p class="u-text-gray-500 mt-1 text-xl">
             {{ module.description }}
           </p>
-          <div class="flex gap-3 items-center mt-4 u-text-gray-500">
+          <div class="flex flex-col sm:flex-row gap-3 items-center mt-4 u-text-gray-500">
             <UAvatarGroup :group="maintainers" size="xs" :max="4" />
             <span>{{ maintainers.length }} Maintainer{{ maintainers.length > 1 ? 's' : '' }}</span>
             <span>-</span>
@@ -46,12 +50,14 @@
           <CopyButton
             base-class="font-mono font-semibold leading-none copy focus:outline-none text-warmgray-600 dark:text-warmgray-400 bg-warmgray-200 dark:bg-warmgray-700"
             icon-class="w-4 h-4"
-            :content="`yarn add ${module.name}`"
+            :content="`yarn add ${module.npm}`"
           />
         </div>
       </div>
     </div>
-    <UPills base-class="px-14 py-2 mb-8 font-medium text-sm rounded-md" :links="links" />
+    <div class="flex justify-center sm:justify-start">
+      <UPills base-class="px-8 sm:px-14 py-2 mb-8 font-medium text-sm rounded-md" :links="links" />
+    </div>
     <NuxtPage />
   </Ucontainer>
 </template>

@@ -17,6 +17,7 @@
     "@nuxthq/studio": "npm:@nuxthq/studio-edge@latest",
     "@nuxthq/ui": "npm:@nuxthq/ui-edge@latest",
     "@nuxtjs/eslint-config-typescript": "^10.0.0",
+    "@nuxtlabs/github-module": "^1.4.0",
     "@sindresorhus/slugify": "^2.1.0",
     "@types/lodash-es": "^4.17.6",
     "@vueuse/core": "^8.9.4",
