@@ -1,7 +1,7 @@
 <template>
   <header
-    class="sticky top-0 z-30 lg:relative"
-    :class="hasScrolledPastNavbar ? 'backdrop-blur-md bg-white/75 dark:bg-black/75 lg:!bg-transparent' : ''"
+    class="sticky top-0 z-30 lg:relative transition-all duration-[0.4s] ease"
+    :class="{ 'backdrop-blur-md bg-white/75 dark:bg-black/75 lg:!bg-transparent': hasScrolledPastNavbar }"
   >
     <NavbarDialog v-model="isOpen" :links="links" />
 
@@ -38,9 +38,9 @@
         </ul>
 
         <div class="flex items-center justify-end gap-3">
-          <UButton icon="fa-brands:twitter" variant="transparent" to="https://twitter.com/nuxt_js" target="_blank" class="!p-0" />
-          <UButton icon="fa-brands:discord" variant="transparent" to="https://discord.com/invite/ps2h6QT" target="_blank" class="!p-0" />
-          <UButton icon="fa-brands:github" variant="transparent" to="https://github.com/nuxt/framework" target="_blank" class="!p-0" />
+          <UButton icon="fa-brands:twitter" variant="transparent" to="https://twitter.com/nuxt_js" target="_blank" class="!p-0 u-text-gray-900" />
+          <UButton icon="fa-brands:discord" variant="transparent" to="https://discord.com/invite/ps2h6QT" target="_blank" class="!p-0 u-text-gray-900" />
+          <UButton icon="fa-brands:github" variant="transparent" to="https://github.com/nuxt/framework" target="_blank" class="!p-0 u-text-gray-900" />
         </div>
       </div>
     </UContainer>
