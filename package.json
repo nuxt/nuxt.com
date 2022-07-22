@@ -25,7 +25,7 @@
     "eslint": "^8.20.0",
     "joi": "^17.6.0",
     "mjml": "^4.13.0",
-    "node-mailjet": "^5.0.1",
+    "node-mailjet": "^5.1.0",
     "nuxt": "^3.0.0-rc.6",
     "nuxt-newsletter": "^0.1.2",
     "standard-version": "^9.5.0",
