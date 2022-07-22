@@ -800,10 +800,10 @@
     tailwindcss "^3.1.6"
     ufo "^0.8.5"
 
-"@nuxtlabs/github-module@^1.4.0":
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/@nuxtlabs/github-module/-/github-module-1.4.0.tgz#b0f4c2c9097b0c8c3137dfc69aeb0ee446a21cdd"
-  integrity sha512-rc32La3nH6xMunBVnGDRNIrovILBb935nLzRFSsM91ZHFa5So7Vv4VRzU7eqzp5kWvKNvS3ilnu86wMtNv/JgA==
+"@nuxtlabs/github-module@^1.4.1":
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/@nuxtlabs/github-module/-/github-module-1.4.1.tgz#993dc84712a9db6406029a809f58b4c5218a5ed8"
+  integrity sha512-Itc0zpTN3BmX8AKBI+dcg9J3WqTh4ak1Ip9FH0PxAyfIToJ+2m/zmhxvJK0C684w/L2icpOYj6/FtxPMnDnPpQ==
   dependencies:
     "@nuxt/kit" "^3.0.0-rc.6"
     "@octokit/graphql" "^5.0.0"

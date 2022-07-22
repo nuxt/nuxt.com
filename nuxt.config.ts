@@ -21,8 +21,7 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     github: {
-      token: process.env.GITHUB_TOKEN,
-      remarkPlugin: true
+      token: process.env.GITHUB_TOKEN
     },
     orbit: {
       token: process.env.ORBIT_TOKEN
@@ -82,5 +81,9 @@ export default defineNuxtConfig({
       apiKey: process.env.REVUE_API_KEY,
       component: false
     }
+  },
+  github: {
+    disableCache: true,
+    maxContributors: 10
   }
 })
