@@ -1,5 +1,5 @@
 <template>
-  <li class="relative flex items-center justify-between h-32 col-span-6 gap-1 overflow-hidden border md:col-span-3 xl:col-span-2 u-border-gray-200 rounded-xl group">
+  <li class="relative flex items-center justify-between h-32 col-span-6 gap-1 overflow-hidden border md:col-span-3 xl:col-span-2 u-border-gray-200 rounded-xl">
     <div class="flex items-center h-full">
       <UAvatar :src="nuxter.avatar" :alt="nuxter.username" :text="nuxter.username" size="2xl" class="mx-2" />
       <div class="flex flex-col justify-between h-full py-5 truncate">
@@ -11,11 +11,11 @@
         </div>
         <div class="flex items-center gap-3">
           <!-- <CommunityNuxtersNuxterBadge :role="nuxter.role" /> -->
-          <!-- <NuxtLink v-if="nuxter.twitter" :to="`https://twitter.com/${nuxter.twitter}`" target="_blank" class="hidden group-hover:block">
+          <!-- <NuxtLink v-if="nuxter.twitter" :to="`https://twitter.com/${nuxter.twitter}`" target="_blank">
             <UIcon name="uil:twitter" class="w-5 h-5 text-gray-400 dark:text-gray-50 hover:u-text-gray-600" />
           </NuxtLink> -->
-          <NuxtLink :to="`https://github.com/${nuxter.username}`" target="_blank" class="hidden group-hover:block">
-            <UIcon name="uil:github" class="w-5 h-5 text-gray-400 dark:text-gray-50 hover:u-text-gray-600" />
+          <NuxtLink :to="`https://github.com/${nuxter.username}`" target="_blank">
+            <UIcon name="uil:github" class="w-5 h-5 u-text-gray-900 hover:u-text-gray-600" />
           </NuxtLink>
         </div>
       </div>

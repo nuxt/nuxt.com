@@ -32,7 +32,7 @@ const props = defineProps({
 const icon = computed(() => {
   switch (props.type) {
     case 'activities':
-      return 'uil:apps'
+      return 'uil:heart-rate'
     case 'pull_requests':
       return 'octicon:git-pull-request-16'
     case 'issues':
