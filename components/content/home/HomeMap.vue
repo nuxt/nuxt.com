@@ -1,6 +1,6 @@
 <template>
   <div class="relative pt-4 py-4 h-[500px] pb-8 min-w-[1005px] flex items-end">
-    <div class="w-full absolute z-[-1] inset-y-0 flex justify-center transition duration-1000 ease-in-out" :class="mapOpacityClass">
+    <div class="w-full flex justify-center">
       <svg
         ref="map"
         fill="none"
@@ -8,7 +8,7 @@
         height="567"
         viewBox="0 0 1105 567"
         xmlns="http://www.w3.org/2000/svg"
-        class="w-full md:pt-8 lg:pt-16 absolute -translate-x-[40%] sm:-translate-x-[20%] md:-translate-x-[4%] lg:translate-x-0 lg:inset-x-0"
+        class="w-full md:pt-8 lg:pt-16 absolute top-0 -translate-x-[40%] sm:-translate-x-[20%] md:-translate-x-[4%] lg:translate-x-0 lg:inset-x-0"
       >
         <g class="transition duration-1000" :style="`color: ${baseColor}; opacity: 0.6`">
           <path
@@ -6203,7 +6203,6 @@ import type { Ref } from 'vue'
 const observer = ref() as Ref<IntersectionObserver>
 const root = ref(null) as Ref<Element>
 const map = ref(null)
-const mapOpacityClass = ref('opacity-0 -translate-y-[200px]')
 const intervalIds = ref([])
 
 const colors = [
@@ -6216,7 +6215,6 @@ const baseColor = '#D4D4D8'
 const observerCallback = (entries: IntersectionObserverEntry[]) =>
   entries.forEach((entry) => {
     if (entry.isIntersecting) {
-      mapOpacityClass.value = 'opacity-100 translate-y-0'
       animationMap()
     } else {
       stopAnimation()
