@@ -2,7 +2,7 @@
   <li class="relative flex items-center justify-between h-32 col-span-6 gap-1 overflow-hidden border md:col-span-3 xl:col-span-2 u-border-gray-200 rounded-xl">
     <div class="flex items-center h-full">
       <UAvatar :src="nuxter.avatar" :alt="nuxter.username" :text="nuxter.username" size="2xl" class="mx-2" />
-      <div class="flex flex-col justify-between h-full py-5 truncate">
+      <div class="flex flex-col justify-between h-full py-7 truncate">
         <h3 class="text-lg font-semibold leading-none u-text-gray-900 line-clamp-1">
           @{{ nuxter.username }}
         </h3>
@@ -18,7 +18,7 @@
         </div>
       </div>
     </div>
-    <div class="flex flex-col items-end justify-between flex-shrink-0 h-full pb-5 mr-6">
+    <div class="flex flex-col items-end justify-between flex-shrink-0 h-full pb-7 mr-6">
       <CommunityNuxtersNuxterRank :nuxter="nuxter" />
       <CommunityNuxtersNuxterNumber :nuxter="nuxter" size="sm" :type="sortedTypes[0]" />
     </div>
