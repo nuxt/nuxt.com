@@ -3,7 +3,7 @@
     <NuxtLink :to="to" class="flex flex-col px-4 py-5 gap-y-5 sm:p-6">
       <div class="flex items-center justify-between">
         <UIcon :name="icon" class="w-6 h-6 u-text-gray-900" />
-        <UIcon name="uil:arrow-right" class="w-10 h-[28px] pr-4 transition-all duration-300 opacity-0 u-text-gray-900 group-hover:translate-x-4 group-hover:opacity-100" />
+        <UIcon name="uil:arrow-right" class="w-6 h-6 mr-4 transition-all duration-300 opacity-0 u-text-gray-900 group-hover:translate-x-4 group-hover:opacity-100" />
       </div>
       <h6 class="text-2xl font-semibold u-text-gray-900">
         <Markdown :use="$slots.title" unwrap="p" />
