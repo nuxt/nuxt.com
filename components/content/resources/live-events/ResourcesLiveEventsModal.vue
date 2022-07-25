@@ -1,5 +1,7 @@
 <template>
-  <UModal v-model="isOpen" appear body-class="p-8" width-class="max-w-xl lg:max-w-4xl xl:max-w-7xl">
+  <UModal v-model="isOpen" appear body-class="p-8" width-class="relative max-w-xl lg:max-w-4xl xl:max-w-7xl">
+    <UButton icon="uil:multiply" variant="transparent" class="!p-0 u-text-gray-900 top-2 right-2 absolute" @click="isOpen = false" />
+
     <div class="overflow-hidden rounded-xl">
       <YoutubePlayer :video-id="page.videoId" :title="page.title" />
     </div>
@@ -29,5 +31,5 @@ defineProps({
   }
 })
 
-const isOpen = ref(true)
+const isOpen = ref(false)
 </script>
