@@ -51,7 +51,7 @@
 <script setup lang="ts">
 const { data: routingData } = await useAsyncData('routing', () => queryContent('/docs/3.x/_collections/routing').findOne())
 
-const currentSection = ref()
+const currentSection = ref(null)
 
 const hoveredSection = (index) => {
   currentSection.value = index
