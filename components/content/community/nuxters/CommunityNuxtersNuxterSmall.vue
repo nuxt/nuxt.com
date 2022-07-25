@@ -3,12 +3,10 @@
     <div class="flex items-center h-full">
       <UAvatar :src="nuxter.avatar" :alt="nuxter.username" :text="nuxter.username" size="2xl" class="mx-2" />
       <div class="flex flex-col justify-between h-full py-5 truncate">
-        <div>
-          <h3 class="text-lg font-semibold leading-none u-text-gray-900 line-clamp-1">
-            @{{ nuxter.username }}
-          </h3>
-          <span class="mt-1 font-medium u-text-gray-500 line-clamp-1">{{ nuxter.name }}</span>
-        </div>
+        <h3 class="text-lg font-semibold leading-none u-text-gray-900 line-clamp-1">
+          @{{ nuxter.username }}
+        </h3>
+        <span class="font-medium u-text-gray-500 line-clamp-1">{{ nuxter.name || nuxter.username }}</span>
         <div class="flex items-center gap-3">
           <!-- <CommunityNuxtersNuxterBadge :role="nuxter.role" /> -->
           <!-- <NuxtLink v-if="nuxter.twitter" :to="`https://twitter.com/${nuxter.twitter}`" target="_blank">

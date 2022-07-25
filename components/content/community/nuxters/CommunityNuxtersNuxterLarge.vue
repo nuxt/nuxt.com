@@ -14,7 +14,7 @@
             <!-- <CommunityNuxtersNuxterBadge :role="nuxter.role" /> -->
           </div>
           <div class="flex items-center gap-3 mt-2">
-            <span class="text-lg font-medium u-text-gray-700">{{ nuxter.name }}</span>
+            <span class="text-lg font-medium u-text-gray-700">{{ nuxter.name || nuxter.username }}</span>
             <!-- <NuxtLink v-if="nuxter.twitter" :to="`https://twitter.com/${nuxter.twitter}`" target="_blank">
               <UIcon name="uil:twitter" class="w-5 h-5 u-text-gray-900 hover:u-text-gray-600" />
             </NuxtLink> -->
