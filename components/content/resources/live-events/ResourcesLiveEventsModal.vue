@@ -21,15 +21,29 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue'
+import type { PropType, WritableComputedRef } from 'vue'
 import type { ResourcesLiveEvent } from '~/types'
 
-defineProps({
+const props = defineProps({
   page: {
     type: Object as PropType<ResourcesLiveEvent>,
     default: () => {}
+  },
+  modelValue: {
+    type: Boolean,
+    default: false
   }
 })
 
-const isOpen = ref(false)
+const emit = defineEmits(['update:modelValue'])
+
+const isOpen: WritableComputedRef<boolean> = computed({
+  get () {
+    return props.modelValue
+  },
+  set (value) {
+    emit('update:modelValue', value)
+  }
+})
+
 </script>
