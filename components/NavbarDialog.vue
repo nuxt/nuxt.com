@@ -15,7 +15,7 @@
         <Logo class="block w-auto h-6" />
       </NuxtLink>
 
-      <div class="w-6" />
+      <ThemeSelect name="theme" size="sm" />
     </template>
 
     <div class="flex-1 px-4 py-4 overflow-y-scroll sm:px-6">
