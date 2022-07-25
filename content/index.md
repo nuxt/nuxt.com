@@ -117,7 +117,7 @@ buttons:
     variant: 'primary-gradient'
     to: '/community'
   - label: 'See the Nuxters'
-    icon: 'heroicons-solid:arrow-sm-right'
+    icon: 'uil:arrow-right'
     to: '/community/nuxters'
     variant: 'secondary'
     trailing: true

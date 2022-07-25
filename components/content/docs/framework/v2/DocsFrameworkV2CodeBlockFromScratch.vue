@@ -23,7 +23,7 @@
             <div class="fromscratch-progressbar-anim u-bg-gray-600" />
           </div>
           <p class="flex items-center text-white opacity-0 fromscratch-compiled-anim">
-            <UIcon name="heroicons-outline:check" />
+            <UIcon name="uil:check" class="w-6 h-6" />
             compiled
           </p>
         </div>

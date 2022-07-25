@@ -10,7 +10,7 @@
         <p class="mt-3 text-base u-text-gray-600 sm:text-lg md:mt-5">
           {{ page.description }}
         </p>
-        <GradientNuxtLink icon="heroicons-outline:arrow-sm-right" :to="page.url" target="_blank" class="mt-3 text-lg font-semibold md:mt-5">
+        <GradientNuxtLink icon="uil:arrow-right" :to="page.url" target="_blank" class="mt-3 text-lg font-semibold md:mt-5">
           See website
         </GradientNuxtLink>
       </UContainer>

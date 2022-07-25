@@ -17,7 +17,7 @@
           <span>)</span>
         </div>
 
-        <UIcon :name="isOpen ? 'heroicons-solid:chevron-down' : 'heroicons-solid:chevron-left'" class="w-5 h-5 justify-self-end" />
+        <UIcon :name="isOpen ? 'uil:angle-down' : 'uil:angle-left'" class="w-5 h-5 justify-self-end" />
       </button>
 
       <div class="flex-col hidden gap-3 md:flex md:flex-row md:items-center">

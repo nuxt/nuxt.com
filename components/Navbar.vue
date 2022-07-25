@@ -9,7 +9,7 @@
       <div class="grid items-center h-16 grid-cols-6 gap-3 lg:h-20 lg:justify-center">
         <div class="lg:hidden">
           <button @click="isOpen = true">
-            <UIcon name="heroicons-outline:menu-alt-2" class="flex-shrink-0 w-6 h-6" />
+            <UIcon name="uil:align-left" class="flex-shrink-0 w-6 h-6" />
           </button>
         </div>
 
@@ -38,9 +38,9 @@
         </ul>
 
         <div class="flex items-center justify-end gap-3">
-          <UButton icon="fa-brands:twitter" variant="transparent" to="https://twitter.com/nuxt_js" target="_blank" class="!p-0 u-text-gray-900" />
+          <UButton icon="uil:twitter" variant="transparent" to="https://twitter.com/nuxt_js" target="_blank" class="!p-0 u-text-gray-900" />
           <UButton icon="fa-brands:discord" variant="transparent" to="https://discord.com/invite/ps2h6QT" target="_blank" class="!p-0 u-text-gray-900" />
-          <UButton icon="fa-brands:github" variant="transparent" to="https://github.com/nuxt/framework" target="_blank" class="!p-0 u-text-gray-900" />
+          <UButton icon="uil:twitter" variant="transparent" to="https://github.com/nuxt/framework" target="_blank" class="!p-0 u-text-gray-900" />
         </div>
       </div>
     </UContainer>
@@ -59,7 +59,7 @@ const isOpen = ref(false)
 
 const links: Ref<NavItem[]> = ref([{
   title: 'Framework',
-  icon: 'heroicons-outline:book-open',
+  icon: 'uil:book-open',
   _path: '/docs'
 }, {
   title: 'Modules',
@@ -69,20 +69,20 @@ const links: Ref<NavItem[]> = ref([{
 {
   title: 'Resources',
   _path: '/resources',
-  icon: 'heroicons-outline:template'
+  icon: 'uil:object-group'
 }, {
   title: 'Community',
   _path: '/community',
-  icon: 'heroicons-outline:globe'
+  icon: 'uil:globe'
 }, {
   title: 'Company',
   _path: '/company',
   hidden: true,
-  icon: 'heroicons-outline:office-building'
+  icon: 'uil:building'
 }, {
   title: 'Studio',
   _path: config.studioUrl,
-  icon: 'heroicons-outline:collection',
+  icon: 'uil:files-landscapes',
   target: '_blank'
 }])
 

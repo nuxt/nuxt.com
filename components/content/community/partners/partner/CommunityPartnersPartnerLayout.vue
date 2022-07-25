@@ -82,7 +82,7 @@
                   :key="index"
                   class="flex items-center gap-3 u-text-gray-700"
                 >
-                  <UIcon name="heroicons-solid:check-circle" class="w-6 h-6 u-text-gray-900" />
+                  <UIcon name="uil:check-circle" class="w-6 h-6 u-text-gray-900" />
                   {{ service }}
                 </li>
               </ul>

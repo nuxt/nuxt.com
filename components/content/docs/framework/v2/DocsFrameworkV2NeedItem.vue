@@ -7,7 +7,7 @@
             <img :src="`/assets/docs/v2/${icon}`" class="absolute top-0 w-full h-full transition-opacity duration-300 opacity-100 group-hover:opacity-0" :alt="`${icon} illustration`">
             <img :src="`/assets/docs/v2/${iconColor}`" class="absolute top-0 w-full h-full transition-opacity duration-300 opacity-0 group-hover:opacity-100" :alt="`${icon} green illustration`">
           </div>
-          <UIcon name="heroicons-solid:arrow-right" alt="arrow" class="w-6 h-6 transition duration-300 opacity-0 mr-coll4 group-hover:translate-x-4 group-hover:opacity-100" />
+          <UIcon name="uil:arrow-right" alt="arrow" class="w-6 h-6 transition duration-300 opacity-0 mr-coll4 group-hover:translate-x-4 group-hover:opacity-100" />
         </div>
         <h5 class="pb-4 text-2xl font-semibold">
           <Markdown :use="$slots.title" unwrap="p" />
