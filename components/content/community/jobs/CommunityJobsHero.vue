@@ -1,5 +1,5 @@
 <template>
-  <PageHero centered>
+  <PageHero>
     <template #title>
       <Markdown :use="$slots.title" unwrap="p" />
     </template>
@@ -8,7 +8,7 @@
     </template>
 
     <template #extra>
-      <UButton to="https://vuejobs.com/jobs/create" target="_blank" variant="primary-gradient" label="Post a job" />
+      <UButton to="https://vuejobs.com/jobs/create" target="_blank" variant="primary-gradient" label="Post a job" class="self-start" />
 
       <img src="/assets/community/jobs/gem-left.png" alt="hero gem left" class="absolute z-[-1] sm:top-[96px] left-[24px] sm:left-[48px] lg:left-[96px] w-[120px] opacity-40 lg:opacity-100">
 

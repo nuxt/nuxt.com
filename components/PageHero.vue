@@ -11,7 +11,7 @@
 
       <div
         v-bind="$attrs"
-        class="relative flex flex-col justify-center gap-y-2 sm:gap-y-5"
+        class="relative flex flex-col justify-center gap-y-4 sm:gap-y-5"
         :class="{
           'items-center': centered,
           'sm:h-72': !!$slots.image || !!$slots.background,
