@@ -7,28 +7,29 @@
     <UContainer padded class="pb-16 sm:pb-32">
       <div class="flex flex-col justify-between gap-8 pb-8 -mt-8 sm:gap-4 sm:items-center sm:flex-row md:-mt-12 xl:pb-12">
         <div class="flex gap-4 md:gap-8">
-          <div class="relative flex w-32 h-32 p-8 overflow-hidden border md:w-40 md:h-40 md:p-10 rounded-xl u-border-gray-200">
+          <!-- `z-[1]` is a safari workaround -->
+          <div class="relative z-[1] flex w-32 h-32 p-8 overflow-hidden border md:w-40 md:h-40 md:p-10 rounded-xl u-border-gray-200 flex-shrink-0">
             <div class="absolute inset-0 bg-white/60 dark:bg-gray-900/70 backdrop-blur-lg" />
             <img v-if="page.logo.light" :src="page.logo.light" :alt="page.title" class="relative dark:hidden">
             <img v-if="page.logo.dark" :src="page.logo.dark" :alt="page.title" class="relative hidden dark:block">
             <img v-if="typeof page.logo === 'string'" :src="page.logo" :alt="page.title" class="relative">
           </div>
-          <div class="flex flex-col justify-center pt-8 md:pt-12">
-            <h1 class="mb-2 text-3xl font-semibold u-text-black">
+          <div class="flex flex-1 flex-col justify-center min-w-0 pt-8 md:pt-12">
+            <h1 class="mb-2 text-3xl font-semibold u-text-black truncate">
               {{ page.title }}
             </h1>
             <NuxtLink :to="page.link" target="_blank" rel="noopener" class="flex items-center gap-2 font-medium u-text-gray-500 hover:underline">
-              {{ websiteDomain }} <UIcon name="uil:external-link-alt" class="w-5 h-5" />
+              <span class="truncate">{{ websiteDomain }}</span><UIcon name="uil:external-link-alt" class="w-5 h-5 flex-shrink-0" />
             </NuxtLink>
           </div>
         </div>
-        <div class="flex flex-col gap-4 md:pt-12 sm:flex-row">
+        <div class="flex flex-row gap-2 sm:gap-4 md:pt-12">
           <UButton
             label="Visit website"
             :to="page.link"
             target="_blank"
             size="xl"
-            variant="transparent"
+            variant="primary-gradient"
             custom-class="justify-center sm:justify-start"
             truncate
           />
