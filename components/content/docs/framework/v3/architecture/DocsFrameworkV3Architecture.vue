@@ -51,7 +51,7 @@
 <script setup lang="ts">
 
 const { data: architectureData } = await useAsyncData('architecture', () => queryContent('/docs/3.x/_collections/architecture').findOne())
-const currentSection = ref()
+const currentSection = ref(null)
 
 const hoveredSection = (index) => {
   currentSection.value = index
