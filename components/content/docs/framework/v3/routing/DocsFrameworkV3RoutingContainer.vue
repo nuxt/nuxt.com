@@ -46,7 +46,8 @@
           <div
             class="absolute left-0 bottom-0 w-[200px] h-[300px] sm:h-[225px] ml-8 flex flex-col items-center justify-start sm:justify-center gap-y-2 md:relative md:w-full md:h-[387px] mt-7 rounded-t-xl md:rounded-br-xl md:rounded-tl-xl md:rounded-tr-none md:ml-[25px] md:grid grid-cols-2 md:px-[53px] md:py-[80px]"
             :class="[(dashboardHovered || messageHovered || idHovered) ? 'bg-green-400 rounded-r-md' : 'bg-gray-200',
-                     { 'border border-t-4 border-l-4 border-r-none border-b-none border-green-500': idHovered }]"
+                     { 'border-t-4 border-l-4 border-r-none border-b-none border-green-500': idHovered },
+                     { 'bottom-2': messageHovered }]"
           >
             <div class="w-[132px] h-8 rounded-3xl mt-8 sm:mt-0 md:mt-[45px]" :class="dashboardHovered || idHovered || messageHovered ? 'bg-green-200' : 'bg-gray-100'" />
             <div class="w-[132px] h-8 rounded-3xl md:place-self-end md:mb-8" :class="dashboardHovered || idHovered || messageHovered ? 'bg-green-200' : 'bg-gray-100'" />

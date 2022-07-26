@@ -1,10 +1,11 @@
 <template>
-  <div ref="root" class="relative flex flex-col justify-center gap-y-20 xl:flex-row xl:justify-between">
+  <div ref="root" class="relative flex flex-col justify-center gap-y-20 xl:flex-row xl:justify-between" @mouseleave="currentSection = null">
     <ul class="grid grid-cols-1 rounded-md md:grid-cols-2 xl:flex xl:flex-col xl:w-2/5 gap-y-2">
       <li
         v-for="(data, index) in routingData.routings"
         :key="data.title"
-        class="relative flex flex-col p-4 transition duration-200 rounded-md cursor-pointer md:flex-row gap-x-2 group hover:u-bg-gray-50"
+        class="relative flex flex-col p-4 transition duration-200 rounded-md cursor-pointer md:flex-row gap-x-2 group"
+        :class="{'u-bg-gray-50': currentSection === index }"
         @click="currentSection = index"
         @mouseenter="currentSection = index"
       >
@@ -51,7 +52,7 @@
 <script setup lang="ts">
 const { data: routingData } = await useAsyncData('routing', () => queryContent('/docs/3.x/_collections/routing').findOne())
 
-const currentSection = ref()
+const currentSection = ref(null)
 
 const hoveredSection = (index) => {
   currentSection.value = index
