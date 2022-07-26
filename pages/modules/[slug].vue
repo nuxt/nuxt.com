@@ -1,8 +1,11 @@
 <template>
   <div>
-    <UContainer padded class="pt-16">
+    <UContainer padded class="pt-6 md:pt-16">
       <div class="flex flex-col lg:flex-row gap-8 justify-between items-center mb-8 lg:mb-16">
         <div class="flex flex-col md:flex-row gap-8 md:gap-12 items-center">
+          <UButton class="md:hidden" variant="transparent" to="/modules" icon="uil:angle-left-b">
+            Go back to modules
+          </UButton>
           <div class="relative border u-border-gray-100 rounded-md u-bg-gray-50">
             <div class="flex justify-center items-center w-36 h-36">
               <ModulesListItemCover :icon="module.icon" icon-class="w-auto h-20" :alt="module.name" />
@@ -52,9 +55,11 @@
           <UButton :label="`yarn add ${module.npm}`" size="lg" :trailing-icon="copyIcon" truncate @click="copyToClipboard(`yarn add ${module.npm}`)" />
         </div>
       </div>
-      <div class="flex justify-center md:justify-start mb-4">
-        <UPills base-class="px-8 md:px-14 py-2 font-medium text-sm rounded-md" :links="links" />
-      </div>
+      <UPills
+        class="mb-4"
+        base-class="w-full md:w-auto md:px-14 py-2 text-center font-medium text-sm rounded-md"
+        :links="links"
+      />
     </UContainer>
 
     <NuxtPage />

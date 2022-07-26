@@ -22,14 +22,20 @@
       </div>
     </template>
 
-    <GithubReadme v-slot="{ readme }" :query="githubQuery">
-      <ContentRenderer v-if="readme" :value="readme" class="prose dark:prose-invert prose-green max-w-none" />
-    </GithubReadme>
+    <ContentRenderer v-if="readme" :value="readme" class="prose dark:prose-invert prose-green max-w-none" />
+    <!-- Readme placeholder -->
+    <div v-else class="u-bg-gray-100 animate-pulse w-full h-screen" />
   </Page>
 </template>
 
 <script setup lang="ts">
 const { githubQuery, module } = useModules()
+const { fetchReadme } = useGithub()
+
+const { data: readme } = useAsyncData(
+  `readme:${githubQuery.value.owner}:${githubQuery.value.repo}`,
+  () => { return fetchReadme(githubQuery.value) }
+)
 
 const links = computed(() => {
   return [{
