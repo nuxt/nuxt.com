@@ -11,7 +11,7 @@
     <UContainer padded class="py-6">
       <div class="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
         <div class="flex flex-col-reverse items-center gap-3 sm:flex-row">
-          <ThemeSelect name="theme" class="order-1 sm:order-none" size="sm" />
+          <ThemeSelect class="order-1 sm:order-none" size="sm" />
           <span class="text-sm u-text-gray-400">© 2022 Nuxt</span>
         </div>
 

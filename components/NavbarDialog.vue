@@ -1,10 +1,10 @@
 <template>
   <USlideover v-model="isOpen">
     <template #header>
-      <button v-if="selectedLink" @click="selectedLink = null">
+      <button v-if="selectedLink" class="flex-1" @click="selectedLink = null">
         <UIcon name="heroicons-outline:arrow-sm-left" class="flex-shrink-0 w-6 h-6" />
       </button>
-      <button v-else @click="isOpen = false">
+      <button v-else class="flex-1" @click="isOpen = false">
         <UIcon name="heroicons-outline:x" class="flex-shrink-0 w-6 h-6" />
       </button>
 
@@ -15,7 +15,9 @@
         <Logo class="block w-auto h-6" />
       </NuxtLink>
 
-      <div class="w-6" />
+      <div class="flex justify-end flex-1">
+        <ThemeSelect size="sm" />
+      </div>
     </template>
 
     <div class="flex-1 px-4 py-4 overflow-y-scroll sm:px-6">
