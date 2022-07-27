@@ -34,7 +34,7 @@ const { fetchReadme } = useGithub()
 
 const { data: readme } = useAsyncData(
   `readme:${githubQuery.value.owner}:${githubQuery.value.repo}`,
-  () => { return fetchReadme(githubQuery.value) }
+  () => fetchReadme(githubQuery.value)
 )
 
 const links = computed(() => {

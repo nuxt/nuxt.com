@@ -66,13 +66,13 @@ const { fetchReleases, fetchContributors } = useGithub()
 
 const { data: releases } = useAsyncData(
   `releases:${githubQuery.value.owner}:${githubQuery.value.repo}`,
-  () => (fetchReleases(githubQuery.value)),
+  () => fetchReleases(githubQuery.value),
   { lazy: true }
 )
 
 const { data: contributors } = useAsyncData(
   `contributors:${githubQuery.value.owner}:${githubQuery.value.repo}`,
-  () => (fetchContributors(githubQuery.value)),
+  () => fetchContributors(githubQuery.value),
   { lazy: true }
 )
 </script>
