@@ -208,7 +208,7 @@ containerClass: ''
   
   #title
   
-  Lastest case study
+  Latest case study from our partners
   :::
 
 #bodyLink
