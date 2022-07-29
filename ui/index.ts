@@ -28,7 +28,7 @@ const button = {
     }, {})
   },
   icon: {
-    loading: 'uil:refresh'
+    loading: 'uil:sync'
   }
 }
 
@@ -39,7 +39,7 @@ const input = {
     darken: 'focus:ring-1 focus:u-ring-gray-900 focus:u-border-gray-900 u-bg-white border u-border-gray-200 rounded-lg shadow-sm focus:ring-offset-white dark:focus:ring-offset-black'
   },
   icon: {
-    loading: 'uil:refresh'
+    loading: 'uil:sync'
   }
 }
 
