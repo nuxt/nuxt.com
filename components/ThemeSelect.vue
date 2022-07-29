@@ -2,8 +2,8 @@
   <UToggle
     v-model="isDark"
     name="theme"
-    icon-on="heroicons-outline:moon"
-    icon-off="heroicons-outline:sun"
+    icon-on="uil:moon"
+    icon-off="uil:sun"
   />
 </template>
 

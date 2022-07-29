@@ -5,7 +5,7 @@
     </h2>
     <ul class="mt-4 space-y-2">
       <li v-for="(topic, index) in topics" :key="index" class="flex items-center">
-        <UIcon name="heroicons-solid:check-circle" class="w-5 h-5 mr-2 u-text-black" />
+        <UIcon name="uil:check-circle" class="w-5 h-5 mr-2 u-text-black" />
         <span class="u-text-gray-500">{{ topic }}</span>
       </li>
     </ul>

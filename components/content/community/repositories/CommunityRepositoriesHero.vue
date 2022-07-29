@@ -41,7 +41,7 @@
       </UCard>
 
       <UCard padded body-class="p-4" class="hidden lg:block absolute right-10 -bottom-2 w-32 backdrop-blur-lg !bg-opacity-10">
-        <UIcon name="heroicons-outline:users" class="w-5 h-5 text-indigoblue-600" />
+        <UIcon name="uil:users-alt" class="w-5 h-5 text-indigoblue-600" />
 
         <div>
           <p class="mb-2 text-4xl font-semibold u-text-gray-900">

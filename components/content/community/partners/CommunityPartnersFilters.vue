@@ -5,7 +5,7 @@
       :key="filter.key"
       :label="filter.title"
       :to="filter.to"
-      icon="heroicons-outline:x"
+      icon="uil:multiply"
       variant="gray"
       trailing
       rounded

@@ -31,7 +31,7 @@
           :label="secondaryButtonText"
           size="lg"
           variant="transparent"
-          icon="heroicons-solid:chevron-right"
+          icon="uil:angle-right-b"
           trailing
           target="_blank"
           class="u-text-gray-900"

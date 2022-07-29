@@ -3,7 +3,7 @@
     <div class="relative flex flex-col h-[272px] justify-between p-8 border group rounded-xl u-border-gray-200 overflow-hidden">
       <div class="flex items-center justify-between">
         <UIcon :name="icon" class="w-12 h-12 transition-all u-text-gray-300 group-hover:w-8 group-hover:h-8 group-hover:u-text-gray-900" />
-        <UIcon name="heroicons-solid:arrow-right" class="w-4 h-4 transition-opacity opacity-0 group-hover:opacity-100" />
+        <UIcon name="uil:arrow-right" class="w-6 h-6 transition-opacity opacity-0 group-hover:opacity-100" />
       </div>
       <div class="absolute inset-x-8 bottom-8 transition-transform translate-y-[48px] group-hover:translate-y-0 space-y-1">
         <div class="text-sm font-semibold u-text-gray-400">
@@ -35,9 +35,9 @@ const props = defineProps({
 const icon = computed(() => {
   switch (props.page.type) {
     case 'education':
-      return 'heroicons-outline:academic-cap'
+      return 'uil:graduation-cap'
     default:
-      return 'heroicons-outline:fire'
+      return 'uil:fire'
   }
 })
 </script>

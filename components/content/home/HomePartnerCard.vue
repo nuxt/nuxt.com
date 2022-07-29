@@ -20,7 +20,7 @@
           :label="buttonText"
           variant="secondary"
           to="/resources/case-studies/github"
-          icon="heroicons-solid:chevron-right"
+          icon="uil:angle-right-b"
           size="lg"
           class="!text-white"
           trailing

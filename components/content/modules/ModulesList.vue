@@ -41,7 +41,7 @@
             variant="secondary"
             size="lg"
             label="How to create a module"
-            icon="heroicons-outline:arrow-sm-right"
+            icon="uil:arrow-right"
             trailing
             truncate
           />

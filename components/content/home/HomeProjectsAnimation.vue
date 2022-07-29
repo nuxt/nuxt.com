@@ -60,8 +60,9 @@
       </p>
       <UButton
         label="Read more"
-        icon="heroicons-solid:arrow-right"
+        icon="uil:arrow-right"
         variant="transparent"
+        icon-base-class="w-6 h-6"
         trailing
         class="-translate-x-4 !text-gray-900"
       />
