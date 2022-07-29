@@ -5,12 +5,22 @@
       <img :src="nuxter.avatar" :alt="nuxter.username" class="w-full h-full">
     </div>
     <div class="absolute inset-y-0 flex justify-between left-40 right-6">
-      <div class="flex flex-col justify-between py-6">
+      <div class="flex flex-col justify-between py-6 min-w-0">
         <div>
           <div class="flex items-center gap-3">
-            <h3 class="text-2xl font-semibold leading-none u-text-gray-900">
+            <h3 class="text-2xl font-semibold leading-none u-text-gray-900 truncate">
               @{{ nuxter.username }}
             </h3>
+            <UButton
+              v-if="nuxter.sponsorable"
+              variant="pink"
+              label="Sponsor"
+              icon="uil:github"
+              size="xxs"
+              :to="`https://github.com/sponsors/${nuxter.username}`"
+              target="_blank"
+              class="-my-px"
+            />
             <!-- <CommunityNuxtersNuxterBadge :role="nuxter.role" /> -->
           </div>
           <div class="flex items-center gap-3 mt-2">
