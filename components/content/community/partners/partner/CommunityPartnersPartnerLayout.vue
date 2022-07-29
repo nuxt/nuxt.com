@@ -54,7 +54,7 @@
           <div class="flex flex-col gap-8 mt-12 sm:flex-row">
             <UButton
               label="Back to partners list"
-              icon="uil:angle-left"
+              icon="uil:angle-left-b"
               to="/community/partners"
               size="xl"
               variant="secondary"
