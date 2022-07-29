@@ -14,7 +14,7 @@
         <span class="u-text-gray-700">{{ item.description }}</span>
       </div>
 
-      <UIcon name="heroicons-outline:chevron-right" class="self-center w-5 h-5 u-text-gray-500 group-hover:u-text-gray-900" />
+      <UIcon name="uil:angle-right-b" class="self-center w-6 h-6 u-text-gray-500 group-hover:u-text-gray-900" />
 
       <NuxtLink :to="item.to" class="absolute inset-0" />
     </div>

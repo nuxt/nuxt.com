@@ -13,7 +13,7 @@
       </p>
       <div class="flex items-center justify-between mt-6">
         <span class="flex items-center text-xl font-semibold text-white gap-x-2">
-          Read article<UIcon name="heroicons-solid:arrow-right" class="w-4 h-4 mt-1" />
+          Read article<UIcon name="uil:arrow-right" class="w-5 h-5 mt-1" />
         </span>
         <UAvatarGroup :group="authors" size="sm" />
       </div>

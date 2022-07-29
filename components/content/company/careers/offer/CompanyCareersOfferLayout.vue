@@ -2,7 +2,7 @@
   <UContainer constrained-class="max-w-4xl" padded>
     <div class="flex flex-col items-center py-10 sm:py-20">
       <NuxtLink to="/company/careers" class="flex items-center justify-center font-semibold u-text-gray-500 hover:u-text-gray-900">
-        <UIcon name="heroicons-outline:chevron-left" />
+        <UIcon name="uil:angle-left-b" class="w-6 h-6" />
         <span class="ml-3">Back to Careers</span>
       </NuxtLink>
       <h1 class="my-6 text-5xl font-semibold u-text-gray-900">

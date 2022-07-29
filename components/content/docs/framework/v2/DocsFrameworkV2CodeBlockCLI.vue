@@ -58,7 +58,7 @@
             <div class="fromcli-progressbar-anim h-[10px] u-bg-gray-500 rounded-md opacity-0" />
           </div>
           <p class="flex items-center opacity-0 fromcli-installed-anim">
-            <UIcon class="text-white" name="heroicons-solid:check" />
+            <UIcon class="text-white h-6 w-6" name="uil:check" />
             <span class="text-white">installed</span>
           </p>
           <p class="flex">
