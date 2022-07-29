@@ -1,11 +1,23 @@
 <template>
-  <li class="relative flex items-center justify-between h-32 col-span-6 gap-1 overflow-hidden border md:col-span-3 xl:col-span-2 u-border-gray-200 rounded-xl">
-    <div class="flex items-center h-full">
-      <UAvatar :src="nuxter.avatar" :alt="nuxter.username" :text="nuxter.username" size="2xl" class="mx-2" />
-      <div class="flex flex-col justify-between h-full py-7 truncate">
-        <h3 class="text-lg font-semibold leading-none u-text-gray-900 line-clamp-1">
-          @{{ nuxter.username }}
-        </h3>
+  <li class="relative flex items-center justify-between h-32 col-span-6 gap-2 overflow-hidden border md:col-span-3 xl:col-span-2 u-border-gray-200 rounded-xl">
+    <div class="flex items-center h-full min-w-0">
+      <UAvatar :src="nuxter.avatar" :alt="nuxter.username" :text="nuxter.username" size="2xl" class="mx-2 flex-shrink-0" />
+      <div class="flex flex-col justify-between h-full py-7 truncate min-w-0">
+        <div class="flex items-center gap-3">
+          <h3 class="text-lg font-semibold leading-none u-text-gray-900 truncate">
+            @{{ nuxter.username }}
+          </h3>
+          <UButton
+            v-if="nuxter.sponsorable"
+            variant="pink"
+            label="Sponsor"
+            icon="uil:github"
+            size="xxs"
+            :to="`https://github.com/sponsors/${nuxter.username}`"
+            target="_blank"
+            class="-my-1"
+          />
+        </div>
         <span class="font-medium u-text-gray-500 line-clamp-1">{{ nuxter.name || nuxter.username }}</span>
         <div class="flex items-center gap-3">
           <!-- <CommunityNuxtersNuxterBadge :role="nuxter.role" /> -->
