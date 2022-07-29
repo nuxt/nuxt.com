@@ -36,7 +36,7 @@
           <span class="font-semibold u-text-gray-900">Share the article</span>
           <ul class="flex gap-x-4">
             <li>
-              <UButton class="!p-0 u-text-gray-900 hover:u-text-gray-700" variant="transparent" icon="heroicons-outline:link" @click="copyUrl" />
+              <UButton class="!p-0 u-text-gray-900 hover:u-text-gray-700" variant="transparent" icon="uil:link" @click="copyUrl" />
             </li>
             <li v-for="social in socialLinks" :key="social.alt">
               <UButton

@@ -13,7 +13,7 @@
       <img src="/assets/modules/gems.svg" class="object-cover h-full lg:mx-10 opacity-10 lg:opacity-100">
 
       <UCard padded body-class="p-4" class="hidden lg:block absolute left-11 top-3 w-44 backdrop-blur-lg !bg-opacity-10">
-        <UIcon name="heroicons-outline:download" class="w-5 h-5 text-teal-400" />
+        <UIcon name="uil:arrow-to-bottom" class="w-5 h-5 text-teal-400" />
 
         <div>
           <p class="mb-2 text-4xl font-semibold u-text-gray-900">
@@ -26,7 +26,7 @@
       </UCard>
 
       <UCard padded body-class="p-4" class="hidden lg:block absolute -left-10 bottom-0 w-32 backdrop-blur-lg !bg-opacity-10">
-        <UIcon name="heroicons-outline:puzzle" class="w-5 h-5 text-green-400" />
+        <UIcon name="uil:puzzle-piece" class="w-5 h-5 text-green-400" />
 
         <div>
           <p class="mb-2 text-4xl font-semibold u-text-gray-900">
@@ -39,7 +39,7 @@
       </UCard>
 
       <UCard padded body-class="p-4" class="hidden lg:block absolute right-0 -bottom-10 w-32 backdrop-blur-lg !bg-opacity-10">
-        <UIcon name="heroicons-outline:users" class="w-5 h-5 text-indigoblue-600" />
+        <UIcon name="uil:users-alt" class="w-5 h-5 text-indigoblue-600" />
 
         <div>
           <p class="mb-2 text-4xl font-semibold u-text-gray-900">

@@ -35,14 +35,14 @@
                 -
               </div>
               <div class="flex items-center gap-1.5">
-                <UIcon name="heroicons-outline:download" class="w-4 h-4" />
+                <UIcon name="uil:download-alt" class="w-4 h-4" />
                 <span>{{ formatNumber(module.downloads) }} installs</span>
               </div>
               <div class="hidden md:block">
                 -
               </div>
               <div class="flex items-center gap-1.5">
-                <UIcon name="heroicons-outline:star" class="w-4 h-4" />
+                <UIcon name="uil:star" class="w-4 h-4" />
                 <span>{{ formatNumber(module.stars) }} stars</span>
               </div>
             </div>

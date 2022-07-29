@@ -8,7 +8,7 @@
     </template>
     <template #extra>
       <!-- TODO: update link -->
-      <GradientNuxtLink icon="heroicons-outline:arrow-sm-right" to="#" class="font-semibold u-text-gray-900 sm:text-lg">
+      <GradientNuxtLink icon="uil:arrow-right" to="#" class="font-semibold u-text-gray-900 sm:text-lg">
         <Markdown :use="$slots.link" unwrap="p" />
       </GradientNuxtLink>
     </template>

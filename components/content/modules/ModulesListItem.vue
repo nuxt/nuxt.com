@@ -19,19 +19,19 @@
     <div class="flex items-center justify-between gap-3 -mb-2 u-text-gray-500">
       <div class="flex items-center gap-3">
         <div class="flex items-center gap-1.5">
-          <UIcon name="heroicons-outline:star" class="w-4 h-4" />
+          <UIcon name="uil:star" class="w-4 h-4" />
 
           <span class="text-sm">{{ formatNumber(module.stars) }}</span>
         </div>
         <div class="flex items-center gap-1.5">
-          <UIcon name="heroicons-outline:download" class="w-4 h-4" />
+          <UIcon name="uil:arrow-to-bottom" class="w-4 h-4" />
 
           <span class="text-sm">{{ formatNumber(module.downloads) }}</span>
         </div>
       </div>
 
       <div class="flex items-center gap-1.5">
-        <UIcon name="heroicons-outline:users" class="w-4 h-4" />
+        <UIcon name="uil:users-alt" class="w-4 h-4" />
 
         <span class="text-sm">{{ module.contributors.length }}</span>
       </div>

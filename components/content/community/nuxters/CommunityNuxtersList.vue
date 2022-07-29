@@ -4,7 +4,7 @@
       <template #title>
         Top 100 Nuxters
 
-        <UIcon v-if="pending" name="heroicons-outline:refresh" class="w-4 h-4 lg:w-5 lg:h-5 ml-1.5 lg:ml-3 animate-spin" />
+        <UIcon v-if="pending" name="uil:sync" class="w-4 h-4 lg:w-5 lg:h-5 ml-1.5 lg:ml-3 animate-spin" />
       </template>
 
       <template #filters>

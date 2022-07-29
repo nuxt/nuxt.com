@@ -16,7 +16,7 @@
       <div class="flex items-center gap-3 -mb-2 u-text-gray-500">
         <div class="flex items-center gap-3">
           <div class="flex items-center gap-1.5">
-            <UIcon name="heroicons-outline:star" class="w-4 h-4" />
+            <UIcon name="uil:star" class="w-4 h-4" />
 
             <span class="text-sm">{{ formatNumber(repository.stargazerCount) }}</span>
           </div>
