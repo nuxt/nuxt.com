@@ -53,6 +53,7 @@ export interface CommunityNuxter {
   pullRequestsCount: number
   commentsCount: number
   activitiesCount: number
+  sponsorable?: boolean
   rank?: number
 }
 
