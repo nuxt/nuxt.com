@@ -23,9 +23,6 @@ export default defineNuxtConfig({
     github: {
       token: process.env.GITHUB_TOKEN
     },
-    orbit: {
-      token: process.env.ORBIT_TOKEN
-    },
     mailjet: {
       apiKey: process.env.MAILJET_API_KEY,
       secretKey: process.env.MAILJET_SECRET_KEY
