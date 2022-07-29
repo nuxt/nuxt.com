@@ -26,6 +26,9 @@ const button = {
       acc[color] = `border border-transparent text-white bg-${color}-500 hover:bg-${color}-400 disabled:bg-${color}-500 focus:ring-2 focus:ring-offset-2 focus:ring-${color}-400`
       return acc
     }, {})
+  },
+  icon: {
+    loading: 'uil:refresh'
   }
 }
 
@@ -34,19 +37,25 @@ const input = {
     default: 'focus:ring-1 focus:u-ring-gray-900 focus:u-border-gray-900 bg-white dark:bg-gray-900 border u-border-gray-200 rounded-lg shadow-sm focus:ring-offset-white dark:focus:ring-offset-black',
     invert: 'focus:ring-2 focus:u-ring-gray-900 focus:ring-offset-2 bg-gray-900 dark:bg-white u-text-white border u-border-gray-900 rounded-lg shadow-sm focus:ring-offset-white dark:focus:ring-offset-black font-semibold',
     darken: 'focus:ring-1 focus:u-ring-gray-900 focus:u-border-gray-900 u-bg-white border u-border-gray-200 rounded-lg shadow-sm focus:ring-offset-white dark:focus:ring-offset-black'
+  },
+  icon: {
+    loading: 'uil:refresh'
   }
 }
 
 const textarea = {
-  ...input
+  appearance: input.appearance
 }
 
 const select = {
-  ...input
+  appearance: input.appearance
 }
 
 const selectCustom = {
-  ...input,
+  appearance: input.appearance,
+  icon: {
+    name: 'uil:angle-down'
+  },
   list: {
     base: 'u-bg-white shadow-lg rounded-md ring-1 u-ring-gray-200 border border-transparent focus:outline-none overflow-y-auto p-1 max-h-60',
     option: {
@@ -54,6 +63,7 @@ const selectCustom = {
       active: 'u-text-gray-900 bg-gray-100 dark:bg-gray-900',
       inactive: 'u-text-gray-900',
       icon: {
+        name: 'uil:check',
         base: 'absolute inset-y-0 right-0 flex items-center pr-2',
         active: '',
         inactive: '',
