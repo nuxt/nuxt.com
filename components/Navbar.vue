@@ -9,7 +9,7 @@
       <div class="grid items-center h-16 grid-cols-6 gap-3 lg:h-20 lg:justify-center">
         <div class="lg:hidden">
           <button @click="isOpen = true">
-            <UIcon name="uil:align-left" class="flex-shrink-0 w-6 h-6" />
+            <UIcon name="uil:bars" class="flex-shrink-0 w-6 h-6" />
           </button>
         </div>
 
@@ -63,7 +63,7 @@ const links: Ref<NavItem[]> = ref([{
   _path: '/docs'
 }, {
   title: 'Modules',
-  icon: 'heroicons-outline:sparkles',
+  icon: 'uil:palette',
   _path: '/modules'
 },
 {
