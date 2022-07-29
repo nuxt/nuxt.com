@@ -2,7 +2,7 @@
   <div class="flex items-center justify-between gap-4">
     <div v-if="prev" class="relative w-1/2 py-4 pl-4 pr-6 overflow-hidden transition duration-200 rounded-lg lg:w-56 ring-1 u-ring-gray-200 lg:hover:u-ring-gray-900 lg:hover:ring-2 group u-bg-white">
       <div class="flex items-center justify-between gap-2">
-        <UIcon name="heroicons-outline:arrow-sm-left" class="flex-shrink-0 w-6 h-6" />
+        <UIcon name="uil:arrow-left" class="flex-shrink-0 w-6 h-6" />
 
         <div class="min-w-0 text-right">
           <p class="font-semibold truncate lg:text-lg u-text-gray-900">
@@ -30,7 +30,7 @@
           </p>
         </div>
 
-        <UIcon name="heroicons-outline:arrow-sm-right" class="flex-shrink-0 w-6 h-6" />
+        <UIcon name="uil:arrow-right" class="flex-shrink-0 w-6 h-6" />
       </div>
       <NuxtLink :to="next._path" tabindex="-1" class="focus:outline-none">
         <span class="absolute inset-0" aria-hidden="true" />

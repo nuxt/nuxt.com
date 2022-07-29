@@ -2,7 +2,7 @@
   <div class="space-y-2">
     <NuxtLink v-if="prev" :to="prev._path" class="flex items-center text-sm font-medium lg:flex-row-reverse hover:font-semibold u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900 gap-x-3">
       <div class="flex-shrink-0 p-1 rounded-md u-bg-gray-100">
-        <UIcon name="heroicons-solid:chevron-double-left" class="w-4 h-4 u-text-gray-400" />
+        <UIcon name="uil:angle-double-left" class="w-5 h-5 u-text-gray-400" />
       </div>
 
       <span>Previous page</span>
@@ -10,8 +10,8 @@
 
     <template v-if="toc.length">
       <div class="flex items-center text-sm font-semibold lg:flex-row-reverse u-text-gray-900 gap-x-3">
-        <div class="flex-shrink-0 p-1 rounded-md u-bg-gray-900">
-          <UIcon name="heroicons-outline:view-grid" class="w-4 h-4 u-text-white" />
+        <div class="flex-shrink-0 p-1.5 rounded-md u-bg-gray-900">
+          <UIcon name="uil:apps" class="w-4 h-4 u-text-white" />
         </div>
 
         <span>On this page</span>
@@ -36,7 +36,7 @@
 
     <NuxtLink v-if="next" :to="next._path" class="flex items-center text-sm font-medium lg:flex-row-reverse hover:font-semibold u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900 gap-x-3 focus:outline-none">
       <div class="flex-shrink-0 p-1 rounded-md u-bg-gray-100">
-        <UIcon name="heroicons-solid:chevron-double-right" class="w-4 h-4 u-text-gray-400" />
+        <UIcon name="uil:angle-double-right" class="w-5 h-5 u-text-gray-400" />
       </div>
 
       <span>Next page</span>

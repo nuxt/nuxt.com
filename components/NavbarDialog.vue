@@ -2,10 +2,10 @@
   <USlideover v-model="isOpen">
     <template #header>
       <button v-if="selectedLink" class="flex-1" @click="selectedLink = null">
-        <UIcon name="heroicons-outline:arrow-sm-left" class="flex-shrink-0 w-6 h-6" />
+        <UIcon name="uil:arrow-left" class="flex-shrink-0 w-6 h-6" />
       </button>
       <button v-else class="flex-1" @click="isOpen = false">
-        <UIcon name="heroicons-outline:x" class="flex-shrink-0 w-6 h-6" />
+        <UIcon name="uil:multiply" class="flex-shrink-0 w-6 h-6" />
       </button>
 
       <p v-if="selectedLink" class="text-lg font-semibold">
