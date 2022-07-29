@@ -85,5 +85,8 @@ export default defineNuxtConfig({
   github: {
     disableCache: true,
     maxContributors: 10
+  },
+  experimental: {
+    viteNode: true
   }
 })
