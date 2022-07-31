@@ -20,9 +20,6 @@ export default defineNuxtConfig({
     ]
   },
   runtimeConfig: {
-    github: {
-      token: process.env.GITHUB_TOKEN
-    },
     mailjet: {
       apiKey: process.env.MAILJET_API_KEY,
       secretKey: process.env.MAILJET_SECRET_KEY
@@ -82,6 +79,7 @@ export default defineNuxtConfig({
   github: {
     disableCache: true,
     maxContributors: 10,
-    token: process.env.GITHUB_TOKEN
+    token: process.env.GITHUB_TOKEN,
+    api: 'https://api.github.com'
   }
 })
