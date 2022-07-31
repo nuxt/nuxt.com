@@ -81,6 +81,7 @@ export default defineNuxtConfig({
   },
   github: {
     disableCache: true,
-    maxContributors: 10
+    maxContributors: 10,
+    token: process.env.GITHUB_TOKEN
   }
 })
