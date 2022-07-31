@@ -10,7 +10,7 @@ export default defineNuxtConfig({
     '@nuxthq/ui',
     '@nuxthq/studio',
     '@nuxt/content',
-    '@larbish/github-module',
+    '@nuxtlabs/github-module',
     'nuxt-newsletter',
     'vue-plausible'
   ],

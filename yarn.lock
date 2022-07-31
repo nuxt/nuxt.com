@@ -407,17 +407,6 @@
     methods "^1.1.2"
     path-to-regexp "^6.1.0"
 
-"@larbish/github-module@^1.4.6":
-  version "1.4.6"
-  resolved "https://registry.yarnpkg.com/@larbish/github-module/-/github-module-1.4.6.tgz#467b46bced650e7993a6133f5683da4ec90b765f"
-  integrity sha512-iFN7XVNTr1mkWXOvhLiUNuySdWAtWX1sx17I2/1Cpvn7qBSwwKZdL2zPhYvLvSySg1//nD8nYKQQIfv6IBZcyQ==
-  dependencies:
-    "@nuxt/kit" "^3.0.0-rc.6"
-    "@octokit/graphql" "^5.0.0"
-    "@octokit/rest" "^19.0.3"
-    remark-gfm "^3.0.1"
-    remark-github "^11.2.4"
-
 "@mailchimp/mailchimp_marketing@^3.0.74":
   version "3.0.75"
   resolved "https://registry.yarnpkg.com/@mailchimp/mailchimp_marketing/-/mailchimp_marketing-3.0.75.tgz#8b0d79d9da4fa3b8c8d43d87494c7a75e081f1d2"
