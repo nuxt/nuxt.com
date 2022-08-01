@@ -458,12 +458,12 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@nuxt/content@npm:@nuxt/content-edge@latest":
-  version "2.1.0-27630041.9582f8c"
-  resolved "https://registry.yarnpkg.com/@nuxt/content-edge/-/content-edge-2.1.0-27630041.9582f8c.tgz#d06c5ed21fac7dd3dd400ae226ac9f1a64961b18"
-  integrity sha512-IraMkDzsCWc+aHCcvncdqZq+E+m4h4j0cLtjZ7Ohb48UEF4f3s5pLFNLZzCLJjMgmmXqMcQU0Ek1NZ0dEO+1DQ==
+"@nuxt/content@npm:@farnabaz/content@debug":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@farnabaz/content/-/content-2.1.0.tgz#f07dda68989adbc18351092596c0e2dbc70de695"
+  integrity sha512-pkY34ai/UcxhCiIibWoK5G0cWofad9PsjksfLGEiWsU/GFiFSb48EVRXzjkiRdO3X3TK4IxLtz319blshtOeQA==
   dependencies:
-    "@nuxt/kit" "^3.0.0-rc.5"
+    "@nuxt/kit" "^3.0.0-rc.6"
     consola "^2.15.3"
     csvtojson "^2.0.10"
     defu "^6.0.0"
@@ -474,17 +474,17 @@
     listhen "^0.2.13"
     mdast-util-to-hast "^12.1.2"
     mdurl "^1.0.1"
-    ohash "^0.1.0"
+    ohash "^0.1.4"
     pathe "^0.3.2"
     property-information "^6.1.1"
-    rehype-external-links "^1.0.1"
+    rehype-external-links "^2.0.0"
     rehype-raw "^6.1.1"
     rehype-slug "^5.0.1"
     rehype-sort-attribute-values "^4.0.0"
     rehype-sort-attributes "^4.0.0"
     remark-emoji "^3.0.2"
     remark-gfm "^3.0.1"
-    remark-mdc "^1.0.1"
+    remark-mdc "^1.0.2"
     remark-parse "^10.0.1"
     remark-rehype "^10.1.0"
     remark-squeeze-paragraphs "^5.0.1"
@@ -497,8 +497,8 @@
     unist-builder "^3.0.0"
     unist-util-position "^4.0.3"
     unist-util-visit "^4.1.0"
-    unstorage "^0.5.4"
-    ws "^8.8.0"
+    unstorage "^0.5.5"
+    ws "^8.8.1"
 
 "@nuxt/devalue@^2.0.0":
   version "2.0.0"
@@ -7613,10 +7613,10 @@ regexpp@^3.0.0, regexpp@^3.2.0:
   resolved "https://registry.yarnpkg.com/regexpp/-/regexpp-3.2.0.tgz#0425a2768d8f23bad70ca4b90461fa2f1213e1b2"
   integrity sha512-pq2bWo9mVD43nbts2wGv17XLiNLya+GklZ8kaDLV2Z08gDCsGpnKn9BFMepvWuHCbyVvY7J5o5+BVvoQbmlJLg==
 
-rehype-external-links@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/rehype-external-links/-/rehype-external-links-1.0.1.tgz#9e5d21c606b04d8098012e2d3c811919762d0ba2"
-  integrity sha512-SrMMtIO2tPLWDfvibhECAn9cuEMW6Fi40ZVK2UQSPTnDEv3LraLzGVyKGb/vrDlUy4RCYTcmm0rq/ss9nPqrsw==
+rehype-external-links@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/rehype-external-links/-/rehype-external-links-2.0.0.tgz#594d7a8727f04758d2e760752ee29d964d44def3"
+  integrity sha512-Nhq4Wq2TpNdZ1rYec0LThCOoVLkIz5CLhDSo7k4nFhhlwE5vYcRleAM92ozZx6CcWTvzalLCpxq4PQLMucI1Vw==
   dependencies:
     "@types/hast" "^2.0.0"
     extend "^3.0.0"
@@ -7701,10 +7701,10 @@ remark-github@^11.2.4:
     unified "^10.0.0"
     unist-util-visit "^4.0.0"
 
-remark-mdc@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/remark-mdc/-/remark-mdc-1.0.1.tgz#006a17672161b4edc3746b49bed8f38fbba91d9c"
-  integrity sha512-KxIMQOUtlSNL5Ycwe2de5X9HiN+aQ5/gsi9DRRShdxTt0DUtTvR8D+dTBQWZzieaJQKqJ4E/TbTJf3aG1+Q+QQ==
+remark-mdc@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/remark-mdc/-/remark-mdc-1.0.2.tgz#f417adac00c7dbd062d8f842c4115e545b131335"
+  integrity sha512-D4G4c4tb+dFnmbo7LE0og21cF04ZOk3dSd0jSKvUSkiprd/qKclFKT+fEeXa2WqG8c7W6aCn36eSwPbzkCWb2A==
   dependencies:
     flat "^5.0.2"
     js-yaml "^4.1.0"
@@ -9322,7 +9322,7 @@ wrappy@1:
   resolved "https://registry.yarnpkg.com/wrappy/-/wrappy-1.0.2.tgz#b5243d8f3ec1aa35f1364605bc0d1036e30ab69f"
   integrity sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==
 
-ws@^8.8.0:
+ws@^8.8.0, ws@^8.8.1:
   version "8.8.1"
   resolved "https://registry.yarnpkg.com/ws/-/ws-8.8.1.tgz#5dbad0feb7ade8ecc99b830c1d77c913d4955ff0"
   integrity sha512-bGy2JzvzkPowEJV++hF07hAD6niYSr0JzBNo/J29WsB57A2r7Wlc1UFcTR9IzrPvuNVO4B8LGqF8qcpsVOhJCA==

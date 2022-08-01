@@ -13,7 +13,7 @@
     "parse5": "6.0.1"
   },
   "devDependencies": {
-    "@nuxt/content": "npm:@nuxt/content-edge@latest",
+    "@nuxt/content": "npm:@farnabaz/content@debug",
     "@nuxthq/studio": "npm:@nuxthq/studio-edge@latest",
     "@nuxthq/ui": "npm:@nuxthq/ui-edge@latest",
     "@nuxtjs/eslint-config-typescript": "^10.0.0",
