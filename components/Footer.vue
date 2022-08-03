@@ -37,7 +37,7 @@
 <script setup lang="ts">
 const { navFromPath } = usePage()
 
-const links = computed(() => navFromPath('/company')?.children)
+const links = computed(() => [...navFromPath('/company')?.children, { title: 'Stats', _path: '/stats' }])
 
 const langs = ref([{ text: 'English', value: 'en' }])
 const lang = ref(langs.value[0].value)
