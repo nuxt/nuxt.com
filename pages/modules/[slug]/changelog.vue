@@ -64,13 +64,13 @@ import { formatDateByLocale } from '~/utils'
 const { githubQuery, module } = useModules()
 const { fetchReleases, fetchContributors } = useGithub()
 
-const { data: releases } = useAsyncData(
+const { data: releases } = await useAsyncData(
   `releases:${githubQuery.value.owner}:${githubQuery.value.repo}`,
   () => fetchReleases(githubQuery.value),
   { lazy: true }
 )
 
-const { data: contributors } = useAsyncData(
+const { data: contributors } = await useAsyncData(
   `contributors:${githubQuery.value.owner}:${githubQuery.value.repo}`,
   () => fetchContributors(githubQuery.value),
   { lazy: true }

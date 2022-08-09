@@ -32,7 +32,7 @@
 const { githubQuery, module } = useModules()
 const { fetchReadme } = useGithub()
 
-const { data: readme } = useAsyncData(
+const { data: readme } = await useAsyncData(
   `readme:${githubQuery.value.owner}:${githubQuery.value.repo}`,
   () => fetchReadme(githubQuery.value)
 )
