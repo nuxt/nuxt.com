@@ -20,6 +20,7 @@
 </template>
 
 <script setup lang="ts">
+
 const props = defineProps({
   currentSection: {
     type: Number,
@@ -30,33 +31,43 @@ const props = defineProps({
 const serverBorder = ref(false)
 const serverStep = ref(0)
 const hybridStep = ref(0)
-const intervalIds = ref([])
-const timeoutIds = ref([])
+const animTimeoutIds = ref([])
+const animIntervalIds = ref([])
 
 watch(() => props.currentSection, () => {
-  if (props.currentSection === 0) {
-    serverBorder.value = true
-
-    intervalIds.value.push(setInterval(() => {
-      serverStep.value = 1
-      timeoutIds.value.push(setTimeout(() => {
-        serverStep.value = 0
-      }, 2000))
-    }, 4000))
+  if (props.currentSection === 0 || props.currentSection === 2) {
+    sectionAnim(props.currentSection === 0)
   }
 
-  if (props.currentSection === 2) {
-    intervalIds.value.push(setInterval(() => {
-      hybridStep.value = 1
-      timeoutIds.value.push(setTimeout(() => {
-        hybridStep.value = 0
-      }, 2000))
-    }, 4000))
-  }
+  if (props.currentSection !== 0) { clearSectionAnim() }
+  if (props.currentSection !== 2) { clearSectionAnim(false) }
 })
 
+const sectionAnim = (server) => {
+  serverBorder.value = server
+
+  animIntervalIds.value.push({
+    id: setInterval(() => {
+      server ? serverStep.value = 1 : hybridStep.value = 1
+
+      animTimeoutIds.value.push({
+        id: setTimeout(() => {
+          server ? serverStep.value = 0 : hybridStep.value = 0
+        }, 2000),
+        serverAnim: server
+      })
+    }, 4000),
+    serverAnim: server
+  })
+}
+
+const clearSectionAnim = (server = true) => {
+  animIntervalIds.value.filter(anim => anim.serverAnim === server).map(anim => clearInterval(anim.id))
+  animTimeoutIds.value.filter(anim => anim.serverAnim === server).map(anim => clearTimeout(anim.id))
+}
+
 onUnmounted(() => {
-  intervalIds.value.map(id => clearInterval(id))
-  timeoutIds.value.map(id => clearTimeout(id))
+  animIntervalIds.value.map(anim => clearInterval(anim.id))
+  animTimeoutIds.value.map(anim => clearTimeout(anim.id))
 })
 </script>
