@@ -43,20 +43,7 @@
     </ul>
     <div class="top-0 right-0 flex items-center justify-center flex-1 xl:absolute 2xl:-right-32 top-10">
       <div class="xl:ml-20">
-        <DocsFrameworkV3AutoImportContainer :current-section="currentSection">
-          <template #components>
-            <Markdown :use="$slots.proseComponents" unwrap="p" />
-          </template>
-          <template #composablesHtml>
-            <Markdown :use="$slots.proseComposablesHtml" unwrap="p" />
-          </template>
-          <template #composablesJS>
-            <Markdown :use="$slots.proseComposablesJS" unwrap="p" />
-          </template>
-          <template #plugins>
-            <Markdown :use="$slots.prosePlugins" unwrap="p" />
-          </template>
-        </DocsFrameworkV3AutoImportContainer>
+        <DocsFrameworkV3AutoImportContainer :current-section="currentSection" />
       </div>
     </div>
   </div>
@@ -66,9 +53,4 @@
 const { data: autoImportData } = await useAsyncData('autoImport', () => queryContent('/docs/3.x/_collections/auto-import').findOne())
 
 const currentSection = ref(null)
-
-const hoveredSection = (index) => {
-  currentSection.value = index
-}
-
 </script>
