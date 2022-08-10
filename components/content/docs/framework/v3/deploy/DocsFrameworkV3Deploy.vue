@@ -5,7 +5,7 @@
         v-for="(data, index) in deployData.deploy"
         ref="sections"
         :key="data.title"
-        class="relative flex flex-col p-4 transition duration-200 rounded-md cursor-pointer gap-x-2 group"
+        class="relative flex flex-col p-4 transition duration-200 rounded-md cursor-pointer gap-x-2 group hover:u-bg-gray-50"
         @mouseenter="currentSection = index"
         @mouseleave="currentSection = null"
         @click="currentSection = index"
