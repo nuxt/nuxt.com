@@ -39,8 +39,15 @@ watch(() => props.currentSection, () => {
     sectionAnim(props.currentSection === 0)
   }
 
-  if (props.currentSection !== 0) { clearSectionAnim() }
-  if (props.currentSection !== 2) { clearSectionAnim(false) }
+  if (props.currentSection !== 0) {
+    serverBorder.value = false
+    serverStep.value = 0
+    clearSectionAnim()
+  }
+  if (props.currentSection !== 2) {
+    clearSectionAnim(false)
+    hybridStep.value = 0
+  }
 })
 
 const sectionAnim = (server) => {

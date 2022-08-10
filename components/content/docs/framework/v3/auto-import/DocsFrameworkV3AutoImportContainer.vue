@@ -175,7 +175,7 @@
 defineProps({
   currentSection: {
     type: Number,
-    default: 0
+    default: null
   }
 })
 </script>
