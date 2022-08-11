@@ -480,9 +480,9 @@
     fastq "^1.6.0"
 
 "@nuxt/content@npm:@nuxt/content-edge@latest":
-  version "2.1.0-27667349.b409f18"
-  resolved "https://registry.yarnpkg.com/@nuxt/content-edge/-/content-edge-2.1.0-27667349.b409f18.tgz#4c5891ebf3e4e3fc486e1f4fb45f20685f4c8bf1"
-  integrity sha512-KF8+UDOFO5H+1UKS7HA85lyRhxLARfWKBd1zo1AM4jOm0iz0nDPV7RTzwc5V0DU0dDDLf/67BxHkVzwMNYGD/g==
+  version "2.1.0-27670257.58ba46f"
+  resolved "https://registry.yarnpkg.com/@nuxt/content-edge/-/content-edge-2.1.0-27670257.58ba46f.tgz#c4d8199dd290e8a630da5646c37be6aa8c5b4b5f"
+  integrity sha512-fEcL/Pw2RHdQM5rU+gRSl/f5bon6EOat5RihnDys3o7pbrANLr5aqUpLmD0X3BYlHiSn0F/ZK42i49HlwGyyeA==
   dependencies:
     "@nuxt/kit" "^3.0.0-rc.6"
     consola "^2.15.3"
