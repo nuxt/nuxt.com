@@ -53,9 +53,4 @@
 const { data: autoImportData } = await useAsyncData('autoImport', () => queryContent('/docs/3.x/_collections/auto-import').findOne())
 
 const currentSection = ref(null)
-
-const hoveredSection = (index) => {
-  currentSection.value = index
-}
-
 </script>

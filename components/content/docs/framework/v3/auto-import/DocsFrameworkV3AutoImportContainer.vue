@@ -64,56 +64,106 @@
           <div class="absolute font-mono text-sm italic text-gray-300 transition-opacity duration-300 top-28 md:top-4 left-4" :class="currentSection === null ? 'opacity-100' : 'opacity-0'">
             Open components, composables or plugins
           </div>
-          <div class="absolute font-mono text-gray-300 transition-opacity duration-300 top-28 md:top-4 left-4" :class="currentSection === 0 ? 'opacity-100' : 'opacity-0'">
-            <span class="text-gray-300">&lt;template&gt;</span>
-            <div v-for="(text, index) in ['Header', 'Footer']" :key="index" class="pl-4">
-              <span>&lt;<span class="text-green-400">{{ text }}&nbsp;</span>/&gt;</span>
-            </div>
-            <span class="text-gray-300">&lt;/template&gt;</span>
+          <div class="absolute transition-opacity duration-300 top-28 md:top-4 left-4 font-mono" :class="currentSection === 0 ? 'opacity-100' : 'opacity-0'">
+            <span class="text-blue-200">&#60;</span>
+            <span class="text-red-300">template</span>
+            <span class="text-blue-200">&#62;</span>
+            <br>
+            <span>&nbsp;</span>
+            <span class="text-blue-200">&#60;</span>
+            <span class="text-red-300">Header</span>
+            <span>&nbsp;</span>
+            <span class="text-blue-200">&#47;</span>
+            <span class="text-blue-200">&#62;</span>
+            <br>
+            <span>&nbsp;</span>
+            <span class="text-blue-200">&#60;</span>
+            <span class="text-red-300">Footer</span>
+            <span>&nbsp;</span>
+            <span class="text-blue-200">&#47;</span>
+            <span class="text-blue-200">&#62;</span>
+            <br>
+            <span class="text-blue-200">&#60;</span>
+            <span class="text-blue-200">&#47;</span>
+            <span class="text-red-300">template</span>
+            <span class="text-blue-200">&#62;</span>
           </div>
           <div class="absolute font-mono text-gray-300 transition-opacity duration-300 top-[98px] md:top-4 left-4" :class="currentSection === 1 ? 'opacity-100' : 'opacity-0'">
-            <span class="text-gray-300">&lt;template&gt;</span>
+            <span class="text-blue-200">&#60;</span>
+            <span class="text-red-300">template</span>
+            <span class="text-blue-200">&#62;</span>
             <br>
-            <span class="pl-4 text-gray-300">&nbsp;&lt;p&gt;</span>
-            <span class="text-gray-200">Mouse position:&nbsp;</span>
-            <span class="text-gray-200">&#123;&#123;&nbsp;</span>
-            <span class="text-green-400">x&nbsp;</span>
-            <span class="text-gray-200">&#125;&#125;&nbsp;</span>
-            <span class="text-gray-200">&#123;&#123;&nbsp;</span>
-            <span class="text-green-400">y&nbsp;</span>
-            <span class="text-gray-300">&#125;&#125;</span>
-            <span class="text-gray-300">&lt;/p&gt;</span>
+            <span>&nbsp;</span>
+            <span class="text-blue-200">&#60;</span>
+            <span class="text-red-300">p</span>
+            <span class="text-blue-200">&#62;</span>
+            <span class="text-gray-300">
+              <span>Mouse position:&nbsp;</span>
+              <span class="text-yellow-400">&#123;&#123;</span>
+              <span>&nbsp;x&nbsp;</span>
+              <span class="text-yellow-400">&#125;&#125;&nbsp;</span>
+              <span class="text-yellow-400">&#123;&#123;</span>
+              <span>&nbsp;y&nbsp;</span>
+              <span class="text-yellow-400">&#125;&#125;</span>
+            </span>
+            <span class="text-blue-200">&#60;</span>
+            <span class="text-blue-200">&#47;</span>
+            <span class="text-red-300">p</span>
+            <span class="text-blue-200">&#62;</span>
             <br>
-            <span class="text-gray-300">&lt;/template&gt;</span>
-            <div class="pt-8">
-              <span class="text-gray-300">&lt;script&nbsp;</span>
-              <span class="text-green-400">setup</span>
-              <span class="text-gray-400">&gt;</span>
-              <br>
-              <span class="text-blue-600">&nbsp;&nbsp;const&nbsp;</span>
-              <span class="text-gray-300">&#123;&nbsp;</span>
-              <span class="text-blue-300">x</span>
+            <span class="text-blue-200">&#60;</span>
+            <span class="text-blue-200">&#47;</span>
+            <span class="text-red-300">template</span>
+            <span class="text-blue-200">&#62;</span>
+            <br><br>
+            <span class="text-blue-200">&#60;</span>
+            <span class="text-red-300">script&nbsp;</span>
+            <span class="text-purple-200 italic">setup</span>
+            <span class="text-blue-200">&#62;</span>
+            <br>
+            <span>
+              <code class="text-purple-200">&nbsp;const&nbsp;</code>
+              <span class="text-yellow-400">&#123;&nbsp;</span>
+              <span class="text-red-300">x</span>
               <span class="text-gray-300">&#44;&nbsp;</span>
-              <span class="text-blue-300">y&nbsp;</span>
-              <span class="text-gray-300">&#125;&nbsp;</span>
-              <span class="text-blue-600">&#61;&nbsp;</span>
-              <span class="text-green-400">useMouse</span>
-              <span class="text-gray-300">&#40;</span>
-              <span class="text-gray-300">&#41;</span>
+              <span class="text-red-300">y&nbsp;</span>
+              <span class="text-yellow-400">&#125;&nbsp;</span>
+              <span class="text-purple-200">&#61;&nbsp;</span>
+              <span class="text-indigoblue-300">useMouse</span>
+              <span class="text-yellow-400">&#40;&#41;</span>
               <br>
-              <span class="text-gray-300">&lt;/script&gt;</span>
-            </div>
+              <span class="text-blue-200">&#60;</span>
+              <span class="text-blue-200">&#47;</span>
+              <span class="text-red-300">script</span>
+              <span class="text-blue-200">&#62;</span>
+            </span>
           </div>
           <div class="absolute font-mono text-gray-300 transition-opacity duration-300 top-28 md:top-4 left-4" :class="currentSection === 2 ? 'opacity-100' : 'opacity-0'">
-            <span class="text-gray-300">&lt;template&gt;</span>
+            <span class="text-blue-200">&#60;</span>
+            <span class="text-red-300">template</span>
+            <span class="text-blue-200">&#62;</span>
             <br>
-            <span class="text-gray-300">&nbsp;&nbsp;&lt;h1&gt;</span>
-            <span class="text-gray-200">&#123;&#123;&nbsp;</span>
-            <span class="text-green-400">&#36;t&#40;&#39;hello&#39;&#41;&nbsp;</span>
-            <span class="text-gray-200">&#125;&#125;</span>
-            <span class="text-gray-300">&lt;/h1&gt;</span>
+            <span>&nbsp;</span>
+            <span class="text-blue-200">&#60;</span>
+            <span class="text-red-300">h1</span>
+            <span class="text-blue-200">&#62;</span>
+            <span class="text-yellow-400">&#123;&#123;&nbsp;</span>
+            <span class="text-indigoblue-300">&#38;t</span>
+            <span class="text-purple-200">&#40;</span>
+            <span class="text-blue-200">&#39;</span>
+            <span class="text-green-400">hello</span>
+            <span class="text-blue-200">&#39;</span>
+            <span class="text-purple-200">&#41;</span>
+            <span class="text-yellow-400">&nbsp;&#125;&#125;</span>
+            <span class="text-blue-200">&#60;</span>
+            <span class="text-blue-200">&#47;</span>
+            <span class="text-red-300">h1</span>
+            <span class="text-blue-200">&#62;</span>
             <br>
-            <span class="text-gray-300">&lt;/template&gt;</span>
+            <span class="text-blue-200">&#60;</span>
+            <span class="text-blue-200">&#47;</span>
+            <span class="text-red-300">template</span>
+            <span class="text-blue-200">&#62;</span>
           </div>
         </div>
       </div>
@@ -125,7 +175,7 @@
 defineProps({
   currentSection: {
     type: Number,
-    default: 0
+    default: null
   }
 })
 </script>

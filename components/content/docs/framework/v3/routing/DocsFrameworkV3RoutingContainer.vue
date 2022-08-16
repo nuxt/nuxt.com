@@ -49,12 +49,12 @@
                      { 'border-t-4 border-l-4 border-r-none border-b-none border-green-500': idHovered },
                      { 'bottom-2': messageHovered }]"
           >
-            <div class="w-[132px] h-8 rounded-3xl mt-8 sm:mt-0 md:mt-[45px]" :class="dashboardHovered || idHovered || messageHovered ? 'bg-green-200' : 'bg-gray-100'" />
-            <div class="w-[132px] h-8 rounded-3xl md:place-self-end md:mb-8" :class="dashboardHovered || idHovered || messageHovered ? 'bg-green-200' : 'bg-gray-100'" />
-            <div class="w-[132px] h-8 rounded-3xl md:mt-8" :class="dashboardHovered || idHovered || messageHovered ? 'bg-green-200' : 'bg-gray-100'" />
-            <div class="hidden sm:block w-[132px] h-8 rounded-3xl md:place-self-end md:mb-8" :class="dashboardHovered || idHovered || messageHovered ? 'bg-green-200' : 'bg-gray-100'" />
-            <div class="hidden md:block w-[212px] h-8 rounded-3xl md:self-end" :class="dashboardHovered || idHovered || messageHovered ? 'bg-green-200' : 'bg-gray-100'" />
-            <div class="hidden md:block w-[80px] h-8 rounded-3xl md:mb-8 md:place-self-end" :class="dashboardHovered || idHovered || messageHovered ? 'bg-green-200' : 'bg-gray-100'" />
+            <div class="w-[132px] h-4 rounded-3xl mt-8 sm:mt-0 md:mt-[45px]" :class="dashboardHovered || idHovered || messageHovered ? 'bg-green-200' : 'bg-gray-100'" />
+            <div class="w-[132px] h-4 rounded-3xl md:place-self-end md:mb-8" :class="dashboardHovered || idHovered || messageHovered ? 'bg-green-200' : 'bg-gray-100'" />
+            <div class="w-[132px] h-4 rounded-3xl md:mt-8" :class="dashboardHovered || idHovered || messageHovered ? 'bg-green-200' : 'bg-gray-100'" />
+            <div class="hidden sm:block w-[132px] h-4 rounded-3xl md:place-self-end md:mb-8" :class="dashboardHovered || idHovered || messageHovered ? 'bg-green-200' : 'bg-gray-100'" />
+            <div class="hidden md:block w-[212px] h-4 rounded-3xl md:self-end" :class="dashboardHovered || idHovered || messageHovered ? 'bg-green-200' : 'bg-gray-100'" />
+            <div class="hidden md:block w-[80px] h-4 rounded-3xl md:mb-8 md:place-self-end" :class="dashboardHovered || idHovered || messageHovered ? 'bg-green-200' : 'bg-gray-100'" />
           </div>
         </div>
       </div>
