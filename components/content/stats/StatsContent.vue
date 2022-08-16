@@ -10,7 +10,9 @@
       <USelect v-model="range" name="downloads-range" :options="rangeOptions" class="flex-shrink-0" @update:model-value="() => refreshDownloads()" />
     </div>
     <UCard padded class="mt-4">
-      <StatsChartLine :data="downloadsChartData" />
+      <ClientOnly>
+        <StatsChartLine :data="downloadsChartData" />
+      </ClientOnly>
     </UCard>
     <div class="flex justify-between items-center mt-8">
       <p class="font-semibold text-xl">
@@ -18,7 +20,9 @@
       </p>
     </div>
     <UCard padded class="mt-4">
-      <StatsChartPie :data="versionsChartData" />
+      <ClientOnly>
+        <StatsChartPie :data="versionsChartData" />
+      </ClientOnly>
     </UCard>
   </Page>
 </template>
