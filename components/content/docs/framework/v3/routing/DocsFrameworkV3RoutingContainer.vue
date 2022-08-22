@@ -20,18 +20,8 @@
       </div>
 
       <div
-        class="absolute inset-0 flex flex-col items-center justify-start space-y-2 transition-opacity duration-300 top-2 md:top-0 md:justify-center"
-        :class="currentSection === 1 ? 'opacity-100' : 'opacity-0'"
-      >
-        <div class="bg-gray-200 dark:bg-gray-600 rounded-xl w-[300px] h-[143px]" />
-        <div v-for="(line, index) in 8" :key="index" class="flex flex-col gap-y-3" :class="index === 0 ? 'w-[100px] self-start ml-1.5 md:ml-[300px]' : 'w-[300px]' ">
-          <div class="w-full bg-gray-200 dark:bg-gray-600 h-[11px] rounded-xl" />
-        </div>
-      </div>
-
-      <div
         class="absolute inset-0 flex transition-opacity duration-300 rounded-l-2xl"
-        :class="currentSection === 2 ? 'opacity-100' : 'opacity-0'"
+        :class="currentSection === 1 ? 'opacity-100' : 'opacity-0'"
       >
         <div class="absolute inset-y-0 left-0 w-[39px] rounded-l-xl h-full" :class="dashboardHovered ? 'bg-green-300' : 'bg-gray-200'" />
         <div
@@ -56,6 +46,15 @@
             <div class="hidden md:block w-[212px] h-4 rounded-3xl md:self-end" :class="dashboardHovered || idHovered || messageHovered ? 'bg-green-200' : 'bg-gray-100'" />
             <div class="hidden md:block w-[80px] h-4 rounded-3xl md:mb-8 md:place-self-end" :class="dashboardHovered || idHovered || messageHovered ? 'bg-green-200' : 'bg-gray-100'" />
           </div>
+        </div>
+      </div>
+      <div
+        class="absolute inset-0 flex flex-col items-center justify-start space-y-2 transition-opacity duration-300 top-2 md:top-0 md:justify-center"
+        :class="currentSection === 2 ? 'opacity-100' : 'opacity-0'"
+      >
+        <div class="bg-gray-200 dark:bg-gray-600 rounded-xl w-[300px] h-[143px]" />
+        <div v-for="(line, index) in 8" :key="index" class="flex flex-col gap-y-3" :class="index === 0 ? 'w-[100px] self-start ml-1.5 md:ml-[300px]' : 'w-[300px]' ">
+          <div class="w-full bg-gray-200 dark:bg-gray-600 h-[11px] rounded-xl" />
         </div>
       </div>
       <div
@@ -106,20 +105,6 @@
             <DocsFrameworkV3RoutingFolder line chevron-down>
               pages
             </DocsFrameworkV3RoutingFolder>
-            <DocsFrameworkV3RoutingFolder class="mt-2 ml-4" line chevron-down line-class="inset-y-0 bottom-44 left-[25px] top-[60px]">
-              blog
-            </DocsFrameworkV3RoutingFolder>
-            <DocsFrameworkV3RoutingFile class="mt-2 ml-6 ml-[36px] mt-1 text-green-400">
-              [slug.vue]
-            </DocsFrameworkV3RoutingFile>
-            <DocsFrameworkV3RoutingFile class="mt-4 ml-6 text-gray-100">
-              index.vue
-            </DocsFrameworkV3RoutingFile>
-          </div>
-          <div v-if="currentSection === 2" class="absolute inset-0">
-            <DocsFrameworkV3RoutingFolder line chevron-down>
-              pages
-            </DocsFrameworkV3RoutingFolder>
             <DocsFrameworkV3RoutingFolder class="mt-2 ml-4">
               blog
             </DocsFrameworkV3RoutingFolder>
@@ -130,7 +115,7 @@
               message
             </DocsFrameworkV3RoutingFolder>
             <DocsFrameworkV3RoutingFile class="mt-2 ml-6 ml-[56px] mt-1 text-gray-100 hover:text-green-400" @mouseenter="idHovered = true" @mouseleave="idHovered = false">
-              [id.vue]
+              [id].vue
             </DocsFrameworkV3RoutingFile>
             <DocsFrameworkV3RoutingFile class="mt-4 ml-[40px] text-gray-100 hover:text-green-400" @mouseenter="messageHovered = true" @mouseleave="messageHovered = false">
               message.vue
@@ -139,6 +124,20 @@
               dashboard.vue
             </DocsFrameworkV3RoutingFile>
             <DocsFrameworkV3RoutingFile class="mt-2 ml-[20px] text-gray-100">
+              index.vue
+            </DocsFrameworkV3RoutingFile>
+          </div>
+          <div v-if="currentSection === 2" class="absolute inset-0">
+            <DocsFrameworkV3RoutingFolder line chevron-down>
+              pages
+            </DocsFrameworkV3RoutingFolder>
+            <DocsFrameworkV3RoutingFolder class="mt-2 ml-4" line chevron-down line-class="inset-y-0 bottom-44 left-[25px] top-[60px]">
+              blog
+            </DocsFrameworkV3RoutingFolder>
+            <DocsFrameworkV3RoutingFile class="mt-2 ml-6 ml-[36px] mt-1 text-green-400">
+              [slug].vue
+            </DocsFrameworkV3RoutingFile>
+            <DocsFrameworkV3RoutingFile class="mt-4 ml-6 text-gray-100">
               index.vue
             </DocsFrameworkV3RoutingFile>
           </div>
