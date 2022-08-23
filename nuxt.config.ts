@@ -3,6 +3,7 @@ import preset from './ui'
 
 // https://v3.nuxtjs.org/guide/directory-structure/nuxt.config
 export default defineNuxtConfig({
+  experimental: { externalVue: true },
   css: [
     '~/assets/css/fonts.css'
   ],
