@@ -76,7 +76,7 @@ const scrollToVideo = () => {
     query: {
       ...route.query
     },
-    params: {
+    state: {
       smooth: '#smooth'
     }
   })

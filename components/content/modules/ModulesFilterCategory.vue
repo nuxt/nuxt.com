@@ -35,7 +35,7 @@ const category = computed({
         ...route.query,
         category: category?.key || undefined
       },
-      params: {
+      state: {
         smooth: '#smooth'
       }
     })

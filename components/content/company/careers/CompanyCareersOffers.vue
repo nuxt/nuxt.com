@@ -106,7 +106,7 @@ const department = computed({
         ...route.query,
         department: department === 'all' ? undefined : department || undefined
       } as LocationQueryRaw,
-      params: {
+      state: {
         smooth: '#smooth'
       }
     })
@@ -124,7 +124,7 @@ const location = computed({
         ...route.query,
         location: location && location === 'all' ? undefined : location || undefined
       } as LocationQueryRaw,
-      params: {
+      state: {
         smooth: '#smooth'
       }
     })

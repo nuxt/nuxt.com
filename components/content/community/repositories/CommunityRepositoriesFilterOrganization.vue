@@ -35,7 +35,7 @@ const organization = computed({
         ...route.query,
         organization: organization?.key || undefined
       },
-      params: {
+      state: {
         smooth: '#smooth'
       }
     })

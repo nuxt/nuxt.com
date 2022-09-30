@@ -38,7 +38,7 @@ const sortBy = computed({
         ...route.query,
         sortBy: sortBy?.key || undefined
       },
-      params: {
+      state: {
         smooth: '#smooth'
       }
     })
@@ -56,7 +56,7 @@ const orderBy = computed({
         ...route.query,
         orderBy: orderBy?.key || undefined
       },
-      params: {
+      state: {
         smooth: '#smooth'
       }
     })

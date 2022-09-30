@@ -26,7 +26,7 @@ const time = computed({
         ...route.query,
         time: time?.key || undefined
       },
-      params: {
+      state: {
         smooth: '#smooth'
       }
     })

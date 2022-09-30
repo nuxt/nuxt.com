@@ -79,7 +79,7 @@ export const useCommunityPartners = (type: 'technologies' | 'agencies') => {
             ...route.query,
             service: route.query?.service !== service.key ? service.key : undefined
           },
-          params: { smooth: '#smooth' }
+          state: { smooth: '#smooth' }
         }
       }))
       .sort((a, b) => a.title.localeCompare(b.title))
@@ -101,7 +101,7 @@ export const useCommunityPartners = (type: 'technologies' | 'agencies') => {
               ...route.query,
               location: route.query?.location !== location.key ? location.key : undefined
             },
-            params: { smooth: '#smooth' }
+            state: { smooth: '#smooth' }
           }
         }
       })

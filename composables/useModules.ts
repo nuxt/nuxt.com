@@ -134,7 +134,7 @@ export const useModules = () => {
           ...route.query,
           category: route.query?.category !== category ? category : undefined
         },
-        params: { smooth: '#smooth' }
+        state: { smooth: '#smooth' }
       }
     })).sort((a, b) => {
       return a.title.localeCompare(b.title)
@@ -151,7 +151,7 @@ export const useModules = () => {
           ...route.query,
           type
         },
-        params: { smooth: '#smooth' }
+        state: { smooth: '#smooth' }
       }
     })).sort((a, b) => {
       const typesMappingKeys = Object.keys(typesMapping)
