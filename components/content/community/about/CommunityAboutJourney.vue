@@ -4,16 +4,16 @@
     <UContainer padded class="relative grid grid-cols-1 md:grid-cols-2 gap-x-[30px] sm:pt-[148px] pb-[300px]">
       <div class="flex flex-col pt-8 gap-y-8">
         <h2 class="text-4xl font-semibold u-text-gray-900">
-          <Markdown :use="$slots.title" unwrap="p" />
+          <ContentSlot :use="$slots.title" unwrap="p" />
         </h2>
         <div class="relative pt-8">
           <img src="/assets/community/about/quote-journey.svg" alt="Quotes image" class="absolute top-4 -left-[22px] w-[60px] h-10">
           <p class="text-2xl font-medium u-text-gray-900">
-            <Markdown :use="$slots.description" unwrap="p" />
+            <ContentSlot :use="$slots.description" unwrap="p" />
           </p>
         </div>
         <blockquote class="text-xl u-text-gray-500">
-          <Markdown :use="$slots.author" unwrap="p" />
+          <ContentSlot :use="$slots.author" unwrap="p" />
         </blockquote>
       </div>
       <div class="flex justify-center w-full md:justify-end">

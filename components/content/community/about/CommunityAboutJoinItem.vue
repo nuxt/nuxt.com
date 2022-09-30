@@ -9,7 +9,7 @@
     >
       <UIcon :name="`fa6-brands:${icon}`" class="flex-shrink-0 w-10 h-10 text-white" :alt="`${icon} icon`" />
       <div class="font-semibold text-center text-white sm:text-xl">
-        <Markdown :use="$slots.title" unwrap="p" />
+        <ContentSlot :use="$slots.title" unwrap="p" />
       </div>
     </a>
   </li>

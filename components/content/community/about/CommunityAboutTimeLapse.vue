@@ -50,37 +50,37 @@
       <div class="lg:absolute relative top-0 grid lg:grid-cols-3 grid-cols-1 justify-center gap-y-8 lg:gap-y-2 lg:pl-[190px] lg:h-[400px] lg:w-[1000px]">
         <div class="absolute lg:hidden left-4 sm:left-0 md:left-12 h-full w-1 bg-gradient-to-t from-green-400 via-teal-400 to-indigoblue-400" />
         <div class="lg:w-[220px] lg:transition delay-300 duration-300 lg:-ml-3 opacity-1" :class="currentStep !== null ? 'lg:opacity-1' : 'lg:opacity-0'">
-          <Markdown :use="$slots.first" unwrap="p" />
+          <ContentSlot :use="$slots.first" unwrap="p" />
         </div>
         <div
           class="lg:w-[320px] lg:pl-[70px] lg:transition lg:duration-1000 lg:delay-400 opacity-1"
           :class="currentStep > 6 ? 'lg:opacity-1' : 'lg:opacity-0'"
         >
-          <Markdown :use="$slots.second" unwrap="p" />
+          <ContentSlot :use="$slots.second" unwrap="p" />
         </div>
         <div
           class="lg:w-[320px] lg:pl-[96px] lg:transition lg:duration-1000 lg:delay-400 opacity-1"
           :class="currentStep > 8 ? 'lg:opacity-1' : 'lg:opacity-0'"
         >
-          <Markdown :use="$slots.third" unwrap="p" />
+          <ContentSlot :use="$slots.third" unwrap="p" />
         </div>
         <div
           class="lg:w-[360px] lg:pl-[144px] lg:pt-48 lg:transition lg:duration-1000 lg:delay-400 opacity-1"
           :class="currentStep > 3 ? 'lg:opacity-1' : 'lg:opacity-0'"
         >
-          <Markdown :use="$slots.fourth" unwrap="p" />
+          <ContentSlot :use="$slots.fourth" unwrap="p" />
         </div>
         <div
           class="lg:w-[380px] lg:pl-[172px] lg:pt-48 lg:transition lg:duration-1000 lg:delay-400 opacity-1"
           :class="currentStep > 6 ? 'lg:opacity-1' : 'lg:opacity-0'"
         >
-          <Markdown :use="$slots.fifth" unwrap="p" />
+          <ContentSlot :use="$slots.fifth" unwrap="p" />
         </div>
         <div
           class="lg:w-[470px] lg:pl-[270px] lg:pt-48 lg:transition lg:duration-1000 lg:delay-400 opacity-1"
           :class="currentStep > 9 ? 'lg:opacity-1' : 'lg:opacity-0'"
         >
-          <Markdown :use="$slots.sixth" unwrap="p" />
+          <ContentSlot :use="$slots.sixth" unwrap="p" />
         </div>
       </div>
     </UContainer>

@@ -6,10 +6,10 @@
         <UIcon name="uil:arrow-right" class="w-6 h-6 mr-4 transition-all duration-300 opacity-0 u-text-gray-900 group-hover:translate-x-4 group-hover:opacity-100" />
       </div>
       <h6 class="text-2xl font-semibold u-text-gray-900">
-        <Markdown :use="$slots.title" unwrap="p" />
+        <ContentSlot :use="$slots.title" unwrap="p" />
       </h6>
       <p class="u-text-gray-900">
-        <Markdown :use="$slots.description" unwrap="p" />
+        <ContentSlot :use="$slots.description" unwrap="p" />
       </p>
     </NuxtLink>
   </UCard>

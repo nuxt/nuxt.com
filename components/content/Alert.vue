@@ -5,7 +5,7 @@
   >
     <div class="flex items-start">
       <div class="flex-grow alert-content">
-        <Markdown unwrap="p" />
+        <ContentSlot unwrap="p" />
       </div>
     </div>
   </div>

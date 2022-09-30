@@ -10,10 +10,10 @@
           <UIcon name="uil:arrow-right" alt="arrow" class="w-6 h-6 transition duration-300 opacity-0 mr-coll4 group-hover:translate-x-4 group-hover:opacity-100" />
         </div>
         <h5 class="pb-4 text-2xl font-semibold">
-          <Markdown :use="$slots.title" unwrap="p" />
+          <ContentSlot :use="$slots.title" unwrap="p" />
         </h5>
         <p class="u-text-gray-500">
-          <Markdown :use="$slots.description" unwrap="p" />
+          <ContentSlot :use="$slots.description" unwrap="p" />
         </p>
       </UCard>
     </NuxtLink>

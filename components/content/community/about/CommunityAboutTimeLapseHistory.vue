@@ -5,14 +5,14 @@
       class="inline-block lg:hidden py-1 md:py-[7px] px-4 md:px-6 text-xl md:backdrop-blur-lg rounded-[7px] font-semibold transition-all duration-300 text-gray-900 md:u-text-gray-900 mb-2"
       :class="`${colorClass} md:bg-transparent`"
     >
-      <Markdown :use="$slots.year" unwrap="p" />
+      <ContentSlot :use="$slots.year" unwrap="p" />
     </div>
     <div>
       <h6 class="pb-2 text-lg font-semibold u-text-gray-900">
-        <Markdown :use="$slots.title" unwrap="p" />
+        <ContentSlot :use="$slots.title" unwrap="p" />
       </h6>
       <p class="text-sm u-text-gray-700">
-        <Markdown :use="$slots.description" unwrap="p" />
+        <ContentSlot :use="$slots.description" unwrap="p" />
       </p>
     </div>
   </div>

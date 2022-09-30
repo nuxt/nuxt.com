@@ -1,10 +1,10 @@
 <template>
   <PageHero description-width-class="sm:max-w-xl">
     <template #title>
-      <Markdown :use="$slots.title" unwrap="p" />
+      <ContentSlot :use="$slots.title" unwrap="p" />
     </template>
     <template #description>
-      <Markdown :use="$slots.description" unwrap="p" />
+      <ContentSlot :use="$slots.description" unwrap="p" />
     </template>
     <template #extra>
       <div class="flex flex-wrap gap-6 sm:flex-nowrap sm:items-center">
