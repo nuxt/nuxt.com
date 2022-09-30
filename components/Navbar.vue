@@ -51,7 +51,6 @@
 import type { NavItem } from '@nuxt/content/dist/runtime/types'
 import type { Ref } from 'vue'
 
-const config = useRuntimeConfig()
 const route = useRoute()
 const { hasScrolledPastNavbar } = useNavbarScroll()
 
@@ -72,7 +71,7 @@ const links: Ref<NavItem[]> = ref([{
   icon: 'uil:object-group'
 }, {
   title: 'Partners',
-  _path: '/partners',
+  _path: '/partners/support',
   icon: 'uil:globe'
 }])
 

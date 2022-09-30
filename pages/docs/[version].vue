@@ -1,11 +1,11 @@
 <template>
   <Page :sticky="!!$route.params.slug">
     <template #header>
-      <SubNavbar title="Framework" :links="links">
+      <SubNavbar title="Docs" :links="links">
         <template #left>
           <div class="flex items-center gap-3">
             <NuxtLink :to="`/docs/${$route.params.version}`" class="font-semibold u-text-gray-900 focus:outline-none" tabindex="-1">
-              Framework
+              Docs
             </NuxtLink>
 
             <USelectCustom
