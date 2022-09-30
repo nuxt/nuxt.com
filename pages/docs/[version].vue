@@ -43,7 +43,7 @@ const route = useRoute()
 const router = useRouter()
 const { navFromPath } = usePage()
 
-const links = computed(() => navFromPath(`/docs/${route.params.version}`)?.children.filter(link => !['/docs/3.x/community'].includes(link._path)))
+const links = computed(() => navFromPath(`/docs/${route.params.version}`)?.children.filter(link => !['/docs/3.x/migration', '/docs/3.x/bridge'].includes(link._path)))
 const path = computed(() => route.path.split('/').slice(0, 4).join('/'))
 const tree = computed(() => navFromPath(path.value)?.children)
 
