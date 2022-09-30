@@ -36,8 +36,6 @@ export const useCommunityPartners = (type: 'technologies' | 'agencies') => {
 
   // Computed
 
-  console.log([..._partners.value])
-
   const partners = computed(() => {
     return [..._partners.value]
       .map(partner => ({
