@@ -1,5 +1,5 @@
 <template>
-  <div class="relative flex flex-col-reverse gap-8 lg:grid lg:grid-cols-10">
+  <div class="relative flex flex-col-reverse gap-8 lg:grid lg:grid-cols-10 docs-page">
     <div :class="{ 'col-span-10 lg:col-span-8': toc, 'col-span-10': !toc }">
       <DocsPageHeader v-if="header && page" />
 
