@@ -1,4 +1,7 @@
+import { createResolver } from '@nuxt/kit'
 import preset from './ui'
+
+const { resolve } = createResolver(import.meta.url)
 
 // https://v3.nuxtjs.org/guide/directory-structure/nuxt.config
 export default defineNuxtConfig({
@@ -12,6 +15,24 @@ export default defineNuxtConfig({
     '@nuxtlabs/github-module',
     'nuxt-newsletter',
     'vue-plausible'
+  ],
+  components: [
+    resolve('./components'),
+    {
+      prefix: '',
+      path: resolve('./components/content'),
+      global: true
+    },
+    {
+      prefix: '',
+      path: resolve('./components/docs'),
+      global: true
+    },
+    {
+      prefix: '',
+      path: resolve('./components/icons'),
+      global: true
+    }
   ],
   build: {
     transpile: [
