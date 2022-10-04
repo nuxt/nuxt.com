@@ -58,16 +58,7 @@ export default defineNuxtConfig({
         repo: 'nuxt/framework',
         branch: 'feat/docus-docs',
         dir: 'docs/content',
-        prefix: '/docs/3.x',
-        token: process.env.GITHUB_TOKEN
-      },
-      {
-        name: 'nuxt2-docs',
-        driver: 'github',
-        repo: 'nuxt/nuxtjs.org',
-        branch: 'main',
-        dir: 'content/en/docs',
-        prefix: '/docs/2.x',
+        prefix: '/docs',
         token: process.env.GITHUB_TOKEN
       }
     ]

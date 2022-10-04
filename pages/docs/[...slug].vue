@@ -1,6 +1,6 @@
 <template>
   <DocsPage :toc="page.toc">
-    <div class="prose dark:prose-invert prose-green max-w-none">
+    <div class="prose dark:prose-invert prose-green">
       <ContentRenderer v-if="page" :value="page" />
     </div>
   </DocsPage>

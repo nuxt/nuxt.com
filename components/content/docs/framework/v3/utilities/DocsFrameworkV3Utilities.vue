@@ -21,5 +21,5 @@
 </template>
 
 <script setup lang="ts">
-const { data: utilitiesData } = await useAsyncData('utilities', () => queryContent('/docs/3.x/_collections/utilities').findOne())
+const { data: utilitiesData } = await useAsyncData('utilities', () => queryContent('/docs/_collections/utilities').findOne())
 </script>
