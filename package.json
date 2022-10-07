@@ -20,7 +20,7 @@
     "@nuxtlabs/github-module": "^1.4.6",
     "@sindresorhus/slugify": "^2.1.0",
     "@types/lodash-es": "^4.17.6",
-    "@vueuse/core": "^8.9.4",
+    "@vueuse/core": "^9.3.0",
     "@vueuse/motion": "^2.0.0-beta.12",
     "eslint": "^8.22.0",
     "joi": "^17.6.0",
