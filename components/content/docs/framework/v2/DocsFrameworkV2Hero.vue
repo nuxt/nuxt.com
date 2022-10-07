@@ -10,10 +10,10 @@
         </span>
       </div>
       <h1 v-if="$slots.title" class="max-w-lg text-5xl font-semibold text-center sm:text-7xl u-text-gray-900">
-        <Markdown :use="$slots.title" unwrap="p" />
+        <ContentSlot :use="$slots.title" unwrap="p" />
       </h1>
       <p v-if="$slots.description" class="text-center sm:w-1/2 text-md sm:text-lg u-text-gray-500">
-        <Markdown :use="$slots.description" unwrap="p" />
+        <ContentSlot :use="$slots.description" unwrap="p" />
       </p>
       <div class="flex flex-col sm:flex-row gap-x-8">
         <UButton

@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col">
     <h2 class="text-xl font-semibold u-text-gray-900">
-      <Markdown :use="$slots.title" unwrap="p" />
+      <ContentSlot :use="$slots.title" unwrap="p" />
     </h2>
     <ul class="mt-4 space-y-2">
       <li v-for="(topic, index) in topics" :key="index" class="flex items-center">
@@ -12,7 +12,7 @@
     <div class="relative mt-16">
       <img src="/assets/company/support/quote.svg" class="absolute -top-4 -left-8">
       <p class="relative">
-        <Markdown :use="$slots.quote" unwrap="p" />
+        <ContentSlot :use="$slots.quote" unwrap="p" />
       </p>
     </div>
     <div class="flex items-center gap-6 mt-6">

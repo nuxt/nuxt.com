@@ -22,12 +22,12 @@ const category = computed({
   },
   set (category) {
     router.push({
-      name: 'resources-showcases',
+      name: 'showcases',
       query: {
         ...route.query,
         category: category?.name || undefined
       },
-      params: {
+      state: {
         smooth: '#smooth'
       }
     })

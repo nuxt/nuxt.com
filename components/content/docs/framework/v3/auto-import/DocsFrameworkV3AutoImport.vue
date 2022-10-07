@@ -50,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-const { data: autoImportData } = await useAsyncData('autoImport', () => queryContent('/docs/3.x/_collections/auto-import').findOne())
+const { data: autoImportData } = await useAsyncData('autoImport', () => queryContent('/docs/_collections/auto-import').findOne())
 
 const currentSection = ref(null)
 </script>

@@ -1,5 +1,7 @@
-import { defineNuxtConfig } from 'nuxt'
+import { createResolver } from '@nuxt/kit'
 import preset from './ui'
+
+const { resolve } = createResolver(import.meta.url)
 
 // https://v3.nuxtjs.org/guide/directory-structure/nuxt.config
 export default defineNuxtConfig({
@@ -13,6 +15,24 @@ export default defineNuxtConfig({
     '@nuxtlabs/github-module',
     'nuxt-newsletter',
     'vue-plausible'
+  ],
+  components: [
+    resolve('./components'),
+    {
+      prefix: '',
+      path: resolve('./components/content'),
+      global: true
+    },
+    {
+      prefix: '',
+      path: resolve('./components/docs'),
+      global: true
+    },
+    {
+      prefix: '',
+      path: resolve('./components/icons'),
+      global: true
+    }
   ],
   build: {
     transpile: [
@@ -57,18 +77,9 @@ export default defineNuxtConfig({
         name: 'nuxt3-docs',
         driver: 'github',
         repo: 'nuxt/framework',
-        branch: 'feat/docus-docs',
-        dir: 'docs/content',
-        prefix: '/docs/3.x',
-        token: process.env.GITHUB_TOKEN
-      },
-      {
-        name: 'nuxt2-docs',
-        driver: 'github',
-        repo: 'nuxt/nuxtjs.org',
         branch: 'main',
-        dir: 'content/en/docs',
-        prefix: '/docs/2.x',
+        dir: 'docs/content',
+        prefix: '/docs',
         token: process.env.GITHUB_TOKEN
       }
     ]

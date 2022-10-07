@@ -29,7 +29,7 @@ const filters = computed(() => {
           ...route.query,
           type: route.query?.type !== selectedType.value.key ? selectedType.value.key : undefined
         },
-        params: { smooth: '#smooth' }
+        state: { smooth: '#smooth' }
       }
     },
     q.value && {

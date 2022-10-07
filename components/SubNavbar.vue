@@ -9,7 +9,14 @@
           <Logo class="h-4 transition-all cursor-pointer" :class="[hasScrolledPastSubNavbar ? 'w-auto mr-3' : 'w-0']" @click="$router.push('/')" />
 
           <slot name="left">
-            <component :is="!!to ? 'NuxtLink' : 'p'" v-if="title" :to="to" class="font-semibold u-text-gray-900 focus:outline-none" tabindex="-1">
+            <component
+              :is="!!to ? 'NuxtLink' : 'p'"
+              v-if="title"
+              :to="to"
+              class="font-semibold u-text-gray-900 focus:outline-none"
+              :class="[hasScrolledPastSubNavbar ? 'opacity-100' : 'opacity-0']"
+              tabindex="-1"
+            >
               {{ title }}
             </component>
           </slot>

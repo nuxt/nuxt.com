@@ -27,6 +27,6 @@
 
 <script setup lang="ts">
 
-const { data: commandsData } = await useAsyncData('commands', () => queryContent('/docs/3.x/_collections/commands').findOne())
+const { data: commandsData } = await useAsyncData('commands', () => queryContent('/docs/_collections/commands').findOne())
 
 </script>

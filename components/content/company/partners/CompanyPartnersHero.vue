@@ -1,10 +1,10 @@
 <template>
   <PageHero :centered="true">
     <template #title>
-      <Markdown :use="$slots.title" unwrap="p" />
+      <ContentSlot :use="$slots.title" unwrap="p" />
     </template>
     <template #description>
-      <Markdown :use="$slots.description" unwrap="p" />
+      <ContentSlot :use="$slots.description" unwrap="p" />
     </template>
     <template #background>
       <div class="relative w-full h-full">

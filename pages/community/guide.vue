@@ -10,10 +10,10 @@
 <script setup lang="ts">
 const { navFromPath } = usePage()
 
-const tree = computed(() => navFromPath('/docs/3.x/community')?.children.map((navItem) => {
+const tree = computed(() => navFromPath('/docs/community')?.children.map((navItem) => {
   return {
     ...navItem,
-    _path: navItem._path.replace('/docs/3.x/community', '/community/guide')
+    _path: navItem._path.replace('/docs/community', '/community/guide')
   }
 }))
 </script>

@@ -1,15 +1,15 @@
 <template>
   <PageHero description-width-class="sm:max-w-2xl">
     <template #title>
-      <Markdown :use="$slots.title" unwrap="p" />
+      <ContentSlot :use="$slots.title" unwrap="p" />
     </template>
     <template #description>
-      <Markdown :use="$slots.description" unwrap="p" />
+      <ContentSlot :use="$slots.description" unwrap="p" />
     </template>
     <template #extra>
       <!-- TODO: update link -->
       <GradientNuxtLink icon="uil:arrow-right" to="#" class="font-semibold u-text-gray-900 sm:text-lg">
-        <Markdown :use="$slots.link" unwrap="p" />
+        <ContentSlot :use="$slots.link" unwrap="p" />
       </GradientNuxtLink>
     </template>
     <template #background>

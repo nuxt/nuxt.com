@@ -1,10 +1,10 @@
 <template>
   <PageHero>
     <template #title>
-      <Markdown :use="$slots.title" unwrap="p" />
+      <ContentSlot :use="$slots.title" unwrap="p" />
     </template>
     <template #description>
-      <Markdown :use="$slots.description" unwrap="p" />
+      <ContentSlot :use="$slots.description" unwrap="p" />
     </template>
     <template #extra>
       <ModulesFilterSearch class="hidden md:block" />

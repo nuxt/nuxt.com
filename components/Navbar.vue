@@ -51,39 +51,28 @@
 import type { NavItem } from '@nuxt/content/dist/runtime/types'
 import type { Ref } from 'vue'
 
-const config = useRuntimeConfig()
 const route = useRoute()
 const { hasScrolledPastNavbar } = useNavbarScroll()
 
 const isOpen = ref(false)
 
 const links: Ref<NavItem[]> = ref([{
-  title: 'Framework',
+  title: 'Docs',
   icon: 'uil:book-open',
-  _path: '/docs'
+  _path: '/docs/getting-started/introduction'
 }, {
   title: 'Modules',
   icon: 'uil:palette',
   _path: '/modules'
 },
 {
-  title: 'Resources',
-  _path: '/resources',
+  title: 'Showcases',
+  _path: '/showcases',
   icon: 'uil:object-group'
 }, {
-  title: 'Community',
-  _path: '/community',
+  title: 'Partners',
+  _path: '/partners/support',
   icon: 'uil:globe'
-}, {
-  title: 'Company',
-  _path: '/company',
-  hidden: true,
-  icon: 'uil:building'
-}, {
-  title: 'Studio',
-  _path: config.studioUrl,
-  icon: 'uil:files-landscapes',
-  target: '_blank'
 }])
 
 const visibleLinks = computed(() => links.value.filter(link => !link.hidden))

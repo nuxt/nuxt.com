@@ -65,7 +65,7 @@ export const useCommunityRepositories = () => {
           ...route.query,
           organization: route.query?.organization !== owner.key ? owner.key : undefined
         },
-        params: { smooth: '#smooth' }
+        state: { smooth: '#smooth' }
       }
     }))
   })

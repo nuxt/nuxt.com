@@ -36,7 +36,7 @@ const version = computed({
         ...route.query,
         version: version?.key || undefined
       },
-      params: {
+      state: {
         smooth: '#smooth'
       }
     })

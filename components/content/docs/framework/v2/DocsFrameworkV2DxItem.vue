@@ -7,10 +7,10 @@
       </div>
     </div>
     <h6 class="text-lg font-semibold text-center u-text-gray-900">
-      <Markdown :use="$slots.title" unwrap="p" />
+      <ContentSlot :use="$slots.title" unwrap="p" />
     </h6>
     <p class="text-center u-text-gray-400">
-      <Markdown :use="$slots.description" unwrap="p" />
+      <ContentSlot :use="$slots.description" unwrap="p" />
     </p>
   </li>
 </template>

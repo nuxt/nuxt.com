@@ -14,15 +14,15 @@ const slug = computed(() => route.params.slug)
 
 await fetchPage({
   querySurround: true,
-  _path: `/docs/3.x/community/${slug.value}`,
+  _path: `/docs/community/${slug.value}`,
   surroundMapper: (surround) => {
     return surround.map((item) => {
-      if (!item?._path.includes('/docs/3.x/community')) {
+      if (!item?._path.includes('/docs/community')) {
         return null
       }
       return {
         ...item,
-        _path: item._path.replace('/docs/3.x/community', '/community/guide')
+        _path: item._path.replace('/docs/community', '/community/guide')
       }
     })
   }

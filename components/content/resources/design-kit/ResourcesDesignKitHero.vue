@@ -1,15 +1,15 @@
 <template>
   <PageHero description-width-class="sm:max-w-2xl">
     <template #title>
-      <Markdown :use="$slots.title" unwrap="p" />
+      <ContentSlot :use="$slots.title" unwrap="p" />
     </template>
     <template #description>
-      <Markdown :use="$slots.description" unwrap="p" />
+      <ContentSlot :use="$slots.description" unwrap="p" />
     </template>
 
     <template #extra>
       <GradientNuxtLink icon="uil:arrow-right" to="https://www.figma.com/community/file/1063820502268406301" target="_blank" class="font-semibold u-text-gray-900 sm:text-lg">
-        <Markdown :use="$slots.buttonText" unwrap="p" />
+        <ContentSlot :use="$slots.buttonText" unwrap="p" />
       </GradientNuxtLink>
     </template>
 

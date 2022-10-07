@@ -42,7 +42,7 @@
         Contribute on GitHub
       </NuxtLink>
       <NuxtLink
-        to="/docs/3.x/guide/going-further/modules"
+        to="/docs/guide/going-further/modules"
         class="flex items-center gap-2 text-sm font-medium hover:u-text-gray-900 focus:u-text-gray-900"
         tabindex="-1"
       >

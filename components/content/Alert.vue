@@ -1,21 +1,8 @@
-<template>
-  <div
-    class="px-4 py-3 mt-4 mb-4 text-sm leading-relaxed rounded-xl alert"
-    :class="[type]"
-  >
-    <div class="flex items-start">
-      <div class="flex-grow alert-content">
-        <Markdown unwrap="p" />
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
-defineProps({
+const props = defineProps({
   /**
-   * @values info, success, warning, danger
-   */
+       * @values info, success, warning, danger
+       */
   type: {
     type: String,
     default: 'info',
@@ -26,93 +13,77 @@ defineProps({
 })
 </script>
 
+<template>
+  <div class="alert mt-4 mb-4 rounded-xl px-4 py-3 text-sm leading-relaxed" :class="props.type">
+    <div class="flex items-start">
+      <div class="alert-content flex-grow">
+        <ContentSlot :use="$slots.default" unwrap="p" />
+      </div>
+    </div>
+  </div>
+</template>
+
 <style lang="postcss" scoped>
+/* Light mode */
 .alert {
-  &.success {
-    @apply bg-green-50 dark:bg-green-800 dark:bg-opacity-25 text-green-600 dark:text-green-200 border border-green-100 dark:border-green-900;
-    :deep() {
-      code {
-        @apply bg-green-100 dark:bg-green-900 dark:bg-opacity-50 shadow-none text-current border-green-200 dark:border-green-800;
-      }
-      a:hover {
-        code {
-          @apply border-green-400 dark:border-green-700;
-        }
-      }
-    }
-  }
-
+  --tw-border-opacity: 1;
+  --tw-bg-opacity: 1;
+  --tw-text-opacity: 1;
+  border-width: 1px;
   &.info {
-    @apply bg-blue-50 dark:bg-blue-800 dark:bg-opacity-25 text-blue-600 dark:text-blue-200 border border-blue-100 dark:border-blue-900;
-    :deep() {
-      code {
-        @apply bg-blue-100 dark:bg-blue-900 dark:bg-opacity-50 shadow-none text-current border-blue-200 dark:border-blue-800;
-      }
-      a:hover {
-        code {
-          @apply border-blue-400 dark:border-blue-700;
-        }
-      }
-    }
+    background-color: rgb(217 241 255/var(--tw-bg-opacity));
+    border-color: rgb(179 228 255/var(--tw-border-opacity));
+    color: rgb(0 144 225/var(--tw-text-opacity));
   }
-
   &.warning {
-    @apply bg-yellow-50 dark:bg-yellow-800 dark:bg-opacity-25 text-yellow-600 dark:text-yellow-100 border border-yellow-100 dark:border-yellow-900;
-    :deep() {
-      code {
-        @apply bg-yellow-100 dark:bg-yellow-900 dark:bg-opacity-50 shadow-none text-current border-yellow-200 dark:border-yellow-800;
-      }
-      a:hover {
-        code {
-          @apply border-yellow-400 dark:border-yellow-700;
-        }
-      }
-    }
+    background-color: rgb(253 246 219/var(--tw-bg-opacity));
+    border-color: rgb(252 237 183/var(--tw-border-opacity));
+    color: rgb(218 172 10/var(--tw-text-opacity));
   }
-
+  &.success {
+    background-color: rgb(214 255 238/var(--tw-bg-opacity));
+    border-color: rgb(172 255 221/var(--tw-border-opacity));
+    color: rgb(0 157 93/var(--tw-text-opacity));
+  }
   &.danger {
-    @apply bg-red-50 dark:bg-red-800 dark:bg-opacity-25 text-red-600 dark:text-red-100 border border-red-100 dark:border-red-900;
-    :deep() {
-      code {
-        @apply bg-red-100 dark:bg-red-900 dark:bg-opacity-50 shadow-none text-current border-red-200 dark:border-red-800;
-      }
-      a:hover {
-        code {
-          @apply border-red-400 dark:border-red-700;
-        }
-      }
-    }
-  }
-
-  :deep() {
-    strong {
-      @apply font-semibold text-current;
-    }
-    a {
-      @apply underline border-none font-semibold text-current;
-      code {
-        @apply border border-transparent border-dashed;
-      }
-    }
-    .prose-code {
-      @apply mt-4 mb-0;
-
-      code {
-        @apply bg-gray-50 dark:bg-gray-900;
-      }
-    }
+    background-color: rgb(255 219 217/var(--tw-bg-opacity));
+    border-color: rgb(255 183 179/var(--tw-border-opacity));
+    color: rgb(225 14 0/var(--tw-text-opacity));
   }
 }
 
-.alert :deep(p) {
-  @apply m-0 !important;
-}
+/* Dark mode */
 
 .dark .alert {
-  :deep() {
-    a {
-      @apply text-current;
-    }
+  --tw-bg-opacity: 0.25;
+  &.info {
+    background-color: rgb(0 72 112/var(--tw-bg-opacity));
+    border-color: rgb(0 36 56/var(--tw-border-opacity));
+    color: rgb(141 214 255/var(--tw-text-opacity));
   }
+  &.warning {
+    background-color: rgb(109 86 5/var(--tw-bg-opacity));
+    border-color: rgb(54 43 3/var(--tw-border-opacity));
+    color: rgb(252 237 183/var(--tw-text-opacity));
+  }
+  &.success {
+    background-color: rgb(0 94 56/var(--tw-bg-opacity));
+    border-color: rgb(0 63 37/var(--tw-border-opacity));
+    color: rgb(131 255 204/var(--tw-text-opacity));
+  }
+  &.danger {
+    background-color: rgb(112 7 0/var(--tw-bg-opacity));
+    border-color: rgb(56 3 0/var(--tw-border-opacity));
+    color: rgb(255 183 179/var(--tw-text-opacity));
+  }
+}
+
+/* Common */
+
+.alert a {
+  border-style: none!important;
+  color: currentColor!important;
+  font-weight: 600!important;
+  text-decoration-line: underline!important;
 }
 </style>
