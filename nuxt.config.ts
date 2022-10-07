@@ -10,7 +10,6 @@ export default defineNuxtConfig({
   ],
   modules: [
     '@nuxthq/ui',
-    '@nuxthq/studio',
     '@nuxt/content',
     '@nuxtlabs/github-module',
     'nuxt-newsletter',
