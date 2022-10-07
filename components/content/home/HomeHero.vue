@@ -9,21 +9,21 @@
       </HomeGemWrapper>
       <div v-if="$slots.badgeLabel" class="flex gap-x-2">
         <UBadge rounded variant="green">
-          <Markdown :use="$slots.badgeLabel" unwrap="p" />
+          <ContentSlot :use="$slots.badgeLabel" unwrap="p" />
         </UBadge>
         <span>
-          <Markdown :use="$slots.news" unwrap="p" />
+          <ContentSlot :use="$slots.news" unwrap="p" />
         </span>
       </div>
       <h1 v-if="$slots.title" class="relative max-w-2xl text-5xl font-semibold text-center sm:text-left md:text-6xl lg:text-7xl u-text-gray-900">
-        <Markdown :use="$slots.title" unwrap="p" />
+        <ContentSlot :use="$slots.title" unwrap="p" />
         <span class="lg:hidden">&nbsp;</span>
         <span ref="title" class="transition duration-700 lg:absolute" style="translate: transform(0); opacity: 0">
-          <Markdown :use="$slots.titleAnimationWord" unwrap="p" />
+          <ContentSlot :use="$slots.titleAnimationWord" unwrap="p" />
         </span>
       </h1>
       <p v-if="$slots.description" class="max-w-lg text-lg text-center text-gray-500 sm:w-3/5 sm:text-left dark:text-gray-100">
-        <Markdown :use="$slots.description" unwrap="p" />
+        <ContentSlot :use="$slots.description" unwrap="p" />
       </p>
       <div class="flex gap-6 z-[1]">
         <UButton :label="primaryButtonText" size="lg" variant="primary-gradient" truncate @click="scrollToVideo()" />
@@ -76,7 +76,7 @@ const scrollToVideo = () => {
     query: {
       ...route.query
     },
-    params: {
+    state: {
       smooth: '#smooth'
     }
   })

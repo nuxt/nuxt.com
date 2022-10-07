@@ -50,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-const { data: routingData } = await useAsyncData('routing', () => queryContent('/docs/3.x/_collections/routing').findOne())
+const { data: routingData } = await useAsyncData('routing', () => queryContent('/docs/_collections/routing').findOne())
 
 const currentSection = ref(null)
 

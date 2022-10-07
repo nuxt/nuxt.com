@@ -6,8 +6,6 @@ import type { CommunityPartner } from '~/types'
 export const useCommunityPartners = (type: 'technologies' | 'agencies') => {
   const route = useRoute()
   const _partners: Ref<CommunityPartner[]> = useState(`community-${type}`, () => [])
-
-  const param = type === 'agencies' ? type : 'partners'
   const pending = ref(false)
 
   // Methods
@@ -20,10 +18,10 @@ export const useCommunityPartners = (type: 'technologies' | 'agencies') => {
     pending.value = true
 
     try {
-      const data = await queryContent<CommunityPartner>(`/community/${param}`).where({
+      const data = await queryContent<CommunityPartner>('/partners/agencies').where({
         $not: {
           _path: {
-            $in: [`/community/${param}`]
+            $in: ['/partners/agencies']
           }
         }
       }).find()
@@ -74,12 +72,12 @@ export const useCommunityPartners = (type: 'technologies' | 'agencies') => {
       .map(service => ({
         ...service,
         to: {
-          name: `community-${param}`,
+          name: `community-${type}`,
           query: {
             ...route.query,
             service: route.query?.service !== service.key ? service.key : undefined
           },
-          params: { smooth: '#smooth' }
+          state: { smooth: '#smooth' }
         }
       }))
       .sort((a, b) => a.title.localeCompare(b.title))
@@ -96,12 +94,12 @@ export const useCommunityPartners = (type: 'technologies' | 'agencies') => {
           key: location.key,
           title: location.title,
           to: {
-            name: `community-${param}`,
+            name: `community-${type}`,
             query: {
               ...route.query,
               location: route.query?.location !== location.key ? location.key : undefined
             },
-            params: { smooth: '#smooth' }
+            state: { smooth: '#smooth' }
           }
         }
       })

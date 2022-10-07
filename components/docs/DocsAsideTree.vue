@@ -11,24 +11,25 @@
     >
       <ULink
         :to="link._path"
-        class="py-1.5 flex items-center justify-between focus:outline-none w-full"
+        class="py-1.5 flex focus:outline-none w-full"
         :exact="link.exact"
         :class="{
           'pl-4 lg:text-sm': level > 0,
           '!pt-0': level === 0 && index === 0,
-          'font-semibold u-text-gray-900': isActive(link),
-          'font-medium u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900': !isActive(link)
+          'font-semibold u-text-gray-900': isActive(link) || level === 0,
+          'font-medium u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900': !isActive(link) && level > 0
         }"
         @click.stop.prevent="onClick(link)"
       >
-        <span>{{ link.title }}</span>
-
-        <UIcon v-if="link.icon" :name="link.icon" class="w-5 h-5 u-text-gray-500" />
+        <span class="inline-flex items-center">
+          <UIcon v-if="link.icon" :name="link.icon" class="w-5 h-5 mr-1" />
+          <span>{{ link.title }}</span>
+        </span>
       </ULink>
 
       <DocsAsideTree
         v-if="link.children?.length && (max === null || ((level + 1) < max))"
-        v-show="isChildOpen[link._path]"
+        v-show="isChildOpen[link._path] || props.level === 0"
         :tree="link.children"
         :level="level + 1"
         :max="max"

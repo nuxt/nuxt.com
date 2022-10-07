@@ -8,10 +8,10 @@
 
     <UContainer padded class="relative flex flex-col items-center justify-center gap-y-6">
       <h3 class="text-4xl font-semibold u-text-gray-900">
-        <Markdown :use="$slots.title" unwrap="p" />
+        <ContentSlot :use="$slots.title" unwrap="p" />
       </h3>
       <p class="max-w-xl text-xl text-center u-text-gray-900">
-        <Markdown :use="$slots.description" unwrap="p" />
+        <ContentSlot :use="$slots.description" unwrap="p" />
       </p>
       <form ref="root" class="flex flex-wrap justify-start justify-center w-full gap-6 sm:flex-nowrap" @submit.prevent="onSubmit">
         <div ref="inputForm">

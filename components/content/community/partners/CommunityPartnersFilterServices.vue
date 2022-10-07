@@ -37,7 +37,7 @@ const service = computed({
         ...route.query,
         service: service?.key || undefined
       },
-      params: {
+      state: {
         smooth: '#smooth'
       }
     })

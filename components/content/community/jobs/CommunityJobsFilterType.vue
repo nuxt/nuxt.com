@@ -34,7 +34,7 @@ const type = computed({
         ...route.query,
         type: type?.value || undefined
       },
-      params: {
+      state: {
         smooth: '#smooth'
       }
     })

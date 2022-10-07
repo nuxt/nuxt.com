@@ -1,7 +1,7 @@
 <template>
   <ClientOnly>
     <span :class="gemWrapperClass">
-      <Markdown :use="$slots.default" unwrap="p" />
+      <ContentSlot :use="$slots.default" unwrap="p" />
     </span>
   </ClientOnly>
 </template>

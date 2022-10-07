@@ -37,7 +37,7 @@
             truncate
           />
           <UButton
-            to="/docs/3.x/guide/going-further/modules"
+            to="/docs/guide/going-further/modules"
             variant="secondary"
             size="lg"
             label="How to create a module"

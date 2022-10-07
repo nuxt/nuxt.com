@@ -26,7 +26,7 @@ const links = computed(() => {
           ...route.query,
           type: undefined
         },
-        params: { smooth: '#smooth' }
+        state: { smooth: '#smooth' }
       },
       active: !route.query.type
     },

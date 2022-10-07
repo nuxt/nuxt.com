@@ -6,9 +6,9 @@ export default <RouterConfig>{
     if (to.params?.stop) {
       return
     }
-    if (to.params?.smooth) {
+    if (history.state.smooth) {
       return {
-        el: to.params?.smooth,
+        el: history.state.smooth,
         behavior: 'smooth'
       }
     }

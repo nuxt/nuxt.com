@@ -37,7 +37,7 @@ const location = computed({
         ...route.query,
         location: location?.key || undefined
       },
-      params: {
+      state: {
         smooth: '#smooth'
       }
     })

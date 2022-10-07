@@ -35,9 +35,21 @@
 </template>
 
 <script setup lang="ts">
-const { navFromPath } = usePage()
 
-const links = computed(() => navFromPath('/company')?.children)
+const links = [
+  {
+    title: 'Partners',
+    _path: '/partners/support'
+  },
+  {
+    title: 'Design Kit',
+    _path: '/design-kit'
+  },
+  {
+    title: 'NuxtLabs',
+    _path: 'https://nuxtlabs.com'
+  }
+]
 
 const langs = ref([{ text: 'English', value: 'en' }])
 const lang = ref(langs.value[0].value)

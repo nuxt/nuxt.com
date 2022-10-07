@@ -3,11 +3,11 @@
     <div class="flex gap-x-[10px] items-center">
       <Logo class="w-[50px] h-[33px] u-text-black" />
       <h2 class="block text-3xl font-semibold u-text-black">
-        <span>+ <Markdown :use="$slots.title" unwrap="p" /></span>
+        <span>+ <ContentSlot :use="$slots.title" unwrap="p" /></span>
       </h2>
     </div>
     <p class="text-center u-text-gray-500 md:w-1/2">
-      <Markdown :use="$slots.description" unwrap="p" />
+      <ContentSlot :use="$slots.description" unwrap="p" />
     </p>
     <div class="flex h-10 mt-8 lg:mt-0 lg:flex-shrink-0 gap-y-3 gap-x-8">
       <UButton

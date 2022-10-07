@@ -4,10 +4,10 @@
       <span class="z-0 _ellipse" />
       <h2 class="u-text-black z-[1] tracking-tight">
         <span class="block text-2xl font-semibold">
-          <Markdown :use="$slots.title" unwrap="p" />
+          <ContentSlot :use="$slots.title" unwrap="p" />
         </span>
         <span class="block mt-2">
-          <Markdown :use="$slots.description" unwrap="p" />
+          <ContentSlot :use="$slots.description" unwrap="p" />
         </span>
       </h2>
       <div class="mt-8 flex lg:mt-0 lg:flex-shrink-0 gap-y-3 gap-x-8 z-[1] relative h-10">

@@ -52,7 +52,7 @@
 
 <script setup lang="ts">
 
-const { data: deployData } = await useAsyncData('deply', () => queryContent('/docs/3.x/_collections/deploy').findOne())
+const { data: deployData } = await useAsyncData('deply', () => queryContent('/docs/_collections/deploy').findOne())
 
 const currentSection = ref(null)
 </script>

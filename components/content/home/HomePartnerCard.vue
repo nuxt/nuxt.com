@@ -5,15 +5,15 @@
         <img src="/assets/home/github-card.svg" class="h-[76px] w-[76px]">
         <div>
           <h6 class="pb-2 text-sm font-medium text-white sm:text-base">
-            <Markdown :use="$slots.title" unwrap="p" />
+            <ContentSlot :use="$slots.title" unwrap="p" />
           </h6>
           <span class="text-xl font-semibold text-white sm:text-4xl">
-            <Markdown :use="$slots.caseStudy" unwrap="p" />
+            <ContentSlot :use="$slots.caseStudy" unwrap="p" />
           </span>
         </div>
       </div>
       <p class="text-sm font-medium text-white sm:text-base">
-        <Markdown :use="$slots.description" unwrap="p" />
+        <ContentSlot :use="$slots.description" unwrap="p" />
       </p>
       <div class="flex">
         <UButton
