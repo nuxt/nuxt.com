@@ -12,8 +12,9 @@ export default defineNuxtConfig({
     '@nuxthq/ui',
     '@nuxt/content',
     '@nuxtlabs/github-module',
-    'nuxt-newsletter',
-    'vue-plausible'
+    // 'nuxt-newsletter',
+    'vue-plausible',
+    '@nuxt-themes/tokens'
   ],
   components: [
     resolve('./components'),
