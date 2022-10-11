@@ -3,21 +3,22 @@ const { data } = await useFetch('/api/sponsors')
 </script>
 
 <template>
-  <section>
-    <h1>Sponsors</h1>
-    <article class="mb-12">
-      <h2 class="items-center justify-between hidden text-3xl font-semibold u-text-gray-900 md:flex">
-        Platinum
+  <section class="flex flex-col gap-y-12">
+    <article v-for="(value, key) in data.sponsors" :key="key" class="flex flex-col items-center gap-y-12">
+      <h2 class="text-3xl font-semibold u-text-gray-900 capitalize">
+        {{ key }}
       </h2>
-      <ul class="flex flex-wrap">
+      <SponsorsSectionList :sponsors="data.sponsors[key]" :sponsor-type="key">
+      <!-- <ul class="flex flex-wrap">
         <li v-for="{ sponsorEntity } in data.sponsors.platinum" :key="sponsorEntity.login">
           <a :href="`https://github.com/${sponsorEntity.login}`" :title="sponsorEntity.name" target="_blank" rel="noopener noreferrer">
             <img :src="sponsorEntity.avatarUrl" :alt="sponsorEntity.name" class="rounded-full w-12">
           </a>
         </li>
-      </ul>
+      </ul> -->
+      </sponsorssectionlist>
     </article>
-    <article class="mb-12">
+    <!-- <article class="mb-12">
       <h2 class="items-center justify-between hidden text-3xl font-semibold u-text-gray-900 md:flex">
         Gold
       </h2>
@@ -64,6 +65,6 @@ const { data } = await useFetch('/api/sponsors')
           </a>
         </li>
       </ul>
-    </article>
+    </article> -->
   </section>
 </template>
