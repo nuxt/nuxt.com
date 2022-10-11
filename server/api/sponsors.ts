@@ -8,6 +8,14 @@ const githubHeaders = (headers = {}) => ({
   ...headers
 })
 
+const tiersMap = {
+  platinum: amount => amount >= 2000,
+  gold: amount => amount >= 1000 && amount < 2000,
+  silver: amount => amount >= 100 && amount < 1000,
+  bronze: amount => amount >= 10 && amount < 100,
+  backer: amount => amount < 10
+}
+
 const fetchSponsors = async (): Promise<Sponsor[]> => {
   const response = []
   const first = 100
@@ -82,7 +90,14 @@ export default defineCachedEventHandler(async () => {
   }
 
   return {
-    sponsors
+    sponsors: sponsors.reduce((acc, sponsor) => {
+      const { monthlyPriceInDollars } = sponsor.tier
+      const tier = Object.keys(tiersMap).find(tier => tiersMap[tier](monthlyPriceInDollars))
+      return {
+        ...acc,
+        [tier]: [...(acc[tier] || []), sponsor]
+      }
+    }, {})
   }
 }, {
   name: 'github-sponsors',
