@@ -1,12 +1,12 @@
 ---
-title: Showcases
+title: Showcase
 description: 'Discover our selection of websites built with Nuxt.'
 showcasesListId: 505
 ---
 
 ::resources-showcases-hero
 #title
-Showcases
+Showcase
 #description
 Extend and automate your workflow by using deployments for your favorite tools.
 ::

@@ -38,7 +38,7 @@ export const useResourcesShowcases = () => {
       id: group.id,
       name: group.name,
       label: group.name,
-      to: { name: 'showcases', query: { category: group.name }, state: { smooth: '#smooth' } }
+      to: { name: 'showcase', query: { category: group.name }, state: { smooth: '#smooth' } }
     })) || []
   })
 
