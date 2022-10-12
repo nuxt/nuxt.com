@@ -43,6 +43,9 @@ export default defineNuxtConfig({
     github: {
       token: process.env.GITHUB_TOKEN
     },
+    openCollective: {
+      apiKey: process.env.OPEN_COLLECTIVE_API_KEY
+    },
     mailjet: {
       apiKey: process.env.MAILJET_API_KEY,
       secretKey: process.env.MAILJET_SECRET_KEY
