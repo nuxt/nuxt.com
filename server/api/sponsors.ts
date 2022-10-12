@@ -1,4 +1,4 @@
-import { fetchGithubSponsors } from '~/server/utils/sponsors'
+import { fetchGithubSponsors, fetchOpenCollectiveSponsors } from '~/server/utils/sponsors'
 
 const tiersMap = {
   platinum: amount => amount >= 2000,
@@ -10,18 +10,18 @@ const tiersMap = {
 
 export default defineCachedEventHandler(async () => {
   let sponsors = null
+  const oc = null
 
   try {
-    sponsors = await fetchGithubSponsors()
+    sponsors = await Promise.all([fetchGithubSponsors(), fetchOpenCollectiveSponsors()])
   } catch (e) {
     console.error(e)
     return
   }
 
   return {
-    sponsors: sponsors.reduce((acc, sponsor) => {
-      const { monthlyPriceInDollars } = sponsor.tier
-      const tier = Object.keys(tiersMap).find(tier => tiersMap[tier](monthlyPriceInDollars))
+    sponsors: sponsors.flat().reduce((acc, sponsor) => {
+      const tier = Object.keys(tiersMap).find(tier => tiersMap[tier](sponsor.monthlyPriceInDollars))
       return {
         ...acc,
         [tier]: [...(acc[tier] || []), sponsor]
