@@ -29,11 +29,11 @@
         <UButton :label="primaryButtonText" size="lg" variant="primary-gradient" truncate @click="scrollToVideo()" />
         <UButton
           :label="secondaryButtonText"
+          :to="secondaryButtonLink"
           size="lg"
           variant="transparent"
           icon="uil:angle-right-b"
           trailing
-          target="_blank"
           class="u-text-gray-900"
           truncate
         />
@@ -56,6 +56,10 @@ defineProps({
     default: ''
   },
   secondaryButtonText: {
+    type: String,
+    default: ''
+  },
+  secondaryButtonLink: {
     type: String,
     default: ''
   }
