@@ -2,6 +2,7 @@
 ---
 primaryButtonText: 'Watch video'
 secondaryButtonText: 'Get started'
+secondaryButtonLink: '/docs/getting-started/introduction'
 ---
 
 #badgeLabel
