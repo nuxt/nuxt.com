@@ -1,7 +1,7 @@
-import type { CommunityJob } from '~/types'
+import type { NuxtJob } from '~/types'
 
-export const useCommunityJobs = () => {
-  const jobs = useState<CommunityJob[]>('jobs', () => [])
+export const useNuxtJobs = () => {
+  const jobs = useState<NuxtJob[]>('jobs', () => [])
   const route = useRoute()
 
   // Http
@@ -11,7 +11,7 @@ export const useCommunityJobs = () => {
       return
     }
 
-    jobs.value = await $fetch<CommunityJob[]>('/api/community/jobs')
+    jobs.value = await $fetch<NuxtJob[]>('/api/community/jobs')
   }
 
   // Computed

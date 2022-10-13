@@ -13,7 +13,7 @@
 const route = useRoute()
 const router = useRouter()
 
-const { types, selectedType } = useCommunityJobs()
+const { types, selectedType } = useNuxtJobs()
 
 const typesWithPlaceholder = computed(() => [
   {
