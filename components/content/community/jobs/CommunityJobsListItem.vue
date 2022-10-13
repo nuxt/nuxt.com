@@ -20,7 +20,7 @@
         </div>
       </div>
       <div>
-        <span class="u-text-gray-500" v-html="description"></span>
+        <span class="u-text-gray-500" v-html="description" />
       </div>
     </NuxtLink>
   </UCard>
@@ -28,16 +28,16 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import type { CommunityJob } from '~/types'
+import type { NuxtJob } from '~/types'
 
 const props = defineProps({
   job: {
-    type: Object as PropType<CommunityJob>,
+    type: Object as PropType<NuxtJob>,
     required: true
   }
 })
 
-const { types } = useCommunityJobs()
+const { types } = useNuxtJobs()
 
 const typeClass = computed(() => {
   switch (props.job.type) {

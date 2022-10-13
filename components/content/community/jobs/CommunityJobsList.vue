@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-const { jobs, selectedLocation, selectedType } = useCommunityJobs()
+const { jobs, selectedLocation, selectedType } = useNuxtJobs()
 
 const filteredJobs = computed(() => {
   return [...jobs.value]

@@ -57,7 +57,7 @@ export interface CommunityNuxter {
   rank?: number
 }
 
-export interface CommunityJob {
+export interface NuxtJob {
   id: number
   title: string
   description: string
