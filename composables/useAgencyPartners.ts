@@ -72,7 +72,7 @@ export const useAgencyPartners = () => {
       .map(service => ({
         ...service,
         to: {
-          name: 'agency-partners',
+          name: 'partners-agencies',
           query: {
             ...route.query,
             service: route.query?.service !== service.key ? service.key : undefined
@@ -90,7 +90,7 @@ export const useAgencyPartners = () => {
           key: location.key,
           title: location.title,
           to: {
-            name: 'agency-partners',
+            name: 'partners-agencies',
             query: {
               ...route.query,
               location: route.query?.location !== location.key ? location.key : undefined
