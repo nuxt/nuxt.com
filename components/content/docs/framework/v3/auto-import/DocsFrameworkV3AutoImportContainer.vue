@@ -1,6 +1,6 @@
 <template>
   <div class="relative flex">
-    <img src="/assets/docs/v3/auto-import/gem.svg" alt="gem illustration" class="absolute -right-16 -bottom-24">
+    <img src="/assets/docs/v3/auto-import/gem.svg" class="absolute -right-16 -bottom-24" role="presentation">
     <div class="relative">
       <div class="h-[500px] md:h-[367px] w-[310px] md:w-[756px] bg-gray-900 rounded-xl backdrop-blur-sm bg-opacity-90">
         <div class="absolute top-3 left-3 flex gap-x-2">

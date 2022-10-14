@@ -12,7 +12,7 @@
 useHead({
   titleTemplate: chunk => chunk ? `${chunk} - Nuxt` : 'Nuxt: Intuitive Web Development',
   meta: [
-    { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1' },
+    { name: 'viewport', content: 'width=device-width, initial-scale=1' },
     { name: 'description', content: 'Nuxt makes web development intuitive and fun. The open source framework NuxtJS makes the development of modern web applications simple.' },
     { name: 'og:site_name', content: 'Nuxt' },
     { name: 'og:type', content: 'website' },
@@ -25,6 +25,9 @@ useHead({
   link: [
     { rel: 'icon', href: '/icon.png' }
   ],
+  htmlAttrs: {
+    lang: 'en'
+  },
   bodyAttrs: {
     class: 'antialiased font-sans text-gray-700 dark:text-gray-200 bg-white dark:bg-black [--scroll-mt:10rem] lg:[--scroll-mt:7rem]'
   }

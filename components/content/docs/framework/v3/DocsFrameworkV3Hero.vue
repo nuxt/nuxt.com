@@ -25,7 +25,7 @@
         />
       </div>
     </div>
-    <img src="/assets/docs/v3/hero.png" class="absolute -right-[485px] hidden lg:block" alt="hero illustration">
+    <img src="/assets/docs/v3/hero.png" class="absolute -right-[485px] hidden lg:block" role="presentation">
   </div>
 </template>
 

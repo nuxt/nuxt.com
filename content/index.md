@@ -111,7 +111,7 @@ Developers love Nuxt, the open source Vue framework built together with communit
   - label: 'Get started'
     size: 'lg'
     variant: 'green'
-    to: '#'
+    to: '/docs/getting-started/introduction'
     target: '_blank'
   - label: 'Read the guide'
     size: 'lg'
