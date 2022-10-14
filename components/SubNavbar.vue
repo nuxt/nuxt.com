@@ -22,20 +22,23 @@
           </slot>
         </div>
 
-        <div class="flex justify-center col-span-4 gap-x-8">
-          <NuxtLink
+        <ul class="flex justify-center col-span-4 gap-x-8">
+          <li
             v-for="(link, index) in links"
             :key="index"
-            :to="link.redirect || findBottomLink(link)"
-            :target="link.redirect && '_blank'"
-            :class="{
-              'u-text-gray-900 font-semibold': link.active || isActive(link),
-              'font-medium u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900': !isActive(link),
-            }"
           >
-            {{ link.title }}
-          </NuxtLink>
-        </div>
+            <NuxtLink
+              :to="link.redirect || findBottomLink(link)"
+              :target="link.redirect && '_blank'"
+              :class="{
+                'u-text-gray-900 font-semibold': link.active || isActive(link),
+                'font-medium u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900': !isActive(link),
+              }"
+            >
+              {{ link.title }}
+            </NuxtLink>
+          </li>
+        </ul>
 
         <div class="flex justify-end gap-3">
           <slot name="right" />
