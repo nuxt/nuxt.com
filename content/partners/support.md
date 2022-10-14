@@ -2,7 +2,7 @@
 title: Support
 ---
 
-::company-support-hero
+::support-hero
 ---
 buttons:
   - label: Find a partner
@@ -19,8 +19,8 @@ Lets talk about your project
 Find experts near you to help you to build and enhance your project.
 ::
 
-::company-support-section
-  :::company-support-details
+::support-section
+  :::support-details
   ---
   topics:
     - Your development goals and challenges
@@ -38,11 +38,11 @@ Find experts near you to help you to build and enhance your project.
   Nuxt offers a compelling solution and a great ecosystem to help you ship fullstack Vue apps that are performant and SEO friendly. The flexibility to choose between SSR and SSG is icing on the cake.
   :::
 
-  ::company-support-form
+  ::support-form
   ::
 ::
 
-::company-support-carousel
+::support-carousel
 ---
 items:
   - unilever
