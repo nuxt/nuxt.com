@@ -1,5 +1,5 @@
 <template>
-  <CommunityPartnersPartnerLayout :page="page" />
+  <AgenciesPartnerLayout :page="page" />
 </template>
 
 <script setup lang="ts">
