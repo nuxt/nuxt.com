@@ -26,7 +26,14 @@
         <ContentSlot :use="$slots.description" unwrap="p" />
       </p>
       <div class="flex gap-6 z-[1]">
-        <UButton :label="primaryButtonText" size="lg" variant="primary-gradient" truncate @click="scrollToVideo()" />
+        <UButton
+          :label="primaryButtonText"
+          size="lg"
+          variant="primary-gradient"
+          truncate
+          class="focus-visible:outline-2"
+          @click="scrollToVideo()"
+        />
         <UButton
           :label="secondaryButtonText"
           :to="secondaryButtonLink"
