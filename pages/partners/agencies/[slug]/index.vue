@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 const { page, fetchPage } = usePage()
-const { fetch: fetchPartners } = useCommunityPartners('technologies')
+const { fetch: fetchPartners } = useAgencyPartners()
 
 await Promise.all([fetchPage(), fetchPartners()])
 </script>

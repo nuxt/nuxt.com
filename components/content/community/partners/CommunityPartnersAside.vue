@@ -61,9 +61,7 @@
 </template>
 
 <script setup lang="ts">
-const partnerType: 'technologies' | 'agencies' = inject('partnerType')
-
-const { services, locations, filteredPartners, selectedService, selectedLocation } = useCommunityPartners(partnerType)
+const { services, locations, filteredPartners, selectedService, selectedLocation } = useAgencyPartners()
 
 // Faceting filtering
 const filteredLocations = computed(() => {

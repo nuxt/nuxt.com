@@ -1,11 +1,11 @@
 import type { Ref } from 'vue'
 import { uniqBy, uniq } from 'lodash-es'
 import slugify from '@sindresorhus/slugify'
-import type { CommunityPartner } from '~/types'
+import type { Agency } from '~/types'
 
-export const useCommunityPartners = (type: 'technologies' | 'agencies') => {
+export const useAgencyPartners = () => {
   const route = useRoute()
-  const _partners: Ref<CommunityPartner[]> = useState(`community-${type}`, () => [])
+  const _partners: Ref<Agency[]> = useState('agency-partners', () => [])
   const pending = ref(false)
 
   // Methods
@@ -18,7 +18,7 @@ export const useCommunityPartners = (type: 'technologies' | 'agencies') => {
     pending.value = true
 
     try {
-      const data = await queryContent<CommunityPartner>('/partners/agencies').where({
+      const data = await queryContent<Agency>('/partners/agencies').where({
         $not: {
           _path: {
             $in: ['/partners/agencies']
@@ -72,7 +72,7 @@ export const useCommunityPartners = (type: 'technologies' | 'agencies') => {
       .map(service => ({
         ...service,
         to: {
-          name: `community-${type}`,
+          name: 'agency-partners',
           query: {
             ...route.query,
             service: route.query?.service !== service.key ? service.key : undefined
@@ -84,17 +84,13 @@ export const useCommunityPartners = (type: 'technologies' | 'agencies') => {
   })
 
   const locations = computed(() => {
-    if (type === 'technologies') {
-      return []
-    }
-
     return uniq([...new Set(partners.value)].map(partner => partner.location))
       .map((location) => {
         return {
           key: location.key,
           title: location.title,
           to: {
-            name: `community-${type}`,
+            name: 'agency-partners',
             query: {
               ...route.query,
               location: route.query?.location !== location.key ? location.key : undefined

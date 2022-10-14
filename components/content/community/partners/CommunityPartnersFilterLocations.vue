@@ -12,11 +12,9 @@
 </template>
 
 <script setup lang="ts">
-const partnerType: 'technologies' | 'agencies' = inject('partnerType')
-
 const route = useRoute()
 const router = useRouter()
-const { locations, selectedLocation } = useCommunityPartners(partnerType)
+const { locations, selectedLocation } = useAgencyPartners()
 
 const locationsWithPlaceholder = computed(() => [
   {
@@ -32,7 +30,7 @@ const location = computed({
   },
   set (location) {
     router.push({
-      name: `community-${partnerType === 'agencies' ? partnerType : 'partners'}`,
+      name: 'partners-agencies',
       query: {
         ...route.query,
         location: location?.key || undefined

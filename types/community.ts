@@ -21,7 +21,7 @@ export interface CommunityRepositoryStats {
   collaborators: number
 }
 
-export interface CommunityPartner extends ParsedContent {
+export interface Agency extends ParsedContent {
   title: string
   description: string
   _path: string
@@ -33,7 +33,7 @@ export interface CommunityPartner extends ParsedContent {
   location: string
 }
 
-export interface FormattedCommunityPartner extends Omit<CommunityPartner, 'services' | 'location'> {
+export interface FormattedAgency extends Omit<Agency, 'services' | 'location'> {
   services: {
     key: string
     title: string
