@@ -6,7 +6,8 @@ const { resolve } = createResolver(import.meta.url)
 // https://v3.nuxtjs.org/guide/directory-structure/nuxt.config
 export default defineNuxtConfig({
   css: [
-    '~/assets/css/fonts.css'
+    '~/assets/css/fonts.css',
+    '~/assets/css/style.css'
   ],
   modules: [
     '@nuxthq/ui',

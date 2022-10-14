@@ -13,7 +13,7 @@
               :is="!!to ? 'NuxtLink' : 'p'"
               v-if="title"
               :to="to"
-              class="font-semibold u-text-gray-900 focus:outline-none"
+              class="font-semibold u-text-gray-900"
               :class="[hasScrolledPastSubNavbar ? 'opacity-100' : 'opacity-0']"
               tabindex="-1"
             >
@@ -28,7 +28,6 @@
             :key="index"
             :to="link.redirect || findBottomLink(link)"
             :target="link.redirect && '_blank'"
-            class="focus:outline-none"
             :class="{
               'u-text-gray-900 font-semibold': link.active || isActive(link),
               'font-medium u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900': !isActive(link),

@@ -14,7 +14,7 @@
         </div>
 
         <div class="flex justify-center col-span-4 lg:col-span-1 lg:justify-start">
-          <NuxtLink to="/" class="block u-text-black focus:outline-none">
+          <NuxtLink to="/" class="block u-text-black">
             <LogoFull class="hidden w-auto h-6 sm:block" />
             <Logo class="block w-auto h-6 sm:hidden" />
           </NuxtLink>
@@ -26,7 +26,7 @@
               :to="link._path"
               :exact="link.exact"
               :target="link.target"
-              class="text-sm lg:text-base focus:outline-none"
+              class="text-sm lg:text-base"
               :class="{
                 'font-semibold u-text-gray-900': isActive(link),
                 'font-medium u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900': !isActive(link),
@@ -51,7 +51,7 @@
             variant="transparent"
             to="https://discord.com/invite/ps2h6QT"
             target="_blank"
-            class="!p-0 u-text-gray-900"
+            class="!p-0 u-text-gray-900 focus-visible:ring-2"
             title="Go to Nuxt Discord Server"
           />
           <UButton
