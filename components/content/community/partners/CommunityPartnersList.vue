@@ -23,9 +23,7 @@
 </template>
 
 <script setup lang="ts">
-const partnerType: 'technologies' | 'agencies' = inject('partnerType')
-
-const { filteredPartners } = useCommunityPartners(partnerType)
+const { filteredPartners } = useAgencyPartners()
 </script>
 
 <style scoped>

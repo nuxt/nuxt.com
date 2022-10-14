@@ -15,9 +15,7 @@
 </template>
 
 <script setup lang="ts">
-const partnerType: 'technologies' | 'agencies' = inject('partnerType')
-
-const { selectedService, selectedLocation } = useCommunityPartners(partnerType)
+const { selectedService, selectedLocation } = useAgencyPartners()
 
 const filters = computed(() => {
   return [selectedService.value, selectedLocation.value].filter(Boolean)
