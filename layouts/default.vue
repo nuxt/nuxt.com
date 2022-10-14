@@ -1,9 +1,9 @@
 <template>
   <div class="flex flex-col min-h-screen">
     <Navbar />
-    <div class="min-h-[calc(100vh-4rem)] lg:min-h-[calc(100vh-5rem)] flex flex-col">
+    <main class="min-h-[calc(100vh-4rem)] lg:min-h-[calc(100vh-5rem)] flex flex-col">
       <slot />
-    </div>
+    </main>
     <Footer />
   </div>
 </template>
