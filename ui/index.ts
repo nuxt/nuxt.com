@@ -57,7 +57,7 @@ const selectCustom = {
     name: 'uil:angle-down'
   },
   list: {
-    base: 'u-bg-white shadow-lg rounded-md ring-1 u-ring-gray-200 border border-transparent focus:outline-none overflow-y-auto p-1 max-h-60',
+    base: 'u-bg-white shadow-lg rounded-md ring-1 u-ring-gray-200 border border-transparent overflow-y-auto p-1 max-h-60',
     option: {
       base: 'cursor-default select-none relative py-1.5 pl-2 pr-8 rounded-md text-sm',
       active: 'u-text-gray-900 bg-gray-100 dark:bg-gray-900',
@@ -74,7 +74,7 @@ const selectCustom = {
 }
 
 const toggle = {
-  base: 'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:u-ring-gray-900 focus:ring-offset-white dark:focus:ring-offset-black',
+  base: 'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer focus:ring-2 focus:ring-offset-2 focus:u-ring-gray-900 focus:ring-offset-white dark:focus:ring-offset-black',
   active: 'bg-gray-100 dark:bg-gray-800',
   inactive: 'bg-gray-100 dark:bg-gray-800',
   container: {

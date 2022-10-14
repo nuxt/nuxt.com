@@ -11,7 +11,7 @@
     >
       <ULink
         :to="link._path"
-        class="py-1.5 flex focus:outline-none w-full"
+        class="py-1.5 flex w-full"
         :exact="link.exact"
         :class="{
           'pl-4 lg:text-sm': level > 0,

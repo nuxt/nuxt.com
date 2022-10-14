@@ -37,7 +37,7 @@
       </div>
     </div>
 
-    <NuxtLink :to="`/modules/${module.name}`" class="focus:outline-none" tabindex="-1">
+    <NuxtLink :to="`/modules/${module.name}`" tabindex="-1">
       <span class="absolute inset-0" aria-hidden="true" />
     </NuxtLink>
   </UCard>
