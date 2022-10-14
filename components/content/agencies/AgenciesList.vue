@@ -1,21 +1,21 @@
 <template>
   <Page id="smooth" class="pt-16 -mt-16">
     <template #aside>
-      <CommunityPartnersAside />
+      <AgenciesAside />
     </template>
 
     <PageList :title="`${filteredPartners.length} partner${filteredPartners.length > 1 ? 's' : ''} found`">
       <template #filters>
-        <CommunityPartnersFilters class="hidden lg:flex" />
-        <CommunityPartnersFilterServices class="lg:hidden" />
-        <CommunityPartnersFilterLocations class="lg:hidden" />
+        <AgenciesFilters class="hidden lg:flex" />
+        <AgenciesFilterServices class="lg:hidden" />
+        <AgenciesFilterLocations class="lg:hidden" />
       </template>
 
       <div class="hidden _ellipse lg:block" />
 
       <ul v-if="filteredPartners.length" class="grid min-h-[calc(100vh-18rem)] grid-cols-1 gap-8 mt-8 sm:grid-cols-2 xl:grid-cols-3">
         <li v-for="(filteredPartner, index) in filteredPartners" :key="index">
-          <CommunityPartnersListItem :partner="filteredPartner" />
+          <AgenciesListItem :partner="filteredPartner" />
         </li>
       </ul>
     </PageList>
