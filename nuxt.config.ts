@@ -5,6 +5,9 @@ const { resolve } = createResolver(import.meta.url)
 
 // https://v3.nuxtjs.org/guide/directory-structure/nuxt.config
 export default defineNuxtConfig({
+  extends: [
+    process.env.NODE_ENV === 'development' ? process.env.ELEMENTS_PATH : '@nuxt-themes/elements'
+  ],
   css: [
     '~/assets/css/fonts.css',
     '~/assets/css/style.css'
