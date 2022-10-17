@@ -7,6 +7,21 @@ export const useResourcesShowcases = () => {
 
   const pending = ref(false)
 
+  const iconsMap = {
+    Featured: 'uil-star',
+    Awwwards: 'uil-award',
+    Tech: 'uil-circuit',
+    'E-Commerce': 'uil-shopping-basket',
+    News: 'uil-newspaper',
+    Education: 'uil-graduation-cap',
+    Government: 'uil-building',
+    Entertainment: 'uil-dice-five',
+    Travel: 'uil-plane',
+    Finance: 'uil-dollar-alt',
+    Business: 'uil-briefcase-alt',
+    Sport: 'uil-basketball'
+  }
+
   // Http
   async function fetch (id: number) {
     if (list.value && list.value.id === id) {
@@ -38,7 +53,8 @@ export const useResourcesShowcases = () => {
       id: group.id,
       name: group.name,
       label: group.name,
-      to: { name: 'showcase', query: { category: group.name }, state: { smooth: '#smooth' } }
+      to: { name: 'showcase', query: { category: group.name }, state: { smooth: '#smooth' } },
+      icon: iconsMap[group.name]
     })) || []
   })
 
