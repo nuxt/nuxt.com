@@ -17,6 +17,7 @@
             :src="`/assets/docs/v3/architecture/${data.icon}`"
             class="transition duration-200 group-hover:opacity-0"
             :class="currentSection === index ? 'opacity-0' : 'opacity-100'"
+            role="presentation"
           >
         </div>
         <div
@@ -25,15 +26,16 @@
         >
           <img
             :src="`/assets/docs/v3/architecture/${data.iconColor}`"
-            :alt="`${data.iconColor} icon`"
+            alt=""
             class="transition duration-200 opacity-0 group-hover:opacity-100"
             :class="currentSection === index ? 'opacity-100' : 'opacity-0'"
+            role="presentation"
           >
         </div>
         <div class="flex flex-col pt-16 md:pt-0 md:pl-16 gap-y-2">
-          <h6 class="text-lg font-semibold u-text-gray-900">
+          <h3 class="text-lg font-semibold u-text-gray-900">
             {{ data.title }}
-          </h6>
+          </h3>
           <p class="u-text-gray-700">
             {{ data.description }}
           </p>

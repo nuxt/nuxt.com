@@ -1,5 +1,5 @@
 <template>
-  <UCard padded body-class="aspect-w-4 aspect-h-3" shadow-class="" class="relative transition duration-200 group hover:ring-2 hover:u-ring-gray-900">
+  <UCard padded body-class="aspect-w-4 aspect-h-3" shadow-class="" class="relative transition duration-200 group hover:ring-2 ucard">
     <div class="flex flex-col">
       <div class="flex-1 min-h-0">
         <img
@@ -20,7 +20,7 @@
       </div>
     </div>
 
-    <NuxtLink :to="showcase.url" target="_blank" class="focus:outline-none" tabindex="-1">
+    <NuxtLink :to="showcase.url" target="_blank">
       <span class="absolute inset-0" aria-hidden="true" />
     </NuxtLink>
   </UCard>
@@ -37,3 +37,14 @@ defineProps({
   }
 })
 </script>
+
+<style scoped lang="postcss">
+.ucard:hover {
+  --tw-ring-color: var(--colors-green-400)
+}
+
+.ucard:has(a:focus-visible) {
+  @apply ring-2;
+  --tw-ring-color: var(--colors-green-400)
+}
+</style>

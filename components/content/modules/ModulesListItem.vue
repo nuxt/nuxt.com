@@ -1,5 +1,5 @@
 <template>
-  <UCard padded shadow-class="" class="relative transition duration-200 hover:ring-2 hover:u-ring-gray-900">
+  <UCard padded shadow-class="" class="relative transition duration-200 hover:ring-2 ucard">
     <ModulesListItemCover :icon="module.icon" :alt="module.name" class="mt-2 mb-6" />
 
     <div class="flex items-center gap-1.5">
@@ -37,7 +37,7 @@
       </div>
     </div>
 
-    <NuxtLink :to="`/modules/${module.name}`" class="focus:outline-none" tabindex="-1">
+    <NuxtLink :to="`/modules/${module.name}`">
       <span class="absolute inset-0" aria-hidden="true" />
     </NuxtLink>
   </UCard>
@@ -55,3 +55,14 @@ defineProps({
   }
 })
 </script>
+
+<style scoped lang="postcss">
+.ucard:hover {
+  --tw-ring-color: var(--colors-green-400)
+}
+
+.ucard:has(a:focus-visible) {
+  @apply ring-2;
+  --tw-ring-color: var(--colors-green-400)
+}
+</style>

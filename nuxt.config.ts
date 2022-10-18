@@ -9,7 +9,8 @@ export default defineNuxtConfig({
     process.env.NODE_ENV === 'development' ? process.env.ELEMENTS_PATH : '@nuxt-themes/elements'
   ],
   css: [
-    '~/assets/css/fonts.css'
+    '~/assets/css/fonts.css',
+    '~/assets/css/style.css'
   ],
   modules: [
     '@nuxthq/ui',
@@ -99,5 +100,8 @@ export default defineNuxtConfig({
   github: {
     disableCache: true,
     maxContributors: 10
+  },
+  nitro: {
+    plugins: ['~/server/plugins/content.ts']
   }
 })

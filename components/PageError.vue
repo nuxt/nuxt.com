@@ -1,7 +1,7 @@
 <template>
   <div class="flex-1 px-4 py-16 bg-white dark:bg-black sm:px-6 sm:py-24 md:grid md:place-items-center lg:px-8">
     <div class="mx-auto max-w-max">
-      <main class="sm:flex">
+      <section class="sm:flex">
         <p class="text-4xl font-semibold text-primary-500 sm:text-5xl">
           {{ error.statusCode || 404 }}
         </p>
@@ -18,7 +18,7 @@
             <UButton label="Go back home" variant="primary" @click="handleError" />
           </div>
         </div>
-      </main>
+      </section>
     </div>
   </div>
 </template>

@@ -2,7 +2,7 @@
   <div class="relative flex-1">
     <slot name="header" />
     <NuxtErrorBoundary>
-      <main class="relative pb-16 sm:pb-32 lg:pt-8" :class="{ 'overflow-hidden': !sticky }">
+      <section class="relative pb-16 sm:pb-32 lg:pt-8" :class="{ 'overflow-hidden': !sticky }">
         <UContainer padded>
           <div class="relative grid grid-cols-10 gap-8">
             <aside
@@ -20,7 +20,7 @@
             </div>
           </div>
         </UContainer>
-      </main>
+      </section>
       <template #error="{ error }">
         <p>An error occurred: {{ error }}</p>
       </template>

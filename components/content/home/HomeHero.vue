@@ -1,8 +1,8 @@
 <template>
   <div class="pb-20 pt-12 md:pt-28">
-    <img src="/assets/home/hero-gradient.svg" class="absolute top-0 right-0 hidden overflow-hidden select-none lg:block">
-    <img src="/assets/home/hero-gradient-tablet.svg" class="absolute top-0 right-0 w-full hidden overflow-hidden select-none sm:block lg:hidden">
-    <img src="/assets/home/hero-gradient-mobile.svg" class="absolute inset-x-0 top-0 w-full overflow-hidden object-cover select-none sm:hidden min-h-[800px]">
+    <img src="/assets/home/hero-gradient.svg" class="absolute top-0 right-0 hidden overflow-hidden select-none lg:block" role="presentation">
+    <img src="/assets/home/hero-gradient-tablet.svg" class="absolute top-0 right-0 w-full hidden overflow-hidden select-none sm:block lg:hidden" role="presentation">
+    <img src="/assets/home/hero-gradient-mobile.svg" class="absolute inset-x-0 top-0 w-full overflow-hidden object-cover select-none sm:hidden min-h-[800px]" role="presentation">
     <UContainer padded class="relative flex flex-col items-center sm:items-start gap-y-8">
       <HomeGemWrapper :gem-wrapper-class="'block sm:hidden'">
         <HomeGem />
@@ -26,7 +26,14 @@
         <ContentSlot :use="$slots.description" unwrap="p" />
       </p>
       <div class="flex gap-6 z-[1]">
-        <UButton :label="primaryButtonText" size="lg" variant="primary-gradient" truncate @click="scrollToVideo()" />
+        <UButton
+          :label="primaryButtonText"
+          size="lg"
+          variant="primary-gradient"
+          truncate
+          class="focus-visible:outline-2"
+          @click="scrollToVideo()"
+        />
         <UButton
           :label="secondaryButtonText"
           :to="secondaryButtonLink"

@@ -4,7 +4,7 @@
     :class="hasScrolledPastSubNavbar ? 'backdrop-blur-md bg-white/75 dark:bg-black/75 shadow shadow-gray-200 dark:shadow-gray-900' : 'u-border-gray-200'"
   >
     <UContainer padded>
-      <div class="relative grid items-center justify-between h-16 grid-cols-2 gap-3 sm:grid-cols-6">
+      <nav id="sub-nav" class="relative grid items-center justify-between h-16 grid-cols-2 gap-3 sm:grid-cols-6" :aria-label="title ? `${title} Sub Navigation`: 'Sub Navigation'">
         <div class="flex items-center justify-start">
           <Logo class="h-4 transition-all cursor-pointer" :class="[hasScrolledPastSubNavbar ? 'w-auto mr-3' : 'w-0']" @click="$router.push('/')" />
 
@@ -13,7 +13,7 @@
               :is="!!to ? 'NuxtLink' : 'p'"
               v-if="title"
               :to="to"
-              class="font-semibold u-text-gray-900 focus:outline-none"
+              class="font-semibold u-text-gray-900"
               :class="[hasScrolledPastSubNavbar ? 'opacity-100' : 'opacity-0']"
               tabindex="-1"
             >
@@ -22,26 +22,28 @@
           </slot>
         </div>
 
-        <div class="flex justify-center col-span-4 gap-x-8">
-          <NuxtLink
+        <ul class="flex justify-center col-span-4 gap-x-8">
+          <li
             v-for="(link, index) in links"
             :key="index"
-            :to="link.redirect || findBottomLink(link)"
-            :target="link.redirect && '_blank'"
-            class="focus:outline-none"
-            :class="{
-              'u-text-gray-900 font-semibold': link.active || isActive(link),
-              'font-medium u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900': !isActive(link),
-            }"
           >
-            {{ link.title }}
-          </NuxtLink>
-        </div>
+            <NuxtLink
+              :to="link.redirect || findBottomLink(link)"
+              :target="link.redirect && '_blank'"
+              :class="{
+                'u-text-gray-900 font-semibold': link.active || isActive(link),
+                'font-medium u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900': !isActive(link),
+              }"
+            >
+              {{ link.title }}
+            </NuxtLink>
+          </li>
+        </ul>
 
         <div class="flex justify-end gap-3">
           <slot name="right" />
         </div>
-      </div>
+      </nav>
     </UContainer>
   </div>
 </template>

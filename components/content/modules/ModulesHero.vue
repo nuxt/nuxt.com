@@ -10,7 +10,7 @@
       <ModulesFilterSearch class="hidden md:block" />
     </template>
     <template #image>
-      <img src="/assets/modules/gems.svg" class="object-cover h-full lg:mx-10 opacity-10 lg:opacity-100">
+      <img src="/assets/modules/gems.svg" class="object-cover h-full lg:mx-10 opacity-10 lg:opacity-100" role="presentation">
 
       <UCard padded body-class="p-4" class="hidden lg:block absolute left-11 top-3 w-44 backdrop-blur-lg !bg-opacity-10">
         <UIcon name="uil:arrow-to-bottom" class="w-5 h-5 text-teal-400" />

@@ -6,7 +6,7 @@
     <NavbarDialog v-model="isOpen" :links="links" />
 
     <UContainer padded class="relative">
-      <div class="grid items-center h-16 grid-cols-6 gap-3 lg:h-20 lg:justify-center">
+      <nav id="main-nav" class="grid items-center h-16 grid-cols-6 gap-3 lg:h-20 lg:justify-center" aria-label="Primary Navigation">
         <div class="lg:hidden">
           <button @click="isOpen = true">
             <UIcon name="uil:bars" class="flex-shrink-0 w-6 h-6" />
@@ -14,7 +14,7 @@
         </div>
 
         <div class="flex justify-center col-span-4 lg:col-span-1 lg:justify-start">
-          <NuxtLink to="/" class="block u-text-black focus:outline-none">
+          <NuxtLink to="/" class="block u-text-black">
             <LogoFull class="hidden w-auto h-6 sm:block" />
             <Logo class="block w-auto h-6 sm:hidden" />
           </NuxtLink>
@@ -26,7 +26,7 @@
               :to="link._path"
               :exact="link.exact"
               :target="link.target"
-              class="text-sm lg:text-base focus:outline-none"
+              class="text-sm lg:text-base"
               :class="{
                 'font-semibold u-text-gray-900': isActive(link),
                 'font-medium u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900': !isActive(link),
@@ -37,12 +37,39 @@
           </li>
         </ul>
 
-        <div class="flex items-center justify-end gap-3">
-          <UButton icon="uil:twitter" variant="transparent" to="https://twitter.com/nuxt_js" target="_blank" class="!p-0 u-text-gray-900" />
-          <UButton icon="fa-brands:discord" variant="transparent" to="https://discord.com/invite/ps2h6QT" target="_blank" class="!p-0 u-text-gray-900" />
-          <UButton icon="uil:github" variant="transparent" to="https://github.com/nuxt/framework" target="_blank" class="!p-0 u-text-gray-900" />
-        </div>
-      </div>
+        <ul class="flex items-center justify-end gap-3">
+          <li>
+            <UButton
+              icon="uil:twitter"
+              variant="transparent"
+              to="https://twitter.com/nuxt_js"
+              target="_blank"
+              class="!p-0 u-text-gray-900"
+              title="Go to Nuxt Twitter Account"
+            />
+          </li>
+          <li>
+            <UButton
+              icon="fa-brands:discord"
+              variant="transparent"
+              to="https://discord.com/invite/ps2h6QT"
+              target="_blank"
+              class="!p-0 u-text-gray-900 focus-visible:ring-2"
+              title="Go to Nuxt Discord Server"
+            />
+          </li>
+          <li>
+            <UButton
+              icon="uil:github"
+              variant="transparent"
+              to="https://github.com/nuxt/framework"
+              target="_blank"
+              class="!p-0 u-text-gray-900"
+              title="Go to Nuxt Github page"
+            />
+          </li>
+        </ul>
+      </nav>
     </UContainer>
   </header>
 </template>
