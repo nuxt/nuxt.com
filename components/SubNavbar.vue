@@ -4,7 +4,7 @@
     :class="hasScrolledPastSubNavbar ? 'backdrop-blur-md bg-white/75 dark:bg-black/75 shadow shadow-gray-200 dark:shadow-gray-900' : 'u-border-gray-200'"
   >
     <UContainer padded>
-      <nav class="relative grid items-center justify-between h-16 grid-cols-2 gap-3 sm:grid-cols-6">
+      <nav id="sub-nav" class="relative grid items-center justify-between h-16 grid-cols-2 gap-3 sm:grid-cols-6" :aria-label="title ? `${title} Sub Navigation`: 'Sub Navigation'">
         <div class="flex items-center justify-start">
           <Logo class="h-4 transition-all cursor-pointer" :class="[hasScrolledPastSubNavbar ? 'w-auto mr-3' : 'w-0']" @click="$router.push('/')" />
 
