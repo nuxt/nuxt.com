@@ -6,7 +6,7 @@
     <NavbarDialog v-model="isOpen" :links="links" />
 
     <UContainer padded class="relative">
-      <nav class="grid items-center h-16 grid-cols-6 gap-3 lg:h-20 lg:justify-center">
+      <nav id="main-nav" class="grid items-center h-16 grid-cols-6 gap-3 lg:h-20 lg:justify-center" aria-label="Primary Navigation">
         <div class="lg:hidden">
           <button @click="isOpen = true">
             <UIcon name="uil:bars" class="flex-shrink-0 w-6 h-6" />
