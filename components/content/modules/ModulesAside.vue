@@ -17,7 +17,6 @@
             'u-text-gray-900 font-medium': selectedCategory?.key === category.key,
             'u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900': selectedCategory?.key !== category.key
           }"
-          tabindex="-1"
         >
           <span class="relative">
             {{ category.title }}
@@ -36,7 +35,6 @@
         to="https://github.com/nuxt/modules"
         target="_blank"
         class="flex items-center gap-2 text-sm font-medium hover:u-text-gray-900 focus:u-text-gray-900"
-        tabindex="-1"
       >
         <UIcon name="fa-brands:github" class="w-4 h-4" />
         Contribute on GitHub
@@ -44,7 +42,6 @@
       <NuxtLink
         to="/docs/guide/going-further/modules"
         class="flex items-center gap-2 text-sm font-medium hover:u-text-gray-900 focus:u-text-gray-900"
-        tabindex="-1"
       >
         <UIcon name="uil:book-open" class="w-4 h-4" />
         Module Author guide
