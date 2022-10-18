@@ -38,8 +38,13 @@ defineProps({
 })
 </script>
 
-<style scoped>
+<style scoped lang="postcss">
 .ucard:hover {
+  --tw-ring-color: var(--colors-green-400)
+}
+
+.ucard:has(a:focus-visible) {
+  @apply ring-2;
   --tw-ring-color: var(--colors-green-400)
 }
 </style>
