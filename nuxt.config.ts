@@ -97,5 +97,8 @@ export default defineNuxtConfig({
   github: {
     disableCache: true,
     maxContributors: 10
+  },
+  nitro: {
+    plugins: ['~/server/plugins/content.ts']
   }
 })
