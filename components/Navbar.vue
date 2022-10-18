@@ -6,7 +6,7 @@
     <NavbarDialog v-model="isOpen" :links="links" />
 
     <UContainer padded class="relative">
-      <div class="grid items-center h-16 grid-cols-6 gap-3 lg:h-20 lg:justify-center">
+      <nav class="grid items-center h-16 grid-cols-6 gap-3 lg:h-20 lg:justify-center">
         <div class="lg:hidden">
           <button @click="isOpen = true">
             <UIcon name="uil:bars" class="flex-shrink-0 w-6 h-6" />
@@ -69,7 +69,7 @@
             />
           </li>
         </ul>
-      </div>
+      </nav>
     </UContainer>
   </header>
 </template>
