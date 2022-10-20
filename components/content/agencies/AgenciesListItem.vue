@@ -1,5 +1,5 @@
 <template>
-  <UCard padded shadow-class="" class="relative transition duration-200 hover:ring-2 hover:u-ring-gray-900">
+  <UCard padded shadow-class="" class="relative transition duration-200 hover:ring-2 ucard">
     <div class="flex justify-between mt-2 mb-6">
       <img v-if="partner.logo.light" :src="partner.logo.light" :alt="partner.title" class="w-auto h-12 dark:hidden">
       <img v-if="partner.logo.dark" :src="partner.logo.dark" :alt="partner.title" class="hidden w-auto h-12 dark:block">
@@ -17,13 +17,13 @@
       </p>
     </div>
 
-    <div class="flex items-center gap-3 overflow-x-auto z-[1] relative">
+    <div class="flex items-center gap-3 overflow-x-auto z-[1] relative" tabindex="-1">
       <UBadge v-for="service in partner.services" :key="service.key" size="sm" class="flex-shrink-0">
         {{ service.title }}
       </UBadge>
     </div>
 
-    <NuxtLink :to="partner._path" tabindex="-1">
+    <NuxtLink :to="partner._path">
       <span class="absolute inset-0" aria-hidden="true" />
     </NuxtLink>
   </UCard>
@@ -31,12 +31,23 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import type { FormattedCommunityPartner } from '~/types'
+import type { FormattedAgency } from '~/types'
 
 defineProps({
   partner: {
-    type: Object as PropType<FormattedCommunityPartner>,
+    type: Object as PropType<FormattedAgency>,
     default: () => null
   }
 })
 </script>
+
+<style scoped lang="postcss">
+.ucard:hover {
+  --tw-ring-color: var(--colors-green-400)
+}
+
+.ucard:has(a:focus-visible) {
+  @apply ring-2;
+  --tw-ring-color: var(--colors-green-400)
+}
+</style>

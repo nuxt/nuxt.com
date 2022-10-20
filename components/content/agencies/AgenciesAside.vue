@@ -14,7 +14,6 @@
               'u-text-gray-900 font-medium': selectedService?.key === service.key,
               'u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900': selectedService?.key !== service.key
             }"
-            tabindex="-1"
           >
             <span class="relative">
               <span>{{ service.title }}</span>
@@ -43,7 +42,6 @@
               'u-text-gray-900 font-medium': selectedLocation?.key === location.key,
               'u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900': selectedLocation?.key !== location.key
             }"
-            tabindex="-1"
           >
             <span class="relative">
               <span>{{ location.title }}</span>
