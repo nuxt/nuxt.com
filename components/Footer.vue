@@ -22,13 +22,7 @@
             </NuxtLink>
           </li>
         </ul>
-
-        <USelect
-          v-model="lang"
-          :options="langs"
-          name="lang"
-          size="sm"
-        />
+        <SocialLinks />
       </div>
     </UContainer>
   </footer>
