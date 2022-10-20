@@ -1,11 +1,7 @@
 <template>
   <Page :sticky="!!$route.params.slug">
     <template #header>
-      <SubNavbar title="Docs" :links="links">
-        <template #right>
-          <UButton icon="fa-brands:github" variant="transparent" to="https://github.com/nuxt/framework" class="!p-0" />
-        </template>
-      </SubNavbar>
+      <SubNavbar title="Docs" :links="links" />
     </template>
 
     <template v-if="$route.params.slug && tree && tree.length" #aside>
