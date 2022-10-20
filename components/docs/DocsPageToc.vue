@@ -4,13 +4,13 @@ const emit = defineEmits(['move'])
 </script>
 
 <template>
-  <div class="flex flex-col space-y-1 sm:space-y-2">
+  <nav class="flex flex-col space-y-1 sm:space-y-2">
     <template v-if="toc?.length">
-      <div class="items-center hidden overflow-hidden text-sm font-semibold lg:flex">
-        <span>Table of Contents</span>
-      </div>
+      <span class="items-center hidden overflow-hidden text-sm font-semibold lg:flex">
+        <h2>Table of Contents</h2>
+      </span>
 
       <DocsTocLinks :links="toc" @move="emit('move')" />
     </template>
-  </div>
+  </nav>
 </template>
