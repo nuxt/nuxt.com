@@ -8,9 +8,6 @@ buttons:
   - label: Become a Sponsor
     to: https://github.com/sponsors/nuxt
     variant: 'primary-gradient'
-  - label: Contact us
-    to: /company/contact
-    variant: secondary
 ---
 #title
 Sponsors
