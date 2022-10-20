@@ -3,7 +3,6 @@
     <div v-if="tabs" class="relative z-0 px-2">
       <button
         v-for="({ label }, i) in tabs"
-        ref="tabs"
         :key="`${i}${label}`"
         class="relative px-3 py-1.5 xs:py-3 my-1.5 xs:my-0 text-sm font-mono tracking-tight font-semibold"
         :class="[activeTabIndex === i ? 'active text-gray-800 dark:text-white' : 'text-gray-600 dark:text-gray-400']"
