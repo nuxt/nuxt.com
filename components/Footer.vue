@@ -22,6 +22,7 @@
             </NuxtLink>
           </li>
         </ul>
+        <SocialLinks />
       </div>
     </UContainer>
   </footer>
