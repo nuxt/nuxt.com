@@ -5,7 +5,7 @@
     shadow-class=""
     background-class="bg-gray-50 dark:bg-gray-900"
     custom-class="bg-opacity-80 dark:bg-opacity-80"
-    class="hover:ring-2 hover:u-ring-gray-900"
+    class="hover:ring-2 ucard"
   >
     <NuxtLink :to="`https://vuejobs.com/jobs/${job.id}`" target="_blank" class="flex flex-col gap-2 px-4 py-5 sm:p-6">
       <div class="grid grid-cols-2 gap-4 sm:flex">
@@ -58,3 +58,14 @@ const typeLabel = computed(() => types.value.find(type => type.value === props.j
 
 const description = computed(() => props.job.description.replace(/\n/g, '<br>'))
 </script>
+
+<style scoped lang="postcss">
+.ucard:hover {
+  --tw-ring-color: var(--colors-green-400)
+}
+
+.ucard:has(a:focus-visible) {
+  @apply ring-2;
+  --tw-ring-color: var(--colors-green-400)
+}
+</style>
