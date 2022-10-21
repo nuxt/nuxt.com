@@ -115,23 +115,12 @@ export const usePage = () => {
 
       if (file.children) {
         const result = navFromPath(path, file.children)
-        if (result) { return result }
+        if (result) {
+          return result
+        }
       }
     }
   }
-
-  // const fileFromPath = (path: string, tree: NavItem[] = navigation.value) => {
-  //   for (const file of tree) {
-  //     if (file.children) {
-  //       const result = fileFromPath(path, file.children)
-  //       if (result) { return result }
-  //     }
-
-  //     if (file._path === path) {
-  //       return file
-  //     }
-  //   }
-  // }
 
   return {
     // useState references
