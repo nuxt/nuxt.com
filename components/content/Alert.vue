@@ -14,9 +14,9 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="alert mt-4 mb-4 rounded-xl px-4 py-3 text-sm leading-relaxed" :class="props.type">
+  <div class="alert mt-4 mb-4 rounded-xl px-4 py-3 text-sm" :class="props.type">
     <div class="flex items-start">
-      <div class="alert-content flex-grow">
+      <div class="overflow-hidden leading-loose">
         <ContentSlot :use="$slots.default" unwrap="p" />
       </div>
     </div>
