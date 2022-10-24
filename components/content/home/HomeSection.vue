@@ -57,7 +57,7 @@
                 <ContentSlot :use="$slots.bodyLink" unwrap="p" />
               </span>
 
-              <UIcon name="uil:arrow-right" class="w-6 h-6 u-text-gray-900" />
+              <Icon name="uil:arrow-right" class="w-6 h-6 u-text-gray-900" />
             </div>
             <div class="absolute -bottom-2 w-0 h-0.5 u-bg-black group-hover:w-full transition-all duration-300 ease-in-out" />
           </NuxtLink>

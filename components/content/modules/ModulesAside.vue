@@ -36,14 +36,14 @@
         target="_blank"
         class="flex items-center gap-2 text-sm font-medium hover:u-text-gray-900 focus:u-text-gray-900"
       >
-        <UIcon name="fa-brands:github" class="w-4 h-4" />
+        <Icon name="fa-brands:github" class="w-4 h-4" />
         Contribute on GitHub
       </NuxtLink>
       <NuxtLink
         to="/docs/guide/going-further/modules"
         class="flex items-center gap-2 text-sm font-medium hover:u-text-gray-900 focus:u-text-gray-900"
       >
-        <UIcon name="uil:book-open" class="w-4 h-4" />
+        <Icon name="uil:book-open" class="w-4 h-4" />
         Module Author guide
       </NuxtLink>
     </div>

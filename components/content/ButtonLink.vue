@@ -3,7 +3,7 @@
     <ContentSlot :use="$slots.default" unwrap="p ul li" />
 
     <template #href>
-      <UIcon v-if="blank" name="ph:link-simple" class="w-4 h-4 ml-2" />
+      <Icon v-if="blank" name="ph:link-simple" class="w-4 h-4 ml-2" />
     </template>
   </NuxtLink>
 </template>
