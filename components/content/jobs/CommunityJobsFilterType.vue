@@ -29,7 +29,7 @@ const type = computed({
   },
   set (type) {
     router.push({
-      name: 'community-jobs',
+      name: 'partners-jobs',
       query: {
         ...route.query,
         type: type?.value || undefined
