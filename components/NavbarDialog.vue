@@ -28,7 +28,6 @@
 
 <script setup lang="ts">
 import type { NavItem } from '@nuxt/content/dist/runtime/types'
-import { omit } from 'lodash-es'
 import type { PropType, Ref, WritableComputedRef } from 'vue'
 
 const props = defineProps({
@@ -84,7 +83,16 @@ const tree = computed(() => {
     return selectedLink.value.children
   }
 
-  return navigation.value.filter(navLink => props.links.some(link => navLink._path === `/${link._path.split('/')[1]}`))
+  const nav = navigation.value.filter(navLink => props.links.some(link => (navLink._path === `/${link._path.split('/')[1]}`) && (navLink._path !== '/docs')))
+  const docs = navigation.value.filter(navLink => navLink._path === '/docs')
+
+  // remove bridge and migration from /docs
+  docs[0].children = docs[0]?.children?.filter(link => !['/docs/migration', '/docs/bridge'].includes(link._path))
+
+  return [
+    ...docs,
+    ...nav
+  ]
 })
 
 const onSelect = (link) => {
