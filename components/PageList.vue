@@ -9,7 +9,7 @@
 
       <button class="flex items-center justify-between font-semibold u-text-gray-900 md:hidden" @click="isOpen = !isOpen">
         <div class="flex items-center">
-          <UIcon name="uil:filter" class="w-5 h-5 mr-1.5" />
+          <Icon name="uil:filter" class="w-5 h-5 mr-1.5" />
           <span>Filter (</span>
           <slot name="title">
             {{ title }}
@@ -17,7 +17,7 @@
           <span>)</span>
         </div>
 
-        <UIcon name="uil:angle-right-b" class="w-5 h-5 transition-transform duration-100 transform" :class="[isOpen ? 'rotate-90' : 'rotate-0']" />
+        <Icon name="uil:angle-right-b" class="w-5 h-5 transition-transform duration-100 transform" :class="[isOpen ? 'rotate-90' : 'rotate-0']" />
       </button>
 
       <div class="flex-col hidden gap-3 md:flex md:flex-row md:items-center">

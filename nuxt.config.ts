@@ -15,7 +15,8 @@ export default defineNuxtConfig({
     '@nuxtlabs/github-module',
     // 'nuxt-newsletter',
     'vue-plausible',
-    '@nuxt-themes/tokens'
+    '@nuxt-themes/tokens',
+    'nuxt-icon'
   ],
   components: [
     resolve('./components'),

@@ -6888,6 +6888,14 @@ nuxt-component-meta@^0.2.3:
     scule "^0.3.2"
     vue-component-meta "^0.40.13"
 
+nuxt-icon@^0.1.7:
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/nuxt-icon/-/nuxt-icon-0.1.7.tgz#af39787aba0146ced1f4eeee7eeb1658917b89e3"
+  integrity sha512-JQ2OKKulcDAUMiPY3Q4YaXncL5de9fiVdrgXKnNZU3Cs2VbR//RAR9xt90+hpmVzDSdEB5UXIJLnWc5uBxm/hw==
+  dependencies:
+    "@iconify/vue" "^4.0.0"
+    "@nuxt/kit" "^3.0.0-rc.10"
+
 nuxt-newsletter@^0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/nuxt-newsletter/-/nuxt-newsletter-0.1.2.tgz#29768bb6d24e0d143d746cae1460de9644509402"
