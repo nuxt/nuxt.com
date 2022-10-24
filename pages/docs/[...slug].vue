@@ -14,7 +14,7 @@ await fetchPage({ querySurround: true })
 
 <style lang="postcss" scoped>
   .prose :deep(div:first-child h1:first-child) {
-    @apply mt-0 text-2xl font-extrabold tracking-tight text-gray-100 sm:text-3xl;
+    @apply mt-0 text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl;
   }
   .prose :deep(div:first-child h1:first-child + p) {
     @apply mt-0 mb-8 sm:text-lg text-gray-400 pb-8 border-b border-gray-700;
