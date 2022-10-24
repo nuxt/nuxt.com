@@ -43,11 +43,11 @@ defineProps({
 
 <style scoped lang="postcss">
 .ucard:hover {
-  --tw-ring-color: var(--colors-green-400)
+  --tw-ring-color: #00dc82
 }
 
 .ucard:has(a:focus-visible) {
   @apply ring-2;
-  --tw-ring-color: var(--colors-green-400)
+  --tw-ring-color: #00dc82
 }
 </style>
