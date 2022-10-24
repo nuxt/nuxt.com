@@ -29,7 +29,7 @@ const location = computed({
   },
   set (location) {
     router.push({
-      name: 'community-jobs',
+      name: 'partners-jobs',
       query: {
         ...route.query,
         location: location?.value || undefined
