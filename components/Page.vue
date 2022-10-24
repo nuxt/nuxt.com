@@ -22,7 +22,15 @@
         </UContainer>
       </section>
       <template #error="{ error }">
-        <p>An error occurred: {{ error }}</p>
+        <UContainer padded class="text-center">
+          <h3 class="text-lg font-semibold mb-6">
+            An error occurred
+          </h3>
+          <Alert type="info" class="mb-6">
+            {{ error }}
+          </Alert>
+          <UButton to="/" label="Go back home" variant="primary-gradient" class="mb-6" />
+        </UContainer>
       </template>
     </NuxtErrorBoundary>
   </div>
