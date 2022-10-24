@@ -15,21 +15,21 @@
         <div class="w-[310px] md:w-[330px] relative">
           <div class="absolute flex flex-col text-gray-300 transition-opacity duration-300 top-4 left-6 gap-y-4" :class="currentSection === null ? 'opacity-100' : 'opacity-0'">
             <div v-for="(text, index) in ['pages', 'components', 'plugins']" :key="index" class="flex items-center gap-x-2">
-              <UIcon name="uil:angle-right" class="w-5 h-5 mt-1" /> <span class="font-medium">{{ text }}</span>
+              <Icon name="uil:angle-right" class="w-5 h-5 mt-1" /> <span class="font-medium">{{ text }}</span>
             </div>
           </div>
           <div class="absolute flex flex-col text-gray-300 transition-opacity duration-300 top-4 left-6 gap-y-4" :class="currentSection === 0 ? 'opacity-100' : 'opacity-0'">
             <div v-for="(text, index) in ['pages', 'components']" :key="index" class="relative">
               <div class="relative flex items-center gap-x-2" :class="{ 'pt-[20px] md:pt-[59px]': index === 1 }">
-                <UIcon name="uil:angle-down" class="w-5 h-5 mt-1" /> <span class="font-medium">{{ text }}</span>
+                <Icon name="uil:angle-down" class="w-5 h-5 mt-1" /> <span class="font-medium">{{ text }}</span>
                 <div class="absolute left-[9px] w-0.5 bg-gradient-to-b from-gray-400 to-transparent" :class="index === 1 ? 'top-[46px] md:top-[89px] h-[109px] ' : 'top-[26px] h-[59px] '" />
               </div>
               <div class="flex items-center pt-4 pl-8 gap-x-4">
-                <UIcon name="uil:file" class="w-6 h-6" :class="index === 0 ? 'text-green-400' : 'text-gray-300'" />
+                <Icon name="uil:file" class="w-6 h-6" :class="index === 0 ? 'text-green-400' : 'text-gray-300'" />
                 <span>{{ index === 0 ? 'index.vue' : 'Header.vue' }}</span>
               </div>
               <div class="flex items-center pt-4 pl-8 gap-x-4" :class="index === 0 ? 'hidden' : 'block'">
-                <UIcon name="uil:file" class="w-6 h-6 text-gray-300" />
+                <Icon name="uil:file" class="w-6 h-6 text-gray-300" />
                 <span>Footer.vue</span>
               </div>
             </div>
@@ -37,11 +37,11 @@
           <div class="absolute flex flex-col text-gray-300 transition-opacity duration-300 top-4 left-6 gap-y-4" :class="currentSection === 1 ? 'opacity-100' : 'opacity-0'">
             <div v-for="(text, index) in ['components', 'composables']" :key="index" class="relative">
               <div class="relative flex items-center gap-x-2" :class="{ 'pt-[20px] md:pt-[59px]': index === 1 }">
-                <UIcon name="uil:angle-down" class="w-5 h-5 mt-1" /> <span class="font-medium">{{ text }}</span>
+                <Icon name="uil:angle-down" class="w-5 h-5 mt-1" /> <span class="font-medium">{{ text }}</span>
                 <div class="absolute left-[9px] w-0.5 bg-gradient-to-b from-gray-400 to-transparent" :class="index === 1 ? 'top-[46px] md:top-[89px] h-[109px] ' : 'top-[26px] h-[59px] '" />
               </div>
               <div class="flex items-center pt-4 pl-8 gap-x-4">
-                <UIcon name="uil:file" class="w-6 h-6" :class="index === 0 ? 'text-green-400' : 'text-gray-300'" />
+                <Icon name="uil:file" class="w-6 h-6" :class="index === 0 ? 'text-green-400' : 'text-gray-300'" />
                 <span>{{ index === 0 ? 'Mouse.vue' : 'useMouse.ts' }}</span>
               </div>
             </div>
@@ -49,11 +49,11 @@
           <div class="absolute flex flex-col text-gray-300 transition-opacity duration-300 top-4 left-6 gap-y-4" :class="currentSection === 2 ? 'opacity-100' : 'opacity-0'">
             <div v-for="(text, index) in ['pages', 'plugins']" :key="index" class="relative">
               <div class="relative flex items-center gap-x-2" :class="{ 'pt-[20px] md:pt-[59px]': index === 1 }">
-                <UIcon name="uil:angle-down" class="w-5 h-5 mt-1" /> <span class="font-medium">{{ text }}</span>
+                <Icon name="uil:angle-down" class="w-5 h-5 mt-1" /> <span class="font-medium">{{ text }}</span>
                 <div class="absolute left-[9px] w-0.5 bg-gradient-to-b from-gray-400 to-transparent" :class="index === 1 ? 'top-[46px] md:top-[89px] h-[109px] ' : 'top-[26px] h-[59px] '" />
               </div>
               <div class="flex items-center pt-4 pl-8 gap-x-4">
-                <UIcon name="uil:file" class="w-6 h-6" :class="index === 0 ? 'text-green-400' : 'text-gray-300'" />
+                <Icon name="uil:file" class="w-6 h-6" :class="index === 0 ? 'text-green-400' : 'text-gray-300'" />
                 <span>{{ index === 0 ? 'index.vue' : 'i18n.ts' }}</span>
               </div>
             </div>

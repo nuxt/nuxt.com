@@ -2,7 +2,7 @@
 <template>
   <div :class="{ 'dark': dark }">
     <UCard padded base-class="relative h-full overflow-hidden">
-      <UIcon v-if="icon" :name="icon" class="absolute w-56 h-56 text-gray-100 -right-10 -bottom-16 dark:text-black" />
+      <Icon v-if="icon" :name="icon" class="absolute w-56 h-56 text-gray-100 -right-10 -bottom-16 dark:text-black" />
 
       <span v-if="dark" class="_ellipse" />
 

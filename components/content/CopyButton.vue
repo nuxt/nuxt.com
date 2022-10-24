@@ -3,8 +3,8 @@
     :class="baseClass"
     @click="onClick"
   >
-    <UIcon v-if="state === 'copied'" name="uil:check" :class="iconClass" />
-    <UIcon v-else name="uil:copy" :class="iconClass" />
+    <Icon v-if="state === 'copied'" name="uil:check" :class="iconClass" />
+    <Icon v-else name="uil:copy" :class="iconClass" />
   </button>
 </template>
 
