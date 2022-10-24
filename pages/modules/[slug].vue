@@ -9,7 +9,7 @@
               <div v-if="module.type === 'official'">
                 <div class="rounded-full bg-white absolute -right-5 -bottom-5 h-12 w-12" />
                 <div class="flex items-center justify-center rounded-full bg-gradient-to-l from-green-400/30 via-teal-400/30 to-indigoblue-400/30 absolute -right-5 -bottom-5 h-12 w-12">
-                  <UIcon name="uil:medal" class="h-5 w-5 text-gray-900" />
+                  <Icon name="uil:medal" class="h-5 w-5 text-gray-900" />
                 </div>
               </div>
             </div>
@@ -22,7 +22,7 @@
 
               <NuxtLink :to="module.website" target="_blank" class="group flex items-center mb-3 md:mb-1">
                 <span class="u-text-gray-400 group-hover:u-text-gray-500 mr-2">Go to documentation</span>
-                <UIcon name="uil:external-link-alt" class="u-text-gray-500" />
+                <Icon name="uil:external-link-alt" class="u-text-gray-500" />
               </NuxtLink>
             </div>
             <p class="u-text-gray-500 mt-1 text-xl text-center md:text-left md:max-w-2xl">
@@ -35,14 +35,14 @@
                 -
               </div>
               <div class="flex items-center gap-1.5">
-                <UIcon name="uil:download-alt" class="w-4 h-4" />
+                <Icon name="uil:download-alt" class="w-4 h-4" />
                 <span>{{ formatNumber(module.downloads) }} installs</span>
               </div>
               <div class="hidden md:block">
                 -
               </div>
               <div class="flex items-center gap-1.5">
-                <UIcon name="uil:star" class="w-4 h-4" />
+                <Icon name="uil:star" class="w-4 h-4" />
                 <span>{{ formatNumber(module.stars) }} stars</span>
               </div>
             </div>
