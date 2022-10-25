@@ -8,7 +8,7 @@
       </p>
 
       <div v-if="module.type === 'official'" class="flex items-center justify-center rounded-full bg-gradient-to-l from-green-400/30 via-teal-400/30 to-indigoblue-400/30 h-6 w-6">
-        <UIcon name="uil:medal" class="h-4 w-4 text-gray-900" />
+        <Icon name="uil:medal" class="h-4 w-4 text-gray-900" />
       </div>
     </div>
 
@@ -19,19 +19,19 @@
     <div class="flex items-center justify-between gap-3 -mb-2 u-text-gray-500">
       <div class="flex items-center gap-3">
         <div class="flex items-center gap-1.5">
-          <UIcon name="uil:star" class="w-4 h-4" />
+          <Icon name="uil:star" class="w-4 h-4" />
 
           <span class="text-sm">{{ formatNumber(module.stars) }}</span>
         </div>
         <div class="flex items-center gap-1.5">
-          <UIcon name="uil:arrow-to-bottom" class="w-4 h-4" />
+          <Icon name="uil:arrow-to-bottom" class="w-4 h-4" />
 
           <span class="text-sm">{{ formatNumber(module.downloads) }}</span>
         </div>
       </div>
 
       <div class="flex items-center gap-1.5">
-        <UIcon name="uil:users-alt" class="w-4 h-4" />
+        <Icon name="uil:users-alt" class="w-4 h-4" />
 
         <span class="text-sm">{{ module.contributors.length }}</span>
       </div>
@@ -58,11 +58,11 @@ defineProps({
 
 <style scoped lang="postcss">
 .ucard:hover {
-  --tw-ring-color: var(--colors-green-400)
+  --tw-ring-color: #00dc82
 }
 
 .ucard:has(a:focus-visible) {
   @apply ring-2;
-  --tw-ring-color: var(--colors-green-400)
+  --tw-ring-color: #00dc82
 }
 </style>

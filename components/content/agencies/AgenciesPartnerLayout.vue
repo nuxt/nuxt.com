@@ -19,7 +19,7 @@
               {{ page.title }}
             </h1>
             <NuxtLink :to="page.link" target="_blank" rel="noopener" class="flex items-center gap-2 font-medium u-text-gray-500 hover:underline">
-              <span class="truncate">{{ websiteDomain }}</span><UIcon name="uil:external-link-alt" class="w-5 h-5 flex-shrink-0" />
+              <span class="truncate">{{ websiteDomain }}</span><Icon name="uil:external-link-alt" class="w-5 h-5 flex-shrink-0" />
             </NuxtLink>
           </div>
         </div>
@@ -82,7 +82,7 @@
                   :key="index"
                   class="flex items-center gap-3 u-text-gray-700"
                 >
-                  <UIcon name="uil:check-circle" class="w-6 h-6 u-text-gray-900" />
+                  <Icon name="uil:check-circle" class="w-6 h-6 u-text-gray-900" />
                   {{ service }}
                 </li>
               </ul>
@@ -92,7 +92,7 @@
                 Location
               </h2>
               <span class="flex items-center gap-3 u-text-gray-700">
-                <UIcon name="uil:location-pin-alt" class="w-6 h-6 u-text-gray-900" />
+                <Icon name="uil:location-pin-alt" class="w-6 h-6 u-text-gray-900" />
                 {{ page.location }}
               </span>
             </div>
@@ -108,7 +108,7 @@
                     rel="noopener"
                     class="flex items-center gap-3 u-text-gray-700 hover:underline"
                   >
-                    <UIcon name="uil:external-link-alt" class="w-6 h-6 u-text-gray-900" />
+                    <Icon name="uil:external-link-alt" class="w-6 h-6 u-text-gray-900" />
                     {{ link.name }}
                   </NuxtLink>
                 </li>

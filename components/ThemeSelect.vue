@@ -21,3 +21,9 @@ const isDark = computed({
   }
 })
 </script>
+
+<style scoped lang="postcss">
+button {
+  @apply bg-gray-200 dark:bg-gray-800
+}
+</style>
