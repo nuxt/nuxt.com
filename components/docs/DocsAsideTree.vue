@@ -17,7 +17,7 @@
           'pl-4 lg:text-sm': level > 0,
           '!pt-0': level === 0 && index === 0,
           'font-semibold u-text-gray-900': isActive(link),
-          'font-medium u-text-gray-500 hover:u-text-red-900 focus:u-text-gray-900': !isActive(link) && level > 0
+          'font-medium u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900': !isActive(link) && level > 0
         }"
         @click.stop.prevent="onClick(link)"
       >
