@@ -8,7 +8,7 @@
         <button class="flex items-center gap-3 lg:hidden" tabindex="-1" @click="isOpen = !isOpen">
           <span class="text-sm font-semibold leading-6 u-text-gray-900">Table of Contents</span>
 
-          <UIcon name="uil:angle-right-b" class="w-5 h-5 transition-transform duration-100 transform u-text-gray-400" :class="[isOpen ? 'rotate-90' : 'rotate-0']" />
+          <Icon name="uil:angle-right-b" class="w-5 h-5 transition-transform duration-100 transform u-text-gray-400" :class="[isOpen ? 'rotate-90' : 'rotate-0']" />
         </button>
 
         <DocsPageToc class="mt-4 lg:mt-0" :class="[isOpen ? 'lg:block' : 'hidden lg:block']" />

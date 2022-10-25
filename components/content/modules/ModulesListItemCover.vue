@@ -8,7 +8,7 @@
       @error="coverError = true"
     >
     <div v-else class="flex items-center w-12 h-12 p-2 rounded-lg u-bg-gray-100">
-      <UIcon name="uil:picture" class="w-8 h-8 u-text-gray-400" />
+      <Icon name="uil:picture" class="w-8 h-8 u-text-gray-400" />
     </div>
   </div>
 </template>

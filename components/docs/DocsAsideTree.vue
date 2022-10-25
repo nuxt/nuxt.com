@@ -22,7 +22,7 @@
         @click.stop.prevent="onClick(link)"
       >
         <span class="inline-flex items-center">
-          <UIcon v-if="link.icon" :name="link.icon" class="w-5 h-5 mr-1" />
+          <Icon v-if="link.icon" :name="link.icon" class="w-5 h-5 mr-1" />
           <span>{{ link.title }}</span>
         </span>
       </ULink>
