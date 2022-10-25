@@ -40,6 +40,8 @@ export const useResourcesShowcases = () => {
       })
 
       list.value = data
+
+      console.log('data', data)
     } catch (e) {
       list.value = null
     }

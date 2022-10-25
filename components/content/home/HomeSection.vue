@@ -1,11 +1,10 @@
 <template>
-  <div
-    ref="root"
+  <UContainer
     class="flex px-4 pt-24 transition duration-700"
     :class="[containerClass, !slideIn ? 'opacity-0 translate-y-20' : 'opacity-100 translate-y-0', buttons.length ? 'items-center justify-between' : 'flex-col']"
+    padded
   >
-    <!-- Main title -->
-    <div class="flex flex-col justify-center" :class="mainTitleContainerClass">
+    <div ref="root" class="flex flex-col justify-center">
       <div v-if="$slots.sectionTitle" class="pb-2 font-semibold">
         <ContentSlot :use="$slots.sectionTitle" unwrap="p" />
       </div>
@@ -24,8 +23,10 @@
         <span class="absolute w-0 -bottom-1 h-0.5 u-bg-gray-500 group-hover:w-full transition-all duration-200" />
       </NuxtLink>
     </div>
-    <ContentSlot :use="$slots.extra" unwrap="p" />
-    <div v-if="buttons.length" class="flex justify-start items-start h-full gap-6 -mt-12 w-1/3 ">
+    <div v-if="$slots.extra">
+      <ContentSlot :use="$slots.extra" unwrap="p" />
+    </div>
+    <div v-if="buttons.length" class="flex justify-end gap-6 w-1/3 ">
       <UButton
         v-for="button of buttons"
         :key="button.label"
@@ -37,7 +38,7 @@
         truncate
       />
     </div>
-  </div>
+  </UContainer>
 </template>
 
 <script setup lang="ts">
@@ -46,11 +47,7 @@ import type { PropType, Ref } from 'vue'
 defineProps({
   containerClass: {
     type: String,
-    default: 'gap-y-10 pb-10 sm:px-0 sm:pb-20 md:pb-28 lg:pb-40 mx-auto sm:px-6 lg:px-8 px-4'
-  },
-  mainTitleContainerClass: {
-    type: String,
-    default: 'lg:pb-16 xl:pb-20 2xl:pb-24'
+    default: 'gap-y-10 pb-4 sm:pb-8 md:pb-12 lg:pb-20'
   },
   buttons: {
     type: Array as PropType<{ label?: string, variant?: string, to?: string, icon?: string, trailing?: boolean }[]>,

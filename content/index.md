@@ -28,6 +28,41 @@ Nuxt provides the best developer experience for web teams to deliver the best en
 Deliver the best [User Experience]{.text-transparent .bg-clip-text .bg-gradient-to-r .from-green-400 .via-teal-400 .to-indigoblue-600}
 #description
 How a user interacts with and experience your website is key. It includes a person's perceptions of utility, ease of use, and efficiency. Nuxt is built with a great user experience in mind by default to keep your end-users as satisfied as possible.
+#extra
+  ::home-card-list
+    :::home-card-item
+    ---
+    image: 'card.svg'
+    to: '/'
+    ---
+    #title
+    Fast and Furious
+    #description
+    Optimized by default with code-splitting, tree-shaking, 0ms cold-start, link prefetching, payload extraction, to name a few.
+    Fast by default so you can focus on building.
+    :::
+    :::home-card-item
+    ---
+    image: 'card.svg'
+    to: '/'
+    ---
+    #title
+    On-demand Rendering.
+    #description
+    Decide what rendering strategy at the route level: SSR, SSG, CSR, ISR, ESR, SWR.
+    Build any kind of website or web application with best performance in mind.
+    :::
+    :::home-card-item
+    ---
+    image: 'card.svg'
+    to: '/'
+    ---
+    #title
+    Search Engine Optimized
+    #description
+    By leveraging server-side rendering and great web vitals by default, Nuxt websites are indexable by search engines while giving an application feeling to the end-users.
+    :::
+  ::
 ::
 
 ::home-section
@@ -40,6 +75,9 @@ Trusted by world-class companies
 Explore our selection of websites & applications made with Nuxt. F-500 companies are trusting Nuxt as well as creative agencies and freelancers.
 #link
 Discover our showcase
+#extra
+:::home-companies-carousel
+:::
 ::
 
 ::home-section
@@ -47,6 +85,39 @@ Discover our showcase
 Deliver a new [Developer Experience]{.text-transparent .bg-clip-text .bg-gradient-to-r .from-green-400 .via-teal-400 .to-indigoblue-600}
 #description
 Developers deserve solutions as well designed as non-technical people. Our focus is to empower Vue developers to ship great softwares with confidence.
+#extra
+  ::home-card-list
+    :::home-card-item
+    ---
+    image: 'card.svg'
+    to: '/'
+    ---
+    #title
+    Plug’n play
+    #description
+    Unlock features by creating folders and files with the most intuitive directory structure made for developers and teams.
+    :::
+    :::home-card-item
+    ---
+    image: 'card.svg'
+    to: '/'
+    ---
+    #title
+    Automation
+    #description
+    Repetitive tasks are automated: auto-imports, code-splitting, typings, minification, bundling for production. and more.
+    :::
+    :::home-card-item
+    ---
+    image: 'card.svg'
+    to: '/'
+    ---
+    #title
+    Batteries included
+    #description
+    Data fetching, state management, meta tags helpers, route guards, cookies, error handling, bundle analyzer and more.
+    :::
+  ::
 ::
 
 ::home-section
@@ -75,6 +146,52 @@ Explore Nuxt modules
 A community of [Web builders]{.text-transparent .bg-clip-text .bg-gradient-to-r .from-green-400 .to-teal-300}
 #description
 Nuxt is composed of web builders all over the world who like to craft beautiful user experiences with Vue.js.
+#extra
+  ::home-card-list
+  ---
+  gridClass: 'lg:grid-cols-4'
+  ---
+    :::home-card-item
+    ---
+    icon: 'fa-brands:npm'
+    to: '/'
+    ---
+    #title
+    50M
+    #description
+    npm downloads
+    :::
+    :::home-card-item
+    ---
+    icon: 'fa-brands:discord'
+    to: '/'
+    ---
+    #title
+    20k
+    #description
+    Discord members
+    :::
+    :::home-card-item
+    ---
+    icon: 'fa-brands:github'
+    to: '/'
+    ---
+    #title
+    41k
+    #description
+    GitHub stars
+    :::
+    :::home-card-item
+    ---
+    icon: 'fa-brands:twitter'
+    to: '/'
+    ---
+    #title
+    75k
+    #description
+    Twitter followers
+    :::
+  ::
 ::
 
 ::home-section
@@ -105,12 +222,12 @@ Discover our agency partners
 ---
 buttons:
 - label: 'Get started'
-  size: 'lg'
+  size: 'xl'
   variant: 'primary-gradient'
   to: '/docs/getting-started/introduction'
   target: '_blank'
 - label: 'Explore Exemples'
-  size: 'lg'
+  size: 'xl'
   variant: 'secondary'
   to: '#'
   target: '_blank'
