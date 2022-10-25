@@ -32,11 +32,7 @@ export default theme => ({
       },
       'a code': {
         color: 'inherit',
-        fontWeight: 'inherit',
-        border: '1px dashed transparent'
-      },
-      'a:hover code': {
-        borderColor: 'var(--tw-prose-links)'
+        fontWeight: 'inherit'
       },
       pre: {
         margin: '0'
