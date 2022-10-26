@@ -106,7 +106,7 @@ export default defineNuxtConfig({
     },
     hooks: {
       'prerender:generate': (route) => {
-        const prerenderedRoutes = [/^\/$/, /^\/docs/]
+        const prerenderedRoutes = [/^\/$/, /^\/docs/, /^\/api\/_content/]
 
         route.skip = true
 
