@@ -5,7 +5,11 @@
 </template>
 
 <script setup lang="ts">
-const { page } = useContent()
+const { page, fetchPage } = usePage()
+const { fetch: fetchShowcases } = useResourcesShowcases()
+
+await fetchPage()
+await fetchShowcases()
 
 useHead({
   title: 'Intuitive Web Development',

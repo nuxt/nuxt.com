@@ -23,15 +23,17 @@ export const useResourcesShowcases = () => {
   }
 
   // Http
-  async function fetch (id: number) {
-    if (list.value && list.value.id === id) {
+  async function fetch () {
+    const showcasesListId = 505
+
+    if (list.value && list.value.id === showcasesListId) {
       return
     }
 
     pending.value = true
 
     try {
-      const data = await $fetch<ResourcesShowcasesList>(`https://api.vuetelescope.com/lists/${id}`)
+      const data = await $fetch<ResourcesShowcasesList>(`https://api.vuetelescope.com/lists/${showcasesListId}`)
 
       // ensure groups & showcases are well sorted
       data.groups?.sort((a, b) => Number(a.position) - Number(b.position))
@@ -40,8 +42,6 @@ export const useResourcesShowcases = () => {
       })
 
       list.value = data
-
-      console.log('data', data)
     } catch (e) {
       list.value = null
     }

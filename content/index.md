@@ -1,3 +1,9 @@
+---
+title: 'Welcome'
+description: 'Develop a modern website'
+showcasesListId: 505
+---
+
 ::home-hero
 ---
 primaryButtonText: 'Get started'
