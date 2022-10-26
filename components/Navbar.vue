@@ -26,7 +26,7 @@
               :to="link._path"
               :exact="link.exact"
               :target="link.target"
-              class="text-sm lg:text-base"
+              class="text-sm lg:text-base link"
               :class="{
                 'font-semibold u-text-gray-900': isActive(link),
                 'font-medium u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900': !isActive(link),
@@ -76,3 +76,25 @@ function isActive (link) {
   return link.exact ? route.fullPath === link._path : route.fullPath.startsWith(link._path)
 }
 </script>
+
+<style scoped>
+.link {
+  border-radius: .25rem;
+  line-height: 1.25rem;
+  padding: 0.5rem 1rem;
+  transition-duration: .15s;
+  transition-property: color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter,-webkit-backdrop-filter;
+  transition-timing-function: cubic-bezier(.4,0,.2,1);
+}
+
+.link:hover, .link.router-link-exact-active {
+  background-color: rgb(244 244 245);
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.dark .link:hover, .link.router-link-exact-active {
+  background-color: rgb(24 24 27);
+}
+
+</style>
