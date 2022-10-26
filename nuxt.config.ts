@@ -133,6 +133,6 @@ export default defineNuxtConfig({
     '/modules/**': { swr: true },
     '/partners/**': { swr: true },
     '/showcase': { swr: true },
-    '/api/**': { swr: true }
+    '/api/**': { swr: 60 }
   }
 })
