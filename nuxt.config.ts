@@ -99,6 +99,31 @@ export default defineNuxtConfig({
     maxContributors: 10
   },
   nitro: {
-    plugins: ['~/server/plugins/content.ts']
+    plugins: ['~/server/plugins/content.ts'],
+    prerender: {
+      routes: ['/docs', '/'],
+      crawlLinks: true
+    },
+    hooks: {
+      'prerender:generate': (route) => {
+        const prerenderedRoutes = [/^\/$/, /^\/docs/]
+
+        route.skip = true
+
+        prerenderedRoutes.forEach((routeRegexp) => {
+          if (routeRegexp.test(route.route)) { route.skip = false }
+        })
+      }
+    }
+  },
+  routeRules: {
+    // prerender is not yet implemented, using nitro.prerender.routes and hooks for it in the meantime
+    // '/': { prerender: true },
+    // '/docs/**': { prerender: true },
+    '/**': { static: true },
+    '/modules/**': { swr: true },
+    '/partners/**': { swr: true },
+    '/showcase': { swr: true },
+    '/api/**': { swr: true }
   }
 })
