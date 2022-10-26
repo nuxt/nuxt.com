@@ -30,7 +30,8 @@ export interface Agency extends ParsedContent {
     dark: string
   }
   services: string[]
-  location: string
+  location: string,
+  regions: string[]
 }
 
 export interface FormattedAgency extends Omit<Agency, 'services' | 'location'> {
