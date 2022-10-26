@@ -99,6 +99,40 @@ export default defineNuxtConfig({
     maxContributors: 10
   },
   nitro: {
-    plugins: ['~/server/plugins/content.ts']
+    plugins: ['~/server/plugins/content.ts'],
+    prerender: {
+      routes: ['/docs', '/'],
+      crawlLinks: true
+    },
+    hooks: {
+      'prerender:generate': (route) => {
+        const prerenderedRoutes = [
+          '/',
+          '/design-kit',
+          '/partners/support',
+          '/partners/agencies',
+          /^\/docs/,
+          /^\/api\/_content/
+        ]
+
+        route.skip = true
+
+        prerenderedRoutes.forEach((condition) => {
+          if (typeof condition === 'string') {
+            if (condition === route.route) { route.skip = false }
+          } else if (condition.test(route.route)) { route.skip = false }
+        })
+      }
+    }
+  },
+  routeRules: {
+    // prerender is not yet implemented, using nitro.prerender.routes and hooks for it in the meantime
+    // '/': { prerender: true },
+    // '/docs/**': { prerender: true },
+    '/**': { cache: { swr: true, maxAge: 120, staleMaxAge: 60, headersOnly: true } }
+    // '/modules/**': { swr: 60 },
+    // '/partners/**': { swr: 60 },
+    // '/showcase': { swr: 60 },
+    // '/api/**': { swr: 60 }
   }
 })
