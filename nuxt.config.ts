@@ -129,10 +129,10 @@ export default defineNuxtConfig({
     // prerender is not yet implemented, using nitro.prerender.routes and hooks for it in the meantime
     // '/': { prerender: true },
     // '/docs/**': { prerender: true },
-    '/**': { static: 60 },
-    '/modules/**': { swr: 60 },
-    '/partners/**': { swr: 60 },
-    '/showcase': { swr: 60 },
-    '/api/**': { swr: 60 }
+    '/**': { headers: { 'cache-control': 's-maxage=10, stale-while-revalidate=59' } }
+    // '/modules/**': { swr: 60 },
+    // '/partners/**': { swr: 60 },
+    // '/showcase': { swr: 60 },
+    // '/api/**': { swr: 60 }
   }
 })
