@@ -106,12 +106,21 @@ export default defineNuxtConfig({
     },
     hooks: {
       'prerender:generate': (route) => {
-        const prerenderedRoutes = [/^\/$/, /^\/docs/, /^\/api\/_content/]
+        const prerenderedRoutes = [
+          '/',
+          '/design-kit',
+          '/partners/support',
+          '/partners/agencies',
+          /^\/docs/,
+          /^\/api\/_content/
+        ]
 
         route.skip = true
 
-        prerenderedRoutes.forEach((routeRegexp) => {
-          if (routeRegexp.test(route.route)) { route.skip = false }
+        prerenderedRoutes.forEach((condition) => {
+          if (typeof condition === 'string') {
+            if (condition === route.route) { route.skip = false }
+          } else if (condition.test(route.route)) { route.skip = false }
         })
       }
     }
