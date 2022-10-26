@@ -1,10 +1,10 @@
 <template>
   <USlideover v-model="isOpen">
     <template #header>
-      <button v-if="selectedLink" class="flex-1" @click="selectedLink = null">
-        <Icon name="uil:arrow-left" class="flex-shrink-0 w-6 h-6" />
+      <button v-if="selectedLink" class="flex-1 flex items-start" @click="selectedLink = null">
+        <Icon name="uil:arrow-left" class="flex-shrink-0 w-7 h-7" />
       </button>
-      <button v-else class="flex-1" @click="isOpen = false">
+      <button v-else class="flex-1 flex items-start" @click="isOpen = false">
         <Icon name="uil:multiply" class="flex-shrink-0 w-6 h-6" />
       </button>
 
