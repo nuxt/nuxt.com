@@ -9,3 +9,7 @@ dist
 .history
 .cache
 .data
+
+# Local Netlify folder
+.netlify
+.vercel
