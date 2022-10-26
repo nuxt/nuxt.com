@@ -93,7 +93,7 @@ function isActive (link) {
   outline-offset: 2px;
 }
 
-.dark .link:hover, .link.router-link-exact-active {
+.dark .link:hover, .dark .link.router-link-exact-active {
   background-color: rgb(24 24 27);
 }
 
