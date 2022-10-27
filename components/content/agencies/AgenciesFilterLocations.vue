@@ -1,11 +1,11 @@
 <template>
   <USelectCustom
-    v-if="locations.length"
-    v-model="location"
-    name="location"
-    :options="locationsWithPlaceholder"
+    v-if="regions.length"
+    v-model="region"
+    name="region"
+    :options="regionsWithPlaceholder"
     size="sm"
-    placeholder="Location"
+    placeholder="Region"
     text-attribute="title"
     class="min-w-[144px]"
   />
@@ -14,26 +14,26 @@
 <script setup lang="ts">
 const route = useRoute()
 const router = useRouter()
-const { locations, selectedLocation } = useAgencyPartners()
+const { regions, selectedRegion } = useAgencyPartners()
 
-const locationsWithPlaceholder = computed(() => [
+const regionsWithPlaceholder = computed(() => [
   {
     key: '',
     title: 'All'
   },
-  ...locations.value
+  ...regions.value
 ])
 
-const location = computed({
+const region = computed({
   get () {
-    return selectedLocation.value
+    return selectedRegion.value
   },
-  set (location) {
+  set (region) {
     router.push({
       name: 'partners-agencies',
       query: {
         ...route.query,
-        location: location?.key || undefined
+        region: region?.key || undefined
       },
       state: {
         smooth: '#smooth'

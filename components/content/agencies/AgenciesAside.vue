@@ -7,7 +7,9 @@
 
       <ul class="flex flex-col py-4 pr-2 gap-y-2">
         <li v-for="service in filteredServices" :key="service.key">
+          <span v-if="service.disabled" class="u-text-gray-200">{{ service.title }}</span>
           <NuxtLink
+            v-else
             :to="service.to"
             class="relative flex items-center gap-2"
             :class="{
@@ -28,26 +30,28 @@
       </ul>
     </div>
 
-    <div v-if="locations.length">
+    <div v-if="regions.length">
       <p class="font-semibold u-text-gray-900 py-1.5">
-        Locations
+        Regions
       </p>
 
       <ul class="flex flex-col py-4 pr-2 gap-y-2">
-        <li v-for="location in filteredLocations" :key="location.key">
+        <li v-for="region in filteredRegions" :key="region.key">
+          <span v-if="region.disabled" class="u-text-gray-200">{{ region.title }}</span>
           <NuxtLink
-            :to="location.to"
+            v-else
+            :to="region.to"
             class="relative flex items-center gap-2"
             :class="{
-              'u-text-gray-900 font-medium': selectedLocation?.key === location.key,
-              'u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900': selectedLocation?.key !== location.key
+              'u-text-gray-900 font-medium': selectedRegion?.key === region.key,
+              'u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900': selectedRegion?.key !== region.key
             }"
           >
             <span class="relative">
-              <span>{{ location.title }}</span>
+              <span>{{ region.title }}</span>
 
               <span
-                v-if="selectedLocation?.key === location.key"
+                v-if="selectedRegion?.key === region.key"
                 class="absolute inset-x-0 -bottom-1 h-0.5 bg-gradient-to-r from-green-400 via-teal-400 to-indigoblue-600"
               />
             </span>
@@ -59,29 +63,37 @@
 </template>
 
 <script setup lang="ts">
-const { services, locations, filteredPartners, selectedService, selectedLocation } = useAgencyPartners()
+const { services, regions, filteredPartners, selectedService, selectedRegion } = useAgencyPartners()
 
 // Faceting filtering
-const filteredLocations = computed(() => {
+const filteredRegions = computed(() => {
   if (!selectedService.value) {
-    return locations.value
+    return regions.value
   }
 
-  return locations.value.filter((location) => {
-    return filteredPartners.value.filter((partner) => {
-      return partner.services.map(s => s.key).includes(selectedService.value.key)
-    }).map(partner => partner.location.key).includes(location.key)
+  /* Flag regions where the selected service is not available */
+  return regions.value.map((region) => {
+    if (!filteredPartners.value.some(partner => partner.regions.some(({ key }) => key === region.key))) {
+      console.log(region.key)
+      return { ...region, disabled: true }
+    } else {
+      return region
+    }
   })
 })
+
 const filteredServices = computed(() => {
-  if (!selectedLocation.value) {
+  if (!selectedRegion.value) {
     return services.value
   }
 
-  return services.value.filter((service) => {
-    return filteredPartners.value.filter((partner) => {
-      return partner.location.key === selectedLocation.value.key
-    }).flatMap(partner => partner.services).map(s => s.key).includes(service.key)
+  /* Flag services not available in the selected region */
+  return services.value.map((service) => {
+    if (!filteredPartners.value.some(partner => partner.services.some(({ key }) => key === service.key))) {
+      return { ...service, disabled: true }
+    } else {
+      return service
+    }
   })
 })
 </script>

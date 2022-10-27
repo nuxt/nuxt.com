@@ -17,12 +17,6 @@
       </p>
     </div>
 
-    <div class="flex items-center gap-3 overflow-x-auto z-[1] relative" tabindex="-1">
-      <UBadge v-for="service in partner.services" :key="service.key" size="sm" class="flex-shrink-0">
-        {{ service.title }}
-      </UBadge>
-    </div>
-
     <NuxtLink :to="partner._path">
       <span class="absolute inset-0" aria-hidden="true" />
     </NuxtLink>
