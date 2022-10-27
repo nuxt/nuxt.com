@@ -15,9 +15,9 @@
 </template>
 
 <script setup lang="ts">
-const { selectedService, selectedLocation } = useAgencyPartners()
+const { selectedService, selectedRegion } = useAgencyPartners()
 
 const filters = computed(() => {
-  return [selectedService.value, selectedLocation.value].filter(Boolean)
+  return [selectedService.value, selectedRegion.value].filter(Boolean)
 })
 </script>
