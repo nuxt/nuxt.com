@@ -44,6 +44,10 @@ export const useAgencyPartners = () => {
           key: slugify(service),
           title: service
         })),
+        regions: partner.regions.map(region => ({
+          key: slugify(region),
+          title: region
+        })),
         location: partner.location
           ? {
               key: slugify(partner.location),
@@ -59,7 +63,7 @@ export const useAgencyPartners = () => {
         if (selectedService.value && !partner.services.find(service => service.key === selectedService.value.key)) {
           return false
         }
-        if (selectedLocation.value && partner.location.key !== selectedLocation.value.key) {
+        if (selectedRegion.value && !partner.regions.find(region => region.key === selectedRegion.value.key)) {
           return false
         }
 
@@ -102,12 +106,31 @@ export const useAgencyPartners = () => {
       .sort((a, b) => a.title.localeCompare(b.title))
   })
 
+  const regions = computed(() => {
+    return uniqBy(partners.value.reduce((acc, val) => acc.concat(val.regions), []), 'key')
+      .map((region) => {
+        return {
+          key: region.key,
+          title: region.title,
+          to: {
+            name: 'partners-agencies',
+            query: {
+              ...route.query,
+              region: route.query?.region !== region.key ? region.key : undefined
+            },
+            state: { smooth: '#smooth' }
+          }
+        }
+      })
+      .sort((a, b) => a.title.localeCompare(b.title))
+  })
+
   const selectedService = computed(() => {
     return services.value.find(service => service.key === route.query.service)
   })
 
-  const selectedLocation = computed(() => {
-    return locations.value.find(location => location.key === route.query.location)
+  const selectedRegion = computed(() => {
+    return regions.value.find(region => region.key === route.query.region)
   })
 
   return {
@@ -118,7 +141,8 @@ export const useAgencyPartners = () => {
     filteredPartners,
     services,
     locations,
+    regions,
     selectedService,
-    selectedLocation
+    selectedRegion
   }
 }
