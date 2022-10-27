@@ -7,12 +7,12 @@
           <img :src="`/assets/home/${image}`" :alt="`${image} image`" class="h-full h-full rounded-md">
         </template>
         <div class="flex flex-col gap-y-4">
-          <UIcon v-if="icon" :name="icon" class="w-6 h-6" />
+          <Icon v-if="icon" :name="icon" class="w-6 h-6" />
           <h6 class="font-semibold u-text-gray-900" :class="!icon ? 'text-xl' : 'text-5xl'">
-            <ContentSlot :use="$slots.title" />
+            <ContentSlot :use="$slots.title" unwrap="p" />
           </h6>
           <p class="u-text-gray-800" :class="{ 'text-lg font-medium': icon }">
-            <ContentSlot :use="$slots.description" />
+            <ContentSlot :use="$slots.description" unwrap="p" />
           </p>
         </div>
       </UCard>

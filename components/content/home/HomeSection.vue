@@ -19,7 +19,7 @@
       </div>
       <NuxtLink v-if="to" :to="to" class="pt-8 text-md xl:text-lg 2xl:text-xl u-text-gray-500 font-medium flex gap-x-4 items-center relative group w-fit">
         <ContentSlot :use="$slots.link" unwrap="p" />
-        <UIcon name="heroicons-solid:chevron-right" class="w-5 h-5 mt-1" />
+        <Icon name="heroicons-solid:chevron-right" class="w-5 h-5 mt-1" />
         <span class="absolute w-0 -bottom-1 h-0.5 u-bg-gray-500 group-hover:w-full transition-all duration-200" />
       </NuxtLink>
     </div>
