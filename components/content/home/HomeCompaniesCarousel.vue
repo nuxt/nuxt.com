@@ -3,37 +3,24 @@
     <div class="absolute left-0 w-40 inset-y-0 bg-gradient-to-r from-white dark:from-black to-transparent z-10" />
     <div class="absolute right-0 w-40 inset-y-0 bg-gradient-to-l from-white dark:from-black to-transparent z-10" />
 
-    <Swiper
-      v-if="selectedShowcases.length"
-      :space-between="30"
-      :modules="[Autoplay]"
-      :centered-slides="true"
-      :slides-per-view="4"
-      :loop="true"
-      :looped-slides="selectedShowcases.length"
-      :loop-additional-slides="selectedShowcases.length"
-      :autoplay="autoplay"
-    >
-      <SwiperSlide v-for="(showcase, i) in selectedShowcases" :key="i" :style="{ height: '200px' }">
-        <div class="slide" />
-        <NuxtLink>
-          <img
-            :src="`https://res.cloudinary.com/nuxt/image/upload/f_auto,q_auto/${showcase.screenshotUrl}`"
-            :alt="showcase.hostname"
-            loading="lazy"
-            class="object-cover object-top w-full h-full rounded-md"
-          >
-          <div class="px-4 py-3 text-center">
-            <h2 class="font-semibold truncate u-text-gray-900 text-xl">
-              {{ showcase.title || showcase.hostname }}
-            </h2>
-            <p class="truncate text-green-400">
-              {{ showcase.hostname }}
-            </p>
-          </div>
-        </nuxtlink>
-      </Swiperslide>
-    </Swiper>
+    <ClientOnly>
+      <Swiper
+        v-if="selectedShowcases.length"
+        ref="swiper"
+        :space-between="30"
+        :modules="[Autoplay]"
+        :centered-slides="true"
+        :slides-per-view="3"
+        :loop="true"
+        :looped-slides="selectedShowcases.length"
+        :loop-additional-slides="selectedShowcases.length"
+        :autoplay="autoplay"
+      >
+        <SwiperSlide v-for="(showcase, i) in selectedShowcases" :key="i" :style="{ height: '200px' }">
+          <HomeCompaniesCarouselItem :showcase="showcase" />
+        </Swiperslide>
+      </Swiper>
+    </ClientOnly>
   </div>
 </template>
 
@@ -48,8 +35,10 @@ import 'swiper/css'
 import 'swiper/css/effect-coverflow'
 import 'swiper/css/pagination'
 
+const swiper = ref(null)
+
 // swiper autoplay options
-const autoplay = { delay: 2000, pauseOnMouseEnter: true, disableOnInteraction: false }
+const autoplay = { delay: 3000, pauseOnMouseEnter: true, disableOnInteraction: false }
 
 const { list, selectedCategory } = useResourcesShowcases()
 
@@ -71,7 +60,7 @@ const selectedShowcases = computed(() => {
 <style scoped lang="postcss">
 .swiper {
   width: 100%;
-  height: 300px;
+  height: 310px;
   padding-top: 40px;
   padding-bottom: 40px;
 }
@@ -86,12 +75,16 @@ const selectedShowcases = computed(() => {
   }
 }
 
-.swiper-slide-active > .slide {
-  @apply -z-[1] blur-[8px] u-bg-gray-900 opacity-100
+.swiper-slide-active:has(.host) {
+  @apply bg-red-500
 }
 
-.slide {
-  @apply absolute inset-0 z-10 opacity-70 backdrop-blur-sm u-bg-white
+.swiper-slide-prev:nth-last-of-type(div) {
+  @apply hidden
+}
+
+.swiper-slide-next:nth-last-of-type(div) {
+  @apply hidden
 }
 
 .swiper-slide img {

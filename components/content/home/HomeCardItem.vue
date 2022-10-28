@@ -1,9 +1,10 @@
 <template>
-  <li class="gradient-border relative h-full">
+  <li class="rounded-md h-full relative">
+    <div class="gradient-border" />
     <NuxtLink :to="to">
-      <UCard class="h-full w-full" header-class="flex items-center justify-center" :ring-class="icon ? 'ring-1 u-ring-gray-200' : 'ring-0'">
+      <UCard class="h-full w-full" header-class="flex items-center justify-center" ring-class="ring-0">
         <template v-if="image" #header>
-          <img :src="`/assets/home/${image}`" :alt="`${image} image`" class="h-full h-full">
+          <img :src="`/assets/home/${image}`" :alt="`${image} image`" class="h-full h-full rounded-md">
         </template>
         <div class="flex flex-col gap-y-4">
           <UIcon v-if="icon" :name="icon" class="w-6 h-6" />
@@ -36,27 +37,43 @@ defineProps({
 })
 </script>
 
-<style scoped lang="postcss">
-.gradient-border::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border-radius: 10px;
-    padding: 2px;
-    opacity: 0;
-    transition: background-position 0.3s ease-in-out, opacity 0.2s ease-in-out;
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    background: linear-gradient(90deg, #e2e2e2 0%, #e2e2e2 25%, #00DC82 50%, #36E4DA 75%, #0047E1 100%);
+ <style scoped lang="postcss">
+
+.gradient-border {
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
+  background-size: 600% 600%;
+  border-radius: 14px;
+  z-index: -1;
+  transform: translate(-1px, -1px);
+  background: linear-gradient(var(--gradient-angle), rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.1), white, rgba(255, 255, 255, 0.3));
 }
 
-.gradient-border:hover::before {
-    background-position: -50% 0;
+li:hover {
+  .gradient-border {
     opacity: 1;
+    animation: gradient-rotate 6s linear 0s infinite reverse;
+    transition: all 0.3s linear;
+  }
+}
+
+@property --gradient-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 360deg;
+}
+
+@keyframes gradient-rotate {
+    0% {
+      --gradient-angle: 360deg;
+    }
+
+    100% {
+      --gradient-angle: 0deg;
+    }
 }
 </style>
