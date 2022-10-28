@@ -12,15 +12,6 @@
       class="-mr-px rounded focus:z-[1] group"
       @click="switchOrder"
     />
-    <!-- <USelectCustom
-      v-model="sortBy"
-      name="sortBy"
-      :options="sorts"
-      size="sm"
-      text-attribute="label"
-      custom-class="rounded-l-none"
-      class="min-w-[144px] w-full md:w-auto"
-    /> -->
   </div>
 </template>
 
@@ -28,25 +19,7 @@
 const route = useRoute()
 const router = useRouter()
 
-const { sorts, selectedSort, orders, selectedOrder } = useModules()
-
-const sortBy = computed({
-  get () {
-    return selectedSort.value
-  },
-  set (sortBy) {
-    router.push({
-      name: 'modules',
-      query: {
-        ...route.query,
-        sortBy: sortBy?.key || undefined
-      },
-      state: {
-        smooth: '#smooth'
-      }
-    })
-  }
-})
+const { orders, selectedOrder } = useModules()
 
 const orderBy = computed({
   get () {

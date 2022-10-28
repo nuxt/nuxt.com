@@ -3,7 +3,7 @@
     v-model="q"
     name="search"
     placeholder="Search an integration"
-    class="w-full md:max-w-sm border-b bg-color-transparent bg-transparent"
+    class="w-full md:max-w-sm"
     :size="size"
     autocomplete="off"
     :trailing="size === 'sm'"
