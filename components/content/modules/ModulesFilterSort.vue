@@ -1,15 +1,18 @@
 <template>
   <div class="inline-flex w-full md:w-auto">
     <UButton
-      name="orderBy"
-      :icon="orderBy.icon"
+      label="A-Z"
       size="sm"
       variant="input-group"
-      icon-base-class="flex-shrink-0 u-text-gray-400 group-hover:u-text-gray-500"
-      class="-mr-px rounded-r-none focus:z-[1] group"
+      trailing-icon="ic:round-keyboard-arrow-down"
+      icon-base-class="
+      flex-shrink-0
+      u-text-gray-400
+      group-hover:u-text-gray-500"
+      class="-mr-px rounded focus:z-[1] group"
       @click="switchOrder"
     />
-    <USelectCustom
+    <!-- <USelectCustom
       v-model="sortBy"
       name="sortBy"
       :options="sorts"
@@ -17,7 +20,7 @@
       text-attribute="label"
       custom-class="rounded-l-none"
       class="min-w-[144px] w-full md:w-auto"
-    />
+    /> -->
   </div>
 </template>
 

@@ -6,7 +6,7 @@
       :label="filter.title"
       :to="filter.to"
       icon="uil:multiply"
-      variant="gray"
+      variant="primary"
       trailing
       rounded
       size="sm"

@@ -2,13 +2,11 @@
   <UInput
     v-model="q"
     name="search"
-    placeholder="Search a module"
-    class="w-full md:max-w-sm"
+    placeholder="Search an integration"
+    class="w-full md:max-w-sm border-b bg-color-transparent bg-transparent"
     :size="size"
-    icon="uil:search-alt"
     autocomplete="off"
     :trailing="size === 'sm'"
-    autofocus
   />
 </template>
 
