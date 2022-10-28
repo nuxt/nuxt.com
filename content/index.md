@@ -128,11 +128,52 @@ Developers deserve solutions as well designed as non-technical people. Our focus
 
 ::home-section
 #title
-And developers love it
+Trusted by the world wild web
 #description
 They opinions are valuable and worth sharing to everyone.
-#link
-Discover our showcase
+#extra
+  :::home-testimonials-list
+  #items
+    ::::home-testimonials-item
+    ---
+    authorImg: evan
+    authorUrl: 'https://twitter.com/youyuxi'
+    ---
+    #author
+    Evan You
+    #job
+    Creator of VueJS
+    #quote
+    Nuxt offers a compelling solution and a great ecosystem to help you ship fullstack Vue apps that are performant and SEO friendly. The flexibility to choose between SSR and SSG is icing on the cake
+    ::::
+
+    ::::home-testimonials-item
+    ---
+    authorImg: sarah
+    authorUrl: 'https://twitter.com/sarah_edo'
+    ---
+    #author
+    Sarah Drasner
+    #job
+    Core Team of Vue.js
+    #quote
+    Nuxt has outstanding developer productivity, experience, and performance right out of the gate!
+    There’s so much attention to detail, ensuring teams have everything at their fingertips to productively build all manners of applications.
+    ::::
+
+    ::::home-testimonials-item
+    ---
+    authorImg: addy
+    authorUrl: 'https://twitter.com/addyosmani'
+    ---
+    #author
+    Addy Osmani
+    #job
+    Chief Engineer of Chrome
+    #quote
+    Nuxt is a fantastic choice for teams building a production-grade product on the web. It aims to bake in performance best-practices while maintaining excellent Vue.js DX.
+    ::::
+  :::
 ::
 
 ::home-section
