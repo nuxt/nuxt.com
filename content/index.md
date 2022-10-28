@@ -1,8 +1,9 @@
 ::home-hero
 ---
-primaryButtonText: 'Watch video'
-secondaryButtonText: 'Get started'
-secondaryButtonLink: '/docs/getting-started/introduction'
+primaryButtonText: 'Get started'
+primaryButtonLink: '/docs/getting-started/introduction'
+secondaryButtonText: 'Open on Github'
+secondaryButtonLink: 'https://github.com/nuxt/framework'
 ---
 
 #badgeLabel
