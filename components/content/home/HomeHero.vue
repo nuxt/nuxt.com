@@ -28,16 +28,17 @@
       <div class="flex gap-6 z-[1]">
         <UButton
           :label="primaryButtonText"
+          :to="primaryButtonLink"
           size="lg"
           variant="primary-gradient"
           truncate
           class="focus-visible:outline-2"
-          @click="scrollToVideo()"
         />
         <UButton
           :label="secondaryButtonText"
           :to="secondaryButtonLink"
           size="lg"
+          target="_blank"
           variant="transparent"
           icon="uil:angle-right-b"
           trailing
@@ -59,6 +60,10 @@ const title = ref(null)
 
 defineProps({
   primaryButtonText: {
+    type: String,
+    default: ''
+  },
+  primaryButtonLink: {
     type: String,
     default: ''
   },
