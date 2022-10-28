@@ -38,18 +38,18 @@ How a user interacts with and experience your website is key. It includes a pers
   ::home-card-list
     :::home-card-item
     ---
-    image: 'card.svg'
+    image: 'ux-fast.svg'
     to: '/'
     ---
     #title
     Fast and Furious
     #description
-    Optimized by default with code-splitting, tree-shaking, 0ms cold-start, link prefetching, payload extraction, to name a few.
+    Optimized by default with code-splitting, tree-shaking, 3ms cold-start, link prefetching, payload extraction, to name a few.
     Fast by default so you can focus on building.
     :::
     :::home-card-item
     ---
-    image: 'card.svg'
+    image: 'ux-hybrid.svg'
     to: '/'
     ---
     #title
@@ -60,13 +60,13 @@ How a user interacts with and experience your website is key. It includes a pers
     :::
     :::home-card-item
     ---
-    image: 'card.svg'
+    image: 'ux-seo.svg'
     to: '/'
     ---
     #title
     Search Engine Optimized
     #description
-    By leveraging server-side rendering and great web vitals by default, Nuxt websites are indexable by search engines while giving an application feeling to the end-users.
+    By leveraging server-side rendering, ESM format and optimized images. Nuxt websites are indexable by search engines while giving an application feeling to the end-users.
     :::
   ::
 ::
@@ -95,27 +95,27 @@ Developers deserve solutions as well designed as non-technical people. Our focus
   ::home-card-list
     :::home-card-item
     ---
-    image: 'card.svg'
+    image: 'dx-plug-and-play.svg'
     to: '/'
     ---
     #title
     Plug’n play
     #description
-    Unlock features by creating folders and files with the most intuitive directory structure made for developers and teams.
+    Unlock features by creating folders and files with the [most intuitive directory structure]{.font-semibold} made for developers and teams.
     :::
     :::home-card-item
     ---
-    image: 'card.svg'
+    image: 'dx-effortless.svg'
     to: '/'
     ---
     #title
     Automation
     #description
-    Repetitive tasks are automated: auto-imports, code-splitting, typings, minification, bundling for production. and more.
+    Repetitive tasks are [automated]{.font-semibold}: auto-imports, code-splitting, typings, minification, bundling for production. and more.
     :::
     :::home-card-item
     ---
-    image: 'card.svg'
+    image: 'dx-batteries.svg'
     to: '/'
     ---
     #title

@@ -2,7 +2,7 @@
   <li class="rounded-md h-full relative">
     <div class="gradient-border" />
     <NuxtLink :to="to">
-      <UCard class="h-full w-full" header-class="flex items-center justify-center" ring-class="ring-0">
+      <UCard class="h-full w-ful flex flex-col justify-between rounded-xl" header-class="flex items-center justify-center border-none px-4 py-5 sm:px-6" ring-class="ring-0">
         <template v-if="image" #header>
           <img :src="`/assets/home/${image}`" :alt="`${image} image`" class="h-full h-full rounded-md">
         </template>
@@ -56,7 +56,7 @@ defineProps({
 li:hover {
   .gradient-border {
     opacity: 1;
-    animation: gradient-rotate 6s linear 0s infinite reverse;
+    animation: gradient-rotate 5s linear 0s infinite reverse;
     transition: all 0.3s linear;
   }
 }
