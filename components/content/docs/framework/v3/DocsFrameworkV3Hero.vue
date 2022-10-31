@@ -7,7 +7,7 @@
           <slot name="badge" />
         </span>
       </div>
-      <h1 v-if="$slots.title" class="max-w-xl font-bold text-center lg:text-left text-5xl sm:text-7xl u-text-gray-900">
+      <h1 v-if="$slots.title" class="max-w-xl font-semibold text-center lg:text-left text-5xl sm:text-7xl u-text-gray-900">
         <ContentSlot :use="$slots.title" unwrap="p" />
       </h1>
       <p v-if="$slots.description" class="sm:w-1/2 text-lg text-center lg:text-left u-text-gray-500">
