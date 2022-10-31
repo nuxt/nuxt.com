@@ -61,7 +61,7 @@
         </div>
         <!-- right container -->
         <div class="relative w-full mt-40 md:mt-0">
-          <div class="absolute font-mono text-sm italic text-gray-300 transition-opacity duration-300 top-28 md:top-4 left-4" :class="currentSection === null ? 'opacity-100' : 'opacity-0'">
+          <div class="absolute font-mono text-sm text-gray-300 transition-opacity duration-300 top-28 md:top-4 left-4" :class="currentSection === null ? 'opacity-100' : 'opacity-0'">
             Open components, composables or plugins
           </div>
           <div class="absolute transition-opacity duration-300 top-28 md:top-4 left-4 font-mono" :class="currentSection === 0 ? 'opacity-100' : 'opacity-0'">
@@ -118,7 +118,7 @@
             <br><br>
             <span class="text-blue-200">&#60;</span>
             <span class="text-red-300">script&nbsp;</span>
-            <span class="text-purple-200 italic">setup</span>
+            <span class="text-purple-200">setup</span>
             <span class="text-blue-200">&#62;</span>
             <br>
             <span>
