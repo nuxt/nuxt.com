@@ -1,11 +1,6 @@
 <template>
   <div>
-    <ContentRenderer :value="page" />
+    <ModulesHero />
+    <ModulesList />
   </div>
 </template>
-
-<script setup lang="ts">
-const { page, fetchPage } = usePage()
-
-await fetchPage()
-</script>

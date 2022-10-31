@@ -1,11 +1,11 @@
 <template>
   <PageHero centered>
     <template #title>
-      <ContentSlot :use="$slots.title" unwrap="p" />
+      Explore Nuxt Jobs
     </template>
     <template #description>
       <span class="u-text-gray-900">
-        <ContentSlot :use="$slots.description" unwrap="p" />
+        Browse available openings for coding with Vue and Nuxt all over the world.
       </span>
     </template>
 

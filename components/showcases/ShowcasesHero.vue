@@ -1,10 +1,10 @@
 <template>
   <PageHero>
     <template #title>
-      <ContentSlot :use="$slots.title" unwrap="p" />
+      Showcase
     </template>
     <template #description>
-      <ContentSlot :use="$slots.description" unwrap="p" />
+      Extend and automate your workflow by using deployments for your favorite tools.
     </template>
 
     <template #extra>
