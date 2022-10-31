@@ -1,10 +1,10 @@
 <template>
   <PageHero>
     <template #title>
-      <ContentSlot :use="$slots.title" unwrap="p" />
+      Modules
     </template>
     <template #description>
-      <ContentSlot :use="$slots.description" unwrap="p" />
+      Discover our list of modules to supercharge your Nuxt project. Created by the Nuxt team and community.
     </template>
     <template #extra>
       <ModulesFilterSearch class="hidden md:block" />
