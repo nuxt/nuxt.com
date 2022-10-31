@@ -5,13 +5,13 @@
     <Page id="smooth" class="relative pt-16 -mt-16">
       <PageList :title="`${filteredJobs.length} job${filteredJobs.length > 1 ? 's' : ''} found`">
         <template #filters>
-          <CommunityJobsFilterLocation />
-          <CommunityJobsFilterType />
+          <JobsFilterLocation />
+          <JobsFilterType />
         </template>
 
         <ul v-if="filteredJobs.length" class="flex flex-col gap-8 mt-8">
           <li v-for="job in filteredJobs" :key="job.id">
-            <CommunityJobsListItem :job="job" />
+            <JobsListItem :job="job" />
           </li>
         </ul>
         <div v-else class="relative flex flex-col items-center gap-6 mt-16 lg:mt-24">
