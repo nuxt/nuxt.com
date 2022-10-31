@@ -1,7 +1,6 @@
 <template>
-  <ContentRenderer :value="sponsors" />
+  <div>
+    <SponsorsHero />
+    <SponsorsSection />
+  </div>
 </template>
-
-<script setup lang="ts">
-const { data: sponsors } = await useAsyncData('sponsors', () => queryContent('/partners/sponsors').findOne())
-</script>

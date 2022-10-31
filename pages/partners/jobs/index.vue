@@ -1,10 +1,12 @@
 <template>
-  <ContentRenderer :value="page" />
+  <div>
+    <JobsHero />
+    <JobsList />
+  </div>
 </template>
 
 <script setup lang="ts">
-const { page, fetchPage } = usePage()
 const { fetch: fetchJobs } = useNuxtJobs()
 
-await Promise.all([fetchPage(), fetchJobs()])
+await fetchJobs()
 </script>

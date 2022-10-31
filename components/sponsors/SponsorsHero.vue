@@ -1,20 +1,20 @@
 <template>
   <PageHero centered>
     <template #title>
-      <ContentSlot :use="$slots.title" unwrap="p" />
+      Sponsors
     </template>
     <template #description>
       <span class="u-text-black">
-        <ContentSlot :use="$slots.description" unwrap="p" />
+        Nuxt is an open-source framework totally free to use. If you use Nuxt in your daily work and feel that it has made your life easier, please consider backing us.
       </span>
     </template>
 
     <template #extra>
       <div class="flex gap-6">
         <UButton
-          v-for="(button, index) in buttons"
-          :key="index"
-          v-bind="button"
+          label="Become a sponsor"
+          to="https://github.com/sponsors/nuxt"
+          variant="primary-gradient"
           size="lg"
         />
       </div>
