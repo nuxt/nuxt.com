@@ -10,6 +10,13 @@
 const { page, fetchPage } = usePage()
 
 await fetchPage({ querySurround: true })
+
+useHead({
+  title: page.value.title,
+  meta: [
+    { name: 'description', content: page.value.description }
+  ]
+})
 </script>
 
 <style lang="postcss" scoped>

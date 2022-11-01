@@ -4,7 +4,9 @@
       Showcase
     </template>
     <template #description>
-      Extend and automate your workflow by using deployments for your favorite tools.
+      Discover our selection of websites built with Nuxt. This collection is powered by <NuxtLink to="https://vuetelescope.com" class="text-green-400">
+        VueTelescope
+      </NuxtLink>.
     </template>
 
     <template #extra>

@@ -1,5 +1,6 @@
 ---
 title: Support
+description: Find experts near you to help you to build and enhance your project.
 ---
 
 ::support-hero
