@@ -5,7 +5,7 @@
     </template>
     <template #description>
       <span class="u-text-black">
-        Nuxt is an open-source framework totally free to use. If you use Nuxt in your daily work and feel that it has made your life easier, please consider backing us.
+        Nuxt is an open-source framework totally free to use thanks to our generous sponsors. If you use Nuxt in your daily work and feel that it has made your life easier, please consider backing us.
       </span>
     </template>
 

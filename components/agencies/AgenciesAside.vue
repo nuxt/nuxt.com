@@ -74,7 +74,6 @@ const filteredRegions = computed(() => {
   /* Flag regions where the selected service is not available */
   return regions.value.map((region) => {
     if (!filteredPartners.value.some(partner => partner.regions.some(({ key }) => key === region.key))) {
-      console.log(region.key)
       return { ...region, disabled: true }
     } else {
       return region
