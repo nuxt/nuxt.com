@@ -1,11 +1,15 @@
 <template>
   <div>
-    <ContentRenderer :value="page" />
+    <ModulesHero />
+    <ModulesList />
   </div>
 </template>
 
-<script setup lang="ts">
-const { page, fetchPage } = usePage()
-
-await fetchPage()
+<script setup>
+useHead({
+  title: 'Modules',
+  meta: [
+    { name: 'description', content: 'Discover our list of modules to supercharge your Nuxt project.' }
+  ]
+})
 </script>

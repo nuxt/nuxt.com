@@ -62,7 +62,7 @@
 </template>
 
 <script setup lang="ts">
-import { formatNumber } from '~/utils'
+import { formatNumber, capitalize } from '~/utils'
 
 const { fetchOne, module } = useModules()
 const route = useRoute()
@@ -88,4 +88,11 @@ const copyToClipboard = (content) => {
     copyIcon.value = 'uil:copy'
   }, 2000)
 }
+
+useHead({
+  title: capitalize(module.value.name),
+  meta: [
+    { name: 'description', content: module.value.description }
+  ]
+})
 </script>

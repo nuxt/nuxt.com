@@ -1,10 +1,19 @@
 <template>
-  <ContentRenderer :value="page" />
+  <div>
+    <JobsHero />
+    <JobsList />
+  </div>
 </template>
 
 <script setup lang="ts">
-const { page, fetchPage } = usePage()
 const { fetch: fetchJobs } = useNuxtJobs()
 
-await Promise.all([fetchPage(), fetchJobs()])
+await fetchJobs()
+
+useHead({
+  title: 'Jobs',
+  meta: [
+    { name: 'description', content: 'Browse available openings for coding with Vue and Nuxt all over the world.' }
+  ]
+})
 </script>

@@ -1,11 +1,19 @@
 <template>
-  <ContentRenderer :value="page" />
+  <div>
+    <ShowcasesHero />
+    <ShowcasesList />
+  </div>
 </template>
 
 <script setup lang="ts">
-const { page, fetchPage } = usePage()
 const { fetch: fetchShowcases } = useResourcesShowcases()
 
-await fetchPage()
-await fetchShowcases(page.value.showcasesListId)
+await fetchShowcases(505)
+
+useHead({
+  title: 'Showcase',
+  meta: [
+    { name: 'description', content: 'Discover our selection of websites built with Nuxt.' }
+  ]
+})
 </script>

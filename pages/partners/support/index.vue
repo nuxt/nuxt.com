@@ -6,4 +6,11 @@
 const { page, fetchPage } = usePage()
 
 await fetchPage()
+
+useHead({
+  title: page.value.title,
+  meta: [
+    { name: 'description', content: page.value.description }
+  ]
+})
 </script>

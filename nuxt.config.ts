@@ -15,7 +15,8 @@ export default defineNuxtConfig({
     '@nuxtlabs/github-module',
     // 'nuxt-newsletter',
     'vue-plausible',
-    'nuxt-icon'
+    'nuxt-icon',
+    '@nuxtjs/fontaine'
   ],
   components: [
     resolve('./components'),
@@ -71,7 +72,7 @@ export default defineNuxtConfig({
   content: {
     highlight: {
       theme: 'one-dark-pro',
-      preload: ['ini', 'json', 'js', 'ts', 'html', 'css', 'vue', 'diff', 'shell', 'markdown']
+      preload: ['js', 'ts', 'html', 'css', 'vue', 'diff']
     },
     navigation: {
       fields: ['redirect']
