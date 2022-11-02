@@ -177,15 +177,15 @@ They opinions are valuable and worth sharing to everyone.
 ::
 
 ::home-section
----
-to: '/modules'
----
 #title
 Ship faster with [Nuxt modules]{.text-transparent .bg-clip-text .bg-gradient-to-r .from-green-400 .via-teal-400 .to-indigoblue-600}
 #description
 Nuxt is made with a robust plugin system, integrate with popular CMS or UI librairies with one line of code. With more than 15M monthly downloads and 1K contributors, Nuxt modules are you day to day companions.
 #link
 Explore Nuxt modules
+#extra
+  ::home-modules-list
+  ::
 ::
 
 ::home-section

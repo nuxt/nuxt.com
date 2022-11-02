@@ -26,7 +26,7 @@
     <div v-if="$slots.extra">
       <ContentSlot :use="$slots.extra" unwrap="p" />
     </div>
-    <div v-if="buttons.length" class="flex justify-end gap-6 w-1/3 ">
+    <div v-if="buttons.length" class="flex justify-end gap-6 w-1/3">
       <UButton
         v-for="button of buttons"
         :key="button.label"
@@ -87,6 +87,10 @@ defineProps({
   bodyExtraClass: {
     type: String,
     default: ''
+  },
+  buttonsClass: {
+    type: String,
+    default: 'flex justify-end gap-6 w-1/3'
   }
 })
 
