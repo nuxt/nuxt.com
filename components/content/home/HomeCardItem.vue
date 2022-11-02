@@ -2,16 +2,16 @@
   <li class="rounded-md h-full relative">
     <div class="gradient-border" />
     <NuxtLink :to="to">
-      <UCard class="h-full w-ful flex flex-col justify-between rounded-xl" header-class="flex items-center justify-center border-none px-4 py-5 sm:px-6" ring-class="ring-0">
+      <UCard class="h-full w-ful flex flex-col justify-between rounded-xl" :header-class="`flex items-center border-none px-4 py-5 sm:px-6 ${imagePositionClass}`" ring-class="ring-0">
         <template v-if="image" #header>
-          <img :src="`/assets/home/${image}`" :alt="`${image} image`" class="h-full h-full rounded-md">
+          <img :src="`/assets/home/${image}`" :alt="`${image} image`" class="h-full rounded-md">
         </template>
         <div class="flex flex-col gap-y-4">
           <Icon v-if="icon" :name="icon" class="w-6 h-6" />
           <h6 class="font-semibold u-text-gray-900" :class="!icon ? 'text-xl' : 'text-5xl'">
             <ContentSlot :use="$slots.title" unwrap="p" />
           </h6>
-          <p class="u-text-gray-800" :class="{ 'text-lg font-medium': icon }">
+          <p class="u-text-gray-500" :class="{ 'text-lg font-medium': icon }">
             <ContentSlot :use="$slots.description" unwrap="p" />
           </p>
         </div>
@@ -19,7 +19,7 @@
     </NuxtLink>
   </li>
 </template>
-
+9
 <script setup lang="ts">
 defineProps({
   image: {
@@ -33,6 +33,10 @@ defineProps({
   to: {
     type: String,
     default: ''
+  },
+  imagePositionClass: {
+    type: String,
+    default: 'justify-center'
   }
 })
 </script>

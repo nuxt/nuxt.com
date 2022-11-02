@@ -1,7 +1,7 @@
 <template>
   <UContainer
-    class="flex px-4 pt-24 transition duration-700"
-    :class="[containerClass, !slideIn ? 'opacity-0 translate-y-20' : 'opacity-100 translate-y-0', buttons.length ? 'items-center justify-between' : 'flex-col']"
+    class="flex px-4 pt-24 transition duration-700 relative"
+    :class="[containerClass, !slideIn ? 'opacity-0 translate-y-20' : 'opacity-100 translate-y-0', buttons.length ? 'flex-col md:flex-row md:items-center md:justify-between' : 'flex-col']"
     padded
   >
     <div ref="root" class="flex flex-col justify-center">
@@ -17,16 +17,16 @@
       <div v-if="$slots.contentExtra">
         <ContentSlot :use="$slots.contentExtra" unwrap="p" />
       </div>
-      <NuxtLink v-if="to" :to="to" class="pt-8 text-md xl:text-lg 2xl:text-xl u-text-gray-500 font-medium flex gap-x-4 items-center relative group w-fit">
+      <NuxtLink v-if="to" :to="to" class="pt-8 text-md xl:text-lg 2xl:text-xl u-text-gray-900 font-medium flex gap-x-4 items-center relative group w-fit">
         <ContentSlot :use="$slots.link" unwrap="p" />
         <Icon name="heroicons-solid:chevron-right" class="w-5 h-5 mt-1" />
-        <span class="absolute w-0 -bottom-1 h-0.5 u-bg-gray-500 group-hover:w-full transition-all duration-200" />
+        <span class="absolute w-0 -bottom-1 h-0.5 u-bg-gray-900 group-hover:w-full transition-all duration-200" />
       </NuxtLink>
     </div>
     <div v-if="$slots.extra">
       <ContentSlot :use="$slots.extra" unwrap="p" />
     </div>
-    <div v-if="buttons.length" class="flex justify-end gap-6 w-1/3">
+    <div v-if="buttons.length" class="flex md:justify-end gap-6 md:w-1/3">
       <UButton
         v-for="button of buttons"
         :key="button.label"

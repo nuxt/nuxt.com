@@ -4,7 +4,7 @@
     class="relative pt-10 pb-40 transition duration-700 sm:pt-44 sm:px-0 md:pt-28 lg:pt-40"
     :class="!slideIn ? 'opacity-0 translate-y-20' : 'opacity-100 translate-y-0'"
   >
-    <div ref="mouseLight" class="opacity-0 absolute top-0 rounded-full blur-[50px] bg-gradient-to-t from-green-400 via-teal-400 to-indigoblue-400 transition duration-300" />
+    <div ref="mouseLight" class="opacity-0 absolute top-0 rounded-full blur-[50px] bg-gradient-to-t from-green-400 to-teal-400 transition duration-300" />
 
     <UContainer padded class="relative flex flex-col items-center justify-center gap-y-6">
       <h3 class="text-4xl font-semibold u-text-gray-900">

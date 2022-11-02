@@ -31,7 +31,7 @@ Nuxt provides the best developer experience for web teams to deliver the best en
 
 ::home-section
 #title
-Deliver the best [User Experience]{.text-transparent .bg-clip-text .bg-gradient-to-r .from-green-400 .via-teal-400 .to-indigoblue-600}
+Deliver an optimized [User Experience]{.text-transparent .bg-clip-text .bg-gradient-to-r .from-green-400 .to-teal-400}
 #description
 How a user interacts with and experience your website is key. It includes a person's perceptions of utility, ease of use, and efficiency. Nuxt is built with a great user experience in mind by default to keep your end-users as satisfied as possible.
 #extra
@@ -88,41 +88,43 @@ Discover our showcase
 
 ::home-section
 #title
-Deliver a new [Developer Experience]{.text-transparent .bg-clip-text .bg-gradient-to-r .from-green-400 .via-teal-400 .to-indigoblue-600}
+Descover a new [Developer Experience]{.text-transparent .bg-clip-text .bg-gradient-to-r .from-green-400 .to-teal-400}
 #description
 Developers deserve solutions as well designed as non-technical people. Our focus is to empower Vue developers to ship great softwares with confidence.
 #extra
-  ::home-card-list
-    :::home-card-item
-    ---
-    image: 'dx-plug-and-play.svg'
-    to: '/'
-    ---
-    #title
-    Plug’n play
-    #description
-    Unlock features by creating folders and files with the [most intuitive directory structure]{.font-semibold} made for developers and teams.
-    :::
-    :::home-card-item
-    ---
-    image: 'dx-effortless.svg'
-    to: '/'
-    ---
-    #title
-    Automation
-    #description
-    Repetitive tasks are [automated]{.font-semibold}: auto-imports, code-splitting, typings, minification, bundling for production. and more.
-    :::
-    :::home-card-item
-    ---
-    image: 'dx-batteries.svg'
-    to: '/'
-    ---
-    #title
-    Batteries included
-    #description
-    Data fetching, state management, meta tags helpers, route guards, cookies, error handling, bundle analyzer and more.
-    :::
+  ::home-dx-section
+    ::home-card-list
+      :::home-card-item
+      ---
+      image: 'dx-plug-and-play.svg'
+      to: '/'
+      ---
+      #title
+      Plug’n play
+      #description
+      Unlock features by creating folders and files with the [most intuitive directory structure]{.font-semibold} made for developers and teams.
+      :::
+      :::home-card-item
+      ---
+      image: 'dx-effortless.svg'
+      to: '/'
+      ---
+      #title
+      Automation
+      #description
+      Repetitive tasks are [automated]{.font-semibold}: auto-imports, code-splitting, typings, minification, bundling for production. and more.
+      :::
+      :::home-card-item
+      ---
+      image: 'dx-batteries.svg'
+      to: '/'
+      ---
+      #title
+      Batteries included
+      #description
+      Data fetching, state management, meta tags helpers, route guards, cookies, error handling, bundle analyzer and more.
+      :::
+    ::
   ::
 ::
 
@@ -178,7 +180,7 @@ They opinions are valuable and worth sharing to everyone.
 
 ::home-section
 #title
-Ship faster with [Nuxt modules]{.text-transparent .bg-clip-text .bg-gradient-to-r .from-green-400 .via-teal-400 .to-indigoblue-600}
+Ship faster with [Nuxt modules]{.text-transparent .bg-clip-text .bg-gradient-to-r .from-green-400 .to-teal-400}
 #description
 Nuxt is made with a robust plugin system, integrate with popular CMS or UI librairies with one line of code. With more than 15M monthly downloads and 1K contributors, Nuxt modules are you day to day companions.
 #link
@@ -242,12 +244,49 @@ Nuxt is composed of web builders all over the world who like to craft beautiful 
 ::
 
 ::home-section
----
-to: '/partners'
----
+#title
+A solution to cover [all your needs]{.text-transparent .bg-clip-text .bg-gradient-to-r .from-green-400 .to-teal-400}
 #description
-Deliver faster with our trusted agency partners near you with the right set of Nuxt skills.
-#contentExtra
+Developers deserve solutions as well designed as non-technical people. Our focus is to empower Vue developers to ship great softwares with confidence.
+#extra
+::home-needs-section
+#cards
+:::home-card-list
+  :::home-card-item
+  ---
+  imagePositionClass: 'justify-start'
+  image: 'needs-community-support.svg'
+  to: '/'
+  ---
+  #title
+  Community support
+  #description
+  More than 2000 active contributors on multiple platforms are here to help !
+  :::
+  :::home-card-item
+  ---
+  imagePositionClass: 'justify-start'
+  image: 'needs-nuxt-expert.svg'
+  to: '/'
+  ---
+  #title
+  Nuxt experts network
+  #description
+  A network of freelance from all over the world, certified by the NuxtLabs team !
+  :::
+  :::home-card-item
+  ---
+  imagePositionClass: 'justify-start'
+  image: 'needs-official-agency.svg'
+  to: '/'
+  ---
+  #title
+  Official agency partners
+  #description
+  A carefully networl of trusted agencies from all over the world !
+  :::
+:::
+#carousel
 :::home-carousel
 ---
 items:
@@ -261,11 +300,12 @@ items:
   - backmarket
 ---
 :::
-#link
-Discover our agency partners
+::
 ::
 
-::home-section
+::home-journey-section
+#content
+:::home-section
 ---
 buttons:
 - label: 'Get started'
@@ -282,7 +322,8 @@ buttons:
 #sectionTitle
 GETTING STARTED
 #title
-Start your [Nuxt Journey]{.text-transparent .bg-clip-text .bg-gradient-to-r .from-teal-400 .to-indigoblue-600}
+Start your Nuxt Journey
 #description
 Learn everything you need to know, from beginner to master.
+:::
 ::

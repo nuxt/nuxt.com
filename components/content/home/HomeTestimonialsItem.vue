@@ -2,7 +2,7 @@
   <li>
     <a :href="authorUrl" rel="author" target="_blank">
       <div class="relative">
-        <div class="relative pt-4 pl-8 flex flex-col md:justify-between xl:h-[260px]">
+        <div class="relative pt-4 flex flex-col md:justify-between xl:h-[260px]">
           <q class="pb-6 u-text-gray-600">
             <ContentSlot :use="$slots.quote" unwrap="p" />
           </q>

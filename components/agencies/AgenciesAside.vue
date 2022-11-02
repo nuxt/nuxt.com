@@ -52,7 +52,7 @@
 
               <span
                 v-if="selectedRegion?.key === region.key"
-                class="absolute inset-x-0 -bottom-1 h-0.5 bg-gradient-to-r from-green-400 via-teal-400 to-indigoblue-600"
+                class="absolute inset-x-0 -bottom-1 h-0.5 bg-gradient-to-r from-green-400 to-teal-600"
               />
             </span>
           </NuxtLink>

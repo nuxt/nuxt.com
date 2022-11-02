@@ -1,7 +1,7 @@
 <template>
   <div class="relative flex flex-col justify-center">
-    <div class="absolute left-0 w-40 inset-y-0 bg-gradient-to-r from-white dark:from-black to-transparent z-10" />
-    <div class="absolute right-0 w-40 inset-y-0 bg-gradient-to-l from-white dark:from-black to-transparent z-10" />
+    <div class="hidden sm:block absolute left-0 w-40 inset-y-0 bg-gradient-to-r from-white dark:from-black to-transparent z-10" />
+    <div class="hidden sm:block absolute right-0 w-40 inset-y-0 bg-gradient-to-l from-white dark:from-black to-transparent z-10" />
 
     <ClientOnly>
       <Swiper
@@ -10,7 +10,7 @@
         :space-between="30"
         :modules="[Autoplay]"
         :centered-slides="true"
-        :slides-per-view="3"
+        :slides-per-view="slidesPerView"
         :loop="true"
         :looped-slides="selectedShowcases.length"
         :loop-additional-slides="selectedShowcases.length"
@@ -25,6 +25,8 @@
 </template>
 
 <script setup lang="ts">
+import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
+
 import { uniqBy } from 'lodash-es'
 // Import Swiper Vue.js components
 import { Swiper, SwiperSlide } from 'swiper/vue'
@@ -39,6 +41,21 @@ const swiper = ref(null)
 
 // swiper autoplay options
 const autoplay = { delay: 3000, pauseOnMouseEnter: true, disableOnInteraction: false }
+
+const { smaller } = useBreakpoints(breakpointsTailwind)
+
+const xs = smaller('sm')
+const sm = smaller('md')
+
+const slidesPerView = computed(() => {
+  if (xs.value) {
+    return 1
+  } else if (sm.value) {
+    return 2
+  } else {
+    return 3
+  }
+})
 
 const { list, selectedCategory } = useResourcesShowcases()
 
