@@ -87,10 +87,6 @@ defineProps({
   bodyExtraClass: {
     type: String,
     default: ''
-  },
-  buttonsClass: {
-    type: String,
-    default: 'flex justify-end gap-6 w-1/3'
   }
 })
 
