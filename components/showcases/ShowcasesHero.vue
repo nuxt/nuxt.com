@@ -4,7 +4,7 @@
       Showcase
     </template>
     <template #description>
-      Discover our selection of websites built with Nuxt. This collection is powered by <NuxtLink to="https://vuetelescope.com" class="text-green-400">
+      Discover our selection of websites built with Nuxt. This collection is powered by <NuxtLink to="https://vuetelescope.com" class="description">
         VueTelescope
       </NuxtLink>.
     </template>
@@ -28,3 +28,11 @@
     </template>
   </PageHero>
 </template>
+
+<style scoped lang="ts">
+css({
+  '.description': {
+    textColor: '{color.green.400}'
+  }
+})
+</style>
