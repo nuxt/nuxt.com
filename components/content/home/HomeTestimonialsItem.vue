@@ -2,11 +2,11 @@
   <li>
     <a :href="authorUrl" rel="author" target="_blank">
       <div class="relative">
-        <div class="relative pt-4 flex flex-col md:justify-between xl:h-[260px]">
+        <div class="relative pt-4 flex flex-col md:justify-between xl:h-[220px]">
           <q class="pb-6 u-text-gray-600">
             <ContentSlot :use="$slots.quote" unwrap="p" />
           </q>
-          <div class="flex flex-row items-center pt-8">
+          <div class="flex flex-row items-center pt-8 xl:pt-0">
             <img :src="`/assets/home/${authorImg}.png`" class="h-12" :alt="`${authorImg} picture`">
             <div class="flex flex-col pl-8">
               <span class="font-semibold u-text-gray-900">

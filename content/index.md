@@ -65,6 +65,7 @@ How a user interacts with and experience your website is key. It includes a pers
 ::home-section
 ---
 to: "/"
+titleSizeClass: 'text-2xl font-semibold md:text-3xl lg:text-4xl'
 ---
 #title
 Trusted by world-class companies
@@ -117,6 +118,9 @@ Developers deserve solutions as well designed as non-technical people. Our focus
 ::
 
 ::home-section
+---
+titleSizeClass: 'text-2xl font-semibold md:text-3xl lg:text-4xl'
+---
 #title
 Trusted by the world wild web
 #description
@@ -238,7 +242,7 @@ Developers deserve solutions as well designed as non-technical people. Our focus
 :::home-card-list
   :::home-card-item
   ---
-  imagePositionClass: 'justify-start'
+  headerClass: 'justify-start px-4 pt-4 sm:px-6'
   image: 'needs-community-support.svg'
   to: '/'
   ---
@@ -249,7 +253,7 @@ Developers deserve solutions as well designed as non-technical people. Our focus
   :::
   :::home-card-item
   ---
-  imagePositionClass: 'justify-start'
+  headerClass: 'justify-start px-4 pt-4 sm:px-6'
   image: 'needs-nuxt-expert.svg'
   to: '/'
   ---
@@ -260,7 +264,7 @@ Developers deserve solutions as well designed as non-technical people. Our focus
   :::
   :::home-card-item
   ---
-  imagePositionClass: 'justify-start'
+  headerClass: 'justify-start px-4 pt-4 sm:px-6'
   image: 'needs-official-agency.svg'
   ---
   #title
@@ -269,6 +273,20 @@ Developers deserve solutions as well designed as non-technical people. Our focus
   A carefully networl of trusted agencies from all over the world !
   :::
 :::
+#carousel
+:::home-carousel
+---
+items:
+  - unilever
+  - gitlab
+  - awwwards
+  - adobe
+  - nintendo
+  - nasa
+  - tiktok
+  - backmarket
+---
+:::s
 ::
 ::
 

@@ -1,11 +1,10 @@
 
 <template>
   <UContainer :constrained="false" class="relative pb-16 pt-28">
-    <ClientOnly>
       <Swiper
         v-for="(swiper, index) in 3"
         :key="index"
-        :modules="swiperModules"
+        :modules="[Autoplay]"
         :slides-per-view="slidesPerView"
         :loop="true"
         :dir="index === 1 ? 'rtl' : 'ltr'"
@@ -27,7 +26,6 @@
           </NuxtLink>
         </SwiperSlide>
       </Swiper>
-    </ClientOnly>
     <div class="w-full flex justify-center items-center pt-8">
       <UButton
         to="/modules"
@@ -38,10 +36,10 @@
       />
     </div>
     <div
-      class="absolute top-24 left-0 h-full w-[20px] sm:w-[50px] md:w-[100px] lg:w-[200px] xl:w-[300px] 2xl:w-[400px] bg-gradient-to-r from-white dark:from-black to-transparent z-[1]"
+      class="absolute top-24 left-0 h-full w-[20px] sm:w-[50px] md:w-[100px] lg:w-[200px] bg-gradient-to-r from-white via-white dark:from-black dark:via-black to-transparent z-[1]"
     />
     <div
-      class="absolute top-24 right-0 h-full w-[20px] sm:w-[50px] md:w-[100px] lg:w-[200px] xl:w-[300px] 2xl:w-[400px] bg-gradient-to-l from-white dark:from-black to-transparent z-[1]"
+      class="absolute top-24 right-0 h-full w-[20px] sm:w-[50px] md:w-[100px] lg:w-[200px] bg-gradient-to-l from-white via-white dark:from-black dark:via-black to-transparent z-[1]"
     />
   </UContainer>
 </template>
@@ -115,8 +113,7 @@ const slidesPerView = computed(() => {
     return 7
   }
 })
-const swiperModules = [Autoplay]
-const autoplay = { delay: 1, pauseOnMouseEnter: false, disableOnInteraction: false }
+const autoplay = { delay: 0, pauseOnMouseEnter: true, disableOnInteraction: false }
 </script>
 
 <style scoped lang="postcss">

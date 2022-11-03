@@ -36,7 +36,7 @@ const props = defineProps({
 
 <style scoped lang="postcss">
 .slide {
-  @apply absolute inset-0 z-10 opacity-70 backdrop-blur-sm u-bg-white
+  @apply absolute inset-0 z-10 opacity-70 backdrop-blur-[2px] u-bg-white
 }
 
 .swiper-slide-active > a > .slide {

@@ -16,7 +16,7 @@
         :loop-additional-slides="selectedShowcases.length"
         :autoplay="autoplay"
       >
-        <SwiperSlide v-for="(showcase, i) in selectedShowcases" :key="i" :style="{ height: '200px' }">
+        <SwiperSlide v-for="(showcase, i) in selectedShowcases" :key="i" :style="{ height: '160px' }">
           <HomeCompaniesCarouselItem :showcase="showcase" />
         </Swiperslide>
       </Swiper>
@@ -77,15 +77,14 @@ const selectedShowcases = computed(() => {
 <style scoped lang="postcss">
 .swiper {
   width: 100%;
-  height: 310px;
+  height: 270px;
   padding-top: 40px;
   padding-bottom: 40px;
 }
 .swiper-slide {
   background-position: center;
   background-size: cover;
-  width: 400px;
-  filter: blur(px);
+  width: 360px;
 
   :hover {
     cursor: pointer;
@@ -106,6 +105,6 @@ const selectedShowcases = computed(() => {
 
 .swiper-slide img {
   width: 100%;
-  height: 200px;
+  height: 160px;
 }
 </style>

@@ -3,9 +3,6 @@
     <div>
       <ContentSlot :use="$slots.cards" unwrap="p" />
     </div>
-    <div>
-      <ContentSlot :use="$slots.carousel" unwrap="p" />
-    </div>
     <div class="w-full flex justify-center items-center pt-8">
       <UButton
         to="/modules"

@@ -1,7 +1,7 @@
 <template>
   <li class="rounded-md h-full relative">
     <div class="gradient-border" />
-    <UCard class="h-full w-ful flex flex-col justify-between rounded-xl" :header-class="`flex items-center border-none px-4 py-5 sm:px-6 ${imagePositionClass}`" ring-class="ring-0">
+    <UCard class="h-full w-ful flex flex-col justify-between rounded-xl" background-class="dark:bg-gray-900/50 light:bg-gray-50/50 hover:u-bg-gray-50" :header-class="headerClass" ring-class="ring-0">
       <template v-if="image" #header>
         <img :src="`/assets/home/${image}`" :alt="`${image} image`" class="h-full rounded-md">
       </template>
@@ -19,7 +19,7 @@
 </template>
 9
 <script setup lang="ts">
-defineProps({
+const props = defineProps({
   image: {
     type: String,
     default: ''
@@ -32,10 +32,17 @@ defineProps({
     type: String,
     default: ''
   },
-  imagePositionClass: {
+  headerClass: {
     type: String,
-    default: 'justify-center'
+    default: 'px-4 py-5 sm:px-6 justify-center'
   }
+})
+
+const headerClass = computed(() => {
+  return [
+    'flex items-center border-none',
+    props.headerClass
+  ].join(' ')
 })
 </script>
 

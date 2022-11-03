@@ -8,7 +8,7 @@
       <div v-if="$slots.sectionTitle" class="pb-2 font-semibold">
         <ContentSlot :use="$slots.sectionTitle" unwrap="p" />
       </div>
-      <h2 class="max-w-lg pb-4 text-4xl font-semibold md:text-5xl lg:text-6xl sm:max-w-xl md:max-w-3xl lg:max-w-4xl u-text-gray-900">
+      <h2 class="max-w-lg pb-4 sm:max-w-xl md:max-w-3xl lg:max-w-4xl u-text-gray-900" :class="titleSizeClass">
         <ContentSlot :use="$slots.title" unwrap="p" />
       </h2>
       <p v-if="$slots.description" class="text-lg xl:text-xl 2xl:text-2xl u-text-gray-500 sm:max-w-xl md:max-w-3xl lg:max-w-4xl">
@@ -35,6 +35,7 @@
         :label="button.label || ''"
         :to="button.to || null"
         :trailing="button.trailing"
+        :size="'lg' || button.size"
         truncate
       />
     </div>
@@ -50,7 +51,7 @@ defineProps({
     default: 'gap-y-10 pb-4 sm:pb-8 md:pb-12 lg:pb-20'
   },
   buttons: {
-    type: Array as PropType<{ label?: string, variant?: string, to?: string, icon?: string, trailing?: boolean }[]>,
+    type: Array as PropType<{ label?: string, variant?: string, to?: string, icon?: string, trailing?: boolean, size?: string }[]>,
     default: () => []
   },
   bodyPlacement: {
@@ -67,6 +68,10 @@ defineProps({
   bodyClass: {
     type: String,
     default: ''
+  },
+  titleSizeClass: {
+    type: String,
+    default: 'text-3xl font-semibold md:text-4xl lg:text-5xl'
   },
   image: {
     type: String,
