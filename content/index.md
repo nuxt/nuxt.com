@@ -286,20 +286,6 @@ Developers deserve solutions as well designed as non-technical people. Our focus
   A carefully networl of trusted agencies from all over the world !
   :::
 :::
-#carousel
-:::home-carousel
----
-items:
-  - unilever
-  - gitlab
-  - awwwards
-  - adobe
-  - nintendo
-  - nasa
-  - tiktok
-  - backmarket
----
-:::
 ::
 ::
 

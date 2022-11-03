@@ -1,31 +1,33 @@
 
 <template>
   <UContainer :constrained="false" class="relative pb-16 pt-28">
-    <Swiper
-      v-for="(swiper, index) in 3"
-      :key="index"
-      :modules="swiperModules"
-      :slides-per-view="slidesPerView"
-      :loop="true"
-      :dir="index === 1 ? 'rtl' : 'ltr'"
-      :autoplay="autoplay"
-      :speed="5000"
-      class="mb-8"
-    >
-      <SwiperSlide
-        v-for="(module, i) in index === 0 ? modulesList.slice(0, 7) : index === 1 ? modulesList.slice(7, 14) : modulesList.slice(14)"
-        :key="i"
-        class="flex items-center justify-center h-[64px] w-[64px] sm:h-[92px] sm:w-[92px] relative my-1"
+    <ClientOnly>
+      <Swiper
+        v-for="(swiper, index) in 3"
+        :key="index"
+        :modules="swiperModules"
+        :slides-per-view="slidesPerView"
+        :loop="true"
+        :dir="index === 1 ? 'rtl' : 'ltr'"
+        :autoplay="autoplay"
+        :speed="5000"
+        class="mb-8"
       >
-        <NuxtLink
-          class="relative flex items-center justify-center u-bg-gray-50 h-[64px] w-[64px] sm:h-[92px] sm:w-[92px] rounded-md"
-          :to="`/modules/${module.name}`"
+        <SwiperSlide
+          v-for="(module, i) in index === 0 ? modulesList.slice(0, 7) : index === 1 ? modulesList.slice(7, 14) : modulesList.slice(14)"
+          :key="i"
+          class="flex items-center justify-center h-[64px] w-[64px] sm:h-[92px] sm:w-[92px] relative my-1"
         >
-          <div class="gradient-border" />
-          <ModulesListItemCover :icon="module.icon" :alt="module.name" icon-class="w-auto h-8 sm:h-12" />
-        </NuxtLink>
-      </SwiperSlide>
-    </Swiper>
+          <NuxtLink
+            class="relative flex items-center justify-center u-bg-gray-50 h-[64px] w-[64px] sm:h-[92px] sm:w-[92px] rounded-md"
+            :to="`/modules/${module.name}`"
+          >
+            <div class="gradient-border" />
+            <ModulesListItemCover :icon="module.icon" :alt="module.name" icon-class="w-auto h-8 sm:h-12" />
+          </NuxtLink>
+        </SwiperSlide>
+      </Swiper>
+    </ClientOnly>
     <div class="w-full flex justify-center items-center pt-8">
       <UButton
         to="/modules"
