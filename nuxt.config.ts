@@ -19,7 +19,8 @@ export default defineNuxtConfig({
     // 'nuxt-newsletter',
     'vue-plausible',
     'nuxt-icon',
-    '@nuxtjs/fontaine'
+    '@nuxtjs/fontaine',
+    '@nuxt-themes/tokens'
   ],
   components: [
     resolve('./components'),

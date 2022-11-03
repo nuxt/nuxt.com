@@ -5,7 +5,6 @@
     </div>
   </Page>
 </template>
-
 <script setup lang="ts">
 const { page, fetchPage } = usePage()
 

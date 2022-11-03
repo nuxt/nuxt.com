@@ -26,3 +26,11 @@
     </template>
   </PageHero>
 </template>
+
+<style scoped lang="ts">
+css({
+  '.description': {
+    textColor: '{color.green.400}'
+  }
+})
+</style>
