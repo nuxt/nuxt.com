@@ -39,7 +39,6 @@ How a user interacts with and experience your website is key. It includes a pers
     :::home-card-item
     ---
     image: 'ux-fast.svg'
-    to: '/'
     ---
     #title
     Fast and Furious
@@ -50,7 +49,6 @@ How a user interacts with and experience your website is key. It includes a pers
     :::home-card-item
     ---
     image: 'ux-hybrid.svg'
-    to: '/'
     ---
     #title
     On-demand Rendering.
@@ -61,7 +59,6 @@ How a user interacts with and experience your website is key. It includes a pers
     :::home-card-item
     ---
     image: 'ux-seo.svg'
-    to: '/'
     ---
     #title
     Search Engine Optimized
@@ -97,7 +94,6 @@ Developers deserve solutions as well designed as non-technical people. Our focus
       :::home-card-item
       ---
       image: 'dx-plug-and-play.svg'
-      to: '/'
       ---
       #title
       Plug’n play
@@ -107,7 +103,6 @@ Developers deserve solutions as well designed as non-technical people. Our focus
       :::home-card-item
       ---
       image: 'dx-effortless.svg'
-      to: '/'
       ---
       #title
       Automation
@@ -117,7 +112,6 @@ Developers deserve solutions as well designed as non-technical people. Our focus
       :::home-card-item
       ---
       image: 'dx-batteries.svg'
-      to: '/'
       ---
       #title
       Batteries included
@@ -203,7 +197,6 @@ Nuxt is composed of web builders all over the world who like to craft beautiful 
     :::home-card-item
     ---
     icon: 'fa-brands:npm'
-    to: '/'
     ---
     #title
     50M
@@ -213,7 +206,6 @@ Nuxt is composed of web builders all over the world who like to craft beautiful 
     :::home-card-item
     ---
     icon: 'fa-brands:discord'
-    to: '/'
     ---
     #title
     20k
@@ -223,7 +215,6 @@ Nuxt is composed of web builders all over the world who like to craft beautiful 
     :::home-card-item
     ---
     icon: 'fa-brands:github'
-    to: '/'
     ---
     #title
     41k
@@ -233,7 +224,6 @@ Nuxt is composed of web builders all over the world who like to craft beautiful 
     :::home-card-item
     ---
     icon: 'fa-brands:twitter'
-    to: '/'
     ---
     #title
     75k
@@ -278,7 +268,6 @@ Developers deserve solutions as well designed as non-technical people. Our focus
   ---
   imagePositionClass: 'justify-start'
   image: 'needs-official-agency.svg'
-  to: '/'
   ---
   #title
   Official agency partners
