@@ -1,5 +1,5 @@
 <template>
-  <li class="rounded-md h-full relative">
+  <li class="rounded-md relative">
     <div class="gradient-border" />
     <UCard class="h-full w-ful flex flex-col justify-between rounded-xl" :body-class="bodyClass" background-class="dark:bg-gray-900/50 light:bg-gray-50/50 hover:u-bg-gray-50" :header-class="headerClass" ring-class="ring-0">
       <template v-if="image" #header>
