@@ -1,11 +1,7 @@
 <template>
   <div>
     <div class="flex flex-col justify-between gap-3 lg:flex-row lg:items-center">
-      <h2 class="items-center justify-between hidden text-3xl font-semibold u-text-gray-900 md:flex">
-        <slot name="title">
-          {{ title }}
-        </slot>
-      </h2>
+      <ModulesFilterSearch class="hidden md:block" />
 
       <button class="flex items-center justify-between font-semibold u-text-gray-900 md:hidden" @click="isOpen = !isOpen">
         <div class="flex items-center">

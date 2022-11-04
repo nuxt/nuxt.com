@@ -28,7 +28,7 @@ const location = computed({
     return selectedLocation.value
   },
   set (location) {
-    router.push({
+    router.replace({
       name: 'partners-jobs',
       query: {
         ...route.query,

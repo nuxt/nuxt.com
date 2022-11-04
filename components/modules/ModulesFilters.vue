@@ -41,7 +41,7 @@ const filters = computed(() => {
           ...route.query,
           q: undefined
         },
-        params: {
+        state: {
           stop: 'true'
         }
       }
