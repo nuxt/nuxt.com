@@ -10,13 +10,13 @@
     </template>
 
     <template #extra>
-      <div class="flex gap-3">
+      <div class="hero-extra">
         <span class="u-text-gray-500">Download extension:</span>
-        <div class="flex gap-6">
-          <GradientNuxtLink to="https://chrome.google.com/webstore/detail/vue-telescope/neaebjphlfplgdhedjdhcnpjkndddbpd" target="_blank" class="font-semibold u-text-gray-900">
+        <div>
+          <GradientNuxtLink to="https://chrome.google.com/webstore/detail/vue-telescope/neaebjphlfplgdhedjdhcnpjkndddbpd" target="_blank" class="u-text-gray-900">
             Chrome
           </GradientNuxtLink>
-          <GradientNuxtLink to="https://addons.mozilla.org/en/firefox/addon/vue-telescope/" target="_blank" class="font-semibold u-text-gray-900">
+          <GradientNuxtLink to="https://addons.mozilla.org/en/firefox/addon/vue-telescope/" target="_blank" class="u-text-gray-900">
             Firefox
           </GradientNuxtLink>
         </div>
@@ -24,15 +24,31 @@
     </template>
 
     <template #image>
-      <img src="/assets/resources/showcases/gems.svg" class="object-contain h-full lg:mx-10 opacity-10 lg:opacity-100" role="presentation">
+      <img src="/assets/resources/showcases/gems.svg" class="hero-image" role="presentation">
     </template>
   </PageHero>
 </template>
 
 <style scoped lang="ts">
 css({
-  '.description': {
-    textColor: '{color.green.400}'
+  '.hero-extra': {
+    display: 'flex',
+    gap: '0.75rem',
+    'div': {
+      display: 'flex',
+      gap: '1.5rem',
+      '& > *': {fontWeight: '600'},
+    }
+  },
+  '.hero-image': {
+    height: '100%',
+    objectFit: 'contain',
+    opacity: '0.1',
+    '@mq.lg': {
+      marginLeft: '2.5rem',
+      marginRight: '2.5rem',
+      opacity: '1',
+    }
   }
 })
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <UCard padded body-class="aspect-w-4 aspect-h-3" shadow-class="" class="relative transition duration-200 group hover:ring-2 ucard">
+  <UCard padded body-class="aspect-w-4 aspect-h-3" shadow-class="" class="ucard">
     <div class="flex flex-col">
       <div class="flex-1 min-h-0">
         <img

@@ -6,7 +6,7 @@
     size="sm"
     placeholder="Category"
     text-attribute="label"
-    class="min-w-[160px]"
+    style="min-width: 160px"
   />
 </template>
 

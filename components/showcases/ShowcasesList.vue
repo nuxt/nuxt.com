@@ -1,20 +1,20 @@
 <template>
-  <Page id="smooth" class="pt-16 -mt-16">
+  <Page id="smooth" class="page">
     <template #aside>
       <ShowcasesAside />
     </template>
 
     <PageList>
-      <template #title>
-        <span class="hidden lg:block">{{ selectedCategory?.label }}</span>
-        <span class="lg:hidden">Category</span>
+      <template #title class="page-title">
+        <span>{{ selectedCategory?.label }}</span>
+        <span>Category</span>
       </template>
 
-      <template #filters>
-        <ShowcasesFilterCategory class="lg:hidden" />
+      <template #filters class="page-filters">
+        <ShowcasesFilterCategory />
       </template>
 
-      <ul v-if="selectedShowcases.length" class="grid min-h-[calc(100vh-18rem)] grid-cols-1 gap-8 mt-8 sm:grid-cols-2 xl:grid-cols-3">
+      <ul v-if="selectedShowcases.length">
         <li v-for="showcase in selectedShowcases" :key="showcase.id">
           <ShowcasesListItem :showcase="showcase" />
         </li>
@@ -43,3 +43,42 @@ const selectedShowcases = computed(() => {
   return uniqBy(flattenedShowcases || [], 'id')
 })
 </script>
+
+<style scoped lang="ts">
+css({
+  '.page': {
+    paddingTop:'4rem',
+    marginTop: '-4rem',
+  },
+  '.page-title': {
+    'span:first-of-type': {
+      display: 'none',
+      '@mq.lg': {
+        display: 'block',
+      },
+    },
+    'span:last-of-type': {
+      '@mq.lg': {
+        display: 'hidden',
+      },
+    },
+  },
+  '.page-filters': {
+    '@mq.lg': {
+      display: 'none',
+    },
+  },
+  ul: {
+    display: 'grid',
+    marginTop: '2rem',
+    gridTemplateColumns: 'repeat(1, minmax(0, 1fr))',
+    gap: '2rem',
+    '@mq.sm': {
+      gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+    },
+    '@mq.xl': {
+      gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+    },
+  }
+})
+</style>
