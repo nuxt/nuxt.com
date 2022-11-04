@@ -23,7 +23,7 @@
     <div v-if="$slots.extra">
       <ContentSlot :use="$slots.extra" unwrap="p" />
     </div>
-    <div v-if="buttons.length" class="flex md:justify-end gap-6 md:w-1/3">
+    <div v-if="buttons.length" class="flex md:justify-end gap-6 pt-8 md:pt-0 md:w-1/3">
       <UButton
         v-for="button of buttons"
         :key="button.label"

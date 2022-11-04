@@ -2,7 +2,14 @@
   <li class="rounded-md relative">
     <div class="hidden gradient-border gradient-border-dark dark:block" />
     <div class="dark:hidden gradient-border gradient-border-light" />
-    <UCard class="h-full w-ful flex flex-col justify-between rounded-xl" :body-class="bodyClass" background-class="dark:bg-gray-900/50 light:bg-gray-50/50 hover:u-bg-gray-50" :header-class="headerClass" ring-class="ring-0">
+    <UCard
+      class="h-full w-ful flex flex-col justify-between rounded-xl"
+      :body-class="bodyClass"
+      shadow-class="shadow-none"
+      background-class="dark:bg-gray-900/50 bg-white hover:dark:bg-gray-900"
+      :header-class="headerClass"
+      ring-class="ring-1 ring-gray-200 dark:ring-0 hover:ring-0"
+    >
       <template v-if="image" #header>
         <img :src="`/assets/home/${image.dark}`" :alt="`${image} image`" class="h-full rounded-md hidden dark:block">
         <img :src="`/assets/home/${image.light}`" :alt="`${image} image`" class="h-full rounded-md dark:hidden">

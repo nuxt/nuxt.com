@@ -19,7 +19,7 @@
           :style="{ height: '92px' }"
         >
           <NuxtLink
-            class="relative flex items-center justify-center u-bg-gray-50 h-[64px] w-[64px] sm:h-[92px] sm:w-[92px] rounded-md ring-1 ring-gray-200 hover:ring-0 dark:ring-0"
+            class="relative flex items-center justify-center bg-white dark:bg-gray-900 h-[64px] w-[64px] sm:h-[92px] sm:w-[92px] rounded-md ring-1 ring-gray-200 hover:ring-0 dark:ring-0"
             :to="`/modules/${module.name}`"
           >
             <div class="hidden gradient-border gradient-border-dark dark:block" />
