@@ -31,7 +31,7 @@ defineProps({
 
 <style lang="postcss" scoped>
 a.button-link {
-  @apply inline-flex items-center flex-none rounded-md px-3 py-1.5 mb-2 text-sm leading-4 text-white transition-colors duration-200 border border-transparent bg-green-400 hover:bg-green-500  focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900 focus:ring-green-500 font-semibold;
+  @apply inline-flex items-center flex-none rounded-md px-3 py-1.5 mb-2 text-sm leading-4 text-gray-900 dark:text-white transition-colors duration-200 border border-green-400 hover:bg-green-500 hover:text-white  focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900 focus:ring-green-500 font-semibold;
 
   &.medium {
     @apply px-4 py-2 text-base leading-4;
