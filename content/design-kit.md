@@ -4,9 +4,6 @@ description: Welcome to Nuxt design definition page. Identity was redefined by h
 ---
 
 ::resources-design-kit-hero
----
-hightlight: true
----
 #title
 Design Kit
 #description
@@ -18,13 +15,98 @@ Download design kit
 ::resources-design-kit-section
 ---
 sectionClass: 'pb-8 pt-16'
+highlight: false
 ---
 #category
-Colors
+Logotype
+#title
+Nuxt Logo
+#description
+The logo is made from two elements: the triangular mountains and the wordmark. In most cases, they should appear together as the opposite master lockup shows. The triangular mountains can be used on their own as an icon, profile picture or badge, but the wordmark should never be used without this symbol on the side.
+#titleExtra
+Icon
+#designList
+  ::resources-design-kit-logo-card
+  ---
+  imgName: mono-framework
+  cardClass: 'bg-white'
+  ---
+  #name
+  Monogram Framework
+  ::
+
+  ::resources-design-kit-logo-card
+  ---
+  imgName: mono-black
+  cardClass: 'bg-white'
+  ---
+  #name
+  Monogram black
+  ::
+
+  ::resources-design-kit-logo-card
+  ---
+  imgName: mono-white
+  cardClass: 'bg-gray-900'
+  ---
+  #name
+  Monogram white
+  ::
+
+::
+
+::resources-design-kit-section
+---
+sectionClass: 'pb-16 pt-8'
+highlight: false
+---
+#title
+Logo
+#designList
+  ::resources-design-kit-logo-card
+  ---
+  imgName: full-white
+  cardClass: 'bg-gray-900'
+  full: true
+  ---
+  #name
+  Full Nuxt White
+  ::
+
+  ::resources-design-kit-logo-card
+  ---
+  imgName: full-framework-black
+  cardClass: 'bg-white'
+  full: true
+  ---
+  #name
+  Full Framework Black
+  ::
+
+  ::resources-design-kit-logo-card
+  ---
+  imgName: full-black
+  cardClass: 'bg-white'
+  full: true
+  ---
+  #name
+ Logo monochrome black
+  ::
+
+  ::resources-design-kit-logo-card
+  ---
+  imgName: full-framework-white
+  cardClass: bg-gray-900
+  full: true
+  ---
+  #name
+  Full Framework White
+  ::
+::
+
+::resources-design-kit-section
 #title
 Nuxt brand colors
-#description
-Our main palette is comprised of a strong inspiring gradient, white, and dark gray to bring sobriety to our brand and is used in logical ways throughout marketing to guide the eye and highlight the important bits.
 #designList
   ::resources-design-kit-color-card
   ---
@@ -218,96 +300,7 @@ Our secondary palette contains a variety of colors with all the same base hue (t
   ::
 ::
 
-::resources-design-kit-section
----
-sectionClass: 'pb-8 pt-16'
-highlight: false
----
-#category
-Logo
-#title
-Monograms
-#description
-Our logo honours the high mountains of the Pyrenees, the place where it all started. The shape is drawn with a smooth but structured path, that locks itself like an infinity symbol.<br />This is one of our most powerful tools to communicate our story and the values behind our brand.
-#designList
-  ::resources-design-kit-logo-card
-  ---
-  imgName: mono-black
-  cardClass: 'bg-white'
-  ---
-  #name
-  Monogram black
-  ::
 
-  ::resources-design-kit-logo-card
-  ---
-  imgName: mono-white
-  cardClass: 'bg-gray-900'
-  ---
-  #name
-  Monogram white
-  ::
-
-  ::resources-design-kit-logo-card
-  ---
-  imgName: mono-framework
-  cardClass: 'bg-white'
-  ---
-  #name
-  Monogram Framework
-  ::
-::
-
-::resources-design-kit-section
----
-sectionClass: 'pb-16 pt-8'
-highlight: false
----
-#category
-Logo
-#title
-Full
-#designList
-  ::resources-design-kit-logo-card
-  ---
-  imgName: full-black
-  cardClass: 'bg-white'
-  full: true
-  ---
-  #name
-  Full Nuxt Black
-  ::
-
-  ::resources-design-kit-logo-card
-  ---
-  imgName: full-white
-  cardClass: 'bg-gray-900'
-  full: true
-  ---
-  #name
-  Full Nuxt White
-  ::
-
-  ::resources-design-kit-logo-card
-  ---
-  imgName: full-framework-black
-  cardClass: 'bg-white'
-  full: true
-  ---
-  #name
-  Full Framework Black
-  ::
-
-  ::resources-design-kit-logo-card
-  ---
-  imgName: full-framework-white
-  cardClass: bg-gray-900
-  full: true
-  ---
-  #name
-  Full Framework White
-  ::
-::
 
 ::resources-design-kit-section
 ---

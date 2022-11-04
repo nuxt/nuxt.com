@@ -10,6 +10,9 @@
       <p v-if="$slots.description" class="pb-10 prose dark:prose-invert max-w-none">
         <ContentSlot :use="$slots.description" unwrap="p" />
       </p>
+      <h2 v-if="$slots.title" class="pb-6 text-2xl font-semibold u-text-gray-900">
+        <ContentSlot :use="$slots.titleExtra" unwrap="p" />
+      </h2>
       <ul v-if="$slots.designList" class="grid" :class="listClass">
         <ContentSlot :use="$slots.designList" unwrap="p" />
       </ul>

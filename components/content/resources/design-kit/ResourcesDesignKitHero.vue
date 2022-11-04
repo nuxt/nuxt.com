@@ -14,7 +14,8 @@
     </template>
 
     <template #image>
-      <img src="/assets/resources/design-kit/hero.png" alt="Design kit illustration" class="object-contain h-full lg:mx-10 opacity-10 lg:opacity-100">
+      <img src="/assets/resources/design-kit/hero-designkit-light.svg" alt="Design kit illustration" class="dark:hidden object-contain h-full lg:mx-10 opacity-10 lg:opacity-100">
+      <img src="/assets/resources/design-kit/hero-designkit-dark.svg" alt="Design kit illustration" class="hidden dark:block object-contain h-full lg:mx-10 opacity-10 lg:opacity-100">
     </template>
   </PageHero>
 </template>
