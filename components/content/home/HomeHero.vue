@@ -85,16 +85,4 @@ const animateTitle = () => {
     title.value.style.opacity = 1
   }, 500)
 }
-
-const scrollToVideo = () => {
-  router.push({
-    name: 'index',
-    query: {
-      ...route.query
-    },
-    state: {
-      smooth: '#smooth'
-    }
-  })
-}
 </script>

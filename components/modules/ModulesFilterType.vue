@@ -29,7 +29,7 @@ const type = computed({
     return selectedType.value
   },
   set (type) {
-    router.push({
+    router.replace({
       name: 'modules',
       query: {
         ...route.query,

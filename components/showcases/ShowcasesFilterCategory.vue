@@ -21,7 +21,7 @@ const category = computed({
     return selectedCategory.value
   },
   set (category) {
-    router.push({
+    router.replace({
       name: 'showcases',
       query: {
         ...route.query,

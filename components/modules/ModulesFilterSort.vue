@@ -32,7 +32,7 @@ const sortBy = computed({
     return selectedSort.value
   },
   set (sortBy) {
-    router.push({
+    router.replace({
       name: 'modules',
       query: {
         ...route.query,
@@ -50,7 +50,7 @@ const orderBy = computed({
     return selectedOrder.value
   },
   set (orderBy: { key: string, label: string, icon: string }) {
-    router.push({
+    router.replace({
       name: 'modules',
       query: {
         ...route.query,

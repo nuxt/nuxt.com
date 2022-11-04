@@ -29,7 +29,7 @@ const category = computed({
     return selectedCategory.value
   },
   set (category) {
-    router.push({
+    router.replace({
       name: 'modules',
       query: {
         ...route.query,

@@ -26,7 +26,7 @@ const q = computed({
     return route.query.q
   },
   set (q) {
-    router.push({
+    router.replace({
       name: 'modules',
       query: {
         ...route.query,
