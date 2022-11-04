@@ -5,11 +5,10 @@
 </template>
 
 <script setup lang="ts">
-const { page, fetchPage } = usePage()
+const { page } = useContent()
 const { fetch: fetchShowcases } = useResourcesShowcases()
 const { fetch: fetchModules } = useModules()
 
-await fetchPage()
 await fetchShowcases()
 await fetchModules()
 
