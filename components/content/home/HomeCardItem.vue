@@ -1,11 +1,11 @@
 <template>
   <li class="rounded-md h-full relative">
     <div class="gradient-border" />
-    <UCard class="h-full w-ful flex flex-col justify-between rounded-xl" background-class="dark:bg-gray-900/50 light:bg-gray-50/50 hover:u-bg-gray-50" :header-class="headerClass" ring-class="ring-0">
+    <UCard class="h-full w-ful flex flex-col justify-between rounded-xl" :body-class="bodyClass" background-class="dark:bg-gray-900/50 light:bg-gray-50/50 hover:u-bg-gray-50" :header-class="headerClass" ring-class="ring-0">
       <template v-if="image" #header>
         <img :src="`/assets/home/${image}`" :alt="`${image} image`" class="h-full rounded-md">
       </template>
-      <div class="flex flex-col gap-y-4">
+      <div class="flex flex-col" :class="contentClass">
         <Icon v-if="icon" :name="icon" class="w-6 h-6" />
         <h6 class="font-semibold u-text-gray-900" :class="!icon ? 'text-xl' : 'text-5xl'">
           <ContentSlot :use="$slots.title" unwrap="p" />
@@ -34,7 +34,15 @@ const props = defineProps({
   },
   headerClass: {
     type: String,
-    default: 'px-4 py-5 sm:px-6 justify-center'
+    default: 'px-4 pt-5 sm:px-6 justify-center'
+  },
+  bodyClass: {
+    type: String,
+    default: 'px-4 pb-5 pt-4 sm:p-6'
+  },
+  contentClass: {
+    type: String,
+    default: 'gap-y-4'
   }
 })
 

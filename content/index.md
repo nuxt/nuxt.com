@@ -80,7 +80,7 @@ Discover our showcase
 
 ::home-section
 #title
-Descover a new [Developer Experience]{.text-transparent .bg-clip-text .bg-gradient-to-r .from-green-400 .to-teal-400}
+Discover a new [Developer Experience]{.text-transparent .bg-clip-text .bg-gradient-to-r .from-green-400 .to-teal-400}
 #description
 Developers deserve solutions as well designed as non-technical people. Our focus is to empower Vue developers to ship great softwares with confidence.
 #extra
@@ -243,8 +243,8 @@ Developers deserve solutions as well designed as non-technical people. Our focus
   :::home-card-item
   ---
   headerClass: 'justify-start px-4 pt-4 sm:px-6'
+  contentClass: 'gap-y-2'
   image: 'needs-community-support.svg'
-  to: '/'
   ---
   #title
   Community support
@@ -255,7 +255,7 @@ Developers deserve solutions as well designed as non-technical people. Our focus
   ---
   headerClass: 'justify-start px-4 pt-4 sm:px-6'
   image: 'needs-nuxt-expert.svg'
-  to: '/'
+  contentClass: 'gap-y-2'
   ---
   #title
   Nuxt experts network
@@ -266,6 +266,7 @@ Developers deserve solutions as well designed as non-technical people. Our focus
   ---
   headerClass: 'justify-start px-4 pt-4 sm:px-6'
   image: 'needs-official-agency.svg'
+  contentClass: 'gap-y-2'
   ---
   #title
   Official agency partners

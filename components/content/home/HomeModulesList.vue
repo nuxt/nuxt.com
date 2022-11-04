@@ -10,12 +10,13 @@
         :dir="index === 1 ? 'rtl' : 'ltr'"
         :autoplay="autoplay"
         :speed="5000"
-        class="mb-8"
+        class="mb-2 sm:mb-8"
       >
         <SwiperSlide
           v-for="(module, i) in index === 0 ? modulesList.slice(0, 7) : index === 1 ? modulesList.slice(7, 14) : modulesList.slice(14)"
           :key="i"
-          class="flex items-center justify-center h-[64px] w-[64px] sm:h-[92px] sm:w-[92px] relative my-1"
+          class="flex items-center justify-center w-[64px] sm:w-[92px] relative my-1"
+          :style="{ height: '92px' }"
         >
           <NuxtLink
             class="relative flex items-center justify-center u-bg-gray-50 h-[64px] w-[64px] sm:h-[92px] sm:w-[92px] rounded-md"
@@ -103,9 +104,9 @@ const md = smaller('lg')
 const lg = smaller('xl')
 
 const slidesPerView = computed(() => {
-  if (xs.value || sm.value) {
-    return 3
-  } else if (md.value) {
+  if (xs.value) {
+    return 4
+  } else if (md.value || sm.value) {
     return 5
   } else if (lg.value) {
     return 6
@@ -119,10 +120,6 @@ const autoplay = { delay: 0, pauseOnMouseEnter: true, disableOnInteraction: fals
 <style scoped lang="postcss">
 .swiper-wrapper {
   transition-timing-function: linear !important;
-}
-
-.swiper-slide {
-  height: 92px;
 }
 
 .gradient-border {

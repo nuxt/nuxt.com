@@ -8,15 +8,12 @@
       <div v-if="$slots.sectionTitle" class="pb-2 font-semibold">
         <ContentSlot :use="$slots.sectionTitle" unwrap="p" />
       </div>
-      <h2 class="max-w-lg pb-4 sm:max-w-xl md:max-w-3xl lg:max-w-4xl u-text-gray-900" :class="titleSizeClass">
+      <h2 class="max-w-lg pb-2 sm:max-w-xl md:max-w-3xl lg:max-w-4xl u-text-gray-900" :class="titleSizeClass">
         <ContentSlot :use="$slots.title" unwrap="p" />
       </h2>
       <p v-if="$slots.description" class="text-lg xl:text-xl 2xl:text-2xl u-text-gray-500 sm:max-w-xl md:max-w-3xl lg:max-w-4xl">
         <ContentSlot :use="$slots.description" unwrap="p" />
       </p>
-      <div v-if="$slots.contentExtra">
-        <ContentSlot :use="$slots.contentExtra" unwrap="p" />
-      </div>
       <NuxtLink v-if="to" :to="to" class="pt-8 text-md xl:text-lg 2xl:text-xl u-text-gray-900 font-medium flex gap-x-4 items-center relative group w-fit">
         <ContentSlot :use="$slots.link" unwrap="p" />
         <Icon name="heroicons-solid:chevron-right" class="w-5 h-5 mt-1" />
@@ -48,7 +45,7 @@ import type { PropType, Ref } from 'vue'
 defineProps({
   containerClass: {
     type: String,
-    default: 'gap-y-10 pb-4 sm:pb-8 md:pb-12 lg:pb-20'
+    default: 'pb-4 sm:pb-8 md:pb-12 lg:pb-20'
   },
   buttons: {
     type: Array as PropType<{ label?: string, variant?: string, to?: string, icon?: string, trailing?: boolean, size?: string }[]>,

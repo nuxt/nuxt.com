@@ -15,6 +15,7 @@
         :looped-slides="selectedShowcases.length"
         :loop-additional-slides="selectedShowcases.length"
         :autoplay="autoplay"
+        :speed="1000"
       >
         <SwiperSlide v-for="(showcase, i) in selectedShowcases" :key="i" :style="{ height: '160px' }">
           <HomeCompaniesCarouselItem :showcase="showcase" />
