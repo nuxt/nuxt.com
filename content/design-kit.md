@@ -65,32 +65,39 @@ Logo
 #designList
   ::resources-design-kit-logo-card
   ---
-  imgName: full-white
-  cardClass: 'bg-gray-900'
+  imgName: full-logo-green-dark
+  cardClass: 'bg-white'
+  infoType: 'primary'
   full: true
   ---
+  #info
+  primary
   #name
-  Full Nuxt White
+  Logo green & dark
   ::
 
   ::resources-design-kit-logo-card
   ---
-  imgName: full-framework-black
-  cardClass: 'bg-white'
+  imgName: full-logo-green
+  cardClass: 'bg-gray-900'
+  infoType: 'secondary-dark'
   full: true
   ---
+  #info
+  secondary
   #name
-  Full Framework Black
+  Logo green & light
   ::
 
   ::resources-design-kit-logo-card
   ---
   imgName: full-black
   cardClass: 'bg-white'
+  infoClass: 'text-gray-900'
   full: true
   ---
   #name
- Logo monochrome black
+  Logo monochrome black
   ::
 
   ::resources-design-kit-logo-card
