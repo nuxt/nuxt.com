@@ -30,7 +30,7 @@ const version = computed({
     return selectedVersion.value
   },
   set (version) {
-    router.push({
+    router.replace({
       name: 'modules',
       query: {
         ...route.query,

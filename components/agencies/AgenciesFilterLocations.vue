@@ -29,7 +29,7 @@ const region = computed({
     return selectedRegion.value
   },
   set (region) {
-    router.push({
+    router.replace({
       name: 'partners-agencies',
       query: {
         ...route.query,
