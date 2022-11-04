@@ -1,12 +1,12 @@
 <template>
   <NuxtLink :to="showcase.url">
-    <div class="slide" />
+    <div class="slide hidden sm:block" />
 
     <img
       :src="`https://res.cloudinary.com/nuxt/image/upload/f_auto,q_auto/${showcase.screenshotUrl}`"
       :alt="showcase.hostname"
       loading="lazy"
-      class="object-cover object-top w-full h-full rounded-md"
+      class="object-cover object-top w-full h-full px-4 sm:px-0"
     >
     <div class="px-4 py-3 text-center content">
       <h2 class="font-semibold truncate u-text-gray-900 text-xl">

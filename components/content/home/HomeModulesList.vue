@@ -1,6 +1,6 @@
 
 <template>
-  <UContainer :constrained="false" class="relative pb-16 pt-28">
+  <UContainer :constrained="false" class="relative py-8 sm:py-12 md:py-16 lg:pb-16 lg:pt-28">
       <Swiper
         v-for="(swiper, index) in 3"
         :key="index"
