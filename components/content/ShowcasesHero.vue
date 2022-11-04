@@ -1,12 +1,10 @@
 <template>
   <PageHero>
     <template #title>
-      Showcase
+      <ContentSlot :use="$slots.title" unwrap="p" />
     </template>
     <template #description>
-      Discover our selection of websites built with Nuxt. This collection is powered by <NuxtLink to="https://vuetelescope.com" class="text-green-400">
-        VueTelescope
-      </NuxtLink>.
+      <ContentSlot :use="$slots.description" unwrap="p" />
     </template>
 
     <template #extra>

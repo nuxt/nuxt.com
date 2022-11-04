@@ -11,6 +11,9 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  documentDriven: false
+})
 const route = useRoute()
 const { fetch: fetchModules, types } = useModules()
 

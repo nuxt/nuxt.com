@@ -28,7 +28,7 @@
             :key="index"
           >
             <NuxtLink
-              :to="link.redirect || findBottomLink(link)"
+              :to="link.redirect || navBottomLink(link)"
               :target="link.redirect && '_blank'"
               :class="{
                 'u-text-gray-900 font-semibold': link.active || isActive(link),
@@ -66,7 +66,7 @@ defineProps({
 
 const route = useRoute()
 const { hasScrolledPastSubNavbar } = useNavbarScroll()
-const { findBottomLink } = usePage()
+const { navBottomLink } = useContentHelpers()
 
 function isActive (link) {
   return link.exact ? route.path === link._path : route.path.startsWith(link._path)

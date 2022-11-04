@@ -1,13 +1,3 @@
-<template>
-  <div>
-    <NuxtLoadingBar :duration="1000" />
-    <NuxtLayout>
-      <NuxtPage />
-    </NuxtLayout>
-    <UNotifications />
-  </div>
-</template>
-
 <script setup lang="ts">
 useHead({
   titleTemplate: chunk => chunk ? `${chunk} • Nuxt` : 'Nuxt: Intuitive Web Development',
@@ -32,4 +22,13 @@ useHead({
     class: 'antialiased font-sans text-gray-700 dark:text-gray-200 bg-white dark:bg-black [--scroll-mt:10rem] lg:[--scroll-mt:7rem]'
   }
 })
+const { layout } = useContent()
 </script>
+
+<template>
+  <NuxtLoadingBar :duration="1000" />
+  <NuxtLayout :name="layout || 'default'">
+    <NuxtPage />
+  </NuxtLayout>
+  <UNotifications />
+</template>
