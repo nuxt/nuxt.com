@@ -207,6 +207,7 @@ Nuxt is composed of web builders all over the world who like to craft beautiful 
     :::home-card-item
     ---
     icon: 'fa-brands:npm'
+    to: 'https://www.npmjs.com/package/nuxt'
     ---
     #title
     50M
@@ -216,6 +217,7 @@ Nuxt is composed of web builders all over the world who like to craft beautiful 
     :::home-card-item
     ---
     icon: 'fa-brands:discord'
+    to: 'https://discord.com/invite/ps2h6QT'
     ---
     #title
     20k
@@ -225,6 +227,7 @@ Nuxt is composed of web builders all over the world who like to craft beautiful 
     :::home-card-item
     ---
     icon: 'fa-brands:github'
+    to: 'https://github.com/nuxt'
     ---
     #title
     41k
@@ -234,6 +237,7 @@ Nuxt is composed of web builders all over the world who like to craft beautiful 
     :::home-card-item
     ---
     icon: 'fa-brands:twitter'
+    to: 'https://twitter.com/nuxt_js'
     ---
     #title
     75k

@@ -1,5 +1,5 @@
 <template>
-  <li class="rounded-md relative">
+  <li ref="root" class="rounded-md relative" :class="{ 'cursor-pointer': to }" @click="onClick">
     <div class="hidden gradient-border gradient-border-dark dark:block" />
     <div class="dark:hidden gradient-border gradient-border-light" />
     <UCard
@@ -17,7 +17,10 @@
       <div class="flex flex-col" :class="contentClass">
         <Icon v-if="icon" :name="icon" class="w-6 h-6" />
         <h6 class="font-semibold u-text-gray-900" :class="!icon ? 'text-xl' : 'text-5xl'">
-          <ContentSlot :use="$slots.title" unwrap="p" />
+          <NuxtLink v-if="to" :to="to">
+            <ContentSlot :use="$slots.title" unwrap="p" />
+          </NuxtLink>
+          <ContentSlot v-else :use="$slots.title" unwrap="p" />
         </h6>
         <p class="u-text-gray-500" :class="{ 'text-lg font-medium': icon }">
           <ContentSlot :use="$slots.description" unwrap="p" />
@@ -26,9 +29,10 @@
     </UCard>
   </li>
 </template>
-9
+
 <script setup lang="ts">
 import type { PropType } from 'vue'
+import { hasProtocol } from 'ufo'
 
 const props = defineProps({
   image: {
@@ -62,16 +66,35 @@ const props = defineProps({
   }
 })
 
+const onClick = () => {
+  if (props.to && !window.getSelection().toString()) {
+    navigateTo(props.to, { external: hasProtocol(props.to) })
+  }
+}
 const headerClass = computed(() => {
   return [
     'flex items-center border-none',
     props.headerClass
   ].join(' ')
 })
+
+// Solution to get great block links
+// From https://css-tricks.com/block-links-the-search-for-a-perfect-solution/#aa-method-4-sprinkle-javascript-on-the-second-method
+const root = ref(null)
+const stopPropagation = (e: Event) => e.stopPropagation()
+onMounted(() => {
+  Array.from(root.value.querySelectorAll('a')).forEach((el: Element) => {
+    el.addEventListener('click', stopPropagation)
+  })
+})
+onBeforeUnmount(() => {
+  Array.from(root.value.querySelectorAll('a')).forEach((el: Element) => {
+    el.removeEventListener('click', stopPropagation)
+  })
+})
 </script>
 
- <style scoped lang="postcss">
-
+<style scoped lang="postcss">
 .gradient-border {
   opacity: 0;
   position: absolute;
