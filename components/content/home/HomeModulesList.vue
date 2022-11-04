@@ -19,10 +19,11 @@
           :style="{ height: '92px' }"
         >
           <NuxtLink
-            class="relative flex items-center justify-center u-bg-gray-50 h-[64px] w-[64px] sm:h-[92px] sm:w-[92px] rounded-md"
+            class="relative flex items-center justify-center u-bg-gray-50 h-[64px] w-[64px] sm:h-[92px] sm:w-[92px] rounded-md ring-1 ring-gray-200 hover:ring-0 dark:ring-0"
             :to="`/modules/${module.name}`"
           >
-            <div class="gradient-border" />
+            <div class="hidden gradient-border gradient-border-dark dark:block" />
+            <div class="dark:hidden gradient-border gradient-border-light" />
             <ModulesListItemCover :icon="module.icon" :alt="module.name" icon-class="w-auto h-8 sm:h-12" />
           </NuxtLink>
         </SwiperSlide>
@@ -133,6 +134,13 @@ const autoplay = { delay: 0, pauseOnMouseEnter: true, disableOnInteraction: fals
   border-radius: 8px;
   z-index: -1;
   transform: translate(-1px, -1px);
+}
+
+.gradient-border-light {
+  background: linear-gradient(var(--gradient-angle), rgba(0, 220, 130, 1), white, rgba(54, 228, 218, 0.5), rgba(29, 224, 177, 0.3));
+}
+
+.gradient-border-dark {
   background: linear-gradient(var(--gradient-angle), rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.1), white, rgba(255, 255, 255, 0.3));
 }
 

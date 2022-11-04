@@ -1,9 +1,11 @@
 <template>
   <li class="rounded-md relative">
-    <div class="gradient-border" />
+    <div class="hidden gradient-border gradient-border-dark dark:block" />
+    <div class="dark:hidden gradient-border gradient-border-light" />
     <UCard class="h-full w-ful flex flex-col justify-between rounded-xl" :body-class="bodyClass" background-class="dark:bg-gray-900/50 light:bg-gray-50/50 hover:u-bg-gray-50" :header-class="headerClass" ring-class="ring-0">
       <template v-if="image" #header>
-        <img :src="`/assets/home/${image}`" :alt="`${image} image`" class="h-full rounded-md">
+        <img :src="`/assets/home/${image.dark}`" :alt="`${image} image`" class="h-full rounded-md hidden dark:block">
+        <img :src="`/assets/home/${image.light}`" :alt="`${image} image`" class="h-full rounded-md dark:hidden">
       </template>
       <div class="flex flex-col" :class="contentClass">
         <Icon v-if="icon" :name="icon" class="w-6 h-6" />
@@ -19,10 +21,17 @@
 </template>
 9
 <script setup lang="ts">
+import type { PropType } from 'vue'
+
 const props = defineProps({
   image: {
-    type: String,
-    default: ''
+    type: Object as PropType<
+      {
+        light: String,
+        dark: String
+      }
+    >,
+    default: () => {}
   },
   icon: {
     type: String,
@@ -67,6 +76,13 @@ const headerClass = computed(() => {
   border-radius: 14px;
   z-index: -1;
   transform: translate(-1px, -1px);
+}
+
+.gradient-border-light {
+  background: linear-gradient(var(--gradient-angle), rgba(0, 220, 130, 1), white, rgba(54, 228, 218, 0.7), rgba(29, 224, 177, 0.3));
+}
+
+.gradient-border-dark {
   background: linear-gradient(var(--gradient-angle), rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.1), white, rgba(255, 255, 255, 0.3));
 }
 

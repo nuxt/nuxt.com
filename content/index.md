@@ -32,7 +32,9 @@ How a user interacts with and experience your website is key. It includes a pers
   ::home-card-list
     :::home-card-item
     ---
-    image: 'ux-fast.svg'
+    image:
+      light: 'ux-fast-light.svg'
+      dark: 'ux-fast.svg'
     ---
     #title
     Fast and Furious
@@ -42,7 +44,9 @@ How a user interacts with and experience your website is key. It includes a pers
     :::
     :::home-card-item
     ---
-    image: 'ux-hybrid.svg'
+    image:
+      light: 'ux-hybrid-light.svg'
+      dark: 'ux-hybrid.svg'
     ---
     #title
     On-demand Rendering.
@@ -52,7 +56,9 @@ How a user interacts with and experience your website is key. It includes a pers
     :::
     :::home-card-item
     ---
-    image: 'ux-seo.svg'
+    image:
+      light: 'ux-seo-light.svg'
+      dark: 'ux-seo.svg'
     ---
     #title
     Search Engine Optimized
@@ -88,7 +94,9 @@ Developers deserve solutions as well designed as non-technical people. Our focus
     ::home-card-list
       :::home-card-item
       ---
-      image: 'dx-plug-and-play.svg'
+      image:
+        light: 'dx-plug-and-play-light.svg'
+        dark: 'dx-plug-and-play.svg'
       ---
       #title
       Plug’n play
@@ -97,7 +105,9 @@ Developers deserve solutions as well designed as non-technical people. Our focus
       :::
       :::home-card-item
       ---
-      image: 'dx-effortless.svg'
+      image:
+        light: 'dx-effortless-light.svg'
+        dark: dx-effortless.svg
       ---
       #title
       Automation
@@ -106,7 +116,9 @@ Developers deserve solutions as well designed as non-technical people. Our focus
       :::
       :::home-card-item
       ---
-      image: 'dx-batteries.svg'
+      image:
+        light: 'dx-batteries-light.svg'
+        dark: 'dx-batteries.svg'
       ---
       #title
       Batteries included
@@ -244,7 +256,9 @@ Developers deserve solutions as well designed as non-technical people. Our focus
   ---
   headerClass: 'justify-start px-4 pt-4 sm:px-6'
   contentClass: 'gap-y-2'
-  image: 'needs-community-support.svg'
+  image:
+    light: 'needs-community-support-light.svg'
+    dark: 'needs-community-support.svg'
   ---
   #title
   Community support
@@ -254,7 +268,9 @@ Developers deserve solutions as well designed as non-technical people. Our focus
   :::home-card-item
   ---
   headerClass: 'justify-start px-4 pt-4 sm:px-6'
-  image: 'needs-nuxt-expert.svg'
+  image:
+    light: 'needs-nuxt-expert-light.svg'
+    dark: 'needs-nuxt-expert.svg'
   contentClass: 'gap-y-2'
   ---
   #title
@@ -265,7 +281,9 @@ Developers deserve solutions as well designed as non-technical people. Our focus
   :::home-card-item
   ---
   headerClass: 'justify-start px-4 pt-4 sm:px-6'
-  image: 'needs-official-agency.svg'
+  image:
+    light: 'needs-official-agency-light.svg'
+    dark: 'needs-official-agency.svg'
   contentClass: 'gap-y-2'
   ---
   #title
