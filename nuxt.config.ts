@@ -87,7 +87,11 @@ export default defineNuxtConfig({
         prefix: '/docs',
         token: process.env.GITHUB_TOKEN
       }
-    ]
+    ],
+    documentDriven: {
+      surround: false,
+      injectPage: false
+    }
   },
   newsletter: {
     revue: {

@@ -3,10 +3,10 @@
 </template>
 
 <script setup lang="ts">
-const { page, fetchPage } = usePage()
+const { page } = useContent()
 const { fetch: fetchPartners } = useAgencyPartners()
 
-await Promise.all([fetchPage(), fetchPartners()])
+await fetchPartners()
 
 useHead({
   title: page.value.title,

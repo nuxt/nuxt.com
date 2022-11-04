@@ -14,9 +14,10 @@
 
 <script setup lang="ts">
 const route = useRoute()
-const { navFromPath } = usePage()
+const { navigation } = useContent()
+const { navPageFromPath } = useContentHelpers()
 
-const links = computed(() => navFromPath('/docs')?.children.filter(link => !['/docs/migration', '/docs/bridge'].includes(link._path)))
+const links = computed(() => navPageFromPath('/docs', navigation.value)?.children.filter(link => !['/docs/migration', '/docs/bridge'].includes(link._path)))
 const path = computed(() => route.path.split('/').slice(0, 3).join('/'))
-const tree = computed(() => navFromPath(path.value)?.children)
+const tree = computed(() => navPageFromPath(path.value, navigation.value)?.children)
 </script>

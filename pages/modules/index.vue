@@ -1,8 +1,6 @@
 <template>
-  <div>
-    <ModulesHero />
-    <ModulesList />
-  </div>
+  <ModulesHero />
+  <ModulesList />
 </template>
 
 <script setup>

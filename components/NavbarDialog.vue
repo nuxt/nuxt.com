@@ -43,7 +43,8 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue'])
 
-const { navigation, navFromPath } = usePage()
+const { navigation } = useContent()
+const { navPageFromPath } = useContentHelpers()
 
 const route = useRoute()
 
@@ -64,7 +65,7 @@ const selectLink = () => {
   }
 
   const path = route.fullPath.split('/').slice(0, 3).join('/')
-  const nav: NavItem = navigation.value ? navFromPath(path) : null
+  const nav: NavItem = navPageFromPath(path, navigation.value)
   if (nav && nav._path === path && nav.children?.length > 1) {
     selectedLink.value = nav
   }

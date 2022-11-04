@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { toc } = usePage()
+const { toc } = useContent()
 const emit = defineEmits(['move'])
 </script>
 
