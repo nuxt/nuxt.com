@@ -30,27 +30,36 @@ Icon
   ---
   imgName: mono-framework
   cardClass: 'bg-white'
+  infoType: 'primary'
   ---
+  #info
+  Primary
   #name
-  Monogram Framework
+  Icon green
   ::
 
   ::resources-design-kit-logo-card
   ---
   imgName: mono-black
   cardClass: 'bg-white'
+  info-type: 'secondary'
   ---
+  #info
+  Secondary
   #name
-  Monogram black
+  Icon black
   ::
 
   ::resources-design-kit-logo-card
   ---
   imgName: mono-white
   cardClass: 'bg-gray-900'
+  info-type: 'secondary-black'
   ---
+  #info
+  Secondary
   #name
-  Monogram white
+  Icon white
   ::
 
 ::
@@ -71,7 +80,7 @@ Logo
   full: true
   ---
   #info
-  primary
+  Primary
   #name
   Logo green & dark
   ::
@@ -80,11 +89,11 @@ Logo
   ---
   imgName: full-logo-green
   cardClass: 'bg-gray-900'
-  infoType: 'secondary-dark'
+  infoType: 'primary-dark'
   full: true
   ---
   #info
-  secondary
+  Primary
   #name
   Logo green & light
   ::
@@ -93,9 +102,11 @@ Logo
   ---
   imgName: full-black
   cardClass: 'bg-white'
-  infoClass: 'text-gray-900'
+  info-type: 'secondary'
   full: true
   ---
+  #info
+  Secondary
   #name
   Logo monochrome black
   ::
