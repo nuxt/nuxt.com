@@ -5,9 +5,7 @@
 </template>
 
 <script setup lang="ts">
-const { page, fetchPage } = usePage()
-
-await fetchPage()
+const { page } = useContent()
 
 useHead({
   title: 'Intuitive Web Development',
