@@ -3,7 +3,7 @@ import type { RouterConfig } from '@nuxt/schema'
 // https://router.vuejs.org/api/#routeroptions
 export default <RouterConfig>{
   scrollBehavior: (to, _from, savedPosition) => {
-    if (to.params?.stop) {
+    if (history.state.stop) {
       return
     }
     if (history.state.smooth) {

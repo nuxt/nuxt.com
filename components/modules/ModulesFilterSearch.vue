@@ -32,7 +32,7 @@ const q = computed({
         ...route.query,
         q: q || undefined
       },
-      params: {
+      state: {
         stop: 'true'
       }
     })
