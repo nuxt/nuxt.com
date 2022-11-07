@@ -55,7 +55,7 @@
             <UButton
               label="Back to partners list"
               icon="uil:angle-left-b"
-              to="/community/partners"
+              to="/support/agencies"
               size="xl"
               variant="secondary"
               custom-class="justify-center sm:justify-start"
@@ -63,7 +63,7 @@
             />
             <UButton
               label="Become a partner"
-              to="/company/partners"
+              to="https://docs.google.com/forms/d/e/1FAIpQLSf85qskit5QqmGJcruGkGF0U7240Bh9MeN0pHB18UiOMWC8dA/viewform"
               size="xl"
               custom-class="justify-center sm:justify-start"
             />
@@ -147,7 +147,7 @@ const router = useRouter()
 
 const onBack = (e) => {
   const lastUrl = router.options.history.state.back as String | null
-  if (lastUrl?.startsWith('/community/partners')) {
+  if (lastUrl?.startsWith('/support/agencies')) {
     e.preventDefault()
     router.push(lastUrl as RouteLocationRaw)
   }

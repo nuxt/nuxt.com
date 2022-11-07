@@ -114,8 +114,8 @@ export default defineNuxtConfig({
         const prerenderedRoutes = [
           '/',
           '/design-kit',
-          '/partners/support',
-          '/partners/agencies',
+          '/support/solutions',
+          '/support/agencies',
           /^\/docs/,
           /^\/api\/_content/
         ]

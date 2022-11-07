@@ -18,10 +18,10 @@ export const useAgencyPartners = () => {
     pending.value = true
 
     try {
-      const data = await queryContent<Agency>('/partners/agencies').where({
+      const data = await queryContent<Agency>('/support/agencies').where({
         $not: {
           _path: {
-            $in: ['/partners/agencies']
+            $in: ['/support/agencies']
           }
         }
       }).find()
@@ -76,7 +76,7 @@ export const useAgencyPartners = () => {
       .map(service => ({
         ...service,
         to: {
-          name: 'partners-agencies',
+          name: 'support-agencies',
           query: {
             ...route.query,
             service: route.query?.service !== service.key ? service.key : undefined
@@ -94,7 +94,7 @@ export const useAgencyPartners = () => {
           key: location.key,
           title: location.title,
           to: {
-            name: 'partners-agencies',
+            name: 'support-agencies',
             query: {
               ...route.query,
               location: route.query?.location !== location.key ? location.key : undefined
@@ -113,7 +113,7 @@ export const useAgencyPartners = () => {
           key: region.key,
           title: region.title,
           to: {
-            name: 'partners-agencies',
+            name: 'support-agencies',
             query: {
               ...route.query,
               region: route.query?.region !== region.key ? region.key : undefined
