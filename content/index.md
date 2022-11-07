@@ -1,3 +1,9 @@
+---
+title: 'Welcome'
+description: 'Develop a modern website'
+showcasesListId: 505
+---
+
 ::home-hero
 ---
 primaryButtonText: 'Get started'
@@ -6,23 +12,292 @@ secondaryButtonText: 'Open on Github'
 secondaryButtonLink: 'https://github.com/nuxt/framework'
 ---
 
-#badgeLabel
-New
-
-#news
-Nuxt 3.0 is out. [Read about it here](https://v3.nuxtjs.org/){.underline}
-
 #title
-Develop a modern website
+The Intuitive Web Framework
 
 #titleAnimationWord
 today.
 
 #description
-Nuxt provides the best developer experience for web teams to deliver the best end-user experience.
+Build your next Vue.js application with confidence using Nuxt. An open source framework under MIT license that makes web development simple and powerful.
 ::
 
-::home-carousel
+
+::home-section
+#title
+Deliver an optimized [User Experience]{.text-transparent .bg-clip-text .bg-gradient-to-r .from-green-400 .to-teal-400}
+#description
+How a user interacts with and experience your website is key. It includes a person's perceptions of utility, ease of use, and efficiency. Nuxt is built with a great user experience in mind by default to keep your end-users as satisfied as possible.
+#extra
+  ::home-card-list
+    :::home-card-item
+    ---
+    image:
+      light: 'ux-fast-light.svg'
+      dark: 'ux-fast.svg'
+    ---
+    #title
+    Fast and Furious
+    #description
+    Optimized by default with code-splitting, tree-shaking, 3ms cold-start, link prefetching, payload extraction, to name a few.
+    Fast by default so you can focus on building.
+    :::
+    :::home-card-item
+    ---
+    image:
+      light: 'ux-hybrid-light.svg'
+      dark: 'ux-hybrid.svg'
+    ---
+    #title
+    On-demand Rendering.
+    #description
+    Decide what rendering strategy at the route level: SSR, SSG, CSR, ISR, ESR, SWR.
+    Build any kind of website or web application with best performance in mind.
+    :::
+    :::home-card-item
+    ---
+    image:
+      light: 'ux-seo-light.svg'
+      dark: 'ux-seo.svg'
+    ---
+    #title
+    Search Engine Optimized
+    #description
+    By leveraging server-side rendering, ESM format and optimized images. Nuxt websites are indexable by search engines while giving an application feeling to the end-users.
+    :::
+  ::
+::
+
+::home-section
+---
+to: "/"
+titleSizeClass: 'text-2xl font-semibold md:text-3xl lg:text-4xl'
+---
+#title
+Trusted by world-class companies
+#description
+Explore our selection of websites & applications made with Nuxt. F-500 companies are trusting Nuxt as well as creative agencies and freelancers.
+#link
+Discover our showcase
+#extra
+:::home-companies-carousel
+:::
+::
+
+::home-section
+#title
+Discover a new [Developer Experience]{.text-transparent .bg-clip-text .bg-gradient-to-r .from-green-400 .to-teal-400}
+#description
+Developers deserve solutions as well designed as non-technical people. Our focus is to empower Vue developers to ship great softwares with confidence.
+#extra
+  ::home-dx-section
+    ::home-card-list
+      :::home-card-item
+      ---
+      image:
+        light: 'dx-plug-and-play-light.svg'
+        dark: 'dx-plug-and-play.svg'
+      ---
+      #title
+      Plug’n play
+      #description
+      Unlock features by creating folders and files with the [most intuitive directory structure]{.font-semibold} made for developers and teams.
+      :::
+      :::home-card-item
+      ---
+      image:
+        light: 'dx-effortless-light.svg'
+        dark: dx-effortless.svg
+      ---
+      #title
+      Automation
+      #description
+      Repetitive tasks are [automated]{.font-semibold}: auto-imports, code-splitting, typings, minification, bundling for production. and more.
+      :::
+      :::home-card-item
+      ---
+      image:
+        light: 'dx-batteries-light.svg'
+        dark: 'dx-batteries.svg'
+      ---
+      #title
+      Batteries included
+      #description
+      Data fetching, state management, meta tags helpers, route guards, cookies, error handling, bundle analyzer and more.
+      :::
+    ::
+  ::
+::
+
+::home-section
+---
+titleSizeClass: 'text-2xl font-semibold md:text-3xl lg:text-4xl'
+---
+#title
+Trusted by the world wild web
+#description
+They opinions are valuable and worth sharing to everyone.
+#extra
+  :::home-testimonials-list
+  #items
+    ::::home-testimonials-item
+    ---
+    authorImg: evan
+    authorUrl: 'https://twitter.com/youyuxi'
+    ---
+    #author
+    Evan You
+    #job
+    Creator of VueJS
+    #quote
+    Nuxt offers a compelling solution and a great ecosystem to help you ship fullstack Vue apps that are performant and SEO friendly. The flexibility to choose between SSR and SSG is icing on the cake
+    ::::
+
+    ::::home-testimonials-item
+    ---
+    authorImg: sarah
+    authorUrl: 'https://twitter.com/sarah_edo'
+    ---
+    #author
+    Sarah Drasner
+    #job
+    Core Team of Vue.js
+    #quote
+    Nuxt has outstanding developer productivity, experience, and performance right out of the gate!
+    There’s so much attention to detail, ensuring teams have everything at their fingertips to productively build all manners of applications.
+    ::::
+
+    ::::home-testimonials-item
+    ---
+    authorImg: addy
+    authorUrl: 'https://twitter.com/addyosmani'
+    ---
+    #author
+    Addy Osmani
+    #job
+    Chief Engineer of Chrome
+    #quote
+    Nuxt is a fantastic choice for teams building a production-grade product on the web. It aims to bake in performance best-practices while maintaining excellent Vue.js DX.
+    ::::
+  :::
+::
+
+::home-section
+#title
+Ship faster with [Nuxt modules]{.text-transparent .bg-clip-text .bg-gradient-to-r .from-green-400 .to-teal-400}
+#description
+Nuxt is made with a robust plugin system, integrate with popular CMS or UI librairies with one line of code. With more than 15M monthly downloads and 1K contributors, Nuxt modules are you day to day companions.
+#link
+Explore Nuxt modules
+#extra
+  ::home-modules-list
+  ::
+::
+
+::home-section
+#title
+A community of [Web builders]{.text-transparent .bg-clip-text .bg-gradient-to-r .from-green-400 .to-teal-300}
+#description
+Nuxt is composed of web builders all over the world who like to craft beautiful user experiences with Vue.js.
+#extra
+  ::home-card-list
+  ---
+  gridClass: 'lg:grid-cols-4'
+  ---
+    :::home-card-item
+    ---
+    icon: 'fa-brands:npm'
+    to: 'https://www.npmjs.com/package/nuxt'
+    ---
+    #title
+    50M
+    #description
+    npm downloads
+    :::
+    :::home-card-item
+    ---
+    icon: 'fa-brands:discord'
+    to: 'https://discord.com/invite/ps2h6QT'
+    ---
+    #title
+    20k
+    #description
+    Discord members
+    :::
+    :::home-card-item
+    ---
+    icon: 'fa-brands:github'
+    to: 'https://github.com/nuxt'
+    ---
+    #title
+    41k
+    #description
+    GitHub stars
+    :::
+    :::home-card-item
+    ---
+    icon: 'fa-brands:twitter'
+    to: 'https://twitter.com/nuxt_js'
+    ---
+    #title
+    75k
+    #description
+    Twitter followers
+    :::
+  ::
+::
+
+::home-section
+#title
+A solution to cover [all your needs]{.text-transparent .bg-clip-text .bg-gradient-to-r .from-green-400 .to-teal-400}
+#description
+Developers deserve solutions as well designed as non-technical people. Our focus is to empower Vue developers to ship great softwares with confidence.
+#extra
+::home-needs-section
+#cards
+:::home-card-list
+  :::home-card-item
+  ---
+  headerClass: 'justify-start px-4 pt-4 sm:px-6'
+  contentClass: 'gap-y-2'
+  image:
+    light: 'needs-community-support-light.svg'
+    dark: 'needs-community-support.svg'
+  ---
+  #title
+  Community support
+  #description
+  More than 2000 active contributors on multiple platforms are here to help !
+  :::
+  :::home-card-item
+  ---
+  headerClass: 'justify-start px-4 pt-4 sm:px-6'
+  image:
+    light: 'needs-nuxt-expert-light.svg'
+    dark: 'needs-nuxt-expert.svg'
+  contentClass: 'gap-y-2'
+  ---
+  #title
+  Nuxt experts network
+  #description
+  A network of freelance from all over the world, certified by the NuxtLabs team !
+  :::
+  :::home-card-item
+  ---
+  headerClass: 'justify-start px-4 pt-4 sm:px-6'
+  image:
+    light: 'needs-official-agency-light.svg'
+    dark: 'needs-official-agency.svg'
+  contentClass: 'gap-y-2'
+  ---
+  #title
+  Official agency partners
+  #description
+  A carefully networl of trusted agencies from all over the world !
+  :::
+:::
+#carousel
+:::home-carousel
 ---
 items:
   - unilever
@@ -34,91 +309,31 @@ items:
   - tiktok
   - backmarket
 ---
+:::s
+::
 ::
 
-::docs-framework-v3-section
-#title
-Modular & Instinctive architecture
-#description
-How a user interacts with and experience your website is key. It includes a person's perceptions of utility, ease of use, and efficiency. with a great user experience in mind.
+::home-journey-section
 #content
-  ::docs-framework-v3-architecture
-  ::
-::
-
-::docs-framework-v3-section
-#title
-Auto-import everything
-#description
-How a user interacts with and experience your website is key. It includes a person's perceptions of utility, ease of use, and efficiency. with a great user experience in mind.
-#content
-  ::docs-framework-v3-auto-import
-  ::
-::
-
-::docs-framework-v3-section
-#title
-File system routing
-#description
-How a user interacts with and experience your website is key. It includes a person's perceptions of utility, ease of use, and efficiency. with a great user experience in mind.
-#content
-  ::docs-framework-v3-routing
-  ::
-::
-
-::docs-framework-v3-section
-#title
-Power up your app with Utilities
-#description
-Ac euismod vel sit maecenas id pellentesque eu sed consectetur. Malesuada adipiscing sagittis vel nulla nec.
-#content
-  ::docs-framework-v3-utilities
-  ::
-::
-
-::docs-framework-v3-section
-#title
-Empowered commands
-#description
-How a user interacts with and experience your website is key. It includes a person's perceptions of utility, ease of use, and efficiency. with a great user experience in mind.
-#content
-  ::docs-framework-v3-commands
-  ::
-::
-
-::docs-framework-v3-section
-#title
-Deploy everywhere
-#description
-How a user interacts with and experience your website is key. It includes a person's perceptions of utility, ease of use, and efficiency. with a great user experience in mind.
-#content
-  ::docs-framework-v3-deploy
-  ::
-::
-
-::docs-framework-v3-section
+:::home-section
 ---
-center: true
+buttons:
+- label: 'Get started'
+  size: 'xl'
+  variant: 'primary-gradient'
+  to: '/docs/getting-started/introduction'
+  target: '_blank'
+- label: 'Explore Exemples'
+  size: 'xl'
+  variant: 'secondary'
+  to: '#'
+  target: '_blank'
 ---
-
+#sectionTitle
+GETTING STARTED
 #title
-Lets go
+Start your Nuxt Journey
 #description
-Developers love Nuxt, the open source Vue framework built together with community. Nuxt powers the biggest websites like Big Website.
-#content
-  :::docs-framework-V3-lets-go
-  ---
-  buttons:
-  - label: 'Get started'
-    size: 'lg'
-    variant: 'green'
-    to: '/docs/getting-started/introduction'
-    target: '_blank'
-  - label: 'Read the guide'
-    size: 'lg'
-    variant: 'secondary'
-    to: '#'
-    target: '_blank'
-  ---
-  :::
+Learn everything you need to know, from beginner to master.
+:::
 ::

@@ -13,7 +13,7 @@ module.exports = {
       linearBorderGradients: ({ theme }) => ({
         colors: {
           gray: [theme('colors.gray.900')],
-          gradient: [colors.green[400], colors.teal[400], colors.indigoblue[400]]
+          gradient: [colors.green[400], colors.teal[400], colors.teal[600]]
         },
         background: theme('colors')
       })

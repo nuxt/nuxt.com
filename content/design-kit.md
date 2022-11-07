@@ -28,7 +28,7 @@ Our main palette is comprised of a strong inspiring gradient, white, and dark gr
 #designList
   ::resources-design-kit-color-card
   ---
-  cardClass: 'bg-gradient-to-r from-green-400 via-teal-400 to-indigoblue-600'
+  cardClass: 'bg-gradient-to-r from-green-400 to-teal-400'
   hexaColor: '#00DC82 to #36E4DA then #0047E1'
   ---
   #color
@@ -119,7 +119,7 @@ This gradient is here to represent the brand, across all supports (landings, app
   ::resources-design-kit-color-card
   ---
   gradient: true
-  cardClass: 'bg-gradient-to-r from-green-400 via-teal-400 to-indigoblue-600'
+  cardClass: 'bg-gradient-to-r from-green-400 to-teal-400'
   ---
   #gradientContent
   Gradient structure
