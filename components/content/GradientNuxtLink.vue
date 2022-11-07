@@ -1,5 +1,5 @@
 <template>
-  <NuxtLink class="relative inline-flex items-center group flex-nowrap max-w-max" :to="to">
+  <NuxtLink class="relative inline-flex items-center group flex-nowrap max-w-max">
     <slot />
     <span
       class="gradient-border rounded absolute bg-[length:200%] left-0 font-semibold -bottom-1 h-0.5 w-4 group-hover:bg-auto group-hover:w-full duration-300 transition-ease bg-gradient-to-r from-green-400 to-teal-400"
