@@ -12,12 +12,6 @@ const { fetch: fetchModules } = useModules()
 await fetchShowcases()
 await fetchModules()
 
-const { fetch: fetchShowcases } = useResourcesShowcases()
-const { fetch: fetchModules } = useModules()
-
-await fetchShowcases()
-await fetchModules()
-
 useHead({
   title: 'Intuitive Web Development',
   meta: [
