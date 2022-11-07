@@ -30,7 +30,7 @@ const service = computed({
   },
   set (service) {
     router.push({
-      name: 'partners-agencies',
+      name: 'support-agencies',
       query: {
         ...route.query,
         service: service?.key || undefined

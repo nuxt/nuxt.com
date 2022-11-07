@@ -30,7 +30,7 @@ const region = computed({
   },
   set (region) {
     router.replace({
-      name: 'partners-agencies',
+      name: 'support-agencies',
       query: {
         ...route.query,
         region: region?.key || undefined
