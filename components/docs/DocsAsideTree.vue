@@ -19,6 +19,7 @@
           'font-semibold u-text-gray-900': isActive(link),
           'font-medium u-text-gray-900': level === 0,
         }"
+        @click.stop.prevent="onClick(link)"
       >
         <span class="inline-flex items-center">
           <Icon v-if="link.icon" :name="link.icon" class="w-5 h-5 mr-1" />
@@ -93,6 +94,7 @@ function openDir (slug, force?) {
 
 watch(() => route.path, () => {
   const paths = route.path.split('/')
+
   for (let i = paths.length - 1; i > 1; i--) {
     paths.pop()
     openDir(paths.join('/'), true)
