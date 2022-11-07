@@ -54,7 +54,7 @@ Icon
   ---
   imgName: icon-white
   cardClass: 'bg-gray-900'
-  info-type: 'secondary-black'
+  info-type: 'secondary-dark'
   ---
   #info
   Secondary
@@ -116,7 +116,7 @@ Logo
   imgName: full-logo-white
   cardClass: bg-gray-900
   full: true
-  info-type: 'secondary-light'
+  info-type: 'secondary-dark'
   ---
   #info
   Secondary
@@ -149,7 +149,7 @@ Our color palette is based on our iconic NuxtJS green and colours have been care
 
   ::resources-design-kit-color-card
   ---
-  cardClass: 'bg-white'
+  cardClass: 'bg-white border dark:border-none'
   hexaColor: '#FFFFFF'
   ---
   #color
