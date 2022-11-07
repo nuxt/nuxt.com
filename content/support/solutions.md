@@ -1,5 +1,5 @@
 ---
-title: Support
+title: Solutions
 description: Find experts near you to help you to build and enhance your project.
 ---
 
@@ -7,7 +7,7 @@ description: Find experts near you to help you to build and enhance your project
 ---
 buttons:
   - label: Find a partner
-    to: /partners/agencies
+    to: /support/agencies
     variant: 'primary-gradient'
   - label: Community Support
     to: https://discord.com/invite/ps2h6QT

@@ -5,7 +5,7 @@
     </div>
     <div class="w-full flex justify-center items-center pt-8">
       <UButton
-        to="/modules"
+        :to="buttonLink"
         variant="primary-gradient"
         size="lg"
         :label="buttonText"
@@ -20,6 +20,10 @@ defineProps({
   buttonText: {
     type: String,
     default: 'Discover our solutions'
+  },
+  buttonLink: {
+    type: String,
+    default: '/'
   }
 })
 </script>

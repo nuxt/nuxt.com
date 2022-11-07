@@ -70,7 +70,7 @@ How a user interacts with and experience your website is key. It includes a pers
 
 ::home-section
 ---
-to: "/"
+to: "/showcase"
 titleSizeClass: 'text-2xl font-semibold md:text-3xl lg:text-4xl'
 ---
 #title
@@ -91,6 +91,9 @@ Discover a new [Developer Experience]{.text-transparent .bg-clip-text .bg-gradie
 Developers deserve solutions as well designed as non-technical people. Our focus is to empower Vue developers to ship great softwares with confidence.
 #extra
   ::home-dx-section
+  ---
+  buttonLink: "/docs/getting-started/installation"
+  ---
     ::home-card-list
       :::home-card-item
       ---
@@ -254,6 +257,9 @@ A solution to cover [all your needs]{.text-transparent .bg-clip-text .bg-gradien
 Developers deserve solutions as well designed as non-technical people. Our focus is to empower Vue developers to ship great softwares with confidence.
 #extra
 ::home-needs-section
+---
+buttonLink: "/support/solutions"
+---
 #cards
 :::home-card-list
   :::home-card-item
@@ -323,7 +329,7 @@ buttons:
   variant: 'primary-gradient'
   to: '/docs/getting-started/introduction'
   target: '_blank'
-- label: 'Explore Exemples'
+- label: 'Explore Examples'
   size: 'xl'
   variant: 'secondary'
   to: '#'
