@@ -15,9 +15,9 @@ buttons:
     variant: secondary
 ---
 #title
-Lets talk about your project
+Nuxt Support
 #description
-Find experts near you to help you to build and enhance your project.
+Discover the different support offers to answer your questions, get an audit, consulting or build your next idea.
 ::
 
 ::support-section

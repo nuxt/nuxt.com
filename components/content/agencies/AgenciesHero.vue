@@ -19,7 +19,10 @@
     </template>
 
     <template #image>
-      <img src="/assets/community/partners/gems.svg" class="object-contain h-full lg:mx-10 opacity-10 lg:opacity-100">
+      <div class="flex h-full items-center justify-center">
+        <img src="/assets/community/partners/hero-light.svg" class="dark:hidden object-contain h-3/4 lg:mx-10 opacity-0 lg:opacity-100" role="presentation">
+        <img src="/assets/community/partners/hero-dark.svg" class="hidden dark:block object-contain h-3/4 lg:mx-10 opacity-0 lg:opacity-100" role="presentation">
+      </div>
     </template>
   </PageHero>
 </template>
