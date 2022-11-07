@@ -6,6 +6,11 @@
 
 <script setup lang="ts">
 const { page } = useContent()
+const { fetch: fetchShowcases } = useResourcesShowcases()
+const { fetch: fetchModules } = useModules()
+
+await fetchShowcases()
+await fetchModules()
 
 const { fetch: fetchShowcases } = useResourcesShowcases()
 const { fetch: fetchModules } = useModules()

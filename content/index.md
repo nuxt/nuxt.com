@@ -315,7 +315,7 @@ items:
   - tiktok
   - backmarket
 ---
-:::s
+:::
 ::
 ::
 
@@ -329,7 +329,7 @@ buttons:
   variant: 'primary-gradient'
   to: '/docs/getting-started/introduction'
   target: '_blank'
-- label: 'Explore Examples'
+- label: 'Explore Exemples'
   size: 'xl'
   variant: 'secondary'
   to: '#'
