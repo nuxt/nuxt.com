@@ -1,6 +1,6 @@
 <template>
   <section>
-    <SubNavbar title="Partners" :links="links" />
+    <SubNavbar title="Support" :links="links" />
     <NuxtPage />
   </section>
 </template>

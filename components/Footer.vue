@@ -32,7 +32,7 @@
 
 const links = [
   {
-    title: 'Partners',
+    title: 'Support',
     _path: '/support/solutions'
   },
   {
