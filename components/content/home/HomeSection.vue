@@ -1,80 +1,42 @@
 <template>
-  <div
-    class="flex flex-col px-4 pt-24 transition duration-700"
-    :class="[containerClass, !slideIn ? 'opacity-0 translate-y-20' : 'opacity-100 translate-y-0']"
+  <UContainer
+    class="flex px-4 pt-24 transition duration-700 relative"
+    :class="[containerClass, !slideIn ? 'opacity-0 translate-y-20' : 'opacity-100 translate-y-0', buttons.length ? 'flex-col md:flex-row md:items-center md:justify-between' : 'flex-col']"
+    padded
   >
-    <!-- Main title -->
-    <div class="flex flex-col items-center justify-center" :class="mainTitleContainerClass">
-      <div :class="sectionTitleColorClass" class="pb-2 font-semibold">
+    <div ref="root" class="flex flex-col justify-center">
+      <div v-if="$slots.sectionTitle" class="pb-2 font-semibold">
         <ContentSlot :use="$slots.sectionTitle" unwrap="p" />
       </div>
-      <h2 class="max-w-lg pb-4 text-4xl font-semibold text-center md:text-5xl lg:text-6xl sm:max-w-xl md:max-w-3xl lg:max-w-4xl u-text-gray-900">
+      <h2 class="max-w-lg pb-2 sm:max-w-xl md:max-w-3xl lg:max-w-4xl u-text-gray-900" :class="titleSizeClass">
         <ContentSlot :use="$slots.title" unwrap="p" />
       </h2>
-      <p v-if="$slots.description" class="text-lg text-center xl:text-xl 2xl:text-2xl u-text-gray-500 sm:max-w-xl md:max-w-3xl lg:max-w-4xl">
+      <p v-if="$slots.description" class="text-lg xl:text-xl 2xl:text-2xl u-text-gray-500 sm:max-w-xl md:max-w-3xl lg:max-w-4xl">
         <ContentSlot :use="$slots.description" unwrap="p" />
       </p>
-      <div v-if="buttons.length" class="flex justify-center gap-6 mt-8">
-        <UButton
-          v-for="button of buttons"
-          :key="button.label"
-          :variant="button.variant || 'transparent'"
-          :icon="button.icon || undefined"
-          :label="button.label || ''"
-          :to="button.to || null"
-          :trailing="button.trailing"
-          truncate
-        />
-      </div>
+      <NuxtLink v-if="to" :to="to" class="pt-8 text-md xl:text-lg 2xl:text-xl u-text-gray-900 font-medium flex gap-x-4 items-center relative group w-fit">
+        <ContentSlot :use="$slots.link" unwrap="p" />
+        <Icon name="heroicons-solid:chevron-right" class="w-5 h-5 mt-1" />
+        <span class="absolute w-0 -bottom-1 h-0.5 u-bg-gray-900 group-hover:w-full transition-all duration-200" />
+      </NuxtLink>
     </div>
-    <!-- body section -->
-    <div ref="root" class="relative">
-      <UContainer
-        class="flex flex-col items-center justify-between w-full lg:flex-row gap-y-10"
-        :class="[
-          bodyContainerClass,
-          { 'gap-y-8': ['left', 'right'].includes(bodyPlacement) },
-          { 'order-last': bodyPlacement === 'left' },
-          { 'lg:justify-end': bodyPlacement === 'right' }
-        ]"
-      >
-        <!-- body text -->
-        <div
-          v-if="withBodyText"
-          padded
-          class="flex flex-col items-center max-w-lg px-4 text-center lg:items-start lg:max-w-md gap-y-6 sm:px-0 xl:max-w-lg 2xl:max-w-xl"
-          :class="[bodyClass, { 'lg:text-left': ['left', 'right'].includes(bodyPlacement) }]"
-        >
-          <div v-if="$slots.bodyTitle" class="text-2xl font-semibold xl:text-3xl 2xl:text-4xl u-text-gray-900">
-            <ContentSlot :use="$slots.bodyTitle" unwrap="p" />
-          </div>
-          <div v-if="$slots.bodyDescription" class="items-center text-lg text-gray-500 xl:text-xl 2xl:text-2xl dark:text-gray-400">
-            <ContentSlot :use="$slots.bodyDescription" unwrap="p" />
-          </div>
-          <NuxtLink v-if="$slots.bodyLink" :to="to" class="relative flex-nowrap max-w-max group">
-            <div class="flex items-center justify-center font-semibold lg:justify-start gap-x-4 ">
-              <span class="lg:text-lg xl:text-xl 2xl:text-2xl u-text-gray-900">
-                <ContentSlot :use="$slots.bodyLink" unwrap="p" />
-              </span>
-
-              <Icon name="uil:arrow-right" class="w-6 h-6 u-text-gray-900" />
-            </div>
-            <div class="absolute -bottom-2 w-0 h-0.5 u-bg-black group-hover:w-full transition-all duration-300 ease-in-out" />
-          </NuxtLink>
-          <UButton v-if="$slots.bodyButton" :to="to" variant="secondary" size="lg" class="flex justify-center w-[224px]">
-            <ContentSlot :use="$slots.bodyButton" unwrap="p" />
-          </UButton>
-        </div>
-        <!-- body image -->
-        <img v-if="image" :src="`/assets/home/${image}`" :alt="`${image} illustration`" :class="imageClass" class="px-4 sm:px-0">
-
-        <div v-if="$slots.bodyExtra" class="px-4 sm:px-0" :class="bodyExtraClass">
-          <ContentSlot :use="$slots.bodyExtra" unwrap="p" />
-        </div>
-      </UContainer>
+    <div v-if="$slots.extra">
       <ContentSlot :use="$slots.extra" unwrap="p" />
     </div>
-  </div>
+    <div v-if="buttons.length" class="flex md:justify-end gap-6 pt-8 md:pt-0 md:w-1/3">
+      <UButton
+        v-for="button of buttons"
+        :key="button.label"
+        :variant="button.variant || 'transparent'"
+        :icon="button.icon || undefined"
+        :label="button.label || ''"
+        :to="button.to || null"
+        :trailing="button.trailing"
+        :size="'lg' || button.size"
+        truncate
+      />
+    </div>
+  </UContainer>
 </template>
 
 <script setup lang="ts">
@@ -83,23 +45,15 @@ import type { PropType, Ref } from 'vue'
 defineProps({
   containerClass: {
     type: String,
-    default: 'gap-y-10 pb-10 sm:px-0 sm:pb-20 md:pb-28 lg:pb-40'
-  },
-  sectionTitleColorClass: {
-    type: String,
-    default: 'text-green-400'
-  },
-  mainTitleContainerClass: {
-    type: String,
-    default: 'lg:pb-16 xl:pb-20 2xl:pb-24'
+    default: 'pb-4 sm:pb-8 md:pb-12 lg:pb-20'
   },
   buttons: {
-    type: Array as PropType<{ label?: string, variant?: string, to?: string, icon?: string, trailing?: boolean }[]>,
+    type: Array as PropType<{ label?: string, variant?: string, to?: string, icon?: string, trailing?: boolean, size?: string }[]>,
     default: () => []
   },
   bodyPlacement: {
     type: String,
-    default: 'center',
+    default: 'left',
     validator: (value: string) => {
       return ['left', 'center', 'right'].includes(value)
     }
@@ -111,6 +65,10 @@ defineProps({
   bodyClass: {
     type: String,
     default: ''
+  },
+  titleSizeClass: {
+    type: String,
+    default: 'text-3xl font-semibold md:text-4xl lg:text-5xl'
   },
   image: {
     type: String,

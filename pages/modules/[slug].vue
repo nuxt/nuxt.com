@@ -8,7 +8,7 @@
               <ModulesListItemCover :icon="module.icon" icon-class="w-auto h-20" :alt="module.name" />
               <div v-if="module.type === 'official'">
                 <div class="rounded-full bg-white absolute -right-5 -bottom-5 h-12 w-12" />
-                <div class="flex items-center justify-center rounded-full bg-gradient-to-l from-green-400/30 via-teal-400/30 to-indigoblue-400/30 absolute -right-5 -bottom-5 h-12 w-12">
+                <div class="flex items-center justify-center rounded-full bg-gradient-to-l from-green-400/30 to-teal-400/30 absolute -right-5 -bottom-5 h-12 w-12">
                   <Icon name="uil:medal" class="h-5 w-5 text-gray-900" />
                 </div>
               </div>

@@ -7,7 +7,7 @@
         {{ module.name }}
       </p>
 
-      <div v-if="module.type === 'official'" class="flex items-center justify-center rounded-full bg-gradient-to-l from-green-400/30 via-teal-400/30 to-indigoblue-400/30 h-6 w-6">
+      <div v-if="module.type === 'official'" class="flex items-center justify-center rounded-full bg-gradient-to-l from-green-400/30 to-teal-400/30 h-6 w-6">
         <Icon name="uil:medal" class="h-4 w-4 text-gray-900" />
       </div>
     </div>

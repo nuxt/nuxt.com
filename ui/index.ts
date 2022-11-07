@@ -20,7 +20,7 @@ const button = {
     link: 'border border-transparent u-text-gray-900 hover:underline focus:underline',
     'transparent-hover': 'border border-transparent u-text-gray-500 hover:u-text-white focus:u-text-white bg-transparent hover:u-bg-gray-900 focus:u-bg-gray-900 disabled:u-text-gray-500',
     'input-group': 'shadow-sm border u-border-gray-200 u-text-gray-700 u-bg-gray-50 hover:u-bg-gray-100 disabled:u-bg-gray-50 focus:ring-1 focus:u-ring-gray-900 focus:u-border-gray-900',
-    'primary-gradient': 'relative text-white gradient-border-2 border-gradient-br-gradient-gray-900 hover:border-gradient-br-gradient-black before:absolute before:transition before:duration-200 before:rounded-lg before:opacity-0 hover:before:opacity-75 before:-inset-0.5 before:bg-gradient-to-r before:from-green-400 before:via-teal-400 before:to-indigoblue-400 before:blur-md before:z-[-1]',
+    'primary-gradient': 'relative text-white gradient-border-2 border-gradient-br-gradient-gray-900 hover:border-gradient-br-gradient-black before:absolute before:transition before:duration-200 before:rounded-lg before:opacity-0 hover:before:opacity-75 before:-inset-0.5 before:bg-gradient-to-r before:from-green-400 before:via-teal-400 before:to-teal-600 before:blur-md before:z-[-1]',
     // Override all button variants to reduce bg from `600` to `500`
     ...safeColors.reduce((acc: any, color) => {
       acc[color] = `border border-transparent text-white bg-${color}-500 hover:bg-${color}-400 disabled:bg-${color}-500 focus:ring-2 focus:ring-offset-2 focus:ring-${color}-400`
