@@ -508,10 +508,10 @@
     pinceau latest
     style-value-types "^5.1.2"
 
-"@nuxt-themes/typography@^0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@nuxt-themes/typography/-/typography-0.0.3.tgz#67a5082b64ba3d91e22a38a1ed51f1877452d4fc"
-  integrity sha512-kZwJuzwKacCtLyQGSS2tUTrzdnSo+fXm3CBpPI3dw3TEDZ8Xfoip+v3dgUkzHl2DTIbZzaPITprssIxujA5/ng==
+"@nuxt-themes/typography@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@nuxt-themes/typography/-/typography-0.0.4.tgz#70dde1f268102471704d0af3324936911d1d0d1c"
+  integrity sha512-6p1PsPv4LUseeuv1xLmyZY4wi4OisgrD6iwmsipZ/QHcYR65Jw6WtcHHGLbAHJ1/sy6hkm9qhe8riI4lp0x1Lw==
   dependencies:
     "@nuxt-themes/tokens" latest
     "@nuxtjs/color-mode" "^3.1.8"
