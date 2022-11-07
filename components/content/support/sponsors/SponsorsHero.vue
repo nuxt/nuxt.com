@@ -1,18 +1,19 @@
 <template>
   <PageHero centered>
     <template #title>
-      Sponsors
+      {{ title }}
     </template>
+
     <template #description>
       <span class="u-text-black">
-        Nuxt is an open-source framework totally free to use thanks to our generous sponsors. If you use Nuxt in your daily work and feel that it has made your life easier, please consider backing us.
+        {{ description }}
       </span>
     </template>
 
     <template #extra>
       <div class="flex gap-6">
         <UButton
-          label="Become a sponsor"
+          :label="buttonText"
           to="https://github.com/sponsors/nuxt"
           variant="primary-gradient"
           size="lg"
@@ -27,9 +28,17 @@
 
 <script setup lang="ts">
 defineProps({
-  buttons: {
-    type: Array,
-    default: () => []
+  buttonText: {
+    type: String,
+    default: 'Become a sponsor'
+  },
+  title: {
+    type: String,
+    default: 'Sponsors'
+  },
+  description: {
+    type: String,
+    default: 'Nuxt is an open-source framework totally free to use thanks to our generous sponsors. If you use Nuxt in your daily work and feel that it has made your life easier, please consider backing us.'
   }
 })
 </script>

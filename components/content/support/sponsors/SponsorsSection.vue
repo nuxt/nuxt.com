@@ -1,4 +1,11 @@
 <script setup lang="ts">
+defineProps({
+  data: {
+    type: Array,
+    default: () => []
+  }
+})
+
 const { data } = await useFetch('/api/sponsors')
 </script>
 
