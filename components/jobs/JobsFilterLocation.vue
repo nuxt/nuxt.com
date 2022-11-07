@@ -29,7 +29,7 @@ const location = computed({
   },
   set (location) {
     router.replace({
-      name: 'partners-jobs',
+      name: 'support-jobs',
       query: {
         ...route.query,
         location: location?.value || undefined

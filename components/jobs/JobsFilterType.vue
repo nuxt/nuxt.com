@@ -29,7 +29,7 @@ const type = computed({
   },
   set (type) {
     router.replace({
-      name: 'partners-jobs',
+      name: 'support-jobs',
       query: {
         ...route.query,
         type: type?.value || undefined
