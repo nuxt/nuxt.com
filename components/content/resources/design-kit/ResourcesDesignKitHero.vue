@@ -8,13 +8,20 @@
     </template>
 
     <template #extra>
-      <GradientNuxtLink icon="uil:arrow-right" to="https://www.figma.com/community/file/1063820502268406301" target="_blank" class="font-semibold u-text-gray-900 sm:text-lg">
+      <a class="relative inline-flex items-center group flex-nowrap max-w-max" href="/assets/resources/design-kit/nuxt-assets.zip" download>
         <ContentSlot :use="$slots.buttonText" unwrap="p" />
-      </GradientNuxtLink>
+        <span
+          class="gradient-border rounded absolute bg-[length:200%] left-0 font-semibold -bottom-1 h-0.5 w-4 group-hover:bg-auto group-hover:w-full duration-300 transition-ease bg-gradient-to-r from-green-400 via-teal-400 to-indigoblue-600"
+        />
+        <Icon name="uil:arrow-right" class="w-5 h-5 ml-1 mt-0.5" />
+      </a>
     </template>
 
     <template #image>
-      <img src="/assets/resources/design-kit/hero.png" alt="Design kit illustration" class="object-contain h-full lg:mx-10 opacity-10 lg:opacity-100">
+      <div class="h-full flex items-center justify-center">
+        <img src="/assets/resources/design-kit/hero-designkit-light.svg" alt="Design kit illustration" class="dark:hidden object-cover h-3/4 lg:mx-10 opacity-0 lg:opacity-100" role="presentation">
+        <img src="/assets/resources/design-kit/hero-designkit-dark.svg" alt="Design kit illustration" class="hidden dark:block object-cover h-3/4 lg:mx-10 opacity-0 lg:opacity-100" role="presentation">
+      </div>
     </template>
   </PageHero>
 </template>
