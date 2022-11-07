@@ -4,13 +4,13 @@
       <p v-if="$slots.category" class="text-sm font-semibold u-text-gray-400">
         <ContentSlot :use="$slots.category" unwrap="p" />
       </p>
-      <h2 v-if="$slots.title" class="pb-6 text-2xl font-semibold u-text-gray-900">
+      <h2 v-if="$slots.title" class="pb-4 text-2xl font-semibold u-text-gray-900">
         <ContentSlot :use="$slots.title" unwrap="p" />
       </h2>
       <p v-if="$slots.description" class="pb-10 prose dark:prose-invert max-w-none">
         <ContentSlot :use="$slots.description" unwrap="p" />
       </p>
-      <h2 v-if="$slots.title" class="pb-6 text-2xl font-semibold u-text-gray-900">
+      <h2 v-if="$slots.titleExtra" class="pb-6 text-lg font-semibold u-text-gray-900">
         <ContentSlot :use="$slots.titleExtra" unwrap="p" />
       </h2>
       <ul v-if="$slots.designList" class="grid" :class="listClass">

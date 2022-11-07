@@ -69,7 +69,7 @@ Icon
 sectionClass: 'pb-16 pt-8'
 highlight: false
 ---
-#title
+#titleExtra
 Logo
 #designList
   ::resources-design-kit-logo-card
@@ -116,7 +116,10 @@ Logo
   imgName: full-logo-white
   cardClass: bg-gray-900
   full: true
+  info-type: 'secondary-light'
   ---
+  #info
+  Secondary
   #name
   Logo monochrome white
   ::
