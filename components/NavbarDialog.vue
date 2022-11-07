@@ -96,6 +96,8 @@ const tree = computed(() => {
   ]
 })
 
+console.log('tree', tree)
+
 const onSelect = (link) => {
   selectedLink.value = link
 }

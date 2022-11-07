@@ -1,15 +1,14 @@
 <template>
-  <div>
-    <SponsorsHero />
-    <SponsorsSection />
-  </div>
+  <ContentRenderer :value="page" />
 </template>
 
-<script setup>
+<script setup lang="ts">
+const { page } = useContent()
+
 useHead({
-  title: 'Sponsors',
+  title: page.value.title,
   meta: [
-    { name: 'description', content: 'Nuxt is an open-source framework totally free to use thanks to our generous sponsors.' }
+    { name: 'description', content: page.value.description }
   ]
 })
 </script>
