@@ -3,10 +3,12 @@
     <img src="/assets/community/jobs/gradient.svg" class="absolute right-0 hidden mt-32 lg:block">
 
     <Page id="smooth" class="relative pt-16 -mt-16">
-      <PageList :title="`${filteredJobs.length} job${filteredJobs.length > 1 ? 's' : ''} found`">
+      <PageList :title="`${filteredJobs.length} job${filteredJobs.length > 1 ? 's' : ''} found`" :modules-filter="false">
         <template #filters>
-          <JobsFilterLocation />
-          <JobsFilterType />
+          <div class="w-full flex items-center justify-end gap-2">
+            <JobsFilterLocation />
+            <JobsFilterType />
+          </div>
         </template>
 
         <ul v-if="filteredJobs.length" class="flex flex-col gap-8 mt-8">
