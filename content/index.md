@@ -259,15 +259,15 @@ Developers deserve solutions as well designed as non-technical people. Our focus
   :::home-card-item
   ---
   headerClass: 'justify-start px-4 pt-4 sm:px-6'
-  contentClass: 'gap-y-2'
   image:
-    light: 'needs-community-support-light.svg'
-    dark: 'needs-community-support.svg'
+    light: 'needs-official-agency-light.svg'
+    dark: 'needs-official-agency.svg'
+  contentClass: 'gap-y-2'
   ---
   #title
-  Community support
+  Official agency partners
   #description
-  More than 2000 active contributors on multiple platforms are here to help !
+  A carefully networl of trusted agencies from all over the world !
   :::
   :::home-card-item
   ---
@@ -285,15 +285,15 @@ Developers deserve solutions as well designed as non-technical people. Our focus
   :::home-card-item
   ---
   headerClass: 'justify-start px-4 pt-4 sm:px-6'
-  image:
-    light: 'needs-official-agency-light.svg'
-    dark: 'needs-official-agency.svg'
   contentClass: 'gap-y-2'
+  image:
+    light: 'needs-community-support-light.svg'
+    dark: 'needs-community-support.svg'
   ---
   #title
-  Official agency partners
+  Community support
   #description
-  A carefully networl of trusted agencies from all over the world !
+  More than 2000 active contributors on multiple platforms are here to help !
   :::
 :::
 #carousel
