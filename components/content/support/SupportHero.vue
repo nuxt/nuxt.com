@@ -6,21 +6,12 @@
     <template #description>
       <ContentSlot :use="$slots.description" unwrap="p" />
     </template>
-    <template #extra>
-      <div class="flex gap-6">
-        <UButton
-          v-for="(button, index) in buttons"
-          :key="index"
-          v-bind="button"
-          size="lg"
-        />
-      </div>
-    </template>
 
-    <template #background>
-      <img src="/assets/company/support/gems.svg" class="object-cover h-full opacity-30 lg:opacity-100">
-      <div class="h-[170px] absolute top-0 inset-x-0 bg-gradient-to-b from-white dark:from-black to-transparent" />
-      <div class="w-[170px] absolute right-0 inset-y-0 bg-gradient-to-l from-white dark:from-black to-transparent" />
+    <template #image>
+      <div class="flex h-full items-center justify-center">
+        <img src="/assets/company/support/hero-light.svg" class="dark:hidden object-contain h-3/4 lg:mx-10 opacity-0 lg:opacity-100" role="presentation">
+        <img src="/assets/company/support/hero-dark.svg" class="hidden dark:block object-contain h-3/4 lg:mx-10 opacity-0 lg:opacity-100" role="presentation">
+      </div>
     </template>
   </PageHero>
 </template>
