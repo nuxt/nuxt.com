@@ -5,6 +5,7 @@ const { resolve } = createResolver(import.meta.url)
 
 // https://v3.nuxtjs.org/guide/directory-structure/nuxt.config
 export default defineNuxtConfig({
+  extends: '@nuxt-themes/typography',
   css: [
     '~/assets/css/fonts.css',
     '~/assets/css/style.css'
