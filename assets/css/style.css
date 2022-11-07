@@ -6,3 +6,7 @@ a:focus-visible, button:focus-visible {
   outline: 2px solid #00dc82;
   outline-offset: 2px;
 }
+
+code {
+  word-break: break-all;
+}
