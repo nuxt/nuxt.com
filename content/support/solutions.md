@@ -36,10 +36,13 @@ Nuxt Experts
 Do you need full time consulting service by a certified Nuxt Expert?
 We have built an expert network that covers a large variety of needs:
 #extra
-- [![](/assets/support/solutions/dot.svg) Identify and solve your pain points]{.flex .gap-x-2 .pb-4}
-- [![](/assets/support/solutions/dot.svg) Set your project on the right track with best practices]{.flex .gap-x-2 .pb-4}
-- [![](/assets/support/solutions/dot.svg) Improve your website performance]{.flex .gap-x-2 .pb-4}
-- [![](/assets/support/solutions/dot.svg) Provide custom solutions or integrations]{.flex .gap-x-2 .pb-6}
+::list{type="success" icon="heroicons-solid:check-circle"}
+- Identify and solve your pain points
+- Set your project on the right track with best practices
+- Improve your website performance
+- Provide custom solutions or integrations
+::
+
 [Contact us at [experts@nuxt.com]{ .text-green-400 } for a quote.]{ .text-lg .font-semibold }
 ::
 
