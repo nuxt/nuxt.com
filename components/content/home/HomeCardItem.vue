@@ -11,8 +11,8 @@
       ring-class="ring-1 ring-gray-200 dark:ring-0 hover:ring-0"
     >
       <template v-if="image" #header>
-        <img :src="`/assets/home/${image.dark}`" :alt="`${image} image`" class="h-full rounded-md hidden dark:block" width="350">
-        <img :src="`/assets/home/${image.light}`" :alt="`${image} image`" class="h-full rounded-md dark:hidden" width="350">
+        <img :src="`/assets/home/${image.dark}`" :alt="`${image} image`" class="h-full rounded-md hidden dark:block" width="350" height="168">
+        <img :src="`/assets/home/${image.light}`" :alt="`${image} image`" class="h-full rounded-md dark:hidden" width="350" height="168">
       </template>
       <div class="flex flex-col" :class="contentClass">
         <Icon v-if="icon" :name="icon" class="w-6 h-6" />
