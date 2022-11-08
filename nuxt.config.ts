@@ -15,7 +15,7 @@ export default defineNuxtConfig({
     '@nuxt/content',
     '@nuxtlabs/github-module',
     // 'nuxt-newsletter',
-    'vue-plausible',
+    'nuxt-plausible',
     'nuxt-icon',
     '@nuxtjs/fontaine'
   ],
