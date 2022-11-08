@@ -5,7 +5,7 @@
       :key="link._path"
       :class="{
         'border-l-2': level > 0,
-        'u-border-gray-900': isActive(link),
+        'border-green-500': isActive(link),
         'u-border-gray-300 hover:u-border-gray-900': !isActive(link)
       }"
     >
@@ -16,8 +16,9 @@
         :class="{
           'pl-4 lg:text-sm': level > 0,
           '!pt-0': level === 0 && index === 0,
-          'font-semibold u-text-gray-900': isActive(link),
-          'font-medium u-text-gray-900': level === 0,
+          'font-semibold text-green-500': isActive(link),
+          'font-medium': level === 0 && !isActive(link) && link.children,
+          'hover:font-semibold': !isActive(link) && !link.children
         }"
         @click.stop.prevent="onClick(link)"
       >
