@@ -8,7 +8,7 @@
     </template>
 
     <template #extra>
-      <a class="relative inline-flex items-center group flex-nowrap max-w-max" href="/assets/resources/design-kit/nuxt-assets.zip" download>
+      <a class="relative inline-flex items-center group flex-nowrap max-w-max" href="/assets/design-kit/nuxt-assets.zip" download>
         <ContentSlot :use="$slots.buttonText" unwrap="p" />
         <span
           class="gradient-border rounded absolute bg-[length:200%] left-0 font-semibold -bottom-1 h-0.5 w-4 group-hover:bg-auto group-hover:w-full duration-300 transition-ease bg-gradient-to-r from-green-400 via-teal-400 to-indigoblue-600"
@@ -19,8 +19,8 @@
 
     <template #image>
       <div class="h-full flex items-center justify-center">
-        <img src="/assets/resources/design-kit/hero-designkit-light.svg" alt="Design kit illustration" class="dark:hidden object-cover h-3/4 lg:mx-10 opacity-0 lg:opacity-100" role="presentation">
-        <img src="/assets/resources/design-kit/hero-designkit-dark.svg" alt="Design kit illustration" class="hidden dark:block object-cover h-3/4 lg:mx-10 opacity-0 lg:opacity-100" role="presentation">
+        <img src="/assets/design-kit/hero-designkit-light.svg" alt="Design kit illustration" class="dark:hidden object-cover h-3/4 lg:mx-10 opacity-0 lg:opacity-100" role="presentation">
+        <img src="/assets/design-kit/hero-designkit-dark.svg" alt="Design kit illustration" class="hidden dark:block object-cover h-3/4 lg:mx-10 opacity-0 lg:opacity-100" role="presentation">
       </div>
     </template>
   </PageHero>

@@ -26,8 +26,8 @@
 
     <template #image>
       <div class="flex h-full items-center justify-center">
-        <img src="/assets/resources/showcases/hero-light.svg" class="dark:hidden object-contain h-3/4 lg:mx-10 opacity-0 md:opacity-100" role="presentation">
-        <img src="/assets/resources/showcases/hero-dark.svg" class="hidden dark:block object-contain h-3/4 lg:mx-10 opacity-0 md:opacity-100" role="presentation">
+        <img src="/assets/showcase/hero-light.svg" class="dark:hidden object-contain h-3/4 lg:mx-10 opacity-0 md:opacity-100" role="presentation">
+        <img src="/assets/showcase/hero-dark.svg" class="hidden dark:block object-contain h-3/4 lg:mx-10 opacity-0 md:opacity-100" role="presentation">
       </div>
     </template>
   </PageHero>
