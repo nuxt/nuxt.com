@@ -268,6 +268,8 @@ buttonLink: "/support/solutions"
   image:
     light: 'needs-official-agency-light.svg'
     dark: 'needs-official-agency.svg'
+  imageHeight: '58'
+  imageWidth: '52'
   contentClass: 'gap-y-2'
   ---
   #title
@@ -281,6 +283,8 @@ buttonLink: "/support/solutions"
   image:
     light: 'needs-nuxt-expert-light.svg'
     dark: 'needs-nuxt-expert.svg'
+  imageHeight: '58'
+  imageWidth: '52'
   contentClass: 'gap-y-2'
   ---
   #title
@@ -295,6 +299,8 @@ buttonLink: "/support/solutions"
   image:
     light: 'needs-community-support-light.svg'
     dark: 'needs-community-support.svg'
+  imageHeight: '58'
+  imageWidth: '52'
   ---
   #title
   Community support
