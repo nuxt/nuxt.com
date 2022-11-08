@@ -32,7 +32,7 @@
             variant="primary-gradient"
             custom-class="justify-center sm:justify-start"
             truncate
-            @click="trackVisit"
+            @click="trackVisit(page)"
           />
           <!-- <UButton
             label="Contact partner"
@@ -70,7 +70,7 @@
               variant="primary-gradient"
               custom-class="justify-center sm:justify-start"
               truncate
-              @click="trackVisit"
+              @click="trackVisit(page)"
             />
           </div>
         </div>
@@ -138,7 +138,7 @@ const props = defineProps({
 
 useTrackEvent('View Partner', { props: { partner: props.page.title } })
 
-const trackVisit = () => useTrackEvent('Visit Partner', { props: { partner: props.page.title } })
+const trackVisit = partner => useTrackEvent('Visit Partner', { props: { partner: partner.title } })
 
 const websiteDomain = computed(() => {
   let domain
