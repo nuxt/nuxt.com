@@ -24,7 +24,7 @@
         >
           <div class="hidden gradient-border gradient-border-dark dark:block" />
           <div class="dark:hidden gradient-border gradient-border-light" />
-          <ModulesListItemCover :icon="module.name" :alt="module.name" :format="module.format" icon-class="w-auto h-8 sm:h-12" />
+          <ModulesListItemCover :icon="`${module.name}.${module.format}`" :alt="module.name" icon-class="w-auto h-8 sm:h-12" />
         </NuxtLink>
       </SwiperSlide>
     </Swiper>
