@@ -5,6 +5,9 @@
     </template>
 
     <PageList :title="`${filteredModules.length} module${filteredModules.length > 1 ? 's' : ''} found`">
+      <template #heading>
+        <ModulesFilterSearch class="hidden md:block" />
+      </template>
       <template #filters>
         <ModulesFilterVersion size="sm" class="lg:hidden" />
         <ModulesFilterSearch size="sm" class="md:hidden" />
