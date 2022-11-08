@@ -3,10 +3,12 @@
     <div class="slide hidden sm:block" />
 
     <img
-      :src="`https://res.cloudinary.com/nuxt/image/upload/f_auto,q_auto/${showcase.screenshotUrl}`"
+      :src="`https://res.cloudinary.com/nuxt/image/upload/f_auto,q_auto,w_327,h_160/${showcase.screenshotUrl}`"
       :alt="showcase.hostname"
       loading="lazy"
       class="object-cover object-top w-full h-full px-4 sm:px-0"
+      height="160"
+      width="327"
     >
     <div class="px-4 py-3 text-center content">
       <h2 class="font-semibold truncate u-text-gray-900 text-xl">
