@@ -1,6 +1,6 @@
 <template>
   <div class="relative overflow-hidden">
-    <img src="/assets/community/jobs/gradient.svg" class="absolute right-0 hidden mt-32 lg:block">
+    <img src="/assets/support/jobs/gradient.svg" class="absolute right-0 hidden mt-32 lg:block">
 
     <Page id="smooth" class="relative pt-16 -mt-16">
       <PageList :title="`${filteredJobs.length} job${filteredJobs.length > 1 ? 's' : ''} found`" :modules-filter="false">
