@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="flex flex-col justify-between gap-3 lg:flex-row lg:items-center">
-      <ModulesFilterSearch v-if="modulesFilter" class="hidden md:block" />
+      <slot name="heading" />
 
       <button class="flex items-center justify-between font-semibold u-text-gray-900 md:hidden" @click="isOpen = !isOpen">
         <div class="flex items-center">
@@ -45,10 +45,6 @@ defineProps({
   title: {
     type: String,
     default: null
-  },
-  modulesFilter: {
-    type: Boolean,
-    default: true
   }
 })
 

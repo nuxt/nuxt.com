@@ -6,7 +6,7 @@
 const { fetch: fetchShowcases } = useResourcesShowcases()
 const { page } = useContent()
 
-await fetchShowcases(505)
+await fetchShowcases()
 
 useContentHead(page)
 </script>
