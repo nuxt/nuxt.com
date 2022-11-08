@@ -1,9 +1,7 @@
 <template>
   <div>
     <SubNavbar title="Modules" :links="links">
-      <template #right>
-        <!-- CTA -->
-      </template>
+      <template #right />
     </SubNavbar>
 
     <NuxtPage />
@@ -11,9 +9,6 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({
-  documentDriven: false
-})
 const route = useRoute()
 const { fetch: fetchModules, types } = useModules()
 
