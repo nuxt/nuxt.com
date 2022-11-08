@@ -1,5 +1,5 @@
 <template>
-  <USlideover v-model="isOpen">
+  <USlideover v-model="isOpen" :transition="false">
     <template #header>
       <button v-if="selectedLink" class="flex-1 flex items-start" @click="selectedLink = null">
         <Icon name="uil:arrow-left" class="flex-shrink-0 w-7 h-7" />
