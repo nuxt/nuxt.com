@@ -21,7 +21,7 @@ Discover the different support offers to answer your questions, get an audit, co
   author:
     name: Evan You
     job: Creator of VueJS
-    image: /assets/company/support/evan.png
+    image: /assets/support/solutions/evan.png
   ---
   #title
   Consultant sessions are tailored to your need.<br> Here are some example topics you might cover:

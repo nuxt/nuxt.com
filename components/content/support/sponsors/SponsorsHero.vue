@@ -1,5 +1,5 @@
 <template>
-  <PageHero centered>
+  <PageHero>
     <template #title>
       {{ title }}
     </template>
@@ -19,8 +19,12 @@
           size="lg"
         />
       </div>
-      <div class="absolute pb-4 inset-x-0 w-full h-full flex items-center justify-center -z-[1]">
-        <img src="/assets/community/partners/gradient.webp">
+    </template>
+
+    <template #image>
+      <div class="flex h-full items-center justify-center">
+        <img src="/assets/support/sponsors/hero-light.svg" class="dark:hidden object-contain h-3/4 lg:mx-10 opacity-0 lg:opacity-100" role="presentation">
+        <img src="/assets/support/sponsors/hero-dark.svg" class="hidden dark:block object-contain h-3/4 lg:mx-10 opacity-0 lg:opacity-100" role="presentation">
       </div>
     </template>
   </PageHero>

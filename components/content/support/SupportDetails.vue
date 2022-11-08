@@ -10,7 +10,7 @@
       </li>
     </ul>
     <div class="relative mt-16">
-      <img src="/assets/company/support/quote.svg" class="absolute -top-4 -left-8">
+      <img src="/assets/support/solutions/quote.svg" class="absolute -top-4 -left-8">
       <p class="relative">
         <ContentSlot :use="$slots.quote" unwrap="p" />
       </p>

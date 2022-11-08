@@ -12,7 +12,7 @@
       >
         <ContentSlot :use="$slots.info" unwrap="p" />
       </div>
-      <img :src="`/assets/resources/design-kit/logo/${imgName}.svg`" :alt="imgName" :class="full ? 'h-8' : 'h-10'">
+      <img :src="`/assets/design-kit/logo/${imgName}.svg`" :alt="imgName" :class="full ? 'h-8' : 'h-10'">
     </UCard>
     <div class="flex justify-between">
       <p class="font-semibold">
@@ -21,13 +21,13 @@
       <div>
         <a
           class="pr-2 hover:u-text-gray-500 u-text-gray-400 hover:underline"
-          :href="`/assets/resources/design-kit/logo/${imgName}.svg`"
+          :href="`/assets/design-kit/logo/${imgName}.svg`"
           aria-label="Download svg"
           download
         >svg</a>
         <a
           class="hover:u-text-gray-500 u-text-gray-400 hover:underline"
-          :href="`/assets/resources/design-kit/logo/${imgName}.png`"
+          :href="`/assets/design-kit/logo/${imgName}.png`"
           aria-label="Download png"
           download
         >png</a>
