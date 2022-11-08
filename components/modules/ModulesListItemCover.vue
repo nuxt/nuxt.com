@@ -6,6 +6,8 @@
       :alt="alt"
       :class="iconClass"
       loading="lazy"
+      height="48"
+      width="48"
       @error="coverError = true"
     >
     <div v-else class="flex items-center w-12 h-12 p-2 rounded-lg u-bg-gray-100">

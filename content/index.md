@@ -308,44 +308,43 @@ buttonLink: "/support/solutions"
   More than 2000 active contributors on multiple platforms are here to help !
   :::
 :::
-#carousel
-:::home-carousel
----
-items:
-  - unilever
-  - gitlab
-  - awwwards
-  - adobe
-  - nintendo
-  - nasa
-  - tiktok
-  - backmarket
----
-:::s
+  :::home-carousel
+  ---
+  items:
+    - unilever
+    - gitlab
+    - awwwards
+    - adobe
+    - nintendo
+    - nasa
+    - tiktok
+    - backmarket
+  ---
+  :::
 ::
 ::
 
 ::home-journey-section
 #content
-:::home-section
----
-buttons:
-- label: 'Get started'
-  size: 'xl'
-  variant: 'primary-gradient'
-  to: '/docs/getting-started/introduction'
-  target: '_blank'
-- label: 'Explore Examples'
-  size: 'xl'
-  variant: 'secondary'
-  to: '#'
-  target: '_blank'
----
-#sectionTitle
-GETTING STARTED
-#title
-Start your Nuxt Journey
-#description
-Learn everything you need to know, from beginner to master.
-:::
+  :::home-section
+  ---
+  buttons:
+  - label: 'Get started'
+    size: 'xl'
+    variant: 'primary-gradient'
+    to: '/docs/getting-started/introduction'
+    target: '_blank'
+  - label: 'Explore Examples'
+    size: 'xl'
+    variant: 'secondary'
+    to: '#'
+    target: '_blank'
+  ---
+  #sectionTitle
+  GETTING STARTED
+  #title
+  Start your Nuxt Journey
+  #description
+  Learn everything you need to know, from beginner to master.
+  :::
 ::
