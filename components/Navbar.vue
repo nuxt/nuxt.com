@@ -28,8 +28,8 @@
               :target="link.target"
               class="text-sm lg:text-base link"
               :class="{
-                'font-semibold u-text-gray-900': isActive(link),
-                'font-medium u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900': !isActive(link),
+                'active': isActive(link),
+                'font-medium u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900 active:shadow-inner active:font-semibold': !isActive(link),
               }"
             >
               {{ link.title }}
@@ -54,6 +54,7 @@ const isOpen = ref(false)
 const links: Ref<NavItem[]> = ref([{
   title: 'Docs',
   icon: 'uil:book-open',
+  path: '/docs',
   _path: '/docs/getting-started/introduction'
 }, {
   title: 'Modules',
@@ -67,13 +68,15 @@ const links: Ref<NavItem[]> = ref([{
 }, {
   title: 'Support',
   _path: '/support/solutions',
+  path: '/support',
   icon: 'uil:globe'
 }])
 
 const visibleLinks = computed(() => links.value.filter(link => !link.hidden))
 
 function isActive (link) {
-  return link.exact ? route.fullPath === link._path : route.fullPath.startsWith(link._path)
+  // Workaround for /docs
+  return link.exact ? route.fullPath === link._path : route.fullPath.startsWith(link.path || link._path)
 }
 </script>
 
@@ -87,13 +90,17 @@ function isActive (link) {
   transition-timing-function: cubic-bezier(.4,0,.2,1);
 }
 
-.link:hover, .link.router-link-exact-active {
-  background-color: rgb(244 244 245);
+.link:hover {
+  background-color: rgb(244, 244, 245);
+}
+.link.active {
+  @apply font-semibold u-text-gray-900 shadow-inner;
+  background-color: rgb(244, 244, 245);
   outline: 2px solid transparent;
   outline-offset: 2px;
 }
 
-.dark .link:hover, .dark .link.router-link-exact-active {
+.dark .link:hover, .dark .active {
   background-color: rgb(24 24 27);
 }
 
