@@ -28,7 +28,7 @@
           size="lg"
           variant="primary-gradient"
           truncate
-          class="focus-visible:outline-2"
+          class="focus-visible:ring-2"
         />
         <UButton
           :label="secondaryButtonText"
@@ -38,7 +38,7 @@
           variant="transparent"
           icon="uil:angle-right-b"
           trailing
-          class="u-text-gray-900"
+          class="u-text-gray-900 focus-visible:ring-2"
           truncate
         />
       </div>

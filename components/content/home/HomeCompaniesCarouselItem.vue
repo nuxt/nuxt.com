@@ -1,5 +1,5 @@
 <template>
-  <NuxtLink :to="showcase.url" target="_blank">
+  <NuxtLink :to="showcase.url" target="_blank" tabindex="-1">
     <div class="slide hidden sm:block" />
 
     <img

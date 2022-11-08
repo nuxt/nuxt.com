@@ -7,7 +7,7 @@
         variant="transparent"
         to="https://twitter.com/nuxt_js"
         target="_blank"
-        class="!p-0 u-text-gray-900"
+        class="!p-0 u-text-gray-900 focus-visible:ring-2"
         title="Go to Nuxt Twitter Account"
       />
     </li>
@@ -27,7 +27,7 @@
         variant="transparent"
         to="https://github.com/nuxt/framework"
         target="_blank"
-        class="!p-0 u-text-gray-900"
+        class="!p-0 u-text-gray-900 focus-visible:ring-2"
         title="Go to Nuxt Github page"
       />
     </li>
