@@ -86,6 +86,7 @@ const tree = computed(() => {
 
   const nav = navigation.value.filter(navLink => props.links.some(link => (navLink._path === `/${link._path.split('/')[1]}`) && (navLink._path !== '/docs')))
   const docs = navigation.value.filter(navLink => navLink._path === '/docs')
+  docs[0].icon = 'ph:books'
 
   // remove bridge and migration from /docs
   docs[0].children = docs[0]?.children?.filter(link => !['/docs/migration', '/docs/bridge'].includes(link._path))
