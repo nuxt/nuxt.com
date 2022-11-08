@@ -1,13 +1,14 @@
 <template>
-  <ModulesHero />
-  <ModulesList />
+  <ContentRenderer :value="page" />
 </template>
 
 <script setup>
+const { page } = useContent()
+
 useHead({
-  title: 'Modules',
+  title: page.value.title,
   meta: [
-    { name: 'description', content: 'Discover our list of modules to supercharge your Nuxt project.' }
+    { name: 'description', content: page.value.description }
   ]
 })
 </script>
