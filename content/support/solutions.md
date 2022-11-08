@@ -11,38 +11,72 @@ Discover the different support offers to answer your questions, get an audit, co
 ::
 
 ::support-section
-  :::support-details
-  ---
-  topics:
-    - Your development goals and challenges
-    - Web application cross-platform development
-    - Questions about how Nuxt works and how to make it work
-    - Nuxt premium dedicated solutions for companies
-  author:
-    name: Evan You
-    job: Creator of VueJS
-    image: /assets/support/solutions/evan.png
-  ---
-  #title
-  Consultant sessions are tailored to your need.<br> Here are some example topics you might cover:
-  #quote
-  Nuxt offers a compelling solution and a great ecosystem to help you ship fullstack Vue apps that are performant and SEO friendly. The flexibility to choose between SSR and SSG is icing on the cake.
-  :::
-
-  ::support-form
-  ::
+---
+image: 'agency'
+to: '/support/agencies'
+---
+#title
+Official Agency partners
+#description
+Are you looking for a trusted partner with a strong expertise in Nuxt development?
+Consult our agency partner catalog and find an agency near you with the right set of skills. Deliver faster using our trusted agency partners.
+<br /><br />
+We will gladly help you refine your needs and help you select the relevant partner for you.
+#link
+Looking for an agency
 ::
 
-::support-carousel
+::support-section
 ---
-items:
-  - unilever
-  - gitlab
-  - adobe
-  - nintendo
-  - nasa
-  - tiktok
-  - awwwards
-  - backmarket
+image: 'experts'
 ---
+#title
+Nuxt Experts
+#description
+Do you need full time consulting service by a certified Nuxt Expert?
+We have built an expert network that covers a large variety of needs:
+#extra
+- [![](/assets/support/solutions/dot.svg) Identify and solve your pain points]{.flex .gap-x-2 .pb-4}
+- [![](/assets/support/solutions/dot.svg) Set your project on the right track with best practices]{.flex .gap-x-2 .pb-4}
+- [![](/assets/support/solutions/dot.svg) Improve your website performance]{.flex .gap-x-2 .pb-4}
+- [![](/assets/support/solutions/dot.svg) Provide custom solutions or integrations]{.flex .gap-x-2 .pb-6}
+[Contact us at [experts@nuxt.com]{ .text-green-400 } for a quote.]{ .text-lg .font-semibold }
+::
+
+::support-section
+---
+image: 'community'
+---
+#title
+Community Support
+#description
+Our active community is comprised of more than 2000 contributors. Asking your questions on our GitHub discussion board is a free and efficient way to ensure that you find solutions to your problems.
+#list
+::support-community-list
+---
+icon: github-discussion
+---
+#title
+GitHub discussion
+#description
+We first recommend looking for your question on the [discussion board](https://github.com/nuxt/framework/discussions){ .font-semibold .text-green-400 }. Feel free to create a post if you can't find the answer.
+::
+::support-community-list
+---
+icon: discord-server
+---
+#title
+Discord server
+#description
+Our [Discord server](https://discord.com/invite/nuxt-473401852243869706){ .font-semibold .text-green-400 } is also a good place to have real time exchanges with members of the community.
+::
+::support-community-list
+---
+icon: other-platform
+---
+#title
+Other Platforms
+#description
+If none of the solutions above work for you, you can also try the [Nuxt subreddit](https://www.reddit.com/r/Nuxt/){ .font-semibold .text-green-400 } or [StackOverflow.](https://stackoverflow.com/questions/tagged/nuxt.js?tab=Newest){ .font-semibold .text-green-400 }
+::
 ::

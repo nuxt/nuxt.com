@@ -153,7 +153,7 @@ They opinions are valuable and worth sharing to everyone.
     #job
     Creator of VueJS
     #quote
-    Nuxt offers a compelling solution and a great ecosystem to help you ship fullstack Vue apps that are performant and SEO friendly. The flexibility to choose between SSR and SSG is icing on the cake
+    Nuxt offers a compelling solution and a great ecosystem to help you ship fullstack Vue apps that are performant and SEO friendly. The flexibility to choose between SSR and SSG is icing on the cake.
     ::::
 
     ::::home-testimonials-item
