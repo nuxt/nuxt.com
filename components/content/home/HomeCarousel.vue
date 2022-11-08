@@ -9,7 +9,14 @@
     >
       <SwiperSlide v-for="(item, index) in items" :key="index" class="flex items-center justify-center h-[60px]">
         <div class="relative flex items-center justify-center h-full">
-          <img :src="`/assets/${ !partners ? 'brands' : 'partners' }/${item.name || item}.svg`" :alt="item" class="text-gray-400 dark:text-white" :class="item.height ? `h-[${item.height}px]` : 'h-8'">
+          <img
+            :src="`/assets/${ !partners ? 'brands' : 'partners' }/${item.name || item}.svg`"
+            :alt="item"
+            class="text-gray-400 dark:text-white"
+            :class="item.height ? `h-[${item.height}px]` : 'h-8'"
+            width="400"
+            loading="lazy"
+          >
         </div>
       </SwiperSlide>
     </Swiper>

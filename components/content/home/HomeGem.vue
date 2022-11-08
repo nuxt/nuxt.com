@@ -1,73 +1,76 @@
 <template>
-  <div id="gemWrapper" ref="gemWrapper" class="transition duration-1000">
-    <div ref="gemAnim" class="opacity-100" />
+  <div id="gemWrapper" ref="gemWrapper" :style="{ opacity: ready ? 1 : 0 }" class="transition duration-1000">
+    <div ref="gemAnim" />
   </div>
 </template>
 
 <script setup>
 import { useEventListener } from '@vueuse/core'
-
-import * as THREE from 'three'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
-import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { useColorMode } from '#imports'
 
+const ready = ref()
 const gemWrapper = ref(null)
 const gemAnim = ref(null)
 
 const colorMode = useColorMode()
 
-// Loaders
-const gltfLoader = new GLTFLoader()
+onMounted(async () => {
+  const THREE = await import('three').then(m => m.default || m)
+  const { OrbitControls } = await import('three/examples/jsm/controls/OrbitControls.js' /* webpackChunkName: "gem" */).then(m => m.default || m)
+  const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js' /* webpackChunkName: "gem" */).then(m => m.default || m)
+  const { RGBELoader } = await import('three/examples/jsm/loaders/RGBELoader.js' /* webpackChunkName: "gem" */).then(m => m.default || m)
 
-// Renderer
-const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'high-performance' })
-renderer.outputEncoding = THREE.sRGBEncoding
-renderer.toneMapping = THREE.ACESFilmicToneMapping
-renderer.toneMappingExposure = 1
-if (window.matchMedia('(min-width: 640px)').matches) {
-  renderer.setSize(475, 475)
-} else if (window.matchMedia('(min-width: 400px)').matches) {
-  renderer.setSize(240, 240)
-} else {
-  renderer.setSize(180, 180)
-}
+  // Loaders
+  const gltfLoader = new GLTFLoader()
 
-// Scene
-const scene = new THREE.Scene()
-
-// Gem
-let gem
-
-const hdrDark = new RGBELoader().load(
-  '/assets/home/environment_D.hdr',
-  () => {
-    hdrDark.mapping = THREE.EquirectangularReflectionMapping
+  // Renderer
+  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'high-performance' })
+  renderer.outputEncoding = THREE.sRGBEncoding
+  renderer.toneMapping = THREE.ACESFilmicToneMapping
+  renderer.toneMappingExposure = 1
+  if (window.matchMedia('(min-width: 640px)').matches) {
+    renderer.setSize(475, 475)
+  } else if (window.matchMedia('(min-width: 400px)').matches) {
+    renderer.setSize(240, 240)
+  } else {
+    renderer.setSize(180, 180)
   }
-)
 
-const hdrLight = new RGBELoader().load(
-  '/assets/home/environment_L.hdr',
-  () => {
-    hdrLight.mapping = THREE.EquirectangularReflectionMapping
-  }
-)
+  // Scene
+  const scene = new THREE.Scene()
 
-const gemMaterial = new THREE.MeshPhysicalMaterial({})
+  // Gem
+  let gem
 
-gltfLoader.load('/assets/home/gem.glb', function (gltf) {
-  gem = gltf.scene.children[0]
-  gem.traverse((o) => {
-    if (o.isMesh) { o.material = gemMaterial }
-    gem.scale.set(1, 1, 1)
-    gem.position.set(0, 0, 0)
-    gem.rotation.z = 0.3
-    scene.add(gem)
+  const hdrDark = new RGBELoader().load(
+    '/assets/home/environment_D.hdr',
+    () => {
+      hdrDark.mapping = THREE.EquirectangularReflectionMapping
+    }
+  )
+
+  const hdrLight = new RGBELoader().load(
+    '/assets/home/environment_L.hdr',
+    () => {
+      hdrLight.mapping = THREE.EquirectangularReflectionMapping
+    }
+  )
+
+  const gemMaterial = new THREE.MeshPhysicalMaterial({})
+
+  gltfLoader.load('/assets/home/gem.glb', function (gltf) {
+    gem = gltf.scene.children[0]
+    gem.traverse((o) => {
+      if (o.isMesh) { o.material = gemMaterial }
+      gem.scale.set(1, 1, 1)
+      gem.position.set(0, 0, 0)
+      gem.rotation.z = 0.3
+      scene.add(gem)
+
+      ready.value = true
+    })
   })
-})
 
-onMounted(() => {
   // Renderer
   gemAnim.value.appendChild(renderer.domElement)
   renderer.setPixelRatio(window.devicePixelRatio)

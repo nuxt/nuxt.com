@@ -1,33 +1,33 @@
 
 <template>
   <UContainer :constrained="false" class="relative py-8 sm:py-12 md:py-16 lg:pb-16 lg:pt-28">
-      <Swiper
-        v-for="(swiper, index) in 3"
-        :key="index"
-        :modules="[Autoplay]"
-        :slides-per-view="slidesPerView"
-        :loop="true"
-        :dir="index === 1 ? 'rtl' : 'ltr'"
-        :autoplay="autoplay"
-        :speed="5000"
-        class="mb-2 sm:mb-8"
+    <Swiper
+      v-for="(swiper, index) in 3"
+      :key="index"
+      :modules="[Autoplay]"
+      :slides-per-view="slidesPerView"
+      :loop="true"
+      :dir="index === 1 ? 'rtl' : 'ltr'"
+      :autoplay="autoplay"
+      :speed="5000"
+      class="mb-2 sm:mb-8"
+    >
+      <SwiperSlide
+        v-for="(module, i) in index === 0 ? modulesList.slice(0, 7) : index === 1 ? modulesList.slice(7, 14) : modulesList.slice(14)"
+        :key="i"
+        class="flex items-center justify-center w-[64px] sm:w-[92px] relative my-1"
+        :style="{ height: '92px' }"
       >
-        <SwiperSlide
-          v-for="(module, i) in index === 0 ? modulesList.slice(0, 7) : index === 1 ? modulesList.slice(7, 14) : modulesList.slice(14)"
-          :key="i"
-          class="flex items-center justify-center w-[64px] sm:w-[92px] relative my-1"
-          :style="{ height: '92px' }"
+        <NuxtLink
+          class="relative flex items-center justify-center bg-white dark:bg-gray-900 h-[64px] w-[64px] sm:h-[92px] sm:w-[92px] rounded-md ring-1 ring-gray-200 hover:ring-0 dark:ring-0"
+          :to="`/modules/${module.name}`"
         >
-          <NuxtLink
-            class="relative flex items-center justify-center bg-white dark:bg-gray-900 h-[64px] w-[64px] sm:h-[92px] sm:w-[92px] rounded-md ring-1 ring-gray-200 hover:ring-0 dark:ring-0"
-            :to="`/modules/${module.name}`"
-          >
-            <div class="hidden gradient-border gradient-border-dark dark:block" />
-            <div class="dark:hidden gradient-border gradient-border-light" />
-            <ModulesListItemCover :icon="module.icon" :alt="module.name" icon-class="w-auto h-8 sm:h-12" />
-          </NuxtLink>
-        </SwiperSlide>
-      </Swiper>
+          <div class="hidden gradient-border gradient-border-dark dark:block" />
+          <div class="dark:hidden gradient-border gradient-border-light" />
+          <ModulesListItemCover :icon="`${module.name}.${module.format}`" :alt="module.name" icon-class="w-auto h-8 sm:h-12" />
+        </NuxtLink>
+      </SwiperSlide>
+    </Swiper>
     <div class="w-full flex justify-center items-center pt-8">
       <UButton
         to="/modules"
@@ -67,35 +67,92 @@ defineProps({
   }
 })
 
-const { modules } = useModules()
-
-const modulesName = [
-  'tailwindcss',
-  'i18n',
-  'content',
-  'pinia',
-  'image',
-  'vueuse',
-  'color-mode',
-  'prismic',
-  'windicss',
-  'strapi',
-  'formkit',
-  'storyblok',
-  'sanity',
-  'icon',
-  'supabase',
-  'algolia',
-  'directus',
-  'unlighthouse',
-  'meilisearch',
-  'harlem',
-  'fontaine'
+const modulesList = [
+  {
+    name: 'tailwindcss',
+    format: 'png'
+  },
+  {
+    name: 'i18n',
+    format: 'png'
+  },
+  {
+    name: 'content',
+    format: 'png'
+  },
+  {
+    name: 'pinia',
+    format: 'svg'
+  },
+  {
+    name: 'image',
+    format: 'png'
+  },
+  {
+    name: 'vueuse',
+    format: 'svg'
+  },
+  {
+    name: 'color-mode',
+    format: 'png'
+  },
+  {
+    name: 'prismic',
+    format: 'png'
+  },
+  {
+    name: 'windicss',
+    format: 'svg'
+  },
+  {
+    name: 'strapi',
+    format: 'png'
+  },
+  {
+    name: 'formkit',
+    format: 'png'
+  },
+  {
+    name: 'storyblok',
+    format: 'png'
+  },
+  {
+    name: 'sanity',
+    format: 'png'
+  },
+  {
+    name: 'icons',
+    format: 'png'
+  },
+  {
+    name: 'supabase',
+    format: 'png'
+  },
+  {
+    name: 'algolia',
+    format: 'svg'
+  },
+  {
+    name: 'directus',
+    format: 'svg'
+  },
+  {
+    name: 'unlighthouse',
+    format: 'svg'
+  },
+  {
+    name: 'meilisearch',
+    format: 'svg'
+  },
+  {
+    name: 'harlem',
+    format: 'svg'
+  },
+  {
+    name: 'fontaine',
+    format: 'svg'
+  }
 ]
-
-const modulesList = computed(() => {
-  return modules.value.filter(module => modulesName.includes(module.name))
-})
 
 const { smaller } = useBreakpoints(breakpointsTailwind)
 

@@ -2,7 +2,7 @@
   <div class="dark">
     <UCard class="rounded-md" ring-class="" body-class="flex flex-col p-4 sm:p-8 gap-y-6 max-w-[519px] max-h-[272px] justify-center">
       <div class="flex items-center gap-x-4">
-        <img src="/assets/home/github-card.svg" class="h-[76px] w-[76px]">
+        <img src="/assets/home/github-card.svg" class="h-[76px] w-[76px]" width="76" height="76">
         <div>
           <h6 class="pb-2 text-sm font-medium text-white sm:text-base">
             <ContentSlot :use="$slots.title" unwrap="p" />
