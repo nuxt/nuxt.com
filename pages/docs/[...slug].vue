@@ -1,11 +1,19 @@
 <template>
   <DocsPage :toc="hasToc">
     <ContentRenderer v-if="page" :value="page" />
+    <hr>
+    <div class="u-text-gray-500 py-6">
+      <NuxtLink :to="`https://github.com/nuxt/framework/edit/main/docs/${githubLink}`" class="hover:text-green-400" target="_blank" rel="noreferer noopener">
+        <Icon name="uil:edit" /> Edit on Github
+      </NuxtLink>
+    </div>
   </DocsPage>
 </template>
 
 <script setup lang="ts">
 const { page } = useContent()
+
+const githubLink = computed(() => page?.value?._file?.replace('docs', 'content'))
 
 const hasToc = computed(() => !!page.value.body?.toc?.links?.length)
 
