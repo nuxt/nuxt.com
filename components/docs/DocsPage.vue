@@ -14,9 +14,9 @@
         <DocsPageToc class="mt-4 lg:mt-0" :class="[isOpen ? 'lg:block' : 'hidden lg:block']" />
       </div>
     </div>
-    <div class="docs-page" :class="{ 'col-span-10 lg:col-span-8': toc, 'col-span-10': !toc }">
+    <article class="docs-page" :class="{ 'col-span-10 lg:col-span-8': toc, 'col-span-10': !toc }">
       <slot />
-    </div>
+    </article>
   </section>
 </template>
 
