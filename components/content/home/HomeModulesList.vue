@@ -151,7 +151,7 @@ const modulesList = [
   },
   {
     name: 'fontaine',
-    format: 'svg'
+    format: 'png'
   }
 ]
 
