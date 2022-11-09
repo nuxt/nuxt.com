@@ -2,7 +2,7 @@
   <li>
     <UCard
       padded
-      class="h-28"
+      class="h-[140px]"
       shadow-class=""
       ring-class=""
       :background-class="cardClass"
