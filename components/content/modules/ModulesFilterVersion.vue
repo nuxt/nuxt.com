@@ -6,7 +6,8 @@
     :size="size"
     text-attribute="key"
     appearance="invert"
-    icon-base-class="u-text-black"
+    class="custom-class"
+    icon-base-class="text-black"
     list-base-class="absolute right-0 z-10 w-full p-1 mt-1 overflow-auto text-sm rounded-md shadow-lg sm:w-32 u-bg-black max-h-60 ring-1 u-ring-white"
     list-option-active-class="bg-gray-100 u-text-gray-900 dark:bg-gray-900"
     list-option-inactive-class="u-text-gray-50"
@@ -43,3 +44,9 @@ const version = computed({
   }
 })
 </script>
+
+<style lang="postcss">
+.custom-class > div > button > span {
+  @apply text-black
+}
+</style>
