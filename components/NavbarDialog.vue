@@ -88,8 +88,7 @@ const tree = computed(() => {
   const docs = navigation.value.filter(navLink => navLink._path === '/docs')
   docs[0].icon = 'ph:books'
 
-  // remove bridge and migration from /docs
-  docs[0].children = docs[0]?.children?.filter(link => !['/docs/migration', '/docs/bridge'].includes(link._path))
+  docs[0].children = formatDocsNav(docs[0]?.children)
 
   return [
     ...docs,
