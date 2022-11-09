@@ -14,7 +14,7 @@
       <p v-if="$slots.description" class="text-lg xl:text-xl 2xl:text-2xl u-text-gray-500 sm:max-w-xl md:max-w-3xl lg:max-w-4xl">
         <ContentSlot :use="$slots.description" unwrap="p" />
       </p>
-      <NuxtLink v-if="to" :to="to" class="pt-8 text-md xl:text-lg 2xl:text-xl u-text-gray-900 font-medium flex gap-x-4 items-center relative group w-fit">
+      <NuxtLink v-if="to" :to="to" class="pt-8 text-md xl:text-lg 2xl:text-xl u-text-gray-900 font-medium flex gap-x-4 items-center relative group w-fit focus-visible:ring-2">
         <ContentSlot :use="$slots.link" unwrap="p" />
         <Icon name="heroicons-solid:chevron-right" class="w-5 h-5 mt-1" />
         <span class="absolute w-0 -bottom-1 h-0.5 u-bg-gray-900 group-hover:w-full transition-all duration-200" />
