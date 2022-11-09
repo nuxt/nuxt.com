@@ -135,7 +135,8 @@ export default defineNuxtConfig({
     // prerender is not yet implemented, using nitro.prerender.routes and hooks for it in the meantime
     // '/': { prerender: true },
     // '/docs/**': { prerender: true },
-    '/**': { cache: { swr: true, maxAge: 120, staleMaxAge: 60, headersOnly: true } }
+    '/**': { cache: { swr: true, maxAge: 120, staleMaxAge: 60, headersOnly: true } },
+    '/docs': { redirect: '/docs/getting-started/installation' }
     // '/modules/**': { swr: 60 },
     // '/partners/**': { swr: 60 },
     // '/showcase': { swr: 60 },
