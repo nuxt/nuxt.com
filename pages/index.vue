@@ -12,10 +12,5 @@ const { fetch: fetchModules } = useModules()
 await fetchShowcases()
 await fetchModules()
 
-useHead({
-  title: 'Intuitive Web Development',
-  meta: [
-    { name: 'description', content: 'Nuxt is an open source framework making web development simple and powerful.' }
-  ]
-})
+useContentHead(page)
 </script>
