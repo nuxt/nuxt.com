@@ -1,11 +1,13 @@
 <template>
-  <DocsPage :toc="page?.toc">
+  <DocsPage :toc="hasToc">
     <ContentRenderer v-if="page" :value="page" />
   </DocsPage>
 </template>
 
 <script setup lang="ts">
 const { page } = useContent()
+
+const hasToc = computed(() => !!page.value.body?.toc?.links?.length)
 
 useContentHead(page)
 </script>
