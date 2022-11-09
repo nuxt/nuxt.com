@@ -32,7 +32,7 @@
 
     <div v-if="regions.length">
       <p class="font-semibold u-text-gray-900 py-1.5">
-        Regions
+        Locations
       </p>
 
       <ul class="flex flex-col py-4 pr-2 gap-y-2">
