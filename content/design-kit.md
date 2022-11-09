@@ -198,5 +198,5 @@ Typography
 Usage
 #description
 For Nuxt brand, we will only use Regular / Medium / Semibold / Bold weights 99% of the time. You should avoid Light & Heavy if you want to use it as Nuxt Identity. Only exceptions are for super, subscript characters, also you can use heavy if you go upper than 72px for a font size.
-As Roobert font is licensed, you cannot use it for free so you can use the [Inter font]{ .underline .font-semibold } as an alternative. If you want to have visuals with Roobert official font, contact us we will give you the asset ready.
+As Roobert font is licensed, you cannot use it for free so you can use the [Inter font](https://fonts.google.com/specimen/Inter){.font-semibold .text-green-400} as an alternative. If you want to have visuals with Roobert official font, contact us we will give you the asset ready.
 ::
