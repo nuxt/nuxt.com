@@ -32,14 +32,15 @@
             variant="primary-gradient"
             custom-class="justify-center sm:justify-start"
             truncate
+            @click="trackVisit(page)"
           />
-          <UButton
+          <!-- <UButton
             label="Contact partner"
             size="xl"
             variant="gray"
             custom-class="justify-center sm:justify-start"
             truncate
-          />
+          /> -->
         </div>
       </div>
 
@@ -62,10 +63,14 @@
               @click="onBack"
             />
             <UButton
-              label="Become a partner"
-              to="https://docs.google.com/forms/d/e/1FAIpQLSf85qskit5QqmGJcruGkGF0U7240Bh9MeN0pHB18UiOMWC8dA/viewform"
+              label="Visit website"
+              :to="page.link"
+              target="_blank"
               size="xl"
+              variant="primary-gradient"
               custom-class="justify-center sm:justify-start"
+              truncate
+              @click="trackVisit(page)"
             />
           </div>
         </div>
@@ -130,6 +135,10 @@ const props = defineProps({
     required: true
   }
 })
+
+useTrackEvent('View Partner', { props: { partner: props.page.title } })
+
+const trackVisit = partner => useTrackEvent('Visit Partner', { props: { partner: partner.title } })
 
 const websiteDomain = computed(() => {
   let domain

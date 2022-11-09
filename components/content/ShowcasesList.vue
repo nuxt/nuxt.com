@@ -10,6 +10,12 @@
         <span class="lg:hidden">Category</span>
       </template>
 
+      <template #heading>
+        <h2 class="py-1.5 font-semibold u-text-gray-900 text-lg">
+          {{ selectedCategory?.label }}
+        </h2>
+      </template>
+
       <template #filters>
         <ShowcasesFilterCategory class="lg:hidden" />
       </template>

@@ -1,5 +1,5 @@
 <template>
-  <USlideover v-model="isOpen">
+  <USlideover v-model="isOpen" :transition="false" :overlay="false">
     <template #header>
       <button v-if="selectedLink" class="flex-1 flex items-start" @click="selectedLink = null">
         <Icon name="uil:arrow-left" class="flex-shrink-0 w-7 h-7" />
@@ -86,6 +86,7 @@ const tree = computed(() => {
 
   const nav = navigation.value.filter(navLink => props.links.some(link => (navLink._path === `/${link._path.split('/')[1]}`) && (navLink._path !== '/docs')))
   const docs = navigation.value.filter(navLink => navLink._path === '/docs')
+  docs[0].icon = 'ph:books'
 
   // remove bridge and migration from /docs
   docs[0].children = docs[0]?.children?.filter(link => !['/docs/migration', '/docs/bridge'].includes(link._path))
