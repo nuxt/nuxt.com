@@ -1,6 +1,6 @@
 ---
-title: 'Welcome'
-description: 'Develop a modern website'
+title: ''
+description: 'Build your next Vue.js application with confidence using Nuxt. An open source framework under MIT license that makes web development simple and powerful.'
 showcasesListId: 505
 ---
 
@@ -27,7 +27,7 @@ Build your next Vue.js application with confidence using Nuxt. An open source fr
 #title
 Deliver an optimized [User Experience]{.text-transparent .bg-clip-text .bg-gradient-to-r .from-green-400 .to-teal-400}
 #description
-How a user interacts with and experience your website is key. It includes a person's perceptions of utility, ease of use, and efficiency. Nuxt is built with a great user experience in mind by default to keep your end-users as satisfied as possible.
+How a user interacts with and experiences your website will determine your impact. Utility, ease of use, and efficiency are key. **Nuxt is built with a set of features that make this possible.**
 #extra
   ::home-card-list
     :::home-card-item
@@ -39,8 +39,7 @@ How a user interacts with and experience your website is key. It includes a pers
     #title
     Fast and Furious
     #description
-    Optimized by default with code-splitting, tree-shaking, 3ms cold-start, link prefetching, payload extraction, to name a few.
-    Fast by default so you can focus on building.
+    Optimized with code-splitting, tree-shaking, 3ms cold-start, link prefetching, payload extraction, just to name a few. Fast by default so you can focus on building.
     :::
     :::home-card-item
     ---
@@ -49,10 +48,10 @@ How a user interacts with and experience your website is key. It includes a pers
       dark: 'ux-hybrid.svg'
     ---
     #title
-    On-demand Rendering.
+    On-demand Rendering
     #description
     Decide what rendering strategy at the route level: SSR, SSG, CSR, ISR, ESR, SWR.
-    Build any kind of website or web application with best performance in mind.
+    Build any kind of website or web application with optimized performance in mind.
     :::
     :::home-card-item
     ---
@@ -61,9 +60,9 @@ How a user interacts with and experience your website is key. It includes a pers
       dark: 'ux-seo.svg'
     ---
     #title
-    Search Engine Optimized
+    SEO & Web Vitals
     #description
-    By leveraging server-side rendering, ESM format and optimized images. Nuxt websites are indexable by search engines while giving an application feeling to the end-users.
+    By leveraging server-side rendering, ESM format and optimized images, Nuxt websites are indexable by search engines while giving the feeling of an app to the end-users. 
     :::
   ::
 ::
@@ -76,7 +75,7 @@ titleSizeClass: 'text-2xl font-semibold md:text-3xl lg:text-4xl'
 #title
 Trusted by world-class companies
 #description
-Explore our selection of websites & applications made with Nuxt. F-500 companies are trusting Nuxt as well as creative agencies and freelancers.
+Explore our selection of websites & applications made with Nuxt. F-500 companies, creative agencies and freelancers all trust us.
 #link
 Discover our showcase
 #extra
@@ -102,7 +101,7 @@ Developers deserve solutions as well designed as non-technical people. Our focus
         dark: 'dx-plug-and-play.svg'
       ---
       #title
-      Plug’n play
+      Plug & Play
       #description
       Unlock features by creating folders and files with the [most intuitive directory structure]{.font-semibold} made for developers and teams.
       :::
@@ -124,7 +123,7 @@ Developers deserve solutions as well designed as non-technical people. Our focus
         dark: 'dx-batteries.svg'
       ---
       #title
-      Batteries included
+      Batteries Included
       #description
       Data fetching, state management, meta tags helpers, route guards, cookies, error handling, bundle analyzer and more.
       :::
@@ -137,9 +136,9 @@ Developers deserve solutions as well designed as non-technical people. Our focus
 titleSizeClass: 'text-2xl font-semibold md:text-3xl lg:text-4xl'
 ---
 #title
-Trusted by the world wild web
+Trusted by the world wide web
 #description
-They opinions are valuable and worth sharing to everyone.
+Their opinions are valuable and worth sharing to everyone.
 #extra
   :::home-testimonials-list
   #items
@@ -189,7 +188,7 @@ They opinions are valuable and worth sharing to everyone.
 #title
 Ship faster with [Nuxt modules]{.text-transparent .bg-clip-text .bg-gradient-to-r .from-green-400 .to-teal-400}
 #description
-Nuxt is made with a robust plugin system, integrate with popular CMS or UI librairies with one line of code. With more than 15M monthly downloads and 1K contributors, Nuxt modules are you day to day companions.
+Nuxt is made with a robust plugin system. Integrate with popular CMS or UI librairies with one line of code. With more than 15M monthly downloads and 1K contributors, Nuxt modules are you day to day companions.
 #link
 Explore Nuxt modules
 #extra
@@ -213,7 +212,7 @@ Nuxt is composed of web builders all over the world who like to craft beautiful 
     to: 'https://www.npmjs.com/package/nuxt'
     ---
     #title
-    50M
+    56M
     #description
     npm downloads
     :::
@@ -233,7 +232,7 @@ Nuxt is composed of web builders all over the world who like to craft beautiful 
     to: 'https://github.com/nuxt'
     ---
     #title
-    41k
+    55k
     #description
     GitHub stars
     :::
@@ -243,7 +242,7 @@ Nuxt is composed of web builders all over the world who like to craft beautiful 
     to: 'https://twitter.com/nuxt_js'
     ---
     #title
-    75k
+    76k
     #description
     Twitter followers
     :::
@@ -271,6 +270,7 @@ buttonLink: "/support/solutions"
   imageHeight: '58'
   imageWidth: '52'
   contentClass: 'gap-y-2'
+  to: '/support/agencies'
   ---
   #title
   Official agency partners
@@ -286,6 +286,7 @@ buttonLink: "/support/solutions"
   imageHeight: '58'
   imageWidth: '52'
   contentClass: 'gap-y-2'
+  to: '/support/solutions'
   ---
   #title
   Nuxt experts network
@@ -301,6 +302,7 @@ buttonLink: "/support/solutions"
     dark: 'needs-community-support.svg'
   imageHeight: '58'
   imageWidth: '52'
+  to: '/support/solutions'
   ---
   #title
   Community support
@@ -308,19 +310,6 @@ buttonLink: "/support/solutions"
   More than 2000 active contributors on multiple platforms are here to help !
   :::
 :::
-  :::home-carousel
-  ---
-  items:
-    - unilever
-    - gitlab
-    - awwwards
-    - adobe
-    - nintendo
-    - nasa
-    - tiktok
-    - backmarket
-  ---
-  :::
 ::
 ::
 
