@@ -3,10 +3,12 @@
     <div class="flex flex-col">
       <div class="flex-1 min-h-0">
         <img
-          :src="`https://res.cloudinary.com/nuxt/image/upload/f_auto,q_auto/${showcase.screenshotUrl}`"
+          :src="`https://res.cloudinary.com/nuxt/image/upload/f_auto,q_auto,w_488,h_298/${showcase.screenshotUrl}`"
           :alt="showcase.hostname"
           loading="lazy"
           class="object-cover object-top w-full h-full"
+          height="298"
+          width="488"
         >
       </div>
 
