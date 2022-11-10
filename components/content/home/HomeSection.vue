@@ -34,6 +34,7 @@
         :trailing="button.trailing"
         :size="'lg' || button.size"
         truncate
+        class="focus-visible:ring-2"
       />
     </div>
   </UContainer>

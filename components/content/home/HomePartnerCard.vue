@@ -22,7 +22,7 @@
           to="/resources/case-studies/github"
           icon="uil:angle-right-b"
           size="lg"
-          class="!text-white"
+          class="!text-white focus-visible:ring-2"
           trailing
         />
       </div>

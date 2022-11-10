@@ -31,6 +31,7 @@
           :loading="loading"
           :label="buttonText"
           size="lg"
+          class="focus-visible:ring-2"
         />
       </form>
     </UContainer>
