@@ -18,7 +18,7 @@
           </li>
         </ul>
         <div class="flex flex-col-reverse items-center gap-3 sm:flex-row">
-          <ThemeSelect class="order-1 sm:order-none" size="sm" />
+          <ThemeSelect class="order-1 sm:order-none" size="sm" aria-hidden="true" tabindex="-1" />
           <span class="text-sm u-text-gray-500">© 2022 Nuxt - MIT License</span>
         </div>
         <SocialLinks />
