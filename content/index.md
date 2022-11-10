@@ -322,12 +322,10 @@ buttonLink: "/support/solutions"
     size: 'xl'
     variant: 'primary-gradient'
     to: '/docs/getting-started/introduction'
-    target: '_blank'
   - label: 'Explore Examples'
     size: 'xl'
     variant: 'secondary'
-    to: '#'
-    target: '_blank'
+    to: '/docs/examples/essentials/hello-world'
   ---
   #sectionTitle
   GETTING STARTED
