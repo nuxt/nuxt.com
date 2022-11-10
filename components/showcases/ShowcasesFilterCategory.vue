@@ -22,7 +22,7 @@ const category = computed({
   },
   set (category) {
     router.replace({
-      name: 'showcases',
+      name: 'showcase',
       query: {
         ...route.query,
         category: category?.name || undefined
