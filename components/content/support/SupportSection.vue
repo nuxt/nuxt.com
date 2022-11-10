@@ -1,7 +1,7 @@
 <template>
   <UContainer padded class="pt-8 pb-[120px] flex flex-col gap-y-8">
-    <img :src="`/assets/support/solutions/${image}-light.svg`" class="dark:hidden w-[74px] h-[81px]">
-    <img :src="`/assets/support/solutions/${image}.svg`" class="hidden dark:block w-[74px] h-[81px]">
+    <img :src="`/assets/support/solutions/${image}-light.webp`" class="dark:hidden w-[73px] h-[81px]" height="81" width="73">
+    <img :src="`/assets/support/solutions/${image}.webp`" class="hidden dark:block w-[73px] h-[81px]" height="81" width="73">
 
     <h1 class="u-text-gray-900 text-4xl font-semibold">
       <ContentSlot :use="$slots.title" unwrap="p" />

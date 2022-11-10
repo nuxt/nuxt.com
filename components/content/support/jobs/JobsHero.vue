@@ -18,8 +18,8 @@
 
     <template #image>
       <div class="flex h-full items-center justify-center">
-        <img src="/assets/support/jobs/hero-light.svg" class="dark:hidden object-contain h-3/4 lg:mx-10 opacity-0 md:opacity-100" role="presentation">
-        <img src="/assets/support/jobs/hero-dark.svg" class="hidden dark:block object-contain h-3/4 lg:mx-10 opacity-0 md:opacity-100" role="presentation">
+        <img src="/assets/support/jobs/hero-light.webp" class="dark:hidden object-contain h-3/4 lg:mx-10 opacity-0 md:opacity-100" role="presentation">
+        <img src="/assets/support/jobs/hero-dark.webp" class="hidden dark:block object-contain h-3/4 lg:mx-10 opacity-0 md:opacity-100" role="presentation">
       </div>
     </template>
   </PageHero>
