@@ -114,10 +114,6 @@ html.dark {
 <style scoped lang="postcss">
 .code-group {
   :deep(.prose-code) {
-    @apply mt-0 !important;
-  }
-
-  :deep(pre) {
     @apply rounded-tl-none rounded-tr-none mt-0 !important;
   }
 }
