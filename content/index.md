@@ -34,7 +34,7 @@ How a user interacts with and experiences your website will determine your impac
     ---
     image:
       light: 'ux-fast-light.svg'
-      dark: 'ux-fast.svg'
+      dark: 'ux-fast.png'
     ---
     #title
     Fast and Furious
