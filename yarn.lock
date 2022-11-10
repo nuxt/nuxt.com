@@ -508,10 +508,10 @@
     pinceau latest
     style-value-types "^5.1.2"
 
-"@nuxt-themes/typography@^0.0.6":
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/@nuxt-themes/typography/-/typography-0.0.6.tgz#505bd80a7fa9795eb2fdf4fba9d77dfed15e9177"
-  integrity sha512-ghC0Ftl1RkUiSXXvmy4HCy9YdTliKPfVB/yeb+FNq5zmPNSVoKMu3uuL67XrmCjVDuRpzoF/B4/17b3oEy4nJQ==
+"@nuxt-themes/typography@^0.0.10":
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/@nuxt-themes/typography/-/typography-0.0.10.tgz#e9429834985ea188a3d6cae92019064fb0d2cb68"
+  integrity sha512-ge6Jy01kIWnXdCdwRUtnRtiWbKk9fDp5Q1DY0z8Hehpwi3vRdtV7iL+/2kx/U/Y4asDJhun/4BzkbCkOWopU4Q==
   dependencies:
     "@nuxt-themes/tokens" latest
     "@nuxtjs/color-mode" "^3.1.8"
@@ -692,7 +692,7 @@
     ufo "^0.8.5"
     unimport "^0.6.7"
 
-"@nuxt/schema@3.0.0-rc.12", "@nuxt/schema@^3.0.0-rc.11", "@nuxt/schema@^3.0.0-rc.4":
+"@nuxt/schema@3.0.0-rc.12", "@nuxt/schema@^3.0.0-rc.4":
   version "3.0.0-rc.12"
   resolved "https://registry.yarnpkg.com/@nuxt/schema/-/schema-3.0.0-rc.12.tgz#2980cb83738093db88143d406608cf39f0bfa9ff"
   integrity sha512-LZFy8a+5tZKtqTHvUJrlCjZXmKPSmar4S/p3SpjzgIbc4jDuWzA5r4voUODozd2/bCnYxfYyNtOgtbJSJtDUrw==
@@ -710,7 +710,7 @@
     unimport "^0.6.8"
     untyped "^0.5.0"
 
-"@nuxt/schema@3.0.0-rc.13":
+"@nuxt/schema@3.0.0-rc.13", "@nuxt/schema@^3.0.0-rc.13":
   version "3.0.0-rc.13"
   resolved "https://registry.yarnpkg.com/@nuxt/schema/-/schema-3.0.0-rc.13.tgz#0cc01b695697007999cef4492901cdf1f6b1d04c"
   integrity sha512-yfNPvUkOQ1/8aKHX8OtU7stANAaZ3B8Rty7HPuo1KHv0R3wNqlRdoRXwFuf4D+jcsS+R5Kccr7i8YYD5IG56Iw==
@@ -798,17 +798,17 @@
     vite-plugin-checker "^0.5.1"
     vue-bundle-renderer "^0.4.4"
 
-"@nuxthq/studio@^0.1.4":
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/@nuxthq/studio/-/studio-0.1.4.tgz#99b04e81a416cae44262b12607b979f4bb62bb7f"
-  integrity sha512-Vofh1FPIZuyFUaPf2wpF9iZ99rIlSFihX2j1lpeNeObr6oa5sh9OpEJ/bldtHE2tUxUYsvWxPwxzyyfdz5T7Tg==
+"@nuxthq/studio@^0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@nuxthq/studio/-/studio-0.1.5.tgz#56fc30518553b25b5eaa1c18cdfb24cc1476b28e"
+  integrity sha512-j+9MmgHhYUy4+74xLX6nvgP7yDPjPnUqOOxRvZrpk2Lud4i39sAZdW7/k+nfOSf2sGtbnBBMEi2oeGRpEeGf0w==
   dependencies:
-    "@nuxt/kit" "^3.0.0-rc.11"
-    "@nuxt/schema" "^3.0.0-rc.11"
+    "@nuxt/kit" "^3.0.0-rc.13"
+    "@nuxt/schema" "^3.0.0-rc.13"
     defu "^6.1.0"
     nuxt-component-meta "^0.2.3"
-    socket.io-client "^4.5.2"
-    ufo "^0.8.5"
+    socket.io-client "^4.5.3"
+    ufo "^0.8.6"
 
 "@nuxthq/ui@^0.1.5":
   version "0.1.5"
@@ -8852,7 +8852,7 @@ snake-case@^3.0.4:
     dot-case "^3.0.4"
     tslib "^2.0.3"
 
-socket.io-client@^4.5.2, socket.io-client@^4.5.3:
+socket.io-client@^4.5.3:
   version "4.5.3"
   resolved "https://registry.yarnpkg.com/socket.io-client/-/socket.io-client-4.5.3.tgz#bed69209d001465b2fea650d2e95c1e82768ab5e"
   integrity sha512-I/hqDYpQ6JKwtJOf5ikM+Qz+YujZPMEl6qBLhxiP0nX+TfXKhW4KZZG8lamrD6Y5ngjmYHreESVasVCgi5Kl3A==
