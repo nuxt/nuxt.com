@@ -10,6 +10,7 @@
         size="lg"
         :label="buttonText"
         truncate
+        class="focus-visible:ring-2"
       />
     </div>
   </div>

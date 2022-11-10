@@ -64,7 +64,7 @@
         variant="transparent"
         icon-base-class="w-6 h-6"
         trailing
-        class="-translate-x-4 !text-gray-900"
+        class="-translate-x-4 !text-gray-900 focus-visible:ring-2"
       />
     </div>
   </div>
