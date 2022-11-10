@@ -13,9 +13,9 @@
     "parse5": "6.0.1"
   },
   "devDependencies": {
-    "@nuxt-themes/typography": "^0.0.6",
+    "@nuxt-themes/typography": "^0.0.10",
     "@nuxt/content": "^2.2.1",
-    "@nuxthq/studio": "^0.1.4",
+    "@nuxthq/studio": "^0.1.5",
     "@nuxthq/ui": "^0.1.5",
     "@nuxtjs/eslint-config-typescript": "^11.0.0",
     "@nuxtjs/fontaine": "^0.2.2",
