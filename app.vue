@@ -8,7 +8,7 @@ useHead({
     { name: 'og:type', content: 'website' },
     { name: 'og:image', content: 'https://nuxt.com/social.png' },
     { name: 'og:image:alt', content: 'Nuxt' },
-    { name: 'twitter:image', content: 'https://nuxt.com/social-twitter.png' },
+    { name: 'twitter:image', content: 'https://nuxt.com/social.png' },
     { name: 'twitter:card', content: 'summary_large_image' },
     { name: 'twitter:site', content: '@nuxt_js' }
   ],
