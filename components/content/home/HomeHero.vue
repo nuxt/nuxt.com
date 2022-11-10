@@ -4,9 +4,6 @@
     <img src="/assets/home/hero-gradient-tablet.svg" class="absolute top-0 right-0 w-full hidden overflow-hidden select-none sm:block lg:hidden blur-md" role="presentation" width="924" height="653">
     <img src="/assets/home/hero-gradient-mobile.svg" class="absolute inset-x-0 top-0 w-full overflow-hidden object-cover select-none sm:hidden min-h-[800px] blur-md" role="presentation" width="375" height="494">
     <UContainer padded class="relative flex flex-col items-center sm:items-start gap-y-8">
-      <HomeGemWrapper :gem-wrapper-class="'block sm:hidden order-last'">
-        <HomeGem />
-      </HomeGemWrapper>
       <div v-if="$slots.badgeLabel" class="flex gap-x-2">
         <UBadge rounded variant="green">
           <ContentSlot :use="$slots.badgeLabel" unwrap="p" />

@@ -19,8 +19,8 @@
 
     <template #image>
       <div class="h-full flex items-center justify-center">
-        <img src="/assets/design-kit/hero-designkit-light.svg" alt="Design kit illustration" class="dark:hidden object-cover h-3/4 lg:mx-10 opacity-0 lg:opacity-100" role="presentation">
-        <img src="/assets/design-kit/hero-designkit-dark.svg" alt="Design kit illustration" class="hidden dark:block object-cover h-3/4 lg:mx-10 opacity-0 lg:opacity-100" role="presentation">
+        <img src="/assets/design-kit/hero-designkit-light.webp" alt="Design kit illustration" class="dark:hidden object-cover h-3/4 lg:mx-10 opacity-0 lg:opacity-100" role="presentation">
+        <img src="/assets/design-kit/hero-designkit-dark.webp" alt="Design kit illustration" class="hidden dark:block object-cover h-3/4 lg:mx-10 opacity-0 lg:opacity-100" role="presentation">
       </div>
     </template>
   </PageHero>
