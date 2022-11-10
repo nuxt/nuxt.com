@@ -11,6 +11,10 @@ code {
   word-break: break-all;
 }
 
+hr {
+  @apply u-border-gray-200;
+}
+
 .nuxt-scrollbars {
   & ::-webkit-scrollbar {
     width: 0.6em;
