@@ -26,10 +26,12 @@
             <div class="absolute inset-0 z-10 opacity-70 backdrop-blur-[2px] u-bg-white transition-opacity duration-300" :class="transition.end === true && realIndex === i ? '-z-[1] blur-[8px] u-bg-gray-900 opacity-100' : 'opacity-70 backdrop-blur-[2px] u-bg-white'" />
 
             <img
-              :src="`https://res.cloudinary.com/nuxt/image/upload/f_auto,q_auto/${showcase.screenshotUrl}`"
+              :src="`https://res.cloudinary.com/nuxt/image/upload/f_auto,q_auto,w_420,h_315/${showcase.screenshotUrl}`"
               :alt="showcase.hostname"
               loading="lazy"
               class="object-cover object-top w-full h-full px-4 sm:px-0"
+              height="315"
+              width="420"
             >
             <div class="px-4 py-3 text-center content transition-opacity duration-300" :class="transition.end === true ? 'opacity-100' : 'opacity-0'">
               <h2 class="font-semibold truncate u-text-gray-900 text-xl">
