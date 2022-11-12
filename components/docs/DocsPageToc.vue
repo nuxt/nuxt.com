@@ -1,6 +1,14 @@
 <script setup lang="ts">
 const { toc } = useContent()
 const emit = defineEmits(['move'])
+
+const { pending, data: sponsors, error } = useLazyFetch('/api/sponsors')
+
+const pickOne = (arr) => {
+  return arr[Math.floor(Math.random() * arr.length)]
+}
+
+const sponsor = computed(() => pickOne([...sponsors.value?.platinum, ...sponsors.value?.gold]))
 </script>
 
 <template>
@@ -12,5 +20,18 @@ const emit = defineEmits(['move'])
 
       <DocsTocLinks :links="toc.links" @move="emit('move')" />
     </template>
+    <LazyClientOnly v-if="!pending && !error">
+      <hr class="mb-2">
+      <span class="hidden">
+        Sponsored by:
+      </span>
+      <NuxtLink :to="sponsor.sponsorUrl" class="block flex bg-white dark:bg-gray-900 rounded-md h-[60px] p-2 align-middle">
+        <img :src="sponsor.sponsorLogo" role="presentation" class="mr-1 rounded-md">
+        <p>{{ sponsor.sponsorName }}</p>
+      </NuxtLink>
+      <div class="bg-white dark:bg-gray-900 rounded-md h-[60px] p-2">
+        <p>Looking for a Nuxt Job?</p>
+      </div>
+    </LazyClientOnly>
   </nav>
 </template>
