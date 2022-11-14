@@ -1,5 +1,4 @@
 import type { Ref } from 'vue'
-import { uniqBy, uniq } from 'lodash-es'
 import type { Agency } from '~/types'
 
 const slugify = (str: string) => str.toLowerCase().replace(/[^a-z0-9 -]/g, ' ').replace(/[\s-]+/g, '-')
@@ -73,7 +72,17 @@ export const useAgencyPartners = () => {
   })
 
   const services = computed(() => {
-    return uniqBy([...new Set(partners.value)].flatMap(partner => partner.services), s => s.key)
+    const ids = new Set<string>()
+    const services = partners.value.flatMap((partner) => {
+      return partner.services.filter((r) => {
+        if (ids.has(r.key)) {
+          return false
+        }
+        ids.add(r.key)
+        return true
+      })
+    })
+    return services
       .map(service => ({
         ...service,
         to: {
@@ -89,7 +98,7 @@ export const useAgencyPartners = () => {
   })
 
   const locations = computed(() => {
-    return uniq([...new Set(partners.value)].map(partner => partner.location))
+    return [...new Set(partners.value.map(partner => partner.location))]
       .map((location) => {
         return {
           key: location.key,
@@ -108,7 +117,17 @@ export const useAgencyPartners = () => {
   })
 
   const regions = computed(() => {
-    return uniqBy(partners.value.reduce((acc, val) => acc.concat(val.regions), []), 'key')
+    const ids = new Set<string>()
+    const regions = partners.value.flatMap((partner) => {
+      return partner.regions.filter((r) => {
+        if (ids.has(r.key)) {
+          return false
+        }
+        ids.add(r.key)
+        return true
+      })
+    })
+    return regions
       .map((region) => {
         return {
           key: region.key,
