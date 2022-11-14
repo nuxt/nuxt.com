@@ -1,7 +1,8 @@
 import type { Ref } from 'vue'
 import { uniqBy, uniq } from 'lodash-es'
-import slugify from '@sindresorhus/slugify'
 import type { Agency } from '~/types'
+
+const slugify = (str: string) => str.toLowerCase().replace(/[^a-z0-9 -]/g, ' ').replace(/[\s-]+/g, '-')
 
 export const useAgencyPartners = () => {
   const route = useRoute()
@@ -50,9 +51,9 @@ export const useAgencyPartners = () => {
         })),
         location: partner.location
           ? {
-              key: slugify(partner.location),
-              title: partner.location
-            }
+            key: slugify(partner.location),
+            title: partner.location
+          }
           : null
       }))
   })

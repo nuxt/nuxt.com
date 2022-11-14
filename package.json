@@ -20,7 +20,6 @@
     "@nuxtjs/eslint-config-typescript": "^11.0.0",
     "@nuxtjs/fontaine": "^0.2.2",
     "@nuxtlabs/github-module": "^1.4.10",
-    "@sindresorhus/slugify": "^2.1.1",
     "@types/lodash-es": "^4.17.6",
     "@vueuse/core": "^9.5.0",
     "@vueuse/motion": "^2.0.0-beta.12",
