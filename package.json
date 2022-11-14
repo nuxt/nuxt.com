@@ -13,9 +13,9 @@
     "parse5": "6.0.1"
   },
   "devDependencies": {
-    "@nuxt-themes/typography": "^0.0.11",
+    "@nuxt-themes/typography": "^0.0.12",
     "@nuxt/content": "^2.2.1",
-    "@nuxthq/studio": "^0.1.5",
+    "@nuxthq/studio": "^0.2.2",
     "@nuxthq/ui": "^0.1.5",
     "@nuxtjs/eslint-config-typescript": "^11.0.0",
     "@nuxtjs/fontaine": "^0.2.2",
@@ -26,9 +26,9 @@
     "joi": "^17.7.0",
     "mjml": "^4.13.0",
     "node-mailjet": "^5.1.1",
-    "nuxt": "3.0.0-rc.12",
+    "nuxt": "3.0.0-rc.13",
     "nuxt-icon": "^0.1.7",
-    "nuxt-newsletter": "^0.1.2",
+    "nuxt-newsletter": "^0.2.0",
     "nuxt-plausible": "^0.1.1",
     "standard-version": "^9.5.0",
     "swiper": "^8.4.4",
