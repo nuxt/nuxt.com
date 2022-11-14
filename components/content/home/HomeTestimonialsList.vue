@@ -6,7 +6,7 @@
       </ul>
     </div>
     <div class="absolute -right-80 2xl:-right-[600px] bottom-0 blur-[150px] -z-[1]">
-      <img src="/assets/home/home-journey-gradient.svg" class="h-[300px]" width="541" height="300">
+      <img src="/assets/home/home-journey-gradient.svg" class="h-[300px]" width="541" height="300" role="presentation">
     </div>
   </div>
 </template>
