@@ -10,7 +10,7 @@
         <div class="lg:hidden">
           <button @click="isOpen = true">
             <Icon name="uil:bars" class="flex-shrink-0 w-6 h-6" aria-hidden="true" focusable="false" />
-            <span class="hidden">Menu</span>
+            <span class="sr-only">Menu</span>
           </button>
         </div>
 
