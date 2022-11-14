@@ -15,7 +15,7 @@ const { page } = useContent()
 
 const githubLink = computed(() => page?.value?._file?.replace('docs', 'content'))
 
-const hasToc = computed(() => !!page.value.body?.toc?.links?.length)
+const hasToc = computed(() => !!page.value?.body?.toc?.links?.length)
 
 useContentHead(page)
 </script>
