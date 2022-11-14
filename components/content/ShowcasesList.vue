@@ -30,22 +30,17 @@
 </template>
 
 <script setup lang="ts">
-import { uniqBy } from 'lodash-es'
-
 const { list, selectedCategory } = useResourcesShowcases()
 
 // Computed
 const selectedShowcases = computed(() => {
-  const flattenedShowcases = list.value?.groups
+  const ids = new Set<number>()
+  return list.value?.groups
     ?.filter((group, index) => (!selectedCategory.value && index === 0) || group.name === selectedCategory.value?.name)
-    ?.map(group => ({
-      ...group,
-      showcases: group.showcases.map(showcase => ({
-        ...showcase
-      }))
-    }))
-    ?.flatMap(group => group.showcases)
-
-  return uniqBy(flattenedShowcases || [], 'id')
+    ?.flatMap((group) => {
+      if (ids.has(group.id)) { return [] }
+      ids.add(group.id)
+      return group.showcases
+    }) ?? []
 })
 </script>
