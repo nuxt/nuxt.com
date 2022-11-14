@@ -153,6 +153,12 @@ export const useAgencyPartners = () => {
     return regions.value.find(region => region.key === route.query.region)
   })
 
+  const pickOne = (arr) => {
+    return arr[Math.floor(Math.random() * arr.length)]
+  }
+
+  const adPartner = computed(() => pickOne(_partners.value))
+
   return {
     // Http
     fetch,
@@ -163,6 +169,7 @@ export const useAgencyPartners = () => {
     locations,
     regions,
     selectedService,
-    selectedRegion
+    selectedRegion,
+    adPartner
   }
 }
