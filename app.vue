@@ -6,9 +6,9 @@ useHead({
     { name: 'description', content: 'Nuxt makes web development intuitive and fun. The open source framework NuxtJS makes the development of modern web applications simple.' },
     { name: 'og:site_name', content: 'Nuxt' },
     { name: 'og:type', content: 'website' },
-    { name: 'og:image', content: 'https://nuxt.com/social.png' },
+    { name: 'og:image', content: '/social.png' },
     { name: 'og:image:alt', content: 'Nuxt' },
-    { name: 'twitter:image', content: 'https://nuxt.com/social.png' },
+    { name: 'twitter:image', content: '/social.png' },
     { name: 'twitter:card', content: 'summary_large_image' },
     { name: 'twitter:site', content: '@nuxt_js' }
   ],
