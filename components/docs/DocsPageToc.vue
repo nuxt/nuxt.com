@@ -2,7 +2,9 @@
 const { toc } = useContent()
 const emit = defineEmits(['move'])
 
-const { pending, data: sponsors, error } = useLazyFetch('/api/sponsors')
+const { pending, data: sponsors, error } = useLazyFetch('/api/sponsors', {
+  pick: ['platinum', 'gold']
+})
 
 const pickOne = (arr) => {
   return arr[Math.floor(Math.random() * arr.length)]
