@@ -1,10 +1,12 @@
 <template>
-  <UToggle
+  <AccessibleToggle
     v-model="isDark"
     name="theme"
     icon-on="uil:moon"
     icon-off="uil:sun"
-  />
+  >
+    <span class="sr-only">Toggle theme</span>
+  </AccessibleToggle>
 </template>
 
 <script setup lang="ts">
