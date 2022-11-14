@@ -17,7 +17,7 @@
       </p>
     </div>
 
-    <NuxtLink :to="partner._path">
+    <NuxtLink :to="partner._path" :title="partner.title">
       <span class="absolute inset-0" aria-hidden="true" />
     </NuxtLink>
   </UCard>
