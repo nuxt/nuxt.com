@@ -27,12 +27,20 @@ const sponsor = computed(() => pickOne([...sponsors.value?.platinum, ...sponsors
       <span class="hidden">
         Sponsored by:
       </span>
-      <NuxtLink :to="sponsor.sponsorUrl" class="block flex bg-white dark:bg-gray-900 rounded-md h-[60px] p-2 align-middle">
-        <img :src="sponsor.sponsorLogo" role="presentation" class="mr-1 rounded-md">
-        <p>{{ sponsor.sponsorName }}</p>
-      </NuxtLink>
-      <div class="bg-white dark:bg-gray-900 rounded-md h-[60px] p-2">
-        <p>Looking for a Nuxt Job?</p>
+      <div>
+        <NuxtLink :to="sponsor.sponsorUrl" class="block flex items-center bg-white dark:bg-gray-900 rounded-xl h-[60px] p-4 lg:p-2 align-middle border border-gray-200 dark:border-gray-800">
+          <img :src="sponsor.sponsorLogo" role="presentation" class="mr-2 rounded-md h-8">
+          <p class="font-semibold truncate">
+            {{ sponsor.sponsorName }}
+          </p>
+        </NuxtLink>
+      </div>
+      <div class="relative h-[68px] p-4 lg:p-2 flex items-center justify-between bg-white dark:bg-gray-900 rounded-xl h-[60px] border border-gray-200 dark:border-gray-800">
+        <p class="font-semibold">
+          Looking for a Nuxt Jobs?
+        </p>
+        <img src="/assets/toc/jobs.svg" class="hidden dark:block absolute right-0 bottom-0 w-12 lg:w-10">
+        <img src="/assets/toc/jobs-light.svg" class="dark:hidden absolute right-0 bottom-0 w-12 lg:w-10">
       </div>
     </LazyClientOnly>
   </nav>
