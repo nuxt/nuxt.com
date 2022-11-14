@@ -30,12 +30,12 @@
       </template>
       <div class="flex flex-col" :class="contentClass">
         <Icon v-if="icon" :name="icon" class="w-6 h-6" />
-        <h6 class="font-semibold u-text-gray-900" :class="!icon ? 'text-xl' : 'text-5xl'">
+        <header class="font-semibold u-text-gray-900" :class="!icon ? 'text-xl' : 'text-5xl'">
           <NuxtLink v-if="to" :to="to">
             <ContentSlot :use="$slots.title" unwrap="p" />
           </NuxtLink>
           <ContentSlot v-else :use="$slots.title" unwrap="p" />
-        </h6>
+        </header>
         <p class="u-text-gray-500" :class="{ 'text-lg font-medium': icon }">
           <ContentSlot :use="$slots.description" unwrap="p" />
         </p>
