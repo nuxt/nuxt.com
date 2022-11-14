@@ -4,9 +4,9 @@
       <div class="flex items-center gap-x-4">
         <img src="/assets/home/github-card.svg" class="h-[76px] w-[76px]" width="76" height="76">
         <div>
-          <h6 class="pb-2 text-sm font-medium text-white sm:text-base">
+          <header class="pb-2 text-sm font-medium text-white sm:text-base">
             <ContentSlot :use="$slots.title" unwrap="p" />
-          </h6>
+          </header>
           <span class="text-xl font-semibold text-white sm:text-4xl">
             <ContentSlot :use="$slots.caseStudy" unwrap="p" />
           </span>
