@@ -21,8 +21,8 @@
       </template>
 
       <ul v-if="selectedShowcases.length" class="grid min-h-[calc(100vh-18rem)] grid-cols-1 gap-8 mt-8 sm:grid-cols-2 xl:grid-cols-3">
-        <li v-for="showcase in selectedShowcases" :key="showcase.id">
-          <ShowcasesListItem :showcase="showcase" />
+        <li v-for="(showcase, key) in selectedShowcases" :key="showcase.id">
+          <ShowcasesListItem :showcase="showcase" :loading-strategy="key === 0 ? 'eager' : 'lazy'" />
         </li>
       </ul>
     </PageList>
