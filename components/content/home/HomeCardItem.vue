@@ -11,17 +11,31 @@
       ring-class="ring-1 ring-gray-200 dark:ring-0 hover:ring-0"
     >
       <template v-if="image" #header>
-        <img :src="`/assets/home/${image.dark}`" :alt="`${image} image`" class="h-full rounded-md hidden dark:block" :width="imageWidth" :height="imageHeight">
-        <img :src="`/assets/home/${image.light}`" :alt="`${image} image`" class="h-full rounded-md dark:hidden" :width="imageWidth" :height="imageHeight">
+        <img
+          :src="`/assets/home/${image.dark}`"
+          :alt="`${image} image`"
+          class="h-full rounded-md hidden dark:block"
+          :width="imageWidth"
+          :height="imageHeight"
+          loading="lazy"
+        >
+        <img
+          :src="`/assets/home/${image.light}`"
+          :alt="`${image} image`"
+          class="h-full rounded-md dark:hidden"
+          :width="imageWidth"
+          :height="imageHeight"
+          loading="lazy"
+        >
       </template>
       <div class="flex flex-col" :class="contentClass">
         <Icon v-if="icon" :name="icon" class="w-6 h-6" />
-        <h6 class="font-semibold u-text-gray-900" :class="!icon ? 'text-xl' : 'text-5xl'">
+        <header class="font-semibold u-text-gray-900" :class="!icon ? 'text-xl' : 'text-5xl'">
           <NuxtLink v-if="to" :to="to">
             <ContentSlot :use="$slots.title" unwrap="p" />
           </NuxtLink>
           <ContentSlot v-else :use="$slots.title" unwrap="p" />
-        </h6>
+        </header>
         <p class="u-text-gray-500" :class="{ 'text-lg font-medium': icon }">
           <ContentSlot :use="$slots.description" unwrap="p" />
         </p>

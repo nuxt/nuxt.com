@@ -15,7 +15,7 @@
         </div>
 
         <div class="flex justify-center col-span-4 lg:col-span-1 lg:justify-start">
-          <NuxtLink to="/" class="block u-text-black" @click.right.prevent="$router.push('/design-kit')">
+          <NuxtLink to="/" class="block u-text-black" title="Homepage" @click.right.prevent="$router.push('/design-kit')">
             <LogoFull class="hidden w-auto h-6 sm:block" />
             <Logo class="block w-auto h-6 sm:hidden" />
           </NuxtLink>

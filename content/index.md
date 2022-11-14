@@ -1,5 +1,5 @@
 ---
-title: ''
+title: 'Nuxt - The Intuitive Web Framework'
 description: 'Build your next Vue.js application with confidence using Nuxt. An open source framework under MIT license that makes web development simple and powerful.'
 showcasesListId: 505
 ---

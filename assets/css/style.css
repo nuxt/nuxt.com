@@ -7,10 +7,6 @@ a:focus-visible, button:focus-visible {
   outline-offset: 2px;
 }
 
-code {
-  word-break: break-all;
-}
-
 hr {
   @apply u-border-gray-200;
 }

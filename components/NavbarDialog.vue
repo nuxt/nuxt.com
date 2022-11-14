@@ -1,11 +1,13 @@
 <template>
   <USlideover v-model="isOpen" :transition="false" :overlay="false">
     <template #header>
-      <button v-if="selectedLink" class="flex-1 flex items-start" @click="selectedLink = null">
+      <button v-if="selectedLink" class="flex-1 flex items-start focus:outline-none focus-visible:outline-2" @click="selectedLink = null">
         <Icon name="uil:arrow-left" class="flex-shrink-0 w-7 h-7" />
+        <span class="hidden">Go back</span>
       </button>
-      <button v-else class="flex-1 flex items-start" @click="isOpen = false">
+      <button v-else class="flex-1 flex items-start focus:outline-none focus-visible:outline-2" @click="isOpen = false">
         <Icon name="uil:multiply" class="flex-shrink-0 w-6 h-6" />
+        <span class="hidden">Close menu</span>
       </button>
 
       <p v-if="selectedLink" class="text-lg font-semibold">

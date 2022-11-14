@@ -8,7 +8,7 @@ module.exports = {
     extend: {
       typography,
       fontFamily: {
-        sans: '"RoobertPRO", sans-serif'
+        sans: '"RoobertPRO", "RoobertPRO override", sans-serif'
       },
       linearBorderGradients: ({ theme }) => ({
         colors: {
