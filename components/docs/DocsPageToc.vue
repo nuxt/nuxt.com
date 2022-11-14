@@ -2,15 +2,9 @@
 const { toc } = useContent()
 const emit = defineEmits(['move'])
 
-const { pending, data: sponsors, error } = useLazyFetch('/api/sponsors', {
-  pick: ['platinum', 'gold']
-})
+const { adPartner, fetch: fetchPartners } = useAgencyPartners()
 
-const pickOne = (arr) => {
-  return arr[Math.floor(Math.random() * arr.length)]
-}
-
-const sponsor = computed(() => pickOne([...sponsors.value?.platinum, ...sponsors.value?.gold]))
+await fetchPartners()
 </script>
 
 <template>
@@ -22,26 +16,27 @@ const sponsor = computed(() => pickOne([...sponsors.value?.platinum, ...sponsors
 
       <DocsTocLinks :links="toc.links" @move="emit('move')" />
     </template>
-    <LazyClientOnly v-if="!pending && !error">
+    <LazyClientOnly>
       <hr class="mb-2">
       <span class="hidden">
-        Sponsored by:
+        Agency partner:
       </span>
       <div>
-        <NuxtLink :to="sponsor.sponsorUrl" class="block flex items-center bg-white dark:bg-gray-900 rounded-xl h-[60px] p-4 lg:p-2 align-middle border border-gray-200 dark:border-gray-800">
-          <img :src="sponsor.sponsorLogo" role="presentation" class="mr-2 rounded-md h-8">
-          <p class="font-semibold truncate">
-            {{ sponsor.sponsorName }}
+        <NuxtLink :to="adPartner._path" class="block flex items-center bg-white dark:bg-gray-900 rounded-xl h-[60px] p-4 lg:p-2 align-middle border border-gray-200 dark:border-gray-800">
+          <img :src="adPartner.logo.dark" role="presentation" class="mr-2 rounded-md h-8 light:hidden">
+          <img :src="adPartner.logo.light" role="presentation" class="mr-2 rounded-md h-8 dark:hidden">
+          <p class="font-semibold">
+            {{ adPartner.title }}
           </p>
         </NuxtLink>
       </div>
-      <div class="relative h-[68px] p-4 lg:p-2 flex items-center justify-between bg-white dark:bg-gray-900 rounded-xl h-[60px] border border-gray-200 dark:border-gray-800">
+      <NuxtLink to="/support/jobs" class="block relative h-[68px] p-4 lg:p-2 flex items-center justify-between bg-white dark:bg-gray-900 rounded-xl h-[60px] border border-gray-200 dark:border-gray-800">
         <p class="font-semibold">
-          Looking for a Nuxt Jobs?
+          Looking for a Nuxt Job?
         </p>
         <img src="/assets/toc/jobs.svg" class="hidden dark:block absolute right-0 bottom-0 w-12 lg:w-10">
         <img src="/assets/toc/jobs-light.svg" class="dark:hidden absolute right-0 bottom-0 w-12 lg:w-10">
-      </div>
+      </NuxtLink>
     </LazyClientOnly>
   </nav>
 </template>
