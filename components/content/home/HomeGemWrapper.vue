@@ -1,9 +1,7 @@
 <template>
-  <ClientOnly>
-    <span :class="gemWrapperClass">
-      <ContentSlot :use="$slots.default" unwrap="p" />
-    </span>
-  </ClientOnly>
+  <div :class="gemWrapperClass">
+    <ContentSlot :use="$slots.default" unwrap="p" />
+  </div>
 </template>
 <script setup lang="ts">
 defineProps({
