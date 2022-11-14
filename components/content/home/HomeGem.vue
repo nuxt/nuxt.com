@@ -14,7 +14,7 @@ const gemAnim = ref(null)
 
 const colorMode = useColorMode()
 
-onMounted(async () => {
+onMounted(() => requestIdleCallback(async () => {
   const THREE = await import('three').then(m => m.default || m)
   const { OrbitControls } = await import('three/examples/jsm/controls/OrbitControls.js' /* webpackChunkName: "gem" */).then(m => m.default || m)
   const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js' /* webpackChunkName: "gem" */).then(m => m.default || m)
@@ -148,7 +148,7 @@ onMounted(async () => {
   };
 
   animate()
-})
+}))
 </script>
 
 <style>
