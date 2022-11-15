@@ -44,6 +44,8 @@
 </template>
 
 <script setup lang="ts">
+import { formatNumber } from '../../../utils'
+
 defineProps({
   module: {
     type: Object,

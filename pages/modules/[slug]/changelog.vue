@@ -54,5 +54,7 @@
 </template>
 
 <script setup lang="ts">
+import { formatDateByLocale } from '../../../utils'
+
 const { githubQuery, module } = useModules()
 </script>
