@@ -11,6 +11,9 @@ export default defineNuxtModule({
         if (manifest[file].isEntry) {
           manifest[file].dynamicImports = []
         }
+        if (manifest[file].src?.includes('HomeGem')) {
+          manifest[file].dynamicImports = []
+        }
       }
     })
   }
