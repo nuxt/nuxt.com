@@ -51,7 +51,14 @@
           </div>
         </div>
         <div>
-          <UButton :label="`yarn add ${module.npm}`" size="lg" :trailing-icon="copyIcon" truncate @click="copyToClipboard(`yarn add ${module.npm}`)" />
+          <UButton
+            class="module-button"
+            :label="`yarn add ${module.npm}`"
+            size="lg"
+            :trailing-icon="copyIcon"
+            truncate
+            @click="copyToClipboard(`yarn add ${module.npm}`)"
+          />
         </div>
       </div>
       <div class="flex justify-center md:justify-start mb-4">
@@ -99,3 +106,9 @@ useHead({
   ]
 })
 </script>
+
+<style lang="postcss">
+.module-button {
+  @apply bg-gray-800 dark:bg-white
+}
+</style>
