@@ -38,6 +38,7 @@
     "@nuxthq/ui": "^0.1.6",
     "@nuxtjs/algolia": "^1.1.5",
     "@nuxtjs/fontaine": "^0.2.2",
+    "@nuxtjs/html-validator": "^1.1.1",
     "@nuxtlabs/github-module": "^1.4.13",
     "@vueuse/core": "^9.5.0",
     "@vueuse/motion": "^2.0.0-beta.12",
