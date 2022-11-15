@@ -37,7 +37,10 @@
             </NuxtLink>
           </li>
         </ul>
-        <SocialLinks />
+        <div class="flex justify-end">
+          <AppSearch v-if="hasDocSearch && $route.fullPath.startsWith('/docs')" class="mr-4" />
+          <SocialLinks />
+        </div>
       </nav>
     </UContainer>
   </header>
@@ -49,6 +52,7 @@ import type { Ref } from 'vue'
 
 const route = useRoute()
 const { hasScrolledPastNavbar } = useNavbarScroll()
+const { hasDocSearch } = useDocSearch()
 
 const isOpen = ref(false)
 
