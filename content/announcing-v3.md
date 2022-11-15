@@ -18,9 +18,20 @@ authors:
 date: "11/14/2022"
 ---
 #title
-Nuxt 3 is out and stable.
+This is the title
 #description
-lorem ipsum dolor sit amet
+And the description
 #body
-This is the main content
+
+## New paragraph
+
+![A test image](/assets/home/dx-batteries.svg){.w-full}
+
+## Hello
+
+lipsum
+
+```js
+console.log('hello')
+```
 ::
