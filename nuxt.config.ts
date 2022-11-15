@@ -105,7 +105,7 @@ export default defineNuxtConfig({
   },
   nitro: {
     prerender: {
-      routes: ['/docs', '/'],
+      routes: ['/docs', '/', '/api/jobs', '/api/modules', '/api/sponsors'],
       crawlLinks: true
     }
     // hooks: {
