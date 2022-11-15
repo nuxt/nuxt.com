@@ -55,7 +55,6 @@
 </template>
 
 <script setup lang="ts">
-import { searchTextRegExp } from '../../../utils'
 const { modules, selectedCategory, selectedType, selectedVersion, selectedSort, selectedOrder, q } = useModules()
 
 const filteredModules = computed(() => {
