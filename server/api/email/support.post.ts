@@ -1,6 +1,7 @@
 import Joi from 'joi'
 import { useEmail, sendEmail } from '../../utils/emails'
 import { validate } from '../../utils/validation'
+import { defineEventHandler } from '#imports'
 
 const bodySchema = Joi.object({
   name: Joi.string().trim().required(),

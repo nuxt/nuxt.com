@@ -5,6 +5,10 @@ const emit = defineEmits(['move'])
 const { adPartner, fetch: fetchPartners } = useAgencyPartners()
 
 await fetchPartners()
+
+if (adPartner.value) {
+  useTrackEvent('Show Partner', { props: { partner: adPartner.value.title } })
+}
 </script>
 
 <template>
@@ -21,21 +25,21 @@ await fetchPartners()
       <span class="hidden">
         Agency partner:
       </span>
-      <NuxtLink :to="adPartner._path" class="block flex items-center bg-white dark:bg-gray-900 rounded-xl h-[60px] p-4 lg:p-2 align-middle border border-gray-200 dark:border-gray-800">
-        <img :src="adPartner.logo.dark" role="presentation" class="mr-2 rounded-md h-8 light:hidden">
+      <NuxtLink :to="adPartner._path" class="block flex items-center bg-white dark:bg-gray-900 dark:hover:bg-gray-800 hover:bg-gray-100 rounded-xl h-[60px] p-4 lg:p-2 align-middle border border-gray-200 dark:border-gray-800">
+        <img :src="adPartner.logo.dark" role="presentation" class="mr-2 rounded-md h-8 hidden dark:block">
         <img :src="adPartner.logo.light" role="presentation" class="mr-2 rounded-md h-8 dark:hidden">
         <p class="font-semibold">
           {{ adPartner.title }}
         </p>
       </NuxtLink>
-      <NuxtLink to="https://masteringnuxt.com/nuxt3?ref=nuxt" target="_blank" class="h-[72px] p-4 lg:p-2 flex flex-col items-start justify-between bg-white dark:bg-gray-900 rounded-xl h-[60px] border border-gray-200 dark:border-gray-800">
+      <NuxtLink to="https://masteringnuxt.com/nuxt3?ref=nuxt" target="_blank" class="gap-1 px-2 py-4 dark:hover:bg-gray-800 hover:bg-gray-100 flex flex-col items-start justify-between bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800">
         <img src="/assets/toc/mastering-nuxt.svg" class="hidden dark:block h-6 lg:h-full">
         <img src="/assets/toc/mastering-nuxt-light.svg" class="dark:hidden h-6 lg:h-full">
         <p class="text-sm">
           Learn Nuxt 3 with experts.
         </p>
       </NuxtLink>
-      <NuxtLink to="/support/jobs" class="block relative h-[68px] p-4 lg:p-2 flex items-center justify-between bg-white dark:bg-gray-900 rounded-xl h-[60px] border border-gray-200 dark:border-gray-800">
+      <NuxtLink to="/support/jobs" class="block relative px-2 py-4 dark:hover:bg-gray-800 hover:bg-gray-100 flex items-center justify-between bg-white dark:bg-gray-900 rounded-xl h-[60px] border border-gray-200 dark:border-gray-800">
         <p class="font-semibold">
           Looking for a Nuxt Job?
         </p>
