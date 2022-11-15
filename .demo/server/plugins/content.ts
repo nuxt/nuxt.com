@@ -1,7 +1,5 @@
 const firstLevels = ['getting-started', 'guide', 'api', 'examples', 'community']
 
-console.log(('Nitro plugin'))
-
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('content:file:beforeParse', (file) => {
     if (file._id.endsWith('.md')) {
