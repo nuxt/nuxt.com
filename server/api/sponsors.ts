@@ -1,4 +1,5 @@
 import { fetchGithubSponsors, fetchOpenCollectiveSponsors } from '../utils/sponsors'
+import { defineCachedEventHandler } from '#imports'
 
 const tiersMap = {
   platinum: amount => amount >= 2000,

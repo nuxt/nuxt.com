@@ -1,5 +1,6 @@
 import mjml2html from 'mjml'
 import Mailjet from 'node-mailjet'
+import { useRuntimeConfig } from '#imports'
 
 const config = useRuntimeConfig()
 
