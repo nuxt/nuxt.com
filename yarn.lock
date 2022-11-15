@@ -699,7 +699,7 @@
     nuxt-icon "^0.1.7"
     pinceau latest
 
-"@nuxt/content@^2.2.1":
+"@nuxt/content@^2.2.2":
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/@nuxt/content/-/content-2.2.2.tgz#ce82174c7f423935a12d80426d50e83cb8867b01"
   integrity sha512-qHkyeD0cVRjd+KJH82+V4Twn1QTJh43m9VGMjljLUvZVdFGxU/ZAe4gq0rdTbi8CtCZNvcR9vvNApYjOP1LNYA==
@@ -967,7 +967,7 @@
     socket.io-client "^4.5.3"
     ufo "^0.8.6"
 
-"@nuxthq/ui@^0.1.5":
+"@nuxthq/ui@^0.1.6":
   version "0.1.6"
   resolved "https://registry.yarnpkg.com/@nuxthq/ui/-/ui-0.1.6.tgz#adb5ccf0c5b0327b0d574b15ec8b43b7518b1472"
   integrity sha512-jWWKzv1Tbqq50zZYQfBibeH1E6RUpUDZtr1NvKj+GpVLMsZkElfFMvRz9K2jhIT4lIjvueT1RoyfJa7cpkC/fw==
