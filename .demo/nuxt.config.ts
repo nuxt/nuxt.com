@@ -5,6 +5,11 @@ const { resolve } = createResolver(import.meta.url)
 // https://v3.nuxtjs.org/guide/directory-structure/nuxt.config
 export default defineNuxtConfig({
   extends: '..',
+  nitro: {
+    output: {
+      dir: '{{ workspaceDir }}/.vercel/output',
+    }
+  },
   content: {
     sources: {
       docs: {
