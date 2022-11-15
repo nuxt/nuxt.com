@@ -40,11 +40,6 @@ export default defineNuxtConfig({
       global: true
     }
   ],
-  build: {
-    transpile: [
-      'swiper'
-    ]
-  },
   runtimeConfig: {
     github: {
       token: process.env.GITHUB_TOKEN
