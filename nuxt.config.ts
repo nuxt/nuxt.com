@@ -74,17 +74,6 @@ export default defineNuxtConfig({
     navigation: {
       fields: ['redirect']
     },
-    sources: [
-      {
-        name: 'nuxt3-docs',
-        driver: 'github',
-        repo: 'nuxt/framework',
-        branch: 'main',
-        dir: 'docs/content',
-        prefix: '/docs',
-        token: process.env.GITHUB_TOKEN
-      }
-    ],
     documentDriven: {
       surround: false,
       injectPage: false

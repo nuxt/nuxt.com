@@ -27,7 +27,7 @@
     "joi": "^17.7.0",
     "mjml": "^4.13.0",
     "node-mailjet": "^5.1.1",
-    "nuxt": "3.0.0-rc.13",
+    "nuxt": "npm:nuxt3@latest",
     "nuxt-icon": "^0.1.7",
     "nuxt-newsletter": "^0.2.0",
     "nuxt-plausible": "^0.1.1",
