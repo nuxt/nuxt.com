@@ -15,7 +15,7 @@ export default defineNuxtConfig({
   modules: [
     '@nuxthq/ui',
     '@nuxt/content',
-    '@nuxtlabs/github-module',
+    // '@nuxtlabs/github-module',
     // 'nuxt-newsletter',
     'nuxt-plausible',
     'nuxt-icon',
