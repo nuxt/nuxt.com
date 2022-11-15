@@ -1,6 +1,25 @@
 {
   "name": "nuxt-website-theme",
   "version": "0.0.1",
+  "main": "nuxt.config.ts",
+  "files": [
+    "app/",
+    "assets/",
+    "components/",
+    "composables/",
+    "layouts/",
+    "pages/",
+    "plugins/",
+    "server/",
+    "types/",
+    "ui/",
+    "utils/",
+    "app.vue",
+    "error.vue",
+    "nuxt.config.ts",
+    "tailwind.config.ts",
+    "tokens.config.ts"
+  ],
   "scripts": {
     "dev": "nuxi prepare && nuxi dev .demo",
     "build": "nuxi prepare && nuxi build .demo",
