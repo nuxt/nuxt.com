@@ -41,9 +41,9 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType, Ref } from 'vue'
+import type { PropType } from 'vue'
 
-defineProps({
+const props = defineProps({
   containerClass: {
     type: String,
     default: 'pb-4 sm:pb-8 md:pb-12 lg:pb-20'
@@ -90,12 +90,16 @@ defineProps({
   bodyExtraClass: {
     type: String,
     default: ''
+  },
+  visible: {
+    type: Boolean,
+    default: false
   }
 })
 
-const observer = ref() as Ref<IntersectionObserver>
-const root = ref(null) as Ref<Element>
-const slideIn = ref(false)
+const observer = ref<IntersectionObserver>()
+const root = ref<Element | null>(null)
+const slideIn = ref(props.visible)
 
 const observerCallback = (entries: IntersectionObserverEntry[]) =>
   entries.forEach((entry) => {
@@ -104,9 +108,12 @@ const observerCallback = (entries: IntersectionObserverEntry[]) =>
     }
   })
 
-onBeforeMount(() => (observer.value = new IntersectionObserver(observerCallback)))
+onBeforeMount(() => {
+  if (props.visible) { return }
+  observer.value = new IntersectionObserver(observerCallback)
+})
 
-onMounted(() => observer.value.observe(root.value))
+onMounted(() => root.value && observer.value?.observe(root.value))
 
 onBeforeUnmount(() => observer.value?.disconnect())
 </script>

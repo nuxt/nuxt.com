@@ -17,6 +17,7 @@ export default defineNuxtConfig({
     '@nuxthq/ui',
     '@nuxt/content',
     '@nuxtlabs/github-module',
+    '@nuxtjs/html-validator',
     // 'nuxt-newsletter',
     'nuxt-plausible',
     'nuxt-icon',
