@@ -37,7 +37,10 @@
             </NuxtLink>
           </li>
         </ul>
-        <SocialLinks />
+        <div class="flex justify-end">
+          <AlgoliaDocSearch v-show="$route.fullPath.startsWith('/docs')" class="mr-4" />
+          <SocialLinks />
+        </div>
       </nav>
     </UContainer>
   </header>
