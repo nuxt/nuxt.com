@@ -54,7 +54,8 @@ export default defineNuxtConfig({
     mailjet: {
       apiKey: process.env.MAILJET_API_KEY,
       secretKey: process.env.MAILJET_SECRET_KEY
-    }
+    },
+    public: {}
   },
   ui: {
     colors: {
@@ -90,9 +91,6 @@ export default defineNuxtConfig({
     maxContributors: 10
   },
   nitro: {
-    plugins: [
-      resolve('./server/plugins/content.ts')
-    ],
     prerender: {
       routes: ['/docs', '/'],
       crawlLinks: true

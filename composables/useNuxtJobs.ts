@@ -1,4 +1,4 @@
-import type { NuxtJob } from '~/types'
+import type { NuxtJob } from '../types'
 
 export const useNuxtJobs = () => {
   const jobs = useState<NuxtJob[]>('jobs', () => [])
