@@ -38,7 +38,7 @@
           </li>
         </ul>
         <div class="flex justify-end">
-          <AppSearch v-if="hasDocSearch && $route.fullPath.startsWith('/docs')" class="mr-4" />
+          <AlgoliaDocSearch v-show="$route.fullPath.startsWith('/docs')" class="mr-4" />
           <SocialLinks />
         </div>
       </nav>
@@ -52,7 +52,6 @@ import type { Ref } from 'vue'
 
 const route = useRoute()
 const { hasScrolledPastNavbar } = useNavbarScroll()
-const { hasDocSearch } = useDocSearch()
 
 const isOpen = ref(false)
 

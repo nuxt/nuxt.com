@@ -19,7 +19,7 @@
     "@nuxthq/ui": "^0.1.5",
     "@nuxtjs/eslint-config-typescript": "^11.0.0",
     "@nuxtjs/fontaine": "^0.2.2",
-    "@nuxtlabs/github-module": "^1.4.10",
+    "@nuxtlabs/github-module": "^1.4.13",
     "@vueuse/core": "^9.5.0",
     "@vueuse/motion": "^2.0.0-beta.12",
     "eslint": "^8.27.0",
@@ -41,6 +41,6 @@
   "dependencies": {
     "@docsearch/css": "^3.3.0",
     "@docsearch/js": "^3.3.0",
-    "@nuxtjs/algolia": "^1.1.4"
+    "@nuxtjs/algolia": "^1.1.5"
   }
 }
