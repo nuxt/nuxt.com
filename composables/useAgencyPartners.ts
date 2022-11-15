@@ -1,5 +1,5 @@
 import type { Ref } from 'vue'
-import type { Agency } from '~/types'
+import type { Agency } from '../types'
 
 const slugify = (str: string) => str.toLowerCase().replace(/[^a-z0-9 -]/g, ' ').replace(/[\s-]+/g, '-')
 
@@ -50,9 +50,9 @@ export const useAgencyPartners = () => {
         })),
         location: partner.location
           ? {
-            key: slugify(partner.location),
-            title: partner.location
-          }
+              key: slugify(partner.location),
+              title: partner.location
+            }
           : null
       }))
   })
