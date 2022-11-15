@@ -1,6 +1,6 @@
 import Joi from 'joi'
-import { useEmail, sendEmail } from '~/server/utils/emails'
-import { validate } from '~/server/utils/validation'
+import { useEmail, sendEmail } from '../../utils/emails'
+import { validate } from '../../utils/validation'
 
 const bodySchema = Joi.object({
   firstname: Joi.string().trim().required(),

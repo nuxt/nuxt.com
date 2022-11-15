@@ -1,4 +1,4 @@
-import type { NuxtJob } from '~/types'
+import type { NuxtJob } from '../../types'
 
 export default defineCachedEventHandler(async () => {
   return await $fetch<NuxtJob[]>('https://vuejobs.com/api/jobs?keyword=nuxt')

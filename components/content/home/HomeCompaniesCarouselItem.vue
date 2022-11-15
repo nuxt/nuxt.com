@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang="ts">import { PropType } from 'vue'
-import { ResourcesShowcasesListGroupItem } from '~~/types'
+import { ResourcesShowcasesListGroupItem } from '../../../types'
 
 const props = defineProps({
   showcase: {

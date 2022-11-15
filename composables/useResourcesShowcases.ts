@@ -1,5 +1,5 @@
 import type { Ref } from 'vue'
-import type { ResourcesShowcasesList } from '~/types'
+import type { ResourcesShowcasesList } from '../types'
 
 export const useResourcesShowcases = () => {
   const list: Ref<ResourcesShowcasesList> = useState('resources-showcases-list', () => null)
