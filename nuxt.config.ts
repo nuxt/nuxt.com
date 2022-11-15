@@ -18,6 +18,7 @@ export default defineNuxtConfig({
     '@nuxt/content',
     '@nuxtlabs/github-module',
     '@nuxtjs/html-validator',
+    resolve('./modules/anti-prefetch'),
     // 'nuxt-newsletter',
     'nuxt-plausible',
     'nuxt-icon',
