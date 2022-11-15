@@ -26,9 +26,11 @@ const { layout } = useContent()
 </script>
 
 <template>
-  <NuxtLoadingBar :duration="1000" />
-  <NuxtLayout :name="layout || 'default'">
-    <NuxtPage />
-  </NuxtLayout>
-  <UNotifications />
+  <div>
+    <NuxtLoadingBar :duration="1000" />
+    <NuxtLayout :name="layout || 'default'">
+      <NuxtPage />
+    </NuxtLayout>
+    <UNotifications />
+  </div>
 </template>
