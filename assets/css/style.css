@@ -26,6 +26,11 @@
   --docsearch-muted-color: rgb(127, 132, 151);
 }
 
+.DocSearch-Input:focus {
+  outline: none;
+  box-shadow: none;
+}
+
 /*
 focus-visible only applies focus styles for keyboard navigation / Do not remove
 See https://www.sarasoueidan.com/blog/focus-indicators/ for more info
