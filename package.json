@@ -35,7 +35,7 @@
     "@nuxthq/studio": "^0.2.2",
     "@nuxthq/ui": "^0.1.5",
     "@nuxtjs/fontaine": "^0.2.2",
-    "@nuxtlabs/github-module": "^1.4.10",
+    "@nuxtlabs/github-module": "^1.4.11",
     "@vueuse/core": "^9.5.0",
     "@vueuse/motion": "^2.0.0-beta.12",
     "joi": "^17.7.0",

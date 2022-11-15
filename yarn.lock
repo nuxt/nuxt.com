@@ -872,12 +872,12 @@
     tailwindcss "^3.2.0"
     ufo "^0.8.6"
 
-"@nuxtlabs/github-module@^1.4.10":
-  version "1.4.10"
-  resolved "https://registry.yarnpkg.com/@nuxtlabs/github-module/-/github-module-1.4.10.tgz#68e6d7d8312bff7d53b6c6989bdaf921b59a87a6"
-  integrity sha512-oW6fEbJJ9yarCxy9BhC0vT76xmbsStSg/AKFKASoa2F4drEYNzVJy1R19p1ldAWKd59DEOqKKOmlQ2vRII8+Uw==
+"@nuxtlabs/github-module@^1.4.11":
+  version "1.4.11"
+  resolved "https://registry.yarnpkg.com/@nuxtlabs/github-module/-/github-module-1.4.11.tgz#4b2b319cc457157c47deb15330f14ff5bfb4fbc1"
+  integrity sha512-+dmpRiOMVldGZgqjVJ/xGi3sPEikaveo7f0QSZS61kQFRaCl0vyblQwJKXJKK0PIkg93jrZfzHADsH0LdM59rA==
   dependencies:
-    "@nuxt/kit" "^3.0.0-rc.10"
+    "@nuxt/kit" "^3.0.0-rc.13"
     "@octokit/graphql" "^5.0.1"
     "@octokit/rest" "^19.0.4"
     remark-gfm "^3.0.1"
