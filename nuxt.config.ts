@@ -80,6 +80,13 @@ export default defineNuxtConfig({
       injectPage: false
     }
   },
+  tailwindcss: {
+    config: {
+      content: [
+        resolve('./ui/*.ts')
+      ]
+    }
+  },
   newsletter: {
     revue: {
       apiKey: process.env.REVUE_API_KEY,
