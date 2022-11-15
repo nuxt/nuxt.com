@@ -34,7 +34,7 @@ How a user interacts with and experiences your website will determine your impac
     ---
     image:
       light: 'ux-fast-light.svg'
-      dark: 'ux-fast.png'
+      dark: 'ux-fast.svg'
     ---
     #title
     Fast and Furious
@@ -62,7 +62,7 @@ How a user interacts with and experiences your website will determine your impac
     #title
     SEO & Web Vitals
     #description
-    By leveraging server-side rendering, ESM format and optimized images, Nuxt websites are indexable by search engines while giving the feeling of an app to the end-users. 
+    By leveraging server-side rendering, ESM format and optimized images, Nuxt websites are indexable by search engines while giving the feeling of an app to the end-users.
     :::
   ::
 ::
