@@ -19,7 +19,8 @@ export default defineNuxtConfig({
     // 'nuxt-newsletter',
     'nuxt-plausible',
     'nuxt-icon',
-    '@nuxtjs/fontaine'
+    '@nuxtjs/fontaine',
+    '@nuxtjs/algolia'
   ],
   components: [
     resolve('./components'),
@@ -78,6 +79,14 @@ export default defineNuxtConfig({
     documentDriven: {
       surround: false,
       injectPage: false
+    }
+  },
+  algolia: {
+    applicationId: '1V8G7N9GF0',
+    apiKey: '60a01900a4b726d667eab75b6f337592',
+    docSearch: {
+      indexName: 'nuxtjs',
+      facetFilters: ['tags:v3']
     }
   },
   tailwindcss: {
