@@ -1,14 +1,16 @@
-import { createResolver } from '@nuxt/kit'
+import { createResolver, logger } from '@nuxt/kit'
+import { version } from './package.json'
 import preset from './ui'
 
 const { resolve } = createResolver(import.meta.url)
+logger.success(`Using Nuxt.com theme v${version}`)
 
 // https://v3.nuxtjs.org/guide/directory-structure/nuxt.config
 export default defineNuxtConfig({
   extends: '@nuxt-themes/typography',
   css: [
-    '~/assets/css/fonts.css',
-    '~/assets/css/style.css'
+    resolve('./assets/css/fonts.css'),
+    resolve('./assets/css/style.css')
   ],
   modules: [
     '@nuxthq/ui',
@@ -54,15 +56,7 @@ export default defineNuxtConfig({
       apiKey: process.env.MAILJET_API_KEY,
       secretKey: process.env.MAILJET_SECRET_KEY
     },
-    volta: {
-      token: process.env.VOLTA_TOKEN
-    },
-    public: {
-      studioUrl: process.env.STUDIO_URL || 'https://studio.nuxt.com',
-      plausible: {
-        domain: process.env.PLAUSIBLE_DOMAIN
-      }
-    }
+    public: {}
   },
   ui: {
     colors: {
@@ -82,17 +76,6 @@ export default defineNuxtConfig({
     navigation: {
       fields: ['redirect']
     },
-    sources: [
-      {
-        name: 'nuxt3-docs',
-        driver: 'github',
-        repo: 'nuxt/framework',
-        branch: 'main',
-        dir: 'docs/content',
-        prefix: '/docs',
-        token: process.env.GITHUB_TOKEN
-      }
-    ],
     documentDriven: {
       surround: false,
       injectPage: false
@@ -106,6 +89,13 @@ export default defineNuxtConfig({
       facetFilters: ['tags:v3']
     }
   },
+  tailwindcss: {
+    config: {
+      content: [
+        resolve('./ui/*.ts')
+      ]
+    }
+  },
   newsletter: {
     revue: {
       apiKey: process.env.REVUE_API_KEY,
@@ -117,7 +107,6 @@ export default defineNuxtConfig({
     maxContributors: 10
   },
   nitro: {
-    plugins: ['~/server/plugins/content.ts'],
     prerender: {
       routes: ['/docs', '/'],
       crawlLinks: true

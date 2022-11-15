@@ -1,4 +1,4 @@
-import { fetchGithubSponsors, fetchOpenCollectiveSponsors } from '~/server/utils/sponsors'
+import { fetchGithubSponsors, fetchOpenCollectiveSponsors } from '../utils/sponsors'
 
 const tiersMap = {
   platinum: amount => amount >= 2000,

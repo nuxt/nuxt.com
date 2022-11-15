@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import type { Sponsor } from '~/types/sponsors'
+import type { Sponsor } from '../../../../types/sponsors'
 
 defineProps({
   sponsors: {

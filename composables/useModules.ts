@@ -1,5 +1,5 @@
 import type { Ref } from 'vue'
-import type { Module } from '~/types'
+import type { Module } from '../types'
 
 export const useModules = () => {
   const route = useRoute()
