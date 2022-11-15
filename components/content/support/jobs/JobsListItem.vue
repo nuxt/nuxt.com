@@ -28,7 +28,7 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import type { NuxtJob } from '~/types'
+import type { NuxtJob } from '../../../../types'
 
 const props = defineProps({
   job: {

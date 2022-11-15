@@ -64,8 +64,6 @@
 </template>
 
 <script setup lang="ts">
-import { formatNumber, capitalize } from '~/utils'
-
 definePageMeta({
   documentDriven: false
 })
