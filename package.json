@@ -1,10 +1,11 @@
 {
-  "private": true,
+  "name": "nuxt-website-theme",
+  "version": "0.0.1",
   "scripts": {
-    "dev": "nuxi dev",
-    "build": "nuxi build",
-    "generate": "nuxi generate",
-    "start": "node .output/server/index.mjs",
+    "dev": "nuxi prepare && nuxi dev .demo",
+    "build": "nuxi prepare && nuxi build .demo",
+    "generate": "nuxi prepare && nuxi generate .demo",
+    "preview": "nuxi preview .demo",
     "lint": "eslint --ext .ts,.js,.vue .",
     "release": "yarn lint && standard-version && git push --follow-tags",
     "test": "yarn lint"
