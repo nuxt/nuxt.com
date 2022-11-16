@@ -801,6 +801,30 @@
     unimport "^0.7.0"
     untyped "^0.5.0"
 
+"@nuxt/kit@^3.0.0-rc.14":
+  version "3.0.0-rc.14"
+  resolved "https://registry.yarnpkg.com/@nuxt/kit/-/kit-3.0.0-rc.14.tgz#8eb0ffb4940fc874708b1cbb30f834c22d29da85"
+  integrity sha512-CNIRkUAEWmvedA4MJqj4kVE1QNHYYu4V0Uj7bcOsOStWvbEzhRqh5AL56eaQGHcHnvNt/QEKvXDgcr6woFH4EQ==
+  dependencies:
+    "@nuxt/schema" "3.0.0-rc.14"
+    c12 "^1.0.1"
+    consola "^2.15.3"
+    defu "^6.1.1"
+    globby "^13.1.2"
+    hash-sum "^2.0.0"
+    ignore "^5.2.0"
+    jiti "^1.16.0"
+    knitwork "^1.0.0"
+    lodash.template "^4.5.0"
+    mlly "^1.0.0"
+    pathe "^1.0.0"
+    pkg-types "^1.0.1"
+    scule "^1.0.0"
+    semver "^7.3.8"
+    unctx "^2.1.0"
+    unimport "^1.0.0"
+    untyped "^1.0.0"
+
 "@nuxt/kit@npm:@nuxt/kit-edge@3.0.0-rc.14-27808884.f1ae40f":
   version "3.0.0-rc.14-27808884.f1ae40f"
   resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-rc.14-27808884.f1ae40f.tgz#94f45e264a9cc1b5681752478907afddf2412153"
@@ -873,6 +897,24 @@
     ufo "^0.8.6"
     unimport "^0.7.0"
     untyped "^0.5.0"
+
+"@nuxt/schema@3.0.0-rc.14":
+  version "3.0.0-rc.14"
+  resolved "https://registry.yarnpkg.com/@nuxt/schema/-/schema-3.0.0-rc.14.tgz#b48e67d409516a85cfec3459660de006bd78ed5d"
+  integrity sha512-d/H/qDieFs//nhZpsH3Qca4RjF+OW3TYcJ2soC7OP4NhbzLMSEiFfi69Q+2hAEhFKrMoCkJ9Q4pSLQGDSOhR0Q==
+  dependencies:
+    c12 "^1.0.1"
+    create-require "^1.1.1"
+    defu "^6.1.1"
+    jiti "^1.16.0"
+    pathe "^1.0.0"
+    pkg-types "^1.0.1"
+    postcss-import-resolver "^2.0.0"
+    scule "^1.0.0"
+    std-env "^3.3.1"
+    ufo "^1.0.0"
+    unimport "^1.0.0"
+    untyped "^1.0.0"
 
 "@nuxt/schema@npm:@nuxt/schema-edge@3.0.0-rc.14-27808884.f1ae40f":
   version "3.0.0-rc.14-27808884.f1ae40f"
@@ -962,10 +1004,10 @@
     vite-plugin-checker "^0.5.1"
     vue-bundle-renderer "^0.5.0"
 
-"@nuxthq/studio@^0.2.2":
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/@nuxthq/studio/-/studio-0.2.2.tgz#2d2e496ab45899292c6a255453be4f31b5ada010"
-  integrity sha512-1pQ7A8f3sP2YN1/b5e9GsBJdvLVU4qhRSl3D4KFKfi/L+QmY0+Je+L7fRIZIhlc0gSn3IyZGvOw8l28/svG66w==
+"@nuxthq/studio@^0.2.3":
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/@nuxthq/studio/-/studio-0.2.3.tgz#e42778a991356676bc1d90d199c8d09306b4bd23"
+  integrity sha512-X5K0UOu/7633m8xJY1bq0K3sd55ERSPBAzSTv2dhoLBPOvwC3HfIvDx29BqRmh9sxsZ/dmJVQP8ZCnGAAbQYVw==
   dependencies:
     "@nuxt/kit" "^3.0.0-rc.13"
     "@nuxt/schema" "^3.0.0-rc.13"
@@ -974,14 +1016,14 @@
     socket.io-client "^4.5.3"
     ufo "^0.8.6"
 
-"@nuxthq/ui@^0.1.6":
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/@nuxthq/ui/-/ui-0.1.6.tgz#adb5ccf0c5b0327b0d574b15ec8b43b7518b1472"
-  integrity sha512-jWWKzv1Tbqq50zZYQfBibeH1E6RUpUDZtr1NvKj+GpVLMsZkElfFMvRz9K2jhIT4lIjvueT1RoyfJa7cpkC/fw==
+"@nuxthq/ui@^0.1.7":
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/@nuxthq/ui/-/ui-0.1.7.tgz#5cea3f9a18e1a73de3c346a745877f8f31c0a460"
+  integrity sha512-oCq+5xEfgM4zjgNd0Fut8/B+rcdFoGs22B/mtG4m/R4tlDCoJD/1zsKbqFpdA6IpQLRxZymlwCLff5doVB1mcA==
   dependencies:
     "@headlessui/vue" "^1.7.4"
     "@iconify/vue" "^4.0.0"
-    "@nuxt/kit" "^3.0.0-rc.13"
+    "@nuxt/kit" "^3.0.0-rc.14"
     "@nuxtjs/color-mode" "^3.1.8"
     "@nuxtjs/tailwindcss" "^6.1.3"
     "@popperjs/core" "^2.11.6"
@@ -989,12 +1031,12 @@
     "@tailwindcss/forms" "^0.5.3"
     "@tailwindcss/line-clamp" "^0.4.2"
     "@tailwindcss/typography" "^0.5.8"
-    "@vueuse/core" "^9.4.0"
-    "@vueuse/integrations" "^9.4.0"
-    defu "^6.1.0"
+    "@vueuse/core" "^9.5.0"
+    "@vueuse/integrations" "^9.5.0"
+    defu "^6.1.1"
     fuse.js "^6.6.2"
     lodash-es "^4.17.21"
-    tailwindcss "^3.2.2"
+    tailwindcss "^3.2.4"
 
 "@nuxtjs/algolia@^1.1.5":
   version "1.1.5"
@@ -1083,10 +1125,10 @@
     tailwindcss "^3.2.0"
     ufo "^0.8.6"
 
-"@nuxtlabs/github-module@^1.5.2":
-  version "1.5.2"
-  resolved "https://registry.yarnpkg.com/@nuxtlabs/github-module/-/github-module-1.5.2.tgz#7a3049b56609cd44fc629fbf737251c7d646c59a"
-  integrity sha512-B3jN8hVD/oGFYuO6FCYrGIUiVLEb/OC309B6eCJ7iJUDAWLqV2KG4PictdC6F1QNqe+N4heV05Y9Y8tIAMgLFA==
+"@nuxtlabs/github-module@^1.5.3":
+  version "1.5.3"
+  resolved "https://registry.yarnpkg.com/@nuxtlabs/github-module/-/github-module-1.5.3.tgz#9aa50c96b88f023dc73f2c3c5461abcdc8d13c71"
+  integrity sha512-dxjhyCRkcCHw73lQriIdertjIk6VAt6VTtdh25pBtFtEW9yGNiG20QrF7CT5Rl20PiKLHNa4jrQfnPNkJPRvHQ==
   dependencies:
     "@nuxt/kit" "^3.0.0-rc.13"
     "@octokit/graphql" "^5.0.1"
@@ -1829,7 +1871,7 @@
     "@unhead/ssr" "^0.6.7"
     "@unhead/vue" "^0.6.7"
 
-"@vueuse/integrations@^9.4.0":
+"@vueuse/integrations@^9.5.0":
   version "9.5.0"
   resolved "https://registry.yarnpkg.com/@vueuse/integrations/-/integrations-9.5.0.tgz#facd95296eaf366010f63e4f513f36e6702d2787"
   integrity sha512-YhxQQOpoZ6QPMbfKXXssgIG+hkDymKsDUbUofzjfvuxyVjKq9/BtV4mnIcCGUjTSm0R7k/sMiucRFrcokiwL7A==
@@ -9787,7 +9829,7 @@ tailwindcss-border-gradient-radius@^3.0.1:
     color "^3.1.2"
     lodash "^4.17.19"
 
-tailwindcss@^3.2.0, tailwindcss@^3.2.2:
+tailwindcss@^3.2.0, tailwindcss@^3.2.4:
   version "3.2.4"
   resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-3.2.4.tgz#afe3477e7a19f3ceafb48e4b083e292ce0dc0250"
   integrity sha512-AhwtHCKMtR71JgeYDaswmZXhPcW9iuI9Sp2LvZPo9upDZ7231ZJ7eA9RaURbhpXGVlrjX4cFNlB4ieTetEb7hQ==
@@ -10071,7 +10113,7 @@ typesafe-path@^0.2.2:
   resolved "https://registry.yarnpkg.com/typesafe-path/-/typesafe-path-0.2.2.tgz#91a436681b2f514badb114061b6a5e5c2b8943b1"
   integrity sha512-OJabfkAg1WLZSqJAJ0Z6Sdt3utnbzr/jh+NAHoyWHJe8CMSy79Gm085094M9nvTPy22KzTVn5Zq5mbapCI/hPA==
 
-typescript@^4.8.4:
+typescript@^4.8.4, typescript@^4.9.3:
   version "4.9.3"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.9.3.tgz#3aea307c1746b8c384435d8ac36b8a2e580d85db"
   integrity sha512-CIfGzTelbKNEnLpLdGFgdyKhG23CKdKgQPOBc+OUNrkJ2vr+KSzsSV5kq5iWhEQbok+quxgGzrAtGWCyU7tHnA==
@@ -10139,7 +10181,7 @@ unbuild@^0.9.4:
     typescript "^4.8.4"
     untyped "^0.5.0"
 
-unctx@^2.0.2:
+unctx@^2.0.2, unctx@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/unctx/-/unctx-2.1.0.tgz#14cd10e5150e2588e88f94775e7509908f853ed8"
   integrity sha512-Q3UdS5IAlVRIWsWDd8Rr9g2zqBAZaecBgQ+XXFiKbZzovDMMTEU+Ki0SAVf/ZgWsoeG0/c1kzO2/k6BVhbkUHw==

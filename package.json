@@ -34,12 +34,12 @@
     "@docsearch/js": "^3.3.0",
     "@nuxt-themes/typography": "^0.0.12",
     "@nuxt/content": "^2.2.2",
-    "@nuxthq/studio": "^0.2.2",
-    "@nuxthq/ui": "^0.1.6",
+    "@nuxthq/studio": "^0.2.3",
+    "@nuxthq/ui": "^0.1.7",
     "@nuxtjs/algolia": "^1.1.5",
     "@nuxtjs/fontaine": "^0.2.2",
     "@nuxtjs/html-validator": "^1.1.1",
-    "@nuxtlabs/github-module": "^1.5.2",
+    "@nuxtlabs/github-module": "^1.5.3",
     "@vueuse/core": "^9.5.0",
     "@vueuse/motion": "^2.0.0-beta.12",
     "joi": "^17.7.0",
@@ -57,7 +57,7 @@
     "eslint": "^8.27.0",
     "nuxt": "npm:nuxt3@latest",
     "standard-version": "^9.5.0",
-    "typescript": "^4.8.4"
+    "typescript": "^4.9.3"
   },
   "resolutions": {
     "parse5": "6.0.1"
