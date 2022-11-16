@@ -42,6 +42,10 @@ const links = [
   {
     title: 'NuxtLabs',
     _path: 'https://nuxtlabs.com'
+  },
+  {
+    title: 'Nuxt Studio',
+    _path: 'https://nuxt.studio'
   }
 ]
 
