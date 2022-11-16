@@ -13,7 +13,7 @@ export default defineNuxtConfig({
     resolve('./assets/css/style.css')
   ],
   modules: [
-    // '@nuxthq/studio',
+    '@nuxthq/studio',
     '@nuxthq/ui',
     '@nuxt/content',
     '@nuxtlabs/github-module',
