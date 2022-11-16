@@ -13,8 +13,9 @@
         </span>
       </div>
       <UButton
-        label="Announcing Nuxt 3.0 stable"
-        to="/v3"
+        v-if="topButtonText"
+        :label="topButtonText"
+        :to="topButtonLink"
         size="xs"
         variant="gray"
         truncate
@@ -55,6 +56,14 @@
 
 <script setup lang="ts">
 defineProps({
+  topButtonText: {
+    type: String,
+    default: ''
+  },
+  topButtonLink: {
+    type: String,
+    default: ''
+  },
   primaryButtonText: {
     type: String,
     default: ''
