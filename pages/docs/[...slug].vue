@@ -11,13 +11,19 @@
 </template>
 
 <script setup lang="ts">
-const { page } = useContent()
+const { page, surround } = useContent()
+
+console.log({ surround })
 
 const githubLink = computed(() => page?.value?._file?.replace('docs', 'content'))
 
 const hasToc = computed(() => !!page.value?.body?.toc?.links?.length)
 
 useContentHead(page)
+
+definePageMeta({
+  documentDriven: { surround: true }
+})
 </script>
 
 <style lang="postcss" scoped>
