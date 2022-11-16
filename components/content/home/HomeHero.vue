@@ -12,6 +12,13 @@
           <ContentSlot :use="$slots.news" unwrap="p" />
         </span>
       </div>
+      <UButton
+        label="Anouncing Nuxt 3.0 stable"
+        to="/v3"
+        size="xs"
+        variant="gray"
+        truncate
+      />
       <h1 v-if="$slots.title" class="relative max-w-2xl text-5xl font-semibold text-center sm:text-left md:text-6xl lg:text-7xl u-text-gray-900">
         <ContentSlot :use="$slots.title" unwrap="p" />
       </h1>
