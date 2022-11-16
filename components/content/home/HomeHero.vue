@@ -13,7 +13,7 @@
         </span>
       </div>
       <UButton
-        label="Anouncing Nuxt 3.0 stable"
+        label="Announcing Nuxt 3.0 stable"
         to="/v3"
         size="xs"
         variant="gray"
