@@ -1,7 +1,7 @@
 <template>
   <UContainer
     class="flex px-4 pt-24 transition duration-700 relative"
-    :class="[containerClass, !slideIn ? 'opacity-0 translate-y-20' : 'opacity-100 translate-y-0', buttons.length ? 'flex-col md:flex-row md:items-center md:justify-between' : 'flex-col']"
+    :class="[containerClass, !slideIn ? 'opacity-0 translate-y-20' : 'opacity-100 translate-y-0', buttons.length ? 'flex-col lg:flex-row lg:items-center lg:justify-between' : 'flex-col']"
     padded
   >
     <div ref="root" class="flex flex-col justify-center">
@@ -23,7 +23,7 @@
     <div v-if="$slots.extra">
       <ContentSlot :use="$slots.extra" unwrap="p" />
     </div>
-    <div v-if="buttons.length" class="flex md:justify-end gap-6 pt-8 md:pt-0 md:w-1/3">
+    <div v-if="buttons.length" class="flex lg:flex-row lg:justify-end gap-2 lg:gap-6 pt-8 lg:pt-0 lg:w-1/3">
       <UButton
         v-for="button of buttons"
         :key="button.label"
