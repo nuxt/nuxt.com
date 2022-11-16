@@ -105,9 +105,14 @@ export default defineNuxtConfig({
   },
   nitro: {
     prerender: {
-      routes: ['/docs', '/', '/api/jobs', '/api/modules', '/api/sponsors'],
+      routes: ['/docs', '/', '/api/jobs.json', '/api/modules.json', '/api/sponsors.json'],
       crawlLinks: true
-    }
+    },
+    handlers: [
+      { handler: resolve('./server/api/modules/index.ts'), route: '/api/modules.json' },
+      { handler: resolve('./server/api/jobs.ts'), route: '/api/jobs.json' },
+      { handler: resolve('./server/api/sponsors.ts'), route: '/api/sponsors.json' }
+    ]
     // hooks: {
     //   'prerender:generate': (route) => {
     //     const prerenderedRoutes = [

@@ -11,7 +11,7 @@ export const useNuxtJobs = () => {
       return
     }
 
-    jobs.value = await $fetch<NuxtJob[]>('/api/jobs')
+    jobs.value = await $fetch<NuxtJob[]>('/api/jobs.json')
   }
 
   // Computed
