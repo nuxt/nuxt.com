@@ -1,6 +1,6 @@
 {
   "name": "nuxt-website-theme",
-  "version": "0.0.23",
+  "version": "0.0.24",
   "main": "nuxt.config.ts",
   "files": [
     "app/",
