@@ -80,30 +80,28 @@ export const useModules = () => {
   // Computed
 
   const modules = computed(() => {
-    return modules.value?.length
-      ? _modules.value.map((module) => {
-        const compatibilityTags = []
-        if (module.compatibility.nuxt.includes('^2.0.0')) {
-          if (module.compatibility.requires.bridge !== true /* bridge: false or bridge: optional */) {
-            compatibilityTags.push('2.x')
-          }
-          if (module.compatibility.requires.bridge) {
-            compatibilityTags.push('2.x-bridge')
-          }
+    return _modules.value.map((module) => {
+      const compatibilityTags = []
+      if (module.compatibility.nuxt.includes('^2.0.0')) {
+        if (module.compatibility.requires.bridge !== true /* bridge: false or bridge: optional */) {
+          compatibilityTags.push('2.x')
         }
-        if (module.compatibility.nuxt.includes('^3.0.0')) {
-          compatibilityTags.push('3.x')
+        if (module.compatibility.requires.bridge) {
+          compatibilityTags.push('2.x-bridge')
         }
+      }
+      if (module.compatibility.nuxt.includes('^3.0.0')) {
+        compatibilityTags.push('3.x')
+      }
 
-        return {
-          ...module,
-          tags: [
-            ...(module.tags || []),
-            ...compatibilityTags
-          ]
-        }
-      })
-      : []
+      return {
+        ...module,
+        tags: [
+          ...(module.tags || []),
+          ...compatibilityTags
+        ]
+      }
+    })
   })
 
   const githubQuery = computed(() => {
