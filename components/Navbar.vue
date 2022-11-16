@@ -38,7 +38,7 @@
           </li>
         </ul>
         <div class="flex justify-end">
-          <AlgoliaDocSearch v-show="$route.fullPath.startsWith('/docs')" class="mr-4" />
+          <AlgoliaDocSearch v-show="$route.fullPath.startsWith('/docs')" class="absolute left-8 mb-[12px] sm:left-0 sm:mb-0 sm:relative sm:mr-4" />
           <SocialLinks />
         </div>
       </nav>
