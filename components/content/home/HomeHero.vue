@@ -26,7 +26,7 @@
       <p v-if="$slots.description" class="max-w-lg text-xl text-center text-gray-500 sm:w-3/5 sm:text-left dark:text-gray-100 leading-8">
         <ContentSlot :use="$slots.description" unwrap="p" />
       </p>
-      <div class="flex gap-6 z-[1]">
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-6 z-[1]">
         <UButton
           :label="primaryButtonText"
           :to="primaryButtonLink"
