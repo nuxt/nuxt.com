@@ -99,13 +99,13 @@ const selectedShowcases = computed(() => {
 }
 
 .slide {
-  height: 100px;
+  height: 200px;
   width: 200px;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 768px) {
   .slide {
-    height: 200px;
+    height: 300px;
     width: 400px;
   }
 }
