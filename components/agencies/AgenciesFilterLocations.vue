@@ -5,7 +5,7 @@
     name="region"
     :options="regionsWithPlaceholder"
     size="sm"
-    placeholder="Region"
+    placeholder="Location"
     text-attribute="title"
     class="min-w-[144px]"
   />
