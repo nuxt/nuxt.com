@@ -31,10 +31,10 @@
       </div>
     </div>
     <div
-      class="absolute top-0 left-0 h-full w-[20px] sm:w-[50px] md:w-[100px] lg:w-[100px] bg-gradient-to-r from-white via-white dark:from-black to-transparent z-[1]"
+      class="absolute top-0 left-0 h-full w-[20px] sm:w-[50px] md:w-[100px] lg:w-[200px] bg-gradient-to-r from-white dark:from-black via-white/50 dark:via-black/60 to-transparent z-[1]"
     />
     <div
-      class="absolute top-0 right-0 h-full w-[20px] sm:w-[50px] md:w-[100px] lg:w-[100px] bg-gradient-to-l from-white via-white dark:from-black to-transparent z-[1]"
+      class="absolute top-0 right-0 h-full w-[20px] sm:w-[50px] md:w-[100px] lg:w-[200px] bg-gradient-to-l from-white dark:from-black via-white/50 dark:via-black/60 to-transparent z-[1]"
     />
   </div>
 </template>
