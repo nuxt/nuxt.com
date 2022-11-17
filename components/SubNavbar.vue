@@ -31,7 +31,7 @@
               :to="link.redirect || navBottomLink(link)"
               :target="link.redirect && '_blank'"
               :class="{
-                'u-text-gray-900 font-semibold': link.active || isActive(link),
+                'u-text-gray-900 font-semibold _active': link.active || isActive(link),
                 'font-medium u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900': !isActive(link),
               }"
             >
