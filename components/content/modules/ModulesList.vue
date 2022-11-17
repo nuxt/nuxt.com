@@ -30,7 +30,7 @@
           There is no module found for <b>{{ q }}</b> yet.<br>Become the first one to create it!
         </span>
 
-        <div class="flex items-center gap-3">
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
           <UButton
             to="https://github.com/nuxt/modules"
             target="_blank"
