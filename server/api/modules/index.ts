@@ -21,12 +21,12 @@ async function fetchModuleStats (module: ModuleInfo) {
         console.error(`Cannot fetch npm info for ${module.npm}: ${err}`)
         return { downloads: { lastMonth: 0 } }
       }),
-    $fetch<any>(`https://ungh.unjs.io/repo/${ghRepo}`)
+    $fetch<any>(`https://ungh.unjs.io/repos/${ghRepo}`)
       .catch((err) => {
         console.error(`Cannot fetch github repo info for ${ghRepo}: ${err}`)
         return { repo: { stars: 0 } }
       }).then(r => r.repo),
-    $fetch<any>(`https://ungh.unjs.io/repo/${ghRepo}/contributors`)
+    $fetch<any>(`https://ungh.unjs.io/repos/${ghRepo}/contributors`)
       .catch((err) => {
         console.error(`Cannot fetch github contributors info for ${ghRepo}: ${err}`)
         return { contributors: [] }
