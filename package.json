@@ -1,6 +1,6 @@
 {
   "name": "nuxt-website-theme",
-  "version": "0.0.19",
+  "version": "0.1.6",
   "main": "nuxt.config.ts",
   "files": [
     "app/",
@@ -32,14 +32,14 @@
   "dependencies": {
     "@docsearch/css": "^3.3.0",
     "@docsearch/js": "^3.3.0",
-    "@nuxt-themes/typography": "^0.0.12",
+    "@nuxt-themes/typography": "^0.0.14",
     "@nuxt/content": "^2.2.2",
-    "@nuxthq/studio": "^0.2.2",
-    "@nuxthq/ui": "^0.1.6",
-    "@nuxtjs/algolia": "^1.1.5",
+    "@nuxthq/studio": "^0.2.3",
+    "@nuxthq/ui": "^0.1.8",
+    "@nuxtjs/algolia": "^1.2.0",
     "@nuxtjs/fontaine": "^0.2.2",
     "@nuxtjs/html-validator": "^1.1.1",
-    "@nuxtlabs/github-module": "^1.4.13",
+    "@nuxtlabs/github-module": "^1.5.3",
     "@vueuse/core": "^9.5.0",
     "@vueuse/motion": "^2.0.0-beta.12",
     "joi": "^17.7.0",
@@ -47,17 +47,17 @@
     "node-mailjet": "^5.1.1",
     "nuxt-icon": "^0.1.7",
     "nuxt-newsletter": "^0.2.0",
-    "nuxt-plausible": "^0.1.1",
+    "nuxt-plausible": "^0.1.2",
     "tailwindcss-border-gradient-radius": "^3.0.1",
     "three": "^0.146.0",
     "vue-lite-youtube-embed": "^1.0.4"
   },
   "devDependencies": {
-    "@nuxtjs/eslint-config-typescript": "^11.0.0",
+    "@nuxtjs/eslint-config-typescript": "^12.0.0",
     "eslint": "^8.27.0",
-    "nuxt": "npm:nuxt3@latest",
+    "nuxt": "^3.0.0",
     "standard-version": "^9.5.0",
-    "typescript": "^4.8.4"
+    "typescript": "^4.9.3"
   },
   "resolutions": {
     "parse5": "6.0.1"

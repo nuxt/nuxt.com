@@ -1,5 +1,5 @@
 <template>
-  <USlideover v-model="isOpen" :transition="false" :overlay="false">
+  <USlideover v-model="isOpen" :transition="false" :overlay="false" base-class="relative flex-1 flex flex-col w-full focus:outline-none max-w-md u-bg-white border-r border-r-gray-300 dark:border-r-gray-700">
     <template #header>
       <button v-if="selectedLink" class="flex-1 flex items-start focus:outline-none focus-visible:outline-2" @click="selectedLink = null">
         <Icon name="uil:arrow-left" class="flex-shrink-0 w-7 h-7" />
@@ -68,7 +68,7 @@ const selectLink = () => {
 
   const path = route.fullPath.split('/').slice(0, 3).join('/')
   const nav: NavItem = navPageFromPath(path, navigation.value)
-  if (nav && nav._path === path && nav.children?.length > 1) {
+  if (nav && nav.children && nav._path === path && nav.children?.length > 1) {
     selectedLink.value = nav
   }
 }

@@ -12,13 +12,21 @@
           <ContentSlot :use="$slots.news" unwrap="p" />
         </span>
       </div>
+      <UButton
+        v-if="topButtonText"
+        :label="topButtonText"
+        :to="topButtonLink"
+        size="xs"
+        variant="gray"
+        truncate
+      />
       <h1 v-if="$slots.title" class="relative max-w-2xl text-5xl font-semibold text-center sm:text-left md:text-6xl lg:text-7xl u-text-gray-900">
         <ContentSlot :use="$slots.title" unwrap="p" />
       </h1>
-      <p v-if="$slots.description" class="max-w-lg text-lg text-center text-gray-500 sm:w-3/5 sm:text-left dark:text-gray-100">
+      <p v-if="$slots.description" class="max-w-lg text-xl text-center text-gray-500 sm:w-3/5 sm:text-left dark:text-gray-100 leading-8">
         <ContentSlot :use="$slots.description" unwrap="p" />
       </p>
-      <div class="flex gap-6 z-[1]">
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-6 z-[1]">
         <UButton
           :label="primaryButtonText"
           :to="primaryButtonLink"
@@ -48,6 +56,14 @@
 
 <script setup lang="ts">
 defineProps({
+  topButtonText: {
+    type: String,
+    default: ''
+  },
+  topButtonLink: {
+    type: String,
+    default: ''
+  },
   primaryButtonText: {
     type: String,
     default: ''

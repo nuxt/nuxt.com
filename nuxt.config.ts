@@ -106,39 +106,44 @@ export default defineNuxtConfig({
   },
   nitro: {
     prerender: {
-      routes: ['/docs', '/'],
+      routes: ['/docs', '/', '/api/jobs.json', '/api/modules.json', '/api/sponsors.json'],
       crawlLinks: true
     },
-    hooks: {
-      'prerender:generate': (route) => {
-        const prerenderedRoutes = [
-          '/',
-          '/design-kit',
-          '/support/solutions',
-          '/support/agencies',
-          /^\/docs/,
-          /^\/api\/_content/
-        ]
+    handlers: [
+      { handler: resolve('./server/api/modules/index.ts'), route: '/api/modules.json' },
+      { handler: resolve('./server/api/jobs.ts'), route: '/api/jobs.json' },
+      { handler: resolve('./server/api/sponsors.ts'), route: '/api/sponsors.json' }
+    ]
+    // hooks: {
+    //   'prerender:generate': (route) => {
+    //     const prerenderedRoutes = [
+    //       '/',
+    //       '/design-kit',
+    //       '/support/solutions',
+    //       '/support/agencies',
+    //       /^\/docs/,
+    //       /^\/api\/_content/
+    //     ]
 
-        route.skip = true
+    //     route.skip = true
 
-        prerenderedRoutes.forEach((condition) => {
-          if (typeof condition === 'string') {
-            if (condition === route.route) { route.skip = false }
-          } else if (condition.test(route.route)) { route.skip = false }
-        })
-      }
-    }
-  },
-  routeRules: {
-    // prerender is not yet implemented, using nitro.prerender.routes and hooks for it in the meantime
-    // '/': { prerender: true },
-    // '/docs/**': { prerender: true },
-    '/**': { cache: { swr: true, maxAge: 120, staleMaxAge: 60, headersOnly: true } },
-    '/docs': { redirect: '/docs/getting-started/installation' }
-    // '/modules/**': { swr: 60 },
-    // '/partners/**': { swr: 60 },
-    // '/showcase': { swr: 60 },
-    // '/api/**': { swr: 60 }
+    //     prerenderedRoutes.forEach((condition) => {
+    //       if (typeof condition === 'string') {
+    //         if (condition === route.route) { route.skip = false }
+    //       } else if (condition.test(route.route)) { route.skip = false }
+    //     })
+    //   }
+    // }
   }
+  // routeRules: {
+  //   // prerender is not yet implemented, using nitro.prerender.routes and hooks for it in the meantime
+  //   // '/': { prerender: true },
+  //   // '/docs/**': { prerender: true },
+  //   '/**': { cache: { swr: true, maxAge: 120, staleMaxAge: 60, headersOnly: true } },
+  //   '/docs': { redirect: '/docs/getting-started/installation' }
+  //   // '/modules/**': { swr: 60 },
+  //   // '/partners/**': { swr: 60 },
+  //   // '/showcase': { swr: 60 },
+  //   // '/api/**': { swr: 60 }
+  // }
 })

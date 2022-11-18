@@ -1,14 +1,14 @@
 <template>
   <UContainer
     class="flex px-4 pt-24 transition duration-700 relative"
-    :class="[containerClass, !slideIn ? 'opacity-0 translate-y-20' : 'opacity-100 translate-y-0', buttons.length ? 'flex-col md:flex-row md:items-center md:justify-between' : 'flex-col']"
+    :class="[containerClass, !slideIn ? 'opacity-0 translate-y-20' : 'opacity-100 translate-y-0', buttons.length ? 'flex-col lg:flex-row lg:items-center lg:justify-between' : 'flex-col']"
     padded
   >
     <div ref="root" class="flex flex-col justify-center">
       <div v-if="$slots.sectionTitle" class="pb-2 font-semibold">
         <ContentSlot :use="$slots.sectionTitle" unwrap="p" />
       </div>
-      <h2 class="max-w-lg pb-2 sm:max-w-xl md:max-w-3xl lg:max-w-4xl u-text-gray-900" :class="titleSizeClass">
+      <h2 class="max-w-lg pb-6 sm:max-w-xl md:max-w-3xl lg:max-w-4xl u-text-gray-900" :class="titleSizeClass">
         <ContentSlot :use="$slots.title" unwrap="p" />
       </h2>
       <p v-if="$slots.description" class="text-lg xl:text-xl 2xl:text-2xl u-text-gray-500 sm:max-w-xl md:max-w-3xl lg:max-w-4xl">
@@ -23,7 +23,7 @@
     <div v-if="$slots.extra">
       <ContentSlot :use="$slots.extra" unwrap="p" />
     </div>
-    <div v-if="buttons.length" class="flex md:justify-end gap-6 pt-8 md:pt-0 md:w-1/3">
+    <div v-if="buttons.length" class="flex lg:flex-row lg:justify-end gap-2 lg:gap-6 pt-8 lg:pt-0 lg:w-1/3">
       <UButton
         v-for="button of buttons"
         :key="button.label"
