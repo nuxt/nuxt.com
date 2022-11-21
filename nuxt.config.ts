@@ -78,7 +78,7 @@ export default defineNuxtConfig({
       preload: ['js', 'ts', 'html', 'css', 'vue', 'diff']
     },
     navigation: {
-      fields: ['redirect']
+      fields: ['redirect', 'titleTemplate', 'image']
     },
     documentDriven: {
       surround: false,

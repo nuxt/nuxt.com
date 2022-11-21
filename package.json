@@ -15,6 +15,7 @@
     "ui/",
     "utils/",
     "app.vue",
+    "app.config.ts",
     "error.vue",
     "nuxt.config.ts",
     "tailwind.config.ts",
