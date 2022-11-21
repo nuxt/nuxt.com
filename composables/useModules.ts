@@ -1,5 +1,5 @@
 import type { Ref } from 'vue'
-import type { Module } from '~/types'
+import type { Module } from '../types'
 
 export const useModules = () => {
   const route = useRoute()
@@ -18,7 +18,7 @@ export const useModules = () => {
     pending.value = true
 
     try {
-      const data = await $fetch<{ modules: Module[] }>('/api/modules')
+      const data = await $fetch<{ modules: Module[] }>('/api/modules.json')
 
       _modules.value = data.modules
     } catch (e) {

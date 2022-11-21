@@ -10,12 +10,12 @@
         <div class="lg:hidden">
           <button @click="isOpen = true">
             <Icon name="uil:bars" class="flex-shrink-0 w-6 h-6" aria-hidden="true" focusable="false" />
-            <span class="hidden">Menu</span>
+            <span class="sr-only">Menu</span>
           </button>
         </div>
 
         <div class="flex justify-center col-span-4 lg:col-span-1 lg:justify-start">
-          <NuxtLink to="/" class="block u-text-black" @click.right.prevent="$router.push('/design-kit')">
+          <NuxtLink to="/" class="block u-text-black" title="Homepage" @click.right.prevent="$router.push('/design-kit')">
             <LogoFull class="hidden w-auto h-6 sm:block" />
             <Logo class="block w-auto h-6 sm:hidden" />
           </NuxtLink>
@@ -37,7 +37,10 @@
             </NuxtLink>
           </li>
         </ul>
-        <SocialLinks />
+        <div class="flex justify-end">
+          <AlgoliaDocSearch v-show="$route.fullPath.startsWith('/docs')" class="absolute left-8 bottom-[14px] sm:bottom-0 sm:left-0 sm:mb-0 sm:relative sm:mr-4" />
+          <SocialLinks />
+        </div>
       </nav>
     </UContainer>
   </header>

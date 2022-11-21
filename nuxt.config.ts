@@ -1,23 +1,35 @@
-import { createResolver } from '@nuxt/kit'
+import { createResolver, logger } from '@nuxt/kit'
+import { version } from './package.json'
 import preset from './ui'
 
 const { resolve } = createResolver(import.meta.url)
+logger.success(`Using Nuxt.com theme v${version}`)
 
 // https://v3.nuxtjs.org/guide/directory-structure/nuxt.config
 export default defineNuxtConfig({
   extends: '@nuxt-themes/typography',
+  app: {
+    head: {
+      script: [
+        { src: 'https://masteringnuxt.com/banners/main.js', async: true }
+      ]
+    }
+  },
   css: [
-    '~/assets/css/fonts.css',
-    '~/assets/css/style.css'
+    resolve('./assets/css/fonts.css'),
+    resolve('./assets/css/style.css')
   ],
   modules: [
+    // '@nuxthq/studio',
     '@nuxthq/ui',
     '@nuxt/content',
     '@nuxtlabs/github-module',
+    '@nuxtjs/html-validator',
     // 'nuxt-newsletter',
     'nuxt-plausible',
     'nuxt-icon',
-    '@nuxtjs/fontaine'
+    '@nuxtjs/fontaine',
+    '@nuxtjs/algolia'
   ],
   components: [
     resolve('./components'),
@@ -37,11 +49,6 @@ export default defineNuxtConfig({
       global: true
     }
   ],
-  build: {
-    transpile: [
-      'swiper'
-    ]
-  },
   runtimeConfig: {
     github: {
       token: process.env.GITHUB_TOKEN
@@ -53,15 +60,7 @@ export default defineNuxtConfig({
       apiKey: process.env.MAILJET_API_KEY,
       secretKey: process.env.MAILJET_SECRET_KEY
     },
-    volta: {
-      token: process.env.VOLTA_TOKEN
-    },
-    public: {
-      studioUrl: process.env.STUDIO_URL || 'https://studio.nuxt.com',
-      plausible: {
-        domain: process.env.PLAUSIBLE_DOMAIN
-      }
-    }
+    public: {}
   },
   ui: {
     colors: {
@@ -81,20 +80,24 @@ export default defineNuxtConfig({
     navigation: {
       fields: ['redirect']
     },
-    sources: [
-      {
-        name: 'nuxt3-docs',
-        driver: 'github',
-        repo: 'nuxt/framework',
-        branch: 'main',
-        dir: 'docs/content',
-        prefix: '/docs',
-        token: process.env.GITHUB_TOKEN
-      }
-    ],
     documentDriven: {
       surround: false,
       injectPage: false
+    }
+  },
+  algolia: {
+    applicationId: '1V8G7N9GF0',
+    apiKey: '60a01900a4b726d667eab75b6f337592',
+    docSearch: {
+      indexName: 'nuxtjs',
+      facetFilters: ['tags:v3']
+    }
+  },
+  tailwindcss: {
+    config: {
+      content: [
+        resolve('./ui/*.ts')
+      ]
     }
   },
   newsletter: {
@@ -108,41 +111,45 @@ export default defineNuxtConfig({
     maxContributors: 10
   },
   nitro: {
-    plugins: ['~/server/plugins/content.ts'],
     prerender: {
-      routes: ['/docs', '/'],
+      routes: ['/docs', '/', '/api/jobs.json', '/api/modules.json', '/api/sponsors.json'],
       crawlLinks: true
     },
-    hooks: {
-      'prerender:generate': (route) => {
-        const prerenderedRoutes = [
-          '/',
-          '/design-kit',
-          '/support/solutions',
-          '/support/agencies',
-          /^\/docs/,
-          /^\/api\/_content/
-        ]
+    handlers: [
+      { handler: resolve('./server/api/modules/index.ts'), route: '/api/modules.json' },
+      { handler: resolve('./server/api/jobs.ts'), route: '/api/jobs.json' },
+      { handler: resolve('./server/api/sponsors.ts'), route: '/api/sponsors.json' }
+    ]
+    // hooks: {
+    //   'prerender:generate': (route) => {
+    //     const prerenderedRoutes = [
+    //       '/',
+    //       '/design-kit',
+    //       '/support/solutions',
+    //       '/support/agencies',
+    //       /^\/docs/,
+    //       /^\/api\/_content/
+    //     ]
 
-        route.skip = true
+    //     route.skip = true
 
-        prerenderedRoutes.forEach((condition) => {
-          if (typeof condition === 'string') {
-            if (condition === route.route) { route.skip = false }
-          } else if (condition.test(route.route)) { route.skip = false }
-        })
-      }
-    }
-  },
-  routeRules: {
-    // prerender is not yet implemented, using nitro.prerender.routes and hooks for it in the meantime
-    // '/': { prerender: true },
-    // '/docs/**': { prerender: true },
-    '/**': { cache: { swr: true, maxAge: 120, staleMaxAge: 60, headersOnly: true } },
-    '/docs': { redirect: '/docs/getting-started/installation' }
-    // '/modules/**': { swr: 60 },
-    // '/partners/**': { swr: 60 },
-    // '/showcase': { swr: 60 },
-    // '/api/**': { swr: 60 }
+    //     prerenderedRoutes.forEach((condition) => {
+    //       if (typeof condition === 'string') {
+    //         if (condition === route.route) { route.skip = false }
+    //       } else if (condition.test(route.route)) { route.skip = false }
+    //     })
+    //   }
+    // }
   }
+  // routeRules: {
+  //   // prerender is not yet implemented, using nitro.prerender.routes and hooks for it in the meantime
+  //   // '/': { prerender: true },
+  //   // '/docs/**': { prerender: true },
+  //   '/**': { cache: { swr: true, maxAge: 120, staleMaxAge: 60, headersOnly: true } },
+  //   '/docs': { redirect: '/docs/getting-started/installation' }
+  //   // '/modules/**': { swr: 60 },
+  //   // '/partners/**': { swr: 60 },
+  //   // '/showcase': { swr: 60 },
+  //   // '/api/**': { swr: 60 }
+  // }
 })

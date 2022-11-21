@@ -7,7 +7,14 @@
         </q>
         <div>
           <a :href="authorUrl" rel="author" target="_blank" class="flex flex-row items-center">
-            <img :src="`/assets/home/${authorImg}.png`" class="h-12" :alt="`${authorImg} picture`" width="49" height="48">
+            <img
+              :src="`/assets/home/${authorImg}.png`"
+              class="h-12"
+              :alt="`${authorImg} picture`"
+              width="49"
+              height="48"
+              loading="lazy"
+            >
             <div class="flex flex-col pl-8">
               <span class="font-semibold u-text-gray-900">
                 <ContentSlot :use="$slots.author" unwrap="p" />

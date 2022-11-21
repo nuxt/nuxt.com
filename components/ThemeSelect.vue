@@ -1,10 +1,13 @@
 <template>
-  <UToggle
+  <AccessibleToggle
     v-model="isDark"
     name="theme"
     icon-on="uil:moon"
     icon-off="uil:sun"
-  />
+    class="theme-select"
+  >
+    <span class="sr-only">Toggle theme</span>
+  </AccessibleToggle>
 </template>
 
 <script setup lang="ts">
@@ -22,8 +25,8 @@ const isDark = computed({
 })
 </script>
 
-<style scoped lang="postcss">
-button {
+<style lang="postcss">
+.theme-select {
   @apply bg-gray-200 dark:bg-gray-800
 }
 </style>

@@ -1,11 +1,13 @@
 <template>
-  <USlideover v-model="isOpen" :transition="false" :overlay="false">
+  <USlideover v-model="isOpen" :transition="false" :overlay="false" base-class="relative flex-1 flex flex-col w-full focus:outline-none max-w-md u-bg-white border-r border-r-gray-300 dark:border-r-gray-700">
     <template #header>
-      <button v-if="selectedLink" class="flex-1 flex items-start" @click="selectedLink = null">
+      <button v-if="selectedLink" class="flex-1 flex items-start focus:outline-none focus-visible:outline-2" @click="selectedLink = null">
         <Icon name="uil:arrow-left" class="flex-shrink-0 w-7 h-7" />
+        <span class="hidden">Go back</span>
       </button>
-      <button v-else class="flex-1 flex items-start" @click="isOpen = false">
+      <button v-else class="flex-1 flex items-start focus:outline-none focus-visible:outline-2" @click="isOpen = false">
         <Icon name="uil:multiply" class="flex-shrink-0 w-6 h-6" />
+        <span class="hidden">Close menu</span>
       </button>
 
       <p v-if="selectedLink" class="text-lg font-semibold">
@@ -66,7 +68,7 @@ const selectLink = () => {
 
   const path = route.fullPath.split('/').slice(0, 3).join('/')
   const nav: NavItem = navPageFromPath(path, navigation.value)
-  if (nav && nav._path === path && nav.children?.length > 1) {
+  if (nav && nav.children && nav._path === path && nav.children?.length > 1) {
     selectedLink.value = nav
   }
 }

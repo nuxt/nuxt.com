@@ -1,4 +1,5 @@
-import { fetchGithubSponsors, fetchOpenCollectiveSponsors } from '~/server/utils/sponsors'
+import { fetchGithubSponsors, fetchOpenCollectiveSponsors } from '../utils/sponsors'
+import { defineCachedEventHandler } from '#imports'
 
 const tiersMap = {
   platinum: amount => amount >= 2000,
@@ -19,22 +20,21 @@ export default defineCachedEventHandler(async () => {
     return
   }
 
-  return {
-    sponsors: sponsors.flat().reduce((acc, sponsor) => {
-      const tier = Object.keys(tiersMap).find(tier => tiersMap[tier](sponsor.monthlyPriceInDollars))
-      return {
-        ...acc,
-        [tier]: [...(acc[tier] || []), sponsor]
-      }
-    }, {
-      platinum: [],
-      gold: [],
-      silver: [],
-      bronze: [],
-      backer: []
-    })
-  }
+  return sponsors.flat().reduce((acc, sponsor) => {
+    const tier = Object.keys(tiersMap).find(tier => tiersMap[tier](sponsor.monthlyPriceInDollars))
+    return {
+      ...acc,
+      [tier]: [...(acc[tier] || []), sponsor]
+    }
+  }, {
+    platinum: [],
+    gold: [],
+    silver: [],
+    bronze: [],
+    backer: []
+  })
 }, {
   name: 'github-sponsors',
-  maxAge: 60 * 1000
+  /* 1 hour */
+  maxAge: 60 * 1000 * 60 * 60
 })

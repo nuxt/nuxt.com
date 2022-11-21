@@ -37,20 +37,16 @@
       </div>
     </div>
 
-    <NuxtLink :to="`/modules/${module.name}`">
+    <NuxtLink :to="`/modules/${module.name}`" :title="module.name">
       <span class="absolute inset-0" aria-hidden="true" />
     </NuxtLink>
   </UCard>
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue'
-import type { Module } from '~/types'
-import { formatNumber } from '~/utils'
-
 defineProps({
   module: {
-    type: Object as PropType<Module>,
+    type: Object,
     default: () => null
   }
 })

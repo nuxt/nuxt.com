@@ -8,7 +8,7 @@
       </div>
     </div>
 
-    <div class="mb-6">
+    <div class="mb-2">
       <p class="text-xl font-semibold u-text-gray-700">
         {{ partner.title }}
       </p>
@@ -17,7 +17,7 @@
       </p>
     </div>
 
-    <NuxtLink :to="partner._path">
+    <NuxtLink :to="partner._path" :title="partner.title">
       <span class="absolute inset-0" aria-hidden="true" />
     </NuxtLink>
   </UCard>
@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import type { FormattedAgency } from '~/types'
+import type { FormattedAgency } from '../../types'
 
 defineProps({
   partner: {

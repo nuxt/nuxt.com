@@ -1,4 +1,4 @@
-import type { NuxtJob } from '~/types'
+import type { NuxtJob } from '../types'
 
 export const useNuxtJobs = () => {
   const jobs = useState<NuxtJob[]>('jobs', () => [])
@@ -11,7 +11,7 @@ export const useNuxtJobs = () => {
       return
     }
 
-    jobs.value = await $fetch<NuxtJob[]>('/api/jobs')
+    jobs.value = await $fetch<NuxtJob[]>('/api/jobs.json')
   }
 
   // Computed

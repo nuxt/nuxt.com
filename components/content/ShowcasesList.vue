@@ -20,9 +20,9 @@
         <ShowcasesFilterCategory class="lg:hidden" />
       </template>
 
-      <ul v-if="selectedShowcases.length" class="grid min-h-[calc(100vh-18rem)] grid-cols-1 gap-8 mt-8 sm:grid-cols-2 xl:grid-cols-3">
-        <li v-for="showcase in selectedShowcases" :key="showcase.id">
-          <ShowcasesListItem :showcase="showcase" />
+      <ul v-if="selectedShowcases.length" class="grid grid-cols-1 gap-8 mt-8 sm:grid-cols-2 xl:grid-cols-3">
+        <li v-for="(showcase, key) in selectedShowcases" :key="showcase.id">
+          <ShowcasesListItem :showcase="showcase" :loading-strategy="key === 0 ? 'eager' : 'lazy'" />
         </li>
       </ul>
     </PageList>
@@ -30,22 +30,17 @@
 </template>
 
 <script setup lang="ts">
-import { uniqBy } from 'lodash-es'
-
 const { list, selectedCategory } = useResourcesShowcases()
 
 // Computed
 const selectedShowcases = computed(() => {
-  const flattenedShowcases = list.value?.groups
+  const ids = new Set<number>()
+  return list.value?.groups
     ?.filter((group, index) => (!selectedCategory.value && index === 0) || group.name === selectedCategory.value?.name)
-    ?.map(group => ({
-      ...group,
-      showcases: group.showcases.map(showcase => ({
-        ...showcase
-      }))
-    }))
-    ?.flatMap(group => group.showcases)
-
-  return uniqBy(flattenedShowcases || [], 'id')
+    ?.flatMap((group) => {
+      if (ids.has(group.id)) { return [] }
+      ids.add(group.id)
+      return group.showcases
+    }) ?? []
 })
 </script>

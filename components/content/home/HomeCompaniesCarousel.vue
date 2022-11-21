@@ -1,168 +1,163 @@
 <template>
-  <div class="relative flex flex-col justify-center">
-    <div class="hidden sm:block absolute left-0 w-20 inset-y-0 bg-gradient-to-r from-white via-white dark:via-black dark:from-black to-transparent z-10" />
-    <div class="hidden sm:block absolute right-0 w-20 inset-y-0 bg-gradient-to-l from-white via-white dark:via-black dark:from-black to-transparent z-10" />
-
-    <ClientOnly>
-      <Swiper
-        v-if="selectedShowcases.length"
-        ref="swiper"
-        :space-between="30"
-        :modules="[Autoplay]"
-        :centered-slides="true"
-        :slides-per-view="slidesPerView"
-        :loop="true"
-        :looped-slides="selectedShowcases.length"
-        :loop-additional-slides="selectedShowcases.length"
-        :autoplay="autoplay"
-        :speed="1000"
-        :slide-to-clicked-slide="false"
-        @slideChangeTransitionEnd="slideChangeTransitionEnd"
-        @slideNextTransitionStart="slideNextTransitionStart"
-        @click="click"
-      >
-        <SwiperSlide v-for="(showcase, i) in selectedShowcases" :key="i" :style="{ height: '160px' }">
-          <Component :is="transition.end === true && realIndex === i ? 'a' : 'div'" :href="showcase.url" target="_blank">
-            <div class="absolute inset-0 z-10 opacity-70 backdrop-blur-[2px] u-bg-white transition-opacity duration-300" :class="transition.end === true && realIndex === i ? '-z-[1] blur-[8px] u-bg-gray-900 opacity-100' : 'opacity-70 backdrop-blur-[2px] u-bg-white'" />
-
-            <img
-              :src="`https://res.cloudinary.com/nuxt/image/upload/f_auto,q_auto,w_420,h_315/${showcase.screenshotUrl}`"
-              :alt="showcase.hostname"
-              loading="lazy"
-              class="object-cover object-top w-full h-full px-4 sm:px-0"
-              height="315"
-              width="420"
-            >
-            <div class="px-4 py-3 text-center content transition-opacity duration-300" :class="transition.end === true ? 'opacity-100' : 'opacity-0'">
-              <h2 class="font-semibold truncate u-text-gray-900 text-xl">
-                {{ showcase.title || showcase.hostname }}
-              </h2>
-              <p class="truncate text-green-400">
-                {{ showcase.hostname }}
-              </p>
-            </div>
-          </Component>
-        </Swiperslide>
-      </Swiper>
-    </ClientOnly>
+  <div class="relative mt-20">
+    <div class="overflow-hidden">
+      <div class="slider">
+        <div class="slide-track mb-2 sm:mb-8 animation">
+          <div v-for="(showcase, i) in selectedShowcases.concat(selectedShowcases)" :key="i" class="slide mx-8">
+            <a :href="showcase.url" target="_blank" class="w-full h-full relative group">
+              <img
+                :src="`https://res.cloudinary.com/nuxt/image/upload/f_auto,q_auto,w_420,h_315/${showcase.screenshotUrl}`"
+                :alt="showcase.hostname"
+                loading="lazy"
+                class="object-cover w-full h-full px-4 sm:px-0 rounded-lg"
+                height="315"
+                width="420"
+              >
+              <div class="px-4 py-3 text-center w-[200px] sm:w-[400px]">
+                <h2 class="font-semibold truncate u-text-gray-900 text-xl">
+                  {{ showcase.title || showcase.hostname }}
+                </h2>
+                <p class="truncate text-green-400">
+                  {{ showcase.hostname }}
+                </p>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="absolute top-0 left-0 h-full w-[20px] sm:w-[50px] md:w-[100px] lg:w-[200px] bg-gradient-to-r from-white dark:from-black via-white/50 dark:via-black/60 to-transparent z-[1]"
+    />
+    <div
+      class="absolute top-0 right-0 h-full w-[20px] sm:w-[50px] md:w-[100px] lg:w-[200px] bg-gradient-to-l from-white dark:from-black via-white/50 dark:via-black/60 to-transparent z-[1]"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
-
-import { uniqBy } from 'lodash-es'
-// Import Swiper Vue.js components
-import { Swiper, SwiperSlide } from 'swiper/vue'
-// import required modules
-import { Autoplay } from 'swiper'
-// Import Swiper styles
-import 'swiper/css'
-import 'swiper/css/effect-coverflow'
-import 'swiper/css/pagination'
-
-const swiper = ref(null)
-const realIndex = ref(0)
-const activeIndex = ref(0)
-
-// swiper autoplay options
-const autoplay = { delay: 3000, pauseOnMouseEnter: false, disableOnInteraction: false }
-
-const { smaller } = useBreakpoints(breakpointsTailwind)
-
-const xs = smaller('sm')
-const sm = smaller('md')
-
-const slidesPerView = computed(() => {
-  if (xs.value) {
-    return 1
-  } else if (sm.value) {
-    return 2
-  } else {
-    return 3
-  }
-})
-
-const transition = reactive({ end: false })
-
-const slideChangeTransitionEnd = (swiper) => {
-  transition.end = true
-  realIndex.value = swiper.realIndex
-  activeIndex.value = swiper.activeIndex
-}
-
-const slideNextTransitionStart = () => {
-  transition.end = false
-}
-
-const click = (swiper) => {
-  if (swiper.clickedIndex < activeIndex.value) {
-    swiper.slidePrev()
-  } else if (swiper.clickedIndex > activeIndex.value) {
-    swiper.slideNext()
-  }
-}
-
 const { list, selectedCategory } = useResourcesShowcases()
 
 const selectedShowcases = computed(() => {
-  const flattenedShowcases = list.value?.groups
+  const ids = new Set<number>()
+  return list.value?.groups
     ?.filter((group, index) => (!selectedCategory.value && index === 0) || group.name === selectedCategory.value?.name)
-    ?.map(group => ({
-      ...group,
-      showcases: group.showcases.map(showcase => ({
-        ...showcase
-      }))
-    }))
-    ?.flatMap(group => group.showcases)
-
-  return uniqBy(flattenedShowcases || [], 'id')
+    ?.flatMap((group) => {
+      if (ids.has(group.id)) { return [] }
+      ids.add(group.id)
+      return group.showcases
+    }) ?? []
 })
+
 </script>
 
 <style scoped lang="postcss">
-.swiper {
-  width: 100%;
-  height: 270px;
-  padding-top: 40px;
-  padding-bottom: 40px;
-}
-.swiper-slide {
-  background-position: center;
-  background-size: cover;
-  width: 360px;
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
 
-  :hover {
-    cursor: pointer;
+  100% {
+    transform: translateX(calc(-50%));
   }
 }
 
-.swiper-slide-active:has(.host) {
-  @apply bg-red-500
+.slider {
+  height: 200px;
+  margin: auto;
+  position: relative;
+  width: 1800%;
 }
 
-.swiper-slide-prev:nth-last-of-type(div) {
-  @apply hidden
+@media (min-width: 768px) {
+  .slider {
+    height: 300px;
+  }
 }
 
-.swiper-slide-next:nth-last-of-type(div) {
-  @apply hidden
+.slider::after {
+  right: 0;
+  top: 0;
+  -webkit-transform: rotateZ(180deg);
+  transform: rotateZ(180deg);
 }
 
-.swiper-slide img {
+.slider::before {
+  left: 0;
+  top: 0;
+}
+
+.animation {
+  -webkit-animation: scroll 120s linear infinite;
+  animation: scroll 120s linear infinite;
+}
+
+.slide-track:hover,
+.slide-track:hover {
+  animation-play-state: paused;
+}
+
+.slide-track {
+  display: flex;
   width: 100%;
-  height: 160px;
 }
 
 .slide {
-  @apply absolute inset-0 z-10 opacity-70 backdrop-blur-[2px] u-bg-white
+  height: 100px;
+  width: 200px;
 }
 
-.swiper-slide-active > a > .content {
-  @apply block
+@media (min-width: 640px) {
+  .slide {
+    height: 200px;
+    width: 400px;
+  }
 }
 
-.content {
-  @apply hidden
+.gradient-border {
+  opacity: 0;
+  margin-top: 1px;
+  margin-left: 1px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
+  background-size: 600% 600%;
+  border-radius: 8px;
+  z-index: -1;
+  transform: translate(-2px, -2px);
+}
+
+.gradient-border-light {
+  background: linear-gradient(var(--gradient-angle), rgba(0, 220, 130, 1), white, rgba(54, 228, 218, 0.5), rgba(29, 224, 177, 0.3));
+}
+
+.gradient-border-dark {
+  background: linear-gradient(var(--gradient-angle), rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.1), white, rgba(255, 255, 255, 0.3));
+}
+
+.slide:hover {
+  .gradient-border {
+    opacity: 1;
+    animation: gradient-rotate 5s linear 0s infinite reverse;
+    transition: all 0.3s linear;
+  }
+}
+
+@property --gradient-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 360deg;
+}
+
+@keyframes gradient-rotate {
+  0% {
+    --gradient-angle: 360deg;
+  }
+
+  100% {
+    --gradient-angle: 0deg;
+  }
 }
 </style>

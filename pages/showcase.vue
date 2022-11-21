@@ -1,5 +1,7 @@
 <template>
-  <ContentRenderer :key="page._id" :value="page" />
+  <div>
+    <ContentRenderer :key="page._id" :value="page" />
+  </div>
 </template>
 
 <script setup lang="ts">

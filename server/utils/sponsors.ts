@@ -1,4 +1,5 @@
-import type { Sponsor } from '~/types'
+import type { Sponsor } from '../../types'
+import { useRuntimeConfig } from '#imports'
 
 const config = useRuntimeConfig()
 

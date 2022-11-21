@@ -29,27 +29,36 @@
               {{ module.description }}
             </p>
             <div class="flex items-center justify-center md:justify-start gap-1.5 mt-4 u-text-gray-500">
-              <UAvatarGroup :group="maintainers" size="xxs" :max="4" />
-              <span>{{ maintainers.length }} maintainer{{ maintainers.length > 1 ? 's' : '' }}</span>
+              <NuxtLink :to="module.github" target="_blank" class="flex items-center gap-1.5">
+                <UAvatarGroup :group="maintainers" size="xxs" :max="4" />
+                <span>{{ maintainers.length }} maintainer{{ maintainers.length > 1 ? 's' : '' }}</span>
+              </NuxtLink>
               <div class="hidden md:block">
                 -
               </div>
-              <div class="flex items-center gap-1.5">
+              <NuxtLink :to="`https://npmjs.com/package/${module.npm}`" target="_blank" class="flex items-center gap-1.5">
                 <Icon name="uil:download-alt" class="w-4 h-4" />
                 <span>{{ formatNumber(module.downloads) }} installs</span>
-              </div>
+              </NuxtLink>
               <div class="hidden md:block">
                 -
               </div>
-              <div class="flex items-center gap-1.5">
+              <NuxtLink :to="module.github" target="_blank" class="flex items-center gap-1.5">
                 <Icon name="uil:star" class="w-4 h-4" />
                 <span>{{ formatNumber(module.stars) }} stars</span>
-              </div>
+              </NuxtLink>
             </div>
           </div>
         </div>
         <div>
-          <UButton :label="`yarn add ${module.npm}`" size="lg" :trailing-icon="copyIcon" truncate @click="copyToClipboard(`yarn add ${module.npm}`)" />
+          <UButton
+            class="module-button"
+            :label="`yarn add ${module.npm}`"
+            size="lg"
+            :trailing-icon="copyIcon"
+            truncate
+            @click="copyToClipboard(`yarn add ${module.npm}`)"
+          />
         </div>
       </div>
       <div class="flex justify-center md:justify-start mb-4">
@@ -62,8 +71,9 @@
 </template>
 
 <script setup lang="ts">
-import { formatNumber, capitalize } from '~/utils'
-
+definePageMeta({
+  documentDriven: false
+})
 const { fetchOne, module } = useModules()
 const route = useRoute()
 const { $clipboard } = useNuxtApp()
@@ -90,9 +100,15 @@ const copyToClipboard = (content) => {
 }
 
 useHead({
-  title: capitalize(module.value.name),
+  title: capitalize(module.value.name) + ' Module',
   meta: [
     { name: 'description', content: module.value.description }
   ]
 })
 </script>
+
+<style lang="postcss">
+.module-button {
+  @apply bg-gray-800 dark:bg-white
+}
+</style>

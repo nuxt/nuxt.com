@@ -5,7 +5,7 @@
         <img
           :src="`https://res.cloudinary.com/nuxt/image/upload/f_auto,q_auto,w_488,h_298/${showcase.screenshotUrl}`"
           :alt="showcase.hostname"
-          loading="lazy"
+          :loading="loadingStrategy"
           class="object-cover object-top w-full h-full"
           height="298"
           width="488"
@@ -30,13 +30,18 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import type { ResourcesShowcasesListGroupItem } from '~/types'
+import type { ResourcesShowcasesListGroupItem } from '../../types'
 
 defineProps({
   showcase: {
     type: Object as PropType<ResourcesShowcasesListGroupItem>,
     default: () => null
+  },
+  loadingStrategy: {
+    type: String,
+    default: 'lazy'
   }
+
 })
 </script>
 

@@ -1,5 +1,7 @@
 <template>
-  <ContentRenderer :value="page" />
+  <div>
+    <ContentRenderer :value="page" />
+  </div>
 </template>
 
 <script setup>
