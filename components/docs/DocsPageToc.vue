@@ -26,8 +26,8 @@ if (adPartner.value) {
         Agency partner:
       </span>
       <NuxtLink :to="adPartner._path" class="block flex items-center bg-white dark:bg-gray-900 dark:hover:bg-gray-800 hover:bg-gray-100 rounded-xl h-[60px] p-4 lg:p-2 align-middle border border-gray-200 dark:border-gray-800">
-        <img :src="adPartner.logo.dark" role="presentation" class="mr-2 rounded-md h-8 hidden dark:block">
-        <img :src="adPartner.logo.light" role="presentation" class="mr-2 rounded-md h-8 dark:hidden">
+        <img :src="adPartner.logo?.dark" role="presentation" class="mr-2 rounded-md h-8 hidden dark:block">
+        <img :src="adPartner.logo?.light" role="presentation" class="mr-2 rounded-md h-8 dark:hidden">
         <p class="font-semibold">
           {{ adPartner.title }}
         </p>

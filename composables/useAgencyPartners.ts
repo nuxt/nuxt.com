@@ -23,7 +23,8 @@ export const useAgencyPartners = () => {
           _path: {
             $in: ['/support/agencies']
           }
-        }
+        },
+        _extension: 'md'
       }).find()
 
       _partners.value = data
@@ -40,11 +41,11 @@ export const useAgencyPartners = () => {
     return [..._partners.value]
       .map(partner => ({
         ...partner,
-        services: partner.services.map(service => ({
+        services: (partner.services || []).map(service => ({
           key: slugify(service),
           title: service
         })),
-        regions: partner.regions.map(region => ({
+        regions: (partner.regions || []).map(region => ({
           key: slugify(region),
           title: region
         })),
