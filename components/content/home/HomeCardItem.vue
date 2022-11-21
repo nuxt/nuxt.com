@@ -1,5 +1,6 @@
 <template>
-  <li ref="root" class="rounded-md relative" :class="{ 'cursor-pointer': to }" @click="onClick">
+  <li ref="root" class="rounded-md relative group" :class="{ 'cursor-pointer': to }" @click="onClick">
+    <Icon v-if="hasExternalLink" name="uil:external-link-alt" class="absolute right-4 top-4 text-gray-500 transition-opacity duration-200 opacity-0 group-hover:opacity-100" />
     <div class="hidden gradient-border gradient-border-dark dark:block" />
     <div class="dark:hidden gradient-border gradient-border-light" />
     <UCard
@@ -88,9 +89,15 @@ const props = defineProps({
   }
 })
 
+const hasExternalLink = computed(() => props.to && hasProtocol(props.to))
+
 const onClick = () => {
   if (props.to && !window.getSelection().toString()) {
-    navigateTo(props.to, { external: hasProtocol(props.to) })
+    if (hasExternalLink.value) {
+      window.open(props.to, '_blank').focus()
+    } else {
+      navigateTo(props.to)
+    }
   }
 }
 const headerClass = computed(() => {
