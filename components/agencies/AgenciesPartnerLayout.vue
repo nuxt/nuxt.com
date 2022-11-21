@@ -10,8 +10,8 @@
           <!-- `z-[1]` is a safari workaround -->
           <div class="relative z-[1] flex w-32 h-32 p-8 overflow-hidden border md:w-40 md:h-40 md:p-10 rounded-xl u-border-gray-200 flex-shrink-0">
             <div class="absolute inset-0 bg-white/60 dark:bg-gray-900/70 backdrop-blur-lg" />
-            <img v-if="page.logo.light" :src="page.logo.light" :alt="page.title" class="relative dark:hidden">
-            <img v-if="page.logo.dark" :src="page.logo.dark" :alt="page.title" class="relative hidden dark:block">
+            <img v-if="page.logo?.light" :src="page.logo.light" :alt="page.title" class="relative dark:hidden">
+            <img v-if="page.logo?.dark" :src="page.logo.dark" :alt="page.title" class="relative hidden dark:block">
             <img v-if="typeof page.logo === 'string'" :src="page.logo" :alt="page.title" class="relative">
           </div>
           <div class="flex flex-1 flex-col justify-center min-w-0 pt-8 md:pt-12">

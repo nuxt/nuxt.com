@@ -8,10 +8,5 @@ const { fetch: fetchPartners } = useAgencyPartners()
 
 await fetchPartners()
 
-useHead({
-  title: `${page.value.title} - A Nuxt Partner`,
-  meta: [
-    { name: 'description', content: page.value.description }
-  ]
-})
+useContentHead(page)
 </script>
