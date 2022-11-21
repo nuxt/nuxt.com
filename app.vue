@@ -1,28 +1,54 @@
 <script setup lang="ts">
-useHead({
-  titleTemplate: chunk => chunk ? `${chunk} • Nuxt` : 'Nuxt: Intuitive Web Development',
-  meta: [
-    { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-    { name: 'description', content: 'Nuxt makes web development intuitive and fun. The open source framework NuxtJS makes the development of modern web applications simple.' },
-    { name: 'og:site_name', content: 'Nuxt' },
-    { name: 'og:type', content: 'website' },
-    { name: 'og:image', content: '/social.png' },
-    { name: 'og:image:alt', content: 'Nuxt' },
-    { name: 'twitter:image', content: '/social.png' },
-    { name: 'twitter:card', content: 'summary_large_image' },
-    { name: 'twitter:site', content: '@nuxt_js' }
-  ],
-  link: [
-    { rel: 'icon', href: '/icon.png' }
-  ],
-  htmlAttrs: {
-    lang: 'en'
-  },
-  bodyAttrs: {
-    class: 'antialiased font-sans text-gray-700 dark:text-gray-200 bg-white dark:bg-black [--scroll-mt:10rem] lg:[--scroll-mt:7rem]'
+const { navigation, layout, page } = useContent()
+const { website } = useAppConfig()
+const { navKeyFromPath } = useContentHelpers()
+
+const titleTemplate = computed(() => {
+  const appTitleTemplate = website.head?.titleTemplate || `%s · ${website.title}`
+  if (page.value) {
+    return page.value.head?.titleTemplate || navKeyFromPath(page.value._path, 'titleTemplate', navigation.value || []) || appTitleTemplate
+  }
+  return appTitleTemplate
+})
+const ogImage = computed(() => {
+  const appOgImage = website.image || '/social.png'
+  if (page.value) {
+    return page.value.image || navKeyFromPath(page.value._path, 'image', navigation.value || []) || appOgImage
+  }
+  return appOgImage
+})
+
+defineProps({
+  padded: {
+    type: Boolean,
+    default: true
   }
 })
-const { layout } = useContent()
+
+watch(titleTemplate, () => {
+  useHead({ titleTemplate: titleTemplate.value })
+})
+watch(ogImage, () => {
+  useHead({
+    meta: [
+      { name: 'og:image', content: ogImage.value },
+      { name: 'twitter:image', content: ogImage.value }
+    ]
+  })
+})
+
+useContentHead({
+  ...website,
+  head: {
+    ...website.head,
+    titleTemplate: titleTemplate.value,
+    meta: [
+      ...(website.head?.meta || []).filter(meta => !['og:image', 'twitter:image'].includes(meta.name)),
+      { name: 'og:image', content: ogImage.value },
+      { name: 'twitter:image', content: ogImage.value }
+    ]
+  }
+})
 </script>
 
 <template>
