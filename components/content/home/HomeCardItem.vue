@@ -1,7 +1,7 @@
 <template>
   <li ref="root" class="rounded-md relative group">
     <UIcon name="uil:external-link-alt" class="absolute right-4 top-4 text-gray-500 transition-opacity duration-200 opacity-0" :class="{ 'group-hover:opacity-100': to && target === '_blank' }" />
-    <component :is="component" :href="to" target="_blank">
+    <component :is="component" :href="to" :target="target">
       <div class="hidden gradient-border gradient-border-dark dark:block" />
       <div class="dark:hidden gradient-border gradient-border-light" />
       <UCard
