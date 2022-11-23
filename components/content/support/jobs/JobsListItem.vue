@@ -7,16 +7,18 @@
     custom-class="bg-opacity-80 dark:bg-opacity-80"
     class="hover:ring-2 ucard"
   >
-    <NuxtLink :to="`https://vuejobs.com/jobs/${job.id}`" target="_blank" class="flex flex-col gap-2 px-4 py-5 sm:p-6">
+    <NuxtLink :to="job.link" target="_blank" class="flex flex-col gap-2 px-4 py-5 sm:p-6">
       <div class="grid grid-cols-2 gap-4 sm:flex">
-        <img :src="job.company.avatar" :alt="job.company.name" class="object-contain w-16 h-16 rounded-full sm:w-20 sm:h-20">
-        <span class="order-1 text-right sm:order-3 u-text-gray-400">{{ job.published_at.for_humans }}</span>
+        <img :src="job.organization.avatar" :alt="job.organization.name" class="object-contain w-16 h-16 rounded-full sm:w-14 sm:h-14">
+        <span class="order-1 text-right sm:order-3 u-text-gray-400">{{ job.published_at }}</span>
         <div class="flex flex-col flex-1 order-2 col-span-2 gap-1">
           <div class="flex flex-col gap-2 sm:flex-row">
             <span class="flex-shrink text-xl font-semibold u-text-gray-900">{{ job.title }}</span>
-            <span class="self-start px-2 py-0.5 rounded-full whitespace-nowrap" :class="typeClass">{{ typeLabel }}</span>
+            <span class="self-start px-2 py-0.5 rounded-full whitespace-nowrap bg-gray-800">{{ job.remote }}</span>
           </div>
-          <span class="u-text-gray-500">{{ job.location }}</span>
+          <p v-if="job.locations?.length" class="u-text-gray-500">
+            <span v-for="location in job.locations" :key="location" class="location-item">{{ location }}</span>
+          </p>
         </div>
       </div>
       <div>
@@ -37,25 +39,6 @@ const props = defineProps({
   }
 })
 
-const { types } = useNuxtJobs()
-
-const typeClass = computed(() => {
-  switch (props.job.type) {
-    case 'full-time':
-      return 'bg-green-50 text-green-800'
-    case 'part-time':
-      return 'bg-blue-50 text-blue-800'
-    case 'freelance':
-      return 'bg-yellow-50 text-yellow-800'
-    case 'internship':
-      return 'bg-purple-50 text-purple-800'
-    case 'temporary':
-      return 'bg-pink-50 text-pink-800'
-  }
-})
-
-const typeLabel = computed(() => types.value.find(type => type.value === props.job.type)?.text || props.job.type)
-
 const description = computed(() => props.job.description.replace(/\n/g, '<br>'))
 </script>
 
@@ -67,5 +50,14 @@ const description = computed(() => props.job.description.replace(/\n/g, '<br>'))
 .ucard:has(a:focus-visible) {
   @apply ring-2;
   --tw-ring-color: #00dc82
+}
+
+.location-item:not(:first-child) {
+  padding-left: .5rem;
+}
+
+.location-item:not(:first-child)::before {
+  content: '•';
+  margin-right: .5rem;
 }
 </style>
