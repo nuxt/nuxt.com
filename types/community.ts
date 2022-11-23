@@ -59,18 +59,18 @@ export interface CommunityNuxter {
 }
 
 export interface NuxtJob {
-  id: number
   title: string
+  link: string
   description: string
-  type: string
-  location: string
-  url: string
-  company: {
+  remote: string
+  locations: string[]
+  organization: {
     name: string
     avatar: string
   }
-  published_at: {
-    date: string
-    for_humans: string
-  }
+  published_at: string
+}
+
+export interface NuxtJobs {
+  data: NuxtJob[]
 }

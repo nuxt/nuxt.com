@@ -26,12 +26,12 @@
 const { jobs, selectedLocation, selectedType } = useNuxtJobs()
 
 const filteredJobs = computed(() => {
-  return [...jobs.value]
+  return [...jobs.value.data]
     .filter((job) => {
-      if (selectedLocation.value && job.location !== selectedLocation.value.value) {
+      if (selectedLocation.value && !job.locations.includes(selectedLocation.value.value)) {
         return false
       }
-      if (selectedType.value && job.type !== selectedType.value.value) {
+      if (selectedType.value && job.remote !== selectedType.value.value) {
         return false
       }
       return true
