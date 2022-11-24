@@ -23,7 +23,7 @@ export const useNuxtJobs = () => {
       return
     }
 
-    jobs.value = await $fetch<NuxtJobs>('/api/jobs')
+    jobs.value = await $fetch<NuxtJobs>('/api/jobs.json')
     jobs.value.data = jobs.value.data.map((job) => {
       return { ...job, remote: mapRemote(job.remote), published_at: toRelativeDate(job.published_at) }
     })
