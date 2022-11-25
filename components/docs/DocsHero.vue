@@ -8,7 +8,7 @@
         <ContentSlot :use="$slots.description" unwrap="p" class="lg:w-2/3" />
       </p>
     </div>
-    <div class="flex h-full w-full gap-x-4 items-end justify-center">
+    <div class="flex h-full w-full gap-x-4 items-end justify-center hidden md:block">
       <img src="/assets/docs/getting-started/views/hero-light.png" width="143" height="136" class="dark:hidden object-cover h-[136px] w-[143px] opacity-0 md:opacity-100" role="presentation">
       <img src="/assets/docs/getting-started/views/hero-dark.png" width="143" height="136" class="hidden dark:block object-cover h-[136px] w-[143px] opacity-0 md:opacity-100" role="presentation">
     </div>
