@@ -8,9 +8,32 @@
         <ContentSlot :use="$slots.description" unwrap="p" class="lg:w-2/3" />
       </p>
     </div>
-    <div class="flex h-full w-full gap-x-4 items-end justify-center hidden md:block">
-      <img src="/assets/docs/getting-started/views/hero-light.png" width="143" height="136" class="dark:hidden object-cover h-[136px] w-[143px] opacity-0 md:opacity-100" role="presentation">
-      <img src="/assets/docs/getting-started/views/hero-dark.png" width="143" height="136" class="hidden dark:block object-cover h-[136px] w-[143px] opacity-0 md:opacity-100" role="presentation">
+    <div v-if="imagePath" class="flex h-full w-full gap-x-4 items-end justify-center hidden md:block">
+      <img
+        :src="`${imagePath}-light.png`"
+        alt=""
+        width="143"
+        height="136"
+        class="dark:hidden object-cover h-[136px] w-[143px] opacity-0 md:opacity-100"
+        role="presentation"
+      >
+      <img
+        :src="`${imagePath}-dark.png`"
+        alt=""
+        width="143"
+        height="136"
+        class="hidden dark:block object-cover h-[136px] w-[143px] opacity-0 md:opacity-100"
+        role="presentation"
+      >
     </div>
   </div>
 </template>
+<script setup lang="ts">
+
+defineProps({
+  imagePath: {
+    type: String,
+    default: ''
+  }
+})
+</script>

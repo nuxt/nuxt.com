@@ -11,20 +11,20 @@
         <ContentSlot :use="$slots.description" unwrap="p" />
       </p>
     </div>
-    <div v-if="image" class="flex flex-col h-full w-full gap-x-4 items-end justify-center">
+    <div v-if="imagePath" class="flex flex-col h-full w-full gap-x-4 items-end justify-center">
       <img
-        :src="`/assets/docs/getting-started/views/${image}-light.png`"
+        :src="`${imagePath}-light.png`"
         width="72"
         height="92"
-        :alt="`${image} image`"
+        alt=""
         class="dark:hidden absolute right-0 bottom-0 object-cover h-[52px] w-[42px] md:h-[92px] md:w-[72px] opacity-0 md:opacity-100"
         role="presentation"
       >
       <img
-        :src="`/assets/docs/getting-started/views/${image}-dark.png`"
+        :src="`${imagePath}-dark.png`"
         width="72"
         height="92"
-        :alt="`${image} image`"
+        alt=""
         class="hidden dark:block absolute right-0 bottom-0 object-cover h-[52px] w-[42px] md:h-[92px] md:w-[72px] opacity-0 md:opacity-100"
         role="presentation"
       >
@@ -35,7 +35,7 @@
 <script setup lang="ts">
 
 defineProps({
-  image: {
+  imagePath: {
     type: String,
     default: ''
   },
@@ -44,10 +44,6 @@ defineProps({
     default: ''
   },
   descriptionClass: {
-    type: String,
-    default: ''
-  },
-  marginBottomClass: {
     type: String,
     default: ''
   }
