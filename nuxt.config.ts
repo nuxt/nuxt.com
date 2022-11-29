@@ -112,7 +112,7 @@ export default defineNuxtConfig({
   },
   nitro: {
     prerender: {
-      routes: ['/docs', '/', '/api/jobs.json', '/api/modules.json', '/api/sponsors.json'],
+      routes: ['/docs', '/', '/api/jobs.json', '/api/modules.json', '/api/sponsors.json', '/sitemap.xml'],
       crawlLinks: true
     },
     handlers: [
