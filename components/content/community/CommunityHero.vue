@@ -1,5 +1,5 @@
 <template>
-  <DocsHero :image="image">
+  <DocsHero class="mb-6" :image="image">
     <template #title>
       <ContentSlot :use="$slots.title" unwrap="p" />
     </template>
