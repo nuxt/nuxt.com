@@ -39,7 +39,7 @@
     "@nuxthq/ui": "^0.1.8",
     "@nuxtjs/algolia": "^1.2.0",
     "@nuxtjs/fontaine": "^0.2.2",
-    "@nuxtjs/html-validator": "^1.1.1",
+    "@nuxtjs/html-validator": "^1.2.1",
     "@nuxtlabs/github-module": "^1.5.3",
     "@vueuse/core": "^9.5.0",
     "@vueuse/motion": "^2.0.0-beta.12",

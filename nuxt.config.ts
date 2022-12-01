@@ -21,16 +21,29 @@ export default defineNuxtConfig({
   ],
   modules: [
     // '@nuxthq/studio',
+    process.env.NODE_ENV === 'production' ? '@nuxtjs/html-validator' : () => {},
     '@nuxthq/ui',
     '@nuxt/content',
     '@nuxtlabs/github-module',
-    '@nuxtjs/html-validator',
     // 'nuxt-newsletter',
     'nuxt-plausible',
     'nuxt-icon',
     '@nuxtjs/fontaine',
     '@nuxtjs/algolia'
   ],
+  htmlValidator: {
+    logLevel: 'error',
+    options: {
+      extends: [
+        'html-validate:document',
+        'html-validate:recommended',
+        'html-validate:standard'
+      ],
+      rules: {
+        'wcag/h30': 'warn'
+      }
+    }
+  },
   components: [
     resolve('./components'),
     {
