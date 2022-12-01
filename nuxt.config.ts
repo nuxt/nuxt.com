@@ -40,7 +40,14 @@ export default defineNuxtConfig({
         'html-validate:standard'
       ],
       rules: {
-        'wcag/h30': 'warn'
+        'wcag/h30': 'warn',
+        'wcag/h32': 'warn',
+        'wcag/h36': 'warn',
+        'wcag/h37': 'warn',
+        'wcag/h63': 'warn',
+        'wcag/h67': 'warn',
+        'wcag/h71': 'warn'
+
       }
     }
   },
