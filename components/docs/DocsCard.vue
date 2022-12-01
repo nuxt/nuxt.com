@@ -17,7 +17,7 @@
         :width="image.width"
         :height="image.height"
         alt=""
-        class="dark:hidden absolute right-0 bottom-0 object-cover h-[52px] w-[42px] md:h-[92px] md:w-[72px] opacity-0 md:opacity-100"
+        class="dark:hidden absolute right-0 bottom-0 object-cover opacity-0 md:opacity-100"
         role="presentation"
       >
       <img
@@ -25,7 +25,7 @@
         :width="image.width"
         :height="image.height"
         alt=""
-        class="hidden dark:block absolute right-0 bottom-0 object-cover h-[52px] w-[42px] md:h-[92px] md:w-[72px] opacity-0 md:opacity-100"
+        class="hidden dark:block absolute right-0 bottom-0 object-cover opacity-0 md:opacity-100"
         role="presentation"
       >
     </div>
@@ -49,7 +49,7 @@ defineProps({
   },
   roundedClass: {
     type: String,
-    default: 'rounded-lg'
+    default: 'rounded'
   }
 })
 </script>
