@@ -1,5 +1,6 @@
 import { SitemapStream, streamToPromise } from 'sitemap'
 import { serverQueryContent } from '#content/server'
+import { defineEventHandler } from '#imports'
 
 export default defineEventHandler(async (event) => {
   const docs = await serverQueryContent(event).find()
