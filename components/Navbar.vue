@@ -74,6 +74,11 @@ const links: Ref<NavItem[]> = ref([{
   _path: '/support/solutions',
   path: '/support',
   icon: 'uil:globe'
+}, {
+  title: 'Roadmap',
+  _path: '/roadmap',
+  path: '/roadmap',
+  icon: 'uil:globe'
 }])
 
 const visibleLinks = computed(() => links.value.filter(link => !link.hidden))
