@@ -1,10 +1,10 @@
 <template>
-  <div class="flex flex-col gap-2">
-    <h2 v-if="$slots.title" class="font-semibold text-3xl">
-      <ContentSlot :use="$slots.title" unwrap="p" />
-    </h2>
-    <ol>
-      <ContentSlot :use="$slots.default" unwrap="p" />
-    </ol>
-  </div>
+  <li class="flex items-center gap-x-4">
+    <p v-if="$slots.numbers" class="font-semibold text-black text-5xl">
+      <ContentSlot :use="$slots.numbers" unwrap="p" />
+    </p>
+    <p v-if="$slots.description" class="text-lg font-normal">
+      <ContentSlot :use="$slots.description" unwrap="p" />
+    </p>
+  </li>
 </template>
