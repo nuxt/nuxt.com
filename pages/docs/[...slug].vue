@@ -13,6 +13,8 @@
 <script setup lang="ts">
 const { page } = useContent()
 
+usePageNotFound(page)
+
 const githubLink = computed(() => `https://github.com/nuxt/framework/edit/main/docs/content/${page?.value?._file}`)
 
 const hasToc = computed(() => !!page.value?.body?.toc?.links?.length)
