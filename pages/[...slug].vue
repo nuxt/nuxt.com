@@ -1,11 +1,7 @@
 <script setup lang="ts">
 const { page } = useContent()
 
-// Page not found, set correct status code on SSR
-if (!page.value && process.server) {
-  const event = useRequestEvent()
-  event.res.statusCode = 404
-}
+usePageNotFound(page)
 
 useContentHead(page)
 </script>

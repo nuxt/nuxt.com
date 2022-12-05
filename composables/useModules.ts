@@ -45,7 +45,7 @@ export const useModules = () => {
       module.value = await $fetch<Module>(`/api/modules/${name}`)
     } catch (e) {
       // @ts-ignore
-      throwError({ statusMessage: 'Module not found', message: 'This page does not exist.', statusCode: 404 })
+      throw createError({ statusMessage: 'Module not found', message: 'This page does not exist.', statusCode: 404 })
     }
 
     pending.value = false

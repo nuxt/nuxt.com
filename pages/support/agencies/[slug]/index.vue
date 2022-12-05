@@ -8,5 +8,6 @@ const { fetch: fetchPartners } = useAgencyPartners()
 
 await fetchPartners()
 
+usePageNotFound(page)
 useContentHead(page)
 </script>

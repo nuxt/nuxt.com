@@ -11,11 +11,11 @@ const tiersMap = {
 
 export default defineCachedEventHandler(async () => {
   let sponsors = null
-  const oc = null
 
   try {
     sponsors = await Promise.all([fetchGithubSponsors(), fetchOpenCollectiveSponsors()])
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.error(e)
     return
   }
