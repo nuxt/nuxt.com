@@ -27,7 +27,7 @@
     "generate": "nuxi prepare && nuxi generate .demo",
     "preview": "nuxi preview .demo",
     "lint": "eslint --ext .ts,.js,.vue .",
-    "release": "yarn lint && release-it",
+    "release": "release-it",
     "test": "yarn lint"
   },
   "dependencies": {
