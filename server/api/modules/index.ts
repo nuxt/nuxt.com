@@ -18,16 +18,19 @@ async function fetchModuleStats (module: ModuleInfo) {
   const [npm, github, contributors] = await Promise.all([
     $fetch<any>(`https://api.nuxtjs.org/api/npm/package/${module.npm}`)
       .catch((err) => {
+        // eslint-disable-next-line no-console
         console.error(`Cannot fetch npm info for ${module.npm}: ${err}`)
         return { downloads: { lastMonth: 0 } }
       }),
     $fetch<any>(`https://ungh.unjs.io/repos/${ghRepo}`)
       .catch((err) => {
+        // eslint-disable-next-line no-console
         console.error(`Cannot fetch github repo info for ${ghRepo}: ${err}`)
         return { repo: { stars: 0 } }
       }).then(r => r.repo),
     $fetch<any>(`https://ungh.unjs.io/repos/${ghRepo}/contributors`)
       .catch((err) => {
+        // eslint-disable-next-line no-console
         console.error(`Cannot fetch github contributors info for ${ghRepo}: ${err}`)
         return { contributors: [] }
       }).then(r => r.contributors)
