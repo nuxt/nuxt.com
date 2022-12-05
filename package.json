@@ -1,6 +1,6 @@
 {
   "name": "nuxt-website-theme",
-  "version": "0.1.11",
+  "version": "0.1.16",
   "main": "nuxt.config.ts",
   "files": [
     "app/",
@@ -51,6 +51,7 @@
     "nuxt-plausible": "^0.1.2",
     "tailwindcss-border-gradient-radius": "^3.0.1",
     "three": "^0.146.0",
+    "sitemap": "^7.1.1",
     "vue-lite-youtube-embed": "^1.0.4"
   },
   "devDependencies": {
