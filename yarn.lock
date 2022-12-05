@@ -696,10 +696,10 @@
     pinceau latest
     style-value-types "^5.1.2"
 
-"@nuxt-themes/typography@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@nuxt-themes/typography/-/typography-0.1.1.tgz#e7adc5a82f56432b68956df6908d380810dcdfd1"
-  integrity sha512-y1gborASBy0G1fUpnNMjwUUinhsjRJDcTaTpi+kcWMtro3wk5tt5p8TAr4gklL+2RKJueVRz1g1abrzQTN0DLA==
+"@nuxt-themes/typography@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@nuxt-themes/typography/-/typography-0.1.2.tgz#c115dfa380feb06f7a1c259604c3d65a5de1d61f"
+  integrity sha512-33gKkWYINOWZ5m9shj0WED9cRbfGZ0coLZfUvTHz78VVj+Zf2HC2wWPfMg73fYMYMEd0Bwt0ZzsAVY+eiq4lQA==
   dependencies:
     "@nuxt-themes/tokens" latest
     "@nuxtjs/color-mode" "^3.2.0"
@@ -935,7 +935,7 @@
     socket.io-client "^4.5.4"
     ufo "^1.0.1"
 
-"@nuxthq/ui@^0.1.13":
+"@nuxthq/ui@^0.1.15":
   version "0.1.15"
   resolved "https://registry.yarnpkg.com/@nuxthq/ui/-/ui-0.1.15.tgz#15139ba7fc8f0ae40d8122e5d5a0466312732ae7"
   integrity sha512-BvOHErNrIv0Cwwsht8pM8mQoEyndPtiEWUAFvWK6PM2ts1TFh1uDIz4NDcOIUEq+vxx6tByp/p9yIasuQuYkjw==
@@ -1026,7 +1026,7 @@
     pathe "^1.0.0"
     ufo "^1.0.0"
 
-"@nuxtjs/html-validator@^1.2.1":
+"@nuxtjs/html-validator@^1.2.2":
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/@nuxtjs/html-validator/-/html-validator-1.2.2.tgz#cb8f6696ffda7cbe69bf82621060b8de22cd74ac"
   integrity sha512-kaZm4Ks6snS3fRi9yihkVFbpffdaZHiFcOxfTOuRRjDy2vnUKkdBzz6+JsGqliNhunSrCT/mziEeq1icjCle8Q==
@@ -4233,7 +4233,7 @@ eslint-visitor-keys@^3.3.0:
   resolved "https://registry.yarnpkg.com/eslint-visitor-keys/-/eslint-visitor-keys-3.3.0.tgz#f6480fa6b1f30efe2d1968aa8ac745b862469826"
   integrity sha512-mQ+suqKJVyeuwGYHAdjMFqjCyfl8+Ldnxuyp3ldiMBFKkvytrXUZWaiPCEav8qDHKty44bD+qV1IP4T+w+xXRA==
 
-eslint@^8.28.0:
+eslint@^8.29.0:
   version "8.29.0"
   resolved "https://registry.yarnpkg.com/eslint/-/eslint-8.29.0.tgz#d74a88a20fb44d59c51851625bc4ee8d0ec43f87"
   integrity sha512-isQ4EEiyUjZFbEKvEGJKKGBwXtvXX+zJbkVKCgTuB9t/+jUBcy8avhkEwWJecI15BkRkOYmvIM5ynbhRjEkoeg==
