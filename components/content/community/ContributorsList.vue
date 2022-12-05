@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div> {{ data }} </div>
 </template>
 
@@ -6,4 +6,4 @@
 
 const { data } = await useAsyncData('baise', () => queryContent('/docs/community/contributors').findOne())
 
-</script>
+</script> -->
