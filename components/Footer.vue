@@ -49,6 +49,6 @@ const links = [
   }
 ]
 
-const langs = ref([{ text: 'English', value: 'en' }])
-const lang = ref(langs.value[0].value)
+// const langs = ref([{ text: 'English', value: 'en' }])
+// const lang = ref(langs.value[0].value)
 </script>

@@ -29,81 +29,81 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import { Switch } from "@headlessui/vue";
-import $ui from "#build/ui";
+import { computed } from 'vue'
+import { Switch } from '@headlessui/vue'
+import $ui from '#build/ui'
 
 const props = defineProps({
   modelValue: {
     type: Boolean,
-    default: false,
+    default: false
   },
   iconOn: {
     type: String,
-    default: null,
+    default: null
   },
   iconOff: {
     type: String,
-    default: null,
+    default: null
   },
   baseClass: {
     type: String,
-    default: () => $ui.toggle.base,
+    default: () => $ui.toggle.base
   },
   activeClass: {
     type: String,
-    default: () => $ui.toggle.active,
+    default: () => $ui.toggle.active
   },
   inactiveClass: {
     type: String,
-    default: () => $ui.toggle.inactive,
+    default: () => $ui.toggle.inactive
   },
   containerBaseClass: {
     type: String,
-    default: () => $ui.toggle.container.base,
+    default: () => $ui.toggle.container.base
   },
   containerActiveClass: {
     type: String,
-    default: () => $ui.toggle.container.active,
+    default: () => $ui.toggle.container.active
   },
   containerInactiveClass: {
     type: String,
-    default: () => $ui.toggle.container.inactive,
+    default: () => $ui.toggle.container.inactive
   },
   iconBaseClass: {
     type: String,
-    default: () => $ui.toggle.icon.base,
+    default: () => $ui.toggle.icon.base
   },
   iconActiveClass: {
     type: String,
-    default: () => $ui.toggle.icon.active,
+    default: () => $ui.toggle.icon.active
   },
   iconInactiveClass: {
     type: String,
-    default: () => $ui.toggle.icon.inactive,
+    default: () => $ui.toggle.icon.inactive
   },
   iconOnClass: {
     type: String,
-    default: () => $ui.toggle.icon.on,
+    default: () => $ui.toggle.icon.on
   },
   iconOffClass: {
     type: String,
-    default: () => $ui.toggle.icon.off,
-  },
-});
+    default: () => $ui.toggle.icon.off
+  }
+})
 
-const emit = defineEmits(["update:modelValue"]);
+const emit = defineEmits(['update:modelValue'])
 
 const active = computed({
-  get() {
-    return props.modelValue;
+  get () {
+    return props.modelValue
   },
-  set(value) {
-    emit("update:modelValue", value);
-  },
-});
+  set (value) {
+    emit('update:modelValue', value)
+  }
+})
 </script>
 
 <script lang="ts">
-export default { name: "UToggle" };
+export default { name: 'UToggle' }
 </script>

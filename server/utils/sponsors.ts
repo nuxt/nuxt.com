@@ -63,6 +63,7 @@ export const fetchOpenCollectiveSponsors = async (): Promise<any[]> => {
     })
 
     if (errors) {
+      // eslint-disable-next-line no-console
       console.error(errors)
       /* Stop the loop if any error occurs */
       offset = null
@@ -142,6 +143,7 @@ export const fetchGithubSponsors = async (): Promise<Sponsor[]> => {
     hasNext = _sponsors.pageInfo.hasNextPage
     cursor = _sponsors.pageInfo.endCursor
     if (errors) {
+      // eslint-disable-next-line no-console
       console.error(errors)
       /* Stop the loop if any error occurs */
       hasNext = false
