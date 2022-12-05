@@ -696,10 +696,10 @@
     pinceau latest
     style-value-types "^5.1.2"
 
-"@nuxt-themes/typography@^0.1.2":
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/@nuxt-themes/typography/-/typography-0.1.2.tgz#c115dfa380feb06f7a1c259604c3d65a5de1d61f"
-  integrity sha512-33gKkWYINOWZ5m9shj0WED9cRbfGZ0coLZfUvTHz78VVj+Zf2HC2wWPfMg73fYMYMEd0Bwt0ZzsAVY+eiq4lQA==
+"@nuxt-themes/typography@^0.1.3":
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/@nuxt-themes/typography/-/typography-0.1.3.tgz#d00c6c0ca68d3e0e7d9cfb56ebb4fdfd866435f6"
+  integrity sha512-pUZOlHC3sUwrwNKJosZ8C7jkl1mBeoO6aQFmDo91yIgLpzPNS90QHPZns+guvDsmsxDEssuMtxTjqsvSi5LoTA==
   dependencies:
     "@nuxt-themes/tokens" latest
     "@nuxtjs/color-mode" "^3.2.0"
