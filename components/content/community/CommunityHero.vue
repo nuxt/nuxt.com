@@ -11,7 +11,7 @@
       <div class="flex flex-col sm:flex-row gap-3 items-start justify-center md:justify-start sm:items-center">
         <UInput
           name="email"
-          placeholder="Enter your email"
+          placeholder="Email"
           class="w-full sm:w-64"
           size="lg"
           required
