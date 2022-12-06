@@ -8,18 +8,24 @@
     </template>
 
     <template #extra>
-      <div class="flex flex-col sm:flex-row gap-3 items-start justify-center md:justify-start sm:items-center">
+      <form class="flex flex-col sm:flex-row gap-3 items-start justify-center md:justify-start sm:items-center" @submit.prevent="onSubmit">
         <UInput
+          v-model="email"
           name="email"
           placeholder="Email"
           class="w-full sm:w-64"
           size="lg"
           required
         />
-        <UButton variant="primary-gradient" to="https://chrome.google.com/webstore/detail/vue-telescope/neaebjphlfplgdhedjdhcnpjkndddbpd" target="_blank">
-          {{ buttonText }}
-        </UButton>
-      </div>
+        <UButton
+          type="submit"
+          submit
+          variant="primary-gradient"
+          :loading="loading"
+          :label="buttonText"
+          class="focus-visible:ring-2"
+        />
+      </form>
     </template>
   </DocsHero>
 </template>
@@ -35,4 +41,27 @@ defineProps({
     default: 'Subscribe'
   }
 })
+
+const { $toast } = useNuxtApp()
+
+const email = ref('')
+const loading = ref(false)
+
+async function onSubmit () {
+  loading.value = true
+
+  const { error } = await useNewsletterSubscribe(email)
+  if (!error) {
+    $toast.success({ title: 'Subscription succeed', description: 'You have been successfully subscribed to Nuxt newsletter. Please check your emails to confirm your subscription.' })
+  } else {
+    let description = 'Something went wrong. Please try again later.'
+    const errors = Object.values(error)
+    if (errors.length && errors[0]?.length) {
+      description = errors[0][0]
+    }
+    $toast.error({ title: 'Subscription failed', description })
+  }
+
+  loading.value = false
+}
 </script>
