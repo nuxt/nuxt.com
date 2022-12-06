@@ -20,7 +20,7 @@ export default defineNuxtConfig({
     resolve('./assets/css/style.css')
   ],
   modules: [
-    // '@nuxthq/studio',
+    '@nuxthq/studio',
     process.env.NODE_ENV === 'production' ? '@nuxtjs/html-validator' : () => {},
     '@nuxthq/ui',
     '@nuxt/content',
