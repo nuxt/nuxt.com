@@ -11,7 +11,7 @@ const titleTemplate = computed(() => {
   return appTitleTemplate
 })
 const ogImage = computed(() => {
-  const appOgImage = website.image || '/social.png'
+  const appOgImage = website.image || '/social.jpg'
   if (page.value) {
     return page.value.image || navKeyFromPath(page.value._path, 'image', navigation.value || []) || appOgImage
   }
