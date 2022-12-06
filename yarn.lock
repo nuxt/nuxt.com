@@ -922,16 +922,16 @@
     vite-plugin-checker "^0.5.1"
     vue-bundle-renderer "^1.0.0"
 
-"@nuxthq/studio@^0.3.1":
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/@nuxthq/studio/-/studio-0.3.1.tgz#9680788e073beaf9d77ad99319b62fd5415127d6"
-  integrity sha512-N0YDGxMr1H2bSnMeiZ4Q4yT2xYiw/onUWei/wLiDZgM0ZVCkH7GUcn4hB+p6lqlnE9OvEvcXwQOOEN8y9XSwzg==
+"@nuxthq/studio@^0.3.3":
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/@nuxthq/studio/-/studio-0.3.3.tgz#c53e367cb2115b66df80b6f7c0ae5ad170908c75"
+  integrity sha512-PBH+NYSp8bOlyyuL7bZGQsl+Pl/6wvQh+puLKDKDwTBgwq+AzNZ8nIjetIhUYbnZe0TbyFDDutL0qzD+gItNbQ==
   dependencies:
     "@nuxt/kit" "^3.0.0"
     "@nuxt/schema" "^3.0.0"
     defu "^6.1.1"
-    nuxt-component-meta "^0.3.5"
-    nuxt-config-schema "^0.3.3"
+    nuxt-component-meta "^0.3.8"
+    nuxt-config-schema "^0.3.4"
     socket.io-client "^4.5.4"
     ufo "^1.0.1"
 
@@ -1026,16 +1026,17 @@
     pathe "^1.0.0"
     ufo "^1.0.0"
 
-"@nuxtjs/html-validator@^1.2.2":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@nuxtjs/html-validator/-/html-validator-1.2.2.tgz#cb8f6696ffda7cbe69bf82621060b8de22cd74ac"
-  integrity sha512-kaZm4Ks6snS3fRi9yihkVFbpffdaZHiFcOxfTOuRRjDy2vnUKkdBzz6+JsGqliNhunSrCT/mziEeq1icjCle8Q==
+"@nuxtjs/html-validator@^1.2.3":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@nuxtjs/html-validator/-/html-validator-1.2.3.tgz#3d411a0f68595d6ebe16d207bd20da3100792da2"
+  integrity sha512-SDoqoi3QqcaoFl8yW5Kdqon5rbAgUWZu1cDUEZR85WBl3T2BddXJazrkIg7gq0r2G/hrxSVDHUtaVYvKhq+ILw==
   dependencies:
     "@nuxt/kit" "^3.0.0"
     chalk "^5.1.2"
     html-validate "~7.10.1"
     pathe "^1.0.0"
     prettier "^2.7.1"
+    std-env "^3.3.1"
 
 "@nuxtjs/tailwindcss@^6.1.3":
   version "6.1.3"
@@ -7660,17 +7661,17 @@ nuxi@3.0.0:
   optionalDependencies:
     fsevents "~2.3.2"
 
-nuxt-component-meta@^0.3.5:
-  version "0.3.5"
-  resolved "https://registry.yarnpkg.com/nuxt-component-meta/-/nuxt-component-meta-0.3.5.tgz#8b631ddc0a56dc792270b1bb74ea76ff25d01a10"
-  integrity sha512-1pknzvuZWpj8qASTqJo6mC4KDX1/qRgk68FchzoRVIoxgisrgQ0/dlWDj/XZ+1HTecxZufTWc5ckrPUzZgWkQg==
+nuxt-component-meta@^0.3.8:
+  version "0.3.8"
+  resolved "https://registry.yarnpkg.com/nuxt-component-meta/-/nuxt-component-meta-0.3.8.tgz#49bd171764368c9fcb40df64c3b528df0f605381"
+  integrity sha512-r1nQ7aKE7ib4YYjSTmqnoGaMNtlqOLvVkGcGPqn5kKJEaWssmAdk6ahzHByV/SRS5+NVEwFIB3GpKCVP1A58DQ==
   dependencies:
     "@nuxt/kit" "^3.0.0"
     scule "^1.0.0"
     typescript "^4.9.3"
     vue-component-meta "^1.0.9"
 
-nuxt-config-schema@^0.3.3, nuxt-config-schema@^0.3.4:
+nuxt-config-schema@^0.3.4:
   version "0.3.4"
   resolved "https://registry.yarnpkg.com/nuxt-config-schema/-/nuxt-config-schema-0.3.4.tgz#dd01f9ec0a13e1c067722954fa86804620cda9b9"
   integrity sha512-VYmV6vVkg3QAuMNC0H/goSi7RQN/DoKoICvQy9ycuKxePc/XOYvWdDI3aIlc4XHrN1qWPdtujmE87lj6RL2r9Q==
