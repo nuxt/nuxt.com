@@ -172,7 +172,7 @@ const RenderCode = defineComponent({
         Copied!
       </span>
     </div>
-    <div class="rounded-lg bg-gray-900 text-gray-200 flex min-h-[500px] relative">
+    <div class="rounded-lg bg-gray-900 text-gray-200 flex min-h-[500px] max-h-[600px] relative">
       <div class="hidden md:flex flex-col shrink-0 min-w-[50px]">
         <div class="pt-4 px-4 text-sm flex flex-col gap-2">
           <component
@@ -230,7 +230,7 @@ const RenderCode = defineComponent({
             </a>
           </div>
         </div>
-        <div class="p-4 border-t-[1px] border-gray-800 overflow-auto max-w-[100vw] max-h-[400px] text-sm">
+        <div class="p-4 border-t-[1px] border-gray-800 overflow-auto max-w-[100vw] text-sm flex-grow">
           <img v-if="(isImage(activeFile?.name) && content?.image)" :src="content.image">
           <RenderCode v-else />
         </div>
