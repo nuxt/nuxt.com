@@ -1,6 +1,5 @@
 <template>
   <div class="flex py-8 relative">
-    <img v-if="backgroundImg" :src="backgroundImg" class="absolute -left-[20%] opacity-0 md:opacity-100">
     <div class="flex flex-col gap-6 ">
       <h1 class="text-5xl font-semibold sm:text-4xl u-text-gray-900">
         <ContentSlot :use="$slots.title" unwrap="p" />
@@ -14,11 +13,3 @@
     </div>
   </div>
 </template>
-<script setup lang="ts">
-defineProps({
-  backgroundImg: {
-    type: String,
-    default: ''
-  }
-})
-</script>

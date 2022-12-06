@@ -2,7 +2,7 @@
   <ul class="grid grid-cols-1 gap-1 sm:gap-8 sm:grid-cols-2 border-gray-200 dark:border-gray-800 rounded-xl" :class="gridClass">
     <div v-if="backgroundImg" class="absolute right-0 inset-y-0 flex">
       <img
-        :src="`${backgroundImg.path}-dark.png`"
+        :src="`${backgroundImg.path}-light.png`"
         :width="backgroundImg.width"
         :height="backgroundImg.height"
         alt=""
