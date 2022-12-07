@@ -70,6 +70,10 @@ export interface NuxtJob {
   }
   published_at: string
 }
+export interface Contributors {
+  name: string
+  link: string
+}
 
 export interface NuxtJobs {
   data: NuxtJob[]
