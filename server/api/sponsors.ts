@@ -3,9 +3,9 @@ import { defineCachedEventHandler } from '#imports'
 
 const tiersMap = {
   platinum: amount => amount >= 2000,
-  gold: amount => amount >= 1000 && amount < 2000,
-  silver: amount => amount >= 100 && amount < 1000,
-  bronze: amount => amount >= 10 && amount < 100,
+  gold: amount => amount < 2000 && amount >= 1000,
+  silver: amount => amount < 1000 && amount >= 200,
+  bronze: amount => amount < 200 && amount >= 10,
   backer: amount => amount < 10
 }
 
