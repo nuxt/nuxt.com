@@ -1,124 +1,28 @@
 <template>
-  <div
-    ref="ctaContainer"
-    class="relative pt-10 pb-40 transition duration-700 sm:pt-44 sm:px-0 md:pt-28 lg:pt-40"
-    :class="!slideIn ? 'opacity-0 translate-y-20' : 'opacity-100 translate-y-0'"
-  >
-    <div ref="mouseLight" class="opacity-0 absolute top-0 rounded-full blur-[50px] bg-gradient-to-t from-green-400 to-teal-400 transition duration-300" />
-
-    <UContainer padded class="relative flex flex-col items-center justify-center gap-y-6">
-      <h3 class="text-4xl font-semibold u-text-gray-900">
-        <ContentSlot :use="$slots.title" unwrap="p" />
-      </h3>
-      <p class="max-w-xl text-xl text-center u-text-gray-900">
-        <ContentSlot :use="$slots.description" unwrap="p" />
-      </p>
-      <form ref="root" class="flex flex-wrap justify-start justify-center w-full gap-6 sm:flex-nowrap" @submit.prevent="onSubmit">
-        <div ref="inputForm">
-          <UInput
-            v-model="form.email"
-            name="email"
-            placeholder="Enter your email"
-            class="w-full sm:w-64"
-            size="lg"
-            required
-          />
-        </div>
-        <UButton
-          type="submit"
-          submit
-          variant="primary-gradient"
-          :loading="loading"
-          :label="buttonText"
-          size="lg"
-          class="focus-visible:ring-2"
-        />
-      </form>
-    </UContainer>
+  <div class="flex flex-col gap-y-8">
+    <ContentSlot :use="$slots.default" unwrap="p" />
+    <div class="w-full flex justify-center items-center pt-8">
+      <UButton
+        :to="buttonLink"
+        variant="primary-gradient"
+        size="lg"
+        :label="buttonText"
+        truncate
+        class="focus-visible:ring-2"
+      />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { Ref } from 'vue'
-import { useEventListener } from '@vueuse/core'
-
 defineProps({
   buttonText: {
     type: String,
-    default: ''
+    required: true
+  },
+  buttonLink: {
+    type: String,
+    required: true
   }
 })
-
-const observer = ref() as Ref<IntersectionObserver>
-const root = ref(null) as Ref<Element>
-const slideIn = ref(false)
-const mouseLight = ref(null)
-const ctaContainer = ref(null)
-const inputForm = ref(null)
-
-const observerCallback = (entries: IntersectionObserverEntry[]) =>
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      slideIn.value = true
-      useEventListener(ctaContainer.value, 'mousemove', (e) => {
-        mouseMoveLight(e)
-      })
-    }
-  })
-
-const { $toast } = useNuxtApp()
-
-const form = reactive({
-  email: ''
-})
-const loading = ref(false)
-
-async function onSubmit () {
-  loading.value = true
-
-  const { error } = await useNewsletterSubscribe(form.email)
-  if (!error) {
-    $toast.success({ title: 'Subscription succeed', description: 'You have been successfully subscribed to Nuxt newsletter. Please check your emails to confirm your subscription.' })
-  } else {
-    let description = 'Something went wrong. Please try again later.'
-    const errors = Object.values(error)
-    if (errors.length && errors[0]?.length) {
-      description = errors[0][0]
-    }
-    $toast.error({ title: 'Subscription failed', description })
-  }
-
-  loading.value = false
-}
-
-const mouseMoveLight = (e) => {
-  const refNumber = 1000
-  const input = inputForm.value.getBoundingClientRect()
-  const x = e.clientX - (input.left + (inputForm.value.clientWidth / 2))
-  const y = e.clientY - (input.top + (inputForm.value.clientHeight / 2))
-  const coord = Math.abs(y) + Math.abs(x)
-  const size = `${((refNumber - coord) / 3)}px`
-
-  mouseLight.value.style.top = `${e.clientY - ctaContainer.value.getBoundingClientRect().y - mouseLight.value.clientHeight / 2}px`
-  mouseLight.value.style.left = `${e.clientX - mouseLight.value.clientWidth / 2}px`
-
-  mouseLight.value.style.width = size
-  mouseLight.value.style.height = size
-
-  if (e.clientY < ctaContainer.value.getBoundingClientRect().y) {
-    mouseLight.value.classList.add('opacity-0')
-    mouseLight.value.classList.remove('opacity-60')
-    mouseLight.value.classList.remove('dark:opacity-90')
-  } else {
-    mouseLight.value.classList.remove('opacity-0')
-    mouseLight.value.classList.add('opacity-60')
-    mouseLight.value.classList.add('dark:opacity-90')
-  }
-}
-
-onBeforeMount(() => (observer.value = new IntersectionObserver(observerCallback)))
-
-onMounted(() => observer.value.observe(root.value))
-
-onBeforeUnmount(() => observer.value?.disconnect())
 </script>
