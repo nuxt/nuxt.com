@@ -48,6 +48,10 @@ const emit = defineEmits(['update:modelValue'])
 const { navigation } = useContent()
 const { navPageFromPath } = useContentHelpers()
 
+if (!navigation.value) {
+  navigation.value = await fetchContentNavigation()
+}
+
 const route = useRoute()
 
 const isOpen: WritableComputedRef<boolean> = computed({
