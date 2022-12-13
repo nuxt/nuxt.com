@@ -148,7 +148,6 @@ export default defineNuxtConfig({
     '/design-kit': { prerender: true },
     '/support/solutions': { prerender: true },
     '/support/agencies': { prerender: true },
-    '/api/_content/**': { prerender: true },
     '/docs/**': { prerender: true },
     // redirects
     '/docs': { redirect: '/docs/getting-started/installation' },
