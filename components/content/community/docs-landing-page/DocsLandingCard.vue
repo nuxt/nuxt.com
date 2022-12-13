@@ -1,6 +1,6 @@
 <template>
   <li ref="root" class="rounded-md pt-3 relative group" :class="{ 'cursor-pointer': to }" @click="onClick">
-    <Icon v-if="hasExternalLink" name="uil:external-link-alt" :class="iconClass" class="absolute" />
+    <Icon v-if="hasExternalLink" name="uil:external-link-alt" class="absolute right-4 top-4 text-gray-500 transition-opacity duration-200 opacity-0 group-hover:opacity-100" />
     <div class="hidden dark:block" />
     <div class="dark:hidden" />
     <UCard
@@ -23,7 +23,7 @@
         <img
           :src="`/assets/home/${image.light}`"
           :alt="`${image} image`"
-          class="h-full rounded-md dark:hidden"
+          class="h-full rounded-md dark:hidden absolute"
           :width="imageWidth"
           :height="imageHeight"
           loading="lazy"
@@ -68,13 +68,13 @@ const props = defineProps({
     type: String || Number,
     default: '168'
   },
-  icon: {
+  imageClass: {
     type: String,
     default: ''
   },
-  iconClass: {
+  icon: {
     type: String,
-    default: 'right-4 top-4 text-gray-500 transition-opacity duration-200 opacity-0 group-hover:opacity-100'
+    default: ''
   },
   to: {
     type: String,
