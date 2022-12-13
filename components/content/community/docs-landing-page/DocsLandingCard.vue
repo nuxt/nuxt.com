@@ -1,10 +1,9 @@
 <template>
   <li ref="root" class="rounded-md pt-3 relative group" :class="{ 'cursor-pointer': to }" @click="onClick">
     <Icon v-if="hasExternalLink" name="uil:external-link-alt" class="absolute right-4 top-4 text-gray-500 transition-opacity duration-200 opacity-0 group-hover:opacity-100" />
-    <div class="hidden dark:block" />
-    <div class="dark:hidden" />
     <UCard
-      class="h-full w-ful flex flex-col justify-between rounded-xl"
+      class="h-full w-full flex justify-between rounded-xl"
+      :class="imagePosition === 'left' ? 'flex-row' : 'flex-col'"
       :body-class="bodyClass"
       shadow-class="shadow-none"
       background-class="dark:bg-gray-900/50 bg-white hover:dark:bg-gray-900"
@@ -13,24 +12,23 @@
     >
       <template v-if="image" #header>
         <img
-          :src="`/assets/home/${image.dark}`"
+          :src="`/assets/docs/getting-started/views/docs-landing/${image.dark}`"
           :alt="`${image} image`"
-          class="h-full rounded-md hidden dark:block"
+          class="rounded-md hidden dark:block"
           :width="imageWidth"
           :height="imageHeight"
           loading="lazy"
         >
         <img
-          :src="`/assets/home/${image.light}`"
+          :src="`/assets/docs/getting-started/views/docs-landing/${image.light}`"
           :alt="`${image} image`"
-          class="h-full rounded-md dark:hidden absolute"
+          class="rounded-md dark:hidden"
           :width="imageWidth"
           :height="imageHeight"
           loading="lazy"
         >
       </template>
       <div class="flex flex-col" :class="contentClass">
-        <Icon v-if="icon" :name="icon" class="w-6 h-6" />
         <header class="font-semibold u-text-gray-900" :class="!icon ? 'text-xl' : 'text-5xl'">
           <NuxtLink v-if="to" :to="to">
             <ContentSlot :use="$slots.title" unwrap="p" />
@@ -68,7 +66,7 @@ const props = defineProps({
     type: String || Number,
     default: '168'
   },
-  imageClass: {
+  imagePosition: {
     type: String,
     default: ''
   },
