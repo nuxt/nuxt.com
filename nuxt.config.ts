@@ -69,14 +69,14 @@ export default defineNuxtConfig({
   ],
   runtimeConfig: {
     github: {
-      token: process.env.GITHUB_TOKEN
+      token: '' || process.env.NUXT_GITHUB_TOKEN
     },
     openCollective: {
-      apiKey: process.env.OPEN_COLLECTIVE_API_KEY
+      apiKey: '' || process.env.NUXT_OPEN_COLLECTIVE_API_KEY
     },
     mailjet: {
-      apiKey: process.env.MAILJET_API_KEY,
-      secretKey: process.env.MAILJET_SECRET_KEY
+      apiKey: '' || process.env.NUXT_MAILJET_API_KEY,
+      secretKey: '' || process.env.NUXT_MAILJET_SECRET_KEY
     },
     public: {}
   },
