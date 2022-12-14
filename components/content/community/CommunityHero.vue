@@ -65,3 +65,9 @@ async function onSubmit () {
   loading.value = false
 }
 </script>
+
+<style scoped lang="postcss">
+button[type="submit"]{
+ @apply border-gradient-br-gradient-black;
+}
+</style>
