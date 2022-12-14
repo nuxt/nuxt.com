@@ -50,15 +50,12 @@ const loading = ref(false)
 async function onSubmit () {
   loading.value = true
 
-  const { error } = await useNewsletterSubscribe(email)
-  if (!error) {
+  const { status } = await useNewsletterSubscribe(email.value)
+  if (status === 200) {
     $toast.success({ title: 'Subscription succeed', description: 'You have been successfully subscribed to Nuxt newsletter. Please check your emails to confirm your subscription.' })
+    email.value = ''
   } else {
-    let description = 'Something went wrong. Please try again later.'
-    const errors = Object.values(error)
-    if (errors.length && errors[0]?.length) {
-      description = errors[0][0]
-    }
+    const description = 'Something went wrong. Please try again later.'
     $toast.error({ title: 'Subscription failed', description })
   }
 
