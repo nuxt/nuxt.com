@@ -3,7 +3,7 @@
     <Icon v-if="hasExternalLink" name="uil:external-link-alt" class="absolute right-4 top-4 text-gray-500 transition-opacity duration-200 opacity-0 group-hover:opacity-100" />
     <UCard
       class="h-full w-full flex justify-between rounded-xl"
-      :class="imagePosition === 'left' ? 'flex-row' : 'flex-col'"
+      :class="imagePosition === 'left' ? 'sm:flex-row py-4 pr-2' : 'flex-col'"
       :body-class="bodyClass"
       shadow-class="shadow-none"
       background-class="dark:bg-gray-900/50 bg-white hover:dark:bg-gray-900"
@@ -59,12 +59,11 @@ const props = defineProps({
   },
   imageWidth: {
     type: String || Number,
-
-    default: '350'
+    default: '112'
   },
   imageHeight: {
     type: String || Number,
-    default: '168'
+    default: '118'
   },
   imagePosition: {
     type: String,

@@ -1,7 +1,7 @@
 <template>
   <div class="flex pt-8 relative">
     <div class="flex flex-col gap-6">
-      <h1 class="text-3xl font-semibold sm:text-4xl u-text-gray-900">
+      <h1 class="text-4xl font-semibold sm:text-5xl u-text-gray-900">
         <ContentSlot :use="$slots.title" unwrap="p" />
       </h1>
       <p class="font-medium sm:text-lg u-text-gray-500">
