@@ -21,7 +21,7 @@
           </NuxtLink>
         </div>
 
-        <ul class="justify-center hidden lg:col-span-4 gap-x-10 lg:flex">
+        <ul class="justify-center hidden lg:col-span-4 lg:gap-x-8 xl:gap-x-10 lg:flex">
           <li v-for="(link, index) in visibleLinks" :key="index">
             <NuxtLink
               :to="link._path"
