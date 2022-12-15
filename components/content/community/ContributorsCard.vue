@@ -3,7 +3,7 @@
     <h2 v-if="$slots.title" class="font-semibold text-3xl align-middle pb-6">
       <ContentSlot :use="$slots.title" unwrap="p" />
     </h2>
-    <ol class="text-red-600">
+    <ol>
       <ContentSlot :use="$slots.default" unwrap="p" />
     </ol>
   </div>
