@@ -16,8 +16,8 @@
             <span class="flex-shrink text-xl font-semibold u-text-gray-900">{{ job.title }}</span>
             <span class="self-start px-2 py-0.5 rounded-full whitespace-nowrap bg-gray-800">{{ job.remote }}</span>
           </div>
-          <p v-if="job.locations?.length" class="u-text-gray-500">
-            <span v-for="location in job.locations" :key="location" class="location-item">{{ location }}</span>
+          <p v-if="locations?.length" class="u-text-gray-500">
+            <span v-for="location in locations" :key="location" class="location-item">{{ location }}</span>
           </p>
         </div>
       </div>
@@ -40,6 +40,17 @@ const props = defineProps({
 })
 
 const description = computed(() => props.job.description.replace(/\n/g, '<br>'))
+
+/* Limit to 4 locations and discard the rest */
+const locations = computed(() => props.job.locations?.map((location, index) => {
+  if (index <= 3) {
+    return location
+  } else if (index === 4) {
+    return '& others'
+  } else {
+    return null
+  }
+}).filter(v => v))
 </script>
 
 <style scoped lang="postcss">
@@ -52,12 +63,12 @@ const description = computed(() => props.job.description.replace(/\n/g, '<br>'))
   --tw-ring-color: #00dc82
 }
 
-.location-item:not(:first-child) {
-  padding-left: .5rem;
+.location-item {
+  white-space: nowrap;
 }
 
 .location-item:not(:first-child)::before {
   content: '•';
-  margin-right: .5rem;
+  margin: 0 .5rem;
 }
 </style>
