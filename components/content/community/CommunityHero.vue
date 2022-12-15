@@ -7,7 +7,7 @@
       <ContentSlot :use="$slots.description" unwrap="p" />
     </template>
 
-    <template #extra>
+    <!-- <template #extra>
       <form class="flex flex-col sm:flex-row gap-3 items-start justify-center md:justify-start sm:items-center" @submit.prevent="onSubmit">
         <UInput
           v-model="email"
@@ -26,7 +26,7 @@
           class="focus-visible:ring-2"
         />
       </form>
-    </template>
+    </template> -->
   </DocsHero>
 </template>
 
@@ -42,23 +42,24 @@ defineProps({
   }
 })
 
-const { $toast } = useNuxtApp()
+/* Temporary remove newsletter subscription */
+// const { $toast } = useNuxtApp()
 
-const email = ref('')
-const loading = ref(false)
+// const email = ref('')
+// const loading = ref(false)
 
-async function onSubmit () {
-  loading.value = true
+// async function onSubmit () {
+//   loading.value = true
 
-  const { status } = await useNewsletterSubscribe(email.value)
-  if (status === 200) {
-    $toast.success({ title: 'Subscription succeed', description: 'You have been successfully subscribed to Nuxt newsletter. Please check your emails to confirm your subscription.' })
-    email.value = ''
-  } else {
-    const description = 'Something went wrong. Please try again later.'
-    $toast.error({ title: 'Subscription failed', description })
-  }
+//   const { status } = await useNewsletterSubscribe(email.value)
+//   if (status === 200) {
+//     $toast.success({ title: 'Subscription succeed', description: 'You have been successfully subscribed to Nuxt newsletter. Please check your emails to confirm your subscription.' })
+//     email.value = ''
+//   } else {
+//     const description = 'Something went wrong. Please try again later.'
+//     $toast.error({ title: 'Subscription failed', description })
+//   }
 
-  loading.value = false
-}
+//   loading.value = false
+// }
 </script>
