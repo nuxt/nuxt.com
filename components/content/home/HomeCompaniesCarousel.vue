@@ -1,5 +1,5 @@
 <template>
-  <div class="relative mt-20" aria-hidden="true" inert>
+  <div class="relative mt-20" aria-hidden="true">
     <div class="overflow-hidden">
       <div class="slider">
         <div class="slide-track mb-2 sm:mb-8 animation">
