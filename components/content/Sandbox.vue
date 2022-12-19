@@ -40,9 +40,14 @@ const images = ['.ico', '.png', '.jpg']
 const isImage = (path?: string) => path && images.some(ext => path.endsWith(ext))
 
 const icons: Record<string, string> = {
-  ts: 'vscode-icons:file-type-typescript-official',
-  js: 'vscode-icons:file-type-js-official',
+  'package.json': 'vscode-icons:file-type-npm',
+  'tsconfig.json': 'vscode-icons:file-type-tsconfig',
+  ts: 'vscode-icons:file-type-typescript',
+  js: 'vscode-icons:file-type-js',
   ico: 'vscode-icons:file-type-favicon'
+}
+function getIcon (filename: string) {
+  return icons[filename] ?? icons[filename.split('.').pop()!] ?? `vscode-icons:file-type-${filename.split('.').pop()!}`
 }
 
 const config = useRuntimeConfig()
@@ -138,11 +143,11 @@ const RenderCode = defineComponent({
       <slot name="header" />
     </header>
     <slot name="description" />
-    <div class="grid grid-columns-3 gap-2 md:flex md:gap-3 text-xs mt-4 justify-stretch relative">
+    <div class="grid grid-columns-3 gap-2 md:flex md:gap-3 md:flex-wrap text-xs mt-4 justify-stretch relative">
       <a
         target="_blank"
         :href="`https://stackblitz.com/github/${repo}/tree/${branch}/${dir}`"
-        class="flex gap-2 items-center px-3 py-2 dark:rounded border-[1px] dark:border-white dark:border-opacity-[0.1] hover:border-opacity-[0.7] hover:bg-opacity-[0.2] transition-all border-r-[1px] border-black"
+        class="open-button"
       >
         <Icon class="w-4 h-4" alt="" name="simple-icons:stackblitz" />
         Open on StackBlitz
@@ -150,13 +155,13 @@ const RenderCode = defineComponent({
       <a
         target="_blank"
         :href="`https://codesandbox.io/s/github/${repo}/tree/${branch}/${dir}`"
-        class="flex gap-2 items-center px-3 py-2 dark:rounded border-[1px] dark:border-white dark:border-opacity-[0.1] hover:border-opacity-[0.7] hover:bg-opacity-[0.2] transition-all"
+        class="open-button"
       >
         <Icon class="w-4 h-4" alt="" name="simple-icons:codesandbox" />
         Open on CodeSandbox
       </a>
       <button
-        class="flex gap-2 items-center px-3 py-2 rounded border-[1px] dark:border-white dark:border-opacity-[0.1] hover:border-opacity-[0.7] hover:bg-opacity-[0.2] transition-all col-span-2 opacity-75 overflow-hidden"
+        class="open-button"
         :onclick="`navigator.clipboard.writeText('${command}')`"
       >
         <span class="sr-only">Click to copy</span>
@@ -164,13 +169,13 @@ const RenderCode = defineComponent({
           <Icon class="w-4 h-4" alt="" name="bi:terminal" />
           {{ command }}
         </code>
+        <span
+          class="backdrop-blur bg-white dark:bg-black px-2 absolute bottom-[0.5rem] right-[0.5rem] transition-opacity duration-1000 opacity-0 copy-confirmation pointer-events-none"
+          alt=""
+        >
+          Copied!
+        </span>
       </button>
-      <span
-        class="absolute bottom-[1.5rem] right-[0.5rem] transition-opacity opacity-0 copy-confirmation pointer-events-none"
-        alt=""
-      >
-        Copied!
-      </span>
     </div>
     <div class="rounded-lg bg-gray-900 text-gray-200 flex min-h-[500px] max-h-[600px] relative">
       <div class="hidden md:flex flex-col shrink-0 min-w-[50px]">
@@ -184,7 +189,7 @@ const RenderCode = defineComponent({
             :class="{ 'text-white font-bold': activeFile === item, 'mt-1': index && (files![index - 1].type !== item.type || item.path.split('/').length !== files![index - 1].path.split('/').length) }"
             @click="item.type === 'file' ? activeFile = item : null"
           >
-            <Icon :name="item.type === 'dir' ? 'uil:folder-open' : icons[item.name.split('.').pop()!] ?? `vscode-icons:file-type-${item.name.split('.').pop()!}`" class="w-4 h-4" />
+            <Icon :name="item.type === 'dir' ? 'uil:folder-open' : getIcon(item.name)" class="w-4 h-4" />
             {{ item.name }}
           </component>
         </div>
@@ -240,7 +245,13 @@ const RenderCode = defineComponent({
   </section>
 </template>
 
-<style>
+<style lang="postcss" scoped>
+.open-button {
+  @apply relative rounded flex gap-2 items-center px-3 py-2 dark:rounded border-[1px] dark:border-white dark:border-opacity-[0.1] transition-all border-r-[1px];
+  &:hover {
+    @apply border-gray-800 dark:border-gray-200 bg-opacity-[0.2]
+  }
+}
 .highlighted-code:first-child {
   counter-reset: line;
 }
@@ -258,7 +269,7 @@ const RenderCode = defineComponent({
 .copy-confirmation {
   transition: 1s;
 }
-:active + .copy-confirmation {
+:active .copy-confirmation {
   opacity: 1;
   transition: 0s;
   right: 1.5rem;
