@@ -29,8 +29,8 @@
               :target="link.target"
               class="text-sm lg:text-base link"
               :class="{
-                'active': isActive(link),
-                'font-medium u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900 active:shadow-inner active:font-semibold': !isActive(link),
+                'active focus-visible:ring': isActive(link),
+                'font-medium u-text-gray-600 hover:u-text-gray-900 focus:u-text-gray-900 active:shadow-inner active:font-semibold': !isActive(link),
               }"
             >
               {{ link.title }}
