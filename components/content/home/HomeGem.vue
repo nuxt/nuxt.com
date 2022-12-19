@@ -25,7 +25,7 @@ if (process.client) {
     const gltfLoader = new GLTFLoader()
 
     // Renderer
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'high-performance' })
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true })
     renderer.outputEncoding = THREE.sRGBEncoding
     renderer.toneMapping = THREE.ACESFilmicToneMapping
     renderer.toneMappingExposure = 1

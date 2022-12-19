@@ -1,11 +1,11 @@
 <template>
-  <ul :class="{ 'pl-4': level > 1 }">
+  <ul :class="{ 'pl-4': level > 1 }" class="px-1">
     <li
       v-for="(link, index) in tree"
       :key="link._path"
       :class="{
         'border-l-2': level > 0,
-        'border-green-500': isActive(link),
+        'border-gray-300': isActive(link),
         'u-border-gray-300 hover:u-border-gray-900': !isActive(link)
       }"
     >
@@ -16,7 +16,7 @@
         :class="{
           'pl-4 lg:text-sm': level > 0,
           '!pt-0': level === 0 && index === 0,
-          'font-semibold text-green-500': isActive(link),
+          'font-semibold': isActive(link),
           'font-medium': level === 0 && !isActive(link) && link.children,
           'hover:font-semibold': !isActive(link) && !link.children
         }"
@@ -24,7 +24,10 @@
       >
         <span class="inline-flex items-center">
           <Icon v-if="link.icon" :name="link.icon" class="w-5 h-5 mr-1" />
-          <span>{{ link.title }}</span>
+          <div class=" flex flex-col">
+            <span>{{ link.title }}</span>
+            <span v-if="(isActive(link) && !link.children)" class="inset-x-0 -bottom-1 h-0.5 bg-gradient-to-r from-green-400 to-teal-400" />
+          </div>
         </span>
       </ULink>
 

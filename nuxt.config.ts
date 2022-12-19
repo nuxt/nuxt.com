@@ -8,24 +8,22 @@ logger.success(`Using Nuxt.com theme v${version}`)
 // https://v3.nuxtjs.org/guide/directory-structure/nuxt.config
 export default defineNuxtConfig({
   extends: '@nuxt-themes/typography',
-  app: {
-    head: {
-      script: [
-        { src: 'https://masteringnuxt.com/banners/main.js', async: true }
-      ]
-    }
-  },
+  // app: {
+  //   head: {
+  //     script: [
+  //       { src: 'https://masteringnuxt.com/banners/main.js', async: true }
+  //     ]
+  //   }
+  // },
   css: [
     resolve('./assets/css/fonts.css'),
     resolve('./assets/css/style.css')
   ],
   modules: [
-    // '@nuxthq/studio',
     process.env.NODE_ENV === 'production' ? '@nuxtjs/html-validator' : () => {},
     '@nuxthq/ui',
     '@nuxt/content',
     '@nuxtlabs/github-module',
-    // 'nuxt-newsletter',
     'nuxt-plausible',
     'nuxt-icon',
     '@nuxtjs/fontaine',

@@ -8,9 +8,9 @@ export default defineAppConfig({
         { name: 'description', content: 'Build your next Vue.js application with confidence using Nuxt. An open source framework under MIT license that makes web development simple and powerful.' },
         { name: 'og:site_name', content: 'Nuxt' },
         { name: 'og:type', content: 'website' },
-        { name: 'og:image', content: '/social.png' },
+        { name: 'og:image', content: '/social.jpg' },
         { name: 'og:image:alt', content: 'Nuxt' },
-        { name: 'twitter:image', content: '/social.png' },
+        { name: 'twitter:image', content: '/social.jpg' },
         { name: 'twitter:card', content: 'summary_large_image' },
         { name: 'twitter:site', content: '@nuxt_js' }
       ],

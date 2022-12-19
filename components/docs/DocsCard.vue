@@ -1,5 +1,5 @@
 <template>
-  <li class="relative flex flex-col justify-between border border-gray-200 dark:border-gray-800 rounded-lg p-4">
+  <li class="relative flex flex-col justify-between border border-gray-200 dark:border-gray-800 p-4" :class="roundedClass">
     <div>
       <h2 v-if="$slots.title" class="text-3xl font-semibold sm:text-5xl u-text-gray-900 mb-2 mt-2">
         <ContentSlot :use="$slots.title" unwrap="p" />
@@ -11,21 +11,21 @@
         <ContentSlot :use="$slots.description" unwrap="p" />
       </p>
     </div>
-    <div v-if="imagePath" class="flex flex-col h-full w-full gap-x-4 items-end justify-center">
+    <div v-if="image" class="flex flex-col h-full w-full gap-x-4 items-end justify-center">
       <img
-        :src="`${imagePath}-light.png`"
-        width="72"
-        height="92"
+        :src="`${image.path}-light.png`"
+        :width="image.width"
+        :height="image.height"
         alt=""
-        class="dark:hidden absolute right-0 bottom-0 object-cover h-[52px] w-[42px] md:h-[92px] md:w-[72px] opacity-0 md:opacity-100"
+        class="dark:hidden absolute right-0 bottom-0 object-cover opacity-0 md:opacity-100"
         role="presentation"
       >
       <img
-        :src="`${imagePath}-dark.png`"
-        width="72"
-        height="92"
+        :src="`${image.path}-dark.png`"
+        :width="image.width"
+        :height="image.height"
         alt=""
-        class="hidden dark:block absolute right-0 bottom-0 object-cover h-[52px] w-[42px] md:h-[92px] md:w-[72px] opacity-0 md:opacity-100"
+        class="hidden dark:block absolute right-0 bottom-0 object-cover opacity-0 md:opacity-100"
         role="presentation"
       >
     </div>
@@ -35,9 +35,9 @@
 <script setup lang="ts">
 
 defineProps({
-  imagePath: {
-    type: String,
-    default: ''
+  image: {
+    type: Object,
+    default: () => {}
   },
   fontSizeClass: {
     type: String,
@@ -46,6 +46,10 @@ defineProps({
   descriptionClass: {
     type: String,
     default: ''
+  },
+  roundedClass: {
+    type: String,
+    default: 'rounded'
   }
 })
 </script>

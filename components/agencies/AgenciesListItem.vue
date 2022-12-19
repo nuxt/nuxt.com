@@ -12,7 +12,7 @@
       <p class="text-xl font-semibold u-text-gray-700">
         {{ partner.title }}
       </p>
-      <p class="mt-2 u-text-gray-500 line-clamp-2">
+      <p class="mt-2 u-text-gray-500 line-clamp-3">
         {{ partner.description }}
       </p>
     </div>

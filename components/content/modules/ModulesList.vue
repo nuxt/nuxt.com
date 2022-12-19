@@ -20,7 +20,7 @@
       <div class="hidden _ellipse lg:block" />
 
       <ul v-if="filteredModules.length" class="grid grid-cols-1 gap-8 mt-8 sm:grid-cols-2 xl:grid-cols-3">
-        <li v-for="(filteredModule, index) in filteredModules" :key="index">
+        <li v-for="filteredModule in filteredModules" :key="filteredModule.name">
           <ModulesListItem :module="filteredModule" />
         </li>
       </ul>

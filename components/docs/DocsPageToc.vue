@@ -12,7 +12,7 @@ if (adPartner.value) {
 </script>
 
 <template>
-  <nav class="flex flex-col space-y-1 sm:space-y-2">
+  <nav class="flex flex-col space-y-1 sm:space-y-2 px-1 py-1">
     <template v-if="toc?.links?.length">
       <span class="items-center hidden overflow-hidden text-sm font-semibold lg:flex">
         <h2>Table of Contents</h2>
