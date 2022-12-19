@@ -143,10 +143,11 @@ const RenderCode = defineComponent({
       <slot name="header" />
     </header>
     <slot name="description" />
-    <div class="grid grid-columns-3 gap-2 md:flex md:gap-3 md:flex-wrap text-xs mt-4 justify-stretch relative">
+    <div class="grid grid-columns-3 gap-2 md:flex md:gap-3 md:flex-wrap mt-4 justify-stretch relative">
       <a
         target="_blank"
         :href="`https://stackblitz.com/github/${repo}/tree/${branch}/${dir}`"
+        rel="noopener"
         class="button"
       >
         <Icon class="w-4 h-4" alt="" name="simple-icons:stackblitz" />
@@ -155,6 +156,7 @@ const RenderCode = defineComponent({
       <a
         target="_blank"
         :href="`https://codesandbox.io/s/github/${repo}/tree/${branch}/${dir}`"
+        rel="noopener"
         class="button"
       >
         <Icon class="w-4 h-4" alt="" name="simple-icons:codesandbox" />
@@ -249,19 +251,20 @@ const RenderCode = defineComponent({
 
 <style lang="postcss" scoped>
 .button {
-  @apply relative rounded flex gap-2 items-center px-3 py-2 dark:rounded border-[1px] dark:border-white dark:border-opacity-[0.1] transition-all border-r-[1px];
+  @apply relative text-xs rounded inline-flex gap-2 items-center px-3 py-2 border-[1px] dark:border-white dark:border-opacity-[0.1] transition-all border-r-[1px];
   &:hover {
     @apply border-gray-800 dark:border-gray-200 bg-opacity-[0.2]
   }
 }
-.copy-confirmation {
+.button .copy-confirmation {
   transition: 1s;
 }
-.button:active .copy-confirmation {
+.button .button:active .copy-confirmation {
   opacity: 1;
   transition: 0s;
   right: 1.5rem;
 }
+
 .highlighted-code:first-child {
   counter-reset: line;
 }
