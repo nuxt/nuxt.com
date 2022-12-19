@@ -1,10 +1,10 @@
 <template>
-  <div class="relative mt-20">
+  <div class="relative mt-20" aria-hidden="true">
     <div class="overflow-hidden">
       <div class="slider">
         <div class="slide-track mb-2 sm:mb-8 animation">
           <div v-for="(showcase, i) in selectedShowcases.concat(selectedShowcases)" :key="i" class="slide mx-8">
-            <a :href="showcase.url" target="_blank" class="w-full h-full relative group">
+            <a :href="showcase.url" target="_blank" class="w-full h-full relative group" tabindex="-1">
               <img
                 :src="`https://res.cloudinary.com/nuxt/image/upload/f_auto,q_auto,w_420,h_315/${showcase.screenshotUrl}`"
                 :alt="showcase.hostname"
