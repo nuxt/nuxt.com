@@ -130,7 +130,7 @@ export default defineNuxtConfig({
   },
   nitro: {
     prerender: {
-      routes: ['/api/jobs.json', '/api/modules.json', '/api/sponsors.json', '/sitemap.xml'],
+      routes: ['/', '/api/jobs.json', '/api/modules.json', '/api/sponsors.json', '/sitemap.xml'],
       crawlLinks: true
     },
     handlers: [
@@ -141,13 +141,12 @@ export default defineNuxtConfig({
     ]
   },
   routeRules: {
-    // defaults
-    '/**': { cache: { swr: true, maxAge: 120, staleMaxAge: 60, headersOnly: true }, prerender: false },
     // prerendered pages
     '/': { prerender: true },
     '/design-kit': { prerender: true },
     '/support/solutions': { prerender: true },
     '/support/agencies': { prerender: true },
+    '/api/_content/**': { prerender: true },
     '/docs/**': { prerender: true },
     // redirects
     '/docs': { redirect: '/docs/getting-started/installation' },
@@ -155,6 +154,9 @@ export default defineNuxtConfig({
     '/modules/**': { swr: 60 },
     '/partners/**': { swr: 60 },
     '/showcase': { swr: 60 },
-    '/api/**': { swr: 60 }
+    '/api/**': { swr: 60 },
+    // defaults
+    // TODO: nitro should sort vercel routes
+    '/**': { cache: { swr: true, maxAge: 120, staleMaxAge: 60, headersOnly: true }, prerender: false }
   }
 })
