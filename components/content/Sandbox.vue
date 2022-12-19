@@ -42,8 +42,12 @@ const isImage = (path?: string) => path && images.some(ext => path.endsWith(ext)
 const icons: Record<string, string> = {
   'package.json': 'vscode-icons:file-type-npm',
   'tsconfig.json': 'vscode-icons:file-type-tsconfig',
+  '.eslintrc': 'vscode-icons:file-type-eslint',
+  '.gitignore': 'vscode-icons:file-type-git',
+  'yarn.lock': 'vscode-icons:file-type-yarn',
   ts: 'vscode-icons:file-type-typescript',
   js: 'vscode-icons:file-type-js',
+  md: 'vscode-icons:file-type-markdown',
   ico: 'vscode-icons:file-type-favicon'
 }
 function getIcon (filename: string) {
@@ -179,9 +183,9 @@ const RenderCode = defineComponent({
         </span>
       </button>
     </div>
-    <div class="rounded-lg bg-gray-900 text-gray-200 flex min-h-[500px] max-h-[600px] relative">
+    <div class="rounded-lg bg-gray-900 text-gray-200 flex min-h-[500px] max-h-[600px] relative overflow-hidden">
       <div class="hidden md:flex flex-col shrink-0 min-w-[50px]">
-        <div class="pt-4 text-sm flex flex-col">
+        <div class="pt-4 text-sm flex flex-col overflow-y-auto">
           <component
             :is="item.type === 'dir' ? 'div' : 'button'"
             v-for="item in files"
