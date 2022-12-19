@@ -147,7 +147,7 @@ const RenderCode = defineComponent({
       <a
         target="_blank"
         :href="`https://stackblitz.com/github/${repo}/tree/${branch}/${dir}`"
-        class="open-button"
+        class="button"
       >
         <Icon class="w-4 h-4" alt="" name="simple-icons:stackblitz" />
         Open on StackBlitz
@@ -155,13 +155,13 @@ const RenderCode = defineComponent({
       <a
         target="_blank"
         :href="`https://codesandbox.io/s/github/${repo}/tree/${branch}/${dir}`"
-        class="open-button"
+        class="button"
       >
         <Icon class="w-4 h-4" alt="" name="simple-icons:codesandbox" />
         Open on CodeSandbox
       </a>
       <button
-        class="open-button"
+        class="button"
         :onclick="`navigator.clipboard.writeText('${command}')`"
       >
         <span class="sr-only">Click to copy</span>
@@ -170,7 +170,7 @@ const RenderCode = defineComponent({
           {{ command }}
         </code>
         <span
-          class="backdrop-blur bg-white dark:bg-black px-2 absolute bottom-[0.5rem] right-[0.5rem] transition-opacity duration-1000 opacity-0 copy-confirmation pointer-events-none"
+          class="backdrop-blur bg-white dark:bg-black px-2 absolute bottom-[0.5rem] right-[0.5rem] transition-opacity opacity-0 copy-confirmation pointer-events-none"
           alt=""
         >
           Copied!
@@ -179,14 +179,16 @@ const RenderCode = defineComponent({
     </div>
     <div class="rounded-lg bg-gray-900 text-gray-200 flex min-h-[500px] max-h-[600px] relative">
       <div class="hidden md:flex flex-col shrink-0 min-w-[50px]">
-        <div class="pt-4 px-4 text-sm flex flex-col gap-2">
+        <div class="pt-4 text-sm flex flex-col">
           <component
             :is="item.type === 'dir' ? 'div' : 'button'"
-            v-for="item, index in files"
+            v-for="item in files"
             :key="item.path"
-            class="flex items-center gap-2"
-            :style="`padding-left: ${(item.path.split('/').length - 1) * 0.5}rem`"
-            :class="{ 'text-white font-bold': activeFile === item, 'mt-1': index && (files![index - 1].type !== item.type || item.path.split('/').length !== files![index - 1].path.split('/').length) }"
+            class="flex items-center gap-2 py-1 hover:text-white hover:bg-gray-800 pr-1"
+            :style="`padding-left: ${1 + (item.path.split('/').length - 1) * 0.5}rem`"
+            :class="{
+              'text-white bg-gray-800': activeFile === item
+            }"
             @click="item.type === 'file' ? activeFile = item : null"
           >
             <Icon :name="item.type === 'dir' ? 'uil:folder-open' : getIcon(item.name)" class="w-4 h-4" />
@@ -246,11 +248,19 @@ const RenderCode = defineComponent({
 </template>
 
 <style lang="postcss" scoped>
-.open-button {
+.button {
   @apply relative rounded flex gap-2 items-center px-3 py-2 dark:rounded border-[1px] dark:border-white dark:border-opacity-[0.1] transition-all border-r-[1px];
   &:hover {
     @apply border-gray-800 dark:border-gray-200 bg-opacity-[0.2]
   }
+}
+.copy-confirmation {
+  transition: 1s;
+}
+.button:active .copy-confirmation {
+  opacity: 1;
+  transition: 0s;
+  right: 1.5rem;
 }
 .highlighted-code:first-child {
   counter-reset: line;
@@ -264,15 +274,6 @@ const RenderCode = defineComponent({
   text-align: right;
   margin-right: 1rem;
   color: #666;
-}
-
-.copy-confirmation {
-  transition: 1s;
-}
-:active .copy-confirmation {
-  opacity: 1;
-  transition: 0s;
-  right: 1.5rem;
 }
 
 @media screen and (max-width: 767px) {
