@@ -86,8 +86,24 @@ async function fetchFiles (path: string): Promise<File[]> {
   return files
 }
 
-const { data: files } = await useAsyncData(`${props.repo}-${props.dir}`, () => fetchFiles(props.dir), {
+const { data: _files, error } = await useAsyncData(`${props.repo}-${props.dir}`, () => fetchFiles(props.dir), {
   default: () => []
+})
+
+const collapsed = ref<string[]>([])
+function toggleCollapsed (dir: string) {
+  const index = collapsed.value.indexOf(dir)
+  if (index === -1) {
+    collapsed.value.push(dir)
+  } else {
+    collapsed.value.splice(index, 1)
+  }
+}
+
+const files = computed(() => {
+  return _files.value?.filter((file) => {
+    return !collapsed.value.some(f => file.path.startsWith(f) && f !== file.path)
+  })
 })
 
 // TODO: fetch files and links from docs repo
@@ -186,8 +202,7 @@ const RenderCode = defineComponent({
     <div class="rounded-lg bg-gray-900 text-gray-200 flex min-h-[500px] max-h-[600px] relative overflow-hidden">
       <div class="hidden md:flex flex-col shrink-0 min-w-[50px]">
         <div class="pt-4 text-sm flex flex-col overflow-y-auto">
-          <component
-            :is="item.type === 'dir' ? 'div' : 'button'"
+          <button
             v-for="item in files"
             :key="item.path"
             class="flex items-center gap-2 py-1 hover:text-white hover:bg-gray-800 pr-1"
@@ -195,11 +210,11 @@ const RenderCode = defineComponent({
             :class="{
               'text-white bg-gray-800': activeFile === item
             }"
-            @click="item.type === 'file' ? activeFile = item : null"
+            @click="item.type === 'file' ? activeFile = item : toggleCollapsed(item.path)"
           >
-            <Icon :name="item.type === 'dir' ? 'uil:folder-open' : getIcon(item.name)" class="w-4 h-4" />
+            <Icon :name="item.type === 'dir' ? collapsed.includes(item.path) ? 'uil:folder' : 'uil:folder-open' : getIcon(item.name)" class="w-4 h-4" />
             {{ item.name }}
-          </component>
+          </button>
         </div>
         <div class="flex-grow" />
         <NuxtLink :href="`https://github.com/${repo}/tree/${branch}/${dir}`" class="p-4 text-sm gap-2 flex shrink-0 items-center opacity-60 hover:opacity-100 transition-opacity" external target="_blank">
