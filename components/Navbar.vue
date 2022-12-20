@@ -21,7 +21,7 @@
           </NuxtLink>
         </div>
 
-        <ul class="justify-center hidden lg:col-span-4 gap-x-10 lg:flex">
+        <ul class="justify-center hidden lg:col-span-4 lg:gap-x-8 xl:gap-x-10 lg:flex">
           <li v-for="(link, index) in visibleLinks" :key="index">
             <NuxtLink
               :to="link._path"
@@ -29,8 +29,8 @@
               :target="link.target"
               class="text-sm lg:text-base link"
               :class="{
-                'active': isActive(link),
-                'font-medium u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900 active:shadow-inner active:font-semibold': !isActive(link),
+                'active focus-visible:ring': isActive(link),
+                'font-medium u-text-gray-600 hover:u-text-gray-900 focus:u-text-gray-900 active:shadow-inner active:font-semibold': !isActive(link),
               }"
             >
               {{ link.title }}

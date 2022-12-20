@@ -6,7 +6,7 @@
         :width="backgroundImg.width"
         :height="backgroundImg.height"
         alt=""
-        class="dark:hidden opacity-0 md:opacity-100"
+        class="dark:hidden opacity-0 md:opacity-100 -z-10"
         role="presentation"
       >
       <img

@@ -23,7 +23,7 @@
     </template>
 
     <GithubReadme v-slot="{ readme }" :query="githubQuery">
-      <ContentRenderer v-if="readme" :value="readme" class="prose dark:prose-invert prose-green max-w-none" />
+      <ContentRenderer v-if="readme" :value="readme" class="max-w-none" />
     </GithubReadme>
   </Page>
 </template>

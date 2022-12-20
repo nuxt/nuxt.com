@@ -24,7 +24,6 @@ export default defineNuxtConfig({
     '@nuxthq/ui',
     '@nuxt/content',
     '@nuxtlabs/github-module',
-    'nuxt-newsletter',
     'nuxt-plausible',
     'nuxt-icon',
     '@nuxtjs/fontaine',

@@ -1,6 +1,6 @@
 {
   "name": "nuxt-website-theme",
-  "version": "0.1.23",
+  "version": "0.1.27",
   "main": "nuxt.config.ts",
   "files": [
     "app/",
@@ -47,7 +47,6 @@
     "mjml": "^4.13.0",
     "node-mailjet": "^5.1.1",
     "nuxt-icon": "^0.1.8",
-    "nuxt-newsletter": "^0.2.0",
     "nuxt-plausible": "^0.1.2",
     "remove": "^0.1.5",
     "sitemap": "^7.1.1",
