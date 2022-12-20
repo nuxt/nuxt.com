@@ -136,7 +136,7 @@ const code = computed(() => content.value?.tokens?.map(l => l.map(t => t.content
 
 const RenderCode = defineComponent({
   render () {
-    return content.value?.tokens?.map(line => h('pre', { class: 'highlighted-code' }, line.map(token => h('span', getColorProps(token), [token.content])) ?? []))
+    return content.value?.tokens?.map(line => h('pre', { class: 'highlighted-code' }, line.length ? line.map(token => h('span', getColorProps(token), [token.content])) : [h('span', {}, [' '])]))
   }
 })
 </script>
