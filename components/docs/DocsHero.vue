@@ -1,13 +1,13 @@
 <template>
   <div class="flex justify-between gap-y-4">
-    <div class="flex flex-col gap-6 md:w-[60%]">
+    <div class="flex flex-col gap-6 md:w-[60%]" :class="{'mb-8': !image }">
       <h1 class="text-4xl font-semibold sm:text-5xl u-text-gray-900">
         <ContentSlot :use="$slots.title" unwrap="p" />
       </h1>
-      <p class="font-medium sm:text-lg u-text-gray-500 lg:pr-8">
+      <p v-if="$slots.description" class="font-medium sm:text-lg u-text-gray-500 lg:pr-8">
         <ContentSlot :use="$slots.description" unwrap="p" />
       </p>
-      <div>
+      <div v-if="$slots.extra">
         <ContentSlot :use="$slots.extra" unwrap="p" />
       </div>
     </div>
