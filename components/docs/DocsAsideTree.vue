@@ -26,7 +26,7 @@
           <Icon v-if="link.icon" :name="link.icon" class="w-5 h-5 mr-1" />
           <div class=" flex flex-col">
             <span>{{ link.title }}</span>
-            <span v-if="(isActive(link) && !link.children)" class="inset-x-0 -bottom-1 h-0.5 bg-gradient-to-r from-green-400 to-teal-400" />
+            <span class="inset-x-0 -bottom-1 h-0.5" :class="{ 'bg-gradient-to-r from-green-400 to-teal-400': (isActive(link) && !link.children)}" />
           </div>
         </span>
       </ULink>
