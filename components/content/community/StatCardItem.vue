@@ -1,5 +1,5 @@
 <template>
-  <li class="relative flex flex-col justify-between p-2.5 sm:p-4">
+  <div class="relative flex flex-col justify-between p-2.5 sm:p-4">
     <div>
       <h2 v-if="$slots.title" class="text-3xl font-semibold sm:text-5xl u-text-gray-900 mb-2 mt-2">
         <ContentSlot :use="$slots.title" unwrap="p" />
@@ -11,7 +11,7 @@
         <ContentSlot :use="$slots.description" unwrap="p" />
       </p>
     </div>
-  </li>
+  </div>
 </template>
 
 <script setup lang="ts">

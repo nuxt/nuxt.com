@@ -74,6 +74,9 @@ export default defineNuxtConfig({
     openCollective: {
       apiKey: process.env.OPEN_COLLECTIVE_API_KEY
     },
+    sendgrid: {
+      apiKey: process.env.SENDGRID_API_KEY
+    },
     mailjet: {
       apiKey: process.env.MAILJET_API_KEY,
       secretKey: process.env.MAILJET_SECRET_KEY
