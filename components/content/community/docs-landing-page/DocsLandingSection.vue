@@ -8,7 +8,7 @@
         <ContentSlot :use="$slots.description" unwrap="p" />
       </p>
       <div v-if="$slots.extra">
-        <ContentSlot :use="$slots.extra" unwrap="p" />
+        <ContentSlot :use="$slots.extra" unwrap="div" />
       </div>
     </div>
   </div>
