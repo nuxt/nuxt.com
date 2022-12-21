@@ -101,6 +101,9 @@ export default defineNuxtConfig({
     documentDriven: {
       surround: false,
       injectPage: false
+    },
+    experimental: {
+      stripQueryParameters: true
     }
   },
   algolia: {
