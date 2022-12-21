@@ -12,17 +12,21 @@
     >
       <template v-if="image" #header>
         <img
-          :src="`/assets/docs/getting-started/views/docs-landing/${image.dark}`"
-          :alt="`${image} image`"
+          :src="image.dark"
+          alt=""
+          role="presentation"
           class="rounded-md hidden dark:block"
+          :class="imageClass"
           :width="imageWidth"
           :height="imageHeight"
           loading="lazy"
         >
         <img
-          :src="`/assets/docs/getting-started/views/docs-landing/${image.light}`"
-          :alt="`${image} image`"
+          :src="image.light"
+          alt=""
+          role="presentation"
           class="rounded-md dark:hidden"
+          :class="imageClass"
           :width="imageWidth"
           :height="imageHeight"
           loading="lazy"
@@ -51,8 +55,8 @@ const props = defineProps({
   image: {
     type: Object as PropType<
       {
-        light: String,
-        dark: String
+        light: string,
+        dark: string
       }
     >,
     default: () => {}
@@ -66,6 +70,10 @@ const props = defineProps({
     default: '118'
   },
   imagePosition: {
+    type: String,
+    default: ''
+  },
+  imageClass: {
     type: String,
     default: ''
   },
