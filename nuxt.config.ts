@@ -171,7 +171,6 @@ export default defineNuxtConfig({
     '/showcase': { swr: 60 },
     '/api/**': { swr: 60 },
     // defaults
-    // TODO: nitro should sort vercel routes
     '/**': { cache: { swr: true, maxAge: 120, staleMaxAge: 60, headersOnly: true }, prerender: false }
   }
 })
