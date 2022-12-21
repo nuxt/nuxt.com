@@ -99,6 +99,8 @@ export default defineNuxtConfig({
       fields: ['redirect', 'titleTemplate', 'image']
     },
     documentDriven: {
+      // @ts-expect-error TODO: ready for https://github.com/nuxt/content/pull/1769
+      host: 'https://nuxt.com',
       surround: false,
       injectPage: false
     },
@@ -130,6 +132,16 @@ export default defineNuxtConfig({
   github: {
     disableCache: true,
     maxContributors: 10
+  },
+  hooks: {
+    'imports:extend' (imports) {
+      imports.push({
+        name: 'useContentHead',
+        as: 'useContentHead',
+        priority: 10,
+        from: resolve('./composables/useContentHead')
+      })
+    }
   },
   nitro: {
     prerender: {
