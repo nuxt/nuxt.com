@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
     method: 'PUT',
     url: '/v3/marketing/contacts',
     body: {
-      list_ids: ['74c40049-4dbc-4caf-a863-315b99d2fbca'],
+      list_ids: ['a7d820e2-557e-471d-b4bd-decfdf5bfb2e'],
       contacts: [{ email }]
     }
   }).catch((err: any) => {
