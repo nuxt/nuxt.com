@@ -1,5 +1,5 @@
 <template>
-  <ul class="grid grid-cols-1 gap-8 pt-3 sm:grid-cols-2" :class="gridClass">
+  <ul class="grid grid-cols-1 gap-4 pt-3 sm:grid-cols-2" :class="gridClass">
     <ContentSlot :use="$slots.default" unwrap="p" />
   </ul>
 </template>
