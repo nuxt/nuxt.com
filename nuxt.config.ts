@@ -69,14 +69,14 @@ export default defineNuxtConfig({
   ],
   runtimeConfig: {
     github: {
-      token: process.env.GITHUB_TOKEN
+      token: '' || process.env.NUXT_GITHUB_TOKEN
     },
     openCollective: {
-      apiKey: process.env.OPEN_COLLECTIVE_API_KEY
+      apiKey: '' || process.env.NUXT_OPEN_COLLECTIVE_API_KEY
     },
     mailjet: {
-      apiKey: process.env.MAILJET_API_KEY,
-      secretKey: process.env.MAILJET_SECRET_KEY
+      apiKey: '' || process.env.NUXT_MAILJET_API_KEY,
+      secretKey: '' || process.env.NUXT_MAILJET_SECRET_KEY
     },
     public: {}
   },
@@ -103,6 +103,9 @@ export default defineNuxtConfig({
       host: 'https://nuxt.com',
       surround: false,
       injectPage: false
+    },
+    experimental: {
+      stripQueryParameters: true
     }
   },
   algolia: {
@@ -142,7 +145,7 @@ export default defineNuxtConfig({
   },
   nitro: {
     prerender: {
-      routes: ['/docs', '/', '/api/jobs.json', '/api/modules.json', '/api/sponsors.json', '/sitemap.xml'],
+      routes: ['/', '/api/jobs.json', '/api/modules.json', '/api/sponsors.json', '/sitemap.xml'],
       crawlLinks: true
     },
     handlers: [
@@ -151,36 +154,23 @@ export default defineNuxtConfig({
       { handler: resolve('./server/api/sponsors.ts'), route: '/api/sponsors.json' },
       { handler: resolve('./server/routes/sitemap.xml.ts'), route: '/sitemap.xml' }
     ]
-    // hooks: {
-    //   'prerender:generate': (route) => {
-    //     const prerenderedRoutes = [
-    //       '/',
-    //       '/design-kit',
-    //       '/support/solutions',
-    //       '/support/agencies',
-    //       /^\/docs/,
-    //       /^\/api\/_content/
-    //     ]
-
-    //     route.skip = true
-
-    //     prerenderedRoutes.forEach((condition) => {
-    //       if (typeof condition === 'string') {
-    //         if (condition === route.route) { route.skip = false }
-    //       } else if (condition.test(route.route)) { route.skip = false }
-    //     })
-    //   }
-    // }
+  },
+  routeRules: {
+    // prerendered pages
+    '/': { prerender: true },
+    '/design-kit': { prerender: true },
+    '/support/solutions': { prerender: true },
+    '/support/agencies': { prerender: true },
+    '/api/_content/**': { prerender: true },
+    '/docs/**': { prerender: true },
+    // redirects
+    '/docs': { redirect: '/docs/getting-started/installation' },
+    // more frequently updated pages
+    '/modules/**': { swr: 60 },
+    '/partners/**': { swr: 60 },
+    '/showcase': { swr: 60 },
+    '/api/**': { swr: 60 },
+    // defaults
+    '/**': { cache: { swr: true, maxAge: 120, staleMaxAge: 60, headersOnly: true }, prerender: false }
   }
-  // routeRules: {
-  //   // prerender is not yet implemented, using nitro.prerender.routes and hooks for it in the meantime
-  //   // '/': { prerender: true },
-  //   // '/docs/**': { prerender: true },
-  //   '/**': { cache: { swr: true, maxAge: 120, staleMaxAge: 60, headersOnly: true } },
-  //   '/docs': { redirect: '/docs/getting-started/installation' }
-  //   // '/modules/**': { swr: 60 },
-  //   // '/partners/**': { swr: 60 },
-  //   // '/showcase': { swr: 60 },
-  //   // '/api/**': { swr: 60 }
-  // }
 })
