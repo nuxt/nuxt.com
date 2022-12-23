@@ -1,5 +1,5 @@
 <template>
-  <div class="relative mt-20">
+  <div class="relative mt-20" aria-hidden="true">
     <div class="overflow-hidden">
       <div v-for="(moduleList, index) in modulesList" :key="index" class="slider">
         <div class="slide-track mb-2 sm:mb-8" :class="index === 1 ? 'animation-reverse' : 'animation'">
@@ -22,10 +22,10 @@
       </div>
     </div>
     <div
-      class="absolute top-0 left-0 h-full w-[20px] sm:w-[50px] md:w-[100px] lg:w-[100px] bg-gradient-to-r from-white via-white dark:from-black to-transparent z-[1]"
+      class="absolute pointer-events-none top-0 left-0 h-full w-[20px] sm:w-[50px] md:w-[100px] lg:w-[100px] bg-gradient-to-r from-white via-white dark:from-black to-transparent z-[1]"
     />
     <div
-      class="absolute top-0 right-0 h-full w-[20px] sm:w-[50px] md:w-[100px] lg:w-[100px] bg-gradient-to-l from-white via-white dark:from-black to-transparent z-[1]"
+      class="absolute pointer-events-none top-0 right-0 h-full w-[20px] sm:w-[50px] md:w-[100px] lg:w-[100px] bg-gradient-to-l from-white via-white dark:from-black to-transparent z-[1]"
     />
   </div>
 </template>

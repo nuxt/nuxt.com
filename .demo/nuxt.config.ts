@@ -19,7 +19,7 @@ export default defineNuxtConfig({
         branch: 'feat/docs-landing-page',
         dir: 'docs/content',
         // prefix: '/docs',
-        token: process.env.GITHUB_TOKEN
+        token: process.env.NUXT_GITHUB_TOKEN
       }
     }
   }
