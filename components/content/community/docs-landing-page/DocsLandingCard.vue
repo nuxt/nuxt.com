@@ -1,10 +1,9 @@
 <template>
-  <li ref="root" class="rounded-md relative group" :class="{ 'cursor-pointer': to }" @click="onClick">
+  <li ref="root" class="rounded-md pt-3 relative group" :class="{ 'cursor-pointer': to }" @click="onClick">
     <Icon v-if="hasExternalLink" name="uil:external-link-alt" class="absolute right-4 top-4 text-gray-500 transition-opacity duration-200 opacity-0 group-hover:opacity-100" />
-    <div class="hidden gradient-border gradient-border-dark dark:block" />
-    <div class="dark:hidden gradient-border gradient-border-light" />
     <UCard
-      class="h-full w-ful flex flex-col justify-between rounded-xl"
+      class="h-full w-full flex justify-between rounded-xl"
+      :class="imagePosition === 'left' ? 'sm:flex-row py-4 pr-2' : 'flex-col'"
       :body-class="bodyClass"
       shadow-class="shadow-none"
       background-class="dark:bg-gray-900/50 bg-white hover:dark:bg-gray-900"
@@ -13,24 +12,27 @@
     >
       <template v-if="image" #header>
         <img
-          :src="`/assets/home/${image.dark}`"
-          :alt="`${image} image`"
-          class="h-full rounded-md hidden dark:block"
+          :src="image.dark"
+          alt=""
+          role="presentation"
+          class="rounded-md hidden dark:block"
+          :class="imageClass"
           :width="imageWidth"
           :height="imageHeight"
           loading="lazy"
         >
         <img
-          :src="`/assets/home/${image.light}`"
-          :alt="`${image} image`"
-          class="h-full rounded-md dark:hidden"
+          :src="image.light"
+          alt=""
+          role="presentation"
+          class="rounded-md dark:hidden"
+          :class="imageClass"
           :width="imageWidth"
           :height="imageHeight"
           loading="lazy"
         >
       </template>
       <div class="flex flex-col" :class="contentClass">
-        <Icon v-if="icon" :name="icon" class="w-6 h-6" />
         <header class="font-semibold u-text-gray-900" :class="!icon ? 'text-xl' : 'text-5xl'">
           <NuxtLink v-if="to" :to="to">
             <ContentSlot :use="$slots.title" unwrap="p" />
@@ -53,19 +55,27 @@ const props = defineProps({
   image: {
     type: Object as PropType<
       {
-        light: String,
-        dark: String
+        light: string,
+        dark: string
       }
     >,
     default: () => {}
   },
   imageWidth: {
     type: String || Number,
-    default: '350'
+    default: '112'
   },
   imageHeight: {
     type: String || Number,
-    default: '168'
+    default: '118'
+  },
+  imagePosition: {
+    type: String,
+    default: ''
+  },
+  imageClass: {
+    type: String,
+    default: ''
   },
   icon: {
     type: String,
@@ -113,34 +123,6 @@ useBlockLinks(root)
 </script>
 
 <style scoped lang="postcss">
-.gradient-border {
-  opacity: 0;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: calc(100% + 2px);
-  height: calc(100% + 2px);
-  background-size: 600% 600%;
-  border-radius: 14px;
-  z-index: -1;
-  transform: translate(-1px, -1px);
-}
-
-.gradient-border-light {
-  background: linear-gradient(var(--gradient-angle), rgba(0, 220, 130, 1), white, rgba(54, 228, 218, 0.7), rgba(29, 224, 177, 0.3));
-}
-
-.gradient-border-dark {
-  background: linear-gradient(var(--gradient-angle), rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.1), white, rgba(255, 255, 255, 0.3));
-}
-
-li:hover {
-  .gradient-border {
-    opacity: 1;
-    animation: gradient-rotate 5s linear 0s infinite reverse;
-    transition: all 0.3s linear;
-  }
-}
 
 @property --gradient-angle {
   syntax: '<angle>';

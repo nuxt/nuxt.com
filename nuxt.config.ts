@@ -163,8 +163,6 @@ export default defineNuxtConfig({
     '/support/agencies': { prerender: true },
     '/api/_content/**': { prerender: true },
     '/docs/**': { prerender: true },
-    // redirects
-    '/docs': { redirect: '/docs/getting-started/installation' },
     // more frequently updated pages
     '/modules/**': { swr: 60 },
     '/partners/**': { swr: 60 },
