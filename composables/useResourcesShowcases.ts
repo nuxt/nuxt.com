@@ -2,10 +2,8 @@ import type { Ref } from 'vue'
 import type { ResourcesShowcasesList } from '../types'
 
 export const useResourcesShowcases = () => {
-  const list: Ref<ResourcesShowcasesList> = useState('resources-showcases-list', () => null)
+  const showcaseList: Ref<ResourcesShowcasesList> = useState('resources-showcases-list', () => null)
   const route = useRoute()
-
-  const pending = ref(false)
 
   const iconsMap = {
     Featured: 'uil-star',
@@ -23,35 +21,28 @@ export const useResourcesShowcases = () => {
   }
 
   // Http
-  async function fetch () {
+  async function fetchList () {
     const showcasesListId = 505
+    const { data } = await useFetch<ResourcesShowcasesList>(`https://api.vuetelescope.com/lists/${showcasesListId}`)
 
-    if (list.value && list.value.id === showcasesListId) {
-      return
+    if (!data) {
+      console.log('error')
     }
 
-    pending.value = true
-
-    try {
-      const data = await $fetch<ResourcesShowcasesList>(`https://api.vuetelescope.com/lists/${showcasesListId}`)
-
+    if (data) {
       // ensure groups & showcases are well sorted
-      data.groups?.sort((a, b) => Number(a.position) - Number(b.position))
-      data.groups?.forEach((group) => {
+      data.value?.groups?.sort((a, b) => Number(a.position) - Number(b.position))
+      data.value?.groups?.forEach((group) => {
         group.showcases.sort((a, b) => Number(a.position) - Number(b.position))
       })
 
-      list.value = data
-    } catch (e) {
-      list.value = null
+      showcaseList.value = data
     }
-
-    pending.value = false
   }
 
   // Computed
   const categories = computed(() => {
-    return list.value?.groups?.map(group => ({
+    return showcaseList.value?.groups?.map(group => ({
       id: group.id,
       name: group.name,
       label: group.name,
@@ -66,9 +57,9 @@ export const useResourcesShowcases = () => {
 
   return {
     // Http
-    fetch,
+    fetchList,
     // Data
-    list,
+    showcaseList,
     // Computed
     categories,
     selectedCategory
