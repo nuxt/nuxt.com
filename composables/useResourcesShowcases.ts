@@ -2,7 +2,6 @@ import type { Ref } from 'vue'
 import type { ResourcesShowcasesList } from '../types'
 
 export const useResourcesShowcases = () => {
-  const showcaseList: Ref<ResourcesShowcasesList> = useState('resources-showcases-list', () => null)
   const route = useRoute()
 
   const iconsMap = {
@@ -20,34 +19,35 @@ export const useResourcesShowcases = () => {
     Sport: 'uil-basketball'
   }
 
-  // Http
+  // Data fetching
+  const showcaseList: Ref<ResourcesShowcasesList | null> = useState('resources-showcases-list', () => null)
+
   async function fetchList () {
     const showcasesListId = 505
     const { data } = await useFetch<ResourcesShowcasesList>(`https://api.vuetelescope.com/lists/${showcasesListId}`)
 
+    /* Missing data is handled at component level */
     if (!data) {
-      console.log('error')
+      return
     }
 
-    if (data) {
-      // ensure groups & showcases are well sorted
-      data.value?.groups?.sort((a, b) => Number(a.position) - Number(b.position))
-      data.value?.groups?.forEach((group) => {
-        group.showcases.sort((a, b) => Number(a.position) - Number(b.position))
-      })
+    // ensure groups & showcases are well sorted
+    data.value?.groups?.sort((a, b) => Number(a.position) - Number(b.position))
+    data.value?.groups?.forEach((group) => {
+      group.showcases.sort((a, b) => Number(a.position) - Number(b.position))
+    })
 
-      showcaseList.value = data
-    }
+    showcaseList.value = data.value
   }
 
-  // Computed
+  // Lists
   const categories = computed(() => {
     return showcaseList.value?.groups?.map(group => ({
       id: group.id,
       name: group.name,
       label: group.name,
       to: { name: 'showcase', query: { category: group.name }, state: { smooth: '#smooth' } },
-      icon: iconsMap[group.name]
+      icon: iconsMap[group.name as keyof typeof iconsMap]
     })) || []
   })
 
@@ -67,9 +67,7 @@ export const useResourcesShowcases = () => {
   })
 
   return {
-    // Http
     fetchList,
-    // Computed
     categories,
     selectedCategory,
     selectedShowcases

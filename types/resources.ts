@@ -72,6 +72,7 @@ export interface ResourcesShowcasesListGroup {
   position: number
   showcases: ResourcesShowcasesListGroupItem[]
   updated_at: string
+  icon?: string
 }
 
 export interface ResourcesShowcasesList {
