@@ -55,13 +55,23 @@ export const useResourcesShowcases = () => {
     return categories.value.find(category => category.name === route.query.category) || categories.value[0]
   })
 
+  const selectedShowcases = computed(() => {
+    const ids = new Set<number>()
+    return showcaseList.value?.groups
+      ?.filter((group, index) => (!selectedCategory.value && index === 0) || group.name === selectedCategory.value?.name)
+      ?.flatMap((group) => {
+        if (ids.has(group.id)) { return [] }
+        ids.add(group.id)
+        return group.showcases
+      }) ?? []
+  })
+
   return {
     // Http
     fetchList,
-    // Data
-    showcaseList,
     // Computed
     categories,
-    selectedCategory
+    selectedCategory,
+    selectedShowcases
   }
 }

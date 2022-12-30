@@ -30,19 +30,7 @@
 </template>
 
 <script setup lang="ts">
-const { fetchList, showcaseList, selectedCategory } = useResourcesShowcases()
+const { fetchList, selectedShowcases, selectedCategory } = useResourcesShowcases()
 
 await fetchList()
-
-// Computed
-const selectedShowcases = computed(() => {
-  const ids = new Set<number>()
-  return showcaseList.value?.groups
-    ?.filter((group, index) => (!selectedCategory.value && index === 0) || group.name === selectedCategory.value?.name)
-    ?.flatMap((group) => {
-      if (ids.has(group.id)) { return [] }
-      ids.add(group.id)
-      return group.showcases
-    }) ?? []
-})
 </script>
