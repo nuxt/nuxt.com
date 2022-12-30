@@ -26,7 +26,7 @@
     <ul v-if="$slots.cards" class="grid grid-cols-1 gap-8 pt-16 sm:grid-cols-2" :class="cardsClass">
       <ContentSlot :use="$slots.cards" unwrap="p" />
     </ul>
-    <div v-if="buttons.length" class="gap-2 lg:gap-6 pt-8" :class="sectionAlign === 'row' ? 'inline-flex lg:flex lg:flex-col lg:flex-row lg:justify-end lg:pt-0 lg:w-1/3' : 'inline-flex justify-center lg:pt-12'">
+    <div v-if="buttons.length" class="gap-2 lg:gap-6 pt-8" :class="sectionAlign === 'row' ? 'flex flex-row lg:justify-end lg:pt-0 lg:w-1/3' : 'inline-flex justify-center lg:pt-12'">
       <UButton
         v-for="button of buttons"
         :key="button.label"
