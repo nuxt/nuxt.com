@@ -17,7 +17,7 @@
       </template>
 
       <template #filters>
-        <ShowcasesFilterCategory class="lg:hidden" />
+        <ShowcasesFilterCategory :categories="categories" :selected-category="selectedCategory" class="lg:hidden" />
       </template>
 
       <ul v-if="selectedShowcases.length" class="grid grid-cols-1 gap-8 mt-8 sm:grid-cols-2 xl:grid-cols-3">

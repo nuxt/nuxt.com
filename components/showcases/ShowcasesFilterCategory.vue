@@ -11,14 +11,21 @@
 </template>
 
 <script setup lang="ts">
-const { categories, selectedCategory } = useResourcesShowcases()
+import type { ShowcaseCategory } from '~/types'
+
+interface Props {
+  categories: ShowcaseCategory[]
+  selectedCategory: ShowcaseCategory
+}
+
+const props = defineProps<Props>()
 
 const route = useRoute()
 const router = useRouter()
 
 const category = computed({
   get () {
-    return selectedCategory.value
+    return props.selectedCategory
   },
   set (category) {
     router.replace({
