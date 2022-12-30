@@ -52,6 +52,50 @@
           <p class="mt-8 leading-7 whitespace-pre-wrap u-text-gray-700">
             {{ page.fullDescription }}
           </p>
+          <form @submit.prevent="contactAgency">
+            <div class="flex flex-col gap-4 mt-12 sm:flex-row">
+              <UInput
+                v-model="form.company"
+                label="Company"
+                name="Company"
+                placeholder="Your company"
+                required
+                size="xl"
+                variant="outline"
+                custom-class="flex-1"
+              />
+              <UInput
+                v-model="form.email"
+                label="Email"
+                name="Email"
+                placeholder="Your email"
+                required
+                size="xl"
+                variant="outline"
+                custom-class="flex-1"
+                type="email"
+              />
+              <UTextarea
+                v-model="form.message"
+                label="Message"
+                name="Message"
+                placeholder="Your message"
+                required
+                size="xl"
+                variant="outline"
+                custom-class="flex-1"
+              />
+              <UButton
+                label="Contact us"
+                type="submit"
+                size="xl"
+                variant="primary-gradient"
+                custom-class="justify-center sm:justify-start"
+                truncate
+                :disabled="loading"
+              />
+            </div>
+          </form>
           <div class="flex flex-col gap-8 mt-12 sm:flex-row">
             <UButton
               label="Back to partners list"
@@ -160,5 +204,35 @@ const onBack = (e) => {
     e.preventDefault()
     router.push(lastUrl as RouteLocationRaw)
   }
+}
+
+const initialForm = {
+  company: '',
+  email: '',
+  message: ''
+}
+
+const form = reactive({ ...initialForm })
+const loading = ref(false)
+
+const { $toast } = useNuxtApp()
+
+const contactAgency = () => {
+  if (loading.value) { return }
+
+  loading.value = true
+  $fetch('/api/agencies', {
+    method: 'POST',
+    body: JSON.stringify(form)
+  }).then((data: any) => {
+    $toast.success({ title: 'Your message has been sent', description: data.response })
+    Object.assign(form, initialForm)
+  }).catch((err) => {
+    $toast.error({ title: 'An error occured', description: err })
+  }).finally(() => {
+    loading.value = false
+  })
+
+  // JOI error : {"url":"/api/agencies","statusCode":400,"statusMessage":"","message":"\"message\" is required"}
 }
 </script>
