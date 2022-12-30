@@ -7479,10 +7479,10 @@ node-gyp-build@^4.2.2:
   resolved "https://registry.yarnpkg.com/node-gyp-build/-/node-gyp-build-4.5.0.tgz#7a64eefa0b21112f89f58379da128ac177f20e40"
   integrity sha512-2iGbaQBV+ITgCz76ZEjmhUKAKVf7xfY1sRl4UiKQspfZMH2h06SyhNsnSVy50cwkFQDGLyif6m/6uFXHkOZ6rg==
 
-node-mailjet@^5.1.1:
-  version "5.1.1"
-  resolved "https://registry.yarnpkg.com/node-mailjet/-/node-mailjet-5.1.1.tgz#eac5552b317c878e47d90ede28e2c7cd237bba71"
-  integrity sha512-/KN1gDn/NcHU6wOwzwbuBbqIpexdjuZLjgLhUWJSSQgGRdRjcL16FF3ldbJRzljtMPiu6IJUNmXFGt7Nu+gEOg==
+node-mailjet@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/node-mailjet/-/node-mailjet-6.0.0.tgz#2425ba8a5bb7a44040c6aa966f6efb2050a696d6"
+  integrity sha512-lwJsUJFK/mOVPs64NaY+PcBMpLo2oXJ06Ar2n8uPcllN27w4rC+FCMlaOHpMunJfuzzruzGe7GJDnelhC9RT3Q==
   dependencies:
     axios "^0.27.2"
     json-bigint "^1.0.0"
