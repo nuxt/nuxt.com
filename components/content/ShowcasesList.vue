@@ -1,7 +1,7 @@
 <template>
   <Page id="smooth" class="pt-16 -mt-16">
     <template #aside>
-      <ShowcasesAside />
+      <ShowcasesAside :categories="categories" :selected-category="selectedCategory" />
     </template>
 
     <PageList>
@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-const { fetchList, selectedShowcases, selectedCategory } = useResourcesShowcases()
+const { fetchList, selectedShowcases, categories, selectedCategory } = useResourcesShowcases()
 
 await fetchList()
 </script>

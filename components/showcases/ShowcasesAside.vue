@@ -38,5 +38,11 @@
 </template>
 
 <script setup lang="ts">
-const { categories, selectedCategory } = useResourcesShowcases()
+import type { ShowcaseCategory } from '~/types'
+interface Props {
+  categories: ShowcaseCategory[]
+  selectedCategory: ShowcaseCategory
+}
+
+defineProps<Props>()
 </script>
