@@ -20,24 +20,14 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const route = useRoute()
-const router = useRouter()
+const emit = defineEmits(['update:selected-category'])
 
 const category = computed({
   get () {
     return props.selectedCategory
   },
   set (category) {
-    router.replace({
-      name: 'showcase',
-      query: {
-        ...route.query,
-        category: category?.name || undefined
-      },
-      state: {
-        smooth: '#smooth'
-      }
-    })
+    emit('update:selected-category', category.name)
   }
 })
 </script>
