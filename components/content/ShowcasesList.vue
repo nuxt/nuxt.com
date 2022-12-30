@@ -1,5 +1,5 @@
 <template>
-  <Page id="smooth" class="pt-16 -mt-16">
+  <Page v-if="!error" id="smooth" class="pt-16 -mt-16">
     <template #aside>
       <ShowcasesAside :categories="categories" :selected-category="selectedCategory" />
     </template>
@@ -17,7 +17,7 @@
       </template>
 
       <template #filters>
-        <ShowcasesFilterCategory :categories="categories" :selected-category="selectedCategory" class="lg:hidden" />
+        <ShowcasesFilterCategory :categories="categories" :selected-category="selectedCategory" class="lg:hidden" @update:selected-category="updateCategory" />
       </template>
 
       <ul v-if="selectedShowcases.length" class="grid grid-cols-1 gap-8 mt-8 sm:grid-cols-2 xl:grid-cols-3">
@@ -27,10 +27,31 @@
       </ul>
     </PageList>
   </Page>
+  <Page v-else>
+    <p class="text-center">
+      Sorry an error occured while fetching showcases...
+    </p>
+  </Page>
 </template>
 
 <script setup lang="ts">
 const { fetchList, selectedShowcases, categories, selectedCategory } = useResourcesShowcases()
 
-await fetchList()
+const error = await fetchList()
+
+const route = useRoute()
+const router = useRouter()
+
+const updateCategory = (categoryName: string) => {
+  router.replace({
+    name: 'showcase',
+    query: {
+      ...route.query,
+      category: categoryName || undefined
+    },
+    state: {
+      smooth: '#smooth'
+    }
+  })
+}
 </script>

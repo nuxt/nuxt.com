@@ -24,11 +24,11 @@ export const useResourcesShowcases = () => {
   const showcasesListId = 505
 
   async function fetchList () {
-    const { data } = await useFetch<ResourcesShowcasesList>(`https://api.vuetelescope.com/lists/${showcasesListId}`)
+    const { data, error } = await useFetch<ResourcesShowcasesList>(`https://api.vuetelescope.com/lists/${showcasesListId}`)
 
     /* Missing data is handled at component level */
-    if (!data) {
-      return
+    if (!data.value && error.value) {
+      return error.value
     }
 
     // ensure groups & showcases are well sorted
