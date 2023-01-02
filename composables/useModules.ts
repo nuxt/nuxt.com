@@ -34,7 +34,6 @@ export const useModules = () => {
     try {
       module.value = await $fetch<Module>(`/api/modules/${name}`)
     } catch (e) {
-      // @ts-ignore
       throw createError({ statusMessage: 'Module not found', message: 'This page does not exist.', statusCode: 404 })
     }
   }
@@ -59,7 +58,7 @@ export const useModules = () => {
     { key: 'asc', label: 'Asc', icon: 'uil:sort-amount-up' }
   ]
 
-  const typesMapping = {
+  const typesMap = {
     official: 'Official',
     community: 'Community',
     '3rd-party': 'Third Party'
@@ -105,7 +104,7 @@ export const useModules = () => {
   const types = computed(() => {
     return [...new Set(modulesByVersion.value.map(module => module.type))].map(type => ({
       key: type,
-      title: typesMapping[type] || type,
+      title: typesMap[type as keyof typeof typesMap] || type,
       to: {
         name: 'modules',
         query: {
@@ -115,7 +114,7 @@ export const useModules = () => {
         state: { smooth: '#smooth' }
       }
     })).sort((a, b) => {
-      const typesMappingKeys = Object.keys(typesMapping)
+      const typesMappingKeys = Object.keys(typesMap)
       const aIndex = typesMappingKeys.indexOf(a.key)
       const bIndex = typesMappingKeys.indexOf(b.key)
       return aIndex - bIndex
