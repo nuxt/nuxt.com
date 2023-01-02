@@ -1,5 +1,5 @@
 <template>
-  <Page id="smooth" class="pt-16 -mt-16">
+  <Page v-if="!error" id="smooth" class="pt-16 -mt-16">
     <template #aside>
       <ModulesAside />
     </template>
@@ -52,10 +52,17 @@
       </div>
     </PageList>
   </Page>
+  <Page v-else>
+    <p class="text-center">
+      Sorry an error occured while fetching modules...
+    </p>
+  </Page>
 </template>
 
 <script setup lang="ts">
-const { modules, selectedCategory, selectedType, selectedVersion, selectedSort, selectedOrder, q } = useModules()
+const { fetchList, modules, selectedCategory, selectedType, selectedVersion, selectedSort, selectedOrder, q } = useModules()
+
+const error = await fetchList()
 
 const filteredModules = computed(() => {
   let filteredModules = [...modules.value]

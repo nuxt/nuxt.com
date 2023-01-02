@@ -6,26 +6,18 @@ export const useModules = () => {
   const _modules: Ref<Module[]> = useState('modules', () => [])
   const module: Ref<Module> = useState('module', () => ({} as Module))
 
-  const pending = ref(false)
+  // Data fetching
+  async function fetchList () {
+    const { data, error } = await useFetch<{ modules: Module[] }>('/api/modules.json')
 
-  // Http
-
-  async function fetch () {
-    if (_modules.value.length) {
-      return
+    /* Missing data is handled at component level */
+    if (!data.value && error.value) {
+      return error.value
     }
 
-    pending.value = true
-
-    try {
-      const data = await $fetch<{ modules: Module[] }>('/api/modules.json')
-
-      _modules.value = data.modules
-    } catch (e) {
-      _modules.value = []
+    if (data) {
+      _modules.value = data.value?.modules || []
     }
-
-    pending.value = false
   }
 
   async function fetchOne (name: string) {
@@ -39,16 +31,12 @@ export const useModules = () => {
       return
     }
 
-    pending.value = true
-
     try {
       module.value = await $fetch<Module>(`/api/modules/${name}`)
     } catch (e) {
       // @ts-ignore
       throw createError({ statusMessage: 'Module not found', message: 'This page does not exist.', statusCode: 404 })
     }
-
-    pending.value = false
   }
 
   // Data
@@ -197,9 +185,27 @@ export const useModules = () => {
     return route.query.q as string
   })
 
+  const links = computed(() => {
+    return [
+      {
+        title: 'All',
+        _path: {
+          name: 'modules',
+          query: {
+            ...route.query,
+            type: undefined
+          },
+          state: { smooth: '#smooth' }
+        },
+        active: !route.query.type
+      },
+      ...types.value.map(type => ({ ...type, _path: type.to, exact: true, active: route.query.type === type.key }))
+    ]
+  })
+
   return {
-    // Http
-    fetch,
+    // Data fetching
+    fetchList,
     fetchOne,
     // Data
     versions,
@@ -218,6 +224,7 @@ export const useModules = () => {
     selectedVersion,
     selectedSort,
     selectedOrder,
-    q
+    q,
+    links
   }
 }
