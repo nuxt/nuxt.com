@@ -2,8 +2,8 @@ import type { Module } from '../../../types'
 import { defineCachedEventHandler } from '#imports'
 
 export default defineCachedEventHandler(async () => {
-  const _modules = await $fetch('https://cdn.jsdelivr.net/npm/@nuxt/modules@latest/modules.json')
-  const modules: Module[] = await Promise.all(_modules.map(module => fetchModuleStats(module)))
+  const _modules = await $fetch<Module[]>('https://cdn.jsdelivr.net/npm/@nuxt/modules@latest/modules.json')
+  const modules: Module[] = await Promise.all(_modules.map(fetchModuleStats)).then(modules => modules.map(assignTagsToModule))
 
   return {
     modules
@@ -41,4 +41,27 @@ async function fetchModuleStats (module: ModuleInfo) {
   module.createdAt = +new Date(npm.createdAt || undefined)
   module.contributors = contributors
   return module
+}
+
+function assignTagsToModule (module: Module) {
+  const compatibilityTags = []
+  if (module.compatibility.nuxt.includes('^2.0.0')) {
+    if (module.compatibility.requires.bridge !== true /* bridge: false or bridge: optional */) {
+      compatibilityTags.push('2.x')
+    }
+    if (module.compatibility.requires.bridge) {
+      compatibilityTags.push('2.x-bridge')
+    }
+  }
+  if (module.compatibility.nuxt.includes('^3.0.0')) {
+    compatibilityTags.push('3.x')
+  }
+
+  return {
+    ...module,
+    tags: [
+      ...(module.tags || []),
+      ...compatibilityTags
+    ]
+  }
 }

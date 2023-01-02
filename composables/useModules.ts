@@ -3,7 +3,7 @@ import type { Module } from '../types'
 
 export const useModules = () => {
   const route = useRoute()
-  const _modules: Ref<Module[]> = useState('modules', () => [])
+  const modules: Ref<Module[]> = useState('modules', () => [])
   const module: Ref<Module> = useState('module', () => ({} as Module))
 
   // Data fetching
@@ -16,7 +16,7 @@ export const useModules = () => {
     }
 
     if (data) {
-      _modules.value = data.value?.modules || []
+      modules.value = data.value?.modules || []
     }
   }
 
@@ -64,33 +64,6 @@ export const useModules = () => {
     community: 'Community',
     '3rd-party': 'Third Party'
   }
-
-  // Computed
-
-  const modules = computed(() => {
-    return _modules.value.map((module) => {
-      const compatibilityTags = []
-      if (module.compatibility.nuxt.includes('^2.0.0')) {
-        if (module.compatibility.requires.bridge !== true /* bridge: false or bridge: optional */) {
-          compatibilityTags.push('2.x')
-        }
-        if (module.compatibility.requires.bridge) {
-          compatibilityTags.push('2.x-bridge')
-        }
-      }
-      if (module.compatibility.nuxt.includes('^3.0.0')) {
-        compatibilityTags.push('3.x')
-      }
-
-      return {
-        ...module,
-        tags: [
-          ...(module.tags || []),
-          ...compatibilityTags
-        ]
-      }
-    })
-  })
 
   const githubQuery = computed(() => {
     const [ownerAndRepo] = module.value.repo.split('#')
