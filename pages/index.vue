@@ -9,8 +9,7 @@ const { page } = useContent()
 const { fetchList: fetchShowcases } = useResourcesShowcases()
 const { fetchList: fetchModules } = useModules()
 
-await fetchShowcases()
-await fetchModules()
+await Promise.all([fetchShowcases(), fetchModules()])
 
 useContentHead(page)
 </script>
