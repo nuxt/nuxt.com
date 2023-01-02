@@ -3,7 +3,7 @@
     <div class="overflow-hidden">
       <div class="slider">
         <div class="slide-track mb-2 sm:mb-8 animation">
-          <div v-for="(showcase, i) in selectedShowcases.concat(selectedShowcases)" :key="i" class="slide mx-8">
+          <div v-for="(showcase, i) in selectedShowcases" :key="i" class="slide mx-8">
             <a :href="showcase.url" target="_blank" class="w-full h-full relative group" tabindex="-1">
               <img
                 :src="`https://res.cloudinary.com/nuxt/image/upload/f_auto,q_auto,w_420,h_315/${showcase.screenshotUrl}`"
@@ -36,18 +36,7 @@
 </template>
 
 <script setup lang="ts">
-const { list, selectedCategory } = useResourcesShowcases()
-
-const selectedShowcases = computed(() => {
-  const ids = new Set<number>()
-  return list.value?.groups
-    ?.filter((group, index) => (!selectedCategory.value && index === 0) || group.name === selectedCategory.value?.name)
-    ?.flatMap((group) => {
-      if (ids.has(group.id)) { return [] }
-      ids.add(group.id)
-      return group.showcases
-    }) ?? []
-})
+const { selectedShowcases } = useResourcesShowcases()
 
 </script>
 

@@ -60,37 +60,9 @@
 </template>
 
 <script setup lang="ts">
-const { fetchList, modules, selectedCategory, selectedType, selectedVersion, selectedSort, selectedOrder, q } = useModules()
+const { fetchList, filteredModules, q } = useModules()
 
 const error = await fetchList()
-
-const filteredModules = computed(() => {
-  let filteredModules = [...modules.value]
-    .filter((module) => {
-      if (selectedCategory.value && module.category !== selectedCategory.value.key) {
-        return false
-      }
-      if (selectedType.value && module.type !== selectedType.value.key) {
-        return false
-      }
-      if (selectedVersion.value && !module.tags.includes(selectedVersion.value.key)) {
-        return false
-      }
-      const queryRegExp = searchTextRegExp(q.value as string)
-      if (q.value && !['name', 'npm', 'category', 'description', 'repo'].map(field => module[field]).filter(Boolean).some(value => value.search(queryRegExp) !== -1)) {
-        return false
-      }
-
-      return true
-    })
-    .sort((a, b) => b[selectedSort.value.key] - a[selectedSort.value.key])
-
-  if (selectedOrder.value.key === 'asc') {
-    filteredModules = filteredModules.reverse()
-  }
-
-  return filteredModules
-})
 </script>
 
 <style scoped>
