@@ -11,34 +11,41 @@
 </template>
 
 <script setup lang="ts">
-const route = useRoute()
-const router = useRouter()
+import type { PropType } from 'vue'
 
-const { categories, selectedCategory } = useModules()
+interface Category {
+  key: string
+  title: string
+  to: object
+}
+
+const props = defineProps({
+  categories: {
+    type: Array as PropType<Category[]>,
+    default: () => []
+  },
+  selectedCategory: {
+    type: Object as PropType<Category>,
+    default: () => {}
+  }
+})
+
+const emit = defineEmits(['update:selected-category'])
 
 const categoriesWithPlaceholder = computed(() => [
   {
     key: '',
     title: 'All'
   },
-  ...categories.value
+  ...props.categories
 ])
 
 const category = computed({
   get () {
-    return selectedCategory.value
+    return props.selectedCategory
   },
   set (category) {
-    router.replace({
-      name: 'modules',
-      query: {
-        ...route.query,
-        category: category?.key || undefined
-      },
-      state: {
-        smooth: '#smooth'
-      }
-    })
+    emit('update:selected-category', category)
   }
 })
 </script>
