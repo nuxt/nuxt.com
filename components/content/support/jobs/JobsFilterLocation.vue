@@ -6,6 +6,7 @@
     size="sm"
     placeholder="Location"
     class="min-w-[192px]"
+    text-attribute="label"
   />
 </template>
 
@@ -14,11 +15,11 @@ import type { PropType } from 'vue'
 
 const props = defineProps({
   locations: {
-    type: Array as PropType<{value: string, text: string}[]>,
+    type: Array as PropType<{key: string, label: string}[]>,
     default: () => []
   },
   selectedLocation: {
-    type: Object as PropType<{ value: string, text: string}>,
+    type: Object as PropType<{ key: string, label: string}>,
     default: () => {}
   }
 })
@@ -27,8 +28,8 @@ const emit = defineEmits(['update:location'])
 
 const locationsWithPlaceholder = computed(() => [
   {
-    value: '',
-    text: 'All'
+    key: '',
+    label: 'All'
   },
   ...props.locations
 ])

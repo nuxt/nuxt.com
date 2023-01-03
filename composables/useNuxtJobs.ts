@@ -26,9 +26,11 @@ export const useNuxtJobs = () => {
       return error.value
     }
 
-    jobs.value = data.value?.map((job) => {
-      return { ...job, remote: mapRemote(job.remote), published_at: toRelativeDate(job.published_at) }
-    }) || []
+    jobs.value = data.value
+      ? data.value.map((job) => {
+        return { ...job, remote: mapRemote(job.remote), published_at: toRelativeDate(job.published_at) }
+      })
+      : []
   }
 
   // Computed
@@ -36,10 +38,10 @@ export const useNuxtJobs = () => {
   const filteredJobs = computed(() => {
     return [...jobs.value]
       .filter((job) => {
-        if (selectedLocation.value && !job.locations.includes(selectedLocation.value.value)) {
+        if (selectedLocation.value && !job.locations.includes(selectedLocation.value.key)) {
           return false
         }
-        if (selectedType.value && job.remote !== selectedType.value.value) {
+        if (selectedType.value && job.remote !== selectedType.value.key) {
           return false
         }
         return true
@@ -49,24 +51,24 @@ export const useNuxtJobs = () => {
   const locations = computed(() => {
     const locations = jobs.value?.map(job => job.locations).flat() || []
     return [...new Set(locations)]
-      .map(l => ({ value: l, text: l }))
-      .sort((a, b) => a.text.localeCompare(b.text))
+      .map(l => ({ key: l, label: l }))
+      .sort((a, b) => a.label.localeCompare(b.label))
   })
 
   const types = computed(() => {
     const types = jobs.value?.map(job => job.remote)
     return [...new Set(types)]
       .map((t) => {
-        return { value: t, text: t }
+        return { key: t, label: t }
       })
   })
 
   const selectedLocation = computed(() => {
-    return locations.value.find(location => location.value === route.query.location)
+    return locations.value.find(location => location.key === route.query.location)
   })
 
   const selectedType = computed(() => {
-    return types.value.find(type => type.value === route.query.type)
+    return types.value.find(type => type.key === route.query.type)
   })
 
   return {

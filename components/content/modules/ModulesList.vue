@@ -83,23 +83,11 @@ const {
   selectedSort
 } = useModules()
 
-const route = useRoute()
-const router = useRouter()
+const { createReplaceRoute } = useFilters()
+const replaceRoute = createReplaceRoute('modules')
 
 const error = await fetchList()
 
-const replaceRoute = (name: string, param: string | { key: string }) => {
-  router.replace({
-    name: 'modules',
-    query: {
-      ...route.query,
-      [name]: typeof param === 'string' ? param : param?.key || undefined
-    },
-    state: {
-      smooth: '#smooth'
-    }
-  })
-}
 </script>
 
 <style scoped>
