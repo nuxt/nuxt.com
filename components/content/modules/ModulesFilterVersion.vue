@@ -17,21 +17,23 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
 
+interface keyLabel {
+  key: string
+  label: string
+}
+
 const props = defineProps({
   size: {
-    type: String,
+    type: String as PropType<'xs' | 'sm'>,
     default: 'xs'
   },
   versions: {
-    type: Array,
+    type: Array as PropType<keyLabel[]>,
     default: () => []
   },
   selectedVersion:
   {
-    type: Object as PropType<{
-      key: string,
-      name: string
-    }>,
+    type: Object as PropType<keyLabel>,
     default: () => {}
   }
 })
@@ -40,10 +42,10 @@ const emit = defineEmits(['update:selected-version'])
 
 const version = computed({
   get () {
-    return props.selectedVersion.value
+    return props.selectedVersion
   },
   set (version) {
-    emit('update:selected-version', version.name)
+    emit('update:selected-version', version)
   }
 })
 </script>

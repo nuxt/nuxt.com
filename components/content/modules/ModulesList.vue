@@ -1,7 +1,7 @@
 <template>
   <Page v-if="!error" id="smooth" class="pt-16 -mt-16">
     <template #aside>
-      <ModulesAside />
+      <ModulesAside :versions="versions" :selected-version="selectedVersion" @update:selected-version="updateSelectedVersion" />
     </template>
 
     <PageList :title="`${filteredModules.length} module${filteredModules.length > 1 ? 's' : ''} found`">
@@ -68,6 +68,7 @@ const router = useRouter()
 const error = await fetchList()
 
 const updateSelectedVersion = (version: {key: string}) => {
+  console.log('emit', version)
   router.replace({
     name: 'modules',
     query: {
