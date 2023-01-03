@@ -32,9 +32,11 @@
   </div>
 </template>
 <script setup lang="ts">
+import type { PropType } from 'vue'
+
 defineProps({
   image: {
-    type: Object,
+    type: Object as PropType<{ path: '', width: '', height: ''}>,
     default: () => {}
   }
 })
