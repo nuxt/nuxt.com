@@ -142,9 +142,42 @@ export const useAgencyPartners = () => {
 
   const adPartner = computed(() => pickOne(partners.value))
 
+  // Faceting filtering
+  const filteredRegions = computed(() => {
+    if (!selectedService.value) {
+      return regions.value
+    }
+
+    /* Flag regions where the selected service is not available */
+    return regions.value.map((region) => {
+      if (!filteredPartners.value.some(partner => partner.regions.some(({ key }) => key === region.key))) {
+        return { ...region, disabled: true }
+      } else {
+        return region
+      }
+    })
+  })
+
+  const filteredServices = computed(() => {
+    if (!selectedRegion.value) {
+      return services.value
+    }
+
+    /* Flag services not available in the selected region */
+    return services.value.map((service) => {
+      if (!filteredPartners.value.some(partner => partner.services.some(({ key }) => key === service.key))) {
+        return { ...service, disabled: true }
+      } else {
+        return service
+      }
+    })
+  })
+
   return {
     fetchList,
     filteredPartners,
+    filteredRegions,
+    filteredServices,
     services,
     locations,
     regions,
