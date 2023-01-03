@@ -1,6 +1,6 @@
 <template>
-  <ul class="grid grid-cols-1 gap-1 sm:gap-8 sm:grid-cols-2 border-gray-200 dark:border-gray-800 rounded-xl" :class="gridClass">
-    <div v-if="backgroundImg" class="absolute right-0 inset-y-0 flex">
+  <ul :class="cardListClass">
+    <div v-if="backgroundImg" :class="backgroundImgClass">
       <img
         :src="`${backgroundImg.path}-light.png`"
         :width="backgroundImg.width"
@@ -23,14 +23,25 @@
 </template>
 
 <script setup lang="ts">
+import type { PropType } from 'vue'
+
 defineProps({
-  gridClass: {
+  cardListClass: {
     type: String,
-    default: 'lg:grid-cols-3'
+    default: 'grid grid-cols-1 gap-8 pt-16 sm:grid-cols-2 lg:grid-cols-3'
   },
   backgroundImg: {
-    type: Object,
+    type: Object as PropType<
+    {
+      path: String,
+      width: any,
+      height: any
+    }>,
     default: () => {}
+  },
+  backgroundImgClass: {
+    type: String,
+    default: 'absolute right-0 inset-y-0 flex'
   }
 })
 </script>
