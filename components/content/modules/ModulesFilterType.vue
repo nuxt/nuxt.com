@@ -11,34 +11,41 @@
 </template>
 
 <script setup lang="ts">
-const route = useRoute()
-const router = useRouter()
+import type { PropType } from 'vue'
 
-const { types, selectedType } = useModules()
+interface Type {
+  key: string
+  title: string
+  to: object
+}
+
+const props = defineProps({
+  types: {
+    type: Array as PropType<Type[]>,
+    default: () => []
+  },
+  selectedType: {
+    type: Object as PropType<Type>,
+    default: () => {}
+  }
+})
+
+const emit = defineEmits(['update:selected-type'])
 
 const typesWithPlaceholder = computed(() => [
   {
     key: '',
     title: 'All'
   },
-  ...types.value
+  ...props.types
 ])
 
 const type = computed({
   get () {
-    return selectedType.value
+    return props.selectedType
   },
   set (type) {
-    router.replace({
-      name: 'modules',
-      query: {
-        ...route.query,
-        type: type?.key || undefined
-      },
-      state: {
-        smooth: '#smooth'
-      }
-    })
+    emit('update:selected-type', type)
   }
 })
 </script>

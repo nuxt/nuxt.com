@@ -11,7 +11,7 @@
       <template #filters>
         <ModulesFilterVersion size="sm" :versions="versions" :selected-version="selectedVersion" class="lg:hidden" @update:selected-version="updateSelectedVersion" />
         <ModulesFilterSearch size="sm" :q="q" class="md:hidden" @update:q="updateQuery" />
-        <ModulesFilterType class="lg:hidden" />
+        <ModulesFilterType class="lg:hidden" :types="types" :selected-type="selectedType" @update:selected-type="updateSelectedType" />
         <ModulesFilterCategory class="lg:hidden" />
         <ModulesFilters class="hidden lg:flex" />
         <ModulesFilterSort />
@@ -60,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-const { fetchList, filteredModules, q, versions, selectedVersion } = useModules()
+const { fetchList, filteredModules, q, versions, selectedVersion, types, selectedType } = useModules()
 
 const route = useRoute()
 const router = useRouter()
@@ -89,6 +89,19 @@ const updateQuery = (q: string) => {
     },
     state: {
       stop: 'true'
+    }
+  })
+}
+
+const updateSelectedType = (type: {key: string}) => {
+  router.replace({
+    name: 'modules',
+    query: {
+      ...route.query,
+      type: type?.key || undefined
+    },
+    state: {
+      smooth: '#smooth'
     }
   })
 }
