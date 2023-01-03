@@ -1,7 +1,7 @@
 <template>
   <UContainer
-    class="flex px-4 pt-24 transition duration-700 relative"
-    :class="[containerClass, !slideIn ? 'opacity-0 translate-y-20' : 'opacity-100 translate-y-0', sectionAlign === 'row' ? 'flex-col lg:flex-row lg:items-center lg:justify-between' : 'flex-col']"
+    class="flex px-4 pt-24 pb-4 sm:pb-8 md:pb-12 lg:pb-20 transition duration-700 relative"
+    :class="[!slideIn ? 'opacity-0 translate-y-20' : 'opacity-100 translate-y-0', sectionAlign === 'row' ? 'flex-col lg:flex-row lg:items-center lg:justify-between' : 'flex-col']"
     padded
   >
     <div ref="root" class="flex flex-col justify-center">
@@ -47,10 +47,6 @@
 import type { PropType } from 'vue'
 
 const props = defineProps({
-  containerClass: {
-    type: String,
-    default: 'pb-4 sm:pb-8 md:pb-12 lg:pb-20'
-  },
   buttons: {
     type: Array as PropType<{ label?: string, variant?: string, to?: string, icon?: string, trailing?: boolean, size?: string }[]>,
     default: () => []
@@ -58,18 +54,6 @@ const props = defineProps({
   sectionAlign: {
     type: String as PropType<'column' | 'row'>,
     default: 'column'
-  },
-  bodyPlacement: {
-    type: String as PropType<'left' | 'center' | 'right'>,
-    default: 'left'
-  },
-  bodyContainerClass: {
-    type: String,
-    default: ''
-  },
-  bodyClass: {
-    type: String,
-    default: ''
   },
   titleSizeClass: {
     type: String,
@@ -79,19 +63,7 @@ const props = defineProps({
     type: String,
     default: ''
   },
-  imageClass: {
-    type: String,
-    default: ''
-  },
-  withBodyText: {
-    type: Boolean,
-    default: true
-  },
   to: {
-    type: String,
-    default: ''
-  },
-  bodyExtraClass: {
     type: String,
     default: ''
   },
