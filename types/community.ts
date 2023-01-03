@@ -29,12 +29,7 @@ export interface Agency extends ParsedContent {
     light: string
     dark: string
   }
-  services: string[]
-  location: string,
-  regions: string[]
-}
-
-export interface FormattedAgency extends Omit<Agency, 'services' | 'location'> {
+  regions: {key: string, title: string}[]
   services: {
     key: string
     title: string

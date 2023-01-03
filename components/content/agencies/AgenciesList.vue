@@ -1,5 +1,5 @@
 <template>
-  <Page id="smooth" class="pt-16 -mt-16">
+  <Page v-if="!error" id="smooth" class="pt-16 -mt-16">
     <template #aside>
       <AgenciesAside />
     </template>
@@ -20,10 +20,17 @@
       </ul>
     </PageList>
   </Page>
+  <Page v-else>
+    <p class="text-center">
+      Sorry an error occured while fetching Nuxt partners...
+    </p>
+  </Page>
 </template>
 
 <script setup lang="ts">
-const { filteredPartners } = useAgencyPartners()
+const { filteredPartners, fetchList } = useAgencyPartners()
+
+const error = await fetchList()
 </script>
 
 <style scoped>
