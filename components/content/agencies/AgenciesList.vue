@@ -7,8 +7,8 @@
     <PageList :title="`${filteredPartners.length} partner${filteredPartners.length > 1 ? 's' : ''} found`">
       <template #filters>
         <AgenciesFilters class="hidden lg:flex" />
-        <AgenciesFilterServices class="lg:hidden" />
-        <AgenciesFilterLocations class="lg:hidden" />
+        <AgenciesFilterServices :services="services" :selected-service="selectedService" class="lg:hidden" @update:selected-service="replaceRoute('service', $event)" />
+        <AgenciesFilterRegions :regions="regions" :selected-region="selectedRegion" class="lg:hidden" @update:selected-region="replaceRoute('region', $event)" />
       </template>
 
       <div class="hidden _ellipse lg:block" />
@@ -28,7 +28,11 @@
 </template>
 
 <script setup lang="ts">
-const { filteredPartners, fetchList } = useAgencyPartners()
+const { filteredPartners, fetchList, services, selectedService } = useAgencyPartners()
+
+const { createReplaceRoute } = useFilters()
+
+const replaceRoute = createReplaceRoute('support-agencies')
 
 const error = await fetchList()
 </script>
