@@ -1,26 +1,26 @@
 <template>
   <Page v-if="!error" id="smooth" class="pt-16 -mt-16">
     <template #aside>
-      <ModulesAside :versions="versions" :selected-version="selectedVersion" @update:selected-version="updateSelectedVersion" />
+      <ModulesAside :versions="versions" :selected-version="selectedVersion" @update:selected-version="replaceRoute('version', $event)" />
     </template>
 
     <PageList :title="`${filteredModules.length} module${filteredModules.length > 1 ? 's' : ''} found`">
       <template #heading>
-        <ModulesFilterSearch class="hidden md:block" :q="q" @update:q="updateQuery" />
+        <ModulesFilterSearch class="hidden md:block" :q="q" @update:q="replaceRoute('q', $event)" />
       </template>
       <template #filters>
-        <ModulesFilterVersion size="sm" :versions="versions" :selected-version="selectedVersion" class="lg:hidden" @update:selected-version="updateSelectedVersion" />
-        <ModulesFilterSearch size="sm" :q="q" class="md:hidden" @update:q="updateQuery" />
-        <ModulesFilterType class="lg:hidden" :types="types" :selected-type="selectedType" @update:selected-type="updateSelectedType" />
-        <ModulesFilterCategory class="lg:hidden" :categories="categories" :selected-category="selectedCategory" @update:selected-category="updateSelectedCategory" />
+        <ModulesFilterVersion size="sm" :versions="versions" :selected-version="selectedVersion" class="lg:hidden" @update:selected-version="replaceRoute('version', $event)" />
+        <ModulesFilterSearch size="sm" :q="q" class="md:hidden" @update:q="replaceRoute('q', $event)" />
+        <ModulesFilterType class="lg:hidden" :types="types" :selected-type="selectedType" @update:selected-type="replaceRoute('type', $event)" />
+        <ModulesFilterCategory class="lg:hidden" :categories="categories" :selected-category="selectedCategory" @update:selected-category="replaceRoute('category', $event)" />
         <ModulesFilters class="hidden lg:flex" :selected-category="selectedCategory" :selected-type="selectedType" :q="q" />
         <ModulesFilterSort
           :sorts="sorts"
           :selected-sort="selectedSort"
           :orders="orders"
           :selected-order="selectedOrder"
-          @update:order-by="updateOrderBy"
-          @update:sort-by="updateSortBy"
+          @update:order-by="replaceRoute('orderBy', $event)"
+          @update:sort-by="replaceRoute('sortBy', $event)"
         />
       </template>
 
@@ -88,77 +88,12 @@ const router = useRouter()
 
 const error = await fetchList()
 
-const updateSelectedVersion = (version: {key: string}) => {
+const replaceRoute = (name: string, param: string | { key: string }) => {
   router.replace({
     name: 'modules',
     query: {
       ...route.query,
-      version: version?.key || undefined
-    },
-    state: {
-      smooth: '#smooth'
-    }
-  })
-}
-
-const updateQuery = (q: string) => {
-  router.replace({
-    name: 'modules',
-    query: {
-      ...route.query,
-      q: q || undefined
-    },
-    state: {
-      stop: 'true'
-    }
-  })
-}
-
-const updateSelectedType = (type: {key: string}) => {
-  router.replace({
-    name: 'modules',
-    query: {
-      ...route.query,
-      type: type?.key || undefined
-    },
-    state: {
-      smooth: '#smooth'
-    }
-  })
-}
-
-const updateSelectedCategory = (category: {key: string}) => {
-  router.replace({
-    name: 'modules',
-    query: {
-      ...route.query,
-      category: category?.key || undefined
-    },
-    state: {
-      smooth: '#smooth'
-    }
-  })
-}
-
-const updateSortBy = (sortBy: {key: string}) => {
-  router.replace({
-    name: 'modules',
-    query: {
-      ...route.query,
-      sortBy: sortBy?.key || undefined
-    },
-    state: {
-      smooth: '#smooth'
-    }
-  })
-}
-
-const updateOrderBy = (orderBy: {key: string}) => {
-  router.replace({
-    name: 'modules',
-    query: {
-      ...route.query,
-      orderBy: orderBy?.key || undefined
+      [name]: typeof param === 'string' ? param : param?.key || undefined
     },
     state: {
       smooth: '#smooth'
