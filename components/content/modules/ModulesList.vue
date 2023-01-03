@@ -6,11 +6,11 @@
 
     <PageList :title="`${filteredModules.length} module${filteredModules.length > 1 ? 's' : ''} found`">
       <template #heading>
-        <ModulesFilterSearch class="hidden md:block" />
+        <ModulesFilterSearch class="hidden md:block" :q="q" @update:q="updateQuery" />
       </template>
       <template #filters>
         <ModulesFilterVersion size="sm" :versions="versions" :selected-version="selectedVersion" class="lg:hidden" @update:selected-version="updateSelectedVersion" />
-        <ModulesFilterSearch size="sm" class="md:hidden" />
+        <ModulesFilterSearch size="sm" :q="q" class="md:hidden" @update:q="updateQuery" />
         <ModulesFilterType class="lg:hidden" />
         <ModulesFilterCategory class="lg:hidden" />
         <ModulesFilters class="hidden lg:flex" />
@@ -68,7 +68,6 @@ const router = useRouter()
 const error = await fetchList()
 
 const updateSelectedVersion = (version: {key: string}) => {
-  console.log('emit', version)
   router.replace({
     name: 'modules',
     query: {
@@ -77,6 +76,19 @@ const updateSelectedVersion = (version: {key: string}) => {
     },
     state: {
       smooth: '#smooth'
+    }
+  })
+}
+
+const updateQuery = (q: string) => {
+  router.replace({
+    name: 'modules',
+    query: {
+      ...route.query,
+      q: q || undefined
+    },
+    state: {
+      stop: 'true'
     }
   })
 }
