@@ -14,7 +14,14 @@
         <ModulesFilterType class="lg:hidden" :types="types" :selected-type="selectedType" @update:selected-type="updateSelectedType" />
         <ModulesFilterCategory class="lg:hidden" :categories="categories" :selected-category="selectedCategory" @update:selected-category="updateSelectedCategory" />
         <ModulesFilters class="hidden lg:flex" :selected-category="selectedCategory" :selected-type="selectedType" :q="q" />
-        <ModulesFilterSort />
+        <ModulesFilterSort
+          :sorts="sorts"
+          :selected-sort="selectedSort"
+          :orders="orders"
+          :selected-order="selectedOrder"
+          @update:order-by="updateOrderBy"
+          @update:sort-by="updateSortBy"
+        />
       </template>
 
       <div class="hidden _ellipse lg:block" />
@@ -60,7 +67,21 @@
 </template>
 
 <script setup lang="ts">
-const { fetchList, filteredModules, q, versions, selectedVersion, types, selectedType, categories, selectedCategory } = useModules()
+const {
+  fetchList,
+  filteredModules,
+  q,
+  versions,
+  selectedVersion,
+  types,
+  selectedType,
+  categories,
+  selectedCategory,
+  orders,
+  selectedOrder,
+  sorts,
+  selectedSort
+} = useModules()
 
 const route = useRoute()
 const router = useRouter()
@@ -112,6 +133,32 @@ const updateSelectedCategory = (category: {key: string}) => {
     query: {
       ...route.query,
       category: category?.key || undefined
+    },
+    state: {
+      smooth: '#smooth'
+    }
+  })
+}
+
+const updateSortBy = (sortBy: {key: string}) => {
+  router.replace({
+    name: 'modules',
+    query: {
+      ...route.query,
+      sortBy: sortBy?.key || undefined
+    },
+    state: {
+      smooth: '#smooth'
+    }
+  })
+}
+
+const updateOrderBy = (orderBy: {key: string}) => {
+  router.replace({
+    name: 'modules',
+    query: {
+      ...route.query,
+      orderBy: orderBy?.key || undefined
     },
     state: {
       smooth: '#smooth'
