@@ -13,7 +13,7 @@
         <ModulesFilterSearch size="sm" :q="q" class="md:hidden" @update:q="updateQuery" />
         <ModulesFilterType class="lg:hidden" :types="types" :selected-type="selectedType" @update:selected-type="updateSelectedType" />
         <ModulesFilterCategory class="lg:hidden" :categories="categories" :selected-category="selectedCategory" @update:selected-category="updateSelectedCategory" />
-        <ModulesFilters class="hidden lg:flex" />
+        <ModulesFilters class="hidden lg:flex" :selected-category="selectedCategory" :selected-type="selectedType" :q="q" />
         <ModulesFilterSort />
       </template>
 

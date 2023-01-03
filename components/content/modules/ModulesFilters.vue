@@ -15,26 +15,48 @@
 </template>
 
 <script setup lang="ts">
+import type { PropType } from 'vue'
+
+interface filterItem {
+  key: string
+  title: string
+  to: object
+}
+
+const props = defineProps({
+  selectedCategory: {
+    type: Object as PropType<filterItem>,
+    default: () => {}
+  },
+  selectedType: {
+    type: Object as PropType<filterItem>,
+    default: () => {}
+  },
+  q: {
+    type: String,
+    default: ''
+  }
+})
+
 const route = useRoute()
-const { selectedCategory, selectedType, q } = useModules()
 
 const filters = computed(() => {
   return [
-    selectedCategory.value,
-    selectedType.value && {
-      ...selectedType.value,
+    props.selectedCategory,
+    props.selectedType && {
+      ...props.selectedType,
       to: {
         name: 'modules',
         query: {
           ...route.query,
-          type: route.query?.type !== selectedType.value.key ? selectedType.value.key : undefined
+          type: route.query?.type !== props.selectedType.key ? props.selectedType.key : undefined
         },
         state: { smooth: '#smooth' }
       }
     },
-    q.value && {
+    props.q && {
       key: 'q',
-      title: q.value,
+      title: props.q,
       to: {
         name: 'modules',
         query: {
