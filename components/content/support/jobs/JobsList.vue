@@ -1,6 +1,6 @@
 <template>
   <div class="relative overflow-hidden">
-    <Page id="smooth" class="relative pt-16 -mt-16">
+    <Page v-if="!error" id="smooth" class="relative pt-16 -mt-16">
       <PageList :title="`${filteredJobs.length} job${filteredJobs.length > 1 ? 's' : ''} found`" :modules-filter="false">
         <template #filters>
           <JobsFilterLocation />
@@ -19,22 +19,16 @@
         </div>
       </PageList>
     </Page>
+    <Page v-else>
+      <p class="text-center">
+        Sorry an error occured while fetching offers...
+      </p>
+    </Page>
   </div>
 </template>
 
 <script setup lang="ts">
-const { jobs, selectedLocation, selectedType } = useNuxtJobs()
+const { fetchList, filteredJobs, selectedLocation, selectedType } = useNuxtJobs()
 
-const filteredJobs = computed(() => {
-  return [...jobs.value.data]
-    .filter((job) => {
-      if (selectedLocation.value && !job.locations.includes(selectedLocation.value.value)) {
-        return false
-      }
-      if (selectedType.value && job.remote !== selectedType.value.value) {
-        return false
-      }
-      return true
-    })
-})
+const error = await fetchList()
 </script>

@@ -74,7 +74,3 @@ export interface Contributors {
   name: string
   link: string
 }
-
-export interface NuxtJobs {
-  data: NuxtJob[]
-}
