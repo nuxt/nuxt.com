@@ -15,32 +15,35 @@
 </template>
 
 <script setup lang="ts">
-defineProps({
+import type { PropType } from 'vue'
+
+const props = defineProps({
   size: {
     type: String,
     default: 'xs'
+  },
+  versions: {
+    type: Array,
+    default: () => []
+  },
+  selectedVersion:
+  {
+    type: Object as PropType<{
+      key: string,
+      name: string
+    }>,
+    default: () => {}
   }
 })
 
-const route = useRoute()
-const router = useRouter()
-const { versions, selectedVersion } = useModules()
+const emit = defineEmits(['update:selected-version'])
 
 const version = computed({
   get () {
-    return selectedVersion.value
+    return props.selectedVersion.value
   },
   set (version) {
-    router.replace({
-      name: 'modules',
-      query: {
-        ...route.query,
-        version: version?.key || undefined
-      },
-      state: {
-        smooth: '#smooth'
-      }
-    })
+    emit('update:selected-version', version.name)
   }
 })
 </script>

@@ -9,7 +9,7 @@
         <ModulesFilterSearch class="hidden md:block" />
       </template>
       <template #filters>
-        <ModulesFilterVersion size="sm" class="lg:hidden" />
+        <ModulesFilterVersion size="sm" :versions="versions" :selected-version="selectedVersion" class="lg:hidden" @update:selected-version="updateSelectedVersion" />
         <ModulesFilterSearch size="sm" class="md:hidden" />
         <ModulesFilterType class="lg:hidden" />
         <ModulesFilterCategory class="lg:hidden" />
@@ -60,9 +60,25 @@
 </template>
 
 <script setup lang="ts">
-const { fetchList, filteredModules, q } = useModules()
+const { fetchList, filteredModules, q, versions, selectedVersion } = useModules()
+
+const route = useRoute()
+const router = useRouter()
 
 const error = await fetchList()
+
+const updateSelectedVersion = (version: {key: string}) => {
+  router.replace({
+    name: 'modules',
+    query: {
+      ...route.query,
+      version: version?.key || undefined
+    },
+    state: {
+      smooth: '#smooth'
+    }
+  })
+}
 </script>
 
 <style scoped>
