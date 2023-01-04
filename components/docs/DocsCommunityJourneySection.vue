@@ -27,34 +27,13 @@
         />
       </div>
     </div>
-    <div v-if="image" class="flex flex-col h-full w-full gap-x-4 items-end justify-center">
-      <img
-        :src="`${image.path}-light.png`"
-        :width="image.width"
-        :height="image.height"
-        alt=""
-        class="dark:hidden absolute right-0 bottom-0 object-cover opacity-0 md:opacity-100"
-        role="presentation"
-      >
-      <img
-        :src="`${image.path}-dark.png`"
-        :width="image.width"
-        :height="image.height"
-        alt=""
-        class="hidden dark:block absolute right-0 bottom-0 object-cover opacity-0 md:opacity-100"
-        role="presentation"
-      >
-    </div>
   </component>
 </template>
 
 <script setup lang="ts">
+import type { PropType } from 'vue'
 
 defineProps({
-  image: {
-    type: Object,
-    default: () => {}
-  },
   fontSizeClass: {
     type: String,
     default: ''
