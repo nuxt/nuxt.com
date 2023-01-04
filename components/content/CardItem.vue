@@ -13,21 +13,21 @@
       :ring-class="ringClass"
       :rounded-class="roundedClass"
     >
-      <div v-if="backgroundImg" :class="backgroundImgClass">
+      <div v-if="backgroundImage" :class="backgroundImageClass">
         <img
-          :src="`${backgroundImg.path}-dark.${backgroundImg.format}`"
+          :src="`${backgroundImage.path}-dark.${backgroundImage.format}`"
           alt=""
           class="h-full hidden dark:block"
-          :width="backgroundImg.width"
-          :height="backgroundImg.height"
+          :width="backgroundImage.width"
+          :height="backgroundImage.height"
           loading="lazy"
         >
         <img
-          :src="`${backgroundImg.path}-light.${backgroundImg.format}`"
+          :src="`${backgroundImage.path}-light.${backgroundImage.format}`"
           alt=""
           class="h-full dark:hidden"
-          :width="backgroundImg.width"
-          :height="backgroundImg.height"
+          :width="backgroundImage.width"
+          :height="backgroundImage.height"
           loading="lazy"
         >
       </div>
@@ -82,30 +82,9 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
 import { hasProtocol } from 'ufo'
+import type { Image } from 'types'
 
 const props = defineProps({
-  image: {
-    type: Object as PropType<
-      {
-        path: String,
-        width: any,
-        height: any,
-        format: String
-      }
-    >,
-    default: () => {}
-  },
-  backgroundImg: {
-    type: Object as PropType<
-      {
-        path: String,
-        width: any,
-        height: any,
-        format: String
-      }
-    >,
-    default: () => {}
-  },
   is: {
     type: String,
     default: 'li'
@@ -118,13 +97,29 @@ const props = defineProps({
     type: String,
     default: ''
   },
+  image: {
+    type: Object as PropType<Image>,
+    default: () => {}
+  },
+  backgroundImage: {
+    type: Object as PropType<Image>,
+    default: () => {}
+  },
+  gradientBorder: {
+    type: Boolean,
+    default: true
+  },
+  buttons: {
+    type: Array as PropType<{ label?: string, variant?: string, to?: string, icon?: string, trailing?: boolean, size?: string }[]>,
+    default: () => []
+  },
+  backgroundImageClass: {
+    type: String,
+    default: 'absolute right-0 bottom-0'
+  },
   roundedClass: {
     type: String,
     default: 'rounded-xl'
-  },
-  backgroundImgClass: {
-    type: String,
-    default: 'absolute right-0 bottom-0'
   },
   headerClass: {
     type: String,
@@ -153,14 +148,6 @@ const props = defineProps({
   ringClass: {
     type: String,
     default: 'ring-1 ring-gray-200 dark:ring-gray-800'
-  },
-  gradientBorder: {
-    type: Boolean,
-    default: true
-  },
-  buttons: {
-    type: Array as PropType<{ label?: string, variant?: string, to?: string, icon?: string, trailing?: boolean, size?: string }[]>,
-    default: () => []
   }
 })
 
