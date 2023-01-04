@@ -17,7 +17,7 @@
       </template>
 
       <template #filters>
-        <ShowcasesFilterCategory :categories="categories" :selected-category="selectedCategory" class="lg:hidden" @update:selected-category="updateCategory" />
+        <ShowcasesFilterCategory :categories="categories" :selected-category="selectedCategory" class="lg:hidden" @update:selected-category="replaceRoute('category', $event)" />
       </template>
 
       <ul v-if="selectedShowcases.length" class="grid grid-cols-1 gap-8 mt-8 sm:grid-cols-2 xl:grid-cols-3">
@@ -39,19 +39,6 @@ const { fetchList, selectedShowcases, categories, selectedCategory } = useResour
 
 const error = await fetchList()
 
-const route = useRoute()
-const router = useRouter()
-
-const updateCategory = (categoryName: string) => {
-  router.replace({
-    name: 'showcase',
-    query: {
-      ...route.query,
-      category: categoryName || undefined
-    },
-    state: {
-      smooth: '#smooth'
-    }
-  })
-}
+const { createReplaceRoute } = useFilters()
+const replaceRoute = createReplaceRoute('showcase')
 </script>
