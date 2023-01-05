@@ -28,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-const { filteredPartners, fetchList, services, selectedService } = useAgencyPartners()
+const { filteredPartners, fetchList, services, selectedService, regions, selectedRegion } = useAgencyPartners()
 
 const { createReplaceRoute } = useFilters()
 
