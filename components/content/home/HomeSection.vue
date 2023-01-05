@@ -59,10 +59,6 @@ const props = defineProps({
     type: String,
     default: 'text-3xl font-semibold md:text-4xl lg:text-5xl'
   },
-  image: {
-    type: String,
-    default: ''
-  },
   to: {
     type: String,
     default: ''

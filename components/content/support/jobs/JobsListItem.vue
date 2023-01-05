@@ -14,7 +14,7 @@
         <div class="flex flex-col flex-1 order-2 col-span-2 gap-1">
           <div class="flex flex-col gap-2 sm:flex-row">
             <span class="flex-shrink text-xl font-semibold u-text-gray-900">{{ job.title }}</span>
-            <span class="self-start px-2 py-0.5 rounded-full whitespace-nowrap bg-gray-800">{{ job.remote }}</span>
+            <span class="self-start px-2 py-0.5 rounded-full whitespace-nowrap u-bg-gray-200">{{ job.remote }}</span>
           </div>
           <p v-if="locations?.length" class="u-text-gray-500">
             <span v-for="location in locations" :key="location" class="location-item">{{ location }}</span>

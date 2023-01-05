@@ -1,7 +1,7 @@
 <template>
   <UContainer padded class="pt-8 pb-[120px] flex flex-col gap-y-8">
-    <img :src="`/assets/support/solutions/${image}-light.webp`" class="dark:hidden w-[73px] h-[81px]" height="81" width="73">
-    <img :src="`/assets/support/solutions/${image}.webp`" class="hidden dark:block w-[73px] h-[81px]" height="81" width="73">
+    <img :src="`/assets/support/solutions/${image.path}-light.${image.format}`" class="dark:hidden w-[73px] h-[81px]" :height="image.height" :width="image.width">
+    <img :src="`/assets/support/solutions/${image.path}-dark.${image.format}`" class="hidden dark:block w-[73px] h-[81px]" :height="image.height" :width="image.width">
 
     <h1 class="u-text-gray-900 text-4xl font-semibold">
       <ContentSlot :use="$slots.title" unwrap="p" />
@@ -28,11 +28,13 @@
 </template>
 
 <script setup lang="ts">
+import type { PropType } from 'vue'
+import type { Image } from 'types'
 
 defineProps({
   image: {
-    type: String,
-    default: ''
+    type: Object as PropType<Image>,
+    default: () => {}
   },
   to: {
     type: String,
