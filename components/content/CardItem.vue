@@ -188,7 +188,21 @@ const root = ref<HTMLElement | null>(null)
 useBlockLinks(root)
 </script>
 
-<style scoped lang="postcss">
+<style lang="postcss">
+
+:root {
+  --gradient-angle: 360deg;
+}
+
+@keyframes gradient-rotate {
+  0% {
+    --gradient-angle: 360deg;
+  }
+
+  100% {
+    --gradient-angle: 0deg;
+  }
+}
 
 .gradient-border {
   opacity: 0;
@@ -217,21 +231,5 @@ li:hover {
     animation: gradient-rotate 5s linear 0s infinite reverse;
     transition: all 0.3s linear;
   }
-}
-
-@property --gradient-angle {
-  syntax: '<angle>';
-  inherits: false;
-  initial-value: 360deg;
-}
-
-@keyframes gradient-rotate {
-    0% {
-      --gradient-angle: 360deg;
-    }
-
-    100% {
-      --gradient-angle: 0deg;
-    }
 }
 </style>
