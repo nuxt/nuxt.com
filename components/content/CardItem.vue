@@ -1,6 +1,6 @@
 <template>
   <Component :is="is" ref="root" class="rounded-md relative group" :class="{ 'cursor-pointer': to }" @click="onClick">
-    <Icon v-if="hasExternalLink" name="uil:external-link-alt" class="absolute right-4 top-4 text-gray-500 transition-opacity duration-200 opacity-0 group-hover:opacity-100" />
+    <Icon v-if="hasExternalLink" name="uil:external-link-alt" class="absolute right-4 top-4 text-gray-500 transition-opacity duration-200 opacity-0 group-hover:opacity-100 z-50" />
     <div v-if="gradientBorder" class="hidden gradient-border gradient-border-dark dark:block" />
     <div v-if="gradientBorder" class="dark:hidden gradient-border gradient-border-light" />
 
@@ -189,6 +189,7 @@ useBlockLinks(root)
 </script>
 
 <style scoped lang="postcss">
+
 .gradient-border {
   opacity: 0;
   position: absolute;
