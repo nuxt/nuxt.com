@@ -15,8 +15,8 @@ export default defineNuxtConfig({
       docs: {
         name: 'nuxt3-docs',
         driver: 'github',
-        repo: 'CarolinaDelerue/framework',
-        branch: 'feat/docs-landing-page',
+        repo: 'nuxt/framework',
+        branch: 'main',
         dir: 'docs/content',
         // prefix: '/docs',
         token: process.env.NUXT_GITHUB_TOKEN
