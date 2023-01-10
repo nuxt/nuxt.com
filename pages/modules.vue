@@ -9,5 +9,7 @@
 </template>
 
 <script setup lang="ts">
-const { links } = useModules()
+const { links, fetchList } = useModules()
+
+await fetchList()
 </script>

@@ -15,7 +15,7 @@
             class="flex items-center gap-2 text-sm font-medium hover:u-text-gray-900 focus:u-text-gray-900"
             tabindex="-1"
           >
-            <Icon name="fa-brands:github" class="w-4 h-4" />
+            <Icon :name="link.icon || 'fa-brands:github'" class="w-4 h-4" />
             {{ link.label }}
           </NuxtLink>
         </div>
@@ -40,7 +40,8 @@ const links = computed(() => {
     href: `${module.value.github}/issues/new/choose`
   }, {
     label: 'Learn more',
-    href: module.value.website
+    href: module.value.website,
+    icon: 'uil:link'
   }]
 })
 </script>
