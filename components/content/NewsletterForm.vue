@@ -21,8 +21,8 @@ function onSubmit () {
   }).then(() => {
     $toast.success({ title: 'Subscription pending', description: 'Please check your emails to confirm your subscription.' })
     email.value = ''
-  }).catch(() => {
-    const description = 'Something went wrong. Please try again later.'
+  }).catch((err) => {
+    const description = err.data?.message || 'Something went wrong. Please try again later.'
     $toast.error({ title: 'Subscription failed', description })
   }).finally(() => {
     loading.value = false

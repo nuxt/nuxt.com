@@ -12,16 +12,37 @@ export default defineEventHandler(async (event) => {
     email: Joi.string().email().trim().required()
   }))
 
-  // Add to contacts list
+  // Check if already in contact list
+  await useSendgrid().client.request({
+    method: 'POST',
+    url: '/v3/marketing/contacts/search/emails',
+    body: {
+      emails: [email]
+    }
+  }).catch((err: any) => {
+    if (err.code !== 404) {
+      throw createError({
+        message: err?.response?.body?.errors?.[0]?.message || 'Could not verify contacts list',
+        statusCode: 400
+      })
+    }
+  }).then(([_, body] = []) => {
+    if (body && body.result && body.result[email]?.contact?.list_ids?.includes(useSendgrid().listId)) {
+      throw createError({
+        message: 'Already subscribed to the newsletter',
+        statusCode: 400
+      })
+    }
+  })
+  // Add to global contacts first
   await useSendgrid().client.request({
     method: 'PUT',
     url: '/v3/marketing/contacts',
     body: {
-      // list_ids: ['74c40049-4dbc-4caf-a863-315b99d2fbca'],
       contacts: [{ email }]
     }
   }).catch((err: any) => {
-    return createError({
+    throw createError({
       message: err?.response?.body?.errors?.[0]?.message || 'Invalid email',
       statusCode: 400
     })

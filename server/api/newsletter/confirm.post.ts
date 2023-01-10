@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
 
   // Validate confirmation code
   if (generateConfirmation(email) !== confirmation) {
-    return createError({
+    throw createError({
       statusCode: 400,
       message: 'Confirmation code is invalid.'
     })
@@ -25,11 +25,11 @@ export default defineEventHandler(async (event) => {
     method: 'PUT',
     url: '/v3/marketing/contacts',
     body: {
-      list_ids: ['a7d820e2-557e-471d-b4bd-decfdf5bfb2e'],
+      list_ids: [useSendgrid().listId],
       contacts: [{ email }]
     }
   }).catch((err: any) => {
-    return createError({
+    throw createError({
       message: err?.response?.body?.errors?.[0]?.message || 'Invalid email',
       statusCode: 400
     })

@@ -76,7 +76,8 @@ export default defineNuxtConfig({
       apiKey: '' || process.env.NUXT_OPEN_COLLECTIVE_API_KEY
     },
     sendgrid: {
-      apiKey: process.env.NUXT_SENDGRID_API_KEY
+      apiKey: process.env.NUXT_SENDGRID_API_KEY,
+      listId: process.env.NUXT_SENDGRID_LIST_ID
     },
     mailjet: {
       apiKey: '' || process.env.NUXT_MAILJET_API_KEY,
@@ -127,12 +128,6 @@ export default defineNuxtConfig({
       ]
     }
   },
-  newsletter: {
-    revue: {
-      apiKey: process.env.REVUE_API_KEY,
-      component: false
-    }
-  },
   github: {
     disableCache: true,
     maxContributors: 10
@@ -149,7 +144,7 @@ export default defineNuxtConfig({
   },
   nitro: {
     prerender: {
-      routes: ['/', '/api/jobs.json', '/api/modules.json', '/api/sponsors.json', '/sitemap.xml'],
+      routes: ['/', '/api/jobs.json', '/api/modules.json', '/api/sponsors.json', '/sitemap.xml', '/newsletter'],
       crawlLinks: true
     },
     handlers: [
