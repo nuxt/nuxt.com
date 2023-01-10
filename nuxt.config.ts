@@ -24,7 +24,7 @@ export default defineNuxtConfig({
     '@nuxthq/ui',
     '@nuxt/content',
     '@nuxtlabs/github-module',
-    'nuxt-plausible',
+    '@nuxtjs/plausible',
     'nuxt-icon',
     '@nuxtjs/fontaine',
     '@nuxtjs/algolia'
