@@ -27,8 +27,8 @@ export default defineNuxtConfig({
     'nuxt-plausible',
     'nuxt-icon',
     '@nuxtjs/fontaine',
-    '@nuxtjs/algolia',
-    '@nuxt/devtools-edge'
+    '@nuxtjs/algolia'
+    // '@nuxt/devtools-edge'
   ],
   htmlValidator: {
     logLevel: 'error',
