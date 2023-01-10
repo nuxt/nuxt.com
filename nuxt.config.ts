@@ -161,6 +161,7 @@ export default defineNuxtConfig({
     '/support/solutions': { prerender: true },
     '/support/agencies': { prerender: true },
     '/api/_content/**': { prerender: true },
+    '/api/newsletter/**': { cache: false, swr: false },
     '/docs/**': { prerender: true },
     // more frequently updated pages
     '/modules/**': { swr: 60 },
