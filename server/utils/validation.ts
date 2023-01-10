@@ -1,3 +1,4 @@
+import { createError } from 'h3'
 import Joi from 'joi'
 
 export async function validate (body: Object, schema: Joi.Schema) {
