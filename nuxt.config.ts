@@ -76,7 +76,7 @@ export default defineNuxtConfig({
       apiKey: '' || process.env.NUXT_OPEN_COLLECTIVE_API_KEY
     },
     sendgrid: {
-      apiKey: process.env.SENDGRID_API_KEY
+      apiKey: process.env.NUXT_SENDGRID_API_KEY
     },
     mailjet: {
       apiKey: '' || process.env.NUXT_MAILJET_API_KEY,
