@@ -13,32 +13,38 @@ export default defineCachedEventHandler(async () => {
   maxAge: 60 * 1000
 })
 
-async function fetchModuleStats (module: ModuleInfo) {
+async function fetchModuleStats (module: Module) {
   const ghRepo = module.repo.split('#')[0]
-  const [npm, github, contributors] = await Promise.all([
-    $fetch<any>(`https://api.nuxtjs.org/api/npm/package/${module.npm}`)
+  const [npmInfos, npmStats, github, contributors] = await Promise.all([
+    $fetch<any>(`https://registry.npmjs.org/${module.npm}`)
+      .catch((err) => {
+      // eslint-disable-next-line no-console
+        console.error(`Cannot fetch npm info for ${module.npm}: ${err}`)
+        return { }
+      }),
+    $fetch<any>(`https://api.npmjs.org/downloads/point/last-month/${module.npm}`)
       .catch((err) => {
         // eslint-disable-next-line no-console
-        console.error(`Cannot fetch npm info for ${module.npm}: ${err}`)
-        return { downloads: { lastMonth: 0 } }
+        console.error(`Cannot fetch npm downloads stats for ${module.npm}: ${err}`)
+        return { downloads: 0 }
       }),
-    $fetch<any>(`https://ungh.unjs.io/repos/${ghRepo}`)
+    $fetch<any>(`https://ungh.cc/repos/${ghRepo}`)
       .catch((err) => {
         // eslint-disable-next-line no-console
         console.error(`Cannot fetch github repo info for ${ghRepo}: ${err}`)
         return { repo: { stars: 0 } }
       }).then(r => r.repo),
-    $fetch<any>(`https://ungh.unjs.io/repos/${ghRepo}/contributors`)
+    $fetch<any>(`https://ungh.cc/repos/${ghRepo}/contributors`)
       .catch((err) => {
         // eslint-disable-next-line no-console
         console.error(`Cannot fetch github contributors info for ${ghRepo}: ${err}`)
         return { contributors: [] }
       }).then(r => r.contributors)
   ])
-  module.downloads = npm.downloads.lastMonth
+  module.downloads = npmStats.downloads
   module.stars = github.stars
-  module.publishedAt = +new Date(npm.publishedAt || undefined)
-  module.createdAt = +new Date(npm.createdAt || undefined)
+  module.publishedAt = +new Date(npmInfos.publishedAt || undefined)
+  module.createdAt = +new Date(npmInfos.createdAt || undefined)
   module.contributors = contributors
   return module
 }
