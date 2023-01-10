@@ -1,4 +1,4 @@
-import { defineEventHandler, readBody } from 'h3'
+import { defineEventHandler, readBody, createError } from 'h3'
 import { withQuery, withTrailingSlash } from 'ufo'
 import Joi from 'joi'
 import { validate } from '../../utils/validation'
