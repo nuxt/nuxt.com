@@ -1,6 +1,6 @@
 {
   "name": "nuxt-website-theme",
-  "version": "0.1.27",
+  "version": "0.2.5",
   "main": "nuxt.config.ts",
   "files": [
     "app/",
@@ -34,7 +34,8 @@
     "@docsearch/css": "^3.3.0",
     "@docsearch/js": "^3.3.0",
     "@nuxt-themes/typography": "^0.1.4",
-    "@nuxt/content": "^2.2.2",
+    "@nuxt/content": "^2.3.0",
+    "@nuxt/devtools-edge": "^0.0.0-27883630.c37cf90",
     "@nuxthq/studio": "^0.3.4",
     "@nuxthq/ui": "^0.1.17",
     "@nuxtjs/algolia": "^1.3.1",
@@ -48,7 +49,7 @@
     "add": "^2.0.6",
     "joi": "^17.7.0",
     "mjml": "^4.13.0",
-    "node-mailjet": "^5.1.1",
+    "node-mailjet": "^6.0.0",
     "nuxt-icon": "^0.1.8",
     "nuxt-plausible": "^0.1.2",
     "ohash": "^1.0.0",
