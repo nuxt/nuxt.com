@@ -12,33 +12,35 @@
 </template>
 
 <script setup lang="ts">
-const route = useRoute()
-const router = useRouter()
-const { services, selectedService } = useAgencyPartners()
+import { PropType } from 'vue'
+
+const props = defineProps({
+  services: {
+    type: Array as PropType<{key: string, title: string}[]>,
+    default: () => []
+  },
+  selectedService: {
+    type: Object as PropType<{key: string, title: string}>,
+    default: () => {}
+  }
+})
+
+const emit = defineEmits(['update:selectedService'])
 
 const servicesWithPlaceholder = computed(() => [
   {
     key: '',
     title: 'All'
   },
-  ...services.value
+  ...props.services
 ])
 
 const service = computed({
   get () {
-    return selectedService.value
+    return props.selectedService
   },
   set (service) {
-    router.push({
-      name: 'support-agencies',
-      query: {
-        ...route.query,
-        service: service?.key || undefined
-      },
-      state: {
-        smooth: '#smooth'
-      }
-    })
+    emit('update:selectedService', service)
   }
 })
 </script>

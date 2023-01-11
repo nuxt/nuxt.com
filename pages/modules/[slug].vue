@@ -90,7 +90,7 @@ await fetchOne(route.params.slug as string)
 // Computed
 const maintainers = computed(() => module.value.maintainers.map(m => ({ src: `https://avatars.githubusercontent.com/${m.github}`, alt: m.name })))
 
-const copyToClipboard = (content) => {
+const copyToClipboard = (content: string) => {
   $clipboard.copy(content, { title: 'Command copied to clipboard!' })
 
   copyIcon.value = 'uil:check'
@@ -102,7 +102,9 @@ const copyToClipboard = (content) => {
 useHead({
   title: capitalize(module.value.name) + ' Module',
   meta: [
-    { name: 'description', content: module.value.description }
+    { name: 'og:title', content: capitalize(module.value.name) + ' Module' },
+    { name: 'description', content: module.value.description },
+    { name: 'og:description', content: module.value.description }
   ]
 })
 </script>

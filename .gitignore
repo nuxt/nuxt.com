@@ -16,3 +16,4 @@ dist
 
 # Local editor
 .vscode/
+*.code-workspace

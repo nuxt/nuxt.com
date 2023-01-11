@@ -6,38 +6,40 @@
     size="sm"
     placeholder="Location"
     class="min-w-[192px]"
+    text-attribute="label"
   />
 </template>
 
 <script setup lang="ts">
-const route = useRoute()
-const router = useRouter()
+import type { PropType } from 'vue'
 
-const { locations, selectedLocation } = useNuxtJobs()
+const props = defineProps({
+  locations: {
+    type: Array as PropType<{key: string, label: string}[]>,
+    default: () => []
+  },
+  selectedLocation: {
+    type: Object as PropType<{ key: string, label: string}>,
+    default: () => {}
+  }
+})
+
+const emit = defineEmits(['update:location'])
 
 const locationsWithPlaceholder = computed(() => [
   {
-    value: '',
-    text: 'All'
+    key: '',
+    label: 'All'
   },
-  ...locations.value
+  ...props.locations
 ])
 
 const location = computed({
   get () {
-    return selectedLocation.value
+    return props.selectedLocation
   },
   set (location) {
-    router.replace({
-      name: 'support-jobs',
-      query: {
-        ...route.query,
-        location: location?.value || undefined
-      },
-      state: {
-        smooth: '#smooth'
-      }
-    })
+    emit('update:location', location)
   }
 })
 </script>

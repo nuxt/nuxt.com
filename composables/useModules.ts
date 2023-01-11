@@ -3,29 +3,21 @@ import type { Module } from '../types'
 
 export const useModules = () => {
   const route = useRoute()
-  const _modules: Ref<Module[]> = useState('modules', () => [])
+  const modules: Ref<Module[]> = useState('modules', () => [])
   const module: Ref<Module> = useState('module', () => ({} as Module))
 
-  const pending = ref(false)
+  // Data fetching
+  async function fetchList () {
+    const { data, error } = await useFetch<{ modules: Module[] }>('/api/modules.json')
 
-  // Http
-
-  async function fetch () {
-    if (_modules.value.length) {
-      return
+    /* Missing data is handled at component level */
+    if (!data.value && error.value) {
+      return error.value
     }
 
-    pending.value = true
-
-    try {
-      const data = await $fetch<{ modules: Module[] }>('/api/modules.json')
-
-      _modules.value = data.modules
-    } catch (e) {
-      _modules.value = []
+    if (data) {
+      modules.value = data.value?.modules || []
     }
-
-    pending.value = false
   }
 
   async function fetchOne (name: string) {
@@ -39,16 +31,11 @@ export const useModules = () => {
       return
     }
 
-    pending.value = true
-
     try {
       module.value = await $fetch<Module>(`/api/modules/${name}`)
     } catch (e) {
-      // @ts-ignore
       throw createError({ statusMessage: 'Module not found', message: 'This page does not exist.', statusCode: 404 })
     }
-
-    pending.value = false
   }
 
   // Data
@@ -71,38 +58,11 @@ export const useModules = () => {
     { key: 'asc', label: 'Asc', icon: 'uil:sort-amount-up' }
   ]
 
-  const typesMapping = {
+  const typesMap = {
     official: 'Official',
     community: 'Community',
     '3rd-party': 'Third Party'
   }
-
-  // Computed
-
-  const modules = computed(() => {
-    return _modules.value.map((module) => {
-      const compatibilityTags = []
-      if (module.compatibility.nuxt.includes('^2.0.0')) {
-        if (module.compatibility.requires.bridge !== true /* bridge: false or bridge: optional */) {
-          compatibilityTags.push('2.x')
-        }
-        if (module.compatibility.requires.bridge) {
-          compatibilityTags.push('2.x-bridge')
-        }
-      }
-      if (module.compatibility.nuxt.includes('^3.0.0')) {
-        compatibilityTags.push('3.x')
-      }
-
-      return {
-        ...module,
-        tags: [
-          ...(module.tags || []),
-          ...compatibilityTags
-        ]
-      }
-    })
-  })
 
   const githubQuery = computed(() => {
     const [ownerAndRepo] = module.value.repo.split('#')
@@ -144,7 +104,7 @@ export const useModules = () => {
   const types = computed(() => {
     return [...new Set(modulesByVersion.value.map(module => module.type))].map(type => ({
       key: type,
-      title: typesMapping[type] || type,
+      title: typesMap[type as keyof typeof typesMap] || type,
       to: {
         name: 'modules',
         query: {
@@ -154,7 +114,7 @@ export const useModules = () => {
         state: { smooth: '#smooth' }
       }
     })).sort((a, b) => {
-      const typesMappingKeys = Object.keys(typesMapping)
+      const typesMappingKeys = Object.keys(typesMap)
       const aIndex = typesMappingKeys.indexOf(a.key)
       const bIndex = typesMappingKeys.indexOf(b.key)
       return aIndex - bIndex
@@ -197,9 +157,55 @@ export const useModules = () => {
     return route.query.q as string
   })
 
+  const links = computed(() => {
+    return [
+      {
+        title: 'All',
+        _path: {
+          name: 'modules',
+          query: {
+            ...route.query,
+            type: undefined
+          },
+          state: { smooth: '#smooth' }
+        },
+        active: !route.query.type
+      },
+      ...types.value.map(type => ({ ...type, _path: type.to, exact: true, active: route.query.type === type.key }))
+    ]
+  })
+
+  const filteredModules = computed(() => {
+    let filteredModules = [...modules.value]
+      .filter((module) => {
+        if (selectedCategory.value && module.category !== selectedCategory.value.key) {
+          return false
+        }
+        if (selectedType.value && module.type !== selectedType.value.key) {
+          return false
+        }
+        if (selectedVersion.value && !module.tags.includes(selectedVersion.value.key)) {
+          return false
+        }
+        const queryRegExp = searchTextRegExp(q.value as string)
+        if (q.value && !['name', 'npm', 'category', 'description', 'repo'].map(field => module[field]).filter(Boolean).some(value => value.search(queryRegExp) !== -1)) {
+          return false
+        }
+
+        return true
+      })
+      .sort((a, b) => b[selectedSort.value.key] - a[selectedSort.value.key])
+
+    if (selectedOrder.value.key === 'asc') {
+      filteredModules = filteredModules.reverse()
+    }
+
+    return filteredModules
+  })
+
   return {
-    // Http
-    fetch,
+    // Data fetching
+    fetchList,
     fetchOne,
     // Data
     versions,
@@ -207,6 +213,7 @@ export const useModules = () => {
     orders,
     // Computed
     modules,
+    filteredModules,
     module,
     githubQuery,
     categories,
@@ -218,6 +225,7 @@ export const useModules = () => {
     selectedVersion,
     selectedSort,
     selectedOrder,
-    q
+    q,
+    links
   }
 }

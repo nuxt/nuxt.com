@@ -5,7 +5,7 @@
         Categories
       </p>
 
-      <ModulesFilterVersion class="mr-1 -my-1" />
+      <ModulesFilterVersion :versions="versions" :selected-version="selectedVersion" class="mr-1 -my-1" @update:selected-version="updateSelectedVersion" />
     </div>
 
     <ul v-if="categories.length" class="flex flex-col py-4 gap-y-2">
@@ -51,5 +51,33 @@
 </template>
 
 <script setup lang="ts">
+import type { PropType } from 'vue'
 const { categories, selectedCategory } = useModules()
+
+interface keyLabel {
+  key: string
+  label: string
+}
+
+defineProps({
+  size: {
+    type: String as PropType<'xs' | 'sm'>,
+    default: 'xs'
+  },
+  versions: {
+    type: Array as PropType<keyLabel[]>,
+    default: () => []
+  },
+  selectedVersion:
+  {
+    type: Object as PropType<keyLabel>,
+    default: () => {}
+  }
+})
+
+const emit = defineEmits(['update:selected-version'])
+
+const updateSelectedVersion = (version: {key: string, label: string}) => {
+  emit('update:selected-version', version)
+}
 </script>

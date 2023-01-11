@@ -24,10 +24,11 @@ export default defineNuxtConfig({
     '@nuxthq/ui',
     '@nuxt/content',
     '@nuxtlabs/github-module',
-    'nuxt-plausible',
+    '@nuxtjs/plausible',
     'nuxt-icon',
     '@nuxtjs/fontaine',
     '@nuxtjs/algolia'
+    // '@nuxt/devtools-edge'
   ],
   htmlValidator: {
     logLevel: 'error',
@@ -69,14 +70,18 @@ export default defineNuxtConfig({
   ],
   runtimeConfig: {
     github: {
-      token: process.env.GITHUB_TOKEN
+      token: '' || process.env.NUXT_GITHUB_TOKEN
     },
     openCollective: {
-      apiKey: process.env.OPEN_COLLECTIVE_API_KEY
+      apiKey: '' || process.env.NUXT_OPEN_COLLECTIVE_API_KEY
+    },
+    sendgrid: {
+      apiKey: process.env.NUXT_SENDGRID_API_KEY,
+      listId: process.env.NUXT_SENDGRID_LIST_ID
     },
     mailjet: {
-      apiKey: process.env.MAILJET_API_KEY,
-      secretKey: process.env.MAILJET_SECRET_KEY
+      apiKey: '' || process.env.NUXT_MAILJET_API_KEY,
+      secretKey: '' || process.env.NUXT_MAILJET_SECRET_KEY
     },
     public: {}
   },
@@ -99,8 +104,13 @@ export default defineNuxtConfig({
       fields: ['redirect', 'titleTemplate', 'image']
     },
     documentDriven: {
+      // @ts-expect-error TODO: ready for https://github.com/nuxt/content/pull/1769
+      host: 'https://nuxt.com',
       surround: false,
       injectPage: false
+    },
+    experimental: {
+      stripQueryParameters: true
     }
   },
   algolia: {
@@ -118,19 +128,23 @@ export default defineNuxtConfig({
       ]
     }
   },
-  newsletter: {
-    revue: {
-      apiKey: process.env.REVUE_API_KEY,
-      component: false
-    }
-  },
   github: {
     disableCache: true,
     maxContributors: 10
   },
+  hooks: {
+    'imports:extend' (imports) {
+      imports.push({
+        name: 'useContentHead',
+        as: 'useContentHead',
+        priority: 10,
+        from: resolve('./composables/useContentHead')
+      })
+    }
+  },
   nitro: {
     prerender: {
-      routes: ['/docs', '/', '/api/jobs.json', '/api/modules.json', '/api/sponsors.json', '/sitemap.xml'],
+      routes: ['/', '/api/jobs.json', '/api/modules.json', '/api/sponsors.json', '/sitemap.xml', '/newsletter'],
       crawlLinks: true
     },
     handlers: [
@@ -139,36 +153,25 @@ export default defineNuxtConfig({
       { handler: resolve('./server/api/sponsors.ts'), route: '/api/sponsors.json' },
       { handler: resolve('./server/routes/sitemap.xml.ts'), route: '/sitemap.xml' }
     ]
-    // hooks: {
-    //   'prerender:generate': (route) => {
-    //     const prerenderedRoutes = [
-    //       '/',
-    //       '/design-kit',
-    //       '/support/solutions',
-    //       '/support/agencies',
-    //       /^\/docs/,
-    //       /^\/api\/_content/
-    //     ]
-
-    //     route.skip = true
-
-    //     prerenderedRoutes.forEach((condition) => {
-    //       if (typeof condition === 'string') {
-    //         if (condition === route.route) { route.skip = false }
-    //       } else if (condition.test(route.route)) { route.skip = false }
-    //     })
-    //   }
-    // }
+  },
+  routeRules: {
+    // prerendered pages
+    '/': { prerender: true },
+    '/design-kit': { prerender: true },
+    '/support/solutions': { prerender: true },
+    '/support/agencies': { prerender: true },
+    '/api/_content/**': { prerender: true },
+    '/api/newsletter/**': { cache: false, swr: false },
+    '/docs/**': { prerender: true },
+    // more frequently updated pages
+    '/modules/**': { swr: 60 },
+    '/partners/**': { swr: 60 },
+    '/showcase': { swr: 60 },
+    '/api/jobs': { swr: 60 },
+    '/api/sponsors': { swr: 60 },
+    '/api/email/**': { swr: 60 },
+    '/api/modules/**': { swr: 60 },
+    // defaults
+    '/**': { cache: { swr: true, maxAge: 120, staleMaxAge: 60, headersOnly: true }, prerender: false }
   }
-  // routeRules: {
-  //   // prerender is not yet implemented, using nitro.prerender.routes and hooks for it in the meantime
-  //   // '/': { prerender: true },
-  //   // '/docs/**': { prerender: true },
-  //   '/**': { cache: { swr: true, maxAge: 120, staleMaxAge: 60, headersOnly: true } },
-  //   '/docs': { redirect: '/docs/getting-started/installation' }
-  //   // '/modules/**': { swr: 60 },
-  //   // '/partners/**': { swr: 60 },
-  //   // '/showcase': { swr: 60 },
-  //   // '/api/**': { swr: 60 }
-  // }
 })

@@ -59,7 +59,7 @@ const links: Ref<NavItem[]> = ref([{
   title: 'Docs',
   icon: 'uil:book-open',
   path: '/docs',
-  _path: '/docs/getting-started/introduction'
+  _path: '/docs'
 }, {
   title: 'Modules',
   icon: 'uil:palette',

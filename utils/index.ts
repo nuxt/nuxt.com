@@ -44,3 +44,9 @@ export const toRelativeDate = (date) => {
     return `${Math.floor(diff / 31536000)} years ago`
   }
 }
+
+export const slugify = (str: string) => str.toLowerCase().replace(/[^a-z0-9 -]/g, ' ').replace(/[\s-]+/g, '-')
+
+export const pickOne = (arr: Array<any>) => {
+  return arr[Math.floor(Math.random() * arr.length)]
+}

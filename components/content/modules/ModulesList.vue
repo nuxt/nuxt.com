@@ -1,20 +1,27 @@
 <template>
-  <Page id="smooth" class="pt-16 -mt-16">
+  <Page v-if="!error" id="smooth" class="pt-16 -mt-16">
     <template #aside>
-      <ModulesAside />
+      <ModulesAside :versions="versions" :selected-version="selectedVersion" @update:selected-version="replaceRoute('version', $event)" />
     </template>
 
     <PageList :title="`${filteredModules.length} module${filteredModules.length > 1 ? 's' : ''} found`">
       <template #heading>
-        <ModulesFilterSearch class="hidden md:block" />
+        <ModulesFilterSearch class="hidden md:block" :q="q" @update:q="replaceRoute('q', $event)" />
       </template>
       <template #filters>
-        <ModulesFilterVersion size="sm" class="lg:hidden" />
-        <ModulesFilterSearch size="sm" class="md:hidden" />
-        <ModulesFilterType class="lg:hidden" />
-        <ModulesFilterCategory class="lg:hidden" />
-        <ModulesFilters class="hidden lg:flex" />
-        <ModulesFilterSort />
+        <ModulesFilterVersion size="sm" :versions="versions" :selected-version="selectedVersion" class="lg:hidden" @update:selected-version="replaceRoute('version', $event)" />
+        <ModulesFilterSearch size="sm" :q="q" class="md:hidden" @update:q="replaceRoute('q', $event)" />
+        <ModulesFilterType class="lg:hidden" :types="types" :selected-type="selectedType" @update:selected-type="replaceRoute('type', $event)" />
+        <ModulesFilterCategory class="lg:hidden" :categories="categories" :selected-category="selectedCategory" @update:selected-category="replaceRoute('category', $event)" />
+        <ModulesFilters class="hidden lg:flex" :selected-category="selectedCategory" :selected-type="selectedType" :q="q" />
+        <ModulesFilterSort
+          :sorts="sorts"
+          :selected-sort="selectedSort"
+          :orders="orders"
+          :selected-order="selectedOrder"
+          @update:order-by="replaceRoute('orderBy', $event)"
+          @update:sort-by="replaceRoute('sortBy', $event)"
+        />
       </template>
 
       <div class="hidden _ellipse lg:block" />
@@ -52,38 +59,35 @@
       </div>
     </PageList>
   </Page>
+  <Page v-else>
+    <p class="text-center">
+      Sorry an error occured while fetching modules...
+    </p>
+  </Page>
 </template>
 
 <script setup lang="ts">
-const { modules, selectedCategory, selectedType, selectedVersion, selectedSort, selectedOrder, q } = useModules()
+const {
+  fetchList,
+  filteredModules,
+  q,
+  versions,
+  selectedVersion,
+  types,
+  selectedType,
+  categories,
+  selectedCategory,
+  orders,
+  selectedOrder,
+  sorts,
+  selectedSort
+} = useModules()
 
-const filteredModules = computed(() => {
-  let filteredModules = [...modules.value]
-    .filter((module) => {
-      if (selectedCategory.value && module.category !== selectedCategory.value.key) {
-        return false
-      }
-      if (selectedType.value && module.type !== selectedType.value.key) {
-        return false
-      }
-      if (selectedVersion.value && !module.tags.includes(selectedVersion.value.key)) {
-        return false
-      }
-      const queryRegExp = searchTextRegExp(q.value as string)
-      if (q.value && !['name', 'npm', 'category', 'description', 'repo'].map(field => module[field]).filter(Boolean).some(value => value.search(queryRegExp) !== -1)) {
-        return false
-      }
+const { createReplaceRoute } = useFilters()
+const replaceRoute = createReplaceRoute('modules')
 
-      return true
-    })
-    .sort((a, b) => b[selectedSort.value.key] - a[selectedSort.value.key])
+const error = await fetchList()
 
-  if (selectedOrder.value.key === 'asc') {
-    filteredModules = filteredModules.reverse()
-  }
-
-  return filteredModules
-})
 </script>
 
 <style scoped>
