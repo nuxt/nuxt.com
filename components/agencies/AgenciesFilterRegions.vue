@@ -1,11 +1,11 @@
 <template>
   <USelectCustom
-    v-if="services.length"
-    v-model="service"
-    name="service"
-    :options="servicesWithPlaceholder"
+    v-if="regions.length"
+    v-model="region"
+    name="region"
+    :options="regionsWithPlaceholder"
     size="sm"
-    placeholder="Service"
+    placeholder="Region"
     text-attribute="title"
     class="min-w-[144px]"
   />
@@ -15,32 +15,32 @@
 import { PropType } from 'vue'
 
 const props = defineProps({
-  services: {
+  regions: {
     type: Array as PropType<{key: string, title: string}[]>,
     default: () => []
   },
-  selectedService: {
+  selectedRegion: {
     type: Object as PropType<{key: string, title: string}>,
     default: () => {}
   }
 })
 
-const emit = defineEmits(['update:selectedService'])
+const emit = defineEmits(['update:selectedRegion'])
 
-const servicesWithPlaceholder = computed(() => [
+const regionsWithPlaceholder = computed(() => [
   {
     key: '',
     title: 'All'
   },
-  ...props.services
+  ...props.regions
 ])
 
-const service = computed({
+const region = computed({
   get () {
-    return props.selectedService
+    return props.selectedRegion
   },
-  set (service) {
-    emit('update:selectedService', service)
+  set (region) {
+    emit('update:selectedRegion', region)
   }
 })
 </script>

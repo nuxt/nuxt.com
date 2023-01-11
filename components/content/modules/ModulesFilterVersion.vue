@@ -15,32 +15,37 @@
 </template>
 
 <script setup lang="ts">
-defineProps({
+import type { PropType } from 'vue'
+
+interface keyLabel {
+  key: string
+  label: string
+}
+
+const props = defineProps({
   size: {
-    type: String,
+    type: String as PropType<'xs' | 'sm'>,
     default: 'xs'
+  },
+  versions: {
+    type: Array as PropType<keyLabel[]>,
+    default: () => []
+  },
+  selectedVersion:
+  {
+    type: Object as PropType<keyLabel>,
+    default: () => {}
   }
 })
 
-const route = useRoute()
-const router = useRouter()
-const { versions, selectedVersion } = useModules()
+const emit = defineEmits(['update:selected-version'])
 
 const version = computed({
   get () {
-    return selectedVersion.value
+    return props.selectedVersion
   },
   set (version) {
-    router.replace({
-      name: 'modules',
-      query: {
-        ...route.query,
-        version: version?.key || undefined
-      },
-      state: {
-        smooth: '#smooth'
-      }
-    })
+    emit('update:selected-version', version)
   }
 })
 </script>

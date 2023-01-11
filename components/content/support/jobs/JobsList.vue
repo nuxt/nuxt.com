@@ -1,14 +1,14 @@
 <template>
   <div class="relative overflow-hidden">
-    <Page id="smooth" class="relative pt-16 -mt-16">
+    <Page v-if="!error" id="smooth" class="relative pt-16 -mt-16">
       <PageList :title="`${filteredJobs.length} job${filteredJobs.length > 1 ? 's' : ''} found`" :modules-filter="false">
         <template #filters>
-          <JobsFilterLocation />
-          <JobsFilterType />
+          <JobsFilterLocation :locations="locations" :selected-location="selectedLocation" @update:location="replaceRoute('location', $event)" />
+          <JobsFilterType :types="types" :selected-type="selectedType" @update:type="replaceRoute('type', $event)" />
         </template>
 
         <ul v-if="filteredJobs.length" class="flex flex-col gap-8 mt-8">
-          <li v-for="job in filteredJobs" :key="job.id">
+          <li v-for="job in filteredJobs" :key="job.link">
             <JobsListItem :job="job" />
           </li>
         </ul>
@@ -19,22 +19,19 @@
         </div>
       </PageList>
     </Page>
+    <Page v-else>
+      <p class="text-center">
+        Sorry an error occured while fetching offers...
+      </p>
+    </Page>
   </div>
 </template>
 
 <script setup lang="ts">
-const { jobs, selectedLocation, selectedType } = useNuxtJobs()
+const { fetchList, filteredJobs, locations, selectedLocation, types, selectedType } = useNuxtJobs()
 
-const filteredJobs = computed(() => {
-  return [...jobs.value.data]
-    .filter((job) => {
-      if (selectedLocation.value && !job.locations.includes(selectedLocation.value.value)) {
-        return false
-      }
-      if (selectedType.value && job.remote !== selectedType.value.value) {
-        return false
-      }
-      return true
-    })
-})
+const error = await fetchList()
+
+const { createReplaceRoute } = useFilters()
+const replaceRoute = createReplaceRoute('support-jobs')
 </script>

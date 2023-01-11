@@ -74,6 +74,14 @@ export interface ResourcesShowcasesListGroup {
   updated_at: string
 }
 
+export interface ShowcaseCategory {
+  id: number,
+  name: string,
+  label: string,
+  to: { name: string, query: { category: string }, state: { smooth: string } },
+  icon?: string
+}
+
 export interface ResourcesShowcasesList {
   created_at: string
   groups: ResourcesShowcasesListGroup[]

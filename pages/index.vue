@@ -6,11 +6,11 @@
 
 <script setup lang="ts">
 const { page } = useContent()
-const { fetch: fetchShowcases } = useResourcesShowcases()
-const { fetch: fetchModules } = useModules()
+const { fetchList: fetchShowcases } = useResourcesShowcases()
+const { fetchList: fetchModules } = useModules()
 
-await fetchShowcases()
-await fetchModules()
+/* resources are needed in the page, start fetching as soon as possible */
+await Promise.all([fetchShowcases(), fetchModules()])
 
 useContentHead(page)
 </script>

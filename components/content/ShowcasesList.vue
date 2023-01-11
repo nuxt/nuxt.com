@@ -1,7 +1,7 @@
 <template>
-  <Page id="smooth" class="pt-16 -mt-16">
+  <Page v-if="!error" id="smooth" class="pt-16 -mt-16">
     <template #aside>
-      <ShowcasesAside />
+      <ShowcasesAside :categories="categories" :selected-category="selectedCategory" />
     </template>
 
     <PageList>
@@ -17,7 +17,7 @@
       </template>
 
       <template #filters>
-        <ShowcasesFilterCategory class="lg:hidden" />
+        <ShowcasesFilterCategory :categories="categories" :selected-category="selectedCategory" class="lg:hidden" @update:selected-category="replaceRoute('category', $event)" />
       </template>
 
       <ul v-if="selectedShowcases.length" class="grid grid-cols-1 gap-8 mt-8 sm:grid-cols-2 xl:grid-cols-3">
@@ -27,20 +27,18 @@
       </ul>
     </PageList>
   </Page>
+  <Page v-else>
+    <p class="text-center">
+      Sorry an error occured while fetching showcases...
+    </p>
+  </Page>
 </template>
 
 <script setup lang="ts">
-const { list, selectedCategory } = useResourcesShowcases()
+const { fetchList, selectedShowcases, categories, selectedCategory } = useResourcesShowcases()
 
-// Computed
-const selectedShowcases = computed(() => {
-  const ids = new Set<number>()
-  return list.value?.groups
-    ?.filter((group, index) => (!selectedCategory.value && index === 0) || group.name === selectedCategory.value?.name)
-    ?.flatMap((group) => {
-      if (ids.has(group.id)) { return [] }
-      ids.add(group.id)
-      return group.showcases
-    }) ?? []
-})
+const error = await fetchList()
+
+const { createReplaceRoute } = useFilters()
+const replaceRoute = createReplaceRoute('showcase')
 </script>

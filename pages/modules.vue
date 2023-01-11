@@ -9,26 +9,7 @@
 </template>
 
 <script setup lang="ts">
-const route = useRoute()
-const { fetch: fetchModules, types } = useModules()
+const { links, fetchList } = useModules()
 
-await fetchModules()
-
-const links = computed(() => {
-  return [
-    {
-      title: 'All',
-      _path: {
-        name: 'modules',
-        query: {
-          ...route.query,
-          type: undefined
-        },
-        state: { smooth: '#smooth' }
-      },
-      active: !route.query.type
-    },
-    ...types.value.map(type => ({ ...type, _path: type.to, exact: true, active: route.query.type === type.key }))
-  ]
-})
+await fetchList()
 </script>

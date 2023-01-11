@@ -11,26 +11,23 @@
 </template>
 
 <script setup lang="ts">
-const { categories, selectedCategory } = useResourcesShowcases()
+import type { ShowcaseCategory } from '~/types'
 
-const route = useRoute()
-const router = useRouter()
+interface Props {
+  categories: ShowcaseCategory[]
+  selectedCategory: ShowcaseCategory
+}
+
+const props = defineProps<Props>()
+
+const emit = defineEmits(['update:selected-category'])
 
 const category = computed({
   get () {
-    return selectedCategory.value
+    return props.selectedCategory
   },
   set (category) {
-    router.replace({
-      name: 'showcase',
-      query: {
-        ...route.query,
-        category: category?.name || undefined
-      },
-      state: {
-        smooth: '#smooth'
-      }
-    })
+    emit('update:selected-category', category.name)
   }
 })
 </script>
