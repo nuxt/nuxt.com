@@ -1,5 +1,5 @@
-import type { Ref } from 'vue'
-import type { ResourcesShowcasesList } from '../types'
+import type { Ref, ComputedRef } from 'vue'
+import type { ResourcesShowcasesList, Category } from '../types'
 
 export const useResourcesShowcases = () => {
   const route = useRoute()
@@ -41,7 +41,7 @@ export const useResourcesShowcases = () => {
   }
 
   // Lists
-  const categories = computed(() => {
+  const categories: ComputedRef<Category[] | []> = computed(() => {
     return showcaseList.value?.groups?.map(group => ({
       key: group.id,
       title: group.name,

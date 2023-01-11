@@ -1,5 +1,5 @@
-import type { Ref } from 'vue'
-import type { Module } from '../types'
+import type { Ref, ComputedRef } from 'vue'
+import type { Module, Category } from '../types'
 
 export const useModules = () => {
   const route = useRoute()
@@ -106,7 +106,7 @@ export const useModules = () => {
       })
   })
 
-  const categories = computed(() => {
+  const categories: ComputedRef<Category[] | []> = computed(() => {
     return [...new Set(modulesByVersion.value.map(module => module.category))].map(category => ({
       key: category,
       title: category,
