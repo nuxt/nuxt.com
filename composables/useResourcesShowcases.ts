@@ -43,8 +43,8 @@ export const useResourcesShowcases = () => {
   // Lists
   const categories = computed(() => {
     return showcaseList.value?.groups?.map(group => ({
-      id: group.id,
-      name: group.name,
+      key: group.id,
+      title: group.name,
       label: group.name,
       to: { name: 'showcase', query: { category: group.name }, state: { smooth: '#smooth' } },
       icon: iconsMap[group.name as keyof typeof iconsMap]
@@ -52,13 +52,13 @@ export const useResourcesShowcases = () => {
   })
 
   const selectedCategory = computed(() => {
-    return categories.value.find(category => category.name === route.query.category) || categories.value[0]
+    return categories.value.find(category => category.title === route.query.category) || categories.value[0]
   })
 
   const selectedShowcases = computed(() => {
     const ids = new Set<number>()
     return showcaseList.value?.groups
-      ?.filter((group, index) => (!selectedCategory.value && index === 0) || group.name === selectedCategory.value?.name)
+      ?.filter((group, index) => (!selectedCategory.value && index === 0) || group.name === selectedCategory.value?.title)
       ?.flatMap((group) => {
         if (ids.has(group.id)) { return [] }
         ids.add(group.id)

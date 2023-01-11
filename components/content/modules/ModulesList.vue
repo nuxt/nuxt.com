@@ -1,7 +1,30 @@
 <template>
   <Page v-if="!error" id="smooth" class="pt-16 -mt-16">
     <template #aside>
-      <ModulesAside :versions="versions" :selected-version="selectedVersion" @update:selected-version="replaceRoute('version', $event)" />
+      <CategoriesAside :categories="categories" :selected-category="selectedCategory" @update:selected-version="replaceRoute('version', $event)">
+        <template #header>
+          <ModulesFilterVersion :versions="versions" :selected-version="selectedVersion" class="mr-1 -my-1" @update:selected-version="replaceRoute('version', $event)" />
+        </template>
+        <template #footer>
+          <div class="flex flex-col gap-2 pt-4 border-t u-border-gray-200">
+            <NuxtLink
+              to="https://github.com/nuxt/modules"
+              target="_blank"
+              class="flex items-center gap-2 text-sm font-medium hover:u-text-gray-900 focus:u-text-gray-900"
+            >
+              <Icon name="fa-brands:github" class="w-4 h-4" />
+              Contribute on GitHub
+            </NuxtLink>
+            <NuxtLink
+              to="/docs/guide/going-further/modules"
+              class="flex items-center gap-2 text-sm font-medium hover:u-text-gray-900 focus:u-text-gray-900"
+            >
+              <Icon name="uil:book-open" class="w-4 h-4" />
+              Module Author guide
+            </NuxtLink>
+          </div>
+        </template>
+      </CategoriesAside>
     </template>
 
     <PageList :title="`${filteredModules.length} module${filteredModules.length > 1 ? 's' : ''} found`">
