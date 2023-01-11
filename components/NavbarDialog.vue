@@ -63,7 +63,7 @@ const isOpen: WritableComputedRef<boolean> = computed({
   }
 })
 
-const selectedLink: Ref<NavItem> = ref(null)
+const selectedLink: Ref<NavItem | null> = ref(null)
 
 const selectLink = () => {
   if (!route.fullPath.startsWith('/docs')) {
@@ -90,8 +90,8 @@ const tree = computed(() => {
     return selectedLink.value.children
   }
 
-  const nav = navigation.value.filter(navLink => props.links.some(link => (navLink._path === `/${link._path.split('/')[1]}`) && (navLink._path !== '/docs')))
-  const docs = navigation.value.filter(navLink => navLink._path === '/docs')
+  const nav = navigation.value.filter((navLink: NavItem) => props.links.some(link => (navLink._path === `/${link._path.split('/')[1]}`) && (navLink._path !== '/docs')))
+  const docs = navigation.value.filter((navLink: NavItem) => navLink._path === '/docs')
   docs[0].icon = 'ph:books'
 
   docs[0].children = formatDocsNav(docs[0]?.children)
@@ -102,7 +102,7 @@ const tree = computed(() => {
   ]
 })
 
-const onSelect = (link) => {
+const onSelect = (link: NavItem | null) => {
   selectedLink.value = link
 }
 </script>
