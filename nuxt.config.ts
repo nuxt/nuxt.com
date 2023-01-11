@@ -167,7 +167,10 @@ export default defineNuxtConfig({
     '/modules/**': { swr: 60 },
     '/partners/**': { swr: 60 },
     '/showcase': { swr: 60 },
-    '/api/**': { swr: 60 },
+    '/api/jobs': { swr: 60 },
+    '/api/sponsors': { swr: 60 },
+    '/api/email/**': { swr: 60 },
+    '/api/modules/**': { swr: 60 },
     // defaults
     '/**': { cache: { swr: true, maxAge: 120, staleMaxAge: 60, headersOnly: true }, prerender: false }
   }

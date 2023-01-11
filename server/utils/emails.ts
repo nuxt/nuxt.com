@@ -1,3 +1,4 @@
+import { createError } from 'h3'
 import mjml2html from 'mjml'
 import Mailjet from 'node-mailjet'
 import { useRuntimeConfig } from '#imports'
