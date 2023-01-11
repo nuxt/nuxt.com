@@ -24,7 +24,7 @@ export default defineNuxtConfig({
     '@nuxthq/ui',
     '@nuxt/content',
     '@nuxtlabs/github-module',
-    'nuxt-plausible',
+    '@nuxtjs/plausible',
     'nuxt-icon',
     '@nuxtjs/fontaine',
     '@nuxtjs/algolia'
@@ -70,18 +70,18 @@ export default defineNuxtConfig({
   ],
   runtimeConfig: {
     github: {
-      token: '' || process.env.NUXT_GITHUB_TOKEN
+      token: process.env.NUXT_GITHUB_TOKEN || ''
     },
     openCollective: {
-      apiKey: '' || process.env.NUXT_OPEN_COLLECTIVE_API_KEY
+      apiKey: process.env.NUXT_OPEN_COLLECTIVE_API_KEY || ''
     },
     sendgrid: {
-      apiKey: process.env.NUXT_SENDGRID_API_KEY,
-      listId: process.env.NUXT_SENDGRID_LIST_ID
+      apiKey: process.env.NUXT_SENDGRID_API_KEY || '',
+      listId: process.env.NUXT_SENDGRID_LIST_ID || ''
     },
     mailjet: {
-      apiKey: '' || process.env.NUXT_MAILJET_API_KEY,
-      secretKey: '' || process.env.NUXT_MAILJET_SECRET_KEY
+      apiKey: process.env.NUXT_MAILJET_API_KEY || '',
+      secretKey: process.env.NUXT_MAILJET_SECRET_KEY || ''
     },
     public: {}
   },
