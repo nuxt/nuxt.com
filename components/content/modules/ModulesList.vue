@@ -1,7 +1,7 @@
 <template>
   <Page v-if="!error" id="smooth" class="pt-16 -mt-16">
     <template #aside>
-      <CategoriesAside :categories="categories" :selected-category="selectedCategory" @update:selected-version="replaceRoute('version', $event)">
+      <CategoriesAside :categories="categories" :selected-category="selectedCategory">
         <template #header>
           <ModulesFilterVersion :versions="versions" :selected-version="selectedVersion" class="mr-1 -my-1" @update:selected-version="replaceRoute('version', $event)" />
         </template>
