@@ -43,11 +43,17 @@
 </template>
 
 <script setup lang="ts">
-import type { ShowcaseCategory } from '~/types'
-interface Props {
-  categories: ShowcaseCategory[]
-  selectedCategory: ShowcaseCategory
-}
+import type { PropType } from 'vue'
+import type { Category } from '~/types'
 
-defineProps<Props>()
+defineProps({
+  categories: {
+    type: Array as PropType<Category[]>,
+    default: []
+  },
+  selectedCategory: {
+    type: Object as PropType<Category | null>,
+    default: null
+  }
+})
 </script>
