@@ -1,7 +1,7 @@
 <template>
   <Page v-if="!error" id="smooth" class="pt-16 -mt-16">
     <template #aside>
-      <CategorieAside :categories="categories" :selected-category="selectedCategory" />
+      <CategoriesAside :categories="categories" :selected-category="selectedCategory" />
     </template>
 
     <PageList>
