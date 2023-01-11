@@ -1010,6 +1010,16 @@
     prettier "^2.7.1"
     std-env "^3.3.1"
 
+"@nuxtjs/plausible@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@nuxtjs/plausible/-/plausible-0.2.0.tgz#07a2c41c2c1cfdfb4578dd5885405a0b4c4ba397"
+  integrity sha512-mke+eW94PCca7zK0kNpNA9ULat5JCrBP2JUCmas6ZKpskU3+IaBv2OzWYzWJb/SsungfV9a/dukKbjAJeBTzhQ==
+  dependencies:
+    "@nuxt/kit" "^3.0.0"
+    defu "^6.1.1"
+    pathe "^1.0.0"
+    plausible-tracker "^0.3.8"
+
 "@nuxtjs/tailwindcss@^6.1.3":
   version "6.1.3"
   resolved "https://registry.yarnpkg.com/@nuxtjs/tailwindcss/-/tailwindcss-6.1.3.tgz#3d131be8879936ba2eb7c23e0b2348f2ad29bd9c"
@@ -7721,16 +7731,6 @@ nuxt-icon@^0.1.8:
   dependencies:
     "@iconify/vue" "^4.0.1"
     "@nuxt/kit" "^3.0.0"
-
-nuxt-plausible@^0.1.2:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/nuxt-plausible/-/nuxt-plausible-0.1.2.tgz#cccf061d267bb2453caf5c410eb7de7fd556381d"
-  integrity sha512-w3Flmonlb73L/IpPkkNfSuUgahXtmp/xyp33MWdqaxMUgwRAdXNZy+YNJyFUPZObp/yruZquisoMy0WLKfcCJQ==
-  dependencies:
-    "@nuxt/kit" "^3.0.0"
-    defu "^6.1.1"
-    pathe "^1.0.0"
-    plausible-tracker "^0.3.8"
 
 nuxt@^3.0.0:
   version "3.0.0"
