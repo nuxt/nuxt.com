@@ -10,6 +10,12 @@ export default defineNuxtConfig({
       dir: '{{ workspaceDir }}/.vercel/output',
     }
   },
+  runtimeConfig: {
+    sandbox: {
+      allowedRepos: ['nuxt/framework', 'nuxt/examples'],
+      allowedBranches: ['main']
+    },
+  },
   content: {
     sources: {
       docs: {

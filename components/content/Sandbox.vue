@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { filename } from 'pathe/utils'
+import type { File } from '~/server/api/example/[...slug].get'
 
 const props = defineProps({
   repo: {
@@ -23,22 +24,6 @@ const props = defineProps({
 // TODO: create examples/ prefix on nuxt/starter
 const command = computed(() => `npx nuxi init -t "gh:${props.repo}/${props.dir}" ${filename(props.dir)}`)
 
-interface File {
-  'type': 'file' | 'dir'
-  name: string
-  path: string
-  content?: string
-}
-
-interface Token {
-  content: string
-  color?: string | { default: string }
-  types: string[]
-}
-
-const images = ['.ico', '.png', '.jpg']
-const isImage = (path?: string) => path && images.some(ext => path.endsWith(ext))
-
 const icons: Record<string, string> = {
   'package.json': 'vscode-icons:file-type-npm',
   'tsconfig.json': 'vscode-icons:file-type-tsconfig',
@@ -54,41 +39,7 @@ function getIcon (filename: string) {
   return icons[filename] ?? icons[filename.split('.').pop()!] ?? `vscode-icons:file-type-${filename.split('.').pop()!}`
 }
 
-const config = useRuntimeConfig()
-const github = $fetch.create({
-  baseURL: 'https://api.github.com/repos',
-  headers: {
-    Authorization: config.github?.token ? `Bearer ${config.github.token}` : ''
-  }
-})
-
-async function fetchFiles (path: string): Promise<File[]> {
-  const promises = []
-  const files = await github<File[]>(`${props.repo}/contents/${path}`)
-
-  files.sort((a, b) => {
-    if (a.type === 'dir' && b.type === 'file') { return -1 }
-    if (a.type === 'file' && b.type === 'dir') { return 1 }
-    return a.name.localeCompare(b.name)
-  })
-
-  for (const file of files) {
-    if (file.type === 'dir') {
-      promises.push(fetchFiles(file.path).then((newFiles) => {
-        const currentIndex = files.indexOf(file)
-        files.splice(currentIndex, files.length, file, ...newFiles, ...files.slice(currentIndex + 1))
-      }))
-    }
-    file.path = file.path.replace(`${props.dir}/`, '')
-  }
-
-  await Promise.all(promises)
-  return files
-}
-
-const { data: _files, error } = await useAsyncData(`${props.repo}-${props.dir}`, () => fetchFiles(props.dir), {
-  default: () => []
-})
+const { data: repoContents } = await useFetch<Record<string, File>>(() => `/api/example/${props.repo}/branch/${props.branch}/dir/${props.dir}`)
 
 const collapsed = ref<string[]>([])
 function toggleCollapsed (dir: string) {
@@ -101,7 +52,7 @@ function toggleCollapsed (dir: string) {
 }
 
 const files = computed(() => {
-  return _files.value?.filter((file) => {
+  return Object.values(repoContents.value || {})?.filter((file) => {
     return !collapsed.value.some(f => file.path.startsWith(f) && f !== file.path)
   })
 })
@@ -109,50 +60,28 @@ const files = computed(() => {
 // TODO: fetch files and links from docs repo
 // const significantFiles: string[] = ['app.vue']
 const significantFiles: string[] = []
-function getColorProps (token: Token) {
-  if (!token.color) {
-    return {}
-  }
-  if (typeof token.color === 'string') {
-    return { style: { color: token.color } }
-  }
-  return { style: { color: token.color.default } }
-}
 
 const activeFile = ref((files.value!.find(f => f.name === props.file) ?? files.value!.find(f => f.type !== 'dir')))
-const { data: content } = await useAsyncData(`${props.repo}-${props.dir}-${activeFile.value?.path}`, async () => {
-  if (!activeFile.value) { return {} }
 
-  const { content } = activeFile.value.content
-    ? activeFile.value
-    : await github<File>(`${props.repo}/contents/${props.dir}/${activeFile.value.path}`)
+function htmlToText (html?: string) {
+  if (!html) { return '' }
 
-  if (isImage(activeFile.value.name)) {
-    return {
-      image: `data:image/png;base64,${content}`
-    }
-  }
+  return html
+    .replace(/<span class="line">/g, '\n')
+    .replace(/<\/?span[^>]*>/g, '')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .trim()
+}
 
-  const ext = activeFile.value.name.split('.').pop()
-  const code = atob(content!)
-
-  return {
-    tokens: await $fetch<Token[][]>('/api/_content/highlight', {
-      method: 'POST',
-      body: {
-        code,
-        lang: ext,
-        theme: 'github-dark'
-      }
-    })
-  }
-}, { watch: [activeFile] })
-
-const code = computed(() => content.value?.tokens?.map(l => l.map(t => t.content).join('')).join('\n'))
+const code = computed(() => repoContents.value && activeFile.value ? htmlToText(repoContents.value[activeFile.value?.path].code) : '')
 
 const RenderCode = defineComponent({
-  render () {
-    return content.value?.tokens?.map(line => h('pre', { class: 'highlighted-code' }, line.length ? line.map(token => h('span', getColorProps(token), [token.content])) : [h('span', {}, [' '])]))
+  setup () {
+    useHead({
+      style: () => activeFile.value?.styles ? [{ innerHTML: activeFile.value.styles }] : []
+    })
+    return () => h('pre', { class: 'highlighted-code', innerHTML: activeFile.value?.code })
   }
 })
 </script>
@@ -259,7 +188,7 @@ const RenderCode = defineComponent({
           </div>
         </div>
         <div class="p-4 border-t-[1px] border-gray-800 overflow-auto max-w-[100vw] text-sm flex-grow">
-          <img v-if="(isImage(activeFile?.name) && content?.image)" :src="content.image">
+          <img v-if="activeFile?.image" :src="activeFile.image">
           <RenderCode v-else />
         </div>
       </div>
@@ -284,20 +213,6 @@ const RenderCode = defineComponent({
   right: 1.5rem;
 }
 
-.highlighted-code:first-child {
-  counter-reset: line;
-}
-.highlighted-code::before {
-  counter-increment: line;
-  content: counter(line);
-  display: inline-block;
-  width: 3rem;
-  margin-left: -2rem;
-  text-align: right;
-  margin-right: 1rem;
-  color: #666;
-}
-
 @media screen and (max-width: 767px) {
   .hide-when-small {
     position: absolute;
@@ -309,6 +224,28 @@ const RenderCode = defineComponent({
     clip: rect(0,0,0,0);
     white-space: nowrap;
     border: 0;
+  }
+}
+</style>
+
+<style lang="postcss">
+.highlighted-code {
+  display: flex;
+  flex-direction: column;
+
+  .line:first-child {
+    counter-reset: line;
+  }
+
+  .line::before {
+    counter-increment: line;
+    content: counter(line);
+    display: inline-block;
+    width: 3rem;
+    margin-left: -2rem;
+    text-align: right;
+    margin-right: 1rem;
+    color: #666;
   }
 }
 </style>

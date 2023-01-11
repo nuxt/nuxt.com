@@ -171,6 +171,7 @@ export default defineNuxtConfig({
     '/api/sponsors': { swr: 60 },
     '/api/email/**': { swr: 60 },
     '/api/modules/**': { swr: 60 },
+    '/api/example/**': { static: true },
     // defaults
     '/**': { cache: { swr: true, maxAge: 120, staleMaxAge: 60, headersOnly: true }, prerender: false }
   }
