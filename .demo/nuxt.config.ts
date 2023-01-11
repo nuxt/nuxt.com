@@ -19,7 +19,7 @@ export default defineNuxtConfig({
         branch: 'main',
         dir: 'docs/content',
         // prefix: '/docs',
-        token: process.env.NUXT_GITHUB_TOKEN
+        token: process.env.NUXT_GITHUB_TOKEN || process.env.GITHUB_TOKEN || ''
       }
     }
   }
