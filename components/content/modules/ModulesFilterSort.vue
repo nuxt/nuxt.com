@@ -22,49 +22,49 @@
 </template>
 
 <script setup lang="ts">
-const route = useRoute()
-const router = useRouter()
+import type { PropType } from 'vue'
 
-const { sorts, selectedSort, orders, selectedOrder } = useModules()
+const props = defineProps({
+  sorts: {
+    type: Array as PropType<{ key: string, label: string }[]>,
+    required: true
+  },
+  selectedSort: {
+    type: Object as PropType<{ key: string, label: string }>,
+    required: true
+  },
+  orders: {
+    type: Array as PropType<{ key: string, label: string, icon: string }[]>,
+    required: true
+  },
+  selectedOrder: {
+    type: Object as PropType<{ key: string, label: string, icon: string }>,
+    required: true
+  }
+})
+
+const emit = defineEmits(['update:sortBy', 'update:orderBy'])
 
 const sortBy = computed({
   get () {
-    return selectedSort.value
+    return props.selectedSort
   },
   set (sortBy) {
-    router.replace({
-      name: 'modules',
-      query: {
-        ...route.query,
-        sortBy: sortBy?.key || undefined
-      },
-      state: {
-        smooth: '#smooth'
-      }
-    })
+    emit('update:sortBy', sortBy)
   }
 })
 
 const orderBy = computed({
   get () {
-    return selectedOrder.value
+    return props.selectedOrder
   },
   set (orderBy: { key: string, label: string, icon: string }) {
-    router.replace({
-      name: 'modules',
-      query: {
-        ...route.query,
-        orderBy: orderBy?.key || undefined
-      },
-      state: {
-        smooth: '#smooth'
-      }
-    })
+    emit('update:orderBy', orderBy)
   }
 })
 
 function switchOrder () {
-  const otherOrder = orders.find(order => order.key !== orderBy.value.key)
-  orderBy.value = otherOrder
+  const otherOrder = props.orders.find(order => order.key !== orderBy.value.key)
+  orderBy.value = otherOrder as { key: string, label: string, icon: string }
 }
 </script>

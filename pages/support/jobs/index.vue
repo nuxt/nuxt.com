@@ -4,9 +4,6 @@
 
 <script setup lang="ts">
 const { page } = useContent()
-const { fetch: fetchJobs } = useNuxtJobs()
-
-await fetchJobs()
 
 useHead({
   title: page.value.title,

@@ -1,5 +1,5 @@
 <template>
-  <Page id="smooth" class="pt-16 -mt-16">
+  <Page v-if="!error" id="smooth" class="pt-16 -mt-16">
     <template #aside>
       <AgenciesAside />
     </template>
@@ -7,8 +7,8 @@
     <PageList :title="`${filteredPartners.length} partner${filteredPartners.length > 1 ? 's' : ''} found`">
       <template #filters>
         <AgenciesFilters class="hidden lg:flex" />
-        <AgenciesFilterServices class="lg:hidden" />
-        <AgenciesFilterLocations class="lg:hidden" />
+        <AgenciesFilterServices :services="services" :selected-service="selectedService" class="lg:hidden" @update:selected-service="replaceRoute('service', $event)" />
+        <AgenciesFilterRegions :regions="regions" :selected-region="selectedRegion" class="lg:hidden" @update:selected-region="replaceRoute('region', $event)" />
       </template>
 
       <div class="hidden _ellipse lg:block" />
@@ -20,10 +20,21 @@
       </ul>
     </PageList>
   </Page>
+  <Page v-else>
+    <p class="text-center">
+      Sorry an error occured while fetching Nuxt partners...
+    </p>
+  </Page>
 </template>
 
 <script setup lang="ts">
-const { filteredPartners } = useAgencyPartners()
+const { filteredPartners, fetchList, services, selectedService, regions, selectedRegion } = useAgencyPartners()
+
+const { createReplaceRoute } = useFilters()
+
+const replaceRoute = createReplaceRoute('support-agencies')
+
+const error = await fetchList()
 </script>
 
 <style scoped>

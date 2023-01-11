@@ -1,24 +1,16 @@
 import type { Ref } from 'vue'
 import type { Agency } from '../types'
-
-const slugify = (str: string) => str.toLowerCase().replace(/[^a-z0-9 -]/g, ' ').replace(/[\s-]+/g, '-')
+import { slugify, pickOne } from '../utils'
 
 export const useAgencyPartners = () => {
   const route = useRoute()
-  const _partners: Ref<Agency[]> = useState('agency-partners', () => [])
-  const pending = ref(false)
+  const partners: Ref<Agency[]> = useState('agency-partners', () => [])
 
-  // Methods
+  // Data fetching
 
-  async function fetch () {
-    if (_partners.value.length) {
-      return
-    }
-
-    pending.value = true
-
+  async function fetchList () {
     try {
-      const data = await queryContent<Agency>('/support/agencies').where({
+      const data = await queryContent('/support/agencies').where({
         $not: {
           _path: {
             $in: ['/support/agencies']
@@ -27,25 +19,13 @@ export const useAgencyPartners = () => {
         _extension: 'md'
       }).find()
 
-      _partners.value = data
-    } catch (e) {
-      _partners.value = []
-    }
-
-    pending.value = false
-  }
-
-  // Computed
-
-  const partners = computed(() => {
-    return [..._partners.value]
-      .map(partner => ({
+      partners.value = data.map(partner => ({
         ...partner,
-        services: (partner.services || []).map(service => ({
+        services: (partner.services || []).map((service: string) => ({
           key: slugify(service),
           title: service
         })),
-        regions: (partner.regions || []).map(region => ({
+        regions: (partner.regions || []).map((region: string) => ({
           key: slugify(region),
           title: region
         })),
@@ -56,15 +36,21 @@ export const useAgencyPartners = () => {
             }
           : null
       }))
-  })
+    } catch (e) {
+      partners.value = []
+      return e
+    }
+  }
+
+  // Computed
 
   const filteredPartners = computed(() => {
     return [...partners.value]
       .filter((partner) => {
-        if (selectedService.value && !partner.services.find(service => service.key === selectedService.value.key)) {
+        if (selectedService.value && !partner.services.find(service => service.key === selectedService.value?.key)) {
           return false
         }
-        if (selectedRegion.value && !partner.regions.find(region => region.key === selectedRegion.value.key)) {
+        if (selectedRegion.value && !partner.regions.find(region => region.key === selectedRegion.value?.key)) {
           return false
         }
 
@@ -154,18 +140,44 @@ export const useAgencyPartners = () => {
     return regions.value.find(region => region.key === route.query.region)
   })
 
-  const pickOne = (arr) => {
-    return arr[Math.floor(Math.random() * arr.length)]
-  }
+  const adPartner = computed(() => pickOne(partners.value))
 
-  const adPartner = computed(() => pickOne(_partners.value))
+  // Faceting filtering
+  const filteredRegions = computed(() => {
+    if (!selectedService.value) {
+      return regions.value
+    }
+
+    /* Flag regions where the selected service is not available */
+    return regions.value.map((region) => {
+      if (!filteredPartners.value.some(partner => partner.regions.some(({ key }) => key === region.key))) {
+        return { ...region, disabled: true }
+      } else {
+        return region
+      }
+    })
+  })
+
+  const filteredServices = computed(() => {
+    if (!selectedRegion.value) {
+      return services.value
+    }
+
+    /* Flag services not available in the selected region */
+    return services.value.map((service) => {
+      if (!filteredPartners.value.some(partner => partner.services.some(({ key }) => key === service.key))) {
+        return { ...service, disabled: true }
+      } else {
+        return service
+      }
+    })
+  })
 
   return {
-    // Http
-    fetch,
-    // Computed
-    partners,
+    fetchList,
     filteredPartners,
+    filteredRegions,
+    filteredServices,
     services,
     locations,
     regions,
