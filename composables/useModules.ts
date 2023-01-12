@@ -1,10 +1,32 @@
-import type { Ref } from 'vue'
-import type { Module } from '../types'
+import type { Ref, ComputedRef } from 'vue'
+import type { Module, Category } from '../types'
 
 export const useModules = () => {
   const route = useRoute()
   const modules: Ref<Module[]> = useState('modules', () => [])
   const module: Ref<Module> = useState('module', () => ({} as Module))
+
+  const iconsMap = {
+    Analytics: 'uil-chart-line',
+    CMS: 'uil-pen',
+    CSS: 'uil-brush-alt',
+    Database: 'uil-database',
+    Date: 'uil-calendar-alt',
+    Deployment: 'uil-cloud',
+    Devtools: 'uil-wrench',
+    Ecommerce: 'uil-shopping-basket',
+    Extensions: 'uil-puzzle-piece',
+    Fonts: 'uil-font',
+    Images: 'uil-image-v',
+    Libraries: 'uil-books',
+    Monitoring: 'uil-stopwatch',
+    Payment: 'uil-dollar-alt',
+    Performance: 'uil-rocket',
+    Request: 'uil-life-ring',
+    Security: 'uil-shield',
+    SEO: 'uil-search-alt',
+    UI: 'uil-palette'
+  }
 
   // Data fetching
   async function fetchList () {
@@ -84,7 +106,7 @@ export const useModules = () => {
       })
   })
 
-  const categories = computed(() => {
+  const categories: ComputedRef<Category[] | []> = computed(() => {
     return [...new Set(modulesByVersion.value.map(module => module.category))].map(category => ({
       key: category,
       title: category,
@@ -95,7 +117,8 @@ export const useModules = () => {
           category: route.query?.category !== category ? category : undefined
         },
         state: { smooth: '#smooth' }
-      }
+      },
+      icon: iconsMap[category as keyof typeof iconsMap]
     })).sort((a, b) => {
       return a.title.localeCompare(b.title)
     })
