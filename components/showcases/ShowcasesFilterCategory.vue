@@ -11,14 +11,19 @@
 </template>
 
 <script setup lang="ts">
-import type { ShowcaseCategory } from '~/types'
+import type { PropType } from 'vue'
+import type { Category } from '~/types'
 
-interface Props {
-  categories: ShowcaseCategory[]
-  selectedCategory: ShowcaseCategory
-}
-
-const props = defineProps<Props>()
+defineProps({
+  categories: {
+    type: Array as PropType<Category[]>,
+    default: () => []
+  },
+  selectedCategory: {
+    type: Object as PropType<Category | null>,
+    default: null
+  }
+})
 
 const emit = defineEmits(['update:selected-category'])
 

@@ -49,7 +49,7 @@ import type { Category } from '~/types'
 defineProps({
   categories: {
     type: Array as PropType<Category[]>,
-    default: []
+    default: () => []
   },
   selectedCategory: {
     type: Object as PropType<Category | null>,
