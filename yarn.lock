@@ -10842,10 +10842,10 @@ vue-instantsearch@^4.3.2:
     instantsearch.js "^4.47.0"
     mitt "^2.1.0"
 
-vue-lite-youtube-embed@^1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/vue-lite-youtube-embed/-/vue-lite-youtube-embed-1.0.4.tgz#e05f6709f3722001e0310e934c5097c00e8a1c8b"
-  integrity sha512-2JZMa8ysGN1TNQwn9KWqSz8aXgZRnwEBlrrKc8Y6hLiIdr3U0D0ltST4sAYLA5L+eUM4Dfsvxp95egKMSYsEXQ==
+vue-lite-youtube-embed@^1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/vue-lite-youtube-embed/-/vue-lite-youtube-embed-1.0.9.tgz#9b8a08611d41fe76540ee0e3a55c75e66dff8148"
+  integrity sha512-0jpUwVmbMtjQU1a1p+yMcAvYTpfHLmxjpz888Hpw/oWa7x6XRQeW2+ZxB31Z8xnsXhrTGoQK+VujKKVI+22OYw==
   dependencies:
     vue-demi latest
 

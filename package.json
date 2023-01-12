@@ -57,7 +57,7 @@
     "sitemap": "^7.1.1",
     "tailwindcss-border-gradient-radius": "^3.0.1",
     "three": "^0.147.0",
-    "vue-lite-youtube-embed": "^1.0.4"
+    "vue-lite-youtube-embed": "^1.0.9"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "^12.0.0",
