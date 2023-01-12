@@ -2,11 +2,11 @@ import { fetchGithubSponsors, fetchOpenCollectiveSponsors } from '../utils/spons
 import { defineCachedEventHandler } from '#imports'
 
 const tiersMap = {
-  platinum: amount => amount >= 2000,
-  gold: amount => amount < 2000 && amount >= 1000,
-  silver: amount => amount < 1000 && amount >= 200,
-  bronze: amount => amount < 200 && amount >= 10,
-  backer: amount => amount < 10
+  platinum: amount => amount >= 1000,
+  gold: amount => amount < 1000 && amount >= 500,
+  silver: amount => amount < 500 && amount >= 200,
+  bronze: amount => amount < 200 && amount >= 100,
+  backer: amount => amount < 100
 }
 
 export default defineCachedEventHandler(async () => {
