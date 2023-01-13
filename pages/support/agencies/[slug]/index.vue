@@ -4,9 +4,9 @@
 
 <script setup lang="ts">
 const { page } = useContent()
-const { fetch: fetchPartners } = useAgencyPartners()
+const { fetchList } = useAgencyPartners()
 
-await fetchPartners()
+await fetchList()
 
 usePageNotFound(page)
 useContentHead(page)
