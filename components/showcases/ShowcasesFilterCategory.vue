@@ -12,9 +12,9 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import type { Category } from '~/types'
+import type { Category } from '../../types'
 
-defineProps({
+const props = defineProps({
   categories: {
     type: Array as PropType<Category[]>,
     default: () => []
