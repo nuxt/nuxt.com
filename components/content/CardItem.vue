@@ -154,9 +154,9 @@ const props = defineProps({
 const hasExternalLink = computed(() => props.to && hasProtocol(props.to))
 
 const onClick = () => {
-  if (props.to && !window.getSelection().toString()) {
+  if (props.to && !window?.getSelection()?.toString()) {
     if (hasExternalLink.value) {
-      window.open(props.to, '_blank').focus()
+      window.open(props.to, '_blank')?.focus()
     } else {
       navigateTo(props.to)
     }
