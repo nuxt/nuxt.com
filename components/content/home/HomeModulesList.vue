@@ -70,6 +70,11 @@ const modulesList = computed(() => {
 </script>
 
 <style scoped lang="postcss">
+
+:root {
+  --gradient-angle: 360deg;
+}
+
 @keyframes scroll {
   0% {
   -webkit-transform: translateX(0);
@@ -157,12 +162,6 @@ const modulesList = computed(() => {
     animation: gradient-rotate 5s linear 0s infinite reverse;
     transition: all 0.3s linear;
   }
-}
-
-@property --gradient-angle {
-  syntax: '<angle>';
-  inherits: false;
-  initial-value: 360deg;
 }
 
 @keyframes gradient-rotate {
