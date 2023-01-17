@@ -5,10 +5,14 @@
     </div>
 
     <UContainer padded class="pb-16 sm:pb-32">
-      <div class="flex flex-col justify-between gap-8 pb-8 -mt-8 sm:gap-4 sm:items-center sm:flex-row md:-mt-12 xl:pb-12">
+      <div
+        class="flex flex-col justify-between gap-8 pb-8 -mt-8 sm:gap-4 sm:items-center sm:flex-row md:-mt-12 xl:pb-12"
+      >
         <div class="flex gap-4 md:gap-8">
           <!-- `z-[1]` is a safari workaround -->
-          <div class="relative z-[1] flex w-32 h-32 p-8 overflow-hidden border md:w-40 md:h-40 md:p-10 rounded-xl u-border-gray-200 flex-shrink-0">
+          <div
+            class="relative z-[1] flex w-32 h-32 p-8 overflow-hidden border md:w-40 md:h-40 md:p-10 rounded-xl u-border-gray-200 flex-shrink-0"
+          >
             <div class="absolute inset-0 bg-white/60 dark:bg-gray-900/70 backdrop-blur-lg" />
             <img v-if="page.logo?.light" :src="page.logo.light" :alt="page.title" class="relative dark:hidden">
             <img v-if="page.logo?.dark" :src="page.logo.dark" :alt="page.title" class="relative hidden dark:block">
@@ -18,8 +22,14 @@
             <h1 class="mb-2 text-3xl font-semibold u-text-black truncate">
               {{ page.title }}
             </h1>
-            <NuxtLink :to="page.link" target="_blank" rel="noopener" class="flex items-center gap-2 font-medium u-text-gray-500 hover:underline">
-              <span class="truncate">{{ websiteDomain }}</span><Icon name="uil:external-link-alt" class="w-5 h-5 flex-shrink-0" />
+            <NuxtLink
+              :to="page.link"
+              target="_blank"
+              rel="noopener"
+              class="flex items-center gap-2 font-medium u-text-gray-500 hover:underline"
+            >
+              <span class="truncate">{{ websiteDomain }}</span>
+              <Icon name="uil:external-link-alt" class="w-5 h-5 flex-shrink-0" />
             </NuxtLink>
           </div>
         </div>
@@ -128,17 +138,35 @@
 
 <script setup lang="ts">
 import type { RouteLocationRaw } from 'vue-router'
+import type { PropType } from 'vue'
+import type { AgencyService, AgencyLocation } from '../../types'
 
 const props = defineProps({
   page: {
-    type: Object,
+    type: Object as PropType<{
+      title: string,
+      link: string,
+      logo:
+      {
+        dark: string,
+        light: string
+      },
+      logoFull: string,
+      fullDescription: string,
+      services: AgencyService[],
+      location: AgencyLocation[],
+      resources: {
+        name: string,
+        url: string
+      }[]
+    }>,
     required: true
   }
 })
 
 useTrackEvent('View Partner', { props: { partner: props.page.title } })
 
-const trackVisit = partner => useTrackEvent('Visit Partner', { props: { partner } })
+const trackVisit = (partner: any) => useTrackEvent('Visit Partner', { props: { partner } })
 
 const websiteDomain = computed(() => {
   let domain
@@ -154,7 +182,7 @@ const websiteDomain = computed(() => {
 
 const router = useRouter()
 
-const onBack = (e) => {
+const onBack = (e: { preventDefault: () => void }) => {
   const lastUrl = router.options.history.state.back as String | null
   if (lastUrl?.startsWith('/support/agencies')) {
     e.preventDefault()
