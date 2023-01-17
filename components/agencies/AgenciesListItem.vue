@@ -25,11 +25,11 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import type { FormattedAgency } from '../../types'
+import type { Agency } from '../../types'
 
 defineProps({
   partner: {
-    type: Object as PropType<FormattedAgency>,
+    type: Object as PropType<Agency>,
     default: () => null
   }
 })

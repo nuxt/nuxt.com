@@ -1,5 +1,5 @@
-import type { Ref } from 'vue'
-import type { Agency } from '../types'
+import type { ComputedRef, Ref } from 'vue'
+import type { Agency, AgencyRegion, AgencyLocation, AgencyService } from '../types'
 import { slugify, pickOne } from '../utils'
 
 export const useAgencyPartners = () => {
@@ -35,7 +35,7 @@ export const useAgencyPartners = () => {
               title: partner.location
             }
           : null
-      }))
+      })) as Agency[]
     } catch (e) {
       partners.value = []
       return e
@@ -44,7 +44,7 @@ export const useAgencyPartners = () => {
 
   // Computed
 
-  const filteredPartners = computed(() => {
+  const filteredPartners: ComputedRef<Agency[]> = computed(() => {
     return [...partners.value]
       .filter((partner) => {
         if (selectedService.value && !partner.services.find(service => service.key === selectedService.value?.key)) {
@@ -58,7 +58,7 @@ export const useAgencyPartners = () => {
       })
   })
 
-  const services = computed(() => {
+  const services: ComputedRef<AgencyService[]> = computed(() => {
     const ids = new Set<string>()
     const services = partners.value.flatMap((partner) => {
       return partner.services.filter((r) => {
@@ -84,9 +84,9 @@ export const useAgencyPartners = () => {
       .sort((a, b) => a.title.localeCompare(b.title))
   })
 
-  const locations = computed(() => {
+  const locations: ComputedRef<AgencyLocation[]> = computed(() => {
     return [...new Set(partners.value.map(partner => partner.location))]
-      .map((location) => {
+      .map((location: AgencyLocation) => {
         return {
           key: location.key,
           title: location.title,
@@ -103,7 +103,7 @@ export const useAgencyPartners = () => {
       .sort((a, b) => a.title.localeCompare(b.title))
   })
 
-  const regions = computed(() => {
+  const regions: ComputedRef<AgencyRegion[]> = computed(() => {
     const ids = new Set<string>()
     const regions = partners.value.flatMap((partner) => {
       return partner.regions.filter((r) => {
@@ -132,18 +132,18 @@ export const useAgencyPartners = () => {
       .sort((a, b) => a.title.localeCompare(b.title))
   })
 
-  const selectedService = computed(() => {
-    return services.value.find(service => service.key === route.query.service)
+  const selectedService: ComputedRef<AgencyService | null> = computed(() => {
+    return services.value.find(service => service.key === route.query.service) || null
   })
 
-  const selectedRegion = computed(() => {
-    return regions.value.find(region => region.key === route.query.region)
+  const selectedRegion: ComputedRef<AgencyRegion | null> = computed(() => {
+    return regions.value.find(region => region.key === route.query.region) || null
   })
 
-  const adPartner = computed(() => pickOne(partners.value))
+  const adPartner: ComputedRef<any> = computed(() => pickOne(partners.value))
 
   // Faceting filtering
-  const filteredRegions = computed(() => {
+  const filteredRegions: ComputedRef<AgencyRegion[]> = computed(() => {
     if (!selectedService.value) {
       return regions.value
     }
@@ -158,7 +158,7 @@ export const useAgencyPartners = () => {
     })
   })
 
-  const filteredServices = computed(() => {
+  const filteredServices: ComputedRef<AgencyService[]> = computed(() => {
     if (!selectedRegion.value) {
       return services.value
     }
