@@ -12,22 +12,26 @@
 </template>
 
 <script setup lang="ts">
-import { PropType } from 'vue'
+import { PropType, WritableComputedRef, ComputedRef } from 'vue'
+import type { AgencyRegion } from 'types'
 
 const props = defineProps({
   regions: {
-    type: Array as PropType<{key: string, title: string}[]>,
+    type: Array as PropType<AgencyRegion[]>,
     default: () => []
   },
   selectedRegion: {
-    type: Object as PropType<{key: string, title: string}>,
-    default: () => {}
+    type: Object as PropType<AgencyRegion>,
+    default: () => { }
   }
 })
 
 const emit = defineEmits(['update:selectedRegion'])
 
-const regionsWithPlaceholder = computed(() => [
+const regionsWithPlaceholder: ComputedRef<(AgencyRegion | {
+  key: string
+  title: string
+})[]> = computed(() => [
   {
     key: '',
     title: 'All'
@@ -35,7 +39,7 @@ const regionsWithPlaceholder = computed(() => [
   ...props.regions
 ])
 
-const region = computed({
+const region: WritableComputedRef<AgencyRegion> = computed({
   get () {
     return props.selectedRegion
   },

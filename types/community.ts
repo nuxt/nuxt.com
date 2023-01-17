@@ -21,6 +21,39 @@ export interface CommunityRepositoryStats {
   collaborators: number
 }
 
+export interface AgencyRegion {
+  key: string
+  title: string
+  disabled?: boolean
+  to: {
+    name: string
+    query: {
+      region: string | undefined
+    }
+    state: {
+      smooth: string
+    }
+  }
+}
+export interface AgencyService {
+  key: string
+  title: string
+  disabled?: boolean,
+  to: {
+    name: string
+    query: {
+      region: string | undefined
+    }
+    state: {
+      smooth: string
+    }
+  }
+}
+export interface AgencyLocation {
+  key: string
+  title: string
+}
+
 export interface Agency extends ParsedContent {
   title: string
   description: string
@@ -29,15 +62,9 @@ export interface Agency extends ParsedContent {
     light: string
     dark: string
   }
-  regions: {key: string, title: string}[]
-  services: {
-    key: string
-    title: string
-  }[]
-  location: {
-    key: string
-    title: string
-  }
+  regions: AgencyRegion[]
+  services: AgencyService[]
+  location: AgencyLocation
 }
 
 export interface CommunityNuxter {
