@@ -4,7 +4,7 @@
       v-for="filter of filters"
       :key="filter?.key"
       :label="filter?.title"
-      :to="filter?.to"
+      :to="filter?.to?.query"
       icon="uil:multiply"
       variant="gray"
       trailing
@@ -16,11 +16,11 @@
 
 <script setup lang="ts">
 import type { ComputedRef } from 'vue'
-import type { AgencyRegion } from 'types'
+import type { FilterItem } from 'types'
 
 const { selectedService, selectedRegion } = useAgencyPartners()
 
-const filters: ComputedRef<(AgencyRegion | null)[]> = computed(() => {
+const filters: ComputedRef<(FilterItem | null)[]> = computed(() => {
   return [selectedService.value, selectedRegion.value].filter(Boolean)
 })
 </script>

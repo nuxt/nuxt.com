@@ -13,22 +13,23 @@
 
 <script setup lang="ts">
 import { PropType, WritableComputedRef, ComputedRef } from 'vue'
-import { AgencyService } from 'types'
+import { FilterItem } from 'types'
 
 const props = defineProps({
   services: {
-    type: Array as PropType<AgencyService[]>,
+    type: Array as PropType<FilterItem[]>,
     default: () => []
   },
   selectedService: {
-    type: Object as PropType<AgencyService>,
-    default: () => { }
+    type: Object as PropType<FilterItem | null>,
+    default: () => {},
+    required: true
   }
 })
 
 const emit = defineEmits(['update:selectedService'])
 
-const servicesWithPlaceholder: ComputedRef<(AgencyService | {
+const servicesWithPlaceholder: ComputedRef<(FilterItem | {
   key: string
   title: string
 })[]> = computed(() => [
@@ -39,11 +40,11 @@ const servicesWithPlaceholder: ComputedRef<(AgencyService | {
   ...props.services
 ])
 
-const service: WritableComputedRef<AgencyService> = computed({
+const service: WritableComputedRef<FilterItem> = computed({
   get () {
-    return props.selectedService
+    return props.selectedService as FilterItem
   },
-  set (service: AgencyService) {
+  set (service: FilterItem) {
     emit('update:selectedService', service)
   }
 })

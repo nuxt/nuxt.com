@@ -11,28 +11,26 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue'
-
-interface Category {
-  key: string
-  title: string
-  to: object
-}
+import type { PropType, ComputedRef, WritableComputedRef } from 'vue'
+import type { FilterItem } from 'types'
 
 const props = defineProps({
   categories: {
-    type: Array as PropType<Category[]>,
+    type: Array as PropType<FilterItem[]>,
     default: () => []
   },
   selectedCategory: {
-    type: Object as PropType<Category>,
+    type: Object as PropType<FilterItem | null>,
     default: () => {}
   }
 })
 
 const emit = defineEmits(['update:selected-category'])
 
-const categoriesWithPlaceholder = computed(() => [
+const categoriesWithPlaceholder: ComputedRef<(FilterItem | {
+    key: string;
+    title: string;
+})[]> = computed(() => [
   {
     key: '',
     title: 'All'
@@ -40,7 +38,7 @@ const categoriesWithPlaceholder = computed(() => [
   ...props.categories
 ])
 
-const category = computed({
+const category: WritableComputedRef<any> = computed({
   get () {
     return props.selectedCategory
   },
