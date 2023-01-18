@@ -27,9 +27,9 @@
         <div class="font-medium sm:text-lg u-text-gray-500" :class="[descriptionWidthClass, { 'text-center': centered }]">
           <ContentSlot :use="$slots.description" unwrap="p" />
         </div>
-        <div v-if="buttons.length" class="lg:flex gap-x-2" :class="{ 'hidden': hidden }">
-          <div v-if="textLeft" class="flex flex-col items-center justify-center sm:flex-row">
-            {{ textLeft }}
+        <div v-if="buttons.length" class="lg:flex gap-x-2" :class="{ 'hidden': buttonsHidden }">
+          <div v-if="buttonsTextLeft" class="flex flex-col items-center justify-center sm:flex-row">
+            {{ buttonsTextLeft }}
           </div>
           <UButton
             v-for="button of buttons"
@@ -61,7 +61,7 @@ defineProps({
     type: Boolean,
     default: false
   },
-  hidden: {
+  buttonsHidden: {
     type: Boolean,
     default: false
   },
@@ -81,7 +81,7 @@ defineProps({
     type: Array as PropType<{ label?: string, variant?: string, to?: string, icon?: string, trailing?: boolean, size?: string }[]>,
     default: () => []
   },
-  textLeft: {
+  buttonsTextLeft: {
     type: String,
     default: ''
   },
