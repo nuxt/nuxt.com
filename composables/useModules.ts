@@ -69,21 +69,21 @@ export const useModules = () => {
   // Data
 
   const versions: FilterItem[] = [
-    { key: '3.x', label: 'v3' },
-    { key: '2.x-bridge', label: 'Bridge' },
-    { key: '2.x', label: 'v2' }
+    { key: '3.x', title: 'v3' },
+    { key: '2.x-bridge', title: 'Bridge' },
+    { key: '2.x', title: 'v2' }
   ]
 
   const sorts: FilterItem[] = [
-    { key: 'downloads', label: 'Downloads' },
-    { key: 'stars', label: 'Stars' },
-    { key: 'publishedAt', label: 'Updated' },
-    { key: 'createdAt', label: 'Created' }
+    { key: 'downloads', title: 'Downloads' },
+    { key: 'stars', title: 'Stars' },
+    { key: 'publishedAt', title: 'Updated' },
+    { key: 'createdAt', title: 'Created' }
   ]
 
   const orders: FilterItem[] = [
-    { key: 'desc', label: 'Desc', icon: 'uil:sort-amount-down' },
-    { key: 'asc', label: 'Asc', icon: 'uil:sort-amount-up' }
+    { key: 'desc', title: 'Desc', icon: 'uil:sort-amount-down' },
+    { key: 'asc', title: 'Asc', icon: 'uil:sort-amount-up' }
   ]
 
   const typesMap: TypeMap = {
