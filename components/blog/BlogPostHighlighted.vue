@@ -23,7 +23,7 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import { formatDateByLocale } from '~/utils'
+import { formatDateByLocale } from '../../utils'
 import type { ResourcesBlogArticle } from '~/types'
 const props = defineProps({
   page: {

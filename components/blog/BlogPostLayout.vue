@@ -92,7 +92,7 @@
 <script setup lang="ts">
 import type { ParsedContent } from '@nuxt/content/dist/runtime/types'
 import type { PropType } from 'vue'
-import { formatDateByLocale } from '~/utils'
+import { formatDateByLocale } from '../../utils'
 const props = defineProps({
   page: {
     type: Object as PropType<ParsedContent>,
