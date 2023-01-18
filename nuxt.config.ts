@@ -69,7 +69,7 @@ export default defineNuxtConfig({
     }
   ],
   runtimeConfig: {
-    github: {
+    githubAPI: {
       token: process.env.NUXT_GITHUB_TOKEN || ''
     },
     openCollective: {
