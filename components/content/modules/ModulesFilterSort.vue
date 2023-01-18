@@ -14,7 +14,7 @@
       name="sortBy"
       :options="sorts"
       size="sm"
-      text-attribute="label"
+      text-attribute="title"
       custom-class="rounded-l-none"
       class="min-w-[144px] w-full md:w-auto"
     />
@@ -22,30 +22,31 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue'
+import type { PropType, WritableComputedRef } from 'vue'
+import type { FilterItem } from 'types'
 
 const props = defineProps({
   sorts: {
-    type: Array as PropType<{ key: string, label: string }[]>,
+    type: Array as PropType<FilterItem[]>,
     required: true
   },
   selectedSort: {
-    type: Object as PropType<{ key: string, label: string }>,
+    type: Object as PropType<FilterItem>,
     required: true
   },
   orders: {
-    type: Array as PropType<{ key: string, label: string, icon: string }[]>,
+    type: Array as PropType<FilterItem[]>,
     required: true
   },
   selectedOrder: {
-    type: Object as PropType<{ key: string, label: string, icon: string }>,
+    type: Object as PropType<FilterItem>,
     required: true
   }
 })
 
 const emit = defineEmits(['update:sortBy', 'update:orderBy'])
 
-const sortBy = computed({
+const sortBy: WritableComputedRef<FilterItem> = computed({
   get () {
     return props.selectedSort
   },
@@ -54,17 +55,17 @@ const sortBy = computed({
   }
 })
 
-const orderBy = computed({
+const orderBy: WritableComputedRef<FilterItem> = computed({
   get () {
     return props.selectedOrder
   },
-  set (orderBy: { key: string, label: string, icon: string }) {
+  set (orderBy: FilterItem) {
     emit('update:orderBy', orderBy)
   }
 })
 
 function switchOrder () {
-  const otherOrder = props.orders.find(order => order.key !== orderBy.value.key)
-  orderBy.value = otherOrder as { key: string, label: string, icon: string }
+  const otherOrder: FilterItem | null = props.orders.find(order => order.key !== orderBy.value.key) || null
+  orderBy.value = otherOrder as FilterItem
 }
 </script>

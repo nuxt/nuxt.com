@@ -1,5 +1,5 @@
 import type { ComputedRef, Ref } from 'vue'
-import type { Agency, AgencyRegion, AgencyLocation, AgencyService } from '../types'
+import type { Agency, FilterItem } from '../types'
 import { slugify, pickOne } from '../utils'
 
 export const useAgencyPartners = () => {
@@ -58,7 +58,7 @@ export const useAgencyPartners = () => {
       })
   })
 
-  const services: ComputedRef<AgencyService[]> = computed(() => {
+  const services: ComputedRef<FilterItem[]> = computed(() => {
     const ids = new Set<string>()
     const services = partners.value.flatMap((partner) => {
       return partner.services.filter((r) => {
@@ -84,9 +84,9 @@ export const useAgencyPartners = () => {
       .sort((a, b) => a.title.localeCompare(b.title))
   })
 
-  const locations: ComputedRef<AgencyLocation[]> = computed(() => {
+  const locations: ComputedRef<FilterItem[]> = computed(() => {
     return [...new Set(partners.value.map(partner => partner.location))]
-      .map((location: AgencyLocation) => {
+      .map((location: any) => {
         return {
           key: location.key,
           title: location.title,
@@ -103,7 +103,7 @@ export const useAgencyPartners = () => {
       .sort((a, b) => a.title.localeCompare(b.title))
   })
 
-  const regions: ComputedRef<AgencyRegion[]> = computed(() => {
+  const regions: ComputedRef<FilterItem[]> = computed(() => {
     const ids = new Set<string>()
     const regions = partners.value.flatMap((partner) => {
       return partner.regions.filter((r) => {
@@ -132,18 +132,18 @@ export const useAgencyPartners = () => {
       .sort((a, b) => a.title.localeCompare(b.title))
   })
 
-  const selectedService: ComputedRef<AgencyService | null> = computed(() => {
+  const selectedService: ComputedRef<FilterItem | null> = computed(() => {
     return services.value.find(service => service.key === route.query.service) || null
   })
 
-  const selectedRegion: ComputedRef<AgencyRegion | null> = computed(() => {
+  const selectedRegion: ComputedRef<FilterItem | null> = computed(() => {
     return regions.value.find(region => region.key === route.query.region) || null
   })
 
   const adPartner: ComputedRef<any> = computed(() => pickOne(partners.value))
 
   // Faceting filtering
-  const filteredRegions: ComputedRef<AgencyRegion[]> = computed(() => {
+  const filteredRegions: ComputedRef<FilterItem[]> = computed(() => {
     if (!selectedService.value) {
       return regions.value
     }
@@ -158,7 +158,7 @@ export const useAgencyPartners = () => {
     })
   })
 
-  const filteredServices: ComputedRef<AgencyService[]> = computed(() => {
+  const filteredServices: ComputedRef<FilterItem[]> = computed(() => {
     if (!selectedRegion.value) {
       return services.value
     }
