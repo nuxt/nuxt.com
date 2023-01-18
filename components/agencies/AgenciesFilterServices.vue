@@ -22,8 +22,7 @@ const props = defineProps({
   },
   selectedService: {
     type: Object as PropType<FilterItem | null>,
-    default: () => {},
-    required: true
+    default: () => {}
   }
 })
 
@@ -40,7 +39,7 @@ const servicesWithPlaceholder: ComputedRef<(FilterItem | {
   ...props.services
 ])
 
-const service: WritableComputedRef<FilterItem> = computed({
+const service: WritableComputedRef<FilterItem | null> = computed({
   get () {
     return props.selectedService as FilterItem
   },
