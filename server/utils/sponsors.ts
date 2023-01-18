@@ -5,7 +5,7 @@ const config = useRuntimeConfig()
 
 const githubHeaders = (headers = {}) => ({
   Accept: 'application/vnd.github.v3+json',
-  Authorization: `token ${config.github.token}`,
+  Authorization: `token ${config.githubAPI.token}`,
   ...headers
 })
 
