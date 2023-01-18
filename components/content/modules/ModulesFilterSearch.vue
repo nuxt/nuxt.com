@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue'
+import type { PropType, WritableComputedRef } from 'vue'
 
 const props = defineProps({
   size: {
@@ -26,7 +26,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:q'])
 
-const query = computed({
+const query: WritableComputedRef<string | number | undefined> = computed({
   get () {
     return props.q
   },

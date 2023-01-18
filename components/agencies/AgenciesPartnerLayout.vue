@@ -139,27 +139,11 @@
 <script setup lang="ts">
 import type { RouteLocationRaw } from 'vue-router'
 import type { PropType } from 'vue'
-import type { AgencyService, AgencyLocation } from '../../types'
+import type { AgencyPage } from '../../types'
 
 const props = defineProps({
   page: {
-    type: Object as PropType<{
-      title: string,
-      link: string,
-      logo:
-      {
-        dark: string,
-        light: string
-      },
-      logoFull: string,
-      fullDescription: string,
-      services: AgencyService[],
-      location: AgencyLocation[],
-      resources: {
-        name: string,
-        url: string
-      }[]
-    }>,
+    type: Object as PropType<AgencyPage>,
     required: true
   }
 })

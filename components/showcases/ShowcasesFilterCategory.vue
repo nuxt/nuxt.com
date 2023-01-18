@@ -11,28 +11,28 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue'
-import type { Category } from '../../types'
+import type { PropType, WritableComputedRef } from 'vue'
+import type { FilterItem } from '../../types'
 
 const props = defineProps({
   categories: {
-    type: Array as PropType<Category[]>,
+    type: Array as PropType<FilterItem[]>,
     default: () => []
   },
   selectedCategory: {
-    type: Object as PropType<Category | null>,
+    type: Object as PropType<FilterItem | undefined>,
     default: null
   }
 })
 
 const emit = defineEmits(['update:selected-category'])
 
-const category = computed({
+const category: WritableComputedRef<FilterItem | undefined> = computed({
   get () {
     return props.selectedCategory
   },
   set (category) {
-    emit('update:selected-category', category.title)
+    emit('update:selected-category', category?.title)
   }
 })
 </script>

@@ -4,7 +4,7 @@
       v-for="filter of filters"
       :key="filter.key"
       :label="filter.title"
-      :to="filter.to"
+      :to="filter.to?.query"
       icon="uil:multiply"
       variant="gray"
       trailing
@@ -15,21 +15,16 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue'
-
-interface filterItem {
-  key: string
-  title: string
-  to: object
-}
+import type { PropType, ComputedRef } from 'vue'
+import type { FilterItem } from '../../../types'
 
 const props = defineProps({
   selectedCategory: {
-    type: Object as PropType<filterItem>,
+    type: Object as PropType<FilterItem | null>,
     default: () => {}
   },
   selectedType: {
-    type: Object as PropType<filterItem>,
+    type: Object as PropType<FilterItem | null>,
     default: () => {}
   },
   q: {
@@ -40,7 +35,7 @@ const props = defineProps({
 
 const route = useRoute()
 
-const filters = computed(() => {
+const filters: ComputedRef<(FilterItem)[]> = computed(() => {
   return [
     props.selectedCategory,
     props.selectedType && {
@@ -68,6 +63,6 @@ const filters = computed(() => {
         }
       }
     }
-  ].filter(Boolean)
+  ].filter(Boolean) as FilterItem[]
 })
 </script>
