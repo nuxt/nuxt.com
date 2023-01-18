@@ -1,7 +1,13 @@
-export interface Category {
-  key: number,
-  title: string,
-  label?: string,
-  to: { name: string, query: { category: string }, state: { smooth: string } },
+export interface FilterItem {
+  key: string
+  title: string
+  disabled?: boolean
   icon?: string
+  to?: {
+    name: string
+    query: Record<string|number, unknown>
+    state: {
+      smooth: string
+    }
+  }
 }
