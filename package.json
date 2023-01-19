@@ -42,7 +42,7 @@
     "@nuxtjs/fontaine": "^0.2.3",
     "@nuxtjs/html-validator": "^1.2.3",
     "@nuxtjs/plausible": "^0.2.0",
-    "@nuxtlabs/github-module": "^1.6.1",
+    "@nuxtlabs/github-module": "^1.5.4",
     "@sendgrid/client": "^7.7.0",
     "@sendgrid/mail": "^7.7.0",
     "@vueuse/core": "^9.6.0",
