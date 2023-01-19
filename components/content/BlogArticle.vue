@@ -1,7 +1,10 @@
-<script setup>
+<script setup lang="ts">
+import type { PropType } from 'vue'
+import type { ResourcesBlogArticleAuthor } from 'types'
+
 defineProps({
   authors: {
-    type: Array,
+    type: Array as PropType<Array<ResourcesBlogArticleAuthor>>,
     default: () => []
   },
   date: {
@@ -17,10 +20,10 @@ defineProps({
       <h1 class="text-4xl font-semibold sm:text-5xl u-text-gray-900">
         <ContentSlot :use="$slots.title" unwrap="p" />
       </h1>
-      <p class="font-medium sm:text-lg u-text-gray-500">
+      <p class="font-medium sm:text-lg text-gray-500">
         <ContentSlot :use="$slots.description" unwrap="p" />
       </p>
-      <div class="flex mb-6 items-center">
+      <div class="flex mb-6 items-center gap-x-2">
         <time class="mr-2 text-sm font-medium">
           {{ date }}
         </time>
