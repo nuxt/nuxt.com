@@ -39,7 +39,7 @@ const servicesWithPlaceholder: ComputedRef<(FilterItem | {
   ...props.services
 ])
 
-const service: WritableComputedRef<FilterItem | null> = computed({
+const service: WritableComputedRef<any> = computed({
   get () {
     return props.selectedService as FilterItem
   },
