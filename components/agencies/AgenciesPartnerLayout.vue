@@ -129,6 +129,23 @@
                 </li>
               </ul>
             </div>
+            <div v-if="socialLinks && socialLinks.length">
+              <h2 class="mb-4 text-2xl font-semibold u-text-gray-900">
+                Social
+              </h2>
+              <ul class="flex flex-row gap-4">
+                <li v-for="(link, index) in socialLinks" :key="index">
+                  <NuxtLink
+                    :to="link.url"
+                    target="_blank"
+                    rel="noopener"
+                    class="flex items-center gap-3 u-text-gray-700 hover:underline"
+                  >
+                    <Icon :name="link.icon" class="w-6 h-6 u-text-gray-900" />
+                  </NuxtLink>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
@@ -138,8 +155,37 @@
 
 <script setup lang="ts">
 import type { RouteLocationRaw } from 'vue-router'
-import type { PropType } from 'vue'
+import type { PropType, ComputedRef } from 'vue'
 import type { AgencyPage } from '../../types'
+
+interface socialLink {
+  [key: string]: string,
+  icon: string,
+  url: string
+}
+
+const socialLinks: ComputedRef<socialLink>[] = computed(() => {
+  const socialLinks: Array<any> = []
+  const keys = ['twitter', 'github', 'linkedin', 'facebook']
+  keys.forEach((social) => {
+    if (props.page[social]) {
+      socialLinks.push({ [social]: props.page[social], icon: `uil:${social}`, url: formatLink(social, props.page[social]) })
+    }
+  })
+  return socialLinks
+})
+
+const formatLink = (social: string, partner: string) => {
+  const socialLink = social === 'twitter'
+    ? 'https://twitter.com/'
+    : social === 'github'
+      ? 'https://github.com/'
+      : social === 'linkedin'
+        ? 'https://www.linkedin.com/company/'
+        : 'https://www.facebook.com/'
+
+  return `${socialLink}${partner}`
+}
 
 const props = defineProps({
   page: {
