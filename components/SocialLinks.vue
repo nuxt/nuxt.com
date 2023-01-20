@@ -25,7 +25,7 @@
       <UButton
         icon="uil:github"
         variant="transparent"
-        to="https://github.com/nuxt/framework"
+        to="https://github.com/nuxt/nuxt"
         target="_blank"
         class="!p-0 u-text-gray-900 focus-visible:ring-2"
         title="Go to Nuxt Github page"
