@@ -1,5 +1,5 @@
-import type { Ref } from 'vue'
-import type { NuxtJob } from '../types'
+import type { Ref, ComputedRef } from 'vue'
+import type { FilterItem, NuxtJob } from '../types'
 import { toRelativeDate } from '../utils'
 
 export const useNuxtJobs = () => {
@@ -35,7 +35,7 @@ export const useNuxtJobs = () => {
 
   // Computed
 
-  const filteredJobs = computed(() => {
+  const filteredJobs: ComputedRef<NuxtJob[]> = computed(() => {
     return [...jobs.value]
       .filter((job) => {
         if (selectedLocation.value && !job.locations.includes(selectedLocation.value.key)) {
@@ -48,27 +48,27 @@ export const useNuxtJobs = () => {
       })
   })
 
-  const locations = computed(() => {
+  const locations: ComputedRef<FilterItem[]> = computed(() => {
     const locations = jobs.value?.map(job => job.locations).flat() || []
     return [...new Set(locations)]
-      .map(l => ({ key: l, label: l }))
-      .sort((a, b) => a.label.localeCompare(b.label))
+      .map(l => ({ key: l, title: l }))
+      .sort((a, b) => a.title.localeCompare(b.title))
   })
 
-  const types = computed(() => {
+  const types: ComputedRef<FilterItem[]> = computed(() => {
     const types = jobs.value?.map(job => job.remote)
     return [...new Set(types)]
       .map((t) => {
-        return { key: t, label: t }
+        return { key: t, title: t }
       })
   })
 
-  const selectedLocation = computed(() => {
-    return locations.value.find(location => location.key === route.query.location)
+  const selectedLocation: ComputedRef<FilterItem | null> = computed(() => {
+    return locations.value.find(location => location.key === route.query.location) || null
   })
 
-  const selectedType = computed(() => {
-    return types.value.find(type => type.key === route.query.type)
+  const selectedType: ComputedRef<FilterItem | null> = computed(() => {
+    return types.value.find(type => type.key === route.query.type) || null
   })
 
   return {

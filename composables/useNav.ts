@@ -5,7 +5,7 @@ export const formatDocsNav = (links) => {
     if (link.title === 'Community') {
       link.children.map((child) => {
         if (child.title === 'Releases') {
-          child.redirect = 'https://github.com/nuxt/framework/releases'
+          child.redirect = 'https://github.com/nuxt/nuxt/releases'
         }
         return child
       })

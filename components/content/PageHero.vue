@@ -27,9 +27,23 @@
         <div class="font-medium sm:text-lg u-text-gray-500" :class="[descriptionWidthClass, { 'text-center': centered }]">
           <ContentSlot :use="$slots.description" unwrap="p" />
         </div>
-
-        <div v-if="buttonText" class="flex">
-          <UButton :to="to" target="_blank" variant="primary-gradient" :label="buttonText" />
+        <div v-if="buttons.length" class="lg:flex gap-x-2" :class="{ 'hidden': buttonsHidden }">
+          <div v-if="buttonsTextLeft" class="flex flex-col items-center justify-center sm:flex-row">
+            {{ buttonsTextLeft }}
+          </div>
+          <UButton
+            v-for="button of buttons"
+            :key="button.label"
+            :variant="button.variant || 'transparent'"
+            :icon="button.icon || undefined"
+            :label="button.label || ''"
+            :to="button.to || null"
+            :trailing="button.trailing"
+            :size="'sm' || button.size"
+            class="focus-visible:ring-2"
+            :download="false"
+            :target="button.target || '_self'"
+          />
         </div>
 
         <ContentSlot :use="$slots.extra" unwrap="p" />
@@ -47,6 +61,10 @@ defineProps({
     type: Boolean,
     default: false
   },
+  buttonsHidden: {
+    type: Boolean,
+    default: false
+  },
   descriptionWidthClass: {
     type: String,
     default: 'sm:max-w-lg'
@@ -59,7 +77,15 @@ defineProps({
     type: Object as PropType<Image>,
     default: () => {}
   },
-  buttonText: {
+  buttons: {
+    type: Array as PropType<{ label?: string, variant?: string, to?: string, icon?: string, trailing?: boolean, size?: string }[]>,
+    default: () => []
+  },
+  buttonsTextLeft: {
+    type: String,
+    default: ''
+  },
+  target: {
     type: String,
     default: ''
   }
