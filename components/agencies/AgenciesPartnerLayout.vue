@@ -141,7 +141,7 @@
                     rel="noopener"
                     class="flex items-center gap-3"
                   >
-                    <Icon :name="link.icon" class="w-6 h-6 u-text-gray-900 transition duration-300 group-hover:u-text-gray-700" />
+                    <Icon :name="link.icon" class="w-6 h-6 u-text-gray-900 transition duration-300 group-hover:u-text-gray-600" />
                   </NuxtLink>
                 </li>
               </ul>
@@ -158,14 +158,14 @@ import type { RouteLocationRaw } from 'vue-router'
 import type { PropType, ComputedRef } from 'vue'
 import type { AgencyPage } from '../../types'
 
-interface socialLink {
+interface SocialLink {
   [key: string]: string,
   icon: string,
   url: string
 }
 
-const socialLinks: ComputedRef<socialLink>[] = computed(() => {
-  const socialLinks: Array<any> = []
+const socialLinks: ComputedRef<SocialLink[]> = computed(() => {
+  const socialLinks: Array<SocialLink> = []
   const keys = ['twitter', 'github', 'linkedin', 'facebook']
   keys.forEach((social) => {
     if (props.page[social]) {
