@@ -129,6 +129,23 @@
                 </li>
               </ul>
             </div>
+            <div v-if="socialLinks && socialLinks.length">
+              <h2 class="mb-4 text-2xl font-semibold u-text-gray-900">
+                Social
+              </h2>
+              <ul class="flex flex-row gap-4">
+                <li v-for="(link, index) in socialLinks" :key="index" class="group">
+                  <NuxtLink
+                    :to="link.url"
+                    target="_blank"
+                    rel="noopener"
+                    class="flex items-center gap-3"
+                  >
+                    <Icon :name="link.icon" class="w-6 h-6 u-text-gray-900 transition duration-300 group-hover:u-text-gray-600" />
+                  </NuxtLink>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
@@ -138,7 +155,7 @@
 
 <script setup lang="ts">
 import type { RouteLocationRaw } from 'vue-router'
-import type { PropType } from 'vue'
+import type { PropType, ComputedRef } from 'vue'
 import type { AgencyPage } from '../../types'
 
 const props = defineProps({
@@ -146,6 +163,46 @@ const props = defineProps({
     type: Object as PropType<AgencyPage>,
     required: true
   }
+})
+
+interface SocialLink {
+  [key: string]: string,
+  icon: string,
+  url: string
+}
+
+const socialsMap = [
+  {
+    key: 'twitter',
+    icon: 'uil:twitter',
+    getUrl: (handle: string) => `https://twitter.com/${handle}`
+  },
+  {
+    key: 'github',
+    icon: 'uil:github',
+    getUrl: (handle: string) => `https://github.com/${handle}`
+  },
+  {
+    key: 'linkedin',
+    icon: 'uil:linkedin',
+    getUrl: (handle: string) => `https://www.linkedin.com/company/${handle}`
+  },
+  {
+    key: 'facebook',
+    icon: 'uil:facebook',
+    getUrl: (handle: string) => `https://www.facebook.com/${handle}`
+  }
+]
+
+const socialLinks: ComputedRef<SocialLink[]> = computed(() => {
+  const socialLinks: Array<SocialLink> = []
+
+  socialsMap.forEach(({ key, icon, getUrl }) => {
+    if (props.page[key]) {
+      socialLinks.push({ key, icon, url: getUrl(props.page[key]) })
+    }
+  })
+  return socialLinks
 })
 
 useTrackEvent('View Partner', { props: { partner: props.page.title } })
