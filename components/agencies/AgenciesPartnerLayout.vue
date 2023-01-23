@@ -134,14 +134,14 @@
                 Social
               </h2>
               <ul class="flex flex-row gap-4">
-                <li v-for="(link, index) in socialLinks" :key="index">
+                <li v-for="(link, index) in socialLinks" :key="index" class="group">
                   <NuxtLink
                     :to="link.url"
                     target="_blank"
                     rel="noopener"
-                    class="flex items-center gap-3 u-text-gray-700 hover:underline"
+                    class="flex items-center gap-3"
                   >
-                    <Icon :name="link.icon" class="w-6 h-6 u-text-gray-900" />
+                    <Icon :name="link.icon" class="w-6 h-6 u-text-gray-900 transition duration-300 group-hover:u-text-gray-700" />
                   </NuxtLink>
                 </li>
               </ul>
