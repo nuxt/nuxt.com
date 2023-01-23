@@ -158,40 +158,51 @@ import type { RouteLocationRaw } from 'vue-router'
 import type { PropType, ComputedRef } from 'vue'
 import type { AgencyPage } from '../../types'
 
+const props = defineProps({
+  page: {
+    type: Object as PropType<AgencyPage>,
+    required: true
+  }
+})
+
 interface SocialLink {
   [key: string]: string,
   icon: string,
   url: string
 }
 
+const socialsMap = [
+  {
+    key: 'twitter',
+    icon: 'uil:twitter',
+    getUrl: (handle: string) => `https://twitter.com/${handle}`
+  },
+  {
+    key: 'github',
+    icon: 'uil:github',
+    getUrl: (handle: string) => `https://github.com/${handle}`
+  },
+  {
+    key: 'linkedin',
+    icon: 'uil:linkedin',
+    getUrl: (handle: string) => `https://www.linkedin.com/company/${handle}`
+  },
+  {
+    key: 'facebook',
+    icon: 'uil:facebook',
+    getUrl: (handle: string) => `https://www.facebook.com/${handle}`
+  }
+]
+
 const socialLinks: ComputedRef<SocialLink[]> = computed(() => {
   const socialLinks: Array<SocialLink> = []
-  const keys = ['twitter', 'github', 'linkedin', 'facebook']
-  keys.forEach((social) => {
-    if (props.page[social]) {
-      socialLinks.push({ [social]: props.page[social], icon: `uil:${social}`, url: formatLink(social, props.page[social]) })
+
+  socialsMap.forEach(({ key, icon, getUrl }) => {
+    if (props.page[key]) {
+      socialLinks.push({ key, icon, url: getUrl(props.page[key]) })
     }
   })
   return socialLinks
-})
-
-const formatLink = (social: string, partner: string) => {
-  const socialLink = social === 'twitter'
-    ? 'https://twitter.com/'
-    : social === 'github'
-      ? 'https://github.com/'
-      : social === 'linkedin'
-        ? 'https://www.linkedin.com/company/'
-        : 'https://www.facebook.com/'
-
-  return `${socialLink}${partner}`
-}
-
-const props = defineProps({
-  page: {
-    type: Object as PropType<AgencyPage>,
-    required: true
-  }
 })
 
 useTrackEvent('View Partner', { props: { partner: props.page.title } })
