@@ -112,7 +112,7 @@ const isClickable = (link: any) => {
 function getLinks () {
   return [
     ...props?.tree?.map((link) => {
-      return { ...link, isCollapsible: link.children?.length && props.level === 0 && link._path.includes('/docs'), collapsed: !link.children?.some(child => child._path.includes(route.path)) }
+      return { ...link, exact: true, isCollapsible: link.children?.length && props.level === 0 && link._path.includes('/docs'), collapsed: !link.children?.some(child => child._path.includes(route.path)) }
     })
   ] as CollapsibleNavItem[]
 }
