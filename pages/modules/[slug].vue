@@ -78,7 +78,7 @@ const { fetchOne, module } = useModules()
 const route = useRoute()
 const { $clipboard } = useNuxtApp()
 
-const links = [
+const links: any[] = [
   { label: 'Overview', to: `/modules/${route.params.slug}`, exact: true },
   { label: 'Changelog', to: `/modules/${route.params.slug}/changelog`, exact: true }
 ]
