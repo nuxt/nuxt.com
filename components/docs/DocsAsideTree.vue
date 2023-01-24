@@ -28,7 +28,7 @@
         </NuxtLink>
         <div v-else class="w-full flex justify-between items-center" @click="tablet ? () => {} : expand(link)">
           <span
-            class="py-1.5 flex w-full"
+            class="py-1.5 flex w-full cursor-pointer"
             :class="linkClass(index, link)"
           >{{ link.title }}</span>
           <span v-if="link.isCollapsible && !tablet">
