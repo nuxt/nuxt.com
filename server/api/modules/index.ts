@@ -12,6 +12,14 @@ export default defineCachedEventHandler(async () => {
   name: 'modules',
   maxAge: 60 * 1000
 })
+// export default defineEventHandler(async () => {
+//   const _modules = await $fetch<Module[]>('https://cdn.jsdelivr.net/npm/@nuxt/modules@latest/modules.json')
+//   const modules: Module[] = await Promise.all(_modules.map(fetchModuleStats)).then(modules => modules.map(assignTagsToModule))
+
+//   return {
+//     modules
+//   }
+// })
 
 async function fetchModuleStats (module: Module) {
   const ghRepo = module.repo.split('#')[0]
