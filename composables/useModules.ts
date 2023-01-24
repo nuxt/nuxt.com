@@ -1,5 +1,4 @@
 import type { Ref, ComputedRef } from 'vue'
-import type { NavItem } from '@nuxt/content/dist/runtime/types'
 import type { Module, FilterItem } from '../types'
 
 export const useModules = () => {
