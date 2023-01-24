@@ -25,12 +25,12 @@
     },
     {
       "source": "/docs/api",
-      "destination": "/docs/api/composables/on-before-route-leave",
+      "destination": "/docs/api/composables/use-app-config",
       "permanent": false
     },
     {
       "source": "/docs/api/composables",
-      "destination": "/docs/api/composables/on-before-route-leave",
+      "destination": "/docs/api/composables/use-app-config",
       "permanent": false
     },
     {
