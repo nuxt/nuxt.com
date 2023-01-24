@@ -104,7 +104,7 @@ export const useModules = () => {
   const modulesByVersion: ComputedRef<Module[]> = computed(() => {
     return [...modules.value]
       .filter((module) => {
-        if (selectedVersion.value && !module.tags.includes(selectedVersion.value.key)) {
+        if (selectedVersion.value && !module.tags.includes(selectedVersion.value.key as string)) {
           return false
         }
 
@@ -186,7 +186,7 @@ export const useModules = () => {
     return route.query.q as string
   })
 
-  const links = computed(() => {
+  const links: ComputedRef<any[]> = computed(() => {
     return [
       {
         title: 'All',

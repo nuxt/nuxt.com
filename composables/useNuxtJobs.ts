@@ -38,7 +38,7 @@ export const useNuxtJobs = () => {
   const filteredJobs: ComputedRef<NuxtJob[]> = computed(() => {
     return [...jobs.value]
       .filter((job) => {
-        if (selectedLocation.value && !job.locations.includes(selectedLocation.value.key)) {
+        if (selectedLocation.value && !job.locations.includes(selectedLocation.value.key as string)) {
           return false
         }
         if (selectedType.value && job.remote !== selectedType.value.key) {

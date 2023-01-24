@@ -1,6 +1,7 @@
 export interface FilterItem {
-  key: string
+  key: string | number
   title: string
+  label?: string
   disabled?: boolean
   icon?: string
   to?: {

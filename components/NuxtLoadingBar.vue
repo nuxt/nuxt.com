@@ -17,12 +17,13 @@ const props = defineProps({
 const data = reactive({
   percent: 0,
   show: false,
-  canSucceed: true
+  canSucceed: true,
+  left: 0
 })
 // Local variables
-let _timer = null
-let _throttle = null
-let _cut
+let _timer: any = null
+let _throttle: any = null
+let _cut: number
 
 // Functions
 const clear = () => {
@@ -46,7 +47,7 @@ const start = () => {
 //   data.canSucceed = true
 //   data.percent = Math.min(100, Math.max(0, Math.floor(num)))
 // }
-const increase = (num) => {
+const increase = (num: number) => {
   data.percent = Math.min(100, Math.floor(data.percent + num))
 }
 // const decrease = (num) => {
