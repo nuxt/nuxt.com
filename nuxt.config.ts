@@ -8,7 +8,7 @@ const docsSource: any = {
   driver: 'github',
   repo: 'nuxt/nuxt',
   branch: 'docs/beta-remote',
-  dir: 'docs-beta',
+  dir: 'docs',
   prefix: '/docs',
   token: process.env.NUXT_GITHUB_TOKEN || process.env.GITHUB_TOKEN || ''
 }
