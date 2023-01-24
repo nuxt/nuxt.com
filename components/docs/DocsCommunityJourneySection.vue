@@ -20,7 +20,7 @@
           :variant="button.variant || 'transparent'"
           :icon="button.icon || undefined"
           :label="button.label || ''"
-          :to="button.to || null"
+          :to="button.to || undefined"
           :trailing="button.trailing"
           :size="'sm' || button.size"
           class="focus-visible:ring-2"
@@ -32,6 +32,7 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
+import type { RouteLocationNormalized, RouteLocationRaw } from 'vue-router'
 
 defineProps({
   fontSizeClass: {
@@ -51,7 +52,7 @@ defineProps({
     default: 'li'
   },
   buttons: {
-    type: Array as PropType<{ label?: string, variant?: string, to?: string, icon?: string, trailing?: boolean, size?: string }[]>,
+    type: Array as PropType<{ label?: string, variant?: string, to?: RouteLocationNormalized | RouteLocationRaw, icon?: string, trailing?: boolean, size?: string }[]>,
     default: () => []
   }
 })

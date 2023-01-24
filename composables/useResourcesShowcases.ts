@@ -1,5 +1,5 @@
 import type { Ref, ComputedRef } from 'vue'
-import type { ResourcesShowcasesList, Category } from '../types'
+import type { ResourcesShowcasesList, FilterItem, ResourcesShowcasesListGroupItem } from '../types'
 
 export const useResourcesShowcases = () => {
   const route = useRoute()
@@ -41,21 +41,22 @@ export const useResourcesShowcases = () => {
   }
 
   // Lists
-  const categories: ComputedRef<Category[] | []> = computed(() => {
-    return showcaseList.value?.groups?.map(group => ({
-      key: group.id,
-      title: group.name,
-      label: group.name,
-      to: { name: 'showcase', query: { category: group.name }, state: { smooth: '#smooth' } },
-      icon: iconsMap[group.name as keyof typeof iconsMap]
-    })) || []
-  })
+  const categories: ComputedRef<FilterItem[] | []> =
+ computed(() => {
+   return showcaseList.value?.groups?.map(group => ({
+     key: group.id,
+     title: group.name,
+     label: group.name,
+     to: { name: 'showcase', query: { category: group.name }, state: { smooth: '#smooth' } },
+     icon: iconsMap[group.name as keyof typeof iconsMap]
+   })) || []
+ })
 
-  const selectedCategory = computed(() => {
+  const selectedCategory: ComputedRef<FilterItem> = computed(() => {
     return categories.value.find(category => category.title === route.query.category) || categories.value[0]
   })
 
-  const selectedShowcases = computed(() => {
+  const selectedShowcases: ComputedRef<ResourcesShowcasesListGroupItem[]> = computed(() => {
     const ids = new Set<number>()
     return showcaseList.value?.groups
       ?.filter((group, index) => (!selectedCategory.value && index === 0) || group.name === selectedCategory.value?.title)

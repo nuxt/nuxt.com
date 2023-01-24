@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
     body: {
       emails: [email]
     }
-  }).catch((err: any) => {
+  }).catch((err) => {
     if (err.code !== 404) {
       throw createError({
         message: err?.response?.body?.errors?.[0]?.message || 'Could not verify contacts list',
@@ -41,7 +41,7 @@ export default defineEventHandler(async (event) => {
     body: {
       contacts: [{ email }]
     }
-  }).catch((err: any) => {
+  }).catch((err) => {
     throw createError({
       message: err?.response?.body?.errors?.[0]?.message || 'Invalid email',
       statusCode: 400
