@@ -13,6 +13,7 @@ const docsSource: any = {
   token: process.env.NUXT_GITHUB_TOKEN || process.env.GITHUB_TOKEN || ''
 }
 if (process.env.NUXT_DOCS_PATH) {
+  console.log(`Using local Nuxt docs from ${process.env.NUXT_DOCS_PATH}`)
   docsSource.driver = 'fs'
   docsSource.base = process.env.NUXT_DOCS_PATH
 }

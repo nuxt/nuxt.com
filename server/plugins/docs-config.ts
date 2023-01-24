@@ -3,6 +3,10 @@ import { upperFirst } from 'scule'
 
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('content:file:beforeParse', async (file) => {
+    // Disable docs readme
+    if (file._id === 'nuxt-docs:docs:README.md') {
+      file.body = '---\nnavigation: false\n---'
+    }
     // Generate the markdown from the schema
     if (file._id === 'nuxt-docs:docs:3.api:6.configuration:nuxt-config.md') {
       const rootSchema = await $fetch<Schema>('https://unpkg.com/@nuxt/schema-edge/schema/config.schema.json')
