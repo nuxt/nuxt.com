@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import type { Sponsor } from 'types'
-
-type SponsorType = 'platinum' | 'silver' | 'gold' | 'sponsor' | 'backers'
+import type { Sponsor, SponsorType } from 'types'
 
 defineProps({
   sponsors: {
