@@ -21,8 +21,8 @@ export default defineNuxtConfig({
   ],
   modules: [
     process.env.NODE_ENV === 'production' ? '@nuxtjs/html-validator' : () => {},
-    '@nuxthq/ui',
     '@nuxt/content',
+    '@nuxthq/ui',
     '@nuxtlabs/github-module',
     '@nuxtjs/plausible',
     'nuxt-icon',
