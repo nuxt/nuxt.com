@@ -13,7 +13,7 @@ export async function validate (body: Object, schema: Joi.Schema) {
       // applies trim to fields
       convert: true
     })
-  } catch (err) {
+  } catch (err: any) {
     let message = 'Invalid body'
     // uses Joi error message if any
     if (err?.details?.length) {

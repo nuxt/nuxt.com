@@ -1,14 +1,13 @@
 <script setup lang="ts">
+import type { PropType } from 'vue'
+
 const props = defineProps({
   /**
        * @values info, success, warning, danger
        */
   type: {
-    type: String,
-    default: 'info',
-    validator (value: string) {
-      return ['info', 'success', 'warning', 'danger'].includes(value)
-    }
+    type: String as PropType<'info' | 'success' | 'warning' | 'danger'>,
+    default: 'info'
   }
 })
 </script>

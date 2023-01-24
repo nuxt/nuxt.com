@@ -44,15 +44,15 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import type { Category } from '~/types'
+import type { FilterItem } from 'types'
 
 defineProps({
   categories: {
-    type: Array as PropType<Category[]>,
+    type: Array as PropType<FilterItem[]>,
     default: () => []
   },
   selectedCategory: {
-    type: Object as PropType<Category | null>,
+    type: Object as PropType<FilterItem | null>,
     default: null
   }
 })

@@ -1,4 +1,5 @@
 import { fetchGithubSponsors, fetchOpenCollectiveSponsors } from '../utils/sponsors'
+import type { Sponsor } from '../../types'
 import { defineCachedEventHandler } from '#imports'
 
 type Tier = (amount: number) => Boolean
@@ -11,7 +12,7 @@ const tiersMap: {[tier: string] : Tier} = {
   backer: amount => amount < 100
 }
 
-export default defineCachedEventHandler(async () => {
+export default defineCachedEventHandler<Sponsor[]>(async () => {
   let sponsors = null
 
   try {

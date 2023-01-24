@@ -1,4 +1,5 @@
 <script lang="ts">
+import type { ComputedRef } from 'vue'
 import { Icon } from '#components'
 
 const iconTypeMap = {
@@ -7,7 +8,7 @@ const iconTypeMap = {
   success: 'heroicons-outline:check-circle',
   warning: 'heroicons-outline:exclamation',
   danger: 'heroicons-outline:exclamation-circle'
-}
+} as any
 
 export default defineComponent({
   props: {
@@ -33,7 +34,7 @@ export default defineComponent({
 
     const { flatUnwrap, unwrap } = useUnwrap()
 
-    const iconName = computed(() => props.icon || iconTypeMap[props.type])
+    const iconName: ComputedRef<any> = computed(() => props.icon || iconTypeMap[props.type])
 
     // Usage of render function is mandatory to access default slot
     // Otherwise Vue warns that slot "default" was invoked outside of the render function

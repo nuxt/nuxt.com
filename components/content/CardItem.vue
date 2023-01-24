@@ -67,7 +67,7 @@
             :variant="button.variant || 'transparent'"
             :icon="button.icon || undefined"
             :label="button.label || ''"
-            :to="button.to || null"
+            :to="button.to || undefined"
             :trailing="button.trailing"
             :size="'sm' || button.size"
             truncate
@@ -80,8 +80,9 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue'
+import type { PropType, ComputedRef } from 'vue'
 import { hasProtocol } from 'ufo'
+import type { RouteLocationNormalized, RouteLocationRaw } from 'vue-router'
 import type { Image } from 'types'
 
 const props = defineProps({
@@ -110,7 +111,7 @@ const props = defineProps({
     default: true
   },
   buttons: {
-    type: Array as PropType<{ label?: string, variant?: string, to?: string, icon?: string, trailing?: boolean, size?: string }[]>,
+    type: Array as PropType<{ label?: string, variant?: string, to?: RouteLocationNormalized | RouteLocationRaw, icon?: string, trailing?: boolean, size?: string }[]>,
     default: () => []
   },
   backgroundImageClass: {
@@ -151,7 +152,7 @@ const props = defineProps({
   }
 })
 
-const hasExternalLink = computed(() => props.to && hasProtocol(props.to))
+const hasExternalLink: ComputedRef<boolean | string> = computed(() => props.to && hasProtocol(props.to))
 
 const onClick = () => {
   if (props.to && !window?.getSelection()?.toString()) {
@@ -162,21 +163,21 @@ const onClick = () => {
     }
   }
 }
-const headerClass = computed(() => {
+const headerClass: ComputedRef<string> = computed(() => {
   return [
     'flex items-center border-none',
     props.headerClass
   ].join(' ')
 })
 
-const ringClass = computed(() => {
+const ringClass: ComputedRef<string> = computed(() => {
   return [
     props.ringClass,
     props.gradientBorder ? 'hover:ring-0' : ''
   ].join(' ')
 })
 
-const backgroundClass = computed(() => {
+const backgroundClass: ComputedRef<string> = computed(() => {
   return [
     props.backgroundClass,
     props.gradientBorder ? 'hover:bg-white hover:dark:bg-gray-900' : props.to ? 'hover:bg-gray-50 hover:dark:bg-gray-900' : ''

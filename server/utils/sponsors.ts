@@ -97,7 +97,7 @@ export const fetchGithubSponsors = async (): Promise<Sponsor[]> => {
   let hasNext = false
 
   do {
-    const query = `query {
+    const query: any = `query {
       organization(login: "nuxt") {
         sponsorshipsAsMaintainer(first: ${first}${cursor ? ` after: "${cursor}"` : ''}) {
           totalCount

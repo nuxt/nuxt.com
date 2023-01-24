@@ -107,10 +107,10 @@ export const useAgencyPartners = () => {
     const ids = new Set<string>()
     const regions = partners.value.flatMap((partner) => {
       return partner.regions.filter((r) => {
-        if (ids.has(r.key)) {
+        if (ids.has(r.key as string)) {
           return false
         }
-        ids.add(r.key)
+        ids.add(r.key as string)
         return true
       })
     })
