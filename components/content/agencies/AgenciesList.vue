@@ -15,6 +15,7 @@
 
       <ul v-if="filteredPartners.length" class="grid grid-cols-1 gap-8 mt-8 sm:grid-cols-2 xl:grid-cols-3">
         <li v-for="filteredPartner in filteredPartners" :key="filteredPartner._id">
+          <CardItem is="div" :background-image="partner.logo" />
           <AgenciesListItem :partner="filteredPartner" />
         </li>
       </ul>
@@ -29,6 +30,19 @@
 
 <script setup lang="ts">
 const { filteredPartners, fetchList, services, selectedService, regions, selectedRegion } = useAgencyPartners()
+
+// export interface Agency extends ParsedContent {
+//   title: string
+//   description: string
+//   _path: string
+//   logo: {
+//     light: string
+//     dark: string
+//   }
+//   regions: FilterItem[]
+//   services: FilterItem[]
+//   location: FilterItem
+// }
 
 const { createReplaceRoute } = useFilters()
 

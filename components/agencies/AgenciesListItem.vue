@@ -1,3 +1,4 @@
+
 <template>
   <UCard padded shadow-class="" class="relative transition duration-200 hover:ring-2 ucard">
     <div class="flex justify-between mt-2 mb-6">
