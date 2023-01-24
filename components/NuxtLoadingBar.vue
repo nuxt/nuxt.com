@@ -21,8 +21,8 @@ const data = reactive({
   left: 0
 })
 // Local variables
-let _timer: NodeJS.Timeout | null = null
-let _throttle: NodeJS.Timeout | null = null
+let _timer: any = null
+let _throttle: any = null
 let _cut: number
 
 // Functions
