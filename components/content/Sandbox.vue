@@ -46,7 +46,7 @@ const props = defineProps({
 
 const colorMode = useColorMode()
 
-const providers = {
+const providers: any = {
   CodeSandBox: () =>
         `https://codesandbox.io/embed/github/${props.repo}/tree/${props.branch}/${props.dir}?hidenavigation=1&theme=${colorMode.value}`,
   StackBlitz: () =>
@@ -59,7 +59,7 @@ const tabs = ref()
 const url = ref('')
 const provider = ref('')
 
-function updateTab (i) {
+function updateTab (i: number) {
   activeTabIndex.value = i
   changeProvider(providersTabs[i].label)
 }
@@ -74,7 +74,7 @@ onMounted(() => {
   setTimeout(() => updateTab(Object.keys(providers).indexOf(provider.value)), 100)
 })
 
-const changeProvider = (value) => {
+const changeProvider = (value: any) => {
   provider.value = value
   url.value = props.src || providers[provider.value]()
   localStorage.setItem('nuxt_sandbox', value)

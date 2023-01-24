@@ -9,6 +9,8 @@
 </template>
 
 <script setup lang="ts">
+import type { ComputedRef } from 'vue'
+
 const props = defineProps({
   link: {
     type: String,
@@ -21,5 +23,5 @@ const props = defineProps({
   }
 })
 
-const computedTitle = computed(() => createTitle(props.title, props.link))
+const computedTitle: ComputedRef<string> = computed(() => createTitle(props.title, props.link))
 </script>

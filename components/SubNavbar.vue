@@ -49,6 +49,9 @@
 </template>
 
 <script setup lang="ts">
+import type { PropType } from 'vue'
+import type { NavItem } from '@nuxt/content/dist/runtime/types'
+
 defineProps({
   title: {
     type: String,
@@ -59,7 +62,7 @@ defineProps({
     default: null
   },
   links: {
-    type: Array,
+    type: Array as PropType<Array<NavItem>>,
     default: () => []
   }
 })
@@ -68,7 +71,7 @@ const route = useRoute()
 const { hasScrolledPastSubNavbar } = useNavbarScroll()
 const { navBottomLink } = useContentHelpers()
 
-function isActive (link) {
+function isActive (link: NavItem) {
   return link.exact ? route.path === link._path : route.path.startsWith(link._path)
 }
 </script>
