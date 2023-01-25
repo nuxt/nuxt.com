@@ -1,5 +1,5 @@
 {
-  "name": "nuxt-website-theme",
+  "name": "nuxt-website",
   "version": "0.3.11",
   "main": "nuxt.config.ts",
   "files": [
@@ -22,12 +22,11 @@
     "tokens.config.ts"
   ],
   "scripts": {
-    "dev": "nuxi prepare && nuxi dev .demo",
-    "build": "nuxi prepare && nuxi build .demo",
-    "generate": "nuxi prepare && nuxi generate .demo",
-    "preview": "nuxi preview .demo",
-    "lint": "eslint --ext .ts,.js,.vue .",
-    "release": "release-it",
+    "dev": "nuxi dev",
+    "build": "nuxi build",
+    "generate": "nuxi generate",
+    "preview": "nuxi preview",
+    "lint": "eslint --ext .",
     "test": "yarn lint"
   },
   "dependencies": {
