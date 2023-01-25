@@ -1,4 +1,4 @@
-import { createResolver } from '@nuxt/kit'
+import { createResolver, logger } from '@nuxt/kit'
 import preset from './ui'
 
 const { resolve } = createResolver(import.meta.url)
@@ -7,13 +7,13 @@ const docsSource: any = {
   name: 'nuxt-docs',
   driver: 'github',
   repo: 'nuxt/nuxt',
-  branch: 'docs/beta-remote',
+  branch: 'main',
   dir: 'docs',
   prefix: '/docs',
   token: process.env.NUXT_GITHUB_TOKEN || process.env.GITHUB_TOKEN || ''
 }
 if (process.env.NUXT_DOCS_PATH) {
-  console.log(`Using local Nuxt docs from ${process.env.NUXT_DOCS_PATH}`)
+  logger.success(`Using local Nuxt docs from ${process.env.NUXT_DOCS_PATH}`)
   docsSource.driver = 'fs'
   docsSource.base = process.env.NUXT_DOCS_PATH
 }
