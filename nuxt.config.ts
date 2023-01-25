@@ -111,7 +111,6 @@ export default defineNuxtConfig({
       fields: ['redirect', 'titleTemplate', 'image']
     },
     documentDriven: {
-      // @ts-expect-error TODO: ready for https://github.com/nuxt/content/pull/1769
       host: 'https://nuxt.com',
       surround: false,
       injectPage: false
