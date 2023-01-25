@@ -1,8 +1,7 @@
 <template>
   <DocsPage :toc="hasToc">
     <ContentRenderer v-if="page" :value="page" />
-    <hr>
-    <div class="u-text-gray-500 py-6">
+    <div class="u-text-gray-500 py-6 border-t u-border-gray-200 mt-4">
       <NuxtLink :to="githubLink" class="hover:text-green-400" target="_blank" rel="noreferer noopener">
         <Icon name="uil:edit" /> Edit on Github
       </NuxtLink>
