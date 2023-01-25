@@ -34,7 +34,8 @@ export default defineNuxtConfig({
     '@nuxtjs/plausible',
     'nuxt-icon',
     '@nuxtjs/fontaine',
-    '@nuxtjs/algolia'
+    '@nuxtjs/algolia',
+    '@nuxthq/studio'
     // '@nuxt/devtools-edge'
   ],
   htmlValidator: {

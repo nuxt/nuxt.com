@@ -9,7 +9,7 @@ specifiers:
   '@nuxt-themes/typography': ^0.1.4
   '@nuxt/content': ^2.3.0
   '@nuxt/devtools-edge': ^0.0.0-27883630.c37cf90
-  '@nuxthq/studio': ^0.3.4
+  '@nuxthq/studio': ^0.3.12
   '@nuxthq/ui': ^0.1.17
   '@nuxtjs/algolia': ^1.3.1
   '@nuxtjs/eslint-config-typescript': ^12.0.0
@@ -43,7 +43,6 @@ dependencies:
   '@nuxt-themes/typography': 0.1.9
   '@nuxt/content': 2.3.0
   '@nuxt/devtools-edge': 0.0.0-27909847.46d1bc3_nuxt@3.1.0
-  '@nuxthq/studio': 0.3.12
   '@nuxthq/ui': 0.1.32
   '@nuxtjs/algolia': 1.5.0
   '@nuxtjs/fontaine': 0.2.4
@@ -67,6 +66,7 @@ dependencies:
   vue-lite-youtube-embed: 1.2.0
 
 devDependencies:
+  '@nuxthq/studio': 0.3.12
   '@nuxtjs/eslint-config-typescript': 12.0.0_7uibuqfxkfaozanbtbziikiqje
   eslint: 8.32.0
   nuxt: 3.1.0_7uibuqfxkfaozanbtbziikiqje
@@ -1534,7 +1534,7 @@ packages:
       - rollup
       - supports-color
       - utf-8-validate
-    dev: false
+    dev: true
 
   /@nuxthq/ui/0.1.32:
     resolution: {integrity: sha512-57+j7xXDXlp/GAmcKpeG4sz6OFypt5BZ5zMGTEgkgnFFC95HI6RbOmanN2hcldgyYmQkTBQAFze6np7lMSAyTw==}
@@ -2118,7 +2118,6 @@ packages:
 
   /@socket.io/component-emitter/3.1.0:
     resolution: {integrity: sha512-+9jVqKhRSpsc591z5vX+X5Yyw+he/HCB4iQ/RYxw35CEPaY1gnsNE43nf9n9AaYjAQrTiI/mOwKUKdUs9vf7Xg==}
-    dev: false
 
   /@swc/helpers/0.3.17:
     resolution: {integrity: sha512-tb7Iu+oZ+zWJZ3HJqwx8oNwSDIU440hmVMDPhpACWQWnrZHK99Bxs70gT1L2dnr5Hg50ZRWEFkQCAnOVVV0z1Q==}
@@ -2507,13 +2506,11 @@ packages:
     dependencies:
       '@volar/source-map': 1.0.24
       muggle-string: 0.1.0
-    dev: false
 
   /@volar/source-map/1.0.24:
     resolution: {integrity: sha512-Qsv/tkplx18pgBr8lKAbM1vcDqgkGKQzbChg6NW+v0CZc3G7FLmK+WrqEPzKlN7Cwdc6XVL559Nod8WKAfKr4A==}
     dependencies:
       muggle-string: 0.1.0
-    dev: false
 
   /@volar/vue-language-core/1.0.24:
     resolution: {integrity: sha512-2NTJzSgrwKu6uYwPqLiTMuAzi7fAY3yFy5PJ255bGJc82If0Xr+cW8pC80vpjG0D/aVLmlwAdO4+Ya2BI8GdDg==}
@@ -2526,7 +2523,6 @@ packages:
       '@vue/shared': 3.2.45
       minimatch: 5.1.6
       vue-template-compiler: 2.7.14
-    dev: false
 
   /@vue/babel-helper-vue-transform-on/1.0.2:
     resolution: {integrity: sha512-hz4R8tS5jMn8lDq6iD+yWL6XNB699pGIVLk7WSJnn1dbpjaazsjZQkieJoRX6gW5zpYSCFqQ7jUquPNY65tQYA==}
@@ -3921,7 +3917,6 @@ packages:
 
   /de-indent/1.0.2:
     resolution: {integrity: sha512-e/1zu3xH5MQryN2zdVaF0OrdNLUbvWxzMbi+iNA6Bky7l1RoP8a2fIbRocyHclXt/arDrrR6lL3TqFD9pMQTsg==}
-    dev: false
 
   /debug/2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
@@ -4255,12 +4250,10 @@ packages:
       - bufferutil
       - supports-color
       - utf-8-validate
-    dev: false
 
   /engine.io-parser/5.0.6:
     resolution: {integrity: sha512-tjuoZDMAdEhVnSFleYPCtdL2GXwVTGtNjoeJd9IhIG3C1xs9uwxqRNEu5WpnDZCaozwVlK/nuQhpodhXSIMaxw==}
     engines: {node: '>=10.0.0'}
-    dev: false
 
   /enhanced-resolve/4.5.0:
     resolution: {integrity: sha512-Nv9m36S/vxpsI+Hc4/ZGRs0n9mXqSWGGq49zxb/cJfPAQMbUtttJAlNPS4AQzaBdw/pKskw5bMbekT/Y7W/Wlg==}
@@ -5750,7 +5743,6 @@ packages:
   /he/1.2.0:
     resolution: {integrity: sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==}
     hasBin: true
-    dev: false
 
   /header-case/2.0.4:
     resolution: {integrity: sha512-H/vuk5TEEVZwrR0lp2zed9OCo1uAILMlx0JEMgC26rzyJJ3N1v6XkwHHXJQdR2doSjcGPM6OKPYoJgf0plJ11Q==}
@@ -7846,7 +7838,6 @@ packages:
 
   /muggle-string/0.1.0:
     resolution: {integrity: sha512-Tr1knR3d2mKvvWthlk7202rywKbiOm4rVFLsfAaSIhJ6dt9o47W4S+JMtWhd/PW9Wrdew2/S2fSvhz3E2gkfEg==}
-    dev: false
 
   /mute-stream/0.0.8:
     resolution: {integrity: sha512-nnbWWOkoWyUsTjKrhgD0dcz22mdkSnpYqbEjIm2nhwhuxlSkpywJmBo8h0ZqJdkp73mb90SssHkN4rsRaBAfAA==}
@@ -8124,7 +8115,7 @@ packages:
     transitivePeerDependencies:
       - rollup
       - supports-color
-    dev: false
+    dev: true
 
   /nuxt-config-schema/0.3.8:
     resolution: {integrity: sha512-+BPBHLKrOCYImBQVcF7k3ZliSK+rT9ZoiqJkbNNbgFyX6VvEzqnYKHYxPhWCS8tD3Dz9HJgNAAPbhBMY17t54Q==}
@@ -8137,7 +8128,6 @@ packages:
     transitivePeerDependencies:
       - rollup
       - supports-color
-    dev: false
 
   /nuxt-icon/0.1.8:
     resolution: {integrity: sha512-oPFlLOZCy80MN+hf49+mBkOIHWVF3sOqZREQZw3qD0N6wGlR15QeRQtKQC8qGeQcc+xvpLQm0GvrdJ8FxFOPYg==}
@@ -10001,7 +9991,6 @@ packages:
       - bufferutil
       - supports-color
       - utf-8-validate
-    dev: false
 
   /socket.io-parser/4.2.2:
     resolution: {integrity: sha512-DJtziuKypFkMMHCm2uIshOYC7QaylbtzQwiMYDuCKy3OPkjLzu4B2vAhTlqipRHHzrI0NJeBAizTK7X+6m1jVw==}
@@ -10011,7 +10000,6 @@ packages:
       debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
-    dev: false
 
   /socks-proxy-agent/5.0.1:
     resolution: {integrity: sha512-vZdmnjb9a2Tz6WEQVIurybSwElwPxMZaIc7PzqbJTrezcKNznv6giT7J7tZDZ1BojVaa1jvO/UiUdhDVB0ACoQ==}
@@ -10588,7 +10576,7 @@ packages:
 
   /typesafe-path/0.2.2:
     resolution: {integrity: sha512-OJabfkAg1WLZSqJAJ0Z6Sdt3utnbzr/jh+NAHoyWHJe8CMSy79Gm085094M9nvTPy22KzTVn5Zq5mbapCI/hPA==}
-    dev: false
+    dev: true
 
   /typescript/4.9.4:
     resolution: {integrity: sha512-Uz+dTXYzxXXbsFpM86Wh3dKCxrQqUcVMxwU54orwlJjOpO3ao8L7j5lH+dWfTwgCwIuM9GQ2kvVotzYJMXTBZg==}
@@ -11216,7 +11204,7 @@ packages:
       '@volar/vue-language-core': 1.0.24
       typesafe-path: 0.2.2
       typescript: 4.9.4
-    dev: false
+    dev: true
 
   /vue-demi/0.13.11:
     resolution: {integrity: sha512-IR8HoEEGM65YY3ZJYAjMlKygDQn25D5ajNFNoKh9RSDMQtlzCxtfQjdQgv9jjK+m3377SsJXY8ysq8kLCZL25A==}
@@ -11295,7 +11283,6 @@ packages:
     dependencies:
       de-indent: 1.0.2
       he: 1.2.0
-    dev: false
 
   /vue/3.2.45:
     resolution: {integrity: sha512-9Nx/Mg2b2xWlXykmCwiTUCWHbWIj53bnkizBxKai1g61f2Xit700A1ljowpTIM11e3uipOeiPcSqnmBg6gyiaA==}
@@ -11489,7 +11476,6 @@ packages:
         optional: true
       utf-8-validate:
         optional: true
-    dev: false
 
   /xdg-basedir/5.1.0:
     resolution: {integrity: sha512-GCPAHLvrIH13+c0SuacwvRYj2SxJXQ4kaVTT5xgL3kPrz56XxkF21IGhjSE1+W0aw7gpBWRGXLCPnPby6lSpmQ==}
@@ -11504,7 +11490,6 @@ packages:
   /xmlhttprequest-ssl/2.0.0:
     resolution: {integrity: sha512-QKxVRxiRACQcVuQEYFsI1hhkrMlrXHPegbbd1yn9UHOmRxY+si12nQYzri3vbzt8VdTTRviqcKxcyllFas5z2A==}
     engines: {node: '>=0.4.0'}
-    dev: false
 
   /xregexp/2.0.0:
     resolution: {integrity: sha512-xl/50/Cf32VsGq/1R8jJE5ajH1yMCQkpmoS10QbFZWl2Oor4H0Me64Pu2yxvsRWK3m6soJbmGfzSR7BYmDcWAA==}
