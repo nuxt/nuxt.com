@@ -35,7 +35,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - run: |
+      - name: warmup jobs, sponsors and modules
+        run: |
           curl -sS $BASE_URL/api/jobs.json
           curl -sS $BASE_URL/api/sponsors.json
           curl -sS $BASE_URL/api/modules.json
