@@ -157,7 +157,7 @@ export default defineNuxtConfig({
       dir: '{{ workspaceDir }}/.vercel/output'
     },
     prerender: {
-      routes: ['/', '/api/jobs.json', '/api/modules.json', '/api/sponsors.json', '/sitemap.xml', '/newsletter'],
+      routes: ['/', '/sitemap.xml', '/newsletter'],
       crawlLinks: true
     },
     handlers: [
