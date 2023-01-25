@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import type { Sponsor } from '../../../../types/sponsors'
+import type { Sponsor, SponsorType } from 'types'
 
 defineProps({
   sponsors: {
@@ -8,10 +8,11 @@ defineProps({
     default: () => []
   },
   sponsorType: {
-    type: String as PropType<'platinum' | 'silver' | 'gold' | 'sponsor' | 'backers'>,
+    type: String as PropType<SponsorType>,
     required: true
   }
 })
+
 </script>
 <template>
   <ul class="w-full" :class="['platinum', 'silver', 'gold'].includes(sponsorType) ? 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12' : 'flex gap-5 flex-wrap'">

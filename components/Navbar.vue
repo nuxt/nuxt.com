@@ -48,7 +48,7 @@
 
 <script setup lang="ts">
 import type { NavItem } from '@nuxt/content/dist/runtime/types'
-import type { Ref } from 'vue'
+import type { Ref, ComputedRef } from 'vue'
 
 const route = useRoute()
 const { hasScrolledPastNavbar } = useNavbarScroll()
@@ -81,9 +81,9 @@ const links: Ref<NavItem[]> = ref([{
   icon: 'uil:globe'
 }])
 
-const visibleLinks = computed(() => links.value.filter(link => !link.hidden))
+const visibleLinks: ComputedRef<NavItem[]> = computed(() => links.value.filter(link => !link.hidden))
 
-function isActive (link) {
+function isActive (link: NavItem) {
   // Workaround for /docs
   return link.exact ? route.fullPath === link._path : route.fullPath.startsWith(link.path || link._path)
 }

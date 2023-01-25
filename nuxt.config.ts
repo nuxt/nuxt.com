@@ -1,28 +1,35 @@
 import { createResolver, logger } from '@nuxt/kit'
-import { version } from './package.json'
 import preset from './ui'
 
 const { resolve } = createResolver(import.meta.url)
-logger.success(`Using Nuxt.com theme v${version}`)
+
+const docsSource: any = {
+  name: 'nuxt-docs',
+  driver: 'github',
+  repo: 'nuxt/nuxt',
+  branch: 'main',
+  dir: 'docs',
+  prefix: '/docs',
+  token: process.env.NUXT_GITHUB_TOKEN || process.env.GITHUB_TOKEN || ''
+}
+if (process.env.NUXT_DOCS_PATH) {
+  logger.success(`Using local Nuxt docs from ${process.env.NUXT_DOCS_PATH}`)
+  docsSource.driver = 'fs'
+  docsSource.base = process.env.NUXT_DOCS_PATH
+}
 
 // https://v3.nuxtjs.org/guide/directory-structure/nuxt.config
 export default defineNuxtConfig({
+  // experimental: { inlineSSRStyles: false },
   extends: '@nuxt-themes/typography',
-  // app: {
-  //   head: {
-  //     script: [
-  //       { src: 'https://masteringnuxt.com/banners/main.js', async: true }
-  //     ]
-  //   }
-  // },
   css: [
     resolve('./assets/css/fonts.css'),
     resolve('./assets/css/style.css')
   ],
   modules: [
     process.env.NODE_ENV === 'production' ? '@nuxtjs/html-validator' : () => {},
-    '@nuxthq/ui',
     '@nuxt/content',
+    '@nuxthq/ui',
     '@nuxtlabs/github-module',
     '@nuxtjs/plausible',
     'nuxt-icon',
@@ -69,7 +76,7 @@ export default defineNuxtConfig({
     }
   ],
   runtimeConfig: {
-    github: {
+    githubAPI: {
       token: process.env.NUXT_GITHUB_TOKEN || ''
     },
     openCollective: {
@@ -111,6 +118,9 @@ export default defineNuxtConfig({
     },
     experimental: {
       stripQueryParameters: true
+    },
+    sources: {
+      docsSource
     }
   },
   algolia: {
@@ -143,6 +153,9 @@ export default defineNuxtConfig({
     }
   },
   nitro: {
+    output: {
+      dir: '{{ workspaceDir }}/.vercel/output'
+    },
     prerender: {
       routes: ['/', '/api/jobs.json', '/api/modules.json', '/api/sponsors.json', '/sitemap.xml', '/newsletter'],
       crawlLinks: true

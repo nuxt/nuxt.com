@@ -1,8 +1,9 @@
 import { SitemapStream, streamToPromise } from 'sitemap'
+import { H3Event } from 'h3'
 import { serverQueryContent } from '#content/server'
 import { defineEventHandler } from '#imports'
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event: H3Event) => {
   const docs = await serverQueryContent(event).find()
 
   const sitemap = new SitemapStream({
@@ -10,7 +11,7 @@ export default defineEventHandler(async (event) => {
   })
   for (const doc of docs) {
     sitemap.write({
-      url: doc._path.replace(/\/_dir$/, ''),
+      url: doc._path?.replace(/\/_dir$/, ''),
       changefreq: 'weekly'
     })
   }
