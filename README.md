@@ -8,11 +8,21 @@ Make sure to install the dependencies
 yarn install
 ```
 
-Create a `.env` file following the `.env.example` file. Ask a team member if needed.
+Copy the `.env.example` file to `.env`:
 
-Clone/Fork the [framework](https://github.com/nuxt/nuxt) repo and follow the [installation guide](https://nuxt.com/docs/community/framework-contribution#set-up-your-local-development-environment)
+```bash
+cp .env.example .env
+```
 
-Create a `.env` file following the `.env.example` file in `docs/`. Ask a team member if needed.
+Clone/Fork the [framework](https://github.com/nuxt/nuxt) repo and inside the `docs/` directory, run:
+
+```bash
+pwd
+```
+
+Copy the output of the command above and paste it in the `NUXT_DOCS_PATH` variable in the `.env` file.
+
+For the other env variables, you can ask the team for the values.
 
 ## Development
 
