@@ -26,7 +26,7 @@ specifiers:
   joi: ^17.7.0
   mjml: ^4.13.0
   node-mailjet: ^6.0.0
-  nuxt: ^3.0.0
+  nuxt: ^3.1.0
   nuxt-icon: ^0.1.8
   ohash: ^1.0.0
   release-it: ^15.5.1
