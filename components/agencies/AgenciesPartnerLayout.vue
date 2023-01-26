@@ -62,7 +62,7 @@
           <p class="mt-8 leading-7 whitespace-pre-wrap u-text-gray-700">
             {{ page.fullDescription }}
           </p>
-          <form @submit.prevent="contactAgency">
+          <form v-if="page.emailAddress" @submit.prevent="contactAgency">
             <div class="flex flex-col gap-4 mt-12 sm:flex-row">
               <UInput
                 v-model="form.company"
@@ -275,13 +275,16 @@ const onBack = (e: { preventDefault: () => void }) => {
   }
 }
 
-const initialForm = {
+/* Contact form */
+
+const initialForm = computed(() => ({
   company: '',
   email: '',
+  agencyEmail: props?.page?.emailAddress,
   message: ''
-}
+}))
 
-const form = reactive({ ...initialForm })
+const form = reactive({ ...initialForm.value })
 const loading = ref(false)
 
 const { $toast } = useNuxtApp()
@@ -295,13 +298,11 @@ const contactAgency = () => {
     body: JSON.stringify(form)
   }).then((data: any) => {
     $toast.success({ title: 'Your message has been sent', description: data.response })
-    Object.assign(form, initialForm)
-  }).catch((err) => {
-    $toast.error({ title: 'An error occured', description: err })
+    Object.assign(form, initialForm.value)
+  }).catch(() => {
+    $toast.error({ title: 'An error occured', description: 'Your message could not be sent, please contact us directly at contact@nuxtlabs.com' })
   }).finally(() => {
     loading.value = false
   })
-
-  // JOI error : {"url":"/api/agencies","statusCode":400,"statusMessage":"","message":"\"message\" is required"}
 }
 </script>
