@@ -111,7 +111,6 @@ export default defineNuxtConfig({
       fields: ['redirect', 'titleTemplate', 'image']
     },
     documentDriven: {
-      // @ts-expect-error TODO: ready for https://github.com/nuxt/content/pull/1769
       host: 'https://nuxt.com',
       surround: false,
       injectPage: false
@@ -157,13 +156,10 @@ export default defineNuxtConfig({
       dir: '{{ workspaceDir }}/.vercel/output'
     },
     prerender: {
-      routes: ['/', '/api/jobs.json', '/api/modules.json', '/api/sponsors.json', '/sitemap.xml', '/newsletter'],
+      routes: ['/', '/sitemap.xml', '/newsletter'],
       crawlLinks: true
     },
     handlers: [
-      { handler: resolve('./server/api/modules/index.ts'), route: '/api/modules.json' },
-      { handler: resolve('./server/api/jobs.ts'), route: '/api/jobs.json' },
-      { handler: resolve('./server/api/sponsors.ts'), route: '/api/sponsors.json' },
       { handler: resolve('./server/routes/sitemap.xml.ts'), route: '/sitemap.xml' }
     ]
   },
