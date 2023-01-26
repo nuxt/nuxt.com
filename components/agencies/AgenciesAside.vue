@@ -6,10 +6,8 @@
       </p>
 
       <ul class="flex flex-col py-4 pr-2 gap-y-2">
-        <li v-for="service in filteredServices" :key="service.key">
-          <span v-if="service.disabled" class="u-text-gray-200">{{ service.title }}</span>
+        <li v-for="service in services" :key="service.key">
           <NuxtLink
-            v-else
             :to="service.to"
             class="relative flex items-center gap-2"
             :class="{
@@ -36,10 +34,8 @@
       </p>
 
       <ul class="flex flex-col py-4 pr-2 gap-y-2">
-        <li v-for="region in filteredRegions" :key="region.key">
-          <span v-if="region.disabled" class="u-text-gray-200">{{ region.title }}</span>
+        <li v-for="region in regions" :key="region.key">
           <NuxtLink
-            v-else
             :to="region.to"
             class="relative flex items-center gap-2"
             :class="{
@@ -63,5 +59,5 @@
 </template>
 
 <script setup lang="ts">
-const { services, regions, selectedService, selectedRegion, filteredRegions, filteredServices } = useAgencyPartners()
+const { services, regions, selectedService, selectedRegion } = useAgencyPartners()
 </script>
