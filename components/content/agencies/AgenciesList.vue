@@ -59,13 +59,8 @@ const { filteredPartners, fetchList, services, selectedService, regions, selecte
 const { createReplaceRoute } = useFilters()
 
 const replaceRoute = createReplaceRoute('support-agencies')
-const router = useRouter()
 
 const error = await fetchList()
-
-const resetQuery = () => {
-  router.replace({ query: {} })
-}
 </script>
 
 <style scoped>
