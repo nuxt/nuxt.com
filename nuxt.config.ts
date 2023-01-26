@@ -156,16 +156,14 @@ export default defineNuxtConfig({
       dir: '{{ workspaceDir }}/.vercel/output'
     },
     prerender: {
-      routes: ['/', '/sitemap.xml', '/newsletter'],
       crawlLinks: true
-    },
-    handlers: [
-      { handler: resolve('./server/routes/sitemap.xml.ts'), route: '/sitemap.xml' }
-    ]
+    }
   },
   routeRules: {
     // prerendered pages
     '/': { prerender: true },
+    '/sitemap.xml': { prerender: true },
+    '/newsletter': { prerender: true },
     '/design-kit': { prerender: true },
     '/support/solutions': { prerender: true },
     '/support/agencies': { prerender: true },
