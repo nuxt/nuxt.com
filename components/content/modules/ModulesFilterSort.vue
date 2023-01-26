@@ -14,7 +14,7 @@
       name="sortBy"
       :options="sorts"
       size="sm"
-      text-attribute="label"
+      text-attribute="title"
       custom-class="rounded-l-none"
       class="min-w-[144px] w-full md:w-auto"
     />
@@ -22,49 +22,50 @@
 </template>
 
 <script setup lang="ts">
-const route = useRoute()
-const router = useRouter()
+import type { PropType, WritableComputedRef } from 'vue'
+import type { FilterItem } from 'types'
 
-const { sorts, selectedSort, orders, selectedOrder } = useModules()
-
-const sortBy = computed({
-  get () {
-    return selectedSort.value
+const props = defineProps({
+  sorts: {
+    type: Array as PropType<FilterItem[]>,
+    required: true
   },
-  set (sortBy) {
-    router.replace({
-      name: 'modules',
-      query: {
-        ...route.query,
-        sortBy: sortBy?.key || undefined
-      },
-      state: {
-        smooth: '#smooth'
-      }
-    })
+  selectedSort: {
+    type: Object as PropType<FilterItem>,
+    required: true
+  },
+  orders: {
+    type: Array as PropType<FilterItem[]>,
+    required: true
+  },
+  selectedOrder: {
+    type: Object as PropType<FilterItem>,
+    required: true
   }
 })
 
-const orderBy = computed({
+const emit = defineEmits(['update:sortBy', 'update:orderBy'])
+
+const sortBy: WritableComputedRef<FilterItem> = computed({
   get () {
-    return selectedOrder.value
+    return props.selectedSort
   },
-  set (orderBy: { key: string, label: string, icon: string }) {
-    router.replace({
-      name: 'modules',
-      query: {
-        ...route.query,
-        orderBy: orderBy?.key || undefined
-      },
-      state: {
-        smooth: '#smooth'
-      }
-    })
+  set (sortBy) {
+    emit('update:sortBy', sortBy)
+  }
+})
+
+const orderBy: WritableComputedRef<FilterItem> = computed({
+  get () {
+    return props.selectedOrder
+  },
+  set (orderBy: FilterItem) {
+    emit('update:orderBy', orderBy)
   }
 })
 
 function switchOrder () {
-  const otherOrder = orders.find(order => order.key !== orderBy.value.key)
-  orderBy.value = otherOrder
+  const otherOrder: FilterItem | null = props.orders.find(order => order.key !== orderBy.value.key) || null
+  orderBy.value = otherOrder as FilterItem
 }
 </script>

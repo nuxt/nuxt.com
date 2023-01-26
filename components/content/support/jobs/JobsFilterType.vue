@@ -6,38 +6,41 @@
     size="sm"
     placeholder="Type"
     class="min-w-[128px]"
+    text-attribute="title"
   />
 </template>
 
 <script setup lang="ts">
-const route = useRoute()
-const router = useRouter()
+import type { PropType, ComputedRef, WritableComputedRef } from 'vue'
+import type { FilterItem } from 'types'
 
-const { types, selectedType } = useNuxtJobs()
-
-const typesWithPlaceholder = computed(() => [
-  {
-    value: '',
-    text: 'All'
+const props = defineProps({
+  types: {
+    type: Array as PropType<FilterItem[]>,
+    default: () => []
   },
-  ...types.value
+  selectedType: {
+    type: Object as PropType<FilterItem | null>,
+    default: () => {}
+  }
+})
+
+const emit = defineEmits(['update:type'])
+
+const typesWithPlaceholder: ComputedRef<FilterItem[]> = computed(() => [
+  {
+    key: '',
+    title: 'All'
+  },
+  ...props.types
 ])
 
-const type = computed({
+const type: WritableComputedRef<any> = computed({
   get () {
-    return selectedType.value
+    return props.selectedType
   },
   set (type) {
-    router.replace({
-      name: 'support-jobs',
-      query: {
-        ...route.query,
-        type: type?.value || undefined
-      },
-      state: {
-        smooth: '#smooth'
-      }
-    })
+    emit('update:type', type)
   }
 })
 </script>

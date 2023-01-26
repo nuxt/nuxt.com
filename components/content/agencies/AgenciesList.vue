@@ -1,5 +1,5 @@
 <template>
-  <Page id="smooth" class="pt-16 -mt-16">
+  <Page v-if="!error" id="smooth" class="pt-16 -mt-16">
     <template #aside>
       <AgenciesAside />
     </template>
@@ -7,23 +7,48 @@
     <PageList :title="`${filteredPartners.length} partner${filteredPartners.length > 1 ? 's' : ''} found`">
       <template #filters>
         <AgenciesFilters class="hidden lg:flex" />
-        <AgenciesFilterServices class="lg:hidden" />
-        <AgenciesFilterLocations class="lg:hidden" />
+        <AgenciesFilterServices :services="services" :selected-service="selectedService" class="lg:hidden" @update:selected-service="replaceRoute('service', $event)" />
+        <AgenciesFilterRegions :regions="regions" :selected-region="selectedRegion" class="lg:hidden" @update:selected-region="replaceRoute('region', $event)" />
       </template>
 
       <div class="hidden _ellipse lg:block" />
 
       <ul v-if="filteredPartners.length" class="grid grid-cols-1 gap-8 mt-8 sm:grid-cols-2 xl:grid-cols-3">
         <li v-for="filteredPartner in filteredPartners" :key="filteredPartner._id">
-          <AgenciesListItem :partner="filteredPartner" />
+          <CardListItem :to="filteredPartner._path">
+            <template #header>
+              <div>
+                <img v-if="filteredPartner.logo?.light" :src="filteredPartner.logo.light" :alt="filteredPartner.title" class="w-auto h-12 dark:hidden">
+                <img v-if="filteredPartner.logo?.dark" :src="filteredPartner.logo.dark" :alt="filteredPartner.title" class="hidden w-auto h-12 dark:block">
+              </div>
+              <span class="text-sm u-text-gray-400">{{ filteredPartner.location.title }}</span>
+            </template>
+            <template #title>
+              {{ filteredPartner.title }}
+            </template>
+            <template #description>
+              {{ filteredPartner.description }}
+            </template>
+          </CardListItem>
         </li>
       </ul>
     </PageList>
   </Page>
+  <Page v-else>
+    <p class="text-center">
+      Sorry an error occured while fetching Nuxt partners...
+    </p>
+  </Page>
 </template>
 
 <script setup lang="ts">
-const { filteredPartners } = useAgencyPartners()
+const { filteredPartners, fetchList, services, selectedService, regions, selectedRegion } = useAgencyPartners()
+
+const { createReplaceRoute } = useFilters()
+
+const replaceRoute = createReplaceRoute('support-agencies')
+
+const error = await fetchList()
 </script>
 
 <style scoped>

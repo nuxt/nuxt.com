@@ -11,34 +11,39 @@
 </template>
 
 <script setup lang="ts">
-const route = useRoute()
-const router = useRouter()
+import type { PropType, ComputedRef, WritableComputedRef } from 'vue'
+import type { FilterItem } from 'types'
 
-const { categories, selectedCategory } = useModules()
+const props = defineProps({
+  categories: {
+    type: Array as PropType<FilterItem[]>,
+    default: () => []
+  },
+  selectedCategory: {
+    type: Object as PropType<FilterItem | null>,
+    default: () => {}
+  }
+})
 
-const categoriesWithPlaceholder = computed(() => [
+const emit = defineEmits(['update:selected-category'])
+
+const categoriesWithPlaceholder: ComputedRef<(FilterItem | {
+    key: string;
+    title: string;
+})[]> = computed(() => [
   {
     key: '',
     title: 'All'
   },
-  ...categories.value
+  ...props.categories
 ])
 
-const category = computed({
+const category: WritableComputedRef<any> = computed({
   get () {
-    return selectedCategory.value
+    return props.selectedCategory
   },
   set (category) {
-    router.replace({
-      name: 'modules',
-      query: {
-        ...route.query,
-        category: category?.key || undefined
-      },
-      state: {
-        smooth: '#smooth'
-      }
-    })
+    emit('update:selected-category', category)
   }
 })
 </script>

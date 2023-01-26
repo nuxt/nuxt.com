@@ -1,3 +1,4 @@
+import { createError } from 'h3'
 import Joi from 'joi'
 
 export async function validate (body: Object, schema: Joi.Schema) {
@@ -12,7 +13,7 @@ export async function validate (body: Object, schema: Joi.Schema) {
       // applies trim to fields
       convert: true
     })
-  } catch (err) {
+  } catch (err: any) {
     let message = 'Invalid body'
     // uses Joi error message if any
     if (err?.details?.length) {

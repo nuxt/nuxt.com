@@ -78,7 +78,7 @@ const { fetchOne, module } = useModules()
 const route = useRoute()
 const { $clipboard } = useNuxtApp()
 
-const links = [
+const links: {label: string, to: string, exact: boolean}[] = [
   { label: 'Overview', to: `/modules/${route.params.slug}`, exact: true },
   { label: 'Changelog', to: `/modules/${route.params.slug}/changelog`, exact: true }
 ]
@@ -90,7 +90,7 @@ await fetchOne(route.params.slug as string)
 // Computed
 const maintainers = computed(() => module.value.maintainers.map(m => ({ src: `https://avatars.githubusercontent.com/${m.github}`, alt: m.name })))
 
-const copyToClipboard = (content) => {
+const copyToClipboard = (content: string) => {
   $clipboard.copy(content, { title: 'Command copied to clipboard!' })
 
   copyIcon.value = 'uil:check'

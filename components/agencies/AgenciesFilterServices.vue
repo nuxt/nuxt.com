@@ -12,33 +12,39 @@
 </template>
 
 <script setup lang="ts">
-const route = useRoute()
-const router = useRouter()
-const { services, selectedService } = useAgencyPartners()
+import { PropType, WritableComputedRef, ComputedRef } from 'vue'
+import { FilterItem } from 'types'
 
-const servicesWithPlaceholder = computed(() => [
+const props = defineProps({
+  services: {
+    type: Array as PropType<FilterItem[]>,
+    default: () => []
+  },
+  selectedService: {
+    type: Object as PropType<FilterItem | null>,
+    default: () => {}
+  }
+})
+
+const emit = defineEmits(['update:selectedService'])
+
+const servicesWithPlaceholder: ComputedRef<(FilterItem | {
+  key: string
+  title: string
+})[]> = computed(() => [
   {
     key: '',
     title: 'All'
   },
-  ...services.value
+  ...props.services
 ])
 
-const service = computed({
+const service: WritableComputedRef<any> = computed({
   get () {
-    return selectedService.value
+    return props.selectedService as FilterItem
   },
-  set (service) {
-    router.push({
-      name: 'support-agencies',
-      query: {
-        ...route.query,
-        service: service?.key || undefined
-      },
-      state: {
-        smooth: '#smooth'
-      }
-    })
+  set (service: FilterItem) {
+    emit('update:selectedService', service)
   }
 })
 </script>

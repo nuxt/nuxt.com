@@ -1,11 +1,8 @@
-import type { Ref } from 'vue'
-import type { ResourcesShowcasesList } from '../types'
+import type { Ref, ComputedRef } from 'vue'
+import type { ResourcesShowcasesList, FilterItem, ResourcesShowcasesListGroupItem } from '../types'
 
 export const useResourcesShowcases = () => {
-  const list: Ref<ResourcesShowcasesList> = useState('resources-showcases-list', () => null)
   const route = useRoute()
-
-  const pending = ref(false)
 
   const iconsMap = {
     Featured: 'uil-star',
@@ -22,55 +19,58 @@ export const useResourcesShowcases = () => {
     Sport: 'uil-basketball'
   }
 
-  // Http
-  async function fetch () {
-    const showcasesListId = 505
+  // Data fetching
+  const showcaseList: Ref<ResourcesShowcasesList | null> = useState('resources-showcases-list', () => null)
+  const showcasesListId = 505
 
-    if (list.value && list.value.id === showcasesListId) {
-      return
+  async function fetchList () {
+    const { data, error } = await useFetch<ResourcesShowcasesList>(`https://api.vuetelescope.com/lists/${showcasesListId}`)
+
+    /* Missing data is handled at component level */
+    if (!data.value && error.value) {
+      return error.value
     }
 
-    pending.value = true
+    // ensure groups & showcases are well sorted
+    data.value?.groups?.sort((a, b) => Number(a.position) - Number(b.position))
+    data.value?.groups?.forEach((group) => {
+      group.showcases.sort((a, b) => Number(a.position) - Number(b.position))
+    })
 
-    try {
-      const data = await $fetch<ResourcesShowcasesList>(`https://api.vuetelescope.com/lists/${showcasesListId}`)
-
-      // ensure groups & showcases are well sorted
-      data.groups?.sort((a, b) => Number(a.position) - Number(b.position))
-      data.groups?.forEach((group) => {
-        group.showcases.sort((a, b) => Number(a.position) - Number(b.position))
-      })
-
-      list.value = data
-    } catch (e) {
-      list.value = null
-    }
-
-    pending.value = false
+    showcaseList.value = data.value
   }
 
-  // Computed
-  const categories = computed(() => {
-    return list.value?.groups?.map(group => ({
-      id: group.id,
-      name: group.name,
-      label: group.name,
-      to: { name: 'showcase', query: { category: group.name }, state: { smooth: '#smooth' } },
-      icon: iconsMap[group.name]
-    })) || []
+  // Lists
+  const categories: ComputedRef<FilterItem[] | []> =
+ computed(() => {
+   return showcaseList.value?.groups?.map(group => ({
+     key: group.id,
+     title: group.name,
+     label: group.name,
+     to: { name: 'showcase', query: { category: group.name }, state: { smooth: '#smooth' } },
+     icon: iconsMap[group.name as keyof typeof iconsMap]
+   })) || []
+ })
+
+  const selectedCategory: ComputedRef<FilterItem> = computed(() => {
+    return categories.value.find(category => category.title === route.query.category) || categories.value[0]
   })
 
-  const selectedCategory = computed(() => {
-    return categories.value.find(category => category.name === route.query.category) || categories.value[0]
+  const selectedShowcases: ComputedRef<ResourcesShowcasesListGroupItem[]> = computed(() => {
+    const ids = new Set<number>()
+    return showcaseList.value?.groups
+      ?.filter((group, index) => (!selectedCategory.value && index === 0) || group.name === selectedCategory.value?.title)
+      ?.flatMap((group) => {
+        if (ids.has(group.id)) { return [] }
+        ids.add(group.id)
+        return group.showcases
+      }) ?? []
   })
 
   return {
-    // Http
-    fetch,
-    // Data
-    list,
-    // Computed
+    fetchList,
     categories,
-    selectedCategory
+    selectedCategory,
+    selectedShowcases
   }
 }

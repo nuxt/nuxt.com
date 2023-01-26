@@ -5,7 +5,7 @@ const config = useRuntimeConfig()
 
 const githubHeaders = (headers = {}) => ({
   Accept: 'application/vnd.github.v3+json',
-  Authorization: `token ${config.github.token}`,
+  Authorization: `token ${config.githubAPI.token}`,
   ...headers
 })
 
@@ -97,7 +97,7 @@ export const fetchGithubSponsors = async (): Promise<Sponsor[]> => {
   let hasNext = false
 
   do {
-    const query = `query {
+    const query: any = `query {
       organization(login: "nuxt") {
         sponsorshipsAsMaintainer(first: ${first}${cursor ? ` after: "${cursor}"` : ''}) {
           totalCount

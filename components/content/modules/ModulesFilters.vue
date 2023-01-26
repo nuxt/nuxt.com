@@ -4,7 +4,7 @@
       v-for="filter of filters"
       :key="filter.key"
       :label="filter.title"
-      :to="filter.to"
+      :to="filter.to?.query"
       icon="uil:multiply"
       variant="gray"
       trailing
@@ -15,26 +15,43 @@
 </template>
 
 <script setup lang="ts">
-const route = useRoute()
-const { selectedCategory, selectedType, q } = useModules()
+import type { PropType, ComputedRef } from 'vue'
+import type { FilterItem } from '../../../types'
 
-const filters = computed(() => {
+const props = defineProps({
+  selectedCategory: {
+    type: Object as PropType<FilterItem | null>,
+    default: () => {}
+  },
+  selectedType: {
+    type: Object as PropType<FilterItem | null>,
+    default: () => {}
+  },
+  q: {
+    type: String,
+    default: ''
+  }
+})
+
+const route = useRoute()
+
+const filters: ComputedRef<(FilterItem)[]> = computed(() => {
   return [
-    selectedCategory.value,
-    selectedType.value && {
-      ...selectedType.value,
+    props.selectedCategory,
+    props.selectedType && {
+      ...props.selectedType,
       to: {
         name: 'modules',
         query: {
           ...route.query,
-          type: route.query?.type !== selectedType.value.key ? selectedType.value.key : undefined
+          type: route.query?.type !== props.selectedType.key ? props.selectedType.key : undefined
         },
         state: { smooth: '#smooth' }
       }
     },
-    q.value && {
+    props.q && {
       key: 'q',
-      title: q.value,
+      title: props.q,
       to: {
         name: 'modules',
         query: {
@@ -46,6 +63,6 @@ const filters = computed(() => {
         }
       }
     }
-  ].filter(Boolean)
+  ].filter(Boolean) as FilterItem[]
 })
 </script>

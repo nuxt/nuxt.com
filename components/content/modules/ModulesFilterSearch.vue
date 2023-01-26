@@ -1,6 +1,6 @@
 <template>
   <UInput
-    v-model="q"
+    v-model="query"
     name="search"
     placeholder="Search an integration"
     class="w-full md:max-w-sm"
@@ -11,31 +11,27 @@
 </template>
 
 <script setup lang="ts">
-defineProps({
+import type { PropType, WritableComputedRef } from 'vue'
+
+const props = defineProps({
   size: {
-    type: String,
+    type: String as PropType<'xs' | 'sm' | 'lg'>,
     default: 'lg'
+  },
+  q: {
+    type: String,
+    default: ''
   }
 })
 
-const route = useRoute()
-const router = useRouter()
+const emit = defineEmits(['update:q'])
 
-const q = computed({
+const query: WritableComputedRef<string | number | undefined> = computed({
   get () {
-    return route.query.q
+    return props.q
   },
-  set (q) {
-    router.replace({
-      name: 'modules',
-      query: {
-        ...route.query,
-        q: q || undefined
-      },
-      state: {
-        stop: 'true'
-      }
-    })
+  set (query) {
+    emit('update:q', query)
   }
 })
 </script>

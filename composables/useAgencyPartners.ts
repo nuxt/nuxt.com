@@ -1,24 +1,16 @@
-import type { Ref } from 'vue'
-import type { Agency } from '../types'
-
-const slugify = (str: string) => str.toLowerCase().replace(/[^a-z0-9 -]/g, ' ').replace(/[\s-]+/g, '-')
+import type { ComputedRef, Ref } from 'vue'
+import type { Agency, FilterItem } from '../types'
+import { slugify, pickOne } from '../utils'
 
 export const useAgencyPartners = () => {
   const route = useRoute()
-  const _partners: Ref<Agency[]> = useState('agency-partners', () => [])
-  const pending = ref(false)
+  const partners: Ref<Agency[]> = useState('agency-partners', () => [])
 
-  // Methods
+  // Data fetching
 
-  async function fetch () {
-    if (_partners.value.length) {
-      return
-    }
-
-    pending.value = true
-
+  async function fetchList () {
     try {
-      const data = await queryContent<Agency>('/support/agencies').where({
+      const data = await queryContent('/support/agencies').where({
         $not: {
           _path: {
             $in: ['/support/agencies']
@@ -27,25 +19,13 @@ export const useAgencyPartners = () => {
         _extension: 'md'
       }).find()
 
-      _partners.value = data
-    } catch (e) {
-      _partners.value = []
-    }
-
-    pending.value = false
-  }
-
-  // Computed
-
-  const partners = computed(() => {
-    return [..._partners.value]
-      .map(partner => ({
+      partners.value = data.map(partner => ({
         ...partner,
-        services: (partner.services || []).map(service => ({
+        services: (partner.services || []).map((service: string) => ({
           key: slugify(service),
           title: service
         })),
-        regions: (partner.regions || []).map(region => ({
+        regions: (partner.regions || []).map((region: string) => ({
           key: slugify(region),
           title: region
         })),
@@ -55,16 +35,22 @@ export const useAgencyPartners = () => {
               title: partner.location
             }
           : null
-      }))
-  })
+      })) as Agency[]
+    } catch (e) {
+      partners.value = []
+      return e
+    }
+  }
 
-  const filteredPartners = computed(() => {
+  // Computed
+
+  const filteredPartners: ComputedRef<Agency[]> = computed(() => {
     return [...partners.value]
       .filter((partner) => {
-        if (selectedService.value && !partner.services.find(service => service.key === selectedService.value.key)) {
+        if (selectedService.value && !partner.services.find(service => service.key === selectedService.value?.key)) {
           return false
         }
-        if (selectedRegion.value && !partner.regions.find(region => region.key === selectedRegion.value.key)) {
+        if (selectedRegion.value && !partner.regions.find(region => region.key === selectedRegion.value?.key)) {
           return false
         }
 
@@ -72,7 +58,7 @@ export const useAgencyPartners = () => {
       })
   })
 
-  const services = computed(() => {
+  const services: ComputedRef<FilterItem[]> = computed(() => {
     const ids = new Set<string>()
     const services = partners.value.flatMap((partner) => {
       return partner.services.filter((r) => {
@@ -98,9 +84,9 @@ export const useAgencyPartners = () => {
       .sort((a, b) => a.title.localeCompare(b.title))
   })
 
-  const locations = computed(() => {
+  const locations: ComputedRef<FilterItem[]> = computed(() => {
     return [...new Set(partners.value.map(partner => partner.location))]
-      .map((location) => {
+      .map((location: any) => {
         return {
           key: location.key,
           title: location.title,
@@ -117,14 +103,14 @@ export const useAgencyPartners = () => {
       .sort((a, b) => a.title.localeCompare(b.title))
   })
 
-  const regions = computed(() => {
+  const regions: ComputedRef<FilterItem[]> = computed(() => {
     const ids = new Set<string>()
     const regions = partners.value.flatMap((partner) => {
       return partner.regions.filter((r) => {
-        if (ids.has(r.key)) {
+        if (ids.has(r.key as string)) {
           return false
         }
-        ids.add(r.key)
+        ids.add(r.key as string)
         return true
       })
     })
@@ -146,26 +132,52 @@ export const useAgencyPartners = () => {
       .sort((a, b) => a.title.localeCompare(b.title))
   })
 
-  const selectedService = computed(() => {
-    return services.value.find(service => service.key === route.query.service)
+  const selectedService: ComputedRef<FilterItem | null> = computed(() => {
+    return services.value.find(service => service.key === route.query.service) || null
   })
 
-  const selectedRegion = computed(() => {
-    return regions.value.find(region => region.key === route.query.region)
+  const selectedRegion: ComputedRef<FilterItem | null> = computed(() => {
+    return regions.value.find(region => region.key === route.query.region) || null
   })
 
-  const pickOne = (arr) => {
-    return arr[Math.floor(Math.random() * arr.length)]
-  }
+  const adPartner: ComputedRef<any> = computed(() => pickOne(partners.value))
 
-  const adPartner = computed(() => pickOne(_partners.value))
+  // Faceting filtering
+  const filteredRegions: ComputedRef<FilterItem[]> = computed(() => {
+    if (!selectedService.value) {
+      return regions.value
+    }
+
+    /* Flag regions where the selected service is not available */
+    return regions.value.map((region) => {
+      if (!filteredPartners.value.some(partner => partner.regions.some(({ key }) => key === region.key))) {
+        return { ...region, disabled: true }
+      } else {
+        return region
+      }
+    })
+  })
+
+  const filteredServices: ComputedRef<FilterItem[]> = computed(() => {
+    if (!selectedRegion.value) {
+      return services.value
+    }
+
+    /* Flag services not available in the selected region */
+    return services.value.map((service) => {
+      if (!filteredPartners.value.some(partner => partner.services.some(({ key }) => key === service.key))) {
+        return { ...service, disabled: true }
+      } else {
+        return service
+      }
+    })
+  })
 
   return {
-    // Http
-    fetch,
-    // Computed
-    partners,
+    fetchList,
     filteredPartners,
+    filteredRegions,
+    filteredServices,
     services,
     locations,
     regions,

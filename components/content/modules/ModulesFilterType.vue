@@ -11,34 +11,39 @@
 </template>
 
 <script setup lang="ts">
-const route = useRoute()
-const router = useRouter()
+import type { PropType, ComputedRef, WritableComputedRef } from 'vue'
+import type { FilterItem } from 'types'
 
-const { types, selectedType } = useModules()
+const props = defineProps({
+  types: {
+    type: Array as PropType<FilterItem[]>,
+    default: () => []
+  },
+  selectedType: {
+    type: Object as PropType<FilterItem | null>,
+    default: () => {}
+  }
+})
 
-const typesWithPlaceholder = computed(() => [
+const emit = defineEmits(['update:selected-type'])
+
+const typesWithPlaceholder: ComputedRef<(FilterItem | {
+    key: string;
+    title: string;
+})[]> = computed(() => [
   {
     key: '',
     title: 'All'
   },
-  ...types.value
+  ...props.types
 ])
 
-const type = computed({
+const type: WritableComputedRef<FilterItem | null> = computed({
   get () {
-    return selectedType.value
+    return props.selectedType
   },
   set (type) {
-    router.replace({
-      name: 'modules',
-      query: {
-        ...route.query,
-        type: type?.key || undefined
-      },
-      state: {
-        smooth: '#smooth'
-      }
-    })
+    emit('update:selected-type', type)
   }
 })
 </script>

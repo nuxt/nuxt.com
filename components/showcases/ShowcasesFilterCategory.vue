@@ -5,32 +5,34 @@
     :options="categories"
     size="sm"
     placeholder="Category"
-    text-attribute="label"
+    text-attribute="title"
     class="min-w-[160px]"
   />
 </template>
 
 <script setup lang="ts">
-const { categories, selectedCategory } = useResourcesShowcases()
+import type { PropType, WritableComputedRef } from 'vue'
+import type { FilterItem } from '../../types'
 
-const route = useRoute()
-const router = useRouter()
+const props = defineProps({
+  categories: {
+    type: Array as PropType<FilterItem[]>,
+    default: () => []
+  },
+  selectedCategory: {
+    type: Object as PropType<FilterItem | undefined>,
+    default: null
+  }
+})
 
-const category = computed({
+const emit = defineEmits(['update:selected-category'])
+
+const category: WritableComputedRef<FilterItem | undefined> = computed({
   get () {
-    return selectedCategory.value
+    return props.selectedCategory
   },
   set (category) {
-    router.replace({
-      name: 'showcase',
-      query: {
-        ...route.query,
-        category: category?.name || undefined
-      },
-      state: {
-        smooth: '#smooth'
-      }
-    })
+    emit('update:selected-category', category?.title)
   }
 })
 </script>

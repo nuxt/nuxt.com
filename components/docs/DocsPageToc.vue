@@ -2,9 +2,9 @@
 const { toc } = useContent()
 const emit = defineEmits(['move'])
 
-const { adPartner, fetch: fetchPartners } = useAgencyPartners()
+const { adPartner, fetchList } = useAgencyPartners()
 
-await fetchPartners()
+await fetchList()
 
 if (adPartner.value) {
   useTrackEvent('Show Partner', { props: { partner: adPartner.value.title } })

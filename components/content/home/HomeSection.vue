@@ -1,7 +1,7 @@
 <template>
   <UContainer
-    class="flex px-4 pt-24 transition duration-700 relative"
-    :class="[containerClass, !slideIn ? 'opacity-0 translate-y-20' : 'opacity-100 translate-y-0', buttons.length ? 'flex-col lg:flex-row lg:items-center lg:justify-between' : 'flex-col']"
+    class="flex px-4 pt-24 pb-4 sm:pb-8 md:pb-12 lg:pb-20 transition duration-700 relative"
+    :class="[!slideIn ? 'opacity-0 translate-y-20' : 'opacity-100 translate-y-0', sectionAlign === 'row' ? 'flex-col lg:flex-row lg:items-center lg:justify-between' : 'flex-col']"
     padded
   >
     <div ref="root" class="flex flex-col justify-center">
@@ -23,7 +23,10 @@
     <div v-if="$slots.extra">
       <ContentSlot :use="$slots.extra" unwrap="p" />
     </div>
-    <div v-if="buttons.length" class="flex lg:flex-row lg:justify-end gap-2 lg:gap-6 pt-8 lg:pt-0 lg:w-1/3">
+    <ul v-if="$slots.cards" class="grid grid-cols-1 gap-8 pt-16 sm:grid-cols-2" :class="cardsClass">
+      <ContentSlot :use="$slots.cards" unwrap="p" />
+    </ul>
+    <div v-if="buttons.length" class="gap-2 lg:gap-6 pt-8" :class="sectionAlign === 'row' ? 'flex flex-row lg:justify-end lg:pt-0 lg:w-1/3' : 'inline-flex justify-center lg:pt-12'">
       <UButton
         v-for="button of buttons"
         :key="button.label"
@@ -42,58 +45,32 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
+import type { RouteLocationNormalized, RouteLocationRaw } from 'vue-router'
 
 const props = defineProps({
-  containerClass: {
-    type: String,
-    default: 'pb-4 sm:pb-8 md:pb-12 lg:pb-20'
-  },
   buttons: {
     type: Array as PropType<{ label?: string, variant?: string, to?: string, icon?: string, trailing?: boolean, size?: string }[]>,
     default: () => []
   },
-  bodyPlacement: {
-    type: String,
-    default: 'left',
-    validator: (value: string) => {
-      return ['left', 'center', 'right'].includes(value)
-    }
-  },
-  bodyContainerClass: {
-    type: String,
-    default: ''
-  },
-  bodyClass: {
-    type: String,
-    default: ''
+  sectionAlign: {
+    type: String as PropType<'column' | 'row'>,
+    default: 'column'
   },
   titleSizeClass: {
     type: String,
     default: 'text-3xl font-semibold md:text-4xl lg:text-5xl'
   },
-  image: {
-    type: String,
-    default: ''
-  },
-  imageClass: {
-    type: String,
-    default: ''
-  },
-  withBodyText: {
-    type: Boolean,
-    default: true
-  },
   to: {
-    type: String,
-    default: ''
-  },
-  bodyExtraClass: {
-    type: String,
+    type: [String, Object] as PropType<string | RouteLocationNormalized | RouteLocationRaw>,
     default: ''
   },
   visible: {
     type: Boolean,
     default: false
+  },
+  cardsClass: {
+    type: String,
+    default: 'lg:grid-cols-3'
   }
 })
 

@@ -14,7 +14,7 @@
         <div class="flex flex-col flex-1 order-2 col-span-2 gap-1">
           <div class="flex flex-col gap-2 sm:flex-row">
             <span class="flex-shrink text-xl font-semibold u-text-gray-900">{{ job.title }}</span>
-            <span class="self-start px-2 py-0.5 rounded-full whitespace-nowrap bg-gray-800">{{ job.remote }}</span>
+            <span class="self-start px-2 py-0.5 rounded-full whitespace-nowrap u-bg-gray-200">{{ job.remote }}</span>
           </div>
           <p v-if="locations?.length" class="u-text-gray-500">
             <span v-for="location in locations" :key="location" class="location-item">{{ location }}</span>
@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue'
+import type { PropType, ComputedRef } from 'vue'
 import type { NuxtJob } from '../../../../types'
 
 const props = defineProps({
@@ -39,10 +39,10 @@ const props = defineProps({
   }
 })
 
-const description = computed(() => props.job.description.replace(/\n/g, '<br>'))
+const description: ComputedRef<string> = computed(() => props.job.description.replace(/\n/g, '<br>'))
 
 /* Limit to 4 locations and discard the rest */
-const locations = computed(() => props.job.locations?.map((location, index) => {
+const locations: ComputedRef<any> = computed(() => props.job.locations?.map((location, index) => {
   if (index <= 3) {
     return location
   } else if (index === 4) {

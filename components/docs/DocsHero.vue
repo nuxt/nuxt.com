@@ -13,7 +13,7 @@
     </div>
     <div v-if="image" class="flex gap-x-4 items-end justify-center hidden md:block place-self-center md:w-[40%]">
       <img
-        :src="`${image.path}-light.png`"
+        :src="`${image.path}-light.${image.format}`"
         alt=""
         :width="image.width"
         :height="image.height"
@@ -21,7 +21,7 @@
         role="presentation"
       >
       <img
-        :src="`${image.path}-dark.png`"
+        :src="`${image.path}-dark.${image.format}`"
         alt=""
         :width="image.width"
         :height="image.height"
@@ -32,9 +32,12 @@
   </div>
 </template>
 <script setup lang="ts">
+import type { PropType } from 'vue'
+import type { Image } from 'types'
+
 defineProps({
   image: {
-    type: Object,
+    type: Object as PropType<Image>,
     default: () => {}
   }
 })

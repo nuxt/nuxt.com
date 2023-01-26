@@ -15,32 +15,33 @@
 </template>
 
 <script setup lang="ts">
-defineProps({
+import type { PropType, WritableComputedRef } from 'vue'
+import type { FilterItem } from 'types'
+
+const props = defineProps({
   size: {
-    type: String,
+    type: String as PropType<'xs' | 'sm'>,
     default: 'xs'
+  },
+  versions: {
+    type: Array as PropType<FilterItem[]>,
+    default: () => []
+  },
+  selectedVersion:
+  {
+    type: Object as PropType<FilterItem>,
+    default: () => {}
   }
 })
 
-const route = useRoute()
-const router = useRouter()
-const { versions, selectedVersion } = useModules()
+const emit = defineEmits(['update:selected-version'])
 
-const version = computed({
+const version: WritableComputedRef<FilterItem> = computed({
   get () {
-    return selectedVersion.value
+    return props.selectedVersion
   },
   set (version) {
-    router.replace({
-      name: 'modules',
-      query: {
-        ...route.query,
-        version: version?.key || undefined
-      },
-      state: {
-        smooth: '#smooth'
-      }
-    })
+    emit('update:selected-version', version)
   }
 })
 </script>

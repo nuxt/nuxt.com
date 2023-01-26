@@ -1,6 +1,6 @@
 export const requestIdleCallback =
   globalThis.requestIdleCallback ||
-  function (cb) {
+  function (cb: IdleRequestCallback) {
     const start = Date.now()
     const idleDeadline = {
       didTimeout: false,

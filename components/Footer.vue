@@ -29,8 +29,9 @@
 </template>
 
 <script setup lang="ts">
+import type { NavItem } from '@nuxt/content/dist/runtime/types'
 
-const links = [
+const links: NavItem[] = [
   {
     title: 'Support',
     _path: '/support/solutions'
@@ -48,7 +49,4 @@ const links = [
     _path: 'https://nuxt.studio'
   }
 ]
-
-// const langs = ref([{ text: 'English', value: 'en' }])
-// const lang = ref(langs.value[0].value)
 </script>
