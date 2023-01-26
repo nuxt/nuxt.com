@@ -15,7 +15,21 @@
 
       <ul v-if="filteredPartners.length" class="grid grid-cols-1 gap-8 mt-8 sm:grid-cols-2 xl:grid-cols-3">
         <li v-for="filteredPartner in filteredPartners" :key="filteredPartner._id">
-          <AgenciesListItem :partner="filteredPartner" />
+          <CardListItem :to="filteredPartner._path">
+            <template #header>
+              <div>
+                <img v-if="filteredPartner.logo?.light" :src="filteredPartner.logo.light" :alt="filteredPartner.title" class="w-auto h-12 dark:hidden">
+                <img v-if="filteredPartner.logo?.dark" :src="filteredPartner.logo.dark" :alt="filteredPartner.title" class="hidden w-auto h-12 dark:block">
+              </div>
+              <span class="text-sm u-text-gray-400">{{ filteredPartner.location.title }}</span>
+            </template>
+            <template #title>
+              {{ filteredPartner.title }}
+            </template>
+            <template #description>
+              {{ filteredPartner.description }}
+            </template>
+          </CardListItem>
         </li>
       </ul>
     </PageList>
