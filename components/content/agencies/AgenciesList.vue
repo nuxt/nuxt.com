@@ -32,6 +32,18 @@
           </CardListItem>
         </li>
       </ul>
+      <NotFound
+        v-else
+        icon="ph:handshake-thin"
+        :reset-filter="true"
+        :buttons="[
+          { variant: 'primary', size: 'lg', label: 'Reset filters', icon: 'grommet-icons:power-reset', trailing: true },
+          {
+            to: 'https://docs.google.com/forms/d/e/1FAIpQLSf85qskit5QqmGJcruGkGF0U7240Bh9MeN0pHB18UiOMWC8dA/viewform',
+            target: '_blank', variant: 'primary-gradient', size: 'lg', label: 'Submit my agency' }]"
+      >
+        <span>No agency matches your criteria for now.</span>
+      </NotFound>
     </PageList>
   </Page>
   <Page v-else>
