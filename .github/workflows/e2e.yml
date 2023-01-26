@@ -37,8 +37,8 @@ jobs:
     steps:
       - name: warmup jobs, sponsors and modules
         run: |
-          curl -sS $BASE_URL/api/jobs.json
-          curl -sS $BASE_URL/api/sponsors.json
-          curl -sS $BASE_URL/api/modules.json
+          curl -sS $BASE_URL/api/jobs
+          curl -sS $BASE_URL/api/sponsors
+          curl -sS $BASE_URL/api/modules
         env:
           BASE_URL: ${{ github.event.inputs.url || github.event.deployment.payload.web_url || github.event.deployment_status.target_url }}

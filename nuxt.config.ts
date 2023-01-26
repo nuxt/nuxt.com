@@ -160,9 +160,6 @@ export default defineNuxtConfig({
       crawlLinks: true
     },
     handlers: [
-      { handler: resolve('./server/api/modules/index.ts'), route: '/api/modules.json' },
-      { handler: resolve('./server/api/jobs.ts'), route: '/api/jobs.json' },
-      { handler: resolve('./server/api/sponsors.ts'), route: '/api/sponsors.json' },
       { handler: resolve('./server/routes/sitemap.xml.ts'), route: '/sitemap.xml' }
     ]
   },

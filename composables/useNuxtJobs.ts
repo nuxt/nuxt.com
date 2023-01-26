@@ -19,7 +19,7 @@ export const useNuxtJobs = () => {
   // Data fetching
 
   async function fetchList () {
-    const { data, error } = await useFetch<NuxtJob[]>('/api/jobs.json')
+    const { data, error } = await useFetch<NuxtJob[]>('/api/jobs')
 
     /* Missing data is handled at component level */
     if (!data.value && error.value) {
