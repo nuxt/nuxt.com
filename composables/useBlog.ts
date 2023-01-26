@@ -7,7 +7,8 @@ export const useBlog = () => {
 
   const iconsMap = {
     Education: 'uil:graduation-cap',
-    Announcements: 'uil:rocket'
+    Announcements: 'uil:microphone',
+    Release: 'uil:rocket'
   }
 
   // Data fetching
