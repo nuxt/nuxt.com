@@ -44,19 +44,6 @@
 <script setup lang="ts">
 const { filteredPartners, fetchList, services, selectedService, regions, selectedRegion } = useAgencyPartners()
 
-// export interface Agency extends ParsedContent {
-//   title: string
-//   description: string
-//   _path: string
-//   logo: {
-//     light: string
-//     dark: string
-//   }
-//   regions: FilterItem[]
-//   services: FilterItem[]
-//   location: FilterItem
-// }
-
 const { createReplaceRoute } = useFilters()
 
 const replaceRoute = createReplaceRoute('support-agencies')
