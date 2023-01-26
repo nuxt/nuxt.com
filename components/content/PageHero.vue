@@ -12,6 +12,10 @@
         </div>
       </div>
 
+      <div v-else class="absolute -right-12 -inset-y-6 sm:inset-y-0 sm:right-6 lg:right-8">
+        <ContentSlot :use="$slots.right" unwrap="p" />
+      </div>
+
       <div
         v-bind="$attrs"
         class="relative flex flex-col justify-center gap-y-4 sm:gap-y-5"

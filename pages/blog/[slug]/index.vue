@@ -3,6 +3,8 @@
 </template>
 
 <script setup lang="ts">
-const { page, fetchPage } = useContent()
-await fetchPage()
+const { page } = useContent()
+
+usePageNotFound(page)
+useContentHead(page)
 </script>

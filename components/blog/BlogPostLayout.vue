@@ -49,41 +49,6 @@
             </li>
           </ul>
         </div>
-        <div class="pt-16">
-          <h2 class="pb-10 text-4xl font-semibold u-text-gray-900">
-            Your journey begins
-          </h2>
-          <div class="grid grid-cols-1 gap-8 sm:grid-cols-2">
-            <div class="dark">
-              <BlogPostCta
-                button-text="Get Started"
-                to="/docs"
-                image-path="/assets/resources/blog/nuxt.svg"
-                image-class="bottom-0 right-0"
-              >
-                <template #title>
-                  Start now
-                </template>
-                <template #description>
-                  How a user interacts with and experience your website is key.
-                </template>
-              </BlogPostCta>
-            </div>
-
-            <BlogPostCta
-              button-text="Discover Nuxt Sites"
-              to="/showcases"
-              image-path="/assets/resources/blog/showcases.png"
-            >
-              <template #title>
-                Watch a Showcase
-              </template>
-              <template #description>
-                How a user interacts with and experience your website is key.
-              </template>
-            </BlogPostCta>
-          </div>
-        </div>
       </UContainer>
     </div>
   </UContainer>

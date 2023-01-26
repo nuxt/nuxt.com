@@ -11,7 +11,7 @@
               :class="{
                 'u-text-gray-900': activeHeadings.includes(link.id),
               }"
-              @click.prevent="scrollToHeading(link.id, '--docs-scroll-margin-block')"
+              @click.prevent="scrollToHeading(link.id)"
             >
               {{ link.text }}
             </a>
@@ -25,7 +25,7 @@
 <script setup lang="ts">
 const route = useRoute()
 const router = useRouter()
-const { toc } = usePage()
+const { toc } = useContent()
 const { activeHeadings, updateHeadings } = useScrollspy()
 watch(route, () => {
   if (process.client) {
