@@ -11,7 +11,7 @@ export interface File {
 
 const config = useRuntimeConfig()
 
-export default defineEventHandler(async (event) => {
+export default defineCachedEventHandler(async (event) => {
   const { slug } = getRouterParams(event)
   const { repo, branch, dir } = slug.match(/^(?<repo>[^/]+\/[^/]+)\/branch\/(?<branch>[^/]+)\/dir\/(?<dir>.*)$/)?.groups ?? {}
   if (!dir) {
@@ -38,6 +38,9 @@ export default defineEventHandler(async (event) => {
     return [file.path, newFile]
   }))
   return Object.fromEntries(files) as Record<string, File>
+}, {
+  // 1 hour
+  maxAge: 60 * 60
 })
 
 const { getHighlightedCode } = useShikiHighlighter()
@@ -45,7 +48,7 @@ const { getHighlightedCode } = useShikiHighlighter()
 const github = $fetch.create({
   baseURL: 'https://api.github.com/repos',
   headers: {
-    Authorization: config.github?.token ? `Bearer ${config.github.token}` : ''
+    Authorization: config.githubAPI?.token ? `Bearer ${config.githubAPI.token}` : ''
   }
 })
 

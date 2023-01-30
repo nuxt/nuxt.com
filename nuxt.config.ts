@@ -76,6 +76,10 @@ export default defineNuxtConfig({
     }
   ],
   runtimeConfig: {
+    sandbox: {
+      allowedRepos: ['nuxt/nuxt', 'nuxt/examples', 'nuxt-modules/supabase'],
+      allowedBranches: ['main']
+    },
     githubAPI: {
       token: process.env.NUXT_GITHUB_TOKEN || ''
     },
