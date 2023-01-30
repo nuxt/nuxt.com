@@ -44,13 +44,6 @@
             truncate
             @click="trackVisit(page.title)"
           />
-          <!-- <UButton
-            label="Contact partner"
-            size="xl"
-            variant="gray"
-            custom-class="justify-center sm:justify-start"
-            truncate
-          /> -->
         </div>
       </div>
 
@@ -59,11 +52,12 @@
           <h2 class="text-3xl font-semibold u-text-gray-900">
             Discover the company
           </h2>
-          <p class="mt-8 leading-7 whitespace-pre-wrap u-text-gray-700">
+          <p class="mt-8 mb-8 leading-7 whitespace-pre-wrap u-text-gray-700">
             {{ page.fullDescription }}
           </p>
-          <form v-if="page.emailAddress" @submit.prevent="contactAgency">
-            <div class="flex flex-col gap-4 mt-12 sm:flex-row">
+
+          <UCard v-if="page.emailAddress" body-class="grid grid-cols-2 gap-8 p-10" rounded-class="rounded-xl" background-class="card-bg" @submit.prevent="contactAgency">
+            <UFormGroup name="email" label="Your company" class="col-span-2 sm:col-span-1">
               <UInput
                 v-model="form.company"
                 label="Company"
@@ -74,6 +68,9 @@
                 variant="outline"
                 custom-class="flex-1"
               />
+            </UFormGroup>
+
+            <UFormGroup name="name" label="Your email" class="col-span-2 sm:col-span-1">
               <UInput
                 v-model="form.email"
                 label="Email"
@@ -85,27 +82,37 @@
                 custom-class="flex-1"
                 type="email"
               />
+            </UFormGroup>
+
+            <UFormGroup
+              name="message"
+              label="Your message"
+              class="col-span-2"
+            >
               <UTextarea
                 v-model="form.message"
                 label="Message"
                 name="Message"
-                placeholder="Your message"
+                placeholder="Message"
                 required
                 size="xl"
                 variant="outline"
                 custom-class="flex-1"
               />
+            </UFormGroup>
+
+            <div class="flex items-center justify-center col-span-2">
               <UButton
                 label="Contact us"
                 type="submit"
+                target="_blank"
                 size="xl"
                 variant="primary-gradient"
                 custom-class="justify-center sm:justify-start"
-                truncate
                 :disabled="loading"
               />
             </div>
-          </form>
+          </UCard>
           <div class="flex flex-col gap-8 mt-12 sm:flex-row">
             <UButton
               label="Back to partners list"
@@ -115,16 +122,6 @@
               variant="secondary"
               custom-class="justify-center sm:justify-start"
               @click="onBack"
-            />
-            <UButton
-              label="Visit website"
-              :to="page.link"
-              target="_blank"
-              size="xl"
-              variant="primary-gradient"
-              custom-class="justify-center sm:justify-start"
-              truncate
-              @click="trackVisit(page)"
             />
           </div>
         </div>
@@ -306,3 +303,9 @@ const contactAgency = () => {
   })
 }
 </script>
+
+<style scoped lang="postcss">
+button[type="submit"]{
+ @apply border-gradient-br-gradient-black;
+}
+</style>
