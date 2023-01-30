@@ -1,7 +1,30 @@
 <template>
   <Page v-if="!error" id="smooth" class="pt-16 -mt-16">
     <template #aside>
-      <ModulesAside :versions="versions" :selected-version="selectedVersion" @update:selected-version="replaceRoute('version', $event)" />
+      <CategoriesAside :categories="categories" :selected-category="selectedCategory">
+        <template #header>
+          <ModulesFilterVersion :versions="versions" :selected-version="selectedVersion" class="mr-1 -my-1" @update:selected-version="replaceRoute('version', $event)" />
+        </template>
+        <template #footer>
+          <div class="flex flex-col gap-2 pt-4 border-t u-border-gray-200">
+            <NuxtLink
+              to="https://github.com/nuxt/modules"
+              target="_blank"
+              class="flex items-center gap-2 text-sm font-medium hover:u-text-gray-900 focus:u-text-gray-900"
+            >
+              <Icon name="fa-brands:github" class="w-4 h-4" />
+              Contribute on GitHub
+            </NuxtLink>
+            <NuxtLink
+              to="/docs/guide/going-further/modules"
+              class="flex items-center gap-2 text-sm font-medium hover:u-text-gray-900 focus:u-text-gray-900"
+            >
+              <Icon name="uil:book-open" class="w-4 h-4" />
+              Module Author guide
+            </NuxtLink>
+          </div>
+        </template>
+      </CategoriesAside>
     </template>
 
     <PageList :title="`${filteredModules.length} module${filteredModules.length > 1 ? 's' : ''} found`">
@@ -31,32 +54,15 @@
           <ModulesListItem :module="filteredModule" />
         </li>
       </ul>
-      <div v-else class="relative flex flex-col items-center gap-6 mt-16 lg:mt-24">
-        <Icon name="fa-brands:github" class="w-16 h-16 u-text-gray-600" />
-        <span class="text-xl font-medium text-center u-text-gray-700">
-          There is no module found for <b>{{ q }}</b> yet.<br>Become the first one to create it!
-        </span>
-
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
-          <UButton
-            to="https://github.com/nuxt/modules"
-            target="_blank"
-            variant="primary"
-            size="lg"
-            label="Contribute on GitHub"
-            truncate
-          />
-          <UButton
-            to="/docs/guide/going-further/modules"
-            variant="secondary"
-            size="lg"
-            label="How to create a module"
-            icon="uil:arrow-right"
-            trailing
-            truncate
-          />
-        </div>
-      </div>
+      <NotFound
+        v-else
+        icon="fa-brands:github"
+        :buttons="[
+          { to: 'https://github.com/nuxt/modules', target: '_blank', variant: 'primary', size: 'lg', label: 'Contribute on GitHub' },
+          { to: '/docs/guide/going-further/modules', variant: 'secondary', size: 'lg', label: 'How to create a module', icon: 'uil:arrow-right', trailing: true }]"
+      >
+        <span>There is no module found for <b>{{ q }}</b> yet.<br>Become the first one to create it!</span>
+      </NotFound>
     </PageList>
   </Page>
   <Page v-else>

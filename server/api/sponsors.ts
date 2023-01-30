@@ -1,15 +1,18 @@
 import { fetchGithubSponsors, fetchOpenCollectiveSponsors } from '../utils/sponsors'
+import type { Sponsor } from '../../types'
 import { defineCachedEventHandler } from '#imports'
 
-const tiersMap = {
-  platinum: amount => amount >= 2000,
-  gold: amount => amount < 2000 && amount >= 1000,
-  silver: amount => amount < 1000 && amount >= 200,
-  bronze: amount => amount < 200 && amount >= 10,
-  backer: amount => amount < 10
+type Tier = (amount: number) => Boolean
+
+const tiersMap: {[tier: string] : Tier} = {
+  platinum: amount => amount >= 1000,
+  gold: amount => amount < 1000 && amount >= 500,
+  silver: amount => amount < 500 && amount >= 200,
+  bronze: amount => amount < 200 && amount >= 100,
+  backer: amount => amount < 100
 }
 
-export default defineCachedEventHandler(async () => {
+export default defineCachedEventHandler<Sponsor[]>(async () => {
   let sponsors = null
 
   try {
@@ -21,7 +24,7 @@ export default defineCachedEventHandler(async () => {
   }
 
   return sponsors.flat().reduce((acc, sponsor) => {
-    const tier = Object.keys(tiersMap).find(tier => tiersMap[tier](sponsor.monthlyPriceInDollars))
+    const tier = Object.keys(tiersMap).find(tier => tiersMap[tier](sponsor.monthlyPriceInDollars)) as string
     return {
       ...acc,
       [tier]: [...(acc[tier] || []), sponsor]

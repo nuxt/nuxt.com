@@ -45,6 +45,7 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
+import type { RouteLocationNormalized, RouteLocationRaw } from 'vue-router'
 
 const props = defineProps({
   buttons: {
@@ -60,7 +61,7 @@ const props = defineProps({
     default: 'text-3xl font-semibold md:text-4xl lg:text-5xl'
   },
   to: {
-    type: String,
+    type: [String, Object] as PropType<string | RouteLocationNormalized | RouteLocationRaw>,
     default: ''
   },
   visible: {

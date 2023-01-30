@@ -1,28 +1,35 @@
 import { createResolver, logger } from '@nuxt/kit'
-import { version } from './package.json'
 import preset from './ui'
 
 const { resolve } = createResolver(import.meta.url)
-logger.success(`Using Nuxt.com theme v${version}`)
+
+const docsSource: any = {
+  name: 'nuxt-docs',
+  driver: 'github',
+  repo: 'nuxt/nuxt',
+  branch: 'main',
+  dir: 'docs',
+  prefix: '/docs',
+  token: process.env.NUXT_GITHUB_TOKEN || process.env.GITHUB_TOKEN || ''
+}
+if (process.env.NUXT_DOCS_PATH) {
+  logger.success(`Using local Nuxt docs from ${process.env.NUXT_DOCS_PATH}`)
+  docsSource.driver = 'fs'
+  docsSource.base = process.env.NUXT_DOCS_PATH
+}
 
 // https://v3.nuxtjs.org/guide/directory-structure/nuxt.config
 export default defineNuxtConfig({
+  // experimental: { inlineSSRStyles: false },
   extends: '@nuxt-themes/typography',
-  // app: {
-  //   head: {
-  //     script: [
-  //       { src: 'https://masteringnuxt.com/banners/main.js', async: true }
-  //     ]
-  //   }
-  // },
   css: [
     resolve('./assets/css/fonts.css'),
     resolve('./assets/css/style.css')
   ],
   modules: [
     process.env.NODE_ENV === 'production' ? '@nuxtjs/html-validator' : () => {},
-    '@nuxthq/ui',
     '@nuxt/content',
+    '@nuxthq/ui',
     '@nuxtlabs/github-module',
     '@nuxtjs/plausible',
     'nuxt-icon',
@@ -69,7 +76,7 @@ export default defineNuxtConfig({
     }
   ],
   runtimeConfig: {
-    github: {
+    githubAPI: {
       token: process.env.NUXT_GITHUB_TOKEN || ''
     },
     openCollective: {
@@ -79,6 +86,7 @@ export default defineNuxtConfig({
       apiKey: process.env.NUXT_SENDGRID_API_KEY || '',
       listId: process.env.NUXT_SENDGRID_LIST_ID || ''
     },
+    testEmail: process.env.NUXT_TEST_EMAIL || '',
     mailjet: {
       apiKey: process.env.NUXT_MAILJET_API_KEY || '',
       secretKey: process.env.NUXT_MAILJET_SECRET_KEY || ''
@@ -104,13 +112,15 @@ export default defineNuxtConfig({
       fields: ['redirect', 'titleTemplate', 'image']
     },
     documentDriven: {
-      // @ts-expect-error TODO: ready for https://github.com/nuxt/content/pull/1769
       host: 'https://nuxt.com',
       surround: false,
       injectPage: false
     },
     experimental: {
       stripQueryParameters: true
+    },
+    sources: {
+      docsSource
     }
   },
   algolia: {
@@ -143,20 +153,18 @@ export default defineNuxtConfig({
     }
   },
   nitro: {
-    prerender: {
-      routes: ['/', '/api/jobs.json', '/api/modules.json', '/api/sponsors.json', '/sitemap.xml', '/newsletter'],
-      crawlLinks: true
+    output: {
+      dir: '{{ workspaceDir }}/.vercel/output'
     },
-    handlers: [
-      { handler: resolve('./server/api/modules/index.ts'), route: '/api/modules.json' },
-      { handler: resolve('./server/api/jobs.ts'), route: '/api/jobs.json' },
-      { handler: resolve('./server/api/sponsors.ts'), route: '/api/sponsors.json' },
-      { handler: resolve('./server/routes/sitemap.xml.ts'), route: '/sitemap.xml' }
-    ]
+    prerender: {
+      crawlLinks: true
+    }
   },
   routeRules: {
     // prerendered pages
     '/': { prerender: true },
+    '/sitemap.xml': { prerender: true },
+    '/newsletter': { prerender: true },
     '/design-kit': { prerender: true },
     '/support/solutions': { prerender: true },
     '/support/agencies': { prerender: true },

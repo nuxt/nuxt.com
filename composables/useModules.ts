@@ -1,14 +1,42 @@
-import type { Ref } from 'vue'
-import type { Module } from '../types'
+import type { Ref, ComputedRef } from 'vue'
+import type { Module, FilterItem } from '../types'
 
 export const useModules = () => {
+  interface TypeMap {
+    official: string,
+    community: string
+    '3rd-party': string
+  }
+
   const route = useRoute()
   const modules: Ref<Module[]> = useState('modules', () => [])
   const module: Ref<Module> = useState('module', () => ({} as Module))
 
+  const iconsMap = {
+    Analytics: 'uil-chart-line',
+    CMS: 'uil-pen',
+    CSS: 'uil-brush-alt',
+    Database: 'uil-database',
+    Date: 'uil-calendar-alt',
+    Deployment: 'uil-cloud',
+    Devtools: 'uil-wrench',
+    Ecommerce: 'uil-shopping-basket',
+    Extensions: 'uil-puzzle-piece',
+    Fonts: 'uil-font',
+    Images: 'uil-image-v',
+    Libraries: 'uil-books',
+    Monitoring: 'uil-stopwatch',
+    Payment: 'uil-dollar-alt',
+    Performance: 'uil-rocket',
+    Request: 'uil-life-ring',
+    Security: 'uil-shield',
+    SEO: 'uil-search-alt',
+    UI: 'uil-palette'
+  }
+
   // Data fetching
   async function fetchList () {
-    const { data, error } = await useFetch<{ modules: Module[] }>('/api/modules.json')
+    const { data, error } = await useFetch<{ modules: Module[] }>('/api/modules')
 
     /* Missing data is handled at component level */
     if (!data.value && error.value) {
@@ -40,31 +68,31 @@ export const useModules = () => {
 
   // Data
 
-  const versions = [
-    { key: '3.x', label: 'v3' },
-    { key: '2.x-bridge', label: 'Bridge' },
-    { key: '2.x', label: 'v2' }
+  const versions: FilterItem[] = [
+    { key: '3.x', title: 'v3' },
+    { key: '2.x-bridge', title: 'Bridge' },
+    { key: '2.x', title: 'v2' }
   ]
 
-  const sorts = [
-    { key: 'downloads', label: 'Downloads' },
-    { key: 'stars', label: 'Stars' },
-    { key: 'publishedAt', label: 'Updated' },
-    { key: 'createdAt', label: 'Created' }
+  const sorts: FilterItem[] = [
+    { key: 'downloads', title: 'Downloads' },
+    { key: 'stars', title: 'Stars' },
+    { key: 'publishedAt', title: 'Updated' },
+    { key: 'createdAt', title: 'Created' }
   ]
 
-  const orders = [
-    { key: 'desc', label: 'Desc', icon: 'uil:sort-amount-down' },
-    { key: 'asc', label: 'Asc', icon: 'uil:sort-amount-up' }
+  const orders: FilterItem[] = [
+    { key: 'desc', title: 'Desc', icon: 'uil:sort-amount-down' },
+    { key: 'asc', title: 'Asc', icon: 'uil:sort-amount-up' }
   ]
 
-  const typesMap = {
+  const typesMap: TypeMap = {
     official: 'Official',
     community: 'Community',
     '3rd-party': 'Third Party'
   }
 
-  const githubQuery = computed(() => {
+  const githubQuery: ComputedRef<{ owner: string, repo: string }> = computed(() => {
     const [ownerAndRepo] = module.value.repo.split('#')
     const [owner, repo] = ownerAndRepo.split('/')
     return {
@@ -73,10 +101,10 @@ export const useModules = () => {
     }
   })
 
-  const modulesByVersion = computed(() => {
+  const modulesByVersion: ComputedRef<Module[]> = computed(() => {
     return [...modules.value]
       .filter((module) => {
-        if (selectedVersion.value && !module.tags.includes(selectedVersion.value.key)) {
+        if (selectedVersion.value && !module.tags.includes(selectedVersion.value.key as string)) {
           return false
         }
 
@@ -84,7 +112,7 @@ export const useModules = () => {
       })
   })
 
-  const categories = computed(() => {
+  const categories: ComputedRef<FilterItem[] | []> = computed(() => {
     return [...new Set(modulesByVersion.value.map(module => module.category))].map(category => ({
       key: category,
       title: category,
@@ -95,13 +123,14 @@ export const useModules = () => {
           category: route.query?.category !== category ? category : undefined
         },
         state: { smooth: '#smooth' }
-      }
+      },
+      icon: iconsMap[category as keyof typeof iconsMap] || undefined
     })).sort((a, b) => {
       return a.title.localeCompare(b.title)
     })
   })
 
-  const types = computed(() => {
+  const types: ComputedRef<FilterItem[]> = computed(() => {
     return [...new Set(modulesByVersion.value.map(module => module.type))].map(type => ({
       key: type,
       title: typesMap[type as keyof typeof typesMap] || type,
@@ -121,11 +150,11 @@ export const useModules = () => {
     })
   })
 
-  const contributors = computed(() => {
+  const contributors: ComputedRef<Set<string>> = computed(() => {
     return new Set(modules.value.flatMap(m => m.contributors.map(m => m.login)))
   })
 
-  const stats = computed(() => {
+  const stats: ComputedRef<{ downloads: number, contributors: number, modules: number }> = computed(() => {
     return {
       downloads: modules.value.reduce((sum, m) => sum + m.downloads, 0),
       contributors: contributors.value.size,
@@ -133,31 +162,31 @@ export const useModules = () => {
     }
   })
 
-  const selectedCategory = computed(() => {
-    return categories.value.find(category => category.key === route.query.category)
+  const selectedCategory: ComputedRef<FilterItem | null> = computed(() => {
+    return categories.value.find(category => category.key === route.query.category) || null
   })
 
-  const selectedType = computed(() => {
-    return types.value.find(type => type.key === route.query.type)
+  const selectedType: ComputedRef<FilterItem | null> = computed(() => {
+    return types.value.find(type => type.key === route.query.type) || null
   })
 
-  const selectedVersion = computed(() => {
+  const selectedVersion: ComputedRef<FilterItem> = computed(() => {
     return versions.find(version => version.key === route.query.version) || versions[0]
   })
 
-  const selectedSort = computed(() => {
+  const selectedSort: ComputedRef<FilterItem> = computed(() => {
     return sorts.find(sort => sort.key === route.query.sortBy) || sorts[0]
   })
 
-  const selectedOrder = computed(() => {
+  const selectedOrder: ComputedRef<FilterItem> = computed(() => {
     return orders.find(order => order.key === route.query.orderBy) || orders[0]
   })
 
-  const q = computed(() => {
+  const q: ComputedRef<string> = computed(() => {
     return route.query.q as string
   })
 
-  const links = computed(() => {
+  const links: ComputedRef<any[]> = computed(() => {
     return [
       {
         title: 'All',
@@ -175,9 +204,9 @@ export const useModules = () => {
     ]
   })
 
-  const filteredModules = computed(() => {
+  const filteredModules: ComputedRef<Module[]> = computed(() => {
     let filteredModules = [...modules.value]
-      .filter((module) => {
+      .filter((module: Module | any) => {
         if (selectedCategory.value && module.category !== selectedCategory.value.key) {
           return false
         }
@@ -194,7 +223,7 @@ export const useModules = () => {
 
         return true
       })
-      .sort((a, b) => b[selectedSort.value.key] - a[selectedSort.value.key])
+      .sort((a: any, b: any) => b[selectedSort.value.key] - a[selectedSort.value.key])
 
     if (selectedOrder.value.key === 'asc') {
       filteredModules = filteredModules.reverse()

@@ -15,12 +15,8 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue'
-
-interface keyLabel {
-  key: string
-  label: string
-}
+import type { PropType, WritableComputedRef } from 'vue'
+import type { FilterItem } from 'types'
 
 const props = defineProps({
   size: {
@@ -28,19 +24,19 @@ const props = defineProps({
     default: 'xs'
   },
   versions: {
-    type: Array as PropType<keyLabel[]>,
+    type: Array as PropType<FilterItem[]>,
     default: () => []
   },
   selectedVersion:
   {
-    type: Object as PropType<keyLabel>,
+    type: Object as PropType<FilterItem>,
     default: () => {}
   }
 })
 
 const emit = defineEmits(['update:selected-version'])
 
-const version = computed({
+const version: WritableComputedRef<FilterItem> = computed({
   get () {
     return props.selectedVersion
   },

@@ -5,29 +5,34 @@
     :options="categories"
     size="sm"
     placeholder="Category"
-    text-attribute="label"
+    text-attribute="title"
     class="min-w-[160px]"
   />
 </template>
 
 <script setup lang="ts">
-import type { ShowcaseCategory } from '~/types'
+import type { PropType, WritableComputedRef } from 'vue'
+import type { FilterItem } from '../../types'
 
-interface Props {
-  categories: ShowcaseCategory[]
-  selectedCategory: ShowcaseCategory
-}
-
-const props = defineProps<Props>()
+const props = defineProps({
+  categories: {
+    type: Array as PropType<FilterItem[]>,
+    default: () => []
+  },
+  selectedCategory: {
+    type: Object as PropType<FilterItem | undefined>,
+    default: null
+  }
+})
 
 const emit = defineEmits(['update:selected-category'])
 
-const category = computed({
+const category: WritableComputedRef<FilterItem | undefined> = computed({
   get () {
     return props.selectedCategory
   },
   set (category) {
-    emit('update:selected-category', category.name)
+    emit('update:selected-category', category?.title)
   }
 })
 </script>

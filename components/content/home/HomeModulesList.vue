@@ -46,17 +46,17 @@ const slidesPerView = computed(() => {
 })
 
 const modulesList = computed(() => {
-  const array1: Array<any> = [
+  const array1: Array<{ name: string, format: string}> = [
     { name: 'tailwindcss', format: 'png' }, { name: 'i18n', format: 'png' }, { name: 'content', format: 'png' }, { name: 'pinia', format: 'svg' },
     { name: 'image', format: 'png' }, { name: 'vueuse', format: 'svg' }, { name: 'color-mode', format: 'png' }
   ]
 
-  const array2: Array<any> = [
+  const array2: Array<{ name: string, format: string}> = [
     { name: 'prismic', format: 'png' }, { name: 'windicss', format: 'svg' }, { name: 'strapi', format: 'png' }, { name: 'formkit', format: 'png' },
     { name: 'storyblok', format: 'png' }, { name: 'sanity', format: 'png' }, { name: 'icons', format: 'png' }
   ]
 
-  const array3: Array<any> = [
+  const array3: Array<{ name: string, format: string}> = [
     { name: 'supabase', format: 'png' }, { name: 'algolia', format: 'svg' }, { name: 'directus', format: 'svg' }, { name: 'unlighthouse', format: 'svg' },
     { name: 'meilisearch', format: 'svg' }, { name: 'harlem', format: 'svg' }, { name: 'fontaine', format: 'png' }
   ]
@@ -70,6 +70,11 @@ const modulesList = computed(() => {
 </script>
 
 <style scoped lang="postcss">
+
+:root {
+  --gradient-angle: 360deg;
+}
+
 @keyframes scroll {
   0% {
   -webkit-transform: translateX(0);
@@ -157,12 +162,6 @@ const modulesList = computed(() => {
     animation: gradient-rotate 5s linear 0s infinite reverse;
     transition: all 0.3s linear;
   }
-}
-
-@property --gradient-angle {
-  syntax: '<angle>';
-  inherits: false;
-  initial-value: 360deg;
 }
 
 @keyframes gradient-rotate {

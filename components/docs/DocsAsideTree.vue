@@ -28,7 +28,7 @@
         </NuxtLink>
         <div v-else class="w-full flex justify-between items-center" @click="tablet ? () => {} : expand(link)">
           <span
-            class="py-1.5 flex w-full"
+            class="py-1.5 flex w-full cursor-pointer"
             :class="linkClass(index, link)"
           >{{ link.title }}</span>
           <span v-if="link.isCollapsible && !tablet">
@@ -112,7 +112,7 @@ const isClickable = (link: any) => {
 function getLinks () {
   return [
     ...props?.tree?.map((link) => {
-      return { ...link, isCollapsible: link.children?.length && props.level === 0 && link._path.includes('/docs'), collapsed: !link.children?.some(child => child._path.includes(route.path)) }
+      return { ...link, exact: true, isCollapsible: link.children?.length && props.level === 0 && link._path.includes('/docs'), collapsed: !link.children?.some(child => child._path.includes(route.path)) }
     })
   ] as CollapsibleNavItem[]
 }

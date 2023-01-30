@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue'
+import type { PropType, ComputedRef } from 'vue'
 import type { NuxtJob } from '../../../../types'
 
 const props = defineProps({
@@ -39,10 +39,10 @@ const props = defineProps({
   }
 })
 
-const description = computed(() => props.job.description.replace(/\n/g, '<br>'))
+const description: ComputedRef<string> = computed(() => props.job.description.replace(/\n/g, '<br>'))
 
 /* Limit to 4 locations and discard the rest */
-const locations = computed(() => props.job.locations?.map((location, index) => {
+const locations: ComputedRef<any> = computed(() => props.job.locations?.map((location, index) => {
   if (index <= 3) {
     return location
   } else if (index === 4) {

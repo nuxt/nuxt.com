@@ -1,4 +1,5 @@
 import type { ParsedContent } from '@nuxt/content/dist/runtime/types'
+import type { FilterItem } from './utils'
 
 export interface CommunityRepository {
   name: string
@@ -20,7 +21,6 @@ export interface CommunityRepositoryStats {
   stars: number
   collaborators: number
 }
-
 export interface Agency extends ParsedContent {
   title: string
   description: string
@@ -29,15 +29,19 @@ export interface Agency extends ParsedContent {
     light: string
     dark: string
   }
-  regions: {key: string, title: string}[]
-  services: {
-    key: string
-    title: string
+  regions: FilterItem[]
+  services: FilterItem[]
+  location: FilterItem
+}
+
+export interface AgencyPage extends Agency{
+  link: string,
+  logoFull: string,
+  fullDescription: string,
+  resources: {
+    name: string,
+    url: string
   }[]
-  location: {
-    key: string
-    title: string
-  }
 }
 
 export interface CommunityNuxter {

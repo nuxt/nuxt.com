@@ -1,14 +1,13 @@
 <script setup lang="ts">
+import type { PropType } from 'vue'
+
 const props = defineProps({
   /**
        * @values info, success, warning, danger
        */
   type: {
-    type: String,
-    default: 'info',
-    validator (value: string) {
-      return ['info', 'success', 'warning', 'danger'].includes(value)
-    }
+    type: String as PropType<'info' | 'success' | 'warning' | 'danger'>,
+    default: 'info'
   }
 })
 </script>
@@ -17,13 +16,21 @@ const props = defineProps({
   <div class="alert mt-4 mb-4 rounded-xl px-4 py-3 text-sm" :class="props.type">
     <div class="flex items-start">
       <div class="overflow-hidden leading-loose">
-        <ContentSlot :use="$slots.default" unwrap="p" />
+        <ContentSlot :use="$slots.default" />
       </div>
     </div>
   </div>
 </template>
 
 <style lang="postcss" scoped>
+.alert :deep(:first-child) {
+  margin-top: 0;
+}
+
+.alert :deep(:last-child) {
+  margin-bottom: 0;
+}
+
 /* Light mode */
 .alert {
   --tw-border-opacity: 1;

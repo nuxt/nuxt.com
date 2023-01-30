@@ -1,6 +1,6 @@
 // https://github.com/tailwindlabs/tailwindcss-typography/blob/master/src/styles.js#L1234
 
-export default theme => ({
+export default (theme: (arg0: string) => any) => ({
   DEFAULT: {
     css: {
       h1: {
