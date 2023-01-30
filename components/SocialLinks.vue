@@ -9,7 +9,9 @@
         target="_blank"
         class="!p-0 u-text-gray-900 focus-visible:ring-2"
         title="Go to Nuxt Twitter Account"
-      />
+      >
+        <span class="sr-only">Twitter</span>
+      </UButton>
     </li>
     <li>
       <UButton
@@ -19,7 +21,9 @@
         target="_blank"
         class="!p-0 u-text-gray-900 focus-visible:ring-2"
         title="Go to Nuxt Discord Server"
-      />
+      >
+        <span class="sr-only">Discord</span>
+      </UButton>
     </li>
     <li>
       <UButton
@@ -29,7 +33,9 @@
         target="_blank"
         class="!p-0 u-text-gray-900 focus-visible:ring-2"
         title="Go to Nuxt Github page"
-      />
+      >
+        <span class="sr-only">GitHub</span>
+      </UButton>
     </li>
   </ul>
 </template>

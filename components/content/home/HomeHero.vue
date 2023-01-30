@@ -1,8 +1,26 @@
 <template>
   <div class="sm:pb-20 pt-12 md:pt-28">
-    <img src="/assets/home/hero-gradient.svg" class="absolute top-0 right-0 hidden overflow-hidden select-none lg:block blur-lg" role="presentation" width="1269" height="724">
-    <img src="/assets/home/hero-gradient-tablet.svg" class="absolute top-0 right-0 w-full hidden overflow-hidden select-none sm:block lg:hidden blur-md" role="presentation" width="924" height="653">
-    <img src="/assets/home/hero-gradient-mobile.svg" class="absolute inset-x-0 top-0 w-full overflow-hidden object-cover select-none sm:hidden blur-md" role="presentation" width="375" height="494">
+    <img
+      src="/assets/home/hero-gradient.svg"
+      class="absolute top-0 right-0 hidden overflow-hidden select-none lg:block blur-lg"
+      alt=""
+      width="1269"
+      height="724"
+    >
+    <img
+      src="/assets/home/hero-gradient-tablet.svg"
+      alt=""
+      class="absolute top-0 right-0 w-full hidden overflow-hidden select-none sm:block lg:hidden blur-md"
+      width="924"
+      height="653"
+    >
+    <img
+      src="/assets/home/hero-gradient-mobile.svg"
+      class="absolute inset-x-0 top-0 w-full overflow-hidden object-cover select-none sm:hidden blur-md"
+      alt=""
+      width="375"
+      height="494"
+    >
     <UContainer padded class="relative flex flex-col items-center sm:items-start gap-y-8">
       <div v-if="$slots.badgeLabel" class="flex gap-x-2">
         <UBadge rounded variant="green">

@@ -1,6 +1,6 @@
 <template>
   <div class="relative overflow-hidden">
-    <Page v-if="!error" id="smooth" class="relative pt-16 -mt-16">
+    <Page v-if="!error" id="smooth" class="pt-16 -mt-16">
       <PageList :title="`${filteredJobs.length} job${filteredJobs.length > 1 ? 's' : ''} found`" :modules-filter="false">
         <template #filters>
           <JobsFilterLocation :locations="locations" :selected-location="selectedLocation" @update:location="replaceRoute('location', $event)" />

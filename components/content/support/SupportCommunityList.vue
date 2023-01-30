@@ -1,7 +1,7 @@
 <template>
   <li class="flex flex-col sm:flex-row gap-4">
-    <img :src="`/assets/support/solutions/${icon}-light.svg`" class="w-[44px] h-[44px] dark:hidden">
-    <img :src="`/assets/support/solutions/${icon}.svg`" class="w-[44px] h-[44px] hidden dark:block">
+    <img :src="`/assets/support/solutions/${icon}-light.svg`" alt="" class="w-[44px] h-[44px] dark:hidden" width="44" height="44">
+    <img :src="`/assets/support/solutions/${icon}.svg`" alt="" class="w-[44px] h-[44px] hidden dark:block" width="44" height="44">
 
     <div class="flex flex-col gap-y-2">
       <h2 class="u-text-gray-900 text-xl font-semibold">

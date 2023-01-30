@@ -1,11 +1,11 @@
 <template>
   <USlideover v-model="isOpen" :transition="false" :overlay="false" base-class="relative flex-1 flex flex-col w-full focus:outline-none max-w-md u-bg-white border-r border-r-gray-300 dark:border-r-gray-700">
     <template #header>
-      <button v-if="selectedLink" class="flex-1 flex items-start focus:outline-none focus-visible:outline-2" @click="selectedLink = null">
+      <button v-if="selectedLink" type="button" class="flex-1 flex items-start focus:outline-none focus-visible:outline-2" @click="selectedLink = null">
         <Icon name="uil:arrow-left" class="flex-shrink-0 w-7 h-7" />
         <span class="hidden">Go back</span>
       </button>
-      <button v-else class="flex-1 flex items-start focus:outline-none focus-visible:outline-2" @click="isOpen = false">
+      <button v-else type="button" class="flex-1 flex items-start focus:outline-none focus-visible:outline-2" @click="isOpen = false">
         <Icon name="uil:multiply" class="flex-shrink-0 w-6 h-6" />
         <span class="hidden">Close menu</span>
       </button>
@@ -14,6 +14,7 @@
         {{ selectedLink.title }}
       </p>
       <NuxtLink v-else to="/" class="block u-text-black" @click="isOpen = false">
+        <span class="sr-only">Nuxt logo</span>
         <Logo class="block w-auto h-6" />
       </NuxtLink>
 

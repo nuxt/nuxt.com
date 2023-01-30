@@ -36,7 +36,7 @@
                 <div class="flex flex-col">
                   <img
                     :src="`https://res.cloudinary.com/nuxt/image/upload/f_auto,q_auto,w_488,h_366/${showcase.screenshotUrl}`"
-                    :alt="showcase.hostname"
+                    :alt="showcase.hostname || ''"
                     :loading="key === 0 ? 'eager' : 'lazy'"
                     class="object-cover object-top w-full h-full"
                     height="366"
