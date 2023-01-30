@@ -86,6 +86,7 @@ export default defineNuxtConfig({
       apiKey: process.env.NUXT_SENDGRID_API_KEY || '',
       listId: process.env.NUXT_SENDGRID_LIST_ID || ''
     },
+    testEmail: process.env.NUXT_TEST_EMAIL || '',
     mailjet: {
       apiKey: process.env.NUXT_MAILJET_API_KEY || '',
       secretKey: process.env.NUXT_MAILJET_SECRET_KEY || ''
