@@ -12,8 +12,8 @@ export const useAgencyPartners = () => {
     try {
       const data = await queryContent('/support/agencies').where({
         $not: {
-          _path: {
-            $in: ['/support/agencies']
+          title: {
+            $in: ['Nuxt Partner Agencies']
           }
         },
         _extension: 'md'
