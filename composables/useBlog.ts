@@ -5,15 +5,11 @@ export const useBlog = () => {
   const articles: Ref<ResourcesBlogArticle[]> = useState('articles', () => [])
   const featuredArticle: Ref<ResourcesBlogArticle | {}> = useState('featured-article', () => {})
 
-  const iconsMap = {
-    Education: 'uil:graduation-cap',
-    Announcements: 'uil:microphone',
-    Release: 'uil:rocket'
-  }
-
   // Data fetching
 
   async function fetchList () {
+    if (articles.value.length) { return }
+
     try {
       const data = await queryContent<ResourcesBlogArticle>('/blog').where({
         $not: {
@@ -24,12 +20,7 @@ export const useBlog = () => {
         _extension: 'md'
       }).sort({ date: -1 }).find()
 
-      console.log({ data })
-
-      articles.value = data.map(article => ({
-        ...article,
-        icon: iconsMap[article.category as keyof typeof iconsMap]
-      })) as ResourcesBlogArticle[]
+      articles.value = data as ResourcesBlogArticle[]
       featuredArticle.value = articles.value?.shift() || {}
     } catch (e) {
       articles.value = []

@@ -8,6 +8,7 @@
         <p v-if="$slots.description" class="text-lg font-medium text-center sm:text-left u-text-gray-500">
           <ContentSlot :use="$slots.description" unwrap="p" />
         </p>
+        <ContentSlot :use="$slots.extra" unwrap="p" />
       </div>
       <BlogPostFeatured />
     </div>

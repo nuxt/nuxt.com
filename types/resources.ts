@@ -9,10 +9,10 @@ export interface ResourcesBlogArticleAuthor {
 export interface ResourcesBlogArticle extends ParsedContent {
   description: string
   date: Date
+  imgUrl: string
   authors: ResourcesBlogArticleAuthor[]
   tags: string[]
-  category: string,
-  icon: string
+  category: string
 }
 
 export interface ResourcesCaseStudy extends ParsedContent {

@@ -1,12 +1,10 @@
 <template>
   <div ref="root" class="cursor-pointer rounded-md relative group card-wrapper" @click="onClick">
-    <div class="hidden gradient-border gradient-border-dark dark:block" />
-    <div class="dark:hidden gradient-border gradient-border-light" />
-
     <UCard
       class="h-full w-full flex flex-col justify-between relative"
       shadow-class="shadow-none"
     >
+      <img src="/assets/blog/featured.png" class="absolute inset-0 object-cover w-full h-full">
       <div class="absolute inset-0 transition-opacity bg-overlay opacity-20 group-hover:opacity-40" />
       <div v-if="featuredArticle" class="relative flex flex-col p-4">
         <div class="font-semibold text-white">
@@ -32,7 +30,9 @@
 <script setup lang="ts">
 import { formatDateByLocale } from '../../../utils'
 
-const { featuredArticle } = useBlog()
+const { featuredArticle, fetchList } = useBlog()
+
+await fetchList()
 
 const authors = computed(() => {
   return (featuredArticle?.value?.authors || []).map(author => ({ src: author.avatarUrl, ...author }))
