@@ -10,7 +10,7 @@
         class="!p-0 u-text-gray-900 focus-visible:ring-2"
         title="Go to Nuxt Twitter Account"
       >
-        <span class="sr-only">Twitter</span>
+        <span class="sr-only">Go to Nuxt Twitter Account</span>
       </UButton>
     </li>
     <li>
@@ -22,7 +22,7 @@
         class="!p-0 u-text-gray-900 focus-visible:ring-2"
         title="Go to Nuxt Discord Server"
       >
-        <span class="sr-only">Discord</span>
+        <span class="sr-only">Go to Nuxt Discord Server</span>
       </UButton>
     </li>
     <li>
@@ -34,7 +34,7 @@
         class="!p-0 u-text-gray-900 focus-visible:ring-2"
         title="Go to Nuxt Github page"
       >
-        <span class="sr-only">GitHub</span>
+        <span class="sr-only">Go to Nuxt Github page</span>
       </UButton>
     </li>
   </ul>

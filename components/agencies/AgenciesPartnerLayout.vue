@@ -182,7 +182,7 @@
                     rel="noopener"
                     class="flex items-center gap-3"
                   >
-                    <span class="sr-only">Social icon</span>
+                    <span class="sr-only">{{ page.title }} {{link.key }}</span>
                     <Icon :name="link.icon" class="w-6 h-6 u-text-gray-900 transition duration-300 group-hover:u-text-gray-600" />
                   </NuxtLink>
                 </li>

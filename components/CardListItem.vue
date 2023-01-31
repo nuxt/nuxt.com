@@ -44,7 +44,7 @@ defineProps({
     <slot v-if="$slots.footer" name="footer" />
 
     <NuxtLink :to="to" :target="target">
-      <span class="sr-only">Link</span>
+      <span class="sr-only">Link to {{ to }}</span>
       <span class="absolute inset-0" aria-hidden="true" />
     </NuxtLink>
   </UCard>

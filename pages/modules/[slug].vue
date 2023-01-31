@@ -29,24 +29,24 @@
               {{ module.description }}
             </p>
             <div class="flex items-center justify-center md:justify-start gap-1.5 mt-4 u-text-gray-500">
-              <a :href="module.github" target="_blank" class="flex items-center gap-1.5">
+              <NuxtLink :href="module.github" target="_blank" class="flex items-center gap-1.5">
                 <UAvatarGroup :group="maintainers" size="xxs" :max="4" />
                 <span>{{ maintainers.length }} maintainer{{ maintainers.length > 1 ? 's' : '' }}</span>
-              </a>
+              </NuxtLink>
               <div class="hidden md:block">
                 -
               </div>
-              <a :href="`https://npmjs.com/package/${module.npm}`" target="_blank" class="flex items-center gap-1.5">
+              <NuxtLink :href="`https://npmjs.com/package/${module.npm}`" target="_blank" class="flex items-center gap-1.5">
                 <Icon name="uil:download-alt" class="w-4 h-4" />
                 <span>{{ formatNumber(module.downloads) }} installs</span>
-              </a>
+              </NuxtLink>
               <div class="hidden md:block">
                 -
               </div>
-              <a :href="module.github" target="_blank" class="flex items-center gap-1.5">
+              <NuxtLink :href="module.github" target="_blank" class="flex items-center gap-1.5">
                 <Icon name="uil:star" class="w-4 h-4" />
                 <span>{{ formatNumber(module.stars) }} stars</span>
-              </a>
+              </NuxtLink>
             </div>
           </div>
         </div>
