@@ -7,7 +7,6 @@
         :height="backgroundImage.height"
         alt=""
         class="dark:hidden opacity-0 md:opacity-100 -z-10"
-        role="presentation"
       >
       <img
         :src="`${backgroundImage.path}-dark.${backgroundImage.format}`"
@@ -15,7 +14,6 @@
         :height="backgroundImage.height"
         alt=""
         class="hidden dark:block opacity-0 md:opacity-100"
-        role="presentation"
       >
     </div>
     <ContentSlot :use="$slots.default" unwrap="p" />

@@ -18,22 +18,22 @@
           :class="linkClass(index, link)"
           @click.stop.prevent="onClick(link)"
         >
-          <span class="inline-flex items-center">
+          <div class="inline-flex items-center">
             <Icon v-if="link.icon" :name="link.icon" class="w-5 h-5 mr-1" />
             <div class=" flex flex-col">
               <span>{{ link.title }}</span>
               <span class="inset-x-0 -bottom-1 h-0.5" :class="{ 'bg-gradient-to-r from-green-400 to-teal-400': (isActive(link) && !link.children)}" />
             </div>
-          </span>
+          </div>
         </NuxtLink>
         <div v-else class="w-full flex justify-between items-center" @click="tablet ? () => {} : expand(link)">
           <span
             class="py-1.5 flex w-full cursor-pointer"
             :class="linkClass(index, link)"
           >{{ link.title }}</span>
-          <span v-if="link.isCollapsible && !tablet">
+          <div v-if="link.isCollapsible && !tablet">
             <UButton :icon="link.collapsed ? 'bx:expand-vertical' : 'bx:collapse-vertical'" icon-base-class="h-5" variant="transparent" />
-          </span>
+          </div>
         </div>
       </div>
 
@@ -90,11 +90,11 @@ const isChildOpen = reactive({} as any)
 const linkClass = (index: Number, link: NavItem | CollapsibleNavItem) => {
   return [
     props.level > 0 && 'pl-4 lg:text-sm',
-    (props.level === 0 && index === 0) && '!pt-0',
+    (props.level === 0 && index === 0) ? '!pt-0' : '',
     isActive(link) && 'font-semibold',
     (props.level === 0 && !isActive(link) && link.children) && 'font-medium',
     !isActive(link) && !link.children && 'hover:font-semibold'
-  ].join(' ')
+  ].filter(Boolean).join(' ')
 }
 
 const links: Ref<CollapsibleNavItem[]> = ref(getLinks())
