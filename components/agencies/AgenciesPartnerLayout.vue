@@ -147,10 +147,10 @@
               <h2 class="mb-4 text-2xl font-semibold u-text-gray-900">
                 Location
               </h2>
-              <span class="flex items-center gap-3 u-text-gray-700">
+              <div class="flex items-center gap-3 u-text-gray-700">
                 <Icon name="uil:location-pin-alt" class="w-6 h-6 u-text-gray-900" />
                 {{ page.location }}
-              </span>
+              </div>
             </div>
             <div v-if="page.resources && page.resources.length">
               <h2 class="mb-4 text-2xl font-semibold u-text-gray-900">
@@ -182,6 +182,7 @@
                     rel="noopener"
                     class="flex items-center gap-3"
                   >
+                    <span class="sr-only">{{ page.title }} {{link.key }}</span>
                     <Icon :name="link.icon" class="w-6 h-6 u-text-gray-900 transition duration-300 group-hover:u-text-gray-600" />
                   </NuxtLink>
                 </li>

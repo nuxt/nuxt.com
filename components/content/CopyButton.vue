@@ -1,6 +1,7 @@
 <template>
   <button
     :class="baseClass"
+    type="button"
     @click="onClick"
   >
     <Icon v-if="state === 'copied'" name="uil:check" :class="iconClass" />

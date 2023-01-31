@@ -3,7 +3,7 @@
     <div class="flex flex-col justify-between gap-3 lg:flex-row lg:items-center">
       <slot name="heading" />
 
-      <button class="flex items-center justify-between font-semibold u-text-gray-900 md:hidden" @click="isOpen = !isOpen">
+      <button class="flex items-center justify-between font-semibold u-text-gray-900 md:hidden" type="button" @click="isOpen = !isOpen">
         <div class="flex items-center">
           <Icon name="uil:filter" class="w-5 h-5 mr-1.5" />
           <span>Filter (</span>

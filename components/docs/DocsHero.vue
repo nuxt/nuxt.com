@@ -18,7 +18,6 @@
         :width="image.width"
         :height="image.height"
         class="dark:hidden object-cover opacity-0 md:opacity-100 mx-auto"
-        role="presentation"
       >
       <img
         :src="`${image.path}-dark.${image.format}`"
@@ -26,7 +25,6 @@
         :width="image.width"
         :height="image.height"
         class="hidden dark:block object-cover opacity-0 md:opacity-100 mx-auto"
-        role="presentation"
       >
     </div>
   </div>
