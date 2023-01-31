@@ -28,9 +28,13 @@ const icons: Record<string, string> = {
   'package.json': 'vscode-icons:file-type-npm',
   'tsconfig.json': 'vscode-icons:file-type-tsconfig',
   '.eslintrc': 'vscode-icons:file-type-eslint',
+  '.eslintrc.cjs': 'vscode-icons:file-type-eslint',
   '.gitignore': 'vscode-icons:file-type-git',
   'yarn.lock': 'vscode-icons:file-type-yarn',
+  '.env': 'vscode-icons:file-type-config',
+  '.env.example': 'vscode-icons:file-type-config',
   ts: 'vscode-icons:file-type-typescript',
+  cjs: 'vscode-icons:file-type-js',
   js: 'vscode-icons:file-type-js',
   md: 'vscode-icons:file-type-markdown',
   ico: 'vscode-icons:file-type-favicon'

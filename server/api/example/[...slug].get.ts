@@ -52,10 +52,17 @@ const github = $fetch.create({
   }
 })
 
+const LOCK_FILES = ['yarn.lock', 'package-lock.json', 'pnpm-lock.yaml']
+function isLockFile (path: string) {
+  return LOCK_FILES.some(filename => path.endsWith(filename))
+}
+
 async function fetchFiles (repo: string, path: string, dir: string): Promise<File[]> {
   const promises = []
-  const files = await github<File[]>(`${repo}/contents/${path}`)
+  let files = await github<File[]>(`${repo}/contents/${path}`)
 
+  // Remove lock files
+  files = files.filter(file => !isLockFile(file.path))
   files.sort((a, b) => {
     if (a.type === 'dir' && b.type === 'file') { return -1 }
     if (a.type === 'file' && b.type === 'dir') { return 1 }
