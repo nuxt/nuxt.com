@@ -18,13 +18,13 @@
           <CardListItem :to="filteredPartner._path">
             <template #header>
               <div>
-                <img v-if="filteredPartner.logo?.light" :src="filteredPartner.logo.light" :alt="filteredPartner.title" class="w-auto h-12 dark:hidden">
-                <img v-if="filteredPartner.logo?.dark" :src="filteredPartner.logo.dark" :alt="filteredPartner.title" class="hidden w-auto h-12 dark:block">
+                <img v-if="filteredPartner.logo?.light" :src="filteredPartner.logo.light" :alt="filteredPartner?.title" class="w-auto h-12 dark:hidden">
+                <img v-if="filteredPartner.logo?.dark" :src="filteredPartner.logo.dark" :alt="filteredPartner?.title" class="hidden w-auto h-12 dark:block">
               </div>
-              <span class="text-sm u-text-gray-400">{{ filteredPartner.location.title }}</span>
+              <span class="text-sm u-text-gray-400">{{ filteredPartner.location?.title }}</span>
             </template>
             <template #title>
-              {{ filteredPartner.title }}
+              {{ filteredPartner?.title }}
             </template>
             <template #description>
               {{ filteredPartner.description }}
