@@ -67,6 +67,11 @@
       "source": "/shop/beanie",
       "destination": "https://nuxt.gumroad.com/l/beanie",
       "permanent": false
+    },
+    {
+      "source": "/shop",
+      "destination": "https://nuxt.gumroad.com/l/ams-beanie",
+      "permanent": false
     }
   ]
 }
