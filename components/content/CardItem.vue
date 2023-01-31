@@ -60,7 +60,7 @@
         <p class="u-text-gray-500" :class="[{ 'text-lg font-medium': icon }, descriptionClass]">
           <ContentSlot :use="$slots.description" unwrap="p" />
         </p>
-        <div v-if="buttons.length" class="gap-2 flex flex-col sm:flex-row">
+        <div v-if="buttons.length" class="gap-2 flex flex-col sm:flex-row" :class="buttonsWrapperClass">
           <UButton
             v-for="button of buttons"
             :key="button.label"
@@ -149,6 +149,10 @@ const props = defineProps({
   ringClass: {
     type: String,
     default: 'ring-1 ring-gray-200 dark:ring-gray-800'
+  },
+  buttonsWrapperClass: {
+    type: String,
+    default: ''
   }
 })
 
