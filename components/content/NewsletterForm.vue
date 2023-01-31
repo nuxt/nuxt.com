@@ -31,23 +31,26 @@ function onSubmit () {
 </script>
 
 <template>
-  <form class="flex gap-2 items-center" @submit.prevent="onSubmit">
-    <UInput
-      v-model="email"
-      name="email"
-      placeholder="Email"
-      class="w-full sm:w-64"
-      size="lg"
-      required
-    />
-    <UButton
-      type="submit"
-      submit
-      variant="primary-gradient"
-      :loading="loading"
-      :label="buttonText"
-      class="focus-visible:ring-2"
-    />
+  <form class="flex flex-col gap-y-4 mt-6" @submit.prevent="onSubmit">
+    <ContentSlot :use="$slots.default" unwrap="p" />
+    <div class="flex gap-x-2 items-center">
+      <UInput
+        v-model="email"
+        name="email"
+        placeholder="Email"
+        class="w-full sm:w-64"
+        size="lg"
+        required
+      />
+      <UButton
+        type="submit"
+        submit
+        variant="primary-gradient"
+        :loading="loading"
+        :label="buttonText"
+        class="focus-visible:ring-2"
+      />
+    </div>
   </form>
 </template>
 
