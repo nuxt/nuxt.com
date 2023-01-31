@@ -8,7 +8,7 @@
     <UContainer padded class="relative">
       <nav id="main-nav" class="grid items-center h-16 grid-cols-6 gap-3 lg:h-20 lg:justify-center" aria-label="Primary Navigation">
         <div class="lg:hidden">
-          <button @click="isOpen = true">
+          <button type="button" @click="isOpen = true">
             <Icon name="uil:bars" class="flex-shrink-0 w-6 h-6" aria-hidden="true" focusable="false" />
             <span class="sr-only">Menu</span>
           </button>
@@ -16,6 +16,7 @@
 
         <div class="flex justify-center col-span-4 lg:col-span-1 lg:justify-start">
           <NuxtLink to="/" class="block u-text-black" title="Homepage" @click.right.prevent="$router.push('/design-kit')">
+            <span class="sr-only">Go to homepage</span>
             <LogoFull class="hidden w-auto h-6 sm:block" />
             <Logo class="block w-auto h-6 sm:hidden" />
           </NuxtLink>

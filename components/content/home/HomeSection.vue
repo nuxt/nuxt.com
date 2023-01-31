@@ -33,7 +33,7 @@
         :variant="button.variant || 'transparent'"
         :icon="button.icon || undefined"
         :label="button.label || ''"
-        :to="button.to || null"
+        :to=" button.to"
         :trailing="button.trailing"
         :size="'lg' || button.size"
         truncate
@@ -49,7 +49,7 @@ import type { RouteLocationNormalized, RouteLocationRaw } from 'vue-router'
 
 const props = defineProps({
   buttons: {
-    type: Array as PropType<{ label?: string, variant?: string, to?: string, icon?: string, trailing?: boolean, size?: string }[]>,
+    type: Array as PropType<{ label?: string, variant?: string, to?: string | RouteLocationNormalized | RouteLocationRaw, icon?: string, trailing?: boolean, size?: string }[]>,
     default: () => []
   },
   sectionAlign: {

@@ -21,7 +21,9 @@ defineProps({
         <UCard v-if="['platinum', 'silver', 'gold'].includes(sponsorType)" class="w-full rounded-xl " background-class="hover:u-bg-gray-50 transition-colors duration-200">
           <template #header>
             <div class="flex justify-center items-center">
-              <UAvatar :rounded="sponsorType === 'silver'" :size="sponsorType === 'silver' ? 'md' : sponsorType === 'gold' ? 'lg' : 'xl'" :src="sponsorLogo" />
+              <UAvatar :rounded="sponsorType === 'silver'" :size="sponsorType === 'silver' ? 'md' : sponsorType === 'gold' ? 'lg' : 'xl'" :src="sponsorLogo" alt="">
+                <span class="sr-only">Sponsors</span>
+              </UAvatar>
             </div>
           </template>
           <div class="text-center truncate font-semibold text-xl sm:text-lg lg:text-xl w-full">
@@ -29,7 +31,9 @@ defineProps({
           </div>
         </UCard>
 
-        <UAvatar v-else rounded :size="sponsorType === 'backers' ? 'sm' : 'md'" :src="sponsorLogo" />
+        <UAvatar v-else rounded :size="sponsorType === 'backers' ? 'sm' : 'md'" :src="sponsorLogo" alt="">
+          <span class="sr-only">Sponsors</span>
+        </UAvatar>
       </a>
     </li>
   </ul>

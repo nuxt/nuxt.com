@@ -16,34 +16,34 @@
           </div>
           <div>
             <div class="flex flex-col md:flex-row gap-3 items-center md:items-end">
-              <h1 class="text-3xl capitalize font-semibold u-text-gray-900">
+              <h2 class="text-3xl capitalize font-semibold u-text-gray-900">
                 {{ module.name }}
-              </h1>
+              </h2>
 
-              <NuxtLink :to="module.website" target="_blank" class="group flex items-center mb-3 md:mb-1">
+              <a :href="module.website" target="_blank" class="group flex items-center mb-3 md:mb-1">
                 <span class="u-text-gray-400 group-hover:u-text-gray-500 mr-2">Go to documentation</span>
                 <Icon name="uil:external-link-alt" class="u-text-gray-500" />
-              </NuxtLink>
+              </a>
             </div>
             <p class="u-text-gray-500 mt-1 text-xl text-center md:text-left md:max-w-2xl">
               {{ module.description }}
             </p>
             <div class="flex items-center justify-center md:justify-start gap-1.5 mt-4 u-text-gray-500">
-              <NuxtLink :to="module.github" target="_blank" class="flex items-center gap-1.5">
+              <NuxtLink :href="module.github" target="_blank" class="flex items-center gap-1.5">
                 <UAvatarGroup :group="maintainers" size="xxs" :max="4" />
                 <span>{{ maintainers.length }} maintainer{{ maintainers.length > 1 ? 's' : '' }}</span>
               </NuxtLink>
               <div class="hidden md:block">
                 -
               </div>
-              <NuxtLink :to="`https://npmjs.com/package/${module.npm}`" target="_blank" class="flex items-center gap-1.5">
+              <NuxtLink :href="`https://npmjs.com/package/${module.npm}`" target="_blank" class="flex items-center gap-1.5">
                 <Icon name="uil:download-alt" class="w-4 h-4" />
                 <span>{{ formatNumber(module.downloads) }} installs</span>
               </NuxtLink>
               <div class="hidden md:block">
                 -
               </div>
-              <NuxtLink :to="module.github" target="_blank" class="flex items-center gap-1.5">
+              <NuxtLink :href="module.github" target="_blank" class="flex items-center gap-1.5">
                 <Icon name="uil:star" class="w-4 h-4" />
                 <span>{{ formatNumber(module.stars) }} stars</span>
               </NuxtLink>

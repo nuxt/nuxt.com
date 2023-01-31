@@ -1,11 +1,11 @@
 <template>
   <UContainer padded class="pt-8 pb-[120px] flex flex-col gap-y-8">
-    <img :src="`/assets/support/solutions/${image.path}-light.${image.format}`" class="dark:hidden w-[73px] h-[81px]" :height="image.height" :width="image.width">
-    <img :src="`/assets/support/solutions/${image.path}-dark.${image.format}`" class="hidden dark:block w-[73px] h-[81px]" :height="image.height" :width="image.width">
+    <img :src="`/assets/support/solutions/${image.path}-light.${image.format}`" alt="" class="dark:hidden w-[73px] h-[81px]" :height="image.height" :width="image.width">
+    <img :src="`/assets/support/solutions/${image.path}-dark.${image.format}`" alt="" class="hidden dark:block w-[73px] h-[81px]" :height="image.height" :width="image.width">
 
-    <h1 class="u-text-gray-900 text-4xl font-semibold">
+    <h2 class="u-text-gray-900 text-4xl font-semibold">
       <ContentSlot :use="$slots.title" unwrap="p" />
-    </h1>
+    </h2>
 
     <p class="u-text-gray-800 text-lg">
       <ContentSlot :use="$slots.description" unwrap="p" />

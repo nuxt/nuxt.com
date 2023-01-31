@@ -41,13 +41,15 @@ defineProps({
       <h4 v-if="$slots.title" class="font-semibold u-text-gray-700" :class="[titleClass, {'truncate': truncate}]">
         <slot name="title" />
       </h4>
-      <p v-if="$slots.description" class="u-text-gray-500" :class="descriptionClass">
-        <slot name="description" />
-      </p>
+    </div>
+    <p v-if="$slots.description" class="u-text-gray-500" :class="descriptionClass">
+      <slot name="description" />
+    </p>
     </div>
     <slot v-if="$slots.footer" name="footer" />
 
     <NuxtLink :to="to" :target="target">
+      <span class="sr-only">Link to {{ to }}</span>
       <span class="absolute inset-0" aria-hidden="true" />
     </NuxtLink>
   </UCard>

@@ -4,6 +4,7 @@
       <button
         v-for="({ label }, i) in tabs"
         :key="`${i}${label}`"
+        type="button"
         class="relative px-3 py-1.5 xs:py-3 my-1.5 xs:my-0 text-sm font-mono tracking-tight font-semibold rounded"
         :class="[activeTabIndex === i ? 'active text-gray-800 dark:text-white bg-gray-300 dark:bg-gray-800' : 'text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100']"
         @click="$emit('update:activeTabIndex', i)"
