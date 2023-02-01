@@ -1,19 +1,19 @@
 <template>
-  <USlideover v-model="isOpen" :transition="false" :overlay="false" base-class="relative flex-1 flex flex-col w-full focus:outline-none max-w-md u-bg-white border-r border-r-gray-300 dark:border-r-gray-700">
+  <Slideover class="relative">
     <template #header>
-      <button v-if="selectedLink" type="button" class="flex-1 flex items-start focus:outline-none focus-visible:outline-2" @click="selectedLink = null">
-        <Icon name="uil:arrow-left" class="flex-shrink-0 w-7 h-7" />
-        <span class="hidden">Go back</span>
+      <button v-if="selectedLink" class="flex-1 flex items-start focus:outline-none focus-visible:outline-2" @click="selectedLink = null">
+        <span class="sr-only">Go back</span>
+        <Icon name="uil:arrow-left" size="28px" class="flex-shrink-0 u-text-gray-900" />
       </button>
-      <button v-else type="button" class="flex-1 flex items-start focus:outline-none focus-visible:outline-2" @click="isOpen = false">
-        <Icon name="uil:multiply" class="flex-shrink-0 w-6 h-6" />
-        <span class="hidden">Close menu</span>
+      <button v-else class="flex-1 flex items-start focus:outline-none focus-visible:outline-2" @click="close">
+        <span class="sr-only">Close menu</span>
+        <Icon name="uil:multiply" size="24px" class="flex-shrink-0 u-text-gray-900" />
       </button>
 
       <p v-if="selectedLink" class="text-lg font-semibold">
         {{ selectedLink.title }}
       </p>
-      <NuxtLink v-else to="/" class="block u-text-black" @click="isOpen = false">
+      <NuxtLink v-else to="/" class="block u-text-black" @click="close">
         <span class="sr-only">Nuxt logo</span>
         <Logo class="block w-auto h-6" />
       </NuxtLink>
@@ -24,14 +24,14 @@
     </template>
 
     <div class="flex-1 px-4 py-4 overflow-y-scroll sm:px-6">
-      <DocsAsideTree :tree="tree" :max="selectedLink ? null : 2" @select="onSelect" @close="isOpen = false" />
+      <DocsAsideTree :tree="tree" :max="selectedLink ? null : 2" @select="onSelect" @close="close" />
     </div>
-  </USlideover>
+  </Slideover>
 </template>
 
 <script setup lang="ts">
 import type { NavItem } from '@nuxt/content/dist/runtime/types'
-import type { PropType, Ref, WritableComputedRef } from 'vue'
+import type { PropType, Ref } from 'vue'
 
 const props = defineProps({
   modelValue: {
@@ -44,25 +44,16 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update:modelValue'])
-
 const { navigation } = useContent()
 const { navPageFromPath } = useContentHelpers()
+
+const { close } = useSlideover()
 
 if (!navigation.value) {
   navigation.value = await fetchContentNavigation()
 }
 
 const route = useRoute()
-
-const isOpen: WritableComputedRef<boolean> = computed({
-  get () {
-    return props.modelValue
-  },
-  set (value) {
-    emit('update:modelValue', value)
-  }
-})
 
 const selectedLink: Ref<NavItem | null> = ref(null)
 

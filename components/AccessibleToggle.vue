@@ -3,28 +3,28 @@
     v-model="active"
     :class="[active ? activeClass : inactiveClass, baseClass]"
   >
-    <span
+    <div
       :class="[
         active ? containerActiveClass : containerInactiveClass,
         containerBaseClass,
       ]"
     >
-      <span
+      <div
         v-if="iconOn"
         :class="[active ? iconActiveClass : iconInactiveClass, iconBaseClass]"
         aria-hidden="true"
       >
-        <UIcon :name="iconOn" :class="iconOnClass" />
-      </span>
-      <span
+        <Icon :name="iconOn" :class="iconOnClass" />
+      </div>
+      <div
         v-if="iconOff"
         :class="[active ? iconInactiveClass : iconActiveClass, iconBaseClass]"
         aria-hidden="true"
       >
-        <UIcon :name="iconOff" :class="iconOffClass" />
-      </span>
+        <Icon :name="iconOff" :class="iconOffClass" />
+      </div>
       <slot />
-    </span>
+    </div>
   </Switch>
 </template>
 
