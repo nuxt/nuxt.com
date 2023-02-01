@@ -96,42 +96,6 @@ const RenderCode = defineComponent({
       <slot name="header" />
     </header>
     <slot name="description" />
-    <div class="grid grid-columns-3 gap-2 md:flex md:gap-3 md:flex-wrap mt-4 justify-stretch relative">
-      <a
-        target="_blank"
-        :href="`https://stackblitz.com/github/${repo}/tree/${branch}/${dir}`"
-        rel="noopener"
-        class="button"
-      >
-        <Icon class="w-4 h-4" alt="" name="simple-icons:stackblitz" />
-        Open on StackBlitz
-      </a>
-      <a
-        target="_blank"
-        :href="`https://codesandbox.io/s/github/${repo}/tree/${branch}/${dir}`"
-        rel="noopener"
-        class="button"
-      >
-        <Icon class="w-4 h-4" alt="" name="simple-icons:codesandbox" />
-        Open on CodeSandbox
-      </a>
-      <button
-        class="button"
-        :onclick="`navigator.clipboard.writeText('${command}')`"
-      >
-        <span class="sr-only">Click to copy</span>
-        <code class="flex items-center gap-2 line-clamp overflow-hidden truncate text-ellipsis w-full">
-          <Icon class="w-4 h-4" alt="" name="bi:terminal" />
-          {{ command }}
-        </code>
-        <span
-          class="backdrop-blur bg-white dark:bg-black px-2 absolute bottom-[0.5rem] right-[0.5rem] transition-opacity opacity-0 copy-confirmation pointer-events-none"
-          alt=""
-        >
-          Copied!
-        </span>
-      </button>
-    </div>
     <div class="rounded-lg bg-gray-900 text-gray-200 flex min-h-[500px] max-h-[600px] relative overflow-hidden">
       <div class="hidden md:flex flex-col shrink-0 min-w-[50px]">
         <div class="pt-4 text-sm flex flex-col overflow-y-auto">
@@ -197,6 +161,42 @@ const RenderCode = defineComponent({
         </div>
       </div>
       <ProseCodeCopyButton v-if="code" show :content="code" class="absolute right-0 bottom-0" />
+    </div>
+    <div class="grid grid-columns-3 gap-2 md:flex md:gap-3 md:flex-wrap mt-4 justify-stretch relative">
+      <a
+        target="_blank"
+        :href="`https://stackblitz.com/github/${repo}/tree/${branch}/${dir}`"
+        rel="noopener"
+        class="button"
+      >
+        <Icon class="w-4 h-4" alt="" name="simple-icons:stackblitz" />
+        Open on StackBlitz
+      </a>
+      <a
+        target="_blank"
+        :href="`https://codesandbox.io/s/github/${repo}/tree/${branch}/${dir}`"
+        rel="noopener"
+        class="button"
+      >
+        <Icon class="w-4 h-4" alt="" name="simple-icons:codesandbox" />
+        Open on CodeSandbox
+      </a>
+      <button
+        class="button"
+        :onclick="`navigator.clipboard.writeText('${command}')`"
+      >
+        <span class="sr-only">Click to copy</span>
+        <code class="flex items-center gap-2 line-clamp overflow-hidden truncate text-ellipsis w-full">
+          <Icon class="w-4 h-4" alt="" name="bi:terminal" />
+          {{ command }}
+        </code>
+        <span
+          class="backdrop-blur bg-white dark:bg-black px-2 absolute bottom-[0.5rem] right-[0.5rem] transition-opacity opacity-0 copy-confirmation pointer-events-none"
+          alt=""
+        >
+          Copied!
+        </span>
+      </button>
     </div>
   </section>
 </template>
