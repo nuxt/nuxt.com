@@ -91,7 +91,13 @@ const tree = computed(() => {
     return selectedLink.value.children
   }
 
-  const nav = navigation.value.filter((navLink: NavItem) => props.links.some(link => (navLink._path === `/${link._path.split('/')[1]}`) && (navLink._path !== '/docs')))
+  const nav = navigation.value.filter((navLink: NavItem) => props.links.some(link => (navLink._path === `/${link._path.split('/')[1]}`) && (navLink._path !== '/docs'))).map((navLink: NavItem) => {
+    if (navLink._path === '/blog') {
+      delete navLink.children
+    }
+    return navLink
+  })
+
   const docs = navigation.value.filter((navLink: NavItem) => navLink._path === '/docs')
   docs[0].icon = 'ph:books'
 
