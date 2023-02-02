@@ -5,7 +5,7 @@
       shadow-class=""
       ring-class=""
     >
-      <img src="/assets/blog/featured.png" class="absolute inset-0 object-cover w-full h-full">
+      <img src="/assets/blog/featured.png" class="absolute inset-0 object-cover w-full h-full rounded-md">
       <div v-if="featuredArticle" class="relative flex flex-col p-4">
         <div class="font-semibold text-white">
           <time>{{ formatDateByLocale('en', featuredArticle.date) }}</time>
