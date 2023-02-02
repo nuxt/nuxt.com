@@ -19,7 +19,7 @@
         </p>
         <ul class="flex flex-wrap items-center justify-center gap-4">
           <li v-for="author in page.authors" :key="author.name">
-            <NuxtLink :to="author.link" class="flex gap-x-2">
+            <NuxtLink :to="author.link" target="_blank" class="flex gap-x-2">
               <UAvatar :src="author.avatarUrl" :alt="author.name" />
               <div class="flex flex-col items-start">
                 <span class="leading-5 u-text-gray-900">{{ author.name }}</span>
