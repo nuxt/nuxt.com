@@ -22,7 +22,6 @@ specifiers:
   '@vueuse/core': ^9.6.0
   '@vueuse/motion': ^2.0.0-beta.12
   add: ^2.0.6
-  chart.js: ^4.2.0
   eslint: ^8.29.0
   joi: ^17.7.0
   mjml: ^4.13.0
@@ -36,7 +35,6 @@ specifiers:
   tailwindcss-border-gradient-radius: ^3.0.1
   three: ^0.147.0
   typescript: ^4.9.3
-  vue-chartjs: ^5.2.0
   vue-lite-youtube-embed: ^1.0.9
 
 dependencies:
@@ -57,7 +55,6 @@ dependencies:
   '@vueuse/core': 9.11.1
   '@vueuse/motion': 2.0.0-beta.12
   add: 2.0.6
-  chart.js: 4.2.0
   joi: 17.7.0
   mjml: 4.13.0
   node-mailjet: 6.0.1
@@ -67,7 +64,6 @@ dependencies:
   sitemap: 7.1.1
   tailwindcss-border-gradient-radius: 3.0.1
   three: 0.147.0
-  vue-chartjs: 5.2.0_chart.js@4.2.0
   vue-lite-youtube-embed: 1.2.0
 
 devDependencies:
@@ -1123,10 +1119,6 @@ packages:
       path-to-regexp: 6.2.1
     transitivePeerDependencies:
       - supports-color
-    dev: false
-
-  /@kurkle/color/0.3.2:
-    resolution: {integrity: sha512-fuscdXJ9G1qb7W8VdHi+IwRqij3lBkosAm4ydQtEmbY58OzHXqQhvlxqEkoz0yssNVn38bcpRWgA9PP+OGoisw==}
     dev: false
 
   /@mapbox/node-pre-gyp/1.0.10:
@@ -3444,13 +3436,6 @@ packages:
 
   /chardet/0.7.0:
     resolution: {integrity: sha512-mT8iDcrh03qDGRRmoA2hmBJnxpllMR+0/0qlzjqZES6NdiWDcZkCNAk4rPFZ9Q85r27unkiNNg8ZOiwZXBHwcA==}
-
-  /chart.js/4.2.0:
-    resolution: {integrity: sha512-wbtcV+QKeH0F7gQZaCJEIpsNriFheacouJQTVIjITi3eQA8bTlIBoknz0+dgV79aeKLNMAX+nDslIVE/nJ3rzA==}
-    engines: {pnpm: ^7.0.0}
-    dependencies:
-      '@kurkle/color': 0.3.2
-    dev: false
 
   /cheerio-select/1.6.0:
     resolution: {integrity: sha512-eq0GdBvxVFbqWgmCm7M3XGs1I8oLy/nExUnh6oLqmBditPO9AqQJrkslDpMun/hZ0yyTs8L0m85OHp4ho6Qm9g==}
@@ -11221,15 +11206,6 @@ packages:
     resolution: {integrity: sha512-43vCqTgaMXfHhtR8/VcxxWD1DgtzyvNc4wNyG5NKCIH19O1z5G9ZCRXTGEA2wifVec5PU82CkRLD2sTK9NkTdA==}
     dependencies:
       ufo: 1.0.1
-
-  /vue-chartjs/5.2.0_chart.js@4.2.0:
-    resolution: {integrity: sha512-d3zpKmGZr2OWHQ1xmxBcAn5ShTG917+/UCLaSpaCDDqT0U7DBsvFzTs69ZnHCgKoXT55GZDW8YEj9Av+dlONLA==}
-    peerDependencies:
-      chart.js: ^4.1.1
-      vue: ^3.0.0-0 || ^2.7.0
-    dependencies:
-      chart.js: 4.2.0
-    dev: false
 
   /vue-component-meta/1.0.24_typescript@4.9.4:
     resolution: {integrity: sha512-T2q8ptMjZA98wDYpyoTcrsvG8oPwyBKw73viLOCr4BSkdMDffyLhdxxVpn/XKangCki7bKY8TdK77w0YP5MCaw==}
