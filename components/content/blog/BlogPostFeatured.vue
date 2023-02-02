@@ -1,5 +1,5 @@
 <template>
-  <div ref="root" class="cursor-pointer rounded-md relative group card-wrapper" @click="onClick">
+  <div ref="rootFeatured" class="cursor-pointer rounded-md relative group card-wrapper" @click="onClick">
     <UCard
       class="h-full w-full flex flex-col justify-between relative transition duration-200 hover:ring-2 ucard"
       shadow-class=""
@@ -19,6 +19,7 @@
         <div class="flex items-center justify-between mt-6">
           <NuxtLink :to="featuredArticle._path" class="flex items-center text-xl font-semibold text-white gap-x-2">
             Read article<UIcon name="uil:arrow-right" class="w-5 h-5 mt-1" />
+            <span class="absolute inset-0" aria-hidden="true" />
           </NuxtLink>
           <UAvatarGroup :group="authors" size="sm" />
         </div>
@@ -39,12 +40,14 @@ const authors = computed(() => {
 })
 
 const onClick = () => {
-  navigateTo(featuredArticle.value?._path)
+  if (!window?.getSelection()?.toString()) {
+    navigateTo(featuredArticle.value?._path)
+  }
 }
 
-const root = ref<HTMLElement | null>(null)
+const rootFeatured = ref<HTMLElement | null>(null)
 
-useBlockLinks(root)
+useBlockLinks(rootFeatured)
 </script>
 
 <style lang="postcss">
