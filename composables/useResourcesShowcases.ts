@@ -53,7 +53,11 @@ export const useResourcesShowcases = () => {
  })
 
   const selectedCategory: ComputedRef<FilterItem> = computed(() => {
-    return categories.value.find(category => category.title === route.query.category) || categories.value[0]
+    if (process.server) {
+      return categories.value[0]
+    } else {
+      return categories.value.find(category => category.title === route.query.category) || categories.value[0]
+    }
   })
 
   const selectedShowcases: ComputedRef<ResourcesShowcasesListGroupItem[]> = computed(() => {
