@@ -37,16 +37,18 @@
         </div>
       </div>
 
-      <DocsAsideTree
-        v-if="link.children?.length && (max === null || ((level + 1) < max))"
-        v-show="(isChildOpen[link._path] || props.level === 0) && ((!link.collapsed && !tablet) || tablet)"
-        :tree="link.children"
-        :level="level + 1"
-        :max="max"
-        class="py-2"
-        @select="link => $emit('select', link)"
-        @close="$emit('close')"
-      />
+      <Transition>
+        <DocsAsideTree
+          v-if="link.children?.length && (max === null || ((level + 1) < max))"
+          v-show="(isChildOpen[link._path] || props.level === 0) && ((!link.collapsed && !tablet) || tablet)"
+          :tree="link.children"
+          :level="level + 1"
+          :max="max"
+          class="py-2 transition-all duration-300"
+          @select="link => $emit('select', link)"
+          @close="$emit('close')"
+        />
+      </Transition>
     </li>
   </ul>
 </template>
@@ -156,3 +158,19 @@ watch(() => route.path, () => {
   }
 }, { immediate: true })
 </script>
+
+<style lang="postcss">
+.v-enter-active,
+.v-leave-active {
+    max-height: 100vh;
+    opacity: 1;
+    transition: all 0.3s linear;
+}
+
+.v-enter-from,
+.v-leave-to {
+  max-height: 0;
+  opacity: 0;
+  transition: all 0.15s linear;
+}
+</style>
