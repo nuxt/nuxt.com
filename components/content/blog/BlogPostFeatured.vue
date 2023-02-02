@@ -17,7 +17,7 @@
           {{ featuredArticle.description }}
         </p>
         <div class="flex items-center justify-between mt-6">
-          <NuxtLink :to="featuredArticle._path" class="flex items-center text-xl font-semibold text-white gap-x-2">
+          <NuxtLink :to="featuredArticle._path" class="flex items-center text-xl font-semibold text-white gap-x-2 hover:border-b">
             Read article<UIcon name="uil:arrow-right" class="w-5 h-5 mt-1" />
           </NuxtLink>
           <UAvatarGroup :group="authors" size="sm" />
