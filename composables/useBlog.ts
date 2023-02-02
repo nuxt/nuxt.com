@@ -1,7 +1,7 @@
 import type { Ref } from 'vue'
 import type { ResourcesBlogArticle } from '../types'
 
-export const useBlog = () => {
+export function useBlog () {
   const articles: Ref<ResourcesBlogArticle[]> = useState('articles', () => [])
   const featuredArticle: Ref<ResourcesBlogArticle | {}> = useState('featured-article', () => {})
 
@@ -12,15 +12,10 @@ export const useBlog = () => {
 
     try {
       const data = await queryContent<ResourcesBlogArticle>('/blog').where({
-        $not: {
-          _path: {
-            $in: ['/blog']
-          }
-        },
         _extension: 'md'
-      }).sort({ date: -1 }).find()
+      }).without(['body', 'excerpt']).sort({ date: -1 }).find()
 
-      articles.value = data as ResourcesBlogArticle[]
+      articles.value = (data as ResourcesBlogArticle[]).filter(article => article._path !== '/blog')
       featuredArticle.value = articles.value?.shift() || {}
     } catch (e) {
       articles.value = []

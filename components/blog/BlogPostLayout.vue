@@ -19,7 +19,7 @@
         </p>
         <ul class="flex flex-wrap items-center justify-center gap-4">
           <li v-for="author in page.authors" :key="author.name">
-            <NuxtLink :to="author.link" class="flex gap-x-2">
+            <NuxtLink :to="author.link" target="_blank" class="flex gap-x-2">
               <UAvatar :src="author.avatarUrl" :alt="author.name" />
               <div class="flex flex-col items-start">
                 <span class="leading-5 u-text-gray-900">{{ author.name }}</span>
@@ -37,6 +37,9 @@
       <UContainer constrained-class="max-w-4xl" class="pt-8 xl:pt-0" padded>
         <div class="relative overflow-hidden border-b u-border-gray-400">
           <ContentRenderer v-if="page" :value="page" class="pb-12 prose dark:prose-invert max-w-none" />
+          <NewsletterForm class="mt-4 mb-4">
+            Subscribe to our newsletter to not miss the upcoming articles and resources.
+          </NewsletterForm>
         </div>
         <div class="flex justify-between pt-6">
           <span class="font-semibold u-text-gray-900">Share the article</span>
