@@ -5,7 +5,7 @@
     header-class="flex"
     body-class="flex flex-col h-full"
     title-class="text-2xl"
-    wrapper-content-class="p-4"
+    wrapper-content-class="p-4 grow h-full flex items-center"
     :truncate="false"
   >
     <template #header>
@@ -20,7 +20,7 @@
       {{ page.title }}
     </template>
     <template #footer>
-      <div class="text-sm font-semibold u-text-gray-400 p-4 h-full flex justify-between items-center card-footer">
+      <div class="text-sm font-semibold u-text-gray-400 h-full py-2 p-4 flex justify-between items-end w-full">
         <time class="pb-1">{{ formatDateByLocale('en', page.date) }}</time>
         <UAvatarGroup :group="page?.authors?.map(author => ({ src: author.avatarUrl, ...author }))" size="sm" />
       </div>
@@ -39,9 +39,3 @@ defineProps({
   }
 })
 </script>
-
-<style scoped>
-.card-footer {
-  align-items: self-end;
-}
-</style>
