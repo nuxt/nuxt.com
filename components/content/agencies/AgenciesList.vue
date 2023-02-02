@@ -58,7 +58,11 @@ const { filteredPartners, fetchList, services, selectedService, regions, selecte
 
 const { createReplaceRoute } = useFilters()
 
-const replaceRoute = createReplaceRoute('support-agencies')
+let replaceRoute: (key: string, value: string) => void
+
+onMounted(() => {
+  replaceRoute = createReplaceRoute('support-agencies')
+})
 
 const error = await fetchList()
 </script>

@@ -33,5 +33,10 @@ const { fetchList, filteredJobs, locations, selectedLocation, types, selectedTyp
 const error = await fetchList()
 
 const { createReplaceRoute } = useFilters()
-const replaceRoute = createReplaceRoute('support-jobs')
+
+let replaceRoute: (key: string, value: string) => void
+
+onMounted(() => {
+  replaceRoute = createReplaceRoute('support-jobs')
+})
 </script>

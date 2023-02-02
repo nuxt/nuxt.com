@@ -90,7 +90,11 @@ const {
 } = useModules()
 
 const { createReplaceRoute } = useFilters()
-const replaceRoute = createReplaceRoute('modules')
+let replaceRoute: (key: string, value: string) => void
+
+onMounted(() => {
+  replaceRoute = createReplaceRoute('modules')
+})
 
 const error = await fetchList()
 
