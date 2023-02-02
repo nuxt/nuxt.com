@@ -36,7 +36,7 @@
 
       <UContainer constrained-class="max-w-4xl" class="pt-8 xl:pt-0" padded>
         <div class="relative overflow-hidden border-b u-border-gray-400">
-          <ContentRenderer v-if="page" :value="page" class="pb-12 prose dark:prose-invert max-w-none" />
+          <ContentRenderer v-if="page" :value="page" class="pb-12 max-w-none" />
           <NewsletterForm class="mt-4 mb-4">
             Subscribe to our newsletter to not miss the upcoming articles and resources.
           </NewsletterForm>

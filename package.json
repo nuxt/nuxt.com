@@ -47,6 +47,7 @@
     "@vueuse/core": "^9.6.0",
     "@vueuse/motion": "^2.0.0-beta.12",
     "add": "^2.0.6",
+    "chart.js": "^4.2.0",
     "joi": "^17.7.0",
     "mjml": "^4.13.0",
     "node-mailjet": "^6.0.0",
@@ -56,6 +57,7 @@
     "sitemap": "^7.1.1",
     "tailwindcss-border-gradient-radius": "^3.0.1",
     "three": "^0.147.0",
+    "vue-chartjs": "^5.2.0",
     "vue-lite-youtube-embed": "^1.0.9"
   },
   "devDependencies": {
