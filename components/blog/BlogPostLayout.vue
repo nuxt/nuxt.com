@@ -3,7 +3,7 @@
     <div class="py-10 sm:py-20">
       <UContainer constrained-class="max-w-4xl" class="flex flex-col items-center justify-center text-center gap-y-8" padded>
         <div class="font-semibold text-gray-400 dark:text-gray-200 w-full">
-          <NuxtLink to="/" title="Go back to articles" class="md:absolute md:left-0">
+          <NuxtLink to="/blog" title="Go back to articles" class="md:absolute md:left-0">
             <Icon name="uil:arrow-left" class="text-3xl" />
             <span class="sr-only">Go back to articles</span>
           </NuxtLink>

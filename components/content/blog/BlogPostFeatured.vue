@@ -1,11 +1,11 @@
 <template>
   <div ref="root" class="cursor-pointer rounded-md relative group card-wrapper" @click="onClick">
     <UCard
-      class="h-full w-full flex flex-col justify-between relative"
-      shadow-class="shadow-none"
+      class="h-full w-full flex flex-col justify-between relative transition duration-200 hover:ring-2 ucard"
+      shadow-class=""
+      ring-class=""
     >
       <img src="/assets/blog/featured.png" class="absolute inset-0 object-cover w-full h-full">
-      <div class="absolute inset-0 transition-opacity bg-overlay opacity-20 group-hover:opacity-40" />
       <div v-if="featuredArticle" class="relative flex flex-col p-4">
         <div class="font-semibold text-white">
           <time>{{ formatDateByLocale('en', featuredArticle.date) }}</time>
@@ -91,4 +91,14 @@ useBlockLinks(root)
     transition: all 0.3s linear;
   }
 }
+
+.ucard:hover {
+  --tw-ring-color: #00dc82
+}
+
+.ucard:has(a:focus-visible) {
+  @apply ring-2;
+  --tw-ring-color: #00dc82
+}
+
 </style>
