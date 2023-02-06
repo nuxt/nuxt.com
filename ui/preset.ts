@@ -85,7 +85,7 @@ const inputPreset: any = {
   }
 }
 
-export const uiPreset = {
+export const uiPreset: any = {
   button: {
     base: 'font-medium focus:outline-none disabled:cursor-not-allowed disabled:opacity-75 focus:ring-offset-white dark:focus:ring-offset-black',
     rounded: 'rounded-lg',
@@ -171,7 +171,8 @@ export const uiPreset = {
     variant: {
       green: 'bg-green-100 dark:bg-green-700 text-green-800 dark:text-green-100',
       red: 'bg-red-100 dark:bg-red-700 text-red-800 dark:text-red-100',
-      primary: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100'
+      primary: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100',
+      secondary: 'u-bg-white u-text-gray-700',
     }
   },
 
@@ -254,10 +255,10 @@ export const uiPreset = {
 
   card: {
     base: 'overflow-hidden',
-    background: 'u-bg-white',
+    background: 'bg-white dark:bg-gray-900',
     border: 'u-border-gray-200',
     ring: 'ring-1 u-ring-gray-200',
-    rounded: 'rounded-md',
+    rounded: 'rounded-xl',
     shadow: 'shadow',
     body: 'px-4 py-5 sm:p-6',
     header: 'px-4 py-5 sm:px-6',

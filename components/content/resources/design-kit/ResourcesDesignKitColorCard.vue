@@ -1,6 +1,6 @@
 <template>
   <li>
-    <UCard
+    <AppCard
       padded
       class="h-[140px]"
       shadow-class=""
@@ -21,7 +21,7 @@
           </span>
         </AppButton>
       </div>
-    </UCard>
+    </AppCard>
     <div v-if="!gradient && !secondaries">
       <div class="flex items-center justify-between">
         <h5 class="font-semibold u-text-gray-900">

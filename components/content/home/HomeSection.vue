@@ -1,5 +1,5 @@
 <template>
-  <UContainer
+  <AppContainer
     class="flex px-4 pt-24 pb-4 sm:pb-8 md:pb-12 lg:pb-20 transition duration-700 relative"
     :class="[!slideIn ? 'opacity-0 translate-y-20' : 'opacity-100 translate-y-0', sectionAlign === 'row' ? 'flex-col lg:flex-row lg:items-center lg:justify-between' : 'flex-col']"
     padded
@@ -40,7 +40,7 @@
         class="focus-visible:ring-2"
       />
     </div>
-  </UContainer>
+  </AppContainer>
 </template>
 
 <script setup lang="ts">

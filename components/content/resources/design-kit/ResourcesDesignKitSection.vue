@@ -1,6 +1,6 @@
 <template>
   <div :class="{ 'u-bg-gray-50': highlight }">
-    <UContainer padded :class="sectionClass">
+    <AppContainer padded :class="sectionClass">
       <p v-if="$slots.category" class="text-sm font-semibold u-text-gray-400">
         <ContentSlot :use="$slots.category" unwrap="p" />
       </p>
@@ -26,7 +26,7 @@
       <div v-if="$slots.cta" class="grid grid-cols-1 gap-12 md:grid-cols-2">
         <ContentSlot :use="$slots.cta" unwrap="p" />
       </div>
-    </UContainer>
+    </AppContainer>
   </div>
 </template>
 

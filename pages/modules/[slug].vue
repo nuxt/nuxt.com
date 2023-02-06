@@ -1,6 +1,6 @@
 <template>
   <div>
-    <UContainer padded class="pt-16">
+    <AppContainer padded class="pt-16">
       <div class="flex flex-col lg:flex-row gap-8 justify-between items-center mb-8 lg:mb-16">
         <div class="flex flex-col md:flex-row gap-8 md:gap-12 items-center">
           <div class="relative border u-border-gray-100 rounded-md u-bg-gray-50">
@@ -30,7 +30,7 @@
             </p>
             <div class="flex items-center justify-center md:justify-start gap-1.5 mt-4 u-text-gray-500">
               <NuxtLink :href="module.github" target="_blank" class="flex items-center gap-1.5">
-                <UAvatarGroup :group="maintainers" size="xxs" :max="4" />
+                <AppAvatarGroup :group="maintainers" size="xxs" :max="4" />
                 <span>{{ maintainers.length }} maintainer{{ maintainers.length > 1 ? 's' : '' }}</span>
               </NuxtLink>
               <div class="hidden md:block">
@@ -64,7 +64,7 @@
       <div class="flex justify-center md:justify-start mb-4">
         <UPills base-class="px-8 md:px-14 py-2 font-medium text-sm rounded-md" :links="links" />
       </div>
-    </UContainer>
+    </AppContainer>
 
     <NuxtPage />
   </div>

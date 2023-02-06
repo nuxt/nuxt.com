@@ -1,5 +1,5 @@
 <template>
-  <UCard
+  <AppCard
     padded
     body-class=""
     shadow-class=""
@@ -25,7 +25,7 @@
         <span class="u-text-gray-500" v-html="description" />
       </div>
     </NuxtLink>
-  </UCard>
+  </AppCard>
 </template>
 
 <script setup lang="ts">
@@ -54,11 +54,11 @@ const locations: ComputedRef<any> = computed(() => props.job.locations?.map((loc
 </script>
 
 <style scoped lang="postcss">
-.ucard:hover {
+.AppCard:hover {
   --tw-ring-color: #00dc82
 }
 
-.ucard:has(a:focus-visible) {
+.AppCard:has(a:focus-visible) {
   @apply ring-2;
   --tw-ring-color: #00dc82
 }

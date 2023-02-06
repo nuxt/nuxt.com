@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col space-y-2">
-    <UCard padded shadow-class="" class="flex items-center justify-center h-[140px] relative" :background-class="cardClass">
+    <AppCard padded shadow-class="" class="flex items-center justify-center h-[140px] relative" :background-class="cardClass">
       <div
         class="absolute right-2 top-2 rounded-md text-xs bg-transparent border info p-1"
         :class="[
@@ -13,7 +13,7 @@
         <ContentSlot :use="$slots.info" unwrap="p" />
       </div>
       <img :src="`/assets/design-kit/logo/${imgName}.svg`" :alt="imgName" :class="full ? 'h-8' : 'h-10'">
-    </UCard>
+    </AppCard>
     <div class="flex justify-between">
       <p class="font-semibold">
         <ContentSlot :use="$slots.name" unwrap="p" />
