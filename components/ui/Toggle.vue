@@ -31,7 +31,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { Switch } from '@headlessui/vue'
-import $ui from '#build/ui'
 
 const props = defineProps({
   modelValue: {
@@ -48,47 +47,47 @@ const props = defineProps({
   },
   baseClass: {
     type: String,
-    default: () => $ui.toggle.base
+    default: () => 'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer focus:ring-2 focus:ring-offset-2 focus:u-ring-gray-900 focus:ring-offset-white dark:focus:ring-offset-black'
   },
   activeClass: {
     type: String,
-    default: () => $ui.toggle.active
+    default: () => 'bg-gray-100 dark:bg-gray-800'
   },
   inactiveClass: {
     type: String,
-    default: () => $ui.toggle.inactive
+    default: () => 'bg-gray-100 dark:bg-gray-800'
   },
   containerBaseClass: {
     type: String,
-    default: () => $ui.toggle.container.base
+    default: () => 'pointer-events-none relative inline-block h-5 w-5 rounded-full u-bg-white shadow transform ring-0 transition ease-in-out duration-200'
   },
   containerActiveClass: {
     type: String,
-    default: () => $ui.toggle.container.active
+    default: () => 'translate-x-5'
   },
   containerInactiveClass: {
     type: String,
-    default: () => $ui.toggle.container.inactive
+    default: () => 'translate-x-0'
   },
   iconBaseClass: {
     type: String,
-    default: () => $ui.toggle.icon.base
+    default: () => 'absolute inset-0 h-full w-full flex items-center justify-center transition-opacity'
   },
   iconActiveClass: {
     type: String,
-    default: () => $ui.toggle.icon.active
+    default: () => 'opacity-100 ease-in duration-200'
   },
   iconInactiveClass: {
     type: String,
-    default: () => $ui.toggle.icon.inactive
+    default: () => 'opacity-0 ease-out duration-100'
   },
   iconOnClass: {
     type: String,
-    default: () => $ui.toggle.icon.on
+    default: () => 'h-3 w-3 u-text-gray-600'
   },
   iconOffClass: {
     type: String,
-    default: () => $ui.toggle.icon.off
+    default: () => 'h-3 w-3 u-text-gray-400'
   }
 })
 
@@ -102,8 +101,4 @@ const active = computed({
     emit('update:modelValue', value)
   }
 })
-</script>
-
-<script lang="ts">
-export default { name: 'UToggle' }
 </script>
