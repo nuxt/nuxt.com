@@ -51,7 +51,7 @@
           </div>
         </div>
         <div>
-          <UButton
+          <AppButton
             class="module-button"
             :label="`yarn add ${module.npm}`"
             size="lg"

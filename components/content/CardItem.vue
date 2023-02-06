@@ -61,7 +61,7 @@
           <ContentSlot :use="$slots.description" unwrap="p" />
         </p>
         <div v-if="buttons.length" class="gap-2 flex flex-col sm:flex-row" :class="buttonsWrapperClass">
-          <UButton
+          <AppButton
             v-for="button of buttons"
             :key="button.label"
             :variant="button.variant || 'transparent'"

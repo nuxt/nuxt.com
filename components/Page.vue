@@ -29,7 +29,7 @@
           <Alert type="info" class="mb-6">
             {{ error }}
           </Alert>
-          <UButton to="/" label="Go back home" variant="primary-gradient" class="mb-6" />
+          <AppButton to="/" label="Go back home" variant="primary-gradient" class="mb-6" />
         </UContainer>
       </template>
     </NuxtErrorBoundary>

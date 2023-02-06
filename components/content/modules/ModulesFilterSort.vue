@@ -1,6 +1,6 @@
 <template>
   <div class="inline-flex w-full md:w-auto">
-    <UButton
+    <AppButton
       name="orderBy"
       :icon="orderBy.icon"
       size="sm"

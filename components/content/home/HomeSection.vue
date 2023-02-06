@@ -27,7 +27,7 @@
       <ContentSlot :use="$slots.extra" unwrap="p" />
     </div>
     <div v-if="buttons.length" class="gap-2 lg:gap-6 pt-8" :class="sectionAlign === 'row' ? 'flex flex-row lg:justify-end lg:pt-0 lg:w-1/3' : 'inline-flex justify-center lg:pt-12'">
-      <UButton
+      <AppButton
         v-for="button of buttons"
         :key="button.label"
         :variant="button.variant || 'transparent'"
