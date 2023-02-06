@@ -5,7 +5,7 @@
   >
     <NavbarDialog v-model="isOpen" :links="links" />
 
-    <UContainer padded class="relative">
+    <AppContainer padded class="relative">
       <nav id="main-nav" class="grid items-center h-16 grid-cols-6 gap-3 lg:h-20 lg:justify-center" aria-label="Primary Navigation">
         <div class="lg:hidden">
           <button type="button" @click="isOpen = true">
@@ -43,7 +43,7 @@
           <SocialLinks />
         </div>
       </nav>
-    </UContainer>
+    </AppContainer>
   </header>
 </template>
 

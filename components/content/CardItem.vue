@@ -4,7 +4,7 @@
     <div v-if="gradientBorder" class="hidden gradient-border gradient-border-dark dark:block" />
     <div v-if="gradientBorder" class="dark:hidden gradient-border gradient-border-light" />
 
-    <UCard
+    <AppCard
       class="h-full w-full flex flex-col justify-between relative"
       :body-class="bodyClass"
       shadow-class="shadow-none"
@@ -75,7 +75,7 @@
           />
         </div>
       </div>
-    </UCard>
+    </AppCard>
   </component>
 </template>
 

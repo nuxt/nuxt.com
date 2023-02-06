@@ -4,7 +4,7 @@
       <img v-if="page.logoFull" loading="lazy" :src="`${page.logoFull}`" :alt="page.title" class="h-20">
     </div>
 
-    <UContainer padded class="pb-16 sm:pb-32">
+    <AppContainer padded class="pb-16 sm:pb-32">
       <div
         class="flex flex-col justify-between gap-8 pb-8 -mt-8 sm:gap-4 sm:items-center sm:flex-row md:-mt-12 xl:pb-12"
       >
@@ -56,7 +56,7 @@
             {{ page.fullDescription }}
           </p>
 
-          <UCard v-if="page.emailAddress" body-class="grid grid-cols-2 gap-8 p-10" rounded-class="rounded-xl" background-class="card-bg" @submit.prevent="contactAgency">
+          <AppCard v-if="page.emailAddress" body-class="grid grid-cols-2 gap-8 p-10" rounded-class="rounded-xl" background-class="card-bg" @submit.prevent="contactAgency">
             <UFormGroup name="email" label="Your company" class="col-span-2 sm:col-span-1">
               <UInput
                 v-model="form.company"
@@ -112,7 +112,7 @@
                 :disabled="loading"
               />
             </div>
-          </UCard>
+          </AppCard>
           <div class="flex flex-col gap-8 mt-12 sm:flex-row">
             <AppButton
               label="Back to partners list"
@@ -191,7 +191,7 @@
           </div>
         </div>
       </div>
-    </UContainer>
+    </AppContainer>
   </div>
 </template>
 

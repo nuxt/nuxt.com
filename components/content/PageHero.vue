@@ -4,7 +4,7 @@
       <slot name="background" />
     </div>
 
-    <UContainer padded class="relative">
+    <AppContainer padded class="relative">
       <div v-if="image" class="absolute -right-12 -inset-y-6 sm:inset-y-0 sm:right-6 lg:right-8">
         <div class="flex h-full items-center justify-center">
           <img :src="`${image.path}-light.${image.format}`" class="dark:hidden object-contain h-3/4 lg:mx-10 opacity-0 md:opacity-100" alt="" :width="image.width" :height="image.height">
@@ -48,7 +48,7 @@
 
         <ContentSlot :use="$slots.extra" unwrap="p" />
       </div>
-    </UContainer>
+    </AppContainer>
   </div>
 </template>
 
