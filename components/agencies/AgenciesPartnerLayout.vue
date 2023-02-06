@@ -34,7 +34,7 @@
           </div>
         </div>
         <div class="flex flex-row gap-2 sm:gap-4 md:pt-12">
-          <UButton
+          <AppButton
             label="Visit website"
             :to="page.link"
             target="_blank"
@@ -102,7 +102,7 @@
             </UFormGroup>
 
             <div class="flex items-center justify-center col-span-2">
-              <UButton
+              <AppButton
                 label="Contact us"
                 type="submit"
                 target="_blank"
@@ -114,7 +114,7 @@
             </div>
           </UCard>
           <div class="flex flex-col gap-8 mt-12 sm:flex-row">
-            <UButton
+            <AppButton
               label="Back to partners list"
               icon="uil:angle-left-b"
               to="/support/agencies"

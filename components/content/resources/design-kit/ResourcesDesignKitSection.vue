@@ -21,7 +21,7 @@
       </div>
 
       <!-- TODO: color system link -->
-      <UButton v-if="secondaries" class="mt-12" variant="secondary" label="See color system" size="lg" />
+      <AppButton v-if="secondaries" class="mt-12" variant="secondary" label="See color system" size="lg" />
 
       <div v-if="$slots.cta" class="grid grid-cols-1 gap-12 md:grid-cols-2">
         <ContentSlot :use="$slots.cta" unwrap="p" />

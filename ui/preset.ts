@@ -1,7 +1,94 @@
-export default function defaultPreset (variantColors: string[]) {
-  const button = {
+const radio: any = {
+  wrapper: 'relative flex items-start',
+  base: 'h-4 w-4 text-primary-600 focus:ring-2 focus:ring-offset-2 u-bg-white dark:checked:bg-current dark:checked:border-transparent focus:ring-primary-500 focus:ring-offset-white dark:focus:ring-offset-black u-border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed',
+  label: 'font-medium u-text-gray-700',
+  required: 'text-red-400',
+  help: 'u-text-gray-500'
+}
+
+const inputPreset: any = {
+  wrapper: 'relative',
+  base: 'relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none',
+  size: {
+    xxs: 'text-xs',
+    xs: 'text-xs',
+    sm: 'text-sm leading-4',
+    md: 'text-sm',
+    lg: 'text-base',
+    xl: 'text-base'
+  },
+  spacing: {
+    xxs: 'px-1 py-0.5',
+    xs: 'px-2.5 py-1.5',
+    sm: 'px-3 py-2',
+    md: 'px-4 py-2',
+    lg: 'px-4 py-2',
+    xl: 'px-6 py-3'
+  },
+  leading: {
+    spacing: {
+      xxs: 'pl-7',
+      xs: 'pl-7',
+      sm: 'pl-10',
+      md: 'pl-10',
+      lg: 'pl-10',
+      xl: 'pl-10'
+    }
+  },
+  trailing: {
+    spacing: {
+      xxs: 'pr-7',
+      xs: 'pr-7',
+      sm: 'pr-10',
+      md: 'pr-10',
+      lg: 'pr-10',
+      xl: 'pr-10'
+    }
+  },
+  appearance: {
+    default: 'u-bg-white u-text-gray-700 focus:ring-1 focus:ring-primary-500 focus:border-primary-500 dark:focus:border-primary-500 border u-border-gray-300 rounded-md shadow-sm',
+    none: 'border-0 bg-transparent focus:ring-0 focus:shadow-none'
+  },
+  icon: {
+    base: 'u-text-gray-400',
+    loading: 'heroicons-outline:refresh',
+    size: {
+      xxs: 'h-3 w-3',
+      xs: 'h-4 w-4',
+      sm: 'h-5 w-5',
+      md: 'h-5 w-5',
+      lg: 'h-5 w-5',
+      xl: 'h-5 w-5'
+    },
+    leading: {
+      wrapper: 'absolute inset-y-0 left-0 flex items-center pointer-events-none',
+      spacing: {
+        xxs: 'ml-2',
+        xs: 'ml-2',
+        sm: 'ml-2',
+        md: 'ml-3',
+        lg: 'ml-3',
+        xl: 'ml-3'
+      }
+    },
+    trailing: {
+      wrapper: 'absolute inset-y-0 right-0 flex items-center pointer-events-none',
+      spacing: {
+        xxs: 'mr-2',
+        xs: 'mr-2',
+        sm: 'mr-2',
+        md: 'mr-3',
+        lg: 'mr-3',
+        xl: 'mr-3'
+      }
+    }
+  }
+}
+
+export const uiPreset = {
+  button: {
     base: 'font-medium focus:outline-none disabled:cursor-not-allowed disabled:opacity-75 focus:ring-offset-white dark:focus:ring-offset-black',
-    rounded: 'rounded-md',
+    rounded: 'rounded-lg',
     size: {
       xxs: 'text-xs',
       xs: 'text-xs',
@@ -27,20 +114,21 @@ export default function defaultPreset (variantColors: string[]) {
       xl: 'p-3'
     },
     variant: {
-      ...variantColors.reduce((acc: any, color: string) => {
-        acc[color] = `shadow-sm border border-transparent text-white bg-${color}-600 hover:bg-${color}-700 disabled:bg-${color}-600 focus:ring-2 focus:ring-offset-2 focus:ring-${color}-500`
-        return acc
-      }, {}),
-      secondary: 'border border-transparent text-primary-700 bg-primary-100 hover:bg-primary-200 disabled:bg-primary-100 focus:ring-2 focus:ring-offset-2 focus:ring-primary-500',
+      green: 'border border-transparent text-white bg-green-500 hover:bg-green-400 disabled:bg-green-500 focus:ring-2 focus:ring-offset-2 focus:ring-green-400',
+      primary: 'border border-transparent u-text-white u-bg-gray-900 hover:u-bg-gray-800 disabled:u-bg-gray-900 focus:ring-2 focus:ring-offset-2 focus:u-ring-gray-900',
+      secondary: 'border u-border-gray-200 u-text-gray-700 u-bg-white hover:u-bg-gray-50 disabled:u-bg-white focus:ring-2 focus:ring-offset-2 focus:u-ring-gray-900',
       white: 'shadow-sm border u-border-gray-300 u-text-gray-700 u-bg-white hover:u-bg-gray-50 disabled:u-bg-white focus:ring-2 focus:ring-offset-2 focus:ring-primary-500',
-      gray: 'shadow-sm border u-border-gray-300 u-text-gray-700 u-bg-gray-50 hover:u-bg-gray-100 disabled:u-bg-gray-50 focus:ring-2 focus:ring-offset-2 focus:ring-primary-500',
+      gray: 'border border-transparent u-text-gray-700 u-bg-gray-100 hover:u-bg-gray-200 disabled:u-bg-gray-100 focus:ring-2 focus:ring-offset-2 focus:u-ring-gray-900',
       black: 'shadow-sm border border-transparent u-text-white u-bg-gray-800 hover:u-bg-gray-900 disabled:u-bg-gray-800 focus:ring-2 focus:ring-offset-2 focus:ring-primary-500',
       transparent: 'border border-transparent u-text-gray-500 hover:u-text-gray-700 focus:u-text-gray-700 disabled:hover:u-text-gray-500',
-      link: 'border border-transparent text-primary-500 hover:text-primary-700 focus:text-primary-700'
+      link: 'border border-transparent u-text-gray-900 hover:underline focus:underline',
+      'transparent-hover': 'border border-transparent u-text-gray-500 hover:u-text-white focus:u-text-white bg-transparent hover:u-bg-gray-900 focus:u-bg-gray-900 disabled:u-text-gray-500',
+      'input-group': 'shadow-sm border u-border-gray-200 u-text-gray-700 u-bg-gray-50 hover:u-bg-gray-100 disabled:u-bg-gray-50 focus:ring-1 focus:u-ring-gray-900 focus:u-border-gray-900',
+      'primary-gradient': 'relative text-white gradient-border-2 border-gradient-br-gradient-gray-900 hover:border-gradient-br-gradient-black before:absolute before:transition before:duration-200 before:rounded-lg before:opacity-0 hover:before:opacity-75 before:-inset-0.5 before:bg-gradient-to-r before:from-green-400 before:via-teal-400 before:to-teal-600 before:blur-md before:z-[-1]'
     },
     icon: {
       base: 'flex-shrink-0',
-      loading: 'heroicons-outline:refresh',
+      loading: 'uil:sync',
       size: {
         xxs: 'h-3.5 w-3.5',
         xs: 'h-4 w-4',
@@ -70,9 +158,9 @@ export default function defaultPreset (variantColors: string[]) {
         }
       }
     }
-  }
+  },
 
-  const badge = {
+  badge: {
     base: 'inline-flex items-center font-medium',
     size: {
       sm: 'text-xs px-2 py-0.5',
@@ -81,14 +169,13 @@ export default function defaultPreset (variantColors: string[]) {
       xl: 'text-sm px-4 py-1'
     },
     variant: {
-      ...variantColors.reduce((acc: any, color: string) => {
-        acc[color] = `bg-${color}-100 dark:bg-${color}-700 text-${color}-800 dark:text-${color}-100`
-        return acc
-      }, {})
+      green: 'bg-green-100 dark:bg-green-700 text-green-800 dark:text-green-100',
+      red: 'bg-red-100 dark:bg-red-700 text-red-800 dark:text-red-100',
+      primary: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100'
     }
-  }
+  },
 
-  const formGroup = {
+  formGroup: {
     wrapper: '',
     label: 'block text-sm font-medium u-text-gray-700',
     labelWrapper: 'flex content-center justify-between',
@@ -97,102 +184,27 @@ export default function defaultPreset (variantColors: string[]) {
     description: 'text-sm leading-5 u-text-gray-500',
     hint: 'text-sm leading-5 u-text-gray-500',
     help: 'mt-2 text-sm u-text-gray-500'
-  }
+  },
 
-  const input = {
+  input: {
+    ...inputPreset
+  },
+
+  textarea: {
+    ...inputPreset
+  },
+
+  select: {
+    ...inputPreset
+  },
+
+  selectCustom: {
+    ...inputPreset,
     wrapper: 'relative',
-    base: 'relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none',
-    size: {
-      xxs: 'text-xs',
-      xs: 'text-xs',
-      sm: 'text-sm leading-4',
-      md: 'text-sm',
-      lg: 'text-base',
-      xl: 'text-base'
-    },
-    spacing: {
-      xxs: 'px-1 py-0.5',
-      xs: 'px-2.5 py-1.5',
-      sm: 'px-3 py-2',
-      md: 'px-4 py-2',
-      lg: 'px-4 py-2',
-      xl: 'px-6 py-3'
-    },
-    leading: {
-      spacing: {
-        xxs: 'pl-7',
-        xs: 'pl-7',
-        sm: 'pl-10',
-        md: 'pl-10',
-        lg: 'pl-10',
-        xl: 'pl-10'
-      }
-    },
-    trailing: {
-      spacing: {
-        xxs: 'pr-7',
-        xs: 'pr-7',
-        sm: 'pr-10',
-        md: 'pr-10',
-        lg: 'pr-10',
-        xl: 'pr-10'
-      }
-    },
-    appearance: {
-      default: 'u-bg-white u-text-gray-700 focus:ring-1 focus:ring-primary-500 focus:border-primary-500 dark:focus:border-primary-500 border u-border-gray-300 rounded-md shadow-sm',
-      none: 'border-0 bg-transparent focus:ring-0 focus:shadow-none'
-    },
-    icon: {
-      base: 'u-text-gray-400',
-      loading: 'heroicons-outline:refresh',
-      size: {
-        xxs: 'h-3 w-3',
-        xs: 'h-4 w-4',
-        sm: 'h-5 w-5',
-        md: 'h-5 w-5',
-        lg: 'h-5 w-5',
-        xl: 'h-5 w-5'
-      },
-      leading: {
-        wrapper: 'absolute inset-y-0 left-0 flex items-center pointer-events-none',
-        spacing: {
-          xxs: 'ml-2',
-          xs: 'ml-2',
-          sm: 'ml-2',
-          md: 'ml-3',
-          lg: 'ml-3',
-          xl: 'ml-3'
-        }
-      },
-      trailing: {
-        wrapper: 'absolute inset-y-0 right-0 flex items-center pointer-events-none',
-        spacing: {
-          xxs: 'mr-2',
-          xs: 'mr-2',
-          sm: 'mr-2',
-          md: 'mr-3',
-          lg: 'mr-3',
-          xl: 'mr-3'
-        }
-      }
-    }
-  }
-
-  const textarea = {
-    ...input
-  }
-
-  const select = {
-    ...input
-  }
-
-  const selectCustom = {
-    ...select,
-    wrapper: 'relative',
-    base: `${select.base} text-left cursor-default`,
+    base: `${inputPreset.base} text-left cursor-default`,
     icon: {
       name: 'heroicons-solid:selector',
-      ...select.icon
+      ...inputPreset.icon
     },
     list: {
       container: 'z-20',
@@ -225,22 +237,22 @@ export default function defaultPreset (variantColors: string[]) {
     popperOptions: {
       placement: 'bottom-end'
     }
-  }
+  },
 
-  const radio = {
+  radio: {
+    ...radio
+  },
+
+  checkbox: {
     wrapper: 'relative flex items-start',
     base: 'h-4 w-4 text-primary-600 focus:ring-2 focus:ring-offset-2 u-bg-white dark:checked:bg-current dark:checked:border-transparent focus:ring-primary-500 focus:ring-offset-white dark:focus:ring-offset-black u-border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed',
     label: 'font-medium u-text-gray-700',
     required: 'text-red-400',
-    help: 'u-text-gray-500'
-  }
+    help: 'u-text-gray-500',
+    rounded: `${radio.base} rounded`
+  },
 
-  const checkbox = {
-    ...radio,
-    base: `${radio.base} rounded`
-  }
-
-  const card = {
+  card: {
     base: 'overflow-hidden',
     background: 'u-bg-white',
     border: 'u-border-gray-200',
@@ -250,9 +262,9 @@ export default function defaultPreset (variantColors: string[]) {
     body: 'px-4 py-5 sm:p-6',
     header: 'px-4 py-5 sm:px-6',
     footer: 'px-4 py-4 sm:px-6'
-  }
+  },
 
-  const modal = {
+  modal: {
     wrapper: 'relative z-50',
     inner: 'fixed inset-0 overflow-y-auto',
     container: 'flex min-h-full items-end sm:items-center justify-center p-4 sm:p-0 text-center',
@@ -282,13 +294,13 @@ export default function defaultPreset (variantColors: string[]) {
       leaveFrom: 'opacity-100 translate-y-0 sm:scale-100',
       leaveTo: 'opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
     }
-  }
+  },
 
-  const container = {
+  container: {
     constrained: 'max-w-7xl'
-  }
+  },
 
-  const toggle = {
+  toggle: {
     base: 'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 focus:ring-offset-white dark:focus:ring-offset-black',
     active: 'bg-primary-600',
     inactive: 'u-bg-gray-200',
@@ -304,9 +316,9 @@ export default function defaultPreset (variantColors: string[]) {
       on: 'h-3 w-3 text-primary-600',
       off: 'h-3 w-3 u-text-gray-400'
     }
-  }
+  },
 
-  const verticalNavigation = {
+  verticalNavigation: {
     wrapper: 'space-y-1',
     base: 'group flex items-center text-sm font-medium rounded-md w-full relative',
     spacing: 'px-3 py-2',
@@ -327,18 +339,18 @@ export default function defaultPreset (variantColors: string[]) {
       active: 'u-bg-white',
       inactive: 'u-bg-gray-100 u-text-gray-600 group-hover:u-bg-gray-200'
     }
-  }
+  },
 
-  const alertDialog = {
+  alertDialog: {
     icon: {
       wrapper: 'h-12 w-12 sm:h-10 sm:w-10 bg-primary-100',
       base: 'text-primary-600'
     },
     title: 'text-lg leading-6 font-medium text-gray-900',
     description: 'text-sm text-gray-500'
-  }
+  },
 
-  const dropdown = {
+  dropdown: {
     wrapper: 'relative inline-flex text-left',
     container: 'z-20',
     width: 'w-48',
@@ -365,23 +377,23 @@ export default function defaultPreset (variantColors: string[]) {
       placement: 'bottom-end',
       strategy: 'fixed'
     }
-  }
+  },
 
-  const tabs = {
+  tabs: {
     wrapper: 'flex items-center gap-8',
     base: 'whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm',
     active: 'border-primary-500 text-primary-600',
     inactive: 'border-transparent u-text-gray-500 hover:u-text-gray-700 hover:u-border-gray-300'
-  }
+  },
 
-  const pills = {
+  pills: {
     wrapper: 'flex items-center gap-4',
     base: 'px-3 py-2 font-medium text-sm rounded-md',
     active: 'u-bg-gray-100 u-text-gray-700',
     inactive: 'u-text-gray-500 hover:u-text-gray-700'
-  }
+  },
 
-  const avatar = {
+  avatar: {
     wrapper: 'relative inline-flex items-center justify-center',
     background: 'u-bg-gray-100',
     rounded: 'rounded-md',
@@ -396,41 +408,15 @@ export default function defaultPreset (variantColors: string[]) {
       xl: 'h-14 w-14 text-xl',
       '2xl': 'h-16 w-16 text-2xl',
       '3xl': 'h-20 w-20 text-3xl'
-    },
-    chip: {
-      base: 'absolute block rounded-full ring-2 u-ring-white',
-      position: {
-        'top-right': 'top-0 right-0',
-        'bottom-right': 'bottom-0 right-0',
-        'top-left': 'top-0 left-0',
-        'bottom-left': 'bottom-0 left-0'
-      },
-      variant: {
-        ...variantColors.reduce((acc: any, color: string) => {
-          acc[color] = `bg-${color}-400`
-          return acc
-        }, {})
-      },
-      size: {
-        xxxs: 'h-1 w-1',
-        xxs: 'h-1 w-1',
-        xs: 'h-1.5 w-1.5',
-        sm: 'h-2 w-2',
-        md: 'h-2.5 w-2.5',
-        lg: 'h-3 w-3',
-        xl: 'h-3.5 w-3.5',
-        '2xl': 'h-3.5 w-3.5',
-        '3xl': 'h-4 w-4'
-      }
     }
-  }
+  },
 
-  const avatarGroup = {
+  avatarGroup: {
     ring: 'ring-2 u-ring-white',
     margin: '-mr-1.5 first:mr-0'
-  }
+  },
 
-  const slideover = {
+  slideover: {
     wrapper: 'fixed inset-0 flex z-40',
     overlay: {
       background: 'bg-gray-500/75 dark:bg-gray-600/75',
@@ -451,9 +437,9 @@ export default function defaultPreset (variantColors: string[]) {
       enter: 'transform transition ease-in-out duration-500 sm:duration-700',
       leave: 'transform transition ease-in-out duration-500 sm:duration-700'
     }
-  }
+  },
 
-  const notification = {
+  notification: {
     background: 'u-bg-white',
     shadow: 'shadow-lg',
     rounded: 'rounded-lg',
@@ -481,9 +467,9 @@ export default function defaultPreset (variantColors: string[]) {
       leaveFromClass: 'opacity-100',
       leaveToClass: 'opacity-0'
     }
-  }
+  },
 
-  const tooltip = {
+  tooltip: {
     wrapper: 'relative inline-flex',
     container: 'z-20',
     width: 'max-w-xs',
@@ -503,9 +489,9 @@ export default function defaultPreset (variantColors: string[]) {
     popperOptions: {
       strategy: 'fixed'
     }
-  }
+  },
 
-  const popover = {
+  popover: {
     wrapper: 'relative',
     container: 'z-20',
     width: '',
@@ -521,9 +507,9 @@ export default function defaultPreset (variantColors: string[]) {
     popperOptions: {
       strategy: 'fixed'
     }
-  }
+  },
 
-  const contextMenu = {
+  contextMenu: {
     wrapper: 'relative',
     container: 'z-20',
     width: '',
@@ -540,35 +526,5 @@ export default function defaultPreset (variantColors: string[]) {
       placement: 'bottom-start',
       scroll: false
     }
-  }
-
-  return {
-    card,
-    modal,
-    button,
-    badge,
-    formGroup,
-    input,
-    textarea,
-    select,
-    selectCustom,
-    checkbox,
-    radio,
-    container,
-    toggle,
-    verticalNavigation,
-    alertDialog,
-    dropdown,
-    tabs,
-    pills,
-    avatar,
-    avatarGroup,
-    slideover,
-    notification,
-    tooltip,
-    popover,
-    contextMenu
-  }
+  },
 }
-
-export type DefaultPreset = ReturnType<typeof defaultPreset>

@@ -2,7 +2,7 @@
 <template>
   <ul class="flex items-center justify-end gap-3">
     <li>
-      <UButton
+      <AppButton
         icon="uil:twitter"
         variant="transparent"
         to="https://twitter.com/nuxt_js"
@@ -11,10 +11,10 @@
         title="Go to Nuxt Twitter Account"
       >
         <span class="sr-only">Go to Nuxt Twitter Account</span>
-      </UButton>
+      </AppButton>
     </li>
     <li>
-      <UButton
+      <AppButton
         icon="fa-brands:discord"
         variant="transparent"
         to="https://discord.com/invite/ps2h6QT"
@@ -23,10 +23,10 @@
         title="Go to Nuxt Discord Server"
       >
         <span class="sr-only">Go to Nuxt Discord Server</span>
-      </UButton>
+      </AppButton>
     </li>
     <li>
-      <UButton
+      <AppButton
         icon="uil:github"
         variant="transparent"
         to="https://github.com/nuxt/nuxt"
@@ -35,7 +35,7 @@
         title="Go to Nuxt Github page"
       >
         <span class="sr-only">Go to Nuxt Github page</span>
-      </UButton>
+      </AppButton>
     </li>
   </ul>
 </template>

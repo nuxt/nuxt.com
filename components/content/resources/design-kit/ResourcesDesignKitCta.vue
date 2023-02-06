@@ -15,7 +15,7 @@
         </p>
         <!-- TODO: update to -->
         <div class="flex items-end h-full">
-          <UButton :label="buttonText" variant="primary" class="px-8" :to="to" size="lg" />
+          <AppButton :label="buttonText" variant="primary" class="px-8" :to="to" size="lg" />
         </div>
       </div>
     </UCard>

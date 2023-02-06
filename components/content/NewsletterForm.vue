@@ -42,7 +42,7 @@ function onSubmit () {
         size="lg"
         required
       />
-      <UButton
+      <AppButton
         type="submit"
         submit
         variant="primary-gradient"

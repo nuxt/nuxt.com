@@ -30,7 +30,7 @@
           <ContentSlot :use="$slots.news" unwrap="p" />
         </span>
       </div>
-      <UButton
+      <AppButton
         v-if="topButtonText"
         :label="topButtonText"
         :to="topButtonLink"
@@ -45,7 +45,7 @@
         <ContentSlot :use="$slots.description" unwrap="p" />
       </p>
       <div class="flex flex-col sm:flex-row items-center justify-center gap-6 z-[1]">
-        <UButton
+        <AppButton
           :label="primaryButtonText"
           :to="primaryButtonLink"
           size="lg"
@@ -53,7 +53,7 @@
           truncate
           class="focus-visible:ring-2"
         />
-        <UButton
+        <AppButton
           :label="secondaryButtonText"
           :to="secondaryButtonLink"
           size="lg"

@@ -31,7 +31,7 @@
           <div v-if="buttonsTextLeft" class="flex flex-col items-center justify-center sm:flex-row">
             {{ buttonsTextLeft }}
           </div>
-          <UButton
+          <AppButton
             v-for="button of buttons"
             :key="button.label"
             :variant="button.variant || 'transparent'"
