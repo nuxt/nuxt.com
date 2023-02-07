@@ -1,5 +1,5 @@
 <template>
-  <USelectCustom
+  <AppSelect
     v-if="regions.length"
     v-model="region"
     name="region"
