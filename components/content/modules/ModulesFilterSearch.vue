@@ -1,5 +1,5 @@
 <template>
-  <UInput
+  <AppInput
     v-model="query"
     name="search"
     placeholder="Search an integration"

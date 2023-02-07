@@ -46,12 +46,14 @@ const inputPreset: any = {
     }
   },
   appearance: {
-    default: 'u-bg-white u-text-gray-700 focus:ring-1 focus:ring-primary-500 focus:border-primary-500 dark:focus:border-primary-500 border u-border-gray-300 rounded-md shadow-sm',
-    none: 'border-0 bg-transparent focus:ring-0 focus:shadow-none'
+    default: 'focus:ring-1 focus:u-ring-gray-900 focus:u-border-gray-900 bg-white dark:bg-gray-900 border u-border-gray-200 rounded-lg shadow-sm focus:ring-offset-white dark:focus:ring-offset-black',
+    none: 'border-0 bg-transparent focus:ring-0 focus:shadow-none',
+    invert: 'focus:ring-2 focus:u-ring-gray-900 focus:ring-offset-2 bg-gray-900 dark:bg-white u-text-white border u-border-gray-900 rounded-lg shadow-sm focus:ring-offset-white dark:focus:ring-offset-black font-semibold',
+    darken: 'focus:ring-1 focus:u-ring-gray-900 focus:u-border-gray-900 u-bg-white border u-border-gray-200 rounded-lg shadow-sm focus:ring-offset-white dark:focus:ring-offset-black'
   },
   icon: {
     base: 'u-text-gray-400',
-    loading: 'heroicons-outline:refresh',
+    loading: 'uil:sync',
     size: {
       xxs: 'h-3 w-3',
       xs: 'h-4 w-4',
@@ -172,7 +174,7 @@ export const uiPreset: any = {
       green: 'bg-green-100 dark:bg-green-700 text-green-800 dark:text-green-100',
       red: 'bg-red-100 dark:bg-red-700 text-red-800 dark:text-red-100',
       primary: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100',
-      secondary: 'u-bg-white u-text-gray-700',
+      secondary: 'u-bg-white u-text-gray-700'
     }
   },
 
@@ -527,5 +529,5 @@ export const uiPreset: any = {
       placement: 'bottom-start',
       scroll: false
     }
-  },
+  }
 }
