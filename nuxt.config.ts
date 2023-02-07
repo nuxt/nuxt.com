@@ -1,5 +1,4 @@
 import { createResolver, logger } from '@nuxt/kit'
-import preset from './ui'
 
 const { resolve } = createResolver(import.meta.url)
 
@@ -24,17 +23,19 @@ export default defineNuxtConfig({
   extends: '@nuxt-themes/typography',
   css: [
     resolve('./assets/css/fonts.css'),
-    resolve('./assets/css/style.css')
+    resolve('./assets/css/style.css'),
+    resolve('./assets/css/tailwind.css')
   ],
   modules: [
     process.env.NODE_ENV === 'production' ? '@nuxtjs/html-validator' : () => {},
     '@nuxt/content',
-    '@nuxthq/ui',
     '@nuxtlabs/github-module',
     '@nuxtjs/plausible',
     'nuxt-icon',
     '@nuxtjs/fontaine',
-    '@nuxtjs/algolia'
+    '@nuxtjs/algolia',
+    '@nuxtjs/color-mode',
+    '@nuxtjs/tailwindcss'
     // '@nuxt/devtools-edge'
   ],
   htmlValidator: {
@@ -98,13 +99,6 @@ export default defineNuxtConfig({
     },
     public: {}
   },
-  ui: {
-    colors: {
-      primary: 'blue',
-      gray: 'zinc'
-    },
-    preset
-  },
   content: {
     highlight: {
       theme: {
@@ -137,10 +131,13 @@ export default defineNuxtConfig({
     }
   },
   tailwindcss: {
+    viewer: false,
+    cssPath: '~/assets/css/tailwind.css',
     config: {
+      theme: { extend: {}},
       content: [
-        resolve('./ui/*.ts')
-      ]
+        resolve('./components/**/*.{vue,js,ts}'),
+      ],
     }
   },
   github: {
