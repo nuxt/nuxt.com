@@ -3,7 +3,7 @@ import type { ResourcesBlogArticle } from '../types'
 
 export function useBlog () {
   const articles: Ref<ResourcesBlogArticle[]> = useState('articles', () => [])
-  const featuredArticle: Ref<ResourcesBlogArticle | {}> = useState('featured-article', () => {})
+  const featuredArticle: Ref<ResourcesBlogArticle | {}> = useState('featured-article', () => ({}))
 
   // Data fetching
 
