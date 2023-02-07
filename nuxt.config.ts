@@ -99,6 +99,9 @@ export default defineNuxtConfig({
     },
     public: {}
   },
+  colorMode: {
+    classSuffix: ''
+  },
   content: {
     highlight: {
       theme: {
