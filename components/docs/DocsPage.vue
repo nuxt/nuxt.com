@@ -2,7 +2,8 @@
   <section class="relative flex flex-col-reverse gap-8 lg:grid lg:grid-cols-10">
     <div
       v-if="toc"
-      class="z-40 lg:z-0 lg:col-span-2 lg:self-start overflow-x-hidden sticky top-16 -mx-4 sm:-mx-6 px-4 sm:px-6 lg:mx-0 lg:px-0 lg:pt-8 lg:-mt-8 bg-white/75 dark:bg-black/75 backdrop-blur-md lg:max-h-[calc(100vh-64px)] order-1"
+      class="lg:z-0 z-40 lg:col-span-2 lg:self-start overflow-x-hidden sticky top-16 -mx-4 sm:-mx-6 px-4 sm:px-6 lg:mx-0 lg:px-0 lg:pt-8 lg:-mt-8 bg-white/75 dark:bg-black/75 backdrop-blur-md lg:max-h-[calc(100vh-64px)] order-1"
+      :class="visible ? 'opacity-0' : 'opacity-100 transition-opacity duration-500'"
     >
       <div class="py-3 border-b border-dashed u-border-gray-200 lg:border-none lg:py-0">
         <button class="flex items-center gap-3 lg:hidden" tabindex="-1" type="button" @click="isOpen = !isOpen">
@@ -33,4 +34,6 @@ defineProps({
     default: true
   }
 })
+
+const { visible } = useSlideover()
 </script>
