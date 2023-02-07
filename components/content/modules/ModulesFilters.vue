@@ -21,11 +21,11 @@ import type { FilterItem } from '../../../types'
 const props = defineProps({
   selectedCategory: {
     type: Object as PropType<FilterItem | null>,
-    default: () => {}
+    default: () => ({})
   },
   selectedType: {
     type: Object as PropType<FilterItem | null>,
-    default: () => {}
+    default: () => ({})
   },
   q: {
     type: String,

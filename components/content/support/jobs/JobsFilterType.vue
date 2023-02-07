@@ -21,7 +21,7 @@ const props = defineProps({
   },
   selectedType: {
     type: Object as PropType<FilterItem | null>,
-    default: () => {}
+    default: () => ({})
   }
 })
 
