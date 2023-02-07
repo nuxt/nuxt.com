@@ -14,14 +14,14 @@
         :class="[active ? iconActiveClass : iconInactiveClass, iconBaseClass]"
         aria-hidden="true"
       >
-        <UIcon :name="iconOn" :class="iconOnClass" />
+        <Icon :name="iconOn" :class="iconOnClass" />
       </span>
       <span
         v-if="iconOff"
         :class="[active ? iconInactiveClass : iconActiveClass, iconBaseClass]"
         aria-hidden="true"
       >
-        <UIcon :name="iconOff" :class="iconOffClass" />
+        <Icon :name="iconOff" :class="iconOffClass" />
       </span>
       <slot />
     </span>
