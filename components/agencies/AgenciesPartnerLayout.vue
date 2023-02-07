@@ -57,7 +57,7 @@
           </p>
 
           <AppCard v-if="page.emailAddress" body-class="grid grid-cols-2 gap-8 p-10" rounded-class="rounded-xl" background-class="card-bg" @submit.prevent="contactAgency">
-            <UFormGroup name="email" label="Your company" class="col-span-2 sm:col-span-1">
+            <AppFormGroup name="email" label="Your company" class="col-span-2 sm:col-span-1">
               <AppInput
                 v-model="form.company"
                 label="Company"
@@ -68,9 +68,9 @@
                 variant="outline"
                 custom-class="flex-1"
               />
-            </UFormGroup>
+            </AppFormGroup>
 
-            <UFormGroup name="name" label="Your email" class="col-span-2 sm:col-span-1">
+            <AppFormGroup name="name" label="Your email" class="col-span-2 sm:col-span-1">
               <AppInput
                 v-model="form.email"
                 label="Email"
@@ -82,9 +82,9 @@
                 custom-class="flex-1"
                 type="email"
               />
-            </UFormGroup>
+            </AppFormGroup>
 
-            <UFormGroup
+            <AppFormGroup
               name="message"
               label="Your message"
               class="col-span-2"
@@ -99,7 +99,7 @@
                 variant="outline"
                 custom-class="flex-1"
               />
-            </UFormGroup>
+            </AppFormGroup>
 
             <div class="flex items-center justify-center col-span-2">
               <AppButton
@@ -182,7 +182,7 @@
                     rel="noopener"
                     class="flex items-center gap-3"
                   >
-                    <span class="sr-only">{{ page.title }} {{link.key }}</span>
+                    <span class="sr-only">{{ page.title }} {{ link.key }}</span>
                     <Icon :name="link.icon" class="w-6 h-6 u-text-gray-900 transition duration-300 group-hover:u-text-gray-600" />
                   </NuxtLink>
                 </li>
