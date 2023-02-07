@@ -9,7 +9,7 @@
       class="-mr-px rounded-r-none focus:z-[1] group"
       @click="switchOrder"
     />
-    <USelectCustom
+    <AppSelect
       v-model="sortBy"
       name="sortBy"
       :options="sorts"

@@ -1,5 +1,5 @@
 <template>
-  <USelectCustom
+  <AppSelect
     v-if="services.length"
     v-model="service"
     name="service"

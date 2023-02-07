@@ -206,29 +206,29 @@ export const uiPreset: any = {
     wrapper: 'relative',
     base: `${inputPreset.base} text-left cursor-default`,
     icon: {
-      name: 'heroicons-solid:selector',
+      name: 'uil:angle-down',
       ...inputPreset.icon
     },
     list: {
       container: 'z-20',
       width: 'w-full',
-      base: 'u-bg-white shadow-lg rounded-md ring-1 u-ring-gray-200 focus:outline-none overflow-y-auto py-1 max-h-60',
+      base: 'u-bg-white shadow-lg rounded-md ring-1 u-ring-gray-200 border border-transparent overflow-y-auto p-1 max-h-60',
       input: 'relative block w-full focus:ring-transparent text-sm px-4 py-2 u-text-gray-700 border-l-0 u-bg-white border-t-0 border-r-0 u-border-gray-200 focus:u-border-gray-200',
       option: {
-        base: 'cursor-default select-none relative py-2 pl-4 pr-10 text-sm group',
-        container: 'flex items-center gap-3',
-        active: 'text-white bg-primary-600',
+        base: 'cursor-default select-none relative py-1.5 pl-2 pr-8 rounded-md text-sm',
+        active: 'u-text-gray-900 bg-gray-100 dark:bg-gray-900',
         inactive: 'u-text-gray-900',
+        container: 'flex items-center gap-3',
         selected: 'font-semibold',
         unselected: 'font-normal',
         disabled: 'cursor-not-allowed opacity-50',
         empty: 'text-sm u-text-gray-400 px-4 py-2',
         icon: {
-          name: 'heroicons-solid:check',
-          base: 'absolute inset-y-0 right-0 flex items-center pr-4',
-          active: 'text-white',
-          inactive: 'text-primary-600',
-          size: 'h-5 w-5'
+          name: 'uil:check',
+          base: 'absolute inset-y-0 right-0 flex items-center pr-2',
+          active: '',
+          inactive: '',
+          size: 'h-4 w-4'
         }
       },
       transition: {

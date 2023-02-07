@@ -1,5 +1,5 @@
 <template>
-  <USelectCustom
+  <AppSelect
     v-model="location"
     name="location"
     :options="locationsWithPlaceholder"
