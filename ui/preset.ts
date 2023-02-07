@@ -173,7 +173,7 @@ export const uiPreset: any = {
     variant: {
       green: 'bg-green-100 dark:bg-green-700 text-green-800 dark:text-green-100',
       red: 'bg-red-100 dark:bg-red-700 text-red-800 dark:text-red-100',
-      primary: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100',
+      primary: 'bg-gray-100 dark:bg-gray-700 u-text-gray-800',
       secondary: 'u-bg-white u-text-gray-700'
     }
   },

@@ -62,7 +62,7 @@
         </div>
       </div>
       <div class="flex justify-center md:justify-start mb-4">
-        <UPills base-class="px-8 md:px-14 py-2 font-medium text-sm rounded-md" :links="links" />
+        <AppPills base-class="px-8 md:px-14 py-2 font-medium text-sm rounded-md" :links="links" />
       </div>
     </AppContainer>
 
@@ -71,6 +71,9 @@
 </template>
 
 <script setup lang="ts">
+
+import { RouteLocationNormalized } from 'vue-router'
+
 definePageMeta({
   documentDriven: false
 })
@@ -78,7 +81,7 @@ const { fetchOne, module } = useModules()
 const route = useRoute()
 const { $clipboard } = useNuxtApp()
 
-const links: {label: string, to: string, exact: boolean}[] = [
+const links: {label: string, to: RouteLocationNormalized | string, exact: boolean}[] = [
   { label: 'Overview', to: `/modules/${route.params.slug}`, exact: true },
   { label: 'Changelog', to: `/modules/${route.params.slug}/changelog`, exact: true }
 ]

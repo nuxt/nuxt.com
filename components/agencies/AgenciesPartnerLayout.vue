@@ -89,7 +89,7 @@
               label="Your message"
               class="col-span-2"
             >
-              <UTextarea
+              <AppTextarea
                 v-model="form.message"
                 label="Message"
                 name="Message"
