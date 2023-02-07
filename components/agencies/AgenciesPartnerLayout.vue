@@ -58,7 +58,7 @@
 
           <AppCard v-if="page.emailAddress" body-class="grid grid-cols-2 gap-8 p-10" rounded-class="rounded-xl" background-class="card-bg" @submit.prevent="contactAgency">
             <UFormGroup name="email" label="Your company" class="col-span-2 sm:col-span-1">
-              <UInput
+              <AppInput
                 v-model="form.company"
                 label="Company"
                 name="Company"
@@ -71,7 +71,7 @@
             </UFormGroup>
 
             <UFormGroup name="name" label="Your email" class="col-span-2 sm:col-span-1">
-              <UInput
+              <AppInput
                 v-model="form.email"
                 label="Email"
                 name="Email"

@@ -28,7 +28,7 @@ const props = defineProps({
   },
   size: {
     type: String as PropType<'xxxs' | 'xxs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl'>,
-    default: 'md',
+    default: 'md'
   },
   max: {
     type: Number,
