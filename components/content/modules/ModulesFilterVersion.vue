@@ -30,7 +30,7 @@ const props = defineProps({
   selectedVersion:
   {
     type: Object as PropType<FilterItem>,
-    default: () => {}
+    default: () => ({})
   }
 })
 
