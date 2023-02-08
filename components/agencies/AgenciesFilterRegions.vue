@@ -22,7 +22,7 @@ const props = defineProps({
   },
   selectedRegion: {
     type: Object as PropType<FilterItem | null>,
-    default: () => {}
+    default: () => ({})
   }
 })
 

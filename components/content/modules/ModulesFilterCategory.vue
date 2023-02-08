@@ -21,7 +21,7 @@ const props = defineProps({
   },
   selectedCategory: {
     type: Object as PropType<FilterItem | null>,
-    default: () => {}
+    default: () => ({})
   }
 })
 
