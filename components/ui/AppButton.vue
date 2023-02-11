@@ -19,7 +19,7 @@ import { ref, computed, useSlots } from 'vue'
 import type { PropType } from 'vue'
 import type { RouteLocationNormalized, RouteLocationRaw } from 'vue-router'
 import NuxtLink from '#app/components/nuxt-link'
-import { uiPreset } from '../../ui/preset'
+import { uiPreset } from '../../ui/preset'
 import { classNames } from '../../utils'
 
 const props = defineProps({
