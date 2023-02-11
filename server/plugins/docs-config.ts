@@ -9,7 +9,7 @@ export default defineNitroPlugin((nitroApp) => {
     }
     // Generate the markdown from the schema
     if (file._id === 'nuxt-docs:docs:3.api:6.configuration:nuxt-config.md') {
-      const rootSchema = await $fetch<Schema>('https://unpkg.com/@nuxt/schema-edge/schema/config.schema.json')
+      const rootSchema = await $fetch<Schema>('https://unpkg.com/@nuxt/schema@3.1.0/schema/config.schema.json')
       const GENERATE_KEY = '<!-- GENERATED_CONFIG_DOCS -->'
       // Prepare content directory
       const start = Date.now()
