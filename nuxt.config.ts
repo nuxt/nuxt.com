@@ -27,6 +27,7 @@ export default defineNuxtConfig({
     resolve('./assets/css/tailwind.css')
   ],
   modules: [
+    '@nuxt-themes/tokens',
     process.env.NODE_ENV === 'production' ? '@nuxtjs/html-validator' : () => {},
     '@nuxt/content',
     '@nuxtlabs/github-module',
@@ -137,10 +138,10 @@ export default defineNuxtConfig({
     viewer: false,
     cssPath: '~/assets/css/tailwind.css',
     config: {
-      theme: { extend: {}},
+      theme: { extend: {} },
       content: [
-        resolve('./components/**/*.{vue,js,ts}'),
-      ],
+        resolve('./components/**/*.{vue,js,ts}')
+      ]
     }
   },
   github: {
