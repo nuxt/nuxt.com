@@ -1,10 +1,10 @@
 <template>
   <div>
-    <AppButton>
+    <AppButton trailing-icon="heroicons:academic-cap" variant="primary">
       Hello World
     </AppButton>
 
-    <AppButtonPinceau>
+    <AppButtonPinceau icon-name="heroicons:academic-cap" trailing variant="primary" to="/">
       Hello World
     </AppButtonPinceau>
   </div>

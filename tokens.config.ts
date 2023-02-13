@@ -193,7 +193,79 @@ export default defineTheme({
       primary: palette('#00dc82')
     }
   },
+  size: {
+    0: '0px',
+    1: '1px',
+    2: '2px',
+    3: '3px',
+    4: '4px',
+    5: '5px',
+    6: '6px',
+    7: '7px',
+    8: '8px',
+    9: '9px',
+    10: '10px',
+    12: '12px',
+    14: '14px',
+    16: '16px',
+    18: '18px',
+    20: '20px',
+    24: '24px',
+    32: '32px',
+    40: '40px',
+    48: '48px',
+    56: '56px',
+    64: '64px',
+    80: '80px',
+    104: '104px',
+    200: '200px',
+    xs: '20rem',
+    sm: '24rem',
+    md: '28rem',
+    lg: '32rem',
+    xl: '36rem',
+    '2xl': '42rem',
+    '3xl': '48rem',
+    '4xl': '56rem',
+    '5xl': '64rem',
+    '6xl': '72rem',
+    '7xl': '80rem',
+    full: '100%'
+  },
+
+  fontSize: {
+    xs: '0.75rem',
+    sm: '0.875rem',
+    base: '1rem',
+    lg: '1.125rem',
+    xl: '1.25rem',
+    '2xl': '1.5rem',
+    '3xl': '1.875rem',
+    '4xl': '2.25rem',
+    '5xl': '3rem',
+    '6xl': '3.75rem',
+    '7xl': '4.5rem',
+    '8xl': '6rem',
+    '9xl': '8rem'
+  },
+
   utils: {
+    py: (value: PropertyValue<'padding'>) => ({
+      paddingTop: value,
+      paddingBottom: value
+    }),
+    my: (value: PropertyValue<'margin'>) => ({
+      marginTop: value,
+      marginBottom: value
+    }),
+    px: (value: PropertyValue<'padding'>) => ({
+      paddingLeft: value,
+      paddingRight: value
+    }),
+    mx: (value: PropertyValue<'margin'>) => ({
+      marginLeft: value,
+      marginRight: value
+    }),
     ringColor: (value: string) => ({
       '--ring-color': value
     }),
