@@ -32,7 +32,7 @@
             :class="linkClass(index, link)"
           >{{ link.title }}</span>
           <div v-if="link.isCollapsible && !tablet">
-            <UButton :icon="link.collapsed ? 'bx:expand-vertical' : 'bx:collapse-vertical'" icon-base-class="h-5" variant="transparent" />
+            <AppButton :icon="link.collapsed ? 'bx:expand-vertical' : 'bx:collapse-vertical'" icon-base-class="h-5" variant="transparent" />
           </div>
         </div>
       </div>

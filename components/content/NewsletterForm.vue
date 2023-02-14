@@ -34,7 +34,7 @@ function onSubmit () {
   <form class="flex flex-col gap-y-4 mt-6" @submit.prevent="onSubmit">
     <ContentSlot :use="$slots.default" unwrap="p" />
     <div class="flex gap-x-2 items-center">
-      <UInput
+      <AppInput
         v-model="email"
         name="email"
         placeholder="Email"
@@ -42,7 +42,7 @@ function onSubmit () {
         size="lg"
         required
       />
-      <UButton
+      <AppButton
         type="submit"
         submit
         variant="primary-gradient"

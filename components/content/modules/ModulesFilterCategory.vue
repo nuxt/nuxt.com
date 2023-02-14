@@ -1,5 +1,5 @@
 <template>
-  <USelectCustom
+  <AppSelect
     v-model="category"
     name="category"
     :options="categoriesWithPlaceholder"

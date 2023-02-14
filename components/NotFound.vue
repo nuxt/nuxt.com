@@ -36,7 +36,7 @@ const resetQuery = () => {
     </div>
 
     <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
-      <UButton
+      <AppButton
         v-for="button of buttons"
         :key="button.label"
         :variant="button.variant || 'transparent'"

@@ -15,7 +15,7 @@
               target="_blank"
               class="flex items-center gap-2 text-sm font-medium hover:u-text-gray-900 focus:u-text-gray-900"
             >
-              <UAvatar size="xxxs" :src="contributor.avatar_url" :alt="contributor.login" />
+              <AppAvatar size="xxxs" :src="contributor.avatar_url" :alt="contributor.login" />
               {{ contributor.login }}
             </NuxtLink>
           </div>
@@ -41,7 +41,7 @@
           <Icon name="bx:git-commit" class="w-8 h-8" />
           <h2 class="flex items-center gap-2 text-2xl u-text-gray-900 font-semibold">
             <span>{{ release.name }} by </span>
-            <UAvatar size="xs" :src="release.author.avatar" :alt="release.author.name" />
+            <AppAvatar size="xs" :src="release.author.avatar" :alt="release.author.name" />
             <span>{{ release.author.name }}</span>
 
             <time class="u-text-gray-500 font-normal text-xl leading-8">{{ formatDateByLocale('en', release.date) }}</time>
