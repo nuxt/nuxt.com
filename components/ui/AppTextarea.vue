@@ -1,0 +1,154 @@
+<template>
+  <div :class="wrapperClass">
+    <textarea
+      :id="name"
+      ref="textarea"
+      :value="modelValue"
+      :name="name"
+      :rows="rows"
+      :required="required"
+      :disabled="disabled"
+      :placeholder="placeholder"
+      :autocomplete="autocomplete"
+      :class="textareaClass"
+      @input="onInput(($event.target as any).value)"
+      @focus="$emit('focus', $event)"
+      @blur="$emit('blur', $event)"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, watch, onMounted, nextTick } from 'vue'
+import { classNames } from '../../utils'
+import { uiPreset } from '../../ui/preset'
+
+const props = defineProps({
+  modelValue: {
+    type: [String, Number],
+    default: ''
+  },
+  name: {
+    type: String,
+    required: true
+  },
+  placeholder: {
+    type: String,
+    default: null
+  },
+  required: {
+    type: Boolean,
+    default: false
+  },
+  disabled: {
+    type: Boolean,
+    default: false
+  },
+  rows: {
+    type: Number,
+    default: 3
+  },
+  autoresize: {
+    type: Boolean,
+    default: false
+  },
+  autofocus: {
+    type: Boolean,
+    default: false
+  },
+  autocomplete: {
+    type: String,
+    default: null
+  },
+  appearance: {
+    type: String,
+    default: 'default',
+    validator (value: string) {
+      return Object.keys(uiPreset.textarea.appearance).includes(value)
+    }
+  },
+  resize: {
+    type: Boolean,
+    default: true
+  },
+  size: {
+    type: String,
+    default: 'md',
+    validator (value: string) {
+      return Object.keys(uiPreset.textarea.size).includes(value)
+    }
+  },
+  wrapperClass: {
+    type: String,
+    default: () => uiPreset.textarea.wrapper
+  },
+  baseClass: {
+    type: String,
+    default: () => uiPreset.textarea.base
+  },
+  customClass: {
+    type: String,
+    default: null
+  }
+})
+
+const emit = defineEmits(['update:modelValue', 'focus', 'blur'])
+
+const textarea = ref<HTMLTextAreaElement | null>(null)
+
+const autoFocus = () => {
+  if (props.autofocus) {
+    textarea.value?.focus()
+  }
+}
+
+const autoResize = () => {
+  if (props.autoresize) {
+    if (!textarea.value) {
+      return
+    }
+
+    textarea.value.rows = props.rows
+
+    const styles = window.getComputedStyle(textarea.value)
+    const paddingTop = parseInt(styles.paddingTop)
+    const paddingBottom = parseInt(styles.paddingBottom)
+    const padding = paddingTop + paddingBottom
+    const lineHeight = parseInt(styles.lineHeight)
+    const { scrollHeight } = textarea.value
+    const newRows = (scrollHeight - padding) / lineHeight
+
+    if (newRows > props.rows) {
+      textarea.value.rows = newRows
+    }
+  }
+}
+
+const onInput = (value: string) => {
+  autoResize()
+
+  emit('update:modelValue', value)
+}
+
+watch(() => props.modelValue, () => {
+  nextTick(autoResize)
+})
+
+onMounted(() => {
+  setTimeout(() => {
+    autoFocus()
+    autoResize()
+  }, 100)
+})
+
+const textareaClass = computed(() => {
+  return classNames(
+    props.baseClass,
+    uiPreset.textarea.size[props.size],
+    uiPreset.textarea.spacing[props.size],
+    uiPreset.textarea.appearance[props.appearance],
+    !props.resize && 'resize-none',
+    props.customClass
+  )
+})
+</script>

@@ -1,5 +1,5 @@
 <template>
-  <AccessibleToggle
+  <AppToggle
     v-model="isDark"
     name="theme"
     icon-on="uil:moon"
@@ -7,7 +7,7 @@
     class="theme-select"
   >
     <span class="sr-only">Toggle theme</span>
-  </AccessibleToggle>
+  </AppToggle>
 </template>
 
 <script setup lang="ts">

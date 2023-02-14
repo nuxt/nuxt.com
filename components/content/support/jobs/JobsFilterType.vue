@@ -1,5 +1,5 @@
 <template>
-  <USelectCustom
+  <AppSelect
     v-model="type"
     name="type"
     :options="typesWithPlaceholder"
