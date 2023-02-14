@@ -31,7 +31,7 @@
           loading="lazy"
         >
       </div>
-      <template v-if="image" #header>
+      <div v-if="image">
         <img
           :src="`${image.path}-dark.${image.format}`"
           alt=""
@@ -48,7 +48,7 @@
           :height="image.height"
           loading="lazy"
         >
-      </template>
+      </div>
       <div class="flex flex-col" :class="contentClass">
         <Icon v-if="icon" :name="icon" class="w-6 h-6" />
         <header :class="titleClass">
