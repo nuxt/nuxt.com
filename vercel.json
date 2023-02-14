@@ -59,7 +59,7 @@
       "permanent": false
     },
     {
-      "source": "/concepts/typescript",
+      "source": "/docs/concepts/typescript",
       "destination": "/docs/guide/concepts/typescript",
       "permanent": false
     },
