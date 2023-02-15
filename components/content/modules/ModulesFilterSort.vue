@@ -3,10 +3,9 @@
     <AppButton
       name="orderBy"
       :icon="orderBy.icon"
-      size="sm"
+      size="xs"
       variant="input-group"
-      icon-base-class="flex-shrink-0 u-text-gray-400 group-hover:u-text-gray-500"
-      class="-mr-px rounded-r-none focus:z-[1] group"
+      class="order-button"
       @click="switchOrder"
     />
     <AppSelect
@@ -69,3 +68,31 @@ function switchOrder () {
   orderBy.value = otherOrder as FilterItem
 }
 </script>
+
+<style scoped lang="ts">
+css({
+  '.order-button': {
+    borderTopRightRadius: '0px',
+    borderBottomRightRadius: '0px',
+    marginRight: '-1px',
+    ringColor: '{color.transparent} !important',
+    ringOffsetColor: '{color.transparent} !important',
+
+    '&:focus': {
+      zIndex: '1',
+    },
+
+    '> .icon': {
+      flexShrink: 0,
+    },
+
+    ':deep(svg)': {
+      color: '{color.gray.600}',
+
+      '@dark': {
+        color: '{color.gray.300}'
+      }
+    }
+  }
+})
+</style>

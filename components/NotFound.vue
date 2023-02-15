@@ -12,7 +12,7 @@ defineProps({
     default: ''
   },
   buttons: {
-    type: Array as PropType<{ target?: string, label?: string, variant?: string, to?: RouteLocationNormalized | RouteLocationRaw, icon?: string, trailing?: boolean, size?: string, action?: any }[]>,
+    type: Array as PropType<{ target?: string, label?: string, variant?: any, to?: RouteLocationNormalized | RouteLocationRaw, icon?: string, trailing?: boolean, size?: string, action?: any }[]>,
     default: () => []
   },
   resetFilter: {

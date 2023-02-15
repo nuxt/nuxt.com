@@ -15,11 +15,7 @@
       </div>
       <div v-if="secondaries" class="relative flex items-end justify-between h-full p-2 text-sm text-gray-900 transition-opacity duration-200 opacity-100 sm:opacity-0 group-hover:opacity-100">
         <span class="pl-1 text-gray-900">{{ hexaColor }}</span>
-        <AppButton variant="transparent" base-class="py-0" @click="onClick">
-          <span class="-mr-2 text-sm text-gray-900">
-            Copy
-          </span>
-        </AppButton>
+        <AppButton variant="transparent" label="Copy" size="sm" class="copy-button" @click="onClick" />
       </div>
     </AppCard>
     <div v-if="!gradient && !secondaries">
@@ -27,11 +23,7 @@
         <h5 class="font-semibold u-text-gray-900">
           <ContentSlot :use="$slots.color" unwrap="p" />
         </h5>
-        <AppButton variant="transparent" @click="onClick">
-          <span class="-mr-4 text-sm u-text-gray-400">
-            Copy
-          </span>
-        </AppButton>
+        <AppButton variant="transparent" label="Copy" size="sm" class="copy-button" @click="onClick" />
       </div>
       <p class="u-text-gray-500">
         {{ hexaColor }}
@@ -69,3 +61,25 @@ const onClick = () => {
   $clipboard.copy(props.hexaColor, { title: 'Color copied to clipboard!' })
 }
 </script>
+
+<style lang="ts">
+css({
+  '.copy-button': {
+    padding: '0px !important',
+    color: '{color.gray.400} !important',
+    ringOffset: '{color.transparent} !important',
+    ringColor: '{color.transparent} !important',
+
+    '@dark': {
+      color: '{color.gray.400} !important',
+    },
+
+    '&:hover': {
+      color: '{color.gray.600} !important',
+      '@dark': {
+        color: '{color.gray.400} !important'
+      }
+    }
+  }
+})
+</style>

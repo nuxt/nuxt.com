@@ -249,6 +249,16 @@ export default defineTheme({
     '9xl': '8rem'
   },
 
+  button: {
+    fontSize: {
+      xs: '0.75rem',
+      sm: '0.875rem',
+      md: '0.875rem',
+      lg: '1rem',
+      xl: '1rem'
+    }
+  },
+
   shadow: {
     sm: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
     base: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',

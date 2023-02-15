@@ -55,8 +55,10 @@
             class="module-button"
             :label="`yarn add ${module.npm}`"
             size="lg"
-            :trailing-icon="copyIcon"
+            trailing
+            :icon="copyIcon"
             truncate
+            variant="primary"
             @click="copyToClipboard(`yarn add ${module.npm}`)"
           />
         </div>

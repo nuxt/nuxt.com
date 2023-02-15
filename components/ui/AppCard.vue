@@ -95,6 +95,7 @@ const props = defineProps({
 
 const cardClass = computed(() => {
   return classNames(
+    'z-0',
     props.baseClass,
     props.padded && props.rounded && props.roundedClass,
     !props.padded && props.rounded && props.roundedClass && `sm:${props.roundedClass}`,
