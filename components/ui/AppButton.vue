@@ -100,7 +100,14 @@ css({
     variant: {
       base: {
         backgroundColor: '{button.base}',
+        ringColor: '{button.base}',
+        ringOffsetColor: '{color.white}',
         color: '{color.gray.100}',
+
+        '@dark': {
+          ringOffsetColor: '{color.black}',
+        },
+
         '&:hover': {
           backgroundColor: '{button.base.hover}',
         },
