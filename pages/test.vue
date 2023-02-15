@@ -1,28 +1,7 @@
 <template>
   <div>
-    <AppButton icon-name="heroicons:academic-cap" trailing variant="primary-gradient">
-      Hello World
-    </AppButton>
-
-    <AppButton icon-name="heroicons:academic-cap" trailing variant="primary" to="/" block>
-      Hello World
-    </AppButton>
-
-    <AppButton icon-name="heroicons:academic-cap" trailing variant="secondary">
-      Hello World
-    </AppButton>
-
-    <AppButton icon-name="heroicons:academic-cap" trailing variant="input-group">
-      Hello World
-    </AppButton>
-
-    <AppButton icon-name="heroicons:academic-cap" trailing variant="base" color="green">
-      Hello World
-    </AppButton>
-
-    <AppButton icon-name="heroicons:academic-cap" trailing variant="transparent">
-      Hello World
-    </AppButton>
+    <AppAvatar size="lg" src="https://avatars.githubusercontent.com/u/6696789?v=4" />
+    <AppAvatarPinceau size="lg" src="https://avatars.githubusercontent.com/u/6696789?v=4" />
   </div>
 </template>
 
