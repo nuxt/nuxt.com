@@ -42,7 +42,7 @@
     "@nuxtjs/fontaine": "^0.2.3",
     "@nuxtjs/html-validator": "^1.2.3",
     "@nuxtjs/plausible": "^0.2.0",
-    "@nuxtjs/tailwindcss": "^6.3.1",
+    "@nuxtjs/tailwindcss": "^6.4.0",
     "@nuxtlabs/github-module": "^1.5.4",
     "@popperjs/core": "^2.11.6",
     "@sendgrid/client": "^7.7.0",
@@ -58,25 +58,25 @@
     "lodash-es": "^4.17.21",
     "mjml": "^4.13.0",
     "node-mailjet": "^6.0.0",
-    "nuxt-icon": "^0.1.8",
+    "nuxt-icon": "^0.3.0",
     "ohash": "^1.0.0",
     "remove": "^0.1.5",
     "sitemap": "^7.1.1",
     "tailwindcss-border-gradient-radius": "^3.0.1",
     "three": "^0.147.0",
-    "unstorage": "^1.1.1",
+    "unstorage": "^1.1.4",
     "vue-lite-youtube-embed": "^1.0.9"
   },
   "devDependencies": {
-    "@nuxthq/studio": "^0.3.12",
+    "@nuxthq/studio": "^0.7.5",
     "@nuxtjs/eslint-config-typescript": "^12.0.0",
     "@types/lodash-es": "^4.17.6",
     "autoprefixer": "^10.4.13",
     "eslint": "^8.29.0",
     "nuxt": "^3.1.0",
     "postcss": "^8.4.21",
-    "release-it": "^15.5.1",
-    "typescript": "^4.9.3"
+    "release-it": "^15.6.0",
+    "typescript": "^4.9.5"
   },
   "resolutions": {
     "parse5": "6.0.1"
