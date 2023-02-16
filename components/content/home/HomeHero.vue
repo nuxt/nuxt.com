@@ -1,18 +1,36 @@
 <template>
   <div class="sm:pb-20 pt-12 md:pt-28">
-    <img src="/assets/home/hero-gradient.svg" class="absolute top-0 right-0 hidden overflow-hidden select-none lg:block blur-lg" role="presentation" width="1269" height="724">
-    <img src="/assets/home/hero-gradient-tablet.svg" class="absolute top-0 right-0 w-full hidden overflow-hidden select-none sm:block lg:hidden blur-md" role="presentation" width="924" height="653">
-    <img src="/assets/home/hero-gradient-mobile.svg" class="absolute inset-x-0 top-0 w-full overflow-hidden object-cover select-none sm:hidden blur-md" role="presentation" width="375" height="494">
-    <UContainer padded class="relative flex flex-col items-center sm:items-start gap-y-8">
+    <img
+      src="/assets/home/hero-gradient.svg"
+      class="absolute top-0 right-0 hidden overflow-hidden select-none lg:block blur-lg"
+      alt=""
+      width="1269"
+      height="724"
+    >
+    <img
+      src="/assets/home/hero-gradient-tablet.svg"
+      alt=""
+      class="absolute top-0 right-0 w-full hidden overflow-hidden select-none sm:block lg:hidden blur-md"
+      width="924"
+      height="653"
+    >
+    <img
+      src="/assets/home/hero-gradient-mobile.svg"
+      class="absolute inset-x-0 top-0 w-full overflow-hidden object-cover select-none sm:hidden blur-md"
+      alt=""
+      width="375"
+      height="494"
+    >
+    <AppContainer padded class="relative flex flex-col items-center sm:items-start gap-y-8">
       <div v-if="$slots.badgeLabel" class="flex gap-x-2">
-        <UBadge rounded variant="green">
+        <AppBadge rounded variant="green">
           <ContentSlot :use="$slots.badgeLabel" unwrap="p" />
-        </UBadge>
+        </AppBadge>
         <span>
           <ContentSlot :use="$slots.news" unwrap="p" />
         </span>
       </div>
-      <UButton
+      <AppButton
         v-if="topButtonText"
         :label="topButtonText"
         :to="topButtonLink"
@@ -27,7 +45,7 @@
         <ContentSlot :use="$slots.description" unwrap="p" />
       </p>
       <div class="flex flex-col sm:flex-row items-center justify-center gap-6 z-[1]">
-        <UButton
+        <AppButton
           :label="primaryButtonText"
           :to="primaryButtonLink"
           size="lg"
@@ -35,7 +53,7 @@
           truncate
           class="focus-visible:ring-2"
         />
-        <UButton
+        <AppButton
           :label="secondaryButtonText"
           :to="secondaryButtonLink"
           size="lg"
@@ -50,7 +68,7 @@
       <HomeGemWrapper :gem-wrapper-class="'hidden sm:block absolute left-1/3 sm:left-1/3 md:left-1/2 lg:top-[-50px] lg:left-2/3'">
         <HomeGem />
       </HomeGemWrapper>
-    </UContainer>
+    </AppContainer>
   </div>
 </template>
 

@@ -1,5 +1,4 @@
 import { createResolver, logger } from '@nuxt/kit'
-import preset from './ui'
 
 const { resolve } = createResolver(import.meta.url)
 
@@ -24,17 +23,19 @@ export default defineNuxtConfig({
   extends: '@nuxt-themes/typography',
   css: [
     resolve('./assets/css/fonts.css'),
-    resolve('./assets/css/style.css')
+    resolve('./assets/css/style.css'),
+    resolve('./assets/css/tailwind.css')
   ],
   modules: [
     process.env.NODE_ENV === 'production' ? '@nuxtjs/html-validator' : () => {},
     '@nuxt/content',
-    '@nuxthq/ui',
     '@nuxtlabs/github-module',
     '@nuxtjs/plausible',
     'nuxt-icon',
     '@nuxtjs/fontaine',
     '@nuxtjs/algolia',
+    '@nuxtjs/color-mode',
+    '@nuxtjs/tailwindcss',
     '@nuxthq/studio'
     // '@nuxt/devtools-edge'
   ],
@@ -74,6 +75,11 @@ export default defineNuxtConfig({
       prefix: '',
       path: resolve('./components/icons'),
       global: true
+    },
+    {
+      prefix: '',
+      path: resolve('./components/ui'),
+      global: true
     }
   ],
   runtimeConfig: {
@@ -87,18 +93,15 @@ export default defineNuxtConfig({
       apiKey: process.env.NUXT_SENDGRID_API_KEY || '',
       listId: process.env.NUXT_SENDGRID_LIST_ID || ''
     },
+    testEmail: process.env.NUXT_TEST_EMAIL || '',
     mailjet: {
       apiKey: process.env.NUXT_MAILJET_API_KEY || '',
       secretKey: process.env.NUXT_MAILJET_SECRET_KEY || ''
     },
     public: {}
   },
-  ui: {
-    colors: {
-      primary: 'blue',
-      gray: 'zinc'
-    },
-    preset
+  colorMode: {
+    classSuffix: ''
   },
   content: {
     highlight: {
@@ -112,7 +115,6 @@ export default defineNuxtConfig({
       fields: ['redirect', 'titleTemplate', 'image']
     },
     documentDriven: {
-      // @ts-expect-error TODO: ready for https://github.com/nuxt/content/pull/1769
       host: 'https://nuxt.com',
       surround: false,
       injectPage: false
@@ -133,10 +135,13 @@ export default defineNuxtConfig({
     }
   },
   tailwindcss: {
+    viewer: false,
+    cssPath: '~/assets/css/tailwind.css',
     config: {
+      theme: { extend: {}},
       content: [
-        resolve('./ui/*.ts')
-      ]
+        resolve('./components/**/*.{vue,js,ts}'),
+      ],
     }
   },
   github: {
@@ -158,19 +163,14 @@ export default defineNuxtConfig({
       dir: '{{ workspaceDir }}/.vercel/output'
     },
     prerender: {
-      routes: ['/', '/api/jobs.json', '/api/modules.json', '/api/sponsors.json', '/sitemap.xml', '/newsletter'],
       crawlLinks: true
-    },
-    handlers: [
-      { handler: resolve('./server/api/modules/index.ts'), route: '/api/modules.json' },
-      { handler: resolve('./server/api/jobs.ts'), route: '/api/jobs.json' },
-      { handler: resolve('./server/api/sponsors.ts'), route: '/api/sponsors.json' },
-      { handler: resolve('./server/routes/sitemap.xml.ts'), route: '/sitemap.xml' }
-    ]
+    }
   },
   routeRules: {
     // prerendered pages
     '/': { prerender: true },
+    '/sitemap.xml': { prerender: true },
+    '/newsletter': { prerender: true },
     '/design-kit': { prerender: true },
     '/support/solutions': { prerender: true },
     '/support/agencies': { prerender: true },

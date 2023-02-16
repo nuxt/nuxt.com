@@ -29,7 +29,7 @@ defineProps({
         </time>
         <div v-for="author in authors" :key="author.name">
           <NuxtLink :to="author.link" target="_blank" class="block flex items-center justify-end -ml-2 sm:ml-0 sm:mr-2">
-            <UAvatar
+            <AppAvatar
               rounded
               :src="author.avatarUrl"
             />

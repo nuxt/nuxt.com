@@ -18,35 +18,37 @@
           :class="linkClass(index, link)"
           @click.stop.prevent="onClick(link)"
         >
-          <span class="inline-flex items-center">
+          <div class="inline-flex items-center">
             <Icon v-if="link.icon" :name="link.icon" class="w-5 h-5 mr-1" />
             <div class=" flex flex-col">
               <span>{{ link.title }}</span>
               <span class="inset-x-0 -bottom-1 h-0.5" :class="{ 'bg-gradient-to-r from-green-400 to-teal-400': (isActive(link) && !link.children)}" />
             </div>
-          </span>
+          </div>
         </NuxtLink>
         <div v-else class="w-full flex justify-between items-center" @click="tablet ? () => {} : expand(link)">
           <span
             class="py-1.5 flex w-full cursor-pointer"
             :class="linkClass(index, link)"
           >{{ link.title }}</span>
-          <span v-if="link.isCollapsible && !tablet">
-            <UButton :icon="link.collapsed ? 'bx:expand-vertical' : 'bx:collapse-vertical'" icon-base-class="h-5" variant="transparent" />
-          </span>
+          <div v-if="link.isCollapsible && !tablet">
+            <AppButton :icon="link.collapsed ? 'bx:expand-vertical' : 'bx:collapse-vertical'" icon-base-class="h-5" variant="transparent" />
+          </div>
         </div>
       </div>
 
-      <DocsAsideTree
-        v-if="link.children?.length && (max === null || ((level + 1) < max))"
-        v-show="(isChildOpen[link._path] || props.level === 0) && ((!link.collapsed && !tablet) || tablet)"
-        :tree="link.children"
-        :level="level + 1"
-        :max="max"
-        class="py-2"
-        @select="link => $emit('select', link)"
-        @close="$emit('close')"
-      />
+      <Transition>
+        <DocsAsideTree
+          v-if="link.children?.length && (max === null || ((level + 1) < max))"
+          v-show="(isChildOpen[link._path] || props.level === 0) && ((!link.collapsed && !tablet) || tablet)"
+          :tree="link.children"
+          :level="level + 1"
+          :max="max"
+          class="py-2 transition-all duration-300"
+          @select="link => $emit('select', link)"
+          @close="$emit('close')"
+        />
+      </Transition>
     </li>
   </ul>
 </template>
@@ -90,11 +92,11 @@ const isChildOpen = reactive({} as any)
 const linkClass = (index: Number, link: NavItem | CollapsibleNavItem) => {
   return [
     props.level > 0 && 'pl-4 lg:text-sm',
-    (props.level === 0 && index === 0) && '!pt-0',
+    (props.level === 0 && index === 0) ? '!pt-0' : '',
     isActive(link) && 'font-semibold',
     (props.level === 0 && !isActive(link) && link.children) && 'font-medium',
     !isActive(link) && !link.children && 'hover:font-semibold'
-  ].join(' ')
+  ].filter(Boolean).join(' ')
 }
 
 const links: Ref<CollapsibleNavItem[]> = ref(getLinks())
@@ -156,3 +158,19 @@ watch(() => route.path, () => {
   }
 }, { immediate: true })
 </script>
+
+<style lang="postcss">
+.v-enter-active,
+.v-leave-active {
+    max-height: 100vh;
+    opacity: 1;
+    transition: all 0.3s linear;
+}
+
+.v-enter-from,
+.v-leave-to {
+  max-height: 0;
+  opacity: 0;
+  transition: all 0.15s linear;
+}
+</style>

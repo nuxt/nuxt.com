@@ -1,6 +1,6 @@
 <template>
   <div v-if="filters.length" class="flex items-center gap-1.5">
-    <UButton
+    <AppButton
       v-for="filter of filters"
       :key="filter.key"
       :label="filter.title"
@@ -21,11 +21,11 @@ import type { FilterItem } from '../../../types'
 const props = defineProps({
   selectedCategory: {
     type: Object as PropType<FilterItem | null>,
-    default: () => {}
+    default: () => ({})
   },
   selectedType: {
     type: Object as PropType<FilterItem | null>,
-    default: () => {}
+    default: () => ({})
   },
   q: {
     type: String,

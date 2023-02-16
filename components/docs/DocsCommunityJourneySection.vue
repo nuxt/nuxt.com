@@ -14,7 +14,7 @@
       </div>
 
       <div v-if="buttons.length" class="flex flex-col sm:flex-row gap-4 items-start">
-        <UButton
+        <AppButton
           v-for="button of buttons"
           :key="button.label"
           :variant="button.variant || 'transparent'"

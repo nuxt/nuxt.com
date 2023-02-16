@@ -3,12 +3,12 @@
     class="sticky top-0 z-30 lg:relative transition-all duration-[0.4s] ease"
     :class="{ 'backdrop-blur-md bg-white/75 dark:bg-black/75 lg:!bg-transparent': hasScrolledPastNavbar }"
   >
-    <NavbarDialog v-model="isOpen" :links="links" />
+    <NavbarDialog v-if="open" :links="links" />
 
-    <UContainer padded class="relative">
+    <AppContainer padded class="relative">
       <nav id="main-nav" class="grid items-center h-16 grid-cols-6 gap-3 lg:h-20 lg:justify-center" aria-label="Primary Navigation">
         <div class="lg:hidden">
-          <button @click="isOpen = true">
+          <button type="button" @click="open">
             <Icon name="uil:bars" class="flex-shrink-0 w-6 h-6" aria-hidden="true" focusable="false" />
             <span class="sr-only">Menu</span>
           </button>
@@ -16,6 +16,7 @@
 
         <div class="flex justify-center col-span-4 lg:col-span-1 lg:justify-start">
           <NuxtLink to="/" class="block u-text-black" title="Homepage" @click.right.prevent="$router.push('/design-kit')">
+            <span class="sr-only">Go to homepage</span>
             <LogoFull class="hidden w-auto h-6 sm:block" />
             <Logo class="block w-auto h-6 sm:hidden" />
           </NuxtLink>
@@ -42,7 +43,7 @@
           <SocialLinks />
         </div>
       </nav>
-    </UContainer>
+    </AppContainer>
   </header>
 </template>
 
@@ -52,8 +53,6 @@ import type { Ref, ComputedRef } from 'vue'
 
 const route = useRoute()
 const { hasScrolledPastNavbar } = useNavbarScroll()
-
-const isOpen = ref(false)
 
 const links: Ref<NavItem[]> = ref([{
   title: 'Docs',
@@ -75,6 +74,8 @@ const links: Ref<NavItem[]> = ref([{
   path: '/support',
   icon: 'uil:globe'
 }])
+
+const { open } = useSlideover()
 
 const visibleLinks: ComputedRef<NavItem[]> = computed(() => links.value.filter(link => !link.hidden))
 

@@ -7,7 +7,6 @@
         :height="backgroundImage.height"
         alt=""
         class="dark:hidden opacity-0 md:opacity-100 -z-10"
-        role="presentation"
       >
       <img
         :src="`${backgroundImage.path}-dark.${backgroundImage.format}`"
@@ -15,7 +14,6 @@
         :height="backgroundImage.height"
         alt=""
         class="hidden dark:block opacity-0 md:opacity-100"
-        role="presentation"
       >
     </div>
     <ContentSlot :use="$slots.default" unwrap="p" />
@@ -29,11 +27,11 @@ import type { Image } from 'types'
 defineProps({
   cardListClass: {
     type: String,
-    default: 'grid grid-cols-1 gap-8 pt-16 sm:grid-cols-2 lg:grid-cols-3'
+    default: 'grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3'
   },
   backgroundImage: {
     type: Object as PropType<Image>,
-    default: () => {}
+    default: () => ({})
   },
   backgroundImageClass: {
     type: String,

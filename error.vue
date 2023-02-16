@@ -3,7 +3,7 @@
     <NuxtLayout>
       <PageError :error="error" />
     </NuxtLayout>
-    <UNotifications />
+    <AppNotifications />
   </div>
 </template>
 

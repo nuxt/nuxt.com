@@ -6,7 +6,6 @@
 
 <script setup lang="ts">
 import type { ComputedRef } from 'vue'
-import { splitByCase, upperFirst } from 'scule'
 
 const props = defineProps({
   link: {
@@ -21,5 +20,5 @@ const props = defineProps({
 })
 
 // Guess title from link!
-const computedTitle: ComputedRef<string> = computed(() => (props.title || props.link).split('/').filter(Boolean).map(part => splitByCase(part).map(p => upperFirst(p)).join(' ')).join(' > '))
+const computedTitle: ComputedRef<string> = computed(() => createBreadcrumb(props.link))
 </script>

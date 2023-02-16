@@ -36,7 +36,7 @@ export const useModules = () => {
 
   // Data fetching
   async function fetchList () {
-    const { data, error } = await useFetch<{ modules: Module[] }>('/api/modules.json')
+    const { data, error } = await useFetch<{ modules: Module[] }>('/api/modules')
 
     /* Missing data is handled at component level */
     if (!data.value && error.value) {

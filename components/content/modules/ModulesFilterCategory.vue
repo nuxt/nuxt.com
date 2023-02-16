@@ -1,5 +1,5 @@
 <template>
-  <USelectCustom
+  <AppSelect
     v-model="category"
     name="category"
     :options="categoriesWithPlaceholder"
@@ -21,7 +21,7 @@ const props = defineProps({
   },
   selectedCategory: {
     type: Object as PropType<FilterItem | null>,
-    default: () => {}
+    default: () => ({})
   }
 })
 

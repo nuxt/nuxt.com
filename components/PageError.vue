@@ -15,7 +15,7 @@
             </p>
           </div>
           <div class="flex gap-3 mt-10 sm:border-l sm:border-transparent sm:pl-6">
-            <UButton label="Go back home" variant="primary" @click="handleError" />
+            <AppButton label="Go back home" variant="primary" @click="handleError" />
           </div>
         </div>
       </section>

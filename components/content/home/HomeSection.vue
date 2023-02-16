@@ -1,5 +1,5 @@
 <template>
-  <UContainer
+  <AppContainer
     class="flex px-4 pt-24 pb-4 sm:pb-8 md:pb-12 lg:pb-20 transition duration-700 relative"
     :class="[!slideIn ? 'opacity-0 translate-y-20' : 'opacity-100 translate-y-0', sectionAlign === 'row' ? 'flex-col lg:flex-row lg:items-center lg:justify-between' : 'flex-col']"
     padded
@@ -20,27 +20,27 @@
         <span class="absolute w-0 -bottom-1 h-0.5 u-bg-gray-900 group-hover:w-full transition-all duration-200" />
       </NuxtLink>
     </div>
-    <div v-if="$slots.extra">
-      <ContentSlot :use="$slots.extra" unwrap="p" />
-    </div>
     <ul v-if="$slots.cards" class="grid grid-cols-1 gap-8 pt-16 sm:grid-cols-2" :class="cardsClass">
       <ContentSlot :use="$slots.cards" unwrap="p" />
     </ul>
+    <div v-if="$slots.extra">
+      <ContentSlot :use="$slots.extra" unwrap="p" />
+    </div>
     <div v-if="buttons.length" class="gap-2 lg:gap-6 pt-8" :class="sectionAlign === 'row' ? 'flex flex-row lg:justify-end lg:pt-0 lg:w-1/3' : 'inline-flex justify-center lg:pt-12'">
-      <UButton
+      <AppButton
         v-for="button of buttons"
         :key="button.label"
         :variant="button.variant || 'transparent'"
         :icon="button.icon || undefined"
         :label="button.label || ''"
-        :to="button.to || null"
+        :to=" button.to"
         :trailing="button.trailing"
         :size="'lg' || button.size"
         truncate
         class="focus-visible:ring-2"
       />
     </div>
-  </UContainer>
+  </AppContainer>
 </template>
 
 <script setup lang="ts">
@@ -49,7 +49,7 @@ import type { RouteLocationNormalized, RouteLocationRaw } from 'vue-router'
 
 const props = defineProps({
   buttons: {
-    type: Array as PropType<{ label?: string, variant?: string, to?: string, icon?: string, trailing?: boolean, size?: string }[]>,
+    type: Array as PropType<{ label?: string, variant?: string, to?: string | RouteLocationNormalized | RouteLocationRaw, icon?: string, trailing?: boolean, size?: string }[]>,
     default: () => []
   },
   sectionAlign: {

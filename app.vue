@@ -59,6 +59,6 @@ useContentHead({
     <NuxtLayout :name="layout || 'default'">
       <NuxtPage />
     </NuxtLayout>
-    <UNotifications />
+    <AppNotifications />
   </div>
 </template>
