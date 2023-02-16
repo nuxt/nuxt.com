@@ -1,7 +1,15 @@
 <template>
   <div>
-    <AppAvatar size="lg" src="https://avatars.githubusercontent.com/u/6696789?v=4" />
-    <AppAvatarPinceau size="lg" src="https://avatars.githubusercontent.com/u/6696789?v=4" />
+    <AppBadge label="test" />
+    <AppBadgePinceau label="test" />
+    <AppBadge label="test" rounded />
+    <AppBadgePinceau label="test" rounded />
+    <AppBadge label="test" variant="primary" />
+    <AppBadgePinceau label="test" variant="primary" />
+    <AppBadge label="test" variant="secondary" />
+    <AppBadgePinceau label="test" variant="secondary" />
+    <AppBadge label="test" variant="green" />
+    <AppBadgePinceau label="test" variant="base" color="green" />
   </div>
 </template>
 
