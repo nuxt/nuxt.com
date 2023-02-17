@@ -8,7 +8,7 @@
       </div>
     </div>
 
-    <AppContainer padded class="py-6">
+    <div class="container py-6">
       <div class="sm:relative flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
         <div class=" flex flex-col-reverse items-center gap-3 sm:flex-row sm:w-40 md:w-60">
           <ThemeSelect class="z-10 order-1 sm:order-none" size="sm" />
@@ -24,7 +24,7 @@
         </ul>
         <SocialLinks class="z-10 sm:w-40 md:w-60" />
       </div>
-    </AppContainer>
+    </div>
   </footer>
 </template>
 

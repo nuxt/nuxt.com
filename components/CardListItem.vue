@@ -16,6 +16,10 @@ defineProps({
     type: String,
     default: ''
   },
+  truncate: {
+    type: Boolean,
+    default: true
+  },
   to: {
     type: String,
     default: ''
@@ -34,13 +38,13 @@ defineProps({
       <slot name="header" />
     </div>
     <div :class="wrapperContentClass">
-      <div v-if="$slots.title" class="font-semibold u-text-gray-700 truncate" :class="titleClass">
+      <h4 v-if="$slots.title" class="font-semibold u-text-gray-700" :class="[titleClass, {'truncate': truncate}]">
         <slot name="title" />
-      </div>
-      <p v-if="$slots.description" class="u-text-gray-500" :class="descriptionClass">
-        <slot name="description" />
-      </p>
+      </h4>
     </div>
+    <p v-if="$slots.description" class="u-text-gray-500" :class="descriptionClass">
+      <slot name="description" />
+    </p>
     <slot v-if="$slots.footer" name="footer" />
 
     <NuxtLink :to="to" :target="target">

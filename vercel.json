@@ -77,6 +77,16 @@
       "source": "/shop",
       "destination": "https://nuxt.gumroad.com/l/ams-beanie",
       "permanent": false
+    },
+    {
+      "source": "/v3",
+      "destination": "/blog/v3",
+      "permanent": false
+    },
+    {
+      "source": "/vision-2023",
+      "destination": "/blog/vision-2023",
+      "permanent": false
     }
   ]
 }
