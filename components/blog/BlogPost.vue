@@ -10,7 +10,7 @@
   >
     <template #header>
       <div class="w-full">
-        <img :src="page.imgUrl" class="object-cover w-full h-[150px]">
+        <img :src="page.image" class="object-cover w-full h-[150px]">
         <AppBadge class="mt-4 ml-4" rounded>
           {{ page.category }}
         </AppBadge>

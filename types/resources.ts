@@ -9,7 +9,7 @@ export interface ResourcesBlogArticleAuthor {
 export interface ResourcesBlogArticle extends ParsedContent {
   description: string
   date: Date
-  imgUrl: string
+  image: string
   authors: ResourcesBlogArticleAuthor[]
   tags: string[]
   category: string
@@ -18,7 +18,7 @@ export interface ResourcesBlogArticle extends ParsedContent {
 export interface ResourcesCaseStudy extends ParsedContent {
   description: string
   url: string
-  imgUrl: string
+  image: string
   gradientUrl: string
 }
 
