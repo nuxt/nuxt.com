@@ -23,5 +23,5 @@ const props = defineProps({
   }
 })
 
-const computedTitle: ComputedRef<string> = computed(() => createTitle(props.title, props.link))
+const computedTitle: ComputedRef<string> = computed(() => createBreadcrumb(props.link))
 </script>

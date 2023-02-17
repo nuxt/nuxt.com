@@ -21,16 +21,16 @@
       width="375"
       height="494"
     >
-    <UContainer padded class="relative flex flex-col items-center sm:items-start gap-y-8">
+    <AppContainer padded class="relative flex flex-col items-center sm:items-start gap-y-8">
       <div v-if="$slots.badgeLabel" class="flex gap-x-2">
-        <UBadge rounded variant="green">
+        <AppBadge rounded variant="green">
           <ContentSlot :use="$slots.badgeLabel" unwrap="p" />
-        </UBadge>
+        </AppBadge>
         <span>
           <ContentSlot :use="$slots.news" unwrap="p" />
         </span>
       </div>
-      <UButton
+      <AppButton
         v-if="topButtonText"
         :label="topButtonText"
         :to="topButtonLink"
@@ -45,7 +45,7 @@
         <ContentSlot :use="$slots.description" unwrap="p" />
       </p>
       <div class="flex flex-col sm:flex-row items-center justify-center gap-6 z-[1]">
-        <UButton
+        <AppButton
           :label="primaryButtonText"
           :to="primaryButtonLink"
           size="lg"
@@ -53,7 +53,7 @@
           truncate
           class="focus-visible:ring-2"
         />
-        <UButton
+        <AppButton
           :label="secondaryButtonText"
           :to="secondaryButtonLink"
           size="lg"
@@ -68,7 +68,7 @@
       <HomeGemWrapper :gem-wrapper-class="'hidden sm:block absolute left-1/3 sm:left-1/3 md:left-1/2 lg:top-[-50px] lg:left-2/3'">
         <HomeGem />
       </HomeGemWrapper>
-    </UContainer>
+    </AppContainer>
   </div>
 </template>
 

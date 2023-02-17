@@ -1,5 +1,5 @@
 <template>
-  <USelectCustom
+  <AppSelect
     v-model="location"
     name="location"
     :options="locationsWithPlaceholder"
@@ -21,7 +21,7 @@ const props = defineProps({
   },
   selectedLocation: {
     type: Object as PropType<FilterItem | null>,
-    default: () => {}
+    default: () => ({})
   }
 })
 

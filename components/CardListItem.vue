@@ -33,7 +33,7 @@ defineProps({
 </script>
 
 <template>
-  <UCard padded shadow-class="" class="relative transition duration-200 hover:ring-2 ucard">
+  <AppCard padded shadow-class="" class="relative transition duration-200 hover:ring-2 ucard">
     <div v-if="$slots.header" :class="headerClass">
       <slot name="header" />
     </div>
@@ -51,7 +51,7 @@ defineProps({
       <span class="sr-only">Link to {{ to }}</span>
       <span class="absolute inset-0" aria-hidden="true" />
     </NuxtLink>
-  </UCard>
+  </AppCard>
 </template>
 
 <style scoped lang="postcss">

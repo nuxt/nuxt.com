@@ -1,6 +1,6 @@
 <template>
   <div v-if="filters.length" class="flex items-center gap-1.5">
-    <UButton
+    <AppButton
       v-for="filter of filters"
       :key="filter?.key"
       :label="filter?.title"

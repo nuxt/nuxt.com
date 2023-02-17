@@ -1,6 +1,6 @@
 <template>
   <div class="inline-flex w-full md:w-auto">
-    <UButton
+    <AppButton
       name="orderBy"
       :icon="orderBy.icon"
       size="sm"
@@ -9,7 +9,7 @@
       class="-mr-px rounded-r-none focus:z-[1] group"
       @click="switchOrder"
     />
-    <USelectCustom
+    <AppSelect
       v-model="sortBy"
       name="sortBy"
       :options="sorts"

@@ -4,7 +4,7 @@
     <div v-if="gradientBorder" class="hidden gradient-border gradient-border-dark dark:block" />
     <div v-if="gradientBorder" class="dark:hidden gradient-border gradient-border-light" />
 
-    <UCard
+    <AppCard
       class="h-full w-full flex flex-col justify-between relative"
       :body-class="bodyClass"
       shadow-class="shadow-none"
@@ -31,7 +31,7 @@
           loading="lazy"
         >
       </div>
-      <template v-if="image" #header>
+      <div v-if="image">
         <img
           :src="`${image.path}-dark.${image.format}`"
           alt=""
@@ -48,7 +48,7 @@
           :height="image.height"
           loading="lazy"
         >
-      </template>
+      </div>
       <div class="flex flex-col" :class="contentClass">
         <Icon v-if="icon" :name="icon" class="w-6 h-6" />
         <header :class="titleClass">
@@ -61,7 +61,7 @@
           <ContentSlot :use="$slots.description" unwrap="p" />
         </p>
         <div v-if="buttons.length" class="gap-2 flex flex-col sm:flex-row" :class="buttonsWrapperClass">
-          <UButton
+          <AppButton
             v-for="button of buttons"
             :key="button.label"
             :variant="button.variant || 'transparent'"
@@ -75,7 +75,7 @@
           />
         </div>
       </div>
-    </UCard>
+    </AppCard>
   </component>
 </template>
 
@@ -100,11 +100,11 @@ const props = defineProps({
   },
   image: {
     type: Object as PropType<Image>,
-    default: () => {}
+    default: () => ({})
   },
   backgroundImage: {
     type: Object as PropType<Image>,
-    default: () => {}
+    default: () => ({})
   },
   gradientBorder: {
     type: Boolean,

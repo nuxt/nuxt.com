@@ -1,5 +1,5 @@
 <template>
-  <USelectCustom
+  <AppSelect
     v-model="type"
     name="type"
     :options="typesWithPlaceholder"
@@ -21,7 +21,7 @@ const props = defineProps({
   },
   selectedType: {
     type: Object as PropType<FilterItem | null>,
-    default: () => {}
+    default: () => ({})
   }
 })
 

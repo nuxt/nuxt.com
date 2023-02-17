@@ -1,5 +1,5 @@
 <template>
-  <USelectCustom
+  <AppSelect
     v-if="services.length"
     v-model="service"
     name="service"
@@ -22,7 +22,7 @@ const props = defineProps({
   },
   selectedService: {
     type: Object as PropType<FilterItem | null>,
-    default: () => {}
+    default: () => ({})
   }
 })
 

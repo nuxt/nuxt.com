@@ -4,7 +4,7 @@
       <img v-if="page.logoFull" loading="lazy" :src="`${page.logoFull}`" :alt="page.title" class="h-20">
     </div>
 
-    <UContainer padded class="pb-16 sm:pb-32">
+    <AppContainer padded class="pb-16 sm:pb-32">
       <div
         class="flex flex-col justify-between gap-8 pb-8 -mt-8 sm:gap-4 sm:items-center sm:flex-row md:-mt-12 xl:pb-12"
       >
@@ -34,7 +34,7 @@
           </div>
         </div>
         <div class="flex flex-row gap-2 sm:gap-4 md:pt-12">
-          <UButton
+          <AppButton
             label="Visit website"
             :to="page.link"
             target="_blank"
@@ -56,9 +56,9 @@
             {{ page.fullDescription }}
           </p>
 
-          <UCard v-if="page.emailAddress" body-class="grid grid-cols-2 gap-8 p-10" rounded-class="rounded-xl" background-class="card-bg" @submit.prevent="contactAgency">
-            <UFormGroup name="email" label="Your company" class="col-span-2 sm:col-span-1">
-              <UInput
+          <AppCard v-if="page.emailAddress" body-class="grid grid-cols-2 gap-8 p-10" rounded-class="rounded-xl" background-class="card-bg" @submit.prevent="contactAgency">
+            <AppFormGroup name="email" label="Your company" class="col-span-2 sm:col-span-1">
+              <AppInput
                 v-model="form.company"
                 label="Company"
                 name="Company"
@@ -68,10 +68,10 @@
                 variant="outline"
                 custom-class="flex-1"
               />
-            </UFormGroup>
+            </AppFormGroup>
 
-            <UFormGroup name="name" label="Your email" class="col-span-2 sm:col-span-1">
-              <UInput
+            <AppFormGroup name="name" label="Your email" class="col-span-2 sm:col-span-1">
+              <AppInput
                 v-model="form.email"
                 label="Email"
                 name="Email"
@@ -82,14 +82,14 @@
                 custom-class="flex-1"
                 type="email"
               />
-            </UFormGroup>
+            </AppFormGroup>
 
-            <UFormGroup
+            <AppFormGroup
               name="message"
               label="Your message"
               class="col-span-2"
             >
-              <UTextarea
+              <AppTextarea
                 v-model="form.message"
                 label="Message"
                 name="Message"
@@ -99,10 +99,10 @@
                 variant="outline"
                 custom-class="flex-1"
               />
-            </UFormGroup>
+            </AppFormGroup>
 
             <div class="flex items-center justify-center col-span-2">
-              <UButton
+              <AppButton
                 label="Contact us"
                 type="submit"
                 target="_blank"
@@ -112,9 +112,9 @@
                 :disabled="loading"
               />
             </div>
-          </UCard>
+          </AppCard>
           <div class="flex flex-col gap-8 mt-12 sm:flex-row">
-            <UButton
+            <AppButton
               label="Back to partners list"
               icon="uil:angle-left-b"
               to="/support/agencies"
@@ -182,7 +182,7 @@
                     rel="noopener"
                     class="flex items-center gap-3"
                   >
-                    <span class="sr-only">{{ page.title }} {{link.key }}</span>
+                    <span class="sr-only">{{ page.title }} {{ link.key }}</span>
                     <Icon :name="link.icon" class="w-6 h-6 u-text-gray-900 transition duration-300 group-hover:u-text-gray-600" />
                   </NuxtLink>
                 </li>
@@ -191,7 +191,7 @@
           </div>
         </div>
       </div>
-    </UContainer>
+    </AppContainer>
   </div>
 </template>
 

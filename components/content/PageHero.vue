@@ -4,7 +4,7 @@
       <slot name="background" />
     </div>
 
-    <UContainer padded class="relative">
+    <AppContainer padded class="relative">
       <div v-if="image" class="absolute -right-12 -inset-y-6 sm:inset-y-0 sm:right-6 lg:right-8">
         <div class="flex h-full items-center justify-center">
           <img :src="`${image.path}-light.${image.format}`" class="dark:hidden object-contain h-3/4 lg:mx-10 opacity-0 md:opacity-100" alt="" :width="image.width" :height="image.height">
@@ -35,7 +35,7 @@
           <div v-if="buttonsTextLeft" class="flex flex-col items-center justify-center sm:flex-row">
             {{ buttonsTextLeft }}
           </div>
-          <UButton
+          <AppButton
             v-for="button of buttons"
             :key="button.label"
             :variant="button.variant || 'transparent'"
@@ -52,7 +52,7 @@
 
         <ContentSlot :use="$slots.extra" unwrap="p" />
       </div>
-    </UContainer>
+    </AppContainer>
   </div>
 </template>
 
@@ -80,7 +80,7 @@ defineProps({
   },
   image: {
     type: Object as PropType<Image>,
-    default: () => {}
+    default: () => ({})
   },
   buttons: {
     type: Array as PropType<{ label?: string, variant?: string, to?: RouteLocationNormalized | RouteLocationRaw, icon?: string, trailing?: boolean, size?: string, target?: string }[]>,

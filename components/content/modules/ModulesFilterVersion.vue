@@ -1,5 +1,5 @@
 <template>
-  <USelectCustom
+  <AppSelect
     v-model="version"
     name="version"
     :options="versions"
@@ -30,7 +30,7 @@ const props = defineProps({
   selectedVersion:
   {
     type: Object as PropType<FilterItem>,
-    default: () => {}
+    default: () => ({})
   }
 })
 

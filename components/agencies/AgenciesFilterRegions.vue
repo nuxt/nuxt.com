@@ -1,5 +1,5 @@
 <template>
-  <USelectCustom
+  <AppSelect
     v-if="regions.length"
     v-model="region"
     name="region"
@@ -22,7 +22,7 @@ const props = defineProps({
   },
   selectedRegion: {
     type: Object as PropType<FilterItem | null>,
-    default: () => {}
+    default: () => ({})
   }
 })
 
