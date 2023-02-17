@@ -19,7 +19,10 @@ if (process.env.NUXT_DOCS_PATH) {
 
 // https://v3.nuxtjs.org/guide/directory-structure/nuxt.config
 export default defineNuxtConfig({
-  // experimental: { inlineSSRStyles: false },
+  experimental: {
+    // inlineSSRStyles: false
+    emitRouteChunkError: 'reload'
+  },
   extends: '@nuxt-themes/typography',
   css: [
     resolve('./assets/css/fonts.css'),
@@ -138,10 +141,10 @@ export default defineNuxtConfig({
     viewer: false,
     cssPath: '~/assets/css/tailwind.css',
     config: {
-      theme: { extend: {}},
+      theme: { extend: {} },
       content: [
-        resolve('./components/**/*.{vue,js,ts}'),
-      ],
+        resolve('./components/**/*.{vue,js,ts}')
+      ]
     }
   },
   github: {
