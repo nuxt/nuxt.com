@@ -36,8 +36,8 @@ export default defineNuxtConfig({
     '@nuxtjs/algolia',
     '@nuxtjs/color-mode',
     '@nuxtjs/tailwindcss',
-    '@nuxthq/studio'
-    // '@nuxt/devtools-edge'
+    '@nuxthq/studio',
+    '@nuxt/devtools'
   ],
   htmlValidator: {
     logLevel: 'error',
@@ -138,10 +138,10 @@ export default defineNuxtConfig({
     viewer: false,
     cssPath: '~/assets/css/tailwind.css',
     config: {
-      theme: { extend: {}},
+      theme: { extend: {} },
       content: [
-        resolve('./components/**/*.{vue,js,ts}'),
-      ],
+        resolve('./components/**/*.{vue,js,ts}')
+      ]
     }
   },
   github: {
