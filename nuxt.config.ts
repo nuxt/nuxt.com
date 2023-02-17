@@ -35,7 +35,8 @@ export default defineNuxtConfig({
     '@nuxtjs/fontaine',
     '@nuxtjs/algolia',
     '@nuxtjs/color-mode',
-    '@nuxtjs/tailwindcss'
+    '@nuxtjs/tailwindcss',
+    '@nuxthq/studio'
     // '@nuxt/devtools-edge'
   ],
   htmlValidator: {
