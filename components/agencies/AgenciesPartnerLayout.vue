@@ -4,7 +4,7 @@
       <img v-if="page.logoFull" loading="lazy" :src="`${page.logoFull}`" :alt="page.title" class="h-20">
     </div>
 
-    <AppContainer padded class="pb-16 sm:pb-32">
+    <div class="container pb-16 sm:pb-32">
       <div
         class="flex flex-col justify-between gap-8 pb-8 -mt-8 sm:gap-4 sm:items-center sm:flex-row md:-mt-12 xl:pb-12"
       >
@@ -191,7 +191,7 @@
           </div>
         </div>
       </div>
-    </AppContainer>
+    </div>
   </div>
 </template>
 

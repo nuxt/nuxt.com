@@ -1,7 +1,7 @@
 <template>
-  <AppContainer class="relative pb-16 sm:pb-32">
+  <div class="container pb-16 sm:pb-32">
     <div class="py-10 sm:py-20">
-      <AppContainer constrained-class="max-w-4xl" class="flex flex-col items-center justify-center text-center gap-y-8" padded>
+      <div class="container max-w-4xl flex flex-col items-center justify-center text-center gap-y-8">
         <div class="font-semibold text-gray-400 dark:text-gray-200 w-full">
           <NuxtLink to="/blog" title="Go back to articles" class="md:absolute md:left-0">
             <Icon name="uil:arrow-left" class="text-3xl" />
@@ -28,13 +28,13 @@
             </NuxtLink>
           </li>
         </ul>
-      </AppContainer>
+      </div>
     </div>
 
     <div class="relative xl:pt-8">
       <BlogPostToc class="max-w-4xl px-4 mx-auto xl:max-w-none sm:px-6 xl:px-0" />
 
-      <AppContainer constrained-class="max-w-4xl" class="pt-8 xl:pt-0" padded>
+      <div class="container max-w-4xl pt-8 xl:pt-0">
         <div class="relative overflow-hidden border-b u-border-gray-400">
           <ContentRenderer v-if="page" :value="page" class="pb-12 max-w-none" />
           <NewsletterForm class="mt-4 mb-4">
@@ -58,9 +58,9 @@
             </li>
           </ul>
         </div>
-      </AppContainer>
+      </div>
     </div>
-  </AppContainer>
+  </div>
 </template>
 
 <script setup lang="ts">
