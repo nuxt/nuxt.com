@@ -1,15 +1,15 @@
 <template>
-  <UCard padded class="relative">
+  <AppCard padded class="relative">
     <h5 class="text-2xl font-semibold u-text-black">
       <slot name="title" />
     </h5>
     <p class="w-3/4 pt-3 u-text-gray-700">
       <slot name="description" />
     </p>
-    <UButton :label="buttonText" class="px-8 mt-6" :to="to" />
+    <AppButton :label="buttonText" class="px-8 mt-6" :to="to" />
 
     <img :src="imagePath" class="absolute w-1/5" :class="imageClass">
-  </UCard>
+  </AppCard>
 </template>
 
 <script setup lang="ts">

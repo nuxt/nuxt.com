@@ -1,7 +1,7 @@
 <template>
-  <UContainer class="relative pb-16 sm:pb-32">
+  <AppContainer class="relative pb-16 sm:pb-32">
     <div class="py-10 sm:py-20">
-      <UContainer constrained-class="max-w-4xl" class="flex flex-col items-center justify-center text-center gap-y-8" padded>
+      <AppContainer constrained-class="max-w-4xl" class="flex flex-col items-center justify-center text-center gap-y-8" padded>
         <div class="font-semibold text-gray-400 dark:text-gray-200 w-full">
           <NuxtLink to="/blog" title="Go back to articles" class="md:absolute md:left-0">
             <Icon name="uil:arrow-left" class="text-3xl" />
@@ -20,7 +20,7 @@
         <ul class="flex flex-wrap items-center justify-center gap-4">
           <li v-for="author in page.authors" :key="author.name">
             <NuxtLink :to="author.link" target="_blank" class="flex gap-x-2">
-              <UAvatar :src="author.avatarUrl" :alt="author.name" />
+              <AppAvatar :src="author.avatarUrl" :alt="author.name" />
               <div class="flex flex-col items-start">
                 <span class="leading-5 u-text-gray-900">{{ author.name }}</span>
                 <span class="text-sm text-gray-400 dark:text-gray-200">{{ `@${author.link.split('/').pop()}` }}</span>
@@ -28,13 +28,13 @@
             </NuxtLink>
           </li>
         </ul>
-      </UContainer>
+      </AppContainer>
     </div>
 
     <div class="relative xl:pt-8">
       <BlogPostToc class="max-w-4xl px-4 mx-auto xl:max-w-none sm:px-6 xl:px-0" />
 
-      <UContainer constrained-class="max-w-4xl" class="pt-8 xl:pt-0" padded>
+      <AppContainer constrained-class="max-w-4xl" class="pt-8 xl:pt-0" padded>
         <div class="relative overflow-hidden border-b u-border-gray-400">
           <ContentRenderer v-if="page" :value="page" class="pb-12 max-w-none" />
           <NewsletterForm class="mt-4 mb-4">
@@ -45,10 +45,10 @@
           <span class="font-semibold u-text-gray-900">Share the article</span>
           <ul class="flex gap-x-4">
             <li>
-              <UButton class="!p-0 u-text-gray-900 hover:u-text-gray-700" variant="transparent" icon="uil:link" @click="copyUrl" />
+              <AppButton class="!p-0 u-text-gray-900 hover:u-text-gray-700" variant="transparent" icon="uil:link" @click="copyUrl" />
             </li>
             <li v-for="social in socialLinks" :key="social.alt">
-              <UButton
+              <AppButton
                 :to="social.href"
                 :icon="social.icon"
                 variant="transparent"
@@ -58,9 +58,9 @@
             </li>
           </ul>
         </div>
-      </UContainer>
+      </AppContainer>
     </div>
-  </UContainer>
+  </AppContainer>
 </template>
 
 <script setup lang="ts">

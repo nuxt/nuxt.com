@@ -1,6 +1,6 @@
 <template>
   <div ref="rootFeatured" class="cursor-pointer rounded-md relative group card-wrapper" @click="onClick">
-    <UCard
+    <AppCard
       class="h-full w-full flex flex-col justify-between relative transition duration-200 hover:ring-2 ucard"
       shadow-class=""
       ring-class=""
@@ -21,10 +21,10 @@
             Read article<Icon name="uil:arrow-right" class="w-5 h-5 mt-1" />
             <span class="absolute inset-0" aria-hidden="true" />
           </NuxtLink>
-          <UAvatarGroup :group="authors" size="sm" />
+          <AppAvatarGroup :group="authors" size="sm" />
         </div>
       </div>
-    </UCard>
+    </AppCard>
   </div>
 </template>
 

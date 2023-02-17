@@ -34,5 +34,5 @@ const containerClass = computed(() => {
 </script>
 
 <script lang="ts">
-export default { name: 'UContainer' }
+export default { name: 'AppContainer' }
 </script>

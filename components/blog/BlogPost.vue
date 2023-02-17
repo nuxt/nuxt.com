@@ -11,9 +11,9 @@
     <template #header>
       <div class="w-full">
         <img :src="page.imgUrl" class="object-cover w-full h-[150px]">
-        <UBadge class="mt-4 ml-4" rounded>
+        <AppBadge class="mt-4 ml-4" rounded>
           {{ page.category }}
-        </UBadge>
+        </AppBadge>
       </div>
     </template>
     <template #title>
@@ -22,7 +22,7 @@
     <template #footer>
       <div class="text-sm font-semibold u-text-gray-400 h-full py-2 p-4 flex justify-between items-end w-full">
         <time class="pb-1">{{ formatDateByLocale('en', page.date) }}</time>
-        <UAvatarGroup :group="page?.authors?.map(author => ({ src: author.avatarUrl, ...author }))" size="sm" />
+        <AppAvatarGroup :group="page?.authors?.map(author => ({ src: author.avatarUrl, ...author }))" size="sm" />
       </div>
     </template>
   </CardListItem>
