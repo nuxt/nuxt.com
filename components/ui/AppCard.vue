@@ -1,21 +1,21 @@
 <template>
   <component
     :is="$attrs.onSubmit ? 'form': 'div'"
-    :class="cardClass"
+    class="app-card"
     v-bind="$attrs"
   >
     <div
       v-if="$slots.header"
-      :class="[headerClass, headerBackgroundClass, borderColorClass, !!$slots.default && 'border-b']"
+      class="header"
     >
       <slot name="header" />
     </div>
-    <div :class="[bodyClass, bodyBackgroundClass]">
+    <div class="body">
       <slot />
     </div>
     <div
       v-if="$slots.footer"
-      :class="[footerClass, footerBackgroundClass, borderColorClass, (!!$slots.default || (!$slots.default && !!$slots.header)) && 'border-t']"
+      class="footer"
     >
       <slot name="footer" />
     </div>
@@ -23,93 +23,164 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { classNames } from '../../utils'
-import { uiPreset } from '../../ui/preset'
+import { PinceauTheme } from 'pinceau'
+import { computedStyle } from 'pinceau/runtime'
 
-const props = defineProps({
-  padded: {
-    type: Boolean,
-    default: false
-  },
-  rounded: {
-    type: Boolean,
-    default: true
-  },
-  baseClass: {
-    type: String,
-    default: () => uiPreset.card.base
-  },
-  backgroundClass: {
-    type: String,
-    default: () => uiPreset.card.background
-  },
-  borderColorClass: {
-    type: String,
-    default: () => uiPreset.card.border
-  },
-  shadowClass: {
-    type: String,
-    default: () => uiPreset.card.shadow
-  },
-  ringClass: {
-    type: String,
-    default: () => uiPreset.card.ring
-  },
-  roundedClass: {
-    type: String,
-    default: () => uiPreset.card.rounded,
-    validator (value: string) {
-      return !value || ['sm', 'md', 'lg', 'xl', '2xl', '3xl'].map(size => `rounded-${size}`).includes(value)
-    }
-  },
-  bodyClass: {
-    type: String,
-    default: () => uiPreset.card.body
-  },
-  bodyBackgroundClass: {
-    type: String,
-    default: null
-  },
-  headerClass: {
-    type: String,
-    default: () => uiPreset.card.header
-  },
-  headerBackgroundClass: {
-    type: String,
-    default: null
-  },
-  footerClass: {
-    type: String,
-    default: () => uiPreset.card.footer
-  },
-  footerBackgroundClass: {
-    type: String,
-    default: null
-  },
-  customClass: {
-    type: String,
-    default: null
-  }
+defineProps({
+  backgroundColor: computedStyle<keyof PinceauTheme['color']>('white'),
+  ...variants
 })
 
-const cardClass = computed(() => {
-  return classNames(
-    'z-0',
-    props.baseClass,
-    props.padded && props.rounded && props.roundedClass,
-    !props.padded && props.rounded && props.roundedClass && `sm:${props.roundedClass}`,
-    props.ringClass,
-    props.shadowClass,
-    props.backgroundClass,
-    props.customClass
-  )
-})
-</script>
-
-<script lang="ts">
-export default {
-  name: 'AppCard',
-  inheritAttrs: false
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const isColorPalette = (color: any) => {
+  return !['white', 'black', 'transparent', 'current'].includes(color.toString())
 }
 </script>
+
+<style lang="ts" scoped>
+css({
+  '.app-card': {
+    overflow: 'hidden',
+    zIndex: '0',
+    ringOffset: '{size.1}',
+    ringColor: '{color.transparent}',
+    ringOffsetColor: '{color.gray.200}',
+
+    borderColor: '{color.gray.200}',
+
+    backgroundColor: (props) => {
+      return isColorPalette(props.backgroundColor) ? `{color.${props.backgroundColor}.600}` : props.backgroundColor
+    },
+
+    '@dark': {
+      borderColor: '{color.gray.800}',
+      backgroundColor: (props) => {
+        return isColorPalette(props.backgroundColor) ? `{color.${props.backgroundColor}.700}` :
+          props.backgroundColor === 'white' ? '{color.gray.900}' : props.backgroundColor === 'black' ? 'white' : props.backgroundColor
+      },
+    },
+
+    '> .header': {
+      borderColor: '{color.gray.200}',
+      borderStyle: 'solid',
+      px: '{size.16}',
+      display: 'flex',
+      py: '{size.20}',
+      width: '100%',
+
+      '@sm': {
+        px: '{size.24}'
+      },
+
+      '@dark': {
+        borderColor: '{color.gray.800}',
+      }
+    },
+    '> .body': {
+      px: '{size.16}',
+      py: '{size.20}',
+
+      '@sm': {
+        px: '{size.24}'
+      },
+    },
+    '> .footer': {
+      borderColor: '{color.gray.200}',
+      borderTopWidth: '{size.1}',
+      px: '{size.16}',
+      py: '{size.20}',
+
+      '@sm': {
+        px: '{size.24}'
+      },
+
+      '@dark': {
+        borderColor: '{color.gray.800}',
+      }
+    }
+  },
+
+  variants: {
+    headerContentPosition: {
+      left: {
+        '> .header': {
+          justifyContent: 'flex-start'
+        }
+      },
+      center: {
+        '> .header': {
+          justifyContent: 'center'
+        }
+      },
+      right: {
+        '> .header': {
+          justifyContent: 'flex-end'
+        }
+      },
+    },
+    rounded: {
+      none: {
+        borderRadius: '0px'
+      },
+      sm: {
+        borderRadius: '0.125rem'
+      },
+      base: {
+        borderRadius: '0.25rem'
+      },
+      md: {
+        borderRadius: '0.375rem'
+      },
+      lg: {
+        borderRadius: '0.5rem'
+      },
+      xl: {
+        borderRadius: '0.75rem'
+      },
+      '2xl': {
+        borderRadius: '1rem'
+      },
+      'full': {
+        borderRadius: '9999px'
+      },
+      options: {
+        default: 'xl'
+      }
+    },
+    shadow: {
+      true: {
+        boxShadow: '0 {size.1} {size.3} 0 rgb(0 0 0 / 0.1), 0 {size.1} {size.2} -1px rgb(0 0 0 / 0.1)'
+      },
+      false: {
+        boxShadow: 'none'
+      },
+      options: {
+        default: true
+      }
+    },
+    border: {
+      true: {
+        borderStyle: 'solid',
+        borderWidth: '{size.1}'
+      },
+      false: {
+        border: 'none'
+      },
+      options: {
+        default: true
+      }
+    },
+    headerBorder: {
+      true: {
+        borderBottomWidth: '{size.1}',
+      },
+      false: {
+        border: 'none',
+      },
+      options: {
+        default: false
+      }
+    }
+  }
+})
+</style>
