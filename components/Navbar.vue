@@ -5,7 +5,7 @@
   >
     <NavbarDialog v-if="open" :links="links" />
 
-    <AppContainer padded class="relative">
+    <div class="container">
       <nav id="main-nav" class="grid items-center h-16 grid-cols-6 gap-3 lg:h-20 lg:justify-center" aria-label="Primary Navigation">
         <div class="lg:hidden">
           <button type="button" @click="open">
@@ -43,7 +43,7 @@
           <SocialLinks />
         </div>
       </nav>
-    </AppContainer>
+    </div>
   </header>
 </template>
 
@@ -72,6 +72,11 @@ const links: Ref<NavItem[]> = ref([{
   title: 'Support',
   _path: '/support/solutions',
   path: '/support',
+  icon: 'uil:globe'
+}, {
+  title: 'Blog',
+  _path: '/blog',
+  path: '/blog',
   icon: 'uil:globe'
 }])
 

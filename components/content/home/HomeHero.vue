@@ -21,7 +21,7 @@
       width="375"
       height="494"
     >
-    <AppContainer padded class="relative flex flex-col items-center sm:items-start gap-y-8">
+    <div class="max-w-7xl relative mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center sm:items-start gap-y-8">
       <div v-if="$slots.badgeLabel" class="flex gap-x-2">
         <AppBadge rounded variant="green">
           <ContentSlot :use="$slots.badgeLabel" unwrap="p" />
@@ -68,7 +68,7 @@
       <HomeGemWrapper :gem-wrapper-class="'hidden sm:block absolute left-1/3 sm:left-1/3 md:left-1/2 lg:top-[-50px] lg:left-2/3'">
         <HomeGem />
       </HomeGemWrapper>
-    </AppContainer>
+    </div>
   </div>
 </template>
 

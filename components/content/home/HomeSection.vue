@@ -1,8 +1,7 @@
 <template>
-  <AppContainer
-    class="flex px-4 pt-24 pb-4 sm:pb-8 md:pb-12 lg:pb-20 transition duration-700 relative"
+  <div
+    class="container flex pt-24 pb-4 sm:pb-8 md:pb-12 lg:pb-20 transition duration-700 relative"
     :class="[!slideIn ? 'opacity-0 translate-y-20' : 'opacity-100 translate-y-0', sectionAlign === 'row' ? 'flex-col lg:flex-row lg:items-center lg:justify-between' : 'flex-col']"
-    padded
   >
     <div ref="root" class="flex flex-col justify-center">
       <div v-if="$slots.sectionTitle" class="pb-2 font-semibold">
@@ -40,7 +39,7 @@
         class="focus-visible:ring-2"
       />
     </div>
-  </AppContainer>
+  </div>
 </template>
 
 <script setup lang="ts">

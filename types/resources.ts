@@ -7,22 +7,18 @@ export interface ResourcesBlogArticleAuthor {
 }
 
 export interface ResourcesBlogArticle extends ParsedContent {
-  template: string
   description: string
-  imgUrl: string
-  imgCredits: string
-  imgCreditsUrl: string
   date: Date
+  image: string
   authors: ResourcesBlogArticleAuthor[]
   tags: string[]
   category: string
-  type: string
 }
 
 export interface ResourcesCaseStudy extends ParsedContent {
   description: string
   url: string
-  imgUrl: string
+  image: string
   gradientUrl: string
 }
 

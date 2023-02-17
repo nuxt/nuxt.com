@@ -5,6 +5,12 @@ import typography from './ui/typography'
 module.exports = {
   theme: {
     colors,
+    container: {
+      screens: {
+        '2xl': '1280px'
+      },
+      center: true
+    },
     extend: {
       typography,
       fontFamily: {
@@ -29,7 +35,7 @@ module.exports = {
   content: [
     'ui/*.ts',
     '.demo/content/**/*.md',
-    'content/**/*.md',
+    'content/**/*.md'
   ],
   safelist: [
     ...[12, 24, 36, 48, 60, 72, 84, 96, 108, 120].map(number => `pl-[${number}px]`),

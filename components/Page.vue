@@ -3,7 +3,7 @@
     <slot name="header" />
     <NuxtErrorBoundary>
       <section class="relative pb-16 sm:pb-32 lg:pt-8" :class="{ 'overflow-hidden': !sticky }">
-        <AppContainer padded>
+        <div class="container">
           <div class="relative grid grid-cols-10 gap-8">
             <aside
               v-if="!!$slots.aside"
@@ -19,10 +19,10 @@
               <slot />
             </div>
           </div>
-        </AppContainer>
+        </div>
       </section>
       <template #error="{ error }">
-        <AppContainer padded class="text-center">
+        <div class="container text-center">
           <h3 class="text-lg font-semibold mb-6">
             An error occurred
           </h3>
@@ -30,7 +30,7 @@
             {{ error }}
           </Alert>
           <AppButton to="/" label="Go back home" variant="primary-gradient" class="mb-6" />
-        </AppContainer>
+        </div>
       </template>
     </NuxtErrorBoundary>
   </div>
