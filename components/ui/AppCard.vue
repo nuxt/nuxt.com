@@ -136,6 +136,22 @@ css({
         default: true
       }
     },
+    form: {
+      true: {
+        '> .body': {
+          display: 'grid',
+          gridTemplateColumns: 'repeat(1 minmax(0, 1fr))',
+          gap: '{size.32}',
+
+          '@sm': {
+            gridTemplateColumns: 'repeat(1 minmax(0, 2fr))',
+          }
+        }
+      },
+      options: {
+        default: false
+      }
+    },
     border: {
       true: {
         borderStyle: 'solid',

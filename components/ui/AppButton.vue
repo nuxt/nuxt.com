@@ -18,6 +18,7 @@ import { PinceauTheme } from 'pinceau'
 import { computedStyle } from 'pinceau/runtime'
 import type { RouteLocationNormalized, RouteLocationRaw } from 'vue-router'
 import NuxtLink from '#app/components/nuxt-link'
+import type { PropType } from 'vue'
 
 const props = defineProps({
   color: computedStyle<keyof PinceauTheme['color']>('blue'),

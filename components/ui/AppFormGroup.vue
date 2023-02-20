@@ -1,20 +1,20 @@
 <template>
-  <div :class="wrapperClass">
-    <div v-if="label || $slots.label" :class="labelWrapperClass">
-      <label :for="name" :class="labelClass">
+  <div class="app-form-group">
+    <div v-if="label || $slots.label" class="label">
+      <label :for="name">
         <slot name="label">{{ label }}</slot>
-        <span v-if="required" :class="requiredClass">*</span>
+        <span v-if="required">*</span>
       </label>
-      <span v-if="$slots.hint || hint" :class="hintClass">
+      <span v-if="$slots.hint || hint">
         <slot name="hint">{{ hint }}</slot>
       </span>
     </div>
-    <p v-if="description" :class="descriptionClass">
+    <p v-if="description">
       {{ description }}
     </p>
-    <div :class="!!label && containerClass">
+    <div :class="!!label" class="container">
       <slot />
-      <p v-if="help" :class="helpClass">
+      <p v-if="help">
         {{ help }}
       </p>
     </div>
@@ -22,8 +22,6 @@
 </template>
 
 <script setup lang="ts">
-import { uiPreset } from '../../ui/preset'
-
 defineProps({
   name: {
     type: String,
@@ -37,10 +35,6 @@ defineProps({
     type: String,
     default: null
   },
-  required: {
-    type: Boolean,
-    default: false
-  },
   help: {
     type: String,
     default: null
@@ -49,37 +43,81 @@ defineProps({
     type: String,
     default: null
   },
-  wrapperClass: {
-    type: String,
-    default: () => uiPreset.formGroup.wrapper
-  },
-  containerClass: {
-    type: String,
-    default: () => uiPreset.formGroup.container
-  },
-  labelClass: {
-    type: String,
-    default: () => uiPreset.formGroup.label
-  },
-  labelWrapperClass: {
-    type: String,
-    default: () => uiPreset.formGroup.labelWrapper
-  },
-  descriptionClass: {
-    type: String,
-    default: () => uiPreset.formGroup.description
-  },
-  requiredClass: {
-    type: String,
-    default: () => uiPreset.formGroup.required
-  },
-  hintClass: {
-    type: String,
-    default: () => uiPreset.formGroup.hint
-  },
-  helpClass: {
-    type: String,
-    default: () => uiPreset.formGroup.help
-  }
+  ...variants
 })
 </script>
+
+<style lang="ts" scoped>
+css({
+  '.app-form-group': {
+
+    '> p': {
+      fontSize: '{fontSize.sm}',
+      lineHeight: '{lead.5}',
+      backgroudColor: '{color.gray.500}'
+    },
+
+    '.container': {
+      position: 'relative',
+      marginTop: '{size.4}',
+
+      '> p': {
+        fontSize: '{fontSize.xs}',
+        marginTop: '{size.8}',
+        backgroudColor: '{color.gray.500}'
+      }
+    },
+
+    '> .label': {
+      display: 'flex',
+      alignContent: 'center',
+      justifyContent: 'space-between',
+
+      '> label': {
+        display: 'block',
+        fontSize: '{fontSize.sm}',
+        color: '{color.gray.700}',
+        fontWeight: '{fontWeight.medium}',
+
+        '@dark': {
+          color: '{color.gray.300}'
+        }
+      },
+
+      '> span': {
+        fontSize: '{fontSize.sm}',
+        lineHeight: '{lead.5}',
+        backgroudColor: '{color.gray.500}'
+      }
+    },
+  },
+
+  variants: {
+    required: {
+      true: {
+        '> .label > span': {
+          color: '{color.red.400}'
+        }
+      },
+      default: {
+        options: false
+      }
+    },
+    full: {
+      false: {
+        gridColumn: 'span 2 / span 2',
+
+        '@sm': {
+          gridColumn: 'span 1 / span 1'
+        }
+      },
+      true: {
+        gridColumn: 'span 2 / span 2'
+      },
+      options: {
+        default: false
+      }
+    },
+  }
+})
+</style>
