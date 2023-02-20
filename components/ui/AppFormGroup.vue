@@ -12,7 +12,7 @@
     <p v-if="description">
       {{ description }}
     </p>
-    <div :class="!!label" class="container">
+    <div :class="!!label" class="form-group-container">
       <slot />
       <p v-if="help">
         {{ help }}
@@ -50,14 +50,13 @@ defineProps({
 <style lang="ts" scoped>
 css({
   '.app-form-group': {
-
     '> p': {
       fontSize: '{fontSize.sm}',
       lineHeight: '{lead.5}',
       backgroudColor: '{color.gray.500}'
     },
 
-    '.container': {
+    '.form-group-container': {
       position: 'relative',
       marginTop: '{size.4}',
 
