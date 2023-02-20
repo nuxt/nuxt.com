@@ -1,10 +1,22 @@
 <template>
   <Component :is="is" ref="root" class="rounded-md relative group" :class="{ 'cursor-pointer': to }" @click="onClick">
-    <Icon v-if="hasExternalLink" name="uil:external-link-alt" class="absolute right-4 top-4 text-gray-500 transition-opacity duration-200 opacity-0 group-hover:opacity-100 z-50" />
+    <Icon
+      v-if="hasExternalLink"
+      name="uil:external-link-alt"
+      class="absolute right-4 top-4 text-gray-500 transition-opacity duration-200 opacity-0 group-hover:opacity-100 z-50"
+    />
     <div v-if="gradientBorder" class="hidden gradient-border gradient-border-dark dark:block" />
     <div v-if="gradientBorder" class="dark:hidden gradient-border gradient-border-light" />
 
-    <AppCard :shadow="false" class="card">
+    <AppCard
+      :shadow="false"
+      class="card"
+      :border="border"
+      :rounded="rounded"
+      :background-color="backgroundColor"
+      :body-padding="bodyPadding"
+      :header-content-position="headerContentPosition"
+    >
       <div v-if="backgroundImage" :class="backgroundImageClass">
         <img
           :src="`${backgroundImage.path}-dark.${backgroundImage.format}`"
@@ -74,12 +86,7 @@
 <script setup lang="ts">
 import type { PropType, ComputedRef } from 'vue'
 import { hasProtocol } from 'ufo'
-import type { RouteLocationNormalized, RouteLocationRaw } from 'vue-router'
-import type { Image } from 'types'
-
-type roundedProps = InstanceType<typeof import('#components')['AppCard']>['$props']['rounded']
-type headerContentPositionProps = InstanceType<typeof import('#components')['AppCard']>['$props']['headerContentPosition']
-type backgroundColorProps = InstanceType<typeof import('#components')['AppCard']>['$props']['backgroundColor']
+import type { Image, Card, Button } from 'types'
 
 const props = defineProps({
   is: {
@@ -95,7 +102,7 @@ const props = defineProps({
     default: ''
   },
   rounded: {
-    type: String as PropType<roundedProps>,
+    type: String as PropType<Card['rounded']>,
     default: 'xl'
   },
   image: {
@@ -111,7 +118,7 @@ const props = defineProps({
     default: true
   },
   buttons: {
-    type: Array as PropType<{ label?: string, variant?: any, to?: RouteLocationNormalized | RouteLocationRaw, icon?: string, trailing?: boolean, size?: string }[]>,
+    type: Array as PropType<Button[]>,
     default: () => []
   },
   backgroundImageClass: {
@@ -119,12 +126,16 @@ const props = defineProps({
     default: 'absolute right-0 bottom-0'
   },
   headerContentPosition: {
-    type: String as PropType<headerContentPositionProps>,
-    default: 'center'
+    type: String as PropType<Card['headerContentPosition']>,
+    default: 'left'
   },
   backgroundColor: {
-    type: String as PropType<backgroundColorProps>,
+    type: String as PropType<Card['backgroundColor']>,
     default: 'white'
+  },
+  border: {
+    type: Boolean as PropType<Card['border']>,
+    default: true
   },
   contentClass: {
     type: String,
@@ -141,6 +152,10 @@ const props = defineProps({
   buttonsWrapperClass: {
     type: String,
     default: ''
+  },
+  bodyPadding: {
+    type: Boolean as PropType<Card['bodyPadding']>,
+    default: true
   }
 })
 
@@ -163,36 +178,29 @@ useBlockLinks(root)
 
 <style lang="ts" scoped>
 css({
-  '.parent': {
-    borderStyle: 'solid',
-  },
-  '.card': {
+  '.app-card': {
     width: '100%',
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
     position: 'relative',
+    transition: 'all 0.2s',
 
     '&:hover': {
-      borderColor: (props) => {
-        console.log(props.gradientBorder)
-        if (props.gradientBorder) {
-          return '{color.transparent} !important'
-        }
-      },
-      backgroundColor: (props) => props.gradientBorder ? 'white' : props.to ? '{color.gray.50}' : '',
+      backgroundColor: (props) => props.gradientBorder ? 'white' : props.to ? '{color.gray.50}' : 'white',
+      borderColor: (props) => props.gradientBorder ? '{color.transparent} !important' : '{color.gray.200} !important',
 
       '@dark': {
-        backgroundColor: (props) => props.gradientBorder ? '{color.gray.900}' : props.to ? '{color.gray.900}' : '',
+          backgroundColor: (props) => props.gradientBorder ? '{color.gray.800}' : props.to ? '{color.gray.800}' : '{color.gray.900}',
+          borderColor: (props) => props.gradientBorder ? '{color.transparent} !important' : '{color.gray.800} !important'
+        }
       }
-    }
   }
 })
 </style>
 
 <style lang="postcss">
-
 :root {
   --gradient-angle: 360deg;
 }

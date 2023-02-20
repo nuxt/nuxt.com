@@ -15,7 +15,7 @@
 
       <ul v-if="filteredPartners.length" class="grid grid-cols-1 gap-8 mt-8 sm:grid-cols-2 xl:grid-cols-3">
         <li v-for="filteredPartner in filteredPartners" :key="filteredPartner._id">
-          <CardListItem :to="filteredPartner._path">
+          <CardListItem :to="filteredPartner._path" header-content-position="between">
             <template #header>
               <div>
                 <img v-if="filteredPartner.logo?.light" :src="filteredPartner.logo.light" :alt="filteredPartner?.title" class="w-auto h-12 dark:hidden">

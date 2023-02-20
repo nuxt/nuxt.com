@@ -1,9 +1,8 @@
 <script setup lang="ts">
+import type { PropType } from 'vue'
+import type { Card } from 'types'
+
 defineProps({
-  headerClass: {
-    type: String,
-    default: 'flex justify-between mb-6 pt-2'
-  },
   titleClass: {
     type: String,
     default: 'text-xl'
@@ -27,16 +26,45 @@ defineProps({
   target: {
     type: String,
     default: '_self'
+  },
+  headerBlock: {
+    type: Boolean as PropType<Card['headerBlock']>,
+    default: false
+  },
+  headerContentPosition: {
+    type: String as PropType<Card['headerContentPosition']>,
+    default: 'left'
+  },
+  headerPadding: {
+    type: Boolean as PropType<Card['headerPadding']>,
+    default: true
+  },
+  bodyPadding: {
+    type: Boolean as PropType<Card['bodyPadding']>,
+    default: true
+  },
+  footerPadding: {
+    type: Boolean as PropType<Card['footerPadding']>,
+    default: true
   }
 })
 
 </script>
 
 <template>
-  <AppCard padded shadow-class="" class="relative transition duration-200 hover:ring-2 ucard">
-    <div v-if="$slots.header" :class="headerClass">
+  <AppCard
+    padded
+    :shadow="false"
+    :header-padding="headerPadding"
+    :body-padding="bodyPadding"
+    :footer-padding="footerPadding"
+    :header-block="headerBlock"
+    :header-content-position="headerContentPosition"
+  >
+    <template v-if="$slots.header" #header>
       <slot name="header" />
-    </div>
+    </template>
+
     <div :class="wrapperContentClass">
       <h4 v-if="$slots.title" class="font-semibold u-text-gray-700" :class="[titleClass, {'truncate': truncate}]">
         <slot name="title" />
@@ -54,13 +82,18 @@ defineProps({
   </AppCard>
 </template>
 
-<style scoped lang="postcss">
-.ucard:hover {
-  --tw-ring-color: #00dc82
-}
+<style lang="ts" scoped>
+css({
+  '.app-card': {
+    position: 'relative',
+    transition: 'all 0.2s',
 
-.ucard:has(a:focus-visible) {
-  @apply ring-2;
-  --tw-ring-color: #00dc82
-}
+    '&:hover, &:has(a:focus-visible)': {
+      borderColor: '{color.green.400}',
+      ring: '0px',
+      ringOffsetColor: '{color.green.400}',
+      ringColor: '{color.green.400}'
+    },
+  }
+})
 </style>

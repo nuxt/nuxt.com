@@ -23,13 +23,14 @@
       <ul v-if="selectedShowcases.length" class="grid grid-cols-1 gap-8 mt-8 sm:grid-cols-2 xl:grid-cols-3">
         <li v-for="(showcase, key) in selectedShowcases" :key="showcase.id">
           <CardListItem
-            body-class="flex flex-col"
+            :header-padding="false"
+            :body-padding="false"
+            :header-block="true"
             wrapper-content-class="px-4 py-3"
             :to="showcase.url"
             target="_blank"
             title-class="text-md"
             description-class="text-sm truncate"
-            header-class="flex-1 min-h-0"
           >
             <template #header>
               <div class="aspect-w-4 aspect-h-2">
@@ -71,3 +72,19 @@ const error = await fetchList()
 const { createReplaceRoute } = useFilters()
 const replaceRoute = createReplaceRoute('showcase')
 </script>
+
+<style lang="ts" scoped>
+css({
+  '.app-card': {
+    '> .body': {
+      display: 'flex',
+      flexDirection: 'column',
+    },
+
+    '> .header': {
+      flex: '1 1 0%',
+      minHeight: '0px',
+    }
+  }
+})
+</style>

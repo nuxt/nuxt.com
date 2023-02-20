@@ -1,22 +1,12 @@
 <template>
-  <component
-    :is="$attrs.onSubmit ? 'form': 'div'"
-    class="app-card"
-    v-bind="$attrs"
-  >
-    <div
-      v-if="$slots.header"
-      class="header"
-    >
+  <component :is="$attrs.onSubmit ? 'form' : 'div'" class="app-card" v-bind="$attrs">
+    <div v-if="$slots.header" class="header">
       <slot name="header" />
     </div>
     <div class="body">
       <slot />
     </div>
-    <div
-      v-if="$slots.footer"
-      class="footer"
-    >
+    <div v-if="$slots.footer" class="footer">
       <slot name="footer" />
     </div>
   </component>
@@ -40,6 +30,7 @@ const isColorPalette = (color: any) => {
 <style lang="ts" scoped>
 css({
   '.app-card': {
+    display: 'block',
     overflow: 'hidden',
     zIndex: '0',
     ringOffset: '{size.1}',
@@ -63,36 +54,15 @@ css({
     '> .header': {
       borderColor: '{color.gray.200}',
       borderStyle: 'solid',
-      px: '{size.16}',
-      display: 'flex',
-      py: '{size.20}',
       width: '100%',
-
-      '@sm': {
-        px: '{size.24}'
-      },
 
       '@dark': {
         borderColor: '{color.gray.800}',
       }
     },
-    '> .body': {
-      px: '{size.16}',
-      py: '{size.20}',
-
-      '@sm': {
-        px: '{size.24}'
-      },
-    },
     '> .footer': {
       borderColor: '{color.gray.200}',
       borderTopWidth: '{size.1}',
-      px: '{size.16}',
-      py: '{size.20}',
-
-      '@sm': {
-        px: '{size.24}'
-      },
 
       '@dark': {
         borderColor: '{color.gray.800}',
@@ -117,6 +87,14 @@ css({
           justifyContent: 'flex-end'
         }
       },
+      between: {
+        '> .header': {
+          justifyContent: 'space-between'
+        }
+      },
+      options: {
+        default: 'left'
+      }
     },
     rounded: {
       none: {
@@ -179,6 +157,96 @@ css({
       },
       options: {
         default: false
+      }
+    },
+    headerBlock: {
+      true: {
+        '> .header': {
+          display: 'block',
+        }
+      },
+      false: {
+        '> .header': {
+          display: 'flex',
+        }
+      },
+      options: {
+        default: false
+      }
+    },
+    headerPadding: {
+      true: {
+        '> .header': {
+          px: '{size.16}',
+          paddingTop: '{size.20}',
+
+          '@sm': {
+            px: '{size.24}',
+          },
+        }
+      },
+      false: {
+        '> .header': {
+          py: '{size.0}',
+          px: '{size.0}',
+
+          '@sm': {
+            px: '{size.0}'
+          },
+        }
+      },
+      options: {
+        default: true
+      }
+    },
+    bodyPadding: {
+      true: {
+        '> .body': {
+          px: '{size.16}',
+          py: '{size.20}',
+
+          '@sm': {
+            px: '{size.24}'
+          },
+        }
+      },
+      false: {
+        '> .body': {
+          py: '{size.0}',
+          px: '{size.0}',
+
+          '@sm': {
+            px: '{size.0}'
+          },
+        }
+      },
+      options: {
+        default: true
+      }
+    },
+    footerPadding: {
+      true: {
+        '> .footer': {
+          px: '{size.16}',
+          py: '{size.20}',
+
+          '@sm': {
+            px: '{size.24}'
+          },
+        }
+      },
+      false: {
+        '> .footer': {
+          py: '{size.0}',
+          px: '{size.0}',
+
+          '@sm': {
+            px: '{size.0}'
+          },
+        }
+      },
+      options: {
+        default: true
       }
     }
   }
