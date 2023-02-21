@@ -1,24 +1,14 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watchEffect } from 'vue'
 import type { PropType } from 'vue'
-import { classNames } from '../../utils'
-import { uiPreset } from '../../ui/preset'
-import type { ToastNotificationAction } from 'types'
-import { isColorPalette } from '../../utils'
 import { PinceauTheme } from 'pinceau'
 import { computedStyle } from 'pinceau/runtime'
+import { isColorPalette } from '../../utils'
 
 const props = defineProps({
   id: {
     type: String,
     required: true
-  },
-  type: {
-    type: String,
-    default: null,
-    validator (value: string) {
-      return Object.keys(uiPreset.notification.type).includes(value)
-    }
   },
   backgroundColor: computedStyle<keyof PinceauTheme['color']>('white'),
   title: {
@@ -29,22 +19,6 @@ const props = defineProps({
     type: String,
     default: null
   },
-  shadowClass: {
-    type: String,
-    default: () => uiPreset.notification.shadow
-  },
-  ringClass: {
-    type: String,
-    default: () => uiPreset.notification.ring
-  },
-  roundedClass: {
-    type: String,
-    default: () => uiPreset.notification.rounded
-  },
-  transitionClass: {
-    type: Object,
-    default: () => uiPreset.notification.transition
-  },
   customClass: {
     type: String,
     default: null
@@ -53,25 +27,15 @@ const props = defineProps({
     type: String,
     default: null
   },
-  iconBaseClass: {
-    type: String,
-    default: () => uiPreset.notification.icon.base
-  },
   timeout: {
     type: Number,
     default: 5000
   },
-  actions: {
-    type: Array as PropType<{
-      label: string,
-      click: Function
-    }[]>,
-    default: () => []
-  },
   callback: {
     type: Function,
     default: null
-  }
+  },
+  ...variants
 })
 
 const emit = defineEmits(['close'])
@@ -79,20 +43,19 @@ const emit = defineEmits(['close'])
 let timer: any = null
 const remaining = ref(props.timeout)
 
-const iconName = computed(() => {
-  return props.icon || uiPreset.notification.type[props.type]
-})
-
-const iconClass = computed(() => {
-  return classNames(
-    props.iconBaseClass,
-    uiPreset.notification.icon.color[props.type] || 'u-text-gray-400'
-  )
-})
-
 const progressBarStyle = computed(() => {
   const remainingPercent = remaining.value / props.timeout * 100
   return { width: `${remainingPercent || 0}%` }
+})
+
+const iconName = computed(() => {
+  return props.type === 'info'
+    ? 'heroicons-outline:information-circle'
+    : props.type === 'success'
+      ? 'heroicons-outline:check-circle'
+      : props.type === 'error'
+        ? 'heroicons-outline:x-circle'
+        : 'heroicons-outline:exclamation-circle'
 })
 
 function onMouseover () {
@@ -114,18 +77,6 @@ function onClose () {
 
   if (props.callback) {
     props.callback()
-  }
-
-  emit('close')
-}
-
-function onAction (action: ToastNotificationAction) {
-  if (timer) {
-    timer.stop()
-  }
-
-  if (action.click) {
-    action.click()
   }
 
   emit('close')
@@ -153,211 +104,181 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <transition appear v-bind="transitionClass">
-    <div
-      @mouseover="onMouseover"
-      @mouseleave="onMouseleave"
-    >
-      <div>
-          <div>
-            <div>
-              <h6>
-                {{ title }}
-              </h6>
-              <p v-if="description" class="description">
-                {{ description }}
-              </p>
-
-              <div v-if="description && actions.length">
-                <button v-for="(action, index) of actions" :key="index" type="button" @click.stop="onAction(action)">
-                  {{ action.label }}
-                </button>
-              </div>
-            </div>
-            <div>
-              <div v-if="!description && actions.length">
-                <button v-for="(action, index) of actions" :key="index" type="button" @click.stop="onAction(action)">
-                  {{ action.label }}
-                </button>
-              </div>
-
-              <button
-                @click.stop="onClose"
-              >
-                <span class="sr-only">Close</span>
-                <Icon name="heroicons-solid:x" />
-              </button>
-            </div>
-          </div>
-        </div>
-        <div v-if="timeout">
-          <div :style="progressBarStyle" />
-        </div>
+  <div class="app-notification" @mouseover="onMouseover" @mouseleave="onMouseleave">
+    <div class="notification">
+      <div v-if="timeout" class="timeout">
+        <div :style="progressBarStyle" />
       </div>
-  </transition>
+      <div class="flex-shrink-0 icon-notification">
+        <Icon :name="iconName" />
+      </div>
+      <div class="content">
+        <h6>
+          {{ title }}
+        </h6>
+        <p v-if="description" class="description">
+          {{ description }}
+        </p>
+      </div>
+      <div class="action">
+        <button class="button-close" @click.stop="onClose">
+          <span class="sr-only">Close</span>
+          <Icon name="heroicons-solid:x" />
+        </button>
+      </div>
+    </div>
+  </div>
 </template>
 
-
-<style lang="ts">
+<style lang="ts" scoped>
 css({
-  '.notification': {
-    '> div': {
-      zIndex: 50,
-      width: '{size.full}',
-      pointerEvents: 'auto',
-      borderRadius: '{radii.lg}',
-      shadow: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+  '.app-notification': {
+    zIndex: 50,
+    width: '{size.full}',
+    pointerEvents: 'auto',
+    shadow: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+    position: 'relative',
+
+    '.notification': {
+      borderRadius: '{radii.md}',
+      borderWidth: '0.1px',
+      borderColor: '{color.gray.300}',
+      position: 'relative',
+      overflow: 'hidden',
+      padding: '{size.16}',
+      width: '100%',
+      display: 'flex',
+      gap: '{size.8}',
 
       backgroundColor: (props) => {
-        return isColorPalette(props.backgroundColor) ? `{color.${props.backgroundColor}.600}` : props.backgroundColor
+      return isColorPalette(props.backgroundColor) ? `{color.${props.backgroundColor}.600}` : props.backgroundColor
+    },
+
+    '@dark': {
+      borderColor: '{color.gray.700}',
+      backgroundColor: (props) => {
+        return isColorPalette(props.backgroundColor) ? `{color.${props.backgroundColor}.700}` :
+          props.backgroundColor === 'white' ? '{color.gray.900}' : props.backgroundColor === 'black' ? 'white' : props.backgroundColor
+      },
+    },
+
+      '> .icon-notification': {
+        '.icon': {
+          width: '{size.24}',
+          height: '{size.24}'
+        }
       },
 
-      '@dark': {
-        backgroundColor: (props) => {
-          return isColorPalette(props.backgroundColor) ? `{color.${props.backgroundColor}.700}` :
-            props.backgroundColor === 'white' ? '{color.gray.900}' : props.backgroundColor === 'black' ? 'white' : props.backgroundColor
+      '.content': {
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '{size.4}',
+        alignItems: 'center',
+
+        '&:has(.description)': {
+          alignItems: 'flex-start !important'
+        },
+
+        'h6': {
+          fontSize: '{fontSize.sm}',
+          fontWeight: '{fontWeight.extrabold}',
+          color: '{color.gray.900}',
+
+          '@dark': {
+            color: '{color.gray.100}'
+          }
+        },
+
+        '.description': {
+          marginTop: '{size.1}',
+          fontSize: '{fontSize.sm}',
+          lineHeight: '{lead.5}',
+          color: '{color.gray.100}.500'
         },
       },
+      '.action': {
+        flexShrink: 0,
+        display: 'flex',
+        alignItems: 'center',
+        alignSelf: 'flex-start',
 
-      '&:first-child': {
-        position: 'relative',
-        overflow: 'hidden',
-        ringOffsetColor: '{color.gray.200}',
-        ringColor: 'transparent',
-        padding: '{size.16}',
+        '.button-close': {
+          transition: 'all 0.15',
+          color: '{color.gray.400}',
 
-        '@dark': {
-          ringOffsetColor: '{color.gray.800}',
-        },
-
-        '> div': {
-          display: 'flex',
-          gap: '{size.12}',
-          alignItems: 'center',
-
-          '&:has(> .description)': {
-            alignItems: 'flex-start'
+          '@dark': {
+            color: '{color.gray.500}',
           },
 
-          '&:first-child': {
-            width: '{size.0}',
-            flex: '1 1 0%',
+          '&:hover': {
+            color: '{color.gray.500}',
 
-            'h6': {
-              fontSize: '{fontSize.sm}',
-              fontWeight: '{fontWeight.medium}',
-              color: '{color.gray.900}',
-
-              '@dark': {
-                color: '{color.gray.100}'
-              }
-            },
-
-            '.description': {
-              marginTop: '{size.4}',
-              fontSize: '{fontSize.sm}',
-              lineHeight: '{lead.5}',
-              color: '{color.gray.100}.500'
-            },
-
-            'div': {
-              marginTop: '{size.12}',
-              alignItems: 'center',
-              gap: '{size.6}',
-
-              'button': {
-                fontSize: '{fontSize.sm}',
-                fontWeight: '{fontWeight.medium}',
-                color: '{color.gray.500}',
-
-                '@dark': {
-                  color: '{color.gray.400}',
-                },
-
-                '&:hover': {
-                  color: '{color.gray.400}',
-                  '@dark': {
-                    color: '{color.gray.500}',
-                  },
-                },
-
-                '&:focus': {
-                  outline: 'none'
-                }
-              }
+            '@dark': {
+              color: '{color.gray.400}',
             }
           },
-          '&:last-child': {
-            flexShrink: 0,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '{size.12}',
 
-            div: {
-              display: 'flex',
-              alignItems: 'center',
-              gap: '{size.8}',
+          '&:focus': {
+            outline: 'none',
+            color: '{color.gray.500}',
 
-              button: {
-                fontSize: '{fontSize.sm}',
-                fontWeight: '{fontWeight.medium}',
-                color: '{color.gray.500}',
-
-                '@dark': {
-                  color: '{color.gray.400}',
-                },
-
-                '&:hover': {
-                  color: '{color.gray.400}',
-                  '@dark': {
-                    color: '{color.gray.500}',
-                  },
-                },
-
-                '&:focus': {
-                  outline: 'none'
-                }
-              }
-            },
-
-            'button': {
-              transition: 'all 0.15 ease-in-out',
+            '@dark': {
               color: '{color.gray.400}',
-
-                '@dark': {
-                  color: '{color.gray.500}',
-                },
-
-                '&:hover': {
-                  color: '{color.gray.500}',
-                },
-
-                '&:focus': {
-                  outline: 'none',
-                  color: '{color.gray.500}',
-                },
-
-                '.icon': {
-                  width: '{size.20}',
-                  height: '{size.20}'
-                },
-              },
-            },
+            }
           },
+          '&:deep(svg)': {
+            height: '{size.20}',
+            width: '{size.20}',
+          }
         },
-        '&:last-child': {
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: '{size.4}',
+      },
+      '.timeout': {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: '{size.4}',
 
-          'div': {
-            height: '{size.4}',
-            background: '{color.primary.500}'
+        'div': {
+          height: '{size.4}',
+          background: '{color.primary.500}'
+        }
+      }
+    },
+  },
+
+  variants: {
+    type: {
+      info: {
+        '.icon-notification': {
+          '.icon': {
+            color: '{color.blue.500}'
           }
         }
       },
-    },
+      success: {
+        '.icon-notification': {
+          '.icon': {
+            color: '{color.green.500}'
+          }
+        }
+      },
+      error: {
+        '.icon-notification': {
+          '.icon': {
+            color: '{color.red.500}'
+          }
+        }
+      },
+      danger: {
+        '.icon-notification': {
+          '.icon': {
+            color: '{color.orange.500}'
+          }
+        }
+      }
+    }
+  }
 })
 </style>

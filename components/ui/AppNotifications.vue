@@ -5,6 +5,13 @@
         v-for="notification of notifications"
         :key="notification.id"
       >
+        <AppNotificationPinceau
+          v-bind="notification"
+          :class="notification.click && 'cursor-pointer'"
+          @click="notification.click && notification.click(notification)"
+          @close="$toast.removeNotification(notification.id)"
+        />
+
         <AppNotification
           v-bind="notification"
           :class="notification.click && 'cursor-pointer'"

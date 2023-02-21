@@ -1,9 +1,19 @@
 <template>
   <div>
+    <AppButton label="baise" @click="click()" />
     <AppInput placeholder="test" name="test" icon="heroicons-outline:academic-cap" />
     <AppInput_old placeholder="test" name="test" icon="heroicons-outline:academic-cap" />
   </div>
 </template>
+
+<script setup lang="ts">
+
+const { $toast } = useNuxtApp()
+
+const click = () => {
+  $toast.success({ title: 'Subscription pending', description: 'Please check your emails to confirm your subscription.', timeout: 100000000, type: 'error' })
+}
+</script>
 
 <style scoped lang="ts">
 css({
