@@ -1,61 +1,12 @@
-<template>
-  <transition appear v-bind="transitionClass">
-    <div
-      :class="['z-50 w-full pointer-events-auto', backgroundClass, roundedClass, shadowClass]"
-      @mouseover="onMouseover"
-      @mouseleave="onMouseleave"
-    >
-      <div :class="['relative overflow-hidden', roundedClass, ringClass]">
-        <div class="p-4">
-          <div class="flex gap-3" :class="{ 'items-start': description, 'items-center': !description }">
-            <div v-if="iconName" class="flex-shrink-0">
-              <Icon :name="iconName" :class="iconClass" />
-            </div>
-            <div class="w-0 flex-1">
-              <p class="text-sm font-medium u-text-gray-900">
-                {{ title }}
-              </p>
-              <p v-if="description" class="mt-1 text-sm leading-5 u-text-gray-500">
-                {{ description }}
-              </p>
-
-              <div v-if="description && actions.length" class="mt-3 flex items-center gap-6">
-                <button v-for="(action, index) of actions" :key="index" type="button" class="text-sm font-medium focus:outline-none text-primary-500 dark:text-primary-400 hover:text-primary-400 dark:hover:text-primary-500" @click.stop="onAction(action)">
-                  {{ action.label }}
-                </button>
-              </div>
-            </div>
-            <div class="flex-shrink-0 flex items-center gap-3">
-              <div v-if="!description && actions.length" class="flex items-center gap-2">
-                <button v-for="(action, index) of actions" :key="index" type="button" class="text-sm font-medium focus:outline-none text-primary-500 dark:text-primary-400 hover:text-primary-400 dark:hover:text-primary-500" @click.stop="onAction(action)">
-                  {{ action.label }}
-                </button>
-              </div>
-
-              <button
-                class="transition duration-150 ease-in-out u-text-gray-400 focus:outline-none hover:u-text-gray-500 focus:u-text-gray-500"
-                @click.stop="onClose"
-              >
-                <span class="sr-only">Close</span>
-                <Icon name="heroicons-solid:x" class="w-5 h-5" />
-              </button>
-            </div>
-          </div>
-        </div>
-        <div v-if="timeout" class="absolute bottom-0 left-0 right-0 h-1">
-          <div class="h-1 bg-primary-500" :style="progressBarStyle" />
-        </div>
-      </div>
-    </div>
-  </transition>
-</template>
-
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watchEffect } from 'vue'
 import type { PropType } from 'vue'
 import { classNames } from '../../utils'
 import { uiPreset } from '../../ui/preset'
 import type { ToastNotificationAction } from 'types'
+import { isColorPalette } from '../../utils'
+import { PinceauTheme } from 'pinceau'
+import { computedStyle } from 'pinceau/runtime'
 
 const props = defineProps({
   id: {
@@ -69,6 +20,7 @@ const props = defineProps({
       return Object.keys(uiPreset.notification.type).includes(value)
     }
   },
+  backgroundColor: computedStyle<keyof PinceauTheme['color']>('white'),
   title: {
     type: String,
     required: true
@@ -76,10 +28,6 @@ const props = defineProps({
   description: {
     type: String,
     default: null
-  },
-  backgroundClass: {
-    type: String,
-    default: () => uiPreset.notification.background
   },
   shadowClass: {
     type: String,
@@ -204,8 +152,212 @@ onUnmounted(() => {
 })
 </script>
 
+<template>
+  <transition appear v-bind="transitionClass">
+    <div
+      @mouseover="onMouseover"
+      @mouseleave="onMouseleave"
+    >
+      <div>
+          <div>
+            <div>
+              <h6>
+                {{ title }}
+              </h6>
+              <p v-if="description" class="description">
+                {{ description }}
+              </p>
+
+              <div v-if="description && actions.length">
+                <button v-for="(action, index) of actions" :key="index" type="button" @click.stop="onAction(action)">
+                  {{ action.label }}
+                </button>
+              </div>
+            </div>
+            <div>
+              <div v-if="!description && actions.length">
+                <button v-for="(action, index) of actions" :key="index" type="button" @click.stop="onAction(action)">
+                  {{ action.label }}
+                </button>
+              </div>
+
+              <button
+                @click.stop="onClose"
+              >
+                <span class="sr-only">Close</span>
+                <Icon name="heroicons-solid:x" />
+              </button>
+            </div>
+          </div>
+        </div>
+        <div v-if="timeout">
+          <div :style="progressBarStyle" />
+        </div>
+      </div>
+  </transition>
+</template>
+
+
 <style lang="ts">
 css({
+  '.notification': {
+    '> div': {
+      zIndex: 50,
+      width: '{size.full}',
+      pointerEvents: 'auto',
+      borderRadius: '{radii.lg}',
+      shadow: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
 
+      backgroundColor: (props) => {
+        return isColorPalette(props.backgroundColor) ? `{color.${props.backgroundColor}.600}` : props.backgroundColor
+      },
+
+      '@dark': {
+        backgroundColor: (props) => {
+          return isColorPalette(props.backgroundColor) ? `{color.${props.backgroundColor}.700}` :
+            props.backgroundColor === 'white' ? '{color.gray.900}' : props.backgroundColor === 'black' ? 'white' : props.backgroundColor
+        },
+      },
+
+      '&:first-child': {
+        position: 'relative',
+        overflow: 'hidden',
+        ringOffsetColor: '{color.gray.200}',
+        ringColor: 'transparent',
+        padding: '{size.16}',
+
+        '@dark': {
+          ringOffsetColor: '{color.gray.800}',
+        },
+
+        '> div': {
+          display: 'flex',
+          gap: '{size.12}',
+          alignItems: 'center',
+
+          '&:has(> .description)': {
+            alignItems: 'flex-start'
+          },
+
+          '&:first-child': {
+            width: '{size.0}',
+            flex: '1 1 0%',
+
+            'h6': {
+              fontSize: '{fontSize.sm}',
+              fontWeight: '{fontWeight.medium}',
+              color: '{color.gray.900}',
+
+              '@dark': {
+                color: '{color.gray.100}'
+              }
+            },
+
+            '.description': {
+              marginTop: '{size.4}',
+              fontSize: '{fontSize.sm}',
+              lineHeight: '{lead.5}',
+              color: '{color.gray.100}.500'
+            },
+
+            'div': {
+              marginTop: '{size.12}',
+              alignItems: 'center',
+              gap: '{size.6}',
+
+              'button': {
+                fontSize: '{fontSize.sm}',
+                fontWeight: '{fontWeight.medium}',
+                color: '{color.gray.500}',
+
+                '@dark': {
+                  color: '{color.gray.400}',
+                },
+
+                '&:hover': {
+                  color: '{color.gray.400}',
+                  '@dark': {
+                    color: '{color.gray.500}',
+                  },
+                },
+
+                '&:focus': {
+                  outline: 'none'
+                }
+              }
+            }
+          },
+          '&:last-child': {
+            flexShrink: 0,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '{size.12}',
+
+            div: {
+              display: 'flex',
+              alignItems: 'center',
+              gap: '{size.8}',
+
+              button: {
+                fontSize: '{fontSize.sm}',
+                fontWeight: '{fontWeight.medium}',
+                color: '{color.gray.500}',
+
+                '@dark': {
+                  color: '{color.gray.400}',
+                },
+
+                '&:hover': {
+                  color: '{color.gray.400}',
+                  '@dark': {
+                    color: '{color.gray.500}',
+                  },
+                },
+
+                '&:focus': {
+                  outline: 'none'
+                }
+              }
+            },
+
+            'button': {
+              transition: 'all 0.15 ease-in-out',
+              color: '{color.gray.400}',
+
+                '@dark': {
+                  color: '{color.gray.500}',
+                },
+
+                '&:hover': {
+                  color: '{color.gray.500}',
+                },
+
+                '&:focus': {
+                  outline: 'none',
+                  color: '{color.gray.500}',
+                },
+
+                '.icon': {
+                  width: '{size.20}',
+                  height: '{size.20}'
+                },
+              },
+            },
+          },
+        },
+        '&:last-child': {
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: '{size.4}',
+
+          'div': {
+            height: '{size.4}',
+            background: '{color.primary.500}'
+          }
+        }
+      },
+    },
 })
 </style>

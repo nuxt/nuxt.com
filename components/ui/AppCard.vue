@@ -15,16 +15,12 @@
 <script setup lang="ts">
 import { PinceauTheme } from 'pinceau'
 import { computedStyle } from 'pinceau/runtime'
+import { isColorPalette } from '../../utils'
 
 defineProps({
   backgroundColor: computedStyle<keyof PinceauTheme['color']>('white'),
   ...variants
 })
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const isColorPalette = (color: any) => {
-  return !['white', 'black', 'transparent', 'current'].includes(color.toString())
-}
 </script>
 
 <style lang="ts" scoped>
