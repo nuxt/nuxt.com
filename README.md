@@ -14,7 +14,7 @@ Copy the `.env.example` file to `.env`:
 cp .env.example .env
 ```
 
-Clone/Fork the [framework](https://github.com/nuxt/nuxt) repo and inside the `docs/` directory, run:
+Clone/Fork [nuxt/nuxt](https://github.com/nuxt/nuxt) repo where you want (but not in the Nuxt.com project) and inside the `docs/` directory, run:
 
 ```bash
 pwd
