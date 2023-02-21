@@ -4,11 +4,6 @@
   },
   "redirects": [
     {
-      "source": "/docs",
-      "destination": "/docs/getting-started/introduction",
-      "permanent": false
-    },
-    {
       "source": "/docs/getting-started",
       "destination": "/docs/getting-started/introduction",
       "permanent": false
