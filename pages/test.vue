@@ -1,28 +1,7 @@
 <template>
   <div>
-    <AppFormGroup name="email" label="Your company" class="col-span-2 sm:col-span-1">
-      <AppInput
-        label="Company"
-        name="Company"
-        placeholder="Your company"
-        required
-        size="xl"
-        variant="outline"
-        custom-class="flex-1"
-      />
-    </AppFormGroup>
-
-    <AppFormGroupPinceau name="email" label="Your company" class="col-span-2 sm:col-span-1">
-      <AppInput
-        label="Company"
-        name="Company"
-        placeholder="Your company"
-        required
-        size="xl"
-        variant="outline"
-        custom-class="flex-1"
-      />
-    </appformgrouppinceau>
+    <AppInput placeholder="test" name="test" icon="heroicons-outline:academic-cap" />
+    <AppInput_old placeholder="test" name="test" icon="heroicons-outline:academic-cap" />
   </div>
 </template>
 
