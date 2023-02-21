@@ -19,7 +19,10 @@ if (process.env.NUXT_DOCS_PATH) {
 
 // https://v3.nuxtjs.org/guide/directory-structure/nuxt.config
 export default defineNuxtConfig({
-  // experimental: { inlineSSRStyles: false },
+  experimental: {
+    // inlineSSRStyles: false
+    emitRouteChunkError: 'reload'
+  },
   extends: '@nuxt-themes/typography',
   css: [
     resolve('./assets/css/fonts.css'),

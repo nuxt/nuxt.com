@@ -65,7 +65,7 @@
     "sitemap": "^7.1.1",
     "tailwindcss-border-gradient-radius": "^3.0.1",
     "three": "^0.147.0",
-    "unstorage": "^1.1.4",
+    "unstorage": "^1.1.5",
     "vue-lite-youtube-embed": "^1.0.9"
   },
   "devDependencies": {
@@ -73,7 +73,7 @@
     "@types/lodash-es": "^4.17.6",
     "autoprefixer": "^10.4.13",
     "eslint": "^8.29.0",
-    "nuxt": "^3.1.0",
+    "nuxt": "^3.2.2",
     "postcss": "^8.4.21",
     "release-it": "^15.6.0",
     "typescript": "^4.9.5"
