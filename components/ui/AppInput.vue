@@ -1,9 +1,22 @@
 <template>
   <div class="app-input-wrapper">
-    <input :id="name" ref="input" class="app-input" :type="type" :name="name" :value="modelValue" :required="required"
-      :placeholder="placeholder" :disabled="disabled" :readonly="readonly" :autocomplete="autocomplete"
-      :spellcheck="spellcheck" @input="onInput(($event.target as any).value)" @focus="$emit('focus', $event)"
-      @blur="$emit('blur', $event)">
+    <input
+      :id="name"
+      ref="input"
+      class="app-input"
+      :type="type"
+      :name="name"
+      :value="modelValue"
+      :required="required"
+      :placeholder="placeholder"
+      :disabled="disabled"
+      :readonly="readonly"
+      :autocomplete="autocomplete"
+      :spellcheck="spellcheck"
+      @input="onInput(($event.target as any).value)"
+      @focus="$emit('focus', $event)"
+      @blur="$emit('blur', $event)"
+    >
     <slot />
     <div v-if="(icon || loading) && !trailing" class="icon-leading-wrapper">
       <Icon v-if="icon" :name="loading ? 'line-md:loading-twotone-loop' : icon" class="icon-leading" />
@@ -150,7 +163,6 @@ css({
           boxShadow: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
           borderColor: '{color.gray.200}',
           backgroundColor: '{color.white}',
-
 
           '&:focus': {
             ring: '-1px',

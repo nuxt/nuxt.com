@@ -1,18 +1,33 @@
 <template>
   <div>
-    <AppButton label="baise" @click="click()" />
-    <AppInput placeholder="test" name="test" icon="heroicons-outline:academic-cap" />
-    <AppInput_old placeholder="test" name="test" icon="heroicons-outline:academic-cap" />
+    <AppSelect
+      v-if="regions.length"
+      v-model="region"
+      name="region"
+      :options="[{ title: 'test' }, { title: 'test2' }, { title: 'test2' }]"
+      size="sm"
+      placeholder="Region"
+      text-attribute="title"
+      class="min-w-[144px]"
+    />
+    <AppSelectPinceau
+      v-if="regions.length"
+      v-model="region"
+      name="region"
+      :options="[{ title: 'test' }, { title: 'test2' }, { title: 'test2' }]"
+      size="sm"
+      placeholder="Region"
+      text-attribute="title"
+      class="min-w-[144px]"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 
-const { $toast } = useNuxtApp()
+const region = ref({ title: 'test' })
+const regions = ref([{ title: 'test' }, { title: 'test2' }, { title: 'test2' }])
 
-const click = () => {
-  $toast.success({ title: 'Subscription pending', description: 'Please check your emails to confirm your subscription.', timeout: 99999999999, type: 'information' })
-}
 </script>
 
 <style scoped lang="ts">
