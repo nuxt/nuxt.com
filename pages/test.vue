@@ -11,7 +11,7 @@
 const { $toast } = useNuxtApp()
 
 const click = () => {
-  $toast.success({ title: 'Subscription pending', description: 'Please check your emails to confirm your subscription.', type: 'information' })
+  $toast.success({ title: 'Subscription pending', description: 'Please check your emails to confirm your subscription.', timeout: 99999999999, type: 'information' })
 }
 </script>
 

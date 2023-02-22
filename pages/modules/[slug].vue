@@ -64,7 +64,7 @@
         </div>
       </div>
       <div class="flex justify-center md:justify-start mb-4">
-        <AppPills base-class="px-8 md:px-14 py-2 font-medium text-sm rounded-md" :links="links" />
+        <AppPills :links="links" />
       </div>
     </div>
 
@@ -114,8 +114,15 @@ useHead({
 })
 </script>
 
-<style lang="postcss">
-.module-button {
-  @apply bg-gray-800 dark:bg-white
-}
+<style lang="ts" scoped>
+css({
+  '.app-pills': {
+    px: '{size.32} !important',
+    py: '{size.8}',
+
+    '@md': {
+      px: '{size.56} !important',
+    }
+  }
+})
 </style>

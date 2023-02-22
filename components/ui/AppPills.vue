@@ -1,13 +1,13 @@
 <template>
-  <nav :class="wrapperClass">
+  <nav class="app-pills">
     <AppLink
       v-for="(link, index) of links"
       :key="index"
       :to="link.to"
       :exact="link.exact"
-      :class="baseClass"
-      :active-class="activeClass"
-      :inactive-class="inactiveClass"
+      class="app-link"
+      active-class="active"
+      inactive-class="inactive"
     >
       {{ link.label }}
     </AppLink>
@@ -17,28 +17,49 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
 import type { RouteLocationNormalized } from 'vue-router'
-import { uiPreset } from '../../ui/preset'
 
 defineProps({
   links: {
     type: Array as PropType<{ to: RouteLocationNormalized | string, exact: boolean, label: string }[]>,
     required: true
-  },
-  wrapperClass: {
-    type: String,
-    default: () => uiPreset.pills.wrapper
-  },
-  baseClass: {
-    type: String,
-    default: () => uiPreset.pills.base
-  },
-  activeClass: {
-    type: String,
-    default: () => uiPreset.pills.active
-  },
-  inactiveClass: {
-    type: String,
-    default: () => uiPreset.pills.inactive
   }
 })
 </script>
+
+<style lang="ts" scoped>
+css({
+  '.app-pills': {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '{size.16}',
+
+    '.app-link': {
+      px: '{size.12}',
+      fontSize: '{fontSize.sm}',
+      fontWeight: '{fontWeight.medium}',
+      borderRadius: '{radii.md}',
+
+      '.active': {
+        backgroundColor: '{color.gray.100}',
+        color: '{color.gray.700}',
+
+        '@dark': {
+          backgroundColor: '{color.gray.900}',
+          color: '{color.gray.100}',
+        }
+      },
+      '.inactive': {
+        color: '{color.gray.500}',
+
+        '&:hover': {
+          color: '{color.gray.700}',
+
+          '@dark': {
+            color: '{color.gray.300}',
+          }
+        }
+      }
+    }
+  }
+})
+</style>

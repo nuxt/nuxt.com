@@ -218,6 +218,7 @@ export default defineTheme({
     56: '56px',
     64: '64px',
     80: '80px',
+    96: '96px',
     104: '104px',
     200: '200px',
     xs: '20rem',
