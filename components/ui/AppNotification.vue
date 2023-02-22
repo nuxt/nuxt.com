@@ -1,73 +1,14 @@
-<template>
-  <transition appear v-bind="transitionClass">
-    <div
-      :class="['z-50 w-full pointer-events-auto', backgroundClass, roundedClass, shadowClass]"
-      @mouseover="onMouseover"
-      @mouseleave="onMouseleave"
-    >
-      <div :class="['relative overflow-hidden', roundedClass, ringClass]">
-        <div class="p-4">
-          <div class="flex gap-3" :class="{ 'items-start': description, 'items-center': !description }">
-            <div v-if="iconName" class="flex-shrink-0">
-              <Icon :name="iconName" :class="iconClass" />
-            </div>
-            <div class="w-0 flex-1">
-              <p class="text-sm font-medium u-text-gray-900">
-                {{ title }}
-              </p>
-              <p v-if="description" class="mt-1 text-sm leading-5 u-text-gray-500">
-                {{ description }}
-              </p>
-
-              <div v-if="description && actions.length" class="mt-3 flex items-center gap-6">
-                <button v-for="(action, index) of actions" :key="index" type="button" class="text-sm font-medium focus:outline-none text-primary-500 dark:text-primary-400 hover:text-primary-400 dark:hover:text-primary-500" @click.stop="onAction(action)">
-                  {{ action.label }}
-                </button>
-              </div>
-            </div>
-            <div class="flex-shrink-0 flex items-center gap-3">
-              <div v-if="!description && actions.length" class="flex items-center gap-2">
-                <button v-for="(action, index) of actions" :key="index" type="button" class="text-sm font-medium focus:outline-none text-primary-500 dark:text-primary-400 hover:text-primary-400 dark:hover:text-primary-500" @click.stop="onAction(action)">
-                  {{ action.label }}
-                </button>
-              </div>
-
-              <button
-                class="transition duration-150 ease-in-out u-text-gray-400 focus:outline-none hover:u-text-gray-500 focus:u-text-gray-500"
-                @click.stop="onClose"
-              >
-                <span class="sr-only">Close</span>
-                <Icon name="heroicons-solid:x" class="w-5 h-5" />
-              </button>
-            </div>
-          </div>
-        </div>
-        <div v-if="timeout" class="absolute bottom-0 left-0 right-0 h-1">
-          <div class="h-1 bg-primary-500" :style="progressBarStyle" />
-        </div>
-      </div>
-    </div>
-  </transition>
-</template>
-
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watchEffect } from 'vue'
-import type { PropType } from 'vue'
-import { classNames } from '../../utils'
-import { uiPreset } from '../../ui/preset'
-import type { ToastNotificationAction } from 'types'
+import { PinceauTheme } from 'pinceau'
+import { computedStyle } from 'pinceau/runtime'
+import { isColorPalette } from '../../utils'
 
 const props = defineProps({
+  backgroundColor: computedStyle<keyof PinceauTheme['color']>('white'),
   id: {
     type: String,
     required: true
-  },
-  type: {
-    type: String,
-    default: null,
-    validator (value: string) {
-      return Object.keys(uiPreset.notification.type).includes(value)
-    }
   },
   title: {
     type: String,
@@ -77,26 +18,6 @@ const props = defineProps({
     type: String,
     default: null
   },
-  backgroundClass: {
-    type: String,
-    default: () => uiPreset.notification.background
-  },
-  shadowClass: {
-    type: String,
-    default: () => uiPreset.notification.shadow
-  },
-  ringClass: {
-    type: String,
-    default: () => uiPreset.notification.ring
-  },
-  roundedClass: {
-    type: String,
-    default: () => uiPreset.notification.rounded
-  },
-  transitionClass: {
-    type: Object,
-    default: () => uiPreset.notification.transition
-  },
   customClass: {
     type: String,
     default: null
@@ -105,25 +26,11 @@ const props = defineProps({
     type: String,
     default: null
   },
-  iconBaseClass: {
-    type: String,
-    default: () => uiPreset.notification.icon.base
-  },
   timeout: {
     type: Number,
     default: 5000
   },
-  actions: {
-    type: Array as PropType<{
-      label: string,
-      click: Function
-    }[]>,
-    default: () => []
-  },
-  callback: {
-    type: Function,
-    default: null
-  }
+  ...variants
 })
 
 const emit = defineEmits(['close'])
@@ -131,20 +38,19 @@ const emit = defineEmits(['close'])
 let timer: any = null
 const remaining = ref(props.timeout)
 
-const iconName = computed(() => {
-  return props.icon || uiPreset.notification.type[props.type]
-})
-
-const iconClass = computed(() => {
-  return classNames(
-    props.iconBaseClass,
-    uiPreset.notification.icon.color[props.type] || 'u-text-gray-400'
-  )
-})
-
 const progressBarStyle = computed(() => {
   const remainingPercent = remaining.value / props.timeout * 100
   return { width: `${remainingPercent || 0}%` }
+})
+
+const iconName = computed(() => {
+  return props.type === 'info'
+    ? 'heroicons-outline:information-circle'
+    : props.type === 'success'
+      ? 'heroicons-outline:check-circle'
+      : props.type === 'error'
+        ? 'heroicons-outline:x-circle'
+        : 'heroicons-outline:exclamation-circle'
 })
 
 function onMouseover () {
@@ -162,22 +68,6 @@ function onMouseleave () {
 function onClose () {
   if (timer) {
     timer.stop()
-  }
-
-  if (props.callback) {
-    props.callback()
-  }
-
-  emit('close')
-}
-
-function onAction (action: ToastNotificationAction) {
-  if (timer) {
-    timer.stop()
-  }
-
-  if (action.click) {
-    action.click()
   }
 
   emit('close')
@@ -203,3 +93,183 @@ onUnmounted(() => {
   }
 })
 </script>
+
+<template>
+  <div class="app-notification" @mouseover="onMouseover" @mouseleave="onMouseleave">
+    <div class="notification">
+      <div v-if="timeout" class="timeout">
+        <div :style="progressBarStyle" />
+      </div>
+      <div class="flex-shrink-0 icon-notification">
+        <Icon :name="iconName" />
+      </div>
+      <div class="content">
+        <h6>
+          {{ title }}
+        </h6>
+        <p v-if="description" class="description">
+          {{ description }}
+        </p>
+      </div>
+      <div class="action">
+        <button class="button-close" @click.stop="onClose">
+          <span class="sr-only">Close</span>
+          <Icon name="heroicons-solid:x" />
+        </button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style lang="ts" scoped>
+css({
+  '.app-notification': {
+    zIndex: 50,
+    width: '{size.full}',
+    pointerEvents: 'auto',
+    shadow: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+    position: 'relative',
+
+    '.notification': {
+      borderRadius: '{radii.md}',
+      borderWidth: '0.1px',
+      borderColor: '{color.gray.300}',
+      position: 'relative',
+      overflow: 'hidden',
+      padding: '{size.16}',
+      width: '100%',
+      display: 'flex',
+      gap: '{size.8}',
+
+      backgroundColor: (props) => {
+        return isColorPalette(props.backgroundColor) ? `{color.${props.backgroundColor}.600}` : props.backgroundColor
+      },
+
+      '@dark': {
+        borderColor: '{color.gray.700}',
+        backgroundColor: (props) => {
+          return isColorPalette(props.backgroundColor) ? `{color.${props.backgroundColor}.700}` :
+            props.backgroundColor === 'white' ? '{color.gray.900}' : props.backgroundColor === 'black' ? 'white' : props.backgroundColor
+        },
+      },
+
+      '> .icon-notification': {
+        '.icon': {
+          width: '{size.24}',
+          height: '{size.24}'
+        }
+      },
+
+      '.content': {
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '{size.4}',
+        alignItems: 'center',
+
+        '&:has(.description)': {
+          alignItems: 'flex-start'
+        },
+
+        'h6': {
+          fontSize: '{fontSize.sm}',
+          fontWeight: '{fontWeight.extrabold}',
+          color: '{color.gray.900}',
+
+          '@dark': {
+            color: '{color.gray.100}'
+          }
+        },
+
+        '.description': {
+          marginTop: '{size.1}',
+          fontSize: '{fontSize.sm}',
+          lineHeight: '{lead.5}',
+          color: '{color.gray.100}.500'
+        },
+      },
+      '.action': {
+        flexShrink: 0,
+        display: 'flex',
+        alignItems: 'center',
+        alignSelf: 'flex-start',
+
+        '.button-close': {
+          transition: 'all 0.15',
+          color: '{color.gray.400}',
+
+          '@dark': {
+            color: '{color.gray.500}',
+          },
+
+          '&:hover': {
+            color: '{color.gray.500}',
+
+            '@dark': {
+              color: '{color.gray.400}',
+            }
+          },
+
+          '&:focus': {
+            outline: 'none',
+            color: '{color.gray.500}',
+
+            '@dark': {
+              color: '{color.gray.400}',
+            }
+          },
+          '&:deep(svg)': {
+            height: '{size.20}',
+            width: '{size.20}',
+          }
+        },
+      },
+      '.timeout': {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: '{size.4}',
+
+        'div': {
+          height: '{size.4}',
+          background: '{color.primary.500}'
+        }
+      }
+    },
+  },
+
+  variants: {
+    type: {
+      info: {
+        '.icon-notification': {
+          '.icon': {
+            color: '{color.blue.500}'
+          }
+        }
+      },
+      success: {
+        '.icon-notification': {
+          '.icon': {
+            color: '{color.green.500}'
+          }
+        }
+      },
+      error: {
+        '.icon-notification': {
+          '.icon': {
+            color: '{color.red.500}'
+          }
+        }
+      },
+      danger: {
+        '.icon-notification': {
+          '.icon': {
+            color: '{color.orange.500}'
+          }
+        }
+      }
+    }
+  }
+})
+</style>
