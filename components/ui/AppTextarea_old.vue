@@ -3,7 +3,6 @@
     <textarea
       :id="name"
       ref="textarea"
-      class="app-textarea"
       :value="modelValue"
       :name="name"
       :rows="rows"
@@ -11,6 +10,7 @@
       :disabled="disabled"
       :placeholder="placeholder"
       :autocomplete="autocomplete"
+      :class="textareaClass"
       @input="onInput(($event.target as any).value)"
       @focus="$emit('focus', $event)"
       @blur="$emit('blur', $event)"
@@ -20,6 +20,8 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, nextTick } from 'vue'
+import { classNames } from '../../utils'
+import { uiPreset } from '../../ui/preset'
 
 const props = defineProps({
   modelValue: {
@@ -58,6 +60,36 @@ const props = defineProps({
     type: String,
     default: null
   },
+  appearance: {
+    type: String,
+    default: 'default',
+    validator (value: string) {
+      return Object.keys(uiPreset.textarea.appearance).includes(value)
+    }
+  },
+  resize: {
+    type: Boolean,
+    default: true
+  },
+  size: {
+    type: String,
+    default: 'md',
+    validator (value: string) {
+      return Object.keys(uiPreset.textarea.size).includes(value)
+    }
+  },
+  wrapperClass: {
+    type: String,
+    default: () => uiPreset.textarea.wrapper
+  },
+  baseClass: {
+    type: String,
+    default: () => uiPreset.textarea.base
+  },
+  customClass: {
+    type: String,
+    default: null
+  }
 })
 
 const emit = defineEmits(['update:modelValue', 'focus', 'blur'])
@@ -108,51 +140,15 @@ onMounted(() => {
     autoResize()
   }, 100)
 })
-</script>
 
-<style lang="ts" scoped>
-css({
-  '.app-textarea-wrapper': {
-    position: 'relative'
-  },
-  '.app-textarea': {
-    position: 'relative',
-    display: 'block',
-    width: '{size.full}',
-    fontSize: '{fontSize.base}',
-    px: '{size.24}',
-    py: '{size.12}',
-    borderWidth: '{size.1}',
-    borderColor: '{color.gray.200}',
-    borderRadius: '{radii.md}',
-    boxShadow: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
-    background: '{color.white}',
-    flex: '1 1 0%',
-
-    '@dark': {
-      borderColor: '{color.gray.800}',
-      backgroundColor: '{color.gray.900}'
-    },
-
-    '&:disabled': {
-      cursor: 'not-allowed',
-      opacity: '0.75'
-    },
-
-    '&:focus': {
-      outline: 'none',
-      ringOffsetColor: '{color.gray.900}',
-      ringColor: '{color.gray.900}',
-      borderColor: '{color.gray.900}',
-      ring: '-2px',
-      ringOffset: '1px',
-
-      '@dark': {
-        ringColor: '{color.gray.100}',
-        borderColor: '{color.gray.100}',
-        ringOffsetColor: '{color.black}'
-      }
-    },
-  },
+const textareaClass = computed(() => {
+  return classNames(
+    props.baseClass,
+    uiPreset.textarea.size[props.size],
+    uiPreset.textarea.spacing[props.size],
+    uiPreset.textarea.appearance[props.appearance],
+    !props.resize && 'resize-none',
+    props.customClass
+  )
 })
-</style>
+</script>

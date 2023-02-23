@@ -376,7 +376,7 @@ css({
       md: {
         px: '{size.16}',
         py: '{size.8}',
-        fontSize: '{button.fontSize.base}',
+        fontSize: '{button.fontSize.md}',
 
         '.icon': {
           width: '{size.20}',

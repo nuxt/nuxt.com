@@ -56,30 +56,7 @@ const props = defineProps({
   },
   icon: {
     type: String,
-    default: () => uiPreset.selectCustom.icon.name
-  },
-  appearance: {
-    type: String,
-    default: 'default',
-    validator (value: string) {
-      return Object.keys(uiPreset.selectCustom.appearance).includes(value)
-    }
-  },
-  listBaseClass: {
-    type: String,
-    default: () => uiPreset.selectCustom.list.base
-  },
-  listContainerClass: {
-    type: String,
-    default: () => uiPreset.selectCustom.list.container
-  },
-  listWidthClass: {
-    type: String,
-    default: () => uiPreset.selectCustom.list.width
-  },
-  listInputClass: {
-    type: String,
-    default: () => uiPreset.selectCustom.list.input
+    default: () => 'uil:angle-down'
   },
   listTransitionClass: {
     type: Object,
@@ -161,12 +138,6 @@ const [trigger, container] = usePopper(popperOptions.value)
 const query = ref('')
 const searchInput = ref<ComponentPublicInstance<HTMLElement>>()
 
-const selectCustomClass = computed(() => {
-  return classNames(
-    uiPreset.selectCustom.appearance[props.appearance]
-  )
-})
-
 const filteredOptions = computed(() =>
   query.value === ''
     ? props.options
@@ -223,7 +194,7 @@ function onUpdate (event: any) {
     :multiple="multiple"
     :nullable="nullable"
     :disabled="disabled"
-    class="app-select"
+    class="app-select !important"
     as="div"
     @update:model-value="onUpdate"
   >
@@ -231,7 +202,7 @@ function onUpdate (event: any) {
 
     <ComboboxButton ref="trigger" v-slot="{ disabled: buttonDisabled }" as="div" class="combobox-button-container">
       <slot :open="open" :disabled="buttonDisabled">
-        <button :class="selectCustomClass" :disabled="disabled" type="button" class="combobox-button">
+        <button :disabled="disabled" type="button" class="combobox-button">
           <slot name="label">
             <span v-if="modelValue" class="label">{{ (modelValue as any)[textAttribute] }}</span>
             <span v-else class="place-holder">{{ placeholder }}</span>
@@ -245,9 +216,9 @@ function onUpdate (event: any) {
       </slot>
     </ComboboxButton>
 
-    <div v-if="open" ref="container" :class="[listContainerClass, listWidthClass]">
+    <div v-if="open" ref="container" class="combobox-list">
       <transition appear v-bind="listTransitionClass">
-        <ComboboxOptions static :class="listBaseClass">
+        <ComboboxOptions class="combobox-options">
           <ComboboxInput
             v-if="searchable"
             ref="searchInput"
@@ -256,7 +227,6 @@ function onUpdate (event: any) {
             placeholder="Search..."
             autofocus
             autocomplete="off"
-            :class="listInputClass"
             @change="query = $event.target.value"
           />
           <ComboboxOption
@@ -275,16 +245,21 @@ function onUpdate (event: any) {
               </div>
 
               <span v-if="selected" :class="resolveOptionIconClass({ active })">
-                <Icon v-if="listOptionIcon" :name="listOptionIcon" :class="listOptionIconSizeClass" aria-hidden="true" />
+                <Icon v-if="listOptionIcon" :name="listOptionIcon" class="list-option-icon" aria-hidden="true" />
               </span>
             </li>
           </ComboboxOption>
 
-          <ComboboxOption v-if="creatable && queryOption && !filteredOptions.length" v-slot="{ active, selected }" :value="queryOption" as="template">
+          <ComboboxOption
+            v-if="creatable && queryOption && !filteredOptions.length"
+            v-slot="{ active, selected }"
+            :value="queryOption"
+            as="template"
+          >
             <li :class="resolveOptionClass({ active, selected })">
               <div :class="listOptionContainerClass">
                 <slot name="option-create" :option="queryOption" :active="active" :selected="selected">
-                  <span class="block truncate">Create "{{ queryOption[textAttribute] }}"</span>
+                  <span class="option-create-text">Create "{{ queryOption[textAttribute] }}"</span>
                 </slot>
               </div>
             </li>
@@ -300,14 +275,11 @@ function onUpdate (event: any) {
   </Combobox>
 </template>
 
-<style lang="ts" scoped>
+<style lang="ts">
 css({
   '.app-select': {
-    '--select-button-padding': (props) => `{size.${props.icon ? ['xxs', 'xs'].includes(props.size) ? '28' : '40' : '0'}}`,
-    '--select-font-size': (props) => `{fontSize.${['xxs', 'xs'].includes(props.size) ? 'xs' : ['sm', 'md'].includes(props.size) ? 'sm' : 'base'}}`,
-    '--select-icon-size': (props) => `{size.${props.size === 'xxs' ? '12' : props.size === 'xs' ? '16' : '20'}}`,
-
     display: 'relative',
+    minWidth: '144px',
 
     '> input': {
       position: 'absolute',
@@ -318,14 +290,18 @@ css({
     },
 
     '.combobox-button-container': {
-      inline: 'flex',
+      display: 'inline-flex',
       width: '{size.full}',
 
       '.combobox-button': {
+        '--select-font-size': (props) => `{fontSize.${['xxs', 'xs'].includes(props.size) ? 'xs' : ['sm', 'md'].includes(props.size) ? 'sm' : 'base'}}`,
+
         position: 'relative',
         display: 'block',
         width: '{size.full}',
         fontSize: '{select.font.size}',
+        borderWidth: '1px',
+        paddingRight: (props) => `{size.${props.icon ? ['xxs', 'xs'].includes(props.size) ? '28' : '40' : '0'}}`,
 
         '&:disabled': {
           cursor: 'not-allowed',
@@ -336,7 +312,7 @@ css({
           outline: 'none'
         },
 
-        '.label .place-holder': {
+        '.label, .place-holder': {
           display: 'block',
           textAlign: 'left',
           lineClamp: 1,
@@ -351,6 +327,8 @@ css({
         },
 
         '.icon-wrapper': {
+          '--select-icon-size': (props) => `{size.${props.size === 'xxs' ? '12' : props.size === 'xs' ? '16' : '20'}}`,
+
           position: 'absolute',
           top: 0,
           bottom: 0,
@@ -366,7 +344,83 @@ css({
           }
         }
       },
-    }
+    },
+
+    '.combobox-list': {
+        zIndex: 2,
+        width: 'auto',
+        minWidth: '144px',
+        backgroundColor: '{color.white}',
+
+        '@dark': {
+          color: '{color.gray.900}'
+        },
+
+      '> ul': {
+        color: '{color.white}',
+        borderRadius: '{radii.md}',
+        ring: '-2px',
+        ringOffsetColor: '{color.transparent}',
+        ringColor: '{color.gray.200}',
+        borderWidth: '{size.1}',
+        borderColor: '{color.transparent}',
+        overflowY: 'auto',
+        padding: '{size.4}',
+        maxHeight: '240px',
+
+        '@dark': {
+          color: '{color.gray.900}',
+          ringColor: '{color.gray.800}',
+        },
+
+        '> li': {
+          position: 'relative',
+          display: 'block',
+          width: '{size.full}',
+          fontSize: '{fontSize.sm}',
+          color: '{color.gray.700}',
+          px: '{size.16}',
+          py: '{size.8}',
+          borderLeftWidth: '{size.0}',
+          borderTopWidth: '{size.0}',
+          borderRightWidth: '{size.0}',
+          borderBottomSize: '{size.1}',
+          backgroundColor: '{color.white}',
+          borderColor: '{color.gray.200}',
+
+          '@dark': {
+            color: '{color.gray.300}',
+            backgroundColor: '{color.black}',
+            borderColor: '{color.gray.800}'
+          },
+
+          '&:hover': {
+            backgroundColor: '{color.gray.100}',
+
+            '@dark': {
+              backgroundColor: '{color.gray.900}',
+            }
+          },
+
+          '&:focus:': {
+            ringColor: '{color.transparent}',
+            ringOffsetColor: '{color.transparent}',
+            borderColor: '{color.gray.200}',
+
+            '@dark': {
+              borderColor: '{color.gray.800}',
+            }
+          }
+        }
+      },
+    },
+
+    '.option-create-text': {
+      display: 'block',
+        textAlign: 'left',
+        lineClamp: 1,
+        wordBreak: 'break-all',
+      },
   },
 
   variants: {
@@ -415,6 +469,73 @@ css({
         default: 'md'
       }
     },
+    appearance: {
+      base: {
+        '.icon': {
+          color: '{color.gray.400}',
+          '@dark': {
+            color: '{color.gray.500}',
+          }
+        },
+
+        '.combobox-button': {
+          borderRadius: '{radii.md}',
+          boxShadow: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+          borderColor: '{color.gray.200}',
+          backgroundColor: '{color.white}',
+
+          '&:focus': {
+            ring: '-1px',
+            ringOffSetColor: '{color.white} !important',
+            borderColor: '{color.transparent}',
+            ringColor: '{color.gray.900} !important',
+          },
+
+          '@dark': {
+            borderColor: '{color.gray.800}',
+            backgroundColor: '{color.gray.900}',
+
+            '&:focus': {
+              ring: '-1px',
+              borderColor: '{color.transparent}',
+              ringOffSetColor: '{color.gray.100} !important',
+              ringColor: '{color.gray.100} !important',
+            }
+          },
+        }
+      },
+      invert: {
+        '.icon': {
+          color: '{color.gray.400}',
+        },
+        '.combobox-button': {
+          backgroundColor: '{color.gray.900}',
+          color: '{color.white}',
+          borderColor: '{color.gray.900}',
+          borderRadius: '{radii.lg}',
+          shadow: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+
+          '&:focus': {
+            ringOffsetColor: '{color.gray.900} !important',
+            ringColor: '{color.white} !important'
+          },
+
+          '@dark': {
+            backgroundColor: '{color.white}',
+            color: '{color.black}',
+            borderColor: '{color.gray.100}',
+
+            '&:focus': {
+              ringOffsetColor: '{color.gray.100} !important',
+              ringColor: '{color.black} !important'
+            }
+          },
+        }
+      },
+      options: {
+        default: 'base'
+      }
+    }
   }
 })
 </style>

@@ -95,9 +95,6 @@
                 name="Message"
                 placeholder="Message"
                 required
-                size="xl"
-                variant="outline"
-                custom-class="flex-1"
               />
             </AppFormGroup>
 

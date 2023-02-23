@@ -1,5 +1,5 @@
 <template>
-  <AppSlideover v-if="open" :transition="false" :overlay="false" base-class="relative flex-1 flex flex-col w-full focus:outline-none max-w-md u-bg-white border-r border-r-gray-300 dark:border-r-gray-700">
+  <AppSlideover v-if="visible" :visible="visible">
     <template #header>
       <button v-if="selectedLink" type="button" class="flex-1 flex items-start focus:outline-none focus-visible:outline-2" @click="selectedLink = null">
         <Icon name="uil:arrow-left" size="28px" class="flex-shrink-0 u-text-gray-900" />
@@ -53,7 +53,7 @@ if (!navigation.value) {
 
 const route = useRoute()
 
-const { close, open } = useSlideover()
+const { close, visible } = useSlideover()
 
 const selectedLink: Ref<NavItem | null> = ref(null)
 
