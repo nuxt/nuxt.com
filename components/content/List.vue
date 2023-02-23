@@ -26,7 +26,7 @@ export default defineComponent({
     type: {
       type: String,
       default: 'primary',
-      validator: (value: string) => ['primary', 'info', 'success', 'warning', 'danger'].includes(value)
+      validator: (value: string) => ['primary', 'info', 'success', 'warning', 'danger', 'default'].includes(value)
     }
   },
   setup (props) {
@@ -75,5 +75,8 @@ export default defineComponent({
 /* Danger */
 .list-danger {
   @apply text-red-500 dark:text-red-400;
+}
+.list-default {
+  @apply text-gray-500 dark:text-gray-200;
 }
 </style>
