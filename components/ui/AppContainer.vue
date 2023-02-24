@@ -20,7 +20,7 @@ const props = defineProps({
   },
   constrainedClass: {
     type: String,
-    default: () =>  uiPreset.container.constrained
+    default: ''
   }
 })
 
