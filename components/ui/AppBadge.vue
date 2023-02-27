@@ -21,24 +21,21 @@ defineProps({
 <style lang="ts" scoped>
 css({
   '.app-badge': {
-    '--badge-bg-base': (props) => `{color.${props.color}.100}`,
-    '--badge-bg-base-dark': (props) => `{color.${props.color}.700}`,
-    '--badge-text-base': (props) => `{color.${props.color}.800}`,
-    '--badge-text-base-dark': (props) => `{color.${props.color}.100}`,
-
     display: 'inline-flex',
     alignItems: 'center',
-    fontWeight: '{fontWeight.medium}'
+    fontWeight: '{fontWeight.medium}',
+    fontSize: (props) => `{fontSize.${props.size === 'xs' ? 'xs' : 'sm'}}`,
+    py: (props) => `{size.${props.size === 'xl' ? '4' : '2'}}`
   },
   variants: {
     variant: {
       base: {
-        backgroundColor: '{badge.bg.base}',
-        color: '{badge.text.base}',
+        backgroundColor: (props) => `{color.${props.color}.100}`,
+        color: (props) => `{color.${props.color}.800}`,
 
         '@dark': {
-          backgroundColor: '{badge.bg.base.dark}',
-          color: '{badge.text.base.dark}'
+          backgroundColor: (props) => `{color.${props.color}.700}`,
+          color: (props) => `{color.${props.color}.100}`
         }
       },
       primary: {
@@ -65,24 +62,16 @@ css({
     },
     size: {
       sm: {
-        fontSize: '{fontSize.xs}',
         px: '{size.8}',
-        py: '{size.2}'
       },
       md: {
-        fontSize: '{fontSize.sm}',
         px: '{size.10}',
-        py: '{size.2}'
       },
       lg: {
-        fontSize: '{fontSize.sm}',
         px: '{size.12}',
-        py: '{size.2}'
       },
       xl: {
-        fontSize: '{fontSize.sm}',
         px: '{size.16}',
-        py: '{size.4}'
       },
       options: {
         default: 'md'
