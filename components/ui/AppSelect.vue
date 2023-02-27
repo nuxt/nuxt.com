@@ -69,7 +69,7 @@ import {
   ComboboxOptions,
   ComboboxOption
 } from '@headlessui/vue'
-import { classNames } from '../../utils'
+import { popperOffsets } from '@popperjs/core'
 import { uiPreset } from '../../ui/preset'
 import type { PopperOptions } from 'types'
 
@@ -118,69 +118,9 @@ const props = defineProps({
     type: String,
     default: 'uil:angle-down'
   },
-  customClass: {
-    type: String,
-    default: null
-  },
-  listInputClass: {
-    type: String,
-    default: () => uiPreset.selectCustom.list.input
-  },
-  listTransitionClass: {
-    type: Object,
-    default: () => uiPreset.selectCustom.list.transition
-  },
-  listOptionBaseClass: {
-    type: String,
-    default: () => uiPreset.selectCustom.list.option.base
-  },
-  listOptionContainerClass: {
-    type: String,
-    default: () => uiPreset.selectCustom.list.option.container
-  },
-  listOptionActiveClass: {
-    type: String,
-    default: () => uiPreset.selectCustom.list.option.active
-  },
-  listOptionInactiveClass: {
-    type: String,
-    default: () => uiPreset.selectCustom.list.option.inactive
-  },
-  listOptionSelectedClass: {
-    type: String,
-    default: () => uiPreset.selectCustom.list.option.selected
-  },
-  listOptionUnselectedClass: {
-    type: String,
-    default: () => uiPreset.selectCustom.list.option.unselected
-  },
-  listOptionDisabledClass: {
-    type: String,
-    default: () => uiPreset.selectCustom.list.option.disabled
-  },
-  listOptionEmptyClass: {
-    type: String,
-    default: () => uiPreset.selectCustom.list.option.empty
-  },
   listOptionIcon: {
     type: String,
     default: 'uil:check'
-  },
-  listOptionIconBaseClass: {
-    type: String,
-    default: () => uiPreset.selectCustom.list.option.icon.base
-  },
-  listOptionIconActiveClass: {
-    type: String,
-    default: () => uiPreset.selectCustom.list.option.icon.active
-  },
-  listOptionIconInactiveClass: {
-    type: String,
-    default: () => uiPreset.selectCustom.list.option.icon.inactive
-  },
-  listOptionIconSizeClass: {
-    type: String,
-    default: () => uiPreset.selectCustom.list.option.icon.size
   },
   textAttribute: {
     type: String,
@@ -199,9 +139,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'open', 'close'])
 
-const popperOptions = computed<PopperOptions>(() => defu({}, props.popperOptions, uiPreset.selectCustom.popperOptions))
-
-const [trigger, container] = usePopper(popperOptions.value)
+const [trigger, container] = usePopper({ placement: 'bottom-end' })
 
 const query = ref('')
 const searchInput = ref<ComponentPublicInstance<HTMLElement>>()

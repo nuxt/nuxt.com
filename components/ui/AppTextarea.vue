@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, nextTick } from 'vue'
+import { ref, watch, onMounted, nextTick } from 'vue'
 
 const props = defineProps({
   modelValue: {
@@ -57,7 +57,7 @@ const props = defineProps({
   autocomplete: {
     type: String,
     default: null
-  },
+  }
 })
 
 const emit = defineEmits(['update:modelValue', 'focus', 'blur'])

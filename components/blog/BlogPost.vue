@@ -1,12 +1,14 @@
 <template>
   <CardListItem
     :to="page._path"
-    class="group h-full"
-    header-class="flex"
-    body-class="flex flex-col h-full"
+    class="group h-full app-card-blog"
     title-class="text-2xl"
     wrapper-content-class="p-4 grow h-full flex items-center"
     :truncate="false"
+    :header-padding="false"
+    :body-padding="false"
+    :footer-padding="false"
+
   >
     <template #header>
       <div class="w-full">
@@ -39,3 +41,24 @@ defineProps({
   }
 })
 </script>
+
+<style lang="ts">
+css({
+  '.app-card-blog': {
+    height: '{size.full}',
+    display: 'flex !important',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+
+    padding: '0px',
+
+    '> .header': {
+      padding: '0px',
+
+      '@sm': {
+        padding: '0px',
+      }
+    },
+  }
+})
+</style>

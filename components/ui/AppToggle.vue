@@ -11,7 +11,7 @@
         :style="`${active ? 'opacity: 1; transition-timing-function: ease-in; transition-duration: 0.2s' : 'opacity: 0; transition-timing-function: ease-out; transition-duration: 0.1s'}`"
         aria-hidden="true"
       >
-        <Icon :name="iconOn" class="icon-on"/>
+        <Icon :name="iconOn" class="icon-on" />
       </span>
       <span
         v-if="iconOff"
@@ -41,7 +41,7 @@ const props = defineProps({
   iconOff: {
     type: String,
     default: null
-  },
+  }
 })
 
 const emit = defineEmits(['update:modelValue'])

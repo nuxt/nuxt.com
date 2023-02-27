@@ -37,7 +37,7 @@
       <div class="container max-w-4xl pt-8 xl:pt-0">
         <div class="relative overflow-hidden border-b u-border-gray-400">
           <ContentRenderer v-if="page" :value="page" class="pb-12 max-w-none" />
-          <NewsletterForm class="mt-4 mb-4">
+          <NewsletterForm class="mt-4 mb-4 ml-1">
             Subscribe to our newsletter to not miss the upcoming articles and resources.
           </NewsletterForm>
         </div>

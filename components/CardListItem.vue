@@ -73,7 +73,11 @@ defineProps({
     <p v-if="$slots.description" class="u-text-gray-500" :class="descriptionClass">
       <slot name="description" />
     </p>
-    <slot v-if="$slots.footer" name="footer" />
+
+    <template v-if="$slots.footer" #footer>
+      <slot name="footer" />
+    </template>
+
 
     <NuxtLink :to="to" :target="target">
       <span class="sr-only">Link to {{ to }}</span>

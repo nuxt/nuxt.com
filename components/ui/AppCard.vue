@@ -15,6 +15,7 @@
 <script setup lang="ts">
 import { PinceauTheme } from 'pinceau'
 import { computedStyle } from 'pinceau/runtime'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { isColorPalette } from '../../utils'
 
 defineProps({
@@ -58,7 +59,8 @@ css({
     },
     '> .footer': {
       borderColor: '{color.gray.200}',
-      borderTopWidth: '{size.1}',
+      borderStyle: 'solid',
+      width: '100%',
 
       '@dark': {
         borderColor: '{color.gray.800}',
@@ -260,7 +262,18 @@ css({
       options: {
         default: true
       }
-    }
+    },
+    footerBorder: {
+      true: {
+        borderTopWidth: '{size.1}',
+      },
+      false: {
+        border: 'none',
+      },
+      options: {
+        default: false
+      }
+    },
   }
 })
 </style>
