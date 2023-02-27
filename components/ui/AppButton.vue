@@ -94,7 +94,17 @@ css({
     '.icon': {
       pointerEvents: 'none',
       flexShrink: 0,
+      width: (props) => `{size.${props.size === 'xxs' ? '12' : props.size === 'xs' ? '16' : '20'}}`,
+      height: (props) => `{size.${props.size === 'xxs' ? '12' : props.size === 'xs' ? '16' : '20'}}`,
     },
+
+    '.icon-leading': {
+      marginRight: (props) => `{size.${['xxs', 'xs', 'sm'].includes(props.size) ? '8' : '12'}}`
+    },
+
+    '.icon-trailing': {
+      marginLeft: (props) => `{size.${['xxs', 'xs', 'sm'].includes(props.size) ? '8' : '12'}}`
+    }
   },
 
   variants: {
@@ -121,7 +131,6 @@ css({
           opacity: '0.75'
         }
       },
-
       gray: {
         borderWidth: '{size.1}',
         borderColor: '{color.transparent}',
@@ -274,7 +283,6 @@ css({
           ringOffsetColor: '{color.black}',
         }
       },
-
       'primary-gradient': {
         ringColor: '{color.green.400}',
         ringOffsetColor: '{color.white}',
@@ -323,11 +331,6 @@ css({
         py: '{size.4}',
         fontSize: '{button.fontSize.xs}',
 
-        '.icon': {
-          width: '{size.12}',
-          height: '{size.12}',
-        },
-
         '.icon-leading': {
           marginRight: '{size.8}'
         },
@@ -340,92 +343,27 @@ css({
         px: '{size.10}',
         py: '{size.4}',
         fontSize: '{button.fontSize.xs}',
-
-        '.icon': {
-          width: '{size.16}',
-          height: '{size.16}'
-        },
-
-        '.icon-leading': {
-          marginRight: '{size.8}'
-        },
-
-        '.icon-trailing': {
-          marginLeft: '{size.8}'
-        }
       },
       sm: {
         px: '{size.12}',
         py: '{size.8}',
         lineHeight: '1rem',
         fontSize: '{button.fontSize.sm}',
-
-        '.icon': {
-          width: '{size.20}',
-          height: '{size.20}'
-        },
-
-        '.icon-leading': {
-          marginRight: '{size.8}'
-        },
-
-        '.icon-trailing': {
-          marginLeft: '{size.8}'
-        }
       },
       md: {
         px: '{size.16}',
         py: '{size.8}',
         fontSize: '{button.fontSize.md}',
-
-        '.icon': {
-          width: '{size.20}',
-          height: '{size.20}'
-        },
-
-        '.icon-leading': {
-          marginRight: '{size.12}'
-        },
-
-        '.icon-trailing': {
-          marginLeft: '{size.12}'
-        }
       },
       lg: {
         px: '{size.16}',
         py: '{size.8}',
         fontSize: '{button.fontSize.lg}',
-
-        '.icon': {
-          width: '{size.20}',
-          height: '{size.20}'
-        },
-
-        '.icon-leading': {
-          marginRight: '{size.12}'
-        },
-
-        '.icon-trailing': {
-          marginLeft: '{size.12}'
-        }
       },
       xl: {
         px: '{size.24}',
         py: '{size.12}',
         fontSize: '{button.fontSize.xl}',
-
-        '.icon': {
-          width: '{size.20}',
-          height: '{size.20}'
-        },
-
-        '.icon-leading': {
-          marginRight: '{size.12}'
-        },
-
-        '.icon-trailing': {
-          marginLeft: '{size.12}'
-        }
       },
       options: {
         default: 'md'

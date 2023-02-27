@@ -5,7 +5,7 @@
       :icon="orderBy.icon"
       size="xs"
       variant="input-group"
-      class="order-button"
+      class="app-button-module-order"
       @click="switchOrder"
     />
     <AppSelect
@@ -85,7 +85,7 @@ css({
       }
     },
   },
-  '.order-button': {
+  '.app-button-module-order': {
     borderTopRightRadius: '0px',
     borderBottomRightRadius: '0px',
     marginRight: '-1px',
@@ -98,6 +98,10 @@ css({
 
     '> .icon': {
       flexShrink: 0,
+    },
+
+    '.icon-leading': {
+      marginRight: '{size.0} !important'
     },
 
     ':deep(svg)': {
