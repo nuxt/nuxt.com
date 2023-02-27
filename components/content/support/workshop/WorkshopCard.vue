@@ -1,5 +1,8 @@
 <template>
-  <div class="container py-6 flex flex-col gap-y-2" :class="borderClass">
+  <div
+    class="container py-6 flex flex-col gap-y-2 w-full"
+    :class="{ 'border u-border-gray-200 rounded-lg u-bg-gray-50': border }"
+  >
     <div v-if="backgroundImage" :class="backgroundImageClass">
       <img
         :src="`${backgroundImage.path}-dark.${backgroundImage.format}`"
@@ -32,9 +35,9 @@ import type { PropType } from 'vue'
 import type { Image } from 'types'
 
 defineProps({
-  borderClass: {
-    type: String,
-    default: 'border u-border-gray-200 rounded-lg u-bg-gray-50'
+  border: {
+    type: Boolean,
+    default: true
   },
   backgroundImageClass: {
     type: String,

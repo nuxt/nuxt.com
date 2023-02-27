@@ -4,7 +4,7 @@
     <li
       v-for="item of list"
       :key="item.label"
-      class="flex flex-row gap-1 mt-8"
+      class="flex flex-row gap-1 mt-4 sm:mt-8"
     >
       <Icon :name="item.icon" class="w-6 h-6" />
 
