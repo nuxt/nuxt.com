@@ -48,6 +48,8 @@ css({
 
     '@lg': {
       paddingRight: '{space.4}',
+      minWidth: '80px',
+      marginLeft: '{size.1}'
     }
   }
 })

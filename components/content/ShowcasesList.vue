@@ -11,16 +11,16 @@
       </template>
 
       <template #heading>
-        <h2 class="py-1.5 font-semibold u-text-gray-900 text-lg">
+        <h2 class="py-1.5 font-semibold u-text-gray-900 text-lg mt-8">
           {{ selectedCategory?.title }}
         </h2>
       </template>
 
       <template #filters>
-        <ShowcasesFilterCategory :categories="categories" :selected-category="selectedCategory" class="lg:hidden" @update:selected-category="replaceRoute('category', $event)" />
+        <ShowcasesFilterCategory :categories="categories" :selected-category="selectedCategory" class="lg:hidden pb-4" @update:selected-category="replaceRoute('category', $event)" />
       </template>
 
-      <ul v-if="selectedShowcases.length" class="grid grid-cols-1 gap-8 mt-8 sm:grid-cols-2 xl:grid-cols-3">
+      <ul v-if="selectedShowcases.length" class="grid grid-cols-1 gap-8 sm:grid-cols-2 xl:grid-cols-3 mt-4">
         <li v-for="(showcase, key) in selectedShowcases" :key="showcase.id">
           <CardListItem
             :header-padding="false"

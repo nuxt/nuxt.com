@@ -313,7 +313,7 @@ css({
             borderWidth: '{size.1}',
             borderColor: '{color.gray.200}',
             borderRadius: '{radii.md}',
-            boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+            boxShadow: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
 
             '@dark': {
               backgroundColor: '{color.gray.900}',

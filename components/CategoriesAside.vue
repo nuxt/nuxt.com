@@ -1,11 +1,12 @@
 <template>
   <nav>
-    <div class="py-1.5 flex items-center justify-between gap-3">
-      <p class="py-1.5 font-semibold u-text-gray-900 text-lg">
+    <div class="py-1.5 gap-3">
+      <slot name="header" />
+      <p class="py-1.5 font-semibold u-text-gray-900 text-lg flex flex-col gap-y-2 pt-8">
         Categories
       </p>
 
-      <slot name="header" />
+
     </div>
 
     <ul v-if="categories.length" class="flex flex-col py-4 gap-y-3">
