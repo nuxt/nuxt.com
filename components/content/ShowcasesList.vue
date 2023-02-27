@@ -26,11 +26,11 @@
             :header-padding="false"
             :body-padding="false"
             :header-block="true"
-            wrapper-content-class="px-4 py-3"
+            wrapper-content-class="px-4 pt-4"
             :to="showcase.url"
             target="_blank"
             title-class="text-md"
-            description-class="text-sm truncate"
+            description-class="text-sm truncate ml-4 pb-4"
           >
             <template #header>
               <div class="aspect-w-4 aspect-h-2">
