@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { ComputedRef, PropType, Ref } from 'vue'
+import type { ComputedRef, PropType } from 'vue'
 import { Icon } from '#components'
 
 const iconTypeMap = {
@@ -24,7 +24,7 @@ export default defineComponent({
      * Type of list
      */
     type: {
-      type: String as PropType<'primary', 'info', 'success', 'warning', 'danger', 'default'>,
+      type: String as PropType<'primary' | 'info' | 'success' | 'warning' | 'danger' | 'default'>,
       default: 'primary'
     }
   },
