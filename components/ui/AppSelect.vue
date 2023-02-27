@@ -2,81 +2,57 @@
   <Combobox
     v-slot="{ open }"
     :by="by"
+    class="app-select"
     :model-value="modelValue"
     :multiple="multiple"
     :nullable="nullable"
     :disabled="disabled"
     as="div"
-    :class="wrapperClass"
     @update:model-value="onUpdate"
   >
-    <input :value="modelValue" :required="required" class="absolute inset-0 w-px opacity-0 cursor-default" tabindex="-1">
+    <input :value="modelValue" :required="required" tabindex="-1">
 
-    <ComboboxButton ref="trigger" v-slot="{ disabled: buttonDisabled }" as="div" class="inline-flex w-full">
+    <ComboboxButton ref="trigger" v-slot="{ disabled: buttonDisabled }" as="div" class="app-select-button">
       <slot :open="open" :disabled="buttonDisabled">
-        <button :class="selectCustomClass" :disabled="disabled" type="button">
+        <button :disabled="disabled" type="button">
           <slot name="label">
-            <span v-if="modelValue" class="block truncate">{{ (modelValue as any)[textAttribute] }}</span>
-            <span v-else class="block truncate u-text-gray-400">{{ placeholder }}</span>
+            <span v-if="modelValue" class="label">{{ (modelValue as any)[textAttribute] }}</span>
+            <span v-else class="label">{{ placeholder }}</span>
           </slot>
           <slot name="icon">
-            <span :class="iconWrapperClass">
-              <Icon v-if="icon" :name="icon" :class="iconClass" aria-hidden="true" />
+            <span class="icon-wrapper">
+              <Icon v-if="icon" name="uil:angle-down" aria-hidden="true" />
             </span>
           </slot>
         </button>
       </slot>
     </ComboboxButton>
 
-    <div v-if="open" ref="container" :class="[listContainerClass, listWidthClass]">
-      <transition appear v-bind="listTransitionClass">
-        <ComboboxOptions static :class="listBaseClass">
-          <ComboboxInput
-            v-if="searchable"
-            ref="searchInput"
-            :display-value="() => query"
-            name="q"
-            placeholder="Search..."
-            autofocus
-            autocomplete="off"
-            :class="listInputClass"
-            @change="query = $event.target.value"
-          />
+    <div v-if="open" ref="container" class="app-select-list">
+      <transition appear>
+        <ComboboxOptions static class="app-select-list-options">
           <ComboboxOption
             v-for="(option, index) in filteredOptions"
-            v-slot="{ active, selected, disabled: optionDisabled }"
+            v-slot="{ active, selected, disabled }"
             :key="index"
             as="template"
             :value="option"
             :disabled="option.disabled"
           >
-            <li :class="resolveOptionClass({ active, selected, disabled: optionDisabled })">
-              <div :class="listOptionContainerClass">
+            <li>
+              <div
+                :style="`font-weight: ${selected ? '600' : '500'}; opacity: ${disabled ? '0.5;' : '1;'}; cursor: ${disabled ? 'not-allowed;' : 'default;'}`"
+              >
                 <slot name="option" :option="option" :active="active" :selected="selected">
-                  <span class="block truncate">{{ option[textAttribute] }}</span>
+                  <span class="option-label">{{ option[textAttribute] }}</span>
                 </slot>
               </div>
 
-              <span v-if="selected" :class="resolveOptionIconClass({ active })">
-                <Icon v-if="listOptionIcon" :name="listOptionIcon" :class="listOptionIconSizeClass" aria-hidden="true" />
+              <span v-if="selected">
+                <Icon v-if="listOptionIcon" :name="listOptionIcon" aria-hidden="true" />
               </span>
             </li>
           </ComboboxOption>
-
-          <ComboboxOption v-if="creatable && queryOption && !filteredOptions.length" v-slot="{ active, selected }" :value="queryOption" as="template">
-            <li :class="resolveOptionClass({ active, selected })">
-              <div :class="listOptionContainerClass">
-                <slot name="option-create" :option="queryOption" :active="active" :selected="selected">
-                  <span class="block truncate">Create "{{ queryOption[textAttribute] }}"</span>
-                </slot>
-              </div>
-            </li>
-          </ComboboxOption>
-          <p v-else-if="searchable && query && !filteredOptions.length" :class="listOptionEmptyClass">
-            <slot name="option-empty" :query="query">
-              No results found for "{{ query }}".
-            </slot>
-          </p>
         </ComboboxOptions>
       </transition>
     </div>
@@ -91,8 +67,7 @@ import {
   Combobox,
   ComboboxButton,
   ComboboxOptions,
-  ComboboxOption,
-  ComboboxInput
+  ComboboxOption
 } from '@headlessui/vue'
 import { classNames } from '../../utils'
 import { uiPreset } from '../../ui/preset'
@@ -139,51 +114,13 @@ const props = defineProps({
     type: String,
     default: 'Select an option'
   },
-  size: {
-    type: String,
-    default: 'md',
-    validator (value: string) {
-      return Object.keys(uiPreset.selectCustom.size).includes(value)
-    }
-  },
-  wrapperClass: {
-    type: String,
-    default: () => uiPreset.selectCustom.wrapper
-  },
-  baseClass: {
-    type: String,
-    default: () => uiPreset.selectCustom.base
-  },
   icon: {
     type: String,
-    default: () => uiPreset.selectCustom.icon.name
-  },
-  iconBaseClass: {
-    type: String,
-    default: () => uiPreset.selectCustom.icon.base
+    default: 'uil:angle-down'
   },
   customClass: {
     type: String,
     default: null
-  },
-  appearance: {
-    type: String,
-    default: 'default',
-    validator (value: string) {
-      return Object.keys(uiPreset.selectCustom.appearance).includes(value)
-    }
-  },
-  listBaseClass: {
-    type: String,
-    default: () => uiPreset.selectCustom.list.base
-  },
-  listContainerClass: {
-    type: String,
-    default: () => uiPreset.selectCustom.list.container
-  },
-  listWidthClass: {
-    type: String,
-    default: () => uiPreset.selectCustom.list.width
   },
   listInputClass: {
     type: String,
@@ -227,7 +164,7 @@ const props = defineProps({
   },
   listOptionIcon: {
     type: String,
-    default: () => uiPreset.selectCustom.list.option.icon.name
+    default: 'uil:check'
   },
   listOptionIconBaseClass: {
     type: String,
@@ -256,7 +193,8 @@ const props = defineProps({
   popperOptions: {
     type: Object as PropType<PopperOptions>,
     default: () => ({})
-  }
+  },
+  ...variants
 })
 
 const emit = defineEmits(['update:modelValue', 'open', 'close'])
@@ -268,25 +206,6 @@ const [trigger, container] = usePopper(popperOptions.value)
 const query = ref('')
 const searchInput = ref<ComponentPublicInstance<HTMLElement>>()
 
-const selectCustomClass = computed(() => {
-  return classNames(
-    props.baseClass,
-    uiPreset.selectCustom.size[props.size],
-    uiPreset.selectCustom.spacing[props.size],
-    uiPreset.selectCustom.appearance[props.appearance],
-    uiPreset.selectCustom.trailing.spacing[props.size],
-    props.customClass
-  )
-})
-
-const iconClass = computed(() => {
-  return classNames(
-    props.iconBaseClass,
-    uiPreset.selectCustom.icon.size[props.size],
-    'mr-2'
-  )
-})
-
 const filteredOptions = computed(() =>
   query.value === ''
     ? props.options
@@ -297,14 +216,6 @@ const filteredOptions = computed(() =>
     })
 )
 
-const queryOption = computed(() => {
-  return query.value === '' ? null : { [props.textAttribute]: query.value }
-})
-
-const iconWrapperClass = classNames(
-  uiPreset.selectCustom.icon.trailing.wrapper
-)
-
 watch(container, (value) => {
   if (value) {
     emit('open')
@@ -312,22 +223,6 @@ watch(container, (value) => {
     emit('close')
   }
 })
-
-function resolveOptionClass ({ active, selected, disabled }: { active: boolean, selected: boolean, disabled?: boolean }) {
-  return classNames(
-    props.listOptionBaseClass,
-    active ? props.listOptionActiveClass : props.listOptionInactiveClass,
-    selected ? props.listOptionSelectedClass : props.listOptionUnselectedClass,
-    disabled && props.listOptionDisabledClass
-  )
-}
-
-function resolveOptionIconClass ({ active }: { active: boolean }) {
-  return classNames(
-    props.listOptionIconBaseClass,
-    active ? props.listOptionIconActiveClass : props.listOptionIconInactiveClass
-  )
-}
 
 function onUpdate (event: any) {
   if (query.value && searchInput.value?.$el) {
@@ -338,3 +233,238 @@ function onUpdate (event: any) {
   emit('update:modelValue', event)
 }
 </script>
+
+<style lang="ts" scoped>
+css({
+  '.app-select': {
+    position: 'relative',
+
+    '> input': {
+      position: 'absolute',
+      inset: 0,
+      opacity: 0,
+      cursor: 'default',
+      width: '{size.0}'
+    },
+
+    '.app-select-button': {
+      display: 'inline-flex',
+      width: '{size.full}',
+
+      '> button': {
+        position: 'relative',
+        display: 'block',
+        width: '{size.full}',
+        textAlign: 'left',
+        cursor: 'default',
+        paddingRight: '{size.40}',
+        fontSize: '{fontSize.sm}',
+
+        '&:disabled': {
+          cursor: 'not-allowed',
+          opacity: '0.75',
+          outline: 'none'
+        },
+
+        '.label': {
+          textAlign: 'left',
+          lineClamp: 1,
+          wordBreak: 'break-all',
+          color: (props) => `color: ${props.modelValue ? '{color.gray.400}' : '{color.current}'}`,
+
+          '@dark': {
+            color: (props) => `color: ${props.modelValue ? '{color.gray.600}' : '{color.current}'}`
+          }
+        },
+
+        '.icon-wrapper': {
+          position: 'absolute',
+          top: 0,
+          bottom: 0,
+          right: 0,
+          display: 'flex',
+          alignItems: 'center',
+          pointerEvents: 'none',
+
+          '.icon': {
+            marginRigth: '{size.8}',
+            color: '{color.gray.400}',
+            height: '{size.20}',
+            width: '{size.20}',
+            marginRight: (props) => `{size.${props.size === 'sm' ? '8' : '12'}}`,
+
+            '@dark': {
+              color: '{color.gray.600}'
+            }
+          }
+        }
+      }
+    },
+    '.app-select-list': {
+      zIndex: 20,
+
+      '.app-select-list-options': {
+        backgroundColor: '{color.white}',
+        borderRadius: '{radii.md}',
+        ring: '{size.0}',
+        ringOffset: '{size.1}',
+        ringOffsetColor: '{color.gray.200}',
+        borderWidth: '{size.0}',
+        borderColor: '{color.transparent}',
+        overflowY: 'auto',
+        padding: '{size.4}',
+        maxHeight: '240px',
+        width: '{size.full}',
+
+        '@dark': {
+          ringOffsetColor: '{color.gray.800}'
+        },
+
+        '> li': {
+          cursor: 'default',
+          userSelect: 'none',
+          position: 'relative',
+          py: '{size.6}',
+          paddingLeft: '{size.8}',
+          paddingRight: '{size.32}',
+          borderRadius: '{radii.md}',
+          fontSize: '{fontSize.sm}',
+
+          '&:hover': {
+            color: '{color.gray.900}',
+            backgroundColor: '{color.gray.100}',
+
+            '@dark': {
+              color: '{color.gray.100}',
+              backgroundColor: '{color.gray.900}',
+            }
+          },
+
+          '> div > span': {
+            textAlign: 'left',
+            lineClamp: 1,
+            wordBreak: 'break-all',
+            display: 'block',
+          },
+
+          '> span': {
+            top: 0,
+            bottom: 0,
+            right: 0,
+            position: 'absolute',
+            display: 'flex',
+            alignItems: 'center',
+            paddingRight: '{size.8}',
+
+            '.icon': {
+              width: '{size.16}',
+              height: '{size.16}',
+            }
+          }
+        }
+      }
+    }
+  },
+
+  variants: {
+    appearance: {
+      base: {
+        '.app-select-button': {
+          '> button': {
+            backgroundColor: '{color.white}',
+            borderWidth: '{size.1}',
+            borderColor: '{color.gray.200}',
+            borderRadius: '{radii.md}',
+            boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+
+            '@dark': {
+              backgroundColor: '{color.gray.900}',
+              borderColor: '{color.gray.800}',
+            },
+
+            '&:focus': {
+              ringOffset: '{size.1}',
+              ring: '{size.0}',
+              ringOffsetColor: '{color.gray.900}',
+              borderColor: '{color.gray.900}',
+
+              '@dark': {
+                ringOffsetColor: '{color.gray.100}',
+                borderColor: '{color.gray.100}',
+              }
+            }
+          }
+        }
+      },
+      options: {
+        default: 'base'
+      }
+    },
+    size: {
+      xs: {
+        '.app-select-button': {
+          '> button': {
+            px: '{size.10}',
+            py: '{size.6}',
+            fontSize: '{fontSize.xs}',
+          }
+        }
+      },
+      sm: {
+        '.app-select-button': {
+          '> button': {
+            px: '{size.12}',
+            py: '{size.8}',
+            fontSize: '{fontSize.sm}',
+            lineHeight: '{lead.4}',
+          }
+        }
+      },
+      md: {
+        '.app-select-button': {
+          '> button': {
+            px: '{size.16}',
+            py: '{size.8}',
+            fontSize: '{fontSize.sm}',
+          }
+        }
+      },
+      lg: {
+        '.app-select-button': {
+          '> button': {
+            px: '{size.16}',
+            py: '{size.8}',
+            fontSize: '{fontSize.base}',
+          }
+        },
+      },
+      xl: {
+        '.app-select-button': {
+          '> button': {
+            px: '{size.24}',
+            py: '{size.12}',
+            fontSize: '{fontSize.base}',
+          }
+        },
+      },
+      options: {
+        default: 'md'
+      }
+    }
+  }
+})
+</style>
+
+<style lang="postcss">
+.v-enter-active {
+  transition: 'all ease-in 0.1s';
+}
+
+.v-leave-from {
+  opacity: 1;
+}
+
+.v-leave-to {
+  opacity: 0;
+}
+</style>

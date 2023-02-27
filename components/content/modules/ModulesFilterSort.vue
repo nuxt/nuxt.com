@@ -14,8 +14,7 @@
       :options="sorts"
       size="sm"
       text-attribute="title"
-      custom-class="rounded-l-none"
-      class="min-w-[144px] w-full md:w-auto"
+      class="app-select-modules-sort"
     />
   </div>
 </template>
@@ -69,8 +68,23 @@ function switchOrder () {
 }
 </script>
 
-<style scoped lang="ts">
+<style lang="ts">
 css({
+  '.app-select-modules-sort': {
+    minWidth: '144px',
+    width: '{size.full}',
+
+    '@md': {
+      width: 'auto'
+    },
+
+    '> div': {
+      '> button': {
+        borderTopLeftRadius: '{radii.none} !important',
+        borderBottomLeftRadius: '{radii.none} !important',
+      }
+    },
+  },
   '.order-button': {
     borderTopRightRadius: '0px',
     borderBottomRightRadius: '0px',

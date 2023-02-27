@@ -6,7 +6,7 @@
     size="sm"
     placeholder="Category"
     text-attribute="title"
-    class="min-w-[160px]"
+    class="app-select-showcases-category"
   />
 </template>
 
@@ -36,3 +36,11 @@ const category: WritableComputedRef<FilterItem | undefined> = computed({
   }
 })
 </script>
+
+<style lang="ts">
+css({
+  'app-select-showcases-category': {
+    minWidth: '160px'
+  }
+})
+</style>

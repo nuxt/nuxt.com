@@ -5,7 +5,7 @@
     :options="typesWithPlaceholder"
     size="sm"
     placeholder="Type"
-    class="min-w-[128px]"
+    class="app-select-jobs-type"
     text-attribute="title"
   />
 </template>
@@ -44,3 +44,11 @@ const type: WritableComputedRef<any> = computed({
   }
 })
 </script>
+
+<style lang="ts">
+css({
+  'app-select-jobs-type': {
+    minWidth: '128px'
+  }
+})
+</style>

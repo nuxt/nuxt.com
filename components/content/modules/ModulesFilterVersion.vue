@@ -5,22 +5,17 @@
     :options="versions"
     :size="size"
     text-attribute="key"
-    appearance="invert"
-    class="custom-class"
-    icon-base-class="text-black"
-    list-base-class="absolute right-0 z-10 w-full p-1 mt-1 overflow-auto text-sm rounded-md shadow-lg sm:w-32 u-bg-black max-h-60 ring-1 u-ring-white"
-    list-option-active-class="bg-gray-100 u-text-gray-900 dark:bg-gray-900"
-    list-option-inactive-class="u-text-gray-50"
+    class="app-select-modules-version"
   />
 </template>
 
 <script setup lang="ts">
 import type { PropType, WritableComputedRef } from 'vue'
-import type { FilterItem } from 'types'
+import type { FilterItem, Select } from 'types'
 
 const props = defineProps({
   size: {
-    type: String as PropType<'xs' | 'sm'>,
+    type: String as PropType<Select['size']>,
     default: 'xs'
   },
   versions: {
@@ -46,8 +41,14 @@ const version: WritableComputedRef<FilterItem> = computed({
 })
 </script>
 
-<style lang="postcss">
-.custom-class > div > button > span {
-  @apply text-black
-}
+<style lang="ts">
+css({
+  '.app-select-modules-version': {
+    paddingRight: '{space.0}',
+
+    '@lg': {
+      paddingRight: '{space.4}',
+    }
+  }
+})
 </style>
