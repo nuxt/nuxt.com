@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { ComputedRef } from 'vue'
+import type { ComputedRef, PropType, Ref } from 'vue'
 import { Icon } from '#components'
 
 const iconTypeMap = {
@@ -24,9 +24,8 @@ export default defineComponent({
      * Type of list
      */
     type: {
-      type: String,
-      default: 'primary',
-      validator: (value: string) => ['primary', 'info', 'success', 'warning', 'danger', 'default'].includes(value)
+      type: String as PropType<'primary', 'info', 'success', 'warning', 'danger', 'default'>,
+      default: 'primary'
     }
   },
   setup (props) {

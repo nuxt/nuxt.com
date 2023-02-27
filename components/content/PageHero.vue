@@ -21,9 +21,9 @@
           'sm:py-8': !image
         }"
       >
-        <h1 class="text-sm font-semibold sm:text-sm text-green-400" :class="{ 'text-center': centered }">
+        <p class="text-sm font-semibold sm:text-sm text-green-400" :class="{ 'text-center': centered }">
           <ContentSlot :use="$slots.topTitle" unwrap="p" />
-        </h1>
+        </p>
         <h1 class="text-4xl font-semibold sm:text-5xl u-text-gray-900" :class="{ 'text-center': centered }">
           <ContentSlot :use="$slots.title" unwrap="p" />
         </h1>
