@@ -104,11 +104,11 @@ const props = defineProps({
   },
   image: {
     type: Object as PropType<Image>,
-    default: () => ({})
+    default: () => {}
   },
   backgroundImage: {
     type: Object as PropType<Image>,
-    default: () => ({})
+    default: () => {}
   },
   gradientBorder: {
     type: Boolean,
