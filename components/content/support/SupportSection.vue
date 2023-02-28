@@ -34,7 +34,7 @@ import type { Image } from 'types'
 defineProps({
   image: {
     type: Object as PropType<Image>,
-    default: () => ({})
+    default: () => {}
   },
   to: {
     type: String,
