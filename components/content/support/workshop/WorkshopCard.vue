@@ -45,7 +45,7 @@ defineProps({
   },
   backgroundImage: {
     type: Object as PropType<Image>,
-    default: () => ({})
+    default: () => {}
   }
 })
 </script>
