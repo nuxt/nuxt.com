@@ -3,4 +3,5 @@ export interface Image {
   width?: string
   height?: string
   format?: string
+  cover?: boolean
 }
