@@ -22,6 +22,7 @@
           :src="`${backgroundImage.path}-dark.${backgroundImage.format}`"
           alt=""
           class="h-full hidden dark:block"
+          :class="{'object-cover': backgroundImage.cover}"
           :width="backgroundImage.width"
           :height="backgroundImage.height"
           loading="lazy"
@@ -29,6 +30,7 @@
         <img
           :src="`${backgroundImage.path}-light.${backgroundImage.format}`"
           alt=""
+          :class="{'object-cover': backgroundImage.cover}"
           class="h-full dark:hidden"
           :width="backgroundImage.width"
           :height="backgroundImage.height"
@@ -40,6 +42,7 @@
           :src="`${image.path}-dark.${image.format}`"
           alt=""
           class="h-full rounded-md hidden dark:block"
+          :class="{'object-cover': image.cover}"
           :width="image.width"
           :height="image.height"
           loading="lazy"
@@ -48,6 +51,7 @@
           :src="`${image.path}-light.${image.format}`"
           alt=""
           class="h-full rounded-md dark:hidden"
+          :class="{'object-cover': image.cover}"
           :width="image.width"
           :height="image.height"
           loading="lazy"
@@ -107,11 +111,11 @@ const props = defineProps({
   },
   image: {
     type: Object as PropType<Image>,
-    default: () => ({})
+    default: () => {}
   },
   backgroundImage: {
     type: Object as PropType<Image>,
-    default: () => ({})
+    default: () => {}
   },
   gradientBorder: {
     type: Boolean,
