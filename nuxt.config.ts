@@ -6,7 +6,7 @@ const docsSource: any = {
   name: 'nuxt-docs',
   driver: 'github',
   repo: 'nuxt/nuxt',
-  branch: 'feat/pinceau-migration',
+  branch: 'docs/pinceau-migration',
   dir: 'docs',
   prefix: '/docs',
   token: process.env.NUXT_GITHUB_TOKEN || process.env.GITHUB_TOKEN || ''
