@@ -255,7 +255,8 @@ css({
         width: '{size.full}',
 
         '@dark': {
-          ringOffsetColor: '{color.gray.800}'
+          ringOffsetColor: '{color.gray.800}',
+          backgroundColor: '{color.gray.900}',
         },
 
         '> li': {
@@ -274,7 +275,7 @@ css({
 
             '@dark': {
               color: '{color.gray.100}',
-              backgroundColor: '{color.gray.900}',
+              backgroundColor: '{color.gray.800}',
             }
           },
 
