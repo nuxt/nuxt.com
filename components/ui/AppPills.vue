@@ -1,22 +1,23 @@
 <template>
   <nav class="app-pills">
-    <AppLink
+    <NuxtLink
       v-for="(link, index) of links"
       :key="index"
       :to="link.to"
       :exact="link.exact"
       class="app-link"
-      active-class="active"
-      inactive-class="inactive"
+      :class="{ 'link-active': router.fullPath === link.to }"
     >
       {{ link.label }}
-    </AppLink>
+    </NuxtLink>
   </nav>
 </template>
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
 import type { RouteLocationNormalized } from 'vue-router'
+
+const router = useRoute()
 
 defineProps({
   links: {
@@ -26,37 +27,35 @@ defineProps({
 })
 </script>
 
-<style lang="ts" scoped>
+<style lang="ts">
 css({
+  '.link-active': {
+    backgroundColor: '{color.gray.100} !important',
+    color: '{color.gray.700} !important',
+
+    '@dark': {
+      backgroundColor: '{color.gray.900} !important',
+      color: '{color.gray.100} !important',
+    }
+  },
+
   '.app-pills': {
     display: 'flex',
     alignItems: 'center',
     gap: '{size.16}',
 
     '.app-link': {
-      px: '{size.12}',
       fontSize: '{fontSize.sm}',
       fontWeight: '{fontWeight.medium}',
       borderRadius: '{radii.md}',
+      color: '{color.gray.500}',
+      backgroundColor: 'transparent',
 
-      '.active': {
-        backgroundColor: '{color.gray.100}',
+      '&:hover': {
         color: '{color.gray.700}',
 
         '@dark': {
-          backgroundColor: '{color.gray.900}',
-          color: '{color.gray.100}',
-        }
-      },
-      '.inactive': {
-        color: '{color.gray.500}',
-
-        '&:hover': {
-          color: '{color.gray.700}',
-
-          '@dark': {
-            color: '{color.gray.300}',
-          }
+          color: '{color.gray.300}',
         }
       }
     }

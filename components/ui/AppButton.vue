@@ -28,7 +28,7 @@ const props = defineProps({
   },
   target: {
     type: String,
-    default: 'null'
+    default: '_self'
   },
   label: {
     type: String,

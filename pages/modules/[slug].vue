@@ -64,7 +64,7 @@
         </div>
       </div>
       <div class="flex justify-center md:justify-start mb-4">
-        <AppPills :links="links" />
+        <AppPills :links="links" class="app-pills-modules" />
       </div>
     </div>
 
@@ -114,14 +114,16 @@ useHead({
 })
 </script>
 
-<style lang="ts" scoped>
+<style lang="ts">
 css({
-  '.app-pills': {
-    px: '{size.32} !important',
-    py: '{size.8}',
+  '.app-pills-modules': {
+    '> a': {
+      px: '{size.32}',
+      py: '{size.8}',
 
-    '@md': {
-      px: '{size.56} !important',
+      '@md': {
+        px: '{size.56}',
+      }
     }
   }
 })
