@@ -8,9 +8,9 @@ const { page } = useContent()
 useHead({
   title: page.value.title,
   meta: [
-    { name: 'og:title', content: page.value.title },
-    { name: 'description', content: page.value.description },
-    { name: 'og:description', content: page.value.description }
+    { property: 'og:title', content: page.value.title },
+    { property: 'description', content: page.value.description },
+    { property: 'og:description', content: page.value.description }
   ]
 })
 </script>

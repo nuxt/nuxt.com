@@ -31,7 +31,7 @@ defineProps({
 
 useHead({
   meta: [
-    () => ({ name: 'og:url', content: joinURL('https://nuxt.com', route.fullPath) })
+    () => ({ property: 'og:url', content: joinURL('https://nuxt.com', route.fullPath) })
   ]
 })
 
@@ -45,9 +45,9 @@ useContentHead({
     ...website.head,
     titleTemplate: titleTemplate.value,
     meta: [
-      ...(website.head?.meta || []).filter(meta => !['og:image'].includes(meta.name)),
-      { name: 'og:image', content: ogImage.value },
-      { name: 'og:description', content: page.value?.description }
+      ...(website.head?.meta || []).filter(meta => !['og:image'].includes(meta.property)),
+      { property: 'og:image', content: ogImage.value },
+      { property: 'og:description', content: page.value?.description }
     ]
   }
 })

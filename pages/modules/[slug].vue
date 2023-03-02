@@ -105,9 +105,9 @@ const copyToClipboard = (content: string) => {
 useHead({
   title: capitalize(module.value.name) + ' Module',
   meta: [
-    { name: 'og:title', content: capitalize(module.value.name) + ' Module' },
-    { name: 'description', content: module.value.description },
-    { name: 'og:description', content: module.value.description }
+    { property: 'og:title', content: capitalize(module.value.name) + ' Module' },
+    { property: 'description', content: module.value.description },
+    { property: 'og:description', content: module.value.description }
   ]
 })
 </script>
