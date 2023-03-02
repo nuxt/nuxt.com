@@ -27,7 +27,7 @@ if (process.server) {
         <span class="font-semibold">
           📣 Just Released!
         </span>
-        Try out our first workshop and level up to Nuxt 3!
+        Our official workshop to level up from Nuxt 2 to Nuxt 3.
       </p>
       <AppButton class="font-semibold" variant="link" size="xs" trailing-icon="material-symbols:arrow-right-alt" to="/support/workshop">
         Register now
