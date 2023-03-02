@@ -151,16 +151,6 @@ export default defineNuxtConfig({
     disableCache: true,
     maxContributors: 10
   },
-  hooks: {
-    'imports:extend' (imports) {
-      imports.push({
-        name: 'useContentHead',
-        as: 'useContentHead',
-        priority: 10,
-        from: resolve('./composables/useContentHead')
-      })
-    }
-  },
   nitro: {
     output: {
       dir: '{{ workspaceDir }}/.vercel/output'
