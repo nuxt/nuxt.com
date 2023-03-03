@@ -12,7 +12,6 @@ const docsSource: any = {
   token: process.env.NUXT_GITHUB_TOKEN || process.env.GITHUB_TOKEN || ''
 }
 if (process.env.NUXT_DOCS_PATH) {
-  logger.success(`Using local Nuxt docs from ${process.env.NUXT_DOCS_PATH}`)
   docsSource.driver = 'fs'
   docsSource.base = process.env.NUXT_DOCS_PATH
 }
@@ -40,7 +39,10 @@ export default defineNuxtConfig({
     '@nuxtjs/color-mode',
     '@nuxtjs/tailwindcss',
     '@nuxthq/studio',
-    '@nuxt/devtools'
+    '@nuxt/devtools',
+    () => {
+      if (process.env.NUXT_DOCS_PATH) { logger.success(`Using local Nuxt docs from ${process.env.NUXT_DOCS_PATH}`) }
+    }
   ],
   htmlValidator: {
     logLevel: 'error',
@@ -150,16 +152,6 @@ export default defineNuxtConfig({
   github: {
     disableCache: true,
     maxContributors: 10
-  },
-  hooks: {
-    'imports:extend' (imports) {
-      imports.push({
-        name: 'useContentHead',
-        as: 'useContentHead',
-        priority: 10,
-        from: resolve('./composables/useContentHead')
-      })
-    }
   },
   nitro: {
     output: {
