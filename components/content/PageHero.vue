@@ -79,7 +79,7 @@ defineProps({
   },
   image: {
     type: Object as PropType<Image>,
-    default: () => ({})
+    default: () => {}
   },
   buttons: {
     type: Array as PropType<{ label?: string, variant?: string, to?: RouteLocationNormalized | RouteLocationRaw, icon?: string, trailing?: boolean, size?: string, target?: string }[]>,
