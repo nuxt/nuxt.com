@@ -23,7 +23,7 @@
       </div>
     </template>
 
-    <div class="flex-1 px-4 py-4 overflow-y-scroll sm:px-6">
+    <div class="flex-1 px-4 pt-4 pb-8 overflow-y-scroll sm:px-6">
       <DocsAsideTree :tree="tree" :max="selectedLink ? null : 2" @select="onSelect" @close="close" />
     </div>
   </AppSlideover>
