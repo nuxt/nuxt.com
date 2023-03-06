@@ -6,7 +6,7 @@
       <ContentSlot :use="$slots.title" unwrap="p" />
     </h2>
 
-    <p v-if="$slots.description" class="u-text-gray-500 text-lg text-center">
+    <p v-if="$slots.description" class="u-text-gray-500 text-lg text-left sm:text-center">
       <ContentSlot :use="$slots.description" unwrap="p" />
     </p>
 

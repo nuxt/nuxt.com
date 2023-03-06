@@ -8,7 +8,7 @@
   >
     <Icon v-if="isLeading && leadingIconName" :name="leadingIconName" :class="leadingIconClass" aria-hidden="true" />
 
-    <slot><span :class="truncate ? 'text-left break-all line-clamp-1' : ''">{{ label }}</span></slot>
+    <slot><span :class="truncate ? 'text-left break-all line-clamp-1' : 'w-full text-center'">{{ label }}</span></slot>
 
     <Icon v-if="isTrailing && trailingIconName" :name="trailingIconName" :class="trailingIconClass" aria-hidden="true" />
   </component>

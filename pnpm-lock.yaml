@@ -11,7 +11,7 @@ specifiers:
   '@nuxt-themes/typography': ^0.9.1
   '@nuxt/content': ^2.4.3
   '@nuxt/devtools': npm:@nuxt/devtools-edge@latest
-  '@nuxthq/studio': ^0.7.8
+  '@nuxthq/studio': ^0.8.1
   '@nuxtjs/algolia': ^1.3.1
   '@nuxtjs/color-mode': ^3.2.0
   '@nuxtjs/eslint-config-typescript': ^12.0.0
@@ -57,7 +57,7 @@ dependencies:
   '@nuxt-themes/typography': 0.9.1_postcss@8.4.21
   '@nuxt/content': 2.4.3
   '@nuxt/devtools': /@nuxt/devtools-edge/0.2.5-27960426.f03ce21_nuxt@3.2.3
-  '@nuxthq/studio': 0.7.8
+  '@nuxthq/studio': 0.8.1
   '@nuxtjs/algolia': 1.5.0
   '@nuxtjs/color-mode': 3.2.0
   '@nuxtjs/fontaine': 0.2.4
@@ -1782,15 +1782,14 @@ packages:
       - vti
       - vue-tsc
 
-  /@nuxthq/studio/0.7.8:
-    resolution: {integrity: sha512-xgmZdxl88YSKvoDar48F9Npy+xJ5Rvud8KVpl+0P9FVP+wzgfIIVqlV2YWykmGXLVEcMoLi+OLpfElzzcenjNg==}
+  /@nuxthq/studio/0.8.1:
+    resolution: {integrity: sha512-DwAept7C7pFsbDTMzPdKWW71ftZD0Y0Fq9dsnDm8aay+nFuCaOBjC8yIdXpOZsol1eB0JueSTPcAzy5oKrAvoQ==}
     dependencies:
       '@nuxt/kit': 3.2.3
-      '@nuxt/schema': 3.2.3
       defu: 6.1.2
       nuxt-component-meta: 0.4.3
-      nuxt-config-schema: 0.4.4
-      socket.io-client: 4.5.4
+      nuxt-config-schema: 0.4.5
+      socket.io-client: 4.6.1
       ufo: 1.1.1
     transitivePeerDependencies:
       - bufferutil
@@ -4595,6 +4594,20 @@ packages:
       debug: 4.3.4
       engine.io-parser: 5.0.6
       ws: 8.2.3
+      xmlhttprequest-ssl: 2.0.0
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+    dev: false
+
+  /engine.io-client/6.4.0:
+    resolution: {integrity: sha512-GyKPDyoEha+XZ7iEqam49vz6auPnNJ9ZBfy89f+rMMas8AuiMWOZ9PVzu8xb9ZC6rafUqiGHSCfu22ih66E+1g==}
+    dependencies:
+      '@socket.io/component-emitter': 3.1.0
+      debug: 4.3.4
+      engine.io-parser: 5.0.6
+      ws: 8.11.0
       xmlhttprequest-ssl: 2.0.0
     transitivePeerDependencies:
       - bufferutil
@@ -8378,7 +8391,7 @@ packages:
       acorn: 8.8.2
       pathe: 1.1.0
       pkg-types: 1.0.2
-      ufo: 1.0.1
+      ufo: 1.1.1
     dev: false
 
   /mlly/1.1.0:
@@ -8823,6 +8836,20 @@ packages:
 
   /nuxt-config-schema/0.4.4:
     resolution: {integrity: sha512-5NnyyH2qSgraQo6kcW/8SWqBZ/pEY/PwyepODPWYYv4ZZ8BiqC850OTmyO2oTBL4O+Xg4fR7hAwSB4g5pIMpSg==}
+    dependencies:
+      '@nuxt/kit': 3.2.3
+      changelogen: 0.4.1
+      defu: 6.1.2
+      jiti: 1.17.1
+      pathe: 1.1.0
+      untyped: 1.2.2
+    transitivePeerDependencies:
+      - rollup
+      - supports-color
+    dev: false
+
+  /nuxt-config-schema/0.4.5:
+    resolution: {integrity: sha512-Y5anu5puDfMJfDP7IYjXsn6Dvj262HtjZqa73jCBbFRCc5jnjrs+BEpJJmtPG32ZsqzO2+RL4oTNb3H6IfKZLQ==}
     dependencies:
       '@nuxt/kit': 3.2.3
       changelogen: 0.4.1
@@ -10821,6 +10848,20 @@ packages:
       - utf-8-validate
     dev: false
 
+  /socket.io-client/4.6.1:
+    resolution: {integrity: sha512-5UswCV6hpaRsNg5kkEHVcbBIXEYoVbMQaHJBXJCyEQ+CiFPV1NIOY0XOFWG4XR4GZcB8Kn6AsRs/9cy9TbqVMQ==}
+    engines: {node: '>=10.0.0'}
+    dependencies:
+      '@socket.io/component-emitter': 3.1.0
+      debug: 4.3.4
+      engine.io-client: 6.4.0
+      socket.io-parser: 4.2.2
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+    dev: false
+
   /socket.io-parser/4.2.2:
     resolution: {integrity: sha512-DJtziuKypFkMMHCm2uIshOYC7QaylbtzQwiMYDuCKy3OPkjLzu4B2vAhTlqipRHHzrI0NJeBAizTK7X+6m1jVw==}
     engines: {node: '>=10.0.0'}
@@ -12371,6 +12412,19 @@ packages:
       signal-exit: 3.0.7
       typedarray-to-buffer: 3.1.5
     dev: true
+
+  /ws/8.11.0:
+    resolution: {integrity: sha512-HPG3wQd9sNQoT9xHyNCXoDUa+Xw/VevmY9FoHyQ+g+rrMn4j6FB4np7Z0OhdTgjx6MgQLK7jwSy1YecU1+4Asg==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: ^5.0.2
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+    dev: false
 
   /ws/8.12.1:
     resolution: {integrity: sha512-1qo+M9Ba+xNhPB+YTWUlK6M17brTut5EXbcBaMRN5pH5dFrXz7lzz1ChFSUq3bOUl8yEvSenhHmYUNJxFzdJew==}
