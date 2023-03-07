@@ -1,19 +1,20 @@
 import { logger } from '@nuxt/kit'
-import { useValidatedParams, z, zh } from 'h3-zod'
+import { useValidatedQuery, z, zh } from 'h3-zod'
+import { performance } from 'node:perf_hooks'
 // @ts-ignore
 import ms from 'ms'
 
 export default defineCachedEventHandler(async (event) => {
-  const params = await useValidatedParams(event, z.object({
+  const { version } = await useValidatedQuery(event, z.object({
     version: zh.intAsString
   }))
   const start = performance.now()
-  logger.info(`Fetching modules v${params.version} from CDN...`)
+  logger.info(`Fetching modules v${version} from CDN...`)
   let modules: any[] = await $fetch('https://unpkg.com/@nuxt/modules@latest/modules.json')
 
   // Filter out modules by compatibility
   modules = modules.filter(module => {
-    return module.compatibility.nuxt.includes(`^${params.version}`)
+    return module.compatibility.nuxt.includes(`^${version}`)
   })
 
   const maintainers: any = {}
@@ -42,6 +43,7 @@ export default defineCachedEventHandler(async (event) => {
   logger.success(`Modules stats ready in ${ms(performance.now() - start)}`)
 
   return {
+    version,
     stats: {
       downloads: modules.reduce((acc, module) => acc + (module.stats?.downloads || 0), 0),
       stars: modules.reduce((acc, module) => acc + (module.stats?.stars || 0), 0),
@@ -56,7 +58,7 @@ export default defineCachedEventHandler(async (event) => {
 }, {
   name: 'modules',
   swr: true,
-  getKey: (event) => event.context.params?.version || '3',
+  getKey: async (event) => await getQuery(event)?.version || '3',
   maxAge: 60 * 60, // 1 hour
 })
 
