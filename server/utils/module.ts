@@ -1,5 +1,22 @@
+import { logger } from '@nuxt/kit'
+
+export function isBot (username: string) {
+  return username.includes('[bot]') || username.includes('-bot')
+}
+
+export const fetchModules = cachedFunction(async () => {
+  logger.info(`Fetching modules from CDN..`)
+  const modules: any[] = await $fetch('https://unpkg.com/@nuxt/modules@latest/modules.json')
+
+  return modules
+}, {
+  name: 'modules',
+  getKey: () => '_all',
+  maxAge: 10 * 60, // 10 minutes
+})
+
 export const fetchModuleStats = cachedFunction(async (module: any) => {
-  console.log(`Fetching module stats for ${module.name}...`)
+  logger.info(`Fetching module stats for ${module.name}...`)
   const ghRepo = module.repo.split('#')[0]
   const [owner, name] = ghRepo.split('/')
   const [npmInfos, npmStats, github] = await Promise.all([
@@ -35,7 +52,7 @@ export const fetchModuleStats = cachedFunction(async (module: any) => {
 })
 
 export const fetchModuleContributors = cachedFunction(async (module: any) => {
-  console.log(`Fetching module contributors for ${module.name}...`)
+  logger.info(`Fetching module contributors for ${module.name}...`)
   const ghRepo = module.repo.split('#')[0]
   const [owner, name] = ghRepo.split('/')
 
@@ -44,9 +61,19 @@ export const fetchModuleContributors = cachedFunction(async (module: any) => {
       // eslint-disable-next-line no-console
       console.error(`Cannot fetch github contributors info for ${owner}/${name}: ${err}`)
       return { contributors: [] }
-    }).then(r => r.contributors)
+    }).then(r => r.contributors.filter((contributor: any) => !isBot(contributor.username)))
 }, {
   name: 'module-contributors',
   maxAge: 24 * 60 * 60, // 24 hour
+  getKey: (module: any) => module.name
+})
+
+export const fetchModuleReadme = cachedFunction(async (module: any) => {
+  const readme = await $fetch(`https://raw.githubusercontent.com/${module.repo}/main/README.md`).catch(() => '') as string
+
+  return await parseMarkdown(readme, 'readme.md')
+}, {
+  name: 'module-readme',
+  maxAge: 12 * 60 * 60, // 12 hour
   getKey: (module: any) => module.name
 })

@@ -9,9 +9,8 @@ export default defineCachedEventHandler(async (event) => {
     version: zh.intAsString
   }))
   const start = performance.now()
-  logger.info(`Fetching modules v${version} from CDN...`)
-  let modules: any[] = await $fetch('https://unpkg.com/@nuxt/modules@latest/modules.json')
-
+  
+  let modules = await fetchModules() as any[]
   // Filter out modules by compatibility
   modules = modules.filter(module => {
     return module.compatibility.nuxt.includes(`^${version}`)
@@ -21,8 +20,8 @@ export default defineCachedEventHandler(async (event) => {
   const contributors: any = {}
   for (const module of modules) {
     const [mStats, mContributors] = await Promise.all([
-      fetchModuleStats(module).catch((err) => ({})),
-      fetchModuleContributors(module).catch((err) => [])
+      fetchModuleStats(module),
+      fetchModuleContributors(module)
     ])
     module.stats = mStats
     module.contributors = mContributors
@@ -32,7 +31,6 @@ export default defineCachedEventHandler(async (event) => {
       maintainers[maintainer.github].modules.push(module.name)
     }
     for (const contributor of module.contributors) {
-      if (contributor.username.includes('[bot]') || contributor.username.includes('-bot')) continue
       contributors[contributor.username] = contributors[contributor.username] || { ...contributor, modules: [] }
       contributors[contributor.username].modules.push(module.name)
       contributors[contributor.username].contributions += contributor.contributions || 0
@@ -58,7 +56,7 @@ export default defineCachedEventHandler(async (event) => {
 }, {
   name: 'modules',
   swr: true,
-  getKey: async (event) => await getQuery(event)?.version || '3',
+  getKey: (event) => getQuery(event)?.version as string,
   maxAge: 60 * 60, // 1 hour
 })
 
