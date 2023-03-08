@@ -6,7 +6,7 @@ import ms from 'ms'
 
 export default defineCachedEventHandler(async (event) => {
   const { version } = await useValidatedQuery(event, z.object({
-    version: zh.intAsString
+    version: z.enum(['2', '3'])
   }))
   const start = performance.now()
   
