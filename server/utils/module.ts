@@ -16,7 +16,7 @@ export const fetchModules = cachedFunction(async () => {
 })
 
 export const fetchModuleStats = cachedFunction(async (module: any) => {
-  logger.info(`Fetching module stats for ${module.name}...`)
+  logger.info(`Fetching module ${module.name} stats...`)
   const ghRepo = module.repo.split('#')[0]
   const [owner, name] = ghRepo.split('/')
   const [npmInfos, npmStats, github] = await Promise.all([
@@ -52,7 +52,7 @@ export const fetchModuleStats = cachedFunction(async (module: any) => {
 })
 
 export const fetchModuleContributors = cachedFunction(async (module: any) => {
-  logger.info(`Fetching module contributors for ${module.name}...`)
+  logger.info(`Fetching module ${module.name} contributors ...`)
   const ghRepo = module.repo.split('#')[0]
   const [owner, name] = ghRepo.split('/')
 
@@ -69,11 +69,13 @@ export const fetchModuleContributors = cachedFunction(async (module: any) => {
 })
 
 export const fetchModuleReadme = cachedFunction(async (module: any) => {
+  logger.info(`Fetching module ${module.name} readme ...`)
   const readme = await $fetch(`https://raw.githubusercontent.com/${module.repo}/main/README.md`).catch(() => '') as string
 
   return await parseMarkdown(readme, 'readme.md')
 }, {
   name: 'module-readme',
-  maxAge: 12 * 60 * 60, // 12 hour
+  // maxAge: 12 * 60 * 60, // 12 hour
+  maxAge: 5, // 12 hour
   getKey: (module: any) => module.name
 })
