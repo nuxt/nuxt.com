@@ -78,7 +78,7 @@ defineProps({
   },
   image: {
     type: Object as PropType<Image>,
-    default: () => ({})
+    default: () => {}
   },
   buttons: {
     type: Array as PropType<Button[]>,

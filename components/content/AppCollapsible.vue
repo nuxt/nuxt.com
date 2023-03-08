@@ -2,7 +2,7 @@
   <div class="flex flex-col gap-4 border-b u-border-gray-200 py-6">
     <button base-class="px-0" class="flex justify-between items-center" @click="isCollapse = !isCollapse">
       <div class="flex flex-col gap-y-4">
-        <h4 class="u-text-gray-700 text-2xl font-semibold">
+        <h4 class="u-text-gray-700 text-2xl font-semibold text-left">
           <ContentSlot :use="$slots.title" unwrap="p" />
         </h4>
       </div>
