@@ -94,17 +94,7 @@ css({
     '.icon': {
       pointerEvents: 'none',
       flexShrink: 0,
-      width: (props) => `{size.${props.size === 'xxs' ? '12' : props.size === 'xs' ? '16' : '20'}}`,
-      height: (props) => `{size.${props.size === 'xxs' ? '12' : props.size === 'xs' ? '16' : '20'}}`,
     },
-
-    '.icon-leading': {
-      marginRight: (props) => `{size.${['xxs', 'xs', 'sm'].includes(props.size) ? '8' : '12'}}`
-    },
-
-    '.icon-trailing': {
-      marginLeft: (props) => `{size.${['xxs', 'xs', 'sm'].includes(props.size) ? '8' : '12'}}`
-    }
   },
 
   variants: {
@@ -331,40 +321,87 @@ css({
         py: '{size.4}',
         fontSize: '{button.fontSize.xs}',
 
-        '.icon-leading': {
-          marginRight: '{size.8}'
+        '.icon': {
+          height: '{size.12}',
+          width: '{size.12}',
         },
 
-        '.icon-trailing': {
-          marginLeft: '{size.8}'
-        }
+        '.icon-leading, .icon-trailing': {
+          marginRight: '{size.8}'
+        },
       },
       xs: {
         px: '{size.10}',
         py: '{size.4}',
         fontSize: '{button.fontSize.xs}',
+
+        '.icon': {
+          height: '{size.16}',
+          width: '{size.16}',
+        },
+
+        '.icon-leading, .icon-trailing': {
+          marginRight: '{size.8}'
+        },
       },
       sm: {
         px: '{size.12}',
         py: '{size.8}',
         lineHeight: '1rem',
         fontSize: '{button.fontSize.sm}',
+
+        '.icon': {
+          height: '{size.20}',
+          width: '{size.20}',
+        },
+
+        '.icon-leading, .icon-trailing': {
+          marginRight: '{size.8}'
+        },
       },
       md: {
         px: '{size.16}',
         py: '{size.8}',
         fontSize: '{button.fontSize.md}',
+
+        '.icon': {
+          height: '{size.20}',
+          width: '{size.20}',
+        },
+
+        '.icon-leading, .icon-trailing': {
+          marginRight: '{size.12}'
+        },
       },
       lg: {
         px: '{size.16}',
         py: '{size.8}',
         fontSize: '{button.fontSize.lg}',
+
+        '.icon': {
+          height: '{size.20}',
+          width: '{size.20}',
+        },
+
+        '.icon-leading, .icon-trailing': {
+          marginRight: '{size.12}'
+        },
       },
       xl: {
         px: '{size.24}',
         py: '{size.12}',
         fontSize: '{button.fontSize.xl}',
+
+        '.icon': {
+          height: '{size.20}',
+          width: '{size.20}',
+        },
+
+        '.icon-leading, .icon-trailing': {
+          marginRight: '{size.12}'
+        },
       },
+
       options: {
         default: 'md'
       }

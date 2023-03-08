@@ -18,10 +18,10 @@
       @blur="$emit('blur', $event)"
     >
     <slot />
-    <div v-if="(icon || loading) && !trailing" class="icon-leading-wrapper">
+    <div v-if="(icon || loading)" class="icon-leading-wrapper">
       <Icon v-if="icon" :name="loading ? 'line-md:loading-twotone-loop' : icon" class="icon-leading" />
     </div>
-    <div v-if="(icon || loading) && trailing" class="icon-trailing-wrapper">
+    <div v-if="(icon || loading)" class="icon-trailing-wrapper">
       <Icon v-if="icon" :name="loading ? 'line-md:loading-twotone-loop' : icon" class="icon-trailing" />
     </div>
   </div>
@@ -104,20 +104,16 @@ onMounted(() => {
 css({
   '.app-input-wrapper': {
     '--input-padding': (props) => `{size.${props.icon || props.loading ? ['xxs', 'xs'].includes(props.size) ? '28' : '40' : '0'}}`,
-    '--input-font-size': (props) => `{fontSize.${['xxs', 'xs'].includes(props.size) ? 'xs' : ['sm', 'md'].includes(props.size) ? 'sm' : 'base'}}`,
-    '--input-icon-margin': (props) => `{size.${['xxs', 'sm', 'md'].includes(props.size) ? '12' : '16'}}`,
-    '--input-icon-size': (props) => `{size.${props.size === 'xxs' ? '12' : props.size === 'xs' ? '16' : '20'}}`,
 
     position: 'relative',
+
     '> .app-input': {
       position: 'relative',
       display: 'block',
       width: '{size.full}',
-      fontSize: '{input.font.size}',
 
       '&:disabled': {
         cursor: 'not-allowed',
-
         opacity: '0.75'
       },
     },
@@ -129,22 +125,7 @@ css({
       display: 'flex',
       alignItems: 'center',
       pointerEvents: 'none',
-
-      '.icon': {
-        width: '{input.icon.size}',
-        height: '{input.icon.size}'
-      }
     },
-
-    '> .icon-leading-wrapper': {
-      '.icon': {
-        marginLeft: '{input.icon.margin}'
-      }
-    },
-
-    '> .icon-trailing-wrapper': {
-      marginRight: '{input.icon.margin}'
-    }
   },
 
   variants: {
@@ -221,43 +202,141 @@ css({
     size: {
       'xxs': {
         '> .app-input': {
+          fontSize: '{fontSize.xs}',
           px: '{size.4}',
           py: '{size.2}',
         },
+
+        '> div': {
+          '.icon': {
+            width: '{size.12}',
+            height: '{size.12}'
+          },
+
+          '> .icon-leading-wrapper': {
+            '.icon': {
+              marginLeft: '{size.12}'
+            }
+          },
+
+          '> .icon-trailing-wrapper': {
+            marginRight: '{size.12}'
+          }
+        }
       },
       'xs': {
         '> .app-input': {
+          fontSize: '{fontSize.xs}',
           px: '{size.4}',
           py: '{size.2}',
         },
+
+        '> div': {
+          '.icon': {
+            width: '{size.16}',
+            height: '{size.16}'
+          },
+
+          '> .icon-leading-wrapper': {
+            marginLeft: '{size.12}'
+          },
+
+          '> .icon-trailing-wrapper': {
+            marginRight: '{size.12}'
+          }
+        }
       },
       'sm': {
         '> .app-input': {
+          fontSize: '{fontSize.sm}',
           lineHeight: '{lead.4} !important',
           px: '{size.12}',
           py: '{size.8}',
+        },
+
+        '> div': {
+          '.icon': {
+            width: '{size.20}',
+            height: '{size.20}'
+          },
+
+          '> .icon-leading-wrapper': {
+            marginLeft: '{size.12}'
+          },
+
+          '> .icon-trailing-wrapper': {
+            marginRight: '{size.12}'
+          }
         }
       },
       'md': {
         '> .app-input': {
+          fontSize: '{fontSize.sm}',
           px: '{size.16}',
           py: '{size.8}',
           lineHeight: '{lead.5} !important',
+        },
+
+        '> div': {
+          '.icon': {
+            width: '{size.20}',
+            height: '{size.20}'
+          },
+
+          '> .icon-leading-wrapper': {
+             marginLeft: '{size.16}'
+          },
+
+          '> .icon-trailing-wrapper': {
+            marginRight: '{size.16}'
+          }
         }
       },
       'lg': {
         '> .app-input': {
+          fontSize: '{fontSize.base}',
           px: '{size.16}',
           py: '{size.8}',
           lineHeight: '{lead.6} !important',
         },
+
+        '> div': {
+          '.icon': {
+            width: '{size.20}',
+            height: '{size.20}'
+          },
+
+          '> .icon-leading-wrapper': {
+            marginLeft: '{size.16}'
+          },
+
+          '> .icon-trailing-wrapper': {
+            marginRight: '{size.16}'
+          }
+        }
       },
       'xl': {
         '> .app-input': {
+          fontSize: '{fontSize.base}',
           px: '{size.24}',
           py: '{size.12}',
           lineHeight: '{lead.7} !important',
         },
+
+        '> div': {
+          '.icon': {
+            width: '{size.20}',
+            height: '{size.20}'
+          },
+
+          '> .icon-leading-wrapper': {
+            marginLeft: '{size.16}'
+          },
+
+          '> .icon-trailing-wrapper': {
+            marginRight: '{size.16}'
+          }
+        }
       },
       options: {
         default: 'md'

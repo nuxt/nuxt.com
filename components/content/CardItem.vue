@@ -10,7 +10,6 @@
 
     <AppCard
       :shadow="false"
-      class="card"
       :border="border"
       :rounded="rounded"
       :background-color="backgroundColor"
@@ -105,6 +104,10 @@ const props = defineProps({
     type: String,
     default: ''
   },
+  appCardClass: {
+    type: String,
+    default: ''
+  },
   rounded: {
     type: String as PropType<Card['rounded']>,
     default: 'xl'
@@ -193,11 +196,11 @@ css({
 
     '&:hover': {
       backgroundColor: (props) => props.gradientBorder ? 'white' : props.to ? '{color.gray.50}' : 'white',
-      borderColor: (props) => props.gradientBorder ? '{color.transparent} !important' : '{color.gray.200} !important',
+      borderColor: (props) => props.gradientBorder ? 'transparent !important' : '{color.gray.200} !important',
 
       '@dark': {
           backgroundColor: (props) => props.gradientBorder ? '{color.gray.800}' : props.to ? '{color.gray.800}' : '{color.gray.900}',
-          borderColor: (props) => props.gradientBorder ? '{color.transparent} !important' : '{color.gray.800} !important'
+          borderColor: (props) => props.gradientBorder ? 'transparent !important' : '{color.gray.800} !important'
         }
       }
   }

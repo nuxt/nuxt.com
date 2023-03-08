@@ -229,7 +229,6 @@ css({
             color: '{color.gray.400}',
             height: '{size.20}',
             width: '{size.20}',
-            marginRight: (props) => `{size.${props.size === 'sm' ? '8' : '12'}}`,
 
             '@dark': {
               color: '{color.gray.600}'
@@ -244,9 +243,9 @@ css({
       '.app-select-list-options': {
         backgroundColor: '{color.white}',
         borderRadius: '{radii.md}',
-        ring: '{size.0}',
-        ringOffset: '{size.1}',
-        ringOffsetColor: '{color.gray.200}',
+        ring: '{size.1}',
+        ringOffset: '{size.0}',
+        ringColor: '{color.gray.200}',
         borderWidth: '{size.0}',
         borderColor: '{color.transparent}',
         overflowY: 'auto',
@@ -255,7 +254,7 @@ css({
         width: '{size.full}',
 
         '@dark': {
-          ringOffsetColor: '{color.gray.800}',
+          ringColor: '{color.gray.800}',
           backgroundColor: '{color.gray.900}',
         },
 
@@ -346,6 +345,12 @@ css({
             px: '{size.10}',
             py: '{size.6}',
             fontSize: '{fontSize.xs}',
+
+            '.icon-wrapper': {
+              '.icon': {
+                marginRight: '{size.8}'
+              }
+            },
           }
         }
       },
@@ -356,6 +361,12 @@ css({
             py: '{size.8}',
             fontSize: '{fontSize.sm}',
             lineHeight: '{lead.4}',
+
+            '.icon-wrapper': {
+              '.icon': {
+                marginRight: '{size.8}'
+              }
+            },
           }
         }
       },
@@ -365,6 +376,12 @@ css({
             px: '{size.16}',
             py: '{size.8}',
             fontSize: '{fontSize.sm}',
+
+            '.icon-wrapper': {
+              '.icon': {
+                marginRight: '{size.12}'
+              }
+            },
           }
         }
       },
@@ -374,6 +391,12 @@ css({
             px: '{size.16}',
             py: '{size.8}',
             fontSize: '{fontSize.base}',
+
+            '.icon-wrapper': {
+              '.icon': {
+                marginRight: '{size.12}'
+              }
+            },
           }
         },
       },
@@ -383,6 +406,7 @@ css({
             px: '{size.24}',
             py: '{size.12}',
             fontSize: '{fontSize.base}',
+
           }
         },
       },
