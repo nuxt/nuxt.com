@@ -189,6 +189,9 @@ export default defineTheme({
     }
   },
   typography: {
+    verticalMargin: {
+      base: '16px'
+    },
     color: {
       primary: {
         50: '#d6ffee',
