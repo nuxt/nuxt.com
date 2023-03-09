@@ -53,17 +53,9 @@
           truncate
           class="focus-visible:ring-2"
         />
-        <AppButton
-          :label="secondaryButtonText"
-          :to="secondaryButtonLink"
-          size="lg"
-          target="_blank"
-          variant="transparent"
-          icon="uil:angle-right-b"
-          trailing
-          class="u-text-gray-900 focus-visible:ring-2"
-          truncate
-        />
+        <div v-if="$slots.codeCTA" class="code-cta">
+          <ContentSlot :use="$slots.codeCTA" unwrap="p" />
+        </div>
       </div>
       <HomeGemWrapper :gem-wrapper-class="'hidden sm:block absolute left-1/3 sm:left-1/3 md:left-1/2 lg:top-[-50px] lg:left-2/3'">
         <HomeGem />
@@ -100,3 +92,12 @@ defineProps({
   }
 })
 </script>
+
+<style scoped>
+.code-cta :deep(.prose-code) {
+  margin: 0;
+}
+.code-cta :deep(.prose-code pre) {
+  padding: 11px;
+}
+</style>
