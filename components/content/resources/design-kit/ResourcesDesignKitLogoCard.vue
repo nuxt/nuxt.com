@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col space-y-2">
-    <AppCard padded shadow-class="" class="flex items-center justify-center h-[140px] relative" :background-class="cardClass">
+    <AppCard :shadow="false">
       <div
         class="absolute right-2 top-2 rounded-md text-xs bg-transparent border info p-1"
         :class="[
@@ -44,13 +44,13 @@ defineProps({
     type: String,
     default: ''
   },
-  cardClass: {
-    type: String,
-    default: ''
-  },
   full: {
     type: Boolean,
     default: false
+  },
+  backgroundColor: {
+    type: String as PropType<'black' | 'white' | 'green'>,
+    default: 'white'
   },
   infoType: {
     type: String as PropType<'primary' | 'primary-dark' | 'secondary' | 'secondary-dark'>,
@@ -58,3 +58,20 @@ defineProps({
   }
 })
 </script>
+
+<style lang="ts" scoped>
+css({
+  '.app-card': {
+      display: 'flex !important',
+      height: '140px !important',
+      alignItems: 'center !important',
+      justifyContent:'center !important',
+      position: 'relative !important',
+      backgroundColor: (props) => props.backgroundColor === 'black' ? '{color.gray.900} !important' : props.backgroundColor === 'green' ? '{color.green.400} !important' : '{color.white} !important',
+
+      '@dark': {
+        backgroundColor: (props) => props.backgroundColor === 'black' ? '{color.gray.900} !important' : props.backgroundColor === 'green' ? '{color.green.400} !important' : '{color.white} !important'
+      }
+    }
+})
+</style>

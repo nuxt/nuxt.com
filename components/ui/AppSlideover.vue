@@ -1,30 +1,98 @@
 <script setup lang="ts">
-const { visible, close } = useSlideover()
+const { close } = useSlideover()
+
+defineProps({
+  visible: {
+    type: Boolean,
+    default: false
+  }
+})
 </script>
 
 <template>
   <ClientOnly>
     <teleport to="body">
-      <div class="overflow-y-auto fixed top-0 left-0 dvh-full z-[100] focus:outline-none flex flex-col flex-1 w-full max-w-md u-bg-white border-r border-r-gray-300 dark:border-r-gray-700 transition duration-300" :class="visible ? 'translate-x-0' : '-translate-x-full'">
-        <div class="z-[100] flex items-center justify-between flex-shrink-0 px-4 sm:px-6 h-16 border-b u-border-gray-200">
+      <div class="app-slideover">
+        <div class="header">
           <slot name="header" />
         </div>
-        <div class="px-1">
+        <div>
           <slot />
         </div>
       </div>
 
       <div
-        class="fixed top-0 left-0 z-50 w-screen dvh-full transition-all duration-100"
-        :class="visible ? 'backdrop-blur-sm' : 'backdrop-blur-none pointer-events-none opacity-0'"
-        @click.prevent="close"
+        class="slideover-blur"
+        @click.prevent="close()"
       />
     </teleport>
   </ClientOnly>
 </template>
 
-<style scoped>
-.dvh-full {
-  height: 100dvh;
-}
+<style lang="ts" scoped>
+css({
+  '.app-slideover': {
+    overflowY: 'hidden',
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    height: '100dvh',
+    zIndex: 100,
+    display: 'flex',
+    flexDirection: 'column',
+    flex: '1 1 0%',
+    width: '{size.full}',
+    maxWidth: '{size.md}',
+    backgroundColor: '{color.white}',
+    borderRightWidth: '{size.1}',
+    borderRightColor: '{color.gray.300}',
+    transform: (props) => `${props.visible ? 'translateX(0px)' : 'translateX(-100%)'}`,
+
+    '@dark': {
+      backgroundColor: '{color.black}',
+      borderRightColor: '{color.gray.700}',
+    },
+
+    '&:focus': {
+      outline: 'none',
+    },
+
+    '.header': {
+      zIndex: 100,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      flexShrink: 0,
+      height: '{size.64}',
+      px: '{size.16}',
+      borderBottomWidth: '{size.1}',
+      borderBottomColor: '{color.gray.200}',
+
+      '@dark': {
+        borderBottomColor: '{color.gray.800}',
+      },
+
+      '@sm': {
+        px: '{size.24}'
+      }
+    },
+
+    '&:last-child': {
+      px: '{size.1}',
+    }
+  },
+
+  '.slideover-blur': {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    zIndex: 50,
+    width: '100vh',
+    height: '100dvh',
+    transition: 'all 0.1s',
+    backdropFilter: (props) => `blur(${props.visible ? '12px' : '0px'})`,
+    opacity: (props) => `${props.visible ? 100 : 0})`,
+    pointerEvents: (props) => `${props.visible ? 'auto' : 'none'})`,
+  }
+})
 </style>

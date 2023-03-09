@@ -1,27 +1,24 @@
 <template>
   <Switch
     v-model="active"
-    :class="[active ? activeClass : inactiveClass, baseClass]"
+    class="app-toggle"
   >
     <span
-      :class="[
-        active ? containerActiveClass : containerInactiveClass,
-        containerBaseClass,
-      ]"
+      :style="`transform: translateX(${active ? '1.25rem' : '0px'})`"
     >
       <span
         v-if="iconOn"
-        :class="[active ? iconActiveClass : iconInactiveClass, iconBaseClass]"
+        :style="`${active ? 'opacity: 1; transition-timing-function: ease-in; transition-duration: 0.2s' : 'opacity: 0; transition-timing-function: ease-out; transition-duration: 0.1s'}`"
         aria-hidden="true"
       >
-        <Icon :name="iconOn" :class="iconOnClass" />
+        <Icon :name="iconOn" class="icon-on" />
       </span>
       <span
         v-if="iconOff"
-        :class="[active ? iconInactiveClass : iconActiveClass, iconBaseClass]"
+        :style="`${active ? 'opacity: 0; transition-timing-function: ease-out; transition-duration: 0.1s' : 'opacity: 1; transition-timing-function: ease-in; transition-duration: 0.2s'}`"
         aria-hidden="true"
       >
-        <Icon :name="iconOff" :class="iconOffClass" />
+        <Icon :name="iconOff" class="icon-off" />
       </span>
       <slot />
     </span>
@@ -44,50 +41,6 @@ const props = defineProps({
   iconOff: {
     type: String,
     default: null
-  },
-  baseClass: {
-    type: String,
-    default: () => 'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer focus:ring-2 focus:ring-offset-2 focus:u-ring-gray-900 focus:ring-offset-white dark:focus:ring-offset-black'
-  },
-  activeClass: {
-    type: String,
-    default: () => 'bg-gray-100 dark:bg-gray-800'
-  },
-  inactiveClass: {
-    type: String,
-    default: () => 'bg-gray-100 dark:bg-gray-800'
-  },
-  containerBaseClass: {
-    type: String,
-    default: () => 'pointer-events-none relative inline-block h-5 w-5 rounded-full u-bg-white shadow transform ring-0 transition ease-in-out duration-200'
-  },
-  containerActiveClass: {
-    type: String,
-    default: () => 'translate-x-5'
-  },
-  containerInactiveClass: {
-    type: String,
-    default: () => 'translate-x-0'
-  },
-  iconBaseClass: {
-    type: String,
-    default: () => 'absolute inset-0 h-full w-full flex items-center justify-center transition-opacity'
-  },
-  iconActiveClass: {
-    type: String,
-    default: () => 'opacity-100 ease-in duration-200'
-  },
-  iconInactiveClass: {
-    type: String,
-    default: () => 'opacity-0 ease-out duration-100'
-  },
-  iconOnClass: {
-    type: String,
-    default: () => 'h-3 w-3 u-text-gray-600'
-  },
-  iconOffClass: {
-    type: String,
-    default: () => 'h-3 w-3 u-text-gray-400'
   }
 })
 
@@ -101,4 +54,92 @@ const active = computed({
     emit('update:modelValue', value)
   }
 })
+
 </script>
+
+<style lang="ts">
+css({
+  '.app-toggle': {
+    position: 'relative',
+    display: 'inline-flex',
+    flexShrink: 1,
+    height: '{size.24}',
+    width: '44px',
+    borderWidth: '{size.2}',
+    borderColor: 'transparent',
+    borderRadius: '{radii.full}',
+    backgroundColor: '{color.gray.200}',
+
+    '@dark': {
+      backgroundColor: '{color.gray.800}'
+    },
+
+    '&:not(:active)': {
+      backgroundColor: '{color.gray.100}',
+
+      '@dark': {
+        backgroundColor: '{color.gray.800}'
+      },
+    },
+
+    '&:focus': {
+      ringOffset: '{size.2}',
+
+      ringColor: '{color.gray.900}',
+      ringOffsetColor: '{color.white}',
+
+      '@dark': {
+        ringOffsetColor: '{color.black}'
+      }
+    },
+
+    '> span': {
+      pointerEvents: 'none',
+      position: 'relative',
+      display: 'inline-block',
+      height: '{size.20}',
+      width: '{size.20}',
+      borderRadius: '{radii.full}',
+      backgroundColor: '{color.white}',
+      boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+      transition: 'all 0.2s',
+
+      '@dark': {
+        backgroundColor: '{color.black}',
+      },
+
+      '> span': {
+        position: 'absolute',
+        inset: 0,
+        height: '{size.full}',
+        width: '{size.full}',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        transition: 'opacity',
+
+        '.icon': {
+          height: '{size.12}',
+          width: '{size.12}',
+        },
+
+        '.icon-on': {
+          color: '{color.gray.600}',
+
+          '@dark': {
+            color: '{color.gray.400}'
+          }
+        },
+
+        '.icon-off': {
+          color: '{color.gray.400}',
+
+          '@dark': {
+            color: '{color.gray.600}'
+          }
+        }
+      }
+    }
+  }
+})
+</style>

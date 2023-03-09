@@ -9,7 +9,7 @@
       variant="gray"
       trailing
       rounded
-      size="sm"
+      size="xs"
     />
   </div>
 </template>

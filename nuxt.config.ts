@@ -29,6 +29,7 @@ export default defineNuxtConfig({
     resolve('./assets/css/tailwind.css')
   ],
   modules: [
+    '@nuxt-themes/tokens',
     process.env.NODE_ENV === 'production' ? '@nuxtjs/html-validator' : () => {},
     '@nuxt/content',
     '@nuxtlabs/github-module',

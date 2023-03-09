@@ -48,7 +48,7 @@ import type { RouteLocationNormalized, RouteLocationRaw } from 'vue-router'
 
 const props = defineProps({
   buttons: {
-    type: Array as PropType<{ label?: string, variant?: string, to?: string | RouteLocationNormalized | RouteLocationRaw, icon?: string, trailing?: boolean, size?: string }[]>,
+    type: Array as PropType<{ label?: string, variant?: any, to?: string | RouteLocationNormalized | RouteLocationRaw, icon?: string, trailing?: boolean, size?: string }[]>,
     default: () => []
   },
   sectionAlign: {

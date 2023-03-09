@@ -19,7 +19,6 @@
 <script setup lang="ts">
 import { computed, PropType } from 'vue'
 import { classNames } from '../../utils'
-import { uiPreset } from '../../ui/preset'
 
 const props = defineProps({
   group: {
@@ -33,14 +32,6 @@ const props = defineProps({
   max: {
     type: Number,
     default: null
-  },
-  ringClass: {
-    type: String,
-    default: () => uiPreset.avatarGroup.ring
-  },
-  marginClass: {
-    type: String,
-    default: () => uiPreset.avatarGroup.margin
   }
 })
 

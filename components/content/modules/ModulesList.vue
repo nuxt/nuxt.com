@@ -3,7 +3,7 @@
     <template #aside>
       <CategoriesAside :categories="categories" :selected-category="selectedCategory">
         <template #header>
-          <ModulesFilterVersion :versions="versions" :selected-version="selectedVersion" class="mr-1 -my-1" @update:selected-version="replaceRoute('version', $event)" />
+          <ModulesFilterVersion size="xs" :versions="versions" :selected-version="selectedVersion" @update:selected-version="replaceRoute('version', $event)" />
         </template>
         <template #footer>
           <div class="flex flex-col gap-2 pt-4 border-t u-border-gray-200">

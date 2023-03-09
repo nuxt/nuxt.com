@@ -1,11 +1,7 @@
 <template>
   <AppCard
-    padded
-    body-class=""
-    shadow-class=""
-    background-class="bg-gray-50 dark:bg-gray-900"
-    custom-class="bg-opacity-80 dark:bg-opacity-80"
-    class="hover:ring-2 ucard"
+    :shadow="false"
+    :body-padding="false"
   >
     <NuxtLink :to="job.link" target="_blank" class="flex flex-col gap-2 px-4 py-5 sm:p-6">
       <div class="grid grid-cols-2 gap-4 sm:flex">
@@ -53,15 +49,29 @@ const locations: ComputedRef<any> = computed(() => props.job.locations?.map((loc
 }).filter(v => v))
 </script>
 
-<style scoped lang="postcss">
-.AppCard:hover {
-  --tw-ring-color: #00dc82
-}
+<style lang="ts" scoped>
+css({
+  '.app-card': {
+    backgroundColor: 'rgba(250, 250, 250, 0.8)',
+    position: 'relative',
+    transition: 'all 0.2s',
 
-.AppCard:has(a:focus-visible) {
-  @apply ring-2;
-  --tw-ring-color: #00dc82
-}
+    '@dark': {
+      backgroundColor: 'rgba(24, 24, 27, 0.8)',
+    },
+
+    '&:hover, &:has(a:focus-visible)': {
+      borderColor: '{color.green.400}',
+      ring: '0px',
+      ringOffsetColor: '{color.green.400}',
+      ringColor: '{color.green.400}'
+    },
+
+  }
+})
+</style>
+
+<style scoped lang="postcss">
 
 .location-item {
   white-space: nowrap;

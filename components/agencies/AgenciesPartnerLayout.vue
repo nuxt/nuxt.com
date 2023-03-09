@@ -56,8 +56,8 @@
             {{ page.fullDescription }}
           </p>
 
-          <AppCard v-if="page.emailAddress" body-class="grid grid-cols-2 gap-8 p-10" rounded-class="rounded-xl" background-class="card-bg" @submit.prevent="contactAgency">
-            <AppFormGroup name="email" label="Your company" class="col-span-2 sm:col-span-1">
+          <AppCard v-if="page.emailAddress" class="card" :form="true" @submit.prevent="contactAgency">
+            <AppFormGroup name="name" label="Your company" :required="true">
               <AppInput
                 v-model="form.company"
                 label="Company"
@@ -70,7 +70,7 @@
               />
             </AppFormGroup>
 
-            <AppFormGroup name="name" label="Your email" class="col-span-2 sm:col-span-1">
+            <AppFormGroup name="email" label="Your email">
               <AppInput
                 v-model="form.email"
                 label="Email"
@@ -87,7 +87,7 @@
             <AppFormGroup
               name="message"
               label="Your message"
-              class="col-span-2"
+              :full="true"
             >
               <AppTextarea
                 v-model="form.message"
@@ -95,9 +95,6 @@
                 name="Message"
                 placeholder="Message"
                 required
-                size="xl"
-                variant="outline"
-                custom-class="flex-1"
               />
             </AppFormGroup>
 

@@ -55,14 +55,16 @@
             class="module-button"
             :label="`yarn add ${module.npm}`"
             size="lg"
-            :trailing-icon="copyIcon"
+            trailing
+            :icon="copyIcon"
             truncate
+            variant="primary"
             @click="copyToClipboard(`yarn add ${module.npm}`)"
           />
         </div>
       </div>
       <div class="flex justify-center md:justify-start mb-4">
-        <AppPills base-class="px-8 md:px-14 py-2 font-medium text-sm rounded-md" :links="links" />
+        <AppPills :links="links" class="app-pills-modules" />
       </div>
     </div>
 
@@ -112,8 +114,17 @@ useHead({
 })
 </script>
 
-<style lang="postcss">
-.module-button {
-  @apply bg-gray-800 dark:bg-white
-}
+<style lang="ts">
+css({
+  '.app-pills-modules': {
+    '> a': {
+      px: '{size.32}',
+      py: '{size.8}',
+
+      '@md': {
+        px: '{size.56}',
+      }
+    }
+  }
+})
 </style>

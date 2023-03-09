@@ -23,7 +23,6 @@
           :to="button.to || undefined"
           :trailing="button.trailing"
           :size="'sm' || button.size"
-          class="focus-visible:ring-2"
         />
       </div>
     </div>
@@ -52,7 +51,7 @@ defineProps({
     default: 'li'
   },
   buttons: {
-    type: Array as PropType<{ label?: string, variant?: string, to?: RouteLocationNormalized | RouteLocationRaw, icon?: string, trailing?: boolean, size?: string }[]>,
+    type: Array as PropType<{ label?: string, variant?: any, to?: RouteLocationNormalized | RouteLocationRaw, icon?: string, trailing?: boolean, size?: string }[]>,
     default: () => []
   }
 })
