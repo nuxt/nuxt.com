@@ -5,7 +5,7 @@
 Make sure to install the dependencies
 
 ```bash
-yarn install
+pnpm install
 ```
 
 Copy the `.env.example` file to `.env`:
@@ -29,7 +29,7 @@ For the other env variables, you can ask the team for the values.
 Start the development server in the `docs/` directory of the framework.
 
 ```bash
-yarn dev
+pnpm run dev
 ```
 
 ## Production
@@ -37,5 +37,5 @@ yarn dev
 Build the application for production:
 
 ```bash
-yarn build
+pnpm run build
 ```
