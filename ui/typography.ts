@@ -4,16 +4,20 @@ export default (theme: (arg0: string) => any) => ({
   DEFAULT: {
     css: {
       h1: {
-        fontWeight: theme('fontWeight.semibold')
+        fontWeight: theme('fontWeight.semibold'),
+        fontFamily: '"RoobertPRO", "RoobertPRO override", sans-serif'
       },
       h2: {
-        fontWeight: theme('fontWeight.semibold')
+        fontWeight: theme('fontWeight.semibold'),
+        fontFamily: '"RoobertPRO", "RoobertPRO override", sans-serif'
       },
       h3: {
-        fontWeight: theme('fontWeight.semibold')
+        fontWeight: theme('fontWeight.semibold'),
+        fontFamily: '"RoobertPRO", "RoobertPRO override", sans-serif'
       },
       h4: {
-        fontWeight: theme('fontWeight.semibold')
+        fontWeight: theme('fontWeight.semibold'),
+        fontFamily: '"RoobertPRO", "RoobertPRO override", sans-serif'
       },
       'h2, h3, h4': {
         'scroll-margin-top': 'var(--scroll-mt)'
