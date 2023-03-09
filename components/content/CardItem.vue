@@ -1,17 +1,20 @@
 <template>
   <Component :is="is" ref="root" class="rounded-md relative group" :class="{ 'cursor-pointer': to }" @click="onClick">
-    <Icon v-if="hasExternalLink" name="uil:external-link-alt" class="absolute right-4 top-4 text-gray-500 transition-opacity duration-200 opacity-0 group-hover:opacity-100 z-50" />
+    <Icon
+      v-if="hasExternalLink"
+      name="uil:external-link-alt"
+      class="absolute right-4 top-4 text-gray-500 transition-opacity duration-200 opacity-0 group-hover:opacity-100 z-50"
+    />
     <div v-if="gradientBorder" class="hidden gradient-border gradient-border-dark dark:block" />
     <div v-if="gradientBorder" class="dark:hidden gradient-border gradient-border-light" />
 
     <AppCard
-      class="h-full w-full flex flex-col justify-between relative"
-      :body-class="bodyClass"
-      shadow-class="shadow-none"
-      :background-class="backgroundClass"
-      :header-class="headerClass"
-      :ring-class="ringClass"
-      :rounded-class="roundedClass"
+      :shadow="false"
+      :border="border"
+      :rounded="rounded"
+      :background-color="backgroundColor"
+      :body-padding="bodyPadding"
+      :header-content-position="headerContentPosition"
     >
       <div v-if="backgroundImage" :class="backgroundImageClass">
         <img
@@ -86,8 +89,7 @@
 <script setup lang="ts">
 import type { PropType, ComputedRef } from 'vue'
 import { hasProtocol } from 'ufo'
-import type { RouteLocationNormalized, RouteLocationRaw } from 'vue-router'
-import type { Image } from 'types'
+import type { Image, Card, Button } from 'types'
 
 const props = defineProps({
   is: {
@@ -102,6 +104,14 @@ const props = defineProps({
     type: String,
     default: ''
   },
+  appCardClass: {
+    type: String,
+    default: ''
+  },
+  rounded: {
+    type: String as PropType<Card['rounded']>,
+    default: 'xl'
+  },
   image: {
     type: Object as PropType<Image>,
     default: () => {}
@@ -115,28 +125,24 @@ const props = defineProps({
     default: true
   },
   buttons: {
-    type: Array as PropType<{ label?: string, variant?: string, to?: RouteLocationNormalized | RouteLocationRaw, icon?: string, trailing?: boolean, size?: string }[]>,
+    type: Array as PropType<Button[]>,
     default: () => []
   },
   backgroundImageClass: {
     type: String,
     default: 'absolute right-0 bottom-0'
   },
-  roundedClass: {
-    type: String,
-    default: 'rounded-xl'
+  headerContentPosition: {
+    type: String as PropType<Card['headerContentPosition']>,
+    default: 'left'
   },
-  headerClass: {
-    type: String,
-    default: 'px-4 pt-5 sm:px-6 justify-center'
+  backgroundColor: {
+    type: String as PropType<Card['backgroundColor']>,
+    default: 'white'
   },
-  bodyClass: {
-    type: String,
-    default: 'px-4 pb-5 pt-4 sm:p-6'
-  },
-  backgroundClass: {
-    type: String,
-    default: 'dark:bg-gray-900/50 bg-white'
+  border: {
+    type: Boolean as PropType<Card['border']>,
+    default: true
   },
   contentClass: {
     type: String,
@@ -150,13 +156,13 @@ const props = defineProps({
     type: String,
     default: ''
   },
-  ringClass: {
-    type: String,
-    default: 'ring-1 ring-gray-200 dark:ring-gray-800'
-  },
   buttonsWrapperClass: {
     type: String,
     default: ''
+  },
+  bodyPadding: {
+    type: Boolean as PropType<Card['bodyPadding']>,
+    default: true
   }
 })
 
@@ -171,34 +177,37 @@ const onClick = () => {
     }
   }
 }
-const headerClass: ComputedRef<string> = computed(() => {
-  return [
-    'flex items-center border-none',
-    props.headerClass
-  ].join(' ')
-})
-
-const ringClass: ComputedRef<string> = computed(() => {
-  return [
-    props.ringClass,
-    props.gradientBorder ? 'hover:ring-0' : ''
-  ].join(' ')
-})
-
-const backgroundClass: ComputedRef<string> = computed(() => {
-  return [
-    props.backgroundClass,
-    props.gradientBorder ? 'hover:bg-white hover:dark:bg-gray-900' : props.to ? 'hover:bg-gray-50 hover:dark:bg-gray-900' : ''
-  ].join(' ')
-})
 
 const root = ref<HTMLElement | null>(null)
 
 useBlockLinks(root)
 </script>
 
-<style lang="postcss">
+<style lang="ts" scoped>
+css({
+  '.app-card': {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    position: 'relative',
+    transition: 'all 0.2s',
 
+    '&:hover': {
+      backgroundColor: (props) => props.gradientBorder ? 'white' : props.to ? '{color.gray.50}' : 'white',
+      borderColor: (props) => props.gradientBorder ? 'transparent !important' : '{color.gray.200} !important',
+
+      '@dark': {
+          backgroundColor: (props) => props.gradientBorder ? '{color.gray.800}' : props.to ? '{color.gray.800}' : '{color.gray.900}',
+          borderColor: (props) => props.gradientBorder ? 'transparent !important' : '{color.gray.800} !important'
+        }
+      }
+  }
+})
+</style>
+
+<style lang="postcss">
 :root {
   --gradient-angle: 360deg;
 }

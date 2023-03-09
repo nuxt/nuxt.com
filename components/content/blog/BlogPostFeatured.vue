@@ -2,8 +2,6 @@
   <div ref="rootFeatured" class="cursor-pointer rounded-md relative group card-wrapper" @click="onClick">
     <AppCard
       class="h-full w-full flex flex-col justify-between relative transition duration-200 hover:ring-2 ucard"
-      shadow-class=""
-      ring-class=""
     >
       <img src="/assets/blog/featured.png" class="absolute inset-0 object-cover w-full h-full rounded-md">
       <div v-if="featuredArticle" class="relative flex flex-col p-4">

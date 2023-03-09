@@ -11,25 +11,26 @@
       </template>
 
       <template #heading>
-        <h2 class="py-1.5 font-semibold u-text-gray-900 text-lg">
+        <h2 class="py-1.5 font-semibold u-text-gray-900 text-lg mt-8">
           {{ selectedCategory?.title }}
         </h2>
       </template>
 
       <template #filters>
-        <ShowcasesFilterCategory :categories="categories" :selected-category="selectedCategory" class="lg:hidden" @update:selected-category="replaceRoute('category', $event)" />
+        <ShowcasesFilterCategory :categories="categories" :selected-category="selectedCategory" class="lg:hidden pb-4" @update:selected-category="replaceRoute('category', $event)" />
       </template>
 
-      <ul v-if="selectedShowcases.length" class="grid grid-cols-1 gap-8 mt-8 sm:grid-cols-2 xl:grid-cols-3">
+      <ul v-if="selectedShowcases.length" class="grid grid-cols-1 gap-8 sm:grid-cols-2 xl:grid-cols-3 mt-4">
         <li v-for="(showcase, key) in selectedShowcases" :key="showcase.id">
           <CardListItem
-            body-class="flex flex-col"
-            wrapper-content-class="px-4 py-3"
+            :header-padding="false"
+            :body-padding="false"
+            :header-block="true"
+            wrapper-content-class="px-4 pt-4"
             :to="showcase.url"
             target="_blank"
             title-class="text-md"
-            description-class="text-sm truncate"
-            header-class="flex-1 min-h-0"
+            description-class="text-sm truncate ml-4 pb-4"
           >
             <template #header>
               <div class="aspect-w-4 aspect-h-2">
@@ -71,3 +72,19 @@ const error = await fetchList()
 const { createReplaceRoute } = useFilters()
 const replaceRoute = createReplaceRoute('showcase')
 </script>
+
+<style lang="ts" scoped>
+css({
+  '.app-card': {
+    '> .body': {
+      display: 'flex',
+      flexDirection: 'column',
+    },
+
+    '> .header': {
+      flex: '1 1 0%',
+      minHeight: '0px',
+    }
+  }
+})
+</style>

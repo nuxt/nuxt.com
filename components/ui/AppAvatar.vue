@@ -1,18 +1,12 @@
 <template>
-  <span :class="wrapperClass">
-    <img v-if="url && !error" :class="avatarClass" :src="url" :alt="alt" :onerror="() => onError()">
-    <span v-else-if="text || placeholder" :class="placeholderClass">{{ text || placeholder }}</span>
-
-    <span v-if="chip" :class="chipClass" />
+  <span class="app-avatar">
+    <img v-if="url && !error" :src="url" :alt="alt" :onerror="() => onError()" class="image">
+    <span v-else-if="text || placeholder">{{ text || placeholder }}</span>
     <slot />
   </span>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import { classNames } from '../../utils'
-import { uiPreset } from '../../ui/preset'
-
 const props = defineProps({
   src: {
     type: [String, Boolean],
@@ -26,62 +20,7 @@ const props = defineProps({
     type: String,
     default: null
   },
-  size: {
-    type: String,
-    default: 'md',
-    validator (value: string) {
-      return Object.keys(uiPreset.avatar.size).includes(value)
-    }
-  },
-  rounded: {
-    type: Boolean,
-    default: true
-  },
-  chip: {
-    type: Boolean,
-    default: false
-  },
-  wrapperClass: {
-    type: String,
-    default: () => uiPreset.avatar.wrapper
-  },
-  backgroundClass: {
-    type: String,
-    default: () => uiPreset.avatar.background
-  },
-  placeholderClass: {
-    type: String,
-    default: () => uiPreset.avatar.placeholder
-  },
-  roundedClass: {
-    type: String,
-    default: () => uiPreset.avatar.rounded
-  }
-})
-
-const wrapperClass = computed(() => {
-  return classNames(
-    props.wrapperClass,
-    props.backgroundClass,
-    uiPreset.avatar.size[props.size],
-    props.rounded ? 'rounded-full' : props.roundedClass
-  )
-})
-
-const avatarClass = computed(() => {
-  return classNames(
-    uiPreset.avatar.size[props.size],
-    props.rounded ? 'rounded-full' : props.roundedClass
-  )
-})
-
-const chipClass = computed(() => {
-  return classNames(
-    uiPreset.avatar.chip.base,
-    uiPreset.avatar.chip.position[props.chipPosition],
-    uiPreset.avatar.chip.variant[props.chipVariant],
-    uiPreset.avatar.chip.size[props.size]
-  )
+  ...variants
 })
 
 const url = computed(() => {
@@ -107,3 +46,94 @@ function onError () {
   error.value = true
 }
 </script>
+
+<style lang="ts" scoped>
+css({
+  '.app-avatar': {
+    position: 'relative',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '{color.gray.100}',
+
+    '@dark': {
+      backgroundColor: '{color.gray.800}',
+    },
+
+    '> img': {
+      height: 'inherit',
+      width: 'inherit',
+      fontSize: 'inherit',
+      borderRadius: 'inherit'
+    },
+
+    '> span': {
+      fontSize: '{fontSize.xs}',
+      lineHeight: 1,
+      fontWeight: '{fontWeight.medium}',
+      color: '{color.black}',
+      textAlign: 'left',
+      lineClamp: 1,
+      wordBreak: 'break-all',
+
+      '@dark': {
+        color: '{color.white}',
+      }
+    },
+  },
+
+  variants: {
+      size: {
+        xxxs: {
+          height: '{size.16}',
+          width: '{size.16}',
+          fontSize: '{fontSize.xs}',
+        },
+        xxs: {
+          height: '{size.20}',
+          width: '{size.20}',
+          fontSize: '{fontSize.xs}',
+        },
+        xs: {
+          height: '{size.24}',
+          width: '{size.24}',
+          fontSize: '{fontSize.xs}',
+        },
+        sm: {
+          height: '{size.32}',
+          width: '{size.32}',
+          fontSize: '{fontSize.sm}',
+        },
+        md: {
+          height: '{size.40}',
+          width: '{size.40}',
+          fontSize: '{fontSize.base}',
+        },
+        lg: {
+          height: '{size.48}',
+          width: '{size.48}',
+          fontSize: '{fontSize.lg}',
+        },
+        xl: {
+          height: '{size.56}',
+          width: '{size.56}',
+          fontSize: '{fontSize.xl}',
+        },
+        options: {
+          default: 'md'
+        }
+      },
+      rounded: {
+        true: {
+          borderRadius: '{radii.full}'
+        },
+        false: {
+          borderRadius: '{radii.sm}'
+        },
+        options: {
+          default: true
+        }
+      }
+    }
+})
+</style>

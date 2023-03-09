@@ -1,53 +1,93 @@
 <template>
-  <span :class="badgeClass">
+  <span class="app-badge">
     <slot>{{ label }}</slot>
   </span>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { classNames } from '../../utils'
-import { uiPreset } from '../../ui/preset'
+import { PinceauTheme } from 'pinceau'
+import { computedStyle } from 'pinceau/runtime'
 
-const props = defineProps({
-  size: {
-    type: String,
-    default: 'md',
-    validator (value: string) {
-      return Object.keys(uiPreset.badge.size).includes(value)
-    }
-  },
-  variant: {
-    type: String,
-    default: 'primary',
-    validator (value: string) {
-      return Object.keys(uiPreset.badge.variant).includes(value)
-    }
-  },
-  baseClass: {
-    type: String,
-    default: () => uiPreset.badge.base
-  },
-  rounded: {
-    type: Boolean,
-    default: false
-  },
+defineProps({
+  color: computedStyle<keyof PinceauTheme['color']>('blue'),
   label: {
     type: String,
-    default: null
+    default: ''
+  },
+  ...variants
+})
+</script>
+
+<style lang="ts" scoped>
+css({
+  '.app-badge': {
+    display: 'inline-flex',
+    alignItems: 'center',
+    fontWeight: '{fontWeight.medium}',
+    fontSize: (props) => `{fontSize.${props.size === 'xs' ? 'xs' : 'sm'}}`,
+    py: (props) => `{size.${props.size === 'xl' ? '4' : '2'}}`
+  },
+  variants: {
+    variant: {
+      base: {
+        backgroundColor: (props) => `{color.${props.color}.100}`,
+        color: (props) => `{color.${props.color}.800}`,
+
+        '@dark': {
+          backgroundColor: (props) => `{color.${props.color}.700}`,
+          color: (props) => `{color.${props.color}.100}`
+        }
+      },
+      primary: {
+        backgroundColor: '{color.gray.100}',
+        color: '{color.gray.800}',
+
+        '@dark': {
+          backgroundColor: '{color.gray.700}',
+          color: '{color.gray.200}'
+        }
+      },
+      secondary: {
+        backgroundColor: '{color.white}',
+        color: '{color.gray.700}',
+
+        '@dark': {
+          backgroundColor: '{color.black}',
+          color: '{color.gray.300}'
+        }
+      },
+      options: {
+        default: 'primary'
+      }
+    },
+    size: {
+      sm: {
+        px: '{size.8}',
+      },
+      md: {
+        px: '{size.10}',
+      },
+      lg: {
+        px: '{size.12}',
+      },
+      xl: {
+        px: '{size.16}',
+      },
+      options: {
+        default: 'md'
+      }
+    },
+    rounded: {
+      false: {
+        borderRadius: '{radii.sm}'
+      },
+      true: {
+        borderRadius: '{radii.full}'
+      },
+      options: {
+        default: false
+      }
+    }
   }
 })
-
-const badgeClass = computed(() => {
-  return classNames(
-    props.baseClass,
-    uiPreset.badge.size[props.size],
-    uiPreset.badge.variant[props.variant],
-    props.rounded ? 'rounded-full' : 'rounded-md'
-  )
-})
-</script>
-
-<script lang="ts">
-export default { name: 'UBadge' }
-</script>
+</style>

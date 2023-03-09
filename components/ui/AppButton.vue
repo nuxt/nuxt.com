@@ -2,135 +2,60 @@
   <component
     :is="buttonIs"
     ref="button"
-    :class="buttonClass"
-    :aria-label="ariaLabel"
+    class="app-button"
+    :disabled="disabled"
     v-bind="buttonProps"
+    :aria-label="ariaLabel"
   >
-    <Icon v-if="isLeading && leadingIconName" :name="leadingIconName" :class="leadingIconClass" aria-hidden="true" />
-
-    <slot><span :class="truncate ? 'text-left break-all line-clamp-1' : 'w-full text-center'">{{ label }}</span></slot>
-
-    <Icon v-if="isTrailing && trailingIconName" :name="trailingIconName" :class="trailingIconClass" aria-hidden="true" />
+    <Icon v-if="(icon || loading) && !trailing" :name="loading ? 'line-md:loading-twotone-loop' : icon" aria-hidden="true" class="icon-leading" />
+    <span><slot v-if="!label" />{{ label }}</span>
+    <Icon v-if="(icon || loading) && trailing" :name="loading ? 'line-md:loading-twotone-loop' : icon" aria-hidden="true" class="icon-trailing" />
   </component>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, useSlots } from 'vue'
-import type { PropType } from 'vue'
+import { PinceauTheme } from 'pinceau'
+import { computedStyle } from 'pinceau/runtime'
 import type { RouteLocationNormalized, RouteLocationRaw } from 'vue-router'
 import NuxtLink from '#app/components/nuxt-link'
-import { uiPreset } from '../../ui/preset'
-import { classNames } from '../../utils'
+import type { PropType } from 'vue'
 
 const props = defineProps({
-  type: {
-    type: String,
-    default: 'button'
-  },
-  block: {
-    type: Boolean,
-    default: false
-  },
-  label: {
-    type: String,
-    default: null
-  },
-  loading: {
-    type: Boolean,
-    default: false
-  },
-  disabled: {
-    type: Boolean,
-    default: false
-  },
-  size: {
-    type: String as PropType<'xxs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl'>,
-    default: 'md'
-  },
-  variant: {
-    type: String,
-    default: 'primary',
-    validator (value: string) {
-      return Object.keys(uiPreset.button.variant).includes(value)
-    }
-  },
-  icon: {
-    type: String,
-    default: null
-  },
-  leadingIcon: {
-    type: String,
-    default: null
-  },
-  trailingIcon: {
-    type: String,
-    default: null
-  },
-  loadingIcon: {
-    type: String,
-    default: () => uiPreset.button.icon.loading
-  },
-  trailing: {
-    type: Boolean,
-    default: false
-  },
-  leading: {
-    type: Boolean,
-    default: false
-  },
+  color: computedStyle<keyof PinceauTheme['color']>('blue'),
   to: {
     type: [String, Object] as PropType<string | RouteLocationNormalized | RouteLocationRaw>,
     default: null
   },
   target: {
     type: String,
-    default: null
+    default: '_self'
+  },
+  label: {
+    type: String,
+    default: ''
   },
   ariaLabel: {
     type: String,
     default: null
   },
-  rounded: {
+  type: {
+    type: String,
+    default: 'button'
+  },
+  loading: {
     type: Boolean,
     default: false
   },
-  roundedClass: {
-    type: String,
-    default: () => uiPreset.button.rounded
-  },
-  baseClass: {
-    type: String,
-    default: () => uiPreset.button.base
-  },
-  iconBaseClass: {
-    type: String,
-    default: () => uiPreset.button.icon.base
-  },
-  leadingIconClass: {
+  icon: {
     type: String,
     default: ''
   },
-  trailingIconClass: {
-    type: String,
-    default: ''
-  },
-  customClass: {
-    type: String,
-    default: null
-  },
-  square: {
+  trailing: {
     type: Boolean,
     default: false
   },
-  truncate: {
-    type: Boolean,
-    default: false
-  }
+  ...variants
 })
-
-const slots = useSlots()
-
-const button = ref(null)
 
 const buttonIs = computed(() => {
   if (props.to) {
@@ -147,62 +72,384 @@ const buttonProps = computed(() => {
     return { disabled: props.disabled || props.loading, type: props.type }
   }
 })
-
-const isLeading = computed(() => {
-  return (props.icon && props.leading) || (props.icon && !props.trailing) || (props.loading && !props.trailing) || props.leadingIcon
-})
-
-const isTrailing = computed(() => {
-  return (props.icon && props.trailing) || (props.loading && props.trailing) || props.trailingIcon
-})
-
-const isSquare = computed(() => props.square || (!slots.default && !props.label))
-
-const buttonClass = computed(() => {
-  return classNames(
-    props.baseClass,
-    uiPreset.button.size[props.size],
-    uiPreset.button[isSquare.value ? 'square' : 'spacing'][props.size],
-    uiPreset.button.variant[props.variant],
-    props.block ? 'w-full flex justify-center items-center' : 'inline-flex items-center',
-    props.rounded ? 'rounded-full' : props.roundedClass,
-    props.customClass
-  )
-})
-
-const leadingIconName = computed(() => {
-  if (props.loading) {
-    return props.loadingIcon
-  }
-
-  return props.leadingIcon || props.icon
-})
-
-const trailingIconName = computed(() => {
-  if (props.loading && !isLeading.value) {
-    return props.loadingIcon
-  }
-
-  return props.trailingIcon || props.icon
-})
-
-const leadingIconClass = computed(() => {
-  return classNames(
-    props.iconBaseClass,
-    uiPreset.button.icon.size[props.size],
-    (!!slots.default || !!props.label?.length) && uiPreset.button.icon.leading.spacing[props.size],
-    props.leadingIconClass,
-    props.loading && 'animate-spin'
-  )
-})
-
-const trailingIconClass = computed(() => {
-  return classNames(
-    props.iconBaseClass,
-    uiPreset.button.icon.size[props.size],
-    (!!slots.default || !!props.label?.length) && uiPreset.button.icon.trailing.spacing[props.size],
-    props.trailingIconClass,
-    props.loading && !isLeading.value && 'animate-spin'
-  )
-})
 </script>
+
+<style lang="ts" scoped>
+css({
+  '.app-button': {
+    '--button-base': (props) => `{color.${props.color}.600}`,
+    '--button-base-hover': (props) => `{color.${props.color}.500}`,
+
+    position: 'relative',
+    alignItems: 'center',
+    fontWeight: '{fontWeight.medium}',
+    transition: '{transition.background}',
+
+    '&:focus': {
+      outline: 'none',
+      ringOffset: 2,
+      ring: 2,
+    },
+
+    '.icon': {
+      pointerEvents: 'none',
+      flexShrink: 0,
+    },
+  },
+
+  variants: {
+    variant: {
+      base: {
+        backgroundColor: '{button.base}',
+        ringColor: '{button.base}',
+        ringOffsetColor: '{color.white}',
+        color: '{color.gray.100}',
+
+        '@dark': {
+          ringOffsetColor: '{color.black}',
+        },
+
+        '&:hover': {
+          backgroundColor: '{button.base.hover}',
+        },
+
+        '.icon': {
+          color: '{color.gray.100}',
+        },
+
+        '&:disabled': {
+          opacity: '0.75'
+        }
+      },
+      gray: {
+        borderWidth: '{size.1}',
+        borderColor: '{color.transparent}',
+        color: '{color.gray.700}',
+        backgroundColor: '{color.gray.100}',
+        ringColor: '{color.gray.900}',
+        ringOffsetColor: '{color.white}',
+
+        '&:hover': {
+          backgroundColor: '{color.gray.200}',
+        },
+
+        '&:disabled': {
+          opacity: '0.75',
+        },
+
+        '@dark': {
+          color: '{color.gray.300}',
+          backgroundColor: '{color.gray.800}',
+          ringColor: '{color.gray.100}',
+          ringOffsetColor: '{color.black}',
+
+          '&:hover': {
+            backgroundColor: '{color.gray.700}',
+          },
+        }
+      },
+      primary: {
+        borderWidth: '{size.1}',
+        borderColor: '{color.transparent}',
+        backgroundColor: '{color.gray.900}',
+        ringColor: '{color.gray.900}',
+        ringOffsetColor: '{color.white}',
+        color: '{color.gray.100}',
+
+        '@dark': {
+          backgroundColor: '{color.gray.100}',
+          color: '{color.gray.900}',
+        },
+
+        '&:disabled': {
+          opacity: '0.75',
+        },
+
+        '&:hover': {
+          backgroundColor: `{color.gray.800}`,
+
+          '@dark': {
+            backgroundColor: `{color.gray.200}`,
+          }
+        },
+
+        '.icon': {
+            color: `{color.gray.100}`,
+            '@dark': {
+              color: `{color.gray.900}`,
+            }
+        },
+      },
+      secondary: {
+        borderWidth: '{size.1}',
+        borderColor: '{color.gray.200}',
+        backgroundColor: '{color.white}',
+        ringColor: '{color.gray.900}',
+        ringOffsetColor: '{color.white}',
+        color: '{color.gray.700}',
+
+        '&:hover': {
+          backgroundColor: '{color.gray.50}',
+          '@dark': {
+            backgroundColor: '{color.gray.900}'
+          }
+        },
+
+        '&:disabled': {
+          opacity: '0.75',
+        },
+
+        '@dark': {
+          borderColor: '{color.gray.800}',
+          backgroundColor: '{color.black}',
+          color: '{color.gray.300}',
+          ringOffsetColor: '{color.black}',
+          ringColor: '{color.gray.100}',
+        },
+
+        '.icon': {
+          color: '{color.gray.700}',
+          '@dark': {
+            color: '{color.gray.300}'
+          }
+        }
+      },
+      'transparent': {
+        borderWidth: '{size.1}',
+        borderColor: '{color.transparent}',
+        color: '{color.gray.900}',
+        ringColor: '{color.transparent}',
+        ringOffsetColor: '{color.transparent}',
+
+        '&:hover': {
+          color: '{color.gray.700}',
+          '@dark': {
+            color: '{color.gray.300}'
+          }
+        },
+
+        '&:disabled': {
+          opacity: '0.75',
+        },
+
+        '@dark': {
+          color: '{color.gray.100}',
+          ringColor: '{color.transparent}',
+          ringOffsetColor: '{color.transparent}',
+        }
+      },
+      'input-group': {
+        boxShadow: '{shadow.sm}',
+        borderWidth: '{size.1}',
+        borderColor: '{color.gray.200}',
+        color: '{color.gray.700}',
+        backgroundColor: '{color.white}',
+        ringColor: '{color.gray.900}',
+        ringOffsetColor: '{color.white}',
+
+        '&:focus': {
+          borderColor: '{color.gray.900}',
+          '@dark': {
+            borderColor: '{color.gray.100}'
+          }
+        },
+
+        '&:disabled': {
+          opacity: '0.75',
+        },
+
+        '&:hover': {
+          backgroundColor: '{color.gray.100}',
+          '@dark': {
+            backgroundColor: '{color.gray.800}'
+          }
+        },
+
+        '@dark': {
+          borderColor: '{color.gray.800}',
+          color: '{color.gray.300}',
+          backgroundColor: '{color.gray.900}',
+          ringColor: '{color.gray.100}',
+          ringOffsetColor: '{color.black}',
+        }
+      },
+      'primary-gradient': {
+        ringColor: '{color.green.400}',
+        ringOffsetColor: '{color.white}',
+        position: 'relative',
+        borderRadius: '{radii.md}',
+        border: '1px solid transparent',
+        backgroundColor: '{color.gray.900}',
+        color: '{color.gray.100}',
+
+        '&::before': {
+          transition: 'all 0.2s',
+          content: `''`,
+          position: 'absolute',
+          background: 'linear-gradient(to right, #00dc82, #36e4da, #16a79e)',
+          inset: '-3px -3px -3px -3px',
+          zIndex: -1,
+          borderRadius: '9.5px',
+        },
+
+        '&:disabled': {
+          backgroundColor: '{color.gray.700}',
+          '&::before': {
+            background: '{color.black}'
+          }
+        },
+
+        '&:hover': {
+          backgroundColor: '{color.black}',
+          '&::before': {
+            boxShadow: '0 0 10px 0 rgba(0, 220, 130, 0.5), 0 0 20px 0 rgba(54, 228, 218, 0.5)',
+          },
+          '&:disabled': {
+            '&::before': {
+              boxShadow: 'none'
+            }
+          },
+        },
+      },
+      options: {
+        default: 'base'
+      }
+    },
+    size: {
+      xxs: {
+        px: '{size.10}',
+        py: '{size.4}',
+        fontSize: '{button.fontSize.xs}',
+
+        '.icon': {
+          height: '{size.12}',
+          width: '{size.12}',
+        },
+
+        '.icon-leading, .icon-trailing': {
+          marginRight: '{size.8}'
+        },
+      },
+      xs: {
+        px: '{size.10}',
+        py: '{size.4}',
+        fontSize: '{button.fontSize.xs}',
+
+        '.icon': {
+          height: '{size.16}',
+          width: '{size.16}',
+        },
+
+        '.icon-leading, .icon-trailing': {
+          marginRight: '{size.8}'
+        },
+      },
+      sm: {
+        px: '{size.12}',
+        py: '{size.8}',
+        lineHeight: '1rem',
+        fontSize: '{button.fontSize.sm}',
+
+        '.icon': {
+          height: '{size.20}',
+          width: '{size.20}',
+        },
+
+        '.icon-leading, .icon-trailing': {
+          marginRight: '{size.8}'
+        },
+      },
+      md: {
+        px: '{size.16}',
+        py: '{size.8}',
+        fontSize: '{button.fontSize.md}',
+
+        '.icon': {
+          height: '{size.20}',
+          width: '{size.20}',
+        },
+
+        '.icon-leading, .icon-trailing': {
+          marginRight: '{size.12}'
+        },
+      },
+      lg: {
+        px: '{size.16}',
+        py: '{size.8}',
+        fontSize: '{button.fontSize.lg}',
+
+        '.icon': {
+          height: '{size.20}',
+          width: '{size.20}',
+        },
+
+        '.icon-leading, .icon-trailing': {
+          marginRight: '{size.12}'
+        },
+      },
+      xl: {
+        px: '{size.24}',
+        py: '{size.12}',
+        fontSize: '{button.fontSize.xl}',
+
+        '.icon': {
+          height: '{size.20}',
+          width: '{size.20}',
+        },
+
+        '.icon-leading, .icon-trailing': {
+          marginRight: '{size.12}'
+        },
+      },
+
+      options: {
+        default: 'md'
+      }
+    },
+    block: {
+      true: {
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+      },
+      false: {
+        display: 'inline-flex'
+      },
+      options: {
+        default: false
+      }
+    },
+    disabled: {
+      true: {
+        cursor: 'not-allowed',
+      },
+      options: {
+        default: false
+      }
+    },
+    rounded: {
+      false: {
+        borderRadius: '{radii.md}'
+      },
+      true: {
+        borderRadius: '9999px'
+      },
+      options: {
+        default: false
+      }
+    },
+    truncate: {
+      true: {
+        '> span': {
+          textAlign: 'left',
+          lineClamp: 1,
+          wordBreak: 'break-all'
+        }
+      },
+      options: {
+        default: false
+      }
+    },
+  }
+})
+</style>

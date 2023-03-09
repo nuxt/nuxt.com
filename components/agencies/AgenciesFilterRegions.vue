@@ -7,7 +7,7 @@
     size="sm"
     placeholder="Region"
     text-attribute="title"
-    class="min-w-[144px]"
+    class="app-select-agencies-region"
   />
 </template>
 
@@ -48,3 +48,11 @@ const region: WritableComputedRef<any> = computed({
   }
 })
 </script>
+
+<style lang="ts">
+css({
+  '.app-select-agencies-region': {
+    minWidth: '144px'
+  }
+})
+</style>

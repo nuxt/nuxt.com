@@ -23,7 +23,7 @@
     >
     <div class="max-w-7xl relative mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center sm:items-start gap-y-8">
       <div v-if="$slots.badgeLabel" class="flex gap-x-2">
-        <AppBadge rounded variant="green">
+        <AppBadge rounded variant="base" color="green">
           <ContentSlot :use="$slots.badgeLabel" unwrap="p" />
         </AppBadge>
         <span>

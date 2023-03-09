@@ -48,14 +48,8 @@ function onSubmit () {
         variant="primary-gradient"
         :loading="loading"
         :label="buttonText"
-        class="focus-visible:ring-2"
+        size="sm"
       />
     </div>
   </form>
 </template>
-
-<style scoped lang="postcss">
-button[type="submit"]{
- @apply border-gradient-br-gradient-black;
-}
-</style>

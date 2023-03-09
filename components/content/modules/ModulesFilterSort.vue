@@ -3,10 +3,9 @@
     <AppButton
       name="orderBy"
       :icon="orderBy.icon"
-      size="sm"
+      size="xs"
       variant="input-group"
-      icon-base-class="flex-shrink-0 u-text-gray-400 group-hover:u-text-gray-500"
-      class="-mr-px rounded-r-none focus:z-[1] group"
+      class="app-button-module-order"
       @click="switchOrder"
     />
     <AppSelect
@@ -15,8 +14,7 @@
       :options="sorts"
       size="sm"
       text-attribute="title"
-      custom-class="rounded-l-none"
-      class="min-w-[144px] w-full md:w-auto"
+      class="app-select-modules-sort"
     />
   </div>
 </template>
@@ -69,3 +67,50 @@ function switchOrder () {
   orderBy.value = otherOrder as FilterItem
 }
 </script>
+
+<style lang="ts">
+css({
+  '.app-select-modules-sort': {
+    minWidth: '144px',
+    width: '{size.full}',
+
+    '@md': {
+      width: 'auto'
+    },
+
+    '> div': {
+      '> button': {
+        borderTopLeftRadius: '{radii.none} !important',
+        borderBottomLeftRadius: '{radii.none} !important',
+      }
+    },
+  },
+  '.app-button-module-order': {
+    borderTopRightRadius: '0px',
+    borderBottomRightRadius: '0px',
+    marginRight: '-1px',
+    ringColor: '{color.transparent} !important',
+    ringOffsetColor: '{color.transparent} !important',
+
+    '&:focus': {
+      zIndex: '1',
+    },
+
+    '> .icon': {
+      flexShrink: 0,
+    },
+
+    '.icon-leading': {
+      marginRight: '{size.0} !important'
+    },
+
+    ':deep(svg)': {
+      color: '{color.gray.600}',
+
+      '@dark': {
+        color: '{color.gray.300}'
+      }
+    }
+  }
+})
+</style>

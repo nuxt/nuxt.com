@@ -23,6 +23,7 @@ buttons:
     icon: 'uil:arrow-right'
     trailing: 'trailing'
     download: true
+    variant: 'link'
     target: '_blank'
 ---
 #title
@@ -48,7 +49,6 @@ Icon
   ::resources-design-kit-logo-card
   ---
   imgName: icon-green
-  cardClass: 'bg-white'
   infoType: 'primary'
   ---
   #info
@@ -60,7 +60,6 @@ Icon
   ::resources-design-kit-logo-card
   ---
   imgName: icon-black
-  cardClass: 'bg-white'
   info-type: 'secondary'
   ---
   #info
@@ -72,7 +71,7 @@ Icon
   ::resources-design-kit-logo-card
   ---
   imgName: icon-white
-  cardClass: 'bg-gray-900'
+  backgroundColor: 'black'
   info-type: 'secondary-dark'
   ---
   #info
@@ -94,7 +93,6 @@ Logo
   ::resources-design-kit-logo-card
   ---
   imgName: full-logo-green-dark
-  cardClass: 'bg-white'
   infoType: 'primary'
   full: true
   ---
@@ -107,7 +105,7 @@ Logo
   ::resources-design-kit-logo-card
   ---
   imgName: full-logo-green-light
-  cardClass: 'bg-gray-900'
+  backgroundColor: 'black'
   infoType: 'primary-dark'
   full: true
   ---
@@ -120,7 +118,6 @@ Logo
   ::resources-design-kit-logo-card
   ---
   imgName: full-logo-black
-  cardClass: 'bg-white'
   info-type: 'secondary'
   full: true
   ---
@@ -133,7 +130,7 @@ Logo
   ::resources-design-kit-logo-card
   ---
   imgName: full-logo-white
-  cardClass: bg-gray-900
+  backgroundColor: 'black'
   full: true
   info-type: 'secondary-dark'
   ---
@@ -157,7 +154,7 @@ Our color palette is based on our iconic NuxtJS green and colours have been care
 #designList
   ::resources-design-kit-color-card
   ---
-  cardClass: 'bg-green-400'
+  backgroundColor: 'green'
   hexaColor: '#00DC82'
   ---
   #color
@@ -168,7 +165,6 @@ Our color palette is based on our iconic NuxtJS green and colours have been care
 
   ::resources-design-kit-color-card
   ---
-  cardClass: 'bg-white border dark:border-none'
   hexaColor: '#FFFFFF'
   ---
   #color
@@ -179,7 +175,7 @@ Our color palette is based on our iconic NuxtJS green and colours have been care
 
   ::resources-design-kit-color-card
   ---
-  cardClass: 'bg-gray-900'
+  backgroundColor: 'black'
   hexaColor: '#18181B'
   ---
   #color

@@ -11,6 +11,7 @@
         title="Follow Nuxt on Twitter"
       >
         <span class="sr-only">Follow Nuxt on Twitter</span>
+
       </AppButton>
     </li>
     <li>

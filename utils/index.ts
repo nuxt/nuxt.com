@@ -67,3 +67,7 @@ export const omit = (obj: object, keys: string[]) => {
     Object.entries(obj).filter(([key]) => !keys.includes(key))
   )
 }
+
+export const isColorPalette = (color: any) => {
+  return !['white', 'black', 'transparent', 'current'].includes(color.toString())
+}

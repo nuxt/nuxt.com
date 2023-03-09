@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { RouteLocationNormalized, RouteLocationRaw } from 'vue-router'
 import type { PropType } from 'vue'
+import type { Button } from 'types'
 
 defineProps({
   text: {
@@ -12,7 +12,7 @@ defineProps({
     default: ''
   },
   buttons: {
-    type: Array as PropType<{ target?: string, label?: string, variant?: string, to?: RouteLocationNormalized | RouteLocationRaw, icon?: string, trailing?: boolean, size?: string, action?: any }[]>,
+    type: Array as PropType<Button[]>,
     default: () => []
   },
   resetFilter: {

@@ -6,7 +6,6 @@
     size="sm"
     placeholder="Type"
     text-attribute="title"
-    class="min-w-[144px]"
   />
 </template>
 
@@ -47,3 +46,11 @@ const type: WritableComputedRef<FilterItem | null> = computed({
   }
 })
 </script>
+
+<style lang="ts" scoped>
+css({
+  '.app-select': {
+    minWidth: '144px',
+  }
+})
+</style>

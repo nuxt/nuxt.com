@@ -57,8 +57,7 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import type { RouteLocationNormalized, RouteLocationRaw } from 'vue-router'
-import type { Image } from 'types'
+import type { Image, Button } from 'types'
 
 defineProps({
   centered: {
@@ -82,7 +81,7 @@ defineProps({
     default: () => {}
   },
   buttons: {
-    type: Array as PropType<{ label?: string, variant?: string, to?: RouteLocationNormalized | RouteLocationRaw, icon?: string, trailing?: boolean, size?: string, target?: string }[]>,
+    type: Array as PropType<Button[]>,
     default: () => []
   },
   buttonsTextLeft: {

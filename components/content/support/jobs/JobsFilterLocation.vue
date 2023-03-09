@@ -5,7 +5,7 @@
     :options="locationsWithPlaceholder"
     size="sm"
     placeholder="Location"
-    class="min-w-[192px]"
+    class="app-select-jobs-location"
     text-attribute="title"
   />
 </template>
@@ -44,3 +44,11 @@ const location: WritableComputedRef<any> = computed({
   }
 })
 </script>
+
+<style lang="ts">
+css({
+  '.app-select-jobs-location': {
+    minWidth: '192px'
+  }
+})
+</style>

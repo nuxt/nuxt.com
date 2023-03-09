@@ -18,7 +18,7 @@ defineProps({
   <ul class="w-full" :class="['platinum', 'silver', 'gold'].includes(sponsorType) ? 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12' : 'flex gap-5 flex-wrap'">
     <li v-for="{ sponsorId, sponsorUrl, sponsorLogo, sponsorName } in sponsors" :key="sponsorId">
       <a :href="sponsorUrl" :title="sponsorName" target="_blank" rel="noopener noreferrer">
-        <AppCard v-if="['platinum', 'silver', 'gold'].includes(sponsorType)" class="w-full rounded-xl " background-class="hover:u-bg-gray-50 transition-colors duration-200">
+        <AppCard v-if="['platinum', 'silver', 'gold'].includes(sponsorType)" header-content-position="center">
           <template #header>
             <div class="flex justify-center items-center">
               <AppAvatar :rounded="sponsorType === 'silver'" :size="sponsorType === 'silver' ? 'md' : sponsorType === 'gold' ? 'lg' : 'xl'" :src="sponsorLogo" alt="">
@@ -38,3 +38,21 @@ defineProps({
     </li>
   </ul>
 </template>
+
+<style lang="ts" scoped>
+css({
+  '.app-card': {
+    transition: 'background-color 0.2s',
+
+    '&:hover': {
+      backgroundColor: '{color.gray.50}',
+    },
+
+    '@dark': {
+      '&:hover': {
+        backgroundColor: '{color.gray.800}'
+      }
+    }
+  }
+})
+</style>
