@@ -16,6 +16,32 @@ if (process.env.NUXT_DOCS_PATH) {
   docsSource.base = process.env.NUXT_DOCS_PATH
 }
 
+let routeRules = {}
+if (process.env.NODE_ENV !== 'development') {
+  routeRules = {
+    // prerendered pages
+    '/': { prerender: true },
+    '/sitemap.xml': { prerender: true },
+    '/newsletter': { prerender: true },
+    '/design-kit': { prerender: true },
+    '/support/solutions': { prerender: true },
+    '/support/agencies': { prerender: true },
+    '/api/_content/**': { prerender: true },
+    '/api/newsletter/**': { cache: false, swr: false },
+    '/docs/**': { prerender: true },
+    // more frequently updated pages
+    '/modules/**': { swr: 60 },
+    '/partners/**': { swr: 60 },
+    '/showcase': { swr: 60 },
+    '/api/jobs': { swr: 60 },
+    '/api/sponsors': { swr: 60 },
+    '/api/email/**': { swr: 60 },
+    '/api/modules/**': { swr: 60 },
+    // defaults
+    '/**': { cache: { swr: true, maxAge: 120, staleMaxAge: 60, headersOnly: true }, prerender: false }
+  }
+}
+
 // https://v3.nuxtjs.org/guide/directory-structure/nuxt.config
 export default defineNuxtConfig({
   experimental: {
@@ -162,26 +188,5 @@ export default defineNuxtConfig({
       crawlLinks: true
     }
   },
-  routeRules: {
-    // prerendered pages
-    '/': { prerender: true },
-    '/sitemap.xml': { prerender: true },
-    '/newsletter': { prerender: true },
-    '/design-kit': { prerender: true },
-    '/support/solutions': { prerender: true },
-    '/support/agencies': { prerender: true },
-    '/api/_content/**': { prerender: true },
-    '/api/newsletter/**': { cache: false, swr: false },
-    '/docs/**': { prerender: true },
-    // more frequently updated pages
-    '/modules/**': { swr: 60 },
-    '/partners/**': { swr: 60 },
-    '/showcase': { swr: 60 },
-    '/api/jobs': { swr: 60 },
-    '/api/sponsors': { swr: 60 },
-    '/api/email/**': { swr: 60 },
-    '/api/modules/**': { swr: 60 },
-    // defaults
-    '/**': { cache: { swr: true, maxAge: 120, staleMaxAge: 60, headersOnly: true }, prerender: false }
-  }
+  routeRules
 })
