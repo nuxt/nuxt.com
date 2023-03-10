@@ -230,6 +230,16 @@ const socialsMap = [
     key: 'facebook',
     icon: 'uil:facebook',
     getUrl: (handle: string) => `https://www.facebook.com/${handle}`
+  },
+  {
+    key: 'youtube',
+    icon: 'uil:youtube',
+    getUrl: (handle: string) => `https://youtube.com/${handle}`
+  },
+  {
+    key: 'instagram',
+    icon: 'uil:instagram',
+    getUrl: (handle: string) => `https://instagram.com/${handle}`
   }
 ]
 
