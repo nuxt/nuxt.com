@@ -21,17 +21,21 @@
           'sm:py-8': !image
         }"
       >
-        <p class="text-sm font-semibold sm:text-sm text-green-400" :class="{ 'text-center': centered }">
+        <p v-if="$slots.topTitle" class="text-sm font-semibold sm:text-sm text-green-400" :class="{ 'text-center': centered }">
           <ContentSlot :use="$slots.topTitle" unwrap="p" />
         </p>
         <h1 class="text-4xl font-semibold sm:text-5xl u-text-gray-900" :class="{ 'text-center': centered }">
-          <ContentSlot :use="$slots.title" unwrap="p" />
+          <ContentSlot :use="$slots.title" unwrap="p">
+            Hero Title
+          </ContentSlot>
         </h1>
         <div class="font-medium sm:text-lg u-text-gray-500" :class="[descriptionWidthClass, { 'text-center': centered }]">
-          <ContentSlot :use="$slots.description" unwrap="p" />
+          <ContentSlot :use="$slots.description" unwrap="p">
+            This is the Hero description
+          </ContentSlot>
         </div>
-        <div v-if="buttons.length" class="flex flex-col gap-y-2 sm:flex-row sm:gap-x-2" :class="{ 'hidden': buttonsHidden }">
-          <div v-if="buttonsTextLeft" class="flex flex-col items-center justify-center sm:flex-row">
+        <div v-if="buttons.length" class="flex flex-col gap-y-2 sm:flex-row sm:gap-x-2">
+          <div v-if="buttonsTextLeft" class="flex flex-col sm:items-center sm:flex-row">
             {{ buttonsTextLeft }}
           </div>
           <AppButton
@@ -48,8 +52,7 @@
             :target="button.target || '_self'"
           />
         </div>
-
-        <ContentSlot :use="$slots.extra" unwrap="p" />
+        <ContentSlot v-if="$slots.extra" :use="$slots.extra" unwrap="p" />
       </div>
     </div>
   </div>
@@ -61,10 +64,6 @@ import type { Image, Button } from 'types'
 
 defineProps({
   centered: {
-    type: Boolean,
-    default: false
-  },
-  buttonsHidden: {
     type: Boolean,
     default: false
   },
