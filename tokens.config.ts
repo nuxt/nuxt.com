@@ -190,7 +190,7 @@ export default defineTheme({
   },
   typography: {
     verticalMargin: {
-      base: '16px'
+      base: '18px'
     },
     color: {
       primary: {
