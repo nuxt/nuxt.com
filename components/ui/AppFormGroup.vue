@@ -53,7 +53,7 @@ css({
     '> p': {
       fontSize: '{fontSize.sm}',
       lineHeight: '{lead.5}',
-      backgroudColor: '{color.gray.500}'
+      backgroundColor: '{color.gray.500}'
     },
 
     '.form-group-container': {
@@ -63,7 +63,7 @@ css({
       '> p': {
         fontSize: '{fontSize.xs}',
         marginTop: '{size.8}',
-        backgroudColor: '{color.gray.500}'
+        backgroundColor: '{color.gray.500}'
       }
     },
 
@@ -86,7 +86,7 @@ css({
       '> span': {
         fontSize: '{fontSize.sm}',
         lineHeight: '{lead.5}',
-        backgroudColor: '{color.gray.500}'
+        backgroundColor: '{color.gray.500}'
       }
     },
   },

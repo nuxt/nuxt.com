@@ -225,7 +225,7 @@ css({
           pointerEvents: 'none',
 
           '.icon': {
-            marginRigth: '{size.8}',
+            marginRight: '{size.8}',
             color: '{color.gray.400}',
             height: '{size.20}',
             width: '{size.20}',
