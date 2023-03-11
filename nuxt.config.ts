@@ -46,7 +46,6 @@ if (process.env.NODE_ENV !== 'development') {
 export default defineNuxtConfig({
   experimental: {
     // inlineSSRStyles: false
-    emitRouteChunkError: 'reload'
   },
   extends: '@nuxt-themes/typography',
   css: [
