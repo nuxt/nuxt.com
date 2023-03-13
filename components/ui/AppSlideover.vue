@@ -32,7 +32,7 @@ defineProps({
 <style lang="ts" scoped>
 css({
   '.app-slideover': {
-    overflowY: 'hidden',
+    overflowY: 'scroll',
     position: 'fixed',
     top: 0,
     left: 0,
