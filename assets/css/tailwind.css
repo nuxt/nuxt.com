@@ -14,8 +14,10 @@ a:focus {
   @apply relative px-4 sm:px-6 lg:px-8;
 }
 
-h1,h2,h3 {
-  @apply scroll-mt-16;
+.docs-page {
+  h1, h2, h3 {
+    @apply scroll-mt-20;
+  }
 }
 
 @layer utilities {
