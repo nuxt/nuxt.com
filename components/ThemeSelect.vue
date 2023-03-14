@@ -1,13 +1,16 @@
 <template>
-  <AppToggle
-    v-model="isDark"
-    name="theme"
-    icon-on="uil:moon"
-    icon-off="uil:sun"
-    class="theme-select"
-  >
-    <span class="sr-only">Toggle theme</span>
-  </AppToggle>
+  <ColorScheme>
+    <AppToggle
+      v-model="isDark"
+      name="theme"
+      icon-on="uil:moon"
+      icon-off="uil:sun"
+      class="theme-select"
+      v-bind="$attrs"
+    >
+      <span class="sr-only">Toggle theme</span>
+    </AppToggle>
+  </ColorScheme>
 </template>
 
 <script setup lang="ts">
