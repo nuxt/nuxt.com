@@ -16,37 +16,40 @@ if (process.env.NUXT_DOCS_PATH) {
   docsSource.base = process.env.NUXT_DOCS_PATH
 }
 
-let routeRules = {}
-if (process.env.NODE_ENV !== 'development') {
-  routeRules = {
-    // prerendered pages
-    '/': { prerender: true },
-    '/sitemap.xml': { prerender: true },
-    '/newsletter': { prerender: true },
-    '/design-kit': { prerender: true },
-    '/support/solutions': { prerender: true },
-    '/support/agencies': { prerender: true },
-    '/api/_content/**': { prerender: true },
-    '/api/newsletter/**': { cache: false, swr: false },
-    '/docs/**': { prerender: true },
-    // more frequently updated pages
-    '/modules/**': { swr: 60 },
-    '/partners/**': { swr: 60 },
-    '/showcase': { swr: 60 },
-    '/api/jobs': { swr: 60 },
-    '/api/sponsors': { swr: 60 },
-    '/api/email/**': { swr: 60 },
-    '/api/modules/**': { swr: 60 },
-    // defaults
-    '/**': { cache: { swr: true, maxAge: 120, staleMaxAge: 60, headersOnly: true }, prerender: false }
-  }
-}
-
 // https://v3.nuxtjs.org/guide/directory-structure/nuxt.config
 export default defineNuxtConfig({
-  experimental: {
-    // inlineSSRStyles: false
-    emitRouteChunkError: 'reload'
+  $development: {
+    runtimeConfig: {
+      public: {
+        website: {
+          url: 'http://localhost:3000'
+        }
+      }
+    }
+  },
+  $production: {
+    routeRules: {
+      // prerendered pages
+      '/': { prerender: true },
+      '/sitemap.xml': { prerender: true },
+      '/newsletter': { prerender: true },
+      '/design-kit': { prerender: true },
+      '/support/solutions': { prerender: true },
+      '/support/agencies': { prerender: true },
+      '/api/_content/**': { prerender: true },
+      '/api/newsletter/**': { cache: false, swr: false },
+      '/docs/**': { prerender: true },
+      // more frequently updated pages
+      '/modules/**': { swr: 60 },
+      '/partners/**': { swr: 60 },
+      '/showcase': { swr: 60 },
+      '/api/jobs': { swr: 60 },
+      '/api/sponsors': { swr: 60 },
+      '/api/email/**': { swr: 60 },
+      '/api/modules/**': { swr: 60 },
+      // defaults
+      '/**': { cache: { swr: true, maxAge: 120, staleMaxAge: 60, headersOnly: true }, prerender: false }
+    }
   },
   extends: '@nuxt-themes/typography',
   css: [
@@ -130,7 +133,13 @@ export default defineNuxtConfig({
       apiKey: process.env.NUXT_MAILJET_API_KEY || '',
       secretKey: process.env.NUXT_MAILJET_SECRET_KEY || ''
     },
-    public: {}
+    public: {
+      website: {
+        title: 'Nuxt',
+        url: 'https://nuxt.com',
+        image: '/social.jpg'
+      }
+    }
   },
   colorMode: {
     classSuffix: ''
@@ -187,6 +196,5 @@ export default defineNuxtConfig({
     prerender: {
       crawlLinks: true
     }
-  },
-  routeRules
+  }
 })

@@ -13,6 +13,10 @@ useHead({
     class: 'antialiased font-sans text-gray-700 dark:text-gray-200 bg-white dark:bg-black'
   }
 })
+useSeoMeta({
+  title: 'Page not found',
+  description: 'We are sorry but this page could not be found.'
+})
 
 defineProps({
   error: {

@@ -6,6 +6,4 @@
 
 <script setup>
 const { page } = useContent()
-
-useContentHead(page.value)
 </script>
