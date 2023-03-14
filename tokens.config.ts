@@ -205,6 +205,10 @@ export default defineTheme({
         800: '#005e38',
         900: '#003f25'
       }
+    },
+    font: {
+      body: '"RoobertPRO", "RoobertPRO override", sans-serif',
+      display: '"RoobertPRO", "RoobertPRO override", sans-serif'
     }
   },
   size: {
