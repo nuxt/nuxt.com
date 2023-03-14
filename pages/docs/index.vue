@@ -8,8 +8,6 @@
 const { page } = useContent()
 
 usePageNotFound(page)
-
-useContentHead(page)
 </script>
 
 <style lang="postcss" scoped>

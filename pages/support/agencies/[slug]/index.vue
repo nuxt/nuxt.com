@@ -9,5 +9,4 @@ const { fetchList } = useAgencyPartners()
 await fetchList()
 
 usePageNotFound(page)
-useContentHead(page)
 </script>
