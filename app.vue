@@ -28,8 +28,7 @@ const description = computed(() => page.value?.head?.description || page.value?.
 
 useServerHead({
   link: [
-    { rel: 'icon', href: '/icon.png' },
-    { rel: 'canonical', href: ogUrl }
+    { rel: 'icon', href: '/icon.png' }
   ],
   htmlAttrs: {
     lang: 'en'
@@ -37,6 +36,12 @@ useServerHead({
   bodyAttrs: {
     class: 'antialiased font-sans text-gray-700 dark:text-gray-200 bg-white dark:bg-black [--scroll-mt:10rem] lg:[--scroll-mt:7rem]'
   }
+})
+
+useHead({
+  link: [
+    { rel: 'canonical', href: ogUrl }
+  ]
 })
 
 useSeoMeta({
