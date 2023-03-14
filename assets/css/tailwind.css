@@ -14,6 +14,12 @@ a:focus {
   @apply relative px-4 sm:px-6 lg:px-8;
 }
 
+.docs-page {
+  h1, h2, h3 {
+    @apply scroll-mt-20;
+  }
+}
+
 @layer utilities {
   .u-bg-white { @apply bg-white dark:bg-black; }
   .u-bg-gray-50 { @apply bg-gray-50 dark:bg-gray-900; }
