@@ -104,13 +104,10 @@ const copyToClipboard = (content: string) => {
   }, 2000)
 }
 
-useHead({
-  title: capitalize(module.value.name) + ' Module',
-  meta: [
-    { property: 'og:title', content: capitalize(module.value.name) + ' Module' },
-    { property: 'description', content: module.value.description },
-    { property: 'og:description', content: module.value.description }
-  ]
+useSeoMeta({
+  title: `${capitalize(module.value.name)} Module`,
+  description: module.value.description,
+  ogImage: '/socials/modules.jpg'
 })
 </script>
 
