@@ -12,7 +12,7 @@
       <div class="sm:relative flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
         <div class=" flex flex-col-reverse items-center gap-3 sm:flex-row sm:w-40 md:w-60">
           <ThemeSelect class="z-10 order-1 sm:order-none" size="sm" />
-          <span class="text-sm u-text-gray-500">© 2023 Nuxt - MIT License</span>
+          <span class="text-sm u-text-gray-500">© 2016-2023 Nuxt - MIT License</span>
         </div>
 
         <ul class="flex flex-wrap justify-center text-sm gap-x-6 gap-y-2">
