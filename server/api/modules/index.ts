@@ -1,4 +1,3 @@
-import { logger } from '@nuxt/kit'
 import { useValidatedQuery, z, zh } from 'h3-zod'
 import { performance } from 'node:perf_hooks'
 // @ts-ignore
