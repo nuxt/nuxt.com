@@ -6,13 +6,17 @@ import ms from 'ms'
 
 export default defineCachedEventHandler(async (event) => {
   const { version } = await useValidatedQuery(event, z.object({
-    version: z.enum(['2', '3'])
+    version: z.enum(['2', '2-bridge', '3'])
   }))
   const start = performance.now()
   
   let modules = await fetchModules() as any[]
   // Filter out modules by compatibility
   modules = modules.filter(module => {
+    // Nuxt 2 + bridge
+    if (version === '2-bridge') {
+      return module.compatibility.nuxt.includes(`^2`) && module.compatibility.requires?.bridge
+    }
     return module.compatibility.nuxt.includes(`^${version}`)
   })
 
@@ -38,7 +42,7 @@ export default defineCachedEventHandler(async (event) => {
   }
 
   // Remove empty modules
-  logger.success(`Modules stats ready in ${ms(performance.now() - start)}`)
+  logger.success(`Modules ${version} stats ready in ${ms(performance.now() - start)}`)
 
   return {
     version,
