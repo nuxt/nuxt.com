@@ -1,5 +1,3 @@
-import { logger } from '@nuxt/kit'
-
 export function isBot (username: string) {
   return username.includes('[bot]') || username.includes('-bot')
 }
