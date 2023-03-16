@@ -68,7 +68,10 @@ export const fetchModuleContributors = cachedFunction(async (module: any) => {
 
 export const fetchModuleReadme = cachedFunction(async (module: any) => {
   logger.info(`Fetching module ${module.name} readme ...`)
-  const readme = await $fetch(`https://raw.githubusercontent.com/${module.repo}/main/README.md`).catch(() => '') as string
+  const readme = await $fetch(`https://unpkg.com/${module.npm}/README.md`).catch(() => {
+    logger.warn(`Could not fetch ${module.npm}/README.md`)
+    return 'Readme not found'
+  }) as string
 
   return await parseMarkdown(readme, 'readme.md')
 }, {
