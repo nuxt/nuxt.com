@@ -52,6 +52,13 @@ export default defineNuxtConfig({
     }
   },
   extends: '@nuxt-themes/typography',
+  app: {
+    head: {
+      script: [
+        { src: 'https://masteringnuxt.com/banner.js?affiliate=nuxt&type=top', async: true }
+      ]
+    }
+  },
   css: [
     resolve('./assets/css/fonts.css'),
     resolve('./assets/css/style.css'),
