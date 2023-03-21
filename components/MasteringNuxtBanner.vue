@@ -34,7 +34,7 @@ if (process.server) {
       </a>
       <ClientOnly>
         <vue-countdown v-if="endDate > 0" :time="endDate" v-slot="{ days, hours, minutes }">
-          <span class="text-sm pl-[10px] sm:pl-0"><span v-if="days > 0">{{ days }} {{ days > 1 ? 'days' : 'day' }}, </span><span v-if="days > 0 || hours > 0">{{ hours }} {{ hours > 1 ? 'hours' : 'hour' }} and</span> {{ minutes }} {{ days > 1 ? 'minutes' : 'minute' }} left</span>
+          <span class="text-sm pl-[10px] sm:pl-0"><span v-if="days > 0">{{ days }} {{ days > 1 ? 'days' : 'day' }}, </span><span v-if="days > 0 || hours > 0">{{ hours }} {{ hours > 1 ? 'hours' : 'hour' }} and</span> {{ minutes }} {{ minutes > 1 ? 'minutes' : 'minute' }} left</span>
         </vue-countdown>
       </ClientOnly>
       <div class="flex flex-row justify-end absolute inset-y-0 right-4">
