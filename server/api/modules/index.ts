@@ -45,6 +45,7 @@ export default defineCachedEventHandler(async (event) => {
 
   return {
     version,
+    generatedAt: new Date().toISOString(),
     stats: {
       downloads: modules.reduce((acc, module) => acc + (module.stats?.downloads || 0), 0),
       stars: modules.reduce((acc, module) => acc + (module.stats?.stars || 0), 0),
@@ -54,7 +55,7 @@ export default defineCachedEventHandler(async (event) => {
     },
     maintainers: Object.values(maintainers).sort((a, b) => b.modules.length - a.modules.length),
     contributors: Object.values(contributors).sort((a, b) => b.modules.length - a.modules.length),
-    modules
+    modules,
   }
 }, {
   name: 'modules',

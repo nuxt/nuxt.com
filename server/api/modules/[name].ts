@@ -23,6 +23,7 @@ export default defineCachedEventHandler(async (event) => {
   module.stats = stats
   module.contributors = contributors
   module.readme = readme
+  module.generatedAt = new Date().toISOString()
 
   return module
 }, {
