@@ -5,7 +5,15 @@ const preferNoMNBanner = () => {
   localStorage.setItem('preferNoMNBanner', 'true')
   document.querySelector('html')?.classList.add('hide-banner')
 }
-const endDate = +(new Date('2023-03-23T00:00:00Z')) - Date.now()
+
+const firstEndDate = +(new Date('2021-03-23T00:00:00Z')) - Date.now()
+
+let endDate = firstEndDate
+
+/* Renew end date */
+if (firstEndDate < 0) {
+  endDate = +(new Date('2021-03-24T23:59:59Z')) - Date.now()
+}
 
 if (process.server) {
   useHead({
@@ -33,7 +41,7 @@ if (process.server) {
         {{ endDate > 0 ? 'Claim 30% OFF' : 'Discover the course' }}
       </a>
       <ClientOnly>
-        <vue-countdown v-if="endDate > 0" :time="endDate" v-slot="{ days, hours, minutes }">
+        <vue-countdown v-if="endDate > 0" v-slot="{ days, hours, minutes }" :time="endDate">
           <span class="text-sm pl-[10px] sm:pl-0"><span v-if="days > 0">{{ days }} {{ days > 1 ? 'days' : 'day' }}, </span><span v-if="days > 0 || hours > 0">{{ hours }} {{ hours > 1 ? 'hours' : 'hour' }} and</span> {{ minutes }} {{ minutes > 1 ? 'minutes' : 'minute' }} left</span>
         </vue-countdown>
       </ClientOnly>
