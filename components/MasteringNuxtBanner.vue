@@ -7,12 +7,13 @@ const preferNoMNBanner = () => {
 }
 
 const firstEndDate = +(new Date('2021-03-23T00:00:00Z')) - Date.now()
+const secondEndDate = +(new Date('2021-03-24T23:59:59Z')) - Date.now()
 
 let endDate = firstEndDate
 
 /* Renew end date */
 if (firstEndDate < 0) {
-  endDate = +(new Date('2021-03-24T23:59:59Z')) - Date.now()
+  endDate = secondEndDate
 }
 
 if (process.server) {
