@@ -11,6 +11,4 @@ const { fetchList: fetchModules } = useModules()
 
 /* resources are needed in the page, start fetching as soon as possible */
 await Promise.all([fetchShowcases(), fetchModules()])
-
-useContentHead(page)
 </script>

@@ -5,7 +5,7 @@
         <slot name="label">{{ label }}</slot>
         <span v-if="required">*</span>
       </label>
-      <span v-if="$slots.hint || hint">
+      <span v-if="$slots.hint || hint" class="hint">
         <slot name="hint">{{ hint }}</slot>
       </span>
     </div>
@@ -53,7 +53,6 @@ css({
     '> p': {
       fontSize: '{fontSize.sm}',
       lineHeight: '{lead.5}',
-      backgroudColor: '{color.gray.500}'
     },
 
     '.form-group-container': {
@@ -63,7 +62,6 @@ css({
       '> p': {
         fontSize: '{fontSize.xs}',
         marginTop: '{size.8}',
-        backgroudColor: '{color.gray.500}'
       }
     },
 
@@ -83,23 +81,32 @@ css({
         }
       },
 
-      '> span': {
+      '> .hint': {
         fontSize: '{fontSize.sm}',
         lineHeight: '{lead.5}',
-        backgroudColor: '{color.gray.500}'
       }
     },
+
   },
 
   variants: {
     required: {
+      false: {
+        '> .label > .hint': {
+          color: '{color.gray.500}',
+
+          '@dark': {
+            color: '{color.gray.400}'
+          }
+        }
+      },
       true: {
-        '> .label > span': {
+        '> .label > .hint': {
           color: '{color.red.400}'
         }
       },
-      default: {
-        options: false
+      options: {
+        default: false
       }
     },
     full: {

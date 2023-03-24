@@ -1,5 +1,5 @@
 <template>
-  <div :class="wrapperClass">
+  <div class="app-textarea-wrapper">
     <textarea
       :id="name"
       ref="textarea"

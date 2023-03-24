@@ -2,8 +2,6 @@
 const { page } = useContent()
 
 usePageNotFound(page)
-
-useContentHead(page)
 </script>
 
 <template>

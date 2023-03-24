@@ -18,6 +18,4 @@ usePageNotFound(page)
 const githubLink = computed(() => `https://github.com/nuxt/nuxt/edit/main/${page?.value?._file}`)
 
 const hasToc = computed(() => !!page.value?.body?.toc?.links?.length)
-
-useContentHead(page)
 </script>
