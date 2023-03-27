@@ -29,6 +29,8 @@ export default defineNuxtConfig({
   },
   $production: {
     routeRules: {
+      // defaults
+      '/**': { cache: { swr: true, maxAge: 120, staleMaxAge: 60, headersOnly: true }, prerender: false },
       // prerendered pages
       '/': { prerender: true },
       '/sitemap.xml': { prerender: true },
@@ -47,8 +49,6 @@ export default defineNuxtConfig({
       '/api/sponsors': { swr: 60 },
       '/api/email/**': { swr: 60 },
       '/api/modules/**': { swr: 60 },
-      // defaults
-      '/**': { cache: { swr: true, maxAge: 120, staleMaxAge: 60, headersOnly: true }, prerender: false }
     }
   },
   extends: '@nuxt-themes/typography',
