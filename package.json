@@ -1,6 +1,7 @@
 {
   "name": "nuxt-website",
   "version": "0.3.11",
+  "packageManager": "pnpm@7.30.5",
   "main": "nuxt.config.ts",
   "files": [
     "app/",
