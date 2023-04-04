@@ -57,9 +57,9 @@
           <ContentSlot :use="$slots.codeCTA" unwrap="p" />
         </div>
       </div>
-      <HomeGemWrapper :gem-wrapper-class="'hidden sm:block absolute left-1/3 sm:left-1/3 md:left-1/2 lg:top-[-50px] lg:left-2/3'">
+      <!-- <HomeGemWrapper :gem-wrapper-class="'hidden sm:block absolute left-1/3 sm:left-1/3 md:left-1/2 lg:top-[-50px] lg:left-2/3'">
         <HomeGem />
-      </HomeGemWrapper>
+      </HomeGemWrapper> -->
     </div>
   </div>
 </template>
