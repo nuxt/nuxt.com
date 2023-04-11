@@ -21,7 +21,7 @@ specifiers:
   '@nuxtjs/html-validator': ^1.2.4
   '@nuxtjs/plausible': ^0.2.0
   '@nuxtjs/tailwindcss': ^6.5.0
-  '@nuxtlabs/github-module': ^1.5.4
+  '@nuxtlabs/github-module': ^1.6.2
   '@popperjs/core': ^2.11.6
   '@sendgrid/client': ^7.7.0
   '@sendgrid/mail': ^7.7.0
@@ -66,7 +66,7 @@ dependencies:
   '@nuxtjs/html-validator': 1.2.4
   '@nuxtjs/plausible': 0.2.0
   '@nuxtjs/tailwindcss': 6.6.4
-  '@nuxtlabs/github-module': 1.6.1
+  '@nuxtlabs/github-module': 1.6.2
   '@popperjs/core': 2.11.7
   '@sendgrid/client': 7.7.0
   '@sendgrid/mail': 7.7.0
@@ -1907,8 +1907,8 @@ packages:
       - webpack
     dev: false
 
-  /@nuxtlabs/github-module/1.6.1:
-    resolution: {integrity: sha512-VXGVdJ0edKNaHzIhu5v/Go8ypN2tU9REfIQ4xTdvdgKE2AKKXu9zuuClBDr/zUf3WsgSuS/vMtLS14++jeHn+w==}
+  /@nuxtlabs/github-module/1.6.2:
+    resolution: {integrity: sha512-piHpTQ2SjVJhcBEesHcvRkRmCfAQKsID4UtlH53tnfRBnmbmWCMYPTOWleJJqKeS9dY3ytObgP4MkcDiOznZhA==}
     dependencies:
       '@nuxt/kit': 3.3.2
       '@octokit/graphql': 5.0.5
