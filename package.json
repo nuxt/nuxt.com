@@ -46,7 +46,7 @@
     "@nuxtjs/html-validator": "^1.2.4",
     "@nuxtjs/plausible": "^0.2.0",
     "@nuxtjs/tailwindcss": "^6.5.0",
-    "@nuxtlabs/github-module": "^1.5.4",
+    "@nuxtlabs/github-module": "^1.6.2",
     "@popperjs/core": "^2.11.6",
     "@sendgrid/client": "^7.7.0",
     "@sendgrid/mail": "^7.7.0",
