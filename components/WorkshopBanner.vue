@@ -23,7 +23,7 @@ if (process.server) {
 <template>
   <div class="relative w-full bg-white dark:bg-black z-50 border-b border-b-gray-300 dark:border-b-gray-700 workshop-banner">
     <div class="flex flex-wrap sm:flex-row justify-start sm:justify-center items-center gap-x-1.5 p-2">
-      <p class="text-xs sm:text-sm text-left sm:text-center items-center text-black dark:text-white justify-center items-center pl-[10px] sm:pl-0 pr-10 sm:pr-0">
+      <p class="text-xs sm:text-sm text-left sm:text-center items-center text-black dark:text-white justify-center pl-[10px] sm:pl-0 pr-10 sm:pr-0">
         <span class="font-semibold">
           📣 Just Released!
         </span>
