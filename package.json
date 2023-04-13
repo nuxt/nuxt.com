@@ -73,7 +73,7 @@
     "@types/lodash-es": "^4.17.6",
     "autoprefixer": "^10.4.13",
     "eslint": "^8.35.0",
-    "nuxt": "3.4.0",
+    "nuxt": "3.4.1",
     "postcss": "^8.4.21",
     "typescript": "^5.0.2"
   },
