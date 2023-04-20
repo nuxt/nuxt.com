@@ -60,7 +60,12 @@
     },
     {
       "source": "/workshops/nuxt-3-migration",
-      "destination": "https://docs.google.com/forms/d/e/1FAIpQLScv6M2XJOLOK2t6tQnw6oXTritmH-K3fPkgX7ftVMxodNEJig/viewform?usp=sf_link",
+      "destination": "https://catalogue-nuxtlabs.dendreo.com/lang/en",
+      "permanent": false
+    },
+     {
+      "source": "/workshops",
+      "destination": "https://catalogue-nuxtlabs.dendreo.com/lang/en",
       "permanent": false
     },
     {
