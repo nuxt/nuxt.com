@@ -9,9 +9,10 @@ export default cachedEventHandler(async (event) => {
   const { lang } = await useValidatedQuery(event, {
     lang: z.enum(HIGHLIGHT_LANGS)
   })
-  const code = await $fetch(`https://gist.githubusercontent.com/${params.owner}/${params.id}/raw`) as string
+  const code = await $fetch<string>(`https://gist.githubusercontent.com/${params.owner}/${params.id}/raw`)
+  const html = await highlightCode(code, lang)
 
-  return await highlightCode(code, lang)
+  return { code, html }
 }, {
   name: 'highlight/gist',
   getKey: async (event) => `${event.context.params!.owner}/${event.context.params!.id}/${getQuery(event)!.lang}`,
