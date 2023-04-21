@@ -20,21 +20,8 @@ export async function highlightCode(code: string, lang: Lang) {
     })
   }
 
-  const supported = shiki.getLoadedLanguages().includes(lang)
-  if (!supported) {
-    return {
-      supported,
-      lang,
-      code,
-    }
-  }
-
-  return {
-    supported: true,
-    lang,
-    code: shiki.codeToHtml(code, {
+  return shiki.codeToHtml(code, {
       lang,
       theme: 'nuxt-theme'
-    }),
-  }
+  })
 }

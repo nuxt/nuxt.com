@@ -9,6 +9,7 @@ export default eventHandler(event => {
       '/modules?version=2-bridge',
       '/modules?version=2',
       '/modules/:name',
+      '/highlight/gist/:owner/:name?lang=md|vue|ts'
     ]
   }
   if (process.dev) {
