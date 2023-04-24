@@ -31,7 +31,7 @@ if (process.server) {
       </p>
       <a
         class="font-semibold text-xs bg-green-400 hover:bg-green-300 text-black px-2 py-1 rounded"
-        href="https://catalogue-nuxtlabs.dendreo.com/lang/en"
+        href="https://catalogue-nuxtlabs.dendreo.com"
         target="_blank"
         rel="noopener"
       >
