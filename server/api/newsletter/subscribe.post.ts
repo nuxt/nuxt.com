@@ -48,7 +48,7 @@ export default eventHandler(async (event) => {
 
   // Send email to confirm registration
   const confirmation = generateConfirmation(email)
-  const confirmationURL = withQuery(withTrailingSlash(getRequestURL(event).origin || 'https://nuxt.com'), { email, confirmation })
+  const confirmationURL = withQuery(withTrailingSlash(getHeader(event, 'origin') || 'https://nuxt.com'), { email, confirmation })
   await useSendgrid().mail.send({
     to: email,
     from: 'Nuxt Team <team@nuxt.com>',
