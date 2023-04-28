@@ -8,7 +8,7 @@ const tiersMap: {[tier: string] : Tier} = {
   backer: amount => amount < 100
 }
 
-export default eventHandler(async () => {
+export default cachedEventHandler(async () => {
   const sponsors = await Promise.all([
     fetchGithubSponsors(),
     fetchOpenCollectiveSponsors()
@@ -27,8 +27,7 @@ export default eventHandler(async () => {
     bronze: [],
     backer: []
   })
+}, {
+  name: 'sponsors',
+  maxAge: 60 * 60 // 1 hour
 })
-// }, {
-//   name: 'sponsors',
-//   maxAge: 60 * 60 // 1 hour
-// })
