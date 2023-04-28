@@ -17,7 +17,7 @@ export default eventHandler(async (event) => {
   }).catch((err) => {
     if (err.code !== 404) {
       throw createError({
-        message: err?.response?.body?.errors?.[0]?.message || 'Could not verify contacts list',
+        message: err?.response?.body?.errors?.[0]?.message || 'Sorry, we could not verify our contact list.',
         statusCode: 400
       })
     }
@@ -27,7 +27,7 @@ export default eventHandler(async (event) => {
     if (body && body.result && body.result[email]?.contact?.list_ids?.includes(useSendgrid().listId)) {
       console.log(body.result[email])
       throw createError({
-        message: 'Already subscribed to the newsletter',
+        message: 'You are already subscribed to the newsletter ❤️',
         statusCode: 400
       })
     }
@@ -41,7 +41,7 @@ export default eventHandler(async (event) => {
     }
   }).catch((err) => {
     throw createError({
-      message: err?.response?.body?.errors?.[0]?.message || 'Invalid email',
+      message: err?.response?.body?.errors?.[0]?.message || 'The email is invalid.',
       statusCode: 400
     })
   })
