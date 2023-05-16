@@ -20,5 +20,5 @@ const props = defineProps({
 })
 
 // Guess title from link!
-const computedTitle: ComputedRef<string> = computed(() => createBreadcrumb(props.link))
+const computedTitle: ComputedRef<string> = computed(() => props.title || createBreadcrumb(props.link))
 </script>
