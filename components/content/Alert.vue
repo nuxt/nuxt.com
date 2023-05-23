@@ -3,18 +3,25 @@ import type { PropType } from 'vue'
 
 const props = defineProps({
   /**
-       * @values info, success, warning, danger
-       */
+  * @values info, success, warning, danger
+  */
   type: {
     type: String as PropType<'info' | 'success' | 'warning' | 'danger'>,
     default: 'info'
+  },
+  icon: {
+    type: String,
+    default: ''
   }
 })
 </script>
 
 <template>
   <div class="alert mt-4 mb-4 rounded-xl px-4 py-3 text-sm" :class="props.type">
-    <div class="flex items-start">
+    <div class="flex items-center">
+      <div v-if="icon" class="mr-2">
+        {{ icon }}
+      </div>
       <div class="overflow-hidden leading-loose">
         <ContentSlot :use="$slots.default" />
       </div>
