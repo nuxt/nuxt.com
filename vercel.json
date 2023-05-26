@@ -29,6 +29,11 @@
       "permanent": false
     },
     {
+      "source": "/docs/api/components",
+      "destination": "/docs/api/components/client-only",
+      "permanent": false
+    },
+    {
       "source": "/docs/examples",
       "destination": "/docs/examples/essentials/hello-world",
       "permanent": false
