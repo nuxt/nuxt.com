@@ -1,6 +1,6 @@
 import { VoltaContributor } from "~/server/utils/volta"
 
-export default eventHandler(async () => {
+export default cachedEventHandler(async () => {
   const { volta } = useRuntimeConfig()
   if (!volta.token) {
     throw createError({
@@ -28,4 +28,8 @@ export default eventHandler(async () => {
   contributors.sort((a, b) => b.score - a.score)
 
   return contributors
+}, {
+  name: 'contributors',
+  swr: true,
+  maxAge: 10 * 60, // 10 min
 })
