@@ -11,7 +11,7 @@ export default cachedEventHandler(async () => {
   let contributors = await fetchOrgsContributors(['nuxt', 'nuxt-modules', 'nuxt-community', 'nuxtlabs', 'nuxt-themes'])
 
   // Limit to 1000 contributors
-  contributors = contributors.slice(0, 1000)
+  // contributors = contributors.slice(0, 1000)
 
   // Calculate score for each contributor
   for (const contributor of contributors) {
