@@ -64,6 +64,7 @@
     "sitemap": "^7.1.1",
     "tailwindcss-border-gradient-radius": "^3.0.1",
     "three": "^0.153.0",
+    "vite-plugin-glsl": "^1.1.2",
     "vue-lite-youtube-embed": "^1.2.0"
   },
   "devDependencies": {
