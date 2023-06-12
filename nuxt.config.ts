@@ -1,4 +1,5 @@
 import { createResolver, logger } from '@nuxt/kit'
+import glsl from 'vite-plugin-glsl'
 
 const { resolve } = createResolver(import.meta.url)
 
@@ -188,6 +189,9 @@ export default defineNuxtConfig({
   github: {
     disableCache: true,
     maxContributors: 10
+  },
+  vite: {
+    plugins: [glsl()]
   },
   nitro: {
     output: {
