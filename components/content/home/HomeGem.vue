@@ -7,6 +7,8 @@
 <script setup>
 import { useEventListener } from '@vueuse/core'
 import { useColorMode } from '#imports'
+import fragmentGem from '~/assets/shaders/fragmentGem.glsl'
+import vertexGem from '~/assets/shaders/vertexGem.glsl'
 
 const ready = ref()
 const gemWrapper = ref(null)
@@ -25,10 +27,12 @@ if (process.client) {
     const gltfLoader = new GLTFLoader()
 
     // Renderer
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true })
-    renderer.outputEncoding = THREE.sRGBEncoding
-    renderer.toneMapping = THREE.ACESFilmicToneMapping
-    renderer.toneMappingExposure = 1
+    const renderer = new THREE.WebGLRenderer({
+      alpha: true,
+      antialias: true,
+      powerPreference: 'high-performance'
+    })
+
     if (window.matchMedia('(min-width: 640px)').matches) {
       renderer.setSize(475, 475)
     } else if (window.matchMedia('(min-width: 400px)').matches) {
@@ -39,38 +43,63 @@ if (process.client) {
 
     // Scene
     const scene = new THREE.Scene()
-
     // Gem
     let gem
+    const params = { time: 0 }
+
+    // Camera for reflexion calculation
+    const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(200, {
+      format: THREE.RGBAFormat,
+      generateMipmaps: true,
+      minFilter: THREE.LinearMipMapLinearFilter,
+      colorSpace: THREE.SRGBColorSpace
+    })
 
     const hdrDark = new RGBELoader().load(
       '/assets/home/environment_D.hdr',
       () => {
-        hdrDark.mapping = THREE.EquirectangularReflectionMapping
+        scene.environment = hdrDark
       }
     )
 
-    const hdrLight = new RGBELoader().load(
-      '/assets/home/environment_L.hdr',
-      () => {
-        hdrLight.mapping = THREE.EquirectangularReflectionMapping
-      }
-    )
-
-    const gemMaterial = new THREE.MeshPhysicalMaterial({})
+    const cubeCamera = new THREE.CubeCamera(0.5, 1000, cubeRenderTarget)
+    const gem3DMaterial = new THREE.ShaderMaterial({
+      extensions: {
+        derivatives: "#extension GL_OES_standard_derivatives : enable"
+      },
+      side: THREE.DoubleSide,
+      uniforms: {
+        time: { value: 0 },
+        tCube: { value: 0 },
+        mRefractionRatio: { value: 1.05 },
+        mFresnelBias: { value: 0.5 },
+        mFresnelScale: { value: 0.2 },
+        mFresnelPower: { value: 3 },
+        resolution: { value: new THREE.Vector4() }
+      },
+      vertexShader: vertexGem,
+      fragmentShader: fragmentGem
+    })
 
     gltfLoader.load('/assets/home/gem.glb', function (gltf) {
       gem = gltf.scene.children[0]
       gem.traverse((o) => {
-        if (o.isMesh) { o.material = gemMaterial }
+        if (o.isMesh) { o.material = gem3DMaterial }
         gem.scale.set(1, 1, 1)
         gem.position.set(0, 0, 0)
         gem.rotation.z = 0.3
         scene.add(gem)
-
         ready.value = true
       })
     })
+
+    const envGeo = new THREE.SphereGeometry(250, 250, 8)
+    const envMat = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide })
+    envMat.map = hdrDark
+    envMat.transparent = true
+    envMat.opacity = 0.95
+    const envSphere = new THREE.Mesh(envGeo, envMat)
+    scene.add(envSphere)
 
     // Renderer
     gemAnim.value.appendChild(renderer.domElement)
@@ -96,8 +125,7 @@ if (process.client) {
     }, 1000)
 
     // Camera
-    const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 400)
-    camera.aspect = 1
+    const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 250)
     camera.position.z = 245
 
     // Controls
@@ -108,40 +136,16 @@ if (process.client) {
     controls.enablePan = false
     controls.maxPolarAngle = Math.PI * 0.5
     controls.minPolarAngle = Math.PI * 0.5
-
     controls.update()
 
     function animate () {
-      if (colorMode.value === 'dark') {
-        gemMaterial.color = new THREE.Color(0x00DC82)
-        gemMaterial.metalness = 0.05
-        gemMaterial.roughness = 0.10
-        gemMaterial.transmission = 1
-        gemMaterial.thickness = 1
-        gemMaterial.envMap = hdrDark
-        gemMaterial.envMapIntensity = 0.8
-        gemMaterial.specularIntensity = 1
-        gemMaterial.specularColor = new THREE.Color(0xFFFFFF)
-        gemMaterial.sheen = 0
-        gemMaterial.clearcoat = 0
-        gemMaterial.flatShading = true
-      } else {
-        gemMaterial.color = new THREE.Color(0x000000)
-        gemMaterial.metalness = 0
-        gemMaterial.roughness = 0
-        gemMaterial.transmission = 0.82
-        gemMaterial.thickness = 5.1
-        gemMaterial.envMap = hdrLight
-        gemMaterial.envMapIntensity = 0.3
-        gemMaterial.specularIntensity = 0.61
-        gemMaterial.specularColor = 0x000000
-        gemMaterial.sheen = 0.78
-        gemMaterial.clearcoat = 0.16
-        gemMaterial.flatShading = true
-      }
-
       requestAnimationFrame(animate)
+      params.time += 0.01
       if (gem) {
+        gem.visible = false
+        cubeCamera.update(renderer, scene)
+        gem.visible = true
+        gem3DMaterial.uniforms.tCube.value = cubeRenderTarget.texture
         gem.rotation.y += 0.01
       }
       controls.update()
