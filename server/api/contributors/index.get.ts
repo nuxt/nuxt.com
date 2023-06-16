@@ -8,7 +8,7 @@ export default cachedEventHandler(async () => {
       message: 'Missing VOLTA_TOKEN in env variables'
     })
   }
-  let contributors = await fetchOrgsContributors(['nuxt', 'nuxt-modules', 'nuxt-community', 'nuxtlabs', 'nuxt-themes'])
+  let contributors = await fetchOrgsContributors(['nuxt', 'nuxt-modules'])
 
   // Limit to 1000 contributors
   // contributors = contributors.slice(0, 1000)
