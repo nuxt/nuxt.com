@@ -17,6 +17,20 @@ if (process.env.NUXT_DOCS_PATH) {
   docsSource.base = process.env.NUXT_DOCS_PATH
 }
 
+const examplesSource: any = {
+  name: 'nuxt-examples',
+  driver: 'github',
+  repo: 'nuxt/examples',
+  branch: 'main',
+  dir: '.docs',
+  prefix: '/docs/4.examples',
+  token: process.env.NUXT_GITHUB_TOKEN || process.env.GITHUB_TOKEN || ''
+}
+if (process.env.NUXT_EXAMPLES_PATH) {
+  examplesSource.driver = 'fs'
+  examplesSource.base = process.env.NUXT_EXAMPLES_PATH
+}
+
 // https://v3.nuxtjs.org/guide/directory-structure/nuxt.config
 export default defineNuxtConfig({
   $development: {
@@ -49,7 +63,7 @@ export default defineNuxtConfig({
       '/api/jobs': { swr: 60 },
       '/api/sponsors': { swr: 60 },
       '/api/email/**': { swr: 60 },
-      '/api/modules/**': { swr: 60 },
+      '/api/modules/**': { swr: 60 }
     }
   },
   extends: '@nuxt-themes/typography',
@@ -73,6 +87,7 @@ export default defineNuxtConfig({
     '@nuxt/devtools',
     () => {
       if (process.env.NUXT_DOCS_PATH) { logger.success(`Using local Nuxt docs from ${process.env.NUXT_DOCS_PATH}`) }
+      if (process.env.NUXT_EXAMPLES_PATH) { logger.success(`Using local Nuxt examples from ${process.env.NUXT_EXAMPLES_PATH}`) }
     }
   ],
   htmlValidator: {
@@ -165,7 +180,8 @@ export default defineNuxtConfig({
       stripQueryParameters: true
     },
     sources: {
-      docsSource
+      docsSource,
+      examplesSource
     }
   },
   algolia: {
