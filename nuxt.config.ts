@@ -66,6 +66,9 @@ export default defineNuxtConfig({
       '/api/modules/**': { swr: 60 }
     }
   },
+  experimental: {
+    inlineSSRStyles: false
+  },
   extends: '@nuxt-themes/typography',
   css: [
     resolve('./assets/css/fonts.css'),
