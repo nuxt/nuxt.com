@@ -82,5 +82,10 @@
     "parse5": "6.0.1",
     "pinceau": "^0.14.7",
     "consola": "^3.0.0"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "@nuxt/content@2.7.0": "patches/@nuxt__content@2.7.0.patch"
+    }
   }
 }

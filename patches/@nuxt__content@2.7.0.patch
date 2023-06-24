@@ -1,0 +1,151 @@
+diff --git a/dist/runtime/components/ContentDoc.vue.d.ts b/dist/runtime/components/ContentDoc.vue.d.ts
+index 03968645c748a8bda770060ec5c081f8c02866fe..fb7549a231d2f7e856380748a6e04d85b2155292 100644
+--- a/dist/runtime/components/ContentDoc.vue.d.ts
++++ b/dist/runtime/components/ContentDoc.vue.d.ts
+@@ -99,10 +99,10 @@ declare const _default: import("vue").DefineComponent<{
+         default: boolean;
+     };
+ }>>, {
+-    head: boolean;
++    tag: string;
+     excerpt: boolean;
+     path: string;
+     query: QueryBuilderParams;
+-    tag: string;
++    head: boolean;
+ }, {}>;
+ export default _default;
+diff --git a/dist/runtime/components/ContentQuery.vue.d.ts b/dist/runtime/components/ContentQuery.vue.d.ts
+index 9a47ea08c0a7648e81330f706b62485b1e502b45..03235a263e1764ba876be3516f40c76286d8341c 100644
+--- a/dist/runtime/components/ContentQuery.vue.d.ts
++++ b/dist/runtime/components/ContentQuery.vue.d.ts
+@@ -71,7 +71,7 @@ declare const _default: import("vue").DefineComponent<{
+      * A type of query to be made.
+      */
+     find: {
+-        type: PropType<"surround" | "one">;
++        type: PropType<"one" | "surround">;
+         required: false;
+         default: undefined;
+     };
+@@ -150,13 +150,13 @@ declare const _default: import("vue").DefineComponent<{
+      * A type of query to be made.
+      */
+     find: {
+-        type: PropType<"surround" | "one">;
++        type: PropType<"one" | "surround">;
+         required: false;
+         default: undefined;
+     };
+ }>>, {
+     sort: SortParams;
+-    find: "surround" | "one";
++    find: "one" | "surround";
+     path: string;
+     only: string[];
+     without: string[];
+diff --git a/dist/runtime/components/ContentRenderer.vue.d.ts b/dist/runtime/components/ContentRenderer.vue.d.ts
+index 47a77cca77ddbe4713728385600b0873b2ca8f7c..5d741599e8c56d3d2e94aad16de65e4ccefd86e0 100644
+--- a/dist/runtime/components/ContentRenderer.vue.d.ts
++++ b/dist/runtime/components/ContentRenderer.vue.d.ts
+@@ -50,7 +50,7 @@ declare const _default: import("vue").DefineComponent<{
+     };
+ }>>, {
+     value: Record<string, any>;
+-    excerpt: boolean;
+     tag: string;
++    excerpt: boolean;
+ }, {}>;
+ export default _default;
+diff --git a/dist/runtime/components/ContentRendererMarkdown.vue.d.ts b/dist/runtime/components/ContentRendererMarkdown.vue.d.ts
+index 5724869c78c06dc224bb67c09a252b926441a420..306f80a313042fd7283644c416d7bc7f5ae1e76f 100644
+--- a/dist/runtime/components/ContentRendererMarkdown.vue.d.ts
++++ b/dist/runtime/components/ContentRendererMarkdown.vue.d.ts
+@@ -60,8 +60,8 @@ declare const _default: import("vue").DefineComponent<{
+         default: () => {};
+     };
+ }>>, {
+-    excerpt: boolean;
+     components: Record<string, any>;
+     tag: string;
++    excerpt: boolean;
+ }, {}>;
+ export default _default;
+diff --git a/dist/runtime/composables/content.mjs b/dist/runtime/composables/content.mjs
+index 9e3285f0a6db7b1a6801594844ba0b2639391a2a..60ee9256142bc8f8e7a5b0254175983da68075f9 100644
+--- a/dist/runtime/composables/content.mjs
++++ b/dist/runtime/composables/content.mjs
+@@ -1,10 +1,10 @@
+ import { withoutTrailingSlash } from "ufo";
+-import { computed, useState, useRoute } from "#imports";
++import { computed, shallowRef, useState, useRoute } from "#imports";
+ export const useContentState = () => {
+-  const pages = useState("dd-pages", () => ({}));
+-  const surrounds = useState("dd-surrounds", () => ({}));
+-  const navigation = useState("dd-navigation");
+-  const globals = useState("dd-globals", () => ({}));
++  const pages = useState("dd-pages", () => shallowRef({}));
++  const surrounds = useState("dd-surrounds", () => shallowRef({}));
++  const navigation = useState("dd-navigation", () => shallowRef([]));
++  const globals = useState("dd-globals", () => shallowRef({}));
+   return {
+     pages,
+     surrounds,
+diff --git a/dist/runtime/plugins/documentDriven.mjs b/dist/runtime/plugins/documentDriven.mjs
+index 07726cf8fb0959db841700cbb28e2ff32cb2ab98..8bebd541a2c13f26b7fbbaa6a6cfe835f0d79f03 100644
+--- a/dist/runtime/plugins/documentDriven.mjs
++++ b/dist/runtime/plugins/documentDriven.mjs
+@@ -1,9 +1,11 @@
+ import { useRuntimeConfig, addRouteMiddleware, callWithNuxt, navigateTo, useRoute, defineNuxtPlugin } from "#app";
+ import { withoutTrailingSlash, hasProtocol } from "ufo";
++import { pascalCase } from "scule";
+ import { useContentState } from "../composables/content.mjs";
+ import { useContentHelpers } from "../composables/helpers.mjs";
+ import { fetchContentNavigation } from "../composables/navigation.mjs";
+ import { queryContent } from "../composables/query.mjs";
++import { componentNames } from "#components";
+ import layouts from "#build/layouts";
+ export default defineNuxtPlugin((nuxt) => {
+   const moduleOptions = useRuntimeConfig()?.public?.content.documentDriven;
+@@ -171,6 +173,22 @@ export default defineNuxtPlugin((nuxt) => {
+       await nuxt.callHook("content:document-driven:finish", { route: to, dedup, page: _page, navigation: _navigation, globals: _globals, surround: _surround });
+     });
+   };
++  if (process.client) {
++    const router = useRouter();
++    nuxt.hook("link:prefetch", (link) => {
++      if (!(link in pages.value) && !hasProtocol(link)) {
++        const route = router.resolve(link);
++        if (route.matched.length > 0) {
++          refresh(route);
++        }
++      }
++    });
++    nuxt.hooks.hook("content:document-driven:finish", ({ page }) => {
++      if (page?.body?.children) {
++        prefetchBodyComponents(page.body.children);
++      }
++    });
++  }
+   addRouteMiddleware(async (to, from) => {
+     if (to.path.includes("favicon.ico")) {
+       return;
+@@ -198,3 +216,18 @@ export default defineNuxtPlugin((nuxt) => {
+   }
+   nuxt.hook("app:data:refresh", async () => process.client && await refresh(useRoute(), true));
+ });
++function prefetchBodyComponents(nodes) {
++  for (const node of nodes) {
++    if (node.children) {
++      prefetchBodyComponents(node.children);
++    }
++    if (node.type === "element" && node.tag) {
++      const el = pascalCase(node.tag);
++      for (const name of ["Prose" + el, el]) {
++        if (componentNames.includes(name)) {
++          prefetchComponents(name);
++        }
++      }
++    }
++  }
++}
