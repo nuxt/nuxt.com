@@ -96,7 +96,8 @@ index 07726cf8fb0959db841700cbb28e2ff32cb2ab98..8bebd541a2c13f26b7fbbaa6a6cfe835
 --- a/dist/runtime/plugins/documentDriven.mjs
 +++ b/dist/runtime/plugins/documentDriven.mjs
 @@ -1,9 +1,11 @@
- import { useRuntimeConfig, addRouteMiddleware, callWithNuxt, navigateTo, useRoute, defineNuxtPlugin } from "#app";
+-import { useRuntimeConfig, addRouteMiddleware, callWithNuxt, navigateTo, useRoute, defineNuxtPlugin } from "#app";
++import { useRuntimeConfig, addRouteMiddleware, callWithNuxt, navigateTo, useRoute, useRouter, defineNuxtPlugin, prefetchComponents } from "#app";
  import { withoutTrailingSlash, hasProtocol } from "ufo";
 +import { pascalCase } from "scule";
  import { useContentState } from "../composables/content.mjs";
