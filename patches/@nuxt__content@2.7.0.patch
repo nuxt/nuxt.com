@@ -78,16 +78,16 @@ index 9e3285f0a6db7b1a6801594844ba0b2639391a2a..60ee9256142bc8f8e7a5b0254175983d
 @@ -1,10 +1,10 @@
  import { withoutTrailingSlash } from "ufo";
 -import { computed, useState, useRoute } from "#imports";
-+import { computed, shallowRef, useState, useRoute } from "#imports";
++import { computed, shallowReactive, shallowRef, useState, useRoute } from "#imports";
  export const useContentState = () => {
 -  const pages = useState("dd-pages", () => ({}));
 -  const surrounds = useState("dd-surrounds", () => ({}));
 -  const navigation = useState("dd-navigation");
 -  const globals = useState("dd-globals", () => ({}));
-+  const pages = useState("dd-pages", () => shallowRef({}));
-+  const surrounds = useState("dd-surrounds", () => shallowRef({}));
-+  const navigation = useState("dd-navigation", () => shallowRef([]));
-+  const globals = useState("dd-globals", () => shallowRef({}));
++  const pages = useState("dd-pages", () => shallowRef(shallowReactive({})));
++  const surrounds = useState("dd-surrounds", () => shallowRef(shallowReactive({})));
++  const navigation = useState("dd-navigation");
++  const globals = useState("dd-globals", () => shallowRef(shallowReactive({})));
    return {
      pages,
      surrounds,

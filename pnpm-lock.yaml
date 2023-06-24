@@ -11,7 +11,7 @@ overrides:
 
 patchedDependencies:
   '@nuxt/content@2.7.0':
-    hash: 4lax6rzqjnxy2w3puf6to26e2e
+    hash: xxc2d4ev6xujl7zoljatkurogi
     path: patches/@nuxt__content@2.7.0.patch
 
 dependencies:
@@ -124,7 +124,7 @@ dependencies:
 devDependencies:
   '@nuxt/content':
     specifier: ^2.7.0
-    version: 2.7.0(patch_hash=4lax6rzqjnxy2w3puf6to26e2e)(rollup@3.25.1)
+    version: 2.7.0(patch_hash=xxc2d4ev6xujl7zoljatkurogi)(rollup@3.25.1)
   '@nuxthq/studio':
     specifier: ^0.13.2
     version: 0.13.2(rollup@3.25.1)
@@ -1370,7 +1370,7 @@ packages:
       - vue
     dev: false
 
-  /@nuxt/content@2.7.0(patch_hash=4lax6rzqjnxy2w3puf6to26e2e)(rollup@3.25.1):
+  /@nuxt/content@2.7.0(patch_hash=xxc2d4ev6xujl7zoljatkurogi)(rollup@3.25.1):
     resolution: {integrity: sha512-3vv3Rbpf6NH7RRuy7PLVmpQCt8C9DgV4aTWLmTCdnWpmlNsX+0wQT8bA/ypqmh8zrJ6BXWztFM35WVESkNvDvQ==}
     dependencies:
       '@nuxt/kit': 3.6.0(rollup@3.25.1)
