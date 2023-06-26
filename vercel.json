@@ -74,6 +74,11 @@
       "permanent": false
     },
     {
+      "source": "/support/workshop",
+      "destination": "/support/courses",
+      "permanent": false
+    },
+    {
       "source": "/shop/beanie",
       "destination": "https://nuxt.gumroad.com/l/beanie",
       "permanent": false

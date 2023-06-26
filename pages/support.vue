@@ -24,8 +24,8 @@ const links = ref([
     _path: '/support/jobs'
   },
   {
-    title: 'Workshop',
-    _path: '/support/workshop'
+    title: 'Courses',
+    _path: '/support/courses'
   }
 ])
 </script>
