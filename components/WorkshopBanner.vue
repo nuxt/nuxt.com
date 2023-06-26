@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const preferNoBanner = () => {
-  localStorage.setItem('preferNoWorkshopBanner', 'true')
+  localStorage.setItem('preferNoCoursesBanner', 'true')
   document.querySelector('html')?.classList.add('hide-banner')
 }
 
@@ -10,7 +10,7 @@ if (process.server) {
       {
         key: 'prehydrate-workshop-banner',
         innerHTML: `
-            if (localStorage.getItem('preferNoWorkshopBanner') === 'true') {
+            if (localStorage.getItem('preferNoCoursesBanner') === 'true') {
               document.querySelector('html').classList.add('hide-banner')
             }`.replace(/\s+/g, ' '),
         type: 'text/javascript'
@@ -23,20 +23,15 @@ if (process.server) {
 <template>
   <div class="relative w-full bg-white dark:bg-black z-50 border-b border-b-gray-300 dark:border-b-gray-700 workshop-banner">
     <div class="flex flex-wrap justify-center items-center gap-1.5 p-2 w-4/5 mx-auto">
-      <p class="text-sm text-center items-center text-black dark:text-white justify-center">
+      <NuxtLink to="/support/courses" class="text-sm text-center items-center text-black dark:text-white justify-center">
+        ✨ Discover our official
         <span class="font-semibold">
-          📣 Just Released!
+          Nuxt Training Courses.
         </span>
-        Our official workshop to level up from Nuxt 2 to Nuxt 3.
-      </p>
-      <a
-        class="font-semibold text-xs bg-green-400 hover:bg-green-300 text-black px-2 py-1 rounded"
-        href="https://catalogue-nuxtlabs.dendreo.com"
-        target="_blank"
-        rel="noopener"
-      >
-        Register now
-      </a>
+      </NuxtLink>
+      <NuxtLink to="/support/courses" class="inline-flex items-center px-2 py-1 font-medium text-xs border rounded border-gray-400 hover:border-gray-600 dark:border-gray-700 dark:hover:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-900">
+        <span>Learn more</span>
+      </NuxtLink>
     </div>
     <div class="absolute top-2 right-1">
       <AppButton class="font-semibold" variant="link" size="xs" icon="carbon:close" @click="preferNoBanner" />
