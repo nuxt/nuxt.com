@@ -1,12 +1,11 @@
-import { useValidatedQuery, z, zh } from 'h3-zod'
 import { performance } from 'node:perf_hooks'
 // @ts-ignore
 import ms from 'ms'
 
 export default defineCachedEventHandler(async (event) => {
-  const { version } = await useValidatedQuery(event, z.object({
-    version: z.enum(['2', '2-bridge', '3'])
-  }))
+  const { version } = await validateQuery(event, {
+    version: z.enum(['2', '2-bridge', '3']).default('3')
+  })
   const start = performance.now()
   
   let modules = await fetchModules() as any[]
@@ -60,7 +59,9 @@ export default defineCachedEventHandler(async (event) => {
 }, {
   name: 'modules',
   swr: true,
-  getKey: (event) => getQuery(event)?.version as string,
+  getKey (event) {
+    return (getQuery(event)?.version || '3') as string
+  },
   maxAge: 60 * 60, // 1 hour
 })
 

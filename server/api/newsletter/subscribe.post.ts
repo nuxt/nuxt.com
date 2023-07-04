@@ -25,7 +25,6 @@ export default eventHandler(async (event) => {
     if (!res) return
     const [_, body] = res
     if (body && body.result && body.result[email]?.contact?.list_ids?.includes(useSendgrid().listId)) {
-      console.log(body.result[email])
       throw createError({
         message: 'You are already subscribed to the newsletter ❤️',
         statusCode: 400
