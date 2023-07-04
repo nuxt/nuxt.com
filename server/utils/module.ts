@@ -40,8 +40,8 @@ export const fetchModuleStats = cachedFunction(async (module: any) => {
   return {
     downloads: npmStats.downloads,
     stars: github.stars,
-    publishedAt: +new Date(npmInfos.time.modified || undefined),
-    createdAt: +new Date(npmInfos.time.created || undefined)
+    publishedAt: +new Date(npmInfos.time?.modified || undefined),
+    createdAt: +new Date(npmInfos.time?.created || undefined)
   }
 }, {
   name: 'module-stats',
