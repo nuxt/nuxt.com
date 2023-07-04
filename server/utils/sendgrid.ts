@@ -8,22 +8,23 @@ let client: Client | null = null
 let mail: MailService | null = null
 
 export const useSendgrid = () => {
-  const { sendgrid } = useRuntimeConfig()
+  const apiKey = process.env.NUXT_SENDGRID_API_KEY
+  const listId = process.env.NUXT_SENDGRID_LIST_ID || ''
   // eslint-disable-next-line no-console
-  if (!sendgrid.apiKey) { console.warn('[Sengrid] NUXT_SENDGRID_API_KEY missing in environment variables.') }
+  if (!apiKey) { console.warn('[Sengrid] NUXT_SENDGRID_API_KEY missing in environment variables.') }
   // eslint-disable-next-line no-console
-  if (!sendgrid.listId) { console.warn('[Sengrid] NUXT_SENDGRID_LIST_ID missing in environment variables.') }
+  if (!listId) { console.warn('[Sengrid] NUXT_SENDGRID_LIST_ID missing in environment variables.') }
   if (!client) {
-    sgClient.setApiKey(sendgrid.apiKey)
+    sgClient.setApiKey(apiKey)
     client = sgClient
   }
   if (!mail) {
-    sgMail.setApiKey(sendgrid.apiKey)
+    sgMail.setApiKey(apiKey)
     mail = sgMail
   }
   return {
     client,
     mail,
-    listId: sendgrid.listId || ''
+    listId
   }
 }

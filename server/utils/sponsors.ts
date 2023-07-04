@@ -10,19 +10,16 @@ export interface Sponsor {
 }
 
 function githubHeaders (headers = {}) {
-  const config = useRuntimeConfig()
   return {
     Accept: 'application/vnd.github.v3+json',
-    Authorization: `token ${config.github.token}`,
+    Authorization: `token ${process.env.NUXT_GITHUB_TOKEN}`,
     ...headers
   }
 }
 
 function openCollectiveHeaders (headers = {}) {
-  const config = useRuntimeConfig()
-
   return {
-    'Api-Key': `${config.openCollective.apiKey}`,
+    'Api-Key': `${process.env.NUXT_OPEN_COLLECTIVE_API_KEY}`,
     'Content-Type': 'application/json',
     ...headers
   }

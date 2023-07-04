@@ -1,11 +1,10 @@
 import { VoltaContributor } from "~/server/utils/volta"
 
 export default cachedEventHandler(async () => {
-  const { volta } = useRuntimeConfig()
-  if (!volta.token) {
+  if (!process.env.NUXT_VOLTA_TOKEN) {
     throw createError({
       statusCode: 500,
-      message: 'Missing VOLTA_TOKEN in env variables'
+      message: 'Missing NUXT_VOLTA_TOKEN in env variables'
     })
   }
   let contributors = await fetchOrgsContributors(['nuxt', 'nuxt-modules'])
