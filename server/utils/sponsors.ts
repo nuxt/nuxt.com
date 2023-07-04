@@ -61,6 +61,7 @@ export const fetchOpenCollectiveSponsors = async (): Promise<any[]> => {
               name
               slug
               type
+              website
               isIncognito
               imageUrl(height: 460, format: png)
             }
@@ -93,7 +94,7 @@ export const fetchOpenCollectiveSponsors = async (): Promise<any[]> => {
         sponsorId: sponsor.account.slug,
         sponsorName: sponsor.account.name,
         sponsorLogo: sponsor.account.imageUrl,
-        sponsorUrl: `https://opencollective.com/${sponsor.account.slug}`,
+        sponsorUrl: sponsor.account.website || `https://opencollective.com/${sponsor.account.slug}`,
         monthlyPriceInDollars: sponsor.tier.amount.value
       }
     }) || [])
@@ -133,11 +134,13 @@ export const fetchGithubSponsors = async (): Promise<Sponsor[]> => {
                 login
                 name
                 avatarUrl
+                websiteUrl
               }
               ...on User {
                 login
                 name
                 avatarUrl
+                websiteUrl
               }
             }
           }
@@ -166,7 +169,7 @@ export const fetchGithubSponsors = async (): Promise<Sponsor[]> => {
         sponsorId: sponsorEntity.login,
         sponsorName: sponsorEntity.name,
         sponsorLogo: sponsorEntity.avatarUrl,
-        sponsorUrl: `https://github.com/${sponsorEntity.login}`,
+        sponsorUrl: sponsorEntity.websiteUrl || `https://github.com/${sponsorEntity.login}`,
         monthlyPriceInDollars: tier.monthlyPriceInDollars
       }
     }) || [])
