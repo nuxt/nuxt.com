@@ -12,6 +12,7 @@ export interface Sponsor {
 function githubHeaders (headers = {}) {
   return {
     Accept: 'application/vnd.github.v3+json',
+    'User-Adgent': 'nuxt-api',
     Authorization: `token ${process.env.NUXT_GITHUB_TOKEN}`,
     ...headers
   }
