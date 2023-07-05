@@ -69,7 +69,7 @@
   },
   "devDependencies": {
     "@nuxt/content": "^2.7.0",
-    "@nuxthq/studio": "^0.13.2",
+    "@nuxthq/studio": "^0.13.3",
     "@nuxtjs/eslint-config-typescript": "^12.0.0",
     "@types/lodash-es": "^4.17.7",
     "autoprefixer": "^10.4.14",
