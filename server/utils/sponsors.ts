@@ -26,6 +26,11 @@ function openCollectiveHeaders (headers = {}) {
   }
 }
 
+function toURL (url: string) {
+  return url?.startsWith('www.') ? `https://${url}` : url
+}
+
+
 export const fetchOpenCollectiveSponsors = async (): Promise<any[]> => {
   const response = []
   const first = 100
@@ -86,13 +91,12 @@ export const fetchOpenCollectiveSponsors = async (): Promise<any[]> => {
     } else {
       offset = null
     }
-
     const sponsors = (data?.collective?.members?.nodes?.filter(sponsor => sponsor.tier).map((sponsor) => {
       return {
         sponsorId: sponsor.account.slug,
         sponsorName: sponsor.account.name,
         sponsorLogo: sponsor.account.imageUrl,
-        sponsorUrl: sponsor.account.website || `https://opencollective.com/${sponsor.account.slug}`,
+        sponsorUrl: toURL(sponsor.account.website) || `https://opencollective.com/${sponsor.account.slug}`,
         monthlyPriceInDollars: sponsor.tier.amount.value
       }
     }) || [])
@@ -167,7 +171,7 @@ export const fetchGithubSponsors = async (): Promise<Sponsor[]> => {
         sponsorId: sponsorEntity.login,
         sponsorName: sponsorEntity.name,
         sponsorLogo: sponsorEntity.avatarUrl,
-        sponsorUrl: sponsorEntity.websiteUrl || `https://github.com/${sponsorEntity.login}`,
+        sponsorUrl: toURL(sponsorEntity.websiteUrl) || `https://github.com/${sponsorEntity.login}`,
         monthlyPriceInDollars: tier.monthlyPriceInDollars
       }
     }) || [])

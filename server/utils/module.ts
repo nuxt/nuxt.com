@@ -57,7 +57,7 @@ export const fetchModuleContributors = cachedFunction(async (module: any) => {
   return $fetch<any>(`https://ungh.cc/repos/${owner}/${name}/contributors`)
     .catch((err) => {
       // eslint-disable-next-line no-console
-      console.error(`Cannot fetch github contributors info for ${owner}/${name}: ${err}`)
+      console.error(`Cannot fetch github contributors info for ${module.repo}: ${err}`)
       return { contributors: [] }
     }).then(r => r.contributors.filter((contributor: any) => !isBot(contributor.username)))
 }, {
