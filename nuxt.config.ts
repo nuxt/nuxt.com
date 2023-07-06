@@ -42,6 +42,7 @@ export default defineNuxtConfig({
       }
     }
   },
+
   $production: {
     routeRules: {
       // defaults
@@ -66,15 +67,19 @@ export default defineNuxtConfig({
       '/api/modules/**': { swr: 60 }
     }
   },
+
   experimental: {
     inlineSSRStyles: false
   },
+
   extends: '@nuxt-themes/typography',
+
   css: [
     resolve('./assets/css/fonts.css'),
     resolve('./assets/css/style.css'),
     resolve('./assets/css/tailwind.css')
   ],
+
   modules: [
     '@nuxt-themes/tokens',
     process.env.NODE_ENV === 'production' ? '@nuxtjs/html-validator' : () => {},
@@ -93,6 +98,7 @@ export default defineNuxtConfig({
       if (process.env.NUXT_EXAMPLES_PATH) { logger.success(`Using local Nuxt examples from ${process.env.NUXT_EXAMPLES_PATH}`) }
     }
   ],
+
   htmlValidator: {
     logLevel: 'error',
     options: {
@@ -113,6 +119,7 @@ export default defineNuxtConfig({
       }
     }
   },
+
   components: [
     resolve('./components'),
     {
@@ -136,6 +143,7 @@ export default defineNuxtConfig({
       global: true
     }
   ],
+
   runtimeConfig: {
     githubAPI: {
       token: process.env.NUXT_GITHUB_TOKEN || ''
@@ -160,9 +168,11 @@ export default defineNuxtConfig({
       }
     }
   },
+
   colorMode: {
     classSuffix: ''
   },
+
   content: {
     highlight: {
       theme: {
@@ -187,6 +197,7 @@ export default defineNuxtConfig({
       examplesSource
     }
   },
+
   algolia: {
     applicationId: '1V8G7N9GF0',
     apiKey: '60a01900a4b726d667eab75b6f337592',
@@ -195,6 +206,7 @@ export default defineNuxtConfig({
       facetFilters: ['tags:v3']
     }
   },
+
   tailwindcss: {
     viewer: false,
     cssPath: '~/assets/css/tailwind.css',
@@ -205,13 +217,16 @@ export default defineNuxtConfig({
       ]
     }
   },
+
   github: {
     disableCache: true,
     maxContributors: 10
   },
+
   vite: {
     plugins: [glsl()]
   },
+
   nitro: {
     output: {
       dir: '{{ workspaceDir }}/.vercel/output'
@@ -219,5 +234,13 @@ export default defineNuxtConfig({
     prerender: {
       crawlLinks: true
     }
-  }
+  },
+
+  plugins: [
+    '~/plugins/scrollbars.client.ts',
+    '~/plugins/slideover.ts',
+    '~/plugins/clipboard.client.ts',
+    '~/plugins/toast.client.ts',
+    '~/plugins/newsletter.client.ts'
+  ]
 })
