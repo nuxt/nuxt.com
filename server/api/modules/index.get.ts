@@ -1,12 +1,7 @@
-import { performance } from 'node:perf_hooks'
-// @ts-ignore
-import ms from 'ms'
-
 export default defineCachedEventHandler(async (event) => {
   const { version } = await validateQuery(event, {
     version: z.enum(['2', '2-bridge', '3']).default('3')
   })
-  const start = performance.now()
   
   let modules = await fetchModules() as any[]
   // Filter out modules by compatibility
@@ -38,9 +33,6 @@ export default defineCachedEventHandler(async (event) => {
       contributors[contributor.username].contributions += contributor.contributions || 0
     }
   }
-
-  // Remove empty modules
-  logger.success(`Modules ${version} stats ready in ${ms(performance.now() - start)}`)
 
   return {
     version,
