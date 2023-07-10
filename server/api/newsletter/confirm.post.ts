@@ -7,6 +7,14 @@ export default eventHandler(async (event) => {
     confirmation: z.string()
   })
 
+  const listId = process.env.NUXT_SENDGRID_LIST_ID
+  if (!listId) {
+    throw createError({
+      statusCode: 500,
+      message: 'Missing NUXT_SENDGRID_LIST_ID env variable'
+    })
+  }
+
   // Validate confirmation code
   if (generateConfirmation(email) !== confirmation) {
     throw createError({
@@ -16,14 +24,7 @@ export default eventHandler(async (event) => {
   }
 
   // Add to contacts list
-  await useSendgrid().client.request({
-    method: 'PUT',
-    url: '/v3/marketing/contacts',
-    body: {
-      list_ids: [useSendgrid().listId],
-      contacts: [{ email }]
-    }
-  }).catch((err: any) => {
+  await sendgrid.addContactToList(email, listId).catch((err: any) => {
     throw createError({
       message: err?.response?.body?.errors?.[0]?.message || 'Invalid email',
       statusCode: 400

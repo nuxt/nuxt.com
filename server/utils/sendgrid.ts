@@ -1,30 +1,86 @@
-import type { Client } from '@sendgrid/client'
-import type { MailService } from '@sendgrid/mail'
-import sgClient from '@sendgrid/client'
-import sgMail from '@sendgrid/mail'
+import { joinURL } from 'ufo'
+import { defu } from 'defu'
 
-// Init Sendgrid client
-let client: Client | null = null
-let mail: MailService | null = null
+export const sendgrid = {
+  async searchContact(email: string) {
+    return sendgridFetch('/marketing/contacts/search/emails', {
+      method: 'POST',
+      body: {
+        emails: [email]
+      }
+    })
+  },
+  async addContact(email: string) {
+    return sendgridFetch('/marketing/contacts', {
+      method: 'PUT',
+      body: {
+        contacts: [{ email }]
+      }
+    })
+  },
+  async sendEmail(data: SendGridEmail) {
+    return sendgridFetch('/mail/send', {
+      method: 'POST',
+      body: data
+    })
+  },
+  async addContactToList(email: string, listId: string) {
+    return sendgridFetch('/marketing/contacts', {
+      method: 'PUT',
+      body: {
+        list_ids: [listId],
+        contacts: [{ email }]
+      }
+    })
+  }
+}
 
-export const useSendgrid = () => {
-  const apiKey = process.env.NUXT_SENDGRID_API_KEY || ''
-  const listId = process.env.NUXT_SENDGRID_LIST_ID || ''
-  // eslint-disable-next-line no-console
-  if (!apiKey) { console.warn('[Sengrid] NUXT_SENDGRID_API_KEY missing in environment variables.') }
-  // eslint-disable-next-line no-console
-  if (!listId) { console.warn('[Sengrid] NUXT_SENDGRID_LIST_ID missing in environment variables.') }
-  if (!client) {
-    sgClient.setApiKey(apiKey)
-    client = sgClient
+async function sendgridFetch (path: string, options = {}) {
+  if (!process.env.NUXT_SENDGRID_API_KEY) {
+    throw createError({
+      statusCode: 500,
+      message: 'Missing NUXT_SENDGRID_API_KEY env variable'
+    })
   }
-  if (!mail) {
-    sgMail.setApiKey(apiKey)
-    mail = sgMail
+
+  const url = joinURL(`https://api.sendgrid.com/v3/`, path)
+  const res = await $fetch<any>(url, defu(options, {
+    headers: {
+      Authorization: `Bearer ${process.env.NUXT_SENDGRID_API_KEY}`
+    }
+  }))
+  if (res.result) {
+		return res.result
+	}
+  return res
+}
+
+// https://docs.sendgrid.com/api-reference/mail-send/mail-send#body
+interface SendGridEmail {
+  from: {
+    email: string
+    name?: string
   }
-  return {
-    client,
-    mail,
-    listId
+  replyTo?: {
+    email: string
+    name?: string
   }
+  personalizations: SendGridEmailPersonalization[]
+  subject: string
+  content: SendGridEmailContent[]
+  template_id?: string
+}
+
+// https://docs.sendgrid.com/for-developers/sending-email/personalizations
+interface SendGridEmailPersonalization {
+  to: {
+    email: string
+    name?: string
+  }[]
+}
+
+
+interface SendGridEmailContent {
+  type: 'text/plain' | 'text/html'
+  value: string
 }

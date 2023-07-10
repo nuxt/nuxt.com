@@ -7,25 +7,25 @@ export default eventHandler(async (event) => {
     email: z.string().email().trim()
   })
 
+  const listId = process.env.NUXT_SENDGRID_LIST_ID
+  if (!listId) {
+    throw createError({
+      statusCode: 500,
+      message: 'Missing NUXT_SENDGRID_LIST_ID env variable'
+    })
+  }
+  
   // Check if already in contact list
-  await useSendgrid().client.request({
-    method: 'POST',
-    url: '/v3/marketing/contacts/search/emails',
-    body: {
-      emails: [email]
-    }
-  }).catch((err) => {
-    console.log('err', err)
-    if (err.code !== 404) {
+  await sendgrid.searchContact(email)
+  .catch((err) => {
+    if (err.statusCode !== 404) {
       throw createError({
-        message: err?.response?.body?.errors?.[0]?.message || 'Sorry, we could not verify our contact list.',
+        message: err?.data?.errors?.[0]?.message || 'Sorry, we could not verify our contact list.',
         statusCode: 400
       })
     }
-  }).then((res) => {
-    if (!res) return
-    const [_, body] = res
-    if (body && body.result && body.result[email]?.contact?.list_ids?.includes(useSendgrid().listId)) {
+  }).then((res = {}) => {
+    if (res[email]?.contact?.list_ids?.includes(listId)) {
       throw createError({
         message: 'You are already subscribed to the newsletter ❤️',
         statusCode: 400
@@ -33,15 +33,10 @@ export default eventHandler(async (event) => {
     }
   })
   // Add to global contacts first
-  await useSendgrid().client.request({
-    method: 'PUT',
-    url: '/v3/marketing/contacts',
-    body: {
-      contacts: [{ email }]
-    }
-  }).catch((err) => {
+  await sendgrid.addContact(email)
+  .catch((err) => {
     throw createError({
-      message: err?.response?.body?.errors?.[0]?.message || 'The email is invalid.',
+      message: err?.data?.errors?.[0]?.message || 'The email is invalid.',
       statusCode: 400
     })
   })
@@ -49,11 +44,24 @@ export default eventHandler(async (event) => {
   // Send email to confirm registration
   const confirmation = generateConfirmation(email)
   const confirmationURL = withQuery(withTrailingSlash(getHeader(event, 'origin') || 'https://nuxt.com'), { email, confirmation })
-  await useSendgrid().mail.send({
-    to: email,
-    from: 'Nuxt Team <team@nuxt.com>',
+
+  await sendgrid.sendEmail({
+    personalizations: [
+      {
+        to: [{ email }]
+      }
+    ],
+    from: {
+      name: 'Nuxt Team',
+      email: 'team@nuxt.com',
+    },
     subject: 'Confirm your subscription to the Nuxt newsletter',
-    html: `Hello,<br><br>Thank you for subscribing to the Nuxt newsletter.<br>Please complete and confirm your subscription by <a href="${confirmationURL}">clicking here</a>.<br><br>Have a wonderful day.<br>The <a href="https://nuxt.com">Nuxt</a> team.`
+    content: [
+      {
+        type: 'text/html',
+        value: `Hello,<br><br>Thank you for subscribing to the Nuxt newsletter.<br>Please complete and confirm your subscription by <a href="${confirmationURL}">clicking here</a>.<br><br>Have a wonderful day.<br>The <a href="https://nuxt.com">Nuxt</a> team.`
+      }
+    ]
   })
 
   return { ok: true }
