@@ -69,9 +69,9 @@ const links: Ref<NavItem[]> = ref([{
   _path: '/showcase',
   icon: 'uil:object-group'
 }, {
-  title: 'Support',
-  _path: '/support/solutions',
-  path: '/support',
+  title: 'Enterprise',
+  _path: '/enterprise/support',
+  path: '/enterprise',
   icon: 'uil:globe'
 }, {
   title: 'Blog',
