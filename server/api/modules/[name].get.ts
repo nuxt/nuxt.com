@@ -20,10 +20,10 @@ export default defineCachedEventHandler(async (event) => {
     fetchModuleContributors(module),
     fetchModuleReadme(module)
   ])
+  module.generatedAt = new Date().toISOString()
   module.stats = stats
   module.contributors = contributors
   module.readme = readme
-  module.generatedAt = new Date().toISOString()
 
   return module
 }, {
