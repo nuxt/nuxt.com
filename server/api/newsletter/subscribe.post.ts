@@ -15,6 +15,7 @@ export default eventHandler(async (event) => {
       emails: [email]
     }
   }).catch((err) => {
+    console.log('err', err)
     if (err.code !== 404) {
       throw createError({
         message: err?.response?.body?.errors?.[0]?.message || 'Sorry, we could not verify our contact list.',
