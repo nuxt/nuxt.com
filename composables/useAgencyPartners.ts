@@ -10,7 +10,7 @@ export const useAgencyPartners = () => {
 
   async function fetchList () {
     try {
-      const data = await queryContent('/support/agencies').where({
+      const data = await queryContent('/enterprise/agencies').where({
         $not: {
           title: {
             $in: ['Nuxt Partner Agencies']
@@ -73,7 +73,7 @@ export const useAgencyPartners = () => {
       .map(service => ({
         ...service,
         to: {
-          name: 'support-agencies',
+          name: 'enterprise-agencies',
           query: {
             ...route.query,
             service: route.query?.service !== service.key ? service.key : undefined
@@ -91,7 +91,7 @@ export const useAgencyPartners = () => {
           key: location.key,
           title: location.title,
           to: {
-            name: 'support-agencies',
+            name: 'enterprise-agencies',
             query: {
               ...route.query,
               location: route.query?.location !== location.key ? location.key : undefined
@@ -120,7 +120,7 @@ export const useAgencyPartners = () => {
           key: region.key,
           title: region.title,
           to: {
-            name: 'support-agencies',
+            name: 'enterprise-agencies',
             query: {
               ...route.query,
               region: route.query?.region !== region.key ? region.key : undefined

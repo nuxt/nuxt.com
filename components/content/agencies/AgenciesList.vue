@@ -58,7 +58,7 @@ const { filteredPartners, fetchList, services, selectedService, regions, selecte
 
 const { createReplaceRoute } = useFilters()
 
-const replaceRoute = createReplaceRoute('support-agencies')
+const replaceRoute = createReplaceRoute('enterprise-agencies')
 
 const error = await fetchList()
 </script>

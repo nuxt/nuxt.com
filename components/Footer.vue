@@ -33,8 +33,8 @@ import type { NavItem } from '@nuxt/content/dist/runtime/types'
 
 const links: NavItem[] = [
   {
-    title: 'Support',
-    _path: '/support/solutions'
+    title: 'Enterprise',
+    _path: '/enterprise/support'
   },
   {
     title: 'Design Kit',

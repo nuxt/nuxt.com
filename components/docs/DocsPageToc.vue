@@ -39,7 +39,7 @@ if (adPartner.value) {
           Learn Nuxt 3 with experts.
         </p>
       </NuxtLink>
-      <NuxtLink to="/support/jobs" class="block relative p-4 lg:p-2 dark:hover:bg-gray-800 hover:bg-gray-100 flex items-center justify-between bg-white dark:bg-gray-900 rounded-xl h-[60px] border border-gray-200 dark:border-gray-800">
+      <NuxtLink to="/enterprise/jobs" class="block relative p-4 lg:p-2 dark:hover:bg-gray-800 hover:bg-gray-100 flex items-center justify-between bg-white dark:bg-gray-900 rounded-xl h-[60px] border border-gray-200 dark:border-gray-800">
         <p class="font-semibold">
           Looking for a Nuxt Job?
         </p>
