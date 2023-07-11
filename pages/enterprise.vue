@@ -17,7 +17,7 @@ const links = ref([
   },
   {
     title: 'Sponsors',
-    _path: '/enterprise/us'
+    _path: '/enterprise/sponsors'
   },
   {
     title: 'Jobs',

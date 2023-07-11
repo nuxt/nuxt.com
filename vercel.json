@@ -159,6 +159,11 @@
       "permanent": false
     },
     {
+      "source": "/support/us",
+      "destination": "/enterprise/sponsors",
+      "permanent": false
+    },
+    {
       "source": "/support/:path*",
       "destination": "/enterprise/:path*",
       "permanent": false
