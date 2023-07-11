@@ -1,7 +1,7 @@
 <template>
   <AppCard class="flex flex-col gap-y-4">
     <div class="flex justify-between items-center pb-4">
-      <img :src="image.path" :width="image.width" :height="image.height" alt="" />
+      <img :src="image.path" :width="image.width" :height="image.height" :alt="image.alt">
       <div v-if="badge" class="py-[6px] px-3 border border-gray-200 bg-white dark:border-white/5 dark:bg-white/10 rounded-full self-start flex items-center justify-center">
         <span v-if="badge.partner" class="text-gray-900 dark:text-white text-xs">{{ badge.label }}</span>
         <div v-else>
@@ -25,6 +25,19 @@
           <span>{{ item }}</span>
         </li>
       </ul>
+      <div v-if="cta" class="pt-2">
+        <AppButton
+          :variant="cta.variant || 'transparent'"
+          :icon="cta.icon || undefined"
+          :label="cta.label || ''"
+          :to="cta.to || undefined"
+          :trailing="cta.trailing"
+          :size="cta.size || 'lg'"
+          class="focus-visible:ring-2 w-fit"
+          :download="false"
+          :target="cta.target || '_self'"
+        />
+      </div>
     </div>
   </AppCard>
 </template>
@@ -45,6 +58,10 @@ defineProps({
   list: {
     type: Array as PropType<Array<string>>,
     default: () => []
+  },
+  cta: {
+    type: Object,
+    default: null
   }
 })
 </script>

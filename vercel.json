@@ -152,6 +152,16 @@
       "source": "/docs/examples/server/routes",
       "destination": "/docs/examples/hello-world",
       "permanent": false
+    },
+    {
+      "source": "/support",
+      "destination": "/enterprise/support",
+      "permanent": false
+    },
+    {
+      "source": "/support/:path*",
+      "destination": "/enterprise/:path*",
+      "permanent": false
     }
   ]
 }
