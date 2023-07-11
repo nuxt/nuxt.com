@@ -49,8 +49,8 @@
       "permanent": false
     },
     {
-      "source": "/support",
-      "destination": "/support/solutions",
+      "source": "/enterprise",
+      "destination": "/enterprise/support",
       "permanent": false
     },
     {
@@ -74,8 +74,8 @@
       "permanent": false
     },
     {
-      "source": "/support/workshop",
-      "destination": "/support/courses",
+      "source": "/enterprise/workshop",
+      "destination": "/enterprise/courses",
       "permanent": false
     },
     {
@@ -151,6 +151,21 @@
     {
       "source": "/docs/examples/server/routes",
       "destination": "/docs/examples/hello-world",
+      "permanent": false
+    },
+    {
+      "source": "/support",
+      "destination": "/enterprise/support",
+      "permanent": false
+    },
+    {
+      "source": "/support/us",
+      "destination": "/enterprise/sponsors",
+      "permanent": false
+    },
+    {
+      "source": "/support/:path*",
+      "destination": "/enterprise/:path*",
       "permanent": false
     }
   ]

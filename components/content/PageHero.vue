@@ -46,8 +46,8 @@
             :label="button.label || ''"
             :to="button.to || undefined"
             :trailing="button.trailing"
-            :size="'sm' || button.size"
-            class="focus-visible:ring-2"
+            :size="button.size || 'lg'"
+            class="focus-visible:ring-2 w-fit"
             :download="false"
             :target="button.target || '_self'"
           />

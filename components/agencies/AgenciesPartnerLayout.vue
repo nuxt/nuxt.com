@@ -114,7 +114,7 @@
             <AppButton
               label="Back to partners list"
               icon="uil:angle-left-b"
-              to="/support/agencies"
+              to="/enterprise/agencies"
               size="xl"
               variant="secondary"
               custom-class="justify-center sm:justify-start"
@@ -274,7 +274,7 @@ const router = useRouter()
 
 const onBack = (e: { preventDefault: () => void }) => {
   const lastUrl = router.options.history.state.back as String | null
-  if (lastUrl?.startsWith('/support/agencies')) {
+  if (lastUrl?.startsWith('/enterprise/agencies')) {
     e.preventDefault()
     router.push(lastUrl as RouteLocationRaw)
   }
