@@ -1,7 +1,7 @@
 <template>
   <div class="nui-support-nuxt">
     <div>
-      <p class="pt-2 m-0 font-bold sm:text-sm d-text-primary">
+      <p class="pt-2 m-0 font-bold sm:text-sm text-gray-900 dark:text-white">
         Nuxt needs you!
       </p>
       <p class="pb-2 m-0 leading-normal text-gray-600 dark:text-white sm:text-xs">
