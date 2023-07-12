@@ -5,7 +5,7 @@
         Nuxt needs you!
       </p>
       <p class="pb-2 m-0 leading-normal text-gray-600 dark:text-white sm:text-xs">
-        By allowing nuxtjs.org on your Ad-Blocker, you support our work and help us financially.
+        By allowing nuxt.com on your Ad-Blocker, you support our work and help us financially.
       </p>
     </div>
   </div>
