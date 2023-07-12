@@ -30,5 +30,6 @@ export default cachedEventHandler(async () => {
 }, {
   name: 'contributors',
   swr: true,
+  headersOnly: true,
   maxAge: 10 * 60, // 10 min
 })
