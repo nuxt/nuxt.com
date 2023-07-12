@@ -1,3 +1,5 @@
+import type { H3Event } from 'h3'
+
 export interface VoltaContributor {
   username: string
   issues: number
@@ -8,7 +10,7 @@ export interface VoltaContributor {
   reactions: number
 }
 
-export const fetchOrgsContributors = cachedFunction<VoltaContributor[]>(async (orgs: string[]) => {
+export const fetchOrgsContributors = cachedFunction(async (_event: H3Event, orgs: string[]) => {
   if (!process.env.NUXT_VOLTA_TOKEN) {
     throw createError({
       statusCode: 500,
@@ -22,5 +24,6 @@ export const fetchOrgsContributors = cachedFunction<VoltaContributor[]>(async (o
 }, {
   name: 'volta-orgs-contributors',
   maxAge: 60 * 60, // 1 hour
-  getKey: (orgs: string[]) => orgs.join('-')
+  getKey: (_event: H3Event, orgs: string[]) => orgs.join('-')
 })
+

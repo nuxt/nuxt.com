@@ -1,13 +1,14 @@
-import { VoltaContributor } from "~/server/utils/volta"
+import type { VoltaContributor } from "~/server/utils/volta"
 
-export default cachedEventHandler(async () => {
+export default cachedEventHandler(async (event) => {
   if (!process.env.NUXT_VOLTA_TOKEN) {
     throw createError({
       statusCode: 500,
       message: 'Missing NUXT_VOLTA_TOKEN in env variables'
     })
   }
-  let contributors = await fetchOrgsContributors(['nuxt', 'nuxt-modules'])
+
+  let contributors = await fetchOrgsContributors(event, ['nuxt', 'nuxt-modules']) as Array<VoltaContributor & { score: number }>
 
   // Limit to 1000 contributors
   // contributors = contributors.slice(0, 1000)
@@ -30,6 +31,5 @@ export default cachedEventHandler(async () => {
 }, {
   name: 'contributors',
   swr: true,
-  headersOnly: true,
   maxAge: 10 * 60, // 10 min
 })
