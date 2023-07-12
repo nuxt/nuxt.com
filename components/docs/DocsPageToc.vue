@@ -47,5 +47,6 @@ if (adPartner.value) {
         <img src="/assets/toc/jobs-light.svg" class="dark:hidden absolute right-0 bottom-0 w-12 lg:w-10" alt="">
       </NuxtLink>
     </LazyClientOnly>
+    <AdsBlock />
   </nav>
 </template>

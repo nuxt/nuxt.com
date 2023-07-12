@@ -237,10 +237,11 @@ export default defineNuxtConfig({
   },
 
   plugins: [
+    '~/plugins/toast.client.ts',
     '~/plugins/scrollbars.client.ts',
     '~/plugins/slideover.ts',
+    '~/plugins/adblock.ts',
     '~/plugins/clipboard.client.ts',
-    '~/plugins/toast.client.ts',
     '~/plugins/newsletter.client.ts'
   ]
 })
