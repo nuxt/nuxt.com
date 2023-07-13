@@ -28,13 +28,13 @@
               class="lg:dark:opacity-50 lg:hover:dark:opacity-100" />
 
             <template #panel>
-              <ul class="flex flex-col gap-y-1 p-2 bg-gray-950 w-[170px]">
+              <ul class="flex flex-col gap-y-1 p-2 bg-gray-950 w-[180px]">
                 <li v-for="link in dropdownLinks" :key="link.title"
                   class="p-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors duration-300">
                   <NuxtLink :to="link.to" class="flex gap-x-4 items-center" target="_blank">
                     <Logo class="h-6 w-6 shrink-0" />
                     <div class="flex flex-col gap-y-1 text-white">
-                      <span class="font-bold text-sm text-gray-800 dark:text-gray-200">{{ link.title }}</span>
+                      <span class="font-semibold text-base text-gray-800 dark:text-gray-100">{{ link.title }}</span>
                       <span class="text-xs text-gray-500 dark:text-gray-400">{{
                         link.description
                       }}</span>
@@ -75,7 +75,7 @@ const { hasScrolledPastNavbar } = useNavbarScroll()
 
 const dropdownLinks = [
   {
-    title: "Nuxt.nuxters",
+    title: "Nuxters",
     description: "Are you a Nuxter?",
     to: "https://nuxters.nuxt.com/",
   },
