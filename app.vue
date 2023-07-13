@@ -53,8 +53,12 @@ useSeoMeta({
   ogUrl,
   ogSiteName: 'Nuxt',
   ogType: 'website',
-  twitterSite: '@nuxt_js',
-  twitterCard: 'summary_large_image'
+  twitterSite: 'nuxt_js',
+  twitterCard: 'summary_large_image',
+  twitterTitle: title,
+  twitterDescription: description,
+  twitterImage: ogImage,
+  twitterImageAlt: title
 })
 </script>
 
