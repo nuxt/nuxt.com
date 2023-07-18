@@ -1,6 +1,5 @@
-
 <template>
-  <ul class="flex items-center justify-end gap-3">
+  <ul class="flex items-center justify-end gap-1 -mr-4 sm:-mr-0 sm:gap-3">
     <li>
       <AppButton
         icon="uil:twitter"
@@ -11,7 +10,6 @@
         title="Follow Nuxt on Twitter"
       >
         <span class="sr-only">Follow Nuxt on Twitter</span>
-
       </AppButton>
     </li>
     <li>
