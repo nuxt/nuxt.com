@@ -8,6 +8,8 @@ export default cachedEventHandler(async (event) => {
     })
   }
 
+  console.log('Fetching new /contributors')
+
   let contributors = await fetchOrgsContributors(event, ['nuxt', 'nuxt-modules']) as Array<VoltaContributor & { score: number }>
 
   // Limit to 1000 contributors
@@ -31,5 +33,5 @@ export default cachedEventHandler(async (event) => {
 }, {
   name: 'contributors',
   swr: true,
-  maxAge: 10 * 60, // 10 min
+  maxAge: 30,
 })
