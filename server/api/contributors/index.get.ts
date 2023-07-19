@@ -8,7 +8,7 @@ export default cachedEventHandler(async (event) => {
     })
   }
 
-  console.log('Fetching new /contributors')
+  console.log('Fetching /contributors...')
 
   let contributors = await fetchOrgsContributors(event, ['nuxt', 'nuxt-modules']) as Array<VoltaContributor & { score: number }>
 
@@ -33,5 +33,5 @@ export default cachedEventHandler(async (event) => {
 }, {
   name: 'contributors',
   swr: true,
-  maxAge: 30,
+  maxAge: 60 * 5, // 5 minutes
 })
