@@ -1,54 +1,39 @@
-import colors, { safeColorsAsRegex } from './ui/colors'
-import typography from './ui/typography'
+import defaultTheme from 'tailwindcss/defaultTheme'
+import type { Config } from 'tailwindcss'
 
-/** @type {import('tailwindcss').Config} */
-module.exports = {
+export default <Partial<Config>>{
   theme: {
-    colors,
-    container: {
-      screens: {
-        '2xl': '1280px'
-      },
-      center: true
-    },
     extend: {
-      typography,
-      fontFamily: {
-        sans: '"RoobertPRO", "RoobertPRO override", sans-serif'
-      },
-      linearBorderGradients: ({ theme }) => ({
-        colors: {
-          gray: [theme('colors.gray.900')],
-          gradient: [colors.green[400], colors.teal[400], colors.teal[600]]
+      colors: {
+        slate: {
+          50: '#f8fafc',
+          100: '#f1f5f9',
+          200: '#e2e8f0',
+          300: '#cbd5e1',
+          400: '#94a3b8',
+          500: '#64748b',
+          600: '#475569',
+          700: '#334155',
+          800: '#1e293b',
+          900: '#0f172a',
+          950: '#020420'
         },
-        background: theme('colors')
-      })
+        green: {
+          50: '#d6ffee',
+          100: '#acffdd',
+          200: '#83ffcc',
+          300: '#30ffaa',
+          400: '#00dc82',
+          500: '#00bd6f',
+          600: '#009d5d',
+          700: '#007e4a',
+          800: '#005e38',
+          900: '#003f25'
+        }
+      },
+      fontFamily: {
+        sans: ["'DM Sans'", "'DM Sans fallback'", ...defaultTheme.fontFamily.sans]
+      }
     }
-  },
-  plugins: [
-    require('tailwindcss-border-gradient-radius'),
-    require('@tailwindcss/typography'),
-    require('@tailwindcss/forms'),
-    require('@tailwindcss/aspect-ratio')
-  ],
-  content: [
-    'ui/*.ts',
-    '.demo/content/**/*.md',
-    'content/**/*.md'
-  ],
-  safelist: [
-    ...[12, 24, 36, 48, 60, 72, 84, 96, 108, 120].map(number => `pl-[${number}px]`),
-    {
-      pattern: /rounded-(sm|md|lg|xl|2xl|3xl)/,
-      variants: ['sm']
-    },
-    {
-      pattern: new RegExp(`bg-(${safeColorsAsRegex})-(400|500)`),
-      variants: ['hover', 'disabled', 'dark']
-    },
-    {
-      pattern: new RegExp(`ring-(${safeColorsAsRegex})-(400)`),
-      variants: ['focus']
-    }
-  ]
+  }
 }

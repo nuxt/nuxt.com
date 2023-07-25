@@ -1,21 +1,19 @@
-<template>
-  <DocsPage :toc="hasToc">
-    <ContentRenderer v-if="page" :value="page" />
-    <div class="u-text-gray-500 py-6 border-t u-border-gray-200 mt-4">
-      <NuxtLink :to="githubLink" class="hover:text-green-400" target="_blank" rel="noreferer noopener">
-        <Icon name="uil:edit" />
-        Edit on Github
-      </NuxtLink>
-    </div>
-  </DocsPage>
-</template>
-
 <script setup lang="ts">
-const { page } = useContent()
+import type { ParsedContent } from '@nuxt/content/dist/runtime/types'
 
-usePageNotFound(page)
+const route = useRoute()
 
-const githubLink = computed(() => `https://github.com/nuxt/nuxt/edit/main/${page?.value?._file}`)
+const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
+const { data: surround } = await useAsyncData(`${route.path}-surround`, () => queryContent('/docs')
+  .only(['_path', 'title', 'navigation', 'description'])
+  .where({ _extension: 'md', navigation: { $ne: false } })
+  .findSurround(route.path.endsWith('/') ? route.path.slice(0, -1) : route.path)
+)
 
-const hasToc = computed(() => !!page.value?.body?.toc?.links?.length)
+useContentHead(page)
 </script>
+
+<template>
+  <UDocsPage v-if="page" :page="page" :surround="(surround as ParsedContent[])" />
+  <UPageError v-else />
+</template>

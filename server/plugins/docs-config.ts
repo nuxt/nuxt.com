@@ -44,6 +44,22 @@ export default defineNitroPlugin((nitroApp) => {
       console.log(`Config docs generated in ${(Date.now() - start) / 1000} seconds!`)
     }
   })
+
+  nitroApp.hooks.hook('content:file:afterParse', async (file) => {
+    console.log('file.icon', file.navigation?.icon)
+    if (file.navigation?.icon?.startsWith('ph:')) {
+      file.navigation.icon = file.navigation.icon.replace('ph:', 'i-ph-')
+    }
+    if (file.navigation?.icon?.startsWith('uil:')) {
+      file.navigation.icon = file.navigation.icon.replace('uil:', 'i-uil-')
+    }
+    if (file.navigation?.icon?.startsWith('heroicons:')) {
+      file.navigation.icon = file.navigation.icon.replace('heroicons:', 'i-heroicons-')
+    }
+    if (file.navigation?.icon?.startsWith('octicon:')) {
+      file.navigation.icon = file.navigation.icon.replace('octicon:', 'i-octicon-')
+    }
+  })
 })
 
 function generateMarkdown (schema: Schema, title: string, level: string) {

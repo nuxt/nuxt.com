@@ -1,13 +1,10 @@
-import { createResolver, logger } from '@nuxt/kit'
-import glsl from 'vite-plugin-glsl'
-
-const { resolve } = createResolver(import.meta.url)
+import { logger } from '@nuxt/kit'
 
 const docsSource: any = {
   name: 'nuxt-docs',
   driver: 'github',
   repo: 'nuxt/nuxt',
-  branch: 'main',
+  branch: 'docs/new-structure',
   dir: 'docs',
   prefix: '/docs',
   token: process.env.NUXT_GITHUB_TOKEN || process.env.GITHUB_TOKEN || ''
@@ -31,7 +28,6 @@ if (process.env.NUXT_EXAMPLES_PATH) {
   examplesSource.base = process.env.NUXT_EXAMPLES_PATH
 }
 
-// https://v3.nuxtjs.org/guide/directory-structure/nuxt.config
 export default defineNuxtConfig({
   $development: {
     runtimeConfig: {
@@ -68,31 +64,27 @@ export default defineNuxtConfig({
     }
   },
 
-  experimental: {
-    inlineSSRStyles: false
-  },
+  // experimental: {
+  //   inlineSSRStyles: false
+  // },
 
-  extends: '@nuxt-themes/typography',
+  extends: '@nuxt-themes/ui-kit',
 
   css: [
-    resolve('./assets/css/fonts.css'),
-    resolve('./assets/css/style.css'),
-    resolve('./assets/css/tailwind.css')
+    '@/assets/css/main.css'
   ],
 
   modules: [
-    '@nuxt-themes/tokens',
     process.env.NODE_ENV === 'production' ? '@nuxtjs/html-validator' : () => {},
     '@nuxt/content',
-    '@nuxtlabs/github-module',
     '@nuxtjs/plausible',
-    'nuxt-icon',
     '@nuxtjs/fontaine',
-    '@nuxtjs/algolia',
-    '@nuxtjs/color-mode',
-    '@nuxtjs/tailwindcss',
+    '@nuxtjs/google-fonts',
+    '@nuxthq/ui',
     '@nuxthq/studio',
     '@nuxt/devtools',
+    '@vueuse/nuxt',
+    'nuxt-lodash',
     () => {
       if (process.env.NUXT_DOCS_PATH) { logger.success(`Using local Nuxt docs from ${process.env.NUXT_DOCS_PATH}`) }
       if (process.env.NUXT_EXAMPLES_PATH) { logger.success(`Using local Nuxt examples from ${process.env.NUXT_EXAMPLES_PATH}`) }
@@ -115,34 +107,9 @@ export default defineNuxtConfig({
         'wcag/h63': 'warn',
         'wcag/h67': 'warn',
         'wcag/h71': 'warn'
-
       }
     }
   },
-
-  components: [
-    resolve('./components'),
-    {
-      prefix: '',
-      path: resolve('./components/content'),
-      global: true
-    },
-    {
-      prefix: '',
-      path: resolve('./components/docs'),
-      global: true
-    },
-    {
-      prefix: '',
-      path: resolve('./components/icons'),
-      global: true
-    },
-    {
-      prefix: '',
-      path: resolve('./components/ui'),
-      global: true
-    }
-  ],
 
   runtimeConfig: {
     githubAPI: {
@@ -170,61 +137,33 @@ export default defineNuxtConfig({
   },
 
   colorMode: {
-    classSuffix: ''
+    preference: 'dark'
+  },
+
+  fontMetrics: {
+    fonts: ['DM Sans']
+  },
+
+  googleFonts: {
+    display: 'swap',
+    download: true,
+    families: {
+      'DM+Sans': [400, 500, 600, 700]
+    }
+  },
+
+  ui: {
+    icons: ['simple-icons', 'ph', 'uil', 'heroicons', 'octicon']
   },
 
   content: {
-    highlight: {
-      theme: {
-        dark: 'one-dark-pro',
-        default: 'github-light'
-      },
-      preload: ['js', 'ts', 'html', 'css', 'vue', 'diff']
-    },
     navigation: {
       fields: ['redirect', 'titleTemplate', 'image']
-    },
-    documentDriven: {
-      host: 'https://nuxt.com',
-      surround: false,
-      injectPage: false
-    },
-    experimental: {
-      stripQueryParameters: true
     },
     sources: {
       docsSource,
       examplesSource
     }
-  },
-
-  algolia: {
-    applicationId: '1V8G7N9GF0',
-    apiKey: '60a01900a4b726d667eab75b6f337592',
-    docSearch: {
-      indexName: 'nuxtjs',
-      facetFilters: ['tags:v3']
-    }
-  },
-
-  tailwindcss: {
-    viewer: false,
-    cssPath: '~/assets/css/tailwind.css',
-    config: {
-      theme: { extend: {} },
-      content: [
-        resolve('./components/**/*.{vue,js,ts}')
-      ]
-    }
-  },
-
-  github: {
-    disableCache: true,
-    maxContributors: 10
-  },
-
-  vite: {
-    plugins: [glsl()]
   },
 
   nitro: {
@@ -237,11 +176,11 @@ export default defineNuxtConfig({
   },
 
   plugins: [
-    '~/plugins/toast.client.ts',
-    '~/plugins/scrollbars.client.ts',
-    '~/plugins/slideover.ts',
     '~/plugins/adblock.ts',
-    '~/plugins/clipboard.client.ts',
     '~/plugins/newsletter.client.ts'
-  ]
+  ],
+
+  typescript: {
+    strict: false
+  }
 })

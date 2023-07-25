@@ -1,23 +1,17 @@
-<template>
-  <Page :sticky="!!$route.params.slug">
-    <template #header>
-      <SubNavbar title="Docs" :links="links" />
-    </template>
-
-    <template v-if="$route.params.slug && tree && tree.length" #aside>
-      <DocsAsideTree :tree="tree" />
-    </template>
-
-    <NuxtPage />
-  </Page>
-</template>
-
 <script setup lang="ts">
-const route = useRoute()
-const { navigation } = useContent()
-const { navPageFromPath } = useContentHelpers()
+import type { NavItem } from '@nuxt/content/dist/runtime/types'
+import type { VerticalNavigationLink } from '@nuxthq/ui/dist/runtime/types'
 
-const links = computed(() => formatDocsNav(navPageFromPath('/docs', navigation.value)?.children))
-const path = computed(() => route.path.split('/').slice(0, 3).join('/'))
-const tree = computed(() => navPageFromPath(path.value, navigation.value)?.children)
+const links = inject<NavItem[]>('links')
+const anchors = inject<VerticalNavigationLink[]>('anchors')
 </script>
+
+<template>
+  <UContainer>
+    <UDocsLayout :links="links" :anchors="anchors">
+      <template #top>
+        <UDocsSearchButton />
+      </template>
+    </UDocsLayout>
+  </UContainer>
+</template>

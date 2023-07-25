@@ -1,0 +1,9 @@
+:root {
+  @screen lg {
+    --header-height: 5rem;
+  }
+}
+
+:root.dark {
+  --background: var(--color-gray-950);
+}

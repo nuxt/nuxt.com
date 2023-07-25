@@ -1,27 +1,18 @@
-<template>
-  <DocsPage :toc="false">
-    <ContentRenderer v-if="page" :value="page" />
-  </DocsPage>
-</template>
-
 <script setup lang="ts">
-const { page } = useContent()
+import type { ParsedContent } from '@nuxt/content/dist/runtime/types'
 
-usePageNotFound(page)
+const route = useRoute()
+
+const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
+const { data: surround } = await useAsyncData(`${route.path}-surround`, () => queryContent('/docs')
+  .only(['_path', 'title', 'navigation', 'description'])
+  .where({ _extension: 'md', navigation: { $ne: false } })
+  .findSurround(route.path.endsWith('/') ? route.path.slice(0, -1) : route.path)
+)
+
+useContentHead(page)
 </script>
 
-<style lang="postcss" scoped>
-  .prose :deep(div:first-child h1:first-child) {
-    @apply mt-0 text-2xl font-semibold tracking-tight text-gray-900 dark:text-gray-100 sm:text-3xl;
-  }
-  .prose :deep(div:first-child h1:first-child + p) {
-    @apply mt-0 mb-8 sm:text-lg text-gray-400 pb-8 border-b border-gray-700;
-    & a {
-      @apply text-gray-400 hover:border-gray-700;
-    }
-  }
-
-  .prose {
-    max-width: 100%;
-  }
-  </style>
+<template>
+  <UDocsPage v-if="page" :page="page" :surround="(surround as ParsedContent[])" />
+</template>
