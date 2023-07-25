@@ -10,7 +10,7 @@ export default cachedEventHandler(async (event) => {
 
   console.log('Fetching /contributors...')
 
-  let contributors = await fetchOrgsContributors(event, ['nuxt', 'nuxt-modules']) as Array<VoltaContributor & { score: number }>
+  let contributors = await fetchOrgsContributors(event, ['nuxt', 'nuxt-modules', 'unjs']) as Array<VoltaContributor & { score: number }>
 
   // Limit to 1000 contributors
   // contributors = contributors.slice(0, 1000)
