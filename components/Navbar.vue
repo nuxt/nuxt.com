@@ -39,7 +39,7 @@
               size="sm"
               icon="ph:caret-down-fill"
               square
-              class="lg:dark:opacity-50 lg:hover:dark:opacity-100"
+              class="opacity-50 hover:opacity-80 dark:opacity-70 dark:hover:opacity-100"
             />
 
             <template #panel>
