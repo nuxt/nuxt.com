@@ -13,25 +13,25 @@ export const useModules = () => {
   const module: Ref<Module> = useState('module', () => ({} as Module))
 
   const iconsMap = {
-    Analytics: 'uil-chart-line',
-    CMS: 'uil-pen',
-    CSS: 'uil-brush-alt',
-    Database: 'uil-database',
-    Date: 'uil-calendar-alt',
-    Deployment: 'uil-cloud',
-    Devtools: 'uil-wrench',
-    Ecommerce: 'uil-shopping-basket',
-    Extensions: 'uil-puzzle-piece',
-    Fonts: 'uil-font',
-    Images: 'uil-image-v',
-    Libraries: 'uil-books',
-    Monitoring: 'uil-stopwatch',
-    Payment: 'uil-dollar-alt',
-    Performance: 'uil-rocket',
-    Request: 'uil-life-ring',
-    Security: 'uil-shield',
-    SEO: 'uil-search-alt',
-    UI: 'uil-palette'
+    Analytics: 'i-uil-chart-line',
+    CMS: 'i-uil-pen',
+    CSS: 'i-uil-brush-alt',
+    Database: 'i-uil-database',
+    Date: 'i-uil-calendar-alt',
+    Deployment: 'i-uil-cloud',
+    Devtools: 'i-uil-wrench',
+    Ecommerce: 'i-uil-shopping-basket',
+    Extensions: 'i-uil-puzzle-piece',
+    Fonts: 'i-uil-font',
+    Images: 'i-uil-image-v',
+    Libraries: 'i-uil-books',
+    Monitoring: 'i-uil-stopwatch',
+    Payment: 'i-uil-dollar-alt',
+    Performance: 'i-uil-rocket',
+    Request: 'i-uil-life-ring',
+    Security: 'i-uil-shield',
+    SEO: 'i-uil-search-alt',
+    UI: 'i-uil-palette'
   }
 
   // Data fetching

@@ -46,7 +46,6 @@ export default defineNitroPlugin((nitroApp) => {
   })
 
   nitroApp.hooks.hook('content:file:afterParse', async (file) => {
-    console.log('file.icon', file.navigation?.icon)
     if (file.navigation?.icon?.startsWith('ph:')) {
       file.navigation.icon = file.navigation.icon.replace('ph:', 'i-ph-')
     }

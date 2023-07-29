@@ -1,17 +1,22 @@
 <script setup lang="ts">
-import type { NavItem } from '@nuxt/content/dist/runtime/types'
-import type { VerticalNavigationLink } from '@nuxthq/ui/dist/runtime/types'
+import type { Link } from '@ui-kit/types'
 
-const links = inject<NavItem[]>('links')
-const anchors = inject<VerticalNavigationLink[]>('anchors')
+const links = inject<Link[]>('links')
+const anchors = inject<Link[]>('anchors')
 </script>
 
 <template>
   <UContainer>
-    <UDocsLayout :links="links" :anchors="anchors">
-      <template #top>
-        <UDocsSearchButton />
+    <UPage>
+      <template #left>
+        <UAside :links="links" :anchors="anchors">
+          <template #top>
+            <UDocsSearchButton />
+          </template>
+        </UAside>
       </template>
-    </UDocsLayout>
+
+      <NuxtPage />
+    </UPage>
   </UContainer>
 </template>

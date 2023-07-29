@@ -4,6 +4,9 @@ devDependencies:
   '@iconify-json/heroicons':
     specifier: ^1.1.11
     version: 1.1.11
+  '@iconify-json/logos':
+    specifier: ^1.1.33
+    version: 1.1.33
   '@iconify-json/octicon':
     specifier: ^1.1.44
     version: 1.1.44
@@ -33,7 +36,7 @@ devDependencies:
     version: 0.13.4
   '@nuxthq/ui':
     specifier: npm:@nuxthq/ui-edge@latest
-    version: /@nuxthq/ui-edge@2.6.0-28164492.4f4a659(vue@3.3.4)(webpack@5.88.1)
+    version: /@nuxthq/ui-edge@2.6.0-28177265.8380607(vue@3.3.4)(webpack@5.88.1)
   '@nuxtjs/fontaine':
     specifier: ^0.4.1
     version: 0.4.1
@@ -973,6 +976,15 @@ packages:
       vue: 3.3.4
     dev: true
 
+  /@headlessui/vue@1.7.15(vue@3.3.4):
+    resolution: {integrity: sha512-3ozVEgQ8mw09nWvUPN+8S6C8l3SM0lVT1aEN/+oP5Y4LF0WNMM9UrVisVTN9LLQ06v/X3EFA0blyL/vg8XNZlg==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      vue: ^3.2.0
+    dependencies:
+      vue: 3.3.4
+    dev: true
+
   /@html-validate/stylish@4.1.0:
     resolution: {integrity: sha512-f2MOKJ2HVdLxpOOg2jD6hjDTDJic3wpb8/UdDDIic5jTvgfMMPN3PoiNWlqDg/mCzLIj1b/p1hCRx4Kz5lbVjw==}
     engines: {node: '>= 14.0'}
@@ -1002,6 +1014,12 @@ packages:
 
   /@iconify-json/heroicons@1.1.11:
     resolution: {integrity: sha512-Autw98FvUTmBCgb4CuKZ7iQQ2633YBCmcCbAbVNU9hAo6vms9uVcbtrAQt/qlB+qzNi52PV3DWDiRtJgmPeZIw==}
+    dependencies:
+      '@iconify/types': 2.0.0
+    dev: true
+
+  /@iconify-json/logos@1.1.33:
+    resolution: {integrity: sha512-XHnob/dyib1oCaHZV0yRLXUfGQAr46pTuO/Y+jx9ImVBVb5jyZfJ+PLgro5pp8fyQkXWV2vq7pdR0yP5s4gcvg==}
     dependencies:
       '@iconify/types': 2.0.0
     dev: true
@@ -1629,6 +1647,48 @@ packages:
     dependencies:
       '@egoist/tailwindcss-icons': 1.1.0(tailwindcss@3.3.3)
       '@headlessui/vue': 1.7.14(vue@3.3.4)
+      '@iconify-json/heroicons': 1.1.11
+      '@nuxt/kit': 3.6.5
+      '@nuxtjs/color-mode': 3.3.0
+      '@nuxtjs/tailwindcss': 6.8.0(webpack@5.88.1)
+      '@popperjs/core': 2.11.8
+      '@tailwindcss/aspect-ratio': 0.4.2(tailwindcss@3.3.3)
+      '@tailwindcss/container-queries': 0.1.1(tailwindcss@3.3.3)
+      '@tailwindcss/forms': 0.5.4(tailwindcss@3.3.3)
+      '@tailwindcss/typography': 0.5.9(tailwindcss@3.3.3)
+      '@vueuse/core': 10.2.1(vue@3.3.4)
+      '@vueuse/integrations': 10.2.1(fuse.js@6.6.2)(vue@3.3.4)
+      '@vueuse/math': 10.2.1(vue@3.3.4)
+      defu: 6.1.2
+      fuse.js: 6.6.2
+      lodash-es: 4.17.21
+      tailwindcss: 3.3.3
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - async-validator
+      - axios
+      - change-case
+      - drauu
+      - focus-trap
+      - idb-keyval
+      - jwt-decode
+      - nprogress
+      - qrcode
+      - rollup
+      - sortablejs
+      - supports-color
+      - ts-node
+      - universal-cookie
+      - vue
+      - webpack
+    dev: true
+
+  /@nuxthq/ui-edge@2.6.0-28177265.8380607(vue@3.3.4)(webpack@5.88.1):
+    resolution: {integrity: sha512-ey1wgIgOZNZiN4JP9wvoBKVCBN+5P5AzpgpHFvbN9LJ24xfsvIkflLzMJ/91S2UYtxFDRK/8FHHyWcKzzzJhLw==}
+    engines: {node: '>=v16.14.0'}
+    dependencies:
+      '@egoist/tailwindcss-icons': 1.1.0(tailwindcss@3.3.3)
+      '@headlessui/vue': 1.7.15(vue@3.3.4)
       '@iconify-json/heroicons': 1.1.11
       '@nuxt/kit': 3.6.5
       '@nuxtjs/color-mode': 3.3.0

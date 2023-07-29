@@ -1,30 +1,15 @@
 <script setup lang="ts">
 const route = useRoute()
+const { createReplaceRoute } = useFilters()
+const replaceRoute = createReplaceRoute('showcase')
 
 const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
 
 useContentHead(page)
 
-// const {
-//   fetchList,
-//   filteredModules,
-//   q,
-//   versions,
-//   selectedVersion,
-//   types,
-//   selectedType,
-//   categories,
-//   selectedCategory,
-//   orders,
-//   selectedOrder,
-//   sorts,
-//   selectedSort
-// } = useModules()
+const { fetchList, selectedShowcases, categories, selectedCategory } = useResourcesShowcases()
 
-// const { createReplaceRoute } = useFilters()
-// const replaceRoute = createReplaceRoute('modules')
-
-// const error = await fetchList()
+const error = await fetchList()
 </script>
 
 <template>
@@ -34,15 +19,14 @@ useContentHead(page)
       <img :src="`${page.image.path}-dark.${page.image.format}`" class="hidden dark:block object-contain h-3/4 lg:ml-auto opacity-0 md:opacity-100" alt="" :width="page.image.width" :height="page.image.height">
     </UPageHero>
 
-    <UPage>
+    <UPageError v-if="error" :error="error" />
+    <UPage v-else>
       <template #left>
-        <UAside>
-          aside
-        </UAside>
+        <UAside :links="categories" />
       </template>
 
       <UPageBody>
-        test
+        {{ selectedShowcases }}
       </UPageBody>
     </UPage>
   </UContainer>

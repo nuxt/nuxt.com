@@ -3,7 +3,11 @@
     <AppHeader />
 
     <UContainer>
-      <UPageError :error="error" />
+      <UMain>
+        <UPage>
+          <UPageError :error="error" />
+        </UPage>
+      </UMain>
     </UContainer>
 
     <AppFooter />

@@ -70,10 +70,6 @@ export default defineNuxtConfig({
 
   extends: '@nuxt-themes/ui-kit',
 
-  css: [
-    '@/assets/css/main.css'
-  ],
-
   modules: [
     process.env.NODE_ENV === 'production' ? '@nuxtjs/html-validator' : () => {},
     '@nuxt/content',
@@ -153,7 +149,7 @@ export default defineNuxtConfig({
   },
 
   ui: {
-    icons: ['simple-icons', 'ph', 'uil', 'heroicons', 'octicon']
+    icons: ['simple-icons', 'ph', 'uil', 'heroicons', 'octicon', 'logos']
   },
 
   content: {

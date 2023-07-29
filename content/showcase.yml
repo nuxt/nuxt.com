@@ -1,42 +1,28 @@
----
 title: Showcase
 description: Discover our selection of websites built with Nuxt. This collection is powered by VueTelescope.
 navigation.icon: icon-park-outline:new-computer
-image: '/socials/showcase.jpg'
----
-
-::page-hero
----
+head.image: '/socials/showcase.jpg'
 image:
   path: '/assets/showcase/hero'
   format: 'webp'
-  height: '216'
-  width: '400'
-buttonsTextLeft: 'Download extension:'
-buttons:
+  height: 216
+  width: 400
+links:
   - label: 'Chrome'
     size: 'lg'
-    variant: 'secondary'
+    color: 'white'
     to: 'https://chrome.google.com/webstore/detail/vue-telescope/neaebjphlfplgdhedjdhcnpjkndddbpd'
-    icon: 'logos:chrome'
+    icon: 'i-logos-chrome'
     target: '_blank'
   - label: 'Firefox'
     size: 'lg'
-    variant: 'secondary'
+    color: 'white'
     to: 'https://addons.mozilla.org/en/firefox/addon/vue-telescope/'
-    icon: 'logos:firefox'
+    icon: 'i-logos-firefox'
     target: '_blank'
   - label: 'Edge'
     size: 'lg'
-    variant: 'secondary'
+    color: 'white'
     to: 'https://microsoftedge.microsoft.com/addons/detail/vue-telescope/icgcillpgelpleniodgkmohgdmeogodl'
-    icon: 'logos:microsoft-edge'
+    icon: 'i-logos-microsoft-edge'
     target: '_blank'
----
-#title
-Showcase
-#description
-Discover our selection of websites built with Nuxt. This collection is powered by VueTelescope.
-::
-
-:ShowcasesList

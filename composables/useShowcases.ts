@@ -5,18 +5,18 @@ export const useResourcesShowcases = () => {
   const route = useRoute()
 
   const iconsMap = {
-    Featured: 'uil-star',
-    Awwwards: 'uil-award',
-    Tech: 'uil-circuit',
-    'E-Commerce': 'uil-shopping-basket',
-    News: 'uil-newspaper',
-    Education: 'uil-graduation-cap',
-    Government: 'uil-building',
-    Entertainment: 'uil-dice-five',
-    Travel: 'uil-plane',
-    Finance: 'uil-dollar-alt',
-    Business: 'uil-briefcase-alt',
-    Sport: 'uil-basketball'
+    Featured: 'i-uil-star',
+    Awwwards: 'i-uil-award',
+    Tech: 'i-uil-circuit',
+    'E-Commerce': 'i-uil-shopping-basket',
+    News: 'i-uil-newspaper',
+    Education: 'i-uil-graduation-cap',
+    Government: 'i-uil-building',
+    Entertainment: 'i-uil-dice-five',
+    Travel: 'i-uil-plane',
+    Finance: 'i-uil-dollar-alt',
+    Business: 'i-uil-briefcase-alt',
+    Sport: 'i-uil-basketball'
   }
 
   // Data fetching
@@ -41,16 +41,15 @@ export const useResourcesShowcases = () => {
   }
 
   // Lists
-  const categories: ComputedRef<FilterItem[] | []> =
- computed(() => {
-   return showcaseList.value?.groups?.map(group => ({
-     key: group.id,
-     title: group.name,
-     label: group.name,
-     to: { name: 'showcase', query: { category: group.name }, state: { smooth: '#smooth' } },
-     icon: iconsMap[group.name as keyof typeof iconsMap]
-   })) || []
- })
+  const categories: ComputedRef<FilterItem[] | []> = computed(() => {
+    return showcaseList.value?.groups?.map(group => ({
+      key: group.id,
+      label: group.name,
+      exact: true,
+      to: { name: 'showcase', query: { category: group.name }, state: { smooth: '#smooth' } },
+      icon: iconsMap[group.name as keyof typeof iconsMap]
+    })) || []
+  })
 
   const selectedCategory: ComputedRef<FilterItem> = computed(() => {
     return categories.value.find(category => category.title === route.query.category) || categories.value[0]

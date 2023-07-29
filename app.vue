@@ -1,7 +1,10 @@
 <script setup lang="ts">
 const colorMode = useColorMode()
 
-const { data: navigation } = await useAsyncData('navigation', () => fetchContentNavigation())
+const { data: links } = await useLazyAsyncData('navigation', () => fetchContentNavigation(), {
+  default: () => [],
+  transform: (navigation) => mapContentLinks(navigation.find((item) => item._path === '/docs')?.children)
+})
 const { data: files } = await useLazyAsyncData('files', () => queryContent('/docs').where({ _type: 'markdown', navigation: { $ne: false } }).find(), { default: () => [] })
 
 const anchors = [{
@@ -14,12 +17,10 @@ const anchors = [{
 
 const color = computed(() => colorMode.value === 'dark' ? '#18181b' : 'white')
 
-const links = computed(() => navigation.value.find((item: any) => item._path === '/docs')?.children || [])
-
 // Head
 
 useHead({
-  titleTemplate: title => title && title.includes('NuxtLabs UI') ? title : `${title} - NuxtLabs UI`,
+  titleTemplate: title => title ? `${title} - Nuxt` : 'Nuxt: The Intuitive Web Framework',
   meta: [
     { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1' },
     { key: 'theme-color', name: 'theme-color', content: color }
@@ -51,7 +52,9 @@ provide('anchors', anchors)
   <div>
     <AppHeader />
 
-    <NuxtPage />
+    <UMain>
+      <NuxtPage />
+    </UMain>
 
     <AppFooter v-if="!$route.path.startsWith('/docs')" />
 

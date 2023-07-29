@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { NavItem } from '@nuxt/content/dist/runtime/types'
+import type { Link } from '@ui-kit/types'
 
-const links = inject<NavItem[]>('links')
+const links = inject<Link[]>('links')
 
 const headerLinks = [{
   label: 'Docs',
@@ -35,10 +35,13 @@ const headerLinks = [{
 
     <template #right>
       <UColorModeButton />
+      <USocialButton to="https://twitter.com/nuxt_js" icon="i-simple-icons-twitter" class="hidden lg:inline-flex" />
+      <USocialButton to="https://discord.com/invite/ps2h6QT" icon="i-simple-icons-discord" class="hidden lg:inline-flex" />
+      <USocialButton to="https://github.com/nuxt/nuxt" icon="i-simple-icons-github" class="hidden lg:inline-flex" />
     </template>
 
     <template #links>
-      <UDocsAsideLinks :links="links" />
+      <UAsideLinks :links="links" />
     </template>
   </UHeader>
 </template>
