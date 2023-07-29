@@ -41,7 +41,7 @@ const headerLinks = [{
     </template>
 
     <template #links>
-      <UAsideLinks :links="links" />
+      <UAsideLinks :links="links" open-if-active />
     </template>
   </UHeader>
 </template>

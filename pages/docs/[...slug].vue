@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { lowerCase } from 'lodash-es'
-
 const route = useRoute()
 
 const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
@@ -10,7 +8,7 @@ const { data: surround } = await useAsyncData(`${route.path}-surround`, () => qu
 )
 
 const githubLink = computed(() => `https://github.com/nuxt/nuxt/edit/dev/docs/content/${page?.value?._file}`)
-const headline = computed(() => page.value._dir?.title ? page.value._dir.title : lowerCase(page.value._dir))
+const headline = computed(() => page.value._dir?.title ? page.value._dir.title : useLowerCase(page.value._dir))
 
 useContentHead(page)
 </script>
@@ -36,8 +34,12 @@ useContentHead(page)
       <UDocsSurround :surround="surround" />
     </UPageBody>
 
-    <template v-if="page.body?.toc?.links?.length" #right>
-      <UDocsToc :links="page.body.toc.links" />
+    <template #right>
+      <UDocsToc :links="page.body.toc.links">
+        <template #bottom>
+          <Ads />
+        </template>
+      </UDocsToc>
     </template>
   </UPage>
   <UPageError v-else />

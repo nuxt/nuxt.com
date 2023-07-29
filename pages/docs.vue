@@ -9,7 +9,7 @@ const anchors = inject<Link[]>('anchors')
   <UContainer>
     <UPage>
       <template #left>
-        <UAside :links="links" :anchors="anchors">
+        <UAside :links="links" :anchors="anchors" default-open :multiple="false">
           <template #top>
             <UDocsSearchButton />
           </template>
