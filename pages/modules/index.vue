@@ -30,8 +30,7 @@ useContentHead(page)
 <template>
   <UContainer>
     <UPageHero v-bind="page">
-      <img :src="`${page.image.path}-light.${page.image.format}`" class="dark:hidden object-contain h-3/4 lg:ml-auto opacity-0 md:opacity-100" alt="" :width="page.image.width" :height="page.image.height">
-      <img :src="`${page.image.path}-dark.${page.image.format}`" class="hidden dark:block object-contain h-3/4 lg:ml-auto opacity-0 md:opacity-100" alt="" :width="page.image.width" :height="page.image.height">
+      <UColorModeImage :light="`${page.image.path}-light.${page.image.format}`" :dark="`${page.image.path}-dark.${page.image.format}`" class="object-contain h-3/4 lg:ml-auto opacity-0 md:opacity-100" :width="page.image.width" :height="page.image.height" />
     </UPageHero>
 
     <UPage>

@@ -1,7 +1,7 @@
 import type { Ref, ComputedRef } from 'vue'
-import type { ResourcesShowcasesList, FilterItem, ResourcesShowcasesListGroupItem } from '../types'
+import type { ShowcasesList, FilterItem, ShowcasesListGroupItem } from '../types'
 
-export const useResourcesShowcases = () => {
+export const useShowcases = () => {
   const route = useRoute()
 
   const iconsMap = {
@@ -20,11 +20,11 @@ export const useResourcesShowcases = () => {
   }
 
   // Data fetching
-  const showcaseList: Ref<ResourcesShowcasesList | null> = useState('resources-showcases-list', () => null)
+  const showcaseList: Ref<ShowcasesList | null> = useState('resources-showcases-list', () => null)
   const showcasesListId = 505
 
   async function fetchList () {
-    const { data, error } = await useFetch<ResourcesShowcasesList>(`https://api.vuetelescope.com/lists/${showcasesListId}`)
+    const { data, error } = await useFetch<ShowcasesList>(`https://api.vuetelescope.com/lists/${showcasesListId}`)
 
     /* Missing data is handled at component level */
     if (!data.value && error.value) {
@@ -44,9 +44,11 @@ export const useResourcesShowcases = () => {
   const categories: ComputedRef<FilterItem[] | []> = computed(() => {
     return showcaseList.value?.groups?.map(group => ({
       key: group.id,
+      title: group.name,
       label: group.name,
       exact: true,
-      to: { name: 'showcase', query: { category: group.name }, state: { smooth: '#smooth' } },
+      exactQuery: true,
+      to: { name: 'showcase', query: group.name === 'Featured' ? undefined : { category: group.name }, state: { smooth: '#smooth' } },
       icon: iconsMap[group.name as keyof typeof iconsMap]
     })) || []
   })
@@ -55,7 +57,7 @@ export const useResourcesShowcases = () => {
     return categories.value.find(category => category.title === route.query.category) || categories.value[0]
   })
 
-  const selectedShowcases: ComputedRef<ResourcesShowcasesListGroupItem[]> = computed(() => {
+  const selectedShowcases: ComputedRef<ShowcasesListGroupItem[]> = computed(() => {
     const ids = new Set<number>()
     return showcaseList.value?.groups
       ?.filter((group, index) => (!selectedCategory.value && index === 0) || group.name === selectedCategory.value?.title)

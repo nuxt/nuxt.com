@@ -1,0 +1,42 @@
+hero:
+  title: '<span class="text-accent">The complete solution</span><br>for web developers'
+  description: 'Nuxt is an open source framework that makes web development intuitive and powerful.<br>Create performant and production-grade full-stack web apps and websites with confidence.'
+  links:
+    - label: 'Get Started'
+      to: '/docs'
+      icon: 'i-ph-rocket-launch'
+      size: 'xl'
+    - label: 'What is Nuxt?'
+      to: 'https://youtu.be/dCxSsr5xuL8'
+      target: '_blank'
+      icon: 'i-ph-video'
+      variant: 'outline'
+      size: 'xl'
+sections:
+  - title: 'Write full-stack<br><span class="text-accent">Vue Applications</span>'
+    description: 'We love Vue Single-File Components as much as you do. Simple, intuitive and powerful, Nuxt lets you write Vue components in a way that makes sense. Every repetitive tasks are automated, so you can focus on writing your full-stack Vue application with confidence.'
+    align: left
+  - title: 'Static or Dynamic,<br><span class="text-accent">the choice is yours</span>'
+    description: 'Decide what rendering strategy you need at the route level. By leveraging the hybrid rendering, you can get the best of both worlds: the performance of a static site and the interactivity of a dynamic one.'
+    align: right
+  - title: 'Compose with<br><span class="text-accent">everything you need.</span>'
+    slot: 'features'
+  - title: 'Ship faster with<br><span class="text-accent">endless integrations</span>'
+    description: 'Integrate with your favorite tools and services. Nuxt is built to be flexible and can be extended with a robust modules ecosystem. Connect your application with popular headless CMS, eCommerce, Database or UI/UX libraries with a single line of code.'
+    align: left
+  - title: 'Built by developers<br><span class="text-accent">around the world.</span>'
+    description: 'The development of Nuxt and its ecosystem is led by an international team. From contributors to developer advocates, the community is made of members with different horizons and skills. We are happy to see new members every day and encourage anyone to join us and help in many ways: answering questions, giving a talk, creating modules and contributing to the core.'
+    align: right
+    links:
+      - label: Discord
+        icon: 'i-simple-icons-discord'
+        variant: 'outline'
+      - label: GitHub
+        icon: 'i-simple-icons-github'
+        variant: 'outline'
+      - label: Twitter
+        icon: 'i-simple-icons-twitter'
+        variant: 'outline'
+  - title: 'Trusted by the<br><span class="text-accent">World Wide Web.</span>'
+    slot: 'testimonials'
+    align: center

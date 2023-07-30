@@ -32,7 +32,7 @@ export interface ResourcesLiveEvent extends ParsedContent {
   description: string
 }
 
-export interface ResourcesShowcasesListGroupItem {
+export interface ShowcasesListGroupItem {
   createdAt: string
   description: string
   domain: string
@@ -61,18 +61,18 @@ export interface ResourcesShowcasesListGroupItem {
   vueVersion: string
 }
 
-export interface ResourcesShowcasesListGroup {
+export interface ShowcasesListGroup {
   created_at: string
   id: number
   name: string
   position: number
-  showcases: ResourcesShowcasesListGroupItem[]
+  showcases: ShowcasesListGroupItem[]
   updated_at: string
 }
 
-export interface ResourcesShowcasesList {
+export interface ShowcasesList {
   created_at: string
-  groups: ResourcesShowcasesListGroup[]
+  groups: ShowcasesListGroup[]
   id: number
   name: string
   updated_at: string

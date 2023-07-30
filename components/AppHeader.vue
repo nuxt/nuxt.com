@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Link } from '@ui-kit/types'
 
-const links = inject<Link[]>('links')
+const navigation = inject<Link[]>('navigation')
 
 const headerLinks = [{
   label: 'Docs',
@@ -35,13 +35,19 @@ const headerLinks = [{
 
     <template #right>
       <UColorModeButton />
-      <USocialButton to="https://twitter.com/nuxt_js" icon="i-simple-icons-twitter" class="hidden lg:inline-flex" />
-      <USocialButton to="https://discord.com/invite/ps2h6QT" icon="i-simple-icons-discord" class="hidden lg:inline-flex" />
-      <USocialButton to="https://github.com/nuxt/nuxt" icon="i-simple-icons-github" class="hidden lg:inline-flex" />
+
+      <UButton
+        icon="i-octicon-star-fill-24"
+        to="https://github.com/nuxt/nuxt"
+        target="_blank"
+        label="46.6k"
+        color="gray"
+        variant="ghost"
+      />
     </template>
 
-    <template #links>
-      <UAsideLinks :links="links" open-if-active />
+    <template #panel>
+      <UNavigationTree :links="navigation" default-open :multiple="false" />
     </template>
   </UHeader>
 </template>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const colorMode = useColorMode()
 
-const { data: links } = await useLazyAsyncData('navigation', () => fetchContentNavigation(), {
+const { data: navigation } = await useLazyAsyncData('navigation', () => fetchContentNavigation(), {
   default: () => [],
   transform: (navigation) => mapContentLinks(navigation.find((item) => item._path === '/docs')?.children)
 })
@@ -44,7 +44,7 @@ useSeoMeta({
 
 // Provide
 
-provide('links', links)
+provide('navigation', navigation)
 provide('anchors', anchors)
 </script>
 
@@ -59,7 +59,7 @@ provide('anchors', anchors)
     <AppFooter v-if="!$route.path.startsWith('/docs')" />
 
     <ClientOnly>
-      <UDocsSearch :files="files" :links="links" />
+      <UDocsSearch :files="files" :navigation="navigation" />
 
       <UNotifications />
     </ClientOnly>

@@ -13,7 +13,7 @@ export default defineAppConfig({
       }
     },
     header: {
-      border: ''
+      border: 'border-b border-border -mb-px lg:mb-0 lg:border-0'
     }
   }
 })

@@ -1,15 +1,10 @@
 <template>
   <div class="space-y-3">
     <LazyClientOnly>
-      <hr class="mb-3 border-gray-200 dark:border-gray-800">
-
-      <span class="hidden">
-        Agency partner:
-      </span>
       <NuxtLink :to="adPartner._path" class="flex items-center bg-white dark:bg-gray-900 dark:hover:bg-gray-800 hover:bg-gray-100 rounded-xl h-[60px] p-4 lg:p-2 align-middle border border-gray-200 dark:border-gray-800">
         <img :src="adPartner.logo?.dark" class="mr-2 rounded-md h-8 hidden dark:block" alt="">
         <img :src="adPartner.logo?.light" class="mr-2 rounded-md h-8 dark:hidden" alt="">
-        <p class="font-semibold">
+        <p class="font-semibold text-sm">
           {{ adPartner.title }}
         </p>
       </NuxtLink>
@@ -21,7 +16,7 @@
         </p>
       </NuxtLink>
       <NuxtLink to="/enterprise/jobs" class="relative p-4 lg:p-2 dark:hover:bg-gray-800 hover:bg-gray-100 flex items-center justify-between bg-white dark:bg-gray-900 rounded-xl h-[60px] border border-gray-200 dark:border-gray-800">
-        <p class="font-semibold">
+        <p class="font-semibold text-sm">
           Looking for a Nuxt Job?
         </p>
         <img src="/assets/toc/jobs.svg" class="hidden dark:block absolute right-0 bottom-0 w-12 lg:w-10" alt="">

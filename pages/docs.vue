@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Link } from '@ui-kit/types'
 
-const links = inject<Link[]>('links')
+const navigation = inject<Link[]>('navigation')
 const anchors = inject<Link[]>('anchors')
 </script>
 
@@ -9,10 +9,12 @@ const anchors = inject<Link[]>('anchors')
   <UContainer>
     <UPage>
       <template #left>
-        <UAside :links="links" :anchors="anchors" default-open :multiple="false">
+        <UAside :links="anchors">
           <template #top>
             <UDocsSearchButton />
           </template>
+
+          <UNavigationTree :links="navigation" default-open :multiple="false" />
         </UAside>
       </template>
 

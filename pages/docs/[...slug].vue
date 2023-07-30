@@ -35,9 +35,13 @@ useContentHead(page)
     </UPageBody>
 
     <template #right>
-      <UDocsToc :links="page.body.toc.links">
+      <UDocsToc :links="page.body?.toc?.links">
         <template #bottom>
-          <Ads />
+          <div>
+            <hr v-if="page.body?.toc?.links?.length" class="border-gray-200 dark:border-gray-800 border-dashed my-6">
+
+            <Ads class="hidden lg:block" />
+          </div>
         </template>
       </UDocsToc>
     </template>
