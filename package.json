@@ -79,7 +79,7 @@
     "typescript": "^5.1.6"
   },
   "resolutions": {
-    "parse5": "6.0.1",
+    "parse5": "7.1.2",
     "pinceau": "^0.19.2",
     "consola": "^3.2.3"
   }
