@@ -3,15 +3,11 @@ const colorMode = useColorMode()
 
 const { data: navigation } = await useLazyAsyncData('navigation', () => fetchContentNavigation(), {
   default: () => [],
-  transform: (navigation) => mapContentLinks(navigation.find((item) => item._path === '/docs')?.children)
+  transform: (navigation) => navigation.find((item) => item._path === '/docs')?.children
 })
 const { data: files } = await useLazyAsyncData('files', () => queryContent('/docs').where({ _type: 'markdown', navigation: { $ne: false } }).find(), { default: () => [] })
 
-const anchors = [{
-  label: 'Documentation',
-  icon: 'i-ph-book-open-text',
-  to: '/docs'
-}]
+const anchors = []
 
 // Computed
 

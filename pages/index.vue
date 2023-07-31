@@ -33,16 +33,6 @@
       <template #description>
         <span v-html="section?.description" />
       </template>
-
-      <template #features>
-        <ULandingGrid>
-          <ULandingCard v-for="(feature, index) of section.features" :key="index" v-bind="feature" :class="feature.class || 'col-span-4 row-span-4'" />
-        </ULandingGrid>
-      </template>
-
-      <template #accordion>
-        <UAccordion v-bind="section.accordion" />
-      </template>
     </ULandingSection>
   </div>
 </template>

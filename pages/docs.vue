@@ -1,8 +1,13 @@
 <script setup lang="ts">
+import type { NavItem } from '@nuxt/content/dist/runtime/types'
 import type { Link } from '@ui-kit/types'
 
-const navigation = inject<Link[]>('navigation')
+const navigation = inject<Ref<NavItem[]>>('navigation')
 const anchors = inject<Link[]>('anchors')
+
+const { mapContentNavigation } = useUIKitContent()
+
+const links = computed(() => mapContentNavigation(navigation.value))
 </script>
 
 <template>
@@ -14,7 +19,7 @@ const anchors = inject<Link[]>('anchors')
             <UDocsSearchButton />
           </template>
 
-          <UNavigationTree :links="navigation" default-open :multiple="false" />
+          <UNavigationTree :links="links" default-open :multiple="false" />
         </UAside>
       </template>
 

@@ -1,12 +1,23 @@
 <script setup lang="ts">
-import type { Link } from '@ui-kit/types'
+import type { NavItem } from '@nuxt/content/dist/runtime/types'
 
-const navigation = inject<Link[]>('navigation')
+const navigation = inject<Ref<NavItem[]>>('navigation')
+
+const router = useRouter()
+const { navBottomLink } = useContentHelpers()
+const { mapContentNavigation } = useUIKitContent()
+
+const links = computed(() => mapContentNavigation(navigation.value))
 
 const headerLinks = [{
   label: 'Docs',
   icon: 'i-ph-rocket-light',
-  to: '/docs'
+  to: '/docs',
+  click: (e) => {
+    e.preventDefault()
+
+    router.push(navBottomLink(navigation.value[0]))
+  }
 }, {
   label: 'Modules',
   icon: 'i-ph-plug-light',
@@ -47,7 +58,7 @@ const headerLinks = [{
     </template>
 
     <template #panel>
-      <UNavigationTree :links="navigation" default-open :multiple="false" />
+      <UNavigationTree :links="links" default-open :multiple="false" />
     </template>
   </UHeader>
 </template>

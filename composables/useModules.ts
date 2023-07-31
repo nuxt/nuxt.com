@@ -69,21 +69,21 @@ export const useModules = () => {
   // Data
 
   const versions: FilterItem[] = [
-    { key: '3.x', title: 'v3' },
-    { key: '2.x-bridge', title: 'Bridge' },
-    { key: '2.x', title: 'v2' }
+    { key: '3.x', label: 'v3' },
+    { key: '2.x-bridge', label: 'Bridge' },
+    { key: '2.x', label: 'v2' }
   ]
 
   const sorts: FilterItem[] = [
-    { key: 'downloads', title: 'Downloads' },
-    { key: 'stars', title: 'Stars' },
-    { key: 'publishedAt', title: 'Updated' },
-    { key: 'createdAt', title: 'Created' }
+    { key: 'downloads', label: 'Downloads' },
+    { key: 'stars', label: 'Stars' },
+    { key: 'publishedAt', label: 'Updated' },
+    { key: 'createdAt', label: 'Created' }
   ]
 
   const orders: FilterItem[] = [
-    { key: 'desc', title: 'Desc', icon: 'uil:sort-amount-down' },
-    { key: 'asc', title: 'Asc', icon: 'uil:sort-amount-up' }
+    { key: 'desc', label: 'Desc', icon: 'uil:sort-amount-down' },
+    { key: 'asc', label: 'Asc', icon: 'uil:sort-amount-up' }
   ]
 
   const typesMap: TypeMap = {
@@ -104,9 +104,10 @@ export const useModules = () => {
   const modulesByVersion: ComputedRef<Module[]> = computed(() => {
     return [...modules.value]
       .filter((module) => {
-        if (selectedVersion.value && !module.tags.includes(selectedVersion.value.key as string)) {
-          return false
-        }
+        // FIXME
+        // if (selectedVersion.value && !(module.tags ?? []).includes(selectedVersion.value.key as string)) {
+        //   return false
+        // }
 
         return true
       })
@@ -115,7 +116,8 @@ export const useModules = () => {
   const categories: ComputedRef<FilterItem[] | []> = computed(() => {
     return [...new Set(modulesByVersion.value.map(module => module.category))].map(category => ({
       key: category,
-      title: category,
+      label: category,
+      exactQuery: true,
       to: {
         name: 'modules',
         query: {
@@ -126,14 +128,14 @@ export const useModules = () => {
       },
       icon: iconsMap[category as keyof typeof iconsMap] || undefined
     })).sort((a, b) => {
-      return a.title.localeCompare(b.title)
+      return a.label.localeCompare(b.label)
     })
   })
 
   const types: ComputedRef<FilterItem[]> = computed(() => {
     return [...new Set(modulesByVersion.value.map(module => module.type))].map(type => ({
       key: type,
-      title: typesMap[type as keyof typeof typesMap] || type,
+      label: typesMap[type as keyof typeof typesMap] || type,
       to: {
         name: 'modules',
         query: {
@@ -189,7 +191,7 @@ export const useModules = () => {
   const links: ComputedRef<any[]> = computed(() => {
     return [
       {
-        title: 'All',
+        label: 'All',
         _path: {
           name: 'modules',
           query: {
@@ -213,9 +215,10 @@ export const useModules = () => {
         if (selectedType.value && module.type !== selectedType.value.key) {
           return false
         }
-        if (selectedVersion.value && !module.tags.includes(selectedVersion.value.key)) {
-          return false
-        }
+        // FIXME
+        // if (selectedVersion.value && !(module.tags ?? []).includes(selectedVersion.value.key)) {
+        //   return false
+        // }
         const queryRegExp = searchTextRegExp(q.value as string)
         if (q.value && !['name', 'npm', 'category', 'description', 'repo'].map(field => module[field]).filter(Boolean).some(value => value.search(queryRegExp) !== -1)) {
           return false

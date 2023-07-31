@@ -7,7 +7,7 @@ useContentHead(page)
 
 const { fetchList, selectedShowcases, categories } = useShowcases()
 
-const error = await fetchList()
+await fetchList()
 </script>
 
 <template>
@@ -16,8 +16,7 @@ const error = await fetchList()
       <UColorModeImage :light="`${page.image.path}-light.${page.image.format}`" :dark="`${page.image.path}-dark.${page.image.format}`" class="object-contain h-3/4 lg:ml-auto opacity-0 md:opacity-100" :width="page.image.width" :height="page.image.height" />
     </UPageHero>
 
-    <UPageError v-if="error" :error="error" />
-    <UPage v-else>
+    <UPage id="smooth" class="pt-20 -mt-20">
       <template #left>
         <UAside>
           <UNavigationLinks :links="categories" />

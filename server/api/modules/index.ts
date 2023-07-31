@@ -1,5 +1,4 @@
 import type { Module } from '../../../types'
-import { defineCachedEventHandler } from '#imports'
 
 export default defineCachedEventHandler(async () => {
   const _modules = await $fetch<Module[]>('https://cdn.jsdelivr.net/npm/@nuxt/modules@latest/modules.json')

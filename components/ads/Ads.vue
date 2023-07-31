@@ -1,10 +1,10 @@
 <template>
   <div class="space-y-3">
     <LazyClientOnly>
-      <NuxtLink :to="adPartner._path" class="flex items-center bg-white dark:bg-gray-900 dark:hover:bg-gray-800 hover:bg-gray-100 rounded-xl h-[60px] p-4 lg:p-2 align-middle border border-gray-200 dark:border-gray-800">
+      <NuxtLink :to="adPartner._path" class="flex items-center bg-white dark:bg-gray-900 dark:hover:bg-gray-800 hover:bg-gray-100 rounded-xl h-[60px] p-4 lg:p-2 align-middle border border-gray-200 dark:border-gray-800 truncate">
         <img :src="adPartner.logo?.dark" class="mr-2 rounded-md h-8 hidden dark:block" alt="">
         <img :src="adPartner.logo?.light" class="mr-2 rounded-md h-8 dark:hidden" alt="">
-        <p class="font-semibold text-sm">
+        <p class="font-semibold text-sm truncate">
           {{ adPartner.title }}
         </p>
       </NuxtLink>

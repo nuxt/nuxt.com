@@ -171,6 +171,10 @@ export default defineNuxtConfig({
     }
   },
 
+  routeRules: {
+    '/docs': { redirect: '/docs/prologue/auto-imports', prerender: false }
+  },
+
   plugins: [
     '~/plugins/adblock.ts',
     '~/plugins/newsletter.client.ts'

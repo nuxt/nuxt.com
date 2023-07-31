@@ -42,7 +42,7 @@
     "@nuxt/devtools": "^0.7.1",
     "@nuxt/eslint-config": "^0.1.1",
     "@nuxthq/studio": "^0.13.4",
-    "@nuxthq/ui": "npm:@nuxthq/ui-edge@2.6.0-28179073.05ea5d2",
+    "@nuxthq/ui": "npm:@nuxthq/ui-edge@2.6.0-28180213.dc1979c",
     "@nuxtjs/fontaine": "^0.4.1",
     "@nuxtjs/google-fonts": "^3.0.2",
     "@nuxtjs/html-validator": "^1.5.2",

@@ -30,4 +30,11 @@ defineProps({
     required: true
   }
 })
+
+const { data: navigation } = await useLazyAsyncData('navigation', () => fetchContentNavigation(), {
+  default: () => [],
+  transform: (navigation) => navigation.find((item) => item._path === '/docs')?.children
+})
+
+provide('navigation', navigation)
 </script>
