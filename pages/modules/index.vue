@@ -1,11 +1,13 @@
 <script setup lang="ts">
 const route = useRoute()
+const { createReplaceRoute } = useFilters()
+const { fetchList, filteredModules, categories, q } = useModules()
 
 const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
 
 useContentHead(page)
 
-const { fetchList, filteredModules, categories } = useModules()
+const replaceRoute = createReplaceRoute('modules')
 
 await fetchList()
 </script>
@@ -20,7 +22,15 @@ await fetchList()
       <template #left>
         <UAside>
           <template #top>
-            <UInput name="q" icon="i-uil-search-alt" placeholder="Search..." class="w-full" autocomplete="off" />
+            <UInput
+              :model-value="q"
+              name="q"
+              icon="i-ph-magnifying-glass"
+              placeholder="Search..."
+              class="w-full"
+              autocomplete="off"
+              @update:model-value="replaceRoute('q', $event)"
+            />
           </template>
 
           <UNavigationLinks :links="categories" />
@@ -42,7 +52,7 @@ await fetchList()
                 color="gray"
                 variant="link"
                 label="Module Author guide"
-                icon="i-uil-book-open"
+                icon="i-ph-book-open"
                 :padded="false"
               />
             </div>
@@ -58,6 +68,10 @@ await fetchList()
             :to="`/modules/${module.name}`"
             :title="module.name"
           >
+            <template #icon>
+              <UAvatar :src="module.icon.match(/^http(s)?:\/\//) ? module.icon : `https://api.nuxtjs.org/api/ipx/s_80,f_webp/gh/nuxt/modules/main/icons/${module.icon}`" :alt="module.name" size="lg" :ui="{ rounded: 'rounded-lg', background: '' }" />
+            </template>
+
             <template #description>
               <span class="line-clamp-2">{{ module.description }}</span>
             </template>

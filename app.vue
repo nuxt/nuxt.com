@@ -7,7 +7,17 @@ const { data: navigation } = await useLazyAsyncData('navigation', () => fetchCon
 })
 const { data: files } = await useLazyAsyncData('files', () => queryContent('/docs').where({ _type: 'markdown', navigation: { $ne: false } }).find(), { default: () => [] })
 
-const anchors = []
+const anchors = [{
+  label: 'Nuxt UI',
+  icon: 'i-simple-icons-nuxtdotjs',
+  to: 'https://ui.nuxtlabs.com',
+  target: '_blank'
+}, {
+  label: 'GitHub',
+  icon: 'i-simple-icons-github',
+  to: 'https://github.com/nuxt-themes/ui-kit',
+  target: '_blank'
+}]
 
 // Computed
 

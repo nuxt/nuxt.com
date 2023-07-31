@@ -1,7 +1,73 @@
 export default defineAppConfig({
   ui: {
     primary: 'green',
-    gray: 'slate'
+    gray: 'slate',
+    button: {
+      default: {
+        loadingIcon: 'i-ph-spinner'
+      }
+    },
+    input: {
+      default: {
+        loadingIcon: 'i-ph-spinner'
+      }
+    },
+    select: {
+      default: {
+        loadingIcon: 'i-ph-spinner',
+        trailingIcon: 'i-ph-caret-down'
+      }
+    },
+    selectMenu: {
+      default: {
+        selectedIcon: 'i-ph-check'
+      }
+    },
+    notification: {
+      default: {
+        closeButton: {
+          icon: 'i-ph-x'
+        }
+      }
+    },
+    commandPalette: {
+      default: {
+        icon: 'i-ph-magnifying-glass',
+        loadingIcon: 'i-ph-spinner',
+        selectedIcon: 'i-ph-check',
+        emptyState: {
+          icon: 'i-ph-magnifying-glass'
+        }
+      }
+    },
+    table: {
+      default: {
+        sortAscIcon: 'i-ph-sort-ascending',
+        sortDescIcon: 'i-ph-sort-descending',
+        sortButton: {
+          icon: 'i-ph-list'
+        },
+        loadingState: {
+          icon: 'i-ph-spinner'
+        },
+        emptyState: {
+          icon: 'i-ph-database'
+        }
+      }
+    },
+    pagination: {
+      default: {
+        prevButton: {
+          icon: 'i-ph-arrow-left'
+        },
+        nextButton: {
+          icon: 'i-ph-arrow-right'
+        }
+      }
+    },
+    card: {
+      // background: 'bg-white dark:bg-gray-900'
+    }
   },
   uiKit: {
     variables: {

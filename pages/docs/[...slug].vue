@@ -25,7 +25,7 @@ useContentHead(page)
         <span v-for="(link, index) in breadcrumb" :key="index" :class="[index < breadcrumb.length - 1 && 'font-normal text-muted']" class="flex items-center gap-1.5">
           {{ link.label }}
 
-          <UIcon v-if="index < breadcrumb.length - 1" name="i-heroicons-chevron-right-20-solid" class="w-4 h-4" />
+          <UIcon v-if="index < breadcrumb.length - 1" name="i-ph-caret-right" class="w-4 h-4" />
         </span>
       </template>
     </UPageHeader>
@@ -36,7 +36,7 @@ useContentHead(page)
       <UButton
         :to="githubLink"
         variant="link"
-        icon="i-heroicons-pencil-square"
+        icon="i-ph-note-pencil"
         label="Edit this page on GitHub"
         :padded="false"
         class="mt-12"

@@ -1,11 +1,13 @@
 <script setup lang="ts">
 const route = useRoute()
+const { fetchList, selectedShowcases, categories } = useShowcases()
+const { createReplaceRoute } = useFilters()
 
 const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
 
 useContentHead(page)
 
-const { fetchList, selectedShowcases, categories } = useShowcases()
+const replaceRoute = createReplaceRoute('showcase')
 
 await fetchList()
 </script>
