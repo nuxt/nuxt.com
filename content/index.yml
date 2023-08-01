@@ -21,6 +21,10 @@ sections:
     align: right
   - title: 'Compose with<br><span class="text-accent">everything you need.</span>'
     slot: 'features'
+    features:
+      - title: 'Routing & Layouts'
+        description: 'File based routing system to build complex views and interfaces with a powerful and conventional approach.'
+        icon: 'i-ph-browsers-thin'
   - title: 'Ship faster with<br><span class="text-accent">endless integrations</span>'
     description: 'Integrate with your favorite tools and services. Nuxt is built to be flexible and can be extended with a robust modules ecosystem. Connect your application with popular headless CMS, eCommerce, Database or UI/UX libraries with a single line of code.'
     align: left

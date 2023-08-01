@@ -13,6 +13,7 @@ const headerLinks = [{
   label: 'Docs',
   icon: 'i-ph-rocket-light',
   to: '/docs',
+  // TODO: Remove with Nuxt 3.7
   click: (e) => {
     e.preventDefault()
 

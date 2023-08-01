@@ -1,3 +1,9 @@
+<script setup lang="ts">
+const { data: page } = await useAsyncData('index', () => queryContent('/').findOne())
+
+useContentHead(page)
+</script>
+
 <template>
   <div v-if="page">
     <ULandingHero v-bind="page.hero">
@@ -33,12 +39,12 @@
       <template #description>
         <span v-html="section?.description" />
       </template>
+
+      <template #features>
+        <ULandingGrid>
+          <UPageCard v-for="(feature, index) in section.features" :key="index" v-bind="feature" />
+        </ULandingGrid>
+      </template>
     </ULandingSection>
   </div>
 </template>
-
-<script setup lang="ts">
-const { data: page } = await useAsyncData('index', () => queryContent('/').findOne())
-
-useContentHead(page)
-</script>
