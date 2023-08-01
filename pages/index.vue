@@ -41,7 +41,7 @@ useContentHead(page)
       </template>
 
       <template #features>
-        <UPageGrid>
+        <UPageGrid columns="grid-cols-1 sm:grid-cols-2 ld:grid-cols-3 xl:grid-cols-4">
           <UPageCard v-for="(feature, index) in section.features" :key="index" v-bind="feature" />
         </UPageGrid>
       </template>
