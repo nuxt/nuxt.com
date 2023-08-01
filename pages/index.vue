@@ -20,7 +20,7 @@ useContentHead(page)
 
     <UContainer>
       <h2 class="text-center text-lg font-semibold leading-8 text-white">
-        Trusted by the world's most innovative teams
+        <span>Trusted by the world's most innovative teams</span>
       </h2>
       <div class="mx-auto mt-10 mb-20 grid max-w-lg grid-cols-4 items-center gap-x-8 gap-y-10 sm:max-w-xl sm:grid-cols-6 sm:gap-x-10 lg:mx-0 lg:max-w-none lg:grid-cols-5">
         <img class="col-span-2 max-h-12 w-full object-contain lg:col-span-1" src="https://tailwindui.com/img/logos/158x48/transistor-logo-white.svg" alt="Transistor" width="158" height="48">
@@ -44,6 +44,27 @@ useContentHead(page)
         <UPageGrid columns="grid-cols-1 sm:grid-cols-2 ld:grid-cols-3 xl:grid-cols-4">
           <UPageCard v-for="(feature, index) in section.features" :key="index" v-bind="feature" />
         </UPageGrid>
+      </template>
+
+      <template #testimonials>
+        <div class="column-1 md:columns-2 lg:columns-3">
+          <UPageGrid columns="grid gap-x-4 gap-y-0 grid-cols-1">
+            <UPageCard v-for="(testimonial, index) in section.testimonials" :key="index" v-bind="testimonial" class="my-2">
+              <quote class="italic text-lg text-gray-700 dark:text-gray-400">
+                "{{ testimonial.quote }}"
+              </quote>
+              <template #footer>
+                <div class="flex space-x-4 items-center">
+                  <UAvatar :src="testimonial.author.img" :alt="testimonial.author.name" size="md" />
+                  <div class="flex flex-col">
+                    <span class="font-semibold text-lg text-accent dark:text-primary-400">{{ testimonial.author.name }}</span>
+                    <span class="text-sm">{{ testimonial.author.job }}</span>
+                  </div>
+                </div>
+              </template>
+            </UPageCard>
+          </UPageGrid>
+        </div>
       </template>
     </ULandingSection>
   </div>

@@ -77,3 +77,52 @@ sections:
   - title: 'Trusted by the<br><span class="text-accent">World Wide Web.</span>'
     slot: 'testimonials'
     align: center
+    testimonials:
+      - quote: "Nuxt offers a compelling solution and a great ecosystem to help you ship fullstack Vue apps that are performant and SEO friendl. The flexibility to choose between SSR and SSG is icing on the cake."
+        author:
+          name: 'Evan you'
+          job: 'Creator of Vue.is and Vite'
+          img: 'https://avatars.githubusercontent.com/u/499550?v=4'
+          url: 'https://twitter.com/youyuxi'
+      - quote: "Nuxt is a fantastic choice for teams building a production-grade product on the web. It aims to bake in performance best-practices while maintaining excellent Vue.js DX."
+        author:
+          name: 'Addy Osmani'
+          job:  'Chief Engineer of Chrome'
+          img: 'https://avatars.githubusercontent.com/u/110953?v=4'
+          url: 'https://twitter.com/addyosmani'
+      - quote: "Every serious full stack development team needs to stop take a look at Nuxt. Vue's developer productivity combined with Nut's server side rendering, is the foundation for instant loading web sites that delight users and improve team velocity."
+        author:
+          name: 'Ajay Kapur'
+          job:  'Co-founder of Edgio'
+          img: 'https://media.licdn.com/dms/image/C5603AQERs9a_RN9pqQ/profile-displayphoto-shrink_800_800/0/1614717831151?e=1696464000&v=beta&t=PxheTiUank2I13Iucu6_Tn7v4jiSQbYMGEEDiUHG6fs'
+          url: 'https://twitter.com/edgioinc'
+      - quote: "Nuxt has been an incredible source of innovation and inspiration for developers and framework authors alike. It's been amazing to see its growth in web projects of all sizes on the web."
+        author:
+          name: 'Guillaume Rauch'
+          job:  'Co-founder and CEO of Vercel'
+          img: 'https://pbs.twimg.com/profile_images/1576257734810312704/ucxb4lHy_400x400.jpg'
+          url: 'https://twitter.com/rauchg?lang=fr'
+      - quote: "Nuxt has outstanding developer productivity, experience, and performance right out of the gate! There’s so much attention to detail, ensuring teams have everything at their fingertips to productively build all manners of applications."
+        author:
+          name: 'Sarah Drasner'
+          job:  'Director of Engineering and Web Infrastructure, Google'
+          img: 'https://avatars.githubusercontent.com/u/2281088?v=4'
+          url: 'https://twitter.com/sarah_edo'
+      - quote: "Nuxt has a unique approach of combining a great developer experience with reusable, fully integrated features that speed up the development and performance of your next website or application."
+        author:
+          name: 'Dominik Angerer'
+          job:  'Co-founder of Stroyblok'
+          img: 'https://github.com/dominikangerer.png?s=120'
+          url: 'https://twitter.com/domangerer'
+      - quote: "Nuxt has an ideal balance of approachability for developers new to JAMstack, and power for experienced teams working on complex applications. The modules and first-class integration with the rest of the Vue ecosystem makes for a superb DX."
+        author:
+          name: 'Dave Loneragan'
+          job:  'Co-founder of Swell'
+          img: 'https://media.licdn.com/dms/image/C4D03AQF9Ax8Am4aq0Q/profile-displayphoto-shrink_800_800/0/1641838846323?e=1696464000&v=beta&t=wgHKhX3YVDs4M9KiuB9j0eHhzLAlsj51HIOFS1O1wjI'
+          url: 'https://twitter.com/paper_tokyo?lang=fr'
+      - quote: "The moment I used Nuxt for the first time I felt in love with it. Apart from its scalability, performance and developer experience, the team behind of it is also fantastic. Thanks for developing such a great framework and making our lives much easier!"
+        author:
+          name: 'Savas Vedova'
+          job:  'Co-founder of Stormkit'
+          img: 'https://avatars.githubusercontent.com/u/3321893?v=4'
+          url: 'https://twitter.com/savasvedova?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor'
