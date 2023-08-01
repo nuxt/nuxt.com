@@ -50,9 +50,11 @@ useContentHead(page)
         <div class="column-1 md:columns-2 lg:columns-3">
           <UPageGrid columns="grid gap-x-4 gap-y-0 grid-cols-1">
             <UPageCard v-for="(testimonial, index) in section.testimonials" :key="index" v-bind="testimonial" class="my-2">
-              <quote class="italic text-lg text-gray-700 dark:text-gray-400">
-                "{{ testimonial.quote }}"
-              </quote>
+              <template #description>
+                <quote class="italic text-lg text-gray-700 dark:text-gray-400">
+                  "{{ testimonial.quote }}"
+                </quote>
+              </template>
               <template #footer>
                 <div class="flex space-x-4 items-center">
                   <UAvatar :src="testimonial.author.img" :alt="testimonial.author.name" size="md" />

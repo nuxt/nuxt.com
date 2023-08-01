@@ -33,16 +33,7 @@ useContentHead(page)
     <UPageBody prose>
       <ContentRenderer v-if="page && page.body" :value="page" />
 
-      <UButton
-        :to="githubLink"
-        variant="link"
-        icon="i-ph-note-pencil"
-        label="Edit this page on GitHub"
-        :padded="false"
-        class="mt-12"
-      />
-
-      <hr v-if="surround?.length" class="border-gray-200 dark:border-gray-800 my-8">
+      <hr v-if="surround?.length" class="border-border my-8">
 
       <UDocsSurround :surround="surround" />
     </UPageBody>
@@ -51,7 +42,19 @@ useContentHead(page)
       <UDocsToc :links="page.body?.toc?.links">
         <template #bottom>
           <div class="hidden lg:block">
-            <hr v-if="page.body?.toc?.links?.length" class="border-gray-200 dark:border-gray-800 border-dashed my-6">
+            <hr class="border-border border-dashed my-6">
+
+            <UButton
+              :to="githubLink"
+              color="gray"
+              variant="link"
+              trailing-icon="i-ph-arrow-square-out"
+              label="Edit this page on GitHub"
+              :padded="false"
+              truncate
+            />
+
+            <hr v-if="page.body?.toc?.links?.length" class="border-border border-dashed my-6">
 
             <Ads />
           </div>

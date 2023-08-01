@@ -36,7 +36,7 @@ await fetchList()
           <UNavigationLinks :links="categories" />
 
           <template #bottom>
-            <hr class="border-gray-200 dark:border-gray-800 border-dashed my-6">
+            <hr class="border-border border-dashed my-6">
 
             <div class="flex flex-col gap-y-4">
               <UButton

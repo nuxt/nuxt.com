@@ -79,7 +79,7 @@ export default defineAppConfig({
       }
     },
     header: {
-      border: 'border-b border-border -mb-px lg:mb-0 lg:border-0'
+      wrapper: 'lg:mb-0 lg:border-0'
     }
   }
 })
