@@ -41,9 +41,9 @@ useContentHead(page)
       </template>
 
       <template #features>
-        <ULandingGrid>
+        <UPageGrid>
           <UPageCard v-for="(feature, index) in section.features" :key="index" v-bind="feature" />
-        </ULandingGrid>
+        </UPageGrid>
       </template>
     </ULandingSection>
   </div>

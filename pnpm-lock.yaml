@@ -20,8 +20,8 @@ devDependencies:
     specifier: ^1.1.4
     version: 1.1.4
   '@nuxt-themes/ui-kit':
-    specifier: npm:@nuxt-themes/ui-kit-edge@0.0.1-28179242.08c2c2e
-    version: /@nuxt-themes/ui-kit-edge@0.0.1-28179242.08c2c2e(@nuxt/content@2.7.2)(@nuxthq/ui-edge@2.6.0-28180213.dc1979c)(vue@3.3.4)
+    specifier: npm:@nuxt-themes/ui-kit-edge@latest
+    version: /@nuxt-themes/ui-kit-edge@0.0.1-28179242.08c2c2e(@nuxt/content@2.7.2)(@nuxthq/ui-edge@2.6.0-28181459.248b0a6)(vue@3.3.4)
   '@nuxt/content':
     specifier: ^2.7.2
     version: 2.7.2
@@ -35,8 +35,8 @@ devDependencies:
     specifier: ^0.13.4
     version: 0.13.4
   '@nuxthq/ui':
-    specifier: npm:@nuxthq/ui-edge@2.6.0-28180213.dc1979c
-    version: /@nuxthq/ui-edge@2.6.0-28180213.dc1979c(vue@3.3.4)(webpack@5.88.2)
+    specifier: npm:@nuxthq/ui-edge@latest
+    version: /@nuxthq/ui-edge@2.6.0-28181459.248b0a6(vue@3.3.4)(webpack@5.88.2)
   '@nuxtjs/fontaine':
     specifier: ^0.4.1
     version: 0.4.1
@@ -1432,14 +1432,14 @@ packages:
       - supports-color
     dev: true
 
-  /@nuxt-themes/ui-kit-edge@0.0.1-28179242.08c2c2e(@nuxt/content@2.7.2)(@nuxthq/ui-edge@2.6.0-28180213.dc1979c)(vue@3.3.4):
+  /@nuxt-themes/ui-kit-edge@0.0.1-28179242.08c2c2e(@nuxt/content@2.7.2)(@nuxthq/ui-edge@2.6.0-28181459.248b0a6)(vue@3.3.4):
     resolution: {integrity: sha512-DRMgQIfJb6kgPEMavThUikxm4qy1zh9lsf6Hwvkk0J+oCm73XrFwOiYVhOXmfn+d5LvC0KCYZH/F2CVHcb754w==}
     peerDependencies:
       '@nuxt/content': ^2.7.2
       '@nuxthq/ui': npm:@nuxthq/ui-edge@latest
     dependencies:
       '@nuxt/content': 2.7.2
-      '@nuxthq/ui': /@nuxthq/ui-edge@2.6.0-28180213.dc1979c(vue@3.3.4)(webpack@5.88.2)
+      '@nuxthq/ui': /@nuxthq/ui-edge@2.6.0-28181459.248b0a6(vue@3.3.4)(webpack@5.88.2)
       '@vueuse/core': 10.3.0(vue@3.3.4)
       lodash-es: 4.17.21
     transitivePeerDependencies:
@@ -1819,8 +1819,8 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@nuxthq/ui-edge@2.6.0-28180213.dc1979c(vue@3.3.4)(webpack@5.88.2):
-    resolution: {integrity: sha512-Jp6SYZxRPkwA1yu5Fo4f/L+HICWa9O7ivHfB+GKMcnfIid2OsdddFXrZVmfMQXg+Uk2sUBDAy+4QMPNXC6/RvQ==}
+  /@nuxthq/ui-edge@2.6.0-28181459.248b0a6(vue@3.3.4)(webpack@5.88.2):
+    resolution: {integrity: sha512-3qd5B1GQEIJx7Q/wOc5jvmqq11ZJEgcMz8R8Ts2fOpqjZO2dDtOv5s7aQ8yke0bUpChK2vLFE3GMN58zhNMjlw==}
     engines: {node: '>=v16.14.0'}
     dependencies:
       '@egoist/tailwindcss-icons': 1.1.0(tailwindcss@3.3.3)
@@ -3463,7 +3463,7 @@ packages:
     hasBin: true
     dependencies:
       caniuse-lite: 1.0.30001518
-      electron-to-chromium: 1.4.477
+      electron-to-chromium: 1.4.479
       node-releases: 2.0.13
       update-browserslist-db: 1.0.11(browserslist@4.21.10)
     dev: true
@@ -4469,8 +4469,8 @@ packages:
     resolution: {integrity: sha512-pmf1rbAStw8UEQ0sr2cdJtWl48ZMuPD9Sto8HVQOq9vx9j2WgDEN6lYoaqFvqEHYOmGA9oRGn7LqWI9ta0YugQ==}
     dev: true
 
-  /electron-to-chromium@1.4.477:
-    resolution: {integrity: sha512-shUVy6Eawp33dFBFIoYbIwLHrX0IZ857AlH9ug2o4rvbWmpaCUdBpQ5Zw39HRrfzAFm4APJE9V+E2A/WB0YqJw==}
+  /electron-to-chromium@1.4.479:
+    resolution: {integrity: sha512-ABv1nHMIR8I5n3O3Een0gr6i0mfM+YcTZqjHy3pAYaOjgFG+BMquuKrSyfYf5CbEkLr9uM05RA3pOk4udNB/aQ==}
     dev: true
 
   /emoji-regex@8.0.0:
