@@ -5,7 +5,7 @@ import type { Link } from '@ui-kit/types'
 const navigation = inject<Ref<NavItem[]>>('navigation')
 const anchors = inject<Link[]>('anchors')
 
-const { mapContentNavigation } = useUIKitContent()
+const { mapContentNavigation } = useElementsHelpers()
 
 const links = computed(() => mapContentNavigation(navigation.value))
 </script>

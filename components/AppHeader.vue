@@ -5,7 +5,7 @@ const navigation = inject<Ref<NavItem[]>>('navigation')
 
 const router = useRouter()
 const { navBottomLink } = useContentHelpers()
-const { mapContentNavigation } = useUIKitContent()
+const { mapContentNavigation } = useElementsHelpers()
 
 const links = computed(() => mapContentNavigation(navigation.value))
 

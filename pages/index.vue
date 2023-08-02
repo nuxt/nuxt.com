@@ -47,26 +47,23 @@ useContentHead(page)
       </template>
 
       <template #testimonials>
-        <div class="column-1 md:columns-2 lg:columns-3">
-          <UPageGrid columns="grid gap-x-4 gap-y-0 grid-cols-1">
-            <UPageCard v-for="(testimonial, index) in section.testimonials" :key="index" v-bind="testimonial" class="my-2">
-              <template #description>
-                <quote class="italic text-lg text-gray-700 dark:text-gray-400">
-                  "{{ testimonial.quote }}"
-                </quote>
-              </template>
-              <template #footer>
-                <div class="flex space-x-4 items-center">
-                  <UAvatar :src="testimonial.author.img" :alt="testimonial.author.name" size="md" />
-                  <div class="flex flex-col">
-                    <span class="font-semibold text-lg text-accent dark:text-primary-400">{{ testimonial.author.name }}</span>
-                    <span class="text-sm">{{ testimonial.author.job }}</span>
-                  </div>
+        <UPageColumns>
+          <UPageCard v-for="(testimonial, index) in section.testimonials" :key="index" v-bind="testimonial">
+            <q class="italic text-lg text-gray-700 dark:text-gray-400">
+              {{ testimonial.quote }}
+            </q>
+
+            <template #footer>
+              <div class="flex space-x-4 items-center">
+                <UAvatar :src="testimonial.author.img" :alt="testimonial.author.name" size="md" />
+                <div class="flex flex-col">
+                  <span class="font-semibold text-lg text-accent dark:text-primary-400">{{ testimonial.author.name }}</span>
+                  <span class="text-sm">{{ testimonial.author.job }}</span>
                 </div>
-              </template>
-            </UPageCard>
-          </UPageGrid>
-        </div>
+              </div>
+            </template>
+          </UPageCard>
+        </UPageColumns>
       </template>
     </ULandingSection>
   </div>

@@ -4,7 +4,7 @@ import type { NavItem } from '@nuxt/content/dist/runtime/types'
 const navigation = inject<Ref<NavItem[]>>('navigation')
 
 const route = useRoute()
-const { mapContentNavigation, findPageBreadcrumb } = useUIKitContent()
+const { mapContentNavigation, findPageBreadcrumb } = useElementsHelpers()
 
 const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
 const { data: surround } = await useAsyncData(`${route.path}-surround`, () => queryContent('/docs')
@@ -42,19 +42,22 @@ useContentHead(page)
       <UDocsToc :links="page.body?.toc?.links">
         <template #bottom>
           <div class="hidden lg:block">
-            <hr class="border-border border-dashed my-6">
+            <hr v-if="page.body?.toc?.links?.length" class="border-border border-dashed my-6">
 
             <UButton
               :to="githubLink"
               color="gray"
               variant="link"
-              trailing-icon="i-ph-arrow-square-out"
-              label="Edit this page on GitHub"
+              label="Edit this page"
               :padded="false"
               truncate
-            />
+            >
+              <template #trailing>
+                <UIcon name="i-ph-arrow-square-out-light" class="w-4 h-4" />
+              </template>
+            </UButton>
 
-            <hr v-if="page.body?.toc?.links?.length" class="border-border border-dashed my-6">
+            <hr class="border-border border-dashed my-6">
 
             <Ads />
           </div>

@@ -69,7 +69,7 @@ export default defineAppConfig({
       // background: 'bg-white dark:bg-gray-900'
     }
   },
-  uiKit: {
+  elements: {
     variables: {
       dark: {
         background: 'var(--color-gray-950)'
