@@ -1,5 +1,7 @@
 <script setup lang="ts">
 const colorMode = useColorMode()
+const router = useRouter()
+const { navBottomLink } = useContentHelpers()
 
 const { data: navigation } = await useLazyAsyncData('navigation', () => fetchContentNavigation(), {
   default: () => [],
@@ -7,15 +9,61 @@ const { data: navigation } = await useLazyAsyncData('navigation', () => fetchCon
 })
 const { data: files } = await useLazyAsyncData('files', () => queryContent('/docs').where({ _type: 'markdown', navigation: { $ne: false } }).find(), { default: () => [] })
 
-const anchors = [{
-  label: 'Nuxt UI',
-  icon: 'i-simple-icons-nuxtdotjs',
-  to: 'https://ui.nuxtlabs.com',
+const headerLinks = [{
+  label: 'Docs',
+  icon: 'i-ph-rocket-light',
+  to: '/docs',
+  // TODO: Remove with Nuxt 3.7
+  click: (e) => {
+    e?.preventDefault()
+
+    router.push(navBottomLink(navigation.value[0]))
+  }
+}, {
+  label: 'Modules',
+  icon: 'i-ph-plug-light',
+  to: '/modules'
+}, {
+  label: 'Showcase',
+  icon: 'i-ph-sparkle-light',
+  to: '/showcase'
+}, {
+  label: 'Enterprise',
+  icon: 'i-ph-app-window-light',
+  children: [{
+    label: 'Support',
+    to: '/enterprise/support',
+    description: 'Get help with Nuxt.js directly from the team that creates it.'
+  }, {
+    label: 'Agencies',
+    to: '/enterprise/agencies',
+    description: 'Find an agency that specializes in Nuxt.js development.'
+  }, {
+    label: 'Sponsors',
+    to: '/enterprise/sponsors',
+    description: 'Become a sponsor and get your logo on our README on GitHub with a link to your site.'
+  }, {
+    label: 'Jobs',
+    to: '/enterprise/jobs',
+    description: 'Find a job or post a job opportunity for Nuxt.js experts.'
+  }, {
+    label: 'Courses',
+    to: '/enterprise/courses',
+    description: 'Learn Nuxt.js from the experts with video courses.'
+  }]
+}, {
+  label: 'Blog',
+  icon: 'i-ph-newspaper-light',
+  to: '/blog'
+}]
+
+const footerLinks = [{
+  label: 'NuxtLabs',
+  to: 'https://nuxtlabs.com/',
   target: '_blank'
 }, {
-  label: 'GitHub',
-  icon: 'i-simple-icons-github',
-  to: 'https://github.com/nuxt-themes/ui-kit',
+  label: 'Nuxt Studio',
+  to: 'https://nuxt.studio/',
   target: '_blank'
 }]
 
@@ -51,21 +99,20 @@ useSeoMeta({
 // Provide
 
 provide('navigation', navigation)
-provide('anchors', anchors)
 </script>
 
 <template>
   <div>
-    <AppHeader />
+    <AppHeader :links="headerLinks" />
 
     <UMain>
       <NuxtPage />
     </UMain>
 
-    <AppFooter v-if="!$route.path.startsWith('/docs')" />
+    <AppFooter v-if="!$route.path.startsWith('/docs')" :links="footerLinks" />
 
     <ClientOnly>
-      <UDocsSearch :files="files" :navigation="navigation" />
+      <UDocsSearch :files="files" :navigation="navigation" :links="headerLinks" />
 
       <UNotifications />
     </ClientOnly>

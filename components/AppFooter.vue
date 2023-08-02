@@ -13,13 +13,9 @@
 </template>
 
 <script setup lang="ts">
-const links = [{
-  label: 'NuxtLabs',
-  to: 'https://nuxtlabs.com/',
-  target: '_blank'
-}, {
-  label: 'Nuxt Studio',
-  to: 'https://nuxt.studio/',
-  target: '_blank'
-}]
+import type { Link } from '@ui-kit/types'
+
+defineProps<{
+  links?: Link[]
+}>()
 </script>

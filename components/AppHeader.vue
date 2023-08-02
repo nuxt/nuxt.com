@@ -1,45 +1,18 @@
 <script setup lang="ts">
 import type { NavItem } from '@nuxt/content/dist/runtime/types'
+import type { Link } from '@ui-kit/types'
 
 const navigation = inject<Ref<NavItem[]>>('navigation')
 
-const router = useRouter()
-const { navBottomLink } = useContentHelpers()
+defineProps<{
+  links?: Link[]
+}>()
+
 const { mapContentNavigation } = useElementsHelpers()
-
-const links = computed(() => mapContentNavigation(navigation.value))
-
-const headerLinks = [{
-  label: 'Docs',
-  icon: 'i-ph-rocket-light',
-  to: '/docs',
-  // TODO: Remove with Nuxt 3.7
-  click: (e) => {
-    e.preventDefault()
-
-    router.push(navBottomLink(navigation.value[0]))
-  }
-}, {
-  label: 'Modules',
-  icon: 'i-ph-plug-light',
-  to: '/modules'
-}, {
-  label: 'Showcase',
-  icon: 'i-ph-sparkle-light',
-  to: '/showcase'
-}, {
-  label: 'Enterprise',
-  icon: 'i-ph-app-window-light',
-  to: '/enterprise'
-}, {
-  label: 'Blog',
-  icon: 'i-ph-newspaper-light',
-  to: '/blog'
-}]
 </script>
 
 <template>
-  <UHeader :links="headerLinks">
+  <UHeader :links="links">
     <template #logo>
       <LogoFull class="hidden w-auto h-6 sm:block" />
       <Logo class="block w-auto h-6 sm:hidden" />
@@ -59,7 +32,7 @@ const headerLinks = [{
     </template>
 
     <template #panel>
-      <UNavigationTree :links="links" default-open :multiple="false" />
+      <UNavigationTree :links="mapContentNavigation(navigation)" default-open :multiple="false" />
 
       <hr class="border-border border-dashed my-6">
 
