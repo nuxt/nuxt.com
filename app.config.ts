@@ -64,15 +64,13 @@ export default defineAppConfig({
           icon: 'i-ph-arrow-right'
         }
       }
-    },
-    card: {
-      // background: 'bg-white dark:bg-gray-900'
     }
   },
   elements: {
     variables: {
       dark: {
-        background: 'var(--color-gray-950)'
+        background: 'var(--color-gray-950)',
+        'surface-accent': 'var(--color-gray-700)'
       },
       header: {
         height: '5rem'

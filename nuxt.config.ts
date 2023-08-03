@@ -76,7 +76,6 @@ export default defineNuxtConfig({
     '@nuxtjs/plausible',
     '@nuxtjs/fontaine',
     '@nuxtjs/google-fonts',
-    '@nuxthq/ui',
     '@nuxthq/studio',
     '@nuxt/devtools',
     '@vueuse/nuxt',

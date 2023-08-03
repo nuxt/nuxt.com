@@ -35,8 +35,8 @@ devDependencies:
     specifier: ^0.13.4
     version: 0.13.4
   '@nuxthq/ui':
-    specifier: npm:@nuxthq/ui-edge@2.7.0-28183458.9e5b8cc
-    version: /@nuxthq/ui-edge@2.7.0-28183458.9e5b8cc(vue@3.3.4)(webpack@5.88.2)
+    specifier: npm:@nuxthq/ui-edge@2.7.0-28184549.ee0d13e
+    version: /@nuxthq/ui-edge@2.7.0-28184549.ee0d13e(vue@3.3.4)(webpack@5.88.2)
   '@nuxtjs/fontaine':
     specifier: ^0.4.1
     version: 0.4.1
@@ -1605,8 +1605,8 @@ packages:
       - webpack
     dev: true
 
-  /@nuxthq/ui-edge@2.7.0-28183458.9e5b8cc(vue@3.3.4)(webpack@5.88.2):
-    resolution: {integrity: sha512-PpallTmsmRMWnnwq69+IT0lzYehd2eHrEo5Mv9IhgLkmwXfvWFzN0WlZYE5y8dYqAzirlCj5J3ibBo/lFgUvdg==}
+  /@nuxthq/ui-edge@2.7.0-28184549.ee0d13e(vue@3.3.4)(webpack@5.88.2):
+    resolution: {integrity: sha512-6SIVCSL2+1+vkiKHmEaTL3yVHQXyrAtTo7Y/0Bsu8wmY+DenPG6RiRyjmF30Rj3HOPO0q23XidlHq6He6TnMyQ==}
     engines: {node: '>=v16.14.0'}
     dependencies:
       '@egoist/tailwindcss-icons': 1.1.0(tailwindcss@3.3.3)
@@ -1723,7 +1723,7 @@ packages:
       colorette: 2.0.20
       cookie-es: 1.0.0
       defu: 6.1.2
-      destr: 2.0.0
+      destr: 2.0.1
       h3: 1.7.1
       iron-webcrypto: 0.7.1
       micromatch: 4.0.5
@@ -4055,6 +4055,10 @@ packages:
 
   /destr@2.0.0:
     resolution: {integrity: sha512-FJ9RDpf3GicEBvzI3jxc2XhHzbqD8p4ANw/1kPsFBfTvP1b7Gn/Lg1vO7R9J4IVgoMbyUmFrFGZafJ1hPZpvlg==}
+    dev: true
+
+  /destr@2.0.1:
+    resolution: {integrity: sha512-M1Ob1zPSIvlARiJUkKqvAZ3VAqQY6Jcuth/pBKQ2b1dX/Qx0OnJ8Vux6J2H5PTMQeRzWrrbTu70VxBfv/OPDJA==}
     dev: true
 
   /destroy@1.2.0:
@@ -8985,6 +8989,14 @@ packages:
       fsevents: 2.3.2
     dev: true
 
+  /rollup@3.27.1:
+    resolution: {integrity: sha512-tXNDFwOkN6C2w5Blj1g6ForKeFw6c1mDu5jxoeDO3/pmYjgt+8yvIFjKzH5FQUq70OKZBkOt0zzv0THXL7vwzQ==}
+    engines: {node: '>=14.18.0', npm: '>=8.0.0'}
+    hasBin: true
+    optionalDependencies:
+      fsevents: 2.3.2
+    dev: true
+
   /run-applescript@5.0.0:
     resolution: {integrity: sha512-XcT5rBksx1QdIhlFOCtgZkB99ZEouFZ1E2Kc2LHqNW13U3/74YGdkQRmThTwxy4QIyookibDKYZOPqX//6BlAg==}
     engines: {node: '>=12'}
@@ -10377,7 +10389,7 @@ packages:
       '@types/node': 20.4.6
       esbuild: 0.18.17
       postcss: 8.4.27
-      rollup: 3.27.0
+      rollup: 3.27.1
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
