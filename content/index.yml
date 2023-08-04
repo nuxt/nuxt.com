@@ -1,6 +1,7 @@
 hero:
   title: '<span class="text-primary">The complete solution</span><br>for web developers'
   description: 'Nuxt is an open source framework that makes web development intuitive and powerful.<br>Create performant and production-grade full-stack web apps and websites with confidence.'
+  class: 'bg-gradient-to-b from-background to-surface'
   links:
     - label: 'Get Started'
       to: '/docs'
@@ -10,17 +11,22 @@ hero:
       to: 'https://youtu.be/dCxSsr5xuL8'
       target: '_blank'
       icon: 'i-ph-video'
-      variant: 'outline'
+      color: 'black'
       size: 'xl'
+logos:
+  title: 'Trusted by the best front-end teams'
 sections:
   - title: 'Write full-stack<br><span class="text-primary">Vue Applications</span>'
     description: 'We love Vue Single-File Components as much as you do. Simple, intuitive and powerful, Nuxt lets you write Vue components in a way that makes sense. Every repetitive tasks are automated, so you can focus on writing your full-stack Vue application with confidence.'
+    class: 'bg-surface'
     align: left
   - title: 'Static or Dynamic,<br><span class="text-primary">the choice is yours</span>'
     description: 'Decide what rendering strategy you need at the route level. By leveraging the hybrid rendering, you can get the best of both worlds: the performance of a static site and the interactivity of a dynamic one.'
+    class: 'bg-surface'
     align: right
   - title: 'Compose with<br><span class="text-primary">everything you need.</span>'
-    slot: 'features'
+    class: 'bg-gradient-to-b from-surface to-background'
+    slot: features
     features:
       - title: 'Routing & Layouts'
         description: 'File based routing system to build complex views and interfaces with a powerful and conventional approach.'
@@ -60,10 +66,75 @@ sections:
         icon: 'i-ph-file-ts-thin'
   - title: 'Ship faster with<br><span class="text-primary">endless integrations</span>'
     description: 'Integrate with your favorite tools and services. Nuxt is built to be flexible and can be extended with a robust modules ecosystem. Connect your application with popular headless CMS, eCommerce, Database or UI/UX libraries with a single line of code.'
+    class: 'bg-gradient-to-b from-background to-surface'
     align: left
+    slot: integrations
+    integrations:
+      - src: /assets/integrations/cloudflare.svg
+        alt: Cloudflare
+        to: https://www.cloudflare.com/
+      - src: /assets/integrations/vercel.svg
+        alt: Vercel
+        to: https://vercel.com/
+      - src: /assets/integrations/heroku.svg
+        alt: Heroku
+        to: https://www.heroku.com/
+      - src: /assets/integrations/aws.svg
+        alt: Aws
+        to: https://aws.amazon.com/
+      - src: /assets/integrations/digitalocean.svg
+        alt: DigitalOcean
+        to: https://www.digitalocean.com/
+      - src: /assets/integrations/netlify.svg
+        alt: Netlify
+        to: https://www.netlify.com/
+      - src: /assets/integrations/tailwind.svg
+        alt: Tailwind CSS
+        to: https://tailwindcss.com/
+      - src: /assets/integrations/supabase.svg
+        alt: Supabase
+        to: https://supabase.com/
+      - src: /assets/integrations/stripe.svg
+        alt: Stripe
+        to: https://stripe.com/
+      - src: /assets/integrations/firebase.svg
+        alt: Firebase
+        to: https://firebase.google.com/
+      - src: /assets/integrations/strapi.svg
+        alt: Strapi
+        to: https://strapi.io/
+      - src: /assets/integrations/wordpress.svg
+        alt: WordPress
+        to: https://wordpress.org/
+      - src: /assets/integrations/directus.svg
+        alt: Directus
+        to: https://directus.io/
+      - src: /assets/integrations/storyblok.svg
+        alt: Storyblok
+        to: https://www.storyblok.com/
+      - src: /assets/integrations/sanity.svg
+        alt: Sanity
+        to: https://www.sanity.io/
+      - src: /assets/integrations/sentry.svg
+        alt: Sentry
+        to: https://sentry.io/
+      - src: /assets/integrations/shopify.svg
+        alt: Shopify
+        to: https://www.shopify.com/
+      - src: /assets/integrations/snipcart.svg
+        alt: Snipcart
+        to: https://snipcart.com/
+      - src: /assets/integrations/meilisearch.svg
+        alt: Meilisearch
+        to: https://www.meilisearch.com/
+      - src: /assets/integrations/algolia.svg
+        alt: Algolia
+        to: https://www.algolia.com/
   - title: 'Built by developers<br><span class="text-primary">around the world.</span>'
     description: 'The development of Nuxt and its ecosystem is led by an international team. From contributors to developer advocates, the community is made of members with different horizons and skills. We are happy to see new members every day and encourage anyone to join us and help in many ways: answering questions, giving a talk, creating modules and contributing to the core.'
+    class: 'bg-surface'
     align: right
+    slot: contributors
     links:
       - label: Discord
         icon: 'i-simple-icons-discord'
@@ -75,7 +146,8 @@ sections:
         icon: 'i-simple-icons-twitter'
         variant: 'outline'
   - title: 'Trusted by the<br><span class="text-primary">World Wide Web.</span>'
-    slot: 'testimonials'
+    class: 'bg-gradient-to-b from-surface to-background'
+    slot: testimonials
     align: center
     testimonials:
       - quote: "Nuxt offers a compelling solution and a great ecosystem to help you ship fullstack Vue apps that are performant and SEO friendl. The flexibility to choose between SSR and SSG is icing on the cake."

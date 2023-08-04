@@ -71,7 +71,7 @@ await fetchList()
             :ui="{ body: { base: 'flex-1' } }"
           >
             <template #icon>
-              <UAvatar :src="module.icon.match(/^http(s)?:\/\//) ? module.icon : `https://api.nuxtjs.org/api/ipx/s_80,f_webp/gh/nuxt/modules/main/icons/${module.icon}`" :alt="module.name" size="lg" icon="i-ph-image" :ui="{ rounded: 'rounded-lg' }" />
+              <UAvatar :src="module.icon.match(/^http(s)?:\/\//) ? module.icon : `https://api.nuxtjs.org/api/ipx/s_80,f_webp/gh/nuxt/modules/main/icons/${module.icon}`" :alt="module.name" size="lg" :ui="{ rounded: 'rounded-lg' }" />
             </template>
 
             <template #title>

@@ -32,7 +32,10 @@ export default <Partial<Config>>{
         }
       },
       fontFamily: {
-        sans: ["'DM Sans'", "'DM Sans fallback'", ...defaultTheme.fontFamily.sans]
+        sans: ['DM Sans', 'DM Sans fallback', ...defaultTheme.fontFamily.sans]
+      },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))'
       }
     }
   }

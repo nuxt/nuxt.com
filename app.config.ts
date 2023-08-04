@@ -2,6 +2,11 @@ export default defineAppConfig({
   ui: {
     primary: 'green',
     gray: 'slate',
+    avatar: {
+      default: {
+        icon: 'i-ph-image'
+      }
+    },
     button: {
       default: {
         loadingIcon: 'i-ph-spinner'

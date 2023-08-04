@@ -22,7 +22,7 @@ const { mapContentNavigation } = useElementsHelpers()
       <UColorModeButton />
 
       <UButton
-        icon="i-octicon-star-fill-24"
+        icon="i-ph-star-duotone"
         to="https://github.com/nuxt/nuxt"
         target="_blank"
         label="46.6k"

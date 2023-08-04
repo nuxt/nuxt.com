@@ -6,7 +6,7 @@ useContentHead(page)
 
 <template>
   <div v-if="page">
-    <ULandingHero v-bind="page.hero">
+    <ULandingHero v-bind="page.hero" :ui="{ base: 'relative z-[1]' }">
       <template #title>
         <span v-html="page.hero?.title" />
       </template>
@@ -15,59 +15,48 @@ useContentHead(page)
         <span v-html="page.hero?.description" />
       </template>
 
-      <div class="absolute w-96 h-96 inset-x-0 -top-8 lg:scale-150 mx-auto rounded-full blur-2xl opacity-20 bg-gradient-radial from-primary-500 dark:from-primary-400 to-white dark:to-gray-800 z-[-1]" />
+      <div class="absolute top-[120px] w-96 h-96 inset-x-0 mx-auto bg-gradient-radial from-primary to-white dark:to-gray-900 opacity-25 blur-2xl lg:scale-125" />
+
+      <div class="mt-32 sm:mt-48">
+        <h2 class="text-center text-lg font-semibold leading-8 text-white">
+          <span>Trusted by the world's most innovative teams</span>
+        </h2>
+        <div class="mx-auto mt-10 mb-20 grid max-w-lg grid-cols-4 items-center gap-x-8 gap-y-10 sm:max-w-xl sm:grid-cols-6 sm:gap-x-10 lg:mx-0 lg:max-w-none lg:grid-cols-5">
+          <img class="col-span-2 max-h-12 w-full object-contain lg:col-span-1" src="https://tailwindui.com/img/logos/158x48/transistor-logo-white.svg" alt="Transistor" width="158" height="48">
+          <img class="col-span-2 max-h-12 w-full object-contain lg:col-span-1" src="https://tailwindui.com/img/logos/158x48/reform-logo-white.svg" alt="Reform" width="158" height="48">
+          <img class="col-span-2 max-h-12 w-full object-contain lg:col-span-1" src="https://tailwindui.com/img/logos/158x48/tuple-logo-white.svg" alt="Tuple" width="158" height="48">
+          <img class="col-span-2 max-h-12 w-full object-contain sm:col-start-2 lg:col-span-1" src="https://tailwindui.com/img/logos/158x48/savvycal-logo-white.svg" alt="SavvyCal" width="158" height="48">
+          <img class="col-span-2 col-start-2 max-h-12 w-full object-contain sm:col-start-auto lg:col-span-1" src="https://tailwindui.com/img/logos/158x48/statamic-logo-white.svg" alt="Statamic" width="158" height="48">
+        </div>
+      </div>
     </ULandingHero>
 
-    <UContainer>
-      <h2 class="text-center text-lg font-semibold leading-8 text-white">
-        <span>Trusted by the world's most innovative teams</span>
-      </h2>
-      <div class="mx-auto mt-10 mb-20 grid max-w-lg grid-cols-4 items-center gap-x-8 gap-y-10 sm:max-w-xl sm:grid-cols-6 sm:gap-x-10 lg:mx-0 lg:max-w-none lg:grid-cols-5">
-        <img class="col-span-2 max-h-12 w-full object-contain lg:col-span-1" src="https://tailwindui.com/img/logos/158x48/transistor-logo-white.svg" alt="Transistor" width="158" height="48">
-        <img class="col-span-2 max-h-12 w-full object-contain lg:col-span-1" src="https://tailwindui.com/img/logos/158x48/reform-logo-white.svg" alt="Reform" width="158" height="48">
-        <img class="col-span-2 max-h-12 w-full object-contain lg:col-span-1" src="https://tailwindui.com/img/logos/158x48/tuple-logo-white.svg" alt="Tuple" width="158" height="48">
-        <img class="col-span-2 max-h-12 w-full object-contain sm:col-start-2 lg:col-span-1" src="https://tailwindui.com/img/logos/158x48/savvycal-logo-white.svg" alt="SavvyCal" width="158" height="48">
-        <img class="col-span-2 col-start-2 max-h-12 w-full object-contain sm:col-start-auto lg:col-span-1" src="https://tailwindui.com/img/logos/158x48/statamic-logo-white.svg" alt="Statamic" width="158" height="48">
-      </div>
-    </UContainer>
+    <div class="bg-gradient-to-b from-surface to-overlay" />
 
-    <ULandingSection v-for="(section, index) of page.sections" :key="index" v-bind="section">
+    <!-- eslint-disable-next-line vue/no-deprecated-slot-attribute -->
+    <ULandingSection v-for="(section, index) of page.sections" :key="index" :slot="section.slot" :class="section.class" :align="section.align">
       <template #title>
         <span v-html="section?.title" />
       </template>
 
-      <template #description>
-        <span v-html="section?.description" />
+      <template v-if="section.description" #description>
+        <span v-html="section.description" />
       </template>
 
       <template #features>
-        <UPageGrid class="xl:grid-cols-4">
-          <UPageCard v-for="(feature, index) in section.features" :key="index" v-bind="feature" />
-        </UPageGrid>
+        <HomeSectionFeatures :features="section.features" />
+      </template>
+
+      <template #integrations>
+        <HomeSectionIntegrations :integrations="section.integrations" />
+      </template>
+
+      <template #contributors>
+        <HomeSectionContributors />
       </template>
 
       <template #testimonials>
-        <UPageColumns>
-          <UPageCard v-for="(testimonial, index) in section.testimonials" :key="index" v-bind="testimonial">
-            <q class="italic text-lg text-muted">
-              {{ testimonial.quote }}
-            </q>
-
-            <template #footer>
-              <div class="flex gap-x-4 items-center">
-                <UAvatar :src="testimonial.author.img" :alt="testimonial.author.name" size="md" class="object-cover" />
-                <div class="min-w-0">
-                  <p class="font-semibold text-primary">
-                    {{ testimonial.author.name }}
-                  </p>
-                  <p class="text-sm truncate">
-                    {{ testimonial.author.job }}
-                  </p>
-                </div>
-              </div>
-            </template>
-          </UPageCard>
-        </UPageColumns>
+        <HomeSectionTestimonials :testimonials="section.testimonials" />
       </template>
     </ULandingSection>
   </div>

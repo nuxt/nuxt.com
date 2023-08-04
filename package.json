@@ -46,6 +46,8 @@
     "@nuxtjs/google-fonts": "^3.0.2",
     "@nuxtjs/html-validator": "^1.5.2",
     "@nuxtjs/plausible": "^0.2.1",
+    "@vueuse/components": "^10.3.0",
+    "@vueuse/core": "^10.3.0",
     "@vueuse/nuxt": "^10.3.0",
     "lodash-es": "^4.17.21",
     "nuxt": "^3.6.5",
