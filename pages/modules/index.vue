@@ -40,19 +40,19 @@ await fetchList()
 
             <div class="flex flex-col gap-y-4">
               <UButton
-                to="https://github.com/nuxt/modules"
-                color="gray"
-                variant="link"
-                label="Contribute on GitHub"
-                icon="i-simple-icons-github"
-                :padded="false"
-              />
-              <UButton
                 to="/docs/guide/going-further/modules"
                 color="gray"
                 variant="link"
-                label="Module Author guide"
+                label="Module Author Guide"
                 icon="i-ph-book-open"
+                :padded="false"
+              />
+              <UButton
+                to="https://github.com/nuxt/modules#addupdate-a-module"
+                color="gray"
+                variant="link"
+                label="Add a Module"
+                icon="i-ph-plus-circle"
                 :padded="false"
               />
             </div>
