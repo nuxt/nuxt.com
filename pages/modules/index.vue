@@ -67,13 +67,46 @@ await fetchList()
             :key="module.name"
             :to="`/modules/${module.name}`"
             :title="module.name"
+            class="flex flex-col"
+            :ui="{ body: { base: 'flex-1' } }"
           >
             <template #icon>
-              <UAvatar :src="module.icon.match(/^http(s)?:\/\//) ? module.icon : `https://api.nuxtjs.org/api/ipx/s_80,f_webp/gh/nuxt/modules/main/icons/${module.icon}`" :alt="module.name" size="lg" :ui="{ rounded: 'rounded-lg', background: '' }" />
+              <UAvatar :src="module.icon.match(/^http(s)?:\/\//) ? module.icon : `https://api.nuxtjs.org/api/ipx/s_80,f_webp/gh/nuxt/modules/main/icons/${module.icon}`" :alt="module.name" size="lg" icon="i-ph-image" :ui="{ rounded: 'rounded-lg' }" />
+            </template>
+
+            <template #title>
+              {{ module.name }}
+
+              <div v-if="module.type === 'official'" class="flex items-center justify-center rounded-full bg-primary h-6 w-6">
+                <UIcon name="i-ph-medal" class="h-4 w-4 text-white" />
+              </div>
             </template>
 
             <template #description>
               <span class="line-clamp-2">{{ module.description }}</span>
+            </template>
+
+            <template #footer>
+              <div class="flex items-center justify-between gap-3 -my-1">
+                <div class="flex items-center gap-3">
+                  <div class="flex items-center gap-1.5">
+                    <UIcon name="i-ph-star" class="w-4 h-4" />
+
+                    <span class="text-sm">{{ formatNumber(module.stars) }}</span>
+                  </div>
+                  <div class="flex items-center gap-1.5">
+                    <UIcon name="i-ph-download-simple" class="w-4 h-4" />
+
+                    <span class="text-sm">{{ formatNumber(module.downloads) }}</span>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-1.5">
+                  <UIcon name="i-ph-users-three" class="w-4 h-4" />
+
+                  <span class="text-sm">{{ module.contributors.length }}</span>
+                </div>
+              </div>
             </template>
           </UPageCard>
         </UPageGrid>

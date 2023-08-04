@@ -70,7 +70,8 @@ export default defineAppConfig({
     variables: {
       dark: {
         background: 'var(--color-gray-950)',
-        'surface-accent': 'var(--color-gray-700)'
+        'surface-accent': 'var(--color-gray-700)',
+        'surface-border': 'var(--color-gray-700)'
       },
       header: {
         height: '5rem'
