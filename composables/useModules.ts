@@ -36,7 +36,7 @@ export const useModules = () => {
 
   // Data fetching
   async function fetchList () {
-    const { data, error } = await useFetch<{ modules: Module[] }>('/api/modules')
+    const { data, error } = await useFetch<{ modules: Module[] }>('https://api.nuxt.com/modules')
 
     /* Missing data is handled at component level */
     if (!data.value && error.value) {
@@ -60,7 +60,7 @@ export const useModules = () => {
     }
 
     try {
-      module.value = await $fetch<Module>(`/api/modules/${name}`)
+      module.value = await $fetch<Module>(`'https://api.nuxt.com/modules/${name}`)
     } catch (e) {
       throw createError({ statusMessage: 'Module not found', message: 'This page does not exist.', statusCode: 404 })
     }

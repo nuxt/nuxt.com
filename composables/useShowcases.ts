@@ -21,10 +21,10 @@ export const useShowcases = () => {
 
   // Data fetching
   const showcaseList: Ref<ShowcasesList | null> = useState('resources-showcases-list', () => null)
-  const showcasesListId = 505
 
   async function fetchList () {
-    const { data, error } = await useFetch<ShowcasesList>(`https://api.vuetelescope.com/lists/${showcasesListId}`)
+    if (showcaseList.value) return showcaseList.value
+    const { data, error } = await useFetch<ShowcasesList>('/api/showcase')
 
     /* Missing data is handled at component level */
     if (!data.value && error.value) {

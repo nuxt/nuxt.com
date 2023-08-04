@@ -68,7 +68,7 @@ export default defineNuxtConfig({
   //   inlineSSRStyles: false
   // },
 
-  extends: '@nuxt-themes/ui-kit',
+  extends: process.env.NUXT_UI_KIT_PATH || '@nuxt-themes/ui-kit',
 
   modules: [
     process.env.NODE_ENV === 'production' ? '@nuxtjs/html-validator' : () => {},
@@ -181,5 +181,11 @@ export default defineNuxtConfig({
 
   typescript: {
     strict: false
+  },
+
+  devtools: {
+    timeline: {
+      enabled: true
+    }
   }
 })
