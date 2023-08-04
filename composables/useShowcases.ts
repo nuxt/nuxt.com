@@ -24,20 +24,15 @@ export const useShowcases = () => {
 
   async function fetchList () {
     if (showcaseList.value) return showcaseList.value
-    const { data, error } = await useFetch<ShowcasesList>('/api/showcase')
-
-    /* Missing data is handled at component level */
-    if (!data.value && error.value) {
-      return error.value
-    }
+    const res = await $fetch<ShowcasesList>('/api/showcase')
 
     // ensure groups & showcases are well sorted
-    data.value?.groups?.sort((a, b) => Number(a.position) - Number(b.position))
-    data.value?.groups?.forEach((group) => {
+    res?.groups?.sort((a, b) => Number(a.position) - Number(b.position))
+    res?.groups?.forEach((group) => {
       group.showcases.sort((a, b) => Number(a.position) - Number(b.position))
     })
 
-    showcaseList.value = data.value
+    showcaseList.value = res
   }
 
   // Lists

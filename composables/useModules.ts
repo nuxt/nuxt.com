@@ -36,15 +36,11 @@ export const useModules = () => {
 
   // Data fetching
   async function fetchList () {
-    const { data, error } = await useFetch<{ modules: Module[] }>('https://api.nuxt.com/modules')
+    if (modules.value.length) return modules.value
 
-    /* Missing data is handled at component level */
-    if (!data.value && error.value) {
-      return error.value
-    }
-
-    if (data) {
-      modules.value = data.value?.modules || []
+    const res = await $fetch<{ modules: Module[] }>('https://api.nuxt.com/modules')
+    if (res?.modules) {
+      modules.value = res.modules
     }
   }
 

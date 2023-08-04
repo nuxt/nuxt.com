@@ -18,10 +18,12 @@ export interface Module {
   type: string
   tags: string[]
   compatibility: { nuxt: string, requires: { bridge: boolean } }
-  downloads: number
-  stars: number
-  publishedAt: number
-  createdAt: number
+  stats: {
+    downloads: number
+    stars: number
+    publishedAt: number
+    createdAt: number
+  }
   maintainers: ModuleUser[]
   contributors: ModuleUser[]
   readme?: string

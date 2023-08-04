@@ -92,12 +92,12 @@ await fetchList()
                   <div class="flex items-center gap-1.5">
                     <UIcon name="i-ph-star" class="w-4 h-4" />
 
-                    <span class="text-sm">{{ formatNumber(module.stars) }}</span>
+                    <span class="text-sm">{{ formatNumber(module.stats.stars) }}</span>
                   </div>
                   <div class="flex items-center gap-1.5">
                     <UIcon name="i-ph-download-simple" class="w-4 h-4" />
 
-                    <span class="text-sm">{{ formatNumber(module.downloads) }}</span>
+                    <span class="text-sm">{{ formatNumber(module.stats.downloads) }}</span>
                   </div>
                 </div>
 
