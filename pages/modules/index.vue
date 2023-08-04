@@ -103,7 +103,7 @@ await fetchList()
                   </UTooltip>
                 </div>
 
-                <UTooltip text="Maintainers">
+                <UTooltip text="Contributors">
                   <div class="flex items-center gap-1">
                     <UIcon name="i-ph-user-circle-gear-duotone" class="w-4 h-4" />
                     <span class="text-sm">{{ module.contributors.length }}</span>
