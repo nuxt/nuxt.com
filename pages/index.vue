@@ -49,16 +49,20 @@ useContentHead(page)
       <template #testimonials>
         <UPageColumns>
           <UPageCard v-for="(testimonial, index) in section.testimonials" :key="index" v-bind="testimonial">
-            <q class="italic text-lg text-gray-700 dark:text-gray-400">
+            <q class="italic text-lg text-muted">
               {{ testimonial.quote }}
             </q>
 
             <template #footer>
-              <div class="flex space-x-4 items-center">
-                <UAvatar :src="testimonial.author.img" :alt="testimonial.author.name" size="md" />
-                <div class="flex flex-col">
-                  <span class="font-semibold text-lg text-accent dark:text-primary-400">{{ testimonial.author.name }}</span>
-                  <span class="text-sm">{{ testimonial.author.job }}</span>
+              <div class="flex gap-x-4 items-center">
+                <UAvatar :src="testimonial.author.img" :alt="testimonial.author.name" size="md" class="object-cover" />
+                <div class="min-w-0">
+                  <p class="font-semibold text-primary">
+                    {{ testimonial.author.name }}
+                  </p>
+                  <p class="text-sm truncate">
+                    {{ testimonial.author.job }}
+                  </p>
                 </div>
               </div>
             </template>
