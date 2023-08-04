@@ -89,23 +89,26 @@ await fetchList()
             <template #footer>
               <div class="flex items-center justify-between gap-3 -my-1">
                 <div class="flex items-center gap-3">
-                  <div class="flex items-center gap-1.5">
-                    <UIcon name="i-ph-star" class="w-4 h-4" />
-
-                    <span class="text-sm">{{ formatNumber(module.stats.stars) }}</span>
-                  </div>
-                  <div class="flex items-center gap-1.5">
-                    <UIcon name="i-ph-download-simple" class="w-4 h-4" />
-
-                    <span class="text-sm">{{ formatNumber(module.stats.downloads) }}</span>
-                  </div>
+                  <UTooltip text="GitHub Stars">
+                    <div class="flex items-center gap-1">
+                      <UIcon name="i-ph-star-duotone" class="w-4 h-4" />
+                      <span class="text-sm">{{ formatNumber(module.stats.stars) }}</span>
+                    </div>
+                  </UTooltip>
+                  <UTooltip text="Monthly NPM Downloads">
+                    <div class="flex items-center gap-1">
+                      <UIcon name="i-ph-arrow-circle-down-duotone" class="w-4 h-4" />
+                      <span class="text-sm">{{ formatNumber(module.stats.downloads) }}</span>
+                    </div>
+                  </UTooltip>
                 </div>
 
-                <div class="flex items-center gap-1.5">
-                  <UIcon name="i-ph-users-three" class="w-4 h-4" />
-
-                  <span class="text-sm">{{ module.contributors.length }}</span>
-                </div>
+                <UTooltip text="Maintainers">
+                  <div class="flex items-center gap-1">
+                    <UIcon name="i-ph-user-circle-gear-duotone" class="w-4 h-4" />
+                    <span class="text-sm">{{ module.contributors.length }}</span>
+                  </div>
+                </UTooltip>
               </div>
             </template>
           </UPageCard>
