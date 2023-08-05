@@ -21,12 +21,22 @@ useContentHead(page)
         <h2 class="text-center text-lg font-semibold leading-8 text-white">
           <span>Trusted by the world's most innovative teams</span>
         </h2>
-        <div class="mx-auto mt-10 mb-20 grid max-w-lg grid-cols-4 items-center gap-x-8 gap-y-10 sm:max-w-xl sm:grid-cols-6 sm:gap-x-10 lg:mx-0 lg:max-w-none lg:grid-cols-5">
-          <img class="col-span-2 max-h-12 w-full object-contain lg:col-span-1" src="https://tailwindui.com/img/logos/158x48/transistor-logo-white.svg" alt="Transistor" width="158" height="48">
+
+        <div class="mx-auto mt-10 mb-20 max-w-lg items-center gap-x-8 gap-y-10 sm:max-w-xl sm:grid-cols-6 sm:gap-x-10 lg:mx-0 lg:max-w-none lg:grid-cols-5">
+          <ULandingLogos>
+            <BrandsGithub class="hidden md:block h-7" />
+            <BrandsOpenai class="h-5 md:h-8" />
+            <BrandsNasa class="h-4 md:h-6" />
+            <BrandsGoogle class="h-5 md:h-8" />
+            <BrandsFedora class="h-4 md:h-7" />
+            <BrandsGitlab class="hidden sm:block h-4 md:h-7" />
+            <BrandsUpwork class="hidden md:block h-8" />
+          </ULandingLogos>
+          <!-- <img class="col-span-2 max-h-12 w-full object-contain lg:col-span-1" src="https://tailwindui.com/img/logos/158x48/transistor-logo-white.svg" alt="Transistor" width="158" height="48">
           <img class="col-span-2 max-h-12 w-full object-contain lg:col-span-1" src="https://tailwindui.com/img/logos/158x48/reform-logo-white.svg" alt="Reform" width="158" height="48">
           <img class="col-span-2 max-h-12 w-full object-contain lg:col-span-1" src="https://tailwindui.com/img/logos/158x48/tuple-logo-white.svg" alt="Tuple" width="158" height="48">
           <img class="col-span-2 max-h-12 w-full object-contain sm:col-start-2 lg:col-span-1" src="https://tailwindui.com/img/logos/158x48/savvycal-logo-white.svg" alt="SavvyCal" width="158" height="48">
-          <img class="col-span-2 col-start-2 max-h-12 w-full object-contain sm:col-start-auto lg:col-span-1" src="https://tailwindui.com/img/logos/158x48/statamic-logo-white.svg" alt="Statamic" width="158" height="48">
+          <img class="col-span-2 col-start-2 max-h-12 w-full object-contain sm:col-start-auto lg:col-span-1" src="https://tailwindui.com/img/logos/158x48/statamic-logo-white.svg" alt="Statamic" width="158" height="48"> -->
         </div>
       </div>
     </ULandingHero>

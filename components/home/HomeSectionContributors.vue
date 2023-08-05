@@ -68,6 +68,7 @@ async function nextContributors () {
     <div
       v-for="(username, index) in $contributors"
       :key="index"
+      class="pt-[100%] relative"
     >
       <Transition
         name="avatar"
@@ -78,7 +79,7 @@ async function nextContributors () {
           :key="username"
           :href="`https://github.com/${username}`"
           target="_blank"
-          class="group inline-block relative transition-all"
+          class="absolute inset-0 block transition-all"
           :style="{
             'transition-delay': `${(index % 8 + Math.floor(index / 8)) * 20}ms`
           }"
