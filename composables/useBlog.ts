@@ -3,7 +3,7 @@ import type { ResourcesBlogArticle } from '../types'
 
 export function useBlog () {
   const articles: Ref<ResourcesBlogArticle[]> = useState('articles', () => [])
-  const featuredArticle: Ref<ResourcesBlogArticle | {}> = useState('featured-article', () => ({}))
+  // const featuredArticle: Ref<ResourcesBlogArticle | {}> = useState('featured-article', () => ({}))
 
   // Data fetching
 
@@ -16,7 +16,7 @@ export function useBlog () {
       }).without(['body', 'excerpt']).sort({ date: -1 }).find()
 
       articles.value = (data as ResourcesBlogArticle[]).filter(article => article._path !== '/blog')
-      featuredArticle.value = articles.value?.shift() || {}
+      // featuredArticle.value = articles.value?.shift() || {}
     } catch (e) {
       articles.value = []
       return e
@@ -25,7 +25,7 @@ export function useBlog () {
 
   return {
     articles,
-    featuredArticle,
+    // featuredArticle,
     fetchList
   }
 }

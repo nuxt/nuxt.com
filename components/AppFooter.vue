@@ -1,7 +1,9 @@
 <template>
   <UFooter :links="links">
     <template #left>
-      © 2016-{{ new Date().getFullYear() }} Nuxt - MIT License
+      <p class="text-sm text-muted">
+        © 2016-{{ new Date().getFullYear() }} Nuxt - MIT License
+      </p>
     </template>
 
     <template #right>

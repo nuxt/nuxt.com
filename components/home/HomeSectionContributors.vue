@@ -29,7 +29,7 @@ onMounted(async () => {
 })
 onBeforeUnmount(stopTimer)
 
-const $contributors = computed(() => contributors.value.slice(start.value, start.value + total))
+const $contributors = computed(() => contributors.value.length ? contributors.value.slice(start.value, start.value + total) : new Array(total).fill(null))
 function imgUrl (username) {
   return `https://github.com/${username}.png`
 }
@@ -76,6 +76,7 @@ async function nextContributors () {
         appear
       >
         <a
+          v-if="username"
           :key="username"
           :href="`https://github.com/${username}`"
           target="_blank"

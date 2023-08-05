@@ -1,0 +1,6 @@
+title: Blog
+description: 'Read the latest news about all Nuxt solutions, from framework announcements to integration tutorials.'
+head.title: The Nuxt Blog
+head.description: Read the latest news about the Nuxt framework and its community.
+head.image: '/socials/blog.jpg'
+navigation.icon: uil:pen
