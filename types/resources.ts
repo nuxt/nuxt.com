@@ -1,20 +1,5 @@
 import type { ParsedContent } from '@nuxt/content/dist/runtime/types'
 
-export interface ResourcesBlogArticleAuthor {
-  name: string
-  avatarUrl: string
-  link: string
-}
-
-export interface ResourcesBlogArticle extends ParsedContent {
-  description: string
-  date: Date
-  image: string
-  authors: ResourcesBlogArticleAuthor[]
-  tags: string[]
-  category: string
-}
-
 export interface ResourcesCaseStudy extends ParsedContent {
   description: string
   url: string

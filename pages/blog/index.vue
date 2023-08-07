@@ -1,12 +1,17 @@
 <script setup lang="ts">
+import type { BlogArticle } from '~/types'
+
 const route = useRoute()
-const { fetchList, articles } = useBlog()
 
 const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
+const { data: articles } = await useAsyncData(`${route.path}-articles`, () => queryContent(route.path)
+  .where({ _extension: 'md' })
+  .sort({ date: -1 })
+  .without(['body', 'excerpt'])
+  .find() as Promise<BlogArticle[]>
+)
 
 useContentHead(page)
-
-await fetchList()
 </script>
 
 <template>
@@ -25,12 +30,14 @@ await fetchList()
             :key="index"
             :to="article._path"
             :title="article.title"
+            :description="article.description"
             class="flex flex-col"
             :ui="{
               divide: '',
               header: { base: 'aspect-w-4 aspect-h-2', padding: '' },
               footer: { padding: 'px-4 pb-4 sm:px-6' },
-              title: 'text-lg'
+              title: 'text-lg line-clamp-1',
+              description: 'line-clamp-2'
             }"
           >
             <template #header>
@@ -44,23 +51,26 @@ await fetchList()
               >
             </template>
 
-            <template #description>
-              <span class="line-clamp-2">{{ article.description }}</span>
-
-              <UBadge :label="article.category" variant="subtle" class="mt-4" />
+            <template #icon>
+              <UBadge :label="article.category" variant="subtle" />
             </template>
 
             <template #footer>
               <div class="flex items-center justify-between gap-3">
                 <time class="text-muted">{{ formatDateByLocale('en', article.date) }}</time>
 
-                <UAvatarGroup size="xs">
+                <UAvatarGroup size="xs" :ui="{ ring: 'ring-2 ring-surface' }">
                   <UAvatar
                     v-for="(author, subIndex) in article.authors"
                     :key="subIndex"
                     :src="author.avatarUrl"
                     :alt="author.name"
-                  />
+                    class="lg:hover:scale-125"
+                  >
+                    <NuxtLink v-if="author.link" :to="author.link" target="_blank" class="focus:outline-none" tabindex="-1">
+                      <span class="absolute inset-0" aria-hidden="true" />
+                    </NuxtLink>
+                  </UAvatar>
                 </UAvatarGroup>
               </div>
             </template>

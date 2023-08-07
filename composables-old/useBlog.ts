@@ -1,9 +1,9 @@
 import type { Ref } from 'vue'
-import type { ResourcesBlogArticle } from '../types'
+import type { BlogArticle } from '../types'
 
 export function useBlog () {
-  const articles: Ref<ResourcesBlogArticle[]> = useState('articles', () => [])
-  // const featuredArticle: Ref<ResourcesBlogArticle | {}> = useState('featured-article', () => ({}))
+  const articles: Ref<BlogArticle[]> = useState('articles', () => [])
+  // const featuredArticle: Ref<BlogArticle | {}> = useState('featured-article', () => ({}))
 
   // Data fetching
 
@@ -11,11 +11,11 @@ export function useBlog () {
     if (articles.value.length) { return }
 
     try {
-      const data = await queryContent<ResourcesBlogArticle>('/blog').where({
+      const data = await queryContent<BlogArticle>('/blog').where({
         _extension: 'md'
       }).without(['body', 'excerpt']).sort({ date: -1 }).find()
 
-      articles.value = (data as ResourcesBlogArticle[]).filter(article => article._path !== '/blog')
+      articles.value = (data as BlogArticle[]).filter(article => article._path !== '/blog')
       // featuredArticle.value = articles.value?.shift() || {}
     } catch (e) {
       articles.value = []

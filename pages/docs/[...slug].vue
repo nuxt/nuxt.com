@@ -7,8 +7,13 @@ const route = useRoute()
 const { mapContentNavigation, findPageBreadcrumb } = useElementsHelpers()
 
 const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
+if (!page.value) {
+  throw createError({ statusCode: 404, statusMessage: 'Page not found' })
+}
+
 const { data: surround } = await useAsyncData(`${route.path}-surround`, () => queryContent('/docs')
   .where({ _extension: 'md', navigation: { $ne: false } })
+  .without(['body', 'excerpt'])
   .findSurround(route.path.endsWith('/') ? route.path.slice(0, -1) : route.path)
 )
 
@@ -19,7 +24,7 @@ useContentHead(page)
 </script>
 
 <template>
-  <UPage v-if="page">
+  <UPage>
     <UPageHeader v-bind="page">
       <template #headline>
         <span v-for="(link, index) in breadcrumb" :key="index" :class="[index < breadcrumb.length - 1 && 'font-normal text-muted']" class="flex items-center gap-1.5">
@@ -65,5 +70,4 @@ useContentHead(page)
       </UDocsToc>
     </template>
   </UPage>
-  <UPageError v-else :error="{ name: 'Page not found' }" />
 </template>
