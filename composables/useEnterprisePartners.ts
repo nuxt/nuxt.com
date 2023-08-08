@@ -65,11 +65,12 @@ export const useEnterprisePartners = () => {
     return services
       .map(service => ({
         ...service,
+        exactQuery: true,
         to: {
           name: 'enterprise-agencies',
           query: {
             ...route.query,
-            service: route.query?.service !== service.key ? service.key : undefined
+            service: service.key
           },
           state: { smooth: '#smooth' }
         }
@@ -83,11 +84,12 @@ export const useEnterprisePartners = () => {
         return {
           key: location.key,
           label: location.label,
+          exactQuery: true,
           to: {
             name: 'enterprise-agencies',
             query: {
               ...route.query,
-              location: route.query?.location !== location.key ? location.key : undefined
+              location: location.key
             },
             state: { smooth: '#smooth' }
           }
@@ -112,11 +114,12 @@ export const useEnterprisePartners = () => {
         return {
           key: region.key,
           label: region.label,
+          exactQuery: true,
           to: {
             name: 'enterprise-agencies',
             query: {
               ...route.query,
-              region: route.query?.region !== region.key ? region.key : undefined
+              region: region.key
             },
             state: { smooth: '#smooth' }
           }

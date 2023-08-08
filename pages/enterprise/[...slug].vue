@@ -23,7 +23,7 @@ useContentHead(page)
     </UPageHero>
 
     <UPage>
-      <UPageBody prose>
+      <UPageBody prose class="prose-lg">
         <ContentRenderer v-if="page && page.body" :value="page" />
       </UPageBody>
     </UPage>

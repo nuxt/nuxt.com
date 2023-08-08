@@ -20,11 +20,11 @@ export const useShowcases = () => {
   }
 
   // Data fetching
-  const showcaseList: Ref<ShowcasesList | null> = useState('resources-showcases-list', () => null)
+  const showcaseList: Ref<ShowcasesList | null> = useState('showcase', () => null)
 
   async function fetchList () {
     if (showcaseList.value) return showcaseList.value
-    const res = await $fetch<ShowcasesList>('/api/showcase')
+    const res = await $fetch<ShowcasesList>('https://api.nuxt.com/showcase')
 
     // ensure groups & showcases are well sorted
     res?.groups?.sort((a, b) => Number(a.position) - Number(b.position))

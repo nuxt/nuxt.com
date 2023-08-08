@@ -1,1 +1,2 @@
 navigation.icon: i-ph-lifebuoy
+head.titleTemplate: '%s - Nuxt Enterprise'

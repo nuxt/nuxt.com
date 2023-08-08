@@ -15,7 +15,7 @@ function onSubmit () {
   if (loading.value) { return }
   loading.value = true
 
-  $fetch('/api/newsletter/subscribe', {
+  $fetch('https://api.nuxt.com/newsletter/subscribe', {
     method: 'POST',
     body: { email: email.value }
   }).then(() => {

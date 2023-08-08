@@ -3,9 +3,7 @@ const colorMode = useColorMode()
 const router = useRouter()
 const { navBottomLink } = useContentHelpers()
 
-const { data: navigation } = await useLazyAsyncData('navigation', () => fetchContentNavigation(), {
-  default: () => []
-})
+const { data: navigation } = await useLazyAsyncData('navigation', () => fetchContentNavigation(), { default: () => [] })
 const { data: files } = await useLazyAsyncData('files', () => queryContent('/docs').where({ _type: 'markdown', navigation: { $ne: false } }).find(), { default: () => [] })
 
 const headerLinks = [{
@@ -52,10 +50,6 @@ const headerLinks = [{
     label: 'Jobs',
     to: '/enterprise/jobs',
     description: 'Find a job or post a job opportunity for Nuxt.js experts.'
-  }, {
-    label: 'Courses',
-    to: '/enterprise/courses',
-    description: 'Learn Nuxt.js from the experts with video courses.'
   }]
 }, {
   label: 'Blog',
@@ -109,13 +103,13 @@ provide('navigation', navigation)
 
 <template>
   <div>
-    <AppHeader :links="headerLinks" />
+    <Header :links="headerLinks" />
 
     <UMain>
       <NuxtPage />
     </UMain>
 
-    <AppFooter v-if="!$route.path.startsWith('/docs')" :links="footerLinks" />
+    <Footer v-if="!$route.path.startsWith('/docs')" :links="footerLinks" />
 
     <ClientOnly>
       <UDocsSearch :files="files" :navigation="navigation" :links="headerLinks" />

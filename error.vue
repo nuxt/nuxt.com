@@ -1,6 +1,6 @@
 <template>
   <div>
-    <AppHeader />
+    <Header />
 
     <UContainer>
       <UMain>
@@ -10,7 +10,7 @@
       </UMain>
     </UContainer>
 
-    <AppFooter />
+    <Footer />
 
     <ClientOnly>
       <UNotifications />

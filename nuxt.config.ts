@@ -4,7 +4,7 @@ const docsSource: any = {
   name: 'nuxt-docs',
   driver: 'github',
   repo: 'nuxt/nuxt',
-  branch: 'docs/new-structure',
+  branch: 'main',
   dir: 'docs',
   prefix: '/1.docs',
   token: process.env.NUXT_GITHUB_TOKEN || process.env.GITHUB_TOKEN || ''
@@ -64,9 +64,10 @@ export default defineNuxtConfig({
     }
   },
 
-  // experimental: {
-  //   inlineSSRStyles: false
-  // },
+  routeRules: {
+    '/docs': { redirect: '/docs/getting-started/introduction', prerender: false },
+    '/enterprise': { redirect: '/enterprise/support', prerender: false }
+  },
 
   extends: process.env.NUXT_UI_KIT_PATH || '@nuxt-themes/ui-kit',
 
@@ -154,7 +155,7 @@ export default defineNuxtConfig({
 
   content: {
     navigation: {
-      fields: ['redirect', 'titleTemplate', 'image']
+      fields: ['redirect']
     },
     sources: {
       docsSource,
@@ -169,12 +170,6 @@ export default defineNuxtConfig({
     prerender: {
       crawlLinks: true
     }
-  },
-
-  routeRules: {
-    '/docs': { redirect: '/docs/prologue/auto-imports', prerender: false },
-    '/enterprise': { redirect: '/enterprise/support', prerender: false },
-    '/api': { proxy: 'https://api.nuxt.com' }
   },
 
   plugins: [

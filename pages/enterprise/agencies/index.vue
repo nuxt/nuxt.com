@@ -10,6 +10,14 @@ useContentHead(page)
 const replaceRoute = createReplaceRoute('enterprise-agencies')
 
 await fetchList()
+
+const links = computed(() => [{
+  label: 'Technical Expertise',
+  children: services.value
+}, {
+  label: 'Locations',
+  children: regions.value
+}])
 </script>
 
 <template>
@@ -21,7 +29,7 @@ await fetchList()
     <UPage id="smooth" class="pt-20 -mt-20">
       <template #left>
         <UAside>
-          <UNavigationLinks :links="regions" />
+          <UNavigationTree :links="links" />
         </UAside>
       </template>
 
