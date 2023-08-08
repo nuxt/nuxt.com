@@ -11,6 +11,7 @@ export default eventHandler(event => {
       '/modules/:name',
       '/contributors',
       '/sponsors',
+      '/showcase',
       '/jobs'
     ]
   }
