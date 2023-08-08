@@ -35,7 +35,7 @@
     "@docsearch/css": "^3.5.1",
     "@docsearch/js": "^3.5.1",
     "@headlessui/vue": "^1.7.15",
-    "@nuxt-themes/tokens": "^1.9.1",
+    "@nuxt-themes/tokens": "^2.1.1",
     "@nuxt-themes/typography": "^0.11.0",
     "@nuxt/devtools": "^0.7.1",
     "@nuxtjs/algolia": "^1.8.0",
