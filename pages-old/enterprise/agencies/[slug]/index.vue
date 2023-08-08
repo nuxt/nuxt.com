@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 const { page } = useContent()
-const { fetchList } = useAgencyPartners()
+const { fetchList } = useEnterprisePartners()
 
 await fetchList()
 

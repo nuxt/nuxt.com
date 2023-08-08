@@ -1,13 +1,13 @@
 <script setup lang="ts">
 const route = useRoute()
-const { fetchList, selectedShowcases, categories } = useShowcases()
+const { filteredPartners, fetchList, services, selectedService, regions, selectedRegion } = useEnterprisePartners()
 const { createReplaceRoute } = useFilters()
 
 const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
 
 useContentHead(page)
 
-const replaceRoute = createReplaceRoute('showcase')
+const replaceRoute = createReplaceRoute('enterprise-agencies')
 
 await fetchList()
 </script>
@@ -21,29 +21,32 @@ await fetchList()
     <UPage id="smooth" class="pt-20 -mt-20">
       <template #left>
         <UAside>
-          <UNavigationLinks :links="categories" />
+          <UNavigationLinks :links="regions" />
         </UAside>
       </template>
 
       <UPageBody>
         <UPageGrid>
           <UPageCard
-            v-for="(showcase, index) in selectedShowcases"
+            v-for="(partner, index) in filteredPartners"
             :key="index"
-            :to="showcase.url"
-            :title="showcase.title || showcase.hostname"
-            :description="showcase.hostname"
-            :ui="{ header: { base: 'aspect-w-4 aspect-h-2', padding: '' }, body: { padding: 'p-4' } }"
+            :to="partner.link"
+            :title="partner.title"
+            :description="partner.description"
+            :ui="{
+              divide: '',
+              header: { base: 'aspect-w-4 aspect-h-2', padding: '' },
+              footer: { base: 'text-subdued', padding: 'px-4 pb-4 sm:px-6' },
+              title: 'text-lg',
+              description: 'line-clamp-3'
+            }"
           >
-            <template #header>
-              <img
-                :src="`https://res.cloudinary.com/nuxt/image/upload/f_auto,q_auto,w_488,h_366/${showcase.screenshotUrl}`"
-                :alt="showcase.hostname || ''"
-                :loading="index === 0 ? 'eager' : 'lazy'"
-                class="object-cover object-top w-full h-full"
-                height="366"
-                width="488"
-              >
+            <template #icon>
+              <UColorModeAvatar :light="partner.logo.light" :dark="partner.logo.dark" size="lg" />
+            </template>
+
+            <template #footer>
+              {{ partner.location.title }}
             </template>
           </UPageCard>
         </UPageGrid>

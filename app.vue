@@ -4,8 +4,7 @@ const router = useRouter()
 const { navBottomLink } = useContentHelpers()
 
 const { data: navigation } = await useLazyAsyncData('navigation', () => fetchContentNavigation(), {
-  default: () => [],
-  transform: (navigation) => navigation.find((item) => item._path === '/docs')?.children
+  default: () => []
 })
 const { data: files } = await useLazyAsyncData('files', () => queryContent('/docs').where({ _type: 'markdown', navigation: { $ne: false } }).find(), { default: () => [] })
 
@@ -30,6 +29,13 @@ const headerLinks = [{
 }, {
   label: 'Enterprise',
   icon: 'i-ph-app-window-light',
+  to: '/enterprise',
+  // TODO: Remove with Nuxt 3.7
+  click: (e) => {
+    e?.preventDefault()
+
+    router.push('/enterprise/support')
+  },
   children: [{
     label: 'Support',
     to: '/enterprise/support',

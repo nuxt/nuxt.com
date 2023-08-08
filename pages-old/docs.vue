@@ -17,7 +17,7 @@ const route = useRoute()
 const { navigation } = useContent()
 const { navPageFromPath } = useContentHelpers()
 
-const links = computed(() => formatDocsNav(navPageFromPath('/docs', navigation.value)?.children))
+const links = computed(() => mapContentNavigation(navPageFromPath('/docs', navigation.value)?.children))
 const path = computed(() => route.path.split('/').slice(0, 3).join('/'))
 const tree = computed(() => navPageFromPath(path.value, navigation.value)?.children)
 </script>

@@ -36,7 +36,7 @@ useContentHead(page)
               divide: '',
               header: { base: 'aspect-w-4 aspect-h-2', padding: '' },
               footer: { padding: 'px-4 pb-4 sm:px-6' },
-              title: 'text-lg line-clamp-1',
+              title: 'text-lg',
               description: 'line-clamp-2'
             }"
           >
@@ -65,7 +65,7 @@ useContentHead(page)
                     :key="subIndex"
                     :src="author.avatarUrl"
                     :alt="author.name"
-                    class="lg:hover:scale-125"
+                    class="lg:hover:scale-125 transition-transform"
                   >
                     <NuxtLink v-if="author.link" :to="author.link" target="_blank" class="focus:outline-none" tabindex="-1">
                       <span class="absolute inset-0" aria-hidden="true" />

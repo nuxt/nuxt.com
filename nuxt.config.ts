@@ -6,7 +6,7 @@ const docsSource: any = {
   repo: 'nuxt/nuxt',
   branch: 'docs/new-structure',
   dir: 'docs',
-  prefix: '/docs',
+  prefix: '/1.docs',
   token: process.env.NUXT_GITHUB_TOKEN || process.env.GITHUB_TOKEN || ''
 }
 if (process.env.NUXT_DOCS_PATH) {
@@ -77,6 +77,7 @@ export default defineNuxtConfig({
     '@nuxtjs/fontaine',
     '@nuxtjs/google-fonts',
     '@nuxthq/studio',
+    '@nuxthq/ui',
     '@nuxt/devtools',
     '@vueuse/nuxt',
     'nuxt-lodash',
@@ -171,7 +172,9 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
-    '/docs': { redirect: '/docs/prologue/auto-imports', prerender: false }
+    '/docs': { redirect: '/docs/prologue/auto-imports', prerender: false },
+    '/enterprise': { redirect: '/enterprise/support', prerender: false },
+    '/api': { proxy: 'https://api.nuxt.com' }
   },
 
   plugins: [

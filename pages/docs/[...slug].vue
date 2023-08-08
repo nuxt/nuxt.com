@@ -27,7 +27,7 @@ useContentHead(page)
   <UPage>
     <UPageHeader v-bind="page">
       <template #headline>
-        <span v-for="(link, index) in breadcrumb" :key="index" :class="[index < breadcrumb.length - 1 && 'font-normal text-muted']" class="flex items-center gap-1.5">
+        <span v-for="(link, index) in breadcrumb" :key="index" :class="[index < breadcrumb.length - 1 && 'text-muted']" class="flex items-center gap-1.5">
           {{ link.label }}
 
           <UIcon v-if="index < breadcrumb.length - 1" name="i-ph-caret-right" class="w-4 h-4" />

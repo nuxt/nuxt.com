@@ -18,7 +18,7 @@
 import type { ComputedRef } from 'vue'
 import type { FilterItem } from 'types'
 
-const { selectedService, selectedRegion } = useAgencyPartners()
+const { selectedService, selectedRegion } = useEnterprisePartners()
 
 const filters: ComputedRef<(FilterItem | null)[]> = computed(() => {
   return [selectedService.value, selectedRegion.value].filter(Boolean)

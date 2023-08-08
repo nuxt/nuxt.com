@@ -1,3 +1,4 @@
+navigation: false
 hero:
   title: '<span class="text-primary">The complete solution</span><br>for web developers'
   description: 'Nuxt is an open source framework that makes web development intuitive and powerful.<br>Create performant and production-grade full-stack web apps and websites with confidence.'

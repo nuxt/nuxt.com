@@ -2,7 +2,7 @@
 const { toc } = useContent()
 const emit = defineEmits(['move'])
 
-const { adPartner, fetchList } = useAgencyPartners()
+const { adPartner, fetchList } = useEnterprisePartners()
 
 await fetchList()
 

@@ -33,7 +33,7 @@ function onSubmit () {
 <template>
   <form @submit.prevent="onSubmit">
     <UFormGroup name="email" :label="label" size="xl" :ui="{ label: { base: 'block font-semibold text-foreground' } }">
-      <UInput placeholder="you@domain.com" :ui="{ icon: { trailing: { pointer: '' } } }" required autocomplete="off">
+      <UInput type="email" placeholder="you@domain.com" :ui="{ icon: { trailing: { pointer: '' } } }" required autocomplete="off">
         <template #trailing>
           <UButton type="submit" size="xs" color="black">
             Subscribe

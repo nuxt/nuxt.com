@@ -1,7 +1,8 @@
 ---
 title: Design Kit
 description: Welcome to Nuxt design definition page. Identity was redefined by handpicking conscientiously colors, typography and shapes in order to put forward how performant, useful & easy Nuxt products are.
-image: '/socials/design-kit.jpg'
+head.image: '/socials/design-kit.jpg'
+navigation: false
 ---
 
 ::page-hero

@@ -2,7 +2,7 @@ import type { ComputedRef, Ref } from 'vue'
 import type { Agency, FilterItem } from '../types'
 import { slugify, pickOne } from '../utils'
 
-export const useAgencyPartners = () => {
+export const useEnterprisePartners = () => {
   const route = useRoute()
   const partners: Ref<Agency[]> = useState('agency-partners', () => [])
 
@@ -10,30 +10,23 @@ export const useAgencyPartners = () => {
 
   async function fetchList () {
     try {
-      const data = await queryContent('/enterprise/agencies').where({
-        $not: {
-          title: {
-            $in: ['Nuxt Partner Agencies']
-          }
-        },
-        _extension: 'md'
-      }).find()
+      const data = await queryContent('/enterprise/agencies').where({ _extension: 'md' }).find()
 
       partners.value = data.map(partner => ({
         ...partner,
         services: (partner.services || []).map((service: string) => ({
           key: slugify(service),
-          title: service
+          label: service
         })),
         regions: (partner.regions || []).map((region: string) => ({
           key: slugify(region),
-          title: region
+          label: region
         })),
         location: partner.location
           ? {
-              key: slugify(partner.location),
-              title: partner.location
-            }
+            key: slugify(partner.location),
+            label: partner.location
+          }
           : null
       })) as Agency[]
     } catch (e) {
@@ -81,7 +74,7 @@ export const useAgencyPartners = () => {
           state: { smooth: '#smooth' }
         }
       }))
-      .sort((a, b) => a.title.localeCompare(b.title))
+      .sort((a, b) => a.label.localeCompare(b.label))
   })
 
   const locations: ComputedRef<FilterItem[]> = computed(() => {
@@ -89,7 +82,7 @@ export const useAgencyPartners = () => {
       .map((location: any) => {
         return {
           key: location.key,
-          title: location.title,
+          label: location.label,
           to: {
             name: 'enterprise-agencies',
             query: {
@@ -100,7 +93,7 @@ export const useAgencyPartners = () => {
           }
         }
       })
-      .sort((a, b) => a.title.localeCompare(b.title))
+      .sort((a, b) => a.label.localeCompare(b.label))
   })
 
   const regions: ComputedRef<FilterItem[]> = computed(() => {
@@ -118,7 +111,7 @@ export const useAgencyPartners = () => {
       .map((region) => {
         return {
           key: region.key,
-          title: region.title,
+          label: region.label,
           to: {
             name: 'enterprise-agencies',
             query: {
@@ -129,7 +122,7 @@ export const useAgencyPartners = () => {
           }
         }
       })
-      .sort((a, b) => a.title.localeCompare(b.title))
+      .sort((a, b) => a.label.localeCompare(b.label))
   })
 
   const selectedService: ComputedRef<FilterItem | null> = computed(() => {

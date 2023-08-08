@@ -59,5 +59,5 @@
 </template>
 
 <script setup lang="ts">
-const { services, regions, selectedService, selectedRegion } = useAgencyPartners()
+const { services, regions, selectedService, selectedRegion } = useEnterprisePartners()
 </script>

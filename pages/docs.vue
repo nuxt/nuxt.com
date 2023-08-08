@@ -3,21 +3,22 @@ import type { NavItem } from '@nuxt/content/dist/runtime/types'
 
 const navigation = inject<Ref<NavItem[]>>('navigation')
 
-const links = []
-
 const { mapContentNavigation } = useElementsHelpers()
+const { navPageFromPath } = useContentHelpers()
+
+const links = computed(() => mapContentNavigation(navPageFromPath('/docs', navigation.value)?.children))
 </script>
 
 <template>
   <UContainer>
     <UPage>
       <template #left>
-        <UAside :links="links">
+        <UAside>
           <template #top>
             <UDocsSearchButton />
           </template>
 
-          <UNavigationTree :links="mapContentNavigation(navigation)" default-open :multiple="false" />
+          <UNavigationTree :links="links" default-open :multiple="false" />
         </UAside>
       </template>
 

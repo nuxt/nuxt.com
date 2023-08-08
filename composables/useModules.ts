@@ -38,7 +38,7 @@ export const useModules = () => {
   async function fetchList () {
     if (modules.value.length) return modules.value
 
-    const res = await $fetch<{ modules: Module[] }>('https://api.nuxt.com/modules')
+    const res = await $fetch<{ modules: Module[] }>('/api/modules')
     if (res?.modules) {
       modules.value = res.modules
     }
@@ -56,7 +56,7 @@ export const useModules = () => {
     }
 
     try {
-      module.value = await $fetch<Module>(`'https://api.nuxt.com/modules/${name}`)
+      module.value = await $fetch<Module>(`/api/modules/${name}`)
     } catch (e) {
       throw createError({ statusMessage: 'Module not found', message: 'This page does not exist.', statusCode: 404 })
     }
@@ -118,7 +118,7 @@ export const useModules = () => {
         name: 'modules',
         query: {
           ...route.query,
-          category: route.query?.category !== category ? category : undefined
+          category
         },
         state: { smooth: '#smooth' }
       },

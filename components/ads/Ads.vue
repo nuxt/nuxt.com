@@ -31,7 +31,7 @@
 
 <script setup lang="ts">
 const { $ads } = useNuxtApp()
-const { adPartner, fetchList } = useAgencyPartners()
+const { adPartner, fetchList } = useEnterprisePartners()
 
 await fetchList()
 
