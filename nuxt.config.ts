@@ -155,7 +155,11 @@ export default defineNuxtConfig({
 
   content: {
     components: [
-      'UButton'
+      'UButton',
+      'UAvatar',
+      'UIcon',
+      'UPageGrid',
+      'UPageCard'
     ],
     navigation: {
       fields: ['redirect']
