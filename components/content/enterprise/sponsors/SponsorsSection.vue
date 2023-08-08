@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { data: sponsors } = await useFetch('https://api.nuxt.com/api/sponsors')
+const { data: sponsors } = await useFetch('https://api.nuxt.com/sponsors')
 </script>
 
 <template>
