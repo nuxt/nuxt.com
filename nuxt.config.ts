@@ -154,6 +154,9 @@ export default defineNuxtConfig({
   },
 
   content: {
+    components: [
+      'UButton'
+    ],
     navigation: {
       fields: ['redirect']
     },
@@ -172,10 +175,7 @@ export default defineNuxtConfig({
     }
   },
 
-  plugins: [
-    '~/plugins/adblock.ts',
-    '~/plugins/newsletter.client.ts'
-  ],
+  plugins: ['~/plugins/adblock.ts', '~/plugins/newsletter.client.ts'],
 
   typescript: {
     strict: false
