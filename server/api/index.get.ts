@@ -10,7 +10,8 @@ export default eventHandler(event => {
       '/modules?version=2',
       '/modules/:name',
       '/contributors',
-      '/sponsors'
+      '/sponsors',
+      '/jobs'
     ]
   }
   if (process.dev) {
