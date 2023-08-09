@@ -113,9 +113,11 @@ defineShortcuts({
             <template #title>
               {{ module.name }}
 
-              <div v-if="module.type === 'official'" class="flex items-center justify-center rounded-full bg-primary h-6 w-6">
-                <UIcon name="i-ph-medal" class="h-4 w-4 text-white" />
-              </div>
+              <UTooltip v-if="module.type === 'official'" text="Official module">
+                <div class="flex items-center justify-center rounded-full bg-primary h-6 w-6">
+                  <UIcon name="i-ph-medal" class="h-4 w-4 text-white" />
+                </div>
+              </UTooltip>
             </template>
 
             <template #description>
@@ -125,24 +127,24 @@ defineShortcuts({
             <template #footer>
               <div class="flex items-center justify-between gap-3 -my-1">
                 <div class="flex items-center gap-3">
-                  <UTooltip text="GitHub Stars">
-                    <div class="flex items-center gap-1">
-                      <UIcon name="i-ph-star-duotone" class="w-4 h-4" />
-                      <span class="text-sm">{{ formatNumber(module.stats.stars) }}</span>
-                    </div>
-                  </UTooltip>
                   <UTooltip text="Monthly NPM Downloads">
                     <div class="flex items-center gap-1">
-                      <UIcon name="i-ph-arrow-circle-down-duotone" class="w-4 h-4" />
-                      <span class="text-sm">{{ formatNumber(module.stats.downloads) }}</span>
+                      <UIcon name="i-ph-arrow-circle-down-duotone" class="w-5 h-5 flex-shrink-0" :class="[selectedSort.key === 'downloads' && 'text-primary']" />
+                      <span class="text-sm font-medium">{{ formatNumber(module.stats.downloads) }}</span>
+                    </div>
+                  </UTooltip>
+                  <UTooltip text="GitHub Stars">
+                    <div class="flex items-center gap-1">
+                      <UIcon name="i-ph-star-duotone" class="w-5 h-5 flex-shrink-0" :class="[selectedSort.key === 'stars' && 'text-primary']" />
+                      <span class="text-sm font-medium">{{ formatNumber(module.stats.stars) }}</span>
                     </div>
                   </UTooltip>
                 </div>
 
                 <UTooltip text="Contributors">
                   <div class="flex items-center gap-1">
-                    <UIcon name="i-ph-user-circle-gear-duotone" class="w-4 h-4" />
-                    <span class="text-sm">{{ module.contributors.length }}</span>
+                    <UIcon name="i-ph-user-circle-gear-duotone" class="w-5 h-5 flex-shrink-0" />
+                    <span class="text-sm font-medium">{{ module.contributors.length }}</span>
                   </div>
                 </UTooltip>
               </div>

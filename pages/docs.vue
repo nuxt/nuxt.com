@@ -15,7 +15,7 @@ const links = computed(() => mapContentNavigation(navPageFromPath('/docs', navig
       <template #left>
         <UAside>
           <template #top>
-            <UDocsSearchButton />
+            <UDocsSearchButton size="md" />
           </template>
 
           <UNavigationTree :links="links" default-open :multiple="false" />

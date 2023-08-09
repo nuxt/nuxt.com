@@ -67,6 +67,52 @@ const footerLinks = [{
   target: '_blank'
 }]
 
+const groups = [{
+  key: 'modules-search',
+  label: 'Modules',
+  search: async (q) => {
+    const { modules, fetchList } = useModules()
+    if (!modules.value.length) {
+      await fetchList()
+    }
+
+    return modules.value
+      .filter(module => ['name', 'npm', 'repo'].map(field => module[field]).filter(Boolean).some(value => value.search(searchTextRegExp(q)) !== -1))
+      .map(module => ({
+        id: `module-${module.name}`,
+        label: module.name,
+        suffix: module.description,
+        avatar: {
+          src: module.icon.match(/^http(s)?:\/\//) ? module.icon : `https://api.nuxtjs.org/api/ipx/s_80,f_webp/gh/nuxt/modules/main/icons/${module.icon}`
+        },
+        to: `/modules/${module.name}`
+      }))
+  }
+}, {
+  key: 'articles-search',
+  label: 'Articles',
+  search: async (q) => {
+    if (!q) {
+      return []
+    }
+
+    const { articles, fetchList } = useBlog()
+    if (!articles.value.length) {
+      await fetchList()
+    }
+
+    return articles.value
+      .filter(article => article.title.search(searchTextRegExp(q)) !== -1)
+      .map(article => ({
+        id: `article-${article._path}`,
+        label: article.title,
+        suffix: article.description,
+        icon: 'i-ph-newspaper',
+        to: article._path
+      }))
+  }
+}]
+
 // Computed
 
 const color = computed(() => colorMode.value === 'dark' ? '#18181b' : 'white')
@@ -112,7 +158,7 @@ provide('navigation', navigation)
     <Footer v-if="!$route.path.startsWith('/docs')" :links="footerLinks" />
 
     <ClientOnly>
-      <UDocsSearch :files="files" :navigation="navigation" :links="headerLinks" />
+      <UDocsSearch :files="files" :navigation="navigation" :links="headerLinks" :groups="groups" />
 
       <UNotifications />
     </ClientOnly>

@@ -1,17 +1,12 @@
 <script setup lang="ts">
-import type { BlogArticle } from '~/types'
-
 const route = useRoute()
+const { fetchList, articles } = useBlog()
 
 const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
-const { data: articles } = await useAsyncData(`${route.path}-articles`, () => queryContent(route.path)
-  .where({ _extension: 'md' })
-  .sort({ date: -1 })
-  .without(['body', 'excerpt'])
-  .find() as Promise<BlogArticle[]>
-)
 
 useContentHead(page)
+
+await fetchList()
 </script>
 
 <template>
