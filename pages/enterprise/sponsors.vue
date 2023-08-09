@@ -26,15 +26,15 @@ useContentHead(page)
 
     <UPage>
       <UPageBody class="divide-y">
-        <div v-for="([key, value]) of Object.entries(sponsors)" :key="key" class="relative grid lg:grid-cols-4 gap-8 py-24">
+        <div v-for="([key, value]) of Object.entries(sponsors)" :key="key" class="relative grid lg:grid-cols-5 gap-8 py-24">
           <div class="lg:self-start flex lg:flex-col items-center lg:items-start justify-between lg:sticky lg:top-0 lg:pt-24 lg:-mt-24">
             <h2 class="capitalize font-bold text-2xl text-highlight">
               {{ key }}
             </h2>
           </div>
 
-          <div class="lg:col-span-3">
-            <div role="list" class="mx-auto grid grid-cols-2 gap-x-8 gap-y-16 text-center sm:grid-cols-3 md:grid-cols-4 lg:mx-0 lg:max-w-none">
+          <div class="lg:col-span-4">
+            <div v-if="['platinum', 'gold', 'silver'].includes(key)" class="grid grid-cols-2 gap-8 gap-x-4 sm:grid-cols-3 md:grid-cols-4 -mt-4">
               <UButton
                 v-for="(sponsor, index) in value"
                 :key="index"
@@ -42,12 +42,19 @@ useContentHead(page)
                 variant="ghost"
                 class="flex-col flex-1 justify-center"
                 size="xl"
+                :to="sponsor.sponsorUrl"
+                target="_blank"
               >
                 <UAvatar :src="sponsor.sponsorLogo" :alt="sponsor.sponsorName" class="mx-auto mt-4" size="2xl" />
-                <h3 class="mt-6 text-base font-semibold leading-7 tracking-tight text-highlight">
+                <h3 class="mt-6 font-semibold leading-7 tracking-tight text-highlight mb-2">
                   {{ sponsor.sponsorName }}
                 </h3>
               </UButton>
+            </div>
+            <div v-else class="flex flex-wrap gap-8 ml-12">
+              <NuxtLink v-for="(sponsor, index) in value" :key="index" :to="sponsor.sponsorUrl" target="_blank" class="inline-flex">
+                <UAvatar :src="sponsor.sponsorLogo" :alt="sponsor.sponsorName" size="lg" />
+              </NuxtLink>
             </div>
           </div>
         </div>

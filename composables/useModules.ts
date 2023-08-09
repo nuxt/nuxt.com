@@ -1,5 +1,4 @@
-import type { Ref } from 'vue'
-import type { Module, FilterItem } from '../types'
+import type { Module, Filter } from '../types'
 
 export const useModules = () => {
   // interface TypeMap {
@@ -11,8 +10,8 @@ export const useModules = () => {
   const route = useRoute()
   const router = useRouter()
 
-  const modules: Ref<Module[]> = useState('modules', () => [])
-  const module: Ref<Module> = useState('module', () => ({} as Module))
+  const modules = useState<Module[]>('modules', () => [])
+  const module = useState<Module>('module', () => ({} as Module))
 
   const iconsMap = {
     Analytics: 'i-uil-chart-line',
@@ -37,8 +36,11 @@ export const useModules = () => {
   }
 
   // Data fetching
+
   async function fetchList () {
-    if (modules.value.length) return modules.value
+    if (modules.value.length) {
+      return
+    }
 
     const res = await $fetch<{ modules: Module[] }>('https://api.nuxt.com/modules')
     if (res?.modules) {
@@ -66,20 +68,20 @@ export const useModules = () => {
 
   // Data
 
-  // const versions: FilterItem[] = [
+  // const versions: Filter[] = [
   //   { key: '3.x', label: 'v3' },
   //   { key: '2.x-bridge', label: 'Bridge' },
   //   { key: '2.x', label: 'v2' }
   // ]
 
-  const sorts: FilterItem[] = [
+  const sorts: Filter[] = [
     { key: 'downloads', label: 'Downloads' },
     { key: 'stars', label: 'Stars' },
     { key: 'publishedAt', label: 'Updated' },
     { key: 'createdAt', label: 'Created' }
   ]
 
-  const orders: FilterItem[] = [
+  const orders: Filter[] = [
     { key: 'desc', label: 'Desc', icon: 'i-uil-sort-amount-down' },
     { key: 'asc', label: 'Asc', icon: 'i-uil-sort-amount-up' }
   ]
@@ -110,7 +112,7 @@ export const useModules = () => {
   //     })
   // })
 
-  const categories = computed<FilterItem[]>(() => {
+  const categories = computed<Filter[]>(() => {
     return [...new Set(modules.value.map(module => module.category))].map(category => ({
       key: category,
       label: category,
@@ -138,7 +140,7 @@ export const useModules = () => {
     })
   })
 
-  // const types: ComputedRef<FilterItem[]> = computed(() => {
+  // const types: ComputedRef<Filter[]> = computed(() => {
   //   return [...new Set(modules.value.map(module => module.type))].map(type => ({
   //     key: type,
   //     label: typesMap[type as keyof typeof typesMap] || type,
@@ -174,7 +176,7 @@ export const useModules = () => {
     return categories.value.find(category => category.key === route.query.category)
   })
 
-  // const selectedType: ComputedRef<FilterItem | null> = computed(() => {
+  // const selectedType: ComputedRef<Filter | null> = computed(() => {
   //   return types.value.find(type => type.key === route.query.type)
   // })
 

@@ -1,4 +1,4 @@
-export interface FilterItem {
+export interface Filter {
   key: string | number
   label: string
   disabled?: boolean

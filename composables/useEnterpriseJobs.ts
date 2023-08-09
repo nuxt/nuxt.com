@@ -1,10 +1,9 @@
-import type { Ref } from 'vue'
-import type { FilterItem, NuxtJob } from '../types'
+import type { Filter, Job } from '../types'
 import { toRelativeDate } from '../utils'
 
-export const useNuxtJobs = () => {
+export const useEnterpriseJobs = () => {
   const route = useRoute()
-  const jobs: Ref<NuxtJob[] | []> = useState('jobs', () => [])
+  const jobs = useState<Job[]>('jobs', () => [])
 
   const mapRemote = (remoteType: string) => {
     switch (remoteType) {
@@ -16,26 +15,24 @@ export const useNuxtJobs = () => {
       return 'Onsite'
     }
   }
+
   // Data fetching
 
   async function fetchList () {
-    const { data, error } = await useFetch<NuxtJob[]>('/api/jobs')
-
-    /* Missing data is handled at component level */
-    if (!data.value && error.value) {
-      return error.value
+    if (jobs.value.length) {
+      return
     }
 
-    jobs.value = data.value
-      ? data.value.map((job) => {
-        return { ...job, remote: mapRemote(job.remote), published_at: toRelativeDate(job.published_at) }
-      })
-      : []
+    const res = await $fetch<Job[]>('https://api.nuxt.com/jobs')
+
+    jobs.value = res.map((job) => {
+      return { ...job, remote: mapRemote(job.remote), published_at: toRelativeDate(job.published_at) }
+    })
   }
 
   // Computed
 
-  const filteredJobs = computed<NuxtJob[]>(() => {
+  const filteredJobs = computed<Job[]>(() => {
     return [...jobs.value]
       .filter((job) => {
         if (selectedLocation.value && !job.locations.includes(selectedLocation.value.key as string)) {
@@ -48,14 +45,14 @@ export const useNuxtJobs = () => {
       })
   })
 
-  const locations = computed<FilterItem[]>(() => {
+  const locations = computed<Filter[]>(() => {
     const locations = jobs.value?.map(job => job.locations).flat() || []
     return [...new Set(locations)]
       .map(l => ({ key: l, label: l }))
       .sort((a, b) => a.label.localeCompare(b.label))
   })
 
-  const types = computed<FilterItem[]>(() => {
+  const types = computed<Filter[]>(() => {
     const types = jobs.value?.map(job => job.remote)
     return [...new Set(types)]
       .map((t) => {

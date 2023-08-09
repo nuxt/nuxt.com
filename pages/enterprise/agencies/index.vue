@@ -1,12 +1,20 @@
 <script setup lang="ts">
 const route = useRoute()
-const { filteredPartners, fetchList, services, regions } = useEnterprisePartners()
+const { filteredAgencies, fetchList, services, regions } = useEnterpriseAgencies()
 
 const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
 
 useContentHead(page)
 
 await fetchList()
+
+const links = computed(() => [{
+  label: 'Technical Expertise',
+  children: services.value
+}, {
+  label: 'Locations',
+  children: regions.value
+}])
 </script>
 
 <template>
@@ -18,28 +26,18 @@ await fetchList()
     <UPage id="smooth" class="pt-20 -mt-20">
       <template #left>
         <UAside>
-          <p class="font-semibold text-foreground text-base/9 mb-6">
-            Technical Expertise
-          </p>
-
-          <UNavigationLinks :links="services" class="mb-6" />
-
-          <p class="font-semibold text-foreground text-base/9 mb-6">
-            Locations
-          </p>
-
-          <UNavigationLinks :links="regions" />
+          <UNavigationTree :links="links" />
         </UAside>
       </template>
 
       <UPageBody>
-        <UPageGrid v-if="filteredPartners?.length">
+        <UPageGrid v-if="filteredAgencies?.length">
           <UPageCard
-            v-for="(partner, index) in filteredPartners"
+            v-for="(agency, index) in filteredAgencies"
             :key="index"
-            :to="partner.link"
-            :title="partner.title"
-            :description="partner.description"
+            :to="agency.link"
+            :title="agency.title"
+            :description="agency.description"
             :ui="{
               divide: '',
               header: { base: 'aspect-w-4 aspect-h-2', padding: '' },
@@ -49,11 +47,11 @@ await fetchList()
             }"
           >
             <template #icon>
-              <UColorModeAvatar :light="partner.logo.light" :dark="partner.logo.dark" size="lg" />
+              <UColorModeAvatar :light="agency.logo.light" :dark="agency.logo.dark" size="lg" />
             </template>
 
             <template #footer>
-              {{ partner.location.title }}
+              {{ agency.location.title }}
             </template>
           </UPageCard>
         </UPageGrid>

@@ -8,7 +8,9 @@ export function useBlog () {
   // Data fetching
 
   async function fetchList () {
-    if (articles.value.length) { return }
+    if (articles.value.length) {
+      return
+    }
 
     try {
       const data = await queryContent<BlogArticle>('/blog').where({

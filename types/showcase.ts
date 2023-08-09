@@ -1,23 +1,4 @@
-import type { ParsedContent } from '@nuxt/content/dist/runtime/types'
-
-export interface ResourcesCaseStudy extends ParsedContent {
-  description: string
-  url: string
-  image: string
-  gradientUrl: string
-}
-
-export interface ResourcesLiveEvent extends ParsedContent {
-  videoId: string
-  date: string
-  eventLogo: string
-  avatarSrc: string
-  name: string
-  speaker: string
-  description: string
-}
-
-export interface ShowcasesListGroupItem {
+export interface ShowcaseListGroupItem {
   createdAt: string
   description: string
   domain: string
@@ -46,18 +27,18 @@ export interface ShowcasesListGroupItem {
   vueVersion: string
 }
 
-export interface ShowcasesListGroup {
+export interface ShowcaseListGroup {
   created_at: string
   id: number
   name: string
   position: number
-  showcases: ShowcasesListGroupItem[]
+  showcases: ShowcaseListGroupItem[]
   updated_at: string
 }
 
-export interface ShowcasesList {
+export interface ShowcaseList {
   created_at: string
-  groups: ShowcasesListGroup[]
+  groups: ShowcaseListGroup[]
   id: number
   name: string
   updated_at: string

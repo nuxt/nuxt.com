@@ -1,9 +1,10 @@
-import type { Ref } from 'vue'
-import type { ShowcasesList, FilterItem, ShowcasesListGroupItem } from '../types'
+import type { ShowcaseList, Filter, ShowcaseListGroupItem } from '../types'
 
 export const useShowcase = () => {
   const route = useRoute()
   const router = useRouter()
+
+  const showcaseList = useState<ShowcaseList>('showcase', () => null)
 
   const iconsMap = {
     Featured: 'i-uil-star',
@@ -21,14 +22,13 @@ export const useShowcase = () => {
   }
 
   // Data fetching
-  const showcaseList: Ref<ShowcasesList | null> = useState('showcase', () => null)
 
   async function fetchList () {
     if (showcaseList.value) {
-      return showcaseList.value
+      return
     }
 
-    const res = await $fetch<ShowcasesList>('https://api.nuxt.com/showcase')
+    const res = await $fetch<ShowcaseList>('https://api.nuxt.com/showcase')
 
     // ensure groups & showcases are well sorted
     res?.groups?.sort((a, b) => Number(a.position) - Number(b.position))
@@ -41,7 +41,7 @@ export const useShowcase = () => {
 
   // Lists
 
-  const categories = computed<FilterItem[]>(() => {
+  const categories = computed<Filter[]>(() => {
     return showcaseList.value?.groups?.map(group => ({
       key: group.id,
       label: group.name,
@@ -65,7 +65,7 @@ export const useShowcase = () => {
     return categories.value.find(category => category.label === route.query.category) || categories.value[0]
   })
 
-  const selectedShowcases = computed<ShowcasesListGroupItem[]>(() => {
+  const selectedShowcases = computed<ShowcaseListGroupItem[]>(() => {
     const ids = new Set<number>()
     return showcaseList.value?.groups
       ?.filter((group, index) => (!selectedCategory.value && index === 0) || group.name === selectedCategory.value?.label)
