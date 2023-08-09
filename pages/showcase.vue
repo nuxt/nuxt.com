@@ -1,13 +1,10 @@
 <script setup lang="ts">
 const route = useRoute()
-const { fetchList, selectedShowcases, categories } = useShowcases()
-const { createReplaceRoute } = useFilters()
+const { fetchList, selectedShowcases, categories } = useShowcase()
 
 const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
 
 useContentHead(page)
-
-const replaceRoute = createReplaceRoute('showcase')
 
 await fetchList()
 </script>
@@ -21,6 +18,10 @@ await fetchList()
     <UPage id="smooth" class="pt-20 -mt-20">
       <template #left>
         <UAside>
+          <p class="font-semibold text-foreground text-base/9 mb-6">
+            Categories
+          </p>
+
           <UNavigationLinks :links="categories" />
         </UAside>
       </template>

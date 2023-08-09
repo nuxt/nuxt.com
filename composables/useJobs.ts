@@ -1,4 +1,4 @@
-import type { Ref, ComputedRef } from 'vue'
+import type { Ref } from 'vue'
 import type { FilterItem, NuxtJob } from '../types'
 import { toRelativeDate } from '../utils'
 
@@ -8,12 +8,12 @@ export const useNuxtJobs = () => {
 
   const mapRemote = (remoteType: string) => {
     switch (remoteType) {
-      case 'ONLY':
-        return 'Remote Only'
-      case 'ALLOWED':
-        return 'Remote Allowed'
-      default:
-        return 'Onsite'
+    case 'ONLY':
+      return 'Remote Only'
+    case 'ALLOWED':
+      return 'Remote Allowed'
+    default:
+      return 'Onsite'
     }
   }
   // Data fetching
@@ -35,7 +35,7 @@ export const useNuxtJobs = () => {
 
   // Computed
 
-  const filteredJobs: ComputedRef<NuxtJob[]> = computed(() => {
+  const filteredJobs = computed<NuxtJob[]>(() => {
     return [...jobs.value]
       .filter((job) => {
         if (selectedLocation.value && !job.locations.includes(selectedLocation.value.key as string)) {
@@ -48,27 +48,27 @@ export const useNuxtJobs = () => {
       })
   })
 
-  const locations: ComputedRef<FilterItem[]> = computed(() => {
+  const locations = computed<FilterItem[]>(() => {
     const locations = jobs.value?.map(job => job.locations).flat() || []
     return [...new Set(locations)]
-      .map(l => ({ key: l, title: l }))
-      .sort((a, b) => a.title.localeCompare(b.title))
+      .map(l => ({ key: l, label: l }))
+      .sort((a, b) => a.label.localeCompare(b.label))
   })
 
-  const types: ComputedRef<FilterItem[]> = computed(() => {
+  const types = computed<FilterItem[]>(() => {
     const types = jobs.value?.map(job => job.remote)
     return [...new Set(types)]
       .map((t) => {
-        return { key: t, title: t }
+        return { key: t, label: t }
       })
   })
 
-  const selectedLocation: ComputedRef<FilterItem | null> = computed(() => {
-    return locations.value.find(location => location.key === route.query.location) || null
+  const selectedLocation = computed(() => {
+    return locations.value.find(location => location.key === route.query.location)
   })
 
-  const selectedType: ComputedRef<FilterItem | null> = computed(() => {
-    return types.value.find(type => type.key === route.query.type) || null
+  const selectedType = computed(() => {
+    return types.value.find(type => type.key === route.query.type)
   })
 
   return {

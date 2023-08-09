@@ -1,15 +1,21 @@
 <script setup lang="ts">
+const inputRef = ref()
+
 const route = useRoute()
-const { createReplaceRoute } = useFilters()
-const { fetchList, filteredModules, categories, q } = useModules()
+const { replaceRoute } = useFilters('modules')
+const { fetchList, filteredModules, q, categories, selectedOrder, sorts, selectedSort } = useModules()
 
 const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
 
 useContentHead(page)
 
-const replaceRoute = createReplaceRoute('modules')
-
 await fetchList()
+
+defineShortcuts({
+  '/': () => {
+    inputRef.value.input.focus()
+  }
+})
 </script>
 
 <template>
@@ -21,17 +27,9 @@ await fetchList()
     <UPage id="smooth" class="pt-20 -mt-20">
       <template #left>
         <UAside>
-          <template #top>
-            <UInput
-              :model-value="q"
-              name="q"
-              icon="i-ph-magnifying-glass"
-              placeholder="Search..."
-              class="w-full"
-              autocomplete="off"
-              @update:model-value="replaceRoute('q', $event)"
-            />
-          </template>
+          <p class="font-semibold text-foreground text-base/9 mb-6">
+            Categories
+          </p>
 
           <UNavigationLinks :links="categories" />
 
@@ -61,7 +59,49 @@ await fetchList()
       </template>
 
       <UPageBody>
-        <UPageGrid>
+        <div class="flex items-center justify-between gap-3 mb-8">
+          <UInput
+            ref="inputRef"
+            :model-value="q"
+            name="q"
+            icon="i-ph-magnifying-glass"
+            placeholder="Search..."
+            class="w-56"
+            size="md"
+            autocomplete="off"
+            :ui="{ icon: { trailing: { pointer: '' } } }"
+            @update:model-value="replaceRoute('q', $event)"
+          >
+            <template #trailing>
+              <UButton
+                v-if="q"
+                color="gray"
+                variant="link"
+                size="xs"
+                icon="i-ph-x"
+                :padded="false"
+                @click="replaceRoute('q', '')"
+              />
+              <UKbd v-else>
+                /
+              </UKbd>
+            </template>
+          </UInput>
+
+          <UButtonGroup>
+            <UButton :icon="selectedOrder.icon" size="md" color="gray" @click="replaceRoute('orderBy', selectedOrder.key === 'desc' ? 'asc' : 'desc')" />
+            <USelectMenu
+              :model-value="selectedSort"
+              :options="sorts"
+              size="md"
+              color="white"
+              class="w-32"
+              @update:model-value="replaceRoute('sortBy', $event)"
+            />
+          </UButtonGroup>
+        </div>
+
+        <UPageGrid v-if="filteredModules?.length">
           <UPageCard
             v-for="(module, index) in filteredModules"
             :key="index"
@@ -113,6 +153,23 @@ await fetchList()
             </template>
           </UPageCard>
         </UPageGrid>
+
+        <EmptyCard v-else :label="`There is no module found for <b>${q}</b> yet. Become the first one to create it!`">
+          <UButton
+            label="Contribute on GitHub"
+            color="black"
+            to="https://github.com/nuxt/modules"
+            target="_blank"
+            size="md"
+            @click="$router.replace({ query: {} })"
+          />
+          <UButton
+            to="/docs/guide/going-further/modules"
+            color="white"
+            size="md"
+            label="How to create a module?"
+          />
+        </EmptyCard>
       </UPageBody>
     </UPage>
   </UContainer>

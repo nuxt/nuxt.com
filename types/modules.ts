@@ -16,7 +16,7 @@ export interface Module {
   learn_more: string
   category: string
   type: string
-  tags: string[]
+  // tags: string[]
   compatibility: { nuxt: string, requires: { bridge: boolean } }
   stats: {
     downloads: number

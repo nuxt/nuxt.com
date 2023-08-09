@@ -1,8 +1,9 @@
-import type { Ref, ComputedRef } from 'vue'
+import type { Ref } from 'vue'
 import type { ShowcasesList, FilterItem, ShowcasesListGroupItem } from '../types'
 
-export const useShowcases = () => {
+export const useShowcase = () => {
   const route = useRoute()
+  const router = useRouter()
 
   const iconsMap = {
     Featured: 'i-uil-star',
@@ -23,7 +24,10 @@ export const useShowcases = () => {
   const showcaseList: Ref<ShowcasesList | null> = useState('showcase', () => null)
 
   async function fetchList () {
-    if (showcaseList.value) return showcaseList.value
+    if (showcaseList.value) {
+      return showcaseList.value
+    }
+
     const res = await $fetch<ShowcasesList>('https://api.nuxt.com/showcase')
 
     // ensure groups & showcases are well sorted
@@ -36,22 +40,32 @@ export const useShowcases = () => {
   }
 
   // Lists
-  const categories: ComputedRef<FilterItem[] | []> = computed(() => {
+
+  const categories = computed<FilterItem[]>(() => {
     return showcaseList.value?.groups?.map(group => ({
       key: group.id,
       label: group.name,
       exact: true,
       exactQuery: true,
       to: { name: 'showcase', query: group.name === 'Featured' ? undefined : { category: group.name }, state: { smooth: '#smooth' } },
-      icon: iconsMap[group.name as keyof typeof iconsMap]
+      icon: iconsMap[group.name as keyof typeof iconsMap],
+      click: (e) => {
+        if (route.query.category !== group.name) {
+          return
+        }
+
+        e.preventDefault()
+
+        router.replace({ query: { ...route.query, category: undefined } })
+      }
     })) || []
   })
 
-  const selectedCategory: ComputedRef<FilterItem> = computed(() => {
+  const selectedCategory = computed(() => {
     return categories.value.find(category => category.label === route.query.category) || categories.value[0]
   })
 
-  const selectedShowcases: ComputedRef<ShowcasesListGroupItem[]> = computed(() => {
+  const selectedShowcases = computed<ShowcasesListGroupItem[]>(() => {
     const ids = new Set<number>()
     return showcaseList.value?.groups
       ?.filter((group, index) => (!selectedCategory.value && index === 0) || group.name === selectedCategory.value?.label)

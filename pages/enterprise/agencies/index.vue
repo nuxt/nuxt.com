@@ -1,23 +1,12 @@
 <script setup lang="ts">
 const route = useRoute()
-const { filteredPartners, fetchList, services, selectedService, regions, selectedRegion } = useEnterprisePartners()
-const { createReplaceRoute } = useFilters()
+const { filteredPartners, fetchList, services, regions } = useEnterprisePartners()
 
 const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
 
 useContentHead(page)
 
-const replaceRoute = createReplaceRoute('enterprise-agencies')
-
 await fetchList()
-
-const links = computed(() => [{
-  label: 'Technical Expertise',
-  children: services.value
-}, {
-  label: 'Locations',
-  children: regions.value
-}])
 </script>
 
 <template>
@@ -29,12 +18,22 @@ const links = computed(() => [{
     <UPage id="smooth" class="pt-20 -mt-20">
       <template #left>
         <UAside>
-          <UNavigationTree :links="links" />
+          <p class="font-semibold text-foreground text-base/9 mb-6">
+            Technical Expertise
+          </p>
+
+          <UNavigationLinks :links="services" class="mb-6" />
+
+          <p class="font-semibold text-foreground text-base/9 mb-6">
+            Locations
+          </p>
+
+          <UNavigationLinks :links="regions" />
         </UAside>
       </template>
 
       <UPageBody>
-        <UPageGrid>
+        <UPageGrid v-if="filteredPartners?.length">
           <UPageCard
             v-for="(partner, index) in filteredPartners"
             :key="index"
@@ -58,6 +57,23 @@ const links = computed(() => [{
             </template>
           </UPageCard>
         </UPageGrid>
+
+        <EmptyCard v-else label="No agency matches your criteria for now.">
+          <UButton
+            label="Clear filters"
+            color="white"
+            trailing-icon="i-ph-x-circle"
+            size="md"
+            @click="$router.replace({ query: {} })"
+          />
+          <UButton
+            to="https://docs.google.com/forms/d/e/1FAIpQLSf85qskit5QqmGJcruGkGF0U7240Bh9MeN0pHB18UiOMWC8dA/viewform"
+            target="_blank"
+            color="black"
+            size="md"
+            label="Submit my agency"
+          />
+        </EmptyCard>
       </UPageBody>
     </UPage>
   </UContainer>
