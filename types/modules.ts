@@ -1,8 +1,9 @@
+import type { ParsedContent } from '@nuxt/content/dist/runtime/types'
+
 export interface ModuleUser {
   name: string
   github: string
   twitter: string
-  login: string
 }
 
 export interface Module {
@@ -24,7 +25,15 @@ export interface Module {
     publishedAt: number
     createdAt: number
   }
-  maintainers: ModuleUser[]
-  contributors: ModuleUser[]
-  readme?: string
+  maintainers: {
+    name: string
+    github: string
+    twitter: string
+  }[]
+  contributors: {
+    id: number
+    username: string
+    contributions: number
+  }[]
+  readme?: ParsedContent
 }

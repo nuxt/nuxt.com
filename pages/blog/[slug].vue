@@ -43,7 +43,7 @@ function copyLink () {
             :key="index"
             :to="author.link"
             target="_blank"
-            color="gray"
+            color="white"
             variant="ghost"
             class="-my-1.5 -mx-2.5"
           >

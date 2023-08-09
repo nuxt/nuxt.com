@@ -53,12 +53,6 @@ export const useModules = () => {
       return
     }
 
-    const m = modules.value.find(m => m.name === name)
-    if (m) {
-      module.value = m
-      return
-    }
-
     try {
       module.value = await $fetch<Module>(`https://api.nuxt.com/modules/${name}`)
     } catch (e) {
