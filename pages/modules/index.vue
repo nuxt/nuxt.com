@@ -27,7 +27,7 @@ defineShortcuts({
     <UPage id="smooth" class="pt-20 -mt-20">
       <template #left>
         <UAside>
-          <UNavigationTree :links="[{ label: 'Categories', children: categories }]" />
+          <UNavigationTree :links="[{ label: 'Categories', disabled: true, children: categories }]" />
 
           <template #bottom>
             <hr class="border-border border-dashed my-6">
@@ -40,7 +40,7 @@ defineShortcuts({
 
               <NuxtLink to="https://github.com/nuxt/modules#addupdate-a-module" target="_blank" class="flex items-center gap-1.5 text-muted hover:text-subdued">
                 <UIcon name="i-ph-plus-circle-duotone" class="w-5 h-5" />
-                <span class="text-sm font-medium">Add a module</span>
+                <span class="text-sm font-medium">List your module</span>
               </NuxtLink>
             </div>
           </template>
