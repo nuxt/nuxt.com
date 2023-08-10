@@ -80,6 +80,9 @@ export default defineAppConfig({
     },
     card: {
       rounded: 'rounded-xl'
+    },
+    tooltip: {
+      background: 'bg-background'
     }
   },
   elements: {
