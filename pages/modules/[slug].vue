@@ -1,7 +1,6 @@
 <script setup lang="ts">
 const route = useRoute()
 const { fetchOne, module } = useModules()
-const { copy } = useCopyToClipboard()
 
 await fetchOne(route.params.slug as string)
 
@@ -13,14 +12,6 @@ const links = computed(() => [{
   to: module.value.website,
   target: '_blank'
 }])
-
-// , {
-//   label: `yarn add ${module.value.npm}`,
-//   color: 'white',
-//   size: 'md',
-//   trailingIcon: 'i-ph-copy',
-//   click: () => copy(`yarn add ${module.value.npm}`, { title: 'Copied to clipboard' })
-// }
 </script>
 
 <template>
@@ -75,6 +66,26 @@ const links = computed(() => [{
 
       <template #right>
         <UAside>
+          <div class="space-y-3">
+            <NuxtLink :to="module.repo" target="_blank" class="flex items-center gap-1.5 text-muted hover:text-subdued">
+              <UIcon name="i-simple-icons-github" class="w-5 h-5" />
+              <span class="text-sm font-medium">View source</span>
+            </NuxtLink>
+
+            <NuxtLink v-if="module.npm" :to="`https://npmjs.org/package/${module.npm}`" target="_blank" class="flex items-center gap-1.5 text-muted hover:text-subdued">
+              <UIcon name="i-simple-icons-npm" class="w-5 h-5" />
+              <span class="text-sm font-medium">{{ module.npm }}</span>
+            </NuxtLink>
+
+            <NuxtLink v-if="module.learn_more" :to="module.learn_more" target="_blank" class="flex items-center gap-1.5 text-muted hover:text-subdued">
+              <UIcon name="i-ph-link" class="w-5 h-5" />
+              <span class="text-sm font-medium">Learn more</span>
+            </NuxtLink>
+          </div>
+
+          <hr class="border-border border-dashed my-6">
+
+
           <p class="font-semibold flex items-center gap-1.5 mb-3">
             Contributors <UBadge :label="module.contributors.length.toString()" color="gray" size="xs" :ui="{ rounded: 'rounded-full' }" />
           </p>
@@ -85,22 +96,6 @@ const links = computed(() => [{
               <span class="text-sm font-medium">{{ contributor.username }}</span>
             </NuxtLink>
           </div>
-
-          <template #bottom>
-            <hr class="border-border border-dashed my-6">
-
-            <div class="space-y-3">
-              <NuxtLink :to="module.repo" target="_blank" class="flex items-center gap-1.5 text-muted hover:text-subdued">
-                <UIcon name="i-simple-icons-github" class="w-5 h-5" />
-                <span class="text-sm font-medium">View source</span>
-              </NuxtLink>
-
-              <NuxtLink :to="module.learn_more" target="_blank" class="flex items-center gap-1.5 text-muted hover:text-subdued">
-                <UIcon name="i-ph-link" class="w-5 h-5" />
-                <span class="text-sm font-medium">Learn more</span>
-              </NuxtLink>
-            </div>
-          </template>
         </UAside>
       </template>
     </UPage>

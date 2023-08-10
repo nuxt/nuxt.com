@@ -1,7 +1,6 @@
 <script setup lang="ts">
 const route = useRoute()
-const { replaceRoute } = useFilters('enterprise-jobs')
-const { fetchList, filteredJobs, locations, selectedLocation, types, selectedType } = useEnterpriseJobs()
+const { fetchList, filteredJobs } = useEnterpriseJobs()
 
 const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
 
