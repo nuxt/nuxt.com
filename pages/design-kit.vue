@@ -1,0 +1,19 @@
+<script setup lang="ts">
+const route = useRoute()
+
+const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
+
+useContentHead(page)
+</script>
+
+<template>
+  <UContainer>
+    <UPageHero v-bind="page">
+      <UColorModeImage :light="`${page.image.path}-light.${page.image.format}`" :dark="`${page.image.path}-dark.${page.image.format}`" class="object-contain h-3/4 lg:ml-auto opacity-0 md:opacity-100" :width="page.image.width" :height="page.image.height" />
+    </UPageHero>
+
+    <UPage>
+      <UPageBody />
+    </UPage>
+  </UContainer>
+</template>

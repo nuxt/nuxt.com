@@ -79,17 +79,13 @@ export default defineAppConfig({
       }
     },
     card: {
-      shadow: 'shadow-lg',
       rounded: 'rounded-xl'
     }
   },
   elements: {
     variables: {
       dark: {
-        background: 'var(--color-gray-950)',
-        surface: 'var(--color-gray-900)'
-        // 'surface-accent': 'var(--color-gray-700)',
-        // 'surface-border': 'var(--color-gray-700)'
+        background: 'var(--color-gray-950)'
       },
       header: {
         height: '5rem'

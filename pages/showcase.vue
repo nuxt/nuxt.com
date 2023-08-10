@@ -18,7 +18,7 @@ await fetchList()
     <UPage id="smooth" class="pt-20 -mt-20">
       <template #left>
         <UAside>
-          <UNavigationTree :links="[{ label: 'Categories', children: categories }]" />
+          <UNavigationTree :links="[{ label: 'Categories', disabled: true, children: categories }]" />
         </UAside>
       </template>
 

@@ -58,7 +58,7 @@ useContentHead(page)
               truncate
             >
               <template #trailing>
-                <UIcon name="i-ph-arrow-square-out-light" class="w-4 h-4" />
+                <UIcon name="i-ph-arrow-square-out-light" class="w-4 h-4 flex-shrink-0" />
               </template>
             </UButton>
 

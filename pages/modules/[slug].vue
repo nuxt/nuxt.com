@@ -59,44 +59,42 @@ const links = computed(() => [{
       </div>
     </UPageHeader>
 
-    <UPage>
+    <UPage :ui="{ right: 'mt-8' }">
       <UPageBody prose>
         <ContentRenderer v-if="module.readme?.body" :value="module.readme" />
       </UPageBody>
 
       <template #right>
-        <UAside>
-          <div class="space-y-3">
-            <NuxtLink :to="module.repo" target="_blank" class="flex items-center gap-1.5 text-muted hover:text-subdued">
-              <UIcon name="i-simple-icons-github" class="w-5 h-5" />
-              <span class="text-sm font-medium">View source</span>
-            </NuxtLink>
+        <div class="space-y-3">
+          <NuxtLink :to="module.repo" target="_blank" class="flex items-center gap-1.5 text-muted hover:text-subdued">
+            <UIcon name="i-simple-icons-github" class="w-5 h-5" />
+            <span class="text-sm font-medium">View source</span>
+          </NuxtLink>
 
-            <NuxtLink v-if="module.npm" :to="`https://npmjs.org/package/${module.npm}`" target="_blank" class="flex items-center gap-1.5 text-muted hover:text-subdued">
-              <UIcon name="i-simple-icons-npm" class="w-5 h-5" />
-              <span class="text-sm font-medium">{{ module.npm }}</span>
-            </NuxtLink>
+          <NuxtLink v-if="module.npm" :to="`https://npmjs.org/package/${module.npm}`" target="_blank" class="flex items-center gap-1.5 text-muted hover:text-subdued">
+            <UIcon name="i-simple-icons-npm" class="w-5 h-5" />
+            <span class="text-sm font-medium">{{ module.npm }}</span>
+          </NuxtLink>
 
-            <NuxtLink v-if="module.learn_more" :to="module.learn_more" target="_blank" class="flex items-center gap-1.5 text-muted hover:text-subdued">
-              <UIcon name="i-ph-link" class="w-5 h-5" />
-              <span class="text-sm font-medium">Learn more</span>
-            </NuxtLink>
-          </div>
+          <NuxtLink v-if="module.learn_more" :to="module.learn_more" target="_blank" class="flex items-center gap-1.5 text-muted hover:text-subdued">
+            <UIcon name="i-ph-link" class="w-5 h-5" />
+            <span class="text-sm font-medium">Learn more</span>
+          </NuxtLink>
+        </div>
 
-          <hr class="border-border border-dashed my-6">
+        <hr class="border-border border-dashed my-6">
 
 
-          <p class="font-semibold flex items-center gap-1.5 mb-3">
-            Contributors <UBadge :label="module.contributors.length.toString()" color="gray" size="xs" :ui="{ rounded: 'rounded-full' }" />
-          </p>
+        <p class="font-semibold flex items-center gap-1.5 mb-3">
+          Contributors <UBadge :label="module.contributors.length.toString()" color="gray" size="xs" :ui="{ rounded: 'rounded-full' }" />
+        </p>
 
-          <div class="space-y-3">
-            <NuxtLink v-for="contributor in module.contributors" :key="contributor.username" :to="`https://github.com/${contributor.username}`" target="_blank" class="flex items-center gap-1.5 text-muted hover:text-subdued">
-              <UAvatar :src="`https://github.com/${contributor.username}.png`" :alt="contributor.username" size="2xs" />
-              <span class="text-sm font-medium">{{ contributor.username }}</span>
-            </NuxtLink>
-          </div>
-        </UAside>
+        <div class="space-y-3">
+          <NuxtLink v-for="contributor in module.contributors" :key="contributor.username" :to="`https://github.com/${contributor.username}`" target="_blank" class="flex items-center gap-1.5 text-muted hover:text-subdued">
+            <UAvatar :src="`https://github.com/${contributor.username}.png`" :alt="contributor.username" size="2xs" />
+            <span class="text-sm font-medium">{{ contributor.username }}</span>
+          </NuxtLink>
+        </div>
       </template>
     </UPage>
   </UContainer>

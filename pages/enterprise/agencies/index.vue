@@ -7,14 +7,6 @@ const { data: page } = await useAsyncData(route.path, () => queryContent(route.p
 useContentHead(page)
 
 await fetchList()
-
-const links = computed(() => [{
-  label: 'Technical Expertise',
-  children: services.value
-}, {
-  label: 'Locations',
-  children: regions.value
-}])
 </script>
 
 <template>
@@ -26,7 +18,7 @@ const links = computed(() => [{
     <UPage id="smooth" class="pt-20 -mt-20">
       <template #left>
         <UAside>
-          <UNavigationTree :links="links" />
+          <UNavigationTree :links="[{ label: 'Technical Expertise', disabled: true, children: services }, { label: 'Locations', disabled: true, children: regions }]" />
         </UAside>
       </template>
 
@@ -35,7 +27,7 @@ const links = computed(() => [{
           <UPageCard
             v-for="(agency, index) in filteredAgencies"
             :key="index"
-            :to="agency.link"
+            :to="agency._path"
             :title="agency.title"
             :description="agency.description"
             :ui="{

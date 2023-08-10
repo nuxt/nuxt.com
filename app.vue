@@ -8,7 +8,7 @@ const { data: files } = await useLazyAsyncData('files', () => queryContent('/doc
 
 const headerLinks = [{
   label: 'Docs',
-  icon: 'i-ph-rocket-light',
+  icon: 'i-ph-book-open',
   to: '/docs',
   // TODO: Remove with Nuxt 3.7
   click: (e) => {
@@ -18,15 +18,15 @@ const headerLinks = [{
   }
 }, {
   label: 'Modules',
-  icon: 'i-ph-plug-light',
+  icon: 'i-ph-puzzle-piece',
   to: '/modules'
 }, {
   label: 'Showcase',
-  icon: 'i-ph-sparkle-light',
+  icon: 'i-ph-projector-screen',
   to: '/showcase'
 }, {
   label: 'Enterprise',
-  icon: 'i-ph-app-window-light',
+  icon: 'i-ph-app-window',
   to: '/enterprise',
   // TODO: Remove with Nuxt 3.7
   click: (e) => {
@@ -53,7 +53,7 @@ const headerLinks = [{
   }]
 }, {
   label: 'Blog',
-  icon: 'i-ph-newspaper-light',
+  icon: 'i-ph-newspaper',
   to: '/blog'
 }]
 
@@ -83,7 +83,7 @@ const groups = [{
         label: module.name,
         suffix: module.description,
         avatar: {
-          src: module.icon.match(/^http(s)?:\/\//) ? module.icon : `https://api.nuxtjs.org/api/ipx/s_80,f_webp/gh/nuxt/modules/main/icons/${module.icon}`
+          src: module.icon && module.icon.match(/^http(s)?:\/\//) ? module.icon : `https://api.nuxtjs.org/api/ipx/s_80,f_webp/gh/nuxt/modules/main/icons/${module.icon}`
         },
         to: `/modules/${module.name}`
       }))
@@ -158,7 +158,7 @@ provide('navigation', navigation)
     <Footer v-if="!$route.path.startsWith('/docs')" :links="footerLinks" />
 
     <ClientOnly>
-      <UDocsSearch :files="files" :navigation="navigation" :links="headerLinks" :groups="groups" />
+      <UDocsSearch :files="files" :navigation="navigation" :groups="groups" :links="headerLinks" />
 
       <UNotifications />
     </ClientOnly>
