@@ -51,7 +51,7 @@ useContentHead(page)
 
             <UButton
               :to="githubLink"
-              color="gray"
+              color="white"
               variant="link"
               label="Edit this page"
               :padded="false"

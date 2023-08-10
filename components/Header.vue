@@ -33,27 +33,6 @@ const { mapContentNavigation } = useElementsHelpers()
 
     <template #panel>
       <UNavigationTree :links="mapContentNavigation(navigation)" default-open :multiple="false" />
-
-      <hr class="border-border border-dashed my-6">
-
-      <div class="flex flex-col gap-y-4">
-        <UButton
-          to="https://github.com/nuxt/modules"
-          color="gray"
-          variant="link"
-          label="Contribute on GitHub"
-          icon="i-simple-icons-github"
-          :padded="false"
-        />
-        <UButton
-          to="/docs/guide/going-further/modules"
-          color="gray"
-          variant="link"
-          label="Module Author guide"
-          icon="i-ph-book-open"
-          :padded="false"
-        />
-      </div>
     </template>
   </UHeader>
 </template>

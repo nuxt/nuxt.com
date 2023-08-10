@@ -32,23 +32,16 @@ defineShortcuts({
           <template #bottom>
             <hr class="border-border border-dashed my-6">
 
-            <div class="flex flex-col gap-y-4">
-              <UButton
-                to="/docs/guide/going-further/modules"
-                color="gray"
-                variant="link"
-                label="Module Author Guide"
-                icon="i-ph-book-open"
-                :padded="false"
-              />
-              <UButton
-                to="https://github.com/nuxt/modules#addupdate-a-module"
-                color="gray"
-                variant="link"
-                label="Add a Module"
-                icon="i-ph-plus-circle"
-                :padded="false"
-              />
+            <div class="space-y-3">
+              <NuxtLink to="/docs/guide/going-further/modules" class="flex items-center gap-1.5 text-muted hover:text-subdued">
+                <UIcon name="i-ph-book-open-duotone" class="w-5 h-5" />
+                <span class="text-sm font-medium">Module Author Guide</span>
+              </NuxtLink>
+
+              <NuxtLink to="https://github.com/nuxt/modules#addupdate-a-module" target="_blank" class="flex items-center gap-1.5 text-muted hover:text-subdued">
+                <UIcon name="i-ph-plus-circle-duotone" class="w-5 h-5" />
+                <span class="text-sm font-medium">Add a module</span>
+              </NuxtLink>
             </div>
           </template>
         </UAside>
