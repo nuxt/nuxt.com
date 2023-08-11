@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { NavItem } from '@nuxt/content/dist/runtime/types'
-import type { Link } from '@ui-kit/types'
+import type { Link } from '@elements/types'
 
 const navigation = inject<Ref<NavItem[]>>('navigation')
 
@@ -14,8 +14,7 @@ const { mapContentNavigation } = useElementsHelpers()
 <template>
   <UHeader :links="links">
     <template #logo>
-      <LogoFull class="hidden w-auto h-6 sm:block" />
-      <Logo class="block w-auto h-6 sm:hidden" />
+      <Logo class="block w-auto h-6" />
     </template>
 
     <template #right>

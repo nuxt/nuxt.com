@@ -33,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Link } from '@ui-kit/types'
+import type { Link } from '@elements/types'
 
 defineProps<{
   links?: Link[]

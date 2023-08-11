@@ -95,7 +95,18 @@ export default defineAppConfig({
       }
     },
     header: {
-      wrapper: 'lg:mb-0 lg:border-0'
+      wrapper: 'lg:mb-0 lg:border-0',
+      popover: {
+        links: {
+          active: 'dark:bg-gray-950/50',
+          inactive: 'dark:hover:bg-gray-950/50'
+        }
+      }
+    },
+    page: {
+      card: {
+        to: 'dark:hover:bg-gray-900/50'
+      }
     }
   }
 })

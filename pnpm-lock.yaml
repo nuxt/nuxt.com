@@ -1,9 +1,5 @@
 lockfileVersion: '6.0'
 
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
-
 dependencies:
   '@iconify-json/heroicons':
     specifier: ^1.1.11
@@ -23,15 +19,15 @@ dependencies:
   '@iconify-json/uil':
     specifier: ^1.1.4
     version: 1.1.4
-  '@nuxt-themes/ui-kit':
-    specifier: npm:@nuxt-themes/ui-kit-edge@latest
-    version: /@nuxt-themes/ui-kit-edge@0.0.1-28191681.db7a488(@nuxt/content@2.7.2)(@nuxthq/ui-edge@2.7.0-28191406.feade3f)(vue@3.3.4)
   '@nuxt/content':
     specifier: ^2.7.2
     version: 2.7.2
   '@nuxt/devtools':
     specifier: ^0.7.4
     version: 0.7.4(nuxt@3.6.5)(vite@4.4.9)
+  '@nuxthq/elements':
+    specifier: npm:@nuxthq/elements-edge@latest
+    version: /@nuxthq/elements-edge@0.0.1-28196026.7a03bf5(@nuxt/content@2.7.2)(@nuxthq/ui-edge@2.7.0-28191406.feade3f)(vue@3.3.4)
   '@nuxthq/studio':
     specifier: ^0.13.4
     version: 0.13.4
@@ -1430,22 +1426,6 @@ packages:
       - supports-color
     dev: false
 
-  /@nuxt-themes/ui-kit-edge@0.0.1-28191681.db7a488(@nuxt/content@2.7.2)(@nuxthq/ui-edge@2.7.0-28191406.feade3f)(vue@3.3.4):
-    resolution: {integrity: sha512-2JeepXA9PmQ+eeGDfmcvTkC4LuCBqy++Bt13kBB40tbWfLeYhJaFb19ZVAYnyLZpGuizh2HY10VEcP4tCP97ew==}
-    peerDependencies:
-      '@nuxt/content': ^2.7.2
-      '@nuxthq/ui': npm:@nuxthq/ui-edge@latest
-    dependencies:
-      '@nuxt/content': 2.7.2
-      '@nuxthq/ui': /@nuxthq/ui-edge@2.7.0-28191406.feade3f(vue@3.3.4)(webpack@5.88.2)
-      '@vueuse/core': 10.3.0(vue@3.3.4)
-      lodash-es: 4.17.21
-      tailwind-merge: 1.14.0
-    transitivePeerDependencies:
-      - '@vue/composition-api'
-      - vue
-    dev: false
-
   /@nuxt/content@2.7.2:
     resolution: {integrity: sha512-fP0nrnyjtFbluKltKUtC7jSMFc1xAH+bwweZyLwXb3gkIap2EHlVL+e9ptGt39+4HIkRkLgME7TNr/fUO+CHug==}
     dependencies:
@@ -1756,6 +1736,22 @@ packages:
       - vls
       - vti
       - vue-tsc
+    dev: false
+
+  /@nuxthq/elements-edge@0.0.1-28196026.7a03bf5(@nuxt/content@2.7.2)(@nuxthq/ui-edge@2.7.0-28191406.feade3f)(vue@3.3.4):
+    resolution: {integrity: sha512-MVX/SW0amI8Gau66lUCWRheO9gUU6VmXlzcYARF1wkkN21ziYayeYWN9AERYXa0ikVVlhYFp/sJhE6oMJmAgLg==}
+    peerDependencies:
+      '@nuxt/content': ^2.7.2
+      '@nuxthq/ui': npm:@nuxthq/ui-edge@latest
+    dependencies:
+      '@nuxt/content': 2.7.2
+      '@nuxthq/ui': /@nuxthq/ui-edge@2.7.0-28191406.feade3f(vue@3.3.4)(webpack@5.88.2)
+      '@vueuse/core': 10.3.0(vue@3.3.4)
+      lodash-es: 4.17.21
+      tailwind-merge: 1.14.0
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - vue
     dev: false
 
   /@nuxthq/studio@0.13.4:
@@ -10286,3 +10282,7 @@ packages:
   /zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
     dev: false
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false

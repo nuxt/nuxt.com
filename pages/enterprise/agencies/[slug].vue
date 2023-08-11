@@ -28,27 +28,27 @@ const links = computed(() => [{
 
       <div class="flex flex-col lg:flex-row lg:items-center gap-3 mt-4">
         <div class="flex items-center gap-1.5">
-          <UIcon name="i-ph-map-pin" class="w-6 h-6 flex-shrink-0" />
-          <span class="font-medium">{{ agency.location }}</span>
+          <UIcon name="i-ph-map-pin" class="w-5 h-5 flex-shrink-0" />
+          <span class="text-sm font-medium">{{ agency.location }}</span>
         </div>
 
         <span v-if="agency.twitter" class="hidden lg:block text-gray-500 dark:text-gray-400">&bull;</span>
 
         <NuxtLink v-if="agency.twitter" :to="agency.twitter" target="_blank" class="flex items-center gap-1.5 hover:text-primary">
-          <UIcon name="i-simple-icons-twitter" class="w-6 h-6" />
-          <span class="font-medium">Twitter</span>
+          <UIcon name="i-simple-icons-twitter" class="w-5 h-5" />
+          <span class="text-sm font-medium">Twitter</span>
         </NuxtLink>
 
         <span v-if="agency.github" class="hidden lg:block text-gray-500 dark:text-gray-400">&bull;</span>
 
         <NuxtLink v-if="agency.github" :to="`https://github.com/${agency.github}`" target="_blank" class="flex items-center gap-1.5 hover:text-primary">
-          <UIcon name="i-simple-icons-github" class="w-6 h-6" />
-          <span class="font-medium">GitHub</span>
+          <UIcon name="i-simple-icons-github" class="w-5 h-5" />
+          <span class="text-sm font-medium">GitHub</span>
         </NuxtLink>
       </div>
     </UPageHeader>
 
-    <UPage :ui="{ right: 'mt-8' }">
+    <UPage :ui="{ right: 'my-8' }">
       <UPageBody prose class="prose-lg">
         <h2>Discover the company</h2>
 
@@ -59,7 +59,7 @@ const links = computed(() => [{
 
       <template #right>
         <div v-if="agency.services?.length">
-          <p class="font-semibold flex items-center gap-1.5 mb-3">
+          <p class="text-sm/6 font-semibold flex items-center gap-1.5 mb-3">
             Services
           </p>
 
@@ -75,7 +75,7 @@ const links = computed(() => [{
         <div v-if="agency.resources?.length">
           <hr class="border-dashed border-gray-200 dark:border-gray-800 my-6">
 
-          <p class="font-semibold flex items-center gap-1.5 mb-3">
+          <p class="text-sm/6 font-semibold flex items-center gap-1.5 mb-3">
             Resources
           </p>
 

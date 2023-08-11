@@ -49,18 +49,31 @@ useContentHead(page)
           <div class="hidden lg:block">
             <hr v-if="page.body?.toc?.links?.length" class="border-gray-200 dark:border-gray-800 border-dashed my-6">
 
-            <UButton
-              :to="githubLink"
-              color="white"
-              variant="link"
-              label="Edit this page"
-              :padded="false"
-              truncate
-            >
-              <template #trailing>
-                <UIcon name="i-ph-arrow-square-out-light" class="w-4 h-4 flex-shrink-0" />
-              </template>
-            </UButton>
+            <p class="text-sm/6 font-semibold flex items-center gap-1.5 mb-3">
+              Community
+            </p>
+
+            <div class="space-y-3">
+              <NuxtLink :to="githubLink" target="_blank" class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                <UIcon name="i-ph-pen-duotone" class="w-5 h-5" />
+                <span class="text-sm font-medium">Edit this page</span>
+              </NuxtLink>
+
+              <NuxtLink to="https://github.com/nuxt/nuxt" target="_blank" class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                <UIcon name="i-simple-icons-github" class="w-5 h-5" />
+                <span class="text-sm font-medium">Star us on GitHub</span>
+              </NuxtLink>
+
+              <NuxtLink to="https://discord.com/invite/ps2h6QT" target="_blank" class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                <UIcon name="i-simple-icons-discord" class="w-5 h-5" />
+                <span class="text-sm font-medium">Join us on Discord</span>
+              </NuxtLink>
+
+              <NuxtLink to="https://github.com/sponsors/nuxt" target="_blank" class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                <UIcon name="i-ph-hand-heart-duotone" class="w-5 h-5" />
+                <span class="text-sm font-medium">Become a Sponsor</span>
+              </NuxtLink>
+            </div>
 
             <hr class="border-gray-200 dark:border-gray-800 border-dashed my-6">
 

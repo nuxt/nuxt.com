@@ -119,24 +119,25 @@ defineShortcuts({
               <div class="flex items-center justify-between gap-3 -my-1 text-gray-600 dark:text-gray-300">
                 <div class="flex items-center gap-3">
                   <UTooltip text="Monthly NPM Downloads">
-                    <div class="flex items-center gap-1" :class="[selectedSort.key === 'downloads' && 'text-gray-900 dark:text-white']">
+                    <NuxtLink class="flex items-center gap-1" :to="`https://npmjs.org/package/${module.npm}`" target="_blank" :class="[selectedSort.key === 'downloads' && 'text-gray-900 dark:text-white']">
                       <UIcon name="i-ph-arrow-circle-down-duotone" class="w-5 h-5 flex-shrink-0" />
                       <span class="text-sm font-medium">{{ formatNumber(module.stats.downloads) }}</span>
-                    </div>
+                    </NuxtLink>
                   </UTooltip>
+
                   <UTooltip text="GitHub Stars">
-                    <div class="flex items-center gap-1" :class="[selectedSort.key === 'stars' && 'text-gray-900 dark:text-white']">
+                    <NuxtLink class="flex items-center gap-1" :to="`https://github.com/${module.repo}`" target="_blank" :class="[selectedSort.key === 'stars' && 'text-gray-900 dark:text-white']">
                       <UIcon name="i-ph-star-duotone" class="w-5 h-5 flex-shrink-0" />
                       <span class="text-sm font-medium">{{ formatNumber(module.stats.stars) }}</span>
-                    </div>
+                    </NuxtLink>
                   </UTooltip>
                 </div>
 
                 <UTooltip text="Contributors">
-                  <div class="flex items-center gap-1">
+                  <NuxtLink class="flex items-center gap-1" :to="`https://github.com/${module.repo}/graphs/contributors`" target="_blank">
                     <UIcon name="i-ph-user-circle-gear-duotone" class="w-5 h-5 flex-shrink-0" />
                     <span class="text-sm font-medium">{{ module.contributors.length }}</span>
-                  </div>
+                  </NuxtLink>
                 </UTooltip>
               </div>
             </template>

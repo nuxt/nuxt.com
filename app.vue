@@ -21,6 +21,11 @@ const headerLinks = [{
   icon: 'i-ph-puzzle-piece',
   to: '/modules'
 }, {
+  label: 'Templates',
+  icon: 'i-ph-puzzle-piece',
+  to: 'https://nuxt.new',
+  target: '_blank'
+}, {
   label: 'Showcase',
   icon: 'i-ph-projector-screen',
   to: '/showcase'

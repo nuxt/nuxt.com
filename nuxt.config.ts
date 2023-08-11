@@ -69,7 +69,7 @@ export default defineNuxtConfig({
     '/enterprise': { redirect: '/enterprise/support', prerender: false }
   },
 
-  extends: process.env.NUXT_UI_KIT_PATH || '@nuxt-themes/ui-kit',
+  extends: process.env.NUXT_ELEMENTS_PATH || '@nuxthq/elements',
 
   modules: [
     process.env.NODE_ENV === 'production' ? '@nuxtjs/html-validator' : () => {},
