@@ -26,7 +26,7 @@ const links = computed(() => [{
       </template>
 
       <template #icon>
-        <UAvatar :src="module.icon.match(/^http(s)?:\/\//) ? module.icon : `https://api.nuxtjs.org/api/ipx/s_80,f_webp/gh/nuxt/modules/main/icons/${module.icon}`" :alt="module.name" size="3xl" :ui="{ rounded: 'rounded-lg' }" class="mt-[2px]" />
+        <UAvatar :src="module.icon.match(/^http(s)?:\/\//) ? module.icon : `https://ipx.nuxt.com/s_80,f_webp/gh/nuxt/modules/main/icons/${module.icon}`" :alt="module.name" size="3xl" :ui="{ rounded: 'rounded-lg' }" class="mt-[2px]" />
       </template>
 
       <div class="flex flex-col lg:flex-row lg:items-center gap-3 mt-4">
