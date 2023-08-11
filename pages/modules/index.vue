@@ -30,15 +30,15 @@ defineShortcuts({
           <UNavigationTree :links="[{ label: 'Categories', disabled: true, children: categories }]" />
 
           <template #bottom>
-            <hr class="border-border border-dashed my-6">
+            <hr class="border-gray-200 dark:border-gray-800 border-dashed my-6">
 
             <div class="space-y-3">
-              <NuxtLink to="/docs/guide/going-further/modules" class="flex items-center gap-1.5 text-muted hover:text-subdued">
+              <NuxtLink to="/docs/guide/going-further/modules" class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                 <UIcon name="i-ph-book-open-duotone" class="w-5 h-5" />
                 <span class="text-sm font-medium">Module Author Guide</span>
               </NuxtLink>
 
-              <NuxtLink to="https://github.com/nuxt/modules#addupdate-a-module" target="_blank" class="flex items-center gap-1.5 text-muted hover:text-subdued">
+              <NuxtLink to="https://github.com/nuxt/modules#addupdate-a-module" target="_blank" class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                 <UIcon name="i-ph-plus-circle-duotone" class="w-5 h-5" />
                 <span class="text-sm font-medium">List your module</span>
               </NuxtLink>
@@ -97,7 +97,7 @@ defineShortcuts({
             :to="`/modules/${module.name}`"
             :title="module.name"
             class="flex flex-col"
-            :ui="{ body: { base: 'flex-1' }, footer: { base: 'bg-surface-accent/50' } }"
+            :ui="{ body: { base: 'flex-1' }, footer: { base: 'bg-gray-100/50 dark:bg-gray-800/50' } }"
           >
             <template #icon>
               <UAvatar :src="module.icon.match(/^http(s)?:\/\//) ? module.icon : `https://ipx.nuxt.com/s_80,f_webp/gh/nuxt/modules/main/icons/${module.icon}`" :alt="module.name" size="lg" :ui="{ rounded: 'rounded-lg' }" />
@@ -116,16 +116,16 @@ defineShortcuts({
             </template>
 
             <template #footer>
-              <div class="flex items-center justify-between gap-3 -my-1 text-subdued">
+              <div class="flex items-center justify-between gap-3 -my-1 text-gray-600 dark:text-gray-300">
                 <div class="flex items-center gap-3">
                   <UTooltip text="Monthly NPM Downloads">
-                    <div class="flex items-center gap-1" :class="[selectedSort.key === 'downloads' && 'text-highlight']">
+                    <div class="flex items-center gap-1" :class="[selectedSort.key === 'downloads' && 'text-gray-900 dark:text-white']">
                       <UIcon name="i-ph-arrow-circle-down-duotone" class="w-5 h-5 flex-shrink-0" />
                       <span class="text-sm font-medium">{{ formatNumber(module.stats.downloads) }}</span>
                     </div>
                   </UTooltip>
                   <UTooltip text="GitHub Stars">
-                    <div class="flex items-center gap-1" :class="[selectedSort.key === 'stars' && 'text-highlight']">
+                    <div class="flex items-center gap-1" :class="[selectedSort.key === 'stars' && 'text-gray-900 dark:text-white']">
                       <UIcon name="i-ph-star-duotone" class="w-5 h-5 flex-shrink-0" />
                       <span class="text-sm font-medium">{{ formatNumber(module.stats.stars) }}</span>
                     </div>

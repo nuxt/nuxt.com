@@ -1,5 +1,5 @@
 import type { Agency, Filter } from '../types'
-import { slugify, pickOne } from '../utils'
+import { slugify, random } from '../utils'
 
 export const useEnterpriseAgencies = () => {
   const route = useRoute()
@@ -167,7 +167,7 @@ export const useEnterpriseAgencies = () => {
     return regions.value.find(region => region.key === route.query.region)
   })
 
-  const adPartner = computed(() => pickOne(agencies.value))
+  const adPartner = computed(() => random(agencies.value))
 
   return {
     fetchList,

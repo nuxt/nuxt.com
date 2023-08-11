@@ -28,7 +28,7 @@ useContentHead(page)
       <UPageBody class="divide-y">
         <div v-for="([key, value]) of Object.entries(sponsors)" :key="key" class="relative grid lg:grid-cols-5 gap-8 py-24">
           <div class="lg:self-start flex lg:flex-col items-center lg:items-start justify-between lg:sticky lg:top-0 lg:pt-24 lg:-mt-24">
-            <h2 class="capitalize font-bold text-2xl text-highlight">
+            <h2 class="capitalize font-bold text-2xl text-gray-900 dark:text-white">
               {{ key }}
             </h2>
           </div>
@@ -46,7 +46,7 @@ useContentHead(page)
                 target="_blank"
               >
                 <UAvatar :src="sponsor.sponsorLogo" :alt="sponsor.sponsorName" class="mx-auto mt-4" size="2xl" />
-                <h3 class="mt-6 font-semibold leading-7 tracking-tight text-highlight mb-2">
+                <h3 class="mt-6 font-semibold leading-7 tracking-tight text-gray-900 dark:text-white mb-2">
                   {{ sponsor.sponsorName }}
                 </h3>
               </UButton>

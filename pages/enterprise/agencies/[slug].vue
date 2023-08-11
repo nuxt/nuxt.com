@@ -32,14 +32,14 @@ const links = computed(() => [{
           <span class="font-medium">{{ agency.location }}</span>
         </div>
 
-        <span class="text-subdued hidden lg:block">&bull;</span>
+        <span v-if="agency.twitter" class="hidden lg:block text-gray-500 dark:text-gray-400">&bull;</span>
 
         <NuxtLink v-if="agency.twitter" :to="agency.twitter" target="_blank" class="flex items-center gap-1.5 hover:text-primary">
           <UIcon name="i-simple-icons-twitter" class="w-6 h-6" />
           <span class="font-medium">Twitter</span>
         </NuxtLink>
 
-        <span class="text-subdued hidden lg:block">&bull;</span>
+        <span v-if="agency.github" class="hidden lg:block text-gray-500 dark:text-gray-400">&bull;</span>
 
         <NuxtLink v-if="agency.github" :to="`https://github.com/${agency.github}`" target="_blank" class="flex items-center gap-1.5 hover:text-primary">
           <UIcon name="i-simple-icons-github" class="w-6 h-6" />
@@ -58,29 +58,33 @@ const links = computed(() => [{
       </UPageBody>
 
       <template #right>
-        <p class="font-semibold flex items-center gap-1.5 mb-3">
-          Services
-        </p>
+        <div v-if="agency.services?.length">
+          <p class="font-semibold flex items-center gap-1.5 mb-3">
+            Services
+          </p>
 
-        <div class="prose dark:prose-invert -ml-1.5">
-          <ul class="space-y-3">
-            <li v-for="(service, index) in agency.services" :key="index" class="text-sm text-subdued">
-              {{ service }}
-            </li>
-          </ul>
+          <div class="prose dark:prose-invert -ml-1.5">
+            <ul class="space-y-3">
+              <li v-for="(service, index) in agency.services" :key="index" class="text-sm text-gray-500 dark:text-gray-400">
+                {{ service }}
+              </li>
+            </ul>
+          </div>
         </div>
 
-        <hr class="border-border border-dashed my-6">
+        <div v-if="agency.resources?.length">
+          <hr class="border-dashed border-gray-200 dark:border-gray-800 my-6">
 
-        <p class="font-semibold flex items-center gap-1.5 mb-3">
-          Resources
-        </p>
+          <p class="font-semibold flex items-center gap-1.5 mb-3">
+            Resources
+          </p>
 
-        <div class="space-y-3">
-          <NuxtLink v-for="(resource, index) in agency.resources" :key="index" :to="resource.url" target="_blank" class="block text-sm text-muted hover:text-subdued">
-            {{ resource.name }}
-            <UIcon name="i-ph-arrow-square-out" class="w-4 h-4 flex-shrink-0 align-sub" />
-          </NuxtLink>
+          <div class="space-y-3">
+            <NuxtLink v-for="(resource, index) in agency.resources" :key="index" :to="resource.url" target="_blank" class="block text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
+              {{ resource.name }}
+              <UIcon name="i-ph-arrow-square-out" class="w-4 h-4 flex-shrink-0 align-sub" />
+            </NuxtLink>
+          </div>
         </div>
       </template>
     </UPage>

@@ -13,8 +13,8 @@ defineProps<{
 
 <template>
   <UPageColumns>
-    <UPageCard v-for="(testimonial, index) in testimonials" :key="index" :ui="{ background: 'bg-gradient-to-b from-overlay to-surface backdrop-blur-md', body: { base: 'bg-surface/50' } }">
-      <q class="italic text-lg text-muted">
+    <UPageCard v-for="(testimonial, index) in testimonials" :key="index" :ui="{ background: 'bg-gradient-to-b from-gray-800 to-gray-900 backdrop-blur-lg', body: { base: 'bg-gray-50/50 dark:bg-gray-900/50' } }">
+      <q class="italic text-lg text-gray-500 dark:text-gray-400">
         {{ testimonial.quote }}
       </q>
 

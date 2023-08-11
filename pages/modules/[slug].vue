@@ -37,7 +37,7 @@ const links = computed(() => [{
           </div>
         </UTooltip>
 
-        <span class="text-subdued hidden lg:block">&bull;</span>
+        <span class="hidden lg:block text-gray-500 dark:text-gray-400">&bull;</span>
 
         <UTooltip text="GitHub Stars">
           <div class="flex items-center gap-1.5">
@@ -46,7 +46,7 @@ const links = computed(() => [{
           </div>
         </UTooltip>
 
-        <div class="mx-3 h-6 border-l w-px hidden lg:block" />
+        <div class="mx-3 h-6 border-l border-gray-200 dark:border-gray-800 w-px hidden lg:block" />
 
         <div v-for="(maintainer, index) in module.maintainers" :key="maintainer.github" class="flex items-center gap-3">
           <NuxtLink :to="`https://github.com/${maintainer.github}`" target="_blank" class="flex items-center gap-1.5 hover:text-primary">
@@ -54,7 +54,7 @@ const links = computed(() => [{
             <span class="font-medium">{{ maintainer.github }}</span>
           </NuxtLink>
 
-          <span v-if="index < module.maintainers.length - 1" class="text-subdued hidden lg:block">&bull;</span>
+          <span v-if="index < module.maintainers.length - 1" class="hidden lg:block text-gray-500 dark:text-gray-400">&bull;</span>
         </div>
       </div>
     </UPageHeader>
@@ -66,31 +66,30 @@ const links = computed(() => [{
 
       <template #right>
         <div class="space-y-3">
-          <NuxtLink :to="module.repo" target="_blank" class="flex items-center gap-1.5 text-muted hover:text-subdued">
+          <NuxtLink :to="module.repo" target="_blank" class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
             <UIcon name="i-simple-icons-github" class="w-5 h-5" />
             <span class="text-sm font-medium">View source</span>
           </NuxtLink>
 
-          <NuxtLink v-if="module.npm" :to="`https://npmjs.org/package/${module.npm}`" target="_blank" class="flex items-center gap-1.5 text-muted hover:text-subdued">
+          <NuxtLink v-if="module.npm" :to="`https://npmjs.org/package/${module.npm}`" target="_blank" class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
             <UIcon name="i-simple-icons-npm" class="w-5 h-5" />
             <span class="text-sm font-medium">{{ module.npm }}</span>
           </NuxtLink>
 
-          <NuxtLink v-if="module.learn_more" :to="module.learn_more" target="_blank" class="flex items-center gap-1.5 text-muted hover:text-subdued">
+          <NuxtLink v-if="module.learn_more" :to="module.learn_more" target="_blank" class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
             <UIcon name="i-ph-link" class="w-5 h-5" />
             <span class="text-sm font-medium">Learn more</span>
           </NuxtLink>
         </div>
 
-        <hr class="border-border border-dashed my-6">
-
+        <hr class="border-dashed border-gray-200 dark:border-gray-800 my-6">
 
         <p class="font-semibold flex items-center gap-1.5 mb-3">
           Contributors <UBadge :label="module.contributors.length.toString()" color="gray" size="xs" :ui="{ rounded: 'rounded-full' }" />
         </p>
 
         <div class="space-y-3">
-          <NuxtLink v-for="contributor in module.contributors" :key="contributor.username" :to="`https://github.com/${contributor.username}`" target="_blank" class="flex items-center gap-1.5 text-muted hover:text-subdued">
+          <NuxtLink v-for="contributor in module.contributors" :key="contributor.username" :to="`https://github.com/${contributor.username}`" target="_blank" class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
             <UAvatar :src="`https://github.com/${contributor.username}.png`" :alt="contributor.username" size="2xs" />
             <span class="text-sm font-medium">{{ contributor.username }}</span>
           </NuxtLink>

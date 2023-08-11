@@ -1,9 +1,8 @@
 <template>
-  <div ref="carbonads" class="Carbon dark:bg-secondary-darkest bg-gray-50 dark:bg-gray-800" />
+  <div ref="carbonads" class="Carbon border border-gray-200 dark:border-gray-800 rounded-lg bg-white dark:bg-white/5" />
 </template>
 
 <script setup lang="ts">
-
 const carbonads = ref(null)
 
 onMounted(() => {
@@ -39,7 +38,7 @@ onMounted(() => {
 }
 
 .Carbon {
-  @apply p-4 flex flex-col mt-4 max-w-full;
+  @apply p-3 flex flex-col max-w-full;
 
   @screen sm {
     @apply max-w-xs;
@@ -47,7 +46,6 @@ onMounted(() => {
 
   @screen lg {
     @apply mt-0;
-    max-width: 160px;
   }
 
   #carbonads span {
@@ -79,7 +77,7 @@ onMounted(() => {
       }
 
       .carbon-text {
-        @apply flex-1 text-sm w-full m-0 text-left block leading-relaxed;
+        @apply flex-1 text-sm w-full m-0 text-left block;
 
         &:hover {
           @apply no-underline;

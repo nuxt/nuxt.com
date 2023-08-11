@@ -34,7 +34,7 @@ function copyLink () {
     <UPage>
       <UPageHeader :title="article.title" :description="article.description">
         <template #headline>
-          {{ article.category }} <span class="text-muted">&middot;</span> <time class="text-muted"> {{ formatDateByLocale('en', article.date) }}</time>
+          {{ article.category }} <span class="text-gray-500 dark:text-gray-400">&middot;</span> <time class="text-gray-500 dark:text-gray-400"> {{ formatDateByLocale('en', article.date) }}</time>
         </template>
 
         <div class="mt-4 flex flex-wrap items-center gap-6">
@@ -53,7 +53,7 @@ function copyLink () {
               <p class="font-medium">
                 {{ author.name }}
               </p>
-              <p class="text-muted leading-4">
+              <p class="text-gray-500 dark:text-gray-400 leading-4">
                 {{ `@${author.link.split('/').pop()}` }}
               </p>
             </div>
@@ -78,7 +78,7 @@ function copyLink () {
           <USocialButton v-for="(link, index) in socialLinks" :key="index" v-bind="link" target="_blank" />
         </div>
 
-        <hr v-if="surround?.length" class="border-border my-8">
+        <hr v-if="surround?.length" class="border-gray-200 dark:border-gray-800 my-8">
 
         <UDocsSurround :surround="surround" />
       </UPageBody>

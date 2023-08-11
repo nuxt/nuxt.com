@@ -52,9 +52,9 @@ await fetchList()
 
             <template #footer>
               <div class="flex items-center justify-between gap-3">
-                <time class="text-muted">{{ formatDateByLocale('en', article.date) }}</time>
+                <time class="text-gray-500 dark:text-gray-400">{{ formatDateByLocale('en', article.date) }}</time>
 
-                <UAvatarGroup size="xs" :ui="{ ring: 'ring-2 ring-surface' }">
+                <UAvatarGroup size="xs">
                   <UAvatar
                     v-for="(author, subIndex) in article.authors"
                     :key="subIndex"

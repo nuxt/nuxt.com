@@ -1,5 +1,11 @@
 <template>
-  <UFooter :links="links" :ui="{ bottom: 'border-t', container: '!py-6' }">
+  <UFooter
+    :links="links"
+    :ui="{
+      bottom: { wrapper: 'border-t border-gray-200 dark:border-gray-800', container: '!py-6' },
+      top: { wrapper: 'border-t border-gray-200 dark:border-gray-800', container: 'py-8 lg:py-12' }
+    }"
+  >
     <template #top>
       <FooterColumns />
     </template>
@@ -13,7 +19,7 @@
     </template>
 
     <template #center>
-      <p class="text-muted">
+      <p class="text-gray-500 dark:text-gray-400">
         Copyright © 2016-{{ new Date().getFullYear() }} Nuxt - MIT License
       </p>
     </template>

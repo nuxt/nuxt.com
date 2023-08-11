@@ -32,8 +32,7 @@ await fetchList()
             :description="agency.description"
             :ui="{
               divide: '',
-              header: { base: 'aspect-w-4 aspect-h-2', padding: '' },
-              footer: { base: 'text-subdued', padding: 'px-4 pb-4 sm:px-6' },
+              footer: { padding: 'px-4 pb-4 sm:px-6' },
               title: 'text-lg',
               description: 'line-clamp-3'
             }"
@@ -43,7 +42,7 @@ await fetchList()
             </template>
 
             <template #footer>
-              {{ agency.location.title }}
+              <UBadge :label="agency.location.label" color="gray" />
             </template>
           </UPageCard>
         </UPageGrid>

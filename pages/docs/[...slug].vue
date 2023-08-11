@@ -27,7 +27,7 @@ useContentHead(page)
   <UPage>
     <UPageHeader v-bind="page">
       <template #headline>
-        <span v-for="(link, index) in breadcrumb" :key="index" :class="[index < breadcrumb.length - 1 && 'text-muted']" class="flex items-center gap-1.5">
+        <span v-for="(link, index) in breadcrumb" :key="index" :class="[index < breadcrumb.length - 1 && 'text-gray-500 dark:text-gray-400']" class="flex items-center gap-1.5">
           {{ link.label }}
 
           <UIcon v-if="index < breadcrumb.length - 1" name="i-ph-caret-right" class="w-4 h-4" />
@@ -38,7 +38,7 @@ useContentHead(page)
     <UPageBody prose>
       <ContentRenderer v-if="page && page.body" :value="page" />
 
-      <hr v-if="surround?.length" class="border-border my-8">
+      <hr v-if="surround?.length" class="border-gray-200 dark:border-gray-800 my-8">
 
       <UDocsSurround :surround="surround" />
     </UPageBody>
@@ -47,7 +47,7 @@ useContentHead(page)
       <UDocsToc :links="page.body?.toc?.links">
         <template #bottom>
           <div class="hidden lg:block">
-            <hr v-if="page.body?.toc?.links?.length" class="border-border border-dashed my-6">
+            <hr v-if="page.body?.toc?.links?.length" class="border-gray-200 dark:border-gray-800 border-dashed my-6">
 
             <UButton
               :to="githubLink"
@@ -62,7 +62,7 @@ useContentHead(page)
               </template>
             </UButton>
 
-            <hr class="border-border border-dashed my-6">
+            <hr class="border-gray-200 dark:border-gray-800 border-dashed my-6">
 
             <Ads />
           </div>
