@@ -25,7 +25,7 @@ await fetchList()
           :description="job.description"
           :ui="{
             divide: '',
-            footer: { padding: 'px-4 pb-4 sm:px-6 sm:pb-6' },
+            footer: { padding: 'pt-0' },
             title: 'text-lg'
           }"
         >

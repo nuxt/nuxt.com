@@ -19,7 +19,7 @@
     "@iconify-json/uil": "^1.1.4",
     "@nuxt/content": "^2.7.2",
     "@nuxt/devtools": "^0.7.4",
-    "@nuxthq/elements": "^0.0.1",
+    "@nuxthq/elements": "npm:@nuxthq/elements-edge@latest",
     "@nuxthq/studio": "^0.13.4",
     "@nuxthq/ui": "npm:@nuxthq/ui-edge@latest",
     "@nuxtjs/fontaine": "^0.4.1",

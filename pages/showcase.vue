@@ -30,7 +30,7 @@ await fetchList()
             :to="showcase.url"
             :title="showcase.title || showcase.hostname"
             :description="showcase.hostname"
-            :ui="{ header: { base: 'aspect-w-4 aspect-h-2', padding: '' }, body: { padding: 'p-4' } }"
+            :ui="{ header: { base: 'aspect-w-4 aspect-h-2', padding: '' }, body: { padding: '!p-4' } }"
           >
             <template #header>
               <img

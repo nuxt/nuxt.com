@@ -32,7 +32,7 @@ await fetchList()
             :description="agency.description"
             :ui="{
               divide: '',
-              footer: { padding: 'px-4 pb-4 sm:px-6' },
+              footer: { padding: 'pt-0' },
               title: 'text-lg',
               description: 'line-clamp-3'
             }"

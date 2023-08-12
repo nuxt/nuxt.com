@@ -11,15 +11,7 @@
     </template>
 
     <template #left>
-      Powered by <NuxtLink to="ui.nuxtlabs.com">
-        UI
-      </NuxtLink> and <NuxtLink to="https://elements.nuxtlabs.com">
-        Elements
-      </NuxtLink>
-    </template>
-
-    <template #center>
-      <p class="text-gray-500 dark:text-gray-400">
+      <p class="text-gray-500 dark:text-gray-400 text-sm">
         Copyright © 2016-{{ new Date().getFullYear() }} Nuxt - MIT License
       </p>
     </template>
