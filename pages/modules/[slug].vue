@@ -16,6 +16,20 @@ const links = computed(() => [{
 
 <template>
   <UContainer>
+    <UAlert
+      v-if="!module.compatibility?.nuxt?.includes('^3')"
+      class="mt-4"
+      icon="i-ph-warning-duotone"
+      color="orange"
+      variant="subtle"
+      title="This module is not yet compatible with Nuxt 3"
+    >
+      <template #description>
+        Head over to <NuxtLink to="https://v2.nuxt.com" target="_blank" class="underline">
+          v2.nuxt.com
+        </NuxtLink>
+      </template>
+    </UAlert>
     <UPageHeader :description="module.description" :links="links" class="sm:py-16">
       <template #title>
         {{ module.name }}
