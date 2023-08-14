@@ -72,12 +72,12 @@ export default defineNuxtConfig({
   extends: process.env.NUXT_ELEMENTS_PATH || '@nuxthq/elements',
 
   modules: [
-    process.env.NODE_ENV === 'production' ? '@nuxtjs/html-validator' : () => {},
+    // process.env.NODE_ENV === 'production' ? '@nuxtjs/html-validator' : () => {},
     '@nuxt/content',
     '@nuxtjs/plausible',
     '@nuxtjs/fontaine',
     '@nuxtjs/google-fonts',
-    '@nuxthq/studio',
+    // '@nuxthq/studio',
     '@nuxthq/ui',
     // '@nuxt/devtools',
     '@vueuse/nuxt',
@@ -173,10 +173,10 @@ export default defineNuxtConfig({
   nitro: {
     output: {
       dir: '{{ workspaceDir }}/.vercel/output'
-    },
-    prerender: {
-      crawlLinks: true
     }
+    // prerender: {
+    //   crawlLinks: true
+    // }
   },
 
   plugins: ['~/plugins/adblock.ts', '~/plugins/newsletter.client.ts'],
