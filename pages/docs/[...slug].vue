@@ -17,8 +17,58 @@ const { data: surround } = await useAsyncData(`${route.path}-surround`, () => qu
   .findSurround(route.path.endsWith('/') ? route.path.slice(0, -1) : route.path)
 )
 
-const githubLink = computed(() => `https://github.com/nuxt/nuxt/edit/dev/docs/content/${page?.value?._file}`)
 const breadcrumb = computed(() => mapContentNavigation(findPageBreadcrumb(navigation.value, page.value)))
+
+const communityLinks = computed(() => [
+  {
+    icon: 'i-ph-pen-duotone',
+    label: 'Edit this page',
+    to: `https://github.com/nuxt/nuxt/edit/dev/docs/content/${page?.value?._file}`,
+    target: '_blank'
+  },
+  {
+    icon: 'i-simple-icons-github',
+    label: 'Star us on GitHub',
+    to: 'https://github.com/nuxt/nuxt',
+    target: '_blank'
+  },
+  {
+    icon: 'i-simple-icons-discord',
+    label: 'Join us on Discord',
+    to: 'https://discord.com/invite/ps2h6QT',
+    target: '_blank'
+  },
+  {
+    icon: 'i-ph-hand-heart-duotone',
+    label: 'Become a Sponsor',
+    to: 'https://github.com/sponsors/nuxt',
+    target: '_blank'
+  }
+])
+
+const ecosystemLinks = [
+  {
+    icon: 'i-ph-buildings-duotone',
+    label: 'Enterprise Support',
+    to: '/enterprise/support'
+  },
+  {
+    icon: 'i-ph-handshake-duotone',
+    label: 'Agency Partnership',
+    to: '/enterprise/agencies'
+  },
+  {
+    icon: 'i-ph-briefcase-duotone',
+    label: 'Find a Nuxt Job',
+    to: '/enterprise/jobs'
+  },
+  {
+    icon: 'i-ph-graduation-cap-duotone',
+    label: 'Mastering Nuxt 3',
+    to: 'https://masteringnuxt.com/nuxt3?ref=nuxt',
+    target: '_blank'
+  }
+]
 
 useContentHead(page)
 </script>
@@ -48,30 +98,24 @@ useContentHead(page)
         <template #bottom>
           <div class="hidden lg:block">
             <hr v-if="page.body?.toc?.links?.length" class="border-gray-200 dark:border-gray-800 border-dashed my-6">
-
             <p class="text-sm/6 font-semibold flex items-center gap-1.5 mb-3">
               Community
             </p>
-
-            <div class="space-y-3">
-              <NuxtLink :to="githubLink" target="_blank" class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                <UIcon name="i-ph-pen-duotone" class="w-5 h-5" />
-                <span class="text-sm font-medium">Edit this page</span>
+            <div class="space-y-2">
+              <NuxtLink v-for="link of communityLinks" :key="link.to" :to="link.to" :target="link.target" class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                <UIcon :name="link.icon" class="w-4 h-4" />
+                <span class="text-sm font-medium">{{ link.label }}</span>
               </NuxtLink>
+            </div>
 
-              <NuxtLink to="https://github.com/nuxt/nuxt" target="_blank" class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                <UIcon name="i-simple-icons-github" class="w-5 h-5" />
-                <span class="text-sm font-medium">Star us on GitHub</span>
-              </NuxtLink>
-
-              <NuxtLink to="https://discord.com/invite/ps2h6QT" target="_blank" class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                <UIcon name="i-simple-icons-discord" class="w-5 h-5" />
-                <span class="text-sm font-medium">Join us on Discord</span>
-              </NuxtLink>
-
-              <NuxtLink to="https://github.com/sponsors/nuxt" target="_blank" class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                <UIcon name="i-ph-hand-heart-duotone" class="w-5 h-5" />
-                <span class="text-sm font-medium">Become a Sponsor</span>
+            <hr class="border-gray-200 dark:border-gray-800 border-dashed my-6">
+            <p class="text-sm/6 font-semibold flex items-center gap-1.5 mb-3">
+              Ecosystem
+            </p>
+            <div class="space-y-2">
+              <NuxtLink v-for="link of ecosystemLinks" :key="link.to" :to="link.to" :target="link.target" class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                <UIcon :name="link.icon" class="w-4 h-4" />
+                <span class="text-sm font-medium">{{ link.label }}</span>
               </NuxtLink>
             </div>
 
