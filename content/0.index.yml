@@ -1,19 +1,4 @@
 navigation: false
-hero:
-  title: '<span class="text-primary">The complete solution</span><br>for web developers'
-  description: 'Nuxt is an open source framework that makes web development intuitive and powerful.<br>Create performant and production-grade full-stack web apps and websites with confidence.'
-  class: 'dark:bg-gradient-to-b from-gray-950 to-gray-900'
-  links:
-    - label: 'Get Started'
-      to: '/docs'
-      icon: 'i-ph-rocket-launch'
-      size: 'xl'
-    - label: 'What is Nuxt?'
-      to: 'https://youtu.be/dCxSsr5xuL8'
-      target: '_blank'
-      icon: 'i-ph-video'
-      color: 'white'
-      size: 'xl'
 logos:
   title: 'Trusted by the best front-end teams'
 sections:

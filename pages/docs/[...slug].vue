@@ -27,14 +27,14 @@ const communityLinks = computed(() => [
     target: '_blank'
   },
   {
-    icon: 'i-simple-icons-github',
-    label: 'Star us on GitHub',
+    icon: 'i-ph-shooting-star-duotone',
+    label: 'Star on GitHub',
     to: 'https://github.com/nuxt/nuxt',
     target: '_blank'
   },
   {
-    icon: 'i-simple-icons-discord',
-    label: 'Join us on Discord',
+    icon: 'i-ph-chat-centered-text-duotone',
+    label: 'Chat on Discord',
     to: 'https://discord.com/invite/ps2h6QT',
     target: '_blank'
   },
