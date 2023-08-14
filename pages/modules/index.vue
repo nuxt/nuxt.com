@@ -5,7 +5,10 @@ const route = useRoute()
 const { replaceRoute } = useFilters('modules')
 const { fetchList, filteredModules, q, categories, selectedOrder, sorts, selectedSort } = useModules()
 
-const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
+const { data: page } = await useAsyncData(route.path, () => {
+  console.log('query')
+  return queryContent(route.path).findOne()
+})
 
 useContentHead(page)
 
@@ -100,7 +103,7 @@ defineShortcuts({
             :ui="{ body: { base: 'flex-1' }, footer: { base: 'bg-gray-100/50 dark:bg-gray-800/50' } }"
           >
             <template #icon>
-              <UAvatar :src="module.icon.match(/^http(s)?:\/\//) ? module.icon : `https://ipx.nuxt.com/s_80,f_webp/gh/nuxt/modules/main/icons/${module.icon}`" :alt="module.name" size="lg" :ui="{ rounded: 'rounded-lg' }" />
+              <UAvatar :src="moduleImage(module.icon)" :icon="moduleIcon(module.category)" :alt="module.name" size="lg" :ui="{ rounded: 'rounded-lg' }" />
             </template>
 
             <template #title>

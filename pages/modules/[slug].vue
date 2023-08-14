@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import type { Module } from '~/types'
 const route = useRoute()
-const { fetchOne, module } = useModules()
 
-await fetchOne(route.params.slug as string)
+const { data: module } = await useFetch<Module>(`https://api.nuxt.com/modules/${route.params.slug}`)
 
 const links = computed(() => [{
   label: 'Documentation',
@@ -40,7 +40,14 @@ const links = computed(() => [{
       </template>
 
       <template #icon>
-        <UAvatar :src="module.icon.match(/^http(s)?:\/\//) ? module.icon : `https://ipx.nuxt.com/s_80,f_webp/gh/nuxt/modules/main/icons/${module.icon}`" :alt="module.name" size="3xl" :ui="{ rounded: 'rounded-lg' }" class="mt-[2px]" />
+        <UAvatar
+          :src="moduleImage(module.icon)"
+          :icon="moduleIcon(module.category)"
+          :alt="module.name"
+          size="3xl"
+          :ui="{ rounded: 'rounded-lg' }"
+          class="mt-[2px]"
+        />
       </template>
 
       <div class="flex flex-col lg:flex-row lg:items-center gap-3 mt-4">

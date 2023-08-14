@@ -88,7 +88,7 @@ const groups = [{
         label: module.name,
         suffix: module.description,
         avatar: {
-          src: module.icon && module.icon.match(/^http(s)?:\/\//) ? module.icon : `https://api.nuxtjs.org/api/ipx/s_80,f_webp/gh/nuxt/modules/main/icons/${module.icon}`
+          src: moduleImage(module.icon)
         },
         to: `/modules/${module.name}`
       }))

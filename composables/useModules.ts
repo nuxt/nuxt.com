@@ -1,5 +1,41 @@
 import type { Module, Filter } from '../types'
 
+const iconsMap = {
+  Analytics: 'i-uil-chart-line',
+  CMS: 'i-uil-pen',
+  CSS: 'i-uil-brush-alt',
+  Database: 'i-uil-database',
+  Date: 'i-uil-calendar-alt',
+  Deployment: 'i-uil-cloud',
+  Devtools: 'i-uil-wrench',
+  Ecommerce: 'i-uil-shopping-basket',
+  Extensions: 'i-uil-puzzle-piece',
+  Fonts: 'i-uil-font',
+  Images: 'i-uil-image-v',
+  Libraries: 'i-uil-books',
+  Monitoring: 'i-uil-stopwatch',
+  Payment: 'i-uil-dollar-alt',
+  Performance: 'i-uil-rocket',
+  Request: 'i-uil-life-ring',
+  Security: 'i-uil-shield',
+  SEO: 'i-uil-search-alt',
+  UI: 'i-uil-palette'
+}
+
+export const moduleImage = function (icon: string = '', size: number = 80) {
+  if (!icon) return
+
+  if (/^http(s)?:\/\//.test(icon)) return icon
+
+  if (/\.svg$/.test(icon)) return `https://ipx.nuxt.com/_/gh/nuxt/modules/main/icons/${icon}`
+
+  return `https://ipx.nuxt.com/s_${size},f_webp/gh/nuxt/modules/main/icons/${icon}`
+}
+
+export const moduleIcon = function (category: string) {
+  return iconsMap[category as keyof typeof iconsMap] || 'i-ph-cube-duotone'
+}
+
 export const useModules = () => {
   // interface TypeMap {
   //   official: string,
@@ -13,27 +49,7 @@ export const useModules = () => {
   const modules = useState<Module[]>('modules', () => [])
   const module = useState<Module>('module', () => ({} as Module))
 
-  const iconsMap = {
-    Analytics: 'i-uil-chart-line',
-    CMS: 'i-uil-pen',
-    CSS: 'i-uil-brush-alt',
-    Database: 'i-uil-database',
-    Date: 'i-uil-calendar-alt',
-    Deployment: 'i-uil-cloud',
-    Devtools: 'i-uil-wrench',
-    Ecommerce: 'i-uil-shopping-basket',
-    Extensions: 'i-uil-puzzle-piece',
-    Fonts: 'i-uil-font',
-    Images: 'i-uil-image-v',
-    Libraries: 'i-uil-books',
-    Monitoring: 'i-uil-stopwatch',
-    Payment: 'i-uil-dollar-alt',
-    Performance: 'i-uil-rocket',
-    Request: 'i-uil-life-ring',
-    Security: 'i-uil-shield',
-    SEO: 'i-uil-search-alt',
-    UI: 'i-uil-palette'
-  }
+
 
   // Data fetching
 
@@ -47,19 +63,6 @@ export const useModules = () => {
       modules.value = res.modules
     }
   }
-
-  async function fetchOne (name: string) {
-    if (module.value.name === name) {
-      return
-    }
-
-    try {
-      module.value = await $fetch<Module>(`https://api.nuxt.com/modules/${name}`)
-    } catch (e) {
-      throw createError({ statusMessage: 'Module not found', message: 'This page does not exist.', statusCode: 404 })
-    }
-  }
-
   // Data
 
   // const versions: Filter[] = [
@@ -85,15 +88,6 @@ export const useModules = () => {
   //   community: 'Community',
   //   '3rd-party': 'Third Party'
   // }
-
-  // const githubQuery: ComputedRef<{ owner: string, repo: string }> = computed(() => {
-  //   const [ownerAndRepo] = module.value.repo.split('#')
-  //   const [owner, repo] = ownerAndRepo.split('/')
-  //   return {
-  //     owner,
-  //     repo
-  //   }
-  // })
 
   // const modulesByVersion: ComputedRef<Module[]> = computed(() => {
   //   return [...modules.value]
@@ -239,7 +233,6 @@ export const useModules = () => {
   return {
     // Data fetching
     fetchList,
-    fetchOne,
     // Data
     // versions,
     sorts,
@@ -248,7 +241,6 @@ export const useModules = () => {
     modules,
     filteredModules,
     module,
-    // githubQuery,
     categories,
     // types,
     // contributors,
