@@ -18,6 +18,7 @@ onMounted(() => {
 
 <style lang="postcss">
 .dark .Carbon {
+  min-height: 220px;
   .carbon-text {
     @apply text-gray-400;
 
