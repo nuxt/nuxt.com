@@ -3,15 +3,10 @@ import type { Module } from '~/types'
 const route = useRoute()
 
 const { data: module } = await useFetch<Module>(`https://api.nuxt.com/modules/${route.params.slug}`)
-
-const links = computed(() => [{
-  label: 'Documentation',
-  color: 'black',
-  size: 'md',
-  icon: 'i-ph-book-open',
-  to: module.value.website,
-  target: '_blank'
-}])
+const ownerName = computed(() => {
+  const [owner, name] = module.value.repo.split('/')
+  return `${owner}/${name}`
+})
 </script>
 
 <template>
@@ -30,7 +25,7 @@ const links = computed(() => [{
         </NuxtLink>
       </template>
     </UAlert>
-    <UPageHeader :description="module.description" :links="links" class="sm:py-16">
+    <UPageHeader :description="module.description" class="sm:py-16">
       <template #title>
         {{ module.name }}
 
@@ -91,33 +86,39 @@ const links = computed(() => [{
         </p>
 
         <div class="space-y-3">
-          <NuxtLink :to="module.repo" target="_blank" class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-            <UIcon name="i-simple-icons-github" class="w-5 h-5" />
-            <span class="text-sm font-medium">View source</span>
+          <NuxtLink :to="module.website" target="_blank" class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+            <UIcon name="i-ph-book-bookmark-duotone" class="w-4 h-4 shrink-0" />
+            <span class="text-sm font-medium truncate">Documentation</span>
+          </NuxtLink>
+
+          <NuxtLink :to="module.github" target="_blank" class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+            <UIcon name="i-simple-icons-github" class="w-4 h-4 shrink-0" />
+            <span class="text-sm font-medium truncate">{{ ownerName }}</span>
           </NuxtLink>
 
           <NuxtLink v-if="module.npm" :to="`https://npmjs.org/package/${module.npm}`" target="_blank" class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-            <UIcon name="i-simple-icons-npm" class="w-5 h-5" />
-            <span class="text-sm font-medium">{{ module.npm }}</span>
+            <UIcon name="i-simple-icons-npm" class="w-4 h-4 shrink-0" />
+            <span class="text-sm truncate font-medium">{{ module.npm }}</span>
           </NuxtLink>
 
           <NuxtLink v-if="module.learn_more" :to="module.learn_more" target="_blank" class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-            <UIcon name="i-ph-link" class="w-5 h-5" />
-            <span class="text-sm font-medium">Learn more</span>
+            <UIcon name="i-ph-link" class="w-4 h-4 shrink-0" />
+            <span class="text-sm truncate font-medium">Learn more</span>
           </NuxtLink>
         </div>
 
-        <hr class="border-dashed border-gray-200 dark:border-gray-800 my-6">
+        <div class="hidden lg:block">
+          <hr class="border-dashed border-gray-200 dark:border-gray-800 my-2 lg:my-6">
+          <p class="flex text-sm/6 font-semibold items-center gap-1.5 mb-3">
+            Contributors <UBadge :label="module.contributors.length.toString()" color="gray" size="xs" :ui="{ rounded: 'rounded-full' }" />
+          </p>
 
-        <p class="text-sm/6 font-semibold flex items-center gap-1.5 mb-3">
-          Contributors <UBadge :label="module.contributors.length.toString()" color="gray" size="xs" :ui="{ rounded: 'rounded-full' }" />
-        </p>
-
-        <div class="space-y-3">
-          <NuxtLink v-for="contributor in module.contributors" :key="contributor.username" :to="`https://github.com/${contributor.username}`" target="_blank" class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-            <UAvatar :src="`https://github.com/${contributor.username}.png`" :alt="contributor.username" size="2xs" />
-            <span class="text-sm font-medium">{{ contributor.username }}</span>
-          </NuxtLink>
+          <div class="space-y-3">
+            <NuxtLink v-for="contributor in module.contributors" :key="contributor.username" :to="`https://github.com/${contributor.username}`" target="_blank" class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+              <UAvatar :src="`https://github.com/${contributor.username}.png`" :alt="contributor.username" size="2xs" />
+              <span class="text-sm font-medium">{{ contributor.username }}</span>
+            </NuxtLink>
+          </div>
         </div>
       </template>
     </UPage>

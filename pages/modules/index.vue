@@ -6,7 +6,6 @@ const { replaceRoute } = useFilters('modules')
 const { fetchList, filteredModules, q, categories, selectedOrder, sorts, selectedSort } = useModules()
 
 const { data: page } = await useAsyncData(route.path, () => {
-  console.log('query')
   return queryContent(route.path).findOne()
 })
 
