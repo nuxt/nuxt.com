@@ -96,16 +96,74 @@ export default defineAppConfig({
     },
     header: {
       wrapper: 'lg:mb-0 lg:border-0',
+      links: {
+        trailingIcon: {
+          name: 'i-ph-caret-down',
+          base: 'w-4 h-4'
+        },
+        externalIcon: {
+          name: 'i-ph-arrow-square-out'
+        }
+      },
       popover: {
         links: {
           active: 'dark:bg-gray-950/50',
           inactive: 'dark:hover:bg-gray-950/50'
         }
+      },
+      button: {
+        icon: {
+          open: 'i-ph-list',
+          close: 'i-ph-x'
+        }
+      }
+    },
+    footer: {
+      links: {
+        externalIcon: {
+          name: 'i-ph-arrow-square-out'
+        }
+      }
+    },
+    navigation: {
+      accordion: {
+        button: {
+          trailingIcon: {
+            name: 'i-ph-caret-down',
+            base: 'w-4 h-4'
+          }
+        }
       }
     },
     page: {
+      links: {
+        externalIcon: {
+          name: 'i-ph-arrow-square-out'
+        }
+      },
       card: {
         to: 'dark:hover:bg-gray-900/50'
+      }
+    },
+    docs: {
+      search: {
+        button: {
+          icon: 'i-ph-magnifying-glass-duotone'
+        }
+      },
+      surround: {
+        icon: {
+          prev: 'i-ph-arrow-left',
+          next: 'i-ph-arrow-right'
+        }
+      }
+    },
+    colorMode: {
+      button: {
+        icon: {
+          dark: 'i-ph-moon-duotone',
+          light: 'i-ph-sun-duotone'
+        }
       }
     }
   }
