@@ -78,7 +78,7 @@ function copyLink () {
           <USocialButton v-for="(link, index) in socialLinks" :key="index" v-bind="link" target="_blank" />
         </div>
 
-        <hr v-if="surround?.length" class="border-gray-200 dark:border-gray-800 my-8">
+        <UDivider v-if="surround?.length" />
 
         <UDocsSurround :surround="surround" />
       </UPageBody>

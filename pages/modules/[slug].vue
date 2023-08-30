@@ -3,10 +3,41 @@ import type { Module } from '~/types'
 const route = useRoute()
 
 const { data: module } = await useFetch<Module>(`https://api.nuxt.com/modules/${route.params.slug}`)
+
 const ownerName = computed(() => {
   const [owner, name] = module.value.repo.split('/')
   return `${owner}/${name}`
 })
+
+const links = computed(() => [{
+  icon: 'i-ph-book-bookmark-duotone',
+  label: 'Documentation',
+  to: module.value.website,
+  target: '_blank'
+}, {
+  icon: 'i-simple-icons-github',
+  label: ownerName.value,
+  to: module.value.github,
+  target: '_blank'
+}, module.value.npm && {
+  icon: 'i-simple-icons-npm',
+  label: module.value.npm,
+  to: `https://npmjs.org/package/${module.value.npm}`,
+  target: '_blank'
+}, module.value.learn_more && {
+  icon: 'i-ph-link',
+  label: 'Learn more',
+  to: module.value.learn_more,
+  target: '_blank'
+}].filter(Boolean))
+
+const contributors = computed(() => module.value.contributors.map((contributor) => ({
+  label: contributor.username,
+  avatar: {
+    src: `https://github.com/${contributor.username}.png`,
+    alt: contributor.username
+  }
+})))
 </script>
 
 <template>
@@ -81,44 +112,16 @@ const ownerName = computed(() => {
       </UPageBody>
 
       <template #right>
-        <p class="text-sm/6 font-semibold flex items-center gap-1.5 mb-3">
-          Links
-        </p>
-
-        <div class="space-y-3">
-          <NuxtLink :to="module.website" target="_blank" class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-            <UIcon name="i-ph-book-bookmark-duotone" class="w-4 h-4 shrink-0" />
-            <span class="text-sm font-medium truncate">Documentation</span>
-          </NuxtLink>
-
-          <NuxtLink :to="module.github" target="_blank" class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-            <UIcon name="i-simple-icons-github" class="w-4 h-4 shrink-0" />
-            <span class="text-sm font-medium truncate">{{ ownerName }}</span>
-          </NuxtLink>
-
-          <NuxtLink v-if="module.npm" :to="`https://npmjs.org/package/${module.npm}`" target="_blank" class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-            <UIcon name="i-simple-icons-npm" class="w-4 h-4 shrink-0" />
-            <span class="text-sm truncate font-medium">{{ module.npm }}</span>
-          </NuxtLink>
-
-          <NuxtLink v-if="module.learn_more" :to="module.learn_more" target="_blank" class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-            <UIcon name="i-ph-link" class="w-4 h-4 shrink-0" />
-            <span class="text-sm truncate font-medium">Learn more</span>
-          </NuxtLink>
-        </div>
+        <UPageLinks title="Links" :links="links" />
 
         <div class="hidden lg:block">
-          <hr class="border-dashed border-gray-200 dark:border-gray-800 my-2 lg:my-6">
-          <p class="flex text-sm/6 font-semibold items-center gap-1.5 mb-3">
-            Contributors <UBadge :label="module.contributors.length.toString()" color="gray" size="xs" :ui="{ rounded: 'rounded-full' }" />
-          </p>
+          <UDivider dashed class="my-6" />
 
-          <div class="space-y-3">
-            <NuxtLink v-for="contributor in module.contributors" :key="contributor.username" :to="`https://github.com/${contributor.username}`" target="_blank" class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-              <UAvatar :src="`https://github.com/${contributor.username}.png`" :alt="contributor.username" size="2xs" />
-              <span class="text-sm font-medium">{{ contributor.username }}</span>
-            </NuxtLink>
-          </div>
+          <UPageLinks :links="contributors">
+            <template #title>
+              Contributors <UBadge :label="module.contributors.length.toString()" color="gray" size="xs" :ui="{ rounded: 'rounded-full' }" />
+            </template>
+          </UPageLinks>
         </div>
       </template>
     </UPage>

@@ -58,11 +58,7 @@ const links = computed(() => [{
       </UPageBody>
 
       <template #right>
-        <div v-if="agency.services?.length">
-          <p class="text-sm/6 font-semibold flex items-center gap-1.5 mb-3">
-            Services
-          </p>
-
+        <UPageLinks v-if="agency.services?.length" title="Services">
           <div class="prose dark:prose-invert -ml-1.5">
             <ul class="space-y-3">
               <li v-for="(service, index) in agency.services" :key="index" class="text-sm text-gray-500 dark:text-gray-400">
@@ -70,21 +66,12 @@ const links = computed(() => [{
               </li>
             </ul>
           </div>
-        </div>
+        </UPageLinks>
 
         <div v-if="agency.resources?.length">
-          <hr class="border-dashed border-gray-200 dark:border-gray-800 my-6">
+          <UDivider dashed class="my-6" />
 
-          <p class="text-sm/6 font-semibold flex items-center gap-1.5 mb-3">
-            Resources
-          </p>
-
-          <div class="space-y-3">
-            <NuxtLink v-for="(resource, index) in agency.resources" :key="index" :to="resource.url" target="_blank" class="block text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
-              {{ resource.name }}
-              <UIcon name="i-ph-arrow-square-out" class="w-4 h-4 flex-shrink-0 align-sub" />
-            </NuxtLink>
-          </div>
+          <UPageLinks title="Resources" :links="agency.resources" />
         </div>
       </template>
     </UPage>

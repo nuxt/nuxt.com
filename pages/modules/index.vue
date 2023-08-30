@@ -9,6 +9,17 @@ const { data: page } = await useAsyncData(route.path, () => {
   return queryContent(route.path).findOne()
 })
 
+const links = [{
+  icon: 'i-ph-book-open-duotone',
+  label: 'Module Author Guide',
+  to: '/docs/guide/going-further/modules'
+}, {
+  icon: 'i-ph-plus-circle-duotone',
+  label: 'List your module',
+  to: 'https://github.com/nuxt/modules#addupdate-a-module',
+  target: '_blank'
+}]
+
 useContentHead(page)
 
 await fetchList()
@@ -32,19 +43,9 @@ defineShortcuts({
           <UNavigationTree :links="[{ label: 'Categories', disabled: true, children: categories }]" />
 
           <template #bottom>
-            <hr class="border-gray-200 dark:border-gray-800 border-dashed my-6">
+            <UDivider dashed class="my-6" />
 
-            <div class="space-y-3">
-              <NuxtLink to="/docs/guide/going-further/modules" class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                <UIcon name="i-ph-book-open-duotone" class="w-5 h-5" />
-                <span class="text-sm font-medium">Module Author Guide</span>
-              </NuxtLink>
-
-              <NuxtLink to="https://github.com/nuxt/modules#addupdate-a-module" target="_blank" class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                <UIcon name="i-ph-plus-circle-duotone" class="w-5 h-5" />
-                <span class="text-sm font-medium">List your module</span>
-              </NuxtLink>
-            </div>
+            <UPageLinks :links="links" />
           </template>
         </UAside>
       </template>
