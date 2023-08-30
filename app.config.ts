@@ -102,7 +102,7 @@ export default defineAppConfig({
           base: 'w-4 h-4'
         },
         externalIcon: {
-          name: 'i-ph-arrow-square-out'
+          name: 'i-ph-arrow-up-right'
         }
       },
       popover: {
@@ -121,7 +121,7 @@ export default defineAppConfig({
     footer: {
       links: {
         externalIcon: {
-          name: 'i-ph-arrow-square-out'
+          name: 'i-ph-arrow-up-right'
         }
       }
     },
@@ -138,7 +138,7 @@ export default defineAppConfig({
     page: {
       links: {
         externalIcon: {
-          name: 'i-ph-arrow-square-out'
+          name: 'i-ph-arrow-up-right'
         }
       },
       card: {
@@ -146,6 +146,14 @@ export default defineAppConfig({
       }
     },
     docs: {
+      toc: {
+        button: {
+          trailingIcon: {
+            name: 'i-ph-caret-down',
+            base: 'w-4 h-4'
+          }
+        }
+      },
       search: {
         button: {
           icon: 'i-ph-magnifying-glass-duotone'
@@ -163,6 +171,19 @@ export default defineAppConfig({
         icon: {
           dark: 'i-ph-moon-duotone',
           light: 'i-ph-sun-duotone'
+        }
+      }
+    },
+    prose: {
+      heading: {
+        icon: 'i-ph-hash-duotone'
+      },
+      collapsible: {
+        button: {
+          icon: {
+            name: 'i-ph-caret-right',
+            base: 'w-3 h-3'
+          }
         }
       }
     }
