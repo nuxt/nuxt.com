@@ -167,13 +167,22 @@ export const fetchGithubSponsors = async (): Promise<Sponsor[]> => {
     }
 
     const sponsors = (_sponsors?.nodes.map(({ sponsorEntity, tier }: any) => {
-      return {
+      const sponsor = {
         sponsorId: sponsorEntity.login,
         sponsorName: sponsorEntity.name,
         sponsorLogo: sponsorEntity.avatarUrl,
         sponsorUrl: toURL(sponsorEntity.websiteUrl) || `https://github.com/${sponsorEntity.login}`,
         monthlyPriceInDollars: tier.monthlyPriceInDollars
       }
+
+      // Hack for nickolasmartin
+      if (sponsor.sponsorId === 'nickolasmartin') {
+        sponsor.sponsorName = 'Direqt'
+        sponsor.sponsorLogo = 'https://avatars.githubusercontent.com/u/32824382?v=4'
+        sponsor.sponsorUrl = 'https://www.direqt.ai'
+      }
+
+      return sponsor
     }) || [])
     response.push(...sponsors)
   } while (hasNext)
