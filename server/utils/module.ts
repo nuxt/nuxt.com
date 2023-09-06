@@ -68,7 +68,7 @@ export const fetchModuleContributors = cachedFunction(async (module: any) => {
   getKey: (module: any) => module.name
 })
 
-export const fetchModuleReadme = cachedFunction(async (module: any) => {
+export const fetchModuleReadme = cachedFunction(async (module: any, _shouldBypassCache: boolean = false) => {
   logger.info(`Fetching module ${module.name} readme ...`)
   const readme = await $fetch(`https://unpkg.com/${module.npm}/README.md`).catch(() => {
     logger.warn(`Could not fetch ${module.npm}/README.md`)
@@ -80,5 +80,8 @@ export const fetchModuleReadme = cachedFunction(async (module: any) => {
   name: 'module-readme',
   // maxAge: 12 * 60 * 60, // 12 hour
   maxAge: 5, // 12 hour
-  getKey: (module: any) => module.name
+  getKey: (module: any) => module.name,
+  shouldBypassCache(_module, shouldBypassCache = false) {
+    return shouldBypassCache
+  },
 })
