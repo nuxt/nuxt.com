@@ -1,5 +1,6 @@
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('error', async (error, ctx) => {
+    if (error.statusCode === 401) return
     // Prepare
     const date = new Date()
     const tags = ['error', ...(ctx.tags as string[] || []).sort()]
