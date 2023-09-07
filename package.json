@@ -21,7 +21,6 @@
     "@nuxt/devtools": "^0.8.2",
     "@nuxthq/elements": "npm:@nuxthq/elements-edge@latest",
     "@nuxthq/studio": "^0.13.4",
-    "@nuxt/ui": "npm:@nuxt/ui-edge@latest",
     "@nuxtjs/fontaine": "^0.4.1",
     "@nuxtjs/google-fonts": "^3.0.2",
     "@nuxtjs/html-validator": "^1.5.2",

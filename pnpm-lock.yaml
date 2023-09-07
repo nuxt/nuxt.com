@@ -29,12 +29,9 @@ dependencies:
   '@nuxt/devtools':
     specifier: ^0.8.2
     version: 0.8.2(nuxt@3.7.1)(vite@4.4.9)
-  '@nuxt/ui':
-    specifier: npm:@nuxt/ui-edge@latest
-    version: /@nuxt/ui-edge@2.7.0-28234844.334dee7(vue@3.3.4)(webpack@5.88.2)
   '@nuxthq/elements':
     specifier: npm:@nuxthq/elements-edge@latest
-    version: /@nuxthq/elements-edge@0.0.1-28234841.b091775(@nuxt/content@2.8.2)(@nuxt/ui-edge@2.7.0-28234844.334dee7)(vue@3.3.4)
+    version: /@nuxthq/elements-edge@0.0.1-28235056.51848fa(vue@3.3.4)(webpack@5.88.2)
   '@nuxthq/studio':
     specifier: ^0.13.4
     version: 0.13.4
@@ -1761,8 +1758,12 @@ packages:
       - supports-color
     dev: false
 
-  /@nuxt/ui-edge@2.7.0-28234844.334dee7(vue@3.3.4)(webpack@5.88.2):
-    resolution: {integrity: sha512-7xekf9d7FYazLbJMgtH+S7PNQdfEdd3FJ5FrxEb1CyGDxCz5GChEMcXDu7F+e5Lv55KiInKKCuvim/nMPRO3qg==}
+  /@nuxt/ui-templates@1.3.1:
+    resolution: {integrity: sha512-5gc02Pu1HycOVUWJ8aYsWeeXcSTPe8iX8+KIrhyEtEoOSkY0eMBuo0ssljB8wALuEmepv31DlYe5gpiRwkjESA==}
+    dev: false
+
+  /@nuxt/ui@2.8.0(vue@3.3.4)(webpack@5.88.2):
+    resolution: {integrity: sha512-8vJM2gKikIq9qKuYZFozEBtD0c/loq+G+IMcBTeO+khQ+ipdVxARFfNUDeTmknEQ+aT7RnZshpqNv+W/jTiJBg==}
     engines: {node: '>=v16.20.2'}
     dependencies:
       '@egoist/tailwindcss-icons': 1.1.0(tailwindcss@3.3.3)
@@ -1802,10 +1803,6 @@ packages:
       - universal-cookie
       - vue
       - webpack
-    dev: false
-
-  /@nuxt/ui-templates@1.3.1:
-    resolution: {integrity: sha512-5gc02Pu1HycOVUWJ8aYsWeeXcSTPe8iX8+KIrhyEtEoOSkY0eMBuo0ssljB8wALuEmepv31DlYe5gpiRwkjESA==}
     dev: false
 
   /@nuxt/vite-builder@3.7.1(eslint@8.48.0)(typescript@5.2.2)(vue@3.3.4):
@@ -1870,14 +1867,10 @@ packages:
       - vue-tsc
     dev: false
 
-  /@nuxthq/elements-edge@0.0.1-28234841.b091775(@nuxt/content@2.8.2)(@nuxt/ui-edge@2.7.0-28234844.334dee7)(vue@3.3.4):
-    resolution: {integrity: sha512-ZlFFK/4m2qRIkZuQZVMNSgi1DM9FTqugvORSMFtfdxbNiPFRM/CQziG02s+lVPGUvoeio90GmUsIMMQKuPyUzA==}
-    peerDependencies:
-      '@nuxt/content': latest
-      '@nuxt/ui': npm:@nuxt/ui-edge@latest
+  /@nuxthq/elements-edge@0.0.1-28235056.51848fa(vue@3.3.4)(webpack@5.88.2):
+    resolution: {integrity: sha512-pY7q6TcVlJOPO3aK+K94KbDEVobiV/1SJYuNJSHXdFotX0gfvz3biGQFT393je2VfX+zTzfgTiIffaLovhWkUA==}
     dependencies:
-      '@nuxt/content': 2.8.2(vue@3.3.4)
-      '@nuxt/ui': /@nuxt/ui-edge@2.7.0-28234844.334dee7(vue@3.3.4)(webpack@5.88.2)
+      '@nuxt/ui': 2.8.0(vue@3.3.4)(webpack@5.88.2)
       '@vueuse/core': 10.4.1(vue@3.3.4)
       lodash-es: 4.17.21
       ofetch: 1.3.3
@@ -1885,7 +1878,22 @@ packages:
       tailwind-merge: 1.14.0
     transitivePeerDependencies:
       - '@vue/composition-api'
+      - async-validator
+      - axios
+      - change-case
+      - drauu
+      - focus-trap
+      - idb-keyval
+      - jwt-decode
+      - nprogress
+      - qrcode
+      - rollup
+      - sortablejs
+      - supports-color
+      - ts-node
+      - universal-cookie
       - vue
+      - webpack
     dev: false
 
   /@nuxthq/studio@0.13.4:
