@@ -1,7 +1,7 @@
 {
   "name": "nuxt.com",
   "version": "0.3.11",
-  "packageManager": "pnpm@8.6.3",
+  "packageManager": "pnpm@8.7.4",
   "scripts": {
     "dev": "nuxi dev",
     "build": "nuxi build",
@@ -21,7 +21,7 @@
     "@nuxt/devtools": "^0.8.2",
     "@nuxthq/elements": "npm:@nuxthq/elements-edge@latest",
     "@nuxthq/studio": "^0.13.4",
-    "@nuxthq/ui": "npm:@nuxthq/ui-edge@latest",
+    "@nuxt/ui": "npm:@nuxt/ui-edge@latest",
     "@nuxtjs/fontaine": "^0.4.1",
     "@nuxtjs/google-fonts": "^3.0.2",
     "@nuxtjs/html-validator": "^1.5.2",

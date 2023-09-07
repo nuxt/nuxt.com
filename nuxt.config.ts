@@ -78,7 +78,7 @@ export default defineNuxtConfig({
     '@nuxtjs/fontaine',
     '@nuxtjs/google-fonts',
     // '@nuxthq/studio',
-    '@nuxthq/ui',
+    '@nuxt/ui',
     // '@nuxt/devtools',
     '@vueuse/nuxt',
     'nuxt-lodash',
