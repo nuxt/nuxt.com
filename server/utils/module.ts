@@ -1,3 +1,4 @@
+// @ts-ignore
 import { parseMarkdown } from '@nuxtjs/mdc/runtime'
 
 export function isBot (username: string) {
