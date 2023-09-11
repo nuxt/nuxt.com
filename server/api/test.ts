@@ -1,5 +1,5 @@
 export default eventHandler(async (event) => {
-  const module = await fetchModuleReadme({ name: 'icon', npm: 'nuxt-icon' }, true)
+  const module = await fetchModuleReadme({ name: 'ui', npm: '@nuxt/ui' }, true)
 
   return module
 })
