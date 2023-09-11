@@ -18,7 +18,7 @@ export default defineCachedEventHandler(async (event) => {
   const [stats, contributors, readme] = await Promise.all([
     fetchModuleStats(module),
     fetchModuleContributors(module),
-    fetchModuleReadme(module)
+    fetchModuleReadme(module, true)
   ])
   module.generatedAt = new Date().toISOString()
   module.stats = stats
