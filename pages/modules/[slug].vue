@@ -5,7 +5,7 @@ const route = useRoute()
 const { data: module } = await useFetch<Module>(`https://api.nuxt.com/modules/${route.params.slug}`)
 
 const ownerName = computed(() => {
-  const [owner, name] = module.value.repo.split('/')
+  const [owner, name] = module.value.repo.split('#')[0].split('/')
   return `${owner}/${name}`
 })
 
@@ -108,7 +108,7 @@ const contributors = computed(() => module.value.contributors.map((contributor) 
 
     <UPage :ui="{ right: 'my-8' }">
       <UPageBody prose>
-        <ContentRenderer v-if="module.readme?.body" :value="module.readme" />
+        <ContentRenderer v-if="module.readme?.body" :value="module.readme" class="module-readme" />
       </UPageBody>
 
       <template #right>
@@ -127,3 +127,26 @@ const contributors = computed(() => module.value.contributors.map((contributor) 
     </UPage>
   </UContainer>
 </template>
+
+<style lang="postcss">
+.module-readme {
+  /* empty code lines */
+  .shiki code .line:empty {
+    @apply hidden;
+  }
+  /* force rounded on prose code */
+  .prose-code {
+    @apply rounded-md;
+  }
+  /* Fix badges */
+  h2 + p,
+  p:has(+ h2) {
+    a img {
+      @apply inline-block m-0 mr-2;
+    }
+    a:hover {
+      @apply border-none opacity-90;
+    }
+  }
+}
+</style>

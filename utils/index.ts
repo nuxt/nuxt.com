@@ -1,12 +1,4 @@
-export const formatNumber = function (num: number, fractionDigits = 0) {
-  if (num > 999 && num < 1000000) {
-    return (num / 1000).toFixed(fractionDigits) + 'k' // convert to K for number from > 1000 < 1 million
-  } else if (num > 1000000) {
-    return (num / 1000000).toFixed(fractionDigits) + 'm' // convert to M for number from > 1 million
-  } else {
-    return String(num)
-  }
-}
+export const { format: formatNumber } = Intl.NumberFormat('en-GB', { notation: 'compact' })
 
 // Case-insensitive RegExp, escaping special characters
 // https://stackoverflow.com/a/38151393/3926832
