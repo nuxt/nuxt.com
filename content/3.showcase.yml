@@ -2,11 +2,6 @@ title: Showcase
 description: Discover our selection of websites built with Nuxt. This collection is powered by VueTelescope.
 navigation.icon: i-ph-projector-screen
 head.image: '/socials/showcase.jpg'
-image:
-  path: '/assets/showcase/hero'
-  format: 'webp'
-  height: 216
-  width: 400
 links:
   - label: 'Chrome'
     size: 'md'

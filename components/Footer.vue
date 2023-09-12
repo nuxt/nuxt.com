@@ -6,9 +6,13 @@
       top: { wrapper: 'border-t border-gray-200 dark:border-gray-800', container: 'py-8 lg:py-12' }
     }"
   >
-    <!-- <template #top>
-      <FooterColumns />
-    </template> -->
+    <template #top>
+      <UFooterColumns :links="columns">
+        <template #right>
+          <NewsletterForm />
+        </template>
+      </UFooterColumns>
+    </template>
 
     <template #left>
       <p class="text-gray-500 dark:text-gray-400 text-sm">
@@ -28,6 +32,7 @@
 import type { Link } from '@elements/types'
 
 defineProps<{
-  links?: Link[]
+  links?: Link[],
+  columns?: Link[]
 }>()
 </script>

@@ -174,10 +174,12 @@ export default defineNuxtConfig({
   nitro: {
     output: {
       dir: '{{ workspaceDir }}/.vercel/output'
+    },
+    prerender: {
+      routes: [
+        '/api/search.json'
+      ]
     }
-    // prerender: {
-    //   crawlLinks: true
-    // }
   },
 
   plugins: ['~/plugins/adblock.ts', '~/plugins/newsletter.client.ts'],

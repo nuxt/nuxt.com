@@ -55,7 +55,7 @@ const ecosystemLinks = [{
   to: '/enterprise/jobs'
 }, {
   icon: 'i-ph-graduation-cap-duotone',
-  label: 'Mastering Nuxt 3',
+  label: 'Video Courses',
   to: 'https://masteringnuxt.com/nuxt3?ref=nuxt',
   target: '_blank'
 }]
@@ -89,11 +89,11 @@ useContentHead(page)
           <div class="hidden lg:block space-y-6 !mt-6">
             <UDivider v-if="page.body?.toc?.links?.length" dashed />
 
-            <UPageLinks title="Ecosystem" :links="communityLinks" />
+            <UPageLinks title="Community" :links="communityLinks" />
 
             <UDivider dashed />
 
-            <UPageLinks title="Community" :links="ecosystemLinks" />
+            <UPageLinks title="Ecosystem" :links="ecosystemLinks" />
 
             <UDivider dashed />
 

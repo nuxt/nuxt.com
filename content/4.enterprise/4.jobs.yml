@@ -3,11 +3,6 @@ description: Browse available openings for coding with Vue and Nuxt all over the
 head.title: Jobs
 navigation.title: Jobs
 head.image: '/socials/jobs.jpg'
-image:
-  path: '/assets/enterprise/jobs/hero'
-  format: 'webp'
-  height: '216'
-  width: '400'
 links:
   - label: 'Post a job'
     to: 'https://vuejobs.com/jobs/create'

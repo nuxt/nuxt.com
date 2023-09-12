@@ -42,9 +42,7 @@ function onSubmit () {
         autocomplete="off"
       >
         <template #trailing>
-          <UButton type="submit" size="xs" color="black">
-            Subscribe
-          </UButton>
+          <UButton type="submit" size="xs" color="black" :label="loading ? 'Subscribing' : 'Subscribe'" :loading="loading" />
         </template>
       </UInput>
     </UFormGroup>

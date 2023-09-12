@@ -3,11 +3,6 @@ description: Are you looking for a trusted partner with a strong expertise in Nu
 head.title: Nuxt Partner Agencies
 head.description: Consult our agency partner catalog and find an agency near you with the right set of skills.
 head.image: '/socials/agencies.jpg'
-image:
-  path: '/assets/enterprise/agencies/hero'
-  format: 'svg'
-  height: '216'
-  width: '400'
 links:
   - label: 'Submit my agency'
     to: 'https://docs.google.com/forms/d/e/1FAIpQLSf85qskit5QqmGJcruGkGF0U7240Bh9MeN0pHB18UiOMWC8dA/viewform'

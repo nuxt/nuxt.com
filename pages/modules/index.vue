@@ -33,9 +33,7 @@ defineShortcuts({
 
 <template>
   <UContainer>
-    <UPageHero v-bind="page">
-      <UColorModeImage :light="`${page.image.path}-light.${page.image.format}`" :dark="`${page.image.path}-dark.${page.image.format}`" class="object-contain h-3/4 lg:ml-auto opacity-0 md:opacity-100" :width="page.image.width" :height="page.image.height" />
-    </UPageHero>
+    <UPageHero v-bind="page" />
 
     <UPage id="smooth" class="pt-20 -mt-20">
       <template #left>
@@ -109,9 +107,9 @@ defineShortcuts({
             <template #title>
               {{ module.name }}
 
-              <UTooltip v-if="module.type === 'official'" text="Official module">
-                <UIcon name="i-ph-medal-duotone" class="h-4 w-4 text-primary" />
-              </UTooltip>
+              <!-- <UTooltip v-if="module.type === 'official'" text="Official module"> -->
+              <UIcon v-if="module.type === 'official'" name="i-ph-medal-duotone" class="h-4 w-4 text-primary" />
+              <!-- </UTooltip> -->
             </template>
 
             <template #description>

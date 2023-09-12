@@ -1,75 +1,119 @@
 <script setup lang="ts">
 const colorMode = useColorMode()
-const router = useRouter()
-const { navBottomLink } = useContentHelpers()
 
 const { data: navigation } = await useLazyAsyncData('navigation', () => fetchContentNavigation(), { default: () => [] })
-const { data: files } = await useLazyAsyncData('files', () => queryContent('/docs').where({ _type: 'markdown', navigation: { $ne: false } }).find(), { default: () => [] })
+const { data: files } = useLazyFetch('/api/search.json', { default: () => [], server: false })
 
 const headerLinks = [{
   label: 'Docs',
-  icon: 'i-ph-book-open',
-  to: '/docs',
-  // TODO: Remove with Nuxt 3.7
-  click: (e) => {
-    e?.preventDefault()
-
-    router.push(navBottomLink(navigation.value[0]))
-  }
+  icon: 'i-ph-book-open-duotone',
+  to: '/docs'
 }, {
   label: 'Modules',
-  icon: 'i-ph-puzzle-piece',
+  icon: 'i-ph-puzzle-piece-duotone',
   to: '/modules'
 }, {
   label: 'Templates',
-  icon: 'i-ph-puzzle-piece',
+  icon: 'i-ph-app-window-duotone',
   to: 'https://nuxt.new',
   target: '_blank'
 }, {
   label: 'Showcase',
-  icon: 'i-ph-projector-screen',
+  icon: 'i-ph-projector-screen-duotone',
   to: '/showcase'
 }, {
   label: 'Enterprise',
-  icon: 'i-ph-app-window',
-  to: '/enterprise',
-  // TODO: Remove with Nuxt 3.7
-  click: (e) => {
-    e?.preventDefault()
-
-    router.push('/enterprise/support')
-  },
+  icon: 'i-ph-buildings-duotone',
   children: [{
     label: 'Support',
     to: '/enterprise/support',
-    description: 'Get help with Nuxt.js directly from the team that creates it.'
+    description: 'Get help with Nuxt.js directly from the team that creates it.',
+    icon: 'i-ph-lifebuoy-duotone'
   }, {
     label: 'Agencies',
     to: '/enterprise/agencies',
-    description: 'Find an agency that specializes in Nuxt.js development.'
+    description: 'Find an agency that specializes in Nuxt.js development.',
+    icon: 'i-ph-handshake-duotone'
   }, {
     label: 'Sponsors',
     to: '/enterprise/sponsors',
-    description: 'Become a sponsor and get your logo on our README on GitHub with a link to your site.'
+    description: 'Become a sponsor and get your logo on our README on GitHub with a link to your site.',
+    icon: 'i-ph-hand-heart-duotone'
   }, {
     label: 'Jobs',
     to: '/enterprise/jobs',
-    description: 'Find a job or post a job opportunity for Nuxt.js experts.'
+    description: 'Find a job or post a job opportunity for Nuxt.js experts.',
+    icon: 'i-ph-briefcase-duotone'
   }]
 }, {
   label: 'Blog',
-  icon: 'i-ph-newspaper',
+  icon: 'i-ph-newspaper-duotone',
   to: '/blog'
 }]
 
-const footerLinks = [{
-  label: 'NuxtLabs',
-  to: 'https://nuxtlabs.com/',
-  target: '_blank'
+const extraLinks = [{
+  label: 'Design Kit',
+  icon: 'i-ph-palette-duotone',
+  to: '/design-kit'
 }, {
-  label: 'Nuxt Studio',
-  to: 'https://nuxt.studio/',
-  target: '_blank'
+  label: 'Newsletter',
+  icon: 'i-ph-envelope-simple-duotone',
+  to: '/newsletter'
+}]
+
+const footerColumns = [{
+  label: 'Community',
+  children: [{
+    label: 'Nuxters',
+    to: 'https://nuxters.nuxt.com',
+    target: '_blank'
+  }, {
+    label: 'Video Courses',
+    to: 'https://masteringnuxt.com/nuxt3?ref=nuxt',
+    target: '_blank'
+  }, {
+    label: 'Chat on Discord',
+    to: 'https://discord.com/invite/ps2h6QT',
+    target: '_blank'
+  }, {
+    label: 'Nuxt on GitHub',
+    to: 'https://github.com/nuxt',
+    target: '_blank'
+  }]
+}, {
+  label: 'Enterprise',
+  children: [{
+    label: 'Support',
+    to: '/enterprise/support'
+  }, {
+    label: 'Agencies',
+    to: '/enterprise/agencies'
+  }, {
+    label: 'Jobs',
+    to: '/enterprise/jobs'
+  }, {
+    label: 'Sponsors',
+    to: '/enterprise/sponsors'
+  }]
+}, {
+  label: 'Solutions',
+  children: [{
+    label: 'Nuxt Content',
+    to: 'https://content.nuxt.com/',
+    target: '_blank'
+  }, {
+    label: 'Nuxt Devtools',
+    to: 'https://devtools.nuxt.com/',
+    target: '_blank'
+  }, {
+    label: 'Nuxt Image',
+    to: 'https://image.nuxt.com/',
+    target: '_blank'
+  }, {
+    label: 'Nuxt UI',
+    to: 'https://ui.nuxt.com/',
+    target: '_blank'
+  }]
 }]
 
 const groups = [{
@@ -160,10 +204,10 @@ provide('navigation', navigation)
       <NuxtPage />
     </UMain>
 
-    <Footer v-if="!$route.path.startsWith('/docs')" :links="footerLinks" />
+    <Footer :columns="footerColumns" />
 
     <ClientOnly>
-      <UDocsSearch :files="files" :navigation="navigation" :groups="groups" :links="headerLinks" />
+      <UDocsSearch :files="files" :navigation="navigation" :groups="groups" :links="[...headerLinks, ...extraLinks]" />
 
       <UNotifications />
     </ClientOnly>
