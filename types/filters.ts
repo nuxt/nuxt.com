@@ -1,13 +1,5 @@
-export interface Filter {
+import type { Link } from '@elements/types'
+
+export interface Filter extends Link {
   key: string | number
-  label: string
-  disabled?: boolean
-  icon?: string
-  to?: {
-    name: string
-    query: Record<string|number, unknown>
-    state: {
-      smooth: string
-    }
-  }
 }

@@ -2,6 +2,7 @@ import type { Schema } from 'untyped'
 import { upperFirst } from 'scule'
 
 export default defineNitroPlugin((nitroApp) => {
+  // @ts-ignore
   nitroApp.hooks.hook('content:file:beforeParse', async (file) => {
     // Disable docs readme
     if (file._id === 'nuxt-docs:docs:README.md') {
@@ -45,6 +46,7 @@ export default defineNitroPlugin((nitroApp) => {
     }
   })
 
+  // @ts-ignore
   nitroApp.hooks.hook('content:file:afterParse', async (file) => {
     if (file.navigation?.icon?.startsWith('ph:')) {
       file.navigation.icon = file.navigation.icon.replace('ph:', 'i-ph-')

@@ -61,60 +61,6 @@ const extraLinks = [{
   to: '/newsletter'
 }]
 
-const footerColumns = [{
-  label: 'Community',
-  children: [{
-    label: 'Nuxters',
-    to: 'https://nuxters.nuxt.com',
-    target: '_blank'
-  }, {
-    label: 'Video Courses',
-    to: 'https://masteringnuxt.com/nuxt3?ref=nuxt',
-    target: '_blank'
-  }, {
-    label: 'Nuxt on GitHub',
-    to: 'https://github.com/nuxt',
-    target: '_blank'
-  }, {
-    label: 'Design Kit',
-    to: '/design-kit'
-  }]
-}, {
-  label: 'Enterprise',
-  children: [{
-    label: 'Support',
-    to: '/enterprise/support'
-  }, {
-    label: 'Agencies',
-    to: '/enterprise/agencies'
-  }, {
-    label: 'Jobs',
-    to: '/enterprise/jobs'
-  }, {
-    label: 'Sponsors',
-    to: '/enterprise/sponsors'
-  }]
-}, {
-  label: 'Solutions',
-  children: [{
-    label: 'Nuxt Content',
-    to: 'https://content.nuxt.com/',
-    target: '_blank'
-  }, {
-    label: 'Nuxt Devtools',
-    to: 'https://devtools.nuxt.com/',
-    target: '_blank'
-  }, {
-    label: 'Nuxt Image',
-    to: 'https://image.nuxt.com/',
-    target: '_blank'
-  }, {
-    label: 'Nuxt UI',
-    to: 'https://ui.nuxt.com/',
-    target: '_blank'
-  }]
-}]
-
 const groups = [{
   key: 'modules-search',
   label: 'Modules',
@@ -203,7 +149,7 @@ provide('navigation', navigation)
       <NuxtPage />
     </UMain>
 
-    <Footer :columns="footerColumns" />
+    <Footer />
 
     <ClientOnly>
       <UDocsSearch :files="files" :navigation="navigation" :groups="groups" :links="[...headerLinks, ...extraLinks]" />

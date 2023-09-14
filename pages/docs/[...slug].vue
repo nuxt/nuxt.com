@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { NavItem } from '@nuxt/content/dist/runtime/types'
+import type { ParsedContent, NavItem } from '@nuxt/content/dist/runtime/types'
 
 const navigation = inject<Ref<NavItem[]>>('navigation')
 
@@ -80,7 +80,7 @@ useContentHead(page)
 
       <UDivider v-if="surround?.length" />
 
-      <UDocsSurround :surround="surround" />
+      <UDocsSurround :surround="(surround as ParsedContent[])" />
     </UPageBody>
 
     <template #right>
