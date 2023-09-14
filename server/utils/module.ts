@@ -33,12 +33,26 @@ export const fetchModuleStats = cachedFunction(async (module: any) => {
         console.error(`Cannot fetch npm downloads stats for ${module.npm}: ${err}`)
         return { downloads: 0 }
       }),
-    $fetch<any>(`https://ungh.cc/repos/${owner}/${name}`)
-      .catch((err) => {
-        // eslint-disable-next-line no-console
-        console.error(`Cannot fetch github repo info for ${owner}/${name}: ${err}`)
-        return { repo: { stars: 0 } }
-      }).then(r => r.repo)
+    $fetch(`https://api.github.com/repos/${owner}/${name}`, {
+      headers: {
+        Accept: 'application/vnd.github.v3+json',
+        'User-Agent': 'nuxt-api',
+        Authorization: `token ${process.env.NUXT_GITHUB_TOKEN}`,
+      }
+    })
+      .then((res: any) => {
+        return { stars: res.stargazers_count }
+      })
+      .catch(err => {
+        console.error(`Cannot fetch github repo API info for ${owner}/${name}: ${err}`)
+        // Cannot call Github API, fallback to UnGH
+        return $fetch<any>(`https://ungh.cc/repos/${owner}/${name}`)
+          .catch((err) => {
+            // eslint-disable-next-line no-console
+            console.error(`Cannot fetch UnGH repo info for ${owner}/${name}: ${err}`)
+            return { repo: { stars: 0 } }
+          }).then(r => ({ stars: r.repo.stars }))
+      })
   ])
   return {
     downloads: npmStats.downloads,
