@@ -21,7 +21,7 @@
     </template>
 
     <template #right>
-      <USocialButton to="https://twitter.com/nuxt_js" icon="i-simple-icons-twitter" />
+      <USocialButton to="https://x.com/nuxt_js" icon="i-simple-icons-x" />
       <USocialButton to="https://discord.com/invite/ps2h6QT" icon="i-simple-icons-discord" />
       <USocialButton to="https://github.com/nuxt/nuxt" icon="i-simple-icons-github" />
     </template>
