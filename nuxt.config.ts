@@ -82,7 +82,6 @@ export default defineNuxtConfig({
     '@nuxt/ui',
     // '@nuxt/devtools',
     '@vueuse/nuxt',
-    'nuxt-lodash',
     () => {
       if (process.env.NUXT_DOCS_PATH) { logger.success(`Using local Nuxt docs from ${process.env.NUXT_DOCS_PATH}`) }
       if (process.env.NUXT_EXAMPLES_PATH) { logger.success(`Using local Nuxt examples from ${process.env.NUXT_EXAMPLES_PATH}`) }
