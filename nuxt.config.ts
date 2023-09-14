@@ -88,25 +88,25 @@ export default defineNuxtConfig({
     }
   ],
 
-  htmlValidator: {
-    logLevel: 'error',
-    options: {
-      extends: [
-        'html-validate:document',
-        'html-validate:recommended',
-        'html-validate:standard'
-      ],
-      rules: {
-        'wcag/h30': 'warn',
-        'wcag/h32': 'warn',
-        'wcag/h36': 'warn',
-        'wcag/h37': 'warn',
-        'wcag/h63': 'warn',
-        'wcag/h67': 'warn',
-        'wcag/h71': 'warn'
-      }
-    }
-  },
+  // htmlValidator: {
+  //   logLevel: 'error',
+  //   options: {
+  //     extends: [
+  //       'html-validate:document',
+  //       'html-validate:recommended',
+  //       'html-validate:standard'
+  //     ],
+  //     rules: {
+  //       'wcag/h30': 'warn',
+  //       'wcag/h32': 'warn',
+  //       'wcag/h36': 'warn',
+  //       'wcag/h37': 'warn',
+  //       'wcag/h63': 'warn',
+  //       'wcag/h67': 'warn',
+  //       'wcag/h71': 'warn'
+  //     }
+  //   }
+  // },
 
   runtimeConfig: {
     githubAPI: {
