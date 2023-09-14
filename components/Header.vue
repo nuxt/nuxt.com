@@ -14,7 +14,7 @@ const { mapContentNavigation } = useElementsHelpers()
 <template>
   <UHeader :links="links">
     <template #logo>
-      <Logo class="block w-auto h-6" />
+      <Logo class="block w-auto h-6" @click.right.prevent="$router.push('/design-kit')" />
     </template>
 
     <template #right>

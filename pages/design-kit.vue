@@ -11,7 +11,9 @@ useContentHead(page)
     <UPageHero v-bind="page" />
 
     <UPage>
-      <UPageBody />
+      <UPageBody prose class="prose-lg">
+        <ContentRenderer v-if="page && page.body" :value="page" />
+      </UPageBody>
     </UPage>
   </UContainer>
 </template>

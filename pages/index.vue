@@ -16,11 +16,13 @@ useSeoMeta({
       <template #title>
         The Complete Solution<br>for <span class="text-primary">Vue Developers</span>
       </template>
+
       <template #description>
         Nuxt is an <NuxtLink to="https://github.com/nuxt/nuxt" target="_blank">
           open source framework
         </NuxtLink> that makes web development intuitive and powerful.<br>Create performant and production-grade full-stack web apps and websites with confidence.
       </template>
+
       <template #links>
         <UButton to="/docs" icon="i-ph-rocket-launch-duotone" size="xl">
           Get Started
@@ -67,10 +69,12 @@ useSeoMeta({
     <!-- eslint-disable-next-line vue/no-deprecated-slot-attribute -->
     <ULandingSection v-for="(section, index) of page.sections" :key="index" :slot="section.slot" :class="section.class" :align="section.align">
       <template #title>
+        <!-- eslint-disable-next-line vue/no-v-html -->
         <span v-html="section?.title" />
       </template>
 
       <template v-if="section.description" #description>
+        <!-- eslint-disable-next-line vue/no-v-html -->
         <span v-html="section.description" />
       </template>
 

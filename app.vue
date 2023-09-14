@@ -72,13 +72,12 @@ const footerColumns = [{
     to: 'https://masteringnuxt.com/nuxt3?ref=nuxt',
     target: '_blank'
   }, {
-    label: 'Chat on Discord',
-    to: 'https://discord.com/invite/ps2h6QT',
-    target: '_blank'
-  }, {
     label: 'Nuxt on GitHub',
     to: 'https://github.com/nuxt',
     target: '_blank'
+  }, {
+    label: 'Design Kit',
+    to: '/design-kit'
   }]
 }, {
   label: 'Enterprise',

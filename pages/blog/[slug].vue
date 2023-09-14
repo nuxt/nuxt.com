@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ParsedContent } from '@nuxt/content/dist/runtime/types'
 import type { BlogArticle } from '~/types'
 
 const route = useRoute()
@@ -80,7 +81,7 @@ function copyLink () {
 
         <UDivider v-if="surround?.length" />
 
-        <UDocsSurround :surround="surround" />
+        <UDocsSurround :surround="(surround as ParsedContent[])" />
       </UPageBody>
     </UPage>
   </UContainer>
