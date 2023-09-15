@@ -20,9 +20,9 @@
     </template>
 
     <template #right>
-      <USocialButton to="https://x.com/nuxt_js" icon="i-simple-icons-x" />
-      <USocialButton to="https://discord.com/invite/ps2h6QT" icon="i-simple-icons-discord" />
-      <USocialButton to="https://github.com/nuxt/nuxt" icon="i-simple-icons-github" />
+      <UButton to="https://x.com/nuxt_js" target="_blank" icon="i-simple-icons-x" v-bind="$elements.button.secondary" />
+      <UButton to="https://discord.com/invite/ps2h6QT" target="_blank" icon="i-simple-icons-discord" v-bind="$elements.button.secondary" />
+      <UButton to="https://github.com/nuxt/nuxt" target="_blank" icon="i-simple-icons-github" v-bind="$elements.button.secondary" />
     </template>
   </UFooter>
 </template>

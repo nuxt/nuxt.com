@@ -25,8 +25,7 @@ const { mapContentNavigation } = useElementsHelpers()
         to="https://github.com/nuxt/nuxt"
         target="_blank"
         label="46.6k"
-        color="gray"
-        variant="ghost"
+        v-bind="$elements.button.secondary"
       />
     </template>
 

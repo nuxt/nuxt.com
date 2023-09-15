@@ -76,8 +76,8 @@ function copyLink () {
         <ContentRenderer v-if="article && article.body" :value="article" />
 
         <div class="flex justify-end items-center gap-1.5 mt-12 not-prose">
-          <USocialButton icon="i-ph-link-simple" @click="copyLink" />
-          <USocialButton v-for="(link, index) in socialLinks" :key="index" v-bind="link" target="_blank" />
+          <UButton icon="i-ph-link-simple" v-bind="$elements.button.secondary" @click="copyLink" />
+          <UButton v-for="(link, index) in socialLinks" :key="index" v-bind="{ ...$elements.button.secondary, ...link }" target="_blank" />
         </div>
 
         <UDivider v-if="surround?.length" />
