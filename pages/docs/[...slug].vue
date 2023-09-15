@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { withoutTrailingSlash } from 'ufo'
 import type { ParsedContent, NavItem } from '@nuxt/content/dist/runtime/types'
 
 const navigation = inject<Ref<NavItem[]>>('navigation')
@@ -14,7 +15,7 @@ if (!page.value) {
 const { data: surround } = await useAsyncData(`${route.path}-surround`, () => queryContent('/docs')
   .where({ _extension: 'md', navigation: { $ne: false } })
   .without(['body', 'excerpt'])
-  .findSurround(route.path.endsWith('/') ? route.path.slice(0, -1) : route.path)
+  .findSurround(withoutTrailingSlash(route.path))
 )
 
 const breadcrumb = computed(() => mapContentNavigation(findPageBreadcrumb(navigation.value, page.value)))

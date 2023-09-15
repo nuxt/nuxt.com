@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { withoutTrailingSlash } from 'ufo'
 import type { ParsedContent } from '@nuxt/content/dist/runtime/types'
 import type { BlogArticle } from '~/types'
 
@@ -14,7 +15,7 @@ const { data: surround } = await useAsyncData(`${route.path}-surround`, () => qu
   .where({ _extension: 'md' })
   .without(['body', 'excerpt'])
   .sort({ date: -1 })
-  .findSurround(route.path.endsWith('/') ? route.path.slice(0, -1) : route.path)
+  .findSurround(withoutTrailingSlash(route.path))
 )
 
 const socialLinks = computed(() => [{
