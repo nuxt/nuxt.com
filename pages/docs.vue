@@ -3,7 +3,6 @@ import type { NavItem } from '@nuxt/content/dist/runtime/types'
 
 const navigation = inject<Ref<NavItem[]>>('navigation')
 
-const { mapContentNavigation } = useElementsHelpers()
 const { navPageFromPath } = useContentHelpers()
 
 const links = computed(() => mapContentNavigation(navPageFromPath('/docs', navigation.value)?.children))

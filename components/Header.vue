@@ -7,8 +7,6 @@ const navigation = inject<Ref<NavItem[]>>('navigation')
 defineProps<{
   links?: Link[]
 }>()
-
-const { mapContentNavigation } = useElementsHelpers()
 </script>
 
 <template>

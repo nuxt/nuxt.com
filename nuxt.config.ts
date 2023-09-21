@@ -51,17 +51,11 @@ export default defineNuxtConfig({
       '/enterprise/support': { prerender: true },
       '/enterprise/agencies': { prerender: true },
       '/api/_content/**': { prerender: true },
-      '/api/newsletter/**': { cache: false, swr: false },
       '/docs/**': { prerender: true },
       // more frequently updated pages
       '/modules/**': { swr: 60 },
-      '/partners/**': { swr: 60 },
       '/showcase': { swr: 60 },
-      '/docs/community/changelog': { redirect: 'https://github.com/nuxt/nuxt/releases' },
-      '/api/jobs': { swr: 60 },
-      '/api/sponsors': { swr: 60 },
-      '/api/email/**': { swr: 60 },
-      '/api/modules/**': { swr: 60 }
+      '/docs/community/changelog': { redirect: 'https://github.com/nuxt/nuxt/releases' }
     }
   },
 
@@ -178,5 +172,9 @@ export default defineNuxtConfig({
 
   typescript: {
     strict: false
+  },
+
+  experimental: {
+    appManifest: true
   }
 })

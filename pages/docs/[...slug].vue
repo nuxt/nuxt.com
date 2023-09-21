@@ -5,7 +5,6 @@ import type { ParsedContent, NavItem } from '@nuxt/content/dist/runtime/types'
 const navigation = inject<Ref<NavItem[]>>('navigation')
 
 const route = useRoute()
-const { mapContentNavigation, findPageBreadcrumb } = useElementsHelpers()
 
 const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
 if (!page.value) {
