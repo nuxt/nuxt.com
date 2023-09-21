@@ -83,9 +83,8 @@ export default defineAppConfig({
     },
     tooltip: {
       background: 'bg-background'
-    }
-  },
-  elements: {
+    },
+    // `@nuxt/ui-pro` specific
     variables: {
       dark: {
         background: 'var(--color-gray-950)'

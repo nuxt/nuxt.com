@@ -10,8 +10,8 @@ if (!agency.value) {
 
 const links = computed(() => [{
   label: 'Visit website',
-  color: 'black',
-  size: 'md',
+  color: 'black' as const,
+  size: 'md' as const,
   icon: 'i-ph-arrow-square-out',
   trailing: true,
   to: agency.value.link,

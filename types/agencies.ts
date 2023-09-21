@@ -1,5 +1,5 @@
 import type { ParsedContent } from '@nuxt/content/dist/runtime/types'
-import type { Link } from '@elements/types'
+import type { Link } from '#ui-pro/types'
 import type { Filter } from './filters'
 
 export interface Agency extends ParsedContent {

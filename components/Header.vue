@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { NavItem } from '@nuxt/content/dist/runtime/types'
-import type { Link } from '@elements/types'
+import type { Link } from '#ui-pro/types'
 
 const navigation = inject<Ref<NavItem[]>>('navigation')
 
@@ -23,7 +23,7 @@ defineProps<{
         to="https://github.com/nuxt/nuxt"
         target="_blank"
         label="46.6k"
-        v-bind="$elements.button.secondary"
+        v-bind="($ui.button.secondary as any)"
       />
     </template>
 
