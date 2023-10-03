@@ -1,3 +1,5 @@
+import { splitByCase, upperFirst } from 'scule'
+
 export const { format: formatNumber } = Intl.NumberFormat('en-GB', { notation: 'compact' })
 
 // Case-insensitive RegExp, escaping special characters
@@ -37,4 +39,13 @@ export const slugify = (str: string) => str.toLowerCase().replace(/[^a-z0-9 -]/g
 
 export const random = (arr: Array<any>) => {
   return arr[Math.floor(Math.random() * arr.length)]
+}
+
+import { splitByCase, upperFirst } from 'scule'
+
+export const createBreadcrumb = (link: string) => {
+  if (link.startsWith('http')) {
+    return link
+  }
+  return link.split('/').filter(Boolean).map(part => splitByCase(part).map(p => upperFirst(p)).join(' ')).join(' > ').replace('Api', 'API')
 }

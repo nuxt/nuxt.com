@@ -83,7 +83,7 @@ useContentHead(page)
       <UDocsSurround :surround="(surround as ParsedContent[])" />
     </UPageBody>
 
-    <template #right>
+    <template v-if="page.toc !== false" #right>
       <UDocsToc :links="page.body?.toc?.links">
         <template #bottom>
           <div class="hidden lg:block space-y-6 !mt-6">
