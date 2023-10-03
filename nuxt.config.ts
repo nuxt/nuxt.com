@@ -45,6 +45,7 @@ export default defineNuxtConfig({
       '/**': { cache: { swr: true, maxAge: 120, staleMaxAge: 60, headersOnly: true }, prerender: false },
       // prerendered pages
       '/': { prerender: true },
+      '/api/search.json': { prerender: true },
       '/sitemap.xml': { prerender: true },
       '/newsletter': { prerender: true },
       '/design-kit': { prerender: true },
@@ -67,7 +68,6 @@ export default defineNuxtConfig({
   extends: process.env.NUXT_UI_PRO_PATH || '@nuxt/ui-pro',
 
   modules: [
-    // process.env.NODE_ENV === 'production' ? '@nuxtjs/html-validator' : () => {},
     '@nuxt/content',
     '@nuxtjs/plausible',
     '@nuxtjs/fontaine',
@@ -81,26 +81,6 @@ export default defineNuxtConfig({
       if (process.env.NUXT_EXAMPLES_PATH) { logger.success(`Using local Nuxt examples from ${process.env.NUXT_EXAMPLES_PATH}`) }
     }
   ],
-
-  // htmlValidator: {
-  //   logLevel: 'error',
-  //   options: {
-  //     extends: [
-  //       'html-validate:document',
-  //       'html-validate:recommended',
-  //       'html-validate:standard'
-  //     ],
-  //     rules: {
-  //       'wcag/h30': 'warn',
-  //       'wcag/h32': 'warn',
-  //       'wcag/h36': 'warn',
-  //       'wcag/h37': 'warn',
-  //       'wcag/h63': 'warn',
-  //       'wcag/h67': 'warn',
-  //       'wcag/h71': 'warn'
-  //     }
-  //   }
-  // },
 
   runtimeConfig: {
     githubAPI: {
