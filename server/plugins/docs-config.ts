@@ -158,7 +158,7 @@ function renderTag (tag: string) {
   }
   tag = tag.replace(`@${type}`, `**${upperFirst(type)}**:`)
   if (TagAlertType[type]) {
-    return [`::alert{type="${TagAlertType[type]}"}`, tag, '::', '']
+    return ['::callout', tag, '::', '']
   }
   return tag
 }
