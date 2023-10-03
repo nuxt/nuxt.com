@@ -27,7 +27,7 @@ export const moduleImage = function (icon: string = '', size: number = 80) {
 
   if (/^http(s)?:\/\//.test(icon)) return icon
 
-  if (/\.svg$/.test(icon)) return `https://ipx.nuxt.com/_/gh/nuxt/modules/main/icons/${icon}`
+  if (/\.svg$/.test(icon)) return `https://raw.githubusercontent.com/nuxt/modules/main/icons/${icon}`
 
   return `https://ipx.nuxt.com/s_${size},f_webp/gh/nuxt/modules/main/icons/${icon}`
 }
