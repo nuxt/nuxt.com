@@ -80,7 +80,7 @@ function copyLink () {
           <UButton v-for="(link, index) in socialLinks" :key="index" v-bind="{ ...($ui.button.secondary as any), ...link }" target="_blank" />
         </div>
 
-        <UDivider v-if="surround?.length" />
+        <hr v-if="surround?.length" />
 
         <UDocsSurround :surround="(surround as ParsedContent[])" />
       </UPageBody>

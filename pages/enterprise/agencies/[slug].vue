@@ -69,7 +69,7 @@ const links = computed(() => [{
         </UPageLinks>
 
         <div v-if="agency.resources?.length">
-          <UDivider dashed class="my-6" />
+          <UDivider type="dashed" class="my-6" />
 
           <UPageLinks title="Resources" :links="agency.resources" />
         </div>

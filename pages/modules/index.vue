@@ -41,7 +41,7 @@ defineShortcuts({
           <UNavigationTree :links="[{ label: 'Categories', disabled: true, children: categories }]" />
 
           <template #bottom>
-            <UDivider dashed class="my-6" />
+            <UDivider type="dashed" class="my-6" />
 
             <UPageLinks :links="links" />
           </template>

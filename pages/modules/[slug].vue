@@ -115,7 +115,7 @@ const contributors = computed(() => module.value.contributors.map((contributor) 
         <UPageLinks title="Links" :links="links" />
 
         <div class="hidden lg:block">
-          <UDivider dashed class="my-6" />
+          <UDivider type="dashed" class="my-6" />
 
           <UPageLinks :links="contributors">
             <template #title>
