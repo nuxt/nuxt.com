@@ -29,5 +29,6 @@ export default cachedEventHandler(async () => {
   })
 }, {
   name: 'sponsors',
+  getKey: () => 'sponsors',
   maxAge: 60 * 60 // 1 hour
 })
