@@ -6,10 +6,55 @@ sections:
     description: 'We love Vue Single-File Components as much as you do. Simple, intuitive and powerful, Nuxt lets you write Vue components in a way that makes sense. Every repetitive tasks are automated, so you can focus on writing your full-stack Vue application with confidence.'
     class: 'bg-gray-900'
     align: left
+    slot: code
+    code: |
+      ```vue [app.vue]
+      <script setup>
+      useSeoMeta({
+        title: 'Meet Nuxt',
+        description: 'The Vue Framework for Web Architects.'
+      })
+      </script>
+
+      <template>
+        <div id="app">
+          <AppHeader />
+          <NuxtPage />
+          <AppFooter />
+        </div>
+      </template>
+
+      <style>
+      #app {
+        background-color: navy;
+        color: lightgreen;
+      }
+      </style>
+      ```
   - title: 'Static or Dynamic,<br><span class="text-primary">the choice is yours</span>'
     description: 'Decide what rendering strategy you need at the route level. By leveraging the hybrid rendering, you can get the best of both worlds: the performance of a static site and the interactivity of a dynamic one.'
     class: 'bg-gray-900'
     align: right
+    slot: code
+    code: |
+      ```ts [nuxt.config.ts]
+      export default defineNuxtConfig({
+        routeRules: {
+          // Homepage pre-rendered at build time
+          '/': { prerender: true },
+          // Product page generated on-demand, revalidates in background
+          '/products/**': { swr: true },
+          // Blog post generated on-demand once until next deploy
+          '/blog/**': { isr: true },
+          // Admin dashboard renders only on client-side
+          '/admin/**': { ssr: false },
+          // Add cors headers on API routes
+          '/api/**': { cors: true },
+          // Redirects legacy urls
+          '/old-page': { redirect: '/new-page' }
+        }
+      })
+      ```
   - title: 'Compose with<br><span class="text-primary">everything you need.</span>'
     class: 'dark:bg-gradient-to-b from-gray-900 to-gray-950'
     slot: features

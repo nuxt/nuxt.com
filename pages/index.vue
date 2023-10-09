@@ -85,6 +85,24 @@ useSeoMeta({
       <template #testimonials>
         <HomeSectionTestimonials :testimonials="section.testimonials" />
       </template>
+
+      <template #code>
+        <MDC
+          v-if="section.code"
+          :value="section.code"
+          tag="pre"
+          class="prose prose-primary dark:prose-invert max-w-none"
+          :parser-options="{
+            highlight: {
+              theme: {
+                light: 'material-theme-lighter',
+                default: 'material-theme',
+                dark: 'material-theme-palenight'
+              }
+            }
+          }"
+        />
+      </template>
     </ULandingSection>
   </div>
 </template>
