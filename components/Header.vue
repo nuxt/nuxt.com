@@ -3,6 +3,7 @@ import type { NavItem } from '@nuxt/content/dist/runtime/types'
 import type { Link } from '#ui-pro/types'
 
 const navigation = inject<Ref<NavItem[]>>('navigation')
+const stats = useStats()
 
 defineProps<{
   links?: Link[]
@@ -16,15 +17,19 @@ defineProps<{
     </template>
 
     <template #right>
-      <UColorModeButton />
+      <UTooltip :text="$colorMode.preference === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'">
+        <UColorModeButton />
+      </UTooltip>
 
-      <UButton
-        icon="i-ph-star-duotone"
-        to="https://github.com/nuxt/nuxt"
-        target="_blank"
-        label="46.6k"
-        v-bind="($ui.button.secondary as any)"
-      />
+      <UTooltip text="GitHub Stars">
+        <UButton
+          icon="i-simple-icons-github"
+          to="https://github.com/nuxt/nuxt"
+          target="_blank"
+          :label="formatNumber(stats.stars)"
+          v-bind="($ui.button.secondary as any)"
+        />
+      </UTooltip>
     </template>
 
     <template #panel>

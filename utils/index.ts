@@ -1,6 +1,6 @@
 import { splitByCase, upperFirst } from 'scule'
 
-export const { format: formatNumber } = Intl.NumberFormat('en-GB', { notation: 'compact' })
+export const { format: formatNumber } = Intl.NumberFormat('en-GB', { notation: 'compact', maximumFractionDigits: 1 })
 
 // Case-insensitive RegExp, escaping special characters
 // https://stackoverflow.com/a/38151393/3926832

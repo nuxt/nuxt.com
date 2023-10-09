@@ -9,32 +9,32 @@ const _useNavigation = () => {
     to: '/docs',
     children: [{
       label: 'Get Started',
-      description: 'Learn how to get started with Nuxt',
+      description: 'Learn how to get started with Nuxt.',
       icon: 'i-ph-rocket-launch-duotone',
       to: '/docs/getting-started',
       active: route.path.startsWith('/docs/getting-started')
     }, {
       label: 'Guide',
-      description: 'Learn how to build and deploy Nuxt applications',
+      description: 'Learn how to build and deploy Nuxt applications.',
       icon: 'i-ph-book-open-duotone',
       to: '/docs/guide',
       active: route.path.startsWith('/docs/guide')
     }, {
       label: 'API',
-      description: 'Explore the Nuxt API',
-      icon: 'i-ph-code-duotone',
+      description: 'Explore the Nuxt API.',
+      icon: 'i-ph-code',
       to: '/docs/api',
       active: route.path.startsWith('/docs/api')
     }, {
       label: 'Examples',
-      description: 'Discover and explore official and community examples',
-      icon: 'i-ph-terminal-duotone',
+      description: 'Discover and explore official and community examples.',
+      icon: 'i-ph-app-window-duotone',
       to: '/docs/examples',
       active: route.path.startsWith('/docs/examples')
     }, {
       label: 'Community',
-      description: 'Find answers and support from the community',
-      icon: 'i-ph-users-duotone',
+      description: 'Find answers and support from the community.',
+      icon: 'i-ph-chats-teardrop-duotone',
       to: '/docs/community',
       active: route.path.startsWith('/docs/community')
     }]
