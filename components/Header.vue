@@ -3,7 +3,9 @@ import type { NavItem } from '@nuxt/content/dist/runtime/types'
 import type { Link } from '#ui-pro/types'
 
 const navigation = inject<Ref<NavItem[]>>('navigation')
+
 const stats = useStats()
+const { metaSymbol } = useShortcuts()
 
 defineProps<{
   links?: Link[]
@@ -17,6 +19,8 @@ defineProps<{
     </template>
 
     <template #right>
+      <UDocsSearchButton :label="null" class="lg:hidden" />
+
       <UTooltip :text="$colorMode.preference === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'">
         <UColorModeButton />
       </UTooltip>
