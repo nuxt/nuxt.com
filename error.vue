@@ -1,27 +1,40 @@
-<template>
-  <div>
-    <NuxtLayout>
-      <PageError :error="error" />
-    </NuxtLayout>
-    <AppNotifications />
-  </div>
-</template>
-
 <script setup lang="ts">
-useHead({
-  bodyAttrs: {
-    class: 'antialiased font-sans text-gray-700 dark:text-gray-200 bg-white dark:bg-black'
-  }
-})
+import type { NuxtError } from '#app'
+import type { ParsedContent } from '@nuxt/content/dist/runtime/types'
+
 useSeoMeta({
   title: 'Page not found',
   description: 'We are sorry but this page could not be found.'
 })
 
-defineProps({
-  error: {
-    type: Object,
-    required: true
-  }
-})
+defineProps<{ error: NuxtError }>()
+
+const { headerLinks, searchGroups, searchLinks } = useNavigation()
+
+const { data: navigation } = await useLazyAsyncData('navigation', () => fetchContentNavigation(), { default: () => [] })
+const { data: files } = useLazyFetch<ParsedContent[]>('/api/search.json', { default: () => [], server: false })
+
+provide('navigation', navigation)
 </script>
+
+<template>
+  <div>
+    <Header :links="headerLinks" />
+
+    <UContainer>
+      <UMain>
+        <UPage>
+          <UPageError :error="error" />
+        </UPage>
+      </UMain>
+    </UContainer>
+
+    <Footer />
+
+    <ClientOnly>
+      <UDocsSearch :files="files" :navigation="navigation" :groups="searchGroups" :links="searchLinks" />
+
+      <UNotifications />
+    </ClientOnly>
+  </div>
+</template>

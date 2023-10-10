@@ -1,4 +1,4 @@
-export default defineNuxtPlugin((ctx) => {
+export default defineNuxtPlugin(() => {
   const adBlocked = ref(false)
 
   onNuxtReady(async () => {

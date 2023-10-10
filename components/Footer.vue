@@ -1,52 +1,32 @@
-
 <template>
-  <footer class="relative border-t u-bg-white u-border-gray-200">
-    <div class="absolute inset-x-0 flex items-center justify-center -top-3">
-      <div class="relative flex justify-center h-10 w-14">
-        <div class="absolute w-full h-full inset-0 -top-[2px] blur-[6px] u-bg-white rounded-full" />
-        <Logo class="relative w-5 h-5 u-text-gray-200" />
-      </div>
-    </div>
+  <UFooter
+    :ui="{
+      bottom: { wrapper: 'border-t border-gray-200 dark:border-gray-800', container: '!py-6' },
+      top: { wrapper: 'border-t border-gray-200 dark:border-gray-800', container: 'py-8 lg:py-12' }
+    }"
+  >
+    <template #top>
+      <UFooterColumns :links="footerLinks">
+        <template #right>
+          <NewsletterForm />
+        </template>
+      </UFooterColumns>
+    </template>
 
-    <div class="container py-6">
-      <div class="sm:relative flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
-        <div class=" flex flex-col-reverse items-center gap-3 sm:flex-row sm:w-40 md:w-60">
-          <ThemeSelect class="z-10 order-1 sm:order-none" size="sm" />
-          <span class="text-sm u-text-gray-500">© 2016-2023 Nuxt - MIT License</span>
-        </div>
+    <template #left>
+      <p class="text-gray-500 dark:text-gray-400 text-sm">
+        Copyright © 2016-{{ new Date().getFullYear() }} Nuxt - MIT License
+      </p>
+    </template>
 
-        <ul class="flex flex-wrap justify-center text-sm gap-x-6 gap-y-2">
-          <li v-for="link in links" :key="link.title">
-            <NuxtLink :to="link._path" class="font-medium u-text-gray-500 hover:u-text-gray-900 focus:u-text-gray-900" active-class="u-text-gray-900">
-              {{ link.title }}
-            </NuxtLink>
-          </li>
-        </ul>
-        <SocialLinks class="z-10 sm:w-40 md:w-60" />
-      </div>
-    </div>
-  </footer>
+    <template #right>
+      <UButton to="https://x.com/nuxt_js" target="_blank" icon="i-simple-icons-x" v-bind="($ui.button.secondary as any)" />
+      <UButton to="https://discord.com/invite/ps2h6QT" target="_blank" icon="i-simple-icons-discord" v-bind="($ui.button.secondary as any)" />
+      <UButton to="https://github.com/nuxt/nuxt" target="_blank" icon="i-simple-icons-github" v-bind="($ui.button.secondary as any)" />
+    </template>
+  </UFooter>
 </template>
 
 <script setup lang="ts">
-import type { NavItem } from '@nuxt/content/dist/runtime/types'
-
-const links: NavItem[] = [
-  {
-    title: 'Enterprise',
-    _path: '/enterprise/support'
-  },
-  {
-    title: 'Design Kit',
-    _path: '/design-kit'
-  },
-  {
-    title: 'NuxtLabs',
-    _path: 'https://nuxtlabs.com'
-  },
-  {
-    title: 'Nuxt Studio',
-    _path: 'https://nuxt.studio'
-  }
-]
+const { footerLinks } = useNavigation()
 </script>

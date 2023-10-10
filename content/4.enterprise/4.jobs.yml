@@ -1,0 +1,11 @@
+title: Explore Nuxt Jobs
+description: Browse available openings for coding with Vue and Nuxt all over the world.
+head.title: Jobs
+navigation.title: Jobs
+head.image: '/socials/jobs.jpg'
+links:
+  - label: 'Post a job'
+    to: 'https://vuejobs.com/jobs/create'
+    color: black
+    size: 'lg'
+    target: '_blank'

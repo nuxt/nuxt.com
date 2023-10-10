@@ -1,221 +1,219 @@
-import type { Ref, ComputedRef } from 'vue'
-import type { Module, FilterItem } from '../types'
+import type { Module, Filter } from '../types'
+
+const iconsMap = {
+  Analytics: 'i-uil-chart-line',
+  CMS: 'i-uil-pen',
+  CSS: 'i-uil-brush-alt',
+  Database: 'i-uil-database',
+  Date: 'i-uil-calendar-alt',
+  Deployment: 'i-uil-cloud',
+  Devtools: 'i-uil-wrench',
+  Ecommerce: 'i-uil-shopping-basket',
+  Extensions: 'i-uil-puzzle-piece',
+  Fonts: 'i-uil-font',
+  Images: 'i-uil-image-v',
+  Libraries: 'i-uil-books',
+  Monitoring: 'i-uil-stopwatch',
+  Payment: 'i-uil-dollar-alt',
+  Performance: 'i-uil-rocket',
+  Request: 'i-uil-life-ring',
+  Security: 'i-uil-shield',
+  SEO: 'i-uil-search-alt',
+  UI: 'i-uil-palette'
+}
+
+export const moduleImage = function (icon: string = '', size: number = 80) {
+  if (!icon) return
+
+  if (/^http(s)?:\/\//.test(icon)) return icon
+
+  if (/\.svg$/.test(icon)) return `https://raw.githubusercontent.com/nuxt/modules/main/icons/${icon}`
+
+  return `https://ipx.nuxt.com/s_${size},f_webp/gh/nuxt/modules/main/icons/${icon}`
+}
+
+export const moduleIcon = function (category: string) {
+  return iconsMap[category as keyof typeof iconsMap] || 'i-ph-cube-duotone'
+}
 
 export const useModules = () => {
-  interface TypeMap {
-    official: string,
-    community: string
-    '3rd-party': string
-  }
+  // interface TypeMap {
+  //   official: string,
+  //   community: string
+  //   '3rd-party': string
+  // }
 
   const route = useRoute()
-  const modules: Ref<Module[]> = useState('modules', () => [])
-  const module: Ref<Module> = useState('module', () => ({} as Module))
+  const router = useRouter()
 
-  const iconsMap = {
-    Analytics: 'uil-chart-line',
-    CMS: 'uil-pen',
-    CSS: 'uil-brush-alt',
-    Database: 'uil-database',
-    Date: 'uil-calendar-alt',
-    Deployment: 'uil-cloud',
-    Devtools: 'uil-wrench',
-    Ecommerce: 'uil-shopping-basket',
-    Extensions: 'uil-puzzle-piece',
-    Fonts: 'uil-font',
-    Images: 'uil-image-v',
-    Libraries: 'uil-books',
-    Monitoring: 'uil-stopwatch',
-    Payment: 'uil-dollar-alt',
-    Performance: 'uil-rocket',
-    Request: 'uil-life-ring',
-    Security: 'uil-shield',
-    SEO: 'uil-search-alt',
-    UI: 'uil-palette'
-  }
+  const modules = useState<Module[]>('modules', () => [])
+  const module = useState<Module>('module', () => ({} as Module))
+
+
 
   // Data fetching
+
   async function fetchList () {
-    const { data, error } = await useFetch<{ modules: Module[] }>('/api/modules')
-
-    /* Missing data is handled at component level */
-    if (!data.value && error.value) {
-      return error.value
-    }
-
-    if (data) {
-      modules.value = data.value?.modules || []
-    }
-  }
-
-  async function fetchOne (name: string) {
-    if (module.value.name === name) {
+    if (modules.value.length) {
       return
     }
 
-    const m = modules.value.find(m => m.name === name)
-    if (m) {
-      module.value = m
-      return
-    }
-
-    try {
-      module.value = await $fetch<Module>(`/api/modules/${name}`)
-    } catch (e) {
-      throw createError({ statusMessage: 'Module not found', message: 'This page does not exist.', statusCode: 404 })
+    const res = await $fetch<{ modules: Module[] }>('https://api.nuxt.com/modules')
+    if (res?.modules) {
+      modules.value = res.modules
     }
   }
-
   // Data
 
-  const versions: FilterItem[] = [
-    { key: '3.x', title: 'v3' },
-    { key: '2.x-bridge', title: 'Bridge' },
-    { key: '2.x', title: 'v2' }
+  // const versions: Filter[] = [
+  //   { key: '3.x', label: 'v3' },
+  //   { key: '2.x-bridge', label: 'Bridge' },
+  //   { key: '2.x', label: 'v2' }
+  // ]
+
+  const sorts: Filter[] = [
+    { key: 'downloads', label: 'Downloads' },
+    { key: 'stars', label: 'Stars' },
+    { key: 'publishedAt', label: 'Updated' },
+    { key: 'createdAt', label: 'Created' }
   ]
 
-  const sorts: FilterItem[] = [
-    { key: 'downloads', title: 'Downloads' },
-    { key: 'stars', title: 'Stars' },
-    { key: 'publishedAt', title: 'Updated' },
-    { key: 'createdAt', title: 'Created' }
+  const orders: Filter[] = [
+    { key: 'desc', label: 'Desc', icon: 'i-uil-sort-amount-down' },
+    { key: 'asc', label: 'Asc', icon: 'i-uil-sort-amount-up' }
   ]
 
-  const orders: FilterItem[] = [
-    { key: 'desc', title: 'Desc', icon: 'uil:sort-amount-down' },
-    { key: 'asc', title: 'Asc', icon: 'uil:sort-amount-up' }
-  ]
+  // const typesMap: TypeMap = {
+  //   official: 'Official',
+  //   community: 'Community',
+  //   '3rd-party': 'Third Party'
+  // }
 
-  const typesMap: TypeMap = {
-    official: 'Official',
-    community: 'Community',
-    '3rd-party': 'Third Party'
-  }
+  // const modulesByVersion: ComputedRef<Module[]> = computed(() => {
+  //   return [...modules.value]
+  //     .filter((module) => {
+  //       if (selectedVersion.value && !(module.tags ?? []).includes(selectedVersion.value.key as string)) {
+  //         return false
+  //       }
 
-  const githubQuery: ComputedRef<{ owner: string, repo: string }> = computed(() => {
-    const [ownerAndRepo] = module.value.repo.split('#')
-    const [owner, repo] = ownerAndRepo.split('/')
-    return {
-      owner,
-      repo
-    }
-  })
+  //       return true
+  //     })
+  // })
 
-  const modulesByVersion: ComputedRef<Module[]> = computed(() => {
-    return [...modules.value]
-      .filter((module) => {
-        if (selectedVersion.value && !module.tags.includes(selectedVersion.value.key as string)) {
-          return false
-        }
-
-        return true
-      })
-  })
-
-  const categories: ComputedRef<FilterItem[] | []> = computed(() => {
-    return [...new Set(modulesByVersion.value.map(module => module.category))].map(category => ({
+  const categories = computed<Filter[]>(() => {
+    return [...new Set(modules.value.map(module => module.category))].map(category => ({
       key: category,
-      title: category,
+      label: category,
+      exactQuery: true,
       to: {
         name: 'modules',
         query: {
           ...route.query,
-          category: route.query?.category !== category ? category : undefined
+          category
         },
         state: { smooth: '#smooth' }
       },
-      icon: iconsMap[category as keyof typeof iconsMap] || undefined
-    })).sort((a, b) => {
-      return a.title.localeCompare(b.title)
-    })
-  })
+      icon: iconsMap[category as keyof typeof iconsMap] || undefined,
+      click: (e) => {
+        if (route.query.category !== category) {
+          return
+        }
 
-  const types: ComputedRef<FilterItem[]> = computed(() => {
-    return [...new Set(modulesByVersion.value.map(module => module.type))].map(type => ({
-      key: type,
-      title: typesMap[type as keyof typeof typesMap] || type,
-      to: {
-        name: 'modules',
-        query: {
-          ...route.query,
-          type
-        },
-        state: { smooth: '#smooth' }
+        e.preventDefault()
+
+        router.replace({ query: { ...route.query, category: undefined } })
       }
     })).sort((a, b) => {
-      const typesMappingKeys = Object.keys(typesMap)
-      const aIndex = typesMappingKeys.indexOf(a.key)
-      const bIndex = typesMappingKeys.indexOf(b.key)
-      return aIndex - bIndex
+      return a.label.localeCompare(b.label)
     })
   })
 
-  const contributors: ComputedRef<Set<string>> = computed(() => {
-    return new Set(modules.value.flatMap(m => m.contributors.map(m => m.login)))
+  // const types: ComputedRef<Filter[]> = computed(() => {
+  //   return [...new Set(modules.value.map(module => module.type))].map(type => ({
+  //     key: type,
+  //     label: typesMap[type as keyof typeof typesMap] || type,
+  //     to: {
+  //       name: 'modules',
+  //       query: {
+  //         ...route.query,
+  //         type
+  //       },
+  //       state: { smooth: '#smooth' }
+  //     }
+  //   })).sort((a, b) => {
+  //     const typesMappingKeys = Object.keys(typesMap)
+  //     const aIndex = typesMappingKeys.indexOf(a.key)
+  //     const bIndex = typesMappingKeys.indexOf(b.key)
+  //     return aIndex - bIndex
+  //   })
+  // })
+
+  // const contributors: ComputedRef<Set<string>> = computed(() => {
+  //   return new Set(modules.value.flatMap(m => m.contributors.map(m => m.login)))
+  // })
+
+  // const stats: ComputedRef<{ downloads: number, contributors: number, modules: number }> = computed(() => {
+  //   return {
+  //     downloads: modules.value.reduce((sum, m) => sum + m.downloads, 0),
+  //     contributors: contributors.value.size,
+  //     modules: modules.value.length
+  //   }
+  // })
+
+  const selectedCategory = computed(() => {
+    return categories.value.find(category => category.key === route.query.category)
   })
 
-  const stats: ComputedRef<{ downloads: number, contributors: number, modules: number }> = computed(() => {
-    return {
-      downloads: modules.value.reduce((sum, m) => sum + m.downloads, 0),
-      contributors: contributors.value.size,
-      modules: modules.value.length
-    }
-  })
+  // const selectedType: ComputedRef<Filter | null> = computed(() => {
+  //   return types.value.find(type => type.key === route.query.type)
+  // })
 
-  const selectedCategory: ComputedRef<FilterItem | null> = computed(() => {
-    return categories.value.find(category => category.key === route.query.category) || null
-  })
+  // const selectedVersion = computed(() => {
+  //   return versions.find(version => version.key === route.query.version) || versions[0]
+  // })
 
-  const selectedType: ComputedRef<FilterItem | null> = computed(() => {
-    return types.value.find(type => type.key === route.query.type) || null
-  })
-
-  const selectedVersion: ComputedRef<FilterItem> = computed(() => {
-    return versions.find(version => version.key === route.query.version) || versions[0]
-  })
-
-  const selectedSort: ComputedRef<FilterItem> = computed(() => {
+  const selectedSort = computed(() => {
     return sorts.find(sort => sort.key === route.query.sortBy) || sorts[0]
   })
 
-  const selectedOrder: ComputedRef<FilterItem> = computed(() => {
+  const selectedOrder = computed(() => {
     return orders.find(order => order.key === route.query.orderBy) || orders[0]
   })
 
-  const q: ComputedRef<string> = computed(() => {
+  const q = computed<string>(() => {
     return route.query.q as string
   })
 
-  const links: ComputedRef<any[]> = computed(() => {
-    return [
-      {
-        title: 'All',
-        _path: {
-          name: 'modules',
-          query: {
-            ...route.query,
-            type: undefined
-          },
-          state: { smooth: '#smooth' }
-        },
-        active: !route.query.type
-      },
-      ...types.value.map(type => ({ ...type, _path: type.to, exact: true, active: route.query.type === type.key }))
-    ]
-  })
+  // const links = computed(() => {
+  //   return [
+  //     {
+  //       label: 'All',
+  //       _path: {
+  //         name: 'modules',
+  //         query: {
+  //           ...route.query,
+  //           type: undefined
+  //         },
+  //         state: { smooth: '#smooth' }
+  //       },
+  //       active: !route.query.type
+  //     },
+  //     ...types.value.map(type => ({ ...type, _path: type.to, exact: true, active: route.query.type === type.key }))
+  //   ]
+  // })
 
-  const filteredModules: ComputedRef<Module[]> = computed(() => {
+  const filteredModules = computed<Module[]>(() => {
     let filteredModules = [...modules.value]
       .filter((module: Module | any) => {
         if (selectedCategory.value && module.category !== selectedCategory.value.key) {
           return false
         }
-        if (selectedType.value && module.type !== selectedType.value.key) {
-          return false
-        }
-        if (selectedVersion.value && !module.tags.includes(selectedVersion.value.key)) {
-          return false
-        }
+        // if (selectedType.value && module.type !== selectedType.value.key) {
+        //   return false
+        // }
+        // if (selectedVersion.value && !(module.tags ?? []).includes(selectedVersion.value.key)) {
+        //   return false
+        // }
         const queryRegExp = searchTextRegExp(q.value as string)
         if (q.value && !['name', 'npm', 'category', 'description', 'repo'].map(field => module[field]).filter(Boolean).some(value => value.search(queryRegExp) !== -1)) {
           return false
@@ -223,7 +221,7 @@ export const useModules = () => {
 
         return true
       })
-      .sort((a: any, b: any) => b[selectedSort.value.key] - a[selectedSort.value.key])
+      .sort((a: any, b: any) => b.stats[selectedSort.value.key] - a.stats[selectedSort.value.key])
 
     if (selectedOrder.value.key === 'asc') {
       filteredModules = filteredModules.reverse()
@@ -235,26 +233,24 @@ export const useModules = () => {
   return {
     // Data fetching
     fetchList,
-    fetchOne,
     // Data
-    versions,
+    // versions,
     sorts,
     orders,
     // Computed
     modules,
     filteredModules,
     module,
-    githubQuery,
     categories,
-    types,
-    contributors,
-    stats,
+    // types,
+    // contributors,
+    // stats,
     selectedCategory,
-    selectedType,
-    selectedVersion,
+    // selectedType,
+    // selectedVersion,
     selectedSort,
     selectedOrder,
-    q,
-    links
+    q
+    // links
   }
 }

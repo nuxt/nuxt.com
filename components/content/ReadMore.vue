@@ -1,7 +1,7 @@
 <template>
-  <Alert icon="👉">
+  <Callout icon="i-ph-bookmark-simple-duotone">
     Read more in <NuxtLink :to="link" v-html="computedTitle" />.
-  </Alert>
+  </Callout>
 </template>
 
 <script setup lang="ts">

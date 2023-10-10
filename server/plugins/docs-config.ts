@@ -2,6 +2,7 @@ import type { Schema } from 'untyped'
 import { upperFirst } from 'scule'
 
 export default defineNitroPlugin((nitroApp) => {
+  // @ts-ignore
   nitroApp.hooks.hook('content:file:beforeParse', async (file) => {
     // Disable docs readme
     if (file._id === 'nuxt-docs:docs:README.md') {
@@ -42,6 +43,22 @@ export default defineNitroPlugin((nitroApp) => {
       file.body = file.body.replace(GENERATE_KEY, generatedDocs)
 
       console.log(`Config docs generated in ${(Date.now() - start) / 1000} seconds!`)
+    }
+  })
+
+  // @ts-ignore
+  nitroApp.hooks.hook('content:file:afterParse', async (file) => {
+    if (file.navigation?.icon?.startsWith('ph:')) {
+      file.navigation.icon = file.navigation.icon.replace('ph:', 'i-ph-')
+    }
+    if (file.navigation?.icon?.startsWith('uil:')) {
+      file.navigation.icon = file.navigation.icon.replace('uil:', 'i-uil-')
+    }
+    if (file.navigation?.icon?.startsWith('heroicons:')) {
+      file.navigation.icon = file.navigation.icon.replace('heroicons:', 'i-heroicons-')
+    }
+    if (file.navigation?.icon?.startsWith('octicon:')) {
+      file.navigation.icon = file.navigation.icon.replace('octicon:', 'i-octicon-')
     }
   })
 })
@@ -141,7 +158,7 @@ function renderTag (tag: string) {
   }
   tag = tag.replace(`@${type}`, `**${upperFirst(type)}**:`)
   if (TagAlertType[type]) {
-    return [`::alert{type="${TagAlertType[type]}"}`, tag, '::', '']
+    return ['::callout', tag, '::', '']
   }
   return tag
 }

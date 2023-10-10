@@ -1,22 +1,25 @@
-import type { Ref } from 'vue'
-import type { ResourcesBlogArticle } from '../types'
+import type { BlogArticle } from '../types'
 
-export function useBlog () {
-  const articles: Ref<ResourcesBlogArticle[]> = useState('articles', () => [])
-  const featuredArticle: Ref<ResourcesBlogArticle | {}> = useState('featured-article', () => ({}))
+export const useBlog = () => {
+  const articles = useState<BlogArticle[]>('articles', () => [])
+  // const featuredArticle: Ref<BlogArticle | {}> = useState('featured-article', () => ({}))
 
   // Data fetching
 
   async function fetchList () {
-    if (articles.value.length) { return }
+    if (articles.value.length) {
+      return
+    }
 
     try {
-      const data = await queryContent<ResourcesBlogArticle>('/blog').where({
-        _extension: 'md'
-      }).without(['body', 'excerpt']).sort({ date: -1 }).find()
+      const data = await queryContent<BlogArticle>('/blog')
+        .where({ _extension: 'md' })
+        .without(['body', 'excerpt'])
+        .sort({ date: -1 })
+        .find()
 
-      articles.value = (data as ResourcesBlogArticle[]).filter(article => article._path !== '/blog')
-      featuredArticle.value = articles.value?.shift() || {}
+      articles.value = (data as BlogArticle[]).filter(article => article._path !== '/blog')
+      // featuredArticle.value = articles.value?.shift() || {}
     } catch (e) {
       articles.value = []
       return e
@@ -25,7 +28,7 @@ export function useBlog () {
 
   return {
     articles,
-    featuredArticle,
+    // featuredArticle,
     fetchList
   }
 }

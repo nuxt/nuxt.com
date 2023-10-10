@@ -1,7 +1,4 @@
-import { createResolver, logger } from '@nuxt/kit'
-import glsl from 'vite-plugin-glsl'
-
-const { resolve } = createResolver(import.meta.url)
+import { logger } from '@nuxt/kit'
 
 const docsSource: any = {
   name: 'nuxt-docs',
@@ -9,7 +6,7 @@ const docsSource: any = {
   repo: 'nuxt/nuxt',
   branch: 'main',
   dir: 'docs',
-  prefix: '/docs',
+  prefix: '/1.docs',
   token: process.env.NUXT_GITHUB_TOKEN || process.env.GITHUB_TOKEN || ''
 }
 if (process.env.NUXT_DOCS_PATH) {
@@ -31,7 +28,6 @@ if (process.env.NUXT_EXAMPLES_PATH) {
   examplesSource.base = process.env.NUXT_EXAMPLES_PATH
 }
 
-// https://v3.nuxtjs.org/guide/directory-structure/nuxt.config
 export default defineNuxtConfig({
   $development: {
     runtimeConfig: {
@@ -49,99 +45,45 @@ export default defineNuxtConfig({
       '/**': { cache: { swr: true, maxAge: 120, staleMaxAge: 60, headersOnly: true }, prerender: false },
       // prerendered pages
       '/': { prerender: true },
+      '/api/search.json': { prerender: true },
       '/sitemap.xml': { prerender: true },
       '/newsletter': { prerender: true },
       '/design-kit': { prerender: true },
       '/enterprise/support': { prerender: true },
       '/enterprise/agencies': { prerender: true },
       '/api/_content/**': { prerender: true },
-      '/api/newsletter/**': { cache: false, swr: false },
       '/docs/**': { prerender: true },
       // more frequently updated pages
       '/modules/**': { swr: 60 },
-      '/partners/**': { swr: 60 },
       '/showcase': { swr: 60 },
-      '/docs/community/changelog': { redirect: 'https://github.com/nuxt/nuxt/releases' },
-      '/api/jobs': { swr: 60 },
-      '/api/sponsors': { swr: 60 },
-      '/api/email/**': { swr: 60 },
-      '/api/modules/**': { swr: 60 }
+      '/docs/community/changelog': { redirect: 'https://github.com/nuxt/nuxt/releases' }
     }
   },
 
-  experimental: {
-    inlineSSRStyles: false
+  routeRules: {
+    '/docs': { redirect: '/docs/getting-started/introduction', prerender: false },
+    '/docs/getting-started': { redirect: '/docs/getting-started/introduction', prerender: false },
+    '/docs/guide': { redirect: '/docs/guide/concepts/auto-imports', prerender: false },
+    '/docs/api': { redirect: '/docs/api/composables/use-app-config', prerender: false },
+    '/docs/examples': { redirect: '/docs/examples/hello-world', prerender: false },
+    '/docs/community': { redirect: '/docs/community/nuxt-community', prerender: false },
+    '/enterprise': { redirect: '/enterprise/support', prerender: false }
   },
 
-  extends: '@nuxt-themes/typography',
-
-  css: [
-    resolve('./assets/css/fonts.css'),
-    resolve('./assets/css/style.css'),
-    resolve('./assets/css/tailwind.css')
-  ],
+  extends: process.env.NUXT_UI_PRO_PATH || '@nuxt/ui-pro',
 
   modules: [
-    '@nuxt-themes/tokens',
-    process.env.NODE_ENV === 'production' ? '@nuxtjs/html-validator' : () => {},
     '@nuxt/content',
-    '@nuxtlabs/github-module',
     '@nuxtjs/plausible',
-    'nuxt-icon',
     '@nuxtjs/fontaine',
-    '@nuxtjs/algolia',
-    '@nuxtjs/color-mode',
-    '@nuxtjs/tailwindcss',
-    '@nuxthq/studio',
-    '@nuxt/devtools',
+    '@nuxtjs/google-fonts',
+    // '@nuxthq/studio',
+    '@nuxt/ui',
+    // '@nuxt/devtools',
+    '@vueuse/nuxt',
     () => {
       if (process.env.NUXT_DOCS_PATH) { logger.success(`Using local Nuxt docs from ${process.env.NUXT_DOCS_PATH}`) }
       if (process.env.NUXT_EXAMPLES_PATH) { logger.success(`Using local Nuxt examples from ${process.env.NUXT_EXAMPLES_PATH}`) }
-    }
-  ],
-
-  htmlValidator: {
-    logLevel: 'error',
-    options: {
-      extends: [
-        'html-validate:document',
-        'html-validate:recommended',
-        'html-validate:standard'
-      ],
-      rules: {
-        'wcag/h30': 'warn',
-        'wcag/h32': 'warn',
-        'wcag/h36': 'warn',
-        'wcag/h37': 'warn',
-        'wcag/h63': 'warn',
-        'wcag/h67': 'warn',
-        'wcag/h71': 'warn'
-
-      }
-    }
-  },
-
-  components: [
-    resolve('./components'),
-    {
-      prefix: '',
-      path: resolve('./components/content'),
-      global: true
-    },
-    {
-      prefix: '',
-      path: resolve('./components/docs'),
-      global: true
-    },
-    {
-      prefix: '',
-      path: resolve('./components/icons'),
-      global: true
-    },
-    {
-      prefix: '',
-      path: resolve('./components/ui'),
-      global: true
     }
   ],
 
@@ -171,27 +113,28 @@ export default defineNuxtConfig({
   },
 
   colorMode: {
-    classSuffix: ''
+    preference: 'dark'
+  },
+
+  fontMetrics: {
+    fonts: ['DM Sans']
+  },
+
+  googleFonts: {
+    display: 'swap',
+    download: true,
+    families: {
+      'DM+Sans': [400, 500, 600, 700]
+    }
+  },
+
+  ui: {
+    icons: ['simple-icons', 'ph', 'uil', 'heroicons', 'octicon', 'logos']
   },
 
   content: {
-    highlight: {
-      theme: {
-        dark: 'one-dark-pro',
-        default: 'github-light'
-      },
-      preload: ['js', 'ts', 'html', 'css', 'vue', 'diff']
-    },
     navigation: {
-      fields: ['redirect', 'titleTemplate', 'image']
-    },
-    documentDriven: {
-      host: 'https://nuxt.com',
-      surround: false,
-      injectPage: false
-    },
-    experimental: {
-      stripQueryParameters: true
+      fields: ['redirect']
     },
     sources: {
       docsSource,
@@ -199,50 +142,19 @@ export default defineNuxtConfig({
     }
   },
 
-  algolia: {
-    applicationId: '1V8G7N9GF0',
-    apiKey: '60a01900a4b726d667eab75b6f337592',
-    docSearch: {
-      indexName: 'nuxtjs',
-      facetFilters: ['tags:v3']
-    }
-  },
-
-  tailwindcss: {
-    viewer: false,
-    cssPath: '~/assets/css/tailwind.css',
-    config: {
-      theme: { extend: {} },
-      content: [
-        resolve('./components/**/*.{vue,js,ts}')
+  nitro: {
+    prerender: {
+      routes: [
+        '/api/search.json'
       ]
     }
   },
 
-  github: {
-    disableCache: true,
-    maxContributors: 10
+  typescript: {
+    strict: false
   },
 
-  vite: {
-    plugins: [glsl()]
-  },
-
-  nitro: {
-    output: {
-      dir: '{{ workspaceDir }}/.vercel/output'
-    },
-    prerender: {
-      crawlLinks: true
-    }
-  },
-
-  plugins: [
-    '~/plugins/toast.client.ts',
-    '~/plugins/scrollbars.client.ts',
-    '~/plugins/slideover.ts',
-    '~/plugins/adblock.ts',
-    '~/plugins/clipboard.client.ts',
-    '~/plugins/newsletter.client.ts'
-  ]
+  experimental: {
+    appManifest: true
+  }
 })

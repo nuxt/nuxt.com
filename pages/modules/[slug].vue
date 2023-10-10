@@ -1,127 +1,152 @@
-<template>
-  <div>
-    <div class="container pt-16">
-      <div class="flex flex-col lg:flex-row gap-8 justify-between items-center mb-8 lg:mb-16">
-        <div class="flex flex-col md:flex-row gap-8 md:gap-12 items-center">
-          <div class="relative border u-border-gray-100 rounded-md u-bg-gray-50">
-            <div class="flex justify-center items-center w-36 h-36">
-              <ModulesListItemCover :icon="module.icon" icon-class="w-auto h-20" :alt="module.name" />
-              <div v-if="module.type === 'official'">
-                <div class="rounded-full bg-white absolute -right-5 -bottom-5 h-12 w-12" />
-                <div class="flex items-center justify-center rounded-full bg-gradient-to-l from-green-400/30 to-teal-400/30 absolute -right-5 -bottom-5 h-12 w-12">
-                  <Icon name="uil:medal" class="h-5 w-5 text-gray-900" />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div>
-            <div class="flex flex-col md:flex-row gap-3 items-center md:items-end">
-              <h2 class="text-3xl capitalize font-semibold u-text-gray-900">
-                {{ module.name }}
-              </h2>
-
-              <a :href="module.website" target="_blank" class="group flex items-center mb-3 md:mb-1">
-                <span class="u-text-gray-400 group-hover:u-text-gray-500 mr-2">Go to documentation</span>
-                <Icon name="uil:external-link-alt" class="u-text-gray-500" />
-              </a>
-            </div>
-            <p class="u-text-gray-500 mt-1 text-xl text-center md:text-left md:max-w-2xl">
-              {{ module.description }}
-            </p>
-            <div class="flex items-center justify-center md:justify-start gap-1.5 mt-4 u-text-gray-500">
-              <NuxtLink :href="module.github" target="_blank" class="flex items-center gap-1.5">
-                <AppAvatarGroup :group="maintainers" size="xxs" :max="4" />
-                <span>{{ maintainers.length }} maintainer{{ maintainers.length > 1 ? 's' : '' }}</span>
-              </NuxtLink>
-              <div class="hidden md:block">
-                -
-              </div>
-              <NuxtLink :href="`https://npmjs.com/package/${module.npm}`" target="_blank" class="flex items-center gap-1.5">
-                <Icon name="uil:download-alt" class="w-4 h-4" />
-                <span>{{ formatNumber(module.downloads) }} installs</span>
-              </NuxtLink>
-              <div class="hidden md:block">
-                -
-              </div>
-              <NuxtLink :href="module.github" target="_blank" class="flex items-center gap-1.5">
-                <Icon name="uil:star" class="w-4 h-4" />
-                <span>{{ formatNumber(module.stars) }} stars</span>
-              </NuxtLink>
-            </div>
-          </div>
-        </div>
-        <div>
-          <AppButton
-            class="module-button"
-            :label="`yarn add ${module.npm}`"
-            size="lg"
-            trailing
-            :icon="copyIcon"
-            truncate
-            variant="primary"
-            @click="copyToClipboard(`yarn add ${module.npm}`)"
-          />
-        </div>
-      </div>
-      <div class="flex justify-center md:justify-start mb-4">
-        <AppPills :links="links" class="app-pills-modules" />
-      </div>
-    </div>
-
-    <NuxtPage />
-  </div>
-</template>
-
 <script setup lang="ts">
-
-import { RouteLocationNormalized } from 'vue-router'
-
-definePageMeta({
-  documentDriven: false
-})
-const { fetchOne, module } = useModules()
+import type { Module } from '~/types'
 const route = useRoute()
-const { $clipboard } = useNuxtApp()
 
-const links: {label: string, to: RouteLocationNormalized | string, exact: boolean}[] = [
-  { label: 'Overview', to: `/modules/${route.params.slug}`, exact: true },
-  { label: 'Changelog', to: `/modules/${route.params.slug}/changelog`, exact: true }
-]
+const { data: module } = await useFetch<Module>(`https://api.nuxt.com/modules/${route.params.slug}`)
 
-const copyIcon = ref('uil:copy')
-
-await fetchOne(route.params.slug as string)
-
-// Computed
-const maintainers = computed(() => module.value.maintainers.map(m => ({ src: `https://avatars.githubusercontent.com/${m.github}`, alt: m.name })))
-
-const copyToClipboard = (content: string) => {
-  $clipboard.copy(content, { title: 'Command copied to clipboard!' })
-
-  copyIcon.value = 'uil:check'
-  window.setTimeout(() => {
-    copyIcon.value = 'uil:copy'
-  }, 2000)
-}
-
-useSeoMeta({
-  title: `${capitalize(module.value.name)} Module`,
-  description: module.value.description,
-  ogImage: '/socials/modules.jpg'
+const ownerName = computed(() => {
+  const [owner, name] = module.value.repo.split('#')[0].split('/')
+  return `${owner}/${name}`
 })
+
+const links = computed(() => [{
+  icon: 'i-ph-book-bookmark-duotone',
+  label: 'Documentation',
+  to: module.value.website,
+  target: '_blank'
+}, {
+  icon: 'i-simple-icons-github',
+  label: ownerName.value,
+  to: module.value.github,
+  target: '_blank'
+}, module.value.npm && {
+  icon: 'i-simple-icons-npm',
+  label: module.value.npm,
+  to: `https://npmjs.org/package/${module.value.npm}`,
+  target: '_blank'
+}, module.value.learn_more && {
+  icon: 'i-ph-link',
+  label: 'Learn more',
+  to: module.value.learn_more,
+  target: '_blank'
+}].filter(Boolean))
+
+const contributors = computed(() => module.value.contributors.map((contributor) => ({
+  label: contributor.username,
+  avatar: {
+    src: `https://github.com/${contributor.username}.png`,
+    alt: contributor.username
+  }
+})))
 </script>
 
-<style lang="ts">
-css({
-  '.app-pills-modules': {
-    '> a': {
-      px: '{size.32}',
-      py: '{size.8}',
+<template>
+  <UContainer>
+    <UAlert
+      v-if="!module.compatibility?.nuxt?.includes('^3')"
+      class="mt-4"
+      icon="i-ph-warning-duotone"
+      color="orange"
+      variant="subtle"
+      title="This module is not yet compatible with Nuxt 3"
+    >
+      <template #description>
+        Head over to <NuxtLink to="https://v2.nuxt.com" target="_blank" class="underline">
+          v2.nuxt.com
+        </NuxtLink>
+      </template>
+    </UAlert>
+    <UPageHeader :description="module.description" class="sm:py-16">
+      <template #title>
+        {{ module.name }}
 
-      '@md': {
-        px: '{size.56}',
-      }
+        <UTooltip v-if="module.type === 'official'" text="Official module" class="tracking-normal">
+          <UIcon name="i-ph-medal-duotone" class="h-6 w-6 text-primary" />
+        </UTooltip>
+      </template>
+
+      <template #icon>
+        <UAvatar
+          :src="moduleImage(module.icon)"
+          :icon="moduleIcon(module.category)"
+          :alt="module.name"
+          size="3xl"
+          :ui="{ rounded: 'rounded-lg' }"
+          class="mt-[2px]"
+        />
+      </template>
+
+      <div class="flex flex-col lg:flex-row lg:items-center gap-3 mt-4">
+        <UTooltip text="Monthly NPM Downloads">
+          <NuxtLink class="flex items-center gap-1.5" :to="`https://npmjs.org/package/${module.npm}`" target="_blank">
+            <UIcon name="i-ph-arrow-circle-down-duotone" class="w-5 h-5 flex-shrink-0" />
+            <span class="text-sm font-medium">{{ formatNumber(module.stats.downloads) }} downloads</span>
+          </NuxtLink>
+        </UTooltip>
+
+        <span class="hidden lg:block text-gray-500 dark:text-gray-400">&bull;</span>
+
+        <UTooltip text="GitHub Stars">
+          <NuxtLink class="flex items-center gap-1.5" :to="`https://github.com/${module.repo}`" target="_blank">
+            <UIcon name="i-ph-star-duotone" class="w-5 h-5 flex-shrink-0" />
+            <span class="text-sm font-medium">{{ formatNumber(module.stats.stars) }} stars</span>
+          </NuxtLink>
+        </UTooltip>
+
+        <div class="mx-3 h-6 border-l border-gray-200 dark:border-gray-800 w-px hidden lg:block" />
+
+        <div v-for="(maintainer, index) in module.maintainers" :key="maintainer.github" class="flex items-center gap-3">
+          <NuxtLink :to="`https://github.com/${maintainer.github}`" target="_blank" class="flex items-center gap-1.5 hover:text-primary">
+            <UAvatar :src="`https://github.com/${maintainer.github}.png`" :alt="maintainer.github" size="2xs" />
+            <span class="text-sm font-medium">{{ maintainer.github }}</span>
+          </NuxtLink>
+
+          <span v-if="index < module.maintainers.length - 1" class="hidden lg:block text-gray-500 dark:text-gray-400">&bull;</span>
+        </div>
+      </div>
+    </UPageHeader>
+
+    <UPage :ui="{ right: 'my-8' }">
+      <UPageBody prose>
+        <ContentRenderer v-if="module.readme?.body" :value="module.readme" class="module-readme" />
+      </UPageBody>
+
+      <template #right>
+        <UPageLinks title="Links" :links="links" />
+
+        <div class="hidden lg:block">
+          <UDivider type="dashed" class="my-6" />
+
+          <UPageLinks :links="contributors">
+            <template #title>
+              Contributors <UBadge :label="module.contributors.length.toString()" color="gray" size="xs" :ui="{ rounded: 'rounded-full' }" />
+            </template>
+          </UPageLinks>
+        </div>
+      </template>
+    </UPage>
+  </UContainer>
+</template>
+
+<style lang="postcss">
+.module-readme {
+  /* empty code lines */
+  .shiki code .line:empty {
+    @apply hidden;
+  }
+  /* force rounded on prose code */
+  .prose-code {
+    @apply rounded-md;
+  }
+  /* Fix badges */
+  h2 + p,
+  p:has(+ h2) {
+    a img {
+      @apply inline-block m-0 mr-2;
+    }
+    a:hover {
+      @apply border-none opacity-90;
     }
   }
-})
+}
 </style>
