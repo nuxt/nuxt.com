@@ -17,7 +17,7 @@ const { data: surround } = await useAsyncData(`${route.path}-surround`, () => qu
   .findSurround(withoutTrailingSlash(route.path))
 )
 
-const breadcrumb = computed(() => mapContentNavigation(findPageBreadcrumb(navigation.value, page.value)))
+const breadcrumb = computed(() => mapContentNavigation(findPageBreadcrumb(navigation.value, page.value)).slice(1))
 
 const communityLinks = computed(() => [{
   icon: 'i-ph-pen-duotone',
@@ -78,7 +78,7 @@ useContentHead(page)
     <UPageBody prose>
       <ContentRenderer v-if="page && page.body" :value="page" />
 
-      <hr v-if="surround?.length" />
+      <hr v-if="surround?.length">
 
       <UDocsSurround :surround="(surround as ParsedContent[])" />
     </UPageBody>
