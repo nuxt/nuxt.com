@@ -16,4 +16,4 @@ cta:
     - label: 'Explore examples'
       size: 'lg'
       color: 'white'
-      to: '/docs/examples/essentials/hello-world'
+      to: '/docs/examples'
