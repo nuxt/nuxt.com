@@ -2,12 +2,6 @@ import defaultTheme from 'tailwindcss/defaultTheme'
 import type { Config } from 'tailwindcss'
 
 export default <Partial<Config>>{
-  content: {
-    files: [
-      './content/**/*.md',
-      './content/**/*.yml'
-    ]
-  },
   theme: {
     extend: {
       colors: {

@@ -43,7 +43,7 @@ export const random = (arr: Array<any>) => {
 
 import { splitByCase, upperFirst } from 'scule'
 
-export const createBreadcrumb = (link: string) => {
+export const createBreadcrumb = (link: string = 'Missing link') => {
   if (link.startsWith('http')) {
     return link
   }

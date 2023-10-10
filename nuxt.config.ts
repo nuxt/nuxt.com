@@ -4,7 +4,7 @@ const docsSource: any = {
   name: 'nuxt-docs',
   driver: 'github',
   repo: 'nuxt/nuxt',
-  branch: 'main',
+  branch: 'new-docs',
   dir: 'docs',
   prefix: '/1.docs',
   token: process.env.NUXT_GITHUB_TOKEN || ''
@@ -63,6 +63,7 @@ export default defineNuxtConfig({
   routeRules: {
     '/docs': { redirect: '/docs/getting-started/introduction', prerender: false },
     '/docs/getting-started': { redirect: '/docs/getting-started/introduction', prerender: false },
+    '/docs/guide/concepts': { redirect: '/docs/guide/concepts/auto-imports', prerender: false },
     '/docs/guide': { redirect: '/docs/guide/concepts/auto-imports', prerender: false },
     '/docs/api': { redirect: '/docs/api/composables/use-app-config', prerender: false },
     '/docs/examples': { redirect: '/docs/examples/hello-world', prerender: false },
