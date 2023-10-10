@@ -137,13 +137,8 @@ const _useNavigation = () => {
   }]
 
   const searchLinks = computed(() => [...headerLinks.value.map(link => {
-    // Remove `/docs/*` links from command palette
-    if (link.to === '/docs') {
-      return null
-    }
-
-    // Remove `/enterprise` link from command palette
-    if (link.to === '/enterprise') {
+    // Remove `/docs` and `/enterprise` links from command palette
+    if (['/docs', '/enterprise'].includes(link.to)) {
       return {
         label: link.label,
         icon: link.icon,
