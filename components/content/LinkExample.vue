@@ -1,7 +1,7 @@
 <template>
   <Callout icon="i-ph-app-window-duotone">
     Read and edit a live example in
-    <NuxtLink :to="link">
+    <NuxtLink :to="to">
       {{ computedTitle }}
     </NuxtLink>.
   </Callout>
@@ -11,7 +11,7 @@
 import type { ComputedRef } from 'vue'
 
 const props = defineProps({
-  link: {
+  to: {
     type: String,
     required: true
   },
@@ -22,5 +22,5 @@ const props = defineProps({
   }
 })
 
-const computedTitle: ComputedRef<string> = computed(() => createBreadcrumb(props.link))
+const computedTitle: ComputedRef<string> = computed(() => createBreadcrumb(props.to))
 </script>
