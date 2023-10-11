@@ -3,6 +3,10 @@ defineProps({
   label: {
     type: String,
     default: 'Subscribe to our newsletter'
+  },
+  description: {
+    type: String,
+    default: 'Stay updated on new releases and features, guides, and community updates'
   }
 })
 
@@ -32,7 +36,7 @@ function onSubmit () {
 
 <template>
   <form @submit.prevent="onSubmit">
-    <UFormGroup name="email" :label="label" size="xl" :ui="{ label: { base: 'font-semibold' }, container: 'mt-3' }">
+    <UFormGroup name="email" :label="label" :description="description" size="xl" :ui="{ label: { base: 'font-semibold' }, container: 'mt-3' }">
       <UInput
         v-model="email"
         type="email"
