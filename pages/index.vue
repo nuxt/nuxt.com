@@ -24,7 +24,7 @@ useSeoMeta({
       </template>
 
       <template #links>
-        <UButton to="/docs" icon="i-ph-rocket-launch-duotone" size="xl">
+        <UButton to="/docs/getting-started/installation" icon="i-ph-rocket-launch-duotone" size="xl">
           Get Started
         </UButton>
         <UButton size="xl" color="white" icon="i-ph-video-duotone" @click="videoModalOpen = true">
