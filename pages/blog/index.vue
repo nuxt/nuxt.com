@@ -13,7 +13,7 @@ await fetchList()
   <UContainer>
     <UPageHero v-bind="page">
       <template #links>
-        <NewsletterForm class="flex-1 max-w-xs" />
+        <NewsletterForm class="flex-1 max-w-xs" :description="null" />
       </template>
     </UPageHero>
 
