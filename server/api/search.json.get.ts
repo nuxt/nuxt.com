@@ -1,12 +1,15 @@
 import { serverQueryContent } from '#content/server'
 
 export default eventHandler(async (event) => {
-  let files = await serverQueryContent(event, '/docs').where({
+  return await serverQueryContent(event, '/docs').where({
     _type: 'markdown',
+    _path: {
+      $and: [{
+        $ne: new RegExp('^/docs/bridge')
+      }, {
+        $ne: new RegExp('^/docs/migration')
+      }]
+    },
     navigation: { $ne: false }
   }).find()
-
-  files = files.filter(file => !file._path.startsWith('/docs/bridge') && !file._path.startsWith('/docs/migration'))
-
-  return files
 })
