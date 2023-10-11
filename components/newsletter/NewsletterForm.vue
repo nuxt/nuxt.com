@@ -6,7 +6,7 @@ defineProps({
   },
   description: {
     type: String,
-    default: 'Stay updated on new releases and features, guides, and community updates'
+    default: 'Stay updated on new releases and features, guides, and community updates.'
   }
 })
 

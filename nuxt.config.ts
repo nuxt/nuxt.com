@@ -65,7 +65,6 @@ export default defineNuxtConfig({
     '/docs/getting-started': { redirect: '/docs/getting-started/introduction', prerender: false },
     '/docs/guide/concepts': { redirect: '/docs/guide/concepts/auto-imports', prerender: false },
     '/docs/guide': { redirect: '/docs/guide/concepts/auto-imports', prerender: false },
-    '/docs/api': { redirect: '/docs/api/composables/use-app-config', prerender: false },
     '/docs/examples': { redirect: '/docs/examples/hello-world', prerender: false },
     '/docs/community': { redirect: '/docs/community/nuxt-community', prerender: false },
     '/enterprise': { redirect: '/enterprise/support', prerender: false }

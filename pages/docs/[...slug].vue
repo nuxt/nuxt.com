@@ -8,14 +8,18 @@ const route = useRoute()
 
 const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
 if (!page.value) {
-  throw createError({ statusCode: 404, statusMessage: 'Page not found' })
+  throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const { data: surround } = await useAsyncData(`${route.path}-surround`, () => queryContent('/docs')
-  .where({ _extension: 'md', navigation: { $ne: false } })
-  .without(['body', 'excerpt'])
-  .findSurround(withoutTrailingSlash(route.path))
-)
+const { data: surround } = await useAsyncData(`${route.path}-surround`, () => {
+  if (page.value.surround === false) {
+    return []
+  }
+  return queryContent('/docs')
+    .where({ _extension: 'md', navigation: { $ne: false } })
+    .without(['body', 'excerpt'])
+    .findSurround(withoutTrailingSlash(route.path))
+})
 
 const breadcrumb = computed(() => mapContentNavigation(findPageBreadcrumb(navigation.value, page.value)).slice(1))
 
