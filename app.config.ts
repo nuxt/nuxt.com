@@ -93,31 +93,25 @@ export default defineAppConfig({
         height: '5rem'
       }
     },
-    aside: {
-      links: {
-        externalIcon: {
-          name: 'i-ph-arrow-up-right'
-        }
-      }
+    icons: {
+      dark: 'i-ph-moon-duotone',
+      light: 'i-ph-sun-duotone',
+      search: 'i-ph-magnifying-glass-duotone',
+      external: 'i-ph-arrow-up-right',
+      chevron: 'i-ph-caret-down',
+      hash: 'i-ph-hash-duotone'
     },
     header: {
       wrapper: 'lg:mb-0 lg:border-0',
       links: {
         trailingIcon: {
-          name: 'i-ph-caret-down',
           base: 'w-4 h-4'
-        },
-        externalIcon: {
-          name: 'i-ph-arrow-up-right'
         }
       },
       popover: {
         links: {
           active: 'dark:bg-gray-950/50',
-          inactive: 'dark:hover:bg-gray-950/50',
-          externalIcon: {
-            name: 'i-ph-arrow-up-right'
-          }
+          inactive: 'dark:hover:bg-gray-950/50'
         }
       },
       button: {
@@ -127,34 +121,16 @@ export default defineAppConfig({
         }
       }
     },
-    footer: {
-      columns: {
-        externalIcon: {
-          name: 'i-ph-arrow-up-right'
-        }
-      },
-      links: {
-        externalIcon: {
-          name: 'i-ph-arrow-up-right'
-        }
-      }
-    },
     navigation: {
       accordion: {
         button: {
           trailingIcon: {
-            name: 'i-ph-caret-down',
             base: 'w-4 h-4'
           }
         }
       }
     },
     page: {
-      links: {
-        externalIcon: {
-          name: 'i-ph-arrow-up-right'
-        }
-      },
       card: {
         to: 'dark:hover:bg-gray-900/50'
       }
@@ -163,14 +139,8 @@ export default defineAppConfig({
       toc: {
         button: {
           trailingIcon: {
-            name: 'i-ph-caret-down',
             base: 'w-4 h-4'
           }
-        }
-      },
-      search: {
-        button: {
-          icon: 'i-ph-magnifying-glass-duotone'
         }
       },
       surround: {
@@ -180,54 +150,20 @@ export default defineAppConfig({
         }
       }
     },
-    colorMode: {
-      button: {
-        icon: {
-          dark: 'i-ph-moon-duotone',
-          light: 'i-ph-sun-duotone'
-        }
-      }
-    },
     content: {
-      callout: {
-        externalIcon: {
-          name: 'i-ph-arrow-up-right'
-        }
-      },
       collapsible: {
         button: {
           icon: {
-            name: 'i-ph-caret-right',
             base: 'w-3 h-3'
           }
         }
       },
       prose: {
-        h1: {
-          icon: {
-            name: 'i-ph-hash-duotone'
-          }
-        },
-        h2: {
-          icon: {
-            name: 'i-ph-hash-duotone'
-          }
-        },
-        h3: {
-          icon: {
-            name: 'i-ph-hash-duotone'
-          }
-        },
-        h4: {
-          icon: {
-            name: 'i-ph-hash-duotone'
-          }
-        },
         code: {
           button: {
             icon: {
               copy: 'i-ph-copy-duotone',
-              copied: 'i-ph-copy-duotone'
+              copied: 'i-ph-check-square-duotone'
             }
           },
           icon: {
