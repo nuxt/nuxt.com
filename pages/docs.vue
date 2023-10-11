@@ -21,10 +21,6 @@ const navigationLinks = computed(() => {
     <UPage>
       <template #left>
         <UAside :links="links">
-          <template #top>
-            <UDocsSearchButton />
-          </template>
-
           <UDivider type="dashed" class="mb-6" />
 
           <UNavigationTree :links="navigationLinks" default-open :multiple="false" />

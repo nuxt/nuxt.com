@@ -19,7 +19,9 @@ defineProps<{
     </template>
 
     <template #right>
-      <UDocsSearchButton :label="null" class="lg:hidden" />
+      <UTooltip text="Search" :shortcuts="[metaSymbol, 'K']">
+        <UDocsSearchButton :label="null" />
+      </UTooltip>
 
       <UTooltip :text="$colorMode.preference === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'">
         <UColorModeButton />
