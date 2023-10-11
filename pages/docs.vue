@@ -5,8 +5,11 @@ const navigation = inject<Ref<NavItem[]>>('navigation')
 
 const route = useRoute()
 const { navPageFromPath } = useContentHelpers()
+const { headerLinks } = useNavigation()
 
-const links = computed(() => {
+const links = computed(() => headerLinks.value.find(link => link.to === '/docs')?.children ?? [])
+
+const navigationLinks = computed(() => {
   const path = ['/docs', route.params.slug?.[0]].filter(Boolean).join('/')
 
   return mapContentNavigation(navPageFromPath(path, navigation.value)?.children)
@@ -17,12 +20,14 @@ const links = computed(() => {
   <UContainer>
     <UPage>
       <template #left>
-        <UAside>
+        <UAside :links="links">
           <template #top>
             <UDocsSearchButton />
           </template>
 
-          <UNavigationTree :links="links" default-open :multiple="false" />
+          <UDivider type="dashed" class="mb-6" />
+
+          <UNavigationTree :links="navigationLinks" default-open :multiple="false" />
         </UAside>
       </template>
 
