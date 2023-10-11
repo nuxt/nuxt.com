@@ -5,7 +5,7 @@ const _useNavigation = () => {
 
   const headerLinks = computed(() => [{
     label: 'Docs',
-    icon: 'i-ph-book-open-duotone',
+    icon: 'i-ph-book-bookmark-duotone',
     to: '/docs',
     children: [{
       label: 'Get Started',
