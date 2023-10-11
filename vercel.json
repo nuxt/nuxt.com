@@ -59,6 +59,16 @@
       "permanent": false
     },
     {
+      "source": "/docs/api/configuration/nuxt.config",
+      "destination": "/docs/api/configuration/nuxt-config",
+      "permanent": false
+    },
+    {
+      "source": "/docs/modules",
+      "destination": "/modules",
+      "permanent": false
+    },
+    {
       "source": "/docs/concepts/typescript",
       "destination": "/docs/guide/concepts/typescript",
       "permanent": false

@@ -31,7 +31,7 @@ if (process.env.NUXT_EXAMPLES_PATH) {
   examplesSource.base = process.env.NUXT_EXAMPLES_PATH
 }
 
-// https://v3.nuxtjs.org/guide/directory-structure/nuxt.config
+// https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   $development: {
     runtimeConfig: {
