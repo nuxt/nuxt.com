@@ -52,7 +52,7 @@ provide('navigation', navigation)
     <Footer />
 
     <ClientOnly>
-      <UDocsSearch :files="files" :navigation="navigation" :groups="searchGroups" :links="searchLinks" />
+      <UDocsSearch :files="files" :navigation="navigation[0]?.children" :groups="searchGroups" :links="searchLinks" />
 
       <UNotifications />
     </ClientOnly>
