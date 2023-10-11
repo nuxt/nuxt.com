@@ -41,8 +41,6 @@ export const random = (arr: Array<any>) => {
   return arr[Math.floor(Math.random() * arr.length)]
 }
 
-import { splitByCase, upperFirst } from 'scule'
-
 export const createBreadcrumb = (link: string = 'Missing link') => {
   if (link.startsWith('http')) {
     return link

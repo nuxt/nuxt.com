@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-v-html -->
 <template>
   <Callout icon="i-ph-bookmark-simple-duotone" :to="to">
     <MDCSlot unwrap="p">
@@ -7,8 +8,6 @@
 </template>
 
 <script setup lang="ts">
-import type { ComputedRef } from 'vue'
-
 const props = defineProps({
   to: {
     type: String,
@@ -22,5 +21,5 @@ const props = defineProps({
 })
 
 // Guess title from link!
-const computedTitle: ComputedRef<string> = computed(() => props.title || createBreadcrumb(props.to))
+const computedTitle = computed<string>(() => props.title || createBreadcrumb(props.to))
 </script>
