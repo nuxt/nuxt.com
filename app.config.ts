@@ -45,11 +45,11 @@ export default defineAppConfig({
     },
     commandPalette: {
       default: {
-        icon: 'i-ph-magnifying-glass',
+        icon: 'i-ph-magnifying-glass-duotone',
         loadingIcon: 'i-ph-spinner',
         selectedIcon: 'i-ph-check',
         emptyState: {
-          icon: 'i-ph-magnifying-glass'
+          icon: 'i-ph-magnifying-glass-duotone'
         }
       }
     },
@@ -93,6 +93,13 @@ export default defineAppConfig({
         height: '5rem'
       }
     },
+    aside: {
+      links: {
+        externalIcon: {
+          name: 'i-ph-arrow-up-right'
+        }
+      }
+    },
     header: {
       wrapper: 'lg:mb-0 lg:border-0',
       links: {
@@ -107,7 +114,10 @@ export default defineAppConfig({
       popover: {
         links: {
           active: 'dark:bg-gray-950/50',
-          inactive: 'dark:hover:bg-gray-950/50'
+          inactive: 'dark:hover:bg-gray-950/50',
+          externalIcon: {
+            name: 'i-ph-arrow-up-right'
+          }
         }
       },
       button: {
@@ -118,6 +128,11 @@ export default defineAppConfig({
       }
     },
     footer: {
+      columns: {
+        externalIcon: {
+          name: 'i-ph-arrow-up-right'
+        }
+      },
       links: {
         externalIcon: {
           name: 'i-ph-arrow-up-right'
@@ -173,15 +188,50 @@ export default defineAppConfig({
         }
       }
     },
-    prose: {
-      heading: {
-        icon: 'i-ph-hash-duotone'
+    content: {
+      callout: {
+        externalIcon: {
+          name: 'i-ph-arrow-up-right'
+        }
       },
       collapsible: {
         button: {
           icon: {
             name: 'i-ph-caret-right',
             base: 'w-3 h-3'
+          }
+        }
+      },
+      prose: {
+        h1: {
+          icon: {
+            name: 'i-ph-hash-duotone'
+          }
+        },
+        h2: {
+          icon: {
+            name: 'i-ph-hash-duotone'
+          }
+        },
+        h3: {
+          icon: {
+            name: 'i-ph-hash-duotone'
+          }
+        },
+        h4: {
+          icon: {
+            name: 'i-ph-hash-duotone'
+          }
+        },
+        code: {
+          button: {
+            icon: {
+              copy: 'i-ph-copy-duotone',
+              copied: 'i-ph-copy-duotone'
+            }
+          },
+          icon: {
+            terminal: 'i-ph-terminal-window-duotone'
           }
         }
       }
