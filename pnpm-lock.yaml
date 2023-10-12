@@ -27,8 +27,8 @@ dependencies:
     specifier: ^2.8.5
     version: 2.8.5(vue@3.3.4)
   '@nuxt/ui-pro':
-    specifier: npm:@nuxt/ui-pro-edge@0.2.1-28285296.669fc33
-    version: /@nuxt/ui-pro-edge@0.2.1-28285296.669fc33(vue@3.3.4)(webpack@5.88.2)
+    specifier: npm:@nuxt/ui-pro-edge@0.2.1-28285496.298dd43
+    version: /@nuxt/ui-pro-edge@0.2.1-28285496.298dd43(vue@3.3.4)(webpack@5.88.2)
   '@nuxthq/studio':
     specifier: ^1.0.0
     version: 1.0.0
@@ -1452,8 +1452,8 @@ packages:
       - webpack
     dev: false
 
-  /@nuxt/ui-pro-edge@0.2.1-28285296.669fc33(vue@3.3.4)(webpack@5.88.2):
-    resolution: {integrity: sha512-vrOFnW/f7uO7ScGAx/bUogQewK+356dFTSX1KF/JBWQGVxLLPIkdyyE4XomnUAaTci6/0HD/SioPwdOqawci3A==}
+  /@nuxt/ui-pro-edge@0.2.1-28285496.298dd43(vue@3.3.4)(webpack@5.88.2):
+    resolution: {integrity: sha512-Is01xCCnYsW9w0rcPwviCRfEHnVrXIp05YiF8/TPUrbcShnnNk2ZQm5Cly2O/sXgyBhmYvUNoVyv4rAOiK78yw==}
     dependencies:
       '@nuxt/ui': /@nuxt/ui-edge@2.9.0-28285290.0bd12fd(vue@3.3.4)(webpack@5.88.2)
       '@vueuse/core': 10.5.0(vue@3.3.4)
