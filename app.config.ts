@@ -8,14 +8,6 @@ export default defineAppConfig({
       }
     },
     button: {
-      color: {
-        white: {
-          link: 'text-gray-700 dark:text-gray-200 hover:text-primary-500 dark:hover:text-primary-400 focus-visible:ring-inset focus-visible:ring-2 focus-visible:ring-primary-500 dark:focus-visible:ring-primary-400'
-        },
-        gray: {
-          link: 'text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 focus-visible:ring-inset focus-visible:ring-2 focus-visible:ring-primary-500 dark:focus-visible:ring-primary-400'
-        }
-      },
       default: {
         loadingIcon: 'i-ph-spinner'
       }
@@ -82,7 +74,7 @@ export default defineAppConfig({
       rounded: 'rounded-xl'
     },
     tooltip: {
-      background: 'bg-background'
+      background: '!bg-background'
     },
     // `@nuxt/ui-pro` specific
     variables: {
