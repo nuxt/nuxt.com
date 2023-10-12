@@ -12,7 +12,7 @@ const links = computed(() => headerLinks.value.find(link => link.to === '/docs')
 const navigationLinks = computed(() => {
   const path = ['/docs', route.params.slug?.[0]].filter(Boolean).join('/')
 
-  return mapContentNavigation(navPageFromPath(path, navigation.value)?.children)
+  return mapContentNavigation(navPageFromPath(path, navigation.value)?.children || [])
 })
 </script>
 
