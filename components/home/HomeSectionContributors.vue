@@ -85,13 +85,16 @@ async function nextContributors () {
             'transition-delay': `${(index % 8 + Math.floor(index / 8)) * 20}ms`
           }"
         >
-          <img
-            :src="imgUrl(username)"
-            :alt="username"
-            loading="lazy"
-            :title="username"
-            class="rounded-xl w-full h-full transition lg:hover:scale-125"
-          >
+          <UTooltip :text="username">
+            <img
+              :src="`https://ipx.nuxt.com/s_80x80/gh_avatar/${username}`"
+              :srcset="`https://ipx.nuxt.com/s_160x160/gh_avatar/${username} 2x`"
+              :alt="username"
+              loading="lazy"
+              :title="username"
+              class="rounded-xl w-full h-full transition lg:hover:scale-125"
+            >
+          </UTooltip>
         </a>
       </Transition>
     </div>
