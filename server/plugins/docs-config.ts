@@ -1,5 +1,6 @@
 import type { Schema } from 'untyped'
 import { upperFirst } from 'scule'
+import { writeFile } from 'node:fs/promises'
 
 export default defineNitroPlugin((nitroApp) => {
   // @ts-ignore
@@ -9,56 +10,46 @@ export default defineNitroPlugin((nitroApp) => {
       file.body = '---\nnavigation: false\n---'
     }
     // Generate the markdown from the schema
-    if (file._id === 'nuxt-docs:docs:3.api:6.configuration:nuxt-config.md') {
-      const rootSchema = await $fetch<Schema>('https://unpkg.com/@nuxt/schema@latest/schema/config.schema.json')
-      const GENERATE_KEY = '<!-- GENERATED_CONFIG_DOCS -->'
-      // Prepare content directory
-      const start = Date.now()
-      console.log(`Generating config docs on ${file._id}`)
-
-      // @ts-ignore
-      const keys = Object.keys(rootSchema.properties).sort()
+    if (file._id === 'nuxt-docs:1.docs:3.api:6.nuxt-config.md') {
       let generatedDocs = ''
+      try {
+        const rootSchema = await $fetch<Schema>('https://unpkg.com/@nuxt/schema@latest/schema/config.schema.json')
+        const GENERATE_KEY = '<!-- GENERATED_CONFIG_DOCS -->'
+        // Prepare content directory
+        const start = Date.now()
+        console.log(`Generating config docs on ${file._id}`)
 
-      if (!file.body.includes(GENERATE_KEY)) {
-        return console.warn(`Could not find ${GENERATE_KEY} in ${file._id}`)
-      }
-
-      // Generate each section
-      for (const key of keys) {
         // @ts-ignore
-        const schema = rootSchema.properties[key]
+        const keys = Object.keys(rootSchema.properties).sort()
 
-        const lines = generateMarkdown(schema, key, '##')
-
-        // Skip empty sections
-        if (lines.length < 3) {
-          continue
+        if (!file.body.includes(GENERATE_KEY)) {
+          return console.warn(`Could not find ${GENERATE_KEY} in ${file._id}`)
         }
 
-        // Add lines to new file content
-        generatedDocs += lines.join('\n') + '\n'
+        // Generate each section
+        for (const key of keys) {
+          // @ts-ignore
+          const schema = rootSchema.properties[key]
+
+          const lines = generateMarkdown(schema, key, '##')
+
+          // Skip empty sections
+          if (lines.length < 3) {
+            continue
+          }
+
+          // Add lines to new file content
+          generatedDocs += lines.join('\n') + '\n'
+        }
+
+
+        file.body = file.body.replace(GENERATE_KEY, generatedDocs)
+
+        console.log(`Config docs generated in ${(Date.now() - start) / 1000} seconds!`)
+      } catch (err) {
+        console.error('Could not generate config docs', err)
+        await writeFile('debug-config-docs.md', generatedDocs)
       }
-
-      file.body = file.body.replace(GENERATE_KEY, generatedDocs)
-
-      console.log(`Config docs generated in ${(Date.now() - start) / 1000} seconds!`)
-    }
-  })
-
-  // @ts-ignore
-  nitroApp.hooks.hook('content:file:afterParse', async (file) => {
-    if (file.navigation?.icon?.startsWith('ph:')) {
-      file.navigation.icon = file.navigation.icon.replace('ph:', 'i-ph-')
-    }
-    if (file.navigation?.icon?.startsWith('uil:')) {
-      file.navigation.icon = file.navigation.icon.replace('uil:', 'i-uil-')
-    }
-    if (file.navigation?.icon?.startsWith('heroicons:')) {
-      file.navigation.icon = file.navigation.icon.replace('heroicons:', 'i-heroicons-')
-    }
-    if (file.navigation?.icon?.startsWith('octicon:')) {
-      file.navigation.icon = file.navigation.icon.replace('octicon:', 'i-octicon-')
     }
   })
 })
@@ -157,6 +148,7 @@ function renderTag (tag: string) {
     return []
   }
   tag = tag.replace(`@${type}`, `**${upperFirst(type)}**:`)
+    .replace('js\'node:fs\'', 'js') // hotfix
   if (TagAlertType[type]) {
     return ['::callout', tag, '::', '']
   }

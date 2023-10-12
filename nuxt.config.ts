@@ -68,6 +68,7 @@ export default defineNuxtConfig({
     '/docs/guide': { redirect: '/docs/guide/concepts/auto-imports', prerender: false },
     '/docs/examples': { redirect: '/docs/examples/hello-world', prerender: false },
     '/docs/community': { redirect: '/docs/community/nuxt-community', prerender: false },
+    '/docs/api/configuration/nuxt-config': { redirect: '/docs/api/nuxt-config', prerender: false },
     '/enterprise': { redirect: '/enterprise/support', prerender: false }
   },
 
