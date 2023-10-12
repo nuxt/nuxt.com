@@ -42,6 +42,9 @@ export default defineAppConfig({
         selectedIcon: 'i-ph-check',
         emptyState: {
           icon: 'i-ph-magnifying-glass-duotone'
+        },
+        closeButton: {
+          icon: 'i-ph-x'
         }
       }
     },
@@ -128,6 +131,11 @@ export default defineAppConfig({
       }
     },
     docs: {
+      search: {
+        default: {
+          icon: 'i-ph-x'
+        }
+      },
       toc: {
         button: {
           trailingIcon: {
