@@ -76,6 +76,20 @@ const contributors = computed(() => module.value.contributors.map((contributor) 
         />
       </template>
 
+
+      <div class="absolute top-[72px] -left-[72px] hidden lg:flex">
+        <UTooltip text="Back to modules">
+          <UButton
+            to="/modules"
+            icon="i-ph-caret-left"
+            color="gray"
+            :ui="{ rounded: 'rounded-full' }"
+            size="lg"
+            class=""
+          />
+        </UTooltip>
+      </div>
+
       <div class="flex flex-col lg:flex-row lg:items-center gap-3 mt-4">
         <UTooltip text="Monthly NPM Downloads">
           <NuxtLink class="flex items-center gap-1.5" :to="`https://npmjs.org/package/${module.npm}`" target="_blank">

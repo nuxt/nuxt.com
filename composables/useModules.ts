@@ -1,25 +1,25 @@
 import type { Module, Filter } from '../types'
 
 const iconsMap = {
-  Analytics: 'i-uil-chart-line',
-  CMS: 'i-uil-pen',
-  CSS: 'i-uil-brush-alt',
-  Database: 'i-uil-database',
-  Date: 'i-uil-calendar-alt',
-  Deployment: 'i-uil-cloud',
-  Devtools: 'i-uil-wrench',
-  Ecommerce: 'i-uil-shopping-basket',
-  Extensions: 'i-uil-puzzle-piece',
-  Fonts: 'i-uil-font',
-  Images: 'i-uil-image-v',
-  Libraries: 'i-uil-books',
-  Monitoring: 'i-uil-stopwatch',
-  Payment: 'i-uil-dollar-alt',
-  Performance: 'i-uil-rocket',
-  Request: 'i-uil-life-ring',
-  Security: 'i-uil-shield',
-  SEO: 'i-uil-search-alt',
-  UI: 'i-uil-palette'
+  Analytics: 'i-ph-chart-bar-duotone',
+  CMS: 'i-ph-pencil-duotone',
+  CSS: 'i-ph-paint-brush-broad-duotone',
+  Database: 'i-ph-database-duotone',
+  Date: 'i-ph-calendar-duotone',
+  Deployment: 'i-ph-cloud-duotone',
+  Devtools: 'i-ph-wrench-duotone',
+  Ecommerce: 'i-ph-shopping-cart-duotone',
+  Extensions: 'i-ph-puzzle-piece-duotone',
+  Fonts: 'i-ph-text-aa-duotone',
+  Images: 'i-ph-image-duotone',
+  Libraries: 'i-ph-books-duotone',
+  Monitoring: 'i-ph-timer-duotone',
+  Payment: 'i-ph-credit-card-duotone',
+  Performance: 'i-ph-gauge-duotone',
+  Request: 'i-ph-plugs-connected-duotone',
+  Security: 'i-ph-shield-duotone',
+  SEO: 'i-ph-file-search-duotone',
+  UI: 'i-ph-layout-duotone'
 }
 
 export const moduleImage = function (icon: string = '', size: number = 80) {

@@ -62,14 +62,18 @@ function copyLink () {
           </UButton>
         </div>
 
-        <UButton
-          to="/blog"
-          icon="i-ph-caret-left"
-          color="gray"
-          :ui="{ rounded: 'rounded-full' }"
-          size="lg"
-          class="absolute top-[72px] -left-[72px] hidden lg:flex"
-        />
+
+        <div class="absolute top-[72px] -left-[72px] hidden lg:flex">
+          <UTooltip text="Back to blog">
+            <UButton
+              to="/blog"
+              icon="i-ph-caret-left"
+              color="gray"
+              :ui="{ rounded: 'rounded-full' }"
+              size="lg"
+            />
+          </UTooltip>
+        </div>
       </UPageHeader>
 
       <UPageBody prose>

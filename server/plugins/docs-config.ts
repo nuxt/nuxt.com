@@ -65,6 +65,16 @@ function generateMarkdown (schema: Schema, title: string, level: string) {
   // Render heading
   lines.push(`${level} ${title}`, '')
 
+  // Render title
+  if (schema.title) {
+    lines.push(schema.title, '')
+  }
+
+  // Render description
+  if (schema.description) {
+    lines.push(schema.description, '')
+  }
+
   // Render meta info
   if (schema.type !== 'object' || !schema.properties) {
     // Type and default
@@ -83,16 +93,6 @@ function generateMarkdown (schema: Schema, title: string, level: string) {
     // lines.push(`- **Version**: ${versions.join(', ')}`)
 
     lines.push('')
-  }
-
-  // Render title
-  if (schema.title) {
-    lines.push('> ' + schema.title, '')
-  }
-
-  // Render description
-  if (schema.description) {
-    lines.push(schema.description, '')
   }
 
   // Render @ tags
