@@ -54,7 +54,7 @@ defineShortcuts({
             ref="inputRef"
             :model-value="q"
             name="q"
-            icon="i-ph-magnifying-glass"
+            icon="i-ph-magnifying-glass-duotone"
             placeholder="Search..."
             class="w-56"
             size="md"
