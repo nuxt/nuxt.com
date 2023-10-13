@@ -5,7 +5,7 @@ const videoModalOpen = ref(false)
 
 
 useSeoMeta({
-  title: 'Nuxt: The Complete Solution for Vue Developers',
+  title: 'Nuxt: The Intuitive Vue Framework',
   description: 'Nuxt is an open source framework that makes web development intuitive and powerful. Create performant and production-grade full-stack web apps and websites with confidence.'
 })
 </script>
@@ -14,7 +14,7 @@ useSeoMeta({
   <div v-if="page">
     <ULandingHero :ui="{ base: 'relative z-[1]' }" class="dark:bg-gradient-to-b from-gray-950 to-gray-900">
       <template #title>
-        The Complete Solution<br>for <span class="text-primary">Vue Developers</span>
+        The Intuitive <span class="text-primary block lg:inline-block">Vue Framework</span>
       </template>
 
       <template #description>
@@ -58,8 +58,15 @@ useSeoMeta({
       </ULandingLogos>
     </ULandingHero>
 
-    <!-- eslint-disable-next-line vue/no-deprecated-slot-attribute -->
-    <ULandingSection v-for="(section, index) of page.sections" :key="index" :slot="section.slot" :class="section.class" :align="section.align">
+    <!-- eslint-disable vue/no-deprecated-slot-attribute -->
+    <ULandingSection
+      v-for="(section, index) of page.sections"
+      :key="index"
+      :slot="section.slot"
+      :class="section.class"
+      :align="section.align"
+      :links="section.links"
+    >
       <template #title>
         <!-- eslint-disable-next-line vue/no-v-html -->
         <span v-html="section?.title" />
