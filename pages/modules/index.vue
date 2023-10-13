@@ -5,9 +5,7 @@ const route = useRoute()
 const { replaceRoute } = useFilters('modules')
 const { fetchList, filteredModules, q, categories, selectedOrder, sorts, selectedSort } = useModules()
 
-const { data: page } = await useAsyncData(route.path, () => {
-  return queryContent(route.path).findOne()
-})
+const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
 
 const links = [{
   icon: 'i-ph-book-open-duotone',
