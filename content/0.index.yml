@@ -1,4 +1,12 @@
 navigation: false
+hero:
+  badges:
+    - label: Nuxt 3.7 is out ✨
+      to: /blog/v3-7
+      variant: outline
+      size: xs
+      trailing: true
+      class: 'font-semibold hover:bg-primary-100 dark:hover:bg-primary-900 rounded-full'
 logos:
   title: 'Trusted by the best front-end teams'
 sections:

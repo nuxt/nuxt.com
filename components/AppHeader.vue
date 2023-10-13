@@ -17,8 +17,6 @@ const mobileNav = computed(() => {
   return links
 })
 
-
-
 defineProps<{
   links?: Link[]
 }>()

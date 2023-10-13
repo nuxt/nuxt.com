@@ -3,7 +3,6 @@ const { data: page } = await useAsyncData('index', () => queryContent('/').findO
 
 const videoModalOpen = ref(false)
 
-
 useSeoMeta({
   title: 'Nuxt: The Intuitive Vue Framework',
   description: 'Nuxt is an open source framework that makes web development intuitive and powerful. Create performant and production-grade full-stack web apps and websites with confidence.'
@@ -12,7 +11,7 @@ useSeoMeta({
 
 <template>
   <div v-if="page">
-    <ULandingHero :ui="{ base: 'relative z-[1]' }" class="dark:bg-gradient-to-b from-gray-950 to-gray-900">
+    <ULandingHero :ui="{ base: 'relative z-[1]' }" class="dark:bg-gradient-to-b from-gray-950 to-gray-900" v-bind="page.hero">
       <template #title>
         The Intuitive <span class="text-primary block lg:inline-block">Vue Framework</span>
       </template>
