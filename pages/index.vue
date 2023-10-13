@@ -47,7 +47,7 @@ useSeoMeta({
 
       <div class="absolute top-[120px] w-96 h-96 inset-x-0 mx-auto bg-gradient-radial from-primary to-white dark:to-gray-900 opacity-25 blur-2xl lg:scale-125" />
 
-      <ULandingLogos :title="page.logos.title" class="mt-32 sm:mt-48 text-gray-500 dark:text-gray-400">
+      <ULandingLogos :title="page.logos.title" class="mt-32 text-gray-500 dark:text-gray-400">
         <BrandsGithub class="hidden md:block h-7" />
         <BrandsOpenai class="h-5 md:h-8" />
         <BrandsNasa class="h-4 md:h-6" />
