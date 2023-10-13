@@ -19,7 +19,7 @@ provide('navigation', navigation)
 
 <template>
   <div>
-    <Header :links="headerLinks" />
+    <AppHeader :links="headerLinks" />
 
     <UContainer>
       <UMain>
@@ -29,7 +29,7 @@ provide('navigation', navigation)
       </UMain>
     </UContainer>
 
-    <Footer />
+    <AppFooter />
 
     <ClientOnly>
       <UDocsSearch :files="files" :navigation="navigation[0]?.children" :groups="searchGroups" :links="searchLinks" />

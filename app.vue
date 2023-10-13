@@ -43,13 +43,13 @@ provide('navigation', navigation)
 
 <template>
   <div>
-    <Header :links="headerLinks" />
+    <AppHeader :links="headerLinks" />
 
     <UMain>
       <NuxtPage />
     </UMain>
 
-    <Footer />
+    <AppFooter />
 
     <ClientOnly>
       <UDocsSearch :files="files" :navigation="navigation[0]?.children" :groups="searchGroups" :links="searchLinks" />

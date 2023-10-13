@@ -7,6 +7,18 @@ const navigation = inject<Ref<NavItem[]>>('navigation')
 const stats = useStats()
 const { metaSymbol } = useShortcuts()
 
+const route = useRoute()
+const mobileNav = computed(() => {
+  const links = mapContentNavigation(navigation.value)
+  const docsLink = links.find((link) => link.to === '/docs')
+  if (docsLink && !route.path.startsWith('/docs/bridge') && !route.path.startsWith('/docs/migration')) {
+    docsLink.children = docsLink.children.filter((link) => !['/docs/bridge', '/docs/migration'].includes(link.to as string))
+  }
+  return links
+})
+
+
+
 defineProps<{
   links?: Link[]
 }>()
@@ -39,7 +51,7 @@ defineProps<{
     </template>
 
     <template #panel>
-      <UNavigationTree :links="mapContentNavigation(navigation)" default-open :multiple="false" />
+      <UNavigationTree :links="mobileNav" default-open :multiple="false" />
     </template>
   </UHeader>
 </template>
