@@ -44,6 +44,7 @@ function onSubmit () {
         :ui="{ icon: { trailing: { pointer: '' } } }"
         required
         autocomplete="off"
+        class="max-w-sm"
       >
         <template #trailing>
           <UButton type="submit" size="xs" color="black" :label="loading ? 'Subscribing' : 'Subscribe'" :loading="loading" />
