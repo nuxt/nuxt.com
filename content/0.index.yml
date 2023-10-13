@@ -237,7 +237,7 @@ sections:
     slot: testimonials
     align: center
     testimonials:
-      - quote: "uxt offers a compelling solution and a great ecosystem to help you ship fullstack Vue apps that are performant and SEO friendly. The flexibility to choose between SSR and SSG is icing on the cake."
+      - quote: "Nuxt offers a compelling solution and a great ecosystem to help you ship fullstack Vue apps that are performant and SEO friendly. The flexibility to choose between SSR and SSG is icing on the cake."
         author:
           name: 'Evan you'
           job: 'Creator of Vue.js and Vite'
