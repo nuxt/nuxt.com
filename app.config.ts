@@ -132,8 +132,8 @@ export default defineAppConfig({
     },
     docs: {
       search: {
-        default: {
-          icon: 'i-ph-x'
+        fileIcon: {
+          name: 'i-ph-file-text-duotone'
         }
       },
       toc: {
