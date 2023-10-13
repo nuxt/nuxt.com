@@ -123,7 +123,7 @@ sections:
         to: '/docs/getting-started/error-handling'
       - title: 'Layers'
         description: 'Extend your Nuxt application with another Nuxt application to reuse components, composables, layouts, pages and more.'
-        icon: 'i-ph-stack-duotonen'
+        icon: 'i-ph-stack-duotone'
         to: '/docs/getting-started/layers'
       - title: 'Server Routes'
         description: 'Create API endpoints and server routes to securely connect with third party services and consume from your frontend.'
