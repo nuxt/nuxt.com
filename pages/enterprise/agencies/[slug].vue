@@ -5,7 +5,7 @@ const route = useRoute()
 
 const { data: agency } = await useAsyncData(route.path, () => queryContent<Agency>(route.path).findOne())
 if (!agency.value) {
-  throw createError({ statusCode: 404, statusMessage: 'Agency not found' })
+  throw createError({ statusCode: 404, statusMessage: 'Agency not found', fatal: true })
 }
 
 const links = computed(() => [{

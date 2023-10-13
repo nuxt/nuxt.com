@@ -3,6 +3,9 @@ import type { Module } from '~/types'
 const route = useRoute()
 
 const { data: module } = await useFetch<Module>(`https://api.nuxt.com/modules/${route.params.slug}`)
+if (!module.value) {
+  throw createError({ statusCode: 404, statusMessage: 'Module not found', fatal: true })
+}
 
 const ownerName = computed(() => {
   const [owner, name] = module.value.repo.split('#')[0].split('/')
