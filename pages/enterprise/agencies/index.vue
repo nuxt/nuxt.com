@@ -36,7 +36,7 @@ await fetchList()
             }"
           >
             <template #icon>
-              <UColorModeAvatar :light="agency.logo.light" :dark="agency.logo.dark" size="lg" />
+              <UColorModeAvatar :light="agency.logo.light" :dark="agency.logo.dark" size="lg" :ui="{ rounded: 'rounded-sm' }" />
             </template>
 
             <template #footer>
