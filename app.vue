@@ -5,7 +5,10 @@ const colorMode = useColorMode()
 const { headerLinks, searchGroups, searchLinks } = useNavigation()
 
 const { data: navigation } = await useLazyAsyncData('navigation', () => fetchContentNavigation(), { default: () => [] })
-const { data: files } = useLazyFetch<ParsedContent[]>('/api/search.json', { default: () => [], server: false })
+const { data: files } = useLazyFetch<ParsedContent[]>('/api/search.json', {
+  default: () => [],
+  server: false
+})
 
 // Computed
 
