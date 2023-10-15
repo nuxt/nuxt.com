@@ -51,7 +51,7 @@ const ecosystemLinks = [{
   to: '/enterprise/support'
 }, {
   icon: 'i-ph-handshake-duotone',
-  label: 'Agency Partnership',
+  label: 'Nuxt Agencies',
   to: '/enterprise/agencies'
 }, {
   icon: 'i-ph-briefcase-duotone',
@@ -71,11 +71,11 @@ useContentHead(page)
   <UPage>
     <UPageHeader v-bind="page">
       <template #headline>
-        <span v-for="(link, index) in breadcrumb" :key="index" :class="[index < breadcrumb.length - 1 && 'text-gray-500 dark:text-gray-400']" class="flex items-center gap-1.5">
+        <NuxtLink v-for="(link, index) in breadcrumb" :key="index" :to="link.to" :class="[index < breadcrumb.length - 1 && 'text-gray-500 dark:text-gray-400']" class="flex items-center gap-1.5">
           {{ link.label }}
 
           <UIcon v-if="index < breadcrumb.length - 1" name="i-ph-caret-right" class="w-4 h-4" />
-        </span>
+        </NuxtLink>
       </template>
     </UPageHeader>
 
