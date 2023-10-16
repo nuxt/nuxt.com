@@ -9,7 +9,8 @@
 
 <script setup lang="ts">
 import { hasProtocol, joinURL } from 'ufo'
-const { data: module } = useNuxtData('module')
+const route = useRoute()
+const { data: module } = useNuxtData(`module-${route.params?.slug}`)
 
 const props = defineProps({
   href: {
@@ -24,8 +25,7 @@ const props = defineProps({
 })
 
 const href = computed(() => {
-  if (hasProtocol(props.href)) return props.href
-  if (!module.value.github) return props.href
+  if (hasProtocol(props.href) || !module.value?.github) return props.href
   return joinURL(module.value.github, 'blob', module.value.stats?.defaultBranch || 'main', props.href)
 })
 </script>

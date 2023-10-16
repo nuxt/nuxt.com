@@ -10,7 +10,8 @@
 <script setup lang="ts">
 import { hasProtocol, joinURL } from 'ufo'
 
-const { data: module } = useNuxtData('module')
+const route = useRoute()
+const { data: module } = useNuxtData(`module-${route.params?.slug}`)
 
 const props = defineProps({
   src: {
