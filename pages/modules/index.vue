@@ -91,8 +91,8 @@ defineShortcuts({
 
         <UPageGrid v-if="filteredModules?.length">
           <UPageCard
-            v-for="module in filteredModules"
-            :key="module.name"
+            v-for="(module, index) in filteredModules"
+            :key="index"
             :to="`/modules/${module.name}`"
             :title="module.name"
             class="flex flex-col"
