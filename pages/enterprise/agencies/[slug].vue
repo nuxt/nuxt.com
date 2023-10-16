@@ -17,6 +17,12 @@ const links = computed(() => [{
   to: agency.value.link,
   target: '_blank'
 }])
+
+useSeoMeta({
+  titleTemplate: '%s · Nuxt Agencies',
+  title: agency.value.head?.title || agency.value.title,
+  description: agency.value.head?.description || agency.value.description
+})
 </script>
 
 <template>

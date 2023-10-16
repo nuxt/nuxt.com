@@ -1,8 +1,11 @@
 <script setup lang="ts">
+import { debounce } from 'perfect-debounce'
 import type { ParsedContent } from '@nuxt/content/dist/runtime/types'
 
+const search = ref(null)
 const colorMode = useColorMode()
 const { headerLinks, searchGroups, searchLinks } = useNavigation()
+const color = computed(() => colorMode.value === 'dark' ? '#18181b' : 'white')
 
 const { data: navigation } = await useLazyAsyncData('navigation', () => fetchContentNavigation(), { default: () => [] })
 const { data: files } = useLazyFetch<ParsedContent[]>('/api/search.json', {
@@ -10,14 +13,8 @@ const { data: files } = useLazyFetch<ParsedContent[]>('/api/search.json', {
   server: false
 })
 
-// Computed
-
-const color = computed(() => colorMode.value === 'dark' ? '#18181b' : 'white')
-
-// Head
-
 useHead({
-  titleTemplate: title => title ? `${title} - Nuxt` : 'Nuxt: The Intuitive Web Framework',
+  titleTemplate: title => title ? `${title} · Nuxt` : 'Nuxt: The Intuitive Web Framework',
   meta: [
     { name: 'viewport', content: 'width=device-width, initial-scale=1' },
     { key: 'theme-color', name: 'theme-color', content: color }
@@ -39,8 +36,12 @@ useSeoMeta({
   twitterSite: 'nuxt_js'
 })
 
-// Provide
+watch(() => search.value?.commandPaletteRef?.query, debounce((query) => {
+  if (!query) return
+  useTrackEvent('Search', { props: { query, results: `${search.value?.commandPaletteRef.results.length}` } })
+}, 500))
 
+// Provide
 provide('navigation', navigation)
 </script>
 
@@ -55,7 +56,7 @@ provide('navigation', navigation)
     <AppFooter />
 
     <ClientOnly>
-      <UDocsSearch :files="files" :navigation="navigation[0]?.children" :groups="searchGroups" :links="searchLinks" />
+      <UDocsSearch ref="search" :files="files" :navigation="navigation[0]?.children" :groups="searchGroups" :links="searchLinks" />
 
       <UNotifications />
     </ClientOnly>

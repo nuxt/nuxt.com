@@ -6,7 +6,11 @@ if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-useContentHead(page)
+useSeoMeta({
+  titleTemplate: '%s · Nuxt Enterprise',
+  title: page.value.head?.title || page.value.title,
+  description: page.value.head?.description || page.value.description
+})
 </script>
 
 <template>

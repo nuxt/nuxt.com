@@ -4,7 +4,11 @@ const { filteredAgencies, fetchList, services, regions } = useEnterpriseAgencies
 
 const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
 
-useContentHead(page)
+useSeoMeta({
+  titleTemplate: 'Explore Nuxt Agencies',
+  title: page.value.head?.title || page.value.title,
+  description: page.value.head?.description || page.value.description
+})
 
 await fetchList()
 </script>

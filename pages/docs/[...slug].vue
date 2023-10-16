@@ -37,7 +37,7 @@ const titleTemplate = computed(() => {
   if (page.value.titleTemplate) return page.value.titleTemplate
   const titleTemplate = navKeyFromPath(route.path, 'titleTemplate', navigation.value)
   if (titleTemplate) return titleTemplate
-  return '%s - Nuxt'
+  return '%s · Nuxt'
 })
 
 const communityLinks = computed(() => [{
@@ -84,7 +84,7 @@ const ecosystemLinks = [{
 useSeoMeta({
   titleTemplate,
   title: page.value.head?.title || page.value.title,
-  description: page.value.description
+  description: page.value.head?.description || page.value.description
 })
 </script>
 

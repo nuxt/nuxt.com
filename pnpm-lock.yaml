@@ -56,6 +56,9 @@ dependencies:
   nuxt:
     specifier: ^3.7.4
     version: 3.7.4(eslint@8.51.0)(typescript@5.2.2)(vue-tsc@1.8.19)
+  perfect-debounce:
+    specifier: ^1.0.0
+    version: 1.0.0
   scule:
     specifier: ^1.0.0
     version: 1.0.0

@@ -18,6 +18,12 @@ const { data: surround } = await useAsyncData(`${route.path}-surround`, () => qu
   .findSurround(withoutTrailingSlash(route.path))
 )
 
+useSeoMeta({
+  titleTemplate: '%s · Nuxt Blog',
+  title: article.value.head?.title || article.value.title,
+  description: article.value.head?.description || article.value.description
+})
+
 const socialLinks = computed(() => [{
   icon: 'i-simple-icons-linkedin',
   to: `https://www.linkedin.com/sharing/share-offsite/?url=https://nuxt.com${article.value._path}`

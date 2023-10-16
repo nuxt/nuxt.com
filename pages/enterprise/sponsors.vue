@@ -8,7 +8,11 @@ if (!page.value) {
 
 const { data: sponsors } = await useFetch('https://api.nuxt.com/sponsors')
 
-useContentHead(page)
+useSeoMeta({
+  titleTemplate: 'Explore Nuxt Sponsors',
+  title: page.value.head?.title || page.value.title,
+  description: page.value.head?.description || page.value.description
+})
 </script>
 
 <template>
