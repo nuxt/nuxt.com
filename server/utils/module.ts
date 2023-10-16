@@ -20,7 +20,7 @@ export const fetchModuleStats = cachedFunction(async (module: any) => {
   logger.info(`Fetching module ${module.name} stats...`)
   const ghRepo = module.repo.split('#')[0]
   const [owner, name] = ghRepo.split('/')
-  const [npmInfos, npmStats, github] = await Promise.all([
+  const [npmInfos, npmStats, repo] = await Promise.all([
     $fetch<any>(`https://registry.npmjs.org/${module.npm}`)
       .catch((err) => {
       // eslint-disable-next-line no-console
@@ -33,30 +33,22 @@ export const fetchModuleStats = cachedFunction(async (module: any) => {
         console.error(`Cannot fetch npm downloads stats for ${module.npm}: ${err}`)
         return { downloads: 0 }
       }),
-    $fetch(`https://api.github.com/repos/${owner}/${name}`, {
-      headers: {
-        Accept: 'application/vnd.github.v3+json',
-        'User-Agent': 'nuxt-api',
-        Authorization: `token ${process.env.NUXT_GITHUB_TOKEN}`,
-      }
-    })
-      .then((res: any) => {
-        return { stars: res.stargazers_count }
-      })
-      .catch(err => {
-        console.error(`Cannot fetch github repo API info for ${owner}/${name}: ${err}`)
-        // Cannot call Github API, fallback to UnGH
-        return $fetch<any>(`https://ungh.cc/repos/${owner}/${name}`)
-          .catch((err) => {
-            // eslint-disable-next-line no-console
-            console.error(`Cannot fetch UnGH repo info for ${owner}/${name}: ${err}`)
-            return { repo: { stars: 0 } }
-          }).then(r => ({ stars: r.repo.stars }))
+    github.fetchRepo(owner, name)
+      .then((repo) => {
+        return {
+          stars: repo.stars,
+          watchers: repo.watchers,
+          forks: repo.forks,
+          defaultBranch: repo.defaultBranch,
+        }
       })
   ])
   return {
     downloads: npmStats.downloads,
-    stars: github.stars,
+    stars: repo.stars,
+    watchers: repo.watchers,
+    forks: repo.forks,
+    defaultBranch: repo.defaultBranch,
     publishedAt: +new Date(npmInfos.time?.modified || undefined),
     createdAt: +new Date(npmInfos.time?.created || undefined)
   }

@@ -35,8 +35,13 @@ export const github = {
           .catch((err) => {
             // eslint-disable-next-line no-console
             console.error(`Cannot fetch UnGH repo info for ${owner}/${name}: ${err}`)
-            return { repo: { stars: 0 } }
-          }).then(r => ({ stars: r.repo.stars }))
+            return {
+              stars: 0,
+              watchers: 0,
+              forks: 0,
+              defaultBranch: 'main'
+            }
+          })
       })
   }
 }
