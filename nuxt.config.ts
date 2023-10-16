@@ -75,6 +75,9 @@ export default defineNuxtConfig({
     '/enterprise': { redirect: '/enterprise/support', prerender: false }
   },
   nitro: {
+    prerender: {
+      failOnError: false
+    },
     hooks: {
       'prerender:generate' (route) {
         // const only = ['/', '/_payload.json']
