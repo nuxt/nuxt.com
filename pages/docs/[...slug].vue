@@ -21,7 +21,17 @@ const { data: surround } = await useAsyncData(`${route.path}-surround`, () => {
     .findSurround(withoutTrailingSlash(route.path))
 })
 
-const breadcrumb = computed(() => mapContentNavigation(findPageBreadcrumb(navigation.value, page.value)).slice(1))
+const breadcrumb = computed(() => {
+  const links = mapContentNavigation(findPageBreadcrumb(navigation.value, page.value))
+  if (route.path.startsWith('/docs/bridge') || route.path.startsWith('/docs/migration')) {
+    links.splice(1, 0, {
+      label: 'Upgrade Guide',
+      to: '/docs/getting-started/upgrade'
+    })
+  }
+
+  return links
+})
 
 const communityLinks = computed(() => [{
   icon: 'i-ph-pen-duotone',
