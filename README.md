@@ -1,5 +1,7 @@
 # nuxt.com
 
+Welcome to the Nuxt website repository.
+
 ## Setup
 
 Make sure to install the dependencies
@@ -22,20 +24,26 @@ pwd
 
 Copy the output of the command above and paste it in the `NUXT_DOCS_PATH` variable in the `.env` file.
 
-For the other env variables, you can ask the team for the values.
-
 ## Development
 
-Start the development server in the `docs/` directory of the framework.
+Start the development server:
 
 ```bash
-pnpm run dev
+npm run dev
 ```
 
 ## Production
 
+In order to build the application for production, you need to have a [Nuxt UI Pro license](https://ui.nuxt.com/pro/purchase) and set the `NUXT_UI_PRO_LICENSE` variable in the `.env` file.
+
+Note that this is not required to run in development and contribute to the Nuxt website or documentation.
+
 Build the application for production:
 
 ```bash
-pnpm run build
+npm run generate
 ```
+
+## License
+
+[MIT License](./LICENSE)
