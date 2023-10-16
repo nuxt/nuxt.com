@@ -18,7 +18,7 @@ const examplesSource: any = {
   name: 'nuxt-examples',
   driver: 'github',
   repo: 'nuxt/examples',
-  branch: 'main',
+  branch: 'new-docs',
   dir: '.docs',
   prefix: '/docs/4.examples',
   token: process.env.NUXT_GITHUB_TOKEN || ''
@@ -54,16 +54,26 @@ export default defineNuxtConfig({
     '/docs': { redirect: '/docs/getting-started/introduction', prerender: false },
     '/docs/getting-started': { redirect: '/docs/getting-started/introduction', prerender: false },
     '/docs/guide/concepts': { redirect: '/docs/guide/concepts/auto-imports', prerender: false },
-    '/docs/guide': { redirect: '/docs/guide/concepts/auto-imports', prerender: false },
+    '/docs/guide/directory-structure': { redirect: '/docs/guide/directory-structure/app', prerender: false },
+    '/docs/guide/going-further': { redirect: '/docs/guide/going-further/experimental-features', prerender: false },
+    '/docs/guide/going-further/edge-release-channel': { redirect: '/docs/guide/going-further/nightly-release-channel', prerender: false },
+    '/docs/bridge': { redirect: '/docs/bridge/overview', prerender: false },
+    '/docs/migration': { redirect: '/docs/migration/overview', prerender: false },
     '/docs/examples': { redirect: '/docs/examples/hello-world', prerender: false },
-    '/docs/community': { redirect: '/docs/community/nuxt-community', prerender: false },
+    '/docs/community': { redirect: '/docs/community/getting-help', prerender: false },
+    '/docs/community/nuxt-community': { redirect: '/docs/community/getting-help', prerender: false },
+    '/docs/api/commands': { redirect: '/docs/api/commands/dev', prerender: false },
+    '/docs/api/kit': { redirect: '/docs/api/kit/modules', prerender: false },
     '/docs/api/configuration/nuxt-config': { redirect: '/docs/api/nuxt-config', prerender: false },
-    '/enterprise': { redirect: '/enterprise/support', prerender: false },
-    '/docs/community/changelog': { redirect: 'https://github.com/nuxt/nuxt/releases', prerender: false }
+    '/enterprise': { redirect: '/enterprise/support', prerender: false }
   },
   nitro: {
     hooks: {
       'prerender:generate' (route) {
+        // const only = ['/', '/_payload.json']
+        // if (!only.includes(route.route)) {
+        //   route.skip = true
+        // }
         // TODO: fix issue with recursive fetches with query string, e.g.
         // `/enterprise/agencies?region=europe&amp;amp;amp;service=ecommerce&amp;amp;service=ecommerce&amp;service=content-marketing`
         if (route.route?.includes('&amp;')) {
@@ -108,7 +118,7 @@ export default defineNuxtConfig({
   },
   content: {
     navigation: {
-      fields: ['redirect']
+      fields: ['titleTemplate']
     },
     sources: {
       docsSource,

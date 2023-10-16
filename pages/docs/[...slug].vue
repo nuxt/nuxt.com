@@ -5,6 +5,7 @@ import type { ParsedContent, NavItem } from '@nuxt/content/dist/runtime/types'
 const navigation = inject<Ref<NavItem[]>>('navigation')
 
 const route = useRoute()
+const { navKeyFromPath } = useContentHelpers()
 
 const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
 if (!page.value) {
@@ -31,6 +32,12 @@ const breadcrumb = computed(() => {
   }
 
   return links
+})
+const titleTemplate = computed(() => {
+  if (page.value.titleTemplate) return page.value.titleTemplate
+  const titleTemplate = navKeyFromPath(route.path, 'titleTemplate', navigation.value)
+  if (titleTemplate) return titleTemplate
+  return '%s - Nuxt'
 })
 
 const communityLinks = computed(() => [{
@@ -74,7 +81,11 @@ const ecosystemLinks = [{
   target: '_blank'
 }]
 
-useContentHead(page)
+useSeoMeta({
+  titleTemplate,
+  title: page.value.head?.title || page.value.title,
+  description: page.value.description
+})
 </script>
 
 <template>
