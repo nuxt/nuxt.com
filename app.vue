@@ -47,6 +47,7 @@ provide('navigation', navigation)
 
 <template>
   <div>
+    <NuxtLoadingIndicator />
     <AppHeader :links="headerLinks" />
 
     <UMain>

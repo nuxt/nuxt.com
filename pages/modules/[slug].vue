@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import type { Module } from '~/types'
+import { ModuleProseA, ModuleProseImg } from '#components'
 const route = useRoute()
 
-const { data: module } = await useFetch<Module>(`https://api.nuxt.com/modules/${route.params.slug}`)
+const { data: module } = await useFetch<Module>(`https://api.nuxt.com/modules/${route.params.slug}`, {
+  key: 'module'
+})
 if (!module.value) {
   throw createError({ statusCode: 404, statusMessage: 'Module not found', fatal: true })
 }
@@ -125,7 +128,7 @@ const contributors = computed(() => module.value.contributors.map((contributor) 
 
     <UPage :ui="{ right: 'my-8' }">
       <UPageBody prose>
-        <ContentRenderer v-if="module.readme?.body" :value="module.readme" class="module-readme" />
+        <ContentRendererMarkdown v-if="module.readme?.body" :value="module.readme" class="module-readme" :components="{ a: ModuleProseA, img: ModuleProseImg }" />
       </UPageBody>
 
       <template #right>
