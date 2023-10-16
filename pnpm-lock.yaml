@@ -18,8 +18,8 @@ dependencies:
     specifier: ^1.1.6
     version: 1.1.6
   '@iconify-json/simple-icons':
-    specifier: ^1.1.74
-    version: 1.1.74
+    specifier: ^1.1.75
+    version: 1.1.75
   '@iconify-json/uil':
     specifier: ^1.1.5
     version: 1.1.5
@@ -27,11 +27,11 @@ dependencies:
     specifier: ^2.8.5
     version: 2.8.5(vue@3.3.4)
   '@nuxt/ui-pro':
-    specifier: npm:@nuxt/ui-pro-edge@0.2.1-28286848.b57ccad
-    version: /@nuxt/ui-pro-edge@0.2.1-28286848.b57ccad(vue@3.3.4)(webpack@5.88.2)
+    specifier: npm:@nuxt/ui-pro-edge@0.2.1-28291168.c00ce1e
+    version: /@nuxt/ui-pro-edge@0.2.1-28291168.c00ce1e(vue@3.3.4)(webpack@5.88.2)
   '@nuxthq/studio':
-    specifier: ^1.0.1
-    version: 1.0.1
+    specifier: ^1.0.2
+    version: 1.0.2
   '@nuxtjs/fontaine':
     specifier: ^0.4.1
     version: 0.4.1
@@ -943,8 +943,8 @@ packages:
       '@iconify/types': 2.0.0
     dev: false
 
-  /@iconify-json/simple-icons@1.1.74:
-    resolution: {integrity: sha512-KlDN8k/8LyWWe+i1ErGmMHWFbiAFvz1R8ifkXI05vHt0K3Z6Ce1uDZY20CbQVhbwIFStS0fVdJAlYhcL7MYvVg==}
+  /@iconify-json/simple-icons@1.1.75:
+    resolution: {integrity: sha512-oGVandyvqMtBb7iq33Lx5YnH0SBkCE6LwpWPM0vjsIRSwXYpw5fxsSs3jfyikOr4Fwr8G24GjSsb53AC+lgGBQ==}
     dependencies:
       '@iconify/types': 2.0.0
     dev: false
@@ -1456,8 +1456,8 @@ packages:
       - webpack
     dev: false
 
-  /@nuxt/ui-pro-edge@0.2.1-28286848.b57ccad(vue@3.3.4)(webpack@5.88.2):
-    resolution: {integrity: sha512-Y3jjwlBQxbSFs4L1vdiq+COwaP8ZcggRwiNRS02h94dCIfLxp/fstGSHp3osRHzIRtyJ/sdbOSdlbALhoKngTQ==}
+  /@nuxt/ui-pro-edge@0.2.1-28291168.c00ce1e(vue@3.3.4)(webpack@5.88.2):
+    resolution: {integrity: sha512-GktQEi0FK5D0qrEIUB1m4p/TxQ0ydNPPTSqCKaCFHQe0pPE5RT43iPqand3A9gUnE5KPw5IZN04tuXuCY5Nnxg==}
     dependencies:
       '@nuxt/ui': /@nuxt/ui-edge@2.9.0-28285290.0bd12fd(vue@3.3.4)(webpack@5.88.2)
       '@vueuse/core': 10.5.0(vue@3.3.4)
@@ -1550,8 +1550,8 @@ packages:
       - vti
       - vue-tsc
 
-  /@nuxthq/studio@1.0.1:
-    resolution: {integrity: sha512-7geTulbJ2ZEhgtoBHZDxbWrorNT7nZiAwXOoGtjciCrsnJhuQiHiQDq/007yvvvz5tN/sDZBaxn8glct6pFzgg==}
+  /@nuxthq/studio@1.0.2:
+    resolution: {integrity: sha512-QoF6oYigr6IcHgNeQqAUBmCrSqnuPffoF9Tbg8cToF3oYU7WHkKgYCe+diICFdWuiH/SHTEfSm9kaone/Bp2gw==}
     dependencies:
       '@nuxt/kit': 3.7.4
       defu: 6.1.2
