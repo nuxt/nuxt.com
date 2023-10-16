@@ -48,7 +48,7 @@ export default defineNuxtConfig({
   routeRules: {
     // Pre-render
     '/api/search.json': { prerender: true },
-    '/sitemap.xml': { prerender: true },
+    // '/sitemap.xml': { prerender: true },
     '/newsletter': { prerender: true },
     // Redirects
     '/docs': { redirect: '/docs/getting-started/introduction', prerender: false },
@@ -59,12 +59,15 @@ export default defineNuxtConfig({
     '/docs/guide/going-further/edge-release-channel': { redirect: '/docs/guide/going-further/nightly-release-channel', prerender: false },
     '/docs/bridge': { redirect: '/docs/bridge/overview', prerender: false },
     '/docs/migration': { redirect: '/docs/migration/overview', prerender: false },
+    '/docs/api/components': { redirect: '/docs/api/components/client-only', prerender: false },
+    '/docs/api/composables': { redirect: '/docs/api/composables/use-app-config', prerender: false },
+    '/docs/api/utils': { redirect: '/docs/api/utils/dollarfetch', prerender: false },
+    '/docs/api/commands': { redirect: '/docs/api/commands/dev', prerender: false },
+    '/docs/api/advanced': { redirect: '/docs/api/advanced/hooks', prerender: false },
+    '/docs/api/configuration/nuxt-config': { redirect: '/docs/api/nuxt-config', prerender: false },
     '/docs/examples': { redirect: '/docs/examples/hello-world', prerender: false },
     '/docs/community': { redirect: '/docs/community/getting-help', prerender: false },
     '/docs/community/nuxt-community': { redirect: '/docs/community/getting-help', prerender: false },
-    '/docs/api/commands': { redirect: '/docs/api/commands/dev', prerender: false },
-    '/docs/api/kit': { redirect: '/docs/api/kit/modules', prerender: false },
-    '/docs/api/configuration/nuxt-config': { redirect: '/docs/api/nuxt-config', prerender: false },
     '/enterprise': { redirect: '/enterprise/support', prerender: false }
   },
   nitro: {
