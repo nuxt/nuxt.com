@@ -66,6 +66,10 @@ export default defineNuxtConfig({
     '/docs/api/advanced': { redirect: '/docs/api/advanced/hooks', prerender: false },
     '/docs/api/configuration/nuxt-config': { redirect: '/docs/api/nuxt-config', prerender: false },
     '/docs/examples': { redirect: '/docs/examples/hello-world', prerender: false },
+    '/docs/examples/features': { redirect: '/docs/examples/features/auto-imports', prerender: false },
+    '/docs/examples/routing': { redirect: '/docs/examples/routing/middleware', prerender: false },
+    '/docs/examples/advanced': { redirect: '/docs/examples/advanced/config-extends', prerender: false },
+    '/docs/examples/experimental': { redirect: '/docs/examples/experimental/wasm', prerender: false },
     '/docs/community': { redirect: '/docs/community/getting-help', prerender: false },
     '/docs/community/nuxt-community': { redirect: '/docs/community/getting-help', prerender: false },
     '/enterprise': { redirect: '/enterprise/support', prerender: false }
