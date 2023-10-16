@@ -38,8 +38,9 @@ export default defineNuxtConfig({
     '@nuxtjs/google-fonts',
     // '@nuxthq/studio',
     '@nuxt/ui',
-    // '@nuxt/devtools',
+    '@nuxt/devtools',
     '@vueuse/nuxt',
+    'nuxt-og-image',
     () => {
       if (process.env.NUXT_DOCS_PATH) { logger.success(`Using local Nuxt docs from ${process.env.NUXT_DOCS_PATH}`) }
       if (process.env.NUXT_EXAMPLES_PATH) { logger.success(`Using local Nuxt examples from ${process.env.NUXT_EXAMPLES_PATH}`) }
@@ -77,10 +78,11 @@ export default defineNuxtConfig({
   nitro: {
     prerender: {
       failOnError: false
+      // routes: ['/modules/tailwindcss']
     },
     hooks: {
       'prerender:generate' (route) {
-        // const only = ['/', '/_payload.json']
+        // const only = ['/modules/tailwindcss', '/modules/tailwindcss/_payload.json']
         // if (!only.includes(route.route)) {
         //   route.skip = true
         // }

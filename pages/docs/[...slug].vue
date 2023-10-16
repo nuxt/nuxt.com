@@ -81,10 +81,19 @@ const ecosystemLinks = [{
   target: '_blank'
 }]
 
+const title = page.value.head?.title || page.value.title
+const description = page.value.head?.description || page.value.description
 useSeoMeta({
   titleTemplate,
-  title: page.value.head?.title || page.value.title,
-  description: page.value.head?.description || page.value.description
+  title,
+  description,
+  ogTitle: title
+})
+
+defineOgImage({
+  component: 'Docs',
+  title: page.value.title,
+  description: page.value.description
 })
 </script>
 
