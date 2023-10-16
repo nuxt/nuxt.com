@@ -93,7 +93,8 @@ useSeoMeta({
 defineOgImage({
   component: 'Docs',
   title: page.value.title,
-  description: page.value.description
+  description: page.value.description,
+  headline: breadcrumb.value.length ? breadcrumb.value[breadcrumb.value.length - 1].label : ''
 })
 </script>
 
