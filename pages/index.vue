@@ -12,8 +12,12 @@ useSeoMeta({
 <template>
   <div v-if="page">
     <ULandingHero :ui="{ base: 'relative z-[1]' }" class="dark:bg-gradient-to-b from-gray-950 to-gray-900" v-bind="page.hero">
+      <template #top>
+        <HomeHeroBackground class="absolute -top-[--header-height] inset-x-0 w-full hidden lg:block" />
+      </template>
+
       <template #title>
-        The Intuitive <span class="text-primary block lg:inline-block">Vue Framework</span>
+        The Intuitive<br><span class="text-primary block lg:inline-block">Vue Framework</span>
       </template>
 
       <template #description>
@@ -29,6 +33,7 @@ useSeoMeta({
         <UButton size="xl" color="white" icon="i-ph-video-duotone" @click="videoModalOpen = true">
           What is Nuxt?
         </UButton>
+
         <UModal v-model="videoModalOpen">
           <div class="p-3">
             <iframe
@@ -43,8 +48,6 @@ useSeoMeta({
           </div>
         </UModal>
       </template>
-
-      <div class="absolute top-[120px] w-96 h-96 inset-x-0 mx-auto bg-gradient-radial from-primary to-white dark:to-gray-900 opacity-25 blur-2xl lg:scale-125" />
 
       <ULandingLogos :title="page.logos.title" class="mt-32 text-gray-500 dark:text-gray-400">
         <BrandsGithub class="hidden md:block h-7" />
