@@ -64,6 +64,11 @@
       "permanent": false
     },
     {
+      "source": "/docs/guide/going-further/edge-channel",
+      "destination": "/docs/guide/going-further/nightly-release-channel",
+      "permanent": false
+    },
+    {
       "source": "/docs/modules",
       "destination": "/modules",
       "permanent": false
