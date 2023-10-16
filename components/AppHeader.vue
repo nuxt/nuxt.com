@@ -43,7 +43,7 @@ defineProps<{
           icon="i-simple-icons-github"
           to="https://github.com/nuxt/nuxt"
           target="_blank"
-          :label="formatNumber(stats.stars)"
+          :label="stats ? formatNumber(stats.stars) : '...'"
           v-bind="($ui.button.secondary as any)"
         />
       </UTooltip>
