@@ -68,13 +68,13 @@
     "vue-lite-youtube-embed": "^1.2.0"
   },
   "devDependencies": {
-    "@nuxt/content": "^2.7.2",
-    "@nuxthq/studio": "^0.13.4",
+    "@nuxt/content": "^2.8.5",
+    "@nuxthq/studio": "^0.14.1",
     "@nuxtjs/eslint-config-typescript": "^12.0.0",
     "@types/lodash-es": "^4.17.8",
     "autoprefixer": "^10.4.14",
     "eslint": "^8.46.0",
-    "nuxt": "3.6.1",
+    "nuxt": "3.7.4",
     "postcss": "^8.4.27",
     "typescript": "^5.1.6"
   },
