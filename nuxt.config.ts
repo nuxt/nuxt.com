@@ -81,6 +81,8 @@ export default defineNuxtConfig({
   nitro: {
     prerender: {
       // failOnError: false
+      // Weird bug on crawler
+      ignore: ['/modules/%3C/span', '/modules/%253C/span']
     },
     hooks: {
       'prerender:generate' (route) {
