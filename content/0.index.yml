@@ -1,9 +1,10 @@
 navigation: false
 hero:
   badges:
-    - label: Nuxt 3.7 is out ✨
-      to: /blog/v3-7
+    - label: A brand new website
+      to: /blog/new-website
       variant: outline
+      icon: i-ph-arrow-right
       size: xs
       trailing: true
       class: 'font-semibold hover:bg-primary-100 dark:hover:bg-primary-900 rounded-full'
