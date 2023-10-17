@@ -63,6 +63,7 @@ export default defineNuxtConfig({
     '/docs/api/components': { redirect: '/docs/api/components/client-only', prerender: false },
     '/docs/api/composables': { redirect: '/docs/api/composables/use-app-config', prerender: false },
     '/docs/api/utils': { redirect: '/docs/api/utils/dollarfetch', prerender: false },
+    '/docs/api/kit': { redirect: '/docs/api/kit/modules', prerender: false },
     '/docs/api/commands': { redirect: '/docs/api/commands/dev', prerender: false },
     '/docs/api/advanced': { redirect: '/docs/api/advanced/hooks', prerender: false },
     '/docs/api/configuration/nuxt-config': { redirect: '/docs/api/nuxt-config', prerender: false },
