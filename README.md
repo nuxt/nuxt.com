@@ -1,6 +1,8 @@
+![nuxt-website](https://github.com/nuxt/nuxt.com/assets/904724/7453c94f-1733-45b6-ae11-ca889a9b9f1b)
+
 # nuxt.com
 
-Welcome to the Nuxt website repository.
+Welcome to the Nuxt website repository available on [nuxt.com](https://nuxt.com).
 
 ## Setup
 
