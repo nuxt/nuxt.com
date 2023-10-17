@@ -10,9 +10,9 @@ links:
     to: '/assets/design-kit/nuxt-assets.zip'
     icon: 'i-ph-download-simple'
     target: '_blank'
-  - label: 'Preview guidelines'
+  - label: 'Brand Guidelines'
     size: 'lg'
-    to: 'https://www.figma.com/file/DOO3neicujKl3ymcqUg9dK/%E2%9B%B0%EF%B8%8F---Nuxt-Brand-Guidelines?node-id=0%3A1&t=qBS3UqvGpjrIkxIm-1'
+    to: 'https://www.figma.com/community/file/1296154408275753939/nuxt-brand-kit'
     icon: 'i-simple-icons-figma'
     download: true
     color: 'white'
