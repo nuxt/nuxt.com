@@ -36,7 +36,7 @@ export default defineNuxtConfig({
     '@nuxtjs/plausible',
     '@nuxtjs/fontaine',
     '@nuxtjs/google-fonts',
-    // '@nuxthq/studio',
+    '@nuxthq/studio',
     '@nuxt/ui',
     '@nuxt/devtools',
     '@vueuse/nuxt',

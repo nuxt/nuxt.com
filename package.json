@@ -24,6 +24,7 @@
     "@nuxtjs/fontaine": "^0.4.1",
     "@nuxtjs/google-fonts": "^3.0.2",
     "@nuxtjs/html-validator": "^1.5.2",
+    "@nuxtjs/mdc": "npm:@nuxtjs/mdc-edge@latest",
     "@nuxtjs/plausible": "^0.2.3",
     "@vueuse/components": "^10.5.0",
     "@vueuse/core": "^10.5.0",
