@@ -1,11 +1,16 @@
 <script setup lang="ts">
+import { joinURL } from 'ufo'
 const { data: page } = await useAsyncData('index', () => queryContent('/').findOne())
 
 const videoModalOpen = ref(false)
 
+const site = useSiteConfig()
 useSeoMeta({
   title: 'Nuxt: The Intuitive Vue Framework',
-  description: 'Nuxt is an open source framework that makes web development intuitive and powerful. Create performant and production-grade full-stack web apps and websites with confidence.'
+  ogTitle: 'Nuxt: The Intuitive Vue Framework',
+  description: 'Nuxt is an open source framework that makes web development intuitive and powerful. Create performant and production-grade full-stack web apps and websites with confidence.',
+  ogImage: joinURL(site.url, '/social.jpg'),
+  twitterImage: joinURL(site.url, '/social.jpg')
 })
 </script>
 

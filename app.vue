@@ -28,10 +28,8 @@ useHead({
 })
 
 useSeoMeta({
-  ogImage: '/social.jpg',
   ogSiteName: 'Nuxt',
   ogType: 'website',
-  twitterImage: '/social.jpg',
   twitterCard: 'summary_large_image',
   twitterSite: 'nuxt_js'
 })
