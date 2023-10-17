@@ -34,8 +34,11 @@ useSeoMeta({
   twitterSite: 'nuxt_js'
 })
 
-watch(() => search.value?.commandPaletteRef?.query, debounce((query) => {
-  if (!query) return
+watch(() => search.value?.commandPaletteRef?.query, debounce((query: string) => {
+  if (!query) {
+    return
+  }
+
   useTrackEvent('Search', { props: { query, results: `${search.value?.commandPaletteRef.results.length}` } })
 }, 500))
 
