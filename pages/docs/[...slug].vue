@@ -119,7 +119,7 @@ defineOgImage({
       <UDocsSurround :surround="(surround as ParsedContent[])" />
     </UPageBody>
 
-    <template v-if="page.toc !== false" #right>
+    <template v-if="page.toc !== false && page.body?.toc?.links?.length" #right>
       <UDocsToc :links="page.body?.toc?.links">
         <template #bottom>
           <div class="hidden lg:block space-y-6" :class="{ '!mt-6': page.body?.toc?.links?.length }">
