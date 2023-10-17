@@ -1,3 +1,4 @@
+import { ofetch } from 'ofetch'
 import { logger } from '@nuxt/kit'
 
 const docsSource: any = {
@@ -79,19 +80,23 @@ export default defineNuxtConfig({
   nitro: {
     prerender: {
       failOnError: false
-      // routes: ['/modules/tailwindcss']
     },
     hooks: {
       'prerender:generate' (route) {
-        // const only = ['/modules/tailwindcss', '/modules/tailwindcss/_payload.json']
-        // if (!only.includes(route.route)) {
-        //   route.skip = true
-        // }
         // TODO: fix issue with recursive fetches with query string, e.g.
         // `/enterprise/agencies?region=europe&amp;amp;amp;service=ecommerce&amp;amp;service=ecommerce&amp;service=content-marketing`
         if (route.route?.includes('&amp;')) {
           route.skip = true
         }
+      }
+    }
+  },
+  hooks: {
+    async 'prerender:routes' (ctx) {
+      // Add Nuxt 2 modules to the prerender list
+      const { modules } = await ofetch<{ modules: [] }>('https://api.nuxt.com/modules?version=2').catch(() => ({ modules: [] }))
+      for (const module of modules) {
+        ctx.routes.add(`/modules/${module.name}`)
       }
     }
   },
