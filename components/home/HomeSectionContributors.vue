@@ -31,7 +31,7 @@ onBeforeUnmount(stopTimer)
 
 const $contributors = computed(() => contributors.value.length ? contributors.value.slice(start.value, start.value + total) : new Array(total).fill(null))
 function imgUrl (username) {
-  return `https://github.com/${username}.png`
+  return `https://ipx.nuxt.com/s_80x80/gh_avatar/${username}`
 }
 function startTimer (ms = 5000) {
   currentTimeout = setTimeout(nextContributors, ms)
