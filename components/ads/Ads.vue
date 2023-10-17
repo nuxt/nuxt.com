@@ -5,6 +5,6 @@ const { $ads } = useNuxtApp()
 <template>
   <div class="space-y-3">
     <AdsFallback v-if="$ads.adBlocked.value" />
-    <AdsCarbon v-else :key="($route.params.slug as string)" />
+    <AdsCarbon v-else :key="$route.path" />
   </div>
 </template>

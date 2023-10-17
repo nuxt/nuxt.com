@@ -51,14 +51,14 @@ await fetchList()
             }"
           >
             <template #header>
-              <img
+              <NuxtImg
                 :src="article.image"
                 :alt="article.title || ''"
                 :loading="index === 0 ? 'eager' : 'lazy'"
                 class="object-cover object-top w-full h-full"
-                height="366"
-                width="488"
-              >
+                width="384"
+                height="192"
+              />
             </template>
 
             <template #icon>

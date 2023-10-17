@@ -34,12 +34,13 @@ export default defineNuxtConfig({
   extends: process.env.NUXT_UI_PRO_PATH || '@nuxt/ui-pro',
   modules: [
     '@nuxt/content',
+    '@nuxt/ui',
+    '@nuxt/devtools',
+    '@nuxt/image',
     '@nuxtjs/plausible',
     '@nuxtjs/fontaine',
     '@nuxtjs/google-fonts',
     '@nuxthq/studio',
-    '@nuxt/ui',
-    '@nuxt/devtools',
     '@vueuse/nuxt',
     'nuxt-og-image',
     () => {
