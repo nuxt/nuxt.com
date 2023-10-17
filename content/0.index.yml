@@ -32,7 +32,7 @@ sections:
       <script setup>
       useSeoMeta({
         title: 'Meet Nuxt',
-        description: 'The Vue Framework for Web Architects.'
+        description: 'The Intuitive Vue Framework.'
       })
       </script>
 
@@ -46,8 +46,8 @@ sections:
 
       <style>
       #app {
-        background-color: navy;
-        color: lightgreen;
+        background-color: '#020420';
+        color: '#00DC82';
       }
       </style>
       ```
@@ -68,6 +68,7 @@ sections:
         size: md
     slot: code
     code: |
+      ::code-group
       ```ts [nuxt.config.ts]
       export default defineNuxtConfig({
         routeRules: {
@@ -86,6 +87,22 @@ sections:
         }
       })
       ```
+      ```vue [pages/index.vue]
+      <script>
+      // Or set at the page level
+      defineRouteRules({
+        prerender: true
+      })
+      </script>
+
+      <template>
+        <div>
+          <h1>Homepage</h1>
+          <p>Pre-rendered at build time</p>
+        </div>
+      </template>
+      ```
+      ::
   - title: 'Compose with<br><span class="text-primary">everything you need.</span>'
     class: 'dark:bg-gradient-to-b from-gray-900 to-gray-950'
     slot: features
