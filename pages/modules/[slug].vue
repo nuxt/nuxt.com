@@ -47,7 +47,7 @@ const contributors = computed(() => module.value.contributors.map((contributor) 
 })))
 
 const title = module.value.name.charAt(0).toUpperCase() + module.value.name.slice(1)
-const description = module.value.description
+const description = module.value.description || 'A Nuxt module'
 useSeoMeta({
   titleTemplate: '%s · Nuxt Modules',
   title,
