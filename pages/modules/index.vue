@@ -142,7 +142,7 @@ defineShortcuts({
                   <UTooltip text="GitHub Stars">
                     <NuxtLink class="flex items-center gap-1" :to="`https://github.com/${module.repo}`" target="_blank" :class="[selectedSort.key === 'stars' && 'text-gray-900 dark:text-white']">
                       <UIcon name="i-ph-star-duotone" class="w-5 h-5 flex-shrink-0" />
-                      <span class="text-sm font-medium">{{ formatNumber(module.stats.stars) }}</span>
+                      <span class="text-sm font-medium">{{ formatNumber(module.stats.stars || 0) }}</span>
                     </NuxtLink>
                   </UTooltip>
                 </div>

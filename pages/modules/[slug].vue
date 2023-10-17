@@ -127,7 +127,7 @@ defineOgImage({
         <UTooltip text="GitHub Stars">
           <NuxtLink class="flex items-center gap-1.5" :to="`https://github.com/${module.repo}`" target="_blank">
             <UIcon name="i-ph-star-duotone" class="w-5 h-5 flex-shrink-0" />
-            <span class="text-sm font-medium">{{ formatNumber(module.stats.stars) }} stars</span>
+            <span class="text-sm font-medium">{{ formatNumber(module.stats.stars || 0) }} stars</span>
           </NuxtLink>
         </UTooltip>
 
