@@ -42,6 +42,7 @@ export const github = {
               defaultBranch: 'main'
             }
           })
+          .then(res => res.repo)
       })
   }
 }
