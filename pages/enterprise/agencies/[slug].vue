@@ -18,10 +18,21 @@ const links = computed(() => [{
   target: '_blank'
 }])
 
+const title = agency.value.head?.title || agency.value.title
+const description = agency.value.head?.description || agency.value.description
 useSeoMeta({
   titleTemplate: '%s · Nuxt Agencies',
-  title: agency.value.head?.title || agency.value.title,
-  description: agency.value.head?.description || agency.value.description
+  title,
+  description,
+  ogDescription: description,
+  ogTitle: `${title} · Nuxt Agencies`
+})
+
+defineOgImage({
+  component: 'Docs',
+  title,
+  description,
+  headline: 'Nuxt Agencies'
 })
 </script>
 

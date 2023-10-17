@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { withoutTrailingSlash } from 'ufo'
+import { withoutTrailingSlash, joinURL } from 'ufo'
 import type { ParsedContent } from '@nuxt/content/dist/runtime/types'
 import type { BlogArticle } from '~/types'
 
@@ -19,10 +19,34 @@ const { data: surround } = await useAsyncData(`${route.path}-surround`, () => qu
 )
 
 useSeoMeta({
-  titleTemplate: '%s · Nuxt Blog',
   title: article.value.head?.title || article.value.title,
   description: article.value.head?.description || article.value.description
 })
+
+const title = article.value.head?.title || article.value.title
+const description = article.value.head?.description || article.value.description
+useSeoMeta({
+  titleTemplate: '%s · Nuxt Blog',
+  title,
+  description,
+  ogDescription: description,
+  ogTitle: `${title} · Nuxt Blog`
+})
+
+if (article.value.image) {
+  const site = useSiteConfig()
+  useSeoMeta({
+    ogImage: joinURL(site.url, article.value.image),
+    twitterImage: joinURL(site.url, article.value.image)
+  })
+} else {
+  defineOgImage({
+    component: 'Docs',
+    title,
+    description,
+    headline: 'Blog'
+  })
+}
 
 const socialLinks = computed(() => [{
   icon: 'i-simple-icons-linkedin',

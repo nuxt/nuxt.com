@@ -8,10 +8,21 @@ if (!page.value) {
 
 const { data: sponsors } = await useFetch('https://api.nuxt.com/sponsors')
 
+const title = page.value.head?.title || page.value.title
+const description = page.value.head?.description || page.value.description
 useSeoMeta({
-  titleTemplate: 'Explore Nuxt Sponsors',
-  title: page.value.head?.title || page.value.title,
-  description: page.value.head?.description || page.value.description
+  titleTemplate: '%s · Community',
+  title,
+  description,
+  ogDescription: description,
+  ogTitle: `${title} · Community`
+})
+
+defineOgImage({
+  component: 'Docs',
+  title,
+  description,
+  headline: 'Community'
 })
 </script>
 

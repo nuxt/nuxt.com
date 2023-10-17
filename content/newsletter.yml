@@ -1,6 +1,5 @@
-head:
-  title: Newsletter
 title: The Nuxt Newsletter
+head.title: Nuxt Newsletter
 description: 'Get the latest releases and news about Nuxt and its ecosystem with our newsletter.'
 navigation: false
 align: 'center'

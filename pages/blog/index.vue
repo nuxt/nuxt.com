@@ -4,10 +4,21 @@ const { fetchList, articles } = useBlog()
 
 const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
 
+const title = page.value.head?.title || page.value.title
+const description = page.value.head?.description || page.value.description
 useSeoMeta({
   titleTemplate: '%s',
-  title: page.value.head?.title || page.value.title,
-  description: page.value.head?.description || page.value.description
+  title,
+  description,
+  ogDescription: description,
+  ogTitle: title
+})
+
+defineOgImage({
+  component: 'Docs',
+  title,
+  description,
+  headline: ''
 })
 
 await fetchList()

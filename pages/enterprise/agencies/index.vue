@@ -4,10 +4,21 @@ const { filteredAgencies, fetchList, services, regions } = useEnterpriseAgencies
 
 const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
 
+const title = page.value.head?.title || page.value.title
+const description = page.value.head?.description || page.value.description
 useSeoMeta({
-  titleTemplate: 'Explore Nuxt Agencies',
-  title: page.value.head?.title || page.value.title,
-  description: page.value.head?.description || page.value.description
+  titleTemplate: '%s · Enterprise',
+  title,
+  description,
+  ogDescription: description,
+  ogTitle: `${title} · Enterprise`
+})
+
+defineOgImage({
+  component: 'Docs',
+  title,
+  description,
+  headline: 'Enterprise'
 })
 
 await fetchList()

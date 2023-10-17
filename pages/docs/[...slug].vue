@@ -87,13 +87,14 @@ useSeoMeta({
   titleTemplate,
   title,
   description,
-  ogTitle: title
+  ogDescription: description,
+  ogTitle: titleTemplate.value?.includes('%s') ? titleTemplate.value.replace('%s', title) : title
 })
 
 defineOgImage({
   component: 'Docs',
-  title: page.value.title,
-  description: page.value.description,
+  title,
+  description,
   headline: breadcrumb.value.length ? breadcrumb.value[breadcrumb.value.length - 1].label : ''
 })
 </script>
