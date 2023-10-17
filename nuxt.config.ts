@@ -88,9 +88,16 @@ export default defineNuxtConfig({
       'prerender:generate' (route) {
         // TODO: fix issue with recursive fetches with query string, e.g.
         // `/enterprise/agencies?region=europe&amp;amp;amp;service=ecommerce&amp;amp;service=ecommerce&amp;service=content-marketing`
-        if (route.route?.includes('&amp;') || route.route?.includes('/%3C/') || route.route?.includes('/%253C/')) {
+        if (route.route?.includes('&amp;')) {
           route.skip = true
         }
+      }
+    },
+    storage: {
+      cache: {
+        driver: 'cloudflare-kv-binding',
+        binding: 'KV',
+        base: 'cache'
       }
     }
   },
