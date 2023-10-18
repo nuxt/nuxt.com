@@ -21,7 +21,7 @@ function onIntersectionObserver ([{ isIntersecting }]) {
 // Fetch on client-side
 onMounted(async () => {
   if (contributors.value.length) return
-  _contributors = await $fetch('https://api.nuxt.com/contributors').then(data => data.map(c => c.username))
+  _contributors = await $fetch('https://api.nuxt.com/contributors').then(data => data.slice(0, total * 10).map(c => c.username))
   await loadImages(_contributors.slice(0, total))
   if (!contributors.value.length && intersecting.value) {
     contributors.value = _contributors
