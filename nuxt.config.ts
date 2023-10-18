@@ -5,7 +5,7 @@ const docsSource: any = {
   name: 'nuxt-docs',
   driver: 'github',
   repo: 'nuxt/nuxt',
-  branch: 'new-docs',
+  branch: 'main',
   dir: 'docs',
   prefix: '/1.docs',
   token: process.env.NUXT_GITHUB_TOKEN || ''
@@ -19,7 +19,7 @@ const examplesSource: any = {
   name: 'nuxt-examples',
   driver: 'github',
   repo: 'nuxt/examples',
-  branch: 'new-docs',
+  branch: 'main',
   dir: '.docs',
   prefix: '/docs/4.examples',
   token: process.env.NUXT_GITHUB_TOKEN || ''
