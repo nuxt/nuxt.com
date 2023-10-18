@@ -31,7 +31,7 @@ onBeforeUnmount(stopTimer)
 
 const $contributors = computed(() => contributors.value.length ? contributors.value.slice(start.value, start.value + total) : new Array(total).fill(null))
 function imgUrl (username) {
-  return `https://ipx.nuxt.com/s_80x80/gh_avatar/${username}`
+  return `https://ipx.nuxt.com/f_auto,s_80x80/gh_avatar/${username}`
 }
 function startTimer (ms = 5000) {
   currentTimeout = setTimeout(nextContributors, ms)
@@ -87,8 +87,8 @@ async function nextContributors () {
         >
           <UTooltip :text="username">
             <img
-              :src="`https://ipx.nuxt.com/s_80x80/gh_avatar/${username}`"
-              :srcset="`https://ipx.nuxt.com/s_160x160/gh_avatar/${username} 2x`"
+              :src="`https://ipx.nuxt.com/f_auto,s_80x80/gh_avatar/${username}`"
+              :srcset="`https://ipx.nuxt.com/f_auto,s_160x160/gh_avatar/${username} 2x`"
               :alt="username"
               loading="lazy"
               :title="username"

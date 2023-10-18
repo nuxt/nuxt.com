@@ -29,7 +29,7 @@ export const moduleImage = function (icon: string = '', size: number = 80) {
 
   if (/\.svg$/.test(icon)) return `https://raw.githubusercontent.com/nuxt/modules/main/icons/${icon}`
 
-  return `https://ipx.nuxt.com/s_${size},f_webp/gh/nuxt/modules/main/icons/${icon}`
+  return `https://ipx.nuxt.com/s_${size},f_auto/gh/nuxt/modules/main/icons/${icon}`
 }
 
 export const moduleIcon = function (category: string) {
