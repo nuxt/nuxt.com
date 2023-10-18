@@ -5,12 +5,15 @@ const { data: page } = await useAsyncData('index', () => queryContent('/').findO
 const videoModalOpen = ref(false)
 
 const site = useSiteConfig()
+const title = 'Nuxt: The Intuitive Vue Framework'
+const description = 'Nuxt is an open source framework that makes web development intuitive and powerful. Create performant and production-grade full-stack web apps and websites with confidence.'
 useSeoMeta({
-  title: 'Nuxt: The Intuitive Vue Framework',
-  ogTitle: 'Nuxt: The Intuitive Vue Framework',
-  description: 'Nuxt is an open source framework that makes web development intuitive and powerful. Create performant and production-grade full-stack web apps and websites with confidence.',
-  ogImage: joinURL(site.url, '/social.jpg'),
-  twitterImage: joinURL(site.url, '/social.jpg')
+  title,
+  ogTitle: title,
+  description: description,
+  ogDescription: description,
+  ogImage: joinURL(site.url, '/new-social.jpg'),
+  twitterImage: joinURL(site.url, '/new-social.jpg')
 })
 </script>
 
