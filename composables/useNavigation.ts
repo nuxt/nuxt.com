@@ -122,7 +122,7 @@ const _useNavigation = () => {
       to: 'https://content.nuxt.com/',
       target: '_blank'
     }, {
-      label: 'Nuxt Devtools',
+      label: 'Nuxt DevTools',
       to: 'https://devtools.nuxt.com/',
       target: '_blank'
     }, {
