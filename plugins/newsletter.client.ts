@@ -1,16 +1,16 @@
 export default defineNuxtPlugin(() => {
-  const { $toast } = useNuxtApp()
+  const toast = useToast()
 
   useNuxtApp().hook('app:mounted', () => {
     const { email, confirmation } = useRoute().query
     if (email && confirmation) {
-      $fetch('/api/newsletter/confirm', {
+      $fetch('https://api.nuxt.com/newsletter/confirm', {
         method: 'POST',
         body: { email, confirmation }
       }).then(() => {
-        $toast.success({ title: 'Subscription succeed', description: 'You have been successfully subscribed to Nuxt newsletter.' })
+        toast.add({ title: 'Subscription succeed', description: 'You have been successfully subscribed to Nuxt newsletter.', color: 'green' })
       }).catch((err) => {
-        $toast.error({ title: 'Subscription failed', description: err.data?.message || '' })
+        toast.add({ title: 'Subscription failed', description: err.data?.message || '', color: 'red' })
       })
     }
   })

@@ -1,73 +1,66 @@
 <script setup lang="ts">
-import { hasProtocol, joinURL } from 'ufo'
+import { debounce } from 'perfect-debounce'
+import type { ParsedContent } from '@nuxt/content/dist/runtime/types'
 
-const { navigation, layout, page } = useContent()
-const { website } = useRuntimeConfig().public
-const { navKeyFromPath } = useContentHelpers()
-const route = useRoute()
+const search = ref(null)
+const colorMode = useColorMode()
+const { headerLinks, searchGroups, searchLinks } = useNavigation()
+const color = computed(() => colorMode.value === 'dark' ? '#18181b' : 'white')
 
-const titleTemplate = computed(() => {
-  const appTitleTemplate = website?.titleTemplate || `%s · ${website.title}`
-  if (page.value) {
-    return page.value.head?.titleTemplate || navKeyFromPath(page.value._path, 'titleTemplate', navigation.value || []) || appTitleTemplate
-  }
-  return appTitleTemplate
-})
-const ogImage = computed(() => {
-  const appOgImage = website.image && hasProtocol(website.image) ? website.image : joinURL(website.url, website.image)
-  if (page.value) {
-    const image = page.value.image || navKeyFromPath(page.value._path, 'image', navigation.value || []) || appOgImage
-    return hasProtocol(image) ? image : joinURL(website.url, image)
-  }
-  return appOgImage
-})
-
-const ogUrl = computed(() => joinURL(website.url, route.fullPath))
-const title = computed(() => page.value?.head?.title || page.value?.title || 'Not found')
-const description = computed(() => page.value?.head?.description || page.value?.description || 'Page not found')
-
-useServerHead({
-  link: [
-    { rel: 'icon', href: '/icon.png' }
-  ],
-  htmlAttrs: {
-    lang: 'en'
-  },
-  bodyAttrs: {
-    class: 'antialiased font-sans text-gray-700 dark:text-gray-200 bg-white dark:bg-black [--scroll-mt:10rem] lg:[--scroll-mt:7rem]'
-  }
+const { data: navigation } = await useLazyAsyncData('navigation', () => fetchContentNavigation(), { default: () => [] })
+const { data: files } = useLazyFetch<ParsedContent[]>('/api/search.json', {
+  default: () => [],
+  server: false
 })
 
 useHead({
+  titleTemplate: title => title ? `${title} · Nuxt` : 'Nuxt: The Intuitive Web Framework',
+  meta: [
+    { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+    { key: 'theme-color', name: 'theme-color', content: color }
+  ],
   link: [
-    { rel: 'canonical', href: ogUrl }
-  ]
+    { rel: 'icon', type: 'image/png', href: '/icon.png' }
+  ],
+  htmlAttrs: {
+    lang: 'en'
+  }
 })
 
 useSeoMeta({
-  titleTemplate,
-  title,
-  description,
-  ogImage,
-  ogImageAlt: title,
-  ogUrl,
   ogSiteName: 'Nuxt',
   ogType: 'website',
-  twitterSite: 'nuxt_js',
   twitterCard: 'summary_large_image',
-  twitterTitle: title,
-  twitterDescription: description,
-  twitterImage: ogImage,
-  twitterImageAlt: title
+  twitterSite: 'nuxt_js'
 })
+
+watch(() => search.value?.commandPaletteRef?.query, debounce((query: string) => {
+  if (!query) {
+    return
+  }
+
+  useTrackEvent('Search', { props: { query, results: `${search.value?.commandPaletteRef.results.length}` } })
+}, 500))
+
+// Provide
+provide('navigation', navigation)
 </script>
 
 <template>
   <div>
-    <NuxtLoadingBar :duration="1000" />
-    <NuxtLayout :name="layout || 'default'">
+    <NuxtLoadingIndicator />
+    <AppHeader :links="headerLinks" />
+
+    <UMain>
       <NuxtPage />
-    </NuxtLayout>
-    <AppNotifications />
+    </UMain>
+
+    <AppFooter />
+
+    <ClientOnly>
+      <UDocsSearch ref="search" :files="files" :navigation="navigation[0]?.children" :groups="searchGroups" :links="searchLinks" />
+
+      <UNotifications />
+    </ClientOnly>
   </div>
 </template>

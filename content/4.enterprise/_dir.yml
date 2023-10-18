@@ -1,2 +1,2 @@
-navigation.icon: ph:lifebuoy
-titleTemplate: '%s · Nuxt Enterprise'
+navigation.icon: i-ph-buildings-duotone
+head.titleTemplate: '%s · Nuxt Enterprise'

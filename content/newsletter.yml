@@ -1,0 +1,18 @@
+title: The Nuxt Newsletter
+head.title: Nuxt Newsletter
+description: 'Get the latest releases and news about Nuxt and its ecosystem with our newsletter.'
+navigation: false
+align: 'center'
+cta:
+  headline: Getting Started
+  title: Start your Nuxt Journey
+  description: Learn everything you need to know, from beginner to master.
+  links:
+    - label: 'Get started'
+      size: 'lg'
+      color: 'black'
+      to: '/docs/getting-started/introduction'
+    - label: 'Explore examples'
+      size: 'lg'
+      color: 'white'
+      to: '/docs/examples'

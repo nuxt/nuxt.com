@@ -1,0 +1,12 @@
+title: Nuxt Agencies
+navigation.title: Agencies
+description: Are you looking for a trusted partner with a strong expertise in Nuxt development? Consult our agency partner catalog and find an agency near you with the right set of skills.
+head.title: Nuxt Partner Agencies
+head.description: Consult our agency partner catalog and find an agency near you with the right set of skills.
+navigation.icon: i-ph-handshake-duotone
+links:
+  - label: 'Submit my agency'
+    to: 'https://docs.google.com/forms/d/e/1FAIpQLSf85qskit5QqmGJcruGkGF0U7240Bh9MeN0pHB18UiOMWC8dA/viewform'
+    color: black
+    size: 'lg'
+    target: '_blank'

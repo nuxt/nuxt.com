@@ -1,23 +1,33 @@
-<template>
-  <Page :sticky="!!$route.params.slug">
-    <template #header>
-      <SubNavbar title="Docs" :links="links" />
-    </template>
-
-    <template v-if="$route.params.slug && tree && tree.length" #aside>
-      <DocsAsideTree :tree="tree" />
-    </template>
-
-    <NuxtPage />
-  </Page>
-</template>
-
 <script setup lang="ts">
-const route = useRoute()
-const { navigation } = useContent()
-const { navPageFromPath } = useContentHelpers()
+import type { NavItem } from '@nuxt/content/dist/runtime/types'
 
-const links = computed(() => formatDocsNav(navPageFromPath('/docs', navigation.value)?.children))
-const path = computed(() => route.path.split('/').slice(0, 3).join('/'))
-const tree = computed(() => navPageFromPath(path.value, navigation.value)?.children)
+const navigation = inject<Ref<NavItem[]>>('navigation')
+
+const route = useRoute()
+const { navPageFromPath } = useContentHelpers()
+const { headerLinks } = useNavigation()
+
+const links = computed(() => headerLinks.value.find(link => link.to === '/docs')?.children ?? [])
+
+const navigationLinks = computed(() => {
+  const path = ['/docs', route.params.slug?.[0]].filter(Boolean).join('/')
+
+  return mapContentNavigation(navPageFromPath(path, navigation.value)?.children || [])
+})
 </script>
+
+<template>
+  <UContainer>
+    <UPage>
+      <template #left>
+        <UAside :links="links">
+          <UDivider type="dashed" class="mb-6" />
+
+          <UNavigationTree :links="navigationLinks" default-open :multiple="false" />
+        </UAside>
+      </template>
+
+      <NuxtPage />
+    </UPage>
+  </UContainer>
+</template>
