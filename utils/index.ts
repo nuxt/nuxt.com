@@ -1,16 +1,6 @@
-export const capitalize = function (str: string) {
-  return str?.charAt(0).toUpperCase() + str?.slice(1)
-}
+import { splitByCase, upperFirst } from 'scule'
 
-export const formatNumber = function (num: number, fractionDigits = 0) {
-  if (num > 999 && num < 1000000) {
-    return (num / 1000).toFixed(fractionDigits) + 'k' // convert to K for number from > 1000 < 1 million
-  } else if (num > 1000000) {
-    return (num / 1000000).toFixed(fractionDigits) + 'm' // convert to M for number from > 1 million
-  } else {
-    return String(num)
-  }
-}
+export const { format: formatNumber } = Intl.NumberFormat('en-GB', { notation: 'compact', maximumFractionDigits: 1 })
 
 // Case-insensitive RegExp, escaping special characters
 // https://stackoverflow.com/a/38151393/3926832
@@ -47,27 +37,13 @@ export const toRelativeDate = (date) => {
 
 export const slugify = (str: string) => str.toLowerCase().replace(/[^a-z0-9 -]/g, ' ').replace(/[\s-]+/g, '-')
 
-export const pickOne = (arr: Array<any>) => {
+export const random = (arr: Array<any>) => {
   return arr[Math.floor(Math.random() * arr.length)]
 }
 
-export function classNames (...classes: any[string]) {
-  return classes.filter(Boolean).join(' ')
-}
-
-export const kebabCase = (str: string) => {
-  return str
-    ?.match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g)
-    ?.map(x => x.toLowerCase())
-    ?.join('-')
-}
-
-export const omit = (obj: object, keys: string[]) => {
-  return Object.fromEntries(
-    Object.entries(obj).filter(([key]) => !keys.includes(key))
-  )
-}
-
-export const isColorPalette = (color: any) => {
-  return !['white', 'black', 'transparent', 'current'].includes(color.toString())
+export const createBreadcrumb = (link: string = 'Missing link') => {
+  if (link.startsWith('http')) {
+    return link
+  }
+  return link.split('/').filter(Boolean).map(part => splitByCase(part).map(p => upperFirst(p)).join(' ')).join(' > ').replace('Api', 'API')
 }

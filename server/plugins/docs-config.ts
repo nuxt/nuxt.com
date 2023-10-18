@@ -1,7 +1,9 @@
 import type { Schema } from 'untyped'
 import { upperFirst } from 'scule'
+import { writeFile } from 'node:fs/promises'
 
 export default defineNitroPlugin((nitroApp) => {
+  // @ts-ignore
   nitroApp.hooks.hook('content:file:beforeParse', async (file) => {
     // Disable docs readme
     if (file._id === 'nuxt-docs:docs:README.md') {
@@ -10,34 +12,43 @@ export default defineNitroPlugin((nitroApp) => {
     // Generate the markdown from the schema
     const GENERATE_KEY = '<!-- GENERATED_CONFIG_DOCS -->'
     if (file.body.includes(GENERATE_KEY)) {
-      const rootSchema = await $fetch<Schema>('https://unpkg.com/@nuxt/schema@latest/schema/config.schema.json')
-      // Prepare content directory
-      const start = Date.now()
-      console.log(`Generating config docs on ${file._id}`)
-
-      // @ts-ignore
-      const keys = Object.keys(rootSchema.properties).sort()
       let generatedDocs = ''
+      try {
+        const rootSchema = await $fetch<Schema>('https://unpkg.com/@nuxt/schema@latest/schema/config.schema.json')
+        const start = Date.now()
+        console.log(`Generating config docs on ${file._id}`)
 
-      // Generate each section
-      for (const key of keys) {
         // @ts-ignore
-        const schema = rootSchema.properties[key]
+        const keys = Object.keys(rootSchema.properties).sort()
 
-        const lines = generateMarkdown(schema, key, '##')
-
-        // Skip empty sections
-        if (lines.length < 3) {
-          continue
+        if (!file.body.includes(GENERATE_KEY)) {
+          return console.warn(`Could not find ${GENERATE_KEY} in ${file._id}`)
         }
 
-        // Add lines to new file content
-        generatedDocs += lines.join('\n') + '\n'
+        // Generate each section
+        for (const key of keys) {
+          // @ts-ignore
+          const schema = rootSchema.properties[key]
+
+          const lines = generateMarkdown(schema, key, '##')
+
+          // Skip empty sections
+          if (lines.length < 3) {
+            continue
+          }
+
+          // Add lines to new file content
+          generatedDocs += lines.join('\n') + '\n'
+        }
+
+
+        file.body = file.body.replace(GENERATE_KEY, generatedDocs)
+
+        console.log(`Config docs generated in ${(Date.now() - start) / 1000} seconds!`)
+      } catch (err) {
+        console.error('Could not generate config docs', err)
+        await writeFile('debug-config-docs.md', generatedDocs)
       }
-
-      file.body = file.body.replace(GENERATE_KEY, generatedDocs)
-
-      console.log(`Config docs generated in ${(Date.now() - start) / 1000} seconds!`)
     }
   })
 })
@@ -52,6 +63,16 @@ function generateMarkdown (schema: Schema, title: string, level: string) {
 
   // Render heading
   lines.push(`${level} ${title}`, '')
+
+  // Render title
+  if (schema.title) {
+    lines.push(schema.title, '')
+  }
+
+  // Render description
+  if (schema.description) {
+    lines.push(schema.description, '')
+  }
 
   // Render meta info
   if (schema.type !== 'object' || !schema.properties) {
@@ -71,16 +92,6 @@ function generateMarkdown (schema: Schema, title: string, level: string) {
     // lines.push(`- **Version**: ${versions.join(', ')}`)
 
     lines.push('')
-  }
-
-  // Render title
-  if (schema.title) {
-    lines.push('> ' + schema.title, '')
-  }
-
-  // Render description
-  if (schema.description) {
-    lines.push(schema.description, '')
   }
 
   // Render @ tags
@@ -136,8 +147,9 @@ function renderTag (tag: string) {
     return []
   }
   tag = tag.replace(`@${type}`, `**${upperFirst(type)}**:`)
+    .replace('js\'node:fs\'', 'js') // hotfix
   if (TagAlertType[type]) {
-    return [`::alert{type="${TagAlertType[type]}"}`, tag, '::', '']
+    return ['::callout', tag, '::', '']
   }
   return tag
 }
