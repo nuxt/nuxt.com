@@ -1,4 +1,4 @@
-![nuxt-website](https://github.com/nuxt/nuxt.com/assets/904724/7453c94f-1733-45b6-ae11-ca889a9b9f1b)
+![nuxt-website](https://github.com/nuxt/nuxt.com/assets/904724/22772d8b-4fff-4cf9-a592-85c5ff5d6d58)
 
 # nuxt.com
 
