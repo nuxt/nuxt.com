@@ -36,7 +36,7 @@ npm run dev
 
 ## Production
 
-In order to build the application for production, you need to have a [Nuxt UI Pro](https://ui.nuxt.com/pro) and set the `NUXT_UI_PRO_LICENSE` variable in the `.env` file.
+In order to build the application for production, you need to have a [Nuxt UI Pro](https://ui.nuxt.com/pro) license and set the `NUXT_UI_PRO_LICENSE` variable in the `.env` file.
 
 Note that this is not required to run in development and contribute to the Nuxt website or documentation.
 
