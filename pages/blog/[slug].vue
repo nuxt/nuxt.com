@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { withoutTrailingSlash, joinURL } from 'ufo'
-import type { ParsedContent } from '@nuxt/content/dist/runtime/types'
 import type { BlogArticle } from '~/types'
 
 const route = useRoute()
@@ -116,7 +115,7 @@ function copyLink () {
 
         <hr v-if="surround?.length">
 
-        <UDocsSurround :surround="(surround as ParsedContent[])" />
+        <UDocsSurround :surround="surround" />
       </UPageBody>
     </UPage>
   </UContainer>

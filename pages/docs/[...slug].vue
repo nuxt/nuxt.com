@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { withoutTrailingSlash } from 'ufo'
-import type { ParsedContent, NavItem } from '@nuxt/content/dist/runtime/types'
+import type { NavItem } from '@nuxt/content/dist/runtime/types'
 
 const navigation = inject<Ref<NavItem[]>>('navigation')
 
@@ -116,7 +116,7 @@ defineOgImage({
 
       <hr v-if="surround?.length">
 
-      <UDocsSurround :surround="(surround as ParsedContent[])" />
+      <UDocsSurround :surround="surround" />
     </UPageBody>
 
     <template v-if="page.toc !== false" #right>
