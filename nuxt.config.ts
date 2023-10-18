@@ -81,7 +81,7 @@ export default defineNuxtConfig({
   nitro: {
     prerender: {
       // failOnError: false
-      // Weird bug on crawler
+      // Ignore weird url from crawler on some modules readme
       ignore: ['/modules/%3C/span', '/modules/%253C/span']
     },
     hooks: {
@@ -91,13 +91,6 @@ export default defineNuxtConfig({
         if (route.route?.includes('&amp;')) {
           route.skip = true
         }
-      }
-    },
-    storage: {
-      cache: {
-        driver: 'cloudflare-kv-binding',
-        binding: 'KV',
-        base: 'cache'
       }
     }
   },
@@ -116,15 +109,6 @@ export default defineNuxtConfig({
         website: {
           url: 'http://localhost:3000'
         }
-      }
-    }
-  },
-  runtimeConfig: {
-    public: {
-      website: {
-        title: 'Nuxt',
-        url: 'https://nuxt.com',
-        image: '/social.jpg'
       }
     }
   },
