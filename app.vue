@@ -39,7 +39,7 @@ watch(() => search.value?.commandPaletteRef?.query, debounce((query: string) => 
     return
   }
 
-  useTrackEvent('Search', { props: { query, results: `${search.value?.commandPaletteRef.results.length}` } })
+  useTrackEvent('Search', { props: { query: `${query} - ${search.value?.commandPaletteRef.results.length} results` } })
 }, 500))
 
 // Provide
