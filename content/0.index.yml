@@ -1,7 +1,7 @@
 navigation: false
 hero:
   badges:
-    - label: A brand new website
+    - label: Nuxt v3.8 is out
       to: /blog/new-website
       variant: outline
       icon: i-ph-arrow-right
