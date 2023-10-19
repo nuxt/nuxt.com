@@ -2,7 +2,7 @@ navigation: false
 hero:
   badges:
     - label: Nuxt v3.8 is out
-      to: /blog/new-website
+      to: /blog/v3-8
       variant: outline
       icon: i-ph-arrow-right
       size: xs
