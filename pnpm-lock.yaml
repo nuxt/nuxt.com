@@ -45,8 +45,8 @@ dependencies:
     specifier: ^1.5.2
     version: 1.5.2
   '@nuxtjs/mdc':
-    specifier: npm:@nuxtjs/mdc-edge@0.2.3-28293996.8f71704
-    version: /@nuxtjs/mdc-edge@0.2.3-28293996.8f71704
+    specifier: npm:@nuxtjs/mdc-edge@0.2.3-28295211.3901502
+    version: /@nuxtjs/mdc-edge@0.2.3-28295211.3901502
   '@nuxtjs/plausible':
     specifier: ^0.2.3
     version: 0.2.3
@@ -1684,8 +1684,8 @@ packages:
       - supports-color
     dev: false
 
-  /@nuxtjs/mdc-edge@0.2.3-28293996.8f71704:
-    resolution: {integrity: sha512-oG6gHnVhQ72jitJSpscKumoJBYSj0bd1XJ1MMZL3RofrQP2NCDPJ6nDkrnM1M2qQpvhjJZXfgA5dPmMz4BNUsA==}
+  /@nuxtjs/mdc-edge@0.2.3-28295211.3901502:
+    resolution: {integrity: sha512-cJlffTxe2StzeVzydoTI3o4rGuhsgkUqy2NTk//Egfc9wlUd4Di/T5NlC8tGJNsyrZkmSD2H5AOVjHG3aZ5aWA==}
     dependencies:
       '@nuxt/kit': 3.7.4
       '@types/hast': 3.0.2
