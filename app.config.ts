@@ -83,9 +83,6 @@ export default defineAppConfig({
     variables: {
       dark: {
         background: 'var(--color-gray-950)'
-      },
-      header: {
-        height: '5rem'
       }
     },
     icons: {
