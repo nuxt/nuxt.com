@@ -177,10 +177,9 @@ defineOgImage({
     @apply rounded-md;
   }
   /* Fix badges */
-  h2 + p,
-  p:has(+ h2) {
+  p {
     a img {
-      @apply inline-block m-0 mr-2;
+      @apply inline-block my-0 mr-1;
     }
     a:hover {
       @apply border-none opacity-90;
