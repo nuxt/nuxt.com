@@ -39,6 +39,7 @@ const links = computed(() => [{
 
 const contributors = computed(() => module.value.contributors.map((contributor) => ({
   label: contributor.username,
+  to: `https://github.com/${contributor.username}`,
   avatar: {
     src: `https://ipx.nuxt.com/f_auto,s_20x20/gh_avatar/${contributor.username}`,
     srcset: `https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/${contributor.username} 2x`,
