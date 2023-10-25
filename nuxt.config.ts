@@ -76,6 +76,7 @@ export default defineNuxtConfig({
     '/docs/examples/experimental': { redirect: '/docs/examples/experimental/wasm', prerender: false },
     '/docs/community': { redirect: '/docs/community/getting-help', prerender: false },
     '/docs/community/nuxt-community': { redirect: '/docs/community/getting-help', prerender: false },
+    '/docs/guide/directory-structure/nuxt.config': { redirect: '/docs/guide/directory-structure/nuxt-config', prerender: false },
     '/enterprise': { redirect: '/enterprise/support', prerender: false }
   },
   nitro: {
