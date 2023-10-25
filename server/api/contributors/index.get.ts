@@ -1,5 +1,7 @@
 import type { VoltaContributor } from "~/server/utils/volta"
 
+const BOTS = ['codecov-io', 'codecov-commenter']
+
 export default cachedEventHandler(async (event) => {
   if (!process.env.NUXT_VOLTA_TOKEN) {
     throw createError({
@@ -10,7 +12,10 @@ export default cachedEventHandler(async (event) => {
 
   console.log('Fetching /contributors...')
 
-  let contributors = await fetchOrgsContributors(event, ['nuxt', 'nuxt-modules', 'unjs']) as Array<VoltaContributor & { score: number }>
+  let contributors = await fetchOrgsContributors(event, ['nuxt', 'nuxt-modules', 'nuxt-themes', 'nuxt-ui-pro', 'unjs', 'nuxtlabs']) as Array<VoltaContributor & { score: number }>
+
+  // Remove bots
+  contributors = contributors.filter(({ username }) => !BOTS.includes(username))
 
   // Limit to 1000 contributors
   // contributors = contributors.slice(0, 1000)
