@@ -151,17 +151,22 @@ defineOgImage({
       </UPageBody>
 
       <template #right>
-        <UPageLinks title="Links" :links="links" />
+        <UDocsToc v-if="module.readme.toc?.links?.length" :links="module.readme.toc.links">
+          <template #bottom>
+            <UDivider v-if="module.readme?.toc?.links?.length" type="dashed" />
+            <UPageLinks title="Links" :links="links" />
 
-        <div class="hidden lg:block">
-          <UDivider type="dashed" class="my-6" />
+            <div class="hidden lg:block">
+              <UDivider type="dashed" class="my-6" />
 
-          <UPageLinks :links="contributors">
-            <template #title>
-              Contributors <UBadge :label="module.contributors.length.toString()" color="gray" size="xs" :ui="{ rounded: 'rounded-full' }" />
-            </template>
-          </UPageLinks>
-        </div>
+              <UPageLinks :links="contributors">
+                <template #title>
+                  Contributors <UBadge :label="module.contributors.length.toString()" color="gray" size="xs" :ui="{ rounded: 'rounded-full' }" />
+                </template>
+              </UPageLinks>
+            </div>
+          </template>
+        </UDocsToc>
       </template>
     </UPage>
   </UContainer>
