@@ -78,7 +78,7 @@ async function nextContributors () {
         <a
           v-if="username"
           :key="username"
-          :href="`https://github.com/${username}`"
+          :href="`https://nuxters.nuxt.com/${username}`"
           target="_blank"
           class="absolute inset-0 block transition-all"
           :style="{
