@@ -47,15 +47,16 @@ await fetchList()
           </template>
 
           <template #footer>
-            <UBadge
-              v-for="location of job.locations"
-              :key="location"
-              :label="location"
-              size="lg"
-              variant="subtle"
-              class="mr-3"
-            />
-            <UBadge :label="job.remote" size="lg" variant="subtle" />
+            <div class="flex flex-wrap gap-3">
+              <UBadge
+                v-for="location of job.locations"
+                :key="location"
+                :label="location"
+                size="lg"
+                variant="subtle"
+              />
+              <UBadge :label="job.remote" size="lg" variant="subtle" />
+            </div>
           </template>
         </UPageCard>
       </UPageBody>
