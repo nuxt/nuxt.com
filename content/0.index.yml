@@ -297,3 +297,10 @@ sections:
           imgSrc: 'https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/svedova'
           imgSrcSet: 'https://ipx.nuxt.com/f_auto,s_80x80/gh_avatar/svedova 2x'
           url: 'https://twitter.com/savasvedova'
+      - quote: "Nuxt’s blend of high performance and focused developer experience is a game changer. Its SSR and SSG flexibility, coupled with a community that’s as vibrant as the Vue.js ecosystem, makes it a great choice for modern web projects."
+        author:
+          name: 'Rijk van Zanten'
+          job:  'CTO at Directus'
+          imgSrc: 'https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/rijkvanzanten'
+          imgSrcSet: 'https://ipx.nuxt.com/f_auto,s_80x80/gh_avatar/rijkvanzanten 2x'
+          url: 'https://github.com/rijkvanzanten'
