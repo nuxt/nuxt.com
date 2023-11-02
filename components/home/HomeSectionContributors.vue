@@ -30,9 +30,6 @@ onMounted(async () => {
 onBeforeUnmount(stopTimer)
 
 const $contributors = computed(() => contributors.value.length ? contributors.value.slice(start.value, start.value + total) : new Array(total).fill(null))
-function imgUrl (username) {
-  return `https://ipx.nuxt.com/f_auto,s_80x80/gh_avatar/${username}`
-}
 function startTimer (ms = 5000) {
   currentTimeout = setTimeout(nextContributors, ms)
 }
@@ -43,7 +40,7 @@ function stopTimer () {
 async function loadImages (usernames) {
   await Promise.all(usernames.map(username => {
     const img = new Image()
-    img.src = imgUrl(username)
+    img.src = `https://ipx.nuxt.com/f_auto,s_${window.devicePixelRatio === 2 ? '160x160' : '80x80'}/gh_avatar/${username}`
     return new Promise(resolve => {
       img.onload = resolve
       img.onerror = resolve
@@ -78,7 +75,7 @@ async function nextContributors () {
         <a
           v-if="username"
           :key="username"
-          :href="`https://github.com/${username}`"
+          :href="`https://nuxters.nuxt.com/${username}`"
           target="_blank"
           class="absolute inset-0 block transition-all"
           :style="{
