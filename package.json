@@ -27,7 +27,7 @@
     "@nuxtjs/html-validator": "^1.5.2",
     "@nuxtjs/mdc": "^0.2.6",
     "@nuxtjs/plausible": "^0.2.3",
-    "@nuxtjs/tailwindcss": "^6.9.0",
+    "@nuxtjs/tailwindcss": "^6.9.1",
     "@vueuse/components": "^10.5.0",
     "@vueuse/core": "^10.5.0",
     "@vueuse/nuxt": "^10.5.0",
