@@ -1,13 +1,13 @@
 navigation: false
 hero:
-  badges:
-    - label: Nuxt v3.8 is out
-      to: /blog/v3-8
-      variant: outline
-      icon: i-ph-arrow-right
-      size: xs
-      trailing: true
-      class: 'font-semibold hover:bg-primary-100 dark:hover:bg-primary-900 rounded-full'
+  cta:
+    label: Nuxt v3.8 is out
+    to: /blog/v3-8
+    variant: outline
+    icon: i-ph-arrow-right
+    size: xs
+    trailing: true
+    class: 'font-semibold hover:bg-primary-100 dark:hover:bg-primary-900 rounded-full'
 logos:
   title: 'Trusted by the best front-end teams'
 sections:
