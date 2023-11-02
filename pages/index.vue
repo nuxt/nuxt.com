@@ -19,9 +19,13 @@ useSeoMeta({
 
 <template>
   <div v-if="page">
-    <ULandingHero :ui="{ base: 'relative z-[1]' }" class="dark:bg-gradient-to-b from-gray-950 to-gray-900" v-bind="page.hero">
+    <ULandingHero :ui="{ base: 'relative z-[1]' }" class="dark:bg-gradient-to-b from-gray-950 to-gray-900">
       <template #top>
         <HomeHeroBackground class="absolute -top-[--header-height] inset-x-0 w-full hidden lg:block" />
+      </template>
+
+      <template #headline>
+        <UButton v-bind="page.hero.cta" />
       </template>
 
       <template #title>
