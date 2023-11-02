@@ -46,6 +46,6 @@
     "vue-tsc": "^1.8.22"
   },
   "resolutions": {
-    "@nuxtjs/tailwindcss": "6.8.1"
+    "@nuxtjs/tailwindcss": "6.9.0"
   }
 }

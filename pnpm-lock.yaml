@@ -5,7 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  '@nuxtjs/tailwindcss': 6.8.1
+  '@nuxtjs/tailwindcss': 6.9.0
 
 dependencies:
   '@iconify-json/heroicons':
@@ -1737,7 +1737,7 @@ packages:
       '@iconify-json/heroicons': 1.1.13
       '@nuxt/kit': 3.8.0
       '@nuxtjs/color-mode': 3.3.0
-      '@nuxtjs/tailwindcss': 6.8.1(webpack@5.89.0)
+      '@nuxtjs/tailwindcss': 6.9.0(webpack@5.89.0)
       '@popperjs/core': 2.11.8
       '@tailwindcss/aspect-ratio': 0.4.2(tailwindcss@3.3.5)
       '@tailwindcss/container-queries': 0.1.1(tailwindcss@3.3.5)
@@ -1953,8 +1953,8 @@ packages:
       - supports-color
     dev: false
 
-  /@nuxtjs/tailwindcss@6.8.1(webpack@5.89.0):
-    resolution: {integrity: sha512-PU9dJtDIEiwBff2WKkWxKuZIfgn9+F9SYAc4io2n0tAmYL8bQr9gJgyf+xpCtMF7UJZ450xXAjSTkO6v8q5Obw==}
+  /@nuxtjs/tailwindcss@6.9.0(webpack@5.89.0):
+    resolution: {integrity: sha512-XDIvuLi7DfpyN/wIPR98yROh1wZ90iupta+zjo8TcrgmPsH+unhmOhFlaCHMUWprWMRTqe0BUUzD0NEf9MncmA==}
     dependencies:
       '@nuxt/kit': 3.8.0
       '@nuxt/postcss8': 1.1.3(webpack@5.89.0)
