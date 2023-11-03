@@ -51,8 +51,8 @@ dependencies:
     specifier: ^0.2.3
     version: 0.2.3
   '@nuxtjs/tailwindcss':
-    specifier: ^6.9.1
-    version: 6.9.1(webpack@5.89.0)
+    specifier: ^6.9.4
+    version: 6.9.4(webpack@5.89.0)
   '@vueuse/components':
     specifier: ^10.5.0
     version: 10.5.0(vue@3.3.4)
@@ -1737,7 +1737,7 @@ packages:
       '@iconify-json/heroicons': 1.1.13
       '@nuxt/kit': 3.8.0
       '@nuxtjs/color-mode': 3.3.0
-      '@nuxtjs/tailwindcss': 6.9.1(webpack@5.89.0)
+      '@nuxtjs/tailwindcss': 6.9.4(webpack@5.89.0)
       '@popperjs/core': 2.11.8
       '@tailwindcss/aspect-ratio': 0.4.2(tailwindcss@3.3.5)
       '@tailwindcss/container-queries': 0.1.1(tailwindcss@3.3.5)
@@ -1953,8 +1953,8 @@ packages:
       - supports-color
     dev: false
 
-  /@nuxtjs/tailwindcss@6.9.1(webpack@5.89.0):
-    resolution: {integrity: sha512-/GLGrxv8oAiOYhf4BFi3LscbtGNFw9Wc47kNpSEzoBxwihtYJhyLTzGP1lVqNSph5dJMkywMlFtBKXprLzqmDQ==}
+  /@nuxtjs/tailwindcss@6.9.4(webpack@5.89.0):
+    resolution: {integrity: sha512-T3B3P7RgJ/WTW3plHziLWqWbMzCWctUHpjqhW1WCXB/U3FOQxGH5dG4uEOmQkA6Gj4cbTNStIU/cRxpZhbBMhg==}
     dependencies:
       '@nuxt/kit': 3.8.0
       '@nuxt/postcss8': 1.1.3(webpack@5.89.0)
