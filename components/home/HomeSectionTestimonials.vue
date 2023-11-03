@@ -25,6 +25,7 @@ defineProps<{
           background: 'dark:bg-gray-900/50'
         }
       }"
+      class="break-inside-avoid"
       :to="testimonial.author.url"
       target="_blank"
     >
