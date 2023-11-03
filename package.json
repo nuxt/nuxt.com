@@ -27,6 +27,7 @@
     "@nuxtjs/html-validator": "^1.5.2",
     "@nuxtjs/mdc": "^0.2.6",
     "@nuxtjs/plausible": "^0.2.3",
+    "@nuxtjs/tailwindcss": "^6.9.4",
     "@vueuse/components": "^10.5.0",
     "@vueuse/core": "^10.5.0",
     "@vueuse/nuxt": "^10.5.0",
@@ -44,8 +45,5 @@
     "eslint": "^8.52.0",
     "typescript": "^5.2.2",
     "vue-tsc": "^1.8.22"
-  },
-  "resolutions": {
-    "@nuxtjs/tailwindcss": "6.8.1"
   }
 }
