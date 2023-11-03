@@ -53,7 +53,7 @@ const communityLinks = computed(() => [{
 }, {
   icon: 'i-ph-chat-centered-text-duotone',
   label: 'Chat on Discord',
-  to: 'https://discord.com/invite/ps2h6QT',
+  to: 'https://discord.com/invite/nuxt',
   target: '_blank'
 }, {
   icon: 'i-ph-hand-heart-duotone',
