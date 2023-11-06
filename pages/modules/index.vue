@@ -42,6 +42,8 @@ defineShortcuts({
     inputRef.value.input.focus()
   }
 })
+
+const { copy } = useCopyToClipboard()
 </script>
 
 <template>
@@ -128,6 +130,14 @@ defineShortcuts({
             <template #description>
               <span class="line-clamp-2">{{ module.description }}</span>
             </template>
+
+            <UTooltip class="hidden lg:inline-flex absolute top-6 right-6 group-hover:opacity-100 opacity-0 transition" :text="`Copy install command`">
+              <UButton
+                icon="i-ph-package-duotone"
+                color="white"
+                @click="copy(`npx nuxi@latest module add ${module.name}`, { title: 'Command copied to clipboard:', description: `npx nuxi@latest module add ${module.name}` })"
+              />
+            </UTooltip>
 
             <template #footer>
               <div class="flex items-center justify-between gap-3 -my-1 text-gray-600 dark:text-gray-300">
