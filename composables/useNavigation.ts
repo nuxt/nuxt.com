@@ -7,6 +7,7 @@ const _useNavigation = () => {
     label: 'Docs',
     icon: 'i-ph-book-bookmark-duotone',
     to: '/docs',
+    active: route.path.startsWith('/docs') || route.path.startsWith('/modules'),
     children: [{
       label: 'Get Started',
       description: 'Learn how to get started with Nuxt.',
@@ -26,6 +27,12 @@ const _useNavigation = () => {
       to: '/docs/api',
       active: route.path.startsWith('/docs/api')
     }, {
+      label: 'Modules',
+      description: 'Discover and explore official and community examples.',
+      icon: 'i-ph-puzzle-piece-duotone',
+      to: '/modules',
+      active: route.path.startsWith('/modules')
+    }, {
       label: 'Examples',
       description: 'Discover and explore official and community examples.',
       icon: 'i-ph-app-window-duotone',
@@ -39,9 +46,9 @@ const _useNavigation = () => {
       active: route.path.startsWith('/docs/community')
     }]
   }, {
-    label: 'Modules',
+    label: 'Integrations',
     icon: 'i-ph-puzzle-piece-duotone',
-    to: '/modules'
+    to: '/integrations'
   }, {
     label: 'Templates',
     icon: 'i-ph-app-window-duotone',
