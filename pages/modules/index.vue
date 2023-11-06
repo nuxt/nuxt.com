@@ -131,11 +131,11 @@ const { copy } = useCopyToClipboard()
               <span class="line-clamp-2">{{ module.description }}</span>
             </template>
 
-            <UTooltip class="absolute top-6 right-6 group-hover:opacity-100 opacity-0 transition" :text="`Copy “${module.npm}”`">
+            <UTooltip class="hidden lg:inline-flex absolute top-6 right-6 group-hover:opacity-100 opacity-0 transition" :text="`Copy install command`">
               <UButton
                 icon="i-ph-package-duotone"
                 color="white"
-                @click="copy(module.npm, { title: 'Copied to clipboard' })"
+                @click="copy(`npx nuxi@latest modules add ${module.name}`, { title: 'Command copied to clipboard:', description: `npx nuxi@latest modules add ${module.name}` })"
               />
             </UTooltip>
 
