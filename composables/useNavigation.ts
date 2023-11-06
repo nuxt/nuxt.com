@@ -28,7 +28,7 @@ const _useNavigation = () => {
       active: route.path.startsWith('/docs/api')
     }, {
       label: 'Modules',
-      description: 'Discover and explore official and community examples.',
+      description: 'Supercharge your Nuxt project with modules.',
       icon: 'i-ph-puzzle-piece-duotone',
       to: '/modules',
       active: route.path.startsWith('/modules')
@@ -47,7 +47,7 @@ const _useNavigation = () => {
     }]
   }, {
     label: 'Integrations',
-    icon: 'i-ph-puzzle-piece-duotone',
+    icon: 'i-ph-plugs-connected-duotone',
     to: '/integrations'
   }, {
     label: 'Templates',

@@ -63,10 +63,11 @@ defineOgImage({
   description,
   headline: 'Nuxt Modules'
 })
+const breadcrumb = [{ label: 'Docs', to: '/docs' }, { label: 'Modules', to: '/modules' }, { label: module.value.name, to: `/modules/${module.value.slug}` }]
 </script>
 
 <template>
-  <UContainer>
+  <div>
     <UAlert
       v-if="!module.compatibility?.nuxt?.includes('^3')"
       class="mt-4"
@@ -81,7 +82,10 @@ defineOgImage({
         </NuxtLink>
       </template>
     </UAlert>
-    <UPageHeader :description="module.description" class="sm:py-16">
+    <UPageHeader :description="module.description" :ui="{ icon: { wrapper: 'lg:order-last' } }">
+      <template #headline>
+        <PageBreadcrumb :links="breadcrumb" />
+      </template>
       <template #title>
         {{ module.name }}
 
@@ -100,21 +104,6 @@ defineOgImage({
           class="mt-[2px]"
         />
       </template>
-
-
-      <div class="absolute top-[72px] -left-[72px] hidden lg:flex">
-        <UTooltip text="Back to modules">
-          <UButton
-            to="/modules"
-            icon="i-ph-caret-left"
-            color="gray"
-            :ui="{ rounded: 'rounded-full' }"
-            size="lg"
-            class=""
-          />
-        </UTooltip>
-      </div>
-
       <div class="flex flex-col lg:flex-row lg:items-center gap-3 mt-4">
         <UTooltip text="Monthly NPM Downloads">
           <NuxtLink class="flex items-center gap-1.5" :to="`https://npmjs.org/package/${module.npm}`" target="_blank">
@@ -169,11 +158,14 @@ defineOgImage({
         </UDocsToc>
       </template>
     </UPage>
-  </UContainer>
+  </div>
 </template>
 
 <style lang="postcss">
 .module-readme {
+  h1 {
+    @apply hidden;
+  }
   /* empty code lines */
   .shiki code .line:empty {
     @apply hidden;

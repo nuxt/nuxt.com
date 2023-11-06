@@ -1,12 +1,4 @@
 <script setup lang="ts">
-const inputRef = ref()
-
-const route = useRoute()
-const { replaceRoute } = useFilters('modules')
-const { fetchList, filteredModules, q, categories, selectedOrder, sorts, selectedSort } = useModules()
-
-const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
-
 const moduleLinks = [{
   icon: 'i-ph-plus-circle-duotone',
   label: 'Create a module',
@@ -19,37 +11,13 @@ const moduleLinks = [{
 }]
 
 const { headerLinks } = useNavigation()
+const { categories } = useModules()
 const links = computed(() => headerLinks.value.find(link => link.to === '/docs')?.children ?? [])
-
-const title = page.value.head?.title || page.value.title
-const description = page.value.head?.description || page.value.description
-useSeoMeta({
-  titleTemplate: '%s',
-  title,
-  description,
-  ogDescription: description,
-  ogTitle: title
-})
-
-defineOgImage({
-  component: 'Docs',
-  title,
-  description,
-  headline: ''
-})
-
-await fetchList()
-
-defineShortcuts({
-  '/': () => {
-    inputRef.value.input.focus()
-  }
-})
 </script>
 
 <template>
   <UContainer>
-    <UPage id="smooth" class="pt-20 -mt-20">
+    <UPage>
       <template #left>
         <UAside :links="links">
           <UDivider type="dashed" class="mb-6" />
@@ -58,125 +26,7 @@ defineShortcuts({
           <UPageLinks :links="moduleLinks" />
         </UAside>
       </template>
-      <UPageHeader v-bind="page" />
-
-      <UPageBody>
-        <div class="flex items-center justify-between gap-3 mb-8">
-          <div class="inline-flex items-center gap-2">
-            <UInput
-              ref="inputRef"
-              :model-value="q"
-              name="q"
-              icon="i-ph-magnifying-glass-duotone"
-              placeholder="Search..."
-              class="w-56"
-              size="md"
-              autocomplete="off"
-              :ui="{ icon: { trailing: { pointer: '' } } }"
-              @update:model-value="replaceRoute('q', $event)"
-            >
-              <template #trailing>
-                <UButton
-                  v-if="q"
-                  color="gray"
-                  variant="link"
-                  size="xs"
-                  icon="i-ph-x"
-                  :padded="false"
-                  @click="replaceRoute('q', '')"
-                />
-                <UKbd v-else>
-                  /
-                </UKbd>
-              </template>
-            </UInput>
-            <span class="text-gray-500">{{ filteredModules.length }} module{{ filteredModules.length === 1 ? '' : 's' }} found</span>
-          </div>
-
-          <UButtonGroup>
-            <UButton :icon="selectedOrder.icon" size="md" color="gray" @click="replaceRoute('orderBy', selectedOrder.key === 'desc' ? 'asc' : 'desc')" />
-            <USelectMenu
-              :model-value="selectedSort"
-              :options="sorts"
-              size="md"
-              color="white"
-              class="w-32"
-              @update:model-value="replaceRoute('sortBy', $event)"
-            />
-          </UButtonGroup>
-        </div>
-
-        <UPageGrid v-if="filteredModules?.length">
-          <UPageCard
-            v-for="(module, index) in filteredModules"
-            :key="index"
-            :to="`/modules/${module.name}`"
-            :title="module.name"
-            class="flex flex-col"
-            :ui="{ body: { base: 'flex-1' }, footer: { base: 'bg-gray-100/50 dark:bg-gray-800/50' } }"
-          >
-            <template #icon>
-              <UAvatar :src="moduleImage(module.icon)" :icon="moduleIcon(module.category)" :alt="module.name" size="lg" :ui="{ rounded: 'rounded-lg' }" />
-            </template>
-
-            <template #title>
-              {{ module.name }}
-
-              <!-- <UTooltip v-if="module.type === 'official'" text="Official module"> -->
-              <UIcon v-if="module.type === 'official'" name="i-ph-medal-duotone" class="h-4 w-4 text-primary" />
-              <!-- </UTooltip> -->
-            </template>
-
-            <template #description>
-              <span class="line-clamp-2">{{ module.description }}</span>
-            </template>
-
-            <template #footer>
-              <div class="flex items-center justify-between gap-3 -my-1 text-gray-600 dark:text-gray-300">
-                <div class="flex items-center gap-3">
-                  <UTooltip text="Monthly NPM Downloads">
-                    <NuxtLink class="flex items-center gap-1" :to="`https://npmjs.org/package/${module.npm}`" target="_blank" :class="[selectedSort.key === 'downloads' && 'text-gray-900 dark:text-white']">
-                      <UIcon name="i-ph-arrow-circle-down-duotone" class="w-5 h-5 flex-shrink-0" />
-                      <span class="text-sm font-medium">{{ formatNumber(module.stats.downloads) }}</span>
-                    </NuxtLink>
-                  </UTooltip>
-
-                  <UTooltip text="GitHub Stars">
-                    <NuxtLink class="flex items-center gap-1" :to="`https://github.com/${module.repo}`" target="_blank" :class="[selectedSort.key === 'stars' && 'text-gray-900 dark:text-white']">
-                      <UIcon name="i-ph-star-duotone" class="w-5 h-5 flex-shrink-0" />
-                      <span class="text-sm font-medium">{{ formatNumber(module.stats.stars || 0) }}</span>
-                    </NuxtLink>
-                  </UTooltip>
-                </div>
-
-                <UTooltip text="Contributors">
-                  <NuxtLink class="flex items-center gap-1" :to="`https://github.com/${module.repo}/graphs/contributors`" target="_blank">
-                    <UIcon name="i-ph-user-circle-gear-duotone" class="w-5 h-5 flex-shrink-0" />
-                    <span class="text-sm font-medium">{{ module.contributors.length }}</span>
-                  </NuxtLink>
-                </UTooltip>
-              </div>
-            </template>
-          </UPageCard>
-        </UPageGrid>
-
-        <EmptyCard v-else :label="`There is no module found for <b>${q}</b> yet. Become the first one to create it!`">
-          <UButton
-            label="Contribute on GitHub"
-            color="black"
-            to="https://github.com/nuxt/modules"
-            target="_blank"
-            size="md"
-            @click="$router.replace({ query: {} })"
-          />
-          <UButton
-            to="/docs/guide/going-further/modules"
-            color="white"
-            size="md"
-            label="How to create a module?"
-          />
-        </EmptyCard>
-      </UPageBody>
+      <NuxtPage />
     </UPage>
   </UContainer>
 </template>

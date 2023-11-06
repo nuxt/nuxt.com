@@ -44,27 +44,20 @@ defineShortcuts({
 })
 
 const { copy } = useCopyToClipboard()
+const breadcrumb = [{ label: 'Docs', to: '/docs' }, { label: 'Modules', to: '/modules' }]
 </script>
 
 <template>
-  <UContainer>
-    <UPageHero v-bind="page" />
-
-    <UPage id="smooth" class="pt-20 -mt-20">
-      <template #left>
-        <UAside>
-          <UNavigationTree :links="[{ label: 'Categories', disabled: true, children: categories }]" />
-
-          <template #bottom>
-            <UDivider type="dashed" class="my-6" />
-
-            <UPageLinks :links="links" />
-          </template>
-        </UAside>
+  <div>
+    <UPageHeader v-bind="page">
+      <template #headline>
+        <PageBreadcrumb :links="breadcrumb" />
       </template>
+    </UPageHeader>
 
-      <UPageBody>
-        <div class="flex items-center justify-between gap-3 mb-8">
+    <UPageBody id="smooth">
+      <div class="flex items-center justify-between gap-3 mb-8">
+        <div class="inline-flex items-center gap-2">
           <UInput
             ref="inputRef"
             :model-value="q"
@@ -92,99 +85,101 @@ const { copy } = useCopyToClipboard()
               </UKbd>
             </template>
           </UInput>
-
-          <UButtonGroup>
-            <UButton :icon="selectedOrder.icon" size="md" color="gray" @click="replaceRoute('orderBy', selectedOrder.key === 'desc' ? 'asc' : 'desc')" />
-            <USelectMenu
-              :model-value="selectedSort"
-              :options="sorts"
-              size="md"
-              color="white"
-              class="w-32"
-              @update:model-value="replaceRoute('sortBy', $event)"
-            />
-          </UButtonGroup>
+          <span class="text-gray-500">{{ filteredModules.length }} module{{ filteredModules.length === 1 ? '' : 's' }} found</span>
         </div>
 
-        <UPageGrid v-if="filteredModules?.length">
-          <UPageCard
-            v-for="(module, index) in filteredModules"
-            :key="index"
-            :to="`/modules/${module.name}`"
-            :title="module.name"
-            class="flex flex-col"
-            :ui="{ body: { base: 'flex-1' }, footer: { base: 'bg-gray-100/50 dark:bg-gray-800/50' } }"
-          >
-            <template #icon>
-              <UAvatar :src="moduleImage(module.icon)" :icon="moduleIcon(module.category)" :alt="module.name" size="lg" :ui="{ rounded: 'rounded-lg' }" />
-            </template>
 
-            <template #title>
-              {{ module.name }}
+        <UButtonGroup>
+          <UButton :icon="selectedOrder.icon" size="md" color="gray" @click="replaceRoute('orderBy', selectedOrder.key === 'desc' ? 'asc' : 'desc')" />
+          <USelectMenu
+            :model-value="selectedSort"
+            :options="sorts"
+            size="md"
+            color="white"
+            class="w-32"
+            @update:model-value="replaceRoute('sortBy', $event)"
+          />
+        </UButtonGroup>
+      </div>
 
-              <!-- <UTooltip v-if="module.type === 'official'" text="Official module"> -->
-              <UIcon v-if="module.type === 'official'" name="i-ph-medal-duotone" class="h-4 w-4 text-primary" />
-              <!-- </UTooltip> -->
-            </template>
+      <UPageGrid v-if="filteredModules?.length">
+        <UPageCard
+          v-for="(module, index) in filteredModules"
+          :key="index"
+          :to="`/modules/${module.name}`"
+          :title="module.name"
+          class="flex flex-col"
+          :ui="{ body: { base: 'flex-1' }, footer: { base: 'bg-gray-100/50 dark:bg-gray-800/50' } }"
+        >
+          <template #icon>
+            <UAvatar :src="moduleImage(module.icon)" :icon="moduleIcon(module.category)" :alt="module.name" size="lg" :ui="{ rounded: 'rounded-lg' }" />
+          </template>
 
-            <template #description>
-              <span class="line-clamp-2">{{ module.description }}</span>
-            </template>
+          <template #title>
+            {{ module.name }}
 
-            <UTooltip class="hidden lg:inline-flex absolute top-6 right-6 group-hover:opacity-100 opacity-0 transition" :text="`Copy install command`">
-              <UButton
-                icon="i-ph-package-duotone"
-                color="white"
-                @click="copy(`npx nuxi@latest module add ${module.name}`, { title: 'Command copied to clipboard:', description: `npx nuxi@latest module add ${module.name}` })"
-              />
-            </UTooltip>
+            <!-- <UTooltip v-if="module.type === 'official'" text="Official module"> -->
+            <UIcon v-if="module.type === 'official'" name="i-ph-medal-duotone" class="h-4 w-4 text-primary" />
+          <!-- </UTooltip> -->
+          </template>
 
-            <template #footer>
-              <div class="flex items-center justify-between gap-3 -my-1 text-gray-600 dark:text-gray-300">
-                <div class="flex items-center gap-3">
-                  <UTooltip text="Monthly NPM Downloads">
-                    <NuxtLink class="flex items-center gap-1" :to="`https://npmjs.org/package/${module.npm}`" target="_blank" :class="[selectedSort.key === 'downloads' && 'text-gray-900 dark:text-white']">
-                      <UIcon name="i-ph-arrow-circle-down-duotone" class="w-5 h-5 flex-shrink-0" />
-                      <span class="text-sm font-medium">{{ formatNumber(module.stats.downloads) }}</span>
-                    </NuxtLink>
-                  </UTooltip>
+          <template #description>
+            <span class="line-clamp-2">{{ module.description }}</span>
+          </template>
 
-                  <UTooltip text="GitHub Stars">
-                    <NuxtLink class="flex items-center gap-1" :to="`https://github.com/${module.repo}`" target="_blank" :class="[selectedSort.key === 'stars' && 'text-gray-900 dark:text-white']">
-                      <UIcon name="i-ph-star-duotone" class="w-5 h-5 flex-shrink-0" />
-                      <span class="text-sm font-medium">{{ formatNumber(module.stats.stars || 0) }}</span>
-                    </NuxtLink>
-                  </UTooltip>
-                </div>
+          <UTooltip class="hidden lg:inline-flex absolute top-6 right-6 group-hover:opacity-100 opacity-0 transition" :text="`Copy install command`">
+            <UButton
+              icon="i-ph-package-duotone"
+              color="white"
+              @click="copy(`npx nuxi@latest module add ${module.name}`, { title: 'Command copied to clipboard:', description: `npx nuxi@latest module add ${module.name}` })"
+            />
+          </UTooltip>
 
-                <UTooltip text="Contributors">
-                  <NuxtLink class="flex items-center gap-1" :to="`https://github.com/${module.repo}/graphs/contributors`" target="_blank">
-                    <UIcon name="i-ph-user-circle-gear-duotone" class="w-5 h-5 flex-shrink-0" />
-                    <span class="text-sm font-medium">{{ module.contributors.length }}</span>
+          <template #footer>
+            <div class="flex items-center justify-between gap-3 -my-1 text-gray-600 dark:text-gray-300">
+              <div class="flex items-center gap-3">
+                <UTooltip text="Monthly NPM Downloads">
+                  <NuxtLink class="flex items-center gap-1" :to="`https://npmjs.org/package/${module.npm}`" target="_blank" :class="[selectedSort.key === 'downloads' && 'text-gray-900 dark:text-white']">
+                    <UIcon name="i-ph-arrow-circle-down-duotone" class="w-5 h-5 flex-shrink-0" />
+                    <span class="text-sm font-medium">{{ formatNumber(module.stats.downloads) }}</span>
+                  </NuxtLink>
+                </UTooltip>
+
+                <UTooltip text="GitHub Stars">
+                  <NuxtLink class="flex items-center gap-1" :to="`https://github.com/${module.repo}`" target="_blank" :class="[selectedSort.key === 'stars' && 'text-gray-900 dark:text-white']">
+                    <UIcon name="i-ph-star-duotone" class="w-5 h-5 flex-shrink-0" />
+                    <span class="text-sm font-medium">{{ formatNumber(module.stats.stars || 0) }}</span>
                   </NuxtLink>
                 </UTooltip>
               </div>
-            </template>
-          </UPageCard>
-        </UPageGrid>
 
-        <EmptyCard v-else :label="`There is no module found for <b>${q}</b> yet. Become the first one to create it!`">
-          <UButton
-            label="Contribute on GitHub"
-            color="black"
-            to="https://github.com/nuxt/modules"
-            target="_blank"
-            size="md"
-            @click="$router.replace({ query: {} })"
-          />
-          <UButton
-            to="/docs/guide/going-further/modules"
-            color="white"
-            size="md"
-            label="How to create a module?"
-          />
-        </EmptyCard>
-      </UPageBody>
-    </UPage>
-  </UContainer>
+              <UTooltip text="Contributors">
+                <NuxtLink class="flex items-center gap-1" :to="`https://github.com/${module.repo}/graphs/contributors`" target="_blank">
+                  <UIcon name="i-ph-user-circle-gear-duotone" class="w-5 h-5 flex-shrink-0" />
+                  <span class="text-sm font-medium">{{ module.contributors.length }}</span>
+                </NuxtLink>
+              </UTooltip>
+            </div>
+          </template>
+        </UPageCard>
+      </UPageGrid>
+
+      <EmptyCard v-else :label="`There is no module found for <b>${q}</b> yet. Become the first one to create it!`">
+        <UButton
+          label="Contribute on GitHub"
+          color="black"
+          to="https://github.com/nuxt/modules"
+          target="_blank"
+          size="md"
+          @click="$router.replace({ query: {} })"
+        />
+        <UButton
+          to="/docs/guide/going-further/modules"
+          color="white"
+          size="md"
+          label="How to create a module?"
+        />
+      </EmptyCard>
+    </UPageBody>
+  </div>
 </template>

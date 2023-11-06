@@ -103,11 +103,7 @@ defineOgImage({
   <UPage>
     <UPageHeader v-bind="page">
       <template #headline>
-        <NuxtLink v-for="(link, index) in breadcrumb" :key="index" :to="link.to" :class="[index < breadcrumb.length - 1 && 'text-gray-500 dark:text-gray-400']" class="flex items-center gap-1.5 group">
-          <span :class="[index < breadcrumb.length - 1 && 'group-hover:text-gray-700 dark:group-hover:text-gray-200']">{{ link.label }}</span>
-
-          <UIcon v-if="index < breadcrumb.length - 1" name="i-ph-caret-right" class="w-4 h-4" />
-        </NuxtLink>
+        <PageBreadcrumb :links="breadcrumb" />
       </template>
     </UPageHeader>
 
