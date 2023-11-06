@@ -135,7 +135,7 @@ const { copy } = useCopyToClipboard()
               <UButton
                 icon="i-ph-package-duotone"
                 color="white"
-                @click="copy(`npx nuxi@latest modules add ${module.name}`, { title: 'Command copied to clipboard:', description: `npx nuxi@latest modules add ${module.name}` })"
+                @click="copy(`npx nuxi@latest module add ${module.name}`, { title: 'Command copied to clipboard:', description: `npx nuxi@latest module add ${module.name}` })"
               />
             </UTooltip>
 
