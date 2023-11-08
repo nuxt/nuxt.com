@@ -43,10 +43,9 @@ const _useNavigation = () => {
     icon: 'i-ph-puzzle-piece-duotone',
     to: '/modules'
   }, {
-    label: 'Templates',
-    icon: 'i-ph-app-window-duotone',
-    to: 'https://nuxt.new',
-    target: '_blank'
+    label: 'Themes',
+    icon: 'i-ph-paint-brush',
+    to: '/themes'
   }, {
     label: 'Showcase',
     icon: 'i-ph-projector-screen-duotone',
@@ -54,7 +53,6 @@ const _useNavigation = () => {
   }, {
     label: 'Enterprise',
     icon: 'i-ph-buildings-duotone',
-    to: '/enterprise',
     children: [{
       label: 'Support',
       to: '/enterprise/support',
