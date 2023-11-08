@@ -137,8 +137,6 @@ defineOgImage({
                 <CopyButton
                   :text="`npx nuxi init -t themes/${theme.slug} <app>`"
                   class="w-full"
-                  background="bg-gradient-to-b from-gray-50 to-gray-100 hover:to-gray-200 lg:hover:to-gray-100
-                   dark:from-gray-900 dark:to-gray-950 dark:hover:to-gray-800 dark:lg:hover:to-gray-900"
                   size="sm"
                 />
               </div>

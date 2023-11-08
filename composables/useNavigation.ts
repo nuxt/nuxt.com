@@ -53,6 +53,7 @@ const _useNavigation = () => {
   }, {
     label: 'Enterprise',
     icon: 'i-ph-buildings-duotone',
+    to: '/enterprise',
     children: [{
       label: 'Support',
       to: '/enterprise/support',

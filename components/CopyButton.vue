@@ -1,10 +1,6 @@
 
 <script setup lang="ts">
 defineProps({
-  background: {
-    type: String,
-    default: 'bg-gradient-to-b from-gray-100 to-gray-50 hover:to-gray-200 lg:hover:to-gray-100 dark:from-gray-800 dark:to-gray-900 dark:hover:to-gray-700 dark:lg:hover:to-gray-800'
-  },
   size: {
     type: String as () => 'xl' | 'sm' | 'md' | 'xs' | '2xs' | 'lg' | undefined,
     default: 'md'
@@ -22,7 +18,7 @@ const { copy, copied } = useClipboard()
     :size="size"
     class="grid grid-cols-12 sm:grid-cols-6 items-center justify-between gap-x-3 px-5 transition-all duration-200 group border w-fit"
     :class="[
-      background,
+      'bg-gradient-to-b from-gray-50 to-gray-100 hover:to-gray-200 lg:hover:to-gray-100 dark:from-gray-900 dark:to-gray-950 dark:hover:to-gray-800 dark:lg:hover:to-gray-900',
       { 'py-3 rounded-xl ': size !== 'sm' },
       [copied ? 'border-green-400 dark:border-green-600' : 'border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500']
     ]"
