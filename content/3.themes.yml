@@ -33,6 +33,14 @@ themes:
     dir: ''
     studio: false
     free: true
+  - name: 'Slantire'
+    slug: 'slantire'
+    description: "Slantire, [slan.ti.ˈɾɛ] from Na'Vi meaning 'inspiration', is a blog theme that you can use in Nuxt Studio. It is powered by Nuxt Content and Nuxt UI Pro!"
+    image: '/assets/themes/slantire.webp'
+    demo: 'https://slantire.esteban-soubiran.site'
+    repo: 'https://github.com/barbapapazes/slantire'
+    free: false
+    shop: 'https://ui.nuxt.com/pro'
   - name: 'Tairo'
     slug: 'tairo'
     description: 'The dashboard system that makes you say WOW.'
