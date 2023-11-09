@@ -166,14 +166,14 @@ defineOgImage({
 
     <div class="pt-[60px] mb-[120px] gap-y-[60px]">
       <UPageHero v-bind="page.further" />
-      <UPageGrid :ui="{ wrapper: 'grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 rounded-xl border border-gray-800 w-full gap-0' }">
+      <UPageGrid :ui="{ wrapper: 'grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 rounded-xl border dark:border-gray-800 w-full gap-0' }">
         <UPageCard
           v-for="(item, index) in page.further.items"
           :key="index"
           :to="item.to"
           target="_blank"
           class="transition-colors duration-200 hover:!ring-0 dark:hover:ring-0"
-          :class="{ 'border-t border-b md:border-b-0 md:border-t-0 md:border-l md:border-r border-gray-800': index === 1 }"
+          :class="{ 'border-t border-b md:border-b-0 md:border-t-0 md:border-l md:border-r dark:border-gray-800': index === 1 }"
           :ui="{ body: { padding: 'px-4 sm:p-6 md:p-8' }, ring: '',
                  rounded: `${ index === 1 ? '' : 'first:rounded-b-none md:first:rounded-l-xl md:first:rounded-r-none first:hover:rounded-t-xl md:first:hover:rounded-tr-none md:first:hover:rounded-l-xl last:hover:rounded-b-xl last:rounded-t-none md:last:rounded-l-none md:last:rouned-r-xl md:last:rounded-tr-xl md:last:hover:rounded-r-xl md:last:hover:rounded-bl-none md:last:hover:rounded-tl-none' }` }"
         >
