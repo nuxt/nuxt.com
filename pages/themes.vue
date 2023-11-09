@@ -1,10 +1,14 @@
 <script lang="ts" setup>
+import type { Theme } from '../types'
+
 const route = useRoute()
 
 const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
 
 const title = page.value.head?.title || page.value.title
 const description = page.value.head?.description || page.value.description
+
+const themes: ComputedRef<Theme[]> = computed(() => page.value.themes)
 
 useSeoMeta({
   titleTemplate: '%s',
@@ -31,7 +35,7 @@ defineOgImage({
     </UPageHero>
 
     <UPageGrid :ui="{ wrapper: 'grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-8 py-8' }">
-      <UPageCard v-for="(theme, index) in page.themes" :key="theme.name" :ui="{ body: { padding: '' } }">
+      <UPageCard v-for="(theme, index) in themes" :key="theme.name" :ui="{ body: { padding: '' } }">
         <li class="relative w-full h-full flex justify-center items-center p-[1px]">
           <div class="w-full h-full text-xs card rounded-xl z-10 grid grid-cols-1">
             <div class="relative h-[300px]">
