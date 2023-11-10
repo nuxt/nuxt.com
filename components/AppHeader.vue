@@ -25,6 +25,18 @@ defineProps<{
 
 <template>
   <UHeader :links="links">
+    <template #top>
+      <AppBanner :id="1" to="https://masteringnuxt.com/?ref=nuxt">
+        <p class="text-gray-600 dark:text-gray-300 flex items-center gap-1">
+          <UIcon name="i-ph-lightbulb-duotone" class="w-4 h-4" />
+
+          Enjoy <span class="font-bold text-gray-900 dark:text-white">Mastering Nuxt</span> black friday!
+        </p>
+
+        <UButton label="Learn more" color="gray" trailing-icon="i-ph-arrow-right" size="xs" class="rounded-full" />
+      </AppBanner>
+    </template>
+
     <template #logo>
       <Logo class="block w-auto h-6" @click.right.prevent="$router.push('/design-kit')" />
     </template>
