@@ -108,8 +108,8 @@ const { copy } = useCopyToClipboard()
 
         <UPageGrid v-if="filteredModules?.length">
           <UPageCard
-            v-for="(module, index) in filteredModules"
-            :key="index"
+            v-for="module in filteredModules"
+            :key="module.name"
             :to="`/modules/${module.name}`"
             :title="module.name"
             class="flex flex-col"
