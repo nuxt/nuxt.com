@@ -34,17 +34,6 @@ echo %cd%
 
 Copy the output of the command above and paste it in the `NUXT_DOCS_PATH` variable in the `.env` file.
 
-If you are on Windows, you need to add `file:///` prefix and replace `\` with `/` in the path, for example:
-```.env
-NUXT_DOCS_PATH=file:///C:/work/nuxt-org/nuxt.com
-```
-
-where the root folder is `C:\work\nuxt-org\nuxt.com`:
-```shell
-C:\work\nuxt-org\nuxt.com>echo %cd%
-C:\work\nuxt-org\nuxt.com
-```
-
 ## Development
 
 Start the development server:
