@@ -4,7 +4,6 @@ description: 'Deploy your Nuxt Application to AWS Lanmbda infrastructure.'
 image: /assets/blog/default.png
 logo: 'i-simple-icons-amazonaws'
 category: Hosting
-to: https://nitro.unjs.io/deploy/providers/aws
 ---
 
 Nitro provides a built-in preset to generate output format compatible with [AWS Lambda](https://aws.amazon.com/lambda/).

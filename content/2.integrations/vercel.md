@@ -4,7 +4,6 @@ description: 'Deploy your Nuxt Application to Vercel infrastructure.'
 image: /assets/blog/default.png
 logo: 'i-simple-icons-vercel'
 category: Hosting
-to: https://nitro.unjs.io/deploy/providers/vercel
 ---
 
 ::callout

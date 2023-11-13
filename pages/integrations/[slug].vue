@@ -19,7 +19,7 @@ const { data: surround } = await useAsyncData(`${route.path}-surround`, () => qu
 
 <template>
   <UContainer :ui="{ base: 'my-20', constrained: 'max-w-4xl' }">
-    <UPageHeader v-bind="integration" :ui="{ wrapper: 'mb-20', icon: { base: 'text-black dark:text-white' } }">
+    <UPageHeader v-bind="integration" :ui="{ wrapper: 'mb-8', icon: { base: 'text-black dark:text-white' } }">
       <template #title>
         <div class="flex items-center space-x-4">
           <UIcon :name="integration.logo" class="w-8 h-8 text-black dark:text-white" />
@@ -31,7 +31,7 @@ const { data: surround } = await useAsyncData(`${route.path}-surround`, () => qu
         <UButton
           label="View on Nitro"
           icon="i-ph-lightning-duotone"
-          :to="integration.to"
+          :to="`https://nitro.unjs.io/deploy/providers/${integration._path.split('/')[2]}`"
           variant="solid"
           color="gray"
           target="_blank"
