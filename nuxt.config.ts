@@ -2,7 +2,7 @@ import { ofetch } from 'ofetch'
 import { logger } from '@nuxt/kit'
 import { isWindows } from 'std-env'
 
-function normalizedDirPath (path: string) {
+function normalizedDirPath (path?: string) {
   if (!path || !isWindows) {
     return path
   }
