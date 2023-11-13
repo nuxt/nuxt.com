@@ -58,7 +58,10 @@ await fetchList()
             </template>
 
             <template #icon>
-              <UBadge :label="integration.category" variant="subtle" />
+              <div class="flex items-center justify-between w-full">
+                <UBadge :label="integration.category" variant="subtle" />
+                <UIcon :name="integration.logo" class="w-8 h-8" />
+              </div>
             </template>
           </UPageCard>
         </UPageGrid>

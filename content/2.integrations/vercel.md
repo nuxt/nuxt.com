@@ -2,37 +2,141 @@
 title: Vercel
 description: 'Deploy your Nuxt Application to Vercel infrastructure.'
 image: /assets/blog/default.png
+logo: 'i-simple-icons-vercel'
 category: Hosting
+to: https://nitro.unjs.io/deploy/providers/vercel
 ---
 
-We are thrilled to announce the first stable version of Nuxt 3.0.0 :sparkles:
+::callout
+**Zero Config Provider**
+:br
+Integration with this provider is possible with zero configuration. ([Learn More](https://nitro.unjs.io/deploy/#zero-config-providers))
+::
 
-Nuxt 3 is a modern rewrite of the Nuxt framework based on [Vite](https://vitejs.dev/), [Vue3](https://vuejs.org/), and [Nitro](https://nitro.unjs.io/) with first-class TypeScript support and the result of more than two years of research, community feedback, innovation, and experiment to make a pleasant full-stack Developer Experience for Vue development to everyone.
+## Deploy using Git
 
- [[Read More In the Documentation]](/docs/getting-started/introduction)
+1. Push your code to your git repository (GitHub, GitLab, Bitbucket).
+2. [Import your project](https://vercel.com/new) into Vercel.
+3. Vercel will detect that you are using Nitro and will enable the correct settings for your deployment.
+4. Your application is deployed!
 
-## API Stability
+After your project has been imported and deployed, all subsequent pushes to branches will generate [Preview Deployments](https://vercel.com/docs/concepts/deployments/environments#preview), and all changes made to the Production Branch (commonly “main”) will result in a [Production Deployment](https://vercel.com/docs/concepts/deployments/environments#production).
 
-Nuxt 3.0.0 comes with a stable, production-ready API and 50+ [supported modules](/modules) built using [Nuxt Kit](/docs/guide/going-further/modules) by the community and Nuxt team.
+Learn more about Vercel’s [Git Integration](https://vercel.com/docs/concepts/git).
 
-All composables, filesystem conventions, and configurations are guaranteed to be backward compatible with Nuxt 3.0.0. Due to the nature of the meta-frameworks, some changes happen when we upgrade the underlying dependencies (vite, rollup, and nitropack). Thanks to the new Nuxt Kit and Schema tools, such upgrades will be backward compatible as long as you are using documented features. Kit and Schema also guarantee better future compatibility. This makes it faster for us to iterate and plan the next major versions of Nuxt.
+## Vercel Edge Functions
 
-## The browser and Node.js support
+**Preset:** `vercel_edge` ([switch to this preset](https://nitro.unjs.io/deploy/#changing-the-deployment-preset))
 
-Nuxt 3 officially supports evergreen browsers only. The "core browser set" is what we (And [web.dev](http://web.dev) team) believe most developers need to support most of the time in the absence of specific constraints. It takes into account [usage numbers](https://caniuse.com/usage-table), developer expectations, and [existing support in](https://make.wordpress.org/core/handbook/best-practices/browser-support/) [the ecosystem](https://angular.io/guide/browser-support). The core browser set targets the **2 most recent major versions** of Chrome, Firefox, and Edge on a monthly basis and Safari on a yearly basis.
+It is possible to deploy your nitro applications directly on [Vercel Edge Functions](https://vercel.com/docs/concepts/functions/edge-functions).
 
-On the server side, Nuxt 3 supports Node.js 14, 16, 18, and 19 at the moment. We encourage everyone to use the latest LTS releases of Node.js, we push them once **widely adopted by major deployment platforms**. This means we keep supporting Node.js versions as long as they are supported by the Node.js team on a rolling basis in non-major releases of Nuxt. Since 14.x is being end-of-life soon, we highly encourage you to update to the latest 18.x whenever possible.
+- Vercel Edge Functions allow you to deliver content to your site's visitors with speed and personalization.
+- They are deployed globally by default on Vercel's Edge Network and enable you to move server-side logic to the Edge, close to your visitor's origin.
+- Edge Functions use the Vercel Edge Runtime, which is built on the same high-performance V8 JavaScript and WebAssembly engine that is used by the Chrome browser.
+- By taking advantage of this small runtime, Edge Functions can have faster cold boots and higher scalability than Serverless Functions.
+- Edge Functions run after the cache, and can both cache and return responses. [Read More](https://vercel.com/docs/concepts/functions/edge-functions)
 
-## We Love Community
+In order to enable this target, please set `NITRO_PRESET` environment variable to `vercel_edge`.
 
-Nuxt wouldn’t be possible today without an amazing community making amazing modules, feedback, and contributions every day. Check our [Community Documentation](https://nuxt.com/docs/community/getting-help) to be involved!
+## Vercel KV Storage
 
-## To the Future
+You can easily use [Vercel KV Storage](https://vercel.com/docs/storage/vercel-kv) with [Nitro Storage](https://nitro.unjs.io//guide/storage).
 
-Releasing Nuxt 3 is a big milestone for us and opens a future-proof basis for new ideas and trust for the users to build their enterprise projects with Nuxt 3.
+::callout{type="warning"}
+This feature is currently in beta. Please check [driver docs](https://unstorage.unjs.io/drivers/vercel-kv).
+::
 
-Server Component Islands, WebSocket layer, new Deployment presets, improved CLI and DevTools and Testing infra are a few to mention. Keep an eye on the [roadmap page](https://nuxt.com/docs/community/roadmap) and [GitHub discussions](https://github.com/nuxt/nuxt/discussions) for updates.
+1. Install `@vercel/kv` dependency:
 
-NuxtLabs is working on [new product](https://nuxt.studio) and solutions on top of Nuxt 3 at the time of writing this article.
+```json [package.json]
+{
+  "devDependencies": {
+    "@vercel/kv": "latest"
+  }
+}
+```
 
-Stay tuned for more exciting news and Happy Nuxting 💚
+Update your configuration:
+
+::code-group
+```ts [nitro.config.ts]
+export default defineNitroConfig({
+  storage: {
+    data: { driver: 'vercelKV' }
+  }
+})
+```
+```ts [nuxt.config.ts]
+export default defineNuxtConfig({
+  nitro: {
+    storage: {
+      data: { driver: 'vercelKV' }
+    }
+  }
+})
+```
+::
+
+::callout
+You need to either set `KV_REST_API_URL` and `KV_REST_API_TOKEN` environment variables or pass `url` and `token` to driver options. Check [driver docs](https://unstorage.unjs.io/drivers/vercel-kv) for more information about usage.
+::
+
+You can now access data store in any event handler:
+
+```ts
+export default defineEventHandler(async (event) => {
+  const dataStorage = useStorage("data");
+  await dataStorage.setItem("hello", "world");
+  return {
+    hello: await dataStorage.getItem("hello"),
+  };
+});
+```
+
+## API routes
+
+Nitro `/api` directory isn't compatible with Vercel.
+Instead, you have to use :
+
+- `routes/api/` for standalone usage
+- `server/api/` with [Nuxt].
+
+## Custom Build Output Configuration
+
+You can provide additional [build output configuration](https://vercel.com/docs/build-output-api/v3) using `vercel.config` key inside `nitro.config`. It will be merged with built-in auto generated config.
+
+## On-Demand Incremental Static Regeneration (ISR)
+
+On-demand revalidation allows you to purge the cache for an ISR route whenever you want, foregoing the time interval required with background revalidation.
+
+To revalidate a page on demand:
+
+1. Create an Environment Variable which will store a revalidation secret
+    * You can use the command `openssl rand -base64 32` or https://generate-secret.vercel.app/32 to generate a random value.
+
+2. Update your configuration:
+
+    ::code-group
+    ```ts [nitro.config.ts]
+    export default defineNitroConfig({
+      vercel: {
+        config: {
+          bypassToken: process.env.VERCEL_BYPASS_TOKEN
+        }
+      }
+    })
+    ```
+    ```ts [nuxt.config.ts]
+    export default defineNuxtConfig({
+      nitro: {
+        vercel: {
+          config: {
+            bypassToken: process.env.VERCEL_BYPASS_TOKEN
+          }
+        }
+      }
+    })
+    ```
+    ::
+
+3. To trigger "On-Demand Incremental Static Regeneration (ISR)" and revalidate a path to a Prerender Function, make a GET or HEAD request to that path with a header of x-prerender-revalidate: `<bypassToken>`. When that Prerender Function endpoint is accessed with this header set, the cache will be revalidated. The next request to that function should return a fresh response.
