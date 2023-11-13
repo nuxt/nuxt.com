@@ -143,8 +143,5 @@ export default defineNuxtConfig({
   },
   experimental: {
     appManifest: true
-  },
-  devtools: {
-    enabled: false
   }
 })
