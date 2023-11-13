@@ -98,6 +98,14 @@ export default defineAppConfig({
       links: {
         trailingIcon: {
           base: 'w-4 h-4'
+        },
+        popover: {
+          popper: {
+            strategy: 'absolute'
+          },
+          ui: {
+            width: 'w-[16rem]'
+          }
         }
       },
       popover: {
