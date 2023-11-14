@@ -1,8 +1,7 @@
 ---
 title: Heroku
 description: 'Deploy your Nuxt Application to Heroku infrastructure.'
-image: /assets/blog/default.png
-logo: 'i-logos-heroku-icon'
+logoSrc: '/assets/integrations/heroku.svg'
 category: Hosting
 ---
 

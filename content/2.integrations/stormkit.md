@@ -1,8 +1,7 @@
 ---
 title: Stormkit
 description: 'Deploy your Nuxt Application to Stormkit infrastructure.'
-image: /assets/blog/default.png
-logo: 'i-ph-cloud-duotone'
+logoSrc: '/assets/integrations/stormkit.webp'
 category: Hosting
 ---
 

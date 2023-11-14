@@ -1,8 +1,7 @@
 ---
 title: Firebase
 description: 'Deploy your Nuxt Application to Firebase infrastructure.'
-image: /assets/blog/default.png
-logo: 'i-logos-firebase'
+logoIcon: 'i-logos-firebase'
 category: Hosting
 ---
 

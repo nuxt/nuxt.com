@@ -1,8 +1,7 @@
 ---
 title: AWS Lambda
 description: 'Deploy your Nuxt Application to AWS Lanmbda infrastructure.'
-image: /assets/blog/default.png
-logo: 'i-simple-icons-amazonaws'
+logoSrc: '/assets/integrations/aws.svg'
 category: Hosting
 ---
 

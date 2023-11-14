@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { Integration } from '~/types'
-import { withoutTrailingSlash } from 'ufo'
+import { withoutTrailingSlash, joinURL } from 'ufo'
 
 const route = useRoute()
 
@@ -15,6 +15,28 @@ const { data: surround } = await useAsyncData(`${route.path}-surround`, () => qu
   .sort({ date: -1 })
   .findSurround(withoutTrailingSlash(route.path))
 )
+
+useSeoMeta({
+  title: integration.value.head?.title || integration.value.title,
+  description: integration.value.head?.description || integration.value.description
+})
+
+const title = integration.value.head?.title || integration.value.title
+const description = integration.value.head?.description || integration.value.description
+useSeoMeta({
+  titleTemplate: '%s · Nuxt Integrations',
+  title,
+  description,
+  ogDescription: description,
+  ogTitle: `${title} · Nuxt Integrations`
+})
+
+defineOgImage({
+  component: 'Docs',
+  title,
+  description,
+  headline: 'Integrations'
+})
 </script>
 
 <template>
@@ -22,11 +44,11 @@ const { data: surround } = await useAsyncData(`${route.path}-surround`, () => qu
     <UPageHeader v-bind="integration" :ui="{ wrapper: 'mb-8', icon: { base: 'text-black dark:text-white' } }">
       <template #title>
         <div class="flex items-center space-x-4">
-          <UIcon :name="integration.logo" class="w-8 h-8 text-black dark:text-white" />
+          <UIcon v-if="integration.logoIcon" :name="integration.logoIcon" class="w-10 h-10 text-black dark:text-white" />
+          <NuxtImg v-else :src="integration.logoSrc" class="w-10 h-10" />
           <div>{{ integration.title }}</div>
         </div>
       </template>
-
       <template #links>
         <UButton
           label="View on Nitro"

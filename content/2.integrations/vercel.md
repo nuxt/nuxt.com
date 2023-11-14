@@ -1,9 +1,10 @@
 ---
 title: Vercel
 description: 'Deploy your Nuxt Application to Vercel infrastructure.'
-image: /assets/blog/default.png
-logo: 'i-simple-icons-vercel'
+componentImg: Vercel
+logoSrc: '/assets/integrations/vercel.svg'
 category: Hosting
+feature: true
 ---
 
 ::callout

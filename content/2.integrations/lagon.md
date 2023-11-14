@@ -1,8 +1,7 @@
 ---
 title: Lagon
 description: 'Deploy your Nuxt Application to Lagon infrastructure.'
-image: /assets/blog/default.png
-logo: 'i-ph-cloud-duotone'
+logoSrc: '/assets/integrations/lagon.webp'
 category: Hosting
 ---
 

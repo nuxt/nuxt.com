@@ -1,8 +1,7 @@
 ---
 title: DigitalOcean
 description: 'Deploy your Nuxt Application to DigitalOcean infrastructure.'
-image: /assets/blog/default.png
-logo: 'i-logos-digital-ocean-icon'
+logoSrc: '/assets/integrations/digitalocean.svg'
 category: Hosting
 ---
 

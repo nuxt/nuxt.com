@@ -1,8 +1,7 @@
 ---
 title: Deno deploy
 description: 'Deploy your Nuxt Application to Deno Deploy infrastructure.'
-image: /assets/blog/default.png
-logo: 'i-logos-deno'
+logoIcon: 'i-logos-deno'
 category: Hosting
 ---
 

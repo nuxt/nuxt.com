@@ -1,8 +1,7 @@
 ---
 title: GitHub Pages
 description: 'Deploy your Nuxt Application to GitHub Pages infrastructure.'
-image: /assets/blog/default.png
-logo: 'i-simple-icons-github'
+logoIcon: 'i-simple-icons-github'
 category: Hosting
 ---
 

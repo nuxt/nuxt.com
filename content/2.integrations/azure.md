@@ -1,8 +1,7 @@
 ---
 title: Azure
 description: 'Deploy your Nuxt Application to Azure infrastructure.'
-image: /assets/blog/default.png
-logo: 'i-logos-azure-icon'
+logoIcon: 'i-logos-azure-icon'
 category: Hosting
 ---
 

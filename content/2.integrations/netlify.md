@@ -1,9 +1,10 @@
 ---
 title: Netlify
 description: 'Deploy your Nuxt Application to Netlify infrastructure.'
-image: /assets/blog/default.png
-logo: 'i-logos-netlify-icon'
+componentImg: Netlify
+logoIcon: 'i-logos-netlify-icon'
 category: Hosting
+feature: true
 ---
 
 **Preset:** `netlify` ([switch to this preset](https://nitro.unjs.io/deploy/#changing-the-deployment-preset))

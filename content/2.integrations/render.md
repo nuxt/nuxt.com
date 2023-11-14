@@ -1,8 +1,7 @@
 ---
 title: Render
 description: 'Deploy your Nuxt Application to Render infrastructure.'
-image: /assets/blog/default.png
-logo: 'i-simple-icons-render'
+logoSrc: '/assets/integrations/render.png'
 category: Hosting
 ---
 

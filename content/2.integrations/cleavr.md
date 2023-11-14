@@ -1,8 +1,7 @@
 ---
 title: Cleavr
 description: 'Deploy your Nuxt Application to Cleavr infrastructure.'
-image: /assets/blog/default.png
-logo: 'i-ph-cloud-duotone'
+logoSrc: '/assets/integrations/cleavr.svg'
 category: Hosting
 ---
 

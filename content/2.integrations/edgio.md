@@ -1,8 +1,7 @@
 ---
 title: Edgio
 description: 'Deploy your Nuxt Application to Edgio infrastructure.'
-image: /assets/blog/default.png
-logo: 'i-logos-edgio-icon'
+logoIcon: 'i-logos-edgio-icon'
 category: Hosting
 ---
 

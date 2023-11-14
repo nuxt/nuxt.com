@@ -1,8 +1,7 @@
 ---
 title: IIS
 description: 'Deploy your Nuxt Application to IIS infrastructure.'
-image: /assets/blog/default.png
-logo: 'i-ph-cloud-duotone'
+logoSrc: '/assets/integrations/microsoft.webp'
 category: Hosting
 ---
 
