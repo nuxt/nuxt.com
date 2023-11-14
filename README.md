@@ -26,6 +26,12 @@ Clone/Fork [nuxt/nuxt](https://github.com/nuxt/nuxt) repo where you want (but no
 pwd
 ```
 
+If you are on Windows, you can use the following command instead:
+
+```bash
+echo %cd%
+```
+
 Copy the output of the command above and paste it in the `NUXT_DOCS_PATH` variable in the `.env` file.
 
 ## Development
