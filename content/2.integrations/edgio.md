@@ -5,13 +5,11 @@ logoIcon: 'i-logos-edgio-icon'
 category: Hosting
 ---
 
-**Preset:** `edgio` ([switch to this preset](https://nitro.unjs.io/deploy/#changing-the-deployment-preset))
-
-Nitro provides a built-in preset to generate output format compatible with [Edgio (formerly Layer0)](https://edg.io/).
+Nuxt provides a built-in preset to generate output format compatible with [Edgio (formerly Layer0)](https://edg.io/).
 
 Edgio (formerly Layer0) extends the capabilities of a traditional CDN by not only hosting your static content, but also providing server-side rendering for progressive web applications as well as caching both your APIs and HTML at the network edge to provide your users with the fastest browsing experience.
 
-If this is your first time deploying to Edgio, the interactive CLI as part of the `deploy` command will prompt to authenticate using your browser. You may also [sign up](https://app.layer0.co/signup) prior to deployment.
+If this is your first time deploying to Edgio, the interactive CLI as part of the `deploy` command will prompt to authenticate using your browser. You may also [sign up](https://edgio.app/signup) prior to deployment.
 
 ## Install the Edgio CLI
 
@@ -24,7 +22,7 @@ npm i -g @edgio/cli
 You can use Nitropack to test your app's developement experience locally:
 
 ```bash
-NITRO_PRESET=edgio npx nitropack build
+SERVER_PRESET=edgio npx nuxi build
 ```
 
 To simulate on local how your app would run in production with Edgio, run the following command:
