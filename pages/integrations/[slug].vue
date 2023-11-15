@@ -3,6 +3,7 @@ import type { Integration } from '~/types'
 import { withoutTrailingSlash } from 'ufo'
 
 const route = useRoute()
+const { slug } = route.params
 
 const { data: integration } = await useAsyncData(route.path, () => queryContent<Integration>(route.path).findOne())
 if (!integration.value) {
@@ -12,7 +13,7 @@ if (!integration.value) {
 const { data: surround } = await useAsyncData(`${route.path}-surround`, () => queryContent('/integrations')
   .where({ _extension: 'md' })
   .without(['body', 'excerpt'])
-  .sort({ date: -1 })
+  .sort({ featured: 1 })
   .findSurround(withoutTrailingSlash(route.path))
 )
 
@@ -38,18 +39,19 @@ defineOgImage({
   headline: 'Integrations'
 })
 
-const links = [
-  {
+const links = []
+if (integration.value?.nitroPreset) {
+  links.push({
     icon: 'i-ph-lightning-duotone',
-    label: 'View on Nitro',
-    to: `https://nitro.unjs.io/deploy/providers/${integration.value._path.split('/')[2]}`,
+    label: 'View on Nitro Docs',
+    to: `https://nitro.unjs.io/deploy/providers/${slug}`,
     target: '_blank'
-  }
-]
+  })
+}
 </script>
 
 <template>
-  <UContainer :ui="{ base: 'my-4 md:my-8 lg:mt-20' }">
+  <UContainer>
     <UPage>
       <UPageHeader v-bind="integration" :ui="{ wrapper: 'mb-8 lg:ml-40', icon: { base: 'text-black dark:text-white' } }">
         <template #title>

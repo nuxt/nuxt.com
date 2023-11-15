@@ -3,6 +3,7 @@ title: Azure
 description: 'Deploy your Nuxt Application to Azure infrastructure.'
 logoIcon: 'i-logos-azure-icon'
 category: Hosting
+nitroPreset: true
 ---
 
 ## Azure Static Web Apps
@@ -22,7 +23,7 @@ Install [Azure Functions Core Tools](https://docs.microsoft.com/en-us/azure/azur
 You can invoke a development environment to preview before deploying.
 
 ```bash [Terminal]
-SERVER_PRESET=azure npx nuxi build
+npx nuxi build --preset=azure
 npx @azure/static-web-apps-cli start .output/public --api-location .output/server
 ```
 

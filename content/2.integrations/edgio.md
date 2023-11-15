@@ -3,6 +3,7 @@ title: Edgio
 description: 'Deploy your Nuxt Application to Edgio infrastructure.'
 logoIcon: 'i-logos-edgio-icon'
 category: Hosting
+nitroPreset: true
 ---
 
 Nuxt provides a built-in preset to generate output format compatible with [Edgio (formerly Layer0)](https://edg.io/).
@@ -22,7 +23,7 @@ npm i -g @edgio/cli
 You can use Nitropack to test your app's developement experience locally:
 
 ```bash
-SERVER_PRESET=edgio npx nuxi build
+npx nuxi build --preset=edgio
 ```
 
 To simulate on local how your app would run in production with Edgio, run the following command:

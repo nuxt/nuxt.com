@@ -27,9 +27,9 @@ defineOgImage({
 await fetchList()
 
 
-const featuredIntegrations = computed(() => integrations.value.filter((integration: Integration) => integration.feature === true))
+const featuredIntegrations = computed(() => integrations.value.filter((integration: Integration) => integration.featured === true))
 
-const otherIntegrations = computed(() => integrations.value.filter((integration: Integration) => integration.feature !== true))
+const otherIntegrations = computed(() => integrations.value.filter((integration: Integration) => integration.featured !== true))
 
 </script>
 

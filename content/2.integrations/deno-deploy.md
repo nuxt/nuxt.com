@@ -3,6 +3,7 @@ title: Deno Deploy
 description: 'Deploy your Nuxt Application to Deno Deploy infrastructure.'
 logoIcon: 'i-logos-deno'
 category: Hosting
+nitroPreset: true
 ---
 
 ::callout{color="amber" icon="i-ph-warning-duotone"}
@@ -17,7 +18,7 @@ Login to [Deno Deploy](https://dash.deno.com/account#access-tokens) to obtain a 
 
 ```bash
 # Build with the deno_deploy preset
-SERVER_PRESET=deno_deploy npm run build
+npm run build --preset=deno_deploy
 
 # Make sure to run the deployctl command from the output directory
 cd .output

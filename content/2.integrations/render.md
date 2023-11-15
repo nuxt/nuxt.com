@@ -3,44 +3,26 @@ title: Render
 description: 'Deploy your Nuxt Application to Render infrastructure.'
 logoSrc: '/assets/integrations/render.png'
 category: Hosting
+nitroPreset: true
 ---
 
-**Preset:** `render_com` ([switch to this preset](https://nitro.unjs.io/deploy/#changing-the-deployment-preset))
-
-Nitro supports deploying on [Render](https://render.com/) with minimal configuration.
+Nuxt supports deploying on [Render](https://render.com/) with minimal configuration.
 
 ## Set up application
 
 1. [Create a new Web Service](https://dashboard.render.com/select-repo?type=web) and select the repository that contains your code.
+2. Ensure the 'Node' environment is selected.
+3. Depending on your package manager, set the build command to `yarn && yarn build`, `npm install && npm run build`, or `pnpm i --shamefully-hoist && pnpm build`.
+4. Update the start command to `node .output/server/index.mjs`
+5. Click 'Advanced' and add the following environment variables
+    ```bash
+    SERVER_PRESET=render_com
+    NODE_VERSION=20
+    ```
+6. Click on `Create Web Service`.
 
-1. Ensure the 'Node' environment is selected.
+## More options
 
-1. Depending on your package manager, set the build command to `yarn && yarn build`, `npm install && npm run build`, or `pnpm i --shamefully-hoist && pnpm build`.
-
-1. Update the start command to `node .output/server/index.mjs`
-
-1. Click 'Advanced' and add an environment variable with `NITRO_PRESET` set to `render_com`. You may also need to add a `NODE_VERSION` environment variable set to `18` for the build to succeed ([docs](https://render.com/docs/node-version)).
-
-1. Click 'Create Web Service'.
-
-## Infrastructure as Code (IaC)
-
-1. Create a file called `render.yaml` with following content at the root of your repository.
-> This file followed by [Infrastructure as Code](https://render.com/docs/infrastructure-as-code) on Render
-
-```yaml
-services:
-  - type: web
-    name: <PROJECTNAME>
-    env: node
-    branch: main
-    startCommand: node .output/server/index.mjs
-    buildCommand: npm install && npm run build
-    envVars:
-    - key: NITRO_PRESET
-      value: render_com
-```
-2. [Create a new Blueprint Instance](https://dashboard.render.com/select-repo?type=blueprint) and select the repository containing your `render.yaml` file.
-
-
-You should be good to go!
+::read-more{to="https://nitro.unjs.io/deploy/providers/render" target="_blank"}
+Head over **Nitro documentation** to learn more about the Render deployment presets.
+::

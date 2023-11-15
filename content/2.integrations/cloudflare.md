@@ -3,6 +3,7 @@ title: Cloudflare
 description: 'Deploy your Nuxt Application to Cloudflare infrastructure.'
 logoSrc: '/assets/integrations/cloudflare.svg'
 category: Hosting
+nitroPreset: true
 ---
 
 ## Cloudflare Pages
@@ -34,7 +35,7 @@ In this case, you will have to set the preset manually.
 1. Build your project for Cloudflare Pages:
 
     ```bash [Terminal]
-    SERVER_PRESET=cloudflare_pages npx nuxi build
+    npx nuxi build --preset=cloudflare_pages
     ```
 
 2. Deploy, it will ask you to create a project for the first time:
@@ -48,6 +49,32 @@ In this case, you will have to set the preset manually.
 ::read-more{to="https://nitro.unjs.io/deploy/providers/cloudflare" target="_blank"}
 Head over **Nitro documentation** to learn more about the Cloudflare deployment preset.
 ::
+
 ::read-more{to="https://developers.cloudflare.com/pages/framework-guides/deploy-a-nuxt-site/#use-bindings-in-your-nuxt-application" target="_blank"}
 Head over **CloudFlare Pages** documentation to learn more about it.
+::
+
+## Templates
+
+::card-group
+  ::card
+  ---
+  icon: i-simple-icons-github
+  title: Nuxt Todos Edge
+  to: https://github.com/atinux/nuxt-todos-edge
+  target: _blank
+  ui.icon.base: text-black dark:text-white
+  ---
+  A todos application with user authentication, SSR and Cloudflare D1.
+  ::
+  ::card
+  ---
+  icon: i-simple-icons-github
+  title: Atinotes
+  to: https://github.com/atinux/atinotes
+  target: _blank
+  ui.icon.base: text-black dark:text-white
+  ---
+  An editable website with universal rendering based on Cloudflare KV.
+  ::
 ::

@@ -3,58 +3,63 @@ title: Lagon
 description: 'Deploy your Nuxt Application to Lagon infrastructure.'
 logoSrc: '/assets/integrations/lagon.webp'
 category: Hosting
+nitroPreset: true
 ---
-
-**Preset:** `lagon` ([switch to this preset](https://nitro.unjs.io/deploy/#changing-the-deployment-preset))
 
 [Lagon](https://lagon.app/) is an open-source runtime and platform that allows developers to run TypeScript and JavaScript Serverless Functions close to users.
 
-Nitro supports deploying on [Lagon](https://lagon.app/) with minimal configuration ([documentation](https://docs.lagon.app/))
+Nuxt supports deploying on [Lagon](https://lagon.app/) with minimal configuration ([documentation](https://docs.lagon.app/))
 
-::callout{color="red" icon="i-ph-warning"}
+::callout{color="amber" icon="i-ph-warning"}
 Lagon is not yet ready for production workloads
 ::
 
 
-### Testing locally
-
-1. Build your Nitro app with `NITRO_PRESET=lagon`
-
-2. Install [Lagon CLI](https://docs.lagon.app/cli#installation)
-
-3. Launch a local dev server (this will pick the config in `.output/.lagon/config.json`) and open [localhost:1234](http://localhost:1234):
-
-```bash
-lagon dev ./.output
+::callout
+Install the [Lagon CLI](https://docs.lagon.app/cli#installation) and login with `lagon login` before proceeding.
+```bash [Terminal]
+npm install --global @lagon/cli esbuild
 ```
+::
 
-(this is equivalent to `lagon dev ./.output/server/index.mjs -p ./.output/public`)
+### Testing Locally
+
+1. Build your Nuxt app
+
+    ```bash [Terminal]
+    npx nuxt build --preset lagon
+    ```
+
+2. Launch a local dev server and open [localhost:1234](http://localhost:1234):
+
+    ```bash [Terminal]
+    lagon dev ./.output
+    ```
 
 ### Deploy from your local machine
 
-1. Build your Nitro app with `NITRO_PRESET=lagon`
+1. Build your Nuxt app
 
-2. Install [Lagon CLI](https://docs.lagon.app/cli#installation) and login with `lagon login`
+    ```bash [Terminal]
+    npx nuxt build --preset lagon
+    ```
 
-3. Run the deploy command. Lagon will ask if you want to link to an existing function or create a new one:
 
-```bash
+2. Run the deploy command. Lagon will ask if you want to link to an existing function or create a new one:
+
+    ```bash [Terminal]
+    lagon deploy .output
+    ```
+
+**Deploy to preview:**
+
+```bash [Terminal]
 lagon deploy .output
 ```
 
-(this is equivalent to `lagon deploy ./.output/server/index.mjs -p ./.output/public`)
+**Deploy to production:**
 
-4. To trigger a new deployment, run the same command and append `--prod` if you want to deploy to production:
-
-Deploy to preview:
-
-```bash
-lagon deploy .output
-```
-
-Deploy to production:
-
-```bash
+```bash [Terminal]
 lagon deploy .output --prod
 ```
 
@@ -64,14 +69,12 @@ Add a new environment variable named `LAGON_TOKEN`, and copy the value from the 
 
 Create a new GitHub Workflow at `.github/workflows/lagon.yml`:
 
-```yaml
+```yaml [.github/workflows/lagon.yml]
 name: Lagon
-
 on:
   push:
     branches:
       - main
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -80,7 +83,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
           cache: pnpm
       - run: pnpm install
       - run: pnpm build
@@ -99,7 +102,7 @@ Trigger a deployment locally first, and commit the updated `.lagon/config.json` 
 
 Trigger a deployment locally first, and copy the content of `.lagon/config.json`. Then, update the workflow configuration:
 
-```yaml
+```yaml [.github/workflows/lagon.yml]
 with:
   lagon_token: ${{ secrets.LAGON_TOKEN }}
   config: |

@@ -4,13 +4,14 @@ description: 'Deploy your Nuxt Application to Vercel infrastructure.'
 componentImg: Vercel
 logoSrc: '/assets/integrations/vercel.svg'
 category: Hosting
-feature: true
+featured: true
+nitroPreset: true
 ---
 
 ::callout
-**Zero Config Provider**
+**Zero Configuration ✨**
 :br
-Integration with this provider is possible with zero configuration. ([Learn More](https://nitro.unjs.io/deploy/#zero-config-providers))
+Integration with Vercel is possible with zero configuration.
 ::
 
 ## Deploy using Git
@@ -26,9 +27,7 @@ Learn more about Vercel’s [Git Integration](https://vercel.com/docs/concepts/g
 
 ## Vercel Edge Functions
 
-**Preset:** `vercel_edge` ([switch to this preset](https://nitro.unjs.io/deploy/#changing-the-deployment-preset))
-
-It is possible to deploy your nitro applications directly on [Vercel Edge Functions](https://vercel.com/docs/concepts/functions/edge-functions).
+It is possible to deploy your Nuxt applications directly on [Vercel Edge Functions](https://vercel.com/docs/concepts/functions/edge-functions).
 
 - Vercel Edge Functions allow you to deliver content to your site's visitors with speed and personalization.
 - They are deployed globally by default on Vercel's Edge Network and enable you to move server-side logic to the Edge, close to your visitor's origin.
@@ -36,70 +35,59 @@ It is possible to deploy your nitro applications directly on [Vercel Edge Functi
 - By taking advantage of this small runtime, Edge Functions can have faster cold boots and higher scalability than Serverless Functions.
 - Edge Functions run after the cache, and can both cache and return responses. [Read More](https://vercel.com/docs/concepts/functions/edge-functions)
 
-In order to enable this target, please set `NITRO_PRESET` environment variable to `vercel_edge`.
+In order to enable this target, set the following environment variable:
+
+```bash
+SERVER_PRESET=vercel_edge
+```
+
+Or update the build command to `nuxt build --preset=vercel_edge`.
 
 ## Vercel KV Storage
 
-You can easily use [Vercel KV Storage](https://vercel.com/docs/storage/vercel-kv) with [Nitro Storage](https://nitro.unjs.io//guide/storage).
+You can easily use [Vercel KV Storage](https://vercel.com/docs/storage/vercel-kv) with [Nuxt Server Storage](/docs/guide/directory-structure/server#server-storage).
 
-::callout{type="warning"}
-This feature is currently in beta. Please check [driver docs](https://unstorage.unjs.io/drivers/vercel-kv).
+::read-more{to="https://unstorage.unjs.io/drivers/vercel-kv" target="_blank"}
+Read more about the Vercel KV driver on Unstorage documentation.
 ::
 
 1. Install `@vercel/kv` dependency:
 
-```json [package.json]
-{
-  "devDependencies": {
-    "@vercel/kv": "latest"
-  }
-}
-```
+    ```bash [Terminal]
+    npm i @vercel/kv
+    ```
 
-Update your configuration:
+2. Update your `nuxt.config`:
 
-::code-group
-```ts [nitro.config.ts]
-export default defineNitroConfig({
-  storage: {
-    data: { driver: 'vercelKV' }
-  }
-})
-```
-```ts [nuxt.config.ts]
-export default defineNuxtConfig({
-  nitro: {
-    storage: {
-      data: { driver: 'vercelKV' }
-    }
-  }
-})
-```
-::
+    ```ts [nuxt.config.ts]
+    export default defineNuxtConfig({
+      nitro: {
+        storage: {
+          data: {
+            driver: 'vercelKV'
+            /* Vercel KV driver options */
+          }
+        }
+      }
+    })
+    ```
 
 ::callout
 You need to either set `KV_REST_API_URL` and `KV_REST_API_TOKEN` environment variables or pass `url` and `token` to driver options. Check [driver docs](https://unstorage.unjs.io/drivers/vercel-kv) for more information about usage.
 ::
 
-You can now access data store in any event handler:
+You can now access your data store anywhere in your `server/` directory:
 
-```ts
+```ts [server/routes/hello.ts]
 export default defineEventHandler(async (event) => {
-  const dataStorage = useStorage("data");
-  await dataStorage.setItem("hello", "world");
+  const dataStorage = useStorage('data');
+  await dataStorage.setItem('hello', 'world');
+
   return {
     hello: await dataStorage.getItem("hello"),
-  };
-});
+  }
+})
 ```
-
-## API routes
-
-Nitro `/api` directory isn't compatible with Vercel.
-Instead, you have to use :
-
-- `routes/api/` for standalone usage
-- `server/api/` with [Nuxt].
 
 ## Custom Build Output Configuration
 
@@ -116,16 +104,6 @@ To revalidate a page on demand:
 
 2. Update your configuration:
 
-    ::code-group
-    ```ts [nitro.config.ts]
-    export default defineNitroConfig({
-      vercel: {
-        config: {
-          bypassToken: process.env.VERCEL_BYPASS_TOKEN
-        }
-      }
-    })
-    ```
     ```ts [nuxt.config.ts]
     export default defineNuxtConfig({
       nitro: {
@@ -137,6 +115,30 @@ To revalidate a page on demand:
       }
     })
     ```
-    ::
 
 3. To trigger "On-Demand Incremental Static Regeneration (ISR)" and revalidate a path to a Prerender Function, make a GET or HEAD request to that path with a header of x-prerender-revalidate: `<bypassToken>`. When that Prerender Function endpoint is accessed with this header set, the cache will be revalidated. The next request to that function should return a fresh response.
+
+## Templates
+
+::card-group
+  ::card
+  ---
+  icon: i-simple-icons-github
+  title: Nuxt Vercel ISR
+  to: https://github.com/danielroe/nuxt-vercel-isr
+  target: _blank
+  ui.icon.base: text-black dark:text-white
+  ---
+  Example of a Nuxt application with hybrid rendering deployed on Vercel.
+  ::
+  ::card
+  ---
+  icon: i-simple-icons-github
+  title: Nuxt on the Edge on Vercel
+  to: https://github.com/pi0/nuxt-on-the-edge
+  target: _blank
+  ui.icon.base: text-black dark:text-white
+  ---
+  Example of a Nuxt application running on Vercel Edge Functions.
+  ::
+::
