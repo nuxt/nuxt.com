@@ -43,9 +43,9 @@ const _useNavigation = () => {
     icon: 'i-ph-puzzle-piece-duotone',
     to: '/modules'
   }, {
-    label: 'Themes',
+    label: 'Templates',
     icon: 'i-ph-paint-brush',
-    to: '/themes'
+    to: '/templates'
   }, {
     label: 'Showcase',
     icon: 'i-ph-projector-screen-duotone',

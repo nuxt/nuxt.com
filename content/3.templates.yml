@@ -1,12 +1,12 @@
-head.title: Nuxt Themes
-title: Themes
-description: 'Open a Nuxt theme on CodeSandbox, StackBlitz or locally to get up and running in a few seconds.'
+head.title: Nuxt Templates
+title: Templates
+description: 'Open a Nuxt template on CodeSandbox, StackBlitz or locally to get up and running in a few seconds.'
 navigation.icon: 'i-ph-paint-brush'
-themes:
+templates:
   - name: 'Content Wind'
     slug: 'content-wind'
-    description: 'A lightweight Nuxt theme for a Markdown driven website.'
-    image: '/assets/themes/content-wind.webp'
+    description: 'A lightweight Nuxt template for a Markdown driven website.'
+    image: '/assets/templates/content-wind.webp'
     demo: 'https://content-wind.nuxt.space'
     repo: 'Atinux/content-wind'
     branch: 'main'
@@ -16,7 +16,7 @@ themes:
   - name: 'Movies'
     slug: 'movies'
     description: 'A TMDB client built with Nuxt.'
-    image: '/assets/themes/movies.webp'
+    image: '/assets/templates/movies.webp'
     demo: 'https://movies.nuxt.space/'
     repo: '/nuxt/movies'
     branch: 'main'
@@ -26,7 +26,7 @@ themes:
   - name: 'HackerNews'
     slug: 'hackernews'
     description: 'HackerNews clone built with Nuxt.'
-    image: '/assets/themes/hackernews.webp'
+    image: '/assets/templates/hackernews.webp'
     demo: 'https://hn.nuxt.space/news/1'
     repo: '/nuxt/hackernews'
     branch: 'master'
@@ -35,8 +35,8 @@ themes:
     free: true
   - name: 'Slantire'
     slug: 'slantire'
-    description: "Slantire, [slan.ti.ˈɾɛ] from Na'Vi meaning 'inspiration', is a blog theme that you can use in Nuxt Studio. It is powered by Nuxt Content and Nuxt UI Pro!"
-    image: '/assets/themes/slantire.webp'
+    description: "Slantire, [slan.ti.ˈɾɛ] from Na'Vi meaning 'inspiration', is a blog template that you can use in Nuxt Studio. It is powered by Nuxt Content and Nuxt UI Pro!"
+    image: '/assets/templates/slantire.webp'
     demo: 'https://slantire.esteban-soubiran.site'
     repo: 'https://github.com/barbapapazes/slantire'
     free: false
@@ -44,7 +44,7 @@ themes:
   - name: 'Tairo'
     slug: 'tairo'
     description: 'The dashboard system that makes you say WOW.'
-    image: '/assets/themes/tairo.webp'
+    image: '/assets/templates/tairo.webp'
     demo: 'https://1.envato.market/nuxt-tairo-preview'
     repo: ''
     branch: ''
@@ -54,7 +54,7 @@ themes:
   - name: 'Brook'
     slug: 'brook'
     description: 'Powerful, flexible & multipurpose template.'
-    image: '/assets/themes/brook.webp'
+    image: '/assets/templates/brook.webp'
     demo: 'https://1.envato.market/nuxt-brook-preview'
     repo: ''
     branch: ''
@@ -64,7 +64,7 @@ themes:
   - name: 'Argon Pro'
     slug: 'argon'
     description: 'Full-stack application dashboard template.'
-    image: '/assets/themes/argon.webp'
+    image: '/assets/templates/argon.webp'
     demo: 'https://demos.creative-tim.com/nuxt-argon-dashboard-pro/?partner=120213'
     repo: ''
     branch: ''
