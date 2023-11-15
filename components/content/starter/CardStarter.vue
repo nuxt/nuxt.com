@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Starter } from '../types'
+import type { Starter } from '../../../types'
 
 const props = defineProps({
   starter: {

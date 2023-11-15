@@ -5,8 +5,6 @@ const route = useRoute()
 
 const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
 
-console.log('page', page)
-
 const title = page.value.head?.title || page.value.title
 const description = page.value.head?.description || page.value.description
 
