@@ -61,9 +61,9 @@ function copyLink () {
 </script>
 
 <template>
-  <UContainer :ui="{ constrained: 'max-w-4xl' }">
+  <UContainer>
     <UPage>
-      <UPageHeader :title="article.title" :description="article.description">
+      <UPageHeader :title="article.title" :description="article.description" :ui="{ wrapper: 'lg:ml-40' }">
         <template #headline>
           {{ article.category }} <span class="text-gray-500 dark:text-gray-400">&middot;</span> <time class="text-gray-500 dark:text-gray-400"> {{ formatDateByLocale('en', article.date) }}</time>
         </template>
@@ -105,18 +105,23 @@ function copyLink () {
         </div>
       </UPageHeader>
 
-      <UPageBody prose>
-        <ContentRenderer v-if="article && article.body" :value="article" />
+      <UPage :ui="{ wrapper: 'lg:ml-40' }">
+        <UPageBody prose>
+          <ContentRenderer v-if="article && article.body" :value="article" />
 
-        <div class="flex justify-end items-center gap-1.5 mt-12 not-prose">
-          <UButton icon="i-ph-link-simple" v-bind="($ui.button.secondary as any)" @click="copyLink" />
-          <UButton v-for="(link, index) in socialLinks" :key="index" v-bind="{ ...($ui.button.secondary as any), ...link }" target="_blank" />
-        </div>
+          <div class="flex justify-end items-center gap-1.5 mt-12 not-prose">
+            <UButton icon="i-ph-link-simple" v-bind="($ui.button.secondary as any)" @click="copyLink" />
+            <UButton v-for="(link, index) in socialLinks" :key="index" v-bind="{ ...($ui.button.secondary as any), ...link }" target="_blank" />
+          </div>
 
-        <hr v-if="surround?.length">
+          <hr v-if="surround?.length">
 
-        <UDocsSurround :surround="surround" />
-      </UPageBody>
+          <UDocsSurround :surround="surround" />
+        </UPageBody>
+        <template #right>
+          <UDocsToc v-if="article.body && article.body.toc" :links="article.body.toc.links" :ui="{ wrapper: 'pt-8 lg:pt-0' }" />
+        </template>
+      </UPage>
     </UPage>
   </UContainer>
 </template>
