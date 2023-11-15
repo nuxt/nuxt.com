@@ -77,7 +77,10 @@ export default defineAppConfig({
       rounded: 'rounded-xl'
     },
     tooltip: {
-      background: '!bg-background'
+      background: '!bg-background',
+      popper: {
+        strategy: 'absolute'
+      }
     },
     // `@nuxt/ui-pro` specific
     variables: {
@@ -98,6 +101,14 @@ export default defineAppConfig({
       links: {
         trailingIcon: {
           base: 'w-4 h-4'
+        },
+        popover: {
+          popper: {
+            strategy: 'absolute'
+          },
+          ui: {
+            width: 'w-[16rem]'
+          }
         }
       },
       popover: {
