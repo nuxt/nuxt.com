@@ -5,7 +5,7 @@ import type { ParsedContent } from '@nuxt/content/dist/runtime/types'
 const search = ref(null)
 const colorMode = useColorMode()
 const { headerLinks, searchGroups, searchLinks } = useNavigation()
-const color = computed(() => colorMode.value === 'dark' ? '#18181b' : 'white')
+const color = computed(() => colorMode.value === 'dark' ? '#020421' : 'white')
 
 const { data: navigation } = await useLazyAsyncData('navigation', () => fetchContentNavigation(), { default: () => [] })
 const { data: files } = useLazyFetch<ParsedContent[]>('/api/search.json', {
