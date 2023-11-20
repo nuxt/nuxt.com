@@ -27,5 +27,5 @@ Integration with AWS Amplify is possible with zero configuration.
 ## Learn more
 
 ::read-more{to="https://nitro.unjs.io/deploy/providers/aws-amplify" target="_blank"}
-Head over **Nitro documentation** to learn more about the Cloudflare deployment preset.
+Head over **Nitro documentation** to learn more about the aws-amplify deployment preset.
 ::
