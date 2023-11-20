@@ -181,9 +181,9 @@ sections:
       - src: /assets/integrations/heroku.svg
         alt: Heroku
         to: /deployments/heroku
-      - src: /assets/integrations/amplify.svg
+      - src: /assets/integrations/aws-amplify.svg
         alt: Amplify
-        to: /deployments/amplify
+        to: /deployments/aws-amplify
       - src: /assets/integrations/digitalocean.svg
         alt: DigitalOcean
         to: /deployments/digitalocean

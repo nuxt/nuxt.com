@@ -52,6 +52,12 @@ if (deployment.value?.nitroPreset) {
     target: '_blank'
   })
 }
+links.push({
+  icon: 'i-ph-pen-duotone',
+  label: 'Edit this page',
+  to: `https://github.com/nuxt/nuxt.com/edit/main/content/3.deployments/${slug}.md`,
+  target: '_blank'
+})
 </script>
 
 <template>
