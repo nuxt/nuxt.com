@@ -93,6 +93,11 @@ export default defineNuxtConfig({
     '/enterprise': { redirect: '/enterprise/support', prerender: false }
   },
   nitro: {
+    prerender: {
+      // failOnError: false
+      // Ignore weird url from crawler on some modules readme
+      ignore: ['/modules/%3C/span', '/modules/%253C/span']
+    },
     hooks: {
       'prerender:generate' (route) {
         // TODO: fix issue with recursive fetches with query string, e.g.
