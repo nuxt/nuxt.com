@@ -1,6 +1,6 @@
 import type { ParsedContent } from '@nuxt/content/dist/runtime/types'
 
-export interface Integration extends ParsedContent {
+export interface Deployment extends ParsedContent {
   title: string
   description: string
   componentImg: string,

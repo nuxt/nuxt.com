@@ -23,7 +23,11 @@ const { data: surround } = await useAsyncData(`${route.path}-surround`, async ()
 })
 
 const breadcrumb = computed(() => {
-  const links = mapContentNavigation(findPageBreadcrumb(navigation.value, page.value))
+  const links = mapContentNavigation(findPageBreadcrumb(navigation.value, page.value)).map((link) => ({
+    label: link.label,
+    to: link.to
+  }))
+
   if (route.path.startsWith('/docs/bridge') || route.path.startsWith('/docs/migration')) {
     links.splice(1, 0, {
       label: 'Upgrade Guide',
@@ -33,6 +37,7 @@ const breadcrumb = computed(() => {
 
   return links
 })
+
 const titleTemplate = computed(() => {
   if (page.value.titleTemplate) return page.value.titleTemplate
   const titleTemplate = navKeyFromPath(route.path, 'titleTemplate', navigation.value)
@@ -83,6 +88,7 @@ const ecosystemLinks = [{
 
 const title = page.value.head?.title || page.value.title
 const description = page.value.head?.description || page.value.description
+
 useSeoMeta({
   titleTemplate,
   title,
@@ -103,7 +109,7 @@ defineOgImage({
   <UPage>
     <UPageHeader v-bind="page">
       <template #headline>
-        <PageBreadcrumb :links="breadcrumb" />
+        <UBreadcrumb :links="breadcrumb" />
       </template>
     </UPageHeader>
 

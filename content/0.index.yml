@@ -174,22 +174,22 @@ sections:
     integrations:
       - src: /assets/integrations/cloudflare.svg
         alt: Cloudflare
-        to: /integrations/cloudflare
+        to: /deployments/cloudflare
       - src: /assets/integrations/vercel.svg
         alt: Vercel
-        to: /integrations/vercel
+        to: /deployments/vercel
       - src: /assets/integrations/heroku.svg
         alt: Heroku
-        to: /integrations/heroku
+        to: /deployments/heroku
       - src: /assets/integrations/amplify.svg
         alt: Amplify
-        to: /integrations/amplify
+        to: /deployments/amplify
       - src: /assets/integrations/digitalocean.svg
         alt: DigitalOcean
-        to: /integrations/digitalocean
+        to: /deployments/digitalocean
       - src: /assets/integrations/netlify.svg
         alt: Netlify
-        to: /integrations/netlify
+        to: /deployments/netlify
       - src: /assets/integrations/tailwind.svg
         alt: Tailwind CSS
         to: /modules/tailwindcss

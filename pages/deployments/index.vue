@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { Integration } from '../../types'
+import type { Deployment } from '../../types'
 
 const route = useRoute()
-const { fetchList, integrations } = useIntegrations()
+const { fetchList, deployments } = useDeployments()
 
 const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
 
@@ -26,11 +26,8 @@ defineOgImage({
 
 await fetchList()
 
-
-const featuredIntegrations = computed(() => integrations.value.filter((integration: Integration) => integration.featured === true))
-
-const otherIntegrations = computed(() => integrations.value.filter((integration: Integration) => integration.featured !== true))
-
+const featuredDeployments = computed(() => deployments.value.filter((deployment: Deployment) => deployment.featured === true))
+const otherDeployments = computed(() => deployments.value.filter((deployment: Deployment) => deployment.featured !== true))
 </script>
 
 <template>
@@ -40,15 +37,16 @@ const otherIntegrations = computed(() => integrations.value.filter((integration:
     <UPage>
       <UPageBody>
         <h2 class="text-gray-950 dark:text-white text-2xl font-semibold pb-4">
-          Featured Integrations
+          Featured
         </h2>
+
         <UPageGrid>
           <UPageCard
-            v-for="(integration, index) in featuredIntegrations"
+            v-for="(deployment, index) in featuredDeployments"
             :key="index"
-            :to="integration._path"
-            :title="integration.title"
-            :description="integration.description"
+            :to="deployment._path"
+            :title="deployment.title"
+            :description="deployment.description"
             class="flex flex-col"
             :ui="{
               divide: '',
@@ -63,22 +61,23 @@ const otherIntegrations = computed(() => integrations.value.filter((integration:
             <template #header>
               <div class="h-[192px] w-full gradient dark:gradient-dark" />
               <div class="absolute inset-0 w-full h-full flex items-center justify-center">
-                <component :is="integration.componentImg" />
+                <component :is="deployment.componentImg" />
               </div>
             </template>
           </UPageCard>
         </UPageGrid>
 
         <h2 class="text-gray-950 dark:text-white text-2xl font-semibold pt-12 pb-4">
-          Other Integrations
+          Others
         </h2>
+
         <UPageGrid>
           <UPageCard
-            v-for="(integration, index) in otherIntegrations"
+            v-for="(deployment, index) in otherDeployments"
             :key="index"
-            :to="integration._path"
-            :title="integration.title"
-            :description="integration.description"
+            :to="deployment._path"
+            :title="deployment.title"
+            :description="deployment.description"
             class="flex flex-col"
             :ui="{
               divide: '',
@@ -89,16 +88,14 @@ const otherIntegrations = computed(() => integrations.value.filter((integration:
             }"
           >
             <template #icon>
-              <img v-if="integration.logoSrc" :src="integration.logoSrc" width="10" height="10" class="w-10 h-10">
-              <UIcon v-else :name="integration.logoIcon" class="w-10 h-10 text-black dark:text-white" />
+              <img v-if="deployment.logoSrc" :src="deployment.logoSrc" width="10" height="10" class="w-10 h-10">
+              <UIcon v-else :name="deployment.logoIcon" class="w-10 h-10 text-black dark:text-white" />
             </template>
-
             <template #title>
-              {{ integration.title }}
+              {{ deployment.title }}
             </template>
-
             <template #description>
-              <span class="line-clamp-2">{{ integration.description }}</span>
+              <span class="line-clamp-2">{{ deployment.description }}</span>
             </template>
           </UPageCard>
         </UPageGrid>
@@ -111,7 +108,6 @@ const otherIntegrations = computed(() => integrations.value.filter((integration:
 .gradient {
   background-image: linear-gradient(105deg, #f8fafc 5.03%, #f1f5f9 102.15%);
 }
-
 .dark .gradient {
   background-image: linear-gradient(105deg, #020420 5.03%, #010211 102.15%);
 }

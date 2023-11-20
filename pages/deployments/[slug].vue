@@ -1,16 +1,16 @@
 <script lang="ts" setup>
-import type { Integration } from '~/types'
+import type { Deployment } from '~/types'
 import { withoutTrailingSlash } from 'ufo'
 
 const route = useRoute()
 const { slug } = route.params
 
-const { data: integration } = await useAsyncData(route.path, () => queryContent<Integration>(route.path).findOne())
-if (!integration.value) {
-  throw createError({ statusCode: 404, statusMessage: 'Integration not found', fatal: true })
+const { data: deployment } = await useAsyncData(route.path, () => queryContent<Deployment>(route.path).findOne())
+if (!deployment.value) {
+  throw createError({ statusCode: 404, statusMessage: 'Deployment not found', fatal: true })
 }
 
-const { data: surround } = await useAsyncData(`${route.path}-surround`, () => queryContent('/integrations')
+const { data: surround } = await useAsyncData(`${route.path}-surround`, () => queryContent('/deployments')
   .where({ _extension: 'md' })
   .without(['body', 'excerpt'])
   .sort({ featured: 1 })
@@ -18,29 +18,30 @@ const { data: surround } = await useAsyncData(`${route.path}-surround`, () => qu
 )
 
 useSeoMeta({
-  title: integration.value.head?.title || integration.value.title,
-  description: integration.value.head?.description || integration.value.description
+  title: deployment.value.head?.title || deployment.value.title,
+  description: deployment.value.head?.description || deployment.value.description
 })
 
-const title = integration.value.head?.title || integration.value.title
-const description = integration.value.head?.description || integration.value.description
+const title = deployment.value.head?.title || deployment.value.title
+const description = deployment.value.head?.description || deployment.value.description
+
 useSeoMeta({
-  titleTemplate: '%s · Nuxt Integrations',
+  titleTemplate: '%s · Nuxt Deployments',
   title,
   description,
   ogDescription: description,
-  ogTitle: `${title} · Nuxt Integrations`
+  ogTitle: `${title} · Nuxt Deployments`
 })
 
 defineOgImage({
   component: 'Docs',
   title,
   description,
-  headline: 'Integrations'
+  headline: 'Deployments'
 })
 
 const links = []
-if (integration.value?.nitroPreset) {
+if (deployment.value?.nitroPreset) {
   links.push({
     icon: 'i-ph-lightning-duotone',
     label: 'View on Nitro Docs',
@@ -53,19 +54,19 @@ if (integration.value?.nitroPreset) {
 <template>
   <UContainer>
     <UPage>
-      <UPageHeader v-bind="integration" :ui="{ wrapper: 'mb-8 lg:ml-40', icon: { base: 'text-black dark:text-white' } }">
+      <UPageHeader v-bind="deployment" :ui="{ wrapper: 'mb-8 lg:ml-40', icon: { base: 'text-black dark:text-white' } }">
         <template #title>
           <div class="flex items-center space-x-4">
-            <UIcon v-if="integration.logoIcon" :name="integration.logoIcon" class="w-10 h-10 text-black dark:text-white" />
-            <NuxtImg v-else :src="integration.logoSrc" class="w-10 h-10" />
-            <div>{{ integration.title }}</div>
+            <UIcon v-if="deployment.logoIcon" :name="deployment.logoIcon" class="w-10 h-10 text-black dark:text-white" />
+            <NuxtImg v-else :src="deployment.logoSrc" class="w-10 h-10" />
+            <div>{{ deployment.title }}</div>
           </div>
         </template>
 
         <div class="absolute top-[34px] -left-[72px] hidden lg:flex">
-          <UTooltip text="Back to integrations">
+          <UTooltip text="Back to deployments">
             <UButton
-              to="/integrations"
+              to="/deployments"
               icon="i-ph-caret-left"
               color="gray"
               :ui="{ rounded: 'rounded-full' }"
@@ -76,14 +77,14 @@ if (integration.value?.nitroPreset) {
       </UPageHeader>
       <UPage :ui="{ center: { base: 'lg:ml-40' } }">
         <UPageBody prose>
-          <ContentRenderer v-if="integration && integration.body" :value="integration" />
+          <ContentRenderer v-if="deployment && deployment.body" :value="deployment" />
           <UDivider class="py-8" />
 
           <UDocsSurround :surround="surround" />
         </UPageBody>
 
         <template #right>
-          <UDocsToc :links="integration.body.toc.links">
+          <UDocsToc :links="deployment.body.toc.links">
             <template #bottom>
               <UDivider v-if="links" type="dashed" />
               <UPageLinks title="Links" :links="links" />

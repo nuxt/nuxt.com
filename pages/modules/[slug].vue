@@ -63,11 +63,10 @@ defineOgImage({
   description,
   headline: 'Nuxt Modules'
 })
-const breadcrumb = [{ label: 'Docs', to: '/docs' }, { label: 'Modules', to: '/modules' }, { label: module.value.name, to: `/modules/${module.value.slug}` }]
 </script>
 
 <template>
-  <div>
+  <UContainer>
     <UAlert
       v-if="!module.compatibility?.nuxt?.includes('^3')"
       class="mt-4"
@@ -82,10 +81,7 @@ const breadcrumb = [{ label: 'Docs', to: '/docs' }, { label: 'Modules', to: '/mo
         </NuxtLink>
       </template>
     </UAlert>
-    <UPageHeader :description="module.description" :ui="{ icon: { wrapper: 'lg:order-last' } }">
-      <template #headline>
-        <PageBreadcrumb :links="breadcrumb" />
-      </template>
+    <UPageHeader :description="module.description" class="sm:py-16">
       <template #title>
         {{ module.name }}
 
@@ -104,6 +100,21 @@ const breadcrumb = [{ label: 'Docs', to: '/docs' }, { label: 'Modules', to: '/mo
           class="mt-[2px]"
         />
       </template>
+
+
+      <div class="absolute top-[72px] -left-[72px] hidden lg:flex">
+        <UTooltip text="Back to modules">
+          <UButton
+            to="/modules"
+            icon="i-ph-caret-left"
+            color="gray"
+            :ui="{ rounded: 'rounded-full' }"
+            size="lg"
+            class=""
+          />
+        </UTooltip>
+      </div>
+
       <div class="flex flex-col lg:flex-row lg:items-center gap-3 mt-4">
         <UTooltip text="Monthly NPM Downloads">
           <NuxtLink class="flex items-center gap-1.5" :to="`https://npmjs.org/package/${module.npm}`" target="_blank">
@@ -142,7 +153,8 @@ const breadcrumb = [{ label: 'Docs', to: '/docs' }, { label: 'Modules', to: '/mo
       <template #right>
         <UDocsToc v-if="module.readme.toc?.links?.length" :links="module.readme.toc.links">
           <template #bottom>
-            <UDivider v-if="module.readme?.toc?.links?.length" type="dashed" />
+            <UDivider v-if="module.readme?.toc?.links?.length" type="dashed" class="my-6" />
+
             <UPageLinks title="Links" :links="links" />
 
             <div class="hidden lg:block">
@@ -158,14 +170,11 @@ const breadcrumb = [{ label: 'Docs', to: '/docs' }, { label: 'Modules', to: '/mo
         </UDocsToc>
       </template>
     </UPage>
-  </div>
+  </UContainer>
 </template>
 
 <style lang="postcss">
 .module-readme {
-  h1 {
-    @apply hidden;
-  }
   /* empty code lines */
   .shiki code .line:empty {
     @apply hidden;
