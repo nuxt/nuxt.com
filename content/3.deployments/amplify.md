@@ -21,50 +21,12 @@ Integration with AWS Amplify is possible with zero configuration.
 2. Click on "Get Started" > Amplify Hosting (Host your web app)
 3. Select and authorize access to your Git repository provider and select the main branch
 4. Choose a name for your app, make sure build settings are auto-detected and optionally set requirement environment variables under the advanced section
-5. Optionally, select Enable SSR logging to enable server-side logging to your Amazon CloudWatch account 
+5. Optionally, select Enable SSR logging to enable server-side logging to your Amazon CloudWatch account
 6. Confirm configuration and click on "Save and Deploy"
 
 ::callout
 As of today, you might need a custom `amplify.yml` file in order to have a working deployment, see below.
 ::
-
-
-## Configuration
-
-You can configure advanced options of this preset using the `awsAmplify` property:
-
-```ts [nuxt.config.ts]
-export default defineNuxtConfig({
-  nitro: {
-    awsAmplify: {
-      // catchAllStaticFallback: true,
-      // imageOptimization: { "/_image", cacheControl: "public, max-age=3600, immutable" },
-      // imageSettings: { ... },
-    }
-  }
-})
-```
-
-### `amplify.yml`
-
-For advanced configuration, you can create a `amplify.yml` file:
-
-```yml [amplify.yml]
-version: 1
-frontend:
-  phases:
-    preBuild:
-      commands:
-        - nvm use 18 && node --version
-        - corepack enable && npx --yes nypm install
-    build:
-      commands:
-        - pnpm build
-  artifacts:
-    baseDirectory: .amplify-hosting
-    files:
-      - "**/*"
-```
 
 ## Learn more
 
