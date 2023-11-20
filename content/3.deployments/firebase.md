@@ -3,7 +3,7 @@ title: Firebase
 description: 'Deploy your Nuxt Application to Firebase infrastructure.'
 logoIcon: 'i-logos-firebase'
 category: Hosting
-nitroPreset: true
+nitroPreset: 'firebase'
 ---
 
 ## Firebase Functions

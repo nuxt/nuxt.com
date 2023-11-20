@@ -5,7 +5,12 @@ componentImg: Amplify
 logoIcon: 'i-logos-aws-amplify'
 category: Hosting
 featured: true
-nitroPreset: true
+nitroPreset: 'aws-amplify'
 ---
 
-TODO
+::callout
+**Zero Configuration**
+:br
+Integration with AWS Amplify is possible with zero configuration.
+::
+

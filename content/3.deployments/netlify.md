@@ -5,7 +5,7 @@ componentImg: Netlify
 logoIcon: 'i-logos-netlify-icon'
 category: Hosting
 featured: true
-nitroPreset: true
+nitroPreset: 'netlify'
 ---
 
 ::callout

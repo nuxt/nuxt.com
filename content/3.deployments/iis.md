@@ -3,7 +3,7 @@ title: IIS
 description: 'Deploy your Nuxt Application to IIS infrastructure.'
 logoSrc: '/assets/integrations/microsoft.webp'
 category: Hosting
-nitroPreset: true
+nitroPreset: 'iis'
 ---
 
 ## Using IISnode

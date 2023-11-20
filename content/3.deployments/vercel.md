@@ -5,7 +5,7 @@ componentImg: Vercel
 logoSrc: '/assets/integrations/vercel.svg'
 category: Hosting
 featured: true
-nitroPreset: true
+nitroPreset: 'vercel'
 ---
 
 ::callout

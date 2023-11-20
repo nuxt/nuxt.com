@@ -3,7 +3,7 @@ title: Azure
 description: 'Deploy your Nuxt Application to Azure infrastructure.'
 logoIcon: 'i-logos-azure-icon'
 category: Hosting
-nitroPreset: true
+nitroPreset: 'azure'
 ---
 
 ## Azure Static Web Apps

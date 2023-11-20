@@ -3,7 +3,7 @@ title: Stormkit
 description: 'Deploy your Nuxt Application to Stormkit infrastructure.'
 logoSrc: '/assets/integrations/stormkit.webp'
 category: Hosting
-nitroPreset: true
+nitroPreset: 'stormkit'
 ---
 
 ::callout

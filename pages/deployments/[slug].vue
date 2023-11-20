@@ -40,7 +40,7 @@ if (deployment.value?.nitroPreset) {
   links.push({
     icon: 'i-ph-lightning-duotone',
     label: 'View on Nitro Docs',
-    to: `https://nitro.unjs.io/deploy/providers/${slug}`,
+    to: `https://nitro.unjs.io/deploy/providers/${deployment.value?.nitroPreset}`,
     target: '_blank'
   })
 }
