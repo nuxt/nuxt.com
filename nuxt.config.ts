@@ -93,19 +93,11 @@ export default defineNuxtConfig({
     '/enterprise': { redirect: '/enterprise/support', prerender: false }
   },
   nitro: {
-    prerender: {
-      // failOnError: false
-      // Ignore weird url from crawler on some modules readme
-      ignore: ['/modules/%3C/span', '/modules/%253C/span']
-    },
     hooks: {
       'prerender:generate' (route) {
         // TODO: fix issue with recursive fetches with query string, e.g.
         // `/enterprise/agencies?region=europe&amp;amp;amp;service=ecommerce&amp;amp;service=ecommerce&amp;service=content-marketing`
         if (route.route?.includes('&amp;')) {
-          route.skip = true
-        }
-        if (route.route?.includes('#') || route.route?.includes('%23')) {
           route.skip = true
         }
       }
