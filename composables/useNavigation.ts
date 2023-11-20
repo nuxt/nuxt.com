@@ -175,6 +175,10 @@ const _useNavigation = () => {
     key: 'modules-search',
     label: 'Modules',
     search: async (q) => {
+      if (!q) {
+        return []
+      }
+
       const { modules, fetchList } = useModules()
       if (!modules.value.length) {
         await fetchList()
@@ -190,6 +194,32 @@ const _useNavigation = () => {
             src: moduleImage(module.icon)
           },
           to: `/modules/${module.name}`
+        }))
+    }
+  }, {
+    key: 'deployments-search',
+    label: 'Deployments',
+    search: async (q) => {
+      if (!q) {
+        return []
+      }
+
+      const { deployments, fetchList } = useDeployments()
+      if (!deployments.value.length) {
+        await fetchList()
+      }
+
+      return deployments.value
+        .filter(deployment => ['title'].map(field => deployment[field]).filter(Boolean).some(value => value.search(searchTextRegExp(q)) !== -1))
+        .map(deployment => ({
+          id: `deployment-${deployment._path}`,
+          label: deployment.title,
+          suffix: deployment.description,
+          icon: deployment.logoIcon,
+          avatar: deployment.logoSrc ? {
+            src: deployment.logoSrc
+          } : undefined,
+          to: deployment._path
         }))
     }
   }, {
