@@ -38,12 +38,16 @@ defineOgImage({
 
 <template>
   <UContainer>
-    <UPageHeader :title="agency.title" :description="agency.description" :links="links" class="sm:py-16">
-      <template #icon>
-        <UColorModeAvatar :light="agency.logo.light" :dark="agency.logo.dark" size="3xl" class="mt-[2px]" :ui="{ rounded: 'rounded-sm' }" />
+    <UPageHeader :description="agency.description" :links="links" headline="Agencies">
+      <template #title>
+        <div class="flex items-center gap-4">
+          <UColorModeAvatar :light="agency.logo.light" :dark="agency.logo.dark" size="lg" :ui="{ rounded: 'rounded-sm' }" class="-m-[4px]" />
+
+          <span>{{ agency.title }}</span>
+        </div>
       </template>
 
-      <div class="absolute top-[72px] -left-[72px] hidden lg:flex">
+      <div class="absolute top-[68px] -left-[64px] hidden lg:flex">
         <UTooltip text="Back to agencies">
           <UButton
             to="/enterprise/agencies"

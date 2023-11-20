@@ -57,7 +57,7 @@ provide('navigation', navigation)
         Enjoy <span class="font-bold text-gray-900 dark:text-white">Mastering Nuxt</span> black friday!
       </p>
 
-      <UButton label="Learn more" color="gray" trailing-icon="i-ph-arrow-right" size="xs" class="rounded-full" />
+      <UButton label="Learn more" color="gray" trailing-icon="i-ph-arrow-right" size="2xs" class="rounded-full" />
     </AppBanner>
 
     <AppHeader :links="headerLinks" />
@@ -69,7 +69,14 @@ provide('navigation', navigation)
     <AppFooter />
 
     <ClientOnly>
-      <UDocsSearch ref="search" :files="files" :navigation="navigation[0]?.children" :groups="searchGroups" :links="searchLinks" />
+      <UDocsSearch
+        ref="search"
+        :files="files"
+        :navigation="navigation[0]?.children"
+        :groups="searchGroups"
+        :links="searchLinks"
+        :fuse="{ resultLimit: 13 }"
+      />
 
       <UNotifications />
     </ClientOnly>

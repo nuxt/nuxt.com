@@ -82,6 +82,14 @@ export default defineAppConfig({
         strategy: 'absolute'
       }
     },
+    breadcrumb: {
+      divider: {
+        base: 'w-4 h-4'
+      },
+      default: {
+        divider: 'i-ph-caret-right'
+      }
+    },
     // `@nuxt/ui-pro` specific
     variables: {
       dark: {
