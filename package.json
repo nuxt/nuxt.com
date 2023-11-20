@@ -42,7 +42,8 @@
   },
   "resolutions": {
     "nuxt": "npm:nuxt-nightly",
-    "nitropack": "npm:nitropack-nightly"
+    "nitropack": "npm:nitropack-nightly",
+    "@nuxtjs/mdc": "npm:@nuxtjs/mdc-edge"
   },
   "devDependencies": {
     "@nuxt/devtools": "^1.0.0",
