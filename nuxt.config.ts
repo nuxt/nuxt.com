@@ -105,6 +105,9 @@ export default defineNuxtConfig({
         if (route.route?.includes('&amp;')) {
           route.skip = true
         }
+        if (route.route?.includes('#') || route.route?.includes('%23')) {
+          route.skip = true
+        }
       }
     }
   },
