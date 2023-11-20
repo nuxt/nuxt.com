@@ -1,13 +1,13 @@
 <script lang="ts" setup>
-import type { Deployment } from '~/types'
+import type { Hosting } from '~/types'
 import { withoutTrailingSlash } from 'ufo'
 
 const route = useRoute()
 const { slug } = route.params
 
-const { data: deployment } = await useAsyncData(route.path, () => queryContent<Deployment>(route.path).findOne())
-if (!deployment.value) {
-  throw createError({ statusCode: 404, statusMessage: 'Deployment not found', fatal: true })
+const { data: provider } = await useAsyncData(route.path, () => queryContent<Hosting>(route.path).findOne())
+if (!provider.value) {
+  throw createError({ statusCode: 404, statusMessage: 'Hosting Platform not found', fatal: true })
 }
 
 const { data: surround } = await useAsyncData(`${route.path}-surround`, () => queryContent('/deploy')
@@ -17,8 +17,8 @@ const { data: surround } = await useAsyncData(`${route.path}-surround`, () => qu
   .findSurround(withoutTrailingSlash(route.path))
 )
 
-const title = deployment.value.head?.title || deployment.value.title
-const description = deployment.value.head?.description || deployment.value.description
+const title = provider.value.head?.title || provider.value.title
+const description = provider.value.head?.description || provider.value.description
 
 useSeoMeta({
   titleTemplate: 'Deploy Nuxt to %s',
@@ -32,30 +32,30 @@ defineOgImage({
   component: 'Docs',
   title,
   description,
-  headline: 'Deploy'
+  headline: 'Deploy To'
 })
 
 const links = []
-if (deployment.value?.website) {
+if (provider.value?.website) {
   links.push({
     icon: 'i-ph-globe-duotone',
-    label: deployment.value?.title,
-    to: deployment.value?.website,
+    label: provider.value?.title,
+    to: provider.value?.website,
     target: '_blank'
   })
 }
-if (deployment.value?.nitroPreset) {
+if (provider.value?.nitroPreset) {
   links.push({
     icon: 'i-ph-lightning-duotone',
     label: 'Nitro Preset',
-    to: `https://nitro.unjs.io/deploy/providers/${deployment.value?.nitroPreset}`,
+    to: `https://nitro.unjs.io/deploy/providers/${provider.value?.nitroPreset}`,
     target: '_blank'
   })
 }
 links.push({
   icon: 'i-ph-pen-duotone',
   label: 'Edit this page',
-  to: `https://github.com/nuxt/nuxt.com/edit/main/content/3.deployments/${slug}.md`,
+  to: `https://github.com/nuxt/nuxt.com/edit/main/content/3.deploy/${slug}.md`,
   target: '_blank'
 })
 </script>
@@ -63,13 +63,13 @@ links.push({
 <template>
   <UContainer>
     <UPage>
-      <UPageHeader :description="deployment.description" headline="Deployments" :ui="{ icon: { base: 'text-black dark:text-white' } }">
+      <UPageHeader :description="provider.description" headline="Deploy" :ui="{ icon: { base: 'text-black dark:text-white' } }">
         <template #title>
           <div class="flex items-center gap-4">
-            <UIcon v-if="deployment.logoIcon" :name="deployment.logoIcon" class="w-10 h-10 text-black dark:text-white" />
-            <NuxtImg v-else :src="deployment.logoSrc" class="w-10 h-10" />
+            <UIcon v-if="provider.logoIcon" :name="provider.logoIcon" class="w-10 text-black dark:text-white" />
+            <NuxtImg v-else :src="provider.logoSrc" class="w-10 h-10" />
 
-            <span>{{ deployment.title }}</span>
+            <span>{{ provider.title }}</span>
           </div>
         </template>
 
@@ -88,7 +88,7 @@ links.push({
 
       <UPage>
         <UPageBody prose>
-          <ContentRenderer v-if="deployment && deployment.body" :value="deployment" />
+          <ContentRenderer v-if="provider && provider.body" :value="provider" />
 
           <hr v-if="surround?.length">
 
@@ -96,10 +96,10 @@ links.push({
         </UPageBody>
 
         <template #right>
-          <UDocsToc :links="deployment.body.toc.links">
+          <UDocsToc :links="provider.body.toc.links">
             <template #bottom>
-              <div class="hidden lg:block space-y-6" :class="{ '!mt-6': deployment.body?.toc?.links?.length }">
-                <UDivider v-if="links?.length && deployment.body?.toc?.links?.length" type="dashed" />
+              <div class="hidden lg:block space-y-6" :class="{ '!mt-6': provider.body?.toc?.links?.length }">
+                <UDivider v-if="links?.length && provider.body?.toc?.links?.length" type="dashed" />
 
                 <UPageLinks title="Links" :links="links" />
               </div>
