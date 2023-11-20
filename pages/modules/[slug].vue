@@ -49,6 +49,7 @@ const contributors = computed(() => module.value.contributors.map((contributor) 
 
 const title = module.value.name.charAt(0).toUpperCase() + module.value.name.slice(1)
 const description = module.value.description || 'A Nuxt module'
+
 useSeoMeta({
   titleTemplate: '%s · Nuxt Modules',
   title,
@@ -81,28 +82,30 @@ defineOgImage({
         </NuxtLink>
       </template>
     </UAlert>
-    <UPageHeader :description="module.description" class="sm:py-16">
+
+    <UPageHeader :description="module.description" headline="Modules" class="lg:ml-16 xl:ml-32">
       <template #title>
-        {{ module.name }}
+        <div class="flex items-center gap-4">
+          <UAvatar
+            :src="moduleImage(module.icon)"
+            :icon="moduleIcon(module.category)"
+            :alt="module.name"
+            size="lg"
+            :ui="{ rounded: 'rounded-lg' }"
+            class="-m-[4px]"
+          />
 
-        <UTooltip v-if="module.type === 'official'" text="Official module" class="tracking-normal">
-          <UIcon name="i-ph-medal-duotone" class="h-6 w-6 text-primary" />
-        </UTooltip>
+          <div>
+            {{ module.name }}
+
+            <UTooltip v-if="module.type === 'official'" text="Official module" class="tracking-normal">
+              <UIcon name="i-ph-medal-duotone" class="h-6 w-6 text-primary" />
+            </UTooltip>
+          </div>
+        </div>
       </template>
 
-      <template #icon>
-        <UAvatar
-          :src="moduleImage(module.icon)"
-          :icon="moduleIcon(module.category)"
-          :alt="module.name"
-          size="3xl"
-          :ui="{ rounded: 'rounded-lg' }"
-          class="mt-[2px]"
-        />
-      </template>
-
-
-      <div class="absolute top-[72px] -left-[72px] hidden lg:flex">
+      <div class="absolute top-[68px] -left-[64px] hidden lg:flex">
         <UTooltip text="Back to modules">
           <UButton
             to="/modules"
@@ -145,20 +148,20 @@ defineOgImage({
       </div>
     </UPageHeader>
 
-    <UPage :ui="{ right: 'my-8' }">
+    <UPage class="lg:ml-16 xl:ml-32">
       <UPageBody prose>
         <ContentRendererMarkdown v-if="module.readme?.body" :value="module.readme" class="module-readme" :components="{ a: ModuleProseA, img: ModuleProseImg }" />
       </UPageBody>
 
       <template #right>
-        <UDocsToc v-if="module.readme.toc?.links?.length" :links="module.readme.toc.links">
+        <UDocsToc :links="module.readme.toc?.links">
           <template #bottom>
-            <UDivider v-if="module.readme?.toc?.links?.length" type="dashed" class="my-6" />
+            <div class="hidden lg:block space-y-6" :class="{ '!mt-6': module.readme?.toc?.links?.length }">
+              <UDivider v-if="module.readme?.toc?.links?.length" type="dashed" />
 
-            <UPageLinks title="Links" :links="links" />
+              <UPageLinks title="Links" :links="links" />
 
-            <div class="hidden lg:block">
-              <UDivider type="dashed" class="my-6" />
+              <UDivider type="dashed" />
 
               <UPageLinks :links="contributors">
                 <template #title>

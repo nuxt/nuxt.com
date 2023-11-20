@@ -22,7 +22,7 @@ npm install --global @lagon/cli esbuild
 ```
 ::
 
-### Testing Locally
+## Testing Locally
 
 1. Build your Nuxt app
 
@@ -36,7 +36,7 @@ npm install --global @lagon/cli esbuild
     lagon dev ./.output
     ```
 
-### Deploy from your local machine
+## Deploy from your local machine
 
 1. Build your Nuxt app
 
@@ -63,7 +63,7 @@ lagon deploy .output
 lagon deploy .output --prod
 ```
 
-### Deploy within CI/CD using GitHub Actions
+## Deploy within CI/CD using GitHub Actions
 
 Add a new environment variable named `LAGON_TOKEN`, and copy the value from the [Tokens section of Lagon's dashboard](https://dash.lagon.app/profile).
 
@@ -94,11 +94,11 @@ jobs:
           lagon_token: ${{ secrets.LAGON_TOKEN }}
 ```
 
-#### If you have committed the `.lagon` folder
+### If you have committed the `.lagon` folder
 
 Trigger a deployment locally first, and commit the updated `.lagon/config.json` file. The GitHub Action will automatically pick the configuration file.
 
-#### If you haven't committed the `.lagon` folder
+### If you haven't committed the `.lagon` folder
 
 Trigger a deployment locally first, and copy the content of `.lagon/config.json`. Then, update the workflow configuration:
 

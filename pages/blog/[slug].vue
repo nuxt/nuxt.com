@@ -63,7 +63,7 @@ function copyLink () {
 <template>
   <UContainer>
     <UPage>
-      <UPageHeader :title="article.title" :description="article.description" :ui="{ wrapper: 'lg:ml-40' }">
+      <UPageHeader :title="article.title" :description="article.description" class="lg:ml-16 xl:ml-32">
         <template #headline>
           {{ article.category }} <span class="text-gray-500 dark:text-gray-400">&middot;</span> <time class="text-gray-500 dark:text-gray-400"> {{ formatDateByLocale('en', article.date) }}</time>
         </template>
@@ -91,8 +91,7 @@ function copyLink () {
           </UButton>
         </div>
 
-
-        <div class="absolute top-[72px] -left-[72px] hidden lg:flex">
+        <div class="absolute top-[68px] -left-[64px] hidden lg:flex">
           <UTooltip text="Back to blog">
             <UButton
               to="/blog"
@@ -105,7 +104,7 @@ function copyLink () {
         </div>
       </UPageHeader>
 
-      <UPage :ui="{ wrapper: 'lg:ml-40' }">
+      <UPage class="lg:ml-16 xl:ml-32">
         <UPageBody prose>
           <ContentRenderer v-if="article && article.body" :value="article" />
 
@@ -118,8 +117,9 @@ function copyLink () {
 
           <UDocsSurround :surround="surround" />
         </UPageBody>
+
         <template #right>
-          <UDocsToc v-if="article.body && article.body.toc" :links="article.body.toc.links" :ui="{ wrapper: 'pt-8 lg:pt-0' }" />
+          <UDocsToc v-if="article.body && article.body.toc" :links="article.body.toc.links" />
         </template>
       </UPage>
     </UPage>

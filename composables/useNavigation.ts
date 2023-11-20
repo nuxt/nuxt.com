@@ -7,6 +7,7 @@ const _useNavigation = () => {
     label: 'Docs',
     icon: 'i-ph-book-bookmark-duotone',
     to: '/docs',
+    search: false,
     children: [{
       label: 'Get Started',
       description: 'Learn how to get started with Nuxt.',
@@ -40,6 +41,8 @@ const _useNavigation = () => {
     }]
   }, {
     label: 'Integrations',
+    to: '/modules',
+    search: false,
     active: route.path.startsWith('/modules') || route.path.startsWith('/deployments'),
     children: [{
       label: 'Modules',
@@ -48,7 +51,7 @@ const _useNavigation = () => {
       to: '/modules'
     }, {
       label: 'Deployments',
-      description: 'Deploy your Nuxt app anywhere.',
+      description: 'Deploy your Nuxt project anywhere.',
       icon: 'i-ph-plugs-connected-duotone',
       to: '/deployments'
     }]
@@ -65,6 +68,7 @@ const _useNavigation = () => {
     label: 'Enterprise',
     icon: 'i-ph-buildings-duotone',
     to: '/enterprise',
+    search: false,
     children: [{
       label: 'Support',
       to: '/enterprise/support',
@@ -148,7 +152,7 @@ const _useNavigation = () => {
 
   const searchLinks = computed(() => [...headerLinks.value.map(link => {
     // Remove `/docs` and `/enterprise` links from command palette
-    if (['/docs', '/enterprise'].includes(link.to)) {
+    if (link.search === false) {
       return {
         label: link.label,
         icon: link.icon,

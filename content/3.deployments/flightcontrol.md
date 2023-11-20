@@ -14,7 +14,7 @@ Nitro supports deploying to [AWS via Flightcontrol](https://flightcontrol.dev?re
 Integration with Flightcontrol is possible with zero configuration.
 ::
 
-### Set Up your Flightcontrol account
+## Set Up your Flightcontrol account
 
 On a high level, the steps you will need to follow to deploy a project for the first time are:
 
@@ -24,7 +24,7 @@ On a high level, the steps you will need to follow to deploy a project for the f
 4. Authorize the Flightcontrol GitHub App to access your chosen repositories, public or private.
 5. Create a Flightcontrol project with configuration via the Dashboard or with configuration via `flightcontrol.json`.
 
-### Create a Project with Configuration via the Dashboard
+## Create a Project with Configuration via the Dashboard
 
 1. Create a Flightcontrol project from the Dashboard. Select a repository for the source.
 2. Select the `GUI` config type.
@@ -32,7 +32,7 @@ On a high level, the steps you will need to follow to deploy a project for the f
 4. Select your preferred AWS server size.
 5. Submit the new project form.
 
-### Create a Project with Configuration via `flightcontrol.json`
+## Create a Project with Configuration via `flightcontrol.json`
 
 1. Create a Flightcontrol project from your dashboard. Select a repository for the source.
 2. Select the `flightcontrol.json` config type.

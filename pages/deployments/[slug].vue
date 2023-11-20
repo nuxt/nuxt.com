@@ -17,11 +17,6 @@ const { data: surround } = await useAsyncData(`${route.path}-surround`, () => qu
   .findSurround(withoutTrailingSlash(route.path))
 )
 
-useSeoMeta({
-  title: deployment.value.head?.title || deployment.value.title,
-  description: deployment.value.head?.description || deployment.value.description
-})
-
 const title = deployment.value.head?.title || deployment.value.title
 const description = deployment.value.head?.description || deployment.value.description
 
@@ -54,16 +49,17 @@ if (deployment.value?.nitroPreset) {
 <template>
   <UContainer>
     <UPage>
-      <UPageHeader v-bind="deployment" :ui="{ wrapper: 'mb-8 lg:ml-40', icon: { base: 'text-black dark:text-white' } }">
+      <UPageHeader :description="deployment.description" headline="Deployments" class="lg:ml-16 xl:ml-32" :ui="{ icon: { base: 'text-black dark:text-white' } }">
         <template #title>
-          <div class="flex items-center space-x-4">
+          <div class="flex items-center gap-4">
             <UIcon v-if="deployment.logoIcon" :name="deployment.logoIcon" class="w-10 h-10 text-black dark:text-white" />
             <NuxtImg v-else :src="deployment.logoSrc" class="w-10 h-10" />
-            <div>{{ deployment.title }}</div>
+
+            <span>{{ deployment.title }}</span>
           </div>
         </template>
 
-        <div class="absolute top-[34px] -left-[72px] hidden lg:flex">
+        <div class="absolute top-[68px] -left-[64px] hidden lg:flex">
           <UTooltip text="Back to deployments">
             <UButton
               to="/deployments"
@@ -75,10 +71,12 @@ if (deployment.value?.nitroPreset) {
           </UTooltip>
         </div>
       </UPageHeader>
-      <UPage :ui="{ center: { base: 'lg:ml-40' } }">
+
+      <UPage class="lg:ml-16 xl:ml-32">
         <UPageBody prose>
           <ContentRenderer v-if="deployment && deployment.body" :value="deployment" />
-          <UDivider class="py-8" />
+
+          <hr v-if="surround?.length">
 
           <UDocsSurround :surround="surround" />
         </UPageBody>
@@ -86,8 +84,11 @@ if (deployment.value?.nitroPreset) {
         <template #right>
           <UDocsToc :links="deployment.body.toc.links">
             <template #bottom>
-              <UDivider v-if="links" type="dashed" />
-              <UPageLinks title="Links" :links="links" />
+              <div class="hidden lg:block space-y-6" :class="{ '!mt-6': deployment.body?.toc?.links?.length }">
+                <UDivider v-if="links?.length && deployment.body?.toc?.links?.length" type="dashed" />
+
+                <UPageLinks title="Links" :links="links" />
+              </div>
             </template>
           </UDocsToc>
         </template>

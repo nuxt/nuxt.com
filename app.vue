@@ -69,7 +69,14 @@ provide('navigation', navigation)
     <AppFooter />
 
     <ClientOnly>
-      <UDocsSearch ref="search" :files="files" :navigation="navigation[0]?.children" :groups="searchGroups" :links="searchLinks" />
+      <UDocsSearch
+        ref="search"
+        :files="files"
+        :navigation="navigation[0]?.children"
+        :groups="searchGroups"
+        :links="searchLinks"
+        :fuse="{ resultLimit: 13 }"
+      />
 
       <UNotifications />
     </ClientOnly>
