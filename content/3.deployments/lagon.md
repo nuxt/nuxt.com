@@ -115,3 +115,7 @@ with:
       "assets": ".output/public"
     }
 ```
+
+::read-more{to="https://nitro.unjs.io/deploy/providers/lagon" target="_blank"}
+Head over **Nitro documentation** to learn more about the lagon deployment preset.
+::

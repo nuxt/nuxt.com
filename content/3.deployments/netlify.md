@@ -58,3 +58,7 @@ Set the following environment variable to enable on-demand builders:
 ```bash
 SERVER_PRESET=netlify_builder
 ```
+
+::read-more{to="https://nitro.unjs.io/deploy/providers/netlify" target="_blank"}
+Head over **Nitro documentation** to learn more about the netlify deployment preset.
+::

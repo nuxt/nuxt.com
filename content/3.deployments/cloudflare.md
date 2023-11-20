@@ -79,3 +79,9 @@ Head over **CloudFlare Pages** documentation to learn more about it.
   An editable website with universal rendering based on Cloudflare KV.
   ::
 ::
+
+## Learn more
+
+::read-more{to="https://nitro.unjs.io/deploy/providers/cloudflare" target="_blank"}
+Head over **Nitro documentation** to learn more about the cloudflare deployment preset.
+::

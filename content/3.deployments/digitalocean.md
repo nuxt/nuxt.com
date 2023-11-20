@@ -44,3 +44,9 @@ Nuxt supports deploying on the [Digital Ocean App Platform](https://docs.digital
 ::callout
 Your Nuxt app should be live at a Digital Ocean generated URL and you can now follow [the rest of the Digital Ocean deployment guide](https://docs.digitalocean.com/products/app-platform/how-to/manage-deployments/).
 ::
+
+## Learn more
+
+::read-more{to="https://nitro.unjs.io/deploy/providers/digitalocean" target="_blank"}
+Head over **Nitro documentation** to learn more about the digitalocean deployment preset.
+::

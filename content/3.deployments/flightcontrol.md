@@ -73,3 +73,7 @@ On a high level, the steps you will need to follow to deploy a project for the f
 ::read-more{to="https://www.flightcontrol.dev/docs?ref=nuxt" target="_blank"}
 Learn more about Flightcontrol's configuration.
 ::
+
+::read-more{to="https://nitro.unjs.io/deploy/providers/flightcontrol" target="_blank"}
+Head over **Nitro documentation** to learn more about the flightcontrol deployment preset.
+::

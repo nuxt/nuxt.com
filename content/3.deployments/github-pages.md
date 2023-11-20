@@ -64,3 +64,7 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v1
 ```
+
+::read-more{to="https://nitro.unjs.io/deploy/providers/github-pages" target="_blank"}
+Head over **Nitro documentation** to learn more about the github-pages deployment preset.
+::

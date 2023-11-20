@@ -48,3 +48,9 @@ If you are deploying from a non-interactive environment, you will need to create
 ```bash
 edgio deploy --token=XXX
 ```
+
+## Learn more
+
+::read-more{to="https://nitro.unjs.io/deploy/providers/edgio" target="_blank"}
+Head over **Nitro documentation** to learn more about the edgio deployment preset.
+::

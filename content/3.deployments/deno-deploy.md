@@ -65,3 +65,9 @@ jobs:
 ::callout
 Make sure to rename `<my-project>` with your project name.
 ::
+
+## Learn more
+
+::read-more{to="https://nitro.unjs.io/deploy/providers/deno-deploy" target="_blank"}
+Head over **Nitro documentation** to learn more about the deno-deploy deployment preset.
+::

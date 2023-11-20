@@ -143,8 +143,6 @@ You may be warned that other cloud functions will be deleted when you deploy you
 firebase deploy --only functions:server,hosting
 ```
 
-## Learn More
-
 ::read-more{to="https://nitro.unjs.io/deploy/providers/firebase" target="_blank"}
-Head over **Nitro documentation** to learn more about the Firebase 1st generation deployment preset as well as renaming functions.
+Head over **Nitro documentation** to learn more about the Firebase deployment preset.
 ::
