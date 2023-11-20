@@ -10,7 +10,7 @@ if (!deployment.value) {
   throw createError({ statusCode: 404, statusMessage: 'Deployment not found', fatal: true })
 }
 
-const { data: surround } = await useAsyncData(`${route.path}-surround`, () => queryContent('/deployments')
+const { data: surround } = await useAsyncData(`${route.path}-surround`, () => queryContent('/deploy')
   .where({ _extension: 'md' })
   .without(['body', 'excerpt'])
   .sort({ featured: 1 })
@@ -21,18 +21,18 @@ const title = deployment.value.head?.title || deployment.value.title
 const description = deployment.value.head?.description || deployment.value.description
 
 useSeoMeta({
-  titleTemplate: '%s · Nuxt Deployments',
+  titleTemplate: 'Deploy Nuxt to %s',
   title,
   description,
   ogDescription: description,
-  ogTitle: `${title} · Nuxt Deployments`
+  ogTitle: `Deploy Nuxt to ${title}`
 })
 
 defineOgImage({
   component: 'Docs',
   title,
   description,
-  headline: 'Deployments'
+  headline: 'Deploy'
 })
 
 const links = []
@@ -76,7 +76,7 @@ links.push({
         <div class="absolute top-[68px] -left-[64px] hidden lg:flex">
           <UTooltip text="Back to deployments">
             <UButton
-              to="/deployments"
+              to="/deploy"
               icon="i-ph-caret-left"
               color="gray"
               :ui="{ rounded: 'rounded-full' }"

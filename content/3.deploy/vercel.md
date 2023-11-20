@@ -22,7 +22,7 @@ Integration with Vercel is possible with zero configuration.
 3. Vercel will detect that you are using Nitro and will enable the correct settings for your deployment.
 4. Your application is deployed!
 
-After your project has been imported and deployed, all subsequent pushes to branches will generate [Preview Deployments](https://vercel.com/docs/concepts/deployments/environments#preview), and all changes made to the Production Branch (commonly “main”) will result in a [Production Deployment](https://vercel.com/docs/concepts/deployments/environments#production).
+After your project has been imported and deployed, all subsequent pushes to branches will generate [Preview Deployments](https://vercel.com/docs/concepts/deploy/environments#preview), and all changes made to the Production Branch (commonly “main”) will result in a [Production Deployment](https://vercel.com/docs/concepts/deploy/environments#production).
 
 Learn more about Vercel’s [Git Integration](https://vercel.com/docs/concepts/git).
 

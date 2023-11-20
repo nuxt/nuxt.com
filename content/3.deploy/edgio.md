@@ -43,7 +43,7 @@ edgio deploy
 
 ## Deploying using CI/CD
 
-If you are deploying from a non-interactive environment, you will need to create an account on [Edgio Developer Console](https://app.layer0.co) first and setup a [deploy token](https://docs.edg.io/guides/basics/deployments#deploy-from-ci). Once the deploy token is created, save it as a secret to your environment. You can start the deploy by running:
+If you are deploying from a non-interactive environment, you will need to create an account on [Edgio Developer Console](https://app.layer0.co) first and setup a [deploy token](https://docs.edg.io/guides/basics/deploy#deploy-from-ci). Once the deploy token is created, save it as a secret to your environment. You can start the deploy by running:
 
 ```bash
 edgio deploy --token=XXX

@@ -1,6 +1,6 @@
 export * from './agencies'
 export * from './blog'
-export * from './deployments'
+export * from './deploy'
 export * from './filters'
 export * from './jobs'
 export * from './modules'

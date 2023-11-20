@@ -43,17 +43,17 @@ const _useNavigation = () => {
     label: 'Integrations',
     to: '/modules',
     search: false,
-    active: route.path.startsWith('/modules') || route.path.startsWith('/deployments'),
+    active: route.path.startsWith('/modules') || route.path.startsWith('/deploy'),
     children: [{
       label: 'Modules',
       description: 'Supercharge your Nuxt project with modules.',
       icon: 'i-ph-puzzle-piece-duotone',
       to: '/modules'
     }, {
-      label: 'Deployments',
+      label: 'Hosting',
       description: 'Deploy your Nuxt project anywhere.',
-      icon: 'i-ph-plugs-connected-duotone',
-      to: '/deployments'
+      icon: 'i-ph-rocket-launch-duotone',
+      to: '/deploy'
     }]
   }, {
     label: 'Templates',
@@ -197,29 +197,29 @@ const _useNavigation = () => {
         }))
     }
   }, {
-    key: 'deployments-search',
-    label: 'Deployments',
+    key: 'hosting-search',
+    label: 'Hosting',
     search: async (q) => {
       if (!q) {
         return []
       }
 
-      const { deployments, fetchList } = useDeployments()
-      if (!deployments.value.length) {
+      const { providers, fetchList } = useHostingProviders()
+      if (!providers.value.length) {
         await fetchList()
       }
 
-      return deployments.value
-        .filter(deployment => ['title'].map(field => deployment[field]).filter(Boolean).some(value => value.search(searchTextRegExp(q)) !== -1))
-        .map(deployment => ({
-          id: `deployment-${deployment._path}`,
-          label: deployment.title,
-          suffix: deployment.description,
-          icon: deployment.logoIcon,
-          avatar: deployment.logoSrc ? {
-            src: deployment.logoSrc
+      return providers.value
+        .filter(hosting => ['title'].map(field => hosting[field]).filter(Boolean).some(value => value.search(searchTextRegExp(q)) !== -1))
+        .map(hosting => ({
+          id: `hosting-${hosting._path}`,
+          label: hosting.title,
+          suffix: hosting.description,
+          icon: hosting.logoIcon,
+          avatar: hosting.logoSrc ? {
+            src: hosting.logoSrc
           } : undefined,
-          to: deployment._path
+          to: hosting._path
         }))
     }
   }, {

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { Deployment } from '../../types'
+import type { Hosting } from '../../types'
 
 const route = useRoute()
-const { fetchList, deployments } = useDeployments()
+const { fetchList, providers } = useHostingProviders()
 
 const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
 
@@ -26,8 +26,8 @@ defineOgImage({
 
 await fetchList()
 
-const featuredDeployments = computed(() => deployments.value.filter((deployment: Deployment) => deployment.featured === true))
-const otherDeployments = computed(() => deployments.value.filter((deployment: Deployment) => deployment.featured !== true))
+const featuredProviders = computed(() => providers.value.filter((provider: Hosting) => provider.featured === true))
+const otherProviders = computed(() => providers.value.filter((provider: Hosting) => provider.featured !== true))
 </script>
 
 <template>
@@ -42,7 +42,7 @@ const otherDeployments = computed(() => deployments.value.filter((deployment: De
 
         <UPageGrid>
           <UPageCard
-            v-for="(deployment, index) in featuredDeployments"
+            v-for="(deployment, index) in featuredProviders"
             :key="index"
             :to="deployment._path"
             :title="deployment.title"
@@ -73,7 +73,7 @@ const otherDeployments = computed(() => deployments.value.filter((deployment: De
 
         <UPageGrid>
           <UPageCard
-            v-for="(deployment, index) in otherDeployments"
+            v-for="(deployment, index) in otherProviders"
             :key="index"
             :to="deployment._path"
             :title="deployment.title"
