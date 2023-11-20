@@ -36,10 +36,18 @@ defineOgImage({
 })
 
 const links = []
+if (deployment.value?.website) {
+  links.push({
+    icon: 'i-ph-globe-duotone',
+    label: deployment.value?.title,
+    to: deployment.value?.website,
+    target: '_blank'
+  })
+}
 if (deployment.value?.nitroPreset) {
   links.push({
     icon: 'i-ph-lightning-duotone',
-    label: 'View on Nitro Docs',
+    label: 'Nitro Preset',
     to: `https://nitro.unjs.io/deploy/providers/${deployment.value?.nitroPreset}`,
     target: '_blank'
   })

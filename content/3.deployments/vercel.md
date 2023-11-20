@@ -6,6 +6,7 @@ logoSrc: '/assets/integrations/vercel.svg'
 category: Hosting
 featured: true
 nitroPreset: 'vercel'
+website: 'https://vercel.com/'
 ---
 
 ::callout

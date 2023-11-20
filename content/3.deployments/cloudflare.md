@@ -4,6 +4,7 @@ description: 'Deploy your Nuxt Application to Cloudflare infrastructure.'
 logoSrc: '/assets/integrations/cloudflare.svg'
 category: Hosting
 nitroPreset: 'cloudflare'
+website: 'https://pages.cloudflare.com/'
 ---
 
 ## Cloudflare Pages

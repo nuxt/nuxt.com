@@ -4,6 +4,7 @@ description: 'Deploy your Nuxt Application to Heroku infrastructure.'
 logoSrc: '/assets/integrations/heroku.svg'
 category: Hosting
 nitroPreset: 'heroku'
+website: 'https://www.heroku.com/'
 ---
 
 Nuxt supports deploying on [Heroku](https://heroku.com/) with minimal configuration.

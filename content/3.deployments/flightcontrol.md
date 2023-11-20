@@ -4,6 +4,7 @@ description: 'Deploy your Nuxt Application to Flightcontrol infrastructure.'
 logoSrc: '/assets/integrations/flightcontrol.webp'
 category: Hosting
 nitroPreset: 'flightcontrol'
+website: 'https://www.flightcontrol.dev'
 ---
 
 Nitro supports deploying to [AWS via Flightcontrol](https://flightcontrol.dev?ref=nuxt) with minimal configuration.

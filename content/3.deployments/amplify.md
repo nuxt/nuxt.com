@@ -1,16 +1,73 @@
 ---
-title: Amplify
-description: 'Deploy your Nuxt Application to Amplify infrastructure.'
+title: AWS Amplify
+description: 'Deploy your Nuxt Application to AWS Amplify infrastructure.'
 componentImg: Amplify
 logoIcon: 'i-logos-aws-amplify'
 category: Hosting
 featured: true
 nitroPreset: 'aws-amplify'
+website: 'https://aws.amazon.com/amplify/'
 ---
 
 ::callout
-**Zero Configuration**
+**Zero Configuration ✨**
 :br
 Integration with AWS Amplify is possible with zero configuration.
 ::
 
+## Setup
+
+1. Login to the [AWS Amplify Hosting Console](https://console.aws.amazon.com/amplify/)
+2. Click on "Get Started" > Amplify Hosting (Host your web app)
+3. Select and authorize access to your Git repository provider and select the main branch
+4. Choose a name for your app, make sure build settings are auto-detected and optionally set requirement environment variables under the advanced section
+5. Optionally, select Enable SSR logging to enable server-side logging to your Amazon CloudWatch account 
+6. Confirm configuration and click on "Save and Deploy"
+
+::callout
+As of today, you might need a custom `amplify.yml` file in order to have a working deployment, see below.
+::
+
+
+## Configuration
+
+You can configure advanced options of this preset using the `awsAmplify` property:
+
+```ts [nuxt.config.ts]
+export default defineNuxtConfig({
+  nitro: {
+    awsAmplify: {
+      // catchAllStaticFallback: true,
+      // imageOptimization: { "/_image", cacheControl: "public, max-age=3600, immutable" },
+      // imageSettings: { ... },
+    }
+  }
+})
+```
+
+### `amplify.yml`
+
+For advanced configuration, you can create a `amplify.yml` file:
+
+```yml [amplify.yml]
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - nvm use 18 && node --version
+        - corepack enable && npx --yes nypm install
+    build:
+      commands:
+        - pnpm build
+  artifacts:
+    baseDirectory: .amplify-hosting
+    files:
+      - "**/*"
+```
+
+## Learn more
+
+::read-more{to="https://nitro.unjs.io/deploy/providers/aws-amplify" target="_blank"}
+Head over **Nitro documentation** to learn more about the Cloudflare deployment preset.
+::

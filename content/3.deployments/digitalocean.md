@@ -4,6 +4,7 @@ description: 'Deploy your Nuxt Application to Digital Ocean infrastructure.'
 logoSrc: '/assets/integrations/digitalocean.svg'
 category: Hosting
 nitroPreset: 'digitalocean'
+website: 'https://www.digitalocean.com/'
 ---
 
 Nuxt supports deploying on the [Digital Ocean App Platform](https://docs.digitalocean.com/products/app-platform/) with minimal configuration.

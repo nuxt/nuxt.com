@@ -4,6 +4,7 @@ description: 'Deploy your Nuxt Application to GitHub Pages infrastructure.'
 logoIcon: 'i-simple-icons-github'
 category: Hosting
 nitroPreset: 'github-pages'
+website: 'https://pages.github.com/'
 ---
 
 Nuxt supports deploying to [GitHub Pages](https://pages.github.com/) with minimal configuration.

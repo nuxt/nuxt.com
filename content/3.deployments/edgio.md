@@ -4,6 +4,7 @@ description: 'Deploy your Nuxt Application to Edgio infrastructure.'
 logoIcon: 'i-logos-edgio-icon'
 category: Hosting
 nitroPreset: 'edgio'
+website: https://edgio.app
 ---
 
 Nuxt provides a built-in preset to generate output format compatible with [Edgio (formerly Layer0)](https://edg.io/).

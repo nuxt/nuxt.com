@@ -4,6 +4,7 @@ description: 'Deploy your Nuxt Application to Deno Deploy infrastructure.'
 logoIcon: 'i-logos-deno'
 category: Hosting
 nitroPreset: 'deno-deploy'
+website: 'https://deno.com/deploy'
 ---
 
 ::callout{color="amber" icon="i-ph-warning-duotone"}

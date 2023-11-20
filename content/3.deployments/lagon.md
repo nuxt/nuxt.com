@@ -4,6 +4,7 @@ description: 'Deploy your Nuxt Application to Lagon infrastructure.'
 logoSrc: '/assets/integrations/lagon.webp'
 category: Hosting
 nitroPreset: 'lagon'
+website: 'https://lagon.app/'
 ---
 
 [Lagon](https://lagon.app/) is an open-source runtime and platform that allows developers to run TypeScript and JavaScript Serverless Functions close to users.

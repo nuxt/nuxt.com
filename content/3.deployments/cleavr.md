@@ -4,6 +4,7 @@ description: 'Deploy your Nuxt Application to Cleavr infrastructure.'
 logoSrc: '/assets/integrations/cleavr.svg'
 category: Hosting
 nitroPreset: 'cleavr'
+website: 'https://cleavr.io/'
 ---
 
 ::callout

@@ -4,6 +4,7 @@ description: 'Deploy your Nuxt Application to Render infrastructure.'
 logoSrc: '/assets/integrations/render.png'
 category: Hosting
 nitroPreset: 'render'
+website: 'https://render.com/'
 ---
 
 Nuxt supports deploying on [Render](https://render.com/) with minimal configuration.
