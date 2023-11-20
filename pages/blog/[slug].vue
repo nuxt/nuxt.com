@@ -63,7 +63,7 @@ function copyLink () {
 <template>
   <UContainer>
     <UPage>
-      <UPageHeader :title="article.title" :description="article.description" class="lg:ml-16 xl:ml-32">
+      <UPageHeader :title="article.title" :description="article.description">
         <template #headline>
           {{ article.category }} <span class="text-gray-500 dark:text-gray-400">&middot;</span> <time class="text-gray-500 dark:text-gray-400"> {{ formatDateByLocale('en', article.date) }}</time>
         </template>
@@ -104,7 +104,7 @@ function copyLink () {
         </div>
       </UPageHeader>
 
-      <UPage class="lg:ml-16 xl:ml-32">
+      <UPage>
         <UPageBody prose>
           <ContentRenderer v-if="article && article.body" :value="article" />
 

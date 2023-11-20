@@ -49,7 +49,7 @@ if (deployment.value?.nitroPreset) {
 <template>
   <UContainer>
     <UPage>
-      <UPageHeader :description="deployment.description" headline="Deployments" class="lg:ml-16 xl:ml-32" :ui="{ icon: { base: 'text-black dark:text-white' } }">
+      <UPageHeader :description="deployment.description" headline="Deployments" :ui="{ icon: { base: 'text-black dark:text-white' } }">
         <template #title>
           <div class="flex items-center gap-4">
             <UIcon v-if="deployment.logoIcon" :name="deployment.logoIcon" class="w-10 h-10 text-black dark:text-white" />
@@ -72,7 +72,7 @@ if (deployment.value?.nitroPreset) {
         </div>
       </UPageHeader>
 
-      <UPage class="lg:ml-16 xl:ml-32">
+      <UPage>
         <UPageBody prose>
           <ContentRenderer v-if="deployment && deployment.body" :value="deployment" />
 

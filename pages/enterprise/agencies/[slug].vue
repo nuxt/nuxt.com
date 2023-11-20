@@ -38,7 +38,7 @@ defineOgImage({
 
 <template>
   <UContainer>
-    <UPageHeader :description="agency.description" :links="links" headline="Agencies" class="lg:ml-16 xl:ml-32">
+    <UPageHeader :description="agency.description" :links="links" headline="Agencies">
       <template #title>
         <div class="flex items-center gap-4">
           <UColorModeAvatar :light="agency.logo.light" :dark="agency.logo.dark" size="lg" :ui="{ rounded: 'rounded-sm' }" class="-m-[4px]" />
@@ -89,7 +89,7 @@ defineOgImage({
       </div>
     </UPageHeader>
 
-    <UPage class="lg:ml-16 xl:ml-32" :ui="{ right: 'my-8' }">
+    <UPage :ui="{ right: 'my-8' }">
       <UPageBody prose class="prose-lg">
         <ContentRenderer v-if="agency && agency.body" :value="agency" />
       </UPageBody>

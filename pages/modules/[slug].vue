@@ -83,7 +83,7 @@ defineOgImage({
       </template>
     </UAlert>
 
-    <UPageHeader :description="module.description" headline="Modules" class="lg:ml-16 xl:ml-32">
+    <UPageHeader :description="module.description" headline="Modules">
       <template #title>
         <div class="flex items-center gap-4">
           <UAvatar
@@ -148,7 +148,7 @@ defineOgImage({
       </div>
     </UPageHeader>
 
-    <UPage class="lg:ml-16 xl:ml-32">
+    <UPage>
       <UPageBody prose>
         <ContentRendererMarkdown v-if="module.readme?.body" :value="module.readme" class="module-readme" :components="{ a: ModuleProseA, img: ModuleProseImg }" />
       </UPageBody>
