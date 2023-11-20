@@ -37,6 +37,6 @@ export default defineNuxtConfig({
 
 ## More options
 
-::read-more{to="https://nitro.unjs.io/deploy/providers/iss" target="_blank"}
-Head over **Nitro documentation** to learn more about the ISS deployment presets.
+::read-more{to="https://nitro.unjs.io/deploy/providers/iis" target="_blank"}
+Head over **Nitro documentation** to learn more about the IIS deployment presets.
 ::
