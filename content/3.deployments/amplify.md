@@ -24,10 +24,6 @@ Integration with AWS Amplify is possible with zero configuration.
 5. Optionally, select Enable SSR logging to enable server-side logging to your Amazon CloudWatch account
 6. Confirm configuration and click on "Save and Deploy"
 
-::callout
-As of today, you might need a custom `amplify.yml` file in order to have a working deployment, see below.
-::
-
 ## Learn more
 
 ::read-more{to="https://nitro.unjs.io/deploy/providers/aws-amplify" target="_blank"}
