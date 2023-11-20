@@ -30,11 +30,11 @@ Learn more about Vercel’s [Git Integration](https://vercel.com/docs/concepts/g
 
 It is possible to deploy your Nuxt applications directly on [Vercel Edge Functions](https://vercel.com/docs/concepts/functions/edge-functions).
 
-- Vercel Edge Functions allow you to deliver content to your site's visitors with speed and personalization.
-- They are deployed globally by default on Vercel's Edge Network and enable you to move server-side logic to the Edge, close to your visitor's origin.
-- Edge Functions use the Vercel Edge Runtime, which is built on the same high-performance V8 JavaScript and WebAssembly engine that is used by the Chrome browser.
-- By taking advantage of this small runtime, Edge Functions can have faster cold boots and higher scalability than Serverless Functions.
-- Edge Functions run after the cache, and can both cache and return responses. [Read More](https://vercel.com/docs/concepts/functions/edge-functions)
+> Vercel Edge Functions allow you to deliver content to your site's visitors with speed and personalization.
+> They are deployed globally by default on Vercel's Edge Network and enable you to move server-side logic to the Edge, close to your visitor's origin.
+> Edge Functions use the Vercel Edge Runtime, which is built on the same high-performance V8 JavaScript and WebAssembly engine that is used by the Chrome browser.
+> By taking advantage of this small runtime, Edge Functions can have faster cold boots and higher scalability than Serverless Functions.
+> Edge Functions run after the cache, and can both cache and return responses. [Read More](https://vercel.com/docs/concepts/functions/edge-functions)
 
 In order to enable this target, set the following environment variable:
 
@@ -94,31 +94,6 @@ export default defineEventHandler(async (event) => {
 
 You can provide additional [build output configuration](https://vercel.com/docs/build-output-api/v3) using `vercel.config` key inside `nitro.config`. It will be merged with built-in auto generated config.
 
-## On-Demand Incremental Static Regeneration (ISR)
-
-On-demand revalidation allows you to purge the cache for an ISR route whenever you want, foregoing the time interval required with background revalidation.
-
-To revalidate a page on demand:
-
-1. Create an Environment Variable which will store a revalidation secret
-    * You can use the command `openssl rand -base64 32` or https://generate-secret.vercel.app/32 to generate a random value.
-
-2. Update your configuration:
-
-    ```ts [nuxt.config.ts]
-    export default defineNuxtConfig({
-      nitro: {
-        vercel: {
-          config: {
-            bypassToken: process.env.VERCEL_BYPASS_TOKEN
-          }
-        }
-      }
-    })
-    ```
-
-3. To trigger "On-Demand Incremental Static Regeneration (ISR)" and revalidate a path to a Prerender Function, make a GET or HEAD request to that path with a header of x-prerender-revalidate: `<bypassToken>`. When that Prerender Function endpoint is accessed with this header set, the cache will be revalidated. The next request to that function should return a fresh response.
-
 ## Templates
 
 ::card-group
@@ -142,4 +117,10 @@ To revalidate a page on demand:
   ---
   Example of a Nuxt application running on Vercel Edge Functions.
   ::
+::
+
+## Learn More
+
+::read-more{to="https://nitro.unjs.io/deploy/providers/vercel" target="_blank"}
+Head over **Nitro documentation** to learn more about On-Demand Incremental Static Regeneration or more advanced options.
 ::
