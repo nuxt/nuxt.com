@@ -19,21 +19,6 @@ website: 'https://www.iis.net/'
     ```
 5. Deploy the contents of your `.output` folder to your website in IIS.
 
-## IIS Configuration
-
-```ts [nuxt.config.ts]
-export default defineNuxtConfig({
-  nitro: {
-    // IIS options default
-    iis: {
-      // merges in a pre-exisiting web.config file to the nitro default file
-      mergeConfig: true,
-      // overrides the default nitro web.config file all together
-      overrideConfig: false,
-    },
-  },
-});
-```
 
 ## More options
 
