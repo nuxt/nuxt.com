@@ -44,7 +44,7 @@ export default defineEventHandler(async (event) => {
       .replaceAll(/class="[^"]*"/g, '')
 
     feed.addItem({
-      link: `https://nuxt.com${blog._path}`,
+      link: `${BaseUrl}${blog._path}`,
       title: blog.title,
       date: new Date(blog.date),
       description: blog.description,
