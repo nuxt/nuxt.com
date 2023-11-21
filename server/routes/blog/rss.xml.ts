@@ -54,6 +54,6 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  appendHeader(event, 'Content-Type', 'text/xml')
+  appendHeader(event, 'Content-Type', 'application/xml')
   return feed.rss2()
 })
