@@ -6,6 +6,16 @@ const { data: page } = await useAsyncData(route.path, () => queryContent(route.p
 
 const title = page.value.head?.title || page.value.title
 const description = page.value.head?.description || page.value.description
+useHead({
+  link: [
+    {
+      rel: 'alternate',
+      type: 'application/atom+xml',
+      title: 'Nuxt Blog RSS',
+      href: 'https://nuxt.com/blog/rss.xml'
+    }
+  ]
+})
 useSeoMeta({
   titleTemplate: '%s',
   title,
