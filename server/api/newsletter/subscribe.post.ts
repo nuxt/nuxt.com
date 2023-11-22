@@ -1,11 +1,11 @@
-import { z, useValidatedBody } from 'h3-zod'
+import { z } from 'zod'
 import { withQuery, withTrailingSlash } from 'ufo'
 
 export default eventHandler(async (event) => {
   // Get the email from body and validate its format
-  const { email } = await useValidatedBody(event, {
+  const { email } = await readValidatedBody(event, z.object({
     email: z.string().email().trim()
-  })
+  }).parse)
 
   const listId = process.env.NUXT_SENDGRID_LIST_ID
   if (!listId) {

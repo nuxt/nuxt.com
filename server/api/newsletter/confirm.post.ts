@@ -1,11 +1,11 @@
-import { z, useValidatedBody } from 'h3-zod'
+import { z } from 'zod'
 
 export default eventHandler(async (event) => {
   // Get the email from body
-  const { email, confirmation } = await useValidatedBody(event, {
+  const { email, confirmation } = await readValidatedBody(event, z.object({
     email: z.string().email().trim(),
     confirmation: z.string()
-  })
+  }).parse)
 
   const listId = process.env.NUXT_SENDGRID_LIST_ID
   if (!listId) {

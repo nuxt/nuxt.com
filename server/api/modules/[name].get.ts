@@ -1,9 +1,9 @@
-import { z, useValidatedParams } from 'h3-zod'
+import { z } from 'zod'
 
 export default defineCachedEventHandler(async (event) => {
-  const { name } = await useValidatedParams(event, z.object({
+  const { name } = await getValidatedRouterParams(event, z.object({
     name: z.string()
-  }))
+  }).parse)
 
   const modules = await fetchModules() as any[]
 
