@@ -8,7 +8,7 @@ const SiteName = 'The Nuxt Blog'
 const SiteDescription =
   'Read the latest news about all Nuxt solutions, from framework announcements to integration tutorials.'
 const SiteLanguage = 'en'
-const Copyright = `Copyright © 2016-${ new Date().getFullYear() } Nuxt - MIT License`
+const Copyright = `Copyright © 2016-${ new Date().getFullYear() } Nuxt All Rights Reserved`
 
 export default defineEventHandler(async (event) => {
   const feed = new Feed({
