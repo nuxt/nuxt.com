@@ -1,56 +1,39 @@
 import { serverQueryContent } from '#content/server'
-import * as cheerio from 'cheerio'
 import { Feed } from 'feed'
-
-const BaseUrl = 'https://nuxt.com'
-const SiteUrl = `${BaseUrl}/blog`
-const SiteName = 'The Nuxt Blog'
-const SiteDescription =
-  'Read the latest news about all Nuxt solutions, from framework announcements to integration tutorials.'
-const SiteLanguage = 'en'
-const Copyright = `Copyright © 2016-${ new Date().getFullYear() } Nuxt All Rights Reserved`
+import { joinURL } from 'ufo'
 
 export default defineEventHandler(async (event) => {
+  const baseUrl = 'https://nuxt.com'
+  const siteUrl = joinURL(baseUrl, 'blog')
   const feed = new Feed({
-    title: SiteName,
-    description: SiteDescription,
-    id: SiteUrl,
-    link: SiteUrl,
-    language: SiteLanguage,
-    image: `${BaseUrl}/icon.png`,
-    favicon: `${BaseUrl}/icon.png`,
-    copyright: Copyright,
+    title: 'The Nuxt Blog',
+    description: 'News and updates about Nuxt.',
+    id: siteUrl,
+    link: siteUrl,
+    language: 'en',
+    image: joinURL(baseUrl, 'icon.png'),
+    favicon: joinURL(baseUrl, 'favicon.png'),
+    copyright: `Copyright © 2016-${ new Date().getFullYear() } Nuxt All Rights Reserved`,
     feedLinks: {
-      rss: `${SiteUrl}/rss.xml`
+      rss: `${siteUrl}/rss.xml`
     }
   })
 
-  const docs = await serverQueryContent(event)
+  const articles = await serverQueryContent(event, '/blog')
     .sort({ date: -1 })
-    .where({ _partial: false, _draft: false })
+    .where({ _partial: false, _draft: false, _type: 'markdown' })
     .find()
-  const blogs = docs.filter(
-    (doc) => doc?._path?.includes('/blog/') && doc.title && doc.date
-  )
 
-  for (const blog of blogs) {
-    const content = await $fetch<string>(blog._path)
-    const $ = cheerio.load(content)
-    const prose = $('.prose')
-      .html()
-      .replaceAll('<!--[-->', '')
-      .replaceAll('<!--]-->', '')
-      .replaceAll('<!---->', '')
-      .replaceAll(/class="[^"]*"/g, '')
-
+  for (const article of articles) {
+    console.log(article)
     feed.addItem({
-      link: `${BaseUrl}${blog._path}`,
-      title: blog.title,
-      date: new Date(blog.date),
-      description: blog.description,
-      author: blog.authors,
-      category: blog.category,
-      content: prose
+      link: joinURL(baseUrl, article._path),
+      image: joinURL(baseUrl, article.image),
+      title: article.title,
+      date: new Date(article.date),
+      description: article.description,
+      author: article.authors,
+      category: article.category
     })
   }
 
