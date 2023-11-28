@@ -50,7 +50,7 @@ provide('navigation', navigation)
   <div>
     <NuxtLoadingIndicator />
 
-    <AppBanner :id="1" to="https://masteringnuxt.com/?ref=nuxt">
+    <!-- <AppBanner :id="1" to="https://masteringnuxt.com/?ref=nuxt">
       <p class="text-gray-600 dark:text-gray-300 flex items-center gap-1">
         <UIcon name="i-ph-lightbulb-duotone" class="w-4 h-4" />
 
@@ -58,7 +58,7 @@ provide('navigation', navigation)
       </p>
 
       <UButton label="Learn more" color="gray" trailing-icon="i-ph-arrow-right" size="2xs" class="rounded-full" />
-    </AppBanner>
+    </AppBanner> -->
 
     <AppHeader :links="headerLinks" />
 
