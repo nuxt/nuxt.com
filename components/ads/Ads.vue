@@ -1,11 +1,12 @@
 <script setup lang="ts">
-// const { $ads } = useNuxtApp()
+const { $ads } = useNuxtApp()
+const uiPro = Math.round(Math.random())
 </script>
 
 <template>
   <div class="space-y-3">
-    <AdsUIPro />
-    <!-- <AdsFallback v-if="$ads.adBlocked.value" /> -->
-    <!-- <AdsCarbon v-else :key="$route.path" /> -->
+    <AdsUIPro v-if="uiPro" />
+    <AdsFallback v-else-if="$ads.adBlocked.value" />
+    <AdsCarbon v-else :key="$route.path" />
   </div>
 </template>
