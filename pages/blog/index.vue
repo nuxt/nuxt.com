@@ -40,6 +40,20 @@ await fetchList()
       <template #links>
         <NewsletterForm class="flex-1 max-w-xs" :description="null" />
       </template>
+      <template #description>
+        {{ page.description }}
+        <UButton
+          to="/blog/rss.xml"
+          color="gray"
+          variant="outline"
+          external
+          icon="i-ph-rss"
+          size="2xs"
+          target="_blank"
+        >
+          RSS
+        </UButton>
+      </template>
     </UPageHero>
 
     <UPage>
