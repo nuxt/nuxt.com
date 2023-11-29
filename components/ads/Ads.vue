@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const { $ads } = useNuxtApp()
-const uiPro = Math.round(Math.random())
+const uiPro = useState('uiProAd', () => Math.round(Math.random()))
 </script>
 
 <template>
