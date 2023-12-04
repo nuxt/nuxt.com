@@ -281,7 +281,7 @@ sections:
           job:  'Co-founder and CEO of Vercel'
           imgSrc: 'https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/rauchg'
           imgSrcSet: 'https://ipx.nuxt.com/f_auto,s_80x80/gh_avatar/rauchg 2x'
-          url: 'https://twitter.com/rauchg?lang=fr'
+          url: 'https://twitter.com/rauchg'
       - quote: "Nuxt has outstanding developer productivity, experience, and performance right out of the gate! There’s so much attention to detail, ensuring teams have everything at their fingertips to productively build all manners of applications."
         author:
           name: 'Sarah Drasner'
