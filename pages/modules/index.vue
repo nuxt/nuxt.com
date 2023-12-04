@@ -56,7 +56,7 @@ const { copy } = useCopyToClipboard()
         </h3>
         <UPageGrid :ui="{ wrapper: 'grid-cols-2 sm:grid-cols-2 xl:grid-cols-2 gap-4' }">
           <UPageCard to="/modules/image" title="Nuxt Image" description="Plug-and-play image optimization." />
-          <UPageCard to="/modules/content" title="Nuxt Content" description="Git-based CMS with Markdow support." />
+          <UPageCard to="/modules/content" title="Nuxt Content" description="Git-based CMS with Markdown support." />
           <UPageCard to="/modules/devtools" title="Nuxt DevTools" description="Visual tools that help you to know your app." />
           <UPageCard to="/modules/ui" title="Nuxt UI" description="Fully styled and customizable components." />
         </UPageGrid>
