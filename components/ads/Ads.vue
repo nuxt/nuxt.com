@@ -1,6 +1,9 @@
 <script setup lang="ts">
 const { $ads } = useNuxtApp()
 const uiPro = useState('uiProAd', () => Math.round(Math.random()))
+if (!useNuxtApp().isHydrating) {
+  uiPro.value = Math.round(Math.random())
+}
 </script>
 
 <template>

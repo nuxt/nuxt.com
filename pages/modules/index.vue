@@ -48,7 +48,20 @@ const { copy } = useCopyToClipboard()
 
 <template>
   <UContainer>
-    <UPageHero v-bind="page" />
+    <UPageHero v-bind="page">
+      <div class="lg:pl-10">
+        <h3 class="font-semibold text-lg mb-2">
+          Official Nuxt modules
+          <UIcon name="i-ph-medal-duotone" class="h-4 w-4 text-primary" title="Official module" />
+        </h3>
+        <UPageGrid :ui="{ wrapper: 'grid-cols-2 sm:grid-cols-2 xl:grid-cols-2 gap-4' }">
+          <UPageCard to="/modules/image" title="Nuxt Image" description="Plug-and-play image optimization." />
+          <UPageCard to="/modules/content" title="Nuxt Content" description="Git-based CMS with Markdow support." />
+          <UPageCard to="/modules/devtools" title="Nuxt DevTools" description="Visual tools that help you to know your app." />
+          <UPageCard to="/modules/ui" title="Nuxt UI" description="Fully styled and customizable components." />
+        </UPageGrid>
+      </div>
+    </UPageHero>
 
     <UPage id="smooth" class="pt-20 -mt-20">
       <template #left>
