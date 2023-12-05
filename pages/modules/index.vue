@@ -50,15 +50,27 @@ const { copy } = useCopyToClipboard()
   <UContainer>
     <UPageHero v-bind="page">
       <div class="lg:pl-10">
-        <h3 class="font-semibold text-lg mb-2">
-          Official Nuxt modules
-          <UIcon name="i-ph-medal-duotone" class="h-4 w-4 text-primary" title="Official module" />
-        </h3>
         <UPageGrid :ui="{ wrapper: 'grid-cols-2 sm:grid-cols-2 xl:grid-cols-2 gap-4' }">
-          <UPageCard to="/modules/image" title="Nuxt Image" description="Plug-and-play image optimization." />
-          <UPageCard to="/modules/content" title="Nuxt Content" description="Git-based CMS with Markdown support." />
-          <UPageCard to="/modules/devtools" title="Nuxt DevTools" description="Visual tools that help you to know your app." />
-          <UPageCard to="/modules/ui" title="Nuxt UI" description="Fully styled and customizable components." />
+          <UPageCard to="https://image.nuxt.com" target="_blank" description="Plug-and-play image optimization.">
+            <template #title>
+              Nuxt Image <UIcon name="i-ph-medal-duotone" class="h-4 w-4 text-primary pointer-events-none" />
+            </template>
+          </UPageCard>
+          <UPageCard to="https://content.nuxt.com" target="_blank" title="Nuxt Content" description="Git-based CMS with Markdown support.">
+            <template #title>
+              Nuxt Content <UIcon name="i-ph-medal-duotone" class="h-4 w-4 text-primary pointer-events-none" />
+            </template>
+          </UPageCard>
+          <UPageCard to="https://devtools.nuxt.com" target="_blank" description="Visual tools that help you to know your app.">
+            <template #title>
+              Nuxt DevTools <UIcon name="i-ph-medal-duotone" class="h-4 w-4 text-primary pointer-events-none" />
+            </template>
+          </UPageCard>
+          <UPageCard to="https://ui.nuxt.com" target="_blank" description="Fully styled and customizable components.">
+            <template #title>
+              Nuxt UI <UIcon name="i-ph-medal-duotone" class="h-4 w-4 text-primary pointer-events-none" />
+            </template>
+          </UPageCard>
         </UPageGrid>
       </div>
     </UPageHero>
@@ -136,7 +148,7 @@ const { copy } = useCopyToClipboard()
               {{ module.name }}
 
               <!-- <UTooltip v-if="module.type === 'official'" text="Official module"> -->
-              <UIcon v-if="module.type === 'official'" name="i-ph-medal-duotone" class="h-4 w-4 text-primary" />
+              <UIcon v-if="module.type === 'official'" name="i-ph-medal-duotone" class="h-4 w-4 text-primary pointer-events-none" />
               <!-- </UTooltip> -->
             </template>
 
