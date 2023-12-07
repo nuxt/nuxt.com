@@ -51,22 +51,22 @@ const { copy } = useCopyToClipboard()
     <UPageHero v-bind="page">
       <div class="lg:pl-10">
         <UPageGrid :ui="{ wrapper: 'grid-cols-2 sm:grid-cols-2 xl:grid-cols-2 gap-4' }">
-          <UPageCard to="https://image.nuxt.com" target="_blank" description="Plug-and-play image optimization.">
+          <UPageCard to="https://image.nuxt.com/?utm_source=nuxt_website&utm_medium=modules" target="_blank" description="Plug-and-play image optimization.">
             <template #title>
               Nuxt Image <UIcon name="i-ph-medal-duotone" class="h-4 w-4 text-primary pointer-events-none" />
             </template>
           </UPageCard>
-          <UPageCard to="https://content.nuxt.com" target="_blank" title="Nuxt Content" description="Git-based CMS with Markdown support.">
+          <UPageCard to="https://content.nuxt.com/?utm_source=nuxt_website&utm_medium=modules" target="_blank" title="Nuxt Content" description="Git-based CMS with Markdown support.">
             <template #title>
               Nuxt Content <UIcon name="i-ph-medal-duotone" class="h-4 w-4 text-primary pointer-events-none" />
             </template>
           </UPageCard>
-          <UPageCard to="https://devtools.nuxt.com" target="_blank" description="Visual tools that help you to know your app.">
+          <UPageCard to="https://devtools.nuxt.com/?utm_source=nuxt_website&utm_medium=modules" target="_blank" description="Visual tools that help you to know your app.">
             <template #title>
               Nuxt DevTools <UIcon name="i-ph-medal-duotone" class="h-4 w-4 text-primary pointer-events-none" />
             </template>
           </UPageCard>
-          <UPageCard to="https://ui.nuxt.com" target="_blank" description="Fully styled and customizable components.">
+          <UPageCard to="https://ui.nuxt.com/?utm_source=nuxt_website&utm_medium=modules" target="_blank" description="Fully styled and customizable components.">
             <template #title>
               Nuxt UI <UIcon name="i-ph-medal-duotone" class="h-4 w-4 text-primary pointer-events-none" />
             </template>
