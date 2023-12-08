@@ -58,7 +58,7 @@ const _useNavigation = () => {
       }]
     }, {
       label: 'Templates',
-      icon: 'i-ph-app-window-duotone',
+      icon: 'i-ph-browsers-duotone',
       to: '/templates'
 
     }, {
