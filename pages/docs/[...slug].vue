@@ -23,7 +23,11 @@ const { data: surround } = await useAsyncData(`${route.path}-surround`, async ()
 })
 
 const breadcrumb = computed(() => {
-  const links = mapContentNavigation(findPageBreadcrumb(navigation.value, page.value))
+  const links = mapContentNavigation(findPageBreadcrumb(navigation.value, page.value)).map((link) => ({
+    label: link.label,
+    to: link.to
+  }))
+
   if (route.path.startsWith('/docs/bridge') || route.path.startsWith('/docs/migration')) {
     links.splice(1, 0, {
       label: 'Upgrade Guide',
@@ -33,6 +37,7 @@ const breadcrumb = computed(() => {
 
   return links
 })
+
 const titleTemplate = computed(() => {
   if (page.value.titleTemplate) return page.value.titleTemplate
   const titleTemplate = navKeyFromPath(route.path, 'titleTemplate', navigation.value)
@@ -83,6 +88,7 @@ const ecosystemLinks = [{
 
 const title = page.value.head?.title || page.value.title
 const description = page.value.head?.description || page.value.description
+
 useSeoMeta({
   titleTemplate,
   title,
@@ -100,14 +106,14 @@ defineOgImage({
 </script>
 
 <template>
-  <UPage>
+  <UPage
+    :ui="{
+      right: 'sticky top-[--header-height] bg-background/75 backdrop-blur group -mx-4 sm:-mx-6 px-4 sm:px-6 lg:px-4 lg:-mx-4 overflow-y-auto max-h-[calc(100vh-var(--header-height))]',
+    }"
+  >
     <UPageHeader v-bind="page">
       <template #headline>
-        <NuxtLink v-for="(link, index) in breadcrumb" :key="index" :to="link.to" :class="[index < breadcrumb.length - 1 && 'text-gray-500 dark:text-gray-400']" class="flex items-center gap-1.5 group">
-          <span :class="[index < breadcrumb.length - 1 && 'group-hover:text-gray-700 dark:group-hover:text-gray-200']">{{ link.label }}</span>
-
-          <UIcon v-if="index < breadcrumb.length - 1" name="i-ph-caret-right" class="w-4 h-4" />
-        </NuxtLink>
+        <UBreadcrumb :links="breadcrumb" />
       </template>
     </UPageHeader>
 
@@ -120,7 +126,7 @@ defineOgImage({
     </UPageBody>
 
     <template v-if="page.toc !== false" #right>
-      <UDocsToc :links="page.body?.toc?.links">
+      <UDocsToc :links="page.body?.toc?.links" :ui="{ wrapper: '' }">
         <template #bottom>
           <div class="hidden lg:block space-y-6" :class="{ '!mt-6': page.body?.toc?.links?.length }">
             <UDivider v-if="page.body?.toc?.links?.length" type="dashed" />

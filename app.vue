@@ -5,7 +5,7 @@ import type { ParsedContent } from '@nuxt/content/dist/runtime/types'
 const search = ref(null)
 const colorMode = useColorMode()
 const { headerLinks, searchGroups, searchLinks } = useNavigation()
-const color = computed(() => colorMode.value === 'dark' ? '#18181b' : 'white')
+const color = computed(() => colorMode.value === 'dark' ? '#020420' : 'white')
 
 const { data: navigation } = await useLazyAsyncData('navigation', () => fetchContentNavigation(), { default: () => [] })
 const { data: files } = useLazyFetch<ParsedContent[]>('/api/search.json', {
@@ -50,15 +50,15 @@ provide('navigation', navigation)
   <div>
     <NuxtLoadingIndicator />
 
-    <AppBanner :id="1" to="https://masteringnuxt.com/?ref=nuxt">
+    <!-- <AppBanner :id="1" to="https://masteringnuxt.com/?ref=nuxt">
       <p class="text-gray-600 dark:text-gray-300 flex items-center gap-1">
         <UIcon name="i-ph-lightbulb-duotone" class="w-4 h-4" />
 
         Enjoy <span class="font-bold text-gray-900 dark:text-white">Mastering Nuxt</span> black friday!
       </p>
 
-      <UButton label="Learn more" color="gray" trailing-icon="i-ph-arrow-right" size="xs" class="rounded-full" />
-    </AppBanner>
+      <UButton label="Learn more" color="gray" trailing-icon="i-ph-arrow-right" size="2xs" class="rounded-full" />
+    </AppBanner> -->
 
     <AppHeader :links="headerLinks" />
 
@@ -69,7 +69,14 @@ provide('navigation', navigation)
     <AppFooter />
 
     <ClientOnly>
-      <UDocsSearch ref="search" :files="files" :navigation="navigation[0]?.children" :groups="searchGroups" :links="searchLinks" />
+      <UDocsSearch
+        ref="search"
+        :files="files"
+        :navigation="navigation[0]?.children"
+        :groups="searchGroups"
+        :links="searchLinks"
+        :fuse="{ resultLimit: 13 }"
+      />
 
       <UNotifications />
     </ClientOnly>

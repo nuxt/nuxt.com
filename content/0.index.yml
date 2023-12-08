@@ -1,8 +1,8 @@
 navigation: false
 hero:
   cta:
-    label: Nuxt v3.8 is out
-    to: /blog/v3-8
+    label: Nuxt DevTools v1.0 is out
+    to: /blog/nuxt-devtools-v1-0
     variant: outline
     icon: i-ph-arrow-right
     size: xs
@@ -174,22 +174,22 @@ sections:
     integrations:
       - src: /assets/integrations/cloudflare.svg
         alt: Cloudflare
-        to: https://developers.cloudflare.com/pages/framework-guides/deploy-a-nuxt-site/
+        to: /deploy/cloudflare
       - src: /assets/integrations/vercel.svg
         alt: Vercel
-        to: https://vercel.com/docs/frameworks/nuxt
+        to: /deploy/vercel
       - src: /assets/integrations/heroku.svg
         alt: Heroku
-        to: https://www.heroku.com/
-      - src: /assets/integrations/aws.svg
-        alt: Aws
-        to: https://aws.amazon.com/
+        to: /deploy/heroku
+      - src: /assets/integrations/aws-amplify.svg
+        alt: Amplify
+        to: /deploy/aws-amplify
       - src: /assets/integrations/digitalocean.svg
         alt: DigitalOcean
-        to: https://www.digitalocean.com/
+        to: /deploy/digitalocean
       - src: /assets/integrations/netlify.svg
         alt: Netlify
-        to: https://docs.netlify.com/integrations/frameworks/nuxt/
+        to: /deploy/netlify
       - src: /assets/integrations/tailwind.svg
         alt: Tailwind CSS
         to: /modules/tailwindcss
@@ -281,7 +281,7 @@ sections:
           job:  'Co-founder and CEO of Vercel'
           imgSrc: 'https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/rauchg'
           imgSrcSet: 'https://ipx.nuxt.com/f_auto,s_80x80/gh_avatar/rauchg 2x'
-          url: 'https://twitter.com/rauchg?lang=fr'
+          url: 'https://twitter.com/rauchg'
       - quote: "Nuxt has outstanding developer productivity, experience, and performance right out of the gate! There’s so much attention to detail, ensuring teams have everything at their fingertips to productively build all manners of applications."
         author:
           name: 'Sarah Drasner'

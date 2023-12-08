@@ -1,85 +1,102 @@
 import { createSharedComposable } from '@vueuse/core'
 
 const _useNavigation = () => {
-  const route = useRoute()
+  const headerLinks = computed(() => {
+    const route = useRoute()
 
-  const headerLinks = computed(() => [{
-    label: 'Docs',
-    icon: 'i-ph-book-bookmark-duotone',
-    to: '/docs',
-    children: [{
-      label: 'Get Started',
-      description: 'Learn how to get started with Nuxt.',
-      icon: 'i-ph-rocket-launch-duotone',
-      to: '/docs/getting-started',
-      active: route.path.startsWith('/docs/getting-started')
+    return [{
+      label: 'Docs',
+      icon: 'i-ph-book-bookmark-duotone',
+      to: '/docs',
+      search: false,
+      children: [{
+        label: 'Get Started',
+        description: 'Learn how to get started with Nuxt.',
+        icon: 'i-ph-rocket-launch-duotone',
+        to: '/docs/getting-started',
+        active: route.path.startsWith('/docs/getting-started')
+      }, {
+        label: 'Guide',
+        description: 'Learn how to build and deploy Nuxt applications.',
+        icon: 'i-ph-book-open-duotone',
+        to: '/docs/guide',
+        active: route.path.startsWith('/docs/guide')
+      }, {
+        label: 'API',
+        description: 'Explore the Nuxt API.',
+        icon: 'i-ph-code',
+        to: '/docs/api',
+        active: route.path.startsWith('/docs/api')
+      }, {
+        label: 'Examples',
+        description: 'Discover and explore official and community examples.',
+        icon: 'i-ph-app-window-duotone',
+        to: '/docs/examples',
+        active: route.path.startsWith('/docs/examples')
+      }, {
+        label: 'Community',
+        description: 'Find answers and support from the community.',
+        icon: 'i-ph-chats-teardrop-duotone',
+        to: '/docs/community',
+        active: route.path.startsWith('/docs/community')
+      }]
     }, {
-      label: 'Guide',
-      description: 'Learn how to build and deploy Nuxt applications.',
-      icon: 'i-ph-book-open-duotone',
-      to: '/docs/guide',
-      active: route.path.startsWith('/docs/guide')
+      label: 'Integrations',
+      to: '/modules',
+      search: false,
+      active: route.path.startsWith('/modules') || route.path.startsWith('/deploy'),
+      children: [{
+        label: 'Modules',
+        description: 'Supercharge your Nuxt project with modules.',
+        icon: 'i-ph-puzzle-piece-duotone',
+        to: '/modules'
+      }, {
+        label: 'Hosting',
+        description: 'Deploy your Nuxt project anywhere.',
+        icon: 'i-ph-rocket-launch-duotone',
+        to: '/deploy'
+      }]
     }, {
-      label: 'API',
-      description: 'Explore the Nuxt API.',
-      icon: 'i-ph-code',
-      to: '/docs/api',
-      active: route.path.startsWith('/docs/api')
-    }, {
-      label: 'Examples',
-      description: 'Discover and explore official and community examples.',
+      label: 'Templates',
       icon: 'i-ph-app-window-duotone',
-      to: '/docs/examples',
-      active: route.path.startsWith('/docs/examples')
+      to: '/templates'
+
     }, {
-      label: 'Community',
-      description: 'Find answers and support from the community.',
-      icon: 'i-ph-chats-teardrop-duotone',
-      to: '/docs/community',
-      active: route.path.startsWith('/docs/community')
+      label: 'Showcase',
+      icon: 'i-ph-projector-screen-duotone',
+      to: '/showcase'
+    }, {
+      label: 'Enterprise',
+      icon: 'i-ph-buildings-duotone',
+      to: '/enterprise',
+      search: false,
+      children: [{
+        label: 'Support',
+        to: '/enterprise/support',
+        description: 'Get help with Nuxt.js directly from the team that creates it.',
+        icon: 'i-ph-lifebuoy-duotone'
+      }, {
+        label: 'Agencies',
+        to: '/enterprise/agencies',
+        description: 'Find an agency that specializes in Nuxt.js development.',
+        icon: 'i-ph-handshake-duotone'
+      }, {
+        label: 'Sponsors',
+        to: '/enterprise/sponsors',
+        description: 'Become a sponsor and get your logo on our README on GitHub with a link to your site.',
+        icon: 'i-ph-hand-heart-duotone'
+      }, {
+        label: 'Jobs',
+        to: '/enterprise/jobs',
+        description: 'Find a job or post a job opportunity for Nuxt.js experts.',
+        icon: 'i-ph-briefcase-duotone'
+      }]
+    }, {
+      label: 'Blog',
+      icon: 'i-ph-newspaper-duotone',
+      to: '/blog'
     }]
-  }, {
-    label: 'Modules',
-    icon: 'i-ph-puzzle-piece-duotone',
-    to: '/modules'
-  }, {
-    label: 'Templates',
-    icon: 'i-ph-paint-brush',
-    to: '/templates'
-  }, {
-    label: 'Showcase',
-    icon: 'i-ph-projector-screen-duotone',
-    to: '/showcase'
-  }, {
-    label: 'Enterprise',
-    icon: 'i-ph-buildings-duotone',
-    to: '/enterprise',
-    children: [{
-      label: 'Support',
-      to: '/enterprise/support',
-      description: 'Get help with Nuxt.js directly from the team that creates it.',
-      icon: 'i-ph-lifebuoy-duotone'
-    }, {
-      label: 'Agencies',
-      to: '/enterprise/agencies',
-      description: 'Find an agency that specializes in Nuxt.js development.',
-      icon: 'i-ph-handshake-duotone'
-    }, {
-      label: 'Sponsors',
-      to: '/enterprise/sponsors',
-      description: 'Become a sponsor and get your logo on our README on GitHub with a link to your site.',
-      icon: 'i-ph-hand-heart-duotone'
-    }, {
-      label: 'Jobs',
-      to: '/enterprise/jobs',
-      description: 'Find a job or post a job opportunity for Nuxt.js experts.',
-      icon: 'i-ph-briefcase-duotone'
-    }]
-  }, {
-    label: 'Blog',
-    icon: 'i-ph-newspaper-duotone',
-    to: '/blog'
-  }])
+  })
 
   const footerLinks = [{
     label: 'Community',
@@ -137,7 +154,7 @@ const _useNavigation = () => {
 
   const searchLinks = computed(() => [...headerLinks.value.map(link => {
     // Remove `/docs` and `/enterprise` links from command palette
-    if (['/docs', '/enterprise'].includes(link.to)) {
+    if (link.search === false) {
       return {
         label: link.label,
         icon: link.icon,
@@ -160,6 +177,10 @@ const _useNavigation = () => {
     key: 'modules-search',
     label: 'Modules',
     search: async (q) => {
+      if (!q) {
+        return []
+      }
+
       const { modules, fetchList } = useModules()
       if (!modules.value.length) {
         await fetchList()
@@ -175,6 +196,32 @@ const _useNavigation = () => {
             src: moduleImage(module.icon)
           },
           to: `/modules/${module.name}`
+        }))
+    }
+  }, {
+    key: 'hosting-search',
+    label: 'Hosting',
+    search: async (q) => {
+      if (!q) {
+        return []
+      }
+
+      const { providers, fetchList } = useHostingProviders()
+      if (!providers.value.length) {
+        await fetchList()
+      }
+
+      return providers.value
+        .filter(hosting => ['title'].map(field => hosting[field]).filter(Boolean).some(value => value.search(searchTextRegExp(q)) !== -1))
+        .map(hosting => ({
+          id: `hosting-${hosting._path}`,
+          label: hosting.title,
+          suffix: hosting.description,
+          icon: hosting.logoIcon,
+          avatar: hosting.logoSrc ? {
+            src: hosting.logoSrc
+          } : undefined,
+          to: hosting._path
         }))
     }
   }, {

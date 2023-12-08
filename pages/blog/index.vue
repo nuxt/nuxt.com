@@ -6,6 +6,16 @@ const { data: page } = await useAsyncData(route.path, () => queryContent(route.p
 
 const title = page.value.head?.title || page.value.title
 const description = page.value.head?.description || page.value.description
+useHead({
+  link: [
+    {
+      rel: 'alternate',
+      type: 'application/atom+xml',
+      title: 'Nuxt Blog RSS',
+      href: 'https://nuxt.com/blog/rss.xml'
+    }
+  ]
+})
 useSeoMeta({
   titleTemplate: '%s',
   title,
@@ -29,6 +39,20 @@ await fetchList()
     <UPageHero v-bind="page">
       <template #links>
         <NewsletterForm class="flex-1 max-w-xs" :description="null" />
+      </template>
+      <template #description>
+        {{ page.description }}
+        <UButton
+          to="/blog/rss.xml"
+          color="gray"
+          variant="outline"
+          external
+          icon="i-ph-rss"
+          size="2xs"
+          target="_blank"
+        >
+          RSS
+        </UButton>
       </template>
     </UPageHero>
 

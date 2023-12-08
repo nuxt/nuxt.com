@@ -29,8 +29,8 @@ if (process.server) {
 </script>
 
 <template>
-  <NuxtLink :to="to" target="_blank" class="relative w-full z-50 border-b border-gray-200 dark:border-gray-800 app-banner flex items-center justify-center">
-    <div class="flex flex-wrap justify-center items-center gap-3 h-12 text-sm">
+  <NuxtLink :to="to" target="_blank" class="relative w-full z-50 border-b border-gray-200 dark:border-gray-800 app-banner flex items-center justify-between lg:justify-center px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-wrap justify-center items-center gap-2 h-12 text-sm">
       <slot />
     </div>
 
@@ -39,7 +39,7 @@ if (process.server) {
       variant="link"
       size="sm"
       icon="i-ph-x"
-      class="right-4 absolute"
+      class="right-4 sm:right-6 lg:right-8 absolute"
       @click.prevent="hideBanner"
     />
   </NuxtLink>

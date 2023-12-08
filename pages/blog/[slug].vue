@@ -61,7 +61,7 @@ function copyLink () {
 </script>
 
 <template>
-  <UContainer :ui="{ constrained: 'max-w-4xl' }">
+  <UContainer>
     <UPage>
       <UPageHeader :title="article.title" :description="article.description">
         <template #headline>
@@ -91,8 +91,7 @@ function copyLink () {
           </UButton>
         </div>
 
-
-        <div class="absolute top-[72px] -left-[72px] hidden lg:flex">
+        <div class="absolute top-[68px] -left-[64px] hidden lg:flex">
           <UTooltip text="Back to blog">
             <UButton
               to="/blog"
@@ -105,18 +104,24 @@ function copyLink () {
         </div>
       </UPageHeader>
 
-      <UPageBody prose>
-        <ContentRenderer v-if="article && article.body" :value="article" />
+      <UPage>
+        <UPageBody prose>
+          <ContentRenderer v-if="article && article.body" :value="article" />
 
-        <div class="flex justify-end items-center gap-1.5 mt-12 not-prose">
-          <UButton icon="i-ph-link-simple" v-bind="($ui.button.secondary as any)" @click="copyLink" />
-          <UButton v-for="(link, index) in socialLinks" :key="index" v-bind="{ ...($ui.button.secondary as any), ...link }" target="_blank" />
-        </div>
+          <div class="flex justify-end items-center gap-1.5 mt-12 not-prose">
+            <UButton icon="i-ph-link-simple" v-bind="($ui.button.secondary as any)" @click="copyLink" />
+            <UButton v-for="(link, index) in socialLinks" :key="index" v-bind="{ ...($ui.button.secondary as any), ...link }" target="_blank" />
+          </div>
 
-        <hr v-if="surround?.length">
+          <hr v-if="surround?.length">
 
-        <UDocsSurround :surround="surround" />
-      </UPageBody>
+          <UDocsSurround :surround="surround" />
+        </UPageBody>
+
+        <template #right>
+          <UDocsToc v-if="article.body && article.body.toc" :links="article.body.toc.links" />
+        </template>
+      </UPage>
     </UPage>
   </UContainer>
 </template>
