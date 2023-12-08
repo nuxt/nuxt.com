@@ -30,8 +30,8 @@ dependencies:
     specifier: ^1.1.0
     version: 1.1.0
   '@nuxt/ui-pro':
-    specifier: npm:@nuxt/ui-pro-edge@0.5.0-28367536.81b1f2c
-    version: /@nuxt/ui-pro-edge@0.5.0-28367536.81b1f2c(nuxt@3.8.2)(vite@4.5.0)(vue@3.3.8)
+    specifier: npm:@nuxt/ui-pro-edge@0.5.0-28367626.236d911
+    version: /@nuxt/ui-pro-edge@0.5.0-28367626.236d911(nuxt@3.8.2)(vite@4.5.0)(vue@3.3.8)
   '@nuxthq/studio':
     specifier: ^1.0.5
     version: 1.0.5
@@ -1679,8 +1679,8 @@ packages:
       - rollup
       - supports-color
 
-  /@nuxt/ui-edge@2.11.0-28367442.db508b2(nuxt@3.8.2)(vite@4.5.0)(vue@3.3.8):
-    resolution: {integrity: sha512-8ldVGZwowLtecWko9DT+LaepLIEHrUvvIu18bzd+mwzzOBo0Q4DZFQkdHpHVMneFxQNgSoc6tlq1TMZ43ZTz9A==}
+  /@nuxt/ui-edge@2.11.0-28367622.4dd92f7(nuxt@3.8.2)(vite@4.5.0)(vue@3.3.8):
+    resolution: {integrity: sha512-lWLy3HBzloV0RrCCOiAmEkB7e3W+VkS+wqXlvrawGU2KPKgpaNjD7ZWOHIPDjicZUkD2En0nCzj5Ii9kxeK89w==}
     engines: {node: '>=v16.20.2'}
     dependencies:
       '@egoist/tailwindcss-icons': 1.4.0(tailwindcss@3.3.6)
@@ -1727,10 +1727,10 @@ packages:
       - vue
     dev: false
 
-  /@nuxt/ui-pro-edge@0.5.0-28367536.81b1f2c(nuxt@3.8.2)(vite@4.5.0)(vue@3.3.8):
-    resolution: {integrity: sha512-+iYNiwkP4lpvHWpFDXnOulhwxazOkLN3MNLBwI9XR3urhOkkJQD8geOJz+7FntUgFNsgeQtbiUsptTFbO17FkQ==}
+  /@nuxt/ui-pro-edge@0.5.0-28367626.236d911(nuxt@3.8.2)(vite@4.5.0)(vue@3.3.8):
+    resolution: {integrity: sha512-vWcwJYdcDvNnwN08Co43xgwD8bkv7h586l6+Jlk8/ZJxUIM2Kf22rdKZD6l4NgC+7D0X6kHLYe4KqHpmaQdpgA==}
     dependencies:
-      '@nuxt/ui': /@nuxt/ui-edge@2.11.0-28367442.db508b2(nuxt@3.8.2)(vite@4.5.0)(vue@3.3.8)
+      '@nuxt/ui': /@nuxt/ui-edge@2.11.0-28367622.4dd92f7(nuxt@3.8.2)(vite@4.5.0)(vue@3.3.8)
       '@vueuse/core': 10.7.0(vue@3.3.8)
       defu: 6.1.3
       ofetch: 1.3.3
