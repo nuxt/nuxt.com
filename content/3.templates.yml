@@ -105,7 +105,6 @@ templates:
     demo: 'https://www.agencyos.dev/'
   - name: 'Zooper'
     slug: 'zooper'
-    description: 'A minimal and personal portfolio template, made with Nuxt Content and TailwindCSS'
-    screenshotUrl: 'https://zooper.pages.dev/preview.jpg'
+    description: 'A minimal and personal portfolio template, made with Nuxt Content and TailwindCSS.'
     repo: 'fayazara/zooper'
     demo: 'https://zooper.pages.dev'
