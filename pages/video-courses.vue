@@ -44,7 +44,7 @@ defineOgImage({
           >
             <template #header>
               <NuxtImg
-                :src="`/assets/templates/${course.slug}.png`"
+                :src="`/assets/video-courses/${course.slug}.png`"
                 class="object-cover object-top w-full h-full xl:hidden"
                 :alt="course.name"
                 width="600"
