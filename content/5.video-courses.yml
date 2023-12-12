@@ -1,0 +1,30 @@
+head.title: Nuxt Video Courses
+title: Nuxt Video Courses
+navigation.title: Video Courses
+description: 'Watch video courses from the community to learn Vue 3 and Nuxt 3.'
+navigation.icon: i-ph-graduation-cap-duotone
+courses:
+  - name: 'Nuxt 3 Fundamentals'
+    slug: 'vc-nuxt-3-fundamentals'
+    description: 'Learn Nuxt 3 fundamentals with VueSchool.'
+    url: 'https://vueschool.io/courses/nuxt-js-3-fundamentals?friend=nuxt'
+  - name: 'Mastering Nuxt'
+    slug: 'mastering-nuxt'
+    description: 'The complete guide to developing and deploying fast, production-ready Nuxt 3 apps.'
+    url: 'https://masteringnuxt.com/nuxt3'
+    badge: Premium
+  - name: 'FullStack with Nuxt'
+    slug: 'vm-fullstack-nuxt'
+    description: 'Get the knowledge to build full-stack apps with your existing front-end skills.'
+    url: 'https://www.vuemastery.com/courses/nuxt-3-server/nuxt-3-server-introduction?fpr=nuxt'
+    badge: Premium
+  - name: 'Vue 3 Deep Dive'
+    slug: 'vm-deep-dive'
+    description: 'Deep dive into Vue 3 with Evan You.'
+    url: 'https://www.vuemastery.com/courses/vue3-deep-dive-with-evan-you/vue3-overview?fpr=nuxt'
+    badge: Premium
+  - name: 'Build a Blog'
+    slug: 'vm-blog-content'
+    description: 'Learn how to create a blog with Nuxt Content.'
+    url: 'https://www.vuemastery.com/courses/build-a-blog-nuxt3-content/build-the-blog-post-detail-page?fpr=nuxt'
+    badge: Premium
