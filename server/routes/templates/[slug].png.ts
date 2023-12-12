@@ -2,7 +2,7 @@ import captureWebsite from 'capture-website'
 import { serverQueryContent } from '#content/server'
 
 export default cachedEventHandler(async (event) => {
-  // Waiting for https://github.com/unjs/nitro/issues/2001 to be fix ro remove `slug.png`
+  // Waiting for https://github.com/unjs/nitro/issues/2001 to be fix to remove `slug.png`
   const slug = event.context.params.slug || (event.context.params['slug.png'] || '').replace('.png', '')
 
   if (!slug) {

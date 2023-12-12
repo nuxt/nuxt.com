@@ -1,7 +1,10 @@
-import type { Starter } from './starter'
 
-export interface Template extends Starter {
-  studio: boolean,
-  shop?: string,
-  free?: boolean
+export interface Template {
+  name: string
+  slug: string
+  description: string
+  repo?: string
+  demo: string
+  purchase?: string
+  badge?: string
 }
