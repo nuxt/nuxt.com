@@ -50,7 +50,7 @@ Make sure to start the development server in order to generate the screenshot fo
 
 If you want to update the screenshot url (ex: another page), use the `screenshotUrl` property.
 
-To regenerate the image, delete the generated one in `public/asses/templates`.
+To regenerate the image, delete the generated one in `public/assets/templates`.
 
 ## Production
 
