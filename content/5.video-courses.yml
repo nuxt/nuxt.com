@@ -28,3 +28,13 @@ courses:
     description: 'Learn how to create a blog with Nuxt Content.'
     url: 'https://www.vuemastery.com/courses/build-a-blog-nuxt3-content/build-the-blog-post-detail-page?fpr=nuxt'
     badge: Premium
+  - name: 'Nuxt 3 - Crash Course'
+    slug: 'nuxt-3-crash-course-prismic'
+    description: 'Unleash the power of Prismic as a Headless Website Builder alongside Nuxt.'
+    url: 'https://www.youtube.com/watch?v=8GmfcbuYOWE'
+    screenshotUrl: 'https://www.youtube-nocookie.com/embed/8GmfcbuYOWE?si=cQuXzIV68IJKT71m'
+  - name: 'Nuxt 3 — Course for Beginners'
+    slug: 'nuxt-3-crash-beginners'
+    description: 'Learn how to use Nuxt 3 in this full tutorial for beginners.'
+    url: 'https://www.youtube.com/watch?v=fTPCKnZZ2dk'
+    screenshotUrl: 'https://www.youtube-nocookie.com/embed/fTPCKnZZ2dk?si=3Fq2wEvmXh2u3jlr'

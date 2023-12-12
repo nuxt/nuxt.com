@@ -29,7 +29,7 @@ defineOgImage({
     <UPageHero v-bind="page" />
     <UPage>
       <UPageBody>
-        <UPageGrid>
+        <UPageGrid class="lg:grid-cols-3">
           <UPageCard
             v-for="(course, index) in courses"
             :key="course.slug"
