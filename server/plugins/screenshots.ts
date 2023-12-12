@@ -3,6 +3,8 @@ import { join } from 'pathe'
 import captureWebsite from 'capture-website'
 
 export default defineNitroPlugin(async (nitroApp) => {
+  // only in dev
+  if (!process.dev) return
   // @ts-ignore
   nitroApp.hooks.hook('content:file:afterParse', async (file) => {
     if (file._path !== '/templates') return
@@ -24,30 +26,4 @@ export default defineNitroPlugin(async (nitroApp) => {
       })
     }
   })
-  // const { templates } = await serverQueryContent(event, '/templates')
-  //   .where({ _partial: false, _draft: false })
-  //   .findOne()
-
-  //   console.log('Generating screenshots for ', templates.map(t => t.slug))
-  // const template = templates.find(t => t.slug === slug)
-  // if (!template) {
-  //   throw createError({
-  //     statusCode: 400,
-  //     message: 'Template not found'
-  //   })
-  // }
-
-  // const url = template.screenshotUrl || template.demo
-  // if (!url) {
-  //   throw createError({
-  //     statusCode: 400,
-  //     message: 'Template has no `demo` or `screenshotUrl` to take a screenshot from'
-  //   })
-  // }
-
-  // setHeader(event, 'content-type', 'image/png')
-  // console.log(`Generating screenshot for ${template.slug} hitting ${url}...`)
-  // return captureWebsite.buffer(url, {
-  //   launchOptions: { headless: 'new' }
-  // })
 })
