@@ -103,3 +103,8 @@ templates:
     description: 'The open source operating system for digital agencies.'
     repo: 'directus-community/agency-os'
     demo: 'https://www.agencyos.dev/'
+  - name: 'Zooper'
+    slug: 'zooper'
+    description: 'A minimal and personal portfolio template, made with Nuxt Content and TailwindCSS.'
+    repo: 'fayazara/zooper'
+    demo: 'https://zooper.pages.dev'

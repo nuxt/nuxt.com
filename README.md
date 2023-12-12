@@ -48,7 +48,7 @@ To list a Nuxt template, add it to the list on [./content/3.templates.yml](./con
 
 Make sure to start the development server in order to generate the screenshot for the template and go to http://localhost:3000/templates to see the result.
 
-If you want to update the screenshot url (ex: another page), use the `screenshotUrl` property.
+If you want to update the url where we take the automated screenshot, use the `screenshotUrl` property.
 
 To regenerate the image, delete the generated one in `public/assets/templates`.
 
