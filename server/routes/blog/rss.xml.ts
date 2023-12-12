@@ -25,7 +25,6 @@ export default defineEventHandler(async (event) => {
     .find()
 
   for (const article of articles) {
-    console.log(article)
     feed.addItem({
       link: joinURL(baseUrl, article._path),
       image: joinURL(baseUrl, article.image),

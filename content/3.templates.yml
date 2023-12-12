@@ -3,6 +3,13 @@ title: Nuxt Templates
 navigation.title: Templates
 description: 'Explore community templates to get up and running in a few seconds.'
 navigation.icon: i-ph-browsers-duotone
+links:
+  - label: 'List your template'
+    to: 'https://github.com/nuxt/nuxt.com/tree/main/move-nuxt-new#add-a-nuxt-template'
+    icon: 'i-ph-plus-circle-duotone'
+    target: '_blank'
+    color: gray
+    size: md
 templates:
   - name: 'Movies'
     slug: 'movies'
@@ -38,6 +45,13 @@ templates:
     demo: 'https://1.envato.market/nuxt-tairo-preview'
     screenshotUrl: 'https://tairo.cssninja.io'
     purchase: 'https://1.envato.market/nuxt-tairo'
+    badge: 'Premium'
+  - name: 'Supastarter'
+    slug: 'supastarter'
+    description: 'A production-ready SaaS starter kit with auth, i18n, billing & payments.'
+    demo: 'https://nuxt-demo.supastarter.dev'
+    purchase: 'https://supastarter.dev/products/starter-kits/nuxt?aff=J0Emk'
+    badge: 'Premium'
   - name: 'Brook'
     slug: 'brook'
     description: 'Powerful, flexible & multipurpose template.'
@@ -46,8 +60,10 @@ templates:
       delay: 5
     demo: 'https://1.envato.market/nuxt-brook-preview'
     purchase: 'https://1.envato.market/nuxt-brook'
+    badge: 'Premium'
   - name: 'Argon Pro'
     slug: 'argon'
     description: 'Full-stack application dashboard template.'
     demo: 'https://demos.creative-tim.com/nuxt-argon-dashboard-pro/?partner=120213'
     purchase: 'https://www.creative-tim.com/product/nuxt-argon-dashboard-pro?partner=120213'
+    badge: 'Premium'
