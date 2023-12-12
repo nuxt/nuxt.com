@@ -43,7 +43,17 @@ defineOgImage({
             <template #header>
               <NuxtImg
                 :src="`/assets/templates/${template.slug}.png`"
-                class="object-cover object-top w-full h-full"
+                class="object-cover object-top w-full h-full xl:hidden"
+                :alt="template.name"
+                width="600"
+                height="300"
+                format="webp"
+                :modifiers="{ pos: 'top' }"
+                :loading="index > 3 ? 'lazy' : undefined"
+              />
+              <NuxtImg
+                :src="`/assets/templates/${template.slug}.png`"
+                class="object-cover object-top w-full h-full hidden xl:block"
                 :alt="template.name"
                 width="280"
                 height="140"
