@@ -45,7 +45,6 @@ await fetchList()
         <UButton
           to="/blog/rss.xml"
           color="gray"
-          variant="outline"
           external
           icon="i-ph-rss"
           size="2xs"
