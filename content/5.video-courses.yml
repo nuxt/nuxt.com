@@ -18,16 +18,20 @@ courses:
     description: 'Get the knowledge to build full-stack apps with your existing front-end skills.'
     url: 'https://www.vuemastery.com/courses/nuxt-3-server/nuxt-3-server-introduction?fpr=nuxt'
     badge: Premium
+  - name: 'Build a Nuxt Blog'
+    slug: 'vm-blog-content'
+    description: 'Learn how to create a blog with Nuxt 3 and Nuxt Content.'
+    url: 'https://www.vuemastery.com/courses/build-a-blog-nuxt3-content/build-the-blog-post-detail-page?fpr=nuxt'
+    badge: Premium
   - name: 'Vue 3 Deep Dive'
     slug: 'vm-deep-dive'
     description: 'Deep dive into Vue 3 with Evan You.'
     url: 'https://www.vuemastery.com/courses/vue3-deep-dive-with-evan-you/vue3-overview?fpr=nuxt'
     badge: Premium
-  - name: 'Build a Blog'
-    slug: 'vm-blog-content'
-    description: 'Learn how to create a blog with Nuxt Content.'
-    url: 'https://www.vuemastery.com/courses/build-a-blog-nuxt3-content/build-the-blog-post-detail-page?fpr=nuxt'
-    badge: Premium
+  - name: 'The Vue 3 Masterclass'
+    slug: 'vc-vue-masterclass'
+    description: 'Learn Vue 3 by building a real-world application.'
+    url: 'https://vueschool.io/courses/the-vuejs-3-master-class?friend=nuxt'
   - name: 'Nuxt 3 - Crash Course'
     slug: 'nuxt-3-crash-course-prismic'
     description: 'Unleash the power of Prismic as a Headless Website Builder alongside Nuxt.'
