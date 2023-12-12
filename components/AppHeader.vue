@@ -10,6 +10,7 @@ const { metaSymbol } = useShortcuts()
 const route = useRoute()
 const mobileNav = computed(() => {
   const links = mapContentNavigation(navigation.value)
+
   // Show Migration and Bridge on mobile only when user is reading them
   const docsLink = links.find((link) => link.to === '/docs')
   if (docsLink && !route.path.startsWith('/docs/bridge') && !route.path.startsWith('/docs/migration')) {

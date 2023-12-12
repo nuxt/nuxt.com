@@ -58,9 +58,9 @@ const _useNavigation = () => {
       }]
     }, {
       label: 'Templates',
-      icon: 'i-ph-app-window-duotone',
-      to: 'https://nuxt.new',
-      target: '_blank'
+      icon: 'i-ph-browsers-duotone',
+      to: '/templates'
+
     }, {
       label: 'Showcase',
       icon: 'i-ph-projector-screen-duotone',
