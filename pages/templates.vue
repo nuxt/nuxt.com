@@ -28,172 +28,112 @@ defineOgImage({
 
 <template>
   <UContainer>
-    <UPageHero v-bind="page">
-      <template #links>
-        <CopyButton text="npx nuxi@latest init my-app" />
-      </template>
-    </UPageHero>
+    <UPageHero v-bind="page" />
 
-    <UPageGrid :ui="{ wrapper: 'grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-8 py-8' }">
-      <UPageCard v-for="(template, index) in templates" :key="template.name" :ui="{ body: { padding: '' } }">
-        <li class="relative w-full h-full flex justify-center items-center">
-          <div class="w-full h-full text-xs card rounded-xl z-10 grid grid-cols-1">
-            <div class="relative h-[300px]">
+    <UPage>
+      <UPageBody>
+        <UPageGrid class="lg:grid-cols-3 xl:grid-cols-4">
+          <UPageCard
+            v-for="(template, index) in templates"
+            :key="index"
+            :title="template.name"
+            :description="template.description"
+            :ui="{
+              header: { base: 'aspect-w-4 aspect-h-2', padding: '' },
+              body: { padding: '!p-4' },
+              description: 'line-clamp-2 sm:min-h-[45px]'
+            }"
+          >
+            <template #header>
               <NuxtImg
                 :src="template.image"
-                class="w-full rounded-t-xl object-cover h-[300px]"
-                alt=""
-                sizes="sm:300px lg:600px"
-                width="1112"
-                height="617"
+                class="object-cover object-top w-full h-full"
+                :alt="template.name"
+                width="280"
+                height="140"
                 format="webp"
-                :loading="index > 1 ? 'lazy' : undefined"
+                :loading="index > 3 ? 'lazy' : undefined"
               />
+            </template>
 
-              <div class="h-[5px] w-full line flex justify-between -mt-[1px] z-10">
-                <span class="h-[5px] w-full bg-gradient-to-l from-transparent to-slate-950/90" />
-                <span class="h-[5px] w-full bg-gradient-to-r from-transparent to-slate-950/90" />
-              </div>
-              <div
-                v-if="template.demo"
-                class="absolute inset-0 w-full h-full bg-gradient-to-b from-transparent to-gray-950/80 flex justify-center"
-              >
-                <div class="absolute bottom-6 left-0 right-0  flex justify-center group">
-                  <UButton
-                    label="preview"
-                    icon="i-ph-arrow-up-right-bold"
-                    :to="template.demo"
-                    size="sm"
-                    target="_blank"
-                    :trailing="true"
-                    color="gray"
-                    :ui="{ icon: { size: { sm: 'w-4 h-4' } } }"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div
-              class="flex flex-col gap-y-4 items-center w-full py-4 px-5 sm:py-[40px] sm:px-[60px] md:p-6 lg:py-[40px] lg:px-[60px]"
-            >
-              <div class="flex flex-col justify-start gap-y-4">
-                <div v-if="!template.shop" class="flex gap-x-2 items-center justify-center">
-                  <UButton
-                    target="_blank"
-                    :to="`https://github.com/${template.repo}/tree/${template.branch}`"
-                    size="xs"
-                    class="flex gap-x-4 transition-colors duration-200 items-center justify-center"
-                    variant="ghost"
-                    color="gray"
-                  >
-                    <span class="text-gray-950 dark:text-white font-bold text-2xl">{{ template.name }}</span>
-
-                    <UIcon name="i-simple-icons-github" class="h-5 w-5" />
-                  </UButton>
-                  <UBadge v-if="template.free" color="green" variant="solid" label="Free" :ui="{ rounded: 'rounded-full' }" />
-                </div>
-
-                <span v-else class="text-white font-bold text-2xl text-center">{{ template.name }}</span>
-
-                <p class="text-center text-lg text-gray-500 dark:text-gray-400 -mt-4 pb-3">
-                  {{ template.description }}
-                </p>
-              </div>
-
-              <div v-if="!template.shop" class="flex flex-col gap-y-4">
-                <UPageGrid
-                  :ui="{ wrapper: `grid grid-cols-1 lg:grid-cols-4 justify-between w-full gap-3 ${ template.studio ? 'xl:grid-cols-3' : 'xl:grid-cols-2' }` }"
-                >
-                  <UButton
-                    target="_blank"
-                    :to="`https://codesandbox.io/s/github/${template.repo}/tree/${template.branch}/${template.dir || ''}`"
-                    color="gray"
-                    label="CodeSandbox"
-                    icon="i-simple-icons-codesandbox"
-                    class="lg:col-span-2 xl:col-span-1 flex justify-center items-center"
-                    size="sm"
-                    :ui="{ icon: { size: { sm: 'w-4 h-4' } } }"
-                  />
-
-                  <UButton
-                    target="_blank"
-                    :to="`https://stackblitz.com/github/${template.repo}/tree/${template.branch}/${template.dir || ''}`"
-                    label="StackBlitz"
-                    color="gray"
-                    icon="i-simple-icons-stackblitz"
-                    class="lg:col-span-2 xl:col-span-1 flex justify-center items-center"
-                    size="sm"
-                  />
-
-                  <UButton
-                    v-if="template.studio"
-                    target="_blank"
-                    :to="`https://nuxt.studio/themes/${template.slug}`"
-                    label="Studio"
-                    icon="i-simple-icons-nuxtdotjs"
-                    color="gray"
-                    class="lg:col-span-4 xl:col-span-1 flex justify-center items-center"
-                    size="sm"
-                    :ui="{ icon: { base: 'flex-shrink-0 text-cyan-500' } }"
-                  />
-                </UPageGrid>
-
-                <CopyButton
-                  :text="`npx nuxi init -t themes/${template.slug} <app>`"
-                  class="w-full"
-                  size="sm"
-                />
-              </div>
+            <UButtonGroup class="mt-3 w-full">
+              <UButton
+                v-if="template.repo"
+                label="GitHub"
+                icon="i-simple-icons-github"
+                :to="`https://github.com/${template.repo}/tree/${template.branch}`"
+                target="_blank"
+                size="sm"
+                color="gray"
+                class="w-1/2 justify-center"
+                :ui="{ icon: { size: { sm: 'w-4 h-4' } } }"
+              />
 
               <UButton
-                v-else
                 target="_blank"
-                :to="template.shop"
+                :to="template.shop || template.demo"
                 color="gray"
-                label="Buy it now"
+                :label="template.shop ? 'Purchase' : 'Demo'"
                 icon="i-ph-arrow-up-right-bold"
-                :trailing="true"
+                trailing
                 size="sm"
+                class="justify-center"
+                :class="[template.repo ? 'w-1/2' : 'w-full']"
                 :ui="{ icon: { size: { sm: 'w-4 h-4' } } }"
-                class="w-full flex justify-center items-center"
               />
-            </div>
-          </div>
-          <div class="absolute card-bg inset-0 w-full h-full z-[-1] rounded-xl" />
-        </li>
-      </UPageCard>
-    </UPageGrid>
+            </UButtonGroup>
+          </UPageCard>
+        </UPageGrid>
 
-    <div class="pt-[60px] mb-[120px] gap-y-[60px]">
-      <UPageHero v-bind="page.further" />
-      <UPageGrid :ui="{ wrapper: 'grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 rounded-xl border dark:border-gray-800 w-full gap-0' }">
-        <UPageCard
-          v-for="(item, index) in page.further.items"
-          :key="index"
-          :to="item.to"
-          target="_blank"
-          class="transition-colors duration-200 hover:!ring-0 dark:hover:ring-0"
-          :class="{ 'border-t border-b md:border-b-0 md:border-t-0 md:border-l md:border-r dark:border-gray-800': index === 1 }"
-          :ui="{ body: { padding: 'px-4 sm:p-6 md:p-8' }, ring: '',
-                 rounded: `${ index === 1 ? '' : 'first:rounded-b-none md:first:rounded-l-xl md:first:rounded-r-none first:hover:rounded-t-xl md:first:hover:rounded-tr-none md:first:hover:rounded-l-xl last:hover:rounded-b-xl last:rounded-t-none md:last:rounded-l-none md:last:rouned-r-xl md:last:rounded-tr-xl md:last:hover:rounded-r-xl md:last:hover:rounded-bl-none md:last:hover:rounded-tl-none' }` }"
-        >
-          <div class="flex justify-between items-center">
-            <h3 class="text-gray-950 dark:text-white font-bold text-xl">
-              {{ item.title }}
-            </h3>
-            <UIcon name="i-ph-arrow-right-light" class="w-5 h-5 self-start text-gray-600 dark:text-gray-400 group-hover:translate-x-2 transition-translate duration-200" />
-          </div>
-          <p class="text-gray-400">
-            {{ item.description }}
-          </p>
-        </UPageCard>
-      </UPageGrid>
-    </div>
+        <ULandingSection :title="page.further.title" :description="page.further.description">
+          <UButtonGroup
+            :ui="{
+              strategy: 'override',
+              wrapper: {
+                horizontal: 'inline-flex flex-col lg:flex-row -space-y-px lg:space-y-0 lg:-space-x-px'
+              },
+              orientation: {
+                'rounded-md': {
+                  horizontal: {
+                    start: 'rounded-t-md lg:rounded-tr-none lg:rounded-s-md',
+                    end: 'rounded-b-md lg:rounded-bl-none lg:rounded-e-md'
+                  }
+                }
+              }
+            }"
+          >
+            <UButton
+              v-for="(item, index) in page.further.items"
+              :key="index"
+              :to="item.to"
+              class="py-5 px-4 sm:p-6 flex-1 group transition-colors"
+              color="white"
+              :ui="{
+                strategy: 'override',
+                color: {
+                  white: {
+                    solid: 'ring-1 ring-inset ring-gray-200 dark:ring-gray-800 bg-white dark:bg-gray-900/50 hover:bg-gray-100/50 dark:hover:bg-gray-800/50'
+                  }
+                }
+              }"
+            >
+              <div class="flex-1">
+                <div class="flex items-center justify-between">
+                  <h3 class="text-gray-900 dark:text-white font-bold text-lg">
+                    {{ item.title }}
+                  </h3>
+
+                  <UIcon name="i-ph-arrow-right-light" class="w-5 h-5 mr-2 text-gray-400 dark:text-gray-500 group-hover:text-gray-500 dark:group-hover:text-gray-400 group-hover:translate-x-2 transition-translate duration-200" />
+                </div>
+
+                <p class="text-gray-400 dark:text-gray-500 text-base font-normal mt-2">
+                  {{ item.description }}
+                </p>
+              </div>
+            </UButton>
+          </UButtonGroup>
+        </ULandingSection>
+      </UPageBody>
+    </UPage>
   </UContainer>
 </template>
-
-<style lang="postcss">
-.line {
-  background: linear-gradient(rgba(0, 220, 130, 0), rgba(19, 223, 162, 1), rgba(54, 228, 218, 1), rgba(54, 228, 218, 0))
-}
-</style>
