@@ -101,7 +101,7 @@ defineOgImage({
   component: 'Docs',
   title,
   description,
-  headline: breadcrumb.value.length ? breadcrumb.value[breadcrumb.value.length - 1].label : ''
+  headline: breadcrumb.value.length ? breadcrumb.value.map(link => link.label).join(' > ') : ''
 })
 </script>
 
