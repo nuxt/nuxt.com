@@ -66,6 +66,21 @@ jobs:
 Make sure to rename `<my-project>` with your project name.
 ::
 
+## Templates
+
+::card-group
+  ::card
+  ---
+  icon: i-simple-icons-github
+  title: Nuxt Deno KV
+  to: https://github.com/Atinux/nuxt-deno-kv
+  target: _blank
+  ui.icon.base: text-black dark:text-white
+  ---
+  A collaborative todo-list app built with Deno KV and Nuxt.
+  ::
+::
+
 ## Learn more
 
 ::read-more{to="https://nitro.unjs.io/deploy/providers/deno-deploy" target="_blank"}
