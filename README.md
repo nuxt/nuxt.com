@@ -44,7 +44,7 @@ npm run dev
 
 ### Add a Nuxt Template
 
-To list a Nuxt template, add it to the list on [./content/3.templates.yml](./content/3.templates.yml).
+To list a Nuxt template, add it to the list on [./content/4.templates.yml](./content/4.templates.yml).
 
 Make sure to start the development server in order to generate the screenshot for the template and go to http://localhost:3000/templates to see the result.
 

@@ -1,4 +1,3 @@
-
 export interface Template {
   name: string
   slug: string

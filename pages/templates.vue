@@ -32,7 +32,7 @@ defineOgImage({
         <UPageGrid class="lg:grid-cols-3 xl:grid-cols-4">
           <UPageCard
             v-for="(template, index) in templates"
-            :key="index"
+            :key="template.slug"
             :description="template.description"
             :ui="{
               header: { base: 'aspect-w-4 aspect-h-2', padding: '' },
