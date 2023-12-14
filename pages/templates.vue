@@ -65,8 +65,17 @@ defineOgImage({
             <template #title>
               <span class="flex-1">{{ template.name }}</span>
               <UBadge
-                v-if="template.badge"
+                v-if="template.badge === 'Premium'"
                 :label="template.badge"
+                color="blue"
+                variant="subtle"
+                size="xs"
+                class="rounded-full"
+              />
+              <UBadge
+                v-else-if="template.badge === 'Freemium'"
+                :label="template.badge"
+                color="green"
                 variant="subtle"
                 size="xs"
                 class="rounded-full"
