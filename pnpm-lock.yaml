@@ -33,8 +33,8 @@ dependencies:
     specifier: ^0.6.1
     version: 0.6.1(nuxt@3.8.2)(vite@4.5.0)(vue@3.3.8)
   '@nuxthq/studio':
-    specifier: ^1.0.5
-    version: 1.0.5
+    specifier: ^1.0.6
+    version: 1.0.6
   '@nuxtjs/fontaine':
     specifier: ^0.4.1
     version: 0.4.1
@@ -1876,12 +1876,12 @@ packages:
       - vti
       - vue-tsc
 
-  /@nuxthq/studio@1.0.5:
-    resolution: {integrity: sha512-ZJjS+H4FcpWR7QR2RSJMbPoikN/ECuJ+dHZO2VvRyLEdTDj3MLJ4ZXPoJCUkJ5h5597jZMMl8KTe70wu39UNZQ==}
+  /@nuxthq/studio@1.0.6:
+    resolution: {integrity: sha512-XGLAu6w6k9YJ5Vkvm5yojCfDIInzRmhAY8Lf5AAXj26tI7sx4Tg6JpkK0syPX/u1ajX6cPfMQp8ZDGOraQht0w==}
     dependencies:
-      '@nuxt/kit': 3.8.1
+      '@nuxt/kit': 3.8.2
       defu: 6.1.3
-      nuxt-component-meta: 0.5.4
+      nuxt-component-meta: 0.6.0
       nuxt-config-schema: 0.4.6
       socket.io-client: 4.7.2
       ufo: 1.3.2
@@ -4169,8 +4169,11 @@ packages:
 
   /citty@0.1.4:
     resolution: {integrity: sha512-Q3bK1huLxzQrvj7hImJ7Z1vKYJRPQCDnd0EjXfHMidcjecGOMuLrmuQmtWmFkuKLcMThlGh1yCKG8IEc6VeNXQ==}
+    requiresBuild: true
     dependencies:
       consola: 3.2.3
+    dev: false
+    optional: true
 
   /citty@0.1.5:
     resolution: {integrity: sha512-AS7n5NSc0OQVMV9v6wt3ByujNIrne0/cTjiC2MYqhvao57VNfiuVksTSr2p17nVOhEr2KtqiAkGwHcgMC/qUuQ==}
@@ -6480,7 +6483,7 @@ packages:
     dependencies:
       '@parcel/watcher': 2.3.0
       '@parcel/watcher-wasm': 2.3.0
-      citty: 0.1.4
+      citty: 0.1.5
       clipboardy: 3.0.0
       consola: 3.2.3
       defu: 6.1.3
@@ -7891,10 +7894,12 @@ packages:
     optionalDependencies:
       fsevents: 2.3.3
 
-  /nuxt-component-meta@0.5.4:
-    resolution: {integrity: sha512-0ou1O5Dky/avUAm6XrO4r4aZiRgP3wCwBlOe49FcyVZo0uAULFw8b3j48BvKWzBdOywf8hJEL4V5o7FWnd1E+A==}
+  /nuxt-component-meta@0.6.0:
+    resolution: {integrity: sha512-QpMZiZ9KMhc0d35yAWmGC8hQuxX3+hFDzIEOU7I0LoePBxp1qcWQO6lmIKjnQ7ddHHVpqIQjtPPL2KHzyFgsrQ==}
+    hasBin: true
     dependencies:
       '@nuxt/kit': 3.8.2
+      citty: 0.1.5
       scule: 1.1.1
       typescript: 5.3.3
       vue-component-meta: 1.8.22(typescript@5.3.3)
@@ -7981,7 +7986,7 @@ packages:
   /nuxt-site-config-kit@1.5.5(vue@3.3.8):
     resolution: {integrity: sha512-87mf+Ij5njs0qmSl/X/fUhfaSe9kf6feulZnrfGqI0yqk7XmcpdiDZl5xLOWaFQI5Ial+eMeIDz86hrKptiLrQ==}
     dependencies:
-      '@nuxt/kit': 3.8.1
+      '@nuxt/kit': 3.8.2
       '@nuxt/schema': 3.8.1
       pkg-types: 1.0.3
       site-config-stack: 1.5.5(vue@3.3.8)
@@ -7996,7 +8001,7 @@ packages:
   /nuxt-site-config@1.5.5(vue@3.3.8):
     resolution: {integrity: sha512-L1mjCyFvIb0mp7WwTgGngGCN6xlIza52zL/84R7rqY8r6gMkUtcTHH7OUCMO9Sq9bGI70HZLl7hsLuIqle+cWw==}
     dependencies:
-      '@nuxt/kit': 3.8.1
+      '@nuxt/kit': 3.8.2
       '@nuxt/schema': 3.8.1
       nuxt-site-config-kit: 1.5.5(vue@3.3.8)
       pathe: 1.1.1
@@ -10229,6 +10234,7 @@ packages:
 
   /undici-types@5.26.5:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
+    requiresBuild: true
 
   /undici@5.27.2:
     resolution: {integrity: sha512-iS857PdOEy/y3wlM3yRp+6SNQQ6xU0mmZcwRSriqk+et/cwWAtwmIGf6WkoDN2EK/AMdCO/dfXzIwi+rFMrjjQ==}
