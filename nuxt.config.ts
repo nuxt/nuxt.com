@@ -136,6 +136,7 @@ export default defineNuxtConfig({
   googleFonts: {
     display: 'swap',
     download: true,
+    base64: true,
     families: {
       'DM+Sans': [400, 500, 600, 700]
     }
