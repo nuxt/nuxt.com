@@ -23,6 +23,20 @@ courses:
     description: 'Learn how to create a blog with Nuxt 3 and Nuxt Content.'
     url: 'https://www.vuemastery.com/courses/build-a-blog-nuxt3-content/build-the-blog-post-detail-page?fpr=nuxt'
     badge: Premium
+  - name: 'Nuxt 3 Tips (Playlist)'
+    slug: 'nuxt3-tips'
+    description: 'Learn Nuxt 3 tips and tricks with Alexander Lichter (core team).'
+    url: 'https://www.youtube.com/watch?v=2tKOZc3Z1dk&list=PL06MUQt-_wlsRNxmbIvgVuhsXG_dN1XaO'
+    screenshotOptions:
+      delay: 1
+      removeElements: ['tp-yt-iron-overlay-backdrop', 'tp-yt-paper-dialog']
+  - name: 'Nuxt 3 Performance (Playlist)'
+    slug: 'nuxt3-performance'
+    description: 'Deep dive into Nuxt 3 performance with Alexander Lichter (core team).'
+    url: 'https://www.youtube.com/watch?v=laRJNkG_wls&list=PL06MUQt-_wls2sirXbt919cIbGvKv6k5Q'
+    screenshotOptions:
+      delay: 1
+      removeElements: ['tp-yt-iron-overlay-backdrop', 'tp-yt-paper-dialog']
   - name: 'The Vue 3 Masterclass'
     slug: 'vc-vue-masterclass'
     description: 'Learn Vue 3 by building a real-world application.'
@@ -42,3 +56,4 @@ courses:
     description: 'Learn how to use Nuxt 3 in this full tutorial for beginners.'
     url: 'https://www.youtube.com/watch?v=fTPCKnZZ2dk'
     screenshotUrl: 'https://www.youtube-nocookie.com/embed/fTPCKnZZ2dk?si=3Fq2wEvmXh2u3jlr'
+
