@@ -1,0 +1,116 @@
+title: Team
+description: 'The development of Nuxt and its ecosystem is led by an international team.<br> Our committed team works every day to bring Nuxt forward.'
+navigation: false
+align: 'center'
+users:
+  - name: Sébastien Chopin
+    location: Bordeaux, France
+    avatar:
+      src: https://ipx.nuxt.com/f_auto/gh_avatar/atinux
+    links:
+      - icon: i-simple-icons-x
+        to: https://twitter.com/Atinux
+        target: _blank
+      - icon: i-simple-icons-github
+        to: https://github.com/Atinux
+        target: _blank
+      - icon: i-simple-icons-linkedin
+        to: https://www.linkedin.com/in/atinux
+        target: _blank
+  - name: Daniel Roe
+    location: Durham, UK
+    avatar:
+      src: https://ipx.nuxt.com/f_auto/gh_avatar/danielroe
+    links:
+      - icon: i-simple-icons-x
+        to: https://twitter.com/Atinux
+        target: _blank
+      - icon: i-simple-icons-github
+        to: https://github.com/Atinux
+        target: _blank
+      - icon: i-simple-icons-linkedin
+        to: https://www.linkedin.com/in/atinux
+        target: _blank
+  - name: Anthony Fu
+    location: Paris, France
+    avatar:
+      src: https://ipx.nuxt.com/f_auto/gh_avatar/antfu
+    links:
+      - icon: i-simple-icons-x
+        to: https://twitter.com/Atinux
+        target: _blank
+      - icon: i-simple-icons-github
+        to: https://github.com/Atinux
+        target: _blank
+      - icon: i-simple-icons-linkedin
+        to: https://www.linkedin.com/in/atinux
+        target: _blank
+  - name: Pooya Parsa
+    location: Haarlem, Netherlands
+    avatar:
+      src: https://ipx.nuxt.com/f_auto/gh_avatar/pi0
+    links:
+      - icon: i-simple-icons-x
+        to: https://twitter.com/Atinux
+        target: _blank
+      - icon: i-simple-icons-github
+        to: https://github.com/Atinux
+        target: _blank
+      - icon: i-simple-icons-linkedin
+        to: https://www.linkedin.com/in/atinux
+        target: _blank
+  - name: Alexander Lichter
+    location: Amsterdam, Netherlands
+    avatar:
+      src: https://ipx.nuxt.com/f_auto/gh_avatar/manniL
+    links:
+      - icon: i-simple-icons-x
+        to: https://twitter.com/Atinux
+        target: _blank
+      - icon: i-simple-icons-github
+        to: https://github.com/Atinux
+        target: _blank
+      - icon: i-simple-icons-linkedin
+        to: https://www.linkedin.com/in/atinux
+        target: _blank
+  - name: Harlan Wilton
+    location: Australia
+    avatar:
+      src: https://ipx.nuxt.com/f_auto/gh_avatar/harlan-zw
+    links:
+      - icon: i-simple-icons-x
+        to: https://twitter.com/Atinux
+        target: _blank
+      - icon: i-simple-icons-github
+        to: https://github.com/Atinux
+        target: _blank
+      - icon: i-simple-icons-linkedin
+        to: https://www.linkedin.com/in/atinux
+        target: _blank
+  - name: Lucie
+    location: France
+    avatar:
+      src: https://ipx.nuxt.com/f_auto/gh_avatar/lihbr
+    links:
+      - icon: i-simple-icons-x
+        to: https://twitter.com/Atinux
+        target: _blank
+      - icon: i-simple-icons-github
+        to: https://github.com/Atinux
+        target: _blank
+      - icon: i-simple-icons-linkedin
+        to: https://www.linkedin.com/in/atinux
+        target: _blank
+cta:
+  headline: Getting Started
+  title: Start your Nuxt Journey
+  description: Learn everything you need to know, from beginner to master.
+  links:
+    - label: 'Get started'
+      size: 'lg'
+      color: 'black'
+      to: '/docs/getting-started/introduction'
+    - label: 'Explore examples'
+      size: 'lg'
+      color: 'white'
+      to: '/docs/examples'
