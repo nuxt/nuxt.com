@@ -82,7 +82,7 @@ users:
         target: _blank
   - name: Harlan Wilton
     location: Australia
-    sponsor: https://github.com/sponsors/harlan_zw
+    sponsor: https://github.com/sponsors/harlan-zw
     avatar:
       src: https://ipx.nuxt.com/f_auto,s_80x80/gh_avatar/harlan-zw
       srcset: https://ipx.nuxt.com/f_auto,s_160x160/gh_avatar/harlan-zw 2x
