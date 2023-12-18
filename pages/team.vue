@@ -4,7 +4,7 @@ const route = useRoute()
 const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
 
 const title = page.value.head?.title || page.value.title
-const description = page.value.head?.description || page.value.description
+const description = (page.value.head?.description || page.value.description).replace(/<br>/g, '')
 useSeoMeta({
   titleTemplate: '%s',
   title,
@@ -48,7 +48,19 @@ defineOgImage({
             </template>
 
             <div class="flex items-center justify-center gap-1.5 mt-4">
-              <UButton v-for="(link, index) in user.links" :key="index" color="gray" variant="link" v-bind="link" />
+              <UButton v-for="(link, i) in user.links" :key="i" color="gray" variant="link" v-bind="link" />
+            </div>
+            <div v-if="user.sponsor" class="flex items-center justify-center mt-4">
+              <UButton
+                :to="user.sponsor"
+                target="_blank"
+                color="gray"
+                icon="i-ph-heart-duotone"
+                icon-color="red"
+                :ui="{ icon: { base: 'text-pink-500' } }"
+              >
+                Sponsor
+              </UButton>
             </div>
           </UPageCard>
         </UPageGrid>
