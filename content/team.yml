@@ -1,0 +1,127 @@
+title: The Nuxt Team
+description: 'The development of Nuxt and its ecosystem is led by an international team.<br> Our committed team works every day to bring Nuxt forward.'
+navigation: false
+align: 'center'
+users:
+  - name: Sébastien Chopin
+    location: Bordeaux, France
+    sponsor: https://github.com/sponsors/Atinux
+    avatar:
+      src: https://ipx.nuxt.com/f_auto,s_80x80/gh_avatar/atinux
+      srcset: https://ipx.nuxt.com/f_auto,s_160x160/gh_avatar/atinux 2x
+    links:
+      - icon: i-simple-icons-x
+        to: https://twitter.com/Atinux
+        target: _blank
+      - icon: i-simple-icons-github
+        to: https://github.com/Atinux
+        target: _blank
+      - icon: i-ph-link
+        to: https://chopin.dev
+        target: _blank
+  - name: Pooya Parsa
+    location: Haarlem, Netherlands
+    sponsor: https://github.com/sponsors/pi0
+    avatar:
+      src: https://ipx.nuxt.com/f_auto,s_80x80/gh_avatar/pi0
+      srcset: https://ipx.nuxt.com/f_auto,s_160x160/gh_avatar/pi0 2x
+    links:
+      - icon: i-simple-icons-x
+        to: https://twitter.com/_pi0_
+        target: _blank
+      - icon: i-simple-icons-github
+        to: https://github.com/pi0
+        target: _blank
+  - name: Daniel Roe
+    location: Durham, UK
+    sponsor: https://github.com/sponsors/danielroe
+    avatar:
+      src: https://ipx.nuxt.com/f_auto,s_80x80/gh_avatar/danielroe
+      srcset: https://ipx.nuxt.com/f_auto,s_160x160/gh_avatar/danielroe 2x
+    links:
+      - icon: i-simple-icons-x
+        to: https://twitter.com/danielcroe
+        target: _blank
+      - icon: i-simple-icons-github
+        to: https://github.com/danielroe
+        target: _blank
+      - icon: i-ph-link
+        to: https://roe.dev
+        target: _blank
+  - name: Anthony Fu
+    location: Paris, France
+    sponsor: https://github.com/sponsors/antfu
+    avatar:
+      src: https://ipx.nuxt.com/f_auto,s_80x80/gh_avatar/antfu
+      srcset: https://ipx.nuxt.com/f_auto,s_160x160/gh_avatar/antfu 2x
+    links:
+      - icon: i-simple-icons-x
+        to: https://twitter.com/antfu7
+        target: _blank
+      - icon: i-simple-icons-github
+        to: https://github.com/antfu
+        target: _blank
+      - icon: i-ph-link
+        to: https://antfu.me
+        target: _blank
+  - name: Alexander Lichter
+    location: Amsterdam, Netherlands
+    sponsor: https://github.com/sponsors/manniL
+    avatar:
+      src: https://ipx.nuxt.com/f_auto,s_80x80/gh_avatar/manniL
+      srcset: https://ipx.nuxt.com/f_auto,s_160x160/gh_avatar/manniL 2x
+    links:
+      - icon: i-simple-icons-x
+        to: https://twitter.com/TheAlexLichter
+        target: _blank
+      - icon: i-simple-icons-github
+        to: https://github.com/manniL
+        target: _blank
+      - icon: i-ph-link
+        to: https://www.lichter.io
+        target: _blank
+  - name: Harlan Wilton
+    location: Australia
+    sponsor: https://github.com/sponsors/harlan_zw
+    avatar:
+      src: https://ipx.nuxt.com/f_auto,s_80x80/gh_avatar/harlan-zw
+      srcset: https://ipx.nuxt.com/f_auto,s_160x160/gh_avatar/harlan-zw 2x
+    links:
+      - icon: i-simple-icons-x
+        to: https://twitter.com/harlan_zw
+        target: _blank
+      - icon: i-simple-icons-github
+        to: https://github.com/harlan-zw
+        target: _blank
+      - icon: i-ph-link
+        to: https://harlanzw.com
+        target: _blank
+  - name: Lucie
+    location: France
+    sponsor: https://github.com/sponsors/lihbr
+    avatar:
+      src: https://ipx.nuxt.com/f_auto,s_80x80/gh_avatar/lihbr
+      srcset: https://ipx.nuxt.com/f_auto,s_160x160/gh_avatar/lihbr 2x
+    links:
+      - icon: i-simple-icons-x
+        to: https://twitter.com/li_hbr
+        target: _blank
+      - icon: i-simple-icons-github
+        to: https://github.com/lihbr
+        target: _blank
+      - icon: i-ph-link
+        to: https://lihbr.com/
+        target: _blank
+cta:
+  headline: Getting Started
+  title: Start your Nuxt Journey
+  description: Learn everything you need to know, from beginner to master.
+  links:
+    - label: 'Get started'
+      size: 'lg'
+      color: 'black'
+      to: '/docs/getting-started/introduction'
+    - label: 'Explore examples'
+      size: 'lg'
+      color: 'white'
+      to: '/docs/examples'

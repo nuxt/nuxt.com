@@ -116,13 +116,12 @@ const _useNavigation = () => {
       to: 'https://nuxters.nuxt.com',
       target: '_blank'
     }, {
-      label: 'Video Courses',
-      to: 'https://masteringnuxt.com/nuxt3?ref=nuxt',
-      target: '_blank'
-    }, {
       label: 'Nuxt on GitHub',
       to: 'https://github.com/nuxt',
       target: '_blank'
+    }, {
+      label: 'Team',
+      to: '/team'
     }, {
       label: 'Design Kit',
       to: '/design-kit'
@@ -175,6 +174,10 @@ const _useNavigation = () => {
 
     return link
   }).filter(Boolean), {
+    label: 'Team',
+    icon: 'i-ph-users-duotone',
+    to: '/team'
+  }, {
     label: 'Design Kit',
     icon: 'i-ph-palette-duotone',
     to: '/design-kit'
