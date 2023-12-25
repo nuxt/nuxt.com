@@ -157,7 +157,8 @@ export default defineNuxtConfig({
     strict: false
   },
   experimental: {
-    appManifest: true
+    appManifest: true,
+    sharedPrerenderData: true
   },
   devtools: {
     enabled: false
