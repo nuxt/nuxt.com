@@ -94,9 +94,6 @@ export default defineNuxtConfig({
     '/enterprise': { redirect: '/enterprise/support', prerender: false }
   },
   nitro: {
-    experimental: {
-      wasm: true
-    },
     prerender: {
       // failOnError: false
       // TODO: investigate
