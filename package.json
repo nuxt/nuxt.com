@@ -50,6 +50,8 @@
     "vue-tsc": "^1.8.26"
   },
   "resolutions": {
-    "nuxt": "npm:nuxt-nightly@3.9.0-28391958.695f29e2"
+    "nuxt": "npm:nuxt-nightly@3.9.0-28391958.695f29e2",
+    "nitropack": "npm:nitropack@2.8.1",
+    "nitropack-nightly": "npm:nitropack@2.8.1"
   }
 }
