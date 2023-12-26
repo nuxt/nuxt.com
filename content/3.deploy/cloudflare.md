@@ -27,6 +27,19 @@ To leverage sever-side rendering on the edge, set the build command to: `nuxt bu
 
 To statically generate your website, set the build command to: `nuxt generate`
 
+### Route matching
+
+For statically generated sites use the nitro option `autoSubfolderIndex` to adapt Cloudflare [route matching](https://developers.cloudflare.com/pages/configuration/serving-pages/#route-matching) rules.
+
+```ts [nuxt.config.ts]
+export default defineNuxtConfig({
+  nitro: {
+    prerender: {
+      autoSubfolderIndex: false
+    }
+})
+```
+
 ### Direct Upload
 
 Alternatively, you can use [wrangler](https://github.com/cloudflare/workers-sdk) to upload your project to Cloudflare.
