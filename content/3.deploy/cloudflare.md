@@ -29,7 +29,9 @@ To statically generate your website, set the build command to: `nuxt generate`
 
 ### Route matching
 
-For statically generated sites use the nitro option `autoSubfolderIndex` to adapt Cloudflare [route matching](https://developers.cloudflare.com/pages/configuration/serving-pages/#route-matching) rules.
+On CloudFlare Pages, if an HTML file is found with a matching path to the current route requested, it will serve it. It will also redirect HTML pages to their extension-less counterparts: for instance, `/contact.html` will be redirected to `/contact`, and `/about/index.html` will be redirected to `/about/`.
+
+To match Cloudflare [route matching](https://developers.cloudflare.com/pages/configuration/serving-pages/#route-matching) rules, set the nitro option `autoSubfolderIndex` to `false`.
 
 ```ts [nuxt.config.ts]
 export default defineNuxtConfig({
