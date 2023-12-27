@@ -61,6 +61,12 @@ In this case, you will have to set the preset manually.
     wrangler pages deploy dist/
     ```
 
+## Disable Auto Minify
+
+Make sure to disable the minification of HTML, CSS and JavaScript in **CloudFlare -> Speed -> Optimization -> Auto Minify** to avoid any Vue hydration.
+
+![Disable Cloudflare auto minify](/assets/deploy/cloudflare-auto-minify.png)
+
 ## Learn more
 
 ::read-more{to="https://nitro.unjs.io/deploy/providers/cloudflare" target="_blank"}
