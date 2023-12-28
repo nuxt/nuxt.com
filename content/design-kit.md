@@ -71,4 +71,3 @@ Font is also variable which allows us to fit with any contexts.
 ### Usage
 
 For Nuxt brand, we will only use Regular / Medium / Semibold weights 99% of the time. You should avoid Light & Heavy if you want to use it as Nuxt Identity. Only exceptions are for super, subscript characters, also you can use heavy if you go upper than 72px for a font size.
-Figma only includes a limited number of DM Sans variants by default. To access all the available variables of DM Sans, you can download them here (remember to restart Figma after installing the font on your computer).
