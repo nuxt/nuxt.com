@@ -32,6 +32,7 @@ export const github = {
         console.error(`Cannot fetch github repo API info for ${owner}/${name}: ${err}`)
         // Cannot call Github API, fallback to UnGH
         return $fetch<any>(`https://ungh.cc/repos/${owner}/${name}`)
+          .then(res => res.repo)
           .catch((err) => {
             // eslint-disable-next-line no-console
             console.error(`Cannot fetch UnGH repo info for ${owner}/${name}: ${err}`)
@@ -42,7 +43,6 @@ export const github = {
               defaultBranch: 'main'
             }
           })
-          .then(res => res.repo)
       })
   }
 }

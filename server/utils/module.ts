@@ -44,6 +44,7 @@ export const fetchModuleStats = cachedFunction(async (module: any) => {
       })
   ])
   return {
+    version: npmInfos['dist-tags']?.latest || '0.0.0',
     downloads: npmStats.downloads,
     stars: repo.stars,
     watchers: repo.watchers,
