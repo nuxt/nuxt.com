@@ -102,6 +102,10 @@ links.push({
                 <UDivider v-if="links?.length && provider.body?.toc?.links?.length" type="dashed" />
 
                 <UPageLinks title="Links" :links="links" />
+
+                <UDivider type="dashed" />
+
+                <Ads />
               </div>
             </template>
           </UDocsToc>

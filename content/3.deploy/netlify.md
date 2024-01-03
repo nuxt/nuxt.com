@@ -4,7 +4,7 @@ description: 'Deploy your Nuxt Application to Netlify infrastructure.'
 componentImg: Netlify
 logoIcon: 'i-logos-netlify-icon'
 category: Hosting
-featured: true
+featured: false
 nitroPreset: 'netlify'
 website: https://www.netlify.com/
 ---

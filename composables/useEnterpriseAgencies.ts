@@ -5,9 +5,13 @@ export const useEnterpriseAgencies = () => {
   const route = useRoute()
   const router = useRouter()
   const agencies = useState<Agency[]>('enterprise-agencies', () => [])
+  const loadingIndicator = useLoadingIndicator()
+
+  watch(() => route.query, () => {
+    loadingIndicator.finish()
+  })
 
   // Data fetching
-
   async function fetchList () {
     if (agencies.value.length) {
       return

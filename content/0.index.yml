@@ -1,8 +1,8 @@
 navigation: false
 hero:
   cta:
-    label: Nuxt DevTools v1.0 is out
-    to: /blog/nuxt-devtools-v1-0
+    label: Nuxt v3.9 is out
+    to: /blog/v3-9
     variant: outline
     icon: i-ph-arrow-right
     size: xs
