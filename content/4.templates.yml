@@ -120,3 +120,8 @@ templates:
     repo: 'Barbapapazes/the-green-chronicle'
     demo: 'https://the-green-chronicle.esteban-soubiran.site/'
     badge: 'Freemium'
+  - name: 'Nuxtship'
+    slug: 'nuxtship'
+    description: 'A landing page template for startups made with TailwindCSS.'
+    repo: 'Gr33nW33n/nuxtship-template'
+    demo: 'https://snazzy-semolina-467693.netlify.app'
