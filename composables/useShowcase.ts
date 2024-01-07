@@ -3,8 +3,6 @@ import type { ShowcaseList, Filter, ShowcaseListGroupItem } from '../types'
 export const useShowcase = () => {
   const route = useRoute()
   const router = useRouter()
-  const loadingIndicator = useLoadingIndicator()
-
   const showcaseList = useState<ShowcaseList>('showcase', () => null)
 
   const iconsMap = {
@@ -40,11 +38,7 @@ export const useShowcase = () => {
     showcaseList.value = res
   }
 
-  watch(() => route.query, () => {
-    loadingIndicator.finish()
-  })
   // Lists
-
   const categories = computed<Filter[]>(() => {
     return showcaseList.value?.groups?.map(group => ({
       key: group.id,

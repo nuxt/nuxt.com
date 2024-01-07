@@ -43,12 +43,8 @@ export const useModules = () => {
 
   const route = useRoute()
   const router = useRouter()
-  const loadingIndicator = useLoadingIndicator()
-
   const modules = useState<Module[]>('modules', () => [])
   const module = useState<Module>('module', () => ({} as Module))
-
-
 
   // Data fetching
 
@@ -98,10 +94,6 @@ export const useModules = () => {
   //       return true
   //     })
   // })
-
-  watch(() => route.query, () => {
-    loadingIndicator.finish()
-  })
 
   const categories = computed<Filter[]>(() => {
     return Object.keys(iconsMap).map(category => ({
