@@ -27,6 +27,13 @@ templates:
     description: 'HackerNews clone built with Nuxt.'
     repo: 'nuxt/hackernews'
     demo: 'https://hn.nuxt.space/news/1'
+  - name: 'Nuxt UI Pro - SaaS'
+    slug: 'ui-pro-saas'
+    description: "A SaaS template made with Nuxt UI Pro."
+    repo: 'nuxt-ui-pro/saas'
+    demo: 'https://nuxt-ui-pro-template-saas.vercel.app'
+    screenshotUrl: 'https://nuxt-ui-pro-template-saas.vercel.app'
+    badge: 'Freemium'
   - name: 'Nuxt UI Pro - Docs'
     slug: 'ui-pro-docs'
     description: "A documentation template made with Nuxt UI Pro."
