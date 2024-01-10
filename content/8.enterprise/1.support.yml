@@ -1,0 +1,64 @@
+title: 'Nuxt professional services'
+navigation.title: 'Support'
+description: 'Get professional support by the Nuxt team to achieve your objectives and overcome any challenge.'
+head.title: 'Nuxt professional services'
+head.description: 'Get professional support by the Nuxt team to achieve your objectives and overcome any challenge.'
+navigation.icon: i-ph-lifebuoy-duotone
+sections:
+  - slot: 'form'
+    form:
+      email:
+        label: 'Company email'
+        placeholder: 'you@example.com'
+      help:
+        label: 'How can we help you'
+        placeholder: 'Tell us what your problem is'
+      info: 'By submitting this form, I confirm that I have read and understood the <a class="text-gray-950 dark:text-gray-100 underline font-medium">Nuxt Privacy Statement.</a>'
+      button: 'Send message'
+    call:
+      title: 'Book a call'
+      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.'
+      button: 'Choose a meeting'
+  - slot: 'testimonials'
+    title: 'Lorem ipsum dolor sit amet'
+    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim.'
+    testimonials:
+      - quote: "Choosing NuxtLabs for an audit of our Nuxt project was a game-changer. Their detailed insights significantly enhanced our site's performance and the quality of our code. We're grateful for their support and highly recommend them to others."
+        author:
+          name: 'Melene Ulm'
+          description: 'Web Developer @ Mobile Industrial Robots'
+      - quote: "I'd highly recommend their services for anyone looking into a Nuxt, to ensure you get all the benefits that it can provide and make sure your team follow all the best practice design patterns."
+        author:
+          name: 'James Baddiley'
+          description: 'CEO/CTO Chillisauce.com'
+      - quote: "We are really happy with how the workshop went. The expert evaluated our application's architecture and made some improvements, then we conducted a long Q&A session during which every member of my team acquired valuable knowledge."
+        author:
+          name: 'Denis Lugowski'
+          description: 'Full Stack Developer @ Tchibo'
+    logos:
+      - name: '/assets/malt.svg'
+        width: '85'
+      - name: '/assets/zadig-and-voltaire.svg'
+        width: '176'
+      - name: '/assets/adyen.svg'
+        width: '75'
+      - name: '/assets/world-wide-technology.svg'
+        width: '116'
+      - name: '/assets/cora.svg'
+        width: '29'
+      - name: '/assets/mir.svg'
+        width: '55'
+      - name: '/assets/tchibo.svg'
+        width: '85'
+      - name: '/assets/about-you.svg'
+        width: '120'
+  - slot: 'faq'
+    title: 'Frequently asked questions'
+    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim.'
+    items:
+      - label: 'What kind of services do we perform?'
+        content: "Project guidance, performance audit, Nuxt migration, workshops and training, as long as it's Nuxt related we can help you"
+      - label: 'How long a support engagement typically last??'
+        content: "Project guidance, performance audit, Nuxt migration, workshops and training, as long as it's Nuxt related we can help you"
+      - label: 'Who are the experts in the Nuxt team?'
+        content: "Our experts network is composed of Vue, Nuxt and Vite core team members and contributors. The highest level of expertise that you can find."

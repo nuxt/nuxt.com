@@ -6,6 +6,8 @@ if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
+console.log('page', page)
+
 const title = page.value.head?.title || page.value.title
 const description = page.value.head?.description || page.value.description
 useSeoMeta({
@@ -26,11 +28,31 @@ defineOgImage({
 
 <template>
   <UContainer>
-    <UPageHero v-bind="page" />
+    <UPage v-if="page">
+      <UPageHero :title="page.title" :description="page.description" align="center" />
 
-    <UPage>
-      <UPageBody prose class="prose-lg">
-        <ContentRenderer v-if="page && page.body" :value="page" />
+      <UPageBody>
+        <ULandingSection v-for="(section, index) of page.sections" :key="index" :slot="section.slot">
+          <template #title>
+            <span v-html="section?.title" />
+          </template>
+
+          <template v-if="section?.description" #description>
+            <span v-html="section.description" />
+          </template>
+
+          <template #form>
+            <EnterpriseSupportFormSection :form="section.form" />
+          </template>
+
+          <template #testimonials>
+
+          </template>
+
+          <template #faq>
+
+          </template>
+        </ULandingSection>
       </UPageBody>
     </UPage>
   </UContainer>
