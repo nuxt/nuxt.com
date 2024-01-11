@@ -111,7 +111,8 @@ span[class^="i-ph"] {
       v-for="(section, index) of page.sections"
       :key="index"
       :slot="section.slot"
-      :class="section.class.toString() + ' content-visibility contain-intrinsic-size-500'"
+      :class="section.class"
+      class="content-visibility contain-intrinsic-size-500"
       :align="section.align"
       :links="section.links"
     >
