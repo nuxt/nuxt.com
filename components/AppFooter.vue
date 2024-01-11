@@ -4,6 +4,8 @@ const { footerLinks } = useNavigation()
 
 <template>
   <UFooter
+    class="content-visibility contain-content"
+    style="contain-intrinsic-size: auto 100px"
     :ui="{
       bottom: { wrapper: 'border-t border-gray-200 dark:border-gray-800', container: '!py-6' },
       top: { wrapper: 'border-t border-gray-200 dark:border-gray-800', container: 'py-8 lg:py-12' }

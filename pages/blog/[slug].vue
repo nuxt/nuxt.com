@@ -78,7 +78,7 @@ function copyLink () {
             variant="ghost"
             class="-my-1.5 -mx-2.5"
           >
-            <UAvatar :src="author.avatarUrl" :alt="author.name" />
+            <UAvatar loading="lazy" :src="author.avatarUrl" :alt="author.name" />
 
             <div class="text-left">
               <p class="font-medium">

@@ -16,7 +16,41 @@ useSeoMeta({
   twitterImage: joinURL(site.url, '/new-social.jpg')
 })
 </script>
+<style>
+.content-visibility-auto {
+  content-visibility: auto;
+  contain:layout;
+}
+.contain-intrinsic-size-200 {
+  contain-intrinsic-size: 200px;
+}
+.contain-intrinsic-size-500 {
+  contain-intrinsic-size: 200px;
+}
+.contain-intrinsic-size-800 {
+  contain-intrinsic-size: 200px;
+}
 
+.contain-layout{
+  contain:layout;
+}
+.contain-content{
+  contain:content;
+}
+.contain-strict{
+  contain:strict;
+}
+
+img, svg, span[class^="i-ph"] {
+  contain:content;
+}
+
+span[class^="i-ph"] {
+  content-visibility: auto;
+  contain-intrinsic-size: 20px;
+}
+
+</style>
 <template>
   <div v-if="page">
     <ULandingHero :ui="{ base: 'relative z-[1]' }" class="dark:bg-gradient-to-b from-gray-950 to-gray-900">
@@ -77,7 +111,7 @@ useSeoMeta({
       v-for="(section, index) of page.sections"
       :key="index"
       :slot="section.slot"
-      :class="section.class"
+      :class="section.class.toString() + ' content-visibility contain-intrinsic-size-500'"
       :align="section.align"
       :links="section.links"
     >

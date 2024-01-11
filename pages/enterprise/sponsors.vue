@@ -51,7 +51,7 @@ defineOgImage({
                 :to="sponsor.sponsorUrl"
                 target="_blank"
               >
-                <UAvatar :src="sponsor.sponsorLogo" :alt="sponsor.sponsorName" class="mx-auto mt-4" size="2xl" />
+                <UAvatar loading="lazy"  :src="sponsor.sponsorLogo" :alt="sponsor.sponsorName" class="mx-auto mt-4" size="2xl" />
                 <h3 class="mt-6 font-semibold leading-7 tracking-tight text-gray-900 dark:text-white mb-2">
                   {{ sponsor.sponsorName }}
                 </h3>
@@ -59,7 +59,7 @@ defineOgImage({
             </div>
             <div v-else class="flex flex-wrap gap-8 ml-12">
               <NuxtLink v-for="(sponsor, index) in value" :key="index" :to="sponsor.sponsorUrl" target="_blank" class="inline-flex">
-                <UAvatar :src="sponsor.sponsorLogo" :alt="sponsor.sponsorName" size="lg" />
+                <UAvatar loading="lazy" :src="sponsor.sponsorLogo" :alt="sponsor.sponsorName" size="lg" />
               </NuxtLink>
             </div>
           </div>
