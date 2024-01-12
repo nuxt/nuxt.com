@@ -48,7 +48,6 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/content',
     '@nuxt/ui',
-    '@nuxt/devtools',
     '@nuxt/image',
     '@nuxtjs/plausible',
     '@nuxtjs/fontaine',
