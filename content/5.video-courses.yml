@@ -28,6 +28,11 @@ courses:
     description: 'Learn to Nuxt middleware to handle authentication, redirection, and custom logic like a pro.'
     url: 'https://www.vuemastery.com/courses/nuxt-3-middleware/middleware-introduction?fpr=nuxt'
     badge: Premium
+  - name: 'Trello Clone'
+    slug: 'vm-trello-clone'
+    description: 'Learn how to build a Trello Clone with Nuxt 3 and Nuxt UI.'
+    url: 'https://www.vuemastery.com/courses/build-a-trello-clone-w-nuxt-3/trello-clone-nuxt-introduction/?fpr=nuxt'
+    badge: Premium
   - name: 'Nuxt 3 Tips (Playlist)'
     slug: 'nuxt3-tips'
     description: 'Learn Nuxt 3 tips and tricks with Alexander Lichter (core team).'
