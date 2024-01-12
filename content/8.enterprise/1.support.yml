@@ -7,12 +7,18 @@ navigation.icon: i-ph-lifebuoy-duotone
 sections:
   - slot: 'form'
     form:
-      email:
+      name:
+        label: 'Name'
+        placeholder: 'John Doe'
+      companyEmail:
         label: 'Company email'
         placeholder: 'you@example.com'
+      company:
+        label: 'Company'
+        placeholder: 'Your company name'
       help:
-        label: 'How can we help you'
-        placeholder: 'Tell us what your problem is'
+        label: 'What can we help you achieve?'
+        placeholder: 'Tell us how we can help you'
       info: 'By submitting this form, I confirm that I have read and understood the <a class="text-gray-950 dark:text-gray-100 underline font-medium">Nuxt Privacy Statement.</a>'
       button: 'Send message'
     call:

@@ -53,6 +53,7 @@ export default defineNuxtConfig({
     '@nuxtjs/plausible',
     '@nuxtjs/fontaine',
     '@nuxtjs/google-fonts',
+    '@nuxtjs/turnstile',
     '@nuxthq/studio',
     '@vueuse/nuxt',
     'nuxt-og-image',
@@ -119,6 +120,11 @@ export default defineNuxtConfig({
       }
     }
   },
+  runtimeConfig: {
+    turnstile: {
+      secretKey: process.env.NUXT_TURNSTILE_SECRET_KEY
+    }
+  },
   $development: {
     runtimeConfig: {
       public: {
@@ -152,6 +158,9 @@ export default defineNuxtConfig({
       docsSource,
       examplesSource
     }
+  },
+  turnstile: {
+    siteKey: process.env.NUXT_PUBLIC_TURNSTILE_SITE_KEY
   },
   typescript: {
     strict: false

@@ -4,7 +4,9 @@ import type { FormError, FormSubmitEvent } from '#ui/types'
 const props = defineProps({
   form: {
     type: Object as PropType<{
-      email: { label: string, placeholder: string },
+      name: { label: string, placeholder: string },
+      companyEmail: { label: string, placeholder: string },
+      company: { label: string, placeholder: string },
       help: { label: string, placeholder: string }
       info: string,
       button: string
@@ -18,38 +20,57 @@ const props = defineProps({
   }
 })
 
+const toast = useToast()
+
+const loading = ref<Boolean>(false)
+const turnstile = ref()
+
 const state = reactive({
-  email: undefined,
+  name: undefined,
+  companyEmail: undefined,
+  company: undefined,
   help: undefined
 })
 
 const validate = (state: any): FormError[] => {
   const errors = []
-  if (!state.email) errors.push({ path: 'email', message: 'Required' })
+  if (!state.name) errors.push({ path: 'name', message: 'Required' })
+  if (!state.companyEmail) errors.push({ path: 'companyEmail', message: 'Required' })
+  if (!state.company) errors.push({ path: 'company', message: 'Required' })
   if (!state.help) errors.push({ path: 'help', message: 'Required' })
   return errors
 }
 
 async function onSubmit (event: FormSubmitEvent<any>) {
-  console.log(event.data)
   if (event.data) {
-    await $fetch('http://localhost:3000/api/support/contact', {
+    if (loading.value) { return }
+
+    loading.value = true
+
+    await $fetch('http://127.0.0.1:3000/api/support/contact', {
       method: 'POST',
-      body: { email: props.form.email, message: props.form.help }
+      body: {
+        name: props.form.name,
+        companyEmail: props.form.companyEmail,
+        company: props.form.company,
+        help: props.form.help
+      }
     })
-      .then((res) => {
-        console.log('res', res)
-        //sendingForm.value = false
-        //Object.assign(form, initialForm)
-        //step.value = 'success'
-        //error.value = ''
+      .then(() => {
+        state.company = ''
+        state.name = ''
+        state.companyEmail = ''
+        state.help = ''
+        toast.add({ title: 'Email sent', description: 'We will do everything possible to respond to you as quickly as possible', color: 'green' })
       })
       .catch((e) => {
-        console.log('e', e)
-        // error.value = e.message
+        const description = e.data?.message || 'Something went wrong. Please try again later.'
+        toast.add({ title: 'Email sending failed', description, color: 'red' })
       })
       .finally(() => {
-        // loading.value = false
+        loading.value = false
+        //reset turnstile token
+        turnstile.value?.reset()
       })
   }
 }
@@ -60,14 +81,23 @@ async function onSubmit (event: FormSubmitEvent<any>) {
     <div class="w-full">
       <UCard :ui="{ background: 'form-bg', body: { base: 'flex flex-col space-y-6 w-full', padding: 'px-4 py-5 sm:p-8' } }">
         <UForm :validate="validate" :state="state" class="space-y-6" @submit="onSubmit">
-          <UFormGroup :label="form.email.label" name="email" required>
-            <UInput v-model="state.email" :placeholder="form.email.placeholder" />
+          <NuxtTurnstile ref="turnstile" :options="{ action: 'vue' }" />
+
+          <UFormGroup :label="form.name.label" name="name" required>
+            <UInput v-model="state.name" :placeholder="form.name.placeholder" />
+          </UFormGroup>
+
+          <UFormGroup :label="form.companyEmail.label" name="companyEmail" required>
+            <UInput v-model="state.companyEmail" :placeholder="form.companyEmail.placeholder" />
+          </UFormGroup>
+
+          <UFormGroup :label="form.company.label" name="company" required>
+            <UInput v-model="state.company" :placeholder="form.company.placeholder" />
           </UFormGroup>
 
           <UFormGroup :label="form.help.label" name="help" required>
             <UTextarea v-model="state.help" autoresize :placeholder="form.help.placeholder" :rows="6" />
           </UFormGroup>
-
 
           <!-- eslint-disable-next-line vue/no-v-html -->
           <div class="text-gray-700 dark:text-gray-400" v-html="form.info" />

@@ -43,6 +43,7 @@
   "devDependencies": {
     "@nuxt/devtools": "^1.0.6",
     "@nuxt/eslint-config": "^0.2.0",
+    "@nuxtjs/turnstile": "^0.6.3",
     "capture-website": "^4.0.0",
     "eslint": "^8.56.0",
     "typescript": "^5.3.3",
