@@ -24,6 +24,7 @@ const toast = useToast()
 
 const loading = ref<Boolean>(false)
 const turnstile = ref()
+const token = ref()
 
 const state = reactive({
   name: undefined,
@@ -47,13 +48,16 @@ async function onSubmit (event: FormSubmitEvent<any>) {
 
     loading.value = true
 
+    console.log('token', token)
+
     await $fetch('http://127.0.0.1:3000/api/support/contact', {
       method: 'POST',
       body: {
         name: props.form.name,
         companyEmail: props.form.companyEmail,
         company: props.form.company,
-        help: props.form.help
+        help: props.form.help,
+        token: token.value
       }
     })
       .then(() => {
@@ -81,7 +85,7 @@ async function onSubmit (event: FormSubmitEvent<any>) {
     <div class="w-full">
       <UCard :ui="{ background: 'form-bg', body: { base: 'flex flex-col space-y-6 w-full', padding: 'px-4 py-5 sm:p-8' } }">
         <UForm :validate="validate" :state="state" class="space-y-6" @submit="onSubmit">
-          <NuxtTurnstile ref="turnstile" :options="{ action: 'vue' }" />
+          <NuxtTurnstile ref="turnstile" v-model="token" />
 
           <UFormGroup :label="form.name.label" name="name" required>
             <UInput v-model="state.name" :placeholder="form.name.placeholder" />
