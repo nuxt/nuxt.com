@@ -120,11 +120,6 @@ export default defineNuxtConfig({
       }
     }
   },
-  runtimeConfig: {
-    turnstile: {
-      secretKey: process.env.NUXT_TURNSTILE_SECRET_KEY
-    }
-  },
 
   $development: {
     runtimeConfig: {
@@ -159,9 +154,6 @@ export default defineNuxtConfig({
       docsSource,
       examplesSource
     }
-  },
-  turnstile: {
-    siteKey: process.env.NUXT_PUBLIC_TURNSTILE_SITE_KEY
   },
   typescript: {
     strict: false

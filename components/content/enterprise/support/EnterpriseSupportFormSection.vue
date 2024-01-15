@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { FormError, FormSubmitEvent } from '#ui/types'
 
-const props = defineProps({
+defineProps({
   form: {
     type: Object as PropType<{
       name: { label: string, placeholder: string },
@@ -9,13 +9,13 @@ const props = defineProps({
       company: { label: string, placeholder: string },
       body: { label: string, placeholder: string }
       info: string,
-      button: string
+      button: any
     }
     >,
     default: () => ({})
   },
   call: {
-    type: Object as PropType<{ title: string, description: string, button: string }>,
+    type: Object as PropType<{ title: string, description: string, button: any }>,
     default: () => ({})
   }
 })
@@ -25,6 +25,7 @@ const toast = useToast()
 const loading = ref<Boolean>(false)
 const turnstile = ref()
 const token = ref()
+const canSend = ref(false)
 
 const state = reactive({
   name: undefined,
@@ -39,42 +40,40 @@ const validate = (state: any): FormError[] => {
   if (!state.email) errors.push({ path: 'email', message: 'Required' })
   if (!state.company) errors.push({ path: 'company', message: 'Required' })
   if (!state.body) errors.push({ path: 'body', message: 'Required' })
+  if (!errors.length || !token.value) canSend.value = true
+  else canSend.value = false
   return errors
 }
 
 async function onSubmit (event: FormSubmitEvent<any>) {
-  if (event.data) {
-    if (loading.value) { return }
+  if (!event.data) return
+  if (loading.value || !canSend.value) return
 
-    loading.value = true
+  loading.value = true
 
-    await $fetch('/api/support/contact', {
-      method: 'POST',
-      body: {
-        name: props.form.name,
-        companyEmail: props.form.email,
-        company: props.form.company,
-        body: props.form.body,
-        token: token.value
-      }
+  await $fetch('https://api.nuxt.com/support/contact', {
+    method: 'POST',
+    body: {
+      ...event.data,
+      token: token.value
+    }
+  })
+    .then(() => {
+      state.company = ''
+      state.name = ''
+      state.email = ''
+      state.body = ''
+      toast.add({ title: 'Email sent', description: 'We will do everything possible to respond to you as quickly as possible', color: 'green' })
     })
-      .then(() => {
-        state.company = ''
-        state.name = ''
-        state.email = ''
-        state.body = ''
-        toast.add({ title: 'Email sent', description: 'We will do everything possible to respond to you as quickly as possible', color: 'green' })
-      })
-      .catch((e) => {
-        const description = e.data?.message || 'Something went wrong. Please try again later.'
-        toast.add({ title: 'Email sending failed', description, color: 'red' })
-      })
-      .finally(() => {
-        loading.value = false
-        //reset turnstile token
-        turnstile.value?.reset()
-      })
-  }
+    .catch((e) => {
+      const description = e.data?.message || 'Something went wrong. Please try again later.'
+      toast.add({ title: 'Email sending failed', description, color: 'red' })
+    })
+    .finally(() => {
+      loading.value = false
+      //reset turnstile token
+      turnstile.value?.reset()
+    })
 }
 </script>
 
@@ -83,28 +82,27 @@ async function onSubmit (event: FormSubmitEvent<any>) {
     <div class="w-full">
       <UCard :ui="{ background: 'form-bg', body: { base: 'flex flex-col space-y-6 w-full', padding: 'px-4 py-5 sm:p-8' } }">
         <UForm :validate="validate" :state="state" class="space-y-6" @submit="onSubmit">
-          <NuxtTurnstile ref="turnstile" v-model="token" />
-
           <UFormGroup :label="form.name.label" name="name" required>
             <UInput v-model="state.name" :placeholder="form.name.placeholder" />
           </UFormGroup>
 
           <UFormGroup :label="form.email.label" name="email" required>
-            <UInput v-model="state.email" :placeholder="form.email.placeholder" />
+            <UInput v-model="state.email" type="email" :placeholder="form.email.placeholder" />
           </UFormGroup>
 
           <UFormGroup :label="form.company.label" name="company" required>
             <UInput v-model="state.company" :placeholder="form.company.placeholder" />
           </UFormGroup>
 
-          <UFormGroup :label="form.body.label" name="help" required>
+          <UFormGroup :label="form.body.label" name="body" required>
             <UTextarea v-model="state.body" autoresize :placeholder="form.body.placeholder" :rows="6" />
           </UFormGroup>
 
           <!-- eslint-disable-next-line vue/no-v-html -->
-          <div class="text-gray-700 dark:text-gray-400" v-html="form.info" />
+          <!-- <div class="text-gray-700 dark:text-gray-400" v-html="form.info" /> -->
+          <NuxtTurnstile ref="turnstile" v-model="token" />
 
-          <UButton :label="form.button" type="submit" color="gray" class="w-fit pt-2" />
+          <UButton v-bind="form.button" type="submit" color="gray" class="w-fit pt-2" :disabled="!canSend"/>
         </UForm>
       </UCard>
     </div>
@@ -119,7 +117,7 @@ async function onSubmit (event: FormSubmitEvent<any>) {
       <p>
         {{ call.description }}
       </p>
-      <UButton class="mt-8" color="gray" :label="call.button" />
+      <UButton class="mt-8" color="gray" v-bind="call.button" />
     </div>
   </div>
 </template>
