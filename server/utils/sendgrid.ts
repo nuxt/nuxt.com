@@ -76,7 +76,15 @@ interface SendGridEmailPersonalization {
   to: {
     email: string
     name?: string
-  }[]
+  }[],
+  dynamic_template_data?: DynamicTemplateDataSupport
+}
+
+interface DynamicTemplateDataSupport {
+  name: string,
+  companyEmail: string,
+  company: string,
+  help: string
 }
 
 

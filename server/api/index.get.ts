@@ -12,7 +12,8 @@ export default eventHandler(event => {
       '/contributors',
       '/sponsors',
       '/showcase',
-      '/jobs'
+      '/jobs',
+      '/support/contact'
     ]
   }
   if (process.dev) {
