@@ -26,9 +26,11 @@ const timingMiddleware = eventHandler((event) => {
 
     // Defined in CF workers
     if (process.env.SERVER_TIMINGS?.writeDataPoint) {
-      process.env.SERVER_TIMINGS.writeDataPoint({
-        blobs: [timing.path, timing.matchedPath],
-        doubles: [timing.duration, timing.statusCode],
+      event.waitUntil(async () => {
+        await process.env.SERVER_TIMINGS.writeDataPoint({
+          blobs: [timing.path, timing.matchedPath],
+          doubles: [timing.duration, timing.statusCode],
+        })
       })
     }
     // console.log('Timing', timing)
