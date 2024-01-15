@@ -1,3 +1,5 @@
+import { logger } from 'nuxt/kit'
+
 declare module 'h3' {
   interface H3EventContext {
     nuxtTimings: {
@@ -18,21 +20,23 @@ export default defineNitroPlugin((nitroApp) => {
     const responseStatus = getResponseStatus(event)
     const duration = performance.now() - event.context.nuxtTimings.start
     const log = {
+      timestamp: new Date().toUTCString(),
+      method: event.method,
       path: event.path === pathPattern ? event.path : `${event.path} (${pathPattern})`,
       status: responseStatus,
-      duration: Math.round(duration*1000)/1000 + 'ms',
+      duration: Math.round(duration*1000)/1000,
       cached: responseStatus === 304,
     }
     const SERVER_TIMINGS: any = process.env.SERVER_TIMINGS
     if (SERVER_TIMINGS?.writeDataPoint) {
       // event.waitUntil(async () => {
         await SERVER_TIMINGS.writeDataPoint({
-          blobs: [event.path, pathPattern],
+          blobs: [event.path, pathPattern, event.method],
           doubles: [duration, responseStatus],
         })
       // })
     } else {
-      console.log(stringify(log))
+      logger.info(`${log.cached ? '`[CACHED] `' : ' '}${event.method} ${event.path} ${log.status} ${log.duration}ms`)
     }
   })
 
@@ -42,7 +46,7 @@ export default defineNitroPlugin((nitroApp) => {
     const date = new Date()
     const tags = ['error', ...(ctx.tags as string[] || []).sort()]
     const path = ctx.event?.path || '?'
-    const method = ctx.event?.node.req.method || '?'
+    const method = ctx.event?.method || '?'
 
     // Show on console
     console.error(
@@ -65,7 +69,3 @@ export default defineNitroPlugin((nitroApp) => {
     // })
   })
 });
-
-function stringify(obj: any) {
-  return Object.keys(obj).map(key => `${key}: ${obj[key]}`).join('\t\t')
-}
