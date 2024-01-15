@@ -1,5 +1,3 @@
-import { logger } from 'nuxt/kit'
-
 declare module 'h3' {
   interface H3EventContext {
     nuxtTimings: {
@@ -36,7 +34,7 @@ export default defineNitroPlugin((nitroApp) => {
         })
       // })
     } else {
-      logger.info(`${log.cached ? '`[CACHED] `' : ' '}${event.method} ${event.path} ${log.status} ${log.duration}ms`)
+      console.log(`${log.cached ? '[CACHED] ' : ' '}${event.method} ${event.path} ${log.status} ${log.duration}ms`)
     }
   })
 
