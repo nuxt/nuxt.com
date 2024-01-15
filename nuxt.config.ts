@@ -65,6 +65,7 @@ export default defineNuxtConfig({
   routeRules: {
     // Pre-render
     '/api/search.json': { prerender: true },
+    '/api/templates.json': { prerender: true },
     '/blog/rss.xml': { prerender: true },
     // '/sitemap.xml': { prerender: true },
     '/newsletter': { prerender: true },
