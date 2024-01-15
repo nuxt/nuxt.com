@@ -61,7 +61,7 @@ interface SendGridEmail {
     email: string
     name?: string
   }
-  replyTo?: {
+  reply_to?: {
     email: string
     name?: string
   }

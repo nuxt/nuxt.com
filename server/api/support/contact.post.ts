@@ -38,7 +38,7 @@ export default defineEventHandler(async (event: H3Event) => {
       name: 'Nuxt Support'
     },
     subject: `[Nuxt Support] ${company}`,
-    replyTo: {
+    reply_to: {
       email,
       name: name
     },
