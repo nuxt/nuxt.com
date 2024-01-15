@@ -1,0 +1,74 @@
+title: 'Nuxt Professional Services'
+navigation.title: 'Support'
+description: 'Get professional support by Vue and Nuxt experts to achieve your objectives and overcome any challenge. <br/> We provide expertise and guidance to companies using Vue and Nuxt, including assistance with project architecture, performance optimization, best practices, and troubleshooting.'
+head.title: 'Nuxt professional services'
+head.description: 'Get professional support by the Nuxt team to achieve your objectives and overcome any challenge.'
+navigation.icon: i-ph-lifebuoy-duotone
+form:
+  name:
+    label: 'Name'
+    placeholder: 'John Doe'
+  email:
+    label: 'Company Email'
+    placeholder: 'you@example.com'
+  company:
+    label: 'Company'
+    placeholder: 'Your company name'
+  body:
+    label: 'What can we help you achieve?'
+    placeholder: 'Tell us how we can help you'
+  info: 'By submitting this form, I confirm that I have read and understood the <a class="text-gray-950 dark:text-gray-100 underline font-medium">Nuxt Privacy Statement.</a>'
+  button:
+    icon: i-ph-paper-plane-right-duotone
+    label: 'Send message'
+call:
+  description: >-
+    ## Talk to us
+
+    Book 30 minutes with us to learn more about our support solutions, present your needs and your project and get personnalized proposions to solve your issues.
+  button:
+    icon: i-ph-calendar-plus-duotone
+    label: 'Choose a meeting'
+    to: https://calendly.com/nuxt-experts/introduction
+    target: _blank
+testimonials:
+  - quote: "Choosing NuxtLabs for an audit of our Nuxt project was a game-changer. Their detailed insights significantly enhanced our site's performance and the quality of our code. We're grateful for their support and highly recommend them to others."
+    author:
+      name: 'Melene Ulm'
+      description: 'Web Developer @ Mobile Industrial Robots'
+  - quote: "I'd highly recommend their services for anyone looking into a Nuxt, to ensure you get all the benefits that it can provide and make sure your team follow all the best practice design patterns."
+    author:
+      name: 'James Baddiley'
+      description: 'CEO/CTO Chillisauce.com'
+  - quote: "We are really happy with how the workshop went. The expert evaluated our application's architecture and made some improvements, then we conducted a long Q&A session during which every member of my team acquired valuable knowledge."
+    author:
+      name: 'Denis Lugowski'
+      description: 'Full Stack Developer @ Tchibo'
+logos:
+  - src: '/assets/support/malt.svg'
+    width: '85'
+  - src: '/assets/support/zadig-and-voltaire.svg'
+    width: '176'
+  - src: '/assets/support/adyen.svg'
+    width: '75'
+  - src: '/assets/support/world-wide-technology.svg'
+    width: '116'
+  - src: '/assets/support/cora.svg'
+    width: '29'
+  - src: '/assets/support/mir.svg'
+    width: '55'
+  - src: '/assets/support/tchibo.svg'
+    width: '85'
+  - src: '/assets/support/about-you.svg'
+    width: '120'
+faq:
+  title: 'Frequently asked questions'
+  description: 'Here are some of the most common questions we get asked about Nuxt support services.'
+  items:
+    - label: 'What are the steps to follow to gain access to NuxtLabs Professional services?'
+      content: >-
+        We start with an introduction meeting to gather information about your context and goals. We provide you a quote based on your needs. When confirmed, we introduce you to the Nuxt Expert, choose dates in common, setup the communication channel and codebase access.
+    - label: 'What kind of services do we perform?'
+      content: "We provide expertise and guidance to companies using Vue and Nuxt, including assistance with project architecture, performance optimization, best practices, and troubleshooting."
+    - label: 'Who are the Nuxt experts?'
+      content: "The Nuxt experts are Vue, Nuxt or Vite core team members or chosen contributors. The highest level of expertise that you can find."
