@@ -53,6 +53,7 @@ export default defineNuxtConfig({
     '@nuxtjs/plausible',
     '@nuxtjs/fontaine',
     '@nuxtjs/google-fonts',
+    '@nuxtjs/turnstile',
     '@nuxthq/studio',
     '@vueuse/nuxt',
     'nuxt-og-image',
@@ -119,6 +120,7 @@ export default defineNuxtConfig({
       }
     }
   },
+
   $development: {
     runtimeConfig: {
       public: {
