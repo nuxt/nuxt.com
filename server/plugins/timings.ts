@@ -25,11 +25,14 @@ export default defineNitroPlugin((nitroApp) => {
     }
     const SERVER_TIMINGS: any = process.env.SERVER_TIMINGS
     if (SERVER_TIMINGS?.writeDataPoint) {
+      console.log('should write data point')
       event.waitUntil(async () => {
+        console.log('write data point')
         await SERVER_TIMINGS.writeDataPoint({
           blobs: [event.path, pathPattern],
           doubles: [duration, responseStatus],
         })
+        console.log('data point saved')
       })
     } else {
       console.log(stringify(log))
