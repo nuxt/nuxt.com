@@ -1,48 +1,71 @@
-const timingMiddleware = eventHandler((event) => {
-  const start = Date.now()
-
-  const _end = event.node.res.end;
-  event.node.res.end = function (
-    chunk: any,
-    encoding: BufferEncoding,
-    cb?: () => void
-  ) {
-    const timing = {
-      matchedPath: event.context.matchedRoute?.path || '/**',
-      path: event.path,
-      duration: Date.now() - start,
-      statusCode: event.node.res.statusCode,
-      cached: Boolean(event.node.res.getHeader('last-modified') && event.node.res.statusCode === 304),
+declare module 'h3' {
+  interface H3EventContext {
+    nuxtTimings: {
+      start: number
     }
-    /**
-     * Would be nice to know from the event the Nitro send back a cached reponse
-     * 
-     * event.context.cacheSent
-     * 
-     * As well as getting the path of the route if possible
-     * 
-     * event.context.meta.path (ex: server/routes/modules/[name].get.ts)
-     */
+  }
+}
 
-    // Defined in CF workers
-    if (process.env.SERVER_TIMINGS?.writeDataPoint) {
+export default defineNitroPlugin((nitroApp) => {
+  nitroApp.hooks.hook('request', (event) => {
+    event.context.nuxtTimings = {
+      start: performance.now(),
+    }
+  })
+
+  nitroApp.hooks.hook('afterResponse', (event) => {
+    const pathPattern = event.context.matchedRoute?.path || '/**'
+    const responseStatus = getResponseStatus(event)
+    const duration = performance.now() - event.context.nuxtTimings.start
+    const log = {
+      path: event.path === pathPattern ? event.path : `${event.path} (${pathPattern})`,
+      status: responseStatus,
+      duration: Math.round(duration*1000)/1000 + 'ms',
+      cached: responseStatus === 304,
+    }
+    const SERVER_TIMINGS: any = process.env.SERVER_TIMINGS
+    if (SERVER_TIMINGS?.writeDataPoint) {
       event.waitUntil(async () => {
-        await process.env.SERVER_TIMINGS.writeDataPoint({
-          blobs: [timing.path, timing.matchedPath],
-          doubles: [timing.duration, timing.statusCode],
+        await SERVER_TIMINGS.writeDataPoint({
+          blobs: [event.path, pathPattern],
+          doubles: [duration, responseStatus],
         })
       })
+    } else {
+      console.log(stringify(log))
     }
-    // console.log('Timing', timing)
-    _end.call(event.node.res, chunk, encoding, cb);
-    return this;
-  }.bind(event.node.res);
+  })
+
+  nitroApp.hooks.hook('error', async (error, ctx) => {
+    if ((error as any).statusCode === 401) return
+    // Prepare
+    const date = new Date()
+    const tags = ['error', ...(ctx.tags as string[] || []).sort()]
+    const path = ctx.event?.path || '?'
+    const method = ctx.event?.node.req.method || '?'
+
+    // Show on console
+    console.error(
+      tags.map((tag) => `[${tag}]`).join(' '),
+      `[${method} ${path}]`,
+      date.toISOString(),
+      error
+    )
+
+    // Keep in storage
+    // const storage = useStorage()
+    // const id = date.toISOString().toLowerCase().replace(/t|z|:|\./g,'-').replace(/-$/,'')
+    // await storage.setItem('logs:' + id, {
+    //   id,
+    //   date,
+    //   method,
+    //   path,
+    //   message: error.message,
+    //   stack: error.stack,
+    // })
+  })
 });
 
-export default defineNitroPlugin((nitro) => {
-  // Always add timing middleware to the beginning of handler stack
-  nitro.h3App.stack.unshift({
-    route: "/",
-    handler: timingMiddleware,
-  });
-});
+function stringify(obj: any) {
+  return Object.keys(obj).map(key => `${key}: ${obj[key]}`).join('\t\t')
+}
