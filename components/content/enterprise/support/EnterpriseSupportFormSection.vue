@@ -68,6 +68,7 @@ async function onSubmit (event: FormSubmitEvent<any>) {
       state.name = ''
       state.email = ''
       state.body = ''
+      showTurnstile.value = false
       toast.add({ title: 'Email sent', description: 'We will do everything possible to respond to you as quickly as possible', color: 'green' })
     })
     .catch((e) => {
