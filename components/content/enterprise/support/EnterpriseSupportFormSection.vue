@@ -25,7 +25,6 @@ const toast = useToast()
 const loading = ref<Boolean>(false)
 const turnstile = ref()
 const token = ref()
-const canSend = ref(false)
 
 const state = reactive({
   name: undefined,
@@ -34,14 +33,20 @@ const state = reactive({
   body: undefined
 })
 
+const showTurnstile = ref(false)
+const canSend = computed(() => {
+  return Boolean(state.name && state.email && state.company && state.body && token.value)
+})
+
 const validate = (state: any): FormError[] => {
   const errors = []
   if (!state.name) errors.push({ path: 'name', message: 'Required' })
   if (!state.email) errors.push({ path: 'email', message: 'Required' })
   if (!state.company) errors.push({ path: 'company', message: 'Required' })
   if (!state.body) errors.push({ path: 'body', message: 'Required' })
-  if (!errors.length || !token.value) canSend.value = true
-  else canSend.value = false
+  if (!errors.length) {
+    showTurnstile.value = true
+  }
   return errors
 }
 
@@ -63,6 +68,7 @@ async function onSubmit (event: FormSubmitEvent<any>) {
       state.name = ''
       state.email = ''
       state.body = ''
+      showTurnstile.value = false
       toast.add({ title: 'Email sent', description: 'We will do everything possible to respond to you as quickly as possible', color: 'green' })
     })
     .catch((e) => {
@@ -100,9 +106,18 @@ async function onSubmit (event: FormSubmitEvent<any>) {
 
           <!-- eslint-disable-next-line vue/no-v-html -->
           <!-- <div class="text-gray-700 dark:text-gray-400" v-html="form.info" /> -->
-          <NuxtTurnstile ref="turnstile" v-model="token" />
+          <ClientOnly>
+            <NuxtTurnstile v-if="showTurnstile" ref="turnstile" v-model="token" :options="{ theme: $colorMode.value }" />
+          </ClientOnly>
 
-          <UButton v-bind="form.button" type="submit" color="gray" class="w-fit pt-2" :disabled="!canSend"/>
+          <UButton
+            v-bind="form.button"
+            type="submit"
+            color="gray"
+            class="w-fit pt-2"
+            :loading="loading"
+            :disabled="!canSend"
+          />
         </UForm>
       </UCard>
     </div>
@@ -111,7 +126,7 @@ async function onSubmit (event: FormSubmitEvent<any>) {
     <UDivider label="OR" color="gray" class="lg:hidden py-16" :ui="{ label: 'text-xl py-8' }" />
 
     <div class="w-full flex items-start justify-center flex-col">
-      <MDC :value="call.description" class="prose dark:prose-invert"/>
+      <MDC :value="call.description" class="prose dark:prose-invert" />
       <UButton class="mt-8" color="gray" v-bind="call.button" />
     </div>
   </div>

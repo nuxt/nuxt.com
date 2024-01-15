@@ -2,7 +2,7 @@ title: 'Nuxt Professional Services'
 navigation.title: 'Support'
 description: 'Get professional support by Vue and Nuxt experts to achieve your objectives and overcome any challenge. <br/> We provide expertise and guidance to companies using Vue and Nuxt, including assistance with project architecture, performance optimization, best practices, and troubleshooting.'
 head.title: 'Nuxt professional services'
-head.description: 'Get professional support by the Nuxt team to achieve your objectives and overcome any challenge. We provide expertise and guidance to companies using Vue and Nuxt, including assistance with project architecture, performance optimization, best practices, and troubleshooting.'
+head.description: 'Get professional support by the Nuxt team to achieve your objectives and overcome any challenge.'
 navigation.icon: i-ph-lifebuoy-duotone
 form:
   name:
