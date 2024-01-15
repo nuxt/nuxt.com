@@ -1,7 +1,9 @@
+import { z } from 'zod'
+
 export default defineCachedEventHandler(async (event) => {
-  const { version } = await validateQuery(event, {
+  const { version } = await getValidatedQuery(event, z.object({
     version: z.enum(['2', '2-bridge', '3']).default('3')
-  })
+  }).parse)
   console.log(`Fetching v${version} modules...`)
   
   let modules = await fetchModules() as any[]
