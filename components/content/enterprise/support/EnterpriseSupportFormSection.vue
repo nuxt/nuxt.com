@@ -48,8 +48,6 @@ async function onSubmit (event: FormSubmitEvent<any>) {
 
     loading.value = true
 
-    console.log('token', token)
-
     await $fetch('http://127.0.0.1:3000/api/support/contact', {
       method: 'POST',
       body: {
