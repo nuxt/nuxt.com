@@ -10,6 +10,6 @@ export default defineCachedEventHandler(async (event) => {
     screenshot: `https://nuxt.com/assets/templates/${template.slug}.png`,
     repo: template.repo,
     demo: template.demo,
-    badge: template.badge
+    pricing: template.badge || 'Free'
   }))
 })
