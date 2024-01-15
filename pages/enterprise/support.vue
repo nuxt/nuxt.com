@@ -6,8 +6,8 @@ if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const title = page.value.head?.title || page.value.title
-const description = page.value.head?.description || page.value.description
+const title = page.value.head?.title || page.value?.title
+const description = page.value?.head?.description || page.value?.description
 useSeoMeta({
   titleTemplate: '%s · Enterprise',
   title,
@@ -25,47 +25,34 @@ defineOgImage({
 </script>
 
 <template>
-  <UContainer>
-    <UPage v-if="page">
-      <UPageHero :title="page.title" :description="page.description" align="center" />
-
-
-      <!-- eslint-disable vue/no-deprecated-slot-attribute -->
-      <ULandingSection v-for="(section, index) of page.sections" :key="index" :slot="section.slot" :ui="{ container: 'gap-y-0 sm:gap-y-0' }">
-        <template #title>
-          <!-- eslint-disable-next-line vue/no-v-html -->
-          <span v-html="section?.title" />
+  <UPage v-if="page">
+    <UContainer>
+      <UPageHero :title="page.title" align="center">
+        <template #description>
+          <span v-html="page.description" />
         </template>
+      </UPageHero>
+    </UContainer>
 
-        <template v-if="section?.description" #description>
-          <!-- eslint-disable-next-line vue/no-v-html -->
-          <span v-html="section.description" />
-        </template>
-
-        <template #form>
-          <EnterpriseSupportFormSection :form="section.form" :call="section.call" />
-        </template>
-
-        <template #testimonials>
-          <UPageColumns class="my-[72px]">
-            <!-- Hack for Safari -->
-            <div v-for="(testimonial) in section.testimonials" :key="testimonial" class="break-inside-avoid">
-              <ULandingTestimonial v-bind="testimonial" :ui="{ background: 'card-testimonial-bg' }" />
-            </div>
-          </UPageColumns>
-          <ul class="flex space-x-10 flex-wrap justify-center">
-            <li v-for="(logo) in section.logos" :key="logo" class="pt-8">
-              <NuxtImg :src="logo.src" :width="logo.width" height="24" alt="" />
-            </li>
-          </ul>
-        </template>
-
-        <template #faq>
-          <ULandingFAQ :items="section.faqs" class="pt-[72px]" />
-        </template>
-      </ULandingSection>
-    </UPage>
-  </UContainer>
+    <!-- eslint-disable vue/no-deprecated-slot-attribute -->
+    <ULandingSection class="py-4 sm:py-8" :ui="{ container: 'gap-y-0 sm:gap-y-0' }">
+      <EnterpriseSupportFormSection :form="page.form" :call="page.call" />
+      <ul class="flex space-x-10 flex-wrap justify-center mt-10">
+        <li v-for="(logo) in page.logos" :key="logo" class="pt-8">
+          <NuxtImg :src="logo.src" :width="logo.width" height="24" alt="" />
+        </li>
+      </ul>
+      <UPageColumns class="my-[72px]">
+        <!-- Hack for Safari -->
+        <div v-for="(testimonial, index) in page.testimonials" :key="index" class="break-inside-avoid">
+          <ULandingTestimonial v-bind="testimonial" :ui="{ background: 'card-testimonial-bg' }" />
+        </div>
+      </UPageColumns>
+    </ULandingSection>
+    <ULandingSection :title="page.faq.title" :description="page.faq.description" class="py-4 sm:py-8">
+      <ULandingFAQ :items="page.faq.items" class="pt-[72px]" />
+    </ULandingSection>
+  </UPage>
 </template>
 
 <style scoped lang="postcss">

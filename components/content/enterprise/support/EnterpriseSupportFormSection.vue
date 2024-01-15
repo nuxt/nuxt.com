@@ -111,12 +111,7 @@ async function onSubmit (event: FormSubmitEvent<any>) {
     <UDivider label="OR" color="gray" class="lg:hidden py-16" :ui="{ label: 'text-xl py-8' }" />
 
     <div class="w-full flex items-start justify-center flex-col">
-      <h2 class="text-xl font-bold">
-        {{ call.title }}
-      </h2>
-      <p>
-        {{ call.description }}
-      </p>
+      <MDC :value="call.description" class="prose"/>
       <UButton class="mt-8" color="gray" v-bind="call.button" />
     </div>
   </div>
