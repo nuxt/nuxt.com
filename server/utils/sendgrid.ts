@@ -82,9 +82,9 @@ interface SendGridEmailPersonalization {
 
 interface DynamicTemplateDataSupport {
   name: string,
-  companyEmail: string,
+  email: string,
   company: string,
-  help: string
+  body: string
 }
 
 

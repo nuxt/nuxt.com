@@ -31,7 +31,7 @@ export default defineEventHandler(async (event: H3Event) => {
   await sendgrid.sendEmail({
     personalizations: [{
       to: [to],
-      dynamic_template_data: { companyEmail: email, name: name, company: company, help: help }
+      dynamic_template_data: { email, name, company, body }
     }],
     from: {
       email: 'team@nuxt.com',
