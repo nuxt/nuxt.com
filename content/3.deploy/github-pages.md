@@ -40,7 +40,9 @@ jobs:
           node-version: "20"
       # Pick your own package manager and build script
       - run: npm install
-      - run: npm run build --preset=github_pages
+      - run: npm run build
+          env:
+            NITRO_PRESET: github_pages
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
