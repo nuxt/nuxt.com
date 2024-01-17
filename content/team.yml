@@ -120,7 +120,7 @@ users:
       srcset: https://ipx.nuxt.com/f_auto,s_160x160/gh_avatar/huang-julien 2x
     links:
       - icon: i-simple-icons-x
-        to: https://twitter.com/li_hbr
+        to: https://twitter.com/JulienHuang_dev
         target: _blank
       - icon: i-simple-icons-github
         to: https://github.com/huang-julien
