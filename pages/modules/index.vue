@@ -137,7 +137,7 @@ const { copy } = useCopyToClipboard()
             :key="index"
             :to="`/modules/${module.name}`"
             :title="module.name"
-            class="flex flex-col"
+            class="flex flex-col overflow-hidden"
             :ui="{ body: { base: 'flex-1' }, footer: { base: 'bg-gray-100/50 dark:bg-gray-800/50' } }"
           >
             <template #icon>
