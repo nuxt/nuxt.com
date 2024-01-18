@@ -46,5 +46,8 @@
     "capture-website": "^4.0.0",
     "eslint": "^8.56.0",
     "vue-tsc": "^1.8.27"
+  },
+  "resolutions": {
+    "vue": "3.3.13"
   }
 }
