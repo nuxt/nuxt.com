@@ -44,7 +44,23 @@ It adds the following properties based on the following criteria:
 
 ### Custom Configuration
 
-You can alter the generated configuration using `azure.config` option.
+You can alter the generated configuration using `azure.config` option. For instance, if you wanted to specify a Node runtime for your Azure Functions, edit your `nuxt.config.ts` file to the following:
+
+```
+export default defineNuxtConfig({
+  [...]
+  nitro: {
+    azure: {
+      config: {
+        [...]
+        platform: {
+          apiRuntime: "node:18"
+        }
+      }
+    }
+  }
+})
+```
 
 Custom routes will be added and matched first. In the case of a conflict (determined if an object has the same route property), custom routes will override generated ones.
 
