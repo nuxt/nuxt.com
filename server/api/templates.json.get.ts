@@ -1,6 +1,6 @@
 import { serverQueryContent } from '#content/server'
 
-export default defineCachedEventHandler(async (event) => {
+export default eventHandler(async (event) => {
   const { templates } = await serverQueryContent(event, '/templates').only('templates').findOne()
 
   return templates.map((template) => ({
