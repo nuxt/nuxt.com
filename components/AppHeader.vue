@@ -25,7 +25,7 @@ defineProps<{
 </script>
 
 <template>
-  <UHeader :links="links">
+  <UHeader :links="links" class="contain-layout">
     <template #logo>
       <Logo class="block w-auto h-6" @click.right.prevent="$router.push('/design-kit')" />
     </template>

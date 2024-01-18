@@ -45,6 +45,29 @@ defineShortcuts({
 
 const { copy } = useCopyToClipboard()
 </script>
+<style>
+#module-categories {
+  contain: content;
+  content-visibility: auto;
+  height: 643px;
+  contain-intrinsic-size: 643px;
+}
+
+.module-card {
+  contain: content;
+  content-visibility: auto;
+}
+
+@media screen and (max-width: 992px) {
+  .module-card {
+    contain-intrinsic-size: auto 200px;
+  }
+}
+
+.module-card {
+  contain-intrinsic-size: auto 238px;
+}
+</style>
 
 <template>
   <UContainer>
@@ -53,22 +76,22 @@ const { copy } = useCopyToClipboard()
         <UPageGrid :ui="{ wrapper: 'grid-cols-2 sm:grid-cols-2 xl:grid-cols-2 gap-4' }">
           <UPageCard to="https://image.nuxt.com/?utm_source=nuxt_website&utm_medium=modules" target="_blank" description="Plug-and-play image optimization.">
             <template #title>
-              Nuxt Image <UIcon name="i-ph-medal-duotone" class="h-4 w-4 text-primary pointer-events-none" />
+              Nuxt Image <UIcon loading="lazy" name="i-ph-medal-duotone" class="h-4 w-4 text-primary pointer-events-none" />
             </template>
           </UPageCard>
           <UPageCard to="https://content.nuxt.com/?utm_source=nuxt_website&utm_medium=modules" target="_blank" title="Nuxt Content" description="Git-based CMS with Markdown support.">
             <template #title>
-              Nuxt Content <UIcon name="i-ph-medal-duotone" class="h-4 w-4 text-primary pointer-events-none" />
+              Nuxt Content <UIcon loading="lazy" name="i-ph-medal-duotone" class="h-4 w-4 text-primary pointer-events-none" />
             </template>
           </UPageCard>
           <UPageCard to="https://devtools.nuxt.com/?utm_source=nuxt_website&utm_medium=modules" target="_blank" description="Visual tools that help you to know your app.">
             <template #title>
-              Nuxt DevTools <UIcon name="i-ph-medal-duotone" class="h-4 w-4 text-primary pointer-events-none" />
+              Nuxt DevTools <UIcon loading="lazy" name="i-ph-medal-duotone" class="h-4 w-4 text-primary pointer-events-none" />
             </template>
           </UPageCard>
           <UPageCard to="https://ui.nuxt.com/?utm_source=nuxt_website&utm_medium=modules" target="_blank" description="Fully styled and customizable components.">
             <template #title>
-              Nuxt UI <UIcon name="i-ph-medal-duotone" class="h-4 w-4 text-primary pointer-events-none" />
+              Nuxt UI <UIcon loading="lazy" name="i-ph-medal-duotone" class="h-4 w-4 text-primary pointer-events-none" />
             </template>
           </UPageCard>
         </UPageGrid>
@@ -77,7 +100,7 @@ const { copy } = useCopyToClipboard()
 
     <UPage id="smooth" class="pt-20 -mt-20">
       <template #left>
-        <UAside>
+        <UAside id="module-categories">
           <UNavigationTree :links="[{ label: 'Categories', disabled: true, children: categories }]" />
 
           <template #bottom>
@@ -137,11 +160,13 @@ const { copy } = useCopyToClipboard()
             :key="index"
             :to="`/modules/${module.name}`"
             :title="module.name"
-            class="flex flex-col"
+            class="module-card flex flex-col"
             :ui="{ body: { base: 'flex-1' }, footer: { base: 'bg-gray-100/50 dark:bg-gray-800/50' } }"
           >
             <template #icon>
-              <UAvatar :src="moduleImage(module.icon)" :icon="moduleIcon(module.category)" :alt="module.name" size="lg" :ui="{ rounded: 'rounded-lg' }" />
+              <UAvatar
+                loading="lazy"
+                :src="moduleImage(module.icon)" :icon="moduleIcon(module.category)" :alt="module.name" size="lg" :ui="{ rounded: 'rounded-lg' }" />
             </template>
 
             <template #title>

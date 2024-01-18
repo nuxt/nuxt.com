@@ -43,7 +43,7 @@ await fetchList()
           }"
         >
           <template #icon>
-            <UAvatar :src="job.organization.avatar" size="lg" />
+            <UAvatar loading="lazy" :src="job.organization.avatar" size="lg" />
           </template>
 
           <template #footer>

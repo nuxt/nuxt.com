@@ -98,6 +98,7 @@ await fetchList()
                     :key="subIndex"
                     :src="author.avatarUrl"
                     :alt="author.name"
+                    loading="lazy"
                     class="lg:hover:scale-110 lg:hover:ring-primary-500 dark:lg:hover:ring-primary-400 transition-transform"
                   >
                     <NuxtLink v-if="author.link" :to="author.link" target="_blank" class="focus:outline-none" tabindex="-1">
