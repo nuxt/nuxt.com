@@ -47,7 +47,7 @@ const otherProviders = computed(() => providers.value.filter((provider: Hosting)
             :to="deployment._path"
             :title="deployment.title"
             :description="deployment.description"
-            class="flex flex-col"
+            class="flex flex-col overflow-hidden"
             :ui="{
               divide: '',
               to: ' hover:ring-2 hover:ring-primary-500 dark:hover:ring-primary-400 hover:!bg-transparent dark:hover:!bg-gray-900',
@@ -78,7 +78,7 @@ const otherProviders = computed(() => providers.value.filter((provider: Hosting)
             :to="deployment._path"
             :title="deployment.title"
             :description="deployment.description"
-            class="flex flex-col"
+            class="flex flex-col overflow-hidden"
             :ui="{
               divide: '',
               header: { base: 'aspect-w-4 aspect-h-2', padding: '' },

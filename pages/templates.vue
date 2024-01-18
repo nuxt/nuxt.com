@@ -39,6 +39,7 @@ defineOgImage({
               body: { padding: '!p-4' },
               description: 'line-clamp-2 sm:min-h-[45px]'
             }"
+            class="overflow-hidden"
           >
             <template #header>
               <NuxtImg
