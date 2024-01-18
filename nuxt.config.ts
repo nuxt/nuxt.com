@@ -45,6 +45,7 @@ if (examplesSourceBase) {
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   extends: process.env.NUXT_UI_PRO_PATH || '@nuxt/ui-pro',
+  // @ts-ignore
   modules: [
     '@nuxt/content',
     '@nuxt/ui',
