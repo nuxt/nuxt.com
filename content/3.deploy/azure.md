@@ -46,15 +46,15 @@ It adds the following properties based on the following criteria:
 
 You can alter the generated configuration using `azure.config` option. For instance, if you wanted to specify a Node runtime for your Azure Functions, edit your `nuxt.config.ts` file to the following:
 
-```
+```ts [nuxt.config.ts]
 export default defineNuxtConfig({
-  [...]
+  // ...
   nitro: {
     azure: {
       config: {
-        [...]
+        // ...
         platform: {
-          apiRuntime: "node:18"
+          apiRuntime: 'node:18'
         }
       }
     }
