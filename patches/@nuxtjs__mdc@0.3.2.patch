@@ -640,6 +640,21 @@ index 0aaf4602ce667fc3c707c8bc55efce5ff26d0c01..4829fc11148919f765b4a75888cba5f5
 +}
  
  export { module as default };
+diff --git a/dist/runtime/components/MDCRenderer.vue b/dist/runtime/components/MDCRenderer.vue
+index da7922d06d93662be55e8123427a6291f99a76a0..88d2155308370e32134f95277e16b2b61b22fc99 100644
+--- a/dist/runtime/components/MDCRenderer.vue
++++ b/dist/runtime/components/MDCRenderer.vue
+@@ -72,8 +72,8 @@ export default defineComponent({
+     }
+     const meta = { ...data, tags };
+     const component = tag !== false ? resolveVueComponent(tag || meta.component?.name || meta.component || "div") : void 0;
+-    const childrenRendrer = renderSlots(body, h, meta, meta);
+-    return component ? h(component, { ...meta.component?.props, ...this.$attrs, key: contentKey }, childrenRendrer) : childrenRendrer.default?.();
++    const childrenRenderer = renderSlots(body, h, meta, meta);
++    return component ? h(component, { ...meta.component?.props, ...this.$attrs, key: contentKey }, childrenRenderer) : childrenRenderer.default?.();
+   }
+ });
+ function renderNode(node, h2, documentMeta, parentScope = {}) {
 diff --git a/dist/runtime/shiki/event-handler.d.ts b/dist/runtime/highlighter/event-handler.d.ts
 similarity index 57%
 rename from dist/runtime/shiki/event-handler.d.ts
@@ -933,6 +948,24 @@ index f32efc3bf6ee10775e708c6f8164d0db39b51dae..b5b76c9a3b5493822732480317a74f39
  export { parseMarkdown } from "./parser/index.mjs";
 -export { useShikiHighlighter } from "./shiki/highlighter.mjs";
  export * from "./utils/node.mjs";
+diff --git a/dist/runtime/parser/compiler.mjs b/dist/runtime/parser/compiler.mjs
+index 5ea5383dbb8f36d0f6764ef551cf4018d2e6e61e..e8e543276a46edfa52c232c684160d78596f780d 100644
+--- a/dist/runtime/parser/compiler.mjs
++++ b/dist/runtime/parser/compiler.mjs
+@@ -39,11 +39,12 @@ export function compileHast() {
+       if (node.tagName === "component-slot") {
+         node.tagName = "template";
+       }
++      const children = (node.tagName === "template" && node.content?.children.length ? node.content.children : node.children).map((child) => compileToJSON(child, node)).filter(Boolean);
+       return {
+         type: "element",
+         tag: node.tagName,
+         props: validateProps(node.tagName, node.properties),
+-        children: node.children.map((child) => compileToJSON(child, node)).filter(Boolean)
++        children
+       };
+     }
+     if (node.type === "text") {
 diff --git a/dist/runtime/parser/index.d.ts b/dist/runtime/parser/index.d.ts
 index 60ffb75ca766b608981597f362f7550097c334ef..794d216e341309e26ca20c36fe1a0a7ac29933ea 100644
 --- a/dist/runtime/parser/index.d.ts

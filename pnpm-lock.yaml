@@ -13,7 +13,7 @@ overrides:
 
 patchedDependencies:
   '@nuxtjs/mdc@0.3.2':
-    hash: bbmj4whe55skudq6xacpbeji3q
+    hash: l2ethoyrerf7dktwfdszqx53lm
     path: patches/@nuxtjs__mdc@0.3.2.patch
 
 dependencies:
@@ -1152,7 +1152,7 @@ packages:
     resolution: {integrity: sha512-HZ+1RJJc2SZc/FPYvbsME7b8++a2uf6g9JlMm+qUMDjnCWJaF38pbrsmYq2b9whXx/3WjpBmCRkWCJy6bjSP+g==}
     dependencies:
       '@nuxt/kit': 3.8.2
-      '@nuxtjs/mdc': 0.3.2(patch_hash=bbmj4whe55skudq6xacpbeji3q)
+      '@nuxtjs/mdc': 0.3.2(patch_hash=l2ethoyrerf7dktwfdszqx53lm)
       '@vueuse/core': 10.7.2(vue@3.3.13)
       '@vueuse/head': 2.0.0(vue@3.3.13)
       '@vueuse/nuxt': 10.7.2(nuxt@3.9.3)(vue@3.3.13)
@@ -1796,7 +1796,7 @@ packages:
       - vitest
     dev: false
 
-  /@nuxtjs/mdc@0.3.2(patch_hash=bbmj4whe55skudq6xacpbeji3q):
+  /@nuxtjs/mdc@0.3.2(patch_hash=l2ethoyrerf7dktwfdszqx53lm):
     resolution: {integrity: sha512-iSepiwfNCh5dgO3ETqSdBHWdendRuRIZ7OsgIpEQXX2J9ubHK5XvRsK3DSUOqZZ8PHbRZ3eSr/9ZF9+IeZ0GFw==}
     dependencies:
       '@nuxt/kit': 3.9.3
