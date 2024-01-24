@@ -1,0 +1,1239 @@
+diff --git a/dist/config.cjs b/dist/config.cjs
+new file mode 100644
+index 0000000000000000000000000000000000000000..c13010a1a83856cef84113a4f5bbae1d8b310db0
+--- /dev/null
++++ b/dist/config.cjs
+@@ -0,0 +1 @@
++module.exports = {}; module.exports.defineConfig = configs => configs
+\ No newline at end of file
+diff --git a/dist/config.d.mts b/dist/config.d.mts
+new file mode 100644
+index 0000000000000000000000000000000000000000..404d242052a3f92adae7b3aaca1ff311ba985c1c
+--- /dev/null
++++ b/dist/config.d.mts
+@@ -0,0 +1,49 @@
++import { Processor } from 'unified';
++import { ShikijiTransformer, HighlighterCore } from 'shikiji';
++import { H as Highlighter, M as MdcThemeOptions, a as HighlighterOptions } from './shared/mdc.4d151e4e.mjs';
++import 'hast';
++
++type Awaitable<T> = T | Promise<T>;
++interface MdcConfig {
++    /**
++     * Hooks for the unified markdown pipeline
++     */
++    unified?: {
++        /**
++         * Custom setup for unified processor before other plugins
++         */
++        pre?: (processor: Processor) => Awaitable<void | Processor>;
++        /**
++         * Custom setup for unified processor after remark but before rehype
++         */
++        remark?: (processor: Processor) => Awaitable<void | Processor>;
++        /**
++         * Custom setup for unified processor after rehype
++         */
++        rehype?: (processor: Processor) => Awaitable<void | Processor>;
++        /**
++         * Custom setup for unified processor after all plugins
++         */
++        post?: (processor: Processor) => Awaitable<void | Processor>;
++    };
++    /**
++     * Custom hightlighter, available when `highlighter` is set to `custom`
++     */
++    highlighter?: Highlighter;
++    /**
++     * Hooks for shikiji
++     */
++    shiki?: {
++        /**
++         * Get transformers for shikiji
++         */
++        transformers?: ShikijiTransformer[] | ((code: string, lang: string, theme: MdcThemeOptions, options: Partial<HighlighterOptions>) => Awaitable<ShikijiTransformer[]>);
++        /**
++         * Custom setup for shikiji instance, only called once on server or client
++         */
++        setup?: (highlighter: HighlighterCore) => Awaitable<void>;
++    };
++}
++declare function defineConfig(config: MdcConfig): MdcConfig;
++
++export { type Awaitable, type MdcConfig, defineConfig };
+diff --git a/dist/config.d.ts b/dist/config.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..74e3c16c0471a7c03723c65ba3ffafc9d5bb9a2a
+--- /dev/null
++++ b/dist/config.d.ts
+@@ -0,0 +1,49 @@
++import { Processor } from 'unified';
++import { ShikijiTransformer, HighlighterCore } from 'shikiji';
++import { H as Highlighter, M as MdcThemeOptions, a as HighlighterOptions } from './shared/mdc.4d151e4e.js';
++import 'hast';
++
++type Awaitable<T> = T | Promise<T>;
++interface MdcConfig {
++    /**
++     * Hooks for the unified markdown pipeline
++     */
++    unified?: {
++        /**
++         * Custom setup for unified processor before other plugins
++         */
++        pre?: (processor: Processor) => Awaitable<void | Processor>;
++        /**
++         * Custom setup for unified processor after remark but before rehype
++         */
++        remark?: (processor: Processor) => Awaitable<void | Processor>;
++        /**
++         * Custom setup for unified processor after rehype
++         */
++        rehype?: (processor: Processor) => Awaitable<void | Processor>;
++        /**
++         * Custom setup for unified processor after all plugins
++         */
++        post?: (processor: Processor) => Awaitable<void | Processor>;
++    };
++    /**
++     * Custom hightlighter, available when `highlighter` is set to `custom`
++     */
++    highlighter?: Highlighter;
++    /**
++     * Hooks for shikiji
++     */
++    shiki?: {
++        /**
++         * Get transformers for shikiji
++         */
++        transformers?: ShikijiTransformer[] | ((code: string, lang: string, theme: MdcThemeOptions, options: Partial<HighlighterOptions>) => Awaitable<ShikijiTransformer[]>);
++        /**
++         * Custom setup for shikiji instance, only called once on server or client
++         */
++        setup?: (highlighter: HighlighterCore) => Awaitable<void>;
++    };
++}
++declare function defineConfig(config: MdcConfig): MdcConfig;
++
++export { type Awaitable, type MdcConfig, defineConfig };
+diff --git a/dist/config.mjs b/dist/config.mjs
+new file mode 100644
+index 0000000000000000000000000000000000000000..64a48e93c24f5efebc81c90d0708a2d9236a9598
+--- /dev/null
++++ b/dist/config.mjs
+@@ -0,0 +1,5 @@
++function defineConfig(config) {
++  return config;
++}
++
++export { defineConfig };
+diff --git a/dist/module.d.mts b/dist/module.d.mts
+index b87c0798d7458e7bcf5b3b4e6067e9b50ce92f9e..9a0fd368a04191a48658e9cc49a5595082b33a13 100644
+--- a/dist/module.d.mts
++++ b/dist/module.d.mts
+@@ -1,23 +1,44 @@
+ import * as _nuxt_schema from '@nuxt/schema';
+-import { BuiltinTheme } from 'shikiji';
+-
+-type Theme = BuiltinTheme | Record<string, BuiltinTheme>;
++import { M as MdcThemeOptions } from './shared/mdc.4d151e4e.mjs';
++import { BundledLanguage, LanguageRegistration } from 'shikiji';
++import 'hast';
+ 
+ interface UnistPlugin {
+     src?: string;
+     options?: Record<string, any>;
+ }
+ interface ModuleOptions {
++    /**
++     * A map of remark plugins to be used for processing markdown.
++     */
+     remarkPlugins?: Record<string, UnistPlugin>;
++    /**
++     * A map of remark plugins to be used for processing markdown.
++     */
+     rehypePlugins?: Record<string, UnistPlugin>;
+     highlight?: {
+-        highlighter?: string;
++        /**
++         * The highlighter to be used for highlighting code blocks.
++         *
++         * Set to `custom` to provide your own highlighter function in `mdc.config.ts`.
++         * Set to `shiki` to use the builtin highlighter based on Shiki.
++         * Or provide the path to your own highlighter module with the default export.
++         *
++         * @default 'shiki'
++         */
++        highlighter?: 'shiki' | 'custom' | string;
+         /**
+          * Default theme that will be used for highlighting code blocks.
+          */
+-        theme?: Theme;
++        theme?: MdcThemeOptions;
++        /**
++         * Builtin languages to be bundled loaded by Shikiji
++         */
++        langs?: (BundledLanguage | LanguageRegistration)[];
+         /**
+          * Preloaded languages that will be available for highlighting code blocks.
++         *
++         * @deprecated use `langs` instead.
+          */
+         preload?: string[];
+         /**
+@@ -41,14 +62,8 @@ interface ModuleOptions {
+ declare const _default: _nuxt_schema.NuxtModule<ModuleOptions>;
+ 
+ declare module '@nuxt/schema' {
+-    interface RuntimeConfig {
+-        mdc: {
+-            highlight: {
+-                theme?: Theme;
+-                preload?: string[];
+-                wrapperStyle?: boolean | string;
+-            };
+-        };
++    interface NuxtHooks {
++        'mdc:configSources': (configs: string[]) => void;
+     }
+     interface PublicRuntimeConfig {
+         mdc: {
+diff --git a/dist/module.d.ts b/dist/module.d.ts
+index b87c0798d7458e7bcf5b3b4e6067e9b50ce92f9e..ef12fbc748f5bfff57076480150c757d54d39db8 100644
+--- a/dist/module.d.ts
++++ b/dist/module.d.ts
+@@ -1,23 +1,44 @@
+ import * as _nuxt_schema from '@nuxt/schema';
+-import { BuiltinTheme } from 'shikiji';
+-
+-type Theme = BuiltinTheme | Record<string, BuiltinTheme>;
++import { M as MdcThemeOptions } from './shared/mdc.4d151e4e.js';
++import { BundledLanguage, LanguageRegistration } from 'shikiji';
++import 'hast';
+ 
+ interface UnistPlugin {
+     src?: string;
+     options?: Record<string, any>;
+ }
+ interface ModuleOptions {
++    /**
++     * A map of remark plugins to be used for processing markdown.
++     */
+     remarkPlugins?: Record<string, UnistPlugin>;
++    /**
++     * A map of remark plugins to be used for processing markdown.
++     */
+     rehypePlugins?: Record<string, UnistPlugin>;
+     highlight?: {
+-        highlighter?: string;
++        /**
++         * The highlighter to be used for highlighting code blocks.
++         *
++         * Set to `custom` to provide your own highlighter function in `mdc.config.ts`.
++         * Set to `shiki` to use the builtin highlighter based on Shiki.
++         * Or provide the path to your own highlighter module with the default export.
++         *
++         * @default 'shiki'
++         */
++        highlighter?: 'shiki' | 'custom' | string;
+         /**
+          * Default theme that will be used for highlighting code blocks.
+          */
+-        theme?: Theme;
++        theme?: MdcThemeOptions;
++        /**
++         * Builtin languages to be bundled loaded by Shikiji
++         */
++        langs?: (BundledLanguage | LanguageRegistration)[];
+         /**
+          * Preloaded languages that will be available for highlighting code blocks.
++         *
++         * @deprecated use `langs` instead.
+          */
+         preload?: string[];
+         /**
+@@ -41,14 +62,8 @@ interface ModuleOptions {
+ declare const _default: _nuxt_schema.NuxtModule<ModuleOptions>;
+ 
+ declare module '@nuxt/schema' {
+-    interface RuntimeConfig {
+-        mdc: {
+-            highlight: {
+-                theme?: Theme;
+-                preload?: string[];
+-                wrapperStyle?: boolean | string;
+-            };
+-        };
++    interface NuxtHooks {
++        'mdc:configSources': (configs: string[]) => void;
+     }
+     interface PublicRuntimeConfig {
+         mdc: {
+diff --git a/dist/module.mjs b/dist/module.mjs
+index 0aaf4602ce667fc3c707c8bc55efce5ff26d0c01..ae55f73fb5c39527c392b5054eb6a52e70f29b4c 100644
+--- a/dist/module.mjs
++++ b/dist/module.mjs
+@@ -1,52 +1,9 @@
+-import { createResolver, extendViteConfig, defineNuxtModule, useNitro, addServerHandler, addTemplate, addComponent, addImports, addServerImports, addComponentsDir } from '@nuxt/kit';
+-import fs from 'fs';
+-import { pascalCase } from 'scule';
++import { extendViteConfig, defineNuxtModule, createResolver, useNitro, addServerHandler, addComponent, addImports, addServerImports, addComponentsDir, addTemplate } from '@nuxt/kit';
++import fs$1, { existsSync } from 'fs';
+ import { defu } from 'defu';
+-import { pathToFileURL } from 'url';
+-
+-const mdcImportTemplate = async ({ nuxt, options }) => {
+-  const resolver = createResolver(import.meta.url);
+-  const imports = [];
+-  const { imports: remarkImports, definitions: remarkDefinitions } = processUnistPlugins(options.remarkPlugins);
+-  const { imports: rehypeImports, definitions: rehypeDefinitions } = processUnistPlugins(options.rehypePlugins);
+-  let highlighter = "false";
+-  if (options.highlight) {
+-    highlighter = JSON.stringify(options.highlight);
+-    if (options.highlight.highlighter) {
+-      const path = await resolver.resolvePath(options.highlight.highlighter, { alias: nuxt.options.alias });
+-      imports.push(`import syntaxHighlighter from '${path}'`);
+-      highlighter = highlighter.replace(`"${options.highlight.highlighter}"`, "syntaxHighlighter");
+-    }
+-  }
+-  return [
+-    ...remarkImports,
+-    ...rehypeImports,
+-    ...imports,
+-    "",
+-    "export const remarkPlugins = {",
+-    ...remarkDefinitions,
+-    "}",
+-    "",
+-    "export const rehypePlugins = {",
+-    ...rehypeDefinitions,
+-    "}",
+-    "",
+-    `export const highlight = ${highlighter}`
+-  ].join("\n");
+-};
+-function processUnistPlugins(plugins) {
+-  const imports = [];
+-  const definitions = [];
+-  Object.entries(plugins).forEach(([name, plugin]) => {
+-    imports.push(`import ${pascalCase(name)} from '${plugin.src || name}'`);
+-    if (Object.keys(plugin).length) {
+-      definitions.push(`  '${name}': { instance: ${pascalCase(name)}, options: ${JSON.stringify(plugin.options || plugin)} },`);
+-    } else {
+-      definitions.push(`  '${name}': { instance: ${pascalCase(name)} },`);
+-    }
+-  });
+-  return { imports, definitions };
+-}
++import { resolve } from 'pathe';
++import fs from 'fs/promises';
++import { pascalCase } from 'scule';
+ 
+ const registerMDCSlotTransformer = (resolver) => {
+   extendViteConfig((config) => {
+@@ -81,6 +38,121 @@ const registerMDCSlotTransformer = (resolver) => {
+   });
+ };
+ 
++async function mdcConfigs({ options }) {
++  return [
++    "let configs",
++    "export function getMdcConfigs () {",
++    "if (!configs) {",
++    "  configs = Promise.all([",
++    ...options.configs.map((item) => `    import('${item}').then(m => m.default),`),
++    "  ])",
++    "}",
++    "return configs",
++    "}"
++  ].join("\n");
++}
++
++async function mdcHighlighter({
++  options: {
++    shikiPath,
++    options
++  }
++}) {
++  if (!options || !options.highlighter)
++    return "export default () => { throw new Error('[@nuxtjs/mdc] No highlighter specified') }";
++  if (options.highlighter === "shiki") {
++    const file = [
++      shikiPath,
++      shikiPath + ".mjs"
++    ].find((file2) => existsSync(file2));
++    if (!file)
++      throw new Error(`[@nuxtjs/mdc] Could not find shiki highlighter: ${shikiPath}`);
++    const code = await fs.readFile(file, "utf-8");
++    const { bundledLanguagesInfo } = await import('shikiji/langs');
++    const langs = /* @__PURE__ */ new Set();
++    options.langs?.forEach((lang) => {
++      if (typeof lang === "string") {
++        const id = bundledLanguagesInfo.find((i) => i.aliases?.includes?.(lang))?.id || lang;
++        if (!bundledLanguagesInfo.find((i) => i.id === id)) {
++          console.error(`[@nuxtjs/mdc] Could not find shikiji language: ${lang}`);
++          return;
++        }
++        langs.add(id);
++      } else
++        langs.add(lang);
++    });
++    const themes = typeof options?.theme === "string" ? [options?.theme] : Object.values(options?.theme || {});
++    return [
++      "import { getMdcConfigs } from '#mdc-configs'",
++      code,
++      "const langs = [",
++      ...Array.from(langs).map((lang) => typeof lang === "string" ? `  import('shikiji/langs/${lang}.mjs'),` : "  " + JSON.stringify(lang) + ","),
++      "]",
++      "const themes = [",
++      ...themes.map((theme) => typeof theme === "string" ? `  import('shikiji/themes/${theme}.mjs'),` : "  " + JSON.stringify(theme) + ","),
++      "]",
++      "const options = " + JSON.stringify({
++        theme: options.theme,
++        wrapperStyle: options.wrapperStyle
++      }),
++      "const highlighter = createShikiHighlighter({ langs, themes, options, getMdcConfigs })",
++      "export default highlighter"
++    ].join("\n");
++  }
++  if (options.highlighter === "custom") {
++    return [
++      "import { getMdcConfigs } from '#mdc-configs'",
++      `export default function (...args) {
++        '  const configs = await getMdcConfigs()`,
++      "  for (const config of configs) {",
++      "    if (config.highlighter) {",
++      "      return config.highlighter(...args)",
++      "    }",
++      "  }",
++      "  throw new Error('[@nuxtjs/mdc] No custom highlighter specified')",
++      "}"
++    ].join("\n");
++  }
++  return "export { default } from " + JSON.stringify(options.highlighter);
++}
++
++async function mdcImports({ options }) {
++  const imports = [];
++  const { imports: remarkImports, definitions: remarkDefinitions } = processUnistPlugins(options.remarkPlugins);
++  const { imports: rehypeImports, definitions: rehypeDefinitions } = processUnistPlugins(options.rehypePlugins);
++  return [
++    ...remarkImports,
++    ...rehypeImports,
++    ...imports,
++    "",
++    "export const remarkPlugins = {",
++    ...remarkDefinitions,
++    "}",
++    "",
++    "export const rehypePlugins = {",
++    ...rehypeDefinitions,
++    "}",
++    "",
++    `export const highlight = ${JSON.stringify({
++      theme: options.highlight?.theme,
++      wrapperStyle: options.highlight?.wrapperStyle
++    })}`
++  ].join("\n");
++}
++function processUnistPlugins(plugins) {
++  const imports = [];
++  const definitions = [];
++  Object.entries(plugins).forEach(([name, plugin]) => {
++    imports.push(`import ${pascalCase(name)} from '${plugin.src || name}'`);
++    if (Object.keys(plugin).length) {
++      definitions.push(`  '${name}': { instance: ${pascalCase(name)}, options: ${JSON.stringify(plugin.options || plugin)} },`);
++    } else {
++      definitions.push(`  '${name}': { instance: ${pascalCase(name)} },`);
++    }
++  });
++  return { imports, definitions };
++}
++
+ const module = defineNuxtModule({
+   meta: {
+     name: "@nuxtjs/mdc",
+@@ -107,6 +179,7 @@ const module = defineNuxtModule({
+     }
+   },
+   async setup(options, nuxt) {
++    resolveOptions(options);
+     const resolver = createResolver(import.meta.url);
+     nuxt.options.runtimeConfig.public.mdc = defu(nuxt.options.runtimeConfig.public.mdc, {
+       components: {
+@@ -115,24 +188,6 @@ const module = defineNuxtModule({
+       },
+       headings: options.headings
+     });
+-    nuxt.options.runtimeConfig.mdc = defu(nuxt.options.runtimeConfig.mdc, {
+-      highlight: options.highlight ? {
+-        theme: options.highlight.theme,
+-        preload: options.highlight.preload,
+-        wrapperStyle: options.highlight.wrapperStyle
+-      } : {}
+-    });
+-    nuxt.hook("vite:extendConfig", (viteConfig) => {
+-      const optimizeList = ["debug", "flat", "node-emoji", "extend", "hast-util-raw"];
+-      viteConfig.optimizeDeps ||= {};
+-      viteConfig.optimizeDeps.include ||= [];
+-      const list = viteConfig.optimizeDeps.include;
+-      optimizeList.forEach((pkg) => {
+-        if (!list.includes(pkg)) {
+-          list.push(pkg);
+-        }
+-      });
+-    });
+     if (options.highlight) {
+       nuxt.hook("ready", () => {
+         const nitro = useNitro();
+@@ -156,15 +211,63 @@ const module = defineNuxtModule({
+           addWasmSupport(prerenderer);
+         });
+       });
+-      addServerHandler({ route: "/api/_mdc/highlight", handler: resolver.resolve("./runtime/shiki/event-handler") });
+-      options.rehypePlugins = options.rehypePlugins || {};
+-      options.rehypePlugins.highlight = options.rehypePlugins.highlight || {};
+-      options.rehypePlugins.highlight.src = options.rehypePlugins.highlight.src || await resolver.resolvePath("./runtime/shiki/index");
++      addServerHandler({
++        route: "/api/_mdc/highlight",
++        handler: resolver.resolve("./runtime/highlighter/event-handler")
++      });
++      options.rehypePlugins ||= {};
++      options.rehypePlugins.highlight ||= {};
++      options.rehypePlugins.highlight.src ||= await resolver.resolvePath("./runtime/highlighter/rehype");
++      options.rehypePlugins.highlight.options ||= {};
++    }
++    const registerTemplate = (options2) => {
++      const name = options2.filename.replace(/\.m?js$/, "");
++      const alias = "#" + name;
++      const results = addTemplate({
++        ...options2,
++        write: true
++        // Write to disk for Nitro to consume
++      });
++      nuxt.options.nitro.alias ||= {};
++      nuxt.options.nitro.externals ||= {};
++      nuxt.options.nitro.externals.inline ||= [];
++      nuxt.options.alias[alias] = results.dst;
++      nuxt.options.nitro.alias[alias] = nuxt.options.alias[alias];
++      nuxt.options.nitro.externals.inline.push(nuxt.options.alias[alias]);
++      nuxt.options.nitro.externals.inline.push(alias);
++      return results;
++    };
++    const mdcConfigs$1 = [];
++    for (const layer of nuxt.options._layers) {
++      let path = resolve(layer.config.srcDir, "mdc.config.ts");
++      if (fs$1.existsSync(path)) {
++        mdcConfigs$1.push(path);
++      } else {
++        path = resolve(layer.config.srcDir, "mdc.config.js");
++        if (fs$1.existsSync(path)) {
++          mdcConfigs$1.push(path);
++        }
++      }
+     }
+-    const { dst: templatePath } = addTemplate({ filename: "mdc-imports.mjs", getContents: mdcImportTemplate, options, write: true });
+-    nuxt.options.alias["#mdc-imports"] = process.env.NODE_ENV === "development" ? pathToFileURL(templatePath).href : templatePath;
+-    nuxt.options.nitro.alias = nuxt.options.nitro.alias || {};
+-    nuxt.options.nitro.alias["#mdc-imports"] = nuxt.options.alias["#mdc-imports"];
++    await nuxt.callHook("mdc:configSources", mdcConfigs$1);
++    registerTemplate({
++      filename: "mdc-configs.mjs",
++      getContents: mdcConfigs,
++      options: { configs: mdcConfigs$1 }
++    });
++    registerTemplate({
++      filename: "mdc-highlighter.mjs",
++      getContents: mdcHighlighter,
++      options: {
++        shikiPath: resolver.resolve("../dist/runtime/highlighter/shiki"),
++        options: options.highlight
++      }
++    });
++    registerTemplate({
++      filename: "mdc-imports.mjs",
++      getContents: mdcImports,
++      options
++    });
+     addComponent({ name: "MDC", filePath: resolver.resolve("./runtime/components/MDC") });
+     addComponent({ name: "MDCRenderer", filePath: resolver.resolve("./runtime/components/MDCRenderer") });
+     addComponent({ name: "MDCSlot", filePath: resolver.resolve("./runtime/components/MDCSlot") });
+@@ -180,15 +283,43 @@ const module = defineNuxtModule({
+       });
+     }
+     extendViteConfig((config) => {
+-      config.optimizeDeps = config.optimizeDeps || {};
+-      config.optimizeDeps.exclude = config.optimizeDeps.exclude || [];
+-      config.optimizeDeps.exclude.push("@nuxtjs/mdc");
++      const include = [
++        "remark-gfm",
++        // from runtime/parser/remark.ts
++        "remark-emoji",
++        // from runtime/parser/remark.ts
++        "remark-mdc",
++        // from runtime/parser/remark.ts
++        "unist-util-visit",
++        // from runtime/highlighter/rehype.ts
++        "unified",
++        // deps by all the plugins
++        "debug"
++        // deps by many libraries but it's not an ESM
++      ];
++      const exclude = [
++        "@nuxtjs/mdc"
++        // package itself, it's a build time module
++      ];
++      config.optimizeDeps ||= {};
++      config.optimizeDeps.exclude ||= [];
++      config.optimizeDeps.include ||= [];
++      for (const pkg of include) {
++        if (!config.optimizeDeps.include.includes(pkg)) {
++          config.optimizeDeps.include.push(pkg);
++        }
++      }
++      for (const pkg of exclude) {
++        if (!config.optimizeDeps.exclude.includes(pkg)) {
++          config.optimizeDeps.exclude.push(pkg);
++        }
++      }
+     });
+     const _layers = [...nuxt.options._layers].reverse();
+     for (const layer of _layers) {
+       const srcDir = layer.config.srcDir;
+       const globalComponents = resolver.resolve(srcDir, "components/mdc");
+-      const dirStat = await fs.promises.stat(globalComponents).catch(() => null);
++      const dirStat = await fs$1.promises.stat(globalComponents).catch(() => null);
+       if (dirStat && dirStat.isDirectory()) {
+         nuxt.hook("components:dirs", (dirs) => {
+           dirs.unshift({
+@@ -203,5 +334,27 @@ const module = defineNuxtModule({
+     registerMDCSlotTransformer(resolver);
+   }
+ });
++function resolveOptions(options) {
++  if (options.highlight !== false) {
++    options.highlight ||= {};
++    options.highlight.highlighter ||= "shiki";
++    options.highlight.theme ||= {
++      default: "github-light",
++      dark: "github-dark"
++    };
++    options.highlight.langs ||= [
++      "js",
++      "ts",
++      "vue",
++      "css",
++      "html",
++      "vue",
++      "shell"
++    ];
++    if (options.highlight.preload) {
++      options.highlight.langs.push(...options.highlight.preload || []);
++    }
++  }
++}
+ 
+ export { module as default };
+diff --git a/dist/runtime/shiki/event-handler.d.ts b/dist/runtime/highlighter/event-handler.d.ts
+similarity index 57%
+rename from dist/runtime/shiki/event-handler.d.ts
+rename to dist/runtime/highlighter/event-handler.d.ts
+index e4df830dddc6ed687f2158d6682718029adb11a1..b4e45f92542b4b0588bdd732c09d7bb4b624d229 100644
+--- a/dist/runtime/shiki/event-handler.d.ts
++++ b/dist/runtime/highlighter/event-handler.d.ts
+@@ -1,2 +1,2 @@
+-declare const _default: import("h3").EventHandler<import("h3").EventHandlerRequest, Promise<import("./types").HighlightResult>>;
++declare const _default: import("h3").EventHandler<import("h3").EventHandlerRequest, Promise<any>>;
+ export default _default;
+diff --git a/dist/runtime/highlighter/event-handler.mjs b/dist/runtime/highlighter/event-handler.mjs
+new file mode 100644
+index 0000000000000000000000000000000000000000..8783c541b810f191dc32afed08e403d720d2a593
+--- /dev/null
++++ b/dist/runtime/highlighter/event-handler.mjs
+@@ -0,0 +1,8 @@
++import { eventHandler, getQuery } from "h3";
++import highlighter from "#mdc-highlighter";
++export default eventHandler(async (event) => {
++  const { code, lang, theme: themeString, options: optionsStr } = getQuery(event);
++  const theme = JSON.parse(themeString);
++  const options = optionsStr ? JSON.parse(optionsStr) : {};
++  return await highlighter(code, lang, theme, options);
++});
+diff --git a/dist/runtime/highlighter/rehype.d.ts b/dist/runtime/highlighter/rehype.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..03fdbf227bfc0f68d2f13807caeeb001a10774d3
+--- /dev/null
++++ b/dist/runtime/highlighter/rehype.d.ts
+@@ -0,0 +1,8 @@
++import type { Root } from 'hast';
++import type { Highlighter, MdcThemeOptions } from './types';
++export interface RehypeHighlightOption {
++    theme?: MdcThemeOptions;
++    highlighter?: Highlighter;
++}
++export default rehypeHighlight;
++export declare function rehypeHighlight(opts?: RehypeHighlightOption): (tree: Root) => Promise<void>;
+diff --git a/dist/runtime/shiki/index.mjs b/dist/runtime/highlighter/rehype.mjs
+similarity index 79%
+rename from dist/runtime/shiki/index.mjs
+rename to dist/runtime/highlighter/rehype.mjs
+index 0f0eed020eb4563888c7f7a2b6221d116e67275e..547b45f8a0fb6b3aacde03caedf5a8b6cdf86531 100644
+--- a/dist/runtime/shiki/index.mjs
++++ b/dist/runtime/highlighter/rehype.mjs
+@@ -1,15 +1,10 @@
+ import { visit } from "unist-util-visit";
+ import { toString } from "hast-util-to-string";
+ const defaults = {
+-  theme: {
+-    default: "github-light",
+-    dark: "github-dark"
+-  },
+-  async highlighter(code, lang, theme, highlights) {
++  theme: {},
++  async highlighter(code, lang, theme, options) {
+     if (process.browser && window.sessionStorage.getItem("mdc-shiki-highlighter") === "browser") {
+-      return import("./highlighter.mjs").then(({ useShikiHighlighter }) => {
+-        return useShikiHighlighter().getHighlightedAST(code, lang, theme, { highlights });
+-      });
++      return import("#mdc-highlighter").then((h) => h.default(code, lang, theme, options));
+     }
+     try {
+       return await $fetch("/api/_mdc/highlight", {
+@@ -17,20 +12,20 @@ const defaults = {
+           code,
+           lang,
+           theme: JSON.stringify(theme),
+-          highlights: JSON.stringify(highlights)
++          options: JSON.stringify(options)
+         }
+       });
+     } catch (e) {
+       if (process.browser && e?.response?.status === 404) {
+         window.sessionStorage.setItem("mdc-shiki-highlighter", "browser");
+-        return this.highlighter?.(code, lang, theme, highlights);
++        return this.highlighter?.(code, lang, theme, options);
+       }
+     }
+     return Promise.resolve({ tree: [{ type: "text", value: code }], className: "", style: "" });
+   }
+ };
+-export default rehypeShiki;
+-export function rehypeShiki(opts = {}) {
++export default rehypeHighlight;
++export function rehypeHighlight(opts = {}) {
+   const options = { ...defaults, ...opts };
+   return async (tree) => {
+     const tasks = [];
+@@ -44,7 +39,10 @@ export function rehypeShiki(opts = {}) {
+           toString(node),
+           _node.properties.language,
+           options.theme,
+-          _node.properties.highlights ?? []
++          {
++            highlights: _node.properties.highlights ?? [],
++            meta: _node.properties.meta
++          }
+         ).then(({ tree: tree2, className, style, inlineStyle }) => {
+           _node.properties.className = ((_node.properties.className || "") + " " + className).trim();
+           _node.properties.style = ((_node.properties.style || "") + " " + inlineStyle).trim();
+diff --git a/dist/runtime/highlighter/shiki.d.ts b/dist/runtime/highlighter/shiki.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..bb5785759d911b49530efaddba530d9f91298522
+--- /dev/null
++++ b/dist/runtime/highlighter/shiki.d.ts
+@@ -0,0 +1,12 @@
++import type { LanguageInput, ThemeInput } from 'shikiji';
++import type { Highlighter } from './types';
++import type { MdcConfig } from '@nuxtjs/mdc/config';
++export interface CreateShikiHighlighterOptions {
++    langs: LanguageInput[];
++    themes: ThemeInput[];
++    options: {
++        wrapperStyle?: string;
++    };
++    getMdcConfigs: () => Promise<MdcConfig[]>;
++}
++export declare function createShikiHighlighter({ langs, themes, getMdcConfigs, options: shikiOptions }: CreateShikiHighlighterOptions): Highlighter;
+diff --git a/dist/runtime/highlighter/shiki.mjs b/dist/runtime/highlighter/shiki.mjs
+new file mode 100644
+index 0000000000000000000000000000000000000000..cff43612e2e2afd765122a84a4630a8e35897d79
+--- /dev/null
++++ b/dist/runtime/highlighter/shiki.mjs
+@@ -0,0 +1,127 @@
++import { getHighlighterCore, addClassToHast } from "shikiji/core";
++import {
++  transformerNotationDiff,
++  transformerNotationErrorLevel,
++  transformerNotationFocus,
++  transformerNotationHighlight
++} from "shikiji-transformers";
++export function createShikiHighlighter({
++  langs,
++  themes,
++  getMdcConfigs,
++  options: shikiOptions
++}) {
++  async function _getShiki() {
++    const shiki2 = await getHighlighterCore({
++      langs,
++      themes,
++      loadWasm: () => import("shikiji/wasm")
++    });
++    const configs = await getMdcConfigs();
++    for (const config of configs) {
++      await config.shiki?.setup?.(shiki2);
++    }
++    return shiki2;
++  }
++  let shiki;
++  async function getShiki() {
++    if (!shiki) {
++      shiki = _getShiki();
++    }
++    return shiki;
++  }
++  const baseTransformers = [
++    transformerNotationDiff(),
++    transformerNotationFocus(),
++    transformerNotationHighlight(),
++    transformerNotationErrorLevel()
++  ];
++  const highlighter = async (code, lang, theme, options = {}) => {
++    const shiki2 = await getShiki();
++    const transformers = [
++      ...baseTransformers
++    ];
++    for (const config of await getMdcConfigs()) {
++      const newTransformers = typeof config.shiki?.transformers === "function" ? await config.shiki?.transformers(code, lang, theme, options) : config.shiki?.transformers || [];
++      transformers.push(...newTransformers);
++    }
++    const themesObject = typeof theme === "string" ? { default: theme } : theme || {};
++    const root = shiki2.codeToHast(code.trimEnd(), {
++      lang,
++      themes: themesObject,
++      defaultColor: false,
++      meta: {
++        __raw: options.meta
++      },
++      transformers: [
++        ...transformers,
++        {
++          name: "mdc:highlight",
++          line(node, line) {
++            if (options.highlights?.includes(line))
++              addClassToHast(node, "highlight");
++            node.properties.line = line;
++          }
++        },
++        {
++          name: "mdc:newline",
++          line(node) {
++            if (code?.includes("\n")) {
++              if (node.children.length === 0 || node.children.length === 1 && node.children[0].type === "element" && node.children[0].children.length === 1 && node.children[0].children[0].type === "text" && node.children[0].children[0].value === "") {
++                node.children = [{
++                  type: "element",
++                  tagName: "span",
++                  properties: {
++                    emptyLinePlaceholder: true
++                  },
++                  children: [{ type: "text", value: "\n" }]
++                }];
++                return;
++              }
++              const last = node.children.at(-1);
++              if (last?.type === "element" && last.tagName === "span") {
++                const text = last.children.at(-1);
++                if (text?.type === "text")
++                  text.value += "\n";
++              }
++            }
++          }
++        }
++      ]
++    });
++    const preEl = root.children[0];
++    const codeEl = preEl.children[0];
++    const wrapperStyle = shikiOptions.wrapperStyle;
++    preEl.properties.style = wrapperStyle ? typeof wrapperStyle === "string" ? wrapperStyle : preEl.properties.style : "";
++    const styles = [];
++    Object.keys(themesObject).forEach((color) => {
++      const colorScheme = color !== "default" ? `.${color}` : "";
++      styles.push(
++        wrapperStyle ? `${colorScheme} .shiki,` : "",
++        `html .${color} .shiki span {`,
++        `color: var(--shiki-${color});`,
++        `background: var(--shiki-${color}-bg);`,
++        `font-style: var(--shiki-${color}-font-style);`,
++        `font-weight: var(--shiki-${color}-font-weight);`,
++        `text-decoration: var(--shiki-${color}-text-decoration);`,
++        "}"
++      );
++      styles.push(
++        `html${colorScheme} .shiki span {`,
++        `color: var(--shiki-${color});`,
++        `background: var(--shiki-${color}-bg);`,
++        `font-style: var(--shiki-${color}-font-style);`,
++        `font-weight: var(--shiki-${color}-font-weight);`,
++        `text-decoration: var(--shiki-${color}-text-decoration);`,
++        "}"
++      );
++    });
++    return {
++      tree: codeEl.children,
++      className: Array.isArray(preEl.properties.class) ? preEl.properties.class.join(" ") : preEl.properties.class,
++      inlineStyle: preEl.properties.style,
++      style: styles.join("")
++    };
++  };
++  return highlighter;
++}
+diff --git a/dist/runtime/highlighter/types.d.ts b/dist/runtime/highlighter/types.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..e4f1ce666021da15c6cccd66c6af9076fb8c06d3
+--- /dev/null
++++ b/dist/runtime/highlighter/types.d.ts
+@@ -0,0 +1,14 @@
++import type { ElementContent } from 'hast';
++import type { BuiltinTheme } from 'shikiji';
++export type MdcThemeOptions = BuiltinTheme | string | Record<string, BuiltinTheme | string>;
++export interface HighlighterOptions {
++    highlights?: number[];
++    meta?: string;
++}
++export interface HighlightResult {
++    tree: ElementContent[];
++    className?: string;
++    style?: string;
++    inlineStyle?: string;
++}
++export type Highlighter = (code: string, lang: string, theme: MdcThemeOptions, options: Partial<HighlighterOptions>) => Promise<HighlightResult>;
+diff --git a/dist/runtime/shiki/types.mjs b/dist/runtime/highlighter/types.mjs
+similarity index 100%
+rename from dist/runtime/shiki/types.mjs
+rename to dist/runtime/highlighter/types.mjs
+diff --git a/dist/runtime/index.d.ts b/dist/runtime/index.d.ts
+index 240d4d45047f04efe8627043496edcca068c15ae..b5e8571908cf0b3ef3191cd1018badb81ce54629 100644
+--- a/dist/runtime/index.d.ts
++++ b/dist/runtime/index.d.ts
+@@ -1,3 +1,2 @@
+ export { parseMarkdown } from './parser';
+-export { useShikiHighlighter } from './shiki/highlighter';
+ export * from './utils/node';
+diff --git a/dist/runtime/index.mjs b/dist/runtime/index.mjs
+index f32efc3bf6ee10775e708c6f8164d0db39b51dae..b5b76c9a3b5493822732480317a74f394bdf87d5 100644
+--- a/dist/runtime/index.mjs
++++ b/dist/runtime/index.mjs
+@@ -1,3 +1,2 @@
+ export { parseMarkdown } from "./parser/index.mjs";
+-export { useShikiHighlighter } from "./shiki/highlighter.mjs";
+ export * from "./utils/node.mjs";
+diff --git a/dist/runtime/parser/index.d.ts b/dist/runtime/parser/index.d.ts
+index 60ffb75ca766b608981597f362f7550097c334ef..794d216e341309e26ca20c36fe1a0a7ac29933ea 100644
+--- a/dist/runtime/parser/index.d.ts
++++ b/dist/runtime/parser/index.d.ts
+@@ -1,5 +1,5 @@
+ import type { MDCData, MDCParseOptions, MDCRoot, Toc } from '../types';
+-export declare const parseMarkdown: (md: string, opts?: MDCParseOptions) => Promise<{
++export declare const parseMarkdown: (md: string, inlineOptions?: MDCParseOptions) => Promise<{
+     data: MDCData;
+     body: MDCRoot;
+     excerpt: MDCRoot | undefined;
+diff --git a/dist/runtime/parser/index.mjs b/dist/runtime/parser/index.mjs
+index 7f4e4cddc48f522aad3c8af0080f463f4c22d755..42818d9b9e53c672111ca814b52c823da2b5ddfb 100644
+--- a/dist/runtime/parser/index.mjs
++++ b/dist/runtime/parser/index.mjs
+@@ -8,15 +8,22 @@ import { compileHast } from "./compiler.mjs";
+ import { defaults } from "./options.mjs";
+ import { generateToc } from "./toc.mjs";
+ import { nodeTextContent } from "../utils/node.mjs";
++import { getMdcConfigs } from "#mdc-configs";
+ let moduleOptions;
+-export const parseMarkdown = async (md, opts = {}) => {
++export const parseMarkdown = async (md, inlineOptions = {}) => {
++  const configs = await getMdcConfigs();
+   if (!moduleOptions) {
+     moduleOptions = await import(
+       "#mdc-imports"
+       /* @vite-ignore */
+     ).catch(() => ({}));
+   }
+-  const options = defu(opts, {
++  if (inlineOptions.highlight != null && inlineOptions.highlight != false && typeof inlineOptions.highlight.highlighter !== "function") {
++    if (import.meta.dev)
++      console.warn("[mdc] `highlighter` passed to `parseMarkdown` is should be a function, but got " + JSON.stringify(inlineOptions.highlight.highlighter) + ", ignored.");
++    delete inlineOptions.highlight.highlighter;
++  }
++  const options = defu(inlineOptions, {
+     remark: { plugins: moduleOptions?.remarkPlugins },
+     rehype: { plugins: moduleOptions?.rehypePlugins },
+     highlight: moduleOptions?.highlight
+@@ -24,13 +31,25 @@ export const parseMarkdown = async (md, opts = {}) => {
+   if (options.rehype?.plugins?.highlight) {
+     options.rehype.plugins.highlight.options = options.highlight || {};
+   }
+-  const { content, data: frontmatter } = await parseFrontMatter(md);
+-  const processor = unified();
++  let processor = unified();
++  for (const config of configs) {
++    processor = await config.unified?.pre?.(processor) || processor;
++  }
+   processor.use(remarkParse);
++  for (const config of configs) {
++    processor = await config.unified?.remark?.(processor) || processor;
++  }
+   await useProcessorPlugins(processor, options.remark?.plugins);
+   processor.use(remark2rehype, options.rehype?.options);
++  for (const config of configs) {
++    processor = await config.unified?.rehype?.(processor) || processor;
++  }
+   await useProcessorPlugins(processor, options.rehype?.plugins);
+   processor.use(compileHast);
++  for (const config of configs) {
++    processor = await config.unified?.post?.(processor) || processor;
++  }
++  const { content, data: frontmatter } = await parseFrontMatter(md);
+   const processedFile = await processor.process({ value: content, data: frontmatter });
+   const result = processedFile.result;
+   const data = Object.assign(
+diff --git a/dist/runtime/shiki/event-handler.mjs b/dist/runtime/shiki/event-handler.mjs
+deleted file mode 100644
+index a381acdd366e73ba2472c0f92360deba757e372d..0000000000000000000000000000000000000000
+diff --git a/dist/runtime/shiki/highlighter.d.ts b/dist/runtime/shiki/highlighter.d.ts
+deleted file mode 100644
+index 912ec0c8eb3ee1f2b880123eebfecad907d0738f..0000000000000000000000000000000000000000
+diff --git a/dist/runtime/shiki/highlighter.mjs b/dist/runtime/shiki/highlighter.mjs
+deleted file mode 100644
+index 3b00269ba7fa03a31df598cace08cbc3ea28eb79..0000000000000000000000000000000000000000
+diff --git a/dist/runtime/shiki/index.d.ts b/dist/runtime/shiki/index.d.ts
+deleted file mode 100644
+index 1174dc12a9d5642f059dfeb002791175784ac6b3..0000000000000000000000000000000000000000
+diff --git a/dist/runtime/shiki/types.d.ts b/dist/runtime/shiki/types.d.ts
+deleted file mode 100644
+index 32fd53478cbd42c35383bb92d00213cc705d29b5..0000000000000000000000000000000000000000
+diff --git a/dist/runtime/types/parser.d.ts b/dist/runtime/types/parser.d.ts
+index b609f3aa7474e81ba69eef36059254e94e0918f1..ade6f8f073da9483943152367a71d7fd8f5f6637 100644
+--- a/dist/runtime/types/parser.d.ts
++++ b/dist/runtime/types/parser.d.ts
+@@ -1,5 +1,5 @@
+ import type { Options as RehypeOption } from 'remark-rehype';
+-import type { Theme, Highlighter } from '../shiki/types';
++import type { RehypeHighlightOption } from '../highlighter/rehype';
+ export interface RemarkPlugin {
+     instance?: any;
+     options?: Array<any> | Record<string, any>;
+@@ -16,10 +16,7 @@ export interface MDCParseOptions {
+         options?: RehypeOption;
+         plugins?: Record<string, false | RehypePlugin>;
+     };
+-    highlight?: {
+-        theme?: Theme;
+-        highlighter?: Highlighter;
+-    } | false;
++    highlight?: RehypeHighlightOption | false;
+     toc?: {
+         /**
+          * Maximum heading depth to include in the table of contents.
+diff --git a/dist/runtime/utils/general.d.ts b/dist/runtime/utils/general.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..e79650ea81a07d6168769c0f7f0f6b6f5fef8499
+--- /dev/null
++++ b/dist/runtime/utils/general.d.ts
+@@ -0,0 +1 @@
++export declare function pickObject<T extends Record<string, any>, K extends keyof T>(obj: T, keys: K[]): Pick<T, K>;
+diff --git a/dist/runtime/utils/general.mjs b/dist/runtime/utils/general.mjs
+new file mode 100644
+index 0000000000000000000000000000000000000000..9b61b36e295209323b84057e7e78d85db8813dc6
+--- /dev/null
++++ b/dist/runtime/utils/general.mjs
+@@ -0,0 +1,7 @@
++export function pickObject(obj, keys) {
++  const ret = {};
++  keys.forEach((key) => {
++    ret[key] = obj[key];
++  });
++  return ret;
++}
+diff --git a/dist/runtime/utils/node.d.ts b/dist/runtime/utils/node.d.ts
+index f707b4f531b5a9ac8ffcdb28302813e0cc0db550..e38f0fedf11ec75a681f4212707ec6c1c4a185d3 100644
+--- a/dist/runtime/utils/node.d.ts
++++ b/dist/runtime/utils/node.d.ts
+@@ -6,7 +6,7 @@ import type { MDCElement, MDCNode } from '../types';
+ export declare const TEXT_TAGS: string[];
+ /**
+  * Check virtual node's tag
+- * @param vnode Virtuel node from Vue virtual DOM
++ * @param vnode Virtual node from Vue virtual DOM
+  * @param tag tag name
+  * @returns `true` it the virtual node match the tag
+  */
+diff --git a/dist/shared/mdc.380fa6e0.d.mts b/dist/shared/mdc.380fa6e0.d.mts
+new file mode 100644
+index 0000000000000000000000000000000000000000..87db727895783195c035de803bb672cb421abb3f
+--- /dev/null
++++ b/dist/shared/mdc.380fa6e0.d.mts
+@@ -0,0 +1,17 @@
++import { ElementContent } from 'hast';
++import { BuiltinTheme } from 'shikiji';
++
++type MdcThemeOptions = BuiltinTheme | string | Record<string, BuiltinTheme | string>;
++interface HighlighterOptions {
++    highlights?: number[];
++    meta?: string;
++}
++interface HighlightResult {
++    tree: ElementContent[];
++    className?: string;
++    style?: string;
++    inlineStyle?: string;
++}
++type Highlighter = (code: string, lang: string, theme: MdcThemeOptions, options: Partial<HighlighterOptions>) => Promise<HighlightResult>;
++
++export type { Highlighter as H, MdcThemeOptions as M };
+diff --git a/dist/shared/mdc.380fa6e0.d.ts b/dist/shared/mdc.380fa6e0.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..87db727895783195c035de803bb672cb421abb3f
+--- /dev/null
++++ b/dist/shared/mdc.380fa6e0.d.ts
+@@ -0,0 +1,17 @@
++import { ElementContent } from 'hast';
++import { BuiltinTheme } from 'shikiji';
++
++type MdcThemeOptions = BuiltinTheme | string | Record<string, BuiltinTheme | string>;
++interface HighlighterOptions {
++    highlights?: number[];
++    meta?: string;
++}
++interface HighlightResult {
++    tree: ElementContent[];
++    className?: string;
++    style?: string;
++    inlineStyle?: string;
++}
++type Highlighter = (code: string, lang: string, theme: MdcThemeOptions, options: Partial<HighlighterOptions>) => Promise<HighlightResult>;
++
++export type { Highlighter as H, MdcThemeOptions as M };
+diff --git a/dist/shared/mdc.4d151e4e.d.mts b/dist/shared/mdc.4d151e4e.d.mts
+new file mode 100644
+index 0000000000000000000000000000000000000000..14dbdd77717234d186473801bf67281330af2620
+--- /dev/null
++++ b/dist/shared/mdc.4d151e4e.d.mts
+@@ -0,0 +1,17 @@
++import { ElementContent } from 'hast';
++import { BuiltinTheme } from 'shikiji';
++
++type MdcThemeOptions = BuiltinTheme | string | Record<string, BuiltinTheme | string>;
++interface HighlighterOptions {
++    highlights?: number[];
++    meta?: string;
++}
++interface HighlightResult {
++    tree: ElementContent[];
++    className?: string;
++    style?: string;
++    inlineStyle?: string;
++}
++type Highlighter = (code: string, lang: string, theme: MdcThemeOptions, options: Partial<HighlighterOptions>) => Promise<HighlightResult>;
++
++export type { Highlighter as H, MdcThemeOptions as M, HighlighterOptions as a };
+diff --git a/dist/shared/mdc.4d151e4e.d.ts b/dist/shared/mdc.4d151e4e.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..14dbdd77717234d186473801bf67281330af2620
+--- /dev/null
++++ b/dist/shared/mdc.4d151e4e.d.ts
+@@ -0,0 +1,17 @@
++import { ElementContent } from 'hast';
++import { BuiltinTheme } from 'shikiji';
++
++type MdcThemeOptions = BuiltinTheme | string | Record<string, BuiltinTheme | string>;
++interface HighlighterOptions {
++    highlights?: number[];
++    meta?: string;
++}
++interface HighlightResult {
++    tree: ElementContent[];
++    className?: string;
++    style?: string;
++    inlineStyle?: string;
++}
++type Highlighter = (code: string, lang: string, theme: MdcThemeOptions, options: Partial<HighlighterOptions>) => Promise<HighlightResult>;
++
++export type { Highlighter as H, MdcThemeOptions as M, HighlighterOptions as a };
+diff --git a/package.json b/package.json
+index 0fbfee69e8b26754ff274b25640d47f0856188bc..f32ac440a8b439bc5ece76ee2d471457cdb03a98 100644
+--- a/package.json
++++ b/package.json
+@@ -11,6 +11,11 @@
+       "import": "./dist/module.mjs",
+       "require": "./dist/module.cjs"
+     },
++    "./config": {
++      "types": "./dist/config.d.ts",
++      "import": "./dist/config.mjs",
++      "require": "./dist/config.cjs"
++    },
+     "./runtime": "./dist/runtime/index.mjs",
+     "./dist/runtime": "./dist/runtime/index.mjs",
+     "./runtime/*": "./dist/runtime/*.mjs",
+@@ -21,6 +26,17 @@
+   "files": [
+     "dist"
+   ],
++  "typesVersions": {
++    "*": {
++      "*": [
++        "./dist/*",
++        "./dist/index.d.ts"
++      ],
++      "config": [
++        "./dist/config.d.ts"
++      ]
++    }
++  },
+   "scripts": {
+     "prepack": "nuxt-module-build prepare; nuxt-module-build",
+     "build": "nuxt-module-build prepare; nuxt-module-build build",
+@@ -47,6 +63,7 @@
+     "mdast-util-to-hast": "^13.1.0",
+     "micromark-util-sanitize-uri": "^2.0.0",
+     "ohash": "^1.1.3",
++    "pathe": "^1.1.2",
+     "property-information": "^6.4.0",
+     "rehype-external-links": "^3.0.0",
+     "rehype-raw": "^7.0.0",
+@@ -55,12 +72,12 @@
+     "rehype-sort-attributes": "^5.0.0",
+     "remark-emoji": "^4.0.1",
+     "remark-gfm": "^4.0.0",
+-    "remark-mdc": "^3.0.1",
++    "remark-mdc": "^3.0.2",
+     "remark-parse": "^11.0.0",
+     "remark-rehype": "^11.1.0",
+     "scule": "^1.2.0",
+-    "shikiji": "^0.9.19",
+-    "shikiji-transformers": "^0.9.19",
++    "shikiji": "^0.10.0",
++    "shikiji-transformers": "^0.10.0",
+     "ufo": "^1.3.2",
+     "unified": "^11.0.4",
+     "unist-builder": "^4.0.0",
+@@ -73,17 +90,17 @@
+     "@nuxt/module-builder": "^0.5.5",
+     "@nuxt/schema": "^3.9.3",
+     "@nuxt/test-utils": "^3.10.0",
+-    "@nuxt/ui": "^2.12.2",
++    "@nuxt/ui": "^2.12.3",
+     "@types/mdurl": "^1.0.5",
+     "@types/node": "^20.11.5",
+     "changelogen": "^0.5.5",
+     "eslint": "^8.56.0",
+     "nuxt": "^3.9.3",
+     "rehype": "^13.0.1",
+-    "release-it": "^17.0.1",
++    "release-it": "^17.0.3",
+     "vitest": "^1.2.1"
+   },
+-  "packageManager": "pnpm@8.14.1",
++  "packageManager": "pnpm@8.14.3",
+   "release-it": {
+     "git": {
+       "commitMessage": "chore(release): release v${version}"

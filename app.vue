@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { debounce } from 'perfect-debounce'
 import type { ParsedContent } from '@nuxt/content/dist/runtime/types'
+import 'shikiji-twoslash/style-rich.css'
 
 const search = ref(null)
 const colorMode = useColorMode()

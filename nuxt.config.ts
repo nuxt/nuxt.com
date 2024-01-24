@@ -154,6 +154,12 @@ export default defineNuxtConfig({
     sources: {
       docsSource,
       examplesSource
+    },
+    highlight: {
+      theme: {
+        default: 'material-theme-lighter',
+        dark: 'material-theme-palenight'
+      }
     }
   },
   typescript: {
