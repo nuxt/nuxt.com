@@ -270,7 +270,7 @@ index b87c0798d7458e7bcf5b3b4e6067e9b50ce92f9e..ef12fbc748f5bfff57076480150c757d
      interface PublicRuntimeConfig {
          mdc: {
 diff --git a/dist/module.mjs b/dist/module.mjs
-index 0aaf4602ce667fc3c707c8bc55efce5ff26d0c01..ae55f73fb5c39527c392b5054eb6a52e70f29b4c 100644
+index 0aaf4602ce667fc3c707c8bc55efce5ff26d0c01..4829fc11148919f765b4a75888cba5f5d12fe9d8 100644
 --- a/dist/module.mjs
 +++ b/dist/module.mjs
 @@ -1,52 +1,9 @@
@@ -558,7 +558,7 @@ index 0aaf4602ce667fc3c707c8bc55efce5ff26d0c01..ae55f73fb5c39527c392b5054eb6a52e
      addComponent({ name: "MDC", filePath: resolver.resolve("./runtime/components/MDC") });
      addComponent({ name: "MDCRenderer", filePath: resolver.resolve("./runtime/components/MDCRenderer") });
      addComponent({ name: "MDCSlot", filePath: resolver.resolve("./runtime/components/MDCSlot") });
-@@ -180,15 +283,43 @@ const module = defineNuxtModule({
+@@ -180,15 +283,49 @@ const module = defineNuxtModule({
        });
      }
      extendViteConfig((config) => {
@@ -567,11 +567,17 @@ index 0aaf4602ce667fc3c707c8bc55efce5ff26d0c01..ae55f73fb5c39527c392b5054eb6a52e
 -      config.optimizeDeps.exclude.push("@nuxtjs/mdc");
 +      const include = [
 +        "remark-gfm",
-+        // from runtime/parser/remark.ts
++        // from runtime/parser/index.ts
 +        "remark-emoji",
-+        // from runtime/parser/remark.ts
++        // from runtime/parser/index.ts
 +        "remark-mdc",
-+        // from runtime/parser/remark.ts
++        // from runtime/parser/index.ts
++        "remark-rehype",
++        // from runtime/parser/index.ts
++        "rehype-raw",
++        // from runtime/parser/index.ts
++        "parse5",
++        // transitive deps of rehype
 +        "unist-util-visit",
 +        // from runtime/highlighter/rehype.ts
 +        "unified",
@@ -606,7 +612,7 @@ index 0aaf4602ce667fc3c707c8bc55efce5ff26d0c01..ae55f73fb5c39527c392b5054eb6a52e
        if (dirStat && dirStat.isDirectory()) {
          nuxt.hook("components:dirs", (dirs) => {
            dirs.unshift({
-@@ -203,5 +334,27 @@ const module = defineNuxtModule({
+@@ -203,5 +340,27 @@ const module = defineNuxtModule({
      registerMDCSlotTransformer(resolver);
    }
  });
@@ -939,10 +945,10 @@ index 60ffb75ca766b608981597f362f7550097c334ef..794d216e341309e26ca20c36fe1a0a7a
      body: MDCRoot;
      excerpt: MDCRoot | undefined;
 diff --git a/dist/runtime/parser/index.mjs b/dist/runtime/parser/index.mjs
-index 7f4e4cddc48f522aad3c8af0080f463f4c22d755..42818d9b9e53c672111ca814b52c823da2b5ddfb 100644
+index 7f4e4cddc48f522aad3c8af0080f463f4c22d755..85f9c7486b626041b9687d334a32845632d631d7 100644
 --- a/dist/runtime/parser/index.mjs
 +++ b/dist/runtime/parser/index.mjs
-@@ -8,15 +8,22 @@ import { compileHast } from "./compiler.mjs";
+@@ -8,15 +8,28 @@ import { compileHast } from "./compiler.mjs";
  import { defaults } from "./options.mjs";
  import { generateToc } from "./toc.mjs";
  import { nodeTextContent } from "../utils/node.mjs";
@@ -961,13 +967,19 @@ index 7f4e4cddc48f522aad3c8af0080f463f4c22d755..42818d9b9e53c672111ca814b52c823d
 +  if (inlineOptions.highlight != null && inlineOptions.highlight != false && typeof inlineOptions.highlight.highlighter !== "function") {
 +    if (import.meta.dev)
 +      console.warn("[mdc] `highlighter` passed to `parseMarkdown` is should be a function, but got " + JSON.stringify(inlineOptions.highlight.highlighter) + ", ignored.");
++    inlineOptions = {
++      ...inlineOptions,
++      highlight: {
++        ...inlineOptions.highlight
++      }
++    };
 +    delete inlineOptions.highlight.highlighter;
 +  }
 +  const options = defu(inlineOptions, {
      remark: { plugins: moduleOptions?.remarkPlugins },
      rehype: { plugins: moduleOptions?.rehypePlugins },
      highlight: moduleOptions?.highlight
-@@ -24,13 +31,25 @@ export const parseMarkdown = async (md, opts = {}) => {
+@@ -24,13 +37,25 @@ export const parseMarkdown = async (md, opts = {}) => {
    if (options.rehype?.plugins?.highlight) {
      options.rehype.plugins.highlight.options = options.highlight || {};
    }
