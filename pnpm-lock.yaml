@@ -7,13 +7,13 @@ settings:
 overrides:
   vue: 3.3.13
   '@nuxtjs/mdc': 0.3.2
-  shikiji: 0.10.0
-  shikiji-core: 0.10.0
-  shikiji-transformers: 0.10.0
+  shikiji: 0.10.1
+  shikiji-core: 0.10.1
+  shikiji-transformers: 0.10.1
 
 patchedDependencies:
   '@nuxtjs/mdc@0.3.2':
-    hash: l2ethoyrerf7dktwfdszqx53lm
+    hash: 5x5cie6jgk7fhyxvd53e2fa5fe
     path: patches/@nuxtjs__mdc@0.3.2.patch
 
 dependencies:
@@ -116,11 +116,11 @@ devDependencies:
     specifier: ^8.56.0
     version: 8.56.0
   shikiji-twoslash:
-    specifier: ^0.10.0
-    version: 0.10.0(typescript@5.3.3)
+    specifier: ^0.10.1
+    version: 0.10.1(typescript@5.3.3)
   vitepress-plugin-twoslash:
-    specifier: ^0.10.0
-    version: 0.10.0(typescript@5.3.3)
+    specifier: ^0.10.1
+    version: 0.10.1(typescript@5.3.3)
   vue-tsc:
     specifier: ^1.8.27
     version: 1.8.27(typescript@5.3.3)
@@ -1152,7 +1152,7 @@ packages:
     resolution: {integrity: sha512-HZ+1RJJc2SZc/FPYvbsME7b8++a2uf6g9JlMm+qUMDjnCWJaF38pbrsmYq2b9whXx/3WjpBmCRkWCJy6bjSP+g==}
     dependencies:
       '@nuxt/kit': 3.8.2
-      '@nuxtjs/mdc': 0.3.2(patch_hash=l2ethoyrerf7dktwfdszqx53lm)
+      '@nuxtjs/mdc': 0.3.2(patch_hash=5x5cie6jgk7fhyxvd53e2fa5fe)
       '@vueuse/core': 10.7.2(vue@3.3.13)
       '@vueuse/head': 2.0.0(vue@3.3.13)
       '@vueuse/nuxt': 10.7.2(nuxt@3.9.3)(vue@3.3.13)
@@ -1796,7 +1796,7 @@ packages:
       - vitest
     dev: false
 
-  /@nuxtjs/mdc@0.3.2(patch_hash=l2ethoyrerf7dktwfdszqx53lm):
+  /@nuxtjs/mdc@0.3.2(patch_hash=5x5cie6jgk7fhyxvd53e2fa5fe):
     resolution: {integrity: sha512-iSepiwfNCh5dgO3ETqSdBHWdendRuRIZ7OsgIpEQXX2J9ubHK5XvRsK3DSUOqZZ8PHbRZ3eSr/9ZF9+IeZ0GFw==}
     dependencies:
       '@nuxt/kit': 3.9.3
@@ -1824,8 +1824,8 @@ packages:
       remark-parse: 11.0.0
       remark-rehype: 11.1.0
       scule: 1.2.0
-      shikiji: 0.10.0
-      shikiji-transformers: 0.10.0
+      shikiji: 0.10.1
+      shikiji-transformers: 0.10.1
       ufo: 1.3.2
       unified: 11.0.4
       unist-builder: 4.0.0
@@ -9070,29 +9070,29 @@ packages:
     resolution: {integrity: sha512-e+/aueHx0YeIEut6RXC6K8gSf0PykwZiHD7q7AHtpTW8Kd8TpFUIWqTwhAnrGjOyOMyrwv+syr5WPagMpDpVYQ==}
     dev: false
 
-  /shikiji-core@0.10.0:
-    resolution: {integrity: sha512-imG+bvRkuNlZUi2q9tMVfegRRouTpDxMFejpfF/6J+bFX3NDKtlW9T9iIAkBYnw4pcCtSwirW0AvkwlQR4wyxg==}
+  /shikiji-core@0.10.1:
+    resolution: {integrity: sha512-MEHLfrdT/oc5gobeHwKXZsKB5M5l6YKDaNjK3NtdjWqgZ4GD2vvXQqyYJFsbhkBCkmFIAbE5G8Xg+QOvNbo3Tg==}
 
-  /shikiji-transformers@0.10.0:
-    resolution: {integrity: sha512-x9oYybeF/XOrIc6Mm8G1gU5ezunMxdgD4WwBTKrZ5tAmFFaNIWCjwZENgRt1uR4iMi0+pGH0g9bmrbraSC41nA==}
+  /shikiji-transformers@0.10.1:
+    resolution: {integrity: sha512-C7m6CuH09Vp1ATm+tObVm5UkFSOuJZoJu2fhDLa3RyQd4rpInVNiCvcJl2g365tpqKw04nXrr6z1pjsB0W7Dog==}
     dependencies:
-      shikiji: 0.10.0
+      shikiji: 0.10.1
     dev: false
 
-  /shikiji-twoslash@0.10.0(typescript@5.3.3):
-    resolution: {integrity: sha512-wK0AZ/HLIPhdWtM8Xyrj2tixvuYpxcutgyac6Il6QaEXHxk3MK1BF2jY5rf5OnLwL/IFk6USdKqjvdNRbfY7Pg==}
+  /shikiji-twoslash@0.10.1(typescript@5.3.3):
+    resolution: {integrity: sha512-pBhzAlzeIL57mz2WW03d67S2+JARsqXwgyynh8cygI8gTOnR7kClkcxYiZuhtJ/86TMopkYUJA6jd1IO12K7QA==}
     dependencies:
-      shikiji-core: 0.10.0
+      shikiji-core: 0.10.1
       twoslash: 0.1.0(typescript@5.3.3)
     transitivePeerDependencies:
       - supports-color
       - typescript
     dev: true
 
-  /shikiji@0.10.0:
-    resolution: {integrity: sha512-1dAzIOWbtM7B4Sem5BvE+CEdsebDsRA34SfCxM4qJ4PLgR73ZD92VEtNfbcoZ3xOLSqvtV0J9i4WpCgVsmQteg==}
+  /shikiji@0.10.1:
+    resolution: {integrity: sha512-fUWWEOYD0JaDkXcQCWqpcO3S3SwvHO+olak9sRcXrlriX2hqNYCkgCGxB2fomlk4pe09F1DqHkw09ccKeZJTOg==}
     dependencies:
-      shikiji-core: 0.10.0
+      shikiji-core: 0.10.1
 
   /signal-exit@3.0.7:
     resolution: {integrity: sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==}
@@ -10487,15 +10487,15 @@ packages:
       fsevents: 2.3.3
     dev: false
 
-  /vitepress-plugin-twoslash@0.10.0(typescript@5.3.3):
-    resolution: {integrity: sha512-yNYPyKh7AUj6u0731OFYheuMDRwU3MtSgPXdiuNPIcZQYp1nSSf6a0sr4k5pipn3hd3TpbG0P04bZgbBGF1h3w==}
+  /vitepress-plugin-twoslash@0.10.1(typescript@5.3.3):
+    resolution: {integrity: sha512-ZFuuskeoXiPi7hwReNEN/F3FarAmYzRBubSDxhEsalhoQoshoVd/PSlZL61oiwU6ApKpIkftERzDDfaIr7okRg==}
     dependencies:
       floating-vue: 5.2.0(vue@3.3.13)
       mdast-util-from-markdown: 2.0.0
       mdast-util-gfm: 3.0.0
       mdast-util-to-hast: 13.1.0
-      shikiji: 0.10.0
-      shikiji-twoslash: 0.10.0(typescript@5.3.3)
+      shikiji: 0.10.1
+      shikiji-twoslash: 0.10.1(typescript@5.3.3)
       twoslash-vue: 0.1.0(typescript@5.3.3)
       vue: 3.3.13(typescript@5.3.3)
     transitivePeerDependencies:

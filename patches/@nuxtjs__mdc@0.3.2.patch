@@ -8,14 +8,13 @@ index 0000000000000000000000000000000000000000..c13010a1a83856cef84113a4f5bbae1d
 \ No newline at end of file
 diff --git a/dist/config.d.mts b/dist/config.d.mts
 new file mode 100644
-index 0000000000000000000000000000000000000000..404d242052a3f92adae7b3aaca1ff311ba985c1c
+index 0000000000000000000000000000000000000000..c1b994948485081371be27caa67d12dd29a9bb6f
 --- /dev/null
 +++ b/dist/config.d.mts
 @@ -0,0 +1,49 @@
++import { Highlighter, ShikijiTransformer, HighlighterCore } from 'shikiji';
 +import { Processor } from 'unified';
-+import { ShikijiTransformer, HighlighterCore } from 'shikiji';
-+import { H as Highlighter, M as MdcThemeOptions, a as HighlighterOptions } from './shared/mdc.4d151e4e.mjs';
-+import 'hast';
++import { M as MdcThemeOptions, H as HighlighterOptions } from './shared/mdc.a28fd91a.mjs';
 +
 +type Awaitable<T> = T | Promise<T>;
 +interface MdcConfig {
@@ -58,19 +57,19 @@ index 0000000000000000000000000000000000000000..404d242052a3f92adae7b3aaca1ff311
 +        setup?: (highlighter: HighlighterCore) => Awaitable<void>;
 +    };
 +}
++
 +declare function defineConfig(config: MdcConfig): MdcConfig;
 +
-+export { type Awaitable, type MdcConfig, defineConfig };
++export { defineConfig };
 diff --git a/dist/config.d.ts b/dist/config.d.ts
 new file mode 100644
-index 0000000000000000000000000000000000000000..74e3c16c0471a7c03723c65ba3ffafc9d5bb9a2a
+index 0000000000000000000000000000000000000000..c43b522eb009b83bb3885ed45598f3641c209f7c
 --- /dev/null
 +++ b/dist/config.d.ts
 @@ -0,0 +1,49 @@
++import { Highlighter, ShikijiTransformer, HighlighterCore } from 'shikiji';
 +import { Processor } from 'unified';
-+import { ShikijiTransformer, HighlighterCore } from 'shikiji';
-+import { H as Highlighter, M as MdcThemeOptions, a as HighlighterOptions } from './shared/mdc.4d151e4e.js';
-+import 'hast';
++import { M as MdcThemeOptions, H as HighlighterOptions } from './shared/mdc.a28fd91a.js';
 +
 +type Awaitable<T> = T | Promise<T>;
 +interface MdcConfig {
@@ -113,9 +112,10 @@ index 0000000000000000000000000000000000000000..74e3c16c0471a7c03723c65ba3ffafc9
 +        setup?: (highlighter: HighlighterCore) => Awaitable<void>;
 +    };
 +}
++
 +declare function defineConfig(config: MdcConfig): MdcConfig;
 +
-+export { type Awaitable, type MdcConfig, defineConfig };
++export { defineConfig };
 diff --git a/dist/config.mjs b/dist/config.mjs
 new file mode 100644
 index 0000000000000000000000000000000000000000..64a48e93c24f5efebc81c90d0708a2d9236a9598
@@ -128,17 +128,16 @@ index 0000000000000000000000000000000000000000..64a48e93c24f5efebc81c90d0708a2d9
 +
 +export { defineConfig };
 diff --git a/dist/module.d.mts b/dist/module.d.mts
-index b87c0798d7458e7bcf5b3b4e6067e9b50ce92f9e..9a0fd368a04191a48658e9cc49a5595082b33a13 100644
+index b87c0798d7458e7bcf5b3b4e6067e9b50ce92f9e..cf1e66d2bc2983c14bbc0d8da0f561ddc7e4c502 100644
 --- a/dist/module.d.mts
 +++ b/dist/module.d.mts
-@@ -1,23 +1,44 @@
+@@ -1,23 +1,47 @@
  import * as _nuxt_schema from '@nuxt/schema';
 -import { BuiltinTheme } from 'shikiji';
 -
 -type Theme = BuiltinTheme | Record<string, BuiltinTheme>;
-+import { M as MdcThemeOptions } from './shared/mdc.4d151e4e.mjs';
-+import { BundledLanguage, LanguageRegistration } from 'shikiji';
-+import 'hast';
++import { M as MdcThemeOptions } from './shared/mdc.a28fd91a.mjs';
++import { BundledLanguage, LanguageRegistration, BundledTheme, ThemeRegistrationAny } from 'shikiji';
  
  interface UnistPlugin {
      src?: string;
@@ -171,9 +170,13 @@ index b87c0798d7458e7bcf5b3b4e6067e9b50ce92f9e..9a0fd368a04191a48658e9cc49a55950
 -        theme?: Theme;
 +        theme?: MdcThemeOptions;
 +        /**
-+         * Builtin languages to be bundled loaded by Shikiji
++         * Languages to be bundled loaded by Shikiji
 +         */
 +        langs?: (BundledLanguage | LanguageRegistration)[];
++        /**
++         * Additional themes to be bundled loaded by Shikiji
++         */
++        themes?: (BundledTheme | ThemeRegistrationAny)[];
          /**
           * Preloaded languages that will be available for highlighting code blocks.
 +         *
@@ -181,7 +184,7 @@ index b87c0798d7458e7bcf5b3b4e6067e9b50ce92f9e..9a0fd368a04191a48658e9cc49a55950
           */
          preload?: string[];
          /**
-@@ -41,14 +62,8 @@ interface ModuleOptions {
+@@ -41,14 +65,8 @@ interface ModuleOptions {
  declare const _default: _nuxt_schema.NuxtModule<ModuleOptions>;
  
  declare module '@nuxt/schema' {
@@ -199,17 +202,16 @@ index b87c0798d7458e7bcf5b3b4e6067e9b50ce92f9e..9a0fd368a04191a48658e9cc49a55950
      interface PublicRuntimeConfig {
          mdc: {
 diff --git a/dist/module.d.ts b/dist/module.d.ts
-index b87c0798d7458e7bcf5b3b4e6067e9b50ce92f9e..ef12fbc748f5bfff57076480150c757d54d39db8 100644
+index b87c0798d7458e7bcf5b3b4e6067e9b50ce92f9e..d7e51a34cc01718ea64f4f11dee6912bbc6a96fa 100644
 --- a/dist/module.d.ts
 +++ b/dist/module.d.ts
-@@ -1,23 +1,44 @@
+@@ -1,23 +1,47 @@
  import * as _nuxt_schema from '@nuxt/schema';
 -import { BuiltinTheme } from 'shikiji';
 -
 -type Theme = BuiltinTheme | Record<string, BuiltinTheme>;
-+import { M as MdcThemeOptions } from './shared/mdc.4d151e4e.js';
-+import { BundledLanguage, LanguageRegistration } from 'shikiji';
-+import 'hast';
++import { M as MdcThemeOptions } from './shared/mdc.a28fd91a.js';
++import { BundledLanguage, LanguageRegistration, BundledTheme, ThemeRegistrationAny } from 'shikiji';
  
  interface UnistPlugin {
      src?: string;
@@ -242,9 +244,13 @@ index b87c0798d7458e7bcf5b3b4e6067e9b50ce92f9e..ef12fbc748f5bfff57076480150c757d
 -        theme?: Theme;
 +        theme?: MdcThemeOptions;
 +        /**
-+         * Builtin languages to be bundled loaded by Shikiji
++         * Languages to be bundled loaded by Shikiji
 +         */
 +        langs?: (BundledLanguage | LanguageRegistration)[];
++        /**
++         * Additional themes to be bundled loaded by Shikiji
++         */
++        themes?: (BundledTheme | ThemeRegistrationAny)[];
          /**
           * Preloaded languages that will be available for highlighting code blocks.
 +         *
@@ -252,7 +258,7 @@ index b87c0798d7458e7bcf5b3b4e6067e9b50ce92f9e..ef12fbc748f5bfff57076480150c757d
           */
          preload?: string[];
          /**
-@@ -41,14 +62,8 @@ interface ModuleOptions {
+@@ -41,14 +65,8 @@ interface ModuleOptions {
  declare const _default: _nuxt_schema.NuxtModule<ModuleOptions>;
  
  declare module '@nuxt/schema' {
@@ -270,7 +276,7 @@ index b87c0798d7458e7bcf5b3b4e6067e9b50ce92f9e..ef12fbc748f5bfff57076480150c757d
      interface PublicRuntimeConfig {
          mdc: {
 diff --git a/dist/module.mjs b/dist/module.mjs
-index 0aaf4602ce667fc3c707c8bc55efce5ff26d0c01..4829fc11148919f765b4a75888cba5f5d12fe9d8 100644
+index 0aaf4602ce667fc3c707c8bc55efce5ff26d0c01..215de4297dd3bbb61ce84c072c082fb7eb4f32e2 100644
 --- a/dist/module.mjs
 +++ b/dist/module.mjs
 @@ -1,52 +1,9 @@
@@ -331,7 +337,7 @@ index 0aaf4602ce667fc3c707c8bc55efce5ff26d0c01..4829fc11148919f765b4a75888cba5f5
  
  const registerMDCSlotTransformer = (resolver) => {
    extendViteConfig((config) => {
-@@ -81,6 +38,121 @@ const registerMDCSlotTransformer = (resolver) => {
+@@ -81,6 +38,124 @@ const registerMDCSlotTransformer = (resolver) => {
    });
  };
  
@@ -378,7 +384,10 @@ index 0aaf4602ce667fc3c707c8bc55efce5ff26d0c01..4829fc11148919f765b4a75888cba5f5
 +      } else
 +        langs.add(lang);
 +    });
-+    const themes = typeof options?.theme === "string" ? [options?.theme] : Object.values(options?.theme || {});
++    const themes = Array.from(/* @__PURE__ */ new Set([
++      ...typeof options?.theme === "string" ? [options?.theme] : Object.values(options?.theme || {}),
++      ...options?.themes || []
++    ]));
 +    return [
 +      "import { getMdcConfigs } from '#mdc-configs'",
 +      code,
@@ -453,7 +462,7 @@ index 0aaf4602ce667fc3c707c8bc55efce5ff26d0c01..4829fc11148919f765b4a75888cba5f5
  const module = defineNuxtModule({
    meta: {
      name: "@nuxtjs/mdc",
-@@ -107,6 +179,7 @@ const module = defineNuxtModule({
+@@ -107,6 +182,7 @@ const module = defineNuxtModule({
      }
    },
    async setup(options, nuxt) {
@@ -461,7 +470,7 @@ index 0aaf4602ce667fc3c707c8bc55efce5ff26d0c01..4829fc11148919f765b4a75888cba5f5
      const resolver = createResolver(import.meta.url);
      nuxt.options.runtimeConfig.public.mdc = defu(nuxt.options.runtimeConfig.public.mdc, {
        components: {
-@@ -115,24 +188,6 @@ const module = defineNuxtModule({
+@@ -115,24 +191,6 @@ const module = defineNuxtModule({
        },
        headings: options.headings
      });
@@ -486,7 +495,7 @@ index 0aaf4602ce667fc3c707c8bc55efce5ff26d0c01..4829fc11148919f765b4a75888cba5f5
      if (options.highlight) {
        nuxt.hook("ready", () => {
          const nitro = useNitro();
-@@ -156,15 +211,63 @@ const module = defineNuxtModule({
+@@ -156,15 +214,63 @@ const module = defineNuxtModule({
            addWasmSupport(prerenderer);
          });
        });
@@ -558,7 +567,7 @@ index 0aaf4602ce667fc3c707c8bc55efce5ff26d0c01..4829fc11148919f765b4a75888cba5f5
      addComponent({ name: "MDC", filePath: resolver.resolve("./runtime/components/MDC") });
      addComponent({ name: "MDCRenderer", filePath: resolver.resolve("./runtime/components/MDCRenderer") });
      addComponent({ name: "MDCSlot", filePath: resolver.resolve("./runtime/components/MDCSlot") });
-@@ -180,15 +283,49 @@ const module = defineNuxtModule({
+@@ -180,15 +286,49 @@ const module = defineNuxtModule({
        });
      }
      extendViteConfig((config) => {
@@ -612,7 +621,7 @@ index 0aaf4602ce667fc3c707c8bc55efce5ff26d0c01..4829fc11148919f765b4a75888cba5f5
        if (dirStat && dirStat.isDirectory()) {
          nuxt.hook("components:dirs", (dirs) => {
            dirs.unshift({
-@@ -203,5 +340,27 @@ const module = defineNuxtModule({
+@@ -203,5 +343,27 @@ const module = defineNuxtModule({
      registerMDCSlotTransformer(resolver);
    }
  });
@@ -759,13 +768,13 @@ index 0f0eed020eb4563888c7f7a2b6221d116e67275e..547b45f8a0fb6b3aacde03caedf5a8b6
            _node.properties.style = ((_node.properties.style || "") + " " + inlineStyle).trim();
 diff --git a/dist/runtime/highlighter/shiki.d.ts b/dist/runtime/highlighter/shiki.d.ts
 new file mode 100644
-index 0000000000000000000000000000000000000000..bb5785759d911b49530efaddba530d9f91298522
+index 0000000000000000000000000000000000000000..d8b7714905962128aa755966f6c5f502af101859
 --- /dev/null
 +++ b/dist/runtime/highlighter/shiki.d.ts
 @@ -0,0 +1,12 @@
 +import type { LanguageInput, ThemeInput } from 'shikiji';
 +import type { Highlighter } from './types';
-+import type { MdcConfig } from '@nuxtjs/mdc/config';
++import type { MdcConfig } from '../types/config';
 +export interface CreateShikiHighlighterOptions {
 +    langs: LanguageInput[];
 +    themes: ThemeInput[];
@@ -777,11 +786,11 @@ index 0000000000000000000000000000000000000000..bb5785759d911b49530efaddba530d9f
 +export declare function createShikiHighlighter({ langs, themes, getMdcConfigs, options: shikiOptions }: CreateShikiHighlighterOptions): Highlighter;
 diff --git a/dist/runtime/highlighter/shiki.mjs b/dist/runtime/highlighter/shiki.mjs
 new file mode 100644
-index 0000000000000000000000000000000000000000..cff43612e2e2afd765122a84a4630a8e35897d79
+index 0000000000000000000000000000000000000000..f7b7dd7c812c51dbdaac22680480737b11b1b452
 --- /dev/null
 +++ b/dist/runtime/highlighter/shiki.mjs
-@@ -0,0 +1,127 @@
-+import { getHighlighterCore, addClassToHast } from "shikiji/core";
+@@ -0,0 +1,143 @@
++import { getHighlighterCore, addClassToHast, isSpecialLang, isSpecialTheme } from "shikiji/core";
 +import {
 +  transformerNotationDiff,
 +  transformerNotationErrorLevel,
@@ -821,6 +830,23 @@ index 0000000000000000000000000000000000000000..cff43612e2e2afd765122a84a4630a8e
 +  ];
 +  const highlighter = async (code, lang, theme, options = {}) => {
 +    const shiki2 = await getShiki();
++    const themesObject = typeof theme === "string" ? { default: theme } : theme || {};
++    if (!shiki2.getLoadedLanguages().includes(lang) && !isSpecialLang(lang)) {
++      if (process.dev) {
++        console.warn(`[mdc] Language "${lang}" is not loaded to the Shiki highlighter, fallback to plain text. Add the language to "mdc.highlight.langs" to fix this.`);
++      }
++      lang = "text";
++    }
++    const loadedThemes = shiki2.getLoadedThemes();
++    for (const color of Object.keys(themesObject)) {
++      const theme2 = themesObject[color];
++      if (!loadedThemes.includes(theme2) && isSpecialTheme(theme2)) {
++        if (process.dev) {
++          console.warn(`[mdc] Theme "${theme2}" is not loaded to the Shiki highlighter. Add the theme to "mdc.highlight.themes" to fix this.`);
++        }
++        themesObject[color] = "none";
++      }
++    }
 +    const transformers = [
 +      ...baseTransformers
 +    ];
@@ -828,7 +854,6 @@ index 0000000000000000000000000000000000000000..cff43612e2e2afd765122a84a4630a8e
 +      const newTransformers = typeof config.shiki?.transformers === "function" ? await config.shiki?.transformers(code, lang, theme, options) : config.shiki?.transformers || [];
 +      transformers.push(...newTransformers);
 +    }
-+    const themesObject = typeof theme === "string" ? { default: theme } : theme || {};
 +    const root = shiki2.codeToHast(code.trimEnd(), {
 +      lang,
 +      themes: themesObject,
@@ -978,18 +1003,16 @@ index 60ffb75ca766b608981597f362f7550097c334ef..794d216e341309e26ca20c36fe1a0a7a
      body: MDCRoot;
      excerpt: MDCRoot | undefined;
 diff --git a/dist/runtime/parser/index.mjs b/dist/runtime/parser/index.mjs
-index 7f4e4cddc48f522aad3c8af0080f463f4c22d755..85f9c7486b626041b9687d334a32845632d631d7 100644
+index 7f4e4cddc48f522aad3c8af0080f463f4c22d755..876feebb37993a5620e44c35727e24b9a1a72d39 100644
 --- a/dist/runtime/parser/index.mjs
 +++ b/dist/runtime/parser/index.mjs
-@@ -8,15 +8,28 @@ import { compileHast } from "./compiler.mjs";
- import { defaults } from "./options.mjs";
+@@ -9,14 +9,36 @@ import { defaults } from "./options.mjs";
  import { generateToc } from "./toc.mjs";
  import { nodeTextContent } from "../utils/node.mjs";
-+import { getMdcConfigs } from "#mdc-configs";
  let moduleOptions;
 -export const parseMarkdown = async (md, opts = {}) => {
++let generatedMdcConfigs;
 +export const parseMarkdown = async (md, inlineOptions = {}) => {
-+  const configs = await getMdcConfigs();
    if (!moduleOptions) {
      moduleOptions = await import(
        "#mdc-imports"
@@ -997,6 +1020,16 @@ index 7f4e4cddc48f522aad3c8af0080f463f4c22d755..85f9c7486b626041b9687d334a328456
      ).catch(() => ({}));
    }
 -  const options = defu(opts, {
++  if (!generatedMdcConfigs) {
++    generatedMdcConfigs = await import(
++      "#mdc-configs"
++      /* @vite-ignore */
++    ).then((r) => r.getMdcConfigs()).catch();
++  }
++  const mdcConfigs = [
++    ...generatedMdcConfigs || [],
++    ...inlineOptions.configs || []
++  ];
 +  if (inlineOptions.highlight != null && inlineOptions.highlight != false && typeof inlineOptions.highlight.highlighter !== "function") {
 +    if (import.meta.dev)
 +      console.warn("[mdc] `highlighter` passed to `parseMarkdown` is should be a function, but got " + JSON.stringify(inlineOptions.highlight.highlighter) + ", ignored.");
@@ -1012,28 +1045,28 @@ index 7f4e4cddc48f522aad3c8af0080f463f4c22d755..85f9c7486b626041b9687d334a328456
      remark: { plugins: moduleOptions?.remarkPlugins },
      rehype: { plugins: moduleOptions?.rehypePlugins },
      highlight: moduleOptions?.highlight
-@@ -24,13 +37,25 @@ export const parseMarkdown = async (md, opts = {}) => {
+@@ -24,13 +46,25 @@ export const parseMarkdown = async (md, opts = {}) => {
    if (options.rehype?.plugins?.highlight) {
      options.rehype.plugins.highlight.options = options.highlight || {};
    }
 -  const { content, data: frontmatter } = await parseFrontMatter(md);
 -  const processor = unified();
 +  let processor = unified();
-+  for (const config of configs) {
++  for (const config of mdcConfigs) {
 +    processor = await config.unified?.pre?.(processor) || processor;
 +  }
    processor.use(remarkParse);
-+  for (const config of configs) {
++  for (const config of mdcConfigs) {
 +    processor = await config.unified?.remark?.(processor) || processor;
 +  }
    await useProcessorPlugins(processor, options.remark?.plugins);
    processor.use(remark2rehype, options.rehype?.options);
-+  for (const config of configs) {
++  for (const config of mdcConfigs) {
 +    processor = await config.unified?.rehype?.(processor) || processor;
 +  }
    await useProcessorPlugins(processor, options.rehype?.plugins);
    processor.use(compileHast);
-+  for (const config of configs) {
++  for (const config of mdcConfigs) {
 +    processor = await config.unified?.post?.(processor) || processor;
 +  }
 +  const { content, data: frontmatter } = await parseFrontMatter(md);
@@ -1055,18 +1088,73 @@ index 1174dc12a9d5642f059dfeb002791175784ac6b3..00000000000000000000000000000000
 diff --git a/dist/runtime/shiki/types.d.ts b/dist/runtime/shiki/types.d.ts
 deleted file mode 100644
 index 32fd53478cbd42c35383bb92d00213cc705d29b5..0000000000000000000000000000000000000000
+diff --git a/dist/runtime/types/config.d.ts b/dist/runtime/types/config.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..3cedfe7ac73dbc9a139c332567459185b12274ee
+--- /dev/null
++++ b/dist/runtime/types/config.d.ts
+@@ -0,0 +1,45 @@
++import type { Highlighter, HighlighterCore } from 'shikiji';
++import type { ShikijiTransformer } from 'shikiji';
++import type { Processor } from 'unified';
++import type { MdcThemeOptions, HighlighterOptions } from '../highlighter/types';
++export type Awaitable<T> = T | Promise<T>;
++export interface MdcConfig {
++    /**
++     * Hooks for the unified markdown pipeline
++     */
++    unified?: {
++        /**
++         * Custom setup for unified processor before other plugins
++         */
++        pre?: (processor: Processor) => Awaitable<void | Processor>;
++        /**
++         * Custom setup for unified processor after remark but before rehype
++         */
++        remark?: (processor: Processor) => Awaitable<void | Processor>;
++        /**
++         * Custom setup for unified processor after rehype
++         */
++        rehype?: (processor: Processor) => Awaitable<void | Processor>;
++        /**
++         * Custom setup for unified processor after all plugins
++         */
++        post?: (processor: Processor) => Awaitable<void | Processor>;
++    };
++    /**
++     * Custom hightlighter, available when `highlighter` is set to `custom`
++     */
++    highlighter?: Highlighter;
++    /**
++     * Hooks for shikiji
++     */
++    shiki?: {
++        /**
++         * Get transformers for shikiji
++         */
++        transformers?: ShikijiTransformer[] | ((code: string, lang: string, theme: MdcThemeOptions, options: Partial<HighlighterOptions>) => Awaitable<ShikijiTransformer[]>);
++        /**
++         * Custom setup for shikiji instance, only called once on server or client
++         */
++        setup?: (highlighter: HighlighterCore) => Awaitable<void>;
++    };
++}
+diff --git a/dist/runtime/types/config.mjs b/dist/runtime/types/config.mjs
+new file mode 100644
+index 0000000000000000000000000000000000000000..e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
 diff --git a/dist/runtime/types/parser.d.ts b/dist/runtime/types/parser.d.ts
-index b609f3aa7474e81ba69eef36059254e94e0918f1..ade6f8f073da9483943152367a71d7fd8f5f6637 100644
+index b609f3aa7474e81ba69eef36059254e94e0918f1..42cf94395d51987cfc05d7ebf7a40d796ffc83ba 100644
 --- a/dist/runtime/types/parser.d.ts
 +++ b/dist/runtime/types/parser.d.ts
-@@ -1,5 +1,5 @@
+@@ -1,5 +1,6 @@
  import type { Options as RehypeOption } from 'remark-rehype';
 -import type { Theme, Highlighter } from '../shiki/types';
 +import type { RehypeHighlightOption } from '../highlighter/rehype';
++import type { MdcConfig } from './config';
  export interface RemarkPlugin {
      instance?: any;
      options?: Array<any> | Record<string, any>;
-@@ -16,10 +16,7 @@ export interface MDCParseOptions {
+@@ -16,10 +17,7 @@ export interface MDCParseOptions {
          options?: RehypeOption;
          plugins?: Record<string, false | RehypePlugin>;
      };
@@ -1078,6 +1166,15 @@ index b609f3aa7474e81ba69eef36059254e94e0918f1..ade6f8f073da9483943152367a71d7fd
      toc?: {
          /**
           * Maximum heading depth to include in the table of contents.
+@@ -27,4 +25,8 @@ export interface MDCParseOptions {
+         depth?: number;
+         searchDepth?: number;
+     };
++    /**
++     * Inline mdc.config.ts
++     */
++    configs?: MdcConfig[];
+ }
 diff --git a/dist/runtime/utils/general.d.ts b/dist/runtime/utils/general.d.ts
 new file mode 100644
 index 0000000000000000000000000000000000000000..e79650ea81a07d6168769c0f7f0f6b6f5fef8499
@@ -1203,6 +1300,36 @@ index 0000000000000000000000000000000000000000..14dbdd77717234d186473801bf672813
 +type Highlighter = (code: string, lang: string, theme: MdcThemeOptions, options: Partial<HighlighterOptions>) => Promise<HighlightResult>;
 +
 +export type { Highlighter as H, MdcThemeOptions as M, HighlighterOptions as a };
+diff --git a/dist/shared/mdc.a28fd91a.d.mts b/dist/shared/mdc.a28fd91a.d.mts
+new file mode 100644
+index 0000000000000000000000000000000000000000..491c3c987727b21e3a170e981e47ec706317ab97
+--- /dev/null
++++ b/dist/shared/mdc.a28fd91a.d.mts
+@@ -0,0 +1,9 @@
++import { BuiltinTheme } from 'shikiji';
++
++type MdcThemeOptions = BuiltinTheme | string | Record<string, BuiltinTheme | string>;
++interface HighlighterOptions {
++    highlights?: number[];
++    meta?: string;
++}
++
++export type { HighlighterOptions as H, MdcThemeOptions as M };
+diff --git a/dist/shared/mdc.a28fd91a.d.ts b/dist/shared/mdc.a28fd91a.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..491c3c987727b21e3a170e981e47ec706317ab97
+--- /dev/null
++++ b/dist/shared/mdc.a28fd91a.d.ts
+@@ -0,0 +1,9 @@
++import { BuiltinTheme } from 'shikiji';
++
++type MdcThemeOptions = BuiltinTheme | string | Record<string, BuiltinTheme | string>;
++interface HighlighterOptions {
++    highlights?: number[];
++    meta?: string;
++}
++
++export type { HighlighterOptions as H, MdcThemeOptions as M };
 diff --git a/package.json b/package.json
 index 0fbfee69e8b26754ff274b25640d47f0856188bc..f32ac440a8b439bc5ece76ee2d471457cdb03a98 100644
 --- a/package.json
