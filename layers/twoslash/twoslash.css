@@ -1,6 +1,6 @@
 :root {
   --twoslash-popup-bg: rgb(var(--color-gray-800) / 1);
-  --twoslash-popup-color: rgb(var(--color-gray-700) / 1);
+  --twoslash-popup-color: rgb(var(--color-gray-300) / 1);
   --twoslash-docs-color: inherit;
   --twoslash-docs-font: inherit;
   --twoslash-code-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
@@ -18,4 +18,9 @@ html:not(.dark) {
 
 .twoslash-popup-container .twoslash-popup-code {
   font-size: 0.9em;
+}
+
+.twoslash-floating .twoslash-popup-docs-tags .twoslash-popup-docs-tag-name {
+  color: inherit;
+  opacity: 0.5;
 }

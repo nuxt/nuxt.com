@@ -3,12 +3,19 @@ import { defineConfig } from '@nuxtjs/mdc/config'
 export default defineConfig({
   shiki: {
     transformers: async (_code, _lang, _theme, options) => {
-      if (import.meta.server) {
-        // TODO: better renderer, conditionally renders on build time.
+      // We only runs TwoSlash at build time
+      // As Nuxt Content cache the result automatically, we don't need to ship twoslash in any production bundle
+      if (import.meta.server && (import.meta.prerender || import.meta.dev)) {
         if (typeof options.meta === 'string' && options.meta?.includes('twoslash')) {
-          const { transformerTwoslash } = await import('vitepress-plugin-twoslash')
+          const { transformerTwoslash, rendererFloatingVue } = await import('vitepress-plugin-twoslash')
           return [
-            transformerTwoslash()
+            transformerTwoslash({
+              renderer: rendererFloatingVue({
+                floatingVue: {
+                  classMarkdown: 'prose prose-primary dark:prose-invert'
+                }
+              })
+            })
           ]
         }
       }

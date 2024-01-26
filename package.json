@@ -46,16 +46,16 @@
     "@nuxtjs/turnstile": "^0.6.3",
     "capture-website": "^4.0.0",
     "eslint": "^8.56.0",
-    "shikiji-twoslash": "^0.10.1",
-    "vitepress-plugin-twoslash": "^0.10.1",
+    "shikiji-twoslash": "^0.10.2",
+    "vitepress-plugin-twoslash": "^0.10.2",
     "vue-tsc": "^1.8.27"
   },
   "resolutions": {
     "vue": "3.3.13",
     "@nuxtjs/mdc": "0.3.2",
-    "shikiji": "0.10.1",
-    "shikiji-core": "0.10.1",
-    "shikiji-transformers": "0.10.1"
+    "shikiji": "0.10.2",
+    "shikiji-core": "0.10.2",
+    "shikiji-transformers": "0.10.2"
   },
   "pnpm": {
     "patchedDependencies": {
