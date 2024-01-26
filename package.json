@@ -55,7 +55,8 @@
     "@nuxtjs/mdc": "0.3.2",
     "shikiji": "0.10.2",
     "shikiji-core": "0.10.2",
-    "shikiji-transformers": "0.10.2"
+    "shikiji-transformers": "0.10.2",
+    "nuxt": "npm:nuxt-nightly@latest"
   },
   "pnpm": {
     "patchedDependencies": {
