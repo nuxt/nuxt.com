@@ -18,7 +18,13 @@ const ownerName = computed(() => {
 const links = computed(() => [{
   icon: 'i-ph-book-bookmark-duotone',
   label: 'Documentation',
-  to: module.value.website,
+  to: {
+    path: module.value.website,
+    query: {
+      utm_source: 'nuxt.com',
+      utm_medium: 'aside-documentation'
+    },
+  },
   target: '_blank'
 }, {
   icon: 'i-simple-icons-github',
@@ -182,19 +188,23 @@ defineOgImage({
 
 <style lang="postcss">
 .module-readme {
+
   /* empty code lines */
   .shiki code .line:empty {
     @apply hidden;
   }
+
   /* force rounded on prose code */
   .prose-code {
     @apply rounded-md;
   }
+
   /* Fix badges */
   p {
     a img {
       @apply inline-block my-0 mr-1;
     }
+
     a:hover {
       @apply border-none opacity-90;
     }
