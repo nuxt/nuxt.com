@@ -73,7 +73,7 @@ Once complete, add the following to your `firebase.json` to enable server render
 You can preview a local version of your site if you need to test things out without deploying.
 
 ```bash
-npm run build --preset=firebase
+npm run build -- --preset=firebase
 firebase emulators:start
 ```
 
@@ -82,7 +82,7 @@ firebase emulators:start
 Deploy to Firebase Hosting by running a Nitro build and then running the `firebase deploy` command.
 
 ```bash
-npm run build --preset=firebase
+npm run build -- --preset=firebase
 firebase deploy
 ```
 
