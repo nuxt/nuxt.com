@@ -31,7 +31,7 @@
     "@vueuse/core": "^10.7.2",
     "@vueuse/nuxt": "^10.7.2",
     "feed": "^4.2.2",
-    "nuxt": "npm:nuxt-nightly@3.10.0-28443451.658a0ffe",
+    "nuxt": "npm:nuxt-nightly@3.10.0-28443752.f1fe97fc",
     "nuxt-og-image": "^2.2.4",
     "ofetch": "^1.3.3",
     "perfect-debounce": "^1.0.0",
