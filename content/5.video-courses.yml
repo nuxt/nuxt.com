@@ -13,6 +13,11 @@ courses:
     description: 'The complete guide to developing and deploying fast, production-ready Nuxt 3 apps.'
     url: 'https://masteringnuxt.com/nuxt3'
     badge: Premium
+  - name: 'Real World Nuxt 3'
+    slug: 'vm-real-world-nuxt'
+    description: 'This is a hands-on course for learning how to build web apps using Nuxt.'
+    url: 'https://www.vuemastery.com/courses/real-world-nuxt-3/intro/?fpr=nuxt'
+    badge: Premium
   - name: 'FullStack with Nuxt'
     slug: 'vm-fullstack-nuxt'
     description: 'Get the knowledge to build full-stack apps with your existing front-end skills.'
