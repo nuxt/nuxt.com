@@ -18,13 +18,7 @@ const ownerName = computed(() => {
 const links = computed(() => [{
   icon: 'i-ph-book-bookmark-duotone',
   label: 'Documentation',
-  to: {
-    path: module.value.website,
-    query: {
-      utm_source: 'nuxt.com',
-      utm_medium: 'aside-documentation'
-    },
-  },
+  to: `${module.value.website}?utm_source=nuxt.com&utm_medium=aside-module&utm_campaign=nuxt.com`,
   target: '_blank'
 }, {
   icon: 'i-simple-icons-github',
