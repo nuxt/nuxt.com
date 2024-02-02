@@ -48,6 +48,7 @@
     "vue-tsc": "^1.8.27"
   },
   "resolutions": {
-    "vue": "3.3.13"
+    "vue": "3.3.13",
+    "@nuxt/content": "npm:@nuxt/content-edge@latest"
   }
 }
