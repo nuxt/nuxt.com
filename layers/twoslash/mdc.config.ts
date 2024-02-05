@@ -8,7 +8,7 @@ export default defineConfig({
       if (import.meta.server && (import.meta.prerender || import.meta.dev)) {
         if (typeof options.meta === 'string' && options.meta?.includes('twoslash')) {
           // console.log('RENDERING TWOSLASH', _code)
-          const { transformerTwoslash, rendererFloatingVue } = await import('vitepress-plugin-twoslash')
+          const { transformerTwoslash, rendererFloatingVue } = await import('@shikijs/vitepress-twoslash')
           return [
             transformerTwoslash({
               renderer: rendererFloatingVue({
