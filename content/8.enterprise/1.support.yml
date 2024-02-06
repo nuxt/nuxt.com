@@ -40,10 +40,10 @@ testimonials:
     author:
       name: 'James Baddiley'
       description: 'CEO/CTO Chillisauce.com'
-  - quote: "We are really happy with how the workshop went. The expert evaluated our application's architecture and made some improvements, then we conducted a long Q&A session during which every member of my team acquired valuable knowledge."
+  - quote: "The expert provided us with valuable feedback, which included improvements on how we can utilize Nuxt and the ecosystem more effectively, raising questions about the background of historic implementation and finding bug that we did not yet catch."
     author:
-      name: 'Denis Lugowski'
-      description: 'Full Stack Developer @ Tchibo'
+      name: 'Robert K Pauls'
+      description: 'Lead Frontend Engineer @ Scayle'
 logos:
   - src: '/assets/support/malt.svg'
     width: '85'

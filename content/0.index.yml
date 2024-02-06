@@ -1,8 +1,8 @@
 navigation: false
 hero:
   cta:
-    label: Nuxt v3.9 is out
-    to: /blog/v3-9
+    label: Nuxt v3.10 is out
+    to: /blog/v3-10
     variant: outline
     icon: i-ph-arrow-right
     size: xs

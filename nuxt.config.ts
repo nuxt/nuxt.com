@@ -182,6 +182,8 @@ export default defineNuxtConfig({
     strict: false
   },
   experimental: {
+    headNext: true,
+    sharedPrerenderData: true,
     appManifest: true
   },
   devtools: {
