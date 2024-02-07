@@ -36,11 +36,11 @@ testimonials:
     author:
       name: 'Melene Ulm'
       description: 'Web Developer @ Mobile Industrial Robots'
-  - quote: "I'd highly recommend their services for anyone looking into a Nuxt, to ensure you get all the benefits that it can provide and make sure your team follow all the best practice design patterns."
+  - quote: "I'd highly recommend their services for anyone looking into Nuxt, to ensure you get all the benefits that it can provide and make sure your team follow all the best practice design patterns."
     author:
       name: 'James Baddiley'
       description: 'CEO/CTO Chillisauce.com'
-  - quote: "The expert provided us with valuable feedback, which included improvements on how we can utilize Nuxt and the ecosystem more effectively, raising questions about the background of historic implementation and finding bug that we did not yet catch."
+  - quote: "The expert provided us with valuable feedback, which included improvements on how we can utilize Nuxt and the ecosystem more effectively, raising questions about the background of historic implementation and finding bugs that we did not yet catch."
     author:
       name: 'Robert K Pauls'
       description: 'Lead Frontend Engineer @ Scayle'
@@ -67,7 +67,7 @@ faq:
   items:
     - label: 'What are the steps to follow to gain access to NuxtLabs Professional services?'
       content: >-
-        We start with an introduction meeting to gather information about your context and goals. We provide you a quote based on your needs. When confirmed, we introduce you to the Nuxt Expert, choose dates in common, setup the communication channel and codebase access.
+        We start with an introduction meeting to gather information about your context and goals. We then provide you a quote suited to your needs. When confirmed, we introduce you to the Nuxt Expert, choose dates in common, setup the communication channel and necessary accesses.
     - label: 'What kind of services do we perform?'
       content: "We provide expertise and guidance to companies using Vue and Nuxt, including assistance with project architecture, performance optimization, best practices, and troubleshooting."
     - label: 'Who are the Nuxt experts?'
