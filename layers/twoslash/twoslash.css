@@ -20,6 +20,15 @@ html:not(.dark) {
   font-size: 0.9em;
 }
 
+.twoslash-popup-container .twoslash-popup-code .line {
+  display: block;
+}
+
+.twoslash-popup-container .shiki .line {
+  --shiki-default-bg: transparent;
+  --shiki-dark-bg: transparent;
+}
+
 .twoslash-floating .twoslash-popup-docs-tags .twoslash-popup-docs-tag-name {
   color: inherit;
   opacity: 0.5;

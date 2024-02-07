@@ -44,13 +44,17 @@
   "devDependencies": {
     "@nuxt/eslint-config": "^0.2.0",
     "@nuxtjs/turnstile": "^0.6.3",
-    "@shikijs/twoslash": "^1.0.0-beta.5",
-    "@shikijs/vitepress-twoslash": "^1.0.0-beta.5",
+    "@shikijs/twoslash": "^1.0.0",
+    "@shikijs/vitepress-twoslash": "^1.0.0",
     "capture-website": "^4.0.0",
     "eslint": "^8.56.0",
+    "shiki": "^1.0.0",
+    "twoslash": "^0.1.2",
+    "vue": "3.3.13",
     "vue-tsc": "^1.8.27"
   },
   "resolutions": {
-    "vue": "3.3.13"
+    "vue": "3.3.13",
+    "twoslash": "^0.1.2"
   }
 }
