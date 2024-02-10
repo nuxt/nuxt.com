@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import type { Module } from '~/types'
 import { ModuleProseA, ModuleProseImg } from '#components'
+
 const route = useRoute()
+const router = useRouter()
+
+function goBack () {
+  return window?.history.length > 2 ? router.back() : router.push('/modules')
+}
 
 const { data: module } = await useFetch<Module>(`https://api.nuxt.com/modules/${route.params.slug}`, {
   key: `module-${route.params.slug}`
@@ -108,12 +114,11 @@ defineOgImage({
       <div class="absolute top-[68px] -left-[64px] hidden lg:flex">
         <UTooltip text="Back to modules">
           <UButton
-            to="/modules"
             icon="i-ph-caret-left"
             color="gray"
             :ui="{ rounded: 'rounded-full' }"
             size="lg"
-            class=""
+            @click="goBack"
           />
         </UTooltip>
       </div>
