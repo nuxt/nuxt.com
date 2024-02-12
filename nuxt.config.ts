@@ -178,6 +178,11 @@ export default defineNuxtConfig({
       ]
     }
   },
+  twoslash: {
+    floatingVueOptions: {
+      classMarkdown: 'prose prose-primary dark:prose-invert'
+    }
+  },
   typescript: {
     strict: false
   },
