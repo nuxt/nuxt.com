@@ -50,6 +50,7 @@ export default defineNuxtConfig({
   // @ts-ignore
   modules: [
     'nuxt-content-twoslash',
+    'nuxt-build-cache',
     '@nuxt/content',
     '@nuxt/ui',
     '@nuxt/image',

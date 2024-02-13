@@ -49,10 +49,8 @@
     "nuxt-content-twoslash": "^0.0.2",
     "shiki": "^1.1.2",
     "twoslash": "^0.2.1",
-    "vue": "3.3.13",
+    "vue": "^3.3.13",
+    "nuxt-build-cache": "^0.1.1",
     "vue-tsc": "^1.8.27"
-  },
-  "resolutions": {
-    "vue": "3.3.13"
   }
 }
