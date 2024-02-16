@@ -44,9 +44,12 @@ if (examplesSourceBase) {
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  extends: process.env.NUXT_UI_PRO_PATH || '@nuxt/ui-pro',
+  extends: [
+    process.env.NUXT_UI_PRO_PATH || '@nuxt/ui-pro'
+  ],
   // @ts-ignore
   modules: [
+    'nuxt-content-twoslash',
     'nuxt-build-cache',
     '@nuxt/content',
     '@nuxt/ui',
@@ -155,6 +158,30 @@ export default defineNuxtConfig({
     sources: {
       docsSource,
       examplesSource
+    },
+    highlight: {
+      theme: {
+        default: 'material-theme-lighter',
+        dark: 'material-theme-palenight'
+      },
+      langs: [
+        'js',
+        'ts',
+        'vue',
+        'css',
+        'scss',
+        'sass',
+        'html',
+        'bash',
+        'md',
+        'mdc',
+        'json'
+      ]
+    }
+  },
+  twoslash: {
+    floatingVueOptions: {
+      classMarkdown: 'prose prose-primary dark:prose-invert'
     }
   },
   typescript: {
