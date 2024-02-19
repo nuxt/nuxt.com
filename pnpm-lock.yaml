@@ -113,14 +113,14 @@ devDependencies:
     specifier: ^0.1.1
     version: 0.1.1
   nuxt-content-twoslash:
-    specifier: 0.0.8
-    version: 0.0.8(@nuxtjs/mdc@0.5.0)
+    specifier: 0.0.10
+    version: 0.0.10(@nuxtjs/mdc@0.5.0)
   shiki:
-    specifier: ^1.1.3
-    version: 1.1.3
+    specifier: ^1.1.5
+    version: 1.1.5
   twoslash:
-    specifier: ^0.2.3
-    version: 0.2.3(typescript@5.3.3)
+    specifier: ^0.2.4
+    version: 0.2.4(typescript@5.3.3)
   vitest:
     specifier: ^1.2.2
     version: 1.2.2
@@ -1561,7 +1561,7 @@ packages:
       ohash: 1.1.3
       pathe: 1.1.2
       scule: 1.3.0
-      shiki: 1.1.3
+      shiki: 1.1.5
       slugify: 1.6.6
       socket.io-client: 4.7.4
       ufo: 1.4.0
@@ -2161,7 +2161,7 @@ packages:
       remark-parse: 11.0.0
       remark-rehype: 11.1.0
       scule: 1.3.0
-      shiki: 1.1.3
+      shiki: 1.1.5
       ufo: 1.4.0
       unified: 11.0.4
       unist-builder: 4.0.0
@@ -2792,34 +2792,34 @@ packages:
   /@shikijs/core@1.0.0-rc.0:
     resolution: {integrity: sha512-j/7te+hvEYlQTvk/wPoA+1rOklZTz8QuyqVvV81KcEN/g1WXKVnqp9WZ7jFuv0ZVLqBtDx/V8viRDROJniyMLA==}
 
-  /@shikijs/core@1.1.3:
-    resolution: {integrity: sha512-1QWSvWcPbvZXsDxB1F7ejW+Kuxp3z/JHs944hp/f8BYOlFd5gplzseFIkE/GTu/qytFef3zNME4qw1oHbQ0j2A==}
+  /@shikijs/core@1.1.5:
+    resolution: {integrity: sha512-cKc5vGQ4p/4sjx48BHIO7CvLaN32vqpz5Wh7v2n+U1EezGdfX4Wms7khBctKz3iCg9yYq4sfGUc2t+JWj6EUsw==}
 
   /@shikijs/transformers@1.0.0-rc.0:
     resolution: {integrity: sha512-1W4QpLKDM+hnlO6vqGre7orZxW4CrnO4F1zftj1KE6MdaEvy1awZKYUXPswvDIARvuetbzTvgc/ZE2yYVT/6GA==}
     dependencies:
       shiki: 1.0.0-rc.0
 
-  /@shikijs/twoslash@1.1.3(typescript@5.3.3):
-    resolution: {integrity: sha512-7NUEqRasZ15wWdUIusm2rQMenV2dIpNNOoCiNx7GZ4VzJxy7AwULQxgDVtYfn0u4BCgiUWqtdMYuO9uts8JSmg==}
+  /@shikijs/twoslash@1.1.5(typescript@5.3.3):
+    resolution: {integrity: sha512-Ne2GycEAtFs1ZWgf+bKRuG99iB+SQnriygyaJ9E24g8Op8PkH6v6mIYzBdKL9EJG+QceUGnCl/mizh0Brl/c5g==}
     dependencies:
-      '@shikijs/core': 1.1.3
-      twoslash: 0.2.3(typescript@5.3.3)
+      '@shikijs/core': 1.1.5
+      twoslash: 0.2.4(typescript@5.3.3)
     transitivePeerDependencies:
       - supports-color
       - typescript
     dev: true
 
-  /@shikijs/vitepress-twoslash@1.1.3(@nuxt/kit@3.10.2)(typescript@5.3.3):
-    resolution: {integrity: sha512-n8xYi7GW0WrLfzFyNQ4o1ugjnLurDt8OFQTpd0N0cjShtRqxePw/iivPSLXKh9RoLoEY4Zo9MHpOVMGXvIc9VA==}
+  /@shikijs/vitepress-twoslash@1.1.5(@nuxt/kit@3.10.2)(typescript@5.3.3):
+    resolution: {integrity: sha512-38sIe0/9h5EAm5GiAECa0SZCwJltOII/3ly+yNQWaKjWyeMSpFpzUCLvJS7MR1CDXjAJPefdQVR3meBDNZUgFw==}
     dependencies:
-      '@shikijs/twoslash': 1.1.3(typescript@5.3.3)
+      '@shikijs/twoslash': 1.1.5(typescript@5.3.3)
       floating-vue: 5.2.2(@nuxt/kit@3.10.2)(vue@3.4.19)
       mdast-util-from-markdown: 2.0.0
       mdast-util-gfm: 3.0.0
       mdast-util-to-hast: 13.1.0
-      shiki: 1.1.3
-      twoslash: 0.2.3(typescript@5.3.3)
+      shiki: 1.1.5
+      twoslash: 0.2.4(typescript@5.3.3)
       twoslash-vue: 0.2.3(typescript@5.3.3)
       vue: 3.4.19(typescript@5.3.3)
     transitivePeerDependencies:
@@ -7971,8 +7971,8 @@ packages:
       - supports-color
     dev: false
 
-  /nuxt-content-twoslash@0.0.8(@nuxtjs/mdc@0.5.0):
-    resolution: {integrity: sha512-Yg0cnICYs6tDleWxpE035R720UWvirFwnUF5jPs/L0K3efkM2u8GmNLdnqMSwXcEYl8v3GwqcHb1y6YiOphRvA==}
+  /nuxt-content-twoslash@0.0.10(@nuxtjs/mdc@0.5.0):
+    resolution: {integrity: sha512-rnSX+qiMvCGMrUBWbHUidxQazw7NlCs80bK1uJ9gwXd2rupM7/niko/3b57jIJUZnDIhlvePk2eWpRDskvfajg==}
     hasBin: true
     peerDependencies:
       '@nuxtjs/mdc': '>=0.5.0'
@@ -7980,15 +7980,15 @@ packages:
       '@nuxt/kit': 3.10.2
       '@nuxt/schema': 3.10.2
       '@nuxtjs/mdc': 0.5.0
-      '@shikijs/vitepress-twoslash': 1.1.3(@nuxt/kit@3.10.2)(typescript@5.3.3)
+      '@shikijs/vitepress-twoslash': 1.1.5(@nuxt/kit@3.10.2)(typescript@5.3.3)
       cac: 6.7.14
       chokidar: 3.6.0
       fast-glob: 3.3.2
       pathe: 1.1.2
       picocolors: 1.0.0
       remark-parse: 11.0.0
-      shiki: 1.1.3
-      twoslash: 0.2.3(typescript@5.3.3)
+      shiki: 1.1.5
+      twoslash: 0.2.4(typescript@5.3.3)
       typescript: 5.3.3
       unified: 11.0.4
       unist-util-visit: 5.0.0
@@ -9672,10 +9672,10 @@ packages:
     dependencies:
       '@shikijs/core': 1.0.0-rc.0
 
-  /shiki@1.1.3:
-    resolution: {integrity: sha512-k/B4UvtWmGcHMLp6JnQminlex3Go5MHKXEiormmzTJECAiSQiwSon6USuwTyto8EMUQc9aYRJ7HojkfVLbBk+g==}
+  /shiki@1.1.5:
+    resolution: {integrity: sha512-754GuKIwkUdT810Xm8btuyNQPL+q3PqOkwGW/VlmAWyMYp+HbvvDt69sWXO1sm5aeczBJQjmQTTMR4GkKQNQPw==}
     dependencies:
-      '@shikijs/core': 1.1.3
+      '@shikijs/core': 1.1.5
 
   /side-channel@1.0.5:
     resolution: {integrity: sha512-QcgiIWV4WV7qWExbN5llt6frQB/lBven9pqliLXfGPB+K9ZYXxDozp0wLkHS24kWCm+6YXH/f0HhnObZnZOBnQ==}
@@ -10339,6 +10339,10 @@ packages:
     resolution: {integrity: sha512-pvNVFaYvZ2S5AvG3dN91NSxTt+JxeoJju/1ezOGhmHB+Wpa5xZuWY5nuvOkeBpqcwvwTvpjtw5d/xSV19ZMzJA==}
     dev: true
 
+  /twoslash-protocol@0.2.4:
+    resolution: {integrity: sha512-AEGTJj4mFGfvQc/M6qi0+s82Zq+mxLcjWZU+EUHGG8LQElyHDs+uDR+/3+m1l+WP7WL+QmWrVzFXgFX+hBg+bg==}
+    dev: true
+
   /twoslash-vue@0.2.3(typescript@5.3.3):
     resolution: {integrity: sha512-sxDBrpAAW5SkA3DO4sEhoYqHCaqM2wPSsLD7+N1ySpiZL+vu+Tk9DNad6HT2zVFefMhO+lEAk7Xcz0cgaEkASQ==}
     peerDependencies:
@@ -10359,6 +10363,18 @@ packages:
     dependencies:
       '@typescript/vfs': 1.5.0
       twoslash-protocol: 0.2.3
+      typescript: 5.3.3
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /twoslash@0.2.4(typescript@5.3.3):
+    resolution: {integrity: sha512-hc3y11BjLHP4kV37TR6lUKksxpZp0LQi9kCy95ka6qobye/gV49PqXZIuWlRaRVGNvp4AJBMg8aiwkp0M8x/nQ==}
+    peerDependencies:
+      typescript: '*'
+    dependencies:
+      '@typescript/vfs': 1.5.0
+      twoslash-protocol: 0.2.4
       typescript: 5.3.3
     transitivePeerDependencies:
       - supports-color
