@@ -54,7 +54,7 @@ provide('navigation', navigation)
     <AppBanner id="ui-pro-1-0" to="https://ui.nuxt.com/pro?utm_source=nuxt-website&utm_medium=banner">
       <div class="flex items-center gap-2">
         <UIcon name="i-ph-rocket-launch-duotone" class="w-5 h-5 flex-shrink-0 pointer-events-none" />
-        <span><span class="font-semibold">Nuxt UI Pro v1.0</span> is out with 50+ Vue components to create beautiful and responsive Nuxt apps in minutes.</span>
+        <span><span class="font-semibold">Nuxt UI Pro v1.0</span> is out with 50+ Vue components<span class="hidden sm:inline"> to create beautiful and responsive Nuxt apps in minutes</span>.</span>
         <UButton label="Learn more" color="white" trailing-icon="i-ph-arrow-right" size="2xs" class="rounded-full" />
       </div>
     </AppBanner>
