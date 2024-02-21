@@ -11,12 +11,12 @@ website: 'https://lagon.app/'
 
 Nuxt supports deploying on [Lagon](https://lagon.app/) with minimal configuration ([documentation](https://docs.lagon.app/))
 
-::callout{color="amber" icon="i-ph-warning"}
+::important
 Lagon is not yet ready for production workloads
 ::
 
 
-::callout
+::alert
 Install the [Lagon CLI](https://docs.lagon.app/cli#installation) and login with `lagon login` before proceeding.
 ```bash [Terminal]
 npm install --global @lagon/cli esbuild

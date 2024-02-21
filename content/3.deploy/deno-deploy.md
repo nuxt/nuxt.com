@@ -7,7 +7,7 @@ nitroPreset: 'deno-deploy'
 website: 'https://deno.com/deploy'
 ---
 
-::callout{color="amber" icon="i-ph-warning-duotone"}
+::important
 Deno deploy preset is experimental.
 ::
 
@@ -62,7 +62,7 @@ jobs:
           root: .output
 ```
 
-::callout
+::important
 Make sure to rename `<my-project>` with your project name.
 ::
 
