@@ -140,6 +140,6 @@ templates:
     demo: 'https://demo.usenuxt.com'
   - name: 'Bloggr'
     slug: 'bloggr'
-    description: 'A personal blog template'
+    description: 'A personal blog template made with Nuxt Content.'
     repo: 'hlassiege/bloggr'
-    demo: 'https://bloggr.eventuallycoding.com/'    
+    demo: 'https://bloggr.eventuallycoding.com/'
