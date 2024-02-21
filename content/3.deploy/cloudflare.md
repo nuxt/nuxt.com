@@ -9,7 +9,7 @@ website: 'https://pages.cloudflare.com/'
 
 ## Cloudflare Pages
 
-::callout
+::tip
 **Zero Configuration ✨**
 :br
 Integration with Cloudflare Pages is possible with zero configuration, [learn more](https://nitro.unjs.io/deploy/#zero-config-providers).
@@ -19,7 +19,7 @@ Integration with Cloudflare Pages is possible with zero configuration, [learn mo
 
 If you use the GitHub/GitLab integration with Cloudflare Pages, **no configuration is required**. Pushing to your repository will automatically build your project and deploy it.
 
-::callout
+::note
 Nuxt will detect the environment to set the correct [Server/Nitro preset](https://nitro.unjs.io/deploy/providers/cloudflare).
 ::
 
