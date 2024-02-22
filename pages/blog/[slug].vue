@@ -115,11 +115,11 @@ function copyLink () {
 
           <hr v-if="surround?.length">
 
-          <UDocsSurround :surround="surround" />
+          <UContentSurround :surround="surround" />
         </UPageBody>
 
         <template #right>
-          <UDocsToc v-if="article.body && article.body.toc" :links="article.body.toc.links" />
+          <UContentToc v-if="article.body && article.body.toc" :links="article.body.toc.links" />
         </template>
       </UPage>
     </UPage>

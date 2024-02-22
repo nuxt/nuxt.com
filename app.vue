@@ -68,7 +68,7 @@ provide('navigation', navigation)
     <AppFooter />
 
     <ClientOnly>
-      <UDocsSearch
+      <UContentSearch
         ref="search"
         :files="files"
         :navigation="navigation[0]?.children"
