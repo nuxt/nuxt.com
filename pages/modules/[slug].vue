@@ -3,11 +3,6 @@ import type { Module } from '~/types'
 import { ModuleProseA, ModuleProseImg } from '#components'
 
 const route = useRoute()
-const router = useRouter()
-
-function goBack () {
-  return window?.history.length > 2 ? router.back() : router.push('/modules')
-}
 
 const { data: module } = await useFetch<Module>(`https://api.nuxt.com/modules/${route.params.slug}`, {
   key: `module-${route.params.slug}`
@@ -89,7 +84,10 @@ defineOgImage({
       </template>
     </UAlert>
 
-    <UPageHeader :description="module.description" headline="Modules">
+    <UPageHeader :description="module.description" :ui="{ headline: 'mb-8' }">
+      <template #headline>
+        <UBreadcrumb :links="[{ label: 'modules', to: '/modules', icon: 'i-ph-puzzle-piece-duotone' }, { label: module.name }]" />
+      </template>
       <template #title>
         <div class="flex items-center gap-4">
           <UAvatar
@@ -110,18 +108,6 @@ defineOgImage({
           </div>
         </div>
       </template>
-
-      <div class="absolute top-[68px] -left-[64px] hidden lg:flex">
-        <UTooltip text="Back to modules">
-          <UButton
-            icon="i-ph-caret-left"
-            color="gray"
-            :ui="{ rounded: 'rounded-full' }"
-            size="lg"
-            @click="goBack"
-          />
-        </UTooltip>
-      </div>
 
       <div class="flex flex-col lg:flex-row lg:items-center gap-3 mt-4">
         <UTooltip text="Monthly NPM Downloads">
@@ -159,7 +145,7 @@ defineOgImage({
       </UPageBody>
 
       <template #right>
-        <UDocsToc :links="module.readme.toc?.links">
+        <UContentToc :links="module.readme.toc?.links">
           <template #bottom>
             <div class="hidden lg:block space-y-6" :class="{ '!mt-6': module.readme?.toc?.links?.length }">
               <UDivider v-if="module.readme?.toc?.links?.length" type="dashed" />
@@ -179,7 +165,7 @@ defineOgImage({
               <Ads />
             </div>
           </template>
-        </UDocsToc>
+        </UContentToc>
       </template>
     </UPage>
   </UContainer>

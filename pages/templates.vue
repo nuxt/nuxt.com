@@ -64,7 +64,7 @@ defineOgImage({
               />
             </template>
             <template #title>
-              <span class="flex-1">{{ template.name }}</span>
+              <span class="flex-1 truncate">{{ template.name }}</span>
               <UBadge
                 v-if="template.badge === 'Premium'"
                 :label="template.badge"
