@@ -50,8 +50,12 @@ defineProps<{
 <template>
   <UHeader :links="links">
     <template #left>
-      <UDropdown v-model:open="open" :items="dropdownItems" :popper="{ placement: 'bottom-start' }"
-        :ui="{ container: 'mt-8', background: 'bg-white dark:bg-gray-950', item: { padding: 'gap-x-2.5 py-2.5', inactive: 'dark:bg-gray-950' } }">
+      <UDropdown
+        v-model:open="open"
+        :items="dropdownItems"
+        :popper="{ placement: 'bottom-start' }"
+        :ui="{ container: 'mt-8', background: 'bg-white dark:bg-gray-950', item: { padding: 'gap-x-2.5 py-2.5', inactive: 'dark:bg-gray-950' } }
+      ">
           <Logo ref="logo" class="block w-auto h-6" @click.right.prevent="open = true" @click.left.prevent="navigateTo('/')" />
       </UDropdown>
     </template>
@@ -66,8 +70,12 @@ defineProps<{
       </UTooltip>
 
       <UTooltip text="GitHub Stars">
-        <UButton icon="i-simple-icons-github" to="https://github.com/nuxt/nuxt" target="_blank"
-          :label="stats ? formatNumber(stats.stars) : '...'" v-bind="($ui.button.secondary as any)" />
+        <UButton
+          icon="i-simple-icons-github"
+          to="https://github.com/nuxt/nuxt"
+          target="_blank"
+          :label="stats ? formatNumber(stats.stars) : '...'"
+          v-bind="($ui.button.secondary as any)" />
       </UTooltip>
     </template>
 
