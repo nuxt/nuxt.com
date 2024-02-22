@@ -41,7 +41,7 @@ Nuxt supports deploying on the [Digital Ocean App Platform](https://docs.digital
 
 5. Finally, you'll need to add this start script to your Digital Ocean app's run command. Go to `Components > Settings > Commands`, click "Edit", then add `npm run start`
 
-::callout
+::tip
 Your Nuxt app should be live at a Digital Ocean generated URL and you can now follow [the rest of the Digital Ocean deployment guide](https://docs.digitalocean.com/products/app-platform/how-to/manage-deployments/).
 ::
 

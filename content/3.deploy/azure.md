@@ -9,7 +9,7 @@ website: 'https://azure.microsoft.com/en-us/services/app-service/static/'
 
 ## Azure Static Web Apps
 
-::callout
+::tip
 **Zero Configuration ✨**
 :br
 Integration with Azure Static Web Apps provider is possible with zero configuration.
@@ -86,7 +86,7 @@ output_location: '.output/public'
 ###### End of Repository/Build Configurations ######
 ```
 
-::callout
+::alert
 That's it! Now Azure Static Web Apps will automatically deploy your Nitro-powered application on push.
 ::
 
