@@ -145,7 +145,7 @@ defineOgImage({
       </UPageBody>
 
       <template #right>
-        <UDocsToc :links="module.readme.toc?.links">
+        <UContentToc :links="module.readme.toc?.links">
           <template #bottom>
             <div class="hidden lg:block space-y-6" :class="{ '!mt-6': module.readme?.toc?.links?.length }">
               <UDivider v-if="module.readme?.toc?.links?.length" type="dashed" />
@@ -165,7 +165,7 @@ defineOgImage({
               <Ads />
             </div>
           </template>
-        </UDocsToc>
+        </UContentToc>
       </template>
     </UPage>
   </UContainer>

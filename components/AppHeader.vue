@@ -25,14 +25,18 @@ defineProps<{
 </script>
 
 <template>
-  <UHeader :links="links">
+  <UHeader>
     <template #logo>
       <Logo class="block w-auto h-6" @click.right.prevent="$router.push('/design-kit')" />
     </template>
 
+    <template #center>
+      <UHeaderLinks :links="links" :ui="{ default: { popover: { popper: { strategy: 'absolute' }, ui: { width: 'w-[256px]' } } } }" />
+    </template>
+
     <template #right>
       <UTooltip text="Search" :shortcuts="[metaSymbol, 'K']">
-        <UDocsSearchButton :label="null" />
+        <UContentSearchButton :label="null" />
       </UTooltip>
 
       <UTooltip :text="$colorMode.preference === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'">
