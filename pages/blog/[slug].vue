@@ -65,7 +65,13 @@ function copyLink () {
     <UPage>
       <UPageHeader :title="article.title" :description="article.description">
         <template #headline>
-          {{ article.category }} <span class="text-gray-500 dark:text-gray-400">&middot;</span> <time class="text-gray-500 dark:text-gray-400"> {{ formatDateByLocale('en', article.date) }}</time>
+          <div class="flex flex-col gap-y-8">
+            <UBreadcrumb :links="[{ label: 'Blog', icon: 'i-ph-newspaper-duotone', to: '/blog' }, { label: article.title }]" />
+            <div>
+              {{ article.category }} <span class="text-gray-500 dark:text-gray-400">&middot;</span> <time class="text-gray-500 dark:text-gray-400"> {{ formatDateByLocale('en', article.date) }}</time>
+            </div>
+        </div>
+
         </template>
 
         <div class="mt-4 flex flex-wrap items-center gap-6">
@@ -89,18 +95,6 @@ function copyLink () {
               </p>
             </div>
           </UButton>
-        </div>
-
-        <div class="absolute top-[68px] -left-[64px] hidden lg:flex">
-          <UTooltip text="Back to blog">
-            <UButton
-              to="/blog"
-              icon="i-ph-caret-left"
-              color="gray"
-              :ui="{ rounded: 'rounded-full' }"
-              size="lg"
-            />
-          </UTooltip>
         </div>
       </UPageHeader>
 
