@@ -35,10 +35,9 @@ const dropdownItems = [
     target: '_blank'
   }],
   [{
-    label: 'Browser Design Kit',
+    label: 'Browse Design Kit',
     icon: 'i-ph-shapes-duotone',
-    to: '/design-kit',
-    target: '_blank'
+    to: '/design-kit'
   }]
 ]
 
