@@ -70,10 +70,7 @@ function copyLink () {
               <span>
                 {{ article.category }}
               </span>
-              <span>&middot;</span>
-              <time class="text-gray-500 dark:text-gray-400">
-                {{ formatDateByLocale('en', article.date) }}
-              </time>
+              <span class="text-gray-500 dark:text-gray-400">&middot;&nbsp;&nbsp;<time>{{ formatDateByLocale('en', article.date) }}</time></span>
             </div>
         </template>
 
