@@ -30,8 +30,8 @@ dependencies:
     specifier: ^1.3.0
     version: 1.3.0
   '@nuxt/ui-pro':
-    specifier: ^0.7.5
-    version: 0.7.5(nuxt@3.10.2)(vite@5.1.4)(vue@3.4.19)
+    specifier: ^1.0.0
+    version: 1.0.0(nuxt@3.10.2)(vite@5.1.4)(vue@3.4.19)
   '@nuxthq/studio':
     specifier: ^1.0.11
     version: 1.0.11
@@ -1077,12 +1077,13 @@ packages:
       tailwindcss: 3.4.1
     dev: false
 
-  /@headlessui/vue@1.7.16(vue@3.4.19):
-    resolution: {integrity: sha512-nKT+nf/q6x198SsyK54mSszaQl/z+QxtASmgMEJtpxSX2Q0OPJX0upS/9daDyiECpeAsvjkoOrm2O/6PyBQ+Qg==}
+  /@headlessui/vue@1.7.19(vue@3.4.19):
+    resolution: {integrity: sha512-VFjKPybogux/5/QYGSq4zgG/x3RcxId15W8uguAJAjPBxelI23dwjOjTx/mIiMkM/Hd3rzFxcf2aIp56eEWRcA==}
     engines: {node: '>=10'}
     peerDependencies:
       vue: ^3.2.0
     dependencies:
+      '@tanstack/vue-virtual': 3.1.2(vue@3.4.19)
       vue: 3.4.19(typescript@5.3.3)
     dev: false
 
@@ -1985,10 +1986,10 @@ packages:
       - supports-color
     dev: true
 
-  /@nuxt/ui-pro@0.7.5(nuxt@3.10.2)(vite@5.1.4)(vue@3.4.19):
-    resolution: {integrity: sha512-Isb+eAjnw6Kn+VCPQZESSLTt+/ZKis5PJKA2exdCWHvWX6Stu8Lr1I7us85P57siv0Y/KtHBBvJmHH+7RNmU2g==}
+  /@nuxt/ui-pro@1.0.0(nuxt@3.10.2)(vite@5.1.4)(vue@3.4.19):
+    resolution: {integrity: sha512-+z9eycrrGBit4OGOKTSzALJTbuDV0W8DnXSvljtNLJNwosHCTxrHdmWl+BiwizbvoeDH5JuovbEMhP7OlFHy2Q==}
     dependencies:
-      '@nuxt/ui': 2.13.0(nuxt@3.10.2)(vite@5.1.4)(vue@3.4.19)
+      '@nuxt/ui': 2.14.0(nuxt@3.10.2)(vite@5.1.4)(vue@3.4.19)
       '@vueuse/core': 10.8.0(vue@3.4.19)
       defu: 6.1.4
       git-url-parse: 14.0.0
@@ -1997,6 +1998,7 @@ packages:
       pathe: 1.1.2
       pkg-types: 1.0.3
       tailwind-merge: 2.2.1
+      vue3-smooth-dnd: 0.0.6(vue@3.4.19)
     transitivePeerDependencies:
       - '@vue/composition-api'
       - async-validator
@@ -2021,13 +2023,13 @@ packages:
   /@nuxt/ui-templates@1.3.1:
     resolution: {integrity: sha512-5gc02Pu1HycOVUWJ8aYsWeeXcSTPe8iX8+KIrhyEtEoOSkY0eMBuo0ssljB8wALuEmepv31DlYe5gpiRwkjESA==}
 
-  /@nuxt/ui@2.13.0(nuxt@3.10.2)(vite@5.1.4)(vue@3.4.19):
-    resolution: {integrity: sha512-u7TXMeNGV/lkPO/k2VlhCXUxJ+iw+OKUOaFLWRjHDfVQpBJMhzIvNvQhRPOD2FMpVuUUbpVjdOqbdEg9VQX3Wg==}
+  /@nuxt/ui@2.14.0(nuxt@3.10.2)(vite@5.1.4)(vue@3.4.19):
+    resolution: {integrity: sha512-WLjHv1zdJCmSU//wiigMXz7C4k0sroL8tCSNXnBRJAD5UIQiZ70gN+RFV9YRv4Ofv/soeYUgXZoiYTu4u3NHbA==}
     engines: {node: '>=v16.20.2'}
     dependencies:
       '@egoist/tailwindcss-icons': 1.7.4(tailwindcss@3.4.1)
       '@headlessui/tailwindcss': 0.2.0(tailwindcss@3.4.1)
-      '@headlessui/vue': 1.7.16(vue@3.4.19)
+      '@headlessui/vue': 1.7.19(vue@3.4.19)
       '@iconify-json/heroicons': 1.1.20
       '@nuxt/kit': 3.10.2
       '@nuxtjs/color-mode': 3.3.2
@@ -3030,6 +3032,19 @@ packages:
       lodash.merge: 4.6.2
       postcss-selector-parser: 6.0.10
       tailwindcss: 3.4.1
+    dev: false
+
+  /@tanstack/virtual-core@3.1.2:
+    resolution: {integrity: sha512-DATZJs8iejkIUqXZe6ruDAnjFo78BKnIIgqQZrc7CmEFqfLEN/TPD91n4hRfo6hpRB6xC00bwKxv7vdjFNEmOg==}
+    dev: false
+
+  /@tanstack/vue-virtual@3.1.2(vue@3.4.19):
+    resolution: {integrity: sha512-RmUnhsFtRw9p4Ti/+rG2Hr3y4yFhs8Xdsn7x9tkPoKINbVya/5RSCoNUCCAg2iXNjOI5a55iBNzNV0SVwxMwKA==}
+    peerDependencies:
+      vue: ^2.7.0 || ^3.0.0
+    dependencies:
+      '@tanstack/virtual-core': 3.1.2
+      vue: 3.4.19(typescript@5.3.3)
     dev: false
 
   /@testing-library/dom@9.3.4:
@@ -10425,6 +10440,10 @@ packages:
     resolution: {integrity: sha512-9LK+E7Hv5R9u4g4C3p+jjLstaLe11MDsL21UpYaCNmapvMkYhqCV4A/f/3gyH8QjMyh6l68q9xC85vihY9ahMQ==}
     dev: false
 
+  /smooth-dnd@0.12.1:
+    resolution: {integrity: sha512-Dndj/MOG7VP83mvzfGCLGzV2HuK1lWachMtWl/Iuk6zV7noDycIBnflwaPuDzoaapEl3Pc4+ybJArkkx9sxPZg==}
+    dev: false
+
   /socket.io-client@4.7.4:
     resolution: {integrity: sha512-wh+OkeF0rAVCrABWQBaEjLfb7DVPotMbu0cgWgyR0v6eA4EoVnAwcIeIbcdTE3GT/H3kbdLl7OoH2+asoDRIIg==}
     engines: {node: '>=10.0.0'}
@@ -11886,6 +11905,15 @@ packages:
       '@vue/language-core': 1.8.27(typescript@5.3.3)
       semver: 7.6.0
       typescript: 5.3.3
+
+  /vue3-smooth-dnd@0.0.6(vue@3.4.19):
+    resolution: {integrity: sha512-CH9ZZhEfE7qU1ef2rlfgBG+nZtQX8PnWlspB2HDDz1uVGU7fXM0Pr65DftBMz4X81S+edw2H+ZFG6Dyb5J81KA==}
+    peerDependencies:
+      vue: ^3.0.11
+    dependencies:
+      smooth-dnd: 0.12.1
+      vue: 3.4.19(typescript@5.3.3)
+    dev: false
 
   /vue@3.4.19(typescript@5.3.3):
     resolution: {integrity: sha512-W/7Fc9KUkajFU8dBeDluM4sRGc/aa4YJnOYck8dkjgZoXtVsn3OeTGni66FV1l3+nvPA7VBFYtPioaGKUmEADw==}
