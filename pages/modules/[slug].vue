@@ -86,7 +86,7 @@ defineOgImage({
 
     <UPageHeader :description="module.description" :ui="{ headline: 'mb-8' }">
       <template #headline>
-        <UBreadcrumb :links="[{ label: 'modules', to: '/modules', icon: 'i-ph-puzzle-piece-duotone' }, { label: module.name }]" />
+        <UBreadcrumb :links="[{ label: 'Modules', to: '/modules', icon: 'i-ph-puzzle-piece-duotone' }, { to: { name: 'modules', query: { category: module.category } }, label: module.category }, { label: module.npm }]" />
       </template>
       <template #title>
         <div class="flex items-center gap-4">
