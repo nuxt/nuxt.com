@@ -24,16 +24,16 @@ const mobileNav = computed(() => {
 const open = ref(false)
 const dropdownItems = [
   [{
-    label: 'Copy logo as SVG',
-    icon: 'i-simple-icons-nuxtdotjs',
-    click: () => copy(logo.value.$el.outerHTML, { title: 'Copied to clipboard' })
-  },
-  {
-    label: 'Nuxt Brand Kit',
-    icon: 'i-simple-icons-figma',
-    to: 'https://www.figma.com/community/file/1296154408275753939/nuxt-brand-kit',
-    target: '_blank'
-  }],
+     label: 'Copy logo as SVG',
+     icon: 'i-simple-icons-nuxtdotjs',
+     click: () => copy(logo.value.$el.outerHTML, { title: 'Copied to clipboard' })
+   },
+   {
+     label: 'Nuxt Brand Kit',
+     icon: 'i-simple-icons-figma',
+     to: 'https://www.figma.com/community/file/1296154408275753939/nuxt-brand-kit',
+     target: '_blank'
+   }],
   [{
     label: 'Browse Design Kit',
     icon: 'i-ph-shapes-duotone',
@@ -52,10 +52,14 @@ defineProps<{
       <UDropdown
         v-model:open="open"
         :items="dropdownItems"
-        :popper="{ placement: 'bottom-start' }"
-        :ui="{ container: 'mt-8', background: 'bg-white dark:bg-gray-950', item: { padding: 'gap-x-2.5 py-2.5', inactive: 'dark:bg-gray-950' } }
-      ">
-          <Logo ref="logo" class="block w-auto h-6" @click.right.prevent="open = true" @click.left.prevent="navigateTo('/')" />
+        :popper="{ strategy: 'absolute', placement: 'bottom-start' }"
+        :ui="{
+          container: 'mt-8',
+          background: 'bg-white dark:bg-gray-950',
+          item: { padding: 'gap-x-2.5 py-2.5', inactive: 'dark:bg-gray-950' },
+        }"
+      >
+        <Logo ref="logo" class="block w-auto h-6" @click.right.prevent="open = true" @click.left.prevent="navigateTo('/')" />
       </UDropdown>
     </template>
 
@@ -78,7 +82,8 @@ defineProps<{
           to="https://github.com/nuxt/nuxt"
           target="_blank"
           :label="stats ? formatNumber(stats.stars) : '...'"
-          v-bind="($ui.button.secondary as any)" />
+          v-bind="($ui.button.secondary as any)"
+        />
       </UTooltip>
     </template>
 
