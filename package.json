@@ -56,6 +56,6 @@
     "vue-tsc": "^1.8.27"
   },
   "resolutions": {
-    "puppeteer": "22.2.0"
+    "@nuxt/ui": "npm:@nuxt/ui-edge@2.14.0-28476882.6e53cb6"
   }
 }
