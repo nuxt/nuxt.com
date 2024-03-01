@@ -44,15 +44,20 @@ if (examplesSourceBase) {
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  extends: process.env.NUXT_UI_PRO_PATH || '@nuxt/ui-pro',
+  extends: [
+    process.env.NUXT_UI_PRO_PATH || '@nuxt/ui-pro'
+  ],
+  // @ts-ignore
   modules: [
+    'nuxt-content-twoslash',
+    'nuxt-build-cache',
     '@nuxt/content',
     '@nuxt/ui',
-    '@nuxt/devtools',
     '@nuxt/image',
     '@nuxtjs/plausible',
     '@nuxtjs/fontaine',
     '@nuxtjs/google-fonts',
+    '@nuxtjs/turnstile',
     '@nuxthq/studio',
     '@vueuse/nuxt',
     'nuxt-og-image',
@@ -64,6 +69,7 @@ export default defineNuxtConfig({
   routeRules: {
     // Pre-render
     '/api/search.json': { prerender: true },
+    '/api/templates.json': { prerender: true },
     '/blog/rss.xml': { prerender: true },
     // '/sitemap.xml': { prerender: true },
     '/newsletter': { prerender: true },
@@ -119,6 +125,7 @@ export default defineNuxtConfig({
       }
     }
   },
+
   $development: {
     runtimeConfig: {
       public: {
@@ -151,12 +158,42 @@ export default defineNuxtConfig({
     sources: {
       docsSource,
       examplesSource
+    },
+    highlight: {
+      theme: {
+        default: 'material-theme-lighter',
+        dark: 'material-theme-palenight'
+      },
+      langs: [
+        'js',
+        'ts',
+        'vue',
+        'css',
+        'scss',
+        'sass',
+        'html',
+        'bash',
+        'md',
+        'mdc',
+        'json'
+      ]
     }
+  },
+  twoslash: {
+    floatingVueOptions: {
+      classMarkdown: 'prose prose-primary dark:prose-invert'
+    },
+    // Skip Twoslash in dev to improve performance. Turn this on when you want to explictly test twoslash in dev.
+    enableInDev: false,
+    // Do not throw when twoslash fails, the typecheck should be down in github.com/nuxt/nuxt's CI
+    throws: false
   },
   typescript: {
     strict: false
   },
   experimental: {
+    headNext: true,
+    sharedPrerenderData: true,
     appManifest: true
   },
   devtools: {

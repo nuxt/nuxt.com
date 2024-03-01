@@ -1,8 +1,8 @@
 navigation: false
 hero:
   cta:
-    label: Nuxt DevTools v1.0 is out
-    to: /blog/nuxt-devtools-v1-0
+    label: Nuxt v3.10 is out
+    to: /blog/v3-10
     variant: outline
     icon: i-ph-arrow-right
     size: xs
@@ -263,7 +263,7 @@ sections:
     testimonials:
       - quote: "Nuxt offers a compelling solution and a great ecosystem to help you ship fullstack Vue apps that are performant and SEO friendly. The flexibility to choose between SSR and SSG is icing on the cake."
         author:
-          name: 'Evan you'
+          name: 'Evan You'
           description: 'Creator of Vue.js and Vite'
           to: 'https://twitter.com/youyuxi'
           target: '_blank'

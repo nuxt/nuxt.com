@@ -108,7 +108,7 @@ defineOgImage({
 <template>
   <UPage
     :ui="{
-      right: 'sticky top-[--header-height] bg-background/75 backdrop-blur group -mx-4 sm:-mx-6 px-4 sm:px-6 lg:px-4 lg:-mx-4 overflow-y-auto max-h-[calc(100vh-var(--header-height))]',
+      right: 'sticky top-[--header-height] bg-background/75 backdrop-blur group -mx-4 sm:-mx-6 px-4 sm:px-6 lg:px-4 lg:-mx-4 overflow-y-auto max-h-[calc(100vh-var(--header-height))] z-10',
     }"
   >
     <UPageHeader v-bind="page">
@@ -122,11 +122,11 @@ defineOgImage({
 
       <hr v-if="surround?.length">
 
-      <UDocsSurround :surround="surround" />
+      <UContentSurround :surround="surround" />
     </UPageBody>
 
     <template v-if="page.toc !== false" #right>
-      <UDocsToc :links="page.body?.toc?.links" :ui="{ wrapper: '' }">
+      <UContentToc :links="page.body?.toc?.links" :ui="{ wrapper: '' }">
         <template #bottom>
           <div class="hidden lg:block space-y-6" :class="{ '!mt-6': page.body?.toc?.links?.length }">
             <UDivider v-if="page.body?.toc?.links?.length" type="dashed" />
@@ -142,7 +142,7 @@ defineOgImage({
             <Ads />
           </div>
         </template>
-      </UDocsToc>
+      </UContentToc>
     </template>
   </UPage>
 </template>

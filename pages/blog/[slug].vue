@@ -63,9 +63,15 @@ function copyLink () {
 <template>
   <UContainer>
     <UPage>
-      <UPageHeader :title="article.title" :description="article.description">
+      <UPageHeader :title="article.title" :description="article.description" :ui="{ headline: 'flex flex-col gap-y-8 items-start'}">
         <template #headline>
-          {{ article.category }} <span class="text-gray-500 dark:text-gray-400">&middot;</span> <time class="text-gray-500 dark:text-gray-400"> {{ formatDateByLocale('en', article.date) }}</time>
+            <UBreadcrumb :links="[{ label: 'Blog', icon: 'i-ph-newspaper-duotone', to: '/blog' }, { label: article.title }]" />
+            <div class="flex items-center space-x-2">
+              <span>
+                {{ article.category }}
+              </span>
+              <span class="text-gray-500 dark:text-gray-400">&middot;&nbsp;&nbsp;<time>{{ formatDateByLocale('en', article.date) }}</time></span>
+            </div>
         </template>
 
         <div class="mt-4 flex flex-wrap items-center gap-6">
@@ -90,18 +96,6 @@ function copyLink () {
             </div>
           </UButton>
         </div>
-
-        <div class="absolute top-[68px] -left-[64px] hidden lg:flex">
-          <UTooltip text="Back to blog">
-            <UButton
-              to="/blog"
-              icon="i-ph-caret-left"
-              color="gray"
-              :ui="{ rounded: 'rounded-full' }"
-              size="lg"
-            />
-          </UTooltip>
-        </div>
       </UPageHeader>
 
       <UPage>
@@ -115,11 +109,11 @@ function copyLink () {
 
           <hr v-if="surround?.length">
 
-          <UDocsSurround :surround="surround" />
+          <UContentSurround :surround="surround" />
         </UPageBody>
 
         <template #right>
-          <UDocsToc v-if="article.body && article.body.toc" :links="article.body.toc.links" />
+          <UContentToc v-if="article.body && article.body.toc" :links="article.body.toc.links" />
         </template>
       </UPage>
     </UPage>

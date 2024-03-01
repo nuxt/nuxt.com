@@ -112,6 +112,19 @@ users:
       - icon: i-ph-link
         to: https://lihbr.com/
         target: _blank
+  - name: Julien Huang
+    location: France
+    sponsor: https://github.com/sponsors/huang-julien
+    avatar:
+      src: https://ipx.nuxt.com/f_auto,s_80x80/gh_avatar/huang-julien
+      srcset: https://ipx.nuxt.com/f_auto,s_160x160/gh_avatar/huang-julien 2x
+    links:
+      - icon: i-simple-icons-x
+        to: https://twitter.com/JulienHuang_dev
+        target: _blank
+      - icon: i-simple-icons-github
+        to: https://github.com/huang-julien
+        target: _blank
 cta:
   headline: Getting Started
   title: Start your Nuxt Journey

@@ -32,7 +32,7 @@ provide('navigation', navigation)
     <AppFooter />
 
     <ClientOnly>
-      <UDocsSearch :files="files" :navigation="navigation[0]?.children" :groups="searchGroups" :links="searchLinks" :fuse="{ resultLimit: 13 }" />
+      <UContentSearch :files="files" :navigation="navigation[0]?.children" :groups="searchGroups" :links="searchLinks" :fuse="{ resultLimit: 13 }" />
 
       <UNotifications />
     </ClientOnly>

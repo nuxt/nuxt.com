@@ -7,7 +7,7 @@ nitroPreset: 'stormkit'
 website: 'https://www.stormkit.io/'
 ---
 
-::callout
+::tip
 **Zero Configuration ✨**
 :br
 Integration with [Stormkit](https://www.stormkit.io/) is possible with zero configuration.
