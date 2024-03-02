@@ -10,7 +10,7 @@ website: 'https://www.stormkit.io/'
 ::tip
 **Zero Configuration ✨**
 :br
-Integration with [Stormkit](https://www.stormkit.io/) is possible with zero configuration.
+Integration with [Stormkit](https://www.stormkit.io/) is possible with zero configuration, [learn more](https://nitro.unjs.io/deploy#zero-config-providers).
 ::
 
 ## Setup
