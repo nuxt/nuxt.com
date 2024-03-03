@@ -13,7 +13,7 @@ function copyLink () {
 
 <template>
   <div class="not-prose">
-    <UCard :ui="{ shadow: '', background: '', body: { padding: 'p-16 sm:p-16' } }" :style="{ background }" />
+    <UCard class="p-16 sm:p-16" :style="{ background }" />
 
     <div class="flex items-center justify-between pt-2">
       <h5 class="font-semibold text-gray-900 dark:text-white text-base">
