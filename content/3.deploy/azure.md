@@ -12,7 +12,7 @@ website: 'https://azure.microsoft.com/en-us/services/app-service/static/'
 ::tip
 **Zero Configuration ✨**
 :br
-Integration with Azure Static Web Apps provider is possible with zero configuration.
+Integration with Azure Static Web Apps provider is possible with zero configuration, [learn more](https://nitro.unjs.io/deploy#zero-config-providers).
 ::
 
 Azure Static Web Apps are designed to be deployed continuously in a [GitHub Actions workflow](https://docs.microsoft.com/en-us/azure/static-web-apps/github-actions-workflow). By default, Nuxt will detect this deployment environment to enable the `azure` preset.

@@ -2,10 +2,12 @@
 import type { NavItem } from '@nuxt/content/dist/runtime/types'
 import type { Link } from '#ui-pro/types'
 
+const logo = ref(null)
 const navigation = inject<Ref<NavItem[]>>('navigation')
 
 const stats = useStats()
 const { metaSymbol } = useShortcuts()
+const { copy } = useCopyToClipboard()
 
 const route = useRoute()
 const mobileNav = computed(() => {
@@ -19,6 +21,26 @@ const mobileNav = computed(() => {
   return links
 })
 
+const open = ref(false)
+const dropdownItems = [
+  [{
+     label: 'Copy logo as SVG',
+     icon: 'i-simple-icons-nuxtdotjs',
+     click: () => copy(logo.value.$el.outerHTML, { title: 'Copied to clipboard' })
+   },
+   {
+     label: 'Nuxt Brand Kit',
+     icon: 'i-simple-icons-figma',
+     to: 'https://www.figma.com/community/file/1296154408275753939/nuxt-brand-kit',
+     target: '_blank'
+   }],
+  [{
+    label: 'Browse Design Kit',
+    icon: 'i-ph-shapes-duotone',
+    to: '/design-kit'
+  }]
+]
+
 defineProps<{
   links?: Link[]
 }>()
@@ -26,13 +48,28 @@ defineProps<{
 
 <template>
   <UHeader :links="links">
-    <template #logo>
-      <Logo class="block w-auto h-6" @click.right.prevent="$router.push('/design-kit')" />
+    <template #left>
+      <UDropdown
+        v-model:open="open"
+        :items="dropdownItems"
+        :popper="{ strategy: 'absolute', placement: 'bottom-start' }"
+        :ui="{
+          container: 'mt-8',
+          background: 'bg-white dark:bg-gray-950',
+          item: { padding: 'gap-x-2.5 py-2.5', inactive: 'dark:bg-gray-950' },
+        }"
+      >
+        <Logo ref="logo" class="block w-auto h-6" @click.right.prevent="open = true" @click.left.prevent="navigateTo('/')" />
+      </UDropdown>
+    </template>
+
+    <template #center>
+      <UHeaderLinks :links="links" :ui="{ default: { popover: { popper: { strategy: 'absolute' }, ui: { width: 'w-[256px]' } } } }" class="hidden lg:flex" />
     </template>
 
     <template #right>
       <UTooltip text="Search" :shortcuts="[metaSymbol, 'K']">
-        <UDocsSearchButton :label="null" />
+        <UContentSearchButton :label="null" />
       </UTooltip>
 
       <UTooltip :text="$colorMode.preference === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'">
