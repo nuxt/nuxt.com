@@ -1,7 +1,7 @@
 {
   "name": "nuxt.com",
   "version": "0.3.11",
-  "packageManager": "pnpm@8.15.1",
+  "packageManager": "pnpm@8.15.4",
   "scripts": {
     "dev": "nuxi dev",
     "build": "nuxi build",
@@ -55,6 +55,6 @@
     "vue-tsc": "^2.0.3"
   },
   "resolutions": {
-    "@nuxt/ui": "npm:@nuxt/ui-edge@2.14.0-28476882.6e53cb6"
+    "@nuxt/ui": "npm:@nuxt/ui-edge@2.14.0-28478377.ba15add"
   }
 }
