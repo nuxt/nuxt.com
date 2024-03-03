@@ -12,7 +12,7 @@ website: 'https://vercel.com/'
 ::tip
 **Zero Configuration ✨**
 :br
-Integration with Vercel is possible with zero configuration.
+Integration with Vercel is possible with zero configuration, [learn more](https://nitro.unjs.io/deploy#zero-config-providers).
 ::
 
 ## Deploy using Git

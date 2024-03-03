@@ -12,7 +12,7 @@ website: 'https://aws.amazon.com/amplify/?trk=bed847b4-6e9f-4e09-ba09-0d4680a044
 ::tip
 **Zero Configuration ✨**
 :br
-Integration with AWS Amplify is possible with zero configuration.
+Integration with AWS Amplify is possible with zero configuration, [learn more](https://nitro.unjs.io/deploy#zero-config-providers).
 ::
 
 ## Setup

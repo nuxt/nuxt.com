@@ -12,7 +12,7 @@ website: 'https://pages.cloudflare.com/'
 ::tip
 **Zero Configuration ✨**
 :br
-Integration with Cloudflare Pages is possible with zero configuration, [learn more](https://nitro.unjs.io/deploy/#zero-config-providers).
+Integration with Cloudflare Pages is possible with zero configuration, [learn more](https://nitro.unjs.io/deploy#zero-config-providers).
 ::
 
 ### Git Integration
