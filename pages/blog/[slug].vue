@@ -63,15 +63,15 @@ function copyLink () {
 <template>
   <UContainer>
     <UPage>
-      <UPageHeader :title="article.title" :description="article.description" :ui="{ headline: 'flex flex-col gap-y-8 items-start'}">
+      <UPageHeader :title="article.title" :description="article.description" :ui="{ headline: 'flex flex-col gap-y-8 items-start' }">
         <template #headline>
-            <UBreadcrumb :links="[{ label: 'Blog', icon: 'i-ph-newspaper-duotone', to: '/blog' }, { label: article.title }]" />
-            <div class="flex items-center space-x-2">
-              <span>
-                {{ article.category }}
-              </span>
-              <span class="text-gray-500 dark:text-gray-400">&middot;&nbsp;&nbsp;<time>{{ formatDateByLocale('en', article.date) }}</time></span>
-            </div>
+          <UBreadcrumb :links="[{ label: 'Blog', icon: 'i-ph-newspaper-duotone', to: '/blog' }, { label: article.title }]" />
+          <div class="flex items-center space-x-2">
+            <span>
+              {{ article.category }}
+            </span>
+            <span class="text-gray-500 dark:text-gray-400">&middot;&nbsp;&nbsp;<time>{{ formatDateByLocale('en', article.date) }}</time></span>
+          </div>
         </template>
 
         <div class="mt-4 flex flex-wrap items-center gap-6">
@@ -99,7 +99,7 @@ function copyLink () {
       </UPageHeader>
 
       <UPage>
-        <UPageBody prose>
+        <UPageBody prose class="dark:text-gray-300">
           <ContentRenderer v-if="article && article.body" :value="article" />
 
           <div class="flex justify-end items-center gap-1.5 mt-12 not-prose">

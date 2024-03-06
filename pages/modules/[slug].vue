@@ -140,7 +140,7 @@ defineOgImage({
     </UPageHeader>
 
     <UPage>
-      <UPageBody prose>
+      <UPageBody prose class="dark:text-gray-300">
         <ContentRendererMarkdown v-if="module.readme?.body" :value="module.readme" class="module-readme" :components="{ a: ModuleProseA, img: ModuleProseImg }" />
       </UPageBody>
 
