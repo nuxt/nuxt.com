@@ -42,7 +42,7 @@ const dropdownItems = [
 ]
 const isMobile = ref(false)
 function openLogoContext () {
-  if (isMobile.value) return
+  if (isMobile.value) return navigateTo('/')
   open.value = true
 }
 
