@@ -40,6 +40,15 @@ const dropdownItems = [
     to: '/design-kit'
   }]
 ]
+const isMobile = ref(false)
+function openLogoContext () {
+  if (isMobile.value) return
+  open.value = true
+}
+
+onMounted(() => {
+  isMobile.value = ('ontouchstart' in document.documentElement)
+})
 
 defineProps<{
   links?: Link[]
@@ -59,7 +68,7 @@ defineProps<{
           item: { padding: 'gap-x-2.5 py-2.5', inactive: 'dark:bg-gray-950' },
         }"
       >
-        <Logo ref="logo" class="block w-auto h-6" @click.right.prevent="open = true" @click.left.prevent="navigateTo('/')" />
+        <Logo ref="logo" class="block w-auto h-6" @click.right.prevent="openLogoContext" @click.left.prevent="navigateTo('/')" />
       </UDropdown>
     </template>
 
