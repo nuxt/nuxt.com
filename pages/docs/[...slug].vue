@@ -117,7 +117,7 @@ defineOgImage({
       </template>
     </UPageHeader>
 
-    <UPageBody prose class="dark:text-gray-300">
+    <UPageBody prose class="dark:text-gray-300 dark:prose-pre:!bg-gray-800/60">
       <ContentRenderer v-if="page && page.body" :value="page" />
 
       <hr v-if="surround?.length">

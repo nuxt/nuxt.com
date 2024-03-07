@@ -87,7 +87,7 @@ links.push({
       </UPageHeader>
 
       <UPage>
-        <UPageBody prose class="dark:text-gray-300">
+        <UPageBody prose class="dark:text-gray-300 dark:prose-pre:!bg-gray-800/60">
           <ContentRenderer v-if="provider && provider.body" :value="provider" />
 
           <hr v-if="surround?.length">

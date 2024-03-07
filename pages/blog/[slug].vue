@@ -124,7 +124,7 @@ const links = [
       </UPageHeader>
 
       <UPage>
-        <UPageBody prose class="dark:text-gray-300">
+        <UPageBody prose class="dark:text-gray-300 dark:prose-pre:!bg-gray-800/60">
           <ContentRenderer v-if="article && article.body" :value="article" />
 
           <div class="flex items-center justify-between mt-12 not-prose">

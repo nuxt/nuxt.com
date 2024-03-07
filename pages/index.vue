@@ -112,7 +112,7 @@ useSeoMeta({
           v-if="section.code"
           :value="section.code"
           tag="pre"
-          class="prose prose-primary dark:prose-invert max-w-none"
+          class="prose prose-primary dark:prose-invert max-w-none dark:prose-pre:!bg-gray-800/60"
         />
       </template>
     </ULandingSection>
