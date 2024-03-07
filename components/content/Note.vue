@@ -12,10 +12,10 @@
 
 <style lang="postcss">
 ._note {
-  @apply prose-a:text-blue-500 hover:prose-a:border-blue-500 !bg-blue-200/40 !border-blue-400/30;
-  @apply dark:!border-blue-600 dark:prose-a:text-blue-400 dark:hover:prose-a:border-blue-400 dark:!bg-blue-900/70;
+  @apply prose-a:text-blue-500 hover:prose-a:border-blue-500 !bg-blue-200/40 !border-blue-400/30 prose-code:text-blue-700 text-blue-900;
+  @apply dark:!border-blue-600 dark:prose-a:text-blue-400 dark:hover:prose-a:border-blue-400 dark:!bg-blue-900/70 dark:text-blue-200 dark:prose-code:text-blue-200;
   a code {
-    @apply hover:!text-blue-400 hover:!border-blue-400;
+    @apply hover:!text-blue-600 hover:!border-blue-400;
     @apply dark:hover:!text-blue-400 dark:hover:!border-blue-400;
   }
 }
