@@ -4,6 +4,7 @@ export interface BlogArticleAuthor {
   name: string
   avatarUrl: string
   link: string
+  twitter: string
 }
 
 export interface BlogArticle extends ParsedContent {

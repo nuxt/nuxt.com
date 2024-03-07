@@ -146,7 +146,7 @@ export default defineAppConfig({
         to: 'dark:hover:bg-gray-900/50'
       }
     },
-    docs: {
+    content: {
       search: {
         fileIcon: {
           name: 'i-ph-file-text-duotone'
@@ -164,9 +164,7 @@ export default defineAppConfig({
           prev: 'i-ph-arrow-left',
           next: 'i-ph-arrow-right'
         }
-      }
-    },
-    content: {
+      },
       collapsible: {
         button: {
           icon: {
