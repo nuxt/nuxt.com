@@ -6,7 +6,7 @@ const props = defineProps({
   title: { type: String },
   icon: { type: String },
   color: { type: String as PropType<(typeof uiColors)[number]> },
-  to: { type: String },
+  to: { type: String }
 })
 
 const target = computed(() => (props.to?.startsWith('https://') ? '_blank' : ''))

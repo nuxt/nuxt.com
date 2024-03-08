@@ -5,13 +5,13 @@ import { splitByCase, upperFirst } from 'scule'
 const props = defineProps({
   to: {
     type: String,
-    required: true,
+    required: true
   },
   title: {
     type: String,
     required: false,
-    default: '',
-  },
+    default: ''
+  }
 })
 
 const createBreadcrumb = (link: string = 'Missing link') => {
@@ -24,7 +24,7 @@ const createBreadcrumb = (link: string = 'Missing link') => {
     .map((part) =>
       splitByCase(part)
         .map((p) => upperFirst(p))
-        .join(' '),
+        .join(' ')
     )
     .join(' > ')
     .replace('Api', 'API')
@@ -35,6 +35,8 @@ const computedTitle = computed<string>(() => props.title || createBreadcrumb(pro
 
 <template>
   <Callout icon="i-ph-bookmark-simple-duotone" :to="to">
-    <MDCSlot unwrap="p"> Read more in <span class="font-bold" v-html="computedTitle" />. </MDCSlot>
+    <MDCSlot unwrap="p">
+      Read more in <span class="font-bold" v-html="computedTitle" />.
+    </MDCSlot>
   </Callout>
 </template>
