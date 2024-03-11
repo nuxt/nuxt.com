@@ -63,7 +63,7 @@ const links = [
   {
     icon: 'i-ph-pen-duotone',
     label: 'Edit this article',
-    to: `https://github.com/nuxt/nuxt.com/edit/main/content/7.blog/${article.value._file}`,
+    to: `https://github.com/nuxt/nuxt.com/edit/main/content/${article.value._file}`,
     target: '_blank'
   }, {
     icon: 'i-ph-shooting-star-duotone',
