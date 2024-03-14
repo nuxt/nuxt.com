@@ -90,7 +90,7 @@ defineOgImage({
     </UPageHeader>
 
     <UPage :ui="{ right: 'my-8' }">
-      <UPageBody prose class="prose-lg">
+      <UPageBody prose class="prose-lg dark:text-gray-300">
         <ContentRenderer v-if="agency && agency.body" :value="agency" />
       </UPageBody>
 

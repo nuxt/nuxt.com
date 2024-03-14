@@ -8,10 +8,36 @@ courses:
     slug: 'vc-nuxt-3-fundamentals'
     description: 'Learn Nuxt 3 fundamentals with VueSchool.'
     url: 'https://vueschool.io/courses/nuxt-js-3-fundamentals?friend=nuxt'
+  - name: 'Nuxt 3 Tips by Daniel Roe'
+    slug: 'nuxt3-tips-daniel'
+    description: 'Learn Nuxt 3 tips and tricks with Daniel Roe (Nuxt lead).'
+    url: 'https://www.youtube.com/watch?v=dZSNW07sO-A&list=PLQnM-cL9ttacXZavMQMT-0lyGki8iSkGF'
+    screenshotOptions:
+      delay: 1
+      removeElements: ['tp-yt-iron-overlay-backdrop', 'tp-yt-paper-dialog']
+  - name: 'Nuxt 3 Tips by Alex Lichter'
+    slug: 'nuxt3-tips'
+    description: 'Learn Nuxt 3 tips and tricks with Alexander Lichter (core team).'
+    url: 'https://www.youtube.com/watch?v=2tKOZc3Z1dk&list=PL06MUQt-_wlsRNxmbIvgVuhsXG_dN1XaO'
+    screenshotOptions:
+      delay: 1
+      removeElements: ['tp-yt-iron-overlay-backdrop', 'tp-yt-paper-dialog']
+  - name: 'Nuxt 3 Performance (Playlist)'
+    slug: 'nuxt3-performance'
+    description: 'Deep dive into Nuxt 3 performance with Alexander Lichter (core team).'
+    url: 'https://www.youtube.com/watch?v=laRJNkG_wls&list=PL06MUQt-_wls2sirXbt919cIbGvKv6k5Q'
+    screenshotOptions:
+      delay: 1
+      removeElements: ['tp-yt-iron-overlay-backdrop', 'tp-yt-paper-dialog']
   - name: 'Mastering Nuxt'
     slug: 'mastering-nuxt'
     description: 'The complete guide to developing and deploying fast, production-ready Nuxt 3 apps.'
     url: 'https://masteringnuxt.com/nuxt3'
+    badge: Premium
+  - name: 'Real World Nuxt 3'
+    slug: 'vm-real-world-nuxt'
+    description: 'This is a hands-on course for learning how to build web apps using Nuxt.'
+    url: 'https://www.vuemastery.com/courses/real-world-nuxt-3/intro/?fpr=nuxt'
     badge: Premium
   - name: 'FullStack with Nuxt'
     slug: 'vm-fullstack-nuxt'
@@ -22,6 +48,16 @@ courses:
     slug: 'vm-blog-content'
     description: 'Learn how to create a blog with Nuxt 3 and Nuxt Content.'
     url: 'https://www.vuemastery.com/courses/build-a-blog-nuxt3-content/build-the-blog-post-detail-page?fpr=nuxt'
+    badge: Premium
+  - name: 'Nuxt 3 Middleware'
+    slug: 'vm-nuxt-middleware'
+    description: 'Learn to Nuxt middleware to handle authentication, redirection, and custom logic like a pro.'
+    url: 'https://www.vuemastery.com/courses/nuxt-3-middleware/middleware-introduction?fpr=nuxt'
+    badge: Premium
+  - name: 'Trello Clone'
+    slug: 'vm-trello-clone'
+    description: 'Learn how to build a Trello Clone with Nuxt 3 and Nuxt UI.'
+    url: 'https://www.vuemastery.com/courses/build-a-trello-clone-w-nuxt-3/trello-clone-nuxt-introduction/?fpr=nuxt'
     badge: Premium
   - name: 'The Vue 3 Masterclass'
     slug: 'vc-vue-masterclass'
@@ -42,3 +78,4 @@ courses:
     description: 'Learn how to use Nuxt 3 in this full tutorial for beginners.'
     url: 'https://www.youtube.com/watch?v=fTPCKnZZ2dk'
     screenshotUrl: 'https://www.youtube-nocookie.com/embed/fTPCKnZZ2dk?si=3Fq2wEvmXh2u3jlr'
+

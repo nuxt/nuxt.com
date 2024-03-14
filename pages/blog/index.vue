@@ -64,7 +64,7 @@ await fetchList()
             :to="article._path"
             :title="article.title"
             :description="article.description"
-            class="flex flex-col"
+            class="flex flex-col overflow-hidden"
             :ui="{
               divide: '',
               header: { base: 'aspect-w-4 aspect-h-2', padding: '' },

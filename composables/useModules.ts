@@ -43,14 +43,10 @@ export const useModules = () => {
 
   const route = useRoute()
   const router = useRouter()
-
   const modules = useState<Module[]>('modules', () => [])
   const module = useState<Module>('module', () => ({} as Module))
 
-
-
   // Data fetching
-
   async function fetchList () {
     if (modules.value.length) {
       return
@@ -61,6 +57,8 @@ export const useModules = () => {
       modules.value = res.modules
     }
   }
+
+
   // Data
 
   // const versions: Filter[] = [
@@ -112,7 +110,7 @@ export const useModules = () => {
         state: { smooth: '#smooth' }
       },
       icon: iconsMap[category as keyof typeof iconsMap] || undefined,
-      click: (e) => {
+      click: (e: any) => {
         if (route.query.category !== category) {
           return
         }
@@ -182,6 +180,16 @@ export const useModules = () => {
     return route.query.q as string
   })
 
+  const isSponsor = (a: Module, b: Module) => {
+    if (a.sponsor && !b.sponsor) {
+        return -1
+    } else if (!a.sponsor && b.sponsor) {
+        return 1
+    } else {
+      return 0
+    }
+  }
+
   // const links = computed(() => {
   //   return [
   //     {
@@ -219,13 +227,14 @@ export const useModules = () => {
 
         return true
       })
-      .sort((a: any, b: any) => b.stats[selectedSort.value.key] - a.stats[selectedSort.value.key])
+      .sort((a: Module, b: Module) => b.stats[selectedSort.value.key] - a.stats[selectedSort.value.key])
 
     if (selectedOrder.value.key === 'asc') {
       filteredModules = filteredModules.reverse()
     }
 
-    return filteredModules
+    // sponsored modules in first place
+    return filteredModules.sort(isSponsor)
   })
 
   return {

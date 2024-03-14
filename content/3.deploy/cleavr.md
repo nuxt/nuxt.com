@@ -7,10 +7,10 @@ nitroPreset: 'cleavr'
 website: 'https://cleavr.io/'
 ---
 
-::callout
+::tip
 **Zero Configuration ✨**
 :br
-Integration with this provider is possible with zero configuration.
+Integration with this provider is possible with zero configuration, [learn more](https://nitro.unjs.io/deploy#zero-config-providers).
 ::
 
 ## Setup

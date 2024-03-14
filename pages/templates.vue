@@ -39,6 +39,7 @@ defineOgImage({
               body: { padding: '!p-4' },
               description: 'line-clamp-2 sm:min-h-[45px]'
             }"
+            class="overflow-hidden"
           >
             <template #header>
               <NuxtImg
@@ -63,7 +64,7 @@ defineOgImage({
               />
             </template>
             <template #title>
-              <span class="flex-1">{{ template.name }}</span>
+              <span class="flex-1 truncate">{{ template.name }}</span>
               <UBadge
                 v-if="template.badge === 'Premium'"
                 :label="template.badge"

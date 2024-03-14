@@ -61,7 +61,7 @@ useSeoMeta({
         </UModal>
       </template>
 
-      <ULandingLogos :title="page.logos.title" class="mt-32 text-gray-500 dark:text-gray-400">
+      <ULandingLogos :title="page?.logos?.title" class="mt-32 text-gray-500 dark:text-gray-400">
         <BrandsGithub class="hidden md:block h-7" />
         <BrandsOpenai class="h-5 md:h-8" />
         <BrandsNasa class="h-4 md:h-6" />
@@ -112,16 +112,7 @@ useSeoMeta({
           v-if="section.code"
           :value="section.code"
           tag="pre"
-          class="prose prose-primary dark:prose-invert max-w-none"
-          :parser-options="{
-            highlight: {
-              theme: {
-                light: 'material-theme-lighter',
-                default: 'material-theme',
-                dark: 'material-theme-palenight'
-              }
-            }
-          }"
+          class="prose prose-primary dark:prose-invert max-w-none dark:prose-pre:!bg-gray-800/60"
         />
       </template>
     </ULandingSection>

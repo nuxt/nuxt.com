@@ -149,7 +149,7 @@ function renderTag (tag: string) {
   tag = tag.replace(`@${type}`, `**${upperFirst(type)}**:`)
     .replace('js\'node:fs\'', 'js') // hotfix
   if (TagAlertType[type]) {
-    return ['::callout', tag, '::', '']
+    return ['::alert', tag, '::', '']
   }
   return tag
 }

@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Audit URLs using Lighthouse
-        uses: treosh/lighthouse-ci-action@v10
+        uses: treosh/lighthouse-ci-action@v11
         with:
           urls: ${{ github.event.inputs.url || github.event.deployment.payload.web_url || github.event.deployment_status.target_url }}
           uploadArtifacts: true

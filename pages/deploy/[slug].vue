@@ -87,24 +87,28 @@ links.push({
       </UPageHeader>
 
       <UPage>
-        <UPageBody prose>
+        <UPageBody prose class="dark:text-gray-300 dark:prose-pre:!bg-gray-800/60">
           <ContentRenderer v-if="provider && provider.body" :value="provider" />
 
           <hr v-if="surround?.length">
 
-          <UDocsSurround :surround="surround" />
+          <UContentSurround :surround="surround" />
         </UPageBody>
 
         <template #right>
-          <UDocsToc :links="provider.body.toc.links">
+          <UContentToc :links="provider.body.toc.links">
             <template #bottom>
               <div class="hidden lg:block space-y-6" :class="{ '!mt-6': provider.body?.toc?.links?.length }">
                 <UDivider v-if="links?.length && provider.body?.toc?.links?.length" type="dashed" />
 
                 <UPageLinks title="Links" :links="links" />
+
+                <UDivider type="dashed" />
+
+                <Ads />
               </div>
             </template>
-          </UDocsToc>
+          </UContentToc>
         </template>
       </UPage>
     </UPage>

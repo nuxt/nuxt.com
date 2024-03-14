@@ -9,7 +9,7 @@ website: 'https://www.flightcontrol.dev'
 
 Nitro supports deploying to [AWS via Flightcontrol](https://flightcontrol.dev?ref=nuxt) with minimal configuration.
 
-::callout
+::tip
 **Zero Configuration ✨**
 :br
 Integration with Flightcontrol is possible with zero configuration.

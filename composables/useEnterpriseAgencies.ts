@@ -7,7 +7,6 @@ export const useEnterpriseAgencies = () => {
   const agencies = useState<Agency[]>('enterprise-agencies', () => [])
 
   // Data fetching
-
   async function fetchList () {
     if (agencies.value.length) {
       return
