@@ -2,19 +2,22 @@ import { z } from 'zod'
 
 export default defineCachedEventHandler(async (event) => {
   const { version } = await getValidatedQuery(event, z.object({
-    version: z.enum(['2', '2-bridge', '3']).default('3')
+    version: z.enum(['2', '2-bridge', '3', 'all']).default('3')
   }).parse)
   console.log(`Fetching v${version} modules...`)
   
   let modules = await fetchModules() as any[]
-  // Filter out modules by compatibility
-  modules = modules.filter(module => {
-    // Nuxt 2 + bridge
-    if (version === '2-bridge') {
-      return module.compatibility.nuxt.includes(`^2`) && module.compatibility.requires?.bridge
-    }
-    return module.compatibility.nuxt.includes(`^${version}`)
-  })
+
+  if (version !== 'all') {
+    // Filter out modules by compatibility
+    modules = modules.filter(module => {
+      // Nuxt 2 + bridge
+      if (version === '2-bridge') {
+        return module.compatibility.nuxt.includes(`^2`) && module.compatibility.requires?.bridge
+      }
+      return module.compatibility.nuxt.includes(`^${version}`)
+    })
+  }
 
   const maintainers: any = {}
   const contributors: any = {}
