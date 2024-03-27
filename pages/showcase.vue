@@ -44,6 +44,7 @@ await fetchList()
             :title="showcase.title || showcase.hostname"
             :description="showcase.hostname"
             :ui="{ header: { base: 'aspect-w-4 aspect-h-2', padding: '' }, body: { padding: '!p-4' } }"
+            class="overflow-hidden"
           >
             <template #header>
               <img

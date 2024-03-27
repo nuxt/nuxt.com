@@ -9,7 +9,7 @@ website: 'https://pages.github.com/'
 
 Nuxt supports deploying to [GitHub Pages](https://pages.github.com/) with minimal configuration.
 
-::callout{color="amber" icon="i-ph-warning-duotone"}
+::caution
 GitHub Pages only support static sites, Nuxt will pre-render your application to static HTML files.
 ::
 
@@ -40,7 +40,7 @@ jobs:
           node-version: "20"
       # Pick your own package manager and build script
       - run: npm install
-      - run: npm run build --preset=github_pages
+      - run: npx nuxt build --preset github_pages
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:

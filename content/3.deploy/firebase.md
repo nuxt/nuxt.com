@@ -21,13 +21,13 @@ export default defineNuxtConfig({
 })
 ```
 
-::callout
+::note
 If you cannot use configuration for any reason, alternatively you can use `NITRO_FIREBASE_GEN=2` environment variable.
 ::
 
 If you already have a deployed version of your website and want to upgrade to 2nd gen, [see the Migration process on Firebase docs](https://firebase.google.com/docs/functions/2nd-gen-upgrade). Namely, the CLI will ask you to delete your existing functions before deploying the new ones.
 
-::callout{to="https://firebase.google.com/docs/functions/version-comparison" target="_blank"}
+::tip{to="https://firebase.google.com/docs/functions/version-comparison" target="_blank"}
 Comparison between 1st and 2nd generation functions
 ::
 
@@ -48,7 +48,7 @@ You may instead prefer to set up your project with the Firebase CLI, which will 
     firebase init hosting
     ```
 
-::callout
+::note
 When prompted, you can enter `.output/public` as the public directory. In the next step, **do not** configure your project as a single-page app.
 ::
 
@@ -73,7 +73,7 @@ Once complete, add the following to your `firebase.json` to enable server render
 You can preview a local version of your site if you need to test things out without deploying.
 
 ```bash
-npm run build --preset=firebase
+npm run build -- --preset=firebase
 firebase emulators:start
 ```
 
@@ -82,7 +82,7 @@ firebase emulators:start
 Deploy to Firebase Hosting by running a Nitro build and then running the `firebase deploy` command.
 
 ```bash
-npm run build --preset=firebase
+npm run build -- --preset=firebase
 firebase deploy
 ```
 

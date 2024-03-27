@@ -4,15 +4,15 @@ description: 'Deploy your Nuxt Application to Netlify infrastructure.'
 componentImg: Netlify
 logoIcon: 'i-logos-netlify-icon'
 category: Hosting
-featured: false
+featured: true
 nitroPreset: 'netlify'
 website: https://www.netlify.com/
 ---
 
-::callout
+::tip
 **Zero Configuration ✨**
 :br
-Integration with Netlify is possible with zero configuration.
+Integration with Netlify is possible with zero configuration, [learn more](https://nitro.unjs.io/deploy#zero-config-providers).
 ::
 
 ## Setup
@@ -21,13 +21,13 @@ Nuxt will auto-detect that you are in a [Netlify](https://www.netlify.com) build
 
 For new sites, Netlify will detect that you are using Nuxt 3 and set the publish directory to `dist` and build command to `npm run build`.
 
-::callout
+::note
 If you are upgrading an existing site from Nuxt 2 you should check these and update them if needed.
 ::
 
 If you want to add custom redirects, you can do so with [`routeRules`](/docs/guide/concepts/rendering#hybrid-rendering) or by adding a [`_redirects`](https://docs.netlify.com/routing/redirects/#syntax-for-the-redirects-file) file to your `public` directory.
 
-::callout{color="green" icon="i-ph-check-circle-duotone"}
+::tip{color="green" icon="i-ph-check-circle-duotone"}
 For deployment, just push to your git repository [as you would normally do for Netlify](https://docs.netlify.com/configure-builds/get-started/).
 ::
 

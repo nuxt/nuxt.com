@@ -1,8 +1,8 @@
 navigation: false
 hero:
   cta:
-    label: Nuxt v3.9 is out
-    to: /blog/v3-9
+    label: Nuxt v3.11 is out
+    to: /blog/v3-11
     variant: outline
     icon: i-ph-arrow-right
     size: xs
@@ -13,7 +13,7 @@ logos:
 sections:
   - title: 'The power of<br><span class="text-primary">Vue Components</span>'
     description: 'We love Vue Single-File Components as much as you do. Simple, intuitive and powerful, Nuxt lets you write Vue components in a way that makes sense. Every repetitive task is automated, so you can focus on writing your full-stack Vue application with confidence.'
-    class: 'dark bg-gray-900'
+    class: 'dark:bg-gray-900'
     align: left
     links:
       - label: 'Learn about Views'
@@ -53,7 +53,7 @@ sections:
       ```
   - title: 'Static or Dynamic,<br><span class="text-primary">the choice is yours</span>'
     description: 'Decide what rendering strategy you need at the route level. By leveraging the hybrid rendering, you can get the best of both worlds: the performance of a static site and the interactivity of a dynamic one.'
-    class: 'dark bg-gray-900'
+    class: 'dark:bg-gray-900'
     align: right
     links:
       - label: 'Learn about Hybrid Rendering'
@@ -157,7 +157,7 @@ sections:
         to: '/docs/guide/concepts/typescript'
   - title: 'Ship faster with<br><span class="text-primary">endless integrations</span>'
     description: 'Integrate with your favorite tools and services. Nuxt is built to be flexible and can be extended with a robust modules ecosystem. Connect your application with popular headless CMS, eCommerce, Database or UI/UX libraries with a single line of code.'
-    class: 'dark bg-gray-900 dark:!bg-gradient-to-b from-gray-950 to-gray-900'
+    class: 'dark:bg-gray-900 dark:!bg-gradient-to-b from-gray-950 to-gray-900'
     align: left
     links:
       - label: 'Explore Nuxt Modules'
@@ -234,7 +234,7 @@ sections:
         to: /modules/algolia
   - title: 'Built by developers<br><span class="text-primary">around the world.</span>'
     description: 'The development of Nuxt and its ecosystem is led by an international team. From contributors to developer advocates, the community is made up of members with different horizons and skills. We are happy to see new members every day and encourage anyone to join us and help in many ways: answering questions, giving a talk, creating modules and contributing to the core.'
-    class: 'dark bg-gray-900'
+    class: 'dark:bg-gray-900'
     align: right
     slot: contributors
     links:
@@ -263,7 +263,7 @@ sections:
     testimonials:
       - quote: "Nuxt offers a compelling solution and a great ecosystem to help you ship fullstack Vue apps that are performant and SEO friendly. The flexibility to choose between SSR and SSG is icing on the cake."
         author:
-          name: 'Evan you'
+          name: 'Evan You'
           description: 'Creator of Vue.js and Vite'
           to: 'https://twitter.com/youyuxi'
           target: '_blank'
