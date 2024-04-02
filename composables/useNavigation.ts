@@ -71,6 +71,12 @@ const _useNavigation = () => {
         description: 'Learn Nuxt by watching video courses.',
         icon: 'i-ph-graduation-cap-duotone',
         to: '/video-courses'
+      }, {
+        label: 'Nuxt Certification',
+        description: 'Obtain your Certification of Competence.',
+        icon: 'i-ph-medal-duotone',
+        to: 'https://certification.nuxt.com',
+        target: '_blank'
       }]
     }, {
       label: 'Showcase',
