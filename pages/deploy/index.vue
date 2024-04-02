@@ -17,13 +17,6 @@ useSeoMeta({
   ogTitle: title
 })
 
-defineOgImage({
-  component: 'Docs',
-  title,
-  description,
-  headline: ''
-})
-
 await fetchList()
 
 const featuredProviders = computed(() => providers.value.filter((provider: Hosting) => provider.featured === true))

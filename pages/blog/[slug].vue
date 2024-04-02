@@ -33,16 +33,11 @@ useSeoMeta({
 })
 
 if (article.value.image) {
-  const site = useSiteConfig()
-  useSeoMeta({
-    ogImage: joinURL(site.url, article.value.image),
-    twitterImage: joinURL(site.url, article.value.image)
+  defineOgImage({
+    url: article.value.image,
   })
 } else {
-  defineOgImage({
-    component: 'Docs',
-    title,
-    description,
+  defineOgImageComponent('Docs', {
     headline: 'Blog'
   })
 }
