@@ -6,7 +6,7 @@ defineProps({
   },
   description: {
     type: String,
-    required: true
+    required: false
   },
   headline: {
     type: String,
@@ -52,7 +52,7 @@ defineProps({
       <h1 class="m-0 text-[75px] font-semibold mb-4 text-white flex items-center">
         <span>{{ title }}</span>
       </h1>
-      <p class="text-[32px] text-[#E4E4E7] leading-tight">
+      <p v-if="description" class="text-[32px] text-[#E4E4E7] leading-tight">
         {{ description.slice(0, 200) }}
       </p>
     </div>
