@@ -38,7 +38,7 @@ if (article.value.image) {
   defineOgImageComponent('Docs', {
     headline: 'Blog',
     title,
-    description,
+    description
   })
 }
 
