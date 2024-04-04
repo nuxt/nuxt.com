@@ -6,7 +6,7 @@ defineProps({
   },
   description: {
     type: String,
-    required: false
+    required: true
   },
   headline: {
     type: String,
