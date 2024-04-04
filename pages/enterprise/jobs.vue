@@ -14,10 +14,7 @@ useSeoMeta({
   ogTitle: `${title} · Enterprise`
 })
 
-defineOgImage({
-  component: 'Docs',
-  title,
-  description,
+defineOgImageComponent('Docs', {
   headline: 'Enterprise'
 })
 

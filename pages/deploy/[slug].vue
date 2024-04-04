@@ -28,10 +28,7 @@ useSeoMeta({
   ogTitle: `Deploy Nuxt to ${title}`
 })
 
-defineOgImage({
-  component: 'Docs',
-  title,
-  description,
+defineOgImageComponent('Docs', {
   headline: 'Deploy To'
 })
 
