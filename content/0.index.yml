@@ -194,7 +194,7 @@ sections:
         alt: Koyeb
         to: /deploy/koyeb
       - src: /assets/integrations/gitlab.svg
-        alt: GitlabPages
+        alt: GitLab
         to: /deploy/gitlab
       - src: /assets/integrations/tailwind.svg
         alt: Tailwind CSS
