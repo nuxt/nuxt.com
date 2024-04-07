@@ -241,6 +241,12 @@ sections:
     align: right
     slot: contributors
     links:
+      - label: 'Nuxters'
+        icon: i-simple-icons-nuxtdotjs
+        to: 'https://nuxters.nuxt.com'
+        target: _blank
+        color: black
+        size: md
       - label: Discord
         icon: 'i-simple-icons-discord'
         color: gray
