@@ -47,7 +47,3 @@ pages:
 ::read-more{to="https://docs.gitlab.com/ee/user/project/pages/getting_started_part_one.html#project-website-examples" target="_blank"}
 Head over **GitLab Pages default domain names and URLs** to learn more about the GitLab Pages default domain names.
 ::
-
-::read-more{to="https://docs.gitlab.com/ee/user/project/pages/" target="_blank"}
-Head over **GitLab Pages documentation** to learn more about the GitLab Pages deployment preset.
-::
