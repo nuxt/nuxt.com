@@ -4,8 +4,8 @@ import captureWebsite from 'capture-website'
 
 export default defineNitroPlugin(async (nitroApp) => {
   // only in dev
-  if (!process.dev) return
-  // @ts-ignore
+  if (!import.meta.dev) return
+  // @ts-expect-error missing types for hook
   nitroApp.hooks.hook('content:file:afterParse', async (file) => {
     if (file._path === '/templates') {
       for (const template of file.templates) {

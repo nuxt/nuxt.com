@@ -47,7 +47,7 @@ export const useModules = () => {
   const module = useState<Module>('module', () => ({} as Module))
 
   // Data fetching
-  async function fetchList () {
+  async function fetchList() {
     if (modules.value.length) {
       return
     }
@@ -57,7 +57,6 @@ export const useModules = () => {
       modules.value = res.modules
     }
   }
-
 
   // Data
 
@@ -182,10 +181,12 @@ export const useModules = () => {
 
   const isSponsor = (a: Module, b: Module) => {
     if (a.sponsor && !b.sponsor) {
-        return -1
-    } else if (!a.sponsor && b.sponsor) {
-        return 1
-    } else {
+      return -1
+    }
+    else if (!a.sponsor && b.sponsor) {
+      return 1
+    }
+    else {
       return 0
     }
   }

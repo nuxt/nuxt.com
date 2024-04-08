@@ -186,7 +186,6 @@ const { copy } = useCopyToClipboard()
                   <span>Official</span>
                 </UBadge>
 
-
                 <UBadge
                   v-if="module.sponsor"
                   class="space-x-1 shine text-sm items-center justitfy-center pointer-events-none"

@@ -7,7 +7,7 @@
     "build": "nuxi build",
     "generate": "nuxi generate",
     "preview": "nuxi preview",
-    "lint": "eslint .",
+    "lint": "nuxi prepare && eslint . --cache",
     "typecheck": "nuxi typecheck",
     "test": "pnpm lint && pnpm typecheck"
   },
@@ -40,12 +40,12 @@
     "ufo": "^1.4.0"
   },
   "devDependencies": {
-    "@nuxt/eslint-config": "^0.2.0",
+    "@nuxt/eslint": "^0.3.1",
     "@nuxt/test-utils": "^3.11.0",
     "@nuxtjs/turnstile": "^0.6.3",
     "@testing-library/vue": "^8.0.2",
     "capture-website": "^4.1.0",
-    "eslint": "^8.57.0",
+    "eslint": "^9.0.0",
     "nuxt-build-cache": "^0.1.1",
     "nuxt-content-twoslash": "0.0.10",
     "shiki": "^1.1.7",

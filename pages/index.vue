@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { joinURL } from 'ufo'
+
 const { data: page } = await useAsyncData('index', () => queryContent('/').findOne())
 
 const videoModalOpen = ref(false)

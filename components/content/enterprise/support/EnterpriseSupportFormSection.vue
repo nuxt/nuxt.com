@@ -4,11 +4,11 @@ import type { FormError, FormSubmitEvent } from '#ui/types'
 defineProps({
   form: {
     type: Object as PropType<{
-      name: { label: string, placeholder: string },
-      email: { label: string, placeholder: string },
-      company: { label: string, placeholder: string },
+      name: { label: string, placeholder: string }
+      email: { label: string, placeholder: string }
+      company: { label: string, placeholder: string }
       body: { label: string, placeholder: string }
-      info: string,
+      info: string
       button: any
     }
     >,
@@ -22,7 +22,7 @@ defineProps({
 
 const toast = useToast()
 
-const loading = ref<Boolean>(false)
+const loading = ref<boolean>(false)
 const turnstile = ref()
 const token = ref()
 
@@ -50,7 +50,7 @@ const validate = (state: any): FormError[] => {
   return errors
 }
 
-async function onSubmit (event: FormSubmitEvent<any>) {
+async function onSubmit(event: FormSubmitEvent<any>) {
   if (!event.data) return
   if (loading.value || !canSend.value) return
 
@@ -77,7 +77,7 @@ async function onSubmit (event: FormSubmitEvent<any>) {
     })
     .finally(() => {
       loading.value = false
-      //reset turnstile token
+      // reset turnstile token
       turnstile.value?.reset()
     })
 }

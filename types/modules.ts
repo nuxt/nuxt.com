@@ -17,7 +17,7 @@ export interface Module {
   learn_more: string
   category: string
   type: string
-  sponsor: boolean,
+  sponsor: boolean
   // tags: string[]
   compatibility: { nuxt: string, requires: { bridge: boolean } }
   stats: {
