@@ -47,7 +47,8 @@ export default defineNuxtConfig({
   extends: [
     process.env.NUXT_UI_PRO_PATH || '@nuxt/ui-pro'
   ],
-  // @ts-expect-error Type circular reference
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment, @typescript-eslint/prefer-ts-expect-error
+  // @ts-ignore Type circular reference
   modules: [
     'nuxt-content-twoslash',
     'nuxt-build-cache',
