@@ -9,6 +9,8 @@ const stats = useStats()
 const { metaSymbol } = useShortcuts()
 const { copy } = useCopyToClipboard()
 
+const { data: release } = await useFetch('/api/release.json')
+
 const route = useRoute()
 const mobileNav = computed(() => {
   const links = mapContentNavigation(navigation.value)
@@ -68,7 +70,13 @@ defineProps<{
           item: { padding: 'gap-x-2.5 py-2.5', inactive: 'dark:bg-gray-950' },
         }"
       >
-        <Logo ref="logo" class="block w-auto h-6" @click.right.prevent="openLogoContext" @click.left.prevent="navigateTo('/')" />
+        <NuxtLink to="/" class="flex items-end">
+          <Logo ref="logo" class="block w-auto h-6" @click.right.prevent="openLogoContext" />
+          
+          <span v-if="release.version" class="ml-1.5 translate-y-1 text-xs font-medium text-gray-300 dark:text-gray-600">
+            {{ release.version }}
+          </span>
+        </NuxtLink>
       </UDropdown>
     </template>
 
