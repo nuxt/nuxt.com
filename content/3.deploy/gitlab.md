@@ -12,44 +12,6 @@ Nuxt supports deploying on the [GitLab Pages](https://docs.gitlab.com/ee/user/pr
 GitLab Pages only support static sites, Nuxt will pre-render your application to static HTML files.
 ::
 
-## Setup
-
-1. GitLab Pages only support deployment from `public/` directory. Rename the `public/` directory to a collision-free alternative first:
-
-   ```bash [Terminal]
-   mv public static
-   ```
-
-2. Add the following to your nuxt.config.ts:
-
-   ```ts [nuxt.config.ts]
-   import path from 'node:path';
-
-   export default defineNuxtConfig({
-     nitro: {
-       // Output directories for production bundle
-       output: {
-         publicDir: path.join(__dirname, "public"),
-       },
-     },
-     // Customize default directory structure used by Nuxt
-     dir: {
-        public: 'static',
-        static: 'static'
-     }
-   })
-   ```
-
-3. Ensure that `generate` script is defined within the project's `package.json` file to define how to generate the application:
-
-    ```json [package.json]
-    {
-      "scripts": {
-          "generate": "nuxt generate"
-      }
-    }
-    ```
-
 ## Deployment
 
 1. Here is an example GitLab Pages workflow to deploy your site to GitLab Pages:
@@ -62,7 +24,7 @@ before_script:
    - npm install
 cache:
    paths:
-      - # Directories that are cached between builds
+      # Directories that are cached between builds
       - node_modules/
 pages:
    script:
@@ -71,8 +33,9 @@ pages:
    artifacts:
       paths:
          # The directory that contains the built files to be published. 
-         # This must be called "public".
-         - public
+         - .output/public
+   # The directory that contains the built files to be published.
+   publish: .output/public
    rules:
       # This ensures that only pushes to the default branch 
       # will trigger a pages deploy
