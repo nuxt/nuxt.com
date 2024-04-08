@@ -32,9 +32,9 @@ pages:
       - npm run generate
    artifacts:
       paths:
-         # The directory that contains the built files to be published. 
+         # The directory that contains the built files to be published
          - .output/public
-   # The directory that contains the built files to be published.
+   # The directory that contains the built files to be published
    publish: .output/public
    rules:
       # This ensures that only pushes to the default branch 
