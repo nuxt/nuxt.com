@@ -181,6 +181,11 @@ export const fetchGithubSponsors = async (): Promise<Sponsor[]> => {
         sponsor.sponsorLogo = 'https://avatars.githubusercontent.com/u/32824382?v=4'
         sponsor.sponsorUrl = 'https://www.direqt.ai'
       }
+      if (sponsor.sponsorId === 'martaklimowiczgh') {
+        sponsor.sponsorName = 'Monterail'
+        sponsor.sponsorLogo = 'https://avatars.githubusercontent.com/u/234138?&v=4'
+        sponsor.sponsorUrl = 'https://www.monterail.com/'
+      }
 
       return sponsor
     }) || [])
