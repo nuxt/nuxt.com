@@ -6,7 +6,7 @@ export const useBlog = () => {
 
   // Data fetching
 
-  async function fetchList () {
+  async function fetchList() {
     if (articles.value.length) {
       return
     }
@@ -20,7 +20,8 @@ export const useBlog = () => {
 
       articles.value = (data as BlogArticle[]).filter(article => article._path !== '/blog')
       // featuredArticle.value = articles.value?.shift() || {}
-    } catch (e) {
+    }
+    catch (e) {
       articles.value = []
       return e
     }

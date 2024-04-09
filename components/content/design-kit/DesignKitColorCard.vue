@@ -6,7 +6,7 @@ const props = defineProps<{
 
 const { copy } = useCopyToClipboard()
 
-function copyLink () {
+function copyLink() {
   copy(props.background, { title: 'Copied to clipboard' })
 }
 </script>
