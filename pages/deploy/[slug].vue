@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import type { Hosting } from '~/types'
 import { withoutTrailingSlash } from 'ufo'
+import type { Hosting } from '~/types'
 
 const route = useRoute()
 const { slug } = route.params
@@ -28,10 +28,7 @@ useSeoMeta({
   ogTitle: `Deploy Nuxt to ${title}`
 })
 
-defineOgImage({
-  component: 'Docs',
-  title,
-  description,
+defineOgImageComponent('Docs', {
   headline: 'Deploy To'
 })
 

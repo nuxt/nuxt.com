@@ -7,7 +7,7 @@ export const useEnterpriseAgencies = () => {
   const agencies = useState<Agency[]>('enterprise-agencies', () => [])
 
   // Data fetching
-  async function fetchList () {
+  async function fetchList() {
     if (agencies.value.length) {
       return
     }
@@ -27,12 +27,13 @@ export const useEnterpriseAgencies = () => {
         })),
         location: agency.location
           ? {
-            key: slugify(agency.location),
-            label: agency.location
-          }
+              key: slugify(agency.location),
+              label: agency.location
+            }
           : null
       })) as Agency[]
-    } catch (e) {
+    }
+    catch (e) {
       agencies.value = []
       return e
     }

@@ -13,7 +13,7 @@ defineProps<{
     preload="auto"
     class="w-[190] m-auto shadow-2xl"
     :style="{
-      'border-radius': '1% / 1.5%',
+      'border-radius': '1% / 1.5%'
     }"
   >
     <source :src="`https://res.cloudinary.com/nuxt/video/upload/${cloudinary}.webm`" type="video/webm">

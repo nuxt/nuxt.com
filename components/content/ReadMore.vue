@@ -1,4 +1,3 @@
-
 <script setup lang="ts">
 import { splitByCase, upperFirst } from 'scule'
 
@@ -21,9 +20,9 @@ const createBreadcrumb = (link: string = 'Missing link') => {
   return link
     .split('/')
     .filter(Boolean)
-    .map((part) =>
+    .map(part =>
       splitByCase(part)
-        .map((p) => upperFirst(p))
+        .map(p => upperFirst(p))
         .join(' ')
     )
     .join(' > ')

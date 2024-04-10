@@ -18,10 +18,7 @@ useSeoMeta({
   ogTitle: `${title} · Community`
 })
 
-defineOgImage({
-  component: 'Docs',
-  title,
-  description,
+defineOgImageComponent('Docs', {
   headline: 'Community'
 })
 </script>
