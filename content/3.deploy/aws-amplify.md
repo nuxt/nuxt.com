@@ -26,6 +26,10 @@ Integration with AWS Amplify is possible with zero configuration, [learn more](h
 
 ## Learn more
 
+::read-more{to="https://www.youtube.com/watch?v=CAk5_XGkOG4" target="_blank"}
+View an Amplify Hosting tutorial with Nuxt
+::
+
 ::read-more{to="https://nitro.unjs.io/deploy/providers/aws-amplify" target="_blank"}
 Head over **Nitro documentation** to learn more about the aws-amplify deployment preset.
 ::
