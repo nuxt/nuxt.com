@@ -199,6 +199,6 @@ export default defineNuxtConfig({
     appManifest: true
   },
   devtools: {
-    enabled: false
+    enabled: true
   }
 })
