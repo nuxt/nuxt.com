@@ -79,20 +79,23 @@ async function nextContributors() {
           :key="username"
           :href="`https://nuxters.nuxt.com/${username}`"
           target="_blank"
-          class="absolute inset-0 block transition-all"
+          class="absolute inset-0 flex transition-all"
+          height="80px"
+          width="80px"
           :style="{
             'transition-delay': `${(index % 8 + Math.floor(index / 8)) * 20}ms`
           }"
         >
-          <UTooltip :text="username">
-            <img
-              :src="`https://ipx.nuxt.com/f_auto,s_80x80/gh_avatar/${username}`"
-              :srcset="`https://ipx.nuxt.com/f_auto,s_160x160/gh_avatar/${username} 2x`"
+          <UTooltip :text="username" class="w-full">
+            <NuxtImg
+              :src="`/gh_avatar/${username}`"
+              provider="ipx"
+              densities="x1 x2"
               :alt="username"
               loading="lazy"
               :title="username"
               class="rounded-xl w-full h-full transition lg:hover:scale-125"
-            >
+            />
           </UTooltip>
         </a>
       </Transition>
