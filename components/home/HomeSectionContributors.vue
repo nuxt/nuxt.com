@@ -80,8 +80,6 @@ async function nextContributors() {
           :href="`https://nuxters.nuxt.com/${username}`"
           target="_blank"
           class="absolute inset-0 flex transition-all"
-          height="80px"
-          width="80px"
           :style="{
             'transition-delay': `${(index % 8 + Math.floor(index / 8)) * 20}ms`
           }"
@@ -91,6 +89,8 @@ async function nextContributors() {
               :src="`/gh_avatar/${username}`"
               provider="ipx"
               densities="x1 x2"
+              height="80px"
+              width="80px"
               :alt="username"
               loading="lazy"
               :title="username"
