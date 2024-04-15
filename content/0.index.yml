@@ -1,8 +1,8 @@
 navigation: false
 hero:
   cta:
-    label: "Nuxt: Looking forward"
-    to: /blog/looking-forward-2024
+    label: "Refreshed Nuxt ESLint Integrations"
+    to: /blog/eslint-module
     variant: outline
     icon: i-ph-arrow-right
     size: xs
