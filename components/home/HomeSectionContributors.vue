@@ -42,7 +42,7 @@ function stopTimer() {
 async function loadImages(usernames) {
   await Promise.all(usernames.map((username) => {
     const img = new Image()
-    img.src = `https://ipx.nuxt.com/f_auto,s_${window.devicePixelRatio === 2 ? '160x160' : '80x80'}/gh_avatar/${username}`
+    img.src = `https://ipx.nuxt.com/f_auto&s_${window.devicePixelRatio === 2 ? '160x160' : '80x80'}/gh_avatar/${username}`
     return new Promise((resolve) => {
       img.onload = resolve
       img.onerror = resolve
@@ -90,6 +90,7 @@ async function nextContributors() {
               provider="ipx"
               densities="x1 x2"
               height="80px"
+              format="auto"
               width="80px"
               :alt="username"
               loading="lazy"
