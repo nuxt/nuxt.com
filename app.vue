@@ -79,14 +79,15 @@ provide('navigation', navigation)
           name="i-ph-medal-duotone"
           class="w-5 h-5 flex-shrink-0 pointer-events-none"
         />
-        <span>The official <span class="font-semibold">Nuxt Certification Program</span> in partnership with VueSchool is coming.</span>
+        <span>The official <span class="font-semibold">Nuxt Certification Program</span> is coming.</span>
         <UButton
-          label="Sign up for early bird"
           color="white"
           trailing-icon="i-ph-arrow-right"
           size="2xs"
           class="rounded-full"
-        />
+        >
+          Sign up<span class="hidden sm:inline"> for early bird</span>
+        </UButton>
       </div>
     </AppBanner>
 
