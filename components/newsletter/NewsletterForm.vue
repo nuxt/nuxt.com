@@ -15,8 +15,10 @@ const toast = useToast()
 const email = ref('')
 const loading = ref(false)
 
-function onSubmit () {
-  if (loading.value) { return }
+function onSubmit() {
+  if (loading.value) {
+    return
+  }
   loading.value = true
 
   $fetch('https://api.nuxt.com/newsletter/subscribe', {

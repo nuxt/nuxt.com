@@ -9,12 +9,12 @@ dist
 .history
 .cache
 .data
+.eslintcache
 
 # Local Netlify folder
 .netlify
 .vercel
 
 # Local editor
-.vscode/
 *.code-workspace
 .idea/

@@ -9,6 +9,7 @@
 
 <script setup lang="ts">
 import { hasProtocol, joinURL } from 'ufo'
+
 const route = useRoute()
 const { data: module } = useNuxtData(`module-${route.params?.slug}`)
 

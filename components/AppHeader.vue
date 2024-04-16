@@ -17,9 +17,9 @@ const mobileNav = computed(() => {
   const links = mapContentNavigation(navigation.value)
 
   // Show Migration and Bridge on mobile only when user is reading them
-  const docsLink = links.find((link) => link.to === '/docs')
+  const docsLink = links.find(link => link.to === '/docs')
   if (docsLink && !route.path.startsWith('/docs/bridge') && !route.path.startsWith('/docs/migration')) {
-    docsLink.children = docsLink.children.filter((link) => !['/docs/bridge', '/docs/migration'].includes(link.to as string))
+    docsLink.children = docsLink.children.filter(link => !['/docs/bridge', '/docs/migration'].includes(link.to as string))
   }
   return links
 })
@@ -27,16 +27,16 @@ const mobileNav = computed(() => {
 const open = ref(false)
 const dropdownItems = [
   [{
-     label: 'Copy logo as SVG',
-     icon: 'i-simple-icons-nuxtdotjs',
-     click: () => copy(logo.value.$el.outerHTML, { title: 'Copied to clipboard' })
-   },
-   {
-     label: 'Nuxt Brand Kit',
-     icon: 'i-simple-icons-figma',
-     to: 'https://www.figma.com/community/file/1296154408275753939/nuxt-brand-kit',
-     target: '_blank'
-   }],
+    label: 'Copy logo as SVG',
+    icon: 'i-simple-icons-nuxtdotjs',
+    click: () => copy(logo.value.$el.outerHTML, { title: 'Copied to clipboard' })
+  },
+  {
+    label: 'Nuxt Brand Kit',
+    icon: 'i-simple-icons-figma',
+    to: 'https://www.figma.com/community/file/1296154408275753939/nuxt-brand-kit',
+    target: '_blank'
+  }],
   [{
     label: 'Browse Design Kit',
     icon: 'i-ph-shapes-duotone',
@@ -44,7 +44,7 @@ const dropdownItems = [
   }]
 ]
 const isMobile = ref(false)
-function openLogoContext () {
+function openLogoContext() {
   if (isMobile.value) return navigateTo('/')
   open.value = true
 }
@@ -68,11 +68,11 @@ defineProps<{
         :ui="{
           container: 'mt-8',
           background: 'bg-white dark:bg-gray-950',
-          item: { padding: 'gap-x-2.5 py-2.5', inactive: 'dark:bg-gray-950' },
+          item: { padding: 'gap-x-2.5 py-2.5', inactive: 'dark:bg-gray-950' }
         }"
       >
         <NuxtLink to="/" class="flex gap-2 items-end">
-          <Logo ref="logo" class="block w-auto h-6" @click.right.prevent="openLogoContext" />
+          <NuxtLogo ref="logo" class="block w-auto h-6" @click.right.prevent="openLogoContext" @click.left.prevent="navigateTo('/')" />
 
           <UTooltip v-if="version" :text="`Latest release: v${release.version}`">
             <UBadge variant="subtle" size="xs" class="-mb-[2px] rounded font-semibold">

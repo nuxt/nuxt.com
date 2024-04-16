@@ -1,6 +1,6 @@
 // TODO: Update later
 import { SitemapStream, streamToPromise } from 'sitemap'
-import { H3Event } from 'h3'
+import type { H3Event } from 'h3'
 import { serverQueryContent } from '#content/server'
 
 export default defineEventHandler(async (event: H3Event) => {

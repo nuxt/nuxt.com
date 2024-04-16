@@ -6,23 +6,23 @@ export const useShowcase = () => {
   const showcaseList = useState<ShowcaseList>('showcase', () => null)
 
   const iconsMap = {
-    Featured: 'i-uil-star',
-    Awwwards: 'i-uil-award',
-    Tech: 'i-uil-circuit',
+    'Featured': 'i-uil-star',
+    'Awwwards': 'i-uil-award',
+    'Tech': 'i-uil-circuit',
     'E-Commerce': 'i-uil-shopping-basket',
-    News: 'i-uil-newspaper',
-    Education: 'i-uil-graduation-cap',
-    Government: 'i-uil-building',
-    Entertainment: 'i-uil-dice-five',
-    Travel: 'i-uil-plane',
-    Finance: 'i-uil-dollar-alt',
-    Business: 'i-uil-briefcase-alt',
-    Sport: 'i-uil-basketball'
+    'News': 'i-uil-newspaper',
+    'Education': 'i-uil-graduation-cap',
+    'Government': 'i-uil-building',
+    'Entertainment': 'i-uil-dice-five',
+    'Travel': 'i-uil-plane',
+    'Finance': 'i-uil-dollar-alt',
+    'Business': 'i-uil-briefcase-alt',
+    'Sport': 'i-uil-basketball'
   }
 
   // Data fetching
 
-  async function fetchList () {
+  async function fetchList() {
     if (showcaseList.value) {
       return
     }
@@ -68,7 +68,9 @@ export const useShowcase = () => {
     return showcaseList.value?.groups
       ?.filter((group, index) => (!selectedCategory.value && index === 0) || group.name === selectedCategory.value?.label)
       ?.flatMap((group) => {
-        if (ids.has(group.id)) { return [] }
+        if (ids.has(group.id)) {
+          return []
+        }
         ids.add(group.id)
         return group.showcases
       }) ?? []

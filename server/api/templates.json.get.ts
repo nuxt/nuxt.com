@@ -3,7 +3,7 @@ import { serverQueryContent } from '#content/server'
 export default eventHandler(async (event) => {
   const { templates } = await serverQueryContent(event, '/templates').only('templates').findOne()
 
-  return templates.map((template) => ({
+  return templates.map(template => ({
     slug: template.slug,
     name: template.name,
     description: template.description,
