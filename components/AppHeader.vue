@@ -10,6 +10,7 @@ const { metaSymbol } = useShortcuts()
 const { copy } = useCopyToClipboard()
 
 const { data: release } = await useFetch('/api/release.json')
+const version = computed(() => release.value.version?.match(/[0-9]+\.[0-9]+/)[0])
 
 const route = useRoute()
 const mobileNav = computed(() => {
@@ -70,12 +71,14 @@ defineProps<{
           item: { padding: 'gap-x-2.5 py-2.5', inactive: 'dark:bg-gray-950' },
         }"
       >
-        <NuxtLink to="/" class="flex items-end">
+        <NuxtLink to="/" class="flex gap-2 items-end">
           <Logo ref="logo" class="block w-auto h-6" @click.right.prevent="openLogoContext" />
-          
-          <span v-if="release.version" class="ml-1.5 translate-y-1 text-xs font-medium text-gray-300 dark:text-gray-600">
-            {{ release.version }}
-          </span>
+
+          <UTooltip v-if="version" :text="`Latest release: v${release.version}`">
+            <UBadge variant="subtle" size="xs" class="-mb-[2px] rounded font-semibold">
+              v{{ version }}
+            </UBadge>
+          </UTooltip>
         </NuxtLink>
       </UDropdown>
     </template>
