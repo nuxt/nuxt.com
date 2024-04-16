@@ -9,8 +9,7 @@ const stats = useStats()
 const { metaSymbol } = useShortcuts()
 const { copy } = useCopyToClipboard()
 
-const { data: release } = await useFetch('/api/release.json')
-const version = computed(() => release.value.version?.match(/[0-9]+\.[0-9]+/)[0])
+const version = computed(() => stats.value.version?.match(/[0-9]+\.[0-9]+/)[0])
 
 const route = useRoute()
 const mobileNav = computed(() => {
@@ -74,7 +73,7 @@ defineProps<{
         <NuxtLink to="/" class="flex gap-2 items-end">
           <NuxtLogo ref="logo" class="block w-auto h-6" @click.right.prevent="openLogoContext" @click.left.prevent="navigateTo('/')" />
 
-          <UTooltip v-if="version" :text="`Latest release: v${release.version}`">
+          <UTooltip v-if="version" :text="`Latest release: v${stats.version}`">
             <UBadge variant="subtle" size="xs" class="-mb-[2px] rounded font-semibold">
               v{{ version }}
             </UBadge>
