@@ -13,6 +13,7 @@ useSeoMeta({
   ogDescription: description,
   ogTitle: title
 })
+defineOgImageComponent('Docs')
 
 await fetchList()
 </script>
