@@ -5,7 +5,7 @@ export default defineCachedEventHandler(async (event) => {
     name: z.string()
   }).parse)
 
-  const modules = await fetchModules() as any[]
+  const modules = await fetchModules(event) as any[]
 
   const module = modules.find(module => module.name === name)
   if (!module) {
@@ -16,9 +16,9 @@ export default defineCachedEventHandler(async (event) => {
   }
 
   const [stats, contributors, readme] = await Promise.all([
-    fetchModuleStats(module),
-    fetchModuleContributors(module),
-    fetchModuleReadme(module, true)
+    fetchModuleStats(event, module),
+    fetchModuleContributors(event, module),
+    fetchModuleReadme(event, module, true)
   ])
   module.generatedAt = new Date().toISOString()
   module.stats = stats
@@ -28,6 +28,6 @@ export default defineCachedEventHandler(async (event) => {
   return module
 }, {
   name: 'modules',
-  getKey: (event) => event.context.params?.name as string,
-  maxAge: 60 * 60, // 1 hour
+  getKey: event => event.context.params?.name as string,
+  maxAge: 60 * 60 // 1 hour
 })

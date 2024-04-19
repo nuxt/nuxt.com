@@ -8,9 +8,9 @@ export const github = {
     }
     return $fetch(`https://api.github.com/repos/${owner}/${name}`, {
       headers: {
-        Accept: 'application/vnd.github.v3+json',
+        'Accept': 'application/vnd.github.v3+json',
         'User-Agent': 'nuxt-api',
-        Authorization: `token ${process.env.NUXT_GITHUB_TOKEN}`,
+        'Authorization': `token ${process.env.NUXT_GITHUB_TOKEN}`
       }
     })
       .then((res: any) => {
@@ -25,16 +25,15 @@ export const github = {
           stars: res.stargazers_count,
           watchers: res.watchers_count,
           forks: res.forks_count,
-          defaultBranch: res.default_branch,
+          defaultBranch: res.default_branch
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.error(`Cannot fetch github repo API info for ${owner}/${name}: ${err}`)
         // Cannot call Github API, fallback to UnGH
         return $fetch<any>(`https://ungh.cc/repos/${owner}/${name}`)
           .then(res => res.repo)
           .catch((err) => {
-            // eslint-disable-next-line no-console
             console.error(`Cannot fetch UnGH repo info for ${owner}/${name}: ${err}`)
             return {
               stars: 0,

@@ -7,36 +7,37 @@ declare module 'h3' {
 }
 
 export default defineNitroPlugin((nitroApp) => {
-  nitroApp.hooks.hook('request', (event) => {
-    event.context.nuxtTimings = {
-      start: performance.now(),
-    }
-  })
+  // nitroApp.hooks.hook('request', (event) => {
+  //   event.context.nuxtTimings = {
+  //     start: performance.now()
+  //   }
+  // })
 
-  nitroApp.hooks.hook('afterResponse', async (event) => {
-    const pathPattern = event.context.matchedRoute?.path || '/**'
-    const responseStatus = getResponseStatus(event)
-    const duration = performance.now() - event.context.nuxtTimings.start
-    const log = {
-      timestamp: new Date().toUTCString(),
-      method: event.method,
-      path: event.path === pathPattern ? event.path : `${event.path} (${pathPattern})`,
-      status: responseStatus,
-      duration: Math.round(duration*1000)/1000,
-      cached: responseStatus === 304,
-    }
-    const SERVER_TIMINGS: any = process.env.SERVER_TIMINGS
-    if (SERVER_TIMINGS?.writeDataPoint) {
-      // event.waitUntil(async () => {
-        await SERVER_TIMINGS.writeDataPoint({
-          blobs: [event.path, pathPattern, event.method],
-          doubles: [duration, responseStatus],
-        })
-      // })
-    } else {
-      console.log(`${log.cached ? '[CACHED] ' : ' '}${event.method} ${event.path} ${log.status} ${log.duration}ms`)
-    }
-  })
+  // nitroApp.hooks.hook('afterResponse', async (event) => {
+  //   const pathPattern = event.context.matchedRoute?.path || '/**'
+  //   const responseStatus = getResponseStatus(event)
+  //   const duration = performance.now() - event.context.nuxtTimings.start
+  //   const log = {
+  //     timestamp: new Date().toUTCString(),
+  //     method: event.method,
+  //     path: event.path === pathPattern ? event.path : `${event.path} (${pathPattern})`,
+  //     status: responseStatus,
+  //     duration: Math.round(duration * 1000) / 1000,
+  //     cached: responseStatus === 304
+  //   }
+  //   const SERVER_TIMINGS: any = process.env.SERVER_TIMINGS
+  //   if (SERVER_TIMINGS?.writeDataPoint) {
+  //     // event.waitUntil(async () => {
+  //     await SERVER_TIMINGS.writeDataPoint({
+  //       blobs: [event.path, pathPattern, event.method],
+  //       doubles: [duration, responseStatus]
+  //     })
+  //     // })
+  //   }
+  //   else {
+  //     console.log(`${log.cached ? '[CACHED] ' : ' '}${event.method} ${event.path} ${log.status} ${log.duration}ms`)
+  //   }
+  // })
 
   nitroApp.hooks.hook('error', async (error, ctx) => {
     if ((error as any).statusCode === 401) return
@@ -48,7 +49,7 @@ export default defineNitroPlugin((nitroApp) => {
 
     // Show on console
     console.error(
-      tags.map((tag) => `[${tag}]`).join(' '),
+      tags.map(tag => `[${tag}]`).join(' '),
       `[${method} ${path}]`,
       date.toISOString(),
       error
@@ -66,4 +67,4 @@ export default defineNitroPlugin((nitroApp) => {
     //   stack: error.stack,
     // })
   })
-});
+})

@@ -1,6 +1,6 @@
-type Tier = (amount: number) => Boolean
+type Tier = (amount: number) => boolean
 
-const tiersMap: {[tier: string] : Tier} = {
+const tiersMap: { [tier: string]: Tier } = {
   platinum: amount => amount >= 1000,
   gold: amount => amount < 1000 && amount >= 500,
   silver: amount => amount < 500 && amount >= 200,

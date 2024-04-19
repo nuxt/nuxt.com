@@ -5,12 +5,12 @@ export default defineCachedEventHandler(async (event) => {
     version: z.enum(['2', '2-bridge', '3', 'all']).default('3')
   }).parse)
   console.log(`Fetching v${version} modules...`)
-  
-  let modules = await fetchModules() as any[]
+
+  let modules = await fetchModules(event) as any[]
 
   if (version !== 'all') {
     // Filter out modules by compatibility
-    modules = modules.filter(module => {
+    modules = modules.filter((module) => {
       // Nuxt 2 + bridge
       if (version === '2-bridge') {
         return module.compatibility.nuxt.includes(`^2`) && module.compatibility.requires?.bridge
@@ -23,8 +23,8 @@ export default defineCachedEventHandler(async (event) => {
   const contributors: any = {}
   for (const module of modules) {
     const [mStats, mContributors] = await Promise.all([
-      fetchModuleStats(module),
-      fetchModuleContributors(module)
+      fetchModuleStats(event, module),
+      fetchModuleContributors(event, module)
     ])
     module.stats = mStats
     module.contributors = mContributors
@@ -52,14 +52,13 @@ export default defineCachedEventHandler(async (event) => {
     },
     maintainers: Object.values(maintainers).sort((a, b) => b.modules.length - a.modules.length),
     contributors: Object.values(contributors).sort((a, b) => b.modules.length - a.modules.length),
-    modules,
+    modules
   }
 }, {
   name: 'modules',
   swr: true,
-  getKey (event) {
+  getKey(event) {
     return (getQuery(event)?.version || '3') as string
   },
-  maxAge: 60 * 60, // 1 hour
+  maxAge: 60 * 60 // 1 hour
 })
-

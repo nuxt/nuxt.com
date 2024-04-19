@@ -14,32 +14,32 @@ export default eventHandler(async (event) => {
       message: 'Missing NUXT_SENDGRID_LIST_ID env variable'
     })
   }
-  
+
   // Check if already in contact list
   await sendgrid.searchContact(email)
-  .catch((err) => {
-    if (err.statusCode !== 404) {
-      throw createError({
-        message: err?.data?.errors?.[0]?.message || 'Sorry, we could not verify our contact list.',
-        statusCode: 400
-      })
-    }
-  }).then((res = {}) => {
-    if (res[email]?.contact?.list_ids?.includes(listId)) {
-      throw createError({
-        message: 'You are already subscribed to the newsletter ❤️',
-        statusCode: 400
-      })
-    }
-  })
+    .catch((err) => {
+      if (err.statusCode !== 404) {
+        throw createError({
+          message: err?.data?.errors?.[0]?.message || 'Sorry, we could not verify our contact list.',
+          statusCode: 400
+        })
+      }
+    }).then((res = {}) => {
+      if (res[email]?.contact?.list_ids?.includes(listId)) {
+        throw createError({
+          message: 'You are already subscribed to the newsletter ❤️',
+          statusCode: 400
+        })
+      }
+    })
   // Add to global contacts first
   await sendgrid.addContact(email)
-  .catch((err) => {
-    throw createError({
-      message: err?.data?.errors?.[0]?.message || 'The email is invalid.',
-      statusCode: 400
+    .catch((err) => {
+      throw createError({
+        message: err?.data?.errors?.[0]?.message || 'The email is invalid.',
+        statusCode: 400
+      })
     })
-  })
 
   // Send email to confirm registration
   const confirmation = generateConfirmation(email)
@@ -53,7 +53,7 @@ export default eventHandler(async (event) => {
     ],
     from: {
       name: 'Nuxt Team',
-      email: 'team@nuxt.com',
+      email: 'team@nuxt.com'
     },
     subject: 'Confirm your subscription to the Nuxt newsletter',
     content: [

@@ -1,4 +1,4 @@
-export default cachedEventHandler(async (event) => {
+export default cachedEventHandler(async () => {
   const repo = await github.fetchRepo('nuxt', 'nuxt')
   const { version } = await $fetch<any>('https://registry.npmjs.org/nuxt/latest').catch(() => {})
   const { downloads } = await npm.fetchPackageStats('nuxt')

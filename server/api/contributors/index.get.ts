@@ -1,4 +1,4 @@
-import type { VoltaContributor } from "~/server/utils/volta"
+import type { VoltaContributor } from '~/server/utils/volta'
 
 const BOTS = ['codecov-io', 'codecov-commenter']
 
@@ -23,12 +23,12 @@ export default cachedEventHandler(async (event) => {
   // Calculate score for each contributor
   for (const contributor of contributors) {
     contributor.score = Math.round(
-      contributor.issues * 1 +
-      contributor.comments * 0.5 +
-      contributor.merged_pull_requests * 5 +
-      contributor.helpful_issues * 3 +
-      contributor.helpful_comments * 2 +
-      contributor.reactions * 0.1
+      contributor.issues * 1
+      + contributor.comments * 0.5
+      + contributor.merged_pull_requests * 5
+      + contributor.helpful_issues * 3
+      + contributor.helpful_comments * 2
+      + contributor.reactions * 0.1
     )
   }
   // Sort by score
@@ -38,5 +38,5 @@ export default cachedEventHandler(async (event) => {
 }, {
   name: 'contributors',
   swr: true,
-  maxAge: 60 * 5, // 5 minutes
+  maxAge: 60 * 5 // 5 minutes
 })

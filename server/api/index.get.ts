@@ -1,6 +1,4 @@
-import { read } from "fs"
-
-export default eventHandler(event => {
+export default eventHandler(() => {
   const readme: any = {
     message: 'Welcome to Nuxt API',
     routes: [
@@ -16,7 +14,7 @@ export default eventHandler(event => {
       '/support/contact'
     ]
   }
-  if (process.dev) {
+  if (import.meta.dev) {
     readme.playground = '/__nuxt_devtools__/client/modules/server-routes'
   }
   return readme

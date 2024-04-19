@@ -20,11 +20,11 @@ export default defineEventHandler(async (event: H3Event) => {
   }
 
   const templateId = 'd-d9f7e91ee529458494e16ecfa3b499c1'
-  let to = {
+  const to = {
     email: 'experts@nuxt.com',
     name: 'Nuxt Experts'
   }
-  if (process.dev && process.env.NUXT_CONTACT_EMAIL) {
+  if (import.meta.dev && process.env.NUXT_CONTACT_EMAIL) {
     to.email = process.env.NUXT_CONTACT_EMAIL
   }
 
@@ -48,7 +48,7 @@ export default defineEventHandler(async (event: H3Event) => {
         value: body
       }
     ],
-    template_id: templateId,
+    template_id: templateId
   })
 
   return { ok: true }

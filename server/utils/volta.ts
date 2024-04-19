@@ -20,6 +20,5 @@ export const fetchOrgsContributors = async (_event: H3Event, orgs: string[]) => 
   logger.info(`Fetching ${orgs} contributors on Volta...`)
   const orgsQquery = orgs.map(org => `owner=${org}`).join('&')
   return await $fetch<VoltaContributor[]>(`http://api.volta.net/users/stats?${orgsQquery}&token=${process.env.NUXT_VOLTA_TOKEN}`)
-    .then(contributors => contributors.filter((contributor: any) => !isBot(contributor.username)))
+    .then(contributors => contributors.filter(contributor => !isBot(contributor.username)))
 }
-

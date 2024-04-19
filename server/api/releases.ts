@@ -1,6 +1,6 @@
-export default cachedEventHandler(async () => {
+export default cachedEventHandler(async (event) => {
   const releases = []
-  const nuxt = await fetchModuleStats({ repo: 'nuxt/nuxt', name: 'nuxt', npm: 'nuxt' })
+  const nuxt = await fetchModuleStats(event, { repo: 'nuxt/nuxt', name: 'nuxt', npm: 'nuxt' })
   releases.push({
     name: 'nuxt',
     repo: 'nuxt/nuxt',
@@ -8,7 +8,7 @@ export default cachedEventHandler(async () => {
     version: nuxt.version,
     date: new Date(nuxt.publishedAt)
   })
-  const cli = await fetchModuleStats({ repo: 'nuxt/cli', name: 'nuxi', npm: 'nuxi' })
+  const cli = await fetchModuleStats(event, { repo: 'nuxt/cli', name: 'nuxi', npm: 'nuxi' })
   releases.push({
     name: 'nuxi',
     repo: 'nuxt/cli',
@@ -16,11 +16,11 @@ export default cachedEventHandler(async () => {
     version: cli.version,
     date: new Date(cli.publishedAt)
   })
-  let modules = await fetchModules()
+  let modules = await fetchModules(event)
   modules = modules.filter(module => module.compatibility.nuxt.includes(`^3`))
 
   for (const module of modules) {
-    const { version, publishedAt } = await fetchModuleStats(module)
+    const { version, publishedAt } = await fetchModuleStats(event, module)
     releases.push({
       name: module.name,
       repo: module.repo,

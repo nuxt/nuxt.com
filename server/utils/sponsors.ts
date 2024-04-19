@@ -1,24 +1,24 @@
 export type SponsorType = 'platinum' | 'silver' | 'gold' | 'bronze' | 'backers'
 
 export interface Sponsor {
-  sponsorId: string,
-  sponsorName: string,
-  sponsorLogo: string,
-  sponsorUrl: string,
-  monthlyPriceInDollars: string,
+  sponsorId: string
+  sponsorName: string
+  sponsorLogo: string
+  sponsorUrl: string
+  monthlyPriceInDollars: string
   tier: SponsorType
 }
 
-function githubHeaders (headers = {}) {
+function githubHeaders(headers = {}) {
   return {
-    Accept: 'application/vnd.github.v3+json',
+    'Accept': 'application/vnd.github.v3+json',
     'User-Agent': 'nuxt-api',
-    Authorization: `token ${process.env.NUXT_GITHUB_TOKEN}`,
+    'Authorization': `token ${process.env.NUXT_GITHUB_TOKEN}`,
     ...headers
   }
 }
 
-function openCollectiveHeaders (headers = {}) {
+function openCollectiveHeaders(headers = {}) {
   return {
     'Api-Key': `${process.env.NUXT_OPEN_COLLECTIVE_API_KEY}`,
     'Content-Type': 'application/json',
@@ -26,12 +26,11 @@ function openCollectiveHeaders (headers = {}) {
   }
 }
 
-function toURL (url: string) {
+function toURL(url: string) {
   return url?.startsWith('www.') ? `https://${url}` : url
 }
 
-
-export const fetchOpenCollectiveSponsors = async (): Promise<any[]> => {
+export async function fetchOpenCollectiveSponsors() {
   const response = []
   const first = 100
   let offset = null
@@ -80,7 +79,6 @@ export const fetchOpenCollectiveSponsors = async (): Promise<any[]> => {
     })
 
     if (errors) {
-      // eslint-disable-next-line no-console
       console.error(errors)
       /* Stop the loop if any error occurs */
       offset = null
@@ -88,7 +86,8 @@ export const fetchOpenCollectiveSponsors = async (): Promise<any[]> => {
 
     if (data.collective.members.nodes.length !== 0) {
       offset += data.collective.members.nodes.length
-    } else {
+    }
+    else {
       offset = null
     }
     const sponsors = (data?.collective?.members?.nodes?.filter(sponsor => sponsor.tier).map((sponsor) => {
@@ -160,7 +159,6 @@ export const fetchGithubSponsors = async (): Promise<Sponsor[]> => {
     hasNext = _sponsors.pageInfo.hasNextPage
     cursor = _sponsors.pageInfo.endCursor
     if (errors) {
-      // eslint-disable-next-line no-console
       console.error(errors)
       /* Stop the loop if any error occurs */
       hasNext = false

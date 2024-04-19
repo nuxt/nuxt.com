@@ -3,25 +3,25 @@ import { bundledThemes } from 'shikiji/themes'
 import { bundledLanguages } from 'shikiji/langs'
 
 export default lazyEventHandler(async () => {
-  await loadWasm(() => import("shikiji/onig.wasm") as any);
+  await loadWasm(() => import('shikiji/onig.wasm') as any)
 
   const shiki = await getHighlighterCore()
 
   return eventHandler(async (event) => {
     const options = {
       ...getQuery(event),
-      ...event.node.req.method === 'POST' ? await readBody(event) : {},
+      ...event.node.req.method === 'POST' ? await readBody(event) : {}
     }
     const {
       code = 'console.log("Hello Nuxt!")',
       lang = 'javascript',
       theme = 'vitesse-light',
-      includeStyle = false,
+      includeStyle = false
     } = options
 
     const {
       light = theme,
-      dark,
+      dark
     } = options
 
     const themesNames = [light, dark].filter(Boolean)
@@ -37,7 +37,7 @@ export default lazyEventHandler(async () => {
     await Promise.all([
       shiki.loadLanguage(bundledLanguages[lang as keyof typeof bundledLanguages]),
       ...themesNames.map(theme =>
-        shiki.loadTheme(bundledThemes[theme as keyof typeof bundledThemes]),
+        shiki.loadTheme(bundledThemes[theme as keyof typeof bundledThemes])
       )
     ])
 

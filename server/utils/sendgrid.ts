@@ -35,7 +35,7 @@ export const sendgrid = {
   }
 }
 
-async function sendgridFetch (path: string, options = {}) {
+async function sendgridFetch(path: string, options = {}) {
   if (!process.env.NUXT_SENDGRID_API_KEY) {
     throw createError({
       statusCode: 500,
@@ -50,8 +50,8 @@ async function sendgridFetch (path: string, options = {}) {
     }
   }))
   if (res.result) {
-		return res.result
-	}
+    return res.result
+  }
   return res
 }
 
@@ -76,17 +76,16 @@ interface SendGridEmailPersonalization {
   to: {
     email: string
     name?: string
-  }[],
+  }[]
   dynamic_template_data?: DynamicTemplateDataSupport
 }
 
 interface DynamicTemplateDataSupport {
-  name: string,
-  email: string,
-  company: string,
+  name: string
+  email: string
+  company: string
   body: string
 }
-
 
 interface SendGridEmailContent {
   type: 'text/plain' | 'text/html'
