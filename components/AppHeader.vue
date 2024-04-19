@@ -9,7 +9,7 @@ const stats = useStats()
 const { metaSymbol } = useShortcuts()
 const { copy } = useCopyToClipboard()
 
-const version = computed(() => stats.value.version?.match(/[0-9]+\.[0-9]+/)[0])
+const version = computed(() => stats.value?.version?.match(/[0-9]+\.[0-9]+/)[0])
 
 const route = useRoute()
 const mobileNav = computed(() => {
