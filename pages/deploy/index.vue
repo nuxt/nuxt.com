@@ -17,6 +17,10 @@ useSeoMeta({
   ogTitle: title
 })
 
+defineOgImageComponent('Docs', {
+  title: 'Deploy Nuxt'
+})
+
 await fetchList()
 
 const featuredProviders = computed(() => providers.value.filter((provider: Hosting) => provider.featured === true))

@@ -35,8 +35,6 @@ useSeoMeta({
   twitterSite: 'nuxt_js'
 })
 
-defineOgImageComponent('Docs')
-
 watch(() => search.value?.commandPaletteRef?.query, debounce((query: string) => {
   if (!query) {
     return
@@ -53,7 +51,7 @@ provide('navigation', navigation)
   <div>
     <NuxtLoadingIndicator />
 
-    <AppBanner
+    <!-- <AppBanner
       id="ui-pro-1-0"
       to="https://ui.nuxt.com/pro?utm_source=nuxt-website&utm_medium=banner"
     >
@@ -70,6 +68,26 @@ provide('navigation', navigation)
           size="2xs"
           class="rounded-full"
         />
+      </div>
+    </AppBanner> -->
+    <AppBanner
+      id="nuxt-certification-early-bird"
+      to="https://certification.nuxt.com"
+    >
+      <div class="flex items-center gap-2">
+        <UIcon
+          name="i-ph-medal-duotone"
+          class="w-5 h-5 flex-shrink-0 pointer-events-none"
+        />
+        <span>The official <span class="font-semibold">Nuxt Certification Program</span> is coming.</span>
+        <UButton
+          color="white"
+          trailing-icon="i-ph-arrow-right"
+          size="2xs"
+          class="rounded-full"
+        >
+          Sign up<span class="hidden sm:inline"> for early bird</span>
+        </UButton>
       </div>
     </AppBanner>
 
