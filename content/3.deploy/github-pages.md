@@ -14,7 +14,7 @@ GitHub Pages only support static sites, Nuxt will pre-render your application to
 ::
 
 ::caution
-Set `NUXT_APP_BASE_URL` to your repository-slug (`https://<user>.github.io/<repository>/`: `NUXT_APP_BASE_URL=/<repository>/`) for your build step.
+If you are not using a custom domain, you need to set `NUXT_APP_BASE_URL` to your repository-slug (`https://<user>.github.io/<repository>/`: `NUXT_APP_BASE_URL=/<repository>/ npx nuxt build --preset github_pages`) for your build step.
 ::
 
 ## Setup
@@ -44,8 +44,7 @@ jobs:
           node-version: "20"
       # Pick your own package manager and build script
       - run: npm install
-      # change /<repository>/ to your github_pages prefix
-      - run: NUXT_APP_BASE_URL=/<repository>/ npx nuxt build --preset github_pages
+      - run: npx nuxt build --preset github_pages
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
