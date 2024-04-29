@@ -71,7 +71,7 @@ provide('navigation', navigation)
       </div>
     </AppBanner> -->
     <AppBanner
-      id="nuxt-certification-early-bird"
+      id="nuxt-certification-early-bird-launch"
       to="https://certification.nuxt.com"
     >
       <div class="flex items-center gap-2">
@@ -79,14 +79,14 @@ provide('navigation', navigation)
           name="i-ph-medal-duotone"
           class="w-5 h-5 flex-shrink-0 pointer-events-none"
         />
-        <span>The official <span class="font-semibold">Nuxt Certification Program</span> is coming.</span>
+        <span>The <span class="font-semibold">Nuxt Certification Program</span> by VueSchool is out!</span>
         <UButton
           color="white"
           trailing-icon="i-ph-arrow-right"
           size="2xs"
           class="rounded-full"
         >
-          Sign up<span class="hidden sm:inline"> for early bird</span>
+          Register
         </UButton>
       </div>
     </AppBanner>
