@@ -71,6 +71,12 @@ const _useNavigation = () => {
         description: 'Learn Nuxt by watching video courses.',
         icon: 'i-ph-graduation-cap-duotone',
         to: '/video-courses'
+      }, {
+        label: 'Nuxt Certification',
+        description: 'Obtain your Certification of Competence.',
+        icon: 'i-ph-medal-duotone',
+        to: 'https://certification.nuxt.com',
+        target: '_blank'
       }]
     }, {
       label: 'Showcase',
@@ -162,7 +168,7 @@ const _useNavigation = () => {
     }]
   }]
 
-  const searchLinks = computed(() => [...headerLinks.value.map(link => {
+  const searchLinks = computed(() => [...headerLinks.value.map((link) => {
     // Remove `/docs` and `/enterprise` links from command palette
     if (link.search === false) {
       return {
@@ -232,9 +238,11 @@ const _useNavigation = () => {
           label: hosting.title,
           suffix: hosting.description,
           icon: hosting.logoIcon,
-          avatar: hosting.logoSrc ? {
-            src: hosting.logoSrc
-          } : undefined,
+          avatar: hosting.logoSrc
+            ? {
+                src: hosting.logoSrc
+              }
+            : undefined,
           to: hosting._path
         }))
     }

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { debounce } from 'perfect-debounce'
 import type { ParsedContent } from '@nuxt/content/dist/runtime/types'
+import './styles/twoslash.css'
 
 const search = ref(null)
 const colorMode = useColorMode()
@@ -50,14 +51,45 @@ provide('navigation', navigation)
   <div>
     <NuxtLoadingIndicator />
 
-    <!-- <AppBanner :id="1" to="https://masteringnuxt.com/?ref=nuxt">
-      <p class="text-gray-600 dark:text-gray-300 flex items-center gap-1">
-        <UIcon name="i-ph-lightbulb-duotone" class="w-4 h-4" />
-
-        Enjoy <span class="font-bold text-gray-900 dark:text-white">Mastering Nuxt</span> black friday!
-      </p>
-
-      <UButton label="Learn more" color="gray" trailing-icon="i-ph-arrow-right" size="2xs" class="rounded-full" />
+    <AppBanner
+      id="ui-pro-dashboard"
+      to="https://github.com/nuxt-ui-pro/dashboard"
+    >
+      <div class="flex items-center gap-2">
+        <UIcon
+          name="i-ph-layout-duotone"
+          class="w-5 h-5 flex-shrink-0 pointer-events-none"
+        />
+        <span class="sm:hidden">Dashboard template with Vue & UI Pro</span>
+        <span class="hidden sm:inline-block">Discover our dashboard template made with Vue & Nuxt UI Pro</span>
+        <UButton
+          label="Open on GitHub"
+          color="white"
+          trailing-icon="i-ph-arrow-right"
+          size="2xs"
+          class="rounded-full"
+        />
+      </div>
+    </AppBanner>
+    <!-- <AppBanner
+      id="nuxt-certification-early-bird-launch"
+      to="https://certification.nuxt.com"
+    >
+      <div class="flex items-center gap-2">
+        <UIcon
+          name="i-ph-medal-duotone"
+          class="w-5 h-5 flex-shrink-0 pointer-events-none"
+        />
+        <span>The <span class="font-semibold">Nuxt Certification Program</span> by VueSchool is out!</span>
+        <UButton
+          color="white"
+          trailing-icon="i-ph-arrow-right"
+          size="2xs"
+          class="rounded-full"
+        >
+          Register
+        </UButton>
+      </div>
     </AppBanner> -->
 
     <AppHeader :links="headerLinks" />
@@ -69,7 +101,7 @@ provide('navigation', navigation)
     <AppFooter />
 
     <ClientOnly>
-      <UDocsSearch
+      <UContentSearch
         ref="search"
         :files="files"
         :navigation="navigation[0]?.children"

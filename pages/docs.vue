@@ -3,6 +3,8 @@ import type { NavItem } from '@nuxt/content/dist/runtime/types'
 
 const navigation = inject<Ref<NavItem[]>>('navigation')
 
+defineOgImageComponent('Docs')
+
 const route = useRoute()
 const { navPageFromPath } = useContentHelpers()
 const { headerLinks } = useNavigation()

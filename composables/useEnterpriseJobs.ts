@@ -7,18 +7,18 @@ export const useEnterpriseJobs = () => {
 
   const mapRemote = (remoteType: string) => {
     switch (remoteType) {
-    case 'ONLY':
-      return 'Remote Only'
-    case 'ALLOWED':
-      return 'Remote Allowed'
-    default:
-      return 'Onsite'
+      case 'ONLY':
+        return 'Remote Only'
+      case 'ALLOWED':
+        return 'Remote Allowed'
+      default:
+        return 'Onsite'
     }
   }
 
   // Data fetching
 
-  async function fetchList () {
+  async function fetchList() {
     if (jobs.value.length) {
       return
     }

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const props = defineProps<{
-  id: number
+  id: number | string
   to: string
 }>()
 
@@ -12,8 +12,8 @@ const hideBanner = () => {
   document.querySelector('html')?.classList.add('hide-banner')
 }
 
-if (process.server) {
-  useHead({
+if (import.meta.server) {
+  useServerHead({
     script: [
       {
         key: 'prehydrate-template-banner',
@@ -29,19 +29,25 @@ if (process.server) {
 </script>
 
 <template>
-  <NuxtLink :to="to" target="_blank" class="relative w-full z-50 border-b border-gray-200 dark:border-gray-800 app-banner flex items-center justify-between lg:justify-center px-4 sm:px-6 lg:px-8">
-    <div class="flex flex-wrap justify-center items-center gap-2 h-12 text-sm">
-      <slot />
-    </div>
+  <NuxtLink :to="to" class="block relative bg-primary hover:bg-primary/90 transition-[background] backdrop-blur z-50 app-banner" external target="_blank">
+    <UContainer class="py-2">
+      <div class="flex items-center justify-between gap-2">
+        <div class="lg:flex-1 hidden lg:flex items-center" />
 
-    <UButton
-      color="gray"
-      variant="link"
-      size="sm"
-      icon="i-ph-x"
-      class="right-4 sm:right-6 lg:right-8 absolute"
-      @click.prevent="hideBanner"
-    />
+        <div class="text-sm font-medium text-white dark:text-gray-900">
+          <slot />
+        </div>
+
+        <div class="flex items-center justify-end lg:flex-1">
+          <button
+            class="p-1.5 rounded-md inline-flex hover:bg-primary/90"
+            @click.prevent="hideBanner"
+          >
+            <UIcon name="i-heroicons-x-mark-20-solid" class="w-5 h-5 text-white dark:text-gray-900" />
+          </button>
+        </div>
+      </div>
+    </UContainer>
   </NuxtLink>
 </template>
 

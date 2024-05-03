@@ -3,11 +3,6 @@ import type { Module } from '~/types'
 import { ModuleProseA, ModuleProseImg } from '#components'
 
 const route = useRoute()
-const router = useRouter()
-
-function goBack () {
-  return window?.history.length > 2 ? router.back() : router.push('/modules')
-}
 
 const { data: module } = await useFetch<Module>(`https://api.nuxt.com/modules/${route.params.slug}`, {
   key: `module-${route.params.slug}`
@@ -24,7 +19,7 @@ const ownerName = computed(() => {
 const links = computed(() => [{
   icon: 'i-ph-book-bookmark-duotone',
   label: 'Documentation',
-  to: module.value.website,
+  to: `${module.value.website}?utm_source=nuxt.com&utm_medium=aside-module&utm_campaign=nuxt.com`,
   target: '_blank'
 }, {
   icon: 'i-simple-icons-github',
@@ -43,7 +38,7 @@ const links = computed(() => [{
   target: '_blank'
 }].filter(Boolean))
 
-const contributors = computed(() => module.value.contributors.map((contributor) => ({
+const contributors = computed(() => module.value.contributors.map(contributor => ({
   label: contributor.username,
   to: `https://github.com/${contributor.username}`,
   avatar: {
@@ -64,10 +59,7 @@ useSeoMeta({
   ogTitle: `${title} · Nuxt Modules`
 })
 
-defineOgImage({
-  component: 'Docs',
-  title,
-  description,
+defineOgImageComponent('Docs', {
   headline: 'Nuxt Modules'
 })
 </script>
@@ -89,7 +81,10 @@ defineOgImage({
       </template>
     </UAlert>
 
-    <UPageHeader :description="module.description" headline="Modules">
+    <UPageHeader :description="module.description" :ui="{ headline: 'mb-8' }">
+      <template #headline>
+        <UBreadcrumb :links="[{ label: 'Modules', to: '/modules', icon: 'i-ph-puzzle-piece-duotone' }, { to: { name: 'modules', query: { category: module.category } }, label: module.category }, { label: module.npm }]" />
+      </template>
       <template #title>
         <div class="flex items-center gap-4">
           <UAvatar
@@ -110,18 +105,6 @@ defineOgImage({
           </div>
         </div>
       </template>
-
-      <div class="absolute top-[68px] -left-[64px] hidden lg:flex">
-        <UTooltip text="Back to modules">
-          <UButton
-            icon="i-ph-caret-left"
-            color="gray"
-            :ui="{ rounded: 'rounded-full' }"
-            size="lg"
-            @click="goBack"
-          />
-        </UTooltip>
-      </div>
 
       <div class="flex flex-col lg:flex-row lg:items-center gap-3 mt-4">
         <UTooltip text="Monthly NPM Downloads">
@@ -154,12 +137,12 @@ defineOgImage({
     </UPageHeader>
 
     <UPage>
-      <UPageBody prose>
+      <UPageBody prose class="dark:text-gray-300 dark:prose-pre:!bg-gray-800/60">
         <ContentRendererMarkdown v-if="module.readme?.body" :value="module.readme" class="module-readme" :components="{ a: ModuleProseA, img: ModuleProseImg }" />
       </UPageBody>
 
       <template #right>
-        <UDocsToc :links="module.readme.toc?.links">
+        <UContentToc :links="module.readme.toc?.links">
           <template #bottom>
             <div class="hidden lg:block space-y-6" :class="{ '!mt-6': module.readme?.toc?.links?.length }">
               <UDivider v-if="module.readme?.toc?.links?.length" type="dashed" />
@@ -179,7 +162,7 @@ defineOgImage({
               <Ads />
             </div>
           </template>
-        </UDocsToc>
+        </UContentToc>
       </template>
     </UPage>
   </UContainer>
@@ -187,19 +170,23 @@ defineOgImage({
 
 <style lang="postcss">
 .module-readme {
+
   /* empty code lines */
   .shiki code .line:empty {
     @apply hidden;
   }
+
   /* force rounded on prose code */
   .prose-code {
     @apply rounded-md;
   }
+
   /* Fix badges */
   p {
     a img {
       @apply inline-block my-0 mr-1;
     }
+
     a:hover {
       @apply border-none opacity-90;
     }

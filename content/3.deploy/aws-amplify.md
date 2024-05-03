@@ -9,10 +9,10 @@ nitroPreset: 'aws-amplify'
 website: 'https://aws.amazon.com/amplify/?trk=bed847b4-6e9f-4e09-ba09-0d4680a0447b&sc_channel=el'
 ---
 
-::callout
+::tip
 **Zero Configuration ✨**
 :br
-Integration with AWS Amplify is possible with zero configuration.
+Integration with AWS Amplify is possible with zero configuration, [learn more](https://nitro.unjs.io/deploy#zero-config-providers).
 ::
 
 ## Setup
@@ -25,6 +25,10 @@ Integration with AWS Amplify is possible with zero configuration.
 6. Confirm configuration and click on "Save and Deploy"
 
 ## Learn more
+
+::read-more{to="https://www.youtube.com/watch?v=CAk5_XGkOG4" target="_blank"}
+Watch an Amplify Hosting tutorial with Nuxt
+::
 
 ::read-more{to="https://nitro.unjs.io/deploy/providers/aws-amplify" target="_blank"}
 Head over **Nitro documentation** to learn more about the aws-amplify deployment preset.

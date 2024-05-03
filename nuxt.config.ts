@@ -2,7 +2,7 @@ import { ofetch } from 'ofetch'
 import { logger } from '@nuxt/kit'
 import { isWindows } from 'std-env'
 
-function normalizedDirPath (path?: string) {
+function normalizedDirPath(path?: string) {
   if (!path || !isWindows) {
     return path
   }
@@ -44,23 +44,31 @@ if (examplesSourceBase) {
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  extends: process.env.NUXT_UI_PRO_PATH || '@nuxt/ui-pro',
-  // @ts-ignore
+  extends: [
+    process.env.NUXT_UI_PRO_PATH || '@nuxt/ui-pro'
+  ],
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment, @typescript-eslint/prefer-ts-expect-error
+  // @ts-ignore Type circular reference
   modules: [
+    'nuxt-content-twoslash',
     'nuxt-build-cache',
     '@nuxt/content',
     '@nuxt/ui',
     '@nuxt/image',
     '@nuxtjs/plausible',
-    '@nuxtjs/fontaine',
-    '@nuxtjs/google-fonts',
+    '@nuxt/fonts',
+    '@nuxt/eslint',
     '@nuxtjs/turnstile',
     '@nuxthq/studio',
     '@vueuse/nuxt',
     'nuxt-og-image',
     () => {
-      if (docsSourceBase) { logger.success(`Using local Nuxt docs from ${docsSourceBase}`) }
-      if (examplesSourceBase) { logger.success(`Using local Nuxt examples from ${examplesSourceBase}`) }
+      if (docsSourceBase) {
+        logger.success(`Using local Nuxt docs from ${docsSourceBase}`)
+      }
+      if (examplesSourceBase) {
+        logger.success(`Using local Nuxt examples from ${examplesSourceBase}`)
+      }
     }
   ],
   routeRules: {
@@ -104,7 +112,7 @@ export default defineNuxtConfig({
       ignore: ['/modules/%3C/span', '/modules/%253C/span', '/docs/getting-started/</span', '/docs/getting-started/%3C/span']
     },
     hooks: {
-      'prerender:generate' (route) {
+      'prerender:generate'(route) {
         // TODO: fix issue with recursive fetches with query string, e.g.
         // `/enterprise/agencies?region=europe&amp;amp;amp;service=ecommerce&amp;amp;service=ecommerce&amp;service=content-marketing`
         if (route.route?.includes('&amp;')) {
@@ -114,7 +122,7 @@ export default defineNuxtConfig({
     }
   },
   hooks: {
-    async 'prerender:routes' (ctx) {
+    async 'prerender:routes'(ctx) {
       // Add Nuxt 2 modules to the prerender list
       const { modules } = await ofetch<{ modules: [] }>('https://api.nuxt.com/modules?version=2').catch(() => ({ modules: [] }))
       for (const module of modules) {
@@ -135,16 +143,6 @@ export default defineNuxtConfig({
   colorMode: {
     preference: 'dark'
   },
-  fontMetrics: {
-    fonts: ['DM Sans']
-  },
-  googleFonts: {
-    display: 'swap',
-    download: true,
-    families: {
-      'DM+Sans': [400, 500, 600, 700]
-    }
-  },
   ui: {
     icons: ['simple-icons', 'ph', 'uil', 'heroicons', 'octicon', 'logos']
   },
@@ -155,6 +153,41 @@ export default defineNuxtConfig({
     sources: {
       docsSource,
       examplesSource
+    },
+    highlight: {
+      theme: {
+        default: 'material-theme-lighter',
+        dark: 'material-theme-palenight'
+      },
+      langs: [
+        'js',
+        'ts',
+        'vue',
+        'css',
+        'scss',
+        'sass',
+        'html',
+        'bash',
+        'md',
+        'mdc',
+        'json'
+      ]
+    }
+  },
+  twoslash: {
+    floatingVueOptions: {
+      classMarkdown: 'prose prose-primary dark:prose-invert'
+    },
+    // Skip Twoslash in dev to improve performance. Turn this on when you want to explictly test twoslash in dev.
+    enableInDev: false,
+    // Do not throw when twoslash fails, the typecheck should be down in github.com/nuxt/nuxt's CI
+    throws: false
+  },
+  eslint: {
+    config: {
+      stylistic: {
+        commaDangle: 'never'
+      }
     }
   },
   typescript: {

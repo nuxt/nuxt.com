@@ -9,10 +9,10 @@ nitroPreset: 'vercel'
 website: 'https://vercel.com/'
 ---
 
-::callout
+::tip
 **Zero Configuration ✨**
 :br
-Integration with Vercel is possible with zero configuration.
+Integration with Vercel is possible with zero configuration, [learn more](https://nitro.unjs.io/deploy#zero-config-providers).
 ::
 
 ## Deploy using Git
@@ -73,7 +73,7 @@ Read more about the Vercel KV driver on Unstorage documentation.
     })
     ```
 
-::callout
+::caution
 You need to either set `KV_REST_API_URL` and `KV_REST_API_TOKEN` environment variables or pass `url` and `token` to driver options. Check [driver docs](https://unstorage.unjs.io/drivers/vercel-kv) for more information about usage.
 ::
 

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { joinURL } from 'ufo'
+
 const { data: page } = await useAsyncData('index', () => queryContent('/').findOne())
 
 const videoModalOpen = ref(false)
@@ -112,16 +113,7 @@ useSeoMeta({
           v-if="section.code"
           :value="section.code"
           tag="pre"
-          class="prose prose-primary dark:prose-invert max-w-none"
-          :parser-options="{
-            highlight: {
-              theme: {
-                light: 'material-theme-lighter',
-                default: 'material-theme',
-                dark: 'material-theme-palenight'
-              }
-            }
-          }"
+          class="prose prose-primary dark:prose-invert max-w-none dark:prose-pre:!bg-gray-800/60"
         />
       </template>
     </ULandingSection>

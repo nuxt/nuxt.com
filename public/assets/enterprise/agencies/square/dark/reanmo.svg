@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="500" height="500" viewBox="0 0 500 500">
+  <defs>
+    <clipPath id="clip-logo_dark_light">
+      <rect width="500" height="500"/>
+    </clipPath>
+  </defs>
+  <g id="logo_dark_light" clip-path="url(#clip-logo_dark_light)">
+    <g id="Ebene_2" data-name="Ebene 2" transform="translate(103.75 70)">
+      <g id="Logo">
+        <g id="LogoR">
+          <path id="Pfad_2557" data-name="Pfad 2557" d="M0,360V0H292.5V45H45V360Z" fill="#00acdf"/>
+          <path id="Pfad_2558" data-name="Pfad 2558" d="M32,312V32H244.5V77H77V312Z" transform="translate(48 48)" fill="#00acdf"/>
+          <path id="Pfad_2559" data-name="Pfad 2559" d="M64,264V64H196.5v45H109V264Z" transform="translate(96 96)" fill="#00acdf"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

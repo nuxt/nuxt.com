@@ -23,7 +23,7 @@ const { data: surround } = await useAsyncData(`${route.path}-surround`, async ()
 })
 
 const breadcrumb = computed(() => {
-  const links = mapContentNavigation(findPageBreadcrumb(navigation.value, page.value)).map((link) => ({
+  const links = mapContentNavigation(findPageBreadcrumb(navigation.value, page.value)).map(link => ({
     label: link.label,
     to: link.to
   }))
@@ -84,6 +84,11 @@ const ecosystemLinks = [{
   label: 'Video Courses',
   to: 'https://masteringnuxt.com/nuxt3?ref=nuxt',
   target: '_blank'
+}, {
+  label: 'Nuxt Certification',
+  icon: 'i-ph-medal-duotone',
+  to: 'https://certification.nuxt.com',
+  target: '_blank'
 }]
 
 const title = page.value.head?.title || page.value.title
@@ -97,10 +102,7 @@ useSeoMeta({
   ogTitle: titleTemplate.value?.includes('%s') ? titleTemplate.value.replace('%s', title) : title
 })
 
-defineOgImage({
-  component: 'Docs',
-  title,
-  description,
+defineOgImageComponent('Docs', {
   headline: breadcrumb.value.length ? breadcrumb.value.map(link => link.label).join(' > ') : ''
 })
 </script>
@@ -108,7 +110,7 @@ defineOgImage({
 <template>
   <UPage
     :ui="{
-      right: 'sticky top-[--header-height] bg-background/75 backdrop-blur group -mx-4 sm:-mx-6 px-4 sm:px-6 lg:px-4 lg:-mx-4 overflow-y-auto max-h-[calc(100vh-var(--header-height))] z-10',
+      right: 'sticky top-[--header-height] bg-background/75 backdrop-blur group -mx-4 sm:-mx-6 px-4 sm:px-6 lg:px-4 lg:-mx-4 overflow-y-auto max-h-[calc(100vh-var(--header-height))] z-10'
     }"
   >
     <UPageHeader v-bind="page">
@@ -117,16 +119,16 @@ defineOgImage({
       </template>
     </UPageHeader>
 
-    <UPageBody prose>
+    <UPageBody prose class="dark:text-gray-300 dark:prose-pre:!bg-gray-800/60">
       <ContentRenderer v-if="page && page.body" :value="page" />
 
       <hr v-if="surround?.length">
 
-      <UDocsSurround :surround="surround" />
+      <UContentSurround :surround="surround" />
     </UPageBody>
 
     <template v-if="page.toc !== false" #right>
-      <UDocsToc :links="page.body?.toc?.links" :ui="{ wrapper: '' }">
+      <UContentToc :links="page.body?.toc?.links" :ui="{ wrapper: '' }">
         <template #bottom>
           <div class="hidden lg:block space-y-6" :class="{ '!mt-6': page.body?.toc?.links?.length }">
             <UDivider v-if="page.body?.toc?.links?.length" type="dashed" />
@@ -142,7 +144,7 @@ defineOgImage({
             <Ads />
           </div>
         </template>
-      </UDocsToc>
+      </UContentToc>
     </template>
   </UPage>
 </template>

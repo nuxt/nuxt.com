@@ -27,13 +27,7 @@ useSeoMeta({
   ogDescription: description,
   ogTitle: title
 })
-
-defineOgImage({
-  component: 'Docs',
-  title,
-  description,
-  headline: ''
-})
+defineOgImageComponent('Docs')
 
 await fetchList()
 
@@ -192,7 +186,6 @@ const { copy } = useCopyToClipboard()
                   <UIcon name="i-ph-medal-duotone" class="w-4 h-4" />
                   <span>Official</span>
                 </UBadge>
-
 
                 <UBadge
                   v-if="module.sponsor"
