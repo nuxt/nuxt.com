@@ -168,7 +168,7 @@ templates:
   - name: 'Materio Admin Template'
     slug: 'materio'
     description: 'A powerful admin dashboard template built for developers'
-    demo: 'https://demos.themeselection.com/materio-vuetify-nuxtjs-admin-template-free/demo/dashboard'
+    demo: 'https://demos.themeselection.com/materio-vuetify-nuxtjs-admin-template/demo-1/'
     purchase: 'https://themeselection.com/item/materio-vuetify-nuxtjs-admin-template'
     badge: 'Premium'
   - name: 'Canvas'
