@@ -1,6 +1,7 @@
 <script setup>
 import { vIntersectionObserver } from '@vueuse/components'
 
+const getImage = useImage()
 const start = ref(0)
 const total = 5 * 4
 const contributors = useState('contributors-grid', () => [])
@@ -40,9 +41,11 @@ function stopTimer() {
   currentTimeout = null
 }
 async function loadImages(usernames) {
+  const size = window.devicePixelRatio === 2 ? '160px' : '80px'
   await Promise.all(usernames.map((username) => {
     const img = new Image()
-    img.src = `https://ipx.nuxt.com/f_auto&s_${window.devicePixelRatio === 2 ? '160x160' : '80x80'}/gh_avatar/${username}`
+    img.src = getImage(`/gh_avatar/${username}`, { height: size, width: size, format: 'auto' }, { provider: 'ipx' })
+    
     return new Promise((resolve) => {
       img.onload = resolve
       img.onerror = resolve
