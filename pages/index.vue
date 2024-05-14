@@ -32,7 +32,7 @@ useSeoMeta({
 
 <template>
   <div v-if="page">
-    <ULandingHero :ui="{ base: 'relative z-[1]' }" class="dark:bg-gradient-to-b from-gray-950 to-gray-900 md:pt-24" :class="{ 'md:pt-24': isUwuEnabled }">
+    <ULandingHero :ui="{ base: 'relative z-[1]' }" class="dark:bg-gradient-to-b from-gray-950 to-gray-900" :class="{ 'md:pt-24': isUwuEnabled }">
       <template #top>
         <HomeHeroBackground class="absolute -top-[--header-height] inset-x-0 w-full hidden lg:block" />
       </template>
