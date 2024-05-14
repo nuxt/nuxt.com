@@ -23,7 +23,7 @@ If you use the GitHub/GitLab integration with Cloudflare Pages, **no configurati
 Nuxt will detect the environment to set the correct [Server/Nitro preset](https://nitro.unjs.io/deploy/providers/cloudflare).
 ::
 
-To leverage sever-side rendering on the edge, set the build command to: `nuxt build`
+To leverage server-side rendering on the edge, set the build command to: `nuxt build`
 
 To statically generate your website, set the build command to: `nuxt generate`
 

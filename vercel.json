@@ -84,16 +84,6 @@
       "permanent": false
     },
     {
-      "source": "/workshops/nuxt-3-migration",
-      "destination": "https://catalogue-nuxtlabs.dendreo.com",
-      "permanent": false
-    },
-     {
-      "source": "/workshops",
-      "destination": "https://catalogue-nuxtlabs.dendreo.com",
-      "permanent": false
-    },
-    {
       "source": "/enterprise/workshop",
       "destination": "/enterprise/courses",
       "permanent": false
@@ -186,6 +176,11 @@
     {
       "source": "/support/:path*",
       "destination": "/enterprise/:path*",
+      "permanent": false
+    },
+    {
+      "source": "/docs/guide/going-further/custom-routing",
+      "destination": "/docs/guide/recipes/custom-routing",
       "permanent": false
     }
   ]

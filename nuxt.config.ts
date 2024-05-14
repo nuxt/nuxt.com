@@ -101,6 +101,8 @@ export default defineNuxtConfig({
     '/docs/examples/experimental': { redirect: '/docs/examples/experimental/wasm', prerender: false },
     '/docs/community': { redirect: '/docs/community/getting-help', prerender: false },
     '/docs/community/nuxt-community': { redirect: '/docs/community/getting-help', prerender: false },
+    '/docs/guide/recipes': { redirect: '/docs/guide/recipes/custom-routing', prerender: false },
+    '/docs/guide/going-further/custom-routing': { redirect: '/docs/guide/recipes/custom-routing', prerender: false },
     // '/docs/guide/directory-structure/nuxt.config': { redirect: '/docs/guide/directory-structure/nuxt-config', prerender: false },
     '/enterprise': { redirect: '/enterprise/support', prerender: false }
   },

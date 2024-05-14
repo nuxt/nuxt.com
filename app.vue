@@ -35,8 +35,6 @@ useSeoMeta({
   twitterSite: 'nuxt_js'
 })
 
-defineOgImageComponent('Docs')
-
 watch(() => search.value?.commandPaletteRef?.query, debounce((query: string) => {
   if (!query) {
     return
@@ -54,17 +52,18 @@ provide('navigation', navigation)
     <NuxtLoadingIndicator />
 
     <AppBanner
-      id="ui-pro-1-0"
-      to="https://ui.nuxt.com/pro?utm_source=nuxt-website&utm_medium=banner"
+      id="ui-pro-dashboard"
+      to="https://github.com/nuxt-ui-pro/dashboard"
     >
       <div class="flex items-center gap-2">
         <UIcon
-          name="i-ph-rocket-launch-duotone"
+          name="i-ph-layout-duotone"
           class="w-5 h-5 flex-shrink-0 pointer-events-none"
         />
-        <span><span class="font-semibold">Nuxt UI Pro v1.0</span> is out with 50+ Vue components<span class="hidden sm:inline"> to create beautiful and responsive Nuxt apps in minutes</span>.</span>
+        <span class="sm:hidden">Dashboard template with Vue & UI Pro</span>
+        <span class="hidden sm:inline-block">Discover our dashboard template made with Vue & Nuxt UI Pro</span>
         <UButton
-          label="Learn more"
+          label="Open on GitHub"
           color="white"
           trailing-icon="i-ph-arrow-right"
           size="2xs"
@@ -72,6 +71,26 @@ provide('navigation', navigation)
         />
       </div>
     </AppBanner>
+    <!-- <AppBanner
+      id="nuxt-certification-early-bird-launch"
+      to="https://certification.nuxt.com"
+    >
+      <div class="flex items-center gap-2">
+        <UIcon
+          name="i-ph-medal-duotone"
+          class="w-5 h-5 flex-shrink-0 pointer-events-none"
+        />
+        <span>The <span class="font-semibold">Nuxt Certification Program</span> by VueSchool is out!</span>
+        <UButton
+          color="white"
+          trailing-icon="i-ph-arrow-right"
+          size="2xs"
+          class="rounded-full"
+        >
+          Register
+        </UButton>
+      </div>
+    </AppBanner> -->
 
     <AppHeader :links="headerLinks" />
 
