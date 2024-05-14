@@ -1,6 +1,18 @@
 <script setup lang="ts">
 import { joinURL } from 'ufo'
 
+const uwuCookie = useCookie<boolean>('uwu-mode', {
+  default: () => false
+})
+
+const route = useRoute()
+if ('uwu' in route.query) {
+  const enableUwu = !['0', 'false'].includes(route.query.uwu as string)
+  uwuCookie.value = enableUwu
+}
+
+const isUwuEnabled = uwuCookie.value
+
 const { data: page } = await useAsyncData('index', () => queryContent('/').findOne())
 
 const videoModalOpen = ref(false)
@@ -20,7 +32,7 @@ useSeoMeta({
 
 <template>
   <div v-if="page">
-    <ULandingHero :ui="{ base: 'relative z-[1]' }" class="dark:bg-gradient-to-b from-gray-950 to-gray-900">
+    <ULandingHero :ui="{ base: 'relative z-[1]' }" class="dark:bg-gradient-to-b from-gray-950 to-gray-900 md:pt-24" :class="{ 'md:pt-24': isUwuEnabled }">
       <template #top>
         <HomeHeroBackground class="absolute -top-[--header-height] inset-x-0 w-full hidden lg:block" />
       </template>
@@ -30,6 +42,15 @@ useSeoMeta({
       </template>
 
       <template #title>
+        <NuxtImg
+          v-if="isUwuEnabled"
+          sizes="343px md:455px"
+          width="455"
+          height="256"
+          class="mx-auto my-16"
+          src="/uwu.png"
+          alt="Nuxt Logo in uwu style"
+        />
         The Intuitive<br><span class="text-primary block lg:inline-block">Vue Framework</span>
       </template>
 
