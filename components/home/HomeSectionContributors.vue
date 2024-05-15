@@ -45,7 +45,7 @@ async function loadImages(usernames) {
   await Promise.all(usernames.map((username) => {
     const img = new Image()
     img.src = getImage(`/gh_avatar/${username}`, { height: size, width: size, format: 'auto' }, { provider: 'ipx' })
-    
+
     return new Promise((resolve) => {
       img.onload = resolve
       img.onerror = resolve
