@@ -11,8 +11,6 @@ if ('uwu' in route.query) {
   uwuCookie.value = enableUwu
 }
 
-const isUwuEnabled = uwuCookie.value
-
 const { data: page } = await useAsyncData('index', () => queryContent('/').findOne())
 
 const videoModalOpen = ref(false)
@@ -32,9 +30,13 @@ useSeoMeta({
 
 <template>
   <div v-if="page">
-    <ULandingHero :ui="{ base: 'relative z-[1]' }" class="dark:bg-gradient-to-b from-gray-950 to-gray-900" :class="{ 'md:pt-24': isUwuEnabled }">
+    <ULandingHero
+      :ui="{ base: 'relative z-[1]' }"
+      class="dark:bg-gradient-to-b from-gray-950 to-gray-900"
+      :orientation="uwuCookie ? 'horizontal' : 'vertical'"
+    >
       <template #top>
-        <HomeHeroBackground class="absolute -top-[--header-height] inset-x-0 w-full hidden lg:block" />
+        <HomeHeroBackground v-if="!uwuCookie" class="absolute -top-[--header-height] inset-x-0 w-full hidden lg:block" />
       </template>
 
       <template #headline>
@@ -42,15 +44,6 @@ useSeoMeta({
       </template>
 
       <template #title>
-        <NuxtImg
-          v-if="isUwuEnabled"
-          sizes="343px md:455px"
-          width="455"
-          height="256"
-          class="mx-auto my-16"
-          src="/uwu.png"
-          alt="Nuxt Logo in uwu style"
-        />
         The Intuitive<br><span class="text-primary block lg:inline-block">Vue Framework</span>
       </template>
 
@@ -83,16 +76,26 @@ useSeoMeta({
         </UModal>
       </template>
 
-      <ULandingLogos :title="page?.logos?.title" class="mt-32 text-gray-500 dark:text-gray-400">
-        <BrandsGithub class="hidden md:block h-7" />
-        <BrandsOpenai class="h-5 md:h-8" />
-        <BrandsNasa class="h-4 md:h-6" />
-        <BrandsGoogle class="h-5 md:h-8" />
-        <BrandsFedora class="h-4 md:h-7" />
-        <BrandsGitlab class="hidden sm:block h-4 md:h-7" />
-        <BrandsUpwork class="hidden md:block h-8" />
-      </ULandingLogos>
+      <NuxtImg
+        v-if="uwuCookie"
+        sizes="343px md:455px"
+        width="455"
+        height="256"
+        class="mx-auto lg:my-16"
+        src="/uwu.png"
+        alt="Nuxt Logo in uwu style"
+      />
     </ULandingHero>
+
+    <ULandingLogos :title="page?.logos?.title" class="lg:pt-12 text-gray-500 dark:text-gray-400 dark:bg-gray-900">
+      <BrandsGithub class="hidden md:block h-7" />
+      <BrandsOpenai class="h-5 md:h-8" />
+      <BrandsNasa class="h-4 md:h-6" />
+      <BrandsGoogle class="h-5 md:h-8" />
+      <BrandsFedora class="h-4 md:h-7" />
+      <BrandsGitlab class="hidden sm:block h-4 md:h-7" />
+      <BrandsUpwork class="hidden md:block h-8" />
+    </ULandingLogos>
 
     <!-- eslint-disable vue/no-deprecated-slot-attribute -->
     <ULandingSection
