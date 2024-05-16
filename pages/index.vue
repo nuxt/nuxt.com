@@ -29,7 +29,7 @@ useSeoMeta({
 </script>
 
 <template>
-  <div v-if="page">
+  <div v-if="page" class="dark:bg-gray-900">
     <ULandingHero
       :ui="{ base: 'relative z-[1]' }"
       class="dark:bg-gradient-to-b from-gray-950 to-gray-900"
@@ -87,15 +87,17 @@ useSeoMeta({
       />
     </ULandingHero>
 
-    <ULandingLogos :title="page?.logos?.title" class="lg:pt-12 text-gray-500 dark:text-gray-400 dark:bg-gray-900">
-      <BrandsGithub class="hidden md:block h-7" />
-      <BrandsOpenai class="h-5 md:h-8" />
-      <BrandsNasa class="h-4 md:h-6" />
-      <BrandsGoogle class="h-5 md:h-8" />
-      <BrandsFedora class="h-4 md:h-7" />
-      <BrandsGitlab class="hidden sm:block h-4 md:h-7" />
-      <BrandsUpwork class="hidden md:block h-8" />
-    </ULandingLogos>
+    <UContainer>
+      <ULandingLogos :title="page?.logos?.title" class="lg:pt-12 text-gray-500 dark:text-gray-400 dark:bg-gray-900">
+        <BrandsGithub class="hidden md:block h-7" />
+        <BrandsOpenai class="h-5 md:h-8" />
+        <BrandsNasa class="h-4 md:h-6" />
+        <BrandsGoogle class="h-5 md:h-8" />
+        <BrandsFedora class="h-4 md:h-7" />
+        <BrandsGitlab class="hidden sm:block h-4 md:h-7" />
+        <BrandsUpwork class="hidden md:block h-8" />
+      </ULandingLogos>
+    </UContainer>
 
     <!-- eslint-disable vue/no-deprecated-slot-attribute -->
     <ULandingSection
