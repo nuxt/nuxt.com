@@ -48,7 +48,12 @@ useSeoMeta({
       </template>
 
       <template #description>
-        Nuxt is an <NuxtLink to="https://github.com/nuxt/nuxt" target="_blank">
+        Nuxt is an
+        <NuxtLink
+          to="https://github.com/nuxt/nuxt"
+          target="_blank"
+          class="text-primary hover:underline"
+        >
           open source framework
         </NuxtLink> that makes web development intuitive and powerful.<br>Create performant and production-grade full-stack web apps and websites with confidence.
       </template>
