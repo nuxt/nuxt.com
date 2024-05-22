@@ -52,18 +52,17 @@ provide('navigation', navigation)
     <NuxtLoadingIndicator />
 
     <AppBanner
-      id="ui-pro-dashboard"
-      to="https://github.com/nuxt-ui-pro/dashboard"
+      id="frontend-nation-2024"
+      to="https://frontendnation.com/?utm_source=nuxt-website"
     >
       <div class="flex items-center gap-2">
         <UIcon
-          name="i-ph-layout-duotone"
+          name="i-ph-microphone-stage-duotone"
           class="w-5 h-5 flex-shrink-0 pointer-events-none"
         />
-        <span class="sm:hidden">Dashboard template with Vue & UI Pro</span>
-        <span class="hidden sm:inline-block">Discover our dashboard template made with Vue & Nuxt UI Pro</span>
+        <span>Join the Nuxt Team at Frontend Nation 4-7 June.</span>
         <UButton
-          label="Open on GitHub"
+          label="Sign up for free"
           color="white"
           trailing-icon="i-ph-arrow-right"
           size="2xs"
