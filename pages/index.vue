@@ -52,7 +52,7 @@ useSeoMeta({
         <NuxtLink
           to="https://github.com/nuxt/nuxt"
           target="_blank"
-          class="text-primary hover:underline"
+          class="font-medium hover:underline underline-offset-2"
         >
           open source framework
         </NuxtLink> that makes web development intuitive and powerful.<br>Create performant and production-grade full-stack web apps and websites with confidence.
