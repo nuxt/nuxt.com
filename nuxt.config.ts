@@ -148,6 +148,11 @@ export default defineNuxtConfig({
   ui: {
     icons: ['simple-icons', 'ph', 'uil', 'heroicons', 'octicon', 'logos']
   },
+  image: {
+    ipx: {
+      baseURL: 'https://ipx.nuxt.com'
+    }
+  },
   content: {
     navigation: {
       fields: ['titleTemplate']
