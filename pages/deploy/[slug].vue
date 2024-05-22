@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import type { Hosting } from '~/types'
 import { withoutTrailingSlash } from 'ufo'
+import type { Hosting } from '~/types'
 
 const route = useRoute()
 const { slug } = route.params

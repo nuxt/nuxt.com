@@ -38,7 +38,7 @@ const links = computed(() => [{
   target: '_blank'
 }].filter(Boolean))
 
-const contributors = computed(() => module.value.contributors.map((contributor) => ({
+const contributors = computed(() => module.value.contributors.map(contributor => ({
   label: contributor.username,
   to: `https://github.com/${contributor.username}`,
   avatar: {

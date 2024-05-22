@@ -1,7 +1,7 @@
 ---
 title: Koyeb
 description: 'Deploy your Nuxt Application to Koyeb infrastructure.'
-logoSrc: '/assets/integrations/koyeb.svg'
+logoIcon: 'i-simple-icons-koyeb'
 category: Hosting
 nitroPreset: 'koyeb'
 website: 'https://www.koyeb.com/'

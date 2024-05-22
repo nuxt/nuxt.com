@@ -1,6 +1,6 @@
-import { serverQueryContent } from '#content/server'
 import { Feed } from 'feed'
 import { joinURL } from 'ufo'
+import { serverQueryContent } from '#content/server'
 
 export default defineEventHandler(async (event) => {
   const baseUrl = 'https://nuxt.com'
@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
     language: 'en',
     image: joinURL(baseUrl, 'icon.png'),
     favicon: joinURL(baseUrl, 'favicon.png'),
-    copyright: `Copyright © 2016-${ new Date().getFullYear() } Nuxt All Rights Reserved`,
+    copyright: `Copyright © 2016-${new Date().getFullYear()} Nuxt All Rights Reserved`,
     feedLinks: {
       rss: `${siteUrl}/rss.xml`
     }

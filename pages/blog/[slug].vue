@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { withoutTrailingSlash, joinURL } from 'ufo'
+import { withoutTrailingSlash } from 'ufo'
 import type { BlogArticle } from '~/types'
 
 const route = useRoute()
@@ -34,7 +34,8 @@ useSeoMeta({
 
 if (article.value.image) {
   defineOgImage({ url: article.value.image })
-} else {
+}
+else {
   defineOgImageComponent('Docs', {
     headline: 'Blog'
   })
@@ -49,7 +50,7 @@ const socialLinks = computed(() => [{
   to: `https://twitter.com/intent/tweet?text=${encodeURIComponent(`${article.value.title}${authorTwitter ? ` by @${article.value.authors[0].twitter}` : ''}\n\n`)}https://nuxt.com${article.value._path}`
 }])
 
-function copyLink () {
+function copyLink() {
   copy(`https://nuxt.com${article.value._path}`, { title: 'Copied to clipboard' })
 }
 const links = [
@@ -75,7 +76,6 @@ const links = [
     target: '_blank'
   }
 ]
-
 </script>
 
 <template>

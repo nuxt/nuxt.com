@@ -1,8 +1,8 @@
 navigation: false
 hero:
   cta:
-    label: "Nuxt: Looking forward"
-    to: /blog/looking-forward-2024
+    label: "Refreshed Nuxt ESLint Integrations"
+    to: /blog/eslint-module
     variant: outline
     icon: i-ph-arrow-right
     size: xs
@@ -190,12 +190,6 @@ sections:
       - src: /assets/integrations/netlify.svg
         alt: Netlify
         to: /deploy/netlify
-      - src: /assets/integrations/koyeb.svg
-        alt: Koyeb
-        to: /deploy/koyeb
-      - src: /assets/integrations/gitlab.svg
-        alt: GitLab
-        to: /deploy/gitlab
       - src: /assets/integrations/tailwind.svg
         alt: Tailwind CSS
         to: /modules/tailwindcss
@@ -244,6 +238,12 @@ sections:
     align: right
     slot: contributors
     links:
+      - label: 'Nuxters'
+        icon: i-simple-icons-nuxtdotjs
+        to: 'https://nuxters.nuxt.com'
+        target: _blank
+        color: black
+        size: md
       - label: Discord
         icon: 'i-simple-icons-discord'
         color: gray
