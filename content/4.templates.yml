@@ -194,5 +194,5 @@ templates:
     slug: 'shadcn-landing-pro'
     description: 'A ready-to-launch landing page template with Shadcn UI components.'
     demo: 'https://nuxt-shadcn-landing-pro.vercel.app/'
-    purchase: 'https://nuxt-shadcn-landing-pro.vercel.app/purchase?ref=nuxt_website&aff=J0Emk'
+    purchase: 'https://nuxt-shadcn-landing-pro.vercel.app/purchase?source=nuxt'
     badge: 'Premium'
