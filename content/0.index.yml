@@ -1,8 +1,8 @@
 navigation: false
 hero:
   cta:
-    label: "Refreshed Nuxt ESLint Integrations"
-    to: /blog/eslint-module
+    label: Nuxt v3.12 is out
+    to: /blog/v3-12
     variant: outline
     icon: i-ph-arrow-right
     size: xs
