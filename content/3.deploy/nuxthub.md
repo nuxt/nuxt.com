@@ -6,7 +6,7 @@ logoSrc: '/assets/integrations/nuxthub.svg'
 category: Hosting
 featured: true
 nitroPreset: 'cloudflare-pages'
-website: 'https://hub.nuxt.com'
+website: 'https://hub.nuxt.com/?utm_source=nuxt-website&utm_medium=deploy-page'
 ---
 
 ::tip
@@ -16,12 +16,12 @@ Integration with NuxtHub is possible with zero configuration, [learn more](https
 ::
 
 ::note
-NuxtHub is a deployment and administration platform for Nuxt, powered by Cloudflare. :br The main difference with the [Cloudflare](/deploy/cloudflare) deployment is that NuxtHub provides a zero-configuration deployment experience (provisioning, deployment, and administration). :br It also provides a powerful admin interface to manage your Nuxt projects (database, blob, KV, ...) as well as [remote storage](https://hub.nuxt.com/docs/getting-started/remote-storage).
+NuxtHub is a deployment and administration platform for Nuxt, powered by Cloudflare. :br The main difference with the [Cloudflare](/deploy/cloudflare) deployment is that NuxtHub provides a zero-configuration deployment experience (provisioning, deployment, and administration). :br It also provides a powerful admin interface to manage your Nuxt projects (database, blob, KV, ...) as well as [remote storage](https://hub.nuxt.com/docs/getting-started/remote-storage?utm_source=nuxt-website&utm_medium=deploy-page).
 ::
 
 ## Quick Start
 
-- Login to [admin.hub.nuxt.com](https://admin.hub.nuxt.com)
+- Login to [admin.hub.nuxt.com](https://admin.hub.nuxt.com/?utm_source=nuxt-website&utm_medium=deploy-page)
 - Connect your Cloudflare account by clicking on `Create a new token with required permissions` and follow the instructions
 - You are now ready to deploy your Nuxt project to your Cloudflare account!
 
@@ -48,7 +48,7 @@ npx nuxthub deploy
 ```
 
 The command will:
-1. Ensure you are logged in on [admin.hub.nuxt.com](https://admin.hub.nuxt.com)
+1. Ensure you are logged in on [admin.hub.nuxt.com](https://admin.hub.nuxt.com/?utm_source=nuxt-website&utm_medium=deploy-page)
 2. Link your local project with a NuxtHub project or help you create a new one
 3. Build your Nuxt project with the correct preset
 4. Deploy it to your Cloudflare account with all the necessary resources
