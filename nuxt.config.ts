@@ -111,7 +111,7 @@ export default defineNuxtConfig({
       // failOnError: false
       // TODO: investigate
       // Ignore weird url from crawler on some modules readme
-      ignore: ['/modules/%3C/span', '/modules/%253C/span', '/docs/getting-started/</span', '/docs/getting-started/%3C/span']
+      ignore: ['/modules/%3C/span', '/modules/%253C/span', '/docs/getting-started/</span', '/docs/getting-started/%3C/span', '/modules/Mojo CSS', '/modules/Mojo%20CSS']
     },
     hooks: {
       'prerender:generate'(route) {
