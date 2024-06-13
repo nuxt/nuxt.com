@@ -15,7 +15,7 @@ GitLab Pages only support static sites, Nuxt will pre-render your application to
 ::caution
 If you are **not** using a custom domain, you need to set `NUXT_APP_BASE_URL` to your repository-slug for your build step.
 
-**Example**: `https://<group/user>.gitlab.io/<repository>/`: `NUXT_APP_BASE_URL=/<repository>/ npx nuxt build --preset github_pages`
+**Example**: `https://<group/user>.gitlab.io/<repository>/`: `NUXT_APP_BASE_URL=/<repository>/ npm run genertate`
 ::
 
 ## Deployment
