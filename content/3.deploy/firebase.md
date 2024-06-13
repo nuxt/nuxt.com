@@ -203,7 +203,7 @@ export default defineEventHandler(async event => {
     return {
       status: 200,
       body: {
-        decodedToken
+        decodedToken // { uid: '123', email: 'example@example.com', ... }
       }
     }
   } catch (error) {
