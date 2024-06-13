@@ -173,7 +173,50 @@ const { data } = await useFetch("/api/functionThatWillDecodeIdTokenToVerifyConne
     Authorization: `Bearer ${sessionCookie.value?.idToken}`
   }
 });
+
 ```
+
+In the backend in `server/api/firebase/firebase.ts`
+
+```ts
+import { applicationDefault, initializeApp } from 'firebase-admin/app';
+import { getAuth } from 'firebase-admin/auth';
+import { getFirestore } from 'firebase-admin/firestore';
+const config = useRuntimeConfig()
+const defaultApp = initializeApp({
+  projectId: config.firebase?.projectID,
+  credential: applicationDefault()
+})
+export const firestore = getFirestore(defaultApp)
+export const auth = getAuth(defaultApp)
+```
+
+In the backend in `server/api/functionThatWillDecodeIdTokenToVerifyConnectedUser.ts`
+
+```ts
+import { auth } from "./firebase/firebase"
+
+export default defineEventHandler(async event => {
+  const headers = getHeaders(event)
+  try {
+    const decodedToken = await auth.verifyIdToken(String(headers.authorization)?.split('Bearer ')[1])
+    return {
+      status: 200,
+      body: {
+        decodedToken
+      }
+    }
+  } catch (error) {
+    return {
+      status: 401,
+      body: {
+        error: 'Unauthorized'
+      }
+    }
+  }
+}
+```
+
 
 ::read-more{to="https://firebase.google.com/docs/hosting/manage-cache#using_cookies" target="\_blank"}
 For more information, refer to the **Firebase documentation**.
