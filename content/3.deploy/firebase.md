@@ -151,6 +151,30 @@ Head over **Nitro documentation** to learn more about the Firebase deployment pr
 
 When using Firebase Hosting together with Cloud Functions or Cloud Run, cookies are generally stripped from incoming requests to allow for efficient CDN cache behavior. Only the specially-named `__session` cookie is permitted to pass through to your app.
 
+Example of how to useCookie to pass the idToken to verify the connected user
+
+```ts
+const sessionCookie = useCookie('__session', {
+  default: () => ({
+    idToken: '' as string | null
+  })
+})
+
+onIdTokenChanged(getAuth(), async (user) => {
+  if (user) {
+    sessionCookie.value.idToken = await user.getIdToken()
+  } else {
+    sessionCookie.value.idToken = null
+  }
+})
+
+const { data } = await useFetch("/api/functionThatWillDecodeIdTokenToVerifyConnectedUser", {
+  headers: {
+    Authorization: `Bearer ${sessionCookie.value?.idToken}`
+  }
+});
+```
+
 ::read-more{to="https://firebase.google.com/docs/hosting/manage-cache#using_cookies" target="\_blank"}
 For more information, refer to the **Firebase documentation**.
 ::
