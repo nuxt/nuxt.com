@@ -50,7 +50,7 @@ useSeoMeta({
       <template #description>
         Nuxt is an
         <NuxtLink
-          to="https://github.com/nuxt/nuxt"
+          to="https://go.nuxt.com/github"
           target="_blank"
           class="font-medium hover:underline underline-offset-2"
         >
