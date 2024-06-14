@@ -52,21 +52,21 @@ provide('navigation', navigation)
     <NuxtLoadingIndicator />
 
     <AppBanner
-      id="nuxthub-beta"
-      to="https://hub.nuxt.com/blog/beta?utm_source=nuxt-website&utm_medium=banner&utm_campaign=nuxthub-beta"
+      id="nuxt2-eol"
+      to="/blog/nuxt2-eol"
     >
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-1">
         <UIcon
-          name="i-simple-icons-nuxtdotjs"
+          name="i-ph-hourglass-low-duotone"
           class="w-5 h-5 flex-shrink-0 pointer-events-none hidden lg:inline-block"
         />
-        <span>NuxtHub is now in public beta<span class="hidden sm:inline">: build & deploy full-stack Nuxt applications</span>.</span>
+        <span>Nuxt 2 is reaching End-of-Life on June 30th, 2024.</span>
         <UButton
           label="Learn more"
           color="white"
           trailing-icon="i-ph-arrow-right"
           size="2xs"
-          class="rounded-full"
+          class="rounded-full ml-1"
         />
       </div>
     </AppBanner>
