@@ -60,7 +60,7 @@ provide('navigation', navigation)
           name="i-ph-hourglass-low-duotone"
           class="w-5 h-5 flex-shrink-0 pointer-events-none hidden lg:inline-block"
         />
-        <span>Nuxt 2 is reaching End-of-Life on June 30.</span>
+        <span>Nuxt 2 is reaching End-of-Life on June 30th, 2024.</span>
         <UButton
           label="Learn more"
           color="white"
