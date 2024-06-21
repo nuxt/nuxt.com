@@ -1,7 +1,13 @@
 import { serverQueryContent } from '#content/server'
 
 export default eventHandler(async (event) => {
-  return await serverQueryContent(event, '/docs').where({
+
+  const { select } = getQuery<{ select: string | undefined }>(event)
+  const fieldsToSelect = select?.split(',') ?? []
+
+  return await serverQueryContent(event, '/docs')
+  .only(fieldsToSelect)
+  .where({
     _type: 'markdown',
     _path: {
       $and: [{
