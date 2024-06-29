@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { satisfies } from 'semver'
 
 export default defineCachedEventHandler(async (event) => {
   const { version } = await getValidatedQuery(event, z.object({
@@ -9,13 +10,16 @@ export default defineCachedEventHandler(async (event) => {
   let modules = await fetchModules(event) as any[]
 
   if (version !== 'all') {
+    const major = (version === '2-bridge' ? '2' : version) satisfies '2' | '3'
+    const testableVersion = `${major}.999.999`
+
     // Filter out modules by compatibility
     modules = modules.filter((module) => {
       // Nuxt 2 + bridge
-      if (version === '2-bridge') {
-        return module.compatibility.nuxt.includes(`^2`) && module.compatibility.requires?.bridge
+      if (version === '2-bridge' && !module.compatibility.requires?.bridge) {
+        return false
       }
-      return module.compatibility.nuxt.includes(`^${version}`)
+      return satisfies(testableVersion, module.compatibility.nuxt)
     })
   }
 
