@@ -67,7 +67,7 @@ defineOgImageComponent('Docs', {
 <template>
   <UContainer>
     <UAlert
-      v-if="!module.compatibility?.nuxt?.includes('^3')"
+      v-if="!module.compatibility?.nuxt?.includes('^3') && !module.compatibility?.nuxt?.includes('>=3')"
       class="mt-4"
       icon="i-ph-warning-duotone"
       color="orange"
