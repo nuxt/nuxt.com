@@ -196,3 +196,8 @@ templates:
     demo: 'https://nuxt-shadcn-landing-pro.vercel.app/'
     purchase: 'https://waterwaystudios.lemonsqueezy.com/buy/48ba7098-5ef6-4177-ae64-e469f445e85f?aff=J0Emk'
     badge: 'Premium'
+  - name: 'Devport'
+    slug: 'devport'
+    description: 'Elegant and visually appealing personal portfolio template designed for developers, programmers on nuxt stack'
+    demo: 'https://pushpak1300.me'
+    repo: 'pushpak1300/pushpak1300.me'
