@@ -58,6 +58,11 @@
   "resolutions": {
     "@nuxt/kit": "3.12.2",
     "@nuxt/schema": "3.12.2",
-    "vue-tsc": "2.0.16"
+    "vue-tsc": "2.0.16",
+    "shiki": "latest",
+    "@shikijs/core": "latest",
+    "@shikijs/twoslash": "latest",
+    "@shikijs/vitepress-twoslash": "latest",
+    "@shikijs/transformers": "latest"
   }
 }
