@@ -30,7 +30,6 @@ function onSubmit() {
   }).catch((err) => {
     const error = JSON.parse(err.data?.message)
     const description = error[0].message || 'Something went wrong. Please try again later.'
-    console.log(err.data);
     toast.add({ title: 'Subscription failed', description, color: 'red' })
   }).finally(() => {
     loading.value = false
