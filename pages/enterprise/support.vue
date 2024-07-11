@@ -24,12 +24,16 @@ defineOgImageComponent('Docs', {
 <template>
   <UPage v-if="page">
     <UContainer>
-      <UPageHero :title="page.title" align="center">
+      <UPageHero :title="page.title" align="center" :links="page.hero.links">
         <template #description>
           <span v-html="page.description" />
         </template>
       </UPageHero>
     </UContainer>
+
+    <ULandingSection>
+      <LogoCarousel :logos="page.logos" />
+    </ULandingSection>
 
     <!-- eslint-disable vue/no-deprecated-slot-attribute -->
     <ULandingSection class="py-4 sm:py-8" :ui="{ container: 'gap-y-0 sm:gap-y-0' }">

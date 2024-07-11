@@ -1,9 +1,15 @@
-title: 'Nuxt Professional Support'
+title: 'Nuxt Professional Service'
 navigation.title: 'Support'
-description: 'Get professional support by Vue and Nuxt experts to achieve your objectives and overcome any challenge. <br/> We provide expertise and guidance to companies using Vue and Nuxt, including assistance with project architecture, performance optimization, best practices, and troubleshooting.'
+description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet.'
 head.title: 'Nuxt professional services'
 head.description: 'Get professional support by the Nuxt team to achieve your objectives and overcome any challenge.'
 navigation.icon: i-ph-lifebuoy-duotone
+hero:
+  links:
+  - label: Talk to an expert
+    color: black
+    to: '#'
+    size: lg
 form:
   name:
     label: 'Name'
@@ -47,20 +53,28 @@ testimonials:
 logos:
   - src: '/assets/support/malt.svg'
     width: '85'
+    height: '24'
   - src: '/assets/support/zadig-and-voltaire.svg'
-    width: '176'
+    width: '180'
+    height: '24'
   - src: '/assets/support/adyen.svg'
-    width: '75'
-  - src: '/assets/support/world-wide-technology.svg'
-    width: '116'
-  - src: '/assets/support/cora.svg'
-    width: '29'
-  - src: '/assets/support/mir.svg'
-    width: '55'
-  - src: '/assets/support/tchibo.svg'
     width: '85'
-  - src: '/assets/support/about-you.svg'
+    height: '24'
+  - src: '/assets/support/world-wide-technology.svg'
     width: '120'
+    height: '24'
+  - src: '/assets/support/cora.svg'
+    width: '40'
+    height: '24'
+  - src: '/assets/support/mir.svg'
+    width: '70'
+    height: '24'
+  - src: '/assets/support/tchibo.svg'
+    width: '100'
+    height: '24'
+  - src: '/assets/support/about-you.svg'
+    width: '150'
+    height: '24'
 faq:
   title: 'Frequently asked questions'
   description: 'Here are some of the most common questions we get asked about Nuxt support services.'
