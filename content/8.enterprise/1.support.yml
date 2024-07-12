@@ -54,27 +54,71 @@ logos:
   - src: '/assets/support/malt.svg'
     width: '85'
     height: '24'
+    alt: 'malt logo'
   - src: '/assets/support/zadig-and-voltaire.svg'
     width: '180'
     height: '24'
+    alt: 'zadig-and-voltaire logo'
   - src: '/assets/support/adyen.svg'
     width: '85'
     height: '24'
+    alt: 'adyen logo'
   - src: '/assets/support/world-wide-technology.svg'
     width: '120'
     height: '24'
+    alt: 'world-wide-technology logo'
   - src: '/assets/support/cora.svg'
     width: '40'
     height: '24'
+    alt: 'cora logo'
   - src: '/assets/support/mir.svg'
     width: '70'
     height: '24'
+    alt: 'mir logo'
   - src: '/assets/support/tchibo.svg'
     width: '100'
     height: '24'
+    alt: 'tchibo logo'
   - src: '/assets/support/about-you.svg'
     width: '150'
     height: '24'
+    alt: 'about-you logo'
+service:
+  title: Our services
+  description: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet.
+  services:
+    - icon: i-ph-chart-line
+      title: Performances optimizations
+      description: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet.
+    - icon: i-ph-code
+      title: Performances optimizations
+      description: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet.
+    - icon: i-ph-rocket-launch
+      title: Performances optimizations
+      description: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet.
+    - icon: i-ph-pencil-ruler
+      title: Performances optimizations
+      description: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet.
+expertise:
+  title: 'The highest level of expertise'
+  description: 'The Nuxt experts are Vue, Nuxt and Vite core team members or chosen contributors.'
+  logos:
+    - src: '/assets/enterprise/support/nuxt.png'
+      width: 32
+      height: 32
+      color: '#00DC82'
+    - src: '/assets/enterprise/support/vite.png'
+      width: 32
+      height: 32
+      color: '#a256fe'
+    - src: '/assets/enterprise/support/unjs.png'
+      width: 32
+      height: 32
+      color: '#ecdb5a'
+    - src: '/assets/enterprise/support/vue.png'
+      width: 32
+      height: 32
+      color: '#42b883'
 faq:
   title: 'Frequently asked questions'
   description: 'Here are some of the most common questions we get asked about Nuxt support services.'

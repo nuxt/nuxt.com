@@ -32,7 +32,21 @@ defineOgImageComponent('Docs', {
     </UContainer>
 
     <ULandingSection>
-      <LogoCarousel :logos="page.logos" />
+      <EnterpriseSupportLogoCarousel :logos="page.logos" />
+    </ULandingSection>
+
+    <ULandingSection v-bind="page.service" align="left">
+      <UPageGrid :ui="{ wrapper: 'xl:grid-cols-2' }">
+        <UPageCard v-for="service in page.service.services" :key="service.title" v-bind="service" :ui="{ background: 'card-bg', icon: { base: 'w-8 h-8' } }" />
+      </UPageGrid>
+    </ULandingSection>
+
+    <ULandingSection v-bind="page.expertise">
+      <div class="flex justify-center w-full gap-x-[92px]">
+        <div v-for="logo in page.expertise.logos" ref="circle" :key="logo.src" class="flex items-center justify-center">
+          <EnterpriseSupportExpertiseCircle :logo="logo" />
+        </div>
+      </div>
     </ULandingSection>
 
     <!-- eslint-disable vue/no-deprecated-slot-attribute -->
@@ -46,7 +60,7 @@ defineOgImageComponent('Docs', {
       <UPageColumns class="my-[72px]">
         <!-- Hack for Safari -->
         <div v-for="(testimonial, index) in page.testimonials" :key="index" class="break-inside-avoid">
-          <ULandingTestimonial v-bind="testimonial" :ui="{ background: 'card-testimonial-bg' }" />
+          <ULandingTestimonial v-bind="testimonial" :ui="{ background: 'card-bg' }" />
         </div>
       </UPageColumns>
     </ULandingSection>
@@ -57,7 +71,7 @@ defineOgImageComponent('Docs', {
 </template>
 
 <style scoped lang="postcss">
-.dark .card-testimonial-bg {
+.dark .card-bg {
   background: linear-gradient(0deg, rgba(15, 23, 42, 0.20) 0%, rgba(15, 23, 42, 0.20) 100%), linear-gradient(180deg, rgba(51, 65, 85, 0.50) 0%, rgba(2, 4, 32, 0.50) 33.92%);
 }
 </style>
