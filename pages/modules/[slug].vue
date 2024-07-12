@@ -127,7 +127,7 @@ defineOgImageComponent('Docs', {
 
         <UTooltip text="GitHub Stars">
           <NuxtLink class="flex items-center gap-1.5" :to="`https://github.com/${module.repo}`" target="_blank">
-            <span class="text-sm font-medium">v{{module.stats.version}}</span> 
+            <span class="text-sm font-medium">v{{ module.stats.version }}</span>
           </NuxtLink>
         </UTooltip>
 
