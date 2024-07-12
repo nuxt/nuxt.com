@@ -123,6 +123,14 @@ defineOgImageComponent('Docs', {
           </NuxtLink>
         </UTooltip>
 
+        <span class="hidden lg:block text-gray-500 dark:text-gray-400">&bull;</span>
+
+        <UTooltip text="GitHub Stars">
+          <NuxtLink class="flex items-center gap-1.5" :to="`https://github.com/${module.repo}`" target="_blank">
+            <span class="text-sm font-medium">v{{module.stats.version}}</span> 
+          </NuxtLink>
+        </UTooltip>
+
         <div class="mx-3 h-6 border-l border-gray-200 dark:border-gray-800 w-px hidden lg:block" />
 
         <div v-for="(maintainer, index) in module.maintainers" :key="maintainer.github" class="flex items-center gap-3">

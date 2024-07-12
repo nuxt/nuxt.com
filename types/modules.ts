@@ -21,6 +21,7 @@ export interface Module {
   // tags: string[]
   compatibility: { nuxt: string, requires: { bridge: boolean } }
   stats: {
+    version: any
     downloads: number
     stars: number
     publishedAt: number
