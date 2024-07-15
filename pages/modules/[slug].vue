@@ -127,6 +127,7 @@ defineOgImageComponent('Docs', {
 
         <UTooltip text="Latest Version">
           <NuxtLink class="flex items-center gap-1.5" :to="`${module.github}/releases`" target="_blank">
+            <UIcon name="i-ph-tag-duotone" class="w-5 h-5 flex-shrink-0" />
             <span class="text-sm font-medium">v{{ module.stats.version }}</span>
           </NuxtLink>
         </UTooltip>
