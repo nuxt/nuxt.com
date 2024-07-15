@@ -1,3 +1,15 @@
+<script lang="ts" setup>
+const { logo } = defineProps({
+  logo: {
+    type: Object as PropType<{ src: string, height: number, width: number, color: string }>,
+    default: () => {}
+  }
+})
+const color = logo.color
+const circle = ref<HTMLDivElement>()
+const { elementX, elementY } = useMouseInElement(circle)
+</script>
+
 <template>
   <div
     ref="circle"
@@ -12,18 +24,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts" setup>
-const { logo } = defineProps({
-  logo: {
-    type: Object as PropType<{ src: string, height: number, width: number, color: string }>,
-    default: () => {}
-  }
-})
-const color = logo.color
-const circle = ref<HTMLDivElement>()
-const { elementX, elementY } = useMouseInElement(circle)
-</script>
 
 <style scoped lang="postcss">
 .circle-gradient::before {

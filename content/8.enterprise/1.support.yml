@@ -37,19 +37,6 @@ call:
     label: 'Choose a meeting'
     to: https://calendly.com/nuxt-experts/introduction
     target: _blank
-testimonials:
-  - quote: "Choosing NuxtLabs for an audit of our Nuxt project was a game-changer. Their detailed insights significantly enhanced our site's performance and the quality of our code. We're grateful for their support and highly recommend them to others."
-    author:
-      name: 'Melene Ulm'
-      description: 'Web Developer @ Mobile Industrial Robots'
-  - quote: "I'd highly recommend their services for anyone looking into Nuxt, to ensure you get all the benefits that it can provide and make sure your team follow all the best practice design patterns."
-    author:
-      name: 'James Baddiley'
-      description: 'CEO/CTO Chillisauce.com'
-  - quote: "The expert provided us with valuable feedback, which included improvements on how we can utilize Nuxt and the ecosystem more effectively, raising questions about the background of historic implementation and finding bugs that we did not yet catch."
-    author:
-      name: 'Robert K Pauls'
-      description: 'Lead Frontend Engineer @ Scayle'
 logos:
   - src: '/assets/support/malt.svg'
     width: '85'
@@ -119,13 +106,82 @@ expertise:
       width: 32
       height: 32
       color: '#42b883'
+testimonials:
+  title: 'What our clients say'
+  description: 'Hear from our clients about how our consulting services have transformed their projects and boosted their performance.'
+  items:
+    - quote: "“I'd highly recommend their services for anyone looking into a Nuxt, to ensure you get all the benefits that it can provide and make sure your team follow all the best practice design patterns.“"
+      author: 'James Baddiley'
+      job: 'CEO/CTO Chillisauce.com'
+      logo: '/assets/enterprise/support/testimonials/chillisauce.svg'
+      achievements:
+        - label: 'Nuxt 3 Migration'
+          color: 'green'
+        - label: 'Nuxt 3 Migration'
+          color: 'blue'
+        - label: 'Nuxt 3 Migration'
+          color: 'violet'
+    - quote: "“I'd highly recommend their services for anyone looking into a Nuxt, to ensure you get all the benefits that it can provide and make sure your team follow all the best practice design patterns.“"
+      author: 'James Baddiley'
+      job: 'CEO/CTO Chillisauce.com'
+      logo: '/assets/enterprise/support/testimonials/chillisauce.svg'
+      achievements:
+        - label: 'Nuxt 3 Migration'
+          color: 'green'
+        - label: 'Nuxt 3 Migration'
+          color: 'blue'
+        - label: 'Nuxt 3 Migration'
+          color: 'violet'
+    - quote: "“I'd highly recommend their services for anyone looking into a Nuxt, to ensure you get all the benefits that it can provide and make sure your team follow all the best practice design patterns.“"
+      author: 'James Baddiley'
+      job: 'CEO/CTO Chillisauce.com'
+      logo: '/assets/enterprise/support/testimonials/chillisauce.svg'
+      achievements:
+        - label: 'Nuxt 3 Migration'
+          color: 'green'
+        - label: 'Nuxt 3 Migration'
+          color: 'blue'
+        - label: 'Nuxt 3 Migration'
+          color: 'violet'
+    - quote: "“I'd highly recommend their services for anyone looking into a Nuxt, to ensure you get all the benefits that it can provide and make sure your team follow all the best practice design patterns.“"
+      author: 'James Baddiley'
+      job: 'CEO/CTO Chillisauce.com'
+      logo: '/assets/enterprise/support/testimonials/chillisauce.svg'
+      achievements:
+        - label: 'Nuxt 3 Migration'
+          color: 'green'
+        - label: 'Nuxt 3 Migration'
+          color: 'blue'
+        - label: 'Nuxt 3 Migration'
+          color: 'violet'
+    - quote: "“I'd highly recommend their services for anyone looking into a Nuxt, to ensure you get all the benefits that it can provide and make sure your team follow all the best practice design patterns.“"
+      author: 'James Baddiley'
+      job: 'CEO/CTO Chillisauce.com'
+      logo: '/assets/enterprise/support/testimonials/chillisauce.svg'
+      achievements:
+        - label: 'Nuxt 3 Migration'
+          color: 'green'
+        - label: 'Nuxt 3 Migration'
+          color: 'blue'
+        - label: 'Nuxt 3 Migration'
+          color: 'violet'
+    - quote: "“I'd highly recommend their services for anyone looking into a Nuxt, to ensure you get all the benefits that it can provide and make sure your team follow all the best practice design patterns.“"
+      author: 'James Baddiley'
+      job: 'CEO/CTO Chillisauce.com'
+      logo: '/assets/enterprise/support/testimonials/chillisauce.svg'
+      achievements:
+        - label: 'Nuxt 3 Migration'
+          color: 'green'
+        - label: 'Nuxt 3 Migration'
+          color: 'blue'
+        - label: 'Nuxt 3 Migration'
+          color: 'violet'
 faq:
   title: 'Frequently asked questions'
   description: 'Here are some of the most common questions we get asked about Nuxt support services.'
   items:
     - label: 'What are the steps to follow to gain access to NuxtLabs Professional services?'
-      content: >-
-        We start with an introduction meeting to gather information about your context and goals. We then provide you a quote suited to your needs. When confirmed, we introduce you to the Nuxt Expert, choose dates in common, setup the communication channel and necessary accesses.
+      content: "We start with an introduction meeting to gather information about your context and goals. We then provide you a quote suited to your needs. When confirmed, we introduce you to the Nuxt Expert, choose dates in common, setup the communication channel and necessary accesses."
     - label: 'What kind of services do we perform?'
       content: "We provide expertise and guidance to companies using Vue and Nuxt, including assistance with project architecture, performance optimization, best practices, and troubleshooting."
     - label: 'Who are the Nuxt experts?'

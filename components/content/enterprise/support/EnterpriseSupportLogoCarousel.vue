@@ -1,18 +1,3 @@
-<template>
-  <div class="overflow-hidden whitespace-nowrap relative h-12">
-    <div class="h-12 w-[400px] bg-gradient-to-r from-white dark:from-slate-950 via-transparent to-transparent absolute left-0 z-10" />
-    <div class="h-12 w-[400px] bg-gradient-to-r to-white dark:to-slate-950 via-transparent from-transparent absolute right-0 z-10" />
-    <div ref="carousel" class="flex carousel">
-      <div v-for="(logo, index) in logos" :key="index" class="carousel-item">
-        <img :src="logo.src" :width="logo.width" :height="logo.height" :alt="logo.alt">
-      </div>
-      <div v-for="(logo, index) in logos" :key="`duplicate-${index}`" class="carousel-item">
-        <img :src="logo.src" :width="logo.width" :height="logo.height" :alt="logo.alt">
-      </div>
-    </div>
-  </div>
-</template>
-
 <script lang="ts" setup>
 const { logos } = defineProps({
   logos: {
@@ -30,6 +15,21 @@ onMounted(() => {
   carousel.value.style.setProperty('--carousel-width', `${carouselWidth}px`)
 })
 </script>
+
+<template>
+  <div class="overflow-hidden whitespace-nowrap relative h-12">
+    <div class="h-12 w-[400px] bg-gradient-to-r from-white dark:from-slate-950 via-transparent to-transparent absolute left-0 z-10" />
+    <div class="h-12 w-[400px] bg-gradient-to-r to-white dark:to-slate-950 via-transparent from-transparent absolute right-0 z-10" />
+    <div ref="carousel" class="flex carousel">
+      <div v-for="(logo, index) in logos" :key="index" class="carousel-item">
+        <img :src="logo.src" :width="logo.width" :height="logo.height" :alt="logo.alt">
+      </div>
+      <div v-for="(logo, index) in logos" :key="`duplicate-${index}`" class="carousel-item">
+        <img :src="logo.src" :width="logo.width" :height="logo.height" :alt="logo.alt">
+      </div>
+    </div>
+  </div>
+</template>
 
 <style scoped lang="postcss">
 .carousel {
