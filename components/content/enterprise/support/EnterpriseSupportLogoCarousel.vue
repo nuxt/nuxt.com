@@ -6,14 +6,7 @@ const { logos } = defineProps({
   }
 })
 
-const carousel = ref(null)
-
-onMounted(() => {
-  const itemWidth = carousel.value.querySelector('.carousel-item').offsetWidth
-  const marginRight = parseInt(getComputedStyle(carousel.value.querySelector('.carousel-item')).marginRight)
-  const carouselWidth = (itemWidth + marginRight) * logos.length
-  carousel.value.style.setProperty('--carousel-width', `${carouselWidth}px`)
-})
+const carousel = ref<HTMLElement>(null)
 </script>
 
 <template>
@@ -21,10 +14,7 @@ onMounted(() => {
     <div class="h-12 w-[400px] bg-gradient-to-r from-white dark:from-slate-950 via-transparent to-transparent absolute left-0 z-10" />
     <div class="h-12 w-[400px] bg-gradient-to-r to-white dark:to-slate-950 via-transparent from-transparent absolute right-0 z-10" />
     <div ref="carousel" class="flex carousel">
-      <div v-for="(logo, index) in logos" :key="index" class="carousel-item">
-        <img :src="logo.src" :width="logo.width" :height="logo.height" :alt="logo.alt">
-      </div>
-      <div v-for="(logo, index) in logos" :key="`duplicate-${index}`" class="carousel-item">
+      <div v-for="(logo, index) in logos.concat(logos)" :key="index" class="carousel-item">
         <img :src="logo.src" :width="logo.width" :height="logo.height" :alt="logo.alt">
       </div>
     </div>
