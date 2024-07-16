@@ -61,8 +61,8 @@ onMounted(() => {
     </ULandingSection>
 
     <ULandingSection v-bind="page.expertise">
-      <div class="flex justify-center w-full gap-x-[92px]">
-        <div v-for="logo in page.expertise.logos" ref="circle" :key="logo.src" class="flex items-center justify-center">
+      <div class="flex justify-center w-full gap-4 sm:gap-x-16 md:gap-x-[92px]">
+        <div v-for="logo in page.expertise.logos" :key="logo.src" class="flex items-center justify-center">
           <EnterpriseSupportExpertiseCircle ref="carouselCard" :logo="logo" />
         </div>
       </div>
@@ -72,40 +72,66 @@ onMounted(() => {
 
     <div class="relative pb-24 sm:pb-32 flex flex-col gap-16 sm:gap-y-24">
       <div class="relative">
-        <div class="w-1/3 h-[300px] bg-gradient-to-r from-gray-950/90 via-gray-950/60 to-transparent absolute left-0 inset-y-0 z-10" />
-        <div class="w-1/3 h-[300px] bg-gradient-to-l from-gray-950/90 via-gray-950/60 to-transparent absolute right-0 inset-y-0 z-10" />
+        <div class="hidden lg:block w-1/3 h-[400px] bg-gradient-to-r from-white/90 via-white/60 dark:from-gray-950/90 dark:via-gray-950/60 to-transparent absolute left-0 -top-10 z-10" />
+        <div class="hidden lg:block w-1/3 h-[400px] bg-gradient-to-l from-white/90 via-white/60 dark:from-gray-950/90 dark:via-gray-950/60 to-transparent absolute right-0 -top-10 z-10" />
         <UCarousel
           ref="carousel"
           v-slot="{ item }"
-          autoplay
           :items="page.testimonials.items"
           indicators
-          :ui="{ container: 'pl-[30%] pr-[30%] pb-4', item: 'w-full max-w-[582px] first:pl-0.5 px-4 last:pr-0.5', indicators: { wrapper: '-bottom-4' } }"
+          :ui="{ container: 'pl-4 pr-4 lg:pl-[30%] lg:pr-[30%] py-4 -mt-12', item: 'basis-full w-full lg:max-w-[582px] first:pl-0.5 px-4 last:pr-0.5', indicators: { wrapper: '-bottom-4', inactive: 'bg-gray-200 mix-blend-normal' } }"
         >
-          <div class="mx-auto">
-            <EnterpriseSupportClientCard v-bind="item" />
+          <div class="mx-auto w-full h-full">
+            <EnterpriseSupportClientCard v-bind="item" :ui="{ background: 'card-bg h-full' }" />
           </div>
         </UCarousel>
       </div>
     </div>
 
-    <!-- eslint-disable vue/no-deprecated-slot-attribute -->
-    <ULandingSection class="py-4 sm:py-8" :ui="{ container: 'gap-y-0 sm:gap-y-0' }">
-      <EnterpriseSupportFormSection :form="page.form" :call="page.call" />
-      <ul class="flex space-x-10 flex-wrap justify-center mt-10">
-        <li v-for="(logo) in page.logos" :key="logo" class="pt-8">
-          <NuxtImg :src="logo.src" :width="logo.width" height="24" alt="" />
-        </li>
-      </ul>
-      <UPageColumns class="my-[72px]">
-        <!-- Hack for Safari -->
-        <div v-for="(testimonial, index) in page.testimonials" :key="index" class="break-inside-avoid">
-          <ULandingTestimonial v-bind="testimonial" :ui="{ background: 'card-bg' }" />
+    <ULandingSection v-bind="page.project" align="left" :ui="{ links: 'mt-8 flex flex-wrap justify-center lg:justify-start gap-x-3 gap-y-1.5', base: 'text-center lg:text-left flex flex-col items-center lg:items-start' }">
+      <div class="w-full flex flex-col items-center justify-center">
+        <div class="flex flex-col space-y-4">
+          <div class="flex space-x-4 relative">
+            <div class="absolute left-4 top-0 h-full hidden lg:block w-2">
+              <svg
+                width="2"
+                height="150"
+                viewBox="0 0 2 150"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                class="absolute left-4 -top-12 h-full z-[-1]"
+              >
+                <path d="M1 0L1 153" stroke="#334155" stroke-dasharray="4 4" />
+                <path d="M1 142L1 295" stroke="#334155" stroke-dasharray="4 4" />
+              </svg>
+            </div>
+            <ul class="flex flex-col gap-y-4 pt-1">
+              <li v-for="step in page.project.steps" :key="step.title" class="flex gap-x-3">
+                <div
+                  class="h-8 w-8 flex items-center justify-center border border-1 border-gray-700 rounded-full bg-gray-900 px-3 py-1"
+                >
+                  {{ step.number }}
+                </div>
+                <div class="pt-1">
+                  <h3 class="font-bold">
+                    {{ step.title }}
+                  </h3>
+                  <p class="text-gray-600 dark:text-gray-400 text-[15px]">
+                    {{ step.description }}
+                  </p>
+                </div>
+              </li>
+            </ul>
+          </div>
         </div>
-      </UPageColumns>
+      </div>
     </ULandingSection>
-    <ULandingSection :title="page.faq.title" :description="page.faq.description" class="py-4 sm:py-8">
-      <ULandingFAQ :items="page.faq.items" class="pt-[72px]" />
+
+    <!-- eslint-disable vue/no-deprecated-slot-attribute -->
+    <ULandingSection :title="page.form.title" :description="page.form.description" :ui="{ container: 'gap-y-0 sm:gap-y-0' }">
+      <div class="pt-8 w-full flex justify-center">
+        <EnterpriseSupportFormSection :form="page.form" />
+      </div>
     </ULandingSection>
   </UPage>
 </template>

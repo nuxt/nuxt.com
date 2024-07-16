@@ -13,8 +13,8 @@ defineProps({
     default: ''
   },
   logo: {
-    type: String,
-    default: ''
+    type: Object as PropType<{ src: string, alt: string }>,
+    default: () => ({})
   },
   achievements: {
     type: Array as PropType<Array<{ title: string, color: string }>>,
@@ -24,7 +24,7 @@ defineProps({
 </script>
 
 <template>
-  <UPageCard :ui="{ background: 'card-bg' }">
+  <UPageCard>
     <template #description>
       {{ quote }}
     </template>
@@ -38,11 +38,11 @@ defineProps({
           {{ job }}
         </div>
       </div>
-      <img :src="logo" width="140" height="20">
+      <img :src="logo.src" width="140" height="20" :alt="logo.alt">
     </div>
 
     <template #footer>
-      <ul class="flex gap-x-1">
+      <ul class="flex gap-x-1 flex-wrap gap-2">
         <li v-for="achievement in achievements" :key="achievement.title">
           <UBadge v-bind="achievement" variant="subtle" />
         </li>
@@ -50,9 +50,3 @@ defineProps({
     </template>
   </UPageCard>
 </template>
-
-<style lang="postcss">
-.dark .card-bg {
-  background: linear-gradient(0deg, rgba(15, 23, 42, 0.20) 0%, rgba(15, 23, 42, 0.20) 100%), linear-gradient(180deg, rgba(51, 65, 85, 0.50) 0%, rgba(2, 4, 32, 0.50) 33.92%);
-}
-</style>

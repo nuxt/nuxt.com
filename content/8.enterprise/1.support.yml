@@ -10,33 +10,6 @@ hero:
     color: black
     to: '#'
     size: lg
-form:
-  name:
-    label: 'Name'
-    placeholder: 'John Doe'
-  email:
-    label: 'Company Email'
-    placeholder: 'you@example.com'
-  company:
-    label: 'Company'
-    placeholder: 'Your company name'
-  body:
-    label: 'What can we help you achieve?'
-    placeholder: 'Tell us how we can help you'
-  info: 'By submitting this form, I confirm that I have read and understood the <a class="text-gray-950 dark:text-gray-100 underline font-medium">Nuxt Privacy Statement.</a>'
-  button:
-    icon: i-ph-paper-plane-right-duotone
-    label: 'Send message'
-call:
-  description: >-
-    ## Talk to us
-
-    Book 30 minutes with us to learn more about our support solutions, present your needs and your project, and get personalized proposals to solve your issues.
-  button:
-    icon: i-ph-calendar-plus-duotone
-    label: 'Choose a meeting'
-    to: https://calendly.com/nuxt-experts/introduction
-    target: _blank
 logos:
   - src: '/assets/support/malt.svg'
     width: '85'
@@ -94,18 +67,22 @@ expertise:
       width: 32
       height: 32
       color: '#00DC82'
+      alt: 'nuxt logo'
     - src: '/assets/enterprise/support/vite.png'
       width: 32
       height: 32
       color: '#a256fe'
+      alt: 'vite logo'
     - src: '/assets/enterprise/support/unjs.png'
       width: 32
       height: 32
       color: '#ecdb5a'
+      alt: 'unjs logo'
     - src: '/assets/enterprise/support/vue.png'
       width: 32
       height: 32
       color: '#42b883'
+      alt: 'vue logo'
 testimonials:
   title: 'What our clients say'
   description: 'Hear from our clients about how our consulting services have transformed their projects and boosted their performance.'
@@ -113,76 +90,125 @@ testimonials:
     - quote: "“I'd highly recommend their services for anyone looking into a Nuxt, to ensure you get all the benefits that it can provide and make sure your team follow all the best practice design patterns.“"
       author: 'James Baddiley'
       job: 'CEO/CTO Chillisauce.com'
-      logo: '/assets/enterprise/support/testimonials/chillisauce.svg'
+      logo:
+        src: '/assets/enterprise/support/testimonials/chillisauce.svg'
+        alt: 'Chillisauce logo'
       achievements:
-        - label: 'Nuxt 3 Migration'
+        - label: 'Workshop'
           color: 'green'
-        - label: 'Nuxt 3 Migration'
+        - label: 'Migration'
           color: 'blue'
-        - label: 'Nuxt 3 Migration'
+        - label: 'Performances optimizations'
+          color: 'orange'
+        - label: 'Custom services'
           color: 'violet'
     - quote: "“I'd highly recommend their services for anyone looking into a Nuxt, to ensure you get all the benefits that it can provide and make sure your team follow all the best practice design patterns.“"
       author: 'James Baddiley'
       job: 'CEO/CTO Chillisauce.com'
-      logo: '/assets/enterprise/support/testimonials/chillisauce.svg'
+      logo:
+        src: '/assets/enterprise/support/testimonials/chillisauce.svg'
+        alt: 'Chillisauce logo'
       achievements:
-        - label: 'Nuxt 3 Migration'
+        - label: 'Workshop'
           color: 'green'
-        - label: 'Nuxt 3 Migration'
+        - label: 'Migration'
           color: 'blue'
-        - label: 'Nuxt 3 Migration'
+        - label: 'Performances optimizations'
+          color: 'orange'
+        - label: 'Custom services'
           color: 'violet'
     - quote: "“I'd highly recommend their services for anyone looking into a Nuxt, to ensure you get all the benefits that it can provide and make sure your team follow all the best practice design patterns.“"
       author: 'James Baddiley'
       job: 'CEO/CTO Chillisauce.com'
-      logo: '/assets/enterprise/support/testimonials/chillisauce.svg'
+      logo:
+        src: '/assets/enterprise/support/testimonials/chillisauce.svg'
+        alt: 'Chillisauce logo'
       achievements:
-        - label: 'Nuxt 3 Migration'
+        - label: 'Workshop'
           color: 'green'
-        - label: 'Nuxt 3 Migration'
+        - label: 'Migration'
           color: 'blue'
-        - label: 'Nuxt 3 Migration'
+        - label: 'Performances optimizations'
+          color: 'orange'
+        - label: 'Custom services'
           color: 'violet'
     - quote: "“I'd highly recommend their services for anyone looking into a Nuxt, to ensure you get all the benefits that it can provide and make sure your team follow all the best practice design patterns.“"
       author: 'James Baddiley'
       job: 'CEO/CTO Chillisauce.com'
-      logo: '/assets/enterprise/support/testimonials/chillisauce.svg'
+      logo:
+        src: '/assets/enterprise/support/testimonials/chillisauce.svg'
+        alt: 'Chillisauce logo'
       achievements:
-        - label: 'Nuxt 3 Migration'
+        - label: 'Workshop'
           color: 'green'
-        - label: 'Nuxt 3 Migration'
+        - label: 'Migration'
           color: 'blue'
-        - label: 'Nuxt 3 Migration'
+        - label: 'Performances optimizations'
+          color: 'orange'
+        - label: 'Custom services'
           color: 'violet'
     - quote: "“I'd highly recommend their services for anyone looking into a Nuxt, to ensure you get all the benefits that it can provide and make sure your team follow all the best practice design patterns.“"
       author: 'James Baddiley'
       job: 'CEO/CTO Chillisauce.com'
-      logo: '/assets/enterprise/support/testimonials/chillisauce.svg'
+      logo:
+        src: '/assets/enterprise/support/testimonials/chillisauce.svg'
+        alt: 'Chillisauce logo'
       achievements:
-        - label: 'Nuxt 3 Migration'
+        - label: 'Workshop'
           color: 'green'
-        - label: 'Nuxt 3 Migration'
+        - label: 'Migration'
           color: 'blue'
-        - label: 'Nuxt 3 Migration'
+        - label: 'Performances optimizations'
+          color: 'orange'
+        - label: 'Custom services'
           color: 'violet'
     - quote: "“I'd highly recommend their services for anyone looking into a Nuxt, to ensure you get all the benefits that it can provide and make sure your team follow all the best practice design patterns.“"
       author: 'James Baddiley'
       job: 'CEO/CTO Chillisauce.com'
-      logo: '/assets/enterprise/support/testimonials/chillisauce.svg'
+      logo:
+        src: '/assets/enterprise/support/testimonials/chillisauce.svg'
+        alt: 'Chillisauce logo'
       achievements:
-        - label: 'Nuxt 3 Migration'
+        - label: 'Workshop'
           color: 'green'
-        - label: 'Nuxt 3 Migration'
+        - label: 'Migration'
           color: 'blue'
-        - label: 'Nuxt 3 Migration'
+        - label: 'Performances optimizations'
+          color: 'orange'
+        - label: 'Custom services'
           color: 'violet'
-faq:
-  title: 'Frequently asked questions'
-  description: 'Here are some of the most common questions we get asked about Nuxt support services.'
-  items:
-    - label: 'What are the steps to follow to gain access to NuxtLabs Professional services?'
-      content: "We start with an introduction meeting to gather information about your context and goals. We then provide you a quote suited to your needs. When confirmed, we introduce you to the Nuxt Expert, choose dates in common, setup the communication channel and necessary accesses."
-    - label: 'What kind of services do we perform?'
-      content: "We provide expertise and guidance to companies using Vue and Nuxt, including assistance with project architecture, performance optimization, best practices, and troubleshooting."
-    - label: 'Who are the Nuxt experts?'
-      content: "The Nuxt experts are Vue, Nuxt or Vite core team members or chosen contributors. The highest level of expertise that you can find."
+project:
+  title: 'Lorem ipsum dolor sit amet'
+  description: "Nuxt UI Pro ships with an extensive set of advanced components that cover a wide range of use-cases."
+  steps:
+    - title: 'Introduction meeting'
+      description: "Choose a primary and a gray color from your Tailwind CSS color palette. Components will be styled accordingly."
+      number: 1
+    - title: 'A quote suited to your needs'
+      description: "Choose a primary and a gray color from your Tailwind CSS color palette. Components will be styled accordingly."
+      number: 2
+    - title: 'Introduce you to the Nuxt Expert'
+      description: "Choose a primary and a gray color from your Tailwind CSS color palette. Components will be styled accordingly."
+      number: 3
+form:
+  title: 'Lorem ipsum dolor sit amet'
+  description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec,"
+  name:
+    label: 'Name'
+    placeholder: 'John Doe'
+  email:
+    label: 'Company Email'
+    placeholder: 'you@example.com'
+  company:
+    label: 'Company'
+    placeholder: 'Your company name'
+  link:
+    label: 'Useful link'
+    placeholder: 'www.nuxt.com'
+  body:
+    label: 'What can we help you achieve?'
+    placeholder: 'Tell us how we can help you'
+  info: 'By submitting this form, I confirm that I have read and understood the <a class="text-gray-950 dark:text-gray-100 underline font-medium">Nuxt Privacy Statement.</a>'
+  button:
+    icon: i-ph-paper-plane-right-duotone
+    label: 'Send message'
