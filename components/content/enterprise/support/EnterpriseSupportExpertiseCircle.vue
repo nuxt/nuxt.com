@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 const { logo } = defineProps({
   logo: {
-    type: Object as PropType<{ src: string, height: number, width: number, color: string }>,
+    type: Object as PropType<{ src: string, height: number, width: number, color: string, alt: string }>,
     default: () => {}
   }
 })
@@ -17,10 +17,10 @@ const { elementX, elementY } = useMouseInElement(circle)
       '--x': `${elementX}px`,
       '--y': `${elementY}px`
     }"
-    class="relative group isolate ring-1 bg-white dark:bg-gray-900 ring-gray-200 dark:ring-gray-800 before:hidden before:lg:block before:absolute before:-inset-[2px] before:h-[calc(100%+4px)] before:w-[calc(100%+4px)] before:z-[-1] before:rounded-full flex-1 flex flex-col shadow circle-gradient items-center justify-center rounded-full"
+    class="relative group isolate ring-1 bg-white dark:bg-gray-900 ring-gray-200 dark:ring-gray-800 before:hidden before:lg:block before:absolute before:-inset-[2px] before:h-[calc(100%+4px)] before:w-[calc(100%+4px)] before:z-[-1] before:rounded-full lg:flex-1 flex flex-col shadow circle-gradient items-center justify-center rounded-full"
   >
-    <div class="p-6 flex-1 flex flex-col overflow-hidden rounded-full divide-y divide-gray-200 dark:divide-gray-800 bg-white dark:bg-gray-900 hover:bg-opacity-90 dark:hover:bg-opacity-90 transition-[background-opacity]">
-      <img :src="logo.src" :width="logo.width" :height="logo.height">
+    <div class="p-5 sm:p-6 flex-1 flex flex-col overflow-hidden rounded-full divide-y divide-gray-200 dark:divide-gray-800 bg-white dark:bg-gray-900 hover:bg-opacity-90 dark:hover:bg-opacity-90 transition-[background-opacity]">
+      <img :src="logo.src" :width="logo.width" :height="logo.height" :alt="logo.alt">
     </div>
   </div>
 </template>
