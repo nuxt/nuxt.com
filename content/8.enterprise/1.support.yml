@@ -178,7 +178,7 @@ testimonials:
         - label: 'Custom services'
           color: 'violet'
 project:
-  title: 'Lorem ipsum dolor sit amet'
+  title: 'My project'
   description: "Nuxt UI Pro ships with an extensive set of advanced components that cover a wide range of use-cases."
   steps:
     - title: 'Introduction meeting'
