@@ -1,8 +1,8 @@
 title: 'Nuxt Professional Service'
 navigation.title: 'Support'
-description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet.'
+description: 'Vue and Nuxt professionnal support and consulting services by the creators and maintainers of Vue and Nuxt for code audit and performance optimization.'
 head.title: 'Nuxt professional services'
-head.description: 'Get professional support by the Nuxt team to achieve your objectives and overcome any challenge.'
+head.description: 'Get professional support by the Nuxt experts to optimize your site perfomance and overcome any challenge.'
 navigation.icon: i-ph-lifebuoy-duotone
 hero:
   links:
@@ -45,20 +45,20 @@ logos:
     alt: 'about-you logo'
 service:
   title: Our services
-  description: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet.
+  description: We provide expertise and guidance to companies using Vue and Nuxt, including assistance with project architecture, performance optimization, best practices, and troubleshooting.
   services:
     - icon: i-ph-chart-line
       title: Performances optimizations
-      description: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet.
+      description: Optimize your Nuxt application with tailored recommendations to make it faster and more reliable than ever.
     - icon: i-ph-code
-      title: Performances optimizations
-      description: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet.
+      title: Migration to Nuxt
+      description: Make any migration project a successful and painless experience from the first steps to the deployment.
     - icon: i-ph-rocket-launch
-      title: Performances optimizations
-      description: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet.
+      title: Nuxt Workshop
+      description: Bring your team’s skills to the expert level with custom workshops session and continuous support.
     - icon: i-ph-pencil-ruler
-      title: Performances optimizations
-      description: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet.
+      title: Custom servicess
+      description: Tell us what you’re looking for and we’ll find the most effective way to assist you in achieving your goals.
 expertise:
   title: 'The highest level of expertise'
   description: 'The Nuxt experts are Vue, Nuxt and Vite core team members or chosen contributors.'
@@ -87,112 +87,85 @@ testimonials:
   title: 'What our clients say'
   description: 'Hear from our clients about how our consulting services have transformed their projects and boosted their performance.'
   items:
-    - quote: "“I'd highly recommend their services for anyone looking into a Nuxt, to ensure you get all the benefits that it can provide and make sure your team follow all the best practice design patterns.“"
+    - quote: "“I'd highly recommend their services for anyone looking into Nuxt, to ensure you get all the benefits that it can provide and make sure your team follow all the best practice design patterns.“"
       author: 'James Baddiley'
-      job: 'CEO/CTO Chillisauce.com'
+      job: 'CEO/CTO @ Chillisauce'
       logo:
         src: '/assets/enterprise/support/testimonials/chillisauce.svg'
         alt: 'Chillisauce logo'
       achievements:
-        - label: 'Workshop'
-          color: 'green'
-        - label: 'Migration'
+        - label: 'Migration to Nuxt'
           color: 'blue'
-        - label: 'Performances optimizations'
+        - label: 'Performances optimization'
           color: 'orange'
-        - label: 'Custom services'
-          color: 'violet'
-    - quote: "“I'd highly recommend their services for anyone looking into a Nuxt, to ensure you get all the benefits that it can provide and make sure your team follow all the best practice design patterns.“"
-      author: 'James Baddiley'
-      job: 'CEO/CTO Chillisauce.com'
+        - label: 'Long-term support'
+          color: 'yellow'
+    - quote: "“Choosing NuxtLabs for an audit of our Nuxt project was a game-changer. Their detailed insights significantly enhanced our site's performance and the quality of our code. We're grateful for their support and highly recommend them to others.“"
+      author: 'Melene Ulm'
+      job: 'Web Developer @ Mobile Industrial Robots'
       logo:
         src: '/assets/enterprise/support/testimonials/chillisauce.svg'
         alt: 'Chillisauce logo'
       achievements:
-        - label: 'Workshop'
-          color: 'green'
-        - label: 'Migration'
-          color: 'blue'
-        - label: 'Performances optimizations'
+        - label: 'Codebase audit'
+          color: 'pink'
+        - label: 'Performances optimization'
           color: 'orange'
-        - label: 'Custom services'
-          color: 'violet'
-    - quote: "“I'd highly recommend their services for anyone looking into a Nuxt, to ensure you get all the benefits that it can provide and make sure your team follow all the best practice design patterns.“"
-      author: 'James Baddiley'
-      job: 'CEO/CTO Chillisauce.com'
+        - label: 'Long-term support'
+          color: 'yellow'
+    - quote: "“The expert provided us with valuable feedback, which included improvements on how we can utilize Nuxt and the ecosystem more effectively, raising questions about the background of historic implementation and finding bugs that we did not yet catch.“"
+      author: 'Robert K Pauls'
+      job: 'Lead Frontend Engineer @ Scayle'
       logo:
         src: '/assets/enterprise/support/testimonials/chillisauce.svg'
         alt: 'Chillisauce logo'
       achievements:
-        - label: 'Workshop'
-          color: 'green'
-        - label: 'Migration'
-          color: 'blue'
-        - label: 'Performances optimizations'
+        - label: 'Performances optimization'
           color: 'orange'
-        - label: 'Custom services'
-          color: 'violet'
-    - quote: "“I'd highly recommend their services for anyone looking into a Nuxt, to ensure you get all the benefits that it can provide and make sure your team follow all the best practice design patterns.“"
-      author: 'James Baddiley'
-      job: 'CEO/CTO Chillisauce.com'
+        - label: 'Codebase audit'
+          color: 'pink'
+    - quote: "“They provided excellent feedback on how to make the core of our app more efficient as well some very valuable tips for the features we are planing to implement in the near future.“"
+      author: 'Maxime Casadei'
+      job: 'CEO @ Nak Web Co'
       logo:
         src: '/assets/enterprise/support/testimonials/chillisauce.svg'
         alt: 'Chillisauce logo'
       achievements:
-        - label: 'Workshop'
-          color: 'green'
-        - label: 'Migration'
+        - label: 'Migration to Nuxt'
           color: 'blue'
         - label: 'Performances optimizations'
           color: 'orange'
-        - label: 'Custom services'
-          color: 'violet'
-    - quote: "“I'd highly recommend their services for anyone looking into a Nuxt, to ensure you get all the benefits that it can provide and make sure your team follow all the best practice design patterns.“"
-      author: 'James Baddiley'
-      job: 'CEO/CTO Chillisauce.com'
+        - label: 'Codebase audit'
+          color: 'pink'
+    - quote: "“NuxtLabs was amazing to work with.  They found hidden opportunities buried deep within our codebase.  Our enterprise application is now faster, more secure and reliable than ever!“"
+      author: 'Josh Deltener'
+      job: 'Director of software engineering @ RealTruck.com'
       logo:
         src: '/assets/enterprise/support/testimonials/chillisauce.svg'
         alt: 'Chillisauce logo'
       achievements:
-        - label: 'Workshop'
-          color: 'green'
-        - label: 'Migration'
+        - label: 'Migration to Nuxt'
           color: 'blue'
         - label: 'Performances optimizations'
           color: 'orange'
-        - label: 'Custom services'
-          color: 'violet'
-    - quote: "“I'd highly recommend their services for anyone looking into a Nuxt, to ensure you get all the benefits that it can provide and make sure your team follow all the best practice design patterns.“"
-      author: 'James Baddiley'
-      job: 'CEO/CTO Chillisauce.com'
-      logo:
-        src: '/assets/enterprise/support/testimonials/chillisauce.svg'
-        alt: 'Chillisauce logo'
-      achievements:
-        - label: 'Workshop'
-          color: 'green'
-        - label: 'Migration'
-          color: 'blue'
-        - label: 'Performances optimizations'
-          color: 'orange'
-        - label: 'Custom services'
-          color: 'violet'
+        - label: 'Codebase audit'
+          color: 'pink'
 project:
-  title: 'My project'
-  description: "Nuxt UI Pro ships with an extensive set of advanced components that cover a wide range of use-cases."
+  title: 'How do we proceed?'
+  description: "3 easy steps to get professionnal support and consulting services from a Vue & Nuxt expert"
   steps:
     - title: 'Introduction meeting'
-      description: "Choose a primary and a gray color from your Tailwind CSS color palette. Components will be styled accordingly."
+      description: "This first meeting is dedicated to gather as much information as possible about your needs and context, for us to determine the right service by the the right expert."
       number: 1
     - title: 'A quote suited to your needs'
-      description: "Choose a primary and a gray color from your Tailwind CSS color palette. Components will be styled accordingly."
+      description: "Based on the information you provided and from previous similar consulting engagements, we will build a custom quote"
       number: 2
     - title: 'Introduce you to the Nuxt Expert'
-      description: "Choose a primary and a gray color from your Tailwind CSS color palette. Components will be styled accordingly."
+      description: "Once an agreement is reached, the expert will be introduced to your team to start performing the agreed engagement."
       number: 3
 form:
-  title: 'Lorem ipsum dolor sit amet'
-  description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec,"
+  title: 'Get in Touch with Us'
+  description: "Have questions or need assistance? Fill out the form below, and we'll get back to you as soon as possible."
   name:
     label: 'Name'
     placeholder: 'John Doe'
