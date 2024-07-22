@@ -108,7 +108,7 @@ onMounted(() => {
             <ul class="flex flex-col gap-y-4 pt-1">
               <li v-for="step in page.project.steps" :key="step.title" class="flex gap-x-3">
                 <div
-                  class="h-8 w-8 flex items-center justify-center border border-1 border-gray-700 rounded-full bg-gray-900 px-3 py-1"
+                  class="h-8 w-8 flex items-center justify-center border border-1 border-gray-300 dark:border-gray-700 rounded-full bg-white dark:bg-gray-900 px-3 py-1"
                 >
                   {{ step.number }}
                 </div>
