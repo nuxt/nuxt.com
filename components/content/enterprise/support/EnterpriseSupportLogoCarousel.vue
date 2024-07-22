@@ -11,8 +11,8 @@ const carousel = ref<HTMLElement>(null)
 
 <template>
   <div class="overflow-hidden whitespace-nowrap relative h-12">
-    <div class="h-12 w-[400px] bg-gradient-to-r from-white dark:from-slate-950 via-transparent to-transparent absolute left-0 z-10" />
-    <div class="h-12 w-[400px] bg-gradient-to-r to-white dark:to-slate-950 via-transparent from-transparent absolute right-0 z-10" />
+    <div class="h-12 w-[50px] sm:w-[100px] md:w-[200px] lg:w-[400px] bg-gradient-to-r from-white dark:from-slate-950 via-transparent to-transparent absolute left-0 z-10" />
+    <div class="h-12 w-[50px] sm:w-[100px] md:w-[200px] lg:w-[400px] bg-gradient-to-r to-white dark:to-slate-950 via-transparent from-transparent absolute right-0 z-10" />
     <div ref="carousel" class="flex carousel">
       <div v-for="(logo, index) in logos.concat(logos)" :key="index" class="carousel-item">
         <img :src="logo.src" :width="logo.width" :height="logo.height" :alt="logo.alt">
