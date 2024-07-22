@@ -13,7 +13,7 @@ defineProps({
     default: ''
   },
   logo: {
-    type: Object as PropType<{ src: string, alt: string }>,
+    type: Object as PropType<{ light: string, dark: string, alt: string }>,
     default: () => ({})
   },
   achievements: {
@@ -39,7 +39,8 @@ defineProps({
             {{ job }}
           </div>
         </div>
-        <img :src="logo.src" width="140" height="20" :alt="logo.alt" class="text-gray-900 dark:text-white">
+
+        <UColorModeImage :light="logo.light" :dark="logo.dark" width="140" height="20" :alt="logo.alt" />
       </div>
 
       <ul class="flex gap-x-1 flex-wrap gap-2">

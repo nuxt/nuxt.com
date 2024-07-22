@@ -91,7 +91,8 @@ testimonials:
       author: 'James Baddiley'
       job: 'CEO/CTO @ Chillisauce'
       logo:
-        src: '/assets/enterprise/support/testimonials/chillisauce.svg'
+        light: '/assets/enterprise/support/testimonials/light/chillisauce.svg'
+        dark: '/assets/enterprise/support/testimonials/dark/chillisauce.svg'
         alt: 'Chillisauce logo'
       achievements:
         - label: 'Migration to Nuxt'
@@ -104,7 +105,8 @@ testimonials:
       author: 'Melene Ulm'
       job: 'Web Developer @ Mobile Industrial Robots'
       logo:
-        src: '/assets/enterprise/support/testimonials/chillisauce.svg'
+        light: '/assets/enterprise/support/testimonials/light/chillisauce.svg'
+        dark: '/assets/enterprise/support/testimonials/dark/chillisauce.svg'
         alt: 'Chillisauce logo'
       achievements:
         - label: 'Codebase audit'
@@ -117,7 +119,8 @@ testimonials:
       author: 'Robert K Pauls'
       job: 'Lead Frontend Engineer @ Scayle'
       logo:
-        src: '/assets/enterprise/support/testimonials/chillisauce.svg'
+        light: '/assets/enterprise/support/testimonials/light/chillisauce.svg'
+        dark: '/assets/enterprise/support/testimonials/dark/chillisauce.svg'
         alt: 'Chillisauce logo'
       achievements:
         - label: 'Performances optimization'
@@ -128,7 +131,8 @@ testimonials:
       author: 'Maxime Casadei'
       job: 'CEO @ Nak Web Co'
       logo:
-        src: '/assets/enterprise/support/testimonials/chillisauce.svg'
+        light: '/assets/enterprise/support/testimonials/light/chillisauce.svg'
+        dark: '/assets/enterprise/support/testimonials/dark/chillisauce.svg'
         alt: 'Chillisauce logo'
       achievements:
         - label: 'Migration to Nuxt'
@@ -141,7 +145,8 @@ testimonials:
       author: 'Josh Deltener'
       job: 'Director of software engineering @ RealTruck.com'
       logo:
-        src: '/assets/enterprise/support/testimonials/chillisauce.svg'
+        light: '/assets/enterprise/support/testimonials/light/chillisauce.svg'
+        dark: '/assets/enterprise/support/testimonials/dark/chillisauce.svg'
         alt: 'Chillisauce logo'
       achievements:
         - label: 'Migration to Nuxt'
