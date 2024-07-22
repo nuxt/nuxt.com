@@ -29,24 +29,29 @@ defineProps({
       {{ quote }}
     </template>
 
-    <div class="flex justify-between gap-x-2 pt-6">
-      <div>
-        <div class="font-semibold text-gray-900 dark:text-white">
-          {{ author }}
+    <div class="flex flex-col justify-between h-full gap-y-4">
+      <div class="flex justify-between gap-x-2 pt-6">
+        <div>
+          <div class="font-semibold text-gray-900 dark:text-white">
+            {{ author }}
+          </div>
+          <div class="text-sm text-gray-600 dark:text-gray-400">
+            {{ job }}
+          </div>
         </div>
-        <div class="text-sm text-gray-600 dark:text-gray-400">
-          {{ job }}
-        </div>
+        <img :src="logo.src" width="140" height="20" :alt="logo.alt">
       </div>
-      <img :src="logo.src" width="140" height="20" :alt="logo.alt">
-    </div>
 
-    <template #footer>
       <ul class="flex gap-x-1 flex-wrap gap-2">
         <li v-for="achievement in achievements" :key="achievement.title">
           <UBadge v-bind="achievement" variant="subtle" />
         </li>
       </ul>
-    </template>
+    </div>
   </UPageCard>
+  <!-- Safelist color for badge -->
+  <!-- <UBadge color="pink" /> -->
+  <!-- <UBadge color="orange" /> -->
+  <!-- <UBadge color="yellow" /> -->
+  <!-- <UBadge color="purple" /> -->
 </template>

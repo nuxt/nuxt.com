@@ -82,7 +82,7 @@ onMounted(() => {
           :ui="{ container: 'pl-4 pr-4 lg:pl-[30%] lg:pr-[30%] py-4 -mt-12', item: 'basis-full w-full lg:max-w-[582px] first:pl-0.5 px-4 last:pr-0.5', indicators: { wrapper: '-bottom-4', inactive: 'bg-gray-200 mix-blend-normal' } }"
         >
           <div class="mx-auto w-full h-full">
-            <EnterpriseSupportClientCard v-bind="item" :ui="{ background: 'card-bg h-full' }" />
+            <EnterpriseSupportClientCard v-bind="item" :ui="{ background: 'card-bg h-full', body: { base: 'flex flex-col justify-between h-full' } }" />
           </div>
         </UCarousel>
       </div>
