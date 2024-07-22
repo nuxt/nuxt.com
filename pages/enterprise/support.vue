@@ -2,6 +2,7 @@
 const carousel = ref()
 const carouselCard = ref()
 const route = useRoute()
+const intervalId = ref()
 
 const { isOutside } = useMouseInElement(carousel)
 
@@ -28,7 +29,7 @@ onMounted(() => {
   setTimeout(() => {
     carousel.value.select(2)
 
-    setInterval(() => {
+    intervalId.value = setInterval(() => {
       if (isOutside.value) {
         if (!carousel.value) return
 
@@ -40,6 +41,10 @@ onMounted(() => {
       }
     }, 3000)
   }, 100)
+})
+
+onBeforeUnmount(() => {
+  clearInterval(intervalId.value)
 })
 </script>
 
