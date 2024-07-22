@@ -99,7 +99,7 @@ onBeforeUnmount(() => {
     <ULandingSection v-bind="page.project" align="left" :ui="{ links: 'mt-8 flex flex-wrap justify-center lg:justify-start gap-x-3 gap-y-1.5', base: 'text-center lg:text-left flex flex-col items-center lg:items-start' }">
       <div class="w-full flex flex-col items-center justify-center">
         <div class="flex flex-col space-y-4">
-          <div class="flex space-x-4 relative">
+          <div class="flex lg:space-x-4 relative">
             <div class="absolute left-4 top-0 h-full hidden lg:block w-2">
               <svg
                 width="2"

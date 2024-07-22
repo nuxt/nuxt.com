@@ -39,7 +39,7 @@ defineProps({
             {{ job }}
           </div>
         </div>
-        <img :src="logo.src" width="140" height="20" :alt="logo.alt">
+        <img :src="logo.src" width="140" height="20" :alt="logo.alt" class="text-gray-900 dark:text-white">
       </div>
 
       <ul class="flex gap-x-1 flex-wrap gap-2">
