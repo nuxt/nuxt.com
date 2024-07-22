@@ -1,8 +1,9 @@
 <script setup lang="ts">
 const carousel = ref()
 const carouselCard = ref()
-
 const route = useRoute()
+
+const { isOutside } = useMouseInElement(carousel)
 
 const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
 if (!page.value) {
@@ -28,13 +29,15 @@ onMounted(() => {
     carousel.value.select(2)
 
     setInterval(() => {
-      if (!carousel.value) return
+      if (isOutside.value) {
+        if (!carousel.value) return
 
-      if (carousel.value.page === carousel.value.pages) {
-        return carousel.value.select(0)
+        if (carousel.value.page === carousel.value.pages) {
+          return carousel.value.select(0)
+        }
+
+        carousel.value.next()
       }
-
-      carousel.value.next()
     }, 3000)
   }, 100)
 })
