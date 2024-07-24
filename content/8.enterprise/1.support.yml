@@ -58,7 +58,7 @@ service:
       description: Bring your team’s skills to the expert level with custom workshops session and continuous support.
     - icon: i-ph-pencil-ruler
       title: Custom servicess
-      description: Tell us what you’re looking for and we’ll find the most effective way to assist you in achieving your goals.
+      description: Tell us what you’re looking for and we’ll find the most effective way to help you achieve your goals.
 expertise:
   title: 'The highest level of expertise'
   description: 'The Nuxt experts are Vue, Nuxt and Vite core team members or chosen contributors.'
@@ -141,7 +141,7 @@ testimonials:
           color: 'orange'
         - label: 'Codebase audit'
           color: 'pink'
-    - quote: "“NuxtLabs was amazing to work with.  They found hidden opportunities buried deep within our codebase.  Our enterprise application is now faster, more secure and reliable than ever!“"
+    - quote: "“NuxtLabs was amazing to work with. They found hidden opportunities buried deep within our codebase. Our enterprise application is now faster, more secure and reliable than ever!“"
       author: 'Josh Deltener'
       job: 'Director of software engineering @ RealTruck.com'
       logo:
@@ -163,10 +163,10 @@ project:
       description: "This first meeting is dedicated to gather as much information as possible about your needs and context, for us to determine the right service by the the right expert."
       number: 1
     - title: 'A quote suited to your needs'
-      description: "Based on the information you provided and from previous similar consulting engagements, we will build a custom quote"
+      description: "Based on the information you provided and from previous similar consulting engagements, we will present a custom quote to answer your demand."
       number: 2
     - title: 'Introduce you to the Nuxt Expert'
-      description: "Once an agreement is reached, the expert will be introduced to your team to start performing the agreed engagement."
+      description: "Once an agreement is reached, the expert will be introduced to your team to start performing the consulting engagement."
       number: 3
 form:
   title: 'Get in Touch with Us'
