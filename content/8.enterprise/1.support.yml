@@ -199,7 +199,7 @@ project:
     - title: 'A quote suited to your needs'
       description: "Based on the information you provided and from previous similar consulting engagements, we will present a custom quote to answer your demand."
       number: 2
-    - title: 'Introduce you to the Nuxt Expert'
+    - title: 'Nuxt Expert onboarding'
       description: "Once an agreement is reached, the expert will be introduced to your team to start performing the consulting engagement."
       number: 3
 form:

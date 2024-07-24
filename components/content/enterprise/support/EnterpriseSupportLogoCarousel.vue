@@ -40,7 +40,7 @@ const startAnimation = () => {
 
 <style scoped lang="postcss">
 .carousel {
-  animation: scroll 20s linear infinite;
+  animation: scroll 30s linear infinite;
   animation-play-state: running;
 }
 
