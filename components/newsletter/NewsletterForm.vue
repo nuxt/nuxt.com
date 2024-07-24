@@ -15,8 +15,10 @@ const toast = useToast()
 const email = ref('')
 const loading = ref(false)
 
-function onSubmit () {
-  if (loading.value) { return }
+function onSubmit() {
+  if (loading.value) {
+    return
+  }
   loading.value = true
 
   $fetch('https://api.nuxt.com/newsletter/subscribe', {
@@ -26,7 +28,8 @@ function onSubmit () {
     toast.add({ title: 'Subscription pending', description: 'Please check your emails to confirm your subscription.', color: 'green' })
     email.value = ''
   }).catch((err) => {
-    const description = err.data?.message || 'Something went wrong. Please try again later.'
+    const error = JSON.parse(err.data?.message)
+    const description = error[0].message || 'Something went wrong. Please try again later.'
     toast.add({ title: 'Subscription failed', description, color: 'red' })
   }).finally(() => {
     loading.value = false

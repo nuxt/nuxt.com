@@ -1,5 +1,7 @@
 <script setup>
 import { vIntersectionObserver } from '@vueuse/components'
+
+const getImage = useImage()
 const start = ref(0)
 const total = 5 * 4
 const contributors = useState('contributors-grid', () => [])
@@ -7,14 +9,15 @@ const intersecting = ref(false)
 let _contributors
 let currentTimeout
 
-function onIntersectionObserver ([{ isIntersecting }]) {
+function onIntersectionObserver([{ isIntersecting }]) {
   intersecting.value = isIntersecting
   if (isIntersecting) {
     if (_contributors) {
       contributors.value = _contributors
     }
     startTimer()
-  } else {
+  }
+  else {
     stopTimer()
   }
 }
@@ -30,24 +33,26 @@ onMounted(async () => {
 onBeforeUnmount(stopTimer)
 
 const $contributors = computed(() => contributors.value.length ? contributors.value.slice(start.value, start.value + total) : new Array(total).fill(null))
-function startTimer (ms = 5000) {
+function startTimer(ms = 5000) {
   currentTimeout = setTimeout(nextContributors, ms)
 }
-function stopTimer () {
+function stopTimer() {
   clearTimeout(currentTimeout)
   currentTimeout = null
 }
-async function loadImages (usernames) {
-  await Promise.all(usernames.map(username => {
+async function loadImages(usernames) {
+  const size = window.devicePixelRatio === 2 ? '160px' : '80px'
+  await Promise.all(usernames.map((username) => {
     const img = new Image()
-    img.src = `https://ipx.nuxt.com/f_auto,s_${window.devicePixelRatio === 2 ? '160x160' : '80x80'}/gh_avatar/${username}`
-    return new Promise(resolve => {
+    img.src = getImage(`/gh_avatar/${username}`, { height: size, width: size, format: 'auto' }, { provider: 'ipx' })
+
+    return new Promise((resolve) => {
       img.onload = resolve
       img.onerror = resolve
     })
   }))
 }
-async function nextContributors () {
+async function nextContributors() {
   const newStart = (start.value + total >= contributors.value.length ? 0 : start.value + total)
   await loadImages(contributors.value.slice(newStart, newStart + total))
   start.value = newStart
@@ -77,20 +82,24 @@ async function nextContributors () {
           :key="username"
           :href="`https://nuxters.nuxt.com/${username}`"
           target="_blank"
-          class="absolute inset-0 block transition-all"
+          class="absolute inset-0 flex transition-all"
           :style="{
             'transition-delay': `${(index % 8 + Math.floor(index / 8)) * 20}ms`
           }"
         >
-          <UTooltip :text="username">
-            <img
-              :src="`https://ipx.nuxt.com/f_auto,s_80x80/gh_avatar/${username}`"
-              :srcset="`https://ipx.nuxt.com/f_auto,s_160x160/gh_avatar/${username} 2x`"
+          <UTooltip :text="username" class="w-full">
+            <NuxtImg
+              :src="`/gh_avatar/${username}`"
+              provider="ipx"
+              densities="x1 x2"
+              height="80px"
+              format="auto"
+              width="80px"
               :alt="username"
               loading="lazy"
               :title="username"
               class="rounded-xl w-full h-full transition lg:hover:scale-125"
-            >
+            />
           </UTooltip>
         </a>
       </Transition>

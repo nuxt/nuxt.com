@@ -12,13 +12,7 @@ useSeoMeta({
   ogDescription: description,
   ogTitle: title
 })
-
-defineOgImage({
-  component: 'Docs',
-  title,
-  description,
-  headline: ''
-})
+defineOgImageComponent('Docs')
 </script>
 
 <template>

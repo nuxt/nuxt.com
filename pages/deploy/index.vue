@@ -17,11 +17,8 @@ useSeoMeta({
   ogTitle: title
 })
 
-defineOgImage({
-  component: 'Docs',
-  title,
-  description,
-  headline: ''
+defineOgImageComponent('Docs', {
+  title: 'Deploy Nuxt'
 })
 
 await fetchList()

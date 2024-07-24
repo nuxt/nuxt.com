@@ -13,13 +13,7 @@ useSeoMeta({
   ogDescription: description,
   ogTitle: title
 })
-
-defineOgImage({
-  component: 'Docs',
-  title,
-  description,
-  headline: ''
-})
+defineOgImageComponent('Docs')
 
 await fetchList()
 </script>
@@ -41,6 +35,7 @@ await fetchList()
             v-for="(showcase, index) in selectedShowcases"
             :key="index"
             :to="showcase.url"
+            target="_blank"
             :title="showcase.title || showcase.hostname"
             :description="showcase.hostname"
             :ui="{ header: { base: 'aspect-w-4 aspect-h-2', padding: '' }, body: { padding: '!p-4' } }"
