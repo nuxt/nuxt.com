@@ -8,41 +8,65 @@ hero:
   links:
   - label: Talk to an expert
     color: black
-    to: '#'
+    to: 'https://calendly.com/ferdinand-nuxt/nuxtlabs-ferdinand'
     size: lg
+    target: '_blank'
 logos:
-  - src: '/assets/support/malt.svg'
+  - light: '/assets/enterprise/support/light/malt.svg'
+    dark: '/assets/enterprise/support/dark/malt.svg'
     width: '85'
     height: '24'
     alt: 'malt logo'
-  - src: '/assets/support/zadig-and-voltaire.svg'
+  - light: '/assets/enterprise/support/light/zadig-and-voltaire.svg'
+    dark: '/assets/enterprise/support/dark/zadig-and-voltaire.svg'
     width: '180'
     height: '24'
     alt: 'zadig-and-voltaire logo'
-  - src: '/assets/support/adyen.svg'
+  - light: '/assets/enterprise/support/light/adyen.svg'
+    dark: '/assets/enterprise/support/dark/adyen.svg'
     width: '85'
     height: '24'
     alt: 'adyen logo'
-  - src: '/assets/support/world-wide-technology.svg'
+  - light: '/assets/enterprise/support/light/world-wide-technology.svg'
+    dark: '/assets/enterprise/support/dark/world-wide-technology.svg'
     width: '120'
     height: '24'
     alt: 'world-wide-technology logo'
-  - src: '/assets/support/cora.svg'
+  - light: '/assets/enterprise/support/light/cora.svg'
+    dark: '/assets/enterprise/support/dark/cora.svg'
     width: '40'
     height: '24'
     alt: 'cora logo'
-  - src: '/assets/support/mir.svg'
+  - light: '/assets/enterprise/support/light/mir.svg'
+    dark: '/assets/enterprise/support/dark/mir.svg'
     width: '70'
     height: '24'
     alt: 'mir logo'
-  - src: '/assets/support/tchibo.svg'
+  - light: '/assets/enterprise/support/light/tchibo.svg'
+    dark: '/assets/enterprise/support/dark/tchibo.svg'
     width: '100'
     height: '24'
     alt: 'tchibo logo'
-  - src: '/assets/support/about-you.svg'
+  - light: '/assets/enterprise/support/light/about-you.svg'
+    dark: '/assets/enterprise/support/dark/about-you.svg'
     width: '150'
     height: '24'
     alt: 'about-you logo'
+  - light: '/assets/enterprise/support/light/chillisauce.svg'
+    dark: '/assets/enterprise/support/dark/chillisauce.svg'
+    width: '140'
+    height: '20'
+    alt: 'chillisauce logo'
+  - light: '/assets/enterprise/support/light/otypo.svg'
+    dark: '/assets/enterprise/support/dark/otypo.svg'
+    width: '120'
+    height: '47'
+    alt: 'otypo logo'
+  - light: '/assets/enterprise/support/light/realtruck.svg'
+    dark: '/assets/enterprise/support/dark/realtruck.svg'
+    width: '180'
+    height: '89'
+    alt: 'realtruck logo'
 service:
   title: Our services
   description: We provide expertise and guidance to companies using Vue and Nuxt, including assistance with project architecture, performance optimization, best practices, and troubleshooting.
@@ -91,9 +115,11 @@ testimonials:
       author: 'James Baddiley'
       job: 'CEO/CTO @ Chillisauce'
       logo:
-        light: '/assets/enterprise/support/testimonials/light/chillisauce.svg'
-        dark: '/assets/enterprise/support/testimonials/dark/chillisauce.svg'
-        alt: 'Chillisauce logo'
+        light: '/assets/enterprise/support/light/chillisauce.svg'
+        dark: '/assets/enterprise/support/dark/chillisauce.svg'
+        alt: 'chillisauce logo'
+        width: 134
+        height: 28
       achievements:
         - label: 'Migration to Nuxt'
           color: 'blue'
@@ -105,9 +131,11 @@ testimonials:
       author: 'Melene Ulm'
       job: 'Web Developer @ Mobile Industrial Robots'
       logo:
-        light: '/assets/enterprise/support/testimonials/light/chillisauce.svg'
-        dark: '/assets/enterprise/support/testimonials/dark/chillisauce.svg'
-        alt: 'Chillisauce logo'
+        light: '/assets/enterprise/support/light/mir.svg'
+        dark: '/assets/enterprise/support/dark/mir.svg'
+        alt: 'mir logo'
+        width: 54
+        height: 24
       achievements:
         - label: 'Codebase audit'
           color: 'pink'
@@ -117,11 +145,13 @@ testimonials:
           color: 'yellow'
     - quote: "“The expert provided us with valuable feedback, which included improvements on how we can utilize Nuxt and the ecosystem more effectively, raising questions about the background of historic implementation and finding bugs that we did not yet catch.“"
       author: 'Robert K Pauls'
-      job: 'Lead Frontend Engineer @ Scayle'
+      job: 'Lead dev at @ ABOUT YOU group'
       logo:
-        light: '/assets/enterprise/support/testimonials/light/chillisauce.svg'
-        dark: '/assets/enterprise/support/testimonials/dark/chillisauce.svg'
-        alt: 'Chillisauce logo'
+        light: '/assets/enterprise/support/light/about-you.svg'
+        dark: '/assets/enterprise/support/dark/about-you.svg'
+        alt: 'about you logo'
+        width: 120
+        height: 24
       achievements:
         - label: 'Performances optimization'
           color: 'orange'
@@ -129,11 +159,13 @@ testimonials:
           color: 'pink'
     - quote: "“They provided excellent feedback on how to make the core of our app more efficient as well some very valuable tips for the features we are planing to implement in the near future.“"
       author: 'Maxime Casadei'
-      job: 'CEO @ Nak Web Co'
+      job: 'CEO at @NAKWEB for Otypo'
+      width: 80
+      height: 20
       logo:
-        light: '/assets/enterprise/support/testimonials/light/chillisauce.svg'
-        dark: '/assets/enterprise/support/testimonials/dark/chillisauce.svg'
-        alt: 'Chillisauce logo'
+        light: '/assets/enterprise/support/light/otypo.svg'
+        dark: '/assets/enterprise/support/dark/otypo.svg'
+        alt: 'otypo logo'
       achievements:
         - label: 'Migration to Nuxt'
           color: 'blue'
@@ -145,9 +177,11 @@ testimonials:
       author: 'Josh Deltener'
       job: 'Director of software engineering @ RealTruck.com'
       logo:
-        light: '/assets/enterprise/support/testimonials/light/chillisauce.svg'
-        dark: '/assets/enterprise/support/testimonials/dark/chillisauce.svg'
-        alt: 'Chillisauce logo'
+        light: '/assets/enterprise/support/light/realtruck.svg'
+        dark: '/assets/enterprise/support/dark/realtruck.svg'
+        alt: 'realtruck logo'
+        width: 10
+        height: 30
       achievements:
         - label: 'Migration to Nuxt'
           color: 'blue'

@@ -13,7 +13,7 @@ defineProps({
     default: ''
   },
   logo: {
-    type: Object as PropType<{ light: string, dark: string, alt: string }>,
+    type: Object as PropType<{ light: string, dark: string, alt: string, width: number, height: number }>,
     default: () => ({})
   },
   achievements: {
@@ -29,8 +29,8 @@ defineProps({
       {{ quote }}
     </template>
 
-    <div class="flex flex-col justify-between h-full gap-y-4">
-      <div class="flex justify-between gap-x-2 pt-6">
+    <div class="flex flex-col justify-end h-full gap-y-4">
+      <div class="flex justify-between gap-x-8 pt-6">
         <div>
           <div class="font-semibold text-gray-900 dark:text-white">
             {{ author }}
@@ -40,7 +40,14 @@ defineProps({
           </div>
         </div>
 
-        <UColorModeImage :light="logo.light" :dark="logo.dark" width="140" height="20" :alt="logo.alt" />
+        <UColorModeImage
+          :light="logo.light"
+          :dark="logo.dark"
+          :width="logo.width"
+          :height="logo.height"
+          :alt="logo.alt"
+          class="h-[24px]"
+        />
       </div>
 
       <ul class="flex gap-x-1 flex-wrap gap-2">

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 const { logos } = defineProps({
   logos: {
-    type: Array<{ src: string, width: number, height: number, alt: string }>,
+    type: Array<{ src: string, width: number, height: number, alt: string, light: string, dark: string }>,
     require: true
   }
 })
@@ -31,8 +31,8 @@ const startAnimation = () => {
       @mouseover="stopAnimation"
       @mouseleave="startAnimation"
     >
-      <div v-for="(logo, index) in logos.concat(logos)" :key="index" class="carousel-item">
-        <img :src="logo.src" :width="logo.width" :height="logo.height" :alt="logo.alt">
+      <div v-for="({ light, dark, width, height, alt }, index) in logos.concat(logos)" :key="index" class="carousel-item items-center">
+        <UColorModeImage :light="light" :dark="dark" :width="width" :height="height" :alt="alt" />
       </div>
     </div>
   </div>
@@ -46,7 +46,7 @@ const startAnimation = () => {
 
 .carousel-item {
   flex: 0 0 auto;
-  margin-right: 58px;
+  margin-right: 68px;
 }
 
 @keyframes scroll {
@@ -54,7 +54,7 @@ const startAnimation = () => {
     transform: translateX(0);
   }
   100% {
-    transform: translateX(calc(-100% - 80px));
+    transform: translateX(calc(-166%));
   }
 }
 </style>

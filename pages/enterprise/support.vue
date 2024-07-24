@@ -1,9 +1,9 @@
 <script setup lang="ts">
 const carousel = ref()
 const carouselCard = ref()
-const route = useRoute()
 const intervalId = ref()
 
+const route = useRoute()
 const { isOutside } = useMouseInElement(carousel)
 
 const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
