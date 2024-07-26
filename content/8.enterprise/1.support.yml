@@ -72,7 +72,7 @@ service:
   description: We provide expertise and guidance to companies using Vue and Nuxt, including assistance with project architecture, performance optimization, best practices, and troubleshooting.
   services:
     - icon: i-ph-chart-line
-      title: Performances optimizations
+      title: Performance optimizations
       description: Optimize your Nuxt application with tailored recommendations to make it faster and more reliable than ever.
     - icon: i-ph-code
       title: Migration to Nuxt
@@ -81,7 +81,7 @@ service:
       title: Nuxt Workshop
       description: Bring your team’s skills to the expert level with custom workshops session and continuous support.
     - icon: i-ph-pencil-ruler
-      title: Custom servicess
+      title: Custom services
       description: Tell us what you’re looking for and we’ll find the most effective way to help you achieve your goals.
 expertise:
   title: 'The highest level of expertise'
@@ -123,7 +123,7 @@ testimonials:
       achievements:
         - label: 'Migration to Nuxt'
           color: 'blue'
-        - label: 'Performances optimization'
+        - label: 'Performance optimization'
           color: 'orange'
         - label: 'Long-term support'
           color: 'yellow'
@@ -139,7 +139,7 @@ testimonials:
       achievements:
         - label: 'Codebase audit'
           color: 'pink'
-        - label: 'Performances optimization'
+        - label: 'Performance optimization'
           color: 'orange'
         - label: 'Long-term support'
           color: 'yellow'
@@ -153,7 +153,7 @@ testimonials:
         width: 120
         height: 24
       achievements:
-        - label: 'Performances optimization'
+        - label: 'Performance optimization'
           color: 'orange'
         - label: 'Codebase audit'
           color: 'pink'
@@ -169,7 +169,7 @@ testimonials:
       achievements:
         - label: 'Migration to Nuxt'
           color: 'blue'
-        - label: 'Performances optimizations'
+        - label: 'Performance optimizations'
           color: 'orange'
         - label: 'Codebase audit'
           color: 'pink'
@@ -180,12 +180,12 @@ testimonials:
         light: '/assets/enterprise/support/light/realtruck.svg'
         dark: '/assets/enterprise/support/dark/realtruck.svg'
         alt: 'realtruck logo'
-        width: 10
+        width: 140
         height: 30
       achievements:
         - label: 'Migration to Nuxt'
           color: 'blue'
-        - label: 'Performances optimizations'
+        - label: 'Performance optimizations'
           color: 'orange'
         - label: 'Codebase audit'
           color: 'pink'
