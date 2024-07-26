@@ -191,7 +191,7 @@ testimonials:
           color: 'pink'
 project:
   title: 'How do we proceed?'
-  description: "3 easy steps to get professionnal support and consulting services from a Vue & Nuxt expert"
+  description: "3 easy steps to get professionnal support and consulting services from a Vue & Nuxt expert."
   steps:
     - title: 'Introduction meeting'
       description: "This first meeting is dedicated to gather as much information as possible about your needs and context, for us to determine the right service by the the right expert."
