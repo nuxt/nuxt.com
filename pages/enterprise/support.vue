@@ -21,8 +21,8 @@ useSeoMeta({
   ogTitle: `${title} · Enterprise`
 })
 
-defineOgImageComponent('Docs', {
-  headline: 'Enterprise'
+defineOgImage({
+  url: '/assets/enterprise/support/social-card.png'
 })
 
 onMounted(() => {
