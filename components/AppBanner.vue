@@ -41,6 +41,7 @@ if (import.meta.server) {
         <div class="flex items-center justify-end lg:flex-1">
           <button
             class="p-1.5 rounded-md inline-flex hover:bg-primary/90"
+            aria-label="Close banner"
             @click.prevent="hideBanner"
           >
             <UIcon name="i-heroicons-x-mark-20-solid" class="w-5 h-5 text-white dark:text-gray-900" />
