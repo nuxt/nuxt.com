@@ -152,5 +152,5 @@ function renderTag(tag: string) {
   if (TagAlertType[type]) {
     return ['::alert', tag, '::', '']
   }
-  return tag
+  return tag + '\n'
 }
