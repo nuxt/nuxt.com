@@ -61,7 +61,7 @@ templates:
     slug: 'supersaas'
     description: 'The dashboard system that makes you say WOW.'
     demo: 'https://supersaas.dev/?aff=J0Emk'
-    purchase: 'https://supersaas.dev/?aff=J0Emk'
+    purchase: 'https://store.supersaas.dev/?aff=J0Emk'
     badge: 'Premium'
   - name: 'Tairo'
     slug: 'tairo'
