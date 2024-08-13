@@ -40,6 +40,14 @@ The command will:
 4. Deploy it to your Cloudflare account with all the necessary resources
 4. Provide you with a URL to access your project
 
+See an example in video:
+
+::video{poster="https://res.cloudinary.com/nuxt/video/upload/v1723568812/nuxthub/nuxthub-deploy_xxs5s8.jpg" controls class="rounded dark:border dark:border-gray-700 md:w-2/3"}
+  :source{src="https://res.cloudinary.com/nuxt/video/upload/v1723568812/nuxthub/nuxthub-deploy_xxs5s8.webm" type="video/webm"}
+  :source{src="https://res.cloudinary.com/nuxt/video/upload/v1723568812/nuxthub/nuxthub-deploy_xxs5s8.mp4" type="video/mp4"}
+  :source{src="https://res.cloudinary.com/nuxt/video/upload/v1723568812/nuxthub/nuxthub-deploy_xxs5s8.ogg" type="video/ogg"}
+::
+
 ::note
 You can also install the [NuxtHub CLI](https://github.com/nuxt-hub/cli) globally with: `npm i -g nuxthub`.
 ::

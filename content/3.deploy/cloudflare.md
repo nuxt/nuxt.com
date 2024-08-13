@@ -16,7 +16,7 @@ Integration with Cloudflare Pages is possible with zero configuration, [learn mo
 ::
 
 ::important
-Checkout the [@nuxthub/core](/modules/hub) module to build full-stack Nuxt applications with Cloudflare.
+Checkout the [@nuxthub/core](/modules/hub) module to build full-stack Nuxt applications with Cloudflare, learn more on [hub.nuxt.com](https://hub.nuxt.com).
 ::
 
 ### Git Integration
