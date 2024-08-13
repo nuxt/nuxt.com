@@ -42,10 +42,10 @@ The command will:
 
 See an example in video:
 
-::video{poster="https://res.cloudinary.com/nuxt/video/upload/v1723568812/nuxthub/nuxthub-deploy_xxs5s8.jpg" controls class="rounded dark:border dark:border-gray-700 md:w-2/3"}
-  :source{src="https://res.cloudinary.com/nuxt/video/upload/v1723568812/nuxthub/nuxthub-deploy_xxs5s8.webm" type="video/webm"}
-  :source{src="https://res.cloudinary.com/nuxt/video/upload/v1723568812/nuxthub/nuxthub-deploy_xxs5s8.mp4" type="video/mp4"}
-  :source{src="https://res.cloudinary.com/nuxt/video/upload/v1723568812/nuxthub/nuxthub-deploy_xxs5s8.ogg" type="video/ogg"}
+::video{poster="https://res.cloudinary.com/nuxt/video/upload/v1723569534/nuxthub/nuxthub-deploy_xxs5s8.jpg" controls class="rounded dark:border dark:border-gray-700 md:w-2/3"}
+  :source{src="https://res.cloudinary.com/nuxt/video/upload/v1723569534/nuxthub/nuxthub-deploy_xxs5s8.webm" type="video/webm"}
+  :source{src="https://res.cloudinary.com/nuxt/video/upload/v1723569534/nuxthub/nuxthub-deploy_xxs5s8.mp4" type="video/mp4"}
+  :source{src="https://res.cloudinary.com/nuxt/video/upload/v1723569534/nuxthub/nuxthub-deploy_xxs5s8.ogg" type="video/ogg"}
 ::
 
 ::note
