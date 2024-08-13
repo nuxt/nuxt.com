@@ -91,6 +91,9 @@ export async function fetchOpenCollectiveSponsors() {
       offset = null
     }
     const sponsors = (data?.collective?.members?.nodes?.filter(sponsor => sponsor.tier).map((sponsor) => {
+      if (sponsor.account.slug === 'logto') {
+        sponsor.account.website = 'https://logto.io'
+      }
       return {
         sponsorId: sponsor.account.slug,
         sponsorName: sponsor.account.name,
