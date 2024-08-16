@@ -28,7 +28,7 @@
     "@nuxtjs/plausible": "^1.0.0",
     "@vueuse/components": "^11.0.0",
     "@vueuse/core": "^10.11.0",
-    "@vueuse/nuxt": "^10.11.0",
+    "@vueuse/nuxt": "^11.0.0",
     "feed": "^4.2.2",
     "floating-vue": "^5.2.2",
     "nuxt": "^3.12.3",
