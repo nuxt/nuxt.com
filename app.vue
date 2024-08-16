@@ -52,15 +52,15 @@ provide('navigation', navigation)
     <NuxtLoadingIndicator />
 
     <AppBanner
-      id="nuxt2-eol"
-      to="/blog/nuxt2-eol"
+      id="nuxt-tips"
+      to="https://michaelnthiessen.com/nuxt-tips-collection?aff=J0Emk"
     >
       <div class="flex items-center gap-1">
         <UIcon
-          name="i-ph-hourglass-low-duotone"
-          class="w-5 h-5 flex-shrink-0 pointer-events-none hidden lg:inline-block"
+          name="i-ph-magic-wand-duotone"
+          class="w-5 h-5 flex-shrink-0 pointer-events-none hidden lg:inline-block mr-1"
         />
-        <span>Nuxt 2 reached End-of-Life on June 30th, 2024.</span>
+        <span>Learn Nuxt with a Collection of 100+ Tips!</span>
         <UButton
           label="Learn more"
           color="white"

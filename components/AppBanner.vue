@@ -29,7 +29,7 @@ if (import.meta.server) {
 </script>
 
 <template>
-  <NuxtLink :to="to" class="block relative bg-primary hover:bg-primary/90 transition-[background] backdrop-blur z-50 app-banner">
+  <NuxtLink :to="to" target="_blank" class="block relative bg-primary hover:bg-primary/90 transition-[background] backdrop-blur z-50 app-banner">
     <UContainer class="py-2">
       <div class="flex items-center justify-between gap-2">
         <div class="lg:flex-1 hidden lg:flex items-center" />
