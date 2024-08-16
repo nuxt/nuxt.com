@@ -48,7 +48,7 @@ jobs:
       - run: npm install
       - run: npx nuxt build --preset github_pages
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: ./.output/public
   # Deployment job
@@ -68,7 +68,7 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4
 ```
 
 ::read-more{to="https://nitro.unjs.io/deploy/providers/github-pages" target="_blank"}
