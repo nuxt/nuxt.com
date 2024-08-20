@@ -1,8 +1,8 @@
 navigation: false
 hero:
   cta:
-    label: Nuxt v3.12 is out
-    to: /blog/v3-12
+    label: Introducing Nuxt Scripts
+    to: /blog/nuxt-scripts
     variant: outline
     icon: i-ph-arrow-right
     size: xs

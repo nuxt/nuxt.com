@@ -59,6 +59,7 @@ export default defineNuxtConfig({
     '@nuxtjs/plausible',
     '@nuxt/fonts',
     '@nuxt/eslint',
+    '@nuxt/scripts',
     '@nuxtjs/turnstile',
     '@nuxthq/studio',
     '@vueuse/nuxt',
