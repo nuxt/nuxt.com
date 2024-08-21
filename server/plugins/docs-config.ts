@@ -3,7 +3,6 @@ import type { Schema } from 'untyped'
 import { upperFirst } from 'scule'
 
 export default defineNitroPlugin((nitroApp) => {
-  // @ts-expect-error missing types for hook
   nitroApp.hooks.hook('content:file:beforeParse', async (file) => {
     // Disable docs readme
     if (file._id === 'nuxt-docs:docs:README.md') {
