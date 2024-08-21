@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { debounce } from 'perfect-debounce'
-import type { ParsedContent } from '@nuxt/content/dist/runtime/types'
+import type { ParsedContent } from '@nuxt/content'
 import './styles/twoslash.css'
 
 const search = ref(null)
