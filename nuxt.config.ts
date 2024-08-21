@@ -153,9 +153,6 @@ export default defineNuxtConfig({
   colorMode: {
     preference: 'dark'
   },
-  ui: {
-    icons: ['simple-icons', 'ph', 'uil', 'heroicons', 'octicon', 'logos']
-  },
   // image: {
   //   ipx: {
   //     baseURL: 'https://ipx.nuxt.com'
