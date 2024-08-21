@@ -21,6 +21,12 @@ defineProps({
     default: () => []
   }
 })
+
+type Achievement = {
+  title: string
+  // Work around a type mismatch where we have no access to BadgeColors from @nuxt/ui
+  color: any
+}
 </script>
 
 <template>
@@ -52,7 +58,7 @@ defineProps({
 
       <ul class="flex gap-x-1 flex-wrap gap-2">
         <li v-for="achievement in achievements" :key="achievement.title">
-          <UBadge v-bind="achievement" variant="subtle" />
+          <UBadge v-bind="achievement as Achievement" variant="subtle" />
         </li>
       </ul>
     </div>
