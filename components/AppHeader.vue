@@ -12,6 +12,7 @@ const { copy } = useCopyToClipboard()
 const version = computed(() => stats.value?.version?.match(/[0-9]+\.[0-9]+/)[0])
 
 const route = useRoute()
+const headerLinks = useNavigation().headerLinks
 const mobileNav = computed(() => {
   const links = mapContentNavigation(navigation.value)
 
@@ -20,7 +21,16 @@ const mobileNav = computed(() => {
   if (docsLink && !route.path.startsWith('/docs/bridge') && !route.path.startsWith('/docs/migration')) {
     docsLink.children = docsLink.children.filter(link => !['/docs/bridge', '/docs/migration'].includes(link.to as string))
   }
-  return links
+
+  return [
+    docsLink,
+    ...headerLinks.value.slice(1),
+    {
+      label: 'Design Kit',
+      icon: 'i-ph-palette-duotone',
+      to: '/design-kit'
+    }
+  ]
 })
 
 const open = ref(false)
