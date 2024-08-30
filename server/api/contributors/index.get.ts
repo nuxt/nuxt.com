@@ -33,6 +33,8 @@ export default cachedEventHandler(async (event) => {
   }
   // Sort by score
   contributors.sort((a, b) => b.score - a.score)
+  // Merge contributors with the same username but different lowercase/uppercase
+  contributors = mergeContributors(contributors)
 
   return contributors
 }, {
@@ -40,3 +42,27 @@ export default cachedEventHandler(async (event) => {
   swr: true,
   maxAge: 60 * 5 // 5 minutes
 })
+
+function mergeContributors(contributors: Array<VoltaContributor & { score: number }>) {
+  const mergedMap = new Map()
+
+  for (const contributor of contributors) {
+    const lowercaseUsername = contributor.username.toLowerCase()
+
+    if (mergedMap.has(lowercaseUsername)) {
+      const existingContributor = mergedMap.get(lowercaseUsername)
+
+      // Sum up all numeric properties
+      for (const [key, value] of Object.entries(contributor)) {
+        if (typeof value === 'number') {
+          existingContributor[key] = (existingContributor[key] || 0) + value
+        }
+      }
+    }
+    else {
+      mergedMap.set(lowercaseUsername, contributor)
+    }
+  }
+
+  return Array.from(mergedMap.values())
+};
