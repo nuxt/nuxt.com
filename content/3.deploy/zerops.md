@@ -11,7 +11,7 @@ website: "https://zerops.io"
 **Nodejs Preset**: `SERVER_PRESET: zerops`
 **Static Preset**: `SERVER_PRESET: zerops-static`
 
-:read-more{title="Zeabur" to="https://zerops.io"}
+:read-more{title="Zerops" to="https://zerops.io"}
 
 ::tip
 **Nuxt x Zerops Quickrun ✨**
