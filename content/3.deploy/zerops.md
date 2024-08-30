@@ -8,7 +8,8 @@ NuxtPreset: "zerops"
 website: "https://zerops.io"
 ---
 
-**Nodejs Preset**: `zerops`
+**Nodejs Preset**: `SERVER_PRESET: zerops`
+**Static Preset**: `SERVER_PRESET: zerops-static`
 
 :read-more{title="Zeabur" to="https://zerops.io"}
 
