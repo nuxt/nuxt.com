@@ -86,7 +86,27 @@ const _useNavigation = () => {
         target: '_blank'
       }]
     }, {
-      label: 'Enterprise',
+      label: 'Products',
+      icon: 'i-ph-sparkle-duotone',
+      search: false,
+      children: [{
+        label: 'Nuxt UI Pro',
+        to: 'https://ui.nuxt.com/pro?utm_source=nuxt-website&utm_medium=header',
+        description: 'Premium Vue components for Nuxt.',
+        icon: 'i-ph-layout-duotone'
+      }, {
+        label: 'Nuxt Studio',
+        to: 'https://nuxt.studio/?utm_source=nuxt-website&utm_medium=header',
+        description: 'The Git-based CMS for Nuxt.',
+        icon: 'i-ph-pen-duotone'
+      }, {
+        label: 'NuxtHub',
+        to: 'https://hub.nuxt.com/?utm_source=nuxt-website&utm_medium=header',
+        description: 'Build, deploy & manage Nuxt apps that scale.',
+        icon: 'i-ph-rocket-launch-duotone'
+      }]
+    }, {
+      label: 'Services',
       icon: 'i-ph-buildings-duotone',
       to: '/enterprise',
       search: false,
@@ -105,26 +125,6 @@ const _useNavigation = () => {
         to: '/enterprise/sponsors',
         description: 'Help us sustain Nuxt development.',
         icon: 'i-ph-hand-heart-duotone'
-      }]
-    }, {
-      label: 'Labs',
-      icon: 'i-ph-atom-duotone',
-      search: false,
-      children: [{
-        label: 'Nuxt UI Pro',
-        to: 'https://ui.nuxt.com/pro?utm_source=nuxt-website&utm_medium=header',
-        description: 'Premium Vue components for Nuxt.',
-        icon: 'i-ph-layout-duotone'
-      }, {
-        label: 'Nuxt Studio',
-        to: 'https://nuxt.studio/?utm_source=nuxt-website&utm_medium=header',
-        description: 'The Git-based CMS for Nuxt.',
-        icon: 'i-ph-pen-duotone'
-      }, {
-        label: 'NuxtHub',
-        to: 'https://hub.nuxt.com/?utm_source=nuxt-website&utm_medium=header',
-        description: 'Build, deploy & manage Nuxt apps that scale.',
-        icon: 'i-ph-rocket-launch-duotone'
       }]
     }, {
       label: 'Blog',
@@ -147,7 +147,7 @@ const _useNavigation = () => {
       to: '/design-kit'
     }]
   }, {
-    label: 'NuxtLabs',
+    label: 'Products',
     children: [{
       label: 'Nuxt UI Pro',
       to: 'https://ui.nuxt.com/pro?utm_source=nuxt-website&utm_medium=footer',
