@@ -67,7 +67,7 @@ defineOgImageComponent('Docs', {
 <template>
   <UContainer>
     <UAlert
-      v-if="!module.compatibility?.nuxt?.includes('^3')"
+      v-if="!module.compatibility?.nuxt?.includes('^3') && !module.compatibility?.nuxt?.includes('>=3')"
       class="mt-4"
       icon="i-ph-warning-duotone"
       color="orange"
@@ -120,6 +120,15 @@ defineOgImageComponent('Docs', {
           <NuxtLink class="flex items-center gap-1.5" :to="`https://github.com/${module.repo}`" target="_blank">
             <UIcon name="i-ph-star-duotone" class="w-5 h-5 flex-shrink-0" />
             <span class="text-sm font-medium">{{ formatNumber(module.stats.stars || 0) }} stars</span>
+          </NuxtLink>
+        </UTooltip>
+
+        <span class="hidden lg:block text-gray-500 dark:text-gray-400">&bull;</span>
+
+        <UTooltip text="Latest Version">
+          <NuxtLink class="flex items-center gap-1.5" :to="`${module.github}/releases`" target="_blank">
+            <UIcon name="i-ph-tag-duotone" class="w-5 h-5 flex-shrink-0" />
+            <span class="text-sm font-medium">v{{ module.stats.version }}</span>
           </NuxtLink>
         </UTooltip>
 

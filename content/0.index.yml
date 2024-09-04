@@ -1,8 +1,8 @@
 navigation: false
 hero:
   cta:
-    label: "Refreshed Nuxt ESLint Integrations"
-    to: /blog/eslint-module
+    label: Nuxt v3.13 is out
+    to: /blog/v3-13
     variant: outline
     icon: i-ph-arrow-right
     size: xs
@@ -249,19 +249,19 @@ sections:
         color: gray
         size: md
         target: _blank
-        to: 'https://chat.nuxt.dev'
+        to: 'https://go.nuxt.com/discord'
       - label: GitHub
         icon: 'i-simple-icons-github'
         color: gray
         size: md
         target: _blank
-        to: 'https://github.com/nuxt/nuxt'
+        to: 'https://go.nuxt.com/github'
       - label: X / Twitter
         icon: 'i-simple-icons-x'
         color: gray
         size: md
         target: _blank
-        to: 'https://x.com/nuxt_js'
+        to: 'https://go.nuxt.com/x'
   - title: 'Trusted by the<br><span class="text-primary">World Wide Web.</span>'
     class: 'dark:bg-gradient-to-b from-gray-900 to-gray-950'
     slot: testimonials

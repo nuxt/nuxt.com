@@ -33,7 +33,7 @@ export default <Partial<Config>>{
         }
       },
       fontFamily: {
-        sans: ['Inter var experimental', 'Inter var', 'Inter', ...defaultTheme.fontFamily.sans]
+        sans: ['Inter', ...defaultTheme.fontFamily.sans]
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))'

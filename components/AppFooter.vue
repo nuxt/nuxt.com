@@ -19,16 +19,17 @@ const { footerLinks } = useNavigation()
 
     <template #left>
       <p class="text-gray-500 dark:text-gray-400 text-sm">
-        Copyright © 2016-{{ new Date().getFullYear() }} Nuxt - <NuxtLink class="hover:underline" to="https://github.com/nuxt/nuxt/blob/main/LICENSE" target="_blank">
+        Copyright © 2016-{{ new Date().getFullYear() }} Nuxt - <NuxtLink class="hover:underline" to="https://go.nuxt.com/license" target="_blank">
           MIT License
         </NuxtLink>
       </p>
     </template>
 
     <template #right>
-      <UButton aria-label="Nuxt on X" to="https://x.com/nuxt_js" target="_blank" icon="i-simple-icons-x" v-bind="($ui.button.secondary as any)" />
-      <UButton aria-label="Nuxt on Discord" to="https://discord.com/invite/nuxt" target="_blank" icon="i-simple-icons-discord" v-bind="($ui.button.secondary as any)" />
-      <UButton aria-label="Nuxt on GitHub" to="https://github.com/nuxt/nuxt" target="_blank" icon="i-simple-icons-github" v-bind="($ui.button.secondary as any)" />
+      <UButton aria-label="Nuxt on X" to="https://go.nuxt.com/x" target="_blank" icon="i-simple-icons-x" v-bind="($ui.button.secondary as any)" />
+      <UButton aria-label="Nuxt on LinkedIn" to="https://go.nuxt.com/linkedin" target="_blank" icon="i-simple-icons-linkedin" v-bind="($ui.button.secondary as any)" />
+      <UButton aria-label="Nuxt on Discord" to="https://go.nuxt.com/discord" target="_blank" icon="i-simple-icons-discord" v-bind="($ui.button.secondary as any)" />
+      <UButton aria-label="Nuxt on GitHub" to="https://go.nuxt.com/github" target="_blank" icon="i-simple-icons-github" v-bind="($ui.button.secondary as any)" />
     </template>
   </UFooter>
 </template>

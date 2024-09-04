@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { debounce } from 'perfect-debounce'
-import type { ParsedContent } from '@nuxt/content/dist/runtime/types'
+import type { ParsedContent } from '@nuxt/content'
 import './styles/twoslash.css'
 
 const search = ref(null)
@@ -52,21 +52,21 @@ provide('navigation', navigation)
     <NuxtLoadingIndicator />
 
     <AppBanner
-      id="nuxthub-beta"
-      to="https://hub.nuxt.com/blog/beta?utm_source=nuxt-website&utm_medium=banner&utm_campaign=nuxthub-beta"
+      id="nuxt-tips"
+      to="https://michaelnthiessen.com/nuxt-tips-collection?aff=J0Emk"
     >
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-1">
         <UIcon
-          name="i-simple-icons-nuxtdotjs"
-          class="w-5 h-5 flex-shrink-0 pointer-events-none hidden lg:inline-block"
+          name="i-ph-magic-wand-duotone"
+          class="w-5 h-5 flex-shrink-0 pointer-events-none hidden lg:inline-block mr-1"
         />
-        <span>NuxtHub is now in public beta<span class="hidden sm:inline">: build & deploy full-stack Nuxt applications</span>.</span>
+        <span>Learn Nuxt with a Collection of 100+ Tips!</span>
         <UButton
           label="Learn more"
           color="white"
           trailing-icon="i-ph-arrow-right"
           size="2xs"
-          class="rounded-full"
+          class="rounded-full ml-1"
         />
       </div>
     </AppBanner>

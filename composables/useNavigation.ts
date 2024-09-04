@@ -43,6 +43,7 @@ const _useNavigation = () => {
     }, {
       label: 'Integrations',
       to: '/modules',
+      icon: 'i-ph-plugs-connected-duotone',
       search: false,
       active: route.path.startsWith('/modules') || route.path.startsWith('/deploy'),
       children: [{
@@ -58,6 +59,7 @@ const _useNavigation = () => {
       }]
     }, {
       label: 'Resources',
+      icon: 'i-ph-books-duotone',
       to: '/templates',
       search: false,
       active: route.path.startsWith('/templates') || route.path.startsWith('/video-courses'),
@@ -72,6 +74,11 @@ const _useNavigation = () => {
         icon: 'i-ph-graduation-cap-duotone',
         to: '/video-courses'
       }, {
+        label: 'Showcase',
+        description: 'Discover and explore projects built with Nuxt.',
+        icon: 'i-ph-projector-screen-duotone',
+        to: '/showcase'
+      }, {
         label: 'Nuxt Certification',
         description: 'Obtain your Certification of Competence.',
         icon: 'i-ph-medal-duotone',
@@ -79,34 +86,45 @@ const _useNavigation = () => {
         target: '_blank'
       }]
     }, {
-      label: 'Showcase',
-      icon: 'i-ph-projector-screen-duotone',
-      to: '/showcase'
+      label: 'Products',
+      icon: 'i-ph-sparkle-duotone',
+      search: false,
+      children: [{
+        label: 'Nuxt UI Pro',
+        to: 'https://ui.nuxt.com/pro?utm_source=nuxt-website&utm_medium=header',
+        description: 'Premium Vue components for Nuxt.',
+        icon: 'i-ph-layout-duotone'
+      }, {
+        label: 'Nuxt Studio',
+        to: 'https://nuxt.studio/?utm_source=nuxt-website&utm_medium=header',
+        description: 'The Git-based CMS for Nuxt.',
+        icon: 'i-ph-pen-duotone'
+      }, {
+        label: 'NuxtHub',
+        to: 'https://hub.nuxt.com/?utm_source=nuxt-website&utm_medium=header',
+        description: 'Build, deploy & manage Nuxt apps that scale.',
+        icon: 'i-ph-rocket-launch-duotone'
+      }]
     }, {
-      label: 'Enterprise',
+      label: 'Services',
       icon: 'i-ph-buildings-duotone',
       to: '/enterprise',
       search: false,
       children: [{
         label: 'Support',
         to: '/enterprise/support',
-        description: 'Get help with Nuxt.js directly from the team that creates it.',
+        description: 'Professional support by Nuxt experts.',
         icon: 'i-ph-lifebuoy-duotone'
       }, {
         label: 'Agencies',
         to: '/enterprise/agencies',
-        description: 'Find an agency that specializes in Nuxt.js development.',
+        description: 'Agencies specialized in Nuxt development.',
         icon: 'i-ph-handshake-duotone'
       }, {
         label: 'Sponsors',
         to: '/enterprise/sponsors',
-        description: 'Become a sponsor and get your logo on our README on GitHub with a link to your site.',
+        description: 'Help us sustain Nuxt development.',
         icon: 'i-ph-hand-heart-duotone'
-      }, {
-        label: 'Jobs',
-        to: '/enterprise/jobs',
-        description: 'Find a job or post a job opportunity for Nuxt.js experts.',
-        icon: 'i-ph-briefcase-duotone'
       }]
     }, {
       label: 'Blog',
@@ -122,15 +140,26 @@ const _useNavigation = () => {
       to: 'https://nuxters.nuxt.com',
       target: '_blank'
     }, {
-      label: 'Nuxt on GitHub',
-      to: 'https://github.com/nuxt',
-      target: '_blank'
-    }, {
       label: 'Team',
       to: '/team'
     }, {
       label: 'Design Kit',
       to: '/design-kit'
+    }]
+  }, {
+    label: 'Products',
+    children: [{
+      label: 'Nuxt UI Pro',
+      to: 'https://ui.nuxt.com/pro?utm_source=nuxt-website&utm_medium=footer',
+      target: '_blank'
+    }, {
+      label: 'Nuxt Studio',
+      to: 'https://nuxt.studio/?utm_source=nuxt-website&utm_medium=footer',
+      target: '_blank'
+    }, {
+      label: 'NuxtHub',
+      to: 'https://hub.nuxt.com/?utm_source=nuxt-website&utm_medium=footer',
+      target: '_blank'
     }]
   }, {
     label: 'Enterprise',
@@ -141,30 +170,8 @@ const _useNavigation = () => {
       label: 'Agencies',
       to: '/enterprise/agencies'
     }, {
-      label: 'Jobs',
-      to: '/enterprise/jobs'
-    }, {
       label: 'Sponsors',
       to: '/enterprise/sponsors'
-    }]
-  }, {
-    label: 'Solutions',
-    children: [{
-      label: 'Nuxt Content',
-      to: 'https://content.nuxt.com/',
-      target: '_blank'
-    }, {
-      label: 'Nuxt DevTools',
-      to: 'https://devtools.nuxt.com/',
-      target: '_blank'
-    }, {
-      label: 'Nuxt Image',
-      to: 'https://image.nuxt.com/',
-      target: '_blank'
-    }, {
-      label: 'Nuxt UI',
-      to: 'https://ui.nuxt.com/',
-      target: '_blank'
     }]
   }]
 

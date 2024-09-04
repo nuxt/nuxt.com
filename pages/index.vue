@@ -50,7 +50,7 @@ useSeoMeta({
       <template #description>
         Nuxt is an
         <NuxtLink
-          to="https://github.com/nuxt/nuxt"
+          to="https://go.nuxt.com/github"
           target="_blank"
           class="font-medium hover:underline underline-offset-2"
         >
@@ -59,18 +59,18 @@ useSeoMeta({
       </template>
 
       <template #links>
-        <UButton to="/docs/getting-started/installation" icon="i-ph-rocket-launch-duotone" size="xl">
+        <UButton to="/docs/getting-started/installation" trailing-icon="i-ph-arrow-right" size="lg">
           Get Started
         </UButton>
-        <UButton size="xl" color="white" icon="i-ph-video-duotone" @click="videoModalOpen = true">
-          What is Nuxt?
+        <UButton size="lg" color="gray" variant="ghost" trailing-icon="i-ph-play-circle" @click="videoModalOpen = true">
+          Nuxt in 100 Seconds
         </UButton>
 
-        <UModal v-model="videoModalOpen">
-          <div class="p-3">
+        <UModal v-model="videoModalOpen" :ui="{ width: 'sm:max-w-4xl lg:max-w-5xl aspect-[16/9]' }">
+          <div class="p-3 h-full">
             <iframe
               width="100%"
-              height="315"
+              height="100%"
               src="https://www.youtube-nocookie.com/embed/dCxSsr5xuL8"
               title="Nuxt in 100 Seconds by Fireship"
               frameborder="0"

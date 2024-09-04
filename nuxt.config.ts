@@ -18,7 +18,7 @@ const docsSource: any = {
   name: 'nuxt-docs',
   driver: 'github',
   repo: 'nuxt/nuxt',
-  branch: 'main',
+  branch: '3.x',
   dir: 'docs',
   prefix: '/1.docs',
   token: process.env.NUXT_GITHUB_TOKEN || ''
@@ -44,10 +44,11 @@ if (examplesSourceBase) {
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  compatibilityDate: '2024-07-18',
   extends: [
     process.env.NUXT_UI_PRO_PATH || '@nuxt/ui-pro'
   ],
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment, @typescript-eslint/prefer-ts-expect-error
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore Type circular reference
   modules: [
     'nuxt-content-twoslash',
@@ -58,6 +59,7 @@ export default defineNuxtConfig({
     '@nuxtjs/plausible',
     '@nuxt/fonts',
     '@nuxt/eslint',
+    '@nuxt/scripts',
     '@nuxtjs/turnstile',
     '@nuxthq/studio',
     '@vueuse/nuxt',
@@ -111,7 +113,7 @@ export default defineNuxtConfig({
       // failOnError: false
       // TODO: investigate
       // Ignore weird url from crawler on some modules readme
-      ignore: ['/modules/%3C/span', '/modules/%253C/span', '/docs/getting-started/</span', '/docs/getting-started/%3C/span']
+      ignore: ['/modules/%3C/span', '/modules/%253C/span', '/docs/getting-started/</span', '/docs/getting-started/%3C/span', '/modules/Mojo CSS', '/modules/Mojo%20CSS']
     },
     hooks: {
       'prerender:generate'(route) {
@@ -132,7 +134,13 @@ export default defineNuxtConfig({
       }
     }
   },
-
+  $production: {
+    image: {
+      ipx: {
+        baseURL: 'https://ipx.nuxt.com'
+      }
+    }
+  },
   $development: {
     runtimeConfig: {
       public: {
@@ -145,14 +153,11 @@ export default defineNuxtConfig({
   colorMode: {
     preference: 'dark'
   },
-  ui: {
-    icons: ['simple-icons', 'ph', 'uil', 'heroicons', 'octicon', 'logos']
-  },
-  image: {
-    ipx: {
-      baseURL: 'https://ipx.nuxt.com'
-    }
-  },
+  // image: {
+  //   ipx: {
+  //     baseURL: 'https://ipx.nuxt.com'
+  //   }
+  // },
   content: {
     navigation: {
       fields: ['titleTemplate']

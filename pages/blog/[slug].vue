@@ -62,17 +62,17 @@ const links = [
   }, {
     icon: 'i-ph-shooting-star-duotone',
     label: 'Star on GitHub',
-    to: 'https://github.com/nuxt/nuxt',
+    to: 'https://go.nuxt.com/github',
     target: '_blank'
   }, {
     icon: 'i-ph-chat-centered-text-duotone',
     label: 'Chat on Discord',
-    to: 'https://discord.com/invite/nuxt',
+    to: 'https://go.nuxt.com/discord',
     target: '_blank'
   }, {
     icon: 'i-ph-hand-heart-duotone',
     label: 'Become a Sponsor',
-    to: 'https://github.com/sponsors/nuxt',
+    to: 'https://go.nuxt.com/sponsor',
     target: '_blank'
   }
 ]
@@ -83,7 +83,7 @@ const links = [
     <UPage>
       <UPageHeader :title="article.title" :description="article.description" :ui="{ headline: 'flex flex-col gap-y-8 items-start' }">
         <template #headline>
-          <UBreadcrumb :links="[{ label: 'Blog', icon: 'i-ph-newspaper-duotone', to: '/blog' }, { label: article.title }]" />
+          <UBreadcrumb :links="[{ label: 'Blog', icon: 'i-ph-newspaper-duotone', to: '/blog' }, { label: article.title }]" :ui="{ wrapper: 'max-w-full' }" />
           <div class="flex items-center space-x-2">
             <span>
               {{ article.category }}

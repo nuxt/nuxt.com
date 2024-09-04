@@ -29,7 +29,7 @@ if (import.meta.server) {
 </script>
 
 <template>
-  <NuxtLink :to="to" class="block relative bg-primary hover:bg-primary/90 transition-[background] backdrop-blur z-50 app-banner" external target="_blank">
+  <NuxtLink :to="to" target="_blank" class="block relative bg-primary hover:bg-primary/90 transition-[background] backdrop-blur z-50 app-banner">
     <UContainer class="py-2">
       <div class="flex items-center justify-between gap-2">
         <div class="lg:flex-1 hidden lg:flex items-center" />
@@ -41,6 +41,7 @@ if (import.meta.server) {
         <div class="flex items-center justify-end lg:flex-1">
           <button
             class="p-1.5 rounded-md inline-flex hover:bg-primary/90"
+            aria-label="Close banner"
             @click.prevent="hideBanner"
           >
             <UIcon name="i-heroicons-x-mark-20-solid" class="w-5 h-5 text-white dark:text-gray-900" />

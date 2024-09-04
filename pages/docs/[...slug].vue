@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { withoutTrailingSlash } from 'ufo'
-import type { NavItem } from '@nuxt/content/dist/runtime/types'
+import type { NavItem } from '@nuxt/content'
 
 const navigation = inject<Ref<NavItem[]>>('navigation')
 
@@ -53,17 +53,17 @@ const communityLinks = computed(() => [{
 }, {
   icon: 'i-ph-shooting-star-duotone',
   label: 'Star on GitHub',
-  to: 'https://github.com/nuxt/nuxt',
+  to: 'https://go.nuxt.com/github',
   target: '_blank'
 }, {
   icon: 'i-ph-chat-centered-text-duotone',
   label: 'Chat on Discord',
-  to: 'https://discord.com/invite/nuxt',
+  to: 'https://go.nuxt.com/discord',
   target: '_blank'
 }, {
   icon: 'i-ph-hand-heart-duotone',
   label: 'Become a Sponsor',
-  to: 'https://github.com/sponsors/nuxt',
+  to: 'https://go.nuxt.com/sponsor',
   target: '_blank'
 }])
 
