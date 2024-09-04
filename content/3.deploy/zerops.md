@@ -2,7 +2,7 @@
 title: Zerops
 description: "Deploy your Nuxt Application to Zerops infrastructure."
 componentImg: Zerops
-logoIcon: "/assets/integrations/zerops.svg"
+logoSrc: "/assets/integrations/zerops.svg"
 category: Hosting
 NuxtPreset: "zerops"
 website: "https://zerops.io"
