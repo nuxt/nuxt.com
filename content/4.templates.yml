@@ -207,3 +207,10 @@ templates:
     demo: 'https://nuxt-shadcn-landing-pro.vercel.app/'
     purchase: 'https://waterwaystudios.lemonsqueezy.com/buy/48ba7098-5ef6-4177-ae64-e469f445e85f?aff=J0Emk'
     badge: 'Premium'
+  - name: 'Personal Blog Site'
+    slug: 'personal-blog'
+    description: 'Personal blog site built with Nuxt3, Nuxt-Content V2 & Tailwind. Deployed in vercel'
+    badge: 'Free'
+    repo: 'nurRiyad/nuxt-blog'
+    demo: 'https://blog.nurriyad.xyz/'
+    
