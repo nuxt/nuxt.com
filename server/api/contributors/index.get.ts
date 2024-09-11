@@ -31,10 +31,10 @@ export default cachedEventHandler(async (event) => {
       + contributor.reactions * 0.1
     )
   }
-  // Sort by score
-  contributors.sort((a, b) => b.score - a.score)
   // Merge contributors with the same username but different lowercase/uppercase
   contributors = mergeContributors(contributors)
+  // Sort by score
+  contributors.sort((a, b) => b.score - a.score)
 
   return contributors
 }, {
