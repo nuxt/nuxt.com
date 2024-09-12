@@ -2,7 +2,7 @@
 title: NuxtHub
 description: 'Deploy Nuxt applications globally on your Cloudflare account with zero configuration.'
 componentImg: NuxtHub
-logoSrc: '/assets/integrations/nuxthub.svg'
+logoSrc: '/assets/integrations/nuxthub-logo.svg'
 category: Hosting
 featured: true
 nitroPreset: 'cloudflare-pages'
