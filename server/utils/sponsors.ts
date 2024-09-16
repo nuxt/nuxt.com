@@ -187,6 +187,10 @@ export const fetchGithubSponsors = async (): Promise<Sponsor[]> => {
         sponsor.sponsorLogo = 'https://avatars.githubusercontent.com/u/234138?&v=4'
         sponsor.sponsorUrl = 'https://www.monterail.com/'
       }
+      if (sponsor.sponsorId === 'DCM-LVT') {
+        sponsor.sponsorName = 'Dotcom Monitor'
+        sponsor.sponsorUrl = 'https://www.dotcom-monitor.com/sponsoring-open-source-projects/'
+      }
 
       return sponsor
     }) || [])
