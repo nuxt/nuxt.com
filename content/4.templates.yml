@@ -2,11 +2,11 @@ head.title: Nuxt Templates
 title: Nuxt Templates
 navigation.title: Templates
 description: 'Explore community templates to get up and running in a few seconds.'
-navigation.icon: i-ph-browsers-duotone
+navigation.icon: i-ph-browsers
 links:
   - label: 'List a template'
     to: 'https://github.com/nuxt/nuxt.com/tree/main#add-a-nuxt-template'
-    icon: 'i-ph-plus-circle-duotone'
+    icon: 'i-ph-plus-circle'
     target: '_blank'
     color: gray
     size: md

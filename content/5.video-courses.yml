@@ -2,7 +2,7 @@ head.title: Nuxt Video Courses
 title: Nuxt Video Courses
 navigation.title: Video Courses
 description: 'Watch video courses from the community to learn Vue 3 and Nuxt 3.'
-navigation.icon: i-ph-graduation-cap-duotone
+navigation.icon: i-ph-graduation-cap
 courses:
   - name: 'Nuxt 3 Fundamentals'
     slug: 'vc-nuxt-3-fundamentals'

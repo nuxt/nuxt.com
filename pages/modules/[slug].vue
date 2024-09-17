@@ -17,7 +17,7 @@ const ownerName = computed(() => {
 })
 
 const links = computed(() => [{
-  icon: 'i-ph-book-bookmark-duotone',
+  icon: 'i-ph-book-bookmark',
   label: 'Documentation',
   to: `${module.value.website}?utm_source=nuxt.com&utm_medium=aside-module&utm_campaign=nuxt.com`,
   target: '_blank'
@@ -69,7 +69,7 @@ defineOgImageComponent('Docs', {
     <UAlert
       v-if="!module.compatibility?.nuxt?.includes('^3') && !module.compatibility?.nuxt?.includes('>=3')"
       class="mt-4"
-      icon="i-ph-warning-duotone"
+      icon="i-ph-warning"
       color="orange"
       variant="subtle"
       title="This module is not yet compatible with Nuxt 3"
@@ -83,7 +83,7 @@ defineOgImageComponent('Docs', {
 
     <UPageHeader :description="module.description" :ui="{ headline: 'mb-8' }">
       <template #headline>
-        <UBreadcrumb :links="[{ label: 'Modules', to: '/modules', icon: 'i-ph-puzzle-piece-duotone' }, { to: { name: 'modules', query: { category: module.category } }, label: module.category }, { label: module.npm }]" />
+        <UBreadcrumb :links="[{ label: 'Modules', to: '/modules', icon: 'i-ph-puzzle-piece' }, { to: { name: 'modules', query: { category: module.category } }, label: module.category }, { label: module.npm }]" />
       </template>
       <template #title>
         <div class="flex items-center gap-4">
@@ -100,7 +100,7 @@ defineOgImageComponent('Docs', {
             {{ module.name }}
 
             <UTooltip v-if="module.type === 'official'" text="Official module" class="tracking-normal">
-              <UIcon name="i-ph-medal-duotone" class="h-6 w-6 text-primary" />
+              <UIcon name="i-ph-medal" class="h-6 w-6 text-primary" />
             </UTooltip>
           </div>
         </div>
@@ -109,7 +109,7 @@ defineOgImageComponent('Docs', {
       <div class="flex flex-col lg:flex-row lg:items-center gap-3 mt-4">
         <UTooltip text="Monthly NPM Downloads">
           <NuxtLink class="flex items-center gap-1.5" :to="`https://npmjs.org/package/${module.npm}`" target="_blank">
-            <UIcon name="i-ph-arrow-circle-down-duotone" class="w-5 h-5 flex-shrink-0" />
+            <UIcon name="i-ph-arrow-circle-down" class="w-5 h-5 flex-shrink-0" />
             <span class="text-sm font-medium">{{ formatNumber(module.stats.downloads) }} downloads</span>
           </NuxtLink>
         </UTooltip>
@@ -118,7 +118,7 @@ defineOgImageComponent('Docs', {
 
         <UTooltip text="GitHub Stars">
           <NuxtLink class="flex items-center gap-1.5" :to="`https://github.com/${module.repo}`" target="_blank">
-            <UIcon name="i-ph-star-duotone" class="w-5 h-5 flex-shrink-0" />
+            <UIcon name="i-ph-star" class="w-5 h-5 flex-shrink-0" />
             <span class="text-sm font-medium">{{ formatNumber(module.stats.stars || 0) }} stars</span>
           </NuxtLink>
         </UTooltip>
@@ -127,7 +127,7 @@ defineOgImageComponent('Docs', {
 
         <UTooltip text="Latest Version">
           <NuxtLink class="flex items-center gap-1.5" :to="`${module.github}/releases`" target="_blank">
-            <UIcon name="i-ph-tag-duotone" class="w-5 h-5 flex-shrink-0" />
+            <UIcon name="i-ph-tag" class="w-5 h-5 flex-shrink-0" />
             <span class="text-sm font-medium">v{{ module.stats.version }}</span>
           </NuxtLink>
         </UTooltip>

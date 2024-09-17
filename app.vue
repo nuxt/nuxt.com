@@ -57,7 +57,7 @@ provide('navigation', navigation)
     >
       <div class="flex items-center gap-1">
         <UIcon
-          name="i-ph-magic-wand-duotone"
+          name="i-ph-magic-wand"
           class="w-5 h-5 flex-shrink-0 pointer-events-none hidden lg:inline-block mr-1"
         />
         <span>Learn Nuxt with a Collection of 100+ Tips!</span>
@@ -76,7 +76,7 @@ provide('navigation', navigation)
     >
       <div class="flex items-center gap-2">
         <UIcon
-          name="i-ph-medal-duotone"
+          name="i-ph-medal"
           class="w-5 h-5 flex-shrink-0 pointer-events-none"
         />
         <span>The <span class="font-semibold">Nuxt Certification Program</span> by VueSchool is out!</span>

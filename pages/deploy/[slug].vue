@@ -35,7 +35,7 @@ defineOgImageComponent('Docs', {
 const links = []
 if (provider.value?.website) {
   links.push({
-    icon: 'i-ph-globe-duotone',
+    icon: 'i-ph-globe',
     label: provider.value?.title,
     to: provider.value?.website,
     target: '_blank'
@@ -43,14 +43,14 @@ if (provider.value?.website) {
 }
 if (provider.value?.nitroPreset) {
   links.push({
-    icon: 'i-ph-lightning-duotone',
+    icon: 'i-ph-lightning',
     label: 'Nitro Preset',
     to: `https://nitro.unjs.io/deploy/providers/${provider.value?.nitroPreset}`,
     target: '_blank'
   })
 }
 links.push({
-  icon: 'i-ph-pen-duotone',
+  icon: 'i-ph-pen',
   label: 'Edit this page',
   to: `https://github.com/nuxt/nuxt.com/edit/main/content/3.deploy/${slug}.md`,
   target: '_blank'

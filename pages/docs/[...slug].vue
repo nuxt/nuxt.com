@@ -46,17 +46,17 @@ const titleTemplate = computed(() => {
 })
 
 const communityLinks = computed(() => [{
-  icon: 'i-ph-pen-duotone',
+  icon: 'i-ph-pen',
   label: 'Edit this page',
   to: `https://github.com/nuxt/nuxt/edit/main/docs/${page?.value?._file?.split('/').slice(1).join('/')}`,
   target: '_blank'
 }, {
-  icon: 'i-ph-chat-centered-text-duotone',
+  icon: 'i-ph-chat-centered-text',
   label: 'Chat on Discord',
   to: 'https://go.nuxt.com/discord',
   target: '_blank'
 }, {
-  icon: 'i-ph-hand-heart-duotone',
+  icon: 'i-ph-hand-heart',
   label: 'Become a Sponsor',
   to: 'https://go.nuxt.com/sponsor',
   target: '_blank'
