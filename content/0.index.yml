@@ -3,11 +3,7 @@ hero:
   cta:
     label: Nuxt v3.13 is out
     to: /blog/v3-13
-    variant: outline
     icon: i-ph-arrow-right
-    size: xs
-    trailing: true
-    class: 'font-semibold hover:bg-primary-100 dark:hover:bg-primary-900 rounded-full'
 logos:
   title: 'Trusted by the best front-end teams'
 sections:
@@ -26,6 +22,7 @@ sections:
         to: '/docs/examples/hello-world'
         color: gray
         size: md
+        variant: ghost
     slot: code
     code: |
       ```vue [app.vue]
@@ -65,6 +62,7 @@ sections:
         icon: i-ph-newspaper-duotone
         to: '/blog/nuxt-on-the-edge'
         color: gray
+        variant: ghost
         size: md
     slot: code
     code: |
@@ -113,7 +111,7 @@ sections:
         to: '/docs/getting-started/routing'
       - title: 'Data Fetching'
         description: 'Composables that run on the server to fetch data for your components and enable you to render content in different ways.'
-        icon: ' i-ph-plugs-connected-duotone'
+        icon: 'i-ph-plugs-connected-duotone'
         to: '/docs/getting-started/data-fetching'
       - title: 'Assets & Style'
         description: 'Image, Font and Script optimizations with a built-in support for CSS Modules, Sass, PostCSS, CSS-in-JS and more.'

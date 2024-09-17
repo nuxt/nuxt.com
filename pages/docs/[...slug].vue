@@ -51,11 +51,6 @@ const communityLinks = computed(() => [{
   to: `https://github.com/nuxt/nuxt/edit/main/docs/${page?.value?._file?.split('/').slice(1).join('/')}`,
   target: '_blank'
 }, {
-  icon: 'i-ph-shooting-star-duotone',
-  label: 'Star on GitHub',
-  to: 'https://go.nuxt.com/github',
-  target: '_blank'
-}, {
   icon: 'i-ph-chat-centered-text-duotone',
   label: 'Chat on Discord',
   to: 'https://go.nuxt.com/discord',
@@ -66,30 +61,6 @@ const communityLinks = computed(() => [{
   to: 'https://go.nuxt.com/sponsor',
   target: '_blank'
 }])
-
-const ecosystemLinks = [{
-  icon: 'i-ph-buildings-duotone',
-  label: 'Enterprise Support',
-  to: '/enterprise/support'
-}, {
-  icon: 'i-ph-handshake-duotone',
-  label: 'Nuxt Agencies',
-  to: '/enterprise/agencies'
-}, {
-  icon: 'i-ph-briefcase-duotone',
-  label: 'Find a Nuxt Job',
-  to: '/enterprise/jobs'
-}, {
-  icon: 'i-ph-graduation-cap-duotone',
-  label: 'Video Courses',
-  to: 'https://masteringnuxt.com/nuxt3?ref=nuxt',
-  target: '_blank'
-}, {
-  label: 'Nuxt Certification',
-  icon: 'i-ph-medal-duotone',
-  to: 'https://certification.nuxt.com',
-  target: '_blank'
-}]
 
 const title = page.value.head?.title || page.value.title
 const description = page.value.head?.description || page.value.description
@@ -134,12 +105,6 @@ defineOgImageComponent('Docs', {
             <UDivider v-if="page.body?.toc?.links?.length" type="dashed" />
 
             <UPageLinks title="Community" :links="communityLinks" />
-
-            <UDivider type="dashed" />
-
-            <UPageLinks title="Ecosystem" :links="ecosystemLinks" />
-
-            <UDivider type="dashed" />
 
             <Ads />
           </div>

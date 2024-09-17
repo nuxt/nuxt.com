@@ -32,7 +32,7 @@ useSeoMeta({
   <div v-if="page" class="dark:bg-gray-900">
     <ULandingHero
       :ui="{ base: 'relative z-[1]' }"
-      class="dark:bg-gradient-to-b from-gray-950 to-gray-900"
+      class="dark:bg-gradient-to-b from-gray-950 to-gray-900 md:pb-24"
       :orientation="uwuCookie ? 'horizontal' : 'vertical'"
     >
       <template #top>
@@ -40,7 +40,16 @@ useSeoMeta({
       </template>
 
       <template #headline>
-        <UButton v-bind="page.hero.cta" />
+        <NuxtLink :to="page.hero.cta.to">
+          <UBadge variant="subtle" size="lg" class="relative rounded-full font-semibold dark:hover:bg-primary-400/15 dark:hover:ring-primary-700">
+            {{ page?.hero.cta.label }}
+            <UIcon
+              v-if="page?.hero.cta.icon"
+              :name="page?.hero.cta.icon"
+              class="ml-1 w-4 h-4 pointer-events-none"
+            />
+          </UBadge>
+        </NuxtLink>
       </template>
 
       <template #title>
@@ -59,12 +68,17 @@ useSeoMeta({
       </template>
 
       <template #links>
-        <UButton to="/docs/getting-started/installation" trailing-icon="i-ph-arrow-right" size="lg">
-          Get Started
-        </UButton>
-        <UButton size="lg" color="gray" variant="ghost" trailing-icon="i-ph-play-circle" @click="videoModalOpen = true">
-          Nuxt in 100 Seconds
-        </UButton>
+        <div class="flex flex-col gap-4">
+          <div class="flex items-center gap-2">
+            <UButton to="/docs/getting-started/installation" trailing-icon="i-ph-arrow-right" size="lg">
+              Get Started
+            </UButton>
+            <UButton size="lg" color="gray" variant="ghost" trailing-icon="i-ph-play-circle" @click="videoModalOpen = true">
+              Nuxt in 100 Seconds
+            </UButton>
+          </div>
+          <UInputCopy value="npx nuxi@latest init <my-app>" class="w-full" />
+        </div>
 
         <UModal v-model="videoModalOpen" :ui="{ width: 'sm:max-w-4xl lg:max-w-5xl aspect-[16/9]' }">
           <div class="p-3 h-full">

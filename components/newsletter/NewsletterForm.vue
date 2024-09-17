@@ -39,12 +39,12 @@ function onSubmit() {
 
 <template>
   <form @submit.prevent="onSubmit">
-    <UFormGroup name="email" :label="label" :description="description" size="xl" :ui="{ label: { base: 'font-semibold' }, container: 'mt-3' }">
+    <UFormGroup name="email" :label="label" size="lg" :description="description" :ui="{ label: { base: 'font-semibold' }, container: 'mt-3' }">
       <UInput
         v-model="email"
         type="email"
         placeholder="you@domain.com"
-        :ui="{ icon: { trailing: { pointer: '' } } }"
+        :ui="{ icon: { trailing: { pointer: '', padding: { lg: 'px-1' } } } }"
         required
         autocomplete="off"
         class="max-w-sm"
