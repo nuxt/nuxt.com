@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { withoutTrailingSlash } from 'ufo'
 import type { Hosting } from '~/types'
+
 definePageMeta({
   heroBackground: 'opacity-30 -z-10'
 })

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { VideoCourse } from '../types'
+
 definePageMeta({
   heroBackground: 'opacity-80 -z-10'
 })
