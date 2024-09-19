@@ -1,4 +1,7 @@
 <script setup lang="ts">
+definePageMeta({
+  heroBackground: 'opacity-80 -z-10'
+})
 const route = useRoute()
 const { filteredAgencies, fetchList, services, regions } = useEnterpriseAgencies()
 
@@ -7,15 +10,15 @@ const { data: page } = await useAsyncData(route.path, () => queryContent(route.p
 const title = page.value.head?.title || page.value.title
 const description = page.value.head?.description || page.value.description
 useSeoMeta({
-  titleTemplate: '%s · Enterprise',
+  titleTemplate: '%s · Services',
   title,
   description,
   ogDescription: description,
-  ogTitle: `${title} · Enterprise`
+  ogTitle: `${title} · Services`
 })
 
 defineOgImageComponent('Docs', {
-  headline: 'Enterprise'
+  headline: 'Services'
 })
 
 await fetchList()

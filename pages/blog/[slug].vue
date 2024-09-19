@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { withoutTrailingSlash, joinURL } from 'ufo'
+import { withoutTrailingSlash } from 'ufo'
 import type { BlogArticle } from '~/types'
 
+definePageMeta({
+  heroBackground: 'opacity-30 -z-10'
+})
 const route = useRoute()
 const { copy } = useCopyToClipboard()
 
@@ -34,7 +37,8 @@ useSeoMeta({
 
 if (article.value.image) {
   defineOgImage({ url: article.value.image })
-} else {
+}
+else {
   defineOgImageComponent('Docs', {
     headline: 'Blog'
   })
@@ -49,33 +53,32 @@ const socialLinks = computed(() => [{
   to: `https://twitter.com/intent/tweet?text=${encodeURIComponent(`${article.value.title}${authorTwitter ? ` by @${article.value.authors[0].twitter}` : ''}\n\n`)}https://nuxt.com${article.value._path}`
 }])
 
-function copyLink () {
+function copyLink() {
   copy(`https://nuxt.com${article.value._path}`, { title: 'Copied to clipboard' })
 }
 const links = [
   {
-    icon: 'i-ph-pen-duotone',
+    icon: 'i-ph-pen',
     label: 'Edit this article',
     to: `https://github.com/nuxt/nuxt.com/edit/main/content/${article.value._file}`,
     target: '_blank'
   }, {
-    icon: 'i-ph-shooting-star-duotone',
+    icon: 'i-ph-shooting-star',
     label: 'Star on GitHub',
-    to: 'https://github.com/nuxt/nuxt',
+    to: 'https://go.nuxt.com/github',
     target: '_blank'
   }, {
-    icon: 'i-ph-chat-centered-text-duotone',
+    icon: 'i-ph-chat-centered-text',
     label: 'Chat on Discord',
-    to: 'https://discord.com/invite/nuxt',
+    to: 'https://go.nuxt.com/discord',
     target: '_blank'
   }, {
-    icon: 'i-ph-hand-heart-duotone',
+    icon: 'i-ph-hand-heart',
     label: 'Become a Sponsor',
-    to: 'https://github.com/sponsors/nuxt',
+    to: 'https://go.nuxt.com/sponsor',
     target: '_blank'
   }
 ]
-
 </script>
 
 <template>
@@ -83,7 +86,7 @@ const links = [
     <UPage>
       <UPageHeader :title="article.title" :description="article.description" :ui="{ headline: 'flex flex-col gap-y-8 items-start' }">
         <template #headline>
-          <UBreadcrumb :links="[{ label: 'Blog', icon: 'i-ph-newspaper-duotone', to: '/blog' }, { label: article.title }]" />
+          <UBreadcrumb :links="[{ label: 'Blog', icon: 'i-ph-newspaper', to: '/blog' }, { label: article.title }]" :ui="{ wrapper: 'max-w-full' }" />
           <div class="flex items-center space-x-2">
             <span>
               {{ article.category }}

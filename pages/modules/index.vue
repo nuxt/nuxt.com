@@ -1,4 +1,8 @@
 <script setup lang="ts">
+definePageMeta({
+  heroBackground: 'opacity-70'
+})
+
 const inputRef = ref()
 
 const route = useRoute()
@@ -8,11 +12,11 @@ const { fetchList, filteredModules, q, categories, selectedOrder, sorts, selecte
 const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
 
 const links = [{
-  icon: 'i-ph-book-open-duotone',
+  icon: 'i-ph-book-open',
   label: 'Module Author Guide',
   to: '/docs/guide/going-further/modules'
 }, {
-  icon: 'i-ph-plus-circle-duotone',
+  icon: 'i-ph-plus-circle',
   label: 'List your module',
   to: 'https://github.com/nuxt/modules#addupdate-a-module',
   target: '_blank'
@@ -27,6 +31,7 @@ useSeoMeta({
   ogDescription: description,
   ogTitle: title
 })
+defineOgImageComponent('Docs')
 
 await fetchList()
 
@@ -41,7 +46,7 @@ const { copy } = useCopyToClipboard()
 
 <template>
   <UContainer>
-    <UPageHero v-bind="page">
+    <UPageHero v-bind="page" class="z-30">
       <div class="lg:pl-10">
         <UPageGrid :ui="{ wrapper: 'grid-cols-2 sm:grid-cols-2 xl:grid-cols-2 gap-4' }">
           <UPageCard
@@ -51,7 +56,7 @@ const { copy } = useCopyToClipboard()
           >
             <template #title>
               Nuxt Image
-              <UIcon name="i-ph-medal-duotone" class="h-4 w-4 text-primary pointer-events-none" />
+              <UIcon name="i-ph-medal" class="h-4 w-4 text-primary pointer-events-none" />
             </template>
           </UPageCard>
           <UPageCard
@@ -62,7 +67,7 @@ const { copy } = useCopyToClipboard()
           >
             <template #title>
               Nuxt Content
-              <UIcon name="i-ph-medal-duotone" class="h-4 w-4 text-primary pointer-events-none" />
+              <UIcon name="i-ph-medal" class="h-4 w-4 text-primary pointer-events-none" />
             </template>
           </UPageCard>
           <UPageCard
@@ -72,7 +77,7 @@ const { copy } = useCopyToClipboard()
           >
             <template #title>
               Nuxt DevTools
-              <UIcon name="i-ph-medal-duotone" class="h-4 w-4 text-primary pointer-events-none" />
+              <UIcon name="i-ph-medal" class="h-4 w-4 text-primary pointer-events-none" />
             </template>
           </UPageCard>
           <UPageCard
@@ -82,7 +87,7 @@ const { copy } = useCopyToClipboard()
           >
             <template #title>
               Nuxt UI
-              <UIcon name="i-ph-medal-duotone" class="h-4 w-4 text-primary pointer-events-none" />
+              <UIcon name="i-ph-medal" class="h-4 w-4 text-primary pointer-events-none" />
             </template>
           </UPageCard>
         </UPageGrid>
@@ -108,7 +113,7 @@ const { copy } = useCopyToClipboard()
             ref="inputRef"
             :model-value="q"
             name="q"
-            icon="i-ph-magnifying-glass-duotone"
+            icon="i-ph-magnifying-glass"
             placeholder="Search..."
             class="w-56"
             size="md"
@@ -182,10 +187,9 @@ const { copy } = useCopyToClipboard()
                   variant="subtle"
                   :ui="{ base: '!flex' }"
                 >
-                  <UIcon name="i-ph-medal-duotone" class="w-4 h-4" />
+                  <UIcon name="i-ph-medal" class="w-4 h-4" />
                   <span>Official</span>
                 </UBadge>
-
 
                 <UBadge
                   v-if="module.sponsor"
@@ -195,7 +199,7 @@ const { copy } = useCopyToClipboard()
                   color="pink"
                   :ui="{ base: '!flex' }"
                 >
-                  <UIcon name="i-ph-hand-heart-duotone" class="w-4 h-4" />
+                  <UIcon name="i-ph-hand-heart" class="w-4 h-4" />
                   <span>Sponsor</span>
                 </UBadge>
               </div>
@@ -212,7 +216,7 @@ const { copy } = useCopyToClipboard()
               :text="`Copy install command`"
             >
               <UButton
-                icon="i-ph-package-duotone"
+                icon="i-ph-package"
                 color="white"
                 @click="copy(`npx nuxi@latest module add ${module.name}`, { title: 'Command copied to clipboard:', description: `npx nuxi@latest module add ${module.name}` })"
               />
@@ -228,7 +232,7 @@ const { copy } = useCopyToClipboard()
                       target="_blank"
                       :class="[selectedSort.key === 'downloads' && 'text-gray-900 dark:text-white']"
                     >
-                      <UIcon name="i-ph-arrow-circle-down-duotone" class="w-5 h-5 flex-shrink-0" />
+                      <UIcon name="i-ph-arrow-circle-down" class="w-5 h-5 flex-shrink-0" />
                       <span class="text-sm font-medium">{{ formatNumber(module.stats.downloads) }}</span>
                     </NuxtLink>
                   </UTooltip>
@@ -240,7 +244,7 @@ const { copy } = useCopyToClipboard()
                       target="_blank"
                       :class="[selectedSort.key === 'stars' && 'text-gray-900 dark:text-white']"
                     >
-                      <UIcon name="i-ph-star-duotone" class="w-5 h-5 flex-shrink-0" />
+                      <UIcon name="i-ph-star" class="w-5 h-5 flex-shrink-0" />
                       <span class="text-sm font-medium">{{ formatNumber(module.stats.stars || 0) }}</span>
                     </NuxtLink>
                   </UTooltip>
@@ -252,7 +256,7 @@ const { copy } = useCopyToClipboard()
                     :to="`https://github.com/${module.repo}/graphs/contributors`"
                     target="_blank"
                   >
-                    <UIcon name="i-ph-user-circle-gear-duotone" class="w-5 h-5 flex-shrink-0" />
+                    <UIcon name="i-ph-user-circle-gear" class="w-5 h-5 flex-shrink-0" />
                     <span class="text-sm font-medium">{{ module.contributors.length }}</span>
                   </NuxtLink>
                 </UTooltip>

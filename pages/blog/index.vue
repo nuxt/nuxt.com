@@ -1,4 +1,7 @@
 <script setup lang="ts">
+definePageMeta({
+  heroBackground: 'opacity-70 -z-10'
+})
 const route = useRoute()
 const { fetchList, articles } = useBlog()
 
@@ -23,6 +26,7 @@ useSeoMeta({
   ogDescription: description,
   ogTitle: title
 })
+defineOgImageComponent('Docs')
 
 await fetchList()
 </script>

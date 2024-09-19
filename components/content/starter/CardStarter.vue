@@ -11,13 +11,13 @@ const props = defineProps({
 const template = computed(() => {
   return props.starter.repo === 'nuxt/starter'
     ? (props.starter.branch === 'v3')
-      ? ''
-      : `-t ${props.starter.branch} `
+        ? ''
+        : `-t ${props.starter.branch} `
     : `-t "${props.starter.repo}#${props.starter.branch}" `
 })
 
 const command = computed(() => {
-  return `npx nuxi init ${template.value}<${template.value.includes('module') ? 'module' : 'app' }>`
+  return `npx nuxi init ${template.value}<${template.value.includes('module') ? 'module' : 'app'}>`
 })
 </script>
 

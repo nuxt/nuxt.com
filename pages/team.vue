@@ -1,6 +1,8 @@
 <script setup lang="ts">
 const route = useRoute()
-
+definePageMeta({
+  heroBackground: 'opacity-70 -z-10'
+})
 const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
 
 const title = page.value.head?.title || page.value.title
@@ -12,6 +14,7 @@ useSeoMeta({
   ogDescription: description,
   ogTitle: title
 })
+defineOgImageComponent('Docs')
 </script>
 
 <template>
@@ -48,7 +51,7 @@ useSeoMeta({
                 :to="user.sponsor"
                 target="_blank"
                 color="gray"
-                icon="i-ph-heart-duotone"
+                icon="i-ph-heart"
                 icon-color="red"
                 :ui="{ icon: { base: 'text-pink-500' } }"
               >

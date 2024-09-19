@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import type { Hosting } from '../../types'
 
+definePageMeta({
+  heroBackground: 'opacity-70 -z-10'
+})
 const route = useRoute()
 const { fetchList, providers } = useHostingProviders()
 
@@ -15,6 +18,10 @@ useSeoMeta({
   description,
   ogDescription: description,
   ogTitle: title
+})
+
+defineOgImageComponent('Docs', {
+  title: 'Deploy Nuxt'
 })
 
 await fetchList()

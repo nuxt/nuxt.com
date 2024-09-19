@@ -13,6 +13,12 @@ Nuxt supports deploying to [GitHub Pages](https://pages.github.com/) with minima
 GitHub Pages only support static sites, Nuxt will pre-render your application to static HTML files.
 ::
 
+::caution
+If you are **not** using a custom domain, you need to set `NUXT_APP_BASE_URL` to your repository-slug for your build step.
+
+**Example**: `https://<user>.github.io/<repository>/`: `NUXT_APP_BASE_URL=/<repository>/ npx nuxt build --preset github_pages`
+::
+
 ## Setup
 
 Follow the steps to [create a GitHub Pages site](https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site).
@@ -42,7 +48,7 @@ jobs:
       - run: npm install
       - run: npx nuxt build --preset github_pages
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: ./.output/public
   # Deployment job
@@ -62,7 +68,7 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4
 ```
 
 ::read-more{to="https://nitro.unjs.io/deploy/providers/github-pages" target="_blank"}

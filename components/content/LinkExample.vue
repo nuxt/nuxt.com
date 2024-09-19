@@ -1,5 +1,5 @@
 <template>
-  <Callout icon="i-ph-app-window-duotone">
+  <Callout icon="i-ph-app-window">
     Read and edit a live example in
     <NuxtLink :to="to">
       {{ computedTitle }}

@@ -2,6 +2,9 @@
 import type { Module } from '~/types'
 import { ModuleProseA, ModuleProseImg } from '#components'
 
+definePageMeta({
+  heroBackground: 'opacity-30 -z-10'
+})
 const route = useRoute()
 
 const { data: module } = await useFetch<Module>(`https://api.nuxt.com/modules/${route.params.slug}`, {
@@ -17,7 +20,7 @@ const ownerName = computed(() => {
 })
 
 const links = computed(() => [{
-  icon: 'i-ph-book-bookmark-duotone',
+  icon: 'i-ph-book-bookmark',
   label: 'Documentation',
   to: `${module.value.website}?utm_source=nuxt.com&utm_medium=aside-module&utm_campaign=nuxt.com`,
   target: '_blank'
@@ -38,7 +41,7 @@ const links = computed(() => [{
   target: '_blank'
 }].filter(Boolean))
 
-const contributors = computed(() => module.value.contributors.map((contributor) => ({
+const contributors = computed(() => module.value.contributors.map(contributor => ({
   label: contributor.username,
   to: `https://github.com/${contributor.username}`,
   avatar: {
@@ -66,24 +69,23 @@ defineOgImageComponent('Docs', {
 
 <template>
   <UContainer>
-    <UAlert
-      v-if="!module.compatibility?.nuxt?.includes('^3')"
-      class="mt-4"
-      icon="i-ph-warning-duotone"
-      color="orange"
-      variant="subtle"
-      title="This module is not yet compatible with Nuxt 3"
-    >
-      <template #description>
-        Head over to <NuxtLink to="https://v2.nuxt.com" target="_blank" class="underline">
-          v2.nuxt.com
-        </NuxtLink>
-      </template>
-    </UAlert>
-
+    <div v-if="!module.compatibility?.nuxt?.includes('^3') && !module.compatibility?.nuxt?.includes('>=3')" class="pt-8">
+      <UAlert
+        icon="i-ph-warning"
+        color="orange"
+        variant="subtle"
+        title="This module is not yet compatible with Nuxt 3"
+      >
+        <template #description>
+          Head over to <NuxtLink to="https://v2.nuxt.com" target="_blank" class="underline">
+            v2.nuxt.com
+          </NuxtLink>
+        </template>
+      </UAlert>
+    </div>
     <UPageHeader :description="module.description" :ui="{ headline: 'mb-8' }">
       <template #headline>
-        <UBreadcrumb :links="[{ label: 'Modules', to: '/modules', icon: 'i-ph-puzzle-piece-duotone' }, { to: { name: 'modules', query: { category: module.category } }, label: module.category }, { label: module.npm }]" />
+        <UBreadcrumb :links="[{ label: 'Modules', to: '/modules', icon: 'i-ph-puzzle-piece' }, { to: { name: 'modules', query: { category: module.category } }, label: module.category }, { label: module.npm }]" />
       </template>
       <template #title>
         <div class="flex items-center gap-4">
@@ -100,7 +102,7 @@ defineOgImageComponent('Docs', {
             {{ module.name }}
 
             <UTooltip v-if="module.type === 'official'" text="Official module" class="tracking-normal">
-              <UIcon name="i-ph-medal-duotone" class="h-6 w-6 text-primary" />
+              <UIcon name="i-ph-medal" class="h-6 w-6 text-primary" />
             </UTooltip>
           </div>
         </div>
@@ -109,7 +111,7 @@ defineOgImageComponent('Docs', {
       <div class="flex flex-col lg:flex-row lg:items-center gap-3 mt-4">
         <UTooltip text="Monthly NPM Downloads">
           <NuxtLink class="flex items-center gap-1.5" :to="`https://npmjs.org/package/${module.npm}`" target="_blank">
-            <UIcon name="i-ph-arrow-circle-down-duotone" class="w-5 h-5 flex-shrink-0" />
+            <UIcon name="i-ph-arrow-circle-down" class="w-5 h-5 flex-shrink-0" />
             <span class="text-sm font-medium">{{ formatNumber(module.stats.downloads) }} downloads</span>
           </NuxtLink>
         </UTooltip>
@@ -118,8 +120,17 @@ defineOgImageComponent('Docs', {
 
         <UTooltip text="GitHub Stars">
           <NuxtLink class="flex items-center gap-1.5" :to="`https://github.com/${module.repo}`" target="_blank">
-            <UIcon name="i-ph-star-duotone" class="w-5 h-5 flex-shrink-0" />
+            <UIcon name="i-ph-star" class="w-5 h-5 flex-shrink-0" />
             <span class="text-sm font-medium">{{ formatNumber(module.stats.stars || 0) }} stars</span>
+          </NuxtLink>
+        </UTooltip>
+
+        <span class="hidden lg:block text-gray-500 dark:text-gray-400">&bull;</span>
+
+        <UTooltip text="Latest Version">
+          <NuxtLink class="flex items-center gap-1.5" :to="`${module.github}/releases`" target="_blank">
+            <UIcon name="i-ph-tag" class="w-5 h-5 flex-shrink-0" />
+            <span class="text-sm font-medium">v{{ module.stats.version }}</span>
           </NuxtLink>
         </UTooltip>
 

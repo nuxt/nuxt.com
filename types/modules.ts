@@ -1,4 +1,4 @@
-import type { ParsedContent } from '@nuxt/content/dist/runtime/types'
+import type { ParsedContent } from '@nuxt/content'
 
 export interface ModuleUser {
   name: string
@@ -17,10 +17,11 @@ export interface Module {
   learn_more: string
   category: string
   type: string
-  sponsor: boolean,
+  sponsor: boolean
   // tags: string[]
   compatibility: { nuxt: string, requires: { bridge: boolean } }
   stats: {
+    version: string
     downloads: number
     stars: number
     publishedAt: number

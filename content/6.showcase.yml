@@ -1,7 +1,7 @@
 title: Showcase
 head.title: Nuxt Showcase
 description: Discover our selection of websites built with Nuxt. This collection is powered by VueTelescope.
-navigation.icon: i-ph-projector-screen-duotone
+navigation.icon: i-ph-projector-screen
 links:
   - label: 'Chrome'
     size: 'md'

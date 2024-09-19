@@ -1,4 +1,7 @@
 <script setup lang="ts">
+definePageMeta({
+  heroBackground: 'opacity-80 -z-10'
+})
 const route = useRoute()
 
 const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
@@ -12,6 +15,7 @@ useSeoMeta({
   ogDescription: description,
   ogTitle: title
 })
+defineOgImageComponent('Docs')
 </script>
 
 <template>

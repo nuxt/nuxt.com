@@ -37,11 +37,11 @@ export default defineAppConfig({
     },
     commandPalette: {
       default: {
-        icon: 'i-ph-magnifying-glass-duotone',
+        icon: 'i-ph-magnifying-glass',
         loadingIcon: 'i-ph-spinner',
         selectedIcon: 'i-ph-check',
         emptyState: {
-          icon: 'i-ph-magnifying-glass-duotone'
+          icon: 'i-ph-magnifying-glass'
         },
         closeButton: {
           icon: 'i-ph-x'
@@ -97,12 +97,12 @@ export default defineAppConfig({
       }
     },
     icons: {
-      dark: 'i-ph-moon-duotone',
-      light: 'i-ph-sun-duotone',
-      search: 'i-ph-magnifying-glass-duotone',
+      dark: 'i-ph-moon',
+      light: 'i-ph-sun',
+      search: 'i-ph-magnifying-glass',
       external: 'i-ph-arrow-up-right',
       chevron: 'i-ph-caret-down',
-      hash: 'i-ph-hash-duotone'
+      hash: 'i-ph-hash'
     },
     header: {
       wrapper: 'lg:mb-0 lg:border-0',
@@ -149,7 +149,7 @@ export default defineAppConfig({
     content: {
       search: {
         fileIcon: {
-          name: 'i-ph-file-text-duotone'
+          name: 'i-ph-file-text'
         }
       },
       toc: {
@@ -176,12 +176,12 @@ export default defineAppConfig({
         code: {
           button: {
             icon: {
-              copy: 'i-ph-copy-duotone',
-              copied: 'i-ph-check-square-duotone'
+              copy: 'i-ph-copy',
+              copied: 'i-ph-check-square'
             }
           },
           icon: {
-            terminal: 'i-ph-terminal-window-duotone'
+            terminal: 'i-ph-terminal-window'
           }
         }
       }

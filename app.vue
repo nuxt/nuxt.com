@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { debounce } from 'perfect-debounce'
-import type { ParsedContent } from '@nuxt/content/dist/runtime/types'
+import type { ParsedContent } from '@nuxt/content'
 import './styles/twoslash.css'
 
 const search = ref(null)
@@ -35,8 +35,6 @@ useSeoMeta({
   twitterSite: 'nuxt_js'
 })
 
-defineOgImageComponent('Docs')
-
 watch(() => search.value?.commandPaletteRef?.query, debounce((query: string) => {
   if (!query) {
     return
@@ -47,23 +45,77 @@ watch(() => search.value?.commandPaletteRef?.query, debounce((query: string) => 
 
 // Provide
 provide('navigation', navigation)
+
+const route = useRoute()
+const heroBackgroundClass = computed(() => route.meta?.heroBackground || '')
+const { isLoading } = useLoadingIndicator()
+const appear = ref(false)
+const appeared = ref(false)
+onMounted(() => {
+  setTimeout(() => {
+    appear.value = true
+    setTimeout(() => {
+      appeared.value = true
+    }, 1000)
+  }, 0)
+})
 </script>
 
 <template>
   <div>
     <NuxtLoadingIndicator />
 
-    <AppBanner id="ui-pro-1-0" to="https://ui.nuxt.com/pro?utm_source=nuxt-website&utm_medium=banner">
-      <div class="flex items-center gap-2">
-        <UIcon name="i-ph-rocket-launch-duotone" class="w-5 h-5 flex-shrink-0 pointer-events-none" />
-        <span><span class="font-semibold">Nuxt UI Pro v1.0</span> is out with 50+ Vue components<span class="hidden sm:inline"> to create beautiful and responsive Nuxt apps in minutes</span>.</span>
-        <UButton label="Learn more" color="white" trailing-icon="i-ph-arrow-right" size="2xs" class="rounded-full" />
+    <AppBanner
+      id="nuxt-tips"
+      to="https://michaelnthiessen.com/nuxt-tips-collection?aff=J0Emk"
+    >
+      <div class="flex items-center gap-1">
+        <UIcon
+          name="i-ph-magic-wand"
+          class="w-5 h-5 flex-shrink-0 pointer-events-none hidden lg:inline-block mr-1"
+        />
+        <span>Learn Nuxt with a Collection of 100+ Tips!</span>
+        <UButton
+          label="Learn more"
+          color="white"
+          trailing-icon="i-ph-arrow-right"
+          size="2xs"
+          class="rounded-full ml-1"
+        />
       </div>
     </AppBanner>
+    <!-- <AppBanner
+      id="nuxt-certification-early-bird-launch"
+      to="https://certification.nuxt.com"
+    >
+      <div class="flex items-center gap-2">
+        <UIcon
+          name="i-ph-medal"
+          class="w-5 h-5 flex-shrink-0 pointer-events-none"
+        />
+        <span>The <span class="font-semibold">Nuxt Certification Program</span> by VueSchool is out!</span>
+        <UButton
+          color="white"
+          trailing-icon="i-ph-arrow-right"
+          size="2xs"
+          class="rounded-full"
+        >
+          Register
+        </UButton>
+      </div>
+    </AppBanner> -->
 
     <AppHeader :links="headerLinks" />
 
-    <UMain>
+    <UMain class="relative">
+      <HeroBackground
+        class="absolute w-full top-[1px] transition-all text-primary flex-shrink-0"
+        :class="[
+          isLoading ? 'animate-pulse' : (appear ? 'opacity-100' : 'opacity-0'),
+          appeared ? 'duration-[400ms]': 'duration-1000',
+          heroBackgroundClass
+        ]"
+      />
       <NuxtPage />
     </UMain>
 

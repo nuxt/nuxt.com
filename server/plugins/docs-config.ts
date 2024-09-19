@@ -1,9 +1,8 @@
+import { writeFile } from 'node:fs/promises'
 import type { Schema } from 'untyped'
 import { upperFirst } from 'scule'
-import { writeFile } from 'node:fs/promises'
 
 export default defineNitroPlugin((nitroApp) => {
-  // @ts-ignore
   nitroApp.hooks.hook('content:file:beforeParse', async (file) => {
     // Disable docs readme
     if (file._id === 'nuxt-docs:docs:README.md') {
@@ -18,7 +17,6 @@ export default defineNitroPlugin((nitroApp) => {
         const start = Date.now()
         console.log(`Generating config docs on ${file._id}`)
 
-        // @ts-ignore
         const keys = Object.keys(rootSchema.properties).sort()
 
         if (!file.body.includes(GENERATE_KEY)) {
@@ -27,7 +25,6 @@ export default defineNitroPlugin((nitroApp) => {
 
         // Generate each section
         for (const key of keys) {
-          // @ts-ignore
           const schema = rootSchema.properties[key]
 
           const lines = generateMarkdown(schema, key, '##')
@@ -41,11 +38,11 @@ export default defineNitroPlugin((nitroApp) => {
           generatedDocs += lines.join('\n') + '\n'
         }
 
-
         file.body = file.body.replace(GENERATE_KEY, generatedDocs)
 
         console.log(`Config docs generated in ${(Date.now() - start) / 1000} seconds!`)
-      } catch (err) {
+      }
+      catch (err) {
         console.error('Could not generate config docs', err)
         await writeFile('debug-config-docs.md', generatedDocs)
       }
@@ -53,7 +50,7 @@ export default defineNitroPlugin((nitroApp) => {
   })
 })
 
-function generateMarkdown (schema: Schema, title: string, level: string) {
+function generateMarkdown(schema: Schema, title: string, level: string) {
   const lines: string[] = []
 
   // Skip private
@@ -84,7 +81,8 @@ function generateMarkdown (schema: Schema, title: string, level: string) {
     if (defaultValue && defaultValue.length) {
       if (defaultValue.length === 1) {
         lines.push(`- **Default:** ${defaultValue[0]}`)
-      } else {
+      }
+      else {
         lines.push('- **Default**', ...defaultValue)
       }
     }
@@ -103,7 +101,6 @@ function generateMarkdown (schema: Schema, title: string, level: string) {
   if (schema.type === 'object') {
     const keys = Object.keys(schema.properties || {}).sort()
     for (const key of keys) {
-      // @ts-ignore
       const val = schema.properties[key] as Schema
       const propLines = generateMarkdown(val, `\`${key}\``, level + '#')
       if (propLines.length) {
@@ -128,17 +125,20 @@ const InternalTypes = new Set([
   'deprecated'
 ])
 
-function formatValue (val) {
+function formatValue(val) {
   const stringified = JSON.stringify(val, null, 2)
-  if (!stringified || stringified === '{}' || stringified === '[]') { return null }
+  if (!stringified || stringified === '{}' || stringified === '[]') {
+    return null
+  }
   if (stringified.includes('\n')) {
     return ['```json', stringified, '```']
-  } else {
+  }
+  else {
     return ['`' + stringified + '`']
   }
 }
 
-function renderTag (tag: string) {
+function renderTag(tag: string) {
   const type = tag.match(TAG_REGEX)?.[1]
   if (!type) {
     return [`<!-- ${tag} -->`]
@@ -151,5 +151,5 @@ function renderTag (tag: string) {
   if (TagAlertType[type]) {
     return ['::alert', tag, '::', '']
   }
-  return tag
+  return tag + '\n'
 }

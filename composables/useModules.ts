@@ -1,23 +1,23 @@
 import type { Module, Filter } from '../types'
 
 const iconsMap = {
-  Analytics: 'i-ph-chart-bar-duotone',
-  CMS: 'i-ph-pencil-duotone',
-  CSS: 'i-ph-paint-brush-broad-duotone',
-  Database: 'i-ph-database-duotone',
-  Devtools: 'i-ph-wrench-duotone',
-  Ecommerce: 'i-ph-shopping-cart-duotone',
-  Extensions: 'i-ph-puzzle-piece-duotone',
-  Fonts: 'i-ph-text-aa-duotone',
-  Images: 'i-ph-image-duotone',
-  Libraries: 'i-ph-books-duotone',
-  Monitoring: 'i-ph-timer-duotone',
-  Payment: 'i-ph-credit-card-duotone',
-  Performance: 'i-ph-gauge-duotone',
-  Request: 'i-ph-plugs-connected-duotone',
-  Security: 'i-ph-shield-duotone',
-  SEO: 'i-ph-file-search-duotone',
-  UI: 'i-ph-layout-duotone'
+  Analytics: 'i-ph-chart-bar',
+  CMS: 'i-ph-pencil',
+  CSS: 'i-ph-paint-brush-broad',
+  Database: 'i-ph-database',
+  Devtools: 'i-ph-wrench',
+  Ecommerce: 'i-ph-shopping-cart',
+  Extensions: 'i-ph-puzzle-piece',
+  Fonts: 'i-ph-text-aa',
+  Images: 'i-ph-image',
+  Libraries: 'i-ph-books',
+  Monitoring: 'i-ph-timer',
+  Payment: 'i-ph-credit-card',
+  Performance: 'i-ph-gauge',
+  Request: 'i-ph-plugs-connected',
+  Security: 'i-ph-shield',
+  SEO: 'i-ph-file-search',
+  UI: 'i-ph-layout'
 }
 
 export const moduleImage = function (icon: string = '', size: number = 80) {
@@ -31,7 +31,7 @@ export const moduleImage = function (icon: string = '', size: number = 80) {
 }
 
 export const moduleIcon = function (category: string) {
-  return iconsMap[category as keyof typeof iconsMap] || 'i-ph-cube-duotone'
+  return iconsMap[category as keyof typeof iconsMap] || 'i-ph-cube'
 }
 
 export const useModules = () => {
@@ -47,7 +47,7 @@ export const useModules = () => {
   const module = useState<Module>('module', () => ({} as Module))
 
   // Data fetching
-  async function fetchList () {
+  async function fetchList() {
     if (modules.value.length) {
       return
     }
@@ -57,7 +57,6 @@ export const useModules = () => {
       modules.value = res.modules
     }
   }
-
 
   // Data
 
@@ -182,10 +181,12 @@ export const useModules = () => {
 
   const isSponsor = (a: Module, b: Module) => {
     if (a.sponsor && !b.sponsor) {
-        return -1
-    } else if (!a.sponsor && b.sponsor) {
-        return 1
-    } else {
+      return -1
+    }
+    else if (!a.sponsor && b.sponsor) {
+      return 1
+    }
+    else {
       return 0
     }
   }
