@@ -2,6 +2,9 @@
 import { withoutTrailingSlash } from 'ufo'
 import type { BlogArticle } from '~/types'
 
+definePageMeta({
+  heroBackground: 'opacity-30 -z-10'
+})
 const route = useRoute()
 const { copy } = useCopyToClipboard()
 

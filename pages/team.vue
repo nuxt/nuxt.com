@@ -1,6 +1,8 @@
 <script setup lang="ts">
 const route = useRoute()
-
+definePageMeta({
+  heroBackground: 'opacity-70 -z-10'
+})
 const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
 
 const title = page.value.head?.title || page.value.title

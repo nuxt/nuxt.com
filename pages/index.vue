@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { joinURL } from 'ufo'
 
+definePageMeta({
+  heroBackground: 'z-10'
+})
 const uwuCookie = useCookie<boolean>('uwu-mode', {
   default: () => false
 })

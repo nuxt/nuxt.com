@@ -1,6 +1,9 @@
 <script lang="ts" setup>
 import type { VideoCourse } from '../types'
 
+definePageMeta({
+  heroBackground: 'opacity-80 -z-10'
+})
 const { data: page } = await useAsyncData('video-courses', () => queryContent('/video-courses').findOne())
 
 const title = page.value.head?.title || page.value.title

@@ -67,27 +67,9 @@ sections:
     slot: code
     code: |
       ::code-group
-      ```ts [nuxt.config.ts]
-      export default defineNuxtConfig({
-        routeRules: {
-          // Homepage pre-rendered at build time
-          '/': { prerender: true },
-          // Product page generated on-demand, revalidates in background
-          '/products/**': { swr: true },
-          // Blog post generated on-demand once until next deploy
-          '/blog/**': { isr: true },
-          // Admin dashboard renders only on client-side
-          '/admin/**': { ssr: false },
-          // Add cors headers on API routes
-          '/api/**': { cors: true },
-          // Redirects legacy urls
-          '/old-page': { redirect: '/new-page' }
-        }
-      })
-      ```
       ```vue [pages/index.vue]
       <script setup>
-      // Or set at the page level
+      // Pre-render the homepage at build time
       defineRouteRules({
         prerender: true
       })
@@ -99,6 +81,25 @@ sections:
           <p>Pre-rendered at build time</p>
         </div>
       </template>
+      ```
+      ```ts [nuxt.config.ts]
+      export default defineNuxtConfig({
+        // Or specify the route rules globally
+        routeRules: {
+          // Homepage pre-rendered at build time
+          '/': { prerender: true },
+          // Product page generated on-demand with background revalidation
+          '/products/**': { swr: true },
+          // Blog post generated on-demand once until next deploy
+          '/blog/**': { isr: true },
+          // Admin dashboard renders only on client-side
+          '/admin/**': { ssr: false },
+          // Add cors headers on API routes
+          '/api/**': { cors: true },
+          // Redirects legacy urls
+          '/old-page': { redirect: '/new-page' }
+        }
+      })
       ```
       ::
   - title: 'Compose with<br><span class="text-primary">everything you need.</span>'

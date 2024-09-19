@@ -1,6 +1,9 @@
 <script lang="ts" setup>
 import type { Template } from '../types'
 
+definePageMeta({
+  heroBackground: 'opacity-80 -z-10'
+})
 const { data: page } = await useAsyncData('templates', () => queryContent('/templates').findOne())
 
 const title = page.value.head?.title || page.value.title

@@ -2,6 +2,9 @@
 import type { Module } from '~/types'
 import { ModuleProseA, ModuleProseImg } from '#components'
 
+definePageMeta({
+  heroBackground: 'opacity-30 -z-10'
+})
 const route = useRoute()
 
 const { data: module } = await useFetch<Module>(`https://api.nuxt.com/modules/${route.params.slug}`, {
@@ -66,21 +69,20 @@ defineOgImageComponent('Docs', {
 
 <template>
   <UContainer>
-    <UAlert
-      v-if="!module.compatibility?.nuxt?.includes('^3') && !module.compatibility?.nuxt?.includes('>=3')"
-      class="mt-4"
-      icon="i-ph-warning"
-      color="orange"
-      variant="subtle"
-      title="This module is not yet compatible with Nuxt 3"
-    >
-      <template #description>
-        Head over to <NuxtLink to="https://v2.nuxt.com" target="_blank" class="underline">
-          v2.nuxt.com
-        </NuxtLink>
-      </template>
-    </UAlert>
-
+    <div v-if="!module.compatibility?.nuxt?.includes('^3') && !module.compatibility?.nuxt?.includes('>=3')" class="pt-8">
+      <UAlert
+        icon="i-ph-warning"
+        color="orange"
+        variant="subtle"
+        title="This module is not yet compatible with Nuxt 3"
+      >
+        <template #description>
+          Head over to <NuxtLink to="https://v2.nuxt.com" target="_blank" class="underline">
+            v2.nuxt.com
+          </NuxtLink>
+        </template>
+      </UAlert>
+    </div>
     <UPageHeader :description="module.description" :ui="{ headline: 'mb-8' }">
       <template #headline>
         <UBreadcrumb :links="[{ label: 'Modules', to: '/modules', icon: 'i-ph-puzzle-piece' }, { to: { name: 'modules', query: { category: module.category } }, label: module.category }, { label: module.npm }]" />

@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import type { Agency } from '~/types'
 
+definePageMeta({
+  heroBackground: 'opacity-30 -z-10'
+})
 const route = useRoute()
 
 const { data: agency } = await useAsyncData(route.path, () => queryContent<Agency>(route.path).findOne())

@@ -1,4 +1,8 @@
 <script setup lang="ts">
+definePageMeta({
+  heroBackground: 'opacity-70'
+})
+
 const inputRef = ref()
 
 const route = useRoute()
@@ -42,7 +46,7 @@ const { copy } = useCopyToClipboard()
 
 <template>
   <UContainer>
-    <UPageHero v-bind="page">
+    <UPageHero v-bind="page" class="z-30">
       <div class="lg:pl-10">
         <UPageGrid :ui="{ wrapper: 'grid-cols-2 sm:grid-cols-2 xl:grid-cols-2 gap-4' }">
           <UPageCard

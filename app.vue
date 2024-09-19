@@ -45,6 +45,20 @@ watch(() => search.value?.commandPaletteRef?.query, debounce((query: string) => 
 
 // Provide
 provide('navigation', navigation)
+
+const route = useRoute()
+const heroBackgroundClass = computed(() => route.meta?.heroBackground || '')
+const { isLoading } = useLoadingIndicator()
+const appear = ref(false)
+const appeared = ref(false)
+onMounted(() => {
+  setTimeout(() => {
+    appear.value = true
+    setTimeout(() => {
+      appeared.value = true
+    }, 1000)
+  }, 0)
+})
 </script>
 
 <template>
@@ -93,7 +107,15 @@ provide('navigation', navigation)
 
     <AppHeader :links="headerLinks" />
 
-    <UMain>
+    <UMain class="relative">
+      <HeroBackground
+        class="absolute w-full top-[1px] transition-all text-primary flex-shrink-0"
+        :class="[
+          isLoading ? 'animate-pulse' : (appear ? 'opacity-100' : 'opacity-0'),
+          appeared ? 'duration-[400ms]': 'duration-1000',
+          heroBackgroundClass
+        ]"
+      />
       <NuxtPage />
     </UMain>
 
