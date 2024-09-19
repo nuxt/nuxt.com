@@ -2,11 +2,11 @@ head.title: Nuxt Templates
 title: Nuxt Templates
 navigation.title: Templates
 description: 'Explore community templates to get up and running in a few seconds.'
-navigation.icon: i-ph-browsers-duotone
+navigation.icon: i-ph-browsers
 links:
   - label: 'List a template'
     to: 'https://github.com/nuxt/nuxt.com/tree/main#add-a-nuxt-template'
-    icon: 'i-ph-plus-circle-duotone'
+    icon: 'i-ph-plus-circle'
     target: '_blank'
     color: gray
     size: md
@@ -57,11 +57,11 @@ templates:
     description: 'A lightweight Nuxt template for a Markdown driven website.'
     repo: 'atinux/content-wind'
     demo: 'https://content-wind.nuxt.space'
-  - name: 'Super SaaS'
+  - name: 'SuperSaaS'
     slug: 'supersaas'
-    description: 'The dashboard system that makes you say WOW.'
+    description: 'Nuxt 3 Fullstack Starter Kit with Auth, DB, Payment, Files & Emails'
     demo: 'https://supersaas.dev/?aff=J0Emk'
-    purchase: 'https://store.supersaas.dev/?aff=J0Emk'
+    purchase: 'https://supersaas.dev/?aff=J0Emk'
     badge: 'Premium'
   - name: 'Tairo'
     slug: 'tairo'

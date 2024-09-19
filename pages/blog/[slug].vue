@@ -58,22 +58,22 @@ function copyLink() {
 }
 const links = [
   {
-    icon: 'i-ph-pen-duotone',
+    icon: 'i-ph-pen',
     label: 'Edit this article',
     to: `https://github.com/nuxt/nuxt.com/edit/main/content/${article.value._file}`,
     target: '_blank'
   }, {
-    icon: 'i-ph-shooting-star-duotone',
+    icon: 'i-ph-shooting-star',
     label: 'Star on GitHub',
     to: 'https://go.nuxt.com/github',
     target: '_blank'
   }, {
-    icon: 'i-ph-chat-centered-text-duotone',
+    icon: 'i-ph-chat-centered-text',
     label: 'Chat on Discord',
     to: 'https://go.nuxt.com/discord',
     target: '_blank'
   }, {
-    icon: 'i-ph-hand-heart-duotone',
+    icon: 'i-ph-hand-heart',
     label: 'Become a Sponsor',
     to: 'https://go.nuxt.com/sponsor',
     target: '_blank'
@@ -86,7 +86,7 @@ const links = [
     <UPage>
       <UPageHeader :title="article.title" :description="article.description" :ui="{ headline: 'flex flex-col gap-y-8 items-start' }">
         <template #headline>
-          <UBreadcrumb :links="[{ label: 'Blog', icon: 'i-ph-newspaper-duotone', to: '/blog' }, { label: article.title }]" :ui="{ wrapper: 'max-w-full' }" />
+          <UBreadcrumb :links="[{ label: 'Blog', icon: 'i-ph-newspaper', to: '/blog' }, { label: article.title }]" :ui="{ wrapper: 'max-w-full' }" />
           <div class="flex items-center space-x-2">
             <span>
               {{ article.category }}

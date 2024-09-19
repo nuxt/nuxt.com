@@ -51,7 +51,7 @@ defineOgImageComponent('Docs')
                 :to="user.sponsor"
                 target="_blank"
                 color="gray"
-                icon="i-ph-heart-duotone"
+                icon="i-ph-heart"
                 icon-color="red"
                 :ui="{ icon: { base: 'text-pink-500' } }"
               >

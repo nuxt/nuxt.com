@@ -27,7 +27,7 @@ const mobileNav = computed(() => {
     ...headerLinks.value.slice(1),
     {
       label: 'Design Kit',
-      icon: 'i-ph-palette-duotone',
+      icon: 'i-ph-palette',
       to: '/design-kit'
     }
   ]
@@ -48,7 +48,7 @@ const dropdownItems = [
   }],
   [{
     label: 'Browse Design Kit',
-    icon: 'i-ph-shapes-duotone',
+    icon: 'i-ph-shapes',
     to: '/design-kit'
   }]
 ]

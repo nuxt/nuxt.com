@@ -1,15 +1,15 @@
 navigation.title: Modules
 title: Nuxt Modules
 description: Discover our list of modules to supercharge your Nuxt project. Created by the Nuxt team and community.
-navigation.icon: i-ph-puzzle-piece-duotone
+navigation.icon: i-ph-puzzle-piece
 links:
   - label: 'Module Author Guide'
-    icon: i-ph-book-open-duotone
+    icon: i-ph-book-open
     to: '/docs/guide/going-further/modules'
     color: black
     size: md
   - label: 'List a module'
-    icon: 'i-ph-plus-circle-duotone'
+    icon: 'i-ph-plus-circle'
     to: 'https://github.com/nuxt/modules#addupdate-a-module'
     target: '_blank'
     color: gray

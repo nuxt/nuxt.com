@@ -3,11 +3,7 @@ hero:
   cta:
     label: Nuxt v3.13 is out
     to: /blog/v3-13
-    variant: outline
     icon: i-ph-arrow-right
-    size: xs
-    trailing: true
-    class: 'font-semibold hover:bg-primary-100 dark:hover:bg-primary-900 rounded-full'
 logos:
   title: 'Trusted by the best front-end teams'
 sections:
@@ -17,15 +13,16 @@ sections:
     align: left
     links:
       - label: 'Learn about Views'
-        icon: i-ph-layout-duotone
+        icon: i-ph-layout
         to: '/docs/getting-started/views'
         color: black
         size: md
       - label: 'Hello World Example'
-        icon: i-ph-app-window-duotone
+        icon: i-ph-app-window
         to: '/docs/examples/hello-world'
         color: gray
         size: md
+        variant: ghost
     slot: code
     code: |
       ```vue [app.vue]
@@ -57,14 +54,15 @@ sections:
     align: right
     links:
       - label: 'Learn about Hybrid Rendering'
-        icon: i-ph-rocket-launch-duotone
+        icon: i-ph-rocket-launch
         to: '/docs/guide/concepts/rendering#hybrid-rendering'
         color: black
         size: md
       - label: 'Nuxt on the Edge'
-        icon: i-ph-newspaper-duotone
+        icon: i-ph-newspaper
         to: '/blog/nuxt-on-the-edge'
         color: gray
+        variant: ghost
         size: md
     slot: code
     code: |
@@ -110,51 +108,51 @@ sections:
     features:
       - title: 'Routing & Layouts'
         description: 'File based routing system to build complex views and interfaces with a powerful and conventional approach.'
-        icon: 'i-ph-signpost-duotone'
+        icon: 'i-ph-signpost'
         to: '/docs/getting-started/routing'
       - title: 'Data Fetching'
         description: 'Composables that run on the server to fetch data for your components and enable you to render content in different ways.'
-        icon: ' i-ph-plugs-connected-duotone'
+        icon: 'i-ph-plugs-connected'
         to: '/docs/getting-started/data-fetching'
       - title: 'Assets & Style'
         description: 'Image, Font and Script optimizations with a built-in support for CSS Modules, Sass, PostCSS, CSS-in-JS and more.'
-        icon: 'i-ph-image-duotone'
+        icon: 'i-ph-image'
         to: '/docs/getting-started/styling'
       - title: 'SEO & Meta Tags'
         description: 'Production ready and indexable by search engines while giving the feeling of an app to the end-users.'
-        icon: 'i-ph-trophy-duotone'
+        icon: 'i-ph-trophy'
         to: '/docs/getting-started/seo-meta'
       - title: 'Middleware'
         description: 'Run custom code such as authentication, localization or A/B testing before rendering a page or a group of pages.'
-        icon: 'i-ph-shield-check-duotone'
+        icon: 'i-ph-shield-check'
         to: '/docs/getting-started/routing#route-middleware'
       - title: 'State Management'
         description: 'Nuxt provides a simple way to share a reactive and SSR-friendly state between components.'
-        icon: 'i-ph-database-duotone'
+        icon: 'i-ph-database'
         to: '/docs/getting-started/state-management'
       - title: 'Transitions'
         description: 'Create smooth transitions between layouts, pages and components with a built-in support for Vue & browser transitions.'
-        icon: 'i-ph-exclude-square-duotone'
+        icon: 'i-ph-exclude-square'
         to: '/docs/getting-started/transitions'
       - title: 'Error Handling'
         description: 'Built-in error handling and logging to help you debug your application and provide a better user experience.'
-        icon: 'i-ph-bug-beetle-duotone'
+        icon: 'i-ph-bug-beetle'
         to: '/docs/getting-started/error-handling'
       - title: 'Layers'
         description: 'Extend your Nuxt application with another Nuxt application to reuse components, composables, layouts, pages and more.'
-        icon: 'i-ph-stack-duotone'
+        icon: 'i-ph-stack'
         to: '/docs/getting-started/layers'
       - title: 'Server Routes'
         description: 'Create API endpoints and server routes to securely connect with third party services and consume from your frontend.'
-        icon: 'i-ph-computer-tower-duotone'
+        icon: 'i-ph-computer-tower'
         to: '/docs/getting-started/server'
       - title: 'Auto Imports'
         description: 'Nuxt auto-imports helpers, composables, and Vue APIs to use across your app without explicitly importing them.'
-        icon: 'i-ph-magic-wand-duotone'
+        icon: 'i-ph-magic-wand'
         to: '/docs/guide/concepts/auto-imports'
       - title: 'TypeScript'
         description: 'Nuxt provides helpful shortcuts to ensure you have access to accurate type information when you are coding.'
-        icon: 'i-ph-file-ts-duotone'
+        icon: 'i-ph-file-ts'
         to: '/docs/guide/concepts/typescript'
   - title: 'Ship faster with<br><span class="text-primary">endless integrations</span>'
     description: 'Integrate with your favorite tools and services. Nuxt is built to be flexible and can be extended with a robust modules ecosystem. Connect your application with popular headless CMS, eCommerce, Database or UI/UX libraries with a single line of code.'
@@ -162,35 +160,38 @@ sections:
     align: left
     links:
       - label: 'Explore Nuxt Modules'
-        icon: i-ph-puzzle-piece-duotone
+        icon: i-ph-puzzle-piece
         to: '/modules'
         color: black
         size: md
       - label: 'Learn about Modules'
-        icon: i-ph-info-duotone
+        icon: i-ph-info
         to: '/docs/guide/concepts/modules'
         color: gray
         size: md
     slot: integrations
     integrations:
-      - src: /assets/integrations/cloudflare.svg
-        alt: Cloudflare
-        to: /deploy/cloudflare
+      - src: /assets/integrations/netlify.svg
+        alt: Netlify
+        to: /deploy/netlify
+      - src: /assets/integrations/nuxthub.svg
+        alt: NuxtHub
+        to: /deploy/nuxthub
       - src: /assets/integrations/vercel.svg
         alt: Vercel
         to: /deploy/vercel
       - src: /assets/integrations/heroku.svg
         alt: Heroku
         to: /deploy/heroku
+      - src: /assets/integrations/cloudflare.svg
+        alt: Cloudflare
+        to: /deploy/cloudflare
       - src: /assets/integrations/aws-amplify.svg
         alt: Amplify
         to: /deploy/aws-amplify
       - src: /assets/integrations/digitalocean.svg
         alt: DigitalOcean
         to: /deploy/digitalocean
-      - src: /assets/integrations/netlify.svg
-        alt: Netlify
-        to: /deploy/netlify
       - src: /assets/integrations/tailwind.svg
         alt: Tailwind CSS
         to: /modules/tailwindcss
@@ -224,9 +225,6 @@ sections:
       - src: /assets/integrations/shopify.svg
         alt: Shopify
         to: https://www.shopify.com/
-      - src: /assets/integrations/snipcart.svg
-        alt: Snipcart
-        to: /modules/snipcart
       - src: /assets/integrations/meilisearch.svg
         alt: Meilisearch
         to: /modules/meilisearch

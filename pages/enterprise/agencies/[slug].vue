@@ -83,7 +83,7 @@ defineOgImageComponent('Docs', {
         <span v-if="agency.link" class="hidden lg:block text-gray-500 dark:text-gray-400">&bull;</span>
 
         <NuxtLink v-if="agency.link" :to="agency.link" target="_blank" class="flex items-center gap-1.5 hover:text-primary">
-          <UIcon name="i-ph-link-duotone" class="w-5 h-5" />
+          <UIcon name="i-ph-link" class="w-5 h-5" />
           <span class="text-sm font-medium">Website</span>
         </NuxtLink>
       </div>

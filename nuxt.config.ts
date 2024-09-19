@@ -7,8 +7,7 @@ function normalizedDirPath(path?: string) {
     return path
   }
 
-  const windowsPath = path.replace(/\\/g, '/')
-  return windowsPath.startsWith('file:///') ? windowsPath : `file:///${windowsPath}`
+  return path.replace(/\\/g, '/')
 }
 
 const docsSourceBase = normalizedDirPath(process.env.NUXT_DOCS_PATH)
