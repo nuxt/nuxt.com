@@ -1,4 +1,7 @@
 <script setup lang="ts">
+definePageMeta({
+  heroBackground: 'opacity-80 -z-10'
+})
 const route = useRoute()
 const { filteredAgencies, fetchList, services, regions } = useEnterpriseAgencies()
 

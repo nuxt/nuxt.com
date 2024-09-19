@@ -11,7 +11,7 @@ defineProps<{
 
 <template>
   <UPageGrid class="xl:grid-cols-4">
-    <ULandingCard
+    <UPageCard
       v-for="(feature, index) in features"
       :key="index"
       v-bind="feature"

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { Hosting } from '../../types'
-
+definePageMeta({
+  heroBackground: 'opacity-70 -z-10'
+})
 const route = useRoute()
 const { fetchList, providers } = useHostingProviders()
 
