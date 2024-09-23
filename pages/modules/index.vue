@@ -163,9 +163,7 @@ const { copy } = useCopyToClipboard()
             :title="module.name"
             class="flex flex-col overflow-hidden group"
             :ui="{
-              // @ts-expect-error needs DeepPartial in nuxt/ui
               body: { base: 'flex-1' },
-              // @ts-expect-error needs DeepPartial in nuxt/ui
               footer: { base: 'bg-gray-100/50 dark:bg-gray-800/50' }
             }"
           >

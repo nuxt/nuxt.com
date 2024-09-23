@@ -67,7 +67,6 @@ links.push({
         :description="provider.description"
         headline="Deploy"
         :ui="{
-          // @ts-expect-error needs DeepPartial in nuxt/ui
           icon: { base: 'text-black dark:text-white' }
         }"
       >

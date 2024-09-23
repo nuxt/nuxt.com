@@ -42,9 +42,7 @@ await fetchList()
             :title="showcase.title || showcase.hostname"
             :description="showcase.hostname"
             :ui="{
-              // @ts-expect-error needs DeepPartial in nuxt/ui
               header: { base: 'aspect-w-4 aspect-h-2', padding: '' },
-              // @ts-expect-error needs DeepPartial in nuxt/ui
               body: { padding: '!p-4' }
             }"
             class="overflow-hidden"

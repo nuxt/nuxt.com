@@ -64,9 +64,7 @@ await fetchList()
             class="flex flex-col overflow-hidden"
             :ui="{
               divide: '',
-              // @ts-expect-error needs DeepPartial in nuxt/ui
               header: { base: 'aspect-w-4 aspect-h-2', padding: '' },
-              // @ts-expect-error needs DeepPartial in nuxt/ui
               footer: { padding: 'pt-0' },
               title: 'text-lg',
               description: 'line-clamp-2'

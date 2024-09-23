@@ -5,7 +5,6 @@ const { footerLinks } = useNavigation()
 <template>
   <UFooter
     :ui="{
-      // @ts-expect-error needs DeepPartial in nuxt/ui
       bottom: { wrapper: 'border-t border-gray-200 dark:border-gray-800', container: '!py-6' },
       top: { wrapper: 'border-t border-gray-200 dark:border-gray-800', container: 'py-8 lg:py-12' }
     }"

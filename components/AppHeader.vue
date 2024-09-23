@@ -98,7 +98,6 @@ defineProps<{
         :ui="{
           default: {
             popover: {
-              // @ts-expect-error needs DeepPartial in nuxt/ui
               popper: { strategy: 'absolute' },
               ui: { width: 'w-[256px]' }
             }

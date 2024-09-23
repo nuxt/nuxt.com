@@ -3,10 +3,8 @@
     to="https://ui.nuxt.com/pro?utm_source=nuxt_website&utm_medium=banner"
     target="_blank"
     :ui="{
-      // @ts-expect-error needs DeepPartial in nuxt/ui
       header: { padding: 'p-0 sm:p-0' },
       rounded: 'rounded',
-      // @ts-expect-error needs DeepPartial in nuxt/ui
       body: { padding: 'p-2 sm:p-2', base: 'text-center' } }"
   >
     <template #header>

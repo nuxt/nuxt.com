@@ -38,7 +38,6 @@ await fetchList()
           :description="job.description"
           :ui="{
             divide: '',
-            // @ts-expect-error needs DeepPartial in nuxt/ui
             footer: { padding: 'pt-0' },
             title: 'text-lg'
           }"
