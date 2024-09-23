@@ -100,7 +100,7 @@ async function onSubmit(event: FormSubmitEvent<any>) {
         </UFormGroup>
 
         <ClientOnly>
-          <NuxtTurnstile v-if="showTurnstile" ref="turnstile" v-model="token" :options="{ theme: $colorMode.value }" />
+          <NuxtTurnstile v-if="showTurnstile" ref="turnstile" v-model="token" :options="{ theme: $colorMode.value as 'auto' | 'light' | 'dark' }" />
         </ClientOnly>
 
         <UButton

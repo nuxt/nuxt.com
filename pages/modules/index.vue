@@ -162,7 +162,12 @@ const { copy } = useCopyToClipboard()
             :to="`/modules/${module.name}`"
             :title="module.name"
             class="flex flex-col overflow-hidden group"
-            :ui="{ body: { base: 'flex-1' }, footer: { base: 'bg-gray-100/50 dark:bg-gray-800/50' } }"
+            :ui="{
+              // @ts-expect-error needs DeepPartial in nuxt/ui
+              body: { base: 'flex-1' },
+              // @ts-expect-error needs DeepPartial in nuxt/ui
+              footer: { base: 'bg-gray-100/50 dark:bg-gray-800/50' }
+            }"
           >
             <template #icon>
               <UAvatar

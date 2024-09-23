@@ -17,6 +17,7 @@ defineProps<{
       v-bind="feature"
       :ui="{
         background: 'dark:bg-gradient-to-b from-gray-700/50 to-gray-900/50',
+        // @ts-expect-error needs DeepPartial in nuxt/ui
         body: {
           base: 'flex-1',
           background: 'dark:bg-gray-900/50'

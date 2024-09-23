@@ -5,7 +5,7 @@ defineProps({
     required: true
   },
   size: {
-    type: String,
+    type: String as () => 'lg',
     default: 'lg'
   }
 })

@@ -93,7 +93,19 @@ defineProps<{
     </template>
 
     <template #center>
-      <UHeaderLinks :links="links" :ui="{ default: { popover: { popper: { strategy: 'absolute' }, ui: { width: 'w-[256px]' } } } }" class="hidden lg:flex" />
+      <UHeaderLinks
+        :links="links"
+        :ui="{
+          default: {
+            popover: {
+              // @ts-expect-error needs DeepPartial in nuxt/ui
+              popper: { strategy: 'absolute' },
+              ui: { width: 'w-[256px]' }
+            }
+          }
+        }"
+        class="hidden lg:flex"
+      />
     </template>
 
     <template #right>

@@ -32,7 +32,9 @@ defineOgImageComponent('Docs')
             :key="template.slug"
             :description="template.description"
             :ui="{
+              // @ts-expect-error needs DeepPartial in nuxt/ui
               header: { base: 'aspect-w-4 aspect-h-2', padding: '' },
+              // @ts-expect-error needs DeepPartial in nuxt/ui
               body: { padding: '!p-4' },
               description: 'line-clamp-2 sm:min-h-[45px]'
             }"

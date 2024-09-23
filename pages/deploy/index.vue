@@ -51,9 +51,12 @@ const otherProviders = computed(() => providers.value.filter((provider: Hosting)
             :ui="{
               divide: '',
               to: ' hover:ring-2 hover:ring-primary-500 dark:hover:ring-primary-400 hover:!bg-transparent dark:hover:!bg-gray-900',
+              // @ts-expect-error needs DeepPartial in nuxt/ui
               header: { base: 'relative flex items-center justify-center', padding: '' },
+              // @ts-expect-error needs DeepPartial in nuxt/ui
               footer: { padding: 'pt-0' },
               title: 'text-lg',
+              // @ts-expect-error needs DeepPartial in nuxt/ui
               icon: { wrapper: 'mb-4' },
               description: 'line-clamp-2'
             }"
@@ -81,7 +84,9 @@ const otherProviders = computed(() => providers.value.filter((provider: Hosting)
             class="flex flex-col overflow-hidden"
             :ui="{
               divide: '',
+              // @ts-expect-error needs DeepPartial in nuxt/ui
               header: { base: 'aspect-w-4 aspect-h-2', padding: '' },
+              // @ts-expect-error needs DeepPartial in nuxt/ui
               footer: { padding: 'pt-0' },
               title: 'text-lg',
               description: 'line-clamp-2'

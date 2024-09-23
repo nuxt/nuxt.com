@@ -45,6 +45,7 @@ await fetchList()
             :description="agency.description"
             :ui="{
               divide: '',
+              // @ts-expect-error needs DeepPartial in nuxt/ui
               footer: { padding: 'pt-0' },
               title: 'text-lg',
               description: 'line-clamp-3'
