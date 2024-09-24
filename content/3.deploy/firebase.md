@@ -154,3 +154,19 @@ When using Firebase Hosting together with Cloud Functions or Cloud Run, cookies 
 ::read-more{to="https://firebase.google.com/docs/hosting/manage-cache#using_cookies" target="\_blank"}
 For more information, refer to the **Firebase documentation**.
 ::
+
+## Working with Environment Variables
+
+To set environment variables for your Firebase functions, you need to copy the `.env` file to the `.output/server` directory.
+You can do this by adding a `postbuild` script to your `package.json`, that will automatically run after the build command:
+
+```json [package.json]
+{
+  "scripts": {
+    "postbuild": "cp .env .output/server/.env"
+  }
+}
+
+::read-more{to="https://firebase.google.com/docs/functions/config-env?gen=2nd#env-variables" target="\_blank"}
+For more information, refer to the **Firebase documentation**.
+::
