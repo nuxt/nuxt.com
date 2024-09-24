@@ -166,6 +166,7 @@ You can do this by adding a `postbuild` script to your `package.json`, that will
     "postbuild": "cp .env .output/server/.env"
   }
 }
+```
 
 ::read-more{to="https://firebase.google.com/docs/functions/config-env?gen=2nd#env-variables" target="\_blank"}
 For more information, refer to the **Firebase documentation**.
