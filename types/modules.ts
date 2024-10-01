@@ -1,5 +1,11 @@
 import type { ParsedContent } from '@nuxt/content'
 
+export interface Stats {
+  maintainers: number
+  contributors: number
+  modules: number
+}
+
 export interface ModuleUser {
   name: string
   github: string

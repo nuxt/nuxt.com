@@ -41,15 +41,27 @@ const links = computed(() => [{
   target: '_blank'
 }].filter(Boolean))
 
-const contributors = computed(() => module.value.contributors.map(contributor => ({
-  label: contributor.username,
-  to: `https://github.com/${contributor.username}`,
-  avatar: {
-    src: `https://ipx.nuxt.com/f_auto,s_20x20/gh_avatar/${contributor.username}`,
-    srcset: `https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/${contributor.username} 2x`,
-    alt: contributor.username
+const contributors = computed(() => {
+  const allContributors = module.value.contributors.map(contributor => ({
+    label: contributor.username,
+    to: `https://github.com/${contributor.username}`,
+    avatar: {
+      src: `https://ipx.nuxt.com/f_auto,s_20x20/gh_avatar/${contributor.username}`,
+      srcset: `https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/${contributor.username} 2x`,
+      alt: contributor.username
+    }
+  }))
+  if (allContributors.length > 10) {
+    return [...allContributors.slice(0, 10), {
+      label: 'View all contributors',
+      to: `https://github.com/${module.value.repo}/graphs/contributors`,
+      external: true,
+      target: '_blank'
+    }]
   }
-})))
+
+  return allContributors
+})
 
 const title = module.value.name.charAt(0).toUpperCase() + module.value.name.slice(1)
 const description = module.value.description || 'A Nuxt module'
@@ -85,7 +97,7 @@ defineOgImageComponent('Docs', {
     </div>
     <UPageHeader :description="module.description" :ui="{ headline: 'mb-8' }">
       <template #headline>
-        <UBreadcrumb :links="[{ label: 'Modules', to: '/modules', icon: 'i-ph-puzzle-piece' }, { to: { name: 'modules', query: { category: module.category } }, label: module.category }, { label: module.npm }]" />
+        <UBreadcrumb :links="[{ label: 'Modules', to: '/modules' }, { to: { name: 'modules', query: { category: module.category } }, label: module.category }, { label: module.npm }]" />
       </template>
       <template #title>
         <div class="flex items-center gap-4">
@@ -99,7 +111,7 @@ defineOgImageComponent('Docs', {
           />
 
           <div>
-            {{ module.name }}
+            {{ module.npm }}
 
             <UTooltip v-if="module.type === 'official'" text="Official module" class="tracking-normal">
               <UIcon name="i-ph-medal" class="h-6 w-6 text-primary" />
@@ -153,11 +165,9 @@ defineOgImageComponent('Docs', {
       </UPageBody>
 
       <template #right>
-        <UContentToc :links="module.readme.toc?.links">
+        <UContentToc>
           <template #bottom>
-            <div class="hidden lg:block space-y-6" :class="{ '!mt-6': module.readme?.toc?.links?.length }">
-              <UDivider v-if="module.readme?.toc?.links?.length" type="dashed" />
-
+            <div class="hidden lg:block space-y-6">
               <UPageLinks title="Links" :links="links" />
 
               <UDivider type="dashed" />

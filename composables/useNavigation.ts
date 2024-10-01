@@ -93,17 +93,20 @@ const _useNavigation = () => {
         label: 'Nuxt UI Pro',
         to: 'https://ui.nuxt.com/pro?utm_source=nuxt-website&utm_medium=header',
         description: 'Premium Vue components for Nuxt.',
-        icon: 'i-ph-layout'
+        icon: 'i-ph-layout',
+        target: '_blank'
       }, {
         label: 'Nuxt Studio',
         to: 'https://nuxt.studio/?utm_source=nuxt-website&utm_medium=header',
         description: 'The Git-based CMS for Nuxt.',
-        icon: 'i-ph-pen'
+        icon: 'i-ph-pen',
+        target: '_blank'
       }, {
         label: 'NuxtHub',
         to: 'https://hub.nuxt.com/?utm_source=nuxt-website&utm_medium=header',
         description: 'Build, deploy & manage Nuxt apps that scale.',
-        icon: 'i-ph-rocket-launch'
+        icon: 'i-ph-rocket-launch',
+        target: '_blank'
       }]
     }, {
       label: 'Services',
@@ -217,10 +220,13 @@ const _useNavigation = () => {
         .filter(module => ['name', 'npm', 'repo'].map(field => module[field]).filter(Boolean).some(value => value.search(searchTextRegExp(q)) !== -1))
         .map(module => ({
           id: `module-${module.name}`,
-          label: module.name,
+          label: module.npm,
           suffix: module.description,
           avatar: {
-            src: moduleImage(module.icon)
+            src: moduleImage(module.icon),
+            ui: {
+              rounded: 'rounded-md'
+            }
           },
           to: `/modules/${module.name}`
         }))

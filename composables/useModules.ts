@@ -1,4 +1,4 @@
-import type { Module, Filter } from '../types'
+import type { Module, Filter, Stats } from '../types'
 
 const iconsMap = {
   Analytics: 'i-ph-chart-bar',
@@ -43,6 +43,11 @@ export const useModules = () => {
 
   const route = useRoute()
   const router = useRouter()
+  const stats = useState<Stats>('module-stats', () => ({
+    maintainers: 0,
+    contributors: 0,
+    modules: 0
+  }))
   const modules = useState<Module[]>('modules', () => [])
   const module = useState<Module>('module', () => ({} as Module))
 
@@ -52,9 +57,10 @@ export const useModules = () => {
       return
     }
 
-    const res = await $fetch<{ modules: Module[] }>('https://api.nuxt.com/modules')
+    const res = await $fetch<{ modules: Module[], stats: Stats }>('https://api.nuxt.com/modules')
     if (res?.modules) {
       modules.value = res.modules
+      stats.value = res.stats
     }
   }
 
@@ -179,11 +185,17 @@ export const useModules = () => {
     return route.query.q as string
   })
 
-  const isSponsor = (a: Module, b: Module) => {
+  const isSponsorOrOfficial = (a: Module, b: Module) => {
     if (a.sponsor && !b.sponsor) {
       return -1
     }
     else if (!a.sponsor && b.sponsor) {
+      return 1
+    }
+    else if (a.type === 'official' && b.type !== 'official') {
+      return -1
+    }
+    else if (a.type !== 'official' && b.type === 'official') {
       return 1
     }
     else {
@@ -234,8 +246,8 @@ export const useModules = () => {
       filteredModules = filteredModules.reverse()
     }
 
-    // sponsored modules in first place
-    return filteredModules.sort(isSponsor)
+    // sponsored & official modules in first place
+    return filteredModules.sort(isSponsorOrOfficial)
   })
 
   return {
@@ -246,6 +258,7 @@ export const useModules = () => {
     sorts,
     orders,
     // Computed
+    stats,
     modules,
     filteredModules,
     module,

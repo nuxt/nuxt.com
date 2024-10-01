@@ -61,14 +61,23 @@ onBeforeUnmount(() => {
       </UPageHero>
     </UContainer>
 
-    <ULandingSection>
+    <ULandingSection class="py-8 sm:py-8">
       <EnterpriseSupportLogoCarousel :logos="page.logos" />
     </ULandingSection>
 
-    <ULandingSection v-bind="page.service" align="left">
-      <UPageGrid :ui="{ wrapper: 'xl:grid-cols-2' }">
-        <UPageCard v-for="service in page.service.services" :key="service.title" v-bind="service" :ui="{ background: 'card-bg', icon: { base: 'size-8' } }" />
-      </UPageGrid>
+    <ULandingSection
+      v-bind="page.service"
+      align="center"
+      :ui="{
+        container: 'gap-12 sm:gap-y-12',
+        base: 'text-left items-start'
+      }"
+    >
+      <template #links>
+        <UPageGrid :ui="{ wrapper: 'xl:grid-cols-4' }">
+          <UPageCard v-for="service in page.service.services" :key="service.title" v-bind="service" :ui="{ background: 'card-bg', icon: { base: 'size-8' } }" />
+        </UPageGrid>
+      </template>
     </ULandingSection>
 
     <ULandingSection v-bind="page.expertise">
