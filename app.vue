@@ -66,15 +66,15 @@ onMounted(() => {
     <NuxtLoadingIndicator />
 
     <AppBanner
-      id="nuxt-tips"
-      to="https://michaelnthiessen.com/nuxt-tips-collection?aff=J0Emk"
+      id="nuxt-cert-date"
+      to="https://certificates.dev/nuxt?utm_source=nuxt&utm_medium=website&utm_campaign=affiliate&friend=NUXT"
     >
       <div class="flex items-center gap-1">
         <UIcon
-          name="i-ph-magic-wand"
-          class="w-5 h-5 flex-shrink-0 pointer-events-none hidden lg:inline-block mr-1"
+          name="i-ph-circle-wavy-check-duotone"
+          class="w-5 h-5 flex-shrink-0 pointer-events-none hidden sm:inline-block"
         />
-        <span>Learn Nuxt with a Collection of 100+ Tips!</span>
+        <span><span class="hidden lg:inline">Official</span> Nuxt mid-level certification launch date announced!</span>
         <UButton
           label="Learn more"
           color="white"
