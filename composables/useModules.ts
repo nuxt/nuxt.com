@@ -246,8 +246,11 @@ export const useModules = () => {
       filteredModules = filteredModules.reverse()
     }
 
-    // sponsored & official modules in first place
-    return filteredModules.sort(isSponsorOrOfficial)
+    // sponsored & official modules in first place if no sort or order by
+    if (!route.query.sortBy && !route.query.orderBy) {
+      return filteredModules.sort(isSponsorOrOfficial)
+    }
+    return filteredModules
   })
 
   return {

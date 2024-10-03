@@ -7,7 +7,7 @@ const inputRef = ref()
 
 const route = useRoute()
 const { replaceRoute } = useFilters('modules')
-const { fetchList, filteredModules, q, categories, stats } = useModules()
+const { fetchList, filteredModules, q, categories, stats, selectedOrder, sorts, selectedSort } = useModules()
 
 const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
 
@@ -64,7 +64,7 @@ const { copy } = useCopyToClipboard()
             name="q"
             icon="i-ph-magnifying-glass"
             placeholder="Search..."
-            class="w-full mb-4"
+            class="w-full mb-2"
             size="md"
             autocomplete="off"
             :ui="{ icon: { trailing: { pointer: '' } } }"
@@ -85,12 +85,28 @@ const { copy } = useCopyToClipboard()
               </UKbd>
             </template>
           </UInput>
+          <UButtonGroup class="mb-4 w-full">
+            <USelectMenu
+              :model-value="selectedSort"
+              :options="sorts"
+              size="md"
+              color="white"
+              class="w-full"
+              @update:model-value="replaceRoute('sortBy', $event)"
+            />
+            <UButton
+              :icon="selectedOrder.icon"
+              size="md"
+              color="gray"
+              @click="replaceRoute('orderBy', selectedOrder.key === 'desc' ? 'asc' : 'desc')"
+            />
+          </UButtonGroup>
           <UNavigationTree :links="[{ label: 'Categories', disabled: true, children: categories }]" />
         </UAside>
       </template>
 
-      <UPageBody class="lg:pl-12">
-        <div class="lg:hidden mb-6">
+      <UPageBody class="lg:pl-8">
+        <div class="lg:hidden mb-6 flex items-center gap-2">
           <UInput
             ref="inputRef"
             type="search"
@@ -98,12 +114,27 @@ const { copy } = useCopyToClipboard()
             name="q"
             icon="i-ph-magnifying-glass"
             placeholder="Search a module..."
-            class="w-full mb-4"
-            size="md"
+            class="w-full"
+            size="sm"
             autocomplete="off"
             :ui="{ icon: { trailing: { pointer: '' } } }"
             @update:model-value="replaceRoute('q', $event)"
           />
+          <UButtonGroup>
+            <USelectMenu
+              :model-value="selectedSort"
+              :options="sorts"
+              size="md"
+              color="white"
+              @update:model-value="replaceRoute('sortBy', $event)"
+            />
+            <UButton
+              :icon="selectedOrder.icon"
+              size="md"
+              color="gray"
+              @click="replaceRoute('orderBy', selectedOrder.key === 'desc' ? 'asc' : 'desc')"
+            />
+          </UButtonGroup>
         </div>
         <UPageGrid v-if="filteredModules?.length">
           <UPageCard
