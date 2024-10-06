@@ -192,18 +192,6 @@ sections:
       - src: /assets/integrations/digitalocean.svg
         alt: DigitalOcean
         to: /deploy/digitalocean
-      - src: /assets/integrations/netlify.svg
-        alt: Netlify
-        to: /deploy/netlify
-      - src: /assets/integrations/koyeb.svg
-        alt: Koyeb
-        to: /deploy/koyeb
-      - src: /assets/integrations/zeabur.svg
-        alt: zeabur
-        to: /deploy/zeabur
-      - src: /assets/integrations/zerops.svg
-        alt: zerops
-        to: /deploy/zerops
       - src: /assets/integrations/tailwind.svg
         alt: Tailwind CSS
         to: /modules/tailwindcss
