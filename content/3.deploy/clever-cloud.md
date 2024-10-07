@@ -16,7 +16,7 @@ Nuxt supports deploying on [Clever Cloud](https://www.clever-cloud.com/) with mi
     clever login
     ```
 
-## Deploy a static application
+## Deploy as Node.js application
 
 1. Create a new Clever Cloud Node app.
 
