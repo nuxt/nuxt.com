@@ -16,6 +16,7 @@ defineProps<{
       :key="index"
       v-bind="feature"
       :ui="{
+        base: 'overflow-hidden',
         background: 'dark:bg-gradient-to-b from-gray-700/50 to-gray-900/50',
         body: {
           base: 'flex-1',
