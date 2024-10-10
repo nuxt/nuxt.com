@@ -48,7 +48,7 @@ const titleTemplate = computed(() => {
 const communityLinks = computed(() => [{
   icon: 'i-ph-pen',
   label: 'Edit this page',
-  to: `https://github.com/nuxt/nuxt/edit/main/docs/${page?.value?._file?.split('/').slice(1).join('/')}`,
+  to: `https://github.com/nuxt/nuxt/blob/main/docs/${page?.value?._file?.split('/').slice(1).join('/')}`,
   target: '_blank'
 }, {
   icon: 'i-ph-chat-centered-text',
