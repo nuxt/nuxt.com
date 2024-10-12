@@ -12,7 +12,9 @@ withDefaults(defineProps<{
       <UIcon name="i-ph-magnifying-glass" class="w-16 h-16 mx-auto text-gray-500 dark:text-gray-400 mb-4" aria-hidden="true" />
 
       <!-- eslint-disable-next-line vue/no-v-html -->
-      <p class="text-lg text-center max-w-sm" v-html="label" />
+      <p class="text-lg text-center max-w-sm">
+        {{ label }}
+      </p>
 
       <div class="flex items-center gap-3 mt-6">
         <slot />

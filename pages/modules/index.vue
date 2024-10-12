@@ -226,7 +226,7 @@ const { copy } = useCopyToClipboard()
           </UPageCard>
         </UPageGrid>
 
-        <EmptyCard v-else :label="`There is no module found for <b>${q}</b> yet. Become the first one to create it!`">
+        <EmptyCard v-else :label="`There is no module found for ${q} yet. Become the first one to create it!`">
           <UButton
             label="Contribute on GitHub"
             color="black"
