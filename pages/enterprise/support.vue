@@ -56,6 +56,7 @@ onBeforeUnmount(() => {
     <UContainer>
       <UPageHero :title="page.title" align="center" :links="page.hero.links">
         <template #description>
+          <!-- eslint-disable-next-line vue/no-v-html -->
           <span v-html="page.description" />
         </template>
       </UPageHero>
