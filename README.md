@@ -8,7 +8,9 @@ Welcome to the Nuxt website repository available on [nuxt.com](https://nuxt.com)
 
 ## Setup
 
-Make sure to install the dependencies
+Ensure your pnpm version matches the one specified in the `packageManager` field in `package.json`.
+
+Install all dependencies
 
 ```bash
 pnpm install
