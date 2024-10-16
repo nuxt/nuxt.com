@@ -74,7 +74,7 @@ onMounted(() => {
           name="i-ph-circle-wavy-check-duotone"
           class="w-5 h-5 flex-shrink-0 pointer-events-none hidden sm:inline-block"
         />
-        <span><span class="hidden lg:inline">Official</span> Nuxt mid-level certification launch date announced!</span>
+        <span><span class="hidden lg:inline">Official</span> Nuxt certification (mid-level) is out!</span>
         <UButton
           label="Learn more"
           color="white"
