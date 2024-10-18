@@ -66,15 +66,15 @@ onMounted(() => {
     <NuxtLoadingIndicator />
 
     <AppBanner
-      id="nuxt-cert-date"
-      to="https://certificates.dev/nuxt?utm_source=nuxt&utm_medium=website&utm_campaign=affiliate&friend=NUXT"
+      id="nuxt-ui-pro"
+      to="https://ui.nuxt.com/pro?utm_source=nuxt&utm_medium=website&utm_campaign=banner"
     >
       <div class="flex items-center gap-1">
         <UIcon
-          name="i-ph-circle-wavy-check-duotone"
+          name="i-ph-layout-duotone"
           class="w-5 h-5 flex-shrink-0 pointer-events-none hidden sm:inline-block"
         />
-        <span><span class="hidden lg:inline">Official</span> Nuxt certification (mid-level) is out!</span>
+        <span>Create beautiful & responsive Nuxt apps with Nuxt UI Pro</span>
         <UButton
           label="Learn more"
           color="white"

@@ -5,6 +5,12 @@ description: 'Watch video courses from the community to learn Vue 3 and Nuxt 3.'
 navigation.icon: i-ph-graduation-cap
 align: center
 courses:
+  - name: 'Mastering Nuxt'
+    slug: 'mastering-nuxt'
+    description: 'The complete guide to developing and deploying fast, production-ready Nuxt 3 apps.'
+    url: 'https://masteringnuxt.com/nuxt3'
+    badge: Premium
+    sponsor: true
   - name: 'Nuxt 3 Fundamentals'
     slug: 'vc-nuxt-3-fundamentals'
     description: 'Learn Nuxt 3 fundamentals with VueSchool.'
@@ -30,11 +36,6 @@ courses:
     screenshotOptions:
       delay: 1
       removeElements: ['tp-yt-iron-overlay-backdrop', 'tp-yt-paper-dialog']
-  - name: 'Mastering Nuxt'
-    slug: 'mastering-nuxt'
-    description: 'The complete guide to developing and deploying fast, production-ready Nuxt 3 apps.'
-    url: 'https://masteringnuxt.com/nuxt3'
-    badge: Premium
   - name: 'Real World Nuxt 3'
     slug: 'vm-real-world-nuxt'
     description: 'This is a hands-on course for learning how to build web apps using Nuxt.'
