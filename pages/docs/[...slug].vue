@@ -87,6 +87,17 @@ defineOgImageComponent('Docs', {
     <UPageHeader v-bind="page">
       <template #headline>
         <UBreadcrumb :links="breadcrumb" />
+        <UTooltip v-if="page._path.includes('/docs/examples/')" class="absolute right-4" text="Preview">
+          <UButton
+            :to="`https://${page._path.replace('/docs/examples/', '').split('/').pop()}.example.nuxt.space`"
+            icon="i-ph-arrow-up-right"
+            color="gray"
+            :ui="{ rounded: 'rounded-full' }"
+            external
+            target="_blank"
+            size="lg"
+          />
+        </UTooltip>
       </template>
     </UPageHeader>
 
