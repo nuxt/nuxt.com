@@ -43,6 +43,9 @@ if (examplesSourceBase) {
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  future: {
+    compatibilityVersion: 4
+  },
   compatibilityDate: '2024-07-18',
   extends: [
     process.env.NUXT_UI_PRO_PATH || '@nuxt/ui-pro'
@@ -203,11 +206,6 @@ export default defineNuxtConfig({
   },
   typescript: {
     strict: false
-  },
-  experimental: {
-    headNext: true,
-    sharedPrerenderData: true,
-    appManifest: true
   },
   devtools: {
     enabled: false
