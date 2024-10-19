@@ -221,7 +221,7 @@ sections:
         to: /modules/sanity
       - src: /assets/integrations/sentry.svg
         alt: Sentry
-        to: https://sentry.io/
+        to: /modules/sentry
       - src: /assets/integrations/shopify.svg
         alt: Shopify
         to: https://www.shopify.com/

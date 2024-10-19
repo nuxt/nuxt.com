@@ -3,7 +3,14 @@ title: Nuxt Video Courses
 navigation.title: Video Courses
 description: 'Watch video courses from the community to learn Vue 3 and Nuxt 3.'
 navigation.icon: i-ph-graduation-cap
+align: center
 courses:
+  - name: 'Mastering Nuxt'
+    slug: 'mastering-nuxt'
+    description: 'The complete guide to developing and deploying fast, production-ready Nuxt 3 apps.'
+    url: 'https://masteringnuxt.com/nuxt3'
+    badge: Premium
+    sponsor: true
   - name: 'Nuxt 3 Fundamentals'
     slug: 'vc-nuxt-3-fundamentals'
     description: 'Learn Nuxt 3 fundamentals with VueSchool.'
@@ -29,11 +36,6 @@ courses:
     screenshotOptions:
       delay: 1
       removeElements: ['tp-yt-iron-overlay-backdrop', 'tp-yt-paper-dialog']
-  - name: 'Mastering Nuxt'
-    slug: 'mastering-nuxt'
-    description: 'The complete guide to developing and deploying fast, production-ready Nuxt 3 apps.'
-    url: 'https://masteringnuxt.com/nuxt3'
-    badge: Premium
   - name: 'Real World Nuxt 3'
     slug: 'vm-real-world-nuxt'
     description: 'This is a hands-on course for learning how to build web apps using Nuxt.'
@@ -68,7 +70,7 @@ courses:
     description: 'Deep dive into Vue 3 with Evan You.'
     url: 'https://www.vuemastery.com/courses/vue3-deep-dive-with-evan-you/vue3-overview?fpr=nuxt'
     badge: Premium
-  - name: 'Nuxt 3 - Crash Course'
+  - name: 'Nuxt 3 — Crash Course'
     slug: 'nuxt-3-crash-course-prismic'
     description: 'Unleash the power of Prismic as a Headless Website Builder alongside Nuxt.'
     url: 'https://www.youtube.com/watch?v=8GmfcbuYOWE'
@@ -78,4 +80,14 @@ courses:
     description: 'Learn how to use Nuxt 3 in this full tutorial for beginners.'
     url: 'https://www.youtube.com/watch?v=fTPCKnZZ2dk'
     screenshotUrl: 'https://www.youtube-nocookie.com/embed/fTPCKnZZ2dk?si=3Fq2wEvmXh2u3jlr'
+  - name: 'Pro Nuxt Workflow'
+    slug: 'vm-pro-nuxt-workflow'
+    description: 'Dig beneath the surface of Nuxt in order to uncover some gems that can enhance your workflow.'
+    url: 'https://www.vuemastery.com/courses/pro-nuxt-workflow/pro-nuxt-workflow-intro/?fpr=nuxt'
+    badge: Premium
+  - name: 'Nuxt Authentication'
+    slug: 'vm-nuxt-auth'
+    description: 'Explore the foundational principles behind web authentication in Nuxt.'
+    url: 'https://www.vuemastery.com/courses/nuxt-authentication/nuxt-auth-introduction/?fpr=nuxt'
+    badge: Premium
 

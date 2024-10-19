@@ -1,5 +1,12 @@
 <template>
-  <UPageCard to="https://ui.nuxt.com/pro?utm_source=nuxt_website&utm_medium=banner" target="_blank" :ui="{ header: { padding: 'p-0 sm:p-0' }, rounded: 'rounded', body: { padding: 'p-2 sm:p-2', base: 'text-center' } }">
+  <UPageCard
+    to="https://ui.nuxt.com/pro?utm_source=nuxt_website&utm_medium=banner"
+    target="_blank"
+    :ui="{
+      header: { padding: 'p-0 sm:p-0' },
+      rounded: 'rounded',
+      body: { padding: 'p-2 sm:p-2', base: 'text-center' } }"
+  >
     <template #header>
       <UColorModeImage dark="https://ui.nuxt.com/_ipx/s_1152x720/templates/dashboard3.png" light="https://ui.nuxt.com/_ipx/s_1152x720/templates/dashboard2.png" alt="Nuxt UI Pro" />
     </template>

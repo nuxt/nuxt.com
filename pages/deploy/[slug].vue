@@ -63,7 +63,13 @@ links.push({
 <template>
   <UContainer>
     <UPage>
-      <UPageHeader :description="provider.description" headline="Deploy" :ui="{ icon: { base: 'text-black dark:text-white' } }">
+      <UPageHeader
+        :description="provider.description"
+        headline="Deploy"
+        :ui="{
+          icon: { base: 'text-black dark:text-white' }
+        }"
+      >
         <template #title>
           <div class="flex items-center gap-4">
             <UIcon v-if="provider.logoIcon" :name="provider.logoIcon" class="w-10 text-black dark:text-white" />

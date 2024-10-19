@@ -9,7 +9,7 @@ hero:
   - label: Talk to an expert
     color: black
     to: 'https://calendly.com/ferdinand-nuxt/nuxtlabs-ferdinand'
-    size: lg
+    size: sm
     target: '_blank'
 logos:
   - light: '/assets/enterprise/support/light/malt.svg'
