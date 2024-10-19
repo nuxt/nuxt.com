@@ -8,9 +8,10 @@ Welcome to the Nuxt website repository available on [nuxt.com](https://nuxt.com)
 
 ## Setup
 
-Make sure to install the dependencies
+Make sure to enable corepack and install the dependencies:
 
 ```bash
+corepack enable
 pnpm install
 ```
 
