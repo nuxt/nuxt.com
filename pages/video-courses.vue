@@ -31,8 +31,8 @@ defineOgImageComponent('Docs')
             <NuxtImg
               :src="`/assets/video-courses/${course.slug}.png`"
               :alt="course.name"
-              :width="course.sponsor ? 96 : 58"
-              :height="course.sponsor ? 64 : 32"
+              :width="'sponsor' in course && course.sponsor ? 96 : 58"
+              :height="'sponsor' in course && course.sponsor ? 64 : 32"
               format="webp"
               :modifiers="{ pos: 'top' }"
               :loading="index > 3 ? 'lazy' : undefined"
@@ -40,13 +40,13 @@ defineOgImageComponent('Docs')
             />
             <h3
               class="font-medium text-gray-700 dark:text-gray-200 flex-grow lg:flex-grow-0"
-              :class="course.sponsor ? 'text-xl' : 'text-base'"
+              :class="'sponsor' in course && course.sponsor ? 'text-xl' : 'text-base'"
             >
               {{ course.name }}
             </h3>
             <p
               class="dark:text-gray-400 text-gray-500 hidden lg:block flex-grow"
-              :class="course.sponsor ? 'text-base' : 'text-sm'"
+              :class="'sponsor' in course && course.sponsor ? 'text-base' : 'text-sm'"
             >
               {{ course.description }}
             </p>
@@ -66,7 +66,7 @@ defineOgImageComponent('Docs')
               class="rounded-full"
             />
             <UButton
-              v-if="course.sponsor"
+              v-if="'sponsor' in course && course.sponsor"
               :to="course.url"
               target="_blank"
               trailing-icon="i-ph-arrow-right"
