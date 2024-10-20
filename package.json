@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "@nuxt/eslint": "^0.6.0",
-    "@nuxt/test-utils": "^3.14.3",
+    "@nuxt/test-utils": "^3.14.4",
     "@nuxtjs/turnstile": "^0.9.10",
     "@testing-library/vue": "^8.1.0",
     "capture-website": "^4.1.0",
