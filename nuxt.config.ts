@@ -50,7 +50,6 @@ export default defineNuxtConfig({
   // @ts-ignore Type circular reference
   modules: [
     'nuxt-content-twoslash',
-    'nuxt-build-cache',
     '@nuxt/content',
     '@nuxt/ui',
     '@nuxt/image',
@@ -163,6 +162,9 @@ export default defineNuxtConfig({
   },
   future: {
     compatibilityVersion: 4
+  },
+  experimental: {
+    buildCache: true
   },
   compatibilityDate: '2024-07-18',
   nitro: {
