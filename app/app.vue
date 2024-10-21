@@ -127,7 +127,7 @@ onMounted(() => {
         :files="files"
         :navigation="navigation[0]?.children"
         :groups="searchGroups"
-        :links="[{ label: 'Ask AI', icon: 'i-ph-magic-wand', to: 'javascript:void(0);', click: () => $kapa.openModal() }, ...searchLinks]"
+        :links="searchLinks"
         :fuse="{ resultLimit: 25 }"
       />
 

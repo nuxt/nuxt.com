@@ -1,6 +1,7 @@
 import { createSharedComposable } from '@vueuse/core'
 
 const _useNavigation = () => {
+  const nuxtApp = useNuxtApp()
   const headerLinks = computed(() => {
     const route = useRoute()
 
@@ -178,7 +179,14 @@ const _useNavigation = () => {
     }]
   }]
 
-  const searchLinks = computed(() => [...headerLinks.value.map((link) => {
+  const searchLinks = computed(() => [
+    {
+      label: 'Ask AI',
+      icon: 'i-ph-magic-wand',
+      to: 'javascript:void(0);',
+      click: () => nuxtApp.$kapa.openModal()
+    },
+    ...headerLinks.value.map((link) => {
     // Remove `/docs` and `/enterprise` links from command palette
     if (link.search === false) {
       return {
