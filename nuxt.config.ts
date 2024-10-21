@@ -50,7 +50,6 @@ export default defineNuxtConfig({
   // @ts-ignore Type circular reference
   modules: [
     'nuxt-content-twoslash',
-    'nuxt-build-cache',
     '@nuxt/content',
     '@nuxt/ui',
     '@nuxt/image',
@@ -166,10 +165,11 @@ export default defineNuxtConfig({
     // '/docs/guide/directory-structure/nuxt.config': { redirect: '/docs/guide/directory-structure/nuxt-config', prerender: false },
     '/enterprise': { redirect: '/enterprise/support', prerender: false }
   },
+  future: {
+    compatibilityVersion: 4
+  },
   experimental: {
-    headNext: true,
-    sharedPrerenderData: true,
-    appManifest: true
+    buildCache: true
   },
   compatibilityDate: '2024-07-18',
   nitro: {
