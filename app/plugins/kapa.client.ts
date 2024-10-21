@@ -154,10 +154,12 @@ export default defineNuxtPlugin((nuxtApp) => {
       document.querySelector('#kapa-widget-container button')?.click()
       if (q) {
         let input = null
+        let i = 0
         do {
           input = document.querySelector('#kapa-widget-portal .mantine-Textarea-input')
           await new Promise(resolve => setTimeout(resolve, 100))
-        } while (!input)
+          i++
+        } while (!input && i < 20)
         input.value = q
         // await new Promise(resolve => setTimeout(resolve, 50))
         // input.dispatchEvent(new Event('input', { bubbles: true }))
