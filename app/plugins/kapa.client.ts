@@ -150,6 +150,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   nuxtApp.provide('kapa', {
     async openModal(q) {
+      // @ts-expect-error this is not typed
       document.querySelector('#kapa-widget-container button')?.click()
       if (q) {
         let input = null

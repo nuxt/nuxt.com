@@ -184,6 +184,7 @@ const _useNavigation = () => {
       label: 'Ask AI',
       icon: 'i-ph-magic-wand',
       to: 'javascript:void(0);',
+      // @ts-expect-error this is not typed
       click: () => nuxtApp.$kapa?.openModal()
     },
     ...headerLinks.value.map((link) => {
@@ -225,6 +226,7 @@ const _useNavigation = () => {
         icon: 'i-ph-magic-wand',
         to: 'javascript:void(0);',
         click() {
+          // @ts-expect-error this is not typed
           useNuxtApp().$kapa.openModal(q)
         }
       }]

@@ -92,11 +92,6 @@ export default defineNuxtConfig({
   colorMode: {
     preference: 'dark'
   },
-  icon: {
-    clientBundle: {
-      scan: true
-    }
-  },
   // image: {
   //   ipx: {
   //     baseURL: 'https://ipx.nuxt.com'
@@ -206,6 +201,11 @@ export default defineNuxtConfig({
       stylistic: {
         commaDangle: 'never'
       }
+    }
+  },
+  icon: {
+    clientBundle: {
+      scan: true
     }
   },
   twoslash: {
