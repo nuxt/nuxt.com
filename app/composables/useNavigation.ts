@@ -184,32 +184,32 @@ const _useNavigation = () => {
       label: 'Ask AI',
       icon: 'i-ph-magic-wand',
       to: 'javascript:void(0);',
-      click: () => nuxtApp.$kapa.openModal()
+      click: () => nuxtApp.$kapa?.openModal()
     },
     ...headerLinks.value.map((link) => {
     // Remove `/docs` and `/enterprise` links from command palette
-    if (link.search === false) {
-      return {
-        label: link.label,
-        icon: link.icon,
-        children: link.children
+      if (link.search === false) {
+        return {
+          label: link.label,
+          icon: link.icon,
+          children: link.children
+        }
       }
-    }
 
-    return link
-  }).filter(Boolean), {
-    label: 'Team',
-    icon: 'i-ph-users',
-    to: '/team'
-  }, {
-    label: 'Design Kit',
-    icon: 'i-ph-palette',
-    to: '/design-kit'
-  }, {
-    label: 'Newsletter',
-    icon: 'i-ph-envelope-simple',
-    to: '/newsletter'
-  }])
+      return link
+    }).filter(Boolean), {
+      label: 'Team',
+      icon: 'i-ph-users',
+      to: '/team'
+    }, {
+      label: 'Design Kit',
+      icon: 'i-ph-palette',
+      to: '/design-kit'
+    }, {
+      label: 'Newsletter',
+      icon: 'i-ph-envelope-simple',
+      to: '/newsletter'
+    }])
 
   const searchGroups = [{
     key: 'ask-ai-search',
@@ -224,7 +224,7 @@ const _useNavigation = () => {
         label: `Ask AI about "${q}"`,
         icon: 'i-ph-magic-wand',
         to: 'javascript:void(0);',
-        click () {
+        click() {
           useNuxtApp().$kapa.openModal(q)
         }
       }]

@@ -141,7 +141,7 @@ declare global {
 }
 
 export default defineNuxtPlugin((nuxtApp) => {
-  const script = useScript<{ Kapa: Kapa }>(kapa, {
+  useScript<{ Kapa: Kapa }>(kapa, {
     trigger: 'onNuxtReady',
     use() {
       return { Kapa: window.Kapa }
