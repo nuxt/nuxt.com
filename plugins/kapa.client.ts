@@ -2,6 +2,7 @@ const kapa = {
   'key': 'kapa',
   'src': 'https://widget.kapa.ai/kapa-widget.bundle.js',
   'data-website-id': 'fb3af718-9db2-440d-9da9-14e6c5fca2aa',
+  // 'data-button-hide': true,
   'data-project-name': 'Nuxt',
   'data-project-color': '#00DC82',
   'data-button-text-color': '#000000',
@@ -139,23 +140,28 @@ declare global {
   }
 }
 
-export default defineNuxtPlugin(() => {
+export default defineNuxtPlugin((nuxtApp) => {
   const script = useScript<{ Kapa: Kapa }>(kapa, {
-    trigger: 'manual',
+    trigger: 'onNuxtReady',
     use() {
       return { Kapa: window.Kapa }
     }
   })
-  addRouteMiddleware((to) => {
-    if (to.path.startsWith('/docs')) {
-      script.warmup('preload')
-      onNuxtReady(() => {
-        script.load()
-      })
+
+  nuxtApp.provide('kapa', {
+    async openModal(q) {
+      document.querySelector('#kapa-widget-container button')?.click()
+      if (q) {
+        let input = null
+        do {
+          input = document.querySelector('#kapa-widget-portal .mantine-Textarea-input')
+          await new Promise(resolve => setTimeout(resolve, 100))
+        } while (!input)
+        input.value = q
+        // await new Promise(resolve => setTimeout(resolve, 50))
+        // input.dispatchEvent(new Event('input', { bubbles: true }))
+        // document.querySelector('#kapa-widget-portal button.mantine-ActionIcon-root')?.click()
+      }
     }
-  })
-  // TODO: fix signature being stripped when accessed through proxy
-  ;(script.proxy.Kapa as unknown as Kapa)('onModalOpen', ({ mode }) => {
-    console.log('Kapa modal opened in', mode, 'mode')
   })
 })

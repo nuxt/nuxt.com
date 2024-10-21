@@ -204,6 +204,24 @@ const _useNavigation = () => {
   }])
 
   const searchGroups = [{
+    key: 'ask-ai-search',
+    label: 'AI',
+    icon: 'i-ph-magic-wand',
+    search: async (q) => {
+      if (!q) {
+        return []
+      }
+
+      return [{
+        label: `Ask AI about "${q}"`,
+        icon: 'i-ph-magic-wand',
+        to: 'javascript:void(0);',
+        click () {
+          useNuxtApp().$kapa.openModal(q)
+        }
+      }]
+    }
+  }, {
     key: 'modules-search',
     label: 'Modules',
     search: async (q) => {
