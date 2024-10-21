@@ -203,6 +203,11 @@ export default defineNuxtConfig({
       }
     }
   },
+  icon: {
+    clientBundle: {
+      scan: true
+    }
+  },
   twoslash: {
     floatingVueOptions: {
       classMarkdown: 'prose prose-primary dark:prose-invert'
