@@ -71,7 +71,7 @@ services:
     type: nodejs@20
 ```
 
-This will create a project called `recipe-nuxt` with a Zerops Static service called `app`.
+This will create a project called `recipe-nuxt` with a Zerops Node.js service called `app`.
 
 ### Setting up Zerops YAML
 
@@ -81,16 +81,14 @@ To tell Zerops how to build and run your app, add a `zerops.yml` to your root:
 zerops:
   - setup: nuxt
     build:
-      base: nodejs@18
-      prepareCommands:
-        - node -v
+      base: nodejs@20
       buildCommands:
         - yarn
         - yarn build
       deployFiles:
         - .output/~
     run:
-      base: nodejs@18
+      base: nodejs@20
       ports:
         - port: 3000
           httpSupport: true
