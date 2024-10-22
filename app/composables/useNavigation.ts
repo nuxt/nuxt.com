@@ -226,8 +226,7 @@ const _useNavigation = () => {
         icon: 'i-ph-magic-wand',
         to: 'javascript:void(0);',
         click() {
-          // @ts-expect-error this is not typed
-          useNuxtApp().$kapa.openModal(q)
+          return nuxtApp.$kapa.openModal(q)
         }
       }]
     }

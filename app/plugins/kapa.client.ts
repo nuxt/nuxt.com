@@ -140,31 +140,46 @@ declare global {
   }
 }
 
-export default defineNuxtPlugin((nuxtApp) => {
-  useScript<{ Kapa: Kapa }>(kapa, {
-    trigger: 'onNuxtReady',
+export default defineNuxtPlugin(() => {
+  const script = useScript<{ Kapa: Kapa }>(kapa, {
+    trigger: 'manual',
     use() {
       return { Kapa: window.Kapa }
     }
   })
 
-  nuxtApp.provide('kapa', {
-    async openModal(q) {
-      // @ts-expect-error this is not typed
-      document.querySelector('#kapa-widget-container button')?.click()
-      if (q) {
-        let input = null
-        let i = 0
-        do {
-          input = document.querySelector('#kapa-widget-portal .mantine-Textarea-input')
-          await new Promise(resolve => setTimeout(resolve, 100))
-          i++
-        } while (!input && i < 20)
-        input.value = q
-        // await new Promise(resolve => setTimeout(resolve, 50))
-        // input.dispatchEvent(new Event('input', { bubbles: true }))
-        // document.querySelector('#kapa-widget-portal button.mantine-ActionIcon-root')?.click()
+  return {
+    provide: {
+      kapa: {
+        async openModal(q) {
+          await script.load()
+          const button = await waitUntilSelector<HTMLButtonElement>('#kapa-widget-container button')
+          button?.click()
+          if (q) {
+            const input = await waitUntilSelector<HTMLInputElement>('#kapa-widget-portal .mantine-Textarea-input')
+            if (input) {
+              input.value = q
+            }
+            // await new Promise(resolve => setTimeout(resolve, 50))
+            // input.dispatchEvent(new Event('input', { bubbles: true }))
+            // document.querySelector('#kapa-widget-portal button.mantine-ActionIcon-root')?.click()
+          }
+        }
       }
     }
-  })
+  }
 })
+
+async function waitUntilSelector<T extends HTMLElement = HTMLElement>(selector: string) {
+  let i = 0
+
+  do {
+    const el = document.querySelector(selector)
+    if (el) {
+      return el as T
+    }
+    await new Promise(resolve => setTimeout(resolve, 10))
+    i++
+  } while (i < 200)
+  console.log('couldn\'t find selector', selector)
+}
