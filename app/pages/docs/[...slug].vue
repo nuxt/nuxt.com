@@ -51,11 +51,6 @@ const communityLinks = computed(() => [{
   to: `https://github.com/nuxt/nuxt/edit/main/docs/${page?.value?._file?.split('/').slice(1).join('/')}`,
   target: '_blank'
 }, {
-  icon: 'i-ph-chat-centered-text',
-  label: 'Chat on Discord',
-  to: 'https://go.nuxt.com/discord',
-  target: '_blank'
-}, {
   icon: 'i-ph-hand-heart',
   label: 'Become a Sponsor',
   to: 'https://go.nuxt.com/sponsor',
@@ -110,6 +105,42 @@ defineOgImageComponent('Docs', {
             <UDivider v-if="page.body?.toc?.links?.length" type="dashed" />
 
             <UPageLinks title="Community" :links="communityLinks" />
+
+            <UDivider type="dashed" />
+            <div class="flex items-center -mt-3">
+              <UButton
+                icon="i-simple-icons-discord"
+                to="https://go.nuxt.com/discord"
+                target="_blank"
+                variant="ghost"
+                color="gray"
+                size="xs"
+              />
+              <UButton
+                icon="i-simple-icons-bluesky"
+                to="https://go.nuxt.com/bluesky"
+                target="_blank"
+                variant="ghost"
+                color="gray"
+                size="xs"
+              />
+              <UButton
+                icon="i-simple-icons-x"
+                to="https://go.nuxt.com/x"
+                target="_blank"
+                variant="ghost"
+                color="gray"
+                size="xs"
+              />
+              <UButton
+                icon="i-simple-icons-github"
+                to="https://go.nuxt.com/github"
+                target="_blank"
+                variant="ghost"
+                color="gray"
+                size="xs"
+              />
+            </div>
 
             <Ads />
           </div>
