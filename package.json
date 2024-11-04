@@ -47,7 +47,7 @@
     "@nuxtjs/turnstile": "^0.9.10",
     "@testing-library/vue": "^8.1.0",
     "capture-website": "^4.1.0",
-    "eslint": "^9.13.0",
+    "eslint": "^9.14.0",
     "nuxt-content-twoslash": "0.1.1",
     "shiki": "^1.22.2",
     "twoslash": "^0.2.12",
