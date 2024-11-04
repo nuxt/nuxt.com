@@ -106,11 +106,9 @@ links.push({
             <template #bottom>
               <div class="hidden lg:block space-y-6" :class="{ '!mt-6': provider.body?.toc?.links?.length }">
                 <UDivider v-if="links?.length && provider.body?.toc?.links?.length" type="dashed" />
-
                 <UPageLinks title="Links" :links="links" />
-
                 <UDivider type="dashed" />
-
+                <SocialLinks />
                 <Ads />
               </div>
             </template>

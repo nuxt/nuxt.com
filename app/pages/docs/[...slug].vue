@@ -103,45 +103,9 @@ defineOgImageComponent('Docs', {
         <template #bottom>
           <div class="hidden lg:block space-y-6" :class="{ '!mt-6': page.body?.toc?.links?.length }">
             <UDivider v-if="page.body?.toc?.links?.length" type="dashed" />
-
             <UPageLinks title="Community" :links="communityLinks" />
-
             <UDivider type="dashed" />
-            <div class="flex items-center -mt-3">
-              <UButton
-                icon="i-simple-icons-discord"
-                to="https://go.nuxt.com/discord"
-                target="_blank"
-                variant="ghost"
-                color="gray"
-                size="xs"
-              />
-              <UButton
-                icon="i-simple-icons-bluesky"
-                to="https://go.nuxt.com/bluesky"
-                target="_blank"
-                variant="ghost"
-                color="gray"
-                size="xs"
-              />
-              <UButton
-                icon="i-simple-icons-x"
-                to="https://go.nuxt.com/x"
-                target="_blank"
-                variant="ghost"
-                color="gray"
-                size="xs"
-              />
-              <UButton
-                icon="i-simple-icons-github"
-                to="https://go.nuxt.com/github"
-                target="_blank"
-                variant="ghost"
-                color="gray"
-                size="xs"
-              />
-            </div>
-
+            <SocialLinks />
             <Ads />
           </div>
         </template>
