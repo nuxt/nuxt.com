@@ -164,7 +164,7 @@ export default defineNuxtConfig({
     compatibilityVersion: 4
   },
   experimental: {
-    buildCache: true
+    buildCache: false
   },
   compatibilityDate: '2024-07-18',
   nitro: {
