@@ -67,16 +67,16 @@ onMounted(() => {
 
     <AppBanner
       id="nuxt-nation-2024"
-      to="https://nuxtnation.com/?utm_source=nuxt&utm_medium=website&utm_campaign=banner"
+      to="https://vi.to/hubs/nuxtnation/pages/stream"
     >
       <div class="flex items-center gap-1">
         <UIcon
           name="i-ph-microphone-stage-duotone"
           class="w-5 h-5 flex-shrink-0 pointer-events-none hidden sm:inline-block"
         />
-        <span><span class="font-semibold">Nuxt Nation</span> conference is coming. Join us on November 12-13.</span>
+        <span><span class="font-semibold">Nuxt Nation</span> conference is live.</span>
         <UButton
-          label="Sign up"
+          label="Watch now"
           color="white"
           trailing-icon="i-ph-arrow-right"
           size="2xs"
