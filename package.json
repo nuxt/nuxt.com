@@ -1,7 +1,7 @@
 {
   "name": "nuxt.com",
   "version": "0.3.11",
-  "packageManager": "pnpm@9.12.3",
+  "packageManager": "pnpm@9.13.0",
   "scripts": {
     "dev": "nuxi dev",
     "build": "nuxi build",
@@ -52,7 +52,7 @@
     "shiki": "^1.22.2",
     "twoslash": "^0.2.12",
     "typescript": "^5.6.3",
-    "vitest": "^2.1.4",
+    "vitest": "^2.1.5",
     "vue": "^3.5.12",
     "vue-tsc": "^2.1.10"
   },
