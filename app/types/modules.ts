@@ -9,7 +9,8 @@ export interface Stats {
 export interface ModuleUser {
   name: string
   github: string
-  twitter: string
+  twitter?: string
+  bluesky?: string
 }
 
 export interface Module {
@@ -36,7 +37,8 @@ export interface Module {
   maintainers: {
     name: string
     github: string
-    twitter: string
+    twitter?: string
+    bluesky?: string
   }[]
   contributors: {
     id: number

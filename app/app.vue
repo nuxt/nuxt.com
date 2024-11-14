@@ -66,17 +66,17 @@ onMounted(() => {
     <NuxtLoadingIndicator />
 
     <AppBanner
-      id="nuxt-ui-pro"
-      to="https://ui.nuxt.com/pro?utm_source=nuxt&utm_medium=website&utm_campaign=banner"
+      id="nuxt-nation-2024"
+      to="https://vi.to/hubs/nuxtnation/pages/stream"
     >
       <div class="flex items-center gap-1">
         <UIcon
-          name="i-ph-layout-duotone"
+          name="i-ph-microphone-stage-duotone"
           class="w-5 h-5 flex-shrink-0 pointer-events-none hidden sm:inline-block"
         />
-        <span>Create beautiful & responsive Nuxt apps with Nuxt UI Pro</span>
+        <span><span class="font-semibold">Nuxt Nation</span> conference is live.</span>
         <UButton
-          label="Learn more"
+          label="Watch now"
           color="white"
           trailing-icon="i-ph-arrow-right"
           size="2xs"

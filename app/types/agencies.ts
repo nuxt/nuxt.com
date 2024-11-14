@@ -9,7 +9,10 @@ export interface Agency extends ParsedContent {
   _path: string
   link: string
   twitter: string
+  x: string
   github: string
+  linkedin: string
+  instagram: string
   logo: {
     light: string
     dark: string

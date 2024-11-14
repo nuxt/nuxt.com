@@ -1,8 +1,8 @@
 navigation: false
 hero:
   cta:
-    label: Nuxt v3.13 is out
-    to: /blog/v3-13
+    label: Nuxt v3.14 is out
+    to: /blog/v3-14
     icon: i-ph-arrow-right
 logos:
   title: 'Trusted by the best front-end teams'
@@ -243,24 +243,30 @@ sections:
         target: _blank
         color: black
         size: md
-      - label: Discord
-        icon: 'i-simple-icons-discord'
+      - icon: 'i-simple-icons-discord'
         color: gray
+        variant: ghost
         size: md
         target: _blank
         to: 'https://go.nuxt.com/discord'
-      - label: GitHub
-        icon: 'i-simple-icons-github'
+      - icon: 'i-simple-icons-github'
         color: gray
+        variant: ghost
         size: md
         target: _blank
         to: 'https://go.nuxt.com/github'
-      - label: X / Twitter
-        icon: 'i-simple-icons-x'
+      - icon: 'i-simple-icons-x'
         color: gray
+        variant: ghost
         size: md
         target: _blank
         to: 'https://go.nuxt.com/x'
+      - icon: 'i-simple-icons-bluesky'
+        color: gray
+        variant: ghost
+        size: md
+        target: _blank
+        to: 'https://go.nuxt.com/bluesky'
   - title: 'Trusted by the<br><span class="text-primary">World Wide Web.</span>'
     class: 'dark:bg-gradient-to-b from-gray-900 to-gray-950'
     slot: testimonials

@@ -51,14 +51,14 @@ const communityLinks = computed(() => [{
   to: `https://github.com/nuxt/nuxt/edit/main/docs/${page?.value?._file?.split('/').slice(1).join('/')}`,
   target: '_blank'
 }, {
-  icon: 'i-ph-chat-centered-text',
-  label: 'Chat on Discord',
-  to: 'https://go.nuxt.com/discord',
-  target: '_blank'
-}, {
   icon: 'i-ph-hand-heart',
   label: 'Become a Sponsor',
   to: 'https://go.nuxt.com/sponsor',
+  target: '_blank'
+}, {
+  icon: 'i-ph-chef-hat',
+  label: 'Master Nuxt',
+  to: 'https://masteringnuxt.com/nuxt3',
   target: '_blank'
 }])
 
@@ -103,9 +103,9 @@ defineOgImageComponent('Docs', {
         <template #bottom>
           <div class="hidden lg:block space-y-6" :class="{ '!mt-6': page.body?.toc?.links?.length }">
             <UDivider v-if="page.body?.toc?.links?.length" type="dashed" />
-
             <UPageLinks title="Community" :links="communityLinks" />
-
+            <UDivider type="dashed" />
+            <SocialLinks />
             <Ads />
           </div>
         </template>

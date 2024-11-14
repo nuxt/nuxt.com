@@ -68,11 +68,6 @@ const links = [
     to: 'https://go.nuxt.com/github',
     target: '_blank'
   }, {
-    icon: 'i-ph-chat-centered-text',
-    label: 'Chat on Discord',
-    to: 'https://go.nuxt.com/discord',
-    target: '_blank'
-  }, {
     icon: 'i-ph-hand-heart',
     label: 'Become a Sponsor',
     to: 'https://go.nuxt.com/sponsor',
@@ -152,9 +147,8 @@ const links = [
             <template #bottom>
               <div class="hidden lg:block space-y-6">
                 <UPageLinks title="Links" :links="links" />
-
                 <UDivider type="dashed" />
-
+                <SocialLinks />
                 <Ads />
               </div>
             </template>

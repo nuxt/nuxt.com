@@ -177,9 +177,8 @@ defineOgImageComponent('Docs', {
                   Contributors <UBadge :label="module.contributors.length.toString()" color="gray" size="xs" :ui="{ rounded: 'rounded-full' }" />
                 </template>
               </UPageLinks>
-
               <UDivider type="dashed" />
-
+              <SocialLinks />
               <Ads />
             </div>
           </template>
