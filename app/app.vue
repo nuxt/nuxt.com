@@ -65,7 +65,7 @@ onMounted(() => {
   <div>
     <NuxtLoadingIndicator />
 
-    <AppBanner
+    <!-- <AppBanner
       id="nuxt-nation-2024"
       to="https://vi.to/hubs/nuxtnation/pages/stream"
     >
@@ -83,7 +83,7 @@ onMounted(() => {
           class="rounded-full ml-1"
         />
       </div>
-    </AppBanner>
+    </AppBanner> -->
     <!-- <AppBanner
       id="nuxt-certification-early-bird-launch"
       to="https://certification.nuxt.com"
