@@ -57,6 +57,6 @@
     "vue-tsc": "^2.1.10"
   },
   "resolutions": {
-    "chokidar": "3.6.0"
+    "chokidar": "4.0.1"
   }
 }
