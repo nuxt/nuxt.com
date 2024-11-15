@@ -55,8 +55,5 @@
     "vitest": "^2.1.5",
     "vue": "^3.5.12",
     "vue-tsc": "^2.1.10"
-  },
-  "resolutions": {
-    "@nuxtjs/tailwindcss": "6.12.2"
   }
 }
