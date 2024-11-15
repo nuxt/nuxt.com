@@ -121,7 +121,10 @@ export default defineNuxtConfig({
         'bash',
         'md',
         'mdc',
-        'json'
+        'json',
+        'json5',
+        'jsonc',
+        'tsx'
       ]
     }
   },
