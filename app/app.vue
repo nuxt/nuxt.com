@@ -65,25 +65,21 @@ onMounted(() => {
   <div>
     <NuxtLoadingIndicator />
 
-    <!-- <AppBanner
-      id="nuxt-nation-2024"
-      to="https://vi.to/hubs/nuxtnation/pages/stream"
+    <AppBanner
+      id="black-friday-2024-mn"
+      to="https://masteringnuxt.com/#plans"
     >
-      <div class="flex items-center gap-1">
-        <UIcon
-          name="i-ph-microphone-stage-duotone"
-          class="w-5 h-5 flex-shrink-0 pointer-events-none hidden sm:inline-block"
-        />
-        <span><span class="font-semibold">Nuxt Nation</span> conference is live.</span>
+      <div class="flex items-center gap-1 text-black">
+        <span><span class="font-bold dark:bg-black dark:text-white bg-white text-black px-2 py-1 rounded text-xs">37% OFF</span> during <span class="font-semibold">Black Friday</span> at <span class="font-semibold">Mastering Nuxt</span>.</span>
         <UButton
-          label="Watch now"
+          label="Shop now"
           color="white"
           trailing-icon="i-ph-arrow-right"
           size="2xs"
           class="rounded-full ml-1"
         />
       </div>
-    </AppBanner> -->
+    </AppBanner>
     <!-- <AppBanner
       id="nuxt-certification-early-bird-launch"
       to="https://certification.nuxt.com"
