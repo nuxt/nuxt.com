@@ -32,7 +32,7 @@
     "@vueuse/nuxt": "^11.2.0",
     "feed": "^4.2.2",
     "floating-vue": "^5.2.2",
-    "nuxt": "^3.14.159",
+    "nuxt": "^3.14.1592",
     "nuxt-og-image": "^3.0.8",
     "ofetch": "^1.4.1",
     "perfect-debounce": "^1.0.0",
