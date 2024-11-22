@@ -7,8 +7,7 @@ function normalizedDirPath(path?: string) {
     return path
   }
 
-  const windowsPath = path.replace(/\\/g, '/')
-  return windowsPath.startsWith('file:///') ? windowsPath : `file:///${windowsPath}`
+  return path.replace(/\\/g, '/')
 }
 
 const docsSourceBase = normalizedDirPath(process.env.NUXT_DOCS_PATH)
@@ -47,17 +46,17 @@ export default defineNuxtConfig({
   extends: [
     process.env.NUXT_UI_PRO_PATH || '@nuxt/ui-pro'
   ],
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment, @typescript-eslint/prefer-ts-expect-error
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore Type circular reference
   modules: [
     'nuxt-content-twoslash',
-    'nuxt-build-cache',
     '@nuxt/content',
     '@nuxt/ui',
     '@nuxt/image',
     '@nuxtjs/plausible',
     '@nuxt/fonts',
     '@nuxt/eslint',
+    '@nuxt/scripts',
     '@nuxtjs/turnstile',
     '@nuxthq/studio',
     '@vueuse/nuxt',
@@ -71,6 +70,64 @@ export default defineNuxtConfig({
       }
     }
   ],
+  $development: {
+    runtimeConfig: {
+      public: {
+        website: {
+          url: 'http://localhost:3000'
+        }
+      }
+    }
+  },
+  $production: {
+    image: {
+      ipx: {
+        baseURL: 'https://ipx.nuxt.com'
+      }
+    }
+  },
+  devtools: {
+    enabled: false
+  },
+  colorMode: {
+    preference: 'dark'
+  },
+  // image: {
+  //   ipx: {
+  //     baseURL: 'https://ipx.nuxt.com'
+  //   }
+  // },
+  content: {
+    navigation: {
+      fields: ['titleTemplate']
+    },
+    sources: {
+      docsSource,
+      examplesSource
+    },
+    highlight: {
+      theme: {
+        default: 'material-theme-lighter',
+        dark: 'material-theme-palenight'
+      },
+      langs: [
+        'js',
+        'ts',
+        'vue',
+        'css',
+        'scss',
+        'sass',
+        'html',
+        'bash',
+        'md',
+        'mdc',
+        'json',
+        'json5',
+        'jsonc',
+        'tsx'
+      ]
+    }
+  },
   routeRules: {
     // Pre-render
     '/api/search.json': { prerender: true },
@@ -106,6 +163,13 @@ export default defineNuxtConfig({
     // '/docs/guide/directory-structure/nuxt.config': { redirect: '/docs/guide/directory-structure/nuxt-config', prerender: false },
     '/enterprise': { redirect: '/enterprise/support', prerender: false }
   },
+  future: {
+    compatibilityVersion: 4
+  },
+  experimental: {
+    buildCache: false
+  },
+  compatibilityDate: '2024-07-18',
   nitro: {
     prerender: {
       // failOnError: false
@@ -123,6 +187,9 @@ export default defineNuxtConfig({
       }
     }
   },
+  typescript: {
+    strict: false
+  },
   hooks: {
     async 'prerender:routes'(ctx) {
       // Add Nuxt 2 modules to the prerender list
@@ -132,53 +199,16 @@ export default defineNuxtConfig({
       }
     }
   },
-
-  $development: {
-    runtimeConfig: {
-      public: {
-        website: {
-          url: 'http://localhost:3000'
-        }
+  eslint: {
+    config: {
+      stylistic: {
+        commaDangle: 'never'
       }
     }
   },
-  colorMode: {
-    preference: 'dark'
-  },
-  ui: {
-    icons: ['simple-icons', 'ph', 'uil', 'heroicons', 'octicon', 'logos']
-  },
-  image: {
-    ipx: {
-      baseURL: 'https://ipx.nuxt.com'
-    }
-  },
-  content: {
-    navigation: {
-      fields: ['titleTemplate']
-    },
-    sources: {
-      docsSource,
-      examplesSource
-    },
-    highlight: {
-      theme: {
-        default: 'material-theme-lighter',
-        dark: 'material-theme-palenight'
-      },
-      langs: [
-        'js',
-        'ts',
-        'vue',
-        'css',
-        'scss',
-        'sass',
-        'html',
-        'bash',
-        'md',
-        'mdc',
-        'json'
-      ]
+  icon: {
+    clientBundle: {
+      scan: true
     }
   },
   twoslash: {
@@ -189,23 +219,5 @@ export default defineNuxtConfig({
     enableInDev: false,
     // Do not throw when twoslash fails, the typecheck should be down in github.com/nuxt/nuxt's CI
     throws: false
-  },
-  eslint: {
-    config: {
-      stylistic: {
-        commaDangle: 'never'
-      }
-    }
-  },
-  typescript: {
-    strict: false
-  },
-  experimental: {
-    headNext: true,
-    sharedPrerenderData: true,
-    appManifest: true
-  },
-  devtools: {
-    enabled: false
   }
 })

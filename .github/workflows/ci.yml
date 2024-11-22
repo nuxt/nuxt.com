@@ -20,4 +20,16 @@ jobs:
           cache: "pnpm"
       - run: pnpm install
       - run: pnpm nuxi prepare
-      - run: pnpm test
+      - run: pnpm lint
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+      - run: pnpm install
+      - run: pnpm nuxi prepare
+      - run: pnpm typecheck
