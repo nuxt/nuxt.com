@@ -66,11 +66,17 @@ onMounted(() => {
     <NuxtLoadingIndicator />
 
     <AppBanner
-      id="black-friday-2024-mn"
-      to="https://masteringnuxt.com/#plans"
+      id="black-friday-2024-nuxt-ui"
+      to="https://ui.nuxt.com/pro/pricing?utm_source=nuxt_website&utm_medium=banner"
     >
       <div class="flex items-center gap-1 text-black">
-        <span><span class="font-bold dark:bg-black dark:text-white bg-white text-black px-2 py-1 rounded text-xs">37% OFF</span> during <span class="font-semibold">Black Friday</span> at <span class="font-semibold">Mastering Nuxt</span>.</span>
+        <UIcon
+          name="i-ri-discount-percent-fill"
+          class="w-5 h-5 flex-shrink-0 pointer-events-none"
+        />
+        <span>
+          <span class="font-bold pr-1">Black Friday Week</span>
+          <span class="font-bold dark:bg-black dark:text-white bg-white text-black px-2 py-1 rounded text-xs">20% OFF</span> on <span class="font-semibold">Nuxt UI Pro</span> until <span class="font-semibold">Dec 2nd</span></span>
         <UButton
           label="Shop now"
           color="white"

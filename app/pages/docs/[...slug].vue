@@ -60,6 +60,11 @@ const communityLinks = computed(() => [{
   label: 'Master Nuxt',
   to: 'https://masteringnuxt.com/nuxt3',
   target: '_blank'
+}, {
+  icon: 'i-ph-certificate',
+  label: 'Nuxt Certification',
+  to: 'https://certification.nuxt.com',
+  target: '_blank'
 }])
 
 const title = page.value.head?.title || page.value.title
