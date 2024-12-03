@@ -8,8 +8,8 @@
       body: { padding: 'p-2 sm:p-2', base: 'text-center' } }"
   >
     <template #header>
-      <!-- <UColorModeImage dark="https://ui.nuxt.com/_ipx/s_1152x720/templates/dashboard3.png" light="https://ui.nuxt.com/_ipx/s_1152x720/templates/dashboard2.png" alt="Nuxt UI Pro" /> -->
-      <NuxtImg src="/assets/ads/nuxt-ui-pro-black-friday.png" width="168" height="105" alt="Nuxt UI Pro Black Friday" class="rounded" />
+      <UColorModeImage dark="https://ui.nuxt.com/_ipx/s_1152x720/templates/dashboard3.png" light="https://ui.nuxt.com/_ipx/s_1152x720/templates/dashboard2.png" alt="Nuxt UI Pro" />
+      <!-- <NuxtImg src="/assets/ads/nuxt-ui-pro-black-friday.png" width="168" height="105" alt="Nuxt UI Pro Black Friday" class="rounded" /> -->
     </template>
     <div class="inline-flex gap-1 my-2">
       <svg class="h-4 inline-block" viewBox="0 0 109 17" fill="none" xmlns="http://www.w3.org/2000/svg">

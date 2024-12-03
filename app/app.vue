@@ -75,7 +75,7 @@ onMounted(() => {
           class="w-5 h-5 flex-shrink-0 pointer-events-none"
         />
         <span>
-        Make your Nuxt experience count in The State of JavaScript 2024  
+          Make your Nuxt experience count in The State of JavaScript 2024
         </span>
         <UButton
           label="Take the Survey"
