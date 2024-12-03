@@ -66,8 +66,8 @@ onMounted(() => {
     <NuxtLoadingIndicator />
 
     <AppBanner
-      id="black-friday-2024-nuxt-ui"
-      to="https://ui.nuxt.com/pro/pricing?utm_source=nuxt_website&utm_medium=banner"
+      id="state-of-js-2024"
+      to="https://survey.devographics.com/en-US/survey/state-of-js/2024?source=nuxt_homepage"
     >
       <div class="flex items-center gap-1 text-black">
         <UIcon
@@ -75,10 +75,10 @@ onMounted(() => {
           class="w-5 h-5 flex-shrink-0 pointer-events-none"
         />
         <span>
-          <span class="font-bold pr-1">Black Friday Week</span>
-          <span class="font-bold dark:bg-black dark:text-white bg-white text-black px-2 py-1 rounded text-xs">20% OFF</span> on <span class="font-semibold">Nuxt UI Pro</span> until <span class="font-semibold">Dec 2nd</span></span>
+        Make your Nuxt experience count in The State of JavaScript 2024  
+        </span>
         <UButton
-          label="Shop now"
+          label="Take the Survey"
           color="white"
           trailing-icon="i-ph-arrow-right"
           size="2xs"
@@ -86,26 +86,6 @@ onMounted(() => {
         />
       </div>
     </AppBanner>
-    <!-- <AppBanner
-      id="nuxt-certification-early-bird-launch"
-      to="https://certification.nuxt.com"
-    >
-      <div class="flex items-center gap-2">
-        <UIcon
-          name="i-ph-medal"
-          class="w-5 h-5 flex-shrink-0 pointer-events-none"
-        />
-        <span>The <span class="font-semibold">Nuxt Certification Program</span> by VueSchool is out!</span>
-        <UButton
-          color="white"
-          trailing-icon="i-ph-arrow-right"
-          size="2xs"
-          class="rounded-full"
-        >
-          Register
-        </UButton>
-      </div>
-    </AppBanner> -->
 
     <AppHeader :links="headerLinks" />
 
