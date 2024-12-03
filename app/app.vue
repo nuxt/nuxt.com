@@ -70,10 +70,10 @@ onMounted(() => {
       to="https://survey.devographics.com/en-US/survey/state-of-js/2024?source=nuxt_homepage"
     >
       <div class="flex items-center gap-1 text-black">
-        <UIcon
+        <!-- <UIcon
           name="i-ri-discount-percent-fill"
           class="w-5 h-5 flex-shrink-0 pointer-events-none"
-        />
+        /> -->
         <span>
           Make your Nuxt experience count in The State of JavaScript 2024
         </span>
