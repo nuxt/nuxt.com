@@ -66,19 +66,21 @@ onMounted(() => {
     <NuxtLoadingIndicator />
 
     <AppBanner
-      id="state-of-js-2024"
-      to="https://survey.devographics.com/en-US/survey/state-of-js/2024?source=nuxt_homepage"
+      id="vue-ams-2025"
+      to="https://eventix.shop/kb2j4ewn"
     >
       <div class="flex items-center gap-1 text-black">
-        <!-- <UIcon
-          name="i-ri-discount-percent-fill"
-          class="w-5 h-5 flex-shrink-0 pointer-events-none"
-        /> -->
+        <UIcon
+          name="i-ph-microphone-stage-duotone"
+          class="w-5 h-5 flex-shrink-0 pointer-events-none hidden md:inline-flex"
+        />
         <span>
-          Make your Nuxt experience count in The State of JavaScript 2024
+          Don't miss <span class="font-semibold">Vue.js Amsterdam</span> <span class="lg:hidden">in March </span>2025!
+          <span class="hidden lg:inline">Join 1000+ Vue developers this March and <span class="font-semibold">save 10% with code NUXT</span>.</span>
+          <span class="lg:hidden">Save 10% with code NUXT.</span>
         </span>
         <UButton
-          label="Take the Survey"
+          label="Get your ticket"
           color="white"
           trailing-icon="i-ph-arrow-right"
           size="2xs"
