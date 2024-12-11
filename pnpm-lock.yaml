@@ -97,8 +97,8 @@ importers:
         specifier: ^0.7.2
         version: 0.7.2(@vue/compiler-sfc@3.5.13)(eslint@9.16.0(jiti@2.4.1))(magicast@0.3.5)(rollup@4.24.4)(typescript@5.6.3)(vite@5.4.11(@types/node@22.5.5)(terser@5.33.0))
       '@nuxt/icon':
-        specifier: ^1.10.0
-        version: 1.10.0(magicast@0.3.5)(rollup@4.24.4)(vite@5.4.11(@types/node@22.5.5)(terser@5.33.0))(vue@3.5.13(typescript@5.6.3))
+        specifier: ^1.10.1
+        version: 1.10.1(magicast@0.3.5)(rollup@4.24.4)(vite@5.4.11(@types/node@22.5.5)(terser@5.33.0))(vue@3.5.13(typescript@5.6.3))
       '@nuxt/test-utils':
         specifier: ^3.15.1
         version: 3.15.1(@testing-library/vue@8.1.0(@vue/compiler-sfc@3.5.13)(vue@3.5.13(typescript@5.6.3)))(@types/node@22.5.5)(@vue/test-utils@2.4.6)(magicast@0.3.5)(playwright-core@1.49.0)(rollup@4.24.4)(terser@5.33.0)(typescript@5.6.3)(vitest@2.1.8(@types/node@22.5.5)(terser@5.33.0))
@@ -1071,8 +1071,8 @@ packages:
   '@nuxt/fonts@0.10.3':
     resolution: {integrity: sha512-wLCQ+olKZtClVmMEgjsNNDfcNCmyhIv8eujcWYYoFiv1Csy1ySqjI2+1Kq7wwaJhWl4sU83KQC2lLdiMuEeHCw==}
 
-  '@nuxt/icon@1.10.0':
-    resolution: {integrity: sha512-Mbb6LzOT6IdVKlGUTZykS+igwHDEbhKilyzNVOg7R2HoSzyb36YDzekGSphexRrKZweGOa1m3lGHCKHlwX1tcQ==}
+  '@nuxt/icon@1.10.1':
+    resolution: {integrity: sha512-w0TbE0GWF5eqYS9KlkHyaHd64hFNEU1IkehfnmEtKwCPkOev/zKoZIbY2Zqa1qo+mhRM8nP3DVGNBCkpl9azww==}
 
   '@nuxt/image@1.8.1':
     resolution: {integrity: sha512-qNj7OCNsoGcutGOo1R2PYp4tQ/6uD77aSakyDoVAmLSRJBmhFTnT2+gIqVD95JMmkSHgYhmSX4gGxnaQK/t1cw==}
@@ -7858,7 +7858,7 @@ snapshots:
       - supports-color
       - vite
 
-  '@nuxt/icon@1.10.0(magicast@0.3.5)(rollup@4.24.4)(vite@5.4.11(@types/node@22.5.5)(terser@5.33.0))(vue@3.5.13(typescript@5.6.3))':
+  '@nuxt/icon@1.10.1(magicast@0.3.5)(rollup@4.24.4)(vite@5.4.11(@types/node@22.5.5)(terser@5.33.0))(vue@3.5.13(typescript@5.6.3))':
     dependencies:
       '@iconify/collections': 1.0.492
       '@iconify/types': 2.0.0
@@ -8137,7 +8137,7 @@ snapshots:
       '@headlessui/tailwindcss': 0.2.1(tailwindcss@3.4.16)
       '@headlessui/vue': 1.7.23(vue@3.5.13(typescript@5.6.3))
       '@iconify-json/heroicons': 1.2.1
-      '@nuxt/icon': 1.10.0(magicast@0.3.5)(rollup@4.24.4)(vite@5.4.11(@types/node@22.5.5)(terser@5.33.0))(vue@3.5.13(typescript@5.6.3))
+      '@nuxt/icon': 1.10.1(magicast@0.3.5)(rollup@4.24.4)(vite@5.4.11(@types/node@22.5.5)(terser@5.33.0))(vue@3.5.13(typescript@5.6.3))
       '@nuxt/kit': 3.14.1592(magicast@0.3.5)(rollup@4.24.4)
       '@nuxtjs/color-mode': 3.5.2(magicast@0.3.5)(rollup@4.24.4)
       '@nuxtjs/tailwindcss': 6.12.2(magicast@0.3.5)(rollup@4.24.4)
