@@ -52,7 +52,7 @@
     "nuxt-content-twoslash": "0.1.2",
     "shiki": "^1.24.2",
     "twoslash": "^0.2.12",
-    "typescript": "^5.6.3",
+    "typescript": "^5.7.2",
     "vitest": "^2.1.8",
     "vue": "^3.5.13",
     "vue-tsc": "^2.1.10"
