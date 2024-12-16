@@ -12,23 +12,23 @@ importers:
   .:
     dependencies:
       '@iconify-json/heroicons':
-        specifier: ^1.2.1
-        version: 1.2.1
+        specifier: ^1.2.2
+        version: 1.2.2
       '@iconify-json/logos':
-        specifier: ^1.2.3
-        version: 1.2.3
+        specifier: ^1.2.4
+        version: 1.2.4
       '@iconify-json/octicon':
         specifier: ^1.2.2
         version: 1.2.2
       '@iconify-json/ph':
-        specifier: ^1.2.1
-        version: 1.2.1
+        specifier: ^1.2.2
+        version: 1.2.2
       '@iconify-json/simple-icons':
         specifier: ^1.2.16
         version: 1.2.16
       '@iconify-json/uil':
-        specifier: ^1.2.1
-        version: 1.2.1
+        specifier: ^1.2.2
+        version: 1.2.2
       '@nuxt/content':
         specifier: ^2.13.4
         version: 2.13.4(ioredis@5.4.1)(magicast@0.3.5)(nuxt@3.14.1592(@parcel/watcher@2.4.1)(@types/node@22.5.5)(eslint@9.17.0(jiti@2.4.1))(ioredis@5.4.1)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.24.4)(terser@5.33.0)(typescript@5.6.3)(vite@5.4.11(@types/node@22.5.5)(terser@5.33.0))(vue-tsc@2.1.10(typescript@5.6.3)))(rollup@4.24.4)(vue@3.5.13(typescript@5.6.3))
@@ -878,17 +878,17 @@ packages:
   '@iconify-json/carbon@1.2.1':
     resolution: {integrity: sha512-dIMY6OOY9LnwR3kOqAtfz4phGFG+KNfESEwSL6muCprBelSlSPpRXtdqvEEO/qWhkf5AJ9hWrOV3Egi5Z2IuKA==}
 
-  '@iconify-json/heroicons@1.2.1':
-    resolution: {integrity: sha512-TkKfS5U27kE5MXmSGLzPoz95BP5VA9xEJXwJFwmPMVLX+xyWq0OkoiWTUXB0uAoQODpb8BaRpzSydItrq9fIRA==}
+  '@iconify-json/heroicons@1.2.2':
+    resolution: {integrity: sha512-qoW4pXr5kTTL6juEjgTs83OJIwpePu7q1tdtKVEdj+i0zyyVHgg/dd9grsXJQnpTpBt6/VwNjrXBvFjRsKPENg==}
 
-  '@iconify-json/logos@1.2.3':
-    resolution: {integrity: sha512-JLHS5hgZP1b55EONAWNeqBUuriRfRNKWXK4cqYx0PpVaJfIIMiiMxFfvoQiX/bkE9XgkLhcKmDUqL3LXPdXPwQ==}
+  '@iconify-json/logos@1.2.4':
+    resolution: {integrity: sha512-XC4If5D/hbaZvUkTV8iaZuGlQCyG6CNOlaAaJaGa13V5QMYwYjgtKk3vPP8wz3wtTVNVEVk3LRx1fOJz+YnSMw==}
 
   '@iconify-json/octicon@1.2.2':
     resolution: {integrity: sha512-qEPkP9DMMay5uILzyaSmVksSMxRw9i2wSDREfB8OK20mPdSadusjLqD/u69GzpFpw6894c+WNmoq7WzN5KAPeg==}
 
-  '@iconify-json/ph@1.2.1':
-    resolution: {integrity: sha512-x0DNfwWrS18dbsBYOq3XGiZnGz4CgRyC+YSl/TZvMQiKhIUl1woWqUbMYqqfMNUBzjyk7ulvaRovpRsIlqIf8g==}
+  '@iconify-json/ph@1.2.2':
+    resolution: {integrity: sha512-PgkEZNtqa8hBGjHXQa4pMwZa93hmfu8FUSjs/nv4oUU6yLsgv+gh9nu28Kqi8Fz9CCVu4hj1MZs9/60J57IzFw==}
 
   '@iconify-json/ri@1.2.0':
     resolution: {integrity: sha512-br8It3uRHylNhEH72aU9VF6gIdL4BAi6JMdcxsCaVbAyWBJ0jd4RxfmsYnil6TmEfP5wxihiCKbtbQmIHZdqKg==}
@@ -899,8 +899,8 @@ packages:
   '@iconify-json/tabler@1.2.3':
     resolution: {integrity: sha512-km0P/1Gtp/bFhvBQQmDkMx3nNIkNmU57WCYl9b8Envl81m3bhVVT85A8FtWChQxMXsYv3cTNuwMq/WZGfcY9vQ==}
 
-  '@iconify-json/uil@1.2.1':
-    resolution: {integrity: sha512-bQPtDp1nVaDL+ejECPENHJalspCQCZreCJ2LHWazm0pfoz34afKAQKMSb1mH8K/CPnibCQTM29AvXrHMpyjbtg==}
+  '@iconify-json/uil@1.2.2':
+    resolution: {integrity: sha512-q7A9TWHcATegZ+2AmKHUvlGpfoX3pDKtnmJEZITzX8I9YbgaG5w8ZWbHK3j9y0TxzOtjTe2a8rXDMZMhqT223Q==}
 
   '@iconify-json/vscode-icons@1.2.4':
     resolution: {integrity: sha512-cmSNh18IMlOgCIYqqW5zqvXn7/6bRpr246c+/ywE/Uq3F0zQPcpHhuJp1nAIj275PF7+ouj+MU1jlmuL59pPRA==}
@@ -7372,11 +7372,11 @@ snapshots:
     dependencies:
       '@iconify/types': 2.0.0
 
-  '@iconify-json/heroicons@1.2.1':
+  '@iconify-json/heroicons@1.2.2':
     dependencies:
       '@iconify/types': 2.0.0
 
-  '@iconify-json/logos@1.2.3':
+  '@iconify-json/logos@1.2.4':
     dependencies:
       '@iconify/types': 2.0.0
 
@@ -7384,7 +7384,7 @@ snapshots:
     dependencies:
       '@iconify/types': 2.0.0
 
-  '@iconify-json/ph@1.2.1':
+  '@iconify-json/ph@1.2.2':
     dependencies:
       '@iconify/types': 2.0.0
 
@@ -7400,7 +7400,7 @@ snapshots:
     dependencies:
       '@iconify/types': 2.0.0
 
-  '@iconify-json/uil@1.2.1':
+  '@iconify-json/uil@1.2.2':
     dependencies:
       '@iconify/types': 2.0.0
 
@@ -7647,7 +7647,7 @@ snapshots:
   '@nuxt/devtools-ui-kit@1.5.2(@nuxt/devtools@1.6.0(rollup@4.24.4)(vite@5.4.11(@types/node@22.5.5)(terser@5.33.0))(vue@3.5.13(typescript@5.6.3)))(@unocss/webpack@0.62.4(rollup@4.24.4)(webpack@5.94.0(esbuild@0.23.1)))(@vue/compiler-core@3.5.13)(change-case@5.4.4)(fuse.js@7.0.0)(magicast@0.3.5)(nuxt@3.14.1592(@parcel/watcher@2.4.1)(@types/node@22.5.5)(eslint@9.17.0(jiti@2.4.1))(ioredis@5.4.1)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.24.4)(terser@5.33.0)(typescript@5.6.3)(vite@5.4.11(@types/node@22.5.5)(terser@5.33.0))(vue-tsc@2.1.10(typescript@5.6.3)))(postcss@8.4.49)(rollup@4.24.4)(vite@5.4.11(@types/node@22.5.5)(terser@5.33.0))(vue@3.5.13(typescript@5.6.3))(webpack@5.94.0(esbuild@0.23.1))':
     dependencies:
       '@iconify-json/carbon': 1.2.1
-      '@iconify-json/logos': 1.2.3
+      '@iconify-json/logos': 1.2.4
       '@iconify-json/ri': 1.2.0
       '@iconify-json/tabler': 1.2.3
       '@nuxt/devtools': 1.6.0(rollup@4.24.4)(vite@5.4.11(@types/node@22.5.5)(terser@5.33.0))(vue@3.5.13(typescript@5.6.3))
@@ -8135,7 +8135,7 @@ snapshots:
     dependencies:
       '@headlessui/tailwindcss': 0.2.1(tailwindcss@3.4.16)
       '@headlessui/vue': 1.7.23(vue@3.5.13(typescript@5.6.3))
-      '@iconify-json/heroicons': 1.2.1
+      '@iconify-json/heroicons': 1.2.2
       '@nuxt/icon': 1.10.2(magicast@0.3.5)(rollup@4.24.4)(vite@5.4.11(@types/node@22.5.5)(terser@5.33.0))(vue@3.5.13(typescript@5.6.3))
       '@nuxt/kit': 3.14.1592(magicast@0.3.5)(rollup@4.24.4)
       '@nuxtjs/color-mode': 3.5.2(magicast@0.3.5)(rollup@4.24.4)
