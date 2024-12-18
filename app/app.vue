@@ -66,21 +66,17 @@ onMounted(() => {
     <NuxtLoadingIndicator />
 
     <AppBanner
-      id="vue-ams-2025"
-      to="https://eventix.shop/kb2j4ewn"
+      id="nuxt-tips-christmas"
+      to="https://michaelnthiessen.com/nuxt-tips-collection?aff=J0Emk"
     >
       <div class="flex items-center gap-1 text-black">
         <UIcon
-          name="i-ph-microphone-stage-duotone"
-          class="w-5 h-5 flex-shrink-0 pointer-events-none hidden md:inline-flex"
+          name="i-ph-magic-wand"
+          class="w-5 h-5 flex-shrink-0 pointer-events-none hidden lg:inline-block mr-1"
         />
-        <span>
-          Don't miss <span class="font-semibold">Vue.js Amsterdam</span> <span class="lg:hidden">in March </span>2025!
-          <span class="hidden lg:inline">Join 1000+ Vue developers this March and <span class="font-semibold">save 10% with code NUXT</span>.</span>
-          <span class="lg:hidden">Save 10% with code NUXT.</span>
-        </span>
+        <span>Learn Nuxt with a Collection of 100+ Tips!</span>
         <UButton
-          label="Get your ticket"
+          label="Learn more"
           color="white"
           trailing-icon="i-ph-arrow-right"
           size="2xs"
