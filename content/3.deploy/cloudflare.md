@@ -15,6 +15,10 @@ website: 'https://pages.cloudflare.com/'
 Integration with Cloudflare Pages is possible with zero configuration, [learn more](https://nitro.unjs.io/deploy#zero-config-providers).
 ::
 
+::important
+Checkout the [@nuxthub/core](/modules/hub) module to build full-stack Nuxt applications with Cloudflare, learn more on [hub.nuxt.com](https://hub.nuxt.com).
+::
+
 ### Git Integration
 
 If you use the GitHub/GitLab integration with Cloudflare Pages, **no configuration is required**. Pushing to your repository will automatically build your project and deploy it.
@@ -61,12 +65,6 @@ In this case, you will have to set the preset manually.
     wrangler pages deploy dist/
     ```
 
-## Disable Auto Minify
-
-Make sure to disable the minification of HTML, CSS and JavaScript in **CloudFlare -> Speed -> Optimization -> Auto Minify** to avoid any Vue hydration.
-
-![Disable Cloudflare auto minify](/assets/deploy/cloudflare-auto-minify.png)
-
 ## Learn more
 
 ::read-more{to="https://nitro.unjs.io/deploy/providers/cloudflare" target="_blank"}
@@ -83,8 +81,8 @@ Head over **CloudFlare Pages** documentation to learn more about it.
   ::card
   ---
   icon: i-simple-icons-github
-  title: Nuxt Todos Edge
-  to: https://github.com/atinux/nuxt-todos-edge
+  title: Atidone
+  to: https://github.com/atinux/atidone
   target: _blank
   ui.icon.base: text-black dark:text-white
   ---
@@ -99,6 +97,26 @@ Head over **CloudFlare Pages** documentation to learn more about it.
   ui.icon.base: text-black dark:text-white
   ---
   An editable website with universal rendering based on Cloudflare KV.
+  ::
+  ::card
+  ---
+  icon: i-simple-icons-github
+  title: Atidraw
+  to: https://github.com/atinux/atidraw
+  target: _blank
+  ui.icon.base: text-black dark:text-white
+  ---
+  Web application that lets you to draw and share your drawings with the world, with Cloudflare R2 & AI.
+  ::
+  ::card
+  ---
+  icon: i-simple-icons-github
+  title: Nuxt Image Gallery
+  to: https://github.com/flosciante/nuxt-image-gallery
+  target: _blank
+  ui.icon.base: text-black dark:text-white
+  ---
+  An image gallery to upload, edit and share your images to the world, with Cloudflare R2.
   ::
 ::
 
