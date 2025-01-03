@@ -208,3 +208,10 @@ templates:
     demo: 'https://nuxt-shadcn-landing-pro.vercel.app/'
     purchase: 'https://waterwaystudios.lemonsqueezy.com/buy/48ba7098-5ef6-4177-ae64-e469f445e85f?aff=J0Emk'
     badge: 'Premium'
+  - name: 'Nuxt Shadcn Dashboard'
+    slug: 'nuxt-shadcn-dashboard'
+    description: 'Shadcn Dashboard built with Nuxt'
+    screenshotUrl: 'https://dashboard.dianprata.com/'
+    repo: 'dianprata/nuxt-shadcn-dashboard'
+    demo: 'https://dashboard.dianprata.com/'
+
