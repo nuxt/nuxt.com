@@ -8,12 +8,12 @@ definePageMeta({
 const route = useRoute()
 const { copy } = useCopyToClipboard()
 
-const { data: article } = await useAsyncData(() => queryContent<BlogArticle>(route.path).findOne())
+const { data: article } = await useAsyncData(route.path, () => queryContent<BlogArticle>(route.path).findOne())
 if (!article.value) {
   throw createError({ statusCode: 404, statusMessage: 'Article not found', fatal: true })
 }
 
-const { data: surround } = await useAsyncData(() => queryContent('/blog')
+const { data: surround } = await useAsyncData(`${route.path}-surround`, () => queryContent('/blog')
   .where({ _extension: 'md' })
   .without(['body', 'excerpt'])
   .sort({ date: -1 })
