@@ -4,6 +4,10 @@ defineProps({
     type: String,
     required: true
   },
+  label: {
+    type: String,
+    required: false
+  },
   size: {
     type: String as () => 'lg',
     default: 'lg'
@@ -14,7 +18,7 @@ const { copy, copied } = useClipboard()
 
 <template>
   <label>
-    <UInput :model-value="value" :size="size" disabled :ui="{ icon: { trailing: { pointer: '' } } }" icon="i-ph-terminal">
+    <UInput :model-value="label ? label : value" :size="size" disabled :ui="{ icon: { trailing: { pointer: '' } } }" icon="i-ph-terminal">
       <div class="absolute inset-0" :class="[copied ? 'cursor-default' : 'cursor-copy']" @click="copy(value)" />
       <template #trailing>
         <UButton

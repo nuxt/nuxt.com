@@ -39,7 +39,7 @@ users:
         to: https://github.com/pi0
         target: _blank
   - name: Daniel Roe
-    location: Durham, UK
+    location: Edinburgh, UK
     sponsor: https://github.com/sponsors/danielroe
     avatar:
       src: https://ipx.nuxt.com/f_auto,s_80x80/gh_avatar/danielroe
@@ -86,11 +86,11 @@ users:
       - icon: i-simple-icons-x
         to: https://x.com/TheAlexLichter
         target: _blank
-      - icon: i-simple-icons-github
-        to: https://github.com/manniL
-        target: _blank
       - icon: i-simple-icons-bluesky
         to: https://bsky.app/profile/thealexlichter.com
+        target: _blank
+      - icon: i-simple-icons-github
+        to: https://github.com/manniL
         target: _blank
       - icon: i-ph-link
         to: https://www.lichter.io
@@ -104,6 +104,9 @@ users:
     links:
       - icon: i-simple-icons-x
         to: https://x.com/harlan_zw
+        target: _blank
+      - icon: i-simple-icons-bluesky
+        to: https://bsky.app/profile/harlanzw.com
         target: _blank
       - icon: i-simple-icons-github
         to: https://github.com/harlan-zw
@@ -121,6 +124,9 @@ users:
       - icon: i-simple-icons-x
         to: https://x.com/li_hbr
         target: _blank
+      - icon: i-simple-icons-bluesky
+        to: https://bsky.app/profile/lihbr.com
+        target: _blank
       - icon: i-simple-icons-github
         to: https://github.com/lihbr
         target: _blank
@@ -136,6 +142,9 @@ users:
     links:
       - icon: i-simple-icons-x
         to: https://x.com/JulienHuang_dev
+        target: _blank
+      - icon: i-simple-icons-bluesky
+        to: https://bsky.app/profile/julienhuang-dev.bsky.social
         target: _blank
       - icon: i-simple-icons-github
         to: https://github.com/huang-julien
