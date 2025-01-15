@@ -74,6 +74,9 @@ importers:
       nuxt-og-image:
         specifier: ^4.0.1
         version: 4.0.1(magicast@0.3.5)(rollup@4.24.4)(vite@6.0.7(@types/node@22.5.5)(jiti@2.4.2)(terser@5.33.0)(tsx@4.19.1)(yaml@2.6.1))(vue@3.5.13(typescript@5.6.3))
+      nuxt-rebundle:
+        specifier: 0.0.2
+        version: 0.0.2(magicast@0.3.5)(nuxt@3.15.1(@parcel/watcher@2.4.1)(@types/node@22.5.5)(db0@0.2.1)(eslint@9.17.0(jiti@2.4.2))(ioredis@5.4.1)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.24.4)(terser@5.33.0)(tsx@4.19.1)(typescript@5.6.3)(vite@6.0.7(@types/node@22.5.5)(jiti@2.4.2)(terser@5.33.0)(tsx@4.19.1)(yaml@2.6.1))(vue-tsc@2.1.10(typescript@5.6.3))(yaml@2.6.1))(rollup@4.24.4)
       ofetch:
         specifier: ^1.4.1
         version: 1.4.1
@@ -5023,6 +5026,11 @@ packages:
   nuxt-og-image@4.0.1:
     resolution: {integrity: sha512-PAZoqGkTaGTNE+8MojjRhBVJmx33Kmo/stkzbJpPttR8PdRKvA8K4AeekyvDD3DZa6pcAZZOwG3aKayruZz0og==}
     engines: {node: '>=18.0.0'}
+
+  nuxt-rebundle@0.0.2:
+    resolution: {integrity: sha512-laHs4TSMtOeWuLLLy66t2LIaf1016KST/mkEXfX99NezVX9uYS8i3T8sj6TSeuO9ZYWOtx1EN48dMcZkKqPnhw==}
+    peerDependencies:
+      nuxt: '>=3.12.0'
 
   nuxt-site-config-kit@3.0.6:
     resolution: {integrity: sha512-QBOFzAIo+D02avFQQ7gNlRyA372/PQlgW2IjL2nttvjfHapqYbvP6tIP55soL+1+D8YvF/bGZgS+vJtfQhroUg==}
@@ -13406,6 +13414,20 @@ snapshots:
       - supports-color
       - vite
       - vue
+
+  nuxt-rebundle@0.0.2(magicast@0.3.5)(nuxt@3.15.1(@parcel/watcher@2.4.1)(@types/node@22.5.5)(db0@0.2.1)(eslint@9.17.0(jiti@2.4.2))(ioredis@5.4.1)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.24.4)(terser@5.33.0)(tsx@4.19.1)(typescript@5.6.3)(vite@6.0.7(@types/node@22.5.5)(jiti@2.4.2)(terser@5.33.0)(tsx@4.19.1)(yaml@2.6.1))(vue-tsc@2.1.10(typescript@5.6.3))(yaml@2.6.1))(rollup@4.24.4):
+    dependencies:
+      '@nuxt/kit': 3.15.1(magicast@0.3.5)(rollup@4.24.4)
+      acorn: 8.14.0
+      estree-walker: 3.0.3
+      magic-string: 0.30.17
+      mlly: 1.7.3
+      nuxt: 3.15.1(@parcel/watcher@2.4.1)(@types/node@22.5.5)(db0@0.2.1)(eslint@9.17.0(jiti@2.4.2))(ioredis@5.4.1)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.24.4)(terser@5.33.0)(tsx@4.19.1)(typescript@5.6.3)(vite@6.0.7(@types/node@22.5.5)(jiti@2.4.2)(terser@5.33.0)(tsx@4.19.1)(yaml@2.6.1))(vue-tsc@2.1.10(typescript@5.6.3))(yaml@2.6.1)
+      pathe: 1.1.2
+    transitivePeerDependencies:
+      - magicast
+      - rollup
+      - supports-color
 
   nuxt-site-config-kit@3.0.6(magicast@0.3.5)(rollup@4.24.4)(vue@3.5.13(typescript@5.6.3)):
     dependencies:
