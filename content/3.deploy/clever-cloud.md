@@ -29,7 +29,7 @@ CC_RUN_COMMAND="node .output/server/index.mjs"
 ```
 
 ```env [yarn]
-CC_NODE_BUILD_TOOL="yarn2"
+CC_NODE_BUILD_TOOL="yarn"
 CC_PRE_BUILD_HOOK="yarn install --frozen-lockfile"
 CC_RUN_COMMAND="node .output/server/index.mjs"
 ```
@@ -64,7 +64,6 @@ CC_POST_BUILD_HOOK=npx nuxi generate
 CC_NODE_VERSION=20
 CC_WEBROOT=/.output/public
 CC_OVERRIDE_BUILDCACHE=/.output/public
-CC_NODE_BUILD_TOOL="yarn2"
 CC_PRE_BUILD_HOOK="yarn install --frozen-lockfile"
 CC_POST_BUILD_HOOK=npx nuxi generate
 ```
@@ -73,7 +72,6 @@ CC_POST_BUILD_HOOK=npx nuxi generate
 CC_NODE_VERSION=20
 CC_WEBROOT=/.output/public
 CC_OVERRIDE_BUILDCACHE=/.output/public
-CC_NODE_BUILD_TOOL="custom"
 CC_PRE_BUILD_HOOK="npm i -g pnpm && pnpm install --frozen-lockfile"
 CC_POST_BUILD_HOOK=npx nuxi generate
 ```
@@ -82,7 +80,6 @@ CC_POST_BUILD_HOOK=npx nuxi generate
 CC_NODE_VERSION=20
 CC_WEBROOT=/.output/public
 CC_OVERRIDE_BUILDCACHE=/.output/public
-CC_NODE_BUILD_TOOL="custom"
 CC_PRE_BUILD_HOOK="npm i -g bun && bun install"
 CC_POST_BUILD_HOOK=npx nuxi generate
 ```
