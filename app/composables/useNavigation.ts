@@ -98,7 +98,7 @@ const _useNavigation = () => {
         target: '_blank'
       }, {
         label: 'Nuxt Studio',
-        to: 'https://nuxt.studio/?utm_source=nuxt-website&utm_medium=header',
+        to: 'https://content.nuxt.com/studio/?utm_source=nuxt-website&utm_medium=header',
         description: 'The Git-based CMS for Nuxt.',
         icon: 'i-ph-pen',
         target: '_blank'
