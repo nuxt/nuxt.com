@@ -110,7 +110,7 @@ const _useNavigation = () => {
         target: '_blank'
       }]
     }, {
-      label: 'Services',
+      label: 'Enterprise',
       icon: 'i-ph-buildings',
       to: '/enterprise',
       search: false,

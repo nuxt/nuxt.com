@@ -79,6 +79,11 @@
       "permanent": false
     },
     {
+      "source": "/modules/:slug/changelog",
+      "destination": "/modules/:slug",
+      "permanent": false
+    },
+    {
       "source": "/docs/concepts/typescript",
       "destination": "/docs/guide/concepts/typescript",
       "permanent": false

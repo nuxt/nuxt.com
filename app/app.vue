@@ -65,45 +65,25 @@ onMounted(() => {
   <div>
     <NuxtLoadingIndicator />
 
-    <!-- <AppBanner
-      id="nuxt-nation-2024"
-      to="https://vi.to/hubs/nuxtnation/pages/stream"
+    <AppBanner
+      id="nuxt-tips-christmas"
+      to="https://michaelnthiessen.com/nuxt-tips-collection?aff=J0Emk"
     >
-      <div class="flex items-center gap-1">
+      <div class="flex items-center gap-1 text-black">
         <UIcon
-          name="i-ph-microphone-stage-duotone"
-          class="w-5 h-5 flex-shrink-0 pointer-events-none hidden sm:inline-block"
+          name="i-ph-magic-wand"
+          class="w-5 h-5 flex-shrink-0 pointer-events-none hidden lg:inline-block mr-1"
         />
-        <span><span class="font-semibold">Nuxt Nation</span> conference is live.</span>
+        <span>Learn Nuxt with a Collection of 100+ Tips!</span>
         <UButton
-          label="Watch now"
+          label="Learn more"
           color="white"
           trailing-icon="i-ph-arrow-right"
           size="2xs"
           class="rounded-full ml-1"
         />
       </div>
-    </AppBanner> -->
-    <!-- <AppBanner
-      id="nuxt-certification-early-bird-launch"
-      to="https://certification.nuxt.com"
-    >
-      <div class="flex items-center gap-2">
-        <UIcon
-          name="i-ph-medal"
-          class="w-5 h-5 flex-shrink-0 pointer-events-none"
-        />
-        <span>The <span class="font-semibold">Nuxt Certification Program</span> by VueSchool is out!</span>
-        <UButton
-          color="white"
-          trailing-icon="i-ph-arrow-right"
-          size="2xs"
-          class="rounded-full"
-        >
-          Register
-        </UButton>
-      </div>
-    </AppBanner> -->
+    </AppBanner>
 
     <AppHeader :links="headerLinks" />
 

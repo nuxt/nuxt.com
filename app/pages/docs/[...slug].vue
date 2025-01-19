@@ -5,14 +5,15 @@ import type { NavItem } from '@nuxt/content'
 const navigation = inject<Ref<NavItem[]>>('navigation')
 
 const route = useRoute()
+const slug = route.params.slug.join('-')
 const { navKeyFromPath } = useContentHelpers()
 
-const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
+const { data: page } = await useAsyncData(`docs-${slug}`, () => queryContent(route.path).findOne())
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const { data: surround } = await useAsyncData(`${route.path}-surround`, async () => {
+const { data: surround } = await useAsyncData(`docs-${slug}-surround`, async () => {
   if (page.value.surround === false) {
     return []
   }
@@ -59,6 +60,11 @@ const communityLinks = computed(() => [{
   icon: 'i-ph-chef-hat',
   label: 'Master Nuxt',
   to: 'https://masteringnuxt.com/nuxt3',
+  target: '_blank'
+}, {
+  icon: 'i-ph-certificate',
+  label: 'Nuxt Certification',
+  to: 'https://certification.nuxt.com',
   target: '_blank'
 }])
 
