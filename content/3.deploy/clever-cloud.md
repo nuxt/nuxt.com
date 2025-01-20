@@ -30,21 +30,21 @@ CC_RUN_COMMAND="node .output/server/index.mjs"
 
 ```env [yarn]
 CC_NODE_BUILD_TOOL="yarn"
-CC_PRE_BUILD_HOOK="yarn install --frozen-lockfile"
+CC_PRE_BUILD_HOOK="yarn install --frozen-lockfile && yarn build"
 CC_RUN_COMMAND="node .output/server/index.mjs"
 ```
 
 ```env [pnpm]
 CC_CUSTOM_BUILD_TOOL="pnpm build"
 CC_NODE_BUILD_TOOL="custom"
-CC_PRE_BUILD_HOOK="npm i -g pnpm && pnpm install --frozen-lockfile"
+CC_PRE_BUILD_HOOK="npm i -g pnpm && pnpm install --frozen-lockfile && pnpm run build"
 CC_RUN_COMMAND="node .output/server/index.mjs"
 ```
 
 ```env [bun]
 CC_CUSTOM_BUILD_TOOL="bun build"
 CC_NODE_BUILD_TOOL="custom"
-CC_PRE_BUILD_HOOK="npm i -g bun && bun install"
+CC_PRE_BUILD_HOOK="npm i -g bun && bun install && bun run build "
 CC_RUN_COMMAND="node .output/server/index.mjs"
 ```
 
