@@ -21,6 +21,7 @@ To deploy your Nuxt project to Clever Cloud, you will need to create a **new app
 6. Skip connecting **Add-ons** to your Clever application unless you’re using a database.
 7. Inject **environment variables**:
   - For **Node.js**
+
 ::package-managers
 
 ```env [npm]
@@ -49,7 +50,9 @@ CC_RUN_COMMAND="node .output/server/index.mjs"
 ```
 
 ::
-  - For a static application
+
+  - For a **static application**
+
 ::package-managers
 
 ```env [npm]
@@ -85,6 +88,7 @@ CC_POST_BUILD_HOOK=npx nuxi generate
 ```
 
 ::
+
 8. Navigate to the application **Information** menu and enable the **enable dedicated build instance** option on a minimal instance of type **M**.
 9. **Deploy!** If you’re deploying from **GitHub**, your deployment should start automatically. If you’re using **Git**, show [this docs](https://www.clever-cloud.com/developers/doc/quickstart/#choose-how-to-deploy).
 
