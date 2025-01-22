@@ -216,7 +216,7 @@ export default defineNuxtConfig({
     floatingVueOptions: {
       classMarkdown: 'prose prose-primary dark:prose-invert'
     },
-    // Skip Twoslash in dev to improve performance. Turn this on when you want to explictly test twoslash in dev.
+    // Skip Twoslash in dev to improve performance. Turn this on when you want to explicitly test twoslash in dev.
     enableInDev: false,
     // Do not throw when twoslash fails, the typecheck should be down in github.com/nuxt/nuxt's CI
     throws: false
