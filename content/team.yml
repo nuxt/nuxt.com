@@ -1,7 +1,7 @@
 title: The Nuxt Team
-description: 'The development of Nuxt and its ecosystem is led by an international team.<br> Our committed team works every day to bring Nuxt forward.'
+description: The development of Nuxt and its ecosystem is led by an international team.<br> Our committed team works every day to bring Nuxt forward.
 navigation: false
-align: 'center'
+align: center
 users:
   - name: Sébastien Chopin
     location: Bordeaux, France
@@ -11,13 +11,16 @@ users:
       srcset: https://ipx.nuxt.com/f_auto,s_160x160/gh_avatar/atinux 2x
     links:
       - icon: i-simple-icons-x
-        to: https://twitter.com/Atinux
+        to: https://x.com/Atinux
+        target: _blank
+      - icon: i-simple-icons-bluesky
+        to: https://bsky.app/profile/atinux.com
         target: _blank
       - icon: i-simple-icons-github
-        to: https://github.com/Atinux
+        to: https://github.com/atinux
         target: _blank
       - icon: i-ph-link
-        to: https://chopin.dev
+        to: https://atinux.com
         target: _blank
   - name: Pooya Parsa
     location: Haarlem, Netherlands
@@ -27,20 +30,26 @@ users:
       srcset: https://ipx.nuxt.com/f_auto,s_160x160/gh_avatar/pi0 2x
     links:
       - icon: i-simple-icons-x
-        to: https://twitter.com/_pi0_
+        to: https://x.com/_pi0_
+        target: _blank
+      - icon: i-simple-icons-bluesky
+        to: https://bsky.app/profile/pi0.io
         target: _blank
       - icon: i-simple-icons-github
         to: https://github.com/pi0
         target: _blank
   - name: Daniel Roe
-    location: Durham, UK
+    location: Edinburgh, UK
     sponsor: https://github.com/sponsors/danielroe
     avatar:
       src: https://ipx.nuxt.com/f_auto,s_80x80/gh_avatar/danielroe
       srcset: https://ipx.nuxt.com/f_auto,s_160x160/gh_avatar/danielroe 2x
     links:
       - icon: i-simple-icons-x
-        to: https://twitter.com/danielcroe
+        to: https://x.com/danielcroe
+        target: _blank
+      - icon: i-simple-icons-bluesky
+        to: https://bsky.app/profile/danielroe.dev
         target: _blank
       - icon: i-simple-icons-github
         to: https://github.com/danielroe
@@ -56,7 +65,10 @@ users:
       srcset: https://ipx.nuxt.com/f_auto,s_160x160/gh_avatar/antfu 2x
     links:
       - icon: i-simple-icons-x
-        to: https://twitter.com/antfu7
+        to: https://x.com/antfu7
+        target: _blank
+      - icon: i-simple-icons-bluesky
+        to: https://bsky.app/profile/antfu.me
         target: _blank
       - icon: i-simple-icons-github
         to: https://github.com/antfu
@@ -72,7 +84,10 @@ users:
       srcset: https://ipx.nuxt.com/f_auto,s_160x160/gh_avatar/manniL 2x
     links:
       - icon: i-simple-icons-x
-        to: https://twitter.com/TheAlexLichter
+        to: https://x.com/TheAlexLichter
+        target: _blank
+      - icon: i-simple-icons-bluesky
+        to: https://bsky.app/profile/thealexlichter.com
         target: _blank
       - icon: i-simple-icons-github
         to: https://github.com/manniL
@@ -88,7 +103,10 @@ users:
       srcset: https://ipx.nuxt.com/f_auto,s_160x160/gh_avatar/harlan-zw 2x
     links:
       - icon: i-simple-icons-x
-        to: https://twitter.com/harlan_zw
+        to: https://x.com/harlan_zw
+        target: _blank
+      - icon: i-simple-icons-bluesky
+        to: https://bsky.app/profile/harlanzw.com
         target: _blank
       - icon: i-simple-icons-github
         to: https://github.com/harlan-zw
@@ -104,7 +122,10 @@ users:
       srcset: https://ipx.nuxt.com/f_auto,s_160x160/gh_avatar/lihbr 2x
     links:
       - icon: i-simple-icons-x
-        to: https://twitter.com/li_hbr
+        to: https://x.com/li_hbr
+        target: _blank
+      - icon: i-simple-icons-bluesky
+        to: https://bsky.app/profile/lihbr.com
         target: _blank
       - icon: i-simple-icons-github
         to: https://github.com/lihbr
@@ -120,7 +141,10 @@ users:
       srcset: https://ipx.nuxt.com/f_auto,s_160x160/gh_avatar/huang-julien 2x
     links:
       - icon: i-simple-icons-x
-        to: https://twitter.com/JulienHuang_dev
+        to: https://x.com/JulienHuang_dev
+        target: _blank
+      - icon: i-simple-icons-bluesky
+        to: https://bsky.app/profile/julienhuang-dev.bsky.social
         target: _blank
       - icon: i-simple-icons-github
         to: https://github.com/huang-julien
@@ -130,11 +154,11 @@ cta:
   title: Start your Nuxt Journey
   description: Learn everything you need to know, from beginner to master.
   links:
-    - label: 'Get started'
-      size: 'lg'
-      color: 'black'
-      to: '/docs/getting-started/introduction'
-    - label: 'Explore examples'
-      size: 'lg'
-      color: 'white'
-      to: '/docs/examples'
+    - label: Get started
+      size: lg
+      color: black
+      to: /docs/getting-started/introduction
+    - label: Explore examples
+      size: lg
+      color: white
+      to: /docs/examples

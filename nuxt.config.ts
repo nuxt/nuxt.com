@@ -43,7 +43,6 @@ if (examplesSourceBase) {
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2024-07-18',
   extends: [
     process.env.NUXT_UI_PRO_PATH || '@nuxt/ui-pro'
   ],
@@ -51,7 +50,6 @@ export default defineNuxtConfig({
   // @ts-ignore Type circular reference
   modules: [
     'nuxt-content-twoslash',
-    'nuxt-build-cache',
     '@nuxt/content',
     '@nuxt/ui',
     '@nuxt/image',
@@ -63,6 +61,7 @@ export default defineNuxtConfig({
     '@nuxthq/studio',
     '@vueuse/nuxt',
     'nuxt-og-image',
+    'nuxt-rebundle',
     () => {
       if (docsSourceBase) {
         logger.success(`Using local Nuxt docs from ${docsSourceBase}`)
@@ -72,6 +71,64 @@ export default defineNuxtConfig({
       }
     }
   ],
+  $development: {
+    runtimeConfig: {
+      public: {
+        website: {
+          url: 'http://localhost:3000'
+        }
+      }
+    }
+  },
+  $production: {
+    image: {
+      ipx: {
+        baseURL: 'https://ipx.nuxt.com'
+      }
+    }
+  },
+  devtools: {
+    enabled: false
+  },
+  colorMode: {
+    preference: 'dark'
+  },
+  // image: {
+  //   ipx: {
+  //     baseURL: 'https://ipx.nuxt.com'
+  //   }
+  // },
+  content: {
+    navigation: {
+      fields: ['titleTemplate']
+    },
+    sources: {
+      docsSource,
+      examplesSource
+    },
+    highlight: {
+      theme: {
+        default: 'material-theme-lighter',
+        dark: 'material-theme-palenight'
+      },
+      langs: [
+        'js',
+        'ts',
+        'vue',
+        'css',
+        'scss',
+        'sass',
+        'html',
+        'bash',
+        'md',
+        'mdc',
+        'json',
+        'json5',
+        'jsonc',
+        'tsx'
+      ]
+    }
+  },
   routeRules: {
     // Pre-render
     '/api/search.json': { prerender: true },
@@ -107,12 +164,19 @@ export default defineNuxtConfig({
     // '/docs/guide/directory-structure/nuxt.config': { redirect: '/docs/guide/directory-structure/nuxt-config', prerender: false },
     '/enterprise': { redirect: '/enterprise/support', prerender: false }
   },
+  future: {
+    compatibilityVersion: 4
+  },
+  experimental: {
+    buildCache: false
+  },
+  compatibilityDate: '2024-07-18',
   nitro: {
     prerender: {
       // failOnError: false
       // TODO: investigate
       // Ignore weird url from crawler on some modules readme
-      ignore: ['/modules/%3C/span', '/modules/%253C/span', '/docs/getting-started/</span', '/docs/getting-started/%3C/span', '/modules/Mojo CSS', '/modules/Mojo%20CSS']
+      ignore: ['/modules/%3C/span', '/modules/%253C/span', '/docs/getting-started/</span', '/docs/getting-started/%3C/span', '/modules/Mojo CSS', '/modules/Mojo%20CSS', '/enterprise/agencies?service=content-marketing']
     },
     hooks: {
       'prerender:generate'(route) {
@@ -124,6 +188,9 @@ export default defineNuxtConfig({
       }
     }
   },
+  typescript: {
+    strict: false
+  },
   hooks: {
     async 'prerender:routes'(ctx) {
       // Add Nuxt 2 modules to the prerender list
@@ -133,56 +200,16 @@ export default defineNuxtConfig({
       }
     }
   },
-  $production: {
-    image: {
-      ipx: {
-        baseURL: 'https://ipx.nuxt.com'
+  eslint: {
+    config: {
+      stylistic: {
+        commaDangle: 'never'
       }
     }
   },
-  $development: {
-    runtimeConfig: {
-      public: {
-        website: {
-          url: 'http://localhost:3000'
-        }
-      }
-    }
-  },
-  colorMode: {
-    preference: 'dark'
-  },
-  // image: {
-  //   ipx: {
-  //     baseURL: 'https://ipx.nuxt.com'
-  //   }
-  // },
-  content: {
-    navigation: {
-      fields: ['titleTemplate']
-    },
-    sources: {
-      docsSource,
-      examplesSource
-    },
-    highlight: {
-      theme: {
-        default: 'material-theme-lighter',
-        dark: 'material-theme-palenight'
-      },
-      langs: [
-        'js',
-        'ts',
-        'vue',
-        'css',
-        'scss',
-        'sass',
-        'html',
-        'bash',
-        'md',
-        'mdc',
-        'json'
-      ]
+  icon: {
+    clientBundle: {
+      scan: true
     }
   },
   twoslash: {
@@ -193,23 +220,5 @@ export default defineNuxtConfig({
     enableInDev: false,
     // Do not throw when twoslash fails, the typecheck should be down in github.com/nuxt/nuxt's CI
     throws: false
-  },
-  eslint: {
-    config: {
-      stylistic: {
-        commaDangle: 'never'
-      }
-    }
-  },
-  typescript: {
-    strict: false
-  },
-  experimental: {
-    headNext: true,
-    sharedPrerenderData: true,
-    appManifest: true
-  },
-  devtools: {
-    enabled: false
   }
 })

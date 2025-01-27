@@ -3,19 +3,20 @@ title: Nuxt Templates
 navigation.title: Templates
 description: 'Explore community templates to get up and running in a few seconds.'
 navigation.icon: i-ph-browsers
+align: center
 links:
   - label: 'List a template'
     to: 'https://github.com/nuxt/nuxt.com/tree/main#add-a-nuxt-template'
     icon: 'i-ph-plus-circle'
     target: '_blank'
     color: gray
-    size: md
-  - label: 'Nuxt Starters'
-    to: 'https://nuxt.new'
-    icon: 'i-simple-icons-nuxtdotjs'
+    size: sm
+  - label: 'Full-stack templates'
+    to: 'https://hub.nuxt.com/templates'
     target: '_blank'
+    variant: ghost
     color: gray
-    size: md
+    size: sm
 templates:
   - name: 'Movies'
     slug: 'movies'
@@ -210,6 +211,12 @@ templates:
   - name: 'Dash UI Nuxt Starter Admin Template'
     slug: 'dashui-nuxt-starter-admin-template'
     description: 'Dash UI Nuxt Starter-Admin Template is a modern, responsive admin dashboard template built with Nuxt.js.'
-    demo: 'https://dashui-nuxt-starter-admin-template.netlify.app/'
+    demo: 'https://dashui-nuxt-starter-admin-template.vercel.app/'
     purchase: 'https://dashui.codescandy.com/nuxt-js-admin-dashboard-template.html'
     badge: 'Freemium'
+  - name: 'Nuxt Shadcn Dashboard'
+    slug: 'nuxt-shadcn-dashboard'
+    description: 'Shadcn Dashboard built with Nuxt'
+    screenshotUrl: 'https://dashboard.dianprata.com/'
+    repo: 'dianprata/nuxt-shadcn-dashboard'
+    demo: 'https://dashboard.dianprata.com/'
