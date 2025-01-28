@@ -158,7 +158,7 @@ const _useNavigation = () => {
       target: '_blank'
     }, {
       label: 'Nuxt Studio',
-      to: 'https://nuxt.studio/?utm_source=nuxt-website&utm_medium=footer',
+      to: 'https://content.nuxt.com/studio/?utm_source=nuxt-website&utm_medium=footer',
       target: '_blank'
     }, {
       label: 'NuxtHub',
