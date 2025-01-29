@@ -214,4 +214,9 @@ templates:
     screenshotUrl: 'https://dashboard.dianprata.com/'
     repo: 'dianprata/nuxt-shadcn-dashboard'
     demo: 'https://dashboard.dianprata.com/'
+  - name: 'Habit'
+    slug: 'habit'
+    description: 'Full-stack habit app with authentication and SQL database.'
+    repo: 'zackha/habit'
+    demo: 'https://habit.nuxt.dev/'
 
