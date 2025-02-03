@@ -61,6 +61,7 @@ export default defineNuxtConfig({
     '@nuxthq/studio',
     '@vueuse/nuxt',
     'nuxt-og-image',
+    'nuxt-rebundle',
     () => {
       if (docsSourceBase) {
         logger.success(`Using local Nuxt docs from ${docsSourceBase}`)
@@ -175,7 +176,7 @@ export default defineNuxtConfig({
       // failOnError: false
       // TODO: investigate
       // Ignore weird url from crawler on some modules readme
-      ignore: ['/modules/%3C/span', '/modules/%253C/span', '/docs/getting-started/</span', '/docs/getting-started/%3C/span', '/modules/Mojo CSS', '/modules/Mojo%20CSS']
+      ignore: ['/modules/%3C/span', '/modules/%253C/span', '/docs/getting-started/</span', '/docs/getting-started/%3C/span', '/modules/Mojo CSS', '/modules/Mojo%20CSS', '/enterprise/agencies?service=content-marketing']
     },
     hooks: {
       'prerender:generate'(route) {
@@ -215,7 +216,7 @@ export default defineNuxtConfig({
     floatingVueOptions: {
       classMarkdown: 'prose prose-primary dark:prose-invert'
     },
-    // Skip Twoslash in dev to improve performance. Turn this on when you want to explictly test twoslash in dev.
+    // Skip Twoslash in dev to improve performance. Turn this on when you want to explicitly test twoslash in dev.
     enableInDev: false,
     // Do not throw when twoslash fails, the typecheck should be down in github.com/nuxt/nuxt's CI
     throws: false

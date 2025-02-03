@@ -122,7 +122,7 @@ defineOgImageComponent('Docs', {
 
       <div class="flex flex-col lg:flex-row lg:items-center gap-3 mt-4">
         <UTooltip text="Monthly NPM Downloads">
-          <NuxtLink class="flex items-center gap-1.5" :to="`https://npmjs.org/package/${module.npm}`" target="_blank">
+          <NuxtLink class="flex items-center gap-1.5" :to="`https://npm.chart.dev/${module.npm}`" target="_blank">
             <UIcon name="i-ph-arrow-circle-down" class="w-5 h-5 flex-shrink-0" />
             <span class="text-sm font-medium">{{ formatNumber(module.stats.downloads) }} downloads</span>
           </NuxtLink>
