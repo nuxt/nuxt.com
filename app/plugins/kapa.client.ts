@@ -164,7 +164,8 @@ export default defineNuxtPlugin(() => {
               submit: true
             })
           }
-          kapa.open()
+
+          return kapa.open()
         }
       }
     }
