@@ -1,3 +1,5 @@
+import { hasProtocol } from 'ufo'
+
 export type SponsorType = 'platinum' | 'silver' | 'gold' | 'bronze' | 'backers'
 
 export interface Sponsor {
@@ -27,7 +29,7 @@ function openCollectiveHeaders(headers = {}) {
 }
 
 function toURL(url: string) {
-  return url?.startsWith('www.') ? `https://${url}` : url
+  return !url || hasProtocol(url) ? url : `https://${url}`
 }
 
 export async function fetchOpenCollectiveSponsors() {
