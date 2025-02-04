@@ -52,16 +52,12 @@ See an example in video:
 You can also install the [NuxtHub CLI](https://github.com/nuxt-hub/cli) globally with: `npm i -g nuxthub`.
 ::
 
-::warning
-If you do your first deployment with the NuxtHub CLI, you won't be able to attach your GitHub/GitLab repository later on due to a Cloudflare limitation.
-::
-
 ## Deploy using Git
 
-1. Push your code to your git repository (GitHub or GitLab)
+1. Push your code to your git repository (GitHub)
 2. Click on `New Project` then `Import a Git repository`
 3. Select your repository and click on `Import repository`
-4. NuxtHub will configure your project on Cloudflare Pages and deploy it
+4. NuxtHub will configure a GitHub Action workflow to deploy your project
 5. Your application is deployed with a `.nuxt.dev` domain
 
 After your project has been imported and deployed, all subsequent pushes to branches will generate preview deployments and all changes made to the production branch (commonly “main”) will result in a production deployment.
