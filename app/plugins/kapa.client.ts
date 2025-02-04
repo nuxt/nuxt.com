@@ -155,17 +155,16 @@ export default defineNuxtPlugin(() => {
       kapa: {
         async openModal(q?: string) {
           await script.load()
-          // TODO: fix type issue in nuxt/scripts
-          const kapa = script.Kapa as unknown as Kapa
+
           if (q) {
-            return kapa.open({
+            return window.Kapa.open({
               mode: 'search',
               query: q,
               submit: true
             })
           }
 
-          return kapa.open()
+          return window.Kapa.open()
         }
       }
     }
