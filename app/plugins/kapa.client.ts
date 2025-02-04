@@ -2,7 +2,7 @@ const kapa = {
   'key': 'kapa',
   'src': 'https://widget.kapa.ai/kapa-widget.bundle.js',
   'data-website-id': 'fb3af718-9db2-440d-9da9-14e6c5fca2aa',
-  // 'data-button-hide': true,
+  'data-button-hide': true,
   'data-project-name': 'Nuxt',
   'data-project-color': '#00DC82',
   'data-button-text-color': '#000000',
