@@ -155,18 +155,33 @@ export default defineNuxtPlugin(() => {
       kapa: {
         async openModal(q?: string) {
           await script.load()
+          const kapa = await getKapa()
 
           if (q) {
-            return window.Kapa.open({
+            return kapa.open({
               mode: 'search',
               query: q,
               submit: true
             })
           }
 
-          return window.Kapa.open()
+          return kapa.open()
         }
       }
     }
   }
 })
+
+async function getKapa() {
+  let i = 0
+
+  do {
+    const kapa = window.Kapa
+    if (kapa) {
+      return kapa
+    }
+    await new Promise(resolve => setTimeout(resolve, 10))
+    i++
+  } while (i < 200)
+  console.log('couldn\'t load kapa')
+}
