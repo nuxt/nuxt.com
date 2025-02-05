@@ -77,7 +77,7 @@ useSeoMeta({
               Get Started
             </UButton>
             <UButton size="lg" color="gray" variant="ghost" trailing-icon="i-ph-play-circle" @click="videoModalOpen = true">
-              Nuxt in 100 Seconds
+              Nuxt in 170 Seconds
             </UButton>
           </div>
           <UInputCopy value="npx nuxi@latest init " label="npx nuxi@latest init <my-app>" class="w-full" />
