@@ -2,7 +2,7 @@ const kapa = {
   'key': 'kapa',
   'src': 'https://widget.kapa.ai/kapa-widget.bundle.js',
   'data-website-id': 'fb3af718-9db2-440d-9da9-14e6c5fca2aa',
-  // 'data-button-hide': true,
+  'data-button-hide': true,
   'data-project-name': 'Nuxt',
   'data-project-color': '#00DC82',
   'data-button-text-color': '#000000',
@@ -132,6 +132,8 @@ interface Kapa {
   (event: 'onSearchResultsCompleted', handler: (args: OnSearchResultsCompletedArgs) => void): void
   (event: 'onSearchResultsShowMoreClick', handler: (args: OnSearchResultsShowMoreClickArgs) => void): void
   (event: 'onSearchResultClick', handler: (args: OnSearchResultClickArgs) => void): void
+  open(options?: { mode?: 'search' | 'ai', query?: string, submit?: boolean }): void
+  close: () => void
 }
 
 declare global {
@@ -151,35 +153,35 @@ export default defineNuxtPlugin(() => {
   return {
     provide: {
       kapa: {
-        async openModal(q) {
+        async openModal(q?: string) {
           await script.load()
-          const button = await waitUntilSelector<HTMLButtonElement>('#kapa-widget-container button')
-          button?.click()
+          const open = await getKapaOpen()
+
           if (q) {
-            const input = await waitUntilSelector<HTMLInputElement>('#kapa-widget-portal .mantine-Textarea-input')
-            if (input) {
-              input.value = q
-            }
-            // await new Promise(resolve => setTimeout(resolve, 50))
-            // input.dispatchEvent(new Event('input', { bubbles: true }))
-            // document.querySelector('#kapa-widget-portal button.mantine-ActionIcon-root')?.click()
+            return open({
+              mode: 'search',
+              query: q,
+              submit: true
+            })
           }
+
+          return open()
         }
       }
     }
   }
 })
 
-async function waitUntilSelector<T extends HTMLElement = HTMLElement>(selector: string) {
+async function getKapaOpen() {
   let i = 0
 
   do {
-    const el = document.querySelector(selector)
-    if (el) {
-      return el as T
+    const open = window.Kapa?.open
+    if (open) {
+      return open
     }
     await new Promise(resolve => setTimeout(resolve, 10))
     i++
   } while (i < 200)
-  console.log('couldn\'t find selector', selector)
+  console.log('couldn\'t load kapa')
 }
