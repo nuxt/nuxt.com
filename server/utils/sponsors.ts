@@ -96,6 +96,9 @@ export async function fetchOpenCollectiveSponsors() {
       if (sponsor.account.slug === 'logto') {
         sponsor.account.website = 'https://logto.io'
       }
+      if (sponsor.account.slug === 'favbet') {
+        sponsor.account.website = 'https://www.favbet.ua/uk/casino/'
+      }
       return {
         sponsorId: sponsor.account.slug,
         sponsorName: sponsor.account.name,
