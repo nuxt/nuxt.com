@@ -187,6 +187,11 @@
       "source": "/docs/guide/going-further/custom-routing",
       "destination": "/docs/guide/recipes/custom-routing",
       "permanent": false
+    },
+    {
+      "source": "/docs/api/composables/use-id",
+      "destination": "https://vuejs.org/api/composition-api-helpers.html#useid",
+      "permanent": true
     }
   ]
 }
