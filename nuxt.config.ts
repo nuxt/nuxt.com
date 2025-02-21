@@ -78,6 +78,11 @@ export default defineNuxtConfig({
           url: 'http://localhost:3000'
         }
       }
+    },
+    image: {
+      ipx: {
+        baseURL: 'https://ipx.nuxt.com'
+      }
     }
   },
   $production: {
