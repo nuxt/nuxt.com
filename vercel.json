@@ -14,18 +14,8 @@
       "permanent": false
     },
     {
-      "source": "/docs/guide",
-      "destination": "/docs/guide/concepts/auto-imports",
-      "permanent": false
-    },
-    {
       "source": "/docs/guide/concepts",
       "destination": "/docs/guide/concepts/auto-imports",
-      "permanent": false
-    },
-    {
-      "source": "/docs/api",
-      "destination": "/docs/api/composables/use-app-config",
       "permanent": false
     },
     {
