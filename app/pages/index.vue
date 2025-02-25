@@ -80,7 +80,7 @@ useSeoMeta({
               Nuxt in 100 Seconds
             </UButton>
           </div>
-          <UInputCopy value="npx nuxi@latest init " label="npx nuxi@latest init <my-app>" class="w-full" />
+          <UInputCopy value="npm create nuxt@latest" label="npm create nuxt@latest" class="w-full" />
         </div>
 
         <UModal v-model="videoModalOpen" :ui="{ width: 'sm:max-w-4xl lg:max-w-5xl aspect-[16/9]' }">
