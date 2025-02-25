@@ -5,7 +5,7 @@ import type { NavItem } from '@nuxt/content'
 const navigation = inject<Ref<NavItem[]>>('navigation')
 
 const route = useRoute()
-const slug = route.params.slug.join('-')
+const slug = (route.params.slug as string[]).join('-')
 const { navKeyFromPath } = useContentHelpers()
 
 const { data: page } = await useAsyncData(`docs-${slug}`, () => queryContent(route.path).findOne())
