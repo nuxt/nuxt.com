@@ -78,6 +78,16 @@ export default defineNuxtConfig({
           url: 'http://localhost:3000'
         }
       }
+    },
+    image: {
+      alias: {
+        '/gh/': 'https://raw.githubusercontent.com',
+        '/gh_avatar/': 'https://avatars.githubusercontent.com'
+      },
+      domains: [
+        'raw.githubusercontent.com',
+        'avatars.githubusercontent.com'
+      ]
     }
   },
   $production: {
@@ -93,11 +103,6 @@ export default defineNuxtConfig({
   colorMode: {
     preference: 'dark'
   },
-  // image: {
-  //   ipx: {
-  //     baseURL: 'https://ipx.nuxt.com'
-  //   }
-  // },
   content: {
     navigation: {
       fields: ['titleTemplate']
