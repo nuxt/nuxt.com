@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { debounce } from 'perfect-debounce'
 import type { ParsedContent } from '@nuxt/content'
-import './styles/twoslash.css'
+import './assets/css/twoslash.css'
 
 const search = ref(null)
 const colorMode = useColorMode()
@@ -62,34 +62,30 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
+  <UApp>
     <NuxtLoadingIndicator />
 
     <AppBanner
       id="nuxt-tips-christmas"
+      title="Learn Nuxt with a Collection of 100+ Tips!"
+      icon="i-ph-magic-wand"
       to="https://michaelnthiessen.com/nuxt-tips-collection?aff=J0Emk"
-    >
-      <div class="flex items-center gap-1 text-black">
-        <UIcon
-          name="i-ph-magic-wand"
-          class="w-5 h-5 flex-shrink-0 pointer-events-none hidden lg:inline-block mr-1"
-        />
-        <span>Learn Nuxt with a Collection of 100+ Tips!</span>
-        <UButton
-          label="Learn more"
-          color="white"
-          trailing-icon="i-ph-arrow-right"
-          size="2xs"
-          class="rounded-full ml-1"
-        />
-      </div>
-    </AppBanner>
+      :actions="[
+        {
+          label: 'Learn more',
+          color: 'neutral',
+          variant: 'outline',
+          trailingIcon: 'i-ph-arrow-right',
+          to: 'https://michaelnthiessen.com/nuxt-tips-collection?aff=J0Emk'
+        }
+      ]"
+    />
 
     <AppHeader :links="headerLinks" />
 
     <UMain class="relative">
       <HeroBackground
-        class="absolute w-full top-[1px] transition-all text-primary flex-shrink-0"
+        class="absolute w-full transition-all text-(--ui-primary) flex-shrink-0"
         :class="[
           isLoading ? 'animate-pulse' : (appear ? 'opacity-100' : 'opacity-0'),
           appeared ? 'duration-[400ms]': 'duration-1000',
@@ -101,7 +97,7 @@ onMounted(() => {
 
     <AppFooter />
 
-    <ClientOnly>
+    <!--    <ClientOnly>
       <UContentSearch
         ref="search"
         :files="files"
@@ -111,7 +107,6 @@ onMounted(() => {
         :fuse="{ resultLimit: 13 }"
       />
 
-      <UNotifications />
-    </ClientOnly>
-  </div>
+    </ClientOnly> -->
+  </UApp>
 </template>

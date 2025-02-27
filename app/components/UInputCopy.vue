@@ -18,15 +18,15 @@ const { copy, copied } = useClipboard()
 
 <template>
   <label>
-    <UInput :model-value="label ? label : value" :size="size" disabled :ui="{ icon: { trailing: { pointer: '' } } }" icon="i-ph-terminal">
+    <UInput class="w-full" :model-value="label ? label : value" :size="size" disabled icon="i-ph-terminal">
       <div class="absolute inset-0" :class="[copied ? 'cursor-default' : 'cursor-copy']" @click="copy(value)" />
       <template #trailing>
         <UButton
           :icon="copied ? 'i-ph-check' : 'i-ph-copy'"
-          color="gray"
+          color="neutral"
           variant="link"
           :padded="false"
-          :class="{ 'text-green-500 hover:text-green-500 dark:text-green-400 hover:dark:text-green-400': copied }"
+          :class="{ 'text-(--ui-primary)': copied }"
           aria-label="copy button"
           @click="copy(value)"
         />

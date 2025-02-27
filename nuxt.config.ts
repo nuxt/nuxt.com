@@ -43,18 +43,14 @@ if (examplesSourceBase) {
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  extends: [
-    process.env.NUXT_UI_PRO_PATH || '@nuxt/ui-pro'
-  ],
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore Type circular reference
   modules: [
+    '@nuxt/ui-pro',
     'nuxt-content-twoslash',
     '@nuxt/content',
-    '@nuxt/ui',
     '@nuxt/image',
     '@nuxtjs/plausible',
-    '@nuxt/fonts',
     '@nuxt/eslint',
     '@nuxt/scripts',
     '@nuxtjs/turnstile',
@@ -100,6 +96,7 @@ export default defineNuxtConfig({
   devtools: {
     enabled: false
   },
+  css: ['~/assets/css/main.css'],
   colorMode: {
     preference: 'dark'
   },

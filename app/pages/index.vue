@@ -32,14 +32,13 @@ useSeoMeta({
 </script>
 
 <template>
-  <div v-if="page" class="dark:bg-gray-900">
-    <ULandingHero
-      :ui="{ base: 'relative z-[1]' }"
-      class="dark:bg-gradient-to-b from-gray-950 to-gray-900 md:pb-24"
+  <div v-if="page">
+    <UPageHero
+      class="relative z-[1] dark:bg-gradient-to-b from-(--ui-color-neutral-950) to-(--ui-color-neutral-900) md:pb-24"
       :orientation="uwuCookie ? 'horizontal' : 'vertical'"
     >
       <template #top>
-        <HomeHeroBackground v-if="!uwuCookie" class="absolute -top-[--header-height] inset-x-0 w-full hidden lg:block" />
+        <HomeHeroBackground v-if="!uwuCookie" class="absolute -top-[--header-height] pointer-events-none inset-x-0 w-full hidden lg:block" />
       </template>
 
       <template #headline>
@@ -56,7 +55,7 @@ useSeoMeta({
       </template>
 
       <template #title>
-        The Intuitive<br><span class="text-primary block lg:inline-block">Vue Framework</span>
+        The Intuitive<br><span class="text-(--ui-primary) block lg:inline-block">Vue Framework</span>
       </template>
 
       <template #description>
@@ -76,25 +75,27 @@ useSeoMeta({
             <UButton to="/docs/getting-started/installation" trailing-icon="i-ph-arrow-right" size="lg">
               Get Started
             </UButton>
-            <UButton size="lg" color="gray" variant="ghost" trailing-icon="i-ph-play-circle" @click="videoModalOpen = true">
+            <UButton size="lg" color="neutral" variant="ghost" trailing-icon="i-ph-play-circle" @click="videoModalOpen = true">
               Nuxt in 100 Seconds
             </UButton>
           </div>
-          <UInputCopy value="npm create nuxt@latest" label="npm create nuxt@latest" class="w-full" />
+          <UInputCopy value="npm create nuxt@latest" label="npm create nuxt@latest" />
         </div>
 
-        <UModal v-model="videoModalOpen" :ui="{ width: 'sm:max-w-4xl lg:max-w-5xl aspect-[16/9]' }">
-          <div class="p-3 h-full">
-            <iframe
-              width="100%"
-              height="100%"
-              src="https://www.youtube-nocookie.com/embed/dCxSsr5xuL8"
-              title="Nuxt in 100 Seconds by Fireship"
-              frameborder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowfullscreen
-            />
-          </div>
+        <UModal v-model:open="videoModalOpen" :ui="{ content: 'sm:max-w-4xl lg:max-w-5xl aspect-[16/9]' }">
+          <template #content>
+            <div class="p-3 h-full">
+              <iframe
+                width="100%"
+                height="100%"
+                src="https://www.youtube-nocookie.com/embed/dCxSsr5xuL8"
+                title="Nuxt in 100 Seconds by Fireship"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+              />
+            </div>
+          </template>
         </UModal>
       </template>
 
@@ -107,10 +108,10 @@ useSeoMeta({
         src="/uwu.png"
         alt="Nuxt Logo in uwu style"
       />
-    </ULandingHero>
+    </UPageHero>
 
     <UContainer>
-      <ULandingLogos :title="page?.logos?.title" class="lg:pt-12 text-gray-500 dark:text-gray-400 dark:bg-gray-900">
+      <UPageLogos :title="page?.logos?.title" class="lg:pt-12 text-(--ui-text-muted)">
         <BrandsGithub class="hidden md:block h-7" />
         <BrandsOpenai class="h-5 md:h-8" />
         <BrandsNasa class="h-4 md:h-6" />
@@ -118,26 +119,22 @@ useSeoMeta({
         <BrandsFedora class="h-4 md:h-7" />
         <BrandsGitlab class="hidden sm:block h-4 md:h-7" />
         <BrandsUpwork class="hidden md:block h-8" />
-      </ULandingLogos>
+      </UPageLogos>
     </UContainer>
 
-    <!-- eslint-disable vue/no-deprecated-slot-attribute -->
-    <ULandingSection
+    <UPageSection
       v-for="(section, index) of page.sections"
       :key="index"
-      :slot="section.slot"
       :class="section.class"
       :align="section.align"
       :links="section.links"
     >
       <template #title>
-        <!-- eslint-disable-next-line vue/no-v-html -->
-        <span v-html="section?.title" />
+        <MDC :value="section?.title" />
       </template>
 
       <template v-if="section.description" #description>
-        <!-- eslint-disable-next-line vue/no-v-html -->
-        <span v-html="section.description" />
+        <MDC :value="section.description" />
       </template>
 
       <template #features>
@@ -164,6 +161,6 @@ useSeoMeta({
           class="prose prose-primary dark:prose-invert max-w-none dark:prose-pre:!bg-gray-800/60"
         />
       </template>
-    </ULandingSection>
+    </UPageSection>
   </div>
 </template>

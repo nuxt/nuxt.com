@@ -39,20 +39,19 @@ function onSubmit() {
 
 <template>
   <form @submit.prevent="onSubmit">
-    <UFormGroup name="email" :label="label" size="lg" :description="description" :ui="{ label: { base: 'font-semibold' }, container: 'mt-3' }">
+    <UFormField name="email" :label="label" size="lg" :description="description" :ui="{ label: { base: 'font-semibold' }, container: 'mt-3' }">
       <UInput
         v-model="email"
         type="email"
         placeholder="you@domain.com"
-        :ui="{ icon: { trailing: { pointer: '', padding: { lg: 'px-1' } } } }"
         required
         autocomplete="off"
         class="max-w-sm"
       >
         <template #trailing>
-          <UButton type="submit" size="xs" color="black" :label="loading ? 'Subscribing' : 'Subscribe'" :loading="loading" />
+          <UButton type="submit" size="xs" color="neutral" :label="loading ? 'Subscribing' : 'Subscribe'" :loading="loading" />
         </template>
       </UInput>
-    </UFormGroup>
+    </UFormField>
   </form>
 </template>
