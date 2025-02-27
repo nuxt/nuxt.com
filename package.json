@@ -1,7 +1,7 @@
 {
   "name": "nuxt.com",
   "version": "0.3.11",
-  "packageManager": "pnpm@10.4.1",
+  "packageManager": "pnpm@10.5.2",
   "scripts": {
     "dev": "nuxi dev",
     "build": "nuxi build",
@@ -25,7 +25,7 @@
     "@nuxt/scripts": "^0.10.5",
     "@nuxt/ui-pro": "^1.7.0",
     "@nuxthq/studio": "^2.2.1",
-    "@nuxtjs/html-validator": "^2.0.0",
+    "@nuxtjs/html-validator": "^2.1.0",
     "@nuxtjs/plausible": "^1.2.0",
     "@vueuse/components": "^12.7.0",
     "@vueuse/core": "^12.7.0",
@@ -51,8 +51,8 @@
     "capture-website": "^4.2.0",
     "eslint": "^9.21.0",
     "nuxt-content-twoslash": "0.1.2",
-    "shiki": "^2.3.2",
-    "twoslash": "^0.2.12",
+    "shiki": "^2.5.0",
+    "twoslash": "^0.3.1",
     "typescript": "^5.7.3",
     "vitest": "^3.0.7",
     "vue": "^3.5.13",
