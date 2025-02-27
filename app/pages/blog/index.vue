@@ -1,14 +1,13 @@
 <script setup lang="ts">
+const { data: page } = await useAsyncData('blog-landing', () => queryCollection('landing').path('/blog').first())
+if (!page.value) {
+  throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
+}
 definePageMeta({
   heroBackground: 'opacity-70 -z-10'
 })
-const route = useRoute()
 const { fetchList, articles } = useBlog()
 
-const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
-
-const title = page.value.head?.title || page.value.title
-const description = page.value.head?.description || page.value.description
 useHead({
   link: [
     {
@@ -21,10 +20,10 @@ useHead({
 })
 useSeoMeta({
   titleTemplate: '%s',
-  title,
-  description,
-  ogDescription: description,
-  ogTitle: title
+  title: page.value.title,
+  description: page.value.description,
+  ogDescription: page.value.description,
+  ogTitle: page.value.title
 })
 defineOgImageComponent('Docs')
 
@@ -33,7 +32,7 @@ await fetchList()
 
 <template>
   <UContainer>
-    <UPageHero v-bind="page">
+    <UPageHero v-bind="page" :ui="{ title: 'text-left', description: 'text-left', links: 'justify-start' }">
       <template #links>
         <NewsletterForm class="flex-1 max-w-xs" :description="null" />
       </template>
@@ -41,10 +40,11 @@ await fetchList()
         {{ page.description }}
         <UButton
           to="/blog/rss.xml"
-          color="gray"
+          color="neutral"
           external
           icon="i-ph-rss"
-          size="2xs"
+          variant="subtle"
+          size="xs"
           target="_blank"
         >
           RSS
@@ -52,61 +52,18 @@ await fetchList()
       </template>
     </UPageHero>
 
-    <UPage>
-      <UPageBody>
-        <UPageGrid>
-          <UPageCard
-            v-for="(article, index) in articles"
-            :key="index"
-            :to="article._path"
-            :title="article.title"
-            :description="article.description"
-            class="flex flex-col overflow-hidden"
-            :ui="{
-              divide: '',
-              header: { base: 'aspect-w-4 aspect-h-2', padding: '' },
-              footer: { padding: 'pt-0' },
-              title: 'text-lg',
-              description: 'line-clamp-2'
-            }"
-          >
-            <template #header>
-              <NuxtImg
-                :src="article.image"
-                :alt="article.title || ''"
-                :loading="index === 0 ? 'eager' : 'lazy'"
-                class="object-cover object-top w-full h-full"
-                width="384"
-                height="192"
-              />
-            </template>
-
-            <template #icon>
-              <UBadge :label="article.category" variant="subtle" />
-            </template>
-
-            <template #footer>
-              <div class="flex items-center justify-between gap-3">
-                <time class="text-gray-500 dark:text-gray-400">{{ formatDateByLocale('en', article.date) }}</time>
-
-                <UAvatarGroup size="xs">
-                  <UAvatar
-                    v-for="(author, subIndex) in article.authors"
-                    :key="subIndex"
-                    :src="author.avatarUrl"
-                    :alt="author.name"
-                    class="lg:hover:scale-110 lg:hover:ring-primary-500 dark:lg:hover:ring-primary-400 transition-transform"
-                  >
-                    <NuxtLink v-if="author.link" :to="author.link" target="_blank" class="focus:outline-none" tabindex="-1">
-                      <span class="absolute inset-0" aria-hidden="true" />
-                    </NuxtLink>
-                  </UAvatar>
-                </UAvatarGroup>
-              </div>
-            </template>
-          </UPageCard>
-        </UPageGrid>
-      </UPageBody>
-    </UPage>
+    <UBlogPosts class="mb-12 lg:grid-cols-2">
+      <UBlogPost
+        v-for="article in articles"
+        :key="article.path"
+        :to="article.path"
+        :title="article.title"
+        :description="article.description"
+        :image="{ src: article.image, width: 592, height: 333, placeholder: [59, 33, 50, 4], format: 'webp' }"
+        :date="formatDateByLocale('en', article.date)"
+        :authors="article.authors"
+        :badge="{ label: article.category, color: 'primary', variant: 'subtle' }"
+      />
+    </UBlogPosts>
   </UContainer>
 </template>

@@ -39,9 +39,7 @@ const breadcrumb = computed(() => {
 })
 
 const titleTemplate = computed(() => {
-  /* if (page.value.titleTemplate) return page.value.titleTemplate
-  const titleTemplate = navKeyFromPath(route.path, 'titleTemplate', navigation.value)
-  if (titleTemplate) return titleTemplate */
+  if (page.value.titleTemplate) return page.value.titleTemplate
   return '%s · Nuxt'
 })
 

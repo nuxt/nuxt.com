@@ -80,41 +80,98 @@ export default defineContentConfig({
       type: 'data',
       source: 'index.yml',
       schema: z.object({
-        title: z.string(),
-        navigation: z.boolean(),
-        description: z.string(),
-        hero: PageHero,
-        features: z.array(PageFeature),
-        testimonial: Testimonial,
-        tool: PageSection,
-        deploy: PageSection.extend({
-          steps: z.array(z.object({
-            title: z.string(),
-            description: z.string(),
-            image: z.object({
-              light: z.string().editor({ input: 'media' }),
-              dark: z.string().editor({ input: 'media' }),
-              width: z.number().optional(),
-              height: z.number().optional()
-            })
-          }))
+        hero: z.object({
+          cta: z.object({
+            label: z.string(),
+            to: z.string(),
+            icon: z.string()
+          })
         }),
-        fullStack: PageSection,
-        sections: z.array(PageSection),
-        testimonials: PageSection.extend({
-          items: z.array(Testimonial)
-        })
+        logos: z.object({
+          title: z.string()
+        }),
+        sections: z.array(
+          z.object({
+            title: z.string(),
+            description: z.string().optional(),
+            class: z.string(),
+            align: z.enum(['left', 'right', 'center']).optional(),
+            links: z.array(
+              z.object({
+                label: z.string().optional(),
+                icon: z.string(),
+                to: z.string(),
+                color: z.string().optional(),
+                size: z.string().optional(),
+                variant: z.string().optional(),
+                target: z.string().optional()
+              })
+            ).optional(),
+            slot: z.string().optional(),
+            code: z.string().optional(),
+            features: z.array(
+              z.object({
+                title: z.string(),
+                description: z.string(),
+                icon: z.string(),
+                to: z.string()
+              })
+            ).optional(),
+            integrations: z.array(
+              z.object({
+                src: z.string(),
+                alt: z.string(),
+                to: z.string()
+              })
+            ).optional(),
+            testimonials: z.array(
+              z.object({
+                quote: z.string(),
+                author: z.object({
+                  name: z.string(),
+                  description: z.string(),
+                  to: z.string(),
+                  target: z.string().optional(),
+                  avatar: z.object({
+                    src: z.string(),
+                    srcset: z.string().optional()
+                  }).optional()
+                })
+              })
+            ).optional()
+          })
+        )
       })
     }),
     docs: defineCollection({
       type: 'page',
       source: {
         repository: 'https://github.com/nuxt/nuxt',
-        include: 'docs/**'
+        include: 'docs/**/*'
       },
       schema: z.object({
+        titleTemplate: z.string().optional(),
         links: z.array(Button)
       })
+    }),
+    blog: defineCollection({
+      type: 'page',
+      source: 'blog/*',
+      schema: z.object({
+        image: z.string().editor({ input: 'media' }),
+        authors: z.array(Author),
+        date: z.string().date(),
+        category: z.enum(['Release', 'Tutorial']),
+        tags: z.array(z.string())
+      })
+    }),
+    landing: defineCollection({
+      type: 'page',
+      source: [{
+        include: 'index.md'
+      }, {
+        include: 'blog.yml'
+      }]
     })
   }
 })

@@ -1,10 +1,10 @@
 <template>
-  <Callout icon="i-ph-app-window">
+  <ProseCallout icon="i-ph-app-window">
     Read and edit a live example in
     <NuxtLink :to="to">
       {{ computedTitle }}
     </NuxtLink>.
-  </Callout>
+  </ProseCallout>
 </template>
 
 <script setup lang="ts">
