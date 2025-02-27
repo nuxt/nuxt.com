@@ -1,19 +1,14 @@
 <script setup lang="ts">
-import type { NavItem } from '@nuxt/content'
-import type { Link } from '#ui-pro/types'
-import { mapContentNavigation } from '#ui-pro/utils'
+const { headerLinks } = useNavigation()
 
 const logo = ref(null)
-const navigation = inject<Ref<NavItem[]>>('navigation')
 
 const stats = useStats()
 const { copy } = useClipboard()
 
-const version = computed(() => stats.value?.version?.match(/[0-9]+\.[0-9]+/)[0])
+const version = computed(() => stats.value?.version?.match(/\d+\.\d+/)[0])
 
-const route = useRoute()
-const headerLinks = useNavigation().headerLinks
-const mobileNav = computed(() => {
+/* const mobileNav = computed(() => {
   const links = mapContentNavigation(navigation.value)
 
   // Show Migration and Bridge on mobile only when user is reading them
@@ -31,7 +26,7 @@ const mobileNav = computed(() => {
       to: '/design-kit'
     }
   ]
-})
+}) */
 
 const open = ref(false)
 const dropdownItems = [
@@ -55,15 +50,11 @@ function openLogoContext() {
 onMounted(() => {
   isMobile.value = ('ontouchstart' in document.documentElement)
 })
-
-defineProps<{
-  links?: Link[]
-}>()
 </script>
 
 <template>
-  <UHeader :links="links" class="dark:bg-(--ui-color-neutral-950)">
-    <template #title>
+  <UHeader class="dark:bg-(--ui-color-neutral-950)" :menu="{ ui: { overlay: 'bg-(--ui-color-neutral-950)', content: 'bg-(--ui-color-neutral-950)' } }">
+    <template #left>
       <UDropdownMenu
         v-model:open="open"
         :items="dropdownItems"
@@ -80,7 +71,7 @@ defineProps<{
       </UDropdownMenu>
     </template>
 
-    <UNavigationMenu :items="links" :ui="{ linkLeadingIcon: 'hidden' }" />
+    <UNavigationMenu :items="headerLinks" variant="link" :ui="{ linkLeadingIcon: 'hidden' }" />
 
     <template #right>
       <UTooltip text="Search" :kbds="['meta', 'K']">
@@ -104,7 +95,7 @@ defineProps<{
     </template>
 
     <template #body>
-      <UNavigationMenu :items="mobileNav" orientation="vertical" />
+      <UNavigationMenu :items="headerLinks" orientation="vertical" class="-mx-2.5" />
     </template>
   </UHeader>
 </template>

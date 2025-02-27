@@ -1,26 +1,25 @@
 <script setup lang="ts">
-import { withoutTrailingSlash } from 'ufo'
-import type { NavItem } from '@nuxt/content'
+import type { ContentNavigationItem } from '@nuxt/content'
+import { findPageBreadcrumb, mapContentNavigation } from '#ui-pro/utils'
 
-const navigation = inject<Ref<NavItem[]>>('navigation')
+definePageMeta({
+  layout: 'docs',
+  heroBackground: 'opacity-30'
+})
+
+const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
 
 const route = useRoute()
-const slug = (route.params.slug as string[]).join('-')
-const { navKeyFromPath } = useContentHelpers()
 
-const { data: page } = await useAsyncData(`docs-${slug}`, () => queryContent(route.path).findOne())
+const { data: page } = await useAsyncData(route.path, () => queryCollection('docs').path(route.path).first())
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const { data: surround } = await useAsyncData(`docs-${slug}-surround`, async () => {
-  if (page.value.surround === false) {
-    return []
-  }
-  return queryContent('/docs')
-    .where({ _extension: 'md', navigation: { $ne: false } })
-    .without(['body', 'excerpt'])
-    .findSurround(withoutTrailingSlash(route.path))
+const { data: surround } = await useAsyncData(`${route.path}-surround`, () => {
+  return queryCollectionItemSurroundings('docs', route.path, {
+    fields: ['description']
+  })
 })
 
 const breadcrumb = computed(() => {
@@ -40,16 +39,16 @@ const breadcrumb = computed(() => {
 })
 
 const titleTemplate = computed(() => {
-  if (page.value.titleTemplate) return page.value.titleTemplate
+  /* if (page.value.titleTemplate) return page.value.titleTemplate
   const titleTemplate = navKeyFromPath(route.path, 'titleTemplate', navigation.value)
-  if (titleTemplate) return titleTemplate
+  if (titleTemplate) return titleTemplate */
   return '%s · Nuxt'
 })
 
 const communityLinks = computed(() => [{
   icon: 'i-ph-pen',
   label: 'Edit this page',
-  to: `https://github.com/nuxt/nuxt/edit/main/docs/${page?.value?._file?.split('/').slice(1).join('/')}`,
+  to: `https://github.com/nuxt/nuxt/edit/main/docs/${page?.value?.stem?.split('/').slice(1).join('/')}`,
   target: '_blank'
 }, {
   icon: 'i-ph-hand-heart',
@@ -68,8 +67,8 @@ const communityLinks = computed(() => [{
   target: '_blank'
 }])
 
-const title = page.value.head?.title || page.value.title
-const description = page.value.head?.description || page.value.description
+const title = page.value.seo?.title || page.value.title
+const description = page.value.seo?.description || page.value.description
 
 useSeoMeta({
   titleTemplate,
@@ -85,34 +84,30 @@ defineOgImageComponent('Docs', {
 </script>
 
 <template>
-  <UPage
-    :ui="{
-      right: 'sticky top-[--header-height] bg-background/75 backdrop-blur group -mx-4 sm:-mx-6 px-4 sm:px-6 lg:px-4 lg:-mx-4 overflow-y-auto max-h-[calc(100vh-var(--header-height))] z-10'
-    }"
-  >
+  <UPage v-if="page">
     <UPageHeader v-bind="page">
       <template #headline>
-        <UBreadcrumb :links="breadcrumb" />
+        <UBreadcrumb :items="breadcrumb" />
       </template>
     </UPageHeader>
 
-    <UPageBody prose class="dark:text-gray-300 dark:prose-pre:!bg-gray-800/60">
-      <ContentRenderer v-if="page && page.body" :value="page" />
+    <UPageBody>
+      <ContentRenderer v-if="page.body" :value="page" />
 
-      <hr v-if="surround?.length">
+      <USeparator v-if="surround?.filter(Boolean).length" />
 
       <UContentSurround :surround="surround" />
     </UPageBody>
 
-    <template v-if="page.toc !== false" #right>
-      <UContentToc :links="page.body?.toc?.links" :ui="{ wrapper: '' }">
+    <template v-if="page?.body?.toc?.links?.length" #right>
+      <UContentToc :links="page.body?.toc?.links" highlight>
         <template #bottom>
           <div class="hidden lg:block space-y-6" :class="{ '!mt-6': page.body?.toc?.links?.length }">
-            <UDivider v-if="page.body?.toc?.links?.length" type="dashed" />
+            <USeparator v-if="page.body?.toc?.links?.length" type="dashed" />
             <UPageLinks title="Community" :links="communityLinks" />
-            <UDivider type="dashed" />
+            <USeparator type="dashed" />
             <SocialLinks />
-            <Ads />
+            <!--            <Ads /> -->
           </div>
         </template>
       </UContentToc>

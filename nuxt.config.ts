@@ -1,72 +1,10 @@
 import { ofetch } from 'ofetch'
-import { logger } from '@nuxt/kit'
-import { isWindows } from 'std-env'
-
-function normalizedDirPath(path?: string) {
-  if (!path || !isWindows) {
-    return path
-  }
-
-  return path.replace(/\\/g, '/')
-}
-
-const docsSourceBase = normalizedDirPath(process.env.NUXT_DOCS_PATH)
-const examplesSourceBase = normalizedDirPath(process.env.NUXT_EXAMPLES_PATH)
-
-const docsSource: any = {
-  name: 'nuxt-docs',
-  driver: 'github',
-  repo: 'nuxt/nuxt',
-  branch: '3.x',
-  dir: 'docs',
-  prefix: '/1.docs',
-  token: process.env.NUXT_GITHUB_TOKEN || ''
-}
-if (docsSourceBase) {
-  docsSource.driver = 'fs'
-  docsSource.base = docsSourceBase
-}
-
-const examplesSource: any = {
-  name: 'nuxt-examples',
-  driver: 'github',
-  repo: 'nuxt/examples',
-  branch: 'main',
-  dir: '.docs',
-  prefix: '/docs/4.examples',
-  token: process.env.NUXT_GITHUB_TOKEN || ''
-}
-if (examplesSourceBase) {
-  examplesSource.driver = 'fs'
-  examplesSource.base = examplesSourceBase
-}
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore Type circular reference
-  modules: [
-    '@nuxt/ui-pro',
-    'nuxt-content-twoslash',
-    '@nuxt/content',
-    '@nuxt/image',
-    '@nuxtjs/plausible',
-    '@nuxt/eslint',
-    '@nuxt/scripts',
-    '@nuxtjs/turnstile',
-    '@nuxthq/studio',
-    '@vueuse/nuxt',
-    'nuxt-og-image',
-    'nuxt-rebundle',
-    () => {
-      if (docsSourceBase) {
-        logger.success(`Using local Nuxt docs from ${docsSourceBase}`)
-      }
-      if (examplesSourceBase) {
-        logger.success(`Using local Nuxt examples from ${examplesSourceBase}`)
-      }
-    }
-  ],
+  modules: ['@nuxt/ui-pro', 'nuxt-content-twoslash', '@nuxt/content', '@nuxt/image', '@nuxtjs/plausible', '@nuxt/eslint', '@nuxt/scripts', '@nuxtjs/turnstile', '@vueuse/nuxt', 'nuxt-og-image', 'nuxt-rebundle', 'nuxt-llms'],
   $development: {
     runtimeConfig: {
       public: {
@@ -101,39 +39,28 @@ export default defineNuxtConfig({
     preference: 'dark'
   },
   content: {
-    navigation: {
-      fields: ['titleTemplate']
+    build: {
+      markdown: {
+        highlight: {
+          theme: {
+            default: 'material-theme-lighter',
+            dark: 'material-theme-palenight'
+          },
+          langs: ['sql', 'diff']
+        }
+      }
     },
-    sources: {
-      docsSource,
-      examplesSource
-    },
-    highlight: {
-      theme: {
-        default: 'material-theme-lighter',
-        dark: 'material-theme-palenight'
-      },
-      langs: [
-        'js',
-        'ts',
-        'vue',
-        'css',
-        'scss',
-        'sass',
-        'html',
-        'bash',
-        'md',
-        'mdc',
-        'json',
-        'json5',
-        'jsonc',
-        'tsx'
-      ]
+    preview: {
+      api: 'https://api.nuxt.studio'
+    }
+  },
+  ui: {
+    theme: {
+      colors: ['primary', 'secondary', 'info', 'success', 'warning', 'error', 'important']
     }
   },
   routeRules: {
     // Pre-render
-    '/api/search.json': { prerender: true },
     '/api/templates.json': { prerender: true },
     '/blog/rss.xml': { prerender: true },
     // '/sitemap.xml': { prerender: true },
@@ -212,6 +139,15 @@ export default defineNuxtConfig({
   icon: {
     clientBundle: {
       scan: true
+    }
+  },
+  llms: {
+    domain: 'https://nuxt.com',
+    title: 'Nuxt Docs',
+    description: 'Nuxt is an open source framework that makes web development intuitive and powerful. Create performant and production-grade full-stack web apps and websites with confidence.',
+    full: {
+      title: 'Nuxt Docs',
+      description: 'The complete Nuxt documentation, blog posts and changelog written in Markdown (MDC syntax).'
     }
   },
   twoslash: {

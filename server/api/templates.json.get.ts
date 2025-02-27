@@ -1,3 +1,4 @@
+/*
 import { serverQueryContent } from '#content/server'
 
 export default eventHandler(async (event) => {
@@ -13,3 +14,4 @@ export default eventHandler(async (event) => {
     pricing: template.badge || 'Free'
   }))
 })
+*/

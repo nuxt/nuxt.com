@@ -46,7 +46,7 @@ function onSubmit() {
         placeholder="you@domain.com"
         required
         autocomplete="off"
-        class="max-w-sm"
+        class="max-w-sm w-full"
       >
         <template #trailing>
           <UButton type="submit" size="xs" color="neutral" :label="loading ? 'Subscribing' : 'Subscribe'" :loading="loading" />

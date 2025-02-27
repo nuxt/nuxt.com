@@ -3,13 +3,17 @@ const { footerLinks } = useNavigation()
 </script>
 
 <template>
+  <USeparator icon="i-simple-icons-nuxtdotjs" class="h-px" />
+
   <UFooter>
     <template #top>
-      <UFooterColumns :columns="footerLinks">
-        <template #right>
-          <NewsletterForm />
-        </template>
-      </UFooterColumns>
+      <UContainer>
+        <UFooterColumns :columns="footerLinks">
+          <template #right>
+            <NewsletterForm />
+          </template>
+        </UFooterColumns>
+      </UContainer>
     </template>
 
     <template #left>

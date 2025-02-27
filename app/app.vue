@@ -1,17 +1,26 @@
 <script setup lang="ts">
 import { debounce } from 'perfect-debounce'
-import type { ParsedContent } from '@nuxt/content'
 import './assets/css/twoslash.css'
 
 const search = ref(null)
 const colorMode = useColorMode()
-const { headerLinks, searchGroups, searchLinks } = useNavigation()
+const { searchGroups, searchLinks } = useNavigation()
 const color = computed(() => colorMode.value === 'dark' ? '#020420' : 'white')
 
-const { data: navigation } = await useLazyAsyncData('navigation', () => fetchContentNavigation(), { default: () => [] })
-const { data: files } = useLazyFetch<ParsedContent[]>('/api/search.json', {
-  default: () => [],
-  server: false
+const { data: navigation } = await useAsyncData('navigation', () => {
+  return Promise.all([
+    queryCollectionNavigation('docs')
+  ])
+}, {
+  transform: data => data.flat()
+})
+const { data: files } = useLazyAsyncData('search', () => {
+  return Promise.all([
+    queryCollectionSearchSections('docs')
+  ])
+}, {
+  server: false,
+  transform: data => data.flat()
 })
 
 useHead({
@@ -81,32 +90,30 @@ onMounted(() => {
       ]"
     />
 
-    <AppHeader :links="headerLinks" />
+    <AppHeader />
 
-    <UMain class="relative">
-      <HeroBackground
-        class="absolute w-full transition-all text-(--ui-primary) flex-shrink-0"
-        :class="[
-          isLoading ? 'animate-pulse' : (appear ? 'opacity-100' : 'opacity-0'),
-          appeared ? 'duration-[400ms]': 'duration-1000',
-          heroBackgroundClass
-        ]"
-      />
+    <HeroBackground
+      class="absolute w-full transition-all text-(--ui-primary) shrink-0 -z-10"
+      :class="[
+        isLoading ? 'animate-pulse' : (appear ? heroBackgroundClass : 'opacity-0'),
+        appeared ? 'duration-[400ms]' : 'duration-1000'
+      ]"
+    />
+    <NuxtLayout>
       <NuxtPage />
-    </UMain>
+    </NuxtLayout>
 
     <AppFooter />
 
-    <!--    <ClientOnly>
-      <UContentSearch
-        ref="search"
-        :files="files"
-        :navigation="navigation[0]?.children"
-        :groups="searchGroups"
-        :links="searchLinks"
-        :fuse="{ resultLimit: 13 }"
-      />
-
-    </ClientOnly> -->
+    <ClientOnly>
+      <ClientOnly>
+        <LazyUContentSearch
+          :files="files"
+          :navigation="navigation"
+          :groups="searchGroups"
+          :links="searchLinks"
+        />
+      </ClientOnly>
+    </ClientOnly>
   </UApp>
 </template>

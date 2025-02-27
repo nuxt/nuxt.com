@@ -1,3 +1,4 @@
+/*
 import { Feed } from 'feed'
 import { joinURL } from 'ufo'
 import { serverQueryContent } from '#content/server'
@@ -39,3 +40,4 @@ export default defineEventHandler(async (event) => {
   appendHeader(event, 'Content-Type', 'application/xml')
   return feed.rss2()
 })
+*/

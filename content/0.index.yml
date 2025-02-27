@@ -1,4 +1,3 @@
-navigation: false
 hero:
   cta:
     label: Nuxt v3.15 is out
@@ -15,12 +14,12 @@ sections:
       - label: Learn about Views
         icon: i-ph-layout
         to: /docs/getting-started/views
-        color: black
+        color: neutral
         size: md
       - label: Hello World Example
         icon: i-ph-app-window
         to: /docs/examples/hello-world
-        color: gray
+        color: neutral
         size: md
         variant: ghost
     slot: code
@@ -56,12 +55,12 @@ sections:
       - label: Learn about Hybrid Rendering
         icon: i-ph-rocket-launch
         to: /docs/guide/concepts/rendering#hybrid-rendering
-        color: black
+        color: neutral
         size: md
       - label: Nuxt on the Edge
         icon: i-ph-newspaper
         to: /blog/nuxt-on-the-edge
-        color: gray
+        color: neutral
         variant: ghost
         size: md
     slot: code
@@ -162,12 +161,12 @@ sections:
       - label: Explore Nuxt Modules
         icon: i-ph-puzzle-piece
         to: /modules
-        color: black
+        color: neutral
         size: md
       - label: Learn about Modules
         icon: i-ph-info
         to: /docs/guide/concepts/modules
-        color: gray
+        color: neutral
         size: md
     slot: integrations
     integrations:
@@ -241,28 +240,28 @@ sections:
         icon: i-simple-icons-nuxtdotjs
         to: https://nuxters.nuxt.com
         target: _blank
-        color: black
+        color: neutral
         size: md
       - icon: i-simple-icons-discord
-        color: gray
+        color: neutral
         variant: ghost
         size: md
         target: _blank
         to: https://go.nuxt.com/discord
       - icon: i-simple-icons-github
-        color: gray
+        color: neutral
         variant: ghost
         size: md
         target: _blank
         to: https://go.nuxt.com/github
       - icon: i-simple-icons-x
-        color: gray
+        color: neutral
         variant: ghost
         size: md
         target: _blank
         to: https://go.nuxt.com/x
       - icon: i-simple-icons-bluesky
-        color: gray
+        color: neutral
         variant: ghost
         size: md
         target: _blank

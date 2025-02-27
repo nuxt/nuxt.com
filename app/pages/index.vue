@@ -34,7 +34,7 @@ useSeoMeta({
 <template>
   <div v-if="page">
     <UPageHero
-      class="relative z-[1] dark:bg-gradient-to-b from-(--ui-color-neutral-950) to-(--ui-color-neutral-900) md:pb-24"
+      class="relative dark:bg-gradient-to-b from-(--ui-color-neutral-950) to-(--ui-color-neutral-900) md:pb-24"
       :orientation="uwuCookie ? 'horizontal' : 'vertical'"
     >
       <template #top>
@@ -109,58 +109,5 @@ useSeoMeta({
         alt="Nuxt Logo in uwu style"
       />
     </UPageHero>
-
-    <UContainer>
-      <UPageLogos :title="page?.logos?.title" class="lg:pt-12 text-(--ui-text-muted)">
-        <BrandsGithub class="hidden md:block h-7" />
-        <BrandsOpenai class="h-5 md:h-8" />
-        <BrandsNasa class="h-4 md:h-6" />
-        <BrandsGoogle class="h-5 md:h-8" />
-        <BrandsFedora class="h-4 md:h-7" />
-        <BrandsGitlab class="hidden sm:block h-4 md:h-7" />
-        <BrandsUpwork class="hidden md:block h-8" />
-      </UPageLogos>
-    </UContainer>
-
-    <UPageSection
-      v-for="(section, index) of page.sections"
-      :key="index"
-      :class="section.class"
-      :align="section.align"
-      :links="section.links"
-    >
-      <template #title>
-        <MDC :value="section?.title" />
-      </template>
-
-      <template v-if="section.description" #description>
-        <MDC :value="section.description" />
-      </template>
-
-      <template #features>
-        <HomeSectionFeatures :features="section.features" />
-      </template>
-
-      <template #integrations>
-        <HomeSectionIntegrations :integrations="section.integrations" />
-      </template>
-
-      <template #contributors>
-        <HomeSectionContributors />
-      </template>
-
-      <template #testimonials>
-        <HomeSectionTestimonials :testimonials="section.testimonials" />
-      </template>
-
-      <template #code>
-        <MDC
-          v-if="section.code"
-          :value="section.code"
-          tag="pre"
-          class="prose prose-primary dark:prose-invert max-w-none dark:prose-pre:!bg-gray-800/60"
-        />
-      </template>
-    </UPageSection>
   </div>
 </template>
