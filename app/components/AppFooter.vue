@@ -5,7 +5,7 @@ const { footerLinks } = useNavigation()
 <template>
   <USeparator icon="i-simple-icons-nuxtdotjs" class="h-px" />
 
-  <UFooter>
+  <UFooter :ui="{ top: 'border-b border-(--ui-border)' }">
     <template #top>
       <UContainer>
         <UFooterColumns :columns="footerLinks">

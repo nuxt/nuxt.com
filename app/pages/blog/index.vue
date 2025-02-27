@@ -32,7 +32,15 @@ await fetchList()
 
 <template>
   <UContainer>
-    <UPageHero v-bind="page" :ui="{ title: 'text-left', description: 'text-left', links: 'justify-start' }">
+    <UPageHero
+      v-bind="page"
+      :ui="{
+        container: 'py-10 sm:py-20 lg:py-20 px-0 sm:px-0 lg:px-0',
+        title: 'text-left sm:text-5xl',
+        description: 'text-left max-w-xl',
+        links: 'justify-start'
+      }"
+    >
       <template #links>
         <NewsletterForm class="flex-1 max-w-xs" :description="null" />
       </template>
@@ -52,7 +60,7 @@ await fetchList()
       </template>
     </UPageHero>
 
-    <UBlogPosts class="mb-12 lg:grid-cols-2">
+    <UBlogPosts class="mb-12 md:grid-cols-2 lg:grid-cols-3">
       <UBlogPost
         v-for="article in articles"
         :key="article.path"

@@ -4,7 +4,20 @@ import { ofetch } from 'ofetch'
 export default defineNuxtConfig({
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore Type circular reference
-  modules: ['@nuxt/ui-pro', 'nuxt-content-twoslash', '@nuxt/content', '@nuxt/image', '@nuxtjs/plausible', '@nuxt/eslint', '@nuxt/scripts', '@nuxtjs/turnstile', '@vueuse/nuxt', 'nuxt-og-image', 'nuxt-rebundle', 'nuxt-llms'],
+  modules: [
+    '@nuxt/ui-pro',
+    'nuxt-content-twoslash',
+    '@nuxt/content',
+    '@nuxt/image',
+    '@nuxtjs/plausible',
+    '@nuxt/eslint',
+    '@nuxt/scripts',
+    '@nuxtjs/turnstile',
+    '@vueuse/nuxt',
+    'nuxt-og-image',
+    'nuxt-rebundle',
+    'nuxt-llms'
+  ],
   $development: {
     runtimeConfig: {
       public: {

@@ -30,3 +30,11 @@
   --color-slate-900: #0f172a;
   --color-slate-950: #020420;
 }
+
+:root {
+  --ui-container: var(--container-7xl);
+}
+
+.dark {
+  --ui-bg: var(--color-slate-950);
+}

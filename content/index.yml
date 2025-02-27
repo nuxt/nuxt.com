@@ -275,7 +275,7 @@ sections:
         author:
           name: Evan You
           description: Creator of Vue.js and Vite
-          to: https://twitter.com/youyuxi
+          to: https://x.com/youyuxi
           target: _blank
           avatar:
             src: https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/yyx990803
@@ -284,7 +284,7 @@ sections:
         author:
           name: Addy Osmani
           description: Chief Engineer of Chrome
-          to: https://twitter.com/addyosmani
+          to: https://x.com/addyosmani
           target: _blank
           avatar:
             src: https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/addyosmani
@@ -293,7 +293,7 @@ sections:
         author:
           name: Guillermo Rauch
           description: Co-founder and CEO of Vercel
-          to: https://twitter.com/rauchg
+          to: https://x.com/rauchg
           target: _blank
           avatar:
             src: https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/rauchg
@@ -302,7 +302,7 @@ sections:
         author:
           name: Sarah Drasner
           description: Director of Engineering, Google
-          to: https://twitter.com/sarah_edo
+          to: https://x.com/sarah_edo
           target: _blank
           avatar:
             src: https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/sdras
@@ -311,7 +311,7 @@ sections:
         author:
           name: Dominik Angerer
           description: Co-founder of Storyblok
-          to: https://twitter.com/domangerer
+          to: https://x.com/domangerer
           target: _blank
           avatar:
             src: https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/DominikAngerer
@@ -320,7 +320,7 @@ sections:
         author:
           name: Savas Vedova
           description: Senior Frontend Engineer at GitLab
-          to: https://twitter.com/savasvedova
+          to: https://x.com/savasvedova
           target: _blank
           avatar:
             src: https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/svedova

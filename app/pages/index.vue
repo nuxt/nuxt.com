@@ -34,7 +34,7 @@ useSeoMeta({
 <template>
   <div v-if="page">
     <UPageHero
-      class="relative dark:bg-gradient-to-b from-(--ui-color-neutral-950) to-(--ui-color-neutral-900) md:pb-24"
+      class="relative  md:pb-24"
       :orientation="uwuCookie ? 'horizontal' : 'vertical'"
     >
       <template #top>

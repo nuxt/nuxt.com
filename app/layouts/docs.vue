@@ -2,7 +2,6 @@
 import type { ContentNavigationItem } from '@nuxt/content'
 
 const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
-console.log(navigation.value)
 
 const asideNavigation = computed(() => navigation.value.find(item => item.path === '/docs')?.children || [])
 </script>

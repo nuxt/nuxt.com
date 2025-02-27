@@ -19,7 +19,7 @@
     "@iconify-json/ph": "^1.2.2",
     "@iconify-json/simple-icons": "^1.2.26",
     "@iconify-json/uil": "^1.2.3",
-    "@nuxt/content": "^3.2.2",
+    "@nuxt/content": "https://pkg.pr.new/@nuxt/content@b0a743b",
     "@nuxt/image": "^1.9.0",
     "@nuxt/scripts": "^0.10.5",
     "@nuxt/ui-pro": "^3.0.0-alpha.13",

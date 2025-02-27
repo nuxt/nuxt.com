@@ -16,6 +16,7 @@ const Author = z.object({
   name: z.string(),
   description: z.string().optional(),
   username: z.string().optional(),
+  twitter: z.string().optional(),
   to: z.string().optional(),
   avatar: z.object({
     src: z.string(),
@@ -146,7 +147,7 @@ export default defineContentConfig({
     docs: defineCollection({
       type: 'page',
       source: {
-        repository: 'https://github.com/nuxt/nuxt',
+        repository: 'https://github.com/nuxt/nuxt/tree/feat/migrate-to-content-v3',
         include: 'docs/**/*'
       },
       schema: z.object({
