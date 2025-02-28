@@ -85,17 +85,7 @@ const links = [
         </template>
 
         <div class="mt-4 flex flex-wrap items-center gap-6">
-          <UButton
-            v-for="(author, index) in article.authors"
-            :key="index"
-            :to="author.to"
-            target="_blank"
-            color="neutral"
-            variant="ghost"
-            class="-my-1.5 -mx-2.5"
-          >
-            <UUser v-bind="author" :description="`@${author.to.split('/').pop()}`" />
-          </UButton>
+          <UUser v-for="(author, index) in article.authors" :key="index" v-bind="author" :description="`@${author.to.split('/').pop()}`" />
         </div>
       </UPageHeader>
 

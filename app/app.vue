@@ -9,14 +9,16 @@ const color = computed(() => colorMode.value === 'dark' ? '#020420' : 'white')
 
 const { data: navigation } = await useAsyncData('navigation', () => {
   return Promise.all([
-    queryCollectionNavigation('docs')
+    queryCollectionNavigation('docs'),
+    queryCollectionNavigation('blog')
   ])
 }, {
   transform: data => data.flat()
 })
 const { data: files } = useLazyAsyncData('search', () => {
   return Promise.all([
-    queryCollectionSearchSections('docs')
+    queryCollectionSearchSections('docs'),
+    queryCollectionSearchSections('blog')
   ])
 }, {
   server: false,
