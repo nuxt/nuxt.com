@@ -68,13 +68,6 @@ const PageHero = z.object({
   links: z.array(Button).optional()
 })
 
-/* const examplesSource = {
-  repository: 'https://github.com/nuxt/examples/tree/main',
-  include: 'docs/content/!**',
-  prefix: '/docs/4.examples',
-  authToken: process.env.NUXT_GITHUB_TOKEN
-} */
-
 export default defineContentConfig({
   collections: {
     index: defineCollection({
@@ -146,10 +139,17 @@ export default defineContentConfig({
     }),
     docs: defineCollection({
       type: 'page',
-      source: {
-        repository: 'https://github.com/nuxt/nuxt/tree/feat/migrate-to-content-v3',
-        include: 'docs/**/*'
-      },
+      source: [
+        {
+          repository: 'https://github.com/nuxt/nuxt/tree/feat/migrate-to-content-v3',
+          include: 'docs/**/*'
+        },
+        {
+          repository: 'https://github.com/nuxt/examples/tree/feat/migrate-to-content-v3',
+          include: '.docs/**/*',
+          prefix: '/docs/4.examples'
+        }
+      ],
       schema: z.object({
         titleTemplate: z.string().optional(),
         links: z.array(Button)
