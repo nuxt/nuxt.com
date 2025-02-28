@@ -32,7 +32,13 @@ const links = computed(() => headerLinks.value.find(link => link.to === '/docs')
 
             <USeparator type="dashed" class="my-6" />
 
-            <UContentNavigation :navigation="navigationLinks" highlight />
+            <UContentNavigation
+              :navigation="navigationLinks"
+              :default-open="false"
+              trailing-icon="i-lucide-chevron-right"
+              :ui="{ linkTrailingIcon: 'group-data-[state=open]:rotate-90' }"
+              highlight
+            />
           </UPageAside>
         </template>
 
