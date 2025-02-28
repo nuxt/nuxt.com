@@ -1,7 +1,6 @@
 /*
 import { Feed } from 'feed'
 import { joinURL } from 'ufo'
-import { serverQueryContent } from '#content/server'
 
 export default defineEventHandler(async (event) => {
   const baseUrl = 'https://nuxt.com'
@@ -20,14 +19,16 @@ export default defineEventHandler(async (event) => {
     }
   })
 
-  const articles = await serverQueryContent(event, '/blog')
-    .sort({ date: -1 })
-    .where({ _partial: false, _draft: false, _type: 'markdown' })
-    .find()
+  const articles = await queryCollection(event, 'blog')
+    .where('draft', '=', false)
+    .andWhere('_partial', '=', false)
+    .order('date', 'DESC')
+    .all()
+  console.log(articles)
 
   for (const article of articles) {
     feed.addItem({
-      link: joinURL(baseUrl, article._path),
+      link: joinURL(baseUrl, article.path),
       image: joinURL(baseUrl, article.image),
       title: article.title,
       date: new Date(article.date),

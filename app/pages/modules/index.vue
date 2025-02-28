@@ -5,14 +5,16 @@ definePageMeta({
 
 const inputRef = ref()
 
-const route = useRoute()
 const { replaceRoute } = useFilters('modules')
 const { fetchList, filteredModules, q, categories, stats, selectedOrder, sorts, selectedSort } = useModules()
 
-const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
+const { data: page } = await useAsyncData('modules-landing', () => queryCollection('landing').path('/modules').first())
+if (!page.value) {
+  throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
+}
 
-const title = page.value.head?.title || page.value.title
-const description = page.value.head?.description || page.value.description
+const title = page.value?.title || page.value.title
+const description = page.value?.description || page.value.description
 useSeoMeta({
   titleTemplate: '%s',
   title,
@@ -30,12 +32,19 @@ defineShortcuts({
   }
 })
 
-const { copy } = useCopyToClipboard()
+const { copy } = useClipboard()
 </script>
 
 <template>
   <UContainer>
-    <UPageHero v-bind="page" class="z-30">
+    <UPageHero
+      v-bind="page"
+      class="z-30"
+      :ui="{
+        container: 'py-10 sm:py-20 lg:py-20 px-0 sm:px-0 lg:px-0',
+        title: 'sm:text-5xl'
+      }"
+    >
       <template #description>
         <p>{{ page.description }}</p>
         <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mt-4 justify-center">
@@ -57,7 +66,7 @@ const { copy } = useCopyToClipboard()
 
     <UPage id="smooth" class="pt-20 -mt-20">
       <template #left>
-        <UAside>
+        <UPageAside>
           <UInput
             ref="inputRef"
             :model-value="q"
@@ -66,18 +75,17 @@ const { copy } = useCopyToClipboard()
             placeholder="Search..."
             class="w-full mb-2"
             size="md"
+            variant="outline"
             autocomplete="off"
-            :ui="{ icon: { trailing: { pointer: '' } } }"
             @update:model-value="replaceRoute('q', $event)"
           >
             <template #trailing>
               <UButton
                 v-if="q"
-                color="gray"
+                color="neutral"
                 variant="link"
                 size="xs"
                 icon="i-ph-x"
-                :padded="false"
                 @click="replaceRoute('q', '')"
               />
               <UKbd v-else>
@@ -90,19 +98,21 @@ const { copy } = useCopyToClipboard()
               :model-value="selectedSort"
               :options="sorts"
               size="md"
-              color="white"
+              color="neutral"
               class="w-full"
+              variant="outline"
               @update:model-value="replaceRoute('sortBy', $event)"
             />
             <UButton
               :icon="selectedOrder.icon"
               size="md"
-              color="gray"
+              color="neutral"
+              variant="outline"
               @click="replaceRoute('orderBy', selectedOrder.key === 'desc' ? 'asc' : 'desc')"
             />
           </UButtonGroup>
-          <UNavigationTree :links="[{ label: 'Categories', disabled: true, children: categories }]" />
-        </UAside>
+          <UContentNavigation :navigation="[{ title: 'Categories', children: categories }]" highlight />
+        </UPageAside>
       </template>
 
       <UPageBody class="lg:pl-8">
@@ -117,7 +127,7 @@ const { copy } = useCopyToClipboard()
             class="w-full"
             size="sm"
             autocomplete="off"
-            :ui="{ icon: { trailing: { pointer: '' } } }"
+            variant="outline"
             @update:model-value="replaceRoute('q', $event)"
           />
           <UButtonGroup>
@@ -125,13 +135,15 @@ const { copy } = useCopyToClipboard()
               :model-value="selectedSort"
               :options="sorts"
               size="md"
-              color="white"
+              color="neutral"
+              variant="outline"
               @update:model-value="replaceRoute('sortBy', $event)"
             />
             <UButton
               :icon="selectedOrder.icon"
               size="md"
-              color="gray"
+              color="neutral"
+              variant="outline"
               @click="replaceRoute('orderBy', selectedOrder.key === 'desc' ? 'asc' : 'desc')"
             />
           </UButtonGroup>
@@ -144,32 +156,29 @@ const { copy } = useCopyToClipboard()
             :title="module.npm"
             class="flex flex-col overflow-hidden group"
             :ui="{
-              to: 'hover:bg-white hover:ring-1',
-              icon: { wrapper: 'mb-2' },
-              body: { padding: 'p-4 sm:p-4', base: 'flex-1 dark:bg-gray-950' },
-              footer: { base: 'dark:bg-gray-950 border-none', padding: 'px-4 sm:px-4 pt-0' }
+              leading: 'mb-2 bg-transparent',
+              container: 'p-4 sm:p-4'
             }"
           >
-            <template #icon>
+            <template #leading>
               <UAvatar
                 :src="moduleImage(module.icon)"
                 :icon="moduleIcon(module.category)"
                 :alt="module.name"
                 size="xs"
-                :ui="{ rounded: 'rounded-md' }"
-                class="pointer-events-none"
+                class="pointer-events-none rounded-md bg-transparent"
               />
             </template>
 
             <template #description>
-              <span class="line-clamp-2 dark:text-gray-400 text-gray-500 text-sm">{{ module.description }}</span>
+              <span class="line-clamp-2 text-(--ui-text-muted) text-sm">{{ module.description }}</span>
             </template>
 
             <UBadge
               v-if="module.type === 'official'"
-              class="space-x-1 shine text-sm items-center justitfy-center pointer-events-none absolute top-4 right-4"
+              class="space-x-1 shine text-sm items-center justify-center pointer-events-none absolute top-4 right-4"
               size="xs"
-              variant="subtle"
+              variant="outline"
             >
               <span>Official</span>
             </UBadge>
@@ -178,14 +187,13 @@ const { copy } = useCopyToClipboard()
               v-if="module.sponsor"
               class="space-x-1 shine text-sm items-center justitfy-center pointer-events-none absolute top-4 right-4"
               size="xs"
-              variant="subtle"
               color="pink"
             >
               <span>Sponsor</span>
             </UBadge>
 
             <template #footer>
-              <UDivider type="dashed" class="mb-4" />
+              <USeparator type="dashed" class="mb-4" />
               <div class="flex items-center justify-between gap-3 -my-1 text-gray-600 dark:text-gray-300">
                 <div class="flex items-center gap-3">
                   <UTooltip text="Monthly NPM Downloads">
@@ -216,8 +224,9 @@ const { copy } = useCopyToClipboard()
                 >
                   <UButton
                     icon="i-ph-terminal"
-                    color="white"
-                    size="2xs"
+                    color="neutral"
+                    size="xs"
+                    variant="outline"
                     @click="copy(`npx nuxi@latest module add ${module.name}`, { title: 'Command copied to clipboard:', description: `npx nuxi@latest module add ${module.name}` })"
                   />
                 </UTooltip>
@@ -229,13 +238,13 @@ const { copy } = useCopyToClipboard()
         <EmptyCard v-else :label="`There is no module found for ${q} yet. Become the first one to create it!`">
           <UButton
             label="Contribute on GitHub"
-            color="black"
+            color="neutral"
             to="https://github.com/nuxt/modules"
             target="_blank"
             size="md"
             @click="$router.replace({ query: {} })"
           />
-          <UButton to="/docs/guide/going-further/modules" color="white" size="md" label="How to create a module?" />
+          <UButton to="/docs/guide/going-further/modules" color="neutral" size="md" label="How to create a module?" />
         </EmptyCard>
       </UPageBody>
     </UPage>

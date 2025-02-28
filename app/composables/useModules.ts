@@ -1,4 +1,4 @@
-import type { Module, Filter, Stats } from '../types'
+import type { Module, Filter, Stats } from '~/types'
 
 const iconsMap = {
   Analytics: 'i-ph-chart-bar',
@@ -104,7 +104,7 @@ export const useModules = () => {
   const categories = computed<Filter[]>(() => {
     return Object.keys(iconsMap).map(category => ({
       key: category,
-      label: category,
+      title: category,
       exactQuery: true,
       to: {
         name: 'modules',
@@ -125,7 +125,7 @@ export const useModules = () => {
         router.replace({ query: { ...route.query, category: undefined } })
       }
     })).sort((a, b) => {
-      return a.label.localeCompare(b.label)
+      return a.title.localeCompare(b.title)
     })
   })
 
@@ -188,17 +188,13 @@ export const useModules = () => {
   const isSponsorOrOfficial = (a: Module, b: Module) => {
     if (a.sponsor && !b.sponsor) {
       return -1
-    }
-    else if (!a.sponsor && b.sponsor) {
+    } else if (!a.sponsor && b.sponsor) {
       return 1
-    }
-    else if (a.type === 'official' && b.type !== 'official') {
+    } else if (a.type === 'official' && b.type !== 'official') {
       return -1
-    }
-    else if (a.type !== 'official' && b.type === 'official') {
+    } else if (a.type !== 'official' && b.type === 'official') {
       return 1
-    }
-    else {
+    } else {
       return 0
     }
   }

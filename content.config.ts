@@ -1,4 +1,4 @@
-import { defineContentConfig, defineCollection, z } from '@nuxt/content'
+import { defineContentConfig, defineCollection, z, defineCollectionSource } from '@nuxt/content'
 
 const Button = z.object({
   label: z.string(),
@@ -66,6 +66,19 @@ const PageHero = z.object({
     icon: z.string().optional().editor({ input: 'icon' })
   }).optional(),
   links: z.array(Button).optional()
+})
+
+const modules = defineCollectionSource({
+  getKeys: async () => {
+    return fetch('https://api.nuxt.com/modules')
+      .then(res => res.json())
+      .then(data => data.modules.map((key: { name: string }) => `${key.name}.json`))
+  },
+  getItem: async (key: string) => {
+    const id = key.split('.')[0]
+    return fetch(`https://api.nuxt.com/modules/${id}`)
+      .then(res => res.json())
+  }
 })
 
 export default defineContentConfig({
@@ -166,12 +179,45 @@ export default defineContentConfig({
         tags: z.array(z.string())
       })
     }),
+    /* modules: defineCollection({
+      type: 'data',
+      source: modules,
+      schema: z.object({
+        name: z.string(),
+        description: z.string().optional(),
+        icon: z.string().optional(),
+        category: z.enum(['Community', 'Framework', 'Module']),
+        npm: z.string().optional(),
+        stats: z.object({
+          downloads: z.number(),
+          stars: z.number().optional(),
+          version: z.string().optional()
+        }),
+        type: z.enum(['official', 'official-with-contributions', 'community']),
+        repo: z.string(),
+        github: z.string(),
+        website: z.string().optional(),
+        learn_more: z.string().optional(),
+        contributors: z.array(z.object({
+          username: z.string(),
+          avatar: z.string().optional()
+        })),
+        readme: z.object({
+          body: z.string().optional()
+        }),
+        compatibility: z.object({
+          nuxt: z.string().optional()
+        })
+      })
+    }), */
     landing: defineCollection({
       type: 'page',
       source: [{
         include: 'index.md'
       }, {
         include: 'blog.yml'
+      }, {
+        include: 'modules.yml'
       }]
     })
   }

@@ -7,9 +7,7 @@ definePageMeta({
 })
 const route = useRoute()
 
-const { data: module } = await useFetch<Module>(`https://api.nuxt.com/modules/${route.params.slug}`, {
-  key: `module-${route.params.slug}`
-})
+const { data: module } = await useAsyncData(route.path, () => queryCollection('modules').path(route.path).first())
 if (!module.value) {
   throw createError({ statusCode: 404, statusMessage: 'Module not found', fatal: true })
 }
@@ -170,14 +168,14 @@ defineOgImageComponent('Docs', {
             <div class="hidden lg:block space-y-6">
               <UPageLinks title="Links" :links="links" />
 
-              <UDivider type="dashed" />
+              <USeparator type="dashed" />
 
               <UPageLinks :links="contributors">
                 <template #title>
-                  Contributors <UBadge :label="module.contributors.length.toString()" color="gray" size="xs" :ui="{ rounded: 'rounded-full' }" />
+                  Contributors <UBadge :label="module.contributors.length.toString()" color="neutral" size="xs" :ui="{ rounded: 'rounded-full' }" />
                 </template>
               </UPageLinks>
-              <UDivider type="dashed" />
+              <USeparator type="dashed" />
               <SocialLinks />
               <Ads />
             </div>
