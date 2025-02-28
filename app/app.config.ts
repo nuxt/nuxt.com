@@ -13,5 +13,12 @@ export default defineAppConfig({
       chevron: 'i-ph-caret-down',
       hash: 'i-ph-hash'
     }
+  },
+  uiPro: {
+    prose: {
+      img: {
+        base: 'w-full'
+      }
+    }
   }
 })
