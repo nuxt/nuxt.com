@@ -5,7 +5,7 @@
       to="https://go.nuxt.com/discord"
       target="_blank"
       variant="ghost"
-      color="gray"
+      color="neutral"
       size="xs"
     />
     <UButton
@@ -13,7 +13,7 @@
       to="https://go.nuxt.com/bluesky"
       target="_blank"
       variant="ghost"
-      color="gray"
+      color="neutral"
       size="xs"
     />
     <UButton
@@ -21,7 +21,7 @@
       to="https://go.nuxt.com/x"
       target="_blank"
       variant="ghost"
-      color="gray"
+      color="neutral"
       size="xs"
     />
     <UButton
@@ -29,7 +29,7 @@
       to="https://go.nuxt.com/github"
       target="_blank"
       variant="ghost"
-      color="gray"
+      color="neutral"
       size="xs"
     />
   </div>

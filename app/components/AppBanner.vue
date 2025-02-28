@@ -1,7 +1,10 @@
 <script setup lang="ts">
 const props = defineProps<{
   id: number | string
-  to: string
+  title?: string
+  icon?: string
+  to?: string
+  actions?: any
 }>()
 
 const id = `hide-banner-${props.id}`
@@ -29,27 +32,21 @@ if (import.meta.server) {
 </script>
 
 <template>
-  <NuxtLink :to="to" target="_blank" class="block relative bg-primary hover:bg-primary/90 transition-[background] backdrop-blur z-50 app-banner">
-    <UContainer class="py-2">
-      <div class="flex items-center justify-between gap-2">
-        <div class="lg:flex-1 hidden lg:flex items-center" />
-
-        <div class="text-sm font-medium text-white dark:text-gray-900">
-          <slot />
-        </div>
-
-        <div class="flex items-center justify-end lg:flex-1">
-          <button
-            class="p-1.5 rounded-md inline-flex hover:bg-primary/90"
-            aria-label="Close banner"
-            @click.prevent="hideBanner"
-          >
-            <UIcon name="i-heroicons-x-mark-20-solid" class="w-5 h-5 text-white dark:text-gray-900" />
-          </button>
-        </div>
-      </div>
-    </UContainer>
-  </NuxtLink>
+  <UBanner
+    :to="to"
+    :title="title"
+    :icon="icon"
+    :actions="actions"
+    class="app-banner hover:bg-(--ui-primary)/90"
+  >
+    <template #close>
+      <UButton
+        aria-label="Close banner"
+        icon="i-heroicons-x-mark-20-solid"
+        @click.prevent="hideBanner"
+      />
+    </template>
+  </UBanner>
 </template>
 
 <style scoped>

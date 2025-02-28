@@ -24,14 +24,14 @@ provide('navigation', navigation)
     <UContainer>
       <UMain>
         <UPage>
-          <UPageError :error="error" />
+          <UError :error="error" />
         </UPage>
       </UMain>
     </UContainer>
 
     <AppFooter />
 
-    <ClientOnly>
+    <!--    <ClientOnly>
       <UContentSearch
         :files="files"
         :navigation="navigation[0]?.children"
@@ -40,7 +40,6 @@ provide('navigation', navigation)
         :fuse="{ resultLimit: 13 }"
       />
 
-      <UNotifications />
-    </ClientOnly>
+    </ClientOnly> -->
   </div>
 </template>

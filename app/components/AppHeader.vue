@@ -1,19 +1,14 @@
 <script setup lang="ts">
-import type { NavItem } from '@nuxt/content'
-import type { Link } from '#ui-pro/types'
+const { headerLinks } = useNavigation()
 
 const logo = ref(null)
-const navigation = inject<Ref<NavItem[]>>('navigation')
 
 const stats = useStats()
-const { metaSymbol } = useShortcuts()
-const { copy } = useCopyToClipboard()
+const { copy } = useClipboard()
 
-const version = computed(() => stats.value?.version?.match(/[0-9]+\.[0-9]+/)[0])
+const version = computed(() => stats.value?.version?.match(/\d+\.\d+/)[0])
 
-const route = useRoute()
-const headerLinks = useNavigation().headerLinks
-const mobileNav = computed(() => {
+/* const mobileNav = computed(() => {
   const links = mapContentNavigation(navigation.value)
 
   // Show Migration and Bridge on mobile only when user is reading them
@@ -31,14 +26,14 @@ const mobileNav = computed(() => {
       to: '/design-kit'
     }
   ]
-})
+}) */
 
 const open = ref(false)
 const dropdownItems = [
   [{
     label: 'Copy logo as SVG',
     icon: 'i-simple-icons-nuxtdotjs',
-    click: () => copy(logo.value.$el.outerHTML, { title: 'Copied to clipboard' })
+    click: () => copy(logo.value.$el.outerHTML)
   }],
   [{
     label: 'Browse design kit',
@@ -55,54 +50,31 @@ function openLogoContext() {
 onMounted(() => {
   isMobile.value = ('ontouchstart' in document.documentElement)
 })
-
-defineProps<{
-  links?: Link[]
-}>()
 </script>
 
 <template>
-  <UHeader :links="links">
+  <UHeader class="dark:bg-(--ui-color-neutral-950)" :menu="{ ui: { overlay: 'bg-(--ui-color-neutral-950)', content: 'bg-(--ui-color-neutral-950)' } }">
     <template #left>
-      <UDropdown
+      <UDropdownMenu
         v-model:open="open"
         :items="dropdownItems"
-        :popper="{ strategy: 'absolute', placement: 'bottom-start' }"
-        :ui="{
-          container: 'mt-8',
-          background: 'bg-white dark:bg-gray-950',
-          item: { padding: 'gap-x-2.5 py-2.5', inactive: 'dark:bg-gray-950' }
-        }"
       >
         <NuxtLink to="/" class="flex gap-2 items-end">
           <NuxtLogo ref="logo" class="block w-auto h-6" @click.right.prevent="openLogoContext" @click.left.prevent="navigateTo('/')" />
 
           <UTooltip v-if="version" :text="`Latest release: v${stats.version}`">
-            <UBadge variant="subtle" size="xs" class="-mb-[2px] rounded font-semibold">
+            <UBadge variant="subtle" size="sm" class="-mb-[2px] rounded font-semibold">
               v{{ version }}
             </UBadge>
           </UTooltip>
         </NuxtLink>
-      </UDropdown>
+      </UDropdownMenu>
     </template>
 
-    <template #center>
-      <UHeaderLinks
-        :links="links"
-        :ui="{
-          default: {
-            popover: {
-              popper: { strategy: 'absolute' },
-              ui: { width: 'w-[256px]' }
-            }
-          }
-        }"
-        class="hidden lg:flex"
-      />
-    </template>
+    <UNavigationMenu :items="headerLinks" variant="link" :ui="{ linkLeadingIcon: 'hidden' }" />
 
     <template #right>
-      <UTooltip text="Search" :shortcuts="[metaSymbol, 'K']">
+      <UTooltip text="Search" :kbds="['meta', 'K']">
         <UContentSearchButton :label="null" />
       </UTooltip>
 
@@ -115,14 +87,15 @@ defineProps<{
           icon="i-simple-icons-github"
           to="https://go.nuxt.com/github"
           target="_blank"
+          variant="ghost"
+          color="neutral"
           :label="stats ? formatNumber(stats.stars) : '...'"
-          v-bind="($ui.button.secondary as any)"
         />
       </UTooltip>
     </template>
 
-    <template #panel>
-      <UNavigationTree :links="mobileNav" default-open :multiple="false" />
+    <template #body>
+      <UNavigationMenu :items="headerLinks" orientation="vertical" class="-mx-2.5" />
     </template>
   </UHeader>
 </template>

@@ -1,15 +1,19 @@
-// @ts-check
-import nuxt from './.nuxt/eslint.config.mjs'
+import { createConfigForNuxt } from '@nuxt/eslint-config/flat'
 
-export default nuxt()
-  .override('nuxt/vue/rules', {
-    rules: {
-      'vue/no-v-html': 'error',
-      'vue/max-attributes-per-line': ['error', { singleline: 5, multiline: 1 }]
+export default createConfigForNuxt({
+  features: {
+    tooling: true,
+    stylistic: {
+      commaDangle: 'never',
+      braceStyle: '1tbs'
     }
-  })
-  .override('nuxt/typescript/rules', {
-    rules: {
-      '@typescript-eslint/no-explicit-any': 'off'
-    }
-  })
+  }
+}).overrideRules({
+  'import/first': 'off',
+  'import/order': 'off',
+  'vue/multi-word-component-names': 'off',
+  'vue/max-attributes-per-line': ['error', { singleline: 5 }],
+  '@typescript-eslint/ban-types': 'off',
+  '@typescript-eslint/no-empty-object-type': 'off',
+  '@typescript-eslint/no-explicit-any': 'off'
+})
