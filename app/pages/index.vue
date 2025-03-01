@@ -29,18 +29,21 @@ useSeoMeta({
   ogImage: joinURL(site.url, '/new-social.jpg'),
   twitterImage: joinURL(site.url, '/new-social.jpg')
 })
+
+const tabs = computed(() => page.value?.hero.tabs.map(tab => ({
+  label: tab.title,
+  icon: tab.icon,
+  slot: tab.title.toLowerCase(),
+  content: tab.content
+})))
 </script>
 
 <template>
-  <div v-if="page">
+  <div v-if="page" class="[--ui-container:100rem]">
     <UPageHero
-      class="relative  md:pb-24"
-      :orientation="uwuCookie ? 'horizontal' : 'vertical'"
+      class="relative"
+      orientation="horizontal"
     >
-      <template #top>
-        <HomeHeroBackground v-if="!uwuCookie" class="absolute -top-[--header-height] pointer-events-none inset-x-0 w-full hidden lg:block" />
-      </template>
-
       <template #headline>
         <NuxtLink :to="page.hero.cta.to">
           <UBadge variant="subtle" size="lg" class="relative rounded-full font-semibold dark:hover:bg-primary-400/15 dark:hover:ring-primary-700">
@@ -55,18 +58,11 @@ useSeoMeta({
       </template>
 
       <template #title>
-        The Intuitive<br><span class="text-(--ui-primary) block lg:inline-block">Vue Framework</span>
+        <MDC :value="page?.hero.title" class="*:mb-0 *:text-6xl *:font-semibold" />
       </template>
 
       <template #description>
-        Nuxt is an
-        <NuxtLink
-          to="https://go.nuxt.com/github"
-          target="_blank"
-          class="font-medium hover:underline underline-offset-2"
-        >
-          open source framework
-        </NuxtLink> that makes web development intuitive and powerful.<br>Create performant and production-grade full-stack web apps and websites with confidence.
+        <MDC :value="page?.hero.description" class="*:mt-0" />
       </template>
 
       <template #links>
@@ -108,6 +104,62 @@ useSeoMeta({
         src="/uwu.png"
         alt="Nuxt Logo in uwu style"
       />
+      <UPageCard v-else class="bg-(--ui-primary) size-full">
+        <template #title>
+          <UTabs
+            :items="tabs"
+            :ui="{
+              list: 'px-0 bg-transparent',
+              trigger: 'group data-[state=active]:text-(--ui-text-highlighted) data-[state=inactive]:text-(--ui-bg)',
+              indicator: 'bg-(--ui-bg)',
+              leadingIcon: 'group-data-[state=active]:text-(--ui-primary)!'
+            }"
+          >
+            <template v-for="(tab, index) of tabs" :key="index" #[tab.slot]="{ item }">
+              <MDC :value="item.content" />
+            </template>
+          </UTabs>
+        </template>
+      </UPageCard>
     </UPageHero>
+    <UContainer>
+      <UPageLogos :title="page?.logos.title" :ui="{ title: 'text-left text-(--ui-text-muted)', logos: '' }">
+        <NuxtImg
+          v-for="company in page?.logos.companies"
+          :key="company.alt"
+          v-bind="company"
+          class="h-6 shrink-0 max-w-[140px] filter invert dark:invert-0"
+        />
+      </UPageLogos>
+      <UPageSection
+        :title="page?.features.title"
+        :description="page?.features.description"
+        :ui="{
+          title: 'text-left lg:text-4xl',
+          description: 'text-left',
+          container: 'py-6 pb-12 sm:px-0 lg:px-0',
+          features: 'xl:grid-cols-4'
+        }"
+      >
+        <template #features>
+          <UPageFeature
+            v-for="(feature, index) in page.features.features"
+            :key="index"
+            v-bind="feature"
+            orientation="vertical"
+            class="p-4"
+            :class="feature.title === 'Modular' ? 'bg-(--ui-bg-muted)/40' : ''"
+          />
+          <div class="flex flex-col justify-center gap-4 p-4">
+            <span class="text-lg font-semibold">
+              {{ page.features.cta.title }}
+            </span>
+            <div>
+              <UButton :to="page.features.cta.to" :label="page.features.cta.label" trailing :icon="page.features.cta.icon" />
+            </div>
+          </div>
+        </template>
+      </UPageSection>
+    </UContainer>
   </div>
 </template>

@@ -67,6 +67,11 @@ export default defineNuxtConfig({
       api: 'https://api.nuxt.studio'
     }
   },
+  mdc: {
+    highlight: {
+      noApiRoute: false
+    }
+  },
   ui: {
     theme: {
       colors: ['primary', 'secondary', 'info', 'success', 'warning', 'error', 'important']

@@ -18,6 +18,11 @@ export default defineAppConfig({
     prose: {
       img: {
         base: 'w-full'
+      },
+      codeTree: {
+        slots: {
+          root: 'bg-(--ui-bg) mt-0'
+        }
       }
     }
   }
