@@ -104,6 +104,7 @@ export default defineContentConfig({
         features: PageSection,
         foundation: PageSection.extend({
           items: z.array(z.object({
+            id: z.string(),
             title: z.string(),
             description: z.string(),
             logo: z.string(),
@@ -116,6 +117,7 @@ export default defineContentConfig({
           }))
         }),
         modules: PageSection,
+        deploy: PageSection,
         testimonial: Testimonial
       })
     }),

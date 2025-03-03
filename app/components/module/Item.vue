@@ -13,40 +13,16 @@ const { copy } = useClipboard()
 const cardTo = computed(() => {
   return props.linkToDetail ? `/modules/${props.module.name}` : undefined
 })
-
-const cardClasses = computed(() => {
-  const baseClasses = 'flex flex-col overflow-hidden group'
-
-  if (props.cardSize === 'small') {
-    return `${baseClasses} h-full`
-  }
-
-  return baseClasses
-})
-
-const cardUI = computed(() => {
-  const base = {
-    leading: 'mb-2 bg-transparent',
-    container: 'p-4 sm:p-4'
-  }
-
-  if (props.cardSize === 'small') {
-    return {
-      ...base,
-      container: 'p-3 sm:p-3'
-    }
-  }
-
-  return base
-})
 </script>
 
 <template>
   <UPageCard
     :to="cardTo"
     :title="module.npm"
-    :class="cardClasses"
-    :ui="cardUI"
+    class="group size-full"
+    :ui="{
+      container: 'p-3 sm:p-3 size-full'
+    }"
   >
     <template #leading>
       <UAvatar

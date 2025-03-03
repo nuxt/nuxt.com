@@ -231,7 +231,8 @@ foundation:
   title: Built on a solid foundation
   description: TODO
   items:
-    - title: Frontend with Vue.js
+    - id: vue
+      title: Frontend with Vue.js
       description: Nuxt is built on top of Vue.js, leveraging its reactive and component-based architecture.
       logo: i-custom-vue
       color: '#42B883'
@@ -239,7 +240,8 @@ foundation:
       link:
         label: vuejs.org
         to: https://vuejs.org
-    - title: Bundler with Vite
+    - id: bundler
+      title: Bundler with Vite
       description: Nuxt leverages Vite's frontend build capabilities, powering rapid development of web applications.
       logo: i-custom-vite
       color: '#A156FE'
@@ -247,7 +249,26 @@ foundation:
       link:
         label: vite.dev
         to: https://vite.dev
-    - title: Server with Nitro
+    - id: bundler
+      title: Bundler with Webpack
+      description: Nuxt leverages Webpack's frontend build capabilities, powering rapid development of web applications.
+      logo: i-custom-webpack
+      color: '#8ED6FB'
+      gradient: 'bg-gradient-to-br from-[#8ED6FB]/20 from-10% to-transparent'
+      link:
+        label: webpack.js.org
+        to: https://webpack.js.org
+    - id: bundler
+      title: Bundler with Rspack
+      description: Nuxt leverages Rspack's frontend build capabilities, powering rapid development of web applications.
+      logo: i-custom-rspack
+      color: '#F93920'
+      gradient: 'bg-gradient-to-br from-[#F93920]/20 from-10% to-transparent'
+      link:
+        label: rspack.dev
+        to: https://rspack.dev
+    - id: nitro
+      title: Server with Nitro
       description: Nuxt uses Nitro to build versatile web servers, ready for deployment on any platform.
       logo: i-custom-nitro
       color: '#FB848E'
@@ -257,10 +278,19 @@ foundation:
         to: https://nitro.build
 modules:
   title: A complete solution with our official modules
-  description: Choose from over 200 modules, including XX official modules, to extend your Nuxt applications.
+  description: Choose from over 200 modules, including %s official modules, to extend your Nuxt applications.
   links:
     - label: Explore all modules
       to: /modules
+      icon: i-lucide-arrow-right
+      color: neutral
+      trailing: true
+deploy:
+  title: Deploy your app anywhere
+  description: One-command deployments and zero-configuration options make it easy to get your Nuxt app live. Choose your platform, and let Nuxt handle the rest, allowing you to focus on building great applications rather than managing complex deployments.
+  links:
+    - label: Learn how to deploy now
+      to: /docs/getting-started/deploy
       icon: i-lucide-arrow-right
       color: neutral
       trailing: true

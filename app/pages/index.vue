@@ -47,17 +47,40 @@ const tabs = computed(() => page.value?.hero.tabs.map(tab => ({
   content: tab.content
 })))
 
-const getRootClasses = (item, index) => {
-  const borderClasses = index === 0
-    ? 'rounded-s-lg rounded-e-none'
-    : index === page.value.foundation.items.length - 1
-      ? 'rounded-s-none rounded-e-lg'
-      : 'rounded-none'
+const activeBundlerIndex = ref(0)
 
-  const gradientClass = item.gradient
+const groupedFoundationItems = computed(() => {
+  const result = []
+  const bundlers = {
+    id: 'bundler',
+    items: [],
+    classes: 'rounded-none'
+  }
 
-  return `${borderClasses} ${gradientClass}`
-}
+  page.value.foundation.items.forEach((item, index) => {
+    if (item.id === 'bundler') {
+      bundlers.items.push(item)
+    } else {
+      const borderClasses = index === 0
+        ? 'rounded-s-lg rounded-e-none'
+        : index === page.value.foundation.items.length - 1
+          ? 'rounded-s-none rounded-e-lg'
+          : 'rounded-none'
+
+      result.push({
+        id: item.id,
+        item: item,
+        classes: `${borderClasses} ${item.gradient}`
+      })
+    }
+  })
+
+  if (bundlers.items.length > 0) {
+    result.splice(1, 0, bundlers)
+  }
+
+  return result
+})
 </script>
 
 <template>
@@ -208,30 +231,67 @@ const getRootClasses = (item, index) => {
       </template>
 
       <div class="flex mx-auto max-w-7xl">
-        <UPageCard
-          v-for="(item, index) in page.foundation.items"
-          :key="index"
-          :title="item.title"
-          :description="item.description"
-          class="w-full"
-          :ui="{
-            root: getRootClasses(item, index),
-            title: 'text-lg font-semibold'
-          }"
-        >
-          <template #leading>
-            <UIcon :name="item.logo" class="size-6" />
-          </template>
-          <ULink :to="item.link.to" :style="{ color: item.color }">
-            {{ item.link.label }}
-          </ULink>
-        </UPageCard>
+        <template v-for="(group, groupIndex) in groupedFoundationItems" :key="groupIndex">
+          <UPageCard
+            v-if="group.id !== 'bundler'"
+            :title="group.item.title"
+            :description="group.item.description"
+            class="w-full"
+            :ui="{
+              root: group.classes,
+              title: 'text-lg font-semibold'
+            }"
+          >
+            <template #leading>
+              <UIcon :name="group.item.logo" class="size-6" />
+            </template>
+            <ULink :to="group.item.link.to" :style="{ color: group.item.color }">
+              {{ group.item.link.label }}
+            </ULink>
+          </UPageCard>
+
+          <div v-else class="relative w-full">
+            <UPageCard
+              v-for="(bundler, index) in group.items"
+              :key="index"
+              :title="bundler.title"
+              :description="bundler.description"
+              class="w-full absolute inset-0 transition-opacity duration-300"
+              :class="{
+                'opacity-100 z-10': activeBundlerIndex === index,
+                'opacity-0 z-0': activeBundlerIndex !== index
+              }"
+              :ui="{
+                root: group.classes + ' ' + bundler.gradient,
+                title: 'text-lg font-semibold'
+              }"
+            >
+              <template #leading>
+                <div class="flex items-center space-x-3">
+                  <UIcon
+                    v-for="(b, bIndex) in group.items"
+                    :key="bIndex"
+                    :name="b.logo"
+                    class="cursor-pointer transition-all duration-300 ease-in-out"
+                    :class="bIndex === activeBundlerIndex
+                      ? 'size-7 opacity-100'
+                      : 'size-5 opacity-50 grayscale'"
+                    @click="activeBundlerIndex = bIndex"
+                  />
+                </div>
+              </template>
+              <ULink :to="bundler.link.to" :style="{ color: bundler.color }">
+                {{ bundler.link.label }}
+              </ULink>
+            </UPageCard>
+          </div>
+        </template>
       </div>
     </UPageSection>
 
     <UPageSection
       :title="page.modules.title"
-      :description="page.modules.description"
+      :description="page.modules.description.replace('%s', officialModules.length.toString())"
       :links="page.modules.links"
       :ui="{
         title: 'text-left sm:text-4xl lg:text-5xl font-semibold',
@@ -245,8 +305,8 @@ const getRootClasses = (item, index) => {
         dots
         wheel-gestures
         :autoplay="{ delay: 3000 }"
-        :items="(officialModules as any[])"
-        class="bg-(--ui-primary) p-4 rounded-lg"
+        :items="officialModules"
+        class="bg-(--ui-primary) p-4 min-w-0 rounded-lg"
         :ui="{
           item: 'max-w-sm size-full'
         }"
@@ -267,5 +327,18 @@ const getRootClasses = (item, index) => {
         class="justify-center"
       />
     </UPageCTA>
+
+    <UPageSection
+      :title="page.deploy.title"
+      :description="page.deploy.description"
+      :links="page.deploy.links"
+      orientation="horizontal"
+    >
+      <UColorModeImage
+        light="/assets/landing/deploy-dark.svg"
+        dark="/assets/landing/deploy-dark.svg"
+        class="w-full"
+      />
+    </UPageSection>
   </div>
 </template>
