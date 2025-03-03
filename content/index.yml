@@ -308,6 +308,51 @@ stats:
   description: |
     Nuxt was born from developers' need to boost productivity and platform performance.
     What began as a Vue-based solution for automating tasks and server-side rendering is now trusted by startups and enterprises all around the world.
+  cta:
+    label: Start contributing
+    to: 'https://github.com/nuxt/nuxt'
+    color: neutral
+    variant: subtle
+    icon: i-simple-icons-github
+    trailing: true
+expertise:
+  title: Nuxt Expertise
+  description: |
+    To ensure your Nuxt projects reach their full potential, our team—featuring :icon{name=i-custom-vue} Vue, :icon{name=i-custom-nuxt} Nuxt, :icon{name=i-custom-vite} Vite, core contributors -- offers a complete suite of services.
+  features:
+    - title: Performance optimization
+      description: Boost Nuxt performance and reliability with our expert optimizations.
+      icon: i-lucide-chart-line
+    - title: Migration to Nuxt
+      description: Ensure successful, painless migrations from start to deployment.
+      icon: i-lucide-code-xml
+    - title: Nuxt Workshop
+      description: Develop expert teams through training and support.
+      icon: i-lucide-rocket
+  companies:
+    - src: /assets/enterprise/support/malt.svg
+      alt: Malt
+    - src: /assets/enterprise/support/zadig-and-voltaire.svg
+      alt: Zadig & Voltaire
+    - src: /assets/enterprise/support/adyen.svg
+      alt: Adyen
+    - src: /assets/enterprise/support/world-wide-technology.svg
+      alt: World Wide Technology
+    - src: /assets/enterprise/support/cora.svg
+      alt: Cora
+  links:
+    - label: Discover our services
+      to: /expertise
+      icon: i-lucide-arrow-right
+      color: neutral
+      variant: subtle
+      trailing: true
 sponsors:
   title: Sponsors
   description: Nuxt is and will always remain free and open source under the MIT License, thanks to our contributors and sponsors.
+  cta:
+    label: Become a sponsor
+    to: 'https://github.com/sponsors/nuxt'
+    color: neutral
+    icon: i-lucide-heart
+    trailing: true

@@ -116,11 +116,23 @@ export default defineContentConfig({
             })
           }))
         }),
-        stats: PageSection,
-        sponsors: PageSection,
         modules: PageSection,
+        testimonial: Testimonial,
         deploy: PageSection,
-        testimonial: Testimonial
+        stats: PageSection.extend({
+          x: z.number(),
+          discord: z.string(),
+          cta: Button
+        }),
+        expertise: PageSection.extend({
+          companies: z.array(z.object({
+            src: z.string(),
+            alt: z.string()
+          }))
+        }),
+        sponsors: PageSection.extend({
+          cta: Button
+        })
       })
     }),
     docs: defineCollection({
