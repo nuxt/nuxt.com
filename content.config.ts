@@ -102,6 +102,20 @@ export default defineContentConfig({
           }))
         }),
         features: PageSection,
+        foundation: PageSection.extend({
+          items: z.array(z.object({
+            title: z.string(),
+            description: z.string(),
+            logo: z.string(),
+            color: z.string(),
+            gradient: z.string(),
+            link: z.object({
+              label: z.string(),
+              to: z.string()
+            })
+          }))
+        }),
+        modules: PageSection,
         testimonial: Testimonial
       })
     }),

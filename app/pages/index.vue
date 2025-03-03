@@ -16,6 +16,16 @@ if ('uwu' in route.query) {
 
 const { data: page } = await useAsyncData('index', () => queryCollection('index').first())
 
+const { fetchList, modules } = useModules()
+
+await fetchList()
+
+const officialModules = computed(() => {
+  return modules.value
+    .filter(module => module.type === 'official')
+    .sort((a, b) => b.stats.downloads - a.stats.downloads)
+})
+
 const videoModalOpen = ref(false)
 
 const site = useSiteConfig()
@@ -36,6 +46,18 @@ const tabs = computed(() => page.value?.hero.tabs.map(tab => ({
   slot: tab.title.toLowerCase(),
   content: tab.content
 })))
+
+const getRootClasses = (item, index) => {
+  const borderClasses = index === 0
+    ? 'rounded-s-lg rounded-e-none'
+    : index === page.value.foundation.items.length - 1
+      ? 'rounded-s-none rounded-e-lg'
+      : 'rounded-none'
+
+  const gradientClass = item.gradient
+
+  return `${borderClasses} ${gradientClass}`
+}
 </script>
 
 <template>
@@ -161,5 +183,89 @@ const tabs = computed(() => page.value?.hero.tabs.map(tab => ({
         </template>
       </UPageSection>
     </UContainer>
+
+    <UPageSection class="relative">
+      <svg class="absolute top-0 inset-x-0 pointer-events-none opacity-30 dark:opacity-100" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 1017 181"><g opacity=".5"><mask id="c" fill="#fff"><path d="M0 0h1017v181H0V0Z" /></mask><path fill="url(#a)" fill-opacity=".5" d="M0 0h1017v181H0V0Z" /><path fill="url(#b)" d="M0 2h1017v-4H0v4Z" mask="url(#c)" /></g><defs><radialGradient
+        id="a"
+        cx="0"
+        cy="0"
+        r="1"
+        gradientTransform="rotate(90.177 244.7795736 263.4645037) scale(161.501 509.002)"
+        gradientUnits="userSpaceOnUse"
+      ><stop stop-color="#334155" /><stop offset="1" stop-color="#334155" stop-opacity="0" /></radialGradient><linearGradient
+        id="b"
+        x1="10.9784"
+        x2="1017"
+        y1="91"
+        y2="90.502"
+        gradientUnits="userSpaceOnUse"
+      ><stop stop-color="#334155" stop-opacity="0" /><stop offset=".395" stop-color="#334155" /><stop offset="1" stop-color="#334155" stop-opacity="0" /></linearGradient></defs></svg>
+      <template #title>
+        <MDC :value="page.foundation.title" unwrap="p" />
+      </template>
+      <template #description>
+        <MDC :value="page.foundation.description" unwrap="p" />
+      </template>
+
+      <div class="flex mx-auto max-w-7xl">
+        <UPageCard
+          v-for="(item, index) in page.foundation.items"
+          :key="index"
+          :title="item.title"
+          :description="item.description"
+          class="w-full"
+          :ui="{
+            root: getRootClasses(item, index),
+            title: 'text-lg font-semibold'
+          }"
+        >
+          <template #leading>
+            <UIcon :name="item.logo" class="size-6" />
+          </template>
+          <ULink :to="item.link.to" :style="{ color: item.color }">
+            {{ item.link.label }}
+          </ULink>
+        </UPageCard>
+      </div>
+    </UPageSection>
+
+    <UPageSection
+      :title="page.modules.title"
+      :description="page.modules.description"
+      :links="page.modules.links"
+      :ui="{
+        title: 'text-left sm:text-4xl lg:text-5xl font-semibold',
+        description: 'text-left',
+        links: 'justify-start'
+      }"
+    >
+      <UCarousel
+        v-slot="{ item }"
+        loop
+        dots
+        wheel-gestures
+        :autoplay="{ delay: 3000 }"
+        :items="(officialModules as any[])"
+        class="bg-(--ui-primary) p-4 rounded-lg"
+        :ui="{
+          item: 'max-w-sm size-full'
+        }"
+      >
+        <ModuleItem :module="item" />
+      </UCarousel>
+    </UPageSection>
+
+    <UPageCTA
+      :description="page.testimonial.quote"
+      variant="subtle"
+      class="rounded-none"
+      :ui="{ container: 'sm:py-12 lg:py-12 sm:gap-8', description: 'before:content-[open-quote] after:content-[close-quote] !text-base' }"
+    >
+      <UUser
+        v-bind="page.testimonial.author"
+        size="xl"
+        class="justify-center"
+      />
+    </UPageCTA>
   </div>
 </template>

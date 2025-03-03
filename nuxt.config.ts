@@ -1,4 +1,7 @@
 import { ofetch } from 'ofetch'
+import { createResolver } from 'nuxt/kit'
+
+const { resolve } = createResolver(import.meta.url)
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -155,9 +158,15 @@ export default defineNuxtConfig({
     }
   },
   icon: {
+    customCollections: [{
+      prefix: 'custom',
+      dir: resolve('./app/assets/icons')
+    }],
     clientBundle: {
-      scan: true
-    }
+      scan: true,
+      includeCustomCollections: true
+    },
+    provider: 'iconify'
   },
   llms: {
     domain: 'https://nuxt.com',
