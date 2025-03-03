@@ -277,20 +277,11 @@ foundation:
         label: nitro.build
         to: https://nitro.build
 modules:
-  title: A complete solution with our official modules
+  title: A complete solution with our [official]{.text-(--ui-primary)} modules
   description: Choose from over 200 modules, including %s official modules, to extend your Nuxt applications.
   links:
     - label: Explore all modules
       to: /modules
-      icon: i-lucide-arrow-right
-      color: neutral
-      trailing: true
-deploy:
-  title: Deploy your app anywhere
-  description: One-command deployments and zero-configuration options make it easy to get your Nuxt app live. Choose your platform, and let Nuxt handle the rest, allowing you to focus on building great applications rather than managing complex deployments.
-  links:
-    - label: Learn how to deploy now
-      to: /docs/getting-started/deploy
       icon: i-lucide-arrow-right
       color: neutral
       trailing: true
@@ -303,3 +294,20 @@ testimonial:
     avatar:
       src: 'https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/yyx990803'
       srcset: 'https://ipx.nuxt.com/f_auto,s_80x80/gh_avatar/yyx990803 2x'
+deploy:
+  title: Deploy your app anywhere
+  description: One-command deployments and zero-configuration options make it easy to get your Nuxt app live. Choose your platform, and let Nuxt handle the rest, allowing you to focus on building great applications rather than managing complex deployments.
+  links:
+    - label: Learn how to deploy now
+      to: /docs/getting-started/deploy
+      icon: i-lucide-arrow-right
+      color: neutral
+      trailing: true
+stats:
+  title: The developer's choice for simple and powerful web apps
+  description: |
+    Nuxt was born from developers' need to boost productivity and platform performance.
+    What began as a Vue-based solution for automating tasks and server-side rendering is now trusted by startups and enterprises all around the world.
+sponsors:
+  title: Sponsors
+  description: Nuxt is and will always remain free and open source under the MIT License, thanks to our contributors and sponsors.

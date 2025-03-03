@@ -44,7 +44,7 @@ const tabs = computed(() => page.value?.hero.tabs.map(tab => ({
   label: tab.title,
   icon: tab.icon,
   slot: tab.title.toLowerCase(),
-  content: tab.content
+  content: '' // tab.content TODO: fix
 })))
 
 const activeBundlerIndex = ref(0)
@@ -62,9 +62,9 @@ const groupedFoundationItems = computed(() => {
       bundlers.items.push(item)
     } else {
       const borderClasses = index === 0
-        ? 'rounded-s-lg rounded-e-none'
+        ? 'max-sm:rounded-t-lg max-sm:rounded-b-none sm:rounded-s-lg sm:rounded-e-none'
         : index === page.value.foundation.items.length - 1
-          ? 'rounded-s-none rounded-e-lg'
+          ? 'max-sm:rounded-t-none max-sm:rounded-b-lg sm:rounded-s-none sm:rounded-e-lg'
           : 'rounded-none'
 
       result.push({
@@ -230,13 +230,13 @@ const groupedFoundationItems = computed(() => {
         <MDC :value="page.foundation.description" unwrap="p" />
       </template>
 
-      <div class="flex mx-auto max-w-7xl">
+      <div class="grid grid-cols-1 sm:grid-cols-3 mx-auto max-w-7xl">
         <template v-for="(group, groupIndex) in groupedFoundationItems" :key="groupIndex">
           <UPageCard
             v-if="group.id !== 'bundler'"
             :title="group.item.title"
             :description="group.item.description"
-            class="w-full"
+            class="h-full"
             :ui="{
               root: group.classes,
               title: 'text-lg font-semibold'
@@ -250,28 +250,22 @@ const groupedFoundationItems = computed(() => {
             </ULink>
           </UPageCard>
 
-          <div v-else class="relative w-full">
+          <div v-else class="h-full">
             <UPageCard
-              v-for="(bundler, index) in group.items"
-              :key="index"
-              :title="bundler.title"
-              :description="bundler.description"
-              class="w-full absolute inset-0 transition-opacity duration-300"
-              :class="{
-                'opacity-100 z-10': activeBundlerIndex === index,
-                'opacity-0 z-0': activeBundlerIndex !== index
-              }"
+              :title="group.items[activeBundlerIndex].title"
+              :description="group.items[activeBundlerIndex].description"
+              class="h-full"
               :ui="{
-                root: group.classes + ' ' + bundler.gradient,
+                root: group.classes + ' ' + group.items[activeBundlerIndex].gradient,
                 title: 'text-lg font-semibold'
               }"
             >
               <template #leading>
                 <div class="flex items-center space-x-3">
                   <UIcon
-                    v-for="(b, bIndex) in group.items"
+                    v-for="(bundler, bIndex) in group.items"
                     :key="bIndex"
-                    :name="b.logo"
+                    :name="bundler.logo"
                     class="cursor-pointer transition-all duration-300 ease-in-out"
                     :class="bIndex === activeBundlerIndex
                       ? 'size-7 opacity-100'
@@ -280,8 +274,11 @@ const groupedFoundationItems = computed(() => {
                   />
                 </div>
               </template>
-              <ULink :to="bundler.link.to" :style="{ color: bundler.color }">
-                {{ bundler.link.label }}
+              <ULink
+                :to="group.items[activeBundlerIndex].link.to"
+                :style="{ color: group.items[activeBundlerIndex].color }"
+              >
+                {{ group.items[activeBundlerIndex].link.label }}
               </ULink>
             </UPageCard>
           </div>
@@ -290,7 +287,6 @@ const groupedFoundationItems = computed(() => {
     </UPageSection>
 
     <UPageSection
-      :title="page.modules.title"
       :description="page.modules.description.replace('%s', officialModules.length.toString())"
       :links="page.modules.links"
       :ui="{
@@ -299,6 +295,9 @@ const groupedFoundationItems = computed(() => {
         links: 'justify-start'
       }"
     >
+      <template #title>
+        <MDC :value="page.modules.title" unwrap="p" />
+      </template>
       <UCarousel
         v-slot="{ item }"
         loop
@@ -334,11 +333,58 @@ const groupedFoundationItems = computed(() => {
       :links="page.deploy.links"
       orientation="horizontal"
     >
-      <UColorModeImage
-        light="/assets/landing/deploy-dark.svg"
-        dark="/assets/landing/deploy-dark.svg"
-        class="w-full"
+      <NuxtImg
+        src="/assets/landing/deploy.svg"
+        alt="Deploy anywhere"
+        class="mx-auto max-w-lg sm:w-full"
       />
     </UPageSection>
+
+    <UPageSection
+      :title="page.stats.title"
+      :description="page.stats.description"
+      class="relative"
+      :ui="{
+        container: 'py-12 sm:py-16 lg:py-20',
+        title: 'sm:text-4xl lg:text-5xl font-semibold'
+      }"
+    >
+      <div class="text-(--ui-primary) absolute top-0 inset-x-0 pointer-events-none opacity-30 dark:opacity-60">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 1017 181">
+          <g opacity=".5">
+            <mask id="mask" fill="white">
+              <path d="M0 0h1017v181H0V0Z" />
+            </mask>
+            <path fill="url(#gradient1)" fill-opacity=".5" d="M0 0h1017v181H0V0Z" />
+            <path fill="url(#gradient2)" d="M0 2h1017v-4H0v4Z" mask="url(#mask)" />
+          </g>
+          <defs>
+            <radialGradient
+              id="gradient1"
+              cx="0"
+              cy="0"
+              r="1"
+              gradientTransform="rotate(90.177 244.7795736 263.4645037) scale(161.501 509.002)"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stop-color="currentColor" />
+              <stop offset="1" stop-color="currentColor" stop-opacity="0" />
+            </radialGradient>
+            <linearGradient
+              id="gradient2"
+              x1="10.9784"
+              x2="1017"
+              y1="91"
+              y2="90.502"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stop-color="currentColor" stop-opacity="0" />
+              <stop offset=".395" stop-color="currentColor" />
+              <stop offset="1" stop-color="currentColor" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+    </upagesection>
   </div>
 </template>

@@ -116,6 +116,8 @@ export default defineContentConfig({
             })
           }))
         }),
+        stats: PageSection,
+        sponsors: PageSection,
         modules: PageSection,
         deploy: PageSection,
         testimonial: Testimonial
