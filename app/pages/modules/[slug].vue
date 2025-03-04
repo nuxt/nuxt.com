@@ -7,7 +7,7 @@ definePageMeta({
 })
 const route = useRoute()
 
-const { data: module } = await useAsyncData(route.path, () => queryCollection('modules').path(route.path).first())
+const { data: module } = await useAsyncData<Module>(route.path, () => $fetch(`https://api.nuxt.com${route.path}`))
 if (!module.value) {
   throw createError({ statusCode: 404, statusMessage: 'Module not found', fatal: true })
 }
@@ -158,8 +158,8 @@ defineOgImageComponent('Docs', {
     </UPageHeader>
 
     <UPage>
-      <UPageBody prose class="dark:text-gray-300 dark:prose-pre:!bg-gray-800/60">
-        <ContentRendererMarkdown v-if="module.readme?.body" :value="module.readme" class="module-readme" :components="{ a: ModuleProseA, img: ModuleProseImg }" />
+      <UPageBody>
+        <ContentRenderer v-if="module.readme?.body" :value="module.readme" :components="{ a: ModuleProseA, img: ModuleProseImg }" />
       </UPageBody>
 
       <template #right>
@@ -185,29 +185,3 @@ defineOgImageComponent('Docs', {
     </UPage>
   </UContainer>
 </template>
-
-<style lang="postcss">
-.module-readme {
-
-  /* empty code lines */
-  .shiki code .line:empty {
-    @apply hidden;
-  }
-
-  /* force rounded on prose code */
-  .prose-code {
-    @apply rounded-md;
-  }
-
-  /* Fix badges */
-  p {
-    a img {
-      @apply inline-block my-0 mr-1;
-    }
-
-    a:hover {
-      @apply border-none opacity-90;
-    }
-  }
-}
-</style>

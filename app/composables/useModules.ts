@@ -1,23 +1,23 @@
 import type { Module, Filter, Stats } from '~/types'
 
 const iconsMap = {
-  Analytics: 'i-ph-chart-bar',
-  CMS: 'i-ph-pencil',
-  CSS: 'i-ph-paint-brush-broad',
-  Database: 'i-ph-database',
-  Devtools: 'i-ph-wrench',
-  Ecommerce: 'i-ph-shopping-cart',
-  Extensions: 'i-ph-puzzle-piece',
-  Fonts: 'i-ph-text-aa',
-  Images: 'i-ph-image',
-  Libraries: 'i-ph-books',
-  Monitoring: 'i-ph-timer',
-  Payment: 'i-ph-credit-card',
-  Performance: 'i-ph-gauge',
-  Request: 'i-ph-plugs-connected',
-  Security: 'i-ph-shield',
-  SEO: 'i-ph-file-search',
-  UI: 'i-ph-layout'
+  Analytics: 'i-lucide-bar-chart',
+  CMS: 'i-lucide-pencil',
+  CSS: 'i-lucide-palette',
+  Database: 'i-lucide-database',
+  Devtools: 'i-lucide-wrench',
+  Ecommerce: 'i-lucide-shopping-cart',
+  Extensions: 'i-lucide-puzzle',
+  Fonts: 'i-lucide-type',
+  Images: 'i-lucide-image',
+  Libraries: 'i-lucide-library',
+  Monitoring: 'i-lucide-timer',
+  Payment: 'i-lucide-credit-card',
+  Performance: 'i-lucide-gauge',
+  Request: 'i-lucide-plug',
+  Security: 'i-lucide-shield',
+  SEO: 'i-lucide-search',
+  UI: 'i-lucide-layout'
 }
 
 export const moduleImage = function (icon: string = '', size: number = 80) {
@@ -31,7 +31,7 @@ export const moduleImage = function (icon: string = '', size: number = 80) {
 }
 
 export const moduleIcon = function (category: string) {
-  return iconsMap[category as keyof typeof iconsMap] || 'i-ph-cube'
+  return iconsMap[category as keyof typeof iconsMap] || 'i-lucide-box'
 }
 
 export const useModules = () => {
@@ -42,7 +42,6 @@ export const useModules = () => {
   // }
 
   const route = useRoute()
-  const router = useRouter()
   const stats = useState<Stats>('module-stats', () => ({
     maintainers: 0,
     contributors: 0,
@@ -102,31 +101,28 @@ export const useModules = () => {
   // })
 
   const categories = computed<Filter[]>(() => {
-    return Object.keys(iconsMap).map(category => ({
-      key: category,
-      title: category,
-      exactQuery: true,
-      to: {
-        name: 'modules',
-        query: {
-          ...route.query,
-          category
-        },
-        state: { smooth: '#smooth' }
-      },
-      icon: iconsMap[category as keyof typeof iconsMap] || undefined,
-      click: (e: any) => {
-        if (route.query.category !== category) {
-          return
+    return Object.keys(iconsMap)
+      .map((category) => {
+        const currentCategory = route.query.category?.toString() || ''
+        const isSelected = currentCategory.toLowerCase() === category.toLowerCase()
+
+        return {
+          key: category,
+          title: category,
+          exactQuery: true,
+          active: isSelected,
+          to: {
+            name: 'modules',
+            query: {
+              ...route.query,
+              category: isSelected ? undefined : category
+            },
+            state: { smooth: '#smooth' }
+          },
+          icon: iconsMap[category as keyof typeof iconsMap] || undefined
         }
-
-        e.preventDefault()
-
-        router.replace({ query: { ...route.query, category: undefined } })
-      }
-    })).sort((a, b) => {
-      return a.title.localeCompare(b.title)
-    })
+      })
+      .sort((a, b) => a.title.localeCompare(b.title))
   })
 
   // const types: ComputedRef<Filter[]> = computed(() => {

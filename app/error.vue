@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { ParsedContent } from '@nuxt/content'
 import type { NuxtError } from '#app'
 
 useSeoMeta({
@@ -11,8 +10,23 @@ defineProps<{ error: NuxtError }>()
 
 const { headerLinks, searchGroups, searchLinks } = useNavigation()
 
-const { data: navigation } = await useLazyAsyncData('navigation', () => fetchContentNavigation(), { default: () => [] })
-const { data: files } = useLazyFetch<ParsedContent[]>('/api/search.json', { default: () => [], server: false })
+const { data: navigation } = await useAsyncData('navigation', () => {
+  return Promise.all([
+    queryCollectionNavigation('docs'),
+    queryCollectionNavigation('blog')
+  ])
+}, {
+  transform: data => data.flat()
+})
+const { data: files } = useLazyAsyncData('search', () => {
+  return Promise.all([
+    queryCollectionSearchSections('docs'),
+    queryCollectionSearchSections('blog')
+  ])
+}, {
+  server: false,
+  transform: data => data.flat()
+})
 
 provide('navigation', navigation)
 </script>
@@ -31,15 +45,13 @@ provide('navigation', navigation)
 
     <AppFooter />
 
-    <!--    <ClientOnly>
-      <UContentSearch
+    <ClientOnly>
+      <LazyUContentSearch
         :files="files"
-        :navigation="navigation[0]?.children"
+        :navigation="navigation"
         :groups="searchGroups"
         :links="searchLinks"
-        :fuse="{ resultLimit: 13 }"
       />
-
-    </ClientOnly> -->
+    </ClientOnly>
   </div>
 </template>

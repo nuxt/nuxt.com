@@ -108,14 +108,12 @@ onMounted(() => {
     <AppFooter />
 
     <ClientOnly>
-      <ClientOnly>
-        <LazyUContentSearch
-          :files="files"
-          :navigation="navigation"
-          :groups="searchGroups"
-          :links="searchLinks"
-        />
-      </ClientOnly>
+      <LazyUContentSearch
+        :files="files"
+        :navigation="navigation"
+        :groups="searchGroups"
+        :links="searchLinks"
+      />
     </ClientOnly>
   </UApp>
 </template>

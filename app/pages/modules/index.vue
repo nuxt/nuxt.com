@@ -3,7 +3,7 @@ definePageMeta({
   heroBackground: 'opacity-70'
 })
 
-const inputRef = ref()
+const input = useTemplateRef('input')
 
 const { replaceRoute } = useFilters('modules')
 const { fetchList, filteredModules, q, categories, stats, selectedOrder, sorts, selectedSort } = useModules()
@@ -28,7 +28,7 @@ await fetchList()
 
 defineShortcuts({
   '/': () => {
-    inputRef.value.input.focus()
+    input.value?.inputRef?.focus()
   }
 })
 
@@ -49,16 +49,16 @@ const { copy } = useClipboard()
         <p>{{ page.description }}</p>
         <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mt-4 justify-center">
           <div class="flex items-center gap-1.5">
-            <UIcon name="i-ph-user-circle-fill" class="w-4 h-4 flex-shrink-0 dark:text-gray-200 text-gray-700" />
-            <span class="text-sm font-medium">{{ formatNumber(stats.maintainers) }} Maintainers</span>
+            <UIcon name="i-lucide-circle-user" class="size-4 shrink-0 text-(--ui-text-muted)" />
+            <span class="text-base font-medium">{{ formatNumber(stats.maintainers) }} Maintainers</span>
           </div>
           <div class="flex items-center gap-1.5">
-            <UIcon name="i-ph-users-three-fill" class="w-4 h-4 flex-shrink-0 dark:text-gray-200 text-gray-700" />
-            <span class="text-sm font-medium">{{ formatNumber(stats.contributors) }} Contributors</span>
+            <UIcon name="i-lucide-users" class="size-4 shrink-0 text-(--ui-text-muted)" />
+            <span class="text-base font-medium">+{{ formatNumber(stats.contributors) }} Contributors</span>
           </div>
           <div class="flex items-center gap-1.5">
-            <UIcon name="i-ph-puzzle-piece-fill" class="w-4 h-4 flex-shrink-0 dark:text-gray-200 text-gray-700" />
-            <span class="text-sm font-medium">{{ formatNumber(stats.modules) }} Modules</span>
+            <UIcon name="i-lucide-puzzle" class="size-4 shrink-0 text-(--ui-text-muted)" />
+            <span class="text-base font-medium">{{ formatNumber(stats.modules) }} Modules</span>
           </div>
         </div>
       </template>
@@ -66,17 +66,15 @@ const { copy } = useClipboard()
 
     <UPage id="smooth" class="pt-20 -mt-20">
       <template #left>
-        <UPageAside>
+        <UPageAside class="space-y-4">
           <UInput
-            ref="inputRef"
+            ref="input"
+            icon="i-lucide-search"
             :model-value="q"
             name="q"
-            icon="i-ph-magnifying-glass"
             placeholder="Search..."
-            class="w-full mb-2"
-            size="md"
-            variant="outline"
             autocomplete="off"
+            class="mb-2"
             @update:model-value="replaceRoute('q', $event)"
           >
             <template #trailing>
@@ -88,15 +86,13 @@ const { copy } = useClipboard()
                 icon="i-ph-x"
                 @click="replaceRoute('q', '')"
               />
-              <UKbd v-else>
-                /
-              </UKbd>
+              <UKbd v-else value="/" />
             </template>
           </UInput>
-          <UButtonGroup class="mb-4 w-full">
+          <UButtonGroup class="w-full mb-4">
             <USelectMenu
               :model-value="selectedSort"
-              :options="sorts"
+              :items="sorts"
               size="md"
               color="neutral"
               class="w-full"

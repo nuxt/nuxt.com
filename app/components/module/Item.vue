@@ -13,12 +13,14 @@ const { copy } = useClipboard()
   <UPageCard
     :to="`/modules/${module.name}`"
     :title="module.npm"
+    :description="module.description"
     class="group hover:bg-(--ui-bg) hover:ring-(--ui-primary)"
     :ui="{
+      description: 'line-clamp-2 text-(--ui-text-muted) text-sm',
       container: 'p-3 sm:p-3 flex flex-col',
       wrapper: 'flex flex-col min-h-0 items-start',
       body: 'flex-none',
-      footer: 'w-full mt-auto pt-4'
+      footer: 'w-full mt-auto pt-4 pointer-events-auto z-10'
     }"
   >
     <template #leading>
@@ -29,10 +31,6 @@ const { copy } = useClipboard()
         size="xs"
         class="pointer-events-none rounded-md bg-transparent"
       />
-    </template>
-
-    <template #description>
-      <span class="line-clamp-2 text-(--ui-text-muted) text-sm">{{ module.description }}</span>
     </template>
 
     <UBadge
@@ -53,11 +51,11 @@ const { copy } = useClipboard()
 
     <template #footer>
       <USeparator type="dashed" class="mb-4" />
-      <div class="flex items-center justify-between gap-3 -my-1 text-gray-600 dark:text-gray-300">
+      <div class="flex items-center justify-between gap-3 -my-1 text-(--ui-text-muted)">
         <div class="flex items-center gap-3">
           <UTooltip text="Monthly NPM Downloads">
             <NuxtLink
-              class="flex items-center gap-1 hover:text-gray-900 hover:dark:text-white"
+              class="flex items-center gap-1 hover:text-(--ui-text-highlighted)"
               :to="`https://npm.chart.dev/${module.npm}`"
               target="_blank"
             >
@@ -68,7 +66,7 @@ const { copy } = useClipboard()
 
           <UTooltip text="GitHub Stars">
             <NuxtLink
-              class="flex items-center gap-1 hover:text-gray-900 hover:dark:text-white"
+              class="flex items-center gap-1 hover:text-(--ui-text-highlighted)"
               :to="`https://github.com/${module.repo}`"
               target="_blank"
             >
