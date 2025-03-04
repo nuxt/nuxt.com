@@ -120,6 +120,10 @@ export default defineContentConfig({
         testimonial: Testimonial,
         deploy: PageSection,
         stats: PageSection.extend({
+          community: z.object({
+            title: z.string(),
+            description: z.string()
+          }),
           x: z.number(),
           discord: z.string(),
           cta: Button
@@ -173,6 +177,116 @@ export default defineContentConfig({
       }, {
         include: 'modules.yml'
       }]
+    }),
+    support: defineCollection({
+      type: 'data',
+      source: '8.enterprise/support.yml',
+      schema: z.object({
+        title: z.string(),
+        description: z.string(),
+        hero: z.object({
+          links: z.array(Button)
+        }),
+        logos: z.array(
+          z.object({
+            light: z.string(),
+            dark: z.string(),
+            width: z.string(),
+            height: z.string(),
+            alt: z.string()
+          })
+        ),
+        service: z.object({
+          title: z.string(),
+          description: z.string(),
+          services: z.array(
+            z.object({
+              icon: z.string(),
+              title: z.string(),
+              description: z.string()
+            })
+          )
+        }),
+        expertise: z.object({
+          title: z.string(),
+          description: z.string(),
+          logos: z.array(
+            z.object({
+              src: z.string(),
+              width: z.number(),
+              height: z.number(),
+              color: z.string(),
+              alt: z.string()
+            })
+          )
+        }),
+        testimonials: z.object({
+          title: z.string(),
+          description: z.string(),
+          items: z.array(
+            z.object({
+              quote: z.string(),
+              author: z.string(),
+              job: z.string(),
+              logo: z.object({
+                light: z.string(),
+                dark: z.string(),
+                alt: z.string(),
+                width: z.number(),
+                height: z.number()
+              }),
+              achievements: z.array(
+                z.object({
+                  label: z.string(),
+                  color: z.string()
+                })
+              ),
+              width: z.number().optional(),
+              height: z.number().optional()
+            })
+          )
+        }),
+        project: z.object({
+          title: z.string(),
+          description: z.string(),
+          steps: z.array(
+            z.object({
+              title: z.string(),
+              description: z.string(),
+              number: z.number()
+            })
+          )
+        }),
+        form: z.object({
+          title: z.string(),
+          description: z.string(),
+          name: z.object({
+            label: z.string(),
+            placeholder: z.string()
+          }),
+          email: z.object({
+            label: z.string(),
+            placeholder: z.string()
+          }),
+          company: z.object({
+            label: z.string(),
+            placeholder: z.string()
+          }),
+          link: z.object({
+            label: z.string(),
+            placeholder: z.string()
+          }),
+          body: z.object({
+            label: z.string(),
+            placeholder: z.string()
+          }),
+          info: z.string(),
+          button: z.object({
+            icon: z.string(),
+            label: z.string()
+          })
+        })
+      })
     })
   }
 })

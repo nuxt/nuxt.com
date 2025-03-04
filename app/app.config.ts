@@ -21,7 +21,7 @@ export default defineAppConfig({
       },
       codeTree: {
         slots: {
-          root: 'bg-(--ui-bg) mt-0'
+          root: 'bg-(--ui-bg) m-0'
         }
       }
     }

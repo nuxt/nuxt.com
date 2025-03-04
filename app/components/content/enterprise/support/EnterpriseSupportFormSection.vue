@@ -83,21 +83,21 @@ async function onSubmit(event: FormSubmitEvent<any>) {
   <div class="w-full max-w-[640px]">
     <UCard :ui="{ background: 'form-bg', body: { base: 'flex flex-col space-y-6 w-full', padding: 'px-4 py-5 sm:p-8' } }">
       <UForm :validate="validate" :state="state" class="space-y-6" @submit="onSubmit">
-        <UFormGroup :label="form.name.label" name="name" required>
+        <UFormField :label="form.name.label" name="name" required>
           <UInput v-model="state.name" :placeholder="form.name.placeholder" />
-        </UFormGroup>
+        </UFormField>
 
-        <UFormGroup :label="form.email.label" name="email" required>
+        <UFormField :label="form.email.label" name="email" required>
           <UInput v-model="state.email" type="email" :placeholder="form.email.placeholder" />
-        </UFormGroup>
+        </UFormField>
 
-        <UFormGroup :label="form.company.label" name="company" required>
+        <UFormField :label="form.company.label" name="company" required>
           <UInput v-model="state.company" :placeholder="form.company.placeholder" />
-        </UFormGroup>
+        </UFormField>
 
-        <UFormGroup :label="form.body.label" name="body" required>
+        <UFormField :label="form.body.label" name="body" required>
           <UTextarea v-model="state.body" autoresize :placeholder="form.body.placeholder" :rows="6" />
-        </UFormGroup>
+        </UFormField>
 
         <ClientOnly>
           <NuxtTurnstile v-if="showTurnstile" ref="turnstile" v-model="token" :options="{ theme: $colorMode.value as 'auto' | 'light' | 'dark' }" />

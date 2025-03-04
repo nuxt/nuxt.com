@@ -4,18 +4,14 @@ definePageMeta({
 })
 const carousel = ref()
 const carouselCard = ref()
-const intervalId = ref()
 
-const route = useRoute()
-const { isOutside } = useMouseInElement(carousel)
-
-const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
+const { data: page } = await useAsyncData('support', () => queryCollection('support').first())
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const title = page.value.head?.title || page.value?.title
-const description = page.value?.head?.description || page.value?.description
+const title = page.value?.title || page.value?.title
+const description = page.value?.description || page.value?.description
 useSeoMeta({
   titleTemplate: '%s · Enterprise',
   title,
@@ -27,69 +23,45 @@ useSeoMeta({
 defineOgImage({
   url: '/assets/enterprise/support/social-card.png'
 })
-
-onMounted(() => {
-  setTimeout(() => {
-    carousel.value.select(2)
-
-    intervalId.value = setInterval(() => {
-      if (isOutside.value) {
-        if (!carousel.value) return
-
-        if (carousel.value.page === carousel.value.pages) {
-          return carousel.value.select(0)
-        }
-
-        carousel.value.next()
-      }
-    }, 3000)
-  }, 100)
-})
-
-onBeforeUnmount(() => {
-  clearInterval(intervalId.value)
-})
 </script>
 
 <template>
   <UPage v-if="page">
     <UContainer>
-      <UPageHero :title="page.title" align="center" :links="page.hero.links">
+      <UPageHero :title="page.title" :links="page.hero.links">
         <template #description>
-          <!-- eslint-disable-next-line vue/no-v-html -->
-          <span v-html="page.description" />
+          <MDC :value="page.description" />
         </template>
       </UPageHero>
     </UContainer>
 
-    <ULandingSection class="py-8 sm:py-8">
+    <!-- <UPageSection class="py-8 sm:py-8">
       <EnterpriseSupportLogoCarousel :logos="page.logos" />
-    </ULandingSection>
+    </UPageSection> -->
 
-    <ULandingSection
+    <UPageSection
       v-bind="page.service"
-      align="center"
       :ui="{
         container: 'gap-12 sm:gap-y-12',
-        base: 'text-left items-start'
+        wrapper: 'text-left items-start'
       }"
     >
       <template #links>
         <UPageGrid :ui="{ wrapper: 'xl:grid-cols-4' }">
-          <UPageCard v-for="service in page.service.services" :key="service.title" v-bind="service" :ui="{ background: 'card-bg', icon: { base: 'size-8' } }" />
+          <UPageCard v-for="service in page.service.services" :key="service.title" v-bind="service" :ui="{ container: 'card-bg', leadingIcon: 'size-8' }" />
         </UPageGrid>
       </template>
-    </ULandingSection>
+    </UPageSection>
 
-    <ULandingSection v-bind="page.expertise">
+    <UPageSection v-bind="page.expertise">
       <div class="flex justify-center w-full gap-4 sm:gap-x-16 md:gap-x-[92px]">
         <div v-for="logo in page.expertise.logos" :key="logo.src" class="flex items-center justify-center">
           <EnterpriseSupportExpertiseCircle ref="carouselCard" :logo="logo" />
         </div>
       </div>
-    </ULandingSection>
+    </UPageSection>
 
-    <ULandingSection v-bind="page.testimonials" />
+    <UPageSection v-bind="page.testimonials" />
 
     <div class="relative pb-24 sm:pb-32 flex flex-col gap-16 sm:gap-y-24">
       <div class="relative">
@@ -102,14 +74,14 @@ onBeforeUnmount(() => {
           indicators
           :ui="{ container: 'pl-4 pr-4 lg:pl-[30%] lg:pr-[30%] py-4 -mt-12', item: 'basis-full w-full lg:max-w-[582px] first:pl-0.5 px-4 last:pr-0.5', indicators: { wrapper: '-bottom-4', inactive: 'bg-gray-200 mix-blend-normal' } }"
         >
-          <div class="mx-auto w-full h-full">
+          <!-- <div class="mx-auto w-full h-full">
             <EnterpriseSupportClientCard v-bind="item" :ui="{ background: 'card-bg h-full', body: { base: 'flex flex-col justify-between h-full' } }" />
-          </div>
+          </div> -->
         </UCarousel>
       </div>
     </div>
 
-    <ULandingSection v-bind="page.project" align="left" :ui="{ links: 'mt-8 flex flex-wrap justify-center lg:justify-start gap-x-3 gap-y-1.5', base: 'text-center lg:text-left flex flex-col items-center lg:items-start' }">
+    <UPageSection v-bind="page.project" align="left" :ui="{ links: 'mt-8 flex flex-wrap justify-center lg:justify-start gap-x-3 gap-y-1.5', base: 'text-center lg:text-left flex flex-col items-center lg:items-start' }">
       <div class="w-full flex flex-col items-center justify-center">
         <div class="flex flex-col space-y-4">
           <div class="flex lg:space-x-4 relative">
@@ -146,14 +118,14 @@ onBeforeUnmount(() => {
           </div>
         </div>
       </div>
-    </ULandingSection>
+    </UPageSection>
 
     <!-- eslint-disable vue/no-deprecated-slot-attribute -->
-    <ULandingSection :title="page.form.title" :description="page.form.description" :ui="{ container: 'gap-y-0 sm:gap-y-0' }">
+    <UPageSection :title="page.form.title" :description="page.form.description" :ui="{ container: 'gap-y-0 sm:gap-y-0' }">
       <div class="pt-8 w-full flex justify-center">
         <EnterpriseSupportFormSection :form="page.form" />
       </div>
-    </ULandingSection>
+    </UPageSection>
   </UPage>
 </template>
 

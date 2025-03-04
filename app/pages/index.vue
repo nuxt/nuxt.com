@@ -89,7 +89,7 @@ const groupedFoundationItems = computed(() => {
 </script>
 
 <template>
-  <div v-if="page" class="[--ui-container:95rem]">
+  <div v-if="page">
     <UPageHero
       class="relative"
       orientation="horizontal"
@@ -154,12 +154,12 @@ const groupedFoundationItems = computed(() => {
         src="/uwu.png"
         alt="Nuxt Logo in uwu style"
       />
-      <UPageCard v-else class="bg-(--ui-primary) size-full">
+      <UPageCard v-else class="bg-(--ui-primary) max-w-lg size-full">
         <template #title>
           <UTabs
             :items="tabs"
             :ui="{
-              list: 'px-0 bg-transparent',
+              list: 'px-0 bg-transparent max-w-lg overflow-x-auto',
               trigger: 'group data-[state=active]:text-(--ui-text-highlighted) data-[state=inactive]:text-(--ui-bg)',
               indicator: 'bg-(--ui-bg)',
               leadingIcon: 'group-data-[state=active]:text-(--ui-primary)!'
@@ -173,12 +173,12 @@ const groupedFoundationItems = computed(() => {
       </UPageCard>
     </UPageHero>
     <UContainer>
-      <UPageLogos :title="page?.logos.title" :ui="{ title: 'text-left text-(--ui-text-muted)', logos: '' }">
+      <UPageLogos :title="page?.logos.title" :ui="{ title: 'text-left text-(--ui-text-muted)' }">
         <NuxtImg
           v-for="company in page?.logos.companies"
           :key="company.alt"
           v-bind="company"
-          class="h-6 shrink-0 max-w-[140px] filter invert dark:invert-0"
+          class="h-6 shrink-0 max-w-[140px] filter dark:invert invert-0 opacity-50"
         />
       </UPageLogos>
       <UPageSection
@@ -235,7 +235,7 @@ const groupedFoundationItems = computed(() => {
         <MDC :value="page.foundation.description" unwrap="p" />
       </template>
 
-      <div class="grid grid-cols-1 sm:grid-cols-3 mx-auto max-w-7xl">
+      <div class="grid grid-cols-1 sm:grid-cols-3">
         <template v-for="(group, groupIndex) in groupedFoundationItems" :key="groupIndex">
           <UPageCard
             v-if="group.id !== 'bundler'"
@@ -312,7 +312,7 @@ const groupedFoundationItems = computed(() => {
         :items="officialModules"
         class="bg-(--ui-primary) p-4 min-w-0 rounded-lg"
         :ui="{
-          item: 'max-w-sm size-full'
+          item: 'max-w-sm'
         }"
       >
         <ModuleItem :module="item" />
@@ -428,10 +428,10 @@ const groupedFoundationItems = computed(() => {
           <UPageCard class="h-full bg-gradient-to-b from-(--ui-bg-inverted)/10 to-(--ui-bg)">
             <div class="flex flex-col items-center justify-around h-full">
               <span class="text-xl font-semibold">
-                Open source
+                {{ page.stats.community.title }}
               </span>
               <p class="text-(--ui-text-muted) text-center">
-                Nuxt is 100% powered by our passionate open source community. Every line of Nuxt is powered by passionate developers like you.
+                {{ page.stats.community.description }}
               </p>
               <UButton class="mt-4 w-fit" v-bind="page.stats.cta" />
             </div>
@@ -446,7 +446,7 @@ const groupedFoundationItems = computed(() => {
               </div>
               <div class="flex flex-col">
                 <span class="font-medium">
-                  97.2k
+                  {{ page.stats.x }}
                 </span>
                 <p>Followers</p>
               </div>
@@ -460,7 +460,7 @@ const groupedFoundationItems = computed(() => {
               </div>
               <div class="flex flex-col">
                 <span class="font-medium">
-                  27k
+                  {{ page.stats.discord }}
                 </span>
                 <p>Members</p>
               </div>
@@ -498,7 +498,7 @@ const groupedFoundationItems = computed(() => {
         </UPageLogos>
       </template>
 
-      <div class="flex flex-col gap-4">
+      <div class="flex flex-col gap-6">
         <UPageFeature
           v-for="(feature, index) in page.expertise.features"
           :key="index"

@@ -236,7 +236,7 @@ foundation:
       description: Nuxt is built on top of Vue.js, leveraging its reactive and component-based architecture.
       logo: i-custom-vue
       color: '#42B883'
-      gradient: 'bg-gradient-to-br from-[#42B883]/20 from-10% to-transparent'
+      gradient: 'bg-gradient-to-br from-[#42B883]/10 from-5% via-transparent via-50% to-transparent'
       link:
         label: vuejs.org
         to: https://vuejs.org
@@ -245,7 +245,7 @@ foundation:
       description: Nuxt leverages Vite's frontend build capabilities, powering rapid development of web applications.
       logo: i-custom-vite
       color: '#A156FE'
-      gradient: 'bg-gradient-to-br from-[#A156FE]/20 from-10% to-transparent'
+      gradient: 'bg-gradient-to-br from-[#A156FE]/10 from-5% via-transparent via-50% to-transparent'
       link:
         label: vite.dev
         to: https://vite.dev
@@ -254,7 +254,7 @@ foundation:
       description: Nuxt leverages Webpack's frontend build capabilities, powering rapid development of web applications.
       logo: i-custom-webpack
       color: '#8ED6FB'
-      gradient: 'bg-gradient-to-br from-[#8ED6FB]/20 from-10% to-transparent'
+      gradient: 'bg-gradient-to-br from-[#8ED6FB]/10 from-5% via-transparent via-50% to-transparent'
       link:
         label: webpack.js.org
         to: https://webpack.js.org
@@ -263,7 +263,7 @@ foundation:
       description: Nuxt leverages Rspack's frontend build capabilities, powering rapid development of web applications.
       logo: i-custom-rspack
       color: '#F93920'
-      gradient: 'bg-gradient-to-br from-[#F93920]/20 from-10% to-transparent'
+      gradient: 'bg-gradient-to-br from-[#F93920]/10 from-5% via-transparent via-50% to-transparent'
       link:
         label: rspack.dev
         to: https://rspack.dev
@@ -272,7 +272,7 @@ foundation:
       description: Nuxt uses Nitro to build versatile web servers, ready for deployment on any platform.
       logo: i-custom-nitro
       color: '#FB848E'
-      gradient: 'bg-gradient-to-br from-[#FB848E]/20 from-10% to-transparent'
+      gradient: 'bg-gradient-to-br from-[#FB848E]/10 from-5% via-transparent via-50% to-transparent'
       link:
         label: nitro.build
         to: https://nitro.build
@@ -308,6 +308,11 @@ stats:
   description: |
     Nuxt was born from developers' need to boost productivity and platform performance.
     What began as a Vue-based solution for automating tasks and server-side rendering is now trusted by startups and enterprises all around the world.
+  community:
+    title: Open source
+    description: Nuxt is 100% powered by our passionate open source community. Every line of Nuxt is powered by passionate developers like you.
+  x: 97.2k
+  discord: 27k
   cta:
     label: Start contributing
     to: 'https://github.com/nuxt/nuxt'
@@ -318,7 +323,7 @@ stats:
 expertise:
   title: Nuxt Expertise
   description: |
-    To ensure your Nuxt projects reach their full potential, our team—featuring :icon{name=i-custom-vue} Vue, :icon{name=i-custom-nuxt} Nuxt, :icon{name=i-custom-vite} Vite, core contributors -- offers a complete suite of services.
+    To ensure your Nuxt projects reach their full potential, our team—featuring :icon{name=i-custom-vue} Vue, :icon{name=i-custom-nuxt} Nuxt, :icon{name=i-custom-vite} Vite, core contributors — offers a complete suite of services.
   features:
     - title: Performance optimization
       description: Boost Nuxt performance and reliability with our expert optimizations.
@@ -342,7 +347,7 @@ expertise:
       alt: Cora
   links:
     - label: Discover our services
-      to: /expertise
+      to: /enterprise/support
       icon: i-lucide-arrow-right
       color: neutral
       variant: subtle
