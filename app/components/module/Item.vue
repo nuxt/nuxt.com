@@ -1,27 +1,24 @@
 <script setup lang="ts">
 import type { Module } from '~/types'
 
-const props = defineProps<{
+const { module, showBadge = true } = defineProps<{
   module: Module
   showBadge?: boolean
-  linkToDetail?: boolean
-  cardSize?: 'small' | 'default' | 'large'
 }>()
 
 const { copy } = useClipboard()
-
-const cardTo = computed(() => {
-  return props.linkToDetail ? `/modules/${props.module.name}` : undefined
-})
 </script>
 
 <template>
   <UPageCard
-    :to="cardTo"
+    :to="`/modules/${module.name}`"
     :title="module.npm"
-    class="group size-full"
+    class="group hover:bg-(--ui-bg) hover:ring-(--ui-primary)"
     :ui="{
-      container: 'p-3 sm:p-3 size-full'
+      container: 'p-3 sm:p-3 flex flex-col',
+      wrapper: 'flex flex-col min-h-0 items-start',
+      body: 'flex-none',
+      footer: 'w-full mt-auto pt-4'
     }"
   >
     <template #leading>
@@ -40,17 +37,16 @@ const cardTo = computed(() => {
 
     <UBadge
       v-if="showBadge && module.type === 'official'"
-      class="space-x-1 shine text-sm items-center justify-center pointer-events-none absolute top-4 right-4"
-      size="xs"
-      variant="outline"
+      class="shine pointer-events-none absolute top-3 right-3"
+      variant="subtle"
     >
       <span>Official</span>
     </UBadge>
 
     <UBadge
       v-if="showBadge && module.sponsor"
-      class="space-x-1 shine text-sm items-center justify-center pointer-events-none absolute top-4 right-4"
-      size="xs"
+      class="shine pointer-events-none absolute top-3 right-3 bg-pink-400/20 text-pink-400 ring-pink-400"
+      variant="subtle"
     >
       <span>Sponsor</span>
     </UBadge>

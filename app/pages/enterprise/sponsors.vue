@@ -44,7 +44,7 @@ defineOgImageComponent('Docs', {
               <UButton
                 v-for="(sponsor, index) in value"
                 :key="index"
-                color="white"
+                color="neutral"
                 variant="ghost"
                 class="flex-col flex-1 justify-center"
                 size="xl"

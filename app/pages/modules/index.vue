@@ -148,7 +148,7 @@ const { copy } = useClipboard()
             />
           </UButtonGroup>
         </div>
-        <UPageGrid v-if="filteredModules?.length">
+        <UPageGrid v-if="filteredModules?.length" class="lg:grid-cols-2 xl:grid-cols-3">
           <ModuleItem v-for="(module, index) in filteredModules" :key="index" :module="module" />
         </UPageGrid>
 

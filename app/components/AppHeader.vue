@@ -28,7 +28,6 @@ const version = computed(() => stats.value?.version?.match(/\d+\.\d+/)[0])
   ]
 }) */
 
-const open = ref(false)
 const dropdownItems = [
   [{
     label: 'Copy logo as SVG',
@@ -42,10 +41,6 @@ const dropdownItems = [
   }]
 ]
 const isMobile = ref(false)
-function openLogoContext() {
-  if (isMobile.value) return navigateTo('/')
-  open.value = true
-}
 
 onMounted(() => {
   isMobile.value = ('ontouchstart' in document.documentElement)
@@ -55,12 +50,11 @@ onMounted(() => {
 <template>
   <UHeader class="dark:bg-(--ui-color-neutral-950)" :menu="{ ui: { overlay: 'bg-(--ui-color-neutral-950)', content: 'bg-(--ui-color-neutral-950)' } }">
     <template #left>
-      <UDropdownMenu
-        v-model:open="open"
+      <UContextMenu
         :items="dropdownItems"
       >
         <NuxtLink to="/" class="flex gap-2 items-end">
-          <NuxtLogo ref="logo" class="block w-auto h-6" @click.right.prevent="openLogoContext" @click.left.prevent="navigateTo('/')" />
+          <NuxtLogo ref="logo" class="block w-auto h-6" />
 
           <UTooltip v-if="version" :text="`Latest release: v${stats.version}`">
             <UBadge variant="subtle" size="sm" class="-mb-[2px] rounded font-semibold">
@@ -68,7 +62,7 @@ onMounted(() => {
             </UBadge>
           </UTooltip>
         </NuxtLink>
-      </UDropdownMenu>
+      </UContextMenu>
     </template>
 
     <UNavigationMenu :items="headerLinks" variant="link" :ui="{ linkLeadingIcon: 'hidden' }" />

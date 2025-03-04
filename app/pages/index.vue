@@ -27,7 +27,6 @@ const officialModules = computed(() => {
 })
 
 const { data: sponsors } = await useFetch('https://api.nuxt.com/sponsors')
-console.log(sponsors)
 
 const stats = useStats()
 
@@ -312,10 +311,10 @@ const groupedFoundationItems = computed(() => {
         :items="officialModules"
         class="bg-(--ui-primary) p-4 min-w-0 rounded-lg"
         :ui="{
-          item: 'max-w-sm'
+          item: 'min-w-0 shrink-0 sm:basis-1/3'
         }"
       >
-        <ModuleItem :module="item" />
+        <ModuleItem :module="item" :show-badge="false" class="min-h-[180px]" />
       </UCarousel>
     </UPageSection>
 

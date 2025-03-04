@@ -1,9 +1,24 @@
 import { defineContentConfig, defineCollection, z } from '@nuxt/content'
 
+const Image = z.object({
+  src: z.string(),
+  alt: z.string(),
+  width: z.number().optional(),
+  height: z.number().optional()
+})
+
+const DualModeImage = z.object({
+  light: z.string().editor({ input: 'media' }),
+  dark: z.string().editor({ input: 'media' }),
+  width: z.number().optional(),
+  height: z.number().optional(),
+  alt: z.string().optional()
+})
+
 const Button = z.object({
   label: z.string(),
   icon: z.string(),
-  trailingIcon: z.string(),
+  trailingIcon: z.string().optional(),
   to: z.string(),
   color: z.enum(['primary', 'neutral']).optional(),
   size: z.enum(['sm', 'md', 'lg', 'xl']).optional(),
@@ -12,16 +27,24 @@ const Button = z.object({
   target: z.enum(['_blank', '_self']).optional()
 })
 
+const Link = z.object({
+  label: z.string(),
+  to: z.string(),
+  icon: z.string().optional()
+})
+
+const BaseSection = z.object({
+  title: z.string(),
+  description: z.string()
+})
+
 const Author = z.object({
   name: z.string(),
   description: z.string().optional(),
   username: z.string().optional(),
   twitter: z.string().optional(),
   to: z.string().optional(),
-  avatar: z.object({
-    src: z.string(),
-    alt: z.string()
-  }).optional()
+  avatar: Image.optional()
 })
 
 const Testimonial = z.object({
@@ -38,17 +61,10 @@ const PageFeature = z.object({
   soon: z.boolean().optional()
 })
 
-const PageSection = z.object({
-  title: z.string(),
-  description: z.string(),
+const PageSection = BaseSection.extend({
   links: z.array(Button),
   features: z.array(PageFeature),
-  image: z.object({
-    light: z.string().editor({ input: 'media' }),
-    dark: z.string().editor({ input: 'media' }),
-    width: z.number().optional(),
-    height: z.number().optional()
-  }),
+  image: DualModeImage,
   cta: z.object({
     title: z.string(),
     label: z.string(),
@@ -57,21 +73,15 @@ const PageSection = z.object({
   }).optional()
 })
 
-const PageHero = z.object({
-  title: z.string(),
-  description: z.string(),
-  image: z.object({
-    width: z.number().optional(),
-    height: z.number().optional(),
-    light: z.string().editor({ input: 'media' }),
-    dark: z.string().editor({ input: 'media' })
-  }).optional(),
+const PageHero = BaseSection.extend({
+  image: DualModeImage.optional(),
   headline: z.object({
     label: z.string(),
     to: z.string(),
     icon: z.string().optional().editor({ input: 'icon' })
   }).optional(),
-  links: z.array(Button).optional()
+  links: z.array(Button).optional(),
+  cta: Link.optional()
 })
 
 export default defineContentConfig({
@@ -83,9 +93,7 @@ export default defineContentConfig({
         hero: z.object({
           title: z.string(),
           description: z.string(),
-          cta: z.object({
-            label: z.string(),
-            to: z.string(),
+          cta: Link.extend({
             icon: z.string()
           }),
           tabs: z.array(z.object({
@@ -110,29 +118,20 @@ export default defineContentConfig({
             logo: z.string(),
             color: z.string(),
             gradient: z.string(),
-            link: z.object({
-              label: z.string(),
-              to: z.string()
-            })
+            link: Link
           }))
         }),
         modules: PageSection,
         testimonial: Testimonial,
         deploy: PageSection,
         stats: PageSection.extend({
-          community: z.object({
-            title: z.string(),
-            description: z.string()
-          }),
+          community: BaseSection,
           x: z.number(),
           discord: z.string(),
           cta: Button
         }),
         expertise: PageSection.extend({
-          companies: z.array(z.object({
-            src: z.string(),
-            alt: z.string()
-          }))
+          companies: z.array(Image.pick({ src: true, alt: true }))
         }),
         sponsors: PageSection.extend({
           cta: Button
@@ -188,52 +187,35 @@ export default defineContentConfig({
           links: z.array(Button)
         }),
         logos: z.array(
-          z.object({
-            light: z.string(),
-            dark: z.string(),
-            width: z.string(),
-            height: z.string(),
+          DualModeImage.extend({
             alt: z.string()
+          }).omit({ width: true, height: true }).extend({
+            width: z.string(),
+            height: z.string()
           })
         ),
-        service: z.object({
-          title: z.string(),
-          description: z.string(),
+        service: BaseSection.extend({
           services: z.array(
-            z.object({
-              icon: z.string(),
-              title: z.string(),
-              description: z.string()
+            BaseSection.extend({
+              icon: z.string()
             })
           )
         }),
-        expertise: z.object({
-          title: z.string(),
-          description: z.string(),
+        expertise: BaseSection.extend({
           logos: z.array(
-            z.object({
-              src: z.string(),
-              width: z.number(),
-              height: z.number(),
-              color: z.string(),
-              alt: z.string()
+            Image.extend({
+              color: z.string()
             })
           )
         }),
-        testimonials: z.object({
-          title: z.string(),
-          description: z.string(),
+        testimonials: BaseSection.extend({
           items: z.array(
             z.object({
               quote: z.string(),
               author: z.string(),
               job: z.string(),
-              logo: z.object({
-                light: z.string(),
-                dark: z.string(),
-                alt: z.string(),
-                width: z.number(),
-                height: z.number()
+              logo: DualModeImage.extend({
+                alt: z.string()
               }),
               achievements: z.array(
                 z.object({
@@ -246,20 +228,14 @@ export default defineContentConfig({
             })
           )
         }),
-        project: z.object({
-          title: z.string(),
-          description: z.string(),
+        project: BaseSection.extend({
           steps: z.array(
-            z.object({
-              title: z.string(),
-              description: z.string(),
+            BaseSection.extend({
               number: z.number()
             })
           )
         }),
-        form: z.object({
-          title: z.string(),
-          description: z.string(),
+        form: BaseSection.extend({
           name: z.object({
             label: z.string(),
             placeholder: z.string()
@@ -281,10 +257,7 @@ export default defineContentConfig({
             placeholder: z.string()
           }),
           info: z.string(),
-          button: z.object({
-            icon: z.string(),
-            label: z.string()
-          })
+          button: Button
         })
       })
     })
