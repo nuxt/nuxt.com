@@ -253,38 +253,37 @@ onMounted(() => {
             </ULink>
           </UPageCard>
 
-          <div v-else class="h-full">
-            <UPageCard
-              :title="group.items[activeBundlerIndex].title"
-              :description="group.items[activeBundlerIndex].description"
-              class="h-full"
-              :ui="{
-                root: group.classes + ' ' + group.items[activeBundlerIndex].gradient,
-                title: 'text-lg font-semibold'
-              }"
+          <UPageCard
+            v-else
+            :title="group.items[activeBundlerIndex].title"
+            :description="group.items[activeBundlerIndex].description"
+            class="h-full"
+            :ui="{
+              root: group.classes + ' ' + group.items[activeBundlerIndex].gradient,
+              title: 'text-lg font-semibold'
+            }"
+          >
+            <template #leading>
+              <div class="flex items-center space-x-3">
+                <UIcon
+                  v-for="(bundler, bIndex) in group.items"
+                  :key="bIndex"
+                  :name="bundler.logo"
+                  class="cursor-pointer transition-all duration-300 ease-in-out"
+                  :class="bIndex === activeBundlerIndex
+                    ? 'size-7 opacity-100'
+                    : 'size-5 opacity-50 grayscale'"
+                  @click="activeBundlerIndex = bIndex"
+                />
+              </div>
+            </template>
+            <ULink
+              :to="group.items[activeBundlerIndex].link.to"
+              :style="{ color: group.items[activeBundlerIndex].color }"
             >
-              <template #leading>
-                <div class="flex items-center space-x-3">
-                  <UIcon
-                    v-for="(bundler, bIndex) in group.items"
-                    :key="bIndex"
-                    :name="bundler.logo"
-                    class="cursor-pointer transition-all duration-300 ease-in-out"
-                    :class="bIndex === activeBundlerIndex
-                      ? 'size-7 opacity-100'
-                      : 'size-5 opacity-50 grayscale'"
-                    @click="activeBundlerIndex = bIndex"
-                  />
-                </div>
-              </template>
-              <ULink
-                :to="group.items[activeBundlerIndex].link.to"
-                :style="{ color: group.items[activeBundlerIndex].color }"
-              >
-                {{ group.items[activeBundlerIndex].link.label }}
-              </ULink>
-            </UPageCard>
-          </div>
+              {{ group.items[activeBundlerIndex].link.label }}
+            </ULink>
+          </UPageCard>
         </template>
       </div>
     </UPageSection>

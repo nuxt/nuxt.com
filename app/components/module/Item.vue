@@ -6,7 +6,14 @@ const { module, showBadge = true } = defineProps<{
   showBadge?: boolean
 }>()
 
+const toast = useToast()
 const { copy } = useClipboard()
+
+function copyInstallCommand(moduleName: string) {
+  const command = `npx nuxi@latest module add ${moduleName}`
+  copy(command)
+  toast.add({ title: 'Command copied to clipboard:', description: command })
+}
 </script>
 
 <template>
@@ -82,7 +89,7 @@ const { copy } = useClipboard()
             color="neutral"
             size="xs"
             variant="outline"
-            @click="copy(`npx nuxi@latest module add ${module.name}`, { title: 'Command copied to clipboard:', description: `npx nuxi@latest module add ${module.name}` })"
+            @click="copyInstallCommand(module.name)"
           />
         </UTooltip>
       </div>

@@ -180,7 +180,8 @@ export default defineContentConfig({
         include: 'blog.yml'
       }, {
         include: 'modules.yml'
-      }]
+      }],
+      schema: PageHero
     }),
     support: defineCollection({
       type: 'data',

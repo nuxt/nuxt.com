@@ -31,8 +31,6 @@ defineShortcuts({
     input.value?.inputRef?.focus()
   }
 })
-
-const { copy } = useClipboard()
 </script>
 
 <template>

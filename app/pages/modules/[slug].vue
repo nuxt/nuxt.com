@@ -170,7 +170,7 @@ defineOgImageComponent('Docs', {
 
               <UPageLinks :links="contributors">
                 <template #title>
-                  Contributors <UBadge :label="module.contributors.length.toString()" color="neutral" size="xs" class="rounded-full" />
+                  Contributors <UBadge :label="module.contributors.length.toString()" color="neutral" variant="subtle" size="sm" class="rounded-full" />
                 </template>
 
                 <template #link-leading="{ link }">

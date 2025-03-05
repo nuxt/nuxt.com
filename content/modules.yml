@@ -2,3 +2,16 @@ title: Nuxt Modules
 navigation.title: Modules
 description: 'Discover our list of modules to supercharge your Nuxt project. Created by the Nuxt team and community.'
 navigation.icon: i-lucide-package
+links:
+  - label: 'Create a Nuxt module'
+    to: '/docs/guide/going-further/modules'
+    icon: i-lucide-package-plus
+    color: neutral
+    size: sm
+  - label: 'List a module'
+    to: 'https://github.com/nuxt/modules#addupdate-a-module'
+    target: '_blank'
+    icon: i-lucide-list-plus
+    color: neutral
+    variant: subtle
+    size: sm
