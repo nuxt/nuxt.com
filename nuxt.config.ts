@@ -18,7 +18,7 @@ export default defineNuxtConfig({
     '@nuxtjs/turnstile',
     '@vueuse/nuxt',
     'nuxt-og-image',
-    'nuxt-rebundle',
+    // 'nuxt-rebundle',
     'nuxt-llms'
   ],
   $development: {
@@ -116,9 +116,6 @@ export default defineNuxtConfig({
   },
   future: {
     compatibilityVersion: 4
-  },
-  experimental: {
-    buildCache: false
   },
   compatibilityDate: '2024-07-18',
   nitro: {

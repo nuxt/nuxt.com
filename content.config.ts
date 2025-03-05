@@ -1,5 +1,17 @@
 import { defineContentConfig, defineCollection, z } from '@nuxt/content'
 
+const docsSource = {
+  cwd: process.env.NUXT_PATH ?? undefined,
+  repository: !process.env.NUXT_PATH ? 'https://github.com/nuxt/nuxt/tree/feat/migrate-to-content-v3' : undefined,
+  include: 'docs/**/*'
+}
+const examplesSource = {
+  cwd: process.env.NUXT_EXAMPLES_PATH ?? undefined,
+  repository: !process.env.NUXT_EXAMPLES_PATH ? 'https://github.com/nuxt/examples/tree/feat/migrate-to-content-v3' : undefined,
+  include: '.docs/**/*',
+  prefix: '/docs/4.examples'
+}
+
 const Image = z.object({
   src: z.string(),
   alt: z.string(),
@@ -141,15 +153,8 @@ export default defineContentConfig({
     docs: defineCollection({
       type: 'page',
       source: [
-        {
-          repository: 'https://github.com/nuxt/nuxt/tree/feat/migrate-to-content-v3',
-          include: 'docs/**/*'
-        },
-        {
-          repository: 'https://github.com/nuxt/examples/tree/feat/migrate-to-content-v3',
-          include: '.docs/**/*',
-          prefix: '/docs/4.examples'
-        }
+        docsSource,
+        examplesSource
       ],
       schema: z.object({
         titleTemplate: z.string().optional(),
