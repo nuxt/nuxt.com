@@ -2,7 +2,7 @@
 import { joinURL } from 'ufo'
 
 definePageMeta({
-  heroBackground: 'z-10'
+  heroBackground: '-z-10'
 })
 
 const { data: page } = await useAsyncData('index', () => queryCollection('index').first())
@@ -145,7 +145,8 @@ onMounted(() => {
       </template>
 
       <UPageCard
-        class="bg-(--ui-primary) overflow-auto lg:absolute lg:-mt-16 right-0 w-screen lg:w-[calc(50%-2rem)] rounded-none lg:rounded-l-[calc(var(--ui-radius)*2)] -mx-4 sm:-mx-6 lg:mx-0"
+        class="overflow-auto lg:absolute lg:-mt-16 right-0 w-screen lg:w-[calc(50%-2rem)] rounded-none lg:rounded-l-[calc(var(--ui-radius)*2)] -mx-4 sm:-mx-6 lg:mx-0"
+        variant="subtle"
         :ui="{ container: 'sm:pt-4.5 lg:pr-0' }"
       >
         <UTabs
@@ -153,14 +154,14 @@ onMounted(() => {
           :unmount-on-hide="false"
           :ui="{
             list: 'px-0 bg-transparent overflow-x-auto pr-4',
-            trigger: 'group data-[state=active]:text-(--ui-text-highlighted) data-[state=inactive]:text-(--ui-bg) hover:data-[state=inactive]:not-disabled:text-(--ui-bg) hover:data-[state=inactive]:not-disabled:bg-(--ui-bg)/10',
+            trigger: 'group data-[state=active]:text-(--ui-text-highlighted)',
             indicator: 'bg-(--ui-bg)',
             leadingIcon: 'group-data-[state=active]:text-(--ui-primary)! size-4 xl:inline-flex hidden',
             content: 'lg:h-[450px] bg-(--ui-bg) rounded-[calc(var(--ui-radius)*1.5)] transition-opacity duration-500 data-[state=inactive]:opacity-0 opacity-100'
           }"
         >
           <template v-for="(tab, index) of tabs" :key="index" #[tab.slot]="{ item }">
-            <MDC :value="item.content" />
+            <MDC :value="item.content" class="//" />
           </template>
         </UTabs>
       </UPageCard>
