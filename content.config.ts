@@ -180,8 +180,25 @@ export default defineContentConfig({
         include: 'blog.yml'
       }, {
         include: 'modules.yml'
+      }, {
+        include: 'deploy.yml'
       }],
       schema: PageHero
+    }),
+    deploy: defineCollection({
+      type: 'page',
+      source: 'deploy/*',
+      schema: z.object({
+        title: z.string(),
+        description: z.string(),
+        componentImg: z.string(),
+        logoSrc: z.string(),
+        featured: z.boolean(),
+        logoIcon: z.string(),
+        category: z.string(),
+        nitroPreset: z.string(),
+        website: z.string().url()
+      })
     }),
     support: defineCollection({
       type: 'data',

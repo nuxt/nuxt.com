@@ -81,7 +81,7 @@ defineShortcuts({
                 color="neutral"
                 variant="link"
                 size="xs"
-                icon="i-ph-x"
+                icon="i-lucide-x"
                 @click="replaceRoute('q', '')"
               />
               <UKbd v-else value="/" />
@@ -116,7 +116,7 @@ defineShortcuts({
             type="search"
             :model-value="q"
             name="q"
-            icon="i-ph-magnifying-glass"
+            icon="i-lucide-search"
             placeholder="Search a module..."
             class="w-full"
             size="sm"
