@@ -1,0 +1,6 @@
+name: 'Dashboard Pro'
+slug: 'ui-pro-dashboard'
+description: "A dashboard template made with Nuxt UI Pro."
+repo: 'nuxt-ui-pro/dashboard'
+demo: 'https://dashboard-template.nuxt.dev'
+badge: 'Freemium' 

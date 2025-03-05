@@ -1,0 +1,20 @@
+head.title: Nuxt Templates
+title: Nuxt Templates
+navigation.title: Templates
+description: 'Explore community templates to get up and running in a few seconds.'
+navigation.icon: i-ph-browsers
+align: center
+links:
+  - label: 'List a template'
+    to: 'https://github.com/nuxt/nuxt.com/tree/main#add-a-nuxt-template'
+    icon: 'i-ph-plus-circle'
+    target: '_blank'
+    variant: subtle
+    color: neutral
+    size: md
+  - label: 'Full-stack templates'
+    to: 'https://hub.nuxt.com/templates'
+    target: '_blank'
+    variant: ghost
+    color: neutral
+    size: md

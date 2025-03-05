@@ -100,6 +100,20 @@ const PageHero = BaseSection.extend({
   cta: Link.optional()
 })
 
+const Template = z.object({
+  name: z.string(),
+  slug: z.string(),
+  description: z.string(),
+  repo: z.string().optional(),
+  demo: z.string().url(),
+  purchase: z.string().url().optional(),
+  badge: z.enum(['Premium', 'Freemium', 'Free']).optional(),
+  screenshotUrl: z.string().url().optional(),
+  screenshotOptions: z.object({
+    delay: z.number()
+  }).optional()
+})
+
 export default defineContentConfig({
   collections: {
     index: defineCollection({
@@ -186,6 +200,8 @@ export default defineContentConfig({
         include: 'modules.yml'
       }, {
         include: 'deploy.yml'
+      }, {
+        include: 'templates.yml',
       }, {
         include: 'showcase.yml'
       }],
@@ -289,6 +305,11 @@ export default defineContentConfig({
           button: Button
         })
       })
+    }),
+    templates: defineCollection({
+      type: 'data',
+      source: 'templates/*',
+      schema: Template
     })
   }
 })
