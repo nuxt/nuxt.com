@@ -18,7 +18,7 @@ const ownerName = computed(() => {
 })
 
 const links = computed(() => [{
-  icon: 'i-ph-book-bookmark',
+  icon: 'i-lucide-book',
   label: 'Documentation',
   to: `${module.value.website}?utm_source=nuxt.com&utm_medium=aside-module&utm_campaign=nuxt.com`,
   target: '_blank'
@@ -33,7 +33,7 @@ const links = computed(() => [{
   to: `https://npmjs.org/package/${module.value.npm}`,
   target: '_blank'
 }, module.value.learn_more && {
-  icon: 'i-ph-link',
+  icon: 'i-lucide-link',
   label: 'Learn more',
   to: module.value.learn_more,
   target: '_blank'
@@ -81,8 +81,7 @@ defineOgImageComponent('Docs', {
   <UContainer>
     <div v-if="!module.compatibility?.nuxt?.includes('^3') && !module.compatibility?.nuxt?.includes('>=3')" class="pt-8">
       <UAlert
-        icon="i-ph-warning"
-        color="orange"
+        icon="i-lucide-warning"
         variant="subtle"
         title="This module is not yet compatible with Nuxt 3"
       >
@@ -95,7 +94,7 @@ defineOgImageComponent('Docs', {
     </div>
     <UPageHeader :description="module.description" :ui="{ headline: 'mb-8' }">
       <template #headline>
-        <UBreadcrumb :links="[{ label: 'Modules', to: '/modules' }, { to: { name: 'modules', query: { category: module.category } }, label: module.category }, { label: module.npm }]" />
+        <UBreadcrumb :items="[{ label: 'Modules', to: '/modules' }, { to: { name: 'modules', query: { category: module.category } }, label: module.category }, { label: module.npm }]" />
       </template>
       <template #title>
         <div class="flex items-center gap-4">
@@ -103,16 +102,15 @@ defineOgImageComponent('Docs', {
             :src="moduleImage(module.icon)"
             :icon="moduleIcon(module.category)"
             :alt="module.name"
-            size="lg"
-            :ui="{ rounded: 'rounded-lg' }"
-            class="-m-[4px]"
+            size="xl"
+            class="-m-[4px] rounded-none bg-transparent"
           />
 
           <div>
             {{ module.npm }}
 
             <UTooltip v-if="module.type === 'official'" text="Official module" class="tracking-normal">
-              <UIcon name="i-ph-medal" class="h-6 w-6 text-primary" />
+              <UIcon name="i-ph-medal" class="size-6 text-(--ui-primary)" />
             </UTooltip>
           </div>
         </div>
@@ -121,25 +119,25 @@ defineOgImageComponent('Docs', {
       <div class="flex flex-col lg:flex-row lg:items-center gap-3 mt-4">
         <UTooltip text="Monthly NPM Downloads">
           <NuxtLink class="flex items-center gap-1.5" :to="`https://npm.chart.dev/${module.npm}`" target="_blank">
-            <UIcon name="i-ph-arrow-circle-down" class="w-5 h-5 flex-shrink-0" />
+            <UIcon name="i-ph-arrow-circle-down" class="size-5 shrink-0" />
             <span class="text-sm font-medium">{{ formatNumber(module.stats.downloads) }} downloads</span>
           </NuxtLink>
         </UTooltip>
 
-        <span class="hidden lg:block text-gray-500 dark:text-gray-400">&bull;</span>
+        <span class="hidden lg:block text-(--ui-text-muted)">&bull;</span>
 
         <UTooltip text="GitHub Stars">
           <NuxtLink class="flex items-center gap-1.5" :to="`https://github.com/${module.repo}`" target="_blank">
-            <UIcon name="i-ph-star" class="w-5 h-5 flex-shrink-0" />
+            <UIcon name="i-ph-star" class="size-5 shrink-0" />
             <span class="text-sm font-medium">{{ formatNumber(module.stats.stars || 0) }} stars</span>
           </NuxtLink>
         </UTooltip>
 
-        <span class="hidden lg:block text-gray-500 dark:text-gray-400">&bull;</span>
+        <span class="hidden lg:block text-(--ui-text-muted)">&bull;</span>
 
         <UTooltip text="Latest Version">
           <NuxtLink class="flex items-center gap-1.5" :to="`${module.github}/releases`" target="_blank">
-            <UIcon name="i-ph-tag" class="w-5 h-5 flex-shrink-0" />
+            <UIcon name="i-ph-tag" class="size-5 shrink-0" />
             <span class="text-sm font-medium">v{{ module.stats.version }}</span>
           </NuxtLink>
         </UTooltip>
@@ -147,12 +145,12 @@ defineOgImageComponent('Docs', {
         <div class="mx-3 h-6 border-l border-gray-200 dark:border-gray-800 w-px hidden lg:block" />
 
         <div v-for="(maintainer, index) in module.maintainers" :key="maintainer.github" class="flex items-center gap-3">
-          <NuxtLink :to="`https://github.com/${maintainer.github}`" target="_blank" class="flex items-center gap-1.5 hover:text-primary">
-            <UAvatar :src="`https://ipx.nuxt.com/f_auto,s_20x20/gh_avatar/${maintainer.github}`" :srcset="`https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/${maintainer.github} 2x`" :alt="maintainer.github" size="2xs" />
+          <NuxtLink :to="`https://github.com/${maintainer.github}`" target="_blank" class="flex items-center gap-1.5 hover:text-(--ui-primary)">
+            <UAvatar :src="`https://ipx.nuxt.com/f_auto,s_20x20/gh_avatar/${maintainer.github}`" :srcset="`https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/${maintainer.github} 2x`" :alt="maintainer.github" size="xs" />
             <span class="text-sm font-medium">{{ maintainer.github }}</span>
           </NuxtLink>
 
-          <span v-if="index < module.maintainers.length - 1" class="hidden lg:block text-gray-500 dark:text-gray-400">&bull;</span>
+          <span v-if="index < module.maintainers.length - 1" class="hidden lg:block text-(--ui-text-muted)">&bull;</span>
         </div>
       </div>
     </UPageHeader>
@@ -172,7 +170,11 @@ defineOgImageComponent('Docs', {
 
               <UPageLinks :links="contributors">
                 <template #title>
-                  Contributors <UBadge :label="module.contributors.length.toString()" color="neutral" size="xs" :ui="{ rounded: 'rounded-full' }" />
+                  Contributors <UBadge :label="module.contributors.length.toString()" color="neutral" size="xs" class="rounded-full" />
+                </template>
+
+                <template #link-leading="{ link }">
+                  <UAvatar :src="`https://ipx.nuxt.com/f_auto,s_20x20/gh_avatar/${link.label}`" class="size-5" />
                 </template>
               </UPageLinks>
               <USeparator type="dashed" />

@@ -62,37 +62,37 @@ defineOgImageComponent('Docs', {
 
       <div class="flex flex-col lg:flex-row lg:items-center gap-3 mt-4">
         <div class="flex items-center gap-1.5">
-          <UIcon name="i-ph-map-pin" class="w-5 h-5 flex-shrink-0" />
+          <UIcon name="i-ph-map-pin" class="size-5 shrink-0" />
           <span class="text-sm font-medium">{{ agency.location }}</span>
         </div>
 
         <span v-if="agency.twitter || agency.x" class="hidden lg:block text-gray-500 dark:text-gray-400">&bull;</span>
         <NuxtLink v-if="agency.twitter || agency.x" :to="`https://x.com/${agency.twitter || agency.x}`" target="_blank" class="flex items-center gap-1.5 hover:text-primary">
-          <UIcon name="i-simple-icons-x" class="w-5 h-5" />
+          <UIcon name="i-simple-icons-x" class="size-5" />
           <span class="text-sm font-medium">{{ agency.twitter || agency.x }}</span>
         </NuxtLink>
 
         <span v-if="agency.github" class="hidden lg:block text-gray-500 dark:text-gray-400">&bull;</span>
         <NuxtLink v-if="agency.github" :to="`https://github.com/${agency.github}`" target="_blank" class="flex items-center gap-1.5 hover:text-primary">
-          <UIcon name="i-simple-icons-github" class="w-5 h-5" />
+          <UIcon name="i-simple-icons-github" class="size-5" />
           <span class="text-sm font-medium">{{ agency.github }}</span>
         </NuxtLink>
 
         <span v-if="agency.linkedin" class="hidden lg:block text-gray-500 dark:text-gray-400">&bull;</span>
         <NuxtLink v-if="agency.linkedin" :to="`https://linkedin.com/company/${agency.linkedin}`" target="_blank" class="flex items-center gap-1.5 hover:text-primary">
-          <UIcon name="i-simple-icons-linkedin" class="w-5 h-5" />
+          <UIcon name="i-simple-icons-linkedin" class="size-5" />
           <span class="text-sm font-medium">{{ agency.linkedin }}</span>
         </NuxtLink>
 
         <span v-if="agency.instagram" class="hidden lg:block text-gray-500 dark:text-gray-400">&bull;</span>
         <NuxtLink v-if="agency.instagram" :to="`https://instagram.com/${agency.instagram}`" target="_blank" class="flex items-center gap-1.5 hover:text-primary">
-          <UIcon name="i-simple-icons-instagram" class="w-5 h-5" />
+          <UIcon name="i-simple-icons-instagram" class="size-5" />
           <span class="text-sm font-medium">{{ agency.instagram }}</span>
         </NuxtLink>
 
         <span v-if="agency.link" class="hidden lg:block text-gray-500 dark:text-gray-400">&bull;</span>
         <NuxtLink v-if="agency.link" :to="agency.link" target="_blank" class="flex items-center gap-1.5 hover:text-primary">
-          <UIcon name="i-ph-link" class="w-5 h-5" />
+          <UIcon name="i-ph-link" class="size-5" />
           <span class="text-sm font-medium">Website</span>
         </NuxtLink>
       </div>

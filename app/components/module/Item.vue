@@ -59,7 +59,7 @@ const { copy } = useClipboard()
               :to="`https://npm.chart.dev/${module.npm}`"
               target="_blank"
             >
-              <UIcon name="i-ph-arrow-circle-down" class="w-4 h-4 flex-shrink-0" />
+              <UIcon name="i-ph-arrow-circle-down" class="w-4 h-4 shrink-0" />
               <span class="text-sm font-medium">{{ formatNumber(module.stats.downloads) }}</span>
             </NuxtLink>
           </UTooltip>
@@ -70,7 +70,7 @@ const { copy } = useClipboard()
               :to="`https://github.com/${module.repo}`"
               target="_blank"
             >
-              <UIcon name="i-ph-star" class="w-4 h-4 flex-shrink-0" />
+              <UIcon name="i-ph-star" class="w-4 h-4 shrink-0" />
               <span class="text-sm font-medium">{{ formatNumber(module.stats.stars || 0) }}</span>
             </NuxtLink>
           </UTooltip>
