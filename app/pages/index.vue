@@ -4,15 +4,6 @@ import { joinURL } from 'ufo'
 definePageMeta({
   heroBackground: 'z-10'
 })
-const uwuCookie = useCookie<boolean>('uwu-mode', {
-  default: () => false
-})
-
-const route = useRoute()
-if ('uwu' in route.query) {
-  const enableUwu = !['0', 'false'].includes(route.query.uwu as string)
-  uwuCookie.value = enableUwu
-}
 
 const { data: page } = await useAsyncData('index', () => queryCollection('index').first())
 
@@ -85,6 +76,11 @@ const groupedFoundationItems = computed(() => {
 
   return result
 })
+
+const isMobile = ref(false)
+onMounted(() => {
+  isMobile.value = window.innerWidth < 768
+})
 </script>
 
 <template>
@@ -92,6 +88,9 @@ const groupedFoundationItems = computed(() => {
     <UPageHero
       class="relative"
       orientation="horizontal"
+      :ui="{
+        container: '!pb-16'
+      }"
     >
       <template #headline>
         <NuxtLink :to="page.hero.cta.to">
@@ -144,21 +143,12 @@ const groupedFoundationItems = computed(() => {
         </UModal>
       </template>
 
-      <NuxtImg
-        v-if="uwuCookie"
-        sizes="343px md:455px"
-        width="455"
-        height="256"
-        class="mx-auto lg:my-16"
-        src="/uwu.png"
-        alt="Nuxt Logo in uwu style"
-      />
-      <UPageCard v-else class="bg-(--ui-primary) max-w-lg size-full">
+      <UPageCard class="bg-(--ui-primary) lg:absolute right-0 w-full lg:w-1/2 rounded-r-none">
         <template #title>
           <UTabs
             :items="tabs"
             :ui="{
-              list: 'px-0 bg-transparent max-w-lg overflow-x-auto',
+              list: 'px-0 bg-transparent overflow-x-auto',
               trigger: 'group data-[state=active]:text-(--ui-text-highlighted) data-[state=inactive]:text-(--ui-bg)',
               indicator: 'bg-(--ui-bg)',
               leadingIcon: 'group-data-[state=active]:text-(--ui-primary)!'
@@ -172,13 +162,22 @@ const groupedFoundationItems = computed(() => {
       </UPageCard>
     </UPageHero>
     <UContainer>
-      <UPageLogos :title="page?.logos.title" :ui="{ title: 'text-left text-(--ui-text-muted)' }">
-        <NuxtImg
-          v-for="company in page?.logos.companies"
+      <UPageLogos :marquee="isMobile" :title="page?.logos.title" :ui="{ title: 'text-left text-(--ui-text-muted) font-medium text-base', logos: 'mt-4' }">
+        <Motion
+          v-for="(company, index) in page?.logos.companies"
           :key="company.alt"
-          v-bind="company"
-          class="h-6 shrink-0 max-w-[140px] filter dark:invert invert-0 opacity-50"
-        />
+          as-child
+          :initial="{ opacity: 0, transform: 'translateY(20px)' }"
+          :in-view="{ opacity: 0.8, transform: 'translateY(0)' }"
+          :transition="{ delay: 0.4 + 0.2 * index }"
+          :in-view-options="{ once: true }"
+        >
+          <NuxtImg
+            :key="company.alt"
+            v-bind="company"
+            class="opacity-0 h-6 shrink-0 max-w-[140px] grayscale filter dark:invert invert-0"
+          />
+        </Motion>
       </UPageLogos>
       <UPageSection
         :title="page?.features.title"

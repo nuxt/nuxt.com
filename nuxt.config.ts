@@ -18,7 +18,7 @@ export default defineNuxtConfig({
     '@nuxtjs/turnstile',
     '@vueuse/nuxt',
     'nuxt-og-image',
-    // 'nuxt-rebundle',
+    'motion-v/nuxt',
     'nuxt-llms'
   ],
   $development: {

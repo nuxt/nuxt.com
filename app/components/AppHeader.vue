@@ -5,7 +5,7 @@ const logo = ref(null)
 
 const stats = useStats()
 const { copy } = useClipboard()
-
+const toast = useToast()
 const version = computed(() => stats.value?.version?.match(/\d+\.\d+/)[0])
 
 /* const mobileNav = computed(() => {
@@ -28,11 +28,19 @@ const version = computed(() => stats.value?.version?.match(/\d+\.\d+/)[0])
   ]
 }) */
 
-const dropdownItems = [
+const logoContextMenuItems = [
   [{
     label: 'Copy logo as SVG',
     icon: 'i-simple-icons-nuxtdotjs',
-    click: () => copy(logo.value.$el.outerHTML)
+    onSelect() {
+      copy(logo.value.$el.outerHTML)
+      toast.add({
+        title: 'Nuxt logo copied as SVG',
+        description: 'You can now paste it into your project',
+        icon: 'i-lucide-circle-check',
+        color: 'success'
+      })
+    }
   }],
   [{
     label: 'Browse design kit',
@@ -51,7 +59,7 @@ onMounted(() => {
   <UHeader class="dark:bg-(--ui-color-neutral-950)" :menu="{ ui: { overlay: 'bg-(--ui-color-neutral-950)', content: 'bg-(--ui-color-neutral-950)' } }">
     <template #left>
       <UContextMenu
-        :items="dropdownItems"
+        :items="logoContextMenuItems"
       >
         <NuxtLink to="/" class="flex gap-2 items-end">
           <NuxtLogo ref="logo" class="block w-auto h-6" />
