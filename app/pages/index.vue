@@ -89,7 +89,8 @@ onMounted(() => {
       class="relative"
       orientation="horizontal"
       :ui="{
-        container: '!pb-16'
+        container: '!pb-20',
+        wrapper: 'lg:min-h-[540px]'
       }"
     >
       <template #headline>
@@ -106,24 +107,24 @@ onMounted(() => {
       </template>
 
       <template #title>
-        <MDC :value="page?.hero.title" class="*:mb-0 *:text-6xl *:font-semibold" />
+        The Intuitive<br><span class="text-(--ui-primary)">Web Framework</span>
       </template>
 
       <template #description>
-        <MDC :value="page?.hero.description" class="*:mt-0" />
+        <MDC :value="page?.hero.description" unwrap="p" />
       </template>
 
       <template #links>
         <div class="flex flex-col gap-4">
           <div class="flex items-center gap-2">
-            <UButton to="/docs/getting-started/installation" trailing-icon="i-ph-arrow-right" size="lg">
+            <UButton to="/docs/getting-started/installation" trailing-icon="i-ph-arrow-right" size="xl">
               Get Started
             </UButton>
-            <UButton size="lg" color="neutral" variant="ghost" trailing-icon="i-ph-play-circle" @click="videoModalOpen = true">
+            <UButton size="xl" color="neutral" variant="ghost" trailing-icon="i-ph-play-circle" @click="videoModalOpen = true">
               Nuxt in 100 Seconds
             </UButton>
           </div>
-          <UInputCopy value="npm create nuxt@latest" label="npm create nuxt@latest" />
+          <UInputCopy value="npm create nuxt@latest" label="npm create nuxt@latest" size="xl" />
         </div>
 
         <UModal v-model:open="videoModalOpen" :ui="{ content: 'sm:max-w-4xl lg:max-w-5xl aspect-[16/9]' }">
@@ -143,26 +144,26 @@ onMounted(() => {
         </UModal>
       </template>
 
-      <UPageCard class="bg-(--ui-primary) lg:absolute right-0 w-full lg:w-1/2 rounded-r-none">
-        <template #title>
-          <UTabs
-            :items="tabs"
-            :ui="{
-              list: 'px-0 bg-transparent overflow-x-auto',
-              trigger: 'group data-[state=active]:text-(--ui-text-highlighted) data-[state=inactive]:text-(--ui-bg)',
-              indicator: 'bg-(--ui-bg)',
-              leadingIcon: 'group-data-[state=active]:text-(--ui-primary)!'
-            }"
-          >
-            <template v-for="(tab, index) of tabs" :key="index" #[tab.slot]="{ item }">
-              <MDC :value="item.content" />
-            </template>
-          </UTabs>
-        </template>
+      <UPageCard class="bg-(--ui-primary) overflow-auto lg:absolute lg:-mt-16 right-0 w-full lg:w-[calc(50%-2rem)] lg:rounded-r-none" :ui="{ container: 'sm:pt-4.5 lg:pr-0' }">
+        <UTabs
+          :items="tabs"
+          :unmount-on-hide="false"
+          :ui="{
+            list: 'px-0 bg-transparent overflow-x-auto pr-4',
+            trigger: 'group data-[state=active]:text-(--ui-text-highlighted) data-[state=inactive]:text-(--ui-bg) hover:data-[state=inactive]:not-disabled:text-(--ui-bg) hover:data-[state=inactive]:not-disabled:bg-(--ui-bg)/10',
+            indicator: 'bg-(--ui-bg)',
+            leadingIcon: 'group-data-[state=active]:text-(--ui-primary)! size-4 xl:inline-flex hidden',
+            content: 'lg:h-[450px] bg-(--ui-bg) rounded-[calc(var(--ui-radius)*1.5)] transition-opacity duration-500 data-[state=inactive]:opacity-0 opacity-100'
+          }"
+        >
+          <template v-for="(tab, index) of tabs" :key="index" #[tab.slot]="{ item }">
+            <MDC :value="item.content" class="" />
+          </template>
+        </UTabs>
       </UPageCard>
     </UPageHero>
-    <UContainer>
-      <UPageLogos :marquee="isMobile" :title="page?.logos.title" :ui="{ title: 'text-left text-(--ui-text-muted) font-medium text-base', logos: 'mt-4' }">
+    <UPageSection :ui="{ container: '!pt-0' }">
+      <UPageLogos :marquee="isMobile" :title="page?.logos.title" :ui="{ title: 'text-left text-(--ui-text-muted) font-medium text-lg', logos: 'mt-4' }">
         <Motion
           v-for="(company, index) in page?.logos.companies"
           :key="company.alt"
@@ -179,36 +180,36 @@ onMounted(() => {
           />
         </Motion>
       </UPageLogos>
-      <UPageSection
-        :title="page?.features.title"
-        :description="page?.features.description"
-        :ui="{
-          title: 'text-left lg:text-4xl',
-          description: 'text-left',
-          container: 'py-6 pb-12 sm:px-0 lg:px-0',
-          features: 'xl:grid-cols-4'
-        }"
-      >
-        <template #features>
-          <UPageFeature
-            v-for="(feature, index) in page.features.features"
-            :key="index"
-            v-bind="feature"
-            orientation="vertical"
-            class="p-4"
-            :class="feature.title === 'Modular' ? 'bg-(--ui-bg-muted)/40' : ''"
-          />
-          <div class="flex flex-col justify-center gap-4 p-4">
-            <span class="text-lg font-semibold">
-              {{ page.features.cta.title }}
-            </span>
-            <div>
-              <UButton :to="page.features.cta.to" :label="page.features.cta.label" trailing :icon="page.features.cta.icon" />
-            </div>
+    </UPageSection>
+    <UPageSection
+      :title="page?.features.title"
+      :description="page?.features.description"
+      :ui="{
+        title: 'text-left lg:text-4xl',
+        description: 'text-left',
+        container: 'py-6 pb-12 sm:px-0 lg:px-0',
+        features: 'xl:grid-cols-4'
+      }"
+    >
+      <template #features>
+        <UPageFeature
+          v-for="(feature, index) in page.features.features"
+          :key="index"
+          v-bind="feature"
+          orientation="vertical"
+          class="p-4"
+          :class="feature.title === 'Modular' ? 'bg-(--ui-bg-muted)/40' : ''"
+        />
+        <div class="flex flex-col justify-center gap-4 p-4">
+          <span class="text-lg font-semibold">
+            {{ page.features.cta.title }}
+          </span>
+          <div>
+            <UButton :to="page.features.cta.to" :label="page.features.cta.label" trailing :icon="page.features.cta.icon" />
           </div>
-        </template>
-      </UPageSection>
-    </UContainer>
+        </div>
+      </template>
+    </UPageSection>
 
     <UPageSection class="relative">
       <svg class="absolute top-0 inset-x-0 pointer-events-none opacity-30 dark:opacity-100" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 1017 181"><g opacity=".5"><mask id="c" fill="#fff"><path d="M0 0h1017v181H0V0Z" /></mask><path fill="url(#a)" fill-opacity=".5" d="M0 0h1017v181H0V0Z" /><path fill="url(#b)" d="M0 2h1017v-4H0v4Z" mask="url(#c)" /></g><defs><radialGradient
