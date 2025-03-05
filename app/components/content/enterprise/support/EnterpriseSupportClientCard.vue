@@ -52,7 +52,7 @@ type Achievement = {
           :width="logo.width"
           :height="logo.height"
           :alt="logo.alt"
-          class="h-[24px]"
+          class="h-[24px] grayscale"
         />
       </div>
 
