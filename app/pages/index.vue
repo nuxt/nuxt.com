@@ -14,7 +14,7 @@ await fetchList()
 const officialModules = computed(() => {
   return modules.value
     .filter(module => module.type === 'official')
-    .sort((a, b) => b.stats.downloads - a.stats.downloads)
+    .sort((a, b) => b.stats.stars - a.stats.stars)
 })
 
 const { data: sponsors } = await useFetch('https://api.nuxt.com/sponsors')
@@ -144,7 +144,10 @@ onMounted(() => {
         </UModal>
       </template>
 
-      <UPageCard class="bg-(--ui-primary) overflow-auto lg:absolute lg:-mt-16 right-0 w-full lg:w-[calc(50%-2rem)] lg:rounded-r-none" :ui="{ container: 'sm:pt-4.5 lg:pr-0' }">
+      <UPageCard
+        class="bg-(--ui-primary) overflow-auto lg:absolute lg:-mt-16 right-0 w-screen lg:w-[calc(50%-2rem)] rounded-none lg:rounded-l-[calc(var(--ui-radius)*2)] -mx-4 sm:-mx-6 lg:mx-0"
+        :ui="{ container: 'sm:pt-4.5 lg:pr-0' }"
+      >
         <UTabs
           :items="tabs"
           :unmount-on-hide="false"
@@ -157,7 +160,7 @@ onMounted(() => {
           }"
         >
           <template v-for="(tab, index) of tabs" :key="index" #[tab.slot]="{ item }">
-            <MDC :value="item.content" class="" />
+            <MDC :value="item.content" />
           </template>
         </UTabs>
       </UPageCard>
@@ -187,8 +190,8 @@ onMounted(() => {
       :ui="{
         title: 'text-left lg:text-4xl',
         description: 'text-left',
-        container: 'py-6 pb-12 sm:px-0 lg:px-0',
-        features: 'xl:grid-cols-4'
+        root: 'bg-gradient-to-b border-t border-(--ui-border) from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)',
+        features: 'xl:grid-cols-4 lg:gap-10'
       }"
     >
       <template #features>
@@ -197,10 +200,8 @@ onMounted(() => {
           :key="index"
           v-bind="feature"
           orientation="vertical"
-          class="p-4"
-          :class="feature.title === 'Modular' ? 'bg-(--ui-bg-muted)/40' : ''"
         />
-        <div class="flex flex-col justify-center gap-4 p-4">
+        <div class="flex flex-col justify-center gap-4 p-4 bg-(--ui-bg-muted)/50 h-full">
           <span class="text-lg font-semibold">
             {{ page.features.cta.title }}
           </span>
@@ -211,22 +212,11 @@ onMounted(() => {
       </template>
     </UPageSection>
 
-    <UPageSection class="relative">
-      <svg class="absolute top-0 inset-x-0 pointer-events-none opacity-30 dark:opacity-100" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 1017 181"><g opacity=".5"><mask id="c" fill="#fff"><path d="M0 0h1017v181H0V0Z" /></mask><path fill="url(#a)" fill-opacity=".5" d="M0 0h1017v181H0V0Z" /><path fill="url(#b)" d="M0 2h1017v-4H0v4Z" mask="url(#c)" /></g><defs><radialGradient
-        id="a"
-        cx="0"
-        cy="0"
-        r="1"
-        gradientTransform="rotate(90.177 244.7795736 263.4645037) scale(161.501 509.002)"
-        gradientUnits="userSpaceOnUse"
-      ><stop stop-color="#334155" /><stop offset="1" stop-color="#334155" stop-opacity="0" /></radialGradient><linearGradient
-        id="b"
-        x1="10.9784"
-        x2="1017"
-        y1="91"
-        y2="90.502"
-        gradientUnits="userSpaceOnUse"
-      ><stop stop-color="#334155" stop-opacity="0" /><stop offset=".395" stop-color="#334155" /><stop offset="1" stop-color="#334155" stop-opacity="0" /></linearGradient></defs></svg>
+    <UPageSection
+      :ui="{
+        root: 'bg-gradient-to-b border-t border-(--ui-border) from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)'
+      }"
+    >
       <template #title>
         <MDC :value="page.foundation.title" unwrap="p" />
       </template>
@@ -265,17 +255,21 @@ onMounted(() => {
             }"
           >
             <template #leading>
-              <div class="flex items-center space-x-3">
-                <UIcon
+              <div class="flex items-center space-x-1">
+                <div
                   v-for="(bundler, bIndex) in group.items"
                   :key="bIndex"
-                  :name="bundler.logo"
-                  class="cursor-pointer transition-all duration-300 ease-in-out"
-                  :class="bIndex === activeBundlerIndex
-                    ? 'size-7 opacity-100'
-                    : 'size-5 opacity-50 grayscale'"
-                  @click="activeBundlerIndex = bIndex"
-                />
+                  class="size-7 justify-center inline-flex items-end"
+                >
+                  <UIcon
+                    :name="bundler.logo"
+                    class="cursor-pointer transition-all duration-300 ease-in-out"
+                    :class="bIndex === activeBundlerIndex
+                      ? 'size-7 opacity-100'
+                      : 'size-6 opacity-50 grayscale hover:size-6.5'"
+                    @click="activeBundlerIndex = bIndex"
+                  />
+                </div>
               </div>
             </template>
             <ULink
@@ -288,35 +282,6 @@ onMounted(() => {
         </template>
       </div>
     </UPageSection>
-
-    <UPageSection
-      :description="page.modules.description.replace('%s', officialModules.length.toString())"
-      :links="page.modules.links"
-      :ui="{
-        title: 'text-left sm:text-4xl lg:text-5xl font-semibold',
-        description: 'text-left',
-        links: 'justify-start'
-      }"
-    >
-      <template #title>
-        <MDC :value="page.modules.title" unwrap="p" />
-      </template>
-      <UCarousel
-        v-slot="{ item }"
-        loop
-        dots
-        wheel-gestures
-        :autoplay="{ delay: 3000 }"
-        :items="officialModules"
-        class="bg-(--ui-primary) p-4 min-w-0 rounded-lg"
-        :ui="{
-          item: 'min-w-0 shrink-0 sm:basis-1/3'
-        }"
-      >
-        <ModuleItem :module="item" :show-badge="false" class="min-h-[180px]" />
-      </UCarousel>
-    </UPageSection>
-
     <UPageCTA
       :description="page.testimonial.quote"
       variant="subtle"
@@ -329,6 +294,33 @@ onMounted(() => {
         class="justify-center"
       />
     </UPageCTA>
+    <UPageSection
+      :description="page.modules.description"
+      :links="page.modules.links"
+      :ui="{
+        title: 'text-left sm:text-4xl lg:text-5xl font-semibold',
+        description: 'text-left',
+        links: 'justify-start'
+      }"
+    >
+      <template #title>
+        <MDC :value="page.modules.title" unwrap="p" />
+      </template>
+      <UCarousel
+        v-slot="{ item }"
+        dots
+        wheel-gestures
+        arrows
+        :items="officialModules"
+        class="bg-(--ui-primary) min-w-0 lg:rounded-lg p-4 -mx-4 sm:p-6 sm:-mx-6 lg:p-8 lg:-mx-8"
+        :ui="{
+          item: 'min-w-0 shrink-0 sm:basis-1/3',
+          arrows: 'hidden 2xl:block'
+        }"
+      >
+        <ModuleItem :module="item" :show-badge="false" class="min-h-[180px]" />
+      </UCarousel>
+    </UPageSection>
 
     <UPageSection
       :title="page.deploy.title"
@@ -336,6 +328,7 @@ onMounted(() => {
       :links="page.deploy.links"
       orientation="horizontal"
       :ui="{
+        root: 'bg-gradient-to-b border-t border-(--ui-border) from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)',
         title: 'sm:text-3xl lg:text-4xl font-semibold'
       }"
     >
@@ -351,79 +344,47 @@ onMounted(() => {
       :description="page.stats.description"
       class="relative"
       :ui="{
+        root: 'bg-gradient-to-b border-t border-(--ui-border) from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)',
         title: 'sm:text-3xl lg:text-4xl font-semibold'
       }"
     >
-      <div class="text-(--ui-primary) absolute top-0 inset-x-0 pointer-events-none opacity-30 dark:opacity-60">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 1017 181">
-          <g opacity=".5">
-            <mask id="mask" fill="white">
-              <path d="M0 0h1017v181H0V0Z" />
-            </mask>
-            <path fill="url(#gradient1)" fill-opacity=".5" d="M0 0h1017v181H0V0Z" />
-            <path fill="url(#gradient2)" d="M0 2h1017v-4H0v4Z" mask="url(#mask)" />
-          </g>
-          <defs>
-            <radialGradient
-              id="gradient1"
-              cx="0"
-              cy="0"
-              r="1"
-              gradientTransform="rotate(90.177 244.7795736 263.4645037) scale(161.501 509.002)"
-              gradientUnits="userSpaceOnUse"
-            >
-              <stop stop-color="currentColor" />
-              <stop offset="1" stop-color="currentColor" stop-opacity="0" />
-            </radialGradient>
-            <linearGradient
-              id="gradient2"
-              x1="10.9784"
-              x2="1017"
-              y1="91"
-              y2="90.502"
-              gradientUnits="userSpaceOnUse"
-            >
-              <stop stop-color="currentColor" stop-opacity="0" />
-              <stop offset=".395" stop-color="currentColor" />
-              <stop offset="1" stop-color="currentColor" stop-opacity="0" />
-            </linearGradient>
-          </defs>
-        </svg>
-      </div>
-
       <div class="flex flex-col md:flex-row gap-4">
         <div class="md:w-1/4 flex flex-col gap-4">
-          <UPageCard class="flex-1 bg-gradient-to-r from-(--ui-bg-inverted)/10 to-(--ui-bg)">
-            <div class="flex items-center gap-2">
-              <div class="rounded-lg bg-(--ui-bg) p-2 flex items-center justify-center border border-(--ui-border)">
+          <UPageCard class="flex-1" variant="subtle" to="https://npm.chart.dev/nuxt">
+            <div class="flex items-center gap-3">
+              <div class="rounded-[calc(var(--ui-radius)*2)] bg-(--ui-bg) p-2 flex items-center justify-center border border-(--ui-border)">
                 <UIcon name="i-simple-icons-npm" class="text-red-500 size-6" />
               </div>
               <div class="flex flex-col">
-                <span class="font-medium">
-                  {{ (stats.monthlyDownloads / 1000000).toFixed(1) }}M
+                <span class="font-semibold text-lg text-(--ui-text-highlighted)">
+                  {{ formatNumber(stats.monthlyDownloads) }}
                 </span>
-                <p>Monthly downloads</p>
+                <p class="text-sm">
+                  Monthly downloads
+                </p>
               </div>
             </div>
           </UPageCard>
 
-          <UPageCard class="flex-1 bg-gradient-to-r from-(--ui-bg-inverted)/10 to-(--ui-bg)">
+          <UPageCard class="flex-1" variant="subtle" to="https://go.nuxt.com/github">
             <div class="flex items-center gap-2">
               <div class="rounded-lg bg-(--ui-bg) p-2 flex items-center justify-center border border-(--ui-border)">
                 <UIcon name="i-simple-icons-github" class="size-6" />
               </div>
               <div class="flex flex-col">
-                <span class="font-medium">
-                  {{ (stats.stars / 1000).toFixed(1) }}k
+                <span class="font-semibold text-lg text-(--ui-text-highlighted)">
+                  {{ formatNumber(stats.stars) }}
                 </span>
-                <p>Stars</p>
+                <p class="text-sm">
+                  GitHub Stars
+                </p>
               </div>
             </div>
           </UPageCard>
         </div>
 
         <div class="md:w-1/2">
-          <UPageCard class="h-full bg-gradient-to-b from-(--ui-bg-inverted)/10 to-(--ui-bg)">
+          <UPageCard class="h-full" variant="subtle" to="https://go.nuxt.com/github">
             <div class="flex flex-col items-center justify-around h-full">
               <span class="text-xl font-semibold">
                 {{ page.stats.community.title }}
@@ -437,7 +398,7 @@ onMounted(() => {
         </div>
 
         <div class="md:w-1/4 flex flex-col gap-4">
-          <UPageCard class="flex-1 bg-gradient-to-r from-(--ui-bg-inverted)/10 to-(--ui-bg)">
+          <UPageCard class="flex-1" variant="subtle" to="https://go.nuxt.com/x">
             <div class="flex items-center gap-2">
               <div class="rounded-lg bg-(--ui-bg) p-2 flex items-center justify-center border border-(--ui-border)">
                 <UIcon name="i-simple-icons-x" class="size-6" />
@@ -451,7 +412,7 @@ onMounted(() => {
             </div>
           </UPageCard>
 
-          <UPageCard class="flex-1 bg-gradient-to-r from-(--ui-bg-inverted)/10 to-(--ui-bg)">
+          <UPageCard class="flex-1" variant="subtle" to="https://go.nuxt.com/discord">
             <div class="flex items-center gap-2">
               <div class="rounded-lg bg-(--ui-bg) p-2 flex items-center justify-center border border-(--ui-border)">
                 <UIcon name="i-simple-icons-discord" class="text-indigo-400 size-6" />
@@ -475,9 +436,9 @@ onMounted(() => {
       orientation="horizontal"
       class="relative"
       :ui="{
+        root: 'bg-gradient-to-b border-t border-(--ui-border) from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)',
         title: 'text-left sm:text-3xl lg:text-4xl font-semibold',
         description: 'text-left',
-        container: 'py-12 sm:py-16 lg:py-20',
         links: 'justify-start'
       }"
     >
@@ -510,26 +471,11 @@ onMounted(() => {
       :description="page.sponsors.description"
       class="relative"
       :ui="{
+        root: 'bg-gradient-to-b border-t border-(--ui-border) from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)',
         container: 'py-12 sm:py-16 lg:py-20',
         title: 'sm:text-3xl lg:text-4xl font-semibold'
       }"
     >
-      <svg class="absolute top-0 inset-x-0 pointer-events-none opacity-30 dark:opacity-100" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 1017 181"><g opacity=".5"><mask id="c" fill="#fff"><path d="M0 0h1017v181H0V0Z" /></mask><path fill="url(#a)" fill-opacity=".5" d="M0 0h1017v181H0V0Z" /><path fill="url(#b)" d="M0 2h1017v-4H0v4Z" mask="url(#c)" /></g><defs><radialGradient
-        id="a"
-        cx="0"
-        cy="0"
-        r="1"
-        gradientTransform="rotate(90.177 244.7795736 263.4645037) scale(161.501 509.002)"
-        gradientUnits="userSpaceOnUse"
-      ><stop stop-color="#334155" /><stop offset="1" stop-color="#334155" stop-opacity="0" /></radialGradient><linearGradient
-        id="b"
-        x1="10.9784"
-        x2="1017"
-        y1="91"
-        y2="90.502"
-        gradientUnits="userSpaceOnUse"
-      ><stop stop-color="#334155" stop-opacity="0" /><stop offset=".395" stop-color="#334155" /><stop offset="1" stop-color="#334155" stop-opacity="0" /></linearGradient></defs></svg>
-
       <div class="flex flex-col items-center">
         <template v-for="([key, value]) of Object.entries(sponsors).filter(([k]) => ['platinum', 'gold'].includes(k))" :key="key">
           <div class="w-full mb-24">
@@ -554,13 +500,14 @@ onMounted(() => {
                           <NuxtLink
                             :to="value[(rowIndex * 3) + colIndex - 1].sponsorUrl"
                             target="_blank"
-                            class="flex items-center justify-center h-full hover:bg-(--ui-bg-muted)/50 transition-colors"
+                            class="flex items-center gap-2 justify-center h-full hover:bg-(--ui-bg-muted)/50 transition-colors"
                           >
                             <NuxtImg
                               :src="value[(rowIndex * 3) + colIndex - 1].sponsorLogo"
                               :alt="value[(rowIndex * 3) + colIndex - 1].sponsorName"
-                              class="h-10 max-w-[140px] object-contain"
+                              class="h-10 max-w-[140px] object-contain rounded-[calc(var(--ui-radius)*2)]"
                             />
+                            <span class="text-base">{{ value[(rowIndex * 3) + colIndex - 1].sponsorName }}</span>
                           </NuxtLink>
                         </td>
                         <td

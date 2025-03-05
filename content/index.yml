@@ -298,17 +298,17 @@ features:
       title: Zero-config TypeScript support
       description: Write type-safe code with auto-generated types and tsconfig.json.
   cta:
-    title: 'Deep dive into Nuxt now:'
+    title: 'Deep dive into Nuxt now'
     label: Start reading docs
     to: /docs
     icon: i-lucide-arrow-right
 foundation:
   title: Built on a solid foundation
-  description: TODO
+  description: Nuxt is built on top of bulletproof open source technologies, with versatility to choose between different build tools.
   items:
     - id: vue
       title: Frontend with Vue.js
-      description: Nuxt is built on top of Vue.js, leveraging its reactive and component-based architecture.
+      description: Nuxt is built on top of Vue.js, leveraging its reactive, component-based architecture to create powerful, scalable, and seamless web applications.
       logo: i-custom-vue
       color: '#42B883'
       gradient: 'bg-gradient-to-br from-[#42B883]/10 from-5% via-transparent via-50% to-transparent'
@@ -317,7 +317,7 @@ foundation:
         to: https://vuejs.org
     - id: bundler
       title: Bundler with Vite
-      description: Nuxt leverages Vite's frontend build capabilities, powering rapid development of web applications.
+      description: Nuxt leverages Vite's frontend build capabilities, powering rapid development of web applications with instant HMR.
       logo: i-custom-vite
       color: '#A156FE'
       gradient: 'bg-gradient-to-br from-[#A156FE]/10 from-5% via-transparent via-50% to-transparent'
@@ -326,7 +326,7 @@ foundation:
         to: https://vite.dev
     - id: bundler
       title: Bundler with Webpack
-      description: Nuxt leverages Webpack's frontend build capabilities, powering rapid development of web applications.
+      description: Nuxt harnesses Webpack’s robust bundling and optimization capabilities, ensuring a stable and scalable development experience with efficient module management.
       logo: i-custom-webpack
       color: '#8ED6FB'
       gradient: 'bg-gradient-to-br from-[#8ED6FB]/10 from-5% via-transparent via-50% to-transparent'
@@ -335,7 +335,7 @@ foundation:
         to: https://webpack.js.org
     - id: bundler
       title: Bundler with Rspack
-      description: Nuxt leverages Rspack's frontend build capabilities, powering rapid development of web applications.
+      description: Nuxt integrates Rspack’s high-performance bundling, accelerating builds and HMR for a seamless developer experience at scale.
       logo: i-custom-rspack
       color: '#F93920'
       gradient: 'bg-gradient-to-br from-[#F93920]/10 from-5% via-transparent via-50% to-transparent'
@@ -344,7 +344,7 @@ foundation:
         to: https://rspack.dev
     - id: nitro
       title: Server with Nitro
-      description: Nuxt uses Nitro to build versatile web servers, ready for deployment on any platform.
+      description: Nuxt uses Nitro as server engine to build versatile full-stack web applications, ready for deployment on any platform.
       logo: i-custom-nitro
       color: '#FB848E'
       gradient: 'bg-gradient-to-br from-[#FB848E]/10 from-5% via-transparent via-50% to-transparent'
@@ -352,8 +352,8 @@ foundation:
         label: nitro.build
         to: https://nitro.build
 modules:
-  title: A complete solution with our [official]{.text-(--ui-primary)} modules
-  description: Choose from over 200 modules, including %s official modules, to extend your Nuxt applications.
+  title: Extend Nuxt with plug & play modules
+  description: Nuxt has a rich module ecosystem, with both official and community-driven modules. This accelerates development by providing ready-to-use solutions for common needs.
   links:
     - label: Explore all modules
       to: /modules
@@ -374,7 +374,7 @@ deploy:
   description: One-command deployments and zero-configuration options make it easy to get your Nuxt app live. Choose your platform, and let Nuxt handle the rest, allowing you to focus on building great applications rather than managing complex deployments.
   links:
     - label: Learn how to deploy now
-      to: /docs/getting-started/deploy
+      to: /deploy
       icon: i-lucide-arrow-right
       color: neutral
       trailing: true
@@ -385,18 +385,18 @@ stats:
     What began as a Vue-based solution for automating tasks and server-side rendering is now trusted by startups and enterprises all around the world.
   community:
     title: Open source
-    description: Nuxt is 100% powered by our passionate open source community. Every line of Nuxt is powered by passionate developers like you.
+    description: Nuxt is 100% powered by our passionate open source community. Every line of Nuxt is written by passionate developers like you.
   x: 97.2k
   discord: 27k
   cta:
     label: Start contributing
     to: 'https://github.com/nuxt/nuxt'
     color: neutral
-    variant: subtle
+    variant: outline
     icon: i-simple-icons-github
     trailing: true
 expertise:
-  title: Nuxt Expertise
+  title: Nuxt Enterprise Support
   description: |
     To ensure your Nuxt projects reach their full potential, our team—featuring :icon{name=i-custom-vue} Vue, :icon{name=i-custom-nuxt} Nuxt, :icon{name=i-custom-vite} Vite, core contributors — offers a complete suite of services.
   features:
