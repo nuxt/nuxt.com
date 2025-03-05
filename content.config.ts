@@ -87,6 +87,10 @@ const PageSection = BaseSection.extend({
 
 const PageHero = BaseSection.extend({
   image: DualModeImage.optional(),
+  head: z.object({
+    title: z.string().optional(),
+    description: z.string().optional()
+  }).optional(),
   headline: z.object({
     label: z.string(),
     to: z.string(),
@@ -182,6 +186,8 @@ export default defineContentConfig({
         include: 'modules.yml'
       }, {
         include: 'deploy.yml'
+      }, {
+        include: 'showcase.yml'
       }],
       schema: PageHero
     }),
