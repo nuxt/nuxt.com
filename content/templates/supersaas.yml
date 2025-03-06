@@ -3,4 +3,5 @@ slug: 'supersaas'
 description: 'Nuxt 3 Fullstack Starter Kit with Auth, DB, Payment, Files & Emails'
 demo: 'https://supersaas.dev/?aff=J0Emk'
 purchase: 'https://supersaas.dev/?aff=J0Emk'
-badge: 'Premium' 
+badge: 'Premium'
+featured: true

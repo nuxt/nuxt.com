@@ -162,15 +162,11 @@ hero:
 
         ```vue [components/MyInput.vue]
         <script setup>
-        defineProps(['modelValue'])
-        defineEmits(['update:modelValue'])
+        const modelValue = defineModel<string>()
         </script>
 
         <template>
-          <input
-            :value="modelValue"
-            @input="$emit('update:modelValue', $event.target.value)"
-          >
+          <input v-model="modelValue" />
         </template>
         ```
         ```ts [composables/say-hello.ts]

@@ -107,6 +107,7 @@ const Template = z.object({
   repo: z.string().optional(),
   demo: z.string().url(),
   purchase: z.string().url().optional(),
+  featured: z.boolean().optional(),
   badge: z.enum(['Premium', 'Freemium', 'Free']).optional(),
   screenshotUrl: z.string().url().optional(),
   screenshotOptions: z.object({
@@ -201,7 +202,7 @@ export default defineContentConfig({
       }, {
         include: 'deploy.yml'
       }, {
-        include: 'templates.yml',
+        include: 'templates.yml'
       }, {
         include: 'showcase.yml'
       }],
