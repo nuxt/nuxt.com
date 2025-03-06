@@ -28,7 +28,7 @@ const links = computed(() => headerLinks.value.find(link => link.to === '/docs')
 
             <UContentNavigation
               :navigation="asideNavigation"
-              :default-open="false"
+              default-open
               trailing-icon="i-lucide-chevron-right"
               :ui="{ linkTrailingIcon: 'group-data-[state=open]:rotate-90' }"
               highlight
