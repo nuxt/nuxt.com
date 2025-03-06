@@ -3,7 +3,7 @@ import { hasProtocol } from 'ufo'
 export type SponsorType = 'diamond' | 'platinum' | 'silver' | 'gold' | 'bronze' | 'backers'
 
 const inactiveSponsors = [
-  'strapijs-bot',
+  'strapijs',
   'planfredapp'
 ]
 
