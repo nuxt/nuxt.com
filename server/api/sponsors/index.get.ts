@@ -1,10 +1,11 @@
 type Tier = (amount: number) => boolean
 
 const tiersMap: { [tier: string]: Tier } = {
-  platinum: amount => amount >= 1000,
+  diamond: amount => amount >= 2500,
+  platinum: amount => amount >= 1000 && amount < 2500,
   gold: amount => amount < 1000 && amount >= 500,
-  silver: amount => amount < 500 && amount >= 200,
-  bronze: amount => amount < 200 && amount >= 100,
+  silver: amount => amount < 500 && amount >= 250,
+  bronze: amount => amount <= 200 && amount >= 100,
   backer: amount => amount < 100
 }
 

@@ -1,6 +1,11 @@
 import { hasProtocol } from 'ufo'
 
-export type SponsorType = 'platinum' | 'silver' | 'gold' | 'bronze' | 'backers'
+export type SponsorType = 'diamond' | 'platinum' | 'silver' | 'gold' | 'bronze' | 'backers'
+
+const inactiveSponsors = [
+  'strapijs-bot',
+  'planfredapp'
+]
 
 export interface Sponsor {
   sponsorId: string
@@ -107,7 +112,7 @@ export async function fetchOpenCollectiveSponsors() {
         monthlyPriceInDollars: sponsor.tier.amount.value
       }
     }) || [])
-    response.push(...sponsors)
+    response.push(...sponsors.filter(sponsor => !inactiveSponsors.includes(sponsor.sponsorId)))
   } while (offset)
 
   return response
@@ -205,8 +210,15 @@ export const fetchGithubSponsors = async (): Promise<Sponsor[]> => {
 
       return sponsor
     }) || [])
-    response.push(...sponsors)
+    response.push(...sponsors.filter(sponsor => !inactiveSponsors.includes(sponsor.sponsorId)))
   } while (hasNext)
 
+  response.unshift({
+    sponsorId: 'nuxtlabs',
+    sponsorName: 'NuxtLabs',
+    sponsorLogo: 'https://avatars.githubusercontent.com/u/62017400',
+    sponsorUrl: 'https://nuxtlabs.com',
+    monthlyPriceInDollars: 10000
+  })
   return response
 }
