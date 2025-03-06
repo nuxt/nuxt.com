@@ -196,6 +196,12 @@ export const fetchGithubSponsors = async (): Promise<Sponsor[]> => {
         sponsor.sponsorName = 'Dotcom Monitor'
         sponsor.sponsorUrl = 'https://www.dotcom-monitor.com/sponsoring-open-source-projects/'
       }
+      if (sponsor.sponsorId === 'netlify-bot') {
+        sponsor.sponsorName = 'Netlify'
+      }
+      if (sponsor.sponsorId === 'zenarchitects') {
+        sponsor.sponsorName = 'Zen Architects'
+      }
 
       return sponsor
     }) || [])
