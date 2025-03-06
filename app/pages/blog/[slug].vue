@@ -89,7 +89,7 @@ const links = [
         </div>
       </UPageHeader>
 
-      <UPage>
+      <UPage class="lg:gap-24">
         <UPageBody>
           <ContentRenderer v-if="article.body" :value="article" />
 

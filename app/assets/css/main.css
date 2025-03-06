@@ -2,6 +2,7 @@
 @import "@nuxt/ui-pro";
 
 @source "../../../content/**/*";
+@source "../../../node_modules/.c12";
 
 @theme static {
   --font-sans: 'Public Sans', sans-serif;
@@ -17,24 +18,15 @@
   --color-green-800: #016538;
   --color-green-900: #0A5331;
   --color-green-950: #052E16;
-
-  --color-slate-50: #f8fafc;
-  --color-slate-100: #f1f5f9;
-  --color-slate-200: #e2e8f0;
-  --color-slate-300: #cbd5e1;
-  --color-slate-400: #94a3b8;
-  --color-slate-500: #64748b;
-  --color-slate-600: #475569;
-  --color-slate-700: #334155;
-  --color-slate-800: #1e293b;
-  --color-slate-900: #0f172a;
-  --color-slate-950: #020420;
 }
 
 :root {
-  --ui-container: var(--container-7xl);
+  --ui-container: 90rem;
 }
 
 .dark {
-  --ui-bg: var(--color-slate-950);
+  --ui-bg: var(--ui-color-neutral-950);
+  --ui-bg-muted: var(--ui-color-neutral-900);
+  --ui-bg-elevated: var(--ui-color-neutral-900);
+  --ui-bg-accented: var(--ui-color-neutral-800);
 }

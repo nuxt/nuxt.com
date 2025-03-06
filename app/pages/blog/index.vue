@@ -62,7 +62,7 @@ await fetchList()
 
     <UBlogPosts class="mb-12 md:grid-cols-2 lg:grid-cols-3">
       <UBlogPost
-        v-for="article in articles"
+        v-for="(article, index) in articles"
         :key="article.path"
         :to="article.path"
         :title="article.title"
@@ -71,6 +71,9 @@ await fetchList()
         :date="formatDateByLocale('en', article.date)"
         :authors="article.authors"
         :badge="{ label: article.category, color: 'primary', variant: 'subtle' }"
+        :variant="index === 0 ? 'naked' : 'subtle'"
+        :orientation="index === 0 ? 'horizontal' : 'vertical'"
+        :class="[index === 0 && 'col-span-full']"
       />
     </UBlogPosts>
   </UContainer>

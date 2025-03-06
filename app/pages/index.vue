@@ -145,18 +145,19 @@ onMounted(() => {
       </template>
 
       <UPageCard
-        class="overflow-auto lg:absolute lg:-mt-16 right-0 w-screen lg:w-[calc(50%-2rem)] rounded-none lg:rounded-l-[calc(var(--ui-radius)*2)] -mx-4 sm:-mx-6 lg:mx-0"
+        class="overflow-auto lg:absolute lg:-mt-16 right-0 w-screen lg:w-[calc(50%-2rem)] rounded-none lg:rounded-l-[calc(var(--ui-radius)*4)] -mx-4 sm:-mx-6 lg:mx-0"
         variant="subtle"
-        :ui="{ container: 'sm:pt-4.5 lg:pr-0' }"
+        :ui="{ container: 'sm:pt-4.5 lg:pr-0 w-full' }"
       >
         <UTabs
           :items="tabs"
           :unmount-on-hide="false"
           :ui="{
-            list: 'px-0 bg-transparent overflow-x-auto pr-4',
+            list: 'px-0 bg-transparent lg:pr-4 overflow-x-auto items-stretch',
             trigger: 'group data-[state=active]:text-(--ui-text-highlighted)',
             indicator: 'bg-(--ui-bg)',
-            leadingIcon: 'group-data-[state=active]:text-(--ui-primary)! size-4 xl:inline-flex hidden',
+            leadingIcon: 'group-data-[state=active]:text-(--ui-primary) size-4 hidden sm:inline-flex',
+            label: 'text-clip',
             content: 'lg:h-[450px] bg-(--ui-bg) rounded-[calc(var(--ui-radius)*1.5)] transition-opacity duration-500 data-[state=inactive]:opacity-0 opacity-100'
           }"
         >
@@ -508,7 +509,7 @@ onMounted(() => {
                               :alt="value[(rowIndex * 3) + colIndex - 1].sponsorName"
                               class="h-10 max-w-[140px] object-contain rounded-[calc(var(--ui-radius)*2)]"
                             />
-                            <span class="text-base">{{ value[(rowIndex * 3) + colIndex - 1].sponsorName }}</span>
+                            <span class="text-base hidden sm:block font-medium">{{ value[(rowIndex * 3) + colIndex - 1].sponsorName }}</span>
                           </NuxtLink>
                         </td>
                         <td

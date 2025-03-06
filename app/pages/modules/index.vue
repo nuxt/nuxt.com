@@ -109,7 +109,7 @@ defineShortcuts({
         </UPageAside>
       </template>
 
-      <UPageBody class="lg:pl-8">
+      <UPageBody>
         <div class="lg:hidden mb-6 flex items-center gap-2">
           <UInput
             ref="inputRef"

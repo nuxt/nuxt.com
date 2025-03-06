@@ -56,7 +56,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <UHeader class="dark:bg-(--ui-color-neutral-950)" :menu="{ ui: { overlay: 'bg-(--ui-color-neutral-950)', content: 'bg-(--ui-color-neutral-950)' } }">
+  <UHeader>
     <template #left>
       <UContextMenu
         :items="logoContextMenuItems"
