@@ -2,10 +2,11 @@ import { z } from 'zod'
 import { satisfies } from 'semver'
 
 export default defineCachedEventHandler(async (event) => {
-  const { version } = await getValidatedQuery(event, z.object({
-    version: z.enum(['2', '2-bridge', '3', 'all']).default('3')
+  const { version, category } = await getValidatedQuery(event, z.object({
+    version: z.enum(['2', '2-bridge', '3', 'all']).default('3'),
+    category: z.string().optional()
   }).parse)
-  console.log(`Fetching v${version} modules...`)
+  console.log(`Fetching v${version} modules...${category ? ` for category: ${category}` : ''}`)
 
   let modules = await fetchModules(event) as any[]
 
@@ -20,6 +21,22 @@ export default defineCachedEventHandler(async (event) => {
         return false
       }
       return satisfies(testableVersion, module.compatibility.nuxt)
+    })
+  }
+
+  // Filter by category if provided
+  if (category) {
+    const lowerCaseCategory = category.toLowerCase()
+    modules = modules.filter((module) => {
+      if (module.category && module.category.toLowerCase() === lowerCaseCategory) {
+        return true
+      }
+
+      if (module.categories && Array.isArray(module.categories)) {
+        return module.categories.some((cat: string) => cat.toLowerCase() === lowerCaseCategory)
+      }
+
+      return false
     })
   }
 
@@ -46,6 +63,7 @@ export default defineCachedEventHandler(async (event) => {
 
   return {
     version,
+    category: category || null,
     generatedAt: new Date().toISOString(),
     stats: {
       downloads: modules.reduce((acc, module) => acc + (module.stats?.downloads || 0), 0),
@@ -62,7 +80,8 @@ export default defineCachedEventHandler(async (event) => {
   name: 'modules',
   swr: true,
   getKey(event) {
-    return (getQuery(event)?.version || '3') as string
+    const query = getQuery(event)
+    return `${query?.version || '3'}-${query?.category || 'all'}`
   },
   maxAge: 60 * 60 // 1 hour
 })
