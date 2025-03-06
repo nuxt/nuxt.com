@@ -89,7 +89,8 @@ onMounted(() => {
       class="relative"
       orientation="horizontal"
       :ui="{
-        container: '!pb-20',
+        container: '!pb-20 py-24 sm:py-32 lg:py-40',
+        title: 'text-5xl sm:text-7xl',
         wrapper: 'lg:min-h-[540px]'
       }"
     >

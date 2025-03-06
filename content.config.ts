@@ -205,6 +205,8 @@ export default defineContentConfig({
         include: 'templates.yml'
       }, {
         include: 'showcase.yml'
+      }, {
+        include: 'video-courses.yml'
       }],
       schema: PageHero
     }),
@@ -311,6 +313,22 @@ export default defineContentConfig({
       type: 'data',
       source: 'templates/*',
       schema: Template
+    }),
+    videoCourses: defineCollection({
+      type: 'data',
+      source: 'video-courses/*',
+      schema: z.object({
+        name: z.string(),
+        slug: z.string(),
+        description: z.string(),
+        url: z.string().url(),
+        badge: z.enum(['Premium', 'Free']).optional(),
+        screenshotOptions: z.object({
+          delay: z.number(),
+          removeElements: z.array(z.string()).optional()
+        }).optional(),
+        sponsor: z.boolean().optional()
+      })
     })
   }
 })

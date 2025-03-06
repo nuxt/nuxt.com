@@ -36,8 +36,7 @@ const otherProviders = computed(() => providers.value.filter(provider => provide
     <UPageHero
       v-bind="page"
       :ui="{
-        container: 'py-10 sm:py-20 lg:py-20 px-0 sm:px-0 lg:px-0',
-        title: 'sm:text-5xl'
+        container: 'px-0 sm:px-0 lg:px-0'
       }"
     />
 
