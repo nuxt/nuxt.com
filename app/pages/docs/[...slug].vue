@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ContentNavigationItem } from '@nuxt/content'
-import { findPageBreadcrumb, mapContentNavigation } from '#ui-pro/utils'
+import { findPageBreadcrumb, mapContentNavigation } from '@nuxt/ui-pro/utils/content'
 
 definePageMeta({
   layout: 'docs',

@@ -1,20 +1,14 @@
 <script setup lang="ts">
 import type { ContentNavigationItem } from '@nuxt/content'
-import { mapContentNavigation } from '#ui-pro/utils'
 
 const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
 
 const route = useRoute()
 
-const navigationLinks = computed(() => {
+const asideNavigation = computed(() => {
   const path = ['/docs', route.params.slug?.[0]].filter(Boolean).join('/')
-  const links = mapContentNavigation(navPageFromPath(path, navigation.value)?.children || [])
 
-  return links.map(link => ({
-    ...link,
-    title: link.label,
-    path: link.to
-  }))
+  return navPageFromPath(path, navigation.value)?.children || []
 })
 
 const { headerLinks } = useNavigation()
@@ -33,7 +27,7 @@ const links = computed(() => headerLinks.value.find(link => link.to === '/docs')
             <USeparator type="dashed" class="my-6" />
 
             <UContentNavigation
-              :navigation="navigationLinks"
+              :navigation="asideNavigation"
               :default-open="false"
               trailing-icon="i-lucide-chevron-right"
               :ui="{ linkTrailingIcon: 'group-data-[state=open]:rotate-90' }"

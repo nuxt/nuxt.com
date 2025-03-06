@@ -212,7 +212,7 @@ const _useNavigation = () => {
     }])
 
   const searchGroups = [{
-    key: 'ask-ai-search',
+    id: 'ask-ai-search',
     label: 'AI',
     icon: 'i-ph-magic-wand',
     search: async (q) => {
@@ -230,7 +230,7 @@ const _useNavigation = () => {
       }]
     }
   }, {
-    key: 'modules-search',
+    id: 'modules-search',
     label: 'Modules',
     search: async (q) => {
       if (!q) {
@@ -258,7 +258,7 @@ const _useNavigation = () => {
         }))
     }
   }, {
-    key: 'hosting-search',
+    id: 'hosting-search',
     label: 'Hosting',
     search: async (q) => {
       if (!q) {
@@ -273,7 +273,7 @@ const _useNavigation = () => {
       return providers.value
         .filter(hosting => ['title'].map(field => hosting[field]).filter(Boolean).some(value => value.search(searchTextRegExp(q)) !== -1))
         .map(hosting => ({
-          id: `hosting-${hosting._path}`,
+          id: `hosting-${hosting.path}`,
           label: hosting.title,
           suffix: hosting.description,
           icon: hosting.logoIcon,
@@ -282,11 +282,11 @@ const _useNavigation = () => {
                 src: hosting.logoSrc
               }
             : undefined,
-          to: hosting._path
+          to: hosting.path
         }))
     }
   }, {
-    key: 'articles-search',
+    id: 'articles-search',
     label: 'Articles',
     search: async (q) => {
       if (!q) {
@@ -301,11 +301,11 @@ const _useNavigation = () => {
       return articles.value
         .filter(article => article.title.search(searchTextRegExp(q)) !== -1)
         .map(article => ({
-          id: `article-${article._path}`,
+          id: `article-${article.path}`,
           label: article.title,
           suffix: article.description,
           icon: 'i-ph-newspaper',
-          to: article._path
+          to: article.path
         }))
     }
   }]

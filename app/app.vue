@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { debounce } from 'perfect-debounce'
-import './assets/css/twoslash.css'
 
 const search = ref(null)
 const colorMode = useColorMode()
@@ -76,11 +75,12 @@ onMounted(() => {
   <UApp>
     <NuxtLoadingIndicator />
 
-    <AppBanner
+    <UBanner
       id="nuxt-tips-christmas"
       title="Learn Nuxt with a Collection of 100+ Tips!"
       icon="i-ph-magic-wand"
       to="https://michaelnthiessen.com/nuxt-tips-collection?aff=J0Emk"
+      close
       :actions="[
         {
           label: 'Learn more',

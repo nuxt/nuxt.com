@@ -22,7 +22,7 @@
     "@nuxt/content": "^3.2.2",
     "@nuxt/image": "^1.9.0",
     "@nuxt/scripts": "^0.10.5",
-    "@nuxt/ui-pro": "https://pkg.pr.new/@nuxt/ui-pro@959b99f",
+    "@nuxt/ui-pro": "https://pkg.pr.new/@nuxt/ui-pro@626140e",
     "@nuxtjs/html-validator": "^2.1.0",
     "@nuxtjs/plausible": "^1.2.0",
     "@vueuse/components": "^12.8.1",
@@ -59,7 +59,8 @@
     "vue-tsc": "^2.2.8"
   },
   "resolutions": {
-    "chokidar": "3.6.0"
+    "chokidar": "3.6.0",
+    "unimport": "3.14.5"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

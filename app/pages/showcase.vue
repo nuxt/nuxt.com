@@ -34,16 +34,11 @@ await fetchList()
         <UButton
           v-for="category in categories"
           :key="category.key"
-          v-bind="{
-            ...category,
-            ...(category.label === route.query.category || (!route.query.category && category.label === 'Featured') ? {
-              color: 'primary',
-              variant: 'subtle'
-            } : {
-              color: 'neutral',
-              variant: 'outline'
-            })
-          }"
+          v-bind="category"
+          color="neutral"
+          variant="outline"
+          active-color="primary"
+          active-variant="subtle"
           size="sm"
         />
       </template>
