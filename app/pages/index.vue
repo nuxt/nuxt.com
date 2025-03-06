@@ -24,8 +24,8 @@ const stats = useStats()
 const videoModalOpen = ref(false)
 
 const site = useSiteConfig()
-const title = 'Nuxt: The Intuitive Vue Framework'
-const description = 'Nuxt is an open source framework that makes web development intuitive and powerful. Create performant and production-grade full-stack web apps and websites with confidence.'
+const title = 'Nuxt: The Progressive Web Framework'
+const description = 'Create high-quality web applications with Nuxt, the open source framework that makes full-stack development with Vue.js intuitive.'
 useSeoMeta({
   title,
   ogTitle: title,
@@ -96,19 +96,19 @@ onMounted(() => {
     >
       <template #headline>
         <NuxtLink :to="page.hero.cta.to">
-          <UBadge variant="subtle" size="lg" class="relative rounded-full font-semibold dark:hover:bg-primary-400/15 dark:hover:ring-primary-700">
+          <UBadge variant="subtle" size="lg" class="px-3 relative rounded-full font-semibold dark:hover:bg-primary-400/15 dark:hover:ring-primary-700">
             {{ page?.hero.cta.label }}
             <UIcon
               v-if="page?.hero.cta.icon"
               :name="page?.hero.cta.icon"
-              class="ml-1 w-4 h-4 pointer-events-none"
+              class="w-4 h-4 pointer-events-none"
             />
           </UBadge>
         </NuxtLink>
       </template>
 
       <template #title>
-        The Intuitive<br><span class="text-(--ui-primary)">Web Framework</span>
+        The Progressive<br><span class="text-(--ui-primary)">Web Framework</span>
       </template>
 
       <template #description>
@@ -117,8 +117,8 @@ onMounted(() => {
 
       <template #links>
         <div class="flex flex-col gap-4">
-          <div class="flex items-center gap-2">
-            <UButton to="/docs/getting-started/installation" trailing-icon="i-ph-arrow-right" size="xl">
+          <div class="flex items-center flex-wrap gap-2">
+            <UButton to="/docs/getting-started/installation" size="xl">
               Get Started
             </UButton>
             <UButton size="xl" color="neutral" variant="ghost" trailing-icon="i-ph-play-circle" @click="videoModalOpen = true">
@@ -191,7 +191,7 @@ onMounted(() => {
       :title="page?.features.title"
       :description="page?.features.description"
       :ui="{
-        title: 'text-left lg:text-4xl',
+        title: 'text-left',
         description: 'text-left',
         root: 'bg-gradient-to-b border-t border-(--ui-border) from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)',
         features: 'xl:grid-cols-4 lg:gap-10'
@@ -258,7 +258,7 @@ onMounted(() => {
             }"
           >
             <template #leading>
-              <div class="flex items-center space-x-1">
+              <div class="flex items-center space-x-2">
                 <div
                   v-for="(bundler, bIndex) in group.items"
                   :key="bIndex"
@@ -266,10 +266,10 @@ onMounted(() => {
                 >
                   <UIcon
                     :name="bundler.logo"
-                    class="cursor-pointer transition-all duration-300 ease-in-out"
+                    class="cursor-pointer transition-all duration-150 ease-in-out"
                     :class="bIndex === activeBundlerIndex
                       ? 'size-7 opacity-100'
-                      : 'size-6 opacity-50 grayscale hover:size-6.5'"
+                      : 'size-6 opacity-50 grayscale hover:size-7'"
                     @click="activeBundlerIndex = bIndex"
                   />
                 </div>
@@ -298,57 +298,11 @@ onMounted(() => {
       />
     </UPageCTA>
     <UPageSection
-      :description="page.modules.description"
-      :links="page.modules.links"
-      :ui="{
-        title: 'text-left sm:text-4xl lg:text-5xl font-semibold',
-        description: 'text-left',
-        links: 'justify-start'
-      }"
-    >
-      <template #title>
-        <MDC :value="page.modules.title" unwrap="p" />
-      </template>
-      <UCarousel
-        v-slot="{ item }"
-        dots
-        wheel-gestures
-        arrows
-        :items="officialModules"
-        class="bg-(--ui-primary) min-w-0 lg:rounded-lg p-4 -mx-4 sm:p-6 sm:-mx-6 lg:p-8 lg:-mx-8"
-        :ui="{
-          item: 'min-w-0 shrink-0 sm:basis-1/3',
-          arrows: 'hidden 2xl:block'
-        }"
-      >
-        <ModuleItem :module="item" :show-badge="false" class="min-h-[180px]" />
-      </UCarousel>
-    </UPageSection>
-
-    <UPageSection
-      :title="page.deploy.title"
-      :description="page.deploy.description"
-      :links="page.deploy.links"
-      orientation="horizontal"
-      :ui="{
-        root: 'bg-gradient-to-b border-t border-(--ui-border) from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)',
-        title: 'sm:text-3xl lg:text-4xl font-semibold'
-      }"
-    >
-      <NuxtImg
-        src="/assets/landing/deploy.svg"
-        alt="Deploy anywhere"
-        class="mx-auto max-w-lg sm:w-full"
-      />
-    </UPageSection>
-
-    <UPageSection
       :title="page.stats.title"
       :description="page.stats.description"
       class="relative"
       :ui="{
-        root: 'bg-gradient-to-b border-t border-(--ui-border) from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)',
-        title: 'sm:text-3xl lg:text-4xl font-semibold'
+        root: 'bg-gradient-to-b border-t border-(--ui-border) from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)'
       }"
     >
       <div class="flex flex-col md:flex-row gap-4">
@@ -433,26 +387,72 @@ onMounted(() => {
     </UPageSection>
 
     <UPageSection
-      :title="page.expertise.title"
-      :description="page.expertise.description"
-      :links="page.expertise.links"
-      orientation="horizontal"
-      class="relative"
+      :description="page.modules.description"
+      :links="page.modules.links"
       :ui="{
         root: 'bg-gradient-to-b border-t border-(--ui-border) from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)',
-        title: 'text-left sm:text-3xl lg:text-4xl font-semibold',
+        title: 'text-left',
         description: 'text-left',
         links: 'justify-start'
       }"
     >
       <template #title>
-        <MDC :value="page.expertise.title" unwrap="p" />
+        <MDC :value="page.modules.title" unwrap="p" />
+      </template>
+      <UCarousel
+        v-slot="{ item }"
+        dots
+        wheel-gestures
+        arrows
+        :items="officialModules"
+        class="bg-(--ui-bg-muted) border-y lg:border border-(--ui-border) min-w-0 lg:rounded-lg p-4 -mx-4 sm:p-6 sm:-mx-6 lg:p-8 lg:-mx-8"
+        :ui="{
+          container: 'ms-0',
+          item: 'min-w-0 shrink-0 sm:basis-1/3 p-2',
+          arrows: 'hidden 2xl:block'
+        }"
+      >
+        <ModuleItem :module="item" :show-badge="false" class="min-h-[180px]" />
+      </UCarousel>
+    </UPageSection>
+
+    <UPageSection
+      :title="page.deploy.title"
+      :description="page.deploy.description"
+      :links="page.deploy.links"
+      orientation="horizontal"
+      :ui="{
+        root: 'bg-gradient-to-b border-t border-(--ui-border) from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)'
+      }"
+    >
+      <NuxtImg
+        src="/assets/landing/deploy.svg"
+        alt="Deploy anywhere"
+        class="mx-auto max-w-lg sm:w-full"
+      />
+    </UPageSection>
+
+    <UPageSection
+      :title="page.support.title"
+      :description="page.support.description"
+      :links="page.support.links"
+      orientation="horizontal"
+      class="relative"
+      :ui="{
+        root: 'bg-gradient-to-b border-t border-(--ui-border) from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-20% to-(--ui-bg)',
+        title: 'text-left',
+        description: 'text-left',
+        links: 'justify-start'
+      }"
+    >
+      <template #title>
+        <MDC :value="page.support.title" unwrap="p" />
       </template>
       <template #description>
-        <MDC :value="page.expertise.description" unwrap="p" />
-        <UPageLogos :ui="{ logos: 'mt-4' }">
+        <MDC :value="page.support.description" unwrap="p" />
+        <UPageLogos :ui="{ logos: 'mt-6' }" marquee>
           <NuxtImg
-            v-for="company in page.expertise.companies"
+            v-for="company in page.support.companies"
             :key="company.alt"
             v-bind="company"
             class="h-8 max-w-[70px] object-contain filter invert dark:invert-0 opacity-50"
@@ -460,23 +460,39 @@ onMounted(() => {
         </UPageLogos>
       </template>
 
-      <div class="flex flex-col gap-6">
+      <UPageCard variant="subtle" :ui="{ container: 'gap-y-8 sm:p-8' }">
         <UPageFeature
-          v-for="(feature, index) in page.expertise.features"
+          v-for="(feature, index) in page.support.features"
           :key="index"
           v-bind="feature"
+          :ui="{
+            root: 'lg:items-center lg:gap-3',
+            leadingIcon: 'text-(--ui-text-highlighted)',
+            leading: 'bg-(--ui-bg) p-1 lg:p-2.5 rounded-(--ui-radius) border border-(--ui-border)',
+            description: 'mt-0'
+          }"
         />
-      </div>
+      </UPageCard>
     </UPageSection>
-
+    <UPageSection
+      :title="page.contributors.title"
+      :description="page.contributors.description"
+      :links="page.contributors.links"
+      orientation="horizontal"
+      reverse
+      :ui="{
+        root: 'bg-gradient-to-b border-t border-(--ui-border) from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)'
+      }"
+    >
+      <HomeSectionContributors />
+    </UPageSection>
     <UPageSection
       :title="page.sponsors.title"
       :description="page.sponsors.description"
       class="relative"
       :ui="{
         root: 'bg-gradient-to-b border-t border-(--ui-border) from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)',
-        container: 'py-12 sm:py-16 lg:py-20',
-        title: 'sm:text-3xl lg:text-4xl font-semibold'
+        container: 'py-12 sm:py-16 lg:py-20'
       }"
     >
       <div class="flex flex-col items-center">

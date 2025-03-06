@@ -155,13 +155,14 @@ export default defineContentConfig({
         modules: PageSection,
         testimonial: Testimonial,
         deploy: PageSection,
+        contributors: PageSection,
         stats: PageSection.extend({
           community: BaseSection,
           x: z.number(),
           discord: z.string(),
           cta: Button
         }),
-        expertise: PageSection.extend({
+        support: PageSection.extend({
           companies: z.array(Image.pick({ src: true, alt: true }))
         }),
         sponsors: PageSection.extend({

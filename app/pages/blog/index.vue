@@ -67,7 +67,13 @@ await fetchList()
         :to="article.path"
         :title="article.title"
         :description="article.description"
-        :image="{ src: article.image, width: 592, height: 333, placeholder: [59, 33, 50, 4], format: 'webp' }"
+        :image="{
+          src: article.image,
+          width: (index === 0 ? 672 : 437),
+          height: (index === 0 ? 378 : 246),
+          placeholder: [59, 33, 50, 40],
+          format: 'webp'
+        }"
         :date="formatDateByLocale('en', article.date)"
         :authors="article.authors"
         :badge="{ label: article.category, color: 'primary', variant: 'subtle' }"

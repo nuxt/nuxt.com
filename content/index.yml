@@ -1,6 +1,6 @@
 hero:
-  title: 'The Intuitive Web Framework'
-  description: Nuxt is an open source framework that makes web development intuitive and powerful. Create performant and production-grade full-stack web apps and websites with confidence.
+  title: 'The Progressive Web Framework'
+  description: Create high-quality web applications with Nuxt, the open source framework that makes full-stack development with Vue.js intuitive.
   cta:
     label: Nuxt v3.15 is out
     to: /blog/v3-15
@@ -238,7 +238,7 @@ hero:
         ```
         ::
 logos:
-  title: Used by various companies around the world
+  title: Chosen by leading companies worldwide
   companies:
     - src: /assets/brands/fielmann.svg
       alt: Fielmann
@@ -257,42 +257,42 @@ logos:
     - src: /assets/brands/too-good-to-go.svg
       alt: To Good to Go
 features:
-  title: The accessible and progressive framework for web development
-  description: Nuxt makes it easy to create powerful applications. We designed it to be approachable for developers of all levels. The framework grow and adapts to your needs while providing a great developer experience.
+  title: Enable features as you grow
+  description: Nuxt grows and adapts with your needs while providing an exceptional developer experience. Build anything from simple landing pages to complex web applications that scale for teams of hundreds of developers. We've designed Nuxt to be approachable for developers of all skill levels.
   features:
     - icon: i-lucide-sparkles
       title: Zero Configuration
-      description: Start coding your app right away, Nuxt takes care of the rest.
-    - icon: i-lucide-milestone
-      title: Routing & Layouts
-      description: File based routing system to build complex views and interfaces.
-    - icon: i-lucide-layout-grid
-      title: Component-based architecture
-      description: Build reusable components for efficient development.
+      description: Start coding with Vue or Typescript immediately — Nuxt handles all the setup for you.
     - icon: i-lucide-file-code-2
       title: Rendering Modes
-      description: Switch between static-site generation or on-demand server rendering.
+      description: Server-side rendering, client-side rendering, static-site generation, you decide, up to the page level.
+    - icon: i-lucide-milestone
+      title: Routing & Layouts
+      description: Use our file-based routing system to build complex url-based views while reusing components for performance.
+    - icon: i-lucide-unplug
+      title: Data Fetching
+      description: Make your Vue component async and await your data. Nuxt provides powerful composables for universal data fetching.
     - icon: i-lucide-bug
       title: Error Handling
-      description: Built-in error handling and logging to help you debug your application.
+      description: Catch errors in your application with our built-in handlers and custom error pages.
     - icon: i-lucide-flip-horizontal
       title: Transitions
-      description: Create smooth transitions between layouts, pages, and components.
+      description: Implement smooth transitions between layouts, pages, and components.
     - icon: i-lucide-image
       title: Assets & Style
-      description: Image, Font and Script optizations with a built-in support.
+      description: Benefit from automatic image, font, and script optimizations with built-in support.
     - icon: i-lucide-file-search
       title: SEO & Meta Tags
-      description: Production ready and indexable by search engines.
+      description: Create production-ready applications that are fully indexable by search engines.
     - icon: i-lucide-puzzle
       title: Modular
-      description: Extend Nuxt with custom features and integrations with third-party services.
+      description: Extend Nuxt features with 200+ modules to ship your application faster.
     - icon: i-lucide-shield-check
       title: Middleware
-      description: Run custom code (auth, localization, A/B testing) before rendering page(s).
+      description: Protect or add custom logic (localization, A/B testing) before rendering pages.
     - icon: i-simple-icons-typescript
-      title: Zero-config TypeScript support
-      description: Write type-safe code with auto-generated types and tsconfig.json.
+      title: Type-safe with TypeScript
+      description: Write type-safe code with automatically generated types and tsconfig.json.
   cta:
     title: 'Deep dive into Nuxt now'
     label: Start reading docs
@@ -313,7 +313,7 @@ foundation:
         to: https://vuejs.org
     - id: bundler
       title: Bundler with Vite
-      description: Nuxt leverages Vite's frontend build capabilities, powering rapid development of web applications with instant HMR.
+      description: Nuxt leverages Vite's frontend build capabilities, powering rapid development of web applications with instant HMR for the best developer experience.
       logo: i-custom-vite
       color: '#A156FE'
       gradient: 'bg-gradient-to-br from-[#A156FE]/10 from-5% via-transparent via-50% to-transparent'
@@ -322,7 +322,7 @@ foundation:
         to: https://vite.dev
     - id: bundler
       title: Bundler with Webpack
-      description: Nuxt harnesses Webpack’s robust bundling and optimization capabilities, ensuring a stable and scalable development experience with efficient module management.
+      description: Nuxt harnesses Webpack's robust bundling and optimization capabilities, ensuring a stable and scalable development experience.
       logo: i-custom-webpack
       color: '#8ED6FB'
       gradient: 'bg-gradient-to-br from-[#8ED6FB]/10 from-5% via-transparent via-50% to-transparent'
@@ -331,7 +331,7 @@ foundation:
         to: https://webpack.js.org
     - id: bundler
       title: Bundler with Rspack
-      description: Nuxt integrates Rspack’s high-performance bundling, accelerating builds and HMR for a seamless developer experience at scale.
+      description: Nuxt integrates Rspack's high-performance bundling, accelerating builds and HMR for a seamless developer experience at scale.
       logo: i-custom-rspack
       color: '#F93920'
       gradient: 'bg-gradient-to-br from-[#F93920]/10 from-5% via-transparent via-50% to-transparent'
@@ -391,20 +391,47 @@ stats:
     variant: outline
     icon: i-simple-icons-github
     trailing: true
-expertise:
+contributors:
+  title: 'Built by developers around the world.'
+  description: 'The development of Nuxt and its ecosystem is led by an international team. From contributors to developer advocates, the community is made up of members with different horizons and skills. We are happy to see new members every day and encourage anyone to join us and help in many ways: answering questions, giving a talk, creating modules and contributing to the core.'
+  links:
+    - label: Nuxters
+      to: https://nuxters.nuxt.com
+      target: _blank
+      icon: i-simple-icons-nuxtdotjs
+      color: neutral
+    - icon: i-simple-icons-discord
+      to: https://go.nuxt.com/discord
+      target: _blank
+      color: neutral
+      variant: ghost
+      size: xl
+    - icon: i-simple-icons-x
+      to: https://go.nuxt.com/x
+      target: _blank
+      color: neutral
+      variant: ghost
+      size: lg
+    - icon: i-simple-icons-bluesky
+      to: https://go.nuxt.com/bluesky
+      target: _blank
+      color: neutral
+      variant: ghost
+      size: lg
+support:
   title: Nuxt Enterprise Support
   description: |
-    To ensure your Nuxt projects reach their full potential, our team—featuring :icon{name=i-custom-vue} Vue, :icon{name=i-custom-nuxt} Nuxt, :icon{name=i-custom-vite} Vite, core contributors — offers a complete suite of services.
+    To ensure your Nuxt projects reach their full potential, our Nuxt Experts team, featuring :icon{name=i-custom-vue .align-middle} Vue, :icon{name=i-custom-nuxt .align-middle} Nuxt and :icon{name=i-custom-vite .align-middle} Vite, core contributors — offers a complete suite of services.
   features:
     - title: Performance optimization
       description: Boost Nuxt performance and reliability with our expert optimizations.
-      icon: i-lucide-chart-line
+      icon: i-lucide-rocket
     - title: Migration to Nuxt
       description: Ensure successful, painless migrations from start to deployment.
-      icon: i-lucide-code-xml
+      icon: i-lucide-circle-arrow-up
     - title: Nuxt Workshop
       description: Develop expert teams through training and support.
-      icon: i-lucide-rocket
+      icon: i-lucide-school
   companies:
     - src: /assets/enterprise/support/malt.svg
       alt: Malt
@@ -417,11 +444,10 @@ expertise:
     - src: /assets/enterprise/support/cora.svg
       alt: Cora
   links:
-    - label: Discover our services
+    - label: Talk to a Nuxt Expert
       to: /enterprise/support
       icon: i-lucide-arrow-right
       color: neutral
-      variant: subtle
       trailing: true
 sponsors:
   title: Sponsors
