@@ -22,6 +22,7 @@ export default cachedEventHandler(async () => {
       [tier]: [...(acc[tier] || []), sponsor]
     }
   }, {
+    diamond: [],
     platinum: [],
     gold: [],
     silver: [],
