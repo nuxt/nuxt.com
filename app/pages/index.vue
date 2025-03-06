@@ -405,7 +405,7 @@ onMounted(() => {
         wheel-gestures
         arrows
         :items="officialModules"
-        class="bg-(--ui-bg-muted) border-y lg:border border-(--ui-border) min-w-0 lg:rounded-lg p-4 -mx-4 sm:p-6 sm:-mx-6 lg:p-8 lg:-mx-8"
+        class="bg-(--ui-bg-muted) border-y 2xl:border border-(--ui-border) min-w-0 2xl:rounded-lg p-4 -mx-4 sm:p-6 sm:-mx-6 lg:p-8 lg:-mx-8"
         :ui="{
           container: 'ms-0',
           item: 'min-w-0 shrink-0 sm:basis-1/3 p-2',
@@ -496,7 +496,7 @@ onMounted(() => {
       }"
     >
       <div class="flex flex-col items-center">
-        <template v-for="([key, value]) of Object.entries(sponsors).filter(([k]) => ['platinum', 'gold'].includes(k))" :key="key">
+        <template v-for="([key, value]) of Object.entries(sponsors).filter(([k]) => ['diamond', 'platinum', 'gold'].includes(k))" :key="key">
           <div class="w-full mb-24">
             <UBadge color="neutral" variant="subtle" class="capitalize mb-2">
               {{ key }} sponsors

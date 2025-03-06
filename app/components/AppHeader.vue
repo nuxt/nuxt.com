@@ -92,6 +92,9 @@ onMounted(() => {
           variant="ghost"
           color="neutral"
           :label="stats ? formatNumber(stats.stars) : '...'"
+          :ui="{
+            label: 'hidden sm:inline-flex'
+          }"
         />
       </UTooltip>
     </template>
