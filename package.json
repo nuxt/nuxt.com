@@ -60,7 +60,8 @@
     "vue-tsc": "^2.2.8"
   },
   "resolutions": {
-    "nitropack": "latest"
+    "nitropack": "latest",
+    "unimport": "3.14.5"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
