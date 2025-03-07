@@ -10,7 +10,7 @@ links:
     icon: 'i-logos-figma'
     trailingIcon: 'i-lucide-arrow-up-right'
     download: true
-    color: 'white'
+    color: 'neutral'
     target: '_blank'
 ---
 

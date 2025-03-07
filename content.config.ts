@@ -354,6 +354,11 @@ export default defineContentConfig({
         }).optional(),
         sponsor: z.boolean().optional()
       })
+    }),
+    designKit: defineCollection({
+      type: 'page',
+      source: 'design-kit.md',
+      schema: PageHero
     })
   }
 })

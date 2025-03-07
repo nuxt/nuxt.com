@@ -4,10 +4,11 @@ definePageMeta({
 })
 const route = useRoute()
 
-const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
+const { data: page } = await useAsyncData(route.path, () => queryCollection('designKit').first())
 
-const title = page.value.head?.title || page.value.title
-const description = page.value.head?.description || page.value.description
+const title = page.value.title
+const description = page.value.description
+
 useSeoMeta({
   titleTemplate: '%s',
   title,
@@ -20,10 +21,10 @@ defineOgImageComponent('Docs')
 
 <template>
   <UContainer>
-    <UPageHero v-bind="page" />
+    <UPageHero v-bind="page" :ui="{ title: 'text-left', description: 'text-left', links: 'justify-start' }" />
 
     <UPage>
-      <UPageBody prose class="prose-lg">
+      <UPageBody>
         <ContentRenderer v-if="page && page.body" :value="page" />
       </UPageBody>
     </UPage>
