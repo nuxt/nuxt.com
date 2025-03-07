@@ -281,6 +281,7 @@ sections:
           avatar:
             src: https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/yyx990803
             srcset: https://ipx.nuxt.com/f_auto,s_80x80/gh_avatar/yyx990803 2x
+            loading: lazy
       - quote: Nuxt is a fantastic choice for teams building a production-grade product on the web. It aims to bake in performance best-practices while maintaining excellent Vue.js DX.
         author:
           name: Addy Osmani
@@ -290,6 +291,7 @@ sections:
           avatar:
             src: https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/addyosmani
             srcset: https://ipx.nuxt.com/f_auto,s_80x80/gh_avatar/addyosmani 2x
+            loading: lazy
       - quote: Nuxt has been an incredible source of innovation and inspiration for developers and framework authors alike. It's been amazing to see its growth in web projects of all sizes on the web.
         author:
           name: Guillermo Rauch
@@ -299,6 +301,7 @@ sections:
           avatar:
             src: https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/rauchg
             srcset: https://ipx.nuxt.com/f_auto,s_80x80/gh_avatar/rauchg 2x
+            loading: lazy
       - quote: Nuxt has outstanding developer productivity, experience, and performance right out of the gate! There’s so much attention to detail, ensuring teams have everything at their fingertips to productively build all manners of applications.
         author:
           name: Sarah Drasner
@@ -308,6 +311,7 @@ sections:
           avatar:
             src: https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/sdras
             srcset: https://ipx.nuxt.com/f_auto,s_80x80/gh_avatar/sdras 2x
+            loading: lazy
       - quote: Nuxt has a unique approach of combining a great developer experience with reusable, fully integrated features that speed up the development and performance of your next website or application.
         author:
           name: Dominik Angerer
@@ -317,6 +321,7 @@ sections:
           avatar:
             src: https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/DominikAngerer
             srcset: https://ipx.nuxt.com/f_auto,s_80x80/gh_avatar/DominikAngerer 2x
+            loading: lazy
       - quote: The moment I used Nuxt for the first time I felt in love with it. Apart from its scalability, performance and developer experience, the team behind of it is also fantastic. Thanks for developing such a great framework and making our lives much easier!
         author:
           name: Savas Vedova
@@ -326,6 +331,7 @@ sections:
           avatar:
             src: https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/svedova
             srcset: https://ipx.nuxt.com/f_auto,s_80x80/gh_avatar/svedova 2x
+            loading: lazy
       - quote: Nuxt’s blend of high performance and focused developer experience is a game changer. Its SSR and SSG flexibility, coupled with a community that’s as vibrant as the Vue.js ecosystem, makes it a great choice for modern web projects.
         author:
           name: Rijk van Zanten
@@ -335,3 +341,4 @@ sections:
           avatar:
             src: https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/rijkvanzanten
             srcset: https://ipx.nuxt.com/f_auto,s_80x80/gh_avatar/rijkvanzanten 2x
+            loading: lazy
