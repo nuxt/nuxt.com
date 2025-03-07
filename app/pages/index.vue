@@ -154,11 +154,10 @@ onMounted(() => {
           :items="tabs"
           :unmount-on-hide="false"
           :ui="{
-            list: 'px-0 bg-transparent lg:pr-4 overflow-x-auto items-stretch',
+            list: 'px-0 bg-transparent lg:pr-4 overflow-x-auto',
             trigger: 'group data-[state=active]:text-(--ui-text-highlighted)',
             indicator: 'bg-(--ui-bg)',
             leadingIcon: 'group-data-[state=active]:text-(--ui-primary) size-4 hidden sm:inline-flex',
-            label: 'text-clip',
             content: 'lg:h-[450px] bg-(--ui-bg) rounded-[calc(var(--ui-radius)*1.5)] transition-opacity duration-500 data-[state=inactive]:opacity-0 opacity-100'
           }"
         >
