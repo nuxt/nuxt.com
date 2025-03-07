@@ -96,6 +96,9 @@ importers:
       ufo:
         specifier: ^1.5.4
         version: 1.5.4
+      valibot:
+        specifier: 1.0.0-rc.3
+        version: 1.0.0-rc.3(typescript@5.8.2)
     devDependencies:
       '@iconify-json/lucide':
         specifier: ^1.2.28

@@ -267,17 +267,15 @@ export default defineContentConfig({
               quote: z.string(),
               author: z.string(),
               job: z.string(),
-              logo: DualModeImage.extend({
-                alt: z.string()
-              }),
+              logo: DualModeImage,
               achievements: z.array(
                 z.object({
                   label: z.string(),
-                  color: z.string()
+                  color: z.enum(['success', 'warning', 'error', 'info', 'neutral', 'important'])
                 })
               ),
-              width: z.number().optional(),
-              height: z.number().optional()
+              width: z.number(),
+              height: z.number()
             })
           )
         }),

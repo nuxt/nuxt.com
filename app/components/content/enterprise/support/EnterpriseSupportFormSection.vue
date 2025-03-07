@@ -1,20 +1,17 @@
 <script lang="ts" setup>
-import type { FormError, FormSubmitEvent } from '#ui/types'
+import * as v from 'valibot'
+import type { FormSubmitEvent } from '#ui/types'
 
-defineProps({
+const formProps = defineProps<{
   form: {
-    type: Object as PropType<{
-      name: { label: string, placeholder: string }
-      email: { label: string, placeholder: string }
-      company: { label: string, placeholder: string }
-      body: { label: string, placeholder: string }
-      info: string
-      button: any
-    }
-    >,
-    default: () => ({})
+    name: { label: string, placeholder: string }
+    email: { label: string, placeholder: string }
+    company: { label: string, placeholder: string }
+    body: { label: string, placeholder: string }
+    info: string
+    button: any
   }
-})
+}>()
 
 const toast = useToast()
 
@@ -22,11 +19,22 @@ const loading = ref<boolean>(false)
 const turnstile = ref()
 const token = ref()
 
+const schema = v.object({
+  name: v.pipe(v.string(), v.minLength(1, 'Name is required')),
+  email: v.pipe(
+    v.string(),
+    v.minLength(1, 'Email is required'),
+    v.email('Please enter a valid email')
+  ),
+  company: v.pipe(v.string(), v.minLength(1, 'Company is required')),
+  body: v.pipe(v.string(), v.minLength(1, 'Message is required'))
+})
+
 const state = reactive({
-  name: undefined,
-  email: undefined,
-  company: undefined,
-  body: undefined
+  name: '',
+  email: '',
+  company: '',
+  body: ''
 })
 
 const showTurnstile = ref(false)
@@ -34,17 +42,14 @@ const canSend = computed(() => {
   return Boolean(state.name && state.email && state.company && state.body && token.value)
 })
 
-const validate = (state: any): FormError[] => {
-  const errors = []
-  if (!state.name) errors.push({ path: 'name', message: 'Required' })
-  if (!state.email) errors.push({ path: 'email', message: 'Required' })
-  if (!state.company) errors.push({ path: 'company', message: 'Required' })
-  if (!state.body) errors.push({ path: 'body', message: 'Required' })
-  if (!errors.length) {
-    showTurnstile.value = true
-  }
-  return errors
-}
+watch([() => state.name, () => state.email, () => state.company, () => state.body],
+  () => {
+    if (state.name && state.email && state.company && state.body) {
+      showTurnstile.value = true
+    }
+  },
+  { immediate: true }
+)
 
 async function onSubmit(event: FormSubmitEvent<any>) {
   if (!event.data) return
@@ -60,16 +65,16 @@ async function onSubmit(event: FormSubmitEvent<any>) {
     }
   })
     .then(() => {
-      state.company = ''
       state.name = ''
       state.email = ''
+      state.company = ''
       state.body = ''
       showTurnstile.value = false
-      toast.add({ title: 'Email sent', description: 'We will do everything possible to respond to you as quickly as possible', color: 'green' })
+      toast.add({ title: 'Email sent', description: 'We will do everything possible to respond to you as quickly as possible', color: 'success' })
     })
     .catch((e) => {
       const description = e.data?.message || 'Something went wrong. Please try again later.'
-      toast.add({ title: 'Email sending failed', description, color: 'red' })
+      toast.add({ title: 'Email sending failed', description, color: 'error' })
     })
     .finally(() => {
       loading.value = false
@@ -81,43 +86,39 @@ async function onSubmit(event: FormSubmitEvent<any>) {
 
 <template>
   <div class="w-full max-w-[640px]">
-    <UCard :ui="{ background: 'form-bg', body: { base: 'flex flex-col space-y-6 w-full', padding: 'px-4 py-5 sm:p-8' } }">
-      <UForm :validate="validate" :state="state" class="space-y-6" @submit="onSubmit">
-        <UFormField :label="form.name.label" name="name" required>
-          <UInput v-model="state.name" :placeholder="form.name.placeholder" />
+    <UPageCard>
+      <UForm :schema="v.safeParser(schema)" :state="state" class="space-y-6" @submit="onSubmit">
+        <UFormField :label="formProps.form.name.label" name="name" required>
+          <UInput v-model="state.name" :placeholder="formProps.form.name.placeholder" class="w-full" />
         </UFormField>
 
-        <UFormField :label="form.email.label" name="email" required>
-          <UInput v-model="state.email" type="email" :placeholder="form.email.placeholder" />
+        <UFormField :label="formProps.form.email.label" name="email" required>
+          <UInput v-model="state.email" type="email" :placeholder="formProps.form.email.placeholder" class="w-full" />
         </UFormField>
 
-        <UFormField :label="form.company.label" name="company" required>
-          <UInput v-model="state.company" :placeholder="form.company.placeholder" />
+        <UFormField :label="formProps.form.company.label" name="company" required>
+          <UInput v-model="state.company" :placeholder="formProps.form.company.placeholder" class="w-full" />
         </UFormField>
 
-        <UFormField :label="form.body.label" name="body" required>
-          <UTextarea v-model="state.body" autoresize :placeholder="form.body.placeholder" :rows="6" />
+        <UFormField :label="formProps.form.body.label" name="body" required>
+          <UTextarea v-model="state.body" autoresize :placeholder="formProps.form.body.placeholder" :rows="6" class="w-full" />
         </UFormField>
 
         <ClientOnly>
           <NuxtTurnstile v-if="showTurnstile" ref="turnstile" v-model="token" :options="{ theme: $colorMode.value as 'auto' | 'light' | 'dark' }" />
         </ClientOnly>
 
-        <UButton
-          v-bind="form.button"
-          type="submit"
-          color="gray"
-          class="w-fit pt-2"
-          :loading="loading"
-          :disabled="!canSend"
-        />
+        <div class="flex justify-end">
+          <UButton
+            v-bind="formProps.form.button"
+            type="submit"
+            color="neutral"
+            class="w-fit pt-2"
+            :loading="loading"
+            :disabled="!canSend"
+          />
+        </div>
       </UForm>
-    </UCard>
+    </UPageCard>
   </div>
 </template>
-
-<style scoped lang="postcss">
-.dark .form-bg {
-  background: linear-gradient(0deg, rgba(15, 23, 42, 0.50) 0%, rgba(15, 23, 42, 0.50) 100%), linear-gradient(180deg, rgba(51, 65, 85, 0.50) 0%, rgba(2, 4, 32, 0.50) 33.92%) !important;
-}
-</style>

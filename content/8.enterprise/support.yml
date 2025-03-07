@@ -122,11 +122,11 @@ testimonials:
         height: 28
       achievements:
         - label: 'Migration to Nuxt'
-          color: 'blue'
+          color: 'info'
         - label: 'Performance optimization'
-          color: 'orange'
+          color: 'warning'
         - label: 'Long-term support'
-          color: 'yellow'
+          color: 'success'
     - quote: "“Choosing NuxtLabs for an audit of our Nuxt project was a game-changer. Their detailed insights significantly enhanced our site's performance and the quality of our code. We're grateful for their support and highly recommend them to others.“"
       author: 'Melene Ulm'
       job: 'Web Developer @ Mobile Industrial Robots'
@@ -138,11 +138,11 @@ testimonials:
         height: 24
       achievements:
         - label: 'Codebase audit'
-          color: 'pink'
+          color: 'important'
         - label: 'Performance optimization'
-          color: 'orange'
+          color: 'warning'
         - label: 'Long-term support'
-          color: 'yellow'
+          color: 'success'
     - quote: "“The expert provided us with valuable feedback, which included improvements on how we can utilize Nuxt and the ecosystem more effectively, raising questions about the background of historic implementation and finding bugs that we did not yet catch.“"
       author: 'Robert K Pauls'
       job: 'Lead dev at @ ABOUT YOU group'
@@ -154,9 +154,9 @@ testimonials:
         height: 24
       achievements:
         - label: 'Performance optimization'
-          color: 'orange'
+          color: 'warning'
         - label: 'Codebase audit'
-          color: 'pink'
+          color: 'important'
     - quote: "“They provided excellent feedback on how to make the core of our app more efficient as well some very valuable tips for the features we are planing to implement in the near future.“"
       author: 'Maxime Casadei'
       job: 'CEO at @NAKWEB for Otypo'
@@ -168,11 +168,11 @@ testimonials:
         alt: 'otypo logo'
       achievements:
         - label: 'Migration to Nuxt'
-          color: 'blue'
+          color: 'info'
         - label: 'Performance optimizations'
-          color: 'orange'
+          color: 'warning'
         - label: 'Codebase audit'
-          color: 'pink'
+          color: 'important'
     - quote: "“NuxtLabs was amazing to work with. They found hidden opportunities buried deep within our codebase. Our enterprise application is now faster, more secure and reliable than ever!“"
       author: 'Josh Deltener'
       job: 'Director of software engineering @ RealTruck.com'
@@ -184,11 +184,11 @@ testimonials:
         height: 30
       achievements:
         - label: 'Migration to Nuxt'
-          color: 'blue'
+          color: 'info'
         - label: 'Performance optimizations'
-          color: 'orange'
+          color: 'warning'
         - label: 'Codebase audit'
-          color: 'pink'
+          color: 'important'
 project:
   title: 'How do we proceed?'
   description: "3 easy steps to get professional support and consulting services from a Vue & Nuxt expert."
@@ -220,7 +220,6 @@ form:
   body:
     label: 'What can we help you achieve?'
     placeholder: 'Tell us how we can help you'
-  info: 'By submitting this form, I confirm that I have read and understood the <a class="text-gray-950 dark:text-gray-100 underline font-medium">Nuxt Privacy Statement.</a>'
   button:
-    icon: i-ph-paper-plane-right
+    icon: i-lucide-send
     label: 'Send message'

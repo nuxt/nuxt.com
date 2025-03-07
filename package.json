@@ -40,7 +40,8 @@
     "sitemap": "^8.0.0",
     "std-env": "^3.8.1",
     "tailwindcss": "^4.0.9",
-    "ufo": "^1.5.4"
+    "ufo": "^1.5.4",
+    "valibot": "1.0.0-rc.3"
   },
   "devDependencies": {
     "@iconify-json/lucide": "^1.2.28",
