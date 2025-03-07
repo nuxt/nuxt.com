@@ -208,6 +208,8 @@ export default defineContentConfig({
         include: 'showcase.yml'
       }, {
         include: 'video-courses.yml'
+      }, {
+        include: 'sponsors.yml'
       }],
       schema: PageHero
     }),
