@@ -7,9 +7,9 @@ withDefaults(defineProps<{
 </script>
 
 <template>
-  <UCard>
+  <UCard variant="subtle">
     <div class="flex flex-col items-center py-12">
-      <UIcon name="i-ph-magnifying-glass" class="w-16 h-16 mx-auto text-gray-500 dark:text-gray-400 mb-4" aria-hidden="true" />
+      <UIcon name="i-lucide-search" class="w-16 h-16 mx-auto text-(--ui-text-muted) mb-4" aria-hidden="true" />
 
       <p class="text-lg text-center max-w-sm">
         {{ label }}

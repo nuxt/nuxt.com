@@ -1,12 +1,11 @@
-import type { ContentFile } from '@nuxt/content'
 import type { Filter } from './filters'
 import type { LinkProps } from '@nuxt/ui'
 
-export interface Agency extends ContentFile {
+export interface Agency {
   title: string
   description: string
   fullDescription: string
-  _path: string
+  path: string
   link: string
   twitter: string
   x: string

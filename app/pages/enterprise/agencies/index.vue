@@ -2,13 +2,16 @@
 definePageMeta({
   heroBackground: 'opacity-80 -z-10'
 })
-const route = useRoute()
+
 const { filteredAgencies, fetchList, services, regions } = useEnterpriseAgencies()
 
-const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
+const { data: page } = await useAsyncData('agencies-landing', () => queryCollection('landing').path('/agencies').first())
+if (!page.value) {
+  throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
+}
 
-const title = page.value.head?.title || page.value.title
-const description = page.value.head?.description || page.value.description
+const title = page.value.title
+const description = page.value.description
 useSeoMeta({
   titleTemplate: '%s · Enterprise',
   title,
@@ -30,32 +33,27 @@ await fetchList()
 
     <UPage id="smooth" class="pt-20 -mt-20">
       <template #left>
-        <UAside>
-          <UNavigationTree :links="[{ label: 'Technical Expertise', disabled: true, children: services }, { label: 'Locations', disabled: true, children: regions }]" />
-        </UAside>
+        <UPageAside>
+          <UContentNavigation highlight :navigation="[{ title: 'Technical Expertise', children: services }, { title: 'Locations', children: regions }]" />
+        </UPageAside>
       </template>
 
       <UPageBody>
-        <UPageGrid v-if="filteredAgencies?.length">
+        <UPageGrid v-if="filteredAgencies?.length" class="lg:grid-cols-2">
           <UPageCard
             v-for="(agency, index) in filteredAgencies"
             :key="index"
-            :to="agency._path"
+            variant="subtle"
+            :to="agency.path"
             :title="agency.title"
             :description="agency.description"
-            :ui="{
-              divide: '',
-              footer: { padding: 'pt-0' },
-              title: 'text-lg',
-              description: 'line-clamp-3'
-            }"
           >
-            <template #icon>
-              <UColorModeAvatar :light="agency.logo.light" :dark="agency.logo.dark" size="lg" :ui="{ rounded: 'rounded-sm' }" />
+            <template #leading>
+              <UColorModeAvatar :light="agency.logo.light" :dark="agency.logo.dark" size="lg" class="rounded-none bg-transparent" />
             </template>
 
             <template #footer>
-              <UBadge :label="agency.location.label" color="gray" />
+              <UBadge :label="agency.location.title" color="neutral" variant="subtle" />
             </template>
           </UPageCard>
         </UPageGrid>
@@ -63,15 +61,16 @@ await fetchList()
         <EmptyCard v-else label="No agency matches your criteria for now.">
           <UButton
             label="Clear filters"
-            color="white"
-            trailing-icon="i-ph-x-circle"
+            color="neutral"
+            variant="subtle"
+            trailing-icon="i-lucide-circle-x"
             size="md"
             @click="$router.replace({ query: {} })"
           />
           <UButton
             to="https://docs.google.com/forms/d/e/1FAIpQLSf85qskit5QqmGJcruGkGF0U7240Bh9MeN0pHB18UiOMWC8dA/viewform"
             target="_blank"
-            color="black"
+            color="neutral"
             size="md"
             label="Submit my agency"
           />

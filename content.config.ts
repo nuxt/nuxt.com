@@ -210,6 +210,8 @@ export default defineContentConfig({
         include: 'video-courses.yml'
       }, {
         include: 'sponsors.yml'
+      }, {
+        include: 'agencies.yml'
       }],
       schema: PageHero
     }),
@@ -310,6 +312,28 @@ export default defineContentConfig({
           info: z.string(),
           button: Button
         })
+      })
+    }),
+    agencies: defineCollection({
+      type: 'page',
+      source: '8.enterprise/2.agencies/*.md',
+      schema: z.object({
+        title: z.string(),
+        description: z.string(),
+        logo: DualModeImage,
+        logoFull: z.string().optional(),
+        link: z.string().url(),
+        services: z.array(z.string()),
+        resources: z.array(Link).optional(),
+        emailAddress: z.string().email().optional(),
+        phoneNumber: z.string().nullable().optional(),
+        x: z.string().optional(),
+        github: z.string().optional(),
+        linkedin: z.string().optional(),
+        instagram: z.string().optional(),
+        color: z.array(z.string()).optional(),
+        regions: z.array(z.string()),
+        location: z.string()
       })
     }),
     templates: defineCollection({
