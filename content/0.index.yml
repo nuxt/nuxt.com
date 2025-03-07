@@ -1,8 +1,8 @@
 navigation: false
 hero:
   cta:
-    label: Nuxt v3.15 is out
-    to: /blog/v3-15
+    label: Nuxt v3.16 is out
+    to: /blog/v3-16
     icon: i-ph-arrow-right
 logos:
   title: Trusted by the best front-end teams
