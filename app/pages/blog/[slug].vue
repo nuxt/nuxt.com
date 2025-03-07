@@ -106,7 +106,7 @@ const links = [
               <p class="font-medium">
                 {{ author.name }}
               </p>
-              <p class="text-gray-500 dark:text-gray-400 leading-4">
+              <p v-if="author.link" class="text-gray-500 dark:text-gray-400 leading-4">
                 {{ `@${author.link.split('/').pop()}` }}
               </p>
             </div>
