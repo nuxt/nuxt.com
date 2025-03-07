@@ -98,7 +98,7 @@ const links = [
               ← Back to blog
             </ULink>
             <div class="flex justify-end items-center gap-1.5">
-              <UButton icon="i-ph-link-simple" variant="ghost" color="neutral" @click="copyLink">
+              <UButton icon="i-lucide-link" variant="ghost" color="neutral" @click="copyLink">
                 Copy URL
               </UButton>
               <UButton

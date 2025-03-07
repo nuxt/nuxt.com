@@ -50,7 +50,7 @@ await fetchList()
           to="/blog/rss.xml"
           color="neutral"
           external
-          icon="i-ph-rss"
+          icon="i-lucide-rss"
           variant="subtle"
           size="xs"
           target="_blank"

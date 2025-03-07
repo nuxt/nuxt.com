@@ -19,7 +19,7 @@ users:
       - icon: i-simple-icons-github
         to: https://github.com/atinux
         target: _blank
-      - icon: i-ph-link
+      - icon: i-lucide-link
         to: https://atinux.com
         target: _blank
   - name: Pooya Parsa
@@ -54,7 +54,7 @@ users:
       - icon: i-simple-icons-github
         to: https://github.com/danielroe
         target: _blank
-      - icon: i-ph-link
+      - icon: i-lucide-link
         to: https://roe.dev
         target: _blank
   - name: Anthony Fu
@@ -73,7 +73,7 @@ users:
       - icon: i-simple-icons-github
         to: https://github.com/antfu
         target: _blank
-      - icon: i-ph-link
+      - icon: i-lucide-link
         to: https://antfu.me
         target: _blank
   - name: Alexander Lichter
@@ -92,7 +92,7 @@ users:
       - icon: i-simple-icons-github
         to: https://github.com/manniL
         target: _blank
-      - icon: i-ph-link
+      - icon: i-lucide-link
         to: https://www.lichter.io
         target: _blank
   - name: Harlan Wilton
@@ -111,7 +111,7 @@ users:
       - icon: i-simple-icons-github
         to: https://github.com/harlan-zw
         target: _blank
-      - icon: i-ph-link
+      - icon: i-lucide-link
         to: https://harlanzw.com
         target: _blank
   - name: Lucie
@@ -130,7 +130,7 @@ users:
       - icon: i-simple-icons-github
         to: https://github.com/lihbr
         target: _blank
-      - icon: i-ph-link
+      - icon: i-lucide-link
         to: https://lihbr.com/
         target: _blank
   - name: Julien Huang

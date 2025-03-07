@@ -27,7 +27,7 @@ If you are upgrading an existing site from Nuxt 2 you should check these and upd
 
 If you want to add custom redirects, you can do so with [`routeRules`](/docs/guide/concepts/rendering#hybrid-rendering) or by adding a [`_redirects`](https://docs.netlify.com/routing/redirects/#syntax-for-the-redirects-file) file to your `public` directory.
 
-::tip{color="green" icon="i-ph-check-circle"}
+::tip{color="green" icon="i-lucide-check-circle"}
 For deployment, just push to your git repository [as you would normally do for Netlify](https://docs.netlify.com/configure-builds/get-started/).
 ::
 

@@ -50,10 +50,9 @@ defineOgImageComponent('Docs')
               <UButton
                 :to="user.sponsor"
                 target="_blank"
-                color="gray"
-                icon="i-ph-heart"
-                icon-color="red"
-                :ui="{ icon: { base: 'text-pink-500' } }"
+                color="neutral"
+                icon="i-lucide-heart"
+                :ui="{ leadingIcon: 'text-pink-500' }"
               >
                 Sponsor
               </UButton>

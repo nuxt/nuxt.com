@@ -50,7 +50,7 @@ const command = computed(() => {
           icon="i-simple-icons-codesandbox"
           class="flex justify-center items-center"
           size="sm"
-          :ui="{ icon: { size: { sm: 'w-4 h-4' } } }"
+          :ui="{ icon: { size: { sm: 'size-4' } } }"
         />
 
         <UButton

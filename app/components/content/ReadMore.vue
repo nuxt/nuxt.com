@@ -33,7 +33,7 @@ const computedTitle = computed<string>(() => props.title || createBreadcrumb(pro
 </script>
 
 <template>
-  <ProseCallout icon="i-ph-bookmark-simple" :to="to">
+  <ProseCallout icon="i-lucide-bookmark" :to="to">
     <MDCSlot unwrap="p">
       Read more in <span class="font-bold" v-text="computedTitle" />.
     </MDCSlot>

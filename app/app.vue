@@ -78,7 +78,7 @@ onMounted(() => {
     <UBanner
       id="nuxt-tips-christmas"
       title="Learn Nuxt with a Collection of 100+ Tips!"
-      icon="i-ph-magic-wand"
+      icon="i-lucide-wand"
       to="https://michaelnthiessen.com/nuxt-tips-collection?aff=J0Emk"
       close
       :actions="[
@@ -86,7 +86,7 @@ onMounted(() => {
           label: 'Learn more',
           color: 'neutral',
           variant: 'outline',
-          trailingIcon: 'i-ph-arrow-right',
+          trailingIcon: 'i-lucide-arrow-right',
           to: 'https://michaelnthiessen.com/nuxt-tips-collection?aff=J0Emk'
         }
       ]"

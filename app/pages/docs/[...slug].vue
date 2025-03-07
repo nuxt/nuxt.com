@@ -44,22 +44,22 @@ const titleTemplate = computed(() => {
 })
 
 const communityLinks = computed(() => [{
-  icon: 'i-ph-pen',
+  icon: 'i-lucide-pen',
   label: 'Edit this page',
   to: `https://github.com/nuxt/nuxt/edit/main/docs/${page?.value?.stem?.split('/').slice(1).join('/')}`,
   target: '_blank'
 }, {
-  icon: 'i-ph-hand-heart',
+  icon: 'i-lucide-heart',
   label: 'Become a Sponsor',
   to: 'https://go.nuxt.com/sponsor',
   target: '_blank'
 }, {
-  icon: 'i-ph-chef-hat',
+  icon: 'i-lucide-chef-hat',
   label: 'Master Nuxt',
   to: 'https://masteringnuxt.com/nuxt3',
   target: '_blank'
 }, {
-  icon: 'i-ph-certificate',
+  icon: 'i-lucide-award',
   label: 'Nuxt Certification',
   to: 'https://certification.nuxt.com',
   target: '_blank'

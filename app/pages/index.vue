@@ -101,7 +101,7 @@ onMounted(() => {
             <UIcon
               v-if="page?.hero.cta.icon"
               :name="page?.hero.cta.icon"
-              class="w-4 h-4 pointer-events-none"
+              class="size-4 pointer-events-none"
             />
           </UBadge>
         </NuxtLink>
@@ -121,11 +121,11 @@ onMounted(() => {
             <UButton to="/docs/getting-started/installation" size="xl">
               Get Started
             </UButton>
-            <UButton size="xl" color="neutral" variant="ghost" trailing-icon="i-ph-play-circle" @click="videoModalOpen = true">
+            <UButton size="xl" color="neutral" variant="ghost" trailing-icon="i-lucide-play-circle" @click="videoModalOpen = true">
               Nuxt in 100 Seconds
             </UButton>
           </div>
-          <UInputCopy value="npm create nuxt@latest" label="npm create nuxt@latest" size="xl" />
+          <UInputCopy value="npm create nuxt@latest" label="npm create nuxt@latest" size="lg" />
         </div>
 
         <UModal v-model:open="videoModalOpen" :ui="{ content: 'sm:max-w-4xl lg:max-w-5xl aspect-[16/9]' }">

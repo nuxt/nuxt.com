@@ -22,7 +22,7 @@ const version = computed(() => stats.value?.version?.match(/\d+\.\d+/)[0])
     ...headerLinks.value.slice(1),
     {
       label: 'Design Kit',
-      icon: 'i-ph-palette',
+      icon: 'i-lucide-palette',
       to: '/design-kit'
     }
   ]
@@ -44,7 +44,7 @@ const logoContextMenuItems = [
   }],
   [{
     label: 'Browse design kit',
-    icon: 'i-ph-shapes',
+    icon: 'i-lucide-shapes',
     to: '/design-kit'
   }]
 ]

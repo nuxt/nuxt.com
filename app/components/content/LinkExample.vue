@@ -1,5 +1,5 @@
 <template>
-  <ProseCallout icon="i-ph-app-window">
+  <ProseCallout icon="lucide-app-window-mac">
     Read and edit a live example in
     <NuxtLink :to="to">
       {{ computedTitle }}
@@ -10,17 +10,10 @@
 <script setup lang="ts">
 import type { ComputedRef } from 'vue'
 
-const props = defineProps({
-  to: {
-    type: String,
-    required: true
-  },
-  title: {
-    type: String,
-    required: false,
-    default: ''
-  }
-})
+const props = defineProps<{
+  to: string
+  title?: string
+}>()
 
 const computedTitle: ComputedRef<string> = computed(() => createBreadcrumb(props.to))
 </script>

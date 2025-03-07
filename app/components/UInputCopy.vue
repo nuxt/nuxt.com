@@ -18,11 +18,11 @@ const { copy, copied } = useClipboard()
 
 <template>
   <label>
-    <UInput class="w-full" :model-value="label ? label : value" :size="size" disabled icon="i-ph-terminal">
+    <UInput class="w-full" :model-value="label ? label : value" :size="size" disabled icon="i-lucide-terminal">
       <div class="absolute inset-0" :class="[copied ? 'cursor-default' : 'cursor-copy']" @click="copy(value)" />
       <template #trailing>
         <UButton
-          :icon="copied ? 'i-ph-check' : 'i-ph-copy'"
+          :icon="copied ? 'i-lucide-check' : 'i-lucide-copy'"
           color="neutral"
           variant="link"
           :padded="false"

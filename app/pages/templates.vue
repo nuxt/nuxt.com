@@ -27,13 +27,7 @@ defineOgImageComponent('Docs')
 
 <template>
   <UContainer>
-    <UPageHero
-      v-bind="page"
-      :ui="{
-        container: 'py-10 sm:py-20 lg:py-20 px-0 sm:px-0 lg:px-0',
-        title: 'sm:text-5xl'
-      }"
-    />
+    <UPageHero v-bind="page" :ui="{ container: 'px-0 sm:px-0 lg:px-0' }" />
     <UPage>
       <UPageBody>
         <div v-if="featuredTemplates.length" class="mb-24">
@@ -106,7 +100,7 @@ defineOgImageComponent('Docs')
                 <UButtonGroup class="w-full">
                   <UButton
                     label="Demo"
-                    icon="i-ph-desktop"
+                    icon="i-lucide-laptop"
                     :to="template.demo"
                     target="_blank"
                     size="sm"
@@ -132,7 +126,7 @@ defineOgImageComponent('Docs')
                     color="neutral"
                     label="Purchase"
                     variant="subtle"
-                    icon="i-ph-credit-card"
+                    icon="i-lucide-credit-card"
                     size="sm"
                     class="w-1/2 justify-center"
                   />
@@ -212,7 +206,7 @@ defineOgImageComponent('Docs')
                 <UButtonGroup class="w-full">
                   <UButton
                     label="Demo"
-                    icon="i-ph-desktop"
+                    icon="i-lucide-laptop"
                     :to="template.demo"
                     target="_blank"
                     size="sm"
@@ -238,7 +232,7 @@ defineOgImageComponent('Docs')
                     color="neutral"
                     label="Purchase"
                     variant="subtle"
-                    icon="i-ph-credit-card"
+                    icon="i-lucide-credit-card"
                     size="sm"
                     class="w-1/2 justify-center"
                   />
