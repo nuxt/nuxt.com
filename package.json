@@ -31,7 +31,7 @@
     "feed": "^4.2.2",
     "floating-vue": "^5.2.2",
     "motion-v": "0.11.0-beta.6",
-    "nuxt": "^3.15.4",
+    "nuxt": "npm:nuxt-nightly@3.16.0-29022563.7c427dfa",
     "nuxt-llms": "0.1.0",
     "nuxt-og-image": "^4.1.6",
     "ofetch": "^1.4.1",
@@ -60,8 +60,7 @@
     "vue-tsc": "^2.2.8"
   },
   "resolutions": {
-    "chokidar": "3.6.0",
-    "unimport": "3.14.5"
+    "nitropack": "latest"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
