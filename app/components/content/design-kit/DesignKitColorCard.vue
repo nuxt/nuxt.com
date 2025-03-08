@@ -6,10 +6,8 @@ const props = defineProps<{
 
 const { copy } = useClipboard()
 
-const toast = useToast()
 function copyLink() {
-  copy(props.background)
-  toast.add({
+  copy(props.background, {
     title: 'Copied to clipboard',
     icon: 'i-lucide-copy-check'
   })

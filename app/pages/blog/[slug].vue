@@ -47,7 +47,7 @@ const socialLinks = computed(() => [{
 }])
 
 function copyLink() {
-  copy(`https://nuxt.com${article.value.path}`)
+  copy(`https://nuxt.com${article.value.path}`, { title: 'Link copied to clipboard', icon: 'i-lucide-copy-check' })
 }
 
 const links = [

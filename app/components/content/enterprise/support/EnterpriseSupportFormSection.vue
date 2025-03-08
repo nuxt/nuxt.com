@@ -30,6 +30,8 @@ const schema = v.object({
   body: v.pipe(v.string(), v.minLength(1, 'Message is required'))
 })
 
+type Schema = v.InferOutput<typeof schema>
+
 const state = reactive({
   name: '',
   email: '',
@@ -51,7 +53,7 @@ watch([() => state.name, () => state.email, () => state.company, () => state.bod
   { immediate: true }
 )
 
-async function onSubmit(event: FormSubmitEvent<any>) {
+async function onSubmit(event: FormSubmitEvent<Schema>) {
   if (!event.data) return
   if (loading.value || !canSend.value) return
 

@@ -4,8 +4,9 @@ const { headerLinks } = useNavigation()
 const logo = ref(null)
 
 const stats = useStats()
+
 const { copy } = useClipboard()
-const toast = useToast()
+
 const version = computed(() => stats.value?.version?.match(/\d+\.\d+/)[0])
 
 /* const mobileNav = computed(() => {
@@ -33,8 +34,7 @@ const logoContextMenuItems = [
     label: 'Copy logo as SVG',
     icon: 'i-simple-icons-nuxtdotjs',
     onSelect() {
-      copy(logo.value.$el.outerHTML)
-      toast.add({
+      copy(logo.value.$el.outerHTML, {
         title: 'Nuxt logo copied as SVG',
         description: 'You can now paste it into your project',
         icon: 'i-lucide-circle-check',
