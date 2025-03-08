@@ -184,7 +184,7 @@ const _useNavigation = () => {
       label: 'Ask AI',
       icon: 'i-lucide-wand',
       to: 'javascript:void(0);',
-      click: () => nuxtApp.$kapa?.openModal()
+      onSelect: () => nuxtApp.$kapa?.openModal()
     },
     ...headerLinks.value.map((link) => {
     // Remove `/docs` and `/enterprise` links from command palette

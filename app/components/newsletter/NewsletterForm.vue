@@ -12,7 +12,6 @@ const {
 
 const toast = useToast()
 
-const email = ref('')
 const loading = ref(false)
 
 const schema = v.object({
