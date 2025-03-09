@@ -42,6 +42,7 @@ export const useModules = () => {
   // }
 
   const route = useRoute()
+  const router = useRouter()
   const stats = useState<Stats>('module-stats', () => ({
     maintainers: 0,
     contributors: 0,
@@ -103,47 +104,25 @@ export const useModules = () => {
   const categories = computed<Filter[]>(() => {
     return Object.keys(iconsMap)
       .map((category) => {
-        const currentCategory = route.query.category?.toString() || ''
-        const isSelected = currentCategory.toLowerCase() === category.toLowerCase()
-
         return {
           key: category,
-          title: category,
-          exactQuery: true,
-          active: isSelected,
-          to: {
-            name: 'modules',
-            query: {
-              ...route.query,
-              category: isSelected ? undefined : category
-            },
-            state: { smooth: '#smooth' }
-          },
-          icon: iconsMap[category as keyof typeof iconsMap] || undefined
+          label: category,
+          active: route.query.category === category,
+          to: { name: 'modules', query: category === route.query.category ? undefined : { category }, state: { smooth: '#smooth' } },
+          icon: iconsMap[category as keyof typeof iconsMap] || undefined,
+          click: (e) => {
+            if (route.query.category !== category) {
+              return
+            }
+
+            e.preventDefault()
+
+            router.replace({ query: { ...route.query, category: undefined } })
+          }
         }
       })
-      .sort((a, b) => a.title.localeCompare(b.title))
+      .sort((a, b) => a.label.localeCompare(b.label))
   })
-
-  // const types: ComputedRef<Filter[]> = computed(() => {
-  //   return [...new Set(modules.value.map(module => module.type))].map(type => ({
-  //     key: type,
-  //     label: typesMap[type as keyof typeof typesMap] || type,
-  //     to: {
-  //       name: 'modules',
-  //       query: {
-  //         ...route.query,
-  //         type
-  //       },
-  //       state: { smooth: '#smooth' }
-  //     }
-  //   })).sort((a, b) => {
-  //     const typesMappingKeys = Object.keys(typesMap)
-  //     const aIndex = typesMappingKeys.indexOf(a.key)
-  //     const bIndex = typesMappingKeys.indexOf(b.key)
-  //     return aIndex - bIndex
-  //   })
-  // })
 
   // const contributors: ComputedRef<Set<string>> = computed(() => {
   //   return new Set(modules.value.flatMap(m => m.contributors.map(m => m.login)))
@@ -158,7 +137,7 @@ export const useModules = () => {
   // })
 
   const selectedCategory = computed(() => {
-    return categories.value.find(category => category.key === route.query.category)
+    return categories.value.find(category => category.label === route.query.category)
   })
 
   // const selectedType: ComputedRef<Filter | null> = computed(() => {
@@ -194,24 +173,6 @@ export const useModules = () => {
       return 0
     }
   }
-
-  // const links = computed(() => {
-  //   return [
-  //     {
-  //       label: 'All',
-  //       _path: {
-  //         name: 'modules',
-  //         query: {
-  //           ...route.query,
-  //           type: undefined
-  //         },
-  //         state: { smooth: '#smooth' }
-  //       },
-  //       active: !route.query.type
-  //     },
-  //     ...types.value.map(type => ({ ...type, _path: type.to, exact: true, active: route.query.type === type.key }))
-  //   ]
-  // })
 
   const filteredModules = computed<Module[]>(() => {
     let filteredModules = [...modules.value]
@@ -267,6 +228,5 @@ export const useModules = () => {
     selectedSort,
     selectedOrder,
     q
-    // links
   }
 }

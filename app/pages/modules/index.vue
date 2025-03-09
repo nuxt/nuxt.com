@@ -1,6 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
-  heroBackground: 'opacity-70'
+  heroBackground: 'opacity-50'
 })
 
 const input = useTemplateRef('input')
@@ -26,6 +26,25 @@ defineOgImageComponent('Docs')
 
 await fetchList()
 
+const shuffleArray = (array) => {
+  const shuffled = [...array]
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+  }
+  return shuffled
+}
+
+const marqueeModules = computed(() => {
+  if (!filteredModules.value?.length) return []
+
+  const row1 = shuffleArray(filteredModules.value)
+  const row2 = shuffleArray(filteredModules.value)
+  const row3 = shuffleArray(filteredModules.value)
+
+  return [row1, row2, row3]
+})
+
 defineShortcuts({
   '/': () => {
     input.value?.inputRef?.focus()
@@ -35,16 +54,47 @@ defineShortcuts({
 
 <template>
   <UContainer>
+    <div class="overflow-hidden absolute inset-0 mt-20">
+      <UPageMarquee
+        v-for="(row, rowIndex) in marqueeModules"
+        :key="rowIndex"
+        :overlay="false"
+        :reverse="rowIndex % 2 === 1"
+        :ui="{
+          root: `[--gap:--spacing(1)] [--duration:400s]`
+        }"
+        class="mb-2"
+      >
+        <div
+          v-for="(module, index) in row"
+          :key="`${rowIndex}-${index}`"
+          class="flex items-center justify-center size-16 mx-2 rounded-lg bg-(--ui-bg-muted) p-2 shrink-0"
+        >
+          <UAvatar
+            :src="moduleImage(module.icon)"
+            :icon="moduleIcon(module.category)"
+            :alt="module.name"
+            size="lg"
+            class="pointer-events-none rounded-md bg-transparent"
+          />
+        </div>
+      </UPageMarquee>
+    </div>
+
     <UPageHero
       v-bind="page"
-      class="z-30"
+      class="z-10 relative"
       :ui="{
-        container: 'px-0 sm:px-0 lg:px-0'
+        container: '!pb-16',
+        title: 'z-30',
+        description: 'z-30 max-w-3xl mx-auto',
+        links: 'z-30 max-w-2xl mx-auto'
       }"
     >
       <template #description>
         <p>{{ page.description }}</p>
-        <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mt-4 justify-center">
+
+        <!-- <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mt-4 justify-center">
           <div class="flex items-center gap-1.5">
             <UIcon name="i-lucide-circle-user" class="size-4 shrink-0 text-(--ui-text-muted)" />
             <span class="text-base font-medium">{{ formatNumber(stats.maintainers) }} Maintainers</span>
@@ -57,72 +107,56 @@ defineShortcuts({
             <UIcon name="i-lucide-puzzle" class="size-4 shrink-0 text-(--ui-text-muted)" />
             <span class="text-base font-medium">{{ formatNumber(stats.modules) }} Modules</span>
           </div>
+        </div> -->
+      </template>
+
+      <template #links>
+        <UInput
+          ref="input"
+          type="search"
+          :model-value="q"
+          name="q"
+          icon="i-lucide-search"
+          placeholder="Search a module..."
+          class="w-full"
+          size="lg"
+          autocomplete="off"
+          variant="subtle"
+          @update:model-value="replaceRoute('q', $event)"
+        >
+          <template #trailing>
+            <UButton
+              v-if="q"
+              color="neutral"
+              variant="link"
+              size="lg"
+              icon="i-lucide-x"
+              @click="replaceRoute('q', '')"
+            />
+            <UKbd v-else value="/" />
+          </template>
+        </UInput>
+        <!-- <div class="flex items-center gap-2">
+          <UButton v-for="link in page.links" :key="link.to" v-bind="link" />
+        </div> -->
+        <div class="mt-6 flex flex-wrap gap-1.5 justify-center">
+          <UButton
+            v-for="category in categories"
+            :key="category.key"
+            v-bind="category"
+            color="neutral"
+            variant="outline"
+            active-color="primary"
+            active-variant="subtle"
+            size="sm"
+          />
         </div>
       </template>
     </UPageHero>
 
     <UPage id="smooth" class="pt-20 -mt-20">
-      <template #left>
-        <UPageAside class="space-y-4">
-          <UInput
-            ref="input"
-            icon="i-lucide-search"
-            :model-value="q"
-            name="q"
-            placeholder="Search..."
-            autocomplete="off"
-            class="mb-2"
-            @update:model-value="replaceRoute('q', $event)"
-          >
-            <template #trailing>
-              <UButton
-                v-if="q"
-                color="neutral"
-                variant="link"
-                size="xs"
-                icon="i-lucide-x"
-                @click="replaceRoute('q', '')"
-              />
-              <UKbd v-else value="/" />
-            </template>
-          </UInput>
-          <UButtonGroup class="w-full mb-4">
-            <USelectMenu
-              :model-value="selectedSort"
-              :items="sorts"
-              size="md"
-              color="neutral"
-              class="w-full"
-              variant="outline"
-              @update:model-value="replaceRoute('sortBy', $event)"
-            />
-            <UButton
-              :icon="selectedOrder.icon"
-              size="md"
-              color="neutral"
-              variant="outline"
-              @click="replaceRoute('orderBy', selectedOrder.key === 'desc' ? 'asc' : 'desc')"
-            />
-          </UButtonGroup>
-          <UContentNavigation :navigation="[{ title: 'Categories', children: categories }]" highlight />
-        </UPageAside>
-      </template>
-
       <UPageBody>
-        <div class="lg:hidden mb-6 flex items-center gap-2">
-          <UInput
-            ref="inputRef"
-            type="search"
-            :model-value="q"
-            name="q"
-            icon="i-lucide-search"
-            placeholder="Search a module..."
-            class="w-full"
-            size="sm"
-            autocomplete="off"
-            variant="outline"
-            @update:model-value="replaceRoute('q', $event)"
-          />
+        <!-- <div class="mb-6 flex items-center gap-2">
           <UButtonGroup>
             <USelectMenu
               :model-value="selectedSort"
@@ -140,7 +174,7 @@ defineShortcuts({
               @click="replaceRoute('orderBy', selectedOrder.key === 'desc' ? 'asc' : 'desc')"
             />
           </UButtonGroup>
-        </div>
+        </div> -->
         <UPageGrid v-if="filteredModules?.length" class="lg:grid-cols-2 xl:grid-cols-3">
           <ModuleItem v-for="(module, index) in filteredModules" :key="index" :module="module" />
         </UPageGrid>
