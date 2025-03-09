@@ -81,7 +81,7 @@ defineOgImageComponent('Docs', {
   <UContainer>
     <div v-if="!module.compatibility?.nuxt?.includes('^3') && !module.compatibility?.nuxt?.includes('>=3')" class="pt-8">
       <UAlert
-        icon="i-lucide-warning"
+        icon="i-lucide-triangle-alert"
         variant="subtle"
         title="This module is not yet compatible with Nuxt 3"
       >

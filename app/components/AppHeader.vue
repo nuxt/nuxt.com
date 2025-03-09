@@ -9,25 +9,16 @@ const { copy } = useClipboard()
 
 const version = computed(() => stats.value?.version?.match(/\d+\.\d+/)[0])
 
-/* const mobileNav = computed(() => {
-  const links = mapContentNavigation(navigation.value)
-
-  // Show Migration and Bridge on mobile only when user is reading them
-  const docsLink = links.find(link => link.to === '/docs')
-  if (docsLink && !route.path.startsWith('/docs/bridge') && !route.path.startsWith('/docs/migration')) {
-    docsLink.children = docsLink.children.filter(link => !['/docs/bridge', '/docs/migration'].includes(link.to as string))
-  }
-
+const mobileNav = computed(() => {
   return [
-    docsLink,
-    ...headerLinks.value.slice(1),
+    ...headerLinks.value,
     {
       label: 'Design Kit',
       icon: 'i-lucide-palette',
       to: '/design-kit'
     }
   ]
-}) */
+})
 
 const logoContextMenuItems = [
   [{
@@ -48,11 +39,6 @@ const logoContextMenuItems = [
     to: '/design-kit'
   }]
 ]
-const isMobile = ref(false)
-
-onMounted(() => {
-  isMobile.value = ('ontouchstart' in document.documentElement)
-})
 </script>
 
 <template>
@@ -77,7 +63,7 @@ onMounted(() => {
 
     <template #right>
       <UTooltip text="Search" :kbds="['meta', 'K']">
-        <UContentSearchButton :label="null" />
+        <UContentSearchButton />
       </UTooltip>
 
       <UTooltip :text="$colorMode.preference === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'">
@@ -100,7 +86,7 @@ onMounted(() => {
     </template>
 
     <template #body>
-      <UNavigationMenu :items="headerLinks" orientation="vertical" class="-mx-2.5" />
+      <UNavigationMenu :items="mobileNav" orientation="vertical" class="-mx-2.5" />
     </template>
   </UHeader>
 </template>

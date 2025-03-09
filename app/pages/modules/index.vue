@@ -13,8 +13,9 @@ if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const title = page.value?.title || page.value.title
-const description = page.value?.description || page.value.description
+const title = page.value.title
+const description = page.value.description
+
 useSeoMeta({
   titleTemplate: '%s',
   title,
@@ -46,7 +47,7 @@ const getRandomDelay = (rowIndex, index) => {
 const initMarqueeModules = () => {
   if (marqueeModulesData.value.length) return
 
-  const allModules = [...filteredModules.value]
+  const allModules = modules.value
   const limitedModules = shuffleArray(allModules).slice(0, 50)
 
   const row1 = shuffleArray(limitedModules)

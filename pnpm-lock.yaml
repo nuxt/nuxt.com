@@ -27,9 +27,6 @@ importers:
       '@iconify-json/simple-icons':
         specifier: ^1.2.27
         version: 1.2.27
-      '@iconify-json/uil':
-        specifier: ^1.2.3
-        version: 1.2.3
       '@nuxt/content':
         specifier: ^3.3.0
         version: 3.3.0(magicast@0.3.5)(rollup@4.34.9)(typescript@5.8.2)
@@ -750,9 +747,6 @@ packages:
 
   '@iconify-json/simple-icons@1.2.27':
     resolution: {integrity: sha512-FtZwp/H7ih5rY9FPfDR+k6toOo/cuwpHWY8faNhxLs5O5uW6Q8TeqdNWfjVfgFtrs5tUUzWysjqNGL234v8EMA==}
-
-  '@iconify-json/uil@1.2.3':
-    resolution: {integrity: sha512-if91+UBhDQc6glPsIaXecGIcXnbQZfEO4Gdv89TV2xQ+V5e9GWbY5rNl2fsKZd8COsRQ5lRQAKimVQVL0CZZVg==}
 
   '@iconify-json/vscode-icons@1.2.16':
     resolution: {integrity: sha512-hstc2yVq2UJ6v6FrgjftzXRvphGZBsKxvSeXoFLP1Hgx89TPZKrGE5SV6vqsoeIlLYaQ7OZbXmAoVGroTfGmVQ==}
@@ -6940,10 +6934,6 @@ snapshots:
       '@iconify/types': 2.0.0
 
   '@iconify-json/simple-icons@1.2.27':
-    dependencies:
-      '@iconify/types': 2.0.0
-
-  '@iconify-json/uil@1.2.3':
     dependencies:
       '@iconify/types': 2.0.0
 

@@ -1,6 +1,7 @@
 import type { Module, Filter, Stats } from '~/types'
 
 const iconsMap = {
+  Official: 'i-lucide-medal',
   Analytics: 'i-lucide-bar-chart',
   CMS: 'i-lucide-pencil',
   CSS: 'i-lucide-palette',
@@ -14,7 +15,7 @@ const iconsMap = {
   Monitoring: 'i-lucide-timer',
   Payment: 'i-lucide-credit-card',
   Performance: 'i-lucide-gauge',
-  Request: 'i-lucide-plug',
+  Request: 'i-lucide-unplug',
   Security: 'i-lucide-shield',
   SEO: 'i-lucide-search',
   UI: 'i-lucide-layout'
@@ -35,12 +36,6 @@ export const moduleIcon = function (category: string) {
 }
 
 export const useModules = () => {
-  // interface TypeMap {
-  //   official: string,
-  //   community: string
-  //   '3rd-party': string
-  // }
-
   const route = useRoute()
   const router = useRouter()
   const stats = useState<Stats>('module-stats', () => ({
@@ -66,12 +61,6 @@ export const useModules = () => {
 
   // Data
 
-  // const versions: Filter[] = [
-  //   { key: '3.x', label: 'v3' },
-  //   { key: '2.x-bridge', label: 'Bridge' },
-  //   { key: '2.x', label: 'v2' }
-  // ]
-
   const sorts: Filter[] = [
     { key: 'downloads', label: 'Downloads' },
     { key: 'stars', label: 'Stars' },
@@ -80,26 +69,9 @@ export const useModules = () => {
   ]
 
   const orders: Filter[] = [
-    { key: 'desc', label: 'Desc', icon: 'i-uil-sort-amount-down' },
-    { key: 'asc', label: 'Asc', icon: 'i-uil-sort-amount-up' }
+    { key: 'desc', label: 'Desc', icon: 'i-lucide-arrow-down-wide-narrow' },
+    { key: 'asc', label: 'Asc', icon: 'i-lucide-arrow-up-wide-narrow' }
   ]
-
-  // const typesMap: TypeMap = {
-  //   official: 'Official',
-  //   community: 'Community',
-  //   '3rd-party': 'Third Party'
-  // }
-
-  // const modulesByVersion: ComputedRef<Module[]> = computed(() => {
-  //   return [...modules.value]
-  //     .filter((module) => {
-  //       if (selectedVersion.value && !(module.tags ?? []).includes(selectedVersion.value.key as string)) {
-  //         return false
-  //       }
-
-  //       return true
-  //     })
-  // })
 
   const categories = computed<Filter[]>(() => {
     return Object.keys(iconsMap)
@@ -121,32 +93,11 @@ export const useModules = () => {
           }
         }
       })
-      .sort((a, b) => a.label.localeCompare(b.label))
   })
-
-  // const contributors: ComputedRef<Set<string>> = computed(() => {
-  //   return new Set(modules.value.flatMap(m => m.contributors.map(m => m.login)))
-  // })
-
-  // const stats: ComputedRef<{ downloads: number, contributors: number, modules: number }> = computed(() => {
-  //   return {
-  //     downloads: modules.value.reduce((sum, m) => sum + m.downloads, 0),
-  //     contributors: contributors.value.size,
-  //     modules: modules.value.length
-  //   }
-  // })
 
   const selectedCategory = computed(() => {
     return categories.value.find(category => category.label === route.query.category)
   })
-
-  // const selectedType: ComputedRef<Filter | null> = computed(() => {
-  //   return types.value.find(type => type.key === route.query.type)
-  // })
-
-  // const selectedVersion = computed(() => {
-  //   return versions.find(version => version.key === route.query.version) || versions[0]
-  // })
 
   const selectedSort = computed(() => {
     return sorts.find(sort => sort.key === route.query.sortBy) || sorts[0]
@@ -177,15 +128,14 @@ export const useModules = () => {
   const filteredModules = computed<Module[]>(() => {
     let filteredModules = [...modules.value]
       .filter((module: Module | any) => {
-        if (selectedCategory.value && module.category !== selectedCategory.value.key) {
-          return false
+        if (selectedCategory.value) {
+          if (selectedCategory.value.key === 'Official') {
+            return module.type === 'official'
+          }
+          if (module.category !== selectedCategory.value.key) {
+            return false
+          }
         }
-        // if (selectedType.value && module.type !== selectedType.value.key) {
-        //   return false
-        // }
-        // if (selectedVersion.value && !(module.tags ?? []).includes(selectedVersion.value.key)) {
-        //   return false
-        // }
         const queryRegExp = searchTextRegExp(q.value as string)
         if (q.value && !['name', 'npm', 'category', 'description', 'repo'].map(field => module[field]).filter(Boolean).some(value => value.search(queryRegExp) !== -1)) {
           return false
