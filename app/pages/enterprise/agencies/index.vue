@@ -29,7 +29,11 @@ await fetchList()
 
 <template>
   <UContainer>
-    <UPageHero v-bind="page" />
+    <UPageHero
+      :title="title"
+      :description="description"
+      :links="page.links"
+    />
 
     <UPage id="smooth" class="pt-20 -mt-20">
       <template #left>

@@ -33,7 +33,8 @@ await fetchList()
 <template>
   <UContainer>
     <UPageHero
-      v-bind="page"
+      :title="page.title"
+      :description="page.description"
       :ui="{
         container: 'px-0 sm:px-0 lg:px-0',
         title: 'text-left',

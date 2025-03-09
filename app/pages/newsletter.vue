@@ -22,7 +22,10 @@ defineOgImageComponent('Docs')
 
 <template>
   <UContainer>
-    <UPageHero v-bind="page">
+    <UPageHero
+      :title="title"
+      :description="description"
+    >
       <template #links>
         <NewsletterForm class="flex-1 max-w-xs" :label="null" :description="null" />
       </template>

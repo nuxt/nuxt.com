@@ -25,7 +25,9 @@ defineOgImageComponent('Docs')
 <template>
   <UContainer>
     <UPageHero
-      v-bind="page"
+      :title="title"
+      :description="description"
+      :links="page.links"
     />
     <UPage>
       <UPageBody>

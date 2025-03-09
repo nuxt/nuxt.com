@@ -8,5 +8,5 @@ links:
   - label: 'Submit my agency'
     to: 'https://docs.google.com/forms/d/e/1FAIpQLSf85qskit5QqmGJcruGkGF0U7240Bh9MeN0pHB18UiOMWC8dA/viewform'
     color: neutral
-    size: 'sm'
+    size: 'md'
     target: '_blank'

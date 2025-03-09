@@ -119,7 +119,6 @@ defineShortcuts({
     </div>
 
     <UPageHero
-      v-bind="page"
       class="z-20 relative mt-32"
       :ui="{
         title: 'text-balance',
@@ -169,7 +168,7 @@ defineShortcuts({
               color="neutral"
               class="w-full"
               variant="outline"
-              @update:model-value="replaceRoute('sortBy', $event)"
+              @update:model-value="replaceRoute('sortBy', $event as string)"
             />
             <UButton
               :icon="selectedOrder.icon"

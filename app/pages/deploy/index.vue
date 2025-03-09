@@ -34,10 +34,9 @@ const otherProviders = computed(() => providers.value.filter(provider => provide
 <template>
   <UContainer>
     <UPageHero
-      v-bind="page"
-      :ui="{
-        container: 'px-0 sm:px-0 lg:px-0'
-      }"
+      :title="title"
+      :description="description"
+      :links="page.links"
     />
 
     <UPage>

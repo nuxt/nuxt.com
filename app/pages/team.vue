@@ -20,7 +20,11 @@ defineOgImageComponent('Docs')
 
 <template>
   <UContainer>
-    <UPageHero v-bind="page">
+    <UPageHero
+      :title="title"
+      :description="description"
+      :links="page.links"
+    >
       <template #description>
         <MDC :value="page.description" />
       </template>

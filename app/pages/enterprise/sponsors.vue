@@ -27,10 +27,14 @@ defineOgImageComponent('Docs', {
 
 <template>
   <UContainer>
-    <UPageHero v-bind="page" />
+    <UPageHero
+      :title="title"
+      :description="description"
+      :links="page.links"
+    />
 
     <UPage>
-      <UPageBody class="divide-y divide-(--ui-border)">
+      <UPageBody class="relative divide-y divide-(--ui-border)">
         <div v-for="([key, value]) of Object.entries(sponsors)" :key="key" class="relative grid lg:grid-cols-5 gap-8 py-24">
           <div class="lg:self-start flex lg:flex-col items-center lg:items-start justify-between lg:sticky lg:top-0 lg:pt-24 lg:-mt-24">
             <h2 class="capitalize font-bold text-2xl text-(--ui-text-highlighted)">
