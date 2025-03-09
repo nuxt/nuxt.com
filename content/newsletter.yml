@@ -2,7 +2,6 @@ title: The Nuxt Newsletter
 head.title: Nuxt Newsletter
 description: 'Get the latest releases and news about Nuxt and its ecosystem with our newsletter.'
 navigation: false
-align: 'center'
 cta:
   headline: Getting Started
   title: Start your Nuxt Journey
@@ -10,9 +9,10 @@ cta:
   links:
     - label: 'Get started'
       size: 'lg'
-      color: 'black'
+      color: 'neutral'
       to: '/docs/getting-started/introduction'
     - label: 'Explore examples'
       size: 'lg'
-      color: 'white'
+      color: 'neutral'
+      variant: 'subtle'
       to: '/docs/examples'

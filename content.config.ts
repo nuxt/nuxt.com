@@ -213,6 +213,8 @@ export default defineContentConfig({
         include: 'sponsors.yml'
       }, {
         include: 'agencies.yml'
+      }, {
+        include: 'newsletter.yml'
       }],
       schema: PageHero
     }),

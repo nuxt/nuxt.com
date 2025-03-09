@@ -82,8 +82,8 @@ export default defineNuxtConfig({
   },
   routeRules: {
     // Pre-render
-    '/api/templates.json': { prerender: true },
-    '/blog/rss.xml': { prerender: true },
+    // '/api/templates.json': { prerender: true },
+    // TODO: '/blog/rss.xml': { prerender: true },
     // '/sitemap.xml': { prerender: true },
     '/newsletter': { prerender: true },
     // Redirects

@@ -18,12 +18,12 @@ importers:
       '@iconify-json/logos':
         specifier: ^1.2.4
         version: 1.2.4
+      '@iconify-json/lucide':
+        specifier: ^1.2.28
+        version: 1.2.28
       '@iconify-json/octicon':
         specifier: ^1.2.5
         version: 1.2.5
-      '@iconify-json/ph':
-        specifier: ^1.2.2
-        version: 1.2.2
       '@iconify-json/simple-icons':
         specifier: ^1.2.27
         version: 1.2.27
@@ -60,9 +60,6 @@ importers:
       feed:
         specifier: ^4.2.2
         version: 4.2.2
-      floating-vue:
-        specifier: ^5.2.2
-        version: 5.2.2(@nuxt/kit@3.15.4(magicast@0.3.5)(rollup@4.34.9))(vue@3.5.13(typescript@5.8.2))
       motion-v:
         specifier: 0.11.0-beta.6
         version: 0.11.0-beta.6(vue@3.5.13(typescript@5.8.2))
@@ -100,9 +97,6 @@ importers:
         specifier: 1.0.0-rc.3
         version: 1.0.0-rc.3(typescript@5.8.2)
     devDependencies:
-      '@iconify-json/lucide':
-        specifier: ^1.2.28
-        version: 1.2.28
       '@iconify-json/vscode-icons':
         specifier: ^1.2.16
         version: 1.2.16
@@ -753,9 +747,6 @@ packages:
 
   '@iconify-json/octicon@1.2.5':
     resolution: {integrity: sha512-FVFjjmAC1R1Feis9k+COO3WvL3yumk0E7RxNvOEGT9K8CDp05k3Qg2lLlynBzZrSfuT1DhReJUUXFAj60ZHkpA==}
-
-  '@iconify-json/ph@1.2.2':
-    resolution: {integrity: sha512-PgkEZNtqa8hBGjHXQa4pMwZa93hmfu8FUSjs/nv4oUU6yLsgv+gh9nu28Kqi8Fz9CCVu4hj1MZs9/60J57IzFw==}
 
   '@iconify-json/simple-icons@1.2.27':
     resolution: {integrity: sha512-FtZwp/H7ih5rY9FPfDR+k6toOo/cuwpHWY8faNhxLs5O5uW6Q8TeqdNWfjVfgFtrs5tUUzWysjqNGL234v8EMA==}
@@ -6945,10 +6936,6 @@ snapshots:
       '@iconify/types': 2.0.0
 
   '@iconify-json/octicon@1.2.5':
-    dependencies:
-      '@iconify/types': 2.0.0
-
-  '@iconify-json/ph@1.2.2':
     dependencies:
       '@iconify/types': 2.0.0
 
