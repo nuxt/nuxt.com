@@ -108,7 +108,7 @@ const isMobile = breakpoints.smaller('sm')
             :transition="{
               delay: getRandomDelay(rowIndex, index)
             }"
-            class="flex items-center justify-center size-16 rounded-lg bg-(--ui-bg-muted) p-2 border border-(--ui-border)"
+            class="flex items-center justify-center size-16 rounded-lg bg-(--ui-bg-muted) p-2 border border-(--ui-border) dark:shadow-lg"
           >
             <UAvatar
               :src="moduleImage(module.icon)"

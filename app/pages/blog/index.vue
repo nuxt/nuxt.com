@@ -71,9 +71,7 @@ await fetchList()
         :image="{
           src: article.image,
           width: (index === 0 ? 672 : 437),
-          height: (index === 0 ? 378 : 246),
-          placeholder: [59, 33, 50, 40],
-          format: 'webp'
+          height: (index === 0 ? 378 : 246)
         }"
         :date="formatDateByLocale('en', article.date)"
         :authors="article.authors"
