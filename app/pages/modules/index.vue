@@ -6,7 +6,7 @@ definePageMeta({
 const input = useTemplateRef('input')
 
 const { replaceRoute } = useFilters('modules')
-const { fetchList, filteredModules, q, categories, stats, selectedOrder, sorts, selectedSort } = useModules()
+const { fetchList, filteredModules, q, categories, modules, stats, selectedSort, selectedOrder, sorts, orders } = useModules()
 
 const { data: page } = await useAsyncData('modules-landing', () => queryCollection('landing').path('/modules').first())
 if (!page.value) {
@@ -35,15 +35,32 @@ const shuffleArray = (array) => {
   return shuffled
 }
 
-const marqueeModules = computed(() => {
-  if (!filteredModules.value?.length) return []
+const marqueeModulesData = useState('marqueeModules', () => [])
 
-  const row1 = shuffleArray(filteredModules.value)
-  const row2 = shuffleArray(filteredModules.value)
-  const row3 = shuffleArray(filteredModules.value)
+const getRandomDelay = (rowIndex, index) => {
+  const baseDelay = (rowIndex * 0.3) + (index * 0.05)
+  const randomOffset = ((rowIndex * 13) + index) % 10 * 0.1
+  return baseDelay + randomOffset
+}
 
-  return [row1, row2, row3]
-})
+const initMarqueeModules = () => {
+  if (marqueeModulesData.value.length) return
+
+  const allModules = [...filteredModules.value]
+  const limitedModules = shuffleArray(allModules).slice(0, 50)
+
+  const row1 = shuffleArray(limitedModules)
+  const row2 = shuffleArray(limitedModules)
+  const row3 = shuffleArray(limitedModules)
+
+  marqueeModulesData.value = [row1, row2, row3]
+}
+
+watch(() => filteredModules.value, (newVal) => {
+  if (newVal?.length && !marqueeModulesData.value.length) {
+    initMarqueeModules()
+  }
+}, { immediate: true })
 
 defineShortcuts({
   '/': () => {
@@ -54,91 +71,115 @@ defineShortcuts({
 
 <template>
   <UContainer>
-    <div class="overflow-hidden absolute inset-0 mt-20">
-      <UPageMarquee
-        v-for="(row, rowIndex) in marqueeModules"
-        :key="rowIndex"
-        :overlay="false"
-        :reverse="rowIndex % 2 === 1"
-        :ui="{
-          root: `[--gap:--spacing(1)] [--duration:400s]`
-        }"
-        class="mb-2"
-      >
-        <div
-          v-for="(module, index) in row"
-          :key="`${rowIndex}-${index}`"
-          class="flex items-center justify-center size-16 mx-2 rounded-lg bg-(--ui-bg-muted) p-2 shrink-0"
+    <div class="absolute inset-0 overflow-hidden">
+      <div class="flex flex-col justify-between pt-20">
+        <UPageMarquee
+          v-for="(row, rowIndex) in marqueeModulesData"
+          :key="rowIndex"
+          :reverse="rowIndex % 2 === 1"
+          :overlay="false"
+          :ui="{
+            root: `[--gap:--spacing(4)] [--duration:400s]`
+          }"
+          class="mb-(--gap)"
         >
-          <UAvatar
-            :src="moduleImage(module.icon)"
-            :icon="moduleIcon(module.category)"
-            :alt="module.name"
-            size="lg"
-            class="pointer-events-none rounded-md bg-transparent"
-          />
-        </div>
-      </UPageMarquee>
+          <Motion
+            v-for="(module, index) in row"
+            :key="`${rowIndex}-${index}`"
+            :initial="{
+              scale: 0.5,
+              opacity: 0,
+              filter: 'blur(10px)'
+            }"
+            :animate="{
+              scale: 1,
+              opacity: 1,
+              filter: 'blur(0px)'
+            }"
+            :transition="{
+              delay: getRandomDelay(rowIndex, index)
+            }"
+            class="flex items-center justify-center size-16 rounded-lg bg-(--ui-bg-muted) p-2 border border-(--ui-border)"
+          >
+            <UAvatar
+              :src="moduleImage(module.icon)"
+              :icon="moduleIcon(module.category)"
+              :alt="module.name"
+              size="lg"
+              class="rounded-none bg-transparent"
+            />
+          </Motion>
+        </UPageMarquee>
+      </div>
+
+      <div class="absolute left-0 top-0 bottom-0 w-1/2 z-10 bg-linear-to-bl from-(--ui-bg)/10 to-(--ui-bg) to-50%" />
+      <div class="absolute right-0 top-0 bottom-0 w-1/2 z-10 bg-linear-to-br from-(--ui-bg)/10 to-(--ui-bg) to-50%" />
+      <div class="absolute top-0 left-0 right-0 size-full z-10 bg-linear-to-t from-(--ui-bg) to-(--ui-bg)/5" />
     </div>
 
     <UPageHero
       v-bind="page"
-      class="z-10 relative"
+      class="z-20 relative mt-32"
       :ui="{
-        container: '!pb-16',
-        title: 'z-30',
-        description: 'z-30 max-w-3xl mx-auto',
-        links: 'z-30 max-w-2xl mx-auto'
+        title: 'text-balance',
+        links: 'max-w-2xl mx-auto'
       }"
     >
-      <template #description>
-        <p>{{ page.description }}</p>
+      <template #title>
+        Build faster with <span class="text-(--ui-primary)">{{ modules.length }}+</span> Nuxt Modules
+      </template>
 
-        <!-- <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mt-4 justify-center">
-          <div class="flex items-center gap-1.5">
-            <UIcon name="i-lucide-circle-user" class="size-4 shrink-0 text-(--ui-text-muted)" />
-            <span class="text-base font-medium">{{ formatNumber(stats.maintainers) }} Maintainers</span>
-          </div>
-          <div class="flex items-center gap-1.5">
-            <UIcon name="i-lucide-users" class="size-4 shrink-0 text-(--ui-text-muted)" />
-            <span class="text-base font-medium">+{{ formatNumber(stats.contributors) }} Contributors</span>
-          </div>
-          <div class="flex items-center gap-1.5">
-            <UIcon name="i-lucide-puzzle" class="size-4 shrink-0 text-(--ui-text-muted)" />
-            <span class="text-base font-medium">{{ formatNumber(stats.modules) }} Modules</span>
-          </div>
-        </div> -->
+      <template #description>
+        {{ description.replace('%s', stats.contributors.toLocaleString()) }}
       </template>
 
       <template #links>
-        <UInput
-          ref="input"
-          type="search"
-          :model-value="q"
-          name="q"
-          icon="i-lucide-search"
-          placeholder="Search a module..."
-          class="w-full"
-          size="lg"
-          autocomplete="off"
-          variant="subtle"
-          @update:model-value="replaceRoute('q', $event)"
-        >
-          <template #trailing>
-            <UButton
-              v-if="q"
-              color="neutral"
-              variant="link"
+        <div class="flex sm:flex-row flex-col w-full items-center gap-2">
+          <UInput
+            ref="input"
+            :model-value="q"
+            name="q"
+            icon="i-lucide-search"
+            placeholder="Search a module..."
+            class="w-full"
+            size="lg"
+            autofocus
+            autocomplete="off"
+            variant="subtle"
+            @update:model-value="replaceRoute('q', $event as string)"
+          >
+            <template #trailing>
+              <UButton
+                v-if="q"
+                color="neutral"
+                variant="link"
+                size="lg"
+                icon="i-lucide-x"
+                @click="replaceRoute('q', '')"
+              />
+              <UKbd v-else value="/" />
+            </template>
+          </UInput>
+          <UButtonGroup>
+            <USelectMenu
+              :model-value="selectedSort"
+              :items="sorts"
               size="lg"
-              icon="i-lucide-x"
-              @click="replaceRoute('q', '')"
+              color="neutral"
+              class="w-full"
+              variant="outline"
+              @update:model-value="replaceRoute('sortBy', $event)"
             />
-            <UKbd v-else value="/" />
-          </template>
-        </UInput>
-        <!-- <div class="flex items-center gap-2">
-          <UButton v-for="link in page.links" :key="link.to" v-bind="link" />
-        </div> -->
+            <UButton
+              :icon="selectedOrder.icon"
+              size="lg"
+              color="neutral"
+              variant="outline"
+              @click="replaceRoute('orderBy', selectedOrder.key === 'desc' ? 'asc' : 'desc')"
+            />
+          </UButtonGroup>
+        </div>
+
         <div class="mt-6 flex flex-wrap gap-1.5 justify-center">
           <UButton
             v-for="category in categories"
@@ -154,27 +195,8 @@ defineShortcuts({
       </template>
     </UPageHero>
 
-    <UPage id="smooth" class="pt-20 -mt-20">
+    <UPage id="smooth" class="relative z-20">
       <UPageBody>
-        <!-- <div class="mb-6 flex items-center gap-2">
-          <UButtonGroup>
-            <USelectMenu
-              :model-value="selectedSort"
-              :options="sorts"
-              size="md"
-              color="neutral"
-              variant="outline"
-              @update:model-value="replaceRoute('sortBy', $event)"
-            />
-            <UButton
-              :icon="selectedOrder.icon"
-              size="md"
-              color="neutral"
-              variant="outline"
-              @click="replaceRoute('orderBy', selectedOrder.key === 'desc' ? 'asc' : 'desc')"
-            />
-          </UButtonGroup>
-        </div> -->
         <UPageGrid v-if="filteredModules?.length" class="lg:grid-cols-2 xl:grid-cols-3">
           <ModuleItem v-for="(module, index) in filteredModules" :key="index" :module="module" />
         </UPageGrid>
