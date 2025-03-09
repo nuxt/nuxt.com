@@ -1,0 +1,6 @@
+name: 'Shadcn Docs Template'
+slug: 'shadcn-docs'
+description: 'Effortless and beautiful docs template built with shadcn-vue.'
+screenshotUrl: 'https://shadcn-docs-nuxt.vercel.app/getting-started/introduction'
+repo: 'ZTL-UwU/shadcn-docs-nuxt'
+demo: 'https://shadcn-docs-nuxt.vercel.app/' 

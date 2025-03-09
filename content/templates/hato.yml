@@ -1,0 +1,6 @@
+name: 'Hato'
+slug: 'hato'
+description: 'Discover Hato, the sleek portfolio website perfect for freelancers, photographers, and artists made with Nuxt UI'
+badge: 'Free'
+repo: 'cesswhite/hato-minimal-template'
+demo: 'https://hato-template.vercel.app/' 

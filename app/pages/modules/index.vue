@@ -1,18 +1,21 @@
 <script setup lang="ts">
 definePageMeta({
-  heroBackground: 'opacity-70'
+  heroBackground: 'opacity-50'
 })
 
-const inputRef = ref()
+const input = useTemplateRef('input')
 
-const route = useRoute()
 const { replaceRoute } = useFilters('modules')
-const { fetchList, filteredModules, q, categories, stats, selectedOrder, sorts, selectedSort } = useModules()
+const { fetchList, filteredModules, q, categories, modules, stats, selectedSort, selectedOrder, selectedCategory, sorts } = useModules()
 
-const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
+const { data: page } = await useAsyncData('modules-landing', () => queryCollection('landing').path('/modules').first())
+if (!page.value) {
+  throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
+}
 
-const title = page.value.head?.title || page.value.title
-const description = page.value.head?.description || page.value.description
+const title = page.value.title
+const description = page.value.description
+
 useSeoMeta({
   titleTemplate: '%s',
   title,
@@ -24,218 +27,240 @@ defineOgImageComponent('Docs')
 
 await fetchList()
 
+const shuffleArray = (array) => {
+  const shuffled = [...array]
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+  }
+  return shuffled
+}
+
+const marqueeModulesData = useState('marqueeModules', () => [])
+
+const getRandomDelay = (rowIndex, index) => {
+  const baseDelay = (rowIndex * 0.3) + (index * 0.05)
+  const randomOffset = ((rowIndex * 13) + index) % 10 * 0.1
+  return baseDelay + randomOffset
+}
+
+const initMarqueeModules = () => {
+  if (marqueeModulesData.value.length) return
+
+  const allModules = modules.value
+  const limitedModules = shuffleArray(allModules).slice(0, 50)
+
+  const row1 = shuffleArray(limitedModules)
+  const row2 = shuffleArray(limitedModules)
+  const row3 = shuffleArray(limitedModules)
+
+  marqueeModulesData.value = [row1, row2, row3]
+}
+
+watch(() => filteredModules.value, (newVal) => {
+  if (newVal?.length && !marqueeModulesData.value.length) {
+    initMarqueeModules()
+  }
+}, { immediate: true })
+
 defineShortcuts({
   '/': () => {
-    inputRef.value.input.focus()
+    input.value?.inputRef?.focus()
   }
 })
 
-const { copy } = useCopyToClipboard()
+const breakpoints = useBreakpoints({
+  sm: 640,
+  md: 768,
+  lg: 1024
+})
+
+const isMobile = breakpoints.smaller('sm')
 </script>
 
 <template>
   <UContainer>
-    <UPageHero v-bind="page" class="z-30">
+    <div class="absolute inset-0 overflow-hidden">
+      <div class="flex flex-col justify-between pt-20">
+        <UPageMarquee
+          v-for="(row, rowIndex) in marqueeModulesData"
+          :key="rowIndex"
+          :reverse="rowIndex % 2 === 1"
+          :overlay="false"
+          :ui="{
+            root: `[--gap:--spacing(4)] [--duration:400s]`
+          }"
+          class="mb-(--gap)"
+        >
+          <Motion
+            v-for="(module, index) in row"
+            :key="`${rowIndex}-${index}`"
+            :initial="{
+              scale: 0.5,
+              opacity: 0,
+              filter: 'blur(10px)'
+            }"
+            :animate="{
+              scale: 1,
+              opacity: 1,
+              filter: 'blur(0px)'
+            }"
+            :transition="{
+              delay: getRandomDelay(rowIndex, index)
+            }"
+            class="flex items-center justify-center size-16 rounded-lg bg-(--ui-bg-muted) p-2 border border-(--ui-border)"
+          >
+            <UAvatar
+              :src="moduleImage(module.icon)"
+              :icon="moduleIcon(module.category)"
+              :alt="module.name"
+              size="lg"
+              class="rounded-none bg-transparent"
+            />
+          </Motion>
+        </UPageMarquee>
+      </div>
+
+      <div class="absolute left-0 top-0 bottom-0 w-1/2 z-10 bg-linear-to-bl from-(--ui-bg)/10 to-(--ui-bg) to-50%" />
+      <div class="absolute right-0 top-0 bottom-0 w-1/2 z-10 bg-linear-to-br from-(--ui-bg)/10 to-(--ui-bg) to-50%" />
+      <div class="absolute top-0 left-0 right-0 size-full z-10 bg-linear-to-t from-(--ui-bg) to-(--ui-bg)/5" />
+    </div>
+
+    <UPageHero
+      class="z-20 relative mt-32"
+      :ui="{
+        title: 'text-4xl sm:text-7xl text-balance max-w-4xl mx-auto',
+        links: 'max-w-2xl mx-auto'
+      }"
+    >
+      <template #title>
+        Build faster with <span class="text-(--ui-primary)">{{ modules.length }}+</span> Nuxt Modules
+      </template>
+
       <template #description>
-        <p>{{ page.description }}</p>
-        <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mt-4 justify-center">
-          <div class="flex items-center gap-1.5">
-            <UIcon name="i-ph-user-circle-fill" class="w-4 h-4 flex-shrink-0 dark:text-gray-200 text-gray-700" />
-            <span class="text-sm font-medium">{{ formatNumber(stats.maintainers) }} Maintainers</span>
+        Discover our list of modules to supercharge your Nuxt project. Created and maintained by more than {{ stats.contributors.toString() }} people from the Nuxt team and community.
+      </template>
+
+      <template #links>
+        <div class="flex flex-col w-full gap-3">
+          <div class="flex flex-col sm:flex-row w-full gap-2 relative">
+            <UInput
+              ref="input"
+              :model-value="q"
+              name="q"
+              icon="i-lucide-search"
+              placeholder="Search a module..."
+              class="w-full"
+              size="lg"
+              autofocus
+              autocomplete="off"
+              variant="subtle"
+              @update:model-value="replaceRoute('q', $event as string)"
+            >
+              <template #trailing>
+                <UButton
+                  v-if="q"
+                  color="neutral"
+                  variant="link"
+                  size="lg"
+                  icon="i-lucide-x"
+                  @click="replaceRoute('q', '')"
+                />
+                <UKbd v-else value="/" class="hidden sm:flex" />
+              </template>
+            </UInput>
+
+            <div v-if="!isMobile" class="flex gap-2 sm:w-auto">
+              <USelectMenu
+                :model-value="selectedSort"
+                :items="sorts"
+                size="lg"
+                color="neutral"
+                class="w-auto"
+                variant="outline"
+                @update:model-value="replaceRoute('sortBy', $event as string)"
+              />
+
+              <UButton
+                :icon="selectedOrder.icon"
+                size="lg"
+                color="neutral"
+                variant="outline"
+                @click="replaceRoute('orderBy', selectedOrder.key === 'desc' ? 'asc' : 'desc')"
+              />
+            </div>
           </div>
-          <div class="flex items-center gap-1.5">
-            <UIcon name="i-ph-users-three-fill" class="w-4 h-4 flex-shrink-0 dark:text-gray-200 text-gray-700" />
-            <span class="text-sm font-medium">{{ formatNumber(stats.contributors) }} Contributors</span>
+
+          <div v-if="isMobile" class="flex gap-2">
+            <USelectMenu
+              :model-value="selectedCategory"
+              :items="categories"
+              size="lg"
+              color="neutral"
+              variant="outline"
+              class="flex-1"
+              placeholder="Select category"
+              @update:model-value="replaceRoute('category', $event as string)"
+            />
+            <UButton
+              v-if="selectedCategory"
+              icon="i-lucide-x"
+              size="lg"
+              color="neutral"
+              variant="outline"
+              aria-label="Clear category filter"
+              @click="replaceRoute('category', '')"
+            />
+            <USelectMenu
+              :model-value="selectedSort"
+              :items="sorts"
+              size="lg"
+              color="neutral"
+              class="w-1/3"
+              variant="outline"
+              @update:model-value="replaceRoute('sortBy', $event as string)"
+            />
+            <UButton
+              :icon="selectedOrder.icon"
+              size="lg"
+              color="neutral"
+              variant="outline"
+              @click="replaceRoute('orderBy', selectedOrder.key === 'desc' ? 'asc' : 'desc')"
+            />
           </div>
-          <div class="flex items-center gap-1.5">
-            <UIcon name="i-ph-puzzle-piece-fill" class="w-4 h-4 flex-shrink-0 dark:text-gray-200 text-gray-700" />
-            <span class="text-sm font-medium">{{ formatNumber(stats.modules) }} Modules</span>
-          </div>
+        </div>
+
+        <div class="hidden sm:flex mt-6 flex-wrap gap-1.5 justify-center">
+          <UButton
+            v-for="category in categories"
+            :key="category.key"
+            v-bind="category"
+            color="neutral"
+            variant="outline"
+            active-color="primary"
+            active-variant="subtle"
+            size="sm"
+          />
         </div>
       </template>
     </UPageHero>
 
-    <UPage id="smooth" class="pt-20 -mt-20">
-      <template #left>
-        <UAside>
-          <UInput
-            ref="inputRef"
-            :model-value="q"
-            name="q"
-            icon="i-ph-magnifying-glass"
-            placeholder="Search..."
-            class="w-full mb-2"
-            size="md"
-            autocomplete="off"
-            :ui="{ icon: { trailing: { pointer: '' } } }"
-            @update:model-value="replaceRoute('q', $event)"
-          >
-            <template #trailing>
-              <UButton
-                v-if="q"
-                color="gray"
-                variant="link"
-                size="xs"
-                icon="i-ph-x"
-                :padded="false"
-                @click="replaceRoute('q', '')"
-              />
-              <UKbd v-else>
-                /
-              </UKbd>
-            </template>
-          </UInput>
-          <UButtonGroup class="mb-4 w-full">
-            <USelectMenu
-              :model-value="selectedSort"
-              :options="sorts"
-              size="md"
-              color="white"
-              class="w-full"
-              @update:model-value="replaceRoute('sortBy', $event)"
-            />
-            <UButton
-              :icon="selectedOrder.icon"
-              size="md"
-              color="gray"
-              @click="replaceRoute('orderBy', selectedOrder.key === 'desc' ? 'asc' : 'desc')"
-            />
-          </UButtonGroup>
-          <UNavigationTree :links="[{ label: 'Categories', disabled: true, children: categories }]" />
-        </UAside>
-      </template>
-
-      <UPageBody class="lg:pl-8">
-        <div class="lg:hidden mb-6 flex items-center gap-2">
-          <UInput
-            ref="inputRef"
-            type="search"
-            :model-value="q"
-            name="q"
-            icon="i-ph-magnifying-glass"
-            placeholder="Search a module..."
-            class="w-full"
-            size="sm"
-            autocomplete="off"
-            :ui="{ icon: { trailing: { pointer: '' } } }"
-            @update:model-value="replaceRoute('q', $event)"
-          />
-          <UButtonGroup>
-            <USelectMenu
-              :model-value="selectedSort"
-              :options="sorts"
-              size="md"
-              color="white"
-              @update:model-value="replaceRoute('sortBy', $event)"
-            />
-            <UButton
-              :icon="selectedOrder.icon"
-              size="md"
-              color="gray"
-              @click="replaceRoute('orderBy', selectedOrder.key === 'desc' ? 'asc' : 'desc')"
-            />
-          </UButtonGroup>
-        </div>
-        <UPageGrid v-if="filteredModules?.length">
-          <UPageCard
-            v-for="(module, index) in filteredModules"
-            :key="index"
-            :to="`/modules/${module.name}`"
-            :title="module.npm"
-            class="flex flex-col overflow-hidden group"
-            :ui="{
-              to: 'hover:bg-white hover:ring-1',
-              icon: { wrapper: 'mb-2' },
-              body: { padding: 'p-4 sm:p-4', base: 'flex-1 dark:bg-gray-950' },
-              footer: { base: 'dark:bg-gray-950 border-none', padding: 'px-4 sm:px-4 pt-0' }
-            }"
-          >
-            <template #icon>
-              <UAvatar
-                :src="moduleImage(module.icon)"
-                :icon="moduleIcon(module.category)"
-                :alt="module.name"
-                size="xs"
-                :ui="{ rounded: 'rounded-md' }"
-                class="pointer-events-none"
-              />
-            </template>
-
-            <template #description>
-              <span class="line-clamp-2 dark:text-gray-400 text-gray-500 text-sm">{{ module.description }}</span>
-            </template>
-
-            <UBadge
-              v-if="module.type === 'official'"
-              class="space-x-1 shine text-sm items-center justitfy-center pointer-events-none absolute top-4 right-4"
-              size="xs"
-              variant="subtle"
-            >
-              <span>Official</span>
-            </UBadge>
-
-            <UBadge
-              v-if="module.sponsor"
-              class="space-x-1 shine text-sm items-center justitfy-center pointer-events-none absolute top-4 right-4"
-              size="xs"
-              variant="subtle"
-              color="pink"
-            >
-              <span>Sponsor</span>
-            </UBadge>
-
-            <template #footer>
-              <UDivider type="dashed" class="mb-4" />
-              <div class="flex items-center justify-between gap-3 -my-1 text-gray-600 dark:text-gray-300">
-                <div class="flex items-center gap-3">
-                  <UTooltip text="Monthly NPM Downloads">
-                    <NuxtLink
-                      class="flex items-center gap-1 hover:text-gray-900 hover:dark:text-white"
-                      :to="`https://npm.chart.dev/${module.npm}`"
-                      target="_blank"
-                    >
-                      <UIcon name="i-ph-arrow-circle-down" class="w-4 h-4 flex-shrink-0" />
-                      <span class="text-sm font-medium">{{ formatNumber(module.stats.downloads) }}</span>
-                    </NuxtLink>
-                  </UTooltip>
-
-                  <UTooltip text="GitHub Stars">
-                    <NuxtLink
-                      class="flex items-center gap-1 hover:text-gray-900 hover:dark:text-white"
-                      :to="`https://github.com/${module.repo}`"
-                      target="_blank"
-                    >
-                      <UIcon name="i-ph-star" class="w-4 h-4 flex-shrink-0" />
-                      <span class="text-sm font-medium">{{ formatNumber(module.stats.stars || 0) }}</span>
-                    </NuxtLink>
-                  </UTooltip>
-                </div>
-
-                <UTooltip
-                  :text="`Copy install command`"
-                >
-                  <UButton
-                    icon="i-ph-terminal"
-                    color="white"
-                    size="2xs"
-                    @click="copy(`npx nuxi@latest module add ${module.name}`, { title: 'Command copied to clipboard:', description: `npx nuxi@latest module add ${module.name}` })"
-                  />
-                </UTooltip>
-              </div>
-            </template>
-          </UPageCard>
+    <UPage id="smooth" class="relative z-20">
+      <UPageBody>
+        <UPageGrid v-if="filteredModules?.length" class="lg:grid-cols-2 xl:grid-cols-3">
+          <ModuleItem v-for="(module, index) in filteredModules" :key="index" :module="module" />
         </UPageGrid>
 
         <EmptyCard v-else :label="`There is no module found for ${q} yet. Become the first one to create it!`">
           <UButton
             label="Contribute on GitHub"
-            color="black"
+            color="neutral"
             to="https://github.com/nuxt/modules"
             target="_blank"
             size="md"
             @click="$router.replace({ query: {} })"
           />
-          <UButton to="/docs/guide/going-further/modules" color="white" size="md" label="How to create a module?" />
+          <UButton to="/docs/guide/going-further/modules" color="neutral" size="md" label="How to create a module?" />
         </EmptyCard>
       </UPageBody>
     </UPage>

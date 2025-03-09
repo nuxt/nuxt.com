@@ -1,0 +1,7 @@
+name: 'Nuxt 3 Performance (Playlist)'
+slug: 'nuxt3-performance'
+description: 'Deep dive into Nuxt 3 performance with Alexander Lichter (core team).'
+url: 'https://www.youtube.com/watch?v=laRJNkG_wls&list=PL06MUQt-_wls2sirXbt919cIbGvKv6k5Q'
+screenshotOptions:
+  delay: 1
+  removeElements: ['tp-yt-iron-overlay-backdrop', 'tp-yt-paper-dialog'] 

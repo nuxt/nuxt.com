@@ -1,0 +1,8 @@
+name: 'Glide.ai'
+slug: 'glideai'
+description: 'A dark, modern, website template powered by Nuxt and Prismic.'
+demo: 'https://prismic-demo-glideai.nuxt.dev'
+screenshotUrl: 'https://prismic-demo-glideai.nuxt.dev'
+screenshotOptions:
+  delay: 5
+repo: prismicio-community/nuxt-starter-prismic-glideai 

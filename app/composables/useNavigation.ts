@@ -7,132 +7,132 @@ const _useNavigation = () => {
 
     return [{
       label: 'Docs',
-      icon: 'i-ph-book-bookmark',
+      icon: 'i-lucide-book-marked',
       to: '/docs',
       search: false,
       children: [{
         label: 'Get Started',
         description: 'Learn how to get started with Nuxt.',
-        icon: 'i-ph-rocket-launch',
+        icon: 'i-lucide-rocket',
         to: '/docs/getting-started',
         active: route.path.startsWith('/docs/getting-started')
       }, {
         label: 'Guide',
         description: 'Learn how to build and deploy Nuxt applications.',
-        icon: 'i-ph-book-open',
+        icon: 'i-lucide-book-open',
         to: '/docs/guide',
         active: route.path.startsWith('/docs/guide')
       }, {
         label: 'API',
         description: 'Explore the Nuxt API.',
-        icon: 'i-ph-code',
+        icon: 'i-lucide-code-xml',
         to: '/docs/api',
         active: route.path.startsWith('/docs/api')
       }, {
         label: 'Examples',
         description: 'Discover and explore official and community examples.',
-        icon: 'i-ph-app-window',
+        icon: 'i-lucide-app-window-mac',
         to: '/docs/examples',
         active: route.path.startsWith('/docs/examples')
       }, {
         label: 'Community',
         description: 'Find answers and support from the community.',
-        icon: 'i-ph-chats-teardrop',
+        icon: 'i-lucide-messages-square',
         to: '/docs/community',
         active: route.path.startsWith('/docs/community')
       }]
     }, {
       label: 'Integrations',
       to: '/modules',
-      icon: 'i-ph-plugs-connected',
+      icon: 'i-lucide-unplug',
       search: false,
       active: route.path.startsWith('/modules') || route.path.startsWith('/deploy'),
       children: [{
         label: 'Modules',
         description: 'Supercharge your Nuxt project with modules.',
-        icon: 'i-ph-puzzle-piece',
+        icon: 'i-lucide-puzzle',
         to: '/modules'
       }, {
         label: 'Hosting',
         description: 'Deploy your Nuxt project anywhere.',
-        icon: 'i-ph-rocket-launch',
+        icon: 'i-lucide-rocket',
         to: '/deploy'
       }]
     }, {
       label: 'Resources',
-      icon: 'i-ph-books',
+      icon: 'i-lucide-library',
       to: '/templates',
       search: false,
       active: route.path.startsWith('/templates') || route.path.startsWith('/video-courses'),
       children: [{
         label: 'Templates',
-        icon: 'i-ph-browsers',
+        icon: 'i-lucide-app-window',
         description: 'Start your next project with a Nuxt template.',
         to: '/templates'
       }, {
         label: 'Video Courses',
         description: 'Learn Nuxt by watching video courses.',
-        icon: 'i-ph-graduation-cap',
+        icon: 'i-lucide-graduation-cap',
         to: '/video-courses'
       }, {
         label: 'Showcase',
         description: 'Discover and explore projects built with Nuxt.',
-        icon: 'i-ph-projector-screen',
+        icon: 'i-lucide-presentation',
         to: '/showcase'
       }, {
         label: 'Nuxt Certification',
         description: 'Obtain your Certification of Competence.',
-        icon: 'i-ph-medal',
+        icon: 'i-lucide-medal',
         to: 'https://certification.nuxt.com',
         target: '_blank'
       }]
     }, {
       label: 'Products',
-      icon: 'i-ph-sparkle',
+      icon: 'i-lucide-sparkle',
       search: false,
       children: [{
         label: 'Nuxt UI Pro',
         to: 'https://ui.nuxt.com/pro?utm_source=nuxt-website&utm_medium=header',
         description: 'Premium Vue components for Nuxt.',
-        icon: 'i-ph-layout',
+        icon: 'i-lucide-panels-top-left',
         target: '_blank'
       }, {
         label: 'Nuxt Studio',
         to: 'https://content.nuxt.com/studio/?utm_source=nuxt-website&utm_medium=header',
         description: 'The Git-based CMS for Nuxt.',
-        icon: 'i-ph-pen',
+        icon: 'i-lucide-pen',
         target: '_blank'
       }, {
         label: 'NuxtHub',
         to: 'https://hub.nuxt.com/?utm_source=nuxt-website&utm_medium=header',
         description: 'Build, deploy & manage Nuxt apps that scale.',
-        icon: 'i-ph-rocket-launch',
+        icon: 'i-lucide-rocket',
         target: '_blank'
       }]
     }, {
       label: 'Enterprise',
-      icon: 'i-ph-buildings',
+      icon: 'i-lucide-building-2',
       to: '/enterprise',
       search: false,
       children: [{
         label: 'Support',
         to: '/enterprise/support',
         description: 'Professional support by Nuxt experts.',
-        icon: 'i-ph-lifebuoy'
+        icon: 'i-lucide-life-buoy'
       }, {
         label: 'Agencies',
         to: '/enterprise/agencies',
         description: 'Agencies specialized in Nuxt development.',
-        icon: 'i-ph-handshake'
+        icon: 'i-lucide-handshake'
       }, {
         label: 'Sponsors',
         to: '/enterprise/sponsors',
         description: 'Help us sustain Nuxt development.',
-        icon: 'i-ph-hand-heart'
+        icon: 'i-lucide-hand-heart'
       }]
     }, {
       label: 'Blog',
-      icon: 'i-ph-newspaper',
+      icon: 'i-lucide-newspaper',
       to: '/blog'
     }]
   })
@@ -182,9 +182,9 @@ const _useNavigation = () => {
   const searchLinks = computed(() => [
     {
       label: 'Ask AI',
-      icon: 'i-ph-magic-wand',
+      icon: 'i-lucide-wand',
       to: 'javascript:void(0);',
-      click: () => nuxtApp.$kapa?.openModal()
+      onSelect: () => nuxtApp.$kapa?.openModal()
     },
     ...headerLinks.value.map((link) => {
     // Remove `/docs` and `/enterprise` links from command palette
@@ -199,22 +199,22 @@ const _useNavigation = () => {
       return link
     }).filter(Boolean), {
       label: 'Team',
-      icon: 'i-ph-users',
+      icon: 'i-lucide-users',
       to: '/team'
     }, {
       label: 'Design Kit',
-      icon: 'i-ph-palette',
+      icon: 'i-lucide-palette',
       to: '/design-kit'
     }, {
       label: 'Newsletter',
-      icon: 'i-ph-envelope-simple',
+      icon: 'i-lucide-mail',
       to: '/newsletter'
     }])
 
   const searchGroups = [{
-    key: 'ask-ai-search',
+    id: 'ask-ai-search',
     label: 'AI',
-    icon: 'i-ph-magic-wand',
+    icon: 'i-lucide-wand',
     search: async (q) => {
       if (!q) {
         return []
@@ -222,7 +222,7 @@ const _useNavigation = () => {
 
       return [{
         label: `Ask AI about "${q}"`,
-        icon: 'i-ph-magic-wand',
+        icon: 'i-lucide-wand',
         to: 'javascript:void(0);',
         click() {
           return nuxtApp.$kapa.openModal(q)
@@ -230,7 +230,7 @@ const _useNavigation = () => {
       }]
     }
   }, {
-    key: 'modules-search',
+    id: 'modules-search',
     label: 'Modules',
     search: async (q) => {
       if (!q) {
@@ -258,7 +258,7 @@ const _useNavigation = () => {
         }))
     }
   }, {
-    key: 'hosting-search',
+    id: 'hosting-search',
     label: 'Hosting',
     search: async (q) => {
       if (!q) {
@@ -273,7 +273,7 @@ const _useNavigation = () => {
       return providers.value
         .filter(hosting => ['title'].map(field => hosting[field]).filter(Boolean).some(value => value.search(searchTextRegExp(q)) !== -1))
         .map(hosting => ({
-          id: `hosting-${hosting._path}`,
+          id: `hosting-${hosting.path}`,
           label: hosting.title,
           suffix: hosting.description,
           icon: hosting.logoIcon,
@@ -282,11 +282,11 @@ const _useNavigation = () => {
                 src: hosting.logoSrc
               }
             : undefined,
-          to: hosting._path
+          to: hosting.path
         }))
     }
   }, {
-    key: 'articles-search',
+    id: 'articles-search',
     label: 'Articles',
     search: async (q) => {
       if (!q) {
@@ -301,11 +301,11 @@ const _useNavigation = () => {
       return articles.value
         .filter(article => article.title.search(searchTextRegExp(q)) !== -1)
         .map(article => ({
-          id: `article-${article._path}`,
+          id: `article-${article.path}`,
           label: article.title,
           suffix: article.description,
-          icon: 'i-ph-newspaper',
-          to: article._path
+          icon: 'i-lucide-newspaper',
+          to: article.path
         }))
     }
   }]

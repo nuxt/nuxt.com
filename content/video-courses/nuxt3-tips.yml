@@ -1,0 +1,7 @@
+name: 'Nuxt 3 Tips by Alex Lichter'
+slug: 'nuxt3-tips'
+description: 'Learn Nuxt 3 tips and tricks with Alexander Lichter (core team).'
+url: 'https://www.youtube.com/watch?v=2tKOZc3Z1dk&list=PL06MUQt-_wlsRNxmbIvgVuhsXG_dN1XaO'
+screenshotOptions:
+  delay: 1
+  removeElements: ['tp-yt-iron-overlay-backdrop', 'tp-yt-paper-dialog'] 
