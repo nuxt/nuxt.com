@@ -23,7 +23,7 @@ const iconsMap = {
 export const moduleImage = function (icon: string = '', size: number = 80) {
   if (!icon) return
 
-  if (/^http(s)?:\/\//.test(icon)) return icon
+  if (/^https?:\/\//.test(icon)) return icon
 
   if (/\.svg$/.test(icon)) return `https://raw.githubusercontent.com/nuxt/modules/main/icons/${icon}`
 

@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { withoutTrailingSlash } from 'ufo'
-
 definePageMeta({
   heroBackground: 'opacity-30 -z-10'
 })

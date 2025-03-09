@@ -6,7 +6,7 @@ definePageMeta({
 const input = useTemplateRef('input')
 
 const { replaceRoute } = useFilters('modules')
-const { fetchList, filteredModules, q, categories, modules, stats, selectedSort, selectedOrder, sorts, orders } = useModules()
+const { fetchList, filteredModules, q, categories, modules, stats, selectedSort, selectedOrder, sorts } = useModules()
 
 const { data: page } = await useAsyncData('modules-landing', () => queryCollection('landing').path('/modules').first())
 if (!page.value) {
@@ -130,7 +130,7 @@ defineShortcuts({
       </template>
 
       <template #description>
-        {{ description.replace('%s', stats.contributors.toLocaleString()) }}
+        Discover our list of modules to supercharge your Nuxt project. Created and maintained by more than {{ stats.contributors.toString() }} people from the Nuxt team and community.
       </template>
 
       <template #links>

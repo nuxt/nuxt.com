@@ -8,8 +8,6 @@ if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const route = useRoute()
-
 const { fetchList, selectedShowcases, categories } = useShowcase()
 
 const title = page.value.head?.title || page.value.title
