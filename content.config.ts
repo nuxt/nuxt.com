@@ -362,6 +362,19 @@ export default defineContentConfig({
       type: 'page',
       source: 'design-kit.md',
       schema: PageHero
+    }),
+    team: defineCollection({
+      type: 'page',
+      source: 'team.yml',
+      schema: PageHero.extend({
+        users: z.array(z.object({
+          name: z.string(),
+          location: z.string(),
+          sponsor: z.string().url(),
+          avatar: Image,
+          links: z.array(Link)
+        }))
+      })
     })
   }
 })

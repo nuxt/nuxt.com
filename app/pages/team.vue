@@ -3,10 +3,11 @@ const route = useRoute()
 definePageMeta({
   heroBackground: 'opacity-70 -z-10'
 })
-const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
+const { data: page } = await useAsyncData(route.path, () => queryCollection('team').first())
 
-const title = page.value.head?.title || page.value.title
-const description = (page.value.head?.description || page.value.description).replace(/<br>/g, '')
+const title = page.value.title
+const description = page.value.description
+
 useSeoMeta({
   titleTemplate: '%s',
   title,
@@ -21,8 +22,7 @@ defineOgImageComponent('Docs')
   <UContainer>
     <UPageHero v-bind="page">
       <template #description>
-        <!-- eslint-disable-next-line vue/no-v-html -->
-        <span v-html="page.description" />
+        <MDC :value="page.description" />
       </template>
     </UPageHero>
 
@@ -35,27 +35,29 @@ defineOgImageComponent('Docs')
             :title="user.name"
             :description="user.location"
             :ui="{
-              title: 'justify-center',
+              container: 'gap-y-4',
+              leading: 'flex justify-center',
+              title: 'text-center',
               description: 'text-center'
             }"
           >
-            <template #icon>
-              <UAvatar v-bind="user.avatar" size="3xl" class="mx-auto" />
+            <template #leading>
+              <UAvatar v-bind="user.avatar" size="3xl" />
             </template>
 
-            <div class="flex items-center justify-center gap-1.5 mt-4">
-              <UButton v-for="(link, i) in user.links" :key="i" color="gray" variant="link" v-bind="link" />
+            <div class="flex items-center justify-center gap-1.5">
+              <UButton v-for="(link, i) in user.links" :key="i" color="neutral" variant="link" v-bind="link" />
             </div>
-            <div v-if="user.sponsor" class="flex items-center justify-center mt-4">
+            <div v-if="user.sponsor" class="flex items-center justify-center">
               <UButton
                 :to="user.sponsor"
                 target="_blank"
                 color="neutral"
+                variant="subtle"
                 icon="i-lucide-heart"
+                label="Sponsor"
                 :ui="{ leadingIcon: 'text-pink-500' }"
-              >
-                Sponsor
-              </UButton>
+              />
             </div>
           </UPageCard>
         </UPageGrid>

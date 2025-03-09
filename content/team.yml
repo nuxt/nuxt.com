@@ -1,7 +1,6 @@
 title: The Nuxt Team
 description: The development of Nuxt and its ecosystem is led by an international team.<br> Our committed team works every day to bring Nuxt forward.
 navigation: false
-align: center
 users:
   - name: Sébastien Chopin
     location: Bordeaux, France
@@ -45,9 +44,6 @@ users:
       src: https://ipx.nuxt.com/f_auto,s_80x80/gh_avatar/danielroe
       srcset: https://ipx.nuxt.com/f_auto,s_160x160/gh_avatar/danielroe 2x
     links:
-      - icon: i-simple-icons-x
-        to: https://x.com/danielcroe
-        target: _blank
       - icon: i-simple-icons-bluesky
         to: https://bsky.app/profile/danielroe.dev
         target: _blank
@@ -149,16 +145,3 @@ users:
       - icon: i-simple-icons-github
         to: https://github.com/huang-julien
         target: _blank
-cta:
-  headline: Getting Started
-  title: Start your Nuxt Journey
-  description: Learn everything you need to know, from beginner to master.
-  links:
-    - label: Get started
-      size: lg
-      color: black
-      to: /docs/getting-started/introduction
-    - label: Explore examples
-      size: lg
-      color: white
-      to: /docs/examples
