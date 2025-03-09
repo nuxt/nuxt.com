@@ -27,6 +27,46 @@ defineOgImageComponent('Docs')
 
 await fetchList()
 
+const hoveredCategory = ref(null)
+const categoryModuleCounts = computed(() => {
+  const counts = {}
+
+  categories.value.forEach((category) => {
+    if (category.key === 'Official') {
+      counts[category.key] = modules.value.filter(m => m.type === 'official').length
+    } else {
+      counts[category.key] = modules.value.filter(m => m.category === category.key).length
+    }
+  })
+
+  return counts
+})
+
+const dynamicTitle = computed(() => {
+  if (!hoveredCategory.value) {
+    return {
+      count: `${modules.value.length}+`,
+      label: 'Nuxt',
+      key: 'default'
+    }
+  }
+
+  const count = categoryModuleCounts.value[hoveredCategory.value.key] || 0
+  return {
+    count: `${count}+`,
+    label: hoveredCategory.value.label,
+    key: hoveredCategory.value.key
+  }
+})
+
+const handleCategoryHover = (category) => {
+  hoveredCategory.value = category
+}
+
+const handleCategoryLeave = () => {
+  hoveredCategory.value = null
+}
+
 const shuffleArray = (array) => {
   const shuffled = [...array]
   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -127,7 +167,32 @@ defineShortcuts({
       }"
     >
       <template #title>
-        Build faster with <span class="text-(--ui-primary)">{{ modules.length }}+</span> Nuxt Modules
+        Build faster with
+        <div class="inline-block">
+          <Motion
+            :key="dynamicTitle.key"
+            :animate="{
+              opacity: 1,
+              filter: 'blur(0px)'
+            }"
+            :initial="{
+              opacity: 0,
+              filter: 'blur(8px)'
+            }"
+            :exit="{
+              opacity: 0,
+              filter: 'blur(8px)'
+            }"
+            :transition="{
+              duration: 0.4,
+              ease: [0.22, 1, 0.36, 1]
+            }"
+            class="inline-block"
+          >
+            <span class="text-(--ui-primary)">{{ dynamicTitle.count }}</span> {{ dynamicTitle.label }}
+          </Motion>
+          Module
+        </div>
       </template>
 
       <template #description>
@@ -191,6 +256,8 @@ defineShortcuts({
             active-color="primary"
             active-variant="subtle"
             size="sm"
+            @mouseenter="handleCategoryHover(category)"
+            @mouseleave="handleCategoryLeave"
           />
         </div>
       </template>
