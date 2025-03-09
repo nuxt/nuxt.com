@@ -210,9 +210,9 @@ export default defineContentConfig({
       }, {
         include: 'video-courses.yml'
       }, {
-        include: 'sponsors.yml'
+        include: 'enterprise/sponsors.yml'
       }, {
-        include: 'agencies.yml'
+        include: 'enterprise/agencies.yml'
       }, {
         include: 'newsletter.yml'
       }],
@@ -235,7 +235,7 @@ export default defineContentConfig({
     }),
     support: defineCollection({
       type: 'data',
-      source: '8.enterprise/support.yml',
+      source: 'enterprise/support.yml',
       schema: z.object({
         title: z.string(),
         description: z.string(),
@@ -317,7 +317,7 @@ export default defineContentConfig({
     }),
     agencies: defineCollection({
       type: 'page',
-      source: '8.enterprise/2.agencies/*.md',
+      source: 'enterprise/agencies/*.md',
       schema: z.object({
         title: z.string(),
         description: z.string(),

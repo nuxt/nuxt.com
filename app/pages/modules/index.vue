@@ -6,7 +6,7 @@ definePageMeta({
 const input = useTemplateRef('input')
 
 const { replaceRoute } = useFilters('modules')
-const { fetchList, filteredModules, q, categories, modules, stats, selectedSort, selectedOrder, sorts } = useModules()
+const { fetchList, filteredModules, q, categories, modules, stats, selectedSort, selectedOrder, selectedCategory, sorts } = useModules()
 
 const { data: page } = await useAsyncData('modules-landing', () => queryCollection('landing').path('/modules').first())
 if (!page.value) {
@@ -68,6 +68,14 @@ defineShortcuts({
     input.value?.inputRef?.focus()
   }
 })
+
+const breakpoints = useBreakpoints({
+  sm: 640,
+  md: 768,
+  lg: 1024
+})
+
+const isMobile = breakpoints.smaller('sm')
 </script>
 
 <template>
@@ -121,7 +129,7 @@ defineShortcuts({
     <UPageHero
       class="z-20 relative mt-32"
       :ui="{
-        title: 'text-balance',
+        title: 'text-4xl sm:text-7xl text-balance max-w-4xl mx-auto',
         links: 'max-w-2xl mx-auto'
       }"
     >
@@ -134,39 +142,81 @@ defineShortcuts({
       </template>
 
       <template #links>
-        <div class="flex sm:flex-row flex-col w-full items-center gap-2">
-          <UInput
-            ref="input"
-            :model-value="q"
-            name="q"
-            icon="i-lucide-search"
-            placeholder="Search a module..."
-            class="w-full"
-            size="lg"
-            autofocus
-            autocomplete="off"
-            variant="subtle"
-            @update:model-value="replaceRoute('q', $event as string)"
-          >
-            <template #trailing>
-              <UButton
-                v-if="q"
-                color="neutral"
-                variant="link"
+        <div class="flex flex-col w-full gap-3">
+          <div class="flex flex-col sm:flex-row w-full gap-2 relative">
+            <UInput
+              ref="input"
+              :model-value="q"
+              name="q"
+              icon="i-lucide-search"
+              placeholder="Search a module..."
+              class="w-full"
+              size="lg"
+              autofocus
+              autocomplete="off"
+              variant="subtle"
+              @update:model-value="replaceRoute('q', $event as string)"
+            >
+              <template #trailing>
+                <UButton
+                  v-if="q"
+                  color="neutral"
+                  variant="link"
+                  size="lg"
+                  icon="i-lucide-x"
+                  @click="replaceRoute('q', '')"
+                />
+                <UKbd v-else value="/" class="hidden sm:flex" />
+              </template>
+            </UInput>
+
+            <div v-if="!isMobile" class="flex gap-2 sm:w-auto">
+              <USelectMenu
+                :model-value="selectedSort"
+                :items="sorts"
                 size="lg"
-                icon="i-lucide-x"
-                @click="replaceRoute('q', '')"
+                color="neutral"
+                class="w-auto"
+                variant="outline"
+                @update:model-value="replaceRoute('sortBy', $event as string)"
               />
-              <UKbd v-else value="/" />
-            </template>
-          </UInput>
-          <UButtonGroup>
+
+              <UButton
+                :icon="selectedOrder.icon"
+                size="lg"
+                color="neutral"
+                variant="outline"
+                @click="replaceRoute('orderBy', selectedOrder.key === 'desc' ? 'asc' : 'desc')"
+              />
+            </div>
+          </div>
+
+          <div v-if="isMobile" class="flex gap-2">
+            <USelectMenu
+              :model-value="selectedCategory"
+              :items="categories"
+              size="lg"
+              color="neutral"
+              variant="outline"
+              class="flex-1"
+              placeholder="Select category"
+              @update:model-value="replaceRoute('category', $event as string)"
+            />
+            <UButton
+              v-if="selectedCategory"
+              icon="i-lucide-x"
+              size="lg"
+              color="neutral"
+              variant="outline"
+              aria-label="Clear category filter"
+              @click="replaceRoute('category', '')"
+            />
             <USelectMenu
               :model-value="selectedSort"
               :items="sorts"
               size="lg"
               color="neutral"
-              class="w-full"
+              class="w-1/3"
               variant="outline"
               @update:model-value="replaceRoute('sortBy', $event as string)"
             />
@@ -177,10 +227,10 @@ defineShortcuts({
               variant="outline"
               @click="replaceRoute('orderBy', selectedOrder.key === 'desc' ? 'asc' : 'desc')"
             />
-          </UButtonGroup>
+          </div>
         </div>
 
-        <div class="mt-6 flex flex-wrap gap-1.5 justify-center">
+        <div class="hidden sm:flex mt-6 flex-wrap gap-1.5 justify-center">
           <UButton
             v-for="category in categories"
             :key="category.key"
