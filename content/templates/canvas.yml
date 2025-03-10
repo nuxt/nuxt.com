@@ -1,0 +1,6 @@
+name: 'Canvas'
+slug: 'canvas'
+description: 'Canvas a portfolio template, with a minimal and clean design, using Nuxt Content and TailwindCSS'
+badge: 'Free'
+repo: 'HugoRCD/canvas'
+demo: 'https://canvas.hrcd.fr/' 

@@ -34,7 +34,7 @@ function stateChange(event) {
         v-if="!isLoaded"
         class="mb-5"
         size="sm"
-        color="blue"
+        color="info"
         variant="soft"
         title="Click to load"
         description="Clicking the video will load the YouTube iframe and start the video."

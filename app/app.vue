@@ -1,17 +1,27 @@
 <script setup lang="ts">
 import { debounce } from 'perfect-debounce'
-import type { ParsedContent } from '@nuxt/content'
-import './styles/twoslash.css'
 
 const search = ref(null)
 const colorMode = useColorMode()
-const { headerLinks, searchGroups, searchLinks } = useNavigation()
+const { searchGroups, searchLinks, searchTerm } = useNavigation()
 const color = computed(() => colorMode.value === 'dark' ? '#020420' : 'white')
 
-const { data: navigation } = await useLazyAsyncData('navigation', () => fetchContentNavigation(), { default: () => [] })
-const { data: files } = useLazyFetch<ParsedContent[]>('/api/search.json', {
-  default: () => [],
-  server: false
+const { data: navigation } = await useAsyncData('navigation', () => {
+  return Promise.all([
+    queryCollectionNavigation('docs'),
+    queryCollectionNavigation('blog')
+  ])
+}, {
+  transform: data => data.flat()
+})
+const { data: files } = useLazyAsyncData('search', () => {
+  return Promise.all([
+    queryCollectionSearchSections('docs'),
+    queryCollectionSearchSections('blog')
+  ])
+}, {
+  server: false,
+  transform: data => data.flat()
 })
 
 useHead({
@@ -62,56 +72,50 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
+  <UApp>
     <NuxtLoadingIndicator />
 
-    <AppBanner
+    <UBanner
       id="nuxt-tips-christmas"
+      title="Learn Nuxt with a Collection of 100+ Tips!"
+      icon="i-lucide-wand"
       to="https://michaelnthiessen.com/nuxt-tips-collection?aff=J0Emk"
-    >
-      <div class="flex items-center gap-1 text-black">
-        <UIcon
-          name="i-ph-magic-wand"
-          class="w-5 h-5 flex-shrink-0 pointer-events-none hidden lg:inline-block mr-1"
-        />
-        <span>Learn Nuxt with a Collection of 100+ Tips!</span>
-        <UButton
-          label="Learn more"
-          color="white"
-          trailing-icon="i-ph-arrow-right"
-          size="2xs"
-          class="rounded-full ml-1"
-        />
-      </div>
-    </AppBanner>
+      close
+      :actions="[
+        {
+          label: 'Learn more',
+          color: 'neutral',
+          variant: 'outline',
+          trailingIcon: 'i-lucide-arrow-right',
+          to: 'https://michaelnthiessen.com/nuxt-tips-collection?aff=J0Emk'
+        }
+      ]"
+    />
 
-    <AppHeader :links="headerLinks" />
+    <AppHeader />
 
-    <UMain class="relative">
-      <HeroBackground
-        class="absolute w-full top-[1px] transition-all text-primary flex-shrink-0"
-        :class="[
-          isLoading ? 'animate-pulse' : (appear ? 'opacity-100' : 'opacity-0'),
-          appeared ? 'duration-[400ms]': 'duration-1000',
-          heroBackgroundClass
-        ]"
-      />
+    <HeroBackground
+      class="absolute w-full transition-all text-(--ui-primary) shrink-0 -z-10"
+      :class="[
+        isLoading ? 'animate-pulse' : (appear ? heroBackgroundClass : 'opacity-0'),
+        appeared ? 'duration-[400ms]' : 'duration-1000'
+      ]"
+    />
+    <NuxtLayout>
       <NuxtPage />
-    </UMain>
+    </NuxtLayout>
 
     <AppFooter />
 
     <ClientOnly>
-      <UContentSearch
-        ref="search"
+      <LazyUContentSearch
+        v-model:search-term="searchTerm"
         :files="files"
-        :navigation="navigation[0]?.children"
+        :navigation="navigation"
         :groups="searchGroups"
         :links="searchLinks"
-        :fuse="{ resultLimit: 13 }"
+        :fuse="{ resultLimit: 42 }"
       />
-
-      <UNotifications />
     </ClientOnly>
-  </div>
+  </UApp>
 </template>

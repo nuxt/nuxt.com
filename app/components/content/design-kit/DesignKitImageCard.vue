@@ -9,7 +9,7 @@ defineProps<{
 
 <template>
   <div class="not-prose">
-    <UCard :ui="{ shadow: '', background: '', body: { padding: full ? 'p-11 sm:p-11' : 'p-8 sm:p-8' } }" :class="background">
+    <UCard :ui="{ body: full ? 'p-11 sm:p-11' : 'p-8 sm:p-8' }" :class="background">
       <img :src="`/assets/design-kit/${path}.svg`" :alt="name" class="mx-auto" :class="full ? 'h-10' : 'h-16'">
     </UCard>
 

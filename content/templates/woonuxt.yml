@@ -1,0 +1,5 @@
+name: 'WooNuxt'
+slug: 'woonuxt'
+description: 'Headless eCommerce powered by WooCommerce and Nuxt.'
+repo: 'scottyzen/woonuxt'
+demo: 'https://v3.woonuxt.com' 
