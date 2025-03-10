@@ -15,6 +15,31 @@ useSeoMeta({
   ogTitle: title
 })
 defineOgImageComponent('Docs')
+
+interface TeamMember {
+  name: string
+  login: string
+  avatarUrl: string
+  pronouns?: string
+  location?: string
+  websiteUrl?: string
+  sponsorsListing?: string
+  socialAccounts: Record<string, { displayName: string, url: string }>
+}
+
+const icons = {
+  website: 'i-ph-link',
+  twitter: 'i-simple-icons-x',
+  twitch: 'i-simple-icons-twitch',
+  youtube: 'i-simple-icons-youtube',
+  instagram: 'i-simple-icons-instagram',
+  linkedin: 'i-simple-icons-linkedin',
+  mastodon: 'i-simple-icons-mastodon',
+  bluesky: 'i-simple-icons-bluesky',
+  github: 'i-simple-icons-github'
+}
+
+const { data: team } = await useFetch<TeamMember[]>('https://api.nuxt.com/teams/core')
 </script>
 
 <template>
@@ -30,7 +55,7 @@ defineOgImageComponent('Docs')
       <UPageBody>
         <UPageGrid class="xl:grid-cols-4">
           <UPageCard
-            v-for="(user, index) in page.users"
+            v-for="(user, index) in team"
             :key="index"
             :title="user.name"
             :description="user.location"
@@ -40,15 +65,41 @@ defineOgImageComponent('Docs')
             }"
           >
             <template #icon>
-              <UAvatar v-bind="user.avatar" size="3xl" class="mx-auto" />
+              <UAvatar :src="`https://ipx.nuxt.com/f_auto,s_80x80/gh_avatar/${user.login}`" :srcset="`https://ipx.nuxt.com/f_auto,s_160x160/gh_avatar/${user.login} 2x`" size="3xl" class="mx-auto" />
             </template>
 
             <div class="flex items-center justify-center gap-1.5 mt-4">
-              <UButton v-for="(link, i) in user.links" :key="i" color="gray" variant="link" v-bind="link" />
-            </div>
-            <div v-if="user.sponsor" class="flex items-center justify-center mt-4">
               <UButton
-                :to="user.sponsor"
+                v-for="(link, key) in user.socialAccounts"
+                :key="key"
+                color="gray"
+                variant="link"
+                :to="link.url"
+                :icon="icons[key] || icons.website"
+                :alt="`Link to ${user.name}'s ${key} profile`"
+                target="_blank"
+              />
+              <UButton
+                :to="`https://github.com/${user.login}`"
+                color="gray"
+                variant="link"
+                :alt="`Link to ${user.name}'s GitHub profile`"
+                :icon="icons.github"
+                target="_blank"
+              />
+              <UButton
+                v-if="user.websiteUrl"
+                :to="user.websiteUrl"
+                color="gray"
+                variant="link"
+                :alt="`Link to ${user.name}'s personal website`"
+                :icon="icons.website"
+                target="_blank"
+              />
+            </div>
+            <div v-if="user.sponsorsListing" class="flex items-center justify-center mt-4">
+              <UButton
+                :to="user.sponsorsListing"
                 target="_blank"
                 color="gray"
                 icon="i-ph-heart"
