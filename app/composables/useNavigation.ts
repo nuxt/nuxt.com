@@ -2,6 +2,8 @@ import { createSharedComposable } from '@vueuse/core'
 
 const _useNavigation = () => {
   const nuxtApp = useNuxtApp()
+  const searchTerm = ref('')
+
   const headerLinks = computed(() => {
     const route = useRoute()
 
@@ -311,6 +313,7 @@ const _useNavigation = () => {
   }]
 
   return {
+    searchTerm,
     headerLinks,
     footerLinks,
     searchLinks,

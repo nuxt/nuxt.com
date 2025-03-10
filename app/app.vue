@@ -3,7 +3,7 @@ import { debounce } from 'perfect-debounce'
 
 const search = ref(null)
 const colorMode = useColorMode()
-const { searchGroups, searchLinks } = useNavigation()
+const { searchGroups, searchLinks, searchTerm } = useNavigation()
 const color = computed(() => colorMode.value === 'dark' ? '#020420' : 'white')
 
 const { data: navigation } = await useAsyncData('navigation', () => {
@@ -109,6 +109,7 @@ onMounted(() => {
 
     <ClientOnly>
       <LazyUContentSearch
+        v-model:search-term="searchTerm"
         :files="files"
         :navigation="navigation"
         :groups="searchGroups"
