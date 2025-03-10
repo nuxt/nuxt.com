@@ -244,7 +244,7 @@ const _useNavigation = () => {
       label: `Ask AI about "${searchTerm.value}"`,
       icon: 'i-lucide-wand',
       to: 'javascript:void(0);',
-      click() {
+      onSelect() {
         return nuxtApp.$kapa.openModal(searchTerm.value)
       }
     }]
