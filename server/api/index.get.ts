@@ -14,7 +14,9 @@ export default eventHandler(() => {
       '/sponsors',
       '/showcase',
       '/jobs',
-      '/support/contact'
+      '/support/contact',
+      '/teams/core',
+      '/teams/ecosystem'
     ]
   }
   if (import.meta.dev) {

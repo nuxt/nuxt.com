@@ -1,6 +1,9 @@
 import type { VoltaContributor } from '~/server/utils/volta'
 
 const BOTS = ['codecov-io', 'codecov-commenter']
+const RENAMED_CONTRIBUTORS: Record<string, string> = {
+  mannil: 'TheAlexLichter'
+}
 
 export default cachedEventHandler(async (event) => {
   if (!process.env.NUXT_VOLTA_TOKEN) {
@@ -47,7 +50,12 @@ function mergeContributors(contributors: Array<VoltaContributor & { score: numbe
   const mergedMap = new Map()
 
   for (const contributor of contributors) {
-    const lowercaseUsername = contributor.username.toLowerCase()
+    let lowercaseUsername = contributor.username.toLowerCase()
+
+    if (RENAMED_CONTRIBUTORS[lowercaseUsername]) {
+      contributor.username = RENAMED_CONTRIBUTORS[lowercaseUsername]
+      lowercaseUsername = contributor.username.toLowerCase()
+    }
 
     if (mergedMap.has(lowercaseUsername)) {
       const existingContributor = mergedMap.get(lowercaseUsername)
