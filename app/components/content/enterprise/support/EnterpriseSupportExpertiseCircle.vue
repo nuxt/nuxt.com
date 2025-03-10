@@ -2,10 +2,10 @@
 const { logo } = defineProps<{
   logo: {
     src: string
-    height: number
-    width: number
+    height?: number
+    width?: number
     color: string
-    alt: string
+    alt?: string
   }
 }>()
 

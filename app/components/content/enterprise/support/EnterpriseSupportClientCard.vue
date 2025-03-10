@@ -6,9 +6,9 @@ defineProps<{
   logo: {
     light: string
     dark: string
-    alt: string
-    width: number
-    height: number
+    alt?: string
+    width?: number
+    height?: number
   }
   achievements: Array<{
     label: string
