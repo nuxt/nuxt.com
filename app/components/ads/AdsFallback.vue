@@ -1,10 +1,10 @@
 <template>
   <div class="nui-support-nuxt">
     <div>
-      <p class="pt-2 m-0 font-bold sm:text-sm text-gray-900 dark:text-white">
+      <p class="pt-2 m-0 font-bold sm:text-sm text-(--ui-text-highlighted)">
         Nuxt needs you!
       </p>
-      <p class="pb-2 m-0 leading-normal text-gray-600 dark:text-white sm:text-xs">
+      <p class="pb-2 m-0 leading-normal text-(--ui-text-muted) sm:text-xs">
         By allowing nuxt.com on your Ad-Blocker, you support our work and help us financially.
       </p>
     </div>

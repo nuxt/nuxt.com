@@ -105,7 +105,7 @@ defineOgImageComponent('Docs', {
             <UPageLinks title="Community" :links="communityLinks" />
             <USeparator type="dashed" />
             <SocialLinks />
-            <!--            <Ads /> -->
+            <Ads />
           </div>
         </template>
       </UContentToc>
