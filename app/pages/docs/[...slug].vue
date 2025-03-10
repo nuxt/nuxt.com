@@ -98,7 +98,7 @@ defineOgImageComponent('Docs', {
     </UPageBody>
 
     <template v-if="page?.body?.toc?.links?.length" #right>
-      <UContentToc :links="page.body?.toc?.links" highlight class="backdrop-blur-none">
+      <UContentToc :links="page.body?.toc?.links" highlight class="lg:backdrop-blur-none">
         <template #bottom>
           <div class="hidden lg:block space-y-6" :class="{ '!mt-6': page.body?.toc?.links?.length }">
             <USeparator v-if="page.body?.toc?.links?.length" type="dashed" />
