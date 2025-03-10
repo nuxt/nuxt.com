@@ -2,7 +2,7 @@ import { createSharedComposable } from '@vueuse/core'
 
 const _useNavigation = () => {
   const nuxtApp = useNuxtApp()
-  const searchTerm = ref('')
+  const searchTerm = ref<string>('')
 
   const headerLinks = computed(() => {
     const route = useRoute()
@@ -213,39 +213,50 @@ const _useNavigation = () => {
       to: '/newsletter'
     }])
 
-  const searchGroups = [{
-    id: 'ask-ai-search',
-    label: 'AI',
-    icon: 'i-lucide-wand',
-    search: async (q) => {
-      if (!q) {
-        return []
-      }
-
-      return [{
-        label: `Ask AI about "${q}"`,
-        icon: 'i-lucide-wand',
-        to: 'javascript:void(0);',
-        click() {
-          return nuxtApp.$kapa.openModal(q)
-        }
-      }]
+  const searchGroups = computed(() => {
+    const aiGroup = {
+      id: 'ask-ai-search',
+      label: 'AI',
+      icon: 'i-lucide-wand',
+      items: []
     }
-  }, {
-    id: 'modules-search',
-    label: 'Modules',
-    search: async (q) => {
-      if (!q) {
-        return []
-      }
 
+    const modulesGroup = {
+      id: 'modules-search',
+      label: 'Modules',
+      items: []
+    }
+
+    const hostingGroup = {
+      id: 'hosting-search',
+      label: 'Hosting',
+      items: []
+    }
+
+    const groups = [aiGroup, modulesGroup, hostingGroup]
+
+    if (!searchTerm.value) {
+      return groups
+    }
+
+    aiGroup.items = [{
+      id: `ask-ai-${searchTerm.value}`,
+      label: `Ask AI about "${searchTerm.value}"`,
+      icon: 'i-lucide-wand',
+      to: 'javascript:void(0);',
+      click() {
+        return nuxtApp.$kapa.openModal(searchTerm.value)
+      }
+    }]
+
+    const loadModules = async () => {
       const { modules, fetchList } = useModules()
       if (!modules.value.length) {
         await fetchList()
       }
 
-      return modules.value
-        .filter(module => ['name', 'npm', 'repo'].map(field => module[field]).filter(Boolean).some(value => value.search(searchTextRegExp(q)) !== -1))
+      modulesGroup.items = modules.value
+        .filter(module => ['name', 'npm', 'repo'].map(field => module[field]).filter(Boolean).some(value => value.search(searchTextRegExp(searchTerm.value)) !== -1))
         .map(module => ({
           id: `module-${module.name}`,
           label: module.npm,
@@ -253,27 +264,21 @@ const _useNavigation = () => {
           avatar: {
             src: moduleImage(module.icon),
             ui: {
-              rounded: 'rounded-md'
+              root: 'rounded-none bg-transparent'
             }
           },
           to: `/modules/${module.name}`
         }))
     }
-  }, {
-    id: 'hosting-search',
-    label: 'Hosting',
-    search: async (q) => {
-      if (!q) {
-        return []
-      }
 
+    const loadHosting = async () => {
       const { providers, fetchList } = useHostingProviders()
       if (!providers.value.length) {
         await fetchList()
       }
 
-      return providers.value
-        .filter(hosting => ['title'].map(field => hosting[field]).filter(Boolean).some(value => value.search(searchTextRegExp(q)) !== -1))
+      hostingGroup.items = providers.value
+        .filter(hosting => ['title'].map(field => hosting[field]).filter(Boolean).some(value => value.search(searchTextRegExp(searchTerm.value)) !== -1))
         .map(hosting => ({
           id: `hosting-${hosting.path}`,
           label: hosting.title,
@@ -281,36 +286,23 @@ const _useNavigation = () => {
           icon: hosting.logoIcon,
           avatar: hosting.logoSrc
             ? {
-                src: hosting.logoSrc
+                src: hosting.logoSrc,
+                ui: {
+                  root: 'rounded-none bg-transparent'
+                }
               }
             : undefined,
           to: hosting.path
         }))
     }
-  }, {
-    id: 'articles-search',
-    label: 'Articles',
-    search: async (q) => {
-      if (!q) {
-        return []
-      }
 
-      const { articles, fetchList } = useBlog()
-      if (!articles.value.length) {
-        await fetchList()
-      }
+    Promise.all([
+      loadModules(),
+      loadHosting()
+    ]).catch(error => console.error('Error loading search results:', error))
 
-      return articles.value
-        .filter(article => article.title.search(searchTextRegExp(q)) !== -1)
-        .map(article => ({
-          id: `article-${article.path}`,
-          label: article.title,
-          suffix: article.description,
-          icon: 'i-lucide-newspaper',
-          to: article.path
-        }))
-    }
-  }]
+    return groups
+  })
 
   return {
     searchTerm,
