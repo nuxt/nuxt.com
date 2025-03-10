@@ -6,6 +6,6 @@ navigation.icon: i-lucide-briefcase-business
 links:
   - label: 'Post a job'
     to: 'https://vuejobs.com/jobs/create'
-    color: black
-    size: 'lg'
+    color: neutral
+    size: md
     target: '_blank'

@@ -215,6 +215,8 @@ export default defineContentConfig({
         include: 'enterprise/agencies.yml'
       }, {
         include: 'newsletter.yml'
+      }, {
+        include: 'enterprise/jobs.yml'
       }],
       schema: PageHero
     }),
