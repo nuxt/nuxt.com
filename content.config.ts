@@ -189,7 +189,7 @@ export default defineContentConfig({
         authors: z.array(Author),
         date: z.string().date(),
         draft: z.boolean().optional(),
-        category: z.enum(['Release', 'Tutorial']),
+        category: z.enum(['Release', 'Tutorial', 'Announcement', 'Article']),
         tags: z.array(z.string())
       })
     }),

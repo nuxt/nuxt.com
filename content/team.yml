@@ -10,7 +10,3 @@ links:
     size: md
     color: neutral
     to: /docs/examples
-cta:
-  headline: Getting Started
-  title: Start your Nuxt Journey
-  description: Learn everything you need to know, from beginner to master.
