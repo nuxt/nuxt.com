@@ -31,9 +31,11 @@ export default defineEventHandler(async (event) => {
       image: joinURL(baseUrl, article.image),
       title: article.title,
       date: new Date(article.date),
-      description: article.description
-      // author: article.authors, FIXME: not present in the final rss feed (even in the old one)
-      // category: article.category
+      description: article.description,
+      category: [{
+        name: article.category
+      }]
+      // author: article.authors, INF0: Cannot work without an email field in the author object https://github.com/jpmonette/feed/issues/141
     })
   }
 
