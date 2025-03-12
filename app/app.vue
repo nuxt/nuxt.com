@@ -67,16 +67,16 @@ onMounted(() => {
 
     <AppBanner
       id="nuxt-ui-3"
-      to="https://ui.nuxt.com"
+      to="https://ui.nuxt.com/pro/pricing"
     >
       <div class="flex items-center gap-1 text-black">
         <UIcon
           name="i-ph-sparkle"
-          class="w-5 h-5 flex-shrink-0 pointer-events-none hidden lg:inline-block mr-1"
+          class="size-5 flex-shrink-0 pointer-events-none hidden lg:inline-block mr-1"
         />
-        <span>Nuxt UI v3 is out with 20% OFF on UI Pro for a limited time</span>
+        <span>Nuxt UI Pro v3 is out! Get 20% OFF until Friday</span>
         <UButton
-          label="Learn more"
+          label="Claim offer"
           color="white"
           trailing-icon="i-ph-arrow-right"
           size="2xs"

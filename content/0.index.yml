@@ -1,7 +1,7 @@
 navigation: false
 hero:
   cta:
-    label: Nuxt UI v3
+    label: Nuxt UI v3 is out
     to: /blog/nuxt-ui-v3
     icon: i-ph-arrow-right
 logos:
