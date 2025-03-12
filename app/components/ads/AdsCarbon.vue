@@ -1,7 +1,3 @@
-<template>
-  <div ref="carbonads" class="Carbon border border-gray-200 dark:border-gray-800 rounded-lg bg-white dark:bg-white/5" />
-</template>
-
 <script setup lang="ts">
 const carbonads = ref(null)
 
@@ -16,24 +12,18 @@ onMounted(() => {
 })
 </script>
 
+<template>
+  <div ref="carbonads" class="Carbon border border-(--ui-border) rounded-lg" />
+</template>
+
 <style lang="postcss">
-.dark .Carbon {
+.Carbon {
   min-height: 220px;
   .carbon-text {
-    @apply text-gray-400;
+    @apply text-(--ui-text-muted);
 
     &:hover {
-      @apply text-gray-200;
-    }
-  }
-}
-
-.light .Carbon {
-  .carbon-text {
-    @apply text-gray-600;
-
-    &:hover {
-      @apply text-gray-800;
+      @apply text-(--ui-text-muted)/70;
     }
   }
 }
@@ -100,10 +90,10 @@ onMounted(() => {
   }
 
   & .carbon-poweredby {
-    @apply ml-2 text-xs text-right text-gray-400 block pt-2;
+    @apply ml-2 text-xs text-right text-(--ui-text-muted) block pt-2;
 
     &:hover {
-      @apply no-underline text-gray-500;
+      @apply no-underline text-(--ui-text-muted)/70;
     }
   }
 }

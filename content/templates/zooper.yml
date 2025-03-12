@@ -1,0 +1,5 @@
+name: 'Zooper'
+slug: 'zooper'
+description: 'A minimal and personal portfolio template, made with Nuxt Content and TailwindCSS.'
+repo: 'fayazara/zooper'
+demo: 'https://zooper.pages.dev' 

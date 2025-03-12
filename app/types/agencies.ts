@@ -1,12 +1,11 @@
-import type { ParsedContent } from '@nuxt/content'
 import type { Filter } from './filters'
-import type { Link } from '#ui-pro/types'
+import type { LinkProps } from '@nuxt/ui'
 
-export interface Agency extends ParsedContent {
+export interface Agency {
   title: string
   description: string
   fullDescription: string
-  _path: string
+  path: string
   link: string
   twitter: string
   x: string
@@ -19,6 +18,6 @@ export interface Agency extends ParsedContent {
   }
   regions: Filter[]
   services: Filter[]
-  resources?: Link[]
+  resources?: LinkProps[]
   location: Filter
 }

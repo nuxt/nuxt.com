@@ -41,8 +41,7 @@ export default defineNitroPlugin((nitroApp) => {
         file.body = file.body.replace(GENERATE_KEY, generatedDocs)
 
         console.log(`Config docs generated in ${(Date.now() - start) / 1000} seconds!`)
-      }
-      catch (err) {
+      } catch (err) {
         console.error('Could not generate config docs', err)
         await writeFile('debug-config-docs.md', generatedDocs)
       }
@@ -81,8 +80,7 @@ function generateMarkdown(schema: Schema, title: string, level: string) {
     if (defaultValue && defaultValue.length) {
       if (defaultValue.length === 1) {
         lines.push(`- **Default:** ${defaultValue[0]}`)
-      }
-      else {
+      } else {
         lines.push('- **Default**', ...defaultValue)
       }
     }
@@ -112,7 +110,7 @@ function generateMarkdown(schema: Schema, title: string, level: string) {
   return lines
 }
 
-const TAG_REGEX = /^@([\d\w]+)[\s\n]/i
+const TAG_REGEX = /^@(\w+)\s/
 
 const TagAlertType = {
   note: 'info',
@@ -132,8 +130,7 @@ function formatValue(val) {
   }
   if (stringified.includes('\n')) {
     return ['```json', stringified, '```']
-  }
-  else {
+  } else {
     return ['`' + stringified + '`']
   }
 }

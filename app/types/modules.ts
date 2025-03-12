@@ -1,4 +1,4 @@
-import type { ParsedContent } from '@nuxt/content'
+import type { ParsedContentFile } from '@nuxt/content'
 
 export interface Stats {
   maintainers: number
@@ -45,5 +45,5 @@ export interface Module {
     username: string
     contributions: number
   }[]
-  readme?: ParsedContent
+  readme?: ParsedContentFile
 }

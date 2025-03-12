@@ -1,0 +1,6 @@
+name: 'SaaS Pro'
+slug: 'ui-pro-saas'
+description: "A SaaS template made with Nuxt UI Pro."
+repo: 'nuxt-ui-pro/saas'
+demo: 'https://saas-template.nuxt.dev'
+badge: 'Freemium' 
