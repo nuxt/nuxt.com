@@ -1,12 +1,11 @@
+import { defineNuxtModule } from '@nuxt/kit'
 import { existsSync } from 'node:fs'
 import { join } from 'pathe'
 import captureWebsite from 'capture-website'
 
-export default defineNitroPlugin(async (nitroApp) => {
-  // only in dev
-  if (!import.meta.dev) return
-  nitroApp.hooks.hook('content:file:afterParse', async (file) => {
-    if (file._path === '/templates') {
+export default defineNuxtModule((options, nuxt) => {
+  nuxt.hook('content:file:afterParse', async ({ content: file }) => {
+    if (file.path === '/templates') {
       for (const template of file.templates) {
         const url = template.screenshotUrl || template.demo
         if (!url) {
@@ -24,7 +23,7 @@ export default defineNitroPlugin(async (nitroApp) => {
         })
       }
     }
-    if (file._path === '/video-courses') {
+    if (file.path === '/video-courses') {
       for (const course of file.courses) {
         const url = course.screenshotUrl || course.url
         if (!url) {
