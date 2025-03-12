@@ -80,16 +80,16 @@ const teams = [
     <UPage>
       <UPageBody>
         <template v-for="(team, index) of teams" :key="index">
-          <h2 class="font-bold text-xl px-2 mb-4 md:mb-12 flex gap-2 items-center" :class="{ 'mt-12 md:mt-24': !!index }">
+          <h2 class="font-bold text-xl px-2 mb-4 md:mb-8 flex gap-2 items-center" :class="{ 'mt-12 md:mt-24': !!index }">
             {{ team.name }}
             <UButton
               :to="team.link"
               external
               :alt="`Open ${team.name} team on GitHub`"
-              icon="i-heroicons-arrow-top-right-on-square-20-solid"
+              icon="i-lucide-external-link"
               target="_blank"
               variant="link"
-              color="gray"
+              color="neutral"
             />
           </h2>
           <UPageGrid class="xl:grid-cols-4">
@@ -99,11 +99,13 @@ const teams = [
               :title="user.name"
               :description="[user.pronouns, user.location].filter(Boolean).join(' ・ ')"
               :ui="{
-                title: 'justify-center',
+                container: 'gap-y-4',
+                leading: 'flex justify-center',
+                title: 'text-center',
                 description: 'text-center'
               }"
             >
-              <template #icon>
+              <template #leading>
                 <UAvatar :src="`https://ipx.nuxt.com/f_auto,s_80x80/gh_avatar/${user.login}`" :srcset="`https://ipx.nuxt.com/f_auto,s_160x160/gh_avatar/${user.login} 2x`" size="3xl" class="mx-auto" />
               </template>
 
@@ -111,8 +113,7 @@ const teams = [
                 <UButton
                   v-for="(link, key) in user.socialAccounts"
                   :key="key"
-                  external
-                  color="gray"
+                  color="neutral"
                   variant="link"
                   :to="link.url"
                   :icon="icons[key] || icons.website"
@@ -121,8 +122,7 @@ const teams = [
                 />
                 <UButton
                   :to="`https://github.com/${user.login}`"
-                  external
-                  color="gray"
+                  color="neutral"
                   variant="link"
                   :alt="`Link to ${user.name}'s GitHub profile`"
                   :icon="icons.github"
@@ -131,8 +131,7 @@ const teams = [
                 <UButton
                   v-if="user.websiteUrl"
                   :to="user.websiteUrl"
-                  external
-                  color="gray"
+                  color="neutral"
                   variant="link"
                   :alt="`Link to ${user.name}'s personal website`"
                   :icon="icons.website"
@@ -142,15 +141,13 @@ const teams = [
               <div v-if="user.sponsorsListing" class="flex items-center justify-center mt-4">
                 <UButton
                   :to="user.sponsorsListing"
-                  external
                   target="_blank"
-                  color="gray"
-                  icon="i-ph-heart"
-                  icon-color="red"
-                  :ui="{ icon: { base: 'text-pink-500' } }"
-                >
-                  Sponsor
-                </UButton>
+                  color="neutral"
+                  variant="subtle"
+                  icon="i-lucide-heart"
+                  label="Sponsor"
+                  :ui="{ leadingIcon: 'text-pink-500' }"
+                />
               </div>
             </UPageCard>
           </UPageGrid>
