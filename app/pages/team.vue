@@ -42,7 +42,12 @@ const icons = {
 const { data: coreTeam } = await useFetch<TeamMember[]>('https://api.nuxt.com/teams/core')
 const { data: ecosystemTeam } = await useFetch<TeamMember[]>('https://api.nuxt.com/teams/ecosystem', {
   transform(team) {
-    return team.filter(t => !coreTeam.value?.some(c => c.login === t.login))
+    return team.filter(t => !coreTeam.value?.some(c => c.login === t.login)).map(t => {
+      return {
+        ...t,
+        websiteUrl: !t.websiteUrl || t.websiteUrl.startsWith('http://') || t.websiteUrl.startsWith('https://') ? t.websiteUrl : `https://${t.websiteUrl}`
+      }
+    })
   }
 })
 const teams = [
@@ -102,6 +107,7 @@ const teams = [
                 <UButton
                   v-for="(link, key) in user.socialAccounts"
                   :key="key"
+                  external
                   color="gray"
                   variant="link"
                   :to="link.url"
@@ -111,6 +117,7 @@ const teams = [
                 />
                 <UButton
                   :to="`https://github.com/${user.login}`"
+                  external
                   color="gray"
                   variant="link"
                   :alt="`Link to ${user.name}'s GitHub profile`"
@@ -131,6 +138,7 @@ const teams = [
               <div v-if="user.sponsorsListing" class="flex items-center justify-center mt-4">
                 <UButton
                   :to="user.sponsorsListing"
+                  external
                   target="_blank"
                   color="gray"
                   icon="i-ph-heart"
