@@ -45,10 +45,18 @@ const { data: ecosystemTeam } = await useFetch<TeamMember[]>('https://api.nuxt.c
     return team.filter(t => !coreTeam.value?.some(c => c.login === t.login))
   }
 })
-const teams = {
-  'Core team': coreTeam.value,
-  'Ecosystem team': ecosystemTeam.value
-}
+const teams = [
+  {
+    name: 'Core team',
+    team: coreTeam.value,
+    link: 'https://github.com/orgs/nuxt/teams/core'
+  },
+  {
+    name: 'Ecosystem team',
+    team: ecosystemTeam.value,
+    link: 'https://github.com/orgs/nuxt/teams/ecosystem'
+  }
+]
 </script>
 
 <template>
@@ -62,13 +70,22 @@ const teams = {
 
     <UPage>
       <UPageBody>
-        <template v-for="(team, name, index) in teams" :key="name">
-          <h2 class="font-bold text-xl px-2 mb-4 md:mb-12" :class="{ 'mt-12 md:mt-24': !!index }">
-            {{ name }}
+        <template v-for="(team, index) of teams" :key="index">
+          <h2 class="font-bold text-xl px-2 mb-4 md:mb-12 flex gap-2 items-center" :class="{ 'mt-12 md:mt-24': !!index }">
+            {{ team.name }}
+            <UButton
+              :to="team.link"
+              external
+              :alt="`Open ${team.name} team on GitHub`"
+              icon="i-heroicons-arrow-top-right-on-square-20-solid"
+              target="_blank"
+              variant="link"
+              color="gray"
+            />
           </h2>
           <UPageGrid class="xl:grid-cols-4">
             <UPageCard
-              v-for="(user, teamIndex) in team"
+              v-for="(user, teamIndex) in team.team"
               :key="teamIndex"
               :title="user.name"
               :description="[user.pronouns, user.location].filter(Boolean).join(' ・ ')"
