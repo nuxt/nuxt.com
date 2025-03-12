@@ -66,15 +66,15 @@ onMounted(() => {
     <NuxtLoadingIndicator />
 
     <AppBanner
-      id="nuxt-tips-christmas"
-      to="https://michaelnthiessen.com/nuxt-tips-collection?aff=J0Emk"
+      id="nuxt-ui-3"
+      to="https://ui.nuxt.com"
     >
       <div class="flex items-center gap-1 text-black">
         <UIcon
-          name="i-ph-magic-wand"
+          name="i-ph-sparkle"
           class="w-5 h-5 flex-shrink-0 pointer-events-none hidden lg:inline-block mr-1"
         />
-        <span>Learn Nuxt with a Collection of 100+ Tips!</span>
+        <span>Nuxt UI v3 is out with 20% OFF on UI Pro for a limited time</span>
         <UButton
           label="Learn more"
           color="white"
