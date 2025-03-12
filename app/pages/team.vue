@@ -42,7 +42,7 @@ const icons = {
 const { data: coreTeam } = await useFetch<TeamMember[]>('https://api.nuxt.com/teams/core')
 const { data: ecosystemTeam } = await useFetch<TeamMember[]>('https://api.nuxt.com/teams/ecosystem', {
   transform(team) {
-    return team.filter(t => !coreTeam.value?.some(c => c.login === t.login)).map(t => {
+    return team.filter(t => !coreTeam.value?.some(c => c.login === t.login)).map((t) => {
       return {
         ...t,
         websiteUrl: !t.websiteUrl || t.websiteUrl.startsWith('http://') || t.websiteUrl.startsWith('https://') ? t.websiteUrl : `https://${t.websiteUrl}`
