@@ -8,7 +8,7 @@
     }"
   >
     <template #header>
-      <UColorModeImage dark="https://ui.nuxt.com/_ipx/s_1152x720/templates/dashboard3.png" light="https://ui.nuxt.com/_ipx/s_1152x720/templates/dashboard2.png" alt="Nuxt UI Pro" />
+      <img src="https://ui.nuxt.com/pro/ad.png" alt="Nuxt UI Pro">
       <!-- <NuxtImg src="/assets/ads/nuxt-ui-pro-black-friday.png" width="168" height="105" alt="Nuxt UI Pro Black Friday" class="rounded" /> -->
     </template>
     <div class="inline-flex justify-center gap-1 my-2">

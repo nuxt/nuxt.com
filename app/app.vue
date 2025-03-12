@@ -75,7 +75,7 @@ onMounted(() => {
   <UApp>
     <NuxtLoadingIndicator />
 
-    <UBanner
+    <!--    <UBanner
       id="nuxt-tips-christmas"
       title="Learn Nuxt with a Collection of 100+ Tips!"
       icon="i-lucide-wand"
@@ -90,7 +90,7 @@ onMounted(() => {
           to: 'https://michaelnthiessen.com/nuxt-tips-collection?aff=J0Emk'
         }
       ]"
-    />
+    /> -->
 
     <AppHeader />
 
