@@ -51,7 +51,7 @@
     "capture-website": "^4.2.0",
     "eslint": "^9.21.0",
     "nuxt-content-twoslash": "0.1.2",
-    "shiki": "^2.5.0",
+    "shiki": "^3.2.1",
     "twoslash": "^0.3.1",
     "typescript": "^5.8.2",
     "vitest": "^3.0.8",
