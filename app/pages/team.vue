@@ -62,11 +62,11 @@ const teams = {
 
     <UPage>
       <UPageBody>
-        <template v-for="(team, name, index) in teams" :key="`${name}-heading`">
+        <template v-for="(team, name, index) in teams" :key="name">
           <h2 class="font-bold text-xl px-2 mb-4 md:mb-12" :class="{ 'mt-12 md:mt-24': !!index }">
             {{ name }}
           </h2>
-          <UPageGrid :key="`${name}-grid`" class="xl:grid-cols-4">
+          <UPageGrid class="xl:grid-cols-4">
             <UPageCard
               v-for="(user, teamIndex) in team"
               :key="teamIndex"
