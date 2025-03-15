@@ -65,7 +65,7 @@ onMounted(() => {
   <div>
     <NuxtLoadingIndicator />
 
-    <AppBanner
+    <!-- <AppBanner
       id="nuxt-ui-3"
       to="https://ui.nuxt.com/pro/pricing"
     >
@@ -83,7 +83,7 @@ onMounted(() => {
           class="rounded-full ml-1"
         />
       </div>
-    </AppBanner>
+    </AppBanner> -->
 
     <AppHeader :links="headerLinks" />
 
