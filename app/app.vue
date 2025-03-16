@@ -14,6 +14,7 @@ const { data: navigation } = await useAsyncData('navigation', () => {
 }, {
   transform: data => data.flat()
 })
+
 const { data: files } = useLazyAsyncData('search', () => {
   return Promise.all([
     queryCollectionSearchSections('docs'),

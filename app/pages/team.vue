@@ -80,17 +80,8 @@ const teams = [
     <UPage>
       <UPageBody>
         <template v-for="(team, index) of teams" :key="index">
-          <h2 class="font-bold text-xl px-2 mb-4 md:mb-8 flex gap-2 items-center" :class="{ 'mt-12 md:mt-24': !!index }">
+          <h2 class="font-bold text-xl px-2 mb-4 flex gap-2 items-center" :class="{ 'mt-12 md:mt-24': !!index }">
             {{ team.name }}
-            <UButton
-              :to="team.link"
-              external
-              :alt="`Open ${team.name} team on GitHub`"
-              icon="i-lucide-external-link"
-              target="_blank"
-              variant="link"
-              color="neutral"
-            />
           </h2>
           <UPageGrid class="xl:grid-cols-4">
             <UPageCard
