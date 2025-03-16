@@ -14,18 +14,8 @@
       "permanent": false
     },
     {
-      "source": "/docs/guide",
-      "destination": "/docs/guide/concepts/auto-imports",
-      "permanent": false
-    },
-    {
       "source": "/docs/guide/concepts",
       "destination": "/docs/guide/concepts/auto-imports",
-      "permanent": false
-    },
-    {
-      "source": "/docs/api",
-      "destination": "/docs/api/composables/use-app-config",
       "permanent": false
     },
     {
@@ -76,6 +66,11 @@
     {
       "source": "/docs/modules",
       "destination": "/modules",
+      "permanent": false
+    },
+    {
+      "source": "/modules/:slug/changelog",
+      "destination": "/modules/:slug",
       "permanent": false
     },
     {
@@ -182,6 +177,11 @@
       "source": "/docs/guide/going-further/custom-routing",
       "destination": "/docs/guide/recipes/custom-routing",
       "permanent": false
+    },
+    {
+      "source": "/docs/api/composables/use-id",
+      "destination": "https://vuejs.org/api/composition-api-helpers.html#useid",
+      "permanent": true
     }
   ]
 }

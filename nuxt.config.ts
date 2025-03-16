@@ -7,8 +7,7 @@ function normalizedDirPath(path?: string) {
     return path
   }
 
-  const windowsPath = path.replace(/\\/g, '/')
-  return windowsPath.startsWith('file:///') ? windowsPath : `file:///${windowsPath}`
+  return path.replace(/\\/g, '/')
 }
 
 const docsSourceBase = normalizedDirPath(process.env.NUXT_DOCS_PATH)
@@ -18,7 +17,7 @@ const docsSource: any = {
   name: 'nuxt-docs',
   driver: 'github',
   repo: 'nuxt/nuxt',
-  branch: 'main',
+  branch: '3.x',
   dir: 'docs',
   prefix: '/1.docs',
   token: process.env.NUXT_GITHUB_TOKEN || ''
@@ -47,21 +46,22 @@ export default defineNuxtConfig({
   extends: [
     process.env.NUXT_UI_PRO_PATH || '@nuxt/ui-pro'
   ],
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment, @typescript-eslint/prefer-ts-expect-error
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore Type circular reference
   modules: [
     'nuxt-content-twoslash',
-    'nuxt-build-cache',
     '@nuxt/content',
     '@nuxt/ui',
     '@nuxt/image',
     '@nuxtjs/plausible',
     '@nuxt/fonts',
     '@nuxt/eslint',
+    '@nuxt/scripts',
     '@nuxtjs/turnstile',
     '@nuxthq/studio',
     '@vueuse/nuxt',
     'nuxt-og-image',
+    'nuxt-rebundle',
     () => {
       if (docsSourceBase) {
         logger.success(`Using local Nuxt docs from ${docsSourceBase}`)
@@ -71,6 +71,69 @@ export default defineNuxtConfig({
       }
     }
   ],
+  $development: {
+    runtimeConfig: {
+      public: {
+        website: {
+          url: 'http://localhost:3000'
+        }
+      }
+    },
+    image: {
+      alias: {
+        '/gh/': 'https://raw.githubusercontent.com',
+        '/gh_avatar/': 'https://avatars.githubusercontent.com'
+      },
+      domains: [
+        'raw.githubusercontent.com',
+        'avatars.githubusercontent.com'
+      ]
+    }
+  },
+  $production: {
+    image: {
+      ipx: {
+        baseURL: 'https://ipx.nuxt.com'
+      }
+    }
+  },
+  devtools: {
+    enabled: false
+  },
+  colorMode: {
+    preference: 'dark'
+  },
+  content: {
+    navigation: {
+      fields: ['titleTemplate']
+    },
+    sources: {
+      docsSource,
+      examplesSource
+    },
+    highlight: {
+      theme: {
+        default: 'material-theme-lighter',
+        dark: 'material-theme-palenight'
+      },
+      langs: [
+        'js',
+        'ts',
+        'vue',
+        'css',
+        'scss',
+        'sass',
+        'html',
+        'bash',
+        'md',
+        'mdc',
+        'json',
+        'json5',
+        'jsonc',
+        'tsx'
+      ]
+    }
+  },
   routeRules: {
     // Pre-render
     '/api/search.json': { prerender: true },
@@ -106,12 +169,19 @@ export default defineNuxtConfig({
     // '/docs/guide/directory-structure/nuxt.config': { redirect: '/docs/guide/directory-structure/nuxt-config', prerender: false },
     '/enterprise': { redirect: '/enterprise/support', prerender: false }
   },
+  future: {
+    compatibilityVersion: 4
+  },
+  experimental: {
+    buildCache: false
+  },
+  compatibilityDate: '2024-07-18',
   nitro: {
     prerender: {
       // failOnError: false
       // TODO: investigate
       // Ignore weird url from crawler on some modules readme
-      ignore: ['/modules/%3C/span', '/modules/%253C/span', '/docs/getting-started/</span', '/docs/getting-started/%3C/span', '/modules/Mojo CSS', '/modules/Mojo%20CSS']
+      ignore: ['/modules/%3C/span', '/modules/%253C/span', '/docs/getting-started/</span', '/docs/getting-started/%3C/span', '/modules/Mojo CSS', '/modules/Mojo%20CSS', '/enterprise/agencies?service=content-marketing', '/enterprise/agencies?service=mobile-development']
     },
     hooks: {
       'prerender:generate'(route) {
@@ -123,6 +193,9 @@ export default defineNuxtConfig({
       }
     }
   },
+  typescript: {
+    strict: false
+  },
   hooks: {
     async 'prerender:routes'(ctx) {
       // Add Nuxt 2 modules to the prerender list
@@ -132,64 +205,6 @@ export default defineNuxtConfig({
       }
     }
   },
-
-  $development: {
-    runtimeConfig: {
-      public: {
-        website: {
-          url: 'http://localhost:3000'
-        }
-      }
-    }
-  },
-  colorMode: {
-    preference: 'dark'
-  },
-  ui: {
-    icons: ['simple-icons', 'ph', 'uil', 'heroicons', 'octicon', 'logos']
-  },
-  image: {
-    ipx: {
-      baseURL: 'https://ipx.nuxt.com'
-    }
-  },
-  content: {
-    navigation: {
-      fields: ['titleTemplate']
-    },
-    sources: {
-      docsSource,
-      examplesSource
-    },
-    highlight: {
-      theme: {
-        default: 'material-theme-lighter',
-        dark: 'material-theme-palenight'
-      },
-      langs: [
-        'js',
-        'ts',
-        'vue',
-        'css',
-        'scss',
-        'sass',
-        'html',
-        'bash',
-        'md',
-        'mdc',
-        'json'
-      ]
-    }
-  },
-  twoslash: {
-    floatingVueOptions: {
-      classMarkdown: 'prose prose-primary dark:prose-invert'
-    },
-    // Skip Twoslash in dev to improve performance. Turn this on when you want to explictly test twoslash in dev.
-    enableInDev: false,
-    // Do not throw when twoslash fails, the typecheck should be down in github.com/nuxt/nuxt's CI
-    throws: false
-  },
   eslint: {
     config: {
       stylistic: {
@@ -197,15 +212,18 @@ export default defineNuxtConfig({
       }
     }
   },
-  typescript: {
-    strict: false
+  icon: {
+    clientBundle: {
+      scan: true
+    }
   },
-  experimental: {
-    headNext: true,
-    sharedPrerenderData: true,
-    appManifest: true
-  },
-  devtools: {
-    enabled: false
+  twoslash: {
+    floatingVueOptions: {
+      classMarkdown: 'prose prose-primary dark:prose-invert'
+    },
+    // Skip Twoslash in dev to improve performance. Turn this on when you want to explicitly test twoslash in dev.
+    enableInDev: false,
+    // Do not throw when twoslash fails, the typecheck should be down in github.com/nuxt/nuxt's CI
+    throws: false
   }
 })

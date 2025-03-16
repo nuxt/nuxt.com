@@ -3,7 +3,6 @@ import type { Schema } from 'untyped'
 import { upperFirst } from 'scule'
 
 export default defineNitroPlugin((nitroApp) => {
-  // @ts-expect-error missing types for hook
   nitroApp.hooks.hook('content:file:beforeParse', async (file) => {
     // Disable docs readme
     if (file._id === 'nuxt-docs:docs:README.md') {
@@ -11,7 +10,7 @@ export default defineNitroPlugin((nitroApp) => {
     }
     // Generate the markdown from the schema
     const GENERATE_KEY = '<!-- GENERATED_CONFIG_DOCS -->'
-    if (file.body.includes(GENERATE_KEY)) {
+    if (typeof file.body === 'string' && file.body.includes(GENERATE_KEY)) {
       let generatedDocs = ''
       try {
         const rootSchema = await $fetch<Schema>('https://unpkg.com/@nuxt/schema@latest/schema/config.schema.json')
@@ -152,5 +151,5 @@ function renderTag(tag: string) {
   if (TagAlertType[type]) {
     return ['::alert', tag, '::', '']
   }
-  return tag
+  return tag + '\n'
 }

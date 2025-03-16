@@ -1,0 +1,36 @@
+<template>
+  <div class="flex items-center">
+    <UButton
+      icon="i-simple-icons-discord"
+      to="https://go.nuxt.com/discord"
+      target="_blank"
+      variant="ghost"
+      color="gray"
+      size="xs"
+    />
+    <UButton
+      icon="i-simple-icons-bluesky"
+      to="https://go.nuxt.com/bluesky"
+      target="_blank"
+      variant="ghost"
+      color="gray"
+      size="xs"
+    />
+    <UButton
+      icon="i-simple-icons-x"
+      to="https://go.nuxt.com/x"
+      target="_blank"
+      variant="ghost"
+      color="gray"
+      size="xs"
+    />
+    <UButton
+      icon="i-simple-icons-github"
+      to="https://go.nuxt.com/github"
+      target="_blank"
+      variant="ghost"
+      color="gray"
+      size="xs"
+    />
+  </div>
+</template>
