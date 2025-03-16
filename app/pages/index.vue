@@ -525,7 +525,7 @@ onMounted(() => {
                               :alt="value[(rowIndex * 3) + colIndex - 1].sponsorName"
                               class="h-10 max-w-[140px] object-contain rounded-[calc(var(--ui-radius)*2)]"
                             />
-                            <span class="text-base hidden sm:block font-medium">{{ value[(rowIndex * 3) + colIndex - 1].sponsorName }}</span>
+                            <span class="text-base hidden sm:block font-semibold">{{ value[(rowIndex * 3) + colIndex - 1].sponsorName }}</span>
                           </NuxtLink>
                         </td>
                         <td

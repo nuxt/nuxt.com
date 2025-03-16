@@ -138,11 +138,11 @@ testimonials:
         height: 28
       achievements:
         - label: Codebase audit
-          color: pink
+          color: important
         - label: Migration to Nuxt
-          color: blue
+          color: info
         - label: Performance optimization
-          color: orange
+          color: warning
     - quote: “Choosing NuxtLabs for an audit of our Nuxt project was a game-changer. Their detailed insights significantly enhanced our site's performance and the quality of our code. We're grateful for their support and highly recommend them to others.“
       author: Melene Ulm
       job: Web Developer @ Mobile Industrial Robots
