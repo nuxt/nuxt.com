@@ -76,22 +76,25 @@ onMounted(() => {
   <UApp>
     <NuxtLoadingIndicator />
 
-    <!--    <UBanner
-      id="nuxt-tips-christmas"
-      title="Learn Nuxt with a Collection of 100+ Tips!"
-      icon="i-lucide-wand"
-      to="https://michaelnthiessen.com/nuxt-tips-collection?aff=J0Emk"
-      close
-      :actions="[
-        {
-          label: 'Learn more',
-          color: 'neutral',
-          variant: 'outline',
-          trailingIcon: 'i-lucide-arrow-right',
-          to: 'https://michaelnthiessen.com/nuxt-tips-collection?aff=J0Emk'
-        }
-      ]"
-    /> -->
+    <!-- <AppBanner
+      id="nuxt-ui-3"
+      to="https://ui.nuxt.com/pro/pricing"
+    >
+      <div class="flex items-center gap-1 text-black">
+        <UIcon
+          name="i-ph-sparkle"
+          class="size-5 flex-shrink-0 pointer-events-none hidden lg:inline-block mr-1"
+        />
+        <span>Nuxt UI Pro v3 is out! Get 20% OFF until Friday</span>
+        <UButton
+          label="Claim offer"
+          color="white"
+          trailing-icon="i-ph-arrow-right"
+          size="2xs"
+          class="rounded-full ml-1"
+        />
+      </div>
+    </AppBanner> -->
 
     <AppHeader />
 
