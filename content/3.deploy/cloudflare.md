@@ -7,6 +7,61 @@ nitroPreset: 'cloudflare'
 website: 'https://pages.cloudflare.com/'
 ---
 
+## Cloudflare Workers
+
+Cloudflare Workers supports [static assets](https://developers.cloudflare.com/workers/static-assets/), making it easy to deploy a Nuxt application. You can learn more about it on the [Cloudflare documentation](https://developers.cloudflare.com/workers/frameworks/framework-guides/nuxt/).
+
+::note
+You must set a compatibility date to `2024-09-19` or later in both `nuxt.config.ts` and `wrangler.toml`.
+Checkout the [Nitro documentation](https://nitro.build/deploy/providers/cloudflare#cloudflare-module-workers) for the `cloudflare_module` preset.
+:: 
+
+::important
+Cloudflare Static Assets is in Beta.
+::
+
+### Deploy With Wrangler
+
+You can use [wrangler](https://github.com/cloudflare/workers-sdk) to deploy your project to Cloudflare.
+
+1. Create a `wangler.jsonc` 
+
+```json [wrangler.jsonc]
+{
+	"$schema": "https://unpkg.com/wrangler@latest/config-schema.json",
+	"compatibility_date": "2025-01-16",
+	"main": "./.output/server/index.mjs",
+	"assets": {
+		"directory": "./.output/public/",
+		"binding": "ASSETS"
+	}
+}
+```
+
+2. Build your project for Cloudflare Workers:
+
+    ```bash [Terminal]
+    npx nuxi build --preset=cloudflare_module
+    ```
+
+3. Deploy, it will ask you to create a project for the first time:
+
+    ```bash [Terminal]
+    wrangler deploy
+    ```
+
+### Automatic Deploy With Git
+
+If you're using GitHub or GitLab, Cloudflare workers has an integration to automatically deploy your project. 
+
+::note
+Checkout the [Workers Build](https://developers.cloudflare.com/workers/ci-cd/builds/git-integration/) documentation for the Git Integration.
+::
+
+::important
+[Workers Build](https://developers.cloudflare.com/workers/ci-cd/builds/) is in Beta.
+::
+
 ## Cloudflare Pages
 
 ::tip
@@ -14,22 +69,6 @@ website: 'https://pages.cloudflare.com/'
 :br
 Integration with Cloudflare Pages is possible with zero configuration, [learn more](https://nitro.unjs.io/deploy#zero-config-providers).
 ::
-
-::important
-Checkout the [@nuxthub/core](/modules/hub) module to build full-stack Nuxt applications with Cloudflare, learn more on [hub.nuxt.com](https://hub.nuxt.com).
-::
-
-### Git Integration
-
-If you use the GitHub/GitLab integration with Cloudflare Pages, **no configuration is required**. Pushing to your repository will automatically build your project and deploy it.
-
-::note
-Nuxt will detect the environment to set the correct [Server/Nitro preset](https://nitro.unjs.io/deploy/providers/cloudflare).
-::
-
-To leverage server-side rendering on the edge, set the build command to: `nuxt build`
-
-To statically generate your website, set the build command to: `nuxt generate`
 
 ### Route matching
 
@@ -46,6 +85,18 @@ export default defineNuxtConfig({
   }
 })
 ```
+
+### Git Integration
+
+If you use the GitHub/GitLab integration with Cloudflare Pages, **no configuration is required**. Pushing to your repository will automatically build your project and deploy it.
+
+::note
+Nuxt will detect the environment to set the correct [Server/Nitro preset](https://nitro.unjs.io/deploy/providers/cloudflare).
+::
+
+To leverage server-side rendering on the edge, set the build command to: `nuxt build`
+
+To statically generate your website, set the build command to: `nuxt generate`
 
 ### Direct Upload
 
@@ -67,8 +118,16 @@ In this case, you will have to set the preset manually.
 
 ## Learn more
 
+::important
+Checkout the [@nuxthub/core](/modules/hub) module to build full-stack Nuxt applications with Cloudflare, learn more on [hub.nuxt.com](https://hub.nuxt.com).
+::
+
 ::read-more{to="https://nitro.unjs.io/deploy/providers/cloudflare" target="_blank"}
 Head over **Nitro documentation** to learn more about the Cloudflare deployment preset.
+::
+
+::read-more{to="https://developers.cloudflare.com/workers/static-assets/compatibility-matrix/" target="_blank"}
+To chose between Workers and Pages, look at the compatibility matrix. In the future Workers will be the preferred way to deploy application on cloudflare.
 ::
 
 ::read-more{to="https://developers.cloudflare.com/pages/framework-guides/deploy-a-nuxt-site/#use-bindings-in-your-nuxt-application" target="_blank"}
