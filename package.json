@@ -33,7 +33,7 @@
     "feed": "^4.2.2",
     "floating-vue": "^5.2.2",
     "nuxt": "^3.15.4",
-    "nuxt-og-image": "^4.2.0",
+    "nuxt-og-image": "^5.0.4",
     "nuxt-rebundle": "0.0.2",
     "ofetch": "^1.4.1",
     "perfect-debounce": "^1.0.0",
