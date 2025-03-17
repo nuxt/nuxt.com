@@ -45,24 +45,50 @@ defineOgImageComponent('Docs', {
           </div>
 
           <div class="lg:col-span-4">
-            <div v-if="['diamond', 'platinum', 'gold', 'silver'].includes(key)" class="grid grid-cols-2 gap-8 gap-x-4 sm:grid-cols-3 md:grid-cols-4 -mt-4">
-              <UButton
-                v-for="(sponsor, index) in value"
-                :key="index"
-                color="neutral"
-                variant="ghost"
-                class="flex-col flex-1 justify-center"
-                size="xl"
-                :to="sponsor.sponsorUrl"
-                target="_blank"
-              >
-                <UAvatar :src="sponsor.sponsorLogo" :alt="sponsor.sponsorName" class="mx-auto mt-4" size="2xl" />
-                <h3 class="mt-6 font-semibold text-center leading-7 tracking-tight text-(--ui-text-highlighted) mb-2">
-                  {{ sponsor.sponsorName }}
-                </h3>
-              </UButton>
+            <div v-if="['diamond', 'platinum', 'gold', 'silver'].includes(key)" class="w-full border border-(--ui-border) rounded-lg">
+              <table class="w-full">
+                <tbody>
+                  <template v-for="(_, rowIndex) in Math.ceil(value.length / 3)" :key="rowIndex">
+                    <tr>
+                      <template v-for="colIndex in 3" :key="colIndex">
+                        <td
+                          v-if="(rowIndex * 3) + colIndex - 1 < value.length"
+                          class="border-b border-r border-(--ui-border) p-0 w-1/3 h-[120px]"
+                          :class="{
+                            'border-r-0': colIndex === 3,
+                            'border-b-0': rowIndex === Math.ceil(value.length / 3) - 1
+                          }"
+                        >
+                          <NuxtLink
+                            :to="value[(rowIndex * 3) + colIndex - 1].sponsorUrl"
+                            target="_blank"
+                            class="flex items-center gap-2 justify-center h-full hover:bg-(--ui-bg-muted)/50 transition-colors"
+                          >
+                            <NuxtImg
+                              :src="value[(rowIndex * 3) + colIndex - 1].sponsorLogo"
+                              :alt="value[(rowIndex * 3) + colIndex - 1].sponsorName"
+                              class="h-10 max-w-[140px] object-contain rounded-[calc(var(--ui-radius)*2)]"
+                            />
+                            <span class="text-base hidden sm:block font-semibold truncate">{{ value[(rowIndex * 3) + colIndex - 1].sponsorName }}</span>
+                          </NuxtLink>
+                        </td>
+                        <td
+                          v-else
+                          class="border-b border-r border-(--ui-border) p-0 w-1/3 h-[120px]"
+                          :class="{
+                            'border-r-0': colIndex === 3,
+                            'border-b-0': rowIndex === Math.ceil(value.length / 3) - 1
+                          }"
+                        >
+                          <div class="h-full" />
+                        </td>
+                      </template>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
             </div>
-            <div v-else class="flex flex-wrap gap-8 ml-12">
+            <div v-else class="flex flex-wrap gap-8">
               <NuxtLink v-for="(sponsor, index) in value" :key="index" :to="sponsor.sponsorUrl" target="_blank" class="inline-flex">
                 <UAvatar :src="sponsor.sponsorLogo" :alt="sponsor.sponsorName" size="lg" />
               </NuxtLink>
