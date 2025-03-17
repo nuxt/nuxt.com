@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ContentNavigationItem } from '@nuxt/content'
-import { findPageBreadcrumb, mapContentNavigation } from '@nuxt/ui-pro/utils/content'
+import { findPageBreadcrumb, mapContentNavigation } from '#ui-pro/utils'
 
 definePageMeta({
   layout: 'docs',
@@ -38,27 +38,7 @@ const breadcrumb = computed(() => {
   return links
 })
 
-const titleTemplate = computed(() => {
-  if (page.value.titleTemplate) return page.value.titleTemplate
-
-  // If titleTemplate is not set, we check the navigation for the closest parent with a titleTemplate
-  const parts = page.value.path.split('/')
-  const items = []
-  let current = navigation.value
-  for (let index = 1; index < parts.length; index += 1) {
-    const prefix = parts.slice(0, index + 1).join('/')
-    const node = current.find(item => item.path === prefix)
-
-    if (!node) {
-      break
-    }
-
-    current = node.children
-    items.unshift(node)
-  }
-
-  return items.find(item => typeof item.titleTemplate === 'string')?.titleTemplate || '%s · Nuxt'
-})
+const titleTemplate = computed(() => findTitleTemplate(page, navigation))
 
 const communityLinks = computed(() => [{
   icon: 'i-lucide-pen',
