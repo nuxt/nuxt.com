@@ -30,6 +30,7 @@ You can use [wrangler](https://github.com/cloudflare/workers-sdk) to deploy your
 {
 	"$schema": "https://unpkg.com/wrangler@latest/config-schema.json",
 	"compatibility_date": "2025-01-16",
+  "compatibility_flags": ["nodejs_compat"], // Optional
 	"main": "./.output/server/index.mjs",
 	"assets": {
 		"directory": "./.output/public/",
