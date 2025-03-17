@@ -21,7 +21,9 @@ useSeoMeta({
 })
 
 defineOgImageComponent('Docs', {
-  headline: 'Community'
+  headline: 'Community',
+  title,
+  description
 })
 </script>
 

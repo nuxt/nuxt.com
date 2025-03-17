@@ -22,7 +22,10 @@ useSeoMeta({
   ogDescription: description,
   ogTitle: title
 })
-defineOgImageComponent('Docs')
+defineOgImageComponent('Docs', {
+  title,
+  description
+})
 </script>
 
 <template>

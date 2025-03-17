@@ -77,9 +77,9 @@ useSeoMeta({
 })
 
 defineOgImageComponent('Docs', {
+  headline: breadcrumb.value.length ? breadcrumb.value.map(link => link.label).join(' > ') : '',
   title,
-  description,
-  headline: breadcrumb.value.length ? breadcrumb.value.map(link => link.label).join(' > ') : ''
+  description
 })
 </script>
 

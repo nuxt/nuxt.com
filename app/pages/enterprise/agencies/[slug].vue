@@ -32,7 +32,9 @@ useSeoMeta({
 })
 
 defineOgImageComponent('Docs', {
-  headline: 'Nuxt Agencies'
+  headline: 'Nuxt Agencies',
+  title,
+  description
 })
 </script>
 

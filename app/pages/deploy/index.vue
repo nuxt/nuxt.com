@@ -22,7 +22,8 @@ useSeoMeta({
 })
 
 defineOgImageComponent('Docs', {
-  title: 'Deploy Nuxt'
+  title: 'Deploy Nuxt',
+  description
 })
 
 await fetchList()

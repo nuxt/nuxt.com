@@ -28,7 +28,9 @@ useSeoMeta({
 })
 
 defineOgImageComponent('Docs', {
-  headline: 'Deploy To'
+  headline: 'Deploy To',
+  title,
+  description
 })
 
 const links = []

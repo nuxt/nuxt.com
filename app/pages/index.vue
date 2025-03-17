@@ -39,7 +39,7 @@ const tabs = computed(() => page.value?.hero.tabs.map(tab => ({
   label: tab.title,
   icon: tab.icon,
   slot: tab.title.toLowerCase(),
-  content: tab.content // TODO: fix
+  content: tab.content
 })))
 
 const activeBundlerIndex = ref(0)
