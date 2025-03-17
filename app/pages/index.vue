@@ -234,7 +234,7 @@ onMounted(() => {
             :description="group.item.description"
             class="h-full"
             :ui="{
-              root: group.classes,
+              root: `${group.classes} ring-0 border border-(--ui-border) ${groupIndex === 0 ? 'sm:border-r-0 max-sm:border-b-0' : groupIndex === groupedFoundationItems.length - 1 ? 'sm:border-l-0 max-sm:border-t-0' : 'max-sm:border-y-0'}`,
               title: 'text-lg font-semibold'
             }"
           >
@@ -250,9 +250,9 @@ onMounted(() => {
             v-else
             :title="group.items[activeBundlerIndex].title"
             :description="group.items[activeBundlerIndex].description"
-            class="h-full"
+            class="h-full ring-0 border border-(--ui-border)"
             :ui="{
-              root: group.classes + ' ' + group.items[activeBundlerIndex].gradient,
+              root: `${group.classes} ${group.items[activeBundlerIndex].gradient}`,
               title: 'text-lg font-semibold'
             }"
           >

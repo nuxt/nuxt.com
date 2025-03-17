@@ -64,25 +64,27 @@ await fetchList()
       </template>
     </UPageHero>
 
-    <UBlogPosts class="mb-12 md:grid-cols-2 lg:grid-cols-3">
-      <UBlogPost
-        v-for="(article, index) in articles"
-        :key="article.path"
-        :to="article.path"
-        :title="article.title"
-        :description="article.description"
-        :image="{
-          src: article.image,
-          width: (index === 0 ? 672 : 437),
-          height: (index === 0 ? 378 : 246)
-        }"
-        :date="formatDateByLocale('en', article.date)"
-        :authors="article.authors"
-        :badge="{ label: article.category, color: 'primary', variant: 'subtle' }"
-        :variant="index === 0 ? 'naked' : 'subtle'"
-        :orientation="index === 0 ? 'horizontal' : 'vertical'"
-        :class="[index === 0 && 'col-span-full']"
-      />
-    </UBlogPosts>
+    <UPageBody>
+      <UBlogPosts class="mb-12 md:grid-cols-2 lg:grid-cols-3">
+        <UBlogPost
+          v-for="(article, index) in articles"
+          :key="article.path"
+          :to="article.path"
+          :title="article.title"
+          :description="article.description"
+          :image="{
+            src: article.image,
+            width: (index === 0 ? 672 : 437),
+            height: (index === 0 ? 378 : 246)
+          }"
+          :date="formatDateByLocale('en', article.date)"
+          :authors="article.authors"
+          :badge="{ label: article.category, color: 'primary', variant: 'subtle' }"
+          :variant="index === 0 ? 'naked' : 'subtle'"
+          :orientation="index === 0 ? 'horizontal' : 'vertical'"
+          :class="[index === 0 && 'col-span-full']"
+        />
+      </UBlogPosts>
+    </UPageBody>
   </UContainer>
 </template>
