@@ -108,7 +108,6 @@ import { defineNuxtModule } from '@nuxt/kit'
 
 export default defineNuxtModule((options, nuxt) => {
   nuxt.hook('content:file:beforeParse', async ({ file }) => {
-    // TODO: implement
     // Disable docs readme
     if (file.id === 'nuxt-docs:docs:README.md') {
       file.body = '---\nnavigation: false\n---'
