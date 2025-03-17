@@ -13,88 +13,97 @@ onMounted(() => {
 </script>
 
 <template>
-  <div ref="carbonads" class="Carbon border border-(--ui-border) rounded-lg" />
+  <div ref="carbonads" class="carbon-wrapper min-h-[220px] border border-(--ui-border) rounded-lg flex flex-col max-w-full md:max-w-xs overflow-hidden" />
 </template>
 
-<style lang="postcss">
-.Carbon {
-  min-height: 220px;
-  .carbon-text {
-    @apply text-(--ui-text-muted);
+<style>
+.carbon-wrapper {
+  padding: 0;
+}
 
-    &:hover {
-      @apply text-(--ui-text-muted)/70;
-    }
+.carbon-wrapper #carbonads {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.carbon-wrapper .carbon-wrap {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+}
+
+@media (min-width: 320px) {
+  .carbon-wrapper .carbon-wrap { flex-direction: row; }
+  .carbon-wrapper .carbon-text {
+    margin-left: 1rem;
+    padding: 0.75rem 0.75rem 0 0;
   }
 }
 
-.Carbon {
-  @apply p-3 flex flex-col max-w-full;
-
-  @screen sm {
-    @apply max-w-xs;
+@media (min-width: 768px) {
+  .carbon-wrapper .carbon-wrap { flex-direction: column; }
+  .carbon-wrapper .carbon-text {
+    margin-left: 0;
+    padding: 0.75rem;
   }
+}
 
-  @screen lg {
-    @apply mt-0;
-  }
+.carbon-wrapper .carbon-img {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  line-height: 0;
+}
 
-  #carbonads span {
-    @apply flex flex-col justify-between;
+.carbon-wrapper .carbon-img a {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
 
-    .carbon-wrap {
-      @apply flex flex-col;
+.carbon-wrapper .carbon-img img {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  object-fit: cover !important;
+}
 
-      flex: 1;
+.carbon-wrapper .carbon-text {
+  flex: 1;
+  font-size: 0.875rem;
+  width: 100%;
+  margin: 0;
+  text-align: left;
+  display: block;
+  color: var(--ui-text-muted);
+  text-decoration: none;
+  padding: 0.75rem;
+}
 
-      @media (min-width: 320px) {
-        @apply flex-row;
-      }
+.carbon-wrapper .carbon-text:hover {
+  color: var(--ui-text-highlighted);
+}
 
-      @screen lg {
-        @apply flex-col;
-      }
+.carbon-wrapper .carbon-poweredby {
+  font-size: 0.75rem;
+  text-align: left;
+  color: var(--ui-text-muted);
+  display: block;
+  padding: 0 0 0.75rem 0.75rem;
+  text-decoration: none;
+}
 
-      .carbon-img {
-        @apply flex items-start justify-center mb-4;
-
-        @media (min-width: 320px) {
-          @apply mb-0;
-        }
-
-        @screen lg {
-          @apply mb-4;
-        }
-      }
-
-      .carbon-text {
-        @apply flex-1 text-sm w-full m-0 text-left block;
-
-        &:hover {
-          @apply no-underline;
-        }
-
-        @media (min-width: 320px) {
-          @apply ml-4;
-        }
-
-        @screen lg {
-          @apply ml-0;
-        }
-      }
-    }
-  }
-
-  img {
-    @apply w-full;
-  }
-
-  & .carbon-poweredby {
-    @apply ml-2 text-xs text-right text-(--ui-text-muted) block pt-2;
-
-    &:hover {
-      @apply no-underline text-(--ui-text-muted)/70;
-    }
-  }
+.carbon-wrapper .carbon-poweredby:hover {
+  color: var(--ui-text-highlighted);
 }
 </style>
