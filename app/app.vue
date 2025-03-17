@@ -8,7 +8,7 @@ const color = computed(() => colorMode.value === 'dark' ? '#020420' : 'white')
 
 const { data: navigation } = await useAsyncData('navigation', () => {
   return Promise.all([
-    queryCollectionNavigation('docs'),
+    queryCollectionNavigation('docs', ['titleTemplate']),
     queryCollectionNavigation('blog')
   ])
 }, {
