@@ -1,54 +1,6 @@
-/*
 import { writeFile } from 'node:fs/promises'
 import type { Schema } from 'untyped'
 import { upperFirst } from 'scule'
-
-export default defineNitroPlugin((nitroApp) => {
-  nitroApp.hooks.hook('content:file:beforeParse', async (file) => {
-    // Disable docs readme
-    if (file._id === 'nuxt-docs:docs:README.md') {
-      file.body = '---\nnavigation: false\n---'
-    }
-    // Generate the markdown from the schema
-    const GENERATE_KEY = '<!-- GENERATED_CONFIG_DOCS -->'
-    if (typeof file.body === 'string' && file.body.includes(GENERATE_KEY)) {
-      let generatedDocs = ''
-      try {
-        const rootSchema = await $fetch<Schema>('https://unpkg.com/@nuxt/schema@latest/schema/config.schema.json')
-        const start = Date.now()
-        console.log(`Generating config docs on ${file._id}`)
-
-        const keys = Object.keys(rootSchema.properties).sort()
-
-        if (!file.body.includes(GENERATE_KEY)) {
-          return console.warn(`Could not find ${GENERATE_KEY} in ${file._id}`)
-        }
-
-        // Generate each section
-        for (const key of keys) {
-          const schema = rootSchema.properties[key]
-
-          const lines = generateMarkdown(schema, key, '##')
-
-          // Skip empty sections
-          if (lines.length < 3) {
-            continue
-          }
-
-          // Add lines to new file content
-          generatedDocs += lines.join('\n') + '\n'
-        }
-
-        file.body = file.body.replace(GENERATE_KEY, generatedDocs)
-
-        console.log(`Config docs generated in ${(Date.now() - start) / 1000} seconds!`)
-      } catch (err) {
-        console.error('Could not generate config docs', err)
-        await writeFile('debug-config-docs.md', generatedDocs)
-      }
-    }
-  })
-})
 
 function generateMarkdown(schema: Schema, title: string, level: string) {
   const lines: string[] = []
@@ -151,12 +103,53 @@ function renderTag(tag: string) {
   }
   return tag + '\n'
 }
-*/
 
 import { defineNuxtModule } from '@nuxt/kit'
 
 export default defineNuxtModule((options, nuxt) => {
-  nuxt.hook('content:file:afterParse', async ({ content: file }) => {
+  nuxt.hook('content:file:beforeParse', async ({ file }) => {
     // TODO: implement
+    // Disable docs readme
+    if (file.id === 'nuxt-docs:docs:README.md') {
+      file.body = '---\nnavigation: false\n---'
+    }
+    // Generate the markdown from the schema
+    const GENERATE_KEY = '<!-- GENERATED_CONFIG_DOCS -->'
+    if (typeof file.body === 'string' && file.body.includes(GENERATE_KEY)) {
+      let generatedDocs = ''
+      try {
+        const rootSchema = await fetch('https://unpkg.com/@nuxt/schema@latest/schema/config.schema.json').then(res => res.json()) as Schema
+        const start = Date.now()
+        console.log(`Generating config docs on ${file._id}`)
+
+        const keys = Object.keys(rootSchema.properties).sort()
+
+        if (!file.body.includes(GENERATE_KEY)) {
+          return console.warn(`Could not find ${GENERATE_KEY} in ${file._id}`)
+        }
+
+        // Generate each section
+        for (const key of keys) {
+          const schema = rootSchema.properties[key]
+
+          const lines = generateMarkdown(schema, key, '##')
+
+          // Skip empty sections
+          if (lines.length < 3) {
+            continue
+          }
+
+          // Add lines to new file content
+          generatedDocs += lines.join('\n') + '\n'
+        }
+
+        file.body = file.body.replace(GENERATE_KEY, generatedDocs)
+
+        console.log(`Config docs generated in ${(Date.now() - start) / 1000} seconds!`)
+      } catch (err) {
+        console.error('Could not generate config docs', err)
+        await writeFile('debug-config-docs.md', generatedDocs)
+      }
+    }
   })
 })
