@@ -19,7 +19,8 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     'nuxt-og-image',
     'motion-v/nuxt',
-    'nuxt-llms'
+    'nuxt-llms',
+    '@nuxthub/core'
   ],
   $development: {
     runtimeConfig: {
@@ -83,9 +84,8 @@ export default defineNuxtConfig({
   routeRules: {
     // Pre-render
     // '/api/templates.json': { prerender: true },
-    // TODO: '/blog/rss.xml': { prerender: true },
+    // '/blog/rss.xml': { prerender: true },
     // '/sitemap.xml': { prerender: true },
-    '/newsletter': { prerender: true },
     // Redirects
     '/docs': { redirect: '/docs/getting-started/introduction', prerender: false },
     '/docs/getting-started': { redirect: '/docs/getting-started/introduction', prerender: false },
@@ -118,23 +118,6 @@ export default defineNuxtConfig({
     compatibilityVersion: 4
   },
   compatibilityDate: '2024-07-18',
-  nitro: {
-    prerender: {
-      // failOnError: false,
-      // TODO: investigate
-      // Ignore weird url from crawler on some modules readme
-      ignore: ['/modules/%3C/span', '/modules/%253C/span', '/docs/getting-started/</span', '/docs/getting-started/%3C/span', '/modules/Mojo CSS', '/modules/Mojo%20CSS', '/enterprise/agencies?service=content-marketing', '/enterprise/agencies?service=mobile-development']
-    },
-    hooks: {
-      'prerender:generate'(route) {
-        // TODO: fix issue with recursive fetches with query string, e.g.
-        // `/enterprise/agencies?region=europe&amp;amp;amp;service=ecommerce&amp;amp;service=ecommerce&amp;service=content-marketing`
-        if (route.route?.includes('&amp;')) {
-          route.skip = true
-        }
-      }
-    }
-  },
   typescript: {
     strict: false
   },
