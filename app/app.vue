@@ -76,25 +76,25 @@ onMounted(() => {
   <UApp>
     <NuxtLoadingIndicator />
 
-    <!-- <AppBanner
-      id="nuxt-ui-3"
-      to="https://ui.nuxt.com/pro/pricing"
+    <AppBanner
+      id="mastering-nuxt-2025"
+      to="https://masteringnuxt.com/2025?utm_source=nuxt-website&utm_medium=banner"
     >
       <div class="flex items-center gap-1 text-black">
         <UIcon
-          name="i-ph-sparkle"
+          name="i-lucide-school"
           class="size-5 flex-shrink-0 pointer-events-none hidden lg:inline-block mr-1"
         />
-        <span>Nuxt UI Pro v3 is out! Get 20% OFF until Friday</span>
+        <span>Mastering Nuxt: Full Stack Unleashed - Coming March 25th.</span>
         <UButton
-          label="Claim offer"
+          label="Sign up"
           color="white"
           trailing-icon="i-ph-arrow-right"
           size="2xs"
           class="rounded-full ml-1"
         />
       </div>
-    </AppBanner> -->
+    </AppBanner>
 
     <AppHeader />
 
