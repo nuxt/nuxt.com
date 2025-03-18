@@ -119,13 +119,13 @@ onMounted(() => {
         <div class="flex flex-col gap-4">
           <div class="flex items-center flex-wrap gap-2">
             <UButton to="/docs/getting-started/installation" size="xl">
-              Get Started
+              Get started
             </UButton>
-            <UButton size="xl" color="neutral" variant="ghost" trailing-icon="i-lucide-play-circle" @click="videoModalOpen = true">
+            <UButton size="xl" color="neutral" variant="subtle" trailing-icon="i-lucide-play-circle" @click="videoModalOpen = true">
               Nuxt in 100 Seconds
             </UButton>
           </div>
-          <UInputCopy value="npm create nuxt@latest" label="npm create nuxt@latest" size="lg" />
+          <UInputCopy value="npm create nuxt@latest" label="npm create nuxt@latest" size="xl" />
         </div>
 
         <UModal v-model:open="videoModalOpen" :ui="{ content: 'sm:max-w-4xl lg:max-w-5xl aspect-[16/9]' }">

@@ -51,7 +51,7 @@ const logoContextMenuItems = [
           <NuxtLogo ref="logo" class="block w-auto h-6" />
 
           <UTooltip v-if="version" :text="`Latest release: v${stats.version}`">
-            <UBadge variant="subtle" size="sm" class="-mb-[2px] rounded font-semibold">
+            <UBadge variant="subtle" size="sm" class="-mb-[2px] rounded font-semibold text-[12px]/3">
               v{{ version }}
             </UBadge>
           </UTooltip>
