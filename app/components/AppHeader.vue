@@ -1,21 +1,40 @@
 <script setup lang="ts">
-const { headerLinks } = useNavigation()
+import type { ContentNavigationItem } from '@nuxt/content'
+
+const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
 
 const logo = ref(null)
 
+const route = useRoute()
 const stats = useStats()
-
 const { copy } = useClipboard()
+const { headerLinks } = useNavigation()
 
 const version = computed(() => stats.value?.version?.match(/\d+\.\d+/)[0])
 
-const mobileNav = computed(() => {
+const mobileNavigation = computed(() => {
+  // Show Migration and Bridge on mobile only when user is reading them
+  const docsLink = navigation.value.find(link => link.path === '/docs')
+  if (docsLink && !route.path.startsWith('/docs/bridge') && !route.path.startsWith('/docs/migration')) {
+    docsLink.children = docsLink.children.filter(link => !['/docs/bridge', '/docs/migration'].includes(link.path as string))
+  }
+
   return [
-    ...headerLinks.value,
+    docsLink,
+    ...headerLinks.value.slice(1).map(link => ({
+      ...link,
+      title: link.label,
+      path: link.to,
+      children: link.children?.map(child => ({
+        ...child,
+        title: child.label,
+        path: child.to
+      }))
+    })),
     {
-      label: 'Design Kit',
+      title: 'Design Kit',
       icon: 'i-lucide-palette',
-      to: '/design-kit'
+      path: '/design-kit'
     }
   ]
 })
@@ -44,9 +63,7 @@ const logoContextMenuItems = [
 <template>
   <UHeader>
     <template #left>
-      <UContextMenu
-        :items="logoContextMenuItems"
-      >
+      <UContextMenu :items="logoContextMenuItems" size="xs">
         <NuxtLink to="/" class="flex gap-2 items-end">
           <NuxtLogo ref="logo" class="block w-auto h-6" />
 
@@ -86,7 +103,7 @@ const logoContextMenuItems = [
     </template>
 
     <template #body>
-      <UNavigationMenu :items="mobileNav" orientation="vertical" class="-mx-2.5" />
+      <UContentNavigation :navigation="mobileNavigation" default-open highlight />
     </template>
   </UHeader>
 </template>
