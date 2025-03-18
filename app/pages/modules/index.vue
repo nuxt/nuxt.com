@@ -84,7 +84,7 @@ const isMobile = breakpoints.smaller('sm')
 <template>
   <UContainer>
     <div class="absolute inset-0 overflow-hidden">
-      <div class="flex flex-col justify-between pt-20">
+      <div class="flex flex-col justify-between pt-4">
         <UPageMarquee
           v-for="(row, rowIndex) in marqueeModulesData"
           :key="rowIndex"
@@ -124,13 +124,13 @@ const isMobile = breakpoints.smaller('sm')
         </UPageMarquee>
       </div>
 
-      <div class="absolute left-0 top-0 bottom-0 w-1/2 z-10 bg-linear-to-bl from-(--ui-bg)/10 to-(--ui-bg) to-50%" />
-      <div class="absolute right-0 top-0 bottom-0 w-1/2 z-10 bg-linear-to-br from-(--ui-bg)/10 to-(--ui-bg) to-50%" />
-      <div class="absolute top-0 left-0 right-0 size-full z-10 bg-linear-to-t from-(--ui-bg) to-(--ui-bg)/5" />
+      <div class="absolute left-0 top-0 bottom-0 w-1/2 z-10 bg-linear-to-bl from-(--ui-bg)/40 to-(--ui-bg) to-40%" />
+      <div class="absolute right-0 top-0 bottom-0 w-1/2 z-10 bg-linear-to-br from-(--ui-bg)/40 to-(--ui-bg) to-40%" />
+      <div class="absolute top-0 left-0 right-0 size-full z-10 bg-linear-to-t from-(--ui-bg) to-(--ui-bg)/15" />
     </div>
 
     <UPageHero
-      class="z-20 relative mt-32"
+      class="z-20 relative pt-24"
       :ui="{
         title: 'text-4xl sm:text-7xl text-balance max-w-4xl mx-auto',
         links: 'max-w-2xl mx-auto'
