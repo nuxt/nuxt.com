@@ -1,6 +1,6 @@
 <script setup lang="ts">
 withDefaults(defineProps<{
-  label: string
+  label?: string
 }>(), {
   label: 'No results found.'
 })

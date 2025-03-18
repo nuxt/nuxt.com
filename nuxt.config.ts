@@ -1,12 +1,9 @@
-import { ofetch } from 'ofetch'
 import { createResolver } from 'nuxt/kit'
 
 const { resolve } = createResolver(import.meta.url)
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore Type circular reference
   modules: [
     '@nuxt/ui-pro',
     'nuxt-content-twoslash',
@@ -120,15 +117,6 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-07-18',
   typescript: {
     strict: false
-  },
-  hooks: {
-    async 'prerender:routes'(ctx) {
-      // Add Nuxt 2 modules to the prerender list
-      const { modules } = await ofetch<{ modules: [] }>('https://api.nuxt.com/modules?version=2').catch(() => ({ modules: [] }))
-      for (const module of modules) {
-        ctx.routes.add(`/modules/${module.name}`)
-      }
-    }
   },
   eslint: {
     config: {

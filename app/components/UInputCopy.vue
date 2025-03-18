@@ -9,7 +9,7 @@ defineProps({
     required: false
   },
   size: {
-    type: String as () => 'lg',
+    type: String as PropType<'lg' | 'xl'>,
     default: 'lg'
   }
 })
