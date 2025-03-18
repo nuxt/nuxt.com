@@ -76,25 +76,22 @@ onMounted(() => {
   <UApp>
     <NuxtLoadingIndicator />
 
-    <AppBanner
+    <UBanner
       id="mastering-nuxt-2025"
+      title="Mastering Nuxt: Full Stack Unleashed - Coming March 25th."
+      icon="i-lucide-school"
       to="https://masteringnuxt.com/2025?utm_source=nuxt-website&utm_medium=banner"
-    >
-      <div class="flex items-center gap-1 text-black">
-        <UIcon
-          name="i-lucide-school"
-          class="size-5 flex-shrink-0 pointer-events-none hidden lg:inline-block mr-1"
-        />
-        <span>Mastering Nuxt: Full Stack Unleashed - Coming March 25th.</span>
-        <UButton
-          label="Sign up"
-          color="white"
-          trailing-icon="i-ph-arrow-right"
-          size="2xs"
-          class="rounded-full ml-1"
-        />
-      </div>
-    </AppBanner>
+      close
+      :actions="[
+        {
+          label: 'Sign up',
+          color: 'neutral',
+          variant: 'outline',
+          trailingIcon: 'i-lucide-arrow-right',
+          to: 'https://masteringnuxt.com/2025?utm_source=nuxt-website&utm_medium=banner'
+        }
+      ]"
+    />
 
     <AppHeader />
 
