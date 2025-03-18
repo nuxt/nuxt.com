@@ -24,25 +24,25 @@ To deploy your Nuxt project to Clever Cloud, you will need to create a **new app
 
 ::package-managers
 
-```env [npm]
+```ini [npm]
 CC_PRE_BUILD_HOOK="npm run build"
 CC_RUN_COMMAND="node .output/server/index.mjs"
 ```
 
-```env [yarn]
+```ini [yarn]
 CC_NODE_BUILD_TOOL="yarn"
 CC_PRE_BUILD_HOOK="yarn install --frozen-lockfile && yarn build"
 CC_RUN_COMMAND="node .output/server/index.mjs"
 ```
 
-```env [pnpm]
+```ini [pnpm]
 CC_CUSTOM_BUILD_TOOL="pnpm build"
 CC_NODE_BUILD_TOOL="custom"
 CC_PRE_BUILD_HOOK="npm i -g pnpm && pnpm install --frozen-lockfile && pnpm run build"
 CC_RUN_COMMAND="node .output/server/index.mjs"
 ```
 
-```env [bun]
+```ini [bun]
 CC_CUSTOM_BUILD_TOOL="bun build"
 CC_NODE_BUILD_TOOL="custom"
 CC_PRE_BUILD_HOOK="npm i -g bun && bun install && bun run build "
@@ -55,7 +55,7 @@ CC_RUN_COMMAND="node .output/server/index.mjs"
 
 ::package-managers
 
-```env [npm]
+```ini [npm]
 CC_NODE_VERSION=20
 CC_WEBROOT=/.output/public
 CC_OVERRIDE_BUILDCACHE=/.output/public
@@ -63,7 +63,7 @@ CC_PRE_BUILD_HOOK=npm install
 CC_POST_BUILD_HOOK=npx nuxi generate
 ```
 
-```env [yarn]
+```ini [yarn]
 CC_NODE_VERSION=20
 CC_WEBROOT=/.output/public
 CC_OVERRIDE_BUILDCACHE=/.output/public
@@ -71,7 +71,7 @@ CC_PRE_BUILD_HOOK="yarn install --frozen-lockfile"
 CC_POST_BUILD_HOOK=npx nuxi generate
 ```
 
-```env [pnpm]
+```ini [pnpm]
 CC_NODE_VERSION=20
 CC_WEBROOT=/.output/public
 CC_OVERRIDE_BUILDCACHE=/.output/public
@@ -79,7 +79,7 @@ CC_PRE_BUILD_HOOK="npm i -g pnpm && pnpm install --frozen-lockfile"
 CC_POST_BUILD_HOOK=npx nuxi generate
 ```
 
-```env [bun]
+```ini [bun]
 CC_NODE_VERSION=20
 CC_WEBROOT=/.output/public
 CC_OVERRIDE_BUILDCACHE=/.output/public

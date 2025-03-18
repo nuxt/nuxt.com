@@ -130,7 +130,8 @@ export default defineNuxtConfig({
         'json',
         'json5',
         'jsonc',
-        'tsx'
+        'tsx',
+        'ini'
       ]
     }
   },
