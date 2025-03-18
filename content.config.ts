@@ -5,6 +5,7 @@ const docsSource = {
   repository: !process.env.NUXT_PATH ? 'https://github.com/nuxt/nuxt/tree/feat/migrate-to-content-v3' : undefined,
   include: 'docs/**/*'
 }
+
 const examplesSource = {
   cwd: process.env.NUXT_EXAMPLES_PATH ?? undefined,
   repository: !process.env.NUXT_EXAMPLES_PATH ? 'https://github.com/nuxt/examples/tree/feat/migrate-to-content-v3' : undefined,
@@ -27,22 +28,22 @@ const DualModeImage = z.object({
   alt: z.string().optional()
 })
 
-const Button = z.object({
-  label: z.string(),
-  icon: z.string(),
-  trailingIcon: z.string().optional(),
-  to: z.string(),
-  color: z.enum(['primary', 'neutral']).optional(),
-  size: z.enum(['sm', 'md', 'lg', 'xl']).optional(),
-  variant: z.enum(['solid', 'outline', 'subtle', 'link']).optional(),
-  id: z.string().optional(),
-  target: z.enum(['_blank', '_self']).optional()
-})
-
 const Link = z.object({
   label: z.string(),
   to: z.string(),
   icon: z.string().optional()
+})
+
+const Button = z.object({
+  label: z.string(),
+  icon: z.string().optional(),
+  trailingIcon: z.string().optional(),
+  to: z.string().optional(),
+  color: z.enum(['primary', 'neutral', 'success', 'warning', 'error', 'info']).optional(),
+  size: z.enum(['xs', 'sm', 'md', 'lg', 'xl']).optional(),
+  variant: z.enum(['solid', 'outline', 'subtle', 'soft', 'ghost', 'link']).optional(),
+  id: z.string().optional(),
+  target: z.enum(['_blank', '_self']).optional()
 })
 
 const BaseSection = z.object({
@@ -172,10 +173,7 @@ export default defineContentConfig({
     }),
     docs: defineCollection({
       type: 'page',
-      source: [
-        docsSource,
-        examplesSource
-      ],
+      source: [docsSource, examplesSource],
       schema: z.object({
         titleTemplate: z.string().optional(),
         links: z.array(Button)
@@ -195,29 +193,19 @@ export default defineContentConfig({
     }),
     landing: defineCollection({
       type: 'page',
-      source: [{
-        include: 'index.md'
-      }, {
-        include: 'blog.yml'
-      }, {
-        include: 'modules.yml'
-      }, {
-        include: 'deploy.yml'
-      }, {
-        include: 'templates.yml'
-      }, {
-        include: 'showcase.yml'
-      }, {
-        include: 'video-courses.yml'
-      }, {
-        include: 'enterprise/sponsors.yml'
-      }, {
-        include: 'enterprise/agencies.yml'
-      }, {
-        include: 'newsletter.yml'
-      }, {
-        include: 'enterprise/jobs.yml'
-      }],
+      source: [
+        { include: 'index.md' },
+        { include: 'blog.yml' },
+        { include: 'modules.yml' },
+        { include: 'deploy.yml' },
+        { include: 'templates.yml' },
+        { include: 'showcase.yml' },
+        { include: 'video-courses.yml' },
+        { include: 'enterprise/sponsors.yml' },
+        { include: 'enterprise/agencies.yml' },
+        { include: 'newsletter.yml' },
+        { include: 'enterprise/jobs.yml' }
+      ],
       schema: PageHero
     }),
     deploy: defineCollection({
