@@ -18,7 +18,9 @@ useSeoMeta({
 })
 
 defineOgImageComponent('Docs', {
-  headline: 'Enterprise'
+  headline: 'Enterprise',
+  title,
+  description
 })
 
 await fetchList()
