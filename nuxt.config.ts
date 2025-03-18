@@ -98,7 +98,7 @@ export default defineNuxtConfig({
     }
   },
   devtools: {
-    enabled: true
+    enabled: false
   },
   colorMode: {
     preference: 'dark'
@@ -217,9 +217,6 @@ export default defineNuxtConfig({
     clientBundle: {
       scan: true
     }
-  },
-  tailwindcss: {
-    viewer: { endpoint: '/_tailwind', exportViewer: true }
   },
   twoslash: {
     floatingVueOptions: {
