@@ -62,7 +62,7 @@ export default defineNuxtConfig({
             default: 'material-theme-lighter',
             dark: 'material-theme-palenight'
           },
-          langs: ['sql', 'diff']
+          langs: ['sql', 'diff', 'ini']
         }
       }
     },
@@ -72,28 +72,7 @@ export default defineNuxtConfig({
   },
   mdc: {
     highlight: {
-      noApiRoute: false,
-      theme: {
-        default: 'material-theme-lighter',
-        dark: 'material-theme-palenight'
-      },
-      langs: [
-        'js',
-        'ts',
-        'vue',
-        'css',
-        'scss',
-        'sass',
-        'html',
-        'bash',
-        'md',
-        'mdc',
-        'json',
-        'json5',
-        'jsonc',
-        'tsx',
-        'ini'
-      ]
+      noApiRoute: false
     }
   },
   ui: {
