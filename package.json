@@ -55,7 +55,8 @@
     "typescript": "^5.8.2",
     "vitest": "^3.0.9",
     "vue": "^3.5.13",
-    "vue-tsc": "^2.2.2"
+    "vue-tsc": "^2.2.2",
+    "wrangler": "^3.114.0"
   },
   "resolutions": {
     "chokidar": "3.6.0",
