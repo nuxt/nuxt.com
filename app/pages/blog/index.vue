@@ -48,8 +48,10 @@ await fetchList()
       <template #links>
         <NewsletterForm class="flex-1 max-w-xs" :description="null" />
       </template>
+
       <template #description>
         {{ page.description }}
+
         <UButton
           to="/blog/rss.xml"
           color="neutral"
@@ -80,7 +82,7 @@ await fetchList()
           :date="formatDateByLocale('en', article.date)"
           :authors="article.authors"
           :badge="{ label: article.category, color: 'primary', variant: 'subtle' }"
-          :variant="index === 0 ? 'naked' : 'subtle'"
+          :variant="index === 0 ? 'outline' : 'subtle'"
           :orientation="index === 0 ? 'horizontal' : 'vertical'"
           :class="[index === 0 && 'col-span-full']"
         />

@@ -21,7 +21,7 @@
     "@nuxt/content": "^3.3.0",
     "@nuxt/image": "^1.9.0",
     "@nuxt/scripts": "^0.11.2",
-    "@nuxt/ui-pro": "3.0.0",
+    "@nuxt/ui-pro": "^3.0.0",
     "@nuxtjs/html-validator": "^2.1.0",
     "@nuxtjs/plausible": "^1.2.0",
     "@vueuse/components": "^13.0.0",
@@ -54,10 +54,11 @@
     "typescript": "^5.8.2",
     "vitest": "^3.0.9",
     "vue": "^3.5.13",
-    "vue-tsc": "^2.2.8"
+    "vue-tsc": "^2.2.2"
   },
   "resolutions": {
-    "chokidar": "3.6.0"
+    "chokidar": "3.6.0",
+    "vue-tsc": "2.2.2"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

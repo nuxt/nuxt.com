@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { kebabCase } from 'scule'
+
 definePageMeta({
   heroBackground: 'opacity-30 -z-10'
 })
@@ -10,7 +12,7 @@ if (!provider.value) {
   throw createError({ statusCode: 404, statusMessage: 'Hosting Platform not found', fatal: true })
 }
 
-const { data: surround } = await useAsyncData(`${route.path}-surround`, () => {
+const { data: surround } = await useAsyncData(`${kebabCase(route.path)}-surround`, () => {
   return queryCollectionItemSurroundings('deploy', route.path, {
     fields: ['description']
   })

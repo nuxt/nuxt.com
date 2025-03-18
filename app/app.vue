@@ -74,7 +74,7 @@ onMounted(() => {
 
 <template>
   <UApp>
-    <NuxtLoadingIndicator />
+    <NuxtLoadingIndicator color="var(--ui-primary)" />
 
     <UBanner
       id="mastering-nuxt-2025"
@@ -102,6 +102,7 @@ onMounted(() => {
         appeared ? 'duration-[400ms]' : 'duration-1000'
       ]"
     />
+
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>

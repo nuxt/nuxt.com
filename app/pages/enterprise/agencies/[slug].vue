@@ -1,11 +1,13 @@
 <script setup lang="ts">
+import { kebabCase } from 'scule'
+
 definePageMeta({
   heroBackground: 'opacity-30 -z-10'
 })
 
 const route = useRoute()
 
-const { data: agency } = await useAsyncData(route.path, () => queryCollection('agencies').path(route.path).first())
+const { data: agency } = await useAsyncData(kebabCase(route.path), () => queryCollection('agencies').path(route.path).first())
 if (!agency.value) {
   throw createError({ statusCode: 404, statusMessage: 'Agency not found', fatal: true })
 }

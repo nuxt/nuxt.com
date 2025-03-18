@@ -8,7 +8,7 @@ if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const { data: sponsors } = await useFetch('https://api.nuxt.com/sponsors')
+const { data: sponsors } = await useFetch('https://api.nuxt.com/sponsors', { key: 'sponsors' })
 
 const title = page.value.title
 const description = page.value.description

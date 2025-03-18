@@ -19,13 +19,14 @@ function copyInstallCommand(moduleName: string) {
     :to="`/modules/${module.name}`"
     :title="module.npm"
     :description="module.description"
-    class="group hover:bg-(--ui-bg) hover:ring-(--ui-primary)"
+    class="group"
+    variant="subtle"
     :ui="{
       description: 'line-clamp-2 text-(--ui-text-muted) text-sm',
-      container: 'p-3 sm:p-3 flex flex-col',
+      container: 'flex flex-col',
       wrapper: 'flex flex-col min-h-0 items-start',
       body: 'flex-none',
-      footer: 'w-full mt-auto pt-4 pointer-events-auto z-10'
+      footer: 'w-full mt-auto pointer-events-auto pt-4 z-[1]'
     }"
   >
     <template #leading>
@@ -33,29 +34,30 @@ function copyInstallCommand(moduleName: string) {
         :src="moduleImage(module.icon)"
         :icon="moduleIcon(module.category)"
         :alt="module.name"
-        size="xs"
-        class="pointer-events-none rounded-md bg-transparent"
+        size="md"
+        class="rounded-md bg-transparent"
       />
     </template>
 
     <UBadge
       v-if="showBadge && module.type === 'official'"
-      class="shine pointer-events-none absolute top-3 right-3"
+      class="shine absolute top-4 right-4 sm:top-6 sm:right-6"
       variant="subtle"
-    >
-      <span>Official</span>
-    </UBadge>
+      color="primary"
+      label="Official"
+    />
 
     <UBadge
       v-if="showBadge && module.sponsor"
-      class="shine pointer-events-none absolute top-3 right-3 bg-pink-400/20 text-pink-400 ring-pink-400"
+      class="shine absolute top-4 right-4 sm:top-6 sm:right-6"
       variant="subtle"
-    >
-      <span>Sponsor</span>
-    </UBadge>
+      color="important"
+      label="Sponsor"
+    />
 
     <template #footer>
       <USeparator type="dashed" class="mb-4" />
+
       <div class="flex items-center justify-between gap-3 -my-1 text-(--ui-text-muted)">
         <div class="flex items-center gap-3">
           <UTooltip text="Monthly NPM Downloads">

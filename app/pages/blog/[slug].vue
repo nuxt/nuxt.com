@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { kebabCase } from 'scule'
+
 definePageMeta({
   heroBackground: 'opacity-30 -z-10'
 })
@@ -6,12 +8,12 @@ definePageMeta({
 const route = useRoute()
 const { copy } = useClipboard()
 
-const { data: article } = await useAsyncData(`blog-${route.params.slug}`, () => queryCollection('blog').path(route.path).first())
+const { data: article } = await useAsyncData(kebabCase(route.path), () => queryCollection('blog').path(route.path).first())
 if (!article.value) {
   throw createError({ statusCode: 404, statusMessage: 'Article not found', fatal: true })
 }
 
-const { data: surround } = await useAsyncData(`blog-${route.params.slug}-surround`, () => {
+const { data: surround } = await useAsyncData(`${kebabCase(route.path)}-surround`, () => {
   return queryCollectionItemSurroundings('blog', route.path, {
     fields: ['description']
   }).order('date', 'DESC')

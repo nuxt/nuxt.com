@@ -17,7 +17,7 @@ const officialModules = computed(() => {
     .sort((a, b) => b.stats.stars - a.stats.stars)
 })
 
-const { data: sponsors } = await useFetch('https://api.nuxt.com/sponsors')
+const { data: sponsors } = await useFetch('https://api.nuxt.com/sponsors', { key: 'sponsors' })
 
 const stats = useStats()
 
@@ -112,7 +112,7 @@ onMounted(() => {
       </template>
 
       <template #description>
-        <MDC :value="page?.hero.description" unwrap="p" />
+        <MDC :value="page?.hero.description" unwrap="p" cache-key="index-hero-description" />
       </template>
 
       <template #links>
@@ -162,7 +162,7 @@ onMounted(() => {
           }"
         >
           <template v-for="(tab, index) of tabs" :key="index" #[tab.slot]="{ item }">
-            <MDC :value="item.content" class="//" />
+            <MDC :value="item.content" class="//" :cache-key="`index-hero-tab-${index}`" />
           </template>
         </UTabs>
       </UPageCard>
@@ -220,10 +220,10 @@ onMounted(() => {
       }"
     >
       <template #title>
-        <MDC :value="page.foundation.title" unwrap="p" />
+        <MDC :value="page.foundation.title" unwrap="p" cache-key="index-foundation-title" />
       </template>
       <template #description>
-        <MDC :value="page.foundation.description" unwrap="p" />
+        <MDC :value="page.foundation.description" unwrap="p" cache-key="index-foundation-description" />
       </template>
 
       <div class="grid grid-cols-1 sm:grid-cols-3">
@@ -396,7 +396,7 @@ onMounted(() => {
       }"
     >
       <template #title>
-        <MDC :value="page.modules.title" unwrap="p" />
+        <MDC :value="page.modules.title" unwrap="p" cache-key="index-modules-title" />
       </template>
       <UCarousel
         v-slot="{ item }"
@@ -404,7 +404,7 @@ onMounted(() => {
         wheel-gestures
         arrows
         :items="officialModules"
-        class="bg-(--ui-bg-muted) border-y 2xl:border border-(--ui-border) min-w-0 2xl:rounded-lg p-4 -mx-4 sm:p-6 sm:-mx-6 lg:p-8 lg:-mx-8"
+        class="min-w-0"
         :ui="{
           container: 'ms-0',
           item: 'min-w-0 shrink-0 sm:basis-1/3 p-2',
@@ -445,10 +445,11 @@ onMounted(() => {
       }"
     >
       <template #title>
-        <MDC :value="page.support.title" unwrap="p" />
+        <MDC :value="page.support.title" unwrap="p" cache-key="index-support-title" />
       </template>
       <template #description>
-        <MDC :value="page.support.description" unwrap="p" />
+        <MDC :value="page.support.description" unwrap="p" cache-key="index-support-description" />
+
         <UPageLogos :ui="{ logos: 'mt-6' }" marquee>
           <NuxtImg
             v-for="company in page.support.companies"

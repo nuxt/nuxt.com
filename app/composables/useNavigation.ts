@@ -65,7 +65,7 @@ const _useNavigation = () => {
       icon: 'i-lucide-library',
       to: '/templates',
       search: false,
-      active: route.path.startsWith('/templates') || route.path.startsWith('/video-courses'),
+      active: route.path.startsWith('/templates') || route.path.startsWith('/video-courses') || route.path.startsWith('/showcase'),
       children: [{
         label: 'Templates',
         icon: 'i-lucide-app-window',

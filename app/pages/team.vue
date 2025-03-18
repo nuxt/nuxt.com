@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { kebabCase } from 'scule'
+
 const route = useRoute()
 definePageMeta({
   heroBackground: 'opacity-70 -z-10'
 })
-const { data: page } = await useAsyncData(route.path, () => queryCollection('team').first())
+const { data: page } = await useAsyncData(kebabCase(route.path), () => queryCollection('team').first())
 
 const title = page.value.title
 const description = page.value.description
@@ -43,8 +45,9 @@ const icons = {
   github: 'i-simple-icons-github'
 }
 
-const { data: coreTeam } = await useFetch<TeamMember[]>('https://api.nuxt.com/teams/core')
+const { data: coreTeam } = await useFetch<TeamMember[]>('https://api.nuxt.com/teams/core', { key: 'teams-core' })
 const { data: ecosystemTeam } = await useFetch<TeamMember[]>('https://api.nuxt.com/teams/ecosystem', {
+  key: 'teams-ecosystem',
   transform(team) {
     return team.filter(t => !coreTeam.value?.some(c => c.login === t.login)).map((t) => {
       return {
@@ -76,7 +79,7 @@ const teams = [
       :links="page.links"
     >
       <template #description>
-        <MDC :value="page.description" />
+        <MDC :value="page.description" cache-key="team-hero-description" />
       </template>
     </UPageHero>
 
