@@ -75,7 +75,9 @@ useSeoMeta({
 })
 
 defineOgImageComponent('Docs', {
-  headline: 'Nuxt Modules'
+  headline: 'Nuxt Modules',
+  title,
+  description
 })
 </script>
 
