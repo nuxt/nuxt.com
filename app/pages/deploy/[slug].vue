@@ -18,8 +18,8 @@ const { data: surround } = await useAsyncData(`${kebabCase(route.path)}-surround
   })
 })
 
-const title = provider.value.title
-const description = provider.value.description
+const title = provider.value?.title
+const description = provider.value?.description
 
 useSeoMeta({
   titleTemplate: 'Deploy Nuxt to %s',
