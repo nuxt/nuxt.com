@@ -41,12 +41,9 @@ const breadcrumb = computed(() => {
 
 const titleTemplate = computed(() => findTitleTemplate(page, navigation))
 
+const editLink = computed(() => `https://github.com/nuxt/nuxt/edit/main/docs/${page?.value?.stem?.split('/').slice(1).join('/')}`)
+
 const communityLinks = computed(() => [{
-  icon: 'i-lucide-pen',
-  label: 'Edit this page',
-  to: `https://github.com/nuxt/nuxt/edit/main/docs/${page?.value?.stem?.split('/').slice(1).join('/')}`,
-  target: '_blank'
-}, {
   icon: 'i-lucide-heart',
   label: 'Become a Sponsor',
   to: 'https://go.nuxt.com/sponsor',
@@ -91,10 +88,20 @@ defineOgImageComponent('Docs', {
 
     <UPageBody>
       <ContentRenderer v-if="page.body" :value="page" />
-
-      <USeparator v-if="surround?.filter(Boolean).length" />
-
-      <UContentSurround :surround="surround" />
+      <div>
+        <USeparator class="my-10">
+          <div class="flex items-center gap-2 text-sm dark:text-gray-400">
+            <UButton size="sm" variant="link" color="neutral" to="https://github.com/nuxt/nuxt/issues/new/choose" target="_blank">
+              Report an issue
+            </UButton>
+            or
+            <UButton size="sm" variant="link" color="neutral" :to="editLink" target="_blank">
+              Edit this page on GitHub
+            </UButton>
+          </div>
+        </USeparator>
+        <UContentSurround :surround="surround" />
+      </div>
     </UPageBody>
 
     <template v-if="page?.body?.toc?.links?.length" #right>
