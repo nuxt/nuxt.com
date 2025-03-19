@@ -14,19 +14,19 @@ const _useNavigation = () => {
       search: false,
       children: [{
         label: 'Get Started',
-        description: 'Learn how to get started with Nuxt.',
+        description: 'Learn how to get started with Nuxt to build your first app.',
         icon: 'i-lucide-rocket',
         to: '/docs/getting-started',
         active: route.path.startsWith('/docs/getting-started')
       }, {
         label: 'Guide',
-        description: 'Learn how to build and deploy Nuxt applications.',
+        description: 'Get the key concepts, directory structure and best practices.',
         icon: 'i-lucide-book-open',
         to: '/docs/guide',
         active: route.path.startsWith('/docs/guide')
       }, {
         label: 'API',
-        description: 'Explore the Nuxt API.',
+        description: 'Explore the Nuxt components, composables, utilities and more.',
         icon: 'i-lucide-code-xml',
         to: '/docs/api',
         active: route.path.startsWith('/docs/api')
@@ -95,19 +95,19 @@ const _useNavigation = () => {
       children: [{
         label: 'Nuxt UI Pro',
         to: 'https://ui.nuxt.com/pro?utm_source=nuxt-website&utm_medium=header',
-        description: 'Premium Vue components for Nuxt.',
+        description: 'Build faster with premium components for Vue or Nuxt.',
         icon: 'i-lucide-panels-top-left',
         target: '_blank'
       }, {
         label: 'Nuxt Studio',
         to: 'https://content.nuxt.com/studio/?utm_source=nuxt-website&utm_medium=header',
-        description: 'The Git-based CMS for Nuxt.',
+        description: 'Edit your Nuxt Content website with a visual editor.',
         icon: 'i-lucide-pen',
         target: '_blank'
       }, {
         label: 'NuxtHub',
         to: 'https://hub.nuxt.com/?utm_source=nuxt-website&utm_medium=header',
-        description: 'Build, deploy & manage Nuxt apps that scale.',
+        description: 'Build, deploy & manage full-stackNuxt apps that scale.',
         icon: 'i-lucide-rocket',
         target: '_blank'
       }]
