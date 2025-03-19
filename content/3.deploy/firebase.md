@@ -151,6 +151,73 @@ Head over **Nitro documentation** to learn more about the Firebase deployment pr
 
 When using Firebase Hosting together with Cloud Functions or Cloud Run, cookies are generally stripped from incoming requests to allow for efficient CDN cache behavior. Only the specially-named `__session` cookie is permitted to pass through to your app.
 
+Example of how to useCookie to pass the idToken to verify the connected user
+
+```ts
+const sessionCookie = useCookie('__session', {
+  default: () => ({
+    idToken: '' as string | null
+  })
+})
+
+onIdTokenChanged(getAuth(), async (user) => {
+  if (user) {
+    sessionCookie.value.idToken = await user.getIdToken()
+  } else {
+    sessionCookie.value.idToken = null
+  }
+})
+
+const { data } = await useFetch("/api/functionThatWillDecodeIdTokenToVerifyConnectedUser", {
+  headers: {
+    Authorization: `Bearer ${sessionCookie.value?.idToken}`
+  }
+});
+
+```
+
+In the backend in `server/api/firebase/firebase.ts`
+
+```ts
+import { applicationDefault, initializeApp } from 'firebase-admin/app';
+import { getAuth } from 'firebase-admin/auth';
+import { getFirestore } from 'firebase-admin/firestore';
+const config = useRuntimeConfig()
+const defaultApp = initializeApp({
+  projectId: config.firebase?.projectID,
+  credential: applicationDefault()
+})
+export const firestore = getFirestore(defaultApp)
+export const auth = getAuth(defaultApp)
+```
+
+In the backend in `server/api/functionThatWillDecodeIdTokenToVerifyConnectedUser.ts`
+
+```ts
+import { auth } from "./firebase/firebase"
+
+export default defineEventHandler(async event => {
+  const headers = getHeaders(event)
+  try {
+    const decodedToken = await auth.verifyIdToken(String(headers.authorization)?.split('Bearer ')[1])
+    return {
+      status: 200,
+      body: {
+        decodedToken // { uid: '123', email: 'example@example.com', ... }
+      }
+    }
+  } catch (error) {
+    return {
+      status: 401,
+      body: {
+        error: 'Unauthorized'
+      }
+    }
+  }
+}
+```
+
+
 ::read-more{to="https://firebase.google.com/docs/hosting/manage-cache#using_cookies" target="\_blank"}
 For more information, refer to the **Firebase documentation**.
 ::
