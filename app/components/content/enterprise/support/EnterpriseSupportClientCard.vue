@@ -40,7 +40,7 @@ defineProps<{
           :width="logo.width"
           :height="logo.height"
           :alt="logo.alt"
-          class="h-[24px] grayscale"
+          class="h-6 shrink-0 max-w-[140px] grayscale"
         />
       </div>
 

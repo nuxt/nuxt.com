@@ -131,8 +131,8 @@ testimonials:
       author: Jacques Jahnichen
       job: Co-founder and CTO @ Viviarto
       logo:
-        light: /assets/enterprise/support/viviarto.webp
-        dark: /assets/enterprise/support/viviarto.webp
+        light: /assets/enterprise/support/light/viviarto.svg
+        dark: /assets/enterprise/support/dark/viviarto.svg
         alt: viviarto logo
         width: 134
         height: 28
