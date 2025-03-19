@@ -7,7 +7,7 @@ definePageMeta({
 const route = useRoute()
 const { slug } = route.params
 
-const { data: provider } = await useAsyncData('hosting-provider', () => queryCollection('deploy').path(route.path).first())
+const { data: provider } = await useAsyncData(`${kebabCase(route.path)}-provider`, () => queryCollection('deploy').path(route.path).first())
 if (!provider.value) {
   throw createError({ statusCode: 404, statusMessage: 'Hosting Platform not found', fatal: true })
 }
