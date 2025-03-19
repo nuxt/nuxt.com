@@ -84,6 +84,7 @@ export default defineNuxtConfig({
     // '/blog/rss.xml': { prerender: true },
     // '/sitemap.xml': { prerender: true },
     // Redirects
+    '/': { prerender: true },
     '/docs': { redirect: '/docs/getting-started/introduction', prerender: false },
     '/docs/getting-started': { redirect: '/docs/getting-started/introduction', prerender: false },
     '/docs/guide/concepts': { redirect: '/docs/guide/concepts/auto-imports', prerender: false },
@@ -115,6 +116,14 @@ export default defineNuxtConfig({
     compatibilityVersion: 4
   },
   compatibilityDate: '2024-07-18',
+  nitro: {
+    prerender: {
+      crawlLinks: true,
+      ignore: [
+        route => route.startsWith('/modules')
+      ]
+    }
+  },
   typescript: {
     strict: false
   },
