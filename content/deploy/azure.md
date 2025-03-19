@@ -86,7 +86,7 @@ output_location: '.output/public'
 ###### End of Repository/Build Configurations ######
 ```
 
-::alert
+::callout
 That's it! Now Azure Static Web Apps will automatically deploy your Nitro-powered application on push.
 ::
 

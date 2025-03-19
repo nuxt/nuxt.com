@@ -62,7 +62,6 @@ defineOgImageComponent('Docs', {
               v-if="course.badge"
               :label="course.badge"
               variant="subtle"
-              size="xs"
               class="rounded-full"
             />
             <UBadge
@@ -70,7 +69,6 @@ defineOgImageComponent('Docs', {
               label="Free"
               color="info"
               variant="subtle"
-              size="sm"
               class="rounded-full"
             />
             <UButton

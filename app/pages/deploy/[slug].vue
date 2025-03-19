@@ -93,10 +93,10 @@ links.push({
         <template #right>
           <UContentToc :links="provider.body.toc.links">
             <template #bottom>
-              <div class="hidden lg:block space-y-6" :class="{ '!mt-6': provider.body?.toc?.links?.length }">
-                <UDivider v-if="links?.length && provider.body?.toc?.links?.length" type="dashed" />
+              <div class="hidden lg:block space-y-6">
+                <USeparator v-if="links?.length && provider.body?.toc?.links?.length" type="dashed" />
                 <UPageLinks title="Links" :links="links" />
-                <UDivider type="dashed" />
+                <USeparator type="dashed" />
                 <SocialLinks />
                 <Ads />
               </div>
