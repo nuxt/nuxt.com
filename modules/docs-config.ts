@@ -66,9 +66,9 @@ function generateMarkdown(schema: Schema, title: string, level: string) {
 const TAG_REGEX = /^@(\w+)\s/
 
 const TagAlertType = {
-  note: 'info',
+  note: 'note',
   warning: 'warning',
-  deprecated: 'danger'
+  deprecated: 'caution'
 }
 
 const InternalTypes = new Set([
@@ -99,7 +99,7 @@ function renderTag(tag: string) {
   tag = tag.replace(`@${type}`, `**${upperFirst(type)}**:`)
     .replace('js\'node:fs\'', 'js') // hotfix
   if (TagAlertType[type]) {
-    return ['::alert', tag, '::', '']
+    return ['::callout', tag, '::', '']
   }
   return tag + '\n'
 }
