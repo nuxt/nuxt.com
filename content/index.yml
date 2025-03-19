@@ -240,21 +240,29 @@ hero:
 logos:
   title: Chosen by leading companies worldwide
   companies:
-    - src: /assets/brands/fielmann.svg
+    - light: /assets/brands/light/fielmann.svg
+      dark: /assets/brands/dark/fielmann.svg
       alt: Fielmann
-    - src: /assets/brands/dassault-systemes.svg
+    - light: /assets/brands/light/dassault-systemes.svg
+      dark: /assets/brands/dark/dassault-systemes.svg
       alt: Dassault Systemes
-    - src: /assets/brands/louis-vuitton.svg
+    - light: /assets/brands/light/louis-vuitton.svg
+      dark: /assets/brands/dark/louis-vuitton.svg
       alt: Louis Vuitton
-    - src: /assets/brands/backmarket.svg
+    - light: /assets/brands/light/backmarket.svg
+      dark: /assets/brands/dark/backmarket.svg
       alt: Back Market
-    - src: /assets/brands/paul-smith.svg
+    - light: /assets/brands/light/paul-smith.svg
+      dark: /assets/brands/dark/paul-smith.svg
       alt: Paul Smith
-    - src: /assets/brands/caudalie.svg
+    - light: /assets/brands/light/caudalie.svg
+      dark: /assets/brands/dark/caudalie.svg
       alt: Caudalie
-    - src: /assets/brands/blizzard.svg
+    - light: /assets/brands/light/blizzard.svg
+      dark: /assets/brands/dark/blizzard.svg
       alt: Blizzard
-    - src: /assets/brands/too-good-to-go.svg
+    - light: /assets/brands/light/too-good-to-go.svg
+      dark: /assets/brands/dark/too-good-to-go.svg
       alt: To Good to Go
 features:
   title: Enable features as you grow

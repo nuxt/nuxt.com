@@ -136,10 +136,7 @@ export default defineContentConfig({
         }),
         logos: z.object({
           title: z.string(),
-          companies: z.array(z.object({
-            url: z.string(),
-            alt: z.string()
-          }))
+          companies: z.array(DualModeImage)
         }),
         features: PageSection,
         foundation: PageSection.extend({

@@ -174,15 +174,19 @@ onMounted(() => {
           :key="company.alt"
           as-child
           :initial="{ opacity: 0, transform: 'translateY(20px)' }"
-          :in-view="{ opacity: 0.8, transform: 'translateY(0)' }"
+          :in-view="{ opacity: 1, transform: 'translateY(0)' }"
           :transition="{ delay: 0.4 + 0.2 * index }"
           :in-view-options="{ once: true }"
         >
-          <NuxtImg
-            :key="company.alt"
-            v-bind="company"
-            class="opacity-0 h-6 shrink-0 max-w-[140px] grayscale filter dark:invert invert-0"
-          />
+          <div class="opacity-0">
+            <UColorModeImage
+              :key="company.alt"
+              :light="company.light"
+              :dark="company.dark"
+              :alt="company.alt"
+              class="h-6 shrink-0 max-w-[140px]"
+            />
+          </div>
         </Motion>
       </UPageLogos>
     </UPageSection>
