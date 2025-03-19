@@ -24,12 +24,22 @@ Cloudflare Static Assets is in Beta.
 
 You can use [wrangler](https://github.com/cloudflare/workers-sdk) to deploy your project to Cloudflare.
 
-1. Create a `wangler.jsonc` 
+1. Configure Nitro in `nuxt.config.ts` with the following configuration :
+
+```ts
+export default defineNuxtConfig({
+  compatibilityDate: "2025-03-01",
+  nitro: { cloudflare: { nodeCompat: true, deployConfig: true } }
+});
+```
+
+This approach is recommend as it will generate a properly configured minimal `wangler.jsonc` for you. If you need to add Cloudflare settings, provide your own `wrangler.jsonc` and it will be merged with the correct Nitro options.
+For advanced use cases, if you want manual control over the cloudflare settings, set `nodeCompat` and `deployConfig` to false and manually provide your own `wrangler.jsonc` with the appropriate configuration :
 
 ```json [wrangler.jsonc]
 {
 	"$schema": "https://unpkg.com/wrangler@latest/config-schema.json",
-	"compatibility_date": "2025-01-16",
+	"compatibility_date": "2025-01-16", 
   "compatibility_flags": ["nodejs_compat"],
 	"main": "./.output/server/index.mjs",
 	"assets": {
