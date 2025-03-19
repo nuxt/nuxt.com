@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import type { Module } from '~/types'
+
 definePageMeta({
   heroBackground: 'opacity-50'
 })
 
 const input = useTemplateRef('input')
+const el = useTemplateRef<HTMLElement>('el')
 
 const { replaceRoute } = useFilters('modules')
 const { fetchList, filteredModules, q, categories, modules, stats, selectedSort, selectedOrder, selectedCategory, sorts } = useModules()
@@ -43,10 +46,45 @@ const breakpoints = useBreakpoints({
 })
 
 const isMobile = breakpoints.smaller('sm')
+
+const ITEMS_PER_PAGE = 12
+const displayedModules = ref<Module[]>([])
+
+const loadMoreModules = () => {
+  const currentLength = displayedModules.value.length
+  if (currentLength >= filteredModules.value.length) return
+
+  const nextItems = filteredModules.value.slice(
+    currentLength,
+    currentLength + ITEMS_PER_PAGE
+  )
+  displayedModules.value.push(...nextItems)
+}
+
+const initializeModules = () => {
+  displayedModules.value = filteredModules.value.slice(0, ITEMS_PER_PAGE)
+}
+
+const { reset } = useInfiniteScroll(
+  el,
+  loadMoreModules,
+  {
+    distance: 12,
+    canLoadMore: () => displayedModules.value.length < filteredModules.value.length
+  }
+)
+
+watch(filteredModules, () => {
+  displayedModules.value = []
+  reset()
+  initializeModules()
+})
+
+initializeModules()
 </script>
 
 <template>
-  <UContainer>
+  <UContainer ref="el">
     <LazyModulesMarquee :modules="modules" />
 
     <UPageHero
@@ -171,7 +209,7 @@ const isMobile = breakpoints.smaller('sm')
     <UPage id="smooth" class="relative z-20">
       <UPageBody>
         <UPageGrid v-if="filteredModules?.length" class="lg:grid-cols-2 xl:grid-cols-3">
-          <ModuleItem v-for="(module, index) in filteredModules" :key="index" :module="module" />
+          <ModuleItem v-for="(module, index) in displayedModules" :key="index" :module="module" />
         </UPageGrid>
 
         <EmptyCard v-else :label="`There is no module found for ${q} yet. Become the first one to create it!`">
