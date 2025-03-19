@@ -3,5 +3,5 @@ slug: 'ui-pro-docs'
 description: "A documentation template made with Nuxt UI Pro."
 repo: 'nuxt-ui-pro/docs'
 demo: 'https://docs-template.nuxt.dev'
-screenshotUrl: 'https://nuxt-ui-pro-template-docs.vercel.app/getting-started'
-badge: 'Freemium' 
+screenshotUrl: 'https://docs-template.nuxt.dev/getting-started'
+badge: 'Freemium'
