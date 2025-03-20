@@ -390,8 +390,8 @@ stats:
   community:
     title: Open source
     description: Nuxt is 100% powered by our passionate open source community. Every line of Nuxt is written by passionate developers like you.
-  x: 97.2k
-  discord: 27k
+  x: 98.7k
+  discord: 28k
   cta:
     label: Start contributing
     to: 'https://github.com/nuxt/nuxt'
