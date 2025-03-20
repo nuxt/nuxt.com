@@ -41,7 +41,7 @@ const breadcrumb = computed(() => {
 
 const titleTemplate = computed(() => findTitleTemplate(page, navigation))
 
-const editLink = computed(() => `https://github.com/nuxt/nuxt/edit/main/docs/${page?.value?.stem?.split('/').slice(1).join('/')}`)
+const editLink = computed(() => `https://github.com/nuxt/nuxt/edit/main/docs/${page?.value?.stem?.split('/').slice(1).join('/')}.${page?.value?.extension}`)
 
 const communityLinks = computed(() => [{
   icon: 'i-lucide-heart',

@@ -6,10 +6,9 @@ head.description: 'Vue and Nuxt professional support and consulting services by 
 navigation.icon: i-lucide-life-buoy
 hero:
   links:
-  - label: Talk to an expert
-    color: neutral
+  - label: Talk to a Nuxt expert
+    trailingIcon: i-lucide-arrow-right
     to: 'https://calendly.com/ferdinand-nuxt/nuxtlabs-ferdinand'
-    size: md
     target: '_blank'
 logos:
   - light: /assets/enterprise/support/light/malt.svg

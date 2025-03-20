@@ -40,6 +40,7 @@ export default defineNuxtConfig({
   },
   $production: {
     image: {
+      provider: 'ipx',
       ipx: {
         baseURL: 'https://ipx.nuxt.com'
       }

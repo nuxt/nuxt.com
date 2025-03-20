@@ -107,7 +107,7 @@ const _useNavigation = () => {
       }, {
         label: 'NuxtHub',
         to: 'https://hub.nuxt.com/?utm_source=nuxt-website&utm_medium=header',
-        description: 'Build, deploy & manage full-stackNuxt apps that scale.',
+        description: 'Deploy & manage full-stack Nuxt apps that scale.',
         icon: 'i-lucide-rocket',
         target: '_blank'
       }]

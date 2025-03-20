@@ -23,10 +23,10 @@ defineProps<{
     <template #header>
       <NuxtImg
         :src="`/assets/templates/${template.slug}.png`"
-        class="object-cover object-top w-full h-full xl:hidden"
+        class="object-contain object-top w-full h-full xl:hidden"
         :alt="template.name"
         width="600"
-        height="300"
+        height="338"
         format="webp"
         :modifiers="{ pos: 'top' }"
         :loading="index > 3 ? 'lazy' : undefined"
@@ -35,8 +35,8 @@ defineProps<{
         :src="`/assets/templates/${template.slug}.png`"
         class="object-cover object-top size-full hidden xl:block"
         :alt="template.name"
-        width="280"
-        height="140"
+        width="320"
+        height="180"
         format="webp"
         :modifiers="{ pos: 'top' }"
         :loading="index > 3 ? 'lazy' : undefined"
