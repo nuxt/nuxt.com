@@ -67,7 +67,7 @@ const logoContextMenuItems = [
   <UHeader>
     <template #left>
       <UContextMenu :items="logoContextMenuItems" size="xs">
-        <NuxtLink to="/" class="flex gap-2 items-end">
+        <NuxtLink to="/" class="flex gap-2 items-end" aria-label="Back to home">
           <NuxtLogo ref="logo" class="block w-auto h-6" />
 
           <UTooltip v-if="version" :text="`Latest release: v${stats?.version || 3}`">
@@ -99,7 +99,9 @@ const logoContextMenuItems = [
           :ui="{
             label: 'hidden sm:inline-flex'
           }"
-        />
+        >
+          <span class="sr-only">Nuxt on GitHub</span>
+        </UButton>
       </UTooltip>
     </template>
 
