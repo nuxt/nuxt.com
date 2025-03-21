@@ -59,7 +59,6 @@ await fetchList()
                 :light="agency.logo.light"
                 :dark="agency.logo.dark"
                 :alt="agency.location.title"
-                format="webp"
                 size="lg"
                 class="rounded-none bg-transparent"
               />
