@@ -18,7 +18,16 @@ const { copy, copied } = useClipboard()
 
 <template>
   <label>
-    <UInput class="w-full" :model-value="label ? label : value" :size="size" disabled icon="i-lucide-terminal">
+    <UInput
+      class="w-full"
+      :model-value="label ? label : value"
+      :size="size"
+      disabled
+      icon="i-lucide-terminal"
+      :ui="{
+        base: copied ? 'ring-(--ui-primary)' : ''
+      }"
+    >
       <div class="absolute inset-0" :class="[copied ? 'cursor-default' : 'cursor-copy']" @click="copy(value)" />
       <template #trailing>
         <UButton
@@ -26,7 +35,10 @@ const { copy, copied } = useClipboard()
           color="neutral"
           variant="link"
           :padded="false"
-          :class="{ 'text-(--ui-primary)': copied }"
+          :class="{
+            '!text-(--ui-primary) cursor-default': copied,
+            'cursor-copy': !copied
+          }"
           aria-label="copy button"
           @click="copy(value)"
         />

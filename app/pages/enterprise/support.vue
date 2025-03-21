@@ -50,7 +50,7 @@ defineOgImage({
       }"
     >
       <template #links>
-        <UPageGrid :ui="{ wrapper: 'xl:grid-cols-4' }">
+        <UPageGrid class="xl:grid-cols-4">
           <UPageCard v-for="service in page.service.services" :key="service.title" v-bind="service" :ui="{ container: 'card-bg', leadingIcon: 'size-8' }" />
         </UPageGrid>
       </template>

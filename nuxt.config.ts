@@ -40,6 +40,11 @@ export default defineNuxtConfig({
   },
   $production: {
     image: {
+      format: ['webp'],
+      provider: 'cloudflare',
+      cloudflare: {
+        baseURL: 'https://dev.nuxt.com'
+      },
       ipx: {
         baseURL: 'https://ipx.nuxt.com'
       }
@@ -123,6 +128,9 @@ export default defineNuxtConfig({
         route => route.startsWith('/modules')
       ]
     }
+  },
+  hub: {
+    cache: true
   },
   typescript: {
     strict: false

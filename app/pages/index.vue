@@ -122,7 +122,7 @@ onMounted(() => {
               Get started
             </UButton>
             <UButton size="xl" color="neutral" variant="subtle" trailing-icon="i-lucide-play-circle" @click="videoModalOpen = true">
-              Nuxt in 100 Seconds
+              Nuxt in 100 seconds
             </UButton>
           </div>
           <UInputCopy value="npm create nuxt@latest" label="npm create nuxt@latest" size="xl" />
@@ -201,20 +201,33 @@ onMounted(() => {
       }"
     >
       <template #features>
-        <UPageFeature
+        <Motion
           v-for="(feature, index) in page.features.features"
-          :key="index"
-          v-bind="feature"
-          orientation="vertical"
-        />
-        <div class="flex flex-col justify-center gap-4 p-4 bg-(--ui-bg-muted)/50 h-full">
+          :key="feature.title"
+          :initial="{ opacity: 0, transform: 'translateY(10px)' }"
+          :while-in-view="{ opacity: 1, transform: 'translateY(0)' }"
+          :transition="{ delay: 0.1 * index }"
+          :in-view-options="{ once: true }"
+        >
+          <UPageFeature
+            v-bind="feature"
+            orientation="vertical"
+          />
+        </Motion>
+        <Motion
+          :initial="{ opacity: 0, transform: 'translateY(10px)' }"
+          :while-in-view="{ opacity: 1, transform: 'translateY(0)' }"
+          :transition="{ delay: 0.1 * page.features.features.length }"
+          :in-view-options="{ once: true }"
+          class="flex flex-col justify-center gap-4 p-4 bg-(--ui-bg-muted)/50 h-full"
+        >
           <span class="text-lg font-semibold">
             {{ page.features.cta.title }}
           </span>
           <div>
             <UButton :to="page.features.cta.to" :label="page.features.cta.label" trailing :icon="page.features.cta.icon" />
           </div>
-        </div>
+        </Motion>
       </template>
     </UPageSection>
 
@@ -292,7 +305,10 @@ onMounted(() => {
       :description="page.testimonial.quote"
       variant="subtle"
       class="rounded-none"
-      :ui="{ container: 'sm:py-12 lg:py-12 sm:gap-8', description: 'before:content-[open-quote] after:content-[close-quote] !text-base' }"
+      :ui="{
+        container: 'sm:py-12 lg:py-12 sm:gap-8',
+        description: '!text-base before:content-[open-quote] before:text-7xl before:inline-block before:text-(--ui-text-dimmed) before:absolute before:-ml-10 before:-mt-4 after:content-[close-quote] after:text-7xl after:inline-block after:text-(--ui-text-dimmed) after:absolute after:ml-2'
+      }"
     >
       <UUser
         v-bind="page.testimonial.author"

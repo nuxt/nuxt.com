@@ -83,9 +83,7 @@ const logoContextMenuItems = [
         <UContentSearchButton />
       </UTooltip>
 
-      <UTooltip :text="$colorMode.preference === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'">
-        <UColorModeButton />
-      </UTooltip>
+      <UColorModeButton />
 
       <UTooltip text="GitHub Stars">
         <UButton
