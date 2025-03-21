@@ -121,15 +121,13 @@ onMounted(() => {
 
     <AppFooter />
 
-    <ClientOnly>
-      <LazyUContentSearch
-        v-model:search-term="searchTerm"
-        :files="files"
-        :navigation="navigation"
-        :groups="searchGroups"
-        :links="searchLinks"
-        :fuse="{ resultLimit: 42 }"
-      />
-    </ClientOnly>
+    <LazyUContentSearch
+      v-model:search-term="searchTerm"
+      :files="files"
+      :navigation="navigation"
+      :groups="searchGroups"
+      :links="searchLinks"
+      :fuse="{ resultLimit: 42 }"
+    />
   </UApp>
 </template>
