@@ -207,6 +207,7 @@ onMounted(() => {
         <Motion
           v-for="(feature, index) in page.features.features"
           :key="feature.title"
+          as="li"
           :initial="{ opacity: 0, transform: 'translateY(10px)' }"
           :while-in-view="{ opacity: 1, transform: 'translateY(0)' }"
           :transition="{ delay: 0.1 * index }"
@@ -218,6 +219,7 @@ onMounted(() => {
           />
         </Motion>
         <Motion
+          as="li"
           :initial="{ opacity: 0, transform: 'translateY(10px)' }"
           :while-in-view="{ opacity: 1, transform: 'translateY(0)' }"
           :transition="{ delay: 0.1 * page.features.features.length }"

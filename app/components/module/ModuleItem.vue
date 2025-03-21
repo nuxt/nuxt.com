@@ -90,7 +90,9 @@ function copyInstallCommand(moduleName: string) {
             size="xs"
             variant="outline"
             @click="copyInstallCommand(module.name)"
-          />
+          >
+            <span class="sr-only">Copy command to install {{ module.name }}</span>
+          </UButton>
         </UTooltip>
       </div>
     </template>
