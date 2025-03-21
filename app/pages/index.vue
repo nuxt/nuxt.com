@@ -307,7 +307,7 @@ onMounted(() => {
       class="rounded-none"
       :ui="{
         container: 'sm:py-12 lg:py-12 sm:gap-8',
-        description: '!text-base before:content-[open-quote] before:text-7xl before:inline-block before:text-(--ui-text-dimmed) before:absolute before:-ml-10 before:-mt-4 after:content-[close-quote] after:text-7xl after:inline-block after:text-(--ui-text-dimmed) after:absolute after:ml-2'
+        description: '!text-base text-balance before:content-[open-quote] before:text-5xl lg:before:text-7xl before:inline-block before:text-(--ui-text-dimmed) before:absolute before:-ml-6 lg:before:-ml-10 before:-mt-2 lg:before:-mt-4 after:content-[close-quote] after:text-5xl lg:after:text-7xl after:inline-block after:text-(--ui-text-dimmed) after:absolute after:mt-1 lg:after:mt-0 after:ml-1 lg:after:ml-2'
       }"
     >
       <UUser
@@ -509,6 +509,7 @@ onMounted(() => {
     <UPageSection
       :title="page.sponsors.title"
       :description="page.sponsors.description"
+      :links="page.sponsors.links"
       class="relative"
       :ui="{
         root: 'bg-gradient-to-b border-t border-(--ui-border) from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)',
@@ -567,8 +568,6 @@ onMounted(() => {
             </div>
           </div>
         </template>
-
-        <UButton v-bind="page.sponsors.cta" />
       </div>
     </UPageSection>
   </div>
