@@ -184,6 +184,9 @@ onMounted(() => {
               :light="company.light"
               :dark="company.dark"
               :alt="company.alt"
+              loading="lazy"
+              :height="company.height"
+              :width="company.width"
               class="h-6 shrink-0 max-w-[140px]"
             />
           </div>
@@ -450,6 +453,7 @@ onMounted(() => {
         src="/assets/landing/deploy.svg"
         alt="Deploy anywhere"
         class="mx-auto max-w-lg sm:w-full"
+        loading="lazy"
       />
     </UPageSection>
 
@@ -477,6 +481,7 @@ onMounted(() => {
             v-for="company in page.support.companies"
             :key="company.alt"
             v-bind="company"
+            loading="lazy"
             class="h-8 max-w-[70px] object-contain filter invert dark:invert-0 opacity-50"
           />
         </UPageLogos>
@@ -544,11 +549,14 @@ onMounted(() => {
                             target="_blank"
                             class="flex items-center gap-2 justify-center h-full hover:bg-(--ui-bg-muted)/50 transition-colors"
                           >
-                            <img
+                            <NuxtImg
                               :src="value[(rowIndex * 3) + colIndex - 1].sponsorLogo"
                               :alt="value[(rowIndex * 3) + colIndex - 1].sponsorName"
+                              loading="lazy"
                               class="h-10 max-w-[140px] object-contain rounded-[calc(var(--ui-radius)*2)]"
-                            >
+                              height="40"
+                              width="40"
+                            />
                             <span class="text-base hidden sm:block font-semibold">{{ value[(rowIndex * 3) + colIndex - 1].sponsorName }}</span>
                           </NuxtLink>
                         </td>

@@ -34,7 +34,10 @@ export default defineNuxtConfig({
       },
       domains: [
         'raw.githubusercontent.com',
-        'avatars.githubusercontent.com'
+        'avatars.githubusercontent.com',
+        'images.opencollective.com',
+        'ui.nuxt.com',
+        'res.cloudinary.com'
       ]
     }
   },
