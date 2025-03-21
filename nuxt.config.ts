@@ -127,7 +127,16 @@ export default defineNuxtConfig({
       ignore: [
         route => route.startsWith('/modules')
       ],
-      autoSubfolderIndex: true
+      autoSubfolderIndex: false
+    },
+    cloudflare: {
+      pages: {
+        routes: {
+          exclude: [
+            '/docs/*'
+          ]
+        }
+      }
     }
   },
   hub: {
