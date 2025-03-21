@@ -121,6 +121,7 @@ export default defineNuxtConfig({
     // '/docs/guide/directory-structure/nuxt.config': { redirect: '/docs/guide/directory-structure/nuxt-config', prerender: false },
     '/enterprise': { redirect: '/enterprise/support', prerender: false }
   },
+  sourcemap: true,
   future: {
     compatibilityVersion: 4
   },
