@@ -18,3 +18,5 @@ dist
 # Local editor
 *.code-workspace
 .idea/
+
+.wrangler
