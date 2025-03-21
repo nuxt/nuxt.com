@@ -126,7 +126,8 @@ export default defineNuxtConfig({
       crawlLinks: true,
       ignore: [
         route => route.startsWith('/modules')
-      ]
+      ],
+      autoSubfolderIndex: true
     }
   },
   hub: {
