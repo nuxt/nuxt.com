@@ -48,7 +48,7 @@ const breakpoints = useBreakpoints({
 const isMobile = breakpoints.smaller('sm')
 
 const ITEMS_PER_PAGE = 9
-const SCROLL_THRESHOLD = 350
+const SCROLL_THRESHOLD = 450
 const displayedModules = ref<Module[]>([])
 const isLoading = ref(false)
 
@@ -62,14 +62,14 @@ const loadMoreModules = () => {
 
   isLoading.value = true
 
-  nextTick(() => {
+  setTimeout(() => {
     const nextItems = filteredModules.value.slice(
       currentLength,
       currentLength + ITEMS_PER_PAGE
     )
     displayedModules.value.push(...nextItems)
     isLoading.value = false
-  })
+  }, 300)
 }
 
 const initializeModules = () => {
@@ -85,6 +85,7 @@ watch(scrollY, (y) => {
 })
 
 watch(filteredModules, () => {
+  isLoading.value = false
   displayedModules.value = []
   initializeModules()
 })
@@ -219,6 +220,20 @@ initializeModules()
       <UPageBody>
         <UPageGrid v-if="filteredModules?.length" class="lg:grid-cols-2 xl:grid-cols-3">
           <ModuleItem v-for="(module, index) in displayedModules" :key="index" :module="module" />
+
+          <template v-if="isLoading">
+            <div v-for="n in ITEMS_PER_PAGE" :key="n" class="flex flex-col gap-4 p-4 rounded-lg border border-(--ui-border)">
+              <div class="flex items-center gap-3">
+                <USkeleton class="h-8 w-8 rounded" />
+              </div>
+              <USkeleton class="h-4 w-3/4" />
+              <USkeleton class="h-4 w-full" />
+              <div class="flex gap-2">
+                <USkeleton class="h-6 w-16" />
+                <USkeleton class="h-6 w-16" />
+              </div>
+            </div>
+          </template>
         </UPageGrid>
 
         <EmptyCard v-else :label="`There is no module found for ${q} yet. Become the first one to create it!`">
