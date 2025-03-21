@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Module } from '~/types'
+import { joinURL } from 'ufo'
 
 definePageMeta({
   heroBackground: 'opacity-50'
@@ -18,17 +19,16 @@ if (!page.value) {
 
 const title = page.value.title
 const description = page.value.description
+const site = useSiteConfig()
 
 useSeoMeta({
   titleTemplate: '%s',
   title,
   description,
   ogDescription: description,
-  ogTitle: title
-})
-defineOgImageComponent('Docs', {
-  title,
-  description
+  ogTitle: title,
+  ogImage: joinURL(site.url, '/modules-social-card.png'),
+  twitterImage: joinURL(site.url, '/modules-social-card.png')
 })
 
 await fetchList()
