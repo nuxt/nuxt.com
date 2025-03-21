@@ -409,24 +409,28 @@ contributors:
       target: _blank
       icon: i-simple-icons-nuxtdotjs
       color: neutral
+      title: See your own profile on Nuxters
     - icon: i-simple-icons-discord
       to: https://go.nuxt.com/discord
       target: _blank
       color: neutral
       variant: ghost
       size: xl
+      title: Join Nuxt on Discord
     - icon: i-simple-icons-x
       to: https://go.nuxt.com/x
       target: _blank
       color: neutral
       variant: ghost
       size: lg
+      title: Nuxt on X
     - icon: i-simple-icons-bluesky
       to: https://go.nuxt.com/bluesky
       target: _blank
       color: neutral
       variant: ghost
       size: lg
+      title: Nuxt on Bluesky
 support:
   title: Nuxt Enterprise Support
   description: |
