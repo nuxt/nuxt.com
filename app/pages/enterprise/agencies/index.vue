@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { ContentNavigationLink } from '@nuxt/ui-pro/runtime/types/content.js'
+
 definePageMeta({
   heroBackground: 'opacity-80 -z-10'
 })
@@ -26,6 +28,13 @@ defineOgImageComponent('Docs', {
   description
 })
 
+const navigation = computed(() => {
+  return [
+    { title: 'Technical Expertise', children: services, path: '/enterprise/agencies' },
+    { title: 'Locations', children: regions, path: '/enterprise/agencies' }
+  ] as unknown as ContentNavigationLink[]
+})
+
 await fetchList()
 </script>
 
@@ -40,7 +49,7 @@ await fetchList()
     <UPage id="smooth" class="pt-20 -mt-20">
       <template #left>
         <UPageAside>
-          <UContentNavigation highlight :navigation="[{ title: 'Technical Expertise', children: services }, { title: 'Locations', children: regions }]" />
+          <UContentNavigation highlight :navigation="navigation" />
         </UPageAside>
       </template>
 
