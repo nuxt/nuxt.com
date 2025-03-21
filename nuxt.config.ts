@@ -173,6 +173,9 @@ export default defineNuxtConfig({
       description: 'The complete Nuxt documentation, blog posts and changelog written in Markdown (MDC syntax).'
     }
   },
+  turnstile: {
+    siteKey: '0x4AAAAAAAP2vNBsTBT3ucZi'
+  },
   twoslash: {
     floatingVueOptions: {
       classMarkdown: 'prose prose-primary dark:prose-invert'
