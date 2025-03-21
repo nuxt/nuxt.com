@@ -55,7 +55,14 @@ await fetchList()
             :description="agency.description"
           >
             <template #leading>
-              <UColorModeAvatar :light="agency.logo.light" :dark="agency.logo.dark" size="lg" class="rounded-none bg-transparent" />
+              <UColorModeAvatar
+                :light="agency.logo.light"
+                :dark="agency.logo.dark"
+                :alt="agency.location.title"
+                format="webp"
+                size="lg"
+                class="rounded-none bg-transparent"
+              />
             </template>
 
             <template #footer>
