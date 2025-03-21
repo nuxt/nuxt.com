@@ -56,14 +56,14 @@ await fetchList()
             variant="naked"
             class="overflow-hidden group rounded-lg"
           >
-            <img
+            <NuxtImg
               :src="`https://res.cloudinary.com/nuxt/image/upload/f_auto,q_auto,w_488,h_366/${showcase.screenshotUrl}`"
               :alt="showcase.hostname || ''"
               :loading="index === 0 ? 'eager' : 'lazy'"
               class="object-cover object-top size-full  opacity-75 group-hover:opacity-100 transition-opacity duration-300"
               height="366"
               width="488"
-            >
+            />
 
             <p class="hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 group-hover:flex bg-(--ui-bg-inverted) text-(--ui-bg) px-2.5 py-1 rounded-full text-sm font-medium font-mono items-center gap-1 shadow">
               {{ showcase.hostname }}

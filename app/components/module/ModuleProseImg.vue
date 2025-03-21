@@ -1,10 +1,10 @@
 <template>
-  <img
+  <NuxtImg
     :src="src"
     :alt="alt"
     :width="width"
     :height="height"
-  >
+  />
 </template>
 
 <script setup lang="ts">
