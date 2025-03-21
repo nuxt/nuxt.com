@@ -90,6 +90,7 @@ export default defineNuxtConfig({
     // '/sitemap.xml': { prerender: true },
     // Redirects
     '/': { prerender: true },
+    '/404.html': { prerender: true },
     '/docs': { redirect: '/docs/getting-started/introduction', prerender: false },
     '/docs/getting-started': { redirect: '/docs/getting-started/introduction', prerender: false },
     '/docs/guide/concepts': { redirect: '/docs/guide/concepts/auto-imports', prerender: false },
