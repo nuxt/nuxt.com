@@ -55,7 +55,8 @@ const contributors = computed(() => {
       label: 'View all contributors',
       to: `https://github.com/${module.value.repo}/graphs/contributors`,
       external: true,
-      target: '_blank'
+      target: '_blank',
+      noAvatar: true
     }]
   }
 
@@ -177,7 +178,7 @@ defineOgImageComponent('Docs', {
                 </template>
 
                 <template #link-leading="{ link }">
-                  <UAvatar provider="ipx" :src="`https://ipx.nuxt.com/f_auto,s_20x20/gh_avatar/${link.label}`" :srcset="`https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/${link.label} 2x`" class="size-5" />
+                  <UAvatar v-if="!(link as any).noAvatar" provider="ipx" :src="`https://ipx.nuxt.com/f_auto,s_20x20/gh_avatar/${link.label}`" :srcset="`https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/${link.label} 2x`" class="size-5" />
                 </template>
               </UPageLinks>
               <USeparator type="dashed" />
