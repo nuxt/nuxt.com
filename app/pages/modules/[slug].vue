@@ -177,7 +177,7 @@ defineOgImageComponent('Docs', {
                 </template>
 
                 <template #link-leading="{ link }">
-                  <UAvatar provider="ipx" :src="`https://ipx.nuxt.com/f_auto,s_20x20/gh_avatar/${link.label}`" class="size-5" />
+                  <UAvatar provider="ipx" :src="`https://ipx.nuxt.com/f_auto,s_20x20/gh_avatar/${link.label}`" :srcset="`https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/${link.label} 2x`" class="size-5" />
                 </template>
               </UPageLinks>
               <USeparator type="dashed" />
