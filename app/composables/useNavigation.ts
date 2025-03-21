@@ -189,7 +189,7 @@ const _useNavigation = () => {
       onSelect: () => nuxtApp.$kapa?.openModal()
     },
     ...headerLinks.value.map((link) => {
-    // Remove `/docs` and `/enterprise` links from command palette
+      // Remove `/docs` and `/enterprise` links from command palette
       if (link.search === false) {
         return {
           label: link.label,
@@ -197,9 +197,8 @@ const _useNavigation = () => {
           children: link.children
         }
       }
-
       return link
-    }).filter(Boolean), {
+    }).filter((link): link is NonNullable<typeof link> => Boolean(link)), {
       label: 'Team',
       icon: 'i-lucide-users',
       to: '/team'
@@ -213,21 +212,41 @@ const _useNavigation = () => {
       to: '/newsletter'
     }])
 
-  const searchGroups = computed(() => {
-    const aiGroup = {
+  type SearchGroup = {
+    id: string
+    label: string
+    icon?: string
+    items: Array<{
+      id: string
+      label: string
+      suffix?: string
+      icon?: string
+      avatar?: {
+        src?: string
+        ui?: {
+          root: string
+        }
+      }
+      to: string
+      onSelect?: () => Promise<void>
+    }>
+  }
+
+  const searchGroups = computed<SearchGroup[]>(() => {
+    const aiGroup: SearchGroup = {
       id: 'ask-ai-search',
       label: 'AI',
       icon: 'i-lucide-wand',
       items: []
     }
 
-    const modulesGroup = {
+    const modulesGroup: SearchGroup = {
       id: 'modules-search',
       label: 'Modules',
       items: []
     }
 
-    const hostingGroup = {
+    const hostingGroup: SearchGroup = {
       id: 'hosting-search',
       label: 'Hosting',
       items: []
@@ -256,7 +275,7 @@ const _useNavigation = () => {
       }
 
       modulesGroup.items = modules.value
-        .filter(module => ['name', 'npm', 'repo'].map(field => module[field]).filter(Boolean).some(value => value.search(searchTextRegExp(searchTerm.value)) !== -1))
+        .filter(module => ['name', 'npm', 'repo'].map(field => module[field as keyof typeof module]).filter(Boolean).some(value => typeof value === 'string' && value.search(searchTextRegExp(searchTerm.value)) !== -1))
         .map(module => ({
           id: `module-${module.name}`,
           label: module.npm,
@@ -278,7 +297,7 @@ const _useNavigation = () => {
       }
 
       hostingGroup.items = providers.value
-        .filter(hosting => ['title'].map(field => hosting[field]).filter(Boolean).some(value => value.search(searchTextRegExp(searchTerm.value)) !== -1))
+        .filter(hosting => ['title'].map(field => hosting[field as keyof typeof hosting]).filter(Boolean).some(value => typeof value === 'string' && value.search(searchTextRegExp(searchTerm.value)) !== -1))
         .map(hosting => ({
           id: `hosting-${hosting.path}`,
           label: hosting.title,

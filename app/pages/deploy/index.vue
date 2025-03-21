@@ -33,7 +33,7 @@ const otherProviders = computed(() => providers.value.filter(provider => provide
 </script>
 
 <template>
-  <UContainer>
+  <UContainer v-if="page">
     <UPageHero
       :title="title"
       :description="description"

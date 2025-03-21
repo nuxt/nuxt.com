@@ -1,12 +1,15 @@
 <script setup lang="ts">
 const isLoaded = ref(false)
 const isPlaying = ref(false)
-const video = ref()
+const video = useTemplateRef<{ player: { playVideo: () => void } }>('video')
 
 function play() {
-  video.value.player.playVideo()
+  if (video.value?.player) {
+    video.value.player.playVideo()
+  }
 }
-function stateChange(event) {
+
+function stateChange(event: { data: number }) {
   isPlaying.value = event.data === 1
 }
 </script>

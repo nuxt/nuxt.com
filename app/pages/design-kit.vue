@@ -25,7 +25,7 @@ defineOgImageComponent('Docs', {
 </script>
 
 <template>
-  <UContainer>
+  <UContainer v-if="page">
     <UPageHero
       :title="page.title"
       :links="page.links"

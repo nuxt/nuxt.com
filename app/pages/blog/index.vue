@@ -34,7 +34,7 @@ await fetchList()
 </script>
 
 <template>
-  <UContainer>
+  <UContainer v-if="page">
     <UPageHero
       :title="page.title"
       :description="page.description"
@@ -46,7 +46,7 @@ await fetchList()
       }"
     >
       <template #links>
-        <NewsletterForm class="flex-1 max-w-xs" :description="null" />
+        <NewsletterForm class="flex-1 max-w-xs" :description="undefined" />
       </template>
 
       <template #description>

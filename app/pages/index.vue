@@ -45,7 +45,13 @@ const tabs = computed(() => page.value?.hero.tabs.map(tab => ({
 const activeBundlerIndex = ref(0)
 
 const groupedFoundationItems = computed(() => {
-  const result = []
+  const result = [] as Array<{
+    id: string
+    // TODO: make these types better
+    item?: any
+    items?: any[]
+    classes: string
+  }>
   const bundlers = {
     id: 'bundler',
     items: [],

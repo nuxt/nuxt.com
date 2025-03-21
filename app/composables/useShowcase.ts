@@ -3,7 +3,7 @@ import type { ShowcaseList, Filter, ShowcaseListGroupItem } from '../types'
 export const useShowcase = () => {
   const route = useRoute()
   const router = useRouter()
-  const showcaseList = useState<ShowcaseList>('showcase', () => null)
+  const showcaseList = useState<ShowcaseList | null>('showcase', () => null)
 
   const iconsMap = {
     'Featured': 'i-lucide-star',
@@ -47,7 +47,7 @@ export const useShowcase = () => {
       exactQuery: true,
       to: { name: 'showcase', query: group.name === 'Featured' ? undefined : { category: group.name }, state: { smooth: '#smooth' } },
       icon: iconsMap[group.name as keyof typeof iconsMap],
-      click: (e) => {
+      click: (e: Event) => {
         if (route.query.category !== group.name) {
           return
         }

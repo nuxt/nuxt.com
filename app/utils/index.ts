@@ -8,7 +8,7 @@ export const searchTextRegExp = function (query = '') {
   return new RegExp(query.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'), 'i')
 }
 
-export const formatDateByLocale = (locale, d) => {
+export const formatDateByLocale = (locale: string, d: string | number | Date) => {
   return new Date(d).toLocaleDateString(locale, {
     year: 'numeric',
     month: 'long',
@@ -16,7 +16,7 @@ export const formatDateByLocale = (locale, d) => {
   })
 }
 
-export const toRelativeDate = (date) => {
+export const toRelativeDate = (date: string | number | Date) => {
   const diff = Math.floor((new Date().getTime() - new Date(date).getTime()) / 1000)
   if (diff < 60) {
     return 'just now'

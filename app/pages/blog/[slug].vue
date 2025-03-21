@@ -42,16 +42,18 @@ if (article.value.image) {
 
 const authorTwitter = article.value.authors?.[0]?.twitter
 
-const socialLinks = computed(() => [{
-  icon: 'i-simple-icons-linkedin',
-  to: `https://www.linkedin.com/sharing/share-offsite/?url=https://nuxt.com${article.value.path}`
-}, {
-  icon: 'i-simple-icons-twitter',
-  to: `https://x.com/intent/tweet?text=${encodeURIComponent(`${article.value.title}${authorTwitter ? ` by @${article.value.authors[0].twitter}` : ''}\n\n`)}https://nuxt.com${article.value.path}`
-}])
+const socialLinks = computed(() => !article.value
+  ? []
+  : [{
+      icon: 'i-simple-icons-linkedin',
+      to: `https://www.linkedin.com/sharing/share-offsite/?url=https://nuxt.com${article.value.path}`
+    }, {
+      icon: 'i-simple-icons-twitter',
+      to: `https://x.com/intent/tweet?text=${encodeURIComponent(`${article.value.title}${authorTwitter ? ` by @${article.value.authors[0]!.twitter}` : ''}\n\n`)}https://nuxt.com${article.value.path}`
+    }])
 
 function copyLink() {
-  copy(`https://nuxt.com${article.value.path}`, { title: 'Link copied to clipboard', icon: 'i-lucide-copy-check' })
+  copy(`https://nuxt.com${article.value?.path || '/'}`, { title: 'Link copied to clipboard', icon: 'i-lucide-copy-check' })
 }
 
 const links = [
@@ -89,7 +91,7 @@ const links = [
         </template>
 
         <div class="mt-4 flex flex-wrap items-center gap-6">
-          <UUser v-for="(author, index) in article.authors" :key="index" v-bind="author" :description="`@${author.to.split('/').pop()}`" />
+          <UUser v-for="(author, index) in article.authors" :key="index" v-bind="author" :description="author.to ? `@${author.to.split('/').pop()}` : undefined" />
         </div>
       </UPageHeader>
 

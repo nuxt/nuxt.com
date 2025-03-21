@@ -8,7 +8,7 @@ definePageMeta({
   heroBackground: 'opacity-30'
 })
 
-const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
+const navigation = inject<Ref<ContentNavigationItem[]>>('navigation', ref([]))
 
 const route = useRoute()
 

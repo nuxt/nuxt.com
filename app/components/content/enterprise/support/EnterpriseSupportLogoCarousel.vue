@@ -1,12 +1,21 @@
 <script lang="ts" setup>
+interface Logo {
+  src: string
+  width: number
+  height: number
+  alt: string
+  light: string
+  dark: string
+}
+
 const { logos } = defineProps({
   logos: {
-    type: Array<{ src: string, width: number, height: number, alt: string, light: string, dark: string }>,
-    require: true
+    type: Array as () => Logo[],
+    required: true
   }
 })
 
-const carousel = ref<HTMLElement>(null)
+const carousel = useTemplateRef('carousel')
 
 const stopAnimation = () => {
   if (carousel.value) {
@@ -31,7 +40,7 @@ const startAnimation = () => {
       @mouseover="stopAnimation"
       @mouseleave="startAnimation"
     >
-      <div v-for="({ light, dark, width, height, alt }, index) in logos.concat(logos)" :key="index" class="carousel-item items-center">
+      <div v-for="({ light, dark, width, height, alt }, index) in logos ? [...logos, ...logos] : []" :key="index" class="carousel-item items-center">
         <UColorModeImage :light="light" :dark="dark" :width="width" :height="height" :alt="alt" />
       </div>
     </div>

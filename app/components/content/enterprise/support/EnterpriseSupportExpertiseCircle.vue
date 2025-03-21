@@ -10,7 +10,7 @@ const { logo } = defineProps<{
 }>()
 
 const color = logo.color
-const circle = ref<HTMLDivElement>()
+const circle = useTemplateRef('circle')
 const { elementX, elementY } = useMouseInElement(circle)
 </script>
 
