@@ -21,7 +21,7 @@ const iconsMap = {
   UI: 'i-lucide-layout'
 }
 
-export const moduleImage = function (icon: string = '', size: number = 80) {
+export const moduleImage = function (icon: string = '', _size: number = 80) {
   if (!icon) return
 
   if (/^https?:\/\//.test(icon)) return icon
