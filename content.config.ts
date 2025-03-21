@@ -2,7 +2,7 @@ import { defineContentConfig, defineCollection, z } from '@nuxt/content'
 
 const docsSource = {
   cwd: process.env.NUXT_PATH ?? undefined,
-  repository: !process.env.NUXT_PATH ? 'https://github.com/nuxt/nuxt' : undefined,
+  repository: !process.env.NUXT_PATH ? 'https://github.com/nuxt/nuxt/tree/3.x' : undefined,
   include: 'docs/**/*'
 }
 
