@@ -64,11 +64,13 @@ defineOgImageComponent('Docs', {
                             target="_blank"
                             class="flex items-center gap-2 justify-center h-full hover:bg-(--ui-bg-muted)/50 transition-colors"
                           >
-                            <img
+                            <NuxtImg
                               :src="value[(rowIndex * 3) + colIndex - 1].sponsorLogo"
                               :alt="value[(rowIndex * 3) + colIndex - 1].sponsorName"
                               class="h-10 max-w-[140px] object-contain rounded-[calc(var(--ui-radius)*2)]"
-                            >
+                              height="40"
+                              width="40"
+                            />
                             <span class="text-base hidden sm:block font-semibold truncate">{{ value[(rowIndex * 3) + colIndex - 1].sponsorName }}</span>
                           </NuxtLink>
                         </td>
