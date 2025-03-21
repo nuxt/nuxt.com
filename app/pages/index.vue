@@ -158,7 +158,7 @@ onMounted(() => {
             trigger: 'group data-[state=active]:text-(--ui-text-highlighted)',
             indicator: 'bg-(--ui-bg)',
             leadingIcon: 'group-data-[state=active]:text-(--ui-primary) size-4 hidden sm:inline-flex',
-            content: 'lg:h-[450px] bg-(--ui-bg) [@media(min-width:2400px)]:border-e [@media(min-width:2400px)]:border-(--ui-border) [@media(min-width:2400px)]:rounded-[calc(var(--ui-radius)*1.5)] transition-opacity duration-500 data-[state=inactive]:opacity-0 opacity-100'
+            content: 'lg:h-[450px] bg-(--ui-bg) [@media(min-width:2400px)]:border-e [@media(min-width:2400px)]:border-(--ui-border) [@media(min-width:2400px)]:rounded-l-[calc(var(--ui-radius)*1.5)] transition-opacity duration-500 data-[state=inactive]:opacity-0 opacity-100'
           }"
         >
           <template v-for="(tab, index) of tabs" :key="index" #[tab.slot]="{ item }">
