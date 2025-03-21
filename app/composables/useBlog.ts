@@ -20,7 +20,7 @@ export const useBlog = () => {
           .all()
       })
 
-      articles.value = posts.value.filter(article => article.path !== '/blog')
+      articles.value = posts.value?.filter(article => article.path !== '/blog') || []
       // featuredArticle.value = articles.value?.shift() || {}
     } catch (e) {
       articles.value = []

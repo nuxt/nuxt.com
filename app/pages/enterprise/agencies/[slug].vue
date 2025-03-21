@@ -12,16 +12,18 @@ if (!agency.value) {
   throw createError({ statusCode: 404, statusMessage: 'Agency not found', fatal: true })
 }
 
-const links = computed(() => [{
-  label: `Visit ${agency.value.title}`,
-  color: 'neutral' as const,
-  size: 'md' as const,
-  variant: 'solid' as const,
-  icon: 'i-lucide-square-arrow-out-up-right',
-  trailing: true,
-  to: agency.value.link,
-  target: '_blank'
-}])
+const links = computed(() => agency.value
+  ? [{
+      label: `Visit ${agency.value.title}`,
+      color: 'neutral' as const,
+      size: 'md' as const,
+      variant: 'solid' as const,
+      icon: 'i-lucide-square-arrow-out-up-right',
+      trailing: true,
+      to: agency.value.link,
+      target: '_blank'
+    }]
+  : [])
 
 const title = agency.value.title
 const description = agency.value.description
@@ -41,7 +43,7 @@ defineOgImageComponent('Docs', {
 </script>
 
 <template>
-  <UContainer>
+  <UContainer v-if="agency">
     <UPageHeader :description="agency.description" :links="links" :ui="{ headline: 'mb-8' }">
       <template #headline>
         <UBreadcrumb :items="[{ label: 'Agencies', to: '/enterprise/agencies' }, { label: agency.title }]" />

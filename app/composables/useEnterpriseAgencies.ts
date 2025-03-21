@@ -85,12 +85,20 @@ export const useEnterpriseAgencies = () => {
           }
         }
       })
-      .sort((a, b) => a.title.localeCompare(b.title))
+      .sort((a, b) => {
+        if (a.title && b.title) {
+          return a.title.localeCompare(b.title)
+        }
+        return 0
+      })
   })
 
   const locations = computed<Filter[]>(() => {
-    return [...new Set(agencies.value.map(agency => agency.location))]
-      .map((location: any) => {
+    return [...new Set(agencies.value
+      .map(agency => agency.location)
+      .filter((location): location is NonNullable<typeof location> => location !== null)
+    )]
+      .map((location) => {
         const currentLocation = route.query.location?.toString() || ''
         const isSelected = currentLocation === location.key
 
@@ -109,7 +117,12 @@ export const useEnterpriseAgencies = () => {
           }
         }
       })
-      .sort((a, b) => a.title.localeCompare(b.title))
+      .sort((a, b) => {
+        if (a.title && b.title) {
+          return a.title.localeCompare(b.title)
+        }
+        return 0
+      })
   })
 
   const regions = computed<Filter[]>(() => {
@@ -143,7 +156,12 @@ export const useEnterpriseAgencies = () => {
           }
         }
       })
-      .sort((a, b) => a.title.localeCompare(b.title))
+      .sort((a, b) => {
+        if (a.title && b.title) {
+          return a.title.localeCompare(b.title)
+        }
+        return 0
+      })
   })
 
   const selectedService = computed(() => {

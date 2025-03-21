@@ -10,7 +10,7 @@ const shuffleArray = (array: Module[]) => {
   const shuffled = [...array]
   for (let i = shuffled.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+    ;[shuffled[i]!, shuffled[j]!] = [shuffled[j]!, shuffled[i]!]
   }
   return shuffled
 }
@@ -26,17 +26,17 @@ const getRandomDelay = (rowIndex: number, index: number) => {
 const initMarqueeModules = () => {
   if (marqueeModulesData.value.length) return
 
-  const allModules = props.modules
+  const allModules: Module[] = props.modules
   const limitedModules = shuffleArray(allModules).slice(0, 50)
 
-  const row1 = shuffleArray(limitedModules)
-  const row2 = shuffleArray(limitedModules)
-  const row3 = shuffleArray(limitedModules)
+  const row1: Module[] = shuffleArray(limitedModules)
+  const row2: Module[] = shuffleArray(limitedModules)
+  const row3: Module[] = shuffleArray(limitedModules)
 
   marqueeModulesData.value = [row1, row2, row3]
 }
 
-watch(() => props.modules, (newVal) => {
+watch(() => props.modules, (newVal?: Module[]) => {
   if (newVal?.length && !marqueeModulesData.value.length) {
     initMarqueeModules()
   }

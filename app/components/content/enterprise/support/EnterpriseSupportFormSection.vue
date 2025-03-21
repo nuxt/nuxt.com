@@ -1,4 +1,7 @@
 <script lang="ts" setup>
+interface NuxtTurnstile {
+  reset: () => void
+}
 import * as v from 'valibot'
 import type { FormSubmitEvent } from '#ui/types'
 
@@ -16,7 +19,7 @@ const formProps = defineProps<{
 const toast = useToast()
 
 const loading = ref<boolean>(false)
-const turnstile = ref()
+const turnstile = useTemplateRef<NuxtTurnstile>('turnstile')
 const token = ref()
 
 const schema = v.object({

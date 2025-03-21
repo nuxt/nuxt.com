@@ -35,7 +35,13 @@ defineOgImageComponent('Docs', {
   description
 })
 
-const links = []
+const links = [] as Array<{
+  icon: string
+  label: string
+  to: string
+  target?: string
+}>
+
 if (provider.value?.website) {
   links.push({
     icon: 'i-lucide-globe',
@@ -61,7 +67,7 @@ links.push({
 </script>
 
 <template>
-  <UContainer>
+  <UContainer v-if="provider">
     <UPage>
       <UPageHeader
         :description="provider.description"
@@ -91,7 +97,7 @@ links.push({
         </UPageBody>
 
         <template #right>
-          <UContentToc :links="provider.body.toc.links">
+          <UContentToc :links="provider.body.toc?.links || []">
             <template #bottom>
               <div class="hidden lg:block space-y-6">
                 <USeparator v-if="links?.length && provider.body?.toc?.links?.length" type="dashed" />

@@ -7,8 +7,8 @@ definePageMeta({
 })
 const { data: page } = await useAsyncData(kebabCase(route.path), () => queryCollection('team').first())
 
-const title = page.value.title
-const description = page.value.description
+const title = page.value!.title
+const description = page.value!.description
 
 useSeoMeta({
   titleTemplate: '%s',
@@ -34,7 +34,7 @@ const icons = {
   github: 'i-simple-icons-github'
 }
 
-const { data } = await useFetch('/api/teams', { key: 'teams' })
+const { data } = await useFetch('/api/teams', { key: 'teams', default: () => ({ core: [], ecosystem: [] }) })
 const teams = [
   {
     name: 'Core Team',
@@ -50,7 +50,7 @@ const teams = [
 </script>
 
 <template>
-  <UContainer>
+  <UContainer v-if="page">
     <UPageHero
       :title="title"
       :description="description"

@@ -39,7 +39,7 @@ await fetchList()
 </script>
 
 <template>
-  <UContainer>
+  <UContainer v-if="page">
     <UPageHero
       :title="title"
       :description="description"

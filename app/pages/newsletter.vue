@@ -24,13 +24,13 @@ defineOgImageComponent('Docs', {
 </script>
 
 <template>
-  <UContainer>
+  <UContainer v-if="page">
     <UPageHero
       :title="title"
       :description="description"
     >
       <template #links>
-        <NewsletterForm class="flex-1 max-w-xs" :label="null" :description="null" />
+        <NewsletterForm class="flex-1 max-w-xs" :label="undefined" :description="undefined" />
       </template>
     </UPageHero>
 

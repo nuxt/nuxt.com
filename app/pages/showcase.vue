@@ -29,7 +29,7 @@ await fetchList()
 </script>
 
 <template>
-  <UContainer>
+  <UContainer v-if="page">
     <UPageHero :title="page.title" :description="page.description" :ui="{ container: '!pb-16', links: 'gap-1.5 max-w-2xl mx-auto' }">
       <template #links>
         <UButton

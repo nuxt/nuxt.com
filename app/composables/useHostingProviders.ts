@@ -11,7 +11,7 @@ export const useHostingProviders = () => {
     try {
       const { data } = await useAsyncData('hosting-provider', () => queryCollection('deploy').all())
 
-      providers.value = data.value.filter(article => article.path !== '/deploy')
+      providers.value = data.value?.filter(article => article.path !== '/deploy') || []
     } catch (e) {
       providers.value = []
       return e

@@ -1,5 +1,7 @@
 import type { Module, Filter, Stats } from '~/types'
 
+type ModuleStatsKeys = 'version' | 'downloads' | 'stars' | 'publishedAt' | 'createdAt'
+
 const iconsMap = {
   Official: 'i-lucide-medal',
   Analytics: 'i-lucide-bar-chart',
@@ -83,7 +85,7 @@ export const useModules = () => {
           active: route.query.category === category,
           to: { name: 'modules', query: category === route.query.category ? undefined : { category }, state: { smooth: '#smooth' } },
           icon: iconsMap[category as keyof typeof iconsMap] || undefined,
-          click: (e) => {
+          click: (e: Event) => {
             if (route.query.category !== category) {
               return
             }
@@ -128,7 +130,7 @@ export const useModules = () => {
 
   const filteredModules = computed<Module[]>(() => {
     let filteredModules = [...modules.value]
-      .filter((module: Module | any) => {
+      .filter((module: Module) => {
         if (selectedCategory.value) {
           if (selectedCategory.value.key === 'Official') {
             return module.type === 'official'
@@ -138,15 +140,21 @@ export const useModules = () => {
           }
         }
         const queryRegExp = searchTextRegExp(q.value as string)
-        if (q.value && !['name', 'npm', 'category', 'description', 'repo'].map(field => module[field]).filter(Boolean).some(value => value.search(queryRegExp) !== -1)) {
+        if (q.value && !['name', 'npm', 'category', 'description', 'repo'].map(field => module[field as keyof Module]).filter(Boolean).some(value => typeof value === 'string' && value.search(queryRegExp) !== -1)) {
           return false
         }
 
         return true
       })
-      .sort((a: Module, b: Module) => b.stats[selectedSort.value.key] - a.stats[selectedSort.value.key])
+      .sort((a: Module, b: Module) => {
+        const sortKey = selectedSort.value?.key as ModuleStatsKeys
+        if (sortKey && a.stats && b.stats) {
+          return (b.stats[sortKey] as number) - (a.stats[sortKey] as number)
+        }
+        return 0
+      })
 
-    if (selectedOrder.value.key === 'asc') {
+    if (selectedOrder.value?.key === 'asc') {
       filteredModules = filteredModules.reverse()
     }
 

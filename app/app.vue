@@ -1,7 +1,18 @@
 <script setup lang="ts">
 import { debounce } from 'perfect-debounce'
 
-const search = ref(null)
+interface SearchValue {
+  commandPaletteRef?: {
+    query: string
+    results: {
+      id: string
+      label: string
+      to: string
+    }[]
+  }
+}
+
+const search = ref<SearchValue | null>(null)
 const colorMode = useColorMode()
 const { searchGroups, searchLinks, searchTerm } = useNavigation()
 const color = computed(() => colorMode.value === 'dark' ? '#020420' : 'white')
@@ -46,16 +57,15 @@ useSeoMeta({
   twitterSite: 'nuxt_js'
 })
 
-watch(() => search.value?.commandPaletteRef?.query, debounce((query: string) => {
-  if (!query) {
+watch(() => search.value?.commandPaletteRef?.query, debounce((query) => {
+  if (typeof query !== 'string') {
     return
   }
-
-  useTrackEvent('Search', { props: { query: `${query} - ${search.value?.commandPaletteRef.results.length} results` } })
+  useTrackEvent('Search', { props: { query: `${query} - ${search.value?.commandPaletteRef?.results.length || 0} results` } })
 }, 500))
 
-// Provide
-provide('navigation', navigation)
+// Provide with non-null assertion since this is top level app setup
+provide('navigation', navigation!)
 
 const route = useRoute()
 const heroBackgroundClass = computed(() => route.meta?.heroBackground || '')

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const carbonads = ref(null)
+const carbonads = useTemplateRef('carbonads')
 
 onMounted(() => {
   if (carbonads.value) {

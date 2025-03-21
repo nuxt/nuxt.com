@@ -13,31 +13,33 @@ if (!module.value) {
 }
 
 const ownerName = computed(() => {
-  const [owner, name] = module.value.repo.split('#')[0].split('/')
+  const [owner, name] = module.value!.repo.split('#')[0].split('/')
   return `${owner}/${name}`
 })
 
-const links = computed(() => [{
-  icon: 'i-lucide-book',
-  label: 'Documentation',
-  to: `${module.value.website}?utm_source=nuxt.com&utm_medium=aside-module&utm_campaign=nuxt.com`,
-  target: '_blank'
-}, {
-  icon: 'i-simple-icons-github',
-  label: ownerName.value,
-  to: module.value.github,
-  target: '_blank'
-}, module.value.npm && {
-  icon: 'i-simple-icons-npm',
-  label: module.value.npm,
-  to: `https://npmjs.org/package/${module.value.npm}`,
-  target: '_blank'
-}, module.value.learn_more && {
-  icon: 'i-lucide-link',
-  label: 'Learn more',
-  to: module.value.learn_more,
-  target: '_blank'
-}].filter(Boolean))
+const links = computed(() => module.value
+  ? [{
+      icon: 'i-lucide-book',
+      label: 'Documentation',
+      to: `${module.value.website}?utm_source=nuxt.com&utm_medium=aside-module&utm_campaign=nuxt.com`,
+      target: '_blank'
+    }, {
+      icon: 'i-simple-icons-github',
+      label: ownerName.value,
+      to: module.value.github,
+      target: '_blank'
+    }, module.value.npm && {
+      icon: 'i-simple-icons-npm',
+      label: module.value.npm,
+      to: `https://npmjs.org/package/${module.value.npm}`,
+      target: '_blank'
+    }, module.value.learn_more && {
+      icon: 'i-lucide-link',
+      label: 'Learn more',
+      to: module.value.learn_more,
+      target: '_blank'
+    }].filter(Boolean)
+  : [])
 
 const contributors = computed(() => {
   const allContributors = module.value.contributors.map(contributor => ({
@@ -82,7 +84,7 @@ defineOgImageComponent('Docs', {
 </script>
 
 <template>
-  <UContainer>
+  <UContainer v-if="module">
     <div v-if="!module.compatibility?.nuxt?.includes('^3') && !module.compatibility?.nuxt?.includes('>=3')" class="pt-8">
       <UAlert
         icon="i-lucide-triangle-alert"
