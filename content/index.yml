@@ -1,0 +1,473 @@
+hero:
+  title: 'The Progressive Web Framework'
+  description: Create high-quality web applications with Nuxt, the open source framework that makes full-stack development with Vue.js intuitive.
+  cta:
+    label: Nuxt UI v3 is out
+    to: /blog/nuxt-ui-v3
+    icon: i-lucide-arrow-right
+  tabs:
+    - title: Minimal
+      icon: i-lucide-leaf
+      content: |
+        ::code-tree{defaultValue="app.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)]"}
+        ```vue [app.vue]
+        <script setup lang="ts">
+        const version = 3
+        </script>
+
+        <template>
+          <h1>
+            Hello Nuxt {{ version }}!
+          </div>
+        </template>
+
+        <style scoped>
+        h1 {
+          font-size: 3rem;
+        }
+        </style>
+        ```
+
+        ```json [package.json]
+        {
+          "name": "hello-nuxt",
+          "private": true,
+          "type": "module",
+          "scripts": {
+            "dev": "nuxt dev",
+            "build": "nuxt build",
+            "generate": "nuxt generate",
+            "preview": "nuxt preview"
+          },
+          "dependencies": {
+            "nuxt": "latest"
+          }
+        }
+        ```
+        ::
+    - title: Routing
+      icon: i-lucide-milestone
+      content: |
+        ::code-tree{defaultValue="pages/index.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)]"}
+        ```vue [app.vue]
+        <template>
+          <NuxtPage />
+        </template>
+        ```
+
+        ```json [package.json]
+        {
+          "name": "nuxt-routing",
+          "private": true,
+          "type": "module",
+          "scripts": {
+            "dev": "nuxt dev",
+            "build": "nuxt build",
+            "generate": "nuxt generate",
+            "preview": "nuxt preview"
+          },
+          "dependencies": {
+            "nuxt": "latest"
+          }
+        }
+        ```
+
+        ```vue [pages/index.vue]
+        <template>
+          <h1>Index page</h1>
+          <NuxtLink to="/blog/hello-world">
+            Go to blog post
+          </NuxtLink>
+        </template>
+        ```
+        ```vue [pages/blog/[slug\\].vue]
+        <template>
+          <h1>Blog post {{ $route.params.slug }}</h1>
+        </template>
+        ```
+        ::
+    - title: Data Fetching
+      icon: i-lucide-unplug
+      content: |
+        ::code-tree{defaultValue="pages/index.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)]"}
+        ```vue [app.vue]
+        <template>
+          <NuxtPage />
+        </template>
+        ```
+
+        ```json [package.json]
+        {
+          "name": "nuxt-data-fetching",
+          "private": true,
+          "type": "module",
+          "scripts": {
+            "dev": "nuxt dev",
+            "build": "nuxt build",
+            "generate": "nuxt generate",
+            "preview": "nuxt preview"
+          },
+          "dependencies": {
+            "nuxt": "latest"
+          }
+        }
+        ```
+
+        ```vue [pages/index.vue]
+        <script setup lang="ts">
+        const { data } = await useFetch('/api/cms/home')
+        </script>
+
+        <template>
+          <h1>{{ page.title }}</h1>
+          <NuxtLink to="/blog/hello-world">
+            Go to blog post
+          </NuxtLink>
+        </template>
+        ```
+        ```vue [pages/blog/[slug\\].vue]
+        <script setup lang="ts">
+          const { slug } = useRoute().params
+          const { data: post } = await useFetch(`/api/cms/blog/${slug}`)
+        </script>
+
+        <template>
+          <h1>{{ post.title }}</h1>
+          <NuxtLink to="/">
+            Go to home
+          </NuxtLink>
+        </template>
+        ```
+        ::
+    - title: Auto-Imports
+      icon: i-lucide-wand-sparkles
+      content: |
+        ::code-tree{defaultValue="app.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)]"}
+        ```vue [app.vue]
+        <script setup>
+        const message = ref('Nuxt')
+        const hello = () => sayHello(message.value)
+        </script>
+
+        <template>
+          <main>
+            <h1>Demo with auto imports</h1>
+            <form @submit.prevent="hello">
+              <MyInput v-model="message" />
+              <button type="submit">Say Hello</button>
+            </form>
+          </main>
+        </template>
+        ```
+
+        ```vue [components/MyInput.vue]
+        <script setup>
+        const modelValue = defineModel<string>()
+        </script>
+
+        <template>
+          <input v-model="modelValue" />
+        </template>
+        ```
+        ```ts [composables/say-hello.ts]
+        export function sayHello(message = 'World') {
+          alert(`Hello ${upperCase(message)}!`)
+        }
+        ```
+
+        ```json [package.json]
+        {
+          "name": "hello-nuxt",
+          "private": true,
+          "type": "module",
+          "scripts": {
+            "dev": "nuxt dev",
+            "build": "nuxt build",
+            "generate": "nuxt generate",
+            "preview": "nuxt preview"
+          },
+          "dependencies": {
+            "nuxt": "latest"
+          }
+        }
+        ```
+        ::
+    - title: API Routes
+      icon: i-lucide-pc-case
+      content: |
+        ::code-tree{defaultValue="server/api/hello.ts" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)]"}
+        ```vue [app.vue]
+        <template>
+          <NuxtPage />
+        </template>
+        ```
+
+        ```json [package.json]
+        {
+          "name": "nuxt-data-fetching",
+          "private": true,
+          "type": "module",
+          "scripts": {
+            "dev": "nuxt dev",
+            "build": "nuxt build",
+            "generate": "nuxt generate",
+            "preview": "nuxt preview"
+          },
+          "dependencies": {
+            "nuxt": "latest"
+          }
+        }
+        ```
+
+        ```vue [pages/index.vue]
+        <script setup lang="ts">
+        const { data } = await useFetch('/api/hello')
+        </script>
+
+        <template>
+          <h1>{{ data.message }}</h1>
+        </template>
+        ```
+
+        ```ts [server/api/hello.ts]
+        export default defineEventHandler((event) => {
+          return {
+            message: 'Hello World'
+          }
+        })
+        ```
+        ::
+logos:
+  title: Chosen by leading companies worldwide
+  companies:
+    - light: /assets/brands/light/fielmann.svg
+      dark: /assets/brands/dark/fielmann.svg
+      alt: Fielmann
+    - light: /assets/brands/light/dassault-systemes.svg
+      dark: /assets/brands/dark/dassault-systemes.svg
+      alt: Dassault Systemes
+    - light: /assets/brands/light/louis-vuitton.svg
+      dark: /assets/brands/dark/louis-vuitton.svg
+      alt: Louis Vuitton
+    - light: /assets/brands/light/backmarket.svg
+      dark: /assets/brands/dark/backmarket.svg
+      alt: Back Market
+    - light: /assets/brands/light/paul-smith.svg
+      dark: /assets/brands/dark/paul-smith.svg
+      alt: Paul Smith
+    - light: /assets/brands/light/caudalie.svg
+      dark: /assets/brands/dark/caudalie.svg
+      alt: Caudalie
+    - light: /assets/brands/light/blizzard.svg
+      dark: /assets/brands/dark/blizzard.svg
+      alt: Blizzard
+    - light: /assets/brands/light/too-good-to-go.svg
+      dark: /assets/brands/dark/too-good-to-go.svg
+      alt: To Good to Go
+features:
+  title: Enable features as you grow
+  description: Nuxt grows and adapts with your needs while providing an exceptional developer experience. Build anything from simple landing pages to complex web applications that scale for teams of hundreds of developers. We've designed Nuxt to be approachable for developers of all skill levels.
+  features:
+    - icon: i-lucide-sparkles
+      title: Zero Configuration
+      description: Start coding with Vue or Typescript immediately — Nuxt handles all the setup for you.
+    - icon: i-lucide-file-code-2
+      title: Rendering Modes
+      description: Server-side rendering, client-side rendering, static-site generation, you decide, up to the page level.
+    - icon: i-lucide-milestone
+      title: Routing & Layouts
+      description: Use our file-based routing system to build complex url-based views while reusing components for performance.
+    - icon: i-lucide-unplug
+      title: Data Fetching
+      description: Make your Vue component async and await your data. Nuxt provides powerful composables for universal data fetching.
+    - icon: i-lucide-bug
+      title: Error Handling
+      description: Catch errors in your application with our built-in handlers and custom error pages.
+    - icon: i-lucide-flip-horizontal
+      title: Transitions
+      description: Implement smooth transitions between layouts, pages, and components.
+    - icon: i-lucide-image
+      title: Assets & Style
+      description: Benefit from automatic image, font, and script optimizations with built-in support.
+    - icon: i-lucide-file-search
+      title: SEO & Meta Tags
+      description: Create production-ready applications that are fully indexable by search engines.
+    - icon: i-lucide-puzzle
+      title: Modular
+      description: Extend Nuxt features with 200+ modules to ship your application faster.
+    - icon: i-lucide-shield-check
+      title: Middleware
+      description: Protect or add custom logic (localization, A/B testing) before rendering pages.
+    - icon: i-simple-icons-typescript
+      title: Type-safe with TypeScript
+      description: Write type-safe code with automatically generated types and tsconfig.json.
+  cta:
+    title: 'Deep dive into Nuxt now'
+    label: Start reading docs
+    to: /docs
+    icon: i-lucide-arrow-right
+foundation:
+  title: Built on a solid foundation
+  description: Nuxt is built on top of bulletproof open source technologies, with versatility to choose between different build tools.
+  items:
+    - id: vue
+      title: Frontend with Vue.js
+      description: Nuxt is built on top of Vue.js, leveraging its reactive, component-based architecture to create powerful, scalable, and seamless web applications.
+      logo: i-custom-vue
+      color: '#42B883'
+      gradient: 'bg-gradient-to-br from-[#42B883]/10 from-5% via-transparent via-50% to-transparent'
+      link:
+        label: vuejs.org
+        to: https://vuejs.org
+    - id: bundler
+      title: Bundler with Vite
+      description: Nuxt leverages Vite's frontend build capabilities, powering rapid development of web applications with instant HMR for the best developer experience.
+      logo: i-custom-vite
+      color: '#A156FE'
+      gradient: 'bg-gradient-to-br from-[#A156FE]/10 from-5% via-transparent via-50% to-transparent'
+      link:
+        label: vite.dev
+        to: https://vite.dev
+    - id: bundler
+      title: Bundler with Webpack
+      description: Nuxt harnesses Webpack's robust bundling and optimization capabilities, ensuring a stable and scalable development experience.
+      logo: i-custom-webpack
+      color: '#8ED6FB'
+      gradient: 'bg-gradient-to-br from-[#8ED6FB]/10 from-5% via-transparent via-50% to-transparent'
+      link:
+        label: webpack.js.org
+        to: https://webpack.js.org
+    - id: bundler
+      title: Bundler with Rspack
+      description: Nuxt integrates Rspack's high-performance bundling, accelerating builds and HMR for a seamless developer experience at scale.
+      logo: i-custom-rspack
+      color: '#F93920'
+      gradient: 'bg-gradient-to-br from-[#F93920]/10 from-5% via-transparent via-50% to-transparent'
+      link:
+        label: rspack.dev
+        to: https://rspack.dev
+    - id: nitro
+      title: Server with Nitro
+      description: Nuxt uses Nitro as server engine to build versatile full-stack web applications, ready for deployment on any platform.
+      logo: i-custom-nitro
+      color: '#FB848E'
+      gradient: 'bg-gradient-to-br from-[#FB848E]/10 from-5% via-transparent via-50% to-transparent'
+      link:
+        label: nitro.build
+        to: https://nitro.build
+modules:
+  title: Extend Nuxt with plug & play modules
+  description: Nuxt has a rich module ecosystem, with both official and community-driven modules. This accelerates development by providing ready-to-use solutions for common needs.
+  links:
+    - label: Explore all modules
+      to: /modules
+      icon: i-lucide-arrow-right
+      color: neutral
+      trailing: true
+testimonial:
+  quote: "Nuxt offers a compelling solution and a great ecosystem to help you ship fullstack Vue apps that are performant and SEO friendly. The flexibility to choose between SSR and SSG is icing on the cake."
+  author:
+    name: 'Evan You'
+    description: 'Creator of Vue.js and Vite'
+    to: 'https://x.com/evanyou'
+    avatar:
+      src: 'https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/yyx990803'
+      srcset: 'https://ipx.nuxt.com/f_auto,s_80x80/gh_avatar/yyx990803 2x'
+      provider: 'ipx'
+deploy:
+  title: Deploy your app anywhere
+  description: One-command deployments and zero-configuration options make it easy to get your Nuxt app live. Choose your platform, and let Nuxt handle the rest, allowing you to focus on building great applications rather than managing complex deployments.
+  links:
+    - label: Learn how to deploy now
+      to: /deploy
+      icon: i-lucide-arrow-right
+      color: neutral
+      trailing: true
+stats:
+  title: The developer's choice for simple and powerful web apps
+  description: |
+    Nuxt was born from developers' need to boost productivity and platform performance.
+    What began as a Vue-based solution for automating tasks and server-side rendering is now trusted by startups and enterprises all around the world.
+  community:
+    title: Open source
+    description: Nuxt is 100% powered by our passionate open source community. Every line of Nuxt is written by passionate developers like you.
+  x: 98.7k
+  discord: 28k
+  cta:
+    label: Start contributing
+    to: 'https://github.com/nuxt/nuxt'
+    color: neutral
+    variant: outline
+    icon: i-simple-icons-github
+    trailing: true
+contributors:
+  title: 'Built by developers around the world.'
+  description: 'The development of Nuxt and its ecosystem is led by an international team. From contributors to developer advocates, the community is made up of members with different horizons and skills. We are happy to see new members every day and encourage anyone to join us and help in many ways: answering questions, giving a talk, creating modules and contributing to the core.'
+  links:
+    - label: Nuxters
+      to: https://nuxters.nuxt.com
+      target: _blank
+      icon: i-simple-icons-nuxtdotjs
+      color: neutral
+    - icon: i-simple-icons-discord
+      to: https://go.nuxt.com/discord
+      target: _blank
+      color: neutral
+      variant: ghost
+      size: xl
+    - icon: i-simple-icons-x
+      to: https://go.nuxt.com/x
+      target: _blank
+      color: neutral
+      variant: ghost
+      size: lg
+    - icon: i-simple-icons-bluesky
+      to: https://go.nuxt.com/bluesky
+      target: _blank
+      color: neutral
+      variant: ghost
+      size: lg
+support:
+  title: Nuxt Enterprise Support
+  description: |
+    To ensure your Nuxt projects reach their full potential, our Nuxt Experts team, featuring :icon{name=i-custom-vue .align-middle} Vue, :icon{name=i-custom-nuxt .align-middle} Nuxt and :icon{name=i-custom-vite .align-middle} Vite, core contributors — offers a complete suite of services.
+  features:
+    - title: Performance optimization
+      description: Boost Nuxt performance and reliability with our expert optimizations.
+      icon: i-lucide-rocket
+    - title: Migration to Nuxt
+      description: Ensure successful, painless migrations from start to deployment.
+      icon: i-lucide-circle-arrow-up
+    - title: Nuxt Workshop
+      description: Develop expert teams through training and support.
+      icon: i-lucide-school
+  companies:
+    - src: /assets/enterprise/support/malt.svg
+      alt: Malt
+    - src: /assets/enterprise/support/zadig-and-voltaire.svg
+      alt: Zadig & Voltaire
+    - src: /assets/enterprise/support/adyen.svg
+      alt: Adyen
+    - src: /assets/enterprise/support/world-wide-technology.svg
+      alt: World Wide Technology
+    - src: /assets/enterprise/support/cora.svg
+      alt: Cora
+  links:
+    - label: Talk to a Nuxt Expert
+      to: /enterprise/support
+      icon: i-lucide-arrow-right
+      color: neutral
+      trailing: true
+sponsors:
+  title: Sponsors
+  description: Nuxt is and will always remain free and open source under the MIT License, thanks to our contributors and sponsors.
+  links:
+    - label: Become a sponsor
+      to: 'https://github.com/sponsors/nuxt'
+      color: neutral
+      trailingIcon: i-lucide-heart
+      trailing: true
+    - label: View all sponsors
+      to: /enterprise/sponsors
+      color: neutral
+      variant: outline

@@ -1,0 +1,5 @@
+name: 'Bloggr'
+slug: 'bloggr'
+description: 'A personal blog template made with Nuxt Content.'
+repo: 'hlassiege/bloggr'
+demo: 'https://bloggr.eventuallycoding.com/' 

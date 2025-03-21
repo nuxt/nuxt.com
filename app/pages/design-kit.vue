@@ -2,12 +2,15 @@
 definePageMeta({
   heroBackground: 'opacity-70 -z-10'
 })
-const route = useRoute()
 
-const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
+const { data: page } = await useAsyncData('design-kit', () => queryCollection('designKit').first())
+if (!page.value) {
+  throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
+}
 
-const title = page.value.head?.title || page.value.title
-const description = page.value.head?.description || page.value.description
+const title = page.value.title
+const description = page.value.description
+
 useSeoMeta({
   titleTemplate: '%s',
   title,
@@ -23,11 +26,22 @@ defineOgImageComponent('Docs', {
 
 <template>
   <UContainer>
-    <UPageHero v-bind="page" />
+    <UPageHero
+      :title="page.title"
+      :links="page.links"
+      :description="page.description"
+      :ui="{
+        title: 'text-left',
+        description: 'text-left',
+        links: 'justify-start'
+      }"
+    />
 
     <UPage>
-      <UPageBody prose class="prose-lg">
-        <ContentRenderer v-if="page && page.body" :value="page" />
+      <UPageBody>
+        <UContainer>
+          <ContentRenderer v-if="page && page.body" :value="page" />
+        </UContainer>
       </UPageBody>
     </UPage>
   </UContainer>

@@ -2,6 +2,7 @@
   <NuxtLink
     :href="href"
     :target="target"
+    class="inline-block mr-1 text-(--ui-primary) hover:text-(--ui-primary)/80"
   >
     <slot />
   </NuxtLink>

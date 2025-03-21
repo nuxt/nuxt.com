@@ -9,7 +9,7 @@ defineProps({
     required: false
   },
   size: {
-    type: String as () => 'lg',
+    type: String as PropType<'lg' | 'xl'>,
     default: 'lg'
   }
 })
@@ -18,15 +18,27 @@ const { copy, copied } = useClipboard()
 
 <template>
   <label>
-    <UInput :model-value="label ? label : value" :size="size" disabled :ui="{ icon: { trailing: { pointer: '' } } }" icon="i-ph-terminal">
+    <UInput
+      class="w-full"
+      :model-value="label ? label : value"
+      :size="size"
+      disabled
+      icon="i-lucide-terminal"
+      :ui="{
+        base: copied ? 'ring-(--ui-primary)' : ''
+      }"
+    >
       <div class="absolute inset-0" :class="[copied ? 'cursor-default' : 'cursor-copy']" @click="copy(value)" />
       <template #trailing>
         <UButton
-          :icon="copied ? 'i-ph-check' : 'i-ph-copy'"
-          color="gray"
+          :icon="copied ? 'i-lucide-check' : 'i-lucide-copy'"
+          color="neutral"
           variant="link"
           :padded="false"
-          :class="{ 'text-green-500 hover:text-green-500 dark:text-green-400 hover:dark:text-green-400': copied }"
+          :class="{
+            '!text-(--ui-primary) cursor-default': copied,
+            'cursor-copy': !copied
+          }"
           aria-label="copy button"
           @click="copy(value)"
         />

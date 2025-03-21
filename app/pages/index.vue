@@ -2,25 +2,30 @@
 import { joinURL } from 'ufo'
 
 definePageMeta({
-  heroBackground: 'z-10'
-})
-const uwuCookie = useCookie<boolean>('uwu-mode', {
-  default: () => false
+  heroBackground: '-z-10'
 })
 
-const route = useRoute()
-if ('uwu' in route.query) {
-  const enableUwu = !['0', 'false'].includes(route.query.uwu as string)
-  uwuCookie.value = enableUwu
-}
+const { data: page } = await useAsyncData('index', () => queryCollection('index').first())
 
-const { data: page } = await useAsyncData('index', () => queryContent('/').findOne())
+const { fetchList, modules } = useModules()
+
+await fetchList()
+
+const officialModules = computed(() => {
+  return modules.value
+    .filter(module => module.type === 'official')
+    .sort((a, b) => b.stats.stars - a.stats.stars)
+})
+
+const { data: sponsors } = await useFetch('https://api.nuxt.com/sponsors', { key: 'sponsors' })
+
+const stats = useStats()
 
 const videoModalOpen = ref(false)
 
 const site = useSiteConfig()
-const title = 'Nuxt: The Intuitive Vue Framework'
-const description = 'Nuxt is an open source framework that makes web development intuitive and powerful. Create performant and production-grade full-stack web apps and websites with confidence.'
+const title = 'Nuxt: The Progressive Web Framework'
+const description = 'Create high-quality web applications with Nuxt, the open source framework that makes full-stack development with Vue.js intuitive.'
 useSeoMeta({
   title,
   ogTitle: title,
@@ -29,141 +34,541 @@ useSeoMeta({
   ogImage: joinURL(site.url, '/new-social.jpg'),
   twitterImage: joinURL(site.url, '/new-social.jpg')
 })
+
+const tabs = computed(() => page.value?.hero.tabs.map(tab => ({
+  label: tab.title,
+  icon: tab.icon,
+  slot: tab.title.toLowerCase(),
+  content: tab.content
+})))
+
+const activeBundlerIndex = ref(0)
+
+const groupedFoundationItems = computed(() => {
+  const result = []
+  const bundlers = {
+    id: 'bundler',
+    items: [],
+    classes: 'rounded-none'
+  }
+
+  page.value.foundation.items.forEach((item, index) => {
+    if (item.id === 'bundler') {
+      bundlers.items.push(item)
+    } else {
+      const borderClasses = index === 0
+        ? 'max-sm:rounded-t-lg max-sm:rounded-b-none sm:rounded-s-lg sm:rounded-e-none'
+        : index === page.value.foundation.items.length - 1
+          ? 'max-sm:rounded-t-none max-sm:rounded-b-lg sm:rounded-s-none sm:rounded-e-lg'
+          : 'rounded-none'
+
+      result.push({
+        id: item.id,
+        item: item,
+        classes: `${borderClasses} ${item.gradient}`
+      })
+    }
+  })
+
+  if (bundlers.items.length > 0) {
+    result.splice(1, 0, bundlers)
+  }
+
+  return result
+})
+
+const isMobile = ref(false)
+onMounted(() => {
+  isMobile.value = window.innerWidth < 768
+})
 </script>
 
 <template>
-  <div v-if="page" class="dark:bg-gray-900">
-    <ULandingHero
-      :ui="{ base: 'relative z-[1]' }"
-      class="dark:bg-gradient-to-b from-gray-950 to-gray-900 md:pb-24"
-      :orientation="uwuCookie ? 'horizontal' : 'vertical'"
+  <div v-if="page">
+    <UPageHero
+      class="relative"
+      orientation="horizontal"
+      :ui="{
+        container: '!pb-20 py-24 sm:py-32 lg:py-40',
+        title: 'text-5xl sm:text-7xl',
+        wrapper: 'lg:min-h-[540px]'
+      }"
     >
-      <template #top>
-        <HomeHeroBackground v-if="!uwuCookie" class="absolute -top-[--header-height] inset-x-0 w-full hidden lg:block" />
-      </template>
-
       <template #headline>
         <NuxtLink :to="page.hero.cta.to">
-          <UBadge variant="subtle" size="lg" class="relative rounded-full font-semibold dark:hover:bg-primary-400/15 dark:hover:ring-primary-700">
+          <UBadge variant="subtle" size="lg" class="px-3 relative rounded-full font-semibold dark:hover:bg-primary-400/15 dark:hover:ring-primary-700">
             {{ page?.hero.cta.label }}
             <UIcon
               v-if="page?.hero.cta.icon"
               :name="page?.hero.cta.icon"
-              class="ml-1 w-4 h-4 pointer-events-none"
+              class="size-4 pointer-events-none"
             />
           </UBadge>
         </NuxtLink>
       </template>
 
       <template #title>
-        The Intuitive<br><span class="text-primary block lg:inline-block">Vue Framework</span>
+        The Progressive<br><span class="text-(--ui-primary)">Web Framework</span>
       </template>
 
       <template #description>
-        Nuxt is an
-        <NuxtLink
-          to="https://go.nuxt.com/github"
-          target="_blank"
-          class="font-medium hover:underline underline-offset-2"
-        >
-          open source framework
-        </NuxtLink> that makes web development intuitive and powerful.<br>Create performant and production-grade full-stack web apps and websites with confidence.
+        <MDC :value="page?.hero.description" unwrap="p" cache-key="index-hero-description" />
       </template>
 
       <template #links>
         <div class="flex flex-col gap-4">
-          <div class="flex items-center gap-2">
-            <UButton to="/docs/getting-started/installation" trailing-icon="i-ph-arrow-right" size="lg">
-              Get Started
+          <div class="flex items-center flex-wrap gap-2">
+            <UButton to="/docs/getting-started/installation" size="xl">
+              Get started
             </UButton>
-            <UButton size="lg" color="gray" variant="ghost" trailing-icon="i-ph-play-circle" @click="videoModalOpen = true">
-              Nuxt in 100 Seconds
+            <UButton size="xl" color="neutral" variant="subtle" trailing-icon="i-lucide-play-circle" @click="videoModalOpen = true">
+              Nuxt in 100 seconds
             </UButton>
           </div>
-          <UInputCopy value="npm create nuxt@latest" label="npm create nuxt@latest" class="w-full" />
+          <UInputCopy value="npm create nuxt@latest" label="npm create nuxt@latest" size="xl" />
         </div>
 
-        <UModal v-model="videoModalOpen" :ui="{ width: 'sm:max-w-4xl lg:max-w-5xl aspect-[16/9]' }">
-          <div class="p-3 h-full">
-            <iframe
-              width="100%"
-              height="100%"
-              src="https://www.youtube-nocookie.com/embed/dCxSsr5xuL8"
-              title="Nuxt in 100 Seconds by Fireship"
-              frameborder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowfullscreen
-            />
-          </div>
+        <UModal v-model:open="videoModalOpen" :ui="{ content: 'sm:max-w-4xl lg:max-w-5xl aspect-[16/9]' }">
+          <template #content>
+            <div class="p-3 h-full">
+              <iframe
+                width="100%"
+                height="100%"
+                src="https://www.youtube-nocookie.com/embed/dCxSsr5xuL8"
+                title="Nuxt in 100 Seconds by Fireship"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+              />
+            </div>
+          </template>
         </UModal>
       </template>
 
-      <NuxtImg
-        v-if="uwuCookie"
-        sizes="343px md:455px"
-        width="455"
-        height="256"
-        class="mx-auto lg:my-16"
-        src="/uwu.png"
-        alt="Nuxt Logo in uwu style"
-      />
-    </ULandingHero>
+      <UPageCard
+        class="overflow-auto lg:absolute lg:-mt-16 right-0 w-screen lg:w-[calc(50%-2rem)] rounded-none lg:rounded-l-[calc(var(--ui-radius)*4)] -mx-4 sm:-mx-6 lg:mx-0"
+        variant="subtle"
+        :ui="{ container: 'sm:pt-4.5 lg:pr-0 w-full' }"
+      >
+        <UTabs
+          :items="tabs"
+          :unmount-on-hide="false"
+          :ui="{
+            list: 'px-0 bg-transparent lg:pr-4 overflow-x-auto',
+            trigger: 'group data-[state=active]:text-(--ui-text-highlighted)',
+            indicator: 'bg-(--ui-bg)',
+            leadingIcon: 'group-data-[state=active]:text-(--ui-primary) size-4 hidden sm:inline-flex',
+            content: 'lg:h-[450px] bg-(--ui-bg) rounded-[calc(var(--ui-radius)*1.5)] transition-opacity duration-500 data-[state=inactive]:opacity-0 opacity-100'
+          }"
+        >
+          <template v-for="(tab, index) of tabs" :key="index" #[tab.slot]="{ item }">
+            <MDC :value="item.content" class="//" :cache-key="`index-hero-tab-${index}`" />
+          </template>
+        </UTabs>
+      </UPageCard>
+    </UPageHero>
+    <UPageSection :ui="{ container: '!pt-0' }">
+      <UPageLogos :marquee="isMobile" :title="page?.logos.title" :ui="{ title: 'text-left text-(--ui-text-muted) font-medium text-lg', logos: 'mt-4' }">
+        <Motion
+          v-for="(company, index) in page?.logos.companies"
+          :key="company.alt"
+          as-child
+          :initial="{ opacity: 0, transform: 'translateY(20px)' }"
+          :in-view="{ opacity: 1, transform: 'translateY(0)' }"
+          :transition="{ delay: 0.4 + 0.2 * index }"
+          :in-view-options="{ once: true }"
+        >
+          <div class="opacity-0">
+            <UColorModeImage
+              :key="company.alt"
+              :light="company.light"
+              :dark="company.dark"
+              :alt="company.alt"
+              class="h-6 shrink-0 max-w-[140px]"
+            />
+          </div>
+        </Motion>
+      </UPageLogos>
+    </UPageSection>
+    <UPageSection
+      :title="page?.features.title"
+      :description="page?.features.description"
+      :ui="{
+        title: 'text-left',
+        description: 'text-left',
+        root: 'bg-gradient-to-b border-t border-(--ui-border) from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)',
+        features: 'xl:grid-cols-4 lg:gap-10'
+      }"
+    >
+      <template #features>
+        <Motion
+          v-for="(feature, index) in page.features.features"
+          :key="feature.title"
+          :initial="{ opacity: 0, transform: 'translateY(10px)' }"
+          :while-in-view="{ opacity: 1, transform: 'translateY(0)' }"
+          :transition="{ delay: 0.1 * index }"
+          :in-view-options="{ once: true }"
+        >
+          <UPageFeature
+            v-bind="feature"
+            orientation="vertical"
+          />
+        </Motion>
+        <Motion
+          :initial="{ opacity: 0, transform: 'translateY(10px)' }"
+          :while-in-view="{ opacity: 1, transform: 'translateY(0)' }"
+          :transition="{ delay: 0.1 * page.features.features.length }"
+          :in-view-options="{ once: true }"
+          class="flex flex-col justify-center gap-4 p-4 bg-(--ui-bg-muted)/50 h-full"
+        >
+          <span class="text-lg font-semibold">
+            {{ page.features.cta.title }}
+          </span>
+          <div>
+            <UButton :to="page.features.cta.to" :label="page.features.cta.label" trailing :icon="page.features.cta.icon" />
+          </div>
+        </Motion>
+      </template>
+    </UPageSection>
 
-    <UContainer>
-      <ULandingLogos :title="page?.logos?.title" class="lg:pt-12 text-gray-500 dark:text-gray-400 dark:bg-gray-900">
-        <BrandsGithub class="hidden md:block h-7" />
-        <BrandsOpenai class="h-5 md:h-8" />
-        <BrandsNasa class="h-4 md:h-6" />
-        <BrandsGoogle class="h-5 md:h-8" />
-        <BrandsFedora class="h-4 md:h-7" />
-        <BrandsGitlab class="hidden sm:block h-4 md:h-7" />
-        <BrandsUpwork class="hidden md:block h-8" />
-      </ULandingLogos>
-    </UContainer>
-
-    <!-- eslint-disable vue/no-deprecated-slot-attribute -->
-    <ULandingSection
-      v-for="(section, index) of page.sections"
-      :key="index"
-      :slot="section.slot"
-      :class="section.class"
-      :align="section.align"
-      :links="section.links"
+    <UPageSection
+      :ui="{
+        root: 'bg-gradient-to-b border-t border-(--ui-border) from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)'
+      }"
     >
       <template #title>
-        <!-- eslint-disable-next-line vue/no-v-html -->
-        <span v-html="section?.title" />
+        <MDC :value="page.foundation.title" unwrap="p" cache-key="index-foundation-title" />
+      </template>
+      <template #description>
+        <MDC :value="page.foundation.description" unwrap="p" cache-key="index-foundation-description" />
       </template>
 
-      <template v-if="section.description" #description>
-        <!-- eslint-disable-next-line vue/no-v-html -->
-        <span v-html="section.description" />
+      <div class="grid grid-cols-1 sm:grid-cols-3">
+        <template v-for="(group, groupIndex) in groupedFoundationItems" :key="groupIndex">
+          <UPageCard
+            v-if="group.id !== 'bundler'"
+            :title="group.item.title"
+            :description="group.item.description"
+            class="h-full"
+            :ui="{
+              root: `${group.classes} ring-0 border border-(--ui-border) ${groupIndex === 0 ? 'sm:border-r-0 max-sm:border-b-0' : groupIndex === groupedFoundationItems.length - 1 ? 'sm:border-l-0 max-sm:border-t-0' : 'max-sm:border-y-0'}`,
+              title: 'text-lg font-semibold'
+            }"
+          >
+            <template #leading>
+              <UIcon :name="group.item.logo" class="size-6" />
+            </template>
+            <ULink :to="group.item.link.to" :style="{ color: group.item.color }">
+              {{ group.item.link.label }}
+            </ULink>
+          </UPageCard>
+
+          <UPageCard
+            v-else
+            :title="group.items[activeBundlerIndex].title"
+            :description="group.items[activeBundlerIndex].description"
+            class="h-full ring-0 border border-(--ui-border)"
+            :ui="{
+              root: `${group.classes} ${group.items[activeBundlerIndex].gradient}`,
+              title: 'text-lg font-semibold'
+            }"
+          >
+            <template #leading>
+              <div class="flex items-center space-x-2">
+                <div
+                  v-for="(bundler, bIndex) in group.items"
+                  :key="bIndex"
+                  class="size-7 justify-center inline-flex items-end"
+                >
+                  <UIcon
+                    :name="bundler.logo"
+                    class="cursor-pointer transition-all duration-150 ease-in-out"
+                    :class="bIndex === activeBundlerIndex
+                      ? 'size-7 opacity-100'
+                      : 'size-6 opacity-50 grayscale hover:size-7'"
+                    @click="activeBundlerIndex = bIndex"
+                  />
+                </div>
+              </div>
+            </template>
+            <ULink
+              :to="group.items[activeBundlerIndex].link.to"
+              :style="{ color: group.items[activeBundlerIndex].color }"
+            >
+              {{ group.items[activeBundlerIndex].link.label }}
+            </ULink>
+          </UPageCard>
+        </template>
+      </div>
+    </UPageSection>
+    <UPageCTA
+      :description="page.testimonial.quote"
+      variant="subtle"
+      class="rounded-none"
+      :ui="{
+        container: 'sm:py-12 lg:py-12 sm:gap-8',
+        description: '!text-base text-balance before:content-[open-quote] before:text-5xl lg:before:text-7xl before:inline-block before:text-(--ui-text-dimmed) before:absolute before:-ml-6 lg:before:-ml-10 before:-mt-2 lg:before:-mt-4 after:content-[close-quote] after:text-5xl lg:after:text-7xl after:inline-block after:text-(--ui-text-dimmed) after:absolute after:mt-1 lg:after:mt-0 after:ml-1 lg:after:ml-2'
+      }"
+    >
+      <UUser
+        v-bind="page.testimonial.author"
+        size="xl"
+        class="justify-center"
+      />
+    </UPageCTA>
+    <UPageSection
+      :title="page.stats.title"
+      :description="page.stats.description"
+      class="relative"
+      :ui="{
+        root: 'bg-gradient-to-b border-t border-(--ui-border) from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)'
+      }"
+    >
+      <div class="flex flex-col md:flex-row gap-4">
+        <div class="md:w-1/4 flex flex-col gap-4">
+          <UPageCard class="flex-1" variant="subtle" to="https://npm.chart.dev/nuxt">
+            <div class="flex items-center gap-3">
+              <div class="rounded-[calc(var(--ui-radius)*2)] bg-(--ui-bg) p-2 flex items-center justify-center border border-(--ui-border)">
+                <UIcon name="i-simple-icons-npm" class="text-red-500 size-6" />
+              </div>
+              <div class="flex flex-col">
+                <span class="font-semibold text-lg text-(--ui-text-highlighted)">
+                  {{ formatNumber(stats.monthlyDownloads) }}
+                </span>
+                <p class="text-sm">
+                  Monthly downloads
+                </p>
+              </div>
+            </div>
+          </UPageCard>
+
+          <UPageCard class="flex-1" variant="subtle" to="https://go.nuxt.com/github">
+            <div class="flex items-center gap-2">
+              <div class="rounded-lg bg-(--ui-bg) p-2 flex items-center justify-center border border-(--ui-border)">
+                <UIcon name="i-simple-icons-github" class="size-6" />
+              </div>
+              <div class="flex flex-col">
+                <span class="font-semibold text-lg text-(--ui-text-highlighted)">
+                  {{ formatNumber(stats.stars) }}
+                </span>
+                <p class="text-sm">
+                  GitHub Stars
+                </p>
+              </div>
+            </div>
+          </UPageCard>
+        </div>
+
+        <div class="md:w-1/2">
+          <UPageCard class="h-full" variant="subtle" to="https://go.nuxt.com/github">
+            <div class="flex flex-col items-center justify-around h-full">
+              <span class="text-xl font-semibold">
+                {{ page.stats.community.title }}
+              </span>
+              <p class="text-(--ui-text-muted) text-center">
+                {{ page.stats.community.description }}
+              </p>
+              <UButton class="mt-4 w-fit" v-bind="page.stats.cta" />
+            </div>
+          </UPageCard>
+        </div>
+
+        <div class="md:w-1/4 flex flex-col gap-4">
+          <UPageCard class="flex-1" variant="subtle" to="https://go.nuxt.com/x">
+            <div class="flex items-center gap-2">
+              <div class="rounded-lg bg-(--ui-bg) p-2 flex items-center justify-center border border-(--ui-border)">
+                <UIcon name="i-simple-icons-x" class="size-6" />
+              </div>
+              <div class="flex flex-col">
+                <span class="font-medium">
+                  {{ page.stats.x }}
+                </span>
+                <p>Followers</p>
+              </div>
+            </div>
+          </UPageCard>
+
+          <UPageCard class="flex-1" variant="subtle" to="https://go.nuxt.com/discord">
+            <div class="flex items-center gap-2">
+              <div class="rounded-lg bg-(--ui-bg) p-2 flex items-center justify-center border border-(--ui-border)">
+                <UIcon name="i-simple-icons-discord" class="text-indigo-400 size-6" />
+              </div>
+              <div class="flex flex-col">
+                <span class="font-medium">
+                  {{ page.stats.discord }}
+                </span>
+                <p>Members</p>
+              </div>
+            </div>
+          </UPageCard>
+        </div>
+      </div>
+    </UPageSection>
+
+    <UPageSection
+      :description="page.modules.description"
+      :links="page.modules.links"
+      :ui="{
+        root: 'bg-gradient-to-b border-t border-(--ui-border) from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)',
+        title: 'text-left',
+        description: 'text-left',
+        links: 'justify-start'
+      }"
+    >
+      <template #title>
+        <MDC :value="page.modules.title" unwrap="p" cache-key="index-modules-title" />
+      </template>
+      <UCarousel
+        v-slot="{ item }"
+        dots
+        wheel-gestures
+        arrows
+        :items="officialModules"
+        class="min-w-0"
+        :ui="{
+          container: 'ms-0',
+          item: 'min-w-0 shrink-0 sm:basis-1/3 p-2',
+          arrows: 'hidden 2xl:block'
+        }"
+      >
+        <ModuleItem :module="item" :show-badge="false" class="min-h-[180px]" />
+      </UCarousel>
+    </UPageSection>
+
+    <UPageSection
+      :title="page.deploy.title"
+      :description="page.deploy.description"
+      :links="page.deploy.links"
+      orientation="horizontal"
+      :ui="{
+        root: 'bg-gradient-to-b border-t border-(--ui-border) from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)'
+      }"
+    >
+      <NuxtImg
+        src="/assets/landing/deploy.svg"
+        alt="Deploy anywhere"
+        class="mx-auto max-w-lg sm:w-full"
+      />
+    </UPageSection>
+
+    <UPageSection
+      :title="page.support.title"
+      :description="page.support.description"
+      :links="page.support.links"
+      orientation="horizontal"
+      class="relative"
+      :ui="{
+        root: 'bg-gradient-to-b border-t border-(--ui-border) from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-20% to-(--ui-bg)',
+        title: 'text-left',
+        description: 'text-left',
+        links: 'justify-start'
+      }"
+    >
+      <template #title>
+        <MDC :value="page.support.title" unwrap="p" cache-key="index-support-title" />
+      </template>
+      <template #description>
+        <MDC :value="page.support.description" unwrap="p" cache-key="index-support-description" />
+
+        <UPageLogos :ui="{ logos: 'mt-6' }" marquee>
+          <NuxtImg
+            v-for="company in page.support.companies"
+            :key="company.alt"
+            v-bind="company"
+            class="h-8 max-w-[70px] object-contain filter invert dark:invert-0 opacity-50"
+          />
+        </UPageLogos>
       </template>
 
-      <template #features>
-        <HomeSectionFeatures :features="section.features" />
-      </template>
-
-      <template #integrations>
-        <HomeSectionIntegrations :integrations="section.integrations" />
-      </template>
-
-      <template #contributors>
-        <HomeSectionContributors />
-      </template>
-
-      <template #testimonials>
-        <HomeSectionTestimonials :testimonials="section.testimonials" />
-      </template>
-
-      <template #code>
-        <MDC
-          v-if="section.code"
-          :value="section.code"
-          tag="pre"
-          class="prose prose-primary dark:prose-invert max-w-none dark:prose-pre:!bg-gray-800/60"
+      <UPageCard variant="subtle" :ui="{ container: 'gap-y-8 sm:p-8' }">
+        <UPageFeature
+          v-for="(feature, index) in page.support.features"
+          :key="index"
+          v-bind="feature"
+          :ui="{
+            root: 'lg:items-center lg:gap-3',
+            leadingIcon: 'text-(--ui-text-highlighted)',
+            leading: 'bg-(--ui-bg) p-1 lg:p-2.5 rounded-(--ui-radius) border border-(--ui-border)',
+            description: 'mt-0'
+          }"
         />
-      </template>
-    </ULandingSection>
+      </UPageCard>
+    </UPageSection>
+    <UPageSection
+      :title="page.contributors.title"
+      :description="page.contributors.description"
+      :links="page.contributors.links"
+      orientation="horizontal"
+      reverse
+      :ui="{
+        root: 'bg-gradient-to-b border-t border-(--ui-border) from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)'
+      }"
+    >
+      <HomeSectionContributors />
+    </UPageSection>
+    <UPageSection
+      :title="page.sponsors.title"
+      :description="page.sponsors.description"
+      :links="page.sponsors.links"
+      class="relative"
+      :ui="{
+        root: 'bg-gradient-to-b border-t border-(--ui-border) from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)',
+        container: 'py-12 sm:py-16 lg:py-20'
+      }"
+    >
+      <div class="flex flex-col items-center">
+        <template v-for="([key, value]) of Object.entries(sponsors).filter(([k]) => ['diamond', 'platinum', 'gold'].includes(k))" :key="key">
+          <div class="w-full mb-24">
+            <UBadge color="neutral" variant="subtle" class="capitalize mb-2">
+              {{ key }} sponsors
+            </UBadge>
+
+            <div class="w-full border border-(--ui-border) rounded-lg">
+              <table class="w-full">
+                <tbody>
+                  <template v-for="(_, rowIndex) in Math.ceil(value.length / 3)" :key="rowIndex">
+                    <tr>
+                      <template v-for="colIndex in 3" :key="colIndex">
+                        <td
+                          v-if="(rowIndex * 3) + colIndex - 1 < value.length"
+                          class="border-b border-r border-(--ui-border) p-0 w-1/3 h-[120px]"
+                          :class="{
+                            'border-r-0': colIndex === 3,
+                            'border-b-0': rowIndex === Math.ceil(value.length / 3) - 1
+                          }"
+                        >
+                          <NuxtLink
+                            :to="value[(rowIndex * 3) + colIndex - 1].sponsorUrl"
+                            target="_blank"
+                            class="flex items-center gap-2 justify-center h-full hover:bg-(--ui-bg-muted)/50 transition-colors"
+                          >
+                            <img
+                              :src="value[(rowIndex * 3) + colIndex - 1].sponsorLogo"
+                              :alt="value[(rowIndex * 3) + colIndex - 1].sponsorName"
+                              class="h-10 max-w-[140px] object-contain rounded-[calc(var(--ui-radius)*2)]"
+                            >
+                            <span class="text-base hidden sm:block font-semibold">{{ value[(rowIndex * 3) + colIndex - 1].sponsorName }}</span>
+                          </NuxtLink>
+                        </td>
+                        <td
+                          v-else
+                          class="border-b border-r border-(--ui-border) p-0 w-1/3 h-[120px]"
+                          :class="{
+                            'border-r-0': colIndex === 3,
+                            'border-b-0': rowIndex === Math.ceil(value.length / 3) - 1
+                          }"
+                        >
+                          <div class="h-full" />
+                        </td>
+                      </template>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </template>
+      </div>
+    </UPageSection>
   </div>
 </template>
