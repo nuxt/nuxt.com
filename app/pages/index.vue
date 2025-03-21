@@ -47,7 +47,9 @@ const activeBundlerIndex = ref(0)
 const groupedFoundationItems = computed(() => {
   const result = [] as Array<{
     id: string
-    item: any
+    // TODO: make these types better
+    item?: any
+    items?: any[]
     classes: string
   }>
   const bundlers = {
