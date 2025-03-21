@@ -47,36 +47,45 @@ const breakpoints = useBreakpoints({
 
 const isMobile = breakpoints.smaller('sm')
 
-const ITEMS_PER_PAGE = 12
+const ITEMS_PER_PAGE = 9
+const SCROLL_THRESHOLD = 350
 const displayedModules = ref<Module[]>([])
+const isLoading = ref(false)
+
+const { y: scrollY } = useWindowScroll()
 
 const loadMoreModules = () => {
+  if (isLoading.value) return
+
   const currentLength = displayedModules.value.length
   if (currentLength >= filteredModules.value.length) return
 
-  const nextItems = filteredModules.value.slice(
-    currentLength,
-    currentLength + ITEMS_PER_PAGE
-  )
-  displayedModules.value.push(...nextItems)
+  isLoading.value = true
+
+  nextTick(() => {
+    const nextItems = filteredModules.value.slice(
+      currentLength,
+      currentLength + ITEMS_PER_PAGE
+    )
+    displayedModules.value.push(...nextItems)
+    isLoading.value = false
+  })
 }
 
 const initializeModules = () => {
-  displayedModules.value = filteredModules.value.slice(0, ITEMS_PER_PAGE)
+  displayedModules.value = filteredModules.value.slice(0, ITEMS_PER_PAGE * 2)
 }
 
-const { reset } = useInfiniteScroll(
-  el,
-  loadMoreModules,
-  {
-    distance: 12,
-    canLoadMore: () => displayedModules.value.length < filteredModules.value.length
+const debouncedLoadMore = useDebounceFn(loadMoreModules, 50)
+
+watch(scrollY, (y) => {
+  if (window.innerHeight + y >= document.documentElement.scrollHeight - SCROLL_THRESHOLD) {
+    debouncedLoadMore()
   }
-)
+})
 
 watch(filteredModules, () => {
   displayedModules.value = []
-  reset()
   initializeModules()
 })
 
