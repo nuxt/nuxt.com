@@ -27,8 +27,8 @@ useSeoMeta({
   description,
   ogDescription: description,
   ogTitle: title,
-  ogImage: joinURL(site.url, '/modules-social-card.png'),
-  twitterImage: joinURL(site.url, '/modules-social-card.png')
+  ogImage: joinURL(site.url, '/modules-social-card.jpg'),
+  twitterImage: joinURL(site.url, '/modules-social-card.jpg')
 })
 
 await fetchList()
