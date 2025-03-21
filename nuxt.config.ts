@@ -43,7 +43,7 @@ export default defineNuxtConfig({
       format: ['webp'],
       provider: 'cloudflare',
       cloudflare: {
-        baseURL: 'https://nuxt.com'
+        baseURL: 'https://dev.nuxt.com'
       },
       ipx: {
         baseURL: 'https://ipx.nuxt.com'
