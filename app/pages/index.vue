@@ -146,9 +146,9 @@ onMounted(() => {
       </template>
 
       <UPageCard
-        class="overflow-auto lg:absolute lg:-mt-16 right-0 w-screen lg:w-[calc(50%-2rem)] rounded-none lg:rounded-l-[calc(var(--ui-radius)*4)] -mx-4 sm:-mx-6 lg:mx-0"
+        class="overflow-auto lg:absolute [@media(min-width:2400px)]:relative lg:-mt-16 [@media(min-width:2400px)]:mt-8 right-0 [@media(min-width:2400px)]:right-auto w-screen lg:w-[calc(50%-2rem)] [@media(min-width:2400px)]:w-full max-w-[800px] [@media(min-width:2400px)]:mx-auto rounded-none lg:rounded-l-[calc(var(--ui-radius)*4)] [@media(min-width:2400px)]:rounded-[calc(var(--ui-radius)*4)] -mx-4 sm:-mx-6 lg:mx-0"
         variant="subtle"
-        :ui="{ container: 'sm:pt-4.5 lg:pr-0 w-full' }"
+        :ui="{ container: 'sm:pt-4.5 lg:pr-0 [@media(min-width:2400px)]:px-6 w-full' }"
       >
         <UTabs
           :items="tabs"
@@ -158,7 +158,7 @@ onMounted(() => {
             trigger: 'group data-[state=active]:text-(--ui-text-highlighted)',
             indicator: 'bg-(--ui-bg)',
             leadingIcon: 'group-data-[state=active]:text-(--ui-primary) size-4 hidden sm:inline-flex',
-            content: 'lg:h-[450px] bg-(--ui-bg) rounded-[calc(var(--ui-radius)*1.5)] transition-opacity duration-500 data-[state=inactive]:opacity-0 opacity-100'
+            content: 'lg:h-[450px] bg-(--ui-bg) [@media(min-width:2400px)]:border-e [@media(min-width:2400px)]:border-(--ui-border) [@media(min-width:2400px)]:rounded-[calc(var(--ui-radius)*1.5)] transition-opacity duration-500 data-[state=inactive]:opacity-0 opacity-100'
           }"
         >
           <template v-for="(tab, index) of tabs" :key="index" #[tab.slot]="{ item }">
