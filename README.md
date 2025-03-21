@@ -21,7 +21,7 @@ Copy the `.env.example` file to `.env`:
 cp .env.example .env
 ```
 
-Clone/Fork [nuxt/nuxt](https://github.com/nuxt/nuxt) repo where you want (but not in the Nuxt.com project) and inside the `docs/` directory, run:
+Clone/Fork [nuxt/nuxt](https://github.com/nuxt/nuxt) repo where you want (but not in the Nuxt.com project) and inside the root of the repo, run:
 
 ```bash
 pwd
@@ -33,7 +33,7 @@ If you are on Windows, you can use the following command instead:
 echo %cd%
 ```
 
-Copy the output of the command above and paste it in the `NUXT_DOCS_PATH` variable in the `.env` file.
+Copy the output of the command above and paste it in the `NUXT_PATH` variable in the `.env` file.
 
 ## Development
 
