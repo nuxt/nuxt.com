@@ -44,7 +44,7 @@ watch(() => props.modules, (newVal) => {
 </script>
 
 <template>
-  <div class="absolute inset-0 overflow-hidden">
+  <div class="absolute isolate inset-0 overflow-hidden">
     <div class="flex flex-col justify-between pt-4">
       <UPageMarquee
         v-for="(row, rowIndex) in marqueeModulesData"

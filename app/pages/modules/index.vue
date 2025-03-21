@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import type { Module } from '~/types'
+
 definePageMeta({
   heroBackground: 'opacity-50'
 })
 
 const input = useTemplateRef('input')
+const el = useTemplateRef<HTMLElement>('el')
 
 const { replaceRoute } = useFilters('modules')
 const { fetchList, filteredModules, q, categories, modules, stats, selectedSort, selectedOrder, selectedCategory, sorts } = useModules()
@@ -43,10 +46,55 @@ const breakpoints = useBreakpoints({
 })
 
 const isMobile = breakpoints.smaller('sm')
+
+const ITEMS_PER_PAGE = 9
+const SCROLL_THRESHOLD = 450
+const displayedModules = ref<Module[]>([])
+const isLoading = ref(false)
+
+const { y: scrollY } = useWindowScroll()
+
+const loadMoreModules = () => {
+  if (isLoading.value) return
+
+  const currentLength = displayedModules.value.length
+  if (currentLength >= filteredModules.value.length) return
+
+  isLoading.value = true
+
+  setTimeout(() => {
+    const nextItems = filteredModules.value.slice(
+      currentLength,
+      currentLength + ITEMS_PER_PAGE
+    )
+    displayedModules.value.push(...nextItems)
+    isLoading.value = false
+  }, 300)
+}
+
+const initializeModules = () => {
+  displayedModules.value = filteredModules.value.slice(0, ITEMS_PER_PAGE * 2)
+}
+
+const debouncedLoadMore = useDebounceFn(loadMoreModules, 50)
+
+watch(scrollY, (y) => {
+  if (window.innerHeight + y >= document.documentElement.scrollHeight - SCROLL_THRESHOLD) {
+    debouncedLoadMore()
+  }
+})
+
+watch(filteredModules, () => {
+  isLoading.value = false
+  displayedModules.value = []
+  initializeModules()
+})
+
+initializeModules()
 </script>
 
 <template>
-  <UContainer>
+  <UContainer ref="el">
     <LazyModulesMarquee :modules="modules" />
 
     <UPageHero
@@ -171,7 +219,21 @@ const isMobile = breakpoints.smaller('sm')
     <UPage id="smooth" class="relative z-20">
       <UPageBody>
         <UPageGrid v-if="filteredModules?.length" class="lg:grid-cols-2 xl:grid-cols-3">
-          <ModuleItem v-for="(module, index) in filteredModules" :key="index" :module="module" />
+          <ModuleItem v-for="(module, index) in displayedModules" :key="index" :module="module" />
+
+          <template v-if="isLoading">
+            <div v-for="n in ITEMS_PER_PAGE" :key="n" class="flex flex-col gap-4 p-4 rounded-lg border border-(--ui-border)">
+              <div class="flex items-center gap-3">
+                <USkeleton class="h-8 w-8 rounded" />
+              </div>
+              <USkeleton class="h-4 w-3/4" />
+              <USkeleton class="h-4 w-full" />
+              <div class="flex gap-2">
+                <USkeleton class="h-6 w-16" />
+                <USkeleton class="h-6 w-16" />
+              </div>
+            </div>
+          </template>
         </UPageGrid>
 
         <EmptyCard v-else :label="`There is no module found for ${q} yet. Become the first one to create it!`">
