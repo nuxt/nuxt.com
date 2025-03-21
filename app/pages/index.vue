@@ -184,6 +184,8 @@ onMounted(() => {
               :light="company.light"
               :dark="company.dark"
               :alt="company.alt"
+              :height="company.height"
+              :width="company.width"
               class="h-6 shrink-0 max-w-[140px]"
             />
           </div>
