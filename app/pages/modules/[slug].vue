@@ -67,7 +67,7 @@ const contributors = computed(() => {
   return allContributors
 })
 
-const title = module.value.name.charAt(0).toUpperCase() + module.value.name.slice(1)
+const title = module.value.npm
 const description = module.value.description || 'A Nuxt module'
 
 useSeoMeta({

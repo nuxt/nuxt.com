@@ -54,11 +54,7 @@ const teams = [
     <UPageHero
       :title="title"
       :description="description"
-    >
-      <template #description>
-        <MDC :value="page.description" cache-key="team-hero-description" />
-      </template>
-    </UPageHero>
+    />
 
     <UPage>
       <UPageBody class="mt-0">
