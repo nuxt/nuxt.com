@@ -1,20 +1,23 @@
 <script setup lang="ts">
-import { debounce } from 'perfect-debounce'
-
-interface SearchValue {
-  commandPaletteRef?: {
-    query: string
-    results: {
-      id: string
-      label: string
-      to: string
-    }[]
   }
 }
+// import { debounce } from 'perfect-debounce'
 
-const search = ref<SearchValue | null>(null)
+// interface SearchValue {
+//   commandPaletteRef?: {
+//     query: string
+//     results: {
+//       id: string
+//       label: string
+//       to: string
+//     }[]
+//   }
+// }
+
+// const search = ref<SearchValue | null>(null)
 const colorMode = useColorMode()
 const { searchGroups, searchLinks, searchTerm } = useNavigation()
+
 const color = computed(() => colorMode.value === 'dark' ? '#020420' : 'white')
 
 const { data: navigation } = await useAsyncData('navigation', () => {
@@ -57,12 +60,12 @@ useSeoMeta({
   twitterSite: 'nuxt_js'
 })
 
-watch(() => search.value?.commandPaletteRef?.query, debounce((query) => {
-  if (typeof query !== 'string') {
-    return
-  }
-  useTrackEvent('Search', { props: { query: `${query} - ${search.value?.commandPaletteRef?.results.length || 0} results` } })
-}, 500))
+// watch(() => search.value?.commandPaletteRef?.query, debounce((query) => {
+//   if (typeof query !== 'string') {
+//     return
+//   }
+//   useTrackEvent('Search', { props: { query: `${query} - ${search.value?.commandPaletteRef?.results.length || 0} results` } })
+// }, 500))
 
 // Provide with non-null assertion since this is top level app setup
 provide('navigation', navigation!)
@@ -122,9 +125,8 @@ onMounted(() => {
     <AppFooter />
 
     <ClientOnly>
-      <UContentSearch
+      <LazyUContentSearch
         v-model:search-term="searchTerm"
-        shortcut="o"
         :files="files"
         :navigation="navigation"
         :groups="searchGroups"
