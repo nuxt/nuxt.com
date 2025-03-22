@@ -190,7 +190,7 @@ onMounted(() => {
               :key="company.alt"
               :light="company.light"
               :dark="company.dark"
-              :alt="company.alt"
+              :alt="`${company.alt} logo`"
               loading="lazy"
               :height="company.height"
               :width="company.width"
@@ -492,6 +492,7 @@ onMounted(() => {
             v-bind="company"
             loading="lazy"
             class="h-8 max-w-[70px] object-contain filter invert dark:invert-0 opacity-50"
+            :alt="`${company.alt} logo`"
           />
         </UPageLogos>
       </template>
@@ -560,7 +561,7 @@ onMounted(() => {
                           >
                             <NuxtImg
                               :src="value[(rowIndex * 3) + colIndex - 1].sponsorLogo"
-                              :alt="value[(rowIndex * 3) + colIndex - 1].sponsorName"
+                              :alt="`${value[(rowIndex * 3) + colIndex - 1].sponsorName} logo`"
                               loading="lazy"
                               class="h-10 max-w-[140px] object-contain rounded-[calc(var(--ui-radius)*2)]"
                               height="40"

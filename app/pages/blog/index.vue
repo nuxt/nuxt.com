@@ -72,10 +72,11 @@ await fetchList()
           :image="{
             src: article.image,
             width: (index === 0 ? 672 : 437),
-            height: (index === 0 ? 378 : 246)
+            height: (index === 0 ? 378 : 246),
+            alt: `${article.title} image`
           }"
           :date="formatDateByLocale('en', article.date)"
-          :authors="article.authors"
+          :authors="article.authors.map(author => ({ ...author, avatar: { ...author.avatar, alt: `${author.name} avatar` } }))"
           :badge="{ label: article.category, color: 'primary', variant: 'subtle' }"
           :variant="index === 0 ? 'outline' : 'subtle'"
           :orientation="index === 0 ? 'horizontal' : 'vertical'"

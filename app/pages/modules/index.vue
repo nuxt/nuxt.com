@@ -158,7 +158,9 @@ initializeModules()
                 color="neutral"
                 variant="outline"
                 @click="replaceRoute('orderBy', selectedOrder.key === 'desc' ? 'asc' : 'desc')"
-              />
+              >
+                <span class="sr-only">Sort by {{ selectedOrder.label }}</span>
+              </UButton>
             </div>
           </div>
 
