@@ -38,12 +38,7 @@ await fetchList()
     <UPageHero
       :title="page.title"
       :description="page.description"
-      :ui="{
-        container: 'px-0 sm:px-0 lg:px-0',
-        title: 'text-left',
-        description: 'text-left max-w-xl',
-        links: 'justify-start'
-      }"
+      orientation="horizontal"
     >
       <template #links>
         <NewsletterForm class="flex-1 max-w-xs" :description="undefined" />
