@@ -3,13 +3,12 @@
   "version": "0.3.11",
   "packageManager": "pnpm@10.6.5",
   "scripts": {
-    "dev": "nuxi dev",
-    "build": "NODE_OPTIONS='--max-old-space-size=8192' nuxi build",
-    "generate": "nuxi generate",
-    "preview": "nuxi preview",
-    "postinstall": "nuxi prepare",
+    "dev": "nuxt dev",
+    "build": "NODE_OPTIONS='--max-old-space-size=8192' nuxt build",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
     "lint": "eslint . --cache",
-    "typecheck": "nuxi typecheck",
+    "typecheck": "nuxt typecheck",
     "test": "pnpm lint && pnpm typecheck"
   },
   "dependencies": {
