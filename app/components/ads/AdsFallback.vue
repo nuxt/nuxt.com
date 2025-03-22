@@ -3,7 +3,7 @@
     icon="i-lucide-heart"
     title="Nuxt needs you!"
     description="By allowing nuxt.com on your Ad-Blocker, you support our work and help us financially."
-    to="https://nuxt.com/support"
+    to="https://nuxt.com/enterprise/support"
     target="_blank"
     :ui="{
       leadingIcon: 'text-pink-500 dark:text-pink-400',
