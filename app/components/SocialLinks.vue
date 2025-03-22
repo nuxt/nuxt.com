@@ -7,7 +7,9 @@
       variant="ghost"
       color="neutral"
       size="xs"
-    />
+    >
+      <span class="sr-only">Nuxt on Discord</span>
+    </UButton>
     <UButton
       icon="i-simple-icons-bluesky"
       to="https://go.nuxt.com/bluesky"
@@ -15,7 +17,9 @@
       variant="ghost"
       color="neutral"
       size="xs"
-    />
+    >
+      <span class="sr-only">Nuxt on Bluesky</span>
+    </UButton>
     <UButton
       icon="i-simple-icons-x"
       to="https://go.nuxt.com/x"
@@ -23,7 +27,9 @@
       variant="ghost"
       color="neutral"
       size="xs"
-    />
+    >
+      <span class="sr-only">Nuxt on X</span>
+    </UButton>
     <UButton
       icon="i-simple-icons-github"
       to="https://go.nuxt.com/github"
@@ -31,6 +37,8 @@
       variant="ghost"
       color="neutral"
       size="xs"
-    />
+    >
+      <span class="sr-only">Nuxt on GitHub</span>
+    </UButton>
   </div>
 </template>

@@ -66,7 +66,7 @@ defineOgImageComponent('Docs', {
                           >
                             <NuxtImg
                               :src="value[(rowIndex * 3) + colIndex - 1].sponsorLogo"
-                              :alt="value[(rowIndex * 3) + colIndex - 1].sponsorName"
+                              :alt="`${value[(rowIndex * 3) + colIndex - 1].sponsorName} logo`"
                               class="h-10 max-w-[140px] object-contain rounded-[calc(var(--ui-radius)*2)]"
                               height="40"
                               width="40"
@@ -92,7 +92,8 @@ defineOgImageComponent('Docs', {
             </div>
             <div v-else class="flex flex-wrap gap-8">
               <NuxtLink v-for="(sponsor, index) in value" :key="index" :to="sponsor.sponsorUrl" target="_blank" class="inline-flex">
-                <UAvatar :src="sponsor.sponsorLogo" :alt="sponsor.sponsorName" size="lg" />
+                <span class="sr-only">Visit {{ sponsor.sponsorName }} profile</span>
+                <UAvatar :src="sponsor.sponsorLogo" size="lg" :alt="`${sponsor.sponsorName} avatar`" />
               </NuxtLink>
             </div>
           </div>
