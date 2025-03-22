@@ -123,6 +123,8 @@ onMounted(() => {
 
     <ClientOnly>
       <LazyUContentSearch
+        v-model:open="searchOpen"
+        v-model:search-term="searchTerm"
         :files="files"
         :navigation="navigation"
         :groups="searchGroups"
