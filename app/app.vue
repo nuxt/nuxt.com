@@ -14,7 +14,7 @@ interface SearchValue {
 
 const search = ref<SearchValue | null>(null)
 const colorMode = useColorMode()
-const { searchGroups, searchLinks, searchTerm } = useNavigation()
+const { searchGroups, searchLinks, searchTerm, searchOpen } = useNavigation()
 const color = computed(() => colorMode.value === 'dark' ? '#020420' : 'white')
 
 const { data: navigation } = await useAsyncData('navigation', () => {

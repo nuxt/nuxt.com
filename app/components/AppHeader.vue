@@ -6,7 +6,7 @@ const logo = useTemplateRef('logo')
 const route = useRoute()
 const stats = useStats()
 const { copy } = useClipboard()
-const { headerLinks } = useNavigation()
+const { headerLinks, searchOpen } = useNavigation()
 
 const version = computed(() => {
   const versionMatch = stats.value?.version?.match(/\d+\.\d+/)
@@ -83,7 +83,7 @@ const logoContextMenuItems = [
 
     <template #right>
       <UTooltip text="Search" :kbds="['meta', 'K']">
-        <UContentSearchButton />
+        <UContentSearchButton @click="searchOpen = true" />
       </UTooltip>
 
       <UColorModeButton />
