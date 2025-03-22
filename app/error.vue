@@ -8,7 +8,7 @@ useSeoMeta({
 
 defineProps<{ error: NuxtError }>()
 
-const { headerLinks, searchGroups, searchLinks } = useNavigation()
+const { searchGroups, searchLinks } = useNavigation()
 
 const { data: navigation } = await useAsyncData('navigation', () => {
   return Promise.all([
@@ -32,26 +32,21 @@ provide('navigation', navigation)
 </script>
 
 <template>
-  <div>
-    <AppHeader :links="headerLinks" />
+  <UApp>
+    <AppHeader />
 
-    <UContainer>
-      <UMain>
-        <UPage>
-          <UError :error="error" />
-        </UPage>
-      </UMain>
-    </UContainer>
+    <UError :error="error" />
 
     <AppFooter />
 
     <ClientOnly>
-      <LazyUContentSearch
+      <UContentSearch
         :files="files"
+        shortcut="o"
         :navigation="navigation"
         :groups="searchGroups"
         :links="searchLinks"
       />
     </ClientOnly>
-  </div>
+  </UApp>
 </template>
