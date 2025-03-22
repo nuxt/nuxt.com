@@ -29,6 +29,7 @@ const description = 'Create high-quality web applications with Nuxt, the open so
 useSeoMeta({
   title,
   ogTitle: title,
+  titleTemplate: '%s',
   description: description,
   ogDescription: description,
   ogImage: joinURL(site.url, '/new-social.jpg'),
