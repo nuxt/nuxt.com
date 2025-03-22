@@ -40,7 +40,7 @@ provide('navigation', navigation)
     <AppFooter />
 
     <ClientOnly>
-      <LazyUContentSearch
+      <UContentSearch
         v-model:open="searchOpen"
         :files="files"
         :navigation="navigation"

@@ -122,7 +122,7 @@ onMounted(() => {
     <AppFooter />
 
     <ClientOnly>
-      <LazyUContentSearch
+      <UContentSearch
         v-model:open="searchOpen"
         v-model:search-term="searchTerm"
         :files="files"
