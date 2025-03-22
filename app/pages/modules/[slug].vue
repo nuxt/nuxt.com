@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { Module } from '~/types'
-import { ModuleProseA, ModuleProseImg } from '#components'
+import { ModuleProseA } from '#components'
+
+const Img = (props: any) => h('img', props)
 
 definePageMeta({
   heroBackground: 'opacity-30 -z-10'
@@ -163,7 +165,7 @@ defineOgImageComponent('Docs', {
 
     <UPage>
       <UPageBody>
-        <ContentRenderer v-if="module.readme?.body" :value="module.readme" :components="{ a: ModuleProseA, img: ModuleProseImg }" />
+        <ContentRenderer v-if="module.readme?.body" :value="module.readme" :components="{ a: ModuleProseA, img: Img }" />
       </UPageBody>
 
       <template #right>

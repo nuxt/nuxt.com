@@ -2,6 +2,7 @@ import { Feed } from 'feed'
 import { joinURL } from 'ufo'
 import type { H3Event } from 'h3'
 import type { Collections, CollectionQueryBuilder } from '@nuxt/content'
+import { queryCollection } from '#imports'
 
 type queryCollectionWithEvent = <T extends keyof Collections>(event: H3Event, collection: T) => CollectionQueryBuilder<Collections[T]>
 
