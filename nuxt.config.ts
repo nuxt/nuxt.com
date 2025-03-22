@@ -157,7 +157,7 @@ export default defineNuxtConfig({
     description: 'Nuxt is an open source framework that makes web development intuitive and powerful. Create performant and production-grade full-stack web apps and websites with confidence.',
     full: {
       title: 'Nuxt Docs',
-      description: 'The complete Nuxt documentation, blog posts and changelog written in Markdown (MDC syntax).'
+      description: 'The complete Nuxt documentation and blog posts written in Markdown (MDC syntax).'
     }
   },
   turnstile: {

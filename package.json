@@ -14,10 +14,10 @@
   "dependencies": {
     "@iconify-json/heroicons": "^1.2.2",
     "@iconify-json/logos": "^1.2.4",
-    "@iconify-json/lucide": "^1.2.31",
+    "@iconify-json/lucide": "^1.2.32",
     "@iconify-json/octicon": "^1.2.5",
     "@iconify-json/simple-icons": "^1.2.29",
-    "@nuxt/content": "^3.3.0",
+    "@nuxt/content": "^3.4.0",
     "@nuxt/image": "^1.10.0",
     "@nuxt/scripts": "^0.11.2",
     "@nuxt/ui-pro": "^3.0.1",
@@ -28,9 +28,9 @@
     "@vueuse/core": "^13.0.0",
     "@vueuse/nuxt": "^13.0.0",
     "feed": "^4.2.2",
-    "motion-v": "0.13.0",
+    "motion-v": "0.13.1",
     "nuxt": "^3.16.1",
-    "nuxt-llms": "0.1.0",
+    "nuxt-llms": "^0.1.1",
     "nuxt-og-image": "^5.0.5",
     "ofetch": "^1.4.1",
     "perfect-debounce": "^1.0.0",
@@ -47,7 +47,7 @@
     "@nuxtjs/turnstile": "^0.9.16",
     "@testing-library/vue": "^8.1.0",
     "capture-website": "^4.2.0",
-    "eslint": "^9.22.0",
+    "eslint": "^9.23.0",
     "nuxt-content-twoslash": "0.1.2",
     "shiki": "^3.2.1",
     "twoslash": "^0.3.1",
@@ -55,7 +55,7 @@
     "vitest": "^3.0.9",
     "vue": "^3.5.13",
     "vue-tsc": "^2.2.2",
-    "wrangler": "^4.2.0"
+    "wrangler": "^4.3.0"
   },
   "resolutions": {
     "chokidar": "3.6.0",

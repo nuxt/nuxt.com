@@ -40,6 +40,13 @@ const mobileNavigation = computed<ContentNavigationItem[]>(() => {
   ].filter((item): item is ContentNavigationItem => Boolean(item))
 })
 
+const defaultOpen = computed(() => {
+  const topLevelWithChildren = mobileNavigation.value.filter(link => link.children?.length)
+  const currentPath = route.path
+
+  return topLevelWithChildren.some(link => link.children?.some(child => currentPath.startsWith(child.path as string)))
+})
+
 const logoContextMenuItems = [
   [{
     label: 'Copy logo as SVG',
@@ -106,7 +113,7 @@ const logoContextMenuItems = [
     </template>
 
     <template #body>
-      <UContentNavigation :navigation="mobileNavigation" default-open highlight />
+      <UContentNavigation :navigation="mobileNavigation" :default-open="defaultOpen" highlight />
     </template>
   </UHeader>
 </template>
