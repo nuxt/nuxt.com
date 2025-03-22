@@ -14,7 +14,7 @@ interface SearchValue {
 
 const search = ref<SearchValue | null>(null)
 const colorMode = useColorMode()
-const { searchGroups, searchLinks, searchTerm, searchOpen } = useNavigation()
+const { searchGroups, searchLinks, searchTerm } = useNavigation()
 const color = computed(() => colorMode.value === 'dark' ? '#020420' : 'white')
 
 const { data: navigation } = await useAsyncData('navigation', () => {
@@ -123,8 +123,8 @@ onMounted(() => {
 
     <ClientOnly>
       <UContentSearch
-        v-model:open="searchOpen"
         v-model:search-term="searchTerm"
+        shortcut="o"
         :files="files"
         :navigation="navigation"
         :groups="searchGroups"

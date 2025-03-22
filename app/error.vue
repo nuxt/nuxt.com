@@ -8,7 +8,7 @@ useSeoMeta({
 
 defineProps<{ error: NuxtError }>()
 
-const { searchGroups, searchLinks, searchOpen } = useNavigation()
+const { searchGroups, searchLinks } = useNavigation()
 
 const { data: navigation } = await useAsyncData('navigation', () => {
   return Promise.all([
@@ -41,8 +41,8 @@ provide('navigation', navigation)
 
     <ClientOnly>
       <UContentSearch
-        v-model:open="searchOpen"
         :files="files"
+        shortcut="o"
         :navigation="navigation"
         :groups="searchGroups"
         :links="searchLinks"

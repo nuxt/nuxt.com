@@ -3,14 +3,6 @@ import { createSharedComposable } from '@vueuse/core'
 const _useNavigation = () => {
   const nuxtApp = useNuxtApp()
   const searchTerm = ref<string>('')
-  const searchOpen = ref(false)
-
-  defineShortcuts({
-    ['meta_k']: {
-      usingInput: true,
-      handler: () => searchOpen.value = !searchOpen.value
-    }
-  })
 
   const headerLinks = computed(() => {
     const route = useRoute()
@@ -333,7 +325,6 @@ const _useNavigation = () => {
 
   return {
     searchTerm,
-    searchOpen,
     headerLinks,
     footerLinks,
     searchLinks,
