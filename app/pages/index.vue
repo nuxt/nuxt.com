@@ -457,8 +457,10 @@ onMounted(() => {
     >
       <NuxtImg
         src="/assets/landing/deploy.svg"
-        alt="Deploy anywhere"
-        class="mx-auto max-w-lg sm:w-full"
+        width="512"
+        height="439"
+        :alt="page.deploy.title"
+        class="mx-auto max-w-lg sm:w-full w-full"
         loading="lazy"
       />
     </UPageSection>
