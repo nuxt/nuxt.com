@@ -17,27 +17,25 @@ const links = computed(() => headerLinks.value.find(link => link.to === '/docs')
 </script>
 
 <template>
-  <UMain>
-    <UContainer>
-      <UPage>
-        <template #left>
-          <UPageAside>
-            <UPageAnchors :links="links" />
+  <UContainer>
+    <UPage>
+      <template #left>
+        <UPageAside>
+          <UPageAnchors :links="links" />
 
-            <USeparator type="dashed" class="my-6" />
+          <USeparator type="dashed" class="my-6" />
 
-            <UContentNavigation
-              :navigation="asideNavigation"
-              default-open
-              trailing-icon="i-lucide-chevron-right"
-              :ui="{ linkTrailingIcon: 'group-data-[state=open]:rotate-90' }"
-              highlight
-            />
-          </UPageAside>
-        </template>
+          <UContentNavigation
+            :navigation="asideNavigation"
+            default-open
+            trailing-icon="i-lucide-chevron-right"
+            :ui="{ linkTrailingIcon: 'group-data-[state=open]:rotate-90' }"
+            highlight
+          />
+        </UPageAside>
+      </template>
 
-        <slot />
-      </UPage>
-    </UContainer>
-  </UMain>
+      <slot />
+    </UPage>
+  </UContainer>
 </template>

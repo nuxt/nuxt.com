@@ -1,20 +1,7 @@
 <script setup lang="ts">
-import { debounce } from 'perfect-debounce'
-
-interface SearchValue {
-  commandPaletteRef?: {
-    query: string
-    results: {
-      id: string
-      label: string
-      to: string
-    }[]
-  }
-}
-
-const search = ref<SearchValue | null>(null)
 const colorMode = useColorMode()
 const { searchGroups, searchLinks, searchTerm } = useNavigation()
+
 const color = computed(() => colorMode.value === 'dark' ? '#020420' : 'white')
 
 const { data: navigation } = await useAsyncData('navigation', () => {
@@ -56,13 +43,6 @@ useSeoMeta({
   twitterCard: 'summary_large_image',
   twitterSite: 'nuxt_js'
 })
-
-watch(() => search.value?.commandPaletteRef?.query, debounce((query) => {
-  if (typeof query !== 'string') {
-    return
-  }
-  useTrackEvent('Search', { props: { query: `${query} - ${search.value?.commandPaletteRef?.results.length || 0} results` } })
-}, 500))
 
 // Provide with non-null assertion since this is top level app setup
 provide('navigation', navigation!)
