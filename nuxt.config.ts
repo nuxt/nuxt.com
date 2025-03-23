@@ -26,31 +26,6 @@ export default defineNuxtConfig({
           url: 'http://localhost:3000'
         }
       }
-    },
-    image: {
-      alias: {
-        '/gh/': 'https://raw.githubusercontent.com',
-        '/gh_avatar/': 'https://avatars.githubusercontent.com'
-      },
-      domains: [
-        'raw.githubusercontent.com',
-        'avatars.githubusercontent.com',
-        'images.opencollective.com',
-        'ui.nuxt.com',
-        'res.cloudinary.com'
-      ]
-    }
-  },
-  $production: {
-    image: {
-      format: ['webp', 'jpeg', 'jpg', 'png', 'svg'],
-      provider: 'cloudflare',
-      cloudflare: {
-        baseURL: 'https://nuxt.com'
-      },
-      ipx: {
-        baseURL: 'https://ipx.nuxt.com'
-      }
     }
   },
   devtools: {
@@ -88,12 +63,10 @@ export default defineNuxtConfig({
   },
   routeRules: {
     // Pre-render
-    // '/api/templates.json': { prerender: true },
-    // '/blog/rss.xml': { prerender: true },
-    // '/sitemap.xml': { prerender: true },
-    // Redirects
     '/': { prerender: true },
+    '/blog/rss.xml': { prerender: true },
     '/404.html': { prerender: true },
+    // Redirects
     '/docs': { redirect: '/docs/getting-started/introduction', prerender: false },
     '/docs/getting-started': { redirect: '/docs/getting-started/introduction', prerender: false },
     '/docs/guide/concepts': { redirect: '/docs/guide/concepts/auto-imports', prerender: false },
@@ -168,13 +141,23 @@ export default defineNuxtConfig({
     },
     provider: 'iconify'
   },
+  image: {
+    format: ['webp', 'jpeg', 'jpg', 'png', 'svg'],
+    provider: 'cloudflare',
+    cloudflare: {
+      baseURL: 'https://nuxt.com'
+    },
+    ipx: {
+      baseURL: 'https://ipx.nuxt.com'
+    }
+  },
   llms: {
     domain: 'https://nuxt.com',
     title: 'Nuxt Docs',
     description: 'Nuxt is an open source framework that makes web development intuitive and powerful. Create performant and production-grade full-stack web apps and websites with confidence.',
     full: {
       title: 'Nuxt Docs',
-      description: 'The complete Nuxt documentation, blog posts and changelog written in Markdown (MDC syntax).'
+      description: 'The complete Nuxt documentation and blog posts written in Markdown (MDC syntax).'
     }
   },
   turnstile: {

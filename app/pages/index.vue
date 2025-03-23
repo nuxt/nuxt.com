@@ -29,6 +29,7 @@ const description = 'Create high-quality web applications with Nuxt, the open so
 useSeoMeta({
   title,
   ogTitle: title,
+  titleTemplate: '%s',
   description: description,
   ogDescription: description,
   ogImage: joinURL(site.url, '/new-social.jpg'),
@@ -118,7 +119,7 @@ onMounted(() => {
       </template>
 
       <template #description>
-        <MDC :value="page?.hero.description" unwrap="p" cache-key="index-hero-description" />
+        <LazyMDC :value="page?.hero.description" unwrap="p" cache-key="index-hero-description" hydrate-never />
       </template>
 
       <template #links>
@@ -168,7 +169,7 @@ onMounted(() => {
           }"
         >
           <template v-for="(tab, index) of tabs" :key="index" #[tab.slot]="{ item }">
-            <MDC :value="item.content" class="//" :cache-key="`index-hero-tab-${index}`" />
+            <LazyMDC :value="item.content" class="//" :cache-key="`index-hero-tab-${index}`" hydrate-on-idle />
           </template>
         </UTabs>
       </UPageCard>
@@ -180,7 +181,7 @@ onMounted(() => {
           :key="company.alt"
           as-child
           :initial="{ opacity: 0, transform: 'translateY(20px)' }"
-          :in-view="{ opacity: 1, transform: 'translateY(0)' }"
+          :while-in-view="{ opacity: 1, transform: 'translateY(0)' }"
           :transition="{ delay: 0.4 + 0.2 * index }"
           :in-view-options="{ once: true }"
         >
@@ -189,7 +190,7 @@ onMounted(() => {
               :key="company.alt"
               :light="company.light"
               :dark="company.dark"
-              :alt="company.alt"
+              :alt="`${company.alt} logo`"
               loading="lazy"
               :height="company.height"
               :width="company.width"
@@ -248,10 +249,10 @@ onMounted(() => {
       }"
     >
       <template #title>
-        <MDC :value="page.foundation.title" unwrap="p" cache-key="index-foundation-title" />
+        <LazyMDC :value="page.foundation.title" unwrap="p" cache-key="index-foundation-title" hydrate-never />
       </template>
       <template #description>
-        <MDC :value="page.foundation.description" unwrap="p" cache-key="index-foundation-description" />
+        <LazyMDC :value="page.foundation.description" unwrap="p" cache-key="index-foundation-description" hydrate-never />
       </template>
 
       <div class="grid grid-cols-1 sm:grid-cols-3">
@@ -427,7 +428,7 @@ onMounted(() => {
       }"
     >
       <template #title>
-        <MDC :value="page.modules.title" unwrap="p" cache-key="index-modules-title" />
+        <LazyMDC :value="page.modules.title" unwrap="p" cache-key="index-modules-title" hydrate-never />
       </template>
       <UCarousel
         v-slot="{ item }"
@@ -457,8 +458,10 @@ onMounted(() => {
     >
       <NuxtImg
         src="/assets/landing/deploy.svg"
-        alt="Deploy anywhere"
-        class="mx-auto max-w-lg sm:w-full"
+        width="512"
+        height="439"
+        :alt="page.deploy.title"
+        class="mx-auto max-w-lg sm:w-full w-full"
         loading="lazy"
       />
     </UPageSection>
@@ -477,10 +480,10 @@ onMounted(() => {
       }"
     >
       <template #title>
-        <MDC :value="page.support.title" unwrap="p" cache-key="index-support-title" />
+        <LazyMDC :value="page.support.title" unwrap="p" cache-key="index-support-title" hydrate-never />
       </template>
       <template #description>
-        <MDC :value="page.support.description" unwrap="p" cache-key="index-support-description" />
+        <LazyMDC :value="page.support.description" unwrap="p" cache-key="index-support-description" hydrate-never />
 
         <UPageLogos :ui="{ logos: 'mt-6' }" marquee>
           <NuxtImg
@@ -489,6 +492,7 @@ onMounted(() => {
             v-bind="company"
             loading="lazy"
             class="h-8 max-w-[70px] object-contain filter invert dark:invert-0 opacity-50"
+            :alt="`${company.alt} logo`"
           />
         </UPageLogos>
       </template>
@@ -557,7 +561,7 @@ onMounted(() => {
                           >
                             <NuxtImg
                               :src="value[(rowIndex * 3) + colIndex - 1].sponsorLogo"
-                              :alt="value[(rowIndex * 3) + colIndex - 1].sponsorName"
+                              :alt="`${value[(rowIndex * 3) + colIndex - 1].sponsorName} logo`"
                               loading="lazy"
                               class="h-10 max-w-[140px] object-contain rounded-[calc(var(--ui-radius)*2)]"
                               height="40"

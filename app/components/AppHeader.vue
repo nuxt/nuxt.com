@@ -40,6 +40,13 @@ const mobileNavigation = computed<ContentNavigationItem[]>(() => {
   ].filter((item): item is ContentNavigationItem => Boolean(item))
 })
 
+const defaultOpen = computed(() => {
+  const topLevelWithChildren = mobileNavigation.value.filter(link => link.children?.length)
+  const currentPath = route.path
+
+  return topLevelWithChildren.some(link => link.children?.some(child => currentPath.startsWith(child.path as string)))
+})
+
 const logoContextMenuItems = [
   [{
     label: 'Copy logo as SVG',
@@ -67,7 +74,7 @@ const logoContextMenuItems = [
   <UHeader>
     <template #left>
       <UContextMenu :items="logoContextMenuItems" size="xs">
-        <NuxtLink to="/" class="flex gap-2 items-end">
+        <NuxtLink to="/" class="flex gap-2 items-end" aria-label="Back to home">
           <NuxtLogo ref="logo" class="block w-auto h-6" />
 
           <UTooltip v-if="version" :text="`Latest release: v${stats?.version || 3}`">
@@ -99,12 +106,14 @@ const logoContextMenuItems = [
           :ui="{
             label: 'hidden sm:inline-flex'
           }"
-        />
+        >
+          <span class="sr-only">Nuxt on GitHub</span>
+        </UButton>
       </UTooltip>
     </template>
 
     <template #body>
-      <UContentNavigation :navigation="mobileNavigation" default-open highlight />
+      <UContentNavigation :navigation="mobileNavigation" :default-open="defaultOpen" highlight />
     </template>
   </UHeader>
 </template>

@@ -26,11 +26,7 @@ defineOgImage({
 
 <template>
   <UPage v-if="page">
-    <UPageHero :title="page.title" :links="page.hero.links">
-      <template #description>
-        <MDC :value="page.description" cache-key="support-hero-description" />
-      </template>
-
+    <UPageHero :title="page.title" :description="page.description" :links="page.hero.links">
       <UPageLogos marquee>
         <UColorModeImage
           v-for="company in page.logos"

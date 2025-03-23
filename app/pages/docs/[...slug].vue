@@ -80,7 +80,7 @@ defineOgImageComponent('Docs', {
 
 <template>
   <UPage v-if="page">
-    <UPageHeader v-bind="page">
+    <UPageHeader v-bind="page" :links="page.links?.map(link => ({ ...link, size: 'md' }))">
       <template #headline>
         <UBreadcrumb :items="breadcrumb" />
       </template>
