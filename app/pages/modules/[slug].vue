@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Module } from '~/types'
-import { ModuleProseA } from '#components'
+import { ModuleProseA, ModuleProseKbd } from '#components'
 
 const Img = (props: any) => h('img', props)
 
@@ -165,7 +165,7 @@ defineOgImageComponent('Docs', {
 
     <UPage>
       <UPageBody>
-        <ContentRenderer v-if="module.readme?.body" :value="module.readme" :components="{ a: ModuleProseA, img: Img }" />
+        <ContentRenderer v-if="module.readme?.body" :value="module.readme" :components="{ a: ModuleProseA, img: Img, kbd: ModuleProseKbd }" />
       </UPageBody>
 
       <template #right>

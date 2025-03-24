@@ -35,7 +35,7 @@ onMounted(() => {
   }
 
   .carbon-poweredby {
-    @apply block text-[10px] text-center text-(--ui-text-dimmed) pt-2;
+    @apply block text-xs text-center text-(--ui-text-muted) pt-2;
   }
 
   &:hover {
