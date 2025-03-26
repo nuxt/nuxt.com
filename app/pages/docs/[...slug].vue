@@ -5,23 +5,49 @@ import { findPageBreadcrumb, mapContentNavigation } from '#ui-pro/utils'
 
 definePageMeta({
   layout: 'docs',
-  heroBackground: 'opacity-30'
+  heroBackground: 'opacity-30',
+  key: 'docs'
 })
 
 const navigation = inject<Ref<ContentNavigationItem[]>>('navigation', ref([]))
 
 const route = useRoute()
-
-const { data: page } = await useAsyncData(kebabCase(route.path), () => queryCollection('docs').path(route.path).first())
-if (!page.value) {
-  throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
+const nuxtApp = useNuxtApp()
+if (import.meta.client) {
+  const unsub = nuxtApp.hook('page:loading:end', () => {
+    nextTick(() => {
+      if (route.hash) {
+        return window?.scrollTo(route.hash)
+      }
+      window?.scrollTo(0, 0)
+    })
+  })
+  onBeforeUnmount(unsub)
 }
 
-const { data: surround } = await useAsyncData(`${kebabCase(route.path)}-surround`, () => {
-  return queryCollectionItemSurroundings('docs', route.path, {
-    fields: ['description']
-  })
+const asideNavigation = computed(() => {
+  const path = ['/docs', route.params.slug?.[0]].filter(Boolean).join('/')
+
+  return navPageFromPath(path, navigation.value)?.children || []
 })
+
+const { headerLinks } = useNavigation()
+const links = computed(() => headerLinks.value.find(link => link.to === '/docs')?.children ?? [])
+
+const [{ data: page }, { data: surround }] = await Promise.all([
+  useAsyncData(kebabCase(route.path), () => nuxtApp.static[kebabCase(route.path)] ?? queryCollection('docs').path(route.path).first(), {
+    watch: [() => route.path]
+  }),
+  useAsyncData(`${kebabCase(route.path)}-surround`, () => nuxtApp.static[`${kebabCase(route.path)}-surround`] ?? queryCollectionItemSurroundings('docs', route.path, {
+    fields: ['description']
+  }), { watch: [() => route.path] })
+])
+
+watch(page, (page) => {
+  if (!page) {
+    throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
+  }
+}, { immediate: true })
 
 const breadcrumb = computed(() => {
   const links = mapContentNavigation(findPageBreadcrumb(navigation.value, page.value)).map(link => ({
@@ -43,7 +69,7 @@ const titleTemplate = computed(() => findTitleTemplate(page, navigation))
 
 const editLink = computed(() => `https://github.com/nuxt/nuxt/edit/main/docs/${page?.value?.stem?.split('/').slice(1).join('/')}.${page?.value?.extension}`)
 
-const communityLinks = computed(() => [{
+const communityLinks = [{
   icon: 'i-lucide-heart',
   label: 'Become a Sponsor',
   to: 'https://go.nuxt.com/sponsor',
@@ -58,64 +84,86 @@ const communityLinks = computed(() => [{
   label: 'Nuxt Certification',
   to: 'https://certification.nuxt.com',
   target: '_blank'
-}])
+}]
 
 const title = page.value.seo?.title || page.value.title
-const description = page.value.seo?.description || page.value.description
 
 useSeoMeta({
   titleTemplate,
-  title,
-  description,
-  ogDescription: description,
-  ogTitle: titleTemplate.value?.includes('%s') ? titleTemplate.value.replace('%s', title) : title
+  title
 })
 
-defineOgImageComponent('Docs', {
-  headline: breadcrumb.value.length ? breadcrumb.value.map(link => link.label).join(' > ') : '',
-  title,
-  description
-})
+if (import.meta.server) {
+  const description = page.value.seo?.description || page.value.description
+  useSeoMeta({
+    description,
+    ogDescription: description,
+    ogTitle: titleTemplate.value?.includes('%s') ? titleTemplate.value.replace('%s', title) : title
+  })
+
+  defineOgImageComponent('Docs', {
+    headline: breadcrumb.value.length ? breadcrumb.value.map(link => link.label).join(' > ') : '',
+    title,
+    description
+  })
+}
 </script>
 
 <template>
-  <UPage v-if="page">
-    <UPageHeader v-bind="page" :links="page.links?.map(link => ({ ...link, size: 'md' }))">
-      <template #headline>
-        <UBreadcrumb :items="breadcrumb" />
+  <UContainer v-if="page">
+    <UPage>
+      <template #left>
+        <UPageAside>
+          <UPageAnchors :links="links" />
+          <USeparator type="dashed" class="my-6" />
+          <UContentNavigation
+            :navigation="asideNavigation"
+            default-open
+            trailing-icon="i-lucide-chevron-right"
+            :ui="{ linkTrailingIcon: 'group-data-[state=open]:rotate-90' }"
+            highlight
+          />
+        </UPageAside>
       </template>
-    </UPageHeader>
+      <UPage>
+        <UPageHeader v-bind="page" :links="page.links?.map(link => ({ ...link, size: 'md' }))">
+          <template #headline>
+            <UBreadcrumb :items="breadcrumb" />
+          </template>
+        </UPageHeader>
 
-    <UPageBody>
-      <ContentRenderer v-if="page.body" :value="page" />
-      <div>
-        <USeparator class="my-10">
-          <div class="flex items-center gap-2 text-sm dark:text-gray-400">
-            <UButton size="sm" variant="link" color="neutral" to="https://github.com/nuxt/nuxt/issues/new/choose" target="_blank">
-              Report an issue
-            </UButton>
-            or
-            <UButton size="sm" variant="link" color="neutral" :to="editLink" target="_blank">
-              Edit this page on GitHub
-            </UButton>
+        <UPageBody>
+          <ContentRenderer v-if="page.body" :value="page" />
+          <div>
+            <USeparator class="my-10">
+              <div class="flex items-center gap-2 text-sm dark:text-gray-400">
+                <UButton size="sm" variant="link" color="neutral" to="https://github.com/nuxt/nuxt/issues/new/choose" target="_blank">
+                  Report an issue
+                </UButton>
+                or
+                <UButton size="sm" variant="link" color="neutral" :to="editLink" target="_blank">
+                  Edit this page on GitHub
+                </UButton>
+              </div>
+            </USeparator>
+            <UContentSurround :surround="surround" />
           </div>
-        </USeparator>
-        <UContentSurround :surround="surround" />
-      </div>
-    </UPageBody>
+        </UPageBody>
 
-    <template v-if="page?.body?.toc?.links?.length" #right>
-      <UContentToc :links="page.body?.toc?.links" highlight class="lg:backdrop-blur-none">
-        <template #bottom>
-          <div class="hidden lg:block space-y-6" :class="{ '!mt-6': page.body?.toc?.links?.length }">
-            <USeparator v-if="page.body?.toc?.links?.length" type="dashed" />
-            <UPageLinks title="Community" :links="communityLinks" />
-            <USeparator type="dashed" />
-            <SocialLinks />
-            <Ads />
-          </div>
+        <template v-if="page?.body?.toc?.links?.length" #right>
+          <UContentToc :links="page.body?.toc?.links" highlight class="lg:backdrop-blur-none">
+            <template #bottom>
+              <div class="hidden lg:block space-y-6" :class="{ '!mt-6': page.body?.toc?.links?.length }">
+                <USeparator v-if="page.body?.toc?.links?.length" type="dashed" />
+                <UPageLinks title="Community" :links="communityLinks" />
+                <USeparator type="dashed" />
+                <SocialLinks />
+                <Ads />
+              </div>
+            </template>
+          </UContentToc>
         </template>
-      </UContentToc>
-    </template>
-  </UPage>
+      </UPage>
+    </UPage>
+  </UContainer>
 </template>
