@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { footerLinks } = useNavigation()
+const { footerLinks } = useFooterLinks()
 </script>
 
 <template>

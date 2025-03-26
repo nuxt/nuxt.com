@@ -5,19 +5,29 @@ definePageMeta({
   heroBackground: '-z-10'
 })
 
-const { data: page } = await useAsyncData('index', () => queryCollection('index').first())
+const [{ data: page }, { data: officialModules }, { data: sponsors }] = await Promise.all([
+  useAsyncData('index', () => queryCollection('index').first()),
+  useAsyncData('official-modules', async () => {
+    const res = await $fetch<{ modules: Module[], stats: Stats }>('https://api.nuxt.com/modules')
 
-const { fetchList, modules } = useModules()
-
-await fetchList()
-
-const officialModules = computed(() => {
-  return modules.value
-    .filter(module => module.type === 'official')
-    .sort((a, b) => b.stats.stars - a.stats.stars)
-})
-
-const { data: sponsors } = await useFetch('https://api.nuxt.com/sponsors', { key: 'sponsors' })
+    return res.modules
+      .filter(module => module.type === 'official')
+      .sort((a, b) => b.stats.stars - a.stats.stars)
+  }),
+  useFetch('https://api.nuxt.com/sponsors', {
+    key: 'top-sponsors',
+    transform: sponsors => Object.entries(sponsors)
+      .filter(([tier]) => ['diamond', 'platinum', 'gold'].includes(tier))
+      .map(([tier, sponsors]) => ({
+        tier,
+        sponsors: sponsors.map(s => ({
+          sponsorName: s.sponsorName,
+          sponsorLogo: s.sponsorLogo,
+          sponsorUrl: s.sponsorUrl
+        }))
+      }))
+  })
+])
 
 const stats = useStats()
 
@@ -25,16 +35,21 @@ const videoModalOpen = ref(false)
 
 const site = useSiteConfig()
 const title = 'Nuxt: The Progressive Web Framework'
-const description = 'Create high-quality web applications with Nuxt, the open source framework that makes full-stack development with Vue.js intuitive.'
 useSeoMeta({
   title,
-  ogTitle: title,
-  titleTemplate: '%s',
-  description: description,
-  ogDescription: description,
-  ogImage: joinURL(site.url, '/new-social.jpg'),
-  twitterImage: joinURL(site.url, '/new-social.jpg')
+  titleTemplate: '%s'
 })
+
+if (import.meta.server) {
+  const description = 'Create high-quality web applications with Nuxt, the open source framework that makes full-stack development with Vue.js intuitive.'
+  useSeoMeta({
+    ogTitle: title,
+    description: description,
+    ogDescription: description,
+    ogImage: joinURL(site.url, '/new-social.jpg'),
+    twitterImage: joinURL(site.url, '/new-social.jpg')
+  })
+}
 
 const tabs = computed(() => page.value?.hero.tabs.map(tab => ({
   label: tab.title,
@@ -534,7 +549,7 @@ onMounted(() => {
       }"
     >
       <div class="flex flex-col items-center">
-        <template v-for="([key, value]) of Object.entries(sponsors).filter(([k]) => ['diamond', 'platinum', 'gold'].includes(k))" :key="key">
+        <template v-for="({ tier, sponsors: value }) of sponsors" :key="tier">
           <div class="w-full mb-24">
             <UBadge color="neutral" variant="subtle" class="capitalize mb-2">
               {{ key }} sponsors

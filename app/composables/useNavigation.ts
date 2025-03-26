@@ -1,12 +1,8 @@
 import { createSharedComposable } from '@vueuse/core'
 
-const _useNavigation = () => {
-  const nuxtApp = useNuxtApp()
-  const searchTerm = ref<string>('')
-
+export const useHeaderLinks = createSharedComposable(() => {
+  const route = useRoute()
   const headerLinks = computed(() => {
-    const route = useRoute()
-
     return [{
       label: 'Docs',
       icon: 'i-lucide-book-marked',
@@ -138,48 +134,59 @@ const _useNavigation = () => {
       to: '/blog'
     }]
   })
+  return { headerLinks }
+})
 
-  const footerLinks = [{
-    label: 'Community',
-    children: [{
-      label: 'Nuxters',
-      to: 'https://nuxters.nuxt.com',
-      target: '_blank'
-    }, {
-      label: 'Team',
-      to: '/team'
-    }, {
-      label: 'Design Kit',
-      to: '/design-kit'
-    }]
+const footerLinks = [{
+  label: 'Community',
+  children: [{
+    label: 'Nuxters',
+    to: 'https://nuxters.nuxt.com',
+    target: '_blank'
   }, {
-    label: 'Products',
-    children: [{
-      label: 'Nuxt UI Pro',
-      to: 'https://ui.nuxt.com/pro?utm_source=nuxt-website&utm_medium=footer',
-      target: '_blank'
-    }, {
-      label: 'Nuxt Studio',
-      to: 'https://content.nuxt.com/studio/?utm_source=nuxt-website&utm_medium=footer',
-      target: '_blank'
-    }, {
-      label: 'NuxtHub',
-      to: 'https://hub.nuxt.com/?utm_source=nuxt-website&utm_medium=footer',
-      target: '_blank'
-    }]
+    label: 'Team',
+    to: '/team'
   }, {
-    label: 'Enterprise',
-    children: [{
-      label: 'Support',
-      to: '/enterprise/support'
-    }, {
-      label: 'Agencies',
-      to: '/enterprise/agencies'
-    }, {
-      label: 'Sponsors',
-      to: '/enterprise/sponsors'
-    }]
+    label: 'Design Kit',
+    to: '/design-kit'
   }]
+}, {
+  label: 'Products',
+  children: [{
+    label: 'Nuxt UI Pro',
+    to: 'https://ui.nuxt.com/pro?utm_source=nuxt-website&utm_medium=footer',
+    target: '_blank'
+  }, {
+    label: 'Nuxt Studio',
+    to: 'https://content.nuxt.com/studio/?utm_source=nuxt-website&utm_medium=footer',
+    target: '_blank'
+  }, {
+    label: 'NuxtHub',
+    to: 'https://hub.nuxt.com/?utm_source=nuxt-website&utm_medium=footer',
+    target: '_blank'
+  }]
+}, {
+  label: 'Enterprise',
+  children: [{
+    label: 'Support',
+    to: '/enterprise/support'
+  }, {
+    label: 'Agencies',
+    to: '/enterprise/agencies'
+  }, {
+    label: 'Sponsors',
+    to: '/enterprise/sponsors'
+  }]
+}]
+
+export const useFooterLinks = () => ({ footerLinks })
+
+const _useNavigation = () => {
+  const nuxtApp = useNuxtApp()
+  const searchTerm = ref<string>('')
+
+  const { headerLinks } = useHeaderLinks()
+  const { footerLinks } = useFooterLinks()
 
   const searchLinks = computed(() => [
     {
@@ -315,10 +322,12 @@ const _useNavigation = () => {
         }))
     }
 
-    Promise.all([
-      loadModules(),
-      loadHosting()
-    ]).catch(error => console.error('Error loading search results:', error))
+    onMounted(() => {
+      Promise.all([
+        loadModules(),
+        loadHosting()
+      ]).catch(error => console.error('Error loading search results:', error))
+    })
 
     return groups
   })

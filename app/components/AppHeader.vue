@@ -6,7 +6,7 @@ const logo = useTemplateRef('logo')
 const route = useRoute()
 const stats = useStats()
 const { copy } = useClipboard()
-const { headerLinks } = useNavigation()
+const { headerLinks } = useHeaderLinks()
 
 const version = computed(() => {
   const versionMatch = stats.value?.version?.match(/\d+\.\d+/)
