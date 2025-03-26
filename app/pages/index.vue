@@ -7,10 +7,9 @@ definePageMeta({
 
 const [{ data: page }, { data: officialModules }, { data: sponsors }] = await Promise.all([
   useAsyncData('index', () => queryCollection('index').first()),
-  useAsyncData('official-modules', async () => {
-    const res = await $fetch<{ modules: Module[], stats: Stats }>('https://api.nuxt.com/modules')
-
-    return res.modules
+  useFetch<{ modules: Module[], stats: Stats }>('https://api.nuxt.com/modules', {
+    key: 'official-modules',
+    transform: res => res.modules
       .filter(module => module.type === 'official')
       .sort((a, b) => b.stats.stars - a.stats.stars)
   }),
