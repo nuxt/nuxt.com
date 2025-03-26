@@ -34,13 +34,23 @@ const asideNavigation = computed(() => {
 const { headerLinks } = useHeaderLinks()
 const links = computed(() => headerLinks.value.find(link => link.to === '/docs')?.children ?? [])
 
+function paintResponse() {
+  if (import.meta.server) {
+    return Promise.resolve()
+  }
+  return new Promise((resolve) => {
+    setTimeout(resolve, 100)
+    requestAnimationFrame(() => setTimeout(resolve, 0))
+  })
+}
+
 const [{ data: page }, { data: surround }] = await Promise.all([
-  useAsyncData(kebabCase(route.path), () => nuxtApp.static[kebabCase(route.path)] ?? queryCollection('docs').path(route.path).first(), {
+  useAsyncData(kebabCase(route.path), () => paintResponse().then(() => nuxtApp.static[kebabCase(route.path)] ?? queryCollection('docs').path(route.path).first()), {
     watch: [() => route.path]
   }),
-  useAsyncData(`${kebabCase(route.path)}-surround`, () => nuxtApp.static[`${kebabCase(route.path)}-surround`] ?? queryCollectionItemSurroundings('docs', route.path, {
+  useAsyncData(`${kebabCase(route.path)}-surround`, () => paintResponse().then(() => nuxtApp.static[`${kebabCase(route.path)}-surround`] ?? queryCollectionItemSurroundings('docs', route.path, {
     fields: ['description']
-  }), { watch: [() => route.path] })
+  })), { watch: [() => route.path] })
 ])
 
 watch(page, (page) => {
