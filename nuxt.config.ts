@@ -37,9 +37,6 @@ export default defineNuxtConfig({
     preference: 'dark'
   },
   content: {
-    experimental: {
-      nativeSqlite: true
-    },
     build: {
       markdown: {
         highlight: {
