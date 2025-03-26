@@ -131,6 +131,8 @@ export default defineNuxtConfig({
         for (const tab of content.hero.tabs) {
           tab.content = await parseMdc(tab.content)
         }
+        // @ts-expect-error -- TODO: fix this
+        delete content.meta.body
       }
     }
   },
