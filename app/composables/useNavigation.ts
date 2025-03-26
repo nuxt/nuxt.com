@@ -1,6 +1,6 @@
 import { createSharedComposable } from '@vueuse/core'
 
-export const useHeaderLinks = createSharedComposable(() => {
+function _useHeaderLinks() {
   const route = useRoute()
   const headerLinks = computed(() => {
     return [{
@@ -8,6 +8,7 @@ export const useHeaderLinks = createSharedComposable(() => {
       icon: 'i-lucide-book-marked',
       to: '/docs',
       search: false,
+      active: route.path.startsWith('/docs'),
       children: [{
         label: 'Get Started',
         description: 'Learn how to get started with Nuxt to build your first app.',
@@ -135,7 +136,9 @@ export const useHeaderLinks = createSharedComposable(() => {
     }]
   })
   return { headerLinks }
-})
+}
+
+export const useHeaderLinks = import.meta.client ? createSharedComposable(_useHeaderLinks) : _useHeaderLinks
 
 const footerLinks = [{
   label: 'Community',
@@ -341,4 +344,4 @@ const _useNavigation = () => {
   }
 }
 
-export const useNavigation = createSharedComposable(_useNavigation)
+export const useNavigation = import.meta.client ? createSharedComposable(_useNavigation) : _useNavigation
