@@ -7,7 +7,7 @@ nitroPreset: 'firebase'
 website: 'https://firebase.google.com/'
 ---
 
-## Firebase app hosting (recommended)
+## Firebase App Hosting (recommended)
 
 > Deploy Nitro apps to Firebase App Hosting.
 ::note
@@ -16,7 +16,7 @@ You will need to be on the [**Blaze plan**](https://firebase.google.com/pricing)
 
 :read-more{title="Firebase App Hosting" to="https://firebase.google.com/docs/app-hosting"}
 
-### Project setup
+### Project Setup
 
 1. Go to the Firebase [console](https://console.firebase.google.com/) and set up a new project.
 2. Select **Build > App Hosting** from the sidebar.
