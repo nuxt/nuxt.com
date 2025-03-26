@@ -17,7 +17,7 @@
     "@iconify-json/lucide": "^1.2.32",
     "@iconify-json/octicon": "^1.2.5",
     "@iconify-json/simple-icons": "^1.2.29",
-    "@nuxt/content": "^3.4.0",
+    "@nuxt/content": "https://pkg.pr.new/@nuxt/content@ef50925",
     "@nuxt/image": "^1.10.0",
     "@nuxt/scripts": "^0.11.2",
     "@nuxt/ui-pro": "^3.0.1",
@@ -58,7 +58,8 @@
   },
   "resolutions": {
     "chokidar": "3.6.0",
-    "vue-tsc": "2.2.2"
+    "vue-tsc": "2.2.2",
+    "@nuxtjs/mdc": "https://pkg.pr.new/@nuxtjs/mdc@363"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

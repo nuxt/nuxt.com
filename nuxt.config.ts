@@ -1,4 +1,5 @@
 import { createResolver } from 'nuxt/kit'
+import { parseMdc } from './helpers/mdc-parser.mjs'
 
 const { resolve } = createResolver(import.meta.url)
 
@@ -122,6 +123,18 @@ export default defineNuxtConfig({
   },
   typescript: {
     strict: false
+  },
+  hooks: {
+    'content:file:afterParse': async ({ file, content }) => {
+      if (file.id === 'index/index.yml') {
+        // @ts-expect-error -- TODO: fix this
+        for (const tab of content.hero.tabs) {
+          tab.content = await parseMdc(tab.content)
+        }
+        // @ts-expect-error -- TODO: fix this
+        delete content.meta.body
+      }
+    }
   },
   eslint: {
     config: {
