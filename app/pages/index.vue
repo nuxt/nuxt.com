@@ -5,7 +5,7 @@ definePageMeta({
   heroBackground: '-z-10'
 })
 
-const [{ data: page }, { data: officialModules }, { data: sponsors }] = await Promise.all([
+const [{ data: page }, { data: officialModules }, { data: sponsorGroups }] = await Promise.all([
   useAsyncData('index', () => queryCollection('index').first()),
   useFetch<{ modules: Module[], stats: Stats }>('https://api.nuxt.com/modules', {
     key: 'official-modules',
@@ -548,40 +548,40 @@ onMounted(() => {
       }"
     >
       <div class="flex flex-col items-center">
-        <template v-for="({ tier, sponsors: value }) of sponsors" :key="tier">
+        <template v-for="({ tier, sponsors }) of sponsorGroups" :key="tier">
           <div class="w-full mb-24">
             <UBadge color="neutral" variant="subtle" class="capitalize mb-2">
-              {{ key }} sponsors
+              {{ tier }} sponsors
             </UBadge>
 
             <div class="w-full border border-(--ui-border) rounded-lg">
               <table class="w-full">
                 <tbody>
-                  <template v-for="(_, rowIndex) in Math.ceil(value.length / 3)" :key="rowIndex">
+                  <template v-for="(_, rowIndex) in Math.ceil(sponsors.length / 3)" :key="rowIndex">
                     <tr>
                       <template v-for="colIndex in 3" :key="colIndex">
                         <td
-                          v-if="(rowIndex * 3) + colIndex - 1 < value.length"
+                          v-if="(rowIndex * 3) + colIndex - 1 < sponsors.length"
                           class="border-b border-r border-(--ui-border) p-0 w-1/3 h-[120px]"
                           :class="{
                             'border-r-0': colIndex === 3,
-                            'border-b-0': rowIndex === Math.ceil(value.length / 3) - 1
+                            'border-b-0': rowIndex === Math.ceil(sponsors.length / 3) - 1
                           }"
                         >
                           <NuxtLink
-                            :to="value[(rowIndex * 3) + colIndex - 1].sponsorUrl"
+                            :to="sponsors[(rowIndex * 3) + colIndex - 1].sponsorUrl"
                             target="_blank"
                             class="flex items-center gap-2 justify-center h-full hover:bg-(--ui-bg-muted)/50 transition-colors"
                           >
                             <NuxtImg
-                              :src="value[(rowIndex * 3) + colIndex - 1].sponsorLogo"
-                              :alt="`${value[(rowIndex * 3) + colIndex - 1].sponsorName} logo`"
+                              :src="sponsors[(rowIndex * 3) + colIndex - 1].sponsorLogo"
+                              :alt="`${sponsors[(rowIndex * 3) + colIndex - 1].sponsorName} logo`"
                               loading="lazy"
                               class="h-10 max-w-[140px] object-contain rounded-[calc(var(--ui-radius)*2)]"
                               height="40"
                               width="40"
                             />
-                            <span class="text-base hidden sm:block font-semibold">{{ value[(rowIndex * 3) + colIndex - 1].sponsorName }}</span>
+                            <span class="text-base hidden sm:block font-semibold">{{ sponsors[(rowIndex * 3) + colIndex - 1].sponsorName }}</span>
                           </NuxtLink>
                         </td>
                         <td
@@ -589,7 +589,7 @@ onMounted(() => {
                           class="border-b border-r border-(--ui-border) p-0 w-1/3 h-[120px]"
                           :class="{
                             'border-r-0': colIndex === 3,
-                            'border-b-0': rowIndex === Math.ceil(value.length / 3) - 1
+                            'border-b-0': rowIndex === Math.ceil(sponsors.length / 3) - 1
                           }"
                         >
                           <div class="h-full" />
