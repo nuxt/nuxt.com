@@ -5,12 +5,25 @@ import { findPageBreadcrumb, mapContentNavigation } from '#ui-pro/utils'
 
 definePageMeta({
   layout: 'docs',
-  heroBackground: 'opacity-30'
+  heroBackground: 'opacity-30',
+  key: 'docs'
 })
 
 const navigation = inject<Ref<ContentNavigationItem[]>>('navigation', ref([]))
 
 const route = useRoute()
+const nuxtApp = useNuxtApp()
+if (import.meta.client) {
+  const unsub = nuxtApp.hook('page:loading:end', () => {
+    nextTick(() => {
+      if (route.hash) {
+        return window?.scrollTo(route.hash)
+      }
+      window?.scrollTo(0, 0)
+    })
+  })
+  onBeforeUnmount(unsub)
+}
 
 const asideNavigation = computed(() => {
   const path = ['/docs', route.params.slug?.[0]].filter(Boolean).join('/')
@@ -22,17 +35,19 @@ const { headerLinks } = useNavigation()
 const links = computed(() => headerLinks.value.find(link => link.to === '/docs')?.children ?? [])
 
 const [{ data: page }, { data: surround }] = await Promise.all([
-  useAsyncData(kebabCase(route.path), () => queryCollection('docs').path(route.path).first()),
-  useAsyncData(`${kebabCase(route.path)}-surround`, () => {
-    return queryCollectionItemSurroundings('docs', route.path, {
-      fields: ['description']
-    })
-  })
+  useAsyncData(kebabCase(route.path), () => nuxtApp.static[kebabCase(route.path)] ?? queryCollection('docs').path(route.path).first(), {
+    watch: [() => route.path]
+  }),
+  useAsyncData(`${kebabCase(route.path)}-surround`, () => nuxtApp.static[`${kebabCase(route.path)}-surround`] ?? queryCollectionItemSurroundings('docs', route.path, {
+    fields: ['description']
+  }), { watch: [() => route.path] })
 ])
 
-if (!page.value) {
-  throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
-}
+watch(page, (page) => {
+  if (!page) {
+    throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
+  }
+}, { immediate: true })
 
 const breadcrumb = computed(() => {
   const links = mapContentNavigation(findPageBreadcrumb(navigation.value, page.value)).map(link => ({
@@ -54,7 +69,7 @@ const titleTemplate = computed(() => findTitleTemplate(page, navigation))
 
 const editLink = computed(() => `https://github.com/nuxt/nuxt/edit/main/docs/${page?.value?.stem?.split('/').slice(1).join('/')}.${page?.value?.extension}`)
 
-const communityLinks = computed(() => [{
+const communityLinks = [{
   icon: 'i-lucide-heart',
   label: 'Become a Sponsor',
   to: 'https://go.nuxt.com/sponsor',
@@ -69,24 +84,29 @@ const communityLinks = computed(() => [{
   label: 'Nuxt Certification',
   to: 'https://certification.nuxt.com',
   target: '_blank'
-}])
+}]
 
 const title = page.value.seo?.title || page.value.title
-const description = page.value.seo?.description || page.value.description
 
 useSeoMeta({
   titleTemplate,
-  title,
-  description,
-  ogDescription: description,
-  ogTitle: titleTemplate.value?.includes('%s') ? titleTemplate.value.replace('%s', title) : title
+  title
 })
 
-defineOgImageComponent('Docs', {
-  headline: breadcrumb.value.length ? breadcrumb.value.map(link => link.label).join(' > ') : '',
-  title,
-  description
-})
+if (import.meta.server) {
+  const description = page.value.seo?.description || page.value.description
+  useSeoMeta({
+    description,
+    ogDescription: description,
+    ogTitle: titleTemplate.value?.includes('%s') ? titleTemplate.value.replace('%s', title) : title
+  })
+
+  defineOgImageComponent('Docs', {
+    headline: breadcrumb.value.length ? breadcrumb.value.map(link => link.label).join(' > ') : '',
+    title,
+    description
+  })
+}
 </script>
 
 <template>
