@@ -32,6 +32,10 @@ export default defineNuxtConfig({
   devtools: {
     enabled: true
   },
+  app: {
+    pageTransition: false,
+    layoutTransition: false
+  },
   css: ['~/assets/css/main.css'],
   colorMode: {
     preference: 'dark'
