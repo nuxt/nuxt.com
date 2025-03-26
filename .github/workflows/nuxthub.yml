@@ -34,6 +34,7 @@ jobs:
         run: pnpm build
         env:
           NUXT_UI_PRO_LICENSE: ${{ secrets.NUXT_UI_PRO_LICENSE }}
+          NUXT_CONTENT_PREVIEW_STAGING_API: https://dev-api.nuxt.studio
 
       - name: Deploy to NuxtHub
         uses: nuxt-hub/action@v1
