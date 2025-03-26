@@ -94,9 +94,7 @@ onMounted(() => {
         ]"
       />
 
-      <NuxtLayout>
-        <NuxtPage />
-      </NuxtLayout>
+      <NuxtPage />
     </UMain>
 
     <AppFooter />
