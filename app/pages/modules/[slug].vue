@@ -1,51 +1,54 @@
 <script setup lang="ts">
 import type { Module } from '~/types'
-import { ModuleProseA, ModuleProseImg } from '#components'
+import { ModuleProseA, ModuleProseKbd } from '#components'
+
+const Img = (props: any) => h('img', props)
 
 definePageMeta({
   heroBackground: 'opacity-30 -z-10'
 })
 const route = useRoute()
 
-const { data: module } = await useFetch<Module>(`https://api.nuxt.com/modules/${route.params.slug}`, {
-  key: `module-${route.params.slug}`
-})
+const { data: module } = await useFetch<Module>(`https://api.nuxt.com/modules/${route.params.slug}`, { key: `modules-${route.params.slug}` })
 if (!module.value) {
   throw createError({ statusCode: 404, statusMessage: 'Module not found', fatal: true })
 }
 
 const ownerName = computed(() => {
-  const [owner, name] = module.value.repo.split('#')[0].split('/')
+  const [owner, name] = module.value!.repo.split('#')[0].split('/')
   return `${owner}/${name}`
 })
 
-const links = computed(() => [{
-  icon: 'i-ph-book-bookmark',
-  label: 'Documentation',
-  to: `${module.value.website}?utm_source=nuxt.com&utm_medium=aside-module&utm_campaign=nuxt.com`,
-  target: '_blank'
-}, {
-  icon: 'i-simple-icons-github',
-  label: ownerName.value,
-  to: module.value.github,
-  target: '_blank'
-}, module.value.npm && {
-  icon: 'i-simple-icons-npm',
-  label: module.value.npm,
-  to: `https://npmjs.org/package/${module.value.npm}`,
-  target: '_blank'
-}, module.value.learn_more && {
-  icon: 'i-ph-link',
-  label: 'Learn more',
-  to: module.value.learn_more,
-  target: '_blank'
-}].filter(Boolean))
+const links = computed(() => module.value
+  ? [{
+      icon: 'i-lucide-book',
+      label: 'Documentation',
+      to: `${module.value.website}?utm_source=nuxt.com&utm_medium=aside-module&utm_campaign=nuxt.com`,
+      target: '_blank'
+    }, {
+      icon: 'i-simple-icons-github',
+      label: ownerName.value,
+      to: module.value.github,
+      target: '_blank'
+    }, module.value.npm && {
+      icon: 'i-simple-icons-npm',
+      label: module.value.npm,
+      to: `https://npmjs.org/package/${module.value.npm}`,
+      target: '_blank'
+    }, module.value.learn_more && {
+      icon: 'i-lucide-link',
+      label: 'Learn more',
+      to: module.value.learn_more,
+      target: '_blank'
+    }].filter(Boolean)
+  : [])
 
 const contributors = computed(() => {
   const allContributors = module.value.contributors.map(contributor => ({
     label: contributor.username,
     to: `https://github.com/${contributor.username}`,
     avatar: {
+      provider: 'ipx',
       src: `https://ipx.nuxt.com/f_auto,s_20x20/gh_avatar/${contributor.username}`,
       srcset: `https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/${contributor.username} 2x`,
       alt: contributor.username
@@ -56,14 +59,15 @@ const contributors = computed(() => {
       label: 'View all contributors',
       to: `https://github.com/${module.value.repo}/graphs/contributors`,
       external: true,
-      target: '_blank'
+      target: '_blank',
+      noAvatar: true
     }]
   }
 
   return allContributors
 })
 
-const title = module.value.name.charAt(0).toUpperCase() + module.value.name.slice(1)
+const title = module.value.npm
 const description = module.value.description || 'A Nuxt module'
 
 useSeoMeta({
@@ -75,16 +79,17 @@ useSeoMeta({
 })
 
 defineOgImageComponent('Docs', {
-  headline: 'Nuxt Modules'
+  headline: 'Nuxt Modules',
+  title,
+  description
 })
 </script>
 
 <template>
-  <UContainer>
+  <UContainer v-if="module">
     <div v-if="!module.compatibility?.nuxt?.includes('^3') && !module.compatibility?.nuxt?.includes('>=3')" class="pt-8">
       <UAlert
-        icon="i-ph-warning"
-        color="orange"
+        icon="i-lucide-triangle-alert"
         variant="subtle"
         title="This module is not yet compatible with Nuxt 3"
       >
@@ -97,7 +102,7 @@ defineOgImageComponent('Docs', {
     </div>
     <UPageHeader :description="module.description" :ui="{ headline: 'mb-8' }">
       <template #headline>
-        <UBreadcrumb :links="[{ label: 'Modules', to: '/modules' }, { to: { name: 'modules', query: { category: module.category } }, label: module.category }, { label: module.npm }]" />
+        <UBreadcrumb :items="[{ label: 'Modules', to: '/modules' }, { to: { name: 'modules', query: { category: module.category } }, label: module.category }, { label: module.npm }]" />
       </template>
       <template #title>
         <div class="flex items-center gap-4">
@@ -105,16 +110,15 @@ defineOgImageComponent('Docs', {
             :src="moduleImage(module.icon)"
             :icon="moduleIcon(module.category)"
             :alt="module.name"
-            size="lg"
-            :ui="{ rounded: 'rounded-lg' }"
-            class="-m-[4px]"
+            size="xl"
+            class="-m-[4px] rounded-none bg-transparent"
           />
 
           <div>
             {{ module.npm }}
 
             <UTooltip v-if="module.type === 'official'" text="Official module" class="tracking-normal">
-              <UIcon name="i-ph-medal" class="h-6 w-6 text-primary" />
+              <UIcon name="i-lucide-medal" class="size-6 text-(--ui-primary)" />
             </UTooltip>
           </div>
         </div>
@@ -123,25 +127,25 @@ defineOgImageComponent('Docs', {
       <div class="flex flex-col lg:flex-row lg:items-center gap-3 mt-4">
         <UTooltip text="Monthly NPM Downloads">
           <NuxtLink class="flex items-center gap-1.5" :to="`https://npm.chart.dev/${module.npm}`" target="_blank">
-            <UIcon name="i-ph-arrow-circle-down" class="w-5 h-5 flex-shrink-0" />
+            <UIcon name="i-lucide-circle-arrow-down" class="size-5 shrink-0" />
             <span class="text-sm font-medium">{{ formatNumber(module.stats.downloads) }} downloads</span>
           </NuxtLink>
         </UTooltip>
 
-        <span class="hidden lg:block text-gray-500 dark:text-gray-400">&bull;</span>
+        <span class="hidden lg:block text-(--ui-text-muted)">&bull;</span>
 
         <UTooltip text="GitHub Stars">
           <NuxtLink class="flex items-center gap-1.5" :to="`https://github.com/${module.repo}`" target="_blank">
-            <UIcon name="i-ph-star" class="w-5 h-5 flex-shrink-0" />
+            <UIcon name="i-lucide-star" class="size-5 shrink-0" />
             <span class="text-sm font-medium">{{ formatNumber(module.stats.stars || 0) }} stars</span>
           </NuxtLink>
         </UTooltip>
 
-        <span class="hidden lg:block text-gray-500 dark:text-gray-400">&bull;</span>
+        <span class="hidden lg:block text-(--ui-text-muted)">&bull;</span>
 
         <UTooltip text="Latest Version">
           <NuxtLink class="flex items-center gap-1.5" :to="`${module.github}/releases`" target="_blank">
-            <UIcon name="i-ph-tag" class="w-5 h-5 flex-shrink-0" />
+            <UIcon name="i-lucide-tag" class="size-5 shrink-0" />
             <span class="text-sm font-medium">v{{ module.stats.version }}</span>
           </NuxtLink>
         </UTooltip>
@@ -149,19 +153,19 @@ defineOgImageComponent('Docs', {
         <div class="mx-3 h-6 border-l border-gray-200 dark:border-gray-800 w-px hidden lg:block" />
 
         <div v-for="(maintainer, index) in module.maintainers" :key="maintainer.github" class="flex items-center gap-3">
-          <NuxtLink :to="`https://github.com/${maintainer.github}`" target="_blank" class="flex items-center gap-1.5 hover:text-primary">
-            <UAvatar :src="`https://ipx.nuxt.com/f_auto,s_20x20/gh_avatar/${maintainer.github}`" :srcset="`https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/${maintainer.github} 2x`" :alt="maintainer.github" size="2xs" />
+          <NuxtLink :to="`https://github.com/${maintainer.github}`" target="_blank" class="flex items-center gap-1.5 hover:text-(--ui-primary)">
+            <UAvatar provider="ipx" :src="`https://ipx.nuxt.com/f_auto,s_20x20/gh_avatar/${maintainer.github}`" :srcset="`https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/${maintainer.github} 2x`" :alt="maintainer.github" size="xs" />
             <span class="text-sm font-medium">{{ maintainer.github }}</span>
           </NuxtLink>
 
-          <span v-if="index < module.maintainers.length - 1" class="hidden lg:block text-gray-500 dark:text-gray-400">&bull;</span>
+          <span v-if="index < module.maintainers.length - 1" class="hidden lg:block text-(--ui-text-muted)">&bull;</span>
         </div>
       </div>
     </UPageHeader>
 
     <UPage>
-      <UPageBody prose class="dark:text-gray-300 dark:prose-pre:!bg-gray-800/60">
-        <ContentRendererMarkdown v-if="module.readme?.body" :value="module.readme" class="module-readme" :components="{ a: ModuleProseA, img: ModuleProseImg }" />
+      <UPageBody>
+        <ContentRenderer v-if="module.readme?.body" :value="module.readme" :components="{ a: ModuleProseA, img: Img, kbd: ModuleProseKbd }" />
       </UPageBody>
 
       <template #right>
@@ -170,14 +174,18 @@ defineOgImageComponent('Docs', {
             <div class="hidden lg:block space-y-6">
               <UPageLinks title="Links" :links="links" />
 
-              <UDivider type="dashed" />
+              <USeparator type="dashed" />
 
               <UPageLinks :links="contributors">
                 <template #title>
-                  Contributors <UBadge :label="module.contributors.length.toString()" color="gray" size="xs" :ui="{ rounded: 'rounded-full' }" />
+                  Contributors <UBadge :label="module.contributors.length.toString()" color="neutral" variant="subtle" size="sm" class="rounded-full" />
+                </template>
+
+                <template #link-leading="{ link }">
+                  <UAvatar v-if="!(link as any).noAvatar" provider="ipx" :src="`https://ipx.nuxt.com/f_auto,s_20x20/gh_avatar/${link.label}`" :srcset="`https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/${link.label} 2x`" class="size-5" />
                 </template>
               </UPageLinks>
-              <UDivider type="dashed" />
+              <USeparator type="dashed" />
               <SocialLinks />
               <Ads />
             </div>
@@ -187,29 +195,3 @@ defineOgImageComponent('Docs', {
     </UPage>
   </UContainer>
 </template>
-
-<style lang="postcss">
-.module-readme {
-
-  /* empty code lines */
-  .shiki code .line:empty {
-    @apply hidden;
-  }
-
-  /* force rounded on prose code */
-  .prose-code {
-    @apply rounded-md;
-  }
-
-  /* Fix badges */
-  p {
-    a img {
-      @apply inline-block my-0 mr-1;
-    }
-
-    a:hover {
-      @apply border-none opacity-90;
-    }
-  }
-}
-</style>

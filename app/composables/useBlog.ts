@@ -1,4 +1,4 @@
-import type { BlogArticle } from '../types'
+import type { BlogArticle } from '~/types'
 
 export const useBlog = () => {
   const articles = useState<BlogArticle[]>('articles', () => [])
@@ -12,16 +12,17 @@ export const useBlog = () => {
     }
 
     try {
-      const data = await queryContent<BlogArticle>('/blog')
-        .where({ _extension: 'md' })
-        .without(['body', 'excerpt'])
-        .sort({ date: -1 })
-        .find()
+      const { data: posts } = await useAsyncData('posts', async () => {
+        return queryCollection('blog')
+          .where('extension', '=', 'md')
+          /* .select('title', 'date', 'image', 'description', 'path', 'authors', 'category') */
+          .order('date', 'DESC')
+          .all()
+      })
 
-      articles.value = (data as BlogArticle[]).filter(article => article._path !== '/blog')
+      articles.value = posts.value?.filter(article => article.path !== '/blog') || []
       // featuredArticle.value = articles.value?.shift() || {}
-    }
-    catch (e) {
+    } catch (e) {
       articles.value = []
       return e
     }

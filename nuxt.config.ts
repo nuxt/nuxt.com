@@ -1,75 +1,23 @@
-import { ofetch } from 'ofetch'
-import { logger } from '@nuxt/kit'
-import { isWindows } from 'std-env'
+import { createResolver } from 'nuxt/kit'
 
-function normalizedDirPath(path?: string) {
-  if (!path || !isWindows) {
-    return path
-  }
-
-  return path.replace(/\\/g, '/')
-}
-
-const docsSourceBase = normalizedDirPath(process.env.NUXT_DOCS_PATH)
-const examplesSourceBase = normalizedDirPath(process.env.NUXT_EXAMPLES_PATH)
-
-const docsSource: any = {
-  name: 'nuxt-docs',
-  driver: 'github',
-  repo: 'nuxt/nuxt',
-  branch: '3.x',
-  dir: 'docs',
-  prefix: '/1.docs',
-  token: process.env.NUXT_GITHUB_TOKEN || ''
-}
-if (docsSourceBase) {
-  docsSource.driver = 'fs'
-  docsSource.base = docsSourceBase
-}
-
-const examplesSource: any = {
-  name: 'nuxt-examples',
-  driver: 'github',
-  repo: 'nuxt/examples',
-  branch: 'main',
-  dir: '.docs',
-  prefix: '/docs/4.examples',
-  token: process.env.NUXT_GITHUB_TOKEN || ''
-}
-if (examplesSourceBase) {
-  examplesSource.driver = 'fs'
-  examplesSource.base = examplesSourceBase
-}
+const { resolve } = createResolver(import.meta.url)
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  extends: [
-    process.env.NUXT_UI_PRO_PATH || '@nuxt/ui-pro'
-  ],
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore Type circular reference
   modules: [
+    '@nuxt/ui-pro',
     'nuxt-content-twoslash',
     '@nuxt/content',
-    '@nuxt/ui',
     '@nuxt/image',
     '@nuxtjs/plausible',
-    '@nuxt/fonts',
     '@nuxt/eslint',
     '@nuxt/scripts',
     '@nuxtjs/turnstile',
-    '@nuxthq/studio',
     '@vueuse/nuxt',
     'nuxt-og-image',
-    'nuxt-rebundle',
-    () => {
-      if (docsSourceBase) {
-        logger.success(`Using local Nuxt docs from ${docsSourceBase}`)
-      }
-      if (examplesSourceBase) {
-        logger.success(`Using local Nuxt examples from ${examplesSourceBase}`)
-      }
-    }
+    'motion-v/nuxt',
+    'nuxt-llms',
+    '@nuxthub/core'
   ],
   $development: {
     runtimeConfig: {
@@ -78,70 +26,46 @@ export default defineNuxtConfig({
           url: 'http://localhost:3000'
         }
       }
-    },
-    image: {
-      alias: {
-        '/gh/': 'https://raw.githubusercontent.com',
-        '/gh_avatar/': 'https://avatars.githubusercontent.com'
-      },
-      domains: [
-        'raw.githubusercontent.com',
-        'avatars.githubusercontent.com'
-      ]
-    }
-  },
-  $production: {
-    image: {
-      ipx: {
-        baseURL: 'https://ipx.nuxt.com'
-      }
     }
   },
   devtools: {
-    enabled: false
+    enabled: true
   },
+  css: ['~/assets/css/main.css'],
   colorMode: {
     preference: 'dark'
   },
   content: {
-    navigation: {
-      fields: ['titleTemplate']
+    build: {
+      markdown: {
+        highlight: {
+          theme: {
+            default: 'material-theme-lighter',
+            dark: 'material-theme-palenight'
+          },
+          langs: ['sql', 'diff', 'ini']
+        }
+      }
     },
-    sources: {
-      docsSource,
-      examplesSource
-    },
+    preview: {
+      api: 'https://api.nuxt.studio'
+    }
+  },
+  mdc: {
     highlight: {
-      theme: {
-        default: 'material-theme-lighter',
-        dark: 'material-theme-palenight'
-      },
-      langs: [
-        'js',
-        'ts',
-        'vue',
-        'css',
-        'scss',
-        'sass',
-        'html',
-        'bash',
-        'md',
-        'mdc',
-        'json',
-        'json5',
-        'jsonc',
-        'tsx',
-        'ini'
-      ]
+      noApiRoute: false
+    }
+  },
+  ui: {
+    theme: {
+      colors: ['primary', 'secondary', 'info', 'success', 'warning', 'error', 'important']
     }
   },
   routeRules: {
     // Pre-render
-    '/api/search.json': { prerender: true },
-    '/api/templates.json': { prerender: true },
+    '/': { prerender: true },
     '/blog/rss.xml': { prerender: true },
-    // '/sitemap.xml': { prerender: true },
-    '/newsletter': { prerender: true },
+    '/404.html': { prerender: true },
     // Redirects
     '/docs': { redirect: '/docs/getting-started/introduction', prerender: false },
     '/docs/getting-started': { redirect: '/docs/getting-started/introduction', prerender: false },
@@ -170,41 +94,34 @@ export default defineNuxtConfig({
     // '/docs/guide/directory-structure/nuxt.config': { redirect: '/docs/guide/directory-structure/nuxt-config', prerender: false },
     '/enterprise': { redirect: '/enterprise/support', prerender: false }
   },
+  sourcemap: true,
   future: {
     compatibilityVersion: 4
-  },
-  experimental: {
-    buildCache: false
   },
   compatibilityDate: '2024-07-18',
   nitro: {
     prerender: {
-      // failOnError: false
-      // TODO: investigate
-      // Ignore weird url from crawler on some modules readme
-      ignore: ['/modules/%3C/span', '/modules/%253C/span', '/docs/getting-started/</span', '/docs/getting-started/%3C/span', '/modules/Mojo CSS', '/modules/Mojo%20CSS', '/enterprise/agencies?service=content-marketing', '/enterprise/agencies?service=mobile-development']
+      crawlLinks: true,
+      ignore: [
+        route => route.startsWith('/modules')
+      ],
+      autoSubfolderIndex: false
     },
-    hooks: {
-      'prerender:generate'(route) {
-        // TODO: fix issue with recursive fetches with query string, e.g.
-        // `/enterprise/agencies?region=europe&amp;amp;amp;service=ecommerce&amp;amp;service=ecommerce&amp;service=content-marketing`
-        if (route.route?.includes('&amp;')) {
-          route.skip = true
+    cloudflare: {
+      pages: {
+        routes: {
+          exclude: [
+            '/docs/*'
+          ]
         }
       }
     }
   },
+  hub: {
+    cache: true
+  },
   typescript: {
     strict: false
-  },
-  hooks: {
-    async 'prerender:routes'(ctx) {
-      // Add Nuxt 2 modules to the prerender list
-      const { modules } = await ofetch<{ modules: [] }>('https://api.nuxt.com/modules?version=2').catch(() => ({ modules: [] }))
-      for (const module of modules) {
-        ctx.routes.add(`/modules/${module.name}`)
-      }
-    }
   },
   eslint: {
     config: {
@@ -214,9 +131,37 @@ export default defineNuxtConfig({
     }
   },
   icon: {
+    customCollections: [{
+      prefix: 'custom',
+      dir: resolve('./app/assets/icons')
+    }],
     clientBundle: {
-      scan: true
+      scan: true,
+      includeCustomCollections: true
+    },
+    provider: 'iconify'
+  },
+  image: {
+    format: ['webp', 'jpeg', 'jpg', 'png', 'svg'],
+    provider: 'cloudflare',
+    cloudflare: {
+      baseURL: 'https://nuxt.com'
+    },
+    ipx: {
+      baseURL: 'https://ipx.nuxt.com'
     }
+  },
+  llms: {
+    domain: 'https://nuxt.com',
+    title: 'Nuxt Docs',
+    description: 'Nuxt is an open source framework that makes web development intuitive and powerful. Create performant and production-grade full-stack web apps and websites with confidence.',
+    full: {
+      title: 'Nuxt Docs',
+      description: 'The complete Nuxt documentation and blog posts written in Markdown (MDC syntax).'
+    }
+  },
+  turnstile: {
+    siteKey: '0x4AAAAAAAP2vNBsTBT3ucZi'
   },
   twoslash: {
     floatingVueOptions: {

@@ -1,0 +1,240 @@
+title: 'Nuxt Enterprise Support'
+navigation.title: 'Support'
+description: 'Get professional support by the Nuxt experts to optimize your site performance and overcome any challenge.'
+head.title: 'Nuxt Enterprise Support'
+head.description: 'Vue and Nuxt professional support and consulting services by the creators and maintainers of Vue and Nuxt for code audit and performance optimization.'
+navigation.icon: i-lucide-life-buoy
+hero:
+  links:
+  - label: Talk to a Nuxt expert
+    trailingIcon: i-lucide-arrow-right
+    to: 'https://calendly.com/ferdinand-nuxt/nuxtlabs-ferdinand'
+    target: '_blank'
+logos:
+  - light: /assets/enterprise/support/light/malt.svg
+    dark: /assets/enterprise/support/dark/malt.svg
+    width: '85'
+    height: '24'
+    alt: malt logo
+  - light: /assets/enterprise/support/light/zadig-and-voltaire.svg
+    dark: /assets/enterprise/support/dark/zadig-and-voltaire.svg
+    width: '180'
+    height: '24'
+    alt: zadig-and-voltaire logo
+  - light: /assets/enterprise/support/light/adyen.svg
+    dark: /assets/enterprise/support/dark/adyen.svg
+    width: '85'
+    height: '24'
+    alt: adyen logo
+  - light: /assets/enterprise/support/light/world-wide-technology.svg
+    dark: /assets/enterprise/support/dark/world-wide-technology.svg
+    width: '120'
+    height: '24'
+    alt: world-wide-technology logo
+  - light: /assets/enterprise/support/light/cora.svg
+    dark: /assets/enterprise/support/dark/cora.svg
+    width: '40'
+    height: '24'
+    alt: cora logo
+  - light: /assets/enterprise/support/light/mir.svg
+    dark: /assets/enterprise/support/dark/mir.svg
+    width: '70'
+    height: '24'
+    alt: mir logo
+  - light: /assets/enterprise/support/light/tchibo.svg
+    dark: /assets/enterprise/support/dark/tchibo.svg
+    width: '100'
+    height: '24'
+    alt: tchibo logo
+  - light: /assets/enterprise/support/light/about-you.svg
+    dark: /assets/enterprise/support/dark/about-you.svg
+    width: '150'
+    height: '24'
+    alt: about-you logo
+  - light: /assets/enterprise/support/light/chillisauce.svg
+    dark: /assets/enterprise/support/dark/chillisauce.svg
+    width: '140'
+    height: '20'
+    alt: chillisauce logo
+  - light: /assets/enterprise/support/light/otypo.svg
+    dark: /assets/enterprise/support/dark/otypo.svg
+    width: '120'
+    height: '47'
+    alt: otypo logo
+  - light: /assets/enterprise/support/light/realtruck.svg
+    dark: /assets/enterprise/support/dark/realtruck.svg
+    width: '180'
+    height: '89'
+    alt: realtruck logo
+service:
+  title: Our services
+  description: We provide expertise and guidance to companies using Vue and Nuxt, including assistance with project architecture, performance optimization, best practices, and troubleshooting.
+  services:
+    - icon: i-lucide-chart-line
+      title: Performance optimizations
+      description: Optimize your Nuxt application with tailored recommendations to make it faster and more reliable than ever.
+    - icon: i-lucide-code
+      title: Migration to Nuxt
+      description: Make any migration project a successful and painless experience from the first steps to the deployment.
+    - icon: i-lucide-rocket
+      title: Nuxt Workshop
+      description: Bring your team’s skills to the expert level with custom workshops session and continuous support.
+    - icon: i-lucide-pencil-ruler
+      title: Custom services
+      description: Tell us what you’re looking for and we’ll find the most effective way to help you achieve your goals.
+expertise:
+  title: The highest level of expertise
+  description: The Nuxt experts are Vue, Nuxt and Vite core team members or chosen contributors.
+  logos:
+    - src: /assets/enterprise/support/nuxt.svg
+      width: 32
+      height: 32
+      color: '#00DC82'
+      alt: nuxt logo
+    - src: /assets/enterprise/support/vite.svg
+      width: 32
+      height: 32
+      color: '#a256fe'
+      alt: vite logo
+    - src: /assets/enterprise/support/unjs.svg
+      width: 32
+      height: 32
+      color: '#ecdb5a'
+      alt: unjs logo
+    - src: /assets/enterprise/support/vue.svg
+      width: 32
+      height: 32
+      color: '#42b883'
+      alt: vue logo
+testimonials:
+  title: What our clients say
+  description: Hear from our clients about how our consulting services have transformed their projects and boosted their performance.
+  items:
+    - quote: “I'd highly recommend their services for anyone looking into Nuxt, to ensure you get all the benefits that it can provide and make sure your team follow all the best practice design patterns.“
+      author: James Baddiley
+      job: CEO/CTO @ Chillisauce
+      logo:
+        light: /assets/enterprise/support/light/chillisauce.svg
+        dark: /assets/enterprise/support/dark/chillisauce.svg
+        alt: chillisauce logo
+        width: 134
+        height: 28
+      achievements:
+        - label: 'Migration to Nuxt'
+          color: 'info'
+        - label: 'Performance optimization'
+          color: 'warning'
+        - label: 'Long-term support'
+          color: 'success'
+    - quote: "“Choosing NuxtLabs for an audit of our Nuxt project was a game-changer. Their detailed insights significantly enhanced our site's performance and the quality of our code. We're grateful for their support and highly recommend them to others.“"
+      author: Jacques Jahnichen
+      job: Co-founder and CTO @ Viviarto
+      logo:
+        light: /assets/enterprise/support/light/viviarto.svg
+        dark: /assets/enterprise/support/dark/viviarto.svg
+        alt: viviarto logo
+        width: 134
+        height: 28
+      achievements:
+        - label: Codebase audit
+          color: important
+        - label: Migration to Nuxt
+          color: info
+        - label: Performance optimization
+          color: warning
+    - quote: “Choosing NuxtLabs for an audit of our Nuxt project was a game-changer. Their detailed insights significantly enhanced our site's performance and the quality of our code. We're grateful for their support and highly recommend them to others.“
+      author: Melene Ulm
+      job: Web Developer @ Mobile Industrial Robots
+      logo:
+        light: /assets/enterprise/support/light/mir.svg
+        dark: /assets/enterprise/support/dark/mir.svg
+        alt: mir logo
+        width: 54
+        height: 24
+      achievements:
+        - label: 'Codebase audit'
+          color: 'important'
+        - label: 'Performance optimization'
+          color: 'warning'
+        - label: 'Long-term support'
+          color: 'success'
+    - quote: "“The expert provided us with valuable feedback, which included improvements on how we can utilize Nuxt and the ecosystem more effectively, raising questions about the background of historic implementation and finding bugs that we did not yet catch.“"
+      author: 'Robert K Pauls'
+      job: 'Lead dev at @ ABOUT YOU group'
+      logo:
+        light: /assets/enterprise/support/light/about-you.svg
+        dark: /assets/enterprise/support/dark/about-you.svg
+        alt: about you logo
+        width: 120
+        height: 24
+      achievements:
+        - label: 'Performance optimization'
+          color: 'warning'
+        - label: 'Codebase audit'
+          color: 'important'
+    - quote: "“They provided excellent feedback on how to make the core of our app more efficient as well some very valuable tips for the features we are planing to implement in the near future.“"
+      author: 'Maxime Casadei'
+      job: 'CEO at @NAKWEB for Otypo'
+      width: 80
+      height: 20
+      logo:
+        light: /assets/enterprise/support/light/otypo.svg
+        dark: /assets/enterprise/support/dark/otypo.svg
+        alt: otypo logo
+      achievements:
+        - label: 'Migration to Nuxt'
+          color: 'info'
+        - label: 'Performance optimizations'
+          color: 'warning'
+        - label: 'Codebase audit'
+          color: 'important'
+    - quote: "“NuxtLabs was amazing to work with. They found hidden opportunities buried deep within our codebase. Our enterprise application is now faster, more secure and reliable than ever!“"
+      author: 'Josh Deltener'
+      job: 'Director of software engineering @ RealTruck.com'
+      logo:
+        light: /assets/enterprise/support/light/realtruck.svg
+        dark: /assets/enterprise/support/dark/realtruck.svg
+        alt: realtruck logo
+        width: 140
+        height: 30
+      achievements:
+        - label: 'Migration to Nuxt'
+          color: 'info'
+        - label: 'Performance optimizations'
+          color: 'warning'
+        - label: 'Codebase audit'
+          color: 'important'
+project:
+  title: How do we proceed?
+  description: 3 easy steps to get professional support and consulting services from a Vue & Nuxt expert.
+  steps:
+    - title: Introduction meeting
+      description: This first meeting is dedicated to gather as much information as possible about your needs and context, for us to determine the right service by the right expert.
+      number: 1
+    - title: A quote suited to your needs
+      description: Based on the information you provided and from previous similar consulting engagements, we will present a custom quote to answer your demand.
+      number: 2
+    - title: Nuxt Expert onboarding
+      description: Once an agreement is reached, the expert will be introduced to your team to start performing the consulting engagement.
+      number: 3
+form:
+  title: Get in Touch with Us
+  description: Have questions or need assistance? Fill out the form below, and we'll get back to you as soon as possible.
+  name:
+    label: Name
+    placeholder: John Doe
+  email:
+    label: Company Email
+    placeholder: you@example.com
+  company:
+    label: Company
+    placeholder: Your company name
+  link:
+    label: Useful link
+    placeholder: www.nuxt.com
+  body:
+    label: 'What can we help you achieve?'
+    placeholder: 'Tell us how we can help you'
+  button:
+    icon: i-lucide-send
+    label: 'Send message'

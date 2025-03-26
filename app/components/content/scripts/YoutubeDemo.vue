@@ -1,12 +1,15 @@
 <script setup lang="ts">
 const isLoaded = ref(false)
 const isPlaying = ref(false)
-const video = ref()
+const video = useTemplateRef<{ player: { playVideo: () => void } }>('video')
 
 function play() {
-  video.value.player.playVideo()
+  if (video.value?.player) {
+    video.value.player.playVideo()
+  }
 }
-function stateChange(event) {
+
+function stateChange(event: { data: number }) {
   isPlaying.value = event.data === 1
 }
 </script>
@@ -34,7 +37,7 @@ function stateChange(event) {
         v-if="!isLoaded"
         class="mb-5"
         size="sm"
-        color="blue"
+        color="info"
         variant="soft"
         title="Click to load"
         description="Clicking the video will load the YouTube iframe and start the video."

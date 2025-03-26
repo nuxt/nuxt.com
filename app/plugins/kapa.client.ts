@@ -158,14 +158,14 @@ export default defineNuxtPlugin(() => {
           const open = await getKapaOpen()
 
           if (q) {
-            return open({
+            return open?.({
               mode: 'search',
               query: q,
               submit: true
             })
           }
 
-          return open()
+          return open?.()
         }
       }
     }

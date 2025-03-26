@@ -1,7 +1,7 @@
-import type { Hosting } from '../types'
+import type { DeployCollectionItem } from '@nuxt/content'
 
 export const useHostingProviders = () => {
-  const providers = useState<Hosting[]>('hostingProviders', () => [])
+  const providers = useState<DeployCollectionItem[]>('hostingProviders', () => [])
 
   async function fetchList() {
     if (providers.value.length) {
@@ -9,15 +9,10 @@ export const useHostingProviders = () => {
     }
 
     try {
-      const data = await queryContent<Hosting>('/deploy')
-        .where({ _extension: 'md' })
-        .without(['body', 'excerpt'])
-        .sort({ date: -1 })
-        .find()
+      const { data } = await useAsyncData('hosting-provider', () => queryCollection('deploy').all())
 
-      providers.value = (data as Hosting[]).filter(article => article._path !== '/deploy')
-    }
-    catch (e) {
+      providers.value = data.value?.filter(article => article.path !== '/deploy') || []
+    } catch (e) {
       providers.value = []
       return e
     }

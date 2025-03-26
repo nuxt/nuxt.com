@@ -1,258 +1,255 @@
 <script setup lang="ts">
+import type { Module } from '~/types'
+import { joinURL } from 'ufo'
+
 definePageMeta({
-  heroBackground: 'opacity-70'
+  heroBackground: 'opacity-50'
 })
 
-const inputRef = ref()
+const input = useTemplateRef('input')
+const el = useTemplateRef<HTMLElement>('el')
 
-const route = useRoute()
 const { replaceRoute } = useFilters('modules')
-const { fetchList, filteredModules, q, categories, stats, selectedOrder, sorts, selectedSort } = useModules()
+const { fetchList, filteredModules, q, categories, modules, stats, selectedSort, selectedOrder, selectedCategory, sorts } = useModules()
 
-const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
+const { data: page } = await useAsyncData('modules-landing', () => queryCollection('landing').path('/modules').first())
+if (!page.value) {
+  throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
+}
 
-const title = page.value.head?.title || page.value.title
-const description = page.value.head?.description || page.value.description
+const title = page.value.title
+const description = page.value.description
+const site = useSiteConfig()
+
 useSeoMeta({
   titleTemplate: '%s',
   title,
   description,
   ogDescription: description,
-  ogTitle: title
+  ogTitle: title,
+  ogImage: joinURL(site.url, '/modules-social-card.jpg'),
+  twitterImage: joinURL(site.url, '/modules-social-card.jpg')
 })
-defineOgImageComponent('Docs')
 
 await fetchList()
 
 defineShortcuts({
   '/': () => {
-    inputRef.value.input.focus()
+    input.value?.inputRef?.focus()
   }
 })
 
-const { copy } = useCopyToClipboard()
+const breakpoints = useBreakpoints({
+  sm: 640,
+  md: 768,
+  lg: 1024
+})
+
+const isMobile = breakpoints.smaller('sm')
+
+const ITEMS_PER_PAGE = 9
+const SCROLL_THRESHOLD = 450
+const displayedModules = ref<Module[]>([])
+const isLoading = ref(false)
+
+const { y: scrollY } = useWindowScroll()
+
+const loadMoreModules = () => {
+  if (isLoading.value) return
+
+  const currentLength = displayedModules.value.length
+  if (currentLength >= filteredModules.value.length) return
+
+  isLoading.value = true
+
+  setTimeout(() => {
+    const nextItems = filteredModules.value.slice(
+      currentLength,
+      currentLength + ITEMS_PER_PAGE
+    )
+    displayedModules.value.push(...nextItems)
+    isLoading.value = false
+  }, 300)
+}
+
+const initializeModules = () => {
+  displayedModules.value = filteredModules.value.slice(0, ITEMS_PER_PAGE * 2)
+}
+
+const debouncedLoadMore = useDebounceFn(loadMoreModules, 50)
+
+watch(scrollY, (y) => {
+  if (window.innerHeight + y >= document.documentElement.scrollHeight - SCROLL_THRESHOLD) {
+    debouncedLoadMore()
+  }
+})
+
+watch(filteredModules, () => {
+  isLoading.value = false
+  displayedModules.value = []
+  initializeModules()
+})
+
+initializeModules()
 </script>
 
 <template>
-  <UContainer>
-    <UPageHero v-bind="page" class="z-30">
+  <UContainer ref="el">
+    <LazyModulesMarquee :modules="modules" />
+
+    <UPageHero
+      class="z-20 relative pt-24"
+      :ui="{
+        title: 'text-4xl sm:text-7xl text-balance max-w-4xl mx-auto',
+        links: 'max-w-2xl mx-auto'
+      }"
+    >
+      <template #title>
+        Build faster with <span class="text-(--ui-primary)">{{ modules.length }}+</span> Nuxt Modules
+      </template>
+
       <template #description>
-        <p>{{ page.description }}</p>
-        <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mt-4 justify-center">
-          <div class="flex items-center gap-1.5">
-            <UIcon name="i-ph-user-circle-fill" class="w-4 h-4 flex-shrink-0 dark:text-gray-200 text-gray-700" />
-            <span class="text-sm font-medium">{{ formatNumber(stats.maintainers) }} Maintainers</span>
+        Discover our list of modules to supercharge your Nuxt project. Created and maintained by more than {{ stats.contributors.toString() }} people from the Nuxt team and community.
+      </template>
+
+      <template #links>
+        <div class="flex flex-col w-full gap-3">
+          <div class="flex flex-col sm:flex-row w-full gap-2 relative">
+            <UInput
+              ref="input"
+              :model-value="q"
+              name="q"
+              icon="i-lucide-search"
+              placeholder="Search a module..."
+              class="w-full"
+              size="lg"
+              autofocus
+              autocomplete="off"
+              variant="subtle"
+              @update:model-value="replaceRoute('q', $event as string)"
+            >
+              <template #trailing>
+                <UButton
+                  v-if="q"
+                  color="neutral"
+                  variant="link"
+                  size="lg"
+                  icon="i-lucide-x"
+                  @click="replaceRoute('q', '')"
+                />
+                <UKbd v-else value="/" class="hidden sm:flex" />
+              </template>
+            </UInput>
+
+            <div v-if="!isMobile" class="flex gap-2 sm:w-auto">
+              <USelectMenu
+                :model-value="selectedSort"
+                :items="sorts"
+                size="lg"
+                color="neutral"
+                class="w-auto"
+                variant="outline"
+                @update:model-value="replaceRoute('sortBy', $event as string)"
+              />
+
+              <UButton
+                :icon="selectedOrder.icon"
+                size="lg"
+                color="neutral"
+                variant="outline"
+                @click="replaceRoute('orderBy', selectedOrder.key === 'desc' ? 'asc' : 'desc')"
+              >
+                <span class="sr-only">Sort by {{ selectedOrder.label }}</span>
+              </UButton>
+            </div>
           </div>
-          <div class="flex items-center gap-1.5">
-            <UIcon name="i-ph-users-three-fill" class="w-4 h-4 flex-shrink-0 dark:text-gray-200 text-gray-700" />
-            <span class="text-sm font-medium">{{ formatNumber(stats.contributors) }} Contributors</span>
+
+          <div v-if="isMobile" class="flex gap-2">
+            <USelectMenu
+              :model-value="selectedCategory"
+              :items="categories"
+              size="lg"
+              color="neutral"
+              variant="outline"
+              class="flex-1"
+              placeholder="Select category"
+              @update:model-value="replaceRoute('category', $event as string)"
+            />
+            <UButton
+              v-if="selectedCategory"
+              icon="i-lucide-x"
+              size="lg"
+              color="neutral"
+              variant="outline"
+              aria-label="Clear category filter"
+              @click="replaceRoute('category', '')"
+            />
+            <USelectMenu
+              :model-value="selectedSort"
+              :items="sorts"
+              size="lg"
+              color="neutral"
+              class="w-1/3"
+              variant="outline"
+              @update:model-value="replaceRoute('sortBy', $event as string)"
+            />
+            <UButton
+              :icon="selectedOrder.icon"
+              size="lg"
+              color="neutral"
+              variant="outline"
+              @click="replaceRoute('orderBy', selectedOrder.key === 'desc' ? 'asc' : 'desc')"
+            />
           </div>
-          <div class="flex items-center gap-1.5">
-            <UIcon name="i-ph-puzzle-piece-fill" class="w-4 h-4 flex-shrink-0 dark:text-gray-200 text-gray-700" />
-            <span class="text-sm font-medium">{{ formatNumber(stats.modules) }} Modules</span>
-          </div>
+        </div>
+
+        <div class="hidden sm:flex mt-6 flex-wrap gap-1.5 justify-center">
+          <UButton
+            v-for="category in categories"
+            :key="category.key"
+            v-bind="category"
+            color="neutral"
+            variant="outline"
+            active-color="primary"
+            active-variant="subtle"
+            size="sm"
+          />
         </div>
       </template>
     </UPageHero>
 
-    <UPage id="smooth" class="pt-20 -mt-20">
-      <template #left>
-        <UAside>
-          <UInput
-            ref="inputRef"
-            :model-value="q"
-            name="q"
-            icon="i-ph-magnifying-glass"
-            placeholder="Search..."
-            class="w-full mb-2"
-            size="md"
-            autocomplete="off"
-            :ui="{ icon: { trailing: { pointer: '' } } }"
-            @update:model-value="replaceRoute('q', $event)"
-          >
-            <template #trailing>
-              <UButton
-                v-if="q"
-                color="gray"
-                variant="link"
-                size="xs"
-                icon="i-ph-x"
-                :padded="false"
-                @click="replaceRoute('q', '')"
-              />
-              <UKbd v-else>
-                /
-              </UKbd>
-            </template>
-          </UInput>
-          <UButtonGroup class="mb-4 w-full">
-            <USelectMenu
-              :model-value="selectedSort"
-              :options="sorts"
-              size="md"
-              color="white"
-              class="w-full"
-              @update:model-value="replaceRoute('sortBy', $event)"
-            />
-            <UButton
-              :icon="selectedOrder.icon"
-              size="md"
-              color="gray"
-              @click="replaceRoute('orderBy', selectedOrder.key === 'desc' ? 'asc' : 'desc')"
-            />
-          </UButtonGroup>
-          <UNavigationTree :links="[{ label: 'Categories', disabled: true, children: categories }]" />
-        </UAside>
-      </template>
+    <UPage id="smooth" class="relative z-20">
+      <UPageBody>
+        <UPageGrid v-if="filteredModules?.length" class="lg:grid-cols-2 xl:grid-cols-3">
+          <ModuleItem v-for="(module, index) in displayedModules" :key="index" :module="module" />
 
-      <UPageBody class="lg:pl-8">
-        <div class="lg:hidden mb-6 flex items-center gap-2">
-          <UInput
-            ref="inputRef"
-            type="search"
-            :model-value="q"
-            name="q"
-            icon="i-ph-magnifying-glass"
-            placeholder="Search a module..."
-            class="w-full"
-            size="sm"
-            autocomplete="off"
-            :ui="{ icon: { trailing: { pointer: '' } } }"
-            @update:model-value="replaceRoute('q', $event)"
-          />
-          <UButtonGroup>
-            <USelectMenu
-              :model-value="selectedSort"
-              :options="sorts"
-              size="md"
-              color="white"
-              @update:model-value="replaceRoute('sortBy', $event)"
-            />
-            <UButton
-              :icon="selectedOrder.icon"
-              size="md"
-              color="gray"
-              @click="replaceRoute('orderBy', selectedOrder.key === 'desc' ? 'asc' : 'desc')"
-            />
-          </UButtonGroup>
-        </div>
-        <UPageGrid v-if="filteredModules?.length">
-          <UPageCard
-            v-for="(module, index) in filteredModules"
-            :key="index"
-            :to="`/modules/${module.name}`"
-            :title="module.npm"
-            class="flex flex-col overflow-hidden group"
-            :ui="{
-              to: 'hover:bg-white hover:ring-1',
-              icon: { wrapper: 'mb-2' },
-              body: { padding: 'p-4 sm:p-4', base: 'flex-1 dark:bg-gray-950' },
-              footer: { base: 'dark:bg-gray-950 border-none', padding: 'px-4 sm:px-4 pt-0' }
-            }"
-          >
-            <template #icon>
-              <UAvatar
-                :src="moduleImage(module.icon)"
-                :icon="moduleIcon(module.category)"
-                :alt="module.name"
-                size="xs"
-                :ui="{ rounded: 'rounded-md' }"
-                class="pointer-events-none"
-              />
-            </template>
-
-            <template #description>
-              <span class="line-clamp-2 dark:text-gray-400 text-gray-500 text-sm">{{ module.description }}</span>
-            </template>
-
-            <UBadge
-              v-if="module.type === 'official'"
-              class="space-x-1 shine text-sm items-center justitfy-center pointer-events-none absolute top-4 right-4"
-              size="xs"
-              variant="subtle"
-            >
-              <span>Official</span>
-            </UBadge>
-
-            <UBadge
-              v-if="module.sponsor"
-              class="space-x-1 shine text-sm items-center justitfy-center pointer-events-none absolute top-4 right-4"
-              size="xs"
-              variant="subtle"
-              color="pink"
-            >
-              <span>Sponsor</span>
-            </UBadge>
-
-            <template #footer>
-              <UDivider type="dashed" class="mb-4" />
-              <div class="flex items-center justify-between gap-3 -my-1 text-gray-600 dark:text-gray-300">
-                <div class="flex items-center gap-3">
-                  <UTooltip text="Monthly NPM Downloads">
-                    <NuxtLink
-                      class="flex items-center gap-1 hover:text-gray-900 hover:dark:text-white"
-                      :to="`https://npm.chart.dev/${module.npm}`"
-                      target="_blank"
-                    >
-                      <UIcon name="i-ph-arrow-circle-down" class="w-4 h-4 flex-shrink-0" />
-                      <span class="text-sm font-medium">{{ formatNumber(module.stats.downloads) }}</span>
-                    </NuxtLink>
-                  </UTooltip>
-
-                  <UTooltip text="GitHub Stars">
-                    <NuxtLink
-                      class="flex items-center gap-1 hover:text-gray-900 hover:dark:text-white"
-                      :to="`https://github.com/${module.repo}`"
-                      target="_blank"
-                    >
-                      <UIcon name="i-ph-star" class="w-4 h-4 flex-shrink-0" />
-                      <span class="text-sm font-medium">{{ formatNumber(module.stats.stars || 0) }}</span>
-                    </NuxtLink>
-                  </UTooltip>
-                </div>
-
-                <UTooltip
-                  :text="`Copy install command`"
-                >
-                  <UButton
-                    icon="i-ph-terminal"
-                    color="white"
-                    size="2xs"
-                    @click="copy(`npx nuxi@latest module add ${module.name}`, { title: 'Command copied to clipboard:', description: `npx nuxi@latest module add ${module.name}` })"
-                  />
-                </UTooltip>
+          <template v-if="isLoading">
+            <div v-for="n in ITEMS_PER_PAGE" :key="n" class="flex flex-col gap-4 p-4 rounded-lg border border-(--ui-border)">
+              <div class="flex items-center gap-3">
+                <USkeleton class="h-8 w-8 rounded" />
               </div>
-            </template>
-          </UPageCard>
+              <USkeleton class="h-4 w-3/4" />
+              <USkeleton class="h-4 w-full" />
+              <div class="flex gap-2">
+                <USkeleton class="h-6 w-16" />
+                <USkeleton class="h-6 w-16" />
+              </div>
+            </div>
+          </template>
         </UPageGrid>
 
         <EmptyCard v-else :label="`There is no module found for ${q} yet. Become the first one to create it!`">
           <UButton
             label="Contribute on GitHub"
-            color="black"
+            color="neutral"
             to="https://github.com/nuxt/modules"
             target="_blank"
             size="md"
             @click="$router.replace({ query: {} })"
           />
-          <UButton to="/docs/guide/going-further/modules" color="white" size="md" label="How to create a module?" />
+          <UButton to="/docs/guide/going-further/modules" color="neutral" size="md" label="How to create a module?" />
         </EmptyCard>
       </UPageBody>
     </UPage>
   </UContainer>
 </template>
-
-<style lang="postcss">
-.group:hover .shine {
-  text-decoration: none;
-  display: inline-block;
-  mask-image: linear-gradient(-75deg, rgba(255,255,255,.8) 30%, #fff 50%, rgba(255,255,255,.8) 70%);
-  mask-size: 200%;
-  animation: shine 2s linear infinite;
-}
-
-@keyframes shine {
-  from { -webkit-mask-position: 150%; }
-  to { -webkit-mask-position: -50%; }
-}
-</style>

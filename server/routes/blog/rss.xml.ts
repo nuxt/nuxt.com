@@ -1,6 +1,10 @@
 import { Feed } from 'feed'
 import { joinURL } from 'ufo'
-import { serverQueryContent } from '#content/server'
+import type { H3Event } from 'h3'
+import type { Collections, CollectionQueryBuilder } from '@nuxt/content'
+import { queryCollection } from '#imports'
+
+type queryCollectionWithEvent = <T extends keyof Collections>(event: H3Event, collection: T) => CollectionQueryBuilder<Collections[T]>
 
 export default defineEventHandler(async (event) => {
   const baseUrl = 'https://nuxt.com'
@@ -19,20 +23,24 @@ export default defineEventHandler(async (event) => {
     }
   })
 
-  const articles = await serverQueryContent(event, '/blog')
-    .sort({ date: -1 })
-    .where({ _partial: false, _draft: false, _type: 'markdown' })
-    .find()
+  const articles = await (queryCollection as queryCollectionWithEvent)(event, 'blog')
+    .order('date', 'DESC')
+    .all()
 
   for (const article of articles) {
+    if (article.draft) {
+      continue
+    }
     feed.addItem({
-      link: joinURL(baseUrl, article._path),
+      link: joinURL(baseUrl, article.path),
       image: joinURL(baseUrl, article.image),
       title: article.title,
       date: new Date(article.date),
       description: article.description,
-      author: article.authors,
-      category: article.category
+      category: [{
+        name: article.category
+      }]
+      // author: article.authors, INF0: Cannot work without an email field in the author object https://github.com/jpmonette/feed/issues/141
     })
   }
 

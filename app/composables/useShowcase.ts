@@ -3,21 +3,21 @@ import type { ShowcaseList, Filter, ShowcaseListGroupItem } from '../types'
 export const useShowcase = () => {
   const route = useRoute()
   const router = useRouter()
-  const showcaseList = useState<ShowcaseList>('showcase', () => null)
+  const showcaseList = useState<ShowcaseList | null>('showcase', () => null)
 
   const iconsMap = {
-    'Featured': 'i-uil-star',
-    'Awwwards': 'i-uil-award',
-    'Tech': 'i-uil-circuit',
-    'E-Commerce': 'i-uil-shopping-basket',
-    'News': 'i-uil-newspaper',
-    'Education': 'i-uil-graduation-cap',
-    'Government': 'i-uil-building',
-    'Entertainment': 'i-uil-dice-five',
-    'Travel': 'i-uil-plane',
-    'Finance': 'i-uil-dollar-alt',
-    'Business': 'i-uil-briefcase-alt',
-    'Sport': 'i-uil-basketball'
+    'Featured': 'i-lucide-star',
+    'Awwwards': 'i-lucide-award',
+    'Tech': 'i-lucide-circuit-board',
+    'E-Commerce': 'i-lucide-shopping-cart',
+    'News': 'i-lucide-newspaper',
+    'Education': 'i-lucide-graduation-cap',
+    'Government': 'i-lucide-building',
+    'Entertainment': 'i-lucide-dices',
+    'Travel': 'i-lucide-plane',
+    'Finance': 'i-lucide-dollar-sign',
+    'Business': 'i-lucide-briefcase',
+    'Sport': 'i-lucide-volleyball'
   }
 
   // Data fetching
@@ -47,7 +47,7 @@ export const useShowcase = () => {
       exactQuery: true,
       to: { name: 'showcase', query: group.name === 'Featured' ? undefined : { category: group.name }, state: { smooth: '#smooth' } },
       icon: iconsMap[group.name as keyof typeof iconsMap],
-      click: (e) => {
+      click: (e: Event) => {
         if (route.query.category !== group.name) {
           return
         }
