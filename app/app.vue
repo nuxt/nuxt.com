@@ -23,6 +23,9 @@ const { data: files } = useLazyAsyncData('search', () => {
   transform: data => data.flat()
 })
 
+const { fetchList } = useModules()
+onNuxtReady(() => fetchList())
+
 useHead({
   titleTemplate: title => title ? `${title} · Nuxt` : 'Nuxt: The Intuitive Web Framework',
   meta: [

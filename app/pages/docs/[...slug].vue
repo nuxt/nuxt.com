@@ -31,7 +31,7 @@ const asideNavigation = computed(() => {
   return navPageFromPath(path, navigation.value)?.children || []
 })
 
-const { headerLinks } = useNavigation()
+const { headerLinks } = useHeaderLinks()
 const links = computed(() => headerLinks.value.find(link => link.to === '/docs')?.children ?? [])
 
 const [{ data: page }, { data: surround }] = await Promise.all([

@@ -5,19 +5,28 @@ definePageMeta({
   heroBackground: '-z-10'
 })
 
-const { data: page } = await useAsyncData('index', () => queryCollection('index').first())
-
-const { fetchList, modules } = useModules()
-
-await fetchList()
-
-const officialModules = computed(() => {
-  return modules.value
-    .filter(module => module.type === 'official')
-    .sort((a, b) => b.stats.stars - a.stats.stars)
-})
-
-const { data: sponsors } = await useFetch('https://api.nuxt.com/sponsors', { key: 'sponsors' })
+const [{ data: page }, { data: officialModules }, { data: sponsorGroups }] = await Promise.all([
+  useAsyncData('index', () => queryCollection('index').first()),
+  useFetch<{ modules: Module[], stats: Stats }>('https://api.nuxt.com/modules', {
+    key: 'official-modules',
+    transform: res => res.modules
+      .filter(module => module.type === 'official')
+      .sort((a, b) => b.stats.stars - a.stats.stars)
+  }),
+  useFetch('https://api.nuxt.com/sponsors', {
+    key: 'top-sponsors',
+    transform: sponsors => Object.entries(sponsors)
+      .filter(([tier]) => ['diamond', 'platinum', 'gold'].includes(tier))
+      .map(([tier, sponsors]) => ({
+        tier,
+        sponsors: sponsors.map(s => ({
+          sponsorName: s.sponsorName,
+          sponsorLogo: s.sponsorLogo,
+          sponsorUrl: s.sponsorUrl
+        }))
+      }))
+  })
+])
 
 const stats = useStats()
 
@@ -25,16 +34,21 @@ const videoModalOpen = ref(false)
 
 const site = useSiteConfig()
 const title = 'Nuxt: The Progressive Web Framework'
-const description = 'Create high-quality web applications with Nuxt, the open source framework that makes full-stack development with Vue.js intuitive.'
 useSeoMeta({
   title,
-  ogTitle: title,
-  titleTemplate: '%s',
-  description: description,
-  ogDescription: description,
-  ogImage: joinURL(site.url, '/new-social.jpg'),
-  twitterImage: joinURL(site.url, '/new-social.jpg')
+  titleTemplate: '%s'
 })
+
+if (import.meta.server) {
+  const description = 'Create high-quality web applications with Nuxt, the open source framework that makes full-stack development with Vue.js intuitive.'
+  useSeoMeta({
+    ogTitle: title,
+    description: description,
+    ogDescription: description,
+    ogImage: joinURL(site.url, '/new-social.jpg'),
+    twitterImage: joinURL(site.url, '/new-social.jpg')
+  })
+}
 
 const tabs = computed(() => page.value?.hero.tabs.map(tab => ({
   label: tab.title,
@@ -534,40 +548,40 @@ onMounted(() => {
       }"
     >
       <div class="flex flex-col items-center">
-        <template v-for="([key, value]) of Object.entries(sponsors).filter(([k]) => ['diamond', 'platinum', 'gold'].includes(k))" :key="key">
+        <template v-for="({ tier, sponsors }) of sponsorGroups" :key="tier">
           <div class="w-full mb-24">
             <UBadge color="neutral" variant="subtle" class="capitalize mb-2">
-              {{ key }} sponsors
+              {{ tier }} sponsors
             </UBadge>
 
             <div class="w-full border border-(--ui-border) rounded-lg">
               <table class="w-full">
                 <tbody>
-                  <template v-for="(_, rowIndex) in Math.ceil(value.length / 3)" :key="rowIndex">
+                  <template v-for="(_, rowIndex) in Math.ceil(sponsors.length / 3)" :key="rowIndex">
                     <tr>
                       <template v-for="colIndex in 3" :key="colIndex">
                         <td
-                          v-if="(rowIndex * 3) + colIndex - 1 < value.length"
+                          v-if="(rowIndex * 3) + colIndex - 1 < sponsors.length"
                           class="border-b border-r border-(--ui-border) p-0 w-1/3 h-[120px]"
                           :class="{
                             'border-r-0': colIndex === 3,
-                            'border-b-0': rowIndex === Math.ceil(value.length / 3) - 1
+                            'border-b-0': rowIndex === Math.ceil(sponsors.length / 3) - 1
                           }"
                         >
                           <NuxtLink
-                            :to="value[(rowIndex * 3) + colIndex - 1].sponsorUrl"
+                            :to="sponsors[(rowIndex * 3) + colIndex - 1].sponsorUrl"
                             target="_blank"
                             class="flex items-center gap-2 justify-center h-full hover:bg-(--ui-bg-muted)/50 transition-colors"
                           >
                             <NuxtImg
-                              :src="value[(rowIndex * 3) + colIndex - 1].sponsorLogo"
-                              :alt="`${value[(rowIndex * 3) + colIndex - 1].sponsorName} logo`"
+                              :src="sponsors[(rowIndex * 3) + colIndex - 1].sponsorLogo"
+                              :alt="`${sponsors[(rowIndex * 3) + colIndex - 1].sponsorName} logo`"
                               loading="lazy"
                               class="h-10 max-w-[140px] object-contain rounded-[calc(var(--ui-radius)*2)]"
                               height="40"
                               width="40"
                             />
-                            <span class="text-base hidden sm:block font-semibold">{{ value[(rowIndex * 3) + colIndex - 1].sponsorName }}</span>
+                            <span class="text-base hidden sm:block font-semibold">{{ sponsors[(rowIndex * 3) + colIndex - 1].sponsorName }}</span>
                           </NuxtLink>
                         </td>
                         <td
@@ -575,7 +589,7 @@ onMounted(() => {
                           class="border-b border-r border-(--ui-border) p-0 w-1/3 h-[120px]"
                           :class="{
                             'border-r-0': colIndex === 3,
-                            'border-b-0': rowIndex === Math.ceil(value.length / 3) - 1
+                            'border-b-0': rowIndex === Math.ceil(sponsors.length / 3) - 1
                           }"
                         >
                           <div class="h-full" />
