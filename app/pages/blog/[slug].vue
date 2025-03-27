@@ -8,16 +8,18 @@ definePageMeta({
 const route = useRoute()
 const { copy } = useClipboard()
 
-const { data: article } = await useAsyncData(kebabCase(route.path), () => queryCollection('blog').path(route.path).first())
+const [{ data: article }, { data: surround }] = await Promise.all([
+  useAsyncData(kebabCase(route.path), () => queryCollection('blog').path(route.path).first()),
+  useAsyncData(`${kebabCase(route.path)}-surround`, () => {
+    return queryCollectionItemSurroundings('blog', route.path, {
+      fields: ['description']
+    }).order('date', 'DESC')
+  })
+])
+
 if (!article.value) {
   throw createError({ statusCode: 404, statusMessage: 'Article not found', fatal: true })
 }
-
-const { data: surround } = await useAsyncData(`${kebabCase(route.path)}-surround`, () => {
-  return queryCollectionItemSurroundings('blog', route.path, {
-    fields: ['description']
-  }).order('date', 'DESC')
-})
 
 const title = article.value.seo?.title || article.value.title
 const description = article.value.seo?.description || article.value.description

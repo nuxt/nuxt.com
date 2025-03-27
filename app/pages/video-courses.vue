@@ -2,12 +2,14 @@
 definePageMeta({
   heroBackground: 'opacity-80 -z-10'
 })
-const { data: page } = await useAsyncData('video-courses-landing', () => queryCollection('landing').path('/video-courses').first())
+const [{ data: page }, { data: courses }] = await Promise.all([
+  useAsyncData('video-courses-landing', () => queryCollection('landing').path('/video-courses').first()),
+  useAsyncData('video-courses', () => queryCollection('videoCourses').all())
+])
+
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
-
-const { data: courses } = await useAsyncData('video-courses', () => queryCollection('videoCourses').all())
 
 const title = page.value.title
 const description = page.value.description

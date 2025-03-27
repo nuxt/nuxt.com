@@ -5,7 +5,26 @@ const route = useRoute()
 definePageMeta({
   heroBackground: 'opacity-70 -z-10'
 })
-const { data: page } = await useAsyncData(kebabCase(route.path), () => queryCollection('team').first())
+
+const [{ data: page }, { data: teams }] = await Promise.all([
+  useAsyncData(kebabCase(route.path), () => queryCollection('team').first()),
+  useFetch('/api/teams', {
+    key: 'teams',
+    default: () => ({ core: [], ecosystem: [] }),
+    transform: data => [
+      {
+        name: 'Core Team',
+        team: data.core,
+        link: 'https://github.com/orgs/nuxt/teams/core'
+      },
+      {
+        name: 'Ecosystem Team',
+        team: data.ecosystem,
+        link: 'https://github.com/orgs/nuxt/teams/ecosystem'
+      }
+    ]
+  })
+])
 
 const title = page.value!.title
 const description = page.value!.description
@@ -33,20 +52,6 @@ const icons = {
   bluesky: 'i-simple-icons-bluesky',
   github: 'i-simple-icons-github'
 }
-
-const { data } = await useFetch('/api/teams', { key: 'teams', default: () => ({ core: [], ecosystem: [] }) })
-const teams = [
-  {
-    name: 'Core Team',
-    team: data.value.core,
-    link: 'https://github.com/orgs/nuxt/teams/core'
-  },
-  {
-    name: 'Ecosystem Team',
-    team: data.value.ecosystem,
-    link: 'https://github.com/orgs/nuxt/teams/ecosystem'
-  }
-]
 </script>
 
 <template>

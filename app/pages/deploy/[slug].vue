@@ -5,18 +5,19 @@ definePageMeta({
   heroBackground: 'opacity-30 -z-10'
 })
 const route = useRoute()
-const { slug } = route.params
 
-const { data: provider } = await useAsyncData(`${kebabCase(route.path)}-provider`, () => queryCollection('deploy').path(route.path).first())
+const [{ data: provider }, { data: surround }] = await Promise.all([
+  useAsyncData(`${kebabCase(route.path)}-provider`, () => queryCollection('deploy').path(route.path).first()),
+  useAsyncData(`${kebabCase(route.path)}-surround`, () => {
+    return queryCollectionItemSurroundings('deploy', route.path, {
+      fields: ['description']
+    })
+  })
+])
+
 if (!provider.value) {
   throw createError({ statusCode: 404, statusMessage: 'Hosting Platform not found', fatal: true })
 }
-
-const { data: surround } = await useAsyncData(`${kebabCase(route.path)}-surround`, () => {
-  return queryCollectionItemSurroundings('deploy', route.path, {
-    fields: ['description']
-  })
-})
 
 const title = provider.value?.title
 const description = provider.value?.description
@@ -61,7 +62,7 @@ if (provider.value?.nitroPreset) {
 links.push({
   icon: 'i-lucide-pen',
   label: 'Edit this page',
-  to: `https://github.com/nuxt/nuxt.com/edit/main/content/3.deploy/${slug}.md`,
+  to: `https://github.com/nuxt/nuxt.com/edit/main/content/3.deploy/${route.params.slug}.md`,
   target: '_blank'
 })
 </script>

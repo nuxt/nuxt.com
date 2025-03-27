@@ -3,12 +3,14 @@ definePageMeta({
   heroBackground: 'opacity-80 -z-10'
 })
 
-const { data: page } = await useAsyncData('sponsors-landing', () => queryCollection('landing').path('/enterprise/sponsors').first())
+const [{ data: page }, { data: sponsors }] = await Promise.all([
+  useAsyncData('sponsors-landing', () => queryCollection('landing').path('/enterprise/sponsors').first()),
+  useFetch('https://api.nuxt.com/sponsors', { key: 'sponsors' })
+])
+
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
-
-const { data: sponsors } = await useFetch('https://api.nuxt.com/sponsors', { key: 'sponsors' })
 
 const title = page.value.title
 const description = page.value.description
