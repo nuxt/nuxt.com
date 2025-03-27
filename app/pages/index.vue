@@ -183,7 +183,7 @@ onMounted(() => {
           }"
         >
           <template v-for="(tab, index) of tabs" :key="index" #[tab.slot]="{ item }">
-            <LazyMDC :value="item.content" class="//" :cache-key="`index-hero-tab-${index}`" hydrate-on-idle />
+            <LazyMDC :value="item.content" :cache-key="`index-hero-tab-${index}`" hydrate-on-idle />
           </template>
         </UTabs>
       </UPageCard>
