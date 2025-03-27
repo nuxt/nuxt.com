@@ -13,17 +13,6 @@ const navigation = inject<Ref<ContentNavigationItem[]>>('navigation', ref([]))
 
 const route = useRoute()
 const nuxtApp = useNuxtApp()
-if (import.meta.client) {
-  const unsub = nuxtApp.hook('page:loading:end', () => {
-    nextTick(() => {
-      if (route.hash) {
-        return window?.scrollTo(route.hash)
-      }
-      window?.scrollTo(0, 0)
-    })
-  })
-  onBeforeUnmount(unsub)
-}
 
 const asideNavigation = computed(() => {
   const path = ['/docs', route.params.slug?.[0]].filter(Boolean).join('/')
@@ -44,7 +33,7 @@ function paintResponse() {
   })
 }
 
-const [{ data: page }, { data: surround }] = await Promise.all([
+const [{ data: page, status }, { data: surround }] = await Promise.all([
   useAsyncData(kebabCase(route.path), () => paintResponse().then(() => nuxtApp.static[kebabCase(route.path)] ?? queryCollection('docs').path(route.path).first()), {
     watch: [() => route.path]
   }),
@@ -52,6 +41,14 @@ const [{ data: page }, { data: surround }] = await Promise.all([
     fields: ['description']
   })), { watch: [() => route.path] })
 ])
+
+watch(status, (status) => {
+  if (status === 'pending') {
+    nuxtApp.hooks.callHook('page:loading:start')
+  } else if (status === 'success' || status === 'error') {
+    nuxtApp.hooks.callHook('page:loading:end')
+  }
+})
 
 watch(page, (page) => {
   if (!page) {
