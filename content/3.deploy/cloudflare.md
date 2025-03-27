@@ -18,7 +18,7 @@ Integration with Cloudflare Pages is possible with zero configuration, [learn mo
 Cloudflare Workers supports [static assets](https://developers.cloudflare.com/workers/static-assets/), making it easy to deploy a Nuxt application. You can learn more about it on the [Cloudflare documentation](https://developers.cloudflare.com/workers/frameworks/framework-guides/nuxt/).
 
 ::note
-You must set a compatibility date to `2024-09-19` or later in both `nuxt.config.ts` and `wrangler.toml`.
+You must set a compatibility date to `2024-09-19` or later in both `nuxt.config.ts` and `wrangler.toml`/`wrangler.json`.
 Checkout the [Nitro documentation](https://nitro.build/deploy/providers/cloudflare#cloudflare-module-workers) for the `cloudflare_module` preset.
 :: 
 
