@@ -14,6 +14,8 @@ const navigation = inject<Ref<ContentNavigationItem[]>>('navigation', ref([]))
 const route = useRoute()
 const nuxtApp = useNuxtApp()
 
+const path = computed(() => route.path.replace(/\/$/, ''))
+
 const asideNavigation = computed(() => {
   const path = ['/docs', route.params.slug?.[0]].filter(Boolean).join('/')
 
@@ -34,12 +36,12 @@ function paintResponse() {
 }
 
 const [{ data: page, status }, { data: surround }] = await Promise.all([
-  useAsyncData(kebabCase(route.path), () => paintResponse().then(() => nuxtApp.static[kebabCase(route.path)] ?? queryCollection('docs').path(route.path).first()), {
-    watch: [() => route.path]
+  useAsyncData(kebabCase(path.value), () => paintResponse().then(() => nuxtApp.static[kebabCase(path.value)] ?? queryCollection('docs').path(path.value).first()), {
+    watch: [path]
   }),
-  useAsyncData(`${kebabCase(route.path)}-surround`, () => paintResponse().then(() => nuxtApp.static[`${kebabCase(route.path)}-surround`] ?? queryCollectionItemSurroundings('docs', route.path, {
+  useAsyncData(`${kebabCase(path.value)}-surround`, () => paintResponse().then(() => nuxtApp.static[`${kebabCase(path.value)}-surround`] ?? queryCollectionItemSurroundings('docs', path.value, {
     fields: ['description']
-  })), { watch: [() => route.path] })
+  })), { watch: [path] })
 ])
 
 watch(status, (status) => {
@@ -62,7 +64,7 @@ const breadcrumb = computed(() => {
     to: link.to
   }))
 
-  if (route.path.startsWith('/docs/bridge') || route.path.startsWith('/docs/migration')) {
+  if (path.value.startsWith('/docs/bridge') || path.value.startsWith('/docs/migration')) {
     links.splice(1, 0, {
       label: 'Upgrade Guide',
       to: '/docs/getting-started/upgrade'
