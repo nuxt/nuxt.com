@@ -9,6 +9,11 @@ overrides:
   vue-tsc: 2.2.2
   '@nuxtjs/mdc': https://pkg.pr.new/@nuxtjs/mdc@363
 
+patchedDependencies:
+  '@nuxt/content':
+    hash: 87785a9b1fbf4e01ba1aed858dd4bc7000490dcd6210e273c3a1a64c6f2ddb6f
+    path: patches/@nuxt__content.patch
+
 importers:
 
   .:
@@ -30,7 +35,7 @@ importers:
         version: 1.2.29
       '@nuxt/content':
         specifier: https://pkg.pr.new/@nuxt/content@ef50925
-        version: https://pkg.pr.new/@nuxt/content@ef50925(magicast@0.3.5)(typescript@5.8.2)
+        version: https://pkg.pr.new/@nuxt/content@ef50925(patch_hash=87785a9b1fbf4e01ba1aed858dd4bc7000490dcd6210e273c3a1a64c6f2ddb6f)(magicast@0.3.5)(typescript@5.8.2)
       '@nuxt/image':
         specifier: ^1.10.0
         version: 1.10.0(db0@0.3.1(better-sqlite3@11.9.1))(ioredis@5.6.0)(magicast@0.3.5)
@@ -7418,7 +7423,7 @@ snapshots:
     transitivePeerDependencies:
       - magicast
 
-  '@nuxt/content@https://pkg.pr.new/@nuxt/content@ef50925(magicast@0.3.5)(typescript@5.8.2)':
+  '@nuxt/content@https://pkg.pr.new/@nuxt/content@ef50925(patch_hash=87785a9b1fbf4e01ba1aed858dd4bc7000490dcd6210e273c3a1a64c6f2ddb6f)(magicast@0.3.5)(typescript@5.8.2)':
     dependencies:
       '@nuxt/kit': 3.16.1(magicast@0.3.5)
       '@nuxtjs/mdc': https://pkg.pr.new/@nuxtjs/mdc@363(magicast@0.3.5)

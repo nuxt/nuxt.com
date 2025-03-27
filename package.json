@@ -71,6 +71,9 @@
       "@parcel/watcher",
       "puppeteer",
       "vue-demi"
-    ]
+    ],
+    "patchedDependencies": {
+      "@nuxt/content": "patches/@nuxt__content.patch"
+    }
   }
 }
