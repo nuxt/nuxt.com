@@ -68,6 +68,10 @@ If you need to add [Cloudflare Workers configuration](https://developers.cloudfl
     wrangler deploy
     ```
 
+::tip 
+While developing your project with `nuxi dev`, [nitro-cloudflare-dev](https://github.com/nitrojs/nitro-cloudflare-dev) will provide access to local simulators of Cloudflare bindings. It is an experimental module.
+You can use it by adding `modules: ["nitro-cloudflare-dev"]` to your nuxt config.
+::
 ### Automatic Deploy With Git
 
 If you're using GitHub or GitLab, Cloudflare workers has an integration to automatically deploy your project. 
