@@ -9,6 +9,12 @@ website: 'https://pages.cloudflare.com/'
 
 ## Cloudflare Workers
 
+::tip
+**Zero Configuration ✨**
+:br
+Integration with Cloudflare Pages is possible with zero configuration, [learn more](https://nitro.unjs.io/deploy#zero-config-providers).
+::
+
 Cloudflare Workers supports [static assets](https://developers.cloudflare.com/workers/static-assets/), making it easy to deploy a Nuxt application. You can learn more about it on the [Cloudflare documentation](https://developers.cloudflare.com/workers/frameworks/framework-guides/nuxt/).
 
 ::note
@@ -33,19 +39,20 @@ export default defineNuxtConfig({
 });
 ```
 
-This approach is recommend as it will generate a properly configured minimal `wangler.jsonc` for you. If you need to add Cloudflare settings, provide your own `wrangler.jsonc` and it will be merged with the correct Nitro options.
-For advanced use cases, if you want manual control over the cloudflare settings, set `nodeCompat` and `deployConfig` to false and manually provide your own `wrangler.jsonc` with the appropriate configuration :
+By setting `deployConfig: true`, Nitro will automatically generate a `wrangler.json` that points to the correct build outputs.
+If you need to add [Cloudflare Workers configuration](https://developers.cloudflare.com/workers/wrangler/configuration/), such as bindings, you can either:
+
+- Set these in your Nuxt config under the `cloudflare: {wrangler : ... }` key. This has the same type as `wrangler.json`.
+- Provide your own `wrangler.jsonc`. Nitro will automatically set the `main` and `assets.directory` keys to the correct build output.
 
 ```json [wrangler.jsonc]
 {
 	"$schema": "https://unpkg.com/wrangler@latest/config-schema.json",
-	"compatibility_date": "2025-01-16", 
-  "compatibility_flags": ["nodejs_compat"],
-	"main": "./.output/server/index.mjs",
-	"assets": {
-		"directory": "./.output/public/",
-		"binding": "ASSETS"
-	}
+  // Add your workers configuration here.
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 0.1
+  }
 }
 ```
 
