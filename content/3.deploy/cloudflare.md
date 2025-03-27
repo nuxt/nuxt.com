@@ -55,7 +55,7 @@ For advanced use cases, if you want manual control over the cloudflare settings,
     npx nuxi build --preset=cloudflare_module
     ```
 
-3. Deploy, it will ask you to create a project for the first time:
+3. Deploy with Wrangler:
 
     ```bash [Terminal]
     wrangler deploy
