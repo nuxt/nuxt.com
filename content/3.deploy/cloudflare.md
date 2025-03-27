@@ -22,7 +22,7 @@ Cloudflare Static Assets is in Beta.
 
 ### Deploy With Wrangler
 
-You can use [wrangler](https://github.com/cloudflare/workers-sdk) to deploy your project to Cloudflare.
+You can use [Wrangler](https://github.com/cloudflare/workers-sdk/tree/main/packages/wrangler) to deploy your project to Cloudflare.
 
 1. Configure Nitro in `nuxt.config.ts` with the following configuration :
 
