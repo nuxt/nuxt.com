@@ -452,12 +452,12 @@ onMounted(() => {
         :items="officialModules"
         class="min-w-0"
         :ui="{
-          container: 'ms-0',
+          container: 'ms-0 items-stretch',
           item: 'min-w-0 shrink-0 sm:basis-1/3 p-2',
           arrows: 'hidden 2xl:block'
         }"
       >
-        <ModuleItem :module="item" :show-badge="false" class="min-h-[180px]" />
+        <ModuleItem :module="item" :show-badge="false" class="min-h-full" />
       </UCarousel>
     </UPageSection>
 
