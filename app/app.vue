@@ -78,13 +78,13 @@ onMounted(() => {
 
     <UBanner
       id="mastering-nuxt-2025-early-bird"
-      title="Mastering Nuxt: Full Stack Unleashed - 24H Early Bird available"
+      title="Mastering Nuxt: Full Stack Unleashed - Launch Specials Available"
       icon="i-lucide-school"
       to="https://masteringnuxt.com/2025?utm_source=nuxt-website&utm_medium=banner"
       close
       :actions="[
         {
-          label: 'Get offer',
+          label: 'View Course',
           color: 'neutral',
           variant: 'outline',
           trailingIcon: 'i-lucide-arrow-right',
