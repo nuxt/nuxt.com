@@ -10,13 +10,13 @@ defineProps<{
   <div class="size-full flex flex-col justify-between bg-[#020420] py-8">
     <div />
     <div class="mx-auto max-w-[900px]">
-      <p v-if="headline" class="uppercase flex justify-center text-[24px] text-[#00DC82] mb-2 font-semibold">
+      <p v-if="headline" class="flex justify-center text-[24px] text-[#00DC82] mb-2 font-semibold">
         {{ headline }}
       </p>
       <h1 class="flex justify-center m-0 text-[75px] font-semibold mb-2 text-white">
         {{ title }}
       </h1>
-      <p v-if="description" class="text-[32px] text-center text-[#B6B6B6] leading-tight">
+      <p v-if="description" class="text-[32px] text-center text-[#B6B6B6]">
         {{ description.slice(0, 200) }}
       </p>
     </div>
