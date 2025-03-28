@@ -8,6 +8,7 @@ defineProps<{
 
 <template>
   <div class="size-full flex flex-col justify-between bg-[#020420] py-8">
+    <img src="/assets/og-bg.jpg" class="absolute inset-0 opacity-70" alt="open-graph image background">
     <div />
     <div class="mx-auto max-w-[900px]">
       <p v-if="headline" class="flex justify-center text-[24px] text-[#00DC82] mb-2 font-semibold">
