@@ -206,7 +206,6 @@ export default defineContentConfig({
         { include: 'modules.yml' },
         { include: 'deploy.yml' },
         { include: 'templates.yml' },
-        { include: 'showcase.yml' },
         { include: 'video-courses.yml' },
         { include: 'enterprise/sponsors.yml' },
         { include: 'enterprise/agencies.yml' },
@@ -342,7 +341,7 @@ export default defineContentConfig({
     showcase: defineCollection({
       type: 'data',
       source: 'showcase.yml',
-      schema: z.object({
+      schema: BaseSection.extend({
         groups: z.array(z.object({
           name: z.string(),
           icon: z.string(),

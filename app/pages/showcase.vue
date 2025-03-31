@@ -3,7 +3,7 @@ definePageMeta({
   heroBackground: 'opacity-80 -z-10'
 })
 
-const { data: page } = await useAsyncData('showcase-landing', () => queryCollection('landing').path('/showcase').first())
+const { data: page } = await useAsyncData('showcase', () => queryCollection('showcase').first())
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }

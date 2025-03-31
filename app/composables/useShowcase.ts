@@ -4,7 +4,6 @@ export const useShowcase = () => {
   const route = useRoute()
   const router = useRouter()
   const showcaseList = useState<ShowcaseList | null>('showcase', () => null)
-
   // Data fetching
 
   async function fetchList() {
