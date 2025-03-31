@@ -116,6 +116,16 @@ const Template = z.object({
   }).optional()
 })
 
+const ShowcaseItem = z.object({
+  name: z.string().optional(),
+  url: z.string().optional(),
+  hostname: z.string().optional(),
+  screenshotUrl: z.string().optional(),
+  screenshotOptions: z.object({
+    delay: z.number()
+  }).optional()
+})
+
 export default defineContentConfig({
   collections: {
     index: defineCollection({
@@ -328,6 +338,17 @@ export default defineContentConfig({
       type: 'data',
       source: 'templates/*',
       schema: Template
+    }),
+    showcase: defineCollection({
+      type: 'data',
+      source: 'showcase.yml',
+      schema: z.object({
+        groups: z.array(z.object({
+          name: z.string(),
+          icon: z.string(),
+          showcases: z.array(ShowcaseItem)
+        }))
+      })
     }),
     videoCourses: defineCollection({
       type: 'data',

@@ -5,21 +5,6 @@ export const useShowcase = () => {
   const router = useRouter()
   const showcaseList = useState<ShowcaseList | null>('showcase', () => null)
 
-  const iconsMap = {
-    'Featured': 'i-lucide-star',
-    'Awwwards': 'i-lucide-award',
-    'Tech': 'i-lucide-circuit-board',
-    'E-Commerce': 'i-lucide-shopping-cart',
-    'News': 'i-lucide-newspaper',
-    'Education': 'i-lucide-graduation-cap',
-    'Government': 'i-lucide-building',
-    'Entertainment': 'i-lucide-dices',
-    'Travel': 'i-lucide-plane',
-    'Finance': 'i-lucide-dollar-sign',
-    'Business': 'i-lucide-briefcase',
-    'Sport': 'i-lucide-volleyball'
-  }
-
   // Data fetching
 
   async function fetchList() {
@@ -27,13 +12,13 @@ export const useShowcase = () => {
       return
     }
 
-    const res = await $fetch<ShowcaseList>('https://api.nuxt.com/showcase')
+    const res = await useAsyncData('showcase', () => queryCollection('showcase').first())
 
     // ensure groups & showcases are well sorted
-    res?.groups?.sort((a, b) => Number(a.position) - Number(b.position))
+    /* res?.groups?.sort((a, b) => Number(a.position) - Number(b.position))
     res?.groups?.forEach((group) => {
       group.showcases.sort((a, b) => Number(a.position) - Number(b.position))
-    })
+    }) */
 
     showcaseList.value = res
   }
@@ -41,12 +26,12 @@ export const useShowcase = () => {
   // Lists
   const categories = computed<Filter[]>(() => {
     return showcaseList.value?.groups?.map(group => ({
-      key: group.id,
+      key: group.name,
       label: group.name,
       exact: true,
       exactQuery: true,
       to: { name: 'showcase', query: group.name === 'Featured' ? undefined : { category: group.name }, state: { smooth: '#smooth' } },
-      icon: iconsMap[group.name as keyof typeof iconsMap],
+      icon: group.icon,
       click: (e: Event) => {
         if (route.query.category !== group.name) {
           return
