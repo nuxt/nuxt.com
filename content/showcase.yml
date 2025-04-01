@@ -117,21 +117,6 @@ groups:
       - url: https://barefootdreams.com:/products/cozychic-lite-circle-cardi
         hostname: barefootdreams.com
         screenshotUrl: vue-telemetry/c8d945173640402fee238a161d952cb4.jpg
-  - name: News
-    icon: i-lucide-newspaper
-    showcases:
-      - url: https://caravanmagazine.in/
-        hostname: caravanmagazine.in
-        screenshotUrl: vue-telemetry/6adef83a8e5be73beb7a9e70154697c0.jpg
-      - url: https://www.thehindu.com/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-  - name: Government
-    icon: i-lucide-building
-    showcases:
-      - url: https://covidtracker.gov.ie/
-        hostname: covidtracker.gov.ie
-        screenshotUrl: vue-telemetry/b0484a3ae482fdef8920b870b3ffccf2.jpg
   - name: Sport
     icon: i-lucide-volleyball
     showcases:
@@ -168,24 +153,6 @@ groups:
       - url: https://barefootdreams.com:/products/cozychic-lite-circle-cardi
         hostname: barefootdreams.com
         screenshotUrl: vue-telemetry/c8d945173640402fee238a161d952cb4.jpg
-  - name: News
-    icon: i-lucide-newspaper
-    showcases:
-      - url: https://caravanmagazine.in/
-        hostname: caravanmagazine.in
-        screenshotUrl: vue-telemetry/6adef83a8e5be73beb7a9e70154697c0.jpg
-      - url: https://www.thehindu.com/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-  - name: Government
-    icon: i-lucide-building
-    showcases:
-      - url: https://covidtracker.gov.ie/
-        hostname: covidtracker.gov.ie
-        screenshotUrl: vue-telemetry/b0484a3ae482fdef8920b870b3ffccf2.jpg
-  - name: Sport
-    icon: i-lucide-volleyball
-    showcases:
       - url: https://lequipe.fr/
         hostname: lequipe.fr
         screenshotUrl: vue-telemetry/2bbfa96411be1cd604d39f549475ef27.jpg
@@ -411,24 +378,6 @@ groups:
       - url: https://barefootdreams.com:/products/cozychic-lite-circle-cardi
         hostname: barefootdreams.com
         screenshotUrl: vue-telemetry/c8d945173640402fee238a161d952cb4.jpg
-  - name: News
-    icon: i-lucide-newspaper
-    showcases:
-      - url: https://caravanmagazine.in/
-        hostname: caravanmagazine.in
-        screenshotUrl: vue-telemetry/6adef83a8e5be73beb7a9e70154697c0.jpg
-      - url: https://www.thehindu.com/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-  - name: Government
-    icon: i-lucide-building
-    showcases:
-      - url: https://covidtracker.gov.ie/
-        hostname: covidtracker.gov.ie
-        screenshotUrl: vue-telemetry/b0484a3ae482fdef8920b870b3ffccf2.jpg
-  - name: Sport
-    icon: i-lucide-volleyball
-    showcases:
       - url: https://lequipe.fr/
         hostname: lequipe.fr
         screenshotUrl: vue-telemetry/2bbfa96411be1cd604d39f549475ef27.jpg
@@ -528,6 +477,15 @@ groups:
       - url: https://marblesofmumbles.com:/
         hostname: marblesofmumbles.com
         screenshotUrl: vue-telemetry/89c7731f5e1ca605e24f5180156d52ff.jpg
+      - url: https://lequipe.fr:/
+        hostname: lequipe.fr
+        screenshotUrl: vue-telemetry/2bbfa96411be1cd604d39f549475ef27.jpg
+      - url: https://niuaero.niu.com:/
+        hostname: niuaero.niu.com
+        screenshotUrl: vue-telemetry/83de2b96bd872c9932a73bb06b2efceb.jpg
+      - url: https://rolandgarros.com:/
+        hostname: rolandgarros.com
+        screenshotUrl: vue-telemetry/5c97ad1abec476c4c08941c6849ee1e3.jpg
   - name: News
     icon: i-lucide-newspaper
     showcases:
@@ -573,9 +531,33 @@ groups:
       - url: https://gothamist.com:/
         hostname: gothamist.com
         screenshotUrl: vue-telemetry/23c5cb9aa83e1c14353c71b2104fd003.jpg
+      - url: https://caravanmagazine.in/
+        hostname: caravanmagazine.in
+        screenshotUrl: vue-telemetry/6adef83a8e5be73beb7a9e70154697c0.jpg
+      - url: https://www.thehindu.com/
+        hostname: www.thehindu.com
+        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
+      - url: https://caravanmagazine.in/
+        hostname: caravanmagazine.in
+        screenshotUrl: vue-telemetry/6adef83a8e5be73beb7a9e70154697c0.jpg
+      - url: https://www.thehindu.com/
+        hostname: www.thehindu.com
+        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
+      - url: https://caravanmagazine.in/
+        hostname: caravanmagazine.in
+        screenshotUrl: vue-telemetry/6adef83a8e5be73beb7a9e70154697c0.jpg
+      - url: https://www.thehindu.com/
+        hostname: www.thehindu.com
+        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
   - name: Government
     icon: i-lucide-building
     showcases:
+      - url: https://covidtracker.gov.ie/
+        hostname: covidtracker.gov.ie
+        screenshotUrl: vue-telemetry/b0484a3ae482fdef8920b870b3ffccf2.jpg
+      - url: https://covidtracker.gov.ie/
+        hostname: covidtracker.gov.ie
+        screenshotUrl: vue-telemetry/b0484a3ae482fdef8920b870b3ffccf2.jpg
       - url: https://covidtracker.gov.ie/
         hostname: covidtracker.gov.ie
         screenshotUrl: vue-telemetry/b0484a3ae482fdef8920b870b3ffccf2.jpg
@@ -630,18 +612,6 @@ groups:
       - url: https://const-court.be:/
         hostname: const-court.be
         screenshotUrl: vue-telemetry/4e7497716afbcfb68c4539593bfd5a13.jpg
-  - name: Sport
-    icon: i-lucide-volleyball
-    showcases:
-      - url: https://lequipe.fr:/
-        hostname: lequipe.fr
-        screenshotUrl: vue-telemetry/2bbfa96411be1cd604d39f549475ef27.jpg
-      - url: https://niuaero.niu.com:/
-        hostname: niuaero.niu.com
-        screenshotUrl: vue-telemetry/83de2b96bd872c9932a73bb06b2efceb.jpg
-      - url: https://rolandgarros.com:/
-        hostname: rolandgarros.com
-        screenshotUrl: vue-telemetry/5c97ad1abec476c4c08941c6849ee1e3.jpg
   - name: Education
     icon: i-lucide-graduation-cap
     showcases:
