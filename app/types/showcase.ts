@@ -9,7 +9,6 @@ export interface ShowcaseListGroupItem {
 }
 
 export interface ShowcaseListGroup {
-  id: number
   name: string
   icon: string
   showcases: ShowcaseListGroupItem[]

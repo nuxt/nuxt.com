@@ -342,6 +342,10 @@ export default defineContentConfig({
       type: 'data',
       source: 'showcase.yml',
       schema: BaseSection.extend({
+        head: z.object({
+          title: z.string().optional(),
+          description: z.string().optional()
+        }).optional(),
         groups: z.array(z.object({
           name: z.string(),
           icon: z.string(),

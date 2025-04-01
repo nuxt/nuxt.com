@@ -11,7 +11,7 @@ export const useShowcase = () => {
       return
     }
 
-    const res = await useAsyncData('showcase', () => queryCollection('showcase').first())
+    const { data } = await useAsyncData('showcase', () => queryCollection('showcase').first())
 
     // ensure groups & showcases are well sorted
     /* res?.groups?.sort((a, b) => Number(a.position) - Number(b.position))
@@ -19,7 +19,7 @@ export const useShowcase = () => {
       group.showcases.sort((a, b) => Number(a.position) - Number(b.position))
     }) */
 
-    showcaseList.value = res
+    showcaseList.value = data.value
   }
 
   // Lists
@@ -48,14 +48,14 @@ export const useShowcase = () => {
   })
 
   const selectedShowcases = computed<ShowcaseListGroupItem[]>(() => {
-    const ids = new Set<number>()
+    const ids = new Set<string>()
     return showcaseList.value?.groups
       ?.filter((group, index) => (!selectedCategory.value && index === 0) || group.name === selectedCategory.value?.label)
       ?.flatMap((group) => {
-        if (ids.has(group.id)) {
+        if (ids.has(group.name)) {
           return []
         }
-        ids.add(group.id)
+        ids.add(group.name)
         return group.showcases
       }) ?? []
   })
