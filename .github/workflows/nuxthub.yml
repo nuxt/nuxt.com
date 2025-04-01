@@ -35,6 +35,7 @@ jobs:
         env:
           NUXT_UI_PRO_LICENSE: ${{ secrets.NUXT_UI_PRO_LICENSE }}
           NUXT_CONTENT_PREVIEW_STAGING_API: https://dev-api.nuxt.studio
+          NUXT_SITE_URL: https://nuxt.com
 
       - name: Deploy to NuxtHub
         uses: nuxt-hub/action@v1
