@@ -1,4 +1,4 @@
-const validTeams = ['ecosystem', 'core']
+const validTeams = ['ecosystem', 'core', 'ui']
 export default cachedEventHandler(async (event) => {
   const contributors = await $fetch('/contributors')
   const teamName = getRouterParam(event, 'slug')
