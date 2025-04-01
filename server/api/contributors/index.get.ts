@@ -2,7 +2,8 @@ import type { VoltaContributor } from '~/server/utils/volta'
 
 const BOTS = ['codecov-io', 'codecov-commenter']
 const RENAMED_CONTRIBUTORS: Record<string, string> = {
-  mannil: 'TheAlexLichter'
+  'mannil': 'TheAlexLichter',
+  'delta-mind-phofmann': 'patrick-hofmann'
 }
 
 export default cachedEventHandler(async (event) => {
