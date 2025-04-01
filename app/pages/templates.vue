@@ -2,15 +2,17 @@
 definePageMeta({
   heroBackground: 'opacity-80 -z-10'
 })
-const { data: page } = await useAsyncData('templates-landing', () => queryCollection('landing').path('/templates').first())
+const [{ data: page }, { data: templates }] = await Promise.all([
+  useAsyncData('templates-landing', () => queryCollection('landing').path('/templates').first()),
+  useAsyncData('templates', () => queryCollection('templates').all())
+])
+
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
 const title = page.value.title
 const description = page.value.description
-
-const { data: templates } = await useAsyncData('templates', () => queryCollection('templates').all())
 
 const featuredTemplates = computed(() => templates.value?.filter(template => template.featured) || [])
 const baseTemplates = computed(() => templates.value?.filter(template => !template.featured) || [])
@@ -23,6 +25,7 @@ useSeoMeta({
   ogTitle: title
 })
 defineOgImageComponent('Docs', {
+  headline: 'Resources',
   title,
   description
 })

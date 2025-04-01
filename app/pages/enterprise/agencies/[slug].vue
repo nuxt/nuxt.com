@@ -51,7 +51,7 @@ defineOgImageComponent('Docs', {
 
       <template #title>
         <div class="flex items-center gap-4">
-          <UColorModeAvatar :light="agency.logo.light" :dark="agency.logo.dark" size="lg" class="-m-[4px] rounded-none bg-transparent" />
+          <UColorModeAvatar :light="agency.logo.light" :dark="agency.logo.dark" size="lg" class="-m-[4px] rounded-none bg-transparent" :alt="`${agency.title} logo`" />
 
           <span>{{ agency.title }}</span>
         </div>

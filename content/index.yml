@@ -18,7 +18,7 @@ hero:
         <template>
           <h1>
             Hello Nuxt {{ version }}!
-          </div>
+          </h1>
         </template>
 
         <style scoped>
@@ -115,7 +115,7 @@ hero:
 
         ```vue [pages/index.vue]
         <script setup lang="ts">
-        const { data } = await useFetch('/api/cms/home')
+        const { data: page } = await useFetch('/api/cms/home')
         </script>
 
         <template>

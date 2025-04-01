@@ -7,9 +7,36 @@ nitroPreset: 'firebase'
 website: 'https://firebase.google.com/'
 ---
 
-## Firebase Functions
+## Firebase App Hosting (recommended)
 
-To use the more recent and recommended generation of firebase functions, set the `firebase.gen` option to `2`:
+::note
+You will need to be on the [**Blaze plan**](https://firebase.google.com/pricing) (Pay as you go) to get started.
+::
+
+:read-more{title="Firebase App Hosting" to="https://firebase.google.com/docs/app-hosting"}
+
+### Project Setup
+
+1. Go to the Firebase [console](https://console.firebase.google.com/) and set up a new project.
+2. Select **Build > App Hosting** from the sidebar.
+    - You may need to upgrade your billing plan at this step.
+3. Click **Get Started**.
+    - Choose a region.
+    - Import a GitHub repository (you’ll need to link your GitHub account).
+    - Configure deployment settings (project root directory and branch), and enable automatic rollouts.
+    - Choose a unique ID for your backend.
+4. Click Finish & Deploy to create your first rollout.
+
+When you deploy with Firebase App Hosting, the App Hosting preset will be run automatically at build time.
+
+## Firebase Functions (deprecated)
+
+::important
+This deployment method is deprecated and is not recommended. Firebase App Hosting is the recommended way to deploy Nuxt apps on Firebase.
+::
+
+
+To use the more recent and recommended generation of Firebase functions, set the `firebase.gen` option to `2`:
 
 ```ts [nuxt.config.ts]
 export default defineNuxtConfig({
@@ -79,7 +106,7 @@ firebase emulators:start
 
 ## Build and Deploy
 
-Deploy to Firebase Hosting by running a Nitro build and then running the `firebase deploy` command.
+Deploy to Firebase Hosting by running a Nuxt build and then running the `firebase deploy` command.
 
 ```bash
 npm run build -- --preset=firebase
@@ -88,7 +115,7 @@ firebase deploy
 
 ## Options
 
-You can set options for the firebase functions in your `nuxt.config.ts` file:
+You can set options for Firebase functions in your `nuxt.config.ts` file:
 
 ```ts [nuxt.config.ts]
 export default defineNuxtConfig({
@@ -106,7 +133,7 @@ export default defineNuxtConfig({
 
 ### Runtime Node.js Version
 
-You can set custom Node.js version in configuration:
+You can set a custom Node.js version in configuration:
 
 ```ts [nuxt.config.ts]
 export default defineNuxtConfig({
@@ -135,19 +162,19 @@ You might also need to add a runtime key to your `firebase.json` file:
 You can read more about this in **Firebase Docs**.
 ::
 
-## If your firebase project has other cloud functions
+## Other Cloud Functions
 
-You may be warned that other cloud functions will be deleted when you deploy your Nuxt project. This is because nitro will deploy your entire project to firebase functions. If you want to deploy only your Nuxt project, you can use the `--only` flag:
+You may be warned that other cloud functions will be deleted when you deploy your Nuxt project. This is because Nitro will deploy your entire project to firebase functions. If you want to deploy only your Nuxt project, you can use the `--only` flag:
 
 ```bash
 firebase deploy --only functions:server,hosting
 ```
 
 ::read-more{to="https://nitro.unjs.io/deploy/providers/firebase" target="_blank"}
-Head over **Nitro documentation** to learn more about the Firebase deployment preset.
+Head over to the **Nitro documentation** to learn more about the Firebase deployment preset.
 ::
 
-## Using Cookies in production
+## Using Cookies in Production
 
 When using Firebase Hosting together with Cloud Functions or Cloud Run, cookies are generally stripped from incoming requests to allow for efficient CDN cache behavior. Only the specially-named `__session` cookie is permitted to pass through to your app.
 

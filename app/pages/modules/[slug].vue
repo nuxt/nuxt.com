@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { Module } from '~/types'
-import { ModuleProseA, ModuleProseImg } from '#components'
+import { ModuleProseA, ModuleProseKbd } from '#components'
+
+const Img = (props: any) => h('img', props)
 
 definePageMeta({
   heroBackground: 'opacity-30 -z-10'
@@ -65,7 +67,7 @@ const contributors = computed(() => {
   return allContributors
 })
 
-const title = module.value.name.charAt(0).toUpperCase() + module.value.name.slice(1)
+const title = module.value.npm
 const description = module.value.description || 'A Nuxt module'
 
 useSeoMeta({
@@ -163,7 +165,7 @@ defineOgImageComponent('Docs', {
 
     <UPage>
       <UPageBody>
-        <ContentRenderer v-if="module.readme?.body" :value="module.readme" :components="{ a: ModuleProseA, img: ModuleProseImg }" />
+        <ContentRenderer v-if="module.readme?.body" :value="module.readme" :components="{ a: ModuleProseA, img: Img, kbd: ModuleProseKbd }" />
       </UPageBody>
 
       <template #right>

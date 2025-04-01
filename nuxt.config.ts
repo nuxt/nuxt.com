@@ -1,4 +1,5 @@
 import { createResolver } from 'nuxt/kit'
+import { parseMdc } from './helpers/mdc-parser.mjs'
 
 const { resolve } = createResolver(import.meta.url)
 
@@ -20,41 +21,16 @@ export default defineNuxtConfig({
     '@nuxthub/core'
   ],
   $development: {
-    runtimeConfig: {
-      public: {
-        website: {
-          url: 'http://localhost:3000'
-        }
-      }
-    },
-    image: {
-      alias: {
-        '/gh/': 'https://raw.githubusercontent.com',
-        '/gh_avatar/': 'https://avatars.githubusercontent.com'
-      },
-      domains: [
-        'raw.githubusercontent.com',
-        'avatars.githubusercontent.com',
-        'images.opencollective.com',
-        'ui.nuxt.com',
-        'res.cloudinary.com'
-      ]
-    }
-  },
-  $production: {
-    image: {
-      format: ['webp', 'jpeg', 'jpg', 'png', 'svg'],
-      provider: 'cloudflare',
-      cloudflare: {
-        baseURL: 'https://nuxt.com'
-      },
-      ipx: {
-        baseURL: 'https://ipx.nuxt.com'
-      }
+    site: {
+      url: 'http://localhost:3000'
     }
   },
   devtools: {
     enabled: true
+  },
+  app: {
+    pageTransition: false,
+    layoutTransition: false
   },
   css: ['~/assets/css/main.css'],
   colorMode: {
@@ -88,12 +64,10 @@ export default defineNuxtConfig({
   },
   routeRules: {
     // Pre-render
-    // '/api/templates.json': { prerender: true },
-    // '/blog/rss.xml': { prerender: true },
-    // '/sitemap.xml': { prerender: true },
-    // Redirects
     '/': { prerender: true },
+    '/blog/rss.xml': { prerender: true },
     '/404.html': { prerender: true },
+    // Redirects
     '/docs': { redirect: '/docs/getting-started/introduction', prerender: false },
     '/docs/getting-started': { redirect: '/docs/getting-started/introduction', prerender: false },
     '/docs/guide/concepts': { redirect: '/docs/guide/concepts/auto-imports', prerender: false },
@@ -119,7 +93,8 @@ export default defineNuxtConfig({
     '/docs/guide/recipes': { redirect: '/docs/guide/recipes/custom-routing', prerender: false },
     '/docs/guide/going-further/custom-routing': { redirect: '/docs/guide/recipes/custom-routing', prerender: false },
     // '/docs/guide/directory-structure/nuxt.config': { redirect: '/docs/guide/directory-structure/nuxt-config', prerender: false },
-    '/enterprise': { redirect: '/enterprise/support', prerender: false }
+    '/enterprise': { redirect: '/enterprise/support', prerender: false },
+    '/support/us': { redirect: '/enterprise/sponsors', prerender: false }
   },
   sourcemap: true,
   future: {
@@ -150,6 +125,18 @@ export default defineNuxtConfig({
   typescript: {
     strict: false
   },
+  hooks: {
+    'content:file:afterParse': async ({ file, content }) => {
+      if (file.id === 'index/index.yml') {
+        // @ts-expect-error -- TODO: fix this
+        for (const tab of content.hero.tabs) {
+          tab.content = await parseMdc(tab.content)
+        }
+        // @ts-expect-error -- TODO: fix this
+        delete content.meta.body
+      }
+    }
+  },
   eslint: {
     config: {
       stylistic: {
@@ -168,13 +155,23 @@ export default defineNuxtConfig({
     },
     provider: 'iconify'
   },
+  image: {
+    format: ['webp', 'jpeg', 'jpg', 'png', 'svg'],
+    provider: 'cloudflare',
+    cloudflare: {
+      baseURL: 'https://nuxt.com'
+    },
+    ipx: {
+      baseURL: 'https://ipx.nuxt.com'
+    }
+  },
   llms: {
     domain: 'https://nuxt.com',
     title: 'Nuxt Docs',
     description: 'Nuxt is an open source framework that makes web development intuitive and powerful. Create performant and production-grade full-stack web apps and websites with confidence.',
     full: {
       title: 'Nuxt Docs',
-      description: 'The complete Nuxt documentation, blog posts and changelog written in Markdown (MDC syntax).'
+      description: 'The complete Nuxt documentation and blog posts written in Markdown (MDC syntax).'
     }
   },
   turnstile: {

@@ -5,19 +5,28 @@ definePageMeta({
   heroBackground: '-z-10'
 })
 
-const { data: page } = await useAsyncData('index', () => queryCollection('index').first())
-
-const { fetchList, modules } = useModules()
-
-await fetchList()
-
-const officialModules = computed(() => {
-  return modules.value
-    .filter(module => module.type === 'official')
-    .sort((a, b) => b.stats.stars - a.stats.stars)
-})
-
-const { data: sponsors } = await useFetch('https://api.nuxt.com/sponsors', { key: 'sponsors' })
+const [{ data: page }, { data: officialModules }, { data: sponsorGroups }] = await Promise.all([
+  useAsyncData('index', () => queryCollection('index').first()),
+  useFetch<{ modules: Module[], stats: Stats }>('https://api.nuxt.com/modules', {
+    key: 'official-modules',
+    transform: res => res.modules
+      .filter(module => module.type === 'official')
+      .sort((a, b) => b.stats.stars - a.stats.stars)
+  }),
+  useFetch('https://api.nuxt.com/sponsors', {
+    key: 'top-sponsors',
+    transform: sponsors => Object.entries(sponsors)
+      .filter(([tier]) => ['diamond', 'platinum', 'gold'].includes(tier))
+      .map(([tier, sponsors]) => ({
+        tier,
+        sponsors: sponsors.map(s => ({
+          sponsorName: s.sponsorName,
+          sponsorLogo: s.sponsorLogo,
+          sponsorUrl: s.sponsorUrl
+        }))
+      }))
+  })
+])
 
 const stats = useStats()
 
@@ -25,15 +34,21 @@ const videoModalOpen = ref(false)
 
 const site = useSiteConfig()
 const title = 'Nuxt: The Progressive Web Framework'
-const description = 'Create high-quality web applications with Nuxt, the open source framework that makes full-stack development with Vue.js intuitive.'
 useSeoMeta({
   title,
-  ogTitle: title,
-  description: description,
-  ogDescription: description,
-  ogImage: joinURL(site.url, '/new-social.jpg'),
-  twitterImage: joinURL(site.url, '/new-social.jpg')
+  titleTemplate: '%s'
 })
+
+if (import.meta.server) {
+  const description = 'Create high-quality web applications with Nuxt, the open source framework that makes full-stack development with Vue.js intuitive.'
+  useSeoMeta({
+    ogTitle: title,
+    description: description,
+    ogDescription: description,
+    ogImage: joinURL(site.url, '/new-social.jpg'),
+    twitterImage: joinURL(site.url, '/new-social.jpg')
+  })
+}
 
 const tabs = computed(() => page.value?.hero.tabs.map(tab => ({
   label: tab.title,
@@ -118,7 +133,7 @@ onMounted(() => {
       </template>
 
       <template #description>
-        <MDC :value="page?.hero.description" unwrap="p" cache-key="index-hero-description" />
+        <LazyMDC :value="page?.hero.description" unwrap="p" cache-key="index-hero-description" hydrate-never />
       </template>
 
       <template #links>
@@ -168,7 +183,7 @@ onMounted(() => {
           }"
         >
           <template v-for="(tab, index) of tabs" :key="index" #[tab.slot]="{ item }">
-            <MDC :value="item.content" class="//" :cache-key="`index-hero-tab-${index}`" />
+            <LazyMDC :value="item.content" :cache-key="`index-hero-tab-${index}`" hydrate-on-idle />
           </template>
         </UTabs>
       </UPageCard>
@@ -180,7 +195,7 @@ onMounted(() => {
           :key="company.alt"
           as-child
           :initial="{ opacity: 0, transform: 'translateY(20px)' }"
-          :in-view="{ opacity: 1, transform: 'translateY(0)' }"
+          :while-in-view="{ opacity: 1, transform: 'translateY(0)' }"
           :transition="{ delay: 0.4 + 0.2 * index }"
           :in-view-options="{ once: true }"
         >
@@ -189,7 +204,7 @@ onMounted(() => {
               :key="company.alt"
               :light="company.light"
               :dark="company.dark"
-              :alt="company.alt"
+              :alt="`${company.alt} logo`"
               loading="lazy"
               :height="company.height"
               :width="company.width"
@@ -248,10 +263,10 @@ onMounted(() => {
       }"
     >
       <template #title>
-        <MDC :value="page.foundation.title" unwrap="p" cache-key="index-foundation-title" />
+        <LazyMDC :value="page.foundation.title" unwrap="p" cache-key="index-foundation-title" hydrate-never />
       </template>
       <template #description>
-        <MDC :value="page.foundation.description" unwrap="p" cache-key="index-foundation-description" />
+        <LazyMDC :value="page.foundation.description" unwrap="p" cache-key="index-foundation-description" hydrate-never />
       </template>
 
       <div class="grid grid-cols-1 sm:grid-cols-3">
@@ -427,7 +442,7 @@ onMounted(() => {
       }"
     >
       <template #title>
-        <MDC :value="page.modules.title" unwrap="p" cache-key="index-modules-title" />
+        <LazyMDC :value="page.modules.title" unwrap="p" cache-key="index-modules-title" hydrate-never />
       </template>
       <UCarousel
         v-slot="{ item }"
@@ -457,8 +472,10 @@ onMounted(() => {
     >
       <NuxtImg
         src="/assets/landing/deploy.svg"
-        alt="Deploy anywhere"
-        class="mx-auto max-w-lg sm:w-full"
+        width="512"
+        height="439"
+        :alt="page.deploy.title"
+        class="mx-auto max-w-lg sm:w-full w-full"
         loading="lazy"
       />
     </UPageSection>
@@ -477,10 +494,10 @@ onMounted(() => {
       }"
     >
       <template #title>
-        <MDC :value="page.support.title" unwrap="p" cache-key="index-support-title" />
+        <LazyMDC :value="page.support.title" unwrap="p" cache-key="index-support-title" hydrate-never />
       </template>
       <template #description>
-        <MDC :value="page.support.description" unwrap="p" cache-key="index-support-description" />
+        <LazyMDC :value="page.support.description" unwrap="p" cache-key="index-support-description" hydrate-never />
 
         <UPageLogos :ui="{ logos: 'mt-6' }" marquee>
           <NuxtImg
@@ -489,6 +506,7 @@ onMounted(() => {
             v-bind="company"
             loading="lazy"
             class="h-8 max-w-[70px] object-contain filter invert dark:invert-0 opacity-50"
+            :alt="`${company.alt} logo`"
           />
         </UPageLogos>
       </template>
@@ -530,40 +548,40 @@ onMounted(() => {
       }"
     >
       <div class="flex flex-col items-center">
-        <template v-for="([key, value]) of Object.entries(sponsors).filter(([k]) => ['diamond', 'platinum', 'gold'].includes(k))" :key="key">
+        <template v-for="({ tier, sponsors }) of sponsorGroups" :key="tier">
           <div class="w-full mb-24">
             <UBadge color="neutral" variant="subtle" class="capitalize mb-2">
-              {{ key }} sponsors
+              {{ tier }} sponsors
             </UBadge>
 
             <div class="w-full border border-(--ui-border) rounded-lg">
               <table class="w-full">
                 <tbody>
-                  <template v-for="(_, rowIndex) in Math.ceil(value.length / 3)" :key="rowIndex">
+                  <template v-for="(_, rowIndex) in Math.ceil(sponsors.length / 3)" :key="rowIndex">
                     <tr>
                       <template v-for="colIndex in 3" :key="colIndex">
                         <td
-                          v-if="(rowIndex * 3) + colIndex - 1 < value.length"
+                          v-if="(rowIndex * 3) + colIndex - 1 < sponsors.length"
                           class="border-b border-r border-(--ui-border) p-0 w-1/3 h-[120px]"
                           :class="{
                             'border-r-0': colIndex === 3,
-                            'border-b-0': rowIndex === Math.ceil(value.length / 3) - 1
+                            'border-b-0': rowIndex === Math.ceil(sponsors.length / 3) - 1
                           }"
                         >
                           <NuxtLink
-                            :to="value[(rowIndex * 3) + colIndex - 1].sponsorUrl"
+                            :to="sponsors[(rowIndex * 3) + colIndex - 1].sponsorUrl"
                             target="_blank"
                             class="flex items-center gap-2 justify-center h-full hover:bg-(--ui-bg-muted)/50 transition-colors"
                           >
                             <NuxtImg
-                              :src="value[(rowIndex * 3) + colIndex - 1].sponsorLogo"
-                              :alt="value[(rowIndex * 3) + colIndex - 1].sponsorName"
+                              :src="sponsors[(rowIndex * 3) + colIndex - 1].sponsorLogo"
+                              :alt="`${sponsors[(rowIndex * 3) + colIndex - 1].sponsorName} logo`"
                               loading="lazy"
                               class="h-10 max-w-[140px] object-contain rounded-[calc(var(--ui-radius)*2)]"
                               height="40"
                               width="40"
                             />
-                            <span class="text-base hidden sm:block font-semibold">{{ value[(rowIndex * 3) + colIndex - 1].sponsorName }}</span>
+                            <span class="text-base hidden sm:block font-semibold">{{ sponsors[(rowIndex * 3) + colIndex - 1].sponsorName }}</span>
                           </NuxtLink>
                         </td>
                         <td
@@ -571,7 +589,7 @@ onMounted(() => {
                           class="border-b border-r border-(--ui-border) p-0 w-1/3 h-[120px]"
                           :class="{
                             'border-r-0': colIndex === 3,
-                            'border-b-0': rowIndex === Math.ceil(value.length / 3) - 1
+                            'border-b-0': rowIndex === Math.ceil(sponsors.length / 3) - 1
                           }"
                         >
                           <div class="h-full" />

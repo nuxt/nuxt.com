@@ -8,16 +8,18 @@ definePageMeta({
 const route = useRoute()
 const { copy } = useClipboard()
 
-const { data: article } = await useAsyncData(kebabCase(route.path), () => queryCollection('blog').path(route.path).first())
+const [{ data: article }, { data: surround }] = await Promise.all([
+  useAsyncData(kebabCase(route.path), () => queryCollection('blog').path(route.path).first()),
+  useAsyncData(`${kebabCase(route.path)}-surround`, () => {
+    return queryCollectionItemSurroundings('blog', route.path, {
+      fields: ['description']
+    }).order('date', 'DESC')
+  })
+])
+
 if (!article.value) {
   throw createError({ statusCode: 404, statusMessage: 'Article not found', fatal: true })
 }
-
-const { data: surround } = await useAsyncData(`${kebabCase(route.path)}-surround`, () => {
-  return queryCollectionItemSurroundings('blog', route.path, {
-    fields: ['description']
-  }).order('date', 'DESC')
-})
 
 const title = article.value.seo?.title || article.value.title
 const description = article.value.seo?.description || article.value.description
@@ -45,10 +47,12 @@ const authorTwitter = article.value.authors?.[0]?.twitter
 const socialLinks = computed(() => !article.value
   ? []
   : [{
+      label: 'LinkedIn',
       icon: 'i-simple-icons-linkedin',
       to: `https://www.linkedin.com/sharing/share-offsite/?url=https://nuxt.com${article.value.path}`
     }, {
-      icon: 'i-simple-icons-twitter',
+      label: 'X',
+      icon: 'i-simple-icons-x',
       to: `https://x.com/intent/tweet?text=${encodeURIComponent(`${article.value.title}${authorTwitter ? ` by @${article.value.authors[0]!.twitter}` : ''}\n\n`)}https://nuxt.com${article.value.path}`
     }])
 
@@ -105,6 +109,7 @@ const links = [
             </ULink>
             <div class="flex justify-end items-center gap-1.5">
               <UButton icon="i-lucide-link" variant="ghost" color="neutral" @click="copyLink">
+                <span class="sr-only">Copy URL</span>
                 Copy URL
               </UButton>
               <UButton
@@ -114,7 +119,9 @@ const links = [
                 variant="ghost"
                 color="neutral"
                 target="_blank"
-              />
+              >
+                <span class="sr-only">Nuxt on {{ link.label }}</span>
+              </UButton>
             </div>
           </div>
 

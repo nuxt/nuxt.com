@@ -1,68 +1,58 @@
 <script setup lang="ts">
-import { debounce } from 'perfect-debounce'
-
-interface SearchValue {
-  commandPaletteRef?: {
-    query: string
-    results: {
-      id: string
-      label: string
-      to: string
-    }[]
-  }
-}
-
-const search = ref<SearchValue | null>(null)
 const colorMode = useColorMode()
 const { searchGroups, searchLinks, searchTerm } = useNavigation()
+const { fetchList } = useModules()
+
 const color = computed(() => colorMode.value === 'dark' ? '#020420' : 'white')
 
-const { data: navigation } = await useAsyncData('navigation', () => {
-  return Promise.all([
-    queryCollectionNavigation('docs', ['titleTemplate']),
-    queryCollectionNavigation('blog')
-  ])
-}, {
-  transform: data => data.flat()
-})
+const [{ data: navigation }, { data: files }] = await Promise.all([
+  useAsyncData('navigation', () => {
+    return Promise.all([
+      queryCollectionNavigation('docs', ['titleTemplate']),
+      queryCollectionNavigation('blog')
+    ])
+  }, {
+    transform: data => data.flat()
+  }),
+  useLazyAsyncData('search', () => {
+    return Promise.all([
+      queryCollectionSearchSections('docs'),
+      queryCollectionSearchSections('blog')
+    ])
+  }, {
+    server: false,
+    transform: data => data.flat()
+  })
+])
 
-const { data: files } = useLazyAsyncData('search', () => {
-  return Promise.all([
-    queryCollectionSearchSections('docs'),
-    queryCollectionSearchSections('blog')
-  ])
-}, {
-  server: false,
-  transform: data => data.flat()
-})
+onNuxtReady(() => fetchList())
 
 useHead({
   titleTemplate: title => title ? `${title} · Nuxt` : 'Nuxt: The Intuitive Web Framework',
   meta: [
-    { name: 'viewport', content: 'width=device-width, initial-scale=1' },
     { key: 'theme-color', name: 'theme-color', content: color }
-  ],
-  link: [
-    { rel: 'icon', type: 'image/png', href: '/icon.png' }
-  ],
-  htmlAttrs: {
-    lang: 'en'
-  }
+  ]
 })
 
-useSeoMeta({
-  ogSiteName: 'Nuxt',
-  ogType: 'website',
-  twitterCard: 'summary_large_image',
-  twitterSite: 'nuxt_js'
-})
-
-watch(() => search.value?.commandPaletteRef?.query, debounce((query) => {
-  if (typeof query !== 'string') {
-    return
-  }
-  useTrackEvent('Search', { props: { query: `${query} - ${search.value?.commandPaletteRef?.results.length || 0} results` } })
-}, 500))
+if (import.meta.server) {
+  useHead({
+    meta: [
+      { name: 'viewport', content: 'width=device-width, initial-scale=1' }
+    ],
+    link: [
+      { rel: 'icon', type: 'image/png', href: '/icon.png' }
+    ],
+    htmlAttrs: {
+      lang: 'en'
+    }
+  })
+  useSeoMeta({
+    ogSiteName: 'Nuxt',
+    ogType: 'website',
+    twitterCard: 'summary_large_image',
+    twitterSite: 'nuxt_js'
+  })
+}
 
 // Provide with non-null assertion since this is top level app setup
 provide('navigation', navigation!)
@@ -87,14 +77,14 @@ onMounted(() => {
     <NuxtLoadingIndicator color="var(--ui-primary)" />
 
     <UBanner
-      id="mastering-nuxt-2025"
-      title="Mastering Nuxt: Full Stack Unleashed - Coming March 25th."
+      id="mastering-nuxt-2025-early-bird"
+      title="Mastering Nuxt: Full Stack Unleashed - Launch Specials Available"
       icon="i-lucide-school"
       to="https://masteringnuxt.com/2025?utm_source=nuxt-website&utm_medium=banner"
       close
       :actions="[
         {
-          label: 'Sign up',
+          label: 'View Course',
           color: 'neutral',
           variant: 'outline',
           trailingIcon: 'i-lucide-arrow-right',
@@ -114,9 +104,7 @@ onMounted(() => {
         ]"
       />
 
-      <NuxtLayout>
-        <NuxtPage />
-      </NuxtLayout>
+      <NuxtPage />
     </UMain>
 
     <AppFooter />

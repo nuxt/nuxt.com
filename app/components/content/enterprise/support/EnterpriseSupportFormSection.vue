@@ -92,7 +92,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 <template>
   <div class="w-full max-w-[640px]">
     <UPageCard>
-      <UForm :schema="v.safeParser(schema)" :state="state" class="space-y-6" @submit="onSubmit">
+      <UForm :schema="schema" :state="state" class="space-y-6" @submit="onSubmit">
         <UFormField :label="formProps.form.name.label" name="name" required>
           <UInput v-model="state.name" :placeholder="formProps.form.name.placeholder" class="w-full" />
         </UFormField>

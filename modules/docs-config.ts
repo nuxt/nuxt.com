@@ -119,12 +119,12 @@ export default defineNuxtModule((options, nuxt) => {
       try {
         const rootSchema = await fetch('https://unpkg.com/@nuxt/schema@latest/schema/config.schema.json').then(res => res.json()) as Schema
         const start = Date.now()
-        console.log(`Generating config docs on ${file._id}`)
+        console.log(`Generating config docs on ${file.id}`)
 
         const keys = Object.keys(rootSchema.properties).sort()
 
         if (!file.body.includes(GENERATE_KEY)) {
-          return console.warn(`Could not find ${GENERATE_KEY} in ${file._id}`)
+          return console.warn(`Could not find ${GENERATE_KEY} in ${file.id}`)
         }
 
         // Generate each section

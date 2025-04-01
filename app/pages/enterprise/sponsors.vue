@@ -3,12 +3,14 @@ definePageMeta({
   heroBackground: 'opacity-80 -z-10'
 })
 
-const { data: page } = await useAsyncData('sponsors-landing', () => queryCollection('landing').path('/enterprise/sponsors').first())
+const [{ data: page }, { data: sponsors }] = await Promise.all([
+  useAsyncData('sponsors-landing', () => queryCollection('landing').path('/enterprise/sponsors').first()),
+  useFetch('https://api.nuxt.com/sponsors', { key: 'sponsors' })
+])
+
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
-
-const { data: sponsors } = await useFetch('https://api.nuxt.com/sponsors', { key: 'sponsors' })
 
 const title = page.value.title
 const description = page.value.description
@@ -66,7 +68,7 @@ defineOgImageComponent('Docs', {
                           >
                             <NuxtImg
                               :src="value[(rowIndex * 3) + colIndex - 1].sponsorLogo"
-                              :alt="value[(rowIndex * 3) + colIndex - 1].sponsorName"
+                              :alt="`${value[(rowIndex * 3) + colIndex - 1].sponsorName} logo`"
                               class="h-10 max-w-[140px] object-contain rounded-[calc(var(--ui-radius)*2)]"
                               height="40"
                               width="40"
@@ -92,7 +94,8 @@ defineOgImageComponent('Docs', {
             </div>
             <div v-else class="flex flex-wrap gap-8">
               <NuxtLink v-for="(sponsor, index) in value" :key="index" :to="sponsor.sponsorUrl" target="_blank" class="inline-flex">
-                <UAvatar :src="sponsor.sponsorLogo" :alt="sponsor.sponsorName" size="lg" />
+                <span class="sr-only">Visit {{ sponsor.sponsorName }} profile</span>
+                <UAvatar :src="sponsor.sponsorLogo" size="lg" :alt="`${sponsor.sponsorName} avatar`" />
               </NuxtLink>
             </div>
           </div>

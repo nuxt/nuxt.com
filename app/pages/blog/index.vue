@@ -26,6 +26,7 @@ useSeoMeta({
   ogTitle: page.value.title
 })
 defineOgImageComponent('Docs', {
+  headline: 'Blog',
   title: page.value.title,
   description: page.value.description
 })
@@ -38,12 +39,7 @@ await fetchList()
     <UPageHero
       :title="page.title"
       :description="page.description"
-      :ui="{
-        container: 'px-0 sm:px-0 lg:px-0',
-        title: 'text-left',
-        description: 'text-left max-w-xl',
-        links: 'justify-start'
-      }"
+      orientation="horizontal"
     >
       <template #links>
         <NewsletterForm class="flex-1 max-w-xs" :description="undefined" />
@@ -67,26 +63,29 @@ await fetchList()
     </UPageHero>
 
     <UPageBody>
-      <UBlogPosts class="mb-12 md:grid-cols-2 lg:grid-cols-3">
-        <UBlogPost
-          v-for="(article, index) in articles"
-          :key="article.path"
-          :to="article.path"
-          :title="article.title"
-          :description="article.description"
-          :image="{
-            src: article.image,
-            width: (index === 0 ? 672 : 437),
-            height: (index === 0 ? 378 : 246)
-          }"
-          :date="formatDateByLocale('en', article.date)"
-          :authors="article.authors"
-          :badge="{ label: article.category, color: 'primary', variant: 'subtle' }"
-          :variant="index === 0 ? 'outline' : 'subtle'"
-          :orientation="index === 0 ? 'horizontal' : 'vertical'"
-          :class="[index === 0 && 'col-span-full']"
-        />
-      </UBlogPosts>
+      <UContainer>
+        <UBlogPosts class="mb-12 md:grid-cols-2 lg:grid-cols-3">
+          <UBlogPost
+            v-for="(article, index) in articles"
+            :key="article.path"
+            :to="article.path"
+            :title="article.title"
+            :description="article.description"
+            :image="{
+              src: article.image,
+              width: (index === 0 ? 672 : 437),
+              height: (index === 0 ? 378 : 246),
+              alt: `${article.title} image`
+            }"
+            :date="formatDateByLocale('en', article.date)"
+            :authors="article.authors.map(author => ({ ...author, avatar: { ...author.avatar, alt: `${author.name} avatar` } }))"
+            :badge="{ label: article.category, color: 'primary', variant: 'subtle' }"
+            :variant="index === 0 ? 'outline' : 'subtle'"
+            :orientation="index === 0 ? 'horizontal' : 'vertical'"
+            :class="[index === 0 && 'col-span-full']"
+          />
+        </UBlogPosts>
+      </UContainer>
     </UPageBody>
   </UContainer>
 </template>
