@@ -21,12 +21,8 @@ export default defineNuxtConfig({
     '@nuxthub/core'
   ],
   $development: {
-    runtimeConfig: {
-      public: {
-        website: {
-          url: 'http://localhost:3000'
-        }
-      }
+    site: {
+      url: 'http://localhost:3000'
     }
   },
   devtools: {
