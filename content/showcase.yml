@@ -6,6 +6,9 @@ groups:
   - name: Featured
     icon: i-lucide-star
     showcases:
+      - url: https://monopo.london/
+        hostname: monopo.london
+        screenshotUrl: vue-telemetry/017f61965a8b4dd0d5f423b1c57abad0.jpg
       - url: https://ecosia.org/
         hostname: ecosia.org
         screenshotUrl: vue-telemetry/a5d4be7e33f3dac04b225c201587bae9.jpg
@@ -30,9 +33,6 @@ groups:
       - url: https://mvm350.ir/
         hostname: mvm350.ir
         screenshotUrl: vue-telemetry/1d7ae27ea6062aad56d471e7a7ee55ab.jpg
-      - url: https://monopo.london/
-        hostname: monopo.london
-        screenshotUrl: vue-telemetry/017f61965a8b4dd0d5f423b1c57abad0.jpg
       - url: https://findadiscord.com/
         hostname: findadiscord.com
         screenshotUrl: vue-telemetry/16625a1b2c2ea668d68ddae2022f54d1.jpg
@@ -399,21 +399,12 @@ groups:
       - url: https://caravanmagazine.in/
         hostname: caravanmagazine.in
         screenshotUrl: vue-telemetry/6adef83a8e5be73beb7a9e70154697c0.jpg
-      - url: https://www.thehindu.com/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
       - url: https://caravanmagazine.in/
         hostname: caravanmagazine.in
         screenshotUrl: vue-telemetry/6adef83a8e5be73beb7a9e70154697c0.jpg
-      - url: https://www.thehindu.com/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
       - url: https://caravanmagazine.in/
         hostname: caravanmagazine.in
         screenshotUrl: vue-telemetry/6adef83a8e5be73beb7a9e70154697c0.jpg
-      - url: https://www.thehindu.com/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
   - name: Education
     icon: i-lucide-graduation-cap
     showcases:
@@ -747,225 +738,6 @@ groups:
       - url: https://lequipe.fr/
         hostname: lequipe.fr
         screenshotUrl: vue-telemetry/2bbfa96411be1cd604d39f549475ef27.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-khasi/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-garo/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-kokborok/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-mizo/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-khasi/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-kokborok/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-mizo/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-khasi/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-garo/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-kokborok/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-mizo/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-khasi/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-garo/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-kokborok/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-mizo/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-khasi/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-garo/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-kokborok/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-mizo/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-khasi/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-garo/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-kokborok/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-mizo/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-khasi/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-garo/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-kokborok/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-mizo/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-garo/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-kokborok/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-mizo/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-khasi/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-kokborok/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-mizo/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-khasi/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-garo/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-kokborok/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-mizo/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-khasi/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-garo/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-kokborok/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-mizo/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-khasi/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-garo/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-kokborok/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-mizo/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-khasi/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-garo/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-kokborok/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-mizo/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-khasi/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-garo/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-kokborok/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-mizo/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-khasi/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-kokborok/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-mizo/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-khasi/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-kokborok/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-mizo/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-khasi/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-garo/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-kokborok/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-mizo/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-khasi/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-garo/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-kokborok/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-mizo/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-khasi/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-garo/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-kokborok/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-mizo/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-khasi/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
-      - url: https://www.thehindu.com/todays-paper/tp-garo/
-        hostname: www.thehindu.com
-        screenshotUrl: vue-telemetry/55555555555555555555555555555555.jpg
       - url: https://barefootdreams.com/products/cozychic-lite-circle-cardi
         hostname: barefootdreams.com
         screenshotUrl: vue-telemetry/c8d945173640402fee238a161d952cb4.jpg
