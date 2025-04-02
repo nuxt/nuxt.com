@@ -137,7 +137,7 @@ groups:
       - url: https://streetgreek.co.uk/
         hostname: streetgreek.co.uk
         screenshotUrl: vue-telemetry/4a4c9e5a820a01ff22f1424ec05c0dd3.jpg
-      - url: https://romanjeanelie.com/projects
+      - url: https://romanjeanelie.com/
         hostname: romanjeanelie.com
         screenshotUrl: vue-telemetry/be99135c705a74a6506fbad84e8de36d.jpg
   - name: Tech
@@ -414,12 +414,12 @@ groups:
       - url: https://blendjet.com/products/jetsetter-insulated-sleeve
         hostname: blendjet.com
         screenshotUrl: vue-telemetry/67a9f3f3b8187da6faae819cd24315b6.jpg
+      - url: https://barefootdreams.com/
+        hostname: barefootdreams.com
+        screenshotUrl: vue-telemetry/c8d945173640402fee238a161d952cb4.jpg
   - name: News
     icon: i-lucide-newspaper
     showcases:
-      - url: https://caravanmagazine.in/
-        hostname: caravanmagazine.in
-        screenshotUrl: vue-telemetry/6adef83a8e5be73beb7a9e70154697c0.jpg
       - url: https://lequipe.fr/
         hostname: lequipe.fr
         screenshotUrl: vue-telemetry/2bbfa96411be1cd604d39f549475ef27.jpg
@@ -432,9 +432,6 @@ groups:
       - url: https://forbes.ru/
         hostname: forbes.ru
         screenshotUrl: vue-telemetry/ff5c113521ef89663464619e885b9850.jpg
-      - url: https://magazine.trivago.es/
-        hostname: magazine.trivago.es
-        screenshotUrl: vue-telemetry/182822b132b5b8e3c15574277d52396d.jpg
       - url: https://thepostmillennial.com/
         hostname: thepostmillennial.com
         screenshotUrl: vue-telemetry/65959ed55ae5b5835363dec60bf7bf1b.jpg
@@ -459,12 +456,6 @@ groups:
       - url: https://gothamist.com/
         hostname: gothamist.com
         screenshotUrl: vue-telemetry/23c5cb9aa83e1c14353c71b2104fd003.jpg
-      - url: https://caravanmagazine.in/
-        hostname: caravanmagazine.in
-        screenshotUrl: vue-telemetry/6adef83a8e5be73beb7a9e70154697c0.jpg
-      - url: https://caravanmagazine.in/
-        hostname: caravanmagazine.in
-        screenshotUrl: vue-telemetry/6adef83a8e5be73beb7a9e70154697c0.jpg
       - url: https://caravanmagazine.in/
         hostname: caravanmagazine.in
         screenshotUrl: vue-telemetry/6adef83a8e5be73beb7a9e70154697c0.jpg
@@ -501,12 +492,6 @@ groups:
   - name: Government
     icon: i-lucide-building
     showcases:
-      - url: https://covidtracker.gov.ie/
-        hostname: covidtracker.gov.ie
-        screenshotUrl: vue-telemetry/b0484a3ae482fdef8920b870b3ffccf2.jpg
-      - url: https://covidtracker.gov.ie/
-        hostname: covidtracker.gov.ie
-        screenshotUrl: vue-telemetry/b0484a3ae482fdef8920b870b3ffccf2.jpg
       - url: https://covidtracker.gov.ie/
         hostname: covidtracker.gov.ie
         screenshotUrl: vue-telemetry/b0484a3ae482fdef8920b870b3ffccf2.jpg
@@ -627,12 +612,6 @@ groups:
       - url: https://madbox.io/
         hostname: madbox.io
         screenshotUrl: vue-telemetry/8df9c1b25113ee5ad0fabe2b02d09d31.jpg
-      - url: https://thechoiceisyours.whatisthematrix.com/
-        hostname: thechoiceisyours.whatisthematrix.com
-        screenshotUrl: vue-telemetry/3cedeb583aa8896107eee3c5d250e265.jpg
-      - url: https://bestwatch.app/
-        hostname: bestwatch.app
-        screenshotUrl: vue-telemetry/04d7d4869116e7ec520a23164c48935f.jpg
       - url: https://accountmigration.leagueoflegends.com/
         hostname: accountmigration.leagueoflegends.com
         screenshotUrl: vue-telemetry/601e4bd3b4963215fdc245536b032d58.jpg
@@ -651,9 +630,6 @@ groups:
       - url: https://sothebysrealty.com/
         hostname: sothebysrealty.com
         screenshotUrl: vue-telemetry/0bdfed92d756ae3eaeaee3120e26b3cb.jpg
-      - url: https://magazine.trivago.es/
-        hostname: magazine.trivago.es
-        screenshotUrl: vue-telemetry/182822b132b5b8e3c15574277d52396d.jpg
       - url: https://europcar.com/
         hostname: europcar.com
         screenshotUrl: vue-telemetry/c00b57808fdfab575e6cfb4c261ed19a.jpg
@@ -772,9 +748,6 @@ groups:
       - url: https://pinarello.com/
         hostname: pinarello.com
         screenshotUrl: vue-telemetry/00bf3a0f91ce17e7b3c3c6c83bd6ca5b.jpg
-      - url: https://barefootdreams.com/
-        hostname: barefootdreams.com
-        screenshotUrl: vue-telemetry/c8d945173640402fee238a161d952cb4.jpg
       - url: https://blackdiamondequipment.com/
         hostname: blackdiamondequipment.com
         screenshotUrl: vue-telemetry/edb5313b291dcb30e838885445f4daf4.jpg
