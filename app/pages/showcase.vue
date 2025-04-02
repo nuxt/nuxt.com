@@ -27,6 +27,16 @@ defineOgImageComponent('Docs', {
 })
 
 await fetchList()
+
+function getShowcaseItemScreenShotUrl(showcase: any) {
+  if (showcase.screenshotUrl && showcase.screenshotUrl.startsWith('vue-telemetry')) {
+    return `https://res.cloudinary.com/nuxt/image/upload/f_auto,q_auto,w_488,h_366/${showcase.screenshotUrl}`
+  }
+  if (showcase.screenshotUrl) {
+    return showcase.screenshotUrl
+  }
+  return `/assets/showcase/${showcase.name ? showcase.name?.toLowerCase() : showcase.hostname}.png`
+}
 </script>
 
 <template>
@@ -58,7 +68,7 @@ await fetchList()
             class="overflow-hidden group rounded-lg"
           >
             <NuxtImg
-              :src="showcase.screenshotUrl ? `https://res.cloudinary.com/nuxt/image/upload/f_auto,q_auto,w_488,h_366/${showcase.screenshotUrl}` : `/assets/showcase/${showcase.name ? showcase.name?.toLowerCase() : showcase.hostname}.png`"
+              :src="getShowcaseItemScreenShotUrl(showcase)"
               :alt="showcase.hostname || ''"
               :loading="index === 0 ? 'eager' : 'lazy'"
               class="object-cover object-top size-full opacity-100 group-hover:opacity-60 transition-opacity duration-300"
@@ -67,7 +77,7 @@ await fetchList()
             />
 
             <p class="hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 group-hover:flex bg-(--ui-bg-inverted) text-(--ui-bg) px-2.5 py-1 rounded-full text-sm font-medium font-mono items-center gap-1 shadow">
-              {{ showcase.hostname }}
+              {{ showcase.name ?? showcase.hostname }}
 
               <UIcon name="i-lucide-arrow-up-right" class="size-4" />
             </p>

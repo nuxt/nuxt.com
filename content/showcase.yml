@@ -9,6 +9,9 @@ groups:
       - url: https://monopo.london/
         hostname: monopo.london
         screenshotUrl: vue-telemetry/017f61965a8b4dd0d5f423b1c57abad0.jpg
+      - name: Louis Vuitton
+        url: https://eu.louisvuitton.com/
+        hostname: eu.louisvuitton.com
       - url: https://ecosia.org/
         hostname: ecosia.org
         screenshotUrl: vue-telemetry/a5d4be7e33f3dac04b225c201587bae9.jpg
@@ -291,15 +294,21 @@ groups:
         - name: BackMarket
           url: https://backmarket.com/
           hostname: backmarket.com
+        - name: Epargnoo
+          url: https://epargnoo.com/
+          hostname: epargnoo.com/
+        - name: Chatwood
+          hostname: https://www.chatwood.com/
+          url: https://www.chatwood.com/
   - name: E-Commerce
     icon: i-lucide-shopping-cart
     showcases:
+      - name: Louis Vuitton
+        url: https://eu.louisvuitton.com/
+        hostname: eu.louisvuitton.com
       - url: https://system76.com/
         hostname: system76.com
         screenshotUrl: vue-telemetry/5c3c234467a020558420a701f5add2cd.jpg
-      - url: https://backmarket.com/
-        hostname: backmarket.com
-        screenshotUrl: vue-telemetry/3903901eaa6b017a413840c2fef7af9b.jpg
       - url: https://stores.jp/
         hostname: stores.jp
         screenshotUrl: vue-telemetry/ad683b95ffa5d8365fb80328943de38d.jpg
