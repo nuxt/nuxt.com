@@ -58,10 +58,10 @@ await fetchList()
             class="overflow-hidden group rounded-lg"
           >
             <NuxtImg
-              :src="showcase.screenshotUrl ? `https://res.cloudinary.com/nuxt/image/upload/f_auto,q_auto,w_488,h_366/${showcase.screenshotUrl}` : `/assets/showcase/${showcase.hostname}.png`"
+              :src="showcase.screenshotUrl ? `https://res.cloudinary.com/nuxt/image/upload/f_auto,q_auto,w_488,h_366/${showcase.screenshotUrl}` : `/assets/showcase/${showcase.name ? showcase.name?.toLowerCase() : showcase.hostname}.png`"
               :alt="showcase.hostname || ''"
               :loading="index === 0 ? 'eager' : 'lazy'"
-              class="object-cover object-top size-full opacity-75 group-hover:opacity-100 transition-opacity duration-300"
+              class="object-cover object-top size-full opacity-100 group-hover:opacity-60 transition-opacity duration-300"
               height="366"
               width="488"
             />

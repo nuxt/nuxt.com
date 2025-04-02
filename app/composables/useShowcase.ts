@@ -1,4 +1,4 @@
-import type { ShowcaseList, Filter, ShowcaseListGroupItem } from '../types'
+import type { ShowcaseList, Filter } from '../types'
 
 export const useShowcase = () => {
   const route = useRoute()
@@ -12,12 +12,6 @@ export const useShowcase = () => {
     }
 
     const { data } = await useAsyncData('showcase', () => queryCollection('showcase').first())
-
-    // ensure groups & showcases are well sorted
-    /* res?.groups?.sort((a, b) => Number(a.position) - Number(b.position))
-    res?.groups?.forEach((group) => {
-      group.showcases.sort((a, b) => Number(a.position) - Number(b.position))
-    }) */
 
     showcaseList.value = data.value
   }
@@ -47,7 +41,7 @@ export const useShowcase = () => {
     return categories.value.find(category => category.label === route.query.category) || categories.value[0]
   })
 
-  const selectedShowcases = computed<ShowcaseListGroupItem[]>(() => {
+  const selectedShowcases = computed(() => {
     const ids = new Set<string>()
     return showcaseList.value?.groups
       ?.filter((group, index) => (!selectedCategory.value && index === 0) || group.name === selectedCategory.value?.label)

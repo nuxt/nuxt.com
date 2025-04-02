@@ -273,6 +273,18 @@ groups:
       - url: https://platform.openai.com/
         hostname: platform.openai.com
         screenshotUrl: vue-telemetry/566b74d30278c076746683629e216525.jpg
+  - name: Saas
+    icon: i-lucide-app-window
+    showcases:
+        - name: Malt
+          url: https://malt.fr/
+          hostname: malt.fr
+        - name: Leetchi
+          url: https://leetchi.com/
+          hostname: leetchi.com
+        - name: Upwork
+          url: https://upwork.com/
+          hostname: upwork.com
   - name: E-Commerce
     icon: i-lucide-shopping-cart
     showcases:

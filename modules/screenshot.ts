@@ -14,6 +14,7 @@ interface ContentFile {
     name: string
     icon: string
     showcases: Array<{
+      name: string
       url: string
       hostname: string
       screenshotUrl?: string
@@ -67,20 +68,21 @@ export default defineNuxtModule((options, nuxt) => {
       for (const group of file.groups) {
         for (const showcase of group.showcases) {
           const url = showcase.screenshotUrl || showcase.url
+          const name = showcase.name?.toLowerCase() || showcase.hostname
           if (!url) {
-            console.error(`Showcase ${showcase.hostname} has no "url" or "screenshotUrl" to take a screenshot from`)
+            console.error(`Showcase ${name} has no "url" or "screenshotUrl" to take a screenshot from`)
             continue
           }
           if (showcase.screenshotUrl) {
             continue
           }
 
-          const filename = join(process.cwd(), 'public/assets/showcase', `${showcase.hostname}.png`)
+          const filename = join(process.cwd(), 'public/assets/showcase', `${name}.png`)
           if (existsSync(filename)) {
             continue
           }
 
-          console.log(`Generating screenshot for Showcase ${showcase.hostname} hitting ${url}...`)
+          console.log(`Generating screenshot for Showcase ${name} hitting ${url}...`)
           await captureWebsite.file(url, filename, {
             launchOptions: { headless: true },
             width: 1920,
