@@ -285,6 +285,12 @@ groups:
         - name: Upwork
           url: https://upwork.com/
           hostname: upwork.com
+        - name: Le Collectionist
+          url: https://www.lecollectionist.com
+          hostname: lecollectionist.com
+        - name: BackMarket
+          url: https://backmarket.com/
+          hostname: backmarket.com
   - name: E-Commerce
     icon: i-lucide-shopping-cart
     showcases:
