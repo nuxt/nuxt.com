@@ -10,6 +10,15 @@ interface ContentFile {
   demo?: string
   url?: string
   screenshotOptions?: Record<string, any>
+  groups?: Array<{
+    name: string
+    icon: string
+    showcases: Array<{
+      url: string
+      hostname: string
+      screenshotUrl?: string
+    }>
+  }>
 }
 
 export default defineNuxtModule((options, nuxt) => {
@@ -52,6 +61,33 @@ export default defineNuxtModule((options, nuxt) => {
         width: 1920,
         height: 960
       })
+    }
+
+    if (file.id?.includes('showcase.yml') && file.groups) {
+      for (const group of file.groups) {
+        for (const showcase of group.showcases) {
+          const url = showcase.screenshotUrl || showcase.url
+          if (!url) {
+            console.error(`Showcase ${showcase.hostname} has no "url" or "screenshotUrl" to take a screenshot from`)
+            continue
+          }
+          if (showcase.screenshotUrl) {
+            continue
+          }
+
+          const filename = join(process.cwd(), 'public/assets/showcase', `${showcase.hostname}.png`)
+          if (existsSync(filename)) {
+            continue
+          }
+
+          console.log(`Generating screenshot for Showcase ${showcase.hostname} hitting ${url}...`)
+          await captureWebsite.file(url, filename, {
+            launchOptions: { headless: true },
+            width: 1920,
+            height: 960
+          })
+        }
+      }
     }
   })
 })
