@@ -71,12 +71,12 @@ function getShowcaseItemScreenShotUrl(showcase: any) {
               :src="getShowcaseItemScreenShotUrl(showcase)"
               :alt="showcase.hostname || ''"
               :loading="index === 0 ? 'eager' : 'lazy'"
-              class="object-cover object-top size-full opacity-100 group-hover:opacity-60 transition-opacity duration-300"
+              class="object-cover object-top size-full opacity-100 group-hover:opacity-50 transition-opacity duration-300"
               height="366"
               width="488"
             />
 
-            <p class="hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 group-hover:flex bg-(--ui-bg-inverted) text-(--ui-bg) px-2.5 py-1 rounded-full text-sm font-medium font-mono items-center gap-1 shadow">
+            <p class="hidden absolute text-nowrap top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 group-hover:flex bg-(--ui-bg-inverted) text-(--ui-bg) px-2.5 py-1 rounded-full text-sm font-medium font-mono items-center gap-1 shadow">
               {{ showcase.name ?? showcase.hostname }}
 
               <UIcon name="i-lucide-arrow-up-right" class="size-4" />
