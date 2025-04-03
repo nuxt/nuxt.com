@@ -137,9 +137,6 @@ groups:
       - url: https://streetgreek.co.uk/
         hostname: streetgreek.co.uk
         screenshotUrl: vue-telemetry/4a4c9e5a820a01ff22f1424ec05c0dd3.jpg
-      - url: https://romanjeanelie.com/
-        hostname: romanjeanelie.com
-        screenshotUrl: vue-telemetry/be99135c705a74a6506fbad84e8de36d.jpg
   - name: Tech
     icon: i-lucide-circuit-board
     showcases:
@@ -741,10 +738,9 @@ groups:
       - name: Roland Garros
         url: https://rolandgarros.com/
         hostname: rolandgarros.com
-        screenshotUrl: vue-telemetry/5c97ad1abec476c4c08941c6849ee1e3.jpg
-      - url: https://lequipe.fr/
+      - name: L'Equipe
+        url: https://lequipe.fr/
         hostname: lequipe.fr
-        screenshotUrl: vue-telemetry/2bbfa96411be1cd604d39f549475ef27.jpg
       - url: https://pinarello.com/
         hostname: pinarello.com
         screenshotUrl: vue-telemetry/00bf3a0f91ce17e7b3c3c6c83bd6ca5b.jpg
