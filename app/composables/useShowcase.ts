@@ -1,25 +1,9 @@
-import type { ShowcaseList, Filter, ShowcaseListGroupItem } from '../types'
+import type { ShowcaseList, Filter } from '../types'
 
 export const useShowcase = () => {
   const route = useRoute()
   const router = useRouter()
   const showcaseList = useState<ShowcaseList | null>('showcase', () => null)
-
-  const iconsMap = {
-    'Featured': 'i-lucide-star',
-    'Awwwards': 'i-lucide-award',
-    'Tech': 'i-lucide-circuit-board',
-    'E-Commerce': 'i-lucide-shopping-cart',
-    'News': 'i-lucide-newspaper',
-    'Education': 'i-lucide-graduation-cap',
-    'Government': 'i-lucide-building',
-    'Entertainment': 'i-lucide-dices',
-    'Travel': 'i-lucide-plane',
-    'Finance': 'i-lucide-dollar-sign',
-    'Business': 'i-lucide-briefcase',
-    'Sport': 'i-lucide-volleyball'
-  }
-
   // Data fetching
 
   async function fetchList() {
@@ -27,26 +11,20 @@ export const useShowcase = () => {
       return
     }
 
-    const res = await $fetch<ShowcaseList>('https://api.nuxt.com/showcase')
+    const { data } = await useAsyncData('showcase', () => queryCollection('showcase').first())
 
-    // ensure groups & showcases are well sorted
-    res?.groups?.sort((a, b) => Number(a.position) - Number(b.position))
-    res?.groups?.forEach((group) => {
-      group.showcases.sort((a, b) => Number(a.position) - Number(b.position))
-    })
-
-    showcaseList.value = res
+    showcaseList.value = data.value
   }
 
   // Lists
   const categories = computed<Filter[]>(() => {
     return showcaseList.value?.groups?.map(group => ({
-      key: group.id,
+      key: group.name,
       label: group.name,
       exact: true,
       exactQuery: true,
       to: { name: 'showcase', query: group.name === 'Featured' ? undefined : { category: group.name }, state: { smooth: '#smooth' } },
-      icon: iconsMap[group.name as keyof typeof iconsMap],
+      icon: group.icon,
       click: (e: Event) => {
         if (route.query.category !== group.name) {
           return
@@ -63,15 +41,15 @@ export const useShowcase = () => {
     return categories.value.find(category => category.label === route.query.category) || categories.value[0]
   })
 
-  const selectedShowcases = computed<ShowcaseListGroupItem[]>(() => {
-    const ids = new Set<number>()
+  const selectedShowcases = computed(() => {
+    const ids = new Set<string>()
     return showcaseList.value?.groups
       ?.filter((group, index) => (!selectedCategory.value && index === 0) || group.name === selectedCategory.value?.label)
       ?.flatMap((group) => {
-        if (ids.has(group.id)) {
+        if (ids.has(group.name)) {
           return []
         }
-        ids.add(group.id)
+        ids.add(group.name)
         return group.showcases
       }) ?? []
   })

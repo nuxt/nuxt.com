@@ -2,3 +2,835 @@ title: Showcase
 head.title: Nuxt Showcase
 description: Discover our selection of websites built with Nuxt.
 navigation.icon: i-lucide-projector
+groups:
+  - name: Featured
+    icon: i-lucide-star
+    showcases:
+      - name: Monopo London
+        url: https://monopo.london/
+        hostname: monopo.london
+        screenshotUrl: vue-telemetry/017f61965a8b4dd0d5f423b1c57abad0.jpg
+      - name: Louis Vuitton
+        url: https://eu.louisvuitton.com/
+        hostname: eu.louisvuitton.com
+      - name: Ecosia
+        url: https://ecosia.org/
+        hostname: ecosia.org
+        screenshotUrl: vue-telemetry/a5d4be7e33f3dac04b225c201587bae9.jpg
+      - name: Upwork
+        url: https://upwork.com/
+        hostname: upwork.com
+        screenshotUrl: vue-telemetry/5913ce3a99defcd8778162850ee80657.jpg
+      - name: NBA Rakuten
+        url: https://nba.rakuten.co.jp/
+        hostname: nba.rakuten.co.jp
+        screenshotUrl: vue-telemetry/b27c5893a311796eccd82cd5884f78c5.jpg
+      - name: Tiktok
+        url: https://tiktok.com/business/es
+        hostname: tiktok.com
+        screenshotUrl: vue-telemetry/90ddab9e41f138afa8ac5cf6e18ccb18.jpg
+      - name: JPL Nasa
+        url: https://jpl.nasa.gov/
+        hostname: jpl.nasa.gov
+        screenshotUrl: vue-telemetry/9752872b22fbfbdf7b9e8bac19264f43.jpg
+      - name: Unilever
+        url: https://unilever.com/
+        hostname: unilever.com
+        screenshotUrl: vue-telemetry/f88bac390770d6bcf39f6c041cf00897.jpg
+      - name: Volta
+        url: https://volta.net/
+        hostname: volta.net
+        screenshotUrl: vue-telemetry/32abc3212c97fd44ff24acaa6edc4573.jpg
+      - name: mvm350
+        url: https://mvm350.ir/
+        hostname: mvm350.ir
+        screenshotUrl: vue-telemetry/1d7ae27ea6062aad56d471e7a7ee55ab.jpg
+      - name: Find a Discord
+        url: https://findadiscord.com/
+        hostname: findadiscord.com
+        screenshotUrl: vue-telemetry/16625a1b2c2ea668d68ddae2022f54d1.jpg
+      - name: Stack Overflow
+        url: https://stackoverflow.co/
+        hostname: stackoverflow.co
+        screenshotUrl: vue-telemetry/0a65a31bef06a53ee822fd5b9331c1bb.jpg
+  - name: Awwwards
+    icon: i-lucide-award
+    showcases:
+      - url: https://techtak.nextpage.agency/
+        hostname: techtak.nextpage.agency
+        screenshotUrl: vue-telemetry/d4fd5b640cb9adae408840e2cb9237d6.jpg
+      - url: https://sddesignweek.org/
+        hostname: sddesignweek.org
+        screenshotUrl: vue-telemetry/3e60e4e9cfd9125dc0d80c481796e4cf.jpg
+      - url: https://speedy.io/
+        hostname: speedy.io
+        screenshotUrl: vue-telemetry/7b2c4aeab118f2b59db6a564ccbf1d23.jpg
+      - url: https://funkhaus.us/
+        hostname: funkhaus.us
+        screenshotUrl: vue-telemetry/0aead234e629a092b413aa4592ffc17a.jpg
+      - url: https://makemakeentertainment.com/
+        hostname: makemakeentertainment.com
+        screenshotUrl: vue-telemetry/61de50c9a60304c70a8cb2af3c932458.jpg
+      - url: https://safe-haven.net/
+        hostname: safe-haven.net
+        screenshotUrl: vue-telemetry/907d05cbc1c2c5198be3fd7e5aa1aad0.jpg
+      - url: https://wanda.net/
+        hostname: wanda.net
+        screenshotUrl: vue-telemetry/d2703957ae47faea93a3202c25022dc2.jpg
+      - url: https://songsfromscrat.ch/
+        hostname: songsfromscrat.ch
+        screenshotUrl: vue-telemetry/59684531bef0d847c71e6fefb8de0da9.jpg
+      - url: https://gemfields.com/
+        hostname: gemfields.com
+        screenshotUrl: vue-telemetry/2134502bc9421fb19b7196156f0d19a8.jpg
+      - url: https://collab.arlab.studio/
+        hostname: collab.arlab.studio
+        screenshotUrl: vue-telemetry/0c95f1fb7de143e5de6f433776bdb2d6.jpg
+      - url: https://emotion-agency.com/
+        hostname: emotion-agency.com
+        screenshotUrl: vue-telemetry/3207cc30cb08471f0e27c572a8513094.jpg
+      - url: https://21insights.idw.studio/
+        hostname: 21insights.idw.studio
+        screenshotUrl: vue-telemetry/57fdfa81d31e78b1a4c292bc893e5f69.jpg
+      - url: https://martinesy.ms/
+        hostname: martinesy.ms
+        screenshotUrl: vue-telemetry/10c256dd4146405413e9d9ddc4e82cb3.jpg
+      - url: https://marfala.com/
+        hostname: marfala.com
+        screenshotUrl: vue-telemetry/eeecc7f3330fbf7f7398844d82a936b1.jpg
+      - url: https://graysdegree.show/
+        hostname: graysdegree.show
+        screenshotUrl: vue-telemetry/3432e7fae60efb54e06865448a0e3460.jpg
+      - url: https://part-time.studio/
+        hostname: part-time.studio
+        screenshotUrl: vue-telemetry/5e6ea4a912e4962791b1c640ad85189c.jpg
+      - url: https://florascales.com/
+        hostname: florascales.com
+        screenshotUrl: vue-telemetry/c13a3c8d09d9cc40e8c6022750daa625.jpg
+      - url: https://simmalugnt.se/
+        hostname: simmalugnt.se
+        screenshotUrl: vue-telemetry/2034efe17dd8ef088838d00583cf313a.jpg
+      - url: https://30ua.info/
+        hostname: 30ua.info
+        screenshotUrl: vue-telemetry/c59f156e42a83c285a4b3bdced74309b.jpg
+      - url: https://infraredmindbody.com/
+        hostname: infraredmindbody.com
+        screenshotUrl: vue-telemetry/b4089857650e8c24d4f67cf6a481b0c4.jpg
+      - url: https://lustica.dev.fleava.com/
+        hostname: lustica.dev.fleava.com
+        screenshotUrl: vue-telemetry/385c94adf1a9939a094d97b9e3454e9f.jpg
+      - url: https://madbox.io/
+        hostname: madbox.io
+        screenshotUrl: vue-telemetry/8df9c1b25113ee5ad0fabe2b02d09d31.jpg
+      - url: https://iqosa.com/
+        hostname: iqosa.com
+        screenshotUrl: vue-telemetry/64b18e4d4d27aef761257cbcd8dedef1.jpg
+      - url: https://goodkidsagency.com/
+        hostname: goodkidsagency.com
+        screenshotUrl: vue-telemetry/74e86b96b3373a68dec9a0269ced878e.jpg
+      - url: https://homeofhai.com/
+        hostname: homeofhai.com
+        screenshotUrl: vue-telemetry/52a3372cadd3eb89d2e5fe2d315b4412.jpg
+      - url: https://aliciakeys.com/
+        hostname: aliciakeys.com
+        screenshotUrl: vue-telemetry/797a22d611380c0783b416bb555756ed.jpg
+      - url: https://streetgreek.co.uk/
+        hostname: streetgreek.co.uk
+        screenshotUrl: vue-telemetry/4a4c9e5a820a01ff22f1424ec05c0dd3.jpg
+  - name: Tech
+    icon: i-lucide-circuit-board
+    showcases:
+      - url: https://ecosia.org/
+        hostname: ecosia.org
+        screenshotUrl: vue-telemetry/a5d4be7e33f3dac04b225c201587bae9.jpg
+      - url: https://icons8.com/
+        hostname: icons8.com
+        screenshotUrl: vue-telemetry/7c21acd845602feda676296c33d3b5fb.jpg
+      - url: https://iconscout.com/
+        hostname: iconscout.com
+        screenshotUrl: vue-telemetry/f57d9372f25eb37adc72ad14e0e2bf9d.jpg
+      - url: https://flutterwave.com/
+        hostname: flutterwave.com
+        screenshotUrl: vue-telemetry/10dca16da39b1653bf0b182bc2312230.jpg
+      - url: https://design.gitlab.com/
+        hostname: design.gitlab.com
+        screenshotUrl: vue-telemetry/3c9be04ad97b56e290e3592b47fdc668.jpg
+      - url: https://vuemastery.com/
+        hostname: vuemastery.com
+        screenshotUrl: vue-telemetry/3b78588250ef57ca1aa7238ef5aeca32.jpg
+      - url: https://yousign.com/
+        hostname: yousign.com
+        screenshotUrl: vue-telemetry/84eeefdcf715600c0787af614904970c.jpg
+      - url: https://livestorm.co/
+        hostname: livestorm.co
+        screenshotUrl: vue-telemetry/fe731449a704ee3b63b693934565999c.jpg
+      - url: https://tidal.com/
+        hostname: tidal.com
+        screenshotUrl: vue-telemetry/eab6d8a15e93f34d42fe8989e3cd14f0.jpg
+      - url: https://stars.github.com/profiles/driesvints
+        hostname: stars.github.com
+        screenshotUrl: vue-telemetry/7216fa5588211476e8b8c315bc0310da.jpg
+      - url: https://vueschool.io/
+        hostname: vueschool.io
+        screenshotUrl: vue-telemetry/97aea3ed6de341002cdd7a56c7c0dee7.jpg
+      - url: https://wappalyzer.com/
+        hostname: wappalyzer.com
+        screenshotUrl: vue-telemetry/6fb4b99f22c6986b59d4c70e999fc75b.jpg
+      - url: https://photos.icons8.com/
+        hostname: photos.icons8.com
+        screenshotUrl: vue-telemetry/3b987bdff27688ffe205963be5a35604.jpg
+      - url: https://bootstrap-vue.org/
+        hostname: bootstrap-vue.org
+        screenshotUrl: vue-telemetry/d66391bdf7386d08390550426ba9f375.jpg
+      - url: https://cdnjs.com/
+        hostname: cdnjs.com
+        screenshotUrl: vue-telemetry/d187006f6312c9415aa5e4a8f33ef17f.jpg
+      - url: https://procreate.art/
+        hostname: procreate.art
+        screenshotUrl: vue-telemetry/e8268a296c4672aa475a52ccd12bcaf6.jpg
+      - url: https://partnerhub.netlify.com/
+        hostname: partnerhub.netlify.com
+        screenshotUrl: vue-telemetry/914d738ab7bd09897b21e3da62d18209.jpg
+      - url: https://netlify.com/technology-partners
+        hostname: netlify.com
+        screenshotUrl: vue-telemetry/62f2b3be270e71adbfad90bba14028ee.jpg
+      - url: https://discordbotlist.com/
+        hostname: discordbotlist.com
+        screenshotUrl: vue-telemetry/41451037d791b59f30769a5ccd7908e0.jpg
+      - url: https://shoppy.gg/
+        hostname: shoppy.gg
+        screenshotUrl: vue-telemetry/926683cc16d3b5c19c485ca2e7a69650.jpg
+      - url: https://search.creativecommons.org/
+        hostname: search.creativecommons.org
+        screenshotUrl: vue-telemetry/b7c8773e3edefe4aa63d15b41304e035.jpg
+      - url: https://meilisearch.com/
+        hostname: meilisearch.com
+        screenshotUrl: vue-telemetry/3165e7b848e04a5f6197780c5c617b51.jpg
+      - url: https://groovy.bot/
+        hostname: groovy.bot
+        screenshotUrl: vue-telemetry/eec2d7b44ecbe3c354347c3ccdd51293.jpg
+      - url: https://microsoftedgetips.microsoft.com/
+        hostname: microsoftedgetips.microsoft.com
+        screenshotUrl: vue-telemetry/0d9eccbdc07b5ca209b6db49f044c5bc.jpg
+      - url: https://company.recharge.com/
+        hostname: company.recharge.com
+        screenshotUrl: vue-telemetry/9348d113a3e4fbd8a6e0c23897c166ec.jpg
+      - url: https://gohighlevel.com/
+        hostname: gohighlevel.com
+        screenshotUrl: vue-telemetry/9ff60f83c921f3f94f6da7352c01cf5c.jpg
+      - url: https://animaapp.com/
+        hostname: animaapp.com
+        screenshotUrl: vue-telemetry/d209a08189596d3282196194e045ab34.jpg
+      - url: https://game.fonts.adobe.com/
+        hostname: game.fonts.adobe.com
+        screenshotUrl: vue-telemetry/ea06d80132aa1b1e4fd4c1328df59d0e.jpg
+      - url: https://learn.vonage.com/
+        hostname: learn.vonage.com
+        screenshotUrl: vue-telemetry/69d776f53e4905dd8b334547e099ca54.jpg
+      - url: https://cleavr.io/
+        hostname: cleavr.io
+        screenshotUrl: vue-telemetry/d605309a84abbd92ccaa7d6a0004fb6e.jpg
+      - url: https://apis.baidu.com/
+        hostname: apis.baidu.com
+        screenshotUrl: vue-telemetry/c13232d967953ae241df961509a419f2.jpg
+      - url: https://amplitude.com/pricing
+        hostname: amplitude.com
+        screenshotUrl: vue-telemetry/11b5d19b1d8f0c6b99a9305151d011de.jpg
+      - url: https://acronis.com/
+        hostname: acronis.com
+        screenshotUrl: vue-telemetry/b4466d1f8a1484353d7e7d7c139f1f70.jpg
+      - url: https://peekalink.io/
+        hostname: peekalink.io
+        screenshotUrl: vue-telemetry/bce6a0a21fb4d527589dcbb378759ce1.jpg
+      - url: https://skyline.github.com/
+        hostname: skyline.github.com
+        screenshotUrl: vue-telemetry/6cbb554890d60c4f42132d6bc85d6cf4.jpg
+      - url: https://morflax.com/
+        hostname: morflax.com
+        screenshotUrl: vue-telemetry/d8a851e191206377da4dc7b3624a69dd.jpg
+      - url: https://acreom.com/pricing
+        hostname: acreom.com
+        screenshotUrl: vue-telemetry/fe2e08f83dbb175154755d7e7e58248a.jpg
+      - url: https://globalmaintainersummit.github.com/
+        hostname: globalmaintainersummit.github.com
+        screenshotUrl: vue-telemetry/b06e5ba1237b076c8f71dd068cd1855e.jpg
+      - url: https://volta.net/
+        hostname: volta.net
+        screenshotUrl: vue-telemetry/32abc3212c97fd44ff24acaa6edc4573.jpg
+      - url: https://bio.link/
+        hostname: bio.link
+        screenshotUrl: vue-telemetry/8262aa04325c005ad0a04e3ffb2bc454.jpg
+      - url: https://hacktoberfest.digitalocean.com/
+        hostname: hacktoberfest.digitalocean.com
+        screenshotUrl: vue-telemetry/2758af66d1ca32e5040d2bd3482c563c.jpg
+      - url: https://buymeacoffee.com/
+        hostname: buymeacoffee.com
+        screenshotUrl: vue-telemetry/671bfef545d2be78f878994507c4d68b.jpg
+      - url: https://capgo.app/
+        hostname: capgo.app
+        screenshotUrl: vue-telemetry/57144ca5ba8c3c89e04a950ecaa8a181.jpg
+      - url: https://discord.soundcloud.com/
+        hostname: discord.soundcloud.com
+        screenshotUrl: vue-telemetry/b1bc1d34dd3a68c7fc9144628752deaa.jpg
+      - url: https://viteconf.org/
+        hostname: viteconf.org
+        screenshotUrl: vue-telemetry/f336880944c868470857102771fa6632.jpg
+      - url: https://nuxt.studio/
+        hostname: nuxt.studio
+        screenshotUrl: vue-telemetry/a197a9d012648e75a8c221add50b7a53.jpg
+      - url: https://openai.fund/
+        hostname: openai.fund
+        screenshotUrl: vue-telemetry/2e2afe0dc441fad05775c1391dc8f934.jpg
+      - url: https://platform.openai.com/
+        hostname: platform.openai.com
+        screenshotUrl: vue-telemetry/566b74d30278c076746683629e216525.jpg
+  - name: Saas
+    icon: i-lucide-app-window
+    showcases:
+        - name: Malt
+          url: https://malt.fr/
+          hostname: malt.fr
+        - name: Leetchi
+          url: https://leetchi.com/
+          hostname: leetchi.com
+        - name: Upwork
+          url: https://upwork.com/
+          hostname: upwork.com
+        - name: Le Collectionist
+          url: https://www.lecollectionist.com
+          hostname: lecollectionist.com
+        - name: BackMarket
+          url: https://backmarket.com/
+          hostname: backmarket.com
+        - name: Epargnoo
+          url: https://epargnoo.com/
+          hostname: epargnoo.com/
+        - name: Chatwood
+          hostname: https://www.chatwood.com/
+          url: https://www.chatwood.com/
+  - name: E-Commerce
+    icon: i-lucide-shopping-cart
+    showcases:
+      - name: Louis Vuitton
+        url: https://eu.louisvuitton.com/
+        hostname: eu.louisvuitton.com
+      - name: System 76
+        url: https://system76.com/
+        hostname: system76.com
+      - name: Jardiland
+        url: https://jardiland.com/
+        hostname: jardiland.com
+      - name: Paul Smith
+        url: https://www.paulsmith.com/
+        hostname: www.paulsmith.com
+      - name: Mcdonalds France
+        url: https://www.mcdonalds.fr/
+        hostname: www.mcdonalds.fr
+      - name: Maisons du Monde
+        url: https://maisonsdumonde.com/
+        hostname: maisonsdumonde.com
+        screenshotUrl: vue-telemetry/72f0a5a6a02167b917b975d69e5d6187.jpg
+      - name: OBI
+        url: https://www.obi.de/
+        hostname: www.obi.de
+      - name: Luma Delikatessen
+        url: https://luma-delikatessen.ch/de/
+        hostname: luma-delikatessen.ch
+      - name: Alina Cosmetics
+        url: https://alina-cosmetics.com/
+        hostname: alina-cosmetics.com
+      - name: Winter Company
+        url: https://www.winter-company.com/en/
+        hostname: www.winter-company.com
+      - name: Otypo
+        url: https://otypo.com/
+        hostname: otypo.com
+      - url: https://stores.jp/
+        hostname: stores.jp
+        screenshotUrl: vue-telemetry/ad683b95ffa5d8365fb80328943de38d.jpg
+      - url: https://happysocks.com/
+        hostname: happysocks.com
+        screenshotUrl: vue-telemetry/64b26453656aed8eca1796b21d412a55.jpg
+      - url: https://bershka.com/
+        hostname: bershka.com
+        screenshotUrl: vue-telemetry/6c39eeb538445cd28903275dc9b2cc60.jpg
+      - url: https://azazie.com/
+        hostname: azazie.com
+        screenshotUrl: vue-telemetry/7c09e0138f09697b7d3ecb9e78c13565.jpg
+      - url: https://404placevendome.com/
+        hostname: 404placevendome.com
+        screenshotUrl: vue-telemetry/9541bd96b37391549a0f58d00bf25396.jpg
+      - url: https://lulus.com/
+        hostname: lulus.com
+        screenshotUrl: vue-telemetry/9e89f3a82dd659b270a692f8229d467c.jpg
+      - url: https://niuaero.niu.com/
+        hostname: niuaero.niu.com
+        screenshotUrl: vue-telemetry/83de2b96bd872c9932a73bb06b2efceb.jpg
+      - url: https://sprintersports.com/
+        hostname: sprintersports.com
+        screenshotUrl: vue-telemetry/82ef937065ae2860c7a61edb5990a030.jpg
+      - url: https://hk-eshop.chanel.com/
+        hostname: hk-eshop.chanel.com
+        screenshotUrl: vue-telemetry/31c16a264cdf5d6753e6e6945625ba74.jpg
+      - url: https://danicastamenic.com/
+        hostname: danicastamenic.com
+        screenshotUrl: vue-telemetry/20e254118f9bb447b985cfa534f30cee.jpg
+      - url: https://franprix.fr/
+        hostname: franprix.fr
+        screenshotUrl: vue-telemetry/8ac89b943722eac11790f2b6ff4325f5.jpg
+      - url: https://us.louisvuitton.com/
+        hostname: us.louisvuitton.com
+        screenshotUrl: vue-telemetry/ebbfc5ccb7c7709e5878333d1c967ee8.jpg
+      - url: https://allo.ua/
+        hostname: allo.ua
+        screenshotUrl: vue-telemetry/960268c51b4a364105ecbcbde3358111.jpg
+      - url: https://buy.garmin.com/en-CA/cart
+        hostname: buy.garmin.com
+        screenshotUrl: vue-telemetry/7f649557235d67855987c16cc3192adc.jpg
+      - url: https://dockers.com/
+        hostname: dockers.com
+        screenshotUrl: vue-telemetry/3f68744d5b2881a69b3b28e228578684.jpg
+      - url: https://lidl-shop.sk/
+        hostname: lidl-shop.sk
+        screenshotUrl: vue-telemetry/83be6854380fe529eae1e3994cad4daa.jpg
+      - url: https://project.veja-store.com/
+        hostname: project.veja-store.com
+        screenshotUrl: vue-telemetry/62d7e7afc2e94225bbcd6102718ebd52.jpg
+      - url: https://universalstandard.com/
+        hostname: universalstandard.com
+        screenshotUrl: vue-telemetry/8c3122300980805a641e8f8f2be496da.jpg
+      - url: https://padthaiwok.com/
+        hostname: padthaiwok.com
+        screenshotUrl: vue-telemetry/0611e9c859631ff58ef98cc2743184cd.jpg
+      - url: https://marblesofmumbles.com/
+        hostname: marblesofmumbles.com
+        screenshotUrl: vue-telemetry/89c7731f5e1ca605e24f5180156d52ff.jpg
+      - url: https://fs.com/
+        hostname: fs.com
+        screenshotUrl: vue-telemetry/8e5942bc3f1cb30aa306c24b6a038db7.jpg
+      - url: https://blendjet.com/products/jetsetter-insulated-sleeve
+        hostname: blendjet.com
+        screenshotUrl: vue-telemetry/67a9f3f3b8187da6faae819cd24315b6.jpg
+      - url: https://barefootdreams.com/
+        hostname: barefootdreams.com
+        screenshotUrl: vue-telemetry/c8d945173640402fee238a161d952cb4.jpg
+  - name: News
+    icon: i-lucide-newspaper
+    showcases:
+      - url: https://lequipe.fr/
+        hostname: lequipe.fr
+        screenshotUrl: vue-telemetry/2bbfa96411be1cd604d39f549475ef27.jpg
+      - url: https://gallery.sharethrough.com/
+        hostname: gallery.sharethrough.com
+        screenshotUrl: vue-telemetry/367669a13f238406459242bf027345bb.jpg
+      - url: https://nzz.ch/
+        hostname: nzz.ch
+        screenshotUrl: vue-telemetry/6507959c92ced19b25b7920ba93aae4d.jpg
+      - url: https://forbes.ru/
+        hostname: forbes.ru
+        screenshotUrl: vue-telemetry/ff5c113521ef89663464619e885b9850.jpg
+      - url: https://thepostmillennial.com/
+        hostname: thepostmillennial.com
+        screenshotUrl: vue-telemetry/65959ed55ae5b5835363dec60bf7bf1b.jpg
+      - url: https://goodhouse.ru/
+        hostname: goodhouse.ru
+        screenshotUrl: vue-telemetry/8c41bf9b5cdbd88610b38ce253477238.jpg
+      - url: https://hernazona.aktuality.sk/
+        hostname: hernazona.aktuality.sk
+        screenshotUrl: vue-telemetry/c73daf6ba57de64a8d326fd80b4910f5.jpg
+      - url: https://bulb.liberation.fr/
+        hostname: bulb.liberation.fr
+        screenshotUrl: vue-telemetry/7b86e388f4c773675e8263ecad681df2.jpg
+      - url: https://foxnews.com/media/charlamagne-tha-god-biden-donkey-of-the-day
+        hostname: foxnews.com
+        screenshotUrl: vue-telemetry/c6fc5387cfcbb8fcb922ffa17b6a338f.jpg
+      - url: https://foxbusiness.com/economy
+        hostname: foxbusiness.com
+        screenshotUrl: vue-telemetry/098c73cc126ff443b3eb130ac0141e9a.jpg
+      - url: https://wbez.org/
+        hostname: wbez.org
+        screenshotUrl: vue-telemetry/8d0ff96abf7b1733612931d90b737fdb.jpg
+      - url: https://gothamist.com/
+        hostname: gothamist.com
+        screenshotUrl: vue-telemetry/23c5cb9aa83e1c14353c71b2104fd003.jpg
+      - url: https://caravanmagazine.in/
+        hostname: caravanmagazine.in
+        screenshotUrl: vue-telemetry/6adef83a8e5be73beb7a9e70154697c0.jpg
+  - name: Education
+    icon: i-lucide-graduation-cap
+    showcases:
+      - url: https://en.amazingtalker.com/courses/yoruba/elementary
+        hostname: en.amazingtalker.com
+        screenshotUrl: vue-telemetry/2cce6699a6736806e3642a7606ad1000.jpg
+      - url: https://publicschoolsforall.nea.org/
+        hostname: publicschoolsforall.nea.org
+        screenshotUrl: vue-telemetry/017a627541917bd1840ddd25b7e153cf.jpg
+      - url: https://vuemastery.com/
+        hostname: vuemastery.com
+        screenshotUrl: vue-telemetry/3b78588250ef57ca1aa7238ef5aeca32.jpg
+      - url: https://online.codingblocks.com/
+        hostname: online.codingblocks.com
+        screenshotUrl: vue-telemetry/e904a6d86456214574fb26f980dcded8.jpg
+      - url: https://brainpop.com/
+        hostname: brainpop.com
+        screenshotUrl: vue-telemetry/d328f677ec477d8d6db07f939c0792a5.jpg
+      - url: https://education.procreate.art/
+        hostname: education.procreate.art
+        screenshotUrl: vue-telemetry/dc58f1cab2c4d32859494de314433a78.jpg
+      - url: https://mindvalley.com/
+        hostname: mindvalley.com
+        screenshotUrl: vue-telemetry/91a7f59d6927063092e73b3cd21acfa6.jpg
+      - url: https://apps.education.fr/
+        hostname: apps.education.fr
+        screenshotUrl: vue-telemetry/00794e760c019bba9912d4711415a9f5.jpg
+      - url: https://gb.ru/
+        hostname: gb.ru
+        screenshotUrl: vue-telemetry/a783210eb908ec6d9ae5522cc9331389.jpg
+  - name: Government
+    icon: i-lucide-building
+    showcases:
+      - url: https://covidtracker.gov.ie/
+        hostname: covidtracker.gov.ie
+        screenshotUrl: vue-telemetry/b0484a3ae482fdef8920b870b3ffccf2.jpg
+      - url: https://www.vic.gov.au/
+        hostname: www.vic.gov.au
+        screenshotUrl: vue-telemetry/e5639d45becbb36e5420002da52e8f82.jpg
+      - url: https://faire.fr/
+        hostname: faire.fr
+        screenshotUrl: vue-telemetry/e306e4cff6d05ccdbae04afc64173802.jpg
+      - url: https://www.gov.gr/
+        hostname: www.gov.gr
+        screenshotUrl: vue-telemetry/fb48ac64c18b57010d6b715d4544fcec.jpg
+      - url: https://www2.education.vic.gov.au/
+        hostname: www2.education.vic.gov.au
+        screenshotUrl: vue-telemetry/b5ee7c7927f318c47f60fc3c64a6abef.jpg
+      - url: https://jpl.nasa.gov/
+        hostname: jpl.nasa.gov
+        screenshotUrl: vue-telemetry/9752872b22fbfbdf7b9e8bac19264f43.jpg
+      - url: https://data.gov.tw/
+        hostname: data.gov.tw
+        screenshotUrl: vue-telemetry/6d317fcff673e287432388af1eed6bae.jpg
+      - url: https://nasims.gov.ng/
+        hostname: nasims.gov.ng
+        screenshotUrl: vue-telemetry/3979e2228c1d6e9b1f05d5302c04724e.jpg
+      - url: https://expoeditionlimitee.paris.fr/
+        hostname: expoeditionlimitee.paris.fr
+        screenshotUrl: vue-telemetry/3a5d9d33beaf014229cee9b11315e522.jpg
+      - url: https://apps.education.fr/
+        hostname: apps.education.fr
+        screenshotUrl: vue-telemetry/00794e760c019bba9912d4711415a9f5.jpg
+      - url: https://bkn-covid.sabah.gov.my/bsp-semak
+        hostname: bkn-covid.sabah.gov.my
+        screenshotUrl: vue-telemetry/5047b19ecfa04ddde21512643cb643ed.jpg
+      - url: https://certificat-covid.gov.ro/
+        hostname: certificat-covid.gov.ro
+        screenshotUrl: vue-telemetry/e6bb864a2739636349123085a66b4598.jpg
+      - url: https://adapass.gov.ct.tr/
+        hostname: adapass.gov.ct.tr
+        screenshotUrl: vue-telemetry/aafeb81976393edd406d88d3c5299d72.jpg
+      - url: https://www.digital.go.jp/
+        hostname: www.digital.go.jp
+        screenshotUrl: vue-telemetry/40861e9911e47d03be3d07f775446a71.jpg
+      - url: https://covidnow.moh.gov.my/
+        hostname: covidnow.moh.gov.my
+        screenshotUrl: vue-telemetry/4fd37f74a28f61dd2c2cb73bfacf2343.jpg
+      - url: https://kishida.gr.jp/
+        hostname: kishida.gr.jp
+        screenshotUrl: vue-telemetry/cc450c7e769d6c39e089778e7a979c6a.jpg
+      - url: https://dea.ga.gov.au/
+        hostname: dea.ga.gov.au
+        screenshotUrl: vue-telemetry/7c311413e9ca92d0f52efc7166cbf28e.jpg
+      - url: https://const-court.be/
+        hostname: const-court.be
+        screenshotUrl: vue-telemetry/4e7497716afbcfb68c4539593bfd5a13.jpg
+  - name: Entertainment
+    icon: i-lucide-dices
+    showcases:
+      - url: https://rss.com/
+        hostname: rss.com
+        screenshotUrl: vue-telemetry/081edc95b1300d5bebda4a019de9a615.jpg
+      - url: https://gamedistribution.com/
+        hostname: gamedistribution.com
+        screenshotUrl: vue-telemetry/9b07e5fbb5a659b610b4f9835bcad023.jpg
+      - url: https://byutv.org/
+        hostname: byutv.org
+        screenshotUrl: vue-telemetry/a919ce2706e47eaf143646faba6f9cb0.jpg
+      - url: https://video.tv-tokyo.co.jp/program
+        hostname: video.tv-tokyo.co.jp
+        screenshotUrl: vue-telemetry/238bd4f3f9dac67f476f4d80c34d4bab.jpg
+      - url: https://lolpros.gg/
+        hostname: lolpros.gg
+        screenshotUrl: vue-telemetry/12c27f19f87f548884b2ef4b8f3708fe.jpg
+      - url: https://papermario.nintendo.com/
+        hostname: papermario.nintendo.com
+        screenshotUrl: vue-telemetry/bc3a7e46e08f92fa35c48e42faf66c84.jpg
+      - url: https://justwatch.com/
+        hostname: justwatch.com
+        screenshotUrl: vue-telemetry/0bd2a34e5397bde25eeae345ed855dae.jpg
+      - url: https://okuna.io/
+        hostname: okuna.io
+        screenshotUrl: vue-telemetry/ee5d425e3b24692e576cc224032d5409.jpg
+      - url: https://nba.2k.com/
+        hostname: nba.2k.com
+        screenshotUrl: vue-telemetry/f70d102b61fe13eb8aa2b2843038b0d0.jpg
+      - url: https://trovo.live/
+        hostname: trovo.live
+        screenshotUrl: vue-telemetry/245c089fe9f37e196862b57c320d9684.jpg
+      - url: https://satisfactorygame.com/
+        hostname: satisfactorygame.com
+        screenshotUrl: vue-telemetry/3affd809896b6ad9586baf7c8f66e6eb.jpg
+      - url: https://theavenue.live/
+        hostname: theavenue.live
+        screenshotUrl: vue-telemetry/b499d2e9d617f3959e5b354e4b41c024.jpg
+      - url: https://nextlevel.ea.com/
+        hostname: nextlevel.ea.com
+        screenshotUrl: vue-telemetry/3b3507be4e135201d1246fa473ed9293.jpg
+      - url: https://nba.rakuten.co.jp/
+        hostname: nba.rakuten.co.jp
+        screenshotUrl: vue-telemetry/b27c5893a311796eccd82cd5884f78c5.jpg
+      - url: https://magic.wizards.com/
+        hostname: magic.wizards.com
+        screenshotUrl: vue-telemetry/334bba7b5703388846b2b60ff5b0c249.jpg
+      - url: https://tiktok.com/business/es
+        hostname: tiktok.com
+        screenshotUrl: vue-telemetry/90ddab9e41f138afa8ac5cf6e18ccb18.jpg
+      - url: https://assassinscreed.ubisoft.com/story-creator-mode/ko-kr/discover
+        hostname: assassinscreed.ubisoft.com
+        screenshotUrl: vue-telemetry/ea02c05feea5ae3803806ba267eebf94.jpg
+      - url: https://ys.biligame.com/
+        hostname: ys.biligame.com
+        screenshotUrl: vue-telemetry/476f8b0ba9407f276e1b877d0fd0a4df.jpg
+      - url: https://listeningparty.com/
+        hostname: listeningparty.com
+        screenshotUrl: vue-telemetry/6af2c7d2060d2356f8897a577daa51c2.jpg
+      - url: https://namethevideogame.com/
+        hostname: namethevideogame.com
+        screenshotUrl: vue-telemetry/4e325bf13492b38045fac7302744bae9.jpg
+      - url: https://madbox.io/
+        hostname: madbox.io
+        screenshotUrl: vue-telemetry/8df9c1b25113ee5ad0fabe2b02d09d31.jpg
+      - url: https://accountmigration.leagueoflegends.com/
+        hostname: accountmigration.leagueoflegends.com
+        screenshotUrl: vue-telemetry/601e4bd3b4963215fdc245536b032d58.jpg
+  - name: Travel
+    icon: i-lucide-plane
+    showcases:
+      - url: https://alibaba.ir/
+        hostname: alibaba.ir
+        screenshotUrl: vue-telemetry/24fc1768bc3fe2dba1c60e075200fcaa.jpg
+      - url: https://hostelworld.com/pwa/account/trips
+        hostname: hostelworld.com
+        screenshotUrl: vue-telemetry/6d1107751429a09ce9a049ef04e3ff60.jpg
+      - url: https://studio.trivago.com/
+        hostname: studio.trivago.com
+        screenshotUrl: vue-telemetry/4e94e68f9193b11780b7ecf1d40ca5c3.jpg
+      - url: https://sothebysrealty.com/
+        hostname: sothebysrealty.com
+        screenshotUrl: vue-telemetry/0bdfed92d756ae3eaeaee3120e26b3cb.jpg
+      - url: https://europcar.com/
+        hostname: europcar.com
+        screenshotUrl: vue-telemetry/c00b57808fdfab575e6cfb4c261ed19a.jpg
+  - name: Finance
+    icon: i-lucide-dollar-sign
+    showcases:
+      - url: https://chargebee.com/
+        hostname: chargebee.com
+        screenshotUrl: vue-telemetry/f48d50a894df516ef479efeda1de651a.jpg
+      - url: https://unionbank.com/
+        hostname: unionbank.com
+        screenshotUrl: vue-telemetry/b35122299006bd22a34be34e8afa3c0a.jpg
+      - url: https://aupay.wallet.auone.jp/store
+        hostname: aupay.wallet.auone.jp
+        screenshotUrl: vue-telemetry/8f9f52273bba912eaa6098dd6e1ecbcd.jpg
+      - url: https://flutterwave.com/
+        hostname: flutterwave.com
+        screenshotUrl: vue-telemetry/10dca16da39b1653bf0b182bc2312230.jpg
+      - url: https://bitpay.com/
+        hostname: bitpay.com
+        screenshotUrl: vue-telemetry/fd7ed4ff5b70c7f8d42e7f67a0803522.jpg
+      - url: https://shoppy.gg/
+        hostname: shoppy.gg
+        screenshotUrl: vue-telemetry/926683cc16d3b5c19c485ca2e7a69650.jpg
+      - url: https://pool.binance.com/
+        hostname: pool.binance.com
+        screenshotUrl: vue-telemetry/c83d4dce200038276ed7ce195dd94f9d.jpg
+      - url: https://foxbusiness.com/economy
+        hostname: foxbusiness.com
+        screenshotUrl: vue-telemetry/098c73cc126ff443b3eb130ac0141e9a.jpg
+      - url: https://life.hsbc.co.uk/
+        hostname: life.hsbc.co.uk
+        screenshotUrl: vue-telemetry/9c2a12e59395de440d32d047888acf08.jpg
+      - url: https://bitforex.com/
+        hostname: bitforex.com
+        screenshotUrl: vue-telemetry/7760e643381373ae7b2b8dedc0563f9b.jpg
+      - url: https://pool.binance.me/en
+        hostname: pool.binance.me
+        screenshotUrl: vue-telemetry/00d68ecda8e757d40f933ede0203a6a3.jpg
+  - name: Business
+    icon: i-lucide-briefcase-business
+    showcases:
+      - url: https://clickmeeting.com/ru
+        hostname: clickmeeting.com
+        screenshotUrl: vue-telemetry/29f4f16e4cc82acc61031c31b87dc71b.jpg
+      - url: https://partners.decathlon.ca/
+        hostname: partners.decathlon.ca
+        screenshotUrl: vue-telemetry/c8b83e4ed74ba2225ef4a49a6fe58607.jpg
+      - url: https://booksy.com/
+        hostname: booksy.com
+        screenshotUrl: vue-telemetry/91de22a1184b6022fea3f70df1bfba21.jpg
+      - url: https://luko.eu/
+        hostname: luko.eu
+        screenshotUrl: vue-telemetry/e3c065cfc4e030f1c7e381f1ffbcc7d9.jpg
+      - url: https://rss.com/
+        hostname: rss.com
+        screenshotUrl: vue-telemetry/081edc95b1300d5bebda4a019de9a615.jpg
+      - url: https://diabetes.sharecare.com/
+        hostname: diabetes.sharecare.com
+        screenshotUrl: vue-telemetry/42cf577c1cb0796e01ddb009bce732f2.jpg
+      - url: https://sothebysrealty.com/
+        hostname: sothebysrealty.com
+        screenshotUrl: vue-telemetry/0bdfed92d756ae3eaeaee3120e26b3cb.jpg
+      - url: https://upwork.com/
+        hostname: upwork.com
+        screenshotUrl: vue-telemetry/5913ce3a99defcd8778162850ee80657.jpg
+      - url: https://teamwork.com/
+        hostname: teamwork.com
+        screenshotUrl: vue-telemetry/7a2ae10830a0ada836c84d53ed331ff7.jpg
+      - url: https://experts.zapier.com/
+        hostname: experts.zapier.com
+        screenshotUrl: vue-telemetry/242f8a4e68d83b1388b95a89b17f5dd9.jpg
+      - url: https://vodafone.de/business/services/glasfaser
+        hostname: vodafone.de
+        screenshotUrl: vue-telemetry/e354b56a7725512266f51f3c0f188fc8.jpg
+      - url: https://todoist.com/templates
+        hostname: todoist.com
+        screenshotUrl: vue-telemetry/5bb677bd576c746d2961a9ac5ec42ffd.jpg
+      - url: https://myhermes.co.uk/find-a-parcel-shop
+        hostname: myhermes.co.uk
+        screenshotUrl: vue-telemetry/065e5c46d3a8881a3870e604ad6f1585.jpg
+      - url: https://acronis.com/
+        hostname: acronis.com
+        screenshotUrl: vue-telemetry/b4466d1f8a1484353d7e7d7c139f1f70.jpg
+      - url: https://ohannesburger.com/
+        hostname: ohannesburger.com
+        screenshotUrl: vue-telemetry/2bc7ee39e8601c44b0cf039295c9d553.jpg
+      - url: https://riders.deliveroo.fr/fr/news/verifiez-votre-identite-et-securisez-votre-compte-en-une-photo
+        hostname: riders.deliveroo.fr
+        screenshotUrl: vue-telemetry/f49409275985b230678c3cd5e781ce19.jpg
+      - url: https://asencis.com/
+        hostname: asencis.com
+        screenshotUrl: vue-telemetry/e8ea886c67091b2a4debeab975d0c476.jpg
+      - url: https://unilever.com/
+        hostname: unilever.com
+        screenshotUrl: vue-telemetry/f88bac390770d6bcf39f6c041cf00897.jpg
+      - url: https://riders.deliveroo.co.uk/
+        hostname: riders.deliveroo.co.uk
+        screenshotUrl: vue-telemetry/549023dc59232b24b54e5a5e62410fea.jpg
+      - url: https://logic-immo.be/
+        hostname: logic-immo.be
+        screenshotUrl: vue-telemetry/43c6d85b8a20b91d9a591c20790b3e59.jpg
+      - url: https://yelloworking.com/
+        hostname: yelloworking.com
+        screenshotUrl: vue-telemetry/48f9b49596ede1ba5ef61d56237d4be8.jpg
+  - name: Sport
+    icon: i-lucide-volleyball
+    showcases:
+      - name: Roland Garros
+        url: https://rolandgarros.com/
+        hostname: rolandgarros.com
+      - name: L'Equipe
+        url: https://lequipe.fr/
+        hostname: lequipe.fr
+      - url: https://pinarello.com/
+        hostname: pinarello.com
+        screenshotUrl: vue-telemetry/00bf3a0f91ce17e7b3c3c6c83bd6ca5b.jpg
+      - url: https://blackdiamondequipment.com/
+        hostname: blackdiamondequipment.com
+        screenshotUrl: vue-telemetry/edb5313b291dcb30e838885445f4daf4.jpg
+      - url: https://getcarv.com/
+        hostname: getcarv.com
+        screenshotUrl: vue-telemetry/d3e21be1316187e28c392342681fd902.jpg
+      - url: https://niuaero.niu.com/
+        hostname: niuaero.niu.com
+        screenshotUrl: vue-telemetry/83de2b96bd872c9932a73bb06b2efceb.jpg
+  - name: Agency
+    icon: i-lucide-building-2
+    showcases:
+      - name: Anai Wood
+        url: https://anaiwood.com/en
+        hostname: anaiwood.com
+      - name: Inkbird
+        url: https://inkbird.io/
+        hostname: inkbird.io
+      - name: Funkhaus
+        url: https://funkhaus.us/
+        hostname: funkhaus.us
+      - name: Pyramide Agency
+        url: https://www.pyramide-agency.com/
+        hostname: www.pyramide-agency.com
+      - name: We Are MIQ
+        url: https://www.wearemiq.com/
+        hostname: www.wearemiq.com
+      - name: Solved
+        url: https://solved.ch/
+        hostname: solved.ch
+  - name: Marketing
+    icon: i-lucide-megaphone
+    showcases:
+      - name: Directus
+        url: https://directus.io/
+        hostname: directus.io
+      - name: Stack Overflow
+        url: https://stackoverflow.co/
+        hostname: stackoverflow.co
+      - name: Mobile Industrial Robots
+        url: https://mobile-industrial-robots.com/
+        hostname: mobile-industrial-robots.com
+      - name: Cleanshot
+        url: https://cleanshot.com/
+        hostname: cleanshot.com
+      - name: France.fr
+        url: https://www.france.fr/
+        hostname: www.france.fr
+      - name: Virgin Galactic
+        url: https://www.virgingalactic.com/
+        hostname: www.virgingalactic.com
+      - name: Maxon
+        url: https://www.maxon.net/en
+        hostname: www.maxon.net
+      - name: Experience Aether
+        url: https://experienceaether.com/
+        hostname: experienceaether.com
+      - name: Escape Lounges
+        url: https://escapelounges.com/
+        hostname: escapelounges.com
+  - name: Streaming
+    icon: i-lucide-video
+    showcases:
+      - name: ORF
+        url: https://on.orf.at/
+        hostname: on.orf.at
+      - name: L'Equipe
+        url: https://www.lequipe.fr/
+        hostname: www.lequipe.fr
+  - name: Indie Hackers
+    icon: i-lucide-rocket
+    showcases:
+      - name: Uneed
+        url: https://www.uneed.best/
+        hostname: www.uneed.best
+      - name: Headshot Pro
+        url: https://www.headshotpro.com/
+        hostname: www.headshotpro.com
+  - name: Portfolio
+    icon: i-lucide-user-round
+    showcases:
+      - name: Marc Bejar
+        url: https://marcbejar.com/en
+        hostname: marcbejar.com
+  - name: AI
+    icon: i-lucide-brain
+    showcases:
+      - name: Parafrasist
+        url: https://parafrasist.com/en
+        hostname: parafrasist.com
