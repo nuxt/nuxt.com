@@ -17,6 +17,9 @@ groups:
         url: https://ecosia.org/
         hostname: ecosia.org
         screenshotUrl: vue-telemetry/a5d4be7e33f3dac04b225c201587bae9.jpg
+      - name: Trade Republic
+        url: https://traderepublic.com/en-fr
+        hostname: traderepublic.com
       - name: Upwork
         url: https://upwork.com/
         hostname: upwork.com
@@ -139,6 +142,9 @@ groups:
   - name: Tech
     icon: i-lucide-circuit-board
     showcases:
+      - name: Trade Republic
+        url: https://traderepublic.com/en-fr
+        hostname: traderepublic.com
       - url: https://ecosia.org/
         hostname: ecosia.org
         screenshotUrl: vue-telemetry/a5d4be7e33f3dac04b225c201587bae9.jpg
