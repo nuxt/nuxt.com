@@ -1,5 +1,9 @@
 name: Deploy to NuxtHub
-on: push
+
+on:
+  push:
+  repository_dispatch:
+    types: [docs-updated]
 
 jobs:
   deploy:
