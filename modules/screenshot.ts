@@ -18,6 +18,7 @@ interface ContentFile {
       url: string
       hostname: string
       screenshotUrl?: string
+      screenshotOptions?: Record<string, any>
     }>
   }>
 }
@@ -84,6 +85,7 @@ export default defineNuxtModule((options, nuxt) => {
 
           console.log(`Generating screenshot for Showcase ${name} hitting ${url}...`)
           await captureWebsite.file(url, filename, {
+            ...(showcase.screenshotOptions || {}),
             launchOptions: { headless: true },
             width: 1920,
             height: 960
