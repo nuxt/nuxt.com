@@ -18,7 +18,7 @@
     "@iconify-json/octicon": "^1.2.5",
     "@iconify-json/simple-icons": "^1.2.30",
     "@nuxt/content": "https://pkg.pr.new/@nuxt/content@c18e094",
-    "@nuxt/image": "https://pkg.pr.new/@nuxt/image@1a5786c",
+    "@nuxt/image": "https://pkg.pr.new/@nuxt/image@1802",
     "@nuxt/scripts": "^0.11.5",
     "@nuxt/ui-pro": "^3.0.2",
     "@nuxthub/core": "0.8.23",
