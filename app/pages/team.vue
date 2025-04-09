@@ -10,7 +10,7 @@ const [{ data: page }, { data: teams }] = await Promise.all([
   useAsyncData(kebabCase(route.path), () => queryCollection('team').first()),
   useFetch('/api/teams', {
     key: 'teams',
-    default: () => ({ core: [], ecosystem: [] }),
+    default: () => ([{ name: 'Core Team', team: [], link: 'https://github.com/orgs/nuxt/teams/core' }, { name: 'Ecosystem Team', team: [], link: 'https://github.com/orgs/nuxt/teams/ecosystem' }]),
     transform: data => [
       {
         name: 'Core Team',
