@@ -149,7 +149,7 @@ initializeModules()
                 color="neutral"
                 class="w-auto"
                 variant="outline"
-                @update:model-value="replaceRoute('sortBy', $event as string)"
+                @update:model-value="replaceRoute('sortBy', $event)"
               />
 
               <UButton
@@ -173,7 +173,7 @@ initializeModules()
               variant="outline"
               class="flex-1"
               placeholder="Select category"
-              @update:model-value="replaceRoute('category', $event as string)"
+              @update:model-value="replaceRoute('category', $event)"
             />
             <UButton
               v-if="selectedCategory"
@@ -191,7 +191,7 @@ initializeModules()
               color="neutral"
               class="w-1/3"
               variant="outline"
-              @update:model-value="replaceRoute('sortBy', $event as string)"
+              @update:model-value="replaceRoute('sortBy', $event)"
             />
             <UButton
               :icon="selectedOrder.icon"
