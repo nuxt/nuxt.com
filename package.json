@@ -61,7 +61,7 @@
     "chokidar": "3.6.0",
     "vue-tsc": "2.2.0",
     "unimport": "4.1.1",
-    "@nuxt/ui": "https://pkg.pr.new/@nuxt/ui@034e78a",
+    "@nuxt/ui": "https://pkg.pr.new/@nuxt/ui@077f62a",
     "@nuxtjs/mdc": "https://pkg.pr.new/@nuxtjs/mdc@363"
   },
   "pnpm": {
