@@ -21,7 +21,7 @@ defineProps<{
         <p v-if="headline" class="text-[26px] text-[#00DC82] mb-4 font-semibold">
           {{ headline }}
         </p>
-        <h1 class="m-0 text-[65px] font-semibold mb-2 text-white flex items-center">
+        <h1 class="m-0 text-[65px] font-semibold mb-2 text-white flex items-center max-w-[850px]">
           <span>{{ title }}</span>
         </h1>
         <p v-if="description" class="text-[34px] text-[#E4E4E7] leading-tight max-w-[700px]">
