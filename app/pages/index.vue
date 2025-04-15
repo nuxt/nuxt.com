@@ -54,7 +54,6 @@ if (import.meta.server) {
 const tabs = computed(() => page.value?.hero.tabs.map(tab => ({
   label: tab.title,
   icon: tab.icon,
-  slot: tab.title.toLowerCase(),
   content: tab.content
 })))
 
@@ -183,7 +182,7 @@ onMounted(() => {
             content: 'lg:h-[450px] bg-(--ui-bg) [@media(min-width:2400px)]:border-e [@media(min-width:2400px)]:border-(--ui-border) [@media(min-width:2400px)]:rounded-l-[calc(var(--ui-radius)*1.5)] transition-opacity duration-500 data-[state=inactive]:opacity-0 opacity-100'
           }"
         >
-          <template v-for="(tab, index) of tabs" :key="index" #[tab.slot]="{ item }">
+          <template #content="{ item, index }">
             <LazyMDC :value="item.content" :cache-key="`index-hero-tab-${index}`" hydrate-on-idle />
           </template>
         </UTabs>
