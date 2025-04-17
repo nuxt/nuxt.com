@@ -77,18 +77,18 @@ onMounted(() => {
     <NuxtLoadingIndicator color="var(--ui-primary)" />
 
     <UBanner
-      id="mastering-nuxt-2025-early-bird"
-      title="Mastering Nuxt: Full Stack Unleashed - Launch Specials Available"
-      icon="i-lucide-school"
-      to="https://masteringnuxt.com/2025?utm_source=nuxt-website&utm_medium=banner"
+      id="nuxt-tips-michael"
+      title="Learn Nuxt with a Collection of 100+ Tips!"
+      icon="i-lucide-wand"
+      to="https://michaelnthiessen.com/nuxt-tips-collection?aff=J0Emk"
       close
       :actions="[
         {
-          label: 'View Course',
+          label: 'View Tips',
           color: 'neutral',
           variant: 'outline',
           trailingIcon: 'i-lucide-arrow-right',
-          to: 'https://masteringnuxt.com/2025?utm_source=nuxt-website&utm_medium=banner'
+          to: 'https://michaelnthiessen.com/nuxt-tips-collection?aff=J0Emk'
         }
       ]"
     />
