@@ -74,7 +74,7 @@ onMounted(() => {
 
 <template>
   <UApp>
-    <NuxtLoadingIndicator color="varprimary" />
+    <NuxtLoadingIndicator color="var(--ui-primary)" />
 
     <UBanner
       id="nuxt-tips-michael"
