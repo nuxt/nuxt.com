@@ -12,6 +12,13 @@ links:
     variant: subtle
     color: neutral
     size: md
+  - label: 'Nuxt Starters'
+    to: 'https://nuxt.new'
+    icon: 'i-simple-icons-nuxt'
+    target: '_blank'
+    variant: subtle
+    color: primary
+    size: md
   - label: 'Full-stack templates'
     to: 'https://hub.nuxt.com/templates'
     target: '_blank'
