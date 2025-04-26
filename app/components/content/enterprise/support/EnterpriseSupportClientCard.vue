@@ -29,7 +29,7 @@ defineProps<{
           <div class="font-semibold text-(--ui-text-highlighted)">
             {{ author }}
           </div>
-          <div class="text-sm text-(--ui-text-muted)">
+          <div class="text-sm text-muted">
             {{ job }}
           </div>
         </div>

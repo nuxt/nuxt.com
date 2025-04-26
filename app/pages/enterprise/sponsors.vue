@@ -47,7 +47,7 @@ defineOgImageComponent('Docs', {
           </div>
 
           <div class="lg:col-span-4">
-            <div v-if="['diamond', 'platinum', 'gold', 'silver'].includes(key)" class="w-full border border-(--ui-border) rounded-lg">
+            <div v-if="['diamond', 'platinum', 'gold', 'silver'].includes(key)" class="w-full border border-default rounded-lg">
               <table class="w-full">
                 <tbody>
                   <template v-for="(_, rowIndex) in Math.ceil(value.length / 3)" :key="rowIndex">
@@ -55,7 +55,7 @@ defineOgImageComponent('Docs', {
                       <template v-for="colIndex in 3" :key="colIndex">
                         <td
                           v-if="(rowIndex * 3) + colIndex - 1 < value.length"
-                          class="border-b border-r border-(--ui-border) p-0 w-1/3 h-[120px]"
+                          class="border-b border-r border-default p-0 w-1/3 h-[120px]"
                           :class="{
                             'border-r-0': colIndex === 3,
                             'border-b-0': rowIndex === Math.ceil(value.length / 3) - 1
@@ -64,7 +64,7 @@ defineOgImageComponent('Docs', {
                           <NuxtLink
                             :to="value[(rowIndex * 3) + colIndex - 1].sponsorUrl"
                             target="_blank"
-                            class="flex items-center gap-2 justify-center h-full hover:bg-(--ui-bg-muted)/50 transition-colors"
+                            class="flex items-center gap-2 justify-center h-full hover:bg-muted/50 transition-colors"
                           >
                             <NuxtImg
                               :src="value[(rowIndex * 3) + colIndex - 1].sponsorLogo"
@@ -78,7 +78,7 @@ defineOgImageComponent('Docs', {
                         </td>
                         <td
                           v-else
-                          class="border-b border-r border-(--ui-border) p-0 w-1/3 h-[120px]"
+                          class="border-b border-r border-default p-0 w-1/3 h-[120px]"
                           :class="{
                             'border-r-0': colIndex === 3,
                             'border-b-0': rowIndex === Math.ceil(value.length / 3) - 1

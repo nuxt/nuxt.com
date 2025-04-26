@@ -90,7 +90,7 @@ const links = [
             <span>
               {{ article.category }}
             </span>
-            <span class="text-(--ui-text-muted)">&middot;&nbsp;&nbsp;<time>{{ formatDateByLocale('en', article.date) }}</time></span>
+            <span class="text-muted">&middot;&nbsp;&nbsp;<time>{{ formatDateByLocale('en', article.date) }}</time></span>
           </div>
         </template>
 

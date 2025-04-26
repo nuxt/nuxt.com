@@ -24,7 +24,7 @@ function copyLink() {
       </h5>
       <UButton variant="link" label="Copy" size="sm" @click="copyLink" />
     </div>
-    <p class="text-(--ui-text-muted) text-sm">
+    <p class="text-muted text-sm">
       {{ background }}
     </p>
   </div>

@@ -105,7 +105,7 @@ defineOgImage({
             <ul class="flex flex-col text-left gap-y-4 pt-1">
               <li v-for="step in page.project.steps" :key="step.title" class="flex gap-x-3">
                 <div
-                  class="size-8 flex items-center justify-center border-1 border-(--ui-border) rounded-full bg-(--ui-bg-muted) px-3 py-1"
+                  class="size-8 flex items-center justify-center border-1 border-default rounded-full bg-muted px-3 py-1"
                 >
                   {{ step.number }}
                 </div>
@@ -113,7 +113,7 @@ defineOgImage({
                   <h3 class="font-bold">
                     {{ step.title }}
                   </h3>
-                  <p class="text-(--ui-text-muted) text-[15px]">
+                  <p class="text-muted text-[15px]">
                     {{ step.description }}
                   </p>
                 </div>

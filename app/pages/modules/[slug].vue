@@ -133,7 +133,7 @@ defineOgImageComponent('Module', {
           </NuxtLink>
         </UTooltip>
 
-        <span class="hidden lg:block text-(--ui-text-muted)">&bull;</span>
+        <span class="hidden lg:block text-muted">&bull;</span>
 
         <UTooltip text="GitHub Stars">
           <NuxtLink class="flex items-center gap-1.5" :to="`https://github.com/${module.repo}`" target="_blank">
@@ -142,7 +142,7 @@ defineOgImageComponent('Module', {
           </NuxtLink>
         </UTooltip>
 
-        <span class="hidden lg:block text-(--ui-text-muted)">&bull;</span>
+        <span class="hidden lg:block text-muted">&bull;</span>
 
         <UTooltip text="Latest Version">
           <NuxtLink class="flex items-center gap-1.5" :to="`${module.github}/releases`" target="_blank">
@@ -159,7 +159,7 @@ defineOgImageComponent('Module', {
             <span class="text-sm font-medium">{{ maintainer.github }}</span>
           </NuxtLink>
 
-          <span v-if="index < module.maintainers.length - 1" class="hidden lg:block text-(--ui-text-muted)">&bull;</span>
+          <span v-if="index < module.maintainers.length - 1" class="hidden lg:block text-muted">&bull;</span>
         </div>
       </div>
     </UPageHeader>

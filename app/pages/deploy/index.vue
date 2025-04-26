@@ -60,7 +60,7 @@ const otherProviders = computed(() => providers.value.filter(provider => provide
               body: 'p-4 sm:p-6',
               header: 'relative mb-0',
               title: 'text-xl',
-              description: 'line-clamp-2 text-(--ui-text-muted)'
+              description: 'line-clamp-2 text-muted'
             }"
           >
             <template #header>

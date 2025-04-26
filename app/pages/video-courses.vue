@@ -47,7 +47,7 @@ defineOgImageComponent('Docs', {
               format="webp"
               :modifiers="{ pos: 'top' }"
               :loading="index > 3 ? 'lazy' : undefined"
-              class="rounded border border-(--ui-border) object-cover mr-2 hidden lg:block"
+              class="rounded border border-default object-cover mr-2 hidden lg:block"
             />
             <h3
               class="font-medium text-(--ui-text-highlighted) text-nowrap flex-grow lg:flex-grow-0"
@@ -56,7 +56,7 @@ defineOgImageComponent('Docs', {
               {{ course.name }}
             </h3>
             <p
-              class="text-(--ui-text-muted) hidden lg:block flex-grow truncate"
+              class="text-muted hidden lg:block flex-grow truncate"
               :class="'sponsor' in course && course.sponsor ? 'text-base' : 'text-sm'"
             >
               {{ course.description }}

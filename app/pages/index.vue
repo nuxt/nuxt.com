@@ -179,7 +179,7 @@ onMounted(() => {
             trigger: 'group data-[state=active]:text-(--ui-text-highlighted)',
             indicator: 'bg-(--ui-bg)',
             leadingIcon: 'group-data-[state=active]:text-(--ui-primary) size-4 hidden sm:inline-flex',
-            content: 'lg:h-[450px] bg-(--ui-bg) [@media(min-width:2400px)]:border-e [@media(min-width:2400px)]:border-(--ui-border) [@media(min-width:2400px)]:rounded-l-[calc(var(--ui-radius)*1.5)] transition-opacity duration-500 data-[state=inactive]:opacity-0 opacity-100'
+            content: 'lg:h-[450px] bg-(--ui-bg) [@media(min-width:2400px)]:border-e [@media(min-width:2400px)]:border-default [@media(min-width:2400px)]:rounded-l-[calc(var(--ui-radius)*1.5)] transition-opacity duration-500 data-[state=inactive]:opacity-0 opacity-100'
           }"
         >
           <template #content="{ item, index }">
@@ -189,7 +189,7 @@ onMounted(() => {
       </UPageCard>
     </UPageHero>
     <UPageSection :ui="{ container: '!pt-0' }">
-      <UPageLogos :marquee="isMobile" :title="page?.logos.title" :ui="{ title: 'text-left text-(--ui-text-muted) font-medium text-lg', logos: 'mt-4' }">
+      <UPageLogos :marquee="isMobile" :title="page?.logos.title" :ui="{ title: 'text-left text-muted font-medium text-lg', logos: 'mt-4' }">
         <Motion
           v-for="(company, index) in page?.logos.companies"
           :key="company.alt"
@@ -220,7 +220,7 @@ onMounted(() => {
       :ui="{
         title: 'text-left',
         description: 'text-left',
-        root: 'bg-gradient-to-b border-t border-(--ui-border) from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)',
+        root: 'bg-gradient-to-b border-t border-default from-muted dark:from-muted/40 to-default',
         features: 'xl:grid-cols-4 lg:gap-10'
       }"
     >
@@ -245,7 +245,7 @@ onMounted(() => {
           :while-in-view="{ opacity: 1, transform: 'translateY(0)' }"
           :transition="{ delay: 0.1 * page.features.features.length }"
           :in-view-options="{ once: true }"
-          class="flex flex-col justify-center gap-4 p-4 bg-(--ui-bg-muted)/50 h-full"
+          class="flex flex-col justify-center gap-4 p-4 bg-muted/50 h-full"
         >
           <span class="text-lg font-semibold">
             {{ page.features.cta.title }}
@@ -259,7 +259,7 @@ onMounted(() => {
 
     <UPageSection
       :ui="{
-        root: 'bg-gradient-to-b border-t border-(--ui-border) from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)'
+        root: 'bg-gradient-to-b border-t border-default from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)'
       }"
     >
       <template #title>
@@ -277,7 +277,7 @@ onMounted(() => {
             :description="group.item.description"
             class="h-full"
             :ui="{
-              root: `${group.classes} ring-0 border border-(--ui-border) ${groupIndex === 0 ? 'sm:border-r-0 max-sm:border-b-0' : groupIndex === groupedFoundationItems.length - 1 ? 'sm:border-l-0 max-sm:border-t-0' : 'max-sm:border-y-0'}`,
+              root: `${group.classes} ring-0 border border-default ${groupIndex === 0 ? 'sm:border-r-0 max-sm:border-b-0' : groupIndex === groupedFoundationItems.length - 1 ? 'sm:border-l-0 max-sm:border-t-0' : 'max-sm:border-y-0'}`,
               title: 'text-lg font-semibold'
             }"
           >
@@ -293,7 +293,7 @@ onMounted(() => {
             v-else
             :title="group.items[activeBundlerIndex].title"
             :description="group.items[activeBundlerIndex].description"
-            class="h-full ring-0 border border-(--ui-border)"
+            class="h-full ring-0 border border-default"
             :ui="{
               root: `${group.classes} ${group.items[activeBundlerIndex].gradient}`,
               title: 'text-lg font-semibold'
@@ -347,14 +347,14 @@ onMounted(() => {
       :description="page.stats.description"
       class="relative"
       :ui="{
-        root: 'bg-gradient-to-b border-t border-(--ui-border) from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)'
+        root: 'bg-gradient-to-b border-t border-default from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)'
       }"
     >
       <div class="flex flex-col md:flex-row gap-4">
         <div class="md:w-1/4 flex flex-col gap-4">
           <UPageCard class="flex-1" variant="subtle" to="https://npm.chart.dev/nuxt">
             <div class="flex items-center gap-3">
-              <div class="rounded-[calc(var(--ui-radius)*2)] bg-(--ui-bg) p-2 flex items-center justify-center border border-(--ui-border)">
+              <div class="rounded-[calc(var(--ui-radius)*2)] bg-(--ui-bg) p-2 flex items-center justify-center border border-default">
                 <UIcon name="i-simple-icons-npm" class="text-red-500 size-6" />
               </div>
               <div class="flex flex-col">
@@ -370,7 +370,7 @@ onMounted(() => {
 
           <UPageCard class="flex-1" variant="subtle" to="https://go.nuxt.com/github">
             <div class="flex items-center gap-2">
-              <div class="rounded-lg bg-(--ui-bg) p-2 flex items-center justify-center border border-(--ui-border)">
+              <div class="rounded-lg bg-(--ui-bg) p-2 flex items-center justify-center border border-default">
                 <UIcon name="i-simple-icons-github" class="size-6" />
               </div>
               <div class="flex flex-col">
@@ -391,7 +391,7 @@ onMounted(() => {
               <span class="text-xl font-semibold">
                 {{ page.stats.community.title }}
               </span>
-              <p class="text-(--ui-text-muted) text-center">
+              <p class="text-muted text-center">
                 {{ page.stats.community.description }}
               </p>
               <UButton class="mt-4 w-fit" v-bind="page.stats.cta" />
@@ -402,7 +402,7 @@ onMounted(() => {
         <div class="md:w-1/4 flex flex-col gap-4">
           <UPageCard class="flex-1" variant="subtle" to="https://go.nuxt.com/x">
             <div class="flex items-center gap-2">
-              <div class="rounded-lg bg-(--ui-bg) p-2 flex items-center justify-center border border-(--ui-border)">
+              <div class="rounded-lg bg-(--ui-bg) p-2 flex items-center justify-center border border-default">
                 <UIcon name="i-simple-icons-x" class="size-6" />
               </div>
               <div class="flex flex-col">
@@ -416,7 +416,7 @@ onMounted(() => {
 
           <UPageCard class="flex-1" variant="subtle" to="https://go.nuxt.com/discord">
             <div class="flex items-center gap-2">
-              <div class="rounded-lg bg-(--ui-bg) p-2 flex items-center justify-center border border-(--ui-border)">
+              <div class="rounded-lg bg-(--ui-bg) p-2 flex items-center justify-center border border-default">
                 <UIcon name="i-simple-icons-discord" class="text-indigo-400 size-6" />
               </div>
               <div class="flex flex-col">
@@ -435,7 +435,7 @@ onMounted(() => {
       :description="page.modules.description"
       :links="page.modules.links"
       :ui="{
-        root: 'bg-gradient-to-b border-t border-(--ui-border) from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)',
+        root: 'bg-gradient-to-b border-t border-default from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)',
         title: 'text-left',
         description: 'text-left',
         links: 'justify-start'
@@ -467,7 +467,7 @@ onMounted(() => {
       :links="page.deploy.links"
       orientation="horizontal"
       :ui="{
-        root: 'bg-gradient-to-b border-t border-(--ui-border) from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)'
+        root: 'bg-gradient-to-b border-t border-default from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)'
       }"
     >
       <NuxtImg
@@ -487,7 +487,7 @@ onMounted(() => {
       orientation="horizontal"
       class="relative"
       :ui="{
-        root: 'bg-gradient-to-b border-t border-(--ui-border) from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-20% to-(--ui-bg)',
+        root: 'bg-gradient-to-b border-t border-default from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-20% to-(--ui-bg)',
         title: 'text-left',
         description: 'text-left',
         links: 'justify-start'
@@ -519,7 +519,7 @@ onMounted(() => {
           :ui="{
             root: 'lg:items-center lg:gap-3',
             leadingIcon: 'text-(--ui-text-highlighted)',
-            leading: 'bg-(--ui-bg) p-1 lg:p-2.5 rounded-(--ui-radius) border border-(--ui-border)',
+            leading: 'bg-(--ui-bg) p-1 lg:p-2.5 rounded-(--ui-radius) border border-default',
             description: 'mt-0'
           }"
         />
@@ -532,7 +532,7 @@ onMounted(() => {
       orientation="horizontal"
       reverse
       :ui="{
-        root: 'bg-gradient-to-b border-t border-(--ui-border) from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)'
+        root: 'bg-gradient-to-b border-t border-default from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)'
       }"
     >
       <HomeSectionContributors />
@@ -543,7 +543,7 @@ onMounted(() => {
       :links="page.sponsors.links"
       class="relative"
       :ui="{
-        root: 'bg-gradient-to-b border-t border-(--ui-border) from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)',
+        root: 'bg-gradient-to-b border-t border-default from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)',
         container: 'py-12 sm:py-16 lg:py-20'
       }"
     >
@@ -554,7 +554,7 @@ onMounted(() => {
               {{ tier }} sponsors
             </UBadge>
 
-            <div class="w-full border border-(--ui-border) rounded-lg">
+            <div class="w-full border border-default rounded-lg">
               <table class="w-full">
                 <tbody>
                   <template v-for="(_, rowIndex) in Math.ceil(sponsors.length / 3)" :key="rowIndex">
@@ -562,7 +562,7 @@ onMounted(() => {
                       <template v-for="colIndex in 3" :key="colIndex">
                         <td
                           v-if="(rowIndex * 3) + colIndex - 1 < sponsors.length"
-                          class="border-b border-r border-(--ui-border) p-0 w-1/3 h-[120px]"
+                          class="border-b border-r border-default p-0 w-1/3 h-[120px]"
                           :class="{
                             'border-r-0': colIndex === 3,
                             'border-b-0': rowIndex === Math.ceil(sponsors.length / 3) - 1
@@ -571,7 +571,7 @@ onMounted(() => {
                           <NuxtLink
                             :to="sponsors[(rowIndex * 3) + colIndex - 1].sponsorUrl"
                             target="_blank"
-                            class="flex items-center gap-2 justify-center h-full hover:bg-(--ui-bg-muted)/50 transition-colors"
+                            class="flex items-center gap-2 justify-center h-full hover:bg-muted/50 transition-colors"
                           >
                             <NuxtImg
                               :src="sponsors[(rowIndex * 3) + colIndex - 1].sponsorLogo"
@@ -586,7 +586,7 @@ onMounted(() => {
                         </td>
                         <td
                           v-else
-                          class="border-b border-r border-(--ui-border) p-0 w-1/3 h-[120px]"
+                          class="border-b border-r border-default p-0 w-1/3 h-[120px]"
                           :class="{
                             'border-r-0': colIndex === 3,
                             'border-b-0': rowIndex === Math.ceil(sponsors.length / 3) - 1
