@@ -37,7 +37,7 @@ defineOgImageComponent('Docs', {
     />
     <UPage>
       <UPageBody>
-        <ul class="divide-y divide-(--ui-border)">
+        <ul class="divide-y divide-default">
           <li v-for="(course, index) in courses" :key="course.slug" class="flex items-center py-3 gap-2">
             <NuxtImg
               :src="`/assets/video-courses/${course.slug}.png`"
@@ -50,7 +50,7 @@ defineOgImageComponent('Docs', {
               class="rounded border border-default object-cover mr-2 hidden lg:block"
             />
             <h3
-              class="font-medium text-(--ui-text-highlighted) text-nowrap flex-grow lg:flex-grow-0"
+              class="font-medium text-highlighted text-nowrap flex-grow lg:flex-grow-0"
               :class="'sponsor' in course && course.sponsor ? 'text-xl' : 'text-base'"
             >
               {{ course.name }}

@@ -104,7 +104,7 @@ const links = [
           <ContentRenderer v-if="article.body" :value="article" />
 
           <div class="flex items-center justify-between mt-12 not-prose">
-            <ULink to="/blog" class="text-(--ui-primary)">
+            <ULink to="/blog" class="text-primary">
               ← Back to blog
             </ULink>
             <div class="flex justify-end items-center gap-1.5">

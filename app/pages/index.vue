@@ -129,7 +129,7 @@ onMounted(() => {
       </template>
 
       <template #title>
-        The Progressive<br><span class="text-(--ui-primary)">Web Framework</span>
+        The Progressive<br><span class="text-primary">Web Framework</span>
       </template>
 
       <template #description>
@@ -176,10 +176,10 @@ onMounted(() => {
           :unmount-on-hide="false"
           :ui="{
             list: 'px-0 bg-transparent lg:pr-4 overflow-x-auto',
-            trigger: 'group data-[state=active]:text-(--ui-text-highlighted)',
-            indicator: 'bg-(--ui-bg)',
-            leadingIcon: 'group-data-[state=active]:text-(--ui-primary) size-4 hidden sm:inline-flex',
-            content: 'lg:h-[450px] bg-(--ui-bg) [@media(min-width:2400px)]:border-e [@media(min-width:2400px)]:border-default [@media(min-width:2400px)]:rounded-l-[calc(var(--ui-radius)*1.5)] transition-opacity duration-500 data-[state=inactive]:opacity-0 opacity-100'
+            trigger: 'group data-[state=active]:text-highlighted',
+            indicator: 'bg-default',
+            leadingIcon: 'group-data-[state=active]:text-primary size-4 hidden sm:inline-flex',
+            content: 'lg:h-[450px] bg-default [@media(min-width:2400px)]:border-e [@media(min-width:2400px)]:border-default [@media(min-width:2400px)]:rounded-l-[calc(var(--ui-radius)*1.5)] transition-opacity duration-500 data-[state=inactive]:opacity-0 opacity-100'
           }"
         >
           <template #content="{ item, index }">
@@ -259,7 +259,7 @@ onMounted(() => {
 
     <UPageSection
       :ui="{
-        root: 'bg-gradient-to-b border-t border-default from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)'
+        root: 'bg-gradient-to-b border-t border-default from-muted dark:from-muted/40 to-default'
       }"
     >
       <template #title>
@@ -333,7 +333,7 @@ onMounted(() => {
       class="rounded-none"
       :ui="{
         container: 'sm:py-12 lg:py-12 sm:gap-8',
-        description: '!text-base text-balance before:content-[open-quote] before:text-5xl lg:before:text-7xl before:inline-block before:text-(--ui-text-dimmed) before:absolute before:-ml-6 lg:before:-ml-10 before:-mt-2 lg:before:-mt-4 after:content-[close-quote] after:text-5xl lg:after:text-7xl after:inline-block after:text-(--ui-text-dimmed) after:absolute after:mt-1 lg:after:mt-0 after:ml-1 lg:after:ml-2'
+        description: '!text-base text-balance before:content-[open-quote] before:text-5xl lg:before:text-7xl before:inline-block before:text-dimmed before:absolute before:-ml-6 lg:before:-ml-10 before:-mt-2 lg:before:-mt-4 after:content-[close-quote] after:text-5xl lg:after:text-7xl after:inline-block after:text-dimmed after:absolute after:mt-1 lg:after:mt-0 after:ml-1 lg:after:ml-2'
       }"
     >
       <UUser
@@ -347,18 +347,18 @@ onMounted(() => {
       :description="page.stats.description"
       class="relative"
       :ui="{
-        root: 'bg-gradient-to-b border-t border-default from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)'
+        root: 'bg-gradient-to-b border-t border-default from-muted dark:from-muted/40 to-default'
       }"
     >
       <div class="flex flex-col md:flex-row gap-4">
         <div class="md:w-1/4 flex flex-col gap-4">
           <UPageCard class="flex-1" variant="subtle" to="https://npm.chart.dev/nuxt">
             <div class="flex items-center gap-3">
-              <div class="rounded-[calc(var(--ui-radius)*2)] bg-(--ui-bg) p-2 flex items-center justify-center border border-default">
+              <div class="rounded-[calc(var(--ui-radius)*2)] bg-default p-2 flex items-center justify-center border border-default">
                 <UIcon name="i-simple-icons-npm" class="text-red-500 size-6" />
               </div>
               <div class="flex flex-col">
-                <span class="font-semibold text-lg text-(--ui-text-highlighted)">
+                <span class="font-semibold text-lg text-highlighted">
                   {{ formatNumber(stats.monthlyDownloads) }}
                 </span>
                 <p class="text-sm">
@@ -370,11 +370,11 @@ onMounted(() => {
 
           <UPageCard class="flex-1" variant="subtle" to="https://go.nuxt.com/github">
             <div class="flex items-center gap-2">
-              <div class="rounded-lg bg-(--ui-bg) p-2 flex items-center justify-center border border-default">
+              <div class="rounded-lg bg-default p-2 flex items-center justify-center border border-default">
                 <UIcon name="i-simple-icons-github" class="size-6" />
               </div>
               <div class="flex flex-col">
-                <span class="font-semibold text-lg text-(--ui-text-highlighted)">
+                <span class="font-semibold text-lg text-highlighted">
                   {{ formatNumber(stats.stars) }}
                 </span>
                 <p class="text-sm">
@@ -402,7 +402,7 @@ onMounted(() => {
         <div class="md:w-1/4 flex flex-col gap-4">
           <UPageCard class="flex-1" variant="subtle" to="https://go.nuxt.com/x">
             <div class="flex items-center gap-2">
-              <div class="rounded-lg bg-(--ui-bg) p-2 flex items-center justify-center border border-default">
+              <div class="rounded-lg bg-default p-2 flex items-center justify-center border border-default">
                 <UIcon name="i-simple-icons-x" class="size-6" />
               </div>
               <div class="flex flex-col">
@@ -416,7 +416,7 @@ onMounted(() => {
 
           <UPageCard class="flex-1" variant="subtle" to="https://go.nuxt.com/discord">
             <div class="flex items-center gap-2">
-              <div class="rounded-lg bg-(--ui-bg) p-2 flex items-center justify-center border border-default">
+              <div class="rounded-lg bg-default p-2 flex items-center justify-center border border-default">
                 <UIcon name="i-simple-icons-discord" class="text-indigo-400 size-6" />
               </div>
               <div class="flex flex-col">
@@ -435,7 +435,7 @@ onMounted(() => {
       :description="page.modules.description"
       :links="page.modules.links"
       :ui="{
-        root: 'bg-gradient-to-b border-t border-default from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)',
+        root: 'bg-gradient-to-b border-t border-default from-muted dark:from-muted/40 to-default',
         title: 'text-left',
         description: 'text-left',
         links: 'justify-start'
@@ -467,7 +467,7 @@ onMounted(() => {
       :links="page.deploy.links"
       orientation="horizontal"
       :ui="{
-        root: 'bg-gradient-to-b border-t border-default from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)'
+        root: 'bg-gradient-to-b border-t border-default from-muted dark:from-muted/40 to-default'
       }"
     >
       <NuxtImg
@@ -487,7 +487,7 @@ onMounted(() => {
       orientation="horizontal"
       class="relative"
       :ui="{
-        root: 'bg-gradient-to-b border-t border-default from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-20% to-(--ui-bg)',
+        root: 'bg-gradient-to-b border-t border-default from-muted dark:from-muted/40 to-20% to-default',
         title: 'text-left',
         description: 'text-left',
         links: 'justify-start'
@@ -518,8 +518,8 @@ onMounted(() => {
           v-bind="feature"
           :ui="{
             root: 'lg:items-center lg:gap-3',
-            leadingIcon: 'text-(--ui-text-highlighted)',
-            leading: 'bg-(--ui-bg) p-1 lg:p-2.5 rounded-(--ui-radius) border border-default',
+            leadingIcon: 'text-highlighted',
+            leading: 'bg-default p-1 lg:p-2.5 rounded-(--ui-radius) border border-default',
             description: 'mt-0'
           }"
         />
@@ -532,7 +532,7 @@ onMounted(() => {
       orientation="horizontal"
       reverse
       :ui="{
-        root: 'bg-gradient-to-b border-t border-default from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)'
+        root: 'bg-gradient-to-b border-t border-default from-muted dark:from-muted/40 to-default'
       }"
     >
       <HomeSectionContributors />
@@ -543,7 +543,7 @@ onMounted(() => {
       :links="page.sponsors.links"
       class="relative"
       :ui="{
-        root: 'bg-gradient-to-b border-t border-default from-(--ui-bg-muted) dark:from-(--ui-bg-muted)/40 to-(--ui-bg)',
+        root: 'bg-gradient-to-b border-t border-default from-muted dark:from-muted/40 to-default',
         container: 'py-12 sm:py-16 lg:py-20'
       }"
     >

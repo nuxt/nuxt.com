@@ -105,7 +105,7 @@ initializeModules()
       }"
     >
       <template #title>
-        Build faster with <span class="text-(--ui-primary)">{{ modules.length }}+</span> Nuxt Modules
+        Build faster with <span class="text-primary">{{ modules.length }}+</span> Nuxt Modules
       </template>
 
       <template #description>

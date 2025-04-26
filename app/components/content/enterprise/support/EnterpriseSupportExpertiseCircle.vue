@@ -21,9 +21,9 @@ const { elementX, elementY } = useMouseInElement(circle)
       '--x': `${elementX}px`,
       '--y': `${elementY}px`
     }"
-    class="relative group isolate ring-1 bg-muted ring-(--ui-border) before:hidden before:lg:block before:absolute before:-inset-[2px] before:h-[calc(100%+4px)] before:w-[calc(100%+4px)] before:z-[-1] before:rounded-full lg:flex-1 flex flex-col shadow circle-gradient items-center justify-center rounded-full"
+    class="relative group isolate ring-1 bg-muted ring-default before:hidden before:lg:block before:absolute before:-inset-[2px] before:h-[calc(100%+4px)] before:w-[calc(100%+4px)] before:z-[-1] before:rounded-full lg:flex-1 flex flex-col shadow circle-gradient items-center justify-center rounded-full"
   >
-    <div class="p-5 sm:p-6 flex-1 flex flex-col overflow-hidden rounded-full divide-y divide-(--ui-border) bg-muted hover:bg-opacity-90 transition-[background-opacity]">
+    <div class="p-5 sm:p-6 flex-1 flex flex-col overflow-hidden rounded-full divide-y divide-default bg-muted hover:bg-opacity-90 transition-[background-opacity]">
       <NuxtImg :src="logo.src" :width="logo.width" :height="logo.height" :alt="logo.alt" />
     </div>
   </div>

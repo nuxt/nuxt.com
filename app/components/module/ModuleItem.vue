@@ -62,7 +62,7 @@ function copyInstallCommand(moduleName: string) {
         <div class="flex items-center gap-3">
           <UTooltip text="Monthly NPM Downloads">
             <NuxtLink
-              class="flex items-center gap-1 hover:text-(--ui-text-highlighted)"
+              class="flex items-center gap-1 hover:text-highlighted"
               :to="`https://npm.chart.dev/${module.npm}`"
               target="_blank"
             >
@@ -73,7 +73,7 @@ function copyInstallCommand(moduleName: string) {
 
           <UTooltip text="GitHub Stars">
             <NuxtLink
-              class="flex items-center gap-1 hover:text-(--ui-text-highlighted)"
+              class="flex items-center gap-1 hover:text-highlighted"
               :to="`https://github.com/${module.repo}`"
               target="_blank"
             >

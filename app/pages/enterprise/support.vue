@@ -96,7 +96,7 @@ defineOgImage({
                 viewBox="0 0 2 150"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                class="absolute left-4 -top-12 h-full z-[-1] text-(--ui-border)"
+                class="absolute left-4 -top-12 h-full z-[-1] text-default"
               >
                 <path d="M1 0L1 153" stroke="currentColor" stroke-dasharray="4 4" />
                 <path d="M1 142L1 295" stroke="currentColor" stroke-dasharray="4 4" />

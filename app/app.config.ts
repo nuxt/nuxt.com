@@ -19,7 +19,7 @@ export default defineAppConfig({
       },
       codeTree: {
         slots: {
-          root: 'bg-(--ui-bg) m-0',
+          root: 'bg-default m-0',
           content: '[&>div>pre]:rounded-r-none'
         }
       }

@@ -25,7 +25,7 @@ const { copy, copied } = useClipboard()
       disabled
       icon="i-lucide-terminal"
       :ui="{
-        base: copied ? 'ring-(--ui-primary)' : ''
+        base: copied ? 'ring-primary' : ''
       }"
     >
       <div class="absolute inset-0" :class="[copied ? 'cursor-default' : 'cursor-copy']" @click="copy(value)" />
@@ -36,7 +36,7 @@ const { copy, copied } = useClipboard()
           variant="link"
           :padded="false"
           :class="{
-            '!text-(--ui-primary) cursor-default': copied,
+            '!text-primary cursor-default': copied,
             'cursor-copy': !copied
           }"
           aria-label="copy button"
