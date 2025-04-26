@@ -4,8 +4,7 @@
     "github>nuxt/renovate-config-nuxt"
   ],
   "ignoreDeps": [
-    "chokidar",
-    "vue-tsc"
+    "chokidar"
   ],
   "packageRules": [{
     "matchDepTypes": ["resolutions"],
