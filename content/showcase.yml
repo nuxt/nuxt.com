@@ -148,6 +148,9 @@ groups:
       - url: https://ecosia.org/
         hostname: ecosia.org
         screenshotUrl: vue-telemetry/a5d4be7e33f3dac04b225c201587bae9.jpg
+      - name: Developer Microsoft
+        url: https://developer.microsoft.com/en-us/
+        hostname: developer.microsoft.com
       - url: https://icons8.com/
         hostname: icons8.com
         screenshotUrl: vue-telemetry/7c21acd845602feda676296c33d3b5fb.jpg
