@@ -9,7 +9,7 @@
     class="group"
   >
     <template #header>
-      <NuxtImg width="171" height="90" src="https://ui.nuxt.com/pro/ad.png" alt="Nuxt UI Pro" class="object-cover w-full rounded-(--ui-radius)" />
+      <NuxtImg width="171" height="90" src="https://ui.nuxt.com/pro/ad.png" alt="Nuxt UI Pro" class="object-cover w-full rounded-sm" />
     </template>
 
     <svg class="max-h-5 w-auto inline-block mx-auto" viewBox="0 0 109 17" fill="none" xmlns="http://www.w3.org/2000/svg">

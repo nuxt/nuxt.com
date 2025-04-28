@@ -167,7 +167,7 @@ onMounted(() => {
       </template>
 
       <UPageCard
-        class="overflow-auto lg:absolute [@media(min-width:2400px)]:relative lg:-mt-16 [@media(min-width:2400px)]:mt-8 right-0 [@media(min-width:2400px)]:right-auto w-screen lg:w-[calc(50%-2rem)] [@media(min-width:2400px)]:w-full max-w-[800px] [@media(min-width:2400px)]:mx-auto rounded-none lg:rounded-l-[calc(var(--ui-radius)*4)] [@media(min-width:2400px)]:rounded-[calc(var(--ui-radius)*4)] -mx-4 sm:-mx-6 lg:mx-0"
+        class="overflow-auto lg:absolute [@media(min-width:2400px)]:relative lg:-mt-16 [@media(min-width:2400px)]:mt-8 right-0 [@media(min-width:2400px)]:right-auto w-screen lg:w-[calc(50%-2rem)] [@media(min-width:2400px)]:w-full max-w-[800px] [@media(min-width:2400px)]:mx-auto rounded-none lg:rounded-l-[calc(var(--ui-radius)*4)] [@media(min-width:2400px)]:rounded-2xl -mx-4 sm:-mx-6 lg:mx-0"
         variant="subtle"
         :ui="{ container: 'sm:pt-4.5 lg:pr-0 [@media(min-width:2400px)]:px-6 w-full' }"
       >
@@ -354,7 +354,7 @@ onMounted(() => {
         <div class="md:w-1/4 flex flex-col gap-4">
           <UPageCard class="flex-1" variant="subtle" to="https://npm.chart.dev/nuxt">
             <div class="flex items-center gap-3">
-              <div class="rounded-[calc(var(--ui-radius)*2)] bg-default p-2 flex items-center justify-center border border-default">
+              <div class="rounded-lg bg-default p-2 flex items-center justify-center border border-default">
                 <UIcon name="i-simple-icons-npm" class="text-red-500 size-6" />
               </div>
               <div class="flex flex-col">
@@ -519,7 +519,7 @@ onMounted(() => {
           :ui="{
             root: 'lg:items-center lg:gap-3',
             leadingIcon: 'text-highlighted',
-            leading: 'bg-default p-1 lg:p-2.5 rounded-(--ui-radius) border border-default',
+            leading: 'bg-default p-1 lg:p-2.5 rounded-sm border border-default',
             description: 'mt-0'
           }"
         />
@@ -577,7 +577,7 @@ onMounted(() => {
                               :src="sponsors[(rowIndex * 3) + colIndex - 1].sponsorLogo"
                               :alt="`${sponsors[(rowIndex * 3) + colIndex - 1].sponsorName} logo`"
                               loading="lazy"
-                              class="h-10 max-w-[140px] object-contain rounded-[calc(var(--ui-radius)*2)]"
+                              class="h-10 max-w-[140px] object-contain rounded-lg"
                               height="40"
                               width="40"
                             />

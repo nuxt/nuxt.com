@@ -20,13 +20,13 @@ onMounted(() => {
 @reference "../../assets/css/main.css";
 
 .carbon :deep(#carbonads) {
-  @apply relative border border-default rounded-[calc(var(--ui-radius)*1.5)] hover:bg-elevated/50 w-full transition-colors min-h-[220px] p-2;
+  @apply relative border border-default rounded-md hover:bg-elevated/50 w-full transition-colors min-h-[220px] p-2;
 
   .carbon-img {
     @apply flex justify-center w-full;
 
     & > img {
-      @apply !max-w-full w-full rounded-(--ui-radius);
+      @apply !max-w-full w-full rounded-sm;
     }
   }
 

@@ -69,7 +69,7 @@ defineOgImageComponent('Docs', {
                             <NuxtImg
                               :src="value[(rowIndex * 3) + colIndex - 1].sponsorLogo"
                               :alt="`${value[(rowIndex * 3) + colIndex - 1].sponsorName} logo`"
-                              class="h-10 max-w-[140px] object-contain rounded-[calc(var(--ui-radius)*2)]"
+                              class="h-10 max-w-[140px] object-contain rounded-lg"
                               height="40"
                               width="40"
                             />
