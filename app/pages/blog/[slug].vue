@@ -64,7 +64,7 @@ const links = [
   {
     icon: 'i-lucide-pen',
     label: 'Edit this article',
-    to: `https://github.com/nuxt/nuxt.com/edit/main/content/${article.value.stem}`,
+    to: `https://github.com/nuxt/nuxt.com/edit/main/content/${article.value.stem}.md`,
     target: '_blank'
   }, {
     icon: 'i-lucide-star',
