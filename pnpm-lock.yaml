@@ -7,7 +7,6 @@ settings:
 overrides:
   chokidar: 3.6.0
   unimport: 4.1.1
-  '@nuxtjs/mdc': https://pkg.pr.new/@nuxtjs/mdc@363
 
 patchedDependencies:
   '@nuxt/content':
@@ -123,7 +122,7 @@ importers:
         version: 9.25.1(jiti@2.4.2)
       nuxt-content-twoslash:
         specifier: 0.1.2
-        version: 0.1.2(@nuxtjs/mdc@0.16.1(magicast@0.3.5))(magicast@0.3.5)
+        version: 0.1.2(@nuxtjs/mdc@0.17.0(magicast@0.3.5))(magicast@0.3.5)
       shiki:
         specifier: ^3.3.0
         version: 3.3.0
@@ -1606,12 +1605,8 @@ packages:
   '@nuxtjs/html-validator@2.1.0':
     resolution: {integrity: sha512-ldo8ioSsH3OEumtgwDMokTxlhjgO9FxjJWViAxisq5l/wjvaVX8SYTQ02wjtQcQQPSvS6BwgypAp400RlyFHng==}
 
-  '@nuxtjs/mdc@0.16.1':
-    resolution: {integrity: sha512-di9Ox9QY5pO2eIkQPyKFe9O8L3RvIrGbmjI3rJQRj1xGYRFj2S9RvBPCFbvfaqQGOTjOfxHLg8KtQIGj1Iw/lg==}
-
-  '@nuxtjs/mdc@https://pkg.pr.new/@nuxtjs/mdc@363':
-    resolution: {tarball: https://pkg.pr.new/@nuxtjs/mdc@363}
-    version: 0.16.1
+  '@nuxtjs/mdc@0.17.0':
+    resolution: {integrity: sha512-5HFJ2Xatl4oSfEZuYRJhzYhVHNvb31xc9Tu/qfXpRIWeQsQphqjaV3wWB5VStZYEHpTw1i6Hzyz/ojQZVl4qPg==}
 
   '@nuxtjs/plausible@1.2.0':
     resolution: {integrity: sha512-pjfps32fFN77BhjqHmq2Jx4XCNso9TcYnB+S4IR2qH/c26WDfYB5mQxN5pOEiWRlMkiKq+Y45mBBFtSOVKClCA==}
@@ -2206,8 +2201,8 @@ packages:
   '@shikijs/themes@3.3.0':
     resolution: {integrity: sha512-tXeCvLXBnqq34B0YZUEaAD1lD4lmN6TOHAhnHacj4Owh7Ptb/rf5XCDeROZt2rEOk5yuka3OOW2zLqClV7/SOg==}
 
-  '@shikijs/transformers@3.2.1':
-    resolution: {integrity: sha512-oIT40p8LOPV/6XLnUrVPeRtJtbu0Mpl+BjGFuMXw870eX9zTSQlidg7CsksFDVyUiSAOC/CH1RQm+ldZp0/6eQ==}
+  '@shikijs/transformers@3.3.0':
+    resolution: {integrity: sha512-PIknEyxfkT7i7at/78ynVmuZEv4+7IcS37f6abxMjQ0pVIPEya8n+KNl7XtfbhNL+U9ElR3UzfSzuD5l5Iu+nw==}
 
   '@shikijs/twoslash@3.2.1':
     resolution: {integrity: sha512-2ZiL9xXY8JRXHG5BdJXE9KoIeSsyH9/yK+YTN90/SUIKkq7Nf5dWqXp5wJ6+4SL0FQO8mq2HUutwqU+gamOgOA==}
@@ -3951,6 +3946,10 @@ packages:
 
   entities@4.5.0:
     resolution: {integrity: sha512-V0hjH4dGPh9Ao5p0MoRY6BVqtwCjhz6vI5LT8AJ55H+4g9/4vbHx1I54fS0XuclLhDHArPQCiMjDxjaL8fPxhw==}
+    engines: {node: '>=0.12'}
+
+  entities@6.0.0:
+    resolution: {integrity: sha512-aKstq2TDOndCn4diEyp9Uq/Flu2i1GlLkc6XIDQSDMuaFE3OPW5OphLCyQ5SpSJZTb4reN+kTcYru5yIfXoRPw==}
     engines: {node: '>=0.12'}
 
   env-paths@2.2.1:
@@ -5899,8 +5898,8 @@ packages:
     resolution: {integrity: sha512-bCgsFI+GeGWPAvAiUv63ZorMeif3/U0zaXABGJbOWt5OH2KCaPHF6S+0ok4aqM9RuIPGyZdx9tR9l13PsW4AYQ==}
     engines: {node: '>=14.13.0'}
 
-  parse5@7.2.1:
-    resolution: {integrity: sha512-BuBYQYlv1ckiPdQi/ohiivi9Sagc9JG+Ozs0r7b/0iK3sKmrb0b9FdWdBbOdx6hBCM/F9Ir82ofnBhtZOjCRPQ==}
+  parse5@7.3.0:
+    resolution: {integrity: sha512-IInvU7fabl34qmi9gY8XOVxhYyMyuH2xUNpb2q8/Y+7552KlejkRvqvD19nMoUW/uQGGbqNpA6Tufu5FL5BZgw==}
 
   parseurl@1.3.3:
     resolution: {integrity: sha512-CiyeOxFT/JZyN5m0z9PfXw4SCBJ6Sygz1Dpl0wqjlhDEGGBP1GnsUVEL0p63hoG1fcj3fHynXi9NYO4nWOL+qQ==}
@@ -6374,8 +6373,8 @@ packages:
   rehype-raw@7.0.0:
     resolution: {integrity: sha512-/aE8hCfKlQeA8LmyeyQvQF3eBiLRGNlfBJEvWH7ivp9sBqs7TNqBL5X3v157rM4IFETqDnIOO+z5M/biZbo9Ww==}
 
-  rehype-remark@10.0.0:
-    resolution: {integrity: sha512-+aDXY/icqMFOafJQomVjxe3BAP7aR3lIsQ3GV6VIwpbCD2nvNFOXjGvotMe5p0Ny+Gt6L13DhEf/FjOOpTuUbQ==}
+  rehype-remark@10.0.1:
+    resolution: {integrity: sha512-EmDndlb5NVwXGfUa4c9GPK+lXeItTilLhE6ADSaQuHr4JUlKw9MidzGzx4HpqZrNCt6vnHmEifXQiiA+CEnjYQ==}
 
   rehype-slug@6.0.0:
     resolution: {integrity: sha512-lWyvf/jwu+oS5+hL5eClVd3hNdmwM1kAC0BUvEGD19pajQMIzcNUd/k9GsfQ+FfECvX+JE+e9/btsKH0EjJT6A==}
@@ -6404,8 +6403,8 @@ packages:
   remark-parse@11.0.0:
     resolution: {integrity: sha512-FCxlKLNGknS5ba/1lmpYijMUzX2esxW5xQqjWxw2eHFfS2MSdaHVINFmhjo+qN1WhZhNimq0dZATN9pH0IDrpA==}
 
-  remark-rehype@11.1.1:
-    resolution: {integrity: sha512-g/osARvjkBXb6Wo0XvAeXQohVta8i84ACbenPpoSsxTOQH/Ae0/RGP4WZgnMH5pMLpsj4FG7OHmcIcXxpza8eQ==}
+  remark-rehype@11.1.2:
+    resolution: {integrity: sha512-Dh7l57ianaEoIpzbp0PC9UKAdCSVklD8E5Rpw7ETfbTl3FqcOOgq5q2LVDhgGCkaBv7p24JXikPdvhhmHvKMsw==}
 
   remark-stringify@11.0.0:
     resolution: {integrity: sha512-1OSmLd3awB/t8qdoEOMazZkNsfVTeY4fTsgzcQFdXNq8ToTN4ZGwrMnlda4K6smTFKD+GRV6O48i6Z4iKgPPpw==}
@@ -9001,7 +9000,7 @@ snapshots:
   '@nuxt/content@3.5.1(patch_hash=87785a9b1fbf4e01ba1aed858dd4bc7000490dcd6210e273c3a1a64c6f2ddb6f)(magicast@0.3.5)(typescript@5.8.3)':
     dependencies:
       '@nuxt/kit': 3.16.2(magicast@0.3.5)
-      '@nuxtjs/mdc': https://pkg.pr.new/@nuxtjs/mdc@363(magicast@0.3.5)
+      '@nuxtjs/mdc': 0.17.0(magicast@0.3.5)
       '@shikijs/langs': 3.3.0
       '@sqlite.org/sqlite-wasm': 3.49.1-build4
       '@webcontainer/env': 1.1.1
@@ -9191,13 +9190,13 @@ snapshots:
   '@nuxt/fonts@0.11.1(@netlify/blobs@8.2.0)(db0@0.3.2(better-sqlite3@11.9.1))(ioredis@5.6.1)(magicast@0.3.5)(vite@6.3.3(@types/node@22.13.10)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(yaml@2.7.1))':
     dependencies:
       '@nuxt/devtools-kit': 2.4.0(magicast@0.3.5)(vite@6.3.3(@types/node@22.13.10)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(yaml@2.7.1))
-      '@nuxt/kit': 3.17.0(magicast@0.3.5)
+      '@nuxt/kit': 3.17.1(magicast@0.3.5)
       consola: 3.4.2
       css-tree: 3.1.0
       defu: 6.1.4
       esbuild: 0.25.3
       fontaine: 0.5.0
-      h3: 1.15.2
+      h3: 1.15.3
       jiti: 2.4.2
       magic-regexp: 0.8.0
       magic-string: 0.30.17
@@ -9240,7 +9239,7 @@ snapshots:
       '@iconify/utils': 2.3.0
       '@iconify/vue': 4.3.0(vue@3.5.13(typescript@5.8.3))
       '@nuxt/devtools-kit': 2.4.0(magicast@0.3.5)(vite@6.3.3(@types/node@22.13.10)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(yaml@2.7.1))
-      '@nuxt/kit': 3.17.0(magicast@0.3.5)
+      '@nuxt/kit': 3.17.1(magicast@0.3.5)
       consola: 3.4.2
       local-pkg: 1.1.1
       mlly: 1.7.4
@@ -9610,8 +9609,8 @@ snapshots:
       '@internationalized/number': 3.6.1
       '@nuxt/fonts': 0.11.1(@netlify/blobs@8.2.0)(db0@0.3.2(better-sqlite3@11.9.1))(ioredis@5.6.1)(magicast@0.3.5)(vite@6.3.3(@types/node@22.13.10)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(yaml@2.7.1))
       '@nuxt/icon': 1.12.0(magicast@0.3.5)(vite@6.3.3(@types/node@22.13.10)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(yaml@2.7.1))(vue@3.5.13(typescript@5.8.3))
-      '@nuxt/kit': 3.17.0(magicast@0.3.5)
-      '@nuxt/schema': 3.17.0
+      '@nuxt/kit': 3.17.1(magicast@0.3.5)
+      '@nuxt/schema': 3.17.1
       '@nuxtjs/color-mode': 3.5.2(magicast@0.3.5)
       '@standard-schema/spec': 1.0.0
       '@tailwindcss/postcss': 4.1.4
@@ -9644,8 +9643,8 @@ snapshots:
       tinyglobby: 0.2.13
       typescript: 5.8.3
       unplugin: 2.3.2
-      unplugin-auto-import: 19.1.2(@nuxt/kit@3.17.0(magicast@0.3.5))(@vueuse/core@13.1.0(vue@3.5.13(typescript@5.8.3)))
-      unplugin-vue-components: 28.5.0(@babel/parser@7.26.10)(@nuxt/kit@3.17.0(magicast@0.3.5))(vue@3.5.13(typescript@5.8.3))
+      unplugin-auto-import: 19.1.2(@nuxt/kit@3.17.1(magicast@0.3.5))(@vueuse/core@13.1.0(vue@3.5.13(typescript@5.8.3)))
+      unplugin-vue-components: 28.5.0(@babel/parser@7.26.10)(@nuxt/kit@3.17.1(magicast@0.3.5))(vue@3.5.13(typescript@5.8.3))
       vaul-vue: 0.4.1(reka-ui@2.2.0(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3)))(vue@3.5.13(typescript@5.8.3))
     optionalDependencies:
       valibot: 1.0.0(typescript@5.8.3)
@@ -9795,7 +9794,7 @@ snapshots:
 
   '@nuxtjs/color-mode@3.5.2(magicast@0.3.5)':
     dependencies:
-      '@nuxt/kit': 3.17.0(magicast@0.3.5)
+      '@nuxt/kit': 3.17.1(magicast@0.3.5)
       pathe: 1.1.2
       pkg-types: 1.3.1
       semver: 7.7.1
@@ -9818,10 +9817,12 @@ snapshots:
       - magicast
       - vitest
 
-  '@nuxtjs/mdc@0.16.1(magicast@0.3.5)':
+  '@nuxtjs/mdc@0.17.0(magicast@0.3.5)':
     dependencies:
-      '@nuxt/kit': 3.17.0(magicast@0.3.5)
-      '@shikijs/transformers': 3.2.1
+      '@nuxt/kit': 3.17.1(magicast@0.3.5)
+      '@shikijs/langs': 3.3.0
+      '@shikijs/themes': 3.3.0
+      '@shikijs/transformers': 3.3.0
       '@types/hast': 3.0.4
       '@types/mdast': 4.0.4
       '@vue/compiler-core': 3.5.13
@@ -9836,13 +9837,13 @@ snapshots:
       hast-util-to-string: 3.0.1
       mdast-util-to-hast: 13.2.0
       micromark-util-sanitize-uri: 2.0.1
-      parse5: 7.2.1
+      parse5: 7.3.0
       pathe: 2.0.3
       property-information: 7.0.0
       rehype-external-links: 3.0.0
       rehype-minify-whitespace: 6.0.2
       rehype-raw: 7.0.0
-      rehype-remark: 10.0.0
+      rehype-remark: 10.0.1
       rehype-slug: 6.0.0
       rehype-sort-attribute-values: 5.0.1
       rehype-sort-attributes: 5.0.1
@@ -9850,53 +9851,7 @@ snapshots:
       remark-gfm: 4.0.1
       remark-mdc: 3.6.0
       remark-parse: 11.0.0
-      remark-rehype: 11.1.1
-      remark-stringify: 11.0.0
-      scule: 1.3.0
-      shiki: 3.3.0
-      ufo: 1.6.1
-      unified: 11.0.5
-      unist-builder: 4.0.0
-      unist-util-visit: 5.0.0
-      unwasm: 0.3.9
-      vfile: 6.0.3
-    transitivePeerDependencies:
-      - magicast
-      - supports-color
-
-  '@nuxtjs/mdc@https://pkg.pr.new/@nuxtjs/mdc@363(magicast@0.3.5)':
-    dependencies:
-      '@nuxt/kit': 3.17.0(magicast@0.3.5)
-      '@shikijs/transformers': 3.2.1
-      '@types/hast': 3.0.4
-      '@types/mdast': 4.0.4
-      '@vue/compiler-core': 3.5.13
-      consola: 3.4.2
-      debug: 4.4.0
-      defu: 6.1.4
-      destr: 2.0.5
-      detab: 3.0.2
-      github-slugger: 2.0.0
-      hast-util-format: 1.1.0
-      hast-util-to-mdast: 10.1.2
-      hast-util-to-string: 3.0.1
-      mdast-util-to-hast: 13.2.0
-      micromark-util-sanitize-uri: 2.0.1
-      parse5: 7.2.1
-      pathe: 2.0.3
-      property-information: 7.0.0
-      rehype-external-links: 3.0.0
-      rehype-minify-whitespace: 6.0.2
-      rehype-raw: 7.0.0
-      rehype-remark: 10.0.0
-      rehype-slug: 6.0.0
-      rehype-sort-attribute-values: 5.0.1
-      rehype-sort-attributes: 5.0.1
-      remark-emoji: 5.0.1
-      remark-gfm: 4.0.1
-      remark-mdc: 3.6.0
-      remark-parse: 11.0.0
-      remark-rehype: 11.1.1
+      remark-rehype: 11.1.2
       remark-stringify: 11.0.0
       scule: 1.3.0
       shiki: 3.3.0
@@ -10378,10 +10333,10 @@ snapshots:
     dependencies:
       '@shikijs/types': 3.3.0
 
-  '@shikijs/transformers@3.2.1':
+  '@shikijs/transformers@3.3.0':
     dependencies:
-      '@shikijs/core': 3.2.1
-      '@shikijs/types': 3.2.1
+      '@shikijs/core': 3.3.0
+      '@shikijs/types': 3.3.0
 
   '@shikijs/twoslash@3.2.1(typescript@5.6.3)':
     dependencies:
@@ -12234,6 +12189,8 @@ snapshots:
 
   entities@4.5.0: {}
 
+  entities@6.0.0: {}
+
   env-paths@2.2.1: {}
 
   env-paths@3.0.0: {}
@@ -13138,7 +13095,7 @@ snapshots:
       hast-util-to-parse5: 8.0.0
       html-void-elements: 3.0.0
       mdast-util-to-hast: 13.2.0
-      parse5: 7.2.1
+      parse5: 7.3.0
       unist-util-position: 5.0.0
       unist-util-visit: 5.0.0
       vfile: 6.0.3
@@ -14503,11 +14460,11 @@ snapshots:
     transitivePeerDependencies:
       - magicast
 
-  nuxt-content-twoslash@0.1.2(@nuxtjs/mdc@0.16.1(magicast@0.3.5))(magicast@0.3.5):
+  nuxt-content-twoslash@0.1.2(@nuxtjs/mdc@0.17.0(magicast@0.3.5))(magicast@0.3.5):
     dependencies:
       '@nuxt/kit': 3.16.1(magicast@0.3.5)
       '@nuxt/schema': 3.16.1
-      '@nuxtjs/mdc': 0.16.1(magicast@0.3.5)
+      '@nuxtjs/mdc': 0.17.0(magicast@0.3.5)
       '@shikijs/vitepress-twoslash': 1.29.2(@nuxt/kit@3.16.1(magicast@0.3.5))(typescript@5.6.3)
       cac: 6.7.14
       chokidar: 3.6.0
@@ -14928,9 +14885,9 @@ snapshots:
       '@types/parse-path': 7.0.3
       parse-path: 7.0.1
 
-  parse5@7.2.1:
+  parse5@7.3.0:
     dependencies:
-      entities: 4.5.0
+      entities: 6.0.0
 
   parseurl@1.3.3: {}
 
@@ -15436,7 +15393,7 @@ snapshots:
       hast-util-raw: 9.1.0
       vfile: 6.0.3
 
-  rehype-remark@10.0.0:
+  rehype-remark@10.0.1:
     dependencies:
       '@types/hast': 3.0.4
       '@types/mdast': 4.0.4
@@ -15531,7 +15488,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  remark-rehype@11.1.1:
+  remark-rehype@11.1.2:
     dependencies:
       '@types/hast': 3.0.4
       '@types/mdast': 4.0.4
@@ -16442,7 +16399,7 @@ snapshots:
       '@nuxt/kit': 3.16.2(magicast@0.3.5)
       '@vueuse/core': 13.1.0(vue@3.5.13(typescript@5.8.3))
 
-  unplugin-auto-import@19.1.2(@nuxt/kit@3.17.0(magicast@0.3.5))(@vueuse/core@13.1.0(vue@3.5.13(typescript@5.8.3))):
+  unplugin-auto-import@19.1.2(@nuxt/kit@3.17.1(magicast@0.3.5))(@vueuse/core@13.1.0(vue@3.5.13(typescript@5.8.3))):
     dependencies:
       local-pkg: 1.1.1
       magic-string: 0.30.17
@@ -16451,7 +16408,7 @@ snapshots:
       unplugin: 2.3.2
       unplugin-utils: 0.2.4
     optionalDependencies:
-      '@nuxt/kit': 3.17.0(magicast@0.3.5)
+      '@nuxt/kit': 3.17.1(magicast@0.3.5)
       '@vueuse/core': 13.1.0(vue@3.5.13(typescript@5.8.3))
 
   unplugin-utils@0.2.4:
@@ -16476,7 +16433,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  unplugin-vue-components@28.5.0(@babel/parser@7.26.10)(@nuxt/kit@3.17.0(magicast@0.3.5))(vue@3.5.13(typescript@5.8.3)):
+  unplugin-vue-components@28.5.0(@babel/parser@7.26.10)(@nuxt/kit@3.17.1(magicast@0.3.5))(vue@3.5.13(typescript@5.8.3)):
     dependencies:
       chokidar: 3.6.0
       debug: 4.4.0
@@ -16489,7 +16446,7 @@ snapshots:
       vue: 3.5.13(typescript@5.8.3)
     optionalDependencies:
       '@babel/parser': 7.26.10
-      '@nuxt/kit': 3.17.0(magicast@0.3.5)
+      '@nuxt/kit': 3.17.1(magicast@0.3.5)
     transitivePeerDependencies:
       - supports-color
 

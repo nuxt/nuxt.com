@@ -59,8 +59,7 @@
   },
   "resolutions": {
     "chokidar": "3.6.0",
-    "unimport": "4.1.1",
-    "@nuxtjs/mdc": "https://pkg.pr.new/@nuxtjs/mdc@363"
+    "unimport": "4.1.1"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
