@@ -3,9 +3,6 @@
   "extends": [
     "github>nuxt/renovate-config-nuxt"
   ],
-  "ignoreDeps": [
-    "chokidar"
-  ],
   "packageRules": [{
     "matchDepTypes": ["resolutions"],
     "enabled": false
