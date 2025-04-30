@@ -59,8 +59,8 @@ function copyInstallCommand(moduleName: string) {
     <template #footer>
       <USeparator type="dashed" class="mb-4" />
 
-      <div class="flex items-center justify-between gap-3 -my-1 text-(--ui-text-muted)">
-        <div class="flex items-center gap-3">
+      <div class="flex items-center justify-between gap-3 -my-1 text-(--ui-text-muted) flex-wrap">
+        <div class="flex items-center gap-3 flex-wrap">
           <UTooltip text="Monthly NPM Downloads">
             <NuxtLink
               class="flex items-center gap-1 hover:text-(--ui-text-highlighted)"
@@ -68,7 +68,7 @@ function copyInstallCommand(moduleName: string) {
               target="_blank"
             >
               <UIcon name="i-lucide-circle-arrow-down" class="size-4 shrink-0" />
-              <span class="text-sm font-medium">{{ formatNumber(module.stats.downloads) }}</span>
+              <span class="text-sm font-medium whitespace-normal">{{ formatNumber(module.stats.downloads) }}</span>
             </NuxtLink>
           </UTooltip>
 
@@ -79,7 +79,7 @@ function copyInstallCommand(moduleName: string) {
               target="_blank"
             >
               <UIcon name="i-lucide-star" class="size-4 shrink-0" />
-              <span class="text-sm font-medium">{{ formatNumber(module.stats.stars || 0) }}</span>
+              <span class="text-sm font-medium whitespace-normal">{{ formatNumber(module.stats.stars || 0) }}</span>
             </NuxtLink>
           </UTooltip>
 
@@ -90,7 +90,7 @@ function copyInstallCommand(moduleName: string) {
               target="_blank"
             >
               <UIcon name="i-lucide-calendar-days" class="size-4 shrink-0" />
-              <span class="text-sm font-medium">{{ formatDateByLocale('en', module.stats.publishedAt) }}</span>
+              <span class="text-sm font-medium whitespace-normal">{{ formatDateByLocale('en', module.stats.publishedAt) }}</span>
             </NuxtLink>
           </UTooltip>
 
@@ -101,7 +101,7 @@ function copyInstallCommand(moduleName: string) {
               target="_blank"
             >
               <UIcon name="i-lucide-calendar-days" class="size-4 shrink-0" />
-              <span class="text-sm font-medium">{{ formatDateByLocale('en', module.stats.createdAt) }}</span>
+              <span class="text-sm font-medium whitespace-normal">{{ formatDateByLocale('en', module.stats.createdAt) }}</span>
             </NuxtLink>
           </UTooltip>
         </div>
