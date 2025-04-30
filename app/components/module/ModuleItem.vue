@@ -7,6 +7,7 @@ const { module, showBadge = true } = defineProps<{
 }>()
 
 const { copy } = useClipboard()
+const { selectedSort } = useModules()
 
 function copyInstallCommand(moduleName: string) {
   const command = `npx nuxi@latest module add ${moduleName}`
@@ -79,6 +80,28 @@ function copyInstallCommand(moduleName: string) {
             >
               <UIcon name="i-lucide-star" class="size-4 shrink-0" />
               <span class="text-sm font-medium">{{ formatNumber(module.stats.stars || 0) }}</span>
+            </NuxtLink>
+          </UTooltip>
+
+          <UTooltip v-if="selectedSort.key === 'publishedAt'" text="Updated Date">
+            <NuxtLink
+              class="flex items-center gap-1 hover:text-(--ui-text-highlighted)"
+              :to="`https://github.com/${module.repo}`"
+              target="_blank"
+            >
+              <UIcon name="i-lucide-calendar-days" class="size-4 shrink-0" />
+              <span class="text-sm font-medium">{{ formatDateByLocale('en', module.stats.publishedAt) }}</span>
+            </NuxtLink>
+          </UTooltip>
+
+          <UTooltip v-if="selectedSort.key === 'createdAt'" text="Created Date">
+            <NuxtLink
+              class="flex items-center gap-1 hover:text-(--ui-text-highlighted)"
+              :to="`https://github.com/${module.repo}`"
+              target="_blank"
+            >
+              <UIcon name="i-lucide-calendar-days" class="size-4 shrink-0" />
+              <span class="text-sm font-medium">{{ formatDateByLocale('en', module.stats.createdAt) }}</span>
             </NuxtLink>
           </UTooltip>
         </div>
