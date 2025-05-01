@@ -8,6 +8,13 @@ const { module, showBadge = true } = defineProps<{
 
 const { copy } = useClipboard()
 const { selectedSort } = useModules()
+const date = computed(() => {
+  if (selectedSort.value.key === 'publishedAt') {
+    return useTimeAgo(module.stats.publishedAt)
+  }
+
+  return useTimeAgo(module.stats.createdAt)
+})
 
 function copyInstallCommand(moduleName: string) {
   const command = `npx nuxi@latest module add ${moduleName}`
@@ -83,25 +90,25 @@ function copyInstallCommand(moduleName: string) {
             </NuxtLink>
           </UTooltip>
 
-          <UTooltip v-if="selectedSort.key === 'publishedAt'" text="Updated Date">
+          <UTooltip v-if="selectedSort.key === 'publishedAt'" :text="`Updated ${formatDateByLocale('en', module.stats.publishedAt)}`">
             <NuxtLink
               class="flex items-center gap-1 hover:text-(--ui-text-highlighted)"
               :to="`https://github.com/${module.repo}`"
               target="_blank"
             >
-              <UIcon name="i-lucide-calendar-days" class="size-4 shrink-0" />
-              <span class="text-sm font-medium whitespace-normal">{{ formatDateByLocale('en', module.stats.publishedAt) }}</span>
+              <UIcon name="i-lucide-radio" class="size-4 shrink-0" />
+              <span class="text-sm font-medium whitespace-normal">{{ date }}</span>
             </NuxtLink>
           </UTooltip>
 
-          <UTooltip v-if="selectedSort.key === 'createdAt'" text="Created Date">
+          <UTooltip v-if="selectedSort.key === 'createdAt'" :text="`Created ${formatDateByLocale('en', module.stats.createdAt)}`">
             <NuxtLink
               class="flex items-center gap-1 hover:text-(--ui-text-highlighted)"
               :to="`https://github.com/${module.repo}`"
               target="_blank"
             >
-              <UIcon name="i-lucide-calendar-days" class="size-4 shrink-0" />
-              <span class="text-sm font-medium whitespace-normal">{{ formatDateByLocale('en', module.stats.createdAt) }}</span>
+              <UIcon name="i-lucide-package" class="size-4 shrink-0" />
+              <span class="text-sm font-medium whitespace-normal">{{ date }}</span>
             </NuxtLink>
           </UTooltip>
         </div>
