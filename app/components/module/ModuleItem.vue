@@ -22,7 +22,7 @@ function copyInstallCommand(moduleName: string) {
     class="group"
     variant="subtle"
     :ui="{
-      description: 'line-clamp-2 text-(--ui-text-muted) text-sm',
+      description: 'line-clamp-2 text-muted text-sm',
       container: 'flex flex-col',
       wrapper: 'flex flex-col min-h-0 items-start',
       body: 'flex-none',
@@ -58,11 +58,11 @@ function copyInstallCommand(moduleName: string) {
     <template #footer>
       <USeparator type="dashed" class="mb-4" />
 
-      <div class="flex items-center justify-between gap-3 -my-1 text-(--ui-text-muted)">
+      <div class="flex items-center justify-between gap-3 -my-1 text-muted">
         <div class="flex items-center gap-3">
           <UTooltip text="Monthly NPM Downloads">
             <NuxtLink
-              class="flex items-center gap-1 hover:text-(--ui-text-highlighted)"
+              class="flex items-center gap-1 hover:text-highlighted"
               :to="`https://npm.chart.dev/${module.npm}`"
               target="_blank"
             >
@@ -73,7 +73,7 @@ function copyInstallCommand(moduleName: string) {
 
           <UTooltip text="GitHub Stars">
             <NuxtLink
-              class="flex items-center gap-1 hover:text-(--ui-text-highlighted)"
+              class="flex items-center gap-1 hover:text-highlighted"
               :to="`https://github.com/${module.repo}`"
               target="_blank"
             >

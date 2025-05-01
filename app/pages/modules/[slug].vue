@@ -119,7 +119,7 @@ defineOgImageComponent('Module', {
             {{ module.npm }}
 
             <UTooltip v-if="module.type === 'official'" text="Official module" class="tracking-normal">
-              <UIcon name="i-lucide-medal" class="size-6 text-(--ui-primary)" />
+              <UIcon name="i-lucide-medal" class="size-6 text-primary" />
             </UTooltip>
           </div>
         </div>
@@ -133,7 +133,7 @@ defineOgImageComponent('Module', {
           </NuxtLink>
         </UTooltip>
 
-        <span class="hidden lg:block text-(--ui-text-muted)">&bull;</span>
+        <span class="hidden lg:block text-muted">&bull;</span>
 
         <UTooltip text="GitHub Stars">
           <NuxtLink class="flex items-center gap-1.5" :to="`https://github.com/${module.repo}`" target="_blank">
@@ -142,7 +142,7 @@ defineOgImageComponent('Module', {
           </NuxtLink>
         </UTooltip>
 
-        <span class="hidden lg:block text-(--ui-text-muted)">&bull;</span>
+        <span class="hidden lg:block text-muted">&bull;</span>
 
         <UTooltip text="Latest Version">
           <NuxtLink class="flex items-center gap-1.5" :to="`${module.github}/releases`" target="_blank">
@@ -154,12 +154,12 @@ defineOgImageComponent('Module', {
         <div class="mx-3 h-6 border-l border-gray-200 dark:border-gray-800 w-px hidden lg:block" />
 
         <div v-for="(maintainer, index) in module.maintainers" :key="maintainer.github" class="flex items-center gap-3">
-          <NuxtLink :to="`https://github.com/${maintainer.github}`" target="_blank" class="flex items-center gap-1.5 hover:text-(--ui-primary)">
+          <NuxtLink :to="`https://github.com/${maintainer.github}`" target="_blank" class="flex items-center gap-1.5 hover:text-primary">
             <UAvatar provider="ipx" :src="`https://ipx.nuxt.com/f_auto,s_20x20/gh_avatar/${maintainer.github}`" :srcset="`https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/${maintainer.github} 2x`" :alt="maintainer.github" size="xs" />
             <span class="text-sm font-medium">{{ maintainer.github }}</span>
           </NuxtLink>
 
-          <span v-if="index < module.maintainers.length - 1" class="hidden lg:block text-(--ui-text-muted)">&bull;</span>
+          <span v-if="index < module.maintainers.length - 1" class="hidden lg:block text-muted">&bull;</span>
         </div>
       </div>
     </UPageHeader>
