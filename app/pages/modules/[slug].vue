@@ -69,6 +69,8 @@ const contributors = computed(() => {
 
 const title = module.value.npm
 const description = module.value.description || 'A Nuxt module'
+const publishedAgo = useTimeAgo(module.value.stats.publishedAt)
+const createdAgo = useTimeAgo(module.value.stats.createdAt)
 
 useSeoMeta({
   titleTemplate: '%s · Nuxt Modules',
@@ -176,6 +178,22 @@ defineOgImageComponent('Module', {
               <UPageLinks title="Links" :links="links" />
 
               <USeparator type="dashed" />
+
+              <UPageLinks
+                title="Details"
+                :links="[
+                  {
+                    label: `Updated ${publishedAgo}`,
+                    to: `https://github.com/${module.repo}`,
+                    icon: 'i-lucide-radio'
+                  },
+                  {
+                    label: `Created ${createdAgo}`,
+                    to: `https://github.com/${module.repo}`,
+                    icon: 'i-lucide-package'
+                  }
+                ]"
+              />
 
               <UPageLinks :links="contributors">
                 <template #title>
