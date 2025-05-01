@@ -41,7 +41,7 @@ defineOgImageComponent('Docs', {
     <UPage>
       <UPageBody>
         <div v-if="featuredTemplates.length" class="mb-24">
-          <h2 class="text-2xl font-semibold mb-4 text-(--ui-text-highlighted)">
+          <h2 class="text-2xl font-semibold mb-4 text-highlighted">
             Featured
           </h2>
           <UPageGrid class="lg:grid-cols-3 xl:grid-cols-4">
@@ -55,7 +55,7 @@ defineOgImageComponent('Docs', {
         </div>
 
         <div>
-          <h2 class="text-2xl font-semibold mb-4 text-(--ui-text-highlighted)">
+          <h2 class="text-2xl font-semibold mb-4 text-highlighted">
             Other
           </h2>
           <UPageGrid class="lg:grid-cols-3 xl:grid-cols-4">

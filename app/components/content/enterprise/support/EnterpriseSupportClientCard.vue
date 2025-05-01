@@ -26,10 +26,10 @@ defineProps<{
     <div class="flex flex-col justify-end h-full gap-y-4">
       <div class="flex justify-between gap-x-8 pt-6">
         <div>
-          <div class="font-semibold text-(--ui-text-highlighted)">
+          <div class="font-semibold text-highlighted">
             {{ author }}
           </div>
-          <div class="text-sm text-(--ui-text-muted)">
+          <div class="text-sm text-muted">
             {{ job }}
           </div>
         </div>

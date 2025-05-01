@@ -105,7 +105,7 @@ initializeModules()
       }"
     >
       <template #title>
-        Build faster with <span class="text-(--ui-primary)">{{ modules.length }}+</span> Nuxt Modules
+        Build faster with <span class="text-primary">{{ modules.length }}+</span> Nuxt Modules
       </template>
 
       <template #description>
@@ -224,7 +224,7 @@ initializeModules()
           <ModuleItem v-for="(module, index) in displayedModules" :key="index" :module="module" />
 
           <template v-if="isLoading">
-            <div v-for="n in ITEMS_PER_PAGE" :key="n" class="flex flex-col gap-4 p-4 rounded-lg border border-(--ui-border)">
+            <div v-for="n in ITEMS_PER_PAGE" :key="n" class="flex flex-col gap-4 p-4 rounded-lg border border-default">
               <div class="flex items-center gap-3">
                 <USkeleton class="h-8 w-8 rounded" />
               </div>

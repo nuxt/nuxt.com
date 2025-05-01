@@ -19,12 +19,12 @@ function copyLink() {
     <UCard class="p-16 sm:p-16" :style="{ background }" />
 
     <div class="flex items-center justify-between pt-2">
-      <h5 class="font-semibold text-(--ui-text-highlighted) text-base">
+      <h5 class="font-semibold text-highlighted text-base">
         {{ name }}
       </h5>
       <UButton variant="link" label="Copy" size="sm" @click="copyLink" />
     </div>
-    <p class="text-(--ui-text-muted) text-sm">
+    <p class="text-muted text-sm">
       {{ background }}
     </p>
   </div>

@@ -97,7 +97,7 @@ async function nextContributors() {
               :alt="username"
               loading="lazy"
               :title="username"
-              class="rounded-xl w-full h-full transition lg:hover:scale-125 bg-(--ui-bg-muted)"
+              class="rounded-xl w-full h-full transition lg:hover:scale-125 bg-muted"
             />
           </UTooltip>
         </a>
