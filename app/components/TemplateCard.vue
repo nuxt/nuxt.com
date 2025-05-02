@@ -16,7 +16,7 @@ defineProps<{
       header: 'relative mb-0 aspect-video',
       title: 'flex items-center w-full',
       description: 'line-clamp-2',
-      footer: 'mt-0 px-4 pb-4'
+      footer: 'mt-0 px-4 pb-4 w-full'
     }"
     class="overflow-hidden"
   >
