@@ -119,15 +119,14 @@ onMounted(() => {
               variant="naked"
               class="overflow-hidden group rounded-lg"
             >
-              <!-- <NuxtImg -->
-              <img
+              <NuxtImg
                 :src="getWebsiteScreenShotUrl(website)"
                 :alt="website.name"
                 :loading="index === 0 ? 'eager' : 'lazy'"
                 class="object-cover object-top size-full opacity-100 group-hover:opacity-50 transition-opacity duration-300"
                 height="366"
                 width="488"
-              >
+              />
 
               <p class="hidden absolute text-nowrap top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 group-hover:flex bg-inverted text-inverted px-2.5 py-1 rounded-full text-sm font-medium font-mono items-center gap-1 shadow">
                 {{ website.name }}
