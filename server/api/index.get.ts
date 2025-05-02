@@ -12,7 +12,6 @@ export default eventHandler(() => {
       '/modules/categories?version=3',
       '/contributors',
       '/sponsors',
-      '/showcase',
       '/jobs',
       '/support/contact',
       '/teams/core',
