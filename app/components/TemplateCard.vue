@@ -23,7 +23,7 @@ defineProps<{
     <template #header>
       <NuxtImg
         :src="`/assets/templates/${template.slug}.png`"
-        class="object-contain object-top w-full h-full xl:hidden"
+        class="object-cover object-top size-full xl:hidden"
         :alt="template.name"
         width="600"
         height="338"
