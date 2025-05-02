@@ -20,7 +20,7 @@
     "@nuxt/content": "^3.5.1",
     "@nuxt/image": "https://pkg.pr.new/@nuxt/image@1a5786c",
     "@nuxt/scripts": "^0.11.6",
-    "@nuxt/ui-pro": "https://pkg.pr.new/@nuxt/ui-pro@9b41e34",
+    "@nuxt/ui-pro": "https://pkg.pr.new/@nuxt/ui-pro@0a78f95",
     "@nuxthub/core": "0.8.25",
     "@nuxtjs/html-validator": "^2.1.0",
     "@nuxtjs/plausible": "^1.2.0",
@@ -29,7 +29,7 @@
     "@vueuse/nuxt": "^13.1.0",
     "feed": "^4.2.2",
     "motion-v": "1.0.0",
-    "nuxt": "^3.17.0",
+    "nuxt": "^3.17.1",
     "nuxt-llms": "^0.1.2",
     "nuxt-og-image": "^5.1.3",
     "ofetch": "^1.4.1",
@@ -59,8 +59,7 @@
   },
   "resolutions": {
     "chokidar": "3.6.0",
-    "unimport": "4.1.1",
-    "@nuxtjs/mdc": "https://pkg.pr.new/@nuxtjs/mdc@363"
+    "unimport": "4.1.1"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

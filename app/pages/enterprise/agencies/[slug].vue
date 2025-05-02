@@ -63,32 +63,32 @@ defineOgImageComponent('Docs', {
           <span class="text-sm font-medium">{{ agency.location }}</span>
         </div>
 
-        <span v-if="agency.x" class="hidden lg:block text-(--ui-text-muted)">&bull;</span>
-        <NuxtLink v-if="agency.x" :to="`https://x.com/${agency.x}`" target="_blank" class="flex items-center gap-1.5 hover:text-(--ui-primary)">
+        <span v-if="agency.x" class="hidden lg:block text-muted">&bull;</span>
+        <NuxtLink v-if="agency.x" :to="`https://x.com/${agency.x}`" target="_blank" class="flex items-center gap-1.5 hover:text-primary">
           <UIcon name="i-simple-icons-x" class="size-5" />
           <span class="text-sm font-medium">{{ agency.x }}</span>
         </NuxtLink>
 
-        <span v-if="agency.github" class="hidden lg:block text-(--ui-text-muted)">&bull;</span>
-        <NuxtLink v-if="agency.github" :to="`https://github.com/${agency.github}`" target="_blank" class="flex items-center gap-1.5 hover:text-(--ui-primary)">
+        <span v-if="agency.github" class="hidden lg:block text-muted">&bull;</span>
+        <NuxtLink v-if="agency.github" :to="`https://github.com/${agency.github}`" target="_blank" class="flex items-center gap-1.5 hover:text-primary">
           <UIcon name="i-simple-icons-github" class="size-5" />
           <span class="text-sm font-medium">{{ agency.github }}</span>
         </NuxtLink>
 
-        <span v-if="agency.linkedin" class="hidden lg:block text-(--ui-text-muted)">&bull;</span>
-        <NuxtLink v-if="agency.linkedin" :to="`https://linkedin.com/company/${agency.linkedin}`" target="_blank" class="flex items-center gap-1.5 hover:text-(--ui-primary)">
+        <span v-if="agency.linkedin" class="hidden lg:block text-muted">&bull;</span>
+        <NuxtLink v-if="agency.linkedin" :to="`https://linkedin.com/company/${agency.linkedin}`" target="_blank" class="flex items-center gap-1.5 hover:text-primary">
           <UIcon name="i-simple-icons-linkedin" class="size-5" />
           <span class="text-sm font-medium">{{ agency.linkedin }}</span>
         </NuxtLink>
 
-        <span v-if="agency.instagram" class="hidden lg:block text-(--ui-text-muted)">&bull;</span>
-        <NuxtLink v-if="agency.instagram" :to="`https://instagram.com/${agency.instagram}`" target="_blank" class="flex items-center gap-1.5 hover:text-(--ui-primary)">
+        <span v-if="agency.instagram" class="hidden lg:block text-muted">&bull;</span>
+        <NuxtLink v-if="agency.instagram" :to="`https://instagram.com/${agency.instagram}`" target="_blank" class="flex items-center gap-1.5 hover:text-primary">
           <UIcon name="i-simple-icons-instagram" class="size-5" />
           <span class="text-sm font-medium">{{ agency.instagram }}</span>
         </NuxtLink>
 
-        <span v-if="agency.link" class="hidden lg:block text-(--ui-text-muted)">&bull;</span>
-        <NuxtLink v-if="agency.link" :to="agency.link" target="_blank" class="flex items-center gap-1.5 hover:text-(--ui-primary)">
+        <span v-if="agency.link" class="hidden lg:block text-muted">&bull;</span>
+        <NuxtLink v-if="agency.link" :to="agency.link" target="_blank" class="flex items-center gap-1.5 hover:text-primary">
           <UIcon name="i-lucide-link" class="size-5" />
           <span class="text-sm font-medium">Website</span>
         </NuxtLink>

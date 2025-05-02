@@ -3,15 +3,15 @@ definePageMeta({
   heroBackground: 'opacity-80 -z-10'
 })
 
-const [{ data: page }, { data: index }] = await Promise.all([
+const [{ data: page }, { data: home }] = await Promise.all([
   useAsyncData('showcase', () => queryCollection('showcase').first()),
-  useAsyncData('index', () => queryCollection('index').first())
+  useAsyncData('home', () => queryCollection('index').first())
 ])
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const { fetchList, selectedShowcases, categories } = useShowcase()
+const { fetchList, selectedShowcases } = useShowcase()
 const stats = useStats()
 
 const title = page.value.head?.title || page.value.title
@@ -50,20 +50,7 @@ onMounted(() => {
 
 <template>
   <div v-if="page">
-    <UPageHero :title="page.title" :description="page.description" :ui="{ container: '!pb-16', links: 'gap-1.5 max-w-2xl mx-auto' }">
-      <template #links>
-        <UButton
-          v-for="category in categories"
-          :key="category.key"
-          v-bind="category"
-          color="neutral"
-          variant="outline"
-          active-color="primary"
-          active-variant="subtle"
-          size="sm"
-        />
-      </template>
-    </UPageHero>
+    <UPageHero :title="page.title" :description="page.description" :ui="{ container: '!pb-12' }" />
 
     <UPage id="smooth" class="pt-20 -mt-20">
       <UPageBody>
@@ -80,7 +67,7 @@ onMounted(() => {
                 <h3 class="text-4xl font-bold text-primary">
                   #1
                 </h3>
-                <p class="text-sm text-(--ui-text-muted)">
+                <p class="text-sm text-muted">
                   Vue Framework
                 </p>
               </div>
@@ -88,8 +75,16 @@ onMounted(() => {
                 <h3 class="text-4xl font-bold">
                   {{ formatNumber(stats.stars) }}
                 </h3>
-                <p class="text-sm text-(--ui-text-muted)">
+                <p class="text-sm text-muted">
                   GitHub Stars
+                </p>
+              </div>
+              <div class="flex flex-col items-center">
+                <h3 class="text-4xl font-bold">
+                  {{ formatNumber(stats.monthlyDownloads) }}
+                </h3>
+                <p class="text-sm text-muted">
+                  Monthly Downloads
                 </p>
               </div>
             </div>
@@ -97,7 +92,7 @@ onMounted(() => {
         </UPageCTA>
         <UContainer>
           <UPageSection :ui="{ container: '!pt-0' }">
-            <UPageLogos :marquee="isMobile" :title="index?.logos.title" :ui="{ title: 'text-(--ui-text-muted) font-medium text-lg', logos: 'mt-4' }">
+            <UPageLogos :marquee="isMobile" :title="home?.logos.title" :ui="{ title: 'text-muted font-medium text-lg', logos: 'mt-4' }">
               <Motion
                 v-for="(company, index) in index?.logos.companies"
                 :key="company.alt"
@@ -122,7 +117,7 @@ onMounted(() => {
               </Motion>
             </UPageLogos>
           </UPageSection>
-          <UPageGrid class="bg-(--ui-bg-elevated)/50 p-4 rounded-2xl gap-2">
+          <UPageGrid class="bg-elevated/50 p-4 rounded-2xl gap-2">
             <UPageCard
               v-for="(showcase, index) in selectedShowcases"
               :key="index"
@@ -140,7 +135,7 @@ onMounted(() => {
                 width="488"
               />
 
-              <p class="hidden absolute text-nowrap top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 group-hover:flex bg-(--ui-bg-inverted) text-(--ui-bg) px-2.5 py-1 rounded-full text-sm font-medium font-mono items-center gap-1 shadow">
+              <p class="hidden absolute text-nowrap top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 group-hover:flex bg-inverted text-inverted px-2.5 py-1 rounded-full text-sm font-medium font-mono items-center gap-1 shadow">
                 {{ showcase.name ?? showcase.hostname }}
 
                 <UIcon name="i-lucide-arrow-up-right" class="size-4" />

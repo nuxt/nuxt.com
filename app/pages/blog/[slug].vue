@@ -64,7 +64,7 @@ const links = [
   {
     icon: 'i-lucide-pen',
     label: 'Edit this article',
-    to: `https://github.com/nuxt/nuxt.com/edit/main/content/${article.value.stem}`,
+    to: `https://github.com/nuxt/nuxt.com/edit/main/content/${article.value.stem}.md`,
     target: '_blank'
   }, {
     icon: 'i-lucide-star',
@@ -90,7 +90,7 @@ const links = [
             <span>
               {{ article.category }}
             </span>
-            <span class="text-(--ui-text-muted)">&middot;&nbsp;&nbsp;<time>{{ formatDateByLocale('en', article.date) }}</time></span>
+            <span class="text-muted">&middot;&nbsp;&nbsp;<time>{{ formatDateByLocale('en', article.date) }}</time></span>
           </div>
         </template>
 
@@ -104,7 +104,7 @@ const links = [
           <ContentRenderer v-if="article.body" :value="article" />
 
           <div class="flex items-center justify-between mt-12 not-prose">
-            <ULink to="/blog" class="text-(--ui-primary)">
+            <ULink to="/blog" class="text-primary">
               ← Back to blog
             </ULink>
             <div class="flex justify-end items-center gap-1.5">

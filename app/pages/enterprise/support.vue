@@ -96,7 +96,7 @@ defineOgImage({
                 viewBox="0 0 2 150"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                class="absolute left-4 -top-12 h-full z-[-1] text-(--ui-border)"
+                class="absolute left-4 -top-12 h-full z-[-1] text-muted"
               >
                 <path d="M1 0L1 153" stroke="currentColor" stroke-dasharray="4 4" />
                 <path d="M1 142L1 295" stroke="currentColor" stroke-dasharray="4 4" />
@@ -105,7 +105,7 @@ defineOgImage({
             <ul class="flex flex-col text-left gap-y-4 pt-1">
               <li v-for="step in page.project.steps" :key="step.title" class="flex gap-x-3">
                 <div
-                  class="size-8 flex items-center justify-center border-1 border-(--ui-border) rounded-full bg-(--ui-bg-muted) px-3 py-1"
+                  class="size-8 flex items-center justify-center border-1 border-default rounded-full bg-muted px-3 py-1"
                 >
                   {{ step.number }}
                 </div>
@@ -113,7 +113,7 @@ defineOgImage({
                   <h3 class="font-bold">
                     {{ step.title }}
                   </h3>
-                  <p class="text-(--ui-text-muted) text-[15px]">
+                  <p class="text-muted text-[15px]">
                     {{ step.description }}
                   </p>
                 </div>

@@ -7,6 +7,14 @@ const { module, showBadge = true } = defineProps<{
 }>()
 
 const { copy } = useClipboard()
+const { selectedSort } = useModules()
+const date = computed(() => {
+  if (selectedSort.value.key === 'publishedAt') {
+    return useTimeAgo(module.stats.publishedAt)
+  }
+
+  return useTimeAgo(module.stats.createdAt)
+})
 
 function copyInstallCommand(moduleName: string) {
   const command = `npx nuxi@latest module add ${moduleName}`
@@ -22,7 +30,7 @@ function copyInstallCommand(moduleName: string) {
     class="group"
     variant="subtle"
     :ui="{
-      description: 'line-clamp-2 text-(--ui-text-muted) text-sm',
+      description: 'line-clamp-2 text-muted text-sm',
       container: 'flex flex-col',
       wrapper: 'flex flex-col min-h-0 items-start',
       body: 'flex-none',
@@ -58,27 +66,49 @@ function copyInstallCommand(moduleName: string) {
     <template #footer>
       <USeparator type="dashed" class="mb-4" />
 
-      <div class="flex items-center justify-between gap-3 -my-1 text-(--ui-text-muted)">
-        <div class="flex items-center gap-3">
+      <div class="flex items-center justify-between gap-3 -my-1 text-muted">
+        <div class="flex items-center gap-3 flex-wrap">
           <UTooltip text="Monthly NPM Downloads">
             <NuxtLink
-              class="flex items-center gap-1 hover:text-(--ui-text-highlighted)"
+              class="flex items-center gap-1 hover:text-highlighted"
               :to="`https://npm.chart.dev/${module.npm}`"
               target="_blank"
             >
               <UIcon name="i-lucide-circle-arrow-down" class="size-4 shrink-0" />
-              <span class="text-sm font-medium">{{ formatNumber(module.stats.downloads) }}</span>
+              <span class="text-sm font-medium whitespace-normal">{{ formatNumber(module.stats.downloads) }}</span>
             </NuxtLink>
           </UTooltip>
 
           <UTooltip text="GitHub Stars">
             <NuxtLink
-              class="flex items-center gap-1 hover:text-(--ui-text-highlighted)"
+              class="flex items-center gap-1 hover:text-highlighted"
               :to="`https://github.com/${module.repo}`"
               target="_blank"
             >
               <UIcon name="i-lucide-star" class="size-4 shrink-0" />
-              <span class="text-sm font-medium">{{ formatNumber(module.stats.stars || 0) }}</span>
+              <span class="text-sm font-medium whitespace-normal">{{ formatNumber(module.stats.stars || 0) }}</span>
+            </NuxtLink>
+          </UTooltip>
+
+          <UTooltip v-if="selectedSort.key === 'publishedAt'" :text="`Updated ${formatDateByLocale('en', module.stats.publishedAt)}`">
+            <NuxtLink
+              class="flex items-center gap-1 hover:text-highlighted"
+              :to="`https://github.com/${module.repo}`"
+              target="_blank"
+            >
+              <UIcon name="i-lucide-radio" class="size-4 shrink-0" />
+              <span class="text-sm font-medium whitespace-normal">{{ date }}</span>
+            </NuxtLink>
+          </UTooltip>
+
+          <UTooltip v-if="selectedSort.key === 'createdAt'" :text="`Created ${formatDateByLocale('en', module.stats.createdAt)}`">
+            <NuxtLink
+              class="flex items-center gap-1 hover:text-highlighted"
+              :to="`https://github.com/${module.repo}`"
+              target="_blank"
+            >
+              <UIcon name="i-lucide-package" class="size-4 shrink-0" />
+              <span class="text-sm font-medium whitespace-normal">{{ date }}</span>
             </NuxtLink>
           </UTooltip>
         </div>

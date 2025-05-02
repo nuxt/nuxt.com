@@ -72,7 +72,7 @@ watch(() => props.modules, (newVal?: Module[]) => {
           :transition="{
             delay: getRandomDelay(rowIndex, index)
           }"
-          class="flex items-center justify-center size-16 rounded-lg bg-(--ui-bg-muted) p-2 border border-(--ui-border) dark:shadow-lg"
+          class="flex items-center justify-center size-16 rounded-lg bg-muted p-2 border border-default dark:shadow-lg"
         >
           <UAvatar
             :src="moduleImage(module.icon)"
@@ -85,8 +85,8 @@ watch(() => props.modules, (newVal?: Module[]) => {
       </UPageMarquee>
     </div>
 
-    <div class="absolute left-0 top-0 bottom-0 w-1/2 z-10 bg-linear-to-bl from-(--ui-bg)/30 to-(--ui-bg) to-40%" />
-    <div class="absolute right-0 top-0 bottom-0 w-1/2 z-10 bg-linear-to-br from-(--ui-bg)/30 to-(--ui-bg) to-40%" />
-    <div class="absolute top-0 left-0 right-0 size-full z-10 bg-linear-to-t from-(--ui-bg) to-(--ui-bg)/15" />
+    <div class="absolute left-0 top-0 bottom-0 w-1/2 z-10 bg-linear-to-bl from-default/30 to-default to-40%" />
+    <div class="absolute right-0 top-0 bottom-0 w-1/2 z-10 bg-linear-to-br from-default/30 to-default to-40%" />
+    <div class="absolute top-0 left-0 right-0 size-full z-10 bg-linear-to-t from-default to-default/15" />
   </div>
 </template>

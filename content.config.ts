@@ -362,6 +362,7 @@ export default defineContentConfig({
         description: z.string(),
         url: z.string().url(),
         badge: z.enum(['Premium', 'Free']).optional(),
+        screenshotUrl: z.string().url().optional(),
         screenshotOptions: z.object({
           delay: z.number(),
           removeElements: z.array(z.string()).optional()
