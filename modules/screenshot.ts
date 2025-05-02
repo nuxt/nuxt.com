@@ -11,16 +11,12 @@ interface ContentFile {
   demo?: string
   url?: string
   screenshotOptions?: Record<string, any>
-  groups?: Array<{
+  websites?: Array<{
     name: string
-    icon: string
-    showcases: Array<{
-      name: string
-      url: string
-      hostname: string
-      screenshotUrl?: string
-      screenshotOptions?: Record<string, any>
-    }>
+    url: string
+    hostname: string
+    screenshotUrl?: string
+    screenshotOptions?: Record<string, any>
   }>
 }
 
@@ -67,7 +63,6 @@ export default defineNuxtModule((options, nuxt) => {
     }
 
     if (file.id?.includes('showcase.yml') && file.websites) {
-      console.log(file.websites)
       for (const website of file.websites) {
         const url = website.screenshotUrl || website.url
         if (!website.name) {
