@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { kebabCase } from 'scule'
+
 definePageMeta({
   heroBackground: 'opacity-80 -z-10'
 })
@@ -7,13 +9,12 @@ const [{ data: page }, { data: home }] = await Promise.all([
   useAsyncData('showcase', () => queryCollection('showcase').first()),
   useAsyncData('home', () => queryCollection('index').first())
 ])
+console.log(page.value)
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const { fetchList, selectedShowcases } = useShowcase()
 const stats = useStats()
-
 const title = page.value.head?.title || page.value.title
 const description = page.value.head?.description || page.value.description
 
@@ -30,16 +31,8 @@ defineOgImageComponent('Docs', {
   description
 })
 
-await fetchList()
-
-function getShowcaseItemScreenShotUrl(showcase: any) {
-  if (showcase.screenshotUrl && showcase.screenshotUrl.startsWith('vue-telemetry')) {
-    return `https://res.cloudinary.com/nuxt/image/upload/f_auto,q_auto,w_488,h_366/${showcase.screenshotUrl}`
-  }
-  if (showcase.screenshotUrl) {
-    return showcase.screenshotUrl
-  }
-  return `/assets/showcase/${showcase.name ? showcase.name?.toLowerCase() : showcase.hostname}.png`
+function getWebsiteScreenShotUrl(website: any) {
+  return `/assets/websites/${kebabCase(website.name?.replace(/ /g, ''))}.png`
 }
 
 const isMobile = ref(false)
@@ -94,7 +87,7 @@ onMounted(() => {
           <UPageSection :ui="{ container: '!pt-0' }">
             <UPageLogos :marquee="isMobile" :title="home?.logos.title" :ui="{ title: 'text-muted font-medium text-lg', logos: 'mt-4' }">
               <Motion
-                v-for="(company, index) in index?.logos.companies"
+                v-for="(company, index) in home?.logos.companies"
                 :key="company.alt"
                 as-child
                 :initial="{ opacity: 0, transform: 'translateY(20px)' }"
@@ -119,24 +112,25 @@ onMounted(() => {
           </UPageSection>
           <UPageGrid class="bg-elevated/50 p-4 rounded-2xl gap-2">
             <UPageCard
-              v-for="(showcase, index) in selectedShowcases"
+              v-for="(website, index) in page.websites"
               :key="index"
-              :to="showcase.url"
+              :to="website.url"
               target="_blank"
               variant="naked"
               class="overflow-hidden group rounded-lg"
             >
-              <NuxtImg
-                :src="getShowcaseItemScreenShotUrl(showcase)"
-                :alt="showcase.hostname || ''"
+              <!-- <NuxtImg -->
+              <img
+                :src="getWebsiteScreenShotUrl(website)"
+                :alt="website.name"
                 :loading="index === 0 ? 'eager' : 'lazy'"
                 class="object-cover object-top size-full opacity-100 group-hover:opacity-50 transition-opacity duration-300"
                 height="366"
                 width="488"
-              />
+              >
 
               <p class="hidden absolute text-nowrap top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 group-hover:flex bg-inverted text-inverted px-2.5 py-1 rounded-full text-sm font-medium font-mono items-center gap-1 shadow">
-                {{ showcase.name ?? showcase.hostname }}
+                {{ website.name }}
 
                 <UIcon name="i-lucide-arrow-up-right" class="size-4" />
               </p>

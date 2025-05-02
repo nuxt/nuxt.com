@@ -346,11 +346,7 @@ export default defineContentConfig({
           title: z.string().optional(),
           description: z.string().optional()
         }).optional(),
-        groups: z.array(z.object({
-          name: z.string(),
-          icon: z.string(),
-          showcases: z.array(ShowcaseItem)
-        }))
+        websites: z.array(ShowcaseItem)
       })
     }),
     videoCourses: defineCollection({
