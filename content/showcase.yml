@@ -19,8 +19,8 @@ websites:
     url: https://jpl.nasa.gov/
   - name: Google Ventures
     url: https://www.gv.com/
-  - name: Microsoft Developer
-    url: https://developer.microsoft.com/en-us/
+  - name: Microsoft Edge Developer
+    url: https://developer.microsoft.com/en-us/microsoft-edge
     screenshotOptions:
       cookies: ['MSCC=cid=psmupjn1uooack94vj8ishtx-c1=2-c2=2-c3=2;']
   - name: Tiktok Ads
