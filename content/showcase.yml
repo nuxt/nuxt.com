@@ -41,6 +41,8 @@ websites:
     url: https://www.mcdonalds.fr/
   - name: Directus
     url: https://directus.io/
+  - name: n8n
+    url: https://n8n.io/
   - name: Hostinger
     url: https://hostinger.com/
     screenshotOptions:
