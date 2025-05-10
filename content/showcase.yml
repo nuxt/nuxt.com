@@ -75,3 +75,7 @@ websites:
     screenshotOptions:
       delay: 5
       cookies: ['notice_gdpr_prefs=0,1,2::implied,eu;', 'cmapi_cookie_privacy=permit 1,2,3;', 'notice_preferences=2:;']
+  - name: Push Security
+    url: https://pushsecurity.com/
+    screenshotOptions:
+      delay: 5
