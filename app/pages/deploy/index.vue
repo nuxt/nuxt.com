@@ -58,7 +58,7 @@ const otherProviders = computed(() => providers.value.filter(provider => provide
             :ui="{
               container: 'p-0 sm:p-0',
               body: 'p-4 sm:p-6',
-              header: 'relative mb-0',
+              header: 'relative w-full mb-0',
               title: 'text-xl',
               description: 'line-clamp-2 text-muted'
             }"
