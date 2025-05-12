@@ -27,7 +27,7 @@
     "@vueuse/components": "^13.1.0",
     "@vueuse/core": "^13.1.0",
     "@vueuse/nuxt": "^13.1.0",
-    "feed": "^5.0.0",
+    "feed": "^5.0.1",
     "motion-v": "1.0.2",
     "nuxt": "^3.17.3",
     "nuxt-llms": "^0.1.2",
