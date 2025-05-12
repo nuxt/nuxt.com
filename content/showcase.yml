@@ -75,3 +75,8 @@ websites:
     screenshotOptions:
       delay: 5
       cookies: ['notice_gdpr_prefs=0,1,2::implied,eu;', 'cmapi_cookie_privacy=permit 1,2,3;', 'notice_preferences=2:;']
+  - name: Too Good To Go
+    url: https://toogoodtogo.com/
+    screenshotOptions:
+      hideElements: ['#cookie-information-template-wrapper', '#declineButton', '.coi-banner__accept']
+      delay: 5
