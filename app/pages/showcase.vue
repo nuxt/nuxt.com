@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { kebabCase } from 'scule'
-
 definePageMeta({
   heroBackground: 'opacity-80 -z-10'
 })
@@ -30,10 +28,6 @@ defineOgImageComponent('Docs', {
   title,
   description
 })
-
-function getWebsiteScreenShotUrl(website: any) {
-  return `/assets/websites/${kebabCase(website.name?.replace(/ /g, ''))}.png`
-}
 
 const isMobile = ref(false)
 onMounted(() => {

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { kebabCase } from 'scule'
 import { joinURL } from 'ufo'
 import type { Module } from '~/types'
 
@@ -104,10 +103,6 @@ const isMobile = ref(false)
 onMounted(() => {
   isMobile.value = window.innerWidth < 768
 })
-
-function getWebsiteScreenShotUrl(website: any) {
-  return `/assets/websites/${kebabCase(website.name?.replace(/ /g, ''))}.png`
-}
 </script>
 
 <template>
@@ -560,11 +555,14 @@ function getWebsiteScreenShotUrl(website: any) {
         loop
         dots
         wheel-gestures
+        arrows
         :autoplay="{ delay: 3000 }"
         :items="showcase.websites.slice(0, 10)"
+        class="min-w-0"
         :ui="{
           item: 'basis-full sm:basis-1/2',
-          container: 'py-2 max-w-7xl mx-auto'
+          container: 'py-2',
+          arrows: 'hidden 2xl:block'
         }"
       >
         <UPageCard
