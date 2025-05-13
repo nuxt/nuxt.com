@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { kebabCase } from 'scule'
 import { joinURL } from 'ufo'
 import type { Module } from '~/types'
 
@@ -6,7 +7,7 @@ definePageMeta({
   heroBackground: '-z-10'
 })
 
-const [{ data: page }, { data: officialModules }, { data: sponsorGroups }] = await Promise.all([
+const [{ data: page }, { data: officialModules }, { data: sponsorGroups }, { data: showcase }] = await Promise.all([
   useAsyncData('index', () => queryCollection('index').first()),
   useFetch('https://api.nuxt.com/modules', {
     key: 'official-modules',
@@ -26,7 +27,8 @@ const [{ data: page }, { data: officialModules }, { data: sponsorGroups }] = awa
           sponsorUrl: s.sponsorUrl
         }))
       }))
-  })
+  }),
+  useAsyncData('showcase', () => queryCollection('showcase').first())
 ])
 
 const stats = useStats()
@@ -102,6 +104,10 @@ const isMobile = ref(false)
 onMounted(() => {
   isMobile.value = window.innerWidth < 768
 })
+
+function getWebsiteScreenShotUrl(website: any) {
+  return `/assets/websites/${kebabCase(website.name?.replace(/ /g, ''))}.png`
+}
 </script>
 
 <template>
@@ -537,6 +543,53 @@ onMounted(() => {
     >
       <HomeSectionContributors />
     </UPageSection>
+
+    <UPageSection
+      id="showcase"
+      headline="Showcase"
+      title="Real-world Web Applications built with Nuxt"
+      class="overflow-hidden border-x border-t border-default"
+      :ui="{
+        title: 'max-w-2xl mx-auto',
+        container: 'relative'
+      }"
+    >
+      <div aria-hidden="true" class="hidden lg:block absolute z-[-1] border-x border-default inset-0 mx-4 sm:mx-6 lg:mx-8" />
+      <UCarousel
+        v-slot="{ item }"
+        loop
+        dots
+        arrows
+        wheel-gestures
+        :autoplay="{ delay: 3000 }"
+        :items="showcase.websites.slice(0, 5)"
+        :ui="{
+          item: 'basis-1/2',
+          container: 'py-2 max-w-7xl mx-auto',
+          viewport: 'px-2'
+        }"
+      >
+        <UPageCard
+          target="_blank"
+          variant="subtle"
+          class="group"
+          :ui="{ container: 'p-4 sm:p-4', title: 'flex items-center gap-1' }"
+        >
+          <template #title>
+            <span>
+              {{ item.name }}
+            </span>
+          </template>
+          <NuxtImg
+            :src="getWebsiteScreenShotUrl(item)"
+            :alt="item.name"
+            class="rounded-lg w-full border border-default aspect-video"
+            loading="lazy"
+          />
+        </UPageCard>
+      </UCarousel>
+    </UPageSection>
+
     <UPageSection
       :title="page.sponsors.title"
       :description="page.sponsors.description"
