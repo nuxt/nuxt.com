@@ -554,36 +554,39 @@ function getWebsiteScreenShotUrl(website: any) {
         container: 'relative'
       }"
     >
-      <div aria-hidden="true" class="hidden lg:block absolute z-[-1] border-x border-default inset-0 mx-4 sm:mx-6 lg:mx-8" />
+      <div aria-hidden="true" class="block absolute z-[-1] border-x border-default inset-0 mx-4 sm:mx-6 lg:mx-8" />
       <UCarousel
         v-slot="{ item }"
         loop
         dots
-        arrows
         wheel-gestures
         :autoplay="{ delay: 3000 }"
-        :items="showcase.websites.slice(0, 5)"
+        :items="showcase.websites.slice(0, 10)"
         :ui="{
-          item: 'basis-1/2',
-          container: 'py-2 max-w-7xl mx-auto',
-          viewport: 'px-2'
+          item: 'basis-full sm:basis-1/2',
+          container: 'py-2 max-w-7xl mx-auto'
         }"
       >
         <UPageCard
+          :to="item.url"
           target="_blank"
           variant="subtle"
-          class="group"
-          :ui="{ container: 'p-4 sm:p-4', title: 'flex items-center gap-1' }"
+          class="group rounded-none sm:rounded-lg"
+          :ui="{
+            container: 'p-2 sm:p-4',
+            title: 'flex items-center gap-1'
+          }"
         >
           <template #title>
             <span>
               {{ item.name }}
             </span>
+            <UIcon name="i-lucide-arrow-up-right" class="opacity-0 group-hover:opacity-100 transition-opacity duration-150 ease-in-out text-primary" />
           </template>
           <NuxtImg
             :src="getWebsiteScreenShotUrl(item)"
             :alt="item.name"
-            class="rounded-lg w-full border border-default aspect-video"
+            class="rounded-none sm:rounded-lg w-full border border-default aspect-video"
             loading="lazy"
           />
         </UPageCard>
