@@ -543,6 +543,12 @@ onMounted(() => {
       id="showcase"
       headline="Showcase"
       title="Real-world Web Applications built with Nuxt"
+      :links="[{
+        label: 'View all',
+        to: '/showcase',
+        color: 'neutral',
+        size: 'md'
+      }]"
       class="overflow-hidden border-x border-t border-default"
       :ui="{
         title: 'max-w-2xl mx-auto',
