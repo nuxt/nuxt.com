@@ -56,6 +56,11 @@ websites:
     url: https://us.caudalie.com/
     screenshotOptions:
       cookies: ['euconsent-v2=CQQyG4AQQyG4AAHABBENBnFsAP_gAELAAAqIGMwCAAMgAgAB4AFsAQQBPAF5gMZAvOAGACAAHgC8wAAA;']
+  - name: Virgin Galactic
+    url: https://www.virgingalactic.com/
+    screenshotOptions:
+      hideElements: ['[aria-label="Cookie Consent Banner"]']
+      delay: 5
   - name: Icons8
     url: https://icons8.com/
   - name: Harrods
@@ -75,7 +80,28 @@ websites:
     screenshotOptions:
       delay: 5
       cookies: ['notice_gdpr_prefs=0,1,2::implied,eu;', 'cmapi_cookie_privacy=permit 1,2,3;', 'notice_preferences=2:;']
+  - name: Too Good To Go
+    url: https://toogoodtogo.com/
+    screenshotOptions:
+      hideElements: ['#cookie-information-template-wrapper', '#declineButton', '.coi-banner__accept']
+      delay: 5
+  - name: Explore France
+    url: https://www.france.fr
+  - name: CleanShot X
+    url: https://cleanshot.com/
+  - name: 12GO
+    url: https://12go.com
+    screenshotOptions:
+      hideElements: ['#CybotCookiebotDialog']
+      delay: 5
+  - name: Paul Smith
+    url: https://www.paulsmith.com
+    screenshotOptions:
+      hideElements: ['#teleports', '#cookiescript_injected_wrapper']
+      delay: 5
   - name: Push Security
     url: https://pushsecurity.com/
     screenshotOptions:
       delay: 5
+
+
