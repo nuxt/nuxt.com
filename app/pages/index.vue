@@ -544,7 +544,7 @@ onMounted(() => {
       headline="Showcase"
       title="Real-world Web Applications built with Nuxt"
       :links="[{
-        label: 'View all',
+        label: 'View all websites',
         to: '/showcase',
         color: 'neutral',
         size: 'md'
