@@ -99,5 +99,9 @@ websites:
     screenshotOptions:
       hideElements: ['#teleports', '#cookiescript_injected_wrapper']
       delay: 5
+  - name: Push Security
+    url: https://pushsecurity.com/
+    screenshotOptions:
+      delay: 5
 
 
