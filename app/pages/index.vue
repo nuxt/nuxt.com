@@ -6,7 +6,7 @@ definePageMeta({
   heroBackground: '-z-10'
 })
 
-const [{ data: page }, { data: officialModules }, { data: sponsorGroups }] = await Promise.all([
+const [{ data: page }, { data: officialModules }, { data: sponsorGroups }, { data: showcase }] = await Promise.all([
   useAsyncData('index', () => queryCollection('index').first()),
   useFetch('https://api.nuxt.com/modules', {
     key: 'official-modules',
@@ -26,7 +26,8 @@ const [{ data: page }, { data: officialModules }, { data: sponsorGroups }] = awa
           sponsorUrl: s.sponsorUrl
         }))
       }))
-  })
+  }),
+  useAsyncData('showcase', () => queryCollection('showcase').first())
 ])
 
 const stats = useStats()
@@ -537,6 +538,65 @@ onMounted(() => {
     >
       <HomeSectionContributors />
     </UPageSection>
+
+    <UPageSection
+      id="showcase"
+      headline="Showcase"
+      title="Real-world Web Applications built with Nuxt"
+      :links="[{
+        label: 'View all websites',
+        to: '/showcase',
+        color: 'neutral',
+        size: 'md'
+      }]"
+      class="overflow-hidden border-x border-t border-default"
+      :ui="{
+        title: 'max-w-2xl mx-auto',
+        container: 'relative'
+      }"
+    >
+      <div aria-hidden="true" class="block absolute z-[-1] border-x border-default inset-0 mx-4 sm:mx-6 lg:mx-8" />
+      <UCarousel
+        v-slot="{ item }"
+        loop
+        dots
+        wheel-gestures
+        arrows
+        :autoplay="{ delay: 3000 }"
+        :items="showcase.websites.slice(0, 10)"
+        class="min-w-0"
+        :ui="{
+          item: 'basis-full sm:basis-1/2',
+          container: 'py-2',
+          arrows: 'hidden 2xl:block'
+        }"
+      >
+        <UPageCard
+          :to="item.url"
+          target="_blank"
+          variant="subtle"
+          class="group rounded-none sm:rounded-lg"
+          :ui="{
+            container: 'p-2 sm:p-4',
+            title: 'flex items-center gap-1'
+          }"
+        >
+          <template #title>
+            <span>
+              {{ item.name }}
+            </span>
+            <UIcon name="i-lucide-arrow-up-right" class="opacity-0 group-hover:opacity-100 transition-opacity duration-150 ease-in-out text-primary" />
+          </template>
+          <NuxtImg
+            :src="getWebsiteScreenShotUrl(item)"
+            :alt="item.name"
+            class="rounded-none sm:rounded-lg w-full border border-default aspect-video"
+            loading="lazy"
+          />
+        </UPageCard>
+      </UCarousel>
+    </UPageSection>
+
     <UPageSection
       :title="page.sponsors.title"
       :description="page.sponsors.description"
