@@ -85,6 +85,7 @@ const icons = {
               :ui="{
                 container: 'gap-y-3',
                 leading: 'flex justify-center',
+                wrapper: 'items-center',
                 title: 'text-center',
                 description: 'text-center'
               }"
