@@ -1,0 +1,6 @@
+name: 'Nuxt Starter Kit'
+slug: 'nuxt-starter-kit'
+description: 'A full-stack Nuxt starter with built with Nuxt UI Pro and NuxtHub.'
+demo: 'https://nuxtstarterkit.com/'
+badge: 'Premium'
+featured: true
