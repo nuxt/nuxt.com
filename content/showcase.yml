@@ -61,6 +61,10 @@ websites:
     screenshotOptions:
       hideElements: ['[aria-label="Cookie Consent Banner"]']
       delay: 5
+  - name: Devault
+    url: https://eu.delvaux.com
+    screenshotOptions:
+      hideElements: ['#privacy-overlay', '#tc-privacy-wrapper']
   - name: Icons8
     url: https://icons8.com/
   - name: Harrods
