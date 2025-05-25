@@ -103,6 +103,11 @@ websites:
     screenshotOptions:
       hideElements: ['#teleports', '#cookiescript_injected_wrapper']
       delay: 5
+  - name: Roland Garros
+    url: https://www.rolandgarros.com/
+    screenshotOptions:
+      hideElements: ['#tc-privacy-wrapper', '#privacy-overlay']
+      delay: 5
   - name: Push Security
     url: https://pushsecurity.com/
     screenshotOptions:
