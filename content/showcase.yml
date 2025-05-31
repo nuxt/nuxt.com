@@ -65,6 +65,10 @@ websites:
     url: https://eu.delvaux.com
     screenshotOptions:
       hideElements: ['#privacy-overlay', '#tc-privacy-wrapper']
+  - name: Immersive Garden
+    url: https://immersive-g.com/
+    screenshotOptions:
+      delay: 8
   - name: Icons8
     url: https://icons8.com/
   - name: Harrods
