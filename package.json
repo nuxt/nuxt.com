@@ -1,7 +1,7 @@
 {
   "name": "nuxt.com",
   "version": "0.3.11",
-  "packageManager": "pnpm@10.11.0",
+  "packageManager": "pnpm@10.11.1",
   "scripts": {
     "dev": "nuxt dev",
     "build": "NODE_OPTIONS='--max-old-space-size=8192' nuxt build",
@@ -52,7 +52,7 @@
     "shiki": "^3.4.2",
     "twoslash": "^0.3.1",
     "typescript": "^5.8.3",
-    "vitest": "^3.1.4",
+    "vitest": "^3.2.0",
     "vue": "^3.5.16",
     "vue-tsc": "^2.2.10",
     "wrangler": "^4.18.0"
