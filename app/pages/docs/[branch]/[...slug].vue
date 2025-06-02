@@ -13,12 +13,12 @@ const navigation = inject<Ref<ContentNavigationItem[]>>('navigation', ref([]))
 
 const route = useRoute()
 const nuxtApp = useNuxtApp()
-const { selectedVersion, versionItems } = useDocsVersion()
+const { prefix, items, version } = useDocsVersion()
 
 const path = computed(() => route.path.replace(/\/$/, ''))
 
 const asideNavigation = computed(() => {
-  const path = [selectedVersion.value.pathPrefix, route.params.slug?.[0]].filter(Boolean).join('/')
+  const path = [prefix.value, ...route.params.slug].filter(Boolean).join('/')
 
   return navPageFromPath(path, navigation.value)?.children || []
 })
@@ -36,8 +36,16 @@ function paintResponse() {
   })
 }
 
+const pagePath = computed(() => {
+  if (path.value.startsWith('/docs/4.x') || path.value.startsWith('/docs/3.x')) {
+    return path.value
+  }
+
+  return path.value.replace('/docs', '/docs/3.x')
+})
+
 const [{ data: page, status }, { data: surround }] = await Promise.all([
-  useAsyncData(kebabCase(path.value), () => paintResponse().then(() => nuxtApp.static[kebabCase(path.value)] ?? queryCollection('docs').path(path.value).first()), {
+  useAsyncData(kebabCase(pagePath.value), () => paintResponse().then(() => nuxtApp.static[kebabCase(pagePath.value)] ?? queryCollection('docs').path(pagePath.value).first()), {
     watch: [path]
   }),
   useAsyncData(`${kebabCase(path.value)}-surround`, () => paintResponse().then(() => nuxtApp.static[`${kebabCase(path.value)}-surround`] ?? queryCollectionItemSurroundings('docs', path.value, {
@@ -127,18 +135,18 @@ if (import.meta.server) {
           <UDropdownMenu
             v-slot="{ open }"
             :modal="false"
-            :items="versionItems"
+            :items="items"
             :ui="{ content: 'w-(--reka-dropdown-menu-trigger-width) min-w-0' }"
             class="mb-4"
           >
             <UButton
-              :label="selectedVersion.label"
+              :label="version.label"
               variant="subtle"
               trailing-icon="i-lucide-chevron-down"
               color="neutral"
               block
               size="md"
-              :class="[open && 'bg-neutral/15 ']"
+              :class="[open && 'bg-neutral/15']"
               :ui="{
                 trailingIcon: ['transition-transform duration-200', open ? 'rotate-180' : undefined].filter(Boolean).join(' ')
               }"

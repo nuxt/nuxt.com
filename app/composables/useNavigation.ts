@@ -2,46 +2,45 @@ import { createSharedComposable } from '@vueuse/core'
 
 function _useHeaderLinks() {
   const route = useRoute()
-  const { selectedVersion } = useDocsVersion()
-  const docsBasePath = computed(() => selectedVersion.value.pathPrefix)
+  const { prefix } = useDocsVersion()
 
   const headerLinks = computed(() => {
     return [{
       label: 'Docs',
       icon: 'i-lucide-book-marked',
-      to: docsBasePath,
+      to: prefix.value,
       search: false,
-      active: route.path.startsWith('/docs'),
+      active: route.path.startsWith(prefix.value),
       children: [{
         label: 'Get Started',
         description: 'Learn how to get started with Nuxt to build your first app.',
         icon: 'i-lucide-rocket',
-        to: `${docsBasePath}/getting-started`,
-        active: route.path.startsWith(`${docsBasePath}/getting-started`)
+        to: `${prefix.value}/getting-started`,
+        active: route.path.startsWith(`${prefix.value}/getting-started`)
       }, {
         label: 'Guide',
         description: 'Get the key concepts, directory structure and best practices.',
         icon: 'i-lucide-book-open',
-        to: `${docsBasePath}/guide`,
-        active: route.path.startsWith(`${docsBasePath}/guide`)
+        to: `${prefix.value}/guide`,
+        active: route.path.startsWith(`${prefix.value}/guide`)
       }, {
         label: 'API',
         description: 'Explore the Nuxt components, composables, utilities and more.',
         icon: 'i-lucide-code-xml',
-        to: `${docsBasePath}/api`,
-        active: route.path.startsWith(`${docsBasePath}/api`)
+        to: `${prefix.value}/api`,
+        active: route.path.startsWith(`${prefix.value}/api`)
       }, {
         label: 'Examples',
         description: 'Discover and explore official and community examples.',
         icon: 'i-lucide-app-window-mac',
-        to: `${docsBasePath}/examples`,
-        active: route.path.startsWith(`${docsBasePath}/examples`)
+        to: `${prefix.value}/examples`,
+        active: route.path.startsWith(`${prefix.value}/examples`)
       }, {
         label: 'Community',
         description: 'Find answers and support from the community.',
         icon: 'i-lucide-messages-square',
-        to: `${docsBasePath}/community`,
-        active: route.path.startsWith(`${docsBasePath}/community`)
+        to: `${prefix.value}/community`,
+        active: route.path.startsWith(`${prefix.value}/community`)
       }]
     }, {
       label: 'Integrations',

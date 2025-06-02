@@ -4,14 +4,14 @@ const docsV3Source = {
   cwd: process.env.NUXT_PATH ?? undefined,
   repository: !process.env.NUXT_PATH ? 'https://github.com/nuxt/nuxt/tree/3.x' : undefined,
   include: 'docs/**/*',
-  prefix: '/docs/v3'
+  prefix: '/docs/3.x'
 }
 
 const docsV4Source = {
   cwd: process.env.NUXT_V4_PATH ?? undefined,
-  repository: !process.env.NUXT_V4_PATH ? 'https://github.com/nuxt/nuxt' : undefined,
+  repository: !process.env.NUXT_V4_PATH ? 'https://github.com/nuxt/nuxt/tree/main' : undefined,
   include: 'docs/**/*',
-  prefix: '/docs/v4'
+  prefix: '/docs/4.x'
 }
 
 const examplesSource = {
