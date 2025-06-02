@@ -123,6 +123,29 @@ if (import.meta.server) {
     <UPage>
       <template #left>
         <UPageAside>
+          <UDropdownMenu
+            v-slot="{ open }"
+            :modal="false"
+            :items="[
+              { label: 'v4.x' },
+              { label: 'v3.x', active: true, color: 'primary', checked: true, type: 'checkbox' }
+            ]"
+            :ui="{ content: 'w-(--reka-dropdown-menu-trigger-width) min-w-0' }"
+            class="mb-4"
+          >
+            <UButton
+              label="v3.x"
+              variant="subtle"
+              trailing-icon="i-lucide-chevron-down"
+              color="neutral"
+              block
+              size="md"
+              :class="[open && 'bg-neutral/15 ']"
+              :ui="{
+                trailingIcon: ['transition-transform duration-200', open ? 'rotate-180' : undefined].filter(Boolean).join(' ')
+              }"
+            />
+          </UDropdownMenu>
           <UPageAnchors :links="links" />
           <USeparator type="dashed" class="my-6" />
           <UContentNavigation
