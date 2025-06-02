@@ -1,9 +1,17 @@
 import { defineContentConfig, defineCollection, z } from '@nuxt/content'
 
-const docsSource = {
+const docsV3Source = {
   cwd: process.env.NUXT_PATH ?? undefined,
   repository: !process.env.NUXT_PATH ? 'https://github.com/nuxt/nuxt/tree/3.x' : undefined,
-  include: 'docs/**/*'
+  include: 'docs/**/*',
+  prefix: '/docs/v3'
+}
+
+const docsV4Source = {
+  cwd: process.env.NUXT_V4_PATH ?? undefined,
+  repository: !process.env.NUXT_V4_PATH ? 'https://github.com/nuxt/nuxt' : undefined,
+  include: 'docs/**/*',
+  prefix: '/docs/v4'
 }
 
 const examplesSource = {
@@ -180,7 +188,7 @@ export default defineContentConfig({
     }),
     docs: defineCollection({
       type: 'page',
-      source: [docsSource, examplesSource],
+      source: [docsV3Source, docsV4Source, examplesSource],
       schema: z.object({
         titleTemplate: z.string().optional(),
         links: z.array(Button)

@@ -13,11 +13,12 @@ const navigation = inject<Ref<ContentNavigationItem[]>>('navigation', ref([]))
 
 const route = useRoute()
 const nuxtApp = useNuxtApp()
+const { selectedVersion, versionItems } = useDocsVersion()
 
 const path = computed(() => route.path.replace(/\/$/, ''))
 
 const asideNavigation = computed(() => {
-  const path = ['/docs', route.params.slug?.[0]].filter(Boolean).join('/')
+  const path = [selectedVersion.value.pathPrefix, route.params.slug?.[0]].filter(Boolean).join('/')
 
   return navPageFromPath(path, navigation.value)?.children || []
 })
@@ -126,15 +127,12 @@ if (import.meta.server) {
           <UDropdownMenu
             v-slot="{ open }"
             :modal="false"
-            :items="[
-              { label: 'v4.x' },
-              { label: 'v3.x', active: true, color: 'primary', checked: true, type: 'checkbox' }
-            ]"
+            :items="versionItems"
             :ui="{ content: 'w-(--reka-dropdown-menu-trigger-width) min-w-0' }"
             class="mb-4"
           >
             <UButton
-              label="v3.x"
+              :label="selectedVersion.label"
               variant="subtle"
               trailing-icon="i-lucide-chevron-down"
               color="neutral"

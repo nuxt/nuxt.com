@@ -2,43 +2,46 @@ import { createSharedComposable } from '@vueuse/core'
 
 function _useHeaderLinks() {
   const route = useRoute()
+  const { selectedVersion } = useDocsVersion()
+  const docsBasePath = computed(() => selectedVersion.value.pathPrefix)
+
   const headerLinks = computed(() => {
     return [{
       label: 'Docs',
       icon: 'i-lucide-book-marked',
-      to: '/docs',
+      to: docsBasePath,
       search: false,
       active: route.path.startsWith('/docs'),
       children: [{
         label: 'Get Started',
         description: 'Learn how to get started with Nuxt to build your first app.',
         icon: 'i-lucide-rocket',
-        to: '/docs/getting-started',
-        active: route.path.startsWith('/docs/getting-started')
+        to: `${docsBasePath}/getting-started`,
+        active: route.path.startsWith(`${docsBasePath}/getting-started`)
       }, {
         label: 'Guide',
         description: 'Get the key concepts, directory structure and best practices.',
         icon: 'i-lucide-book-open',
-        to: '/docs/guide',
-        active: route.path.startsWith('/docs/guide')
+        to: `${docsBasePath}/guide`,
+        active: route.path.startsWith(`${docsBasePath}/guide`)
       }, {
         label: 'API',
         description: 'Explore the Nuxt components, composables, utilities and more.',
         icon: 'i-lucide-code-xml',
-        to: '/docs/api',
-        active: route.path.startsWith('/docs/api')
+        to: `${docsBasePath}/api`,
+        active: route.path.startsWith(`${docsBasePath}/api`)
       }, {
         label: 'Examples',
         description: 'Discover and explore official and community examples.',
         icon: 'i-lucide-app-window-mac',
-        to: '/docs/examples',
-        active: route.path.startsWith('/docs/examples')
+        to: `${docsBasePath}/examples`,
+        active: route.path.startsWith(`${docsBasePath}/examples`)
       }, {
         label: 'Community',
         description: 'Find answers and support from the community.',
         icon: 'i-lucide-messages-square',
-        to: '/docs/community',
-        active: route.path.startsWith('/docs/community')
+        to: `${docsBasePath}/community`,
+        active: route.path.startsWith(`${docsBasePath}/community`)
       }]
     }, {
       label: 'Integrations',
