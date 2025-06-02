@@ -40,14 +40,19 @@ const asideNavigation = computed(() => {
 
   const cleanCurrentPath = route.path.replace(/\/docs\/(3\.x|4\.x)/, '/docs')
 
-  return foundParent.children.map((child) => {
-    const cleanChildPath = child.path.replace(/\/docs\/(3\.x|4\.x)/, '/docs')
+  const handleActiveNavigation = (items: any[]): any[] => {
+    return items.map((item) => {
+      const cleanItemPath = item.path.replace(/\/docs\/(3\.x|4\.x)/, '/docs')
 
-    return {
-      ...child,
-      active: cleanCurrentPath === cleanChildPath
-    }
-  })
+      return {
+        ...item,
+        active: cleanCurrentPath === cleanItemPath,
+        children: item.children ? handleActiveNavigation(item.children) : undefined
+      }
+    })
+  }
+
+  return handleActiveNavigation(foundParent.children)
 })
 
 const { headerLinks } = useHeaderLinks()
@@ -96,14 +101,21 @@ const breadcrumb = computed(() => {
     to: link.to
   }))
 
+  const filteredLinks = links.filter((link, index) => {
+    if (link.label === 'Docs') {
+      return links.findIndex(l => l.label === 'Docs') === index
+    }
+    return true
+  })
+
   if (path.value.startsWith('/docs/bridge') || path.value.startsWith('/docs/migration')) {
-    links.splice(1, 0, {
+    filteredLinks.splice(1, 0, {
       label: 'Upgrade Guide',
       to: '/docs/getting-started/upgrade'
     })
   }
 
-  return links
+  return filteredLinks
 })
 
 const titleTemplate = computed(() => findTitleTemplate(page, navigation))
