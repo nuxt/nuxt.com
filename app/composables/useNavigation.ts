@@ -4,43 +4,48 @@ function _useHeaderLinks() {
   const route = useRoute()
   const { prefix } = useDocsVersion()
 
+  const isRouteActive = (targetPath: string) => {
+    const cleanCurrentPath = route.path.replace(/\/docs\/(3\.x|4\.x)/, '/docs')
+    return cleanCurrentPath.startsWith(targetPath)
+  }
+
   const headerLinks = computed(() => {
     return [{
       label: 'Docs',
       icon: 'i-lucide-book-marked',
       to: prefix.value,
       search: false,
-      active: route.path.startsWith(prefix.value),
+      active: isRouteActive(prefix.value),
       children: [{
         label: 'Get Started',
         description: 'Learn how to get started with Nuxt to build your first app.',
         icon: 'i-lucide-rocket',
         to: `${prefix.value}/getting-started`,
-        active: route.path.startsWith(`${prefix.value}/getting-started`)
+        active: isRouteActive(`/docs/getting-started`)
       }, {
         label: 'Guide',
         description: 'Get the key concepts, directory structure and best practices.',
         icon: 'i-lucide-book-open',
         to: `${prefix.value}/guide`,
-        active: route.path.startsWith(`${prefix.value}/guide`)
+        active: isRouteActive(`/docs/guide`)
       }, {
         label: 'API',
         description: 'Explore the Nuxt components, composables, utilities and more.',
         icon: 'i-lucide-code-xml',
         to: `${prefix.value}/api`,
-        active: route.path.startsWith(`${prefix.value}/api`)
+        active: isRouteActive(`/docs/api`)
       }, {
         label: 'Examples',
         description: 'Discover and explore official and community examples.',
         icon: 'i-lucide-app-window-mac',
         to: `${prefix.value}/examples`,
-        active: route.path.startsWith(`${prefix.value}/examples`)
+        active: isRouteActive(`/docs/examples`)
       }, {
         label: 'Community',
         description: 'Find answers and support from the community.',
         icon: 'i-lucide-messages-square',
         to: `${prefix.value}/community`,
-        active: route.path.startsWith(`${prefix.value}/community`)
+        active: isRouteActive(`/docs/community`)
       }]
     }, {
       label: 'Integrations',

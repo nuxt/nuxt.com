@@ -17,29 +17,37 @@ const { items, version, contentPrefix } = useDocsVersion()
 
 const path = computed(() => route.path.replace(/\/$/, ''))
 
-const parseSlugAndVersion = () => {
+const actualSlug = computed(() => {
   const slugArray = Array.isArray(route.params.slug)
     ? route.params.slug
     : [route.params.slug]
 
   const [firstSlug, ...restSlug] = slugArray
   const isVersionDetected = firstSlug === '3.x' || firstSlug === '4.x'
-  const actualSlug = isVersionDetected ? restSlug : slugArray
 
-  return { actualSlug }
-}
+  return isVersionDetected ? restSlug : slugArray
+})
 
 const asideNavigation = computed(() => {
-  const { actualSlug } = parseSlugAndVersion()
-
   let parentPath = contentPrefix.value
-  if (actualSlug.length > 0) {
-    parentPath = [contentPrefix.value, actualSlug[0]].filter(Boolean).join('/')
+  if (actualSlug.value.length > 0) {
+    parentPath = [contentPrefix.value, actualSlug.value[0]].filter(Boolean).join('/')
   }
 
   const foundParent = navPageFromPath(parentPath, navigation.value)
 
-  return foundParent?.children || []
+  if (!foundParent?.children) return []
+
+  const cleanCurrentPath = route.path.replace(/\/docs\/(3\.x|4\.x)/, '/docs')
+
+  return foundParent.children.map((child) => {
+    const cleanChildPath = child.path.replace(/\/docs\/(3\.x|4\.x)/, '/docs')
+
+    return {
+      ...child,
+      active: cleanCurrentPath === cleanChildPath
+    }
+  })
 })
 
 const { headerLinks } = useHeaderLinks()
@@ -56,8 +64,7 @@ function paintResponse() {
 }
 
 const pagePath = computed(() => {
-  const { actualSlug } = parseSlugAndVersion()
-  return [contentPrefix.value, ...actualSlug].filter(Boolean).join('/')
+  return [contentPrefix.value, ...actualSlug.value].filter(Boolean).join('/')
 })
 
 const [{ data: page, status }, { data: surround }] = await Promise.all([
