@@ -13,14 +13,35 @@ const navigation = inject<Ref<ContentNavigationItem[]>>('navigation', ref([]))
 
 const route = useRoute()
 const nuxtApp = useNuxtApp()
-const { prefix, items, version } = useDocsVersion()
+const { items, version, versions } = useDocsVersion()
 
 const path = computed(() => route.path.replace(/\/$/, ''))
 
-const asideNavigation = computed(() => {
-  const path = [prefix.value, ...route.params.slug].filter(Boolean).join('/')
+const parseSlugAndVersion = () => {
+  const slugArray = Array.isArray(route.params.slug)
+    ? route.params.slug
+    : [route.params.slug]
 
-  return navPageFromPath(path, navigation.value)?.children || []
+  const [firstSlug, ...restSlug] = slugArray
+  const isVersionDetected = firstSlug === '3.x' || firstSlug === '4.x'
+  const detectedVersion = isVersionDetected ? firstSlug : version.value.value
+  const actualSlug = isVersionDetected ? restSlug : slugArray
+  const contentPrefix = (versions.find(({ value }) => value === detectedVersion) || versions[0]).contentPrefix
+
+  return { actualSlug, contentPrefix }
+}
+
+const asideNavigation = computed(() => {
+  const { actualSlug, contentPrefix } = parseSlugAndVersion()
+
+  let parentPath = contentPrefix
+  if (actualSlug.length > 0) {
+    parentPath = [contentPrefix, actualSlug[0]].filter(Boolean).join('/')
+  }
+
+  const foundParent = navPageFromPath(parentPath, navigation.value)
+
+  return foundParent?.children || []
 })
 
 const { headerLinks } = useHeaderLinks()
@@ -37,16 +58,13 @@ function paintResponse() {
 }
 
 const pagePath = computed(() => {
-  if (path.value.startsWith('/docs/4.x') || path.value.startsWith('/docs/3.x')) {
-    return path.value
-  }
-
-  return path.value.replace('/docs', '/docs/3.x')
+  const { actualSlug, contentPrefix } = parseSlugAndVersion()
+  return [contentPrefix, ...actualSlug].filter(Boolean).join('/')
 })
 
 const [{ data: page, status }, { data: surround }] = await Promise.all([
   useAsyncData(kebabCase(pagePath.value), () => paintResponse().then(() => nuxtApp.static[kebabCase(pagePath.value)] ?? queryCollection('docs').path(pagePath.value).first()), {
-    watch: [path]
+    watch: [pagePath]
   }),
   useAsyncData(`${kebabCase(path.value)}-surround`, () => paintResponse().then(() => nuxtApp.static[`${kebabCase(path.value)}-surround`] ?? queryCollectionItemSurroundings('docs', path.value, {
     fields: ['description']
@@ -85,7 +103,10 @@ const breadcrumb = computed(() => {
 
 const titleTemplate = computed(() => findTitleTemplate(page, navigation))
 
-const editLink = computed(() => `https://github.com/nuxt/nuxt/edit/main/docs/${page?.value?.stem?.split('/').slice(1).join('/')}.${page?.value?.extension}`)
+const editLink = computed(() => {
+  const branch = version.value.value === '4.x' ? 'main' : '3.x'
+  return `https://github.com/nuxt/nuxt/edit/${branch}/docs/${page?.value?.stem?.split('/').slice(2).join('/')}.${page?.value?.extension}`
+})
 
 const communityLinks = [{
   icon: 'i-lucide-heart',
@@ -174,7 +195,7 @@ if (import.meta.server) {
           <ContentRenderer v-if="page.body" :value="page" />
           <div>
             <USeparator class="my-10">
-              <div class="flex items-center gap-2 text-sm dark:text-gray-400">
+              <div class="flex items-center gap-2 text-sm text-muted">
                 <UButton size="sm" variant="link" color="neutral" to="https://github.com/nuxt/nuxt/issues/new/choose" target="_blank">
                   Report an issue
                 </UButton>
