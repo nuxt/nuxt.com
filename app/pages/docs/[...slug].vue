@@ -13,7 +13,7 @@ const navigation = inject<Ref<ContentNavigationItem[]>>('navigation', ref([]))
 
 const route = useRoute()
 const nuxtApp = useNuxtApp()
-const { items, version, versions } = useDocsVersion()
+const { items, version, contentPrefix } = useDocsVersion()
 
 const path = computed(() => route.path.replace(/\/$/, ''))
 
@@ -24,19 +24,17 @@ const parseSlugAndVersion = () => {
 
   const [firstSlug, ...restSlug] = slugArray
   const isVersionDetected = firstSlug === '3.x' || firstSlug === '4.x'
-  const detectedVersion = isVersionDetected ? firstSlug : version.value.value
   const actualSlug = isVersionDetected ? restSlug : slugArray
-  const contentPrefix = (versions.find(({ value }) => value === detectedVersion) || versions[0]).contentPrefix
 
-  return { actualSlug, contentPrefix }
+  return { actualSlug }
 }
 
 const asideNavigation = computed(() => {
-  const { actualSlug, contentPrefix } = parseSlugAndVersion()
+  const { actualSlug } = parseSlugAndVersion()
 
-  let parentPath = contentPrefix
+  let parentPath = contentPrefix.value
   if (actualSlug.length > 0) {
-    parentPath = [contentPrefix, actualSlug[0]].filter(Boolean).join('/')
+    parentPath = [contentPrefix.value, actualSlug[0]].filter(Boolean).join('/')
   }
 
   const foundParent = navPageFromPath(parentPath, navigation.value)
@@ -58,8 +56,8 @@ function paintResponse() {
 }
 
 const pagePath = computed(() => {
-  const { actualSlug, contentPrefix } = parseSlugAndVersion()
-  return [contentPrefix, ...actualSlug].filter(Boolean).join('/')
+  const { actualSlug } = parseSlugAndVersion()
+  return [contentPrefix.value, ...actualSlug].filter(Boolean).join('/')
 })
 
 const [{ data: page, status }, { data: surround }] = await Promise.all([
