@@ -13,7 +13,7 @@ const navigation = inject<Ref<ContentNavigationItem[]>>('navigation', ref([]))
 
 const route = useRoute()
 const nuxtApp = useNuxtApp()
-const { version, items } = useDocsVersion()
+const { version } = useDocsVersion()
 
 const path = computed(() => route.path.replace(/\/$/, ''))
 
@@ -124,25 +124,7 @@ if (import.meta.server) {
     <UPage>
       <template #left>
         <UPageAside>
-          <UDropdownMenu
-            v-slot="{ open }"
-            :modal="false"
-            :items="items"
-            :ui="{ content: 'w-(--reka-dropdown-menu-trigger-width) min-w-0' }"
-          >
-            <UButton
-              :label="version.label"
-              variant="outline"
-              trailing-icon="i-lucide-chevron-down"
-              color="neutral"
-              block
-              size="md"
-              :class="[open && 'bg-elevated']"
-              :ui="{
-                trailingIcon: ['transition-transform duration-200', open ? 'rotate-180' : undefined].filter(Boolean).join(' ')
-              }"
-            />
-          </UDropdownMenu>
+          <VersionSelect />
           <USeparator type="dashed" class="my-6" />
           <UPageAnchors :links="links" />
           <USeparator type="dashed" class="my-6" />

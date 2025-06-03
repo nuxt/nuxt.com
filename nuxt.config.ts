@@ -153,9 +153,7 @@ export default defineNuxtConfig({
   },
   hooks: {
     'content:file:beforeParse': async ({ file }) => {
-      console.log('id', file.id)
       if (file.id.startsWith('docsv4/')) {
-        console.log('file', file)
         file.body = file.body.replaceAll('/docs/', '/docs/4.x/')
       }
     },
