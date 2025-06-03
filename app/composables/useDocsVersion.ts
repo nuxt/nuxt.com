@@ -14,7 +14,17 @@ const versions = [{
 export const useDocsVersion = () => {
   const route = useRoute()
 
-  const version = computed(() => versions.find(v => route.params.branch && v.value === route.params.branch) || versions[0])
+  const version = computed(() => {
+    if (route.path.startsWith('/docs/4.x/')) {
+      return versions.find(v => v.value === '4.x') || versions[0]
+    } else if (route.path.startsWith('/docs/3.x/')) {
+      return versions.find(v => v.value === '3.x') || versions[0]
+    } else if (route.path.startsWith('/docs/')) {
+      return versions.find(v => v.value === '3.x') || versions[0]
+    }
+    return versions[0]
+  })
+
   const prefix = computed(() => version.value.prefix)
   const contentPrefix = computed(() => version.value.contentPrefix)
 
@@ -27,7 +37,31 @@ export const useDocsVersion = () => {
           checked: true
         }
       : {}),
-    type: 'checkbox' as const
+    type: 'checkbox' as const,
+    onSelect: () => {
+      const currentPath = route.path
+      const targetVersion = v
+
+      let relativePath = ''
+
+      if (currentPath.startsWith('/docs/3.x/')) {
+        relativePath = currentPath.replace('/docs/3.x', '')
+      } else if (currentPath.startsWith('/docs/4.x/')) {
+        relativePath = currentPath.replace('/docs/4.x', '')
+      } else if (currentPath.startsWith('/docs/')) {
+        relativePath = currentPath.replace('/docs', '')
+      }
+
+      let newPath = ''
+
+      if (targetVersion.value === '3.x') {
+        newPath = `/docs${relativePath}`
+      } else {
+        newPath = `/docs/${targetVersion.value}${relativePath}`
+      }
+
+      navigateTo(newPath)
+    }
   })))
 
   return {
