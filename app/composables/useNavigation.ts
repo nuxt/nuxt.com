@@ -2,50 +2,44 @@ import { createSharedComposable } from '@vueuse/core'
 
 function _useHeaderLinks() {
   const route = useRoute()
-  const { prefix } = useDocsVersion()
-
-  const isRouteActive = (targetPath: string) => {
-    const cleanCurrentPath = route.path.replace(/\/docs\/(3\.x|4\.x)/, '/docs')
-    return cleanCurrentPath.startsWith(targetPath)
-  }
 
   const headerLinks = computed(() => {
     return [{
       label: 'Docs',
       icon: 'i-lucide-book-marked',
-      to: prefix.value,
+      to: '/docs',
       search: false,
-      active: isRouteActive(prefix.value),
+      active: route.path.startsWith('/docs'),
       children: [{
         label: 'Get Started',
         description: 'Learn how to get started with Nuxt to build your first app.',
         icon: 'i-lucide-rocket',
-        to: `${prefix.value}/getting-started`,
-        active: isRouteActive(`/docs/getting-started`)
+        to: '/docs/getting-started',
+        active: route.path.startsWith('/docs/getting-started')
       }, {
         label: 'Guide',
         description: 'Get the key concepts, directory structure and best practices.',
         icon: 'i-lucide-book-open',
-        to: `${prefix.value}/guide`,
-        active: isRouteActive(`/docs/guide`)
+        to: '/docs/guide',
+        active: route.path.startsWith('/docs/guide')
       }, {
         label: 'API',
         description: 'Explore the Nuxt components, composables, utilities and more.',
         icon: 'i-lucide-code-xml',
-        to: `${prefix.value}/api`,
-        active: isRouteActive(`/docs/api`)
+        to: '/docs/api',
+        active: route.path.startsWith('/docs/api')
       }, {
         label: 'Examples',
         description: 'Discover and explore official and community examples.',
         icon: 'i-lucide-app-window-mac',
-        to: `${prefix.value}/examples`,
-        active: isRouteActive(`/docs/examples`)
+        to: '/docs/examples',
+        active: route.path.startsWith('/docs/examples')
       }, {
         label: 'Community',
         description: 'Find answers and support from the community.',
         icon: 'i-lucide-messages-square',
-        to: `${prefix.value}/community`,
-        active: isRouteActive(`/docs/community`)
+        to: '/docs/community',
+        active: route.path.startsWith('/docs/community')
       }]
     }, {
       label: 'Integrations',
@@ -142,6 +136,7 @@ function _useHeaderLinks() {
       to: '/blog'
     }]
   })
+
   return { headerLinks }
 }
 

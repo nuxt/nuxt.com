@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const colorMode = useColorMode()
+const { version } = useDocsVersion()
 const { searchGroups, searchLinks, searchTerm } = useNavigation()
 const { fetchList } = useModules()
 
@@ -8,7 +9,7 @@ const color = computed(() => colorMode.value === 'dark' ? '#020420' : 'white')
 const [{ data: navigation }, { data: files }] = await Promise.all([
   useAsyncData('navigation', () => {
     return Promise.all([
-      queryCollectionNavigation('docs', ['titleTemplate']),
+      queryCollectionNavigation(version.value.collection, ['titleTemplate']),
       queryCollectionNavigation('blog')
     ])
   }, {
@@ -16,7 +17,7 @@ const [{ data: navigation }, { data: files }] = await Promise.all([
   }),
   useLazyAsyncData('search', () => {
     return Promise.all([
-      queryCollectionSearchSections('docs'),
+      queryCollectionSearchSections(version.value.collection),
       queryCollectionSearchSections('blog')
     ])
   }, {

@@ -3,8 +3,7 @@ import { defineContentConfig, defineCollection, z } from '@nuxt/content'
 const docsV3Source = {
   cwd: process.env.NUXT_PATH ?? undefined,
   repository: !process.env.NUXT_PATH ? 'https://github.com/nuxt/nuxt/tree/3.x' : undefined,
-  include: 'docs/**/*',
-  prefix: '/docs/3.x'
+  include: 'docs/**/*'
 }
 
 const docsV4Source = {
@@ -186,9 +185,17 @@ export default defineContentConfig({
         })
       })
     }),
-    docs: defineCollection({
+    docsv3: defineCollection({
       type: 'page',
-      source: [docsV3Source, docsV4Source, examplesSource],
+      source: [docsV3Source, examplesSource],
+      schema: z.object({
+        titleTemplate: z.string().optional(),
+        links: z.array(Button)
+      })
+    }),
+    docsv4: defineCollection({
+      type: 'page',
+      source: [docsV4Source, examplesSource],
       schema: z.object({
         titleTemplate: z.string().optional(),
         links: z.array(Button)

@@ -13,46 +13,14 @@ const navigation = inject<Ref<ContentNavigationItem[]>>('navigation', ref([]))
 
 const route = useRoute()
 const nuxtApp = useNuxtApp()
-const { items, version, contentPrefix } = useDocsVersion()
+const { items, version } = useDocsVersion()
 
 const path = computed(() => route.path.replace(/\/$/, ''))
 
-const actualSlug = computed(() => {
-  const slugArray = Array.isArray(route.params.slug)
-    ? route.params.slug
-    : [route.params.slug]
-
-  const [firstSlug, ...restSlug] = slugArray
-  const isVersionDetected = firstSlug === '3.x' || firstSlug === '4.x'
-
-  return isVersionDetected ? restSlug : slugArray
-})
-
 const asideNavigation = computed(() => {
-  let parentPath = contentPrefix.value
-  if (actualSlug.value.length > 0) {
-    parentPath = [contentPrefix.value, actualSlug.value[0]].filter(Boolean).join('/')
-  }
-
-  const foundParent = navPageFromPath(parentPath, navigation.value)
-
-  if (!foundParent?.children) return []
-
-  const cleanCurrentPath = route.path.replace(/\/docs\/(3\.x|4\.x)/, '/docs')
-
-  const handleActiveNavigation = (items: any[]): any[] => {
-    return items.map((item) => {
-      const cleanItemPath = item.path.replace(/\/docs\/(3\.x|4\.x)/, '/docs')
-
-      return {
-        ...item,
-        active: cleanCurrentPath === cleanItemPath,
-        children: item.children ? handleActiveNavigation(item.children) : undefined
-      }
-    })
-  }
-
-  return handleActiveNavigation(foundParent.children)
+  const path = [version.value.path, route.params.slug?.[version.value.path.split('/').length - 2]].filter(Boolean).join('/')
+  console.log('path', path)
+  return navPageFromPath(path, navigation.value)?.children || []
 })
 
 const { headerLinks } = useHeaderLinks()
@@ -68,18 +36,16 @@ function paintResponse() {
   })
 }
 
-const pagePath = computed(() => {
-  return [contentPrefix.value, ...actualSlug.value].filter(Boolean).join('/')
-})
-
 const [{ data: page, status }, { data: surround }] = await Promise.all([
-  useAsyncData(kebabCase(pagePath.value), () => paintResponse().then(() => nuxtApp.static[kebabCase(pagePath.value)] ?? queryCollection('docs').path(pagePath.value).first()), {
-    watch: [pagePath]
+  useAsyncData(kebabCase(path.value), () => paintResponse().then(() => nuxtApp.static[kebabCase(path.value)] ?? queryCollection(version.value.collection).path(path.value).first()), {
+    watch: [path, version]
   }),
-  useAsyncData(`${kebabCase(path.value)}-surround`, () => paintResponse().then(() => nuxtApp.static[`${kebabCase(path.value)}-surround`] ?? queryCollectionItemSurroundings('docs', path.value, {
+  useAsyncData(`${kebabCase(path.value)}-surround`, () => paintResponse().then(() => nuxtApp.static[`${kebabCase(path.value)}-surround`] ?? queryCollectionItemSurroundings(version.value.collection, path.value, {
     fields: ['description']
-  })), { watch: [path] })
+  })), { watch: [path, version] })
 ])
+
+console.log('page', page.value)
 
 watch(status, (status) => {
   if (status === 'pending') {
@@ -101,29 +67,19 @@ const breadcrumb = computed(() => {
     to: link.to
   }))
 
-  const filteredLinks = links.filter((link, index) => {
-    if (link.label === 'Docs') {
-      return links.findIndex(l => l.label === 'Docs') === index
-    }
-    return true
-  })
-
   if (path.value.startsWith('/docs/bridge') || path.value.startsWith('/docs/migration')) {
-    filteredLinks.splice(1, 0, {
+    links.splice(1, 0, {
       label: 'Upgrade Guide',
       to: '/docs/getting-started/upgrade'
     })
   }
 
-  return filteredLinks
+  return links
 })
 
 const titleTemplate = computed(() => findTitleTemplate(page, navigation))
 
-const editLink = computed(() => {
-  const branch = version.value.value === '4.x' ? 'main' : '3.x'
-  return `https://github.com/nuxt/nuxt/edit/${branch}/docs/${page?.value?.stem?.split('/').slice(2).join('/')}.${page?.value?.extension}`
-})
+const editLink = computed(() => `https://github.com/nuxt/nuxt/edit/main/docs/${page?.value?.stem?.split('/').slice(1).join('/')}.${page?.value?.extension}`)
 
 const communityLinks = [{
   icon: 'i-lucide-heart',
