@@ -81,7 +81,7 @@ const breadcrumb = computed(() => {
 
 const titleTemplate = computed(() => findTitleTemplate(page, navigation))
 
-const editLink = computed(() => `https://github.com/nuxt/nuxt/edit/main/docs/${page?.value?.stem?.split('/').slice(1).join('/')}.${page?.value?.extension}`)
+const editLink = computed(() => `https://github.com/nuxt/nuxt/edit/${version.value.branch}/${page?.value?.stem?.replace('docs/4.x', 'docs')}.${page?.value?.extension}`)
 
 const communityLinks = [{
   icon: 'i-lucide-heart',
@@ -100,7 +100,7 @@ const communityLinks = [{
   target: '_blank'
 }]
 
-const title = page.value.seo?.title || page.value.title
+const title = page.value?.seo?.title || page.value?.title
 
 useSeoMeta({
   titleTemplate,
@@ -108,7 +108,7 @@ useSeoMeta({
 })
 
 if (import.meta.server) {
-  const description = page.value.seo?.description || page.value.description
+  const description = page.value?.seo?.description || page.value?.description
   useSeoMeta({
     description,
     ogDescription: description,
@@ -184,10 +184,10 @@ if (import.meta.server) {
           </div>
         </UPageBody>
 
-        <template v-if="page?.body?.toc?.links?.length" #right>
+        <template #right>
           <UContentToc :links="page.body?.toc?.links" highlight class="lg:backdrop-blur-none">
             <template #bottom>
-              <div class="hidden lg:block space-y-6" :class="{ '!mt-6': page.body?.toc?.links?.length }">
+              <div class="hidden lg:block space-y-6">
                 <USeparator v-if="page.body?.toc?.links?.length" type="dashed" />
                 <UPageLinks title="Community" :links="communityLinks" />
                 <USeparator type="dashed" />

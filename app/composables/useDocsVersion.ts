@@ -12,7 +12,7 @@ const versions: Version[] = [{
   collection: 'docsv3'
 }, {
   label: '4.x (alpha)',
-  branch: '4.x',
+  branch: 'main',
   path: '/docs/4.x',
   collection: 'docsv4'
 }]
@@ -22,7 +22,7 @@ export const useDocsVersion = () => {
 
   const version = computed(() => {
     if (route.path.startsWith('/docs/4.x')) {
-      return versions.find(v => v.branch === '4.x')
+      return versions.find(v => v.path === '/docs/4.x')
     }
 
     return versions[0]
@@ -36,7 +36,6 @@ export const useDocsVersion = () => {
           color: 'primary' as const,
           checked: true,
           type: 'checkbox' as const
-
         }
       : {
           to: route.path.replace(version.value.path, v.path)

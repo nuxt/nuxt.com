@@ -16,8 +16,13 @@ export function navPageFromPath(path: string, tree: ContentNavigationItem[]): Co
 }
 
 export function findTitleTemplate(page: Ref<DocsCollectionItem>, navigation: Ref<ContentNavigationItem[]>): string {
-  if (page.value.titleTemplate)
+  if (!page.value) {
+    return ''
+  }
+
+  if (page.value.titleTemplate) {
     return page.value.titleTemplate
+  }
 
   // If titleTemplate is not set, we check the navigation for the closest parent with a titleTemplate
   const parts = page.value.path.split('/')

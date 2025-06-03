@@ -59,13 +59,9 @@ if (import.meta.server) {
   })
 }
 
-const versionNavigation = computed(() => {
-  return [...navigation.value].splice(version.value.collection === 'docsv4' ? 1 : 0, 1)
-})
+const versionNavigation = computed(() => [...navigation.value].splice(version.value.collection === 'docsv4' ? 1 : 0, 1))
 
-const versionFiles = computed(() => {
-  return files.value ?? []
-})
+const versionFiles = computed(() => files.value?.filter(file => file.id.startsWith(`${version.value.path}/`) || file.id.startsWith('/blog/')) ?? [])
 
 // Provide with non-null assertion since this is top level app setup
 provide('navigation', versionNavigation)
