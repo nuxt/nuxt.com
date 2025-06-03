@@ -1,21 +1,26 @@
+import type { BadgeProps } from '@nuxt/ui'
+
 interface Version {
   label: string
-  version: string
+  tag: string
   branch: string
+  tagColor: BadgeProps['color']
   path: string
   collection: 'docsv3' | 'docsv4'
 }
 
 const versions: Version[] = [{
-  label: 'Latest version',
-  version: '3.x',
+  label: 'Version 3',
+  tag: 'latest',
   branch: '3.x',
+  tagColor: 'primary',
   path: '/docs',
   collection: 'docsv3'
 }, {
-  label: 'Alpha version',
-  version: '4.x',
+  label: 'Version 4',
+  tag: 'alpha',
   branch: 'main',
+  tagColor: 'warning',
   path: '/docs/4.x',
   collection: 'docsv4'
 }]
@@ -32,13 +37,11 @@ export const useDocsVersion = () => {
   })
 
   const items = computed(() => versions.map(v => ({
-    label: v.label,
-    version: v.version,
+    ...v,
     ...(v.branch === version.value.branch
       ? {
-          active: true,
-          color: 'primary' as const,
           checked: true,
+          color: v.tagColor,
           type: 'checkbox' as const
         }
       : {
