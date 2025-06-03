@@ -9,7 +9,8 @@ const color = computed(() => colorMode.value === 'dark' ? '#020420' : 'white')
 const [{ data: navigation }, { data: files }] = await Promise.all([
   useAsyncData('navigation', () => {
     return Promise.all([
-      queryCollectionNavigation(version.value.collection, ['titleTemplate']),
+      queryCollectionNavigation('docsv3', ['titleTemplate']),
+      queryCollectionNavigation('docsv4', ['titleTemplate']),
       queryCollectionNavigation('blog')
     ])
   }, {
@@ -18,7 +19,8 @@ const [{ data: navigation }, { data: files }] = await Promise.all([
   }),
   useLazyAsyncData('search', () => {
     return Promise.all([
-      queryCollectionSearchSections(version.value.collection),
+      queryCollectionSearchSections('docsv3'),
+      queryCollectionSearchSections('docsv4'),
       queryCollectionSearchSections('blog')
     ])
   }, {
@@ -57,8 +59,16 @@ if (import.meta.server) {
   })
 }
 
+const versionNavigation = computed(() => {
+  return [...navigation.value].splice(version.value.collection === 'docsv4' ? 1 : 0, 1)
+})
+
+const versionFiles = computed(() => {
+  return files.value ?? []
+})
+
 // Provide with non-null assertion since this is top level app setup
-provide('navigation', navigation!)
+provide('navigation', versionNavigation)
 
 const route = useRoute()
 const heroBackgroundClass = computed(() => route.meta?.heroBackground || '')
@@ -115,8 +125,8 @@ onMounted(() => {
     <ClientOnly>
       <LazyUContentSearch
         v-model:search-term="searchTerm"
-        :files="files"
-        :navigation="navigation"
+        :files="versionFiles"
+        :navigation="versionNavigation"
         :groups="searchGroups"
         :links="searchLinks"
         :fuse="{ resultLimit: 42 }"
