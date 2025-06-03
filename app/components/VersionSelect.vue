@@ -22,7 +22,7 @@ const { version, items } = useDocsVersion()
           trailingIcon: ['transition-transform duration-200', open ? 'rotate-180' : undefined].filter(Boolean).join(' ')
         }"
       >
-        <span>{{ version.label }}</span>
+        <span class="truncate">{{ version.label }}</span>
 
         <UBadge v-if="version.tag" :color="version.tagColor" variant="subtle" size="sm" class="rounded-full">
           {{ version.tag }}
@@ -32,7 +32,7 @@ const { version, items } = useDocsVersion()
 
     <template #item-label="{ item }">
       <div class="flex items-center gap-1.5">
-        <span>{{ item.label }}</span>
+        <span class="truncate">{{ item.label }}</span>
 
         <UBadge v-if="item.tag" :color="item.tagColor" variant="subtle" size="sm" class="rounded-full">
           {{ item.tag }}
