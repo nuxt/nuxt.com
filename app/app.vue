@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const route = useRoute()
 const colorMode = useColorMode()
 const { version } = useDocsVersion()
 const { searchGroups, searchLinks, searchTerm } = useNavigation()
@@ -10,7 +11,7 @@ const [{ data: navigation }, { data: files }] = await Promise.all([
   useAsyncData('navigation', () => {
     return Promise.all([
       queryCollectionNavigation('docsv3', ['titleTemplate']),
-      queryCollectionNavigation('docsv4', ['titleTemplate']),
+      queryCollectionNavigation('docsv4', ['titleTemplate']).then(data => data[0]?.children),
       queryCollectionNavigation('blog')
     ])
   }, {
@@ -59,18 +60,18 @@ if (import.meta.server) {
   })
 }
 
-const versionNavigation = computed(() => [...navigation.value].splice(version.value.collection === 'docsv4' ? 1 : 0, 1))
+const versionNavigation = computed(() => navigation.value?.filter(item => item.path.startsWith(version.value.path) || item.path.startsWith('/blog/')) ?? [])
 
 const versionFiles = computed(() => files.value?.filter(file => file.id.startsWith(`${version.value.path}/`) || file.id.startsWith('/blog/')) ?? [])
 
 // Provide with non-null assertion since this is top level app setup
-provide('navigation', versionNavigation)
+provide('navigation', versionNavigation!)
 
-const route = useRoute()
 const heroBackgroundClass = computed(() => route.meta?.heroBackground || '')
 const { isLoading } = useLoadingIndicator()
 const appear = ref(false)
 const appeared = ref(false)
+
 onMounted(() => {
   setTimeout(() => {
     appear.value = true

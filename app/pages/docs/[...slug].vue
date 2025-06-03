@@ -60,14 +60,10 @@ watch(page, (page) => {
 }, { immediate: true })
 
 const breadcrumb = computed(() => {
-  const links = mapContentNavigation(findPageBreadcrumb(navigation.value, page.value)).map(link => ({
+  const links = mapContentNavigation(findPageBreadcrumb(navigation.value, { path: path.value })).map(link => ({
     label: link.label,
     to: link.to
   }))
-
-  if (links[0].to !== version.value.path) {
-    links.splice(0, 1)
-  }
 
   if (path.value.startsWith(`${version.value.path}/bridge`) || path.value.startsWith(`${version.value.path}/migration`)) {
     links.splice(1, 0, {
