@@ -1,4 +1,4 @@
-import type { ContentNavigationItem, DocsCollectionItem } from '@nuxt/content'
+import type { ContentNavigationItem, Docsv3CollectionItem, Docsv4CollectionItem } from '@nuxt/content'
 
 export function navPageFromPath(path: string, tree: ContentNavigationItem[]): ContentNavigationItem | undefined {
   for (const file of tree) {
@@ -15,7 +15,7 @@ export function navPageFromPath(path: string, tree: ContentNavigationItem[]): Co
   }
 }
 
-export function findTitleTemplate(page: Ref<DocsCollectionItem>, navigation: Ref<ContentNavigationItem[]>): string {
+export function findTitleTemplate(page: Ref<Docsv3CollectionItem | Docsv4CollectionItem>, navigation: Ref<ContentNavigationItem[]>): string {
   if (!page.value) {
     return ''
   }
