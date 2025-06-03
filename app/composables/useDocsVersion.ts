@@ -4,8 +4,7 @@ const versions = [{
   prefix: '/docs',
   contentPrefix: '/docs/3.x'
 }, {
-  label: '4.x',
-  suffix: '(alpha)',
+  label: '4.x (alpha)',
   value: '4.x',
   prefix: '/docs/4.x',
   contentPrefix: '/docs/4.x'
