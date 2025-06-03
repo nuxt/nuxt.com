@@ -1,17 +1,20 @@
 interface Version {
   label: string
+  version: string
   branch: string
   path: string
   collection: 'docsv3' | 'docsv4'
 }
 
 const versions: Version[] = [{
-  label: '3.x',
+  label: 'Latest version',
+  version: '3.x',
   branch: '3.x',
   path: '/docs',
   collection: 'docsv3'
 }, {
-  label: '4.x (alpha)',
+  label: 'Alpha version',
+  version: '4.x',
   branch: 'main',
   path: '/docs/4.x',
   collection: 'docsv4'
@@ -30,6 +33,7 @@ export const useDocsVersion = () => {
 
   const items = computed(() => versions.map(v => ({
     label: v.label,
+    version: v.version,
     ...(v.branch === version.value.branch
       ? {
           active: true,

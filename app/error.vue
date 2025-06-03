@@ -9,31 +9,39 @@ useSeoMeta({
 defineProps<{ error: NuxtError }>()
 
 const { searchGroups, searchLinks, searchTerm } = useNavigation()
+const { version } = useDocsVersion()
 
 const [{ data: navigation }, { data: files }] = await Promise.all([
   useAsyncData('navigation', () => {
     return Promise.all([
-      queryCollectionNavigation('docs'),
+      queryCollectionNavigation('docsv3', ['titleTemplate']),
+      queryCollectionNavigation('docsv4', ['titleTemplate']),
       queryCollectionNavigation('blog')
     ])
   }, {
-    transform: data => data.flat()
+    transform: data => data.flat(),
+    watch: [version]
   }),
   useLazyAsyncData('search', () => {
     return Promise.all([
-      queryCollectionSearchSections('docs'),
+      queryCollectionSearchSections('docsv3'),
+      queryCollectionSearchSections('docsv4'),
       queryCollectionSearchSections('blog')
     ])
   }, {
     server: false,
-    transform: data => data.flat()
+    transform: data => data.flat(),
+    watch: [version]
   })
 ])
+
+const versionNavigation = computed(() => [...navigation.value].splice(version.value.collection === 'docsv4' ? 1 : 0, 1))
+const versionFiles = computed(() => files.value?.filter(file => file.id.startsWith(`${version.value.path}/`) || file.id.startsWith('/blog/')) ?? [])
 
 const { fetchList } = useModules()
 onNuxtReady(() => fetchList())
 
-provide('navigation', navigation)
+provide('navigation', versionNavigation)
 </script>
 
 <template>
@@ -47,8 +55,8 @@ provide('navigation', navigation)
     <ClientOnly>
       <LazyUContentSearch
         v-model:search-term="searchTerm"
-        :files="files"
-        :navigation="navigation"
+        :files="versionFiles"
+        :navigation="versionNavigation"
         :groups="searchGroups"
         :links="searchLinks"
         :fuse="{ resultLimit: 42 }"
