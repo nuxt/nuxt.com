@@ -1,4 +1,11 @@
-const versions: { label: string, branch: string, collection: 'docsv3' | 'docsv4', path: string }[] = [{
+interface Version {
+  label: string
+  branch: string
+  path: string
+  collection: 'docsv3' | 'docsv4'
+}
+
+const versions: Version[] = [{
   label: '3.x',
   branch: '3.x',
   path: '/docs',
@@ -13,7 +20,13 @@ const versions: { label: string, branch: string, collection: 'docsv3' | 'docsv4'
 export const useDocsVersion = () => {
   const route = useRoute()
 
-  const version = computed(() => versions.find(v => route.path.startsWith(v.path)) || versions[0])
+  const version = computed(() => {
+    if (route.path.startsWith('/docs/4.x')) {
+      return versions.find(v => v.branch === '4.x')
+    }
+
+    return versions[0]
+  })
 
   const items = computed(() => versions.map(v => ({
     label: v.label,
@@ -21,41 +34,18 @@ export const useDocsVersion = () => {
       ? {
           active: true,
           color: 'primary' as const,
-          checked: true
+          checked: true,
+          type: 'checkbox' as const
+
         }
-      : {}),
-    type: 'checkbox' as const
-    // onSelect: () => {
-    //   const currentPath = route.path
-    //   const targetVersion = v
-
-    //   let relativePath = ''
-
-    //   if (currentPath.startsWith('/docs/3.x/')) {
-    //     relativePath = currentPath.replace('/docs/3.x', '')
-    //   } else if (currentPath.startsWith('/docs/4.x/')) {
-    //     relativePath = currentPath.replace('/docs/4.x', '')
-    //   } else if (currentPath.startsWith('/docs/')) {
-    //     relativePath = currentPath.replace('/docs', '')
-    //   }
-
-    //   let newPath = ''
-
-    //   if (targetVersion.value === '3.x') {
-    //     newPath = `/docs${relativePath}`
-    //   } else {
-    //     newPath = `/docs/${targetVersion.value}${relativePath}`
-    //   }
-
-    //   navigateTo(newPath)
-    // }
+      : {
+          to: route.path.replace(version.value.path, v.path)
+        })
   })))
 
   return {
     items,
-    // prefix,
     version,
     versions
-    // contentPrefix
   }
 }

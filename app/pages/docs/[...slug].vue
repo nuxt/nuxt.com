@@ -13,18 +13,18 @@ const navigation = inject<Ref<ContentNavigationItem[]>>('navigation', ref([]))
 
 const route = useRoute()
 const nuxtApp = useNuxtApp()
-const { items, version } = useDocsVersion()
+const { version, items } = useDocsVersion()
 
 const path = computed(() => route.path.replace(/\/$/, ''))
 
 const asideNavigation = computed(() => {
   const path = [version.value.path, route.params.slug?.[version.value.path.split('/').length - 2]].filter(Boolean).join('/')
-  console.log('path', path)
+
   return navPageFromPath(path, navigation.value)?.children || []
 })
 
 const { headerLinks } = useHeaderLinks()
-const links = computed(() => headerLinks.value.find(link => link.to === '/docs')?.children ?? [])
+const links = computed(() => headerLinks.value.find(link => link.to === version.value.path)?.children ?? [])
 
 function paintResponse() {
   if (import.meta.server) {
@@ -38,14 +38,12 @@ function paintResponse() {
 
 const [{ data: page, status }, { data: surround }] = await Promise.all([
   useAsyncData(kebabCase(path.value), () => paintResponse().then(() => nuxtApp.static[kebabCase(path.value)] ?? queryCollection(version.value.collection).path(path.value).first()), {
-    watch: [path, version]
+    watch: [path]
   }),
   useAsyncData(`${kebabCase(path.value)}-surround`, () => paintResponse().then(() => nuxtApp.static[`${kebabCase(path.value)}-surround`] ?? queryCollectionItemSurroundings(version.value.collection, path.value, {
     fields: ['description']
-  })), { watch: [path, version] })
+  })), { watch: [path] })
 ])
-
-console.log('page', page.value)
 
 watch(status, (status) => {
   if (status === 'pending') {
@@ -67,10 +65,14 @@ const breadcrumb = computed(() => {
     to: link.to
   }))
 
-  if (path.value.startsWith('/docs/bridge') || path.value.startsWith('/docs/migration')) {
+  if (links[0].to !== version.value.path) {
+    links.splice(0, 1)
+  }
+
+  if (path.value.startsWith(`${version.value.path}/bridge`) || path.value.startsWith(`${version.value.path}/migration`)) {
     links.splice(1, 0, {
       label: 'Upgrade Guide',
-      to: '/docs/getting-started/upgrade'
+      to: `${version.value.path}/getting-started/upgrade`
     })
   }
 

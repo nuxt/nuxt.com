@@ -13,11 +13,18 @@ const docsV4Source = {
   prefix: '/docs/4.x'
 }
 
-const examplesSource = {
+const examplesV3Source = {
   cwd: process.env.NUXT_EXAMPLES_PATH ?? undefined,
   repository: !process.env.NUXT_EXAMPLES_PATH ? 'https://github.com/nuxt/examples' : undefined,
   include: '.docs/**/*',
   prefix: '/docs/4.examples'
+}
+
+const examplesV4Source = {
+  cwd: process.env.NUXT_EXAMPLES_PATH ?? undefined,
+  repository: !process.env.NUXT_EXAMPLES_PATH ? 'https://github.com/nuxt/examples' : undefined,
+  include: '.docs/**/*',
+  prefix: '/docs/4.x/4.examples'
 }
 
 const Image = z.object({
@@ -187,7 +194,7 @@ export default defineContentConfig({
     }),
     docsv3: defineCollection({
       type: 'page',
-      source: [docsV3Source, examplesSource],
+      source: [docsV3Source, examplesV3Source],
       schema: z.object({
         titleTemplate: z.string().optional(),
         links: z.array(Button)
@@ -195,7 +202,7 @@ export default defineContentConfig({
     }),
     docsv4: defineCollection({
       type: 'page',
-      source: [docsV4Source, examplesSource],
+      source: [docsV4Source, examplesV4Source],
       schema: z.object({
         titleTemplate: z.string().optional(),
         links: z.array(Button)

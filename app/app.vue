@@ -13,7 +13,8 @@ const [{ data: navigation }, { data: files }] = await Promise.all([
       queryCollectionNavigation('blog')
     ])
   }, {
-    transform: data => data.flat()
+    transform: data => data.flat(),
+    watch: [version]
   }),
   useLazyAsyncData('search', () => {
     return Promise.all([
@@ -22,7 +23,8 @@ const [{ data: navigation }, { data: files }] = await Promise.all([
     ])
   }, {
     server: false,
-    transform: data => data.flat()
+    transform: data => data.flat(),
+    watch: [version]
   })
 ])
 
