@@ -14,6 +14,14 @@ const latestVersion = computed(() => {
   return versionMatch ? versionMatch[0] : undefined
 })
 
+const mobileDocsVersion = computed(() => {
+  if (route.path.startsWith('/docs')) {
+    return version.value.tag !== 'latest'
+      ? `${version.value.shortTag} (${version.value.tag})`
+      : version.value.shortTag
+  }
+})
+
 const mobileNavigation = computed<ContentNavigationItem[]>(() => {
   // Show Migration and Bridge on mobile only when user is reading them
   const docsLink = navigation.value.find(link => link.path === version.value.path)
@@ -78,11 +86,15 @@ const logoContextMenuItems = [
         <NuxtLink to="/" class="flex gap-2 items-end" aria-label="Back to home">
           <NuxtLogo ref="logo" class="block w-auto h-6" />
 
-          <UTooltip v-if="latestVersion" :text="`Latest release: v${stats?.version || 3}`">
-            <UBadge variant="subtle" size="sm" class="-mb-[2px] rounded font-semibold text-[12px]/3">
+          <UTooltip v-if="latestVersion" :text="`Latest release: v${stats?.version || 3}`" class="hidden md:block">
+            <UBadge variant="subtle" size="sm" class="-mb-[2px] rounded font-semibold text-[12px]/3" color="primary">
               v{{ latestVersion }}
             </UBadge>
           </UTooltip>
+
+          <UBadge v-if="mobileDocsVersion" variant="subtle" size="sm" class="block md:hidden -mb-[2px] rounded font-semibold text-[12px]/3" :color="version.tagColor">
+            {{ mobileDocsVersion }}
+          </UBadge>
         </NuxtLink>
       </UContextMenu>
     </template>
