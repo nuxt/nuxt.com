@@ -3,6 +3,7 @@ import type { BadgeProps } from '@nuxt/ui'
 interface Version {
   label: string
   tag: string
+  shortTag: string
   branch: string
   tagColor: BadgeProps['color']
   path: string
@@ -12,6 +13,7 @@ interface Version {
 const versions: Version[] = [{
   label: 'Version 3',
   tag: 'latest',
+  shortTag: 'v3',
   branch: '3.x',
   tagColor: 'primary',
   path: '/docs',
@@ -19,6 +21,7 @@ const versions: Version[] = [{
 }, {
   label: 'Version 4',
   tag: 'alpha',
+  shortTag: 'v4',
   branch: 'main',
   tagColor: 'warning',
   path: '/docs/4.x',

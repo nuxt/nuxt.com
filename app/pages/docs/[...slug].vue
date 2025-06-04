@@ -75,8 +75,6 @@ const breadcrumb = computed(() => {
   return links
 })
 
-const titleTemplate = computed(() => findTitleTemplate(page, navigation))
-
 const editLink = computed(() => `https://github.com/nuxt/nuxt/edit/${version.value.branch}/${page?.value?.stem?.replace('docs/4.x', 'docs')}.${page?.value?.extension}`)
 
 const communityLinks = [{
@@ -97,6 +95,7 @@ const communityLinks = [{
 }]
 
 const title = page.value?.seo?.title || page.value?.title
+const titleTemplate = computed(() => `${findTitleTemplate(page, navigation)} ${version.value.shortTag}`)
 
 useSeoMeta({
   titleTemplate,
