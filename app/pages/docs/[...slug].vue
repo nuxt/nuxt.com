@@ -164,13 +164,11 @@ if (import.meta.server) {
         <template #right>
           <UContentToc :links="page.body?.toc?.links" highlight class="lg:backdrop-blur-none">
             <template #bottom>
-              <div class="hidden lg:block space-y-6">
-                <USeparator v-if="page.body?.toc?.links?.length" type="dashed" />
-                <UPageLinks title="Community" :links="communityLinks" />
-                <USeparator type="dashed" />
-                <SocialLinks />
-                <Ads />
-              </div>
+              <USeparator v-if="page.body?.toc?.links?.length" type="dashed" />
+              <UPageLinks title="Community" :links="communityLinks" />
+              <USeparator type="dashed" />
+              <SocialLinks />
+              <Ads />
             </template>
           </UContentToc>
         </template>
