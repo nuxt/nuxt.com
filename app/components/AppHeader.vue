@@ -14,13 +14,13 @@ const latestVersion = computed(() => {
   return versionMatch ? versionMatch[0] : undefined
 })
 
-const mobileDocsVersion = computed(() => {
-  if (route.path.startsWith('/docs')) {
-    return version.value.tag !== 'latest'
+const mobileDocsVersion = computed(() =>
+  route.path.startsWith('/docs')
+    ? version.value.tag !== 'latest'
       ? `${version.value.shortTag} (${version.value.tag})`
       : version.value.shortTag
-  }
-})
+    : undefined
+)
 
 const mobileNavigation = computed<ContentNavigationItem[]>(() => {
   // Show Migration and Bridge on mobile only when user is reading them
