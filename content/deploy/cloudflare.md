@@ -62,7 +62,7 @@ In this case, you will have to set the preset manually.
 2. Deploy, it will ask you to create a project for the first time:
 
     ```bash [Terminal]
-    wrangler pages deploy dist/
+    npx wrangler pages deploy dist/
     ```
 
 ## Learn more
