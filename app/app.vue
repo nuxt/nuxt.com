@@ -60,12 +60,12 @@ if (import.meta.server) {
   })
 }
 
-const versionNavigation = computed(() => navigation.value?.filter(item => item.path.startsWith(version.value.path) || item.path.startsWith('/blog/')) ?? [])
+const versionNavigation = computed(() => navigation.value?.filter(item => item.path === version.value.path || item.path === '/blog') ?? [])
+const versionFiles = computed(() => files.value?.filter((file) => {
+  return (version.value.path === '/docs/4.x' ? file.id.startsWith('/docs/4.x/') : !file.id.startsWith('/docs/4.x')) || file.id.startsWith('/blog/')
+}) ?? [])
 
-const versionFiles = computed(() => files.value?.filter(file => file.id.startsWith(`${version.value.path}/`) || file.id.startsWith('/blog/')) ?? [])
-
-// Provide with non-null assertion since this is top level app setup
-provide('navigation', versionNavigation!)
+provide('navigation', versionNavigation)
 
 const heroBackgroundClass = computed(() => route.meta?.heroBackground || '')
 const { isLoading } = useLoadingIndicator()
