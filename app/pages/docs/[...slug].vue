@@ -94,7 +94,7 @@ const communityLinks = [{
   target: '_blank'
 }]
 
-const title = page.value?.seo?.title || page.value?.title
+const title = computed(() => page.value?.seo?.title || page.value?.title)
 const titleTemplate = computed(() => `${findTitleTemplate(page, navigation)} ${version.value.shortTag}`)
 
 useSeoMeta({
@@ -107,7 +107,7 @@ if (import.meta.server) {
   useSeoMeta({
     description,
     ogDescription: description,
-    ogTitle: titleTemplate.value?.includes('%s') ? titleTemplate.value.replace('%s', title) : title
+    ogTitle: titleTemplate.value?.includes('%s') ? titleTemplate.value.replace('%s', title.value) : title.value
   })
 
   defineOgImageComponent('Docs', {
