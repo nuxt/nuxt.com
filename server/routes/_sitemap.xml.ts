@@ -7,7 +7,7 @@ import { queryCollection } from '#imports'
 type queryCollectionWithEvent = <T extends keyof Collections>(event: H3Event, collection: T) => CollectionQueryBuilder<Collections[T]>
 
 export default defineEventHandler(async (event: H3Event) => {
-  const docs = await (queryCollection as queryCollectionWithEvent)(event, 'docs').all()
+  const docs = await (queryCollection as queryCollectionWithEvent)(event, 'docsv3').all()
 
   const sitemap = new SitemapStream({
     hostname: 'https://nuxt.com'

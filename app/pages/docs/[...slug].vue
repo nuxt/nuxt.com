@@ -13,17 +13,18 @@ const navigation = inject<Ref<ContentNavigationItem[]>>('navigation', ref([]))
 
 const route = useRoute()
 const nuxtApp = useNuxtApp()
+const { version } = useDocsVersion()
 
 const path = computed(() => route.path.replace(/\/$/, ''))
 
 const asideNavigation = computed(() => {
-  const path = ['/docs', route.params.slug?.[0]].filter(Boolean).join('/')
+  const path = [version.value.path, route.params.slug?.[version.value.path.split('/').length - 2]].filter(Boolean).join('/')
 
   return navPageFromPath(path, navigation.value)?.children || []
 })
 
 const { headerLinks } = useHeaderLinks()
-const links = computed(() => headerLinks.value.find(link => link.to === '/docs')?.children ?? [])
+const links = computed(() => headerLinks.value.find(link => link.to === version.value.path)?.children ?? [])
 
 function paintResponse() {
   if (import.meta.server) {
@@ -36,10 +37,10 @@ function paintResponse() {
 }
 
 const [{ data: page, status }, { data: surround }] = await Promise.all([
-  useAsyncData(kebabCase(path.value), () => paintResponse().then(() => nuxtApp.static[kebabCase(path.value)] ?? queryCollection('docs').path(path.value).first()), {
+  useAsyncData(kebabCase(path.value), () => paintResponse().then(() => nuxtApp.static[kebabCase(path.value)] ?? queryCollection(version.value.collection).path(path.value).first()), {
     watch: [path]
   }),
-  useAsyncData(`${kebabCase(path.value)}-surround`, () => paintResponse().then(() => nuxtApp.static[`${kebabCase(path.value)}-surround`] ?? queryCollectionItemSurroundings('docs', path.value, {
+  useAsyncData(`${kebabCase(path.value)}-surround`, () => paintResponse().then(() => nuxtApp.static[`${kebabCase(path.value)}-surround`] ?? queryCollectionItemSurroundings(version.value.collection, path.value, {
     fields: ['description']
   })), { watch: [path] })
 ])
@@ -59,24 +60,22 @@ watch(page, (page) => {
 }, { immediate: true })
 
 const breadcrumb = computed(() => {
-  const links = mapContentNavigation(findPageBreadcrumb(navigation.value, page.value)).map(link => ({
+  const links = mapContentNavigation(findPageBreadcrumb(navigation.value, { path: path.value })).map(link => ({
     label: link.label,
     to: link.to
   }))
 
-  if (path.value.startsWith('/docs/bridge') || path.value.startsWith('/docs/migration')) {
+  if (path.value.startsWith(`${version.value.path}/bridge`) || path.value.startsWith(`${version.value.path}/migration`)) {
     links.splice(1, 0, {
       label: 'Upgrade Guide',
-      to: '/docs/getting-started/upgrade'
+      to: `${version.value.path}/getting-started/upgrade`
     })
   }
 
   return links
 })
 
-const titleTemplate = computed(() => findTitleTemplate(page, navigation))
-
-const editLink = computed(() => `https://github.com/nuxt/nuxt/edit/main/docs/${page?.value?.stem?.split('/').slice(1).join('/')}.${page?.value?.extension}`)
+const editLink = computed(() => `https://github.com/nuxt/nuxt/edit/${version.value.branch}/${page?.value?.stem?.replace('docs/4.x', 'docs')}.${page?.value?.extension}`)
 
 const communityLinks = [{
   icon: 'i-lucide-heart',
@@ -95,7 +94,8 @@ const communityLinks = [{
   target: '_blank'
 }]
 
-const title = page.value.seo?.title || page.value.title
+const title = computed(() => page.value?.seo?.title || page.value?.title)
+const titleTemplate = computed(() => `${findTitleTemplate(page, navigation)} ${version.value.shortTag}`)
 
 useSeoMeta({
   titleTemplate,
@@ -103,11 +103,11 @@ useSeoMeta({
 })
 
 if (import.meta.server) {
-  const description = page.value.seo?.description || page.value.description
+  const description = page.value?.seo?.description || page.value?.description
   useSeoMeta({
     description,
     ogDescription: description,
-    ogTitle: titleTemplate.value?.includes('%s') ? titleTemplate.value.replace('%s', title) : title
+    ogTitle: titleTemplate.value?.includes('%s') ? titleTemplate.value.replace('%s', title.value) : title.value
   })
 
   defineOgImageComponent('Docs', {
@@ -123,6 +123,8 @@ if (import.meta.server) {
     <UPage>
       <template #left>
         <UPageAside>
+          <VersionSelect />
+          <USeparator type="dashed" class="my-6" />
           <UPageAnchors :links="links" />
           <USeparator type="dashed" class="my-6" />
           <UContentNavigation
@@ -145,7 +147,7 @@ if (import.meta.server) {
           <ContentRenderer v-if="page.body" :value="page" />
           <div>
             <USeparator class="my-10">
-              <div class="flex items-center gap-2 text-sm dark:text-gray-400">
+              <div class="flex items-center gap-2 text-sm text-muted">
                 <UButton size="sm" variant="link" color="neutral" to="https://github.com/nuxt/nuxt/issues/new/choose" target="_blank">
                   Report an issue
                 </UButton>
@@ -159,16 +161,14 @@ if (import.meta.server) {
           </div>
         </UPageBody>
 
-        <template v-if="page?.body?.toc?.links?.length" #right>
+        <template #right>
           <UContentToc :links="page.body?.toc?.links" highlight class="lg:backdrop-blur-none">
             <template #bottom>
-              <div class="hidden lg:block space-y-6" :class="{ '!mt-6': page.body?.toc?.links?.length }">
-                <USeparator v-if="page.body?.toc?.links?.length" type="dashed" />
-                <UPageLinks title="Community" :links="communityLinks" />
-                <USeparator type="dashed" />
-                <SocialLinks />
-                <Ads />
-              </div>
+              <USeparator v-if="page.body?.toc?.links?.length" type="dashed" />
+              <UPageLinks title="Community" :links="communityLinks" />
+              <USeparator type="dashed" />
+              <SocialLinks />
+              <Ads />
             </template>
           </UContentToc>
         </template>

@@ -7,7 +7,6 @@ const [{ data: page }, { data: home }] = await Promise.all([
   useAsyncData('showcase', () => queryCollection('showcase').first()),
   useAsyncData('home', () => queryCollection('index').first())
 ])
-console.log(page.value)
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
