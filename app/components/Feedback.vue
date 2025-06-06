@@ -101,7 +101,7 @@ async function submitFeedback() {
             </motion.span>
 
             <motion.div layout class="flex gap-2">
-              <motion.button
+              <UButton
                 v-for="option in feedbackOptions"
                 :key="option.value"
                 class="flex items-center justify-center size-8 rounded-lg border transition-all duration-150"
@@ -113,7 +113,7 @@ async function submitFeedback() {
                 @click="handleRatingSelect(option.value)"
               >
                 <span class="text-sm">{{ option.emoji }}</span>
-              </motion.button>
+              </UButton>
             </motion.div>
           </motion.div>
 
@@ -162,35 +162,33 @@ async function submitFeedback() {
                       label="Cancel"
                       @click="cancelFeedback"
                     />
-                    <Motion>
-                      <UButton
-                        size="sm"
-                        :disabled="isSubmitting"
-                        @click="submitFeedback"
-                      >
-                        <AnimatePresence mode="wait">
-                          <motion.span
-                            v-if="isSubmitting"
-                            key="sending"
-                            :initial="{ opacity: 0 }"
-                            :animate="{ opacity: 1 }"
-                            :exit="{ opacity: 0 }"
-                          >
-                            <Icon name="mdi:loading" class="size-3.5 animate-spin" />
-                            Sending...
-                          </motion.span>
-                          <motion.span
-                            v-else
-                            key="send"
-                            :initial="{ opacity: 0 }"
-                            :animate="{ opacity: 1 }"
-                            :exit="{ opacity: 0 }"
-                          >
-                            Send
-                          </motion.span>
-                        </AnimatePresence>
-                      </UButton>
-                    </Motion>
+                    <UButton
+                      size="sm"
+                      :disabled="isSubmitting"
+                      @click="submitFeedback"
+                    >
+                      <AnimatePresence mode="wait">
+                        <motion.span
+                          v-if="isSubmitting"
+                          key="sending"
+                          :initial="{ opacity: 0 }"
+                          :animate="{ opacity: 1 }"
+                          :exit="{ opacity: 0 }"
+                        >
+                          <Icon name="mdi:loading" class="size-3.5 animate-spin" />
+                          Sending...
+                        </motion.span>
+                        <motion.span
+                          v-else
+                          key="send"
+                          :initial="{ opacity: 0 }"
+                          :animate="{ opacity: 1 }"
+                          :exit="{ opacity: 0 }"
+                        >
+                          Send
+                        </motion.span>
+                      </AnimatePresence>
+                    </UButton>
                   </div>
                 </div>
               </motion.div>
