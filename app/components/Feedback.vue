@@ -107,7 +107,7 @@ async function submitFeedback() {
                 class="flex items-center justify-center size-8 rounded-lg border transition-all duration-150"
                 :class="[
                   selectedRating === option.value
-                    ? 'border-primary bg-primary/20'
+                    ? 'border-primary bg-primary/20 hover:bg-primary/30'
                     : 'border-default bg-accented/20 hover:border-accented/70 hover:bg-accented/80'
                 ]"
                 @click="handleRatingSelect(option.value)"
@@ -134,7 +134,7 @@ async function submitFeedback() {
                 class="space-y-3"
               >
                 <UFormField
-                  label="Your feedback..."
+                  label="Your feedback... (optional)"
                   :ui="{ label: 'text-xs font-medium text-muted' }"
                 >
                   <UTextarea
