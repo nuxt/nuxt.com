@@ -4,7 +4,6 @@ import type { ContentNavigationItem } from '@nuxt/content'
 import { findPageBreadcrumb, mapContentNavigation } from '#ui-pro/utils'
 
 definePageMeta({
-  layout: 'docs',
   heroBackground: 'opacity-30',
   key: 'docs'
 })
