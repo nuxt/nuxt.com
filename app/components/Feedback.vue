@@ -80,7 +80,7 @@ watch(route, () => {
     <motion.div
       layout
       class="bg-muted border border-default rounded-lg max-w-md mx-auto shadow-lg"
-      :class="isSubmitted ? 'px-6 py-1' : 'px-4 py-2'"
+      :class="isSubmitted ? 'px-6 py-1' : 'p-3'"
     >
       <AnimatePresence mode="wait">
         <!-- Success State -->
@@ -169,15 +169,15 @@ watch(route, () => {
                       :rows="4"
                     />
 
-                    <template #help>
+                    <!-- <template #help>
                       <span class="flex items-center gap-1.5 text-xs text-muted">
                         <Icon name="mdi:language-markdown" class="w-3 h-3" />
                         Markdown supported.
                       </span>
-                    </template>
+                    </template> -->
                   </UFormField>
 
-                  <div class="flex justify-end items-center">
+                  <div class="flex justify-end items-center mt-4">
                     <div class="flex gap-2">
                       <UButton
                         variant="subtle"

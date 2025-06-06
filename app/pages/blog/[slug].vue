@@ -125,6 +125,7 @@ const links = [
             </div>
           </div>
 
+          <Feedback />
           <USeparator v-if="surround?.length" />
 
           <UContentSurround :surround="surround" />
