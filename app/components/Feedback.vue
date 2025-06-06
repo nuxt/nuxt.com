@@ -7,9 +7,12 @@ interface FeedbackOption {
   value: string
 }
 
+const route = useRoute()
+
 const feedbackOptions: FeedbackOption[] = [
   { emoji: '🤩', label: 'Very helpful', value: 'very-helpful' },
   { emoji: '😊', label: 'Helpful', value: 'helpful' },
+  { emoji: '🙂', label: 'Neutral', value: 'neutral' },
   { emoji: '☹️', label: 'Not helpful', value: 'not-helpful' },
   { emoji: '😰', label: 'Confusing', value: 'confusing' }
 ]
@@ -41,13 +44,31 @@ async function submitFeedback() {
 
   isSubmitting.value = true
 
-  await new Promise(resolve => setTimeout(resolve, 1000))
-
-  // TODO: Track the feedback event
-
-  isSubmitting.value = false
-  isSubmitted.value = true
+  try {
+    await $fetch('/api/feedback', {
+      method: 'POST',
+      body: {
+        rating: selectedRating.value,
+        feedback: feedbackText.value,
+        path: route.path
+      }
+    })
+  } catch (error) {
+    console.error(error)
+  } finally {
+    // wait to make transition smooth
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    isSubmitting.value = false
+    isSubmitted.value = true
+  }
 }
+
+watch(route, () => {
+  isSubmitted.value = false
+  isExpanded.value = false
+  selectedRating.value = null
+  feedbackText.value = ''
+})
 </script>
 
 <template>
@@ -56,7 +77,7 @@ async function submitFeedback() {
   >
     <motion.div
       layout
-      class="bg-muted border border-default backdrop-blur-sm rounded-lg max-w-md mx-auto shadow-lg"
+      class="bg-muted border border-default rounded-lg max-w-md mx-auto shadow-lg"
       :class="isSubmitted ? 'px-6 py-1' : 'px-4 py-2'"
     >
       <AnimatePresence mode="wait">
