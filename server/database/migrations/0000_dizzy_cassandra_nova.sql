@@ -3,5 +3,5 @@ CREATE TABLE `feedback` (
 	`rating` text NOT NULL,
 	`feedback` text,
 	`path` text NOT NULL,
-	`created_at` integer DEFAULT CURRENT_TIMESTAMP NOT NULL
+	`createdAt` integer NOT NULL
 );

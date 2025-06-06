@@ -17,6 +17,7 @@ export default defineEventHandler(async (event: H3Event) => {
   await drizzle.insert(tables.feedback).values({
     rating,
     feedback,
-    path
+    path,
+    createdAt: new Date()
   })
 })
