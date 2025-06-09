@@ -1,5 +1,7 @@
 <script setup lang="ts">
+const route = useRoute()
 const colorMode = useColorMode()
+const { version } = useDocsVersion()
 const { searchGroups, searchLinks, searchTerm } = useNavigation()
 const { fetchList } = useModules()
 
@@ -8,20 +10,24 @@ const color = computed(() => colorMode.value === 'dark' ? '#020420' : 'white')
 const [{ data: navigation }, { data: files }] = await Promise.all([
   useAsyncData('navigation', () => {
     return Promise.all([
-      queryCollectionNavigation('docs', ['titleTemplate']),
+      queryCollectionNavigation('docsv3', ['titleTemplate']),
+      queryCollectionNavigation('docsv4', ['titleTemplate']).then(data => data[0]?.children),
       queryCollectionNavigation('blog')
     ])
   }, {
-    transform: data => data.flat()
+    transform: data => data.flat(),
+    watch: [version]
   }),
   useLazyAsyncData('search', () => {
     return Promise.all([
-      queryCollectionSearchSections('docs'),
+      queryCollectionSearchSections('docsv3'),
+      queryCollectionSearchSections('docsv4'),
       queryCollectionSearchSections('blog')
     ])
   }, {
     server: false,
-    transform: data => data.flat()
+    transform: data => data.flat(),
+    watch: [version]
   })
 ])
 
@@ -54,8 +60,26 @@ if (import.meta.server) {
   })
 }
 
-// Provide with non-null assertion since this is top level app setup
-provide('navigation', navigation!)
+const versionNavigation = computed(() => navigation.value?.filter(item => item.path === version.value.path || item.path === '/blog') ?? [])
+const versionFiles = computed(() => files.value?.filter((file) => {
+  return (version.value.path === '/docs/4.x' ? file.id.startsWith('/docs/4.x/') : !file.id.startsWith('/docs/4.x')) || file.id.startsWith('/blog/')
+}) ?? [])
+
+provide('navigation', versionNavigation)
+
+const heroBackgroundClass = computed(() => route.meta?.heroBackground || '')
+const { isLoading } = useLoadingIndicator()
+const appear = ref(false)
+const appeared = ref(false)
+
+onMounted(() => {
+  setTimeout(() => {
+    appear.value = true
+    setTimeout(() => {
+      appeared.value = true
+    }, 1000)
+  }, 0)
+})
 </script>
 
 <template>
@@ -69,8 +93,8 @@ provide('navigation', navigation!)
     <ClientOnly>
       <LazyUContentSearch
         v-model:search-term="searchTerm"
-        :files="files"
-        :navigation="navigation"
+        :files="versionFiles"
+        :navigation="versionNavigation"
         :groups="searchGroups"
         :links="searchLinks"
         :fuse="{ resultLimit: 42 }"

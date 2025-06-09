@@ -99,9 +99,9 @@ const columns: TableColumn<FeedbackItem>[] = [
         label: 'Date',
         icon: isSorted
           ? isSorted === 'asc'
-            ? 'i-heroicons-chevron-up'
-            : 'i-heroicons-chevron-down'
-          : 'i-heroicons-chevron-up-down',
+            ? 'i-lucide-chevron-up'
+            : 'i-lucide-chevron-down'
+          : 'i-lucide-chevrons-up-down',
         class: '-mx-2.5',
         onClick: () => column.toggleSorting(column.getIsSorted() === 'asc')
       })
@@ -128,9 +128,9 @@ const columns: TableColumn<FeedbackItem>[] = [
         label: 'Rating',
         icon: isSorted
           ? isSorted === 'asc'
-            ? 'i-heroicons-chevron-up'
-            : 'i-heroicons-chevron-down'
-          : 'i-heroicons-chevron-up-down',
+            ? 'i-lucide-chevron-up'
+            : 'i-lucide-chevron-down'
+          : 'i-lucide-chevrons-up-down',
         class: '-mx-2.5',
         onClick: () => column.toggleSorting(column.getIsSorted() === 'asc')
       })
@@ -156,15 +156,15 @@ const columns: TableColumn<FeedbackItem>[] = [
         label: 'Page',
         icon: isSorted
           ? isSorted === 'asc'
-            ? 'i-heroicons-chevron-up'
-            : 'i-heroicons-chevron-down'
-          : 'i-heroicons-chevron-up-down',
+            ? 'i-lucide-chevron-up'
+            : 'i-lucide-chevron-down'
+          : 'i-lucide-chevrons-up-down',
         class: '-mx-2.5',
         onClick: () => column.toggleSorting(column.getIsSorted() === 'asc')
       })
     },
     cell: ({ row }) => h('code', {
-      class: 'text-xs bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded'
+      class: 'text-xs bg-muted px-1.5 py-0.5 rounded'
     }, row.getValue('path'))
   },
   {
@@ -191,24 +191,13 @@ const ratingOptions = [
   { value: 'not-helpful', label: '☹️ Not Helpful' },
   { value: 'confusing', label: '😰 Confusing' }
 ]
-
-function formatDate(date: Date | string) {
-  const d = typeof date === 'string' ? new Date(date) : date
-  return d.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
-}
 </script>
 
 <template>
   <UContainer class="py-8">
     <div class="flex flex-col gap-2 mb-8">
       <div class="flex items-center gap-3">
-        <UIcon name="i-heroicons-chart-bar" class="size-8 text-primary" />
+        <UIcon name="i-lucide-bar-chart" class="size-8 text-primary" />
         <span class="text-2xl font-bold">Feedback Dashboard</span>
       </div>
       <span class="text-muted">
@@ -217,70 +206,70 @@ function formatDate(date: Date | string) {
     </div>
 
     <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
-      <UCard class="overflow-hidden">
+      <UCard>
         <div class="flex items-center justify-between">
           <div class="flex flex-col">
             <span class="text-xs text-muted uppercase tracking-wide">Total</span>
             <span class="text-2xl font-bold text-primary">{{ stats.total }}</span>
           </div>
-          <UIcon name="i-heroicons-chat-bubble-left-ellipsis" class="size-5 text-muted" />
+          <UIcon name="i-lucide-message-circle-more" class="size-5 text-muted" />
         </div>
       </UCard>
 
-      <UCard class="overflow-hidden">
+      <UCard>
         <div class="flex items-center justify-between">
           <div class="flex flex-col">
             <span class="text-xs text-muted uppercase tracking-wide">Helpful</span>
             <span class="text-2xl font-bold text-primary">{{ stats.helpfulPercentage }}%</span>
           </div>
-          <UIcon name="i-heroicons-face-smile" class="size-5 text-primary" />
+          <UIcon name="i-lucide-smile" class="size-5 text-primary" />
         </div>
       </UCard>
 
-      <UCard class="overflow-hidden">
+      <UCard>
         <div class="flex items-center justify-between">
           <div class="flex flex-col">
             <span class="text-xs text-muted uppercase tracking-wide">Very Helpful</span>
             <span class="text-2xl font-bold text-primary">{{ stats.veryHelpful }}</span>
           </div>
-          <UIcon name="i-heroicons-star" class="size-5 text-primary" />
+          <UIcon name="i-lucide-star" class="size-5 text-primary" />
         </div>
       </UCard>
 
-      <UCard class="overflow-hidden">
+      <UCard>
         <div class="flex items-center justify-between">
           <div class="flex flex-col">
             <span class="text-xs text-muted uppercase tracking-wide">Neutral</span>
             <span class="text-2xl font-bold text-warning">{{ stats.neutral }}</span>
           </div>
-          <UIcon name="i-heroicons-minus" class="size-5 text-warning" />
+          <UIcon name="i-lucide-minus" class="size-5 text-warning" />
         </div>
       </UCard>
 
-      <UCard class="overflow-hidden">
+      <UCard>
         <div class="flex items-center justify-between">
           <div class="flex flex-col">
             <span class="text-xs text-muted uppercase tracking-wide">Negative</span>
             <span class="text-2xl font-bold text-error">{{ stats.negative }}</span>
           </div>
-          <UIcon name="i-heroicons-exclamation-triangle" class="size-5 text-error" />
+          <UIcon name="i-lucide-triangle-alert" class="size-5 text-error" />
         </div>
       </UCard>
     </div>
 
     <UCard>
-      <div class="flex items-center gap-2 py-2 border-b border-default">
+      <div class="flex items-center gap-2 mb-4">
         <UInput
           v-model="pathFilter"
           placeholder="Filter by page..."
-          icon="i-heroicons-magnifying-glass"
+          icon="i-lucide-search"
           class="max-w-sm"
         />
 
         <UInput
           v-model="feedbackFilter"
           placeholder="Filter feedback..."
-          icon="i-heroicons-chat-bubble-left"
+          icon="i-lucide-message-circle"
           class="max-w-sm"
         />
 
@@ -302,26 +291,14 @@ function formatDate(date: Date | string) {
         v-model:sorting="sorting"
         :data="filteredData"
         :columns="columns"
-        class="w-full"
-      >
-        <template #expanded="{ row }">
-          <div class="p-4 bg-gray-50 dark:bg-gray-800/50">
-            <div class="space-y-3">
-              <div>
-                <span class="font-medium text-sm">Full Feedback:</span>
-                <p class="text-sm text-muted mt-1">
-                  {{ row.original.feedback || 'No additional feedback provided' }}
-                </p>
-              </div>
-              <div class="flex items-center gap-4 text-xs text-muted">
-                <span>ID: {{ row.original.id }}</span>
-                <span>Created: {{ formatDate(row.original.createdAt) }}</span>
-                <span>Rating: {{ ratingConfig[row.original.rating].label }}</span>
-              </div>
-            </div>
-          </div>
-        </template>
-      </UTable>
+        :ui="{
+          base: 'table-fixed border-separate border-spacing-0',
+          thead: '[&>tr]:bg-elevated/50 [&>tr]:after:content-none',
+          tbody: '[&>tr]:last:[&>td]:border-b-0',
+          th: 'first:rounded-l-lg last:rounded-r-lg border-y border-default first:border-l last:border-r',
+          td: 'border-b border-default'
+        }"
+      />
     </UCard>
   </UContainer>
 </template>
