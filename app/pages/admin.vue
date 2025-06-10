@@ -1,9 +1,4 @@
 <script setup lang="ts">
-import { h, resolveComponent } from 'vue'
-import type { TableColumn } from '@nuxt/ui'
-
-const UButton = resolveComponent('UButton')
-
 definePageMeta({
   layout: 'admin'
 })
@@ -91,11 +86,27 @@ const pageAnalytics = computed(() => {
   }).sort((a, b) => b.total - a.total) // Sort by total feedback count
 })
 
-// Top 5 best and worst pages
+// Top 5 best and worst pages - improved logic to avoid duplicates
 const topPages = computed(() => {
   const pages = pageAnalytics.value.filter(p => p.total >= 2) // Only pages with at least 2 feedback
+
+  // If we have less than 6 pages, split them differently to avoid showing same pages in both sections
+  if (pages.length < 6) {
+    const sortedByScore = [...pages].sort((a, b) => b.averageScore - a.averageScore)
+    const midpoint = Math.ceil(sortedByScore.length / 2)
+
+    return {
+      best: sortedByScore.slice(0, midpoint),
+      worst: sortedByScore.slice(midpoint).filter(p => p.averageScore < 4.0) // Only show truly poor performing pages
+    }
+  }
+
+  // Normal logic for when we have enough pages
   const best = [...pages].sort((a, b) => b.averageScore - a.averageScore).slice(0, 5)
-  const worst = [...pages].sort((a, b) => a.averageScore - b.averageScore).slice(0, 5)
+  const worst = [...pages]
+    .filter(p => p.averageScore < 4.0) // Only pages with score below 4.0
+    .sort((a, b) => a.averageScore - b.averageScore)
+    .slice(0, 5)
 
   return { best, worst }
 })
@@ -108,12 +119,6 @@ function viewPageDetails(page: any) {
 function getScoreColor(score: number) {
   if (score >= 4.0) return 'text-success'
   if (score >= 3.0) return 'text-warning'
-  return 'text-error'
-}
-
-function getPercentageColor(percentage: number) {
-  if (percentage >= 75) return 'text-success'
-  if (percentage >= 50) return 'text-warning'
   return 'text-error'
 }
 </script>
@@ -208,7 +213,7 @@ function getPercentageColor(percentage: number) {
               <div>
                 <code class="text-sm font-mono">{{ page.path }}</code>
                 <div class="text-xs text-muted">
-                  {{ page.total }} responses
+                  {{ page.total }} feedback{{ page.total > 1 ? 's' : '' }}
                 </div>
               </div>
             </div>
@@ -234,6 +239,7 @@ function getPercentageColor(percentage: number) {
             <h3 class="font-semibold">
               Pages Needing Attention
             </h3>
+            <span class="text-xs text-muted">(Score &lt; 4.0)</span>
           </div>
         </template>
 
@@ -251,7 +257,7 @@ function getPercentageColor(percentage: number) {
               <div>
                 <code class="text-sm font-mono">{{ page.path }}</code>
                 <div class="text-xs text-muted">
-                  {{ page.total }} responses
+                  {{ page.total }}
                 </div>
               </div>
             </div>
@@ -286,9 +292,6 @@ function getPercentageColor(percentage: number) {
                 URL
               </th>
               <th class="text-right py-3 px-4 font-medium text-sm text-muted">
-                Total
-              </th>
-              <th class="text-right py-3 px-4 font-medium text-sm text-muted">
                 Positive
               </th>
               <th class="text-right py-3 px-4 font-medium text-sm text-muted">
@@ -296,6 +299,9 @@ function getPercentageColor(percentage: number) {
               </th>
               <th class="text-right py-3 px-4 font-medium text-sm text-muted">
                 Score
+              </th>
+              <th class="text-right py-3 px-4 font-medium text-sm text-muted">
+                Feedbacks
               </th>
               <th class="text-right py-3 px-4 font-medium text-sm text-muted">
                 Last Feedback
@@ -312,9 +318,6 @@ function getPercentageColor(percentage: number) {
               <td class="py-3 px-4">
                 <code class="text-sm font-mono">{{ page.path }}</code>
               </td>
-              <td class="py-3 px-4 text-right font-medium">
-                {{ page.total }}
-              </td>
               <td class="py-3 px-4 text-right">
                 <span class="font-medium text-success">{{ page.positive }}</span>
               </td>
@@ -325,6 +328,11 @@ function getPercentageColor(percentage: number) {
                 <span class="font-semibold" :class="getScoreColor(page.averageScore)">
                   {{ page.averageScore }}/5
                 </span>
+              </td>
+              <td class="py-3 px-4 text-right">
+                <div class="font-medium">
+                  {{ page.total }}
+                </div>
               </td>
               <td class="py-3 px-4 text-right text-sm text-muted">
                 {{ new Date(page.lastFeedback.createdAt).toLocaleDateString('en-US', {
