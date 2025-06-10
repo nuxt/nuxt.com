@@ -26,171 +26,96 @@ const feedbackData = computed(() =>
 )
 
 const ratingConfig = {
-  'very-helpful': { emoji: '🤩', color: 'success', label: 'Very Helpful' },
-  'helpful': { emoji: '😊', color: 'primary', label: 'Helpful' },
-  'neutral': { emoji: '🙂', color: 'warning', label: 'Neutral' },
-  'not-helpful': { emoji: '☹️', color: 'orange', label: 'Not Helpful' },
-  'confusing': { emoji: '😰', color: 'error', label: 'Confusing' }
+  'very-helpful': { emoji: '🤩', label: 'Very Helpful', score: 5 },
+  'helpful': { emoji: '😊', label: 'Helpful', score: 4 },
+  'neutral': { emoji: '🙂', label: 'Neutral', score: 3 },
+  'not-helpful': { emoji: '☹️', label: 'Not Helpful', score: 2 },
+  'confusing': { emoji: '😰', label: 'Confusing', score: 1 }
 } as const
 
-const stats = computed(() => {
-  const total = feedbackData.value.length
-  const ratingCounts = feedbackData.value.reduce((acc, item) => {
-    acc[item.rating] = (acc[item.rating] || 0) + 1
-    return acc
-  }, {} as Record<string, number>)
+const selectedPage = ref<any>(null)
+const showFeedbackModal = ref(false)
 
-  const helpful = (ratingCounts['very-helpful'] || 0) + (ratingCounts['helpful'] || 0)
-  const helpfulPercentage = total > 0 ? Math.round((helpful / total) * 100) : 0
-  const negative = (ratingCounts['not-helpful'] || 0) + (ratingCounts['confusing'] || 0)
+// Global stats
+const globalStats = computed(() => {
+  const total = feedbackData.value.length
+  const positive = feedbackData.value.filter(f => ['very-helpful', 'helpful'].includes(f.rating)).length
+  const negative = feedbackData.value.filter(f => ['not-helpful', 'confusing'].includes(f.rating)).length
+
+  // Calculate average score
+  const totalScore = feedbackData.value.reduce((sum, item) => sum + ratingConfig[item.rating].score, 0)
+  const averageScore = total > 0 ? (totalScore / total).toFixed(1) : '0.0'
+
+  const positivePercentage = total > 0 ? Math.round((positive / total) * 100) : 0
 
   return {
     total,
-    helpful,
-    helpfulPercentage,
+    positive,
     negative,
-    veryHelpful: ratingCounts['very-helpful'] || 0,
-    neutral: ratingCounts['neutral'] || 0
+    averageScore,
+    positivePercentage
   }
 })
 
-const pathFilter = ref('')
-const feedbackFilter = ref('')
-const ratingFilter = ref('all')
+// Group feedback by page
+const pageAnalytics = computed(() => {
+  const pageGroups = feedbackData.value.reduce((acc, item) => {
+    if (!acc[item.path]) {
+      acc[item.path] = []
+    }
+    acc[item.path].push(item)
+    return acc
+  }, {} as Record<string, FeedbackItem[]>)
 
-const filteredData = computed(() => {
-  let filtered = feedbackData.value
+  return Object.entries(pageGroups).map(([path, feedback]) => {
+    const total = feedback.length
+    const positive = feedback.filter(f => ['very-helpful', 'helpful'].includes(f.rating)).length
+    const negative = feedback.filter(f => ['not-helpful', 'confusing'].includes(f.rating)).length
 
-  if (pathFilter.value) {
-    filtered = filtered.filter(item =>
-      item.path.toLowerCase().includes(pathFilter.value.toLowerCase())
-    )
-  }
+    // Calculate average score for this page
+    const totalScore = feedback.reduce((sum, item) => sum + ratingConfig[item.rating].score, 0)
+    const averageScore = total > 0 ? (totalScore / total).toFixed(1) : '0.0'
 
-  if (feedbackFilter.value) {
-    filtered = filtered.filter(item =>
-      item.feedback?.toLowerCase().includes(feedbackFilter.value.toLowerCase())
-    )
-  }
+    const positivePercentage = total > 0 ? Math.round((positive / total) * 100) : 0
 
-  if (ratingFilter.value !== 'all') {
-    filtered = filtered.filter(item => item.rating === ratingFilter.value)
-  }
-
-  return filtered
+    return {
+      path,
+      total,
+      positive,
+      negative,
+      averageScore: Number.parseFloat(averageScore),
+      positivePercentage,
+      feedback,
+      lastFeedback: feedback.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0]
+    }
+  }).sort((a, b) => b.total - a.total) // Sort by total feedback count
 })
 
-const sorting = ref([{ id: 'createdAt', desc: true }])
+// Top 5 best and worst pages
+const topPages = computed(() => {
+  const pages = pageAnalytics.value.filter(p => p.total >= 2) // Only pages with at least 2 feedback
+  const best = [...pages].sort((a, b) => b.averageScore - a.averageScore).slice(0, 5)
+  const worst = [...pages].sort((a, b) => a.averageScore - b.averageScore).slice(0, 5)
 
-const columns: TableColumn<FeedbackItem>[] = [
-  {
-    accessorKey: 'id',
-    header: 'ID',
-    cell: ({ row }) => `#${row.getValue('id')}`
-  },
-  {
-    accessorKey: 'createdAt',
-    header: ({ column }) => {
-      const isSorted = column.getIsSorted()
+  return { best, worst }
+})
 
-      return h(UButton, {
-        color: 'neutral',
-        variant: 'ghost',
-        label: 'Date',
-        icon: isSorted
-          ? isSorted === 'asc'
-            ? 'i-lucide-chevron-up'
-            : 'i-lucide-chevron-down'
-          : 'i-lucide-chevrons-up-down',
-        class: '-mx-2.5',
-        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc')
-      })
-    },
-    cell: ({ row }) => {
-      const date = new Date(row.getValue('createdAt'))
-      return date.toLocaleDateString('en-US', {
-        day: 'numeric',
-        month: 'short',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
-      })
-    }
-  },
-  {
-    accessorKey: 'rating',
-    header: ({ column }) => {
-      const isSorted = column.getIsSorted()
+function viewPageDetails(page: any) {
+  selectedPage.value = page
+  showFeedbackModal.value = true
+}
 
-      return h(UButton, {
-        color: 'neutral',
-        variant: 'ghost',
-        label: 'Rating',
-        icon: isSorted
-          ? isSorted === 'asc'
-            ? 'i-lucide-chevron-up'
-            : 'i-lucide-chevron-down'
-          : 'i-lucide-chevrons-up-down',
-        class: '-mx-2.5',
-        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc')
-      })
-    },
-    cell: ({ row }) => {
-      const rating = row.getValue('rating') as keyof typeof ratingConfig
-      const config = ratingConfig[rating]
+function getScoreColor(score: number) {
+  if (score >= 4.0) return 'text-success'
+  if (score >= 3.0) return 'text-warning'
+  return 'text-error'
+}
 
-      return h('div', { class: 'flex items-center gap-1.5' }, [
-        h('span', config.emoji),
-        h('span', { class: 'capitalize text-sm' }, config.label)
-      ])
-    }
-  },
-  {
-    accessorKey: 'path',
-    header: ({ column }) => {
-      const isSorted = column.getIsSorted()
-
-      return h(UButton, {
-        color: 'neutral',
-        variant: 'ghost',
-        label: 'Page',
-        icon: isSorted
-          ? isSorted === 'asc'
-            ? 'i-lucide-chevron-up'
-            : 'i-lucide-chevron-down'
-          : 'i-lucide-chevrons-up-down',
-        class: '-mx-2.5',
-        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc')
-      })
-    },
-    cell: ({ row }) => h('code', {
-      class: 'text-xs bg-muted px-1.5 py-0.5 rounded'
-    }, row.getValue('path'))
-  },
-  {
-    accessorKey: 'feedback',
-    header: 'Feedback',
-    cell: ({ row }) => {
-      const feedback = row.getValue('feedback') as string
-      if (!feedback) {
-        return h('span', { class: 'text-muted text-sm italic' }, 'No comment')
-      }
-      return h('div', {
-        class: 'max-w-xs truncate text-sm',
-        title: feedback
-      }, feedback)
-    }
-  }
-]
-
-const ratingOptions = [
-  { value: 'all', label: 'All Ratings' },
-  { value: 'very-helpful', label: '🤩 Very Helpful' },
-  { value: 'helpful', label: '😊 Helpful' },
-  { value: 'neutral', label: '🙂 Neutral' },
-  { value: 'not-helpful', label: '☹️ Not Helpful' },
-  { value: 'confusing', label: '😰 Confusing' }
-]
+function getPercentageColor(percentage: number) {
+  if (percentage >= 75) return 'text-success'
+  if (percentage >= 50) return 'text-warning'
+  return 'text-error'
+}
 </script>
 
 <template>
@@ -198,107 +123,308 @@ const ratingOptions = [
     <div class="flex flex-col gap-2 mb-8">
       <div class="flex items-center gap-3">
         <UIcon name="i-lucide-bar-chart" class="size-8 text-primary" />
-        <span class="text-2xl font-bold">Feedback Dashboard</span>
+        <span class="text-2xl font-bold">Feedback Analytics</span>
       </div>
       <span class="text-muted">
-        Monitor user feedback and documentation satisfaction across docs and blog pages
+        Monitor user feedback and documentation satisfaction across all pages
       </span>
     </div>
 
-    <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
       <UCard>
         <div class="flex items-center justify-between">
-          <div class="flex flex-col">
-            <span class="text-xs text-muted uppercase tracking-wide">Total</span>
-            <span class="text-2xl font-bold text-primary">{{ stats.total }}</span>
+          <div>
+            <div class="text-sm text-muted mb-1">
+              Total Feedback
+            </div>
+            <div class="text-3xl font-bold">
+              {{ globalStats.total }}
+            </div>
+            <div class="text-xs text-muted mt-1">
+              All responses
+            </div>
           </div>
-          <UIcon name="i-lucide-message-circle-more" class="size-5 text-muted" />
+          <UIcon name="i-lucide-message-circle" class="size-8 text-primary" />
         </div>
       </UCard>
 
       <UCard>
         <div class="flex items-center justify-between">
-          <div class="flex flex-col">
-            <span class="text-xs text-muted uppercase tracking-wide">Helpful</span>
-            <span class="text-2xl font-bold text-primary">{{ stats.helpfulPercentage }}%</span>
+          <div>
+            <div class="text-sm text-muted mb-1">
+              Positive
+            </div>
+            <div class="text-3xl font-bold">
+              {{ globalStats.positive }}
+            </div>
+            <div class="text-xs text-success mt-1">
+              {{ globalStats.positivePercentage }}% positive
+            </div>
           </div>
-          <UIcon name="i-lucide-smile" class="size-5 text-primary" />
+          <UIcon name="i-lucide-thumbs-up" class="size-8 text-success" />
         </div>
       </UCard>
 
       <UCard>
         <div class="flex items-center justify-between">
-          <div class="flex flex-col">
-            <span class="text-xs text-muted uppercase tracking-wide">Very Helpful</span>
-            <span class="text-2xl font-bold text-primary">{{ stats.veryHelpful }}</span>
+          <div>
+            <div class="text-sm text-muted mb-1">
+              Negative
+            </div>
+            <div class="text-3xl font-bold">
+              {{ globalStats.negative }}
+            </div>
+            <div class="text-xs text-error mt-1">
+              Needs attention
+            </div>
           </div>
-          <UIcon name="i-lucide-star" class="size-5 text-primary" />
+          <UIcon name="i-lucide-thumbs-down" class="size-8 text-error" />
+        </div>
+      </UCard>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <UCard>
+        <template #header>
+          <div class="flex items-center gap-2">
+            <UIcon name="i-lucide-trophy" class="size-5 text-success" />
+            <h3 class="font-semibold">
+              Top Rated Pages
+            </h3>
+          </div>
+        </template>
+
+        <div class="space-y-3">
+          <div
+            v-for="(page, index) in topPages.best"
+            :key="page.path"
+            class="flex items-center justify-between p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer"
+            @click="viewPageDetails(page)"
+          >
+            <div class="flex items-center gap-3">
+              <div class="flex items-center justify-center size-6 rounded-full bg-success/20 text-success text-sm font-bold">
+                {{ index + 1 }}
+              </div>
+              <div>
+                <code class="text-sm font-mono">{{ page.path }}</code>
+                <div class="text-xs text-muted">
+                  {{ page.total }} responses
+                </div>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="font-semibold" :class="getScoreColor(page.averageScore)">
+                {{ page.averageScore }}/5
+              </div>
+              <div class="text-xs text-muted">
+                {{ page.positivePercentage }}% positive
+              </div>
+            </div>
+          </div>
+          <div v-if="topPages.best.length === 0" class="text-center py-4 text-muted">
+            Not enough data yet
+          </div>
         </div>
       </UCard>
 
       <UCard>
-        <div class="flex items-center justify-between">
-          <div class="flex flex-col">
-            <span class="text-xs text-muted uppercase tracking-wide">Neutral</span>
-            <span class="text-2xl font-bold text-warning">{{ stats.neutral }}</span>
+        <template #header>
+          <div class="flex items-center gap-2">
+            <UIcon name="i-lucide-alert-triangle" class="size-5 text-error" />
+            <h3 class="font-semibold">
+              Pages Needing Attention
+            </h3>
           </div>
-          <UIcon name="i-lucide-minus" class="size-5 text-warning" />
-        </div>
-      </UCard>
+        </template>
 
-      <UCard>
-        <div class="flex items-center justify-between">
-          <div class="flex flex-col">
-            <span class="text-xs text-muted uppercase tracking-wide">Negative</span>
-            <span class="text-2xl font-bold text-error">{{ stats.negative }}</span>
+        <div class="space-y-3">
+          <div
+            v-for="(page, index) in topPages.worst"
+            :key="page.path"
+            class="flex items-center justify-between p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer"
+            @click="viewPageDetails(page)"
+          >
+            <div class="flex items-center gap-3">
+              <div class="flex items-center justify-center size-6 rounded-full bg-error/20 text-error text-sm font-bold">
+                {{ index + 1 }}
+              </div>
+              <div>
+                <code class="text-sm font-mono">{{ page.path }}</code>
+                <div class="text-xs text-muted">
+                  {{ page.total }} responses
+                </div>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="font-semibold" :class="getScoreColor(page.averageScore)">
+                {{ page.averageScore }}/5
+              </div>
+              <div class="text-xs text-muted">
+                {{ page.positivePercentage }}% positive
+              </div>
+            </div>
           </div>
-          <UIcon name="i-lucide-triangle-alert" class="size-5 text-error" />
+          <div v-if="topPages.worst.length === 0" class="text-center py-4 text-muted">
+            All pages are performing well!
+          </div>
         </div>
       </UCard>
     </div>
 
     <UCard>
-      <div class="flex items-center gap-2 mb-4">
-        <UInput
-          v-model="pathFilter"
-          placeholder="Filter by page..."
-          icon="i-lucide-search"
-          class="max-w-sm"
-        />
+      <template #header>
+        <h3 class="font-semibold">
+          Feedback grouped by page
+        </h3>
+      </template>
 
-        <UInput
-          v-model="feedbackFilter"
-          placeholder="Filter feedback..."
-          icon="i-lucide-message-circle"
-          class="max-w-sm"
-        />
-
-        <USelect
-          v-model="ratingFilter"
-          :items="ratingOptions"
-          option-attribute="label"
-          value-attribute="value"
-          placeholder="Filter by rating"
-          class="max-w-48"
-        />
-
-        <div class="ml-auto text-sm text-muted">
-          {{ filteredData.length }} of {{ feedbackData.length }} entries
-        </div>
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr class="border-b border-default">
+              <th class="text-left py-3 px-4 font-medium text-sm text-muted">
+                URL
+              </th>
+              <th class="text-right py-3 px-4 font-medium text-sm text-muted">
+                Total
+              </th>
+              <th class="text-right py-3 px-4 font-medium text-sm text-muted">
+                Positive
+              </th>
+              <th class="text-right py-3 px-4 font-medium text-sm text-muted">
+                Negative
+              </th>
+              <th class="text-right py-3 px-4 font-medium text-sm text-muted">
+                Score
+              </th>
+              <th class="text-right py-3 px-4 font-medium text-sm text-muted">
+                Last Feedback
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="page in pageAnalytics"
+              :key="page.path"
+              class="border-b border-default hover:bg-muted/30 transition-colors cursor-pointer"
+              @click="viewPageDetails(page)"
+            >
+              <td class="py-3 px-4">
+                <code class="text-sm font-mono">{{ page.path }}</code>
+              </td>
+              <td class="py-3 px-4 text-right font-medium">
+                {{ page.total }}
+              </td>
+              <td class="py-3 px-4 text-right">
+                <span class="font-medium text-success">{{ page.positive }}</span>
+              </td>
+              <td class="py-3 px-4 text-right">
+                <span class="font-medium text-error">{{ page.negative }}</span>
+              </td>
+              <td class="py-3 px-4 text-right">
+                <span class="font-semibold" :class="getScoreColor(page.averageScore)">
+                  {{ page.averageScore }}/5
+                </span>
+              </td>
+              <td class="py-3 px-4 text-right text-sm text-muted">
+                {{ new Date(page.lastFeedback.createdAt).toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                }) }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-
-      <UTable
-        v-model:sorting="sorting"
-        :data="filteredData"
-        :columns="columns"
-        :ui="{
-          base: 'table-fixed border-separate border-spacing-0',
-          thead: '[&>tr]:bg-elevated/50 [&>tr]:after:content-none',
-          tbody: '[&>tr]:last:[&>td]:border-b-0',
-          th: 'first:rounded-l-lg last:rounded-r-lg border-y border-default first:border-l last:border-r',
-          td: 'border-b border-default'
-        }"
-      />
     </UCard>
+
+    <UModal v-model:open="showFeedbackModal">
+      <template #content>
+        <UCard v-if="selectedPage" class="sm:max-w-4xl">
+          <template #header>
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="font-semibold">
+                  Page Feedback Details
+                </h3>
+                <code class="text-sm bg-muted px-2 py-1 rounded mt-1 inline-block">{{ selectedPage.path }}</code>
+              </div>
+              <div class="text-right">
+                <div class="text-2xl font-bold" :class="getScoreColor(selectedPage.averageScore)">
+                  {{ selectedPage.averageScore }}/5
+                </div>
+                <div class="text-sm text-muted">
+                  {{ selectedPage.total }} responses
+                </div>
+              </div>
+            </div>
+          </template>
+
+          <div class="grid grid-cols-3 gap-4 mb-6 p-4 bg-muted/30 rounded-lg">
+            <div class="text-center">
+              <div class="text-2xl font-bold text-success">
+                {{ selectedPage.positive }}
+              </div>
+              <div class="text-xs text-muted">
+                Positive
+              </div>
+            </div>
+            <div class="text-center">
+              <div class="text-2xl font-bold text-warning">
+                {{ selectedPage.total - selectedPage.positive - selectedPage.negative }}
+              </div>
+              <div class="text-xs text-muted">
+                Neutral
+              </div>
+            </div>
+            <div class="text-center">
+              <div class="text-2xl font-bold text-error">
+                {{ selectedPage.negative }}
+              </div>
+              <div class="text-xs text-muted">
+                Negative
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-4 max-h-96 overflow-y-auto">
+            <div
+              v-for="feedback in selectedPage.feedback.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())"
+              :key="feedback.id"
+              class="border border-default rounded-lg p-4"
+            >
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-3">
+                  <span class="text-xl">{{ ratingConfig[feedback.rating].emoji }}</span>
+                  <div>
+                    <span class="text-sm font-medium">{{ ratingConfig[feedback.rating].label }}</span>
+                    <div class="text-xs text-muted">
+                      Score: {{ ratingConfig[feedback.rating].score }}/5
+                    </div>
+                  </div>
+                </div>
+                <span class="text-xs text-muted">
+                  {{ new Date(feedback.createdAt).toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  }) }}
+                </span>
+              </div>
+              <p v-if="feedback.feedback" class="text-sm">
+                {{ feedback.feedback }}
+              </p>
+              <p v-else class="text-sm text-muted italic">
+                No additional comment provided
+              </p>
+            </div>
+          </div>
+        </UCard>
+      </template>
+    </UModal>
   </UContainer>
 </template>
