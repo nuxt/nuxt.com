@@ -120,6 +120,18 @@ export default defineNuxtConfig({
     '/docs/4.x/guide/best-practices': { redirect: '/docs/4.x/guide/best-practices/performance', prerender: false },
     '/docs/guide/going-further/custom-routing': { redirect: '/docs/guide/recipes/custom-routing', prerender: false },
     '/docs/4.x/guide/going-further/custom-routing': { redirect: '/docs/4.x/guide/recipes/custom-routing', prerender: false },
+    // new directory structure
+    '/docs/4.x/guide/directory-structure/assets': { redirect: '/docs/4.x/guide/directory-structure/app/assets', prerender: false },
+    '/docs/4.x/guide/directory-structure/components': { redirect: '/docs/4.x/guide/directory-structure/app/components', prerender: false },
+    '/docs/4.x/guide/directory-structure/composables': { redirect: '/docs/4.x/guide/directory-structure/app/composables', prerender: false },
+    '/docs/4.x/guide/directory-structure/layouts': { redirect: '/docs/4.x/guide/directory-structure/app/layouts', prerender: false },
+    '/docs/4.x/guide/directory-structure/middleware': { redirect: '/docs/4.x/guide/directory-structure/app/middleware', prerender: false },
+    '/docs/4.x/guide/directory-structure/pages': { redirect: '/docs/4.x/guide/directory-structure/app/pages', prerender: false },
+    '/docs/4.x/guide/directory-structure/plugins': { redirect: '/docs/4.x/guide/directory-structure/app/plugins', prerender: false },
+    '/docs/4.x/guide/directory-structure/utils': { redirect: '/docs/4.x/guide/directory-structure/app/utils', prerender: false },
+    '/docs/4.x/guide/directory-structure/app': { redirect: '/docs/4.x/guide/directory-structure/app/app', prerender: false },
+    '/docs/4.x/guide/directory-structure/app-config': { redirect: '/docs/4.x/guide/directory-structure/app/app-config', prerender: false },
+    '/docs/4.x/guide/directory-structure/error': { redirect: '/docs/4.x/guide/directory-structure/app/error', prerender: false },
     // '/docs/guide/directory-structure/nuxt.config': { redirect: '/docs/guide/directory-structure/nuxt-config', prerender: false },
     '/enterprise': { redirect: '/enterprise/support', prerender: false },
     '/support/us': { redirect: '/enterprise/sponsors', prerender: false }
