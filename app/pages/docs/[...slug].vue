@@ -129,7 +129,6 @@ if (import.meta.server) {
           <USeparator type="dashed" class="my-6" />
           <UContentNavigation
             :navigation="asideNavigation"
-            default-open
             trailing-icon="i-lucide-chevron-right"
             :ui="{ linkTrailingIcon: 'group-data-[state=open]:rotate-90' }"
             highlight
