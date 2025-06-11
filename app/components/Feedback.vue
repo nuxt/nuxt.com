@@ -2,7 +2,10 @@
 import { AnimatePresence, MotionConfig, motion } from 'motion-v'
 
 const props = defineProps<{
-  title: string
+  page: {
+    title: string
+    stem: string
+  }
 }>()
 
 interface FeedbackOption {
@@ -56,7 +59,8 @@ async function submitFeedback() {
         rating: formState.rating,
         feedback: formState.feedback,
         path: route.path,
-        title: props.title
+        title: props.page.title,
+        stem: props.page.stem
       }
     })
   } catch (error) {
@@ -174,27 +178,38 @@ watch(route, () => {
                         type="submit"
                         class="focus-visible:outline-0"
                       >
-                        <AnimatePresence mode="wait">
-                          <motion.span
-                            v-if="isSubmitting"
-                            key="sending"
-                            :initial="{ opacity: 0 }"
-                            :animate="{ opacity: 1 }"
-                            :exit="{ opacity: 0 }"
+                        <motion.span
+                          class="flex items-center"
+                          :transition="{ duration: 0.2, ease: 'easeInOut' }"
+                        >
+                          <motion.div
+                            :animate="{
+                              width: isSubmitting ? '14px' : '0px',
+                              marginRight: isSubmitting ? '6px' : '0px',
+                              opacity: isSubmitting ? 1 : 0,
+                              scale: isSubmitting ? 1 : 0,
+                              rotate: isSubmitting ? 360 : 0
+                            }"
+                            :transition="{
+                              width: { duration: 0.2, ease: 'easeInOut' },
+                              marginRight: { duration: 0.2, ease: 'easeInOut' },
+                              opacity: { duration: 0.2 },
+                              scale: { duration: 0.2, type: 'spring', bounce: 0.3 },
+                              rotate: { duration: 1, ease: 'linear', repeat: Infinity }
+                            }"
+                            class="flex items-center justify-center overflow-hidden"
                           >
-                            <Icon name="mdi:loading" class="size-3.5 animate-spin" />
-                            Sending...
-                          </motion.span>
+                            <Icon name="mdi:loading" class="size-3.5 shrink-0" />
+                          </motion.div>
                           <motion.span
-                            v-else
-                            key="send"
-                            :initial="{ opacity: 0 }"
-                            :animate="{ opacity: 1 }"
-                            :exit="{ opacity: 0 }"
+                            :animate="{
+                              opacity: 1
+                            }"
+                            :transition="{ duration: 0.2, ease: 'easeInOut' }"
                           >
-                            Send
+                            {{ isSubmitting ? 'Sending...' : 'Send' }}
                           </motion.span>
-                        </AnimatePresence>
+                        </motion.span>
                       </UButton>
                     </div>
                   </div>
