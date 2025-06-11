@@ -1,13 +1,5 @@
+import { feedbackSchema, type FeedbackInput } from '~~/shared/types/feedback'
 import type { H3Event } from 'h3'
-import { z } from 'zod'
-
-const feedbackSchema = z.object({
-  rating: z.enum(['very-helpful', 'helpful', 'not-helpful', 'confusing']),
-  feedback: z.string().optional(),
-  path: z.string(),
-  title: z.string(),
-  stem: z.string()
-})
 
 async function getFingerprint(event: H3Event, path: string): Promise<string> {
   const ip = event.context.cf?.ip || 'unknown'
@@ -26,19 +18,14 @@ async function getFingerprint(event: H3Event, path: string): Promise<string> {
 }
 
 export default defineEventHandler(async (event: H3Event) => {
-  const { rating, feedback, path, title, stem } = await readValidatedBody(event, feedbackSchema.parse)
+  const data: FeedbackInput = await readValidatedBody(event, feedbackSchema.parse)
 
   const drizzle = useDrizzle()
   const country = event.context.cf?.country || 'unknown'
-
-  const fingerprint = await getFingerprint(event, path)
+  const fingerprint = await getFingerprint(event, data.path)
 
   await drizzle.insert(tables.feedback).values({
-    rating,
-    feedback,
-    path,
-    title,
-    stem,
+    ...data,
     country,
     fingerprint,
     createdAt: new Date(),
@@ -46,10 +33,7 @@ export default defineEventHandler(async (event: H3Event) => {
   }).onConflictDoUpdate({
     target: [tables.feedback.path, tables.feedback.fingerprint],
     set: {
-      rating,
-      feedback,
-      title,
-      stem,
+      ...data,
       country,
       updatedAt: new Date()
     }

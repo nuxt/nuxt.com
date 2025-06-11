@@ -8,77 +8,14 @@ const props = defineProps<{
   }
 }>()
 
-interface FeedbackOption {
-  emoji: string
-  label: string
-  value: string
-}
-
-const route = useRoute()
-
-const feedbackOptions: FeedbackOption[] = [
-  { emoji: '🤩', label: 'Very helpful', value: 'very-helpful' },
-  { emoji: '🙂', label: 'Helpful', value: 'helpful' },
-  { emoji: '☹️', label: 'Not helpful', value: 'not-helpful' },
-  { emoji: '😰', label: 'Confusing', value: 'confusing' }
-]
-
-const formState = reactive({
-  rating: null,
-  feedback: ''
-})
-const isExpanded = ref(false)
-const isSubmitted = ref(false)
-const isSubmitting = ref(false)
-
-function cancelFeedback() {
-  formState.rating = null
-  formState.feedback = ''
-  isExpanded.value = false
-}
-
-function handleRatingSelect(rating: string) {
-  if (isSubmitted.value) return
-  if (isExpanded.value && rating === formState.rating) {
-    cancelFeedback()
-    return
-  }
-  formState.rating = rating
-  isExpanded.value = true
-}
-
-async function submitFeedback() {
-  if (!formState.rating) return
-
-  isSubmitting.value = true
-
-  try {
-    await $fetch('/api/feedback', {
-      method: 'POST',
-      body: {
-        rating: formState.rating,
-        feedback: formState.feedback,
-        path: route.path,
-        title: props.page.title,
-        stem: props.page.stem
-      }
-    })
-  } catch (error) {
-    console.error(error)
-  } finally {
-    // wait to make transition smooth
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    isSubmitting.value = false
-    isSubmitted.value = true
-  }
-}
-
-watch(route, () => {
-  isSubmitted.value = false
-  isExpanded.value = false
-  formState.rating = null
-  formState.feedback = ''
-})
+const {
+  formState,
+  isExpanded,
+  isSubmitted,
+  isSubmitting,
+  handleRatingSelect,
+  submitFeedback
+} = useFeedback(props)
 </script>
 
 <template>
@@ -132,7 +69,7 @@ watch(route, () => {
 
             <motion.div layout class="flex gap-2">
               <UButton
-                v-for="option in feedbackOptions"
+                v-for="option in FEEDBACK_OPTIONS"
                 :key="option.value"
                 class="flex items-center grayscale-80 hover:grayscale-0 justify-center size-8 rounded-lg border transition-all duration-150"
                 :class="[
