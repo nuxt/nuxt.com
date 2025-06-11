@@ -3,5 +3,7 @@ CREATE TABLE `feedback` (
 	`rating` text NOT NULL,
 	`feedback` text,
 	`path` text NOT NULL,
+	`title` text NOT NULL,
+	`fingerprint` text NOT NULL,
 	`createdAt` integer NOT NULL
 );

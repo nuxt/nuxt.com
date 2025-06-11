@@ -5,5 +5,7 @@ export const feedback = sqliteTable('feedback', {
   rating: text('rating').notNull(),
   feedback: text('feedback'),
   path: text('path').notNull(),
+  title: text('title').notNull(),
+  fingerprint: text('fingerprint').notNull(),
   createdAt: integer({ mode: 'timestamp' }).notNull()
 })

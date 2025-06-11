@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { AnimatePresence, MotionConfig, motion } from 'motion-v'
 
+const props = defineProps<{
+  title: string
+}>()
+
 interface FeedbackOption {
   emoji: string
   label: string
@@ -51,7 +55,8 @@ async function submitFeedback() {
       body: {
         rating: formState.rating,
         feedback: formState.feedback,
-        path: route.path
+        path: route.path,
+        title: props.title
       }
     })
   } catch (error) {
