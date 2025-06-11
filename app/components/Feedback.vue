@@ -84,7 +84,6 @@ watch(route, () => {
     <motion.div
       layout
       class="rounded-lg max-w-md"
-      :class="isSubmitted ? 'px-6 py-1' : ''"
     >
       <AnimatePresence mode="wait">
         <!-- Success State -->
@@ -167,20 +166,13 @@ watch(route, () => {
                     placeholder="Share your thoughts... (optional)"
                     :rows="4"
                   />
-
-                  <!-- <template #help>
-                      <span class="flex items-center gap-1.5 text-xs text-muted">
-                        <Icon name="mdi:language-markdown" class="w-3 h-3" />
-                        Markdown supported.
-                      </span>
-                    </template> -->
-
                   <div class="flex items-center mt-2">
                     <div class="flex gap-2">
                       <UButton
                         size="sm"
                         :disabled="isSubmitting"
                         type="submit"
+                        class="focus-visible:outline-0"
                       >
                         <AnimatePresence mode="wait">
                           <motion.span

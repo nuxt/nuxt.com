@@ -67,8 +67,6 @@ const versionFiles = computed(() => files.value?.filter((file) => {
 
 provide('navigation', versionNavigation)
 
-const heroBackgroundClass = computed(() => route.meta?.heroBackground || '')
-const { isLoading } = useLoadingIndicator()
 const appear = ref(false)
 const appeared = ref(false)
 
