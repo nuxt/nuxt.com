@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
+import { sqliteTable, text, integer, uniqueIndex } from 'drizzle-orm/sqlite-core'
 
 export const feedback = sqliteTable('feedback', {
   id: integer('id').primaryKey({ autoIncrement: true }),
@@ -9,5 +9,6 @@ export const feedback = sqliteTable('feedback', {
   stem: text('stem').notNull(),
   country: text('country').notNull(),
   fingerprint: text('fingerprint').notNull(),
-  createdAt: integer({ mode: 'timestamp' }).notNull()
-})
+  createdAt: integer({ mode: 'timestamp' }).notNull(),
+  updatedAt: integer({ mode: 'timestamp' }).notNull()
+}, table => [uniqueIndex('path_fingerprint_idx').on(table.path, table.fingerprint)])
