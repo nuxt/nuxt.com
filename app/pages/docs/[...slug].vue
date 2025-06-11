@@ -146,7 +146,7 @@ if (import.meta.server) {
           <ContentRenderer v-if="page.body" :value="page" />
           <div>
             <Feedback />
-            <USeparator class="my-10">
+            <USeparator class="mt-6 mb-10">
               <div class="flex items-center gap-2 text-sm text-muted">
                 <UButton size="sm" variant="link" color="neutral" to="https://github.com/nuxt/nuxt/issues/new/choose" target="_blank">
                   Report an issue

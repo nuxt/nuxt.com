@@ -2,7 +2,7 @@ import type { H3Event } from 'h3'
 import { z } from 'zod'
 
 const feedbackSchema = z.object({
-  rating: z.enum(['very-helpful', 'helpful', 'neutral', 'not-helpful', 'confusing']),
+  rating: z.enum(['very-helpful', 'helpful', 'not-helpful', 'confusing']),
   feedback: z.string().optional(),
   path: z.string()
 })

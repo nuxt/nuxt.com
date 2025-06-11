@@ -5,7 +5,7 @@ definePageMeta({
 
 interface FeedbackItem {
   id: number
-  rating: 'very-helpful' | 'helpful' | 'neutral' | 'not-helpful' | 'confusing'
+  rating: 'very-helpful' | 'helpful' | 'not-helpful' | 'confusing'
   feedback?: string
   path: string
   createdAt: Date | string
@@ -21,9 +21,8 @@ const feedbackData = computed(() =>
 )
 
 const ratingConfig = {
-  'very-helpful': { emoji: '🤩', label: 'Very Helpful', score: 5 },
-  'helpful': { emoji: '😊', label: 'Helpful', score: 4 },
-  'neutral': { emoji: '🙂', label: 'Neutral', score: 3 },
+  'very-helpful': { emoji: '🤩', label: 'Very Helpful', score: 4 },
+  'helpful': { emoji: '😊', label: 'Helpful', score: 3 },
   'not-helpful': { emoji: '☹️', label: 'Not Helpful', score: 2 },
   'confusing': { emoji: '😰', label: 'Confusing', score: 1 }
 } as const
@@ -31,13 +30,11 @@ const ratingConfig = {
 const selectedPage = ref<any>(null)
 const showFeedbackModal = ref(false)
 
-// Global stats
 const globalStats = computed(() => {
   const total = feedbackData.value.length
   const positive = feedbackData.value.filter(f => ['very-helpful', 'helpful'].includes(f.rating)).length
   const negative = feedbackData.value.filter(f => ['not-helpful', 'confusing'].includes(f.rating)).length
 
-  // Calculate average score
   const totalScore = feedbackData.value.reduce((sum, item) => sum + ratingConfig[item.rating].score, 0)
   const averageScore = total > 0 ? (totalScore / total).toFixed(1) : '0.0'
 
@@ -52,7 +49,6 @@ const globalStats = computed(() => {
   }
 })
 
-// Group feedback by page
 const pageAnalytics = computed(() => {
   const pageGroups = feedbackData.value.reduce((acc, item) => {
     if (!acc[item.path]) {
@@ -67,7 +63,6 @@ const pageAnalytics = computed(() => {
     const positive = feedback.filter(f => ['very-helpful', 'helpful'].includes(f.rating)).length
     const negative = feedback.filter(f => ['not-helpful', 'confusing'].includes(f.rating)).length
 
-    // Calculate average score for this page
     const totalScore = feedback.reduce((sum, item) => sum + ratingConfig[item.rating].score, 0)
     const averageScore = total > 0 ? (totalScore / total).toFixed(1) : '0.0'
 
@@ -83,32 +78,7 @@ const pageAnalytics = computed(() => {
       feedback,
       lastFeedback: feedback.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0]
     }
-  }).sort((a, b) => b.total - a.total) // Sort by total feedback count
-})
-
-// Top 5 best and worst pages - improved logic to avoid duplicates
-const topPages = computed(() => {
-  const pages = pageAnalytics.value.filter(p => p.total >= 2) // Only pages with at least 2 feedback
-
-  // If we have less than 6 pages, split them differently to avoid showing same pages in both sections
-  if (pages.length < 6) {
-    const sortedByScore = [...pages].sort((a, b) => b.averageScore - a.averageScore)
-    const midpoint = Math.ceil(sortedByScore.length / 2)
-
-    return {
-      best: sortedByScore.slice(0, midpoint),
-      worst: sortedByScore.slice(midpoint).filter(p => p.averageScore < 4.0) // Only show truly poor performing pages
-    }
-  }
-
-  // Normal logic for when we have enough pages
-  const best = [...pages].sort((a, b) => b.averageScore - a.averageScore).slice(0, 5)
-  const worst = [...pages]
-    .filter(p => p.averageScore < 4.0) // Only pages with score below 4.0
-    .sort((a, b) => a.averageScore - b.averageScore)
-    .slice(0, 5)
-
-  return { best, worst }
+  }).sort((a, b) => b.total - a.total)
 })
 
 function viewPageDetails(page: any) {
@@ -188,95 +158,6 @@ function getScoreColor(score: number) {
       </UCard>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-      <UCard>
-        <template #header>
-          <div class="flex items-center gap-2">
-            <UIcon name="i-lucide-trophy" class="size-5 text-success" />
-            <h3 class="font-semibold">
-              Top Rated Pages
-            </h3>
-          </div>
-        </template>
-
-        <div class="space-y-3">
-          <div
-            v-for="(page, index) in topPages.best"
-            :key="page.path"
-            class="flex items-center justify-between p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer"
-            @click="viewPageDetails(page)"
-          >
-            <div class="flex items-center gap-3">
-              <div class="flex items-center justify-center size-6 rounded-full bg-success/20 text-success text-sm font-bold">
-                {{ index + 1 }}
-              </div>
-              <div>
-                <code class="text-sm font-mono">{{ page.path }}</code>
-                <div class="text-xs text-muted">
-                  {{ page.total }} feedback{{ page.total > 1 ? 's' : '' }}
-                </div>
-              </div>
-            </div>
-            <div class="text-right">
-              <div class="font-semibold" :class="getScoreColor(page.averageScore)">
-                {{ page.averageScore }}/5
-              </div>
-              <div class="text-xs text-muted">
-                {{ page.positivePercentage }}% positive
-              </div>
-            </div>
-          </div>
-          <div v-if="topPages.best.length === 0" class="text-center py-4 text-muted">
-            Not enough data yet
-          </div>
-        </div>
-      </UCard>
-
-      <UCard>
-        <template #header>
-          <div class="flex items-center gap-2">
-            <UIcon name="i-lucide-alert-triangle" class="size-5 text-error" />
-            <h3 class="font-semibold">
-              Pages Needing Attention
-            </h3>
-            <span class="text-xs text-muted">(Score &lt; 4.0)</span>
-          </div>
-        </template>
-
-        <div class="space-y-3">
-          <div
-            v-for="(page, index) in topPages.worst"
-            :key="page.path"
-            class="flex items-center justify-between p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer"
-            @click="viewPageDetails(page)"
-          >
-            <div class="flex items-center gap-3">
-              <div class="flex items-center justify-center size-6 rounded-full bg-error/20 text-error text-sm font-bold">
-                {{ index + 1 }}
-              </div>
-              <div>
-                <code class="text-sm font-mono">{{ page.path }}</code>
-                <div class="text-xs text-muted">
-                  {{ page.total }}
-                </div>
-              </div>
-            </div>
-            <div class="text-right">
-              <div class="font-semibold" :class="getScoreColor(page.averageScore)">
-                {{ page.averageScore }}/5
-              </div>
-              <div class="text-xs text-muted">
-                {{ page.positivePercentage }}% positive
-              </div>
-            </div>
-          </div>
-          <div v-if="topPages.worst.length === 0" class="text-center py-4 text-muted">
-            All pages are performing well!
-          </div>
-        </div>
-      </UCard>
-    </div>
-
     <UCard>
       <template #header>
         <h3 class="font-semibold">
@@ -326,7 +207,7 @@ function getScoreColor(score: number) {
               </td>
               <td class="py-3 px-4 text-right">
                 <span class="font-semibold" :class="getScoreColor(page.averageScore)">
-                  {{ page.averageScore }}/5
+                  {{ page.averageScore }}/4
                 </span>
               </td>
               <td class="py-3 px-4 text-right">
@@ -370,21 +251,13 @@ function getScoreColor(score: number) {
             </div>
           </template>
 
-          <div class="grid grid-cols-3 gap-4 mb-6 p-4 bg-muted/30 rounded-lg">
+          <div class="grid grid-cols-2 gap-4 mb-6 p-4 bg-muted/30 rounded-lg">
             <div class="text-center">
               <div class="text-2xl font-bold text-success">
                 {{ selectedPage.positive }}
               </div>
               <div class="text-xs text-muted">
                 Positive
-              </div>
-            </div>
-            <div class="text-center">
-              <div class="text-2xl font-bold text-warning">
-                {{ selectedPage.total - selectedPage.positive - selectedPage.negative }}
-              </div>
-              <div class="text-xs text-muted">
-                Neutral
               </div>
             </div>
             <div class="text-center">
@@ -409,7 +282,7 @@ function getScoreColor(score: number) {
                   <div>
                     <span class="text-sm font-medium">{{ ratingConfig[feedback.rating].label }}</span>
                     <div class="text-xs text-muted">
-                      Score: {{ ratingConfig[feedback.rating].score }}/5
+                      Score: {{ ratingConfig[feedback.rating].score }}/4
                     </div>
                   </div>
                 </div>

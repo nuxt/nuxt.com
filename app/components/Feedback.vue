@@ -11,8 +11,7 @@ const route = useRoute()
 
 const feedbackOptions: FeedbackOption[] = [
   { emoji: '🤩', label: 'Very helpful', value: 'very-helpful' },
-  { emoji: '😊', label: 'Helpful', value: 'helpful' },
-  { emoji: '🙂', label: 'Neutral', value: 'neutral' },
+  { emoji: '🙂', label: 'Helpful', value: 'helpful' },
   { emoji: '☹️', label: 'Not helpful', value: 'not-helpful' },
   { emoji: '😰', label: 'Confusing', value: 'confusing' }
 ]
@@ -79,8 +78,8 @@ watch(route, () => {
   >
     <motion.div
       layout
-      class="bg-muted border border-default rounded-lg max-w-md mx-auto shadow-lg"
-      :class="isSubmitted ? 'px-6 py-1' : 'p-3'"
+      class="rounded-lg max-w-md"
+      :class="isSubmitted ? 'px-6 py-1' : ''"
     >
       <AnimatePresence mode="wait">
         <!-- Success State -->
@@ -118,7 +117,7 @@ watch(route, () => {
           v-else
           key="feedback"
         >
-          <motion.div layout class="flex items-center justify-between gap-3">
+          <motion.div layout class="flex items-center gap-3">
             <motion.span layout class="text-sm font-medium text-highlighted whitespace-nowrap">
               Was this helpful?
             </motion.span>
@@ -127,15 +126,15 @@ watch(route, () => {
               <UButton
                 v-for="option in feedbackOptions"
                 :key="option.value"
-                class="flex items-center justify-center size-8 rounded-lg border transition-all duration-150"
+                class="flex items-center grayscale-80 hover:grayscale-0 justify-center size-8 rounded-lg border transition-all duration-150"
                 :class="[
                   formState.rating === option.value
-                    ? 'border-primary bg-primary/20 hover:bg-primary/30'
+                    ? 'border-primary bg-primary/20 hover:bg-primary/30 grayscale-0'
                     : 'border-default bg-accented/20 hover:border-accented/70 hover:bg-accented/80'
                 ]"
                 @click="handleRatingSelect(option.value)"
               >
-                <span class="text-sm">{{ option.emoji }}</span>
+                <span class="text-lg">{{ option.emoji }}</span>
               </UButton>
             </motion.div>
           </motion.div>
@@ -145,7 +144,7 @@ watch(route, () => {
               v-if="isExpanded"
               key="expanded-form"
               :initial="{ opacity: 0, height: 0, marginTop: 0 }"
-              :animate="{ opacity: 1, height: 'auto', marginTop: 16 }"
+              :animate="{ opacity: 1, height: 'auto', marginTop: 8 }"
               :exit="{ opacity: 0, height: 0, marginTop: 0 }"
               :transition="{ duration: 0.3, ease: 'easeInOut' }"
               class="overflow-hidden"
@@ -154,39 +153,25 @@ watch(route, () => {
                 :initial="{ opacity: 0 }"
                 :animate="{ opacity: 1 }"
                 :transition="{ delay: 0.15, duration: 0.2 }"
-                class="space-y-3"
+                class="space-y-1"
               >
                 <UForm :state="formState" @submit="submitFeedback">
-                  <UFormField
-                    label="Your feedback... (optional)"
-                    name="feedback"
-                    :ui="{ label: 'text-xs font-medium text-muted' }"
-                  >
-                    <UTextarea
-                      v-model="formState.feedback"
-                      class="w-full rounded-xl text-sm leading-relaxed resize-vertical"
-                      placeholder="Share your thoughts..."
-                      :rows="4"
-                    />
+                  <UTextarea
+                    v-model="formState.feedback"
+                    class="w-full rounded-xl text-sm leading-relaxed resize-vertical"
+                    placeholder="Share your thoughts... (optional)"
+                    :rows="4"
+                  />
 
-                    <!-- <template #help>
+                  <!-- <template #help>
                       <span class="flex items-center gap-1.5 text-xs text-muted">
                         <Icon name="mdi:language-markdown" class="w-3 h-3" />
                         Markdown supported.
                       </span>
                     </template> -->
-                  </UFormField>
 
-                  <div class="flex justify-end items-center mt-4">
+                  <div class="flex items-center mt-2">
                     <div class="flex gap-2">
-                      <UButton
-                        variant="subtle"
-                        color="neutral"
-                        size="sm"
-                        :disabled="isSubmitting"
-                        label="Cancel"
-                        @click="cancelFeedback"
-                      />
                       <UButton
                         size="sm"
                         :disabled="isSubmitting"
