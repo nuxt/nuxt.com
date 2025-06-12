@@ -79,7 +79,7 @@ export function useFeedback(options: UseFeedbackOptions) {
   watch(route, resetFeedback)
 
   return {
-    formState: readonly(formState),
+    formState,
     isExpanded: readonly(isExpanded),
     isSubmitted: readonly(isSubmitted),
     isSubmitting: readonly(isSubmitting),
