@@ -35,12 +35,16 @@ const {
           :animate="{ opacity: 1, scale: 1 }"
           :transition="{ duration: 0.3 }"
           class="flex items-center gap-3 py-2"
+          role="status"
+          aria-live="polite"
+          aria-label="Feedback submitted successfully"
         >
           <motion.div
             :initial="{ scale: 0 }"
             :animate="{ scale: 1 }"
             :transition="{ delay: 0.1, type: 'spring', visualDuration: 0.4 }"
             class="text-xl"
+            aria-hidden="true"
           >
             ✨
           </motion.div>
@@ -62,27 +66,38 @@ const {
           v-else
           key="feedback"
         >
-          <motion.div layout class="flex items-center gap-3">
-            <motion.span layout class="text-sm font-medium text-highlighted whitespace-nowrap">
-              Was this helpful?
-            </motion.span>
+          <fieldset>
+            <motion.div layout class="flex items-center gap-3">
+              <motion.legend id="feedback-legend" layout class="text-sm font-medium text-highlighted whitespace-nowrap">
+                Was this helpful?
+              </motion.legend>
 
-            <motion.div layout class="flex gap-2">
-              <UButton
-                v-for="option in FEEDBACK_OPTIONS"
-                :key="option.value"
-                class="flex items-center grayscale-80 hover:grayscale-0 justify-center size-8 rounded-lg border transition-all duration-150"
-                :class="[
-                  formState.rating === option.value
-                    ? 'border-primary bg-primary/20 hover:bg-primary/30 grayscale-0'
-                    : 'border-default bg-accented/20 hover:border-accented/70 hover:bg-accented/80'
-                ]"
-                @click="handleRatingSelect(option.value)"
+              <motion.div
+                layout
+                class="flex gap-2"
+                role="radiogroup"
+                aria-labelledby="feedback-legend"
               >
-                <span class="text-lg">{{ option.emoji }}</span>
-              </UButton>
+                <UButton
+                  v-for="option in FEEDBACK_OPTIONS"
+                  :key="option.value"
+                  class="flex items-center grayscale-80 hover:grayscale-0 justify-center size-8 rounded-lg border transition-all duration-150 focus:outline-2 focus:outline-primary focus:outline-offset-2"
+                  :class="[
+                    formState.rating === option.value
+                      ? 'border-primary bg-primary/20 hover:bg-primary/30 grayscale-0'
+                      : 'border-default bg-accented/20 hover:border-accented/70 hover:bg-accented/80'
+                  ]"
+                  :aria-label="`Rate as ${option.label}`"
+                  :aria-pressed="formState.rating === option.value"
+                  role="radio"
+                  :aria-checked="formState.rating === option.value"
+                  @click="handleRatingSelect(option.value)"
+                >
+                  <span class="text-lg">{{ option.emoji }}</span>
+                </UButton>
+              </motion.div>
             </motion.div>
-          </motion.div>
+          </fieldset>
 
           <AnimatePresence>
             <motion.div
@@ -93,6 +108,8 @@ const {
               :exit="{ opacity: 0, height: 0, marginTop: 0 }"
               :transition="{ duration: 0.3, ease: 'easeInOut' }"
               class="overflow-hidden"
+              role="region"
+              aria-label="Additional feedback form"
             >
               <motion.div
                 :initial="{ opacity: 0 }"
@@ -101,19 +118,29 @@ const {
                 class="space-y-1"
               >
                 <UForm :state="formState" @submit="submitFeedback">
+                  <label for="feedback-textarea" class="sr-only">
+                    Additional feedback (optional)
+                  </label>
                   <UTextarea
+                    id="feedback-textarea"
+                    ref="textareaRef"
                     v-model="formState.feedback"
                     class="w-full rounded-xl text-sm leading-relaxed resize-vertical"
                     placeholder="Share your thoughts... (optional)"
                     :rows="4"
+                    aria-describedby="feedback-help"
                   />
+                  <div id="feedback-help" class="sr-only">
+                    Provide additional details about your experience with this page
+                  </div>
                   <div class="flex items-center mt-2">
                     <div class="flex gap-2">
                       <UButton
                         size="sm"
                         :disabled="isSubmitting"
                         type="submit"
-                        class="focus-visible:outline-0"
+                        class="focus:outline-0"
+                        :aria-label="isSubmitting ? 'Sending feedback...' : 'Send feedback'"
                       >
                         <motion.span
                           class="flex items-center"
@@ -156,6 +183,16 @@ const {
           </AnimatePresence>
         </motion.div>
       </AnimatePresence>
+
+      <div
+        aria-live="polite"
+        class="sr-only"
+      >
+        <span v-if="isSubmitting">Sending your feedback...</span>
+        <span v-else-if="isExpanded && formState.rating">
+          Feedback form expanded. You can now add additional comments.
+        </span>
+      </div>
     </motion.div>
   </MotionConfig>
 </template>
