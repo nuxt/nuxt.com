@@ -35,7 +35,11 @@ export default defineEventHandler(async (event: H3Event) => {
   const fingerprint = await getFingerprint(event)
 
   await drizzle.insert(tables.feedback).values({
-    ...data,
+    rating: data.rating,
+    feedback: data.feedback || null,
+    path: data.path,
+    title: data.title,
+    stem: data.stem,
     country,
     fingerprint,
     createdAt: new Date(),
@@ -43,7 +47,8 @@ export default defineEventHandler(async (event: H3Event) => {
   }).onConflictDoUpdate({
     target: [tables.feedback.path, tables.feedback.fingerprint],
     set: {
-      ...data,
+      rating: data.rating,
+      feedback: data.feedback || null,
       country,
       updatedAt: new Date()
     }
