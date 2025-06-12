@@ -1,4 +1,3 @@
-import { feedbackSchema, type FeedbackInput } from '~~/shared/types/feedback'
 import type { H3Event } from 'h3'
 
 export async function generateHash(
