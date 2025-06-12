@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1749644272053,
-      "tag": "0000_public_spirit",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1749655547839,
-      "tag": "0001_brainy_stature",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1749658324971,
-      "tag": "0002_next_groot",
+      "when": 1749723412586,
+      "tag": "0000_conscious_kingpin",
       "breakpoints": true
     }
   ]

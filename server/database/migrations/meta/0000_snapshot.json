@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "dc3e53ae-9e26-40e4-8150-37a225eba7e9",
+  "id": "b26ce80f-2ee0-4277-914e-3daf3d9218aa",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "feedback": {
@@ -42,6 +42,20 @@
           "notNull": true,
           "autoincrement": false
         },
+        "stem": {
+          "name": "stem",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "country": {
+          "name": "country",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "fingerprint": {
           "name": "fingerprint",
           "type": "text",
@@ -55,9 +69,25 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "path_fingerprint_idx": {
+          "name": "path_fingerprint_idx",
+          "columns": [
+            "path",
+            "fingerprint"
+          ],
+          "isUnique": true
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
