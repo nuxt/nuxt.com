@@ -4,7 +4,6 @@ import type { ContentNavigationItem } from '@nuxt/content'
 import { findPageBreadcrumb, mapContentNavigation } from '#ui-pro/utils'
 
 definePageMeta({
-  layout: 'docs',
   heroBackground: 'opacity-30',
   key: 'docs'
 })
@@ -146,7 +145,8 @@ if (import.meta.server) {
         <UPageBody>
           <ContentRenderer v-if="page.body" :value="page" />
           <div>
-            <USeparator class="my-10">
+            <Feedback :page="page" />
+            <USeparator class="mt-6 mb-10">
               <div class="flex items-center gap-2 text-sm text-muted">
                 <UButton size="sm" variant="link" color="neutral" to="https://github.com/nuxt/nuxt/issues/new/choose" target="_blank">
                   Report an issue

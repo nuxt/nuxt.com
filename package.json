@@ -9,7 +9,9 @@
     "postinstall": "nuxt prepare",
     "lint": "eslint . --cache",
     "typecheck": "nuxt typecheck",
-    "test": "pnpm lint && pnpm typecheck"
+    "test": "pnpm lint && pnpm typecheck",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
   },
   "dependencies": {
     "@iconify-json/heroicons": "^1.2.2",
@@ -27,6 +29,7 @@
     "@vueuse/components": "^13.3.0",
     "@vueuse/core": "^13.3.0",
     "@vueuse/nuxt": "^13.3.0",
+    "drizzle-orm": "^0.44.2",
     "feed": "^5.1.0",
     "motion-v": "1.2.1",
     "nuxt": "^3.17.5",
@@ -47,6 +50,7 @@
     "@testing-library/vue": "^8.1.0",
     "@types/youtube": "^0.1.2",
     "capture-website": "^4.2.0",
+    "drizzle-kit": "^0.31.1",
     "eslint": "^9.28.0",
     "nuxt-content-twoslash": "0.1.2",
     "shiki": "^3.6.0",
