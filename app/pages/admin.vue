@@ -13,7 +13,7 @@ const { data: rawFeedback } = await useFetch<FeedbackItem[]>('/api/feedback')
 const feedbackData = computed(() =>
   rawFeedback.value?.map(item => ({
     ...item,
-    createdAt: typeof item.createdAt === 'string' ? new Date(item.createdAt) : item.createdAt
+    createdAt: new Date(item.createdAt)
   })) || []
 )
 
