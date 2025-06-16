@@ -13,13 +13,14 @@ export interface FeedbackOption {
   emoji: string
   label: string
   value: FeedbackRating
+  score: number
 }
 
 export const FEEDBACK_OPTIONS: FeedbackOption[] = [
-  { emoji: '🤩', label: 'Very helpful', value: 'very-helpful' },
-  { emoji: '🙂', label: 'Helpful', value: 'helpful' },
-  { emoji: '☹️', label: 'Not helpful', value: 'not-helpful' },
-  { emoji: '😰', label: 'Confusing', value: 'confusing' }
+  { emoji: '🤩', label: 'Very helpful', value: 'very-helpful', score: 4 },
+  { emoji: '🙂', label: 'Helpful', value: 'helpful', score: 3 },
+  { emoji: '☹️', label: 'Not helpful', value: 'not-helpful', score: 2 },
+  { emoji: '😰', label: 'Confusing', value: 'confusing', score: 1 }
 ]
 
 export interface FeedbackSubmission {
