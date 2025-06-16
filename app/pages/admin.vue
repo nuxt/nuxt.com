@@ -399,6 +399,7 @@ const { selectedPage, showFeedbackModal, currentPage, itemsPerPage, paginatedFee
       </div>
 
       <UCard class="max-w-5xl mx-auto">
+        <FeedbackDatePicker />
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <FeedbackStatCard
             icon="i-lucide-message-circle"

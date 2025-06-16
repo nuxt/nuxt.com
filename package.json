@@ -29,6 +29,7 @@
     "@vueuse/components": "^13.3.0",
     "@vueuse/core": "^13.3.0",
     "@vueuse/nuxt": "^13.3.0",
+    "date-fns": "^4.1.0",
     "drizzle-orm": "^0.44.2",
     "feed": "^5.1.0",
     "motion-v": "1.2.1",
