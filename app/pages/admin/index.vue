@@ -2,11 +2,19 @@
 import { getPaginationRowModel } from '@tanstack/vue-table'
 import type { TableColumn } from '@nuxt/ui'
 import { h, resolveComponent } from 'vue'
+import { UColorModeButton } from '#components'
 
 const UButton = resolveComponent('UButton')
+const { user, clear } = useUserSession()
+
+async function logout() {
+  await clear()
+  navigateTo('/admin/login')
+}
 
 definePageMeta({
-  layout: 'admin'
+  layout: 'admin',
+  middleware: 'auth'
 })
 
 type FeedbackItem = FeedbackSubmission & {
@@ -405,6 +413,25 @@ const { selectedPage, showFeedbackModal, currentPage, itemsPerPage, paginatedFee
 
 <template>
   <div class="min-h-screen">
+    <div class="absolute top-2 left-2 right-2 flex items-center justify-between">
+      <div class="flex items-center gap-1">
+        <UAvatar
+          :src="user?.avatar_url"
+          :alt="user?.login"
+          size="xs"
+        />
+        <span class="text-sm">{{ user?.login }}</span>
+      </div>
+      <div class="flex items-center gap-1">
+        <UColorModeButton />
+        <UButton
+          color="neutral"
+          variant="ghost"
+          icon="i-lucide-log-out"
+          @click="logout"
+        />
+      </div>
+    </div>
     <UContainer class="py-12">
       <div class="text-center mb-8 space-y-2">
         <UIcon name="i-lucide-bar-chart" class="size-8 text-primary mx-auto" />
