@@ -43,7 +43,7 @@ export function useFeedback(options: UseFeedbackOptions) {
 
     const submission: FeedbackSubmission = {
       rating: formState.rating,
-      feedback: formState.feedback || undefined,
+      feedback: formState.feedback.trim() || undefined,
       path: route.path,
       title: options.page.title,
       stem: options.page.stem

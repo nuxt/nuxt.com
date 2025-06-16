@@ -43,7 +43,8 @@ function useFeedbackData() {
   const allFeedbackData = computed(() =>
     rawFeedback.value?.map(item => ({
       ...item,
-      createdAt: new Date(item.createdAt)
+      createdAt: new Date(item.createdAt),
+      updatedAt: new Date(item.updatedAt)
     })) || []
   )
 
@@ -98,7 +99,7 @@ function useFeedbackData() {
 
       const positivePercentage = total > 0 ? Math.round((positive / total) * 100) : 0
 
-      const sortedFeedback = feedback.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      const sortedFeedback = feedback.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
       const oldestFeedback = feedback.reduce((oldest, current) =>
         new Date(current.createdAt) < new Date(oldest.createdAt) ? current : oldest
       )
@@ -113,7 +114,7 @@ function useFeedbackData() {
         feedback,
         lastFeedback: sortedFeedback[0],
         createdAt: new Date(oldestFeedback.createdAt),
-        updatedAt: new Date(sortedFeedback[0].createdAt)
+        updatedAt: new Date(sortedFeedback[0].updatedAt)
       }
     }).sort((a, b) => b.total - a.total)
   })

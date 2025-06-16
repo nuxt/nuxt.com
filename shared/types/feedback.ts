@@ -39,4 +39,14 @@ export const feedbackSchema = z.object({
   stem: z.string()
 })
 
+export const feedbackFormSchema = z.object({
+  rating: z.enum(FEEDBACK_RATINGS).nullable(),
+  feedback: z.string().refine((val) => {
+    const trimmed = val.trim()
+    return trimmed === '' || trimmed.length >= 10
+  }, {
+    message: 'Please provide at least 10 characters or leave the field empty'
+  })
+})
+
 export type FeedbackInput = z.infer<typeof feedbackSchema>
