@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import type { FeedbackSubmission, FeedbackRating } from '../../shared/types/feedback'
-import { FEEDBACK_OPTIONS } from '../../shared/types/feedback'
+import { getPaginationRowModel } from '@tanstack/vue-table'
+import type { TableColumn } from '@nuxt/ui'
+import { h, resolveComponent } from 'vue'
+
+const UButton = resolveComponent('UButton')
 
 definePageMeta({
   layout: 'admin'
@@ -9,25 +12,10 @@ definePageMeta({
 type FeedbackItem = FeedbackSubmission & {
   updatedAt: Date
   createdAt: Date
+  country?: string
 }
 
-const { data: rawFeedback } = await useFetch<FeedbackItem[]>('/api/feedback')
-
-const feedbackData = computed(() =>
-  rawFeedback.value?.map(item => ({
-    ...item,
-    createdAt: new Date(item.createdAt)
-  })) || []
-)
-
-const ratingConfig = computed(() => {
-  return FEEDBACK_OPTIONS.reduce((acc, option) => {
-    acc[option.value] = option
-    return acc
-  }, {} as Record<FeedbackRating, typeof FEEDBACK_OPTIONS[0]>)
-})
-
-const selectedPage = ref<{
+type PageAnalytic = {
   path: string
   total: number
   positive: number
@@ -36,70 +24,365 @@ const selectedPage = ref<{
   positivePercentage: number
   feedback: FeedbackItem[]
   lastFeedback: FeedbackItem
-} | null>(null)
-const showFeedbackModal = ref(false)
+  createdAt: Date
+  updatedAt: Date
+}
 
-const globalStats = computed(() => {
-  const total = feedbackData.value.length
-  const positive = feedbackData.value.filter(f => ['very-helpful', 'helpful'].includes(f.rating)).length
-  const negative = feedbackData.value.filter(f => ['not-helpful', 'confusing'].includes(f.rating)).length
+const { data: rawFeedback } = await useFetch<FeedbackItem[]>('/api/feedback')
 
-  const totalScore = feedbackData.value.reduce((sum, item) => sum + ratingConfig.value[item.rating].score, 0)
-  const averageScore = total > 0 ? (totalScore / total).toFixed(1) : '0.0'
+function useFeedbackData() {
+  const feedbackData = computed(() =>
+    rawFeedback.value?.map(item => ({
+      ...item,
+      createdAt: new Date(item.createdAt)
+    })) || []
+  )
 
-  const positivePercentage = total > 0 ? Math.round((positive / total) * 100) : 0
+  const ratingConfig = computed(() => {
+    return FEEDBACK_OPTIONS.reduce((acc, option) => {
+      acc[option.value] = option
+      return acc
+    }, {} as Record<FeedbackRating, typeof FEEDBACK_OPTIONS[0]>)
+  })
 
-  return {
-    total,
-    positive,
-    negative,
-    averageScore,
-    positivePercentage
-  }
-})
+  const globalStats = computed(() => {
+    const total = feedbackData.value.length
+    const positive = feedbackData.value.filter(f => ['very-helpful', 'helpful'].includes(f.rating)).length
+    const negative = feedbackData.value.filter(f => ['not-helpful', 'confusing'].includes(f.rating)).length
 
-const pageAnalytics = computed(() => {
-  const pageGroups: Record<string, FeedbackItem[]> = feedbackData.value.reduce((acc, item) => {
-    if (!acc[item.path]) {
-      acc[item.path] = []
-    }
-    acc[item.path].push(item)
-    return acc
-  }, {} as Record<string, FeedbackItem[]>)
-
-  return Object.entries(pageGroups).map(([path, feedback]) => {
-    const total = feedback.length
-    const positive = feedback.filter(f => ['very-helpful', 'helpful'].includes(f.rating)).length
-    const negative = feedback.filter(f => ['not-helpful', 'confusing'].includes(f.rating)).length
-
-    const totalScore = feedback.reduce((sum, item) => sum + ratingConfig.value[item.rating].score, 0)
+    const totalScore = feedbackData.value.reduce((sum, item) => sum + ratingConfig.value[item.rating].score, 0)
     const averageScore = total > 0 ? (totalScore / total).toFixed(1) : '0.0'
 
     const positivePercentage = total > 0 ? Math.round((positive / total) * 100) : 0
 
     return {
-      path,
       total,
       positive,
       negative,
-      averageScore: Number.parseFloat(averageScore),
-      positivePercentage,
-      feedback,
-      lastFeedback: feedback.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0]
+      averageScore,
+      positivePercentage
     }
-  }).sort((a, b) => b.total - a.total)
-})
+  })
 
-function viewPageDetails(page: any) {
-  selectedPage.value = page
-  showFeedbackModal.value = true
+  const pageAnalytics = computed((): PageAnalytic[] => {
+    const pageGroups: Record<string, FeedbackItem[]> = feedbackData.value.reduce((acc, item) => {
+      if (!acc[item.path]) {
+        acc[item.path] = []
+      }
+      acc[item.path].push(item)
+      return acc
+    }, {} as Record<string, FeedbackItem[]>)
+
+    return Object.entries(pageGroups).map(([path, feedback]) => {
+      const total = feedback.length
+      const positive = feedback.filter(f => ['very-helpful', 'helpful'].includes(f.rating)).length
+      const negative = feedback.filter(f => ['not-helpful', 'confusing'].includes(f.rating)).length
+
+      const totalScore = feedback.reduce((sum, item) => sum + ratingConfig.value[item.rating].score, 0)
+      const averageScore = total > 0 ? (totalScore / total).toFixed(1) : '0.0'
+
+      const positivePercentage = total > 0 ? Math.round((positive / total) * 100) : 0
+
+      const sortedFeedback = feedback.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      const oldestFeedback = feedback.reduce((oldest, current) =>
+        new Date(current.createdAt) < new Date(oldest.createdAt) ? current : oldest
+      )
+
+      return {
+        path,
+        total,
+        positive,
+        negative,
+        averageScore: Number.parseFloat(averageScore),
+        positivePercentage,
+        feedback,
+        lastFeedback: sortedFeedback[0],
+        createdAt: new Date(oldestFeedback.createdAt),
+        updatedAt: new Date(sortedFeedback[0].createdAt)
+      }
+    }).sort((a, b) => b.total - a.total)
+  })
+
+  function getScoreColor(score: number) {
+    if (score >= 4.0) return 'text-success'
+    if (score >= 3.0) return 'text-warning'
+    return 'text-error'
+  }
+
+  return {
+    feedbackData,
+    ratingConfig,
+    globalStats,
+    pageAnalytics,
+    getScoreColor
+  }
 }
 
-function getScoreColor(score: number) {
-  if (score >= 4.0) return 'text-success'
-  if (score >= 3.0) return 'text-warning'
-  return 'text-error'
+function useAdminTable() {
+  const table = useTemplateRef<any>('table')
+  const pagination = ref({
+    pageIndex: 0,
+    pageSize: 5
+  })
+
+  const sorting = ref([
+    {
+      id: 'updatedAt',
+      desc: true
+    }
+  ])
+
+  const globalFilter = ref('')
+
+  function resetFilters() {
+    globalFilter.value = ''
+    versionFilter.value = 'all'
+    sorting.value = [{ id: 'updatedAt', desc: true }]
+    pagination.value = { pageIndex: 0, pageSize: 5 }
+  }
+
+  const versionFilter = ref<'all' | 'v3' | 'v4'>('all')
+
+  function filterByVersion(version: 'v3' | 'v4') {
+    versionFilter.value = version
+    pagination.value.pageIndex = 0
+    if (version === 'v3') {
+      globalFilter.value = ''
+    } else {
+      globalFilter.value = 'docs/4.x'
+    }
+  }
+
+  const filteredPageAnalytics = computed(() => {
+    if (versionFilter.value === 'all') {
+      return pageAnalytics.value
+    } else if (versionFilter.value === 'v3') {
+      return pageAnalytics.value.filter(page => !page.path.includes('docs/4.x'))
+    } else {
+      return pageAnalytics.value.filter(page => page.path.includes('docs/4.x'))
+    }
+  })
+
+  const columns: TableColumn<PageAnalytic>[] = [
+    {
+      accessorKey: 'path',
+      header: 'Page',
+      cell: ({ row }) => {
+        const page = row.original
+        return h('div', { class: 'flex flex-col' }, [
+          h('span', { class: 'font-medium text-sm' }, page.lastFeedback.title),
+          h('code', { class: 'text-xs text-muted font-mono mt-1' }, page.path)
+        ])
+      }
+    },
+    {
+      accessorKey: 'positive',
+      header: ({ column }) => {
+        const isSorted = column.getIsSorted()
+        return h(UButton, {
+          color: 'neutral',
+          variant: 'ghost',
+          label: 'Positive',
+          icon: isSorted
+            ? isSorted === 'asc'
+              ? 'i-lucide-arrow-up-narrow-wide'
+              : 'i-lucide-arrow-down-wide-narrow'
+            : 'i-lucide-arrow-up-down',
+          class: '-mx-2.5 text-success',
+          onClick: () => column.toggleSorting(column.getIsSorted() === 'asc')
+        })
+      },
+      cell: ({ row }) => {
+        return h('div', { class: 'text-center' }, [
+          h('span', { class: 'font-medium text-success' }, row.original.positive.toString())
+        ])
+      }
+    },
+    {
+      accessorKey: 'negative',
+      header: ({ column }) => {
+        const isSorted = column.getIsSorted()
+        return h(UButton, {
+          color: 'neutral',
+          variant: 'ghost',
+          label: 'Negative',
+          icon: isSorted
+            ? isSorted === 'asc'
+              ? 'i-lucide-arrow-up-narrow-wide'
+              : 'i-lucide-arrow-down-wide-narrow'
+            : 'i-lucide-arrow-up-down',
+          class: '-mx-2.5 text-error',
+          onClick: () => column.toggleSorting(column.getIsSorted() === 'asc')
+        })
+      },
+      cell: ({ row }) => {
+        return h('div', { class: 'text-center' }, [
+          h('span', { class: 'font-medium text-error' }, row.original.negative.toString())
+        ])
+      }
+    },
+    {
+      accessorKey: 'averageScore',
+      header: ({ column }) => {
+        const isSorted = column.getIsSorted()
+        return h(UButton, {
+          color: 'neutral',
+          variant: 'ghost',
+          label: 'Score',
+          icon: isSorted
+            ? isSorted === 'asc'
+              ? 'i-lucide-arrow-up-narrow-wide'
+              : 'i-lucide-arrow-down-wide-narrow'
+            : 'i-lucide-arrow-up-down',
+          class: '-mx-2.5',
+          onClick: () => column.toggleSorting(column.getIsSorted() === 'asc')
+        })
+      },
+      cell: ({ row }) => {
+        const score = row.original.averageScore
+        const colorClass = score >= 4.0 ? 'text-success' : score >= 3.0 ? 'text-warning' : 'text-error'
+        return h('div', { class: 'text-center' }, [
+          h('span', { class: `font-semibold ${colorClass}` }, `${score}/4`)
+        ])
+      }
+    },
+    {
+      accessorKey: 'total',
+      header: ({ column }) => {
+        const isSorted = column.getIsSorted()
+        return h(UButton, {
+          color: 'neutral',
+          variant: 'ghost',
+          label: 'Total',
+          icon: isSorted
+            ? isSorted === 'asc'
+              ? 'i-lucide-arrow-up-narrow-wide'
+              : 'i-lucide-arrow-down-wide-narrow'
+            : 'i-lucide-arrow-up-down',
+          class: '-mx-2.5',
+          onClick: () => column.toggleSorting(column.getIsSorted() === 'asc')
+        })
+      },
+      cell: ({ row }) => {
+        return h('div', { class: 'text-center font-medium' }, row.original.total.toString())
+      }
+    },
+    {
+      accessorKey: 'createdAt',
+      header: ({ column }) => {
+        const isSorted = column.getIsSorted()
+        return h(UButton, {
+          color: 'neutral',
+          variant: 'ghost',
+          label: 'Created',
+          icon: isSorted
+            ? isSorted === 'asc'
+              ? 'i-lucide-arrow-up-narrow-wide'
+              : 'i-lucide-arrow-down-wide-narrow'
+            : 'i-lucide-arrow-up-down',
+          class: '-mx-2.5',
+          onClick: () => column.toggleSorting(column.getIsSorted() === 'asc')
+        })
+      },
+      cell: ({ row }) => {
+        const date = row.original.createdAt.toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: '2-digit'
+        })
+        return h('div', { class: 'text-center' }, [
+          h('span', { class: 'text-sm text-muted' }, date)
+        ])
+      }
+    },
+    {
+      accessorKey: 'updatedAt',
+      header: ({ column }) => {
+        const isSorted = column.getIsSorted()
+        return h(UButton, {
+          color: 'neutral',
+          variant: 'ghost',
+          label: 'Last Update',
+          icon: isSorted
+            ? isSorted === 'asc'
+              ? 'i-lucide-arrow-up-narrow-wide'
+              : 'i-lucide-arrow-down-wide-narrow'
+            : 'i-lucide-arrow-up-down',
+          class: '-mx-2.5',
+          onClick: () => column.toggleSorting(column.getIsSorted() === 'asc')
+        })
+      },
+      cell: ({ row }) => {
+        const date = row.original.updatedAt.toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+        return h('div', { class: 'text-center' }, [
+          h('span', { class: 'text-sm text-muted' }, date)
+        ])
+      }
+    }
+  ]
+
+  return {
+    table,
+    pagination,
+    sorting,
+    globalFilter,
+    columns,
+    resetFilters,
+    filterByVersion,
+    filteredPageAnalytics,
+    versionFilter
+  }
 }
+
+function useFeedbackModal() {
+  const selectedPage = ref<PageAnalytic | null>(null)
+  const showFeedbackModal = ref(false)
+  const currentPage = ref(1)
+  const itemsPerPage = 5
+
+  const paginatedFeedback = computed(() => {
+    if (!selectedPage.value) return []
+
+    const sortedFeedback = [...selectedPage.value.feedback].sort((a, b) =>
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    )
+
+    const startIndex = (currentPage.value - 1) * itemsPerPage
+    const endIndex = startIndex + itemsPerPage
+
+    return sortedFeedback.slice(startIndex, endIndex)
+  })
+
+  const totalPages = computed(() => {
+    if (!selectedPage.value) return 0
+    return Math.ceil(selectedPage.value.feedback.length / itemsPerPage)
+  })
+
+  function viewPageDetails(page: PageAnalytic) {
+    selectedPage.value = page
+    currentPage.value = 1
+    showFeedbackModal.value = true
+  }
+
+  return {
+    selectedPage,
+    showFeedbackModal,
+    currentPage,
+    itemsPerPage,
+    paginatedFeedback,
+    totalPages,
+    viewPageDetails
+  }
+}
+
+const { globalStats, pageAnalytics, getScoreColor } = useFeedbackData()
+const { table, pagination, sorting, globalFilter, columns, resetFilters, filterByVersion, filteredPageAnalytics, versionFilter } = useAdminTable()
+const { selectedPage, showFeedbackModal, currentPage, itemsPerPage, paginatedFeedback, totalPages, viewPageDetails } = useFeedbackModal()
 </script>
 
 <template>
@@ -115,7 +398,7 @@ function getScoreColor(score: number) {
         </p>
       </div>
 
-      <UCard class="max-w-4xl mx-auto">
+      <UCard class="max-w-5xl mx-auto">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <FeedbackStatCard
             icon="i-lucide-message-circle"
@@ -144,153 +427,169 @@ function getScoreColor(score: number) {
         </div>
 
         <div class="border-t border-default pt-6">
-          <h2 class="text-xl font-semibold mb-4 text-center">
-            Feedback by Page
-          </h2>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-semibold">
+              Feedback by Page
+            </h2>
+            <div class="flex items-center gap-2">
+              <UInput
+                v-model="globalFilter"
+                class="max-w-sm"
+                placeholder="Search pages..."
+                icon="i-lucide-search"
+              />
+              <UTooltip text="Reset filters" :content="{ side: 'top' }">
+                <UButton
+                  color="neutral"
+                  variant="outline"
+                  icon="i-lucide-filter-x"
+                  aria-label="Reset filters"
+                  @click="resetFilters"
+                />
+              </UTooltip>
+              <UTooltip text="Show only v3 pages" :content="{ side: 'top' }">
+                <UButton
+                  :color="versionFilter === 'v3' ? 'primary' : 'neutral'"
+                  :variant="versionFilter === 'v3' ? 'solid' : 'outline'"
+                  label="v3"
+                  @click="filterByVersion('v3')"
+                />
+              </UTooltip>
+              <UTooltip text="Show only v4 pages" :content="{ side: 'top' }">
+                <UButton
+                  :color="versionFilter === 'v4' ? 'primary' : 'neutral'"
+                  :variant="versionFilter === 'v4' ? 'solid' : 'outline'"
+                  label="v4"
+                  @click="filterByVersion('v4')"
+                />
+              </UTooltip>
+            </div>
+          </div>
 
-          <div class="overflow-x-auto">
-            <table class="w-full">
-              <thead>
-                <tr class="border-b border-default">
-                  <th class="text-left py-4 px-4 font-medium text-sm text-muted">
-                    Page
-                  </th>
-                  <th class="text-center py-4 px-4 font-medium text-sm text-muted">
-                    Positive
-                  </th>
-                  <th class="text-center py-4 px-4 font-medium text-sm text-muted">
-                    Negative
-                  </th>
-                  <th class="text-center py-4 px-4 font-medium text-sm text-muted">
-                    Score
-                  </th>
-                  <th class="text-center py-4 px-4 font-medium text-sm text-muted">
-                    Total
-                  </th>
-                  <th class="text-center py-4 px-4 font-medium text-sm text-muted">
-                    Last Feedback
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr
-                  v-for="page in pageAnalytics"
-                  :key="page.path"
-                  class="border-b border-default hover:bg-muted/20 transition-colors cursor-pointer"
-                  @click="viewPageDetails(page)"
-                >
-                  <td class="py-4 px-4">
-                    <div class="flex flex-col">
-                      <span class="font-medium text-sm">{{ page.lastFeedback.title }}</span>
-                      <code class="text-xs text-muted font-mono mt-1">{{ page.path }}</code>
-                    </div>
-                  </td>
-                  <td class="py-4 px-4 text-center">
-                    <span class="font-medium text-success">{{ page.positive }}</span>
-                  </td>
-                  <td class="py-4 px-4 text-center">
-                    <span class="font-medium text-error">{{ page.negative }}</span>
-                  </td>
-                  <td class="py-4 px-4 text-center">
-                    <span class="font-semibold" :class="getScoreColor(page.averageScore)">
-                      {{ page.averageScore }}/4
-                    </span>
-                  </td>
-                  <td class="py-4 px-4 text-center">
-                    <div class="font-medium">
-                      {{ page.total }}
-                    </div>
-                  </td>
-                  <td class="py-4 px-4 text-center text-sm text-muted">
-                    {{ new Date(page.lastFeedback.createdAt).toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    }) }}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <UTable
+            ref="table"
+            v-model:pagination="pagination"
+            v-model:sorting="sorting"
+            v-model:global-filter="globalFilter"
+            :data="filteredPageAnalytics"
+            :columns="columns"
+            :pagination-options="{
+              getPaginationRowModel: getPaginationRowModel()
+            }"
+            class="flex-1 cursor-pointer [&_tbody_tr]:cursor-pointer"
+            :ui="{
+              base: 'table-fixed border-separate border-spacing-0',
+              thead: '[&>tr]:bg-elevated/50 [&>tr]:after:content-none',
+              tbody: '[&>tr]:last:[&>td]:border-b-0',
+              th: 'first:rounded-l-lg last:rounded-r-lg border-y border-default first:border-l last:border-r',
+              td: 'border-b border-default'
+            }"
+            @select="(row) => viewPageDetails(row.original)"
+          />
+
+          <div class="flex justify-end border-t border-default pt-4">
+            <UPagination
+              :default-page="(table?.tableApi?.getState().pagination.pageIndex || 0) + 1"
+              :items-per-page="table?.tableApi?.getState().pagination.pageSize"
+              :total="table?.tableApi?.getFilteredRowModel().rows.length"
+              @update:page="(p) => table?.tableApi?.setPageIndex(p - 1)"
+            />
           </div>
         </div>
       </UCard>
     </UContainer>
 
-    <!-- Modal -->
-    <UModal v-model:open="showFeedbackModal">
+    <UModal v-model:open="showFeedbackModal" :ui="{ content: 'max-w-3xl' }">
       <template #content>
-        <UCard v-if="selectedPage" class="sm:max-w-4xl">
+        <UCard v-if="selectedPage">
           <template #header>
-            <div class="flex items-center justify-between">
-              <div>
-                <h3 class="font-semibold text-lg">
+            <div class="flex items-start justify-between gap-4">
+              <div class="flex-1">
+                <h3 class="font-semibold text-xl mb-2">
                   {{ selectedPage.lastFeedback.title }}
                 </h3>
-                <code class="text-sm bg-muted px-2 py-1 rounded mt-2 inline-block">{{ selectedPage.path }}</code>
+                <div class="flex items-center gap-3 flex-wrap">
+                  <code class="text-sm bg-muted px-2 py-1 rounded">{{ selectedPage.path }}</code>
+                  <UButton
+                    v-if="selectedPage.lastFeedback.stem"
+                    size="sm"
+                    variant="solid"
+                    color="primary"
+                    :to="`https://github.com/nuxt/nuxt/edit/main/${selectedPage.lastFeedback.stem.replace('docs/4.x', 'docs')}.md`"
+                    target="_blank"
+                    icon="i-lucide-edit"
+                    class="shadow-sm"
+                    label="Edit page"
+                  />
+                </div>
               </div>
-              <div class="text-right">
-                <div class="text-2xl font-bold" :class="getScoreColor(selectedPage.averageScore)">
+              <div class="text-right flex-shrink-0">
+                <div class="text-3xl font-bold mb-1" :class="getScoreColor(selectedPage.averageScore)">
                   {{ selectedPage.averageScore }}/4
                 </div>
                 <div class="text-sm text-muted">
-                  {{ selectedPage.total }} responses
+                  {{ selectedPage.total }} {{ selectedPage.total === 1 ? 'response' : 'responses' }}
                 </div>
               </div>
             </div>
           </template>
 
-          <div class="grid grid-cols-2 gap-4 mb-6 p-4 bg-muted/20 rounded-lg">
-            <div class="text-center">
-              <div class="text-2xl font-bold text-success">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div class="text-center p-4 bg-muted/20 border border-default rounded-lg">
+              <UIcon name="i-lucide-thumbs-up" class="size-5 text-success mx-auto mb-2" />
+              <div class="text-xl font-bold">
                 {{ selectedPage.positive }}
               </div>
               <div class="text-xs text-muted">
                 Positive
               </div>
             </div>
-            <div class="text-center">
-              <div class="text-2xl font-bold text-error">
+            <div class="text-center p-4 bg-muted/20 border border-default rounded-lg">
+              <UIcon name="i-lucide-thumbs-down" class="size-5 text-error mx-auto mb-2" />
+              <div class="text-xl font-bold">
                 {{ selectedPage.negative }}
               </div>
               <div class="text-xs text-muted">
                 Negative
               </div>
             </div>
+            <div class="text-center p-4 bg-muted/20 border border-default rounded-lg">
+              <UIcon name="i-lucide-target" class="size-5 text-primary mx-auto mb-2" />
+              <div class="text-xl font-bold" :class="getScoreColor(selectedPage.averageScore)">
+                {{ selectedPage.averageScore }}/4
+              </div>
+              <div class="text-xs text-muted">
+                Average Score
+              </div>
+            </div>
           </div>
 
-          <div class="space-y-4 max-h-96 overflow-y-auto">
-            <div
-              v-for="(feedback, index) in [...selectedPage.feedback].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())"
-              :key="index"
-              class="border border-default rounded-lg p-4"
-            >
-              <div class="flex items-center justify-between mb-3">
-                <div class="flex items-center gap-3">
-                  <span class="text-xl">{{ ratingConfig[feedback.rating].emoji }}</span>
-                  <div>
-                    <span class="text-sm font-medium">{{ ratingConfig[feedback.rating].label }}</span>
-                    <div class="text-xs text-muted">
-                      Score: {{ ratingConfig[feedback.rating].score }}/4
-                    </div>
-                  </div>
-                </div>
-                <span class="text-xs text-muted">
-                  {{ new Date(feedback.createdAt).toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  }) }}
-                </span>
+          <div class="space-y-4">
+            <h4 class="text-lg font-semibold mb-4 flex items-center gap-2">
+              <UIcon name="i-lucide-message-square" class="size-5" />
+              Individual Feedback
+            </h4>
+            <div class="space-y-4">
+              <div class="space-y-3">
+                <FeedbackItem
+                  v-for="(feedback, index) in paginatedFeedback"
+                  :key="index"
+                  :feedback="feedback"
+                />
               </div>
-              <p v-if="feedback.feedback" class="text-sm">
-                {{ feedback.feedback }}
-              </p>
-              <p v-else class="text-sm text-muted italic">
-                No additional comment provided
-              </p>
+
+              <div v-if="totalPages > 1" class="flex items-center justify-between pt-4 border-t border-default">
+                <div class="text-sm text-muted">
+                  Showing {{ (currentPage - 1) * itemsPerPage + 1 }}-{{ Math.min(currentPage * itemsPerPage, selectedPage.total) }} of {{ selectedPage.total }} feedbacks
+                </div>
+                <UPagination
+                  v-model:page="currentPage"
+                  :total="selectedPage.total"
+                  :items-per-page="itemsPerPage"
+                  :sibling-count="1"
+                  size="sm"
+                />
+              </div>
             </div>
           </div>
         </UCard>
