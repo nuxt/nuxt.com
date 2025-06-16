@@ -448,6 +448,10 @@ const { selectedPage, showFeedbackModal, currentPage, itemsPerPage, paginatedFee
         </div>
 
         <div class="border-t border-default pt-6">
+          <FeedbackChart :page-analytics="pageAnalytics" />
+        </div>
+
+        <div class="border-t border-default pt-6">
           <div class="flex items-center justify-between mb-4">
             <h2 class="text-xl font-semibold">
               Feedback by Page

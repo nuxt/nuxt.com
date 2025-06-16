@@ -18,7 +18,8 @@ export default defineNuxtConfig({
     'nuxt-og-image',
     'motion-v/nuxt',
     'nuxt-llms',
-    '@nuxthub/core'
+    '@nuxthub/core',
+    'nuxt-charts'
   ],
   $development: {
     site: {
