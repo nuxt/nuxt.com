@@ -29,13 +29,18 @@ type PageAnalytic = {
 }
 
 const { data: rawFeedback } = await useFetch<FeedbackItem[]>('/api/feedback')
+const { filterFeedbackByDateRange } = useDateRange()
 
 function useFeedbackData() {
-  const feedbackData = computed(() =>
+  const allFeedbackData = computed(() =>
     rawFeedback.value?.map(item => ({
       ...item,
       createdAt: new Date(item.createdAt)
     })) || []
+  )
+
+  const feedbackData = computed(() =>
+    filterFeedbackByDateRange(allFeedbackData.value)
   )
 
   const ratingConfig = computed(() => {
@@ -65,7 +70,9 @@ function useFeedbackData() {
   })
 
   const pageAnalytics = computed((): PageAnalytic[] => {
-    const pageGroups: Record<string, FeedbackItem[]> = feedbackData.value.reduce((acc, item) => {
+    const filteredFeedback = filterFeedbackByDateRange(allFeedbackData.value)
+
+    const pageGroups: Record<string, FeedbackItem[]> = filteredFeedback.reduce((acc, item) => {
       if (!acc[item.path]) {
         acc[item.path] = []
       }
@@ -154,13 +161,24 @@ function useAdminTable() {
   }
 
   const filteredPageAnalytics = computed(() => {
-    if (versionFilter.value === 'all') {
-      return pageAnalytics.value
-    } else if (versionFilter.value === 'v3') {
-      return pageAnalytics.value.filter(page => !page.path.includes('docs/4.x'))
-    } else {
-      return pageAnalytics.value.filter(page => page.path.includes('docs/4.x'))
+    let filtered = pageAnalytics.value
+
+    if (versionFilter.value === 'v3') {
+      filtered = filtered.filter(page => !page.path.includes('docs/4.x'))
+    } else if (versionFilter.value === 'v4') {
+      filtered = filtered.filter(page => page.path.includes('docs/4.x'))
     }
+
+    if (globalFilter.value.trim()) {
+      const searchTerm = globalFilter.value.toLowerCase().trim()
+      filtered = filtered.filter((page) => {
+        const title = (page.lastFeedback?.title || '').toLowerCase()
+        const path = page.path.toLowerCase()
+        return title.includes(searchTerm) || path.includes(searchTerm)
+      })
+    }
+
+    return filtered
   })
 
   const columns: TableColumn<PageAnalytic>[] = [
@@ -496,7 +514,6 @@ const { selectedPage, showFeedbackModal, currentPage, itemsPerPage, paginatedFee
             ref="table"
             v-model:pagination="pagination"
             v-model:sorting="sorting"
-            v-model:global-filter="globalFilter"
             :data="filteredPageAnalytics"
             :columns="columns"
             :pagination-options="{

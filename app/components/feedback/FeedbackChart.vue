@@ -17,6 +17,7 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+const { dateRange } = useDateRange()
 
 const viewMode = ref<'all' | 'top'>('top')
 
@@ -26,30 +27,35 @@ const hasValidData = computed(() => {
 
 const chartData = computed(() => {
   const data: any[] = []
-  const today = new Date()
+  const endDate = dateRange.value.end
+  const startDate = dateRange.value.start
 
-  // Calculate real daily averages from feedback data
+  const daysDiff = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
+
   const dailyScores: Record<string, number[]> = {}
 
   if (hasValidData.value) {
-    // Group all feedback by date
     props.pageAnalytics.forEach((page) => {
       page.feedback.forEach((feedback) => {
-        const feedbackDate = new Date(feedback.createdAt).toISOString().split('T')[0]
-        if (!dailyScores[feedbackDate]) {
-          dailyScores[feedbackDate] = []
-        }
+        const feedbackDate = new Date(feedback.createdAt)
 
-        const ratingScore = FEEDBACK_OPTIONS.find(opt => opt.value === feedback.rating)?.score || 0
-        dailyScores[feedbackDate].push(ratingScore)
+        if (feedbackDate >= startDate && feedbackDate <= endDate) {
+          const dateStr = feedbackDate.toISOString().split('T')[0]
+          if (!dailyScores[dateStr]) {
+            dailyScores[dateStr] = []
+          }
+
+          const ratingScore = FEEDBACK_OPTIONS.find(opt => opt.value === feedback.rating)?.score || 0
+          dailyScores[dateStr].push(ratingScore)
+        }
       })
     })
   }
 
   const lastKnownValues: Record<string, number> = {}
 
-  for (let i = 29; i >= 0; i--) {
-    const date = new Date(today)
+  for (let i = daysDiff - 1; i >= 0; i--) {
+    const date = new Date(endDate)
     date.setDate(date.getDate() - i)
     const dateStr = date.toISOString().split('T')[0]
 
@@ -146,6 +152,15 @@ const chartCategories = computed(() => {
 
 const xFormatter = (index: number) => chartData.value[index]?.day || ''
 const yFormatter = (value: number) => value === 0 ? '0' : `${Number(value).toFixed(1)}/4`
+
+const dateRangeLabel = computed(() => {
+  const daysDiff = Math.ceil((dateRange.value.end.getTime() - dateRange.value.start.getTime()) / (1000 * 60 * 60 * 24))
+  if (daysDiff <= 7) return `Last ${daysDiff} days`
+  if (daysDiff <= 31) return `Last ${daysDiff} days`
+  if (daysDiff <= 93) return `Last ${Math.round(daysDiff / 30)} months`
+  if (daysDiff <= 186) return `Last ${Math.round(daysDiff / 30)} months`
+  return `Last ${Math.round(daysDiff / 365)} year${daysDiff > 730 ? 's' : ''}`
+})
 </script>
 
 <template>
@@ -183,13 +198,14 @@ const yFormatter = (value: number) => value === 0 ? '0' : `${Number(value).toFix
       </div>
     </div>
 
-    <div class="rounded-xl overflow-hidden mb-8">
+    <div class="relative rounded-xl overflow-hidden mb-8">
+      <div class="dot-pattern h-[300px] -top-5 left-0 right-0" />
       <LineChart
         :data="chartData"
         :categories="chartCategories"
         :x-formatter="xFormatter"
         :y-formatter="yFormatter"
-        x-label="Last 30 days"
+        :x-label="dateRangeLabel"
         y-label="Rating (out of 4)"
         :show-tooltip="true"
         class="min-h-[300px]"
@@ -216,6 +232,8 @@ const yFormatter = (value: number) => value === 0 ? '0' : `${Number(value).toFix
   --vis-axis-tick-label-color: rgba(255, 255, 255, 0.6) !important;
   --vis-axis-label-color: rgba(255, 255, 255, 0.8) !important;
   --vis-legend-label-color: rgba(255, 255, 255, 0.8) !important;
+
+  --dot-pattern-color: #111827;
 }
 
 .dark {
@@ -224,5 +242,18 @@ const yFormatter = (value: number) => value === 0 ? '0' : `${Number(value).toFix
   --vis-tooltip-text-color: rgba(255, 255, 255, 0.9) !important;
   --vis-tooltip-label-color: rgba(255, 255, 255, 0.7) !important;
   --vis-tooltip-value-color: rgba(255, 255, 255, 1) !important;
+
+  --dot-pattern-color: #9ca3af;
+}
+
+.dot-pattern {
+  position: absolute;
+
+  background-image: radial-gradient(var(--dot-pattern-color) 1px, transparent 1px);
+  background-size: 7px 7px;
+  background-position: -8.5px -8.5px;
+  opacity: 20%;
+
+  mask-image: radial-gradient(ellipse at center, rgba(0, 0, 0, 1), transparent 75%);
 }
 </style>

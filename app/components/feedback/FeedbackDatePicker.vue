@@ -77,7 +77,7 @@ const isRangeSelected = (preset: 'week' | 'month' | '3months' | '6months' | 'yea
         color="neutral"
         variant="outline"
         icon="i-lucide-calendar"
-        class="data-[state=open]:bg-elevated group min-w-[280px]"
+        class="data-[state=open]:bg-elevated group min-w-fit"
       >
         <span class="truncate">
           <template v-if="dateRange.start && dateRange.end">
