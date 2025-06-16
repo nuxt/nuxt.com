@@ -1,5 +1,4 @@
 <script setup lang="ts">
-const route = useRoute()
 const colorMode = useColorMode()
 const { version } = useDocsVersion()
 const { searchGroups, searchLinks, searchTerm } = useNavigation()
