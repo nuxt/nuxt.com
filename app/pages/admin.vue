@@ -399,12 +399,15 @@ const { selectedPage, showFeedbackModal, currentPage, itemsPerPage, paginatedFee
       </div>
 
       <UCard class="max-w-5xl mx-auto">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <FeedbackStatCard
             icon="i-lucide-message-circle"
             :value="globalStats.total"
-            label="Total Feedback"
-            description="All responses"
+            label="Total"
+            :popover-stats="{
+              trend: `${Math.round(globalStats.total / 7)} per day average`,
+              details: 'Total feedback responses across all pages'
+            }"
           />
 
           <FeedbackStatCard
@@ -412,8 +415,11 @@ const { selectedPage, showFeedbackModal, currentPage, itemsPerPage, paginatedFee
             icon-color="text-success"
             :value="globalStats.positive"
             label="Positive"
-            :description="`${globalStats.positivePercentage}% positive`"
-            description-color="text-success"
+            :popover-stats="{
+              percentage: `${globalStats.positivePercentage}% of total`,
+              trend: `${globalStats.positivePercentage >= 70 ? '📈 Excellent' : globalStats.positivePercentage >= 50 ? '✅ Good' : '📉 Needs work'}`,
+              details: 'Very helpful + Helpful responses'
+            }"
           />
 
           <FeedbackStatCard
@@ -421,8 +427,23 @@ const { selectedPage, showFeedbackModal, currentPage, itemsPerPage, paginatedFee
             icon-color="text-error"
             :value="globalStats.negative"
             label="Negative"
-            description="Needs attention"
-            description-color="text-error"
+            :popover-stats="{
+              percentage: `${100 - globalStats.positivePercentage}% of total`,
+              trend: `${globalStats.negative <= 2 ? '🟢 Low volume' : globalStats.negative <= 5 ? '🟡 Moderate' : '🔴 High volume'}`,
+              details: 'Not helpful + Confusing responses'
+            }"
+          />
+
+          <FeedbackStatCard
+            icon="i-lucide-target"
+            icon-color="text-primary"
+            :value="`${globalStats.averageScore}/4`"
+            label="Avg Score"
+            :popover-stats="{
+              percentage: `${Math.round(Number.parseFloat(globalStats.averageScore) / 4 * 100)}% satisfaction`,
+              trend: `${Number.parseFloat(globalStats.averageScore) >= 3.5 ? '🎯 Excellent' : Number.parseFloat(globalStats.averageScore) >= 3.0 ? '👍 Good' : '⚠️ Needs work'}`,
+              details: 'Weighted average of all ratings'
+            }"
           />
         </div>
 
@@ -534,34 +555,42 @@ const { selectedPage, showFeedbackModal, currentPage, itemsPerPage, paginatedFee
             </div>
           </template>
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-            <div class="text-center p-4 bg-muted/20 border border-default rounded-lg">
-              <UIcon name="i-lucide-thumbs-up" class="size-5 text-success mx-auto mb-2" />
-              <div class="text-xl font-bold">
-                {{ selectedPage.positive }}
-              </div>
-              <div class="text-xs text-muted">
-                Positive
-              </div>
-            </div>
-            <div class="text-center p-4 bg-muted/20 border border-default rounded-lg">
-              <UIcon name="i-lucide-thumbs-down" class="size-5 text-error mx-auto mb-2" />
-              <div class="text-xl font-bold">
-                {{ selectedPage.negative }}
-              </div>
-              <div class="text-xs text-muted">
-                Negative
-              </div>
-            </div>
-            <div class="text-center p-4 bg-muted/20 border border-default rounded-lg">
-              <UIcon name="i-lucide-target" class="size-5 text-primary mx-auto mb-2" />
-              <div class="text-xl font-bold" :class="getScoreColor(selectedPage.averageScore)">
-                {{ selectedPage.averageScore }}/4
-              </div>
-              <div class="text-xs text-muted">
-                Average Score
-              </div>
-            </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
+            <FeedbackStatCard
+              icon="i-lucide-thumbs-up"
+              icon-color="text-success"
+              :value="selectedPage.positive"
+              label="Positive"
+              :popover-stats="{
+                percentage: `${selectedPage.positivePercentage}% of responses`,
+                trend: `${selectedPage.positivePercentage >= 70 ? '📈 Excellent' : selectedPage.positivePercentage >= 50 ? '✅ Good' : '📉 Poor'}`,
+                details: 'Users found this page helpful'
+              }"
+            />
+
+            <FeedbackStatCard
+              icon="i-lucide-thumbs-down"
+              icon-color="text-error"
+              :value="selectedPage.negative"
+              label="Negative"
+              :popover-stats="{
+                percentage: `${100 - selectedPage.positivePercentage}% of responses`,
+                trend: `${selectedPage.negative <= 1 ? '🟢 Low' : selectedPage.negative <= 3 ? '🟡 Moderate' : '🔴 High'}`,
+                details: 'Users found issues with this page'
+              }"
+            />
+
+            <FeedbackStatCard
+              icon="i-lucide-target"
+              icon-color="text-primary"
+              :value="`${selectedPage.averageScore}/4`"
+              label="Average Score"
+              :popover-stats="{
+                percentage: `${Math.round(selectedPage.averageScore / 4 * 100)}% satisfaction`,
+                trend: `${selectedPage.averageScore >= 3.5 ? '🎯 Excellent' : selectedPage.averageScore >= 3.0 ? '👍 Good' : '⚠️ Poor'}`,
+                details: `Based on ${selectedPage.total} ${selectedPage.total === 1 ? 'response' : 'responses'}`
+              }"
+            />
           </div>
 
           <div class="space-y-4">
