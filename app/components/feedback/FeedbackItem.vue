@@ -1,28 +1,13 @@
 <script setup lang="ts">
-type FeedbackItem = FeedbackSubmission & {
-  updatedAt: Date
-  createdAt: Date
-  country?: string
-}
-
 interface Props {
   feedback: FeedbackItem
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 
-const ratingConfig = computed(() => {
-  return FEEDBACK_OPTIONS.reduce((acc, option) => {
-    acc[option.value] = option
-    return acc
-  }, {} as Record<FeedbackRating, typeof FEEDBACK_OPTIONS[0]>)
-})
+const { getRatingFromFeedback, getScoreColor } = useFeedbackRatings()
 
-function getScoreColor(score: number) {
-  if (score >= 4.0) return 'text-success'
-  if (score >= 3.0) return 'text-warning'
-  return 'text-error'
-}
+const rating = computed(() => getRatingFromFeedback(props.feedback))
 </script>
 
 <template>
@@ -30,14 +15,14 @@ function getScoreColor(score: number) {
     <div class="flex items-start justify-between mb-3">
       <div class="flex items-center gap-3">
         <div class="flex flex-col items-center">
-          <span class="text-2xl">{{ ratingConfig[feedback.rating].emoji }}</span>
-          <span class="text-xs font-bold" :class="getScoreColor(ratingConfig[feedback.rating].score)">
-            {{ ratingConfig[feedback.rating].score }}/4
+          <span class="text-2xl">{{ rating.emoji }}</span>
+          <span class="text-xs font-bold" :class="getScoreColor(rating.score)">
+            {{ rating.score }}/4
           </span>
         </div>
         <div>
           <div class="flex items-center gap-2 mb-1">
-            <span class="text-sm font-medium">{{ ratingConfig[feedback.rating].label }}</span>
+            <span class="text-sm font-medium">{{ rating.label }}</span>
           </div>
           <div class="flex items-center gap-3 text-xs text-muted">
             <span class="flex items-center gap-1">

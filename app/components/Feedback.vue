@@ -15,7 +15,7 @@ const {
   isSubmitting,
   handleRatingSelect,
   submitFeedback
-} = useFeedback(props)
+} = useFeedbackForm(props)
 </script>
 
 <template>

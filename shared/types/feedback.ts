@@ -31,6 +31,25 @@ export interface FeedbackSubmission {
   stem: string
 }
 
+export type FeedbackItem = FeedbackSubmission & {
+  updatedAt: Date
+  createdAt: Date
+  country?: string
+}
+
+export type PageAnalytic = {
+  path: string
+  total: number
+  positive: number
+  negative: number
+  averageScore: number
+  positivePercentage: number
+  feedback: FeedbackItem[]
+  lastFeedback: FeedbackItem
+  createdAt: Date
+  updatedAt: Date
+}
+
 export const feedbackSchema = z.object({
   rating: z.enum(FEEDBACK_RATINGS),
   feedback: z.string().optional(),

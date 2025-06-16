@@ -17,122 +17,7 @@ definePageMeta({
   middleware: 'auth'
 })
 
-type FeedbackItem = FeedbackSubmission & {
-  updatedAt: Date
-  createdAt: Date
-  country?: string
-}
-
-type PageAnalytic = {
-  path: string
-  total: number
-  positive: number
-  negative: number
-  averageScore: number
-  positivePercentage: number
-  feedback: FeedbackItem[]
-  lastFeedback: FeedbackItem
-  createdAt: Date
-  updatedAt: Date
-}
-
 const { data: rawFeedback } = await useFetch<FeedbackItem[]>('/api/feedback')
-const { filterFeedbackByDateRange } = useDateRange()
-
-function useFeedbackData() {
-  const allFeedbackData = computed(() =>
-    rawFeedback.value?.map(item => ({
-      ...item,
-      createdAt: new Date(item.createdAt),
-      updatedAt: new Date(item.updatedAt)
-    })) || []
-  )
-
-  const feedbackData = computed(() =>
-    filterFeedbackByDateRange(allFeedbackData.value)
-  )
-
-  const ratingConfig = computed(() => {
-    return FEEDBACK_OPTIONS.reduce((acc, option) => {
-      acc[option.value] = option
-      return acc
-    }, {} as Record<FeedbackRating, typeof FEEDBACK_OPTIONS[0]>)
-  })
-
-  const globalStats = computed(() => {
-    const total = feedbackData.value.length
-    const positive = feedbackData.value.filter(f => ['very-helpful', 'helpful'].includes(f.rating)).length
-    const negative = feedbackData.value.filter(f => ['not-helpful', 'confusing'].includes(f.rating)).length
-
-    const totalScore = feedbackData.value.reduce((sum, item) => sum + ratingConfig.value[item.rating].score, 0)
-    const averageScore = total > 0 ? (totalScore / total).toFixed(1) : '0.0'
-
-    const positivePercentage = total > 0 ? Math.round((positive / total) * 100) : 0
-
-    return {
-      total,
-      positive,
-      negative,
-      averageScore,
-      positivePercentage
-    }
-  })
-
-  const pageAnalytics = computed((): PageAnalytic[] => {
-    const filteredFeedback = filterFeedbackByDateRange(allFeedbackData.value)
-
-    const pageGroups: Record<string, FeedbackItem[]> = filteredFeedback.reduce((acc, item) => {
-      if (!acc[item.path]) {
-        acc[item.path] = []
-      }
-      acc[item.path].push(item)
-      return acc
-    }, {} as Record<string, FeedbackItem[]>)
-
-    return Object.entries(pageGroups).map(([path, feedback]) => {
-      const total = feedback.length
-      const positive = feedback.filter(f => ['very-helpful', 'helpful'].includes(f.rating)).length
-      const negative = feedback.filter(f => ['not-helpful', 'confusing'].includes(f.rating)).length
-
-      const totalScore = feedback.reduce((sum, item) => sum + ratingConfig.value[item.rating].score, 0)
-      const averageScore = total > 0 ? (totalScore / total).toFixed(1) : '0.0'
-
-      const positivePercentage = total > 0 ? Math.round((positive / total) * 100) : 0
-
-      const sortedFeedback = feedback.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
-      const oldestFeedback = feedback.reduce((oldest, current) =>
-        new Date(current.createdAt) < new Date(oldest.createdAt) ? current : oldest
-      )
-
-      return {
-        path,
-        total,
-        positive,
-        negative,
-        averageScore: Number.parseFloat(averageScore),
-        positivePercentage,
-        feedback,
-        lastFeedback: sortedFeedback[0],
-        createdAt: new Date(oldestFeedback.createdAt),
-        updatedAt: new Date(sortedFeedback[0].updatedAt)
-      }
-    }).sort((a, b) => b.total - a.total)
-  })
-
-  function getScoreColor(score: number) {
-    if (score >= 4.0) return 'text-success'
-    if (score >= 3.0) return 'text-warning'
-    return 'text-error'
-  }
-
-  return {
-    feedbackData,
-    ratingConfig,
-    globalStats,
-    pageAnalytics,
-    getScoreColor
-  }
-}
 
 function useAdminTable() {
   const table = useTemplateRef<any>('table')
@@ -366,48 +251,8 @@ function useAdminTable() {
   }
 }
 
-function useFeedbackModal() {
-  const selectedPage = ref<PageAnalytic | null>(null)
-  const showFeedbackModal = ref(false)
-  const currentPage = ref(1)
-  const itemsPerPage = 5
-
-  const paginatedFeedback = computed(() => {
-    if (!selectedPage.value) return []
-
-    const sortedFeedback = [...selectedPage.value.feedback].sort((a, b) =>
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    )
-
-    const startIndex = (currentPage.value - 1) * itemsPerPage
-    const endIndex = startIndex + itemsPerPage
-
-    return sortedFeedback.slice(startIndex, endIndex)
-  })
-
-  const totalPages = computed(() => {
-    if (!selectedPage.value) return 0
-    return Math.ceil(selectedPage.value.feedback.length / itemsPerPage)
-  })
-
-  function viewPageDetails(page: PageAnalytic) {
-    selectedPage.value = page
-    currentPage.value = 1
-    showFeedbackModal.value = true
-  }
-
-  return {
-    selectedPage,
-    showFeedbackModal,
-    currentPage,
-    itemsPerPage,
-    paginatedFeedback,
-    totalPages,
-    viewPageDetails
-  }
-}
-
-const { globalStats, pageAnalytics, getScoreColor } = useFeedbackData()
+const { globalStats, pageAnalytics } = useFeedbackData(rawFeedback)
+const { getScoreColor } = useFeedbackRatings()
 const { table, pagination, sorting, globalFilter, columns, resetFilters, filterByVersion, filteredPageAnalytics, versionFilter } = useAdminTable()
 const { selectedPage, showFeedbackModal, currentPage, itemsPerPage, paginatedFeedback, totalPages, viewPageDetails } = useFeedbackModal()
 </script>
@@ -487,8 +332,8 @@ const { selectedPage, showFeedbackModal, currentPage, itemsPerPage, paginatedFee
             :value="`${globalStats.averageScore}/4`"
             label="Avg Score"
             :popover-stats="{
-              percentage: `${Math.round(Number.parseFloat(globalStats.averageScore) / 4 * 100)}% satisfaction`,
-              trend: `${Number.parseFloat(globalStats.averageScore) >= 3.5 ? '🎯 Excellent' : Number.parseFloat(globalStats.averageScore) >= 3.0 ? '👍 Good' : '⚠️ Needs work'}`,
+              percentage: `${Math.round(globalStats.averageScore / 4 * 100)}% satisfaction`,
+              trend: `${globalStats.averageScore >= 3.5 ? '🎯 Excellent' : globalStats.averageScore >= 3.0 ? '👍 Good' : '⚠️ Needs work'}`,
               details: 'Weighted average of all ratings'
             }"
           />
