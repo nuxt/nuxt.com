@@ -236,11 +236,11 @@ const chartCategories = computed(() => {
     return {
       positive: {
         name: 'Positive',
-        color: '#22c55e'
+        color: 'var(--ui-success)'
       },
       negative: {
         name: 'Negative',
-        color: '#ef4444'
+        color: 'var(--ui-error)'
       }
     }
   }
@@ -392,28 +392,30 @@ function selectWorstPages(count: number) {
     .slice(0, count)
   selectedPagePaths.value = pages.map(p => p.path)
 }
-
-function clearSearch() {
-  pageSearchQuery.value = ''
-}
 </script>
 
 <template>
   <div class="space-y-6">
-    <div class="flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <UIcon :name="chartIcon" class="size-5 text-primary" />
-        <div>
-          <h3 class="text-lg font-semibold">
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      <Motion
+        :key="`header-${chartType}`"
+        :initial="{ opacity: 0, y: 10 }"
+        :animate="{ opacity: 1, y: 0 }"
+        :transition="{ duration: 0.4, ease: 'easeInOut' }"
+        class="flex items-center gap-3"
+      >
+        <UIcon :name="chartIcon" class="size-6 sm:size-5 text-primary shrink-0" />
+        <div class="min-w-0">
+          <h3 class="text-lg font-semibold truncate">
             {{ chartTitle }}
           </h3>
           <p class="text-sm text-muted">
             {{ chartDescription }}
           </p>
         </div>
-      </div>
+      </Motion>
 
-      <div class="flex items-center gap-2">
+      <div class="flex items-center max-sm:flex-row-reverse max-sm:justify-end gap-2 flex-wrap">
         <AnimatePresence mode="wait">
           <Motion
             v-if="chartType !== 'overall'"
@@ -460,7 +462,6 @@ function clearSearch() {
         :x-label="dateRangeLabel"
         y-label="Rating (out of 4)"
         :show-tooltip="true"
-        class="min-h-[300px]"
       />
 
       <LineChart
@@ -502,36 +503,44 @@ function clearSearch() {
       <template #content>
         <UCard>
           <template #header>
+            <UButton
+              size="sm"
+              variant="ghost"
+              color="neutral"
+              icon="i-lucide-x"
+              class="absolute top-2 right-2"
+              @click="showPageSelector = false"
+            />
             <div class="space-y-3">
               <h3 class="text-lg font-semibold">
                 Select Pages to {{ chartType === 'line' ? 'Track' : 'Compare' }}
               </h3>
-              <div class="flex items-center gap-3 flex-wrap">
+              <div class="flex items-center gap-2 flex-wrap">
                 <span class="text-sm text-muted font-medium">Quick select:</span>
                 <UButton
                   size="sm"
-                  variant="ghost"
+                  variant="soft"
                   color="neutral"
                   label="Best Rated 5"
                   @click="selectBestRatedPages(5)"
                 />
                 <UButton
                   size="sm"
-                  variant="ghost"
+                  variant="soft"
                   color="neutral"
                   label="Most Popular 5"
                   @click="selectTopPages(5)"
                 />
                 <UButton
                   size="sm"
-                  variant="ghost"
+                  variant="soft"
                   color="neutral"
                   label="Worst Rated 5"
                   @click="selectWorstPages(5)"
                 />
                 <UButton
                   size="sm"
-                  variant="ghost"
+                  variant="soft"
                   color="neutral"
                   label="Worst Rated 10"
                   @click="selectWorstPages(10)"
@@ -543,12 +552,22 @@ function clearSearch() {
           <div class="mb-4">
             <UInput
               v-model="pageSearchQuery"
-              placeholder="Search pages by title or path..."
+              placeholder="Search pages..."
               icon="i-lucide-search"
-              :trailing-icon="pageSearchQuery ? 'i-lucide-x' : undefined"
               class="w-full"
-              @trailing-click="clearSearch"
-            />
+              :ui="{ trailing: 'pe-1' }"
+            >
+              <template v-if="pageSearchQuery?.length" #trailing>
+                <UButton
+                  color="neutral"
+                  variant="link"
+                  size="sm"
+                  icon="i-lucide-circle-x"
+                  aria-label="Clear input"
+                  @click="pageSearchQuery = ''"
+                />
+              </template>
+            </UInput>
           </div>
 
           <div class="space-y-3 max-h-96 overflow-y-auto">
@@ -559,25 +578,25 @@ function clearSearch() {
               :class="{ 'bg-primary/5 border-primary/20 hover:bg-primary/10': selectedPagePaths.includes(page.path) }"
               @click="togglePageSelection(page.path)"
             >
-              <div class="flex items-center gap-3 flex-1">
+              <div class="flex items-center gap-3 flex-1 min-w-0">
                 <UCheckbox
                   :model-value="selectedPagePaths.includes(page.path)"
                   @update:model-value="togglePageSelection(page.path)"
                 />
-                <div class="flex-1">
-                  <div class="font-medium text-sm">
+                <div class="flex-1 min-w-0">
+                  <div class="font-medium text-sm truncate">
                     {{ page.title }}
                   </div>
-                  <code class="text-xs text-muted">{{ page.path }}</code>
+                  <code class="text-xs text-muted truncate block">{{ page.path }}</code>
                 </div>
               </div>
-              <div class="flex items-center gap-4 text-sm">
+              <div class="flex items-center gap-2 sm:gap-4 text-sm shrink-0">
                 <div class="text-center">
                   <div class="font-semibold">
                     {{ page.total }}
                   </div>
                   <div class="text-muted text-xs">
-                    responses
+                    resp.
                   </div>
                 </div>
                 <div class="text-center">
@@ -585,28 +604,19 @@ function clearSearch() {
                     {{ page.score.toFixed(1) }}/4
                   </div>
                   <div class="text-muted text-xs">
-                    avg score
+                    score
                   </div>
                 </div>
               </div>
             </div>
 
-            <div v-if="availablePages.length === 0" class="text-center py-8 text-muted">
-              <UIcon name="i-lucide-search-x" class="size-8 mx-auto mb-2" />
-              <p>No pages found matching "{{ pageSearchQuery }}"</p>
+            <div v-if="availablePages.length === 0" class="text-center py-8">
+              <UIcon name="i-lucide-search-x" class="size-8 text-muted mx-auto mb-2" />
+              <p class="text-sm text-muted">
+                No pages found matching your search
+              </p>
             </div>
           </div>
-
-          <template #footer>
-            <div class="flex justify-between items-center">
-              <div class="text-sm text-muted">
-                {{ selectedPagePaths.length }} pages selected
-              </div>
-              <UButton @click="showPageSelector = false">
-                Done
-              </UButton>
-            </div>
-          </template>
         </UCard>
       </template>
     </UModal>
@@ -622,9 +632,9 @@ function clearSearch() {
   --vis-tooltip-value-color: rgba(0, 0, 0, 1) !important;
 
   --vis-axis-grid-color: rgba(255, 255, 255, 0.1) !important;
-  --vis-axis-tick-label-color: rgba(255, 255, 255, 0.6) !important;
-  --vis-axis-label-color: rgba(255, 255, 255, 0.8) !important;
-  --vis-legend-label-color: rgba(255, 255, 255, 0.8) !important;
+  --vis-axis-tick-label-color:  var(--ui-text-muted) !important;
+  --vis-axis-label-color: var(--ui-text-toned) !important;
+  --vis-legend-label-color: var(--ui-text-muted) !important;
 
   --dot-pattern-color: #111827;
 }
