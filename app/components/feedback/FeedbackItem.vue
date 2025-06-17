@@ -3,15 +3,36 @@ interface Props {
   feedback: FeedbackItem
 }
 
+interface Emits {
+  (e: 'delete', id: number): void
+}
+
 const props = defineProps<Props>()
+
+const emit = defineEmits<Emits>()
 
 const { getRatingFromFeedback, getScoreColor } = useFeedbackRatings()
 
 const rating = computed(() => getRatingFromFeedback(props.feedback))
+
+const isDeleting = ref(false)
+
+async function handleDelete() {
+  if (!confirm('Are you sure you want to delete this feedback?')) {
+    return
+  }
+
+  isDeleting.value = true
+  try {
+    emit('delete', props.feedback.id)
+  } finally {
+    isDeleting.value = false
+  }
+}
 </script>
 
 <template>
-  <div class="border border-default rounded-lg p-4 hover:bg-muted/20 transition-colors">
+  <div class="border border-default rounded-lg p-4">
     <div class="flex items-start justify-between mb-3">
       <div class="flex items-center gap-3">
         <div class="flex flex-col items-center">
@@ -42,6 +63,15 @@ const rating = computed(() => getRatingFromFeedback(props.feedback))
           </div>
         </div>
       </div>
+      <UButton
+        color="error"
+        variant="ghost"
+        size="sm"
+        icon="i-lucide-trash-2"
+        :loading="isDeleting"
+        :disabled="isDeleting"
+        @click="handleDelete"
+      />
     </div>
 
     <div v-if="feedback.feedback" class="text-sm leading-relaxed bg-muted/30 rounded p-3">

@@ -11,7 +11,16 @@ async function logout() {
   navigateTo('/admin/login')
 }
 
-const { data: rawFeedback } = await useFetch<FeedbackItem[]>('/api/feedback')
+const { data: rawFeedback, refresh: refreshFeedback } = await useFetch<FeedbackItem[]>('/api/feedback')
+const { deleteFeedback } = useFeedbackDelete()
+
+async function handleDeleteFeedback(feedbackId: number) {
+  const success = await deleteFeedback(feedbackId)
+  if (success) {
+    await refreshFeedback()
+  }
+  showFeedbackModal.value = false
+}
 
 function useAdminTable() {
   const table = useTemplateRef<any>('table')
@@ -492,6 +501,8 @@ const { selectedPage, showFeedbackModal, currentPage, itemsPerPage, paginatedFee
                   v-for="(feedback, index) in paginatedFeedback"
                   :key="index"
                   :feedback="feedback"
+                  show-delete
+                  @delete="handleDeleteFeedback"
                 />
               </div>
 

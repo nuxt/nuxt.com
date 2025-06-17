@@ -32,6 +32,7 @@ export interface FeedbackSubmission {
 }
 
 export type FeedbackItem = FeedbackSubmission & {
+  id: number
   updatedAt: Date
   createdAt: Date
   country?: string

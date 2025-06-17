@@ -146,6 +146,42 @@ export function useFeedbackModal() {
   }
 }
 
+// === Delete Management ===
+export function useFeedbackDelete() {
+  const toast = useToast()
+
+  async function deleteFeedback(id: number): Promise<boolean> {
+    try {
+      await $fetch(`/api/feedback/${id}`, {
+        method: 'DELETE'
+      })
+
+      toast.add({
+        title: 'Feedback deleted',
+        description: 'The feedback has been successfully removed',
+        color: 'success',
+        icon: 'i-lucide-check'
+      })
+
+      return true
+    } catch (error) {
+      console.error('Failed to delete feedback:', error)
+      toast.add({
+        title: 'Failed to delete feedback',
+        description: 'Please try again later',
+        color: 'error',
+        icon: 'i-lucide-circle-alert'
+      })
+
+      return false
+    }
+  }
+
+  return {
+    deleteFeedback
+  }
+}
+
 // === Form Submission ===
 interface UseFeedbackFormOptions {
   page: {
