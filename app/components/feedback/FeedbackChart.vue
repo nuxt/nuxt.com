@@ -486,10 +486,8 @@ function clearSearch() {
         :x-label="dateRangeLabel"
         y-label="Feedback Count"
         :height="300"
-        :group-padding="0"
         :bar-padding="0.2"
-        :radius="4"
-        :y-grid-line="true"
+        :y-grid-line="false"
         class="min-h-[300px]"
       />
     </div>
