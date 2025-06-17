@@ -418,18 +418,17 @@ const { selectedPage, showFeedbackModal, currentPage, itemsPerPage, paginatedFee
                 <h3 class="font-semibold text-xl mb-2">
                   {{ selectedPage.lastFeedback.title }}
                 </h3>
-                <div class="flex items-center gap-3 flex-wrap">
+                <div class="flex items-center gap-1 flex-wrap">
                   <code class="text-sm bg-muted px-2 py-1 rounded">{{ selectedPage.path }}</code>
                   <UButton
                     v-if="selectedPage.lastFeedback.stem"
                     size="sm"
-                    variant="solid"
-                    color="primary"
+                    variant="ghost"
+                    color="neutral"
                     :to="`https://github.com/nuxt/nuxt/edit/main/${selectedPage.lastFeedback.stem.replace('docs/4.x', 'docs')}.md`"
                     target="_blank"
-                    icon="i-lucide-edit"
+                    icon="i-simple-icons-github"
                     class="shadow-sm"
-                    label="Edit page"
                   />
                 </div>
               </div>

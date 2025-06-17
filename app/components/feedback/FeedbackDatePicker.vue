@@ -1,10 +1,16 @@
 <script setup lang="ts">
-import { DateFormatter, getLocalTimeZone, CalendarDate, today } from '@internationalized/date'
+import { getLocalTimeZone, CalendarDate, today } from '@internationalized/date'
+import { formatDateRange } from 'little-date'
 
 const { dateRange, setDateRange, setPresetRange } = useDateRange()
 
-const df = new DateFormatter('en-US', {
-  dateStyle: 'medium'
+const formattedDateRange = computed(() => {
+  if (dateRange.value.start && dateRange.value.end) {
+    return formatDateRange(dateRange.value.start, dateRange.value.end, {
+      includeTime: false
+    })
+  }
+  return null
 })
 
 const ranges = [
@@ -80,8 +86,8 @@ const isRangeSelected = (preset: 'week' | 'month' | '3months' | '6months' | 'yea
         class="data-[state=open]:bg-elevated group min-w-fit"
       >
         <span class="truncate">
-          <template v-if="dateRange.start && dateRange.end">
-            {{ df.format(dateRange.start) }} - {{ df.format(dateRange.end) }}
+          <template v-if="formattedDateRange">
+            {{ formattedDateRange }}
           </template>
           <template v-else>
             Pick a date range

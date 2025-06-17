@@ -32,6 +32,7 @@
     "date-fns": "^4.1.0",
     "drizzle-orm": "^0.44.2",
     "feed": "^5.1.0",
+    "little-date": "^1.0.0",
     "motion-v": "1.2.1",
     "nuxt": "^3.17.5",
     "nuxt-auth-utils": "0.5.20",
