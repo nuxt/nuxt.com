@@ -15,7 +15,7 @@ const {
   isSubmitting,
   handleRatingSelect,
   submitFeedback
-} = useFeedback(props)
+} = useFeedbackForm(props)
 </script>
 
 <template>
@@ -117,22 +117,25 @@ const {
                 :transition="{ delay: 0.15, duration: 0.2 }"
                 class="space-y-1"
               >
-                <UForm :state="formState" @submit="submitFeedback">
-                  <label for="feedback-textarea" class="sr-only">
-                    Additional feedback (optional)
-                  </label>
-                  <UTextarea
-                    id="feedback-textarea"
-                    ref="textareaRef"
-                    v-model="formState.feedback"
-                    class="w-full rounded-xl text-sm leading-relaxed resize-vertical"
-                    placeholder="Share your thoughts... (optional)"
-                    :rows="4"
-                    aria-describedby="feedback-help"
-                  />
-                  <div id="feedback-help" class="sr-only">
-                    Provide additional details about your experience with this page
-                  </div>
+                <UForm :state="formState" :schema="feedbackFormSchema" @submit="submitFeedback">
+                  <UFormField name="feedback">
+                    <label for="feedback-textarea" class="sr-only">
+                      Additional feedback (optional)
+                    </label>
+                    <UTextarea
+                      id="feedback-textarea"
+                      ref="textareaRef"
+                      v-model="formState.feedback"
+                      class="w-full rounded-xl text-sm leading-relaxed resize-vertical"
+                      placeholder="Share your thoughts... (optional)"
+                      :rows="4"
+                      autoresize
+                      aria-describedby="feedback-help"
+                    />
+                    <div id="feedback-help" class="sr-only">
+                      Provide additional details about your experience with this page
+                    </div>
+                  </UFormField>
                   <div class="flex items-center mt-2">
                     <div class="flex gap-2">
                       <UButton

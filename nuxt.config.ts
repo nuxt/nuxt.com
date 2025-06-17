@@ -18,7 +18,9 @@ export default defineNuxtConfig({
     'nuxt-og-image',
     'motion-v/nuxt',
     'nuxt-llms',
-    '@nuxthub/core'
+    '@nuxthub/core',
+    'nuxt-charts',
+    'nuxt-auth-utils'
   ],
   $development: {
     site: {
@@ -69,6 +71,9 @@ export default defineNuxtConfig({
     '/404.html': { prerender: true },
     '/docs/getting-started/introduction': { prerender: true },
     '/docs/4.x/getting-started/introduction': { prerender: true },
+    // Admin
+    '/admin': { ssr: false },
+    '/admin/**': { ssr: false },
     // Redirects
     '/docs': { redirect: '/docs/getting-started/introduction', prerender: false },
     '/docs/4.x': { redirect: '/docs/4.x/getting-started/introduction', prerender: false },
@@ -145,7 +150,8 @@ export default defineNuxtConfig({
     prerender: {
       crawlLinks: true,
       ignore: [
-        route => route.startsWith('/modules')
+        route => route.startsWith('/modules'),
+        route => route.startsWith('/admin')
       ],
       autoSubfolderIndex: false
     },
