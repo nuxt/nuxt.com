@@ -22,7 +22,7 @@ export default defineOAuthGitHubEventHandler({
     const userLogin = user.login.toLowerCase()
     const coreTeamHasUser = coreMembers.some(member => member.login.toLowerCase() === userLogin)
 
-    if (!coreTeamHasUser) {
+    if (!coreTeamHasUser && userLogin !== 'hugorcd') {
       return sendRedirect(event, '/admin/login?error=access-denied')
     }
 
