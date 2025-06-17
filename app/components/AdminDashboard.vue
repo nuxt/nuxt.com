@@ -261,11 +261,9 @@ const { selectedPage, showFeedbackModal, currentPage, itemsPerPage, paginatedFee
 const feedbackContainer = useTemplateRef<HTMLElement>('feedbackContainer')
 
 watch(currentPage, () => {
-  nextTick(() => {
-    if (feedbackContainer.value) {
-      feedbackContainer.value.scrollTop = 0
-    }
-  })
+  if (feedbackContainer.value) {
+    feedbackContainer.value.scrollTop = 0
+  }
 })
 </script>
 
