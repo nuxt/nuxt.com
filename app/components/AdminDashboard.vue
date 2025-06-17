@@ -463,7 +463,6 @@ watch(currentPage, () => {
                   :to="`https://github.com/nuxt/nuxt/edit/main/${selectedPage.lastFeedback.stem.replace('docs/4.x', 'docs')}.md`"
                   target="_blank"
                   icon="i-simple-icons-github"
-                  class="shadow-sm"
                 />
               </div>
             </div>
