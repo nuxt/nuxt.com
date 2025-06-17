@@ -428,7 +428,17 @@ const { selectedPage, showFeedbackModal, currentPage, itemsPerPage, paginatedFee
                   {{ selectedPage.lastFeedback.title }}
                 </h3>
                 <div class="flex items-center gap-1 flex-wrap">
-                  <code class="text-sm bg-muted px-2 py-1 rounded">{{ selectedPage.path }}</code>
+                  <ULink :to="`https://nuxt.com${selectedPage.path}`" target="_blank">
+                    <code class="text-sm bg-muted px-2 py-1 rounded">{{ selectedPage.path }}</code>
+                  </ULink>
+                  <UButton
+                    size="sm"
+                    variant="ghost"
+                    color="neutral"
+                    icon="i-lucide-link"
+                    :to="`https://nuxt.com${selectedPage.path}`"
+                    target="_blank"
+                  />
                   <UButton
                     v-if="selectedPage.lastFeedback.stem"
                     size="sm"
