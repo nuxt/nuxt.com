@@ -435,7 +435,7 @@ const { selectedPage, showFeedbackModal, currentPage, itemsPerPage, paginatedFee
                     size="sm"
                     variant="ghost"
                     color="neutral"
-                    icon="i-lucide-link"
+                    icon="i-lucide-external-link"
                     :to="`https://nuxt.com${selectedPage.path}`"
                     target="_blank"
                   />
@@ -506,7 +506,7 @@ const { selectedPage, showFeedbackModal, currentPage, itemsPerPage, paginatedFee
               Individual Feedback
             </h4>
             <div class="space-y-4">
-              <div class="space-y-3">
+              <div class="space-y-3 max-h-[400px] overflow-y-auto">
                 <FeedbackItem
                   v-for="(feedback, index) in paginatedFeedback"
                   :key="index"
