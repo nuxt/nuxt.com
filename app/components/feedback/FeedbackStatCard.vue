@@ -23,7 +23,7 @@ withDefaults(defineProps<Props>(), {
 <template>
   <UPopover mode="hover" arrow :open-delay="300" :close-delay="200">
     <div class="flex items-center gap-3 px-4 py-3 bg-muted/20 rounded-lg border border-default cursor-pointer hover:bg-muted/30 transition-colors">
-      <UIcon :name="icon" :class="`size-6 ${iconColor}`" />
+      <UIcon :name="icon" :class="`size-6 ${iconColor} shrink-0`" />
       <div>
         <div class="text-xl font-bold">
           {{ value }}

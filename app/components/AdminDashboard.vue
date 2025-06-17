@@ -255,9 +255,18 @@ function useAdminTable() {
 }
 
 const { globalStats, pageAnalytics } = useFeedbackData(rawFeedback)
-const { getScoreColor } = useFeedbackRatings()
 const { table, pagination, sorting, globalFilter, columns, resetFilters, filterByVersion, filteredPageAnalytics, versionFilter } = useAdminTable()
 const { selectedPage, showFeedbackModal, currentPage, itemsPerPage, paginatedFeedback, totalPages, viewPageDetails } = useFeedbackModal()
+
+const feedbackContainer = useTemplateRef<HTMLElement>('feedbackContainer')
+
+watch(currentPage, () => {
+  nextTick(() => {
+    if (feedbackContainer.value) {
+      feedbackContainer.value.scrollTop = 0
+    }
+  })
+})
 </script>
 
 <template>
@@ -347,14 +356,14 @@ const { selectedPage, showFeedbackModal, currentPage, itemsPerPage, paginatedFee
         </div>
 
         <div class="border-t border-default pt-6">
-          <div class="flex items-center justify-between mb-4">
+          <div class="flex sm:items-center justify-between flex-col sm:flex-row mb-4 gap-4">
             <h2 class="text-xl font-semibold">
               Feedback by Page
             </h2>
             <div class="flex items-center gap-2">
               <UInput
                 v-model="globalFilter"
-                class="max-w-sm"
+                class="flex-1 max-w-sm"
                 placeholder="Search pages..."
                 icon="i-lucide-search"
               />
@@ -418,51 +427,72 @@ const { selectedPage, showFeedbackModal, currentPage, itemsPerPage, paginatedFee
       </UCard>
     </UContainer>
 
-    <UModal v-model:open="showFeedbackModal" :ui="{ content: 'max-w-3xl' }">
+    <UModal v-model:open="showFeedbackModal" :ui="{ content: 'max-w-3xl max-sm:max-h-[85vh] overflow-y-auto' }">
       <template #content>
         <UCard v-if="selectedPage">
           <template #header>
-            <div class="flex items-start justify-between gap-4">
-              <div class="flex-1">
-                <h3 class="font-semibold text-xl mb-2">
-                  {{ selectedPage.lastFeedback.title }}
-                </h3>
-                <div class="flex items-center gap-1 flex-wrap">
-                  <ULink :to="`https://nuxt.com${selectedPage.path}`" target="_blank">
-                    <code class="text-sm bg-muted px-2 py-1 rounded">{{ selectedPage.path }}</code>
-                  </ULink>
-                  <UButton
-                    size="sm"
-                    variant="ghost"
-                    color="neutral"
-                    icon="i-lucide-external-link"
-                    :to="`https://nuxt.com${selectedPage.path}`"
-                    target="_blank"
-                  />
-                  <UButton
-                    v-if="selectedPage.lastFeedback.stem"
-                    size="sm"
-                    variant="ghost"
-                    color="neutral"
-                    :to="`https://github.com/nuxt/nuxt/edit/main/${selectedPage.lastFeedback.stem.replace('docs/4.x', 'docs')}.md`"
-                    target="_blank"
-                    icon="i-simple-icons-github"
-                    class="shadow-sm"
-                  />
-                </div>
-              </div>
-              <div class="text-right flex-shrink-0">
-                <div class="text-3xl font-bold mb-1" :class="getScoreColor(selectedPage.averageScore)">
-                  {{ selectedPage.averageScore }}/4
-                </div>
-                <div class="text-sm text-muted">
-                  {{ selectedPage.total }} {{ selectedPage.total === 1 ? 'response' : 'responses' }}
-                </div>
+            <UButton
+              size="sm"
+              variant="ghost"
+              color="neutral"
+              icon="i-lucide-x"
+              class="absolute top-2 right-2"
+              @click="showFeedbackModal = false"
+            />
+            <div>
+              <h3 class="font-semibold text-lg sm:text-xl mb-2">
+                {{ selectedPage.lastFeedback.title }}
+              </h3>
+              <div class="flex items-center gap-1">
+                <ULink :to="`https://nuxt.com${selectedPage.path}`" target="_blank">
+                  <code class="text-xs sm:text-sm bg-muted px-2 py-1 rounded">{{ selectedPage.path }}</code>
+                </ULink>
+                <UButton
+                  size="sm"
+                  variant="ghost"
+                  color="neutral"
+                  icon="i-lucide-external-link"
+                  :to="`https://nuxt.com${selectedPage.path}`"
+                  target="_blank"
+                />
+                <UButton
+                  v-if="selectedPage.lastFeedback.stem"
+                  size="sm"
+                  variant="ghost"
+                  color="neutral"
+                  :to="`https://github.com/nuxt/nuxt/edit/main/${selectedPage.lastFeedback.stem.replace('docs/4.x', 'docs')}.md`"
+                  target="_blank"
+                  icon="i-simple-icons-github"
+                  class="shadow-sm"
+                />
               </div>
             </div>
           </template>
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mb-4 sm:mb-6">
+            <FeedbackStatCard
+              icon="i-lucide-target"
+              icon-color="text-primary"
+              :value="`${selectedPage.averageScore}/4`"
+              label="Average Score"
+              :popover-stats="{
+                percentage: `${Math.round(selectedPage.averageScore / 4 * 100)}% satisfaction`,
+                trend: `${selectedPage.averageScore >= 3.5 ? '🎯 Excellent' : selectedPage.averageScore >= 3.0 ? '👍 Good' : '⚠️ Poor'}`,
+                details: `Based on ${selectedPage.total} ${selectedPage.total === 1 ? 'response' : 'responses'}`
+              }"
+            />
+
+            <FeedbackStatCard
+              icon="i-lucide-message-circle"
+              icon-color="text-muted"
+              :value="selectedPage.total"
+              label="Responses"
+              :popover-stats="{
+                trend: `${selectedPage.total === 1 ? 'Single feedback' : 'Multiple feedbacks'}`,
+                details: 'Total number of user feedback submissions for this page'
+              }"
+            />
+
             <FeedbackStatCard
               icon="i-lucide-thumbs-up"
               icon-color="text-success"
@@ -486,27 +516,15 @@ const { selectedPage, showFeedbackModal, currentPage, itemsPerPage, paginatedFee
                 details: 'Users found issues with this page'
               }"
             />
-
-            <FeedbackStatCard
-              icon="i-lucide-target"
-              icon-color="text-primary"
-              :value="`${selectedPage.averageScore}/4`"
-              label="Average Score"
-              :popover-stats="{
-                percentage: `${Math.round(selectedPage.averageScore / 4 * 100)}% satisfaction`,
-                trend: `${selectedPage.averageScore >= 3.5 ? '🎯 Excellent' : selectedPage.averageScore >= 3.0 ? '👍 Good' : '⚠️ Poor'}`,
-                details: `Based on ${selectedPage.total} ${selectedPage.total === 1 ? 'response' : 'responses'}`
-              }"
-            />
           </div>
 
-          <div class="space-y-4">
-            <h4 class="text-lg font-semibold mb-4 flex items-center gap-2">
-              <UIcon name="i-lucide-message-square" class="size-5" />
+          <div class="space-y-3 sm:space-y-4">
+            <h4 class="text-base sm:text-lg font-semibold mb-3 sm:mb-4 flex items-center gap-2">
+              <UIcon name="i-lucide-message-square" class="size-4 sm:size-5" />
               Individual Feedback
             </h4>
-            <div class="space-y-4">
-              <div class="space-y-3 max-h-[400px] overflow-y-auto">
+            <div class="space-y-3 sm:space-y-4">
+              <div ref="feedbackContainer" class="space-y-2 sm:space-y-3 max-h-[300px] sm:max-h-[400px] overflow-y-auto">
                 <FeedbackItem
                   v-for="(feedback, index) in paginatedFeedback"
                   :key="index"
