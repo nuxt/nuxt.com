@@ -236,11 +236,11 @@ const chartCategories = computed(() => {
     return {
       positive: {
         name: 'Positive',
-        color: '#22c55e'
+        color: 'var(--ui-success)'
       },
       negative: {
         name: 'Negative',
-        color: '#ef4444'
+        color: 'var(--ui-error)'
       }
     }
   }
@@ -622,9 +622,9 @@ function clearSearch() {
   --vis-tooltip-value-color: rgba(0, 0, 0, 1) !important;
 
   --vis-axis-grid-color: rgba(255, 255, 255, 0.1) !important;
-  --vis-axis-tick-label-color: rgba(255, 255, 255, 0.6) !important;
-  --vis-axis-label-color: rgba(255, 255, 255, 0.8) !important;
-  --vis-legend-label-color: rgba(255, 255, 255, 0.8) !important;
+  --vis-axis-tick-label-color:  var(--ui-text-muted) !important;
+  --vis-axis-label-color: var(--ui-text-toned) !important;
+  --vis-legend-label-color: var(--ui-text-muted) !important;
 
   --dot-pattern-color: #111827;
 }
