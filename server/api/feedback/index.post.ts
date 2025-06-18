@@ -28,8 +28,6 @@ async function getFingerprint(event: H3Event): Promise<string> {
 }
 
 export default defineEventHandler(async (event: H3Event) => {
-  await requireCoreTeamUser(event)
-
   const data: FeedbackInput = await readValidatedBody(event, feedbackSchema.parse)
 
   const drizzle = useDrizzle()
