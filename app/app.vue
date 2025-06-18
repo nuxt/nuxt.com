@@ -1,5 +1,4 @@
 <script setup lang="ts">
-const route = useRoute()
 const colorMode = useColorMode()
 const { version } = useDocsVersion()
 const { searchGroups, searchLinks, searchTerm } = useNavigation()
@@ -67,8 +66,6 @@ const versionFiles = computed(() => files.value?.filter((file) => {
 
 provide('navigation', versionNavigation)
 
-const heroBackgroundClass = computed(() => route.meta?.heroBackground || '')
-const { isLoading } = useLoadingIndicator()
 const appear = ref(false)
 const appeared = ref(false)
 
@@ -86,38 +83,9 @@ onMounted(() => {
   <UApp>
     <NuxtLoadingIndicator color="var(--ui-primary)" />
 
-    <UBanner
-      id="nuxt-tips-michael"
-      title="Learn Nuxt with a Collection of 100+ Tips!"
-      icon="i-lucide-wand"
-      to="https://michaelnthiessen.com/nuxt-tips-collection?aff=J0Emk"
-      close
-      :actions="[
-        {
-          label: 'View Tips',
-          color: 'neutral',
-          variant: 'outline',
-          trailingIcon: 'i-lucide-arrow-right',
-          to: 'https://michaelnthiessen.com/nuxt-tips-collection?aff=J0Emk'
-        }
-      ]"
-    />
-
-    <AppHeader />
-
-    <UMain class="relative">
-      <HeroBackground
-        class="absolute w-full -top-px transition-all text-primary shrink-0 -z-10"
-        :class="[
-          isLoading ? 'animate-pulse' : (appear ? heroBackgroundClass : 'opacity-0'),
-          appeared ? 'duration-[400ms]' : 'duration-1000'
-        ]"
-      />
-
+    <NuxtLayout>
       <NuxtPage />
-    </UMain>
-
-    <AppFooter />
+    </NuxtLayout>
 
     <ClientOnly>
       <LazyUContentSearch
