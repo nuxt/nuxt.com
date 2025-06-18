@@ -6,7 +6,7 @@ const deleteParamsSchema = z.object({
 })
 
 export default defineEventHandler(async (event) => {
-  await requireCoreTeamUser(event)
+  await requireUserSession(event)
 
   const { id } = await getValidatedRouterParams(event, deleteParamsSchema.parse)
 
