@@ -1,9 +1,9 @@
-interface TeamMember {
-  login: string
-}
+import type { H3Event } from 'h3'
 
 export const getCoreMembers = cachedFunction(async () => {
-  return await $fetch<TeamMember[]>('https://api.nuxt.com/teams/core')
+  return await $fetch<{
+    login: string
+  }[]>('https://api.nuxt.com/teams/core')
 }, {
   maxAge: 60 * 60, // 1 hour
   getKey: () => 'core-members'
@@ -18,4 +18,15 @@ export async function isCoreTeamMember(login: string) {
     })
   }
   return coreMembers.some(member => member.login.toLowerCase() === login)
+}
+
+export async function requireCoreTeamUser(event: H3Event) {
+  const { user } = await requireUserSession(event)
+  const coreMember = await isCoreTeamMember(user.login.toLowerCase())
+  if (!coreMember) {
+    throw createError({
+      statusCode: 401,
+      statusMessage: 'Unauthorized'
+    })
+  }
 }
