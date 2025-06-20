@@ -3,10 +3,39 @@ definePageMeta({
   heroBackground: 'opacity-80 -z-10'
 })
 
-const [{ data: page }, { data: sponsors }] = await Promise.all([
+const [{ data: page }, { data: apiSponsors }, { data: manualSponsors }] = await Promise.all([
   useAsyncData('sponsors-landing', () => queryCollection('landing').path('/enterprise/sponsors').first()),
-  useFetch('https://api.nuxt.com/sponsors', { key: 'sponsors' })
+  useFetch('https://api.nuxt.com/sponsors', { key: 'sponsors' }),
+  useAsyncData('manual-sponsors', () => queryCollection('manualSponsors').first())
 ])
+
+interface Sponsor {
+  sponsorName: string
+  sponsorLogo: string
+  sponsorUrl: string
+  tier?: 'diamond' | 'platinum' | 'gold' | 'silver' | 'bronze' | 'backers'
+}
+
+const sponsors = computed(() => {
+  const api = (apiSponsors.value || {}) as Record<string, Sponsor[]>
+  const manual = manualSponsors.value?.sponsors || []
+
+  const result: Record<string, Sponsor[]> = {}
+
+  for (const [tier, sponsorsList] of Object.entries(api)) {
+    result[tier] = [...sponsorsList]
+  }
+
+  for (const manualSponsor of manual) {
+    const tier = manualSponsor.tier || 'backers'
+    if (!result[tier]) {
+      result[tier] = []
+    }
+    result[tier].push(manualSponsor)
+  }
+
+  return result
+})
 
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
