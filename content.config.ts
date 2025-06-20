@@ -253,6 +253,18 @@ export default defineContentConfig({
         website: z.string().url()
       })
     }),
+    manualSponsors: defineCollection({
+      type: 'data',
+      source: 'enterprise/manual-sponsors.yml',
+      schema: z.object({
+        sponsors: z.array(z.object({
+          sponsorName: z.string(),
+          sponsorLogo: z.string(),
+          sponsorUrl: z.string(),
+          tier: z.enum(['diamond', 'platinum', 'gold', 'silver', 'bronze', 'backers'])
+        })).optional()
+      })
+    }),
     support: defineCollection({
       type: 'data',
       source: 'enterprise/support.yml',

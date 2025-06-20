@@ -3,9 +3,9 @@ definePageMeta({
   heroBackground: 'opacity-80 -z-10'
 })
 
-const [{ data: page }, { data: sponsors }] = await Promise.all([
+const [{ data: page }, { sponsors }] = await Promise.all([
   useAsyncData('sponsors-landing', () => queryCollection('landing').path('/enterprise/sponsors').first()),
-  useFetch('https://api.nuxt.com/sponsors', { key: 'sponsors' })
+  useSponsors()
 ])
 
 if (!page.value) {
