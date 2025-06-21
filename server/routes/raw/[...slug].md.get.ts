@@ -1,3 +1,4 @@
+import type { Docsv3CollectionItem, Docsv4CollectionItem } from '@nuxt/content'
 import { stringify } from 'minimark/stringify'
 import { withLeadingSlash } from 'ufo'
 
@@ -9,7 +10,8 @@ export default eventHandler(async (event) => {
 
   const path = withLeadingSlash(slug.replace('.md', ''))
   const docsVersion = path.includes('4.x') ? 'docsv4' : 'docsv3'
-  const page = await queryCollection(event, docsVersion).path(path).first()
+
+  const page = await queryCollection(event, docsVersion).path(path).first() as Docsv3CollectionItem | Docsv4CollectionItem
   if (!page) {
     throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
   }
