@@ -54,7 +54,7 @@
     "@testing-library/vue": "^8.1.0",
     "@types/youtube": "^0.1.2",
     "capture-website": "^4.2.0",
-    "drizzle-kit": "^0.31.1",
+    "drizzle-kit": "^0.31.2",
     "eslint": "^9.29.0",
     "nuxt-content-twoslash": "0.1.2",
     "shiki": "^3.7.0",
