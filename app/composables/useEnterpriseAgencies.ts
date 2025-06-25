@@ -85,12 +85,6 @@ export const useEnterpriseAgencies = () => {
           }
         }
       })
-      .sort((a, b) => {
-        if (a.title && b.title) {
-          return a.title.localeCompare(b.title)
-        }
-        return 0
-      })
   })
 
   const locations = computed<Filter[]>(() => {
@@ -116,12 +110,6 @@ export const useEnterpriseAgencies = () => {
             state: { smooth: '#smooth' }
           }
         }
-      })
-      .sort((a, b) => {
-        if (a.title && b.title) {
-          return a.title.localeCompare(b.title)
-        }
-        return 0
       })
   })
 
@@ -155,12 +143,6 @@ export const useEnterpriseAgencies = () => {
             state: { smooth: '#smooth' }
           }
         }
-      })
-      .sort((a, b) => {
-        if (a.title && b.title) {
-          return a.title.localeCompare(b.title)
-        }
-        return 0
       })
   })
 
