@@ -42,19 +42,39 @@ if (article.value.image) {
   })
 }
 
-const authorTwitter = article.value.authors?.[0]?.twitter
+function formatSocialIntentQueryText(handle: string | undefined): string {
+  const credit = handle ? ` by @${handle}` : ''
+  const body = article.value.title + credit
+  const link = `https://nuxt.com${article.value.path}`
+  return encodeURIComponent(`${body}\n\n${link}`)
+}
 
-const socialLinks = computed(() => !article.value
-  ? []
-  : [{
-      label: 'LinkedIn',
-      icon: 'i-simple-icons-linkedin',
-      to: `https://www.linkedin.com/sharing/share-offsite/?url=https://nuxt.com${article.value.path}`
-    }, {
-      label: 'X',
-      icon: 'i-simple-icons-x',
-      to: `https://x.com/intent/tweet?text=${encodeURIComponent(`${article.value.title}${authorTwitter ? ` by @${article.value.authors[0]!.twitter}` : ''}\n\n`)}https://nuxt.com${article.value.path}`
-    }])
+const authorHandles: { twitter?: string, bluesky?: string } = {
+  twitter: article.value.authors?.[0]?.twitter,
+  bluesky: article.value.authors?.[0]?.bluesky
+}
+
+const socialLinks = computed(() =>
+  !article.value
+    ? []
+    : [
+        {
+          label: 'LinkedIn',
+          icon: 'i-simple-icons-linkedin',
+          to: `https://www.linkedin.com/sharing/share-offsite/?url=https://nuxt.com${article.value.path}`
+        },
+        {
+          label: 'Bluesky',
+          icon: 'i-simple-icons-bluesky',
+          to: `https://bsky.app/intent/compose?text=${formatSocialIntentQueryText(authorHandles.bluesky)}`
+        },
+        {
+          label: 'X',
+          icon: 'i-simple-icons-x',
+          to: `https://x.com/intent/tweet?text=${formatSocialIntentQueryText(authorHandles.twitter)}`
+        }
+      ]
+)
 
 function copyLink() {
   copy(`https://nuxt.com${article.value?.path || '/'}`, { title: 'Link copied to clipboard', icon: 'i-lucide-copy-check' })
