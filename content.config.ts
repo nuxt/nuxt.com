@@ -72,6 +72,7 @@ const Author = z.object({
   description: z.string().optional(),
   username: z.string().optional(),
   twitter: z.string().optional(),
+  bluesky: z.string().optional(),
   to: z.string().optional(),
   avatar: Image.optional()
 })
