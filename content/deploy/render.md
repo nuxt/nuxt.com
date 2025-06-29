@@ -1,7 +1,7 @@
 ---
 title: Render
 description: 'Deploy your Nuxt Application to Render infrastructure.'
-logoSrc: '/assets/integrations/render.png'
+logoSrc: '/assets/integrations/render.jpg'
 category: Hosting
 nitroPreset: 'render'
 website: 'https://render.com/'
