@@ -25,13 +25,13 @@ importers:
         version: 1.2.4
       '@iconify-json/lucide':
         specifier: ^1.2.53
-        version: 1.2.53
+        version: 1.2.54
       '@iconify-json/octicon':
         specifier: ^1.2.7
         version: 1.2.7
       '@iconify-json/simple-icons':
         specifier: ^1.2.40
-        version: 1.2.40
+        version: 1.2.41
       '@nuxt/content':
         specifier: ^3.6.1
         version: 3.6.1(patch_hash=87785a9b1fbf4e01ba1aed858dd4bc7000490dcd6210e273c3a1a64c6f2ddb6f)(better-sqlite3@11.10.0)(drizzle-orm@0.44.2(@cloudflare/workers-types@4.20250620.0)(better-sqlite3@11.10.0))(magicast@0.3.5)
@@ -1040,14 +1040,14 @@ packages:
   '@iconify-json/logos@1.2.4':
     resolution: {integrity: sha512-XC4If5D/hbaZvUkTV8iaZuGlQCyG6CNOlaAaJaGa13V5QMYwYjgtKk3vPP8wz3wtTVNVEVk3LRx1fOJz+YnSMw==}
 
-  '@iconify-json/lucide@1.2.53':
-    resolution: {integrity: sha512-LAdOrHp70uYqf/Q9g13qPafF6qjg4XEez7C/0Np5oLSOzfEF49lpMk3xa6ysYTPoWdPYE0qSc/NP3ebJWg3aJg==}
+  '@iconify-json/lucide@1.2.54':
+    resolution: {integrity: sha512-sUHvGWE0WI+XVew//03Y1jw7AFRv57X1BFxrLBdjwt9xccr4Y2JartcWXM/Zeinxrr3ZgBt0n16WkeN/fx9QAQ==}
 
   '@iconify-json/octicon@1.2.7':
     resolution: {integrity: sha512-o1WcVH2Uus6PlMOZkBOpmWywAoHDJBsHx/3cH/D/FZPB1OLNG7N9o+xI67iqlc7/5vKMeW22jI/1iSgdEYdfBw==}
 
-  '@iconify-json/simple-icons@1.2.40':
-    resolution: {integrity: sha512-sr2fbrS8rRhJNap41ucTStctxTcWQ3lcsHkY3loc4Yt1KNOne6D+l1JTOQCDj9f/VrUktVIEdaRQoYTvqfuSSw==}
+  '@iconify-json/simple-icons@1.2.41':
+    resolution: {integrity: sha512-4tt29cKzNsxvt6rjAOVhEgpZV0L8jleTDTMdtvIJjF14Afp9aH8peuwGYyX35l6idfFwuzbvjSVfVyVjJtfmYA==}
 
   '@iconify-json/vscode-icons@1.2.23':
     resolution: {integrity: sha512-gFTcKecKra2/b5SbGDgHGI/l8CuikHyBPmqGlK+YCmS8AK72dtDQbUekdoACsju/3TYS37QvdPoOQwnyx2LdYg==}
@@ -8987,7 +8987,7 @@ snapshots:
     dependencies:
       '@iconify/types': 2.0.0
 
-  '@iconify-json/lucide@1.2.53':
+  '@iconify-json/lucide@1.2.54':
     dependencies:
       '@iconify/types': 2.0.0
 
@@ -8995,7 +8995,7 @@ snapshots:
     dependencies:
       '@iconify/types': 2.0.0
 
-  '@iconify-json/simple-icons@1.2.40':
+  '@iconify-json/simple-icons@1.2.41':
     dependencies:
       '@iconify/types': 2.0.0
 
