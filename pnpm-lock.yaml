@@ -24,13 +24,13 @@ importers:
         specifier: ^1.2.4
         version: 1.2.4
       '@iconify-json/lucide':
-        specifier: ^1.2.53
+        specifier: ^1.2.54
         version: 1.2.54
       '@iconify-json/octicon':
         specifier: ^1.2.7
         version: 1.2.7
       '@iconify-json/simple-icons':
-        specifier: ^1.2.40
+        specifier: ^1.2.41
         version: 1.2.41
       '@nuxt/content':
         specifier: ^3.6.1
