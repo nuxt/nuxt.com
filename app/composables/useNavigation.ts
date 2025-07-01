@@ -193,6 +193,12 @@ const _useNavigation = () => {
   const nuxtApp = useNuxtApp()
   const searchTerm = ref<string>('')
 
+  const debouncedSearchTerm = ref<string>('')
+
+  watchDebounced(searchTerm, (newValue) => {
+    debouncedSearchTerm.value = newValue
+  }, { debounce: 300, maxWait: 1000 })
+
   const { headerLinks } = useHeaderLinks()
   const { footerLinks } = useFooterLinks()
 
@@ -269,17 +275,17 @@ const _useNavigation = () => {
 
     const groups = [aiGroup, modulesGroup, hostingGroup]
 
-    if (!searchTerm.value) {
+    if (!debouncedSearchTerm.value) {
       return groups
     }
 
     aiGroup.items = [{
-      id: `ask-ai-${searchTerm.value}`,
-      label: `Ask AI about "${searchTerm.value}"`,
+      id: `ask-ai-${debouncedSearchTerm.value}`,
+      label: `Ask AI about "${debouncedSearchTerm.value}"`,
       icon: 'i-lucide-wand',
       to: 'javascript:void(0);',
       onSelect() {
-        return nuxtApp.$kapa.openModal(searchTerm.value)
+        return nuxtApp.$kapa.openModal(debouncedSearchTerm.value)
       }
     }]
 
@@ -290,7 +296,7 @@ const _useNavigation = () => {
       }
 
       modulesGroup.items = modules.value
-        .filter(module => ['name', 'npm', 'repo'].map(field => module[field as keyof typeof module]).filter(Boolean).some(value => typeof value === 'string' && value.search(searchTextRegExp(searchTerm.value)) !== -1))
+        .filter(module => ['name', 'npm', 'repo'].map(field => module[field as keyof typeof module]).filter(Boolean).some(value => typeof value === 'string' && value.search(searchTextRegExp(debouncedSearchTerm.value)) !== -1))
         .map(module => ({
           id: `module-${module.name}`,
           label: module.npm,
@@ -312,7 +318,7 @@ const _useNavigation = () => {
       }
 
       hostingGroup.items = providers.value
-        .filter(hosting => ['title'].map(field => hosting[field as keyof typeof hosting]).filter(Boolean).some(value => typeof value === 'string' && value.search(searchTextRegExp(searchTerm.value)) !== -1))
+        .filter(hosting => ['title'].map(field => hosting[field as keyof typeof hosting]).filter(Boolean).some(value => typeof value === 'string' && value.search(searchTextRegExp(debouncedSearchTerm.value)) !== -1))
         .map(hosting => ({
           id: `hosting-${hosting.path}`,
           label: hosting.title,
