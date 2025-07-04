@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { getPaginationRowModel } from '@tanstack/vue-table'
-import type { TableColumn } from '@nuxt/ui'
+import type { TableColumn, DropdownMenuItem } from '@nuxt/ui'
 import { h, resolveComponent } from 'vue'
 
 const UButton = resolveComponent('UButton')
@@ -11,8 +11,41 @@ async function logout() {
   navigateTo('/admin/login')
 }
 
+const items = computed<DropdownMenuItem[][]>(() => [
+  [
+    {
+      label: user.value?.login,
+      avatar: {
+        src: user.value?.avatar_url,
+        alt: user.value?.login
+      },
+      type: 'label'
+    }
+  ],
+  [
+    {
+      label: 'Export Feedback',
+      icon: 'i-lucide-download',
+      onClick: handleExportFeedback
+    },
+    {
+      label: 'Export Analytics',
+      icon: 'i-lucide-bar-chart',
+      onClick: handleExportPageAnalytics
+    }
+  ],
+  [
+    {
+      label: 'Logout',
+      icon: 'i-lucide-log-out',
+      onClick: logout
+    }
+  ]
+])
+
 const { data: rawFeedback, refresh: refreshFeedback } = await useFetch<FeedbackItem[]>('/api/feedback')
 const { deleteFeedback } = useFeedbackDelete()
+const { exportFeedbackData, exportPageAnalytics } = useFeedbackExport()
 
 async function handleDeleteFeedback(feedbackId: number) {
   const success = await deleteFeedback(feedbackId)
@@ -20,6 +53,18 @@ async function handleDeleteFeedback(feedbackId: number) {
     await refreshFeedback()
   }
   showFeedbackModal.value = false
+}
+
+async function handleExportFeedback() {
+  if (feedbackData.value && feedbackData.value.length > 0) {
+    await exportFeedbackData(feedbackData.value)
+  }
+}
+
+async function handleExportPageAnalytics() {
+  if (pageAnalytics.value && pageAnalytics.value.length > 0) {
+    await exportPageAnalytics(pageAnalytics.value)
+  }
 }
 
 function useAdminTable() {
@@ -254,7 +299,7 @@ function useAdminTable() {
   }
 }
 
-const { globalStats, pageAnalytics } = useFeedbackData(rawFeedback)
+const { globalStats, pageAnalytics, feedbackData } = useFeedbackData(rawFeedback)
 const { table, pagination, sorting, globalFilter, columns, resetFilters, filterByVersion, filteredPageAnalytics, versionFilter } = useAdminTable()
 const { selectedPage, showFeedbackModal, currentPage, itemsPerPage, paginatedFeedback, totalPages, viewPageDetails } = useFeedbackModal()
 
@@ -269,24 +314,19 @@ watch(currentPage, () => {
 
 <template>
   <div class="min-h-screen">
-    <div class="absolute top-2 left-2 right-2 flex items-center justify-between">
-      <div class="flex items-center gap-1">
-        <UAvatar
-          :src="user?.avatar_url"
-          :alt="user?.login"
-          size="xs"
-        />
-        <span class="text-sm">{{ user?.login }}</span>
-      </div>
-      <div class="flex items-center gap-1">
-        <UColorModeButton />
+    <div class="absolute top-2 right-2">
+      <UDropdownMenu :items="items">
         <UButton
+          :avatar="{
+            src: user?.avatar_url,
+            alt: user?.login
+          }"
           color="neutral"
+          trailing-icon="i-lucide-menu"
           variant="ghost"
-          icon="i-lucide-log-out"
-          @click="logout"
+          :label="user?.login"
         />
-      </div>
+      </UDropdownMenu>
     </div>
     <UContainer class="py-12">
       <div class="text-center mb-8 space-y-2">
