@@ -11,7 +11,7 @@ async function logout() {
   navigateTo('/admin/login')
 }
 
-const items: DropdownMenuItem[] = computed(() => [
+const items = computed<DropdownMenuItem[][]>(() => [
   [
     {
       label: user.value?.login,
