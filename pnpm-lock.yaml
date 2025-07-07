@@ -34,7 +34,7 @@ importers:
         version: 1.2.42
       '@nuxt/content':
         specifier: ^3.6.3
-        version: 3.6.3(patch_hash=87785a9b1fbf4e01ba1aed858dd4bc7000490dcd6210e273c3a1a64c6f2ddb6f)(better-sqlite3@11.10.0)(drizzle-orm@0.44.2(@cloudflare/workers-types@4.20250620.0)(better-sqlite3@11.10.0))(magicast@0.3.5)(vue-component-type-helpers@2.2.10)
+        version: 3.6.3(patch_hash=87785a9b1fbf4e01ba1aed858dd4bc7000490dcd6210e273c3a1a64c6f2ddb6f)(better-sqlite3@11.10.0)(drizzle-orm@0.44.2(@cloudflare/workers-types@4.20250620.0)(better-sqlite3@11.10.0))(magicast@0.3.5)(vue-component-type-helpers@2.2.12)
       '@nuxt/image':
         specifier: https://pkg.pr.new/@nuxt/image@1a5786c
         version: https://pkg.pr.new/@nuxt/image@1a5786c(db0@0.3.2(better-sqlite3@11.10.0)(drizzle-orm@0.44.2(@cloudflare/workers-types@4.20250620.0)(better-sqlite3@11.10.0)))(ioredis@5.6.1)(magicast@0.3.5)
@@ -96,8 +96,8 @@ importers:
         specifier: ^0.1.3
         version: 0.1.3(magicast@0.3.5)
       nuxt-og-image:
-        specifier: ^5.1.9
-        version: 5.1.9(@unhead/vue@2.0.11(vue@3.5.17(typescript@5.8.3)))(magicast@0.3.5)(unstorage@1.16.0(db0@0.3.2(better-sqlite3@11.10.0)(drizzle-orm@0.44.2(@cloudflare/workers-types@4.20250620.0)(better-sqlite3@11.10.0)))(ioredis@5.6.1))(vite@6.3.5(@types/node@22.15.19)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.39.2)(yaml@2.8.0))(vue@3.5.17(typescript@5.8.3))
+        specifier: 5.1.8
+        version: 5.1.8(@unhead/vue@2.0.11(vue@3.5.17(typescript@5.8.3)))(magicast@0.3.5)(unstorage@1.16.0(db0@0.3.2(better-sqlite3@11.10.0)(drizzle-orm@0.44.2(@cloudflare/workers-types@4.20250620.0)(better-sqlite3@11.10.0)))(ioredis@5.6.1))(vite@6.3.5(@types/node@22.15.19)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.39.2)(yaml@2.8.0))(vue@3.5.17(typescript@5.8.3))
       ofetch:
         specifier: ^1.4.1
         version: 1.4.1
@@ -5992,8 +5992,8 @@ packages:
   nuxt-llms@0.1.3:
     resolution: {integrity: sha512-+LaySko5UnlZw37GoTbsRX6KBFccSAzh6ENAYjV+xlVwsG8lSMz+IWnE7z5rstyVxHiX3Rx62M9JVut4jotJ3w==}
 
-  nuxt-og-image@5.1.9:
-    resolution: {integrity: sha512-VsGpaV/Q9mhr6YhTTXsxiPbE5rucrW0dNmfssxaWEF4rKhnpKBh8U2C1QK8iddo7Gg2lqD2L9zcBe4GsHl8X8w==}
+  nuxt-og-image@5.1.8:
+    resolution: {integrity: sha512-aOjME8E6uD0YDzIoU5wSpthgVA7sSl0r6jlgXii5W4Rvp2fwC49im3Yhv2CpnZAoZYiejN+4lL1zMw5ryCboMA==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       '@unhead/vue': ^2.0.5
@@ -7766,6 +7766,9 @@ packages:
   vue-component-type-helpers@2.2.10:
     resolution: {integrity: sha512-iDUO7uQK+Sab2tYuiP9D1oLujCWlhHELHMgV/cB13cuGbG4qwkLHvtfWb6FzvxrIOPDnU0oHsz2MlQjhYDeaHA==}
 
+  vue-component-type-helpers@2.2.12:
+    resolution: {integrity: sha512-YbGqHZ5/eW4SnkPNR44mKVc6ZKQoRs/Rux1sxC6rdwXb4qpbOSYfDr9DsTHolOTGmIKgM9j141mZbBeg05R1pw==}
+
   vue-demi@0.14.10:
     resolution: {integrity: sha512-nMZBOwuzabUO0nLgIcc6rycZEebF6eeUfaiQx9+WSk8e29IbLvPU9feI6tqW4kTo3hvoYAJkMh8n8D0fuISphg==}
     engines: {node: '>=12'}
@@ -9159,7 +9162,7 @@ snapshots:
     transitivePeerDependencies:
       - magicast
 
-  '@nuxt/content@3.6.3(patch_hash=87785a9b1fbf4e01ba1aed858dd4bc7000490dcd6210e273c3a1a64c6f2ddb6f)(better-sqlite3@11.10.0)(drizzle-orm@0.44.2(@cloudflare/workers-types@4.20250620.0)(better-sqlite3@11.10.0))(magicast@0.3.5)(vue-component-type-helpers@2.2.10)':
+  '@nuxt/content@3.6.3(patch_hash=87785a9b1fbf4e01ba1aed858dd4bc7000490dcd6210e273c3a1a64c6f2ddb6f)(better-sqlite3@11.10.0)(drizzle-orm@0.44.2(@cloudflare/workers-types@4.20250620.0)(better-sqlite3@11.10.0))(magicast@0.3.5)(vue-component-type-helpers@2.2.12)':
     dependencies:
       '@nuxt/kit': 3.17.6(magicast@0.3.5)
       '@nuxtjs/mdc': 0.17.0(magicast@0.3.5)
@@ -9187,7 +9190,7 @@ snapshots:
       micromatch: 4.0.8
       minimark: 0.2.0
       minimatch: 10.0.3
-      nuxt-component-meta: 0.12.1(magicast@0.3.5)(vue-component-type-helpers@2.2.10)
+      nuxt-component-meta: 0.12.1(magicast@0.3.5)(vue-component-type-helpers@2.2.12)
       nypm: 0.6.0
       ohash: 2.0.11
       pathe: 2.0.3
@@ -14826,7 +14829,7 @@ snapshots:
       - magicast
       - vue
 
-  nuxt-component-meta@0.12.1(magicast@0.3.5)(vue-component-type-helpers@2.2.10):
+  nuxt-component-meta@0.12.1(magicast@0.3.5)(vue-component-type-helpers@2.2.12):
     dependencies:
       '@nuxt/kit': 3.17.6(magicast@0.3.5)
       citty: 0.1.6
@@ -14835,7 +14838,7 @@ snapshots:
       scule: 1.3.0
       typescript: 5.8.3
       ufo: 1.6.1
-      vue-component-meta: 3.0.1(typescript@5.8.3)(vue-component-type-helpers@2.2.10)
+      vue-component-meta: 3.0.1(typescript@5.8.3)(vue-component-type-helpers@2.2.12)
     transitivePeerDependencies:
       - magicast
       - vue-component-type-helpers
@@ -14867,7 +14870,7 @@ snapshots:
     transitivePeerDependencies:
       - magicast
 
-  nuxt-og-image@5.1.9(@unhead/vue@2.0.11(vue@3.5.17(typescript@5.8.3)))(magicast@0.3.5)(unstorage@1.16.0(db0@0.3.2(better-sqlite3@11.10.0)(drizzle-orm@0.44.2(@cloudflare/workers-types@4.20250620.0)(better-sqlite3@11.10.0)))(ioredis@5.6.1))(vite@6.3.5(@types/node@22.15.19)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.39.2)(yaml@2.8.0))(vue@3.5.17(typescript@5.8.3)):
+  nuxt-og-image@5.1.8(@unhead/vue@2.0.11(vue@3.5.17(typescript@5.8.3)))(magicast@0.3.5)(unstorage@1.16.0(db0@0.3.2(better-sqlite3@11.10.0)(drizzle-orm@0.44.2(@cloudflare/workers-types@4.20250620.0)(better-sqlite3@11.10.0)))(ioredis@5.6.1))(vite@6.3.5(@types/node@22.15.19)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.39.2)(yaml@2.8.0))(vue@3.5.17(typescript@5.8.3)):
     dependencies:
       '@nuxt/devtools-kit': 2.6.2(magicast@0.3.5)(vite@6.3.5(@types/node@22.15.19)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.39.2)(yaml@2.8.0))
       '@nuxt/kit': 3.17.6(magicast@0.3.5)
@@ -17118,15 +17121,17 @@ snapshots:
     dependencies:
       vue: 3.5.17(typescript@5.8.3)
 
-  vue-component-meta@3.0.1(typescript@5.8.3)(vue-component-type-helpers@2.2.10):
+  vue-component-meta@3.0.1(typescript@5.8.3)(vue-component-type-helpers@2.2.12):
     dependencies:
       '@volar/typescript': 2.4.17
       '@vue/language-core': 3.0.1(typescript@5.8.3)
       path-browserify: 1.0.1
       typescript: 5.8.3
-      vue-component-type-helpers: 2.2.10
+      vue-component-type-helpers: 2.2.12
 
   vue-component-type-helpers@2.2.10: {}
+
+  vue-component-type-helpers@2.2.12: {}
 
   vue-demi@0.14.10(vue@3.5.17(typescript@5.8.3)):
     dependencies:
