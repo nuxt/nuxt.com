@@ -64,7 +64,7 @@
     "typescript": "^5.8.3",
     "vitest": "^3.2.4",
     "vue": "^3.5.17",
-    "vue-tsc": "^2.2.10",
+    "vue-tsc": "^3.0.1",
     "wrangler": "^4.22.0"
   },
   "resolutions": {
