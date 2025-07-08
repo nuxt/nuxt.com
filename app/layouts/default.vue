@@ -18,18 +18,18 @@ onMounted(() => {
 <template>
   <div>
     <UBanner
-      id="nuxt-tips-michael"
-      title="Learn Nuxt with a Collection of 100+ Tips!"
-      icon="i-lucide-wand"
-      to="https://michaelnthiessen.com/nuxt-tips-collection?aff=J0Emk"
+      id="nuxtlabs-vercel"
+      title="NuxtLabs is joining Vercel"
+      icon="i-simple-icons-vercel"
+      to="https://nuxtlabs.com/?utm_source=nuxt-website&utm_medium=banner&utm_campaign=nuxtlabs-vercel"
       close
       :actions="[
         {
-          label: 'View Tips',
+          label: 'Read the announcement',
           color: 'neutral',
           variant: 'outline',
           trailingIcon: 'i-lucide-arrow-right',
-          to: 'https://michaelnthiessen.com/nuxt-tips-collection?aff=J0Emk'
+          to: 'https://nuxtlabs.com/?utm_source=nuxt-website&utm_medium=banner&utm_campaign=nuxtlabs-vercel'
         }
       ]"
     />
