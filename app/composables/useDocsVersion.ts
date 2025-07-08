@@ -20,10 +20,10 @@ const versions: Version[] = [{
   collection: 'docsv3'
 }, {
   label: 'Version 4',
-  tag: 'alpha',
+  tag: '4.0.0-rc', // updated from 'alpha' to '4.0.0-rc'
   shortTag: 'v4',
   branch: 'main',
-  tagColor: 'warning',
+  tagColor: 'info',
   path: '/docs/4.x',
   collection: 'docsv4'
 }]
