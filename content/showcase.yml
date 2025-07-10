@@ -23,6 +23,10 @@ websites:
     url: https://developer.microsoft.com/en-us/microsoft-edge
     screenshotOptions:
       cookies: ['MSCC=cid=psmupjn1uooack94vj8ishtx-c1=2-c2=2-c3=2;']
+  - name: Comet by Perplexity AI
+    url: https://comet.perplexity.ai
+    screenshotOptions:
+      delay: 8
   - name: Tiktok Ads
     url: https://tiktok.com/business/en
     screenshotOptions:
