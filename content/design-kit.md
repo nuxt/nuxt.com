@@ -1,15 +1,16 @@
 ---
 title: Design Kit
 head.description: Get the Nuxt assets such as Logo, Typography and Colors.
-description: Welcome to Nuxt design definition page. Identity was redefined by handpicking conscientiously colors, typography and shapes in order to put forward how performant, useful & easy Nuxt products are.
-navigation.icon: 'i-ph-palette'
+description: Welcome to Nuxt design definition page. Identity was redefined by handpicking conscientiously colors, and shapes in order to express how easy & joyful Nuxt products are.
+navigation.icon: 'i-lucide-palette'
 links:
   - label: 'Nuxt Brand Kit'
     size: 'lg'
     to: 'https://www.figma.com/community/file/1296154408275753939/nuxt-brand-kit'
-    icon: 'i-simple-icons-figma'
+    icon: 'i-logos-figma'
+    trailingIcon: 'i-lucide-arrow-up-right'
     download: true
-    color: 'white'
+    color: 'neutral'
     target: '_blank'
 ---
 
@@ -57,17 +58,3 @@ Our color palette is based on our iconic Nuxt green and colours have been carefu
   :design-kit-color-card{background="#FFFFFF" name="White"}
   :design-kit-color-card{background="#020420" name="Gray"}
 ::
-
-## DM Sans
-
-Our brand typeface is DM Sans from Google Fonts. This typeface was chosen for its aesthetics, reminiscent of the shape of the Nuxt logo in many aspects (joints, apex, vertex of the structure). It offers modernity and sobriety while lending an iconic aspect to our visual content without compromising text accessibility.
-
-Font is also variable which allows us to fit with any contexts.
-
-[DM Sans]{class="font-semibold text-5xl text-gray-900 dark:text-white"}
-
-[The quick brown fox jumps over the lazy dog.]{class="font-semibold text-4xl text-gray-900 dark:text-white"}
-
-### Usage
-
-For Nuxt brand, we will only use Regular / Medium / Semibold weights 99% of the time. You should avoid Light & Heavy if you want to use it as Nuxt Identity. Only exceptions are for super, subscript characters, also you can use heavy if you go upper than 72px for a font size.

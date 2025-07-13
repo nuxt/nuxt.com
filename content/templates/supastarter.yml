@@ -1,0 +1,6 @@
+name: 'Supastarter'
+slug: 'supastarter'
+description: 'A production-ready SaaS starter kit with auth, i18n, billing & payments.'
+demo: 'https://nuxt-demo.supastarter.dev'
+purchase: 'https://supastarter.dev/products/starter-kits/nuxt?aff=J0Emk'
+badge: 'Premium' 

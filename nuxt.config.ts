@@ -1,170 +1,240 @@
-import { ofetch } from 'ofetch'
-import { logger } from '@nuxt/kit'
-import { isWindows } from 'std-env'
+import { createResolver } from 'nuxt/kit'
+import { parseMdc } from './helpers/mdc-parser.mjs'
 
-function normalizedDirPath (path?: string) {
-  if (!path || !isWindows) {
-    return path
-  }
-
-  const windowsPath = path.replace(/\\/g, '/')
-  return windowsPath.startsWith('file:///') ? windowsPath : `file:///${windowsPath}`
-}
-
-const docsSourceBase = normalizedDirPath(process.env.NUXT_DOCS_PATH)
-const examplesSourceBase = normalizedDirPath(process.env.NUXT_EXAMPLES_PATH)
-
-const docsSource: any = {
-  name: 'nuxt-docs',
-  driver: 'github',
-  repo: 'nuxt/nuxt',
-  branch: 'main',
-  dir: 'docs',
-  prefix: '/1.docs',
-  token: process.env.NUXT_GITHUB_TOKEN || ''
-}
-if (docsSourceBase) {
-  docsSource.driver = 'fs'
-  docsSource.base = docsSourceBase
-}
-
-const examplesSource: any = {
-  name: 'nuxt-examples',
-  driver: 'github',
-  repo: 'nuxt/examples',
-  branch: 'main',
-  dir: '.docs',
-  prefix: '/docs/4.examples',
-  token: process.env.NUXT_GITHUB_TOKEN || ''
-}
-if (examplesSourceBase) {
-  examplesSource.driver = 'fs'
-  examplesSource.base = examplesSourceBase
-}
+const { resolve } = createResolver(import.meta.url)
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  extends: process.env.NUXT_UI_PRO_PATH || '@nuxt/ui-pro',
-  // @ts-ignore
   modules: [
+    '@nuxt/ui-pro',
+    'nuxt-content-twoslash',
     '@nuxt/content',
-    '@nuxt/ui',
     '@nuxt/image',
     '@nuxtjs/plausible',
-    '@nuxtjs/fontaine',
-    '@nuxtjs/google-fonts',
+    '@nuxt/eslint',
+    '@nuxt/scripts',
     '@nuxtjs/turnstile',
-    '@nuxthq/studio',
     '@vueuse/nuxt',
     'nuxt-og-image',
-    () => {
-      if (docsSourceBase) { logger.success(`Using local Nuxt docs from ${docsSourceBase}`) }
-      if (examplesSourceBase) { logger.success(`Using local Nuxt examples from ${examplesSourceBase}`) }
-    }
+    'motion-v/nuxt',
+    'nuxt-llms',
+    '@nuxthub/core',
+    'nuxt-charts',
+    'nuxt-auth-utils'
   ],
-  routeRules: {
-    // Pre-render
-    '/api/search.json': { prerender: true },
-    '/api/templates.json': { prerender: true },
-    '/blog/rss.xml': { prerender: true },
-    // '/sitemap.xml': { prerender: true },
-    '/newsletter': { prerender: true },
-    // Redirects
-    '/docs': { redirect: '/docs/getting-started/introduction', prerender: false },
-    '/docs/getting-started': { redirect: '/docs/getting-started/introduction', prerender: false },
-    '/docs/guide/concepts': { redirect: '/docs/guide/concepts/auto-imports', prerender: false },
-    '/docs/guide/directory-structure': { redirect: '/docs/guide/directory-structure/app', prerender: false },
-    '/docs/guide/going-further': { redirect: '/docs/guide/going-further/experimental-features', prerender: false },
-    '/docs/guide/going-further/edge-release-channel': { redirect: '/docs/guide/going-further/nightly-release-channel', prerender: false },
-    '/docs/bridge': { redirect: '/docs/bridge/overview', prerender: false },
-    '/docs/migration': { redirect: '/docs/migration/overview', prerender: false },
-    '/docs/api/components': { redirect: '/docs/api/components/client-only', prerender: false },
-    '/docs/api/composables': { redirect: '/docs/api/composables/use-app-config', prerender: false },
-    '/docs/api/utils': { redirect: '/docs/api/utils/dollarfetch', prerender: false },
-    '/docs/api/kit': { redirect: '/docs/api/kit/modules', prerender: false },
-    '/docs/api/commands': { redirect: '/docs/api/commands/dev', prerender: false },
-    '/docs/api/advanced': { redirect: '/docs/api/advanced/hooks', prerender: false },
-    '/docs/api/configuration/nuxt-config': { redirect: '/docs/api/nuxt-config', prerender: false },
-    '/docs/examples': { redirect: '/docs/examples/hello-world', prerender: false },
-    '/docs/examples/features': { redirect: '/docs/examples/features/auto-imports', prerender: false },
-    '/docs/examples/routing': { redirect: '/docs/examples/routing/middleware', prerender: false },
-    '/docs/examples/advanced': { redirect: '/docs/examples/advanced/config-extends', prerender: false },
-    '/docs/examples/experimental': { redirect: '/docs/examples/experimental/wasm', prerender: false },
-    '/docs/community': { redirect: '/docs/community/getting-help', prerender: false },
-    '/docs/community/nuxt-community': { redirect: '/docs/community/getting-help', prerender: false },
-    // '/docs/guide/directory-structure/nuxt.config': { redirect: '/docs/guide/directory-structure/nuxt-config', prerender: false },
-    '/enterprise': { redirect: '/enterprise/support', prerender: false }
-  },
-  nitro: {
-    prerender: {
-      // failOnError: false
-      // TODO: investigate
-      // Ignore weird url from crawler on some modules readme
-      ignore: ['/modules/%3C/span', '/modules/%253C/span', '/docs/getting-started/</span', '/docs/getting-started/%3C/span']
-    },
-    hooks: {
-      'prerender:generate' (route) {
-        // TODO: fix issue with recursive fetches with query string, e.g.
-        // `/enterprise/agencies?region=europe&amp;amp;amp;service=ecommerce&amp;amp;service=ecommerce&amp;service=content-marketing`
-        if (route.route?.includes('&amp;')) {
-          route.skip = true
-        }
-      }
-    }
-  },
-  hooks: {
-    async 'prerender:routes' (ctx) {
-      // Add Nuxt 2 modules to the prerender list
-      const { modules } = await ofetch<{ modules: [] }>('https://api.nuxt.com/modules?version=2').catch(() => ({ modules: [] }))
-      for (const module of modules) {
-        ctx.routes.add(`/modules/${module.name}`)
-      }
-    }
-  },
-
   $development: {
-    runtimeConfig: {
-      public: {
-        website: {
-          url: 'http://localhost:3000'
-        }
-      }
+    site: {
+      url: 'http://localhost:3000'
     }
   },
+  devtools: {
+    enabled: true
+  },
+  app: {
+    pageTransition: false,
+    layoutTransition: false
+  },
+  css: ['~/assets/css/main.css'],
   colorMode: {
     preference: 'dark'
   },
-  fontMetrics: {
-    fonts: ['DM Sans']
+  content: {
+    build: {
+      markdown: {
+        highlight: {
+          theme: {
+            default: 'material-theme-lighter',
+            dark: 'material-theme-palenight'
+          },
+          langs: ['sql', 'diff', 'ini']
+        }
+      }
+    },
+    preview: {
+      api: 'https://api.nuxt.studio'
+    }
   },
-  googleFonts: {
-    display: 'swap',
-    download: true,
-    families: {
-      'DM+Sans': [400, 500, 600, 700]
+  mdc: {
+    highlight: {
+      noApiRoute: false
     }
   },
   ui: {
-    icons: ['simple-icons', 'ph', 'uil', 'heroicons', 'octicon', 'logos']
-  },
-  content: {
-    navigation: {
-      fields: ['titleTemplate']
-    },
-    sources: {
-      docsSource,
-      examplesSource
+    theme: {
+      colors: ['primary', 'secondary', 'info', 'success', 'warning', 'error', 'important']
     }
+  },
+  routeRules: {
+    // Pre-render
+    '/': { prerender: true },
+    '/blog/rss.xml': { prerender: true },
+    '/404.html': { prerender: true },
+    '/docs/getting-started/introduction': { prerender: true },
+    '/docs/4.x/getting-started/introduction': { prerender: true },
+    // Admin
+    '/admin': { ssr: false },
+    '/admin/**': { ssr: false },
+    // Redirects
+    '/docs': { redirect: '/docs/getting-started/introduction', prerender: false },
+    '/docs/4.x': { redirect: '/docs/4.x/getting-started/introduction', prerender: false },
+    '/docs/getting-started': { redirect: '/docs/getting-started/introduction', prerender: false },
+    '/docs/4.x/getting-started': { redirect: '/docs/4.x/getting-started/introduction', prerender: false },
+    '/docs/guide/concepts': { redirect: '/docs/guide/concepts/auto-imports', prerender: false },
+    '/docs/4.x/guide/concepts': { redirect: '/docs/4.x/guide/concepts/auto-imports', prerender: false },
+    '/docs/guide/directory-structure': { redirect: '/docs/guide/directory-structure/app', prerender: false },
+    '/docs/4.x/guide/directory-structure': { redirect: '/docs/4.x/guide/directory-structure/app', prerender: false },
+    '/docs/guide/going-further': { redirect: '/docs/guide/going-further/experimental-features', prerender: false },
+    '/docs/4.x/guide/going-further': { redirect: '/docs/4.x/guide/going-further/experimental-features', prerender: false },
+    '/docs/guide/going-further/edge-release-channel': { redirect: '/docs/guide/going-further/nightly-release-channel', prerender: false },
+    '/docs/4.x/guide/going-further/edge-release-channel': { redirect: '/docs/4.x/guide/going-further/nightly-release-channel', prerender: false },
+    '/docs/bridge': { redirect: '/docs/bridge/overview', prerender: false },
+    '/docs/4.x/bridge': { redirect: '/docs/4.x/bridge/overview', prerender: false },
+    '/docs/migration': { redirect: '/docs/migration/overview', prerender: false },
+    '/docs/4.x/migration': { redirect: '/docs/4.x/migration/overview', prerender: false },
+    '/docs/api/components': { redirect: '/docs/api/components/client-only', prerender: false },
+    '/docs/4.x/api/components': { redirect: '/docs/4.x/api/components/client-only', prerender: false },
+    '/docs/api/composables': { redirect: '/docs/api/composables/use-app-config', prerender: false },
+    '/docs/4.x/api/composables': { redirect: '/docs/4.x/api/composables/use-app-config', prerender: false },
+    '/docs/api/utils': { redirect: '/docs/api/utils/dollarfetch', prerender: false },
+    '/docs/4.x/api/utils': { redirect: '/docs/4.x/api/utils/dollarfetch', prerender: false },
+    '/docs/api/kit': { redirect: '/docs/api/kit/modules', prerender: false },
+    '/docs/4.x/api/kit': { redirect: '/docs/4.x/api/kit/modules', prerender: false },
+    '/docs/api/commands': { redirect: '/docs/api/commands/dev', prerender: false },
+    '/docs/4.x/api/commands': { redirect: '/docs/4.x/api/commands/dev', prerender: false },
+    '/docs/api/advanced': { redirect: '/docs/api/advanced/hooks', prerender: false },
+    '/docs/4.x/api/advanced': { redirect: '/docs/4.x/api/advanced/hooks', prerender: false },
+    '/docs/api/configuration/nuxt-config': { redirect: '/docs/api/nuxt-config', prerender: false },
+    '/docs/4.x/api/configuration/nuxt-config': { redirect: '/docs/4.x/api/nuxt-config', prerender: false },
+    '/docs/examples': { redirect: '/docs/examples/hello-world', prerender: false },
+    '/docs/4.x/examples': { redirect: '/docs/4.x/examples/hello-world', prerender: false },
+    '/docs/examples/features': { redirect: '/docs/examples/features/auto-imports', prerender: false },
+    '/docs/4.x/examples/features': { redirect: '/docs/4.x/examples/features/auto-imports', prerender: false },
+    '/docs/examples/routing': { redirect: '/docs/examples/routing/middleware', prerender: false },
+    '/docs/4.x/examples/routing': { redirect: '/docs/4.x/examples/routing/middleware', prerender: false },
+    '/docs/examples/advanced': { redirect: '/docs/examples/advanced/config-extends', prerender: false },
+    '/docs/4.x/examples/advanced': { redirect: '/docs/4.x/examples/advanced/config-extends', prerender: false },
+    '/docs/examples/experimental': { redirect: '/docs/examples/experimental/wasm', prerender: false },
+    '/docs/4.x/examples/experimental': { redirect: '/docs/4.x/examples/experimental/wasm', prerender: false },
+    '/docs/community': { redirect: '/docs/community/getting-help', prerender: false },
+    '/docs/4.x/community': { redirect: '/docs/4.x/community/getting-help', prerender: false },
+    '/docs/community/nuxt-community': { redirect: '/docs/community/getting-help', prerender: false },
+    '/docs/4.x/community/nuxt-community': { redirect: '/docs/4.x/community/getting-help', prerender: false },
+    '/docs/guide/recipes': { redirect: '/docs/guide/recipes/custom-routing', prerender: false },
+    '/docs/4.x/guide/recipes': { redirect: '/docs/4.x/guide/recipes/custom-routing', prerender: false },
+    '/docs/guide/best-practices': { redirect: '/docs/guide/best-practices/performance', prerender: false },
+    '/docs/4.x/guide/best-practices': { redirect: '/docs/4.x/guide/best-practices/performance', prerender: false },
+    '/docs/guide/going-further/custom-routing': { redirect: '/docs/guide/recipes/custom-routing', prerender: false },
+    '/docs/4.x/guide/going-further/custom-routing': { redirect: '/docs/4.x/guide/recipes/custom-routing', prerender: false },
+    // new directory structure
+    '/docs/4.x/guide/directory-structure/assets': { redirect: '/docs/4.x/guide/directory-structure/app/assets', prerender: false },
+    '/docs/4.x/guide/directory-structure/components': { redirect: '/docs/4.x/guide/directory-structure/app/components', prerender: false },
+    '/docs/4.x/guide/directory-structure/composables': { redirect: '/docs/4.x/guide/directory-structure/app/composables', prerender: false },
+    '/docs/4.x/guide/directory-structure/layouts': { redirect: '/docs/4.x/guide/directory-structure/app/layouts', prerender: false },
+    '/docs/4.x/guide/directory-structure/middleware': { redirect: '/docs/4.x/guide/directory-structure/app/middleware', prerender: false },
+    '/docs/4.x/guide/directory-structure/pages': { redirect: '/docs/4.x/guide/directory-structure/app/pages', prerender: false },
+    '/docs/4.x/guide/directory-structure/plugins': { redirect: '/docs/4.x/guide/directory-structure/app/plugins', prerender: false },
+    '/docs/4.x/guide/directory-structure/utils': { redirect: '/docs/4.x/guide/directory-structure/app/utils', prerender: false },
+    '/docs/4.x/guide/directory-structure/app': { redirect: '/docs/4.x/guide/directory-structure/app/app', prerender: false },
+    '/docs/4.x/guide/directory-structure/app-config': { redirect: '/docs/4.x/guide/directory-structure/app/app-config', prerender: false },
+    '/docs/4.x/guide/directory-structure/error': { redirect: '/docs/4.x/guide/directory-structure/app/error', prerender: false },
+    // '/docs/guide/directory-structure/nuxt.config': { redirect: '/docs/guide/directory-structure/nuxt-config', prerender: false },
+    '/enterprise': { redirect: '/enterprise/support', prerender: false },
+    '/support/us': { redirect: '/enterprise/sponsors', prerender: false }
+  },
+  sourcemap: true,
+  future: {
+    compatibilityVersion: 4
+  },
+  compatibilityDate: '2024-07-18',
+  nitro: {
+    prerender: {
+      crawlLinks: true,
+      ignore: [
+        route => route.startsWith('/modules'),
+        route => route.startsWith('/admin')
+      ],
+      autoSubfolderIndex: false
+    },
+    cloudflare: {
+      pages: {
+        routes: {
+          exclude: [
+            '/docs/*'
+          ]
+        }
+      }
+    }
+  },
+  hub: {
+    cache: true
   },
   typescript: {
     strict: false
   },
-  experimental: {
-    headNext: true,
-    sharedPrerenderData: true,
-    appManifest: true
+  hooks: {
+    'content:file:beforeParse': async ({ file }) => {
+      if (file.id.startsWith('docsv4/')) {
+        file.body = file.body.replaceAll('(/docs/', '(/docs/4.x/')
+      }
+    },
+    'content:file:afterParse': async ({ file, content }) => {
+      if (file.id === 'index/index.yml') {
+        // @ts-expect-error -- TODO: fix this
+        for (const tab of content.hero.tabs) {
+          tab.content = await parseMdc(tab.content)
+        }
+        // @ts-expect-error -- TODO: fix this
+        delete content.meta.body
+      }
+    }
   },
-  devtools: {
-    enabled: false
+  eslint: {
+    config: {
+      stylistic: {
+        commaDangle: 'never'
+      }
+    }
+  },
+  icon: {
+    customCollections: [{
+      prefix: 'custom',
+      dir: resolve('./app/assets/icons')
+    }],
+    clientBundle: {
+      scan: true,
+      includeCustomCollections: true
+    },
+    provider: 'iconify'
+  },
+  image: {
+    format: ['webp', 'jpeg', 'jpg', 'png', 'svg'],
+    provider: 'cloudflare',
+    cloudflare: {
+      baseURL: 'https://nuxt.com'
+    },
+    ipx: {
+      baseURL: 'https://ipx.nuxt.com'
+    }
+  },
+  llms: {
+    domain: 'https://nuxt.com',
+    title: 'Nuxt Docs',
+    description: 'Nuxt is an open source framework that makes web development intuitive and powerful. Create performant and production-grade full-stack web apps and websites with confidence.',
+    full: {
+      title: 'Nuxt Docs',
+      description: 'The complete Nuxt documentation and blog posts written in Markdown (MDC syntax).'
+    }
+  },
+  turnstile: {
+    siteKey: '0x4AAAAAAAP2vNBsTBT3ucZi'
+  },
+  twoslash: {
+    floatingVueOptions: {
+      classMarkdown: 'prose prose-primary dark:prose-invert'
+    },
+    // Skip Twoslash in dev to improve performance. Turn this on when you want to explicitly test twoslash in dev.
+    enableInDev: false,
+    // Do not throw when twoslash fails, the typecheck should be down in github.com/nuxt/nuxt's CI
+    throws: false
   }
 })

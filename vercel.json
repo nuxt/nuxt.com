@@ -1,26 +1,18 @@
 {
-  "github": {
-    "silent": true
-  },
   "redirects": [
+    {
+      "source": "/docs/",
+      "destination": "/docs/getting-started/introduction",
+      "permanent": false
+    },
     {
       "source": "/docs/getting-started",
       "destination": "/docs/getting-started/introduction",
       "permanent": false
     },
     {
-      "source": "/docs/guide",
-      "destination": "/docs/guide/concepts/auto-imports",
-      "permanent": false
-    },
-    {
       "source": "/docs/guide/concepts",
       "destination": "/docs/guide/concepts/auto-imports",
-      "permanent": false
-    },
-    {
-      "source": "/docs/api",
-      "destination": "/docs/api/composables/use-app-config",
       "permanent": false
     },
     {
@@ -74,18 +66,13 @@
       "permanent": false
     },
     {
-      "source": "/docs/concepts/typescript",
-      "destination": "/docs/guide/concepts/typescript",
+      "source": "/modules/:slug/changelog",
+      "destination": "/modules/:slug",
       "permanent": false
     },
     {
-      "source": "/workshops/nuxt-3-migration",
-      "destination": "https://catalogue-nuxtlabs.dendreo.com",
-      "permanent": false
-    },
-     {
-      "source": "/workshops",
-      "destination": "https://catalogue-nuxtlabs.dendreo.com",
+      "source": "/docs/concepts/typescript",
+      "destination": "/docs/guide/concepts/typescript",
       "permanent": false
     },
     {
@@ -182,6 +169,16 @@
       "source": "/support/:path*",
       "destination": "/enterprise/:path*",
       "permanent": false
+    },
+    {
+      "source": "/docs/guide/going-further/custom-routing",
+      "destination": "/docs/guide/recipes/custom-routing",
+      "permanent": false
+    },
+    {
+      "source": "/docs/api/composables/use-id",
+      "destination": "https://vuejs.org/api/composition-api-helpers.html#useid",
+      "permanent": true
     }
   ]
 }

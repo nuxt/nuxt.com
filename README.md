@@ -8,9 +8,10 @@ Welcome to the Nuxt website repository available on [nuxt.com](https://nuxt.com)
 
 ## Setup
 
-Make sure to install the dependencies
+Make sure to enable corepack and install the dependencies:
 
 ```bash
+corepack enable
 pnpm install
 ```
 
@@ -20,7 +21,7 @@ Copy the `.env.example` file to `.env`:
 cp .env.example .env
 ```
 
-Clone/Fork [nuxt/nuxt](https://github.com/nuxt/nuxt) repo where you want (but not in the Nuxt.com project) and inside the `docs/` directory, run:
+Clone/Fork [nuxt/nuxt](https://github.com/nuxt/nuxt) repo where you want (but not in the Nuxt.com project) and inside the root of the repo, run:
 
 ```bash
 pwd
@@ -32,19 +33,19 @@ If you are on Windows, you can use the following command instead:
 echo %cd%
 ```
 
-Copy the output of the command above and paste it in the `NUXT_DOCS_PATH` variable in the `.env` file.
+Copy the output of the command above and paste it in the `NUXT_PATH` variable in the `.env` file.
 
 ## Development
 
 Start the development server:
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 ### Add a Nuxt Template
 
-To list a Nuxt template, add it to the list on [./content/4.templates.yml](./content/4.templates.yml).
+To list a Nuxt template, add a file in the [./content/templates](./content/templates) directory.
 
 Make sure to start the development server in order to generate the screenshot for the template and go to http://localhost:3000/templates to see the result.
 
@@ -61,7 +62,7 @@ Note that this is not required to run in development and contribute to the Nuxt 
 Build the application for production:
 
 ```bash
-npm run generate
+pnpm generate
 ```
 
 ## License
