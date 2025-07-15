@@ -10,30 +10,35 @@ interface Version {
   collection: 'docsv3' | 'docsv4'
 }
 
-const versions: Version[] = [{
-  label: 'Version 3',
-  tag: 'latest',
-  shortTag: 'v3',
-  branch: '3.x',
-  tagColor: 'primary',
-  path: '/docs',
-  collection: 'docsv3'
-}, {
-  label: 'Version 4',
-  tag: '4.0.0-rc', // updated from 'alpha' to '4.0.0-rc'
-  shortTag: 'v4',
-  branch: 'main',
-  tagColor: 'info',
-  path: '/docs/4.x',
-  collection: 'docsv4'
-}]
+// TODO: get versions from npm registry
+const versions: Version[] = [
+  {
+    label: 'Version 4',
+    tag: '4.0.0',
+    shortTag: 'v4',
+    branch: 'main',
+    tagColor: 'info',
+    path: '/docs/4.x',
+    collection: 'docsv4'
+  },
+  {
+    label: 'Version 3',
+    // TODO: update this on release
+    tag: '3.17.7',
+    shortTag: 'v3',
+    branch: '3.x',
+    tagColor: 'primary',
+    path: '/docs/3.x',
+    collection: 'docsv3'
+  }
+]
 
 export const useDocsVersion = () => {
   const route = useRoute()
 
   const version = computed(() => {
-    if (route.path.startsWith('/docs/4.x')) {
-      return versions.find(v => v.path === '/docs/4.x')
+    if (route.path.startsWith('/docs/3.x')) {
+      return versions.find(v => v.path === '/docs/3.x')
     }
 
     return versions[0]
