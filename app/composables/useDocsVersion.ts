@@ -10,9 +10,10 @@ interface Version {
   collection: 'docsv3' | 'docsv4'
 }
 
+// TODO: get versions from npm registry
 const versions: Version[] = [{
   label: 'Version 3',
-  tag: 'latest',
+  tag: '3.17.7',
   shortTag: 'v3',
   branch: '3.x',
   tagColor: 'primary',
@@ -20,7 +21,7 @@ const versions: Version[] = [{
   collection: 'docsv3'
 }, {
   label: 'Version 4',
-  tag: '4.0.0-rc', // updated from 'alpha' to '4.0.0-rc'
+  tag: '4.0.0',
   shortTag: 'v4',
   branch: 'main',
   tagColor: 'info',
