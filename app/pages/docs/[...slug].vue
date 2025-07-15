@@ -75,7 +75,7 @@ const breadcrumb = computed(() => {
   return links
 })
 
-const editLink = computed(() => `https://github.com/nuxt/nuxt/edit/${version.value.branch}/${page?.value?.stem?.replace('docs/4.x', 'docs')}.${page?.value?.extension}`)
+const editLink = computed(() => `https://github.com/nuxt/nuxt/edit/${version.value.branch}/${page?.value?.stem?.replace(/docs\/\d\.x/, 'docs')}.${page?.value?.extension}`)
 
 const communityLinks = [{
   icon: 'i-lucide-heart',

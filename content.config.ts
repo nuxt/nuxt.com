@@ -4,7 +4,8 @@ const docsV3Source = {
   cwd: process.env.NUXT_PATH ?? undefined,
   repository: !process.env.NUXT_PATH ? 'https://github.com/nuxt/nuxt/tree/3.x' : undefined,
   include: 'docs/**/*',
-  exclude: ['docs/**/*.json']
+  exclude: ['docs/**/*.json'],
+  prefix: '/docs/3.x'
 }
 
 const docsV4Source = {
@@ -19,7 +20,7 @@ const examplesV3Source = {
   cwd: process.env.NUXT_EXAMPLES_PATH ?? undefined,
   repository: !process.env.NUXT_EXAMPLES_PATH ? 'https://github.com/nuxt/examples' : undefined,
   include: '.docs/**/*',
-  prefix: '/docs/4.examples'
+  prefix: '/docs/3.x/4.examples'
 }
 
 const examplesV4Source = {
