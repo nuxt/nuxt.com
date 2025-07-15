@@ -244,10 +244,7 @@ export default defineNuxtConfig({
   },
   image: {
     format: ['webp', 'jpeg', 'jpg', 'png', 'svg'],
-    provider: 'cloudflare',
-    cloudflare: {
-      baseURL: 'https://nuxt.com'
-    },
+    provider: 'ipx',
     ipx: {
       baseURL: 'https://ipx.nuxt.com'
     }
