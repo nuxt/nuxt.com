@@ -4,7 +4,6 @@ description: 'Deploy your Nuxt Application to Vercel infrastructure.'
 componentImg: Vercel
 logoSrc: '/assets/integrations/vercel.svg'
 category: Hosting
-featured: true
 nitroPreset: 'vercel'
 website: 'https://vercel.com/'
 ---

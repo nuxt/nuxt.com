@@ -18,10 +18,10 @@ onMounted(() => {
 <template>
   <div>
     <UBanner
-      id="nuxtlabs-vercel"
-      title="NuxtLabs is joining Vercel"
-      icon="i-simple-icons-vercel"
-      to="https://nuxtlabs.com/?utm_source=nuxt-website&utm_medium=banner&utm_campaign=nuxtlabs-vercel"
+      id="nuxt-v4"
+      title="Announcing Nuxt 4.0"
+      icon="i-lucide-sparkles"
+      to="/blog/v4"
       close
       :actions="[
         {
@@ -29,7 +29,7 @@ onMounted(() => {
           color: 'neutral',
           variant: 'outline',
           trailingIcon: 'i-lucide-arrow-right',
-          to: 'https://nuxtlabs.com/?utm_source=nuxt-website&utm_medium=banner&utm_campaign=nuxtlabs-vercel'
+          to: '/blog/v4'
         }
       ]"
     />
