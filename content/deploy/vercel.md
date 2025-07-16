@@ -58,7 +58,7 @@ Read more about the Vercel KV driver on Unstorage documentation.
     npm i @vercel/kv
     ```
 
-2. Update your `nuxt.config`:
+2. Update your `nuxt.config.ts`:
 
     ```ts [nuxt.config.ts]
     export default defineNuxtConfig({
@@ -92,7 +92,7 @@ export default defineEventHandler(async (event) => {
 
 ## Custom Build Output Configuration
 
-You can provide additional [build output configuration](https://vercel.com/docs/build-output-api/v3) using `nitro.vercel.config` key inside `nuxt.config`. It will be merged with built-in auto generated config.
+You can provide additional [build output configuration](https://vercel.com/docs/build-output-api/v3) using `nitro.vercel.config` key inside `nuxt.config.ts`. It will be merged with built-in auto generated config.
 
 ## Templates
 
