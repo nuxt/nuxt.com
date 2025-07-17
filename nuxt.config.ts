@@ -177,10 +177,7 @@ export default defineNuxtConfig({
     '/support/us': { redirect: '/enterprise/sponsors', prerender: false }
   },
   sourcemap: true,
-  future: {
-    compatibilityVersion: 4
-  },
-  compatibilityDate: '2024-07-18',
+  compatibilityDate: '2025-07-17',
   nitro: {
     prerender: {
       crawlLinks: true,
