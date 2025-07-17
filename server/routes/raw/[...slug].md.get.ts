@@ -1,4 +1,5 @@
 import type { Docsv3CollectionItem, Docsv4CollectionItem } from '@nuxt/content'
+import { queryCollection } from '@nuxt/content/nitro'
 import { stringify } from 'minimark/stringify'
 import { withLeadingSlash } from 'ufo'
 
