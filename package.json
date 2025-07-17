@@ -20,7 +20,7 @@
     "@iconify-json/octicon": "^1.2.7",
     "@iconify-json/simple-icons": "^1.2.43",
     "@nuxt/content": "^3.6.3",
-    "@nuxt/image": "https://pkg.pr.new/@nuxt/image@1a5786c",
+    "@nuxt/image": "2.0.0-alpha.1",
     "@nuxt/scripts": "^0.11.10",
     "@nuxt/ui-pro": "^3.2.0",
     "@nuxthub/core": "0.9.0",
