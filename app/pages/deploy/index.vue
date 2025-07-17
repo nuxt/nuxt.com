@@ -27,9 +27,6 @@ defineOgImageComponent('Docs', {
 })
 
 await fetchList()
-
-const featuredProviders = computed(() => providers.value.filter(provider => provider.featured === true))
-const otherProviders = computed(() => providers.value.filter(provider => provider.featured !== true))
 </script>
 
 <template>
@@ -44,7 +41,7 @@ const otherProviders = computed(() => providers.value.filter(provider => provide
       <UPageBody>
         <UPageGrid>
           <UPageCard
-            v-for="(deployment, index) in otherProviders"
+            v-for="(deployment, index) in providers"
             :key="index"
             :to="deployment.path"
             :title="deployment.title"
