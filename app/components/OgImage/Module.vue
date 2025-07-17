@@ -1,6 +1,14 @@
 <script lang="ts" setup>
 import type { Module } from '~/types'
 
+function moduleImage(icon: string = '') {
+  if (!icon) return
+
+  if (/^https?:\/\//.test(icon)) return icon
+
+  return `https://raw.githubusercontent.com/nuxt/modules/main/icons/${icon}`
+}
+
 defineProps<{
   module: Module
   headline?: string
