@@ -5,7 +5,7 @@ head.title: Nuxt Jobs
 navigation.icon: i-lucide-briefcase-business
 links:
   - label: 'Post a job'
-    to: 'https://vuejobs.com/jobs/create'
+    to: 'https://vuejobs.com/hire-vuejs-developers'
     color: neutral
     size: md
     target: '_blank'
