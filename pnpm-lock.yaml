@@ -85,8 +85,8 @@ importers:
         specifier: 0.5.20
         version: 0.5.20(magicast@0.3.5)
       nuxt-charts:
-        specifier: 0.2.0-test.12
-        version: 0.2.0-test.12(magicast@0.3.5)(vue@3.5.17(typescript@5.8.3))
+        specifier: 0.2.0-test.20
+        version: 0.2.0-test.20(magicast@0.3.5)(vue@3.5.17(typescript@5.8.3))
       nuxt-llms:
         specifier: ^0.1.3
         version: 0.1.3(magicast@0.3.5)
@@ -6332,8 +6332,8 @@ packages:
       '@simplewebauthn/server':
         optional: true
 
-  nuxt-charts@0.2.0-test.12:
-    resolution: {integrity: sha512-KINYSB8gvz9wE1a3YfpGtf7EeR1WG0G+l+lqgPchVC3hZKKdUdBzp6ChKQcckB139tv+WN31b9A/tiU+m7T2FA==}
+  nuxt-charts@0.2.0-test.20:
+    resolution: {integrity: sha512-S+cUuC2cfJQbRv48FseFFINm8iPWB1lXEDvkzOecxQQZLW7gxJ0pnin+PVYHiOO3plZCjvf7L0h0kUDwX5vxMQ==}
 
   nuxt-component-meta@0.12.1:
     resolution: {integrity: sha512-w0ZgRCE9wGZLbmAnCUV2F4/Gjwy1J6L9FejrpTHSHM8Igrf2THwe809QOXbdV8g4+Elkz2MeC/34ZFyt05tKCg==}
@@ -8124,8 +8124,8 @@ packages:
   vue-bundle-renderer@2.1.1:
     resolution: {integrity: sha512-+qALLI5cQncuetYOXp4yScwYvqh8c6SMXee3B+M7oTZxOgtESP0l4j/fXdEJoZ+EdMxkGWIj+aSEyjXkOdmd7g==}
 
-  vue-chrts@0.2.0-test.5:
-    resolution: {integrity: sha512-wLAXIPtLchP5ZyO56oMdZZdAKcYU2x+h0wowRdE4J19z0mxfCUb5G7p/wqOVQjFNZGymD7bXdgZxX8tWh0DXqw==}
+  vue-chrts@0.2.0-beta.2:
+    resolution: {integrity: sha512-2c3BrelqSBptFVKTDaaB6XnstIGKGq3XVu3CWiSx9GbGCtTpaKJInV/ciwITufPSjqcXmH9sPZL1BxDxD9gTGw==}
     peerDependencies:
       vue: ^3.5.13
 
@@ -15477,12 +15477,12 @@ snapshots:
       - bcrypt
       - magicast
 
-  nuxt-charts@0.2.0-test.12(magicast@0.3.5)(vue@3.5.17(typescript@5.8.3)):
+  nuxt-charts@0.2.0-test.20(magicast@0.3.5)(vue@3.5.17(typescript@5.8.3)):
     dependencies:
       '@nuxt/kit': 3.17.7(magicast@0.3.5)
       '@unovis/ts': 1.5.2
       '@unovis/vue': 1.5.2(@unovis/ts@1.5.2)(vue@3.5.17(typescript@5.8.3))
-      vue-chrts: 0.2.0-test.5(vue@3.5.17(typescript@5.8.3))
+      vue-chrts: 0.2.0-beta.2(vue@3.5.17(typescript@5.8.3))
     transitivePeerDependencies:
       - magicast
       - supports-color
@@ -17828,7 +17828,7 @@ snapshots:
     dependencies:
       ufo: 1.6.1
 
-  vue-chrts@0.2.0-test.5(vue@3.5.17(typescript@5.8.3)):
+  vue-chrts@0.2.0-beta.2(vue@3.5.17(typescript@5.8.3)):
     dependencies:
       vue: 3.5.17(typescript@5.8.3)
 
