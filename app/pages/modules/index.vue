@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { motion, AnimatePresence } from 'motion-v'
 import type { Module } from '~/types'
 import { joinURL } from 'ufo'
 
@@ -7,6 +8,7 @@ definePageMeta({
 })
 
 const input = useTemplateRef('input')
+const modulesToAdd = ref<Module[]>([])
 const el = useTemplateRef<HTMLElement>('el')
 
 const { replaceRoute } = useFilters('modules')
@@ -53,6 +55,7 @@ const displayedModules = ref<Module[]>([])
 const isLoading = ref(false)
 
 const { y: scrollY } = useWindowScroll()
+const { copy } = useClipboard()
 
 const loadMoreModules = () => {
   if (isLoading.value) return
@@ -89,6 +92,19 @@ watch(filteredModules, () => {
   displayedModules.value = []
   initializeModules()
 })
+
+const copyAllInstallCommands = () => {
+  const moduleNames = modulesToAdd.value.map(module => module.name).join(' ')
+  const command = `npx nuxi@latest module add ${moduleNames}`
+  copy(command, {
+    title: 'Install command copied to clipboard:',
+    description: `Ready to install ${modulesToAdd.value.length} module${modulesToAdd.value.length > 1 ? 's' : ''} at once`
+  })
+}
+
+const clearAllModules = () => {
+  modulesToAdd.value = []
+}
 
 initializeModules()
 </script>
@@ -220,8 +236,20 @@ initializeModules()
 
     <UPage id="smooth" class="relative z-20">
       <UPageBody>
+        <div class="flex items-center gap-2 mb-4 text-muted">
+          <UIcon name="i-lucide-info" class="size-4" />
+          <span class="text-xs">Shift+click to select modules for bulk installation</span>
+        </div>
+
         <UPageGrid v-if="filteredModules?.length" class="lg:grid-cols-2 xl:grid-cols-3">
-          <ModuleItem v-for="(module, index) in displayedModules" :key="index" :module="module" />
+          <ModuleItem
+            v-for="(module, index) in displayedModules"
+            :key="index"
+            :module="module"
+            :is-added="modulesToAdd.includes(module)"
+            @add="modulesToAdd.push(module)"
+            @remove="modulesToAdd = modulesToAdd.filter(m => m.name !== module.name)"
+          />
 
           <template v-if="isLoading">
             <div v-for="n in ITEMS_PER_PAGE" :key="n" class="flex flex-col gap-4 p-4 rounded-lg border border-default">
@@ -250,6 +278,48 @@ initializeModules()
           <UButton to="/docs/guide/going-further/modules" color="neutral" size="md" label="How to create a module?" />
         </EmptyCard>
       </UPageBody>
+
+      <AnimatePresence>
+        <motion.div
+          v-if="modulesToAdd.length"
+          key="toolbar"
+          class="fixed z-50 bottom-0 left-0 right-0"
+          :initial="{ y: 100, opacity: 0 }"
+          :animate="{ y: 0, opacity: 1 }"
+          :exit="{ y: 100, opacity: 0 }"
+          :transition="{ type: 'spring', stiffness: 400, damping: 30 }"
+        >
+          <div layout class="flex justify-center mb-6">
+            <div class="bg-default/95 backdrop-blur-lg border border-default dark:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.8)] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] rounded-2xl p-3 flex items-center gap-4">
+              <motion.div class="flex items-center gap-2">
+                <UTooltip text="Copy install command">
+                  <UButton
+                    color="primary"
+                    variant="soft"
+                    size="sm"
+                    icon="i-lucide-download"
+                    class="font-medium"
+                    @click="copyAllInstallCommands"
+                  >
+                    Install {{ modulesToAdd.length }} module{{ modulesToAdd.length > 1 ? 's' : '' }}
+                  </UButton>
+                </UTooltip>
+
+                <UTooltip text="Clear selection">
+                  <UButton
+                    color="neutral"
+                    variant="ghost"
+                    size="sm"
+                    icon="i-lucide-x"
+                    class="hover:bg-error/10 hover:text-error"
+                    @click="clearAllModules"
+                  />
+                </UTooltip>
+              </motion.div>
+            </div>
+          </div>
+        </motion.div>
+      </AnimatePresence>
     </UPage>
   </UContainer>
 </template>
