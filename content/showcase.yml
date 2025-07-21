@@ -120,5 +120,7 @@ websites:
     url: https://pushsecurity.com/
     screenshotOptions:
       delay: 5
-
-
+  - name: Toolstation
+    url: https://www.toolstation.nl/
+    screenshotOptions:
+      cookies: ['OptanonAlertBoxClosed=2025-05-02T22:04:35.770Z']
