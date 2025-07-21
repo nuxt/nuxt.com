@@ -290,30 +290,42 @@ initializeModules()
           :transition="{ type: 'spring', stiffness: 400, damping: 30 }"
         >
           <div layout class="flex justify-center mb-6">
-            <div class="bg-default/95 backdrop-blur-lg border border-default dark:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.8)] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] rounded-2xl p-3 flex items-center gap-4">
-              <motion.div class="flex items-center gap-2">
+            <div class="bg-default/80 backdrop-blur-lg rounded-full p-1 border border-default dark:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.9)] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] flex items-center gap-4">
+              <motion.div class="flex items-center gap-1">
                 <UTooltip text="Copy install command">
-                  <UButton
-                    color="primary"
-                    variant="soft"
-                    size="sm"
-                    icon="i-lucide-download"
-                    class="font-medium"
-                    @click="copyAllInstallCommands"
+                  <Motion
+                    :press="{
+                      scale: 0.99
+                    }"
                   >
-                    Install {{ modulesToAdd.length }} module{{ modulesToAdd.length > 1 ? 's' : '' }}
-                  </UButton>
+                    <UButton
+                      color="primary"
+                      variant="soft"
+                      size="lg"
+                      icon="i-lucide-download"
+                      class="font-medium rounded-full"
+                      @click="copyAllInstallCommands"
+                    >
+                      Install {{ modulesToAdd.length }} module{{ modulesToAdd.length > 1 ? 's' : '' }}
+                    </UButton>
+                  </Motion>
                 </UTooltip>
 
                 <UTooltip text="Clear selection">
-                  <UButton
-                    color="neutral"
-                    variant="ghost"
-                    size="sm"
-                    icon="i-lucide-x"
-                    class="hover:bg-error/10 hover:text-error"
-                    @click="clearAllModules"
-                  />
+                  <Motion
+                    :press="{
+                      scale: 0.99
+                    }"
+                  >
+                    <UButton
+                      color="neutral"
+                      variant="soft"
+                      size="lg"
+                      icon="i-lucide-x"
+                      class="hover:bg-error/10 hover:text-error rounded-full"
+                      @click="clearAllModules"
+                    />
+                  </Motion>
                 </UTooltip>
               </motion.div>
             </div>
