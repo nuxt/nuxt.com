@@ -12,7 +12,7 @@ hero:
         ::code-tree{defaultValue="app.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)]"}
         ```vue [app.vue]
         <script setup lang="ts">
-        const version = 3
+        const version = 4
         </script>
 
         <template>
