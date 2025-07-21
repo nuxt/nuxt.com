@@ -85,8 +85,8 @@ importers:
         specifier: 0.5.20
         version: 0.5.20(magicast@0.3.5)
       nuxt-charts:
-        specifier: 0.2.0-test.20
-        version: 0.2.0-test.20(magicast@0.3.5)(vue@3.5.17(typescript@5.8.3))
+        specifier: 0.2.0-test.21
+        version: 0.2.0-test.21(magicast@0.3.5)(vue@3.5.17(typescript@5.8.3))
       nuxt-llms:
         specifier: ^0.1.3
         version: 0.1.3(magicast@0.3.5)
@@ -6332,8 +6332,8 @@ packages:
       '@simplewebauthn/server':
         optional: true
 
-  nuxt-charts@0.2.0-test.20:
-    resolution: {integrity: sha512-S+cUuC2cfJQbRv48FseFFINm8iPWB1lXEDvkzOecxQQZLW7gxJ0pnin+PVYHiOO3plZCjvf7L0h0kUDwX5vxMQ==}
+  nuxt-charts@0.2.0-test.21:
+    resolution: {integrity: sha512-44jZ5ZIbwVPzPRySkv1iVPWH77uSZT1go50zepXPwfbTagw6dvdxRope9bB9xFf8GAt07VAt0Cjh9B1iBOH5Cg==}
 
   nuxt-component-meta@0.12.1:
     resolution: {integrity: sha512-w0ZgRCE9wGZLbmAnCUV2F4/Gjwy1J6L9FejrpTHSHM8Igrf2THwe809QOXbdV8g4+Elkz2MeC/34ZFyt05tKCg==}
@@ -15477,7 +15477,7 @@ snapshots:
       - bcrypt
       - magicast
 
-  nuxt-charts@0.2.0-test.20(magicast@0.3.5)(vue@3.5.17(typescript@5.8.3)):
+  nuxt-charts@0.2.0-test.21(magicast@0.3.5)(vue@3.5.17(typescript@5.8.3)):
     dependencies:
       '@nuxt/kit': 3.17.7(magicast@0.3.5)
       '@unovis/ts': 1.5.2
