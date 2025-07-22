@@ -23,7 +23,7 @@ const date = computed(() => {
 })
 
 function copyInstallCommand(moduleName: string) {
-  const command = `npx nuxi@latest module add ${moduleName}`
+  const command = `npx nuxt@latest module add ${moduleName}`
   copy(command, { title: 'Command copied to clipboard:', description: command })
 }
 

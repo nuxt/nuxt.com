@@ -95,7 +95,7 @@ watch(filteredModules, () => {
 
 const copyAllInstallCommands = () => {
   const moduleNames = modulesToAdd.value.map(module => module.name).join(' ')
-  const command = `npx nuxi@latest module add ${moduleNames}`
+  const command = `npx nuxt@latest module add ${moduleNames}`
   copy(command, {
     title: 'Install command copied to clipboard:',
     description: `Ready to install ${modulesToAdd.value.length} module${modulesToAdd.value.length > 1 ? 's' : ''} at once`
