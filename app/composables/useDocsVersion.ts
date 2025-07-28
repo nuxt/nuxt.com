@@ -14,7 +14,7 @@ interface Version {
 const versions: Version[] = [
   {
     label: 'Version 4',
-    tag: '4.0.1',
+    tag: '4.0.2',
     shortTag: 'v4',
     branch: 'main',
     tagColor: 'info',
@@ -24,7 +24,7 @@ const versions: Version[] = [
   {
     label: 'Version 3',
     // TODO: update this on release
-    tag: '3.17.7',
+    tag: '3.18.0',
     shortTag: 'v3',
     branch: '3.x',
     tagColor: 'primary',
