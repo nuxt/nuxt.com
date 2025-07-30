@@ -18,18 +18,19 @@ onMounted(() => {
 <template>
   <div>
     <UBanner
-      id="nuxt-v4"
-      title="Announcing Nuxt 4.0"
-      icon="i-lucide-sparkles"
-      to="/blog/v4"
+      id="mastering-nuxt-v4"
+      title="Get the official course for Nuxt 4 and save $50 with code NUXT4RDY"
+      icon="i-lucide-book-open"
+      to="https://masteringnuxt.com/?utm_source=nuxt&utm_medium=banner&utm_campaign=nuxt4&friend=nuxt"
+      target="_blank"
       close
       :actions="[
         {
-          label: 'Read the announcement',
+          label: 'Claim discount',
           color: 'neutral',
           variant: 'outline',
           trailingIcon: 'i-lucide-arrow-right',
-          to: '/blog/v4'
+          to: 'https://masteringnuxt.com/?utm_source=nuxt&utm_medium=banner&utm_campaign=nuxt4&friend=nuxt'
         }
       ]"
     />

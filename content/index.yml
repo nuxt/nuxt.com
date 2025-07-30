@@ -2,8 +2,8 @@ hero:
   title: 'The Progressive Web Framework'
   description: Create high-quality web applications with Nuxt, the open source framework that makes full-stack development with Vue.js intuitive.
   cta:
-    label: Announcing Nuxt 4.0
-    to: /blog/v4
+    label: Nuxt v3.18 is out
+    to: /blog/v3-18
     icon: i-lucide-arrow-right
   tabs:
     - title: Minimal
@@ -12,7 +12,7 @@ hero:
         ::code-tree{defaultValue="app.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)]"}
         ```vue [app.vue]
         <script setup lang="ts">
-        const version = 3
+        const version = 4
         </script>
 
         <template>
