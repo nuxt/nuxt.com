@@ -2,19 +2,16 @@ import type { BadgeProps } from '@nuxt/ui'
 
 interface Version {
   label: string
-  tag: string
-  shortTag: string
+  shortTag: 'v4' | 'v3'
   branch: string
   tagColor: BadgeProps['color']
   path: string
   collection: 'docsv3' | 'docsv4'
 }
 
-// TODO: get versions from npm registry
 const versions: Version[] = [
   {
     label: 'Version 4',
-    tag: '4.0.2',
     shortTag: 'v4',
     branch: 'main',
     tagColor: 'info',
@@ -23,8 +20,6 @@ const versions: Version[] = [
   },
   {
     label: 'Version 3',
-    // TODO: update this on release
-    tag: '3.18.0',
     shortTag: 'v3',
     branch: '3.x',
     tagColor: 'primary',
@@ -32,6 +27,24 @@ const versions: Version[] = [
     collection: 'docsv3'
   }
 ]
+
+const tagMap: Record<Version['shortTag'], string> = {
+  v3: '3x',
+  v4: '4x'
+}
+
+export const useDocsTags = () => {
+  const { data: tags } = useAsyncData('versions', async () => {
+    const { 'dist-tags': distTags } = await $fetch<{ 'dist-tags': Record<string, string> }>('https://registry.npmjs.org/nuxt')
+    return Object.fromEntries(
+      Object.entries(tagMap).map(([shortTag]: [keyof typeof tagMap, string]) => {
+        return [shortTag, distTags[tagMap[shortTag]] ?? distTags.latest]
+      })
+    )
+  }, { default: () => ({}) })
+
+  return { tags }
+}
 
 export const useDocsVersion = () => {
   const route = useRoute()

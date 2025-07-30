@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const { version, items } = useDocsVersion()
+const { tags } = useDocsTags()
 </script>
 
 <template>
@@ -24,8 +25,8 @@ const { version, items } = useDocsVersion()
       >
         <span class="truncate">{{ version.label }}</span>
 
-        <UBadge v-if="version.tag" :color="version.tagColor" variant="subtle" size="sm" class="rounded-full">
-          {{ version.tag }}
+        <UBadge v-if="tags[version.shortTag]" :color="version.tagColor" variant="subtle" size="sm" class="rounded-full">
+          {{ tags[version.shortTag] }}
         </UBadge>
       </UButton>
     </template>
@@ -34,8 +35,8 @@ const { version, items } = useDocsVersion()
       <div class="flex items-center gap-1.5">
         <span class="truncate">{{ item.label }}</span>
 
-        <UBadge v-if="item.tag" :color="item.tagColor" variant="subtle" size="sm" class="rounded-full">
-          {{ item.tag }}
+        <UBadge v-if="item.shortTag" :color="item.tagColor" variant="subtle" size="sm" class="rounded-full">
+          {{ tags[item.shortTag] }}
         </UBadge>
       </div>
     </template>
