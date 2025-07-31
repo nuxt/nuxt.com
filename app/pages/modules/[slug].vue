@@ -1,15 +1,13 @@
 <script setup lang="ts">
 import type { Module } from '~/types'
-import { ModuleProseA, ModuleProseKbd } from '#components'
-
-const Img = (props: any) => h('img', props)
+import { ModuleProseA, ModuleProseKbd, ModuleProseImg } from '#components'
 
 definePageMeta({
   heroBackground: 'opacity-30 -z-10'
 })
 const route = useRoute()
 
-const { data: module } = await useFetch<Module>(`https://api.nuxt.com/modules/${route.params.slug}`, { key: `modules-${route.params.slug}` })
+const { data: module } = await useFetch<Module>(`https://api.nuxt.com/modules/${route.params.slug}`, { key: `module-${route.params.slug}` })
 if (!module.value) {
   throw createError({ statusCode: 404, statusMessage: 'Module not found', fatal: true })
 }
@@ -168,7 +166,7 @@ defineOgImageComponent('Module', {
 
     <UPage>
       <UPageBody>
-        <ContentRenderer v-if="module.readme?.body" :value="module.readme" :components="{ a: ModuleProseA, img: Img, kbd: ModuleProseKbd }" />
+        <ContentRenderer v-if="module.readme?.body" :value="module.readme" :components="{ a: ModuleProseA, img: ModuleProseImg, kbd: ModuleProseKbd }" class="first:[&_picture]:block first:[&_picture]:mb-4" />
       </UPageBody>
 
       <template #right>
