@@ -28,7 +28,7 @@ defineProps<{
         width="600"
         height="338"
         format="webp"
-        :modifiers="{ pos: 'top' }"
+        :modifiers="{ position: 'top' }"
         :loading="index > 3 ? 'lazy' : undefined"
       />
       <NuxtImg
@@ -38,7 +38,7 @@ defineProps<{
         width="320"
         height="180"
         format="webp"
-        :modifiers="{ pos: 'top' }"
+        :modifiers="{ position: 'top' }"
         :loading="index > 3 ? 'lazy' : undefined"
       />
     </template>
