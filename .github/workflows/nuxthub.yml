@@ -42,7 +42,7 @@ jobs:
           NUXT_SITE_URL: https://nuxt.com
 
       - name: Deploy to NuxtHub
-        uses: nuxt-hub/action@v1
+        uses: nuxt-hub/action@v2
         id: deploy
         with:
           project-key: nuxt-com-lvuq
