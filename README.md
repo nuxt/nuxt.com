@@ -33,7 +33,7 @@ If you are on Windows, you can use the following command instead:
 echo %cd%
 ```
 
-Copy the output of the command above and paste it in the `NUXT_PATH` variable in the `.env` file.
+Copy the output of the command above and paste it in the `NUXT_PATH` and `NUXT_V4_PATH` variables in the `.env` file.
 
 ## Development
 
