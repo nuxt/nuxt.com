@@ -196,17 +196,17 @@ export default defineContentConfig({
         })
       })
     }),
-    docsv3: defineCollection({
+    docsv4: defineCollection({
       type: 'page',
-      source: [docsV3Source, examplesV3Source],
+      source: [docsV4Source, examplesV4Source],
       schema: z.object({
         titleTemplate: z.string().optional(),
         links: z.array(Button)
       })
     }),
-    docsv4: defineCollection({
+    docsv3: defineCollection({
       type: 'page',
-      source: [docsV4Source, examplesV4Source],
+      source: [docsV3Source, examplesV3Source],
       schema: z.object({
         titleTemplate: z.string().optional(),
         links: z.array(Button)
