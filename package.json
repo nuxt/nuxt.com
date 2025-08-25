@@ -27,7 +27,7 @@
     "@nuxtjs/html-validator": "^2.1.0",
     "@nuxtjs/mdc": "^0.17.2",
     "@nuxtjs/plausible": "^1.2.0",
-    "@vue/compiler-sfc": "^3.5.19",
+    "@vue/compiler-sfc": "^3.5.20",
     "@vueuse/components": "^13.7.0",
     "@vueuse/core": "^13.7.0",
     "@vueuse/nuxt": "^13.7.0",
@@ -63,7 +63,7 @@
     "twoslash": "^0.3.4",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4",
-    "vue": "^3.5.19",
+    "vue": "^3.5.20",
     "vue-tsc": "^3.0.6",
     "wrangler": "^4.32.0"
   },
