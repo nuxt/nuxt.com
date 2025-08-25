@@ -32,7 +32,7 @@
     "@vueuse/core": "^13.7.0",
     "@vueuse/nuxt": "^13.7.0",
     "date-fns": "^4.1.0",
-    "drizzle-orm": "^0.44.4",
+    "drizzle-orm": "^0.44.5",
     "feed": "^5.1.0",
     "little-date": "^1.0.0",
     "motion-v": "1.7.0",
