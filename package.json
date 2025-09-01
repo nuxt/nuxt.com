@@ -1,7 +1,7 @@
 {
   "name": "nuxt.com",
   "version": "0.3.11",
-  "packageManager": "pnpm@10.15.0",
+  "packageManager": "pnpm@10.15.1",
   "scripts": {
     "dev": "nuxt dev",
     "build": "ROLLDOWN_OPTIONS_VALIDATION=loose NODE_OPTIONS='--max-old-space-size=8192' nuxt build",
@@ -28,9 +28,9 @@
     "@nuxtjs/mdc": "^0.17.2",
     "@nuxtjs/plausible": "^1.2.0",
     "@vue/compiler-sfc": "^3.5.20",
-    "@vueuse/components": "^13.8.0",
-    "@vueuse/core": "^13.8.0",
-    "@vueuse/nuxt": "^13.8.0",
+    "@vueuse/components": "^13.9.0",
+    "@vueuse/core": "^13.9.0",
+    "@vueuse/nuxt": "^13.9.0",
     "date-fns": "^4.1.0",
     "drizzle-orm": "^0.44.5",
     "feed": "^5.1.0",
