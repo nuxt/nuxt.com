@@ -36,7 +36,7 @@
     "feed": "^5.1.0",
     "little-date": "^1.0.0",
     "motion-v": "1.7.1",
-    "nuxt": "^4.0.3",
+    "nuxt": "^4.1.0",
     "nuxt-auth-utils": "0.5.23",
     "nuxt-charts": "0.2.3",
     "nuxt-llms": "^0.1.3",
