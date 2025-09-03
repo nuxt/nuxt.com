@@ -3,7 +3,17 @@ import { toRelativeDate } from '../utils'
 
 export const useEnterpriseJobs = () => {
   const route = useRoute()
-  const jobs = useState<Job[]>('jobs', () => [])
+  const { data: jobs, execute } = useAsyncData('jobs', () => $fetch<Job[]>('https://api.nuxt.com/jobs'), {
+    immediate: false,
+    default: () => [],
+    transform: (data) => {
+      return data.map(job => ({
+        ...job,
+        remote: mapRemote(job.remote),
+        published_at: toRelativeDate(job.published_at)
+      }))
+    }
+  })
 
   const mapRemote = (remoteType: string) => {
     switch (remoteType) {
@@ -23,11 +33,7 @@ export const useEnterpriseJobs = () => {
       return
     }
 
-    const res = await $fetch<Job[]>('https://api.nuxt.com/jobs')
-
-    jobs.value = res.map((job) => {
-      return { ...job, remote: mapRemote(job.remote), published_at: toRelativeDate(job.published_at) }
-    })
+    return execute()
   }
 
   // Computed

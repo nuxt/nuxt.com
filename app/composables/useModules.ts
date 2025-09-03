@@ -41,12 +41,21 @@ export const moduleIcon = function (category: string) {
 export const useModules = () => {
   const route = useRoute()
   const router = useRouter()
-  const stats = useState<Stats>('module-stats', () => ({
-    maintainers: 0,
-    contributors: 0,
-    modules: 0
-  }))
-  const modules = useState<Module[]>('modules', () => [])
+  const { data, execute } = useFetch<{ modules: Module[], stats: Stats }>('https://api.nuxt.com/modules', {
+    immediate: false,
+    default: () => ({
+      modules: [],
+      stats: {
+        maintainers: 0,
+        contributors: 0,
+        modules: 0
+      }
+    })
+  })
+
+  const stats = computed(() => data.value.stats)
+  const modules = computed(() => data.value.modules || [])
+
   const module = useState<Module>('module', () => ({} as Module))
 
   // Data fetching
@@ -55,11 +64,7 @@ export const useModules = () => {
       return
     }
 
-    const res = await $fetch<{ modules: Module[], stats: Stats }>('https://api.nuxt.com/modules')
-    if (res?.modules) {
-      modules.value = res.modules
-      stats.value = res.stats
-    }
+    return execute()
   }
 
   // Data
