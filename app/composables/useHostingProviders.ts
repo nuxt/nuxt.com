@@ -1,21 +1,16 @@
-import type { DeployCollectionItem } from '@nuxt/content'
-
 export const useHostingProviders = () => {
-  const providers = useState<DeployCollectionItem[]>('hostingProviders', () => [])
+  const { data: providers, execute } = useAsyncData(() => queryCollection('deploy').all(), {
+    immediate: false,
+    default: () => [],
+    transform: data => data.filter(article => article.path !== '/deploy')
+  })
 
   async function fetchList() {
     if (providers.value.length) {
       return
     }
 
-    try {
-      const { data } = await useAsyncData('hosting-provider', () => queryCollection('deploy').all())
-
-      providers.value = data.value?.filter(article => article.path !== '/deploy') || []
-    } catch (e) {
-      providers.value = []
-      return e
-    }
+    return execute()
   }
 
   return {

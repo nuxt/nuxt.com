@@ -4,7 +4,7 @@
   "packageManager": "pnpm@10.15.1",
   "scripts": {
     "dev": "nuxt dev",
-    "build": "ROLLDOWN_OPTIONS_VALIDATION=loose NODE_OPTIONS='--max-old-space-size=8192' nuxt build",
+    "build": "NODE_OPTIONS='--max-old-space-size=8192' nuxt build",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "lint": "eslint . --cache",
