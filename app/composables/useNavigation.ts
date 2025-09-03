@@ -111,6 +111,12 @@ function _useHeaderLinks() {
         description: 'Deploy & manage full-stack Nuxt apps that scale.',
         icon: 'i-lucide-rocket',
         target: '_blank'
+      }, {
+        label: 'Docus',
+        to: 'https://docus.dev/?utm_source=nuxt-website&utm_medium=header',
+        description: 'Write beautiful docs with Markdown',
+        icon: 'i-custom-docus',
+        target: '_blank'
       }]
     }, {
       label: 'Enterprise',
@@ -171,6 +177,10 @@ const footerLinks = [{
   }, {
     label: 'NuxtHub',
     to: 'https://hub.nuxt.com/?utm_source=nuxt-website&utm_medium=footer',
+    target: '_blank'
+  }, {
+    label: 'Docus',
+    to: 'https://docus.dev/?utm_source=nuxt-website&utm_medium=footer',
     target: '_blank'
   }]
 }, {
