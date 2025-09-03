@@ -24,7 +24,6 @@ const [{ data: navigation }, { data: files }] = await Promise.all([
       queryCollectionSearchSections('blog')
     ])
   }, {
-    server: false,
     transform: data => data.flat(),
     watch: [version]
   })
