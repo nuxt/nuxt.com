@@ -275,9 +275,9 @@ logos:
       alt: Blizzard
       height: 28
       width: 55
-    - light: /assets/brands/light/too-good-to-go.svg
-      dark: /assets/brands/dark/too-good-to-go.svg
-      alt: To Good to Go
+    - light: /assets/brands/light/deutsche-bahn.svg
+      dark: /assets/brands/dark/deutsche-bahn.svg
+      alt: Deutsche Bahn
       height: 40
       width: 51
 features:
