@@ -19,7 +19,7 @@ export default defineEventHandler(async (event: H3Event) => {
   })
   for (const doc of docs) {
     sitemap.write({
-      url: doc.path?.replace(/\/4\.x\//, '/'),
+      url: doc.path,
       changefreq: 'weekly'
     })
   }
