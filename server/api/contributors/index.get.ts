@@ -16,7 +16,7 @@ export default cachedEventHandler(async (event) => {
 
   console.log('Fetching /contributors...')
 
-  let contributors = await fetchOrgsContributors(event, ['nuxt', 'nuxt-modules', 'nuxt-themes', 'nuxt-ui-pro', 'unjs', 'nuxtlabs', 'nuxt-hub']) as Array<VoltaContributor & { score: number }>
+  let contributors = await fetchOrgsContributors(event, ['nuxt', 'nuxt-modules', 'nuxt-themes', 'nuxt-ui-templates', 'unjs', 'nuxtlabs', 'nuxt-hub']) as Array<VoltaContributor & { score: number }>
 
   // Remove bots
   contributors = contributors.filter(({ username }) => !BOTS.includes(username))
