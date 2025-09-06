@@ -124,3 +124,13 @@ websites:
     url: https://www.toolstation.nl/
     screenshotOptions:
       cookies: ['OptanonAlertBoxClosed=2025-05-02T22:04:35.770Z']
+  - name: Vans
+    url: https://www.vans.com
+    delay: 5
+    screenshotOptions:
+      cookies: ['OptanonAlertBoxClosed=2025-05-02T22:04:35.770Z']
+  - name: Timberland
+    url: https://www.timberland.com
+    delay: 5
+    screenshotOptions:
+      cookies: ['OptanonAlertBoxClosed=2025-05-02T22:04:35.770Z']
