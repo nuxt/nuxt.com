@@ -219,7 +219,7 @@ export default defineContentConfig({
         image: z.string().editor({ input: 'media' }),
         authors: z.array(Author),
         date: z.string().date(),
-        draft: z.boolean().optional(),
+        draft: z.boolean().default(false),
         category: z.enum(['Release', 'Tutorial', 'Announcement', 'Article']),
         tags: z.array(z.string())
       })
