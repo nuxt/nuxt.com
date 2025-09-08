@@ -18,19 +18,19 @@ onMounted(() => {
 <template>
   <div>
     <UBanner
-      id="senior-certification-nuxt"
-      title="Official Nuxt Senior Certification Exam has launched"
-      icon="i-lucide-award"
-      to="https://certification.nuxt.com"
+      id="aidd-event-sep-10"
+      title="Sep 10: Free AI-Driven Development Event for Vue & Nuxt Developers"
+      icon="i-lucide-calendar"
+      to="https://aidd.io/ai-driven-development-day?utm_source=nuxt&utm_medium=website&utm[…]aign=affiliate&utm_content=top_banner&banner_type=top&friend=NUXThttps://aidd.io/ai-driven-development-day?utm_source=nuxt&utm_medium=website&utm_campaign=affiliate&utm_content=top_banner&banner_type=top&friend=NUXT"
       target="_blank"
       close
       :actions="[
         {
-          label: 'Get Certified',
+          label: 'Save my seat',
           color: 'neutral',
           variant: 'outline',
           trailingIcon: 'i-lucide-arrow-right',
-          to: 'https://certification.nuxt.com'
+          to: 'https://aidd.io/ai-driven-development-day?utm_source=nuxt&utm_medium=website&utm_campaign=affiliate&utm_content=top_banner&banner_type=top&friend=NUXT'
         }
       ]"
     />
