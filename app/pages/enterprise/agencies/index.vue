@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ContentNavigationLink } from '@nuxt/ui-pro/runtime/types/content.js'
+import type { ContentNavigationLink } from '@nuxt/ui/runtime/types/content.js'
 
 definePageMeta({
   heroBackground: 'opacity-80 -z-10'

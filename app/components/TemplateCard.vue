@@ -68,7 +68,7 @@ defineProps<{
       </div>
     </template>
     <template #footer>
-      <UButtonGroup class="w-full">
+      <UFieldGroup class="w-full">
         <UButton
           label="Demo"
           icon="i-lucide-laptop"
@@ -101,7 +101,7 @@ defineProps<{
           size="sm"
           class="w-1/2 justify-center"
         />
-      </UButtonGroup>
+      </UFieldGroup>
     </template>
   </UPageCard>
 </template>

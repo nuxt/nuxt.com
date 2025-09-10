@@ -21,7 +21,7 @@ onMounted(() => {
       id="aidd-event-sep-10"
       title="Sep 10: Free AI-Driven Development Event for Vue & Nuxt Developers"
       icon="i-lucide-calendar"
-      to="https://aidd.io/ai-driven-development-day?utm_source=nuxt&utm_medium=website&utm[…]aign=affiliate&utm_content=top_banner&banner_type=top&friend=NUXThttps://aidd.io/ai-driven-development-day?utm_source=nuxt&utm_medium=website&utm_campaign=affiliate&utm_content=top_banner&banner_type=top&friend=NUXT"
+      to="https://aidd.io/ai-driven-development-day?utm_source=nuxt&utm_medium=website&utm_campaign=affiliate&utm_content=top_banner&banner_type=top&friend=NUXT"
       target="_blank"
       close
       :actions="[
