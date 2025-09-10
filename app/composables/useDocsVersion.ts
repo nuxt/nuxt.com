@@ -14,7 +14,7 @@ const versions: Version[] = [
     label: 'Version 4',
     shortTag: 'v4',
     branch: 'main',
-    tagColor: 'info',
+    tagColor: 'primary',
     path: '/docs/4.x',
     collection: 'docsv4'
   },
@@ -22,7 +22,7 @@ const versions: Version[] = [
     label: 'Version 3',
     shortTag: 'v3',
     branch: '3.x',
-    tagColor: 'primary',
+    tagColor: 'neutral',
     path: '/docs/3.x',
     collection: 'docsv3'
   }
