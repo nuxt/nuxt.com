@@ -46,7 +46,7 @@ watch(() => props.modules, (newVal?: Module[]) => {
 <template>
   <div class="absolute isolate inset-0 overflow-hidden">
     <div class="flex flex-col justify-between pt-4">
-      <UPageMarquee
+      <UMarquee
         v-for="(row, rowIndex) in marqueeModulesData"
         :key="rowIndex"
         :reverse="rowIndex % 2 === 1"
@@ -82,7 +82,7 @@ watch(() => props.modules, (newVal?: Module[]) => {
             class="rounded-none bg-transparent"
           />
         </Motion>
-      </UPageMarquee>
+      </UMarquee>
     </div>
 
     <div class="absolute left-0 top-0 bottom-0 w-1/2 z-10 bg-linear-to-bl from-default/30 to-default to-40%" />
