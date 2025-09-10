@@ -2,7 +2,6 @@
 import { kebabCase } from 'scule'
 import type { ContentNavigationItem } from '@nuxt/content'
 import { findPageBreadcrumb } from '@nuxt/content/utils'
-import { mapContentNavigation } from '#ui-pro/utils'
 
 definePageMeta({
   heroBackground: 'opacity-30',
@@ -60,7 +59,7 @@ watch(page, (page) => {
 }, { immediate: true })
 
 const breadcrumb = computed(() => {
-  const links = mapContentNavigation(findPageBreadcrumb(navigation.value, path.value)).map(link => ({
+  const links = findPageBreadcrumb(navigation.value, path.value).map(link => ({
     label: link.label,
     to: link.to
   }))
