@@ -85,7 +85,7 @@ Checkout the [Workers Build](https://developers.cloudflare.com/workers/ci-cd/bui
 
 While the default configuration should work for most usecases, we provide ways to tailor the deployment to your needs.
 
-#### Custom Wrangler configuration
+#### Custom Wrangler Configuration
 
 It is recommended to provide a cloudflare option to nitro, but not strictly necessary.
 You might have some advanced usecase where you want to process the Nitro output further before deploying it, or you might prefer manually manage the wrangler configuration.
@@ -97,7 +97,7 @@ You will have to set the `main` and `assets` keys manually, based on Nitro outpu
 However, Nitro output format must be respected. It is possible that these will change in future versions, so be careful when upgrading Nitro or Nuxt.
 ::
 
-#### Custom entry point
+#### Custom Entry Point
 
 In some (rare) cases, you might want to customize the worker entry point. For instance, there might be some new Cloudflare Workers features that you want to use, or you might want to deviate from the default behavior.
 You can even go further and completely customize the worker entry point. Refer to Nitro documentation on [how to create a custom preset](https://nitro.build/deploy/custom-presets).
