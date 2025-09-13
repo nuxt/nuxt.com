@@ -1,0 +1,7 @@
+name: 'Portfolio Pro'
+slug: 'ui-pro-portfolio'
+description: "A portfolio template with a clean and modern design."
+repo: 'nuxt-ui-pro/portfolio'
+demo: 'https://portfolio-template.nuxt.dev'
+badge: 'Freemium'
+featured: true

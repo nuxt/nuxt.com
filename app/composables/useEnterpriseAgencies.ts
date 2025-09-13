@@ -3,8 +3,32 @@ import { slugify, random } from '../utils'
 
 export const useEnterpriseAgencies = () => {
   const route = useRoute()
-  const router = useRouter()
-  const agencies = useState<Agency[]>('enterprise-agencies', () => [])
+  const { data: agencies, execute } = useAsyncData('agencies', () => queryCollection('agencies').all(), {
+    immediate: false,
+    default: () => [],
+    transform: (data) => {
+      if (data && Array.isArray(data)) {
+        return data.map((agency: any) => ({
+          ...agency,
+          services: (agency.services || []).map((service: string) => ({
+            key: slugify(service),
+            title: service
+          })),
+          regions: (agency.regions || []).map((region: string) => ({
+            key: slugify(region),
+            title: region
+          })),
+          location: agency.location
+            ? {
+                key: slugify(agency.location),
+                title: agency.location
+              }
+            : null
+        })) as Agency[]
+      }
+      return []
+    }
+  })
 
   // Data fetching
   async function fetchList() {
@@ -12,31 +36,7 @@ export const useEnterpriseAgencies = () => {
       return
     }
 
-    try {
-      const data = await queryContent('/enterprise/agencies').where({ _extension: 'md' }).find()
-
-      agencies.value = data.map(agency => ({
-        ...agency,
-        services: (agency.services || []).map((service: string) => ({
-          key: slugify(service),
-          label: service
-        })),
-        regions: (agency.regions || []).map((region: string) => ({
-          key: slugify(region),
-          label: region
-        })),
-        location: agency.location
-          ? {
-              key: slugify(agency.location),
-              label: agency.location
-            }
-          : null
-      })) as Agency[]
-    }
-    catch (e) {
-      agencies.value = []
-      return e
-    }
+    return execute()
   }
 
   // Computed
@@ -67,57 +67,50 @@ export const useEnterpriseAgencies = () => {
       })
     })
     return services
-      .map(service => ({
-        ...service,
-        exactQuery: true,
-        to: {
-          name: 'enterprise-agencies',
-          query: {
-            ...route.query,
-            service: service.key
-          },
-          state: { smooth: '#smooth' }
-        },
-        click: (e) => {
-          if (route.query.service !== service.key) {
-            return
-          }
+      .map((service) => {
+        const currentService = route.query.service?.toString() || ''
+        const isSelected = currentService === service.key
 
-          e.preventDefault()
-
-          router.replace({ query: { ...route.query, service: undefined } })
-        }
-      }))
-      .sort((a, b) => a.label.localeCompare(b.label))
-  })
-
-  const locations = computed<Filter[]>(() => {
-    return [...new Set(agencies.value.map(agency => agency.location))]
-      .map((location: any) => {
         return {
-          key: location.key,
-          label: location.label,
+          ...service,
           exactQuery: true,
+          active: isSelected,
           to: {
             name: 'enterprise-agencies',
             query: {
               ...route.query,
-              location: location.key
+              service: isSelected ? undefined : service.key
             },
             state: { smooth: '#smooth' }
-          },
-          click: (e) => {
-            if (route.query.location !== location.key) {
-              return
-            }
-
-            e.preventDefault()
-
-            router.replace({ query: { ...route.query, location: undefined } })
           }
         }
       })
-      .sort((a, b) => a.label.localeCompare(b.label))
+  })
+
+  const locations = computed<Filter[]>(() => {
+    return [...new Set(agencies.value
+      .map(agency => agency.location)
+      .filter((location): location is NonNullable<typeof location> => location !== null)
+    )]
+      .map((location) => {
+        const currentLocation = route.query.location?.toString() || ''
+        const isSelected = currentLocation === location.key
+
+        return {
+          key: location.key,
+          title: location.title,
+          exactQuery: true,
+          active: isSelected,
+          to: {
+            name: 'enterprise-agencies',
+            query: {
+              ...route.query,
+              location: isSelected ? undefined : location.key
+            },
+            state: { smooth: '#smooth' }
+          }
+        }
+      })
   })
 
   const regions = computed<Filter[]>(() => {
@@ -133,30 +126,24 @@ export const useEnterpriseAgencies = () => {
     })
     return regions
       .map((region) => {
+        const currentRegion = route.query.region?.toString() || ''
+        const isSelected = currentRegion === region.key
+
         return {
           key: region.key,
-          label: region.label,
+          title: region.title,
           exactQuery: true,
+          active: isSelected,
           to: {
             name: 'enterprise-agencies',
             query: {
               ...route.query,
-              region: region.key
+              region: isSelected ? undefined : region.key
             },
             state: { smooth: '#smooth' }
-          },
-          click: (e) => {
-            if (route.query.region !== region.key) {
-              return
-            }
-
-            e.preventDefault()
-
-            router.replace({ query: { ...route.query, region: undefined } })
           }
         }
       })
-      .sort((a, b) => a.label.localeCompare(b.label))
   })
 
   const selectedService = computed(() => {

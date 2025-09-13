@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { ParsedContent } from '@nuxt/content'
 import type { NuxtError } from '#app'
 
 useSeoMeta({
@@ -9,38 +8,61 @@ useSeoMeta({
 
 defineProps<{ error: NuxtError }>()
 
-const { headerLinks, searchGroups, searchLinks } = useNavigation()
+const { version } = useDocsVersion()
+const { searchGroups, searchLinks, searchTerm } = useNavigation()
+const { fetchList } = useModules()
 
-const { data: navigation } = await useLazyAsyncData('navigation', () => fetchContentNavigation(), { default: () => [] })
-const { data: files } = useLazyFetch<ParsedContent[]>('/api/search.json', { default: () => [], server: false })
+const [{ data: navigation }, { data: files }] = await Promise.all([
+  useAsyncData('navigation', () => {
+    return Promise.all([
+      queryCollectionNavigation('docsv3', ['titleTemplate']),
+      queryCollectionNavigation('docsv4', ['titleTemplate']).then(data => data[0]?.children),
+      queryCollectionNavigation('blog')
+    ])
+  }, {
+    transform: data => data.flat(),
+    watch: [version]
+  }),
+  useLazyAsyncData('search', () => {
+    return Promise.all([
+      queryCollectionSearchSections('docsv3'),
+      queryCollectionSearchSections('docsv4'),
+      queryCollectionSearchSections('blog')
+    ])
+  }, {
+    server: false,
+    transform: data => data.flat(),
+    watch: [version]
+  })
+])
 
-provide('navigation', navigation)
+onNuxtReady(() => fetchList())
+
+const versionNavigation = computed(() => navigation.value?.filter(item => item.path === version.value.path || item.path === '/blog') ?? [])
+const versionFiles = computed(() => files.value?.filter((file) => {
+  return (version.value.path === '/docs/4.x' ? file.id.startsWith('/docs/4.x/') : !file.id.startsWith('/docs/4.x')) || file.id.startsWith('/blog/')
+}) ?? [])
+
+provide('navigation', versionNavigation)
 </script>
 
 <template>
-  <div>
-    <AppHeader :links="headerLinks" />
+  <UApp>
+    <AppHeader />
 
-    <UContainer>
-      <UMain>
-        <UPage>
-          <UPageError :error="error" />
-        </UPage>
-      </UMain>
-    </UContainer>
+    <UError :error="error" />
 
     <AppFooter />
 
     <ClientOnly>
-      <UContentSearch
-        :files="files"
-        :navigation="navigation[0]?.children"
+      <LazyUContentSearch
+        v-model:search-term="searchTerm"
+        :files="versionFiles"
+        :navigation="versionNavigation"
         :groups="searchGroups"
         :links="searchLinks"
-        :fuse="{ resultLimit: 13 }"
+        :fuse="{ resultLimit: 42 }"
       />
-
-      <UNotifications />
     </ClientOnly>
-  </div>
+  </UApp>
 </template>

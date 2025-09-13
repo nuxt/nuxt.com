@@ -1,0 +1,7 @@
+name: 'Nuxt 3 Tips by Daniel Roe'
+slug: 'nuxt3-tips-daniel'
+description: 'Learn Nuxt 3 tips and tricks with Daniel Roe (Nuxt lead).'
+url: 'https://www.youtube.com/watch?v=dZSNW07sO-A&list=PLQnM-cL9ttacXZavMQMT-0lyGki8iSkGF'
+screenshotOptions:
+  delay: 1
+  removeElements: ['tp-yt-iron-overlay-backdrop', 'tp-yt-paper-dialog'] 

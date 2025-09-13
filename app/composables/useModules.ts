@@ -1,54 +1,61 @@
-import type { Module, Filter, Stats } from '../types'
+import type { Module, Filter, Stats } from '~/types'
+
+type ModuleStatsKeys = 'version' | 'downloads' | 'stars' | 'publishedAt' | 'createdAt'
 
 const iconsMap = {
-  Analytics: 'i-ph-chart-bar',
-  CMS: 'i-ph-pencil',
-  CSS: 'i-ph-paint-brush-broad',
-  Database: 'i-ph-database',
-  Devtools: 'i-ph-wrench',
-  Ecommerce: 'i-ph-shopping-cart',
-  Extensions: 'i-ph-puzzle-piece',
-  Fonts: 'i-ph-text-aa',
-  Images: 'i-ph-image',
-  Libraries: 'i-ph-books',
-  Monitoring: 'i-ph-timer',
-  Payment: 'i-ph-credit-card',
-  Performance: 'i-ph-gauge',
-  Request: 'i-ph-plugs-connected',
-  Security: 'i-ph-shield',
-  SEO: 'i-ph-file-search',
-  UI: 'i-ph-layout'
+  Official: 'i-lucide-medal',
+  Analytics: 'i-lucide-bar-chart',
+  CMS: 'i-lucide-pencil',
+  CSS: 'i-lucide-palette',
+  Database: 'i-lucide-database',
+  Devtools: 'i-lucide-wrench',
+  Ecommerce: 'i-lucide-shopping-cart',
+  Extensions: 'i-lucide-puzzle',
+  Fonts: 'i-lucide-type',
+  Images: 'i-lucide-image',
+  Libraries: 'i-lucide-library',
+  Monitoring: 'i-lucide-timer',
+  Payment: 'i-lucide-credit-card',
+  Performance: 'i-lucide-gauge',
+  Request: 'i-lucide-unplug',
+  Security: 'i-lucide-shield',
+  SEO: 'i-lucide-search',
+  UI: 'i-lucide-layout'
 }
 
-export const moduleImage = function (icon: string = '', size: number = 80) {
+export const moduleImage = function (icon: string = '', _size: number = 80) {
   if (!icon) return
 
-  if (/^http(s)?:\/\//.test(icon)) return icon
+  if (/^https?:\/\//.test(icon)) return icon
 
-  if (/\.svg$/.test(icon)) return `https://raw.githubusercontent.com/nuxt/modules/main/icons/${icon}`
+  return `https://raw.githubusercontent.com/nuxt/modules/main/icons/${icon}`
+  // if (/\.svg$/.test(icon)) return `https://raw.githubusercontent.com/nuxt/modules/main/icons/${icon}`
 
-  return `https://ipx.nuxt.com/s_${size},f_auto/gh/nuxt/modules/main/icons/${icon}`
+  // return `https://ipx.nuxt.com/s_${size},f_auto/gh/nuxt/modules/main/icons/${icon}`
 }
 
 export const moduleIcon = function (category: string) {
-  return iconsMap[category as keyof typeof iconsMap] || 'i-ph-cube'
+  return iconsMap[category as keyof typeof iconsMap] || 'i-lucide-box'
 }
 
 export const useModules = () => {
-  // interface TypeMap {
-  //   official: string,
-  //   community: string
-  //   '3rd-party': string
-  // }
-
   const route = useRoute()
   const router = useRouter()
-  const stats = useState<Stats>('module-stats', () => ({
-    maintainers: 0,
-    contributors: 0,
-    modules: 0
-  }))
-  const modules = useState<Module[]>('modules', () => [])
+  const { data, execute } = useFetch<{ modules: Module[], stats: Stats }>('https://api.nuxt.com/modules', {
+    immediate: false,
+    default: () => ({
+      modules: [],
+      stats: {
+        maintainers: 0,
+        contributors: 0,
+        modules: 0
+      }
+    })
+  })
+
+  const stats = computed(() => data.value.stats)
+  const modules = computed(() => data.value.modules || [])
+
   const module = useState<Module>('module', () => ({} as Module))
 
   // Data fetching
@@ -57,20 +64,10 @@ export const useModules = () => {
       return
     }
 
-    const res = await $fetch<{ modules: Module[], stats: Stats }>('https://api.nuxt.com/modules')
-    if (res?.modules) {
-      modules.value = res.modules
-      stats.value = res.stats
-    }
+    return execute()
   }
 
   // Data
-
-  // const versions: Filter[] = [
-  //   { key: '3.x', label: 'v3' },
-  //   { key: '2.x-bridge', label: 'Bridge' },
-  //   { key: '2.x', label: 'v2' }
-  // ]
 
   const sorts: Filter[] = [
     { key: 'downloads', label: 'Downloads' },
@@ -80,98 +77,35 @@ export const useModules = () => {
   ]
 
   const orders: Filter[] = [
-    { key: 'desc', label: 'Desc', icon: 'i-uil-sort-amount-down' },
-    { key: 'asc', label: 'Asc', icon: 'i-uil-sort-amount-up' }
+    { key: 'desc', label: 'Desc', icon: 'i-lucide-arrow-down-wide-narrow' },
+    { key: 'asc', label: 'Asc', icon: 'i-lucide-arrow-up-wide-narrow' }
   ]
 
-  // const typesMap: TypeMap = {
-  //   official: 'Official',
-  //   community: 'Community',
-  //   '3rd-party': 'Third Party'
-  // }
-
-  // const modulesByVersion: ComputedRef<Module[]> = computed(() => {
-  //   return [...modules.value]
-  //     .filter((module) => {
-  //       if (selectedVersion.value && !(module.tags ?? []).includes(selectedVersion.value.key as string)) {
-  //         return false
-  //       }
-
-  //       return true
-  //     })
-  // })
-
   const categories = computed<Filter[]>(() => {
-    return Object.keys(iconsMap).map(category => ({
-      key: category,
-      label: category,
-      exactQuery: true,
-      to: {
-        name: 'modules',
-        query: {
-          ...route.query,
-          category
-        },
-        state: { smooth: '#smooth' }
-      },
-      icon: iconsMap[category as keyof typeof iconsMap] || undefined,
-      click: (e: any) => {
-        if (route.query.category !== category) {
-          return
+    return Object.keys(iconsMap)
+      .map((category) => {
+        return {
+          key: category,
+          label: category,
+          active: route.query.category === category,
+          to: { name: 'modules', query: category === route.query.category ? undefined : { category }, state: { smooth: '#smooth' } },
+          icon: iconsMap[category as keyof typeof iconsMap] || undefined,
+          click: (e: Event) => {
+            if (route.query.category !== category) {
+              return
+            }
+
+            e.preventDefault()
+
+            router.replace({ query: { ...route.query, category: undefined } })
+          }
         }
-
-        e.preventDefault()
-
-        router.replace({ query: { ...route.query, category: undefined } })
-      }
-    })).sort((a, b) => {
-      return a.label.localeCompare(b.label)
-    })
+      })
   })
-
-  // const types: ComputedRef<Filter[]> = computed(() => {
-  //   return [...new Set(modules.value.map(module => module.type))].map(type => ({
-  //     key: type,
-  //     label: typesMap[type as keyof typeof typesMap] || type,
-  //     to: {
-  //       name: 'modules',
-  //       query: {
-  //         ...route.query,
-  //         type
-  //       },
-  //       state: { smooth: '#smooth' }
-  //     }
-  //   })).sort((a, b) => {
-  //     const typesMappingKeys = Object.keys(typesMap)
-  //     const aIndex = typesMappingKeys.indexOf(a.key)
-  //     const bIndex = typesMappingKeys.indexOf(b.key)
-  //     return aIndex - bIndex
-  //   })
-  // })
-
-  // const contributors: ComputedRef<Set<string>> = computed(() => {
-  //   return new Set(modules.value.flatMap(m => m.contributors.map(m => m.login)))
-  // })
-
-  // const stats: ComputedRef<{ downloads: number, contributors: number, modules: number }> = computed(() => {
-  //   return {
-  //     downloads: modules.value.reduce((sum, m) => sum + m.downloads, 0),
-  //     contributors: contributors.value.size,
-  //     modules: modules.value.length
-  //   }
-  // })
 
   const selectedCategory = computed(() => {
-    return categories.value.find(category => category.key === route.query.category)
+    return categories.value.find(category => category.label === route.query.category)
   })
-
-  // const selectedType: ComputedRef<Filter | null> = computed(() => {
-  //   return types.value.find(type => type.key === route.query.type)
-  // })
-
-  // const selectedVersion = computed(() => {
-  //   return versions.find(version => version.key === route.query.version) || versions[0]
-  // })
 
   const selectedSort = computed(() => {
     return sorts.find(sort => sort.key === route.query.sortBy) || sorts[0]
@@ -188,61 +122,44 @@ export const useModules = () => {
   const isSponsorOrOfficial = (a: Module, b: Module) => {
     if (a.sponsor && !b.sponsor) {
       return -1
-    }
-    else if (!a.sponsor && b.sponsor) {
+    } else if (!a.sponsor && b.sponsor) {
       return 1
-    }
-    else if (a.type === 'official' && b.type !== 'official') {
+    } else if (a.type === 'official' && b.type !== 'official') {
       return -1
-    }
-    else if (a.type !== 'official' && b.type === 'official') {
+    } else if (a.type !== 'official' && b.type === 'official') {
       return 1
-    }
-    else {
+    } else {
       return 0
     }
   }
 
-  // const links = computed(() => {
-  //   return [
-  //     {
-  //       label: 'All',
-  //       _path: {
-  //         name: 'modules',
-  //         query: {
-  //           ...route.query,
-  //           type: undefined
-  //         },
-  //         state: { smooth: '#smooth' }
-  //       },
-  //       active: !route.query.type
-  //     },
-  //     ...types.value.map(type => ({ ...type, _path: type.to, exact: true, active: route.query.type === type.key }))
-  //   ]
-  // })
-
   const filteredModules = computed<Module[]>(() => {
     let filteredModules = [...modules.value]
-      .filter((module: Module | any) => {
-        if (selectedCategory.value && module.category !== selectedCategory.value.key) {
-          return false
+      .filter((module: Module) => {
+        if (selectedCategory.value) {
+          if (selectedCategory.value.key === 'Official') {
+            return module.type === 'official'
+          }
+          if (module.category !== selectedCategory.value.key) {
+            return false
+          }
         }
-        // if (selectedType.value && module.type !== selectedType.value.key) {
-        //   return false
-        // }
-        // if (selectedVersion.value && !(module.tags ?? []).includes(selectedVersion.value.key)) {
-        //   return false
-        // }
         const queryRegExp = searchTextRegExp(q.value as string)
-        if (q.value && !['name', 'npm', 'category', 'description', 'repo'].map(field => module[field]).filter(Boolean).some(value => value.search(queryRegExp) !== -1)) {
+        if (q.value && !['name', 'npm', 'category', 'description', 'repo'].map(field => module[field as keyof Module]).filter(Boolean).some(value => typeof value === 'string' && value.search(queryRegExp) !== -1)) {
           return false
         }
 
         return true
       })
-      .sort((a: Module, b: Module) => b.stats[selectedSort.value.key] - a.stats[selectedSort.value.key])
+      .sort((a: Module, b: Module) => {
+        const sortKey = selectedSort.value?.key as ModuleStatsKeys
+        if (sortKey && a.stats && b.stats) {
+          return (b.stats[sortKey] as number) - (a.stats[sortKey] as number)
+        }
+        return 0
+      })
 
-    if (selectedOrder.value.key === 'asc') {
+    if (selectedOrder.value?.key === 'asc') {
       filteredModules = filteredModules.reverse()
     }
 
@@ -275,6 +192,5 @@ export const useModules = () => {
     selectedSort,
     selectedOrder,
     q
-    // links
   }
 }

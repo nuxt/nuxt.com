@@ -1,32 +1,29 @@
 <script setup lang="ts">
-import { withoutTrailingSlash } from 'ufo'
-import type { BlogArticle } from '~/types'
+import { kebabCase } from 'scule'
 
 definePageMeta({
   heroBackground: 'opacity-30 -z-10'
 })
-const route = useRoute()
-const { copy } = useCopyToClipboard()
 
-const { data: article } = await useAsyncData(`blog-${route.params.slug}`, () => queryContent<BlogArticle>(route.path).findOne())
+const route = useRoute()
+const { copy } = useClipboard()
+
+const [{ data: article }, { data: surround }] = await Promise.all([
+  useAsyncData(kebabCase(route.path), () => queryCollection('blog').path(route.path).first()),
+  useAsyncData(`${kebabCase(route.path)}-surround`, () => {
+    return queryCollectionItemSurroundings('blog', route.path, {
+      fields: ['description']
+    }).order('date', 'DESC')
+  })
+])
+
 if (!article.value) {
   throw createError({ statusCode: 404, statusMessage: 'Article not found', fatal: true })
 }
 
-const { data: surround } = await useAsyncData(`blog-${route.params.slug}-surround`, () => queryContent('/blog')
-  .where({ _extension: 'md' })
-  .without(['body', 'excerpt'])
-  .sort({ date: -1 })
-  .findSurround(withoutTrailingSlash(route.path))
-)
+const title = article.value.seo?.title || article.value.title
+const description = article.value.seo?.description || article.value.description
 
-useSeoMeta({
-  title: article.value.head?.title || article.value.title,
-  description: article.value.head?.description || article.value.description
-})
-
-const title = article.value.head?.title || article.value.title
-const description = article.value.head?.description || article.value.description
 useSeoMeta({
   titleTemplate: '%s · Nuxt Blog',
   title,
@@ -37,38 +34,65 @@ useSeoMeta({
 
 if (article.value.image) {
   defineOgImage({ url: article.value.image })
-}
-else {
+} else {
   defineOgImageComponent('Docs', {
-    headline: 'Blog'
+    headline: 'Blog',
+    title,
+    description
   })
 }
 
-const authorTwitter = article.value.authors?.[0]?.twitter
-const socialLinks = computed(() => [{
-  icon: 'i-simple-icons-linkedin',
-  to: `https://www.linkedin.com/sharing/share-offsite/?url=https://nuxt.com${article.value._path}`
-}, {
-  icon: 'i-simple-icons-twitter',
-  to: `https://twitter.com/intent/tweet?text=${encodeURIComponent(`${article.value.title}${authorTwitter ? ` by @${article.value.authors[0].twitter}` : ''}\n\n`)}https://nuxt.com${article.value._path}`
-}])
+function formatSocialIntentQueryText(handle: string | undefined): string {
+  const credit = handle ? ` by @${handle}` : ''
+  const body = article.value.title + credit
+  const link = `https://nuxt.com${article.value.path}`
+  return encodeURIComponent(`${body}\n\n${link}`)
+}
+
+const authorHandles: { twitter?: string, bluesky?: string } = {
+  twitter: article.value.authors?.[0]?.twitter,
+  bluesky: article.value.authors?.[0]?.bluesky
+}
+
+const socialLinks = computed(() =>
+  !article.value
+    ? []
+    : [
+        {
+          label: 'LinkedIn',
+          icon: 'i-simple-icons-linkedin',
+          to: `https://www.linkedin.com/sharing/share-offsite/?url=https://nuxt.com${article.value.path}`
+        },
+        {
+          label: 'Bluesky',
+          icon: 'i-simple-icons-bluesky',
+          to: `https://bsky.app/intent/compose?text=${formatSocialIntentQueryText(authorHandles.bluesky)}`
+        },
+        {
+          label: 'X',
+          icon: 'i-simple-icons-x',
+          to: `https://x.com/intent/tweet?text=${formatSocialIntentQueryText(authorHandles.twitter)}`
+        }
+      ]
+)
 
 function copyLink() {
-  copy(`https://nuxt.com${article.value._path}`, { title: 'Copied to clipboard' })
+  copy(`https://nuxt.com${article.value?.path || '/'}`, { title: 'Link copied to clipboard', icon: 'i-lucide-copy-check' })
 }
+
 const links = [
   {
-    icon: 'i-ph-pen',
+    icon: 'i-lucide-pen',
     label: 'Edit this article',
-    to: `https://github.com/nuxt/nuxt.com/edit/main/content/${article.value._file}`,
+    to: `https://github.com/nuxt/nuxt.com/edit/main/content/${article.value.stem}.md`,
     target: '_blank'
   }, {
-    icon: 'i-ph-shooting-star',
+    icon: 'i-lucide-star',
     label: 'Star on GitHub',
     to: 'https://go.nuxt.com/github',
     target: '_blank'
   }, {
-    icon: 'i-ph-hand-heart',
+    icon: 'i-lucide-hand-heart',
     label: 'Become a Sponsor',
     to: 'https://go.nuxt.com/sponsor',
     target: '_blank'
@@ -78,52 +102,34 @@ const links = [
 
 <template>
   <UContainer>
-    <UPage>
+    <UPage v-if="article">
       <UPageHeader :title="article.title" :description="article.description" :ui="{ headline: 'flex flex-col gap-y-8 items-start' }">
         <template #headline>
-          <UBreadcrumb :links="[{ label: 'Blog', icon: 'i-ph-newspaper', to: '/blog' }, { label: article.title }]" :ui="{ wrapper: 'max-w-full' }" />
+          <UBreadcrumb :items="[{ label: 'Blog', icon: 'i-lucide-newspaper', to: '/blog' }, { label: article.title }]" class="max-w-full" />
           <div class="flex items-center space-x-2">
             <span>
               {{ article.category }}
             </span>
-            <span class="text-gray-500 dark:text-gray-400">&middot;&nbsp;&nbsp;<time>{{ formatDateByLocale('en', article.date) }}</time></span>
+            <span class="text-muted">&middot;&nbsp;&nbsp;<time>{{ formatDateByLocale('en', article.date) }}</time></span>
           </div>
         </template>
 
         <div class="mt-4 flex flex-wrap items-center gap-6">
-          <UButton
-            v-for="(author, index) in article.authors"
-            :key="index"
-            :to="author.link"
-            target="_blank"
-            color="white"
-            variant="ghost"
-            class="-my-1.5 -mx-2.5"
-          >
-            <UAvatar :src="author.avatarUrl" :alt="author.name" />
-
-            <div class="text-left">
-              <p class="font-medium">
-                {{ author.name }}
-              </p>
-              <p v-if="author.link" class="text-gray-500 dark:text-gray-400 leading-4">
-                {{ `@${author.link.split('/').pop()}` }}
-              </p>
-            </div>
-          </UButton>
+          <UUser v-for="(author, index) in article.authors" :key="index" v-bind="author" :description="author.to ? `@${author.to.split('/').pop()}` : undefined" />
         </div>
       </UPageHeader>
 
-      <UPage>
-        <UPageBody prose class="dark:text-gray-300 dark:prose-pre:!bg-gray-800/60">
-          <ContentRenderer v-if="article && article.body" :value="article" />
+      <UPage class="lg:gap-24">
+        <UPageBody>
+          <ContentRenderer v-if="article.body" :value="article" />
 
           <div class="flex items-center justify-between mt-12 not-prose">
-            <NuxtLink href="/blog" class="text-primary">
+            <ULink to="/blog" class="text-primary">
               ← Back to blog
-            </NuxtLink>
+            </ULink>
             <div class="flex justify-end items-center gap-1.5">
-              <UButton icon="i-ph-link-simple" v-bind="($ui.button.secondary as any)" @click="copyLink">
+              <UButton icon="i-lucide-link" variant="ghost" color="neutral" @click="copyLink">
+                <span class="sr-only">Copy URL</span>
                 Copy URL
               </UButton>
               <UButton
@@ -131,23 +137,25 @@ const links = [
                 :key="index"
                 v-bind="link"
                 variant="ghost"
-                color="gray"
+                color="neutral"
                 target="_blank"
-              />
+              >
+                <span class="sr-only">Nuxt on {{ link.label }}</span>
+              </UButton>
             </div>
           </div>
 
-          <hr v-if="surround?.length">
+          <USeparator v-if="surround?.length" />
 
           <UContentSurround :surround="surround" />
         </UPageBody>
 
         <template #right>
-          <UContentToc v-if="article.body && article.body.toc" :links="article.body.toc.links">
+          <UContentToc v-if="article.body && article.body.toc" :links="article.body.toc.links" title="Table of Contents" highlight>
             <template #bottom>
               <div class="hidden lg:block space-y-6">
                 <UPageLinks title="Links" :links="links" />
-                <UDivider type="dashed" />
+                <USeparator type="dashed" />
                 <SocialLinks />
                 <Ads />
               </div>

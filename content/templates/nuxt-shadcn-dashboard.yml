@@ -1,0 +1,6 @@
+name: 'Nuxt Shadcn Dashboard'
+slug: 'nuxt-shadcn-dashboard'
+description: 'Shadcn Dashboard built with Nuxt'
+screenshotUrl: 'https://nuxt-shadcn-dashboard.vercel.app/'
+repo: 'dianprata/nuxt-shadcn-dashboard'
+demo: 'https://nuxt-shadcn-dashboard.vercel.app/'

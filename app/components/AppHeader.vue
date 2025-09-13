@@ -1,128 +1,140 @@
 <script setup lang="ts">
-import type { NavItem } from '@nuxt/content'
-import type { Link } from '#ui-pro/types'
+import type { ContentNavigationItem } from '@nuxt/content'
 
-const logo = ref(null)
-const navigation = inject<Ref<NavItem[]>>('navigation')
-
-const stats = useStats()
-const { metaSymbol } = useShortcuts()
-const { copy } = useCopyToClipboard()
-
-const version = computed(() => stats.value?.version?.match(/[0-9]+\.[0-9]+/)[0])
-
+const navigation = inject<Ref<ContentNavigationItem[]>>('navigation', ref([]))
+const logo = useTemplateRef('logo')
 const route = useRoute()
-const headerLinks = useNavigation().headerLinks
-const mobileNav = computed(() => {
-  const links = mapContentNavigation(navigation.value)
+const stats = useStats()
+const { copy } = useClipboard()
+const { headerLinks } = useHeaderLinks()
+const { version } = useDocsVersion()
 
+const { tags } = useDocsTags()
+
+const latestVersion = computed(() => {
+  const versionMatch = stats.value?.version?.match(/\d+\.\d+/)
+  return versionMatch ? versionMatch[0] : undefined
+})
+
+const mobileDocsVersion = computed(() =>
+  route.path.startsWith('/docs')
+    ? version.value.shortTag !== 'v4'
+      ? `${version.value.shortTag} (${tags[version.value.shortTag]})`
+      : version.value.shortTag
+    : undefined
+)
+
+const mobileNavigation = computed<ContentNavigationItem[]>(() => {
   // Show Migration and Bridge on mobile only when user is reading them
-  const docsLink = links.find(link => link.to === '/docs')
-  if (docsLink && !route.path.startsWith('/docs/bridge') && !route.path.startsWith('/docs/migration')) {
-    docsLink.children = docsLink.children.filter(link => !['/docs/bridge', '/docs/migration'].includes(link.to as string))
+  const docsLink = navigation.value.find(link => link.path === version.value.path)
+  if (docsLink && !route.path.startsWith(`${version.value.path}/bridge`) && !route.path.startsWith(`${version.value.path}/migration`)) {
+    docsLink.children = docsLink.children?.filter(link => ![`${version.value.path}/bridge`, `${version.value.path}/migration`].includes(link.path as string)) || []
   }
 
   return [
     docsLink,
-    ...headerLinks.value.slice(1),
+    ...headerLinks.value.slice(1).map(link => ({
+      ...link,
+      title: link.label,
+      path: link.to,
+      children: link.children?.map(child => ({
+        ...child,
+        title: child.label,
+        path: child.to
+      }))
+    } as ContentNavigationItem)),
     {
-      label: 'Design Kit',
-      icon: 'i-ph-palette',
-      to: '/design-kit'
+      title: 'Design Kit',
+      icon: 'i-lucide-palette',
+      path: '/design-kit'
     }
-  ]
+  ].filter((item): item is ContentNavigationItem => Boolean(item))
 })
 
-const open = ref(false)
-const dropdownItems = [
+const defaultOpen = computed(() => {
+  const topLevelWithChildren = mobileNavigation.value.filter(link => link.children?.length)
+  const currentPath = route.path
+
+  return topLevelWithChildren.some(link => link.children?.some(child => currentPath.startsWith(child.path as string)))
+})
+
+const logoContextMenuItems = [
   [{
     label: 'Copy logo as SVG',
     icon: 'i-simple-icons-nuxtdotjs',
-    click: () => copy(logo.value.$el.outerHTML, { title: 'Copied to clipboard' })
+    onSelect() {
+      if (logo.value) {
+        copy(logo.value.$el.outerHTML, {
+          title: 'Nuxt logo copied as SVG',
+          description: 'You can now paste it into your project',
+          icon: 'i-lucide-circle-check',
+          color: 'success'
+        })
+      }
+    }
   }],
   [{
     label: 'Browse design kit',
-    icon: 'i-ph-shapes',
+    icon: 'i-lucide-shapes',
     to: '/design-kit'
   }]
 ]
-const isMobile = ref(false)
-function openLogoContext() {
-  if (isMobile.value) return navigateTo('/')
-  open.value = true
-}
-
-onMounted(() => {
-  isMobile.value = ('ontouchstart' in document.documentElement)
-})
-
-defineProps<{
-  links?: Link[]
-}>()
 </script>
 
 <template>
-  <UHeader :links="links">
+  <UHeader>
     <template #left>
-      <UDropdown
-        v-model:open="open"
-        :items="dropdownItems"
-        :popper="{ strategy: 'absolute', placement: 'bottom-start' }"
-        :ui="{
-          container: 'mt-8',
-          background: 'bg-white dark:bg-gray-950',
-          item: { padding: 'gap-x-2.5 py-2.5', inactive: 'dark:bg-gray-950' }
-        }"
-      >
-        <NuxtLink to="/" class="flex gap-2 items-end">
-          <NuxtLogo ref="logo" class="block w-auto h-6" @click.right.prevent="openLogoContext" @click.left.prevent="navigateTo('/')" />
+      <UContextMenu :items="logoContextMenuItems" size="xs">
+        <NuxtLink to="/" class="flex gap-2 items-end" aria-label="Back to home">
+          <NuxtLogo ref="logo" class="block w-auto h-6" />
 
-          <UTooltip v-if="version" :text="`Latest release: v${stats.version}`">
-            <UBadge variant="subtle" size="xs" class="-mb-[2px] rounded font-semibold">
-              v{{ version }}
+          <UTooltip v-if="latestVersion" :text="`Latest release: v${stats?.version || 3}`" class="hidden md:block">
+            <UBadge variant="subtle" size="sm" class="-mb-[2px] rounded font-semibold text-[12px]/3" color="primary">
+              v{{ latestVersion }}
             </UBadge>
           </UTooltip>
+
+          <UBadge v-if="mobileDocsVersion" variant="subtle" size="sm" class="block md:hidden -mb-[2px] rounded font-semibold text-[12px]/3" :color="version.tagColor">
+            {{ mobileDocsVersion }}
+          </UBadge>
         </NuxtLink>
-      </UDropdown>
+      </UContextMenu>
     </template>
 
-    <template #center>
-      <UHeaderLinks
-        :links="links"
-        :ui="{
-          default: {
-            popover: {
-              popper: { strategy: 'absolute' },
-              ui: { width: 'w-[256px]' }
-            }
-          }
-        }"
-        class="hidden lg:flex"
-      />
-    </template>
+    <UNavigationMenu :items="headerLinks" variant="link" :ui="{ linkLeadingIcon: 'hidden' }" />
 
     <template #right>
-      <UTooltip text="Search" :shortcuts="[metaSymbol, 'K']">
-        <UContentSearchButton :label="null" />
+      <UTooltip text="Search" :kbds="['meta', 'K']">
+        <UContentSearchButton />
       </UTooltip>
 
-      <UTooltip :text="$colorMode.preference === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'">
-        <UColorModeButton />
-      </UTooltip>
+      <UColorModeButton />
 
       <UTooltip text="GitHub Stars">
         <UButton
           icon="i-simple-icons-github"
           to="https://go.nuxt.com/github"
           target="_blank"
+          variant="ghost"
+          color="neutral"
           :label="stats ? formatNumber(stats.stars) : '...'"
-          v-bind="($ui.button.secondary as any)"
-        />
+          :ui="{
+            label: 'hidden sm:inline-flex'
+          }"
+        >
+          <span class="sr-only">Nuxt on GitHub</span>
+        </UButton>
       </UTooltip>
     </template>
 
-    <template #panel>
-      <UNavigationTree :links="mobileNav" default-open :multiple="false" />
+    <template #body>
+      <template v-if="route.path.startsWith('/docs')">
+        <VersionSelect />
+
+        <USeparator type="dashed" class="my-6" />
+      </template>
+
+      <UContentNavigation :navigation="mobileNavigation" :default-open="defaultOpen" highlight />
     </template>
   </UHeader>
 </template>

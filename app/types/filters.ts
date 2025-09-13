@@ -1,6 +1,8 @@
-import type { Link } from '#ui-pro/types'
+import type { LinkProps } from '@nuxt/ui'
 
-export interface Filter extends Link {
+export interface Filter extends Omit<LinkProps, 'type'> {
   key: string | number
+  title?: string
+  label?: string
   icon?: string
 }

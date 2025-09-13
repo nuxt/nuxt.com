@@ -1,6 +1,6 @@
 <template>
   <svg
-    class="text-black dark:text-white"
+    class="text-highlighted"
     width="800"
     height="200"
     viewBox="0 0 800 200"

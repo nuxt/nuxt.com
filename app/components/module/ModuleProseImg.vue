@@ -1,12 +1,3 @@
-<template>
-  <img
-    :src="src"
-    :alt="alt"
-    :width="width"
-    :height="height"
-  >
-</template>
-
 <script setup lang="ts">
 import { hasProtocol, joinURL } from 'ufo'
 
@@ -37,3 +28,12 @@ const src = computed(() => {
   return joinURL('https://raw.githubusercontent.com/', repo, module.value.stats.defaultBranch, props.src)
 })
 </script>
+
+<template>
+  <img
+    :src="src"
+    :alt="alt"
+    :width="width"
+    :height="height"
+  >
+</template>
