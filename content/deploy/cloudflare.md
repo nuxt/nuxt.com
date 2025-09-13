@@ -22,10 +22,6 @@ You must set a compatibility date to `2024-09-19` or later in both `nuxt.config.
 Checkout the [Nitro documentation](https://nitro.build/deploy/providers/cloudflare#cloudflare-module-workers) for the `cloudflare_module` preset.
 :: 
 
-::important
-Cloudflare Static Assets is in Beta.
-::
-
 ### Deploy With Wrangler
 
 You can use [Wrangler](https://github.com/cloudflare/workers-sdk/tree/main/packages/wrangler) to deploy your project to Cloudflare.
@@ -42,7 +38,7 @@ export default defineNuxtConfig({
 By setting `deployConfig: true`, Nitro will automatically generate a `wrangler.json` that points to the correct build outputs.
 If you need to add [Cloudflare Workers configuration](https://developers.cloudflare.com/workers/wrangler/configuration/), such as bindings, you can either:
 
-- Set these in your Nuxt config under the `cloudflare: {wrangler : ... }` key. This has the same type as `wrangler.json`.
+- Set these in your Nuxt config under the `cloudflare: { wrangler : ... }` key. This has the same type as `wrangler.json`.
 - Provide your own `wrangler.jsonc`. Nitro will automatically set the `main` and `assets.directory` keys to the correct build output.
 
 ```json [wrangler.jsonc]
@@ -83,6 +79,28 @@ Checkout the [Workers Build](https://developers.cloudflare.com/workers/ci-cd/bui
 ::important
 [Workers Build](https://developers.cloudflare.com/workers/ci-cd/builds/) is in Beta.
 ::
+
+
+### Advanced Configuration 
+
+While the default configuration should work for most usecases, we provide ways to tailor the deployment to your needs.
+
+#### Custom Wrangler configuration
+
+It is recommended to provide a cloudflare option to nitro, but not strictly necessary.
+You might have some advanced usecase where you want to process the Nitro output further before deploying it, or you might prefer manually manage the wrangler configuration.
+
+In this case, you can write your own `wrangler.jsonc` entirely.
+You will have to set the `main` and `assets` keys manually, based on Nitro output and your own processing.
+
+::important
+However, Nitro output format must be respected. It is possible that these will change in future versions, so be careful when upgrading Nitro or Nuxt.
+::
+
+#### Custom entry point
+
+In some (rare) cases, you might want to customize the worker entry point. For instance, there might be some new Cloudflare Workers features that you want to use, or you might want to deviate from the default behavior.
+You can even go further and completely customize the worker entry point. Refer to Nitro documentation on [how to create a custom preset](https://nitro.build/deploy/custom-presets).
 
 ## Cloudflare Pages
 
