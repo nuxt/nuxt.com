@@ -201,6 +201,13 @@ export default defineNuxtConfig({
   hub: {
     cache: true
   },
+  experimental: {
+    defaults: {
+      nuxtLink: {
+        externalRelAttribute: 'noopener'
+      }
+    }
+  },
   typescript: {
     strict: false
   },
