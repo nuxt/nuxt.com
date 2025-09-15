@@ -9,7 +9,7 @@ const color = computed(() => colorMode.value === 'dark' ? '#020420' : 'white')
 const [{ data: navigation }, { data: files }] = await Promise.all([
   useAsyncData('navigation', () => {
     return Promise.all([
-      queryCollectionNavigation('docsv3', ['titleTemplate']),
+      queryCollectionNavigation('docsv3', ['titleTemplate']).then(data => data[0]?.children),
       queryCollectionNavigation('docsv4', ['titleTemplate']).then(data => data[0]?.children),
       queryCollectionNavigation('blog')
     ])

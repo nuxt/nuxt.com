@@ -1,4 +1,4 @@
-<a href="https://nuxt.com"><img width="1200" alt="Nuxt Website" src="https://github.com/nuxt/nuxt.com/assets/904724/22772d8b-4fff-4cf9-a592-85c5ff5d6d58"></a>
+<a href="https://nuxt.com"><img width="1200" alt="Nuxt Website" src="./public/website.jpg"></a>
 
 # nuxt.com
 
@@ -33,7 +33,7 @@ If you are on Windows, you can use the following command instead:
 echo %cd%
 ```
 
-Copy the output of the command above and paste it in the `NUXT_PATH` variable in the `.env` file.
+Copy the output of the command above and paste it in the `NUXT_PATH` and `NUXT_V4_PATH` variables in the `.env` file.
 
 ## Development
 

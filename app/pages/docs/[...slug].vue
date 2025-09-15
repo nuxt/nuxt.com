@@ -2,7 +2,7 @@
 import { kebabCase } from 'scule'
 import type { ContentNavigationItem } from '@nuxt/content'
 import { findPageBreadcrumb } from '@nuxt/content/utils'
-import { mapContentNavigation } from '#ui-pro/utils'
+import { mapContentNavigation } from '@nuxt/ui/utils/content'
 
 definePageMeta({
   heroBackground: 'opacity-30',
@@ -75,7 +75,7 @@ const breadcrumb = computed(() => {
   return links
 })
 
-const editLink = computed(() => `https://github.com/nuxt/nuxt/edit/${version.value.branch}/${page?.value?.stem?.replace('docs/4.x', 'docs')}.${page?.value?.extension}`)
+const editLink = computed(() => `https://github.com/nuxt/nuxt/edit/${version.value.branch}/${page?.value?.stem?.replace(/docs\/\d\.x/, 'docs')}.${page?.value?.extension}`)
 
 const communityLinks = [{
   icon: 'i-lucide-heart',

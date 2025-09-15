@@ -27,9 +27,6 @@ defineOgImageComponent('Docs', {
 })
 
 await fetchList()
-
-const featuredProviders = computed(() => providers.value.filter(provider => provider.featured === true))
-const otherProviders = computed(() => providers.value.filter(provider => provider.featured !== true))
 </script>
 
 <template>
@@ -42,43 +39,9 @@ const otherProviders = computed(() => providers.value.filter(provider => provide
 
     <UPage>
       <UPageBody>
-        <h2 class="text-2xl font-semibold mb-4">
-          Featured
-        </h2>
-
         <UPageGrid>
           <UPageCard
-            v-for="(deployment, index) in featuredProviders"
-            :key="index"
-            :to="deployment.path"
-            :title="deployment.title"
-            :description="deployment.description"
-            variant="subtle"
-            class="flex flex-col overflow-hidden"
-            :ui="{
-              container: 'p-0 sm:p-0',
-              body: 'p-4 sm:p-6',
-              header: 'relative w-full mb-0',
-              title: 'text-xl',
-              description: 'line-clamp-2 text-muted'
-            }"
-          >
-            <template #header>
-              <div class="h-[192px] w-full gradient dark:gradient-dark" />
-              <div class="absolute inset-0 size-full flex items-center justify-center">
-                <component :is="deployment.componentImg" />
-              </div>
-            </template>
-          </UPageCard>
-        </UPageGrid>
-
-        <h2 class="text-2xl font-semibold pt-12 mb-4">
-          Others
-        </h2>
-
-        <UPageGrid>
-          <UPageCard
-            v-for="(deployment, index) in otherProviders"
+            v-for="(deployment, index) in providers"
             :key="index"
             :to="deployment.path"
             :title="deployment.title"

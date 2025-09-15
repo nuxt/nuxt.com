@@ -4,7 +4,8 @@ const docsV3Source = {
   cwd: process.env.NUXT_PATH ?? undefined,
   repository: !process.env.NUXT_PATH ? 'https://github.com/nuxt/nuxt/tree/3.x' : undefined,
   include: 'docs/**/*',
-  exclude: ['docs/**/*.json']
+  exclude: ['docs/**/*.json'],
+  prefix: '/docs/3.x'
 }
 
 const docsV4Source = {
@@ -19,7 +20,7 @@ const examplesV3Source = {
   cwd: process.env.NUXT_EXAMPLES_PATH ?? undefined,
   repository: !process.env.NUXT_EXAMPLES_PATH ? 'https://github.com/nuxt/examples' : undefined,
   include: '.docs/**/*',
-  prefix: '/docs/4.examples'
+  prefix: '/docs/3.x/4.examples'
 }
 
 const examplesV4Source = {
@@ -195,17 +196,17 @@ export default defineContentConfig({
         })
       })
     }),
-    docsv3: defineCollection({
+    docsv4: defineCollection({
       type: 'page',
-      source: [docsV3Source, examplesV3Source],
+      source: [docsV4Source, examplesV4Source],
       schema: z.object({
         titleTemplate: z.string().optional(),
         links: z.array(Button)
       })
     }),
-    docsv4: defineCollection({
+    docsv3: defineCollection({
       type: 'page',
-      source: [docsV4Source, examplesV4Source],
+      source: [docsV3Source, examplesV3Source],
       schema: z.object({
         titleTemplate: z.string().optional(),
         links: z.array(Button)
@@ -218,7 +219,7 @@ export default defineContentConfig({
         image: z.string().editor({ input: 'media' }),
         authors: z.array(Author),
         date: z.string().date(),
-        draft: z.boolean().optional(),
+        draft: z.boolean().default(false),
         category: z.enum(['Release', 'Tutorial', 'Announcement', 'Article']),
         tags: z.array(z.string())
       })

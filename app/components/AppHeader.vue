@@ -9,6 +9,8 @@ const { copy } = useClipboard()
 const { headerLinks } = useHeaderLinks()
 const { version } = useDocsVersion()
 
+const { tags } = useDocsTags()
+
 const latestVersion = computed(() => {
   const versionMatch = stats.value?.version?.match(/\d+\.\d+/)
   return versionMatch ? versionMatch[0] : undefined
@@ -16,8 +18,8 @@ const latestVersion = computed(() => {
 
 const mobileDocsVersion = computed(() =>
   route.path.startsWith('/docs')
-    ? version.value.tag !== 'latest'
-      ? `${version.value.shortTag} (${version.value.tag})`
+    ? version.value.shortTag !== 'v4'
+      ? `${version.value.shortTag} (${tags[version.value.shortTag]})`
       : version.value.shortTag
     : undefined
 )

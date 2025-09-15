@@ -62,7 +62,7 @@ if (provider.value?.nitroPreset) {
 links.push({
   icon: 'i-lucide-pen',
   label: 'Edit this page',
-  to: `https://github.com/nuxt/nuxt.com/edit/main/content/3.deploy/${route.params.slug}.md`,
+  to: `https://github.com/nuxt/nuxt.com/edit/main/content/deploy/${route.params.slug}.md`,
   target: '_blank'
 })
 </script>

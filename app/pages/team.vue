@@ -66,15 +66,6 @@ const icons = {
         <template v-for="(team, index) of teams" :key="index">
           <h2 class="font-bold text-2xl mb-4 flex gap-2 items-center justify-between" :class="{ 'mt-12 md:mt-24': !!index }">
             <span>{{ team.name }}</span>
-            <UButton
-              :to="team.link"
-              color="neutral"
-              variant="soft"
-              size="sm"
-              :icon="icons.github"
-              target="_blank"
-              label="View on GitHub"
-            />
           </h2>
           <UPageGrid class="xl:grid-cols-4">
             <UPageCard

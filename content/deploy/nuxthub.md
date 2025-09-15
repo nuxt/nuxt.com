@@ -4,7 +4,6 @@ description: 'Deploy Nuxt applications globally on your Cloudflare account with 
 componentImg: NuxtHub
 logoSrc: '/assets/integrations/nuxthub-logo.svg'
 category: Hosting
-featured: true
 nitroPreset: 'cloudflare-pages'
 website: 'https://hub.nuxt.com/?utm_source=nuxt-website&utm_medium=deploy-page'
 ---

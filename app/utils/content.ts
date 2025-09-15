@@ -16,12 +16,10 @@ export function navPageFromPath(path: string, tree: ContentNavigationItem[]): Co
 }
 
 function cleanV4Path(path: string): string {
-  return path.replace('/4.x/', '/').replace(/\/4\.x$/, '')
+  return path.replace(/\/\d\.x(?=\/|$)/, '')
 }
 
 function cleanNavigationPaths(navigation: ContentNavigationItem[], isV4: boolean): ContentNavigationItem[] {
-  if (!isV4) return navigation
-
   return navigation.map(item => ({
     ...item,
     path: item.path ? cleanV4Path(item.path) : item.path,
@@ -40,7 +38,7 @@ export function findTitleTemplate(page: Ref<Docsv3CollectionItem | Docsv4Collect
 
   const { version } = useDocsVersion()
   const isV4 = version.value.path === '/docs/4.x'
-  const searchPath = isV4 ? cleanV4Path(page.value.path) : page.value.path
+  const searchPath = cleanV4Path(page.value.path)
   const cleanNavigation = cleanNavigationPaths(navigation.value, isV4)
 
   const parts = searchPath.split('/')

@@ -96,7 +96,7 @@ function useAdminTable() {
     versionFilter.value = version
     pagination.value.pageIndex = 0
     if (version === 'v3') {
-      globalFilter.value = ''
+      globalFilter.value = 'docs/3.x'
     } else {
       globalFilter.value = 'docs/4.x'
     }
@@ -498,7 +498,7 @@ watch(currentPage, () => {
                   size="sm"
                   variant="ghost"
                   color="neutral"
-                  :to="`https://github.com/nuxt/nuxt/edit/main/${selectedPage.lastFeedback.stem.replace('docs/4.x', 'docs')}.md`"
+                  :to="`https://github.com/nuxt/nuxt/edit/main/${selectedPage.lastFeedback.stem.replace(/docs\/\d\.x/, 'docs')}.md`"
                   target="_blank"
                   icon="i-simple-icons-github"
                 />

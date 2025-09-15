@@ -17,22 +17,23 @@ onMounted(() => {
 
 <template>
   <div>
-    <UBanner
-      id="nuxtlabs-vercel"
-      title="NuxtLabs is joining Vercel"
-      icon="i-simple-icons-vercel"
-      to="https://nuxtlabs.com/?utm_source=nuxt-website&utm_medium=banner&utm_campaign=nuxtlabs-vercel"
+    <!-- <UBanner
+      id="aidd-event-sep-10"
+      title="Sep 10: Free AI-Driven Development Event for Vue & Nuxt Developers"
+      icon="i-lucide-calendar"
+      to="https://aidd.io/ai-driven-development-day?utm_source=nuxt&utm_medium=website&utm_campaign=affiliate&utm_content=top_banner&banner_type=top&friend=NUXT"
+      target="_blank"
       close
       :actions="[
         {
-          label: 'Read the announcement',
+          label: 'Save my seat',
           color: 'neutral',
           variant: 'outline',
           trailingIcon: 'i-lucide-arrow-right',
-          to: 'https://nuxtlabs.com/?utm_source=nuxt-website&utm_medium=banner&utm_campaign=nuxtlabs-vercel'
+          to: 'https://aidd.io/ai-driven-development-day?utm_source=nuxt&utm_medium=website&utm_campaign=affiliate&utm_content=top_banner&banner_type=top&friend=NUXT'
         }
       ]"
-    />
+    /> -->
 
     <AppHeader />
 

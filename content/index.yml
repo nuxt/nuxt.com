@@ -2,8 +2,8 @@ hero:
   title: 'The Progressive Web Framework'
   description: Create high-quality web applications with Nuxt, the open source framework that makes full-stack development with Vue.js intuitive.
   cta:
-    label: Roadmap to Nuxt 4
-    to: /blog/roadmap-v4
+    label: Nuxt v4.1 is out
+    to: /blog/v4-1
     icon: i-lucide-arrow-right
   tabs:
     - title: Minimal
@@ -12,7 +12,7 @@ hero:
         ::code-tree{defaultValue="app.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)]"}
         ```vue [app.vue]
         <script setup lang="ts">
-        const version = 3
+        const version = 4
         </script>
 
         <template>
@@ -275,9 +275,9 @@ logos:
       alt: Blizzard
       height: 28
       width: 55
-    - light: /assets/brands/light/too-good-to-go.svg
-      dark: /assets/brands/dark/too-good-to-go.svg
-      alt: To Good to Go
+    - light: /assets/brands/light/deutsche-bahn.svg
+      dark: /assets/brands/dark/deutsche-bahn.svg
+      alt: Deutsche Bahn
       height: 40
       width: 51
 features:
