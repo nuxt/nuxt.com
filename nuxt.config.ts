@@ -178,6 +178,13 @@ export default defineNuxtConfig({
     '/support/us': { redirect: '/enterprise/sponsors', prerender: false }
   },
   sourcemap: true,
+  experimental: {
+    defaults: {
+      nuxtLink: {
+        externalRelAttribute: 'noopener'
+      }
+    }
+  },
   compatibilityDate: '2025-07-17',
   nitro: {
     prerender: {
