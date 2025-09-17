@@ -9,7 +9,7 @@ hero:
     - title: Minimal
       icon: i-lucide-leaf
       content: |
-        ::code-tree{defaultValue="app.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)]"}
+        ::code-tree{defaultValue="app.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)] my-0!"}
         ```vue [app.vue]
         <script setup lang="ts">
         const version = 4
@@ -48,7 +48,7 @@ hero:
     - title: Routing
       icon: i-lucide-milestone
       content: |
-        ::code-tree{defaultValue="pages/index.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)]"}
+        ::code-tree{defaultValue="pages/index.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)] my-0!"}
         ```vue [app.vue]
         <template>
           <NuxtPage />
@@ -89,7 +89,7 @@ hero:
     - title: Data Fetching
       icon: i-lucide-unplug
       content: |
-        ::code-tree{defaultValue="pages/index.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)]"}
+        ::code-tree{defaultValue="pages/index.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)] my-0!"}
         ```vue [app.vue]
         <template>
           <NuxtPage />
@@ -142,7 +142,7 @@ hero:
     - title: Auto-Imports
       icon: i-lucide-wand-sparkles
       content: |
-        ::code-tree{defaultValue="app.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)]"}
+        ::code-tree{defaultValue="app.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)] my-0!"}
         ```vue [app.vue]
         <script setup>
         const message = ref('Nuxt')
@@ -195,7 +195,7 @@ hero:
     - title: API Routes
       icon: i-lucide-pc-case
       content: |
-        ::code-tree{defaultValue="server/api/hello.ts" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)]"}
+        ::code-tree{defaultValue="server/api/hello.ts" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)] my-0!"}
         ```vue [app.vue]
         <template>
           <NuxtPage />
