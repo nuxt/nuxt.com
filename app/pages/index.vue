@@ -448,7 +448,7 @@ onMounted(() => {
           arrows: 'hidden 2xl:block'
         }"
       >
-        <ModuleItem :module="item" :show-badge="false" :is-added="false" class="min-h-full" />
+        <ModuleItem :module="item" :show-badge="false" :is-added="false" :show-add-button="false" class="min-h-full" />
       </UCarousel>
     </UPageSection>
 
