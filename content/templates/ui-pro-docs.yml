@@ -1,7 +1,0 @@
-name: 'Docs Pro'
-slug: 'ui-pro-docs'
-description: "A documentation template made with Nuxt UI Pro."
-repo: 'nuxt-ui-pro/docs'
-demo: 'https://docs-template.nuxt.dev'
-screenshotUrl: 'https://docs-template.nuxt.dev/getting-started'
-badge: 'Freemium'
