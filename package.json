@@ -88,6 +88,9 @@
       "@nuxt/kit": "https://pkg.pr.new/@nuxt/kit@33262",
       "@nuxt/schema": "https://pkg.pr.new/@nuxt/schema@33262",
       "@nuxt/vite-builder": "https://pkg.pr.new/@nuxt/vite-builder@33262"
+    },
+    "patchedDependencies": {
+      "@nuxt/ui": "patches/@nuxt__ui.patch"
     }
   }
 }
