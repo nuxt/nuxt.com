@@ -36,7 +36,7 @@
     "feed": "^5.1.0",
     "little-date": "^1.0.0",
     "motion-v": "1.7.1",
-    "nuxt": "^4.1.2",
+    "nuxt": "https://pkg.pr.new/nuxt@33262",
     "nuxt-auth-utils": "0.5.24",
     "nuxt-charts": "0.2.4",
     "nuxt-llms": "^0.1.3",
@@ -84,7 +84,10 @@
       "vue-demi"
     ],
     "overrides": {
-      "vite": "npm:rolldown-vite@latest"
+      "vite": "npm:rolldown-vite@latest",
+      "@nuxt/kit": "https://pkg.pr.new/@nuxt/kit@33262",
+      "@nuxt/schema": "https://pkg.pr.new/@nuxt/schema@33262",
+      "@nuxt/vite-builder": "https://pkg.pr.new/@nuxt/vite-builder@33262"
     }
   }
 }
