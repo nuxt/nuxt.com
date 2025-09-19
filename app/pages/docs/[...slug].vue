@@ -172,13 +172,48 @@ if (import.meta.server) {
         </UPageBody>
 
         <template #right>
-          <UContentToc :links="page.body?.toc?.links" highlight class="lg:backdrop-blur-none">
+          <UContentToc
+            :links="page.body?.toc?.links"
+            highlight
+            class="lg:backdrop-blur-none"
+            :ui="{
+              title: 'w-full text-right lg:text-left'
+            }"
+          >
             <template #bottom>
               <USeparator v-if="page.body?.toc?.links?.length" type="dashed" />
               <UPageLinks title="Community" :links="communityLinks" />
               <USeparator type="dashed" />
               <SocialLinks />
               <Ads />
+            </template>
+
+            <template #leading>
+              <UDrawer
+                direction="left"
+                title="Navigation"
+                side="left"
+                class="lg:hidden"
+              >
+                <UBadge
+                  label="Menu"
+                  icon="i-lucide-text-align-start"
+                  variant="ghost"
+                  color="neutral"
+                  size="lg"
+                  aria-label="Open navigation"
+                  @click.stop
+                />
+                <template #body>
+                  <UContentNavigation
+                    :navigation="asideNavigation"
+                    default-open
+                    trailing-icon="i-lucide-chevron-right"
+                    :ui="{ linkTrailingIcon: 'group-data-[state=open]:rotate-90' }"
+                    highlight
+                  />
+                </template>
+              </UDrawer>
             </template>
           </UContentToc>
         </template>
