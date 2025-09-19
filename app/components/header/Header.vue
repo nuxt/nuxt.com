@@ -36,7 +36,12 @@ const logoContextMenuItems = [
         <NuxtLink to="/" class="flex gap-2 items-end" aria-label="Back to home">
           <NuxtLogo ref="logo" class="block w-auto h-6" />
 
-          <VersionMenu />
+          <UTooltip v-if="!route.path.startsWith('/docs') && !route.path.startsWith('/deploy') && stats?.version" :text="`Latest release: v${stats.version}`" class="hidden md:block">
+            <UBadge variant="subtle" size="sm" class="-mb-[2px] rounded font-semibold text-[12px]/3">
+              v{{ stats.version }}
+            </UBadge>
+          </UTooltip>
+          <VersionMenu v-else />
         </NuxtLink>
       </UContextMenu>
     </template>

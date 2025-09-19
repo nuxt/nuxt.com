@@ -7,21 +7,6 @@ const route = useRoute()
 const { headerLinks } = useHeaderLinks()
 const { version } = useDocsVersion()
 
-const { tags } = useDocsTags()
-
-const latestVersion = computed(() => {
-  const versionMatch = stats.value?.version?.match(/\d+\.\d+/)
-  return versionMatch ? versionMatch[0] : undefined
-})
-
-const mobileDocsVersion = computed(() =>
-  route.path.startsWith('/docs')
-    ? version.value.shortTag !== 'v4'
-      ? `${version.value.shortTag} (${tags[version.value.shortTag]})`
-      : version.value.shortTag
-    : undefined
-)
-
 const mobileNavigation = computed<ContentNavigationItem[]>(() => {
   // Show Migration and Bridge on mobile only when user is reading them
   const docsLink = navigation.value.find(link => link.path === version.value.path)
