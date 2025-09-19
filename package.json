@@ -31,6 +31,7 @@
     "@vueuse/components": "^13.9.0",
     "@vueuse/core": "^13.9.0",
     "@vueuse/nuxt": "^13.9.0",
+    "better-sqlite3": "^12.2.0",
     "date-fns": "^4.1.0",
     "drizzle-orm": "^0.44.5",
     "feed": "^5.1.0",
