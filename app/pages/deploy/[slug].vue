@@ -5,6 +5,8 @@ definePageMeta({
   heroBackground: 'opacity-30 -z-10'
 })
 const route = useRoute()
+const { fetchList, providers } = useHostingProviders()
+await fetchList()
 
 const [{ data: provider }, { data: surround }] = await Promise.all([
   useAsyncData(`${kebabCase(route.path)}-provider`, () => queryCollection('deploy').path(route.path).first()),
@@ -70,6 +72,19 @@ links.push({
 <template>
   <UContainer v-if="provider">
     <UPage>
+      <template #left>
+        <UPageAside>
+          <UNavigationMenu
+            variant="pill"
+            highlight
+            orientation="vertical"
+            :items="providers.map(provider => ({
+              label: provider.title,
+              to: provider.path
+            }))"
+          />
+        </UPageAside>
+      </template>
       <UPageHeader
         :description="provider.description"
         :ui="{ headline: 'mb-8' }"

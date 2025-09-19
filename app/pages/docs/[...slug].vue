@@ -23,9 +23,6 @@ const asideNavigation = computed(() => {
   return navPageFromPath(path, navigation.value)?.children || []
 })
 
-const { headerLinks } = useHeaderLinks()
-const links = computed(() => headerLinks.value.find(link => link.to === version.value.path)?.children ?? [])
-
 function paintResponse() {
   if (import.meta.server) {
     return Promise.resolve()
@@ -123,10 +120,6 @@ if (import.meta.server) {
     <UPage>
       <template #left>
         <UPageAside>
-          <VersionSelect />
-          <USeparator type="dashed" class="my-6" />
-          <UPageAnchors :links="links" />
-          <USeparator type="dashed" class="my-6" />
           <UContentNavigation
             :navigation="asideNavigation"
             default-open

@@ -16,7 +16,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
+  <div :class="[(route.path.startsWith('/docs/') || route.path.startsWith('/deploy')) && 'root']">
     <!-- <UBanner
       id="aidd-event-sep-10"
       title="Sep 10: Free AI-Driven Development Event for Vue & Nuxt Developers"
@@ -35,7 +35,7 @@ onMounted(() => {
       ]"
     /> -->
 
-    <AppHeader />
+    <Header />
 
     <UMain class="relative">
       <HeroBackground

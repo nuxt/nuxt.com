@@ -1,6 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
-  heroBackground: 'opacity-70 -z-10'
+  heroBackground: 'opacity-30 -z-10'
 })
 
 const { fetchList, providers } = useHostingProviders()
@@ -31,13 +31,20 @@ await fetchList()
 
 <template>
   <UContainer v-if="page">
-    <UPageHero
-      :title="title"
-      :description="description"
-      :links="page.links"
-    />
-
     <UPage>
+      <template #left>
+        <UPageAside>
+          <UNavigationMenu
+            variant="pill"
+            highlight
+            orientation="vertical"
+            :items="providers.map(provider => ({
+              label: provider.title,
+              to: provider.path
+            }))"
+          />
+        </UPageAside>
+      </template>
       <UPageBody>
         <UPageGrid>
           <UPageCard

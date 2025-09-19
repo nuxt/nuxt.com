@@ -99,3 +99,11 @@ onMounted(() => {
     </ClientOnly>
   </UApp>
 </template>
+
+<style>
+@media (min-width: 1024px) {
+  .root {
+    --ui-header-height: 113px;
+  }
+}
+</style>

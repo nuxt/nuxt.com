@@ -35,7 +35,8 @@ function _useHeaderLinks() {
         label: 'Deploy',
         description: 'Deploy your Nuxt project anywhere.',
         icon: 'i-lucide-rocket',
-        to: '/deploy'
+        to: '/deploy',
+        active: route.path.startsWith('/deploy')
       }, {
         label: 'Examples',
         description: 'Discover and explore official and community examples.',
@@ -53,7 +54,7 @@ function _useHeaderLinks() {
       label: 'Modules',
       icon: 'i-lucide-puzzle',
       to: '/modules',
-      description: 'Supercharge your Nuxt project with modules.',
+      description: 'Supercharge your Nuxt project with modules.'
     }, {
       label: 'Templates',
       icon: 'i-lucide-app-window',

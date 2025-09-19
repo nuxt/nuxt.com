@@ -48,7 +48,7 @@ provide('navigation', versionNavigation)
 
 <template>
   <UApp>
-    <AppHeader />
+    <Header />
 
     <UError :error="error" />
 
