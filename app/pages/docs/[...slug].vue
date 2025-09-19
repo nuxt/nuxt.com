@@ -198,7 +198,6 @@ if (import.meta.server) {
                 <UBadge
                   label="Menu"
                   icon="i-lucide-text-align-start"
-                  variant="ghost"
                   color="neutral"
                   size="lg"
                   aria-label="Open navigation"
