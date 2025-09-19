@@ -41,7 +41,16 @@ const logoContextMenuItems = [
       </UContextMenu>
     </template>
 
-    <UNavigationMenu :items="headerLinks" variant="link" :ui="{ linkLeadingIcon: 'hidden' }" />
+    <UNavigationMenu
+      :items="headerLinks.map((link) => {
+        if (link.to.startsWith('/docs')) {
+          return { ...link, children: [] }
+        }
+        return link
+      })"
+      variant="link"
+      :ui="{ linkLeadingIcon: 'hidden' }"
+    />
 
     <template #right>
       <UTooltip text="Search" :kbds="['meta', 'K']">
