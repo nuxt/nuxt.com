@@ -158,13 +158,23 @@ if (import.meta.server) {
             <Feedback :page="page" />
             <USeparator class="mt-6 mb-10">
               <div class="flex items-center gap-2 text-sm text-muted">
-                <UButton size="sm" variant="link" color="neutral" to="https://github.com/nuxt/nuxt/issues/new/choose" target="_blank">
-                  Report an issue
-                </UButton>
+                <UButton
+                  size="sm"
+                  variant="link"
+                  color="neutral"
+                  to="https://github.com/nuxt/nuxt/issues/new/choose"
+                  target="_blank"
+                  label="Report an issue"
+                />
                 or
-                <UButton size="sm" variant="link" color="neutral" :to="editLink" target="_blank">
-                  Edit this page on GitHub
-                </UButton>
+                <UButton
+                  size="sm"
+                  variant="link"
+                  color="neutral"
+                  :to="editLink"
+                  target="_blank"
+                  label="Edit this page on GitHub"
+                />
               </div>
             </USeparator>
             <UContentSurround :surround="surround" />
@@ -172,49 +182,68 @@ if (import.meta.server) {
         </UPageBody>
 
         <template #right>
-          <UContentToc
+          <ContentToc
             :links="page.body?.toc?.links"
+            :community-links="communityLinks"
             highlight
-            class="lg:backdrop-blur-none"
-            :ui="{
-              title: 'w-full text-right lg:text-left'
-            }"
-          >
-            <template #bottom>
-              <USeparator v-if="page.body?.toc?.links?.length" type="dashed" />
-              <UPageLinks title="Community" :links="communityLinks" />
-              <USeparator type="dashed" />
-              <SocialLinks />
-              <Ads />
-            </template>
-
-            <template #leading>
-              <UDrawer
-                direction="left"
-                title="Navigation"
-                side="left"
-                class="lg:hidden"
-              >
-                <UBadge
-                  label="Menu"
-                  icon="i-lucide-text-align-start"
-                  color="neutral"
-                  size="lg"
-                  aria-label="Open navigation"
-                  @click.stop
+            class="hidden lg:block lg:backdrop-blur-none"
+          />
+          <div class="order-first lg:order-last sticky top-(--ui-header-height) z-10 bg-default/75 lg:bg-[initial] backdrop-blur -mx-4 px-4 sm:px-6 py-4 border-b border-dashed border-default flex justify-between">
+            <UDrawer
+              direction="left"
+              title="Navigation"
+              side="left"
+              class="lg:hidden"
+            >
+              <UButton
+                label="Menu"
+                icon="i-lucide-text-align-start"
+                color="neutral"
+                variant="ghost"
+                size="xs"
+                aria-label="Open navigation"
+                class="p-0"
+              />
+              <template #body>
+                <UContentNavigation
+                  :navigation="asideNavigation"
+                  default-open
+                  trailing-icon="i-lucide-chevron-right"
+                  :ui="{ linkTrailingIcon: 'group-data-[state=open]:rotate-90' }"
+                  highlight
                 />
-                <template #body>
-                  <UContentNavigation
-                    :navigation="asideNavigation"
-                    default-open
-                    trailing-icon="i-lucide-chevron-right"
-                    :ui="{ linkTrailingIcon: 'group-data-[state=open]:rotate-90' }"
-                    highlight
-                  />
-                </template>
-              </UDrawer>
-            </template>
-          </UContentToc>
+              </template>
+            </UDrawer>
+            <UDrawer
+              direction="right"
+              side="right"
+              class="lg:hidden"
+            >
+              <UButton
+                label="On this page"
+                icon="i-lucide-book-open"
+                color="neutral"
+                variant="ghost"
+                size="xs"
+                aria-label="Open on this page"
+                class="p-0"
+              />
+              <template #body>
+                <ContentToc
+                  :links="page.body?.toc?.links"
+                  :community-links="communityLinks"
+                  :open="true"
+                  default-open
+                  highlight
+                  :ui="{
+                    root: 'top-0',
+                    trailingIcon: 'hidden',
+                    bottom: 'flex flex-col'
+                  }"
+                />
+              </template>
+            </UDrawer>
+          </div>
         </template>
       </UPage>
     </UPage>
