@@ -188,7 +188,7 @@ if (import.meta.server) {
             highlight
             class="hidden lg:block lg:backdrop-blur-none"
           />
-          <div class="order-first lg:order-last sticky top-(--ui-header-height) z-10 bg-default/75 lg:bg-[initial] backdrop-blur -mx-4 px-4 sm:px-6 py-4 border-b border-dashed border-default flex justify-between">
+          <div class="order-first lg:order-last sticky top-(--ui-header-height) z-10 bg-default/75 lg:bg-[initial] backdrop-blur -mx-4 px-4 py-4 border-b border-dashed border-default flex justify-between">
             <UDrawer
               direction="left"
               title="Navigation"
