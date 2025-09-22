@@ -135,7 +135,12 @@ function refreshHeading(opened: Event) {
         </UPageAside>
       </template>
       <UPage>
-        <UPageHeader v-bind="page">
+        <UPageHeader
+          :ui="{
+            wrapper: 'flex-row items-center flex-wrap justify-between'
+          }"
+          v-bind="page"
+        >
           <template #headline>
             <UBreadcrumb :items="breadcrumb" />
           </template>
@@ -145,9 +150,9 @@ function refreshHeading(opened: Event) {
               v-for="link in page.links?.map(link => ({ ...link, size: 'md' }))"
               :key="link.label"
               color="neutral"
-              variant="outline"
+              variant="soft"
               :target="link.to.startsWith('http') ? '_blank' : undefined"
-              v-bind="link"
+              v-bind="{ ...link, size: 'sm' }"
             >
               <template v-if="link.avatar" #leading>
                 <UAvatar v-bind="link.avatar" size="2xs" :alt="`${link.label} avatar`" />
