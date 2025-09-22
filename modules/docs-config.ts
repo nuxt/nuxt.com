@@ -117,7 +117,8 @@ export default defineNuxtModule((options, nuxt) => {
     if (typeof file.body === 'string' && file.body.includes(GENERATE_KEY)) {
       let generatedDocs = ''
       try {
-        const rootSchema = await fetch('https://unpkg.com/@nuxt/schema@latest/schema/config.schema.json').then(res => res.json()) as Schema
+        // This is only used by the 3.x branch - we removed `config.schema.json` in Nuxt 4
+        const rootSchema = await fetch('https://unpkg.com/@nuxt/schema@3x/schema/config.schema.json').then(res => res.json()) as Schema
         const start = Date.now()
         console.log(`Generating config docs on ${file.id}`)
 
