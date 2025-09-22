@@ -127,6 +127,14 @@ const logoContextMenuItems = [
       </UTooltip>
     </template>
 
+    <template #toggle="{ open, toggle }">
+      <IconMenuToggle
+        :open="open"
+        class="lg:hidden"
+        @click="toggle"
+      />
+    </template>
+
     <template #body>
       <template v-if="route.path.startsWith('/docs')">
         <VersionSelect />

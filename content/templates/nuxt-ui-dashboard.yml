@@ -1,0 +1,6 @@
+name: 'Dashboard'
+slug: 'nuxt-ui-dashboard'
+description: "A dashboard template made with Nuxt UI."
+repo: 'nuxt-ui-templates/dashboard'
+demo: 'https://dashboard-template.nuxt.dev'
+featured: true
