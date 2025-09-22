@@ -114,10 +114,9 @@ if (import.meta.server) {
   })
 }
 
-function refreshHeading() {
-  nextTick(() => {
-    nuxtApp.callHook('page:loading:end')
-  })
+function refreshHeading(opened: Event) {
+  if (!opened) return
+  nextTick(() => nuxtApp.callHook('page:loading:end'))
 }
 </script>
 
@@ -231,6 +230,7 @@ function refreshHeading() {
               side="right"
               inset
               class="lg:hidden"
+              no-body-styles
               :ui="{
                 content: 'w-full max-w-2/3'
               }"
