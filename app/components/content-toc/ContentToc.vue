@@ -23,10 +23,7 @@ defineProps<Props>()
 </script>
 
 <template>
-  <UContentToc
-    :links="links"
-    v-bind="$attrs"
-  >
+  <UContentToc :links="links">
     <template #bottom>
       <ContentTocBottom
         :has-links="!!links?.length"
