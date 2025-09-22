@@ -9,6 +9,7 @@ const mobileNavigation = computed<ContentNavigationItem[]>(() => {
       ...link,
       title: link.label,
       path: link.to,
+      icon: link.children?.length ? undefined : link.icon,
       children: link.children?.map(child => ({
         ...child,
         title: child.label,
@@ -31,9 +32,9 @@ const mobileNavigation = computed<ContentNavigationItem[]>(() => {
     variant="link"
     highlight
     :ui="{
-      trigger: 'font-medium text-xs uppercase',
+      trigger: 'font-semibold text-xs uppercase',
       link: 'data-[state=open]:text-muted',
-      linkLeadingIcon: 'group-data-[state=open]:text-muted group-data-[state=open]:hidden'
+      linkLeadingIcon: 'group-data-[state=open]:text-muted'
     }"
   />
 </template>
