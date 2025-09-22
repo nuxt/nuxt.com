@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import type { ContentNavigationItem } from '@nuxt/content'
 
-const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
-
 const route = useRoute()
 const { headerLinks } = useHeaderLinks()
 
