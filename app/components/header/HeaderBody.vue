@@ -5,13 +5,14 @@ const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
 
 const route = useRoute()
 const { headerLinks } = useHeaderLinks()
-const { version } = useDocsVersion()
 
 const mobileNavigation = computed<ContentNavigationItem[]>(() => {
-  const docsLinks = navigation.value.find(link => link.path === version.value.path).children.filter(link => !link.path.includes('/migration') && !link.path.includes('/bridge')).map(link => ({ ...link, children: [] }))
-
   return [
-    ...docsLinks,
+    ...headerLinks.value[0].children.map(link => ({
+      ...link,
+      title: link.label,
+      path: link.to
+    })),
     ...headerLinks.value.slice(1).map(link => ({
       ...link,
       title: link.label,

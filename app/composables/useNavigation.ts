@@ -34,7 +34,7 @@ function _useHeaderLinks() {
       }, {
         label: 'Deploy',
         description: 'Deploy your Nuxt project anywhere.',
-        icon: 'i-lucide-rocket',
+        icon: 'i-lucide-cloud',
         to: '/deploy',
         active: route.path.startsWith('/deploy')
       }, {
