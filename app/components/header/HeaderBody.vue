@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { ContentNavigationItem } from '@nuxt/content'
 
-const route = useRoute()
 const { headerLinks } = useHeaderLinks()
 
 const mobileNavigation = computed<ContentNavigationItem[]>(() => {
