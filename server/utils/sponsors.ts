@@ -214,10 +214,10 @@ export const fetchGithubSponsors = async (): Promise<Sponsor[]> => {
   } while (hasNext)
 
   response.unshift({
-    sponsorId: 'nuxtlabs',
-    sponsorName: 'NuxtLabs',
-    sponsorLogo: 'https://avatars.githubusercontent.com/u/62017400',
-    sponsorUrl: 'https://nuxtlabs.com',
+    sponsorId: 'vercel',
+    sponsorName: 'Vercel',
+    sponsorLogo: 'https://avatars.githubusercontent.com/u/14985020',
+    sponsorUrl: 'https://vercel.com',
     monthlyPriceInDollars: 10000
   })
   return response
