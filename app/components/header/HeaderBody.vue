@@ -8,14 +8,10 @@ const { headerLinks } = useHeaderLinks()
 const { version } = useDocsVersion()
 
 const mobileNavigation = computed<ContentNavigationItem[]>(() => {
-  // Show Migration and Bridge on mobile only when user is reading them
-  const docsLink = navigation.value.find(link => link.path === version.value.path)
-  if (docsLink && !route.path.startsWith(`${version.value.path}/bridge`) && !route.path.startsWith(`${version.value.path}/migration`)) {
-    docsLink.children = docsLink.children?.filter(link => ![`${version.value.path}/bridge`, `${version.value.path}/migration`].includes(link.path as string)) || []
-  }
+  const docsLinks = navigation.value.find(link => link.path === version.value.path).children.filter(link => !link.path.includes('/migration') && !link.path.includes('/bridge')).map(link => ({ ...link, children: [] }))
 
   return [
-    docsLink,
+    ...docsLinks,
     ...headerLinks.value.slice(1).map(link => ({
       ...link,
       title: link.label,
