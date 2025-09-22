@@ -129,7 +129,7 @@ if (import.meta.server) {
   })
 }
 
-function refreshHeading(opened: Event) {
+function refreshHeading(opened: boolean) {
   if (!opened) return
   nextTick(() => nuxtApp.callHook('page:loading:end'))
 }
@@ -142,9 +142,7 @@ function refreshHeading(opened: Event) {
         <UPageAside>
           <UContentNavigation
             :navigation="asideNavigation"
-            default-open
-            trailing-icon="i-lucide-chevron-right"
-            :ui="{ linkTrailingIcon: 'group-data-[state=open]:rotate-90' }"
+            :collapsible="false"
             highlight
           />
         </UPageAside>

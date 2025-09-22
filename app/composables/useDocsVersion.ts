@@ -6,7 +6,7 @@ interface Version {
   branch: string
   tagColor: BadgeProps['color']
   path: string
-  collection: 'docsv3' | 'docsv4' | 'docsv2'
+  collection?: 'docsv3' | 'docsv4'
 }
 
 const versions: Version[] = [
@@ -31,8 +31,7 @@ const versions: Version[] = [
     shortTag: 'v2',
     branch: '2.x',
     tagColor: 'neutral',
-    path: 'https://v2.nuxt.com',
-    collection: 'docsv2'
+    path: 'https://v2.nuxt.com'
   }
 ]
 

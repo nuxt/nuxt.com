@@ -40,8 +40,9 @@ await fetchList()
             orientation="vertical"
             :items="providers.map(provider => ({
               label: provider.title,
-              to: provider.path
-            }))"
+              to: provider.path,
+              badge: provider.sponsor ? 'Sponsor' : null
+            })).sort((a, b) => a.label.localeCompare(b.label))"
           />
         </UPageAside>
       </template>

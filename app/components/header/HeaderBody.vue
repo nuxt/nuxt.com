@@ -6,12 +6,7 @@ const { headerLinks } = useHeaderLinks()
 
 const mobileNavigation = computed<ContentNavigationItem[]>(() => {
   return [
-    ...headerLinks.value[0].children.map(link => ({
-      ...link,
-      title: link.label,
-      path: link.to
-    })),
-    ...headerLinks.value.slice(1).map(link => ({
+    ...headerLinks.value.map(link => ({
       ...link,
       title: link.label,
       path: link.to,
@@ -28,15 +23,18 @@ const mobileNavigation = computed<ContentNavigationItem[]>(() => {
     }
   ].filter((item): item is ContentNavigationItem => Boolean(item))
 })
-
-const defaultOpen = computed(() => {
-  const topLevelWithChildren = mobileNavigation.value.filter(link => link.children?.length)
-  const currentPath = route.path
-
-  return topLevelWithChildren.some(link => link.children?.some(child => currentPath.startsWith(child.path as string)))
-})
 </script>
 
 <template>
-  <UContentNavigation :navigation="mobileNavigation" :default-open="defaultOpen" highlight />
+  <UContentNavigation
+    :navigation="mobileNavigation"
+    :collapsible="false"
+    variant="link"
+    highlight
+    :ui="{
+      trigger: 'font-medium text-xs uppercase',
+      link: 'data-[state=open]:text-muted',
+      linkLeadingIcon: 'group-data-[state=open]:text-muted group-data-[state=open]:hidden'
+    }"
+  />
 </template>

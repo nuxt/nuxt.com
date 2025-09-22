@@ -49,7 +49,7 @@ await fetchList()
     <UPage id="smooth" class="pt-20 -mt-20">
       <template #left>
         <UPageAside>
-          <UContentNavigation highlight :navigation="navigation" />
+          <UContentNavigation highlight :navigation="navigation" :collapsible="false" />
         </UPageAside>
       </template>
 
