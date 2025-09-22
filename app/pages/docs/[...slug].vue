@@ -188,21 +188,26 @@ if (import.meta.server) {
             highlight
             class="hidden lg:block lg:backdrop-blur-none"
           />
-          <div class="order-first lg:order-last sticky top-(--ui-header-height) z-10 bg-default/75 lg:bg-[initial] backdrop-blur -mx-4 px-4 py-4 border-b border-dashed border-default flex justify-between">
+          <div class="order-first lg:order-last sticky top-(--ui-header-height) z-10 bg-default/75 lg:bg-[initial] backdrop-blur -mx-4 p-6 border-b border-dashed border-default flex justify-between">
             <UDrawer
               direction="left"
               title="Navigation"
+              inset
+              :handle="false"
               side="left"
               class="lg:hidden"
+              :ui="{
+                content: 'w-full max-w-2/3'
+              }"
             >
               <UButton
                 label="Menu"
                 icon="i-lucide-text-align-start"
                 color="neutral"
-                variant="ghost"
+                variant="link"
                 size="xs"
                 aria-label="Open navigation"
-                class="p-0"
+                class="-m-4"
               />
               <template #body>
                 <UContentNavigation
@@ -216,17 +221,22 @@ if (import.meta.server) {
             </UDrawer>
             <UDrawer
               direction="right"
+              :handle="false"
               side="right"
+              inset
               class="lg:hidden"
+              :ui="{
+                content: 'w-full max-w-2/3'
+              }"
             >
               <UButton
                 label="On this page"
                 icon="i-lucide-book-open"
                 color="neutral"
-                variant="ghost"
+                variant="link"
                 size="xs"
                 aria-label="Open on this page"
-                class="p-0"
+                class="-m-4"
               />
               <template #body>
                 <ContentToc
@@ -234,7 +244,6 @@ if (import.meta.server) {
                   :community-links="communityLinks"
                   :open="true"
                   default-open
-                  highlight
                   :ui="{
                     root: 'top-0',
                     trailingIcon: 'hidden',

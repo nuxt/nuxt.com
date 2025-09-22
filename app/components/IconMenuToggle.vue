@@ -35,9 +35,10 @@ const state = computed(() => props.open ? 'close' : 'normal')
     size="sm"
     variant="ghost"
     color="neutral"
-    class="-me-1.5"
+    class="relative -me-1.5"
     square
   >
+    <span class="absolute top-1/2 left-1/2 size-12 -translate-1/2 [@media(pointer:fine)]:hidden" />
     <svg
       xmlns="http://www.w3.org/2000/svg"
       class="size-5"
