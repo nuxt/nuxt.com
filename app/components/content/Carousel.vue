@@ -5,7 +5,7 @@ defineProps<{
 </script>
 
 <template>
-  <UCarousel v-slot="{ item, index }" :items="items" :ui="{ item: 'basis-1/3' }" dots>
-    <ProseImg :src="item" :alt="`Image ${index + 1}`" width="320" class="rounded-lg" />
+  <UCarousel v-slot="{ item, index }" :items="items" :ui="{ item: 'basis-full sm:basis-1/2' }" dots>
+    <ProseImg :src="item" :alt="`Figma preview ${index + 1}`" class="w-full rounded-lg" />
   </UCarousel>
 </template>
