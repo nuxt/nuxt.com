@@ -10,10 +10,13 @@ definePageMeta({
 })
 
 const navigation = inject<Ref<ContentNavigationItem[]>>('navigation', ref([]))
+const menuDrawerOpen = ref(false)
+const onThisPageDrawerOpen = ref(false)
 
 const route = useRoute()
 const nuxtApp = useNuxtApp()
 const { version } = useDocsVersion()
+const { headerLinks } = useHeaderLinks()
 
 const path = computed(() => route.path.replace(/\/$/, ''))
 
@@ -22,7 +25,6 @@ const asideNavigation = computed(() => {
 
   return navPageFromPath(path, navigation.value)?.children || []
 })
-
 function paintResponse() {
   if (import.meta.server) {
     return Promise.resolve()
@@ -50,6 +52,11 @@ watch(status, (status) => {
   }
 })
 
+watch(route, () => {
+  menuDrawerOpen.value = false
+  onThisPageDrawerOpen.value = false
+})
+
 watch(page, (page) => {
   if (!page) {
     throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
@@ -71,6 +78,8 @@ const breadcrumb = computed(() => {
 
   return links
 })
+// Get the -2 item of the breadcrumb
+const currentSectionTitle = computed(() => headerLinks.value[0].children.find(link => path.value.includes(link.to))?.label || findPageBreadcrumb(navigation.value, path.value).slice(-1)[0].title)
 
 const editLink = computed(() => `https://github.com/nuxt/nuxt/edit/${version.value.branch}/${page?.value?.stem?.replace(/docs\/\d\.x/, 'docs')}.${page?.value?.extension}`)
 
@@ -200,8 +209,9 @@ function refreshHeading(opened: Event) {
           />
           <div class="order-first lg:order-last sticky top-(--ui-header-height) z-10 bg-default/75 lg:bg-[initial] backdrop-blur -mx-4 p-6 border-b border-dashed border-default flex justify-between">
             <UDrawer
+              v-model:open="menuDrawerOpen"
               direction="left"
-              title="Navigation"
+              :title="currentSectionTitle"
               inset
               :handle="false"
               side="left"
@@ -230,6 +240,7 @@ function refreshHeading(opened: Event) {
               </template>
             </UDrawer>
             <UDrawer
+              v-model:open="onThisPageDrawerOpen"
               direction="right"
               :handle="false"
               side="right"
@@ -243,7 +254,7 @@ function refreshHeading(opened: Event) {
             >
               <UButton
                 label="On this page"
-                icon="i-lucide-book-open"
+                trailing-icon="i-lucide-chevron-right"
                 color="neutral"
                 variant="link"
                 size="xs"
