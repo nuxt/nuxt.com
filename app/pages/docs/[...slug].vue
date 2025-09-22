@@ -113,6 +113,12 @@ if (import.meta.server) {
     description
   })
 }
+
+function refreshHeading() {
+  nextTick(() => {
+    nuxtApp.callHook('page:loading:end')
+  })
+}
 </script>
 
 <template>
@@ -228,6 +234,7 @@ if (import.meta.server) {
               :ui="{
                 content: 'w-full max-w-2/3'
               }"
+              @update:open="refreshHeading"
             >
               <UButton
                 label="On this page"
@@ -246,6 +253,7 @@ if (import.meta.server) {
                   default-open
                   :ui="{
                     root: 'top-0',
+                    container: 'border-b-0',
                     trailingIcon: 'hidden',
                     bottom: 'flex flex-col'
                   }"
