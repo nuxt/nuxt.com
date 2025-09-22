@@ -63,24 +63,30 @@ watch(page, (page) => {
   }
 }, { immediate: true })
 
+// Get the -2 item of the breadcrumb
+const currentSectionTitle = computed(() => headerLinks.value[0].children.find(link => path.value.includes(link.to))?.label || findPageBreadcrumb(navigation.value, path.value).slice(-1)[0].title)
+
 const breadcrumb = computed(() => {
   const links = mapContentNavigation(findPageBreadcrumb(navigation.value, path.value)).map(link => ({
     label: link.label,
     to: link.to
-  }))
+  })).slice(1)
 
   if (path.value.startsWith(`${version.value.path}/bridge`) || path.value.startsWith(`${version.value.path}/migration`)) {
-    links.splice(1, 0, {
+    links.unshift({
       label: 'Upgrade Guide',
       to: `${version.value.path}/getting-started/upgrade`
+    })
+  }
+  if (!links.length) {
+    links.push({
+      label: currentSectionTitle.value,
+      to: path.value
     })
   }
 
   return links
 })
-// Get the -2 item of the breadcrumb
-const currentSectionTitle = computed(() => headerLinks.value[0].children.find(link => path.value.includes(link.to))?.label || findPageBreadcrumb(navigation.value, path.value).slice(-1)[0].title)
-
 const editLink = computed(() => `https://github.com/nuxt/nuxt/edit/${version.value.branch}/${page?.value?.stem?.replace(/docs\/\d\.x/, 'docs')}.${page?.value?.extension}`)
 
 const communityLinks = [{
