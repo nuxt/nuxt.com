@@ -252,7 +252,7 @@ function refreshHeading(opened: Event) {
                   :open="true"
                   default-open
                   :ui="{
-                    root: '!mx-0 !px-1 top-0',
+                    root: '!mx-0 !px-1 top-0 overflow-visible',
                     container: '!pt-0 border-b-0',
                     trailingIcon: 'hidden',
                     bottom: 'flex flex-col'
