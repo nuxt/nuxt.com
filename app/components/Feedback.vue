@@ -88,7 +88,6 @@ const {
                       : 'border-default bg-accented/20 hover:border-accented/70 hover:bg-accented/80'
                   ]"
                   :aria-label="`Rate as ${option.label}`"
-                  :aria-pressed="formState.rating === option.value"
                   role="radio"
                   :aria-checked="formState.rating === option.value"
                   @click="handleRatingSelect(option.value)"
