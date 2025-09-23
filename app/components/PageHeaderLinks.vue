@@ -78,6 +78,7 @@ async function copyPage() {
         color="neutral"
         variant="soft"
         class="border-l border-muted"
+        aria-label="Open copy options"
         :ui="{
           leadingIcon: 'size-3.5'
         }"

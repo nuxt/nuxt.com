@@ -8,6 +8,7 @@ useSeoMeta({
 
 defineProps<{ error: NuxtError }>()
 
+const route = useRoute()
 const { version } = useDocsVersion()
 const { searchGroups, searchLinks, searchTerm } = useNavigation()
 const { fetchList } = useModules()
@@ -48,21 +49,23 @@ provide('navigation', versionNavigation)
 
 <template>
   <UApp>
-    <AppHeader />
+    <div :class="[(route.path.startsWith('/docs/') || route.path.startsWith('/deploy')) && 'root']">
+      <Header />
 
-    <UError :error="error" />
+      <UError :error="error" />
 
-    <AppFooter />
+      <AppFooter />
 
-    <ClientOnly>
-      <LazyUContentSearch
-        v-model:search-term="searchTerm"
-        :files="versionFiles"
-        :navigation="versionNavigation"
-        :groups="searchGroups"
-        :links="searchLinks"
-        :fuse="{ resultLimit: 42 }"
-      />
-    </ClientOnly>
+      <ClientOnly>
+        <LazyUContentSearch
+          v-model:search-term="searchTerm"
+          :files="versionFiles"
+          :navigation="versionNavigation"
+          :groups="searchGroups"
+          :links="searchLinks"
+          :fuse="{ resultLimit: 42 }"
+        />
+      </ClientOnly>
+    </div>
   </UApp>
 </template>
