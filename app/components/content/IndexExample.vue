@@ -1,5 +1,5 @@
 <template>
-  <div class="overflow-y-scroll h-[500px]">
+  <div class="overflow-y-scroll h-[650px]">
     <UHeader class="z-1 w-full rounded-t-md">
       <template #title>
         <svg
