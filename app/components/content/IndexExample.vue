@@ -97,16 +97,14 @@
               'Community support'
             ],
             button: {
-              label: 'Get started',
-              to: 'https://ui.nuxt.com/getting-started/installation/nuxt',
-              target: '_blank'
+              label: 'Get started'
             }
           },
           {
             title: 'Pro',
             description: 'Enhanced features for growing businesses.',
             price: '$19',
-            cycle: '/month',
+            billingCycle: '/month',
             features: [
               'Everything in Starter',
               'Priority support',
@@ -114,8 +112,7 @@
               'Custom components'
             ],
             button: {
-              label: 'Coming soon',
-              disabled: true
+              label: 'Get started'
             }
           },
           {
