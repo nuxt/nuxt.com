@@ -63,19 +63,19 @@ function _useHeaderLinks() {
     }, {
       label: 'Resources',
       icon: 'i-lucide-library',
-      to: '/templates',
+      to: '/showcase',
       search: false,
       active: route.path.startsWith('/video-courses') || route.path.startsWith('/showcase'),
       children: [{
-        label: 'Video Courses',
-        description: 'Learn Nuxt by watching video courses.',
-        icon: 'i-lucide-graduation-cap',
-        to: '/video-courses'
-      }, {
         label: 'Showcase',
         description: 'Discover and explore projects built with Nuxt.',
         icon: 'i-lucide-presentation',
         to: '/showcase'
+      }, {
+        label: 'Video Courses',
+        description: 'Learn Nuxt by watching video courses.',
+        icon: 'i-lucide-graduation-cap',
+        to: '/video-courses'
       }, {
         label: 'Nuxt Certification',
         description: 'Obtain your Certification of Competence.',
