@@ -1,6 +1,6 @@
 <template>
   <div class="overflow-y-scroll h-[500px]">
-    <UHeader class="z-1 w-full">
+    <UHeader class="z-1 w-full rounded-t-md">
       <template #title>
         <svg
           class="h-6 w-auto"
