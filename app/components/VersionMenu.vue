@@ -14,15 +14,17 @@ const route = useRoute()
     size="xs"
     :disabled="!route.path.startsWith('/docs')"
   >
-    <UBadge
+    <UButton
       :label="`v${tags[version.shortTag]}`"
       variant="subtle"
       :trailing-icon="route.path.startsWith('/docs') ? 'i-lucide-chevron-down' : undefined"
-      size="sm"
+      size="xs"
       :color="version.tagColor"
-      class="-mb-[2px] font-semibold text-[12px]/3 truncate"
+      :disabled="false"
+      class="-mb-[2px] font-semibold text-[12px]/3 rounded-sm px-1.5 gap-0.5 truncate"
+      :class="[!route.path.startsWith('/docs') && 'hover:bg-primary/10 active:bg-primary/10']"
       :ui="{
-        trailingIcon: ['transition-transform duration-200', open ? 'rotate-180' : undefined].filter(Boolean).join(' ')
+        trailingIcon: ['transition-transform duration-200 size-3', open && 'rotate-180']
       }"
     />
   </UDropdownMenu>

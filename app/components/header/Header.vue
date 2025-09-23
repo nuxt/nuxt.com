@@ -30,15 +30,15 @@ const logoContextMenuItems = [
 </script>
 
 <template>
-  <UHeader :ui="{ left: 'min-w-0' }" class="flex flex-col">
+  <UHeader :ui="{ left: 'min-w-0 items-end' }" class="flex flex-col">
     <template #left>
-      <UContextMenu :items="logoContextMenuItems" size="xs">
-        <NuxtLink to="/" class="flex gap-2 items-end" aria-label="Back to home">
+      <NuxtLink to="/" aria-label="Back to home">
+        <UContextMenu :items="logoContextMenuItems" size="xs">
           <NuxtLogo ref="logo" class="block w-auto h-6" />
+        </UContextMenu>
+      </NuxtLink>
 
-          <VersionMenu />
-        </NuxtLink>
-      </UContextMenu>
+      <VersionMenu />
     </template>
 
     <UNavigationMenu
