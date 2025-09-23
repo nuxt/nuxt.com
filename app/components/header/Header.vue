@@ -49,6 +49,7 @@ const logoContextMenuItems = [
         return link
       })"
       variant="link"
+      content-orientation="vertical"
       :ui="{ linkLeadingIcon: 'hidden' }"
     />
 
