@@ -78,7 +78,7 @@ const logoContextMenuItems = [
     </template>
 
     <template #toggle="{ open, toggle }">
-      <IconMenuToggle
+      <HeaderToggle
         :open="open"
         class="lg:hidden"
         @click="toggle"
