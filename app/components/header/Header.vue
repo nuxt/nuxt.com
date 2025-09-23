@@ -67,13 +67,13 @@ const logoContextMenuItems = [
           target="_blank"
           variant="ghost"
           color="neutral"
+          square
           :label="stats ? formatNumber(stats.stars) : '...'"
+          aria-label="Nuxt on GitHub"
           :ui="{
             label: 'hidden sm:inline-flex'
           }"
-        >
-          <span class="sr-only">Nuxt on GitHub</span>
-        </UButton>
+        />
       </UTooltip>
     </template>
 
