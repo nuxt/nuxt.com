@@ -248,7 +248,7 @@ export default defineContentConfig({
         description: z.string(),
         componentImg: z.string(),
         logoSrc: z.string(),
-        featured: z.boolean(),
+        sponsor: z.boolean(),
         logoIcon: z.string(),
         category: z.string(),
         nitroPreset: z.string(),
