@@ -12,7 +12,7 @@ function _useHeaderLinks() {
       icon: 'i-lucide-book-marked',
       to,
       search: false,
-      active: route.path.startsWith(to),
+      active: route.path.startsWith(to) || route.path.startsWith(`/deploy`),
       children: [{
         label: 'Get Started',
         description: 'Learn how to get started with Nuxt to build your first app.',
