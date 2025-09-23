@@ -32,7 +32,7 @@ const mobileNavigation = computed<ContentNavigationItem[]>(() => {
     variant="link"
     highlight
     :ui="{
-      trigger: 'font-semibold text-xs uppercase',
+      trigger: 'font-medium data-[state=open]:text-toned tracking-wide text-[11px] uppercase',
       link: 'data-[state=open]:text-muted',
       linkLeadingIcon: 'group-data-[state=open]:text-muted'
     }"
