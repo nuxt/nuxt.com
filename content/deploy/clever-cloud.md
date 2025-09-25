@@ -22,7 +22,7 @@ To deploy your Nuxt project to Clever Cloud, you will need to create a **new app
 7. Inject **environment variables**:
   - For **Node.js**
 
-::package-managers
+::code-group{sync="pm"}
 
 ```ini [npm]
 CC_PRE_BUILD_HOOK="npm run build"
@@ -30,22 +30,17 @@ CC_RUN_COMMAND="node .output/server/index.mjs"
 ```
 
 ```ini [yarn]
-CC_NODE_BUILD_TOOL="yarn"
-CC_PRE_BUILD_HOOK="yarn install --frozen-lockfile && yarn build"
+CC_POST_BUILD_HOOK="yarn build"
 CC_RUN_COMMAND="node .output/server/index.mjs"
 ```
 
 ```ini [pnpm]
-CC_CUSTOM_BUILD_TOOL="pnpm build"
-CC_NODE_BUILD_TOOL="custom"
-CC_PRE_BUILD_HOOK="npm i -g pnpm && pnpm install --frozen-lockfile && pnpm run build"
+CC_POST_BUILD_HOOK="pnpm build"
 CC_RUN_COMMAND="node .output/server/index.mjs"
 ```
 
 ```ini [bun]
-CC_CUSTOM_BUILD_TOOL="bun build"
-CC_NODE_BUILD_TOOL="custom"
-CC_PRE_BUILD_HOOK="npm i -g bun && bun install && bun run build "
+CC_POST_BUILD_HOOK="bun build"
 CC_RUN_COMMAND="node .output/server/index.mjs"
 ```
 
@@ -53,38 +48,34 @@ CC_RUN_COMMAND="node .output/server/index.mjs"
 
   - For a **static application**
 
-::package-managers
+::code-group{sync="pm"}
 
 ```ini [npm]
-CC_NODE_VERSION=20
 CC_WEBROOT=/.output/public
 CC_OVERRIDE_BUILDCACHE=/.output/public
 CC_PRE_BUILD_HOOK=npm install
-CC_POST_BUILD_HOOK=npx nuxi generate
+CC_POST_BUILD_HOOK=npm generate
 ```
 
 ```ini [yarn]
-CC_NODE_VERSION=20
 CC_WEBROOT=/.output/public
 CC_OVERRIDE_BUILDCACHE=/.output/public
-CC_PRE_BUILD_HOOK="yarn install --frozen-lockfile"
-CC_POST_BUILD_HOOK=npx nuxi generate
+CC_PRE_BUILD_HOOK=yarn install
+CC_POST_BUILD_HOOK=yarn generate
 ```
 
 ```ini [pnpm]
-CC_NODE_VERSION=20
 CC_WEBROOT=/.output/public
 CC_OVERRIDE_BUILDCACHE=/.output/public
-CC_PRE_BUILD_HOOK="npm i -g pnpm && pnpm install --frozen-lockfile"
-CC_POST_BUILD_HOOK=npx nuxi generate
+CC_PRE_BUILD_HOOK=pnpm install
+CC_POST_BUILD_HOOK=pnpm generate
 ```
 
 ```ini [bun]
-CC_NODE_VERSION=20
 CC_WEBROOT=/.output/public
 CC_OVERRIDE_BUILDCACHE=/.output/public
-CC_PRE_BUILD_HOOK="npm i -g bun && bun install"
-CC_POST_BUILD_HOOK=npx nuxi generate
+CC_PRE_BUILD_HOOK=bun install
+CC_POST_BUILD_HOOK=bun generate
 ```
 
 ::
