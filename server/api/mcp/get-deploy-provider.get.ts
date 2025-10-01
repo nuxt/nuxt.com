@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { queryCollection } from '@nuxt/content/nitro'
 
 const querySchema = z.object({
   path: z.string().describe('The deploy provider path (e.g., /deploy/vercel)')

@@ -1,4 +1,5 @@
 import type { BlogCollectionItem } from '@nuxt/content'
+import { queryCollection } from '@nuxt/content/nitro'
 
 export default defineCachedEventHandler(async (event) => {
   const blogPosts = await queryCollection(event, 'blog')

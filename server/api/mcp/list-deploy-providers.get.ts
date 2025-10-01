@@ -1,4 +1,5 @@
 import type { DeployCollectionItem } from '@nuxt/content'
+import { queryCollection } from '@nuxt/content/nitro'
 
 export default defineCachedEventHandler(async (event) => {
   const deployProviders = await queryCollection(event, 'deploy')

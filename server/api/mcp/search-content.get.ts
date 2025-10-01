@@ -1,4 +1,5 @@
 import type { BlogCollectionItem, DeployCollectionItem, Docsv3CollectionItem, Docsv4CollectionItem } from '@nuxt/content'
+import { queryCollection } from '@nuxt/content/nitro'
 import { z } from 'zod'
 
 const querySchema = z.object({

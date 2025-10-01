@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { queryCollection } from '@nuxt/content/nitro'
 
 const querySchema = z.object({
   path: z.string().describe('The blog post path (e.g., /blog/v4)')
