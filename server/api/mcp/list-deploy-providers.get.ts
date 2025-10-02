@@ -1,12 +1,11 @@
-import type { DeployCollectionItem } from '@nuxt/content'
-import { queryCollection } from '@nuxt/content/nitro'
+import { queryCollection } from '@nuxt/content/server'
 
 export default defineCachedEventHandler(async (event) => {
   const deployProviders = await queryCollection(event, 'deploy')
     .select('title', 'path', 'description', 'logoSrc', 'logoIcon', 'category', 'nitroPreset', 'website', 'sponsor')
     .all()
 
-  return deployProviders.map((provider: DeployCollectionItem) => ({
+  return deployProviders.map(provider => ({
     title: provider.title,
     name: provider.title,
     path: provider.path,

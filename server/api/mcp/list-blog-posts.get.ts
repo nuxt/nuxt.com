@@ -1,12 +1,11 @@
-import type { BlogCollectionItem } from '@nuxt/content'
-import { queryCollection } from '@nuxt/content/nitro'
+import { queryCollection } from '@nuxt/content/server'
 
 export default defineCachedEventHandler(async (event) => {
   const blogPosts = await queryCollection(event, 'blog')
     .select('title', 'path', 'description', 'date', 'category', 'tags', 'authors', 'image')
     .all()
 
-  return blogPosts.map((post: BlogCollectionItem) => ({
+  return blogPosts.map(post => ({
     title: post.title,
     path: post.path,
     description: post.description,

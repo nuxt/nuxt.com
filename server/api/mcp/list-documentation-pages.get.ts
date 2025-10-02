@@ -1,5 +1,4 @@
-import type { Docsv3CollectionItem, Docsv4CollectionItem } from '@nuxt/content'
-import { queryCollection } from '@nuxt/content/nitro'
+import { queryCollection } from '@nuxt/content/server'
 import { z } from 'zod'
 
 const querySchema = z.object({
@@ -9,7 +8,7 @@ const querySchema = z.object({
 export default defineCachedEventHandler(async (event) => {
   const { version } = await getValidatedQuery(event, querySchema.parse)
 
-  let allDocs: (Docsv3CollectionItem | Docsv4CollectionItem)[]
+  let allDocs = []
 
   if (version === '3.x') {
     allDocs = await queryCollection(event, 'docsv3')
@@ -31,7 +30,7 @@ export default defineCachedEventHandler(async (event) => {
     allDocs = [...docsV3, ...docsV4]
   }
 
-  return allDocs.map((doc: Docsv3CollectionItem | Docsv4CollectionItem) => ({
+  return allDocs.map(doc => ({
     title: doc.title,
     path: doc.path,
     description: doc.description,

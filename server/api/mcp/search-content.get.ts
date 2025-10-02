@@ -1,5 +1,4 @@
-import type { BlogCollectionItem, DeployCollectionItem, Docsv3CollectionItem, Docsv4CollectionItem } from '@nuxt/content'
-import { queryCollection } from '@nuxt/content/nitro'
+import { queryCollection } from '@nuxt/content/server'
 import { z } from 'zod'
 
 const querySchema = z.object({
@@ -16,7 +15,7 @@ export default defineEventHandler(async (event) => {
   try {
     // Search documentation
     if (type === 'docs' || type === 'all') {
-      let docs: (Docsv3CollectionItem | Docsv4CollectionItem)[] = []
+      let docs = []
 
       if (version === '3.x') {
         docs = await queryCollection(event, 'docsv3')
@@ -44,7 +43,7 @@ export default defineEventHandler(async (event) => {
         docs = [...docsV3, ...docsV4]
       }
 
-      results.push(...docs.map((doc: Docsv3CollectionItem | Docsv4CollectionItem) => ({
+      results.push(...docs.map(doc => ({
         type: 'documentation',
         title: doc.title,
         path: doc.path,
@@ -62,7 +61,7 @@ export default defineEventHandler(async (event) => {
         .limit(10)
         .all()
 
-      results.push(...blog.map((post: BlogCollectionItem) => ({
+      results.push(...blog.map(post => ({
         type: 'blog',
         title: post.title,
         path: post.path,
@@ -82,7 +81,7 @@ export default defineEventHandler(async (event) => {
         .limit(10)
         .all()
 
-      results.push(...deploy.map((provider: DeployCollectionItem) => ({
+      results.push(...deploy.map(provider => ({
         type: 'deploy',
         title: provider.title,
         path: provider.path,

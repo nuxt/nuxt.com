@@ -1,7 +1,6 @@
 import { z } from 'zod'
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js'
-import type { DeployCollectionItem } from '@nuxt/content'
 
 function createServer() {
   const server = new McpServer({
@@ -110,7 +109,7 @@ function createServer() {
     },
     async ({ provider }) => {
       const deployProviders = await $fetch('/api/mcp/list-deploy-providers')
-      const matchingProvider = deployProviders.find((p: DeployCollectionItem) =>
+      const matchingProvider = deployProviders.find(p =>
         p.title.toLowerCase().includes(provider.toLowerCase())
       )
 
