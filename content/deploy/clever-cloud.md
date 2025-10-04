@@ -54,7 +54,7 @@ CC_RUN_COMMAND="node .output/server/index.mjs"
 CC_WEBROOT=/.output/public
 CC_OVERRIDE_BUILDCACHE=/.output/public
 CC_PRE_BUILD_HOOK=npm install
-CC_POST_BUILD_HOOK=npm generate
+CC_POST_BUILD_HOOK=npm run generate
 ```
 
 ```ini [yarn]
