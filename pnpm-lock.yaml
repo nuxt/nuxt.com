@@ -26,7 +26,7 @@ importers:
         specifier: ^1.2.14
         version: 1.2.14
       '@iconify-json/simple-icons':
-        specifier: ^1.2.53
+        specifier: ^1.2.54
         version: 1.2.54
       '@nuxt/content':
         specifier: ^3.7.1
@@ -38,7 +38,7 @@ importers:
         specifier: ^0.12.1
         version: 0.12.1(@googlemaps/markerclusterer@2.6.2)(@types/youtube@0.1.2)(@unhead/vue@2.0.17(vue@3.5.22(typescript@5.9.3)))(db0@0.3.2(better-sqlite3@12.4.1)(drizzle-orm@0.44.6(@cloudflare/workers-types@4.20251001.0)(@opentelemetry/api@1.9.0)(better-sqlite3@12.4.1)))(ioredis@5.8.0)(magicast@0.3.5)(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
       '@nuxt/ui':
-        specifier: ^4.0.0
+        specifier: ^4.0.1
         version: 4.0.1(@babel/parser@7.28.4)(change-case@5.4.4)(db0@0.3.2(better-sqlite3@12.4.1)(drizzle-orm@0.44.6(@cloudflare/workers-types@4.20251001.0)(@opentelemetry/api@1.9.0)(better-sqlite3@12.4.1)))(embla-carousel@8.6.0)(ioredis@5.8.0)(magicast@0.3.5)(typescript@5.9.3)(valibot@1.1.0(typescript@5.9.3))(vite@7.1.7(@types/node@24.6.1)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.0)(yaml@2.8.1))(vue-router@4.5.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(zod@3.25.76)
       '@nuxthub/core':
         specifier: 0.9.0
@@ -71,7 +71,7 @@ importers:
         specifier: ^4.1.0
         version: 4.1.0
       drizzle-orm:
-        specifier: ^0.44.5
+        specifier: ^0.44.6
         version: 0.44.6(@cloudflare/workers-types@4.20251001.0)(@opentelemetry/api@1.9.0)(better-sqlite3@12.4.1)
       feed:
         specifier: ^5.1.0
@@ -141,7 +141,7 @@ importers:
         specifier: ^0.31.5
         version: 0.31.5
       eslint:
-        specifier: ^9.36.0
+        specifier: ^9.37.0
         version: 9.37.0(jiti@2.6.1)
       nuxt-content-twoslash:
         specifier: 0.1.2
@@ -165,7 +165,7 @@ importers:
         specifier: ^3.1.0
         version: 3.1.0(typescript@5.9.3)
       wrangler:
-        specifier: ^4.40.3
+        specifier: ^4.42.0
         version: 4.42.0(@cloudflare/workers-types@4.20251001.0)
 
 packages:
