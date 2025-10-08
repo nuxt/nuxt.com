@@ -16,8 +16,8 @@
   "dependencies": {
     "@iconify-json/heroicons": "^1.2.3",
     "@iconify-json/logos": "^1.2.9",
-    "@iconify-json/lucide": "^1.2.68",
-    "@iconify-json/octicon": "^1.2.14",
+    "@iconify-json/lucide": "^1.2.69",
+    "@iconify-json/octicon": "^1.2.15",
     "@iconify-json/simple-icons": "^1.2.54",
     "@nuxt/content": "^3.7.1",
     "@nuxt/image": "https://pkg.pr.new/@nuxt/image@1a5786c",
@@ -50,7 +50,7 @@
     "valibot": "1.1.0"
   },
   "devDependencies": {
-    "@iconify-json/vscode-icons": "^1.2.30",
+    "@iconify-json/vscode-icons": "^1.2.31",
     "@nuxt/eslint": "^1.9.0",
     "@nuxt/test-utils": "^3.19.2",
     "@nuxtjs/turnstile": "^1.1.0",
@@ -66,7 +66,7 @@
     "vitest": "^3.2.4",
     "vue": "^3.5.22",
     "vue-tsc": "^3.1.1",
-    "wrangler": "^4.42.0"
+    "wrangler": "^4.42.1"
   },
   "resolutions": {
     "chokidar": "3.6.0",

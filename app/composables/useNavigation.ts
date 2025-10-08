@@ -130,23 +130,16 @@ const footerLinks = [{
     to: '/design-kit'
   }]
 }, {
-  label: 'Products',
+  label: 'Explore',
   children: [{
-    label: 'Nuxt UI Pro',
-    to: 'https://ui.nuxt.com/pro?utm_source=nuxt-website&utm_medium=footer',
-    target: '_blank'
+    label: 'Modules',
+    to: 'https://nuxt.com/modules',
   }, {
-    label: 'Nuxt Studio',
-    to: 'https://content.nuxt.com/studio/?utm_source=nuxt-website&utm_medium=footer',
-    target: '_blank'
+    label: 'Templates',
+    to: 'https://nuxt.com/templates',
   }, {
-    label: 'NuxtHub',
-    to: 'https://hub.nuxt.com/?utm_source=nuxt-website&utm_medium=footer',
-    target: '_blank'
-  }, {
-    label: 'Docus',
-    to: 'https://docus.dev/?utm_source=nuxt-website&utm_medium=footer',
-    target: '_blank'
+    label: 'Showcase',
+    to: 'https://nuxt.com/showcase',
   }]
 }, {
   label: 'Enterprise',
