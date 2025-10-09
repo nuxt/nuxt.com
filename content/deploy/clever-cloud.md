@@ -25,7 +25,7 @@ To deploy your Nuxt project to Clever Cloud, you will need to create a **new app
 ::code-group{sync="pm"}
 
 ```ini [npm]
-CC_PRE_BUILD_HOOK="npm run build"
+CC_PRE_BUILD_HOOK="npm install && npm run build"
 CC_RUN_COMMAND="node .output/server/index.mjs"
 ```
 
