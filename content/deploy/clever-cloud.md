@@ -25,7 +25,7 @@ To deploy your Nuxt project to Clever Cloud, you will need to create a **new app
 ::code-group{sync="pm"}
 
 ```ini [npm]
-CC_PRE_BUILD_HOOK="npm install && npm run build"
+CC_POST_BUILD_HOOK="npm run build"
 CC_RUN_COMMAND="node .output/server/index.mjs"
 ```
 
@@ -47,6 +47,14 @@ CC_RUN_COMMAND="node .output/server/index.mjs"
 ::
 
   - For a **static application**
+
+::note
+If [`ssr: false` is set in `nuxt.config.ts`](https://nuxt.com/docs/4.x/getting-started/deployment#static-hosting) **or** if your project contains dynamic routes that cannot be pre-rendered, you should :
+1. Use a **Static Apache** application
+2. Create a [`.htaccess`](https://www.clever.cloud/developers/doc/applications/static-apache/#serving-indexhtml-for-spa-single-page-application-routers) file that redirects all routes to `index.html` to ensure proper routing for your SPA.
+
+Otherwise, you can use the default **Static HTML** application.
+::
 
 ::code-group{sync="pm"}
 
