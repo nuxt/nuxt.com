@@ -133,13 +133,13 @@ const footerLinks = [{
   label: 'Explore',
   children: [{
     label: 'Modules',
-    to: 'https://nuxt.com/modules',
+    to: 'https://nuxt.com/modules'
   }, {
     label: 'Templates',
-    to: 'https://nuxt.com/templates',
+    to: 'https://nuxt.com/templates'
   }, {
     label: 'Showcase',
-    to: 'https://nuxt.com/showcase',
+    to: 'https://nuxt.com/showcase'
   }]
 }, {
   label: 'Enterprise',
