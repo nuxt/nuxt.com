@@ -5,7 +5,7 @@ links:
   - label: Get started
     size: md
     color: neutral
-    to: /docs/getting-started/introduction
+    to: /docs/getting-started/installation
   - label: Explore examples
     size: md
     color: neutral

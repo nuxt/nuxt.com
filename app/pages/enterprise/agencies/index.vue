@@ -49,7 +49,7 @@ await fetchList()
     <UPage id="smooth" class="pt-20 -mt-20">
       <template #left>
         <UPageAside>
-          <UContentNavigation highlight :navigation="navigation" />
+          <UContentNavigation highlight :navigation="navigation" :collapsible="false" />
         </UPageAside>
       </template>
 
@@ -89,11 +89,11 @@ await fetchList()
             @click="$router.replace({ query: {} })"
           />
           <UButton
-            to="https://docs.google.com/forms/d/e/1FAIpQLSf85qskit5QqmGJcruGkGF0U7240Bh9MeN0pHB18UiOMWC8dA/viewform"
+            to="https://opencollective.com/nuxtjs/contribute/agency-partner-93555"
             target="_blank"
             color="neutral"
             size="md"
-            label="Submit my agency"
+            label="Become a partner"
           />
         </EmptyCard>
       </UPageBody>

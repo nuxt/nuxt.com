@@ -50,17 +50,19 @@ async function copyPage() {
   <UFieldGroup>
     <UButton
       label="Copy page"
-      :icon="copied ? 'i-lucide-copy-check' : 'i-lucide-copy'"
+      :icon="copied ? 'i-lucide-clipboard-check' : 'i-lucide-clipboard'"
       color="neutral"
-      variant="outline"
+      variant="soft"
+      size="sm"
       :loading="isCopying"
       :ui="{
-        leadingIcon: [copied ? 'text-primary' : 'text-neutral', 'size-3.5']
+        leadingIcon: 'size-3.5'
       }"
       @click="copyPage"
     />
     <UDropdownMenu
       :items="items"
+      size="sm"
       :content="{
         align: 'end',
         side: 'bottom',
@@ -74,7 +76,12 @@ async function copyPage() {
         icon="i-lucide-chevron-down"
         size="sm"
         color="neutral"
-        variant="outline"
+        variant="soft"
+        class="border-l border-muted"
+        aria-label="Open copy options"
+        :ui="{
+          leadingIcon: 'size-3.5'
+        }"
       />
     </UDropdownMenu>
   </UFieldGroup>

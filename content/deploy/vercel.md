@@ -6,6 +6,7 @@ logoSrc: '/assets/integrations/vercel.svg'
 category: Hosting
 nitroPreset: 'vercel'
 website: 'https://vercel.com/'
+sponsor: true
 ---
 
 ::tip

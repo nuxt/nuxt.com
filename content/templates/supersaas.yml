@@ -4,3 +4,4 @@ description: 'Nuxt 3 Fullstack Starter Kit with Auth, DB, Payment, Files & Email
 demo: 'https://supersaas.dev/?aff=J0Emk'
 purchase: 'https://supersaas.dev/?aff=J0Emk'
 badge: 'Premium'
+featured: true

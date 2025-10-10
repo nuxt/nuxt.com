@@ -12,12 +12,12 @@ function _useHeaderLinks() {
       icon: 'i-lucide-book-marked',
       to,
       search: false,
-      active: route.path.startsWith(to),
+      active: route.path.startsWith(to) || route.path.startsWith(`/deploy`),
       children: [{
         label: 'Get Started',
         description: 'Learn how to get started with Nuxt to build your first app.',
         icon: 'i-lucide-rocket',
-        to: `${to}/getting-started`,
+        to: `${to}/getting-started/installation`,
         active: route.path.startsWith(`${to}/getting-started`)
       }, {
         label: 'Guide',
@@ -32,6 +32,12 @@ function _useHeaderLinks() {
         to: `${to}/api`,
         active: route.path.startsWith(`${to}/api`)
       }, {
+        label: 'Deploy',
+        description: 'Deploy your Nuxt project anywhere.',
+        icon: 'i-lucide-cloud',
+        to: '/deploy',
+        active: route.path.startsWith('/deploy')
+      }, {
         label: 'Examples',
         description: 'Discover and explore official and community examples.',
         icon: 'i-lucide-app-window-mac',
@@ -45,77 +51,36 @@ function _useHeaderLinks() {
         active: route.path.startsWith(`${to}/community`)
       }]
     }, {
-      label: 'Integrations',
+      label: 'Modules',
+      icon: 'i-lucide-puzzle',
       to: '/modules',
-      icon: 'i-lucide-unplug',
-      search: false,
-      active: route.path.startsWith('/modules') || route.path.startsWith('/deploy'),
-      children: [{
-        label: 'Modules',
-        description: 'Supercharge your Nuxt project with modules.',
-        icon: 'i-lucide-puzzle',
-        to: '/modules'
-      }, {
-        label: 'Hosting',
-        description: 'Deploy your Nuxt project anywhere.',
-        icon: 'i-lucide-rocket',
-        to: '/deploy'
-      }]
+      description: 'Supercharge your Nuxt project with modules.'
+    }, {
+      label: 'Templates',
+      icon: 'i-lucide-app-window',
+      description: 'Start your next project with a Nuxt template.',
+      to: '/templates'
     }, {
       label: 'Resources',
       icon: 'i-lucide-library',
-      to: '/templates',
+      to: '/showcase',
       search: false,
-      active: route.path.startsWith('/templates') || route.path.startsWith('/video-courses') || route.path.startsWith('/showcase'),
+      active: route.path.startsWith('/video-courses') || route.path.startsWith('/showcase'),
       children: [{
-        label: 'Templates',
-        icon: 'i-lucide-app-window',
-        description: 'Start your next project with a Nuxt template.',
-        to: '/templates'
+        label: 'Showcase',
+        description: 'Discover and explore projects built with Nuxt.',
+        icon: 'i-lucide-presentation',
+        to: '/showcase'
       }, {
         label: 'Video Courses',
         description: 'Learn Nuxt by watching video courses.',
         icon: 'i-lucide-graduation-cap',
         to: '/video-courses'
       }, {
-        label: 'Showcase',
-        description: 'Discover and explore projects built with Nuxt.',
-        icon: 'i-lucide-presentation',
-        to: '/showcase'
-      }, {
         label: 'Nuxt Certification',
         description: 'Obtain your Certification of Competence.',
         icon: 'i-lucide-medal',
         to: 'https://certification.nuxt.com',
-        target: '_blank'
-      }]
-    }, {
-      label: 'Products',
-      icon: 'i-lucide-sparkle',
-      search: false,
-      children: [{
-        label: 'Nuxt UI Pro',
-        to: 'https://ui.nuxt.com/pro?utm_source=nuxt-website&utm_medium=header',
-        description: 'Build faster with premium components for Vue or Nuxt.',
-        icon: 'i-lucide-panels-top-left',
-        target: '_blank'
-      }, {
-        label: 'Nuxt Studio',
-        to: 'https://content.nuxt.com/studio/?utm_source=nuxt-website&utm_medium=header',
-        description: 'Edit your Nuxt Content website with a visual editor.',
-        icon: 'i-lucide-pen',
-        target: '_blank'
-      }, {
-        label: 'NuxtHub',
-        to: 'https://hub.nuxt.com/?utm_source=nuxt-website&utm_medium=header',
-        description: 'Deploy & manage full-stack Nuxt apps that scale.',
-        icon: 'i-lucide-rocket',
-        target: '_blank'
-      }, {
-        label: 'Docus',
-        to: 'https://docus.dev/?utm_source=nuxt-website&utm_medium=header',
-        description: 'Write beautiful docs with Markdown',
-        icon: 'i-custom-docus',
         target: '_blank'
       }]
     }, {
@@ -165,23 +130,16 @@ const footerLinks = [{
     to: '/design-kit'
   }]
 }, {
-  label: 'Products',
+  label: 'Explore',
   children: [{
-    label: 'Nuxt UI Pro',
-    to: 'https://ui.nuxt.com/pro?utm_source=nuxt-website&utm_medium=footer',
-    target: '_blank'
+    label: 'Modules',
+    to: 'https://nuxt.com/modules',
   }, {
-    label: 'Nuxt Studio',
-    to: 'https://content.nuxt.com/studio/?utm_source=nuxt-website&utm_medium=footer',
-    target: '_blank'
+    label: 'Templates',
+    to: 'https://nuxt.com/templates',
   }, {
-    label: 'NuxtHub',
-    to: 'https://hub.nuxt.com/?utm_source=nuxt-website&utm_medium=footer',
-    target: '_blank'
-  }, {
-    label: 'Docus',
-    to: 'https://docus.dev/?utm_source=nuxt-website&utm_medium=footer',
-    target: '_blank'
+    label: 'Showcase',
+    to: 'https://nuxt.com/showcase',
   }]
 }, {
   label: 'Enterprise',

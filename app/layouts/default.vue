@@ -16,26 +16,26 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
-    <!-- <UBanner
-      id="aidd-event-sep-10"
-      title="Sep 10: Free AI-Driven Development Event for Vue & Nuxt Developers"
-      icon="i-lucide-calendar"
-      to="https://aidd.io/ai-driven-development-day?utm_source=nuxt&utm_medium=website&utm_campaign=affiliate&utm_content=top_banner&banner_type=top&friend=NUXT"
+  <div :class="[(route.path.startsWith('/docs/') || route.path.startsWith('/deploy')) && 'root']">
+    <UBanner
+      id="nuxt-certification-autumn-2025"
+      title="Get 50% OFF on all Official Nuxt Senior Certifications"
+      icon="i-lucide-ticket-percent"
+      to="https://certificates.dev/nuxt?certification=senior&friend=NUXT"
       target="_blank"
       close
       :actions="[
         {
-          label: 'Save my seat',
+          label: 'Get certified',
           color: 'neutral',
           variant: 'outline',
           trailingIcon: 'i-lucide-arrow-right',
-          to: 'https://aidd.io/ai-driven-development-day?utm_source=nuxt&utm_medium=website&utm_campaign=affiliate&utm_content=top_banner&banner_type=top&friend=NUXT'
+          to: 'https://certificates.dev/nuxt?certification=senior&friend=NUXT'
         }
       ]"
-    /> -->
+    />
 
-    <AppHeader />
+    <Header />
 
     <UMain class="relative">
       <HeroBackground

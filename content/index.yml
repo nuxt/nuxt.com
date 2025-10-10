@@ -2,8 +2,8 @@ hero:
   title: 'The Progressive Web Framework'
   description: Create high-quality web applications with Nuxt, the open source framework that makes full-stack development with Vue.js intuitive.
   cta:
-    label: Nuxt v4.1 is out
-    to: /blog/v4-1
+    label: Nuxt UI v4 is out
+    to: /blog/nuxt-ui-v4
     icon: i-lucide-arrow-right
   tabs:
     - title: Minimal
@@ -407,8 +407,8 @@ stats:
   community:
     title: Open source
     description: Nuxt is 100% powered by our passionate open source community. Every line of Nuxt is written by passionate developers like you.
-  x: 98.7k
-  discord: 28k
+  x: 102k
+  discord: 32k
   cta:
     label: Start contributing
     to: 'https://github.com/nuxt/nuxt'
@@ -483,7 +483,7 @@ sponsors:
   description: Nuxt is and will always remain free and open source under the MIT License, thanks to our contributors and sponsors.
   links:
     - label: Become a sponsor
-      to: 'https://github.com/sponsors/nuxt'
+      to: 'https://opencollective.com/nuxtjs'
       color: neutral
       trailingIcon: i-lucide-heart
       trailing: true
