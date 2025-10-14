@@ -17,7 +17,7 @@ onMounted(() => {
 
 <template>
   <div :class="[(route.path.startsWith('/docs/') || route.path.startsWith('/deploy')) && 'root']">
-    <!-- <UBanner
+    <UBanner
       id="nuxt-certification-autumn-2025"
       title="Get 50% OFF on all Official Nuxt Senior Certifications"
       icon="i-lucide-ticket-percent"
@@ -33,7 +33,7 @@ onMounted(() => {
           to: 'https://certificates.dev/nuxt?certification=senior&friend=NUXT'
         }
       ]"
-    /> -->
+    />
 
     <Header />
 
