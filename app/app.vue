@@ -1,7 +1,6 @@
 <script setup lang="ts">
 const colorMode = useColorMode()
 const { version } = useDocsVersion()
-const { searchGroups, searchLinks, searchTerm } = useNavigation()
 const { fetchList } = useModules()
 
 const color = computed(() => colorMode.value === 'dark' ? '#020420' : 'white')
@@ -88,14 +87,7 @@ onMounted(() => {
     </NuxtLayout>
 
     <ClientOnly>
-      <LazyUContentSearch
-        v-model:search-term="searchTerm"
-        :files="versionFiles"
-        :navigation="versionNavigation"
-        :groups="searchGroups"
-        :links="searchLinks"
-        :fuse="{ resultLimit: 42 }"
-      />
+      <LazySearch :files="versionFiles" :navigation="versionNavigation" />
     </ClientOnly>
   </UApp>
 </template>

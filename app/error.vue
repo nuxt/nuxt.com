@@ -10,7 +10,6 @@ defineProps<{ error: NuxtError }>()
 
 const route = useRoute()
 const { version } = useDocsVersion()
-const { searchGroups, searchLinks, searchTerm } = useNavigation()
 const { fetchList } = useModules()
 
 const [{ data: navigation }, { data: files }] = await Promise.all([
@@ -57,14 +56,7 @@ provide('navigation', versionNavigation)
       <AppFooter />
 
       <ClientOnly>
-        <LazyUContentSearch
-          v-model:search-term="searchTerm"
-          :files="versionFiles"
-          :navigation="versionNavigation"
-          :groups="searchGroups"
-          :links="searchLinks"
-          :fuse="{ resultLimit: 42 }"
-        />
+        <LazySearch :files="versionFiles" :navigation="versionNavigation" />
       </ClientOnly>
     </div>
   </UApp>
