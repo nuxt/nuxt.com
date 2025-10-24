@@ -18,7 +18,9 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const statusMessage = computed(() => {
+const MIN_DISPLAY_TIME = 1000
+
+const rawStatusMessage = computed(() => {
   if (props.agents.some(a => a.type === 'thinking')) {
     return 'Preparing...'
   }
@@ -43,8 +45,72 @@ const statusMessage = computed(() => {
   return 'Preparing...'
 })
 
-const toolsText = computed(() => {
-  if (!hasToolCalls.value || currentToolsList.value.length === 0) return ''
+const displayedMessage = ref(rawStatusMessage.value)
+const lastUpdateTime = ref(Date.now())
+const pendingMessage = ref<string | null>(null)
+let updateTimer: ReturnType<typeof setTimeout> | null = null
+
+function updateDisplayedMessage(newMessage: string) {
+  const now = Date.now()
+  const timeSinceLastUpdate = now - lastUpdateTime.value
+
+  if (timeSinceLastUpdate >= MIN_DISPLAY_TIME) {
+    displayedMessage.value = newMessage
+    lastUpdateTime.value = now
+    pendingMessage.value = null
+
+    if (updateTimer) {
+      clearTimeout(updateTimer)
+      updateTimer = null
+    }
+  } else {
+    pendingMessage.value = newMessage
+
+    if (!updateTimer) {
+      const remainingTime = MIN_DISPLAY_TIME - timeSinceLastUpdate
+      updateTimer = setTimeout(() => {
+        if (pendingMessage.value) {
+          displayedMessage.value = pendingMessage.value
+          lastUpdateTime.value = Date.now()
+          pendingMessage.value = null
+        }
+        updateTimer = null
+      }, remainingTime)
+    }
+  }
+}
+
+watch(rawStatusMessage, (newMessage) => {
+  const done = props.agents.filter(a => a.state === 'done')
+  if (done.length > 0 && props.agents.every(a => a.state === 'done')) {
+    displayedMessage.value = newMessage
+    lastUpdateTime.value = Date.now()
+    pendingMessage.value = null
+    if (updateTimer) {
+      clearTimeout(updateTimer)
+      updateTimer = null
+    }
+  } else {
+    updateDisplayedMessage(newMessage)
+  }
+}, { immediate: true })
+
+onUnmounted(() => {
+  if (updateTimer) {
+    clearTimeout(updateTimer)
+    updateTimer = null
+  }
+})
+
+const statusMessage = computed(() => displayedMessage.value)
+
+const agentInfo: Record<string, { label: string, icon: string }> = {
+  'nuxt': { label: 'Nuxt Agent', icon: 'i-simple-icons-nuxtdotjs' },
+  'nuxt-ui': { label: 'Nuxt UI Agent', icon: 'i-simple-icons-nuxtdotjs' }
+}
+
+const toolsByAgent = computed(() => {
+  if (!hasToolCalls.value || currentToolsList.value.length === 0) return []
 
   const byAgent: Record<string, string[]> = {}
   currentToolsList.value.forEach((tool) => {
@@ -54,10 +120,15 @@ const toolsText = computed(() => {
     byAgent[tool.agent].push(tool.name)
   })
 
-  return Object.entries(byAgent)
-    .map(([agent, tools]) => `${agent} (${tools.join(', ')})`)
-    .join(', ')
+  return Object.entries(byAgent).map(([agent, tools]) => ({
+    agent,
+    label: agentInfo[agent]?.label || agent,
+    icon: agentInfo[agent]?.icon,
+    tools
+  }))
 })
+
+const hasTools = computed(() => toolsByAgent.value.length > 0)
 
 const isProcessing = computed(() =>
   props.agents.some(a => a.state === 'calling')
@@ -89,7 +160,7 @@ const currentToolsList = computed(() => {
   const tools: Array<{ name: string, agent: string }> = []
   for (const [agent, calls] of Object.entries(props.toolCalls || {})) {
     calls.forEach((call) => {
-      tools.push({ name: call.toolName.replace(/_/g, ' '), agent })
+      tools.push({ name: call.toolName, agent })
     })
   }
   return tools
@@ -134,13 +205,54 @@ const currentToolsList = computed(() => {
             :text="statusMessage"
             :duration="1.5"
           />
-          <span>{{ statusMessage }}</span>
+          <span v-else>{{ statusMessage }}</span>
         </motion.div>
       </AnimatePresence>
 
-      <div v-if="toolsText" class="text-dimmed text-2xs">
-        using tools: {{ toolsText }}
-      </div>
+      <AnimatePresence>
+        <motion.div
+          v-if="hasTools"
+          class="flex flex-col gap-2 mt-2"
+          :initial="{ opacity: 0, height: 0 }"
+          :animate="{ opacity: 1, height: 'auto' }"
+          :exit="{ opacity: 0, height: 0 }"
+          :transition="{ duration: 0.2 }"
+        >
+          <div
+            v-for="{ agent, label, icon, tools } in toolsByAgent"
+            :key="agent"
+            class="flex flex-col gap-1"
+          >
+            <div class="flex items-center gap-1 text-2xs text-dimmed">
+              <UIcon v-if="icon" :name="icon" class="size-3" />
+              <span class="font-medium text-[10px]">{{ label }}</span>
+            </div>
+
+            <div class="flex flex-wrap gap-1 pl-4">
+              <AnimatePresence>
+                <motion.span
+                  v-for="(tool, toolIndex) in tools"
+                  :key="`${agent}-${tool}`"
+                  :initial="{ opacity: 0, scale: 0.8 }"
+                  :animate="{ opacity: 1, scale: 1 }"
+                  :exit="{ opacity: 0, scale: 0.8 }"
+                  :transition="{
+                    duration: 0.2,
+                    delay: toolIndex * 0.05
+                  }"
+                >
+                  <UBadge
+                    :label="tool"
+                    size="xs"
+                    color="neutral"
+                    variant="soft"
+                  />
+                </motion.span>
+              </AnimatePresence>
+            </div>
+          </div>
+        </motion.div>
+      </AnimatePresence>
     </div>
   </motion.div>
 </template>
