@@ -17,18 +17,20 @@ const emits = defineEmits<{
 }>()
 
 const input = ref('')
+const toolCalls = ref<Record<string, any[]>>({})
 
 const lastMessage = computed(() => chat.messages.at(-1))
-const showThinking = computed(() => chat.status === 'streaming' && lastMessage.value?.role === 'assistant' && lastMessage.value?.parts?.length === 0)
+const showThinking = computed(() =>
+  chat.status === 'streaming'
+  && lastMessage.value?.role === 'assistant'
+  && lastMessage.value?.parts?.length === 0
+)
 
 const toast = useToast()
 
 function getAgentCalls(message: any) {
   if (showThinking.value && message.role === 'assistant') {
-    return [{
-      type: 'thinking',
-      state: 'calling'
-    }]
+    return [{ type: 'thinking', state: 'calling' }]
   }
 
   return message.parts
@@ -44,6 +46,20 @@ const chat = new Chat({
   transport: new DefaultChatTransport({
     api: '/api/search'
   }),
+  onData: (data) => {
+    if (data.type === 'data-tool-calls') {
+      Object.entries(data.data).forEach(([agent, calls]: [string, any]) => {
+        if (!toolCalls.value[agent]) {
+          toolCalls.value[agent] = []
+        }
+        calls.forEach((call: any) => {
+          if (!toolCalls.value[agent].some((c: any) => c.toolName === call.toolName)) {
+            toolCalls.value[agent].push(call)
+          }
+        })
+      })
+    }
+  },
   onError: (error) => {
     const { message } = typeof error.message === 'string' && error.message[0] === '{' ? JSON.parse(error.message) : error
 
@@ -65,6 +81,8 @@ function handleSubmit(event: Event) {
   if (!input.value.trim()) {
     return
   }
+
+  toolCalls.value = {}
 
   chat.sendMessage({
     text: input.value
@@ -94,22 +112,18 @@ onMounted(() => {
       :status="chat.status"
       :user="{ side: 'left', variant: 'naked', avatar: { icon: 'i-lucide-user', size: 'xs' } }"
       :assistant="{ avatar: { icon: 'i-simple-icons-nuxtdotjs', size: 'xs' } }"
+      :ui="{ indicator: '*:size-1 *:bg-accented' }"
     >
       <template #content="{ message }">
-        <div class="*:first:mt-0! *:last:mb-0!">
+        <div class="*:first:mt-0! *:last:mb-0! flex flex-col gap-3">
           <AgentStatus
             v-if="getAgentCalls(message).length > 0 || (showThinking && message.role === 'assistant')"
             :agents="getAgentCalls(message)"
+            :tool-calls="message.role === 'assistant' && message === lastMessage ? toolCalls : undefined"
           />
-
           <template v-for="(part, index) in message.parts" :key="`${message.id}-${part.type}-${index}${'state' in part ? `-${part.state}` : ''}`">
-            <Reasoning
-              v-if="part.type === 'reasoning'"
-              :text="part.text"
-              :is-streaming="part.state !== 'done'"
-            />
             <MDCCached
-              v-else-if="part.type === 'text'"
+              v-if="part.type === 'text'"
               :value="part.text"
               :cache-key="`${message.id}-${index}`"
               :components="components"

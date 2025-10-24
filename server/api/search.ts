@@ -18,77 +18,71 @@ export default defineEventHandler(async (event) => {
     schema: routingSchema,
     prompt: `Analyze this question and determine which agent(s) to use:
 - "nuxt" for framework, modules, routing, composables, server, deployment
-- "nuxt-ui" for UI components, design system, theming
+- "nuxt-ui" for UI components, design system, theming, templates
 
 Question: ${lastMsg}`
   })
 
   const agents = await Promise.all(
     routing.agents.map(async (name) => {
-      if (name === 'nuxt-ui') {
-        return { name, agent: await createAgent(NUXT_UI_AGENT_CONFIG) }
+      return {
+        name,
+        agent: await createAgent(name === 'nuxt-ui' ? NUXT_UI_AGENT_CONFIG : NUXT_AGENT_CONFIG)
       }
-      return { name, agent: await createAgent(NUXT_AGENT_CONFIG) }
     })
   )
 
-  let streamWriter: any = null
-
-  const tools = Object.fromEntries(
-    agents.map(({ name, agent }) => [
-      `${name}-agent`,
-      tool({
-        description: name === 'nuxt'
-          ? 'Nuxt framework expert: routing, composables, server, deployment, modules'
-          : 'Nuxt UI library expert: components, design system, theming',
-        inputSchema: z.object({ question: z.string() }),
-        execute: async ({ question }) => {
-          const result = await agent.generate({ prompt: question })
-
-          if (streamWriter && result.steps) {
-            for (const step of result.steps) {
-              if (step.toolCalls && step.toolCalls.length > 0) {
-                streamWriter.write({
-                  type: 'data-tool-calls',
-                  data: {
-                    agent: name,
-                    toolCalls: step.toolCalls
-                  }
-                })
-              }
-            }
-          }
-
-          return result.text
-        }
-      })
-    ])
-  )
-
-  const orchestrator = await createAgent({
-    model: 'anthropic/claude-sonnet-4.5',
-    expertise: ORCHESTRATOR_EXPERTISE,
-    maxOutputTokens: 15000,
-    stopWhen: stepCountIs(10),
-    experimental_transform: smoothStream({ chunking: 'word' }),
-    tools
-  })
-
   const stream = createUIMessageStream({
-    execute: ({ writer }) => {
-      streamWriter = writer
+    execute: async ({ writer }) => {
+      const tools = Object.fromEntries(
+        agents.map(({ name, agent }) => [
+          `${name}-agent`,
+          tool({
+            description: name === 'nuxt'
+              ? 'Nuxt framework expert: routing, composables, server, deployment, modules'
+              : 'Nuxt UI library expert: components, design system, theming',
+            inputSchema: z.object({ question: z.string() }),
+            execute: async ({ question }) => {
+              const stream = agent.stream({ prompt: question })
+              let text = ''
 
-      const agentStream = orchestrator.stream({
-        messages: convertToModelMessages(messages)
+              for await (const chunk of stream.fullStream) {
+                if (chunk.type === 'tool-call') {
+                  writer.write({
+                    id: chunk.toolCallId,
+                    type: 'data-tool-calls',
+                    data: {
+                      [name]: [{ toolName: chunk.toolName }]
+                    }
+                  })
+                } else if (chunk.type === 'text-delta') {
+                  text += chunk.text
+                }
+              }
+
+              return text
+            }
+          })
+        ])
+      )
+
+      const orchestrator = await createAgent({
+        model: 'moonshotai/kimi-k2-turbo',
+        expertise: ORCHESTRATOR_EXPERTISE,
+        maxOutputTokens: 15000,
+        stopWhen: stepCountIs(10),
+        experimental_transform: smoothStream({ chunking: 'word' }),
+        tools
       })
 
-      writer.merge(agentStream.toUIMessageStream())
+      writer.merge(
+        orchestrator.stream({
+          messages: convertToModelMessages(messages)
+        }).toUIMessageStream()
+      )
     },
     onFinish: async () => {
-      await Promise.all([
-        orchestrator.close(),
-        ...agents.map(({ agent }) => agent.close())
-      ])
+      await Promise.all(agents.map(({ agent }) => agent.close()))
     }
   })
 

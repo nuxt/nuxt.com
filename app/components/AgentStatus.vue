@@ -1,23 +1,22 @@
 <script setup lang="ts">
-import { ref, watch, computed, onMounted } from 'vue'
-import { motion, AnimatePresence, useTime, useTransform, animate } from 'motion-v'
+import { motion, AnimatePresence, animate } from 'motion-v'
 
 interface AgentCall {
   type: 'nuxt' | 'nuxt-ui' | 'thinking'
   state: 'calling' | 'done'
 }
 
+interface ToolCall {
+  toolName: string
+  args?: any
+}
+
 interface Props {
   agents: AgentCall[]
+  toolCalls?: Record<string, ToolCall[]> // { 'nuxt': [...], 'nuxt-ui': [...] }
 }
 
 const props = defineProps<Props>()
-
-const SPRING_CONFIG = {
-  type: 'spring' as const,
-  stiffness: 600,
-  damping: 30
-}
 
 const statusMessage = computed(() => {
   if (props.agents.some(a => a.type === 'thinking')) {
@@ -28,9 +27,7 @@ const statusMessage = computed(() => {
   const done = props.agents.filter(a => a.state === 'done')
 
   if (calling.length === 0 && done.length > 0) {
-    return done.length === 1
-      ? 'Agent consulted'
-      : 'Agents consulted'
+    return done.length === 1 ? 'Agent consulted' : 'Agents consulted'
   }
 
   if (calling.length === 1) {
@@ -40,17 +37,26 @@ const statusMessage = computed(() => {
   }
 
   if (calling.length > 1) {
-    return 'Consulting Nuxt agents...'
+    return `Consulting ${calling.length} Nuxt agents...`
   }
 
   return 'Preparing...'
 })
 
-const tooltipText = computed(() => {
-  const agentNames = props.agents.map(a =>
-    a.type === 'nuxt' ? 'Nuxt Agent' : 'Nuxt UI Agent'
-  )
-  return agentNames.join(', ')
+const toolsText = computed(() => {
+  if (!hasToolCalls.value || currentToolsList.value.length === 0) return ''
+
+  const byAgent: Record<string, string[]> = {}
+  currentToolsList.value.forEach((tool) => {
+    if (!byAgent[tool.agent]) {
+      byAgent[tool.agent] = []
+    }
+    byAgent[tool.agent].push(tool.name)
+  })
+
+  return Object.entries(byAgent)
+    .map(([agent, tools]) => `${agent} (${tools.join(', ')})`)
+    .join(', ')
 })
 
 const isProcessing = computed(() =>
@@ -58,26 +64,6 @@ const isProcessing = computed(() =>
 )
 
 const badgeRef = ref(null)
-const measureRef = ref<HTMLDivElement | null>(null)
-const labelWidth = ref('auto')
-
-const time = useTime()
-const rotate = useTransform(time, [0, 1000], [0, 360], { clamp: false })
-
-function updateWidth() {
-  if (measureRef.value) {
-    const { width } = measureRef.value.getBoundingClientRect()
-    labelWidth.value = `${width}px`
-  }
-}
-
-watch(() => statusMessage.value, () => {
-  updateWidth()
-}, { flush: 'post' })
-
-onMounted(() => {
-  updateWidth()
-})
 
 watch(() => isProcessing.value, (newVal) => {
   if (!badgeRef.value) return
@@ -92,66 +78,31 @@ watch(() => isProcessing.value, (newVal) => {
     })
   }
 })
+
+const hasToolCalls = computed(() => {
+  return props.toolCalls && Object.keys(props.toolCalls).length > 0
+})
+
+const currentToolsList = computed(() => {
+  if (!hasToolCalls.value) return []
+
+  const tools: Array<{ name: string, agent: string }> = []
+  for (const [agent, calls] of Object.entries(props.toolCalls || {})) {
+    calls.forEach((call) => {
+      tools.push({ name: call.toolName.replace(/_/g, ' '), agent })
+    })
+  }
+  return tools
+})
 </script>
 
 <template>
   <motion.div
     ref="badgeRef"
-    class="flex items-center gap-1 text-xs text-muted py-1 cursor-default"
+    class="flex items-start gap-1 text-xs text-muted py-1 cursor-default"
   >
-    <motion.span
-      class="relative flex items-center justify-center size-4 shrink-0"
-      :animate="{ opacity: 1 }"
-      :transition="SPRING_CONFIG"
-    >
-      <AnimatePresence>
-        <motion.span
-          :key="isProcessing ? 'processing' : 'done'"
-          class="absolute left-0 top-0"
-          :initial="{
-            scale: 0.5,
-            opacity: 0
-          }"
-          :animate="{
-            scale: 1,
-            opacity: 1
-          }"
-          :exit="{
-            scale: 0.5,
-            opacity: 0
-          }"
-          :transition="{
-            duration: 0.2,
-            ease: 'easeInOut'
-          }"
-        >
-          <motion.div
-            v-if="isProcessing"
-            :style="{ rotate }"
-            class="flex items-center justify-center size-4"
-          >
-            <UIcon name="i-lucide-loader-circle" class="size-4" />
-          </motion.div>
-
-          <UIcon
-            v-else
-            name="i-lucide-check"
-            class="size-4 text-success"
-          />
-        </motion.span>
-      </AnimatePresence>
-    </motion.span>
-
-    <div ref="measureRef" class="absolute invisible whitespace-nowrap">
-      {{ statusMessage }}
-    </div>
-
-    <motion.span
-      class="relative overflow-hidden"
-      :animate="{ width: labelWidth }"
-      :transition="SPRING_CONFIG"
-    >
-      <AnimatePresence mode="sync" :initial="false">
+    <div class="flex flex-col gap-0.5 min-w-0">
+      <AnimatePresence mode="sync">
         <motion.div
           :key="statusMessage"
           class="whitespace-nowrap"
@@ -183,13 +134,13 @@ watch(() => isProcessing.value, (newVal) => {
             :text="statusMessage"
             :duration="1.5"
           />
-          <UTooltip v-else :text="tooltipText" arrow :content="{ side: 'top' }">
-            <span>
-              {{ statusMessage }}
-            </span>
-          </UTooltip>
+          <span>{{ statusMessage }}</span>
         </motion.div>
       </AnimatePresence>
-    </motion.span>
+
+      <div v-if="toolsText" class="text-dimmed text-2xs">
+        using tools: {{ toolsText }}
+      </div>
+    </div>
   </motion.div>
 </template>

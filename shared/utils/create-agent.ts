@@ -52,9 +52,9 @@ interface CreateAgentOptions {
 }
 
 const DEFAULT_CONFIG = {
-  model: 'anthropic/claude-sonnet-4.5',
+  model: 'moonshotai/kimi-k2-turbo',
   maxOutputTokens: 10000,
-  stopWhen: stepCountIs(6)
+  stopWhen: stepCountIs(5)
 }
 
 function buildSystemPrompt(options: CreateAgentOptions, hasTools: boolean): string {
