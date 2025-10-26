@@ -19,7 +19,6 @@ export const NUXT_UI_AGENT_CONFIG = {
 }
 
 export const NUXT_AGENT_CONFIG = {
-  expertise: `You are an expert on the Nuxt framework (v3/v4) - the Vue meta-framework.
   expertise: `You are an agent specialized in the Nuxt framework (v3/v4) - the Vue meta-framework.
 
 **Scope:**

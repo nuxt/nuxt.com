@@ -32,47 +32,51 @@ Question: ${lastMsg}`
     })
   )
 
+  const tools = Object.fromEntries(
+    agents.map(({ name, agent }) => [
+      `${name}-agent`,
+      tool({
+        description: name === 'nuxt'
+          ? 'Nuxt framework expert: routing, composables, server, deployment, modules'
+          : 'Nuxt UI library expert: components, design system, theming',
+        inputSchema: z.object({ question: z.string() }),
+        execute: async ({ question }, executionOptions) => {
+          const writer = getWriter(executionOptions)
+          const stream = agent.stream({ prompt: question })
+          let text = ''
+
+          for await (const chunk of stream.fullStream) {
+            if (chunk.type === 'tool-call') {
+              writer.write({
+                id: chunk.toolCallId,
+                type: 'data-tool-calls',
+                data: {
+                  [name]: [{ toolName: chunk.toolName }]
+                }
+              })
+            } else if (chunk.type === 'text-delta') {
+              text += chunk.text
+            }
+          }
+
+          return text
+        }
+      })
+    ])
+  )
+
   const stream = createUIMessageStream({
     execute: async ({ writer }) => {
-      const tools = Object.fromEntries(
-        agents.map(({ name, agent }) => [
-          `${name}-agent`,
-          tool({
-            description: name === 'nuxt'
-              ? 'Nuxt framework expert: routing, composables, server, deployment, modules'
-              : 'Nuxt UI library expert: components, design system, theming',
-            inputSchema: z.object({ question: z.string() }),
-            execute: async ({ question }) => {
-              const stream = agent.stream({ prompt: question })
-              let text = ''
-
-              for await (const chunk of stream.fullStream) {
-                if (chunk.type === 'tool-call') {
-                  writer.write({
-                    id: chunk.toolCallId,
-                    type: 'data-tool-calls',
-                    data: {
-                      [name]: [{ toolName: chunk.toolName }]
-                    }
-                  })
-                } else if (chunk.type === 'text-delta') {
-                  text += chunk.text
-                }
-              }
-
-              return text
-            }
-          })
-        ])
-      )
-
       const orchestrator = await createAgent({
         model: 'moonshotai/kimi-k2-turbo',
         expertise: ORCHESTRATOR_EXPERTISE,
         maxOutputTokens: 15000,
         stopWhen: stepCountIs(10),
         experimental_transform: smoothStream({ chunking: 'word' }),
-        tools
+        tools,
+        experimental_context: {
+          writer
+        }
       })
 
       writer.merge(

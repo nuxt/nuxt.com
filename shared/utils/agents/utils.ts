@@ -1,5 +1,6 @@
-import { type Tool, Experimental_Agent as SDKAgent, type StopCondition, type LanguageModel } from 'ai'
-import { experimental_createMCPClient, stepCountIs } from 'ai'
+import type { Tool, UIMessageStreamWriter, StopCondition, LanguageModel } from 'ai'
+import { Experimental_Agent as SDKAgent, stepCountIs } from 'ai'
+import { experimental_createMCPClient } from '@ai-sdk/mcp'
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
 import { defu } from 'defu'
 import { TOOL_USAGE_GUIDELINES, GENERAL_GUIDELINES, FORMATTING_RULES } from './shared-prompts'
@@ -133,4 +134,16 @@ export async function createAgent(options: CreateAgentOptions & Record<string, a
       }
     }
   }) as Agent
+}
+
+export function getWriter(executionOptions?: any): UIMessageStreamWriter {
+  const writer = executionOptions?.experimental_context?.writer
+
+  if (!writer) {
+    throw new Error(
+      'Writer not available. Make sure you\'re passing executionOptions: getWriter(executionOptions)'
+    )
+  }
+
+  return writer
 }
