@@ -39,7 +39,7 @@
     "motion-v": "1.7.3",
     "nuxt": "^4.2.0",
     "nuxt-auth-utils": "0.5.25",
-    "nuxt-charts": "0.2.4",
+    "nuxt-charts": "1.0.2",
     "nuxt-llms": "^0.1.3",
     "nuxt-og-image": "5.1.12",
     "ofetch": "^1.4.1",
