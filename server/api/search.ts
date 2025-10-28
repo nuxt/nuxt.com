@@ -1,35 +1,21 @@
-import { convertToModelMessages, createUIMessageStream, createUIMessageStreamResponse, tool, stepCountIs, smoothStream, generateObject } from 'ai'
+import { convertToModelMessages, createUIMessageStream, createUIMessageStreamResponse, tool, stepCountIs, smoothStream } from 'ai'
 import type { UIMessage } from 'ai'
 import { z } from 'zod'
-
-const routingSchema = z.object({
-  agents: z.array(z.enum(['nuxt', 'nuxt-ui']))
-})
 
 export default defineEventHandler(async (event) => {
   const { messages } = await readValidatedBody(event, z.object({
     messages: z.array(z.custom<UIMessage>())
   }).parse)
 
-  const lastMsg = messages[messages.length - 1].parts.map(part => part.type === 'text' ? part.text : '').join('')
-
-  const { object: routing } = await generateObject({
-    model: 'openai/gpt-4o-mini',
-    schema: routingSchema,
-    prompt: `Analyze this question and determine which agent(s) to use:
-- "nuxt" for framework, modules, routing, composables, server, deployment
-- "nuxt-ui" for UI components, design system, theming, templates
-
-Question: ${lastMsg}`
-  })
-
   const agents = await Promise.all(
-    routing.agents.map(async (name) => {
-      return {
+    [
+      { name: 'nuxt', config: NUXT_AGENT_CONFIG },
+      { name: 'nuxt-ui', config: NUXT_UI_AGENT_CONFIG }
+    ]
+      .map(async ({ name, config }) => ({
         name,
-        agent: await createAgent(name === 'nuxt-ui' ? NUXT_UI_AGENT_CONFIG : NUXT_AGENT_CONFIG)
-      }
-    })
+        agent: await createAgent(config)
+      }))
   )
 
   const tools = Object.fromEntries(

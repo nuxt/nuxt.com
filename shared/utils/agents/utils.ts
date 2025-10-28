@@ -136,6 +136,25 @@ export async function createAgent(options: CreateAgentOptions & Record<string, a
   }) as Agent
 }
 
+/**
+ * Get writer from execution context
+ *
+ * @param executionOptions - Tool execution options from AI SDK
+ * @returns The stream writer
+ *
+ * @example
+ * ```typescript
+ * export const myTool = tool({
+ *   execute: async (params, executionOptions) => {
+ *     const writer = getWriter(executionOptions);
+ *     writer.write({
+ *       type: 'data-tool-id',
+ *       text: 'Hello, world!'
+ *     });
+ *   }
+ * });
+ * ```
+ */
 export function getWriter(executionOptions?: any): UIMessageStreamWriter {
   const writer = executionOptions?.experimental_context?.writer
 
