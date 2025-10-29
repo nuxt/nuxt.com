@@ -130,6 +130,10 @@ onMounted(() => {
               :parser-options="{ highlight: false }"
               class="*:first:mt-0 *:last:mb-0"
             />
+            <SearchHelp
+              v-else-if="part.type === 'tool-help'"
+              :invocation="part as HelpToolInvocation"
+            />
           </template>
         </div>
       </template>

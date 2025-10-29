@@ -24,7 +24,7 @@ export default defineEventHandler(async (event) => {
       tool({
         description: name === 'nuxt'
           ? 'Nuxt framework expert: routing, composables, server, deployment, modules'
-          : 'Nuxt UI library expert: components, design system, theming',
+          : 'Nuxt UI library expert: components, design system, theming, templates',
         inputSchema: z.object({ question: z.string() }),
         execute: async ({ question }, executionOptions) => {
           const writer = getWriter(executionOptions)
@@ -53,13 +53,18 @@ export default defineEventHandler(async (event) => {
 
   const stream = createUIMessageStream({
     execute: async ({ writer }) => {
+      const orchestratorTools = {
+        ...tools,
+        help: helpTool
+      }
+
       const orchestrator = await createAgent({
         model: 'moonshotai/kimi-k2-turbo',
         expertise: ORCHESTRATOR_EXPERTISE,
         maxOutputTokens: 15000,
         stopWhen: stepCountIs(10),
         experimental_transform: smoothStream({ chunking: 'word' }),
-        tools,
+        tools: orchestratorTools,
         experimental_context: {
           writer
         }

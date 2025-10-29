@@ -62,9 +62,6 @@ export default defineNuxtConfig({
   ui: {
     theme: {
       colors: ['primary', 'secondary', 'info', 'success', 'warning', 'error', 'important']
-    },
-    experimental: {
-      componentDetection: true
     }
   },
   routeRules: {
