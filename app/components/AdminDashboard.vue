@@ -450,7 +450,7 @@ watch(currentPage, () => {
               th: 'first:rounded-l-lg last:rounded-r-lg border-y border-default first:border-l last:border-r',
               td: 'border-b border-default'
             }"
-            @select="(row) => viewPageDetails(row.original)"
+            @select="(_, row) => viewPageDetails(row.original)"
           />
 
           <div class="flex justify-end border-t border-default pt-4">
