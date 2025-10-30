@@ -77,12 +77,13 @@ function createServer() {
       title: 'Find Documentation for Topic',
       description: 'Find the best Nuxt documentation for a specific topic or feature',
       argsSchema: {
-        topic: z.string().describe('Describe what you want to learn about (e.g., "server-side rendering", "data fetching", "routing")')
+        topic: z.string().describe('Describe what you want to learn about (e.g., "server-side rendering", "data fetching", "routing")'),
+        version: z.enum(['3.x', '4.x']).optional().describe('Documentation version to search (defaults to 4.x)')
       }
     },
-    async ({ topic }) => {
-      const searchResults = await $fetch('/api/mcp/search-content', {
-        query: { query: topic, type: 'docs' }
+    async ({ topic, version = '4.x' }) => {
+      const allPages = await $fetch('/api/mcp/list-documentation-pages', {
+        query: { version }
       })
       return {
         messages: [
@@ -90,7 +91,7 @@ function createServer() {
             role: 'user',
             content: {
               type: 'text',
-              text: `Help me find the best Nuxt documentation for this topic: "${topic}". Here are the search results: ${JSON.stringify(searchResults, null, 2)}`
+              text: `Help me find the best Nuxt documentation for this topic: "${topic}". Here are all available documentation pages. Please identify the most relevant pages based on their titles and descriptions, then use get_documentation_page to retrieve the full content of the most relevant ones: ${JSON.stringify(allPages, null, 2)}`
             }
           }
         ]
@@ -145,16 +146,19 @@ function createServer() {
       }
     },
     async ({ fromVersion, toVersion }) => {
-      const migrationDocs = await $fetch('/api/mcp/search-content', {
-        query: { query: `migration ${fromVersion} ${toVersion}`, type: 'docs' }
-      })
       return {
         messages: [
           {
             role: 'user',
             content: {
               type: 'text',
-              text: `Help me migrate my Nuxt application from version ${fromVersion} to ${toVersion}. Here are relevant migration guides: ${JSON.stringify(migrationDocs, null, 2)}`
+              text: `Help me migrate my Nuxt application from version ${fromVersion} to ${toVersion}. 
+
+To find relevant migration guides, please:
+1. Use list_documentation_pages to find pages related to migration from ${fromVersion} to ${toVersion}
+2. Look for pages with "migration" in their title or description, or migration guides specific to version ${toVersion}
+3. Use get_documentation_page to retrieve the full content of the most relevant migration guides
+4. Provide step-by-step migration instructions based on the documentation found`
             }
           }
         ]
@@ -166,7 +170,7 @@ function createServer() {
 
   server.tool(
     'list_documentation_pages',
-    'Lists all available Nuxt documentation pages with their categories and basic information. Returns: A JSON array of objects containing title, path, description, version, and url.',
+    'Lists all available Nuxt documentation pages with their categories and basic information. Use this tool to find relevant pages by examining titles and descriptions, then use get_documentation_page to retrieve full content. Returns: A JSON array of objects containing title, path, description, version, and url.',
     {
       version: z.enum(['3.x', '4.x', 'all']).optional().default('4.x').describe('Documentation version to fetch')
     },
@@ -228,20 +232,6 @@ function createServer() {
     },
     async (params) => {
       const result = await $fetch('/api/mcp/get-deploy-provider', { query: params })
-      return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] }
-    }
-  )
-
-  server.tool(
-    'search_content',
-    'Searches across all Nuxt content including documentation, blog posts, and deployment guides. Parameters: query (string, required) - search query, type (enum, optional) - content type filter, version (enum, optional) - documentation version filter. Returns: A JSON object containing search results with type, title, path, description, and relevant metadata.',
-    {
-      query: z.string().describe('Search query'),
-      type: z.enum(['docs', 'blog', 'deploy', 'all']).optional().describe('Content type to search'),
-      version: z.enum(['3.x', '4.x', 'all']).optional().describe('Documentation version to search')
-    },
-    async (params) => {
-      const result = await $fetch('/api/mcp/search-content', { query: params })
       return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] }
     }
   )
