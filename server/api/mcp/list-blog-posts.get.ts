@@ -17,6 +17,6 @@ export default defineCachedEventHandler(async (event) => {
     url: `https://nuxt.com${post.path}`
   }))
 }, {
-  maxAge: 60 * 30, // 30 minutes
+  maxAge: 60 * 60, // 1 hour
   getKey: () => 'mcp-blog-posts'
 })

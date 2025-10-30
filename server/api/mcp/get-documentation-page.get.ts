@@ -5,7 +5,7 @@ const querySchema = z.object({
   path: z.string().describe('The documentation path (e.g., /docs/3.x/getting-started/introduction)')
 })
 
-export default defineEventHandler(async (event) => {
+export default defineCachedEventHandler(async (event) => {
   const { path } = await getValidatedQuery(event, querySchema.parse)
 
   try {
@@ -37,5 +37,11 @@ export default defineEventHandler(async (event) => {
       statusCode: 500,
       statusMessage: 'Failed to fetch documentation page'
     })
+  }
+}, {
+  maxAge: 60 * 30, // 30 minutes
+  getKey: (event) => {
+    const query = getQuery(event)
+    return `mcp-documentation-page-${query.path}`
   }
 })

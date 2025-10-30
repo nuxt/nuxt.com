@@ -5,7 +5,7 @@ const querySchema = z.object({
   path: z.string().describe('The blog post path (e.g., /blog/v4)')
 })
 
-export default defineEventHandler(async (event) => {
+export default defineCachedEventHandler(async (event) => {
   const { path } = await getValidatedQuery(event, querySchema.parse)
 
   try {
@@ -38,5 +38,11 @@ export default defineEventHandler(async (event) => {
       statusCode: 500,
       statusMessage: 'Failed to fetch blog post'
     })
+  }
+}, {
+  maxAge: 60 * 60, // 1 hour
+  getKey: (event) => {
+    const query = getQuery(event)
+    return `mcp-blog-post-${query.path}`
   }
 })

@@ -7,7 +7,7 @@ const querySchema = z.object({
   version: z.enum(['3.x', '4.x', 'all']).optional().default('all').describe('Documentation version to search')
 })
 
-export default defineEventHandler(async (event) => {
+export default defineCachedEventHandler(async (event) => {
   const { query: searchQuery, type, version } = await getValidatedQuery(event, querySchema.parse)
 
   const results = []
@@ -106,5 +106,11 @@ export default defineEventHandler(async (event) => {
       statusCode: 500,
       statusMessage: 'Search failed'
     })
+  }
+}, {
+  maxAge: 60 * 60, // 1 hour
+  getKey: (event) => {
+    const query = getQuery(event)
+    return `mcp-search-content-${query.query}-${query.type}-${query.version}-${query.page}`
   }
 })
