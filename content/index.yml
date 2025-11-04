@@ -2,8 +2,8 @@ hero:
   title: 'The Progressive Web Framework'
   description: Create high-quality web applications with Nuxt, the open source framework that makes full-stack development with Vue.js intuitive.
   cta:
-    label: Nuxt v4.2 is out
-    to: /blog/v4-2
+    label: Nuxt Image v2 is out
+    to: /blog/nuxt-image-v2
     icon: i-lucide-arrow-right
   tabs:
     - title: Minimal
