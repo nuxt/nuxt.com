@@ -194,18 +194,10 @@ export default defineNuxtConfig({
         route => route.startsWith('/admin')
       ],
       autoSubfolderIndex: false
-    },
-    cloudflare: {
-      pages: {
-        routes: {
-          exclude: [
-            '/docs/*'
-          ]
-        }
-      }
     }
   },
   hub: {
+    database: 'sqlite',
     cache: true
   },
   typescript: {

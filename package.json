@@ -10,8 +10,8 @@
     "lint": "eslint . --cache",
     "typecheck": "nuxt typecheck",
     "test": "pnpm lint && pnpm typecheck",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "db:generate": "nuxt hub database generate",
+    "db:migrate": "nuxt hub database migrate"
   },
   "dependencies": {
     "@iconify-json/heroicons": "^1.2.3",
@@ -19,12 +19,13 @@
     "@iconify-json/lucide": "^1.2.71",
     "@iconify-json/octicon": "^1.2.16",
     "@iconify-json/simple-icons": "^1.2.56",
+    "@libsql/client": "^0.15.15",
     "@modelcontextprotocol/sdk": "^1.18.2",
     "@nuxt/content": "^3.7.1",
     "@nuxt/image": "https://pkg.pr.new/@nuxt/image@62998ab",
     "@nuxt/scripts": "^0.13.0",
     "@nuxt/ui": "^4.1.0",
-    "@nuxthub/core": "0.9.0",
+    "@nuxthub/core": "npm:@nuxthub/core-nightly@1.0.0-20251104-224431-b52a71f",
     "@nuxtjs/html-validator": "^2.1.0",
     "@nuxtjs/mdc": "^0.18.0",
     "@nuxtjs/plausible": "^2.0.1",
