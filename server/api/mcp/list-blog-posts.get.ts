@@ -5,6 +5,13 @@ export default defineCachedEventHandler(async (event) => {
     .select('title', 'path', 'description', 'date', 'category', 'tags', 'authors', 'image')
     .all()
 
+  if (!blogPosts) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: 'Blog posts collection not found'
+    })
+  }
+
   return blogPosts.map(post => ({
     title: post.title,
     path: post.path,

@@ -14,10 +14,24 @@ export default defineCachedEventHandler(async (event) => {
     allDocs = await queryCollection(event, 'docsv3')
       .select('title', 'path', 'description')
       .all()
+
+    if (!allDocs) {
+      throw createError({
+        statusCode: 404,
+        statusMessage: 'Documentation pages collection not found'
+      })
+    }
   } else if (version === '4.x') {
     allDocs = await queryCollection(event, 'docsv4')
       .select('title', 'path', 'description')
       .all()
+
+    if (!allDocs) {
+      throw createError({
+        statusCode: 404,
+        statusMessage: 'Documentation pages collection not found'
+      })
+    }
   } else {
     const docsV3 = await queryCollection(event, 'docsv3')
       .select('title', 'path', 'description')
@@ -26,6 +40,13 @@ export default defineCachedEventHandler(async (event) => {
     const docsV4 = await queryCollection(event, 'docsv4')
       .select('title', 'path', 'description')
       .all()
+
+    if (!docsV3 || !docsV4) {
+      throw createError({
+        statusCode: 404,
+        statusMessage: 'Documentation pages collection not found'
+      })
+    }
 
     allDocs = [...docsV3, ...docsV4]
   }

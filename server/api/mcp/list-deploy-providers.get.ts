@@ -5,6 +5,13 @@ export default defineCachedEventHandler(async (event) => {
     .select('title', 'path', 'description', 'logoSrc', 'logoIcon', 'category', 'nitroPreset', 'website', 'sponsor')
     .all()
 
+  if (!deployProviders) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: 'Deploy providers collection not found'
+    })
+  }
+
   return deployProviders.map(provider => ({
     title: provider.title,
     name: provider.title,

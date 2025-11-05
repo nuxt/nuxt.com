@@ -8,35 +8,28 @@ const querySchema = z.object({
 export default defineCachedEventHandler(async (event) => {
   const { path } = await getValidatedQuery(event, querySchema.parse)
 
-  try {
-    const docsVersion = path.includes('/docs/4.x') ? 'docsv4' : 'docsv3'
+  const docsVersion = path.includes('/docs/4.x') ? 'docsv4' : 'docsv3'
 
-    const page = await queryCollection(event, docsVersion)
-      .where('path', '=', path)
-      .select('title', 'path', 'description', 'body', 'links')
-      .first()
+  const page = await queryCollection(event, docsVersion)
+    .where('path', '=', path)
+    .select('title', 'path', 'description', 'body', 'links')
+    .first()
 
-    if (!page) {
-      throw createError({
-        statusCode: 404,
-        statusMessage: 'Documentation page not found'
-      })
-    }
-
-    return {
-      title: page.title,
-      path: page.path,
-      description: page.description,
-      content: page.body,
-      version: page.path.includes('/docs/4.x') ? '4.x' : '3.x',
-      links: page.links,
-      url: `https://nuxt.com${page.path}`
-    }
-  } catch {
+  if (!page) {
     throw createError({
-      statusCode: 500,
-      statusMessage: 'Failed to fetch documentation page'
+      statusCode: 404,
+      statusMessage: 'Documentation page not found'
     })
+  }
+
+  return {
+    title: page.title,
+    path: page.path,
+    description: page.description,
+    content: page.body,
+    version: page.path.includes('/docs/4.x') ? '4.x' : '3.x',
+    links: page.links,
+    url: `https://nuxt.com${page.path}`
   }
 }, {
   maxAge: 60 * 30, // 30 minutes

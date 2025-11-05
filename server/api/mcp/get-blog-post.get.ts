@@ -8,36 +8,29 @@ const querySchema = z.object({
 export default defineCachedEventHandler(async (event) => {
   const { path } = await getValidatedQuery(event, querySchema.parse)
 
-  try {
-    const post = await queryCollection(event, 'blog')
-      .where('path', '=', path)
-      .select('title', 'path', 'description', 'body', 'date', 'category', 'tags', 'authors', 'image')
-      .first()
+  const post = await queryCollection(event, 'blog')
+    .where('path', '=', path)
+    .select('title', 'path', 'description', 'body', 'date', 'category', 'tags', 'authors', 'image')
+    .first()
 
-    if (!post) {
-      throw createError({
-        statusCode: 404,
-        statusMessage: 'Blog post not found'
-      })
-    }
-
-    return {
-      title: post.title,
-      path: post.path,
-      description: post.description,
-      content: post.body,
-      date: post.date,
-      category: post.category,
-      tags: post.tags,
-      authors: post.authors,
-      image: post.image,
-      url: `https://nuxt.com${post.path}`
-    }
-  } catch {
+  if (!post) {
     throw createError({
-      statusCode: 500,
-      statusMessage: 'Failed to fetch blog post'
+      statusCode: 404,
+      statusMessage: 'Blog post not found'
     })
+  }
+
+  return {
+    title: post.title,
+    path: post.path,
+    description: post.description,
+    content: post.body,
+    date: post.date,
+    category: post.category,
+    tags: post.tags,
+    authors: post.authors,
+    image: post.image,
+    url: `https://nuxt.com${post.path}`
   }
 }, {
   maxAge: 60 * 60, // 1 hour
