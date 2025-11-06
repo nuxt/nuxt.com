@@ -189,7 +189,7 @@ export default defineNuxtConfig({
   nitro: {
     compatibilityDate: {
       // Don't generate observability routes
-      vercel: '2025-07-14',
+      vercel: '2025-07-14'
     },
     prerender: {
       crawlLinks: true,
