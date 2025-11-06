@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import { Analytics } from '@vercel/analytics/nuxt'
-import { SpeedInsights } from '@vercel/speed-insights/nuxt'
-
 const colorMode = useColorMode()
 const { version } = useDocsVersion()
 const { searchGroups, searchLinks, searchTerm } = useNavigation()
@@ -84,8 +81,6 @@ onMounted(() => {
 
 <template>
   <UApp>
-    <Analytics />
-    <SpeedInsights />
     <NuxtLoadingIndicator color="var(--ui-primary)" />
 
     <NuxtLayout>
