@@ -27,6 +27,13 @@ export default defineNuxtConfig({
       url: 'http://localhost:3000'
     }
   },
+  $production: {
+    image: {
+      ipx: {
+        baseURL: 'https://ipx.nuxt.com'
+      }
+    }
+  },
   devtools: {
     enabled: true
   },
@@ -244,10 +251,7 @@ export default defineNuxtConfig({
   },
   image: {
     format: ['webp', 'jpeg', 'jpg', 'png', 'svg'],
-    provider: 'ipx',
-    ipx: {
-      baseURL: 'https://ipx.nuxt.com'
-    }
+    provider: 'ipx'
   },
   llms: {
     domain: 'https://nuxt.com',
