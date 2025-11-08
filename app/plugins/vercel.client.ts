@@ -8,24 +8,24 @@ export default defineNuxtPlugin(() => {
   const route = useRoute()
   const speedInsights = injectSpeedInsights({
     route: route.matched[0]?.path || route.path,
-    framework: 'nuxt',
+    framework: 'nuxt'
   })
 
   onNuxtReady(() => {
     inject({
       disableAutoTrack: true,
-      framework: 'nuxt',
+      framework: 'nuxt'
     })
     pageview({
       route: route.matched[0]?.path || route.path,
-      path: route.path,
+      path: route.path
     })
   })
   // On navigation to a new page
   nuxtApp.hooks.hook('page:finish', () => {
     pageview({
       route: route.matched[0]?.path || route.path,
-      path: route.path,
+      path: route.path
     })
     speedInsights?.setRoute(route.matched[0]?.path || route.path)
   })
