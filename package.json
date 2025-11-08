@@ -25,7 +25,7 @@
     "@nuxt/image": "https://pkg.pr.new/@nuxt/image@62998ab",
     "@nuxt/scripts": "^0.13.0",
     "@nuxt/ui": "^4.1.0",
-    "@nuxthub/core": "npm:@nuxthub/core-nightly@1.0.0-20251107-232041-b44caa8",
+    "@nuxthub/core": "npm:@nuxthub/core-nightly@1.0.0-20251108-001035-570e621",
     "@nuxtjs/html-validator": "^2.1.0",
     "@nuxtjs/mdc": "^0.18.0",
     "@nuxtjs/plausible": "^2.0.1",
