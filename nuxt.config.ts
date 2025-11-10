@@ -79,6 +79,8 @@ export default defineNuxtConfig({
     '/404.html': { prerender: true },
     '/docs/3.x/getting-started/introduction': { prerender: true },
     '/docs/4.x/getting-started/introduction': { prerender: true },
+    '/modules': { isr: 60 * 60 },
+    '/modules/**': { isr: 60 * 60 },
     // Admin
     '/admin': { ssr: false },
     '/admin/**': { ssr: false },
