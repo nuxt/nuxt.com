@@ -9,7 +9,7 @@ interface TeamMember {
   socialAccounts: Record<string, { displayName: string, url: string }>
 }
 
-export default defineCachedEventHandler(async () => {
+export default defineEventHandler(async () => {
   const core = await $fetch<TeamMember[]>('https://api.nuxt.com/teams/core')
   let ecosystem = await $fetch<TeamMember[]>('https://api.nuxt.com/teams/ecosystem')
 
@@ -25,7 +25,4 @@ export default defineCachedEventHandler(async () => {
     core,
     ecosystem
   }
-}, {
-  maxAge: 60 * 60, // 1 hour
-  getKey: () => 'teams'
 })

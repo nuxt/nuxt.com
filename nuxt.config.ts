@@ -81,6 +81,8 @@ export default defineNuxtConfig({
     '/docs/4.x/getting-started/introduction': { prerender: true },
     '/modules': { isr: 60 * 60 },
     '/modules/**': { isr: 60 * 60 },
+    // API
+    '/api/teams': { isr: 60 * 60 },
     // Admin
     '/admin': { ssr: false },
     '/admin/**': { ssr: false },
