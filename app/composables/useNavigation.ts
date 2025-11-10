@@ -163,6 +163,8 @@ const _useNavigation = () => {
 
   const { headerLinks } = useHeaderLinks()
   const { footerLinks } = useFooterLinks()
+  const { modules } = useModules()
+  const { providers } = useHostingProviders()
 
   const searchLinks = computed(() => [
     {
@@ -251,59 +253,38 @@ const _useNavigation = () => {
       }
     }]
 
-    const loadModules = async () => {
-      const { modules, fetchList } = useModules()
-      if (!modules.value.length) {
-        await fetchList()
-      }
+    modulesGroup.items = modules.value
+      .filter(module => ['name', 'npm', 'repo'].map(field => module[field as keyof typeof module]).filter(Boolean).some(value => typeof value === 'string' && value.search(searchTextRegExp(searchTerm.value)) !== -1))
+      .map(module => ({
+        id: `module-${module.name}`,
+        label: module.npm,
+        suffix: module.description,
+        avatar: {
+          src: moduleImage(module.icon),
+          ui: {
+            root: 'rounded-none bg-transparent'
+          }
+        },
+        to: `/modules/${module.name}`
+      }))
 
-      modulesGroup.items = modules.value
-        .filter(module => ['name', 'npm', 'repo'].map(field => module[field as keyof typeof module]).filter(Boolean).some(value => typeof value === 'string' && value.search(searchTextRegExp(searchTerm.value)) !== -1))
-        .map(module => ({
-          id: `module-${module.name}`,
-          label: module.npm,
-          suffix: module.description,
-          avatar: {
-            src: moduleImage(module.icon),
-            ui: {
-              root: 'rounded-none bg-transparent'
-            }
-          },
-          to: `/modules/${module.name}`
-        }))
-    }
-
-    const loadHosting = async () => {
-      const { providers, fetchList } = useHostingProviders()
-      if (!providers.value.length) {
-        await fetchList()
-      }
-
-      hostingGroup.items = providers.value
-        .filter(hosting => ['title'].map(field => hosting[field as keyof typeof hosting]).filter(Boolean).some(value => typeof value === 'string' && value.search(searchTextRegExp(searchTerm.value)) !== -1))
-        .map(hosting => ({
-          id: `hosting-${hosting.path}`,
-          label: hosting.title,
-          suffix: hosting.description,
-          icon: hosting.logoIcon,
-          avatar: hosting.logoSrc
-            ? {
-                src: hosting.logoSrc,
-                ui: {
-                  root: 'rounded-none bg-transparent'
-                }
+    hostingGroup.items = providers.value
+      .filter(hosting => ['title'].map(field => hosting[field as keyof typeof hosting]).filter(Boolean).some(value => typeof value === 'string' && value.search(searchTextRegExp(searchTerm.value)) !== -1))
+      .map(hosting => ({
+        id: `hosting-${hosting.path}`,
+        label: hosting.title,
+        suffix: hosting.description,
+        icon: hosting.logoIcon,
+        avatar: hosting.logoSrc
+          ? {
+              src: hosting.logoSrc,
+              ui: {
+                root: 'rounded-none bg-transparent'
               }
-            : undefined,
-          to: hosting.path
-        }))
-    }
-
-    onMounted(() => {
-      Promise.all([
-        loadModules(),
-        loadHosting()
-      ]).catch(error => console.error('Error loading search results:', error))
-    })
+            }
+          : undefined,
+        to: hosting.path
+      }))
 
     return groups
   })
