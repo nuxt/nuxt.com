@@ -38,8 +38,8 @@ importers:
         specifier: ^0.13.0
         version: 0.13.0(@googlemaps/markerclusterer@2.6.2)(@types/youtube@0.1.2)(@unhead/vue@2.0.19(vue@3.5.23(typescript@5.9.3)))(db0@0.3.4(better-sqlite3@12.4.1)(drizzle-orm@0.44.7(@opentelemetry/api@1.9.0)(better-sqlite3@12.4.1)))(ioredis@5.8.2)(magicast@0.5.1)(typescript@5.9.3)(vue@3.5.23(typescript@5.9.3))
       '@nuxt/ui':
-        specifier: https://pkg.pr.new/@nuxt/ui@5bd56a6
-        version: https://pkg.pr.new/@nuxt/ui@5bd56a6(@babel/parser@7.28.5)(change-case@5.4.4)(db0@0.3.4(better-sqlite3@12.4.1)(drizzle-orm@0.44.7(@opentelemetry/api@1.9.0)(better-sqlite3@12.4.1)))(embla-carousel@8.6.0)(ioredis@5.8.2)(magicast@0.5.1)(typescript@5.9.3)(valibot@1.1.0(typescript@5.9.3))(vite@7.1.9(@types/node@24.10.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.0)(yaml@2.8.1))(vue-router@4.6.3(vue@3.5.23(typescript@5.9.3)))(vue@3.5.23(typescript@5.9.3))(zod@3.25.76)
+        specifier: https://pkg.pr.new/@nuxt/ui@fa56623
+        version: https://pkg.pr.new/@nuxt/ui@fa56623(@babel/parser@7.28.5)(change-case@5.4.4)(db0@0.3.4(better-sqlite3@12.4.1)(drizzle-orm@0.44.7(@opentelemetry/api@1.9.0)(better-sqlite3@12.4.1)))(embla-carousel@8.6.0)(ioredis@5.8.2)(magicast@0.5.1)(typescript@5.9.3)(valibot@1.1.0(typescript@5.9.3))(vite@7.1.9(@types/node@24.10.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.0)(yaml@2.8.1))(vue-router@4.6.3(vue@3.5.23(typescript@5.9.3)))(vue@3.5.23(typescript@5.9.3))(zod@3.25.76)
       '@nuxthub/core':
         specifier: 0.9.0
         version: 0.9.0(db0@0.3.4(better-sqlite3@12.4.1)(drizzle-orm@0.44.7(@opentelemetry/api@1.9.0)(better-sqlite3@12.4.1)))(ioredis@5.8.2)(magicast@0.5.1)(vite@7.1.9(@types/node@24.10.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.0)(yaml@2.8.1))
@@ -1570,8 +1570,8 @@ packages:
       vitest:
         optional: true
 
-  '@nuxt/ui@https://pkg.pr.new/@nuxt/ui@5bd56a6':
-    resolution: {tarball: https://pkg.pr.new/@nuxt/ui@5bd56a6}
+  '@nuxt/ui@https://pkg.pr.new/@nuxt/ui@fa56623':
+    resolution: {tarball: https://pkg.pr.new/@nuxt/ui@fa56623}
     version: 4.1.0
     hasBin: true
     peerDependencies:
@@ -9748,7 +9748,7 @@ snapshots:
       - magicast
       - typescript
 
-  '@nuxt/ui@https://pkg.pr.new/@nuxt/ui@5bd56a6(@babel/parser@7.28.5)(change-case@5.4.4)(db0@0.3.4(better-sqlite3@12.4.1)(drizzle-orm@0.44.7(@opentelemetry/api@1.9.0)(better-sqlite3@12.4.1)))(embla-carousel@8.6.0)(ioredis@5.8.2)(magicast@0.5.1)(typescript@5.9.3)(valibot@1.1.0(typescript@5.9.3))(vite@7.1.9(@types/node@24.10.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.0)(yaml@2.8.1))(vue-router@4.6.3(vue@3.5.23(typescript@5.9.3)))(vue@3.5.23(typescript@5.9.3))(zod@3.25.76)':
+  '@nuxt/ui@https://pkg.pr.new/@nuxt/ui@fa56623(@babel/parser@7.28.5)(change-case@5.4.4)(db0@0.3.4(better-sqlite3@12.4.1)(drizzle-orm@0.44.7(@opentelemetry/api@1.9.0)(better-sqlite3@12.4.1)))(embla-carousel@8.6.0)(ioredis@5.8.2)(magicast@0.5.1)(typescript@5.9.3)(valibot@1.1.0(typescript@5.9.3))(vite@7.1.9(@types/node@24.10.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.0)(yaml@2.8.1))(vue-router@4.6.3(vue@3.5.23(typescript@5.9.3)))(vue@3.5.23(typescript@5.9.3))(zod@3.25.76)':
     dependencies:
       '@iconify/vue': 5.0.0(vue@3.5.23(typescript@5.9.3))
       '@internationalized/date': 3.10.0
