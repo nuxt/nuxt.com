@@ -168,85 +168,118 @@ To find relevant migration guides, please:
 
   // TOOLS
 
-  server.tool(
+  server.registerTool(
     'list_documentation_pages',
-    'Lists all available Nuxt documentation pages with their categories and basic information. Use this tool to find relevant pages by examining titles and descriptions, then use get_documentation_page to retrieve full content. Returns: A JSON array of objects containing title, path, description, version, and url.',
     {
-      version: z.enum(['3.x', '4.x', 'all']).optional().default('4.x').describe('Documentation version to fetch')
+      title: 'List Documentation Pages',
+      description: 'Lists all available Nuxt documentation pages with their categories and basic information. Use this tool to find relevant pages by examining titles and descriptions, then use get_documentation_page to retrieve full content.',
+      inputSchema: {
+        version: z.enum(['3.x', '4.x', 'all']).optional().default('4.x').describe('Documentation version to fetch')
+      }
     },
     async (params) => {
       const result = await $fetch('/api/mcp/list-documentation-pages', { query: params })
-      return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] }
+      return {
+        content: [{ type: 'text', text: JSON.stringify(result, null, 2) }]
+      }
     }
   )
 
-  server.tool(
+  server.registerTool(
     'get_documentation_page',
-    'Retrieves Nuxt documentation page content and details. Parameters: path (string, required) - the documentation path starting with /docs/. Returns: A JSON object containing title, content, path, url, version, and links.',
     {
-      path: z.string().describe('The path to the documentation page (e.g., /docs/3.x/getting-started/introduction)')
+      title: 'Get Documentation Page',
+      description: 'Retrieves Nuxt documentation page content and details. Parameters: path (string, required) - the documentation path starting with /docs/.',
+      inputSchema: {
+        path: z.string().describe('The path to the documentation page (e.g., /docs/3.x/getting-started/introduction)')
+      }
     },
     async (params) => {
       const result = await $fetch('/api/mcp/get-documentation-page', { query: params })
-      return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] }
+      return {
+        content: [{ type: 'text', text: JSON.stringify(result, null, 2) }]
+      }
     }
   )
 
-  server.tool(
+  server.registerTool(
     'list_blog_posts',
-    'Lists all Nuxt blog posts with metadata including dates, categories, and tags. Returns: A JSON array of objects containing title, path, description, date, category, tags, authors, image, and url.',
-    {},
+    {
+      title: 'List Blog Posts',
+      description: 'Lists all Nuxt blog posts with metadata including dates, categories, and tags.'
+    },
     async () => {
       const result = await $fetch('/api/mcp/list-blog-posts')
-      return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] }
+      return {
+        content: [{ type: 'text', text: JSON.stringify(result, null, 2) }]
+      }
     }
   )
 
-  server.tool(
+  server.registerTool(
     'get_blog_post',
-    'Retrieves blog post content and details. Parameters: path (string, required) - the blog post path starting with /blog/. Returns: A JSON object containing title, content, path, url, date, category, tags, authors, and image.',
     {
-      path: z.string().describe('The path to the blog post (e.g., /blog/v4)')
+      title: 'Get Blog Post',
+      description: 'Retrieves blog post content and details. Parameters: path (string, required) - the blog post path starting with /blog/.',
+      inputSchema: {
+        path: z.string().describe('The path to the blog post (e.g., /blog/v4)')
+      }
     },
     async (params) => {
       const result = await $fetch('/api/mcp/get-blog-post', { query: params })
-      return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] }
+      return {
+        content: [{ type: 'text', text: JSON.stringify(result, null, 2) }]
+      }
     }
   )
 
-  server.tool(
+  server.registerTool(
     'list_deploy_providers',
-    'Lists all deployment providers and hosting platforms for Nuxt applications. Returns: A JSON array of objects containing title, name, path, description, logoSrc, logoIcon, category, nitroPreset, website, sponsor, and url.',
-    {},
+    {
+      title: 'List Deploy Providers',
+      description: 'Lists all deployment providers and hosting platforms for Nuxt applications.'
+    },
     async () => {
       const result = await $fetch('/api/mcp/list-deploy-providers')
-      return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] }
+      return {
+        content: [{ type: 'text', text: JSON.stringify(result, null, 2) }]
+      }
     }
   )
 
-  server.tool(
+  server.registerTool(
     'get_deploy_provider',
-    'Retrieves deployment provider details and instructions. Parameters: path (string, required) - the deploy provider path starting with /deploy/. Returns: A JSON object containing title, name, path, description, content, logoSrc, logoIcon, category, nitroPreset, website, sponsor, and url.',
     {
-      path: z.string().describe('The path to the deploy provider (e.g., /deploy/vercel)')
+      title: 'Get Deploy Provider',
+      description: 'Retrieves deployment provider details and instructions. Parameters: path (string, required) - the deploy provider path starting with /deploy/.',
+      inputSchema: {
+        path: z.string().describe('The path to the deploy provider (e.g., /deploy/vercel)')
+      }
     },
     async (params) => {
       const result = await $fetch('/api/mcp/get-deploy-provider', { query: params })
-      return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] }
+      return {
+        content: [{ type: 'text', text: JSON.stringify(result, null, 2) }]
+      }
     }
   )
 
-  server.tool(
+  server.registerTool(
     'get_getting_started_guide',
-    'Gets the getting started guide for Nuxt. Parameters: version (enum, optional) - Nuxt version. Returns: A JSON object containing getting started documentation.',
     {
-      version: z.enum(['3.x', '4.x']).optional().default('4.x').describe('Nuxt version')
+      title: 'Get Getting Started Guide',
+      description: 'Gets the getting started guide for Nuxt. Parameters: version (enum, optional) - Nuxt version.',
+      inputSchema: {
+        version: z.enum(['3.x', '4.x']).optional().default('4.x').describe('Nuxt version')
+      }
     },
     async ({ version }) => {
       const gettingStarted = await $fetch('/api/mcp/get-documentation-page', {
         query: { path: `/docs/${version}/getting-started/introduction` }
       })
-      return { content: [{ type: 'text', text: JSON.stringify(gettingStarted, null, 2) }] }
+      return {
+        content: [{ type: 'text', text: JSON.stringify(gettingStarted, null, 2) }]
+      }
     }
   )
 
