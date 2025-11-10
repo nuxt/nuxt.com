@@ -19,8 +19,8 @@ const [{ data: navigation }, { data: files }] = await Promise.all([
   }),
   useLazyAsyncData('search', () => {
     return Promise.all([
-      queryCollectionSearchSections('docsv3'),
-      queryCollectionSearchSections('docsv4'),
+      queryCollectionSearchSections('docsv3', { ignoredTags: ['style'] }),
+      queryCollectionSearchSections('docsv4', { ignoredTags: ['style'] }),
       queryCollectionSearchSections('blog')
     ])
   }, {
