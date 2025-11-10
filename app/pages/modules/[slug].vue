@@ -136,7 +136,7 @@ defineOgImageComponent('Module', {
         <span class="hidden lg:block text-muted">&bull;</span>
 
         <UTooltip text="GitHub Stars">
-          <NuxtLink class="flex items-center gap-1.5" :to="`https://github.com/${module.repo}`" target="_blank">
+          <NuxtLink class="flex items-center gap-1.5" :to="`https://github.com/${(module.repo || '').split('#')[0]}`" target="_blank">
             <UIcon name="i-lucide-star" class="size-5 shrink-0" />
             <span class="text-sm font-medium">{{ formatNumber(module.stats.stars || 0) }} stars</span>
           </NuxtLink>
@@ -145,7 +145,7 @@ defineOgImageComponent('Module', {
         <span class="hidden lg:block text-muted">&bull;</span>
 
         <UTooltip text="Latest Version">
-          <NuxtLink class="flex items-center gap-1.5" :to="`${module.github}/releases`" target="_blank">
+          <NuxtLink class="flex items-center gap-1.5" :to="`${(module.github || '').split('/tree/main/')[0]}/releases`" target="_blank">
             <UIcon name="i-lucide-tag" class="size-5 shrink-0" />
             <span class="text-sm font-medium">v{{ module.stats.version }}</span>
           </NuxtLink>
