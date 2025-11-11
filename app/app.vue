@@ -98,7 +98,12 @@ onMounted(() => {
         :navigation="versionNavigation"
         :groups="searchGroups"
         :links="searchLinks"
-        :fuse="{ resultLimit: 42 }"
+        :fuse="{
+          resultLimit: 42,
+          fuseOptions: {
+            threshold: 0
+          }
+        }"
       />
     </ClientOnly>
   </UApp>
