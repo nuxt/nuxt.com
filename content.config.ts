@@ -2,7 +2,7 @@ import { defineContentConfig, defineCollection, z } from '@nuxt/content'
 
 const docsV3Source = {
   cwd: process.env.NUXT_V3_PATH ?? undefined,
-  repository: !process.env.NUXT_V3_PATH ? 'https://github.com/nuxt/nuxt/tree/docs/structure-v3' : undefined,
+  repository: !process.env.NUXT_V3_PATH ? 'https://github.com/nuxt/nuxt/tree/3.x' : undefined,
   include: 'docs/**/*',
   exclude: ['docs/**/*.json'],
   prefix: '/docs/3.x'
@@ -10,7 +10,7 @@ const docsV3Source = {
 
 const docsV4Source = {
   cwd: process.env.NUXT_V4_PATH ?? undefined,
-  repository: !process.env.NUXT_V4_PATH ? 'https://github.com/nuxt/nuxt/tree/docs/structure-v4' : undefined,
+  repository: !process.env.NUXT_V4_PATH ? 'https://github.com/nuxt/nuxt/tree/main' : undefined,
   include: 'docs/**/*',
   exclude: ['docs/**/*.json'],
   prefix: '/docs/4.x'
