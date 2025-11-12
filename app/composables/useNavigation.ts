@@ -188,7 +188,7 @@ const _useNavigation = () => {
       }
     }
     return link
-  }).filter((link): link is NonNullable<typeof link> => Boolean(link)), {
+  }).filter(Boolean), {
     label: 'Team',
     icon: 'i-lucide-users',
     to: '/team'
