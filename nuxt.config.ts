@@ -159,8 +159,8 @@ export default defineNuxtConfig({
     '/docs/3.x/guide/going-further/custom-routing': { redirect: '/docs/3.x/guide/recipes/custom-routing', prerender: false },
     '/docs/4.x/guide/going-further/custom-routing': { redirect: '/docs/4.x/guide/recipes/custom-routing', prerender: false },
     // new directory structure
-    '/docs/3.x/guide/directory-structure/**': { redirect: '/docs/3.x/directory-structure/**', prerender: false },
-    '/docs/4.x/guide/directory-structure/**': { redirect: '/docs/4.x/directory-structure/**', prerender: false },
+    '/docs/3.x/guide/directory-structure/**': { redirect: '/docs/3.x/directory-structure', prerender: false },
+    '/docs/4.x/guide/directory-structure/**': { redirect: '/docs/4.x/directory-structure', prerender: false },
     '/docs/3.x/directory-structure/app/assets': { redirect: '/docs/3.x/directory-structure/assets', prerender: false },
     '/docs/4.x/directory-structure/assets': { redirect: '/docs/4.x/directory-structure/app/assets', prerender: false },
     '/docs/3.x/directory-structure/app/components': { redirect: '/docs/3.x/directory-structure/components', prerender: false },
