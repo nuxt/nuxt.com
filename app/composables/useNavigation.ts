@@ -21,11 +21,17 @@ function _useHeaderLinks() {
         to: `${to}/getting-started/installation`,
         active: route.path.startsWith(`${to}/getting-started`)
       }, {
+        label: 'Structure',
+        description: 'Learn about the directory structure of a Nuxt project.',
+        icon: 'i-lucide-folder-open',
+        to: `${to}/directory-structure`,
+        active: route.path.startsWith(`${to}/directory-structure`)
+      }, {
         label: 'Guide',
         description: 'Get the key concepts, directory structure and best practices.',
         icon: 'i-lucide-book-open',
         to: `${to}/guide`,
-        active: route.path.startsWith(`${to}/guide`)
+        active: route.path.startsWith(`${to}/guide`) && !route.path.startsWith(`${to}/guide/directory-structure`)
       }, {
         label: 'API',
         description: 'Explore the Nuxt components, composables, utilities and more.',
