@@ -1,3 +1,4 @@
+import type { CommandPaletteGroup } from '@nuxt/ui'
 import { createSharedComposable } from '@vueuse/core'
 
 function _useHeaderLinks() {
@@ -172,128 +173,95 @@ const _useNavigation = () => {
   const { modules } = useModules()
   const { providers } = useHostingProviders()
 
-  const searchLinks = computed(() => [
-    {
-      label: 'Ask AI',
-      icon: 'i-lucide-wand',
-      to: 'javascript:void(0);',
-      onSelect: () => nuxtApp.$kapa?.openModal()
+  const searchLinks = computed(() => [{
+    label: 'Ask AI',
+    icon: 'i-lucide-wand',
+    to: 'javascript:void(0);',
+    onSelect: () => nuxtApp.$kapa?.openModal()
+  }, ...headerLinks.value.map((link) => {
+    // Remove `/docs` and `/enterprise` links from command palette
+    if (link.search === false) {
+      return {
+        label: link.label,
+        icon: link.icon,
+        children: link.children
+      }
+    }
+    return link
+  }).filter(Boolean), {
+    label: 'Team',
+    icon: 'i-lucide-users',
+    to: '/team'
+  }, {
+    label: 'Design Kit',
+    icon: 'i-lucide-palette',
+    to: '/design-kit'
+  }, {
+    label: 'Newsletter',
+    icon: 'i-lucide-mail',
+    to: '/newsletter'
+  }])
+
+  const modulesItems = computed(() => modules.value.map(module => ({
+    id: `module-${module.name}`,
+    label: module.npm,
+    suffix: module.description,
+    avatar: {
+      src: moduleImage(module.icon),
+      ui: {
+        root: 'rounded-none bg-transparent'
+      }
     },
-    ...headerLinks.value.map((link) => {
-      // Remove `/docs` and `/enterprise` links from command palette
-      if (link.search === false) {
-        return {
-          label: link.label,
-          icon: link.icon,
-          children: link.children
-        }
-      }
-      return link
-    }).filter((link): link is NonNullable<typeof link> => Boolean(link)), {
-      label: 'Team',
-      icon: 'i-lucide-users',
-      to: '/team'
-    }, {
-      label: 'Design Kit',
-      icon: 'i-lucide-palette',
-      to: '/design-kit'
-    }, {
-      label: 'Newsletter',
-      icon: 'i-lucide-mail',
-      to: '/newsletter'
-    }])
+    to: `/modules/${module.name}`,
+    // Store searchable fields for filtering
+    _searchFields: [module.name, module.npm, module.repo].filter(Boolean)
+  })))
 
-  type SearchGroup = {
-    id: string
-    label: string
-    icon?: string
-    items: Array<{
-      id: string
-      label: string
-      suffix?: string
-      icon?: string
-      avatar?: {
-        src?: string
-        ui?: {
-          root: string
-        }
-      }
-      to: string
-      onSelect?: () => Promise<void>
-    }>
-  }
-
-  const searchGroups = computed<SearchGroup[]>(() => {
-    const aiGroup: SearchGroup = {
-      id: 'ask-ai-search',
-      label: 'AI',
-      icon: 'i-lucide-wand',
-      items: []
-    }
-
-    const modulesGroup: SearchGroup = {
-      id: 'modules-search',
-      label: 'Modules',
-      items: []
-    }
-
-    const hostingGroup: SearchGroup = {
-      id: 'hosting-search',
-      label: 'Hosting',
-      items: []
-    }
-
-    const groups = [aiGroup, modulesGroup, hostingGroup]
-
-    if (!searchTerm.value) {
-      return groups
-    }
-
-    aiGroup.items = [{
-      id: `ask-ai-${searchTerm.value}`,
-      label: `Ask AI about "${searchTerm.value}"`,
-      icon: 'i-lucide-wand',
-      to: 'javascript:void(0);',
-      onSelect() {
-        return nuxtApp.$kapa.openModal(searchTerm.value)
-      }
-    }]
-
-    modulesGroup.items = modules.value
-      .filter(module => ['name', 'npm', 'repo'].map(field => module[field as keyof typeof module]).filter(Boolean).some(value => typeof value === 'string' && value.search(searchTextRegExp(searchTerm.value)) !== -1))
-      .map(module => ({
-        id: `module-${module.name}`,
-        label: module.npm,
-        suffix: module.description,
-        avatar: {
-          src: moduleImage(module.icon),
+  const hostingItems = computed(() => providers.value.map(hosting => ({
+    id: `hosting-${hosting.path}`,
+    label: hosting.title,
+    suffix: hosting.description,
+    icon: hosting.logoIcon,
+    avatar: hosting.logoSrc
+      ? {
+          src: hosting.logoSrc,
           ui: {
             root: 'rounded-none bg-transparent'
           }
-        },
-        to: `/modules/${module.name}`
-      }))
+        }
+      : undefined,
+    to: hosting.path,
+    // Store searchable fields for filtering
+    _searchFields: [hosting.title].filter(Boolean)
+  })))
 
-    hostingGroup.items = providers.value
-      .filter(hosting => ['title'].map(field => hosting[field as keyof typeof hosting]).filter(Boolean).some(value => typeof value === 'string' && value.search(searchTextRegExp(searchTerm.value)) !== -1))
-      .map(hosting => ({
-        id: `hosting-${hosting.path}`,
-        label: hosting.title,
-        suffix: hosting.description,
-        icon: hosting.logoIcon,
-        avatar: hosting.logoSrc
-          ? {
-              src: hosting.logoSrc,
-              ui: {
-                root: 'rounded-none bg-transparent'
-              }
-            }
-          : undefined,
-        to: hosting.path
-      }))
-
-    return groups
-  })
+  const searchGroups = computed<CommandPaletteGroup[]>(() => [{
+    id: 'ask-ai-search',
+    label: 'AI',
+    ignoreFilter: true,
+    postFilter: (searchTerm: string, items: any[]) => {
+      if (!searchTerm) {
+        return []
+      }
+      return items
+    },
+    items: [{
+      label: 'Ask AI',
+      icon: 'i-lucide-wand',
+      to: 'javascript:void(0);',
+      onSelect() {
+        nuxtApp.$kapa?.openModal(searchTerm.value)
+      }
+    }]
+  }, {
+    id: 'modules-search',
+    label: 'Modules',
+    items: modulesItems.value
+  }, {
+    id: 'hosting-search',
+    label: 'Hosting',
+    items: hostingItems.value
+  }])
 
   return {
     searchTerm,

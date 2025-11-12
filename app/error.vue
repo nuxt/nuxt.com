@@ -27,8 +27,8 @@ const [{ data: navigation }, { data: files }] = await Promise.all([
   }),
   useLazyAsyncData('search', () => {
     return Promise.all([
-      queryCollectionSearchSections('docsv3'),
-      queryCollectionSearchSections('docsv4'),
+      queryCollectionSearchSections('docsv3', { ignoredTags: ['style'] }),
+      queryCollectionSearchSections('docsv4', { ignoredTags: ['style'] }),
       queryCollectionSearchSections('blog')
     ])
   }, {
@@ -67,7 +67,12 @@ provide('navigation', versionNavigation)
           :navigation="versionNavigation"
           :groups="searchGroups"
           :links="searchLinks"
-          :fuse="{ resultLimit: 42 }"
+          :fuse="{
+            resultLimit: 42,
+            fuseOptions: {
+              threshold: 0
+            }
+          }"
         />
       </ClientOnly>
     </div>
