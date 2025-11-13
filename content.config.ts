@@ -1,8 +1,8 @@
 import { defineContentConfig, defineCollection, z } from '@nuxt/content'
 
 const docsV3Source = {
-  cwd: process.env.NUXT_PATH ?? undefined,
-  repository: !process.env.NUXT_PATH ? 'https://github.com/nuxt/nuxt/tree/3.x' : undefined,
+  cwd: process.env.NUXT_V3_PATH ?? undefined,
+  repository: !process.env.NUXT_V3_PATH ? 'https://github.com/nuxt/nuxt/tree/3.x' : undefined,
   include: 'docs/**/*',
   exclude: ['docs/**/*.json'],
   prefix: '/docs/3.x'
