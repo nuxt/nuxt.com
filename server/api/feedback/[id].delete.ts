@@ -10,11 +10,9 @@ export default defineEventHandler(async (event) => {
 
   const { id } = await getValidatedRouterParams(event, deleteParamsSchema.parse)
 
-  const drizzle = useDrizzle()
-
-  const result = await drizzle
-    .delete(tables.feedback)
-    .where(eq(tables.feedback.id, id))
+  const result = await db
+    .delete(schema.feedback)
+    .where(eq(schema.feedback.id, id))
     .returning()
 
   if (result.length === 0) {

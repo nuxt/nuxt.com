@@ -79,6 +79,10 @@ export default defineNuxtConfig({
     '/404.html': { prerender: true },
     '/docs/3.x/getting-started/introduction': { prerender: true },
     '/docs/4.x/getting-started/introduction': { prerender: true },
+    '/modules': { isr: 60 * 60 },
+    '/modules/**': { isr: 60 * 60 },
+    // API
+    '/api/teams': { isr: 60 * 60 },
     // Admin
     '/admin': { ssr: false },
     '/admin/**': { ssr: false },
@@ -222,8 +226,12 @@ export default defineNuxtConfig({
       }
     }
   },
-  compatibilityDate: '2025-07-17',
+  compatibilityDate: '2025-07-14',
   nitro: {
+    compatibilityDate: {
+      // Don't generate observability routes
+      vercel: '2025-07-14'
+    },
     prerender: {
       crawlLinks: true,
       ignore: [
@@ -231,18 +239,10 @@ export default defineNuxtConfig({
         route => route.startsWith('/admin')
       ],
       autoSubfolderIndex: false
-    },
-    cloudflare: {
-      pages: {
-        routes: {
-          exclude: [
-            '/docs/*'
-          ]
-        }
-      }
     }
   },
   hub: {
+    database: 'sqlite',
     cache: true
   },
   typescript: {
