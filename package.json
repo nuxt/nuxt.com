@@ -82,9 +82,6 @@
       "@parcel/watcher",
       "puppeteer",
       "vue-demi"
-    ],
-    "overrides": {
-      "vite": "npm:rolldown-vite@latest"
-    }
+    ]
   }
 }

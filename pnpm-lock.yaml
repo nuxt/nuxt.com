@@ -6,7 +6,6 @@ settings:
 
 overrides:
   chokidar: 3.6.0
-  vite: npm:rolldown-vite@latest
 
 importers:
 
