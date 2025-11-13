@@ -25,6 +25,19 @@ export default defineNuxtConfig({
   $development: {
     site: {
       url: 'http://localhost:3000'
+    },
+    image: {
+      alias: {
+        '/gh/': 'https://raw.githubusercontent.com',
+        '/gh_avatar/': 'https://avatars.githubusercontent.com',
+        '/nuxt/': 'https://nuxt.com',
+        '/': 'https://nuxt.com'
+      },
+      domains: [
+        'raw.githubusercontent.com',
+        'avatars.githubusercontent.com',
+        'nuxt.com'
+      ]
     }
   },
   $production: {
@@ -56,9 +69,6 @@ export default defineNuxtConfig({
           langs: ['sql', 'diff', 'ini']
         }
       }
-    },
-    preview: {
-      api: 'https://api.nuxt.studio'
     }
   },
   mdc: {
@@ -234,7 +244,7 @@ export default defineNuxtConfig({
       vercel: '2025-07-14'
     },
     prerender: {
-      crawlLinks: true,
+      // crawlLinks: true,
       ignore: [
         route => route.startsWith('/modules'),
         route => route.startsWith('/admin')

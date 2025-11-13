@@ -35,8 +35,8 @@ importers:
         specifier: ^1.21.1
         version: 1.21.1
       '@nuxt/content':
-        specifier: ^3.8.1
-        version: 3.8.1(@libsql/client@0.15.15)(better-sqlite3@12.4.1)(drizzle-orm@0.44.7(@cloudflare/workers-types@4.20251111.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(better-sqlite3@12.4.1))(magicast@0.5.1)(valibot@1.1.0(typescript@5.9.3))
+        specifier: https://pkg.pr.new/@nuxt/content@5438131
+        version: https://pkg.pr.new/@nuxt/content@5438131(@libsql/client@0.15.15)(better-sqlite3@12.4.1)(drizzle-orm@0.44.7(@cloudflare/workers-types@4.20251111.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(better-sqlite3@12.4.1))(magicast@0.5.1)(valibot@1.1.0(typescript@5.9.3))
       '@nuxt/image':
         specifier: https://pkg.pr.new/@nuxt/image@62998ab
         version: https://pkg.pr.new/@nuxt/image@62998ab(@vercel/blob@2.0.0)(aws4fetch@1.0.20)(db0@0.3.4(@libsql/client@0.15.15)(better-sqlite3@12.4.1)(drizzle-orm@0.44.7(@cloudflare/workers-types@4.20251111.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(better-sqlite3@12.4.1)))(ioredis@5.8.2)(magicast@0.5.1)
@@ -1515,8 +1515,9 @@ packages:
     engines: {node: ^16.10.0 || >=18.0.0}
     hasBin: true
 
-  '@nuxt/content@3.8.1':
-    resolution: {integrity: sha512-DR4RqCK5GllXPCtKIdNtP3OIaKCKwHNf/cdxBNjio4O975hOxoJJ53Y0oul5Q25jVgreTIpNEIR7mPd2LLMb/A==}
+  '@nuxt/content@https://pkg.pr.new/@nuxt/content@5438131':
+    resolution: {tarball: https://pkg.pr.new/@nuxt/content@5438131}
+    version: 3.8.1
     peerDependencies:
       '@electric-sql/pglite': '*'
       '@libsql/client': '*'
@@ -2733,8 +2734,8 @@ packages:
   '@speed-highlight/core@1.2.12':
     resolution: {integrity: sha512-uilwrK0Ygyri5dToHYdZSjcvpS2ZwX0w5aSt3GCEN9hrjxWCoeV4Z2DTXuxjwbntaLQIEEAlCeNQss5SoHvAEA==}
 
-  '@sqlite.org/sqlite-wasm@3.51.1-build1':
-    resolution: {integrity: sha512-weVY19vDqFvhA8rUYcHPdS67iDBWMQvdlWstKiPkX8fWuuBUSPnEQGd6NjbAvXW/ch8xariRkLoJTzqsQeuvlw==}
+  '@sqlite.org/sqlite-wasm@3.50.4-build1':
+    resolution: {integrity: sha512-Qig2Wso7gPkU1PtXwFzndh+CTRzrIFxVGqv6eCetjU7YqxlHItj+GvQYwYTppCRgAPawtRN/4AJcEgB9xDHGug==}
     hasBin: true
 
   '@standard-schema/spec@1.0.0':
@@ -9953,12 +9954,12 @@ snapshots:
     transitivePeerDependencies:
       - magicast
 
-  '@nuxt/content@3.8.1(@libsql/client@0.15.15)(better-sqlite3@12.4.1)(drizzle-orm@0.44.7(@cloudflare/workers-types@4.20251111.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(better-sqlite3@12.4.1))(magicast@0.5.1)(valibot@1.1.0(typescript@5.9.3))':
+  '@nuxt/content@https://pkg.pr.new/@nuxt/content@5438131(@libsql/client@0.15.15)(better-sqlite3@12.4.1)(drizzle-orm@0.44.7(@cloudflare/workers-types@4.20251111.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(better-sqlite3@12.4.1))(magicast@0.5.1)(valibot@1.1.0(typescript@5.9.3))':
     dependencies:
       '@nuxt/kit': 4.2.1(magicast@0.5.1)
       '@nuxtjs/mdc': 0.18.3(magicast@0.5.1)
       '@shikijs/langs': 3.15.0
-      '@sqlite.org/sqlite-wasm': 3.51.1-build1
+      '@sqlite.org/sqlite-wasm': 3.50.4-build1
       '@standard-schema/spec': 1.0.0
       '@webcontainer/env': 1.1.1
       c12: 3.3.2(magicast@0.5.1)
@@ -11594,7 +11595,7 @@ snapshots:
 
   '@speed-highlight/core@1.2.12': {}
 
-  '@sqlite.org/sqlite-wasm@3.51.1-build1': {}
+  '@sqlite.org/sqlite-wasm@3.50.4-build1': {}
 
   '@standard-schema/spec@1.0.0': {}
 
