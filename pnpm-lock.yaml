@@ -35,8 +35,8 @@ importers:
         specifier: ^1.21.1
         version: 1.21.1
       '@nuxt/content':
-        specifier: https://pkg.pr.new/@nuxt/content@3610
-        version: https://pkg.pr.new/@nuxt/content@3610(@libsql/client@0.15.15)(better-sqlite3@12.4.1)(drizzle-orm@0.44.7(@cloudflare/workers-types@4.20251111.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(better-sqlite3@12.4.1))(magicast@0.5.1)(valibot@1.1.0(typescript@5.9.3))
+        specifier: ^3.8.1
+        version: 3.8.1(@libsql/client@0.15.15)(better-sqlite3@12.4.1)(drizzle-orm@0.44.7(@cloudflare/workers-types@4.20251111.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(better-sqlite3@12.4.1))(magicast@0.5.1)(valibot@1.1.0(typescript@5.9.3))
       '@nuxt/image':
         specifier: https://pkg.pr.new/@nuxt/image@62998ab
         version: https://pkg.pr.new/@nuxt/image@62998ab(@vercel/blob@2.0.0)(aws4fetch@1.0.20)(db0@0.3.4(@libsql/client@0.15.15)(better-sqlite3@12.4.1)(drizzle-orm@0.44.7(@cloudflare/workers-types@4.20251111.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(better-sqlite3@12.4.1)))(ioredis@5.8.2)(magicast@0.5.1)
@@ -1515,9 +1515,8 @@ packages:
     engines: {node: ^16.10.0 || >=18.0.0}
     hasBin: true
 
-  '@nuxt/content@https://pkg.pr.new/@nuxt/content@3610':
-    resolution: {tarball: https://pkg.pr.new/@nuxt/content@3610}
-    version: 3.8.0
+  '@nuxt/content@3.8.1':
+    resolution: {integrity: sha512-DR4RqCK5GllXPCtKIdNtP3OIaKCKwHNf/cdxBNjio4O975hOxoJJ53Y0oul5Q25jVgreTIpNEIR7mPd2LLMb/A==}
     peerDependencies:
       '@electric-sql/pglite': '*'
       '@libsql/client': '*'
@@ -9954,7 +9953,7 @@ snapshots:
     transitivePeerDependencies:
       - magicast
 
-  '@nuxt/content@https://pkg.pr.new/@nuxt/content@3610(@libsql/client@0.15.15)(better-sqlite3@12.4.1)(drizzle-orm@0.44.7(@cloudflare/workers-types@4.20251111.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(better-sqlite3@12.4.1))(magicast@0.5.1)(valibot@1.1.0(typescript@5.9.3))':
+  '@nuxt/content@3.8.1(@libsql/client@0.15.15)(better-sqlite3@12.4.1)(drizzle-orm@0.44.7(@cloudflare/workers-types@4.20251111.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(better-sqlite3@12.4.1))(magicast@0.5.1)(valibot@1.1.0(typescript@5.9.3))':
     dependencies:
       '@nuxt/kit': 4.2.1(magicast@0.5.1)
       '@nuxtjs/mdc': 0.18.3(magicast@0.5.1)
@@ -12483,7 +12482,7 @@ snapshots:
     dependencies:
       '@volar/language-core': 2.4.23
       '@vue/compiler-dom': 3.5.23
-      '@vue/shared': 3.5.23
+      '@vue/shared': 3.5.24
       alien-signals: 3.0.0
       muggle-string: 0.4.1
       path-browserify: 1.0.1
