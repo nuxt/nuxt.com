@@ -49,6 +49,8 @@ const versionFiles = computed(() => files.value?.filter((file) => {
 }) ?? [])
 
 provide('navigation', versionNavigation)
+
+const { groups } = useContentSearchWorker(versionFiles, versionNavigation, searchTerm)
 </script>
 
 <template>
@@ -63,16 +65,9 @@ provide('navigation', versionNavigation)
       <ClientOnly>
         <LazyUContentSearch
           v-model:search-term="searchTerm"
-          :files="versionFiles"
-          :navigation="versionNavigation"
-          :groups="searchGroups"
+          :groups="[...groups, ...searchGroups]"
           :links="searchLinks"
-          :fuse="{
-            resultLimit: 42,
-            fuseOptions: {
-              threshold: 0
-            }
-          }"
+          :fuse="{ resultLimit: 42 }"
         />
       </ClientOnly>
     </div>

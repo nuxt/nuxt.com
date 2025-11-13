@@ -173,22 +173,18 @@ const _useNavigation = () => {
   const { modules } = useModules()
   const { providers } = useHostingProviders()
 
-  const searchLinks = computed(() => [{
+  const searchLinks = computed(() => [!searchTerm.value && {
     label: 'Ask AI',
     icon: 'i-lucide-wand',
     to: 'javascript:void(0);',
     onSelect: () => nuxtApp.$kapa?.openModal()
-  }, ...headerLinks.value.map((link) => {
+  }, ...headerLinks.value.flatMap((link): any => {
     // Remove `/docs` and `/enterprise` links from command palette
     if (link.search === false) {
-      return {
-        label: link.label,
-        icon: link.icon,
-        children: link.children
-      }
+      return link.children
     }
-    return link
-  }).filter(Boolean), {
+    return [link]
+  }), {
     label: 'Team',
     icon: 'i-lucide-users',
     to: '/team'
@@ -200,7 +196,7 @@ const _useNavigation = () => {
     label: 'Newsletter',
     icon: 'i-lucide-mail',
     to: '/newsletter'
-  }])
+  }].filter(Boolean))
 
   const modulesItems = computed(() => modules.value.map(module => ({
     id: `module-${module.name}`,
