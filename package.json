@@ -22,7 +22,7 @@
     "@nuxt/content": "^3.7.1",
     "@nuxt/image": "https://pkg.pr.new/@nuxt/image@62998ab",
     "@nuxt/scripts": "^0.13.0",
-    "@nuxt/ui": "https://pkg.pr.new/@nuxt/ui@1caf2fa",
+    "@nuxt/ui": "https://pkg.pr.new/@nuxt/ui@afd73db",
     "@nuxthub/core": "0.9.0",
     "@nuxtjs/html-validator": "^2.1.0",
     "@nuxtjs/mdc": "^0.18.0",
