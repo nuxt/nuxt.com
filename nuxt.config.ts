@@ -216,7 +216,8 @@ export default defineNuxtConfig({
     '/docs/4.x/guide/directory-structure/tsconfig': { redirect: '/docs/4.x/directory-structure/tsconfig', prerender: false },
     // '/docs/guide/directory-structure/nuxt.config': { redirect: '/docs/guide/directory-structure/nuxt-config', prerender: false },
     '/enterprise': { redirect: '/enterprise/support', prerender: false },
-    '/support/us': { redirect: '/enterprise/sponsors', prerender: false }
+    '/support/us': { redirect: '/enterprise/sponsors', prerender: false },
+    '/docs/4.x/guide/ai': { redirect: '/docs/4.x/guide/ai/mcp', prerender: false }
   },
   sourcemap: true,
   experimental: {
