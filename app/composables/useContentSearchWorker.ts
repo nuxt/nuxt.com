@@ -1,31 +1,12 @@
 import type { Ref, ComputedRef } from 'vue'
 import type { ContentNavigationItem } from '@nuxt/content'
-import type { CommandPaletteGroup } from '@nuxt/ui'
+import type { ContentSearchFile, ContentSearchItem } from '@nuxt/ui'
 import { useWebWorkerFn, refDebounced } from '@vueuse/core'
-
-export interface ContentSearchFile {
-  id: string
-  title: string
-  titles: string[]
-  content: string
-  level: number
-}
-
-export interface ContentSearchItem {
-  prefix?: string
-  label?: string
-  suffix?: string
-  to?: string
-  icon?: string
-  level?: number
-  matches?: any[]
-  score?: number
-}
 
 export interface UseContentSearchWorkerOptions {
   /**
-   * Debounce delay in milliseconds
-   * @defaultValue 200
+   * Debounce delay in milliseconds (lower = faster, but more worker calls)
+   * @defaultValue 50
    */
   debounce?: number
   /**
@@ -35,7 +16,7 @@ export interface UseContentSearchWorkerOptions {
   threshold?: number
   /**
    * Maximum number of results to return per group (to optimize data transfer from worker)
-   * @defaultValue 100
+   * @defaultValue 42
    */
   resultLimit?: number
   /**
@@ -57,9 +38,9 @@ export function useContentSearchWorker(
   options: UseContentSearchWorkerOptions = {}
 ) {
   const {
-    debounce = 200,
-    threshold = 0.2,
-    resultLimit = 12,
+    debounce = 50,
+    threshold = 0.1,
+    resultLimit = 42,
     timeout = 10000,
     fuseKeys = ['label', 'suffix']
   } = options
@@ -72,18 +53,11 @@ export function useContentSearchWorker(
       return []
     }
 
-    if (navigation.value.some(link => !!link.children?.length)) {
-      return navigation.value.map(group => ({
-        id: group.path,
-        label: group.title,
-        items: mapNavigationItems(group.children || [], files.value)
-      }))
-    } else {
-      return [{
-        id: 'docs',
-        items: mapNavigationItems(navigation.value, files.value)
-      }]
-    }
+    return navigation.value?.[0]?.children?.map(group => ({
+      id: group.path,
+      label: group.title,
+      items: mapNavigationItems(group.children || [], files.value)
+    }))
   })
 
   // Create web worker function that handles Fuse search for each group
@@ -106,25 +80,32 @@ export function useContentSearchWorker(
         }))
       }
 
-      // Search each group's items with Fuse
-      return groups.map((group) => {
-        // @ts-expect-error - Fuse is loaded via importScripts
-        const fuse = new Fuse(group.items, {
-          threshold,
-          includeScore: true,
-          includeMatches: true,
-          ignoreLocation: true,
-          keys: fuseKeys
-        })
+      // Flatten all items from all groups for a single Fuse search
+      const allItems = groups.flatMap(group => group.items)
 
-        const results = fuse.search(query, { limit: resultLimit })
+      // Create one Fuse instance with all items (more efficient than per-group)
+      // @ts-expect-error - Fuse is loaded via importScripts
+      const fuse = new Fuse(allItems, {
+        threshold,
+        includeScore: true,
+        includeMatches: true,
+        ignoreLocation: true,
+        keys: fuseKeys
+      })
+
+      // Search once across all items
+      const searchResults = fuse.search(query, { limit: resultLimit })
+      const resultsWithMetadata = searchResults.map((result: any) => ({
+        ...result.item,
+        matches: result.matches,
+        score: result.score
+      }))
+
+      // Group results back by their original group
+      return groups.map((group) => {
         return {
           ...group,
-          items: results.map((result: any) => ({
-            ...result.item,
-            matches: result.matches,
-            score: result.score
-          }))
+          items: resultsWithMetadata.filter((item: any) => item.to?.startsWith(group.id))
         }
       })
     },
@@ -149,6 +130,11 @@ export function useContentSearchWorker(
         return
       }
 
+      // Skip if worker is already running (prevents the "only one instance" error)
+      if (workerStatus.value === 'RUNNING') {
+        return
+      }
+
       try {
         const results = await workerFn(
           groups as any,
@@ -169,11 +155,13 @@ export function useContentSearchWorker(
 
   // Create final groups with ignoreFilter and postFilter for CommandPalette
   const groups = computed(() => {
-    return searchedGroups.value.map(group => ({
-      ...group,
+    return searchedGroups.value.map((group: any) => ({
+      id: group.id,
+      label: group.label,
+      items: group.items,
       ignoreFilter: true,
       postFilter
-    })) as CommandPaletteGroup<any>[]
+    })) as any
   })
 
   // Cleanup on unmount
