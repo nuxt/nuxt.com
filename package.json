@@ -21,7 +21,7 @@
     "@iconify-json/simple-icons": "^1.2.56",
     "@libsql/client": "^0.15.15",
     "@modelcontextprotocol/sdk": "^1.21.1",
-    "@nuxt/content": "^3.8.0",
+    "@nuxt/content": "https://pkg.pr.new/@nuxt/content@3610",
     "@nuxt/image": "https://pkg.pr.new/@nuxt/image@62998ab",
     "@nuxt/scripts": "^0.13.0",
     "@nuxt/ui": "^4.1.0",

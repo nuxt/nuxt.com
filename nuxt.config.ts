@@ -234,7 +234,7 @@ export default defineNuxtConfig({
       vercel: '2025-07-14'
     },
     prerender: {
-      crawlLinks: true,
+      // crawlLinks: true,
       ignore: [
         route => route.startsWith('/modules'),
         route => route.startsWith('/admin')
