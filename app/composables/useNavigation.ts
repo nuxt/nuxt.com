@@ -173,7 +173,7 @@ const _useNavigation = () => {
   const { modules } = useModules()
   const { providers } = useHostingProviders()
 
-  const searchLinks = computed(() => [{
+  const searchLinks = computed(() => [!searchTerm.value && {
     label: 'Ask AI',
     icon: 'i-lucide-wand',
     to: 'javascript:void(0);',
@@ -200,7 +200,7 @@ const _useNavigation = () => {
     label: 'Newsletter',
     icon: 'i-lucide-mail',
     to: '/newsletter'
-  }])
+  }].filter(Boolean))
 
   const modulesItems = computed(() => modules.value.map(module => ({
     id: `module-${module.name}`,
