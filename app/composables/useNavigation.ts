@@ -178,17 +178,13 @@ const _useNavigation = () => {
     icon: 'i-lucide-wand',
     to: 'javascript:void(0);',
     onSelect: () => nuxtApp.$kapa?.openModal()
-  }, ...headerLinks.value.map((link) => {
+  }, ...headerLinks.value.flatMap((link): any => {
     // Remove `/docs` and `/enterprise` links from command palette
     if (link.search === false) {
-      return {
-        label: link.label,
-        icon: link.icon,
-        children: link.children
-      }
+      return link.children
     }
-    return link
-  }).filter(Boolean), {
+    return [link]
+  }), {
     label: 'Team',
     icon: 'i-lucide-users',
     to: '/team'
