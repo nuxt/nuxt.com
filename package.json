@@ -69,8 +69,7 @@
     "wrangler": "^4.45.0"
   },
   "resolutions": {
-    "chokidar": "3.6.0",
-    "unimport": "4.1.1"
+    "chokidar": "3.6.0"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
