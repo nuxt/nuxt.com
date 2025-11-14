@@ -84,7 +84,7 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     vercel: {
-      skewProtection: process.env.VERCEL_SKEW_PROTECTION_ENABLED === '1',
+      skewProtection: !!process.env.VERCEL_SKEW_PROTECTION_ENABLED,
       deploymentId: process.env.VERCEL_DEPLOYMENT_ID || ''
     }
   },

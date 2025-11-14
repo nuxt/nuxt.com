@@ -3,8 +3,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   if (!config.vercel.skewProtection) return
 
   const event = nuxtApp.ssrContext!.event
-  const secFetchDest = getRequestHeader(nuxtApp.ssrContext!.event, 'sec-fetch-dest')
-  if (secFetchDest === 'document') {
+  if (event.headers.get('sec-fetch-dest') === 'document') {
     setCookie(event, '__vdpl', config.vercel.deploymentId, { httpOnly: true })
   }
 })
