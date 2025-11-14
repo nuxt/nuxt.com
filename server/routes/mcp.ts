@@ -283,6 +283,43 @@ To find relevant migration guides, please:
     }
   )
 
+  server.registerTool(
+    'list_modules',
+    {
+      title: 'List Modules',
+      description: 'Lists all available Nuxt modules with optional filtering and sorting. Use this to search for modules by name, description, or category, and find the best module for your needs.',
+      inputSchema: {
+        search: z.string().optional().describe('Search term to filter modules by name, description, or npm package name'),
+        category: z.string().optional().describe('Filter modules by category (e.g., "ui", "database", "auth", "seo")'),
+        sort: z.enum(['downloads', 'stars', 'publishedAt', 'createdAt']).optional().default('downloads').describe('Sort modules by downloads, stars, published date, or created date'),
+        order: z.enum(['asc', 'desc']).optional().default('desc').describe('Sort order (ascending or descending)')
+      }
+    },
+    async (params) => {
+      const result = await $fetch('/api/mcp/list-modules', { query: params })
+      return {
+        content: [{ type: 'text', text: JSON.stringify(result, null, 2) }]
+      }
+    }
+  )
+
+  server.registerTool(
+    'get_module',
+    {
+      title: 'Get Module',
+      description: 'Retrieves detailed information about a specific Nuxt module by its slug/name. Use this after finding a module with list_modules to get complete details including maintainers, contributors, compatibility, and README.',
+      inputSchema: {
+        slug: z.string().describe('The module slug/name (e.g., "@nuxt/ui", "nuxt-auth", "nuxt-icon")')
+      }
+    },
+    async (params) => {
+      const result = await $fetch('/api/mcp/get-module', { query: params })
+      return {
+        content: [{ type: 'text', text: JSON.stringify(result, null, 2) }]
+      }
+    }
+  )
+
   return server
 }
 
