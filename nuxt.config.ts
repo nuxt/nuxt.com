@@ -1,3 +1,4 @@
+import process from 'node:process'
 import { createResolver } from 'nuxt/kit'
 import { parseMdc } from './helpers/mdc-parser.mjs'
 
@@ -79,6 +80,12 @@ export default defineNuxtConfig({
   ui: {
     theme: {
       colors: ['primary', 'secondary', 'info', 'success', 'warning', 'error', 'important']
+    }
+  },
+  runtimeConfig: {
+    vercel: {
+      skewProtection: process.env.VERCEL_SKEW_PROTECTION_ENABLED === '1',
+      deploymentId: process.env.VERCEL_DEPLOYMENT_ID || ''
     }
   },
   routeRules: {
