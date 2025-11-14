@@ -90,6 +90,9 @@
     ],
     "overrides": {
       "vite": "npm:rolldown-vite@latest"
+    },
+    "patchedDependencies": {
+      "nitropack": "patches/nitropack.patch"
     }
   }
 }
