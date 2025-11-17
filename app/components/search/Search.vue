@@ -19,33 +19,31 @@ const chat = ref(false)
 const fullscreen = ref(false)
 const messages = ref<UIMessage[]>([])
 
-const { searchLinks, searchTerm } = useNavigation()
+const { searchLinks, searchGroups, searchTerm } = useNavigation()
 
-const groups = computed(() => [{
-  id: 'ai',
-  label: 'Assistant',
-  ignoreFilter: true,
-  items: [{
-    label: 'Ask Nuxt AI',
-    icon: 'i-simple-icons-nuxtdotjs',
-    ui: {
-      itemLeadingIcon: 'group-data-highlighted:not-group-data-disabled:text-primary'
-    },
-    onSelect: (e: any) => {
-      e.preventDefault()
+const links = computed(() => [{
+  label: 'Ask Nuxt AI',
+  description: 'Ask the assistant about anything Nuxt related.',
+  icon: 'i-simple-icons-nuxtdotjs',
+  ui: {
+    itemLeadingIcon: 'group-data-highlighted:not-group-data-disabled:text-primary'
+  },
+  onSelect: (e: any) => {
+    e.preventDefault()
 
-      messages.value = searchTerm.value
-        ? [{
-            id: '1',
-            role: 'user',
-            parts: [{ type: 'text', text: searchTerm.value }]
-          }]
-        : []
+    messages.value = searchTerm.value
+      ? [{
+          id: '1',
+          role: 'user',
+          parts: [{ type: 'text', text: searchTerm.value }]
+        }]
+      : []
 
-      chat.value = true
-    }
-  }]
-}])
+    chat.value = true
+  }
+},
+...searchLinks.value
+])
 
 function onClose() {
   chat.value = false
@@ -56,12 +54,17 @@ function onClose() {
 <template>
   <UContentSearch
     v-model:search-term="searchTerm"
-    :links="searchLinks"
+    :links="links"
     :files="files"
-    :groups="groups"
+    :groups="searchGroups"
     :navigation="navigation"
     :fullscreen="fullscreen"
-    :fuse="{ resultLimit: 115 }"
+    :fuse="{
+      resultLimit: 42,
+      fuseOptions: {
+        threshold: 0
+      }
+    }"
   >
     <template v-if="chat" #content>
       <SearchChat v-model:messages="messages" v-model:fullscreen="fullscreen" @close="onClose" />

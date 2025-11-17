@@ -19,6 +19,7 @@ export const NUXT_UI_AGENT_CONFIG = {
 }
 
 export const NUXT_AGENT_CONFIG = {
+  mcpUrl: 'https://nuxt.com/mcp',
   expertise: `You are an agent specialized in the Nuxt framework (v3/v4) - the Vue meta-framework.
 
 **Scope:**

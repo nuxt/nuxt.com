@@ -1,3 +1,4 @@
+import type { CommandPaletteGroup } from '@nuxt/ui'
 import { createSharedComposable } from '@vueuse/core'
 
 function _useHeaderLinks() {
@@ -20,11 +21,17 @@ function _useHeaderLinks() {
         to: `${to}/getting-started/installation`,
         active: route.path.startsWith(`${to}/getting-started`)
       }, {
+        label: 'Structure',
+        description: 'Learn about the directory structure of a Nuxt project.',
+        icon: 'i-lucide-folder-open',
+        to: `${to}/directory-structure`,
+        active: route.path.startsWith(`${to}/directory-structure`)
+      }, {
         label: 'Guide',
         description: 'Get the key concepts, directory structure and best practices.',
         icon: 'i-lucide-book-open',
         to: `${to}/guide`,
-        active: route.path.startsWith(`${to}/guide`)
+        active: route.path.startsWith(`${to}/guide`) && !route.path.startsWith(`${to}/guide/directory-structure`)
       }, {
         label: 'API',
         description: 'Explore the Nuxt components, composables, utilities and more.',
@@ -162,6 +169,8 @@ const _useNavigation = () => {
 
   const { headerLinks } = useHeaderLinks()
   const { footerLinks } = useFooterLinks()
+  const { modules } = useModules()
+  const { providers } = useHostingProviders()
 
   const searchLinks = computed(() => [
     ...headerLinks.value.map((link) => {
@@ -188,11 +197,55 @@ const _useNavigation = () => {
       to: '/newsletter'
     }])
 
+  const modulesItems = computed(() => modules.value.map(module => ({
+    id: `module-${module.name}`,
+    label: module.npm,
+    suffix: module.description,
+    avatar: {
+      src: moduleImage(module.icon),
+      ui: {
+        root: 'rounded-none bg-transparent'
+      }
+    },
+    to: `/modules/${module.name}`,
+    // Store searchable fields for filtering
+    _searchFields: [module.name, module.npm, module.repo].filter(Boolean)
+  })))
+
+  const hostingItems = computed(() => providers.value.map(hosting => ({
+    id: `hosting-${hosting.path}`,
+    label: hosting.title,
+    suffix: hosting.description,
+    icon: hosting.logoIcon,
+    avatar: hosting.logoSrc
+      ? {
+          src: hosting.logoSrc,
+          ui: {
+            root: 'rounded-none bg-transparent'
+          }
+        }
+      : undefined,
+    to: hosting.path,
+    // Store searchable fields for filtering
+    _searchFields: [hosting.title].filter(Boolean)
+  })))
+
+  const searchGroups = computed<CommandPaletteGroup[]>(() => [{
+    id: 'modules-search',
+    label: 'Modules',
+    items: modulesItems.value
+  }, {
+    id: 'hosting-search',
+    label: 'Hosting',
+    items: hostingItems.value
+  }])
+
   return {
     searchTerm,
     headerLinks,
     footerLinks,
-    searchLinks
+    searchLinks,
+    searchGroups
   }
 }
 
