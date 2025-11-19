@@ -143,3 +143,12 @@ websites:
     url: https://www.promod.com/en/
     screenshotOptions:
       cookies: ['TC_PRIVACY=0%23006%7C3%7C485%231%2C2%2C3%234%231760984617135%2C1760984617135%2C1794680617135%23']
+  - name: Departamento
+    url: https://www.dpto.la/
+  - name: Hai
+    url: https://www.homeofhai.com/
+    delay: 5
+  - name: Shaina Mote
+    url: https://www.shainamote.com/
+    screenshotOptions:
+      hideElements: ['.cookie-policy', '.announcement-bar']
