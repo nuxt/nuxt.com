@@ -77,9 +77,7 @@ function createServer() {
       title: 'Find Documentation for Topic',
       description: 'Find the best Nuxt documentation for a specific topic or feature',
       argsSchema: {
-        // @ts-expect-error - need to wait for support for zod 4, this works correctly just a type mismatch from zod 3 to zod 4 (https://github.com/modelcontextprotocol/typescript-sdk/pull/1040)
         topic: z.string().describe('Describe what you want to learn about (e.g., "server-side rendering", "data fetching", "routing")'),
-        // @ts-expect-error - need to wait for support for zod 4, this works correctly just a type mismatch from zod 3 to zod 4 (https://github.com/modelcontextprotocol/typescript-sdk/pull/1040)
         version: z.enum(['3.x', '4.x']).optional().describe('Documentation version to search (defaults to 4.x)')
       }
     },
@@ -107,7 +105,6 @@ function createServer() {
       title: 'Deployment Guide',
       description: 'Get deployment instructions for a specific hosting provider',
       argsSchema: {
-        // @ts-expect-error - need to wait for support for zod 4, this works correctly just a type mismatch from zod 3 to zod 4 (https://github.com/modelcontextprotocol/typescript-sdk/pull/1040)
         provider: z.string().describe('Hosting provider name (e.g., "Vercel", "Netlify", "AWS", "Cloudflare")')
       }
     },
@@ -144,9 +141,7 @@ function createServer() {
       title: 'Migration Help',
       description: 'Get help with migrating between Nuxt versions',
       argsSchema: {
-        // @ts-expect-error - need to wait for support for zod 4, this works correctly just a type mismatch from zod 3 to zod 4 (https://github.com/modelcontextprotocol/typescript-sdk/pull/1040)
         fromVersion: z.string().describe('Current Nuxt version (e.g., "2", "3.x")'),
-        // @ts-expect-error - need to wait for support for zod 4, this works correctly just a type mismatch from zod 3 to zod 4 (https://github.com/modelcontextprotocol/typescript-sdk/pull/1040)
         toVersion: z.string().describe('Target Nuxt version (e.g., "3.x", "4.x")')
       }
     },
@@ -179,7 +174,6 @@ To find relevant migration guides, please:
       title: 'List Documentation Pages',
       description: 'Lists all available Nuxt documentation pages with their categories and basic information. Use this tool to find relevant pages by examining titles and descriptions, then use get_documentation_page to retrieve full content.',
       inputSchema: {
-        // @ts-expect-error - need to wait for support for zod 4, this works correctly just a type mismatch from zod 3 to zod 4 (https://github.com/modelcontextprotocol/typescript-sdk/pull/1040)
         version: z.enum(['3.x', '4.x', 'all']).optional().default('4.x').describe('Documentation version to fetch')
       }
     },
@@ -197,7 +191,6 @@ To find relevant migration guides, please:
       title: 'Get Documentation Page',
       description: 'Retrieves Nuxt documentation page content and details. Parameters: path (string, required) - the documentation path starting with /docs/.',
       inputSchema: {
-        // @ts-expect-error - need to wait for support for zod 4, this works correctly just a type mismatch from zod 3 to zod 4 (https://github.com/modelcontextprotocol/typescript-sdk/pull/1040)
         path: z.string().describe('The path to the documentation page (e.g., /docs/3.x/getting-started/introduction)')
       }
     },
@@ -230,7 +223,6 @@ To find relevant migration guides, please:
       title: 'Get Blog Post',
       description: 'Retrieves blog post content and details. Parameters: path (string, required) - the blog post path starting with /blog/.',
       inputSchema: {
-        // @ts-expect-error - need to wait for support for zod 4, this works correctly just a type mismatch from zod 3 to zod 4 (https://github.com/modelcontextprotocol/typescript-sdk/pull/1040)
         path: z.string().describe('The path to the blog post (e.g., /blog/v4)')
       }
     },
@@ -263,7 +255,6 @@ To find relevant migration guides, please:
       title: 'Get Deploy Provider',
       description: 'Retrieves deployment provider details and instructions. Parameters: path (string, required) - the deploy provider path starting with /deploy/.',
       inputSchema: {
-        // @ts-expect-error - need to wait for support for zod 4, this works correctly just a type mismatch from zod 3 to zod 4 (https://github.com/modelcontextprotocol/typescript-sdk/pull/1040)
         path: z.string().describe('The path to the deploy provider (e.g., /deploy/vercel)')
       }
     },
@@ -281,7 +272,6 @@ To find relevant migration guides, please:
       title: 'Get Getting Started Guide',
       description: 'Gets the getting started guide for Nuxt. Parameters: version (enum, optional) - Nuxt version.',
       inputSchema: {
-        // @ts-expect-error - need to wait for support for zod 4, this works correctly just a type mismatch from zod 3 to zod 4 (https://github.com/modelcontextprotocol/typescript-sdk/pull/1040)
         version: z.enum(['3.x', '4.x']).optional().default('4.x').describe('Nuxt version')
       }
     },
@@ -301,13 +291,9 @@ To find relevant migration guides, please:
       title: 'List Modules',
       description: 'Lists all available Nuxt modules with optional filtering and sorting. Use this to search for modules by name, description, or category, and find the best module for your needs.',
       inputSchema: {
-        // @ts-expect-error - need to wait for support for zod 4, this works correctly just a type mismatch from zod 3 to zod 4 (https://github.com/modelcontextprotocol/typescript-sdk/pull/1040)
         search: z.string().optional().describe('Search term to filter modules by name, description, or npm package name'),
-        // @ts-expect-error - need to wait for support for zod 4, this works correctly just a type mismatch from zod 3 to zod 4 (https://github.com/modelcontextprotocol/typescript-sdk/pull/1040)
         category: z.string().optional().describe('Filter modules by category (e.g., "ui", "database", "auth", "seo")'),
-        // @ts-expect-error - need to wait for support for zod 4, this works correctly just a type mismatch from zod 3 to zod 4 (https://github.com/modelcontextprotocol/typescript-sdk/pull/1040)
         sort: z.enum(['downloads', 'stars', 'publishedAt', 'createdAt']).optional().default('downloads').describe('Sort modules by downloads, stars, published date, or created date'),
-        // @ts-expect-error - need to wait for support for zod 4, this works correctly just a type mismatch from zod 3 to zod 4 (https://github.com/modelcontextprotocol/typescript-sdk/pull/1040)
         order: z.enum(['asc', 'desc']).optional().default('desc').describe('Sort order (ascending or descending)')
       }
     },
@@ -325,7 +311,6 @@ To find relevant migration guides, please:
       title: 'Get Module',
       description: 'Retrieves detailed information about a specific Nuxt module by its slug/name. Use this after finding a module with list_modules to get complete details including maintainers, contributors, compatibility, and README.',
       inputSchema: {
-        // @ts-expect-error - need to wait for support for zod 4, this works correctly just a type mismatch from zod 3 to zod 4 (https://github.com/modelcontextprotocol/typescript-sdk/pull/1040)
         slug: z.string().describe('The module slug/name (e.g., "@nuxt/ui", "nuxt-auth", "nuxt-icon")')
       }
     },
