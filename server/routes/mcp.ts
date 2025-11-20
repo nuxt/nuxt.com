@@ -76,9 +76,10 @@ function createServer() {
     {
       title: 'Find Documentation for Topic',
       description: 'Find the best Nuxt documentation for a specific topic or feature',
-      // @ts-expect-error - MCP SDK has overly strict Zod type constraints
       argsSchema: {
+        // @ts-expect-error - MCP SDK has overly strict Zod type constraints
         topic: z.string().describe('Describe what you want to learn about (e.g., "server-side rendering", "data fetching", "routing")'),
+        // @ts-expect-error - MCP SDK has overly strict Zod type constraints
         version: z.enum(['3.x', '4.x']).optional().describe('Documentation version to search (defaults to 4.x)')
       }
     },
@@ -105,15 +106,15 @@ function createServer() {
     {
       title: 'Deployment Guide',
       description: 'Get deployment instructions for a specific hosting provider',
-      // @ts-expect-error - MCP SDK has overly strict Zod type constraints
       argsSchema: {
+        // @ts-expect-error - MCP SDK has overly strict Zod type constraints
         provider: z.string().describe('Hosting provider name (e.g., "Vercel", "Netlify", "AWS", "Cloudflare")')
       }
     },
     async ({ provider }) => {
       const deployProviders = await $fetch('/api/mcp/list-deploy-providers')
       const matchingProvider = deployProviders.find(p =>
-        p.title.toLowerCase().includes(provider.toLowerCase())
+        p.title.toLowerCase().includes(provider!.toLowerCase())
       )
 
       let providerDetails = null
@@ -142,9 +143,10 @@ function createServer() {
     {
       title: 'Migration Help',
       description: 'Get help with migrating between Nuxt versions',
-      // @ts-expect-error - MCP SDK has overly strict Zod type constraints
       argsSchema: {
+        // @ts-expect-error - MCP SDK has overly strict Zod type constraints
         fromVersion: z.string().describe('Current Nuxt version (e.g., "2", "3.x")'),
+        // @ts-expect-error - MCP SDK has overly strict Zod type constraints
         toVersion: z.string().describe('Target Nuxt version (e.g., "3.x", "4.x")')
       }
     },
@@ -182,8 +184,8 @@ WHEN TO USE: Use this tool when you need to EXPLORE or SEARCH for documentation 
 WHEN NOT TO USE: If you already know the specific page path (e.g., "/docs/4.x/getting-started/introduction"), use get_documentation_page directly instead.
 
 WORKFLOW: This tool returns page titles, descriptions, and paths. After finding relevant pages, use get_documentation_page to retrieve the full content.`,
-      // @ts-expect-error - MCP SDK has overly strict Zod type constraints
       inputSchema: {
+        // @ts-expect-error - MCP SDK has overly strict Zod type constraints
         version: z.enum(['3.x', '4.x', 'all']).optional().default('4.x').describe('Documentation version to fetch')
       }
     },
@@ -227,8 +229,8 @@ Directory Structure:
 Common Issues:
 - "/docs/4.x/guide/going-further/debugging" - debugging
 - "/docs/4.x/guide/going-further/error-handling" - errors`,
-      // @ts-expect-error - MCP SDK has overly strict Zod type constraints
       inputSchema: {
+        // @ts-expect-error - MCP SDK has overly strict Zod type constraints
         path: z.string().describe('The path to the documentation page (e.g., /docs/4.x/getting-started/introduction)')
       }
     },
@@ -278,8 +280,8 @@ WHEN TO USE: Use this tool when you know the EXACT path to a blog post. Common s
 WHEN NOT TO USE: If you don't know the exact path and need to search/discover, use list_blog_posts first.
 
 EXAMPLES: "/blog/v4", "/blog/nuxt3", "/blog/nuxt-on-the-edge"`,
-      // @ts-expect-error - MCP SDK has overly strict Zod type constraints
       inputSchema: {
+        // @ts-expect-error - MCP SDK has overly strict Zod type constraints
         path: z.string().describe('The path to the blog post (e.g., /blog/v4)')
       }
     },
@@ -329,8 +331,8 @@ WHEN TO USE: Use this tool when you know EXACTLY which provider the user wants. 
 WHEN NOT TO USE: If the user is asking about options or comparing providers, use list_deploy_providers first.
 
 EXAMPLES: "/deploy/vercel", "/deploy/cloudflare", "/deploy/netlify", "/deploy/aws", "/deploy/node-server"`,
-      // @ts-expect-error - MCP SDK has overly strict Zod type constraints
       inputSchema: {
+        // @ts-expect-error - MCP SDK has overly strict Zod type constraints
         path: z.string().describe('The path to the deploy provider (e.g., /deploy/vercel)')
       }
     },
@@ -347,8 +349,8 @@ EXAMPLES: "/deploy/vercel", "/deploy/cloudflare", "/deploy/netlify", "/deploy/aw
     {
       title: 'Get Getting Started Guide',
       description: 'Gets the getting started guide for Nuxt. Parameters: version (enum, optional) - Nuxt version.',
-      // @ts-expect-error - MCP SDK has overly strict Zod type constraints
       inputSchema: {
+        // @ts-expect-error - MCP SDK has overly strict Zod type constraints
         version: z.enum(['3.x', '4.x']).optional().default('4.x').describe('Nuxt version')
       }
     },
@@ -383,11 +385,14 @@ PARAMETERS:
 WHEN NOT TO USE: If you already know the exact module slug (e.g., "@nuxt/ui"), use get_module directly.
 
 OUTPUT: Returns list of modules with name, description, category, stats. Use get_module for complete details including README and compatibility.`,
-      // @ts-expect-error - MCP SDK has overly strict Zod type constraints
       inputSchema: {
+        // @ts-expect-error - MCP SDK has overly strict Zod type constraints
         search: z.string().optional().describe('Search term to filter modules by name, description, or npm package name'),
+        // @ts-expect-error - MCP SDK has overly strict Zod type constraints
         category: z.string().optional().describe('Filter modules by category (e.g., "ui", "database", "auth", "seo")'),
+        // @ts-expect-error - MCP SDK has overly strict Zod type constraints
         sort: z.enum(['downloads', 'stars', 'publishedAt', 'createdAt']).optional().default('downloads').describe('Sort modules by downloads, stars, published date, or created date'),
+        // @ts-expect-error - MCP SDK has overly strict Zod type constraints
         order: z.enum(['asc', 'desc']).optional().default('desc').describe('Sort order (ascending or descending)')
       }
     },
@@ -420,8 +425,8 @@ EXAMPLES:
 - slug: "nuxt-icon"
 - slug: "@nuxt/image"
 - slug: "nuxt-auth"`,
-      // @ts-expect-error - MCP SDK has overly strict Zod type constraints
       inputSchema: {
+        // @ts-expect-error - MCP SDK has overly strict Zod type constraints
         slug: z.string().describe('The unique module identifier, exactly as shown in list_modules (e.g., "@nuxt/ui", "@nuxtjs/i18n", "nuxt-icon")')
       }
     },

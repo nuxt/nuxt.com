@@ -29,9 +29,7 @@ export default defineNuxtConfig({
     image: {
       alias: {
         '/gh/': 'https://raw.githubusercontent.com',
-        '/gh_avatar/': 'https://avatars.githubusercontent.com',
-        '/nuxt/': 'https://nuxt.com',
-        '/': 'https://nuxt.com'
+        '/gh_avatar/': 'https://avatars.githubusercontent.com'
       },
       domains: [
         'raw.githubusercontent.com',

@@ -11,7 +11,7 @@
     "typecheck": "nuxt typecheck",
     "test": "pnpm lint && pnpm typecheck",
     "eval": "evalite",
-    "eval:ui": "evalite --ui",
+    "eval:ui": "evalite serve",
     "db:generate": "nuxt hub database generate",
     "db:migrate": "nuxt hub database migrate"
   },
