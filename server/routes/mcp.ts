@@ -111,7 +111,7 @@ function createServer() {
         provider: z.string().describe('Hosting provider name (e.g., "Vercel", "Netlify", "AWS", "Cloudflare")')
       }
     },
-    async ({ provider }) => {
+    async ({ provider }: { provider: string }) => {
       const deployProviders = await $fetch('/api/mcp/list-deploy-providers')
       const matchingProvider = deployProviders.find(p =>
         p.title.toLowerCase().includes(provider!.toLowerCase())
@@ -157,7 +157,7 @@ function createServer() {
             role: 'user',
             content: {
               type: 'text',
-              text: `Help me migrate my Nuxt application from version ${fromVersion} to ${toVersion}. 
+              text: `Help me migrate my Nuxt application from version ${fromVersion} to ${toVersion}.
 
 To find relevant migration guides, please:
 1. Use list_documentation_pages to find pages related to migration from ${fromVersion} to ${toVersion}
