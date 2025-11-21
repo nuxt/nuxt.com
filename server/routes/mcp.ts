@@ -108,7 +108,7 @@ function createServer() {
         provider: z.string().describe('Hosting provider name (e.g., "Vercel", "Netlify", "AWS", "Cloudflare")')
       }
     },
-    async ({ provider }) => {
+    async ({ provider }: { provider: string }) => {
       const deployProviders = await $fetch('/api/mcp/list-deploy-providers')
       const matchingProvider = deployProviders.find(p =>
         p.title.toLowerCase().includes(provider.toLowerCase())
@@ -152,7 +152,7 @@ function createServer() {
             role: 'user',
             content: {
               type: 'text',
-              text: `Help me migrate my Nuxt application from version ${fromVersion} to ${toVersion}. 
+              text: `Help me migrate my Nuxt application from version ${fromVersion} to ${toVersion}.
 
 To find relevant migration guides, please:
 1. Use list_documentation_pages to find pages related to migration from ${fromVersion} to ${toVersion}
@@ -177,7 +177,7 @@ To find relevant migration guides, please:
         version: z.enum(['3.x', '4.x', 'all']).optional().default('4.x').describe('Documentation version to fetch')
       }
     },
-    async (params) => {
+    async (params: { version?: '3.x' | '4.x' | 'all' }) => {
       const result = await $fetch('/api/mcp/list-documentation-pages', { query: params })
       return {
         content: [{ type: 'text', text: JSON.stringify(result, null, 2) }]
@@ -194,7 +194,7 @@ To find relevant migration guides, please:
         path: z.string().describe('The path to the documentation page (e.g., /docs/3.x/getting-started/introduction)')
       }
     },
-    async (params) => {
+    async (params: { path: string }) => {
       const result = await $fetch('/api/mcp/get-documentation-page', { query: params })
       return {
         content: [{ type: 'text', text: JSON.stringify(result, null, 2) }]
@@ -206,7 +206,8 @@ To find relevant migration guides, please:
     'list_blog_posts',
     {
       title: 'List Blog Posts',
-      description: 'Lists all Nuxt blog posts with metadata including dates, categories, and tags.'
+      description: 'Lists all Nuxt blog posts with metadata including dates, categories, and tags.',
+      inputSchema: {}
     },
     async () => {
       const result = await $fetch('/api/mcp/list-blog-posts')
@@ -225,7 +226,7 @@ To find relevant migration guides, please:
         path: z.string().describe('The path to the blog post (e.g., /blog/v4)')
       }
     },
-    async (params) => {
+    async (params: { path: string }) => {
       const result = await $fetch('/api/mcp/get-blog-post', { query: params })
       return {
         content: [{ type: 'text', text: JSON.stringify(result, null, 2) }]
@@ -237,7 +238,8 @@ To find relevant migration guides, please:
     'list_deploy_providers',
     {
       title: 'List Deploy Providers',
-      description: 'Lists all deployment providers and hosting platforms for Nuxt applications.'
+      description: 'Lists all deployment providers and hosting platforms for Nuxt applications.',
+      inputSchema: {}
     },
     async () => {
       const result = await $fetch('/api/mcp/list-deploy-providers')
@@ -256,7 +258,7 @@ To find relevant migration guides, please:
         path: z.string().describe('The path to the deploy provider (e.g., /deploy/vercel)')
       }
     },
-    async (params) => {
+    async (params: { path: string }) => {
       const result = await $fetch('/api/mcp/get-deploy-provider', { query: params })
       return {
         content: [{ type: 'text', text: JSON.stringify(result, null, 2) }]
@@ -273,7 +275,7 @@ To find relevant migration guides, please:
         version: z.enum(['3.x', '4.x']).optional().default('4.x').describe('Nuxt version')
       }
     },
-    async ({ version }) => {
+    async ({ version }: { version?: '3.x' | '4.x' }) => {
       const gettingStarted = await $fetch('/api/mcp/get-documentation-page', {
         query: { path: `/docs/${version}/getting-started/introduction` }
       })
@@ -295,7 +297,7 @@ To find relevant migration guides, please:
         order: z.enum(['asc', 'desc']).optional().default('desc').describe('Sort order (ascending or descending)')
       }
     },
-    async (params) => {
+    async (params: { search?: string, category?: string, sort?: 'downloads' | 'stars' | 'publishedAt' | 'createdAt', order?: 'asc' | 'desc' }) => {
       const result = await $fetch('/api/mcp/list-modules', { query: params })
       return {
         content: [{ type: 'text', text: JSON.stringify(result, null, 2) }]
@@ -312,7 +314,7 @@ To find relevant migration guides, please:
         slug: z.string().describe('The module slug/name (e.g., "@nuxt/ui", "nuxt-auth", "nuxt-icon")')
       }
     },
-    async (params) => {
+    async (params: { slug: string }) => {
       const result = await $fetch('/api/mcp/get-module', { query: params })
       return {
         content: [{ type: 'text', text: JSON.stringify(result, null, 2) }]
