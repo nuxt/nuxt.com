@@ -4,6 +4,7 @@ type ModuleStatsKeys = 'version' | 'downloads' | 'stars' | 'publishedAt' | 'crea
 
 const iconsMap = {
   Official: 'i-lucide-medal',
+  AI: 'i-lucide-brain',
   Analytics: 'i-lucide-bar-chart',
   CMS: 'i-lucide-pencil',
   CSS: 'i-lucide-palette',
