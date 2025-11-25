@@ -129,6 +129,12 @@ websites:
     delay: 5
     screenshotOptions:
       cookies: ['OptanonAlertBoxClosed=2025-05-02T22:04:35.770Z']
+  - name: The North Face
+    url: https://www.thenorthface.com
+    delay: 5
+    hideElements: ['.cms-promo-bar-1']
+    screenshotOptions:
+      cookies: ['OptanonAlertBoxClosed=2025-05-02T22:04:35.770Z']
   - name: Timberland
     url: https://www.timberland.com
     delay: 5
