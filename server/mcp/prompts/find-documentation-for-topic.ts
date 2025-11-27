@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { queryCollection } from '@nuxt/content/server'
 
 export default defineMcpPrompt({
   description: 'Find the best Nuxt documentation for a specific topic or feature',
@@ -7,9 +8,21 @@ export default defineMcpPrompt({
     version: z.enum(['3.x', '4.x']).optional().describe('Documentation version to search (defaults to 4.x)')
   },
   async handler({ topic, version = '4.x' }) {
-    const allPages = await $fetch('/api/mcp/list-documentation-pages', {
-      query: { version }
-    })
+    const event = useEvent()
+    const docsVersion = version === '4.x' ? 'docsv4' : 'docsv3'
+
+    const allDocs = await queryCollection(event, docsVersion)
+      .select('title', 'path', 'description')
+      .all()
+
+    const allPages = allDocs?.map(doc => ({
+      title: doc.title,
+      path: doc.path,
+      description: doc.description,
+      version,
+      url: `https://nuxt.com${doc.path}`
+    })) || []
+
     return {
       messages: [
         {

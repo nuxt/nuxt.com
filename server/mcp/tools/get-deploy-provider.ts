@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { queryCollection } from '@nuxt/content/server'
 
 export default defineMcpTool({
   description: `Retrieves detailed deployment instructions and setup guide for a specific hosting provider.
@@ -14,8 +15,36 @@ EXAMPLES: "/deploy/vercel", "/deploy/cloudflare", "/deploy/netlify", "/deploy/aw
   inputSchema: {
     path: z.string().describe('The path to the deploy provider (e.g., /deploy/vercel)')
   },
+  cache: '1h',
   async handler({ path }) {
-    const result = await $fetch('/api/mcp/get-deploy-provider', { query: { path } })
+    const event = useEvent()
+
+    const provider = await queryCollection(event, 'deploy')
+      .where('path', '=', path)
+      .select('title', 'path', 'description', 'body', 'logoSrc', 'logoIcon', 'category', 'nitroPreset', 'website', 'sponsor')
+      .first()
+
+    if (!provider) {
+      return {
+        content: [{ type: 'text' as const, text: 'Deploy provider not found' }],
+        isError: true
+      }
+    }
+
+    const result = {
+      title: provider.title,
+      path: provider.path,
+      description: provider.description,
+      content: provider.body,
+      logoSrc: provider.logoSrc,
+      logoIcon: provider.logoIcon,
+      category: provider.category,
+      nitroPreset: provider.nitroPreset,
+      website: provider.website,
+      sponsor: provider.sponsor,
+      url: `https://nuxt.com${provider.path}`
+    }
+
     return {
       content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }]
     }

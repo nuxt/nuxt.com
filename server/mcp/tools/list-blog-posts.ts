@@ -1,3 +1,5 @@
+import { queryCollection } from '@nuxt/content/server'
+
 export default defineMcpTool({
   description: `Lists all Nuxt blog posts with metadata including titles, dates, categories, tags, and descriptions.
 
@@ -10,8 +12,33 @@ WHEN TO USE: Use this tool when you need to DISCOVER or SEARCH for blog posts. C
 WHEN NOT TO USE: If you already know the exact blog post path (e.g., "/blog/v4"), use get_blog_post directly.
 
 OUTPUT: Returns list of posts with title, description, date, path. Use get_blog_post to retrieve full content of specific posts.`,
+  cache: '1h',
   async handler() {
-    const result = await $fetch('/api/mcp/list-blog-posts')
+    const event = useEvent()
+
+    const blogPosts = await queryCollection(event, 'blog')
+      .select('title', 'path', 'description', 'date', 'category', 'tags', 'authors', 'image')
+      .all()
+
+    if (!blogPosts) {
+      return {
+        content: [{ type: 'text' as const, text: 'Blog posts collection not found' }],
+        isError: true
+      }
+    }
+
+    const result = blogPosts.map(post => ({
+      title: post.title,
+      path: post.path,
+      description: post.description,
+      date: post.date,
+      category: post.category,
+      tags: post.tags,
+      authors: post.authors,
+      image: post.image,
+      url: `https://nuxt.com${post.path}`
+    }))
+
     return {
       content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }]
     }

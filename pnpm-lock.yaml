@@ -55,8 +55,8 @@ importers:
         specifier: ^2.1.0
         version: 2.1.0(magicast@0.5.1)(vitest@4.0.13(@opentelemetry/api@1.9.0)(@types/debug@4.1.12)(@types/node@24.10.1)(esbuild@0.25.12)(jiti@2.6.1)(terser@5.44.1)(yaml@2.8.1))
       '@nuxtjs/mcp-toolkit':
-        specifier: ^0.2.0
-        version: 0.2.0(magicast@0.5.1)(zod@4.1.13)
+        specifier: ^0.4.1
+        version: 0.4.1(magicast@0.5.1)(zod@4.1.13)
       '@nuxtjs/mdc':
         specifier: ^0.18.4
         version: 0.18.4(magicast@0.5.1)
@@ -1963,8 +1963,8 @@ packages:
   '@nuxtjs/html-validator@2.1.0':
     resolution: {integrity: sha512-ldo8ioSsH3OEumtgwDMokTxlhjgO9FxjJWViAxisq5l/wjvaVX8SYTQ02wjtQcQQPSvS6BwgypAp400RlyFHng==}
 
-  '@nuxtjs/mcp-toolkit@0.2.0':
-    resolution: {integrity: sha512-7BBS6IiibSkzCdW5QgLLpETuiyGdzhWXKCJHvRwSMpu4aNYm0dghSt7z5Ahao3xWPpHlmWHajBzQYbfiZZCiZQ==}
+  '@nuxtjs/mcp-toolkit@0.4.1':
+    resolution: {integrity: sha512-vT4B1ujtoIMkkkJ0WufM5ccZ1A+dfVOqNDrJT4ZT5KExHiogWjq5C1nrm58PI0+Fwo004f5tWxBE2B8Mo17xsA==}
     peerDependencies:
       zod: ^4.1.13
 
@@ -11234,7 +11234,7 @@ snapshots:
       - magicast
       - vitest
 
-  '@nuxtjs/mcp-toolkit@0.2.0(magicast@0.5.1)(zod@4.1.13)':
+  '@nuxtjs/mcp-toolkit@0.4.1(magicast@0.5.1)(zod@4.1.13)':
     dependencies:
       '@clack/prompts': 0.11.0
       '@modelcontextprotocol/sdk': 1.23.0(zod@4.1.13)
@@ -11242,6 +11242,7 @@ snapshots:
       automd: 0.4.2(magicast@0.5.1)
       chokidar: 3.6.0
       defu: 6.1.4
+      ms: 2.1.3
       pathe: 2.0.3
       scule: 1.3.0
       tinyglobby: 0.2.15

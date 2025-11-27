@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { queryCollection } from '@nuxt/content/server'
 
 export default defineMcpTool({
   description: `Retrieves the full content and details of a specific Nuxt blog post.
@@ -14,8 +15,35 @@ EXAMPLES: "/blog/v4", "/blog/nuxt3", "/blog/nuxt-on-the-edge"`,
   inputSchema: {
     path: z.string().describe('The path to the blog post (e.g., /blog/v4)')
   },
+  cache: '1h',
   async handler({ path }) {
-    const result = await $fetch('/api/mcp/get-blog-post', { query: { path } })
+    const event = useEvent()
+
+    const post = await queryCollection(event, 'blog')
+      .where('path', '=', path)
+      .select('title', 'path', 'description', 'body', 'date', 'category', 'tags', 'authors', 'image')
+      .first()
+
+    if (!post) {
+      return {
+        content: [{ type: 'text' as const, text: 'Blog post not found' }],
+        isError: true
+      }
+    }
+
+    const result = {
+      title: post.title,
+      path: post.path,
+      description: post.description,
+      content: post.body,
+      date: post.date,
+      category: post.category,
+      tags: post.tags,
+      authors: post.authors,
+      image: post.image,
+      url: `https://nuxt.com${post.path}`
+    }
+
     return {
       content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }]
     }
