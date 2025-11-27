@@ -27,7 +27,7 @@ EXAMPLES:
     try {
       const module = await $fetch<Module>(`https://api.nuxt.com/modules/${slug}`)
 
-      const result = {
+      return jsonResult({
         name: module.name,
         description: module.description,
         npm: module.npm,
@@ -45,16 +45,9 @@ EXAMPLES:
         contributors: module.contributors,
         readme: module.readme,
         url: `https://nuxt.com/modules/${module.name}`
-      }
-
-      return {
-        content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }]
-      }
+      })
     } catch (error: any) {
-      return {
-        content: [{ type: 'text' as const, text: error.statusMessage || 'Module not found' }],
-        isError: true
-      }
+      return errorResult(error.statusMessage || 'Module not found')
     }
   }
 })

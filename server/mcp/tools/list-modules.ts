@@ -80,7 +80,7 @@ OUTPUT: Returns list of modules with name, description, category, stats. Use get
       }
     })
 
-    const result = {
+    return jsonResult({
       modules: modules.map(module => ({
         name: module.name,
         description: module.description,
@@ -100,10 +100,6 @@ OUTPUT: Returns list of modules with name, description, category, stats. Use get
       })),
       stats: response.stats,
       total: modules.length
-    }
-
-    return {
-      content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }]
-    }
+    })
   }
 })

@@ -25,13 +25,10 @@ EXAMPLES: "/deploy/vercel", "/deploy/cloudflare", "/deploy/netlify", "/deploy/aw
       .first()
 
     if (!provider) {
-      return {
-        content: [{ type: 'text' as const, text: 'Deploy provider not found' }],
-        isError: true
-      }
+      return errorResult('Deploy provider not found')
     }
 
-    const result = {
+    return jsonResult({
       title: provider.title,
       path: provider.path,
       description: provider.description,
@@ -43,10 +40,6 @@ EXAMPLES: "/deploy/vercel", "/deploy/cloudflare", "/deploy/netlify", "/deploy/aw
       website: provider.website,
       sponsor: provider.sponsor,
       url: `https://nuxt.com${provider.path}`
-    }
-
-    return {
-      content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }]
-    }
+    })
   }
 })

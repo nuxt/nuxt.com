@@ -25,13 +25,10 @@ EXAMPLES: "/blog/v4", "/blog/nuxt3", "/blog/nuxt-on-the-edge"`,
       .first()
 
     if (!post) {
-      return {
-        content: [{ type: 'text' as const, text: 'Blog post not found' }],
-        isError: true
-      }
+      return errorResult('Blog post not found')
     }
 
-    const result = {
+    return jsonResult({
       title: post.title,
       path: post.path,
       description: post.description,
@@ -42,10 +39,6 @@ EXAMPLES: "/blog/v4", "/blog/nuxt3", "/blog/nuxt-on-the-edge"`,
       authors: post.authors,
       image: post.image,
       url: `https://nuxt.com${post.path}`
-    }
-
-    return {
-      content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }]
-    }
+    })
   }
 })

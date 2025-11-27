@@ -18,13 +18,10 @@ export default defineMcpTool({
       .first()
 
     if (!page) {
-      return {
-        content: [{ type: 'text' as const, text: 'Getting started guide not found' }],
-        isError: true
-      }
+      return errorResult('Getting started guide not found')
     }
 
-    const result = {
+    return jsonResult({
       title: page.title,
       path: page.path,
       description: page.description,
@@ -32,10 +29,6 @@ export default defineMcpTool({
       version: version,
       links: page.links,
       url: `https://nuxt.com${page.path}`
-    }
-
-    return {
-      content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }]
-    }
+    })
   }
 })

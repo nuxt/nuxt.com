@@ -44,13 +44,10 @@ Common Issues:
       .first()
 
     if (!page) {
-      return {
-        content: [{ type: 'text' as const, text: 'Documentation page not found' }],
-        isError: true
-      }
+      return errorResult('Documentation page not found')
     }
 
-    const result = {
+    return jsonResult({
       title: page.title,
       path: page.path,
       description: page.description,
@@ -58,10 +55,6 @@ Common Issues:
       version: page.path.includes('/docs/4.x') ? '4.x' : '3.x',
       links: page.links,
       url: `https://nuxt.com${page.path}`
-    }
-
-    return {
-      content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }]
-    }
+    })
   }
 })

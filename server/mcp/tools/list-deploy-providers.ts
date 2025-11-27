@@ -21,13 +21,10 @@ OUTPUT: Returns list of providers with titles, descriptions, and paths. Use get_
       .all()
 
     if (!deployProviders) {
-      return {
-        content: [{ type: 'text' as const, text: 'Deploy providers collection not found' }],
-        isError: true
-      }
+      return errorResult('Deploy providers collection not found')
     }
 
-    const result = deployProviders.map(provider => ({
+    return jsonResult(deployProviders.map(provider => ({
       title: provider.title,
       name: provider.title,
       path: provider.path,
@@ -39,10 +36,6 @@ OUTPUT: Returns list of providers with titles, descriptions, and paths. Use get_
       website: provider.website,
       sponsor: provider.sponsor,
       url: `https://nuxt.com${provider.path}`
-    }))
-
-    return {
-      content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }]
-    }
+    })))
   }
 })

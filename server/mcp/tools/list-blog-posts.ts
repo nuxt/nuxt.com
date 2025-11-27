@@ -21,13 +21,10 @@ OUTPUT: Returns list of posts with title, description, date, path. Use get_blog_
       .all()
 
     if (!blogPosts) {
-      return {
-        content: [{ type: 'text' as const, text: 'Blog posts collection not found' }],
-        isError: true
-      }
+      return errorResult('Blog posts collection not found')
     }
 
-    const result = blogPosts.map(post => ({
+    return jsonResult(blogPosts.map(post => ({
       title: post.title,
       path: post.path,
       description: post.description,
@@ -37,10 +34,6 @@ OUTPUT: Returns list of posts with title, description, date, path. Use get_blog_
       authors: post.authors,
       image: post.image,
       url: `https://nuxt.com${post.path}`
-    }))
-
-    return {
-      content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }]
-    }
+    })))
   }
 })
