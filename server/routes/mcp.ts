@@ -77,7 +77,9 @@ function createServer() {
       title: 'Find Documentation for Topic',
       description: 'Find the best Nuxt documentation for a specific topic or feature',
       argsSchema: {
+        // @ts-expect-error - MCP SDK has overly strict Zod type constraints
         topic: z.string().describe('Describe what you want to learn about (e.g., "server-side rendering", "data fetching", "routing")'),
+        // @ts-expect-error - MCP SDK has overly strict Zod type constraints
         version: z.enum(['3.x', '4.x']).optional().describe('Documentation version to search (defaults to 4.x)')
       }
     },
@@ -105,13 +107,14 @@ function createServer() {
       title: 'Deployment Guide',
       description: 'Get deployment instructions for a specific hosting provider',
       argsSchema: {
+        // @ts-expect-error - MCP SDK has overly strict Zod type constraints
         provider: z.string().describe('Hosting provider name (e.g., "Vercel", "Netlify", "AWS", "Cloudflare")')
       }
     },
     async ({ provider }: { provider: string }) => {
       const deployProviders = await $fetch('/api/mcp/list-deploy-providers')
       const matchingProvider = deployProviders.find(p =>
-        p.title.toLowerCase().includes(provider.toLowerCase())
+        p.title.toLowerCase().includes(provider!.toLowerCase())
       )
 
       let providerDetails = null
@@ -141,7 +144,9 @@ function createServer() {
       title: 'Migration Help',
       description: 'Get help with migrating between Nuxt versions',
       argsSchema: {
+        // @ts-expect-error - MCP SDK has overly strict Zod type constraints
         fromVersion: z.string().describe('Current Nuxt version (e.g., "2", "3.x")'),
+        // @ts-expect-error - MCP SDK has overly strict Zod type constraints
         toVersion: z.string().describe('Target Nuxt version (e.g., "3.x", "4.x")')
       }
     },
@@ -172,15 +177,22 @@ To find relevant migration guides, please:
     'list_documentation_pages',
     {
       title: 'List Documentation Pages',
-      description: 'Lists all available Nuxt documentation pages with their categories and basic information. Use this tool to find relevant pages by examining titles and descriptions, then use get_documentation_page to retrieve full content.',
+      description: `Lists all available Nuxt documentation pages with their categories and basic information.
+
+WHEN TO USE: Use this tool when you need to EXPLORE or SEARCH for documentation about a topic but don't know the exact page path. For example: "Find documentation about hydration errors", "What pages cover rendering modes?", "Search for migration guides".
+
+WHEN NOT TO USE: If you already know the specific page path (e.g., "/docs/4.x/getting-started/introduction"), use get_documentation_page directly instead.
+
+WORKFLOW: This tool returns page titles, descriptions, and paths. After finding relevant pages, use get_documentation_page to retrieve the full content.`,
       inputSchema: {
+        // @ts-expect-error - MCP SDK has overly strict Zod type constraints
         version: z.enum(['3.x', '4.x', 'all']).optional().default('4.x').describe('Documentation version to fetch')
       }
     },
-    async (params: { version?: '3.x' | '4.x' | 'all' }) => {
+    async (params: any) => {
       const result = await $fetch('/api/mcp/list-documentation-pages', { query: params })
       return {
-        content: [{ type: 'text', text: JSON.stringify(result, null, 2) }]
+        content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }]
       }
     }
   )
@@ -189,15 +201,43 @@ To find relevant migration guides, please:
     'get_documentation_page',
     {
       title: 'Get Documentation Page',
-      description: 'Retrieves Nuxt documentation page content and details. Parameters: path (string, required) - the documentation path starting with /docs/.',
+      description: `Retrieves the full content and details of a specific Nuxt documentation page.
+
+WHEN TO USE: Use this tool when you know the EXACT path to a documentation page. Common use cases:
+- User asks for a specific page: "Show me the introduction page" → /docs/4.x/getting-started/introduction
+- User asks about a known topic with a dedicated page
+- You found a relevant path from list_documentation_pages and want the full content
+
+WHEN NOT TO USE: If you don't know the exact path and need to search/explore, use list_documentation_pages first.
+
+COMMON PAGES (Nuxt 4.x):
+Getting Started:
+- "/docs/4.x/getting-started/introduction" - main intro
+- "/docs/4.x/getting-started/installation" - setup
+- "/docs/4.x/getting-started/upgrade" - migration from v3
+
+Core Concepts:
+- "/docs/4.x/guide/concepts/rendering" - SSR/CSR/SSG modes
+- "/docs/4.x/guide/concepts/auto-imports" - auto-imports
+- "/docs/4.x/guide/concepts/server-engine" - server features
+
+Directory Structure:
+- "/docs/4.x/guide/directory-structure/composables" - composables
+- "/docs/4.x/guide/directory-structure/components" - components
+- "/docs/4.x/guide/directory-structure/pages" - routing
+
+Common Issues:
+- "/docs/4.x/guide/going-further/debugging" - debugging
+- "/docs/4.x/guide/going-further/error-handling" - errors`,
       inputSchema: {
-        path: z.string().describe('The path to the documentation page (e.g., /docs/3.x/getting-started/introduction)')
+        // @ts-expect-error - MCP SDK has overly strict Zod type constraints
+        path: z.string().describe('The path to the documentation page (e.g., /docs/4.x/getting-started/introduction)')
       }
     },
-    async (params: { path: string }) => {
+    async (params: any) => {
       const result = await $fetch('/api/mcp/get-documentation-page', { query: params })
       return {
-        content: [{ type: 'text', text: JSON.stringify(result, null, 2) }]
+        content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }]
       }
     }
   )
@@ -206,13 +246,22 @@ To find relevant migration guides, please:
     'list_blog_posts',
     {
       title: 'List Blog Posts',
-      description: 'Lists all Nuxt blog posts with metadata including dates, categories, and tags.',
-      inputSchema: {}
+      description: `Lists all Nuxt blog posts with metadata including titles, dates, categories, tags, and descriptions.
+
+WHEN TO USE: Use this tool when you need to DISCOVER or SEARCH for blog posts. Common scenarios:
+- "What are the latest announcements?" - browse recent posts
+- "Has there been any post about X feature?" - search by topic
+- "Show me performance improvements" - find relevant posts by topic
+- "What's new in Nuxt?" - explore recent updates
+
+WHEN NOT TO USE: If you already know the exact blog post path (e.g., "/blog/v4"), use get_blog_post directly.
+
+OUTPUT: Returns list of posts with title, description, date, path. Use get_blog_post to retrieve full content of specific posts.`
     },
-    async () => {
+    async (_args: any, _extra: any) => {
       const result = await $fetch('/api/mcp/list-blog-posts')
       return {
-        content: [{ type: 'text', text: JSON.stringify(result, null, 2) }]
+        content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }]
       }
     }
   )
@@ -221,15 +270,25 @@ To find relevant migration guides, please:
     'get_blog_post',
     {
       title: 'Get Blog Post',
-      description: 'Retrieves blog post content and details. Parameters: path (string, required) - the blog post path starting with /blog/.',
+      description: `Retrieves the full content and details of a specific Nuxt blog post.
+
+WHEN TO USE: Use this tool when you know the EXACT path to a blog post. Common scenarios:
+- User asks for a specific post: "Get the blog post about Nuxt 4" → /blog/v4
+- You found a relevant post from list_blog_posts and want the full content
+- You know the post slug from context
+
+WHEN NOT TO USE: If you don't know the exact path and need to search/discover, use list_blog_posts first.
+
+EXAMPLES: "/blog/v4", "/blog/nuxt3", "/blog/nuxt-on-the-edge"`,
       inputSchema: {
+        // @ts-expect-error - MCP SDK has overly strict Zod type constraints
         path: z.string().describe('The path to the blog post (e.g., /blog/v4)')
       }
     },
-    async (params: { path: string }) => {
+    async (params: any) => {
       const result = await $fetch('/api/mcp/get-blog-post', { query: params })
       return {
-        content: [{ type: 'text', text: JSON.stringify(result, null, 2) }]
+        content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }]
       }
     }
   )
@@ -238,13 +297,22 @@ To find relevant migration guides, please:
     'list_deploy_providers',
     {
       title: 'List Deploy Providers',
-      description: 'Lists all deployment providers and hosting platforms for Nuxt applications.',
-      inputSchema: {}
+      description: `Lists all deployment providers and hosting platforms for Nuxt applications with their features and capabilities.
+
+WHEN TO USE: Use this tool when you need to DISCOVER or COMPARE deployment options. Common scenarios:
+- "What deployment platforms are available?" - browse all options
+- "I need edge functions support" - compare features across providers
+- "Show me platforms with free tiers" - search for specific features
+- "What are my deployment options?" - general exploration
+
+WHEN NOT TO USE: If you know the exact provider (e.g., "Vercel", "Cloudflare"), you can use get_deploy_provider directly with the path.
+
+OUTPUT: Returns list of providers with titles, descriptions, and paths. Use get_deploy_provider for detailed deployment instructions.`
     },
-    async () => {
+    async (_args: any, _extra: any) => {
       const result = await $fetch('/api/mcp/list-deploy-providers')
       return {
-        content: [{ type: 'text', text: JSON.stringify(result, null, 2) }]
+        content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }]
       }
     }
   )
@@ -253,15 +321,25 @@ To find relevant migration guides, please:
     'get_deploy_provider',
     {
       title: 'Get Deploy Provider',
-      description: 'Retrieves deployment provider details and instructions. Parameters: path (string, required) - the deploy provider path starting with /deploy/.',
+      description: `Retrieves detailed deployment instructions and setup guide for a specific hosting provider.
+
+WHEN TO USE: Use this tool when you know EXACTLY which provider the user wants. Common scenarios:
+- User asks for a specific provider: "How do I deploy to Vercel?" → /deploy/vercel
+- User mentions a known platform: "Cloudflare deployment" → /deploy/cloudflare
+- You found a relevant provider from list_deploy_providers and want full details
+
+WHEN NOT TO USE: If the user is asking about options or comparing providers, use list_deploy_providers first.
+
+EXAMPLES: "/deploy/vercel", "/deploy/cloudflare", "/deploy/netlify", "/deploy/aws", "/deploy/node-server"`,
       inputSchema: {
+        // @ts-expect-error - MCP SDK has overly strict Zod type constraints
         path: z.string().describe('The path to the deploy provider (e.g., /deploy/vercel)')
       }
     },
-    async (params: { path: string }) => {
+    async (params: any) => {
       const result = await $fetch('/api/mcp/get-deploy-provider', { query: params })
       return {
-        content: [{ type: 'text', text: JSON.stringify(result, null, 2) }]
+        content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }]
       }
     }
   )
@@ -272,15 +350,16 @@ To find relevant migration guides, please:
       title: 'Get Getting Started Guide',
       description: 'Gets the getting started guide for Nuxt. Parameters: version (enum, optional) - Nuxt version.',
       inputSchema: {
+        // @ts-expect-error - MCP SDK has overly strict Zod type constraints
         version: z.enum(['3.x', '4.x']).optional().default('4.x').describe('Nuxt version')
       }
     },
-    async ({ version }: { version?: '3.x' | '4.x' }) => {
+    async ({ version }: any) => {
       const gettingStarted = await $fetch('/api/mcp/get-documentation-page', {
         query: { path: `/docs/${version}/getting-started/introduction` }
       })
       return {
-        content: [{ type: 'text', text: JSON.stringify(gettingStarted, null, 2) }]
+        content: [{ type: 'text' as const, text: JSON.stringify(gettingStarted, null, 2) }]
       }
     }
   )
@@ -289,18 +368,38 @@ To find relevant migration guides, please:
     'list_modules',
     {
       title: 'List Modules',
-      description: 'Lists all available Nuxt modules with optional filtering and sorting. Use this to search for modules by name, description, or category, and find the best module for your needs.',
+      description: `Lists all available Nuxt modules with optional filtering and sorting capabilities.
+
+WHEN TO USE: Use this tool when you need to DISCOVER or SEARCH for modules. Common scenarios:
+- "I need an authentication module" - search by category or keyword
+- "What UI libraries are available?" - filter by category
+- "Show me popular image optimization modules" - filter + sort by downloads
+- "Find a module for X feature" - general exploration
+
+PARAMETERS:
+- search: Filter by name, description, or npm package name
+- category: Filter by category (e.g., "ui", "auth", "database", "media", "seo")
+- sort: Order by downloads, stars, publishedAt, or createdAt
+- order: asc or desc
+
+WHEN NOT TO USE: If you already know the exact module slug (e.g., "@nuxt/ui"), use get_module directly.
+
+OUTPUT: Returns list of modules with name, description, category, stats. Use get_module for complete details including README and compatibility.`,
       inputSchema: {
+        // @ts-expect-error - MCP SDK has overly strict Zod type constraints
         search: z.string().optional().describe('Search term to filter modules by name, description, or npm package name'),
+        // @ts-expect-error - MCP SDK has overly strict Zod type constraints
         category: z.string().optional().describe('Filter modules by category (e.g., "ui", "database", "auth", "seo")'),
+        // @ts-expect-error - MCP SDK has overly strict Zod type constraints
         sort: z.enum(['downloads', 'stars', 'publishedAt', 'createdAt']).optional().default('downloads').describe('Sort modules by downloads, stars, published date, or created date'),
+        // @ts-expect-error - MCP SDK has overly strict Zod type constraints
         order: z.enum(['asc', 'desc']).optional().default('desc').describe('Sort order (ascending or descending)')
       }
     },
-    async (params: { search?: string, category?: string, sort?: 'downloads' | 'stars' | 'publishedAt' | 'createdAt', order?: 'asc' | 'desc' }) => {
+    async (params: any) => {
       const result = await $fetch('/api/mcp/list-modules', { query: params })
       return {
-        content: [{ type: 'text', text: JSON.stringify(result, null, 2) }]
+        content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }]
       }
     }
   )
@@ -309,15 +408,32 @@ To find relevant migration guides, please:
     'get_module',
     {
       title: 'Get Module',
-      description: 'Retrieves detailed information about a specific Nuxt module by its slug/name. Use this after finding a module with list_modules to get complete details including maintainers, contributors, compatibility, and README.',
+      description: `Retrieves complete details about a specific Nuxt module including README, compatibility, maintainers, and stats.
+
+WHEN TO USE: Use this tool when you know the EXACT module identifier. Common scenarios:
+- User asks for a specific module: "Get details about @nuxt/ui"
+- User mentions a known module: "Show me nuxt-icon module"
+- You found a relevant module from list_modules and want full details
+- You need to check Nuxt 4 compatibility for a specific module
+
+WHEN NOT TO USE: If you don't know the exact module identifier and need to search/discover modules, use list_modules first.
+
+PARAMETER: slug (required) - The unique module identifier
+EXAMPLES:
+- slug: "@nuxt/ui"
+- slug: "@nuxtjs/i18n"
+- slug: "nuxt-icon"
+- slug: "@nuxt/image"
+- slug: "nuxt-auth"`,
       inputSchema: {
-        slug: z.string().describe('The module slug/name (e.g., "@nuxt/ui", "nuxt-auth", "nuxt-icon")')
+        // @ts-expect-error - MCP SDK has overly strict Zod type constraints
+        slug: z.string().describe('The unique module identifier, exactly as shown in list_modules (e.g., "@nuxt/ui", "@nuxtjs/i18n", "nuxt-icon")')
       }
     },
-    async (params: { slug: string }) => {
+    async (params: any) => {
       const result = await $fetch('/api/mcp/get-module', { query: params })
       return {
-        content: [{ type: 'text', text: JSON.stringify(result, null, 2) }]
+        content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }]
       }
     }
   )

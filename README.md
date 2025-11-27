@@ -65,6 +65,34 @@ Build the application for production:
 pnpm generate
 ```
 
+### Running Evals for the MCP Server
+
+To run the evals for the MCP server, follow these steps:
+
+1. **Ensure your development server is running**  
+   Start the local Nuxt development server:
+   ```bash
+   pnpm dev
+   ```
+
+2. **Create an AI Gateway API key**  
+   Go to https://vercel.com/ai-gateway and create an API key.
+   Add the following variable to your `.env` file (replace `sk-...` with your actual key):
+   ```
+   AI_GATEWAY_API_KEY=<you-api-key>
+   ```
+
+3. **Run the evals**  
+   You can execute the evals from the command line:
+   ```bash
+   pnpm eval
+   ```
+
+   Or launch the interactive UI to run them via a web interface:
+   ```bash
+   pnpm eval:ui
+   ```
+
 ## License
 
 [MIT License](./LICENSE)
