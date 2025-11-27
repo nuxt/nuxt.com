@@ -151,6 +151,17 @@ defineOgImageComponent('Module', {
           </NuxtLink>
         </UTooltip>
 
+        <template v-if="module.compatibility?.nuxt">
+          <span class="hidden lg:block text-muted">&bull;</span>
+
+          <UTooltip text="Module Compatibility">
+            <div class="flex items-center gap-1 5">
+              <UIcon name="i-simple-icons-nuxtdotjs" class="size-5 shrink-0"></UIcon>
+              <span class="text-sm font-medium">{{ module.compatibility.nuxt }}</span>
+            </div>
+          </UTooltip>
+        </template>
+
         <div class="mx-3 h-6 border-l border-gray-200 dark:border-gray-800 w-px hidden lg:block" />
 
         <div v-for="(maintainer, index) in module.maintainers" :key="maintainer.github" class="flex items-center gap-3">
