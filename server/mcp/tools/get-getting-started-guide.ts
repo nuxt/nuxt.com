@@ -1,12 +1,11 @@
-import { z } from 'zod/v3'
+import { z } from 'zod'
 
 export default defineMcpTool({
   description: 'Gets the getting started guide for Nuxt. Parameters: version (enum, optional) - Nuxt version.',
   inputSchema: {
-    // @ts-expect-error - MCP SDK has overly strict Zod type constraints
     version: z.enum(['3.x', '4.x']).optional().default('4.x').describe('Nuxt version')
   },
-  async handler({ version }: any) {
+  async handler({ version }) {
     const gettingStarted = await $fetch('/api/mcp/get-documentation-page', {
       query: { path: `/docs/${version}/getting-started/introduction` }
     })

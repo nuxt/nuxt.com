@@ -1,14 +1,12 @@
-import { z } from 'zod/v3'
+import { z } from 'zod'
 
 export default defineMcpPrompt({
   description: 'Find the best Nuxt documentation for a specific topic or feature',
   inputSchema: {
-    // @ts-expect-error - MCP SDK has overly strict Zod type constraints
     topic: z.string().describe('Describe what you want to learn about (e.g., "server-side rendering", "data fetching", "routing")'),
-    // @ts-expect-error - MCP SDK has overly strict Zod type constraints
     version: z.enum(['3.x', '4.x']).optional().describe('Documentation version to search (defaults to 4.x)')
   },
-  async handler({ topic, version = '4.x' }: any) {
+  async handler({ topic, version = '4.x' }) {
     const allPages = await $fetch('/api/mcp/list-documentation-pages', {
       query: { version }
     })

@@ -1,8 +1,6 @@
 export default defineMcpResource({
   uri: 'resource://nuxt-com/blog-posts',
-  metadata: {
-    description: 'Complete list of Nuxt blog posts including releases, tutorials, and announcements'
-  },
+  description: 'Complete list of Nuxt blog posts including releases, tutorials, and announcements',
   async handler(uri: any) {
     const result = await $fetch('/api/mcp/list-blog-posts')
     return {

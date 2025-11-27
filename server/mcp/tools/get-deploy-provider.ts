@@ -1,4 +1,4 @@
-import { z } from 'zod/v3'
+import { z } from 'zod'
 
 export default defineMcpTool({
   description: `Retrieves detailed deployment instructions and setup guide for a specific hosting provider.
@@ -12,11 +12,10 @@ WHEN NOT TO USE: If the user is asking about options or comparing providers, use
 
 EXAMPLES: "/deploy/vercel", "/deploy/cloudflare", "/deploy/netlify", "/deploy/aws", "/deploy/node-server"`,
   inputSchema: {
-    // @ts-expect-error - MCP SDK has overly strict Zod type constraints
     path: z.string().describe('The path to the deploy provider (e.g., /deploy/vercel)')
   },
-  async handler(params: any) {
-    const result = await $fetch('/api/mcp/get-deploy-provider', { query: params })
+  async handler({ path }) {
+    const result = await $fetch('/api/mcp/get-deploy-provider', { query: { path } })
     return {
       content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }]
     }

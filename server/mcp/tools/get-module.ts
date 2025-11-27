@@ -1,4 +1,4 @@
-import { z } from 'zod/v3'
+import { z } from 'zod'
 
 export default defineMcpTool({
   description: `Retrieves complete details about a specific Nuxt module including README, compatibility, maintainers, and stats.
@@ -19,11 +19,10 @@ EXAMPLES:
 - slug: "@nuxt/image"
 - slug: "nuxt-auth"`,
   inputSchema: {
-    // @ts-expect-error - MCP SDK has overly strict Zod type constraints
     slug: z.string().describe('The unique module identifier, exactly as shown in list_modules (e.g., "@nuxt/ui", "@nuxtjs/i18n", "nuxt-icon")')
   },
-  async handler(params: any) {
-    const result = await $fetch('/api/mcp/get-module', { query: params })
+  async handler({ slug }) {
+    const result = await $fetch('/api/mcp/get-module', { query: { slug } })
     return {
       content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }]
     }

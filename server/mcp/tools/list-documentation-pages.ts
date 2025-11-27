@@ -1,4 +1,4 @@
-import { z } from 'zod/v3'
+import { z } from 'zod'
 
 export default defineMcpTool({
   description: `Lists all available Nuxt documentation pages with their categories and basic information.
@@ -9,11 +9,10 @@ WHEN NOT TO USE: If you already know the specific page path (e.g., "/docs/4.x/ge
 
 WORKFLOW: This tool returns page titles, descriptions, and paths. After finding relevant pages, use get_documentation_page to retrieve the full content.`,
   inputSchema: {
-    // @ts-expect-error - MCP SDK has overly strict Zod type constraints
     version: z.enum(['3.x', '4.x', 'all']).optional().default('4.x').describe('Documentation version to fetch')
   },
-  async handler(params: any) {
-    const result = await $fetch('/api/mcp/list-documentation-pages', { query: params })
+  async handler({ version }) {
+    const result = await $fetch('/api/mcp/list-documentation-pages', { query: { version } })
     return {
       content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }]
     }

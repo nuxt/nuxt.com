@@ -1,4 +1,4 @@
-import { z } from 'zod/v3'
+import { z } from 'zod'
 
 export default defineMcpTool({
   description: `Retrieves the full content and details of a specific Nuxt documentation page.
@@ -30,11 +30,10 @@ Common Issues:
 - "/docs/4.x/guide/going-further/debugging" - debugging
 - "/docs/4.x/guide/going-further/error-handling" - errors`,
   inputSchema: {
-    // @ts-expect-error - MCP SDK has overly strict Zod type constraints
     path: z.string().describe('The path to the documentation page (e.g., /docs/4.x/getting-started/introduction)')
   },
-  async handler(params: any) {
-    const result = await $fetch('/api/mcp/get-documentation-page', { query: params })
+  async handler({ path }) {
+    const result = await $fetch('/api/mcp/get-documentation-page', { query: { path } })
     return {
       content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }]
     }

@@ -1,12 +1,11 @@
-import { z } from 'zod/v3'
+import { z } from 'zod'
 
 export default defineMcpPrompt({
   description: 'Get deployment instructions for a specific hosting provider',
   inputSchema: {
-    // @ts-expect-error - MCP SDK has overly strict Zod type constraints
     provider: z.string().describe('Hosting provider name (e.g., "Vercel", "Netlify", "AWS", "Cloudflare")')
   },
-  async handler({ provider }: { provider: string }) {
+  async handler({ provider }) {
     const deployProviders = await $fetch<Array<{ title: string, path: string }>>('/api/mcp/list-deploy-providers')
     const matchingProvider = deployProviders.find(p =>
       p.title.toLowerCase().includes(provider.toLowerCase())

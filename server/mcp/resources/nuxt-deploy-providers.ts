@@ -1,8 +1,6 @@
 export default defineMcpResource({
   uri: 'resource://nuxt-com/deploy-providers',
-  metadata: {
-    description: 'Complete list of deployment providers and hosting platforms for Nuxt applications'
-  },
+  description: 'Complete list of deployment providers and hosting platforms for Nuxt applications',
   async handler(uri: any) {
     const result = await $fetch('/api/mcp/list-deploy-providers')
     return {

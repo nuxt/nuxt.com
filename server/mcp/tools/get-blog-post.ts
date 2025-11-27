@@ -1,4 +1,4 @@
-import { z } from 'zod/v3'
+import { z } from 'zod'
 
 export default defineMcpTool({
   description: `Retrieves the full content and details of a specific Nuxt blog post.
@@ -12,11 +12,10 @@ WHEN NOT TO USE: If you don't know the exact path and need to search/discover, u
 
 EXAMPLES: "/blog/v4", "/blog/nuxt3", "/blog/nuxt-on-the-edge"`,
   inputSchema: {
-    // @ts-expect-error - MCP SDK has overly strict Zod type constraints
     path: z.string().describe('The path to the blog post (e.g., /blog/v4)')
   },
-  async handler(params: any) {
-    const result = await $fetch('/api/mcp/get-blog-post', { query: params })
+  async handler({ path }) {
+    const result = await $fetch('/api/mcp/get-blog-post', { query: { path } })
     return {
       content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }]
     }

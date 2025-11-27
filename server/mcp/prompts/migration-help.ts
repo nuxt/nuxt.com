@@ -1,14 +1,12 @@
-import { z } from 'zod/v3'
+import { z } from 'zod'
 
 export default defineMcpPrompt({
   description: 'Get help with migrating between Nuxt versions',
   inputSchema: {
-    // @ts-expect-error - MCP SDK has overly strict Zod type constraints
     fromVersion: z.string().describe('Current Nuxt version (e.g., "2", "3.x")'),
-    // @ts-expect-error - MCP SDK has overly strict Zod type constraints
     toVersion: z.string().describe('Target Nuxt version (e.g., "3.x", "4.x")')
   },
-  async handler({ fromVersion, toVersion }: any) {
+  async handler({ fromVersion, toVersion }) {
     return {
       messages: [
         {
