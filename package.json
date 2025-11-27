@@ -53,7 +53,7 @@
     "sitemap": "^9.0.0",
     "std-env": "^3.10.0",
     "ufo": "^1.6.1",
-    "valibot": "1.1.0"
+    "valibot": "1.2.0"
   },
   "devDependencies": {
     "@ai-sdk/mcp": "^0.0.8",
