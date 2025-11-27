@@ -75,11 +75,11 @@ To run the evals for the MCP server, follow these steps:
    pnpm dev
    ```
 
-2. **Set your OpenAI API key**  
-   Make sure you have a valid OpenAI API key.  
+2. **Create an AI Gateway API key**  
+   Go to https://vercel.com/ai-gateway and create an API key.
    Add the following variable to your `.env` file (replace `sk-...` with your actual key):
    ```
-   OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+   AI_GATEWAY_API_KEY=<you-api-key>
    ```
 
 3. **Run the evals**  

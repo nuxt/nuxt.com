@@ -1,8 +1,6 @@
 import { experimental_createMCPClient as createMCPClient } from '@ai-sdk/mcp'
-import { openai } from '@ai-sdk/openai'
 import { generateText } from 'ai'
 import { evalite } from 'evalite'
-import { wrapAISDKModel } from 'evalite/ai-sdk'
 import { toolCallAccuracy } from 'evalite/scorers'
 
 /**
@@ -16,9 +14,8 @@ import { toolCallAccuracy } from 'evalite/scorers'
  *
  * Related: https://ai-sdk.dev/docs/reference/ai-sdk-core/create-mcp-client
  */
-
+const model = 'openai/gpt-5.1-codex-mini'
 const MCP_URL = process.env.MCP_URL ?? 'http://localhost:3000/mcp'
-const model = wrapAISDKModel(openai('gpt-5.1-codex-mini'))
 
 evalite('Evaluate Nuxt MCP Documentation Tools', {
   data: async () => [
@@ -43,7 +40,11 @@ evalite('Evaluate Nuxt MCP Documentation Tools', {
   task: async (input) => {
     const mcpClient = await createMCPClient({ transport: { type: 'http', url: MCP_URL } })
     try {
-      const result = await generateText({ model, prompt: input, tools: await mcpClient.tools() })
+      const result = await generateText({
+        model,
+        prompt: input,
+        tools: await mcpClient.tools()
+      })
       return result.toolCalls ?? []
     } finally {
       await mcpClient.close()
@@ -62,7 +63,11 @@ evalite('Evaluate Nuxt MCP Blog Tools', {
   task: async (input) => {
     const mcpClient = await createMCPClient({ transport: { type: 'http', url: MCP_URL } })
     try {
-      const result = await generateText({ model, prompt: input, tools: await mcpClient.tools() })
+      const result = await generateText({
+        model,
+        prompt: input,
+        tools: await mcpClient.tools()
+      })
       return result.toolCalls ?? []
     } finally {
       await mcpClient.close()
@@ -82,7 +87,11 @@ evalite('Evaluate Nuxt MCP Deploy Tools', {
   task: async (input) => {
     const mcpClient = await createMCPClient({ transport: { type: 'http', url: MCP_URL } })
     try {
-      const result = await generateText({ model, prompt: input, tools: await mcpClient.tools() })
+      const result = await generateText({
+        model,
+        prompt: input,
+        tools: await mcpClient.tools()
+      })
       return result.toolCalls ?? []
     } finally {
       await mcpClient.close()
