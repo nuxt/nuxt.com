@@ -20,7 +20,8 @@ export default defineNuxtConfig({
     'nuxt-llms',
     '@nuxthub/core',
     'nuxt-charts',
-    'nuxt-auth-utils'
+    'nuxt-auth-utils',
+    '@nuxtjs/mcp-toolkit'
   ],
   $development: {
     site: {
@@ -307,6 +308,11 @@ export default defineNuxtConfig({
       title: 'Nuxt Docs',
       description: 'The complete Nuxt documentation and blog posts written in Markdown (MDC syntax).'
     }
+  },
+  mcp: {
+    name: 'Nuxt',
+    route: '/mcp',
+    browserRedirect: '/docs/guide/ai/mcp'
   },
   turnstile: {
     siteKey: '0x4AAAAAAAP2vNBsTBT3ucZi'
