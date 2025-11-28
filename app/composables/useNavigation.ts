@@ -200,6 +200,11 @@ const _useNavigation = () => {
     label: 'Newsletter',
     icon: 'i-lucide-mail',
     to: '/newsletter'
+  }, {
+    label: 'Source Code',
+    icon: 'i-lucide-code',
+    to: 'https://github.com/nuxt/nuxt.com',
+    target: '_blank'
   }])
 
   const modulesItems = computed(() => modules.value.map(module => ({
