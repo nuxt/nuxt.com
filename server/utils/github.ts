@@ -57,7 +57,7 @@ export const github = {
 
       if (!res) {
         // try token-less request
-        res = await $fetch<GitHubRepositoryResponse>(`https://api.github.com/repos/${owner}/${name}`, { headers })
+        res = await $fetch<GitHubRepositoryResponse>(`https://api.github.com/repos/${owner}/${name}`, { headers: githubHeaders(event, { Authorization: '' }) })
       }
 
       return {
