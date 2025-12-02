@@ -16,7 +16,7 @@ export default eventHandler(async (event) => {
   }
 
   // Validate confirmation code
-  if (generateConfirmation(email) !== confirmation) {
+  if (generateConfirmation(event, email) !== confirmation) {
     throw createError({
       statusCode: 400,
       message: 'Confirmation code is invalid.'
