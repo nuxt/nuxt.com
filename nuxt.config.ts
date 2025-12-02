@@ -83,6 +83,19 @@ export default defineNuxtConfig({
       componentDetection: true
     }
   },
+  runtimeConfig: {
+    contactEmail: '',
+    openCollective: {
+      apiKey: ''
+    },
+    sendgrid: {
+      listId: '',
+      apiKey: ''
+    },
+    volta: {
+      token: ''
+    }
+  },
   routeRules: {
     // Pre-render
     '/': { prerender: true },

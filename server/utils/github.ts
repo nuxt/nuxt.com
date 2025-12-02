@@ -1,6 +1,9 @@
+import type { H3Event } from 'h3'
+
 export const github = {
-  async fetchRepo(owner: string, name: string) {
-    if (!process.env.NUXT_GITHUB_TOKEN) {
+  async fetchRepo(event: H3Event, owner: string, name: string) {
+    const token = useRuntimeConfig(event).github.token
+    if (!token) {
       throw createError({
         statusCode: 500,
         message: 'Missing NUXT_GITHUB_TOKEN env variable'
@@ -10,7 +13,7 @@ export const github = {
       headers: {
         'Accept': 'application/vnd.github.v3+json',
         'User-Agent': 'nuxt-api',
-        'Authorization': `token ${process.env.NUXT_GITHUB_TOKEN}`
+        'Authorization': `token ${token}`
       }
     })
       .then((res: any) => {
@@ -31,7 +34,7 @@ export const github = {
       .catch((err) => {
         console.error(`Cannot fetch github repo API info for ${owner}/${name}: ${err}`)
         // Cannot call Github API, fallback to UnGH
-        return $fetch<any>(`https://ungh.cc/repos/${owner}/${name}`)
+        return $fetch<{ repo: { stars: number, watchers: number, forks: number, defaultBranch: string } }>(`https://ungh.cc/repos/${owner}/${name}`)
           .then(res => res.repo)
           .catch((err) => {
             console.error(`Cannot fetch UnGH repo info for ${owner}/${name}: ${err}`)
@@ -44,8 +47,9 @@ export const github = {
           })
       })
   },
-  async fetchTeam(org: string, teamName: string) {
-    if (!process.env.NUXT_GITHUB_TOKEN) {
+  async fetchTeam(event: H3Event, org: string, teamName: string) {
+    const token = useRuntimeConfig(event).github.token
+    if (!token) {
       throw createError({
         statusCode: 500,
         message: 'Missing NUXT_GITHUB_TOKEN env variable'
@@ -57,7 +61,7 @@ export const github = {
       headers: {
         'Accept': 'application/vnd.github.v3+json',
         'User-Agent': 'nuxt-api',
-        'Authorization': `token ${process.env.NUXT_GITHUB_TOKEN}`
+        'Authorization': `token ${token}`
       },
       body: {
         query: `

@@ -24,11 +24,12 @@ export default defineEventHandler(async (event: H3Event) => {
     email: 'experts@nuxt.com',
     name: 'Nuxt Experts'
   }
-  if (import.meta.dev && process.env.NUXT_CONTACT_EMAIL) {
-    to.email = process.env.NUXT_CONTACT_EMAIL
+  const config = useRuntimeConfig(event)
+  if (import.meta.dev && config.contactEmail) {
+    to.email = config.contactEmail
   }
 
-  await sendgrid.sendEmail({
+  await sendgrid.sendEmail(event, {
     personalizations: [{
       to: [to],
       dynamic_template_data: { email, name, company, body }

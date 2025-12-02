@@ -7,7 +7,7 @@ export default eventHandler(async (event) => {
     confirmation: z.string()
   }).parse)
 
-  const listId = process.env.NUXT_SENDGRID_LIST_ID
+  const listId = useRuntimeConfig(event).sendgrid.listId
   if (!listId) {
     throw createError({
       statusCode: 500,
@@ -24,7 +24,7 @@ export default eventHandler(async (event) => {
   }
 
   // Add to contacts list
-  await sendgrid.addContactToList(email, listId).catch((err: any) => {
+  await sendgrid.addContactToList(event, email, listId).catch((err: any) => {
     throw createError({
       message: err?.response?.body?.errors?.[0]?.message || 'Invalid email',
       statusCode: 400

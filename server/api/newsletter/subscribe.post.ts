@@ -7,7 +7,7 @@ export default eventHandler(async (event) => {
     email: z.string().email().trim()
   }).parse)
 
-  const listId = process.env.NUXT_SENDGRID_LIST_ID
+  const listId = useRuntimeConfig(event).sendgrid.listId
   if (!listId) {
     throw createError({
       statusCode: 500,
@@ -16,7 +16,7 @@ export default eventHandler(async (event) => {
   }
 
   // Check if already in contact list
-  await sendgrid.searchContact(email)
+  await sendgrid.searchContact(event, email)
     .catch((err) => {
       if (err.statusCode !== 404) {
         throw createError({
@@ -33,7 +33,7 @@ export default eventHandler(async (event) => {
       }
     })
   // Add to global contacts first
-  await sendgrid.addContact(email)
+  await sendgrid.addContact(event, email)
     .catch((err) => {
       throw createError({
         message: err?.data?.errors?.[0]?.message || 'The email is invalid.',
@@ -45,7 +45,7 @@ export default eventHandler(async (event) => {
   const confirmation = generateConfirmation(email)
   const confirmationURL = withQuery(withTrailingSlash(getHeader(event, 'origin') || 'https://nuxt.com'), { email, confirmation })
 
-  await sendgrid.sendEmail({
+  await sendgrid.sendEmail(event, {
     personalizations: [
       {
         to: [{ email }]

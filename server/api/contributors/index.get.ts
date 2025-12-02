@@ -1,4 +1,4 @@
-import type { VoltaContributor } from '~/server/utils/volta'
+import type { VoltaContributor } from '../../utils/volta'
 
 const BOTS = ['codecov-io', 'codecov-commenter']
 const RENAMED_CONTRIBUTORS: Record<string, string> = {
@@ -7,7 +7,8 @@ const RENAMED_CONTRIBUTORS: Record<string, string> = {
 }
 
 export default cachedEventHandler(async (event) => {
-  if (!process.env.NUXT_VOLTA_TOKEN) {
+  const config = useRuntimeConfig(event)
+  if (!config.volta.token) {
     throw createError({
       statusCode: 500,
       message: 'Missing NUXT_VOLTA_TOKEN in env variables'
@@ -67,8 +68,7 @@ function mergeContributors(contributors: Array<VoltaContributor & { score: numbe
           existingContributor[key] = (existingContributor[key] || 0) + value
         }
       }
-    }
-    else {
+    } else {
       mergedMap.set(lowercaseUsername, contributor)
     }
   }

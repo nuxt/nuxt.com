@@ -1,3 +1,4 @@
+import type { H3Event } from 'h3'
 import { hasProtocol } from 'ufo'
 
 export type SponsorType = 'diamond' | 'platinum' | 'silver' | 'gold' | 'bronze' | 'backers'
@@ -16,18 +17,18 @@ export interface Sponsor {
   tier: SponsorType
 }
 
-function githubHeaders(headers = {}) {
+function githubHeaders(event: H3Event, headers = {}) {
   return {
     'Accept': 'application/vnd.github.v3+json',
     'User-Agent': 'nuxt-api',
-    'Authorization': `token ${process.env.NUXT_GITHUB_TOKEN}`,
+    'Authorization': `token ${useRuntimeConfig(event).github.token}`,
     ...headers
   }
 }
 
-function openCollectiveHeaders(headers = {}) {
+function openCollectiveHeaders(event: H3Event, headers = {}) {
   return {
-    'Api-Key': `${process.env.NUXT_OPEN_COLLECTIVE_API_KEY}`,
+    'Api-Key': `${useRuntimeConfig(event).openCollective.apiKey}`,
     'Content-Type': 'application/json',
     ...headers
   }
@@ -37,7 +38,7 @@ function toURL(url: string) {
   return !url || hasProtocol(url) ? url : `https://${url}`
 }
 
-export async function fetchOpenCollectiveSponsors() {
+export async function fetchOpenCollectiveSponsors(event: H3Event) {
   const response = []
   const first = 100
   let offset = null
@@ -81,7 +82,7 @@ export async function fetchOpenCollectiveSponsors() {
 
     const { data, errors } = await $fetch<{ data: any, errors: any }>('https://api.opencollective.com/graphql/v2/', {
       method: 'POST',
-      headers: openCollectiveHeaders(),
+      headers: openCollectiveHeaders(event),
       body: { query }
     })
 
@@ -93,8 +94,7 @@ export async function fetchOpenCollectiveSponsors() {
 
     if (data.collective.members.nodes.length !== 0) {
       offset += data.collective.members.nodes.length
-    }
-    else {
+    } else {
       offset = null
     }
     const sponsors = (data?.collective?.members?.nodes?.filter(sponsor => sponsor.tier).map((sponsor) => {
@@ -118,7 +118,7 @@ export async function fetchOpenCollectiveSponsors() {
   return response
 }
 
-export const fetchGithubSponsors = async (): Promise<Sponsor[]> => {
+export const fetchGithubSponsors = async (event: H3Event): Promise<Sponsor[]> => {
   const response = []
   const first = 100
   let cursor = null
@@ -164,7 +164,7 @@ export const fetchGithubSponsors = async (): Promise<Sponsor[]> => {
 
     const { data, errors } = await $fetch<{ data: any, errors: any }>('https://api.github.com/graphql', {
       method: 'POST',
-      headers: githubHeaders(),
+      headers: githubHeaders(event),
       body: { query }
     })
     const _sponsors = data.organization.sponsorshipsAsMaintainer

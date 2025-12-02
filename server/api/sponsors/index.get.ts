@@ -9,10 +9,10 @@ const tiersMap: { [tier: string]: Tier } = {
   backer: amount => amount < 100
 }
 
-export default cachedEventHandler(async () => {
+export default cachedEventHandler(async (event) => {
   const sponsors = await Promise.all([
-    fetchGithubSponsors(),
-    fetchOpenCollectiveSponsors()
+    fetchGithubSponsors(event),
+    fetchOpenCollectiveSponsors(event)
   ])
 
   return sponsors.flat().reduce((acc, sponsor) => {
