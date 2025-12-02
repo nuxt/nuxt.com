@@ -57,7 +57,7 @@ export const npm = {
     }
     const result = await npmFetch<NpmDownloadStats>(`https://api.npmjs.org/downloads/point/${period}/${name}`)
     if (result) {
-      await kv.set(key, result)
+      await kv.set(key, result, { ttl: 60 * 60 * 24 }) // cache for 1 day
       return result
     }
     return { downloads: 0 }
