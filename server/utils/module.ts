@@ -2,8 +2,7 @@ import { createShikiHighlighter, parseMarkdown } from '@nuxtjs/mdc/runtime'
 import type { H3Event } from 'h3'
 import type { BaseModule, Module, ModuleContributor, ModuleStats } from '#shared/types'
 import type { NpmDownloadStats } from '../types/npm'
-import { bundledLanguages } from 'shiki/langs'
-import { bundledThemes } from 'shiki/themes'
+import { bundledLanguages, bundledThemes } from 'shiki'
 
 export function isBot(username: string) {
   return username.includes('[bot]') || username.includes('-bot')
@@ -81,6 +80,8 @@ export async function fetchModuleReadme(_event: H3Event, module: BaseModule) {
   }) as string
 
   highlighter ||= createShikiHighlighter({
+    bundledLangs: bundledLanguages,
+    bundledThemes,
     themes: [bundledThemes['material-theme-lighter'], bundledThemes['material-theme-palenight']],
     langs: [bundledLanguages.js, bundledLanguages.jsx, bundledLanguages.json, bundledLanguages.ts, bundledLanguages.tsx, bundledLanguages.vue, bundledLanguages.css, bundledLanguages.html, bundledLanguages.bash, bundledLanguages.md, bundledLanguages.mdc, bundledLanguages.yaml, bundledLanguages.sql, bundledLanguages.diff, bundledLanguages.ini]
   })
