@@ -1,22 +1,4 @@
-import { createMarkdownParser, rehypeHighlight, createShikiHighlighter } from '@nuxtjs/mdc/runtime'
-
-import darkTheme from '@shikijs/themes/material-theme-palenight'
-import defaultTheme from '@shikijs/themes/material-theme-lighter'
-import js from '@shikijs/langs/js'
-import jsx from '@shikijs/langs/jsx'
-import json from '@shikijs/langs/json'
-import ts from '@shikijs/langs/ts'
-import tsx from '@shikijs/langs/tsx'
-import vue from '@shikijs/langs/vue'
-import css from '@shikijs/langs/css'
-import html from '@shikijs/langs/html'
-import bash from '@shikijs/langs/bash'
-import md from '@shikijs/langs/md'
-import mdc from '@shikijs/langs/mdc'
-import yaml from '@shikijs/langs/yaml'
-import sql from '@shikijs/langs/sql'
-import diff from '@shikijs/langs/diff'
-import ini from '@shikijs/langs/ini'
+import { parseMarkdown } from '@nuxtjs/mdc/runtime'
 
 import type { H3Event } from 'h3'
 import type { BaseModule, Module, ModuleContributor, ModuleStats } from '#shared/types'
@@ -88,8 +70,6 @@ export async function fetchModuleContributors(_event: H3Event, module: BaseModul
   }
 }
 
-let parser: Awaited<ReturnType<typeof createMarkdownParser>>
-
 export async function fetchModuleReadme(_event: H3Event, module: BaseModule) {
   console.info(`Fetching module ${module.name} readme ...`)
   const readme = await $fetch(`https://unpkg.com/${module.npm}/README.md`).catch(() => {
@@ -97,45 +77,5 @@ export async function fetchModuleReadme(_event: H3Event, module: BaseModule) {
     return 'Readme not found'
   }) as string
 
-  parser ||= await createParser()
-
-  return await parser(readme)
-}
-
-async function createParser() {
-  return await createMarkdownParser({
-    rehype: {
-      plugins: {
-        highlight: {
-          instance: rehypeHighlight,
-          options: {
-            theme: 'material-theme-lighter',
-            highlighter: createShikiHighlighter({
-              bundledThemes: {
-                'material-theme-lighter': defaultTheme,
-                'material-theme-palenight': darkTheme
-              },
-              bundledLangs: {
-                js,
-                jsx,
-                json,
-                ts,
-                tsx,
-                vue,
-                css,
-                html,
-                bash,
-                md,
-                mdc,
-                yaml,
-                sql,
-                diff,
-                ini
-              }
-            })
-          }
-        }
-      }
-    }
-  })
+  return await parseMarkdown(readme)
 }

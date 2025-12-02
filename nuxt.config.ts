@@ -65,7 +65,7 @@ export default defineNuxtConfig({
             default: 'material-theme-lighter',
             dark: 'material-theme-palenight'
           },
-          langs: ['sql', 'diff', 'ini']
+          langs: ['js', 'jsx', 'json', 'ts', 'tsx', 'vue', 'css', 'html', 'bash', 'md', 'mdc', 'yaml', 'sql', 'diff', 'ini']
         }
       }
     }
@@ -263,6 +263,9 @@ export default defineNuxtConfig({
     compatibilityDate: {
       // Don't generate observability routes
       vercel: '2025-07-14'
+    },
+    experimental: {
+      wasm: true
     },
     prerender: {
       crawlLinks: true,
