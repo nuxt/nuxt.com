@@ -61,7 +61,7 @@ export default defineNuxtConfig({
     highlight: {
       noApiRoute: false,
       theme: {
-        light: 'material-theme-lighter',
+        default: 'material-theme-lighter',
         dark: 'material-theme-palenight'
       },
       langs: ['js', 'jsx', 'json', 'ts', 'tsx', 'vue', 'css', 'html', 'bash', 'md', 'mdc', 'yaml', 'sql', 'diff', 'ini']
