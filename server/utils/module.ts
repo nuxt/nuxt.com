@@ -7,7 +7,7 @@ export function isBot(username: string) {
 }
 
 export const fetchModules = cachedFunction(async (_event: H3Event): Promise<Module[]> => {
-  logger.info(`Fetching modules from CDN..`)
+  console.info(`Fetching modules from CDN..`)
   return await $fetch<BaseModule[]>('https://unpkg.com/@nuxt/modules@latest/modules.json')
 }, {
   name: 'modules',
@@ -16,7 +16,7 @@ export const fetchModules = cachedFunction(async (_event: H3Event): Promise<Modu
 })
 
 export async function fetchModuleStats(event: H3Event, module: BaseModule) {
-  logger.info(`Fetching module ${module.name} stats...`)
+  console.info(`Fetching module ${module.name} stats...`)
   const ghRepo = module.repo.split('#')[0]
   const [owner, name] = ghRepo.split('/')
   const [npmInfos, npmStats, repo] = await Promise.all([
@@ -55,7 +55,7 @@ interface UnghResponse {
 }
 
 export async function fetchModuleContributors(_event: H3Event, module: BaseModule): Promise<ModuleContributor[]> {
-  logger.info(`Fetching module ${module.name} contributors ...`)
+  console.info(`Fetching module ${module.name} contributors ...`)
   const ghRepo = module.repo.split('#')[0]
   const [owner, name] = ghRepo.split('/')
 
@@ -69,9 +69,9 @@ export async function fetchModuleContributors(_event: H3Event, module: BaseModul
 }
 
 export async function fetchModuleReadme(_event: H3Event, module: BaseModule) {
-  logger.info(`Fetching module ${module.name} readme ...`)
+  console.info(`Fetching module ${module.name} readme ...`)
   const readme = await $fetch(`https://unpkg.com/${module.npm}/README.md`).catch(() => {
-    logger.warn(`Could not fetch ${module.npm}/README.md`)
+    console.warn(`Could not fetch ${module.npm}/README.md`)
     return 'Readme not found'
   }) as string
 
