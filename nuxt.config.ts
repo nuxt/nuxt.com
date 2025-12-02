@@ -277,6 +277,7 @@ export default defineNuxtConfig({
   },
   hub: {
     db: 'sqlite',
+    kv: true,
     cache: true
   },
   typescript: {
