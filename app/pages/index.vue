@@ -8,7 +8,7 @@ definePageMeta({
 
 const [{ data: page }, { data: officialModules }, { data: showcase }, { getFilteredSponsors }] = await Promise.all([
   useAsyncData('index', () => queryCollection('index').first()),
-  useFetch('/api/modules', {
+  useFetch('/api/v1/modules', {
     key: 'official-modules',
     transform: (res: { modules: Module[], stats: Stats }) => res.modules
       .filter(module => module.type === 'official')

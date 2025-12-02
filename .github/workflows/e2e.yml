@@ -39,6 +39,6 @@ jobs:
         run: |
           curl -sS $BASE_URL/api/jobs
           curl -sS $BASE_URL/api/sponsors
-          curl -sS $BASE_URL/api/modules
+          curl -sS $BASE_URL/api/v1/modules
         env:
           BASE_URL: ${{ github.event.inputs.url || github.event.deployment_status.environment_url }}

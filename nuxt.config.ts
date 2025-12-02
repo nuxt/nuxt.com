@@ -110,7 +110,7 @@ export default defineNuxtConfig({
     '/modules': { isr: 60 * 60 },
     '/modules/**': { isr: 60 * 60 },
     // API
-    '/api/teams': { isr: 60 * 60 },
+    '/api/v1/teams': { isr: 60 * 60 },
     // Admin
     '/admin': { ssr: false },
     '/admin/**': { ssr: false },

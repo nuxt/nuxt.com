@@ -42,7 +42,7 @@ export const moduleIcon = function (category: string) {
 export const useModules = () => {
   const route = useRoute()
   const router = useRouter()
-  const { data, execute } = useFetch('/api/modules', {
+  const { data, execute } = useFetch('/api/v1/modules', {
     immediate: false,
     default: () => ({
       modules: [],
