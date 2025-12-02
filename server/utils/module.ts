@@ -15,7 +15,7 @@ export const fetchModules = cachedFunction(async (_event: H3Event): Promise<Modu
   maxAge: 10 * 60 // 10 minutes
 })
 
-export const fetchModuleStats = cachedFunction(async (event: H3Event, module: BaseModule) => {
+export async function fetchModuleStats(event: H3Event, module: BaseModule) {
   logger.info(`Fetching module ${module.name} stats...`)
   const ghRepo = module.repo.split('#')[0]
   const [owner, name] = ghRepo.split('/')
@@ -42,11 +42,7 @@ export const fetchModuleStats = cachedFunction(async (event: H3Event, module: Ba
     publishedAt: +new Date(npmInfos?.time?.modified || Date.now()),
     createdAt: +new Date(npmInfos?.time?.created || Date.now())
   } satisfies ModuleStats
-}, {
-  name: 'module-stats',
-  maxAge: 60 * 60, // 1 hour
-  getKey: (_event: H3Event, module: BaseModule) => module.name
-})
+}
 
 interface UnghContributor {
   id: number
@@ -58,7 +54,7 @@ interface UnghResponse {
   contributors: UnghContributor[]
 }
 
-export const fetchModuleContributors = cachedFunction(async (_event: H3Event, module: BaseModule): Promise<ModuleContributor[]> => {
+export async function fetchModuleContributors(_event: H3Event, module: BaseModule): Promise<ModuleContributor[]> {
   logger.info(`Fetching module ${module.name} contributors ...`)
   const ghRepo = module.repo.split('#')[0]
   const [owner, name] = ghRepo.split('/')
@@ -70,13 +66,9 @@ export const fetchModuleContributors = cachedFunction(async (_event: H3Event, mo
     console.error(`Cannot fetch github contributors info for ${module.repo}: ${err}`)
     return []
   }
-}, {
-  name: 'module-contributors',
-  maxAge: 24 * 60 * 60, // 24 hour
-  getKey: (_event: H3Event, module: BaseModule) => module.name
-})
+}
 
-export const fetchModuleReadme = cachedFunction(async (_event: H3Event, module: BaseModule, _shouldBypassCache: boolean = false) => {
+export async function fetchModuleReadme(_event: H3Event, module: BaseModule) {
   logger.info(`Fetching module ${module.name} readme ...`)
   const readme = await $fetch(`https://unpkg.com/${module.npm}/README.md`).catch(() => {
     logger.warn(`Could not fetch ${module.npm}/README.md`)
@@ -84,12 +76,4 @@ export const fetchModuleReadme = cachedFunction(async (_event: H3Event, module: 
   }) as string
 
   return await parseMarkdown(readme)
-}, {
-  name: 'module-readme',
-  // maxAge: 12 * 60 * 60, // 12 hour
-  maxAge: 5, // 12 hour
-  getKey: (_event: H3Event, module: BaseModule) => module.name,
-  shouldBypassCache(_module, shouldBypassCache = false) {
-    return shouldBypassCache
-  }
-})
+}

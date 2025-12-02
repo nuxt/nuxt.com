@@ -1,7 +1,7 @@
 import type { GitHubTeamMember } from '../types/github'
 
 const getCoreMembers = cachedFunction((): Promise<GitHubTeamMember[]> => $fetch<GitHubTeamMember[]>('/api/v1/teams/core'), {
-  maxAge: 60 * 60, // 1 hour
+  maxAge: 60 * 60 * 24 * 7, // 1 week
   getKey: () => 'core-members'
 })
 
