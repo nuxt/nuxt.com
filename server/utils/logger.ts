@@ -1,3 +1,3 @@
-import { consola } from 'consola'
+import { createConsola } from 'consola/core'
 
-export const logger = consola.withTag('api')
+export const logger = createConsola().withTag('api')
