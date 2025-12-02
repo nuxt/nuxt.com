@@ -1,8 +1,7 @@
-import { createShikiHighlighter, parseMarkdown } from '@nuxtjs/mdc/runtime'
+import { parseMarkdown } from '@nuxtjs/mdc/runtime'
 import type { H3Event } from 'h3'
 import type { BaseModule, Module, ModuleContributor, ModuleStats } from '#shared/types'
 import type { NpmDownloadStats } from '../types/npm'
-import { bundledLanguages, bundledThemes } from 'shiki'
 
 export function isBot(username: string) {
   return username.includes('[bot]') || username.includes('-bot')
@@ -70,8 +69,6 @@ export async function fetchModuleContributors(_event: H3Event, module: BaseModul
   }
 }
 
-let highlighter: ReturnType<typeof createShikiHighlighter> | null = null
-
 export async function fetchModuleReadme(_event: H3Event, module: BaseModule) {
   console.info(`Fetching module ${module.name} readme ...`)
   const readme = await $fetch(`https://unpkg.com/${module.npm}/README.md`).catch(() => {
@@ -79,20 +76,5 @@ export async function fetchModuleReadme(_event: H3Event, module: BaseModule) {
     return 'Readme not found'
   }) as string
 
-  highlighter ||= createShikiHighlighter({
-    bundledLangs: bundledLanguages,
-    bundledThemes,
-    themes: [bundledThemes['material-theme-lighter'], bundledThemes['material-theme-palenight']],
-    langs: [bundledLanguages.js, bundledLanguages.jsx, bundledLanguages.json, bundledLanguages.ts, bundledLanguages.tsx, bundledLanguages.vue, bundledLanguages.css, bundledLanguages.html, bundledLanguages.bash, bundledLanguages.md, bundledLanguages.mdc, bundledLanguages.yaml, bundledLanguages.sql, bundledLanguages.diff, bundledLanguages.ini]
-  })
-
-  return await parseMarkdown(readme, {
-    highlight: {
-      highlighter,
-      theme: {
-        default: 'material-theme-lighter',
-        dark: 'material-theme-palenight'
-      }
-    }
-  })
+  return await parseMarkdown(readme, {}, { fileOptions: { path: 'readme.md' } })
 }
