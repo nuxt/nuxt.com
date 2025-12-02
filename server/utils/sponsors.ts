@@ -17,7 +17,7 @@ export interface Sponsor {
   tier: SponsorType
 }
 
-function githubHeaders(event: H3Event, headers = {}) {
+function githubHeaders(event: H3Event, headers: Record<string, string> = {}) {
   return {
     'Accept': 'application/vnd.github.v3+json',
     'User-Agent': 'nuxt-api',
@@ -26,7 +26,7 @@ function githubHeaders(event: H3Event, headers = {}) {
   }
 }
 
-function openCollectiveHeaders(event: H3Event, headers = {}) {
+function openCollectiveHeaders(event: H3Event, headers: Record<string, string> = {}) {
   return {
     'Api-Key': `${useRuntimeConfig(event).openCollective.apiKey}`,
     'Content-Type': 'application/json',
@@ -38,12 +38,20 @@ function toURL(url: string) {
   return !url || hasProtocol(url) ? url : `https://${url}`
 }
 
-export async function fetchOpenCollectiveSponsors(event: H3Event) {
-  const response = []
+interface OpenCollectiveSponsor {
+  sponsorId: string
+  sponsorName: string
+  sponsorLogo: string
+  sponsorUrl: string
+  monthlyPriceInDollars: string
+}
+
+export async function fetchOpenCollectiveSponsors(event: H3Event): Promise<OpenCollectiveSponsor[]> {
+  const response: OpenCollectiveSponsor[] = []
   const first = 100
-  let offset = null
+  let offset: number | null = null
   do {
-    const query = `query {
+    const query: string = `query {
       collective(slug: "nuxtjs", throwIfMissing: true) {
         members(limit: ${first}${offset ? ` offset: ${offset}` : ''} role: [BACKER]) {
           offset
@@ -80,7 +88,32 @@ export async function fetchOpenCollectiveSponsors(event: H3Event) {
       }
     }`
 
-    const { data, errors } = await $fetch<{ data: any, errors: any }>('https://api.opencollective.com/graphql/v2/', {
+    interface OpenCollectiveNode {
+      account: {
+        slug: string
+        name: string
+        imageUrl: string
+        website: string
+      }
+      tier: {
+        amount: {
+          value: string
+        }
+      }
+    }
+
+    interface OpenCollectiveResponse {
+      data: {
+        collective: {
+          members: {
+            nodes: OpenCollectiveNode[]
+          }
+        }
+      }
+      errors?: any[]
+    }
+
+    const { data, errors }: OpenCollectiveResponse = await $fetch<OpenCollectiveResponse>('https://api.opencollective.com/graphql/v2/', {
       method: 'POST',
       headers: openCollectiveHeaders(event),
       body: { query }
@@ -93,11 +126,11 @@ export async function fetchOpenCollectiveSponsors(event: H3Event) {
     }
 
     if (data.collective.members.nodes.length !== 0) {
-      offset += data.collective.members.nodes.length
+      offset = (offset ?? 0) + data.collective.members.nodes.length
     } else {
       offset = null
     }
-    const sponsors = (data?.collective?.members?.nodes?.filter(sponsor => sponsor.tier).map((sponsor) => {
+    const sponsors = (data?.collective?.members?.nodes?.filter(sponsor => sponsor.tier).map((sponsor: OpenCollectiveNode): OpenCollectiveSponsor => {
       if (sponsor.account.slug === 'logto') {
         sponsor.account.website = 'https://logto.io'
       }
@@ -109,7 +142,7 @@ export async function fetchOpenCollectiveSponsors(event: H3Event) {
         sponsorName: sponsor.account.name,
         sponsorLogo: sponsor.account.imageUrl,
         sponsorUrl: toURL(sponsor.account.website) || `https://opencollective.com/${sponsor.account.slug}`,
-        monthlyPriceInDollars: sponsor.tier.amount.value
+        monthlyPriceInDollars: sponsor.tier.amount.value.toString()
       }
     }) || [])
     response.push(...sponsors.filter(sponsor => !inactiveSponsors.includes(sponsor.sponsorId)))
@@ -119,13 +152,13 @@ export async function fetchOpenCollectiveSponsors(event: H3Event) {
 }
 
 export const fetchGithubSponsors = async (event: H3Event): Promise<Sponsor[]> => {
-  const response = []
+  const response: Sponsor[] = []
   const first = 100
-  let cursor = null
+  let cursor: string | null = null
   let hasNext = false
 
   do {
-    const query: any = `query {
+    const query = `query {
       organization(login: "nuxt") {
         sponsorshipsAsMaintainer(includePrivate: false, first: ${first}${cursor ? ` after: "${cursor}"` : ''}) {
           totalCount
@@ -162,12 +195,39 @@ export const fetchGithubSponsors = async (event: H3Event): Promise<Sponsor[]> =>
       }
     }`
 
-    const { data, errors } = await $fetch<{ data: any, errors: any }>('https://api.github.com/graphql', {
+    interface GitHubSponsorNode {
+      sponsorEntity: {
+        login: string
+        name: string
+        avatarUrl: string
+        websiteUrl: string
+      }
+      tier: {
+        monthlyPriceInDollars: string
+      }
+    }
+
+    interface GitHubSponsorsResponse {
+      data: {
+        organization: {
+          sponsorshipsAsMaintainer: {
+            pageInfo: {
+              endCursor: string
+              hasNextPage: boolean
+            }
+            nodes: GitHubSponsorNode[]
+          }
+        }
+      }
+      errors?: any[]
+    }
+
+    const { data, errors }: GitHubSponsorsResponse = await $fetch<GitHubSponsorsResponse>('https://api.github.com/graphql', {
       method: 'POST',
       headers: githubHeaders(event),
       body: { query }
     })
-    const _sponsors = data.organization.sponsorshipsAsMaintainer
+    const _sponsors: GitHubSponsorsResponse['data']['organization']['sponsorshipsAsMaintainer'] = data.organization.sponsorshipsAsMaintainer
 
     hasNext = _sponsors.pageInfo.hasNextPage
     cursor = _sponsors.pageInfo.endCursor
@@ -177,13 +237,14 @@ export const fetchGithubSponsors = async (event: H3Event): Promise<Sponsor[]> =>
       hasNext = false
     }
 
-    const sponsors = (_sponsors?.nodes.map(({ sponsorEntity, tier }: any) => {
-      const sponsor = {
+    const sponsors = (_sponsors?.nodes.map(({ sponsorEntity, tier }) => {
+      const sponsor: Sponsor = {
         sponsorId: sponsorEntity.login,
         sponsorName: sponsorEntity.name,
         sponsorLogo: sponsorEntity.avatarUrl,
         sponsorUrl: toURL(sponsorEntity.websiteUrl) || `https://github.com/${sponsorEntity.login}`,
-        monthlyPriceInDollars: tier.monthlyPriceInDollars
+        monthlyPriceInDollars: tier.monthlyPriceInDollars.toString(),
+        tier: 'backers'
       }
 
       // Hack for nickolasmartin
@@ -218,7 +279,8 @@ export const fetchGithubSponsors = async (event: H3Event): Promise<Sponsor[]> =>
     sponsorName: 'Vercel',
     sponsorLogo: 'https://avatars.githubusercontent.com/u/14985020',
     sponsorUrl: 'https://vercel.com',
-    monthlyPriceInDollars: 10000
+    monthlyPriceInDollars: '10000',
+    tier: 'diamond'
   })
   return response
 }

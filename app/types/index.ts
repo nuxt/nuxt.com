@@ -1,7 +1,6 @@
 export * from './agencies'
 export * from './blog'
 export * from './filters'
-export * from './jobs'
 export * from './modules'
 export * from './sponsors'
 export * from './starters'

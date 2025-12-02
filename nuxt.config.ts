@@ -85,6 +85,9 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     contactEmail: '',
+    github: {
+      token: ''
+    },
     openCollective: {
       apiKey: ''
     },

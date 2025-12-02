@@ -109,6 +109,7 @@ export const github = {
         location: member.location as string | undefined,
         websiteUrl: member.websiteUrl as string | undefined,
         sponsorsListing: member.sponsorsListing?.url as string | undefined,
+        score: undefined as number | undefined,
         socialAccounts: Object.fromEntries(member.socialAccounts?.edges.map((edge: any) => [
           edge.node.provider.toLowerCase(),
           {

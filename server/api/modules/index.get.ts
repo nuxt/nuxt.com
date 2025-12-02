@@ -40,8 +40,23 @@ export default defineCachedEventHandler(async (event) => {
     })
   }
 
-  const maintainers: any = {}
-  const contributors: any = {}
+  interface MaintainerWithModules {
+    name: string
+    github: string
+    twitter?: string
+    bluesky?: string
+    modules: string[]
+  }
+
+  interface ContributorWithModules {
+    id: number
+    username: string
+    contributions: number
+    modules: string[]
+  }
+
+  const maintainers: Record<string, MaintainerWithModules> = {}
+  const contributors: Record<string, ContributorWithModules> = {}
   for (const module of modules) {
     const [mStats, mContributors] = await Promise.all([
       fetchModuleStats(event, module),

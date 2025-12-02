@@ -16,22 +16,22 @@ export const fetchModules = cachedFunction(async (_event: H3Event) => {
   maxAge: 10 * 60 // 10 minutes
 })
 
-export const fetchModuleStats = cachedFunction(async (_event: H3Event, module: any) => {
+export const fetchModuleStats = cachedFunction(async (event: H3Event, module: any) => {
   logger.info(`Fetching module ${module.name} stats...`)
   const ghRepo = module.repo.split('#')[0]
   const [owner, name] = ghRepo.split('/')
   const [npmInfos, npmStats, repo] = await Promise.all([
     $fetch<any>(`https://registry.npmjs.org/${module.npm}`)
-      .catch((err) => {
+      .catch((err: Error) => {
         console.error(`Cannot fetch npm info for ${module.npm}: ${err}`)
         return { }
       }),
     $fetch<any>(`https://api.npmjs.org/downloads/point/last-month/${module.npm}`)
-      .catch((err) => {
+      .catch((err: Error) => {
         console.error(`Cannot fetch npm downloads stats for ${module.npm}: ${err}`)
         return { downloads: 0 }
       }),
-    github.fetchRepo(owner, name)
+    github.fetchRepo(event, owner, name)
       .then((repo) => {
         return {
           stars: repo.stars,
@@ -62,11 +62,19 @@ export const fetchModuleContributors = cachedFunction(async (_event: H3Event, mo
   const ghRepo = module.repo.split('#')[0]
   const [owner, name] = ghRepo.split('/')
 
-  return $fetch<any>(`https://ungh.cc/repos/${owner}/${name}/contributors`)
-    .catch((err) => {
+  interface UnghContributor {
+    username: string
+  }
+
+  interface UnghResponse {
+    contributors: UnghContributor[]
+  }
+
+  return $fetch<UnghResponse>(`https://ungh.cc/repos/${owner}/${name}/contributors`)
+    .catch((err: Error) => {
       console.error(`Cannot fetch github contributors info for ${module.repo}: ${err}`)
       return { contributors: [] }
-    }).then(r => r.contributors.filter((contributor: any) => !isBot(contributor.username)))
+    }).then(r => r.contributors.filter(contributor => !isBot(contributor.username)))
 }, {
   name: 'module-contributors',
   maxAge: 24 * 60 * 60, // 24 hour
@@ -80,7 +88,7 @@ export const fetchModuleReadme = cachedFunction(async (_event: H3Event, module: 
     return 'Readme not found'
   }) as string
 
-  return await parseMarkdown(readme, 'readme.md')
+  return await parseMarkdown(readme)
 }, {
   name: 'module-readme',
   // maxAge: 12 * 60 * 60, // 12 hour
