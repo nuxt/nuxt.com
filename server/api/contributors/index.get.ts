@@ -7,14 +7,6 @@ const RENAMED_CONTRIBUTORS: Record<string, string> = {
 }
 
 export default cachedEventHandler(async (event) => {
-  const config = useRuntimeConfig(event)
-  if (!config.volta.token) {
-    throw createError({
-      statusCode: 500,
-      message: 'Missing NUXT_VOLTA_TOKEN in env variables'
-    })
-  }
-
   console.log('Fetching /contributors...')
 
   let contributors = await fetchOrgsContributors(event, ['nuxt', 'nuxt-modules', 'nuxt-themes', 'nuxt-ui-templates', 'unjs', 'nuxtlabs', 'nuxt-hub', 'nuxt-content']) as Array<VoltaContributor & { score: number }>
