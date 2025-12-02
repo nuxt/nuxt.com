@@ -3,7 +3,7 @@ import { toRelativeDate } from '../utils'
 
 export const useEnterpriseJobs = () => {
   const route = useRoute()
-  const { data: jobs, execute } = useAsyncData('jobs', () => $fetch<Job[]>('https://api.nuxt.com/jobs'), {
+  const { data: jobs, execute } = useAsyncData('jobs', () => $fetch<Job[]>('/api/jobs'), {
     immediate: false,
     default: () => [],
     transform: (data) => {

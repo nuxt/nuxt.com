@@ -7,7 +7,7 @@ definePageMeta({
 })
 const route = useRoute()
 
-const { data: module } = await useFetch<Module>(`https://api.nuxt.com/modules/${route.params.slug}`, { key: `module-${route.params.slug}` })
+const { data: module } = await useFetch<Module>(`/api/modules/${route.params.slug}`, { key: `module-${route.params.slug}` })
 if (!module.value) {
   throw createError({ statusCode: 404, statusMessage: 'Module not found', fatal: true })
 }

@@ -2,7 +2,7 @@ import type { Sponsor } from '~/types'
 
 export const useSponsors = async () => {
   const [{ data: apiSponsors }, { data: manualSponsors }] = await Promise.all([
-    useFetch('https://api.nuxt.com/sponsors', { key: 'sponsors' }),
+    useFetch('/api/sponsors', { key: 'sponsors' }),
     useAsyncData('manual-sponsors', () => queryCollection('manualSponsors').first())
   ])
 

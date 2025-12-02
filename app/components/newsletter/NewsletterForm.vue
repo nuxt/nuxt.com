@@ -27,7 +27,7 @@ const state = reactive({
 async function onSubmit(event: FormSubmitEvent<Schema>) {
   loading.value = true
 
-  await $fetch('https://api.nuxt.com/newsletter/subscribe', {
+  await $fetch('/api/newsletter/subscribe', {
     method: 'POST',
     body: {
       email: event.data.email

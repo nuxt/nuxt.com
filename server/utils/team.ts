@@ -1,7 +1,7 @@
 export const getCoreMembers = cachedFunction(async () => {
   return await $fetch<{
     login: string
-  }[]>('https://api.nuxt.com/teams/core')
+  }[]>('/api/teams/core')
 }, {
   maxAge: 60 * 60, // 1 hour
   getKey: () => 'core-members'

@@ -10,8 +10,8 @@ interface TeamMember {
 }
 
 export default defineEventHandler(async () => {
-  const core = await $fetch<TeamMember[]>('https://api.nuxt.com/teams/core')
-  let ecosystem = await $fetch<TeamMember[]>('https://api.nuxt.com/teams/ecosystem')
+  const core = await $fetch<TeamMember[]>('/api/teams/core')
+  let ecosystem = await $fetch<TeamMember[]>('/api/teams/ecosystem')
 
   ecosystem = ecosystem.filter(t => !core.some(c => c.login === t.login))
     .map((m) => {

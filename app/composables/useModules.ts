@@ -42,7 +42,7 @@ export const moduleIcon = function (category: string) {
 export const useModules = () => {
   const route = useRoute()
   const router = useRouter()
-  const { data, execute } = useFetch<{ modules: Module[], stats: Stats }>('https://api.nuxt.com/modules', {
+  const { data, execute } = useFetch<{ modules: Module[], stats: Stats }>('/api/modules', {
     immediate: false,
     default: () => ({
       modules: [],
