@@ -51,21 +51,14 @@ interface GitHubTeamResponse {
 
 export const github = {
   async fetchRepo(event: H3Event, owner: string, name: string): Promise<GitHubRepository> {
-    const token = useRuntimeConfig(event).github.token
-    if (!token) {
-      throw createError({
-        statusCode: 500,
-        message: 'Missing NUXT_GITHUB_TOKEN env variable'
-      })
-    }
     try {
-      const res = await $fetch<GitHubRepositoryResponse>(`https://api.github.com/repos/${owner}/${name}`, {
-        headers: {
-          'Accept': 'application/vnd.github.v3+json',
-          'User-Agent': 'nuxt-api',
-          'Authorization': `token ${token}`
-        }
-      })
+      const headers = githubHeaders(event)
+      let res = await $fetch<GitHubRepositoryResponse>(`https://api.github.com/repos/${owner}/${name}`, { headers }).catch(() => null)
+
+      if (!res) {
+        // try token-less request
+        res = await $fetch<GitHubRepositoryResponse>(`https://api.github.com/repos/${owner}/${name}`, { headers })
+      }
 
       return {
         id: res.id,
@@ -107,11 +100,7 @@ export const github = {
 
     const team = await $fetch<GitHubTeamResponse>(`https://api.github.com/graphql`, {
       method: 'POST',
-      headers: {
-        'Accept': 'application/vnd.github.v3+json',
-        'User-Agent': 'nuxt-api',
-        'Authorization': `token ${token}`
-      },
+      headers: githubHeaders(event),
       body: {
         query: `
           query($org: String!, $team: String!) {
@@ -168,5 +157,22 @@ export const github = {
         ]) || [])
       }
     })
+  }
+}
+
+export function githubHeaders(event: H3Event, headers: Record<string, string> = {}) {
+  const token = useRuntimeConfig(event).github.token
+  if (!token) {
+    throw createError({
+      statusCode: 500,
+      message: 'Missing NUXT_GITHUB_TOKEN env variable'
+    })
+  }
+
+  return {
+    'Accept': 'application/vnd.github.v3+json',
+    'User-Agent': 'nuxt-api',
+    'Authorization': `token ${token}`,
+    ...headers
   }
 }

@@ -1,19 +1,11 @@
 import type { H3Event } from 'h3'
 import { hasProtocol } from 'ufo'
+import { githubHeaders } from './github'
 
 const inactiveSponsors = [
   'strapijs',
   'planfredapp'
 ]
-
-function githubHeaders(event: H3Event, headers: Record<string, string> = {}) {
-  return {
-    'Accept': 'application/vnd.github.v3+json',
-    'User-Agent': 'nuxt-api',
-    'Authorization': `token ${useRuntimeConfig(event).github.token}`,
-    ...headers
-  }
-}
 
 function openCollectiveHeaders(event: H3Event, headers: Record<string, string> = {}) {
   return {
