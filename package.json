@@ -33,6 +33,7 @@
     "@nuxtjs/mcp-toolkit": "^0.4.1",
     "@nuxtjs/mdc": "^0.18.4",
     "@nuxtjs/plausible": "^2.0.1",
+    "@upstash/redis": "^1.35.7",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
     "@vue/compiler-sfc": "^3.5.25",
