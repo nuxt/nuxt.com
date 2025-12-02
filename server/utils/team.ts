@@ -1,15 +1,13 @@
-export const getCoreMembers = cachedFunction(async () => {
-  return await $fetch<{
-    login: string
-  }[]>('/api/teams/core')
-}, {
+import type { GitHubTeamMember } from '../types/github'
+
+const getCoreMembers = cachedFunction((): Promise<GitHubTeamMember[]> => $fetch<GitHubTeamMember[]>('/api/teams/core'), {
   maxAge: 60 * 60, // 1 hour
   getKey: () => 'core-members'
 })
 
-export async function isCoreTeamMember(login: string) {
+export async function isCoreTeamMember(login: string): Promise<boolean> {
   const coreMembers = await getCoreMembers()
-  if (!coreMembers) {
+  if (!coreMembers || !Array.isArray(coreMembers)) {
     throw createError({
       statusCode: 500,
       statusMessage: 'Failed to fetch core team members.'

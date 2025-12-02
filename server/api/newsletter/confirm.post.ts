@@ -24,12 +24,15 @@ export default eventHandler(async (event) => {
   }
 
   // Add to contacts list
-  await sendgrid.addContactToList(event, email, listId).catch((err: any) => {
+  try {
+    await sendgrid.addContactToList(event, email, listId)
+  } catch (_err) {
+    const err = _err as Error & { response?: { body?: { errors?: Array<{ message?: string }> } } }
     throw createError({
       message: err?.response?.body?.errors?.[0]?.message || 'Invalid email',
       statusCode: 400
     })
-  })
+  }
 
   return { ok: true }
 })

@@ -8,7 +8,7 @@ export default defineCachedEventHandler(async (event) => {
   }).parse)
   console.log(`Fetching v${version} modules...${category ? ` for category: ${category}` : ''}`)
 
-  let modules = await fetchModules(event) as any[]
+  let modules = await fetchModules(event) || []
 
   if (version !== 'all') {
     const major = (version === '2-bridge' ? '2' : version) satisfies '2' | '3'
@@ -33,7 +33,7 @@ export default defineCachedEventHandler(async (event) => {
       }
 
       if (module.categories && Array.isArray(module.categories)) {
-        return module.categories.some((cat: string) => cat.toLowerCase() === lowerCaseCategory)
+        return module.categories.some(cat => cat.toLowerCase() === lowerCaseCategory)
       }
 
       return false
@@ -65,14 +65,20 @@ export default defineCachedEventHandler(async (event) => {
     module.stats = mStats
     module.contributors = mContributors
 
-    for (const maintainer of module.maintainers) {
-      maintainers[maintainer.github] = maintainers[maintainer.github] || { ...maintainer, modules: [] }
-      maintainers[maintainer.github].modules.push(module.name)
+    if (module.maintainers) {
+      for (const maintainer of module.maintainers) {
+        maintainers[maintainer.github] = maintainers[maintainer.github] || { ...maintainer, modules: [] }
+        maintainers[maintainer.github].modules.push(module.name)
+      }
     }
-    for (const contributor of module.contributors) {
-      contributors[contributor.username] = contributors[contributor.username] || { ...contributor, modules: [] }
-      contributors[contributor.username].modules.push(module.name)
-      contributors[contributor.username].contributions += contributor.contributions || 0
+    if (module.contributors) {
+      for (const contributor of module.contributors) {
+        if (!contributors[contributor.username]) {
+          contributors[contributor.username] = { id: contributor.id, username: contributor.username, contributions: 0, modules: [] }
+        }
+        contributors[contributor.username].modules.push(module.name)
+        contributors[contributor.username].contributions += contributor.contributions || 0
+      }
     }
   }
 

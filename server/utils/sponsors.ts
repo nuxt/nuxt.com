@@ -109,7 +109,7 @@ export async function fetchOpenCollectiveSponsors(event: H3Event): Promise<OpenC
           }
         }
       }
-      errors?: any[]
+      errors?: GraphQLError[]
     }
 
     const { data, errors }: OpenCollectiveResponse = await $fetch<OpenCollectiveResponse>('https://api.opencollective.com/graphql/v2/', {
@@ -219,7 +219,7 @@ export const fetchGithubSponsors = async (event: H3Event): Promise<Sponsor[]> =>
           }
         }
       }
-      errors?: any[]
+      errors?: GraphQLError[]
     }
 
     const { data, errors }: GitHubSponsorsResponse = await $fetch<GitHubSponsorsResponse>('https://api.github.com/graphql', {
@@ -283,4 +283,17 @@ export const fetchGithubSponsors = async (event: H3Event): Promise<Sponsor[]> =>
     tier: 'diamond'
   })
   return response
+}
+
+interface GraphQLError {
+  message: string
+  locations?: Array<{
+    line: number
+    column: number
+  }>
+  path?: Array<string | number>
+  extensions?: {
+    code?: string
+    [key: string]: unknown
+  }
 }

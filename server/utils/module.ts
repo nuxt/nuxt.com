@@ -1,36 +1,27 @@
 import { parseMarkdown } from '@nuxtjs/mdc/runtime'
 import type { H3Event } from 'h3'
+import type { BaseModule, Module, ModuleContributor, ModuleStats } from '#shared/types'
 
 export function isBot(username: string) {
   return username.includes('[bot]') || username.includes('-bot')
 }
 
-export const fetchModules = cachedFunction(async (_event: H3Event) => {
+export const fetchModules = cachedFunction(async (_event: H3Event): Promise<Module[]> => {
   logger.info(`Fetching modules from CDN..`)
-  const modules: any[] = await $fetch('https://unpkg.com/@nuxt/modules@latest/modules.json')
-
-  return modules
+  return await $fetch<BaseModule[]>('https://unpkg.com/@nuxt/modules@latest/modules.json')
 }, {
   name: 'modules',
   getKey: _event => '_all',
   maxAge: 10 * 60 // 10 minutes
 })
 
-export const fetchModuleStats = cachedFunction(async (event: H3Event, module: any) => {
+export const fetchModuleStats = cachedFunction(async (event: H3Event, module: BaseModule) => {
   logger.info(`Fetching module ${module.name} stats...`)
   const ghRepo = module.repo.split('#')[0]
   const [owner, name] = ghRepo.split('/')
   const [npmInfos, npmStats, repo] = await Promise.all([
-    $fetch<any>(`https://registry.npmjs.org/${module.npm}`)
-      .catch((err: Error) => {
-        console.error(`Cannot fetch npm info for ${module.npm}: ${err}`)
-        return { }
-      }),
-    $fetch<any>(`https://api.npmjs.org/downloads/point/last-month/${module.npm}`)
-      .catch((err: Error) => {
-        console.error(`Cannot fetch npm downloads stats for ${module.npm}: ${err}`)
-        return { downloads: 0 }
-      }),
+    npm.fetchPackage(module.npm),
+    npm.fetchPackageStats(module.npm, 'last-month'),
     github.fetchRepo(event, owner, name)
       .then((repo) => {
         return {
@@ -42,46 +33,50 @@ export const fetchModuleStats = cachedFunction(async (event: H3Event, module: an
       })
   ])
   return {
-    version: npmInfos['dist-tags']?.latest || '0.0.0',
+    version: npmInfos?.['dist-tags']?.latest || '0.0.0',
     downloads: npmStats.downloads,
     stars: repo.stars,
     watchers: repo.watchers,
     forks: repo.forks,
     defaultBranch: repo.defaultBranch,
-    publishedAt: +new Date(npmInfos.time?.modified || undefined),
-    createdAt: +new Date(npmInfos.time?.created || undefined)
-  }
+    publishedAt: +new Date(npmInfos?.time?.modified || Date.now()),
+    createdAt: +new Date(npmInfos?.time?.created || Date.now())
+  } satisfies ModuleStats
 }, {
   name: 'module-stats',
   maxAge: 60 * 60, // 1 hour
-  getKey: (_event: H3Event, module: any) => module.name
+  getKey: (_event: H3Event, module: BaseModule) => module.name
 })
 
-export const fetchModuleContributors = cachedFunction(async (_event: H3Event, module: any) => {
+interface UnghContributor {
+  id: number
+  username: string
+  contributions: number
+}
+
+interface UnghResponse {
+  contributors: UnghContributor[]
+}
+
+export const fetchModuleContributors = cachedFunction(async (_event: H3Event, module: BaseModule): Promise<ModuleContributor[]> => {
   logger.info(`Fetching module ${module.name} contributors ...`)
   const ghRepo = module.repo.split('#')[0]
   const [owner, name] = ghRepo.split('/')
 
-  interface UnghContributor {
-    username: string
+  try {
+    const { contributors } = await $fetch<UnghResponse>(`https://ungh.cc/repos/${owner}/${name}/contributors`)
+    return contributors.filter(contributor => !isBot(contributor.username))
+  } catch (err) {
+    console.error(`Cannot fetch github contributors info for ${module.repo}: ${err}`)
+    return []
   }
-
-  interface UnghResponse {
-    contributors: UnghContributor[]
-  }
-
-  return $fetch<UnghResponse>(`https://ungh.cc/repos/${owner}/${name}/contributors`)
-    .catch((err: Error) => {
-      console.error(`Cannot fetch github contributors info for ${module.repo}: ${err}`)
-      return { contributors: [] }
-    }).then(r => r.contributors.filter(contributor => !isBot(contributor.username)))
 }, {
   name: 'module-contributors',
   maxAge: 24 * 60 * 60, // 24 hour
-  getKey: (_event: H3Event, module: any) => module.name
+  getKey: (_event: H3Event, module: BaseModule) => module.name
 })
 
-export const fetchModuleReadme = cachedFunction(async (_event: H3Event, module: any, _shouldBypassCache: boolean = false) => {
+export const fetchModuleReadme = cachedFunction(async (_event: H3Event, module: BaseModule, _shouldBypassCache: boolean = false) => {
   logger.info(`Fetching module ${module.name} readme ...`)
   const readme = await $fetch(`https://unpkg.com/${module.npm}/README.md`).catch(() => {
     logger.warn(`Could not fetch ${module.npm}/README.md`)
@@ -93,7 +88,7 @@ export const fetchModuleReadme = cachedFunction(async (_event: H3Event, module: 
   name: 'module-readme',
   // maxAge: 12 * 60 * 60, // 12 hour
   maxAge: 5, // 12 hour
-  getKey: (_event: H3Event, module: any) => module.name,
+  getKey: (_event: H3Event, module: BaseModule) => module.name,
   shouldBypassCache(_module, shouldBypassCache = false) {
     return shouldBypassCache
   }

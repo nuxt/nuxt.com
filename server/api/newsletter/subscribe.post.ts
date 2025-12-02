@@ -25,7 +25,7 @@ export default eventHandler(async (event) => {
         })
       }
     }).then((res = {}) => {
-      if (res[email]?.contact?.list_ids?.includes(listId)) {
+      if (res?.[email]?.contact?.list_ids?.includes(listId)) {
         throw createError({
           message: 'You are already subscribed to the newsletter ❤️',
           statusCode: 400

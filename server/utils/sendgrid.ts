@@ -1,32 +1,35 @@
 import { joinURL } from 'ufo'
 import type { H3Event } from 'h3'
 import { defu } from 'defu'
+import type { SendGridSearchContactsResponse, SendGridAddContactResponse, SendGridEmailResponse } from '../types/sendgrid'
+
+type SendGridResult<T> = 'result' extends keyof T ? T['result'] : T
 
 export const sendgrid = {
-  async searchContact(event: H3Event, email: string) {
-    return sendgridFetch(event, '/marketing/contacts/search/emails', {
+  async searchContact(event: H3Event, email: string): Promise<SendGridResult<SendGridSearchContactsResponse>> {
+    return sendgridFetch<SendGridSearchContactsResponse>(event, '/marketing/contacts/search/emails', {
       method: 'POST',
       body: {
         emails: [email]
       }
     })
   },
-  async addContact(event: H3Event, email: string) {
-    return sendgridFetch(event, '/marketing/contacts', {
+  async addContact(event: H3Event, email: string): Promise<SendGridAddContactResponse> {
+    return sendgridFetch<SendGridAddContactResponse>(event, '/marketing/contacts', {
       method: 'PUT',
       body: {
         contacts: [{ email }]
       }
     })
   },
-  async sendEmail(event: H3Event, data: SendGridEmail) {
-    return sendgridFetch(event, '/mail/send', {
+  async sendEmail(event: H3Event, data: SendGridEmail): Promise<SendGridEmailResponse> {
+    return sendgridFetch<SendGridEmailResponse>(event, '/mail/send', {
       method: 'POST',
       body: data
     })
   },
-  async addContactToList(event: H3Event, email: string, listId: string) {
-    return sendgridFetch(event, '/marketing/contacts', {
+  async addContactToList(event: H3Event, email: string, listId: string): Promise<SendGridAddContactResponse> {
+    return sendgridFetch<SendGridAddContactResponse>(event, '/marketing/contacts', {
       method: 'PUT',
       body: {
         list_ids: [listId],
@@ -36,7 +39,8 @@ export const sendgrid = {
   }
 }
 
-async function sendgridFetch(event: H3Event, path: string, options = {}) {
+async function sendgridFetch<T>(event: H3Event, path: string, options = {}): Promise<'result' extends keyof T ? T['result'] : T> {
+  type Result = 'result' extends keyof T ? T['result'] : T
   const config = useRuntimeConfig(event)
   if (!config.sendgrid.apiKey) {
     throw createError({
@@ -46,15 +50,15 @@ async function sendgridFetch(event: H3Event, path: string, options = {}) {
   }
 
   const url = joinURL(`https://api.sendgrid.com/v3/`, path)
-  const res = await $fetch<any>(url, defu(options, {
+  const res = await $fetch<T & { result?: T }>(url, defu(options, {
     headers: {
       Authorization: `Bearer ${config.sendgrid.apiKey}`
     }
   }))
-  if (res.result) {
-    return res.result
+  if ('result' in res && res.result) {
+    return res.result as Result
   }
-  return res
+  return res as Result
 }
 
 // https://docs.sendgrid.com/api-reference/mail-send/mail-send#body

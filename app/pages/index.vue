@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { joinURL } from 'ufo'
-import type { Module } from '~/types'
+import type { Module } from '#shared/types'
 
 definePageMeta({
   heroBackground: '-z-10'

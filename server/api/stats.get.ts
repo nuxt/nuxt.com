@@ -1,17 +1,17 @@
-interface NpmPackageInfo {
-  version?: string
-}
+import type { Stats } from '#shared/types'
 
 export default cachedEventHandler(async (event) => {
   const repo = await github.fetchRepo(event, 'nuxt', 'nuxt')
-  const npmData = await $fetch<NpmPackageInfo>('https://registry.npmjs.org/nuxt/latest').catch((): NpmPackageInfo => ({}))
-  const { downloads } = await npm.fetchPackageStats('nuxt')
+  const [npmData, { downloads }] = await Promise.all([
+    npm.fetchPackageVersion('nuxt', 'latest'),
+    npm.fetchPackageStats('nuxt')
+  ])
 
   return {
     ...repo,
-    version: npmData.version,
+    version: npmData!.version,
     monthlyDownloads: downloads
-  }
+  } satisfies Stats
 }, {
   name: 'stats',
   getKey: () => 'nuxt',
