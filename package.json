@@ -28,7 +28,7 @@
     "@nuxt/scripts": "^0.13.0",
     "@nuxt/ui": "^4.2.1",
     "@nuxt/vite-builder": "https://pkg.pr.new/@nuxt/vite-builder@33682",
-    "@nuxthub/core": "npm:@nuxthub/core-nightly@0.10.0-20251202-160427-b2d4a1a",
+    "@nuxthub/core": "npm:@nuxthub/core-nightly@0.10.0-20251202-162300-b2d4a1a",
     "@nuxtjs/html-validator": "^2.1.0",
     "@nuxtjs/mcp-toolkit": "^0.4.1",
     "@nuxtjs/mdc": "^0.18.4",
