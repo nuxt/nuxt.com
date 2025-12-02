@@ -1,4 +1,4 @@
-import type { Sponsor } from '~/types'
+import type { Sponsor } from '#shared/types'
 
 export const useSponsors = async () => {
   const [{ data: apiSponsors }, { data: manualSponsors }] = await Promise.all([
@@ -7,12 +7,11 @@ export const useSponsors = async () => {
   ])
 
   const sponsors = computed(() => {
-    const api = (apiSponsors.value || {}) as Record<string, Sponsor[]>
     const manual = manualSponsors.value?.sponsors || []
 
     const result: Record<string, Sponsor[]> = {}
 
-    for (const [tier, sponsorsList] of Object.entries(api)) {
+    for (const [tier, sponsorsList] of Object.entries(apiSponsors.value || {})) {
       result[tier] = [...sponsorsList]
     }
 

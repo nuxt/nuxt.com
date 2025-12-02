@@ -1,21 +1,10 @@
 import type { H3Event } from 'h3'
 import { hasProtocol } from 'ufo'
 
-export type SponsorType = 'diamond' | 'platinum' | 'silver' | 'gold' | 'bronze' | 'backers'
-
 const inactiveSponsors = [
   'strapijs',
   'planfredapp'
 ]
-
-export interface Sponsor {
-  sponsorId: string
-  sponsorName: string
-  sponsorLogo: string
-  sponsorUrl: string
-  monthlyPriceInDollars: string
-  tier: SponsorType
-}
 
 function githubHeaders(event: H3Event, headers: Record<string, string> = {}) {
   return {
@@ -38,12 +27,22 @@ function toURL(url: string) {
   return !url || hasProtocol(url) ? url : `https://${url}`
 }
 
-interface OpenCollectiveSponsor {
+export function getTierByAmount(amount: number): SponsorType {
+  if (amount >= 2500) return 'diamond'
+  if (amount >= 1000) return 'platinum'
+  if (amount >= 500) return 'gold'
+  if (amount >= 250) return 'silver'
+  if (amount >= 100) return 'bronze'
+  return 'backers'
+}
+
+export interface OpenCollectiveSponsor {
   sponsorId: string
   sponsorName: string
   sponsorLogo: string
   sponsorUrl: string
-  monthlyPriceInDollars: string
+  monthlyPriceInDollars: number
+  tier: SponsorType
 }
 
 export async function fetchOpenCollectiveSponsors(event: H3Event): Promise<OpenCollectiveSponsor[]> {
@@ -142,7 +141,8 @@ export async function fetchOpenCollectiveSponsors(event: H3Event): Promise<OpenC
         sponsorName: sponsor.account.name,
         sponsorLogo: sponsor.account.imageUrl,
         sponsorUrl: toURL(sponsor.account.website) || `https://opencollective.com/${sponsor.account.slug}`,
-        monthlyPriceInDollars: sponsor.tier.amount.value.toString()
+        monthlyPriceInDollars: Number(sponsor.tier.amount.value),
+        tier: getTierByAmount(Number(sponsor.tier.amount.value))
       }
     }) || [])
     response.push(...sponsors.filter(sponsor => !inactiveSponsors.includes(sponsor.sponsorId)))
@@ -243,8 +243,8 @@ export const fetchGithubSponsors = async (event: H3Event): Promise<Sponsor[]> =>
         sponsorName: sponsorEntity.name,
         sponsorLogo: sponsorEntity.avatarUrl,
         sponsorUrl: toURL(sponsorEntity.websiteUrl) || `https://github.com/${sponsorEntity.login}`,
-        monthlyPriceInDollars: tier.monthlyPriceInDollars.toString(),
-        tier: 'backers'
+        monthlyPriceInDollars: Number(tier.monthlyPriceInDollars),
+        tier: getTierByAmount(Number(tier.monthlyPriceInDollars))
       }
 
       // Hack for nickolasmartin
@@ -279,7 +279,7 @@ export const fetchGithubSponsors = async (event: H3Event): Promise<Sponsor[]> =>
     sponsorName: 'Vercel',
     sponsorLogo: 'https://avatars.githubusercontent.com/u/14985020',
     sponsorUrl: 'https://vercel.com',
-    monthlyPriceInDollars: '10000',
+    monthlyPriceInDollars: 10000,
     tier: 'diamond'
   })
   return response

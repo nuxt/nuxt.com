@@ -1,13 +1,4 @@
-type Tier = (amount: number) => boolean
-
-const tiersMap: { [tier: string]: Tier } = {
-  diamond: amount => amount >= 2500,
-  platinum: amount => amount >= 1000 && amount < 2500,
-  gold: amount => amount < 1000 && amount >= 500,
-  silver: amount => amount < 500 && amount >= 250,
-  bronze: amount => amount <= 200 && amount >= 100,
-  backer: amount => amount < 100
-}
+import type { Sponsor, SponsorType } from '#shared/types'
 
 export default cachedEventHandler(async (event) => {
   const sponsors = await Promise.all([
@@ -15,20 +6,25 @@ export default cachedEventHandler(async (event) => {
     fetchOpenCollectiveSponsors(event)
   ])
 
-  return sponsors.flat().reduce((acc, sponsor) => {
-    const tier = Object.keys(tiersMap).find(tier => tiersMap[tier](sponsor.monthlyPriceInDollars)) as string
-    return {
-      ...acc,
-      [tier]: [...(acc[tier] || []), sponsor]
-    }
-  }, {
+  const sponsorsByTier: Record<SponsorType, Array<Sponsor>> = {
     diamond: [],
     platinum: [],
     gold: [],
     silver: [],
     bronze: [],
-    backer: []
-  })
+    backers: []
+  }
+
+  for (const chunk of sponsors) {
+    for (const sponsor of chunk) {
+      const tier = getTierByAmount(sponsor.monthlyPriceInDollars)
+
+      sponsorsByTier[tier] ||= []
+      sponsorsByTier[tier].push(sponsor)
+    }
+  }
+
+  return sponsorsByTier
 }, {
   name: 'sponsors',
   getKey: () => 'sponsors',
