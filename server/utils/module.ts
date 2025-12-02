@@ -1,6 +1,7 @@
 import { parseMarkdown } from '@nuxtjs/mdc/runtime'
 import type { H3Event } from 'h3'
 import type { BaseModule, Module, ModuleContributor, ModuleStats } from '#shared/types'
+import type { NpmDownloadStats } from '../types/npm'
 
 export function isBot(username: string) {
   return username.includes('[bot]') || username.includes('-bot')
@@ -15,13 +16,13 @@ export const fetchModules = cachedFunction(async (_event: H3Event): Promise<Modu
   maxAge: 10 * 60 // 10 minutes
 })
 
-export async function fetchModuleStats(event: H3Event, module: BaseModule) {
+export async function fetchModuleStats(event: H3Event, module: BaseModule, preloadedNpmStats?: NpmDownloadStats) {
   console.info(`Fetching module ${module.name} stats...`)
   const ghRepo = module.repo.split('#')[0]
   const [owner, name] = ghRepo.split('/')
   const [npmInfos, npmStats, repo] = await Promise.all([
     npm.fetchPackage(module.npm),
-    npm.fetchPackageStats(module.npm, 'last-month'),
+    preloadedNpmStats || npm.fetchPackageStats(module.npm, 'last-month'),
     github.fetchRepo(event, owner, name)
       .then((repo) => {
         return {

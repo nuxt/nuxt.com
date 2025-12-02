@@ -55,11 +55,13 @@ export default defineCachedEventHandler(async (event) => {
     modules: string[]
   }
 
+  const bulkNpmStats = await npm.fetchBulkPackageStats(modules.map(m => m.npm), 'last-month')
+
   const maintainers: Record<string, MaintainerWithModules> = {}
   const contributors: Record<string, ContributorWithModules> = {}
   for (const module of modules) {
     const [mStats, mContributors] = await Promise.all([
-      fetchModuleStats(event, module),
+      fetchModuleStats(event, module, bulkNpmStats[module.npm]),
       fetchModuleContributors(event, module)
     ])
     module.stats = mStats
