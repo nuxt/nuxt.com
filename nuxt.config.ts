@@ -57,19 +57,6 @@ export default defineNuxtConfig({
   colorMode: {
     preference: 'dark'
   },
-  content: {
-    build: {
-      markdown: {
-        highlight: {
-          theme: {
-            default: 'material-theme-lighter',
-            dark: 'material-theme-palenight'
-          },
-          langs: ['sql', 'diff', 'ini']
-        }
-      }
-    }
-  },
   mdc: {
     highlight: {
       noApiRoute: false,
