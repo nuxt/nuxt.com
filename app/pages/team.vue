@@ -8,7 +8,7 @@ definePageMeta({
 
 const [{ data: page }, { data: teams }] = await Promise.all([
   useAsyncData(kebabCase(route.path), () => queryCollection('team').first()),
-  useFetch('/api/teams', {
+  useFetch('/api/v1/teams', {
     key: 'teams',
     default: () => ([{ name: 'Core Team', team: [], link: 'https://github.com/orgs/nuxt/teams/core' }, { name: 'Ecosystem Team', team: [], link: 'https://github.com/orgs/nuxt/teams/ecosystem' }]),
     transform: data => [

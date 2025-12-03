@@ -4,7 +4,7 @@ export default defineNuxtPlugin(() => {
   useNuxtApp().hook('app:mounted', () => {
     const { email, confirmation } = useRoute().query
     if (email && confirmation) {
-      $fetch('https://api.nuxt.com/newsletter/confirm', {
+      $fetch('/api/newsletter/confirm', {
         method: 'POST',
         body: { email, confirmation }
       }).then(() => {

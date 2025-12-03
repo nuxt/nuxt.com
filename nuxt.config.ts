@@ -65,7 +65,7 @@ export default defineNuxtConfig({
             default: 'material-theme-lighter',
             dark: 'material-theme-palenight'
           },
-          langs: ['sql', 'diff', 'ini']
+          langs: ['js', 'jsx', 'json', 'ts', 'tsx', 'vue', 'css', 'html', 'bash', 'md', 'mdc', 'yaml', 'sql', 'diff', 'ini']
         }
       }
     }
@@ -83,6 +83,22 @@ export default defineNuxtConfig({
       componentDetection: true
     }
   },
+  runtimeConfig: {
+    contactEmail: '',
+    github: {
+      token: ''
+    },
+    newsletter: {
+      secret: ''
+    },
+    openCollective: {
+      apiKey: ''
+    },
+    sendgrid: {
+      listId: '',
+      apiKey: ''
+    }
+  },
   routeRules: {
     // Pre-render
     '/': { prerender: true },
@@ -94,7 +110,7 @@ export default defineNuxtConfig({
     '/modules': { isr: 60 * 60 },
     '/modules/**': { isr: 60 * 60 },
     // API
-    '/api/teams': { isr: 60 * 60 },
+    '/api/v1/teams': { isr: 60 * 60 },
     // Admin
     '/admin': { ssr: false },
     '/admin/**': { ssr: false },

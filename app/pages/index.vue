@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { joinURL } from 'ufo'
-import type { Module } from '~/types'
+import type { Module } from '#shared/types'
 
 definePageMeta({
   heroBackground: '-z-10'
@@ -8,7 +8,7 @@ definePageMeta({
 
 const [{ data: page }, { data: officialModules }, { data: showcase }, { getFilteredSponsors }] = await Promise.all([
   useAsyncData('index', () => queryCollection('index').first()),
-  useFetch('https://api.nuxt.com/modules', {
+  useFetch('/api/v1/modules', {
     key: 'official-modules',
     transform: (res: { modules: Module[], stats: Stats }) => res.modules
       .filter(module => module.type === 'official')

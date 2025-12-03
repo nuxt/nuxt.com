@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import type { Module, Stats } from '~/types'
+import type { Module, Stats } from '#shared/types'
 
 export default defineMcpTool({
   description: `Lists all available Nuxt modules with optional filtering and sorting capabilities.
@@ -46,31 +46,38 @@ OUTPUT: Returns list of modules with name, description, category, stats. Use get
       )
     }
 
-    // Sort modules
+    // Sort modules (modules without stats go to the end)
     modules.sort((a, b) => {
-      let aValue: number | string
-      let bValue: number | string
+      const aStats = a.stats
+      const bStats = b.stats
+
+      if (!aStats && !bStats) return 0
+      if (!aStats) return 1
+      if (!bStats) return -1
+
+      let aValue: number
+      let bValue: number
 
       switch (sort) {
         case 'downloads':
-          aValue = a.stats.downloads
-          bValue = b.stats.downloads
+          aValue = aStats.downloads
+          bValue = bStats.downloads
           break
         case 'stars':
-          aValue = a.stats.stars
-          bValue = b.stats.stars
+          aValue = aStats.stars
+          bValue = bStats.stars
           break
         case 'publishedAt':
-          aValue = a.stats.publishedAt
-          bValue = b.stats.publishedAt
+          aValue = aStats.publishedAt
+          bValue = bStats.publishedAt
           break
         case 'createdAt':
-          aValue = a.stats.createdAt
-          bValue = b.stats.createdAt
+          aValue = aStats.createdAt
+          bValue = bStats.createdAt
           break
         default:
-          aValue = a.stats.downloads
-          bValue = b.stats.downloads
+          aValue = aStats.downloads
+          bValue = bStats.downloads
       }
 
       if (order === 'asc') {

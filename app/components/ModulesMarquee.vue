@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { moduleImage, moduleIcon } from '~/composables/useModules'
-import type { Module } from '~/types'
+import type { Module } from '#shared/types'
 
 const props = defineProps<{
   modules: Module[]

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Module } from '~/types'
+import type { Module } from '#shared/types'
 import { ModuleProseA, ModuleProseKbd, ModuleProseImg } from '#components'
 
 definePageMeta({
@@ -7,7 +7,7 @@ definePageMeta({
 })
 const route = useRoute()
 
-const { data: module } = await useFetch<Module>(`https://api.nuxt.com/modules/${route.params.slug}`, { key: `module-${route.params.slug}` })
+const { data: module } = await useFetch<Module>(`/api/v1/modules/${route.params.slug}`, { key: `module-${route.params.slug}` })
 if (!module.value) {
   throw createError({ statusCode: 404, statusMessage: 'Module not found', fatal: true })
 }

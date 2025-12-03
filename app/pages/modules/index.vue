@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { motion, AnimatePresence } from 'motion-v'
-import type { Module } from '~/types'
+import type { Module } from '#shared/types'
 import { joinURL } from 'ufo'
 
 definePageMeta({

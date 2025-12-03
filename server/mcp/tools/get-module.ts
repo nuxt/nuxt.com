@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import type { Module } from '~/types'
+import type { Module } from '#shared/types'
 
 export default defineMcpTool({
   description: `Retrieves complete details about a specific Nuxt module including README, compatibility, maintainers, and stats.
@@ -46,8 +46,9 @@ EXAMPLES:
         readme: module.readme,
         url: `https://nuxt.com/modules/${module.name}`
       })
-    } catch (error: any) {
-      return errorResult(error.statusMessage || 'Module not found')
+    } catch (error: unknown) {
+      const err = error as Error & { statusMessage?: string }
+      return errorResult(err.statusMessage || 'Module not found')
     }
   }
 })
