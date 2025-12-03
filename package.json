@@ -104,7 +104,8 @@
       "vite": "npm:rolldown-vite@latest"
     },
     "patchedDependencies": {
-      "nitropack": "patches/nitropack.patch"
+      "nitropack": "patches/nitropack.patch",
+      "@nuxtjs/mdc": "patches/@nuxtjs__mdc.patch"
     }
   }
 }

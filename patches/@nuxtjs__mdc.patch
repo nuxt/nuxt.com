@@ -1,0 +1,32 @@
+diff --git a/dist/module.mjs b/dist/module.mjs
+index a44474bc1c8e6a31066679d5d432fd645a30935f..3cd79d83bdbec8a996a5b47fe8c7397d0e684e9b 100644
+--- a/dist/module.mjs
++++ b/dist/module.mjs
+@@ -84,7 +84,7 @@ async function mdcHighlighter({
+     }
+     code = code.replace(
+       /from\s+(['"])shiki\1/,
+-      'from "shiki/engine/javascript"'
++      'from "@shikijs/engine-javascript"'
+     );
+     const langsMap = /* @__PURE__ */ new Map();
+     options.langs?.forEach((lang) => {
+@@ -110,7 +110,7 @@ async function mdcHighlighter({
+     } = options;
+     return [
+       "import { getMdcConfigs } from '#mdc-configs'",
+-      shikiEngine === "javascript" ? "" : "import { createOnigurumaEngine } from 'shiki/engine/oniguruma'",
++      shikiEngine === "javascript" ? "" : "import { createOnigurumaEngine } from '@shikijs/engine-oniguruma'",
+       code,
+       "const bundledLangs = {",
+       ...Array.from(langsMap.entries()).map(([name, lang]) => typeof lang === "string" ? JSON.stringify(name) + `: () => import('@shikijs/langs/${lang}').then(r => r.default || r),` : JSON.stringify(name) + ": " + JSON.stringify(lang) + ","),
+diff --git a/dist/runtime/highlighter/shiki.js b/dist/runtime/highlighter/shiki.js
+index e00c89469ead8e9023946dbb7509922cc1aa54d0..f4f69679a2e76a138309f335e3f3ba98b6e58c41 100644
+--- a/dist/runtime/highlighter/shiki.js
++++ b/dist/runtime/highlighter/shiki.js
+@@ -1,4 +1,4 @@
+-import { createJavaScriptRegexEngine } from "shiki/engine/javascript";
++import { createJavaScriptRegexEngine } from "@shikijs/engine-javascript";
+ export function createShikiHighlighter({
+   langs = [],
+   themes = [],

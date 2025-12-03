@@ -261,11 +261,8 @@ export default defineNuxtConfig({
       // Don't generate observability routes
       vercel: '2025-07-14'
     },
-    externals: {
-      traceInclude: ['node_modules/shiki/dist/engine-javascript.mjs', 'node_modules/@shikijs/engine-javascript/dist/index.mjs', 'node_modules/shiki/dist/engine-oniguruma.mjs', 'node_modules/@shikijs/engine-oniguruma/dist/index.mjs']
-    },
     prerender: {
-      crawlLinks: true,
+      crawlLinks: false,
       ignore: [
         route => route.startsWith('/modules'),
         route => route.startsWith('/admin')
