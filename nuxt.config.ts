@@ -262,7 +262,7 @@ export default defineNuxtConfig({
       vercel: '2025-07-14'
     },
     externals: {
-      traceInclude: ['node_modules/shiki/dist/engine-javascript.mjs', 'node_modules/@shikijs/engine-javascript/dist/index.mjs']
+      traceInclude: ['node_modules/shiki/dist/engine-javascript.mjs', 'node_modules/@shikijs/engine-javascript/dist/index.mjs', 'node_modules/shiki/dist/engine-oniguruma.mjs', 'node_modules/@shikijs/engine-oniguruma/dist/index.mjs']
     },
     prerender: {
       crawlLinks: true,
