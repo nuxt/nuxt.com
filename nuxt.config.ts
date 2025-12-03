@@ -261,8 +261,8 @@ export default defineNuxtConfig({
       // Don't generate observability routes
       vercel: '2025-07-14'
     },
-    experimental: {
-      wasm: true
+    externals: {
+      traceInclude: ['node_modules/shiki/dist/engine-javascript.mjs', 'node_modules/@shikijs/engine-javascript/dist/index.mjs']
     },
     prerender: {
       crawlLinks: true,
