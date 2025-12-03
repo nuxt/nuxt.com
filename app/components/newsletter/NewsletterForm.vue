@@ -36,8 +36,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     toast.add({ title: 'Subscription pending', description: 'Please check your emails to confirm your subscription.', color: 'success' })
     state.email = ''
   }).catch((err) => {
-    const error = JSON.parse(err.data?.message)
-    const description = error[0].message || 'Something went wrong. Please try again later.'
+    const description = err.data?.message || 'Something went wrong. Please try again later.'
     toast.add({ title: 'Subscription failed', description, color: 'error' })
   })
   loading.value = false
