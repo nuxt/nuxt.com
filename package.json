@@ -4,6 +4,7 @@
   "packageManager": "pnpm@10.23.0",
   "scripts": {
     "dev": "nuxt dev",
+    "dev:ui": "nuxt dev --ui-only",
     "build": "NODE_OPTIONS='--max-old-space-size=8192' nuxt build",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
