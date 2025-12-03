@@ -25,7 +25,7 @@
     "@libsql/client": "^0.15.15",
     "@npm/types": "^2.1.0",
     "@nuxt/content": "https://pkg.pr.new/@nuxt/content@3624",
-    "@nuxt/image": "https://pkg.pr.new/@nuxt/image@62998ab",
+    "@nuxt/image": "^2.0.0",
     "@nuxt/scripts": "^0.13.0",
     "@nuxt/ui": "^4.2.1",
     "@nuxt/vite-builder": "https://pkg.pr.new/@nuxt/vite-builder@33682",
