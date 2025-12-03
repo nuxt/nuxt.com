@@ -97,9 +97,6 @@ export default defineNuxtConfig({
     sendgrid: {
       listId: '',
       apiKey: ''
-    },
-    volta: {
-      token: ''
     }
   },
   routeRules: {
