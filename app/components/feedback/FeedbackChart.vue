@@ -75,10 +75,10 @@ const overallChartData = computed(() => {
   const dailyScores: Record<string, number[]> = {}
 
   if (hasValidData.value && props.pageAnalytics) {
-    props.pageAnalytics.forEach((page) => {
-      if (!page || !page.feedback) return
+    for (const page of props.pageAnalytics) {
+      if (!page || !page.feedback) continue
 
-      page.feedback.forEach((feedback) => {
+      for (const feedback of page.feedback) {
         const feedbackDate = new Date(feedback.createdAt)
 
         if (feedbackDate >= startDate && feedbackDate <= endDate) {
@@ -90,8 +90,8 @@ const overallChartData = computed(() => {
           const ratingScore = FEEDBACK_OPTIONS.find(opt => opt.value === feedback.rating)?.score || 0
           dailyScores[dateStr].push(ratingScore)
         }
-      })
-    })
+      }
+    }
   }
 
   let lastKnownValue = 0
@@ -143,12 +143,12 @@ const timeBasedChartData = computed(() => {
 
   const selectedPages = props.pageAnalytics.filter(p => p && selectedPagePaths.value.includes(p.path))
 
-  selectedPages.forEach((page) => {
-    if (!page || !page.feedback) return
+  for (const page of selectedPages) {
+    if (!page || !page.feedback) continue
 
     const pageKey = page.path.split('/').pop()?.replace(/[^a-z0-9]/gi, '') || 'page'
 
-    page.feedback.forEach((feedback) => {
+    for (const feedback of page.feedback) {
       const feedbackDate = new Date(feedback.createdAt)
 
       if (feedbackDate >= startDate && feedbackDate <= endDate) {
@@ -163,8 +163,8 @@ const timeBasedChartData = computed(() => {
         const ratingScore = FEEDBACK_OPTIONS.find(opt => opt.value === feedback.rating)?.score || 0
         dailyScores[dateStr][pageKey].push(ratingScore)
       }
-    })
-  })
+    }
+  }
 
   const lastKnownValues: Record<string, number> = {}
 
@@ -178,8 +178,8 @@ const timeBasedChartData = computed(() => {
       day: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
     }
 
-    selectedPages.forEach((page) => {
-      if (!page) return
+    for (const page of selectedPages) {
+      if (!page) continue
 
       const pageKey = page.path.split('/').pop()?.replace(/[^a-z0-9]/gi, '') || 'page'
 
@@ -189,7 +189,7 @@ const timeBasedChartData = computed(() => {
       }
 
       entry[pageKey] = lastKnownValues[pageKey] || 0
-    })
+    }
 
     data.push(entry)
   }
