@@ -314,7 +314,7 @@ export default defineNuxtConfig({
     provider: 'iconify'
   },
   image: {
-    format: ['webp', 'jpeg', 'jpg', 'png', 'svg'],
+    format: ['webp', 'jpeg', 'jpg', 'png'],
     provider: 'ipx'
   },
   llms: {

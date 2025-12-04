@@ -28,12 +28,20 @@ defineOgImage({
   <UPage v-if="page">
     <UPageHero :title="page.title" :description="page.description" :links="page.hero.links">
       <UPageLogos marquee>
-        <UColorModeImage
-          v-for="company in page.logos"
-          :key="company.alt"
-          v-bind="company"
-          class="h-10 max-w-[120px] object-contain"
-        />
+        <template v-for="company in page.logos" :key="company.alt">
+          <img
+            v-if="!$colorMode?.value || $colorMode.value === 'light'"
+            :src="company.light"
+            :alt="company.alt"
+            class="h-10 max-w-[120px] object-contain"
+          >
+          <img
+            v-else
+            :src="company.dark"
+            :alt="company.alt"
+            class="h-10 max-w-[120px] object-contain"
+          >
+        </template>
       </UPageLogos>
     </UPageHero>
 

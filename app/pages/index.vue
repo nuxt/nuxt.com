@@ -191,16 +191,24 @@ onMounted(() => {
           :in-view-options="{ once: true }"
         >
           <div class="opacity-0">
-            <UColorModeImage
-              :key="company.alt"
-              :light="company.light"
-              :dark="company.dark"
+            <img
+              v-if="$colorMode.value === 'light'"
+              :src="company.light"
               :alt="`${company.alt} logo`"
               loading="lazy"
               :height="company.height"
               :width="company.width"
               class="h-6 shrink-0 max-w-[140px]"
-            />
+            >
+            <img
+              v-else
+              :src="company.dark"
+              :alt="`${company.alt} logo`"
+              loading="lazy"
+              :height="company.height"
+              :width="company.width"
+              class="h-6 shrink-0 max-w-[140px]"
+            >
           </div>
         </Motion>
       </UPageLogos>
@@ -461,14 +469,14 @@ onMounted(() => {
         root: 'bg-gradient-to-b border-t border-default from-muted dark:from-muted/40 to-default'
       }"
     >
-      <NuxtImg
+      <img
         src="/assets/landing/deploy.svg"
         width="512"
         height="439"
         :alt="page.deploy.title"
         class="mx-auto max-w-lg sm:w-full w-full"
         loading="lazy"
-      />
+      >
     </UPageSection>
 
     <UPageSection
@@ -491,14 +499,14 @@ onMounted(() => {
         <LazyMDC :value="page.support.description" unwrap="p" cache-key="index-support-description" hydrate-never />
 
         <UPageLogos :ui="{ logos: 'mt-6' }" marquee>
-          <NuxtImg
+          <img
             v-for="company in page.support.companies"
             :key="company.alt"
             v-bind="company"
             loading="lazy"
             class="h-8 max-w-[70px] object-contain filter invert dark:invert-0 opacity-50"
             :alt="`${company.alt} logo`"
-          />
+          >
         </UPageLogos>
       </template>
 

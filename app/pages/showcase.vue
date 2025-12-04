@@ -89,16 +89,24 @@ onMounted(() => {
                 :in-view-options="{ once: true }"
               >
                 <div class="opacity-0">
-                  <UColorModeImage
-                    :key="company.alt"
-                    :light="company.light"
-                    :dark="company.dark"
+                  <img
+                    v-if="$colorMode.value === 'light'"
+                    :src="company.light"
                     :alt="`${company.alt} logo`"
                     loading="lazy"
                     :height="company.height"
                     :width="company.width"
                     class="h-6 shrink-0 max-w-[140px]"
-                  />
+                  >
+                  <img
+                    v-else
+                    :src="company.dark"
+                    :alt="`${company.alt} logo`"
+                    loading="lazy"
+                    :height="company.height"
+                    :width="company.width"
+                    class="h-6 shrink-0 max-w-[140px]"
+                  >
                 </div>
               </Motion>
             </UPageLogos>
