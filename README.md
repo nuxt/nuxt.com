@@ -40,6 +40,12 @@ Copy the output of the command above and paste it in the `NUXT_PATH` and `NUXT_V
 Start the development server:
 
 ```bash
+pnpm dev:ui
+```
+
+If you want to run the development server with the API, run:
+
+```bash
 pnpm dev
 ```
 
