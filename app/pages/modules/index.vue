@@ -236,9 +236,15 @@ initializeModules()
 
     <UPage id="smooth" class="relative z-20">
       <UPageBody>
-        <div class="flex items-center gap-2 mb-4 text-muted">
-          <UIcon name="i-lucide-info" class="size-4" />
-          <span class="text-xs">Shift+click to select modules for bulk installation</span>
+        <div class="flex justify-between mb-4 text-muted text-xs">
+          <div class="flex items-center gap-2">
+            <UIcon name="i-lucide-info" class="size-4" />
+            <span>Shift+click to select modules for bulk installation</span>
+          </div>
+          <ULink to="/docs/guide/modules/getting-started" class="hidden md:flex items-center gap-1">
+            Create your own module
+            <UIcon name="i-lucide-arrow-right" class="size-4" />
+          </ULink>
         </div>
 
         <UPageGrid v-if="filteredModules?.length" class="lg:grid-cols-2 xl:grid-cols-3">
