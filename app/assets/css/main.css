@@ -1,6 +1,5 @@
 @import "tailwindcss";
-@import "@nuxt/ui-pro";
-@import "./twoslash.css";
+@import "@nuxt/ui";
 
 @source "../../../content/**/*";
 @source "../../../node_modules/.c12";

@@ -1,5 +1,5 @@
 export const useHostingProviders = () => {
-  const { data: providers, execute } = useAsyncData(() => queryCollection('deploy').all(), {
+  const { data: providers, execute } = useAsyncData(() => queryCollection('deploy').order('sponsor', 'DESC').all(), {
     immediate: false,
     default: () => [],
     transform: data => data.filter(article => article.path !== '/deploy')

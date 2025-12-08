@@ -1,8 +1,8 @@
 import { defineContentConfig, defineCollection, z } from '@nuxt/content'
 
 const docsV3Source = {
-  cwd: process.env.NUXT_PATH ?? undefined,
-  repository: !process.env.NUXT_PATH ? 'https://github.com/nuxt/nuxt/tree/3.x' : undefined,
+  cwd: process.env.NUXT_V3_PATH ?? undefined,
+  repository: !process.env.NUXT_V3_PATH ? 'https://github.com/nuxt/nuxt/tree/3.x' : undefined,
   include: 'docs/**/*',
   exclude: ['docs/**/*.json'],
   prefix: '/docs/3.x'
@@ -219,7 +219,7 @@ export default defineContentConfig({
         image: z.string().editor({ input: 'media' }),
         authors: z.array(Author),
         date: z.string().date(),
-        draft: z.boolean().optional(),
+        draft: z.boolean().default(false),
         category: z.enum(['Release', 'Tutorial', 'Announcement', 'Article']),
         tags: z.array(z.string())
       })
@@ -248,7 +248,7 @@ export default defineContentConfig({
         description: z.string(),
         componentImg: z.string(),
         logoSrc: z.string(),
-        featured: z.boolean(),
+        sponsor: z.boolean(),
         logoIcon: z.string(),
         category: z.string(),
         nitroPreset: z.string(),

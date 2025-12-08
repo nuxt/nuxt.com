@@ -8,9 +8,11 @@ useSeoMeta({
 
 defineProps<{ error: NuxtError }>()
 
+const route = useRoute()
 const { version } = useDocsVersion()
 const { searchGroups, searchLinks, searchTerm } = useNavigation()
-const { fetchList } = useModules()
+const { fetchList: fetchModules } = useModules()
+const { fetchList: fetchHosting } = useHostingProviders()
 
 const [{ data: navigation }, { data: files }] = await Promise.all([
   useAsyncData('navigation', () => {
@@ -25,17 +27,21 @@ const [{ data: navigation }, { data: files }] = await Promise.all([
   }),
   useLazyAsyncData('search', () => {
     return Promise.all([
-      queryCollectionSearchSections('docsv3'),
-      queryCollectionSearchSections('docsv4'),
+      queryCollectionSearchSections('docsv3', { ignoredTags: ['style'] }),
+      queryCollectionSearchSections('docsv4', { ignoredTags: ['style'] }),
       queryCollectionSearchSections('blog')
     ])
   }, {
+    server: false,
     transform: data => data.flat(),
     watch: [version]
   })
 ])
 
-onNuxtReady(() => fetchList())
+onNuxtReady(() => {
+  fetchModules()
+  fetchHosting()
+})
 
 const versionNavigation = computed(() => navigation.value?.filter(item => item.path === version.value.path || item.path === '/blog') ?? [])
 const versionFiles = computed(() => files.value?.filter((file) => {
@@ -47,21 +53,28 @@ provide('navigation', versionNavigation)
 
 <template>
   <UApp>
-    <AppHeader />
+    <div :class="[(route.path.startsWith('/docs/') || route.path.startsWith('/deploy')) && 'root']">
+      <Header />
 
-    <UError :error="error" />
+      <UError :error="error" />
 
-    <AppFooter />
+      <AppFooter />
 
-    <ClientOnly>
-      <LazyUContentSearch
-        v-model:search-term="searchTerm"
-        :files="versionFiles"
-        :navigation="versionNavigation"
-        :groups="searchGroups"
-        :links="searchLinks"
-        :fuse="{ resultLimit: 42 }"
-      />
-    </ClientOnly>
+      <ClientOnly>
+        <LazyUContentSearch
+          v-model:search-term="searchTerm"
+          :files="versionFiles"
+          :navigation="versionNavigation"
+          :groups="searchGroups"
+          :links="searchLinks"
+          :fuse="{
+            resultLimit: 42,
+            fuseOptions: {
+              threshold: 0
+            }
+          }"
+        />
+      </ClientOnly>
+    </div>
   </UApp>
 </template>

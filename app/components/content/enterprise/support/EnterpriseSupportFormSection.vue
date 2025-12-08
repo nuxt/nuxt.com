@@ -62,7 +62,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 
   loading.value = true
 
-  await $fetch('https://api.nuxt.com/support/contact', {
+  await $fetch('/api/support/contact', {
     method: 'POST',
     body: {
       ...event.data,

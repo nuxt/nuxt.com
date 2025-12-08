@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import type { Module } from '~/types'
+import type { Module } from '#shared/types'
 
 const emit = defineEmits<{
   add: [module: Module]
   remove: [module: Module]
 }>()
 
-const { module, showBadge = true, isAdded } = defineProps<{
+const { module, showBadge = true, isAdded, showAddButton = true } = defineProps<{
   module: Module
   showBadge?: boolean
   isAdded: boolean
+  showAddButton?: boolean
 }>()
 
 const { copy } = useClipboard()
@@ -28,7 +29,6 @@ function copyInstallCommand(moduleName: string) {
 }
 
 function toggleModule(module: Module) {
-  console.log(module)
   if (isAdded) {
     emit('remove', module)
   } else {
@@ -174,14 +174,16 @@ const items = computed(() => [
           </div>
 
           <div class="flex items-center gap-2">
-            <UTooltip text="Add module">
+            <UTooltip v-if="showAddButton" :text="isAdded ? 'Remove module' : 'Add module'">
               <UButton
                 :icon="isAdded ? 'i-lucide-check' : 'i-lucide-plus'"
                 color="neutral"
                 size="xs"
                 variant="outline"
                 @click="toggleModule(module)"
-              />
+              >
+                <span class="sr-only">{{ isAdded ? 'Remove module' : 'Add module' }}</span>
+              </UButton>
             </UTooltip>
             <UTooltip text="Copy install command">
               <UButton

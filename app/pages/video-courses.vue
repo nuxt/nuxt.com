@@ -45,7 +45,7 @@ defineOgImageComponent('Docs', {
               :width="'sponsor' in course && course.sponsor ? 96 : 58"
               :height="'sponsor' in course && course.sponsor ? 64 : 32"
               format="webp"
-              :modifiers="{ pos: 'top' }"
+              :modifiers="{ position: 'top' }"
               :loading="index > 3 ? 'lazy' : undefined"
               class="rounded border border-default object-cover mr-2 hidden lg:block"
             />

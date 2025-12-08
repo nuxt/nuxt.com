@@ -28,7 +28,7 @@ defineProps<{
         width="600"
         height="338"
         format="webp"
-        :modifiers="{ pos: 'top' }"
+        :modifiers="{ position: 'top' }"
         :loading="index > 3 ? 'lazy' : undefined"
       />
       <NuxtImg
@@ -38,7 +38,7 @@ defineProps<{
         width="320"
         height="180"
         format="webp"
-        :modifiers="{ pos: 'top' }"
+        :modifiers="{ position: 'top' }"
         :loading="index > 3 ? 'lazy' : undefined"
       />
     </template>
@@ -68,7 +68,7 @@ defineProps<{
       </div>
     </template>
     <template #footer>
-      <UButtonGroup class="w-full">
+      <UFieldGroup class="w-full">
         <UButton
           label="Demo"
           icon="i-lucide-laptop"
@@ -101,7 +101,7 @@ defineProps<{
           size="sm"
           class="w-1/2 justify-center"
         />
-      </UButtonGroup>
+      </UFieldGroup>
     </template>
   </UPageCard>
 </template>

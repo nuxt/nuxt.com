@@ -1,7 +1,5 @@
 export default defineEventHandler(async (event) => {
   await requireUserSession(event)
 
-  const drizzle = useDrizzle()
-
-  return await drizzle.query.feedback.findMany()
+  return await db.select().from(schema.feedback)
 })

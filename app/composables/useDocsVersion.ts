@@ -2,11 +2,11 @@ import type { BadgeProps } from '@nuxt/ui'
 
 interface Version {
   label: string
-  shortTag: 'v4' | 'v3'
+  shortTag: 'v4' | 'v3' | 'v2'
   branch: string
   tagColor: BadgeProps['color']
   path: string
-  collection: 'docsv3' | 'docsv4'
+  collection?: 'docsv3' | 'docsv4'
 }
 
 const versions: Version[] = [
@@ -14,7 +14,7 @@ const versions: Version[] = [
     label: 'Version 4',
     shortTag: 'v4',
     branch: 'main',
-    tagColor: 'info',
+    tagColor: 'primary',
     path: '/docs/4.x',
     collection: 'docsv4'
   },
@@ -22,15 +22,23 @@ const versions: Version[] = [
     label: 'Version 3',
     shortTag: 'v3',
     branch: '3.x',
-    tagColor: 'primary',
+    tagColor: 'neutral',
     path: '/docs/3.x',
     collection: 'docsv3'
+  },
+  {
+    label: 'Version 2',
+    shortTag: 'v2',
+    branch: '2.x',
+    tagColor: 'neutral',
+    path: 'https://v2.nuxt.com'
   }
 ]
 
 const tagMap: Record<Version['shortTag'], string> = {
   v3: '3x',
-  v4: '4x'
+  v4: '4x',
+  v2: '2x'
 }
 
 export const useDocsTags = () => {
@@ -66,7 +74,7 @@ export const useDocsVersion = () => {
           type: 'checkbox' as const
         }
       : {
-          to: route.path.replace(version.value.path, v.path)
+          to: v.path === 'https://v2.nuxt.com' ? v.path : route.path.replace(version.value.path, v.path)
         })
   })))
 

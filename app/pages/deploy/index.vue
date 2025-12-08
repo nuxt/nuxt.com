@@ -1,6 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
-  heroBackground: 'opacity-70 -z-10'
+  heroBackground: 'opacity-30 -z-10'
 })
 
 const { fetchList, providers } = useHostingProviders()
@@ -31,13 +31,21 @@ await fetchList()
 
 <template>
   <UContainer v-if="page">
-    <UPageHero
-      :title="title"
-      :description="description"
-      :links="page.links"
-    />
-
     <UPage>
+      <template #left>
+        <UPageAside>
+          <UNavigationMenu
+            variant="pill"
+            highlight
+            orientation="vertical"
+            :items="providers.map(provider => ({
+              label: provider.title,
+              to: provider.path,
+              badge: provider.sponsor ? 'Sponsor' : undefined
+            })).sort((a, b) => a.label.localeCompare(b.label))"
+          />
+        </UPageAside>
+      </template>
       <UPageBody>
         <UPageGrid>
           <UPageCard
@@ -56,6 +64,13 @@ await fetchList()
               <NuxtImg v-if="deployment.logoSrc" :src="deployment.logoSrc" width="10" height="10" class="w-10 h-10" />
               <UIcon v-else :name="deployment.logoIcon" class="size-10 text-black dark:text-white" />
             </template>
+            <UBadge
+              v-if="deployment.sponsor"
+              class="shine absolute top-4 right-4 sm:top-6 sm:right-6"
+              variant="subtle"
+              color="important"
+              label="Sponsor"
+            />
             <template #title>
               {{ deployment.title }}
             </template>

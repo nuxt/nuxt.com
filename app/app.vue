@@ -2,7 +2,8 @@
 const colorMode = useColorMode()
 const { version } = useDocsVersion()
 const { searchGroups, searchLinks, searchTerm } = useNavigation()
-const { fetchList } = useModules()
+const { fetchList: fetchModules } = useModules()
+const { fetchList: fetchHosting } = useHostingProviders()
 
 const color = computed(() => colorMode.value === 'dark' ? '#020420' : 'white')
 
@@ -19,17 +20,21 @@ const [{ data: navigation }, { data: files }] = await Promise.all([
   }),
   useLazyAsyncData('search', () => {
     return Promise.all([
-      queryCollectionSearchSections('docsv3'),
-      queryCollectionSearchSections('docsv4'),
+      queryCollectionSearchSections('docsv3', { ignoredTags: ['style'] }),
+      queryCollectionSearchSections('docsv4', { ignoredTags: ['style'] }),
       queryCollectionSearchSections('blog')
     ])
   }, {
+    server: false,
     transform: data => data.flat(),
     watch: [version]
   })
 ])
 
-onNuxtReady(() => fetchList())
+onNuxtReady(() => {
+  fetchModules()
+  fetchHosting()
+})
 
 useHead({
   titleTemplate: title => title ? `${title} · Nuxt` : 'Nuxt: The Intuitive Web Framework',
@@ -93,8 +98,21 @@ onMounted(() => {
         :navigation="versionNavigation"
         :groups="searchGroups"
         :links="searchLinks"
-        :fuse="{ resultLimit: 42 }"
+        :fuse="{
+          resultLimit: 42,
+          fuseOptions: {
+            threshold: 0
+          }
+        }"
       />
     </ClientOnly>
   </UApp>
 </template>
+
+<style>
+@media (min-width: 1024px) {
+  .root {
+    --ui-header-height: 112px;
+  }
+}
+</style>

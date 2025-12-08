@@ -17,7 +17,7 @@ jobs:
     if: github.event.deployment_status.state == 'success' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Audit URLs using Lighthouse
         uses: treosh/lighthouse-ci-action@v12
         with:
@@ -39,6 +39,6 @@ jobs:
         run: |
           curl -sS $BASE_URL/api/jobs
           curl -sS $BASE_URL/api/sponsors
-          curl -sS $BASE_URL/api/modules
+          curl -sS $BASE_URL/api/v1/modules
         env:
           BASE_URL: ${{ github.event.inputs.url || github.event.deployment_status.environment_url }}

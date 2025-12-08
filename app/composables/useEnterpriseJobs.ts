@@ -1,9 +1,10 @@
-import type { Filter, Job } from '../types'
+import type { Filter } from '../types'
+import type { Job } from '#shared/types'
 import { toRelativeDate } from '../utils'
 
 export const useEnterpriseJobs = () => {
   const route = useRoute()
-  const { data: jobs, execute } = useAsyncData('jobs', () => $fetch<Job[]>('https://api.nuxt.com/jobs'), {
+  const { data: jobs, execute } = useAsyncData('jobs', () => $fetch('/api/jobs'), {
     immediate: false,
     default: () => [],
     transform: (data) => {

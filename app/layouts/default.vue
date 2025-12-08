@@ -16,26 +16,26 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
-    <UBanner
-      id="senior-certification-nuxt"
-      title="Official Nuxt Senior Certification Exam has launched"
-      icon="i-lucide-award"
-      to="https://certification.nuxt.com"
+  <div :class="[(route.path.startsWith('/docs/') || route.path.startsWith('/deploy')) && 'root']">
+    <!-- <UBanner
+      id="mn-nuxt-b"
+      title="Black Friday: Get 40% OFF the complete Mastering Nuxt course"
+      icon="i-lucide-ticket-percent"
+      to="https://masteringnuxt.com/?utm_source=nuxt.com&utm_medium=banner&utm_campaign=nuxt.com"
       target="_blank"
       close
       :actions="[
         {
-          label: 'Get Certified',
+          label: 'Claim offer',
           color: 'neutral',
           variant: 'outline',
           trailingIcon: 'i-lucide-arrow-right',
-          to: 'https://certification.nuxt.com'
+          to: 'https://masteringnuxt.com/?utm_source=nuxt.com&utm_medium=banner&utm_campaign=nuxt.com'
         }
       ]"
-    />
+    /> -->
 
-    <AppHeader />
+    <Header />
 
     <UMain class="relative">
       <HeroBackground

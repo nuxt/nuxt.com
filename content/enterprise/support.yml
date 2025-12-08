@@ -8,8 +8,7 @@ hero:
   links:
   - label: Talk to a Nuxt expert
     trailingIcon: i-lucide-arrow-right
-    to: 'https://calendly.com/ferdinand-nuxt/nuxtlabs-ferdinand'
-    target: '_blank'
+    to: 'mailto:support@nuxt.com'
 logos:
   - light: /assets/enterprise/support/light/malt.svg
     dark: /assets/enterprise/support/dark/malt.svg

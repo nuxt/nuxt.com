@@ -2,14 +2,14 @@ hero:
   title: 'The Progressive Web Framework'
   description: Create high-quality web applications with Nuxt, the open source framework that makes full-stack development with Vue.js intuitive.
   cta:
-    label: Nuxt v4.1 is out
-    to: /blog/v4-1
+    label: Nuxt MCP Server is out
+    to: /docs/4.x/guide/ai/mcp
     icon: i-lucide-arrow-right
   tabs:
     - title: Minimal
       icon: i-lucide-leaf
       content: |
-        ::code-tree{defaultValue="app.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)]"}
+        ::code-tree{defaultValue="app.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)] my-0!"}
         ```vue [app.vue]
         <script setup lang="ts">
         const version = 4
@@ -48,7 +48,7 @@ hero:
     - title: Routing
       icon: i-lucide-milestone
       content: |
-        ::code-tree{defaultValue="pages/index.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)]"}
+        ::code-tree{defaultValue="pages/index.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)] my-0!"}
         ```vue [app.vue]
         <template>
           <NuxtPage />
@@ -89,7 +89,7 @@ hero:
     - title: Data Fetching
       icon: i-lucide-unplug
       content: |
-        ::code-tree{defaultValue="pages/index.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)]"}
+        ::code-tree{defaultValue="pages/index.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)] my-0!"}
         ```vue [app.vue]
         <template>
           <NuxtPage />
@@ -142,7 +142,7 @@ hero:
     - title: Auto-Imports
       icon: i-lucide-wand-sparkles
       content: |
-        ::code-tree{defaultValue="app.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)]"}
+        ::code-tree{defaultValue="app.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)] my-0!"}
         ```vue [app.vue]
         <script setup>
         const message = ref('Nuxt')
@@ -195,7 +195,7 @@ hero:
     - title: API Routes
       icon: i-lucide-pc-case
       content: |
-        ::code-tree{defaultValue="server/api/hello.ts" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)]"}
+        ::code-tree{defaultValue="server/api/hello.ts" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)] my-0!"}
         ```vue [app.vue]
         <template>
           <NuxtPage />
@@ -240,21 +240,16 @@ hero:
 logos:
   title: Chosen by leading companies worldwide
   companies:
-    - light: /assets/brands/light/fielmann.svg
-      dark: /assets/brands/dark/fielmann.svg
-      alt: Fielmann
-      height: 28
-      width: 89
-    - light: /assets/brands/light/dassault-systemes.svg
-      dark: /assets/brands/dark/dassault-systemes.svg
-      alt: Dassault Systemes
-      height: 28
-      width: 93
     - light: /assets/brands/light/louis-vuitton.svg
       dark: /assets/brands/dark/louis-vuitton.svg
       alt: Louis Vuitton
       height: 16
       width: 152
+    - light: /assets/brands/light/dassault-systemes.svg
+      dark: /assets/brands/dark/dassault-systemes.svg
+      alt: Dassault Systemes
+      height: 28
+      width: 93
     - light: /assets/brands/light/backmarket.svg
       dark: /assets/brands/dark/backmarket.svg
       alt: Back Market
@@ -275,9 +270,14 @@ logos:
       alt: Blizzard
       height: 28
       width: 55
-    - light: /assets/brands/light/too-good-to-go.svg
-      dark: /assets/brands/dark/too-good-to-go.svg
-      alt: To Good to Go
+    - light: /assets/brands/light/vans.svg
+      dark: /assets/brands/dark/vans.svg
+      alt: Vans
+      height: 23
+      width: 67
+    - light: /assets/brands/light/deutsche-bahn.svg
+      dark: /assets/brands/dark/deutsche-bahn.svg
+      alt: Deutsche Bahn
       height: 40
       width: 51
 features:
@@ -407,8 +407,8 @@ stats:
   community:
     title: Open source
     description: Nuxt is 100% powered by our passionate open source community. Every line of Nuxt is written by passionate developers like you.
-  x: 98.7k
-  discord: 28k
+  x: 102k
+  discord: 32k
   cta:
     label: Start contributing
     to: 'https://github.com/nuxt/nuxt'
@@ -483,7 +483,7 @@ sponsors:
   description: Nuxt is and will always remain free and open source under the MIT License, thanks to our contributors and sponsors.
   links:
     - label: Become a sponsor
-      to: 'https://github.com/sponsors/nuxt'
+      to: 'https://opencollective.com/nuxtjs'
       color: neutral
       trailingIcon: i-lucide-heart
       trailing: true

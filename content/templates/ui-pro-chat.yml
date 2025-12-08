@@ -1,7 +1,0 @@
-name: 'AI Chatbot'
-slug: 'ui-pro-chat'
-description: "Full-featured AI Chatbot with authentication & chat history."
-repo: 'nuxt-ui-pro/chat'
-demo: 'https://chat-template.nuxt.dev'
-badge: 'Freemium'
-featured: true

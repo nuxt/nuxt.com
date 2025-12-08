@@ -43,7 +43,7 @@ const items = computed<DropdownMenuItem[][]>(() => [
   ]
 ])
 
-const { data: rawFeedback, refresh: refreshFeedback } = await useFetch<FeedbackItem[]>('/api/feedback')
+const { data: rawFeedback, refresh: refreshFeedback } = await useFetch('/api/feedback')
 const { deleteFeedback } = useFeedbackDelete()
 const { exportFeedbackData, exportPageAnalytics } = useFeedbackExport()
 
@@ -450,7 +450,7 @@ watch(currentPage, () => {
               th: 'first:rounded-l-lg last:rounded-r-lg border-y border-default first:border-l last:border-r',
               td: 'border-b border-default'
             }"
-            @select="(row) => viewPageDetails(row.original)"
+            @select="(_, row) => viewPageDetails(row.original)"
           />
 
           <div class="flex justify-end border-t border-default pt-4">
