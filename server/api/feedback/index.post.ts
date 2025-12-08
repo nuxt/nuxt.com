@@ -30,11 +30,10 @@ async function getFingerprint(event: H3Event): Promise<string> {
 export default defineEventHandler(async (event: H3Event) => {
   const data: FeedbackInput = await readValidatedBody(event, feedbackSchema.parse)
 
-  const drizzle = useDrizzle()
   const country = event.context.cf?.country || 'unknown'
   const fingerprint = await getFingerprint(event)
 
-  await drizzle.insert(tables.feedback).values({
+  await db.insert(schema.feedback).values({
     rating: data.rating,
     feedback: data.feedback || null,
     path: data.path,
@@ -45,7 +44,7 @@ export default defineEventHandler(async (event: H3Event) => {
     createdAt: new Date(),
     updatedAt: new Date()
   }).onConflictDoUpdate({
-    target: [tables.feedback.path, tables.feedback.fingerprint],
+    target: [schema.feedback.path, schema.feedback.fingerprint],
     set: {
       rating: data.rating,
       feedback: data.feedback || null,

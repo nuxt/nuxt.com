@@ -20,10 +20,23 @@ const { headerLinks } = useHeaderLinks()
 
 const path = computed(() => route.path.replace(/\/$/, ''))
 
+const ignoredPaths = ['.nuxt', '.output', '.env', 'node_modules']
+const navClass = (item: ContentNavigationItem) => {
+  if (ignoredPaths.includes(item.title) && !route.path.includes(item.path)) {
+    return 'opacity-70 hover:opacity-100'
+  }
+  return ''
+}
+
 const asideNavigation = computed(() => {
   const path = [version.value.path, route.params.slug?.[version.value.path.split('/').length - 2]].filter(Boolean).join('/')
 
-  return navPageFromPath(path, navigation.value)?.children || []
+  const nav = navPageFromPath(path, navigation.value)?.children || []
+
+  return nav.map(item => ({
+    ...item,
+    class: navClass(item)
+  }))
 })
 function paintResponse() {
   if (import.meta.server) {

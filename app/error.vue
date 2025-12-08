@@ -11,7 +11,8 @@ defineProps<{ error: NuxtError }>()
 const route = useRoute()
 const { version } = useDocsVersion()
 const { searchGroups, searchLinks, searchTerm } = useNavigation()
-const { fetchList } = useModules()
+const { fetchList: fetchModules } = useModules()
+const { fetchList: fetchHosting } = useHostingProviders()
 
 const [{ data: navigation }, { data: files }] = await Promise.all([
   useAsyncData('navigation', () => {
@@ -26,8 +27,8 @@ const [{ data: navigation }, { data: files }] = await Promise.all([
   }),
   useLazyAsyncData('search', () => {
     return Promise.all([
-      queryCollectionSearchSections('docsv3'),
-      queryCollectionSearchSections('docsv4'),
+      queryCollectionSearchSections('docsv3', { ignoredTags: ['style'] }),
+      queryCollectionSearchSections('docsv4', { ignoredTags: ['style'] }),
       queryCollectionSearchSections('blog')
     ])
   }, {
@@ -37,7 +38,10 @@ const [{ data: navigation }, { data: files }] = await Promise.all([
   })
 ])
 
-onNuxtReady(() => fetchList())
+onNuxtReady(() => {
+  fetchModules()
+  fetchHosting()
+})
 
 const versionNavigation = computed(() => navigation.value?.filter(item => item.path === version.value.path || item.path === '/blog') ?? [])
 const versionFiles = computed(() => files.value?.filter((file) => {
@@ -63,7 +67,12 @@ provide('navigation', versionNavigation)
           :navigation="versionNavigation"
           :groups="searchGroups"
           :links="searchLinks"
-          :fuse="{ resultLimit: 42 }"
+          :fuse="{
+            resultLimit: 42,
+            fuseOptions: {
+              threshold: 0
+            }
+          }"
         />
       </ClientOnly>
     </div>

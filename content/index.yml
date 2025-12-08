@@ -2,8 +2,8 @@ hero:
   title: 'The Progressive Web Framework'
   description: Create high-quality web applications with Nuxt, the open source framework that makes full-stack development with Vue.js intuitive.
   cta:
-    label: Nuxt UI v4 is out
-    to: /blog/nuxt-ui-v4
+    label: Nuxt MCP Server is out
+    to: /docs/4.x/guide/ai/mcp
     icon: i-lucide-arrow-right
   tabs:
     - title: Minimal
@@ -240,21 +240,16 @@ hero:
 logos:
   title: Chosen by leading companies worldwide
   companies:
-    - light: /assets/brands/light/fielmann.svg
-      dark: /assets/brands/dark/fielmann.svg
-      alt: Fielmann
-      height: 28
-      width: 89
-    - light: /assets/brands/light/dassault-systemes.svg
-      dark: /assets/brands/dark/dassault-systemes.svg
-      alt: Dassault Systemes
-      height: 28
-      width: 93
     - light: /assets/brands/light/louis-vuitton.svg
       dark: /assets/brands/dark/louis-vuitton.svg
       alt: Louis Vuitton
       height: 16
       width: 152
+    - light: /assets/brands/light/dassault-systemes.svg
+      dark: /assets/brands/dark/dassault-systemes.svg
+      alt: Dassault Systemes
+      height: 28
+      width: 93
     - light: /assets/brands/light/backmarket.svg
       dark: /assets/brands/dark/backmarket.svg
       alt: Back Market
@@ -275,6 +270,11 @@ logos:
       alt: Blizzard
       height: 28
       width: 55
+    - light: /assets/brands/light/vans.svg
+      dark: /assets/brands/dark/vans.svg
+      alt: Vans
+      height: 23
+      width: 67
     - light: /assets/brands/light/deutsche-bahn.svg
       dark: /assets/brands/dark/deutsche-bahn.svg
       alt: Deutsche Bahn

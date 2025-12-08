@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { joinURL } from 'ufo'
-import type { Module } from '~/types'
+import type { Module } from '#shared/types'
 
 definePageMeta({
   heroBackground: '-z-10'
@@ -8,7 +8,7 @@ definePageMeta({
 
 const [{ data: page }, { data: officialModules }, { data: showcase }, { getFilteredSponsors }] = await Promise.all([
   useAsyncData('index', () => queryCollection('index').first()),
-  useFetch('https://api.nuxt.com/modules', {
+  useFetch('/api/v1/modules', {
     key: 'official-modules',
     transform: (res: { modules: Module[], stats: Stats }) => res.modules
       .filter(module => module.type === 'official')
@@ -324,7 +324,7 @@ onMounted(() => {
       class="rounded-none"
       :ui="{
         container: 'sm:py-12 lg:py-12 sm:gap-8',
-        description: '!text-base text-balance before:content-[open-quote] before:text-5xl lg:before:text-7xl before:inline-block before:text-dimmed before:absolute before:-ml-6 lg:before:-ml-10 before:-mt-2 lg:before:-mt-4 after:content-[close-quote] after:text-5xl lg:after:text-7xl after:inline-block after:text-dimmed after:absolute after:mt-1 lg:after:mt-0 after:ml-1 lg:after:ml-2'
+        description: 'text-base! text-balance before:content-[open-quote] before:text-5xl before:mr-1 before:leading-0 before:inline-block before:transform before:translate-y-4 before:align-baseline before:text-dimmed after:content-[close-quote] after:text-5xl after:leading-0 after:ml-1 after:inline-block after:transform after:translate-y-7 after:align-baseline after:text-dimmed'
       }"
     >
       <UUser

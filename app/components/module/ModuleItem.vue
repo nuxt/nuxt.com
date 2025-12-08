@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Module } from '~/types'
+import type { Module } from '#shared/types'
 
 const emit = defineEmits<{
   add: [module: Module]

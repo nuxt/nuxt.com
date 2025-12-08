@@ -1,9 +1,10 @@
-import type { Module, Filter, Stats } from '~/types'
-
 type ModuleStatsKeys = 'version' | 'downloads' | 'stars' | 'publishedAt' | 'createdAt'
+import type { Module } from '#shared/types'
+import type { Filter } from '~/types'
 
 const iconsMap = {
   Official: 'i-lucide-medal',
+  AI: 'i-lucide-brain',
   Analytics: 'i-lucide-bar-chart',
   CMS: 'i-lucide-pencil',
   CSS: 'i-lucide-palette',
@@ -41,7 +42,7 @@ export const moduleIcon = function (category: string) {
 export const useModules = () => {
   const route = useRoute()
   const router = useRouter()
-  const { data, execute } = useFetch<{ modules: Module[], stats: Stats }>('https://api.nuxt.com/modules', {
+  const { data, execute } = useFetch('/api/v1/modules', {
     immediate: false,
     default: () => ({
       modules: [],
