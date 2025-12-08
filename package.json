@@ -1,7 +1,7 @@
 {
   "name": "nuxt.com",
   "version": "0.3.11",
-  "packageManager": "pnpm@10.24.0",
+  "packageManager": "pnpm@10.25.0",
   "scripts": {
     "dev": "nuxt dev --ui-only",
     "dev:full": "nuxt dev",
@@ -29,9 +29,9 @@
     "@nuxt/scripts": "^0.13.0",
     "@nuxt/ui": "^4.2.1",
     "@nuxt/vite-builder": "https://pkg.pr.new/@nuxt/vite-builder@33682",
-    "@nuxthub/core": "npm:@nuxthub/core-nightly@0.10.0-20251205-001323-943b30c",
+    "@nuxthub/core": "npm:@nuxthub/core-nightly@0.10.0-20251208-123318-f8ecae8",
     "@nuxtjs/html-validator": "^2.1.0",
-    "@nuxtjs/mcp-toolkit": "^0.5.1",
+    "@nuxtjs/mcp-toolkit": "^0.5.2",
     "@nuxtjs/mdc": "^0.19.1",
     "@nuxtjs/plausible": "^2.0.1",
     "@upstash/redis": "^1.35.7",
@@ -61,7 +61,7 @@
   },
   "devDependencies": {
     "@ai-sdk/mcp": "^0.0.11",
-    "@ai-sdk/openai": "3.0.0-beta.87",
+    "@ai-sdk/openai": "3.0.0-beta.88",
     "@iconify-json/vscode-icons": "^1.2.37",
     "@nuxt/eslint": "^1.11.0",
     "@nuxt/modules": "0.6.0-7f4646",
