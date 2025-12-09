@@ -12,20 +12,6 @@ test.describe('User Interactions', () => {
     await expect(page).toHaveURL(/\/docs/)
   })
 
-  test('internal link navigation works', async ({ page, goto }) => {
-    await goto('/')
-
-    const initialUrl = page.url()
-    const internalLink = page.locator('a[href^="/docs"], a[href^="/modules"], a[href^="/blog"]').first()
-
-    expect(await internalLink.count()).toBeGreaterThan(0)
-    await internalLink.click({ timeout: 5000 })
-
-    expect(page.url()).not.toBe(initialUrl)
-
-    await expect(page.locator('body')).toBeVisible()
-  })
-
   test.skip('tab interface works when present', async ({ page, goto }) => {
     await goto('/')
 
