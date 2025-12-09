@@ -1,5 +1,6 @@
 import type { NpmDownloadStats, NpmPeriod } from '../types/npm'
 import type { Packument, PackumentVersion } from '@npm/types'
+import { kv } from 'hub:kv'
 
 interface NpmBulkDownloadStats {
   [packageName: string]: NpmDownloadStats
@@ -50,7 +51,6 @@ export const npm = {
     return await npmFetch<PackumentVersion>(`https://registry.npmjs.org/${name}/${version}`)
   },
   async fetchPackageStats(name: string, period: NpmPeriod = 'last-month'): Promise<NpmDownloadStats> {
-    const kv = useStorage('kv')
     const key = `npm-stats:${name}:${period}`
     if (await kv.get(key)) {
       return await kv.get(key) as NpmDownloadStats
