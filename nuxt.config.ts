@@ -259,6 +259,11 @@ export default defineNuxtConfig({
   },
   compatibilityDate: '2025-07-14',
   nitro: {
+    storage: {
+      kv: {
+        driver: 'vercel-runtime-cache'
+      }
+    },
     compatibilityDate: {
       // Don't generate observability routes
       vercel: '2025-07-14'
