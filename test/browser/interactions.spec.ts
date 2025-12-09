@@ -19,7 +19,7 @@ test.describe('User Interactions', () => {
     const internalLink = page.locator('a[href^="/docs"], a[href^="/modules"], a[href^="/blog"]').first()
 
     expect(await internalLink.count()).toBeGreaterThan(0)
-    await internalLink.click()
+    await internalLink.click({ timeout: 5000 })
 
     expect(page.url()).not.toBe(initialUrl)
 
