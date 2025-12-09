@@ -8,6 +8,7 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/ui',
     'nuxt-content-twoslash',
+    '@nuxt/test-utils',
     '@nuxt/content',
     '@nuxt/image',
     '@nuxtjs/plausible',
@@ -280,7 +281,10 @@ export default defineNuxtConfig({
     cache: true
   },
   typescript: {
-    strict: false
+    strict: false,
+    tsConfig: {
+      include: ['../test/nuxt']
+    }
   },
   hooks: {
     'content:file:beforeParse': async ({ file }) => {

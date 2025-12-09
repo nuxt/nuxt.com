@@ -35,7 +35,7 @@ export const toRelativeDate = (date: string | number | Date) => {
   }
 }
 
-export const slugify = (str: string) => str.toLowerCase().replace(/[^a-z0-9 -]/g, ' ').replace(/[\s-]+/g, '-')
+export const slugify = (str: string) => str.toLowerCase().replace(/[^a-z0-9 -]/g, ' ').trim().replace(/[\s-]+/g, '-')
 
 export const random = (arr: Array<any>) => {
   return arr[Math.floor(Math.random() * arr.length)]
