@@ -254,7 +254,8 @@ export default defineNuxtConfig({
       nuxtLink: {
         externalRelAttribute: 'noopener'
       }
-    }
+    },
+    viteEnvironmentApi: true
   },
   compatibilityDate: '2025-07-14',
   nitro: {
