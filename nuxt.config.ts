@@ -249,6 +249,7 @@ export default defineNuxtConfig({
   },
   sourcemap: true,
   experimental: {
+    extractAsyncDataHandlers: true,
     defaults: {
       nuxtLink: {
         externalRelAttribute: 'noopener'
