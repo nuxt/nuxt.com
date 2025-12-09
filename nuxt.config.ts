@@ -252,11 +252,13 @@ export default defineNuxtConfig({
   },
   sourcemap: true,
   experimental: {
+    extractAsyncDataHandlers: true,
     defaults: {
       nuxtLink: {
         externalRelAttribute: 'noopener'
       }
-    }
+    },
+    viteEnvironmentApi: true
   },
   compatibilityDate: '2025-07-14',
   nitro: {
@@ -275,7 +277,9 @@ export default defineNuxtConfig({
   },
   hub: {
     db: 'sqlite',
-    kv: true,
+    kv: {
+      driver: 'vercel-runtime-cache'
+    },
     cache: true
   },
   typescript: {
