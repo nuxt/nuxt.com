@@ -8,7 +8,7 @@ test.describe('Modules Page', () => {
 
     await expect(page.getByRole('heading', { level: 1 }).first()).toBeVisible()
 
-    const moduleLinks = page.locator('a[href*="/modules/"]')
+    const moduleLinks = page.locator('a[href^="/modules/"]')
     expect(await moduleLinks.count()).toBeGreaterThanOrEqual(0)
   })
 
@@ -24,7 +24,7 @@ test.describe('Modules Page', () => {
     await page.waitForLoadState('networkidle')
 
     // Verify that no module links are visible after filtering
-    const moduleLinks = page.locator('a[href*="/modules/"]')
+    const moduleLinks = page.locator('a[href^="/modules/"]')
     expect(await moduleLinks.count()).toBe(0)
 
     // Clear the search input
@@ -43,7 +43,7 @@ test.describe('Modules Page', () => {
 
     await expect(categoryLinks.first()).toBeVisible()
 
-    const moduleLinks = page.locator('a[href*="/modules/"]')
+    const moduleLinks = page.locator('a[href^="/modules/"]')
     const count = await moduleLinks.count()
 
     // click a category link
@@ -60,7 +60,7 @@ test.describe('Modules Page', () => {
     await goto('/modules')
 
     // Find a visible module card link
-    const moduleLink = page.locator('a[href^="/modules/"][href*="/modules/"][href$="/"]').first()
+    const moduleLink = page.locator('a[href^="/modules/"][href$="/"]').first()
 
     await moduleLink.scrollIntoViewIfNeeded()
     await moduleLink.click()
