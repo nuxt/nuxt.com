@@ -21,6 +21,20 @@ jobs:
       - run: pnpm install
       - run: pnpm nuxt prepare
       - run: pnpm lint
+
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - run: corepack enable
+      - uses: actions/setup-node@v6
+        with:
+          node-version: lts/-1
+          cache: "pnpm"
+      - run: pnpm install
+      - run: pnpm nuxt prepare
+      - run: pnpm vitest run
+
   typecheck:
     runs-on: ubuntu-latest
     steps:
