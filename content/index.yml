@@ -9,8 +9,8 @@ hero:
     - title: Minimal
       icon: i-lucide-leaf
       content: |
-        ::code-tree{defaultValue="app.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)] my-0!"}
-        ```vue [app.vue]
+        ::code-tree{defaultValue="app/app.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)] my-0!"}
+        ```vue [app/app.vue]
         <script setup lang="ts">
         const version = 4
         </script>
@@ -48,8 +48,22 @@ hero:
     - title: Routing
       icon: i-lucide-milestone
       content: |
-        ::code-tree{defaultValue="pages/index.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)] my-0!"}
-        ```vue [app.vue]
+        ::code-tree{defaultValue="app/pages/index.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)] my-0!"}
+        ```vue [app/pages/index.vue]
+        <template>
+          <h1>Index page</h1>
+          <NuxtLink to="/blog/hello-world">
+            Go to blog post
+          </NuxtLink>
+        </template>
+        ```
+        ```vue [app/pages/blog/[slug\\].vue]
+        <template>
+          <h1>Blog post {{ $route.params.slug }}</h1>
+        </template>
+        ```
+
+        ```vue [app/app.vue]
         <template>
           <NuxtPage />
         </template>
@@ -71,26 +85,38 @@ hero:
           }
         }
         ```
+        ::
+    - title: Data Fetching
+      icon: i-lucide-unplug
+      content: |
+        ::code-tree{defaultValue="app/pages/index.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)] my-0!"}
+        ```vue [app/pages/index.vue]
+        <script setup lang="ts">
+        const { data: page } = await useFetch('/api/cms/home')
+        </script>
 
-        ```vue [pages/index.vue]
         <template>
-          <h1>Index page</h1>
+          <h1>{{ page.title }}</h1>
           <NuxtLink to="/blog/hello-world">
             Go to blog post
           </NuxtLink>
         </template>
         ```
-        ```vue [pages/blog/[slug\\].vue]
+        ```vue [app/pages/blog/[slug\\].vue]
+        <script setup lang="ts">
+          const { slug } = useRoute().params
+          const { data: post } = await useFetch(`/api/cms/blog/${slug}`)
+        </script>
+
         <template>
-          <h1>Blog post {{ $route.params.slug }}</h1>
+          <h1>{{ post.title }}</h1>
+          <NuxtLink to="/">
+            Go to home
+          </NuxtLink>
         </template>
         ```
-        ::
-    - title: Data Fetching
-      icon: i-lucide-unplug
-      content: |
-        ::code-tree{defaultValue="pages/index.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)] my-0!"}
-        ```vue [app.vue]
+
+        ```vue [app/app.vue]
         <template>
           <NuxtPage />
         </template>
@@ -112,38 +138,12 @@ hero:
           }
         }
         ```
-
-        ```vue [pages/index.vue]
-        <script setup lang="ts">
-        const { data: page } = await useFetch('/api/cms/home')
-        </script>
-
-        <template>
-          <h1>{{ page.title }}</h1>
-          <NuxtLink to="/blog/hello-world">
-            Go to blog post
-          </NuxtLink>
-        </template>
-        ```
-        ```vue [pages/blog/[slug\\].vue]
-        <script setup lang="ts">
-          const { slug } = useRoute().params
-          const { data: post } = await useFetch(`/api/cms/blog/${slug}`)
-        </script>
-
-        <template>
-          <h1>{{ post.title }}</h1>
-          <NuxtLink to="/">
-            Go to home
-          </NuxtLink>
-        </template>
-        ```
         ::
     - title: Auto-Imports
       icon: i-lucide-wand-sparkles
       content: |
-        ::code-tree{defaultValue="app.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)] my-0!"}
-        ```vue [app.vue]
+        ::code-tree{defaultValue="app/app.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)] my-0!"}
+        ```vue [app/app.vue]
         <script setup>
         const message = ref('Nuxt')
         const hello = () => sayHello(message.value)
@@ -160,7 +160,7 @@ hero:
         </template>
         ```
 
-        ```vue [components/MyInput.vue]
+        ```vue [app/components/MyInput.vue]
         <script setup>
         const modelValue = defineModel<string>()
         </script>
@@ -169,7 +169,7 @@ hero:
           <input v-model="modelValue" />
         </template>
         ```
-        ```ts [composables/say-hello.ts]
+        ```ts [app/composables/say-hello.ts]
         export function sayHello(message = 'World') {
           alert(`Hello ${upperCase(message)}!`)
         }
@@ -196,9 +196,19 @@ hero:
       icon: i-lucide-pc-case
       content: |
         ::code-tree{defaultValue="server/api/hello.ts" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)] my-0!"}
-        ```vue [app.vue]
+        ```vue [app/app.vue]
         <template>
           <NuxtPage />
+        </template>
+        ```
+
+        ```vue [app/pages/index.vue]
+        <script setup lang="ts">
+        const { data } = await useFetch('/api/hello')
+        </script>
+
+        <template>
+          <h1>{{ data.message }}</h1>
         </template>
         ```
 
@@ -217,16 +227,6 @@ hero:
             "nuxt": "latest"
           }
         }
-        ```
-
-        ```vue [pages/index.vue]
-        <script setup lang="ts">
-        const { data } = await useFetch('/api/hello')
-        </script>
-
-        <template>
-          <h1>{{ data.message }}</h1>
-        </template>
         ```
 
         ```ts [server/api/hello.ts]
