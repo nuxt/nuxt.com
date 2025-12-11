@@ -27,7 +27,6 @@ hero:
         }
         </style>
         ```
-
         ```json [package.json]
         {
           "name": "hello-nuxt",
@@ -62,13 +61,11 @@ hero:
           <h1>Blog post {{ $route.params.slug }}</h1>
         </template>
         ```
-
         ```vue [app/app.vue]
         <template>
           <NuxtPage />
         </template>
         ```
-
         ```json [package.json]
         {
           "name": "nuxt-routing",
@@ -115,13 +112,11 @@ hero:
           </NuxtLink>
         </template>
         ```
-
         ```vue [app/app.vue]
         <template>
           <NuxtPage />
         </template>
         ```
-
         ```json [package.json]
         {
           "name": "nuxt-data-fetching",
@@ -159,7 +154,6 @@ hero:
           </main>
         </template>
         ```
-
         ```vue [app/components/MyInput.vue]
         <script setup>
         const modelValue = defineModel<string>()
@@ -174,7 +168,6 @@ hero:
           alert(`Hello ${upperCase(message)}!`)
         }
         ```
-
         ```json [package.json]
         {
           "name": "hello-nuxt",
