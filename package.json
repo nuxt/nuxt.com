@@ -111,7 +111,7 @@
       "vue-demi"
     ],
     "overrides": {
-      "vite": "npm:rolldown-vite@latest"
+      "vite": "8.0.0-beta.1"
     },
     "patchedDependencies": {
       "nitropack": "patches/nitropack.patch",
