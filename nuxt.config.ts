@@ -22,7 +22,8 @@ export default defineNuxtConfig({
     '@nuxthub/core',
     'nuxt-charts',
     'nuxt-auth-utils',
-    '@nuxtjs/mcp-toolkit'
+    '@nuxtjs/mcp-toolkit',
+    '@nuxt/hints'
   ],
   $development: {
     site: {
