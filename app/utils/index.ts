@@ -1,6 +1,9 @@
 import { splitByCase, upperFirst } from 'scule'
 
-export const { format: formatNumber } = Intl.NumberFormat('en-GB', { notation: 'compact', maximumFractionDigits: 1 })
+const _numberFormatter = Intl.NumberFormat('en-GB', { notation: 'compact', maximumFractionDigits: 1 })
+
+// Normalize k/m/b to K/M/B to fix hydration mismatch between Node.js and browser ICU data
+export const formatNumber = (value: number) => _numberFormatter.format(value).replace(/([kmb])$/i, match => match.toUpperCase())
 
 // Case-insensitive RegExp, escaping special characters
 // https://stackoverflow.com/a/38151393/3926832
