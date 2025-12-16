@@ -152,8 +152,8 @@ importers:
         specifier: ^0.0.12
         version: 0.0.12(zod@4.1.13)
       '@ai-sdk/openai':
-        specifier: 3.0.0-beta.99
-        version: 3.0.0-beta.99(zod@4.1.13)
+        specifier: 3.0.0-beta.101
+        version: 3.0.0-beta.101(zod@4.1.13)
       '@iconify-json/vscode-icons':
         specifier: ^1.2.37
         version: 1.2.37
@@ -185,8 +185,8 @@ importers:
         specifier: ^2.4.6
         version: 2.4.6
       ai:
-        specifier: 6.0.0-beta.154
-        version: 6.0.0-beta.154(zod@4.1.13)
+        specifier: 6.0.0-beta.156
+        version: 6.0.0-beta.156(zod@4.1.13)
       capture-website:
         specifier: ^5.1.0
         version: 5.1.0(typescript@5.9.3)
@@ -198,7 +198,7 @@ importers:
         version: 9.39.2(jiti@2.6.1)
       evalite:
         specifier: 1.0.0-beta.15
-        version: 1.0.0-beta.15(ai@6.0.0-beta.154(zod@4.1.13))(better-sqlite3@12.5.0)
+        version: 1.0.0-beta.15(ai@6.0.0-beta.156(zod@4.1.13))(better-sqlite3@12.5.0)
       happy-dom:
         specifier: ^20.0.11
         version: 20.0.11
@@ -244,8 +244,8 @@ packages:
       bcrypt:
         optional: true
 
-  '@ai-sdk/gateway@2.0.0-beta.81':
-    resolution: {integrity: sha512-zcW3bRhCsvWY+fJBJM/gFXpj0ox4ieNXilezNyhjHVZubQoS/o8Abgn08JIb2I5ZASTbLr7X4jEi56fwIo+K7g==}
+  '@ai-sdk/gateway@2.0.0-beta.82':
+    resolution: {integrity: sha512-6HRrBVPvn1IC/vx6HYLnAeJsveucsXes2DQWu7R/uPaq/BWwNTboBDCXvOPi2963zbrq+iPelS1SlPfpkx7kDQ==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -256,8 +256,8 @@ packages:
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
-  '@ai-sdk/openai@3.0.0-beta.99':
-    resolution: {integrity: sha512-wjulwNA817yLQyDTpqa6MjZhKv0EG0/cKcuytEkJHOXTxKwzdPvQq9VmP2qE5J8R8k3YcBS86WNx6kQvpSM8wg==}
+  '@ai-sdk/openai@3.0.0-beta.101':
+    resolution: {integrity: sha512-hICBVlKENUOesQnw5XvsNZDZbGGM7DH26meTViDCh01YZqgFwKeAAOT//Gf2qHNr19eozyAs2HSIdVuQL3+T/w==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -268,8 +268,8 @@ packages:
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
-  '@ai-sdk/provider-utils@4.0.0-beta.50':
-    resolution: {integrity: sha512-Kpc9NSi32Hj8uHSv+kMmfft27p9o3Cl13Ly5d6S+z2EY5lz7ChIVbuMndP8cjdbS/wF6lWt0XvaW0eGyeo3VsA==}
+  '@ai-sdk/provider-utils@4.0.0-beta.51':
+    resolution: {integrity: sha512-7NEGTKMRbOOI6n7Xm1w7XiFqHaDcNxORql3iUIjPyXgYhnvF48JaB8cxySmtdDqpeR1DD4d6B6Cbjhn45DVR0g==}
     engines: {node: '>=18'}
     peerDependencies:
       '@valibot/to-json-schema': ^1.3.0
@@ -4130,8 +4130,8 @@ packages:
     resolution: {integrity: sha512-MnA+YT8fwfJPgBx3m60MNqakm30XOkyIoH1y6huTQvC0PwZG7ki8NacLBcrPbNoo8vEZy7Jpuk7+jMO+CUovTQ==}
     engines: {node: '>= 14'}
 
-  ai@6.0.0-beta.154:
-    resolution: {integrity: sha512-09lynLM8ARmHa7/Big1nYTu4YOQIzZySkvI8wBvQHQ8LODe0j5kc9x9dKYz6R47d00uFbfgMMSGIxxPfwqms5A==}
+  ai@6.0.0-beta.156:
+    resolution: {integrity: sha512-7bkGbRw811f0Xa30EfNE3HqlgccUmUS/hqSCV3SuIf8cxRZ0Z73cQUmFTDXMe5OIhW/6G50qvs2D2KQFiFHm0w==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -9344,10 +9344,10 @@ snapshots:
       '@phc/format': 1.0.0
       '@poppinss/utils': 6.10.1
 
-  '@ai-sdk/gateway@2.0.0-beta.81(zod@4.1.13)':
+  '@ai-sdk/gateway@2.0.0-beta.82(zod@4.1.13)':
     dependencies:
       '@ai-sdk/provider': 3.0.0-beta.26
-      '@ai-sdk/provider-utils': 4.0.0-beta.50(zod@4.1.13)
+      '@ai-sdk/provider-utils': 4.0.0-beta.51(zod@4.1.13)
       '@vercel/oidc': 3.0.5
       zod: 4.1.13
     transitivePeerDependencies:
@@ -9362,10 +9362,10 @@ snapshots:
       pkce-challenge: 5.0.1
       zod: 4.1.13
 
-  '@ai-sdk/openai@3.0.0-beta.99(zod@4.1.13)':
+  '@ai-sdk/openai@3.0.0-beta.101(zod@4.1.13)':
     dependencies:
       '@ai-sdk/provider': 3.0.0-beta.26
-      '@ai-sdk/provider-utils': 4.0.0-beta.50(zod@4.1.13)
+      '@ai-sdk/provider-utils': 4.0.0-beta.51(zod@4.1.13)
       zod: 4.1.13
     transitivePeerDependencies:
       - '@valibot/to-json-schema'
@@ -9379,7 +9379,7 @@ snapshots:
       eventsource-parser: 3.0.6
       zod: 4.1.13
 
-  '@ai-sdk/provider-utils@4.0.0-beta.50(zod@4.1.13)':
+  '@ai-sdk/provider-utils@4.0.0-beta.51(zod@4.1.13)':
     dependencies:
       '@ai-sdk/provider': 3.0.0-beta.26
       '@standard-schema/spec': 1.0.0
@@ -13524,11 +13524,11 @@ snapshots:
 
   agent-base@7.1.4: {}
 
-  ai@6.0.0-beta.154(zod@4.1.13):
+  ai@6.0.0-beta.156(zod@4.1.13):
     dependencies:
-      '@ai-sdk/gateway': 2.0.0-beta.81(zod@4.1.13)
+      '@ai-sdk/gateway': 2.0.0-beta.82(zod@4.1.13)
       '@ai-sdk/provider': 3.0.0-beta.26
-      '@ai-sdk/provider-utils': 4.0.0-beta.50(zod@4.1.13)
+      '@ai-sdk/provider-utils': 4.0.0-beta.51(zod@4.1.13)
       '@opentelemetry/api': 1.9.0
       zod: 4.1.13
     transitivePeerDependencies:
@@ -15041,7 +15041,7 @@ snapshots:
 
   etag@1.8.1: {}
 
-  evalite@1.0.0-beta.15(ai@6.0.0-beta.154(zod@4.1.13))(better-sqlite3@12.5.0):
+  evalite@1.0.0-beta.15(ai@6.0.0-beta.156(zod@4.1.13))(better-sqlite3@12.5.0):
     dependencies:
       '@fastify/static': 8.3.0
       '@fastify/websocket': 11.2.0
@@ -15058,7 +15058,7 @@ snapshots:
       table: 6.9.0
       tinyrainbow: 3.0.3
     optionalDependencies:
-      ai: 6.0.0-beta.154(zod@4.1.13)
+      ai: 6.0.0-beta.156(zod@4.1.13)
       better-sqlite3: 12.5.0
     transitivePeerDependencies:
       - bufferutil

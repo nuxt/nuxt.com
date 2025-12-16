@@ -68,7 +68,7 @@
   },
   "devDependencies": {
     "@ai-sdk/mcp": "^0.0.12",
-    "@ai-sdk/openai": "3.0.0-beta.99",
+    "@ai-sdk/openai": "3.0.0-beta.101",
     "@iconify-json/vscode-icons": "^1.2.37",
     "@nuxt/eslint": "^1.12.1",
     "@nuxt/modules": "0.6.0-7f4646",
@@ -79,7 +79,7 @@
     "@types/semver": "^7.7.1",
     "@types/youtube": "^0.1.2",
     "@vue/test-utils": "^2.4.6",
-    "ai": "6.0.0-beta.154",
+    "ai": "6.0.0-beta.156",
     "capture-website": "^5.1.0",
     "drizzle-kit": "^0.31.8",
     "eslint": "^9.39.2",
