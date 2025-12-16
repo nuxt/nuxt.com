@@ -42,6 +42,14 @@ export default defineNuxtConfig({
     }
   },
   $production: {
+    hub: {
+      kv: {
+        driver: 'cloudflare-kv-http',
+        accountId: process.env.CLOUDFLARE_KV_ACCOUNT_ID,
+        namespaceId: process.env.CLOUDFLARE_KV_NAMESPACE_ID,
+        apiToken: process.env.CLOUDFLARE_KV_API_TOKEN
+      }
+    },
     image: {
       ipx: {
         baseURL: 'https://ipx.nuxt.com'
@@ -279,9 +287,7 @@ export default defineNuxtConfig({
   },
   hub: {
     db: 'sqlite',
-    kv: {
-      driver: 'vercel-runtime-cache'
-    },
+    kv: true,
     cache: true
   },
   typescript: {
