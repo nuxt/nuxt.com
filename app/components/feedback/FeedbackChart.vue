@@ -635,17 +635,24 @@ function selectWorstPages(count: number) {
   --vis-axis-tick-label-color:  var(--ui-text-muted) !important;
   --vis-axis-label-color: var(--ui-text-toned) !important;
   --vis-legend-label-color: var(--ui-text-muted) !important;
+  --vis-tooltip-title-color: var(--ui-text) !important;
+  --vis-tooltip-title-border-bottom: 1px solid var(--ui-border) !important;
+  --vis-tooltip-title-padding: 0.2rem !important;
+  --vis-tooltip-box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
+  --vis-tooltip-border-radius: 8px !important;
+  --vis-tooltip-border-color: var(--ui-border) !important;
+  --vis-tooltip-background-color: var(--ui-bg) !important;
+  --vis-tooltip-text-color: var(--ui-text) !important;
+  --vis-tooltip-divider: var(--ui-border) !important;
+  --vis-tooltip-value-font-size: 0.875rem !important;
+  --vis-tooltip-value-font-weight: 600 !important;
+  --vis-tooltip-value-color: var(--ui-text) !important;
+  --vis-tooltip-label-color: var(--ui-text-muted) !important;
 
   --dot-pattern-color: #111827;
 }
 
 .dark {
-  --vis-tooltip-background-color: rgba(15, 23, 42, 0.95) !important;
-  --vis-tooltip-border-color: rgba(255, 255, 255, 0.1) !important;
-  --vis-tooltip-text-color: rgba(255, 255, 255, 0.9) !important;
-  --vis-tooltip-label-color: rgba(255, 255, 255, 0.7) !important;
-  --vis-tooltip-value-color: rgba(255, 255, 255, 1) !important;
-
   --dot-pattern-color: #9ca3af;
 }
 
