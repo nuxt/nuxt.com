@@ -3,6 +3,7 @@
 
 @source "../../../content/**/*";
 @source "../../../node_modules/.c12";
+@source "../../../modules/";
 
 @theme static {
   --font-sans: 'Public Sans', sans-serif;

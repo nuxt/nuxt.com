@@ -2,13 +2,15 @@
 import { getPaginationRowModel } from '@tanstack/vue-table'
 import type { TableColumn, DropdownMenuItem } from '@nuxt/ui'
 import { h, resolveComponent } from 'vue'
+import type { PageAnalytic } from '../../types'
 
 const UButton = resolveComponent('UButton')
 const { user, clear } = useUserSession()
+const { public: { feedback } } = useRuntimeConfig()
 
 async function logout() {
   await clear()
-  navigateTo('/admin/login')
+  navigateTo(`${feedback.adminPath}/login`)
 }
 
 const items = computed<DropdownMenuItem[][]>(() => [
@@ -43,7 +45,7 @@ const items = computed<DropdownMenuItem[][]>(() => [
   ]
 ])
 
-const { data: rawFeedback, refresh: refreshFeedback } = await useFetch('/api/feedback')
+const { data: rawFeedback, refresh: refreshFeedback } = await useFetch('/api/_feedback')
 const { deleteFeedback } = useFeedbackDelete()
 const { exportFeedbackData, exportPageAnalytics } = useFeedbackExport()
 
@@ -563,9 +565,9 @@ watch(currentPage, () => {
             <div class="space-y-3 sm:space-y-4">
               <div ref="feedbackContainer" class="space-y-2 sm:space-y-3 max-h-[300px] sm:max-h-[400px] overflow-y-auto">
                 <FeedbackItem
-                  v-for="(feedback, index) in paginatedFeedback"
+                  v-for="(_feedback, index) in paginatedFeedback"
                   :key="index"
-                  :feedback="feedback"
+                  :feedback="_feedback"
                   show-delete
                   @delete="handleDeleteFeedback"
                 />

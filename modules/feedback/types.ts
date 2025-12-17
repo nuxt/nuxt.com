@@ -1,5 +1,15 @@
 import { z } from 'zod'
 
+export interface FeedbackPublicRuntimeConfig {
+  adminPath: string
+}
+
+declare module 'nuxt/schema' {
+  interface PublicRuntimeConfig {
+    feedback: FeedbackPublicRuntimeConfig
+  }
+}
+
 export const FEEDBACK_RATINGS = [
   'very-helpful',
   'helpful',
@@ -70,3 +80,33 @@ export const feedbackFormSchema = z.object({
 })
 
 export type FeedbackInput = z.infer<typeof feedbackSchema>
+
+export interface FeedbackModuleOptions {
+  /**
+   * Path prefix for admin routes
+   * @default '/_feedback/admin'
+   */
+  adminPath?: string
+}
+
+/**
+ * Context passed to the 'feedback:authorize' hook
+ */
+export interface FeedbackAuthorizeContext {
+  /** GitHub user object from OAuth */
+  user: {
+    id: number
+    login: string
+    name: string | null
+    email: string | null
+    avatar_url: string
+  }
+  /** Set to false to deny access (default: true) */
+  allowed: boolean
+}
+
+declare module 'nitropack/types' {
+  interface NitroRuntimeHooks {
+    'feedback:authorize': (ctx: FeedbackAuthorizeContext) => void | Promise<void>
+  }
+}

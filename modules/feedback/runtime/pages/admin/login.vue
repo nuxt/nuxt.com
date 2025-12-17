@@ -3,7 +3,7 @@ import { motion } from 'motion-v'
 
 definePageMeta({
   layout: false,
-  middleware: 'guest',
+  middleware: 'feedback-guest',
   colorMode: 'dark'
 })
 
@@ -12,7 +12,7 @@ const errorType = route.query.error as string
 </script>
 
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-primary-50 via-white to-primary-50 dark:from-neutral-950 dark:via-neutral-900 dark:to-primary-950 relative overflow-hidden">
+  <div class="min-h-screen bg-linear-to-br from-primary-50 via-white to-primary-50 dark:from-neutral-950 dark:via-neutral-900 dark:to-primary-950 relative overflow-hidden">
     <div class="absolute inset-0 overflow-hidden pointer-events-none">
       <div class="absolute -top-40 -right-40 w-80 h-80 bg-primary-500/10 rounded-full blur-3xl" />
       <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-primary-500/10 rounded-full blur-3xl" />
@@ -51,7 +51,7 @@ const errorType = route.query.error as string
             :transition="{ duration: 0.5, delay: 0.1 }"
             class="mb-6"
           >
-            <div class="size-16 mx-auto mb-4 bg-gradient-to-br from-primary-400 to-primary-600 rounded-2xl flex items-center justify-center shadow-lg shadow-primary-500/25">
+            <div class="size-16 mx-auto mb-4 bg-linear-to-br from-primary-400 to-primary-600 rounded-2xl flex items-center justify-center shadow-lg shadow-primary-500/25">
               <UIcon name="i-lucide-bar-chart-3" class="size-8 text-white" />
             </div>
           </motion.div>
@@ -61,11 +61,11 @@ const errorType = route.query.error as string
             :animate="{ opacity: 1, y: 0 }"
             :transition="{ duration: 0.5, delay: 0.2 }"
           >
-            <h1 class="text-3xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 dark:from-white dark:to-neutral-300 bg-clip-text text-transparent mb-2">
+            <h1 class="text-3xl font-bold bg-linear-to-r from-neutral-900 to-neutral-600 dark:from-white dark:to-neutral-300 bg-clip-text text-transparent mb-2">
               Analytics Dashboard
             </h1>
             <p class="text-muted">
-              Sign in to access Nuxt.com feedback analytics
+              Sign in to access feedback analytics
             </p>
           </motion.div>
         </div>
@@ -85,7 +85,7 @@ const errorType = route.query.error as string
             >
               <UAlert
                 title="Access Denied"
-                description="Only Nuxt core team members can access this page."
+                description="You are not authorized to access this page."
                 icon="i-lucide-shield-x"
                 color="error"
                 variant="subtle"
@@ -121,7 +121,7 @@ const errorType = route.query.error as string
 
               <div class="text-center pt-4 border-t border-default">
                 <p class="text-xs text-muted">
-                  Restricted access • Core team members only
+                  Restricted access
                 </p>
               </div>
             </div>

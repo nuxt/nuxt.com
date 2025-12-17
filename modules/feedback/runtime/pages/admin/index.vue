@@ -1,7 +1,7 @@
 <script setup lang="ts">
 definePageMeta({
-  layout: 'admin',
-  middleware: 'auth'
+  layout: false,
+  middleware: 'feedback-auth'
 })
 
 useSeoMeta({
@@ -13,5 +13,5 @@ useSeoMeta({
 </script>
 
 <template>
-  <AdminDashboard />
+  <FeedbackDashboard />
 </template>

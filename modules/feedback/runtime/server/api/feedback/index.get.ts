@@ -1,3 +1,5 @@
+import { db, schema } from 'hub:db'
+
 export default defineEventHandler(async (event) => {
   await requireUserSession(event)
 

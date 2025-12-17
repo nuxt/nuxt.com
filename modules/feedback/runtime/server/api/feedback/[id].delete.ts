@@ -1,4 +1,5 @@
 import { eq } from 'drizzle-orm'
+import { db, schema } from 'hub:db'
 import { z } from 'zod'
 
 const deleteParamsSchema = z.object({
