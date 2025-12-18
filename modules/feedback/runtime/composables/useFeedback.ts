@@ -46,16 +46,16 @@ export function useFeedbackRatings() {
   }
 }
 
-export function useFeedbackData(rawFeedback: Ref<FeedbackItem[] | null>) {
+export function useFeedbackData(rawFeedback: Ref<Record<string, unknown>[] | null>) {
   const { calculateStats } = useFeedbackRatings()
   const { filterFeedbackByDateRange } = useDateRange()
 
-  const allFeedbackData = computed(() =>
+  const allFeedbackData = computed<FeedbackItem[]>(() =>
     rawFeedback.value?.map(item => ({
       ...item,
-      createdAt: new Date(item.createdAt),
-      updatedAt: new Date(item.updatedAt)
-    })) || []
+      createdAt: new Date(item.createdAt as string),
+      updatedAt: new Date(item.updatedAt as string)
+    }) as FeedbackItem) || []
   )
 
   const feedbackData = computed(() =>
