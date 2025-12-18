@@ -61,8 +61,8 @@ importers:
         specifier: https://pkg.pr.new/@nuxt/vite-builder@33682
         version: https://pkg.pr.new/@nuxt/vite-builder@33682(3c353b57e82ffaaa2afd8fcbf9408f2f)
       '@nuxthub/core':
-        specifier: https://pkg.pr.new/@nuxthub/core@d2060fd
-        version: https://pkg.pr.new/@nuxthub/core@d2060fd(@vercel/functions@3.3.4)(db0@0.3.4(@libsql/client@0.15.15)(better-sqlite3@12.5.0)(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20251217.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(better-sqlite3@12.5.0)))(ioredis@5.8.2)(magicast@0.5.1)(typescript@5.9.3)(vue-tsc@3.1.8(typescript@5.9.3))
+        specifier: https://pkg.pr.new/@nuxthub/core@944cdd1
+        version: https://pkg.pr.new/@nuxthub/core@944cdd1(@vercel/functions@3.3.4)(db0@0.3.4(@libsql/client@0.15.15)(better-sqlite3@12.5.0)(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20251217.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(better-sqlite3@12.5.0)))(ioredis@5.8.2)(magicast@0.5.1)(typescript@5.9.3)(vue-tsc@3.1.8(typescript@5.9.3))
       '@nuxtjs/html-validator':
         specifier: ^2.1.0
         version: 2.1.0(magicast@0.5.1)(vitest@4.0.15(@opentelemetry/api@1.9.0)(@types/node@24.10.2)(esbuild@0.27.1)(happy-dom@20.0.11)(jiti@2.6.1)(terser@5.44.1)(yaml@2.8.2))
@@ -2026,8 +2026,8 @@ packages:
       rolldown:
         optional: true
 
-  '@nuxthub/core@https://pkg.pr.new/@nuxthub/core@d2060fd':
-    resolution: {integrity: sha512-d0r1lzPtP3DMyKuJn3QkKAeQbG16nonvY0QoLc15zmHZ6a1zeq4HOVtw+9lM6w+ppcQLIJJNpMWknuxKN270qQ==, tarball: https://pkg.pr.new/@nuxthub/core@d2060fd}
+  '@nuxthub/core@https://pkg.pr.new/@nuxthub/core@944cdd1':
+    resolution: {integrity: sha512-3jE2LMgGzyf3ztOQX883OnD3bNO5tdjAuf+Ov4m6uvBnLAC3XfmOtjb0AGiinglwg442TsiMvECQc8qiubSStg==, tarball: https://pkg.pr.new/@nuxthub/core@944cdd1}
     version: 0.10.3
     hasBin: true
 
@@ -11445,7 +11445,7 @@ snapshots:
       - vue-tsc
       - yaml
 
-  '@nuxthub/core@https://pkg.pr.new/@nuxthub/core@d2060fd(@vercel/functions@3.3.4)(db0@0.3.4(@libsql/client@0.15.15)(better-sqlite3@12.5.0)(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20251217.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(better-sqlite3@12.5.0)))(ioredis@5.8.2)(magicast@0.5.1)(typescript@5.9.3)(vue-tsc@3.1.8(typescript@5.9.3))':
+  '@nuxthub/core@https://pkg.pr.new/@nuxthub/core@944cdd1(@vercel/functions@3.3.4)(db0@0.3.4(@libsql/client@0.15.15)(better-sqlite3@12.5.0)(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20251217.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(better-sqlite3@12.5.0)))(ioredis@5.8.2)(magicast@0.5.1)(typescript@5.9.3)(vue-tsc@3.1.8(typescript@5.9.3))':
     dependencies:
       '@cloudflare/workers-types': 4.20251217.0
       '@nuxt/kit': 4.2.2(magicast@0.5.1)
