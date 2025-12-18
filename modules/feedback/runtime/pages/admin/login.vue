@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { z } from 'zod'
 import { motion } from 'motion-v'
+import type { FormSubmitEvent } from '@nuxt/ui'
 
 definePageMeta({
   layout: false,
@@ -8,7 +10,37 @@ definePageMeta({
 })
 
 const route = useRoute()
+const { public: { feedback } } = useRuntimeConfig()
+const { fetch: fetchSession } = useUserSession()
 const errorType = route.query.error as string
+
+const passwordSchema = z.object({
+  password: z.string().min(1, 'Please enter a password')
+})
+
+type PasswordSchema = z.output<typeof passwordSchema>
+
+const state = reactive({ password: '' })
+const loginError = ref<string>()
+const isLoading = ref(false)
+
+async function handlePasswordLogin(event: FormSubmitEvent<PasswordSchema>) {
+  isLoading.value = true
+  loginError.value = undefined
+
+  try {
+    await $fetch('/api/auth/password', {
+      method: 'POST',
+      body: { password: event.data.password }
+    })
+    await fetchSession()
+    await navigateTo(feedback.adminPath)
+  } catch {
+    loginError.value = 'Invalid password'
+  } finally {
+    isLoading.value = false
+  }
+}
 </script>
 
 <template>
@@ -98,7 +130,7 @@ const errorType = route.query.error as string
                   Welcome back
                 </h2>
                 <p class="text-sm text-muted">
-                  Continue with your GitHub account to access the dashboard
+                  Sign in to access the dashboard
                 </p>
               </div>
 
@@ -114,16 +146,55 @@ const errorType = route.query.error as string
                   color="neutral"
                   variant="solid"
                   size="lg"
-                  class="w-full justify-center shadow-lg"
+                  block
                   external
                 />
               </motion.div>
 
-              <div class="text-center pt-4 border-t border-default">
-                <p class="text-xs text-muted">
-                  Restricted access
-                </p>
-              </div>
+              <template v-if="feedback.hasPasswordAuth">
+                <div class="flex items-center gap-4">
+                  <USeparator class="flex-1" />
+                  <span class="text-xs text-muted uppercase">or</span>
+                  <USeparator class="flex-1" />
+                </div>
+
+                <UForm :schema="passwordSchema" :state="state" class="space-y-4" @submit="handlePasswordLogin">
+                  <UFormField label="Password" name="password">
+                    <UInput
+                      v-model="state.password"
+                      type="password"
+                      placeholder="Enter admin password"
+                      icon="i-lucide-lock"
+                      size="lg"
+                      class="w-full"
+                    />
+                  </UFormField>
+
+                  <UAlert
+                    v-if="loginError"
+                    :title="loginError"
+                    icon="i-lucide-alert-circle"
+                    color="error"
+                    variant="subtle"
+                  />
+
+                  <motion.div
+                    :while-hover="{ scale: 1.02 }"
+                    :while-tap="{ scale: 0.98 }"
+                    :transition="{ type: 'spring', stiffness: 400, damping: 25 }"
+                  >
+                    <UButton
+                      type="submit"
+                      label="Sign in with password"
+                      color="primary"
+                      variant="solid"
+                      size="lg"
+                      block
+                      :loading="isLoading"
+                    />
+                  </motion.div>
+                </UForm>
+              </template>
             </div>
           </UCard>
         </motion.div>

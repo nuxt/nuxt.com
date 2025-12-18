@@ -13,8 +13,15 @@ export default defineNuxtModule<FeedbackModuleOptions>({
     const { resolve } = createResolver(import.meta.url)
     const adminPath = options.adminPath!.replace(/\/$/, '')
 
+    const adminPassword = process.env.NUXT_FEEDBACK_ADMIN_PASSWORD || ''
+
+    nuxt.options.runtimeConfig.feedback = {
+      adminPassword
+    }
+
     nuxt.options.runtimeConfig.public.feedback = {
-      adminPath
+      adminPath,
+      hasPasswordAuth: !!adminPassword
     }
 
     nuxt.hook('hub:db:schema:extend', async ({ dialect, paths }) => {
@@ -56,6 +63,12 @@ export default defineNuxtModule<FeedbackModuleOptions>({
       handler: resolve('./runtime/server/api/auth/github.get')
     })
 
+    addServerHandler({
+      route: '/api/auth/password',
+      method: 'post',
+      handler: resolve('./runtime/server/api/auth/password.post')
+    })
+
     addRouteMiddleware({
       name: 'feedback-auth',
       path: resolve('./runtime/middleware/auth')
@@ -93,4 +106,5 @@ export default defineNuxtModule<FeedbackModuleOptions>({
 
 export type { FeedbackModuleOptions } from './types'
 export { FEEDBACK_OPTIONS, FEEDBACK_RATINGS, feedbackSchema, feedbackFormSchema } from './types'
-export type { FeedbackRating, FeedbackItem, FeedbackSubmission, PageAnalytic, FeedbackInput } from './types'
+export type { FeedbackRating, FeedbackOption, FeedbackInput, FeedbackItem, FeedbackSubmission, PageAnalytic } from './types'
+export type { Feedback } from './runtime/shared/types/feedback'
