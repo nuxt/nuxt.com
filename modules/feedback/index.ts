@@ -17,7 +17,7 @@ export default defineNuxtModule<FeedbackModuleOptions>({
       adminPath
     }
 
-    nuxt.hook('hub:db:schema:extend', async ({ dialect, paths }: { dialect: string, paths: string[] }) => {
+    nuxt.hook('hub:db:schema:extend', async ({ dialect, paths }) => {
       if (dialect === 'sqlite') {
         paths.push(resolve('./runtime/server/db/schema.sqlite.ts'))
       }
@@ -80,8 +80,8 @@ export default defineNuxtModule<FeedbackModuleOptions>({
       })
     })
 
-    nuxt.options.routeRules[adminPath] = { ssr: false }
-    nuxt.options.routeRules[`${adminPath}/**`] = { ssr: false }
+    nuxt.options.routeRules![adminPath] = { ssr: false }
+    nuxt.options.routeRules![`${adminPath}/**`] = { ssr: false }
 
     nuxt.hook('prepare:types', ({ references }) => {
       references.push({
