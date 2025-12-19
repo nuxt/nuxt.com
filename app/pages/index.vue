@@ -580,6 +580,10 @@ onMounted(() => {
           <NuxtImg
             :src="getWebsiteScreenShotUrl(item)"
             :alt="item.name"
+            width="646"
+            height="363"
+            sizes="587px sm:445px lg:646px"
+            format="webp"
             class="rounded-none sm:rounded-lg w-full border border-default aspect-video"
             loading="lazy"
           />

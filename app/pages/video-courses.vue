@@ -40,10 +40,10 @@ defineOgImageComponent('Docs', {
         <ul class="divide-y divide-default">
           <li v-for="(course, index) in courses" :key="course.slug" class="flex items-center py-3 gap-2">
             <NuxtImg
-              :src="`/assets/video-courses/${course.slug}.png`"
+              :src="`/assets/video-courses/${course.slug}.webp`"
               :alt="course.name"
-              :width="'sponsor' in course && course.sponsor ? 96 : 58"
-              :height="'sponsor' in course && course.sponsor ? 64 : 32"
+              :width="'sponsor' in course && course.sponsor ? 94 : 56"
+              :height="'sponsor' in course && course.sponsor ? 47 : 28"
               format="webp"
               :modifiers="{ position: 'top' }"
               :loading="index > 3 ? 'lazy' : undefined"
