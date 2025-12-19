@@ -1,4 +1,7 @@
 import type { H3Event } from 'h3'
+import { db, schema } from 'hub:db'
+import { feedbackSchema } from '../../../../types'
+import type { FeedbackInput } from '../../../../types'
 
 export async function generateHash(
   today: string,
@@ -19,7 +22,7 @@ export async function generateHash(
 }
 
 async function getFingerprint(event: H3Event): Promise<string> {
-  const ip = event.context.cf?.ip || 'unknown'
+  const ip = (event.context.cf as any)?.ip || 'unknown'
   const userAgent = getHeader(event, 'user-agent') || 'unknown'
   const domain = getHeader(event, 'host') || 'localhost'
   const today = new Date().toISOString().split('T')[0]
@@ -30,7 +33,7 @@ async function getFingerprint(event: H3Event): Promise<string> {
 export default defineEventHandler(async (event: H3Event) => {
   const data: FeedbackInput = await readValidatedBody(event, feedbackSchema.parse)
 
-  const country = event.context.cf?.country || 'unknown'
+  const country = (event.context.cf as any)?.country || 'unknown'
   const fingerprint = await getFingerprint(event)
 
   await db.insert(schema.feedback).values({

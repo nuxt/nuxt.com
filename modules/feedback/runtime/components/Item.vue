@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { FeedbackItem } from '../../types'
+
 interface Props {
   feedback: FeedbackItem
 }

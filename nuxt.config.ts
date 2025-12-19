@@ -113,9 +113,6 @@ export default defineNuxtConfig({
     '/modules/**': { isr: 60 * 60 },
     // API
     '/api/v1/teams': { isr: 60 * 60 },
-    // Admin
-    '/admin': { ssr: false },
-    '/admin/**': { ssr: false },
     // Redirects
     '/docs': { redirect: '/docs/getting-started/introduction', prerender: false },
     '/docs/3.x': { redirect: '/docs/3.x/getting-started/introduction', prerender: false },
@@ -272,7 +269,7 @@ export default defineNuxtConfig({
       crawlLinks: true,
       ignore: [
         route => route.startsWith('/modules'),
-        route => route.startsWith('/admin')
+        route => route.startsWith('/_feedback')
       ],
       autoSubfolderIndex: false
     }

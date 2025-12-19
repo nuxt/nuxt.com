@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { AnimatePresence, MotionConfig, motion } from 'motion-v'
+import { FEEDBACK_OPTIONS, feedbackFormSchema } from '../../types'
 
 const props = defineProps<{
   page: {

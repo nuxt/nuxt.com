@@ -1,16 +1,7 @@
 <script setup lang="ts">
-type PageAnalytic = {
-  path: string
-  total: number
-  positive: number
-  negative: number
-  averageScore: number
-  positivePercentage: number
-  feedback: any[]
-  lastFeedback: any
-  createdAt: Date
-  updatedAt: Date
-}
+import { Motion, AnimatePresence } from 'motion-v'
+import type { PageAnalytic } from '../../types'
+import { FEEDBACK_OPTIONS } from '../../types'
 
 interface Props {
   pageAnalytics: PageAnalytic[]
