@@ -3,4 +3,3 @@ slug: 'nuxt-ui-portfolio'
 description: "A portfolio template with a clean and modern design."
 repo: 'nuxt-ui-templates/portfolio'
 demo: 'https://portfolio-template.nuxt.dev'
-featured: true
