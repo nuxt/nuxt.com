@@ -1,10 +1,16 @@
 <script lang="ts" setup>
 import type { TemplatesCollectionItem } from '@nuxt/content'
 
-defineProps<{
+const props = defineProps<{
   template: TemplatesCollectionItem
   index: number
 }>()
+
+const { track } = useAnalytics()
+
+function trackTemplateAction(action: 'Demo' | 'GitHub' | 'Purchase') {
+  track('Template Action', { template: props.template.name, action })
+}
 </script>
 
 <template>
@@ -69,6 +75,7 @@ defineProps<{
           color="neutral"
           variant="subtle"
           class="w-1/2 justify-center"
+          @click="trackTemplateAction('Demo')"
         />
         <UButton
           v-if="template.repo"
@@ -80,6 +87,7 @@ defineProps<{
           color="neutral"
           variant="subtle"
           class="w-1/2 justify-center"
+          @click="trackTemplateAction('GitHub')"
         />
         <UButton
           v-else-if="template.purchase"
@@ -91,6 +99,7 @@ defineProps<{
           icon="i-lucide-credit-card"
           size="sm"
           class="w-1/2 justify-center"
+          @click="trackTemplateAction('Purchase')"
         />
       </UFieldGroup>
     </template>

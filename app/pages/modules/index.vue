@@ -13,6 +13,7 @@ const el = useTemplateRef<HTMLElement>('el')
 
 const { replaceRoute } = useFilters('modules')
 const { fetchList, filteredModules, q, categories, modules, stats, selectedSort, selectedOrder, selectedCategory, sorts } = useModules()
+const { track } = useAnalytics()
 
 const { data: page } = await useAsyncData('modules-landing', () => queryCollection('landing').path('/modules').first())
 if (!page.value) {
@@ -96,6 +97,7 @@ watch(filteredModules, () => {
 const copyAllInstallCommands = () => {
   const moduleNames = modulesToAdd.value.map(module => module.name).join(' ')
   const command = `npx nuxt@latest module add ${moduleNames}`
+  track('Modules Bulk Install Copied', { count: modulesToAdd.value.length, modules: moduleNames })
   copy(command, {
     title: 'Install command copied to clipboard:',
     description: `Ready to install ${modulesToAdd.value.length} module${modulesToAdd.value.length > 1 ? 's' : ''} at once`
