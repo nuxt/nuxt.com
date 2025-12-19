@@ -30,14 +30,17 @@ export default defineNuxtModule((options, nuxt) => {
         console.error(`Template ${template.slug} has no "demo" or "screenshotUrl" to take a screenshot from`)
         return
       }
-      const filename = join(process.cwd(), 'public/assets/templates', `${template.slug}.png`)
+      const filename = join(process.cwd(), 'public/assets/templates', `${template.slug}.webp`)
       if (existsSync(filename)) {
         return
       }
       console.log(`Generating screenshot for Template ${template.slug} hitting ${url}...`)
       await captureWebsite.file(url, filename, {
         ...(template.screenshotOptions || {}),
-        launchOptions: { headless: true }
+        launchOptions: { headless: true },
+        width: 1280,
+        height: 720,
+        type: 'webp'
       })
     }
 
@@ -49,7 +52,7 @@ export default defineNuxtModule((options, nuxt) => {
         console.error(`Video Course ${course.slug} has no "url" or "screenshotUrl" to take a screenshot from`)
         return
       }
-      const filename = join(process.cwd(), 'public/assets/video-courses', `${course.slug}.png`)
+      const filename = join(process.cwd(), 'public/assets/video-courses', `${course.slug}.webp`)
       if (existsSync(filename)) {
         return
       }
@@ -57,8 +60,9 @@ export default defineNuxtModule((options, nuxt) => {
       await captureWebsite.file(url, filename, {
         ...(course.screenshotOptions || {}),
         launchOptions: { headless: true },
-        width: 1920,
-        height: 960
+        width: 1280,
+        height: 720,
+        type: 'webp'
       })
     }
 
@@ -77,7 +81,7 @@ export default defineNuxtModule((options, nuxt) => {
           continue
         }
 
-        const filename = join(process.cwd(), 'public/assets/websites', `${kebabCase(website.name.replace(/ /g, ''))}.png`)
+        const filename = join(process.cwd(), 'public/assets/websites', `${kebabCase(website.name.replace(/ /g, ''))}.webp`)
         if (existsSync(filename)) {
           continue
         }
@@ -86,8 +90,9 @@ export default defineNuxtModule((options, nuxt) => {
         await captureWebsite.file(url, filename, {
           ...(website.screenshotOptions || {}),
           launchOptions: { headless: true },
-          width: 1920,
-          height: 1080,
+          width: 1280,
+          height: 720,
+          type: 'webp',
           userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36'
         }).catch((err) => {
           console.warn(`Could not generate screenshot for ${url}: ${err.message}`)
