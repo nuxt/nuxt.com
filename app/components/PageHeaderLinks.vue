@@ -9,7 +9,7 @@ const isCopying = ref(false)
 const mdPath = computed(() => `${site.url}/raw${route.path}.md`)
 
 const items = [
-  {
+  [{
     label: 'Copy Markdown link',
     icon: 'i-lucide-link',
     onSelect() {
@@ -41,7 +41,27 @@ const items = [
     target: '_blank',
     to: `https://claude.ai/new?q=${encodeURIComponent(`Read ${mdPath.value} so I can ask questions about it.`)}`,
     onSelect: () => track('Page Action', { action: 'Open in Claude' })
-  }
+  }], [
+    {
+      label: 'Copy MCP URL',
+      icon: 'i-lucide-link',
+      onSelect() {
+        track('Page Action', { action: 'Copy MCP URL' })
+        copy(`https://nuxt.com/mcp`)
+        toast.add({
+          title: 'Copied to clipboard',
+          icon: 'i-lucide-check-circle'
+        })
+      }
+    },
+    {
+      label: 'Add MCP Server',
+      icon: 'i-simple-icons:cursor',
+      target: '_blank',
+      to: `/mcp/deeplink`,
+      onSelect: () => track('Page Action', { action: 'Add MCP Server' })
+    }
+  ]
 ]
 
 async function copyPage() {
