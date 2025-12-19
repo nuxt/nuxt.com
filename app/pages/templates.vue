@@ -63,7 +63,7 @@ defineOgImageComponent('Docs', {
               v-for="(template, index) in baseTemplates"
               :key="template.slug"
               :template="template"
-              :index="index"
+              :index="index + featuredTemplates.length"
             />
           </UPageGrid>
         </div>
