@@ -2,4 +2,6 @@ name: 'Full Stack Nuxt Course'
 slug: 'full-stack-nuxt-course'
 description: 'Full Stack app with Nuxt, Vue, Better Auth, Drizzle, Tailwind, DaisyUI, MapLibre'
 url: 'https://www.youtube.com/watch?v=DK93dqmJJYg'
-screenshotUrl: 'https://www.youtube-nocookie.com/embed/DK93dqmJJYg'
+screenshotOptions:
+  delay: 1
+  removeElements: ['tp-yt-iron-overlay-backdrop', 'tp-yt-paper-dialog']
