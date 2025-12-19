@@ -1,3 +1,11 @@
+<script setup lang="ts">
+const { track } = useAnalytics()
+
+function trackSocialClick(platform: string) {
+  track('Social Link Clicked', { platform })
+}
+</script>
+
 <template>
   <div class="flex items-center">
     <UButton
@@ -7,6 +15,7 @@
       variant="ghost"
       color="neutral"
       size="xs"
+      @click="trackSocialClick('Discord')"
     >
       <span class="sr-only">Nuxt on Discord</span>
     </UButton>
@@ -17,6 +26,7 @@
       variant="ghost"
       color="neutral"
       size="xs"
+      @click="trackSocialClick('Bluesky')"
     >
       <span class="sr-only">Nuxt on Bluesky</span>
     </UButton>
@@ -27,6 +37,7 @@
       variant="ghost"
       color="neutral"
       size="xs"
+      @click="trackSocialClick('X')"
     >
       <span class="sr-only">Nuxt on X</span>
     </UButton>
@@ -37,6 +48,7 @@
       variant="ghost"
       color="neutral"
       size="xs"
+      @click="trackSocialClick('GitHub')"
     >
       <span class="sr-only">Nuxt on GitHub</span>
     </UButton>

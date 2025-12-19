@@ -1,5 +1,5 @@
 <script setup lang="ts">
-defineProps({
+const props = defineProps({
   value: {
     type: String,
     required: true
@@ -14,6 +14,12 @@ defineProps({
   }
 })
 const { copy, copied } = useClipboard()
+const { track } = useAnalytics()
+
+function copyValue() {
+  track('Command Copied', { value: props.value })
+  copy(props.value)
+}
 </script>
 
 <template>
@@ -28,7 +34,7 @@ const { copy, copied } = useClipboard()
         base: copied ? 'ring-primary' : ''
       }"
     >
-      <div class="absolute inset-0" :class="[copied ? 'cursor-default' : 'cursor-copy']" @click="copy(value)" />
+      <div class="absolute inset-0" :class="[copied ? 'cursor-default' : 'cursor-copy']" @click="copyValue" />
       <template #trailing>
         <UButton
           :icon="copied ? 'i-lucide-check' : 'i-lucide-copy'"
@@ -40,7 +46,7 @@ const { copy, copied } = useClipboard()
             'cursor-copy': !copied
           }"
           aria-label="copy button"
-          @click="copy(value)"
+          @click="copyValue"
         />
       </template>
     </UInput>

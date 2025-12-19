@@ -4,8 +4,15 @@ const { version } = useDocsVersion()
 const { searchGroups, searchLinks, searchTerm } = useNavigation()
 const { fetchList: fetchModules } = useModules()
 const { fetchList: fetchHosting } = useHostingProviders()
+const { track } = useAnalytics()
 
 const color = computed(() => colorMode.value === 'dark' ? '#020420' : 'white')
+
+watch(() => colorMode.preference, (newMode, oldMode) => {
+  if (oldMode && newMode !== oldMode) {
+    track('Color Mode Changed', { mode: newMode })
+  }
+})
 
 const [{ data: navigation }, { data: files }] = await Promise.all([
   useAsyncData('navigation', () => {
