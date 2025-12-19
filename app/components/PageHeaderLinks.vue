@@ -43,10 +43,10 @@ const items = [
     onSelect: () => track('Page Action', { action: 'Open in Claude' })
   }], [
     {
-      label: 'Copy MCP Server URL',
+      label: 'Copy MCP URL',
       icon: 'i-lucide-link',
       onSelect() {
-        track('Page Action', { action: 'Copy MCP Server URL' })
+        track('Page Action', { action: 'Copy MCP URL' })
         copy(`https://nuxt.com/mcp`)
         toast.add({
           title: 'Copied to clipboard',
