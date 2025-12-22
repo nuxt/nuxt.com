@@ -1,5 +1,6 @@
 import type { H3Event } from 'h3'
 import { hasProtocol } from 'ufo'
+import { kv } from 'hub:kv'
 import { githubHeaders } from './github'
 
 const inactiveSponsors = [
@@ -38,6 +39,11 @@ export interface OpenCollectiveSponsor {
 }
 
 export async function fetchOpenCollectiveSponsors(event: H3Event): Promise<OpenCollectiveSponsor[]> {
+  const key = `sponsors:opencollective`
+  const cached = await kv.get<OpenCollectiveSponsor[]>(key)
+  if (cached) {
+    return cached
+  }
   const response: OpenCollectiveSponsor[] = []
   const first = 100
   let offset: number | null = null
@@ -111,9 +117,8 @@ export async function fetchOpenCollectiveSponsors(event: H3Event): Promise<OpenC
     })
 
     if (errors) {
-      console.error(errors)
-      /* Stop the loop if any error occurs */
-      offset = null
+      console.error('Could not fetch OpenCollective sponsors:', errors)
+      return []
     }
 
     if (data.collective.members.nodes.length !== 0) {
@@ -140,6 +145,7 @@ export async function fetchOpenCollectiveSponsors(event: H3Event): Promise<OpenC
     response.push(...sponsors.filter(sponsor => !inactiveSponsors.includes(sponsor.sponsorId)))
   } while (offset)
 
+  await kv.set(key, response, { ttl: 60 * 60 * 24 }) // cache for 1 day
   return response
 }
 
@@ -148,6 +154,12 @@ export const fetchGithubSponsors = async (event: H3Event): Promise<Sponsor[]> =>
   const first = 100
   let cursor: string | null = null
   let hasNext = false
+
+  const key = `sponsors:github`
+  const cached = await kv.get<Sponsor[]>(key)
+  if (cached) {
+    return cached
+  }
 
   do {
     const query = `query {
@@ -219,6 +231,10 @@ export const fetchGithubSponsors = async (event: H3Event): Promise<Sponsor[]> =>
       headers: githubHeaders(event),
       body: { query }
     })
+    if (errors || !data?.organization?.sponsorshipsAsMaintainer) {
+      console.error('Could not fetch GitHub sponsors:', errors)
+      return []
+    }
     const _sponsors: GitHubSponsorsResponse['data']['organization']['sponsorshipsAsMaintainer'] = data.organization.sponsorshipsAsMaintainer
 
     hasNext = _sponsors.pageInfo.hasNextPage
@@ -274,6 +290,7 @@ export const fetchGithubSponsors = async (event: H3Event): Promise<Sponsor[]> =>
     monthlyPriceInDollars: 10000,
     tier: 'diamond'
   })
+  await kv.set(key, response, { ttl: 60 * 60 * 24 }) // cache for 1 day
   return response
 }
 

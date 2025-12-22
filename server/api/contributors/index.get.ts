@@ -3,7 +3,7 @@ export default cachedEventHandler(async () => {
 }, {
   name: 'contributors',
   swr: true,
-  maxAge: 60 * 5 // 5 minutes
+  maxAge: 60 * 60 // 1 hour
 })
 
 interface NuxtersContributor {

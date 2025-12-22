@@ -15,5 +15,6 @@ export default cachedEventHandler(async (event) => {
 }, {
   name: 'stats',
   getKey: () => 'nuxt',
+  swr: true,
   maxAge: 60 * 60 // 10 minutes
 })
