@@ -45,6 +45,9 @@ export default defineNuxtConfig({
     hub: {
       kv: {
         driver: 'vercel-runtime-cache'
+      },
+      db: {
+        applyMigrationsDuringBuild: false
       }
     },
     image: {
