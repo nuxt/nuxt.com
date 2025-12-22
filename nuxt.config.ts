@@ -47,6 +47,7 @@ export default defineNuxtConfig({
         driver: 'vercel-runtime-cache'
       },
       db: {
+        dialect: 'sqlite',
         applyMigrationsDuringBuild: false
       }
     },
