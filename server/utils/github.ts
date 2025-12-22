@@ -51,6 +51,11 @@ interface GitHubTeamResponse {
 
 export const github = {
   async fetchRepo(event: H3Event, owner: string, name: string): Promise<GitHubRepository> {
+    const key = `github:repo:${owner}:${name}`
+    const cached = await kv.get<GitHubRepository>(key)
+    if (cached) {
+      return cached
+    }
     try {
       const headers = githubHeaders(event)
       let res = await $fetch<GitHubRepositoryResponse>(`https://api.github.com/repos/${owner}/${name}`, { headers }).catch(() => null)
@@ -60,7 +65,7 @@ export const github = {
         res = await $fetch<GitHubRepositoryResponse>(`https://api.github.com/repos/${owner}/${name}`, { headers: githubHeaders(event, { Authorization: '' }) })
       }
 
-      return {
+      const repo = {
         id: res.id,
         name: res.name,
         repo: res.full_name,
@@ -72,7 +77,9 @@ export const github = {
         watchers: res.watchers_count,
         forks: res.forks_count,
         defaultBranch: res.default_branch
-      }
+      } satisfies GitHubRepository
+      await kv.set(key, repo, { ttl: 60 * 60 * 24 }) // cache for 1 day
+      return repo
     } catch (err) {
       console.error(`Cannot fetch github repo API info for ${owner}/${name}: ${err}`)
       // Cannot call Github API, fallback to UnGH
@@ -96,6 +103,12 @@ export const github = {
         statusCode: 500,
         message: 'Missing NUXT_GITHUB_TOKEN env variable'
       })
+    }
+
+    const key = `github:team:${org}:${teamName}`
+    const cached = await kv.get<GitHubTeamMember[]>(key)
+    if (cached) {
+      return cached
     }
 
     const team = await $fetch<GitHubTeamResponse>(`https://api.github.com/graphql`, {
@@ -138,7 +151,7 @@ export const github = {
       }
     })
 
-    return team.data.organization.team.members.nodes.map((member): GitHubTeamMember => {
+    const members = team.data.organization.team.members.nodes.map((member): GitHubTeamMember => {
       return {
         name: member.name,
         login: member.login,
@@ -157,6 +170,8 @@ export const github = {
         ]) || [])
       }
     })
+    await kv.set(key, members, { ttl: 60 * 60 * 24 }) // cache for 1 day
+    return members
   }
 }
 

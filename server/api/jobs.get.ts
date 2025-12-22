@@ -12,5 +12,6 @@ export default cachedEventHandler(async () => {
 }, {
   name: 'nuxt-jobs',
   getKey: () => 'jobs',
-  maxAge: 60 * 10 // 10 minutes
+  maxAge: 60 * 60 * 24, // 1 day
+  swr: true
 })

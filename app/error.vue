@@ -23,7 +23,8 @@ const [{ data: navigation }, { data: files }] = await Promise.all([
     ])
   }, {
     transform: data => data.flat(),
-    watch: [version]
+    watch: [version],
+    server: false
   }),
   useLazyAsyncData('search', () => {
     return Promise.all([

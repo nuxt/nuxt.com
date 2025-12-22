@@ -42,6 +42,11 @@ export default defineNuxtConfig({
     }
   },
   $production: {
+    hub: {
+      kv: {
+        driver: 'vercel-runtime-cache'
+      }
+    },
     image: {
       ipx: {
         baseURL: 'https://ipx.nuxt.com'
@@ -279,9 +284,7 @@ export default defineNuxtConfig({
   },
   hub: {
     db: 'sqlite',
-    kv: {
-      driver: 'vercel-runtime-cache'
-    },
+    kv: true,
     cache: true
   },
   typescript: {

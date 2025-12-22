@@ -18,6 +18,11 @@ export const fetchModules = cachedFunction(async (_event: H3Event): Promise<Modu
 })
 
 export async function fetchModuleStats(event: H3Event, module: BaseModule, preloadedNpmStats?: NpmDownloadStats) {
+  const key = `module:stats:${module.name}`
+  const cached = await kv.get<ModuleStats>(key)
+  if (cached) {
+    return cached
+  }
   console.info(`Fetching module ${module.name} stats...`)
   const ghRepo = module.repo.split('#')[0]
   const [owner, name] = ghRepo.split('/')
@@ -34,7 +39,7 @@ export async function fetchModuleStats(event: H3Event, module: BaseModule, prelo
         }
       })
   ])
-  return {
+  const stats = {
     version: npmInfos?.['dist-tags']?.latest || '0.0.0',
     downloads: npmStats.downloads,
     stars: repo.stars,
@@ -44,6 +49,8 @@ export async function fetchModuleStats(event: H3Event, module: BaseModule, prelo
     publishedAt: +new Date(npmInfos?.time?.modified || Date.now()),
     createdAt: +new Date(npmInfos?.time?.created || Date.now())
   } satisfies ModuleStats
+  await kv.set(key, stats, { ttl: 60 * 60 * 24 }) // cache for 1 day
+  return stats
 }
 
 interface UnghContributor {
@@ -57,13 +64,19 @@ interface UnghResponse {
 }
 
 export async function fetchModuleContributors(_event: H3Event, module: BaseModule): Promise<ModuleContributor[]> {
-  console.info(`Fetching module ${module.name} contributors ...`)
   const ghRepo = module.repo.split('#')[0]
   const [owner, name] = ghRepo.split('/')
-
+  const key = `module:contributors:${owner}:${name}`
+  const cached = await kv.get<ModuleContributor[]>(key)
+  if (cached) {
+    return cached
+  }
+  console.info(`Fetching module ${module.name} contributors ...`)
   try {
-    const { contributors } = await $fetch<UnghResponse>(`https://ungh.cc/repos/${owner}/${name}/contributors`)
-    return contributors.filter(contributor => !isBot(contributor.username))
+    const res = await $fetch<UnghResponse>(`https://ungh.cc/repos/${owner}/${name}/contributors`)
+    const contributors = res.contributors.filter(contributor => !isBot(contributor.username))
+    await kv.set(key, contributors, { ttl: 60 * 60 * 24 }) // cache for 1 day
+    return contributors
   } catch (err) {
     console.error(`Cannot fetch github contributors info for ${module.repo}: ${err}`)
     return []
