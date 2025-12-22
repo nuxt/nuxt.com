@@ -65,10 +65,6 @@ export default defineNuxtConfig({
     preference: 'dark'
   },
   content: {
-    database: {
-      type: 'sqlite',
-      filename: '/tmp/nuxt.com.db'
-    },
     build: {
       markdown: {
         highlight: {

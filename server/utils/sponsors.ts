@@ -1,5 +1,6 @@
 import type { H3Event } from 'h3'
 import { hasProtocol } from 'ufo'
+import { kv } from 'hub:kv'
 import { githubHeaders } from './github'
 
 const inactiveSponsors = [
