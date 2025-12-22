@@ -128,6 +128,9 @@ export default defineNuxtConfig({
     // Admin
     '/admin': { ssr: false },
     '/admin/**': { ssr: false },
+    // Main navigation
+    '/api/navigation.json': { prerender: true },
+    '/api/search.json': { prerender: true },
     // Redirects
     '/docs': { redirect: '/docs/getting-started/introduction', prerender: false },
     '/docs/3.x': { redirect: '/docs/3.x/getting-started/introduction', prerender: false },
