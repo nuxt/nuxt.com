@@ -67,7 +67,7 @@
     "valibot": "1.2.0"
   },
   "devDependencies": {
-    "@ai-sdk/mcp": "^0.0.12",
+    "@ai-sdk/mcp": "^1.0.1",
     "@ai-sdk/openai": "3.0.0-beta.101",
     "@iconify-json/vscode-icons": "^1.2.37",
     "@nuxt/eslint": "^1.12.1",
