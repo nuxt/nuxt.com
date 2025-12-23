@@ -16,13 +16,13 @@ Nuxt supports deploying on [Northflank](https://www.northflank.com) with minimal
 2. In your project, create a [Service]((https://northflank.com/docs/v1/application/getting-started/build-and-deploy-your-code)) and connect it to your Nuxt repository.
 
 3. Ensure your package.json includes a start script that runs the Nuxt production server.
-   ```json [package.json]
-   {
-      "scripts": {
+  ```json [package.json]
+  {
+    "scripts": {
       "start": "node .output/server/index.mjs"
-      }
-   }
-   ```
+    }
+  }
+  ```
 
 4. Click "Create Service" to build and deploy your Nuxt app.
 
