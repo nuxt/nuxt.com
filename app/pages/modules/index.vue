@@ -15,8 +15,13 @@ const { replaceRoute } = useFilters('modules')
 const { fetchList, filteredModules, q, categories, modules, stats, selectedSort, selectedOrder, selectedCategory, sorts } = useModules()
 const { track } = useAnalytics()
 
+const cacheControl = useResponseHeader('Cache-Control')
+const cdnCacheControl = useResponseHeader('CDN-Cache-Control')
+
 const { data: page } = await useAsyncData('modules-landing', () => queryCollection('landing').path('/modules').first())
 if (!page.value) {
+  cacheControl.value = 'no-store, no-cache, must-revalidate'
+  cdnCacheControl.value = 'no-store'
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
