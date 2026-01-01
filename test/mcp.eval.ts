@@ -1,7 +1,10 @@
-import { experimental_createMCPClient as createMCPClient } from '@ai-sdk/mcp'
+import { createMCPClient } from '@ai-sdk/mcp'
 import { generateText } from 'ai'
 import { evalite } from 'evalite'
 import { toolCallAccuracy } from 'evalite/scorers'
+import type { Evalite } from 'evalite'
+
+type ToolCall = Evalite.Scorers.ToolCall
 
 /**
  * MCP Evaluation Tests
@@ -43,6 +46,7 @@ evalite('Evaluate Nuxt MCP Documentation Tools', {
       const result = await generateText({
         model,
         prompt: input,
+        // @ts-expect-error - MCP tools type mismatch with ai SDK ToolSet
         tools: await mcpClient.tools()
       })
       return result.toolCalls ?? []
@@ -50,7 +54,7 @@ evalite('Evaluate Nuxt MCP Documentation Tools', {
       await mcpClient.close()
     }
   },
-  scorers: [async ({ output, expected }) => toolCallAccuracy({ actualCalls: output, expectedCalls: expected })]
+  scorers: [async ({ output, expected }) => toolCallAccuracy({ actualCalls: output as ToolCall[], expectedCalls: expected as ToolCall[] })]
 })
 
 evalite('Evaluate Nuxt MCP Blog Tools', {
@@ -66,6 +70,7 @@ evalite('Evaluate Nuxt MCP Blog Tools', {
       const result = await generateText({
         model,
         prompt: input,
+        // @ts-expect-error - MCP tools type mismatch with ai SDK ToolSet
         tools: await mcpClient.tools()
       })
       return result.toolCalls ?? []
@@ -73,7 +78,7 @@ evalite('Evaluate Nuxt MCP Blog Tools', {
       await mcpClient.close()
     }
   },
-  scorers: [async ({ output, expected }) => toolCallAccuracy({ actualCalls: output, expectedCalls: expected })]
+  scorers: [async ({ output, expected }) => toolCallAccuracy({ actualCalls: output as ToolCall[], expectedCalls: expected as ToolCall[] })]
 })
 
 evalite('Evaluate Nuxt MCP Deploy Tools', {
@@ -90,6 +95,7 @@ evalite('Evaluate Nuxt MCP Deploy Tools', {
       const result = await generateText({
         model,
         prompt: input,
+        // @ts-expect-error - MCP tools type mismatch with ai SDK ToolSet
         tools: await mcpClient.tools()
       })
       return result.toolCalls ?? []
@@ -97,10 +103,10 @@ evalite('Evaluate Nuxt MCP Deploy Tools', {
       await mcpClient.close()
     }
   },
-  scorers: [async ({ output, expected }) => toolCallAccuracy({ actualCalls: output, expectedCalls: expected })]
+  scorers: [async ({ output, expected }) => toolCallAccuracy({ actualCalls: output as ToolCall[], expectedCalls: expected as ToolCall[] })]
 })
 
-evalite('Evaluate Nuxt MCP Module Tools', {
+evalite<string, ToolCall[], ToolCall[]>('Evaluate Nuxt MCP Module Tools', {
   data: async () => [
     { input: 'I need to add authentication with social login providers to my app. Find me a suitable module.', expected: [{ toolName: 'list_modules', input: { category: 'authentication' } }] },
     { input: 'What modules are available for image optimization and lazy loading?', expected: [{ toolName: 'list_modules', input: { category: 'media' } }] },
@@ -111,8 +117,14 @@ evalite('Evaluate Nuxt MCP Module Tools', {
   task: async (input) => {
     const mcpClient = await createMCPClient({ transport: { type: 'http', url: MCP_URL } })
     try {
-      const result = await generateText({ model, prompt: input, tools: await mcpClient.tools(), maxSteps: 3 })
-      return result.toolCalls ?? []
+      const result = await generateText({
+        model,
+        prompt: input,
+        // @ts-expect-error - MCP tools type mismatch with ai SDK ToolSet
+        tools: await mcpClient.tools(),
+        maxSteps: 3
+      })
+      return result.toolCalls as ToolCall[] ?? []
     } finally {
       await mcpClient.close()
     }
@@ -120,7 +132,7 @@ evalite('Evaluate Nuxt MCP Module Tools', {
   scorers: [async ({ output, expected }) => toolCallAccuracy({ actualCalls: output, expectedCalls: expected })]
 })
 
-evalite('Evaluate Nuxt MCP Cross-Tool Workflows', {
+evalite<string, ToolCall[], ToolCall[]>('Evaluate Nuxt MCP Cross-Tool Workflows', {
   data: async () => [
     { input: 'I want to build an e-commerce site with Nuxt 4. What modules do I need and where should I deploy it?', expected: [{ toolName: 'list_modules' }, { toolName: 'list_deploy_providers' }] },
     { input: 'Show me the latest features in Nuxt 4 and link to the relevant documentation', expected: [{ toolName: 'list_blog_posts' }, { toolName: 'get_documentation_page', input: { path: '/docs/4.x/getting-started/introduction' } }] }
@@ -128,8 +140,14 @@ evalite('Evaluate Nuxt MCP Cross-Tool Workflows', {
   task: async (input) => {
     const mcpClient = await createMCPClient({ transport: { type: 'http', url: MCP_URL } })
     try {
-      const result = await generateText({ model, prompt: input, tools: await mcpClient.tools(), maxSteps: 5 })
-      return result.toolCalls ?? []
+      const result = await generateText({
+        model,
+        prompt: input,
+        // @ts-expect-error - MCP tools type mismatch with ai SDK ToolSet
+        tools: await mcpClient.tools(),
+        maxSteps: 5
+      })
+      return result.toolCalls as ToolCall[] ?? []
     } finally {
       await mcpClient.close()
     }
