@@ -23,5 +23,6 @@ export default cachedEventHandler(async (event) => {
   name: 'teams',
   shouldBypassCache: () => !!import.meta.dev,
   getKey: event => 'teams-' + getRouterParam(event, 'slug'),
+  swr: true,
   maxAge: 60 * 60 // 1 hour
 })

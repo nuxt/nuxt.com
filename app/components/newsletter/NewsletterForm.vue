@@ -11,6 +11,7 @@ const {
 }>()
 
 const toast = useToast()
+const { track } = useAnalytics()
 
 const loading = ref(false)
 
@@ -33,9 +34,11 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       email: event.data.email
     }
   }).then(() => {
+    track('Newsletter Subscription', { success: true })
     toast.add({ title: 'Subscription pending', description: 'Please check your emails to confirm your subscription.', color: 'success' })
     state.email = ''
   }).catch((err) => {
+    track('Newsletter Subscription', { success: false })
     const description = err.data?.message || 'Something went wrong. Please try again later.'
     toast.add({ title: 'Subscription failed', description, color: 'error' })
   })

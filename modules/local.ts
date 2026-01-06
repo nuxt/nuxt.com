@@ -26,16 +26,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     if (options.uiOnly) {
       consola.info('Enabling UI-only mode for local development')
-      const proxyRoutes = [
-        '/api/stats',
-        '/api/sponsors',
-        '/api/contributors',
-        '/api/v1/modules/**',
-        '/api/v1/teams/**'
-      ]
-      for (const route of proxyRoutes) {
-        nuxt.options.routeRules[route] = { proxy: { to: `https://nuxt.com${route}` } }
-      }
+      nuxt.options.routeRules['/api/v1/**'] = { proxy: { to: 'https://nuxt.com/api/v1/**' } }
     }
   }
 })

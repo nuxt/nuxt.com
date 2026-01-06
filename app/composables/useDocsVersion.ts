@@ -56,6 +56,7 @@ export const useDocsTags = () => {
 
 export const useDocsVersion = () => {
   const route = useRoute()
+  const { track } = useAnalytics()
 
   const version = computed(() => {
     if (route.path.startsWith('/docs/3.x')) {
@@ -74,7 +75,8 @@ export const useDocsVersion = () => {
           type: 'checkbox' as const
         }
       : {
-          to: v.path === 'https://v2.nuxt.com' ? v.path : route.path.replace(version.value.path, v.path)
+          to: v.path === 'https://v2.nuxt.com' ? v.path : route.path.replace(version.value.path, v.path),
+          onSelect: () => track('Version Switched', { version: v.shortTag })
         })
   })))
 

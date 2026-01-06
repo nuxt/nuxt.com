@@ -167,6 +167,7 @@ export const useFooterLinks = () => ({ footerLinks })
 const _useNavigation = () => {
   const nuxtApp = useNuxtApp()
   const searchTerm = ref<string>('')
+  const { track } = useAnalytics()
 
   const { headerLinks } = useHeaderLinks()
   const { footerLinks } = useFooterLinks()
@@ -177,7 +178,10 @@ const _useNavigation = () => {
     label: 'Ask AI',
     icon: 'i-lucide-wand',
     to: 'javascript:void(0);',
-    onSelect: () => nuxtApp.$kapa?.openModal()
+    onSelect: () => {
+      track('Ask AI Opened', { source: 'search-links' })
+      nuxtApp.$kapa?.openModal()
+    }
   }, ...headerLinks.value.map((link) => {
     // Remove `/docs` and `/enterprise` links from command palette
     if (link.search === false) {
@@ -255,6 +259,7 @@ const _useNavigation = () => {
       icon: 'i-lucide-wand',
       to: 'javascript:void(0);',
       onSelect() {
+        track('Ask AI Opened', { source: 'search-palette', query: searchTerm.value })
         nuxtApp.$kapa?.openModal(searchTerm.value)
       }
     }]
@@ -267,6 +272,12 @@ const _useNavigation = () => {
     label: 'Hosting',
     items: hostingItems.value
   }])
+
+  watchDebounced(searchTerm, (term) => {
+    if (term) {
+      track('Search Performed', { term })
+    }
+  }, { debounce: 500 })
 
   return {
     searchTerm,

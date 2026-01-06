@@ -192,6 +192,7 @@ interface UseFeedbackFormOptions {
 export function useFeedbackForm(options: UseFeedbackFormOptions) {
   const route = useRoute()
   const toast = useToast()
+  const { track } = useAnalytics()
 
   const formState = reactive({
     rating: null as FeedbackRating | null,
@@ -241,6 +242,7 @@ export function useFeedbackForm(options: UseFeedbackFormOptions) {
 
       await new Promise(resolve => setTimeout(resolve, 1000))
       isSubmitted.value = true
+      track('Feedback Submitted', { rating: formState.rating, hasComment: !!formState.feedback.trim() })
     } catch {
       toast.add({
         title: 'Failed to submit feedback',

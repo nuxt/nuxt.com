@@ -5,12 +5,14 @@ const logo = useTemplateRef('logo')
 const stats = useStats()
 const { copy } = useClipboard()
 const { headerLinks } = useHeaderLinks()
+const { track } = useAnalytics()
 
 const logoContextMenuItems = [
   [{
     label: 'Copy logo as SVG',
     icon: 'i-simple-icons-nuxtdotjs',
     onSelect() {
+      track('Logo Action', { action: 'Copy SVG' })
       if (logo.value) {
         copy(logo.value.$el.outerHTML, {
           title: 'Nuxt logo copied as SVG',
@@ -24,9 +26,18 @@ const logoContextMenuItems = [
   [{
     label: 'Browse design kit',
     icon: 'i-lucide-shapes',
-    to: '/design-kit'
+    to: '/design-kit',
+    onSelect: () => track('Logo Action', { action: 'Browse Design Kit' })
   }]
 ]
+
+function trackSearchOpen() {
+  track('Search Opened')
+}
+
+function trackGitHubClick() {
+  track('Header Action', { action: 'GitHub Stars' })
+}
 </script>
 
 <template>
@@ -55,7 +66,7 @@ const logoContextMenuItems = [
 
     <template #right>
       <UTooltip text="Search" :kbds="['meta', 'K']">
-        <UContentSearchButton />
+        <UContentSearchButton @click="trackSearchOpen" />
       </UTooltip>
 
       <UColorModeButton />
@@ -73,6 +84,7 @@ const logoContextMenuItems = [
           :ui="{
             label: 'hidden sm:inline-flex'
           }"
+          @click="trackGitHubClick"
         />
       </UTooltip>
     </template>
@@ -81,7 +93,7 @@ const logoContextMenuItems = [
       <HeaderToggle
         :open="open"
         class="lg:hidden"
-        @click="toggle"
+        @click="() => { track('Mobile Menu Toggled', { open: !open }); toggle() }"
       />
     </template>
 

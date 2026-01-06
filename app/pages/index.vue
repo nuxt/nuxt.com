@@ -21,8 +21,14 @@ const [{ data: page }, { data: officialModules }, { data: showcase }, { getFilte
 const sponsorGroups = getFilteredSponsors(['diamond', 'platinum', 'gold'])
 
 const stats = useStats()
+const { track } = useAnalytics()
 
 const videoModalOpen = ref(false)
+
+function openVideoModal() {
+  track('Video Modal Opened')
+  videoModalOpen.value = true
+}
 
 const site = useSiteConfig()
 const title = 'Nuxt: The Progressive Web Framework'
@@ -133,7 +139,7 @@ onMounted(() => {
             <UButton to="/docs/getting-started/installation" size="xl">
               Get started
             </UButton>
-            <UButton size="xl" color="neutral" variant="subtle" trailing-icon="i-lucide-play-circle" @click="videoModalOpen = true">
+            <UButton size="xl" color="neutral" variant="subtle" trailing-icon="i-lucide-play-circle" @click="openVideoModal">
               Nuxt in 100 seconds
             </UButton>
           </div>

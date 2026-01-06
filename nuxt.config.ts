@@ -42,6 +42,11 @@ export default defineNuxtConfig({
     }
   },
   $production: {
+    hub: {
+      kv: {
+        driver: 'vercel-runtime-cache'
+      }
+    },
     image: {
       ipx: {
         baseURL: 'https://ipx.nuxt.com'
@@ -113,6 +118,12 @@ export default defineNuxtConfig({
     '/modules/**': { isr: 60 * 60 },
     // API
     '/api/v1/teams': { isr: 60 * 60 },
+    // Admin
+    '/admin': { ssr: false },
+    '/admin/**': { ssr: false },
+    // Main navigation
+    '/api/navigation.json': { prerender: true },
+    '/api/search.json': { prerender: true },
     // Redirects
     '/docs': { redirect: '/docs/getting-started/introduction', prerender: false },
     '/docs/3.x': { redirect: '/docs/3.x/getting-started/introduction', prerender: false },
@@ -276,9 +287,7 @@ export default defineNuxtConfig({
   },
   hub: {
     db: 'sqlite',
-    kv: {
-      driver: 'vercel-runtime-cache'
-    },
+    kv: true,
     cache: true
   },
   typescript: {

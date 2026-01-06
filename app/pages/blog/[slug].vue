@@ -7,6 +7,7 @@ definePageMeta({
 
 const route = useRoute()
 const { copy } = useClipboard()
+const { track } = useAnalytics()
 
 const [{ data: article }, { data: surround }] = await Promise.all([
   useAsyncData(kebabCase(route.path), () => queryCollection('blog').path(route.path).first()),
@@ -61,22 +62,26 @@ const socialLinks = computed(() =>
         {
           label: 'LinkedIn',
           icon: 'i-simple-icons-linkedin',
-          to: `https://www.linkedin.com/sharing/share-offsite/?url=https://nuxt.com${article.value.path}`
+          to: `https://www.linkedin.com/sharing/share-offsite/?url=https://nuxt.com${article.value.path}`,
+          onClick: () => track('Blog Share', { platform: 'LinkedIn', article: article.value?.title })
         },
         {
           label: 'Bluesky',
           icon: 'i-simple-icons-bluesky',
-          to: `https://bsky.app/intent/compose?text=${formatSocialIntentQueryText(authorHandles.bluesky)}`
+          to: `https://bsky.app/intent/compose?text=${formatSocialIntentQueryText(authorHandles.bluesky)}`,
+          onClick: () => track('Blog Share', { platform: 'Bluesky', article: article.value?.title })
         },
         {
           label: 'X',
           icon: 'i-simple-icons-x',
-          to: `https://x.com/intent/tweet?text=${formatSocialIntentQueryText(authorHandles.twitter)}`
+          to: `https://x.com/intent/tweet?text=${formatSocialIntentQueryText(authorHandles.twitter)}`,
+          onClick: () => track('Blog Share', { platform: 'X', article: article.value?.title })
         }
       ]
 )
 
 function copyLink() {
+  track('Blog Link Copied', { article: article.value?.title })
   copy(`https://nuxt.com${article.value?.path || '/'}`, { title: 'Link copied to clipboard', icon: 'i-lucide-copy-check' })
 }
 
