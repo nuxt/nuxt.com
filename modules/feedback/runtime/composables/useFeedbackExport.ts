@@ -1,3 +1,6 @@
+import type { FeedbackItem, PageAnalytic } from '../../types'
+import { FEEDBACK_OPTIONS } from '../../types'
+
 export function useFeedbackExport() {
   const toast = useToast()
 

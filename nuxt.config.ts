@@ -280,7 +280,7 @@ export default defineNuxtConfig({
       crawlLinks: true,
       ignore: [
         route => route.startsWith('/modules'),
-        route => route.startsWith('/admin')
+        route => route.startsWith('/_feedback')
       ],
       autoSubfolderIndex: false
     }

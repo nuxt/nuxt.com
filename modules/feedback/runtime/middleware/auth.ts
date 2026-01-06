@@ -1,7 +1,8 @@
 export default defineNuxtRouteMiddleware(() => {
   const { loggedIn } = useUserSession()
+  const { public: { feedback } } = useRuntimeConfig()
 
   if (!loggedIn.value) {
-    return navigateTo('/admin/login')
+    return navigateTo(`${feedback.adminPath}/login`)
   }
 })

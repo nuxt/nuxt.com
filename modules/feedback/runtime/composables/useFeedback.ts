@@ -1,4 +1,7 @@
-// === Ratings & Score Management ===
+import type { Ref } from 'vue'
+import type { FeedbackRating, FeedbackItem, FeedbackSubmission, PageAnalytic } from '../../types'
+import { FEEDBACK_OPTIONS } from '../../types'
+
 export function useFeedbackRatings() {
   const ratingConfig = computed(() => {
     return FEEDBACK_OPTIONS.reduce((acc, option) => {
@@ -43,17 +46,16 @@ export function useFeedbackRatings() {
   }
 }
 
-// === Data Analysis & Processing ===
-export function useFeedbackData(rawFeedback: Ref<FeedbackItem[] | null>) {
+export function useFeedbackData(rawFeedback: Ref<Record<string, unknown>[] | null>) {
   const { calculateStats } = useFeedbackRatings()
   const { filterFeedbackByDateRange } = useDateRange()
 
-  const allFeedbackData = computed(() =>
+  const allFeedbackData = computed<FeedbackItem[]>(() =>
     rawFeedback.value?.map(item => ({
       ...item,
-      createdAt: new Date(item.createdAt),
-      updatedAt: new Date(item.updatedAt)
-    })) || []
+      createdAt: new Date(item.createdAt as string),
+      updatedAt: new Date(item.updatedAt as string)
+    }) as FeedbackItem) || []
   )
 
   const feedbackData = computed(() =>
@@ -98,7 +100,6 @@ export function useFeedbackData(rawFeedback: Ref<FeedbackItem[] | null>) {
   }
 }
 
-// === Modal Management ===
 export function useFeedbackModal() {
   const selectedPage = ref<PageAnalytic | null>(null)
   const showFeedbackModal = ref(false)
@@ -146,13 +147,12 @@ export function useFeedbackModal() {
   }
 }
 
-// === Delete Management ===
 export function useFeedbackDelete() {
   const toast = useToast()
 
   async function deleteFeedback(id: number): Promise<boolean> {
     try {
-      await $fetch(`/api/feedback/${id}`, {
+      await $fetch(`/api/_feedback/${id}`, {
         method: 'DELETE'
       })
 
@@ -182,7 +182,6 @@ export function useFeedbackDelete() {
   }
 }
 
-// === Form Submission ===
 interface UseFeedbackFormOptions {
   page: {
     title: string
@@ -236,7 +235,7 @@ export function useFeedbackForm(options: UseFeedbackFormOptions) {
     }
 
     try {
-      await $fetch('/api/feedback', {
+      await $fetch('/api/_feedback', {
         method: 'POST',
         body: submission
       })
