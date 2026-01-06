@@ -5,7 +5,7 @@ const { isLoading } = useLoadingIndicator()
 
 const appear = ref(false)
 const appeared = ref(false)
-onMounted(() => {
+onNuxtReady(() => {
   setTimeout(() => {
     appear.value = true
     setTimeout(() => {
@@ -42,7 +42,7 @@ onMounted(() => {
         class="absolute w-full -top-px transition-all text-primary shrink-0 -z-10"
         :class="[
           isLoading ? 'animate-pulse' : (appear ? heroBackgroundClass : 'opacity-0'),
-          appeared ? 'duration-[400ms]' : 'duration-1000'
+          appeared ? 'duration-400' : 'duration-1000'
         ]"
       />
 

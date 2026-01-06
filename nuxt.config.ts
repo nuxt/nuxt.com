@@ -276,6 +276,13 @@ export default defineNuxtConfig({
   },
   compatibilityDate: '2025-07-14',
   nitro: {
+    hooks: {
+      'prerender:route': (route) => {
+        if (route.error) {
+          console.error('route.error', route.route, route.error)
+        }
+      }
+    },
     compatibilityDate: {
       // Don't generate observability routes
       vercel: '2025-07-14'
