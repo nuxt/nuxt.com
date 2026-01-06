@@ -22,13 +22,13 @@ Integration with Vercel is possible with zero configuration, [learn more](https:
 3. Vercel will detect that you are using Nitro and will enable the correct settings for your deployment.
 4. Your application is deployed!
 
-After your project has been imported and deployed, all subsequent pushes to branches will generate [Preview Deployments](https://vercel.com/docs/concepts/deploy/environments#preview), and all changes made to the Production Branch (commonly “main”) will result in a [Production Deployment](https://vercel.com/docs/concepts/deploy/environments#production).
+After your project has been imported and deployed, all subsequent pushes to branches will generate [Preview Deployments](https://vercel.com/docs/deployments/environments#preview-environment-pre-production), and all changes made to the Production Branch (commonly “main”) will result in a [Production Deployment](https://vercel.com/docs/deployments/environments#production-environment).
 
-Learn more about Vercel’s [Git Integration](https://vercel.com/docs/concepts/git).
+Learn more about Vercel’s [Git Integration](https://vercel.com/docs/git).
 
 ## Custom Build Output Configuration
 
-You can provide additional [build output configuration](https://vercel.com/docs/build-output-api/v3) using `nitro.vercel.config` key inside `nuxt.config.ts`. It will be merged with built-in auto generated config.
+You can provide additional [build output configuration](https://vercel.com/docs/build-output-api) using `nitro.vercel.config` key inside `nuxt.config.ts`. It will be merged with built-in auto generated config.
 
 ## Templates
 
