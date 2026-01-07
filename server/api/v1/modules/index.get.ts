@@ -69,17 +69,15 @@ export default defineCachedEventHandler(async (event) => {
 
     if (module.maintainers) {
       for (const maintainer of module.maintainers) {
-        maintainers[maintainer.github] = maintainers[maintainer.github] || { ...maintainer, modules: [] }
-        maintainers[maintainer.github].modules.push(module.name)
+        maintainers[maintainer.github] ||= { ...maintainer, modules: [] }
+        maintainers[maintainer.github]!.modules.push(module.name)
       }
     }
     if (module.contributors) {
       for (const contributor of module.contributors) {
-        if (!contributors[contributor.username]) {
-          contributors[contributor.username] = { id: contributor.id, username: contributor.username, contributions: 0, modules: [] }
-        }
-        contributors[contributor.username].modules.push(module.name)
-        contributors[contributor.username].contributions += contributor.contributions || 0
+        contributors[contributor.username] ||= { id: contributor.id, username: contributor.username, contributions: 0, modules: [] }
+        contributors[contributor.username]!.modules.push(module.name)
+        contributors[contributor.username]!.contributions += contributor.contributions || 0
       }
     }
   }
