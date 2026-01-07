@@ -31,14 +31,14 @@ function openVideoModal() {
 }
 
 const site = useSiteConfig()
-const title = 'Nuxt: The Progressive Web Framework'
+const title = 'Nuxt: The Full-Stack Vue Framework'
 useSeoMeta({
   title,
   titleTemplate: '%s'
 })
 
 if (import.meta.server) {
-  const description = 'Create high-quality web applications with Nuxt, the open source framework that makes full-stack development with Vue.js intuitive.'
+  const description = 'Build fast, production-ready web apps with Vue. File-based routing, auto-imports, and server-side rendering — all configured out of the box.'
   useSeoMeta({
     ogTitle: title,
     description: description,
@@ -112,21 +112,8 @@ onMounted(() => {
         wrapper: 'lg:min-h-[540px]'
       }"
     >
-      <template #headline>
-        <NuxtLink :to="page.hero.cta.to">
-          <UBadge variant="subtle" size="lg" class="px-3 relative rounded-full font-semibold dark:hover:bg-primary-400/15 dark:hover:ring-primary-700">
-            {{ page?.hero.cta.label }}
-            <UIcon
-              v-if="page?.hero.cta.icon"
-              :name="page?.hero.cta.icon"
-              class="size-4 pointer-events-none"
-            />
-          </UBadge>
-        </NuxtLink>
-      </template>
-
       <template #title>
-        The Progressive<br><span class="text-primary">Web Framework</span>
+        The Full-Stack<br><span class="text-primary">Vue Framework</span>
       </template>
 
       <template #description>
@@ -217,7 +204,7 @@ onMounted(() => {
       :ui="{
         title: 'text-left',
         description: 'text-left',
-        root: 'bg-gradient-to-b border-t border-default from-muted dark:from-muted/40 to-default',
+        root: 'bg-linear-to-b border-t border-default from-muted dark:from-muted/40 to-default',
         features: 'xl:grid-cols-4 lg:gap-10'
       }"
     >
@@ -254,9 +241,25 @@ onMounted(() => {
       </template>
     </UPageSection>
 
+    <UPageCTA
+      :description="page.testimonial.quote"
+      variant="subtle"
+      class="rounded-none"
+      :ui="{
+        container: 'sm:py-12 lg:py-12 sm:gap-8',
+        description: 'text-base! text-balance before:content-[open-quote] before:text-5xl before:mr-1 before:leading-0 before:inline-block before:transform before:translate-y-4 before:align-baseline before:text-dimmed after:content-[close-quote] after:text-5xl after:leading-0 after:ml-1 after:inline-block after:transform after:translate-y-7 after:align-baseline after:text-dimmed'
+      }"
+    >
+      <UUser
+        v-bind="page.testimonial.author"
+        size="xl"
+        class="justify-center"
+      />
+    </UPageCTA>
+
     <UPageSection
       :ui="{
-        root: 'bg-gradient-to-b border-t border-default from-muted dark:from-muted/40 to-default'
+        root: 'bg-linear-to-b border-t border-default from-muted dark:from-muted/40 to-default'
       }"
     >
       <template #title>
@@ -324,27 +327,13 @@ onMounted(() => {
         </template>
       </div>
     </UPageSection>
-    <UPageCTA
-      :description="page.testimonial.quote"
-      variant="subtle"
-      class="rounded-none"
-      :ui="{
-        container: 'sm:py-12 lg:py-12 sm:gap-8',
-        description: 'text-base! text-balance before:content-[open-quote] before:text-5xl before:mr-1 before:leading-0 before:inline-block before:transform before:translate-y-4 before:align-baseline before:text-dimmed after:content-[close-quote] after:text-5xl after:leading-0 after:ml-1 after:inline-block after:transform after:translate-y-7 after:align-baseline after:text-dimmed'
-      }"
-    >
-      <UUser
-        v-bind="page.testimonial.author"
-        size="xl"
-        class="justify-center"
-      />
-    </UPageCTA>
+
     <UPageSection
       :title="page.stats.title"
       :description="page.stats.description"
       class="relative"
       :ui="{
-        root: 'bg-gradient-to-b border-t border-default from-muted dark:from-muted/40 to-default'
+        root: 'bg-linear-to-b border-t border-default from-muted dark:from-muted/40 to-default'
       }"
     >
       <div class="flex flex-col md:flex-row gap-4">
@@ -432,7 +421,7 @@ onMounted(() => {
       :description="page.modules.description"
       :links="page.modules.links"
       :ui="{
-        root: 'bg-gradient-to-b border-t border-default from-muted dark:from-muted/40 to-default',
+        root: 'bg-linear-to-b border-t border-default from-muted dark:from-muted/40 to-default',
         title: 'text-left',
         description: 'text-left',
         links: 'justify-start'
@@ -464,7 +453,7 @@ onMounted(() => {
       :links="page.deploy.links"
       orientation="horizontal"
       :ui="{
-        root: 'bg-gradient-to-b border-t border-default from-muted dark:from-muted/40 to-default'
+        root: 'bg-linear-to-b border-t border-default from-muted dark:from-muted/40 to-default'
       }"
     >
       <NuxtImg
@@ -478,58 +467,13 @@ onMounted(() => {
     </UPageSection>
 
     <UPageSection
-      :title="page.support.title"
-      :description="page.support.description"
-      :links="page.support.links"
-      orientation="horizontal"
-      class="relative"
-      :ui="{
-        root: 'bg-gradient-to-b border-t border-default from-muted dark:from-muted/40 to-20% to-default',
-        title: 'text-left',
-        description: 'text-left',
-        links: 'justify-start'
-      }"
-    >
-      <template #title>
-        <LazyMDC :value="page.support.title" unwrap="p" cache-key="index-support-title" hydrate-never />
-      </template>
-      <template #description>
-        <LazyMDC :value="page.support.description" unwrap="p" cache-key="index-support-description" hydrate-never />
-
-        <UPageLogos :ui="{ logos: 'mt-6' }" marquee>
-          <NuxtImg
-            v-for="company in page.support.companies"
-            :key="company.alt"
-            v-bind="company"
-            loading="lazy"
-            class="h-8 max-w-[70px] object-contain filter invert dark:invert-0 opacity-50"
-            :alt="`${company.alt} logo`"
-          />
-        </UPageLogos>
-      </template>
-
-      <UPageCard variant="subtle" :ui="{ container: 'gap-y-8 sm:p-8' }">
-        <UPageFeature
-          v-for="(feature, index) in page.support.features"
-          :key="index"
-          v-bind="feature"
-          :ui="{
-            root: 'lg:items-center lg:gap-3',
-            leadingIcon: 'text-highlighted',
-            leading: 'bg-default p-1 lg:p-2.5 rounded-sm border border-default',
-            description: 'mt-0'
-          }"
-        />
-      </UPageCard>
-    </UPageSection>
-    <UPageSection
       :title="page.contributors.title"
       :description="page.contributors.description"
       :links="page.contributors.links"
       orientation="horizontal"
       reverse
       :ui="{
-        root: 'bg-gradient-to-b border-t border-default from-muted dark:from-muted/40 to-default'
+        root: 'bg-linear-to-b border-t border-default from-muted dark:from-muted/40 to-default'
       }"
     >
       <HomeSectionContributors />
@@ -603,7 +547,7 @@ onMounted(() => {
       :links="page.sponsors.links"
       class="relative"
       :ui="{
-        root: 'bg-gradient-to-b border-t border-default from-muted dark:from-muted/40 to-default',
+        root: 'bg-linear-to-b border-t border-default from-muted dark:from-muted/40 to-default',
         container: 'py-12 sm:py-16 lg:py-20'
       }"
     >
