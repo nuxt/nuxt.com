@@ -298,7 +298,7 @@ export default defineNuxtConfig({
     '/assets/websites/explore-france.png': { redirect: '/assets/websites/explore-france.webp' },
     '/assets/websites/louis-vuitton.png': { redirect: '/assets/websites/louis-vuitton.webp' },
     '/assets/websites/shaina-mote.png': { redirect: '/assets/websites/shaina-mote.webp' },
-    '/assets/websites/virgin-galactic.png': { redirect: '/assets/websites/virgin-galactic.webp' },
+    '/assets/websites/virgin-galactic.png': { redirect: '/assets/websites/virgin-galactic.webp' }
   },
   sourcemap: true,
   experimental: {
