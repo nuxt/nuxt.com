@@ -114,7 +114,7 @@ export default defineNuxtConfig({
     '/404.html': { prerender: true },
     '/docs/3.x/getting-started/introduction': { prerender: true },
     '/docs/4.x/getting-started/introduction': { prerender: true },
-    '/modules': { isr: 60 * 60 },
+    '/modules': { prerender: true },
     '/modules/**': { isr: 60 * 60 },
     // API
     '/api/v1/teams': { isr: 60 * 60 },
@@ -320,7 +320,7 @@ export default defineNuxtConfig({
     prerender: {
       crawlLinks: true,
       ignore: [
-        route => route.startsWith('/modules'),
+        route => route.startsWith('/modules/'),
         route => route.startsWith('/admin')
       ],
       autoSubfolderIndex: false
