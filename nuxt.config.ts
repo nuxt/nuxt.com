@@ -312,8 +312,7 @@ export default defineNuxtConfig({
     '/docs/4.x/getting-started/hooks': { redirect: '/docs/4.x/api/advanced/hooks' },
     '/docs/4.x/api/nuxt-hooks': { redirect: '/docs/4.x/api/advanced/hooks' },
     '/docs/4.x/guide/directory-structure/hooks': { redirect: '/docs/4.x/api/advanced/hooks' },
-    '/docs/4.x/robots.txt': { redirect: '/robots.txt' },
-    
+    '/docs/4.x/robots.txt': { redirect: '/robots.txt' }
   },
   sourcemap: true,
   experimental: {
