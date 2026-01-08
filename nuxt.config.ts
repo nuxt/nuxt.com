@@ -299,7 +299,21 @@ export default defineNuxtConfig({
     '/assets/websites/explore-france.png': { redirect: '/assets/websites/explore-france.webp' },
     '/assets/websites/louis-vuitton.png': { redirect: '/assets/websites/louis-vuitton.webp' },
     '/assets/websites/shaina-mote.png': { redirect: '/assets/websites/shaina-mote.webp' },
-    '/assets/websites/virgin-galactic.png': { redirect: '/assets/websites/virgin-galactic.webp' }
+    '/assets/websites/virgin-galactic.png': { redirect: '/assets/websites/virgin-galactic.webp' },
+    // missing redirects
+    '/docs/4.x/examples/essentials/hello-world': { redirect: '/docs/4.x/examples/hello-world' },
+    '/docs/4.x/api/composables/usehead': { redirect: '/docs/4.x/api/composables/use-head' },
+    '/docs/4.x/examples/composables/use-async-data': { redirect: '/docs/4.x/examples/features/data-fetching' },
+    '/docs/4.x/examples/composables/use-head': { redirect: '/docs/4.x/examples/features/meta-tags' },
+    '/docs/4.x/getting-started/directory-structure': { redirect: '/docs/4.x/directory-structure' },
+    '/docs/4.x/guide/going-further/modules': { redirect: '/docs/4.x/guide/modules' },
+    '/docs/4.x/guide/concepts/rendering-modes': { redirect: '/docs/4.x/guide/concepts/rendering' },
+    '/docs/4.x/guide/directory-structure/nuxt.config': { redirect: '/docs/4.x/directory-structure/nuxt-config' },
+    '/docs/4.x/getting-started/hooks': { redirect: '/docs/4.x/api/advanced/hooks' },
+    '/docs/4.x/api/nuxt-hooks': { redirect: '/docs/4.x/api/advanced/hooks' },
+    '/docs/4.x/guide/directory-structure/hooks': { redirect: '/docs/4.x/api/advanced/hooks' },
+    '/docs/4.x/robots.txt': { redirect: '/robots.txt' },
+    
   },
   sourcemap: true,
   experimental: {
