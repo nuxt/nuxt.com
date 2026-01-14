@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { kebabCase } from 'scule'
+import { joinURL } from 'ufo'
 import type { ContentNavigationItem } from '@nuxt/content'
 import { findPageBreadcrumb } from '@nuxt/content/utils'
 import { mapContentNavigation } from '@nuxt/ui/utils/content'
@@ -17,6 +18,7 @@ const route = useRoute()
 const nuxtApp = useNuxtApp()
 const { version } = useDocsVersion()
 const { headerLinks } = useHeaderLinks()
+const site = useSiteConfig()
 
 const path = computed(() => route.path.replace(/\/$/, ''))
 
@@ -131,7 +133,7 @@ useHead({
   link: [
     {
       rel: 'alternate',
-      href: `https://nuxt.com/raw${path.value}.md`,
+      href: joinURL(site.url, 'raw', `${path.value}.md`),
       type: 'text/markdown'
     }
   ]
