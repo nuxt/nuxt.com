@@ -6,7 +6,7 @@
       "has": [
         { "type": "header", "key": "accept", "value": "text/markdown" }
       ],
-      "destination": "/raw/:path*.md"
+      "destination": "/raw/docs/:path*.md"
     }
   ]
 }
