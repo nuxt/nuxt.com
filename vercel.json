@@ -1,0 +1,12 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    {
+      "source": "/docs/*",
+      "has": [
+        { "type": "header", "key": "accept", "value": "text/markdown" }
+      ],
+      "destination": "/raw/:path*.md"
+    }
+  ]
+}
