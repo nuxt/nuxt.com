@@ -127,6 +127,16 @@ useSeoMeta({
   title
 })
 
+useHead({
+  link: [
+    {
+      rel: 'alternate',
+      href: `https://nuxt.com/raw${path.value}.md`,
+      type: 'text/markdown'
+    }
+  ]
+})
+
 if (import.meta.server) {
   const description = page.value?.seo?.description || page.value?.description
   useSeoMeta({
