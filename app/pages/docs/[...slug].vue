@@ -19,7 +19,6 @@ const nuxtApp = useNuxtApp()
 const { version } = useDocsVersion()
 const { headerLinks } = useHeaderLinks()
 const site = useSiteConfig()
-
 const path = computed(() => route.path.replace(/\/$/, ''))
 
 const ignoredPaths = ['.nuxt', '.output', '.env', 'node_modules']
@@ -30,6 +29,20 @@ const navClass = (item: ContentNavigationItem) => {
   return ''
 }
 
+// Pre-render the markdown path + add it to alternate links
+const markdownPath = joinURL(site.url, 'raw', `${path.value}.md`)
+prerenderRoutes([markdownPath])
+useHead({
+  link: [
+    {
+      rel: 'alternate',
+      href: markdownPath,
+      type: 'text/markdown'
+    }
+  ]
+})
+
+// Get the aside navigation
 const asideNavigation = computed(() => {
   const path = [version.value.path, route.params.slug?.[version.value.path.split('/').length - 2]].filter(Boolean).join('/')
 
@@ -127,19 +140,6 @@ const titleTemplate = computed(() => `${findTitleTemplate(page, navigation)} ${v
 useSeoMeta({
   titleTemplate,
   title
-})
-
-// Pre-render the markdown path + add it to alternate links
-const markdownPath = joinURL(site.url, 'raw', `${path.value}.md`)
-prerenderRoutes([markdownPath])
-useHead({
-  link: [
-    {
-      rel: 'alternate',
-      href: markdownPath,
-      type: 'text/markdown'
-    }
-  ]
 })
 
 if (import.meta.server) {
