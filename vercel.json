@@ -2,7 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
     {
-      "source": "/docs/*",
+      "source": "/docs/:path*",
       "has": [
         { "type": "header", "key": "accept", "value": "text/markdown" }
       ],
