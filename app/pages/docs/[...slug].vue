@@ -129,11 +129,14 @@ useSeoMeta({
   title
 })
 
+// Pre-render the markdown path + add it to alternate links
+const markdownPath = joinURL(site.url, 'raw', `${path.value}.md`)
+prerenderRoutes([markdownPath])
 useHead({
   link: [
     {
       rel: 'alternate',
-      href: joinURL(site.url, 'raw', `${path.value}.md`),
+      href: markdownPath,
       type: 'text/markdown'
     }
   ]
