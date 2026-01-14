@@ -324,12 +324,8 @@ export default defineNuxtConfig({
     },
     viteEnvironmentApi: true
   },
-  compatibilityDate: '2025-07-14',
+  compatibilityDate: '2026-01-14',
   nitro: {
-    compatibilityDate: {
-      // Don't generate observability routes
-      vercel: '2025-07-14'
-    },
     prerender: {
       crawlLinks: true,
       ignore: [
