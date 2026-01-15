@@ -24,12 +24,12 @@ export async function fetchModuleStats(event: H3Event, module: BaseModule, prelo
     return cached
   }
   console.info(`Fetching module ${module.name} stats...`)
-  const ghRepo = module.repo.split('#')[0]
+  const ghRepo = module.repo.split('#')[0]!
   const [owner, name] = ghRepo.split('/')
   const [npmInfos, npmStats, repo] = await Promise.all([
     npm.fetchPackage(module.npm),
     preloadedNpmStats || npm.fetchPackageStats(module.npm, 'last-month'),
-    github.fetchRepo(event, owner, name)
+    github.fetchRepo(event, owner!, name!)
       .then((repo) => {
         return {
           stars: repo.stars,
@@ -64,7 +64,7 @@ interface UnghResponse {
 }
 
 export async function fetchModuleContributors(_event: H3Event, module: BaseModule): Promise<ModuleContributor[]> {
-  const ghRepo = module.repo.split('#')[0]
+  const ghRepo = module.repo.split('#')[0]!
   const [owner, name] = ghRepo.split('/')
   const key = `module:contributors:${owner}:${name}`
   const cached = await kv.get<ModuleContributor[]>(key)

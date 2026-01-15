@@ -97,6 +97,7 @@
   },
   "resolutions": {
     "chokidar": "3.6.0",
+    "nitropack": "2.13.0",
     "unimport": "4.1.1"
   },
   "pnpm": {
@@ -115,7 +116,6 @@
       "vite": "8.0.0-beta.2"
     },
     "patchedDependencies": {
-      "nitropack": "patches/nitropack.patch",
       "@nuxtjs/mdc": "patches/@nuxtjs__mdc.patch"
     }
   }

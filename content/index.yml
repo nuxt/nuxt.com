@@ -1,10 +1,6 @@
 hero:
-  title: 'The Progressive Web Framework'
-  description: Create high-quality web applications with Nuxt, the open source framework that makes full-stack development with Vue.js intuitive.
-  cta:
-    label: Nuxt MCP Server is out
-    to: /docs/4.x/guide/ai/mcp
-    icon: i-lucide-arrow-right
+  title: 'The Full-Stack Vue Framework'
+  description: Build fast, production-ready web apps with Vue. File-based routing, auto-imports, and server-side rendering — all configured out of the box.
   tabs:
     - title: Minimal
       icon: i-lucide-leaf
@@ -274,8 +270,8 @@ logos:
       height: 40
       width: 51
 features:
-  title: Enable features as you grow
-  description: Nuxt grows and adapts with your needs while providing an exceptional developer experience. Build anything from simple landing pages to complex web applications that scale for teams of hundreds of developers. We've designed Nuxt to be approachable for developers of all skill levels.
+  title: Everything you need, nothing you don't
+  description: Nuxt handles the architecture so you can focus on building.
   features:
     - icon: i-lucide-sparkles
       title: Zero Configuration
@@ -316,8 +312,8 @@ features:
     to: /docs
     icon: i-lucide-arrow-right
 foundation:
-  title: Built on a solid foundation
-  description: Nuxt is built on top of bulletproof open source technologies, with versatility to choose between different build tools.
+  title: Built on proven tools
+  description: Vue for the frontend. Nitro for the server. Your choice of bundler.
   items:
     - id: vue
       title: Frontend with Vue.js
@@ -385,8 +381,8 @@ testimonial:
       provider: 'ipx'
       loading: 'lazy'
 deploy:
-  title: Deploy your app anywhere
-  description: One-command deployments and zero-configuration options make it easy to get your Nuxt app live. Choose your platform, and let Nuxt handle the rest, allowing you to focus on building great applications rather than managing complex deployments.
+  title: Deploy anywhere
+  description: Deploy with one command. SSR, static, or edge — Nuxt adapts to your platform.
   links:
     - label: Learn how to deploy now
       to: /deploy
@@ -394,13 +390,11 @@ deploy:
       color: neutral
       trailing: true
 stats:
-  title: The developer's choice for simple and powerful web apps
-  description: |
-    Nuxt was born from developers' need to boost productivity and platform performance.
-    What began as a Vue-based solution for automating tasks and server-side rendering is now trusted by startups and enterprises all around the world.
+  title: Trusted by developers worldwide
+  description: Powering startups to enterprises. 100% open source.
   community:
     title: Open source
-    description: Nuxt is 100% powered by our passionate open source community. Every line of Nuxt is written by passionate developers like you.
+    description: Every line of Nuxt is written by developers like you.
   x: 102k
   discord: 32k
   cta:
@@ -411,8 +405,8 @@ stats:
     icon: i-simple-icons-github
     trailing: true
 contributors:
-  title: 'Built by developers around the world.'
-  description: 'The development of Nuxt and its ecosystem is led by an international team. From contributors to developer advocates, the community is made up of members with different horizons and skills. We are happy to see new members every day and encourage anyone to join us and help in many ways: answering questions, giving a talk, creating modules and contributing to the core.'
+  title: 'Built by developers around the world'
+  description: 'Hundreds of contributors making Nuxt better every day. Join us.'
   links:
     - label: Nuxters
       to: https://nuxters.nuxt.com

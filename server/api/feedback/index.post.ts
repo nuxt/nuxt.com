@@ -22,7 +22,7 @@ async function getFingerprint(event: H3Event): Promise<string> {
   const ip = event.context.cf?.ip || 'unknown'
   const userAgent = getHeader(event, 'user-agent') || 'unknown'
   const domain = getHeader(event, 'host') || 'localhost'
-  const today = new Date().toISOString().split('T')[0]
+  const today = new Date().toISOString().split('T')[0]!
 
   return generateHash(today, ip, domain, userAgent)
 }

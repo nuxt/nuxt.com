@@ -30,7 +30,7 @@ export default defineCachedEventHandler(async (event) => {
   } satisfies Module
 }, {
   name: 'modules:v1',
-  getKey: event => event.context.params!.name,
+  getKey: event => event.context.params!.name!,
   swr: true,
   maxAge: 60 * 60 // 1 hour
 })
