@@ -14,7 +14,6 @@ Nuxt supports deploying on [Zeabur](https://zeabur.com) with minimal configurati
 1. Create a new Zeabur app for Nuxt following the [guide](https://zeabur.com/docs/guides/nodejs/nuxt).
 
 2. During the deployment process, you can configure environment variables in Zeabur dashboard. In your service page, open the variables tab set the following [environment variable](https://zeabur.com/docs/deploy/variables):
-
     ```bash
     SERVER_PRESET=zeabur
     ```
