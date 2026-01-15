@@ -312,7 +312,8 @@ export default defineNuxtConfig({
     '/docs/4.x/getting-started/hooks': { redirect: '/docs/4.x/api/advanced/hooks', prerender: false },
     '/docs/4.x/api/nuxt-hooks': { redirect: '/docs/4.x/api/advanced/hooks', prerender: false },
     '/docs/4.x/guide/directory-structure/hooks': { redirect: '/docs/4.x/api/advanced/hooks', prerender: false },
-    '/docs/4.x/robots.txt': { redirect: '/robots.txt', prerender: false }
+    '/docs/4.x/robots.txt': { redirect: '/robots.txt', prerender: false },
+    '/deploy/nuxthub': { redirect: '/deploy/vercel', prerender: false }
   },
   sourcemap: true,
   experimental: {
