@@ -396,7 +396,7 @@ export default defineNuxtConfig({
     },
     sections: [
       {
-        title: 'Nuxt 4 Documentation',
+        title: 'Nuxt v4 Documentation',
         contentCollection: 'docsv4',
         contentFilters: [{ field: 'extension', operator: '=', value: 'md' }]
       },
@@ -406,7 +406,7 @@ export default defineNuxtConfig({
         contentFilters: [{ field: 'extension', operator: '=', value: 'md' }]
       },
       {
-        title: 'Nuxt 3 Documentation',
+        title: 'Nuxt v3 Documentation',
         contentCollection: 'docsv3',
         contentFilters: [{ field: 'extension', operator: '=', value: 'md' }]
       },
