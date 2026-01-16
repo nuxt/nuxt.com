@@ -393,7 +393,29 @@ export default defineNuxtConfig({
     full: {
       title: 'Nuxt Docs',
       description: 'The complete Nuxt documentation and blog posts written in Markdown (MDC syntax).'
-    }
+    },
+    sections: [
+      {
+        title: 'Nuxt v4 Documentation',
+        contentCollection: 'docsv4',
+        contentFilters: [{ field: 'extension', operator: '=', value: 'md' }]
+      },
+      {
+        title: 'Deployment Guides',
+        contentCollection: 'deploy',
+        contentFilters: [{ field: 'extension', operator: '=', value: 'md' }]
+      },
+      {
+        title: 'Nuxt v3 Documentation',
+        contentCollection: 'docsv3',
+        contentFilters: [{ field: 'extension', operator: '=', value: 'md' }]
+      },
+      {
+        title: 'Blog',
+        contentCollection: 'blog',
+        contentFilters: [{ field: 'extension', operator: '=', value: 'md' }]
+      }
+    ]
   },
   mcp: {
     name: 'Nuxt',
