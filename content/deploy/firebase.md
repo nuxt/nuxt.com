@@ -65,14 +65,14 @@ You may instead prefer to set up your project with the Firebase CLI, which will 
 1. Install the latest version of the Firebase CLI.
 
 ```bash [Terminal]
-    npm install -g firebase-tools@latest
+npm install -g firebase-tools@latest
 ```
 
 2. Initialize your Firebase Project
 
 ```bash [Terminal]
-    firebase login
-    firebase init hosting
+firebase login
+firebase init hosting
 ```
 
 ::note
