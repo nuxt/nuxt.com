@@ -93,7 +93,7 @@
     "vitest": "^4.0.15",
     "vue": "^3.5.25",
     "vue-tsc": "^3.1.8",
-    "wrangler": "^4.54.0"
+    "wrangler": "^4.59.1"
   },
   "resolutions": {
     "chokidar": "3.6.0",
