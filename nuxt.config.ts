@@ -259,6 +259,7 @@ export default defineNuxtConfig({
     '/enterprise': { redirect: '/enterprise/support', prerender: false },
     '/support/us': { redirect: '/enterprise/sponsors', prerender: false },
     '/docs/4.x/guide/ai': { redirect: '/docs/4.x/guide/ai/mcp', prerender: false },
+    '/docs/3.x/guide/ai': { redirect: '/docs/4.x/guide/ai/mcp', prerender: false },
     // showcase assets
     '/assets/websites/12go.png': { redirect: '/assets/websites/12go.webp' },
     '/assets/websites/git-lab.png': { redirect: '/assets/websites/git-lab.webp' },
