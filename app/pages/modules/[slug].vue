@@ -170,7 +170,7 @@ defineOgImageComponent('Module', {
       </UPageBody>
 
       <template #right>
-        <UContentToc>
+        <UContentToc :links="module.readme?.toc?.links">
           <template #bottom>
             <div class="hidden lg:block space-y-6">
               <UPageLinks title="Links" :links="links" />
