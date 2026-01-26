@@ -96,11 +96,6 @@ function _useHeaderLinks() {
       to: '/enterprise',
       search: false,
       children: [{
-        label: 'Support',
-        to: '/enterprise/support',
-        description: 'Professional support by Nuxt experts.',
-        icon: 'i-lucide-life-buoy'
-      }, {
         label: 'Agencies',
         to: '/enterprise/agencies',
         description: 'Agencies specialized in Nuxt development.',
@@ -151,9 +146,6 @@ const footerLinks = [{
 }, {
   label: 'Enterprise',
   children: [{
-    label: 'Support',
-    to: '/enterprise/support'
-  }, {
     label: 'Agencies',
     to: '/enterprise/agencies'
   }, {
