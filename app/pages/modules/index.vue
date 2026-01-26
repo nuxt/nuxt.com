@@ -256,8 +256,8 @@ initializeModules()
 
         <UPageGrid v-if="filteredModules?.length" class="lg:grid-cols-2 xl:grid-cols-3">
           <ModuleItem
-            v-for="(module, index) in displayedModules"
-            :key="index"
+            v-for="module in displayedModules"
+            :key="module.name"
             :module="module"
             :is-added="modulesToAdd.includes(module)"
             @add="modulesToAdd.push(module)"
