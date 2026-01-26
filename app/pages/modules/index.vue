@@ -259,7 +259,7 @@ initializeModules()
             v-for="module in displayedModules"
             :key="module.name"
             :module="module"
-            :is-added="modulesToAdd.includes(module)"
+            :is-added="modulesToAdd.some(m => m.name === module.name)"
             @add="modulesToAdd.push(module)"
             @remove="modulesToAdd = modulesToAdd.filter(m => m.name !== module.name)"
           />
