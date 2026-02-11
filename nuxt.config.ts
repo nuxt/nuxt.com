@@ -95,6 +95,9 @@ export default defineNuxtConfig({
     github: {
       token: ''
     },
+    newsletter: {
+      secret: ''
+    },
     openCollective: {
       apiKey: ''
     },
