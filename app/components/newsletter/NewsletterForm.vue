@@ -35,7 +35,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     }
   }).then(() => {
     track('Newsletter Subscription', { success: true })
-    toast.add({ title: 'Subscription pending', description: 'Please check your emails to confirm your subscription.', color: 'success' })
+    toast.add({ title: 'Subscribed!', description: 'You have been successfully subscribed to the Nuxt newsletter.', color: 'success' })
     state.email = ''
   }).catch((err) => {
     track('Newsletter Subscription', { success: false })

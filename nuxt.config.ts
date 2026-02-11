@@ -95,15 +95,12 @@ export default defineNuxtConfig({
     github: {
       token: ''
     },
-    newsletter: {
-      secret: ''
-    },
     openCollective: {
       apiKey: ''
     },
-    sendgrid: {
-      listId: '',
-      apiKey: ''
+    resend: {
+      apiKey: '',
+      audienceId: ''
     }
   },
   routeRules: {
