@@ -268,7 +268,9 @@ const evalColumns: TableColumn<EvalResultItem>[] = [
     <UPageBody class="mt-0">
       <UContainer class="max-w-6xl">
         <div class="flex items-center justify-between mb-4">
-          <h2 class="text-2xl font-bold">Agent Performance Results</h2>
+          <h2 class="text-2xl font-bold">
+            Agent Performance Results
+          </h2>
 
           <USelectMenu
             v-model="selectedAgents"
