@@ -141,9 +141,6 @@ importers:
       '@ai-sdk/mcp':
         specifier: ^1.0.20
         version: 1.0.20(zod@4.3.6)
-      '@ai-sdk/openai':
-        specifier: ^3.0.27
-        version: 3.0.27(zod@4.3.6)
       '@iconify-json/vscode-icons':
         specifier: ^1.2.41
         version: 1.2.41
@@ -242,12 +239,6 @@ packages:
 
   '@ai-sdk/mcp@1.0.20':
     resolution: {integrity: sha512-wrPYSPY2oigua7QlW6ou3ZzggV7Xpf8sJJKWGbiXSjHz9ycZaewP3lB4QnFlp7hyJFj2+9mKqxis9ibk9ODeoQ==}
-    engines: {node: '>=18'}
-    peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
-
-  '@ai-sdk/openai@3.0.27':
-    resolution: {integrity: sha512-pLMxWOypwroXiK9dxNpn60/HGhWWWDEOJ3lo9vZLoxvpJNtKnLKojwVIvlW3yEjlD7ll1+jUO2uzsABNTaP5Yg==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -9598,12 +9589,6 @@ snapshots:
       '@ai-sdk/provider': 3.0.8
       '@ai-sdk/provider-utils': 4.0.14(zod@4.3.6)
       pkce-challenge: 5.0.1
-      zod: 4.3.6
-
-  '@ai-sdk/openai@3.0.27(zod@4.3.6)':
-    dependencies:
-      '@ai-sdk/provider': 3.0.8
-      '@ai-sdk/provider-utils': 4.0.14(zod@4.3.6)
       zod: 4.3.6
 
   '@ai-sdk/provider-utils@4.0.14(zod@4.3.6)':

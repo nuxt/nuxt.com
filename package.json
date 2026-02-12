@@ -68,7 +68,6 @@
   },
   "devDependencies": {
     "@ai-sdk/mcp": "^1.0.20",
-    "@ai-sdk/openai": "^3.0.27",
     "@iconify-json/vscode-icons": "^1.2.41",
     "@nuxt/devtools": "^3.2.1",
     "@nuxt/eslint": "^1.15.1",
