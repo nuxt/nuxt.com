@@ -107,7 +107,7 @@
       "vue-demi"
     ],
     "overrides": {
-      "vite": "8.0.0-beta.2"
+      "vite": "8.0.0-beta.14"
     }
   }
 }
