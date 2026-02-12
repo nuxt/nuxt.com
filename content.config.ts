@@ -421,6 +421,15 @@ export default defineContentConfig({
           links: z.array(Link)
         }))
       })
+    }),
+    evals: defineCollection({
+      type: 'data',
+      source: 'evals.yml',
+      schema: z.object({
+        title: z.string(),
+        description: z.string(),
+        githubUrl: z.string()
+      })
     })
   }
 })
