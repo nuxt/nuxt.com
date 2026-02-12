@@ -105,9 +105,6 @@
       "@parcel/watcher",
       "puppeteer",
       "vue-demi"
-    ],
-    "overrides": {
-      "vite": "8.0.0-beta.14"
-    }
+    ]
   }
 }
