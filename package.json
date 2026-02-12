@@ -53,7 +53,7 @@
     "feed": "^5.2.0",
     "h3": "^1.15.5",
     "little-date": "^1.2.1",
-    "motion-v": "1.10.3",
+    "motion-v": "^1.10.3",
     "nuxt": "^4.3.1",
     "nuxt-auth-utils": "^0.5.28",
     "nuxt-charts": "^2.1.2",
@@ -64,7 +64,7 @@
     "sitemap": "^9.0.0",
     "std-env": "^3.10.0",
     "ufo": "^1.6.3",
-    "valibot": "1.2.0"
+    "valibot": "^1.2.0"
   },
   "devDependencies": {
     "@ai-sdk/mcp": "^1.0.20",
