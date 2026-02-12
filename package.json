@@ -70,7 +70,7 @@
     "@ai-sdk/mcp": "^1.0.19",
     "@ai-sdk/openai": "3.0.26",
     "@iconify-json/vscode-icons": "^1.2.41",
-    "@nuxt/devtools": "^3.2.0",
+    "@nuxt/devtools": "^3.2.1",
     "@nuxt/eslint": "^1.15.1",
     "@nuxt/modules": "0.6.0-7f4646",
     "@nuxt/test-utils": "^4.0.0",
@@ -94,11 +94,6 @@
     "vitest": "^4.0.15",
     "vue": "^3.5.28",
     "vue-tsc": "^3.1.8"
-  },
-  "resolutions": {
-    "chokidar": "3.6.0",
-    "nitropack": "2.13.0",
-    "unimport": "4.1.1"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
