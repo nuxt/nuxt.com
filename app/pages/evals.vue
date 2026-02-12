@@ -5,7 +5,7 @@ import { joinURL } from 'ufo'
 
 const UButton = resolveComponent('UButton')
 const UBadge = resolveComponent('UBadge')
-const UIcon = resolveComponent('UIcon')
+const UAvatar = resolveComponent('UAvatar')
 
 definePageMeta({
   heroBackground: 'opacity-70 -z-10'
@@ -119,15 +119,18 @@ const formattedDate = computed(() => {
 })
 
 // Model icon mapping
-function getModelIcon(model: string): string {
+function getModelAvatar(model: string): string | undefined {
   const lower = model.toLowerCase()
-  if (lower.includes('claude')) return 'i-simple-icons-anthropic'
-  if (lower.includes('gpt') || lower.includes('codex')) return 'i-simple-icons-openai'
-  if (lower.includes('gemini')) return 'i-simple-icons-googlegemini'
-  if (lower.includes('deepseek')) return 'i-ri-deepseek-fill'
-  if (lower.includes('devstral')) return 'i-simple-icons-mistralai'
-  if (lower.includes('minimax')) return 'i-simple-icons-minimax'
-  return 'i-lucide-sparkles'
+  if (lower.includes('claude')) return '/assets/agents/anthropic.avif'
+  if (lower.includes('gpt') || lower.includes('codex')) return '/assets/agents/openai.avif'
+  if (lower.includes('gemini')) return '/assets/agents/google.avif'
+  if (lower.includes('deepseek')) return '/assets/agents/deepseek.avif'
+  if (lower.includes('devstral')) return '/assets/agents/mistral.avif'
+  if (lower.includes('minimax')) return '/assets/agents/minimax.avif'
+  if (lower.includes('kat')) return '/assets/agents/kwaipilot.avif'
+  if (lower.includes('moonshot')) return '/assets/agents/moonshotai.avif'
+  if (lower.includes('grok')) return '/assets/agents/xai.avif'
+  return undefined
 }
 
 // Format duration from ms to seconds
@@ -173,7 +176,7 @@ const columns: TableColumn<ModelRow>[] = [
     accessorKey: 'model',
     header: 'Model',
     cell: ({ row }) => h('div', { class: 'flex items-center gap-2' }, [
-      h(UIcon, { name: getModelIcon(row.original.model), class: 'size-4 shrink-0' }),
+      h(UAvatar, { src: getModelAvatar(row.original.model), size: 'xs', loading: 'lazy', class: 'border border-default' }),
       h('span', {}, row.original.model)
     ])
   },
