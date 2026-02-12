@@ -24,7 +24,8 @@ export default defineConfig({
           environmentOptions: {
             nuxt: {
               overrides: {
-                ogImage: { enabled: false }
+                ogImage: { enabled: false },
+                experimental: { viteEnvironmentApi: false }
               }
             }
           }
