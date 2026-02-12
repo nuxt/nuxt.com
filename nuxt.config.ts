@@ -75,9 +75,6 @@ export default defineNuxtConfig({
           langs: ['js', 'jsx', 'json', 'ts', 'tsx', 'vue', 'css', 'html', 'bash', 'md', 'mdc', 'yaml', 'sql', 'diff', 'ini']
         }
       }
-    },
-    experimental: {
-      sqliteConnector: 'native'
     }
   },
   mdc: {
