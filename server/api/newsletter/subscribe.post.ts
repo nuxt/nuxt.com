@@ -27,7 +27,8 @@ export default eventHandler(async (event) => {
   }
 
   const confirmation = generateConfirmation(event, email)
-  const confirmationURL = withQuery(withTrailingSlash(getHeader(event, 'origin') || 'https://nuxt.com'), { email, confirmation })
+  const origin = import.meta.dev ? getRequestURL(event).origin : 'https://nuxt.com'
+  const confirmationURL = withQuery(withTrailingSlash(origin), { email, confirmation })
 
   const { error } = await resend.emails.send({
     from: 'Nuxt Team <team@newsletter.nuxt.com>',
