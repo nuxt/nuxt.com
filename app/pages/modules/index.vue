@@ -45,7 +45,7 @@ const breakpoints = useBreakpoints({
   sm: 640,
   md: 768,
   lg: 1024
-})
+}, { ssrWidth: 1024 })
 
 const isMobile = breakpoints.smaller('sm')
 
