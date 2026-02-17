@@ -1,5 +1,5 @@
 import { parseMarkdown } from '@nuxtjs/mdc/runtime'
-import rehypeHighlight from '@nuxtjs/mdc/runtime/highlighter/rehype-nuxt'
+import rehypeHighlight from '@nuxtjs/mdc/runtime/highlighter/rehype'
 import { createOnigurumaEngine } from 'shiki/engine/oniguruma'
 import { createJavaScriptRegexEngine } from 'shiki'
 
@@ -148,7 +148,7 @@ export function createShikiHighlighter({
     const wrapperStyle = shikiOptions?.wrapperStyle
     preEl.properties.style = wrapperStyle ? typeof wrapperStyle === 'string' ? wrapperStyle : preEl.properties.style : ''
     const styles = []
-    Object.keys(themesObject).forEach((color) => {
+    for (const color in themesObject) {
       const colorScheme = color !== 'default' ? `.${color}` : ''
       styles.push(
         wrapperStyle ? `${colorScheme} .shiki,` : '',
@@ -169,7 +169,7 @@ export function createShikiHighlighter({
         `text-decoration: var(--shiki-${color}-text-decoration);`,
         '}'
       )
-    })
+    }
     return {
       tree: codeEl.children,
       className: Array.isArray(preEl.properties.class) ? preEl.properties.class.join(' ') : preEl.properties.class,

@@ -64,16 +64,16 @@ You may instead prefer to set up your project with the Firebase CLI, which will 
 
 1. Install the latest version of the Firebase CLI.
 
-    ```bash [Terminal]
-    npm install -g firebase-tools@latest
-    ```
+```bash [Terminal]
+npm install -g firebase-tools@latest
+```
 
 2. Initialize your Firebase Project
 
-    ```bash [Terminal]
-    firebase login
-    firebase init hosting
-    ```
+```bash [Terminal]
+firebase login
+firebase init hosting
+```
 
 ::note
 When prompted, you can enter `.output/public` as the public directory. In the next step, **do not** configure your project as a single-page app.

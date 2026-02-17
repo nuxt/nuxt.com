@@ -23,10 +23,6 @@ websites:
     url: https://developer.microsoft.com/en-us/microsoft-edge
     screenshotOptions:
       cookies: ['MSCC=cid=psmupjn1uooack94vj8ishtx-c1=2-c2=2-c3=2;']
-  - name: Comet by Perplexity AI
-    url: https://comet.perplexity.ai
-    screenshotOptions:
-      delay: 8
   - name: Tiktok Ads
     url: https://tiktok.com/business/en
     screenshotOptions:
@@ -39,14 +35,20 @@ websites:
     url: https://upwork.com/
     screenshotOptions:
       cookies: ['OptanonAlertBoxClosed=2025-05-02T22:04:35.770Z;']
-  - name: BackMarket
-    url: https://www.backmarket.com/
+      delay: 0.5
+  # - name: BackMarket
+  #   url: https://www.backmarket.com/
   - name: Mc Donalds France
     url: https://www.mcdonalds.fr/
+    screenshotOptions:
+      hideElements: ['#didomi-host']
+      delay: 1
   - name: Directus
     url: https://directus.io/
   - name: n8n
     url: https://n8n.io/
+    screenshotOptions:
+      hideElements: ['#cookiescript_injected_wrapper']
   - name: Hostinger
     url: https://hostinger.com/
     screenshotOptions:
@@ -66,9 +68,10 @@ websites:
       hideElements: ['[aria-label="Cookie Consent Banner"]']
       delay: 5
   - name: Delvaux
-    url: https://eu.delvaux.com
+    url: https://eu.delvaux.com/
     screenshotOptions:
       hideElements: ['#privacy-overlay', '#tc-privacy-wrapper']
+      delay: 5
   - name: Immersive Garden
     url: https://immersive-g.com/
     screenshotOptions:
@@ -80,7 +83,7 @@ websites:
     screenshotOptions:
       hideElements: ['#didomi-host']
   - name: Le Collectionist
-    url: https://www.lecollectionist.com
+    url: https://www.lecollectionist.com/
   - name: Buy Me a Coffee
     url: https://buymeacoffee.com/
   - name: Croix Rouge
@@ -98,16 +101,16 @@ websites:
       hideElements: ['#cookie-information-template-wrapper', '#declineButton', '.coi-banner__accept']
       delay: 5
   - name: Explore France
-    url: https://www.france.fr
+    url: https://www.france.fr/
   - name: CleanShot X
     url: https://cleanshot.com/
   - name: 12GO
-    url: https://12go.com
+    url: https://12go.com/
     screenshotOptions:
       hideElements: ['#CybotCookiebotDialog']
       delay: 5
   - name: Paul Smith
-    url: https://www.paulsmith.com
+    url: https://www.paulsmith.com/fr
     screenshotOptions:
       hideElements: ['#teleports', '#cookiescript_injected_wrapper']
       delay: 5
@@ -125,15 +128,21 @@ websites:
     screenshotOptions:
       cookies: ['OptanonAlertBoxClosed=2025-05-02T22:04:35.770Z']
   - name: Vans
-    url: https://www.vans.com
+    url: https://www.vans.com/
     delay: 5
     screenshotOptions:
       cookies: ['OptanonAlertBoxClosed=2025-05-02T22:04:35.770Z']
+  - name: The North Face
+    url: https://www.thenorthface.com/
+    screenshotOptions:
+      cookies: ['OptanonAlertBoxClosed=2025-05-02T22:04:35.770Z']
+      hideElements: ['#onetrust-consent-sdk']
   - name: Timberland
-    url: https://www.timberland.com
-    delay: 5
+    url: https://www.timberland.com/
     screenshotOptions:
+      delay: 5
       cookies: ['OptanonAlertBoxClosed=2025-05-02T22:04:35.770Z']
+      hideElements: ['#onetrust-consent-sdk', '[data-test-id="cms-pop-up-609298"]']
   - name: On Running
     url: https://www.on.com/
     delay: 5
@@ -143,3 +152,12 @@ websites:
     url: https://www.promod.com/en/
     screenshotOptions:
       cookies: ['TC_PRIVACY=0%23006%7C3%7C485%231%2C2%2C3%234%231760984617135%2C1760984617135%2C1794680617135%23']
+  - name: Departamento
+    url: https://www.dpto.la/
+  - name: Hai
+    url: https://www.homeofhai.com/
+    delay: 5
+  - name: Shaina Mote
+    url: https://www.shainamote.com/
+    screenshotOptions:
+      hideElements: ['.cookie-policy', '.announcement-bar']

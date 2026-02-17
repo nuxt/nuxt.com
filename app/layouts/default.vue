@@ -18,19 +18,19 @@ onMounted(() => {
 <template>
   <div :class="[(route.path.startsWith('/docs/') || route.path.startsWith('/deploy')) && 'root']">
     <!-- <UBanner
-      id="nuxt-certification-autumn-2025"
-      title="Get 50% OFF on all Official Nuxt Senior Certifications"
+      id="mn-nuxt-b"
+      title="Black Friday: Get 40% OFF the complete Mastering Nuxt course"
       icon="i-lucide-ticket-percent"
-      to="https://certificates.dev/nuxt?certification=senior&friend=NUXT"
+      to="https://masteringnuxt.com/?utm_source=nuxt.com&utm_medium=banner&utm_campaign=nuxt.com"
       target="_blank"
       close
       :actions="[
         {
-          label: 'Get certified',
+          label: 'Claim offer',
           color: 'neutral',
           variant: 'outline',
           trailingIcon: 'i-lucide-arrow-right',
-          to: 'https://certificates.dev/nuxt?certification=senior&friend=NUXT'
+          to: 'https://masteringnuxt.com/?utm_source=nuxt.com&utm_medium=banner&utm_campaign=nuxt.com'
         }
       ]"
     /> -->

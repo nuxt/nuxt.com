@@ -11,6 +11,7 @@ const {
 }>()
 
 const toast = useToast()
+const { track } = useAnalytics()
 
 const loading = ref(false)
 
@@ -27,17 +28,18 @@ const state = reactive({
 async function onSubmit(event: FormSubmitEvent<Schema>) {
   loading.value = true
 
-  await $fetch('https://api.nuxt.com/newsletter/subscribe', {
+  await $fetch('/api/newsletter/subscribe', {
     method: 'POST',
     body: {
       email: event.data.email
     }
   }).then(() => {
+    track('Newsletter Subscription', { success: true })
     toast.add({ title: 'Subscription pending', description: 'Please check your emails to confirm your subscription.', color: 'success' })
     state.email = ''
   }).catch((err) => {
-    const error = JSON.parse(err.data?.message)
-    const description = error[0].message || 'Something went wrong. Please try again later.'
+    track('Newsletter Subscription', { success: false })
+    const description = err.data?.message || 'Something went wrong. Please try again later.'
     toast.add({ title: 'Subscription failed', description, color: 'error' })
   })
   loading.value = false

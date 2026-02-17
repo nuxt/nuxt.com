@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Module } from '~/types'
+import type { Module } from '#shared/types'
 
 const emit = defineEmits<{
   add: [module: Module]
@@ -15,6 +15,7 @@ const { module, showBadge = true, isAdded, showAddButton = true } = defineProps<
 
 const { copy } = useClipboard()
 const { selectedSort } = useModules()
+const { track } = useAnalytics()
 const date = computed(() => {
   if (selectedSort.value.key === 'publishedAt') {
     return useTimeAgo(module.stats.publishedAt)
@@ -24,11 +25,14 @@ const date = computed(() => {
 })
 
 function copyInstallCommand(moduleName: string) {
+  track('Module Install Command Copied', { module: moduleName })
   const command = `npx nuxt@latest module add ${moduleName}`
   copy(command, { title: 'Command copied to clipboard:', description: command })
 }
 
 function toggleModule(module: Module) {
+  const action = isAdded ? 'remove' : 'add'
+  track('Module Toggled', { module: module.name, action })
   if (isAdded) {
     emit('remove', module)
   } else {

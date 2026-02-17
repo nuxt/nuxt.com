@@ -1,10 +1,16 @@
 <script lang="ts" setup>
 import type { TemplatesCollectionItem } from '@nuxt/content'
 
-defineProps<{
+const props = defineProps<{
   template: TemplatesCollectionItem
   index: number
 }>()
+
+const { track } = useAnalytics()
+
+function trackTemplateAction(action: 'Demo' | 'GitHub' | 'Purchase') {
+  track('Template Action', { template: props.template.name, action })
+}
 </script>
 
 <template>
@@ -22,21 +28,12 @@ defineProps<{
   >
     <template #header>
       <NuxtImg
-        :src="`/assets/templates/${template.slug}.png`"
-        class="object-cover object-top size-full xl:hidden"
+        :src="`/assets/templates/${template.slug}.webp`"
+        class="object-cover object-top size-full"
         :alt="template.name"
-        width="600"
-        height="338"
-        format="webp"
-        :modifiers="{ position: 'top' }"
-        :loading="index > 3 ? 'lazy' : undefined"
-      />
-      <NuxtImg
-        :src="`/assets/templates/${template.slug}.png`"
-        class="object-cover object-top size-full hidden xl:block"
-        :alt="template.name"
-        width="320"
-        height="180"
+        width="640"
+        height="360"
+        sizes="674px sm:524px lg:426px xl:600px"
         format="webp"
         :modifiers="{ position: 'top' }"
         :loading="index > 3 ? 'lazy' : undefined"
@@ -78,6 +75,7 @@ defineProps<{
           color="neutral"
           variant="subtle"
           class="w-1/2 justify-center"
+          @click="trackTemplateAction('Demo')"
         />
         <UButton
           v-if="template.repo"
@@ -89,6 +87,7 @@ defineProps<{
           color="neutral"
           variant="subtle"
           class="w-1/2 justify-center"
+          @click="trackTemplateAction('GitHub')"
         />
         <UButton
           v-else-if="template.purchase"
@@ -100,6 +99,7 @@ defineProps<{
           icon="i-lucide-credit-card"
           size="sm"
           class="w-1/2 justify-center"
+          @click="trackTemplateAction('Purchase')"
         />
       </UFieldGroup>
     </template>

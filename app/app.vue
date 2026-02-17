@@ -4,31 +4,19 @@ const { version } = useDocsVersion()
 const { searchGroups, searchLinks, searchTerm } = useNavigation()
 const { fetchList: fetchModules } = useModules()
 const { fetchList: fetchHosting } = useHostingProviders()
+const { track } = useAnalytics()
 
 const color = computed(() => colorMode.value === 'dark' ? '#020420' : 'white')
 
+watch(() => colorMode.preference, (newMode, oldMode) => {
+  if (oldMode && newMode !== oldMode) {
+    track('Color Mode Changed', { mode: newMode })
+  }
+})
+
 const [{ data: navigation }, { data: files }] = await Promise.all([
-  useAsyncData('navigation', () => {
-    return Promise.all([
-      queryCollectionNavigation('docsv3', ['titleTemplate']).then(data => data[0]?.children),
-      queryCollectionNavigation('docsv4', ['titleTemplate']).then(data => data[0]?.children),
-      queryCollectionNavigation('blog')
-    ])
-  }, {
-    transform: data => data.flat(),
-    watch: [version]
-  }),
-  useLazyAsyncData('search', () => {
-    return Promise.all([
-      queryCollectionSearchSections('docsv3', { ignoredTags: ['style'] }),
-      queryCollectionSearchSections('docsv4', { ignoredTags: ['style'] }),
-      queryCollectionSearchSections('blog')
-    ])
-  }, {
-    server: false,
-    transform: data => data.flat(),
-    watch: [version]
-  })
+  useFetch('/api/navigation.json'),
+  useFetch('/api/search.json', { server: false })
 ])
 
 onNuxtReady(() => {

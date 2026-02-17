@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { kebabCase } from 'scule'
+import { joinURL } from 'ufo'
 import type { ContentNavigationItem } from '@nuxt/content'
 import { findPageBreadcrumb } from '@nuxt/content/utils'
 import { mapContentNavigation } from '@nuxt/ui/utils/content'
@@ -17,7 +18,7 @@ const route = useRoute()
 const nuxtApp = useNuxtApp()
 const { version } = useDocsVersion()
 const { headerLinks } = useHeaderLinks()
-
+const site = useSiteConfig()
 const path = computed(() => route.path.replace(/\/$/, ''))
 
 const ignoredPaths = ['.nuxt', '.output', '.env', 'node_modules']
@@ -28,6 +29,7 @@ const navClass = (item: ContentNavigationItem) => {
   return ''
 }
 
+// Get the aside navigation
 const asideNavigation = computed(() => {
   const path = [version.value.path, route.params.slug?.[version.value.path.split('/').length - 2]].filter(Boolean).join('/')
 
@@ -125,6 +127,18 @@ const titleTemplate = computed(() => `${findTitleTemplate(page, navigation)} ${v
 useSeoMeta({
   titleTemplate,
   title
+})
+
+// Pre-render the markdown path + add it to alternate links
+prerenderRoutes([joinURL('/raw', `${path.value}.md`)])
+useHead({
+  link: [
+    {
+      rel: 'alternate',
+      href: joinURL(site.url, 'raw', `${path.value}.md`),
+      type: 'text/markdown'
+    }
+  ]
 })
 
 if (import.meta.server) {

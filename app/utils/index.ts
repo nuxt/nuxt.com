@@ -1,6 +1,9 @@
 import { splitByCase, upperFirst } from 'scule'
 
-export const { format: formatNumber } = Intl.NumberFormat('en-GB', { notation: 'compact', maximumFractionDigits: 1 })
+const _numberFormatter = Intl.NumberFormat('en-GB', { notation: 'compact', maximumFractionDigits: 1 })
+
+// Normalize k/m/b to K/M/B to fix hydration mismatch between Node.js and browser ICU data
+export const formatNumber = (value: number) => _numberFormatter.format(value).replace(/([kmb])$/i, match => match.toUpperCase())
 
 // Case-insensitive RegExp, escaping special characters
 // https://stackoverflow.com/a/38151393/3926832
@@ -35,7 +38,7 @@ export const toRelativeDate = (date: string | number | Date) => {
   }
 }
 
-export const slugify = (str: string) => str.toLowerCase().replace(/[^a-z0-9 -]/g, ' ').replace(/[\s-]+/g, '-')
+export const slugify = (str: string) => str.toLowerCase().replace(/[^a-z0-9 -]/g, ' ').trim().replace(/[\s-]+/g, '-')
 
 export const random = (arr: Array<any>) => {
   return arr[Math.floor(Math.random() * arr.length)]

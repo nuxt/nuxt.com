@@ -1,19 +1,3 @@
-export interface Stats {
-  id: number
-  name: string
-  repo: string
-  description: string
-  createdAt: string
-  updatedAt: string
-  pushedAt: string
-  stars: number
-  watchers: number
-  forks: number
-  defaultBranch: string
-  version: string
-  monthlyDownloads: number
-}
+import type { Stats } from '#shared/types'
 
-export const useStats = () => {
-  return useState<Stats | null>('stats', () => null)
-}
+export const useStats = () => useState<Stats | null>('stats', () => null)

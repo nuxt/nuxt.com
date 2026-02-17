@@ -1,10 +1,13 @@
 <a href="https://nuxt.com"><img width="1200" alt="Nuxt Website" src="./public/website.jpg"></a>
 
+[![Install in Cursor](https://nuxt.com/mcp/badge.svg)](https://nuxt.com/mcp/deeplink)
+[![Install in VSCode](https://nuxt.com/mcp/badge.svg?ide=vscode)](https://nuxt.com/mcp/deeplink?ide=vscode)
+
 # nuxt.com
 
 Welcome to the Nuxt website repository available on [nuxt.com](https://nuxt.com).
 
-[![Nuxt UI Pro](https://img.shields.io/badge/Made%20with-Nuxt%20UI%20Pro-00DC82?logo=nuxt.js&labelColor=020420)](https://ui.nuxt.com/pro)
+[![Nuxt UI](https://img.shields.io/badge/Made%20with-Nuxt%20UI-00DC82?logo=nuxt.js&labelColor=020420)](https://ui.nuxt.com)
 
 ## Setup
 
@@ -43,6 +46,12 @@ Start the development server:
 pnpm dev
 ```
 
+To start the development server with all fetches to the Nuxt ecosystem (modules, APIs, etc.):
+
+```bash
+pnpm dev:full
+```
+
 ### Add a Nuxt Template
 
 To list a Nuxt template, add a file in the [./content/templates](./content/templates) directory.
@@ -55,15 +64,39 @@ To regenerate the image, delete the generated one in `public/assets/templates`.
 
 ## Production
 
-In order to build the application for production, you need to have a [Nuxt UI Pro](https://ui.nuxt.com/pro) license and set the `NUXT_UI_PRO_LICENSE` variable in the `.env` file.
-
-Note that this is not required to run in development and contribute to the Nuxt website or documentation.
-
 Build the application for production:
 
 ```bash
 pnpm generate
 ```
+
+### Running Evals for the MCP Server
+
+To run the evals for the MCP server, follow these steps:
+
+1. **Ensure your development server is running**  
+   Start the local Nuxt development server:
+   ```bash
+   pnpm dev
+   ```
+
+2. **Create an AI Gateway API key**  
+   Go to https://vercel.com/ai-gateway and create an API key.
+   Add the following variable to your `.env` file (replace `sk-...` with your actual key):
+   ```
+   AI_GATEWAY_API_KEY=<you-api-key>
+   ```
+
+3. **Run the evals**  
+   You can execute the evals from the command line:
+   ```bash
+   pnpm eval
+   ```
+
+   Or launch the interactive UI to run them via a web interface:
+   ```bash
+   pnpm eval:ui
+   ```
 
 ## License
 

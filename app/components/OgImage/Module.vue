@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { Module } from '~/types'
+import type { Module } from '#shared/types'
 
 function moduleImage(icon: string = '') {
   if (!icon) return

@@ -2,4 +2,6 @@ name: 'Nuxt 3 Crash Course 2025'
 slug: 'nuxt-3-crash-course-2025'
 description: 'How to get up and going with Nuxt - layouts, pages, data fetching, api routes and more'
 url: 'https://www.youtube.com/watch?v=RhZZ0whiuT8'
-screenshotUrl: 'https://www.youtube-nocookie.com/embed/RhZZ0whiuT8'
+screenshotOptions:
+  delay: 1
+  removeElements: ['tp-yt-iron-overlay-backdrop', 'tp-yt-paper-dialog']

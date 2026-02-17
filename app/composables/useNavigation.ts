@@ -96,11 +96,6 @@ function _useHeaderLinks() {
       to: '/enterprise',
       search: false,
       children: [{
-        label: 'Support',
-        to: '/enterprise/support',
-        description: 'Professional support by Nuxt experts.',
-        icon: 'i-lucide-life-buoy'
-      }, {
         label: 'Agencies',
         to: '/enterprise/agencies',
         description: 'Agencies specialized in Nuxt development.',
@@ -151,9 +146,6 @@ const footerLinks = [{
 }, {
   label: 'Enterprise',
   children: [{
-    label: 'Support',
-    to: '/enterprise/support'
-  }, {
     label: 'Agencies',
     to: '/enterprise/agencies'
   }, {
@@ -167,6 +159,7 @@ export const useFooterLinks = () => ({ footerLinks })
 const _useNavigation = () => {
   const nuxtApp = useNuxtApp()
   const searchTerm = ref<string>('')
+  const { track } = useAnalytics()
 
   const { headerLinks } = useHeaderLinks()
   const { footerLinks } = useFooterLinks()
@@ -177,7 +170,10 @@ const _useNavigation = () => {
     label: 'Ask AI',
     icon: 'i-lucide-wand',
     to: 'javascript:void(0);',
-    onSelect: () => nuxtApp.$kapa?.openModal()
+    onSelect: () => {
+      track('Ask AI Opened', { source: 'search-links' })
+      nuxtApp.$kapa?.openModal()
+    }
   }, ...headerLinks.value.map((link) => {
     // Remove `/docs` and `/enterprise` links from command palette
     if (link.search === false) {
@@ -200,6 +196,11 @@ const _useNavigation = () => {
     label: 'Newsletter',
     icon: 'i-lucide-mail',
     to: '/newsletter'
+  }, {
+    label: 'Source Code',
+    icon: 'i-lucide-code',
+    to: 'https://github.com/nuxt/nuxt.com',
+    target: '_blank'
   }])
 
   const modulesItems = computed(() => modules.value.map(module => ({
@@ -250,6 +251,7 @@ const _useNavigation = () => {
       icon: 'i-lucide-wand',
       to: 'javascript:void(0);',
       onSelect() {
+        track('Ask AI Opened', { source: 'search-palette', query: searchTerm.value })
         nuxtApp.$kapa?.openModal(searchTerm.value)
       }
     }]
@@ -262,6 +264,12 @@ const _useNavigation = () => {
     label: 'Hosting',
     items: hostingItems.value
   }])
+
+  watchDebounced(searchTerm, (term) => {
+    if (term) {
+      track('Search Performed', { term })
+    }
+  }, { debounce: 500 })
 
   return {
     searchTerm,
