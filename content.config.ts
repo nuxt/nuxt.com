@@ -428,7 +428,7 @@ export default defineContentConfig({
       schema: z.object({
         title: z.string(),
         description: z.string(),
-        githubUrl: z.string()
+        githubUrl: z.string().url()
       })
     })
   }

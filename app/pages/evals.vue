@@ -91,7 +91,7 @@ const allResults = computed<ModelRow[]>(() => {
       model: modelName,
       agent: agentMap.value[modelName] || 'Unknown',
       totalEvals: evals.length,
-      successRate: Math.round((successes / evals.length) * 100),
+      successRate: evals.length ? Math.round((successes / evals.length) * 100) : 0,
       evals
     })
   }
@@ -118,19 +118,23 @@ const formattedDate = computed(() => {
   return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
 })
 
-// Model icon mapping
+// Model avatar mapping
+const modelAvatarMap: Record<string, string> = {
+  claude: '/assets/agents/anthropic.avif',
+  gpt: '/assets/agents/openai.avif',
+  codex: '/assets/agents/openai.avif',
+  gemini: '/assets/agents/google.avif',
+  deepseek: '/assets/agents/deepseek.avif',
+  devstral: '/assets/agents/mistral.avif',
+  minimax: '/assets/agents/minimax.avif',
+  kat: '/assets/agents/kwaipilot.avif',
+  moonshot: '/assets/agents/moonshotai.avif',
+  grok: '/assets/agents/xai.avif'
+}
+
 function getModelAvatar(model: string): string | undefined {
   const lower = model.toLowerCase()
-  if (lower.includes('claude')) return '/assets/agents/anthropic.avif'
-  if (lower.includes('gpt') || lower.includes('codex')) return '/assets/agents/openai.avif'
-  if (lower.includes('gemini')) return '/assets/agents/google.avif'
-  if (lower.includes('deepseek')) return '/assets/agents/deepseek.avif'
-  if (lower.includes('devstral')) return '/assets/agents/mistral.avif'
-  if (lower.includes('minimax')) return '/assets/agents/minimax.avif'
-  if (lower.includes('kat')) return '/assets/agents/kwaipilot.avif'
-  if (lower.includes('moonshot')) return '/assets/agents/moonshotai.avif'
-  if (lower.includes('grok')) return '/assets/agents/xai.avif'
-  return undefined
+  return Object.entries(modelAvatarMap).find(([key]) => lower.includes(key))?.[1]
 }
 
 // Format duration from ms to seconds

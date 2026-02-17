@@ -135,10 +135,10 @@ const footerLinks = [{
   label: 'Explore',
   children: [{
     label: 'Templates',
-    to: 'https://nuxt.com/templates'
+    to: '/templates'
   }, {
     label: 'Showcase',
-    to: 'https://nuxt.com/showcase'
+    to: '/showcase'
   }, {
     label: 'AI Evals',
     to: '/evals'
