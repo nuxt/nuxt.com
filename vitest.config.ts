@@ -20,11 +20,12 @@ export default defineConfig({
           name: 'nuxt',
           environment: 'nuxt',
           include: ['test/nuxt/**.spec.ts'],
-          setupFiles: ['../test/nuxt/setup.ts'],
+          setupFiles: ['./test/nuxt/setup.ts'],
           environmentOptions: {
             nuxt: {
               overrides: {
-                ogImage: { enabled: false }
+                ogImage: { enabled: false },
+                experimental: { viteEnvironmentApi: false }
               }
             }
           }

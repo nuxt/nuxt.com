@@ -18,7 +18,7 @@ export default cachedEventHandler(async (event) => {
     }
   }
 
-  return members.sort((a, b) => (b.score || 0) - (a.score || 0))
+  return members.sort((a: { score?: number }, b: { score?: number }) => (b.score || 0) - (a.score || 0))
 }, {
   name: 'teams',
   shouldBypassCache: () => !!import.meta.dev,
