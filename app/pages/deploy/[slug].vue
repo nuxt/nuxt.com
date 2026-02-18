@@ -82,7 +82,7 @@ links.push({
               label: provider.title,
               to: provider.path,
               badge: provider.sponsor ? 'Sponsor' : undefined
-            })).sort((a, b) => a.label.localeCompare(b.label))"
+            })).sort((a, b) => a.label.localeCompare(b.label, 'en'))"
           />
         </UPageAside>
       </template>
