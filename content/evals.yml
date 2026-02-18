@@ -1,0 +1,3 @@
+title: AI Agent Evaluations
+description: "Performance results of AI coding agents on Nuxt code generation tasks, measuring success rate and execution time."
+githubUrl: "https://github.com/vercel/nuxt-evals"
