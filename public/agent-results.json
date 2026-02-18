@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "exportedAt": "2026-02-12T21:12:05.353Z",
+    "exportedAt": "2026-02-18T11:38:09.448Z",
     "experiments": [
       {
         "name": "claude-opus-4.6",
@@ -35,7 +35,7 @@
       {
         "name": "gpt-5.3-codex-xhigh",
         "timestamp": "2026-02-12T21:00:19.312Z",
-        "modelName": "GPT-5.3 Codex (xhigh)",
+        "modelName": "GPT 5.3 Codex (xhigh)",
         "agentHarness": "Codex"
       },
       {
@@ -53,7 +53,7 @@
     ]
   },
   "results": {
-    "Claude Opus 4.6": [
+    "claude-opus-4.6": [
       {
         "evalPath": "nuxt-000-server-api-route",
         "result": {
@@ -280,7 +280,7 @@
         }
       }
     ],
-    "Claude Sonnet 4.5": [
+    "claude-sonnet-4.5": [
       {
         "evalPath": "nuxt-000-server-api-route",
         "result": {
@@ -507,7 +507,7 @@
         }
       }
     ],
-    "DeepSeek V3.2": [
+    "deepseek-v3.2": [
       {
         "evalPath": "nuxt-000-server-api-route",
         "result": {
@@ -734,7 +734,7 @@
         }
       }
     ],
-    "Devstral 2": [
+    "devstral-2": [
       {
         "evalPath": "nuxt-000-server-api-route",
         "result": {
@@ -961,7 +961,7 @@
         }
       }
     ],
-    "Gemini 3 Pro Preview": [
+    "gemini-3-pro-preview": [
       {
         "evalPath": "nuxt-000-server-api-route",
         "result": {
@@ -1188,7 +1188,7 @@
         }
       }
     ],
-    "GPT-5.3 Codex (xhigh)": [
+    "gpt-5.3-codex-xhigh": [
       {
         "evalPath": "nuxt-000-server-api-route",
         "result": {
@@ -1415,7 +1415,7 @@
         }
       }
     ],
-    "Kat Coder Pro V1": [
+    "kat-coder-pro-v1": [
       {
         "evalPath": "nuxt-000-server-api-route",
         "result": {
@@ -1642,7 +1642,7 @@
         }
       }
     ],
-    "Minimax M2.1": [
+    "minimax-m2.1": [
       {
         "evalPath": "nuxt-000-server-api-route",
         "result": {

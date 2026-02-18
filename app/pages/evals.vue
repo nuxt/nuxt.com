@@ -71,12 +71,12 @@ useSeoMeta({
 })
 defineOgImageComponent('Docs', { title, description })
 
-// Build agent map from experiments
-const agentMap = computed(() => {
-  const map: Record<string, string> = {}
+// Build experiment map by name
+const experimentMap = computed(() => {
+  const map: Record<string, Experiment> = {}
   if (!rawData.value?.metadata?.experiments) return map
   for (const exp of rawData.value.metadata.experiments) {
-    map[exp.modelName] = exp.agentHarness
+    map[exp.name] = exp
   }
   return map
 })
@@ -85,11 +85,12 @@ const agentMap = computed(() => {
 const allResults = computed<ModelRow[]>(() => {
   if (!rawData.value?.results) return []
   const rows: ModelRow[] = []
-  for (const [modelName, evals] of Object.entries(rawData.value.results)) {
+  for (const [experimentName, evals] of Object.entries(rawData.value.results)) {
+    const experiment = experimentMap.value[experimentName]
     const successes = evals.filter(e => e.result.success).length
     rows.push({
-      model: modelName,
-      agent: agentMap.value[modelName] || 'Unknown',
+      model: experiment?.modelName || experimentName,
+      agent: experiment?.agentHarness || 'Unknown',
       totalEvals: evals.length,
       successRate: evals.length ? Math.round((successes / evals.length) * 100) : 0,
       evals
