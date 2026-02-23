@@ -119,23 +119,20 @@ const formattedDate = computed(() => {
   return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
 })
 
-// Model avatar mapping
-const modelAvatarMap: Record<string, string> = {
-  claude: '/assets/agents/anthropic.avif',
-  gpt: '/assets/agents/openai.avif',
-  codex: '/assets/agents/openai.avif',
-  gemini: '/assets/agents/google.avif',
-  deepseek: '/assets/agents/deepseek.avif',
-  devstral: '/assets/agents/mistral.avif',
-  minimax: '/assets/agents/minimax.avif',
-  kat: '/assets/agents/kwaipilot.avif',
-  moonshot: '/assets/agents/moonshotai.avif',
-  grok: '/assets/agents/xai.avif'
+// Model icon mapping (matched by lowercase prefix of model name)
+const modelIconMap: Record<string, string> = {
+  claude: 'i-simple-icons-anthropic',
+  gpt: 'i-simple-icons-openai',
+  cursor: 'i-simple-icons-cursor',
+  gemini: 'i-simple-icons-googlegemini'
 }
 
-function getModelAvatar(model: string): string | undefined {
+function getModelIcon(model: string): string {
   const lower = model.toLowerCase()
-  return Object.entries(modelAvatarMap).find(([key]) => lower.includes(key))?.[1]
+  for (const [key, icon] of Object.entries(modelIconMap)) {
+    if (lower.startsWith(key)) return icon
+  }
+  return 'i-lucide-box'
 }
 
 // Format duration from ms to seconds
@@ -182,7 +179,7 @@ const columns: TableColumn<ModelRow>[] = [
     accessorKey: 'model',
     header: 'Model',
     cell: ({ row }) => h('div', { class: 'flex items-center gap-2' }, [
-      h(UAvatar, { src: getModelAvatar(row.original.model), size: 'xs', loading: 'lazy', class: 'border border-default' }),
+      h(UAvatar, { icon: getModelIcon(row.original.model), size: 'xs', class: 'ring ring-default' }),
       h('span', {}, row.original.model)
     ])
   },
