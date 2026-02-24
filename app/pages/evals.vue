@@ -179,7 +179,7 @@ const columns: TableColumn<ModelRow>[] = [
     accessorKey: 'model',
     header: 'Model',
     cell: ({ row }) => h('div', { class: 'flex items-center gap-2' }, [
-      h(UAvatar, { icon: getModelIcon(row.original.model), size: 'xs', class: 'ring ring-default' }),
+      h(UAvatar, { icon: getModelIcon(row.original.model), size: 'sm', class: 'ring ring-default ring-inset' }),
       h('span', {}, row.original.model)
     ])
   },
@@ -296,7 +296,7 @@ const evalColumns: TableColumn<EvalResultItem>[] = [
           :columns="columns"
           :ui="{
             thead: '[&>tr]:bg-elevated/50 border-b border-default',
-            tr: 'py-2.5 peer peer-data-[expanded=true]:[&>td]:p-4! group',
+            tr: 'py-2.5 peer peer-data-[expanded=true]:[&>td]:p-4! group transition-colors',
             td: 'py-2.5'
           }"
           class="flex-1 border border-default rounded-lg"
