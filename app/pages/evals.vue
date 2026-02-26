@@ -29,14 +29,6 @@ interface Experiment {
   agentHarness: string
 }
 
-interface AgentResultsData {
-  metadata: {
-    exportedAt: string
-    experiments: Experiment[]
-  }
-  results: Record<string, EvalResultItem[]>
-}
-
 interface ModelRow {
   model: string
   agent: string
