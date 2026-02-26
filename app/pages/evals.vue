@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { h, resolveComponent } from 'vue'
 import type { TableColumn, TableRow } from '@nuxt/ui'
-import { joinURL } from 'ufo'
+import rawData from '~~/public/agent-results.json'
 
 const UButton = resolveComponent('UButton')
 const UBadge = resolveComponent('UBadge')
@@ -45,18 +45,9 @@ interface ModelRow {
   evals: EvalResultItem[]
 }
 
-const { url } = useSiteConfig()
-
-const [{ data: page }, { data: rawData }] = await Promise.all([
-  useAsyncData('evals', () => queryCollection('evals').first()),
-  useAsyncData('agent-results', () => $fetch<AgentResultsData>(joinURL(url, '/agent-results.json')))
-])
-
+const { data: page } = await useAsyncData('evals', () => queryCollection('evals').first())
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
-}
-if (!rawData.value) {
-  throw createError({ statusCode: 404, statusMessage: 'Data not found', fatal: true })
 }
 
 const title = page.value.title
@@ -74,8 +65,8 @@ defineOgImageComponent('Docs', { title, description })
 // Build experiment map by name
 const experimentMap = computed(() => {
   const map: Record<string, Experiment> = {}
-  if (!rawData.value?.metadata?.experiments) return map
-  for (const exp of rawData.value.metadata.experiments) {
+  if (!rawData?.metadata?.experiments) return map
+  for (const exp of rawData.metadata.experiments) {
     map[exp.name] = exp
   }
   return map
@@ -83,9 +74,9 @@ const experimentMap = computed(() => {
 
 // Process results into table rows
 const allResults = computed<ModelRow[]>(() => {
-  if (!rawData.value?.results) return []
+  if (!rawData?.results) return []
   const rows: ModelRow[] = []
-  for (const [experimentName, evals] of Object.entries(rawData.value.results)) {
+  for (const [experimentName, evals] of Object.entries(rawData.results)) {
     const experiment = experimentMap.value[experimentName]
     const successes = evals.filter(e => e.result.success).length
     rows.push({
@@ -114,8 +105,8 @@ const filteredResults = computed(() => {
 
 // Format exported date
 const formattedDate = computed(() => {
-  if (!rawData.value?.metadata?.exportedAt) return ''
-  const date = new Date(rawData.value.metadata.exportedAt)
+  if (!rawData?.metadata?.exportedAt) return ''
+  const date = new Date(rawData.metadata.exportedAt)
   return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
 })
 
@@ -218,7 +209,7 @@ const evalColumns: TableColumn<EvalResultItem>[] = [
   },
   {
     id: 'score',
-    header: 'Score',
+    header: 'Result',
     meta: {
       class: {
         th: 'text-center',
