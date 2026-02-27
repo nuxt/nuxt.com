@@ -246,13 +246,14 @@ export const fetchGithubSponsors = async (event: H3Event): Promise<Sponsor[]> =>
     }
 
     const sponsors = (_sponsors?.nodes.map(({ sponsorEntity, tier }) => {
+      const amount = Number(tier?.monthlyPriceInDollars) || 0
       const sponsor: Sponsor = {
         sponsorId: sponsorEntity.login,
         sponsorName: sponsorEntity.name,
         sponsorLogo: sponsorEntity.avatarUrl,
         sponsorUrl: toURL(sponsorEntity.websiteUrl) || `https://github.com/${sponsorEntity.login}`,
-        monthlyPriceInDollars: Number(tier.monthlyPriceInDollars),
-        tier: getTierByAmount(Number(tier.monthlyPriceInDollars))
+        monthlyPriceInDollars: amount,
+        tier: getTierByAmount(amount)
       }
 
       // Hack for nickolasmartin
