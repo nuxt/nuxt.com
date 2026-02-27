@@ -126,7 +126,11 @@ export async function fetchBulkModuleHealth(_event: H3Event, modules: BaseModule
       for (const m of chunk) {
         query.append('package', m.npm)
       }
-      const data = await $fetch<NuxtCareModuleSlim[]>(`https://nuxt.care/api/v1/modules?${query.toString()}`)
+      const data = await $fetch<NuxtCareModuleSlim[]>(`https://nuxt.care/api/v1/modules?${query.toString()}`, {
+        timeout: 10_000,
+        retry: 2,
+        retryDelay: 1000
+      })
       for (const item of data) {
         const module = npmToModule.get(item.npm)
         if (!module) continue
