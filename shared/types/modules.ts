@@ -56,8 +56,15 @@ export interface ModuleStats {
   createdAt: number
 }
 
+export interface ModuleHealth {
+  score: number
+  color: string
+  status: string
+}
+
 export interface Module extends BaseModule {
   stats?: ModuleStats
+  health?: ModuleHealth | null
   contributors?: ModuleContributor[]
   maintainers?: ModuleMaintainer[]
   readme?: MDCParserResult

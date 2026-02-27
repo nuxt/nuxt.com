@@ -112,7 +112,7 @@ defineOgImageComponent('Module', {
             :icon="moduleIcon(module.category)"
             :alt="module.name"
             size="xl"
-            class="-m-[4px] rounded-none bg-transparent"
+            class="-m-1 rounded-none bg-transparent"
           />
 
           <div>
@@ -150,6 +150,25 @@ defineOgImageComponent('Module', {
             <span class="text-sm font-medium">v{{ module.stats.version }}</span>
           </NuxtLink>
         </UTooltip>
+
+        <template v-if="module.health">
+          <span class="hidden lg:block text-muted">&bull;</span>
+
+          <UTooltip :text="`nuxt.care Score: ${module.health.score}/100`">
+            <NuxtLink
+              class="flex items-center gap-1.5 hover:opacity-80 transition-opacity"
+              :to="`https://nuxt.care/?search=npm:${module.npm}`"
+              target="_blank"
+            >
+              <span
+                class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium capitalize"
+                :style="{ backgroundColor: module.health.color, color: module.health.status === 'degraded' ? '#451a03' : '#fff' }"
+              >
+                {{ module.health.status }}
+              </span>
+            </NuxtLink>
+          </UTooltip>
+        </template>
 
         <div class="mx-3 h-6 border-l border-gray-200 dark:border-gray-800 w-px hidden lg:block" />
 

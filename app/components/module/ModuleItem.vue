@@ -153,6 +153,20 @@ const items = computed(() => [
                 <span class="text-sm font-medium whitespace-normal">{{ formatNumber(module.stats.stars || 0) }}</span>
               </NuxtLink>
             </UTooltip>
+            <UTooltip v-if="module.health" :text="`nuxt.care Score: ${module.health.score}/100`">
+              <NuxtLink
+                class="flex items-center gap-1.5 hover:opacity-80 transition-opacity"
+                :to="`https://nuxt.care/?search=npm:${module.npm}`"
+                target="_blank"
+              >
+                <span
+                  class="inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-xs font-medium capitalize"
+                  :style="{ backgroundColor: module.health.color, color: module.health.status === 'degraded' ? '#451a03' : '#fff' }"
+                >
+                  {{ module.health.status }}
+                </span>
+              </NuxtLink>
+            </UTooltip>
 
             <UTooltip v-if="selectedSort.key === 'publishedAt'" :text="`Updated ${formatDateByLocale('en', module.stats.publishedAt)}`">
               <NuxtLink
