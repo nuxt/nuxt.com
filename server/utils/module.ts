@@ -107,34 +107,40 @@ export async function fetchBulkModuleHealth(_event: H3Event, modules: BaseModule
 
   if (!uncached.length) return result
 
-  console.info(`Fetching health for ${uncached.length} modules from nuxt.care...`)
-  try {
-    const query = new URLSearchParams()
-    query.set('slim', 'true')
-    for (const m of uncached) {
-      query.append('package', m.npm)
-    }
-    const statusColorMap: Record<string, string> = {
-      optimal: '#22c55e',
-      stable: '#84cc16',
-      degraded: '#eab308',
-      critical: '#ef4444',
-      unknown: '#6b7280'
-    }
-    const data = await $fetch<NuxtCareModuleSlim[]>(`https://nuxt.care/api/v1/modules?${query.toString()}`)
-    for (const item of data) {
-      const module = uncached.find(m => m.npm === item.npm)
-      if (!module) continue
-      const health: ModuleHealth = {
-        score: item.score,
-        color: statusColorMap[item.status] || '#6b7280',
-        status: item.status
+  const CHUNK_SIZE = 50
+  const statusColorMap: Record<string, string> = {
+    optimal: '#22c55e',
+    stable: '#84cc16',
+    degraded: '#eab308',
+    critical: '#ef4444',
+    unknown: '#6b7280'
+  }
+  const npmToModule = new Map(uncached.map(m => [m.npm, m]))
+
+  console.info(`Fetching health for ${uncached.length} modules from nuxt.care (${Math.ceil(uncached.length / CHUNK_SIZE)} chunks)...`)
+  for (let i = 0; i < uncached.length; i += CHUNK_SIZE) {
+    const chunk = uncached.slice(i, i + CHUNK_SIZE)
+    try {
+      const query = new URLSearchParams()
+      query.set('slim', 'true')
+      for (const m of chunk) {
+        query.append('package', m.npm)
       }
-      result[module.name] = health
-      await kv.set(`module:health:${module.name}`, health, { ttl: 60 * 60 * 24 })
+      const data = await $fetch<NuxtCareModuleSlim[]>(`https://nuxt.care/api/v1/modules?${query.toString()}`)
+      for (const item of data) {
+        const module = npmToModule.get(item.npm)
+        if (!module) continue
+        const health: ModuleHealth = {
+          score: item.score,
+          color: statusColorMap[item.status] || '#6b7280',
+          status: item.status
+        }
+        result[module.name] = health
+        await kv.set(`module:health:${module.name}`, health, { ttl: 60 * 60 * 24 })
+      }
+    } catch (err) {
+      console.error(`Cannot fetch bulk health from nuxt.care (chunk ${Math.floor(i / CHUNK_SIZE) + 1}): ${err}`)
     }
-  } catch (err) {
-    console.error(`Cannot fetch bulk health from nuxt.care: ${err}`)
   }
 
   return result
