@@ -174,17 +174,15 @@ const _useNavigation = () => {
       track('Ask AI Opened', { source: 'search-links' })
       nuxtApp.$kapa?.openModal()
     }
-  }, ...headerLinks.value.map((link) => {
-    // Remove `/docs` and `/enterprise` links from command palette
+  }, ...headerLinks.value.flatMap((link) => {
     if (link.search === false) {
-      return {
-        label: link.label,
-        icon: link.icon,
-        children: link.children
-      }
+      return (link.children || []).map(child => ({
+        ...child,
+        label: `${link.label} > ${child.label}`
+      }))
     }
-    return link
-  }).filter(Boolean), {
+    return [link]
+  }), {
     label: 'Team',
     icon: 'i-lucide-users',
     to: '/team'
@@ -192,6 +190,10 @@ const _useNavigation = () => {
     label: 'Design Kit',
     icon: 'i-lucide-palette',
     to: '/design-kit'
+  }, {
+    label: 'AI Evals',
+    icon: 'i-lucide-brain',
+    to: '/evals'
   }, {
     label: 'Newsletter',
     icon: 'i-lucide-mail',
