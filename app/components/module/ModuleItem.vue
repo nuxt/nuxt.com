@@ -160,8 +160,8 @@ const items = computed(() => [
                 target="_blank"
               >
                 <span
-                  class="inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-xs font-medium text-white capitalize"
-                  :style="{ backgroundColor: module.health.color }"
+                  class="inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-xs font-medium capitalize"
+                  :style="{ backgroundColor: module.health.color, color: module.health.status === 'degraded' ? '#451a03' : '#fff' }"
                 >
                   {{ module.health.status }}
                 </span>
