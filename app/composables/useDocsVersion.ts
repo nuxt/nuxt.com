@@ -2,18 +2,26 @@ import type { BadgeProps } from '@nuxt/ui'
 
 interface Version {
   label: string
-  shortTag: 'v4' | 'v3' | 'v2'
+  shortTag: 'v5' | 'v4' | 'v3' | 'v2'
   branch: string
   tagColor: BadgeProps['color']
   path: string
-  collection?: 'docsv3' | 'docsv4'
+  collection?: 'docsv3' | 'docsv4' | 'docsv5'
 }
 
 const versions: Version[] = [
   {
+    label: 'Version 5',
+    shortTag: 'v5',
+    branch: 'main',
+    tagColor: 'warning',
+    path: '/docs/5.x',
+    collection: 'docsv5'
+  },
+  {
     label: 'Version 4',
     shortTag: 'v4',
-    branch: 'main',
+    branch: '4.x',
     tagColor: 'primary',
     path: '/docs/4.x',
     collection: 'docsv4'
@@ -36,8 +44,9 @@ const versions: Version[] = [
 ]
 
 const tagMap: Record<Version['shortTag'], string> = {
-  v3: '3x',
+  v5: '5x',
   v4: '4x',
+  v3: '3x',
   v2: '2x'
 }
 
@@ -46,6 +55,8 @@ export const useDocsTags = () => {
     const { 'dist-tags': distTags } = await $fetch<{ 'dist-tags': Record<string, string> }>('https://registry.npmjs.org/nuxt')
     return Object.fromEntries(
       Object.entries(tagMap).map(([shortTag]: [keyof typeof tagMap, string]) => {
+        // TODO: remove nightly fallback when Nuxt 5 is released
+        if (shortTag === 'v5') return [shortTag, distTags['5x'] ?? '5 (nightly)']
         return [shortTag, distTags[tagMap[shortTag]] ?? distTags.latest]
       })
     )
@@ -59,11 +70,16 @@ export const useDocsVersion = () => {
   const { track } = useAnalytics()
 
   const version = computed(() => {
+    if (route.path.startsWith('/docs/5.x')) {
+      return versions.find(v => v.path === '/docs/5.x')
+    }
+
     if (route.path.startsWith('/docs/3.x')) {
       return versions.find(v => v.path === '/docs/3.x')
     }
 
-    return versions[0]
+    // Default to v4 (current stable)
+    return versions.find(v => v.path === '/docs/4.x')
   })
 
   const items = computed(() => versions.map(v => ({

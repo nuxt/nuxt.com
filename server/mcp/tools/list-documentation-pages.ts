@@ -10,7 +10,7 @@ WHEN NOT TO USE: If you already know the specific page path (e.g., "/docs/4.x/ge
 
 WORKFLOW: This tool returns page titles, descriptions, and paths. After finding relevant pages, use get_documentation_page to retrieve the full content.`,
   inputSchema: {
-    version: z.enum(['3.x', '4.x', 'all']).optional().default('4.x').describe('Documentation version to fetch')
+    version: z.enum(['3.x', '4.x', '5.x', 'all']).optional().default('4.x').describe('Documentation version to fetch')
   },
   cache: '1h',
   async handler({ version }) {
@@ -33,7 +33,16 @@ WORKFLOW: This tool returns page titles, descriptions, and paths. After finding 
       if (!allDocs) {
         return errorResult('Documentation pages collection not found')
       }
+    } else if (version === '5.x') {
+      allDocs = await queryCollection(event, 'docsv5')
+        .select('title', 'path', 'description')
+        .all()
+
+      if (!allDocs) {
+        return errorResult('Documentation pages collection not found')
+      }
     } else {
+      // TODO: include docsv5 in 'all' when Nuxt 5 is released
       const docsV3 = await queryCollection(event, 'docsv3')
         .select('title', 'path', 'description')
         .all()
@@ -53,7 +62,7 @@ WORKFLOW: This tool returns page titles, descriptions, and paths. After finding 
       title: doc.title,
       path: doc.path,
       description: doc.description,
-      version: doc.path.includes('/docs/4.x') ? '4.x' : '3.x',
+      version: doc.path.includes('/docs/5.x') ? '5.x' : doc.path.includes('/docs/4.x') ? '4.x' : '3.x',
       url: `https://nuxt.com${doc.path}`
     })))
   }

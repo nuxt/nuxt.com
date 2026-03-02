@@ -2,6 +2,7 @@ import { queryCollection } from '@nuxt/content/server'
 
 export default defineMcpResource({
   uri: 'resource://nuxt-com/documentation-pages',
+  // TODO: update to include v5.x docs when Nuxt 5 is released
   description: 'Complete list of available Nuxt documentation pages (defaults to v4.x)',
   cache: '1h',
   async handler(uri: URL) {

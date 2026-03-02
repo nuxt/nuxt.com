@@ -1,4 +1,4 @@
-import type { ContentNavigationItem, Docsv3CollectionItem, Docsv4CollectionItem } from '@nuxt/content'
+import type { ContentNavigationItem, Docsv3CollectionItem, Docsv4CollectionItem, Docsv5CollectionItem } from '@nuxt/content'
 
 export function navPageFromPath(path: string, tree: ContentNavigationItem[]): ContentNavigationItem | undefined {
   for (const file of tree) {
@@ -27,7 +27,7 @@ function cleanNavigationPaths(navigation: ContentNavigationItem[], isV4: boolean
   }))
 }
 
-export function findTitleTemplate(page: Ref<Docsv3CollectionItem | Docsv4CollectionItem>, navigation: Ref<ContentNavigationItem[]>): string {
+export function findTitleTemplate(page: Ref<Docsv3CollectionItem | Docsv4CollectionItem | Docsv5CollectionItem>, navigation: Ref<ContentNavigationItem[]>): string {
   if (!page.value?.path) {
     return '%s · Nuxt'
   }

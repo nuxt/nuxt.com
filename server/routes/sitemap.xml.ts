@@ -7,12 +7,15 @@ import { queryCollection } from '#imports'
 type queryCollectionWithEvent = <T extends keyof Collections>(event: H3Event, collection: T) => CollectionQueryBuilder<Collections[T]>
 
 export default defineEventHandler(async (event: H3Event) => {
-  const docs = await (queryCollection as queryCollectionWithEvent)(event, 'docsv4')
-    .where('path', 'NOT LIKE', '%.navigation')
-    .all()
-  const blog = await (queryCollection as queryCollectionWithEvent)(event, 'blog')
-    .where('draft', '=', 0)
-    .all()
+  // TODO: add docsv5 to sitemap when Nuxt 5 is released
+  const [docs, blog] = await Promise.all([
+    (queryCollection as queryCollectionWithEvent)(event, 'docsv4')
+      .where('path', 'NOT LIKE', '%.navigation')
+      .all(),
+    (queryCollection as queryCollectionWithEvent)(event, 'blog')
+      .where('draft', '=', 0)
+      .all()
+  ])
 
   const sitemap = new SitemapStream({
     hostname: 'https://nuxt.com'
