@@ -2,7 +2,7 @@ import type { BadgeProps } from '@nuxt/ui'
 
 interface Version {
   label: string
-  shortTag: 'v4' | 'v3' | 'v2'
+  shortTag: 'v5' | 'v4' | 'v3' | 'v2'
   branch: string
   tagColor: BadgeProps['color']
   path: string
@@ -11,9 +11,16 @@ interface Version {
 
 const versions: Version[] = [
   {
+    label: 'Version 5',
+    shortTag: 'v5',
+    branch: 'main',
+    tagColor: 'warning',
+    path: '/docs/5.x'
+  },
+  {
     label: 'Version 4',
     shortTag: 'v4',
-    branch: 'main',
+    branch: '4.x',
     tagColor: 'primary',
     path: '/docs/4.x',
     collection: 'docsv4'
@@ -36,8 +43,9 @@ const versions: Version[] = [
 ]
 
 const tagMap: Record<Version['shortTag'], string> = {
-  v3: '3x',
+  v5: '5x',
   v4: '4x',
+  v3: '3x',
   v2: '2x'
 }
 
@@ -59,11 +67,16 @@ export const useDocsVersion = () => {
   const { track } = useAnalytics()
 
   const version = computed(() => {
+    if (route.path.startsWith('/docs/5.x')) {
+      return versions.find(v => v.path === '/docs/5.x')
+    }
+
     if (route.path.startsWith('/docs/3.x')) {
       return versions.find(v => v.path === '/docs/3.x')
     }
 
-    return versions[0]
+    // Default to v4 (current stable)
+    return versions.find(v => v.path === '/docs/4.x')
   })
 
   const items = computed(() => versions.map(v => ({

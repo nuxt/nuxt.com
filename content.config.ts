@@ -10,10 +10,18 @@ const docsV3Source = {
 
 const docsV4Source = {
   cwd: process.env.NUXT_V4_PATH ?? undefined,
-  repository: !process.env.NUXT_V4_PATH ? 'https://github.com/nuxt/nuxt/tree/main' : undefined,
+  repository: !process.env.NUXT_V4_PATH ? 'https://github.com/nuxt/nuxt/tree/4.x' : undefined,
   include: 'docs/**/*',
   exclude: ['docs/**/*.json'],
   prefix: '/docs/4.x'
+}
+
+const docsV5Source = {
+  cwd: process.env.NUXT_V5_PATH ?? undefined,
+  repository: !process.env.NUXT_V5_PATH ? 'https://github.com/nuxt/nuxt/tree/main' : undefined,
+  include: 'docs/**/*',
+  exclude: ['docs/**/*.json'],
+  prefix: '/docs/5.x'
 }
 
 const examplesV3Source = {
@@ -194,6 +202,14 @@ export default defineContentConfig({
         sponsors: PageSection.extend({
           cta: Button
         })
+      })
+    }),
+    docsv5: defineCollection({
+      type: 'page',
+      source: [docsV5Source, examplesV4Source],
+      schema: z.object({
+        titleTemplate: z.string().optional(),
+        links: z.array(Button)
       })
     }),
     docsv4: defineCollection({
