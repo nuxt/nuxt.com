@@ -88,7 +88,7 @@
     "happy-dom": "^20.6.1",
     "nuxt-content-twoslash": "^0.1.2",
     "playwright": "^1.58.2",
-    "shiki": "^3.22.0",
+    "shiki": "^4.0.1",
     "twoslash": "^0.3.6",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18",
