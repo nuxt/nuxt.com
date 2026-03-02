@@ -4,6 +4,7 @@ import { queryCollection } from '@nuxt/content/server'
 export default defineMcpTool({
   description: 'Gets the getting started guide for Nuxt. Parameters: version (enum, optional) - Nuxt version.',
   inputSchema: {
+    // TODO: add '5.x' when Nuxt 5 is released
     version: z.enum(['3.x', '4.x']).optional().default('4.x').describe('Nuxt version')
   },
   cache: '30m',

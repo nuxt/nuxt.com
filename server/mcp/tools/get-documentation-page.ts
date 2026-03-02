@@ -36,7 +36,7 @@ Common Issues:
   cache: '30m',
   async handler({ path }) {
     const event = useEvent()
-    const docsVersion = path.includes('/docs/4.x') ? 'docsv4' : 'docsv3'
+    const docsVersion = path.includes('/docs/5.x') ? 'docsv5' : path.includes('/docs/4.x') ? 'docsv4' : 'docsv3'
 
     const page = await queryCollection(event, docsVersion)
       .where('path', '=', path)
@@ -52,7 +52,7 @@ Common Issues:
       path: page.path,
       description: page.description,
       content: page.body,
-      version: page.path.includes('/docs/4.x') ? '4.x' : '3.x',
+      version: page.path.includes('/docs/5.x') ? '5.x' : page.path.includes('/docs/4.x') ? '4.x' : '3.x',
       links: page.links,
       url: `https://nuxt.com${page.path}`
     })
