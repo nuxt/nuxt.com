@@ -55,6 +55,8 @@ export const useDocsTags = () => {
     const { 'dist-tags': distTags } = await $fetch<{ 'dist-tags': Record<string, string> }>('https://registry.npmjs.org/nuxt')
     return Object.fromEntries(
       Object.entries(tagMap).map(([shortTag]: [keyof typeof tagMap, string]) => {
+        // TODO: remove nightly fallback when Nuxt 5 is released
+        if (shortTag === 'v5') return [shortTag, distTags['5x'] ?? 'nightly']
         return [shortTag, distTags[tagMap[shortTag]] ?? distTags.latest]
       })
     )
