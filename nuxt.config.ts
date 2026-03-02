@@ -114,6 +114,7 @@ export default defineNuxtConfig({
     '/404.html': { prerender: true },
     '/docs/3.x/getting-started/introduction': { prerender: true },
     '/docs/4.x/getting-started/introduction': { prerender: true },
+    '/docs/5.x/getting-started/introduction': { prerender: true },
     '/modules': { prerender: true },
     '/modules/**': { isr: 60 * 60 },
     // API
@@ -128,18 +129,22 @@ export default defineNuxtConfig({
     '/docs': { redirect: '/docs/getting-started/introduction', prerender: false },
     '/docs/3.x': { redirect: '/docs/3.x/getting-started/introduction', prerender: false },
     '/docs/4.x': { redirect: '/docs/4.x/getting-started/introduction', prerender: false },
+    '/docs/5.x': { redirect: '/docs/5.x/getting-started/introduction', prerender: false },
     '/docs/getting-started': { redirect: '/docs/getting-started/introduction', prerender: false },
     '/docs/3.x/getting-started': { redirect: '/docs/3.x/getting-started/introduction', prerender: false },
     '/docs/4.x/getting-started': { redirect: '/docs/4.x/getting-started/introduction', prerender: false },
+    '/docs/5.x/getting-started': { redirect: '/docs/5.x/getting-started/introduction', prerender: false },
     '/docs/guide/concepts': { redirect: '/docs/guide/concepts/auto-imports', prerender: false },
     '/docs/3.x/guide/concepts': { redirect: '/docs/3.x/guide/concepts/auto-imports', prerender: false },
     '/docs/4.x/guide/concepts': { redirect: '/docs/4.x/guide/concepts/auto-imports', prerender: false },
+    '/docs/5.x/guide/concepts': { redirect: '/docs/5.x/guide/concepts/auto-imports', prerender: false },
     '/docs/guide/directory-structure': { redirect: '/docs/directory-structure', prerender: false },
     '/docs/3.x/guide/directory-structure': { redirect: '/docs/3.x/directory-structure', prerender: false },
     '/docs/4.x/guide/directory-structure': { redirect: '/docs/4.x/directory-structure', prerender: false },
     '/docs/guide/going-further': { redirect: '/docs/guide/going-further/experimental-features', prerender: false },
     '/docs/3.x/guide/going-further': { redirect: '/docs/3.x/guide/going-further/experimental-features', prerender: false },
     '/docs/4.x/guide/going-further': { redirect: '/docs/4.x/guide/going-further/experimental-features', prerender: false },
+    '/docs/5.x/guide/going-further': { redirect: '/docs/5.x/guide/going-further/experimental-features', prerender: false },
     '/docs/guide/going-further/edge-release-channel': { redirect: '/docs/guide/going-further/nightly-release-channel', prerender: false },
     '/docs/3.x/guide/going-further/edge-release-channel': { redirect: '/docs/3.x/guide/going-further/nightly-release-channel', prerender: false },
     '/docs/4.x/guide/going-further/edge-release-channel': { redirect: '/docs/4.x/guide/going-further/nightly-release-channel', prerender: false },
@@ -173,6 +178,7 @@ export default defineNuxtConfig({
     '/docs/examples': { redirect: '/docs/examples/hello-world', prerender: false },
     '/docs/3.x/examples': { redirect: '/docs/3.x/examples/hello-world', prerender: false },
     '/docs/4.x/examples': { redirect: '/docs/4.x/examples/hello-world', prerender: false },
+    '/docs/5.x/examples': { redirect: '/docs/5.x/examples/hello-world', prerender: false },
     '/docs/examples/features': { redirect: '/docs/examples/features/auto-imports', prerender: false },
     '/docs/3.x/examples/features': { redirect: '/docs/3.x/examples/features/auto-imports', prerender: false },
     '/docs/4.x/examples/features': { redirect: '/docs/4.x/examples/features/auto-imports', prerender: false },
@@ -188,6 +194,7 @@ export default defineNuxtConfig({
     '/docs/community': { redirect: '/docs/community/getting-help', prerender: false },
     '/docs/3.x/community': { redirect: '/docs/3.x/community/getting-help', prerender: false },
     '/docs/4.x/community': { redirect: '/docs/4.x/community/getting-help', prerender: false },
+    '/docs/5.x/community': { redirect: '/docs/5.x/community/getting-help', prerender: false },
     '/docs/community/nuxt-community': { redirect: '/docs/community/getting-help', prerender: false },
     '/docs/3.x/community/nuxt-community': { redirect: '/docs/3.x/community/getting-help', prerender: false },
     '/docs/4.x/community/nuxt-community': { redirect: '/docs/4.x/community/getting-help', prerender: false },
@@ -260,6 +267,7 @@ export default defineNuxtConfig({
     '/enterprise/support': { redirect: '/enterprise/agencies', prerender: false },
     '/support/us': { redirect: '/enterprise/sponsors', prerender: false },
     '/docs/4.x/guide/ai': { redirect: '/docs/4.x/guide/ai/mcp', prerender: false },
+    '/docs/5.x/guide/ai': { redirect: '/docs/5.x/guide/ai/mcp', prerender: false },
     '/docs/3.x/guide/ai': { redirect: '/docs/4.x/guide/ai/mcp', prerender: false },
     // showcase assets
     '/assets/websites/12go.png': { redirect: '/assets/websites/12go.webp' },
@@ -351,6 +359,9 @@ export default defineNuxtConfig({
   },
   hooks: {
     'content:file:beforeParse': async ({ file }) => {
+      if (file.id.startsWith('docsv5/')) {
+        file.body = file.body.replaceAll(/\(\/docs\/(?!\d\.x)/g, '(/docs/5.x/')
+      }
       if (file.id.startsWith('docsv4/')) {
         file.body = file.body.replaceAll(/\(\/docs\/(?!\d\.x)/g, '(/docs/4.x/')
       }
@@ -397,6 +408,11 @@ export default defineNuxtConfig({
       description: 'The complete Nuxt documentation and blog posts written in Markdown (MDC syntax).'
     },
     sections: [
+      {
+        title: 'Nuxt v5 Documentation',
+        contentCollection: 'docsv5',
+        contentFilters: [{ field: 'extension', operator: '=', value: 'md' }]
+      },
       {
         title: 'Nuxt v4 Documentation',
         contentCollection: 'docsv4',

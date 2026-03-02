@@ -6,7 +6,7 @@ interface Version {
   branch: string
   tagColor: BadgeProps['color']
   path: string
-  collection?: 'docsv3' | 'docsv4'
+  collection?: 'docsv3' | 'docsv4' | 'docsv5'
 }
 
 const versions: Version[] = [
@@ -15,7 +15,8 @@ const versions: Version[] = [
     shortTag: 'v5',
     branch: 'main',
     tagColor: 'warning',
-    path: '/docs/5.x'
+    path: '/docs/5.x',
+    collection: 'docsv5'
   },
   {
     label: 'Version 4',

@@ -1,1 +1,4 @@
+User-agent: *
+Disallow: /docs/5.x/
+
 Sitemap: https://nuxt.com/sitemap.xml
