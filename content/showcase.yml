@@ -161,3 +161,5 @@ websites:
     url: https://www.shainamote.com/
     screenshotOptions:
       hideElements: ['.cookie-policy', '.announcement-bar']
+  - name: RevX
+    url: https://revx.dev/
