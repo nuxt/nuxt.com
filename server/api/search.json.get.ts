@@ -5,6 +5,7 @@ export default defineEventHandler(async (event) => {
   return Promise.all([
     queryCollectionSearchSections(event, 'docsv3', { ignoredTags: ['style'] }),
     queryCollectionSearchSections(event, 'docsv4', { ignoredTags: ['style'] }),
+    queryCollectionSearchSections(event, 'docsv5', { ignoredTags: ['style'] }),
     queryCollectionSearchSections(event, 'blog')
   ]).then(data => data.flat())
 })
