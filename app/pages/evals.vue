@@ -107,7 +107,8 @@ const modelIconMap: Record<string, string> = {
   claude: 'i-simple-icons-anthropic',
   gpt: 'i-simple-icons-openai',
   cursor: 'i-simple-icons-cursor',
-  gemini: 'i-simple-icons-googlegemini'
+  gemini: 'i-simple-icons-googlegemini',
+  devstral: 'i-simple-icons-mistralai'
 }
 
 function getModelIcon(model: string): string {
