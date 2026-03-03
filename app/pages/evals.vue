@@ -107,7 +107,8 @@ const modelIconMap: Record<string, string> = {
   claude: 'i-simple-icons-anthropic',
   gpt: 'i-simple-icons-openai',
   cursor: 'i-simple-icons-cursor',
-  gemini: 'i-simple-icons-googlegemini'
+  gemini: 'i-simple-icons-googlegemini',
+  devstral: 'i-simple-icons-mistralai'
 }
 
 function getModelIcon(model: string): string {
@@ -279,7 +280,7 @@ const evalColumns: TableColumn<EvalResultItem>[] = [
           :columns="columns"
           :ui="{
             thead: '[&>tr]:bg-elevated/50 border-b border-default',
-            tr: 'py-2.5 peer peer-data-[expanded=true]:[&>td]:p-4! group transition-colors',
+            tr: 'py-2.5 peer peer-data-[expanded=true]:[&>td]:p-4! group transition-[background-color]',
             td: 'py-2.5'
           }"
           class="flex-1 border border-default rounded-lg"
