@@ -421,6 +421,11 @@ export default defineNuxtConfig({
     kv: true,
     cache: true
   },
+  vite: {
+    optimizeDeps: {
+      exclude: ['vue-chrts']
+    }
+  },
   typescript: {
     strict: false,
     tsConfig: {
@@ -521,10 +526,5 @@ export default defineNuxtConfig({
     enableInDev: false,
     // Do not throw when twoslash fails, the typecheck should be down in github.com/nuxt/nuxt's CI
     throws: false
-  },
-  vite: {
-    optimizeDeps: {
-      exclude: ['vue-chrts']
-    }
   }
 })
