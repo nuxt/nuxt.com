@@ -16,7 +16,7 @@ defineProps<{
       @click.stop
     >
       <span class="inline-flex items-center font-medium text-xs px-2 py-1 rounded-l-md ring ring-inset ring-accented text-default bg-elevated">
-        nuxt.care
+        Health
       </span>
       <span
         class="inline-flex items-center font-medium capitalize text-xs px-2 py-1 rounded-r-md"
