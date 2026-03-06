@@ -421,6 +421,11 @@ export default defineNuxtConfig({
     kv: true,
     cache: true
   },
+  vite: {
+    optimizeDeps: {
+      exclude: ['vue-chrts']
+    }
+  },
   typescript: {
     strict: false,
     tsConfig: {
