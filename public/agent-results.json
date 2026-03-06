@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "exportedAt": "2026-03-03T13:27:12.053Z",
+    "exportedAt": "2026-03-06T11:09:21.163Z",
     "experiments": [
       {
         "name": "claude-opus-4.6",
@@ -34,14 +34,14 @@
       },
       {
         "name": "gemini-3-pro-preview",
-        "timestamp": "2026-02-24T15:02:21.679Z",
-        "modelName": "Gemini 3 Pro Preview",
-        "agentHarness": "OpenCode"
-      },
-      {
-        "name": "gemini-3-pro-preview-gemini-cli",
         "timestamp": "2026-02-24T20:04:54.495Z",
         "modelName": "Gemini 3 Pro Preview",
+        "agentHarness": "Gemini CLI"
+      },
+      {
+        "name": "gemini-3.1-pro-preview",
+        "timestamp": "2026-03-06T09:21:01.249Z",
+        "modelName": "Gemini 3.1 Pro Preview",
         "agentHarness": "Gemini CLI"
       },
       {
@@ -1193,233 +1193,6 @@
         "evalPath": "nuxt-000-fix-data-fetching",
         "result": {
           "success": true,
-          "duration": 342417,
-          "evalPath": "nuxt-000-fix-data-fetching",
-          "timestamp": "2026-02-24T14:42:38.461Z"
-        }
-      },
-      {
-        "evalPath": "nuxt-001-prefer-nuxt-link",
-        "result": {
-          "success": true,
-          "duration": 110826.74999999999,
-          "evalPath": "nuxt-001-prefer-nuxt-link",
-          "timestamp": "2026-02-24T14:42:38.461Z"
-        }
-      },
-      {
-        "evalPath": "nuxt-002-state-composables",
-        "result": {
-          "success": true,
-          "duration": 456188.99999999994,
-          "evalPath": "nuxt-002-state-composables",
-          "timestamp": "2026-02-24T14:42:38.461Z"
-        }
-      },
-      {
-        "evalPath": "nuxt-003-page-meta",
-        "result": {
-          "success": false,
-          "duration": 166602.50000000003,
-          "evalPath": "nuxt-003-page-meta",
-          "timestamp": "2026-02-24T14:42:38.461Z"
-        }
-      },
-      {
-        "evalPath": "nuxt-004-error-handling",
-        "result": {
-          "success": true,
-          "duration": 327969,
-          "evalPath": "nuxt-004-error-handling",
-          "timestamp": "2026-02-24T15:02:21.679Z"
-        }
-      },
-      {
-        "evalPath": "nuxt-005-fix-seo-meta",
-        "result": {
-          "success": true,
-          "duration": 242429,
-          "evalPath": "nuxt-005-fix-seo-meta",
-          "timestamp": "2026-02-24T14:42:38.461Z"
-        }
-      },
-      {
-        "evalPath": "nuxt-006-runtime-config",
-        "result": {
-          "success": true,
-          "duration": 334258,
-          "evalPath": "nuxt-006-runtime-config",
-          "timestamp": "2026-02-24T15:02:21.679Z"
-        }
-      },
-      {
-        "evalPath": "nuxt-007-avoid-redundant-ref",
-        "result": {
-          "success": true,
-          "duration": 257834.99999999997,
-          "evalPath": "nuxt-007-avoid-redundant-ref",
-          "timestamp": "2026-02-24T14:42:38.461Z"
-        }
-      },
-      {
-        "evalPath": "nuxt-008-fix-exposed-secret",
-        "result": {
-          "success": true,
-          "duration": 272863,
-          "evalPath": "nuxt-008-fix-exposed-secret",
-          "timestamp": "2026-02-24T14:42:38.461Z"
-        }
-      },
-      {
-        "evalPath": "nuxt-009-cache-api-response",
-        "result": {
-          "success": true,
-          "duration": 239064,
-          "evalPath": "nuxt-009-cache-api-response",
-          "timestamp": "2026-02-24T15:02:21.679Z"
-        }
-      },
-      {
-        "evalPath": "nuxt-010-fix-watch-fetch",
-        "result": {
-          "success": true,
-          "duration": 147204.5,
-          "evalPath": "nuxt-010-fix-watch-fetch",
-          "timestamp": "2026-02-24T14:42:38.461Z"
-        }
-      },
-      {
-        "evalPath": "nuxt-011-fix-sequential-fetching",
-        "result": {
-          "success": true,
-          "duration": 102948.33333333333,
-          "evalPath": "nuxt-011-fix-sequential-fetching",
-          "timestamp": "2026-02-24T14:42:38.461Z"
-        }
-      },
-      {
-        "evalPath": "nuxt-012-nuxt3-to-nuxt4-migration",
-        "result": {
-          "success": true,
-          "duration": 309215,
-          "evalPath": "nuxt-012-nuxt3-to-nuxt4-migration",
-          "timestamp": "2026-02-24T15:02:21.679Z"
-        }
-      },
-      {
-        "evalPath": "nuxt-013-prefer-nuxt-image",
-        "result": {
-          "success": true,
-          "duration": 114445.66666666667,
-          "evalPath": "nuxt-013-prefer-nuxt-image",
-          "timestamp": "2026-02-24T14:42:38.461Z"
-        }
-      },
-      {
-        "evalPath": "nuxt-014-prefer-use-cookie",
-        "result": {
-          "success": false,
-          "duration": 113011.50000000001,
-          "evalPath": "nuxt-014-prefer-use-cookie",
-          "timestamp": "2026-02-24T14:42:38.461Z"
-        }
-      },
-      {
-        "evalPath": "nuxt-content-000-navigation",
-        "result": {
-          "success": true,
-          "duration": 354012,
-          "evalPath": "nuxt-content-000-navigation",
-          "timestamp": "2026-02-24T14:42:38.461Z"
-        }
-      },
-      {
-        "evalPath": "nuxt-content-001-data-collection",
-        "result": {
-          "success": true,
-          "duration": 336292,
-          "evalPath": "nuxt-content-001-data-collection",
-          "timestamp": "2026-02-24T14:42:38.461Z"
-        }
-      },
-      {
-        "evalPath": "nuxt-ui-000-theming",
-        "result": {
-          "success": false,
-          "duration": 407154.25,
-          "evalPath": "nuxt-ui-000-theming",
-          "timestamp": "2026-02-24T14:42:38.461Z"
-        }
-      },
-      {
-        "evalPath": "nuxt-ui-001-fix-raw-html-page",
-        "result": {
-          "success": false,
-          "duration": 393034.75,
-          "evalPath": "nuxt-ui-001-fix-raw-html-page",
-          "timestamp": "2026-02-24T15:02:21.679Z"
-        }
-      },
-      {
-        "evalPath": "nuxt-ui-002-dashboard-layout",
-        "result": {
-          "success": true,
-          "duration": 441570.99999999994,
-          "evalPath": "nuxt-ui-002-dashboard-layout",
-          "timestamp": "2026-02-24T14:42:38.461Z"
-        }
-      },
-      {
-        "evalPath": "nuxt-ui-003-fix-raw-form",
-        "result": {
-          "success": true,
-          "duration": 307103,
-          "evalPath": "nuxt-ui-003-fix-raw-form",
-          "timestamp": "2026-02-24T14:42:38.461Z"
-        }
-      },
-      {
-        "evalPath": "nuxt-ui-004-table",
-        "result": {
-          "success": true,
-          "duration": 307004,
-          "evalPath": "nuxt-ui-004-table",
-          "timestamp": "2026-02-24T14:42:38.461Z"
-        }
-      },
-      {
-        "evalPath": "nuxt-ui-005-modal",
-        "result": {
-          "success": true,
-          "duration": 355545,
-          "evalPath": "nuxt-ui-005-modal",
-          "timestamp": "2026-02-24T14:42:38.461Z"
-        }
-      },
-      {
-        "evalPath": "nuxt-ui-006-command-palette",
-        "result": {
-          "success": false,
-          "duration": 439433,
-          "evalPath": "nuxt-ui-006-command-palette",
-          "timestamp": "2026-02-24T14:42:38.461Z"
-        }
-      },
-      {
-        "evalPath": "nuxt-ui-007-dropdown-menu",
-        "result": {
-          "success": true,
-          "duration": 263968,
-          "evalPath": "nuxt-ui-007-dropdown-menu",
-          "timestamp": "2026-02-24T14:42:38.461Z"
-        }
-      }
-    ],
-    "gemini-3-pro-preview-gemini-cli": [
-      {
-        "evalPath": "nuxt-000-fix-data-fetching",
-        "result": {
-          "success": true,
           "duration": 494385.5,
           "evalPath": "nuxt-000-fix-data-fetching",
           "timestamp": "2026-02-24T14:42:38.454Z"
@@ -1639,6 +1412,233 @@
           "duration": 505195.6666666667,
           "evalPath": "nuxt-ui-007-dropdown-menu",
           "timestamp": "2026-02-24T15:18:49.505Z"
+        }
+      }
+    ],
+    "gemini-3.1-pro-preview": [
+      {
+        "evalPath": "nuxt-000-fix-data-fetching",
+        "result": {
+          "success": true,
+          "duration": 226697,
+          "evalPath": "nuxt-000-fix-data-fetching",
+          "timestamp": "2026-03-05T13:33:58.966Z"
+        }
+      },
+      {
+        "evalPath": "nuxt-001-prefer-nuxt-link",
+        "result": {
+          "success": true,
+          "duration": 183895,
+          "evalPath": "nuxt-001-prefer-nuxt-link",
+          "timestamp": "2026-03-05T13:33:58.966Z"
+        }
+      },
+      {
+        "evalPath": "nuxt-002-state-composables",
+        "result": {
+          "success": true,
+          "duration": 439509,
+          "evalPath": "nuxt-002-state-composables",
+          "timestamp": "2026-03-05T13:33:58.966Z"
+        }
+      },
+      {
+        "evalPath": "nuxt-003-page-meta",
+        "result": {
+          "success": true,
+          "duration": 260757.99999999997,
+          "evalPath": "nuxt-003-page-meta",
+          "timestamp": "2026-03-05T13:33:58.966Z"
+        }
+      },
+      {
+        "evalPath": "nuxt-004-error-handling",
+        "result": {
+          "success": false,
+          "duration": 430562.25,
+          "evalPath": "nuxt-004-error-handling",
+          "timestamp": "2026-03-05T13:33:58.966Z"
+        }
+      },
+      {
+        "evalPath": "nuxt-005-fix-seo-meta",
+        "result": {
+          "success": false,
+          "duration": 418632.75,
+          "evalPath": "nuxt-005-fix-seo-meta",
+          "timestamp": "2026-03-03T13:52:58.178Z"
+        }
+      },
+      {
+        "evalPath": "nuxt-006-runtime-config",
+        "result": {
+          "success": true,
+          "duration": 245745,
+          "evalPath": "nuxt-006-runtime-config",
+          "timestamp": "2026-03-03T13:35:49.655Z"
+        }
+      },
+      {
+        "evalPath": "nuxt-007-avoid-redundant-ref",
+        "result": {
+          "success": true,
+          "duration": 236007,
+          "evalPath": "nuxt-007-avoid-redundant-ref",
+          "timestamp": "2026-03-05T13:33:58.966Z"
+        }
+      },
+      {
+        "evalPath": "nuxt-008-fix-exposed-secret",
+        "result": {
+          "success": true,
+          "duration": 452715,
+          "evalPath": "nuxt-008-fix-exposed-secret",
+          "timestamp": "2026-03-06T08:48:53.387Z"
+        }
+      },
+      {
+        "evalPath": "nuxt-009-cache-api-response",
+        "result": {
+          "success": true,
+          "duration": 200558,
+          "evalPath": "nuxt-009-cache-api-response",
+          "timestamp": "2026-03-05T13:33:58.966Z"
+        }
+      },
+      {
+        "evalPath": "nuxt-010-fix-watch-fetch",
+        "result": {
+          "success": true,
+          "duration": 246302,
+          "evalPath": "nuxt-010-fix-watch-fetch",
+          "timestamp": "2026-03-05T13:33:58.966Z"
+        }
+      },
+      {
+        "evalPath": "nuxt-011-fix-sequential-fetching",
+        "result": {
+          "success": true,
+          "duration": 189909,
+          "evalPath": "nuxt-011-fix-sequential-fetching",
+          "timestamp": "2026-03-05T13:33:58.966Z"
+        }
+      },
+      {
+        "evalPath": "nuxt-012-nuxt3-to-nuxt4-migration",
+        "result": {
+          "success": true,
+          "duration": 260740,
+          "evalPath": "nuxt-012-nuxt3-to-nuxt4-migration",
+          "timestamp": "2026-03-06T09:21:01.249Z"
+        }
+      },
+      {
+        "evalPath": "nuxt-013-prefer-nuxt-image",
+        "result": {
+          "success": true,
+          "duration": 249444,
+          "evalPath": "nuxt-013-prefer-nuxt-image",
+          "timestamp": "2026-03-05T13:33:58.966Z"
+        }
+      },
+      {
+        "evalPath": "nuxt-014-prefer-use-cookie",
+        "result": {
+          "success": true,
+          "duration": 336977,
+          "evalPath": "nuxt-014-prefer-use-cookie",
+          "timestamp": "2026-03-05T16:28:26.331Z"
+        }
+      },
+      {
+        "evalPath": "nuxt-content-000-navigation",
+        "result": {
+          "success": true,
+          "duration": 528814,
+          "evalPath": "nuxt-content-000-navigation",
+          "timestamp": "2026-03-05T13:33:58.966Z"
+        }
+      },
+      {
+        "evalPath": "nuxt-content-001-data-collection",
+        "result": {
+          "success": true,
+          "duration": 398933,
+          "evalPath": "nuxt-content-001-data-collection",
+          "timestamp": "2026-03-05T13:33:58.966Z"
+        }
+      },
+      {
+        "evalPath": "nuxt-ui-000-theming",
+        "result": {
+          "success": true,
+          "duration": 551676,
+          "evalPath": "nuxt-ui-000-theming",
+          "timestamp": "2026-03-05T13:33:58.966Z"
+        }
+      },
+      {
+        "evalPath": "nuxt-ui-001-fix-raw-html-page",
+        "result": {
+          "success": false,
+          "duration": 391573,
+          "evalPath": "nuxt-ui-001-fix-raw-html-page",
+          "timestamp": "2026-03-03T13:52:58.178Z"
+        }
+      },
+      {
+        "evalPath": "nuxt-ui-002-dashboard-layout",
+        "result": {
+          "success": true,
+          "duration": 306539,
+          "evalPath": "nuxt-ui-002-dashboard-layout",
+          "timestamp": "2026-03-06T08:48:53.387Z"
+        }
+      },
+      {
+        "evalPath": "nuxt-ui-003-fix-raw-form",
+        "result": {
+          "success": true,
+          "duration": 460709,
+          "evalPath": "nuxt-ui-003-fix-raw-form",
+          "timestamp": "2026-03-05T13:33:58.966Z"
+        }
+      },
+      {
+        "evalPath": "nuxt-ui-004-table",
+        "result": {
+          "success": true,
+          "duration": 370269,
+          "evalPath": "nuxt-ui-004-table",
+          "timestamp": "2026-03-05T13:33:58.966Z"
+        }
+      },
+      {
+        "evalPath": "nuxt-ui-005-modal",
+        "result": {
+          "success": true,
+          "duration": 442440.6666666666,
+          "evalPath": "nuxt-ui-005-modal",
+          "timestamp": "2026-03-05T13:33:58.966Z"
+        }
+      },
+      {
+        "evalPath": "nuxt-ui-006-command-palette",
+        "result": {
+          "success": true,
+          "duration": 519861,
+          "evalPath": "nuxt-ui-006-command-palette",
+          "timestamp": "2026-03-05T13:33:58.966Z"
+        }
+      },
+      {
+        "evalPath": "nuxt-ui-007-dropdown-menu",
+        "result": {
+          "success": true,
+          "duration": 454061,
+          "evalPath": "nuxt-ui-007-dropdown-menu",
+          "timestamp": "2026-03-05T13:33:58.966Z"
         }
       }
     ],
