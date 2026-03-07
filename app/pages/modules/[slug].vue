@@ -112,7 +112,7 @@ defineOgImageComponent('Module', {
             :icon="moduleIcon(module.category)"
             :alt="module.name"
             size="xl"
-            class="-m-[4px] rounded-none bg-transparent"
+            class="-m-1 rounded-none bg-transparent"
           />
 
           <div>
@@ -150,6 +150,15 @@ defineOgImageComponent('Module', {
             <span class="text-sm font-medium">v{{ module.stats.version }}</span>
           </NuxtLink>
         </UTooltip>
+
+        <template v-if="module.health">
+          <span class="hidden lg:block text-muted">&bull;</span>
+
+          <ModuleHealthBadge
+            :health="module.health"
+            :npm="module.npm"
+          />
+        </template>
 
         <div class="mx-3 h-6 border-l border-gray-200 dark:border-gray-800 w-px hidden lg:block" />
 
