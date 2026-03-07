@@ -109,6 +109,31 @@ const copyAllInstallCommands = () => {
   })
 }
 
+const copyAgentPrompt = () => {
+  const modulesList = modulesToAdd.value.map((m) => {
+    const lines = [`- ${m.npm}: ${m.description}`]
+    if (m.website) lines.push(`  Docs: ${m.website}`)
+    if (m.repo) lines.push(`  GitHub: https://github.com/${m.repo}`)
+    return lines.join('\n')
+  }).join('\n')
+  const moduleNames = modulesToAdd.value.map(m => m.name).join(' ')
+  const prompt = `Install and configure the following Nuxt modules in my project:
+
+${modulesList}
+
+Steps:
+1. Run \`npx nuxt@latest module add ${moduleNames}\` to install all modules at once
+2. For each module, read its documentation and add the recommended configuration in \`nuxt.config.ts\`
+3. List any required environment variables in \`.env.example\` without filling in actual values
+4. Verify the setup is correct by checking that the modules are properly registered`
+  track('Modules Agent Prompt Copied', { count: modulesToAdd.value.length, modules: moduleNames })
+  copy(prompt, {
+    title: 'Agent prompt copied to clipboard!',
+    description: `Prompt ready for ${modulesToAdd.value.length} module${modulesToAdd.value.length > 1 ? 's' : ''}`,
+    icon: 'i-custom-ai'
+  })
+}
+
 const clearAllModules = () => {
   modulesToAdd.value = []
 }
@@ -321,6 +346,23 @@ initializeModules()
                     >
                       Install {{ modulesToAdd.length }} module{{ modulesToAdd.length > 1 ? 's' : '' }}
                     </UButton>
+                  </Motion>
+                </UTooltip>
+
+                <UTooltip text="Copy agent prompt to install & configure">
+                  <Motion
+                    :press="{
+                      scale: 0.99
+                    }"
+                  >
+                    <UButton
+                      color="neutral"
+                      variant="soft"
+                      size="lg"
+                      icon="i-custom-ai"
+                      class="rounded-full"
+                      @click="copyAgentPrompt"
+                    />
                   </Motion>
                 </UTooltip>
 
