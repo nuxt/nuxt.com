@@ -161,3 +161,6 @@ websites:
     url: https://www.shainamote.com/
     screenshotOptions:
       hideElements: ['.cookie-policy', '.announcement-bar']
+  - name: BulkPicTools
+    url: https://bulkpictools.com/
+    delay: 5
