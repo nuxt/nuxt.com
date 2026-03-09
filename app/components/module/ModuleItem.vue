@@ -115,11 +115,6 @@ const items = computed(() => [
         v-if="showBadge && (module.type === 'official' || module.sponsor || module.health)"
         class="absolute top-4 right-4 sm:top-6 sm:right-6 flex items-center gap-2 z-1 pointer-events-auto"
       >
-        <ModuleHealthBadge
-          v-if="module.health"
-          :health="module.health"
-          :npm="module.npm"
-        />
         <UBadge
           v-if="module.type === 'official'"
           class="shine"
@@ -162,6 +157,22 @@ const items = computed(() => [
                 <span class="text-sm font-medium whitespace-normal">{{ formatNumber(module.stats.stars || 0) }}</span>
               </NuxtLink>
             </UTooltip>
+
+            <template v-if="module.health">
+              <UTooltip :text="`Health: ${module.health.status} - ${module.health.score}/100`">
+                <NuxtLink
+                  :to="`https://nuxt.care/?search=npm:${module.npm}`"
+                  class="flex items-center gap-1 hover:text-highlighted"
+                  target="_blank"
+                >
+                  <UIcon name="i-lucide-heart-pulse" class="size-4 shrink-0" :style="{ color: module.health.color }" />
+                  <span class="text-sm font-medium whitespace-normal">
+                    {{ module.health.score }}
+                  </span>
+                </NuxtLink>
+              </UTooltip>
+            </template>
+
             <UTooltip v-if="selectedSort.key === 'publishedAt'" :text="`Updated ${formatDateByLocale('en', module.stats.publishedAt)}`">
               <NuxtLink
                 class="flex items-center gap-1 hover:text-highlighted"
