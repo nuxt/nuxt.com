@@ -1,5 +1,16 @@
 import { expect, test } from '@nuxt/test-utils/playwright'
 
+test.describe('Homepage', () => {
+  test('has a visible hero description', async ({ page, goto }) => {
+    await goto('/')
+    const h1 = page.getByRole('heading', { level: 1 }).first()
+    await expect(h1).toBeVisible()
+    // The hero tagline rendered below the headline should have meaningful text
+    const description = h1.locator('..').locator('[data-slot="description"]')
+    await expect(description).toHaveText(/.{10,}/)
+  })
+})
+
 test.describe('Content Pages', () => {
   test('key pages load successfully', async ({ page, goto }) => {
     const pages = ['/templates', '/blog', '/showcase', '/team']
