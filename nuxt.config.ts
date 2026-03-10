@@ -117,6 +117,7 @@ export default defineNuxtConfig({
     '/docs/5.x/getting-started/introduction': { prerender: true },
     '/modules': { prerender: true },
     '/modules/**': { isr: 60 * 60 },
+    '/changelog': { isr: 60 * 60 },
     // API
     '/api/v1/teams': { isr: 60 * 60 },
     // Admin
