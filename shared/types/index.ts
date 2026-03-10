@@ -1,4 +1,5 @@
 export * from './jobs'
 export * from './modules'
+export * from './releases'
 export * from './sponsors'
 export * from './stats'

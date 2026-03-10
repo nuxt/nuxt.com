@@ -107,9 +107,20 @@ function _useHeaderLinks() {
         icon: 'i-lucide-hand-heart'
       }]
     }, {
-      label: 'Blog',
+      label: 'Updates',
       icon: 'i-lucide-newspaper',
-      to: '/blog'
+      to: '/blog',
+      children: [{
+        label: 'Blog',
+        to: '/blog',
+        description: 'News and updates about Nuxt.',
+        icon: 'i-lucide-newspaper'
+      }, {
+        label: 'Changelog',
+        to: '/changelog',
+        description: 'Latest releases from Nuxt and official modules.',
+        icon: 'i-lucide-history'
+      }]
     }]
   })
 

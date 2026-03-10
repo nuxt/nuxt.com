@@ -34,6 +34,12 @@ function mdRewrite(nitro) {
       has: [{ type: 'header', key: 'accept', value: '(.*)text/markdown(.*)' }],
       check: true
     })
+    vcConfig.routes.unshift({
+      src: '^/changelog/?$',
+      dest: '/changelog.md',
+      has: [{ type: 'header', key: 'accept', value: '(.*)text/markdown(.*)' }],
+      check: true
+    })
     await writeFile(vcJSON, JSON.stringify(vcConfig, null, 2), 'utf8')
   })
 }
