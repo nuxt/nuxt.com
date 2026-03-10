@@ -19,7 +19,7 @@ export default defineCachedEventHandler(async (event) => {
     }
   })
 
-  const releases = await fetchRawReleases()
+  const releases = await fetchRawReleases() || []
 
   for (const release of releases.slice(0, 50)) {
     feed.addItem({

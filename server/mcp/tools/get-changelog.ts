@@ -1,5 +1,4 @@
 import { z } from 'zod'
-import { fetchRawReleases } from '~~/server/utils/changelog'
 
 export default defineMcpTool({
   description: `Retrieves the latest releases from Nuxt core and official modules (changelog).
@@ -23,7 +22,7 @@ OUTPUT: Returns releases with title, repo, tag, date, and raw markdown body. Opt
   },
   cache: '1h',
   async handler({ repo, limit }) {
-    const releases = await fetchRawReleases()
+    const releases = await fetchRawReleases() || []
 
     const filtered = repo
       ? releases.filter(r => r.repo === repo || r.repo.endsWith(`/${repo}`))

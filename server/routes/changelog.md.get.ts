@@ -1,5 +1,5 @@
 export default defineCachedEventHandler(async (event) => {
-  const releases = await fetchRawReleases()
+  const releases = await fetchRawReleases() || []
 
   const lines: string[] = [
     '# Nuxt Changelog',
