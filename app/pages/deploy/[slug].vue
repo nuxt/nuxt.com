@@ -97,7 +97,14 @@ links.push({
         <template #title>
           <div class="flex items-center gap-4">
             <UIcon v-if="provider.logoIcon" :name="provider.logoIcon" class="w-10" />
-            <NuxtImg v-else :src="provider.logoSrc" width="40" height="40" class="size-10" :alt="`${provider.title} logo`" />
+            <NuxtImg
+              v-else
+              :src="provider.logoSrc"
+              width="40"
+              height="40"
+              class="size-10"
+              :alt="`${provider.title} logo`"
+            />
 
             <span>{{ provider.title }}</span>
           </div>
