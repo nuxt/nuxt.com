@@ -61,7 +61,7 @@ function copyRelease(release: Release) {
     <div class="relative border-b border-default xl:border-b-0 xl:sticky xl:inset-y-0 xl:h-screen overflow-hidden">
       <div class="absolute -right-1/2 z-[-1] rounded-full bg-primary blur-[300px] size-60 sm:size-100 transform -translate-y-1/2 top-1/2" />
 
-      <div class="h-full flex flex-col justify-center px-6 sm:px-12 lg:px-16 py-12 sm:py-16">
+      <div class="h-full flex flex-col justify-center px-6 sm:px-12 lg:px-16 py-12 sm:py-16 xl:ps-[max(2rem,calc((100vw-var(--ui-container))/2+2rem))]">
         <h1 class="text-4xl sm:text-5xl font-bold text-highlighted tracking-tight">
           {{ title }}
         </h1>
