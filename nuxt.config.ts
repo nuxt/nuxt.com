@@ -7,6 +7,7 @@ const { resolve } = createResolver(import.meta.url)
 export default defineNuxtConfig({
   modules: [
     '@nuxt/ui',
+    '@nuxt/a11y',
     'nuxt-content-twoslash',
     '@nuxt/test-utils',
     '@nuxt/content',

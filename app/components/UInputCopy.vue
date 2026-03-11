@@ -45,7 +45,7 @@ function copyValue() {
             '!text-primary cursor-default': copied,
             'cursor-copy': !copied
           }"
-          aria-label="copy button"
+          :aria-label="label ? `Copy "${label}" to clipboard` : 'Copy command to clipboard'"
           @click="copyValue"
         />
       </template>

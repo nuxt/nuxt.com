@@ -37,6 +37,28 @@ test.describe('User Interactions', () => {
 })
 
 test.describe('Accessibility', () => {
+  test('skip to main content link is present and targets main landmark', async ({ page, goto }) => {
+    await goto('/')
+
+    const skipLink = page.getByTestId('skip-to-main-content')
+    await expect(skipLink).toBeAttached()
+    await expect(skipLink).toHaveAttribute('href', '#main-content')
+    await expect(skipLink).toHaveText('Skip to main content')
+
+    const mainContent = page.locator('#main-content')
+    await expect(mainContent).toBeAttached()
+  })
+
+  test('skip link navigates to main content on click', async ({ page, goto }) => {
+    await goto('/')
+
+    const skipLink = page.getByTestId('skip-to-main-content')
+    await skipLink.click()
+
+    const mainContent = page.locator('#main-content')
+    await expect(mainContent).toBeInViewport()
+  })
+
   test('main navigation links are keyboard accessible', async ({ page, goto }) => {
     await goto('/')
 
