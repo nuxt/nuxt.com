@@ -1,7 +1,7 @@
 import { parseMarkdown } from '@nuxtjs/mdc/runtime'
 
 import type { H3Event } from 'h3'
-import type { BaseModule, Module, ModuleContributor, ModuleStats } from '#shared/types'
+import type { BaseModule, Module, ModuleContributor, ModuleHealth, ModuleStats } from '#shared/types'
 import type { NpmDownloadStats } from '../types/npm'
 
 export function isBot(username: string) {
@@ -81,6 +81,73 @@ export async function fetchModuleContributors(_event: H3Event, module: BaseModul
     console.error(`Cannot fetch github contributors info for ${module.repo}: ${err}`)
     return []
   }
+}
+
+interface NuxtCareModuleSlim {
+  name: string
+  npm: string
+  score: number
+  status: string
+  lastUpdated: string | null
+}
+
+export async function fetchBulkModuleHealth(_event: H3Event, modules: BaseModule[]): Promise<Record<string, ModuleHealth>> {
+  const result: Record<string, ModuleHealth> = {}
+  const uncached: BaseModule[] = []
+
+  // Check KV cache first
+  for (const module of modules) {
+    const cached = await kv.get<ModuleHealth>(`module:health:${module.name}`)
+    if (cached) {
+      result[module.name] = cached
+    } else {
+      uncached.push(module)
+    }
+  }
+
+  if (!uncached.length) return result
+
+  const CHUNK_SIZE = 50
+  const statusColorMap: Record<string, string> = {
+    optimal: '#22c55e',
+    stable: '#84cc16',
+    degraded: '#eab308',
+    critical: '#ef4444',
+    unknown: '#6b7280'
+  }
+  const npmToModule = new Map(uncached.map(m => [m.npm, m]))
+
+  console.info(`Fetching health for ${uncached.length} modules from nuxt.care (${Math.ceil(uncached.length / CHUNK_SIZE)} chunks)...`)
+  for (let i = 0; i < uncached.length; i += CHUNK_SIZE) {
+    const chunk = uncached.slice(i, i + CHUNK_SIZE)
+    try {
+      const query = new URLSearchParams()
+      query.set('slim', 'true')
+      for (const m of chunk) {
+        query.append('package', m.npm)
+      }
+      const data = await $fetch<NuxtCareModuleSlim[]>(`https://nuxt.care/api/v1/modules?${query.toString()}`, {
+        timeout: 10_000,
+        retry: 2,
+        retryDelay: 1000
+      })
+      for (const item of data) {
+        const module = npmToModule.get(item.npm)
+        if (!module) continue
+        const health: ModuleHealth = {
+          score: item.score,
+          color: statusColorMap[item.status] || '#6b7280',
+          status: item.status
+        }
+        result[module.name] = health
+        await kv.set(`module:health:${module.name}`, health, { ttl: 60 * 60 * 24 })
+      }
+    } catch (err) {
+      console.error(`Cannot fetch bulk health from nuxt.care (chunk ${Math.floor(i / CHUNK_SIZE) + 1}): ${err}`)
+    }
+  }
+
+  return result
 }
 
 export async function fetchModuleReadme(_event: H3Event, module: BaseModule) {

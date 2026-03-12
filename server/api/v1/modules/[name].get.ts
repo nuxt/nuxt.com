@@ -16,17 +16,19 @@ export default defineCachedEventHandler(async (event) => {
     })
   }
 
-  const [stats, contributors, readme] = await Promise.all([
+  const [stats, contributors, readme, bulkHealth] = await Promise.all([
     fetchModuleStats(event, module),
     fetchModuleContributors(event, module),
-    fetchModuleReadme(event, module)
+    fetchModuleReadme(event, module),
+    fetchBulkModuleHealth(event, [module])
   ])
   return {
     ...module,
     generatedAt: new Date().toISOString(),
     contributors,
     stats,
-    readme
+    readme,
+    health: bulkHealth[module.name] || null
   } satisfies Module
 }, {
   name: 'modules:v1',
