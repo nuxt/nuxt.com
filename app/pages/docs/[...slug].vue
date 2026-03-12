@@ -185,6 +185,21 @@ function refreshHeading(opened: boolean) {
             <UBreadcrumb :items="breadcrumb" />
           </template>
 
+          <template #title>
+            <div class="flex items-center gap-2 flex-wrap">
+              <span>{{ page.title }}</span>
+              <UBadge
+                v-if="page.minimalVersion?.trim()"
+                :label="`v${page.minimalVersion}`"
+                color="info"
+                variant="subtle"
+                size="xs"
+                class="align-middle"
+                :aria-label="`Minimum Nuxt version: v${page.minimalVersion}`"
+              />
+            </div>
+          </template>
+
           <template #links>
             <UButton
               v-for="link in page.links?.map(link => ({ ...link, size: 'md' }))"
