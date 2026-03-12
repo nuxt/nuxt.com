@@ -70,6 +70,7 @@
   "devDependencies": {
     "@ai-sdk/mcp": "^1.0.25",
     "@iconify-json/vscode-icons": "^1.2.44",
+    "@nuxt/a11y": "1.0.0-alpha.1",
     "@nuxt/devtools": "^3.2.3",
     "@nuxt/eslint": "^1.15.2",
     "@nuxt/modules": "^0.6.0-fdc88d",
