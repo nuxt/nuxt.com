@@ -23,7 +23,9 @@ export default defineNuxtConfig({
     'nuxt-charts',
     'nuxt-auth-utils',
     '@nuxtjs/mcp-toolkit',
-    '@nuxt/hints'
+    '@nuxt/hints',
+    '@vercel/analytics',
+    '@vercel/speed-insights'
   ],
   $development: {
     site: {
