@@ -53,7 +53,7 @@
     "feed": "^5.2.0",
     "h3": "^1.15.6",
     "little-date": "^1.2.1",
-    "motion-v": "^1.10.3",
+    "motion-v": "^2.0.0",
     "nuxt": "^4.3.1",
     "nuxt-auth-utils": "^0.5.29",
     "nuxt-charts": "^2.1.3",
