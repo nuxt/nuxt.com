@@ -26,6 +26,12 @@ async function npmFetch<T>(url: string): Promise<T | null> {
       const isRateLimited = err?.status === 429 || err?.statusCode === 429
       const isServerError = err?.status >= 500 || err?.statusCode >= 500
 
+      const isNotFound = err?.status === 404 || err?.statusCode === 404
+      if (isNotFound) {
+        console.warn(`Package not found: ${url}`)
+        return null
+      }
+
       if (!isRateLimited && !isServerError) {
         throw err
       }

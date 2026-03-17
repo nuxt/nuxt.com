@@ -17,40 +17,54 @@ export const fetchModules = cachedFunction(async (_event: H3Event): Promise<Modu
   maxAge: 10 * 60 // 10 minutes
 })
 
-export async function fetchModuleStats(event: H3Event, module: BaseModule, preloadedNpmStats?: NpmDownloadStats) {
+export async function fetchModuleStats(event: H3Event, module: BaseModule, preloadedNpmStats?: NpmDownloadStats): Promise<ModuleStats> {
   const key = `module:stats:${module.name}`
   const cached = await kv.get<ModuleStats>(key)
   if (cached) {
     return cached
   }
   console.info(`Fetching module ${module.name} stats...`)
-  const ghRepo = module.repo.split('#')[0]!
-  const [owner, name] = ghRepo.split('/')
-  const [npmInfos, npmStats, repo] = await Promise.all([
-    npm.fetchPackage(module.npm),
-    preloadedNpmStats || npm.fetchPackageStats(module.npm, 'last-month'),
-    github.fetchRepo(event, owner!, name!)
-      .then((repo) => {
-        return {
-          stars: repo.stars,
-          watchers: repo.watchers,
-          forks: repo.forks,
-          defaultBranch: repo.defaultBranch
-        }
-      })
-  ])
-  const stats = {
-    version: npmInfos?.['dist-tags']?.latest || '0.0.0',
-    downloads: npmStats.downloads,
-    stars: repo.stars,
-    watchers: repo.watchers,
-    forks: repo.forks,
-    defaultBranch: repo.defaultBranch,
-    publishedAt: +new Date(npmInfos?.time?.modified || Date.now()),
-    createdAt: +new Date(npmInfos?.time?.created || Date.now())
-  } satisfies ModuleStats
-  await kv.set(key, stats, { ttl: 60 * 60 * 24 }) // cache for 1 day
-  return stats
+  try {
+    const ghRepo = module.repo.split('#')[0]!
+    const [owner, name] = ghRepo.split('/')
+    const [npmInfos, npmStats, repo] = await Promise.all([
+      npm.fetchPackage(module.npm),
+      preloadedNpmStats || npm.fetchPackageStats(module.npm, 'last-month'),
+      github.fetchRepo(event, owner!, name!)
+        .then((repo) => {
+          return {
+            stars: repo.stars,
+            watchers: repo.watchers,
+            forks: repo.forks,
+            defaultBranch: repo.defaultBranch
+          }
+        })
+    ])
+    const stats = {
+      version: npmInfos?.['dist-tags']?.latest || '0.0.0',
+      downloads: npmStats.downloads,
+      stars: repo.stars,
+      watchers: repo.watchers,
+      forks: repo.forks,
+      defaultBranch: repo.defaultBranch,
+      publishedAt: +new Date(npmInfos?.time?.modified || Date.now()),
+      createdAt: +new Date(npmInfos?.time?.created || Date.now())
+    } satisfies ModuleStats
+    await kv.set(key, stats, { ttl: 60 * 60 * 24 }) // cache for 1 day
+    return stats
+  } catch (err) {
+    console.error(`Failed to fetch stats for module ${module.name}: ${err}`)
+    return {
+      version: '0.0.0',
+      downloads: 0,
+      stars: 0,
+      watchers: 0,
+      forks: 0,
+      defaultBranch: 'main',
+      publishedAt: Date.now(),
+      createdAt: Date.now()
+    } satisfies ModuleStats
+  }
 }
 
 interface UnghContributor {
