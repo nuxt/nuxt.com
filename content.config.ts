@@ -216,8 +216,7 @@ export default defineContentConfig({
       source: [docsV5Source, examplesV5Source],
       schema: z.object({
         titleTemplate: z.string().optional(),
-        links: z.array(Button),
-        rawbody: z.string()
+        links: z.array(Button)
       })
     }),
     docsv4: defineCollection({
@@ -225,8 +224,7 @@ export default defineContentConfig({
       source: [docsV4Source, examplesV4Source],
       schema: z.object({
         titleTemplate: z.string().optional(),
-        links: z.array(Button),
-        rawbody: z.string()
+        links: z.array(Button)
       })
     }),
     docsv3: defineCollection({
@@ -234,8 +232,7 @@ export default defineContentConfig({
       source: [docsV3Source, examplesV3Source],
       schema: z.object({
         titleTemplate: z.string().optional(),
-        links: z.array(Button),
-        rawbody: z.string()
+        links: z.array(Button)
       })
     }),
     blog: defineCollection({
@@ -247,8 +244,7 @@ export default defineContentConfig({
         date: z.string().date(),
         draft: z.boolean().default(false),
         category: z.enum(['Release', 'Tutorial', 'Announcement', 'Article']),
-        tags: z.array(z.string()),
-        rawbody: z.string()
+        tags: z.array(z.string())
       })
     }),
     landing: defineCollection({
@@ -279,8 +275,7 @@ export default defineContentConfig({
         logoIcon: z.string(),
         category: z.string(),
         nitroPreset: z.string(),
-        website: z.string().url(),
-        rawbody: z.string()
+        website: z.string().url()
       })
     }),
     manualSponsors: defineCollection({

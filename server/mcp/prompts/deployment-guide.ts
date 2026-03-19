@@ -10,7 +10,7 @@ export default defineMcpPrompt({
     const event = useEvent()
 
     const deployProviders = await queryCollection(event, 'deploy')
-      .select('title', 'path', 'description', 'rawbody', 'logoSrc', 'logoIcon', 'category', 'nitroPreset', 'website', 'sponsor')
+      .select('title', 'path', 'description')
       .all()
 
     const allProviders = deployProviders?.map(p => ({
@@ -24,20 +24,12 @@ export default defineMcpPrompt({
       p.title.toLowerCase().includes(provider.toLowerCase())
     )
 
-    let providerDetails = null
+    let providerContent: string | null = null
     if (matchingProvider) {
-      providerDetails = {
-        title: matchingProvider.title,
-        path: matchingProvider.path,
-        description: matchingProvider.description,
-        content: matchingProvider.rawbody,
-        logoSrc: matchingProvider.logoSrc,
-        logoIcon: matchingProvider.logoIcon,
-        category: matchingProvider.category,
-        nitroPreset: matchingProvider.nitroPreset,
-        website: matchingProvider.website,
-        sponsor: matchingProvider.sponsor,
-        url: `https://nuxt.com${matchingProvider.path}`
+      try {
+        providerContent = await $fetch<string>(`/raw${matchingProvider.path}.md`)
+      } catch {
+        providerContent = null
       }
     }
 
@@ -47,7 +39,7 @@ export default defineMcpPrompt({
           role: 'user' as const,
           content: {
             type: 'text' as const,
-            text: `Help me deploy my Nuxt application to ${provider}. ${providerDetails ? `Here are the deployment instructions: ${JSON.stringify(providerDetails, null, 2)}` : `Here are all available providers: ${JSON.stringify(allProviders, null, 2)}`}`
+            text: `Help me deploy my Nuxt application to ${provider}. ${providerContent ? `Here are the deployment instructions:\n\n${providerContent}` : `Here are all available providers: ${JSON.stringify(allProviders, null, 2)}`}`
           }
         }
       ]

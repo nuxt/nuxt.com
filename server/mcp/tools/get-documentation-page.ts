@@ -1,4 +1,3 @@
-import { queryCollection } from '@nuxt/content/server'
 import { z } from 'zod'
 
 export default defineMcpTool({
@@ -31,30 +30,24 @@ Common Issues:
 - "/docs/4.x/guide/going-further/debugging" - debugging
 - "/docs/4.x/guide/going-further/error-handling" - errors`,
   inputSchema: {
-    path: z.string().describe('The path to the documentation page (e.g., /docs/4.x/getting-started/introduction)')
+    path: z.string().describe('The path to the documentation page (e.g., /docs/4.x/getting-started/introduction)'),
+    sections: z.array(z.string()).optional().describe('Specific h2 section titles to return (e.g., ["Usage", "API"]). If omitted, returns full documentation.')
   },
   cache: '30m',
-  async handler({ path }) {
-    const event = useEvent()
-    const docsVersion = path.includes('/docs/5.x') ? 'docsv5' : path.includes('/docs/4.x') ? 'docsv4' : 'docsv3'
+  async handler({ path, sections }) {
+    try {
+      const fullContent = await $fetch<string>(`/raw${path}.md`)
 
-    const page = await queryCollection(event, docsVersion)
-      .where('path', '=', path)
-      .select('title', 'path', 'description', 'rawbody', 'links')
-      .first()
+      let content = fullContent
+      if (sections?.length) {
+        content = extractSections(fullContent, sections)
+      }
 
-    if (!page) {
-      return errorResult('Documentation page not found')
+      return {
+        content: [{ type: 'text' as const, text: content }]
+      }
+    } catch (error) {
+      return errorResult(`Documentation page not found: ${error}`)
     }
-
-    return jsonResult({
-      title: page.title,
-      path: page.path,
-      description: page.description,
-      content: page.rawbody,
-      version: page.path.includes('/docs/5.x') ? '5.x' : page.path.includes('/docs/4.x') ? '4.x' : '3.x',
-      links: page.links,
-      url: `https://nuxt.com${page.path}`
-    })
   }
 })

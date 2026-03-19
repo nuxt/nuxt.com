@@ -1,5 +1,4 @@
 import { z } from 'zod'
-import { queryCollection } from '@nuxt/content/server'
 
 export default defineMcpTool({
   description: `Retrieves the full content and details of a specific Nuxt blog post.
@@ -13,32 +12,24 @@ WHEN NOT TO USE: If you don't know the exact path and need to search/discover, u
 
 EXAMPLES: "/blog/v4", "/blog/nuxt3", "/blog/nuxt-on-the-edge"`,
   inputSchema: {
-    path: z.string().describe('The path to the blog post (e.g., /blog/v4)')
+    path: z.string().describe('The path to the blog post (e.g., /blog/v4)'),
+    sections: z.array(z.string()).optional().describe('Specific h2 section titles to return. If omitted, returns full content.')
   },
   cache: '1h',
-  async handler({ path }) {
-    const event = useEvent()
+  async handler({ path, sections }) {
+    try {
+      const fullContent = await $fetch<string>(`/raw${path}.md`)
 
-    const post = await queryCollection(event, 'blog')
-      .where('path', '=', path)
-      .select('title', 'path', 'description', 'rawbody', 'date', 'category', 'tags', 'authors', 'image')
-      .first()
+      let content = fullContent
+      if (sections?.length) {
+        content = extractSections(fullContent, sections)
+      }
 
-    if (!post) {
-      return errorResult('Blog post not found')
+      return {
+        content: [{ type: 'text' as const, text: content }]
+      }
+    } catch (error) {
+      return errorResult(`Blog post not found: ${error}`)
     }
-
-    return jsonResult({
-      title: post.title,
-      path: post.path,
-      description: post.description,
-      content: post.rawbody,
-      date: post.date,
-      category: post.category,
-      tags: post.tags,
-      authors: post.authors,
-      image: post.image,
-      url: `https://nuxt.com${post.path}`
-    })
   }
 })

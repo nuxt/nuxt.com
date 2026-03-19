@@ -1,35 +1,29 @@
 import { z } from 'zod'
-import { queryCollection } from '@nuxt/content/server'
 
 export default defineMcpTool({
   description: 'Gets the getting started guide for Nuxt. Parameters: version (enum, optional) - Nuxt version.',
   inputSchema: {
     // TODO: add '5.x' when Nuxt 5 is released
-    version: z.enum(['3.x', '4.x']).optional().default('4.x').describe('Nuxt version')
+    version: z.enum(['3.x', '4.x']).optional().default('4.x').describe('Nuxt version'),
+    sections: z.array(z.string()).optional().describe('Specific h2 section titles to return. If omitted, returns full guide.')
   },
   cache: '30m',
-  async handler({ version }) {
-    const event = useEvent()
+  async handler({ version, sections }) {
     const path = `/docs/${version}/getting-started/introduction`
-    const docsVersion = version === '4.x' ? 'docsv4' : 'docsv3'
 
-    const page = await queryCollection(event, docsVersion)
-      .where('path', '=', path)
-      .select('title', 'path', 'description', 'rawbody', 'links')
-      .first()
+    try {
+      const fullContent = await $fetch<string>(`/raw${path}.md`)
 
-    if (!page) {
-      return errorResult('Getting started guide not found')
+      let content = fullContent
+      if (sections?.length) {
+        content = extractSections(fullContent, sections)
+      }
+
+      return {
+        content: [{ type: 'text' as const, text: content }]
+      }
+    } catch (error) {
+      return errorResult(`Getting started guide not found: ${error}`)
     }
-
-    return jsonResult({
-      title: page.title,
-      path: page.path,
-      description: page.description,
-      content: page.rawbody,
-      version: version,
-      links: page.links,
-      url: `https://nuxt.com${page.path}`
-    })
   }
 })
