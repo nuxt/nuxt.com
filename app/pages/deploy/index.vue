@@ -61,7 +61,14 @@ await fetchList()
             }"
           >
             <template #leading>
-              <NuxtImg v-if="deployment.logoSrc" :src="deployment.logoSrc" width="40" height="40" class="w-10 h-10" />
+              <NuxtImg
+                v-if="deployment.logoSrc"
+                :src="deployment.logoSrc"
+                width="40"
+                height="40"
+                class="w-10 h-10"
+                :alt="`${deployment.title} logo`"
+              />
               <UIcon v-else :name="deployment.logoIcon" class="size-10 text-black dark:text-white" />
             </template>
             <UBadge
