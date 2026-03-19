@@ -10,7 +10,7 @@ export default defineMcpPrompt({
     const event = useEvent()
 
     const deployProviders = await queryCollection(event, 'deploy')
-      .select('title', 'path', 'description', 'body', 'logoSrc', 'logoIcon', 'category', 'nitroPreset', 'website', 'sponsor')
+      .select('title', 'path', 'description', 'rawbody', 'logoSrc', 'logoIcon', 'category', 'nitroPreset', 'website', 'sponsor')
       .all()
 
     const allProviders = deployProviders?.map(p => ({
@@ -30,7 +30,7 @@ export default defineMcpPrompt({
         title: matchingProvider.title,
         path: matchingProvider.path,
         description: matchingProvider.description,
-        content: matchingProvider.body,
+        content: matchingProvider.rawbody,
         logoSrc: matchingProvider.logoSrc,
         logoIcon: matchingProvider.logoIcon,
         category: matchingProvider.category,
