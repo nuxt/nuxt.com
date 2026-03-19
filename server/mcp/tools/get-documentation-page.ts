@@ -40,7 +40,7 @@ Common Issues:
 
     const page = await queryCollection(event, docsVersion)
       .where('path', '=', path)
-      .select('title', 'path', 'description', 'body', 'links')
+      .select('title', 'path', 'description', 'rawbody', 'links')
       .first()
 
     if (!page) {
@@ -51,7 +51,7 @@ Common Issues:
       title: page.title,
       path: page.path,
       description: page.description,
-      content: page.body,
+      content: page.rawbody,
       version: page.path.includes('/docs/5.x') ? '5.x' : page.path.includes('/docs/4.x') ? '4.x' : '3.x',
       links: page.links,
       url: `https://nuxt.com${page.path}`

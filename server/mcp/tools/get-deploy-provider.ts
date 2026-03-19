@@ -21,7 +21,7 @@ EXAMPLES: "/deploy/vercel", "/deploy/cloudflare", "/deploy/netlify", "/deploy/aw
 
     const provider = await queryCollection(event, 'deploy')
       .where('path', '=', path)
-      .select('title', 'path', 'description', 'body', 'logoSrc', 'logoIcon', 'category', 'nitroPreset', 'website', 'sponsor')
+      .select('title', 'path', 'description', 'rawbody', 'logoSrc', 'logoIcon', 'category', 'nitroPreset', 'website', 'sponsor')
       .first()
 
     if (!provider) {
@@ -32,7 +32,7 @@ EXAMPLES: "/deploy/vercel", "/deploy/cloudflare", "/deploy/netlify", "/deploy/aw
       title: provider.title,
       path: provider.path,
       description: provider.description,
-      content: provider.body,
+      content: provider.rawbody,
       logoSrc: provider.logoSrc,
       logoIcon: provider.logoIcon,
       category: provider.category,

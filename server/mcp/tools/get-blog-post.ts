@@ -21,7 +21,7 @@ EXAMPLES: "/blog/v4", "/blog/nuxt3", "/blog/nuxt-on-the-edge"`,
 
     const post = await queryCollection(event, 'blog')
       .where('path', '=', path)
-      .select('title', 'path', 'description', 'body', 'date', 'category', 'tags', 'authors', 'image')
+      .select('title', 'path', 'description', 'rawbody', 'date', 'category', 'tags', 'authors', 'image')
       .first()
 
     if (!post) {
@@ -32,7 +32,7 @@ EXAMPLES: "/blog/v4", "/blog/nuxt3", "/blog/nuxt-on-the-edge"`,
       title: post.title,
       path: post.path,
       description: post.description,
-      content: post.body,
+      content: post.rawbody,
       date: post.date,
       category: post.category,
       tags: post.tags,

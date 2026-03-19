@@ -15,7 +15,7 @@ export default defineMcpTool({
 
     const page = await queryCollection(event, docsVersion)
       .where('path', '=', path)
-      .select('title', 'path', 'description', 'body', 'links')
+      .select('title', 'path', 'description', 'rawbody', 'links')
       .first()
 
     if (!page) {
@@ -26,7 +26,7 @@ export default defineMcpTool({
       title: page.title,
       path: page.path,
       description: page.description,
-      content: page.body,
+      content: page.rawbody,
       version: version,
       links: page.links,
       url: `https://nuxt.com${page.path}`
