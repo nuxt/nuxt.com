@@ -97,7 +97,7 @@ const items = computed(() => [
         container: 'flex flex-col',
         wrapper: 'flex flex-col min-h-0 items-start',
         body: 'flex-none',
-        footer: 'w-full mt-auto pointer-events-auto pt-4 z-[1]'
+        footer: 'w-full mt-auto pointer-events-auto pt-4 z-1'
       }"
       @click="handleCardClick"
     >
@@ -111,21 +111,25 @@ const items = computed(() => [
         />
       </template>
 
-      <UBadge
-        v-if="showBadge && module.type === 'official'"
-        class="shine absolute top-4 right-4 sm:top-6 sm:right-6"
-        variant="subtle"
-        color="primary"
-        label="Official"
-      />
-
-      <UBadge
-        v-if="showBadge && module.sponsor"
-        class="shine absolute top-4 right-4 sm:top-6 sm:right-6"
-        variant="subtle"
-        color="important"
-        label="Sponsor"
-      />
+      <div
+        v-if="showBadge && (module.type === 'official' || module.sponsor || module.health)"
+        class="absolute top-4 right-4 sm:top-6 sm:right-6 flex items-center gap-2 z-1 pointer-events-auto"
+      >
+        <UBadge
+          v-if="module.type === 'official'"
+          class="shine"
+          variant="subtle"
+          color="primary"
+          label="Official"
+        />
+        <UBadge
+          v-if="module.sponsor"
+          class="shine"
+          variant="subtle"
+          color="important"
+          label="Sponsor"
+        />
+      </div>
 
       <template #footer>
         <USeparator type="dashed" class="mb-4" />
@@ -153,6 +157,21 @@ const items = computed(() => [
                 <span class="text-sm font-medium whitespace-normal">{{ formatNumber(module.stats.stars || 0) }}</span>
               </NuxtLink>
             </UTooltip>
+
+            <template v-if="module.health">
+              <UTooltip :text="`Health: ${module.health.status} - ${module.health.score}/100`">
+                <NuxtLink
+                  :to="`https://nuxt.care/?search=npm:${module.npm}`"
+                  class="flex items-center gap-1 hover:text-highlighted"
+                  target="_blank"
+                >
+                  <UIcon name="i-lucide-heart-pulse" class="size-4 shrink-0" :style="{ color: module.health.color }" />
+                  <span class="text-sm font-medium whitespace-normal">
+                    {{ module.health.score }}
+                  </span>
+                </NuxtLink>
+              </UTooltip>
+            </template>
 
             <UTooltip v-if="selectedSort.key === 'publishedAt'" :text="`Updated ${formatDateByLocale('en', module.stats.publishedAt)}`">
               <NuxtLink
