@@ -16,6 +16,10 @@ const props = defineProps({
 const { copy, copied } = useClipboard()
 const { track } = useAnalytics()
 
+const ariaLabel = computed(() =>
+  props.label ? `Copy "${props.label}" to clipboard` : 'Copy command to clipboard'
+)
+
 function copyValue() {
   track('Command Copied', { value: props.value })
   copy(props.value)
@@ -45,7 +49,7 @@ function copyValue() {
             '!text-primary cursor-default': copied,
             'cursor-copy': !copied
           }"
-          aria-label="copy button"
+          :aria-label="ariaLabel"
           @click="copyValue"
         />
       </template>
