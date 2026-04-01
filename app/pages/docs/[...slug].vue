@@ -122,7 +122,7 @@ const communityLinks = [{
 }]
 
 const title = computed(() => page.value?.seo?.title || page.value?.title)
-const titleTemplate = computed(() => `${findTitleTemplate(page, navigation)} ${version.value.shortTag}`)
+const titleTemplate = computed(() => `${findTitleTemplate(page, navigation, version.value.path)} ${version.value.shortTag}`)
 
 useSeoMeta({
   titleTemplate,

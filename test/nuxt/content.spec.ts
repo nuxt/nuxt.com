@@ -75,21 +75,21 @@ describe('utils/content', () => {
     it('should return default template when page has no path', () => {
       const page = { value: { path: undefined } } as any
       const navigation = { value: [] } as any
-      const result = findTitleTemplate(page, navigation)
+      const result = findTitleTemplate(page, navigation, '/docs/4.x')
       expect(result).toBe('%s · Nuxt')
     })
 
     it('should use page titleTemplate if available', () => {
       const page = { value: { path: '/test', titleTemplate: '%s | Custom' } } as any
       const navigation = { value: [] } as any
-      const result = findTitleTemplate(page, navigation)
+      const result = findTitleTemplate(page, navigation, '/docs/4.x')
       expect(result).toBe('%s | Custom')
     })
 
     it('should return default template when no matching navigation found', () => {
       const page = { value: { path: '/docs/4.x/guide/introduction' } } as any
       const navigation = { value: [] } as any
-      const result = findTitleTemplate(page, navigation)
+      const result = findTitleTemplate(page, navigation, '/docs/4.x')
       expect(result).toBe('%s · Nuxt')
     })
 
@@ -116,7 +116,7 @@ describe('utils/content', () => {
           }
         ]
       } as any
-      const result = findTitleTemplate(page, navigation)
+      const result = findTitleTemplate(page, navigation, '/docs/4.x')
       expect(result).toBe('%s · Get Started with Nuxt')
     })
 
@@ -151,7 +151,7 @@ describe('utils/content', () => {
           }
         ]
       } as any
-      const result = findTitleTemplate(page, navigation)
+      const result = findTitleTemplate(page, navigation, '/docs/4.x')
       expect(result).toBe('%s · Nuxt Composables')
     })
   })
