@@ -39,7 +39,7 @@
     "@nuxtjs/html-validator": "^2.1.0",
     "@nuxtjs/mcp-toolkit": "^0.7.0",
     "@nuxtjs/mdc": "^0.20.2",
-    "@nuxtjs/plausible": "^2.0.1",
+    "@nuxtjs/plausible": "^3.0.2",
     "@vercel/analytics": "^2.0.0",
     "@vercel/functions": "^3.4.3",
     "@vercel/speed-insights": "^2.0.0",
