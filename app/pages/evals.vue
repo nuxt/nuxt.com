@@ -88,11 +88,40 @@ const agents = computed(() => {
 })
 const selectedAgents = ref<string[]>([])
 
+// Category filter
+function getEvalCategory(evalPath: string): string {
+  if (evalPath.startsWith('nuxt-ui-')) return 'Nuxt UI'
+  if (evalPath.startsWith('nuxt-content-')) return 'Nuxt Content'
+  return 'Nuxt'
+}
+
+const categories = computed(() => {
+  const allEvals = allResults.value.flatMap(r => r.evals)
+  return [...new Set(allEvals.map(e => getEvalCategory(e.evalPath)))].sort()
+})
+const selectedCategories = ref<string[]>([])
+
 const filteredResults = computed(() => {
-  if (selectedAgents.value.length === 0) {
-    return allResults.value
+  let rows = allResults.value
+
+  if (selectedAgents.value.length > 0) {
+    rows = rows.filter(r => selectedAgents.value.includes(r.agent))
   }
-  return allResults.value.filter(r => selectedAgents.value.includes(r.agent))
+
+  if (selectedCategories.value.length > 0) {
+    rows = rows.map((r) => {
+      const evals = r.evals.filter(e => selectedCategories.value.includes(getEvalCategory(e.evalPath)))
+      const successes = evals.filter(e => e.result.success).length
+      return {
+        ...r,
+        evals,
+        totalEvals: evals.length,
+        successRate: evals.length ? Math.round((successes / evals.length) * 100) : 0
+      }
+    }).sort((a, b) => b.successRate - a.successRate)
+  }
+
+  return rows
 })
 
 // Format exported date
@@ -187,7 +216,7 @@ const columns: TableColumn<ModelRow>[] = [
     meta: {
       class: {
         th: 'text-right',
-        td: 'text-right'
+        td: 'text-right text-success font-medium'
       }
     },
     cell: ({ row }) => h('span', {}, `${row.original.successRate}%`)
@@ -262,16 +291,37 @@ const evalColumns: TableColumn<EvalResultItem>[] = [
             Agent Performance Results
           </h2>
 
-          <USelectMenu
-            v-model="selectedAgents"
-            :items="agents"
-            multiple
-            placeholder="All Agents"
-            color="neutral"
-            variant="subtle"
-            class="w-52 bg-elevated/50 hover:bg-elevated data-[state=open]:bg-elevated group"
-            :ui="{ trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200' }"
-          />
+          <div class="flex items-center gap-2">
+            <USelectMenu
+              v-model="selectedCategories"
+              :items="categories"
+              multiple
+              placeholder="All Categories"
+              color="neutral"
+              variant="subtle"
+              size="lg"
+              class="w-52 bg-elevated/50 hover:bg-elevated data-[state=open]:bg-elevated group"
+              :ui="{
+                placeholder: 'text-highlighted',
+                trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200'
+              }"
+            />
+
+            <USelectMenu
+              v-model="selectedAgents"
+              :items="agents"
+              multiple
+              placeholder="All Agents"
+              color="neutral"
+              variant="subtle"
+              size="lg"
+              class="w-52 bg-elevated/50 hover:bg-elevated data-[state=open]:bg-elevated group"
+              :ui="{
+                placeholder: 'text-highlighted',
+                trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200'
+              }"
+            />
+          </div>
         </div>
 
         <UTable
@@ -280,7 +330,7 @@ const evalColumns: TableColumn<EvalResultItem>[] = [
           :columns="columns"
           :ui="{
             thead: '[&>tr]:bg-elevated/50 border-b border-default',
-            tr: 'py-2.5 peer peer-data-[expanded=true]:[&>td]:p-4! group transition-[background-color]',
+            tr: 'py-2.5 peer peer-data-[expanded=true]:[&>td]:p-4! group transition-[background-color] cursor-default',
             td: 'py-2.5'
           }"
           class="flex-1 border border-default rounded-lg"
