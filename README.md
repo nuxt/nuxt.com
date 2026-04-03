@@ -8,6 +8,7 @@
 Welcome to the Nuxt website repository available on [nuxt.com](https://nuxt.com).
 
 [![Nuxt UI](https://img.shields.io/badge/Made%20with-Nuxt%20UI-00DC82?logo=nuxt.js&labelColor=020420)](https://ui.nuxt.com)
+[![nuxt.care](https://img.shields.io/badge/Health%20by-nuxt.care-84cc16?labelColor=020420)](https://nuxt.care)
 
 ## Setup
 
