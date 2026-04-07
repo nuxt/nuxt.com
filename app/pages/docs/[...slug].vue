@@ -79,7 +79,10 @@ watch(page, (page) => {
 }, { immediate: true })
 
 // Get the -2 item of the breadcrumb
-const currentSectionTitle = computed(() => headerLinks.value[0].children.find(link => path.value.includes(link.to))?.label || findPageBreadcrumb(navigation.value, path.value).slice(-1)[0].title)
+const currentSectionTitle = computed(() =>
+  headerLinks.value[0]?.children?.find(link => path.value.includes(link.to))?.label
+  || findPageBreadcrumb(navigation.value, path.value).slice(-1)[0]?.title
+  || '')
 
 const breadcrumb = computed(() => {
   const links = mapContentNavigation(findPageBreadcrumb(navigation.value, path.value)).map(link => ({

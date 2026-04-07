@@ -6,8 +6,6 @@ const props = defineProps<{
   open: boolean
 }>()
 
-const { t } = useLocale()
-
 const variants: { [k: string]: VariantType | ((custom: unknown) => VariantType) } = {
   normal: {
     rotate: 0,
@@ -39,7 +37,7 @@ const state = computed(() => props.open ? 'close' : 'normal')
     color="neutral"
     class="relative -me-1.5"
     square
-    :aria-label="open ? t('header.close') : t('header.open')"
+    :aria-label="open ? 'Close menu' : 'Open menu'"
   >
     <span class="absolute top-1/2 left-1/2 size-12 -translate-1/2 [@media(pointer:fine)]:hidden" />
     <svg

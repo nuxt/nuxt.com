@@ -44,7 +44,8 @@ async function npmFetch<T>(url: string): Promise<T | null> {
     }
   }
 
-  console.error(`Failed to fetch ${url} after ${maxRetries} retries: ${lastError}`)
+  const wasRateLimited = lastError?.status === 429 || lastError?.statusCode === 429
+  console[wasRateLimited ? 'warn' : 'error'](`Failed to fetch ${url} after ${maxRetries} retries: ${lastError}`)
 
   return null
 }
@@ -101,9 +102,11 @@ export const npm = {
       }
     }
 
-    // Fetch scoped packages individually (not supported in bulk queries)
+    // Fetch scoped packages individually (not supported in bulk queries).
+    // Small delay between calls to avoid npm registry 429s during full prerender/build.
     for (const pkg of scopedPackages) {
       result[pkg] = await this.fetchPackageStats(pkg, period)
+      await new Promise(r => setTimeout(r, 75))
     }
 
     return result
