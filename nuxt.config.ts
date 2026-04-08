@@ -117,7 +117,7 @@ export default defineNuxtConfig({
     '/docs/3.x/getting-started/introduction': { prerender: true },
     '/docs/4.x/getting-started/introduction': { prerender: true },
     '/docs/5.x/getting-started/introduction': { prerender: true },
-    '/modules': { prerender: false },
+    '/modules': { isr: false, prerender: false },
     '/modules/**': { isr: 60 * 60 },
     '/changelog': { isr: 60 * 60 },
     // API
