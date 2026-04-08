@@ -117,7 +117,6 @@ export default defineNuxtConfig({
     '/docs/3.x/getting-started/introduction': { prerender: true },
     '/docs/4.x/getting-started/introduction': { prerender: true },
     '/docs/5.x/getting-started/introduction': { prerender: true },
-    '/modules': { prerender: true },
     '/modules/**': { isr: 60 * 60 },
     '/changelog': { isr: 60 * 60 },
     // API
@@ -412,10 +411,7 @@ export default defineNuxtConfig({
   nitro: {
     prerender: {
       crawlLinks: true,
-      ignore: [
-        route => route.startsWith('/modules/'),
-        route => route.startsWith('/admin')
-      ],
+      ignore: ['/modules', '/modules/**', '/admin', '/admin/**'],
       autoSubfolderIndex: false
     }
   },

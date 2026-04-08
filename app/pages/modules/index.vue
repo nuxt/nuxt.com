@@ -47,14 +47,6 @@ defineShortcuts({
   }
 })
 
-const breakpoints = useBreakpoints({
-  sm: 640,
-  md: 768,
-  lg: 1024
-}, { ssrWidth: 1024 })
-
-const isMobile = breakpoints.smaller('sm')
-
 const ITEMS_PER_PAGE = 9
 const SCROLL_THRESHOLD = 450
 const displayedModules = ref<Module[]>([])
@@ -143,7 +135,9 @@ initializeModules()
 
 <template>
   <UContainer ref="el">
-    <LazyModulesMarquee :modules="modules" />
+    <ClientOnly>
+      <LazyModulesMarquee :modules="modules" />
+    </ClientOnly>
 
     <UPageHero
       class="z-20 relative pt-24"
@@ -189,7 +183,7 @@ initializeModules()
               </template>
             </UInput>
 
-            <div v-if="!isMobile" class="flex gap-2 sm:w-auto">
+            <div class="hidden sm:flex gap-2 sm:w-auto">
               <USelectMenu
                 :model-value="selectedSort"
                 :items="sorts"
@@ -212,7 +206,7 @@ initializeModules()
             </div>
           </div>
 
-          <div v-if="isMobile" class="flex gap-2">
+          <div class="flex sm:hidden gap-2">
             <USelectMenu
               :model-value="selectedCategory"
               :items="categories"

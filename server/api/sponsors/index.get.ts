@@ -1,10 +1,16 @@
 import type { Sponsor, SponsorType } from '#shared/types'
 
 export default cachedEventHandler(async (event) => {
-  const sponsors = await Promise.all([
-    fetchGithubSponsors(event),
-    fetchOpenCollectiveSponsors(event)
-  ])
+  let sponsors: [Sponsor[], Sponsor[]]
+  try {
+    sponsors = await Promise.all([
+      fetchGithubSponsors(event),
+      fetchOpenCollectiveSponsors(event)
+    ])
+  } catch (e) {
+    console.warn('[sponsors] Failed to load sponsor data, returning empty tiers:', e)
+    sponsors = [[], []]
+  }
 
   const sponsorsByTier: Record<SponsorType, Array<Sponsor>> = {
     diamond: [],
