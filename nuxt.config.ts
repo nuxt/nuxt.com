@@ -413,7 +413,7 @@ export default defineNuxtConfig({
     prerender: {
       crawlLinks: true,
       ignore: [
-        route => route.startsWith('/modules'),
+        route => route === '/modules' || route.startsWith('/modules/'),
         route => route.startsWith('/admin')
       ],
       autoSubfolderIndex: false
