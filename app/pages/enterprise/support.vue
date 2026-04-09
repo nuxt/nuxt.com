@@ -16,11 +16,8 @@ useSeoMeta({
   title,
   description,
   ogDescription: description,
-  ogTitle: `${title} · Enterprise`
-})
-
-defineOgImage({
-  url: '/assets/enterprise/support/social-card.png'
+  ogTitle: `${title} · Enterprise`,
+  ogImage: '/assets/enterprise/support/social-card.png'
 })
 </script>
 

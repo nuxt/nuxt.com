@@ -78,8 +78,9 @@ useSeoMeta({
   ogTitle: `${title} · Nuxt Modules`
 })
 
-defineOgImageComponent('Module', {
-  module: module.value,
+defineOgImage('Module', {
+  icon: module.value.icon,
+  npm: module.value.npm,
   headline: 'Nuxt Modules',
   title,
   description

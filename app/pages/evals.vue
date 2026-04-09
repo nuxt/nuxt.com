@@ -52,7 +52,7 @@ useSeoMeta({
   ogDescription: description,
   ogTitle: title
 })
-defineOgImageComponent('Docs', { title, description })
+defineOgImage('Docs', { title, description })
 
 // Build experiment map by name
 const experimentMap = computed(() => {

@@ -15,7 +15,7 @@ useSeoMeta({
   ogDescription: description,
   ogTitle: title
 })
-defineOgImageComponent('Docs', {
+defineOgImage('Docs', {
   headline: 'Changelog',
   title,
   description

@@ -30,13 +30,12 @@ useSeoMeta({
   title,
   description,
   ogDescription: description,
-  ogTitle: `${title} · Nuxt Blog`
+  ogTitle: `${title} · Nuxt Blog`,
+  ...(article.value.image ? { ogImage: article.value.image } : {})
 })
 
-if (article.value.image) {
-  defineOgImage({ url: article.value.image })
-} else {
-  defineOgImageComponent('Docs', {
+if (!article.value.image) {
+  defineOgImage('Docs', {
     headline: 'Blog',
     title,
     description
