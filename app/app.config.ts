@@ -4,22 +4,24 @@ export default defineAppConfig({
       {
         category: 'Getting Started',
         items: [
-          'How to create a new project?',
-          'Differences between Nuxt 3 and 4?',
-          'How does file-based routing work?'
+          'Create a new Nuxt project',
+          'What\'s new in Nuxt 4?',
+          'Show me a starter template'
         ]
       },
       {
-        category: 'Data Fetching',
+        category: 'Features',
         items: [
-          'How to fetch data?',
-          'useFetch vs useAsyncData?'
+          'useFetch vs useAsyncData?',
+          'How does file-based routing work?',
+          'Add Pinia to my project'
         ]
       },
       {
-        category: 'Deployment',
+        category: 'Deploy & Explore',
         items: [
-          'How to deploy a Nuxt app?',
+          'Deploy to Vercel',
+          'Latest blog posts',
           'Available rendering modes?'
         ]
       }

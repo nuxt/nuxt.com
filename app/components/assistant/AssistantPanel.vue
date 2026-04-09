@@ -10,12 +10,12 @@ const route = useRoute()
 const toast = useToast()
 const input = ref('')
 
-const indexPages = new Set(['/docs', '/blog', '/changelog'])
+const indexPages = new Set(['/docs', '/blog', '/changelog', '/modules'])
 
 const currentPage = computed(() => {
   const path = route.path
   if (indexPages.has(path)) return null
-  if (!path.startsWith('/docs/') && !path.startsWith('/blog/') && !path.startsWith('/changelog/')) return null
+  if (!path.startsWith('/docs/') && !path.startsWith('/blog/') && !path.startsWith('/changelog/') && !path.startsWith('/modules/')) return null
   return path
 })
 
@@ -76,13 +76,70 @@ const canClear = computed(() => messages.value.length > 0 || chat.messages.lengt
 type ToolPart = ToolUIPart | DynamicToolUIPart
 type ToolState = ToolPart['state']
 
+interface ModuleCardData {
+  name: string
+  npm?: string
+  description?: string
+  icon?: string
+  category?: string
+  repo?: string
+  website?: string
+  downloads?: number
+  stars?: number
+}
+
+interface TemplateCardData {
+  name: string
+  slug: string
+  description?: string
+  repo?: string
+  demo?: string
+  badge?: string
+  purchase?: string
+}
+
+interface BlogCardData {
+  title: string
+  description?: string
+  path: string
+  date?: string
+  image?: string
+  category?: string
+  authors?: Array<{ name: string, avatar?: string }>
+}
+
+interface HostingCardData {
+  title: string
+  description?: string
+  path: string
+  logoSrc?: string
+  logoIcon?: string
+  category?: string
+  nitroPreset?: string
+  website?: string
+}
+
+interface PlaygroundCardData {
+  url: string
+  repo: string
+  title?: string
+  file?: string
+  dir?: string
+}
+
 function getToolMessage(state: ToolState, toolName: string, toolInput: Record<string, string | undefined>) {
   const searchVerb = state === 'output-available' ? 'Searched' : 'Searching'
   const readVerb = state === 'output-available' ? 'Read' : 'Reading'
 
   return {
     'list-pages': `${searchVerb} pages`,
-    'get-page': `${readVerb} ${toolInput.path || '...'}`
+    'get-page': `${readVerb} ${toolInput.path || '...'}`,
+    'list-modules': `${searchVerb} modules`,
+    'get-module': `${readVerb} module ${toolInput.slug || '...'}`,
+    'show_template': `${state === 'output-available' ? 'Found' : 'Finding'} template ${toolInput.name || '...'}`,
+    'show_blog_post': `${state === 'output-available' ? 'Found' : 'Finding'} blog post`,
+    'show_hosting': `${state === 'output-available' ? 'Found' : 'Finding'} hosting provider`,
+    'open_playground': `${state === 'output-available' ? 'Generated' : 'Generating'} playground`
   }[toolName] || `${searchVerb} ${toolName}`
 }
 
@@ -94,8 +151,81 @@ function getToolIcon(part: ToolPart): string {
   const toolName = getToolName(part)
 
   return {
-    'get-page': 'i-lucide-file-text'
+    'get-page': 'i-lucide-file-text',
+    'list-modules': 'i-lucide-box',
+    'get-module': 'i-lucide-box',
+    'show_template': 'i-lucide-layout-template',
+    'show_blog_post': 'i-lucide-newspaper',
+    'show_hosting': 'i-lucide-server',
+    'open_playground': 'i-simple-icons-stackblitz'
   }[toolName] || 'i-lucide-search'
+}
+
+function getModuleCards(part: ToolPart): ModuleCardData[] {
+  if (part.state !== 'output-available' || !part.output) return []
+
+  const toolName = getToolName(part)
+  const output = part.output as Record<string, unknown>
+
+  if (toolName === 'get-module') {
+    const content = (output.content ?? output) as Array<{ text?: string }> | Record<string, unknown>
+    let data: Record<string, unknown> | undefined
+    if (Array.isArray(content)) {
+      const text = content.find(c => c.text)?.text
+      if (text) {
+        try {
+          data = JSON.parse(text)
+        } catch {
+          // ignore malformed JSON
+        }
+      }
+    } else {
+      data = content
+    }
+    if (data?.name) {
+      return [{
+        name: data.name as string,
+        npm: data.npm as string | undefined,
+        description: data.description as string | undefined,
+        icon: data.icon as string | undefined,
+        category: data.category as string | undefined,
+        repo: data.repo as string | undefined,
+        website: data.website as string | undefined,
+        downloads: (data.stats as Record<string, number> | undefined)?.downloads,
+        stars: (data.stats as Record<string, number> | undefined)?.stars
+      }]
+    }
+  }
+
+  if (toolName === 'list-modules') {
+    const content = (output.content ?? output) as Array<{ text?: string }> | unknown
+    let items: Record<string, unknown>[] = []
+    if (Array.isArray(content)) {
+      const text = content.find((c: { text?: string }) => c.text)?.text
+      if (text) {
+        try {
+          items = JSON.parse(text)
+        } catch {
+          // ignore malformed JSON
+        }
+      }
+    }
+    if (Array.isArray(items)) {
+      return items.filter(m => m.name).slice(0, 5).map(m => ({
+        name: m.name as string,
+        npm: m.npm as string | undefined,
+        description: m.description as string | undefined,
+        icon: m.icon as string | undefined,
+        category: m.category as string | undefined,
+        repo: m.repo as string | undefined,
+        website: m.website as string | undefined,
+        downloads: (m.stats as Record<string, number> | undefined)?.downloads,
+        stars: (m.stats as Record<string, number> | undefined)?.stars
+      }))
+    }
+  }
+
+  return []
 }
 
 function getToolOutput(part: ToolPart): string | undefined {
@@ -255,8 +385,83 @@ defineShortcuts({
                 :streaming="isToolStreaming(part)"
                 chevron="leading"
               >
-                <AssistantToolSources :sources="getSources(part)" />
+                <ToolsToolSources :sources="getSources(part)" />
               </UChatTool>
+              <template v-else-if="getToolName(part) === 'show_module'">
+                <ToolsModuleCard
+                  v-if="part.state === 'output-available' && part.output && !(part.output as Record<string, unknown>).error"
+                  v-bind="part.output as ModuleCardData"
+                />
+                <UChatTool
+                  v-else
+                  :text="isToolStreaming(part) ? 'Loading module...' : 'Module not found'"
+                  icon="i-lucide-box"
+                  :streaming="isToolStreaming(part)"
+                />
+              </template>
+              <template v-else-if="getToolName(part) === 'show_template'">
+                <ToolsTemplateCard
+                  v-if="part.state === 'output-available' && part.output && !(part.output as Record<string, unknown>).error"
+                  v-bind="part.output as TemplateCardData"
+                />
+                <UChatTool
+                  v-else
+                  :text="isToolStreaming(part) ? 'Loading template...' : 'Template not found'"
+                  icon="i-lucide-layout-template"
+                  :streaming="isToolStreaming(part)"
+                />
+              </template>
+              <template v-else-if="getToolName(part) === 'show_blog_post'">
+                <ToolsBlogCard
+                  v-if="part.state === 'output-available' && part.output && !(part.output as Record<string, unknown>).error"
+                  v-bind="part.output as BlogCardData"
+                />
+                <UChatTool
+                  v-else
+                  :text="isToolStreaming(part) ? 'Finding blog post...' : 'Blog post not found'"
+                  icon="i-lucide-newspaper"
+                  :streaming="isToolStreaming(part)"
+                />
+              </template>
+              <template v-else-if="getToolName(part) === 'show_hosting'">
+                <ToolsHostingCard
+                  v-if="part.state === 'output-available' && part.output && !(part.output as Record<string, unknown>).error"
+                  v-bind="part.output as HostingCardData"
+                />
+                <UChatTool
+                  v-else
+                  :text="isToolStreaming(part) ? 'Loading provider...' : 'Provider not found'"
+                  icon="i-lucide-server"
+                  :streaming="isToolStreaming(part)"
+                />
+              </template>
+              <template v-else-if="getToolName(part) === 'open_playground'">
+                <ToolsPlaygroundCard
+                  v-if="part.state === 'output-available' && part.output"
+                  v-bind="part.output as PlaygroundCardData"
+                />
+                <UChatTool
+                  v-else
+                  :text="isToolStreaming(part) ? 'Generating playground...' : 'Playground ready'"
+                  icon="i-simple-icons-stackblitz"
+                  :streaming="isToolStreaming(part)"
+                />
+              </template>
+              <template v-else-if="(getToolName(part) === 'get-module' || getToolName(part) === 'list-modules') && getModuleCards(part).length">
+                <UChatTool
+                  :text="getToolText(part)"
+                  :icon="getToolIcon(part)"
+                  :streaming="isToolStreaming(part)"
+                  chevron="leading"
+                />
+                <div class="flex flex-col gap-2">
+                  <ToolsModuleCard
+                    v-for="mod in getModuleCards(part)"
+                    :key="mod.name"
+                    v-bind="mod"
+                  />
+                </div>
+              </template>
               <UChatTool
                 v-else
                 :text="getToolText(part)"

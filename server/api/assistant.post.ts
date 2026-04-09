@@ -2,6 +2,11 @@ import { streamText, convertToModelMessages, createUIMessageStream, createUIMess
 import type { ToolSet } from 'ai'
 import { createMCPClient } from '@ai-sdk/mcp'
 import { anthropic } from '@ai-sdk/anthropic'
+import { showModuleTool } from '../utils/tools/show-module'
+import { createShowTemplateTool } from '../utils/tools/show-template'
+import { createShowBlogPostTool } from '../utils/tools/show-blog-post'
+import { createShowHostingTool } from '../utils/tools/show-hosting'
+import { openPlaygroundTool } from '../utils/tools/open-playground'
 
 const MCP_PATH = '/mcp'
 const MODEL = 'anthropic/claude-sonnet-4.6'
@@ -28,9 +33,14 @@ const systemPrompt = `You are the documentation assistant for Nuxt. Help users n
 - Speak as a helpful guide, not as the documentation itself
 
 **Tool usage (CRITICAL):**
-- You have tools: list-pages (discover pages) and get-page (read a page)
+- You have tools: list-pages (discover pages), get-page (read a page), list-modules, get-module, show_module, show_template, show_blog_post, show_hosting, and open_playground
 - If a page title clearly matches the question, read it directly without listing first
 - ALWAYS respond with text after using tools - never end with just tool calls
+- When the user asks about installing or using a specific module, use the show_module tool to display a rich module card
+- When the user asks about starter templates or scaffolding a project, use the show_template tool to display a template card with preview and init command
+- When the user asks about blog posts, releases, or announcements, use the show_blog_post tool to display a rich blog post card
+- When the user asks about deploying or hosting a Nuxt app, use the show_hosting tool to display a hosting provider card with deploy guide
+- When it would help the user to try code live or see a working example, use the open_playground tool to generate a StackBlitz link
 
 **WEB SEARCH:**
 - You have access to a web search tool to find current, up-to-date information
@@ -83,7 +93,12 @@ export default defineEventHandler(async (event) => {
         messages: await convertToModelMessages(messages),
         tools: {
           ...mcpTools as ToolSet,
-          web_search: anthropic.tools.webSearch_20250305()
+          web_search: anthropic.tools.webSearch_20250305(),
+          show_module: showModuleTool,
+          show_template: createShowTemplateTool(event),
+          show_blog_post: createShowBlogPostTool(event),
+          show_hosting: createShowHostingTool(event),
+          open_playground: openPlaygroundTool
         },
         onFinish: () => {
           event.waitUntil(httpClient.close())

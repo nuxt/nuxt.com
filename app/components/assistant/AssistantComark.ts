@@ -1,5 +1,5 @@
 import highlight from '@comark/nuxt/plugins/highlight'
-import AssistantSourceLink from './AssistantSourceLink.vue'
+import SourceLink from '../tools/SourceLink.vue'
 
 export default defineComarkComponent({
   name: 'AssistantComark',
@@ -7,7 +7,7 @@ export default defineComarkComponent({
     highlight()
   ],
   components: {
-    'source-link': AssistantSourceLink
+    'source-link': SourceLink
   },
   class: '*:first:mt-0 *:last:mb-0'
 })
