@@ -75,9 +75,21 @@ onMounted(() => {
   <UApp>
     <NuxtLoadingIndicator color="var(--ui-primary)" />
 
-    <NuxtLayout>
-      <NuxtPage />
-    </NuxtLayout>
+    <div class="flex">
+      <div class="flex-1 min-w-0">
+        <NuxtLayout>
+          <NuxtPage />
+        </NuxtLayout>
+
+        <ClientOnly>
+          <LazyAssistantFloatingInput />
+        </ClientOnly>
+      </div>
+
+      <ClientOnly>
+        <LazyAssistantPanel />
+      </ClientOnly>
+    </div>
 
     <ClientOnly>
       <LazyUContentSearch

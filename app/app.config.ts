@@ -1,4 +1,30 @@
 export default defineAppConfig({
+  assistant: {
+    faqQuestions: [
+      {
+        category: 'Getting Started',
+        items: [
+          'How to create a new project?',
+          'Differences between Nuxt 3 and 4?',
+          'How does file-based routing work?'
+        ]
+      },
+      {
+        category: 'Data Fetching',
+        items: [
+          'How to fetch data?',
+          'useFetch vs useAsyncData?'
+        ]
+      },
+      {
+        category: 'Deployment',
+        items: [
+          'How to deploy a Nuxt app?',
+          'Available rendering modes?'
+        ]
+      }
+    ]
+  },
   ui: {
     colors: {
       primary: 'green',

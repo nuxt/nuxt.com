@@ -25,7 +25,8 @@ export default defineNuxtConfig({
     '@nuxtjs/mcp-toolkit',
     '@nuxt/hints',
     '@vercel/analytics',
-    '@vercel/speed-insights'
+    '@vercel/speed-insights',
+    '@comark/nuxt'
   ],
   $development: {
     site: {

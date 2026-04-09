@@ -18,6 +18,7 @@ const route = useRoute()
 const nuxtApp = useNuxtApp()
 const { version } = useDocsVersion()
 const { headerLinks } = useHeaderLinks()
+const { isOpen: isAssistantOpen } = useAssistant()
 const site = useSiteConfig()
 const path = computed(() => route.path.replace(/\/$/, ''))
 
@@ -177,7 +178,12 @@ function refreshHeading(opened: boolean) {
           />
         </UPageAside>
       </template>
-      <UPage>
+      <UPage
+        :ui="isAssistantOpen ? {
+          center: 'lg:col-span-10',
+          right: 'lg:col-span-0'
+        } : undefined"
+      >
         <UPageHeader
           :ui="{
             wrapper: 'flex-row items-center flex-wrap justify-between'
@@ -236,6 +242,7 @@ function refreshHeading(opened: boolean) {
 
         <template #right>
           <ContentToc
+            v-if="!isAssistantOpen"
             :links="page.body?.toc?.links"
             :community-links="communityLinks"
             highlight
