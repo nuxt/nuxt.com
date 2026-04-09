@@ -24,7 +24,7 @@ useSeoMeta({
   ogDescription: description,
   ogTitle: title
 })
-defineOgImage('Docs', {
+defineOgImage('DocsSatori', {
   headline: 'Resources',
   title,
   description

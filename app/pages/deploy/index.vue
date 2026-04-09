@@ -21,7 +21,7 @@ useSeoMeta({
   ogTitle: title
 })
 
-defineOgImage('Docs', {
+defineOgImage('DocsSatori', {
   title: 'Deploy Nuxt',
   description
 })

@@ -25,7 +25,7 @@ useSeoMeta({
   ogDescription: page.value.description,
   ogTitle: page.value.title
 })
-defineOgImage('Docs', {
+defineOgImage('DocsSatori', {
   headline: 'Blog',
   title: page.value.title,
   description: page.value.description

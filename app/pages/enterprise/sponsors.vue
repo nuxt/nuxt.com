@@ -22,7 +22,7 @@ useSeoMeta({
   ogTitle: `${title} · Community`
 })
 
-defineOgImage('Docs', {
+defineOgImage('DocsSatori', {
   headline: 'Community',
   title,
   description

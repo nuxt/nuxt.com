@@ -152,7 +152,7 @@ if (import.meta.server) {
     ogTitle: titleTemplate.value?.includes('%s') ? titleTemplate.value.replace('%s', title.value) : title.value
   })
 
-  defineOgImage('Docs', {
+  defineOgImage('DocsSatori', {
     headline: breadcrumb.value.length ? breadcrumb.value.map(link => link.label).join(' > ') : '',
     title: title.value ?? '',
     description

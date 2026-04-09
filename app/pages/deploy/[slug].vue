@@ -32,7 +32,7 @@ useSeoMeta({
   ogTitle: `Deploy Nuxt to ${title}`
 })
 
-defineOgImage('Docs', {
+defineOgImage('DocsSatori', {
   headline: 'Deploy To',
   title,
   description

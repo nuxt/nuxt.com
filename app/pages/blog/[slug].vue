@@ -35,7 +35,7 @@ useSeoMeta({
 })
 
 if (!article.value.image) {
-  defineOgImage('Docs', {
+  defineOgImage('DocsSatori', {
     headline: 'Blog',
     title,
     description
