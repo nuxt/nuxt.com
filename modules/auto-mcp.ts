@@ -25,7 +25,15 @@ export default defineNuxtModule<ModuleOptions>({
       if (!ide) {
         return
       }
-      const modulesWithMCP = await $fetch('https://api.nuxt.com/modules').then((res: any) => res.modules.filter((module: any) => module.mcp).map(({ name, npm, mcp }: any) => ({ name, npm, mcp })))
+      let modulesWithMCP: { name: string, npm: string, mcp: string }[] = []
+      try {
+        const res = await $fetch<{ modules: { mcp?: string, name: string, npm: string }[] }>('https://api.nuxt.com/modules')
+        modulesWithMCP = res.modules
+          .filter(module => module.mcp)
+          .map(({ name, npm, mcp }) => ({ name, npm, mcp: mcp! }))
+      } catch {
+        consola.debug('[auto-mcp] Skipping module list (api.nuxt.com unreachable)')
+      }
       const localMcpJson = join(nuxt.options.rootDir, `.${ide}/mcp.json`)
       const globalMcpJson = join(homedir(), `.${ide}/mcp.json`)
       const mcpConfigs = {

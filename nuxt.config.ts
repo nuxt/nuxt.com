@@ -435,12 +435,6 @@ export default defineNuxtConfig({
       include: ['../test/nuxt']
     }
   },
-  // Docs crawl prerenders many /_og/ URLs; Satori+Resvg can exceed the default 15s per image under load.
-  ogImage: {
-    security: {
-      renderTimeout: 120_000
-    }
-  },
   hooks: {
     'content:file:beforeParse': async ({ file }) => {
       if (file.id.startsWith('docsv5/')) {
@@ -523,6 +517,12 @@ export default defineNuxtConfig({
     name: 'Nuxt',
     route: '/mcp',
     browserRedirect: '/docs/guide/ai/mcp'
+  },
+  // Docs crawl prerenders many /_og/ URLs; Satori+Resvg can exceed the default 15s per image under load.
+  ogImage: {
+    security: {
+      renderTimeout: 120_000
+    }
   },
   turnstile: {
     siteKey: '0x4AAAAAAAP2vNBsTBT3ucZi'
