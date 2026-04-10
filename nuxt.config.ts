@@ -113,6 +113,7 @@ export default defineNuxtConfig({
     '/': { prerender: true },
     '/blog/rss.xml': { prerender: true },
     '/sitemap.xml': { prerender: true },
+    '/sitemap.md': { prerender: true },
     '/404.html': { prerender: true },
     '/docs/3.x/getting-started/introduction': { prerender: true },
     '/docs/4.x/getting-started/introduction': { prerender: true },

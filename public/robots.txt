@@ -1,4 +1,23 @@
 User-agent: *
 Disallow: /docs/5.x/
 
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
 Sitemap: https://nuxt.com/sitemap.xml
+Sitemap: https://nuxt.com/sitemap.md
