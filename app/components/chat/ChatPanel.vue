@@ -52,15 +52,44 @@ watch(messages, (newMessages) => {
 
 const canClear = computed(() => messages.value.length > 0 || chat.messages.length > 0)
 
-const marqueeItems = computed(() => {
-  const items: { label: string, prompt: string }[] = []
-  for (const category of faqQuestions.value) {
-    for (const item of category.items) {
-      items.push({ label: item, prompt: item })
-    }
+const suggestions = [
+  {
+    icon: 'i-lucide-rocket',
+    title: 'Start a project',
+    description: 'Pick a starter template',
+    question: 'Show me available starter templates'
+  },
+  {
+    icon: 'i-lucide-lock',
+    title: 'Add auth',
+    description: 'User authentication setup',
+    question: 'How do I add authentication to my Nuxt app?'
+  },
+  {
+    icon: 'i-lucide-credit-card',
+    title: 'Payments',
+    description: 'Integrate Stripe',
+    question: 'How do I integrate Stripe payments in Nuxt?'
+  },
+  {
+    icon: 'i-lucide-database',
+    title: 'Database',
+    description: 'Connect a database',
+    question: 'How do I connect a database to my Nuxt app?'
+  },
+  {
+    icon: 'i-lucide-cloud',
+    title: 'Deploy',
+    description: 'Ship to production',
+    question: 'How do I deploy my Nuxt app?'
+  },
+  {
+    icon: 'i-lucide-sparkles',
+    title: 'What\'s new',
+    description: 'Latest in Nuxt 4',
+    question: 'What\'s new in Nuxt 4?'
   }
-  return items
-})
+]
 
 function onSubmit() {
   if (!input.value.trim()) return
@@ -87,11 +116,7 @@ function clearMessages() {
 
 function goBack() {
   collapseToSidebar()
-  if (window.history.length > 1) {
-    router.back()
-  } else {
-    navigateTo('/docs')
-  }
+  navigateTo('/')
 }
 
 const chatTheme = {
@@ -117,14 +142,9 @@ const chatTheme = {
     <!-- Floating toolbar -->
     <div class="absolute top-0 inset-x-0 z-10 backdrop-blur pointer-events-none">
       <div class="flex items-center justify-between px-3 py-2 pointer-events-auto">
-        <UButton
-          color="neutral"
-          variant="ghost"
-          size="sm"
-          leading-icon="i-lucide-arrow-left"
-          label="Back to docs"
-          @click="goBack"
-        />
+        <NuxtLink to="/" class="flex items-center gap-2 text-muted hover:text-highlighted transition-colors" @click="collapseToSidebar">
+          <NuxtLogo class="h-4.5 w-auto" />
+        </NuxtLink>
 
         <div class="flex items-center gap-1.5">
           <UTooltip v-if="canClear" text="New conversation">
@@ -143,35 +163,21 @@ const chatTheme = {
 
     <!-- Empty state -->
     <template v-if="!chat.messages.length">
-      <div class="flex-1 overflow-y-auto overscroll-none">
-        <div class="mx-auto w-full max-w-3xl px-4 sm:px-6 flex flex-col min-h-full">
-          <div class="flex flex-1 flex-col items-center justify-center py-8">
-            <div class="flex w-full max-w-lg flex-col items-center gap-10 text-center">
-              <div class="flex flex-col items-center gap-4">
-                <div class="relative">
-                  <img
-                    src="/icon.png"
-                    alt="Nuxt"
-                    width="72"
-                    height="72"
-                    class="size-16 rounded-full bg-muted object-cover ring-2 ring-default shadow-sm sm:size-18"
-                  >
-                  <span class="absolute -bottom-0.5 -right-0.5 flex size-7 items-center justify-center rounded-full bg-elevated text-highlighted ring-2 ring-default">
-                    <UIcon name="i-custom-ai" class="size-3.5 opacity-95" />
-                  </span>
-                </div>
-                <div class="flex flex-col gap-2">
-                  <h1 class="text-3xl sm:text-4xl text-highlighted font-bold">
-                    Ask anything about Nuxt
-                  </h1>
-                  <p class="mx-auto max-w-xs text-sm/6 text-muted">
-                    Get help with docs, modules, deployment, and more.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+      <div class="flex-1 flex flex-col items-center justify-center gap-8 p-8">
+        <svg class="absolute top-16 opacity-20 text-highlighted -z-1 size-72 sm:size-88" viewBox="0 0 300 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M168 200H279C282.542 200 285.932 198.756 289 197C292.068 195.244 295.23 193.041 297 190C298.77 186.959 300.002 183.51 300 179.999C299.998 176.488 298.773 173.04 297 170.001L222 41C220.23 37.96 218.067 35.7552 215 34C211.933 32.2448 207.542 31 204 31C200.458 31 197.067 32.2448 194 34C190.933 35.7552 188.77 37.96 187 41L168 74L130 9.99764C128.228 6.95784 126.068 3.75491 123 2C119.932 0.245087 116.542 0 113 0C109.458 0 106.068 0.245087 103 2C99.9323 3.75491 96.7717 6.95784 95 9.99764L2 170.001C0.226979 173.04 0.00154312 176.488 1.90993e-06 179.999C-0.0015393 183.51 0.229648 186.959 2 190C3.77035 193.04 6.93245 195.244 10 197C13.0675 198.756 16.4578 200 20 200H90C117.737 200 137.925 187.558 152 164L186 105L204 74L259 168H186L168 200ZM89 168H40L113 42L150 105L125.491 147.725C116.144 163.01 105.488 168 89 168Z" stroke="currentColor" stroke-width="1.5" />
+        </svg>
 
+        <div class="text-center">
+          <h1 class="text-2xl font-semibold text-highlighted">
+            Ask anything about Nuxt
+          </h1>
+          <p class="text-base text-muted mt-1">
+            Get help with docs, modules, deployment, and more
+          </p>
+        </div>
+
+        <div class="w-full max-w-2xl flex flex-col gap-6">
           <UChatPrompt
             v-model="input"
             :error="chat.error"
@@ -192,17 +198,23 @@ const chatTheme = {
             </template>
           </UChatPrompt>
 
-          <div v-if="marqueeItems.length" class="flex flex-wrap gap-2 mt-4 mb-8">
-            <UButton
-              v-for="q in marqueeItems"
-              :key="q.label"
-              :label="q.label"
-              size="sm"
-              color="neutral"
-              variant="outline"
-              class="rounded-full"
-              @click="askQuestion(q.prompt)"
-            />
+          <div class="w-full grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <button
+              v-for="suggestion in suggestions"
+              :key="suggestion.title"
+              class="flex sm:flex-col gap-3 p-4 rounded-lg border border-default bg-default hover:bg-elevated/50 text-left transition-colors cursor-pointer"
+              @click="askQuestion(suggestion.question)"
+            >
+              <UIcon :name="suggestion.icon" class="size-5 text-muted shrink-0" />
+              <div>
+                <p class="text-sm font-medium text-highlighted">
+                  {{ suggestion.title }}
+                </p>
+                <p class="text-sm text-muted mt-0.5 hidden sm:block">
+                  {{ suggestion.description }}
+                </p>
+              </div>
+            </button>
           </div>
         </div>
       </div>

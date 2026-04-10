@@ -64,7 +64,7 @@ function getToolMessage(state: ToolState, toolName: string, toolInput: Record<st
     'get-page': `${readVerb} ${toolInput.path || '...'}`,
     'list-modules': `${searchVerb} modules`,
     'get-module': `${readVerb} module ${toolInput.slug || '...'}`,
-    'show_template': `${state === 'output-available' ? 'Found' : 'Finding'} template ${toolInput.name || '...'}`,
+    'show_template': `${state === 'output-available' ? 'Found' : 'Finding'} templates`,
     'show_blog_post': `${state === 'output-available' ? 'Found' : 'Finding'} blog post`,
     'show_hosting': `${state === 'output-available' ? 'Found' : 'Finding'} hosting provider`,
     'open_playground': `${state === 'output-available' ? 'Generated' : 'Generating'} playground`

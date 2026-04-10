@@ -25,14 +25,14 @@ function copyInit() {
 </script>
 
 <template>
-  <div class="flex flex-col rounded-lg border border-default bg-elevated/50 overflow-hidden">
+  <div class="@container flex flex-col rounded-lg border border-default bg-elevated/50 overflow-hidden">
     <NuxtLink :to="`/templates`" class="block hover:bg-elevated transition-colors overflow-hidden">
       <NuxtImg
         :src="`/assets/templates/${slug}.webp`"
         :alt="name"
-        class="w-full aspect-video object-cover object-top"
+        class="w-full aspect-2/1 object-cover object-top"
         width="384"
-        height="216"
+        height="192"
         format="webp"
         loading="lazy"
       />
@@ -63,19 +63,19 @@ function copyInit() {
       </p>
     </div>
 
-    <div class="flex items-center gap-2 px-3 py-1.5 border-t border-default">
-      <div class="flex items-center gap-2.5 text-[11px] text-muted flex-1">
-        <NuxtLink v-if="demo" :to="demo" target="_blank" class="flex items-center gap-1 hover:text-default transition-colors">
-          <UIcon name="i-lucide-laptop" class="size-3" />
-          Demo
+    <div class="flex items-center gap-1.5 px-3 py-1.5 border-t border-default">
+      <div class="flex items-center gap-1 @xs:gap-2.5 flex-1">
+        <NuxtLink v-if="demo" :to="demo" target="_blank" class="flex items-center gap-1 text-muted hover:text-default transition-colors">
+          <UIcon name="i-lucide-laptop" class="size-3.5" />
+          <span class="hidden @xs:inline text-[11px]">Demo</span>
         </NuxtLink>
-        <NuxtLink v-if="repo" :to="`https://github.com/${repo}`" target="_blank" class="flex items-center gap-1 hover:text-default transition-colors">
-          <UIcon name="i-lucide-github" class="size-3" />
-          GitHub
+        <NuxtLink v-if="repo" :to="`https://github.com/${repo}`" target="_blank" class="flex items-center gap-1 text-muted hover:text-default transition-colors">
+          <UIcon name="i-simple-icons-github" class="size-3.5" />
+          <span class="hidden @xs:inline text-[11px]">GitHub</span>
         </NuxtLink>
-        <NuxtLink v-if="purchase" :to="purchase" target="_blank" class="flex items-center gap-1 hover:text-default transition-colors">
-          <UIcon name="i-lucide-credit-card" class="size-3" />
-          Purchase
+        <NuxtLink v-if="purchase" :to="purchase" target="_blank" class="flex items-center gap-1 text-muted hover:text-default transition-colors">
+          <UIcon name="i-lucide-credit-card" class="size-3.5" />
+          <span class="hidden @xs:inline text-[11px]">Purchase</span>
         </NuxtLink>
       </div>
 

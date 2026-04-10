@@ -8,6 +8,13 @@ defineProps<{
   index: number
   chat: { status: string, messages: UIMessage[] }
 }>()
+
+function getTemplates(output: unknown): TemplateCardData[] {
+  if (!output || typeof output !== 'object') return []
+  const o = output as Record<string, unknown>
+  if (Array.isArray(o.templates)) return o.templates as TemplateCardData[]
+  return []
+}
 </script>
 
 <template>
@@ -47,14 +54,20 @@ defineProps<{
       </template>
       <template v-else-if="getToolName(part) === 'show_template'">
         <UChatTool
-          :text="isToolStreaming(part) ? 'Loading template...' : (part.state === 'output-available' && part.output && !(part.output as Record<string, unknown>).error ? 'Found template' : 'Template not found')"
+          :text="isToolStreaming(part) ? 'Loading templates...' : (part.state === 'output-available' && part.output && !(part.output as Record<string, unknown>).error ? 'Found templates' : 'Templates not found')"
           icon="i-lucide-layout-template"
           :streaming="isToolStreaming(part)"
         />
-        <ToolsTemplateCard
-          v-if="part.state === 'output-available' && part.output && !(part.output as Record<string, unknown>).error"
-          v-bind="part.output as TemplateCardData"
-        />
+        <div
+          v-if="part.state === 'output-available' && part.output && !(part.output as Record<string, unknown>).error && getTemplates(part.output).length"
+          class="grid grid-cols-1 sm:grid-cols-2 gap-3"
+        >
+          <ToolsTemplateCard
+            v-for="tpl in getTemplates(part.output)"
+            :key="tpl.slug"
+            v-bind="tpl"
+          />
+        </div>
       </template>
       <template v-else-if="getToolName(part) === 'show_blog_post'">
         <UChatTool

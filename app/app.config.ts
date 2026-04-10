@@ -4,9 +4,9 @@ export default defineAppConfig({
       {
         category: 'Getting Started',
         items: [
-          'Create a new Nuxt project',
+          'Show me available starter templates',
           'What\'s new in Nuxt 4?',
-          'Show me a starter template'
+          'How do I add authentication to my Nuxt app?'
         ]
       },
       {
@@ -14,14 +14,14 @@ export default defineAppConfig({
         items: [
           'useFetch vs useAsyncData?',
           'How does file-based routing work?',
-          'Add Pinia to my project'
+          'How do I connect a database to my Nuxt app?'
         ]
       },
       {
         category: 'Deploy & Explore',
         items: [
-          'Deploy to Vercel',
-          'Latest blog posts',
+          'How do I deploy my Nuxt app?',
+          'How do I integrate Stripe payments in Nuxt?',
           'Available rendering modes?'
         ]
       }
