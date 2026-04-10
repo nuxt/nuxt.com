@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const colorMode = useColorMode()
+const route = useRoute()
 const { version } = useDocsVersion()
 const { searchGroups, searchLinks, searchTerm } = useNavigation()
 const { fetchList: fetchModules } = useModules()
@@ -82,12 +83,12 @@ onMounted(() => {
         </NuxtLayout>
 
         <ClientOnly>
-          <LazyAssistantFloatingInput />
+          <LazyAssistantFloatingInput v-if="route.path !== '/chat'" />
         </ClientOnly>
       </div>
 
       <ClientOnly>
-        <LazyAssistantPanel />
+        <LazyAssistantPanel v-if="route.path !== '/chat'" />
       </ClientOnly>
     </div>
 

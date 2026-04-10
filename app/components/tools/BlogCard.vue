@@ -16,7 +16,7 @@ const formattedDate = computed(() => {
 </script>
 
 <template>
-  <NuxtLink :to="path" class="flex flex-col rounded-lg border border-default bg-elevated/50 overflow-hidden hover:bg-elevated transition-colors">
+  <NuxtLink :to="path" class="flex flex-col rounded-lg border border-default bg-elevated/50 overflow-hidden hover:bg-elevated transition-colors max-w-sm">
     <NuxtImg
       v-if="image"
       :src="image"

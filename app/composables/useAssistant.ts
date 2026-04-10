@@ -65,12 +65,23 @@ export const useAssistant = createSharedComposable(() => {
     isOpen.value = !isOpen.value
   }
 
+  function expandToFullScreen() {
+    isOpen.value = false
+    navigateTo('/chat')
+  }
+
+  function collapseToSidebar() {
+    isOpen.value = true
+  }
+
   return {
     isOpen,
     messages,
     faqQuestions,
     open,
     close,
-    toggle
+    toggle,
+    expandToFullScreen,
+    collapseToSidebar
   }
 })

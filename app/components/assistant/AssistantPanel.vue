@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import type { ToolUIPart, DynamicToolUIPart } from 'ai'
-import { DefaultChatTransport, isToolUIPart, isReasoningUIPart, isTextUIPart, getToolName } from 'ai'
+import { DefaultChatTransport } from 'ai'
 import { Chat } from '@ai-sdk/vue'
-import { isReasoningStreaming, isToolStreaming } from '@nuxt/ui/utils/ai'
 
-const { isOpen, messages, faqQuestions } = useAssistant()
+const { isOpen, messages, faqQuestions, expandToFullScreen } = useAssistant()
 const { track } = useAnalytics()
 const route = useRoute()
 const toast = useToast()
@@ -73,176 +71,6 @@ watch(messages, (newMessages) => {
 
 const canClear = computed(() => messages.value.length > 0 || chat.messages.length > 0)
 
-type ToolPart = ToolUIPart | DynamicToolUIPart
-type ToolState = ToolPart['state']
-
-interface ModuleCardData {
-  name: string
-  npm?: string
-  description?: string
-  icon?: string
-  category?: string
-  repo?: string
-  website?: string
-  downloads?: number
-  stars?: number
-}
-
-interface TemplateCardData {
-  name: string
-  slug: string
-  description?: string
-  repo?: string
-  demo?: string
-  badge?: string
-  purchase?: string
-}
-
-interface BlogCardData {
-  title: string
-  description?: string
-  path: string
-  date?: string
-  image?: string
-  category?: string
-  authors?: Array<{ name: string, avatar?: string }>
-}
-
-interface HostingCardData {
-  title: string
-  description?: string
-  path: string
-  logoSrc?: string
-  logoIcon?: string
-  category?: string
-  nitroPreset?: string
-  website?: string
-}
-
-interface PlaygroundCardData {
-  url: string
-  repo: string
-  title?: string
-  file?: string
-  dir?: string
-}
-
-function getToolMessage(state: ToolState, toolName: string, toolInput: Record<string, string | undefined>) {
-  const searchVerb = state === 'output-available' ? 'Searched' : 'Searching'
-  const readVerb = state === 'output-available' ? 'Read' : 'Reading'
-
-  return {
-    'list-pages': `${searchVerb} pages`,
-    'get-page': `${readVerb} ${toolInput.path || '...'}`,
-    'list-modules': `${searchVerb} modules`,
-    'get-module': `${readVerb} module ${toolInput.slug || '...'}`,
-    'show_template': `${state === 'output-available' ? 'Found' : 'Finding'} template ${toolInput.name || '...'}`,
-    'show_blog_post': `${state === 'output-available' ? 'Found' : 'Finding'} blog post`,
-    'show_hosting': `${state === 'output-available' ? 'Found' : 'Finding'} hosting provider`,
-    'open_playground': `${state === 'output-available' ? 'Generated' : 'Generating'} playground`
-  }[toolName] || `${searchVerb} ${toolName}`
-}
-
-function getToolText(part: ToolPart) {
-  return getToolMessage(part.state, getToolName(part), (part.input || {}) as Record<string, string | undefined>)
-}
-
-function getToolIcon(part: ToolPart): string {
-  const toolName = getToolName(part)
-
-  return {
-    'get-page': 'i-lucide-file-text',
-    'list-modules': 'i-lucide-box',
-    'get-module': 'i-lucide-box',
-    'show_template': 'i-lucide-layout-template',
-    'show_blog_post': 'i-lucide-newspaper',
-    'show_hosting': 'i-lucide-server',
-    'open_playground': 'i-simple-icons-stackblitz'
-  }[toolName] || 'i-lucide-search'
-}
-
-function getModuleCards(part: ToolPart): ModuleCardData[] {
-  if (part.state !== 'output-available' || !part.output) return []
-
-  const toolName = getToolName(part)
-  const output = part.output as Record<string, unknown>
-
-  if (toolName === 'get-module') {
-    const content = (output.content ?? output) as Array<{ text?: string }> | Record<string, unknown>
-    let data: Record<string, unknown> | undefined
-    if (Array.isArray(content)) {
-      const text = content.find(c => c.text)?.text
-      if (text) {
-        try {
-          data = JSON.parse(text)
-        } catch {
-          // ignore malformed JSON
-        }
-      }
-    } else {
-      data = content
-    }
-    if (data?.name) {
-      return [{
-        name: data.name as string,
-        npm: data.npm as string | undefined,
-        description: data.description as string | undefined,
-        icon: data.icon as string | undefined,
-        category: data.category as string | undefined,
-        repo: data.repo as string | undefined,
-        website: data.website as string | undefined,
-        downloads: (data.stats as Record<string, number> | undefined)?.downloads,
-        stars: (data.stats as Record<string, number> | undefined)?.stars
-      }]
-    }
-  }
-
-  if (toolName === 'list-modules') {
-    const content = (output.content ?? output) as Array<{ text?: string }> | unknown
-    let items: Record<string, unknown>[] = []
-    if (Array.isArray(content)) {
-      const text = content.find((c: { text?: string }) => c.text)?.text
-      if (text) {
-        try {
-          items = JSON.parse(text)
-        } catch {
-          // ignore malformed JSON
-        }
-      }
-    }
-    if (Array.isArray(items)) {
-      return items.filter(m => m.name).slice(0, 5).map(m => ({
-        name: m.name as string,
-        npm: m.npm as string | undefined,
-        description: m.description as string | undefined,
-        icon: m.icon as string | undefined,
-        category: m.category as string | undefined,
-        repo: m.repo as string | undefined,
-        website: m.website as string | undefined,
-        downloads: (m.stats as Record<string, number> | undefined)?.downloads,
-        stars: (m.stats as Record<string, number> | undefined)?.stars
-      }))
-    }
-  }
-
-  return []
-}
-
-function getToolOutput(part: ToolPart): string | undefined {
-  if (part.state !== 'output-available' || !part.output) return undefined
-
-  const output = part.output as Record<string, unknown>
-
-  if (getToolName(part) === 'list-pages' || getToolName(part) === 'get-page') {
-    const content = (output.content ?? output) as Array<{ text?: string }> | string
-    const text = typeof content === 'string' ? content : content?.map(c => c.text).filter(Boolean).join('\n') || ''
-    return text.length > 500 ? `${text.slice(0, 500)}…` : text || undefined
-  }
-
-  const json = JSON.stringify(output, null, 2)
-  return json.length > 500 ? `${json.slice(0, 500)}…` : json
-}
-
 function onSubmit() {
   if (!input.value.trim()) return
 
@@ -267,14 +95,6 @@ function clearMessages() {
   }
   messages.value = []
   chat.messages = []
-}
-
-const pageContextPattern = /^\[Page: (\/[^\]]+)\]\s*/
-
-function parseUserMessage(text: string) {
-  const match = text.match(pageContextPattern)
-  if (!match) return { page: null, text }
-  return { page: match[1], text: text.replace(pageContextPattern, '') }
 }
 
 defineShortcuts({
@@ -316,6 +136,14 @@ defineShortcuts({
           color="neutral"
           variant="ghost"
           @click="clearMessages"
+        />
+      </UTooltip>
+      <UTooltip text="Open full screen">
+        <UButton
+          icon="i-lucide-maximize-2"
+          color="neutral"
+          variant="ghost"
+          @click="expandToFullScreen"
         />
       </UTooltip>
     </template>
@@ -364,132 +192,7 @@ defineShortcuts({
         </template>
 
         <template #content="{ message }">
-          <template v-for="(part, index) in getMergedParts(message.parts)" :key="`${message.id}-${part.type}-${index}`">
-            <UChatReasoning
-              v-if="isReasoningUIPart(part)"
-              :text="part.text"
-              :streaming="isReasoningStreaming(message, index, chat)"
-              icon="i-lucide-brain"
-            >
-              <AssistantComark
-                :markdown="part.text"
-                :streaming="isReasoningStreaming(message, index, chat)"
-              />
-            </UChatReasoning>
-
-            <template v-else-if="isToolUIPart(part)">
-              <UChatTool
-                v-if="getToolName(part) === 'web_search'"
-                :text="isToolStreaming(part) ? 'Searching the web...' : 'Searched the web'"
-                :suffix="getSearchQuery(part)"
-                :streaming="isToolStreaming(part)"
-                chevron="leading"
-              >
-                <ToolsToolSources :sources="getSources(part)" />
-              </UChatTool>
-              <template v-else-if="getToolName(part) === 'show_module'">
-                <ToolsModuleCard
-                  v-if="part.state === 'output-available' && part.output && !(part.output as Record<string, unknown>).error"
-                  v-bind="part.output as ModuleCardData"
-                />
-                <UChatTool
-                  v-else
-                  :text="isToolStreaming(part) ? 'Loading module...' : 'Module not found'"
-                  icon="i-lucide-box"
-                  :streaming="isToolStreaming(part)"
-                />
-              </template>
-              <template v-else-if="getToolName(part) === 'show_template'">
-                <ToolsTemplateCard
-                  v-if="part.state === 'output-available' && part.output && !(part.output as Record<string, unknown>).error"
-                  v-bind="part.output as TemplateCardData"
-                />
-                <UChatTool
-                  v-else
-                  :text="isToolStreaming(part) ? 'Loading template...' : 'Template not found'"
-                  icon="i-lucide-layout-template"
-                  :streaming="isToolStreaming(part)"
-                />
-              </template>
-              <template v-else-if="getToolName(part) === 'show_blog_post'">
-                <ToolsBlogCard
-                  v-if="part.state === 'output-available' && part.output && !(part.output as Record<string, unknown>).error"
-                  v-bind="part.output as BlogCardData"
-                />
-                <UChatTool
-                  v-else
-                  :text="isToolStreaming(part) ? 'Finding blog post...' : 'Blog post not found'"
-                  icon="i-lucide-newspaper"
-                  :streaming="isToolStreaming(part)"
-                />
-              </template>
-              <template v-else-if="getToolName(part) === 'show_hosting'">
-                <ToolsHostingCard
-                  v-if="part.state === 'output-available' && part.output && !(part.output as Record<string, unknown>).error"
-                  v-bind="part.output as HostingCardData"
-                />
-                <UChatTool
-                  v-else
-                  :text="isToolStreaming(part) ? 'Loading provider...' : 'Provider not found'"
-                  icon="i-lucide-server"
-                  :streaming="isToolStreaming(part)"
-                />
-              </template>
-              <template v-else-if="getToolName(part) === 'open_playground'">
-                <ToolsPlaygroundCard
-                  v-if="part.state === 'output-available' && part.output"
-                  v-bind="part.output as PlaygroundCardData"
-                />
-                <UChatTool
-                  v-else
-                  :text="isToolStreaming(part) ? 'Generating playground...' : 'Playground ready'"
-                  icon="i-simple-icons-stackblitz"
-                  :streaming="isToolStreaming(part)"
-                />
-              </template>
-              <template v-else-if="(getToolName(part) === 'get-module' || getToolName(part) === 'list-modules') && getModuleCards(part).length">
-                <UChatTool
-                  :text="getToolText(part)"
-                  :icon="getToolIcon(part)"
-                  :streaming="isToolStreaming(part)"
-                  chevron="leading"
-                />
-                <div class="flex flex-col gap-2">
-                  <ToolsModuleCard
-                    v-for="mod in getModuleCards(part)"
-                    :key="mod.name"
-                    v-bind="mod"
-                  />
-                </div>
-              </template>
-              <UChatTool
-                v-else
-                :text="getToolText(part)"
-                :icon="getToolIcon(part)"
-                :streaming="isToolStreaming(part)"
-                chevron="leading"
-              >
-                <pre v-if="getToolOutput(part)" class="text-xs text-dimmed whitespace-pre-wrap break-all" v-text="getToolOutput(part)" />
-              </UChatTool>
-            </template>
-
-            <template v-else-if="isTextUIPart(part) && part.text.length > 0">
-              <AssistantComark
-                v-if="message.role === 'assistant'"
-                :markdown="part.text"
-                :streaming="isReasoningStreaming(message, index, chat)"
-              />
-              <div v-else-if="message.role === 'user'">
-                <div v-if="parseUserMessage(part.text).page" class="flex items-center gap-1.5 mb-1.5 rounded-md bg-default/10 px-2 py-1 w-fit">
-                  <img src="/icon.png" alt="Nuxt" class="size-3.5 shrink-0">
-                  <span class="text-xs text-default/70">{{ parseUserMessage(part.text).page?.replace('/docs/', '') }}</span>
-                </div>
-                <p class="whitespace-pre-wrap text-sm/6">
-                  {{ parseUserMessage(part.text).text }}
-                </p>
-              </div>
-            </template>
-          </template>
+          <ChatContent :message="message" :index="0" :chat="chat" />
         </template>
       </UChatMessages>
 
