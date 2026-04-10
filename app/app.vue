@@ -31,17 +31,43 @@ useHead({
   ]
 })
 
+const route = useRoute()
+const site = useSiteConfig()
+const canonicalUrl = computed(() => `${site.url}${route.path}`)
+
 if (import.meta.server) {
   useHead({
     meta: [
       { name: 'viewport', content: 'width=device-width, initial-scale=1' }
     ],
     link: [
-      { rel: 'icon', type: 'image/png', href: '/icon.png' }
+      { rel: 'icon', type: 'image/png', href: '/icon.png' },
+      { rel: 'canonical', href: canonicalUrl }
     ],
     htmlAttrs: {
       lang: 'en'
-    }
+    },
+    script: [
+      {
+        type: 'application/ld+json',
+        innerHTML: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'WebSite',
+          'name': 'Nuxt',
+          'url': site.url,
+          'description': 'The Intuitive Vue Framework. Nuxt is a free and open-source framework to create type-safe, performant and production-grade full-stack web applications and websites with Vue.js.',
+          'publisher': {
+            '@type': 'Organization',
+            'name': 'Nuxt',
+            'url': site.url,
+            'logo': {
+              '@type': 'ImageObject',
+              'url': `${site.url}/icon.png`
+            }
+          }
+        })
+      }
+    ]
   })
   useSeoMeta({
     ogSiteName: 'Nuxt',

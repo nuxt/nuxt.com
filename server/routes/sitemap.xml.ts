@@ -1,8 +1,7 @@
-// TODO: Update later
 import { SitemapStream, streamToPromise } from 'sitemap'
 import type { H3Event } from 'h3'
 import type { Collections, CollectionQueryBuilder } from '@nuxt/content'
-import { queryCollection } from '#imports'
+import { queryCollection } from '@nuxt/content/server'
 
 type queryCollectionWithEvent = <T extends keyof Collections>(event: H3Event, collection: T) => CollectionQueryBuilder<Collections[T]>
 
@@ -17,19 +16,24 @@ export default defineEventHandler(async (event: H3Event) => {
       .all()
   ])
 
-  const sitemap = new SitemapStream({
-    hostname: 'https://nuxt.com'
-  })
+  const now = new Date().toISOString()
+
+  const reqUrl = getRequestURL(event)
+  const hostname = reqUrl.origin.includes('localhost') ? 'https://nuxt.com' : reqUrl.origin
+
+  const sitemap = new SitemapStream({ hostname })
   for (const doc of docs) {
     sitemap.write({
       url: doc.path,
-      changefreq: 'weekly'
+      changefreq: 'weekly',
+      lastmod: now
     })
   }
   for (const doc of blog) {
     sitemap.write({
       url: doc.path,
-      changefreq: 'monthly'
+      changefreq: 'monthly',
+      lastmod: (doc as any).date || now
     })
   }
   sitemap.end()

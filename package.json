@@ -53,6 +53,7 @@
     "drizzle-orm": "^0.45.1",
     "feed": "^5.2.0",
     "h3": "^1.15.6",
+    "html2canvas-pro": "^2.0.2",
     "little-date": "^1.2.1",
     "motion-v": "^1.10.3",
     "nuxt": "^4.4.2",

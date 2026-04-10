@@ -1,6 +1,6 @@
 import type { H3Event } from 'h3'
 import type { Collections, CollectionQueryBuilder } from '@nuxt/content'
-import { queryCollection } from '#imports'
+import { queryCollection } from '@nuxt/content/server'
 
 type QueryCollectionWithEvent = <T extends keyof Collections>(event: H3Event, collection: T) => CollectionQueryBuilder<Collections[T]>
 

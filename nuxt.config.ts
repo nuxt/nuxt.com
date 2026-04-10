@@ -27,6 +27,9 @@ export default defineNuxtConfig({
     '@vercel/analytics',
     '@vercel/speed-insights'
   ],
+  site: {
+    url: 'https://nuxt.com'
+  },
   $development: {
     site: {
       url: 'http://localhost:3000'
@@ -106,13 +109,16 @@ export default defineNuxtConfig({
     resend: {
       apiKey: '',
       audienceId: ''
+    },
+    mdTracking: {
+      url: '',
+      apiKey: ''
     }
   },
   routeRules: {
     // Pre-render
     '/': { prerender: true },
     '/blog/rss.xml': { prerender: true },
-    '/sitemap.xml': { prerender: true },
     '/sitemap.md': { prerender: true },
     '/404.html': { prerender: true },
     '/docs/3.x/getting-started/introduction': { prerender: true },
