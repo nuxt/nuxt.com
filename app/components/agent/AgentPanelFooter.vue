@@ -8,6 +8,8 @@ const props = defineProps<{
   chat: Chat<UIMessage>
   currentPage: string | null
   showPageContext: boolean
+  rateLimitReached?: boolean
+  usage?: { used: number, remaining: number, limit: number }
 }>()
 
 defineEmits<{
@@ -62,7 +64,13 @@ const contextPathLabel = computed(() => {
       </div>
     </Transition>
 
+    <div v-if="rateLimitReached" class="flex items-center gap-2 px-4 py-3 text-sm text-muted">
+      <UIcon name="i-lucide-clock" class="size-4 shrink-0" />
+      <span>Daily limit reached. Try again tomorrow.</span>
+    </div>
+
     <UChatPrompt
+      v-else
       v-model="input"
       :error="chat.error"
       placeholder="Ask anything…"
@@ -86,11 +94,11 @@ const contextPathLabel = computed(() => {
 
           <USeparator v-if="currentPage && !showPageContext" orientation="vertical" class="h-4" />
 
-          <div class="flex items-center gap-1.5">
-            <span>Line break</span>
-            <UKbd size="sm" value="shift" />
-            <UKbd size="sm" value="enter" />
-          </div>
+          <UTooltip v-if="usage" text="Daily messages remaining">
+            <span :class="usage.remaining <= 5 ? 'text-warning' : ''">
+              {{ usage.remaining }}/{{ usage.limit }}
+            </span>
+          </UTooltip>
         </div>
 
         <UChatPromptSubmit

@@ -2,7 +2,7 @@
 import { DefaultChatTransport } from 'ai'
 import { Chat } from '@ai-sdk/vue'
 
-const { isOpen, messages, faqQuestions, expandToFullScreen, isAgentDockedBreakpoint } = useNuxtAgent()
+const { isOpen, messages, faqQuestions, expandToFullScreen, isAgentDockedBreakpoint, usage, rateLimitReached, onMessageSent } = useNuxtAgent()
 const { track } = useAnalytics()
 const route = useRoute()
 const toast = useToast()
@@ -72,13 +72,14 @@ watch(messages, (newMessages) => {
 const canClear = computed(() => messages.value.length > 0 || chat.messages.length > 0)
 
 function onSubmit() {
-  if (!input.value.trim()) return
+  if (!input.value.trim() || rateLimitReached.value) return
 
   track('Nuxt Agent Message Sent', { query: input.value, source: 'prompt', page: currentPage.value, withContext: pageContextAdded.value })
   const text = currentPage.value && pageContextAdded.value
     ? `[Page: ${currentPage.value}] ${input.value}`
     : input.value
   chat.sendMessage({ text })
+  onMessageSent()
   input.value = ''
 }
 
@@ -197,6 +198,8 @@ defineShortcuts({
         :chat="chat"
         :current-page="currentPage"
         :show-page-context="!!showPageContext"
+        :rate-limit-reached="rateLimitReached"
+        :usage="usage"
         @submit="onSubmit"
         @dismiss-page-context="pageContextAdded = false; pageContextDismissed = true"
         @add-page-context="pageContextAdded = true; pageContextDismissed = false"
@@ -269,6 +272,8 @@ defineShortcuts({
         :chat="chat"
         :current-page="currentPage"
         :show-page-context="!!showPageContext"
+        :rate-limit-reached="rateLimitReached"
+        :usage="usage"
         @submit="onSubmit"
         @dismiss-page-context="pageContextAdded = false; pageContextDismissed = true"
         @add-page-context="pageContextAdded = true; pageContextDismissed = false"

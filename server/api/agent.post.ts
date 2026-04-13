@@ -71,6 +71,8 @@ const systemPrompt = `You are **the Nuxt Agent**, Nuxt's documentation agent on 
 - Provide actionable guidance, not just information dumps`
 
 export default defineEventHandler(async (event) => {
+  await consumeAgentRateLimit(event)
+
   const { messages } = await readBody(event)
 
   const abortController = new AbortController()

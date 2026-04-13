@@ -2,6 +2,12 @@ import type { UIMessage } from 'ai'
 import { createSharedComposable, useLocalStorage, useMediaQuery } from '@vueuse/core'
 import type { FaqCategory, FaqQuestions } from '~/types/agent'
 
+interface AgentUsage {
+  used: number
+  remaining: number
+  limit: number
+}
+
 function normalizeFaqQuestions(questions: FaqQuestions): FaqCategory[] {
   if (!questions || (Array.isArray(questions) && questions.length === 0)) {
     return []
@@ -79,6 +85,24 @@ export const useNuxtAgent = createSharedComposable(() => {
 
   const isAgentDocked = computed(() => isOpen.value && isAgentDockedBreakpoint.value)
 
+  const { data: usage, refresh: refreshUsage } = useFetch<AgentUsage>('/api/agent/usage', {
+    server: false,
+    lazy: true,
+    default: () => ({ used: 0, remaining: 20, limit: 20 })
+  })
+
+  const rateLimitReached = computed(() => usage.value.remaining <= 0)
+
+  function onMessageSent() {
+    if (usage.value) {
+      usage.value = {
+        ...usage.value,
+        used: usage.value.used + 1,
+        remaining: Math.max(0, usage.value.remaining - 1)
+      }
+    }
+  }
+
   return {
     isOpen,
     messages,
@@ -89,6 +113,10 @@ export const useNuxtAgent = createSharedComposable(() => {
     expandToFullScreen,
     collapseToSidebar,
     isAgentDockedBreakpoint,
-    isAgentDocked
+    isAgentDocked,
+    usage,
+    rateLimitReached,
+    refreshUsage,
+    onMessageSent
   }
 })

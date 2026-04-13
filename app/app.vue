@@ -73,7 +73,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <UApp>
+  <UApp :tooltip="{ delayDuration: 500 }">
     <NuxtLoadingIndicator color="var(--ui-primary)" />
 
     <div class="flex">

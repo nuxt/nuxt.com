@@ -2,7 +2,7 @@
 import { DefaultChatTransport } from 'ai'
 import { Chat } from '@ai-sdk/vue'
 
-const { messages, collapseToSidebar } = useNuxtAgent()
+const { messages, collapseToSidebar, usage, rateLimitReached, onMessageSent } = useNuxtAgent()
 const { track } = useAnalytics()
 const toast = useToast()
 const input = ref('')
@@ -91,10 +91,11 @@ const suggestions = [
 ]
 
 function onSubmit() {
-  if (!input.value.trim()) return
+  if (!input.value.trim() || rateLimitReached.value) return
 
   track('Nuxt Agent Message Sent', { query: input.value, source: 'chat-page' })
   chat.sendMessage({ text: input.value })
+  onMessageSent()
   input.value = ''
 }
 
@@ -174,7 +175,12 @@ const chatTheme = {
         </div>
 
         <div class="w-full max-w-2xl flex flex-col gap-6">
+          <div v-if="rateLimitReached" class="flex items-center justify-center gap-2 py-4 text-sm text-muted">
+            <UIcon name="i-lucide-clock" class="size-4 shrink-0" />
+            <span>Daily limit reached. Try again tomorrow.</span>
+          </div>
           <UChatPrompt
+            v-else
             v-model="input"
             :error="chat.error"
             placeholder="Ask anything…"
@@ -185,7 +191,11 @@ const chatTheme = {
             @submit="onSubmit"
           >
             <template #footer>
-              <div />
+              <UTooltip v-if="usage" text="Daily messages remaining">
+                <span class="text-xs text-dimmed" :class="usage.remaining <= 5 ? 'text-warning' : ''">
+                  {{ usage.remaining }}/{{ usage.limit }}
+                </span>
+              </UTooltip>
               <UChatPromptSubmit
                 color="neutral"
                 size="sm"
@@ -243,7 +253,12 @@ const chatTheme = {
       </div>
 
       <div class="mx-auto w-full max-w-3xl px-4 sm:px-6">
+        <div v-if="rateLimitReached" class="flex items-center justify-center gap-2 py-4 text-sm text-muted">
+          <UIcon name="i-lucide-clock" class="size-4 shrink-0" />
+          <span>Daily limit reached. Try again tomorrow.</span>
+        </div>
         <UChatPrompt
+          v-else
           v-model="input"
           :error="chat.error"
           placeholder="Ask anything…"
@@ -254,7 +269,11 @@ const chatTheme = {
           @submit="onSubmit"
         >
           <template #footer>
-            <div />
+            <UTooltip v-if="usage" text="Daily messages remaining">
+              <span class="text-xs text-dimmed" :class="usage.remaining <= 5 ? 'text-warning' : ''">
+                {{ usage.remaining }}/{{ usage.limit }}
+              </span>
+            </UTooltip>
             <UChatPromptSubmit
               :status="chat.status"
               :disabled="chat.status === 'ready' && !input.trim()"
