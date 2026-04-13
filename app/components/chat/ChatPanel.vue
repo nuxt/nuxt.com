@@ -185,9 +185,11 @@ const chatTheme = {
             :error="chat.error"
             placeholder="Ask anything…"
             variant="subtle"
+            :rows="2"
+            :maxrows="5"
             autofocus
             class="[view-transition-name:chat-prompt]"
-            :ui="{ base: 'px-1.5' }"
+            :ui="{ base: 'px-1.5 rounded-none' }"
             @submit="onSubmit"
           >
             <template #footer>
@@ -263,6 +265,8 @@ const chatTheme = {
           :error="chat.error"
           placeholder="Ask anything…"
           variant="subtle"
+          :rows="2"
+          :maxrows="8"
           autofocus
           class="[view-transition-name:chat-prompt] rounded-b-none"
           :ui="{ base: 'px-1.5', root: 'rounded-b-none' }"

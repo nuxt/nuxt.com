@@ -76,8 +76,10 @@ const contextPathLabel = computed(() => {
       placeholder="Ask anything…"
       variant="naked"
       size="sm"
+      :rows="2"
+      :maxrows="5"
       autofocus
-      :ui="{ base: 'px-0' }"
+      :ui="{ base: 'px-0 rounded-none' }"
       class="px-4"
       @submit="$emit('submit')"
     >
