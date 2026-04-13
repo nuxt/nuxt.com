@@ -8,12 +8,12 @@ const route = useRoute()
 const toast = useToast()
 const input = ref('')
 
-const indexPages = new Set(['/docs', '/blog', '/changelog', '/modules'])
+const indexPages = new Set(['/docs', '/blog', '/changelog', '/modules', '/deploy'])
 
 const currentPage = computed(() => {
   const path = route.path
   if (indexPages.has(path)) return null
-  if (!path.startsWith('/docs/') && !path.startsWith('/blog/') && !path.startsWith('/changelog/') && !path.startsWith('/modules/')) return null
+  if (!path.startsWith('/docs/') && !path.startsWith('/blog/') && !path.startsWith('/changelog/') && !path.startsWith('/modules/') && !path.startsWith('/deploy/')) return null
   return path
 })
 
