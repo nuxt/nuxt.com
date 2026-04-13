@@ -143,6 +143,9 @@ importers:
       scule:
         specifier: ^1.3.0
         version: 1.3.0
+      shaders:
+        specifier: ^2.5.93
+        version: 2.5.93(vue@3.5.32(typescript@6.0.2))
       sitemap:
         specifier: ^9.0.1
         version: 9.0.1
@@ -8354,6 +8357,29 @@ packages:
     engines: {node: '>= 0.10'}
     hasBin: true
 
+  shaders@2.5.93:
+    resolution: {integrity: sha512-ZM41grBXeWzmG/yGCr5IKWxnvEUya/zpxcLstHmqs4kB150vkLg0getvgO0uF0pjppddyCwGJt22Y4v3MogkTg==}
+    peerDependencies:
+      pixi.js: ^8.0.0
+      react: ^18.0.0 || ^19.0.0
+      react-dom: ^18.0.0 || ^19.0.0
+      solid-js: ^1.8.0
+      svelte: ^5
+      vue: ^3.5.0
+    peerDependenciesMeta:
+      pixi.js:
+        optional: true
+      react:
+        optional: true
+      react-dom:
+        optional: true
+      solid-js:
+        optional: true
+      svelte:
+        optional: true
+      vue:
+        optional: true
+
   sharp@0.34.5:
     resolution: {integrity: sha512-Ou9I5Ft9WNcCbXrU9cMgPBcCK8LiwLqcbywW3t4oDV37n1pzpuNLsYiAV8eODnjbtQlSDwZ2cUEeQz4E54Hltg==}
     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
@@ -8710,6 +8736,9 @@ packages:
 
   three@0.135.0:
     resolution: {integrity: sha512-kuEpuuxRzLv0MDsXai9huCxOSQPZ4vje6y0gn80SRmQvgz6/+rI0NAvCRAw56zYaWKMGMfqKWsxF9Qa2Z9xymQ==}
+
+  three@0.183.2:
+    resolution: {integrity: sha512-di3BsL2FEQ1PA7Hcvn4fyJOlxRRgFYBpMTcyOgkwJIaDOdJMebEFPA+t98EvjuljDx4hNulAGwF6KIjtwI5jgQ==}
 
   throttle-debounce@5.0.2:
     resolution: {integrity: sha512-B71/4oyj61iNH0KeCamLuE2rmKuTO5byTOSVwECM5FA7TiAiAW+UqTKZ9ERueC4qvgSttUhdmq1mXC3kJqGX7A==}
@@ -19007,6 +19036,12 @@ snapshots:
       safe-buffer: 5.2.1
       to-buffer: 1.2.2
 
+  shaders@2.5.93(vue@3.5.32(typescript@6.0.2)):
+    dependencies:
+      three: 0.183.2
+    optionalDependencies:
+      vue: 3.5.32(typescript@6.0.2)
+
   sharp@0.34.5:
     dependencies:
       '@img/colour': 1.1.0
@@ -19460,6 +19495,8 @@ snapshots:
       real-require: 0.2.0
 
   three@0.135.0: {}
+
+  three@0.183.2: {}
 
   throttle-debounce@5.0.2: {}
 

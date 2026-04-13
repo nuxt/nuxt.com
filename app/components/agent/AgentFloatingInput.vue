@@ -2,7 +2,7 @@
 import { AnimatePresence, motion } from 'motion-v'
 
 const route = useRoute()
-const { open, isOpen } = useAssistant()
+const { open, isOpen } = useNuxtAgent()
 const { track } = useAnalytics()
 const input = ref('')
 const isVisible = ref(true)
@@ -13,7 +13,7 @@ const isDocsRoute = computed(() => route.path.startsWith('/docs') || route.path.
 function handleSubmit() {
   if (!input.value.trim()) return
 
-  track('Assistant Message Sent', { query: input.value, source: 'floating-input', page: route.path })
+  track('Nuxt Agent Message Sent', { query: input.value, source: 'floating-input', page: route.path })
   const message = input.value
   isVisible.value = false
 
@@ -60,7 +60,7 @@ defineShortcuts({
           <UInput
             ref="inputRef"
             v-model="input"
-            placeholder="Ask AI about Nuxt..."
+            placeholder="Ask anything…"
             size="lg"
             maxlength="1000"
             :ui="{

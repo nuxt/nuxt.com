@@ -2,7 +2,7 @@ import highlight from '@comark/nuxt/plugins/highlight'
 import SourceLink from '../tools/SourceLink.vue'
 
 export default defineComarkComponent({
-  name: 'AssistantComark',
+  name: 'AgentComark',
   plugins: [
     highlight()
   ],

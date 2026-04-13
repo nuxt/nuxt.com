@@ -1,5 +1,5 @@
 export default defineAppConfig({
-  assistant: {
+  agent: {
     faqQuestions: [
       {
         category: 'Getting Started',
@@ -21,8 +21,8 @@ export default defineAppConfig({
         category: 'Deploy & Explore',
         items: [
           'How do I deploy my Nuxt app?',
-          'How do I integrate Stripe payments in Nuxt?',
-          'Available rendering modes?'
+          'What are the available rendering modes?',
+          'How do I add SEO meta tags in Nuxt?'
         ]
       }
     ]

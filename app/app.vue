@@ -83,12 +83,12 @@ onMounted(() => {
         </NuxtLayout>
 
         <ClientOnly>
-          <LazyAssistantFloatingInput v-if="route.path !== '/chat'" />
+          <LazyAgentFloatingInput v-if="route.path !== '/chat'" />
         </ClientOnly>
       </div>
 
       <ClientOnly>
-        <LazyAssistantPanel v-if="route.path !== '/chat'" />
+        <LazyAgentPanel v-if="route.path !== '/chat'" />
       </ClientOnly>
     </div>
 

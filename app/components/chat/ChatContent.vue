@@ -25,7 +25,7 @@ function getTemplates(output: unknown): TemplateCardData[] {
       :streaming="isPartStreaming(part)"
       icon="i-lucide-brain"
     >
-      <AssistantComark
+      <AgentComark
         :markdown="part.text"
         :streaming="isPartStreaming(part)"
       />
@@ -129,7 +129,7 @@ function getTemplates(output: unknown): TemplateCardData[] {
     </template>
 
     <template v-else-if="isTextUIPart(part) && part.text.length > 0">
-      <AssistantComark
+      <AgentComark
         v-if="message.role === 'assistant'"
         :markdown="part.text"
         :streaming="isPartStreaming(part)"

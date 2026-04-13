@@ -4,14 +4,14 @@ definePageMeta({
 })
 
 useHead({
-  title: 'Chat with Nuxt AI'
+  title: 'Nuxt Agent'
 })
 
 useSeoMeta({
-  ogTitle: 'Chat with Nuxt AI',
-  ogDescription: 'Ask anything about Nuxt — get help with docs, modules, deployment, and more.',
-  twitterTitle: 'Chat with Nuxt AI',
-  twitterDescription: 'Ask anything about Nuxt — get help with docs, modules, deployment, and more.'
+  ogTitle: 'Nuxt Agent · Nuxt',
+  ogDescription: 'The Nuxt Agent helps you explore the documentation — ask about Nuxt, modules, deployment, and more.',
+  twitterTitle: 'Nuxt Agent · Nuxt',
+  twitterDescription: 'The Nuxt Agent helps you explore the documentation — ask about Nuxt, modules, deployment, and more.'
 })
 </script>
 

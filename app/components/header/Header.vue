@@ -69,7 +69,7 @@ function trackGitHubClick() {
         <UContentSearchButton @click="trackSearchOpen" />
       </UTooltip>
 
-      <AssistantChat />
+      <AgentChatButton />
 
       <UColorModeButton />
 

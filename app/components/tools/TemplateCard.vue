@@ -19,7 +19,7 @@ const initCommand = computed(() => {
 
 function copyInit() {
   if (!initCommand.value) return
-  track('Template Init Copied', { template: props.slug, source: 'assistant' })
+  track('Template Init Copied', { template: props.slug, source: 'nuxt-agent' })
   copy(initCommand.value, { title: 'Command copied to clipboard:', description: initCommand.value })
 }
 </script>

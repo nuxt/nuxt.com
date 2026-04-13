@@ -25,12 +25,12 @@ const agentPrompt = computed(() => {
 })
 
 function copyInstall() {
-  track('Module Install Command Copied', { module: props.name, source: 'assistant' })
+  track('Module Install Command Copied', { module: props.name, source: 'nuxt-agent' })
   copy(installCommand.value, { title: 'Command copied to clipboard:', description: installCommand.value })
 }
 
 function copyPrompt() {
-  track('Module Agent Prompt Copied', { module: props.name, source: 'assistant' })
+  track('Module Agent Prompt Copied', { module: props.name, source: 'nuxt-agent' })
   copy(agentPrompt.value, { title: 'Agent prompt copied!', description: props.npm || props.name, icon: 'i-custom-ai' })
 }
 </script>

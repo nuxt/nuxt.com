@@ -1,6 +1,6 @@
 import type { UIMessage } from 'ai'
-import { createSharedComposable, useLocalStorage } from '@vueuse/core'
-import type { FaqCategory, FaqQuestions } from '~/types/assistant'
+import { createSharedComposable, useLocalStorage, useMediaQuery } from '@vueuse/core'
+import type { FaqCategory, FaqQuestions } from '~/types/agent'
 
 function normalizeFaqQuestions(questions: FaqQuestions): FaqCategory[] {
   if (!questions || (Array.isArray(questions) && questions.length === 0)) {
@@ -17,9 +17,9 @@ function normalizeFaqQuestions(questions: FaqQuestions): FaqCategory[] {
   return questions as FaqCategory[]
 }
 
-export const useAssistant = createSharedComposable(() => {
+export const useNuxtAgent = createSharedComposable(() => {
   const appConfig = useAppConfig()
-  const assistantConfig = appConfig.assistant as { faqQuestions?: FaqQuestions } | undefined
+  const agentConfig = appConfig.agent as { faqQuestions?: FaqQuestions } | undefined
 
   const storageOpen = useLocalStorage('assistant-open', false)
   const messages = useLocalStorage<UIMessage[]>('assistant-messages', [])
@@ -37,7 +37,7 @@ export const useAssistant = createSharedComposable(() => {
   })
 
   const faqQuestions = computed<FaqCategory[]>(() => {
-    const faqConfig = assistantConfig?.faqQuestions
+    const faqConfig = agentConfig?.faqQuestions
     if (!faqConfig) return []
     return normalizeFaqQuestions(faqConfig)
   })
@@ -74,6 +74,11 @@ export const useAssistant = createSharedComposable(() => {
     isOpen.value = true
   }
 
+  /** Matches Tailwind `xl` — docked USidebar only at this width and above */
+  const isAgentDockedBreakpoint = useMediaQuery('(min-width: 1280px)')
+
+  const isAgentDocked = computed(() => isOpen.value && isAgentDockedBreakpoint.value)
+
   return {
     isOpen,
     messages,
@@ -82,6 +87,8 @@ export const useAssistant = createSharedComposable(() => {
     close,
     toggle,
     expandToFullScreen,
-    collapseToSidebar
+    collapseToSidebar,
+    isAgentDockedBreakpoint,
+    isAgentDocked
   }
 })

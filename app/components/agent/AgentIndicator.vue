@@ -50,11 +50,9 @@ function scramble(from: string, to: string) {
     for (let i = 0; i < maxLength; i++) {
       if (i < progress - 2) {
         result += to[i] || ''
-      }
-      else if (i < progress) {
+      } else if (i < progress) {
         result += chars[Math.floor(Math.random() * chars.length)]
-      }
-      else {
+      } else {
         result += from[i] || ''
       }
     }
@@ -63,8 +61,7 @@ function scramble(from: string, to: string) {
 
     if (frame < totalFrames) {
       requestAnimationFrame(step)
-    }
-    else {
+    } else {
       displayedText.value = to
     }
   }
@@ -99,7 +96,7 @@ onUnmounted(() => {
         gridTemplateColumns: `repeat(${size}, 1fr)`,
         gap: `${gap}px`,
         width: `${size * dotSize + (size - 1) * gap}px`,
-        height: `${size * dotSize + (size - 1) * gap}px`,
+        height: `${size * dotSize + (size - 1) * gap}px`
       }"
     >
       <span

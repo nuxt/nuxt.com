@@ -1,15 +1,15 @@
 <script setup lang="ts">
-const { toggle, isOpen } = useAssistant()
+const { toggle, isOpen } = useNuxtAgent()
 const { track } = useAnalytics()
 
 function handleToggle() {
-  track('Assistant Toggled', { source: 'header', open: !isOpen.value })
+  track('Nuxt Agent Toggled', { source: 'header', open: !isOpen.value })
   toggle()
 }
 </script>
 
 <template>
-  <UTooltip text="Ask AI">
+  <UTooltip text="Agent">
     <UButton
       icon="i-custom-ai"
       color="neutral"

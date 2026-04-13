@@ -178,11 +178,11 @@ const _useNavigation = () => {
   const { providers } = useHostingProviders()
 
   const searchLinks = computed(() => [{
-    label: 'Ask AI',
+    label: 'Ask Agent',
     icon: 'i-lucide-wand',
     to: 'javascript:void(0);',
     onSelect: () => {
-      track('Ask AI Opened', { source: 'search-links' })
+      track('Nuxt Agent Opened', { source: 'search-links' })
       nuxtApp.$kapa?.openModal()
     }
   }, ...headerLinks.value.flatMap((link) => {
@@ -260,11 +260,11 @@ const _useNavigation = () => {
       return items
     },
     items: [{
-      label: 'Ask AI',
+      label: 'Ask Agent',
       icon: 'i-lucide-wand',
       to: 'javascript:void(0);',
       onSelect() {
-        track('Ask AI Opened', { source: 'search-palette', query: searchTerm.value })
+        track('Nuxt Agent Opened', { source: 'search-palette', query: searchTerm.value })
         nuxtApp.$kapa?.openModal(searchTerm.value)
       }
     }]

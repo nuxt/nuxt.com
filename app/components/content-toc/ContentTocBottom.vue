@@ -15,11 +15,11 @@ interface Props {
 defineProps<Props>()
 
 const route = useRoute()
-const { open } = useAssistant()
+const { open } = useNuxtAgent()
 const { track } = useAnalytics()
 
 function explainWithAI() {
-  track('Assistant Explain Page', { page: route.path })
+  track('Nuxt Agent Explain Page', { page: route.path })
   open(`[Page: ${route.path}] Explain this page`, true)
 }
 </script>
@@ -30,7 +30,7 @@ function explainWithAI() {
   <USeparator type="dashed" />
   <UButton
     icon="i-lucide-brain"
-    label="Explain with AI"
+    label="Explain with Agent"
     size="sm"
     variant="link"
     color="neutral"
