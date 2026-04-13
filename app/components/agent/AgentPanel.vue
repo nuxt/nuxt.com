@@ -32,7 +32,7 @@ let _skipSync = false
 const chat = new Chat({
   messages: messages.value,
   transport: new DefaultChatTransport({
-    api: '/api/assistant'
+    api: '/api/agent'
   }),
   onError: (error: Error) => {
     let message = error.message

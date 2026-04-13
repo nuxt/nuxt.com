@@ -96,7 +96,7 @@ const contextPathLabel = computed(() => {
         <UChatPromptSubmit
           size="sm"
           :status="chat.status"
-          :disabled="!input.trim()"
+          :disabled="chat.status === 'ready' && !input.trim()"
           @stop="chat.stop()"
           @reload="chat.regenerate()"
         />

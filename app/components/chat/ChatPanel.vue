@@ -12,7 +12,7 @@ let _skipSync = false
 const chat = new Chat({
   messages: messages.value,
   transport: new DefaultChatTransport({
-    api: '/api/assistant'
+    api: '/api/agent'
   }),
   onError: (error: Error) => {
     let message = error.message
@@ -159,17 +159,18 @@ const chatTheme = {
 
     <template v-if="!chat.messages.length">
       <div class="flex-1 flex flex-col items-center justify-center gap-8 p-8">
-        <svg class="absolute top-16 opacity-20 text-highlighted -z-1 size-72 sm:size-88" viewBox="0 0 300 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M168 200H279C282.542 200 285.932 198.756 289 197C292.068 195.244 295.23 193.041 297 190C298.77 186.959 300.002 183.51 300 179.999C299.998 176.488 298.773 173.04 297 170.001L222 41C220.23 37.96 218.067 35.7552 215 34C211.933 32.2448 207.542 31 204 31C200.458 31 197.067 32.2448 194 34C190.933 35.7552 188.77 37.96 187 41L168 74L130 9.99764C128.228 6.95784 126.068 3.75491 123 2C119.932 0.245087 116.542 0 113 0C109.458 0 106.068 0.245087 103 2C99.9323 3.75491 96.7717 6.95784 95 9.99764L2 170.001C0.226979 173.04 0.00154312 176.488 1.90993e-06 179.999C-0.0015393 183.51 0.229648 186.959 2 190C3.77035 193.04 6.93245 195.244 10 197C13.0675 198.756 16.4578 200 20 200H90C117.737 200 137.925 187.558 152 164L186 105L204 74L259 168H186L168 200ZM89 168H40L113 42L150 105L125.491 147.725C116.144 163.01 105.488 168 89 168Z" stroke="currentColor" stroke-width="1.5" />
-        </svg>
-
-        <div class="text-center max-w-lg mx-auto px-4">
-          <h1 class="text-2xl sm:text-3xl font-semibold text-highlighted tracking-tight">
-            Welcome to Nuxt Agent
-          </h1>
-          <p class="text-base text-muted mt-2">
-            Ask anything or explore docs, modules, deployment, and more.
-          </p>
+        <div class="flex w-full max-w-2xl flex-col items-center px-4">
+          <div class="relative h-36 w-full shrink-0 overflow-hidden sm:h-40">
+            <AgentShader variant="hero" />
+          </div>
+          <div class="text-center">
+            <h1 class="text-2xl sm:text-3xl font-semibold text-highlighted tracking-tight">
+              Welcome to Nuxt Agent
+            </h1>
+            <p class="text-base text-muted mt-2 max-w-lg mx-auto">
+              Ask anything or explore docs, modules, deployment, and more.
+            </p>
+          </div>
         </div>
 
         <div class="w-full max-w-2xl flex flex-col gap-6">
@@ -188,7 +189,10 @@ const chatTheme = {
               <UChatPromptSubmit
                 color="neutral"
                 size="sm"
-                :disabled="!input.trim()"
+                :status="chat.status"
+                :disabled="chat.status === 'ready' && !input.trim()"
+                @stop="chat.stop()"
+                @reload="chat.regenerate()"
               />
             </template>
           </UChatPrompt>
@@ -253,7 +257,7 @@ const chatTheme = {
             <div />
             <UChatPromptSubmit
               :status="chat.status"
-              :disabled="!input.trim()"
+              :disabled="chat.status === 'ready' && !input.trim()"
               color="neutral"
               size="sm"
               @stop="chat.stop()"

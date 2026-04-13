@@ -73,6 +73,9 @@ const systemPrompt = `You are **the Nuxt Agent**, Nuxt's documentation agent on 
 export default defineEventHandler(async (event) => {
   const { messages } = await readBody(event)
 
+  const abortController = new AbortController()
+  event.node.req.on('close', () => abortController.abort())
+
   const mcpUrl = import.meta.dev
     ? `http://localhost:3000${MCP_PATH}`
     : `${getRequestURL(event).origin}${MCP_PATH}`
@@ -82,12 +85,15 @@ export default defineEventHandler(async (event) => {
   })
   const mcpTools = await httpClient.tools()
 
+  const closeMcp = () => event.waitUntil(httpClient.close())
+
   const stream = createUIMessageStream({
     execute: async ({ writer }) => {
       const result = streamText({
         model: MODEL,
         maxOutputTokens: 4000,
         maxRetries: 2,
+        abortSignal: abortController.signal,
         stopWhen: stopWhenResponseComplete,
         system: systemPrompt,
         messages: await convertToModelMessages(messages),
@@ -100,12 +106,9 @@ export default defineEventHandler(async (event) => {
           show_hosting: createShowHostingTool(event),
           open_playground: openPlaygroundTool
         },
-        onFinish: () => {
-          event.waitUntil(httpClient.close())
-        },
-        onError: () => {
-          event.waitUntil(httpClient.close())
-        }
+        onFinish: closeMcp,
+        onAbort: closeMcp,
+        onError: closeMcp
       })
 
       writer.merge(result.toUIMessageStream({
