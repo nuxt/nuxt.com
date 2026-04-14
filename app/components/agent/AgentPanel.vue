@@ -74,8 +74,8 @@ const canClear = computed(() => messages.value.length > 0 || chat.messages.lengt
 function onSubmit() {
   if (!input.value.trim() || rateLimitReached.value) return
 
-  track('Nuxt Agent Message Sent', { query: input.value, source: 'prompt', page: currentPage.value, withContext: pageContextAdded.value })
-  const text = currentPage.value && pageContextAdded.value
+  track('Nuxt Agent Message Sent', { query: input.value, source: 'prompt', page: currentPage.value, withContext: showPageContext.value })
+  const text = currentPage.value && showPageContext.value
     ? `[Page: ${currentPage.value}] ${input.value}`
     : input.value
   chat.sendMessage({ text })
