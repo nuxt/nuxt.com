@@ -43,13 +43,13 @@ function getTemplates(output: unknown): TemplateCardData[] {
       </UChatTool>
       <template v-else-if="getToolName(part) === 'show_module'">
         <UChatTool
-          :text="isToolStreaming(part) ? 'Loading module...' : (part.state === 'output-available' && part.output && !(part.output as Record<string, unknown>).error ? 'Found module' : 'Module not found')"
+          :text="isToolStreaming(part) ? 'Loading module...' : (part.state === 'output-available' && isValidModuleCardData(part.output) ? 'Found module' : 'Module not found')"
           icon="i-lucide-box"
           :streaming="isToolStreaming(part)"
         />
         <ToolsModuleCard
-          v-if="part.state === 'output-available' && part.output && !(part.output as Record<string, unknown>).error"
-          v-bind="part.output as ModuleCardData"
+          v-if="part.state === 'output-available' && isValidModuleCardData(part.output)"
+          v-bind="moduleCardProps(part.output as ModuleCardData)"
         />
       </template>
       <template v-else-if="getToolName(part) === 'show_template'">
@@ -111,9 +111,9 @@ function getTemplates(output: unknown): TemplateCardData[] {
         />
         <div class="flex flex-col gap-2">
           <ToolsModuleCard
-            v-for="mod in getModuleCards(part)"
+            v-for="mod in getModuleCards(part).filter(isValidModuleCardData)"
             :key="mod.name"
-            v-bind="mod"
+            v-bind="moduleCardProps(mod)"
           />
         </div>
       </template>

@@ -16,6 +16,20 @@ export interface ModuleCardData {
   stars?: number
 }
 
+export function isValidModuleCardData(output: unknown): output is ModuleCardData {
+  if (!output || typeof output !== 'object') return false
+  const o = output as Record<string, unknown>
+  if ('error' in o && o.error) return false
+  const name = o.name
+  return typeof name === 'string' && name.trim().length > 0
+}
+
+/** Maps API/tool `name` to `slug` so we never pass a `name` prop into ModuleCard (conflicts with Vue Router / NuxtLink). */
+export function moduleCardProps(data: ModuleCardData): Omit<ModuleCardData, 'name'> & { slug: string } {
+  const { name, ...rest } = data
+  return { ...rest, slug: name }
+}
+
 export interface TemplateCardData {
   name: string
   slug: string
