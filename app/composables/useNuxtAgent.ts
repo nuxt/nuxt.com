@@ -29,6 +29,7 @@ export const useNuxtAgent = createSharedComposable(() => {
 
   const storageOpen = useLocalStorage('assistant-open', false)
   const messages = useLocalStorage<UIMessage[]>('assistant-messages', [])
+  const chatId = useLocalStorage('assistant-chat-id', () => crypto.randomUUID())
 
   const isOpen = ref(false)
 
@@ -48,9 +49,14 @@ export const useNuxtAgent = createSharedComposable(() => {
     return normalizeFaqQuestions(faqConfig)
   })
 
+  function resetChatId() {
+    chatId.value = crypto.randomUUID()
+  }
+
   function open(initialMessage?: string, clearPrevious = false) {
     if (clearPrevious) {
       messages.value = []
+      resetChatId()
     }
 
     if (initialMessage) {
@@ -106,6 +112,8 @@ export const useNuxtAgent = createSharedComposable(() => {
   return {
     isOpen,
     messages,
+    chatId,
+    resetChatId,
     faqQuestions,
     open,
     close,

@@ -10,7 +10,10 @@ defineProps<{
 
 const emit = defineEmits<{
   askQuestion: [question: string]
+  vote: [message: UIMessage, isUpvoted: boolean]
 }>()
+
+const votes = defineModel<Map<string, boolean>>('votes', { required: true })
 </script>
 
 <template>
@@ -47,6 +50,15 @@ const emit = defineEmits<{
 
       <template #content="{ message }">
         <ChatContent :message="message" :index="0" :chat="chat" />
+      </template>
+
+      <template #actions="{ message }">
+        <ChatMessageActions
+          v-if="message.role === 'assistant'"
+          :message="message"
+          :vote="votes.get(message.id) ?? null"
+          @vote="(msg, isUpvoted) => $emit('vote', msg, isUpvoted)"
+        />
       </template>
     </UChatMessages>
 

@@ -3,6 +3,8 @@ import type { ToolSet } from 'ai'
 import { createMCPClient } from '@ai-sdk/mcp'
 import { anthropic } from '@ai-sdk/anthropic'
 import { createAILogger, createEvlogIntegration } from 'evlog/ai'
+import type { AILogger } from 'evlog/ai'
+import { sql } from 'drizzle-orm'
 import { showModuleTool } from '../utils/tools/show-module'
 import { createShowTemplateTool } from '../utils/tools/show-template'
 import { createShowBlogPostTool } from '../utils/tools/show-blog-post'
@@ -83,10 +85,29 @@ const systemPrompt = `You are **the Nuxt Agent**, Nuxt's documentation agent on 
 - "Nuxt supports TypeScript out of the box" — attribute capabilities to Nuxt, not to yourself as a person
 - Provide actionable guidance, not just information dumps`
 
+function computeEstimatedCost(state: AILogger['_state']): number {
+  if (!state.costMap) return 0
+  const model = state.models.at(-1)
+  if (!model) return 0
+  const cost = state.costMap[model]
+  if (!cost) return 0
+  return (state.usage.inputTokens * cost.input + state.usage.outputTokens * cost.output) / 1_000_000
+}
+
+async function getFingerprint(event: H3Event): Promise<string> {
+  const ip = event.context.cf?.ip || 'unknown'
+  const userAgent = getHeader(event, 'user-agent') || 'unknown'
+  const domain = getHeader(event, 'host') || 'localhost'
+  const data = `${domain}+${ip}+${userAgent}`
+  const buffer = await crypto.subtle.digest('SHA-1', new TextEncoder().encode(data))
+  return [...new Uint8Array(buffer)].map(b => b.toString(16).padStart(2, '0')).join('')
+}
+
 export default defineEventHandler(async (event) => {
   await consumeAgentRateLimit(event)
 
   const { messages } = await readBody(event)
+  const chatId = getHeader(event, 'x-chat-id')
   const log = useLogger(event)
   const ai = createAILogger(log, { toolInputs: true, cost: { 'claude-sonnet-4-6': { input: 3, output: 15 } } })
 
@@ -103,6 +124,46 @@ export default defineEventHandler(async (event) => {
   const mcpTools = await httpClient.tools()
 
   const closeMcp = () => event.waitUntil(httpClient.close())
+
+  const saveChat = async () => {
+    if (!chatId) return
+    const fingerprint = await getFingerprint(event)
+    const now = new Date()
+    const state = ai._state
+    const model = state.models.at(-1) ?? null
+    const provider = state.lastProvider ?? null
+    const { inputTokens, outputTokens } = state.usage
+    const estimatedCost = computeEstimatedCost(state)
+    const durationMs = state.totalDurationMs ?? 0
+
+    await db.insert(schema.agentChats).values({
+      id: chatId,
+      messages,
+      fingerprint,
+      model,
+      provider,
+      inputTokens,
+      outputTokens,
+      estimatedCost,
+      durationMs,
+      requestCount: 1,
+      createdAt: now,
+      updatedAt: now
+    }).onConflictDoUpdate({
+      target: schema.agentChats.id,
+      set: {
+        messages,
+        updatedAt: now,
+        model,
+        provider,
+        inputTokens: sql`${schema.agentChats.inputTokens} + ${inputTokens}`,
+        outputTokens: sql`${schema.agentChats.outputTokens} + ${outputTokens}`,
+        estimatedCost: sql`${schema.agentChats.estimatedCost} + ${estimatedCost}`,
+        durationMs: sql`${schema.agentChats.durationMs} + ${durationMs}`,
+        requestCount: sql`${schema.agentChats.requestCount} + 1`
+      }
+    })
+  }
 
   const stream = createUIMessageStream({
     execute: async ({ writer }) => {
@@ -127,7 +188,10 @@ export default defineEventHandler(async (event) => {
           isEnabled: true,
           integrations: [createEvlogIntegration(ai)]
         },
-        onFinish: closeMcp,
+        onFinish: () => {
+          closeMcp()
+          event.waitUntil(saveChat())
+        },
         onAbort: closeMcp,
         onError: closeMcp
       })

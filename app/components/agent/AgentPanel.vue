@@ -1,12 +1,35 @@
 <script setup lang="ts">
 import { DefaultChatTransport } from 'ai'
+import type { UIMessage } from 'ai'
 import { Chat } from '@ai-sdk/vue'
 
-const { isOpen, messages, faqQuestions, expandToFullScreen, isAgentDockedBreakpoint, usage, rateLimitReached, onMessageSent } = useNuxtAgent()
+const { isOpen, messages, chatId, resetChatId, faqQuestions, expandToFullScreen, isAgentDockedBreakpoint, usage, rateLimitReached, onMessageSent } = useNuxtAgent()
 const { track } = useAnalytics()
 const route = useRoute()
 const toast = useToast()
 const input = ref('')
+const votes = ref(new Map<string, boolean>())
+
+function vote(message: UIMessage, isUpvoted: boolean) {
+  const current = votes.value.get(message.id)
+  const next = current === isUpvoted ? undefined : isUpvoted
+
+  if (next === undefined) {
+    votes.value.delete(message.id)
+  } else {
+    votes.value.set(message.id, next)
+  }
+  votes.value = new Map(votes.value)
+
+  $fetch('/api/agent/vote', {
+    method: 'POST',
+    body: { chatId: chatId.value, messageId: message.id, isUpvoted: next }
+  }).catch(() => {
+    if (current !== undefined) votes.value.set(message.id, current)
+    else votes.value.delete(message.id)
+    votes.value = new Map(votes.value)
+  })
+}
 
 const indexPages = new Set(['/docs', '/blog', '/changelog', '/modules', '/deploy'])
 
@@ -32,7 +55,8 @@ let _skipSync = false
 const chat = new Chat({
   messages: messages.value,
   transport: new DefaultChatTransport({
-    api: '/api/agent'
+    api: '/api/agent',
+    headers: () => ({ 'x-chat-id': chatId.value })
   }),
   onError: (error: Error) => {
     let message = error.message
@@ -96,6 +120,8 @@ function clearMessages() {
   }
   messages.value = []
   chat.messages = []
+  resetChatId()
+  votes.value = new Map()
 }
 
 const panelUi = {
@@ -187,9 +213,11 @@ defineShortcuts({
     </template>
 
     <AgentPanelMain
+      v-model:votes="votes"
       :chat="chat"
       :faq-questions="faqQuestions"
       @ask-question="askQuestion"
+      @vote="vote"
     />
 
     <template #footer>
@@ -259,10 +287,12 @@ defineShortcuts({
 
     <template #body>
       <AgentPanelMain
+        v-model:votes="votes"
         :chat="chat"
         :faq-questions="faqQuestions"
         class="min-h-0 flex-1 flex flex-col overflow-hidden"
         @ask-question="askQuestion"
+        @vote="vote"
       />
     </template>
 
