@@ -2,6 +2,7 @@ import { streamText, convertToModelMessages, createUIMessageStream, createUIMess
 import type { ToolSet } from 'ai'
 import { createMCPClient } from '@ai-sdk/mcp'
 import { anthropic } from '@ai-sdk/anthropic'
+import type { H3Event } from 'h3'
 import { createAILogger, createEvlogIntegration } from 'evlog/ai'
 import type { AILogger } from 'evlog/ai'
 import { sql } from 'drizzle-orm'
