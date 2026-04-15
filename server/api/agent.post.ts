@@ -2,6 +2,7 @@ import { streamText, convertToModelMessages, createUIMessageStream, createUIMess
 import type { ToolSet } from 'ai'
 import { createMCPClient } from '@ai-sdk/mcp'
 import { anthropic } from '@ai-sdk/anthropic'
+import { createAILogger, createEvlogIntegration } from 'evlog/ai'
 import { showModuleTool } from '../utils/tools/show-module'
 import { createShowTemplateTool } from '../utils/tools/show-template'
 import { createShowBlogPostTool } from '../utils/tools/show-blog-post'
@@ -86,6 +87,8 @@ export default defineEventHandler(async (event) => {
   await consumeAgentRateLimit(event)
 
   const { messages } = await readBody(event)
+  const log = useLogger(event)
+  const ai = createAILogger(log, { toolInputs: true, cost: { 'claude-sonnet-4-6': { input: 3, output: 15 } } })
 
   const abortController = new AbortController()
   event.node.req.on('close', () => abortController.abort())
@@ -104,7 +107,7 @@ export default defineEventHandler(async (event) => {
   const stream = createUIMessageStream({
     execute: async ({ writer }) => {
       const result = streamText({
-        model: MODEL,
+        model: ai.wrap(MODEL),
         maxOutputTokens: 4000,
         maxRetries: 2,
         abortSignal: abortController.signal,
@@ -119,6 +122,10 @@ export default defineEventHandler(async (event) => {
           show_blog_post: createShowBlogPostTool(event),
           show_hosting: createShowHostingTool(event),
           open_playground: openPlaygroundTool
+        },
+        experimental_telemetry: {
+          isEnabled: true,
+          integrations: [createEvlogIntegration(ai)]
         },
         onFinish: closeMcp,
         onAbort: closeMcp,

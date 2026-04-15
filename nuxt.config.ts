@@ -26,7 +26,8 @@ export default defineNuxtConfig({
     '@nuxt/hints',
     '@vercel/analytics',
     '@vercel/speed-insights',
-    '@comark/nuxt'
+    '@comark/nuxt',
+    'evlog/nuxt'
   ],
   $development: {
     site: {
@@ -463,6 +464,9 @@ export default defineNuxtConfig({
         commaDangle: 'never'
       }
     }
+  },
+  evlog: {
+    env: { service: 'nuxt-com' }
   },
   icon: {
     customCollections: [{
