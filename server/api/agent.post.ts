@@ -11,6 +11,7 @@ import { createShowTemplateTool } from '../utils/tools/show-template'
 import { createShowBlogPostTool } from '../utils/tools/show-blog-post'
 import { createShowHostingTool } from '../utils/tools/show-hosting'
 import { openPlaygroundTool } from '../utils/tools/open-playground'
+import { createSearchGitHubIssuesTool } from '../utils/tools/search-github-issues'
 
 const MCP_PATH = '/mcp'
 const MODEL = 'anthropic/claude-sonnet-4.6'
@@ -42,9 +43,16 @@ const systemPrompt = `You are **the Nuxt Agent**, Nuxt's documentation agent on 
 - Prefer \`show_module\` over \`get_module\` (smaller response, richer UI).
 - Avoid redundant tool calls — one focused call is better than several broad ones.
 
+**Debugging / error questions:**
+- When the user shares an error message or stack trace, use \`search_github_issues\` first — it searches across nuxt, nuxt-modules, and nuxt-content orgs.
+- If a matching closed issue exists, link to it and summarize the fix/workaround.
+- If open, link to the issue and mention any workarounds from the body.
+- Only fall back to \`web_search\` if no relevant GitHub Issue is found.
+
 **Tools:**
 - \`list_documentation_pages\` — discover pages by topic (use before \`get_documentation_page\` if path unknown)
 - \`get_documentation_page\` — read a page. **Always pass \`sections\`** with the relevant h2 titles.
+- \`search_github_issues\` — search GitHub Issues across the Nuxt ecosystem. Use for errors, bugs, and debugging questions.
 - \`show_module\` — display a module card (preferred for module questions)
 - \`show_template\` — display template cards (accepts array of slugs). For vague requests, show official templates first: nuxt-ui-dashboard, nuxt-ui-saas, nuxt-ui-landing, nuxt-ui-chat, nuxt-ui-docs, nuxt-ui-portfolio
 - \`show_blog_post\` — display a blog post card
@@ -52,7 +60,7 @@ const systemPrompt = `You are **the Nuxt Agent**, Nuxt's documentation agent on 
 - \`open_playground\` — generate a StackBlitz link
 - ALWAYS respond with text after tool calls — never end with just tool calls
 
-**Web search:** Only use when the user **explicitly** asks about recent events or real-time data beyond the Nuxt docs. Never search proactively.
+**Web search:** Only use when the user **explicitly** asks about recent events or real-time data beyond the Nuxt docs, or if \`search_github_issues\` returned no results. Never search proactively.
 
 **Formatting:**
 - NEVER use markdown headings (#, ##, ###)
@@ -156,6 +164,7 @@ export default defineEventHandler(async (event) => {
         tools: {
           ...mcpTools as ToolSet,
           web_search: anthropic.tools.webSearch_20250305(),
+          search_github_issues: createSearchGitHubIssuesTool(event),
           show_module: showModuleTool,
           show_template: createShowTemplateTool(event),
           show_blog_post: createShowBlogPostTool(event),
