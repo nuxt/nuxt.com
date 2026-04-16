@@ -26,6 +26,17 @@ function getTemplates(output: unknown): TemplateCardData[] {
 function hasTemplatesOutput(output: unknown): boolean {
   return getTemplates(output).length > 0
 }
+
+type FeedbackOutput = { title: string, summary: string }
+
+function getFeedbackOutput(output: unknown): FeedbackOutput | null {
+  if (!output || typeof output !== 'object') return null
+  const o = output as Record<string, unknown>
+  if (typeof o.title === 'string' && typeof o.summary === 'string') {
+    return { title: o.title, summary: o.summary }
+  }
+  return null
+}
 </script>
 
 <template>
@@ -111,6 +122,18 @@ function hasTemplatesOutput(output: unknown): boolean {
         <ToolsPlaygroundCard
           v-if="part.state === 'output-available' && part.output"
           v-bind="part.output as PlaygroundCardData"
+        />
+      </template>
+      <template v-else-if="getToolName(part) === 'report_issue'">
+        <UChatTool
+          :text="isToolStreaming(part) ? 'Preparing feedback form...' : 'Help us improve'"
+          icon="i-lucide-message-circle-warning"
+          :streaming="isToolStreaming(part)"
+        />
+        <ToolsFeedbackCard
+          v-if="part.state === 'output-available' && getFeedbackOutput(part.output)"
+          :title="getFeedbackOutput(part.output)!.title"
+          :summary="getFeedbackOutput(part.output)!.summary"
         />
       </template>
       <template v-else-if="(getToolName(part) === 'get-module' || getToolName(part) === 'list-modules') && getModuleCards(part).length">

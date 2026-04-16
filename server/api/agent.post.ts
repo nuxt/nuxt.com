@@ -12,6 +12,7 @@ import { createShowBlogPostTool } from '../utils/tools/show-blog-post'
 import { createShowHostingTool } from '../utils/tools/show-hosting'
 import { openPlaygroundTool } from '../utils/tools/open-playground'
 import { createSearchGitHubIssuesTool } from '../utils/tools/search-github-issues'
+import { reportIssueTool } from '../utils/tools/report-issue'
 
 const MCP_PATH = '/mcp'
 const MODEL = 'anthropic/claude-sonnet-4.6'
@@ -58,6 +59,7 @@ const systemPrompt = `You are **the Nuxt Agent**, Nuxt's documentation agent on 
 - \`show_blog_post\` — display a blog post card
 - \`show_hosting\` — display a hosting provider card
 - \`open_playground\` — generate a StackBlitz link
+- \`report_issue\` — call when you cannot resolve the user's question after exhausting all available tools, or when the user expresses frustration. Provide a short title and 1-3 sentence summary of what was tried and why it failed
 - ALWAYS respond with text after tool calls — never end with just tool calls
 
 **Web search:** Only use when the user **explicitly** asks about recent events or real-time data beyond the Nuxt docs, or if \`search_github_issues\` returned no results. Never search proactively.
@@ -173,7 +175,8 @@ export default defineEventHandler(async (event) => {
           show_template: createShowTemplateTool(event),
           show_blog_post: createShowBlogPostTool(event),
           show_hosting: createShowHostingTool(event),
-          open_playground: openPlaygroundTool
+          open_playground: openPlaygroundTool,
+          report_issue: reportIssueTool
         },
         experimental_telemetry: {
           isEnabled: true,

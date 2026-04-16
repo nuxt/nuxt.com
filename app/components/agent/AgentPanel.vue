@@ -108,10 +108,10 @@ async function onSubmit() {
   const text = currentPage.value && showPageContext.value
     ? `[Page: ${currentPage.value}] ${raw}`
     : raw
+  input.value = ''
   try {
     await chat.sendMessage({ text })
     onMessageSent()
-    input.value = ''
   } catch {
     // Error surfaced via chat.onError
   }

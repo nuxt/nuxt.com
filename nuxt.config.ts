@@ -100,6 +100,9 @@ export default defineNuxtConfig({
     github: {
       token: ''
     },
+    linear: {
+      apiKey: ''
+    },
     newsletter: {
       secret: ''
     },
