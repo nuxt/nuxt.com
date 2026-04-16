@@ -24,7 +24,10 @@ TIPS: Always pass a search term to narrow results — avoids dumping the entire 
       const docs = await queryCollection(event, col)
         .select('title', 'path', 'description')
         .all()
-      if (!docs) return errorResult('Documentation pages collection not found')
+      if (!docs) {
+        if (version === 'all') continue
+        return errorResult('Documentation pages collection not found')
+      }
       allDocs.push(...docs)
     }
 

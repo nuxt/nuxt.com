@@ -22,6 +22,10 @@ function getTemplates(output: unknown): TemplateCardData[] {
   if (Array.isArray(o.templates)) return o.templates as TemplateCardData[]
   return []
 }
+
+function hasTemplatesOutput(output: unknown): boolean {
+  return getTemplates(output).length > 0
+}
 </script>
 
 <template>
@@ -61,12 +65,12 @@ function getTemplates(output: unknown): TemplateCardData[] {
       </template>
       <template v-else-if="getToolName(part) === 'show_template'">
         <UChatTool
-          :text="isToolStreaming(part) ? 'Loading templates...' : (part.state === 'output-available' && part.output && !(part.output as Record<string, unknown>).error ? 'Found templates' : 'Templates not found')"
+          :text="isToolStreaming(part) ? 'Loading templates...' : (part.state === 'output-available' && part.output && !(part.output as Record<string, unknown>).error && hasTemplatesOutput(part.output) ? 'Found templates' : 'Templates not found')"
           icon="i-lucide-layout-template"
           :streaming="isToolStreaming(part)"
         />
         <div
-          v-if="part.state === 'output-available' && part.output && !(part.output as Record<string, unknown>).error && getTemplates(part.output).length"
+          v-if="part.state === 'output-available' && part.output && !(part.output as Record<string, unknown>).error && hasTemplatesOutput(part.output)"
           class="grid grid-cols-1 sm:grid-cols-2 gap-3"
         >
           <ToolsTemplateCard
