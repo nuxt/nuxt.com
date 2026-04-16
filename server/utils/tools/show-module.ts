@@ -1,6 +1,7 @@
 import { tool } from 'ai'
 import { z } from 'zod'
 import type { UIToolInvocation } from 'ai'
+import { FetchError } from 'ofetch'
 
 export type ShowModuleUIToolInvocation = UIToolInvocation<typeof showModuleTool>
 
@@ -27,11 +28,13 @@ function slugCandidates(raw: string): string[] {
 }
 
 async function fetchModule(slug: string): Promise<Record<string, unknown> | null> {
+  const url = `${MODULE_API}/${encodeURIComponent(slug)}`
   try {
-    const data = await $fetch<Record<string, unknown>>(`${MODULE_API}/${encodeURIComponent(slug)}`)
+    const data = await $fetch<Record<string, unknown>>(url)
     return data.error === true ? null : data
-  } catch {
-    return null
+  } catch (e) {
+    if (e instanceof FetchError && e.statusCode === 404) return null
+    throw e
   }
 }
 

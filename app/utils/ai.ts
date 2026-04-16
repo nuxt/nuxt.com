@@ -1,5 +1,6 @@
 import type { UIMessage } from 'ai'
 import { isTextUIPart } from 'ai'
+import { sourceToInlineMdc } from '~/utils/tool'
 
 export function getMergedParts(parts: UIMessage['parts']): UIMessage['parts'] {
   const result: UIMessage['parts'] = []
@@ -8,6 +9,8 @@ export function getMergedParts(parts: UIMessage['parts']): UIMessage['parts'] {
     if (part.type === 'source-url') {
       if (prev && isTextUIPart(prev)) {
         result[result.length - 1] = { type: 'text', text: prev.text + sourceToInlineMdc(part.url) }
+      } else {
+        result.push({ type: 'text', text: sourceToInlineMdc(part.url) })
       }
       continue
     }

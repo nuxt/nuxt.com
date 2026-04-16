@@ -25,6 +25,7 @@ const textContent = computed(() => {
     <UTooltip :text="copied ? 'Copied' : 'Copy'">
       <UButton
         :icon="copied ? 'i-lucide-check' : 'i-lucide-copy'"
+        :aria-label="copied ? 'Copied' : 'Copy response'"
         color="neutral"
         variant="ghost"
         size="xs"
@@ -35,6 +36,8 @@ const textContent = computed(() => {
     <UTooltip text="Good response">
       <UButton
         icon="i-lucide-thumbs-up"
+        aria-label="Mark response as helpful"
+        :aria-pressed="vote === true ? 'true' : 'false'"
         :color="vote === true ? 'success' : 'neutral'"
         variant="ghost"
         size="xs"
@@ -45,6 +48,8 @@ const textContent = computed(() => {
     <UTooltip text="Bad response">
       <UButton
         icon="i-lucide-thumbs-down"
+        aria-label="Mark response as not helpful"
+        :aria-pressed="vote === false ? 'true' : 'false'"
         :color="vote === false ? 'error' : 'neutral'"
         variant="ghost"
         size="xs"

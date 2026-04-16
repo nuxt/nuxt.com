@@ -7,22 +7,33 @@ const { track } = useAnalytics()
 const input = ref('')
 const isVisible = ref(true)
 const inputRef = ref<{ inputRef: HTMLInputElement } | null>(null)
+let submitTimer: ReturnType<typeof setTimeout> | null = null
 
 const isDocsRoute = computed(() => route.path.startsWith('/docs') || route.path.startsWith('/blog'))
 
 function handleSubmit() {
   if (!input.value.trim()) return
 
-  track('Nuxt Agent Message Sent', { query: input.value, source: 'floating-input', page: route.path })
   const message = input.value
+  track('Nuxt Agent Message Sent', {
+    source: 'floating-input',
+    page: route.path,
+    queryLength: message.length
+  })
   isVisible.value = false
 
-  setTimeout(() => {
+  if (submitTimer) clearTimeout(submitTimer)
+  submitTimer = setTimeout(() => {
+    submitTimer = null
     open(message, true)
     input.value = ''
     isVisible.value = true
   }, 200)
 }
+
+onScopeDispose(() => {
+  if (submitTimer) clearTimeout(submitTimer)
+})
 
 defineShortcuts({
   meta_i: {

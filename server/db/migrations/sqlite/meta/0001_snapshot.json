@@ -97,6 +97,38 @@
           "autoincrement": false
         }
       },
+      "indexes": {
+        "agent_chats_fingerprint_idx": {
+          "name": "agent_chats_fingerprint_idx",
+          "columns": [
+            "fingerprint"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "agent_daily_usage": {
+      "name": "agent_daily_usage",
+      "columns": {
+        "day_key": {
+          "name": "day_key",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "count": {
+          "name": "count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
@@ -152,7 +184,21 @@
           "isUnique": true
         }
       },
-      "foreignKeys": {},
+      "foreignKeys": {
+        "agent_votes_chat_id_agent_chats_id_fk": {
+          "name": "agent_votes_chat_id_agent_chats_id_fk",
+          "tableFrom": "agent_votes",
+          "tableTo": "agent_chats",
+          "columnsFrom": [
+            "chat_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraints": {}

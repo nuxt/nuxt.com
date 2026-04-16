@@ -1,11 +1,11 @@
-import { streamText, convertToModelMessages, createUIMessageStream, createUIMessageStreamResponse } from 'ai'
-import type { ToolSet } from 'ai'
+import { streamText, convertToModelMessages, createUIMessageStream, createUIMessageStreamResponse, safeValidateUIMessages } from 'ai'
+import type { ToolSet, UIMessage } from 'ai'
 import { createMCPClient } from '@ai-sdk/mcp'
 import { anthropic } from '@ai-sdk/anthropic'
-import type { H3Event } from 'h3'
 import { createAILogger, createEvlogIntegration } from 'evlog/ai'
 import type { AILogger } from 'evlog/ai'
 import { sql } from 'drizzle-orm'
+import { getAgentFingerprint } from '../utils/agent-fingerprint'
 import { showModuleTool } from '../utils/tools/show-module'
 import { createShowTemplateTool } from '../utils/tools/show-template'
 import { createShowBlogPostTool } from '../utils/tools/show-blog-post'
@@ -77,19 +77,23 @@ function computeEstimatedCost(state: AILogger['_state']): number {
   return (state.usage.inputTokens * cost.input + state.usage.outputTokens * cost.output) / 1_000_000
 }
 
-async function getFingerprint(event: H3Event): Promise<string> {
-  const ip = event.context.cf?.ip || 'unknown'
-  const userAgent = getHeader(event, 'user-agent') || 'unknown'
-  const domain = getHeader(event, 'host') || 'localhost'
-  const data = `${domain}+${ip}+${userAgent}`
-  const buffer = await crypto.subtle.digest('SHA-1', new TextEncoder().encode(data))
-  return [...new Uint8Array(buffer)].map(b => b.toString(16).padStart(2, '0')).join('')
-}
-
 export default defineEventHandler(async (event) => {
-  await consumeAgentRateLimit(event)
+  const raw = await readBody(event) as { messages?: unknown } | null
+  if (!raw || !Array.isArray(raw.messages)) {
+    throw createError({ statusCode: 400, statusMessage: 'Invalid request body' })
+  }
 
-  const { messages } = await readBody(event)
+  const validated = await safeValidateUIMessages({ messages: raw.messages })
+  if (validated.success === false) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: validated.error.message || 'Invalid messages'
+    })
+  }
+
+  const messages = validated.data
+
+  await consumeAgentRateLimit(event)
   const chatId = getHeader(event, 'x-chat-id')
   const log = useLogger(event)
   const ai = createAILogger(log, {
@@ -111,9 +115,9 @@ export default defineEventHandler(async (event) => {
 
   const closeMcp = () => event.waitUntil(httpClient.close())
 
-  const saveChat = async () => {
+  const saveChat = async (finalizedMessages: UIMessage[]) => {
     if (!chatId) return
-    const fingerprint = await getFingerprint(event)
+    const fingerprint = await getAgentFingerprint(event)
     const now = new Date()
     const state = ai._state
     const model = state.models.at(-1) ?? null
@@ -124,7 +128,7 @@ export default defineEventHandler(async (event) => {
 
     await db.insert(schema.agentChats).values({
       id: chatId,
-      messages,
+      messages: finalizedMessages,
       fingerprint,
       model,
       provider,
@@ -138,7 +142,7 @@ export default defineEventHandler(async (event) => {
     }).onConflictDoUpdate({
       target: schema.agentChats.id,
       set: {
-        messages,
+        messages: finalizedMessages,
         updatedAt: now,
         model,
         provider,
@@ -177,14 +181,17 @@ export default defineEventHandler(async (event) => {
         },
         onFinish: () => {
           closeMcp()
-          event.waitUntil(saveChat())
         },
         onAbort: closeMcp,
         onError: closeMcp
       })
 
       writer.merge(result.toUIMessageStream({
-        sendSources: true
+        sendSources: true,
+        originalMessages: messages,
+        onFinish: ({ messages: finalizedMessages }) => {
+          event.waitUntil(saveChat(finalizedMessages))
+        }
       }))
     }
   })

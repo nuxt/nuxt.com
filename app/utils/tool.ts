@@ -1,4 +1,4 @@
-import type { getToolName } from 'ai'
+import type { DynamicToolUIPart, ToolUIPart, UITools } from 'ai'
 
 export interface Source {
   url: string
@@ -9,7 +9,7 @@ interface SearchOutput {
   sources?: { url: string, type?: string }[]
 }
 
-type ToolPart = Parameters<typeof getToolName>[0]
+type ToolPart = ToolUIPart<UITools> | DynamicToolUIPart
 
 export function getSearchQuery(part: ToolPart): string | undefined {
   return (part.input as { query?: string } | undefined)?.query

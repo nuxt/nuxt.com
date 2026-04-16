@@ -18,7 +18,15 @@ CREATE TABLE `agent_votes` (
 	`chat_id` text NOT NULL,
 	`message_id` text NOT NULL,
 	`is_upvoted` integer NOT NULL,
-	`createdAt` integer NOT NULL
+	`createdAt` integer NOT NULL,
+	FOREIGN KEY (`chat_id`) REFERENCES `agent_chats`(`id`) ON DELETE CASCADE
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `agent_vote_chat_msg_idx` ON `agent_votes` (`chat_id`,`message_id`);
+--> statement-breakpoint
+CREATE INDEX `agent_chats_fingerprint_idx` ON `agent_chats` (`fingerprint`);
+--> statement-breakpoint
+CREATE TABLE `agent_daily_usage` (
+	`day_key` text PRIMARY KEY NOT NULL,
+	`count` integer NOT NULL
+);

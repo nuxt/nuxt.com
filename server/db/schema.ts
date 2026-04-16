@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, real, uniqueIndex } from 'drizzle-orm/sqlite-core'
+import { sqliteTable, text, integer, real, uniqueIndex, index } from 'drizzle-orm/sqlite-core'
 
 export const feedback = sqliteTable('feedback', {
   id: integer('id').primaryKey({ autoIncrement: true }),
@@ -26,11 +26,16 @@ export const agentChats = sqliteTable('agent_chats', {
   requestCount: integer('request_count').notNull().default(0),
   createdAt: integer({ mode: 'timestamp' }).notNull(),
   updatedAt: integer({ mode: 'timestamp' }).notNull()
+}, table => [index('agent_chats_fingerprint_idx').on(table.fingerprint)])
+
+export const agentDailyUsage = sqliteTable('agent_daily_usage', {
+  dayKey: text('day_key').primaryKey(),
+  count: integer('count').notNull()
 })
 
 export const agentVotes = sqliteTable('agent_votes', {
   id: integer('id').primaryKey({ autoIncrement: true }),
-  chatId: text('chat_id').notNull(),
+  chatId: text('chat_id').notNull().references(() => agentChats.id, { onDelete: 'cascade' }),
   messageId: text('message_id').notNull(),
   isUpvoted: integer('is_upvoted', { mode: 'boolean' }).notNull(),
   createdAt: integer({ mode: 'timestamp' }).notNull()

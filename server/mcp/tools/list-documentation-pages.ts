@@ -17,7 +17,7 @@ TIPS: Always pass a search term to narrow results — avoids dumping the entire 
     let allDocs: { title: string, path: string, description: string }[] = []
 
     const collections = version === 'all'
-      ? ['docsv3', 'docsv4'] as const
+      ? ['docsv3', 'docsv4', 'docsv5'] as const
       : [version === '3.x' ? 'docsv3' : version === '5.x' ? 'docsv5' : 'docsv4'] as const
 
     for (const col of collections) {
@@ -31,7 +31,7 @@ TIPS: Always pass a search term to narrow results — avoids dumping the entire 
     if (search) {
       const terms = search.toLowerCase().split(/\s+/)
       allDocs = allDocs.filter((doc) => {
-        const haystack = `${doc.title} ${doc.path} ${doc.description}`.toLowerCase()
+        const haystack = `${doc.title ?? ''} ${doc.path ?? ''} ${doc.description ?? ''}`.toLowerCase()
         return terms.every(t => haystack.includes(t))
       })
     }

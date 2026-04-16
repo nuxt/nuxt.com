@@ -86,12 +86,16 @@ const contextPathLabel = computed(() => {
       <template #footer>
         <div class="flex items-center gap-2 text-xs text-dimmed">
           <UTooltip v-if="currentPage && !showPageContext" text="Use page as context" :kbds="['tab']">
-            <button
-              class="relative flex items-center py-1 px-1.5 -my-1 -mx-1.5 rounded-md text-dimmed hover:text-default hover:bg-elevated transition-colors"
-              @click="$emit('addPageContext')"
-            >
-              <UIcon name="i-lucide-file-plus" class="size-4" />
-            </button>
+            <UButton
+              type="button"
+              icon="i-lucide-file-plus"
+              color="neutral"
+              variant="ghost"
+              size="sm"
+              class="relative -my-1 -mx-1.5 text-dimmed hover:text-default"
+              aria-label="Use page as context"
+              @click.stop="$emit('addPageContext')"
+            />
           </UTooltip>
 
           <USeparator v-if="currentPage && !showPageContext" orientation="vertical" class="h-4" />

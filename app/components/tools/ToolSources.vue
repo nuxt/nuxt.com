@@ -1,7 +1,18 @@
 <script setup lang="ts">
+import type { Source } from '~/utils/tool'
+
 defineProps<{
   sources: Source[]
 }>()
+
+function safeExternalHref(raw: string) {
+  try {
+    const url = new URL(raw)
+    return ['http:', 'https:'].includes(url.protocol) ? url.href : ''
+  } catch {
+    return ''
+  }
+}
 </script>
 
 <template>
@@ -9,7 +20,7 @@ defineProps<{
     <a
       v-for="source in sources"
       :key="source.url"
-      :href="source.url"
+      :href="safeExternalHref(source.url)"
       target="_blank"
       rel="noopener noreferrer"
       class="flex items-center gap-2 px-2 py-1 text-sm text-muted hover:text-default hover:bg-elevated/50 transition-colors min-w-0 rounded-md"

@@ -95,16 +95,26 @@ watch(messages, (newMessages) => {
 
 const canClear = computed(() => messages.value.length > 0 || chat.messages.length > 0)
 
-function onSubmit() {
+async function onSubmit() {
   if (!input.value.trim() || rateLimitReached.value) return
 
-  track('Nuxt Agent Message Sent', { query: input.value, source: 'prompt', page: currentPage.value, withContext: showPageContext.value })
+  const raw = input.value
+  track('Nuxt Agent Message Sent', {
+    source: 'prompt',
+    page: currentPage.value,
+    withContext: showPageContext.value,
+    queryLength: raw.length
+  })
   const text = currentPage.value && showPageContext.value
-    ? `[Page: ${currentPage.value}] ${input.value}`
-    : input.value
-  chat.sendMessage({ text })
-  onMessageSent()
-  input.value = ''
+    ? `[Page: ${currentPage.value}] ${raw}`
+    : raw
+  try {
+    await chat.sendMessage({ text })
+    onMessageSent()
+    input.value = ''
+  } catch {
+    // Error surfaced via chat.onError
+  }
 }
 
 function askQuestion(question: string) {

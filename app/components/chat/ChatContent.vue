@@ -2,6 +2,13 @@
 import type { UIMessage } from 'ai'
 import { isToolUIPart, isReasoningUIPart, isTextUIPart, getToolName } from 'ai'
 import { isPartStreaming, isToolStreaming } from '@nuxt/ui/utils/ai'
+import type {
+  BlogCardData,
+  HostingCardData,
+  ModuleCardData,
+  PlaygroundCardData,
+  TemplateCardData
+} from '~/composables/useChatTools'
 
 defineProps<{
   message: UIMessage

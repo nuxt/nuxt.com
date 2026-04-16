@@ -114,13 +114,18 @@ const suggestions = [
   }
 ]
 
-function onSubmit() {
+async function onSubmit() {
   if (!input.value.trim() || rateLimitReached.value) return
 
-  track('Nuxt Agent Message Sent', { query: input.value, source: 'chat-page' })
-  chat.sendMessage({ text: input.value })
-  onMessageSent()
-  input.value = ''
+  const raw = input.value
+  track('Nuxt Agent Message Sent', { source: 'chat-page', queryLength: raw.length })
+  try {
+    await chat.sendMessage({ text: raw })
+    onMessageSent()
+    input.value = ''
+  } catch {
+    // Error surfaced via chat.onError
+  }
 }
 
 function askQuestion(question: string) {

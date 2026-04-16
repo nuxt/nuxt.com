@@ -1,11 +1,20 @@
 <script setup lang="ts">
-defineProps<{
+const props = defineProps<{
   url: string
   repo: string
   title?: string
   file?: string
   dir?: string
 }>()
+
+const safeUrl = computed(() => {
+  try {
+    const parsed = new URL(props.url)
+    return ['http:', 'https:'].includes(parsed.protocol) ? parsed.href : '#'
+  } catch {
+    return '#'
+  }
+})
 </script>
 
 <template>
@@ -23,7 +32,7 @@ defineProps<{
       size="xs"
       color="primary"
       variant="soft"
-      :to="url"
+      :to="safeUrl"
       target="_blank"
     />
   </div>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const colorMode = useColorMode()
 const route = useRoute()
+const isChatRoute = computed(() => route.path === '/chat' || route.path.startsWith('/chat/'))
 const { version } = useDocsVersion()
 const { searchGroups, searchLinks, searchTerm } = useNavigation()
 const { fetchList: fetchModules } = useModules()
@@ -83,12 +84,12 @@ onMounted(() => {
         </NuxtLayout>
 
         <ClientOnly>
-          <LazyAgentFloatingInput v-if="route.path !== '/chat'" />
+          <LazyAgentFloatingInput v-if="!isChatRoute" />
         </ClientOnly>
       </div>
 
       <ClientOnly>
-        <LazyAgentPanel v-if="route.path !== '/chat'" />
+        <LazyAgentPanel v-if="!isChatRoute" />
       </ClientOnly>
     </div>
 

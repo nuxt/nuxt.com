@@ -1,5 +1,5 @@
 import type { UIMessage } from 'ai'
-import { createSharedComposable, useLocalStorage, useMediaQuery } from '@vueuse/core'
+import { createSharedComposable, useLocalStorage, useMediaQuery, useSessionStorage } from '@vueuse/core'
 import type { FaqCategory, FaqQuestions } from '~/types/agent'
 
 interface AgentUsage {
@@ -28,8 +28,8 @@ export const useNuxtAgent = createSharedComposable(() => {
   const agentConfig = appConfig.agent as { faqQuestions?: FaqQuestions } | undefined
 
   const storageOpen = useLocalStorage('assistant-open', false)
-  const messages = useLocalStorage<UIMessage[]>('assistant-messages', [])
-  const chatId = useLocalStorage('assistant-chat-id', () => crypto.randomUUID())
+  const messages = useSessionStorage<UIMessage[]>('assistant-messages', [])
+  const chatId = useSessionStorage('assistant-chat-id', () => crypto.randomUUID())
 
   const isOpen = ref(false)
 

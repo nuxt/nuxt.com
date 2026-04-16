@@ -421,7 +421,7 @@ export default defineNuxtConfig({
         route => route.startsWith('/admin')
       ],
       autoSubfolderIndex: false
-    },
+    }
   },
   hub: {
     db: 'sqlite',
