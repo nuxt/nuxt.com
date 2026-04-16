@@ -43,6 +43,11 @@ Common Issues:
         content = extractSections(fullContent, sections)
       }
 
+      const MAX_CHARS = 12_000
+      if (content.length > MAX_CHARS) {
+        content = content.slice(0, MAX_CHARS) + '\n\n[Content truncated. Use the sections parameter to request specific h2 sections.]'
+      }
+
       return {
         content: [{ type: 'text' as const, text: content }]
       }
