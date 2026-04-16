@@ -27,9 +27,13 @@ EXAMPLES:
     try {
       const module = await $fetch<Module>(`https://api.nuxt.com/modules/${slug}`)
 
-      const readme = module.readme && module.readme.length > 8_000
-        ? module.readme.slice(0, 8_000) + '\n\n[README truncated. Visit the module page for the full content.]'
-        : module.readme
+      let readme: string | undefined
+      if (module.readme) {
+        const raw = JSON.stringify(module.readme)
+        readme = raw.length > 8_000
+          ? raw.slice(0, 8_000) + '… [README truncated]'
+          : raw
+      }
 
       return jsonResult({
         name: module.name,

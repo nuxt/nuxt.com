@@ -96,6 +96,7 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     contactEmail: '',
+    cronSecret: '',
     github: {
       token: ''
     },
@@ -420,7 +421,7 @@ export default defineNuxtConfig({
         route => route.startsWith('/admin')
       ],
       autoSubfolderIndex: false
-    }
+    },
   },
   hub: {
     db: 'sqlite',
