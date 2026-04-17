@@ -1,19 +1,19 @@
 :root {
-  --twoslash-popup-bg: rgb(var(--color-gray-800) / 1);
-  --twoslash-popup-color: rgb(var(--color-gray-300) / 1);
+  --twoslash-popup-bg: var(--color-neutral-800);
+  --twoslash-popup-color: var(--color-neutral-300);
   --twoslash-docs-color: inherit;
   --twoslash-docs-font: inherit;
   --twoslash-code-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --twoslash-underline-color: #8888;
-  --twoslash-border-color: rgb(var(--color-gray-700) / 1);
-  --twoslash-cursor-color: rgb(var(--color-primary-DEFAULT) / 1);
-  --twoslash-matched-color: rgb(var(--color-primary-DEFAULT) / 1);
+  --twoslash-border-color: var(--color-neutral-700);
+  --twoslash-cursor-color: var(--color-primary-500);
+  --twoslash-matched-color: var(--color-primary-500);
 }
 
 html:not(.dark) {
-  --twoslash-popup-bg: rgb(var(--color-gray-100) / 1);
-  --twoslash-popup-color: rgb(var(--color-gray-600) / 1);
-  --twoslash-border-color: rgb(var(--color-gray-300) / 1);
+  --twoslash-popup-bg: var(--color-neutral-100);
+  --twoslash-popup-color: var(--color-neutral-600);
+  --twoslash-border-color: var(--color-neutral-300);
 }
 
 .twoslash-popup-container .twoslash-popup-code {
