@@ -15,6 +15,13 @@
       "when": 1776264773812,
       "tag": "0001_great_spot",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1776600000000,
+      "tag": "0002_agent_daily_usage",
+      "breakpoints": true
     }
   ]
 }
