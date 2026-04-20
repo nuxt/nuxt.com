@@ -168,9 +168,9 @@ const footerLinks = [{
 export const useFooterLinks = () => ({ footerLinks })
 
 const _useNavigation = () => {
-  const nuxtApp = useNuxtApp()
   const searchTerm = ref<string>('')
   const { track } = useAnalytics()
+  const { open: openAgent } = useNuxtAgent()
 
   const { headerLinks } = useHeaderLinks()
   const { footerLinks } = useFooterLinks()
@@ -183,7 +183,7 @@ const _useNavigation = () => {
     to: 'javascript:void(0);',
     onSelect: () => {
       track('Nuxt Agent Opened', { source: 'search-links' })
-      nuxtApp.$kapa?.openModal()
+      openAgent()
     }
   }, ...headerLinks.value.flatMap((link) => {
     if (link.search === false) {
@@ -265,7 +265,7 @@ const _useNavigation = () => {
       to: 'javascript:void(0);',
       onSelect() {
         track('Nuxt Agent Opened', { source: 'search-palette', query: searchTerm.value })
-        nuxtApp.$kapa?.openModal(searchTerm.value)
+        openAgent(searchTerm.value)
       }
     }]
   }, {
