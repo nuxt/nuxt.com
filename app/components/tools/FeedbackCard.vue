@@ -54,6 +54,9 @@ async function submit() {
         />
       </div>
 
+      <p class="px-3 pt-1 pb-2 text-xs text-dimmed">
+        The conversation context is automatically attached.
+      </p>
       <div class="flex items-center gap-2 px-3 py-2 border-t border-default">
         <UButton
           size="xs"
