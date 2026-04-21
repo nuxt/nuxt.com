@@ -181,7 +181,7 @@ function refreshHeading(opened: boolean) {
       <UPage
         :ui="isAgentDocked ? {
           center: 'lg:col-span-10',
-          right: 'lg:col-span-0'
+          right: 'lg:hidden'
         } : undefined"
       >
         <UPageHeader

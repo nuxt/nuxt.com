@@ -3,9 +3,20 @@ import { DefaultChatTransport } from 'ai'
 import type { UIMessage } from 'ai'
 import { Chat } from '@ai-sdk/vue'
 
-const { isOpen, messages, chatId, resetChatId, faqQuestions, expandToFullScreen, isAgentDockedBreakpoint, usage, rateLimitReached, onMessageSent } = useNuxtAgent()
+const {
+  isOpen,
+  messages,
+  chatId,
+  resetChatId,
+  faqQuestions,
+  expandToFullScreen,
+  isAgentDockedBreakpoint,
+  usage,
+  rateLimitReached,
+  onMessageSent,
+  currentPage
+} = useNuxtAgent()
 const { track } = useAnalytics()
-const route = useRoute()
 const toast = useToast()
 const input = ref('')
 const votes = ref(new Map<string, boolean>())
@@ -31,32 +42,17 @@ function vote(message: UIMessage, isUpvoted: boolean) {
   })
 }
 
-const indexPages = new Set(['/docs', '/blog', '/changelog', '/modules', '/deploy'])
-
-const currentPage = computed(() => {
-  const path = route.path
-  if (indexPages.has(path)) return null
-  if (!path.startsWith('/docs/') && !path.startsWith('/blog/') && !path.startsWith('/changelog/') && !path.startsWith('/modules/') && !path.startsWith('/deploy/')) return null
-  return path
-})
-
-const pageContextAdded = ref(false)
-const pageContextDismissed = ref(false)
-
-watch(currentPage, () => {
-  pageContextAdded.value = false
-  pageContextDismissed.value = false
-})
-
-const showPageContext = computed(() => currentPage.value && (pageContextAdded.value || !pageContextDismissed.value))
-
 let _skipSync = false
 
 const chat = new Chat({
   messages: messages.value,
   transport: new DefaultChatTransport({
     api: '/api/agent',
-    headers: () => ({ 'x-chat-id': chatId.value })
+    headers: () => {
+      const headers: Record<string, string> = { 'x-chat-id': chatId.value }
+      if (currentPage.value) headers['x-page-path'] = currentPage.value
+      return headers
+    }
   }),
   onError: (error: Error) => {
     let message = error.message
@@ -102,15 +98,15 @@ async function onSubmit() {
   track('Nuxt Agent Message Sent', {
     source: 'prompt',
     page: currentPage.value,
-    withContext: showPageContext.value,
+    withContext: Boolean(currentPage.value),
     queryLength: raw.length
   })
-  const text = currentPage.value && showPageContext.value
-    ? `[Page: ${currentPage.value}] ${raw}`
-    : raw
   input.value = ''
   try {
-    await chat.sendMessage({ text })
+    await chat.sendMessage({
+      text: raw,
+      metadata: currentPage.value ? { pagePath: currentPage.value } : undefined
+    })
     onMessageSent()
   } catch {
     // Error surfaced via chat.onError
@@ -155,19 +151,6 @@ defineShortcuts({
   meta_i: {
     handler: () => {
       isOpen.value = !isOpen.value
-    },
-    usingInput: true
-  },
-  tab: {
-    handler: () => {
-      if (!currentPage.value) return
-      if (showPageContext.value) {
-        pageContextAdded.value = false
-        pageContextDismissed.value = true
-      } else {
-        pageContextAdded.value = true
-        pageContextDismissed.value = false
-      }
     },
     usingInput: true
   }
@@ -235,12 +218,9 @@ defineShortcuts({
         v-model="input"
         :chat="chat"
         :current-page="currentPage"
-        :show-page-context="!!showPageContext"
         :rate-limit-reached="rateLimitReached"
         :usage="usage"
         @submit="onSubmit"
-        @dismiss-page-context="pageContextAdded = false; pageContextDismissed = true"
-        @add-page-context="pageContextAdded = true; pageContextDismissed = false"
       />
     </template>
   </USidebar>
@@ -311,12 +291,9 @@ defineShortcuts({
         v-model="input"
         :chat="chat"
         :current-page="currentPage"
-        :show-page-context="!!showPageContext"
         :rate-limit-reached="rateLimitReached"
         :usage="usage"
         @submit="onSubmit"
-        @dismiss-page-context="pageContextAdded = false; pageContextDismissed = true"
-        @add-page-context="pageContextAdded = true; pageContextDismissed = false"
       />
     </template>
   </USlideover>

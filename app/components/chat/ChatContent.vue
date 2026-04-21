@@ -37,6 +37,12 @@ function getFeedbackOutput(output: unknown): FeedbackOutput | null {
   }
   return null
 }
+
+function getMessagePagePath(message: UIMessage, text: string): string | null {
+  const metaPath = (message.metadata as { pagePath?: string } | undefined)?.pagePath
+  if (typeof metaPath === 'string' && metaPath.length > 0) return metaPath
+  return parseUserMessage(text).page
+}
 </script>
 
 <template>
@@ -169,9 +175,9 @@ function getFeedbackOutput(output: unknown): FeedbackOutput | null {
         :streaming="isPartStreaming(part)"
       />
       <div v-else-if="message.role === 'user'">
-        <div v-if="parseUserMessage(part.text).page" class="flex items-center gap-1.5 mb-1.5 rounded-md bg-default/10 px-2 py-1 w-fit">
+        <div v-if="getMessagePagePath(message, part.text)" class="flex items-center gap-1.5 mb-1.5 rounded-md bg-default/10 px-2 py-1 w-fit">
           <img src="/icon.png" alt="Nuxt" class="size-3.5 shrink-0">
-          <span class="text-xs text-default/70">{{ parseUserMessage(part.text).page?.replace('/docs/', '') }}</span>
+          <span class="text-xs text-default/70">{{ getMessagePagePath(message, part.text)!.replace(/^\//, '') }}</span>
         </div>
         <p class="whitespace-pre-wrap text-sm/6">
           {{ parseUserMessage(part.text).text }}

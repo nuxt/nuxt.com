@@ -3,7 +3,7 @@ import { DefaultChatTransport } from 'ai'
 import type { UIMessage } from 'ai'
 import { Chat } from '@ai-sdk/vue'
 
-const { messages, chatId, resetChatId, collapseToSidebar, usage, rateLimitReached, onMessageSent } = useNuxtAgent()
+const { messages, chatId, resetChatId, collapseToSidebar, usage, rateLimitReached, onMessageSent, currentPage } = useNuxtAgent()
 const { track } = useAnalytics()
 const toast = useToast()
 const input = ref('')
@@ -36,7 +36,11 @@ const chat = new Chat({
   messages: messages.value,
   transport: new DefaultChatTransport({
     api: '/api/agent',
-    headers: () => ({ 'x-chat-id': chatId.value })
+      headers: () => {
+        const headers: Record<string, string> = { 'x-chat-id': chatId.value }
+        if (currentPage.value) headers['x-page-path'] = currentPage.value
+        return headers
+      }
   }),
   onError: (error: Error) => {
     let message = error.message
@@ -119,10 +123,13 @@ async function onSubmit() {
 
   const raw = input.value
   track('Nuxt Agent Message Sent', { source: 'chat-page', queryLength: raw.length })
+  input.value = ''
   try {
-    await chat.sendMessage({ text: raw })
+    await chat.sendMessage({
+      text: raw,
+      metadata: currentPage.value ? { pagePath: currentPage.value } : undefined
+    })
     onMessageSent()
-    input.value = ''
   } catch {
     // Error surfaced via chat.onError
   }

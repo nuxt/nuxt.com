@@ -24,14 +24,9 @@ export default defineMcpPrompt({
       p.title.toLowerCase().includes(provider.toLowerCase())
     )
 
-    let providerContent: string | null = null
-    if (matchingProvider) {
-      try {
-        providerContent = await $fetch<string>(`/raw${matchingProvider.path}.md`)
-      } catch {
-        providerContent = null
-      }
-    }
+    const providerContent = matchingProvider
+      ? await fetchPageMarkdown(event, 'deploy', matchingProvider.path)
+      : null
 
     return {
       messages: [

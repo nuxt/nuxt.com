@@ -23,15 +23,26 @@ function normalizeFaqQuestions(questions: FaqQuestions): FaqCategory[] {
   return questions as FaqCategory[]
 }
 
+const CONTEXT_PAGE_PREFIXES = ['/docs/', '/blog/', '/changelog/', '/modules/', '/deploy/']
+const CONTEXT_INDEX_PAGES = new Set(['/docs', '/blog', '/changelog', '/modules', '/deploy'])
+
 export const useNuxtAgent = createSharedComposable(() => {
   const appConfig = useAppConfig()
   const agentConfig = appConfig.agent as { faqQuestions?: FaqQuestions } | undefined
+  const route = useRoute()
 
   const storageOpen = useLocalStorage('assistant-open', false)
   const messages = useSessionStorage<UIMessage[]>('assistant-messages', [])
   const chatId = useSessionStorage('assistant-chat-id', () => crypto.randomUUID())
 
   const isOpen = ref(false)
+
+  const currentPage = computed(() => {
+    const path = route.path
+    if (CONTEXT_INDEX_PAGES.has(path)) return null
+    if (!CONTEXT_PAGE_PREFIXES.some(prefix => path.startsWith(prefix))) return null
+    return path
+  })
 
   onNuxtReady(() => {
     nextTick(() => {
@@ -63,7 +74,8 @@ export const useNuxtAgent = createSharedComposable(() => {
       messages.value = [...messages.value, {
         id: String(Date.now()),
         role: 'user' as const,
-        parts: [{ type: 'text' as const, text: initialMessage }]
+        parts: [{ type: 'text' as const, text: initialMessage }],
+        ...(currentPage.value ? { metadata: { pagePath: currentPage.value } } : {})
       }]
     }
     isOpen.value = true
@@ -125,6 +137,7 @@ export const useNuxtAgent = createSharedComposable(() => {
     usage,
     rateLimitReached,
     refreshUsage,
-    onMessageSent
+    onMessageSent,
+    currentPage
   }
 })

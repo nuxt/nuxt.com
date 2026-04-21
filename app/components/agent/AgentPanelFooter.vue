@@ -7,22 +7,15 @@ const input = defineModel<string>({ required: true })
 const props = defineProps<{
   chat: Chat<UIMessage>
   currentPage: string | null
-  showPageContext: boolean
   rateLimitReached?: boolean
   usage?: { used: number, remaining: number, limit: number }
 }>()
 
 defineEmits<{
   submit: []
-  dismissPageContext: []
-  addPageContext: []
 }>()
 
-const contextPathLabel = computed(() => {
-  const p = props.currentPage
-  if (!p) return ''
-  return p.replace(/^\//, '')
-})
+const contextPathLabel = computed(() => props.currentPage?.replace(/^\//, '') ?? '')
 </script>
 
 <template>
@@ -36,7 +29,7 @@ const contextPathLabel = computed(() => {
       leave-to-class="opacity-0"
     >
       <div
-        v-if="showPageContext"
+        v-if="currentPage"
         class="flex items-center gap-2 border-b border-default px-4 py-2.5"
       >
         <div class="min-w-0 flex-1 flex items-center gap-1.5 text-xs">
@@ -48,19 +41,9 @@ const contextPathLabel = computed(() => {
           >
           <span
             class="min-w-0 truncate font-medium text-highlighted"
-            :title="currentPage ?? undefined"
+            :title="currentPage"
           >{{ contextPathLabel }}</span>
         </div>
-        <UTooltip text="Stop using this page as context">
-          <UButton
-            icon="i-lucide-x"
-            color="neutral"
-            variant="ghost"
-            size="sm"
-            class="shrink-0 text-dimmed hover:text-default -me-1"
-            @click="$emit('dismissPageContext')"
-          />
-        </UTooltip>
       </div>
     </Transition>
 
@@ -85,21 +68,6 @@ const contextPathLabel = computed(() => {
     >
       <template #footer>
         <div class="flex items-center gap-2 text-xs text-dimmed">
-          <UTooltip v-if="currentPage && !showPageContext" text="Use page as context" :kbds="['tab']">
-            <UButton
-              type="button"
-              icon="i-lucide-file-plus"
-              color="neutral"
-              variant="ghost"
-              size="sm"
-              class="relative -my-1 -mx-1.5 text-dimmed hover:text-default"
-              aria-label="Use page as context"
-              @click.stop="$emit('addPageContext')"
-            />
-          </UTooltip>
-
-          <USeparator v-if="currentPage && !showPageContext" orientation="vertical" class="h-4" />
-
           <UTooltip v-if="usage" text="Daily messages remaining">
             <span :class="usage.remaining <= 5 ? 'text-warning' : ''">
               {{ usage.remaining }}/{{ usage.limit }}
