@@ -21,6 +21,12 @@ const toast = useToast()
 const input = ref('')
 const votes = ref(new Map<string, boolean>())
 
+const pageContextDismissed = ref(false)
+watch(currentPage, () => {
+  pageContextDismissed.value = false
+})
+const pageContextEnabled = computed(() => Boolean(currentPage.value) && !pageContextDismissed.value)
+
 function vote(message: UIMessage, isUpvoted: boolean) {
   const current = votes.value.get(message.id)
   const next = current === isUpvoted ? undefined : isUpvoted
@@ -50,7 +56,7 @@ const chat = new Chat({
     api: '/api/agent',
     headers: () => {
       const headers: Record<string, string> = { 'x-chat-id': chatId.value }
-      if (currentPage.value) headers['x-page-path'] = currentPage.value
+      if (pageContextEnabled.value && currentPage.value) headers['x-page-path'] = currentPage.value
       return headers
     }
   }),
@@ -98,14 +104,14 @@ async function onSubmit() {
   track('Nuxt Agent Message Sent', {
     source: 'prompt',
     page: currentPage.value,
-    withContext: Boolean(currentPage.value),
+    withContext: pageContextEnabled.value,
     queryLength: raw.length
   })
   input.value = ''
   try {
     await chat.sendMessage({
       text: raw,
-      metadata: currentPage.value ? { pagePath: currentPage.value } : undefined
+      metadata: pageContextEnabled.value && currentPage.value ? { pagePath: currentPage.value } : undefined
     })
     onMessageSent()
   } catch {
@@ -151,6 +157,13 @@ defineShortcuts({
   meta_i: {
     handler: () => {
       isOpen.value = !isOpen.value
+    },
+    usingInput: true
+  },
+  tab: {
+    handler: () => {
+      if (!isOpen.value || !currentPage.value) return
+      pageContextDismissed.value = !pageContextDismissed.value
     },
     usingInput: true
   }
@@ -218,9 +231,12 @@ defineShortcuts({
         v-model="input"
         :chat="chat"
         :current-page="currentPage"
+        :page-context-enabled="pageContextEnabled"
         :rate-limit-reached="rateLimitReached"
         :usage="usage"
         @submit="onSubmit"
+        @dismiss-page-context="pageContextDismissed = true"
+        @add-page-context="pageContextDismissed = false"
       />
     </template>
   </USidebar>
@@ -291,9 +307,12 @@ defineShortcuts({
         v-model="input"
         :chat="chat"
         :current-page="currentPage"
+        :page-context-enabled="pageContextEnabled"
         :rate-limit-reached="rateLimitReached"
         :usage="usage"
         @submit="onSubmit"
+        @dismiss-page-context="pageContextDismissed = true"
+        @add-page-context="pageContextDismissed = false"
       />
     </template>
   </USlideover>
