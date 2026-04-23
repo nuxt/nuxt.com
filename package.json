@@ -33,7 +33,7 @@
     "@nuxt/content": "^3.13.0",
     "@nuxt/hints": "1.0.3",
     "@nuxt/image": "^2.0.0",
-    "@nuxt/scripts": "^0.13.4",
+    "@nuxt/scripts": "^1.0.2",
     "@nuxt/ui": "^4.6.1",
     "@nuxthub/core": "^0.10.7",
     "@nuxtjs/html-validator": "^2.1.0",
