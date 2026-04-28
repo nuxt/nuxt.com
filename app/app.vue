@@ -59,18 +59,6 @@ const versionFiles = computed(() => files.value?.filter((file) => {
 }) ?? [])
 
 provide('navigation', versionNavigation)
-
-const appear = ref(false)
-const appeared = ref(false)
-
-onMounted(() => {
-  setTimeout(() => {
-    appear.value = true
-    setTimeout(() => {
-      appeared.value = true
-    }, 1000)
-  }, 0)
-})
 </script>
 
 <template>

@@ -101,7 +101,9 @@ export default defineNuxtConfig({
       token: ''
     },
     linear: {
-      apiKey: ''
+      apiKey: '',
+      teamId: 'f79ad145-d4eb-4bff-88b9-c344f006a777',
+      projectId: '11a6000e-6c95-445e-85f1-a7de5c372bcd'
     },
     newsletter: {
       secret: ''

@@ -131,12 +131,8 @@ export default defineEventHandler(async (event) => {
   const abortController = new AbortController()
   event.node.req.on('close', () => abortController.abort())
 
-  const mcpUrl = import.meta.dev
-    ? `http://localhost:3000${MCP_PATH}`
-    : `${getRequestURL(event).origin}${MCP_PATH}`
-
   const httpClient = await createMCPClient({
-    transport: { type: 'http', url: mcpUrl }
+    transport: { type: 'http', url: `${getRequestURL(event).origin}${MCP_PATH}` }
   })
   const mcpTools = await httpClient.tools()
 
@@ -153,6 +149,9 @@ export default defineEventHandler(async (event) => {
     const estimatedCost = computeEstimatedCost(state)
     const durationMs = state.totalDurationMs ?? 0
 
+    // Insert when chatId is new; on conflict only update when the existing row's
+    // fingerprint matches — prevents anyone with a guessable chatId from
+    // overwriting another user's conversation.
     await db.insert(schema.agentChats).values({
       id: chatId,
       messages: finalizedMessages,
@@ -178,7 +177,8 @@ export default defineEventHandler(async (event) => {
         estimatedCost: sql`${schema.agentChats.estimatedCost} + ${estimatedCost}`,
         durationMs: sql`${schema.agentChats.durationMs} + ${durationMs}`,
         requestCount: sql`${schema.agentChats.requestCount} + 1`
-      }
+      },
+      where: sql`${schema.agentChats.fingerprint} = ${fingerprint}`
     })
   }
 

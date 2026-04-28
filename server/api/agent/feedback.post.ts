@@ -3,8 +3,6 @@ import { eq } from 'drizzle-orm'
 import { getAgentFingerprint } from '../../utils/agent-fingerprint'
 
 const LINEAR_API = 'https://api.linear.app/graphql'
-const LINEAR_TEAM_ID = 'f79ad145-d4eb-4bff-88b9-c344f006a777'
-const LINEAR_PROJECT_ID = '11a6000e-6c95-445e-85f1-a7de5c372bcd'
 const MAX_TRANSCRIPT_CHARS = 3000
 
 const bodySchema = z.object({
@@ -85,8 +83,8 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
   }
 
-  const apiKey = useRuntimeConfig(event).linear.apiKey
-  if (!apiKey) {
+  const { apiKey, teamId, projectId } = useRuntimeConfig(event).linear
+  if (!apiKey || !teamId || !projectId) {
     throw createError({ statusCode: 503, statusMessage: 'Linear integration not configured' })
   }
 
@@ -114,8 +112,8 @@ export default defineEventHandler(async (event) => {
       query: mutation,
       variables: {
         input: {
-          teamId: LINEAR_TEAM_ID,
-          projectId: LINEAR_PROJECT_ID,
+          teamId,
+          projectId,
           title: `[Agent] ${title}`,
           description
         }

@@ -44,6 +44,12 @@ export const useNuxtAgent = createSharedComposable(() => {
     return path
   })
 
+  const pageContextDismissed = ref(false)
+  watch(currentPage, () => {
+    pageContextDismissed.value = false
+  })
+  const pageContextEnabled = computed(() => Boolean(currentPage.value) && !pageContextDismissed.value)
+
   onNuxtReady(() => {
     nextTick(() => {
       isOpen.value = storageOpen.value
@@ -77,6 +83,7 @@ export const useNuxtAgent = createSharedComposable(() => {
         parts: [{ type: 'text' as const, text: initialMessage }],
         ...(currentPage.value ? { metadata: { pagePath: currentPage.value } } : {})
       }]
+      onMessageSent()
     }
     isOpen.value = true
   }
@@ -109,7 +116,7 @@ export const useNuxtAgent = createSharedComposable(() => {
     default: () => ({ used: 0, remaining: 20, limit: 20 })
   })
 
-  const rateLimitReached = computed(() => usage.value.remaining <= 0)
+  const rateLimitReached = computed(() => (usage.value?.remaining ?? Infinity) <= 0)
 
   function onMessageSent() {
     if (usage.value) {
@@ -138,6 +145,8 @@ export const useNuxtAgent = createSharedComposable(() => {
     rateLimitReached,
     refreshUsage,
     onMessageSent,
-    currentPage
+    currentPage,
+    pageContextDismissed,
+    pageContextEnabled
   }
 })

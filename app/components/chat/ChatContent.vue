@@ -38,10 +38,9 @@ function getFeedbackOutput(output: unknown): FeedbackOutput | null {
   return null
 }
 
-function getMessagePagePath(message: UIMessage, text: string): string | null {
+function getMessagePagePath(message: UIMessage): string | null {
   const metaPath = (message.metadata as { pagePath?: string } | undefined)?.pagePath
-  if (typeof metaPath === 'string' && metaPath.length > 0) return metaPath
-  return parseUserMessage(text).page
+  return typeof metaPath === 'string' && metaPath.length > 0 ? metaPath : null
 }
 </script>
 
@@ -175,12 +174,12 @@ function getMessagePagePath(message: UIMessage, text: string): string | null {
         :streaming="isPartStreaming(part)"
       />
       <div v-else-if="message.role === 'user'">
-        <div v-if="getMessagePagePath(message, part.text)" class="flex items-center gap-1.5 mb-1.5 rounded-md bg-default/10 px-2 py-1 w-fit">
+        <div v-if="getMessagePagePath(message)" class="flex items-center gap-1.5 mb-1.5 rounded-md bg-default/10 px-2 py-1 w-fit">
           <img src="/icon.png" alt="Nuxt" class="size-3.5 shrink-0">
-          <span class="text-xs text-default/70">{{ getMessagePagePath(message, part.text)!.replace(/^\//, '') }}</span>
+          <span class="text-xs text-default/70">{{ getMessagePagePath(message)!.replace(/^\//, '') }}</span>
         </div>
         <p class="whitespace-pre-wrap text-sm/6">
-          {{ parseUserMessage(part.text).text }}
+          {{ part.text }}
         </p>
       </div>
     </template>

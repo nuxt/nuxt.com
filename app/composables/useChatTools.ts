@@ -72,15 +72,20 @@ export interface PlaygroundCardData {
 function getToolMessage(state: ToolState, toolName: string, toolInput: Record<string, string | undefined>) {
   const searchVerb = state === 'output-available' ? 'Searched' : 'Searching'
   const readVerb = state === 'output-available' ? 'Read' : 'Reading'
+  const foundVerb = state === 'output-available' ? 'Found' : 'Finding'
 
   return {
-    'list-pages': `${searchVerb} pages`,
-    'get-page': `${readVerb} ${toolInput.path || '...'}`,
-    'list-modules': `${searchVerb} modules`,
+    'list-documentation-pages': `${searchVerb} documentation${toolInput.search ? ` · ${toolInput.search}` : ''}`,
+    'get-documentation-page': `${readVerb} ${toolInput.path || '...'}`,
+    'get-getting-started-guide': `${readVerb} getting started`,
+    'get-blog-post': `${readVerb} ${toolInput.path || 'blog post'}`,
+    'get-deploy-provider': `${readVerb} ${toolInput.path || 'deploy guide'}`,
+    'get-changelog': `${searchVerb} changelog${toolInput.repo ? ` · ${toolInput.repo}` : ''}`,
+    'list-modules': `${searchVerb} modules${toolInput.search ? ` · ${toolInput.search}` : ''}`,
     'get-module': `${readVerb} module ${toolInput.slug || '...'}`,
-    'show_template': `${state === 'output-available' ? 'Found' : 'Finding'} templates`,
-    'show_blog_post': `${state === 'output-available' ? 'Found' : 'Finding'} blog post`,
-    'show_hosting': `${state === 'output-available' ? 'Found' : 'Finding'} hosting provider`,
+    'show_template': `${foundVerb} templates`,
+    'show_blog_post': `${foundVerb} blog post`,
+    'show_hosting': `${foundVerb} hosting provider`,
     'open_playground': `${state === 'output-available' ? 'Generated' : 'Generating'} playground`
   }[toolName] || `${searchVerb} ${toolName}`
 }
@@ -93,7 +98,12 @@ export function getToolIcon(part: ToolPart): string {
   const toolName = getToolName(part)
 
   return {
-    'get-page': 'i-lucide-file-text',
+    'list-documentation-pages': 'i-lucide-book-open',
+    'get-documentation-page': 'i-lucide-file-text',
+    'get-getting-started-guide': 'i-lucide-rocket',
+    'get-blog-post': 'i-lucide-newspaper',
+    'get-deploy-provider': 'i-lucide-cloud',
+    'get-changelog': 'i-lucide-history',
     'list-modules': 'i-lucide-box',
     'get-module': 'i-lucide-box',
     'show_template': 'i-lucide-layout-template',
@@ -141,17 +151,21 @@ export function getModuleCards(part: ToolPart): ModuleCardData[] {
 
   if (toolName === 'list-modules') {
     const content = (output.content ?? output) as Array<{ text?: string }> | unknown
-    let items: Record<string, unknown>[] = []
+    let payload: Record<string, unknown> | unknown[] | undefined
     if (Array.isArray(content)) {
       const text = content.find((c: { text?: string }) => c.text)?.text
       if (text) {
         try {
-          items = JSON.parse(text)
+          payload = JSON.parse(text)
         } catch {
           // ignore malformed JSON
         }
       }
     }
+    const items = Array.isArray(payload)
+      ? payload as Record<string, unknown>[]
+      : (payload as { modules?: Record<string, unknown>[] } | undefined)?.modules
+
     if (Array.isArray(items)) {
       return items.filter(m => m.name).slice(0, 5).map(m => ({
         name: m.name as string,
@@ -161,8 +175,8 @@ export function getModuleCards(part: ToolPart): ModuleCardData[] {
         category: m.category as string | undefined,
         repo: m.repo as string | undefined,
         website: m.website as string | undefined,
-        downloads: (m.stats as Record<string, number> | undefined)?.downloads,
-        stars: (m.stats as Record<string, number> | undefined)?.stars
+        downloads: (m.downloads as number | undefined) ?? (m.stats as Record<string, number> | undefined)?.downloads,
+        stars: (m.stars as number | undefined) ?? (m.stats as Record<string, number> | undefined)?.stars
       }))
     }
   }
@@ -170,12 +184,21 @@ export function getModuleCards(part: ToolPart): ModuleCardData[] {
   return []
 }
 
+const TEXT_TOOLS = new Set([
+  'list-documentation-pages',
+  'get-documentation-page',
+  'get-getting-started-guide',
+  'get-blog-post',
+  'get-deploy-provider',
+  'get-changelog'
+])
+
 export function getToolOutput(part: ToolPart): string | undefined {
   if (part.state !== 'output-available' || !part.output) return undefined
 
   const output = part.output as Record<string, unknown>
 
-  if (getToolName(part) === 'list-pages' || getToolName(part) === 'get-page') {
+  if (TEXT_TOOLS.has(getToolName(part))) {
     const content = (output.content ?? output) as Array<{ text?: string }> | string
     const text = typeof content === 'string' ? content : content?.map(c => c.text).filter(Boolean).join('\n') || ''
     return text.length > 500 ? `${text.slice(0, 500)}…` : text || undefined
@@ -183,12 +206,4 @@ export function getToolOutput(part: ToolPart): string | undefined {
 
   const json = JSON.stringify(output, null, 2)
   return json.length > 500 ? `${json.slice(0, 500)}…` : json
-}
-
-const pageContextPattern = /^\[Page: (\/[^\]]+)\]\s*/
-
-export function parseUserMessage(text: string) {
-  const match = text.match(pageContextPattern)
-  if (!match) return { page: null, text }
-  return { page: match[1], text: text.replace(pageContextPattern, '') }
 }

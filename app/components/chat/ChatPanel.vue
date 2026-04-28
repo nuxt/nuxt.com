@@ -1,83 +1,9 @@
 <script setup lang="ts">
-import { DefaultChatTransport } from 'ai'
-import type { UIMessage } from 'ai'
-import { Chat } from '@ai-sdk/vue'
-
-const { messages, chatId, resetChatId, collapseToSidebar, usage, rateLimitReached, onMessageSent, currentPage } = useNuxtAgent()
-const { track } = useAnalytics()
-const toast = useToast()
-const input = ref('')
-const votes = ref(new Map<string, boolean>())
-
-function vote(message: UIMessage, isUpvoted: boolean) {
-  const current = votes.value.get(message.id)
-  const next = current === isUpvoted ? undefined : isUpvoted
-
-  if (next === undefined) {
-    votes.value.delete(message.id)
-  } else {
-    votes.value.set(message.id, next)
-  }
-  votes.value = new Map(votes.value)
-
-  $fetch('/api/agent/vote', {
-    method: 'POST',
-    body: { chatId: chatId.value, messageId: message.id, isUpvoted: next }
-  }).catch(() => {
-    if (current !== undefined) votes.value.set(message.id, current)
-    else votes.value.delete(message.id)
-    votes.value = new Map(votes.value)
-  })
-}
-
-let _skipSync = false
-
-const chat = new Chat({
-  messages: messages.value,
-  transport: new DefaultChatTransport({
-    api: '/api/agent',
-    headers: () => {
-      const headers: Record<string, string> = { 'x-chat-id': chatId.value }
-      if (currentPage.value) headers['x-page-path'] = currentPage.value
-      return headers
-    }
-  }),
-  onError: (error: Error) => {
-    let message = error.message
-    if (typeof message === 'string' && message[0] === '{') {
-      try {
-        message = JSON.parse(message).message || message
-      } catch {
-        // keep original
-      }
-    }
-
-    toast.add({
-      description: message,
-      icon: 'i-lucide-alert-circle',
-      color: 'error',
-      duration: 0
-    })
-  },
-  onFinish: () => {
-    _skipSync = true
-    messages.value = chat.messages
-    nextTick(() => {
-      _skipSync = false
-    })
-  }
+const { collapseToSidebar, usage, rateLimitReached } = useNuxtAgent()
+const { chat, input, votes, vote, canClear, onSubmit, askQuestion, clearMessages, chatTheme } = useAgentChat({
+  source: 'chat-page',
+  withPageContext: 'always'
 })
-
-watch(messages, (newMessages) => {
-  if (_skipSync) return
-
-  chat.messages = newMessages
-  if (chat.lastMessage?.role === 'user') {
-    chat.regenerate()
-  }
-})
-
-const canClear = computed(() => messages.value.length > 0 || chat.messages.length > 0)
 
 const suggestions = [
   {
@@ -117,57 +43,6 @@ const suggestions = [
     question: 'What\'s new in Nuxt 4?'
   }
 ]
-
-async function onSubmit() {
-  if (!input.value.trim() || rateLimitReached.value) return
-
-  const raw = input.value
-  track('Nuxt Agent Message Sent', { source: 'chat-page', queryLength: raw.length })
-  input.value = ''
-  try {
-    await chat.sendMessage({
-      text: raw,
-      metadata: currentPage.value ? { pagePath: currentPage.value } : undefined
-    })
-    onMessageSent()
-  } catch {
-    // Error surfaced via chat.onError
-  }
-}
-
-function askQuestion(question: string) {
-  track('Nuxt Agent FAQ Clicked', { question, source: 'chat-page' })
-  input.value = question
-  onSubmit()
-}
-
-function clearMessages() {
-  track('Nuxt Agent Chat Cleared', { source: 'chat-page' })
-  if (chat.status === 'streaming') {
-    chat.stop()
-  }
-  messages.value = []
-  chat.messages = []
-  resetChatId()
-  votes.value = new Map()
-}
-
-const chatTheme = {
-  prose: {
-    p: { base: 'my-2 text-sm/6' },
-    li: { base: 'my-0.5 text-sm/6' },
-    ul: { base: 'my-2' },
-    ol: { base: 'my-2' },
-    h1: { base: 'text-xl mb-4' },
-    h2: { base: 'text-lg mt-6 mb-3' },
-    h3: { base: 'text-base mt-4 mb-2' },
-    h4: { base: 'text-sm mt-3 mb-1.5' },
-    code: { base: 'text-xs' },
-    pre: { root: 'my-2', base: 'text-xs/5' },
-    table: { root: 'my-2' },
-    hr: { base: 'my-4' }
-  }
-}
 </script>
 
 <template>
@@ -252,7 +127,6 @@ const chatTheme = {
               v-for="suggestion in suggestions"
               :key="suggestion.title"
               class="flex sm:flex-col gap-3 p-4 rounded-lg border border-default bg-default hover:bg-elevated/50 text-left transition-colors cursor-pointer"
-
               @click="askQuestion(suggestion.question)"
             >
               <UIcon :name="suggestion.icon" class="size-5 text-muted shrink-0" />

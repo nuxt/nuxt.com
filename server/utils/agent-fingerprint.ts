@@ -1,7 +1,7 @@
 import type { H3Event } from 'h3'
 
 export async function getAgentFingerprint(event: H3Event): Promise<string> {
-  const ip = event.context.cf?.ip || 'unknown'
+  const ip = getRequestIP(event, { xForwardedFor: true }) || 'unknown'
   const userAgent = getHeader(event, 'user-agent') || 'unknown'
   const domain = getHeader(event, 'host') || 'localhost'
   const data = `${domain}+${ip}+${userAgent}`

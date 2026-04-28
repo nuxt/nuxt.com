@@ -26,7 +26,7 @@ export async function consumeAgentRateLimit(event: H3Event): Promise<{ used: num
   const ip = resolveIP(event)
   const key = todayKey(ip)
 
-  return await db.transaction(async (tx: typeof db) => {
+  return await db.transaction(async (tx) => {
     await tx.insert(schema.agentDailyUsage).values({ dayKey: key, count: 1 })
       .onConflictDoUpdate({
         target: schema.agentDailyUsage.dayKey,

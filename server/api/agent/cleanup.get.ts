@@ -1,6 +1,7 @@
-import { lt } from 'drizzle-orm'
+import { lt, sql } from 'drizzle-orm'
 
-const RETENTION_DAYS = 30
+const CHATS_RETENTION_DAYS = 30
+const USAGE_RETENTION_DAYS = 7
 
 export default defineEventHandler(async (event) => {
   const secret = useRuntimeConfig(event).cronSecret
@@ -10,12 +11,25 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
   }
 
-  const threshold = new Date()
-  threshold.setDate(threshold.getDate() - RETENTION_DAYS)
+  const chatsThreshold = new Date()
+  chatsThreshold.setDate(chatsThreshold.getDate() - CHATS_RETENTION_DAYS)
 
-  const deleted = await db.delete(schema.agentChats)
-    .where(lt(schema.agentChats.updatedAt, threshold))
+  const deletedChats = await db.delete(schema.agentChats)
+    .where(lt(schema.agentChats.updatedAt, chatsThreshold))
     .returning({ id: schema.agentChats.id })
 
-  return { deleted: deleted.length, threshold: threshold.toISOString() }
+  // `dayKey` is `rate:agent:<ip>:YYYY-MM-DD` — extract the trailing 10 chars
+  // to compare lexicographically (ISO format makes this safe).
+  const usageThresholdDate = new Date()
+  usageThresholdDate.setDate(usageThresholdDate.getDate() - USAGE_RETENTION_DAYS)
+  const usageThresholdKey = usageThresholdDate.toISOString().slice(0, 10)
+
+  const deletedUsage = await db.delete(schema.agentDailyUsage)
+    .where(sql`substr(${schema.agentDailyUsage.dayKey}, -10) < ${usageThresholdKey}`)
+    .returning({ dayKey: schema.agentDailyUsage.dayKey })
+
+  return {
+    chats: { deleted: deletedChats.length, threshold: chatsThreshold.toISOString() },
+    usage: { deleted: deletedUsage.length, threshold: usageThresholdKey }
+  }
 })

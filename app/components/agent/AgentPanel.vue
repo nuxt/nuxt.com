@@ -1,140 +1,20 @@
 <script setup lang="ts">
-import { DefaultChatTransport } from 'ai'
-import type { UIMessage } from 'ai'
-import { Chat } from '@ai-sdk/vue'
-
 const {
   isOpen,
-  messages,
-  chatId,
-  resetChatId,
   faqQuestions,
   expandToFullScreen,
   isAgentDockedBreakpoint,
   usage,
   rateLimitReached,
-  onMessageSent,
-  currentPage
+  currentPage,
+  pageContextDismissed,
+  pageContextEnabled
 } = useNuxtAgent()
-const { track } = useAnalytics()
-const toast = useToast()
-const input = ref('')
-const votes = ref(new Map<string, boolean>())
 
-const pageContextDismissed = ref(false)
-watch(currentPage, () => {
-  pageContextDismissed.value = false
+const { chat, input, votes, vote, canClear, onSubmit, askQuestion, clearMessages } = useAgentChat({
+  source: 'prompt',
+  withPageContext: 'when-enabled'
 })
-const pageContextEnabled = computed(() => Boolean(currentPage.value) && !pageContextDismissed.value)
-
-function vote(message: UIMessage, isUpvoted: boolean) {
-  const current = votes.value.get(message.id)
-  const next = current === isUpvoted ? undefined : isUpvoted
-
-  if (next === undefined) {
-    votes.value.delete(message.id)
-  } else {
-    votes.value.set(message.id, next)
-  }
-  votes.value = new Map(votes.value)
-
-  $fetch('/api/agent/vote', {
-    method: 'POST',
-    body: { chatId: chatId.value, messageId: message.id, isUpvoted: next }
-  }).catch(() => {
-    if (current !== undefined) votes.value.set(message.id, current)
-    else votes.value.delete(message.id)
-    votes.value = new Map(votes.value)
-  })
-}
-
-let _skipSync = false
-
-const chat = new Chat({
-  messages: messages.value,
-  transport: new DefaultChatTransport({
-    api: '/api/agent',
-    headers: () => {
-      const headers: Record<string, string> = { 'x-chat-id': chatId.value }
-      if (pageContextEnabled.value && currentPage.value) headers['x-page-path'] = currentPage.value
-      return headers
-    }
-  }),
-  onError: (error: Error) => {
-    let message = error.message
-    if (typeof message === 'string' && message[0] === '{') {
-      try {
-        message = JSON.parse(message).message || message
-      } catch {
-        // keep original on malformed JSON
-      }
-    }
-
-    toast.add({
-      description: message,
-      icon: 'i-lucide-alert-circle',
-      color: 'error',
-      duration: 0
-    })
-  },
-  onFinish: () => {
-    _skipSync = true
-    messages.value = chat.messages
-    nextTick(() => {
-      _skipSync = false
-    })
-  }
-})
-
-watch(messages, (newMessages) => {
-  if (_skipSync) return
-
-  chat.messages = newMessages
-  if (chat.lastMessage?.role === 'user') {
-    chat.regenerate()
-  }
-})
-
-const canClear = computed(() => messages.value.length > 0 || chat.messages.length > 0)
-
-async function onSubmit() {
-  if (!input.value.trim() || rateLimitReached.value) return
-
-  const raw = input.value
-  track('Nuxt Agent Message Sent', {
-    source: 'prompt',
-    page: currentPage.value,
-    withContext: pageContextEnabled.value,
-    queryLength: raw.length
-  })
-  input.value = ''
-  try {
-    await chat.sendMessage({
-      text: raw,
-      metadata: pageContextEnabled.value && currentPage.value ? { pagePath: currentPage.value } : undefined
-    })
-    onMessageSent()
-  } catch {
-    // Error surfaced via chat.onError
-  }
-}
-
-function askQuestion(question: string) {
-  track('Nuxt Agent FAQ Clicked', { question })
-  input.value = question
-  onSubmit()
-}
-
-function clearMessages() {
-  track('Nuxt Agent Chat Cleared')
-  if (chat.status === 'streaming') {
-    chat.stop()
-  }
-  messages.value = []
-  chat.messages = []
-  resetChatId()
-  votes.value = new Map()
-}
 
 const panelUi = {
   footer: 'p-0',
