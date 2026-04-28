@@ -12,8 +12,6 @@ import type {
 
 defineProps<{
   message: UIMessage
-  index: number
-  chat: { status: string, messages: UIMessage[] }
 }>()
 
 function getTemplates(output: unknown): TemplateCardData[] {

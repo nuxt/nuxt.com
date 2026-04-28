@@ -159,7 +159,7 @@ const suggestions = [
               </template>
 
               <template #content="{ message }">
-                <ChatContent :message="message" :index="0" :chat="chat" />
+                <ChatContent :message="message" />
               </template>
 
               <template #actions="{ message }">

@@ -33,7 +33,7 @@ const votes = defineModel<Map<string, boolean>>('votes', { required: true })
       </template>
 
       <template #content="{ message }">
-        <ChatContent :message="message" :index="0" :chat="chat" />
+        <ChatContent :message="message" />
       </template>
 
       <template #actions="{ message }">

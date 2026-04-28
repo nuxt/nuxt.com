@@ -1,6 +1,8 @@
 import type { H3Event } from 'h3'
 import { eq, sql } from 'drizzle-orm'
 
+type DbTransaction = Parameters<Parameters<typeof db.transaction>[0]>[0]
+
 const DAILY_LIMIT = 20
 
 function todayKey(ip: string): string {
@@ -26,7 +28,7 @@ export async function consumeAgentRateLimit(event: H3Event): Promise<{ used: num
   const ip = resolveIP(event)
   const key = todayKey(ip)
 
-  return await db.transaction(async (tx) => {
+  return await db.transaction(async (tx: DbTransaction) => {
     await tx.insert(schema.agentDailyUsage).values({ dayKey: key, count: 1 })
       .onConflictDoUpdate({
         target: schema.agentDailyUsage.dayKey,

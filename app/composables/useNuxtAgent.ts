@@ -88,10 +88,6 @@ export const useNuxtAgent = createSharedComposable(() => {
     isOpen.value = true
   }
 
-  function close() {
-    isOpen.value = false
-  }
-
   function toggle() {
     isOpen.value = !isOpen.value
   }
@@ -110,7 +106,7 @@ export const useNuxtAgent = createSharedComposable(() => {
 
   const isAgentDocked = computed(() => isOpen.value && isAgentDockedBreakpoint.value)
 
-  const { data: usage, refresh: refreshUsage } = useFetch<AgentUsage>('/api/agent/usage', {
+  const { data: usage } = useFetch<AgentUsage>('/api/agent/usage', {
     server: false,
     lazy: true,
     default: () => ({ used: 0, remaining: 20, limit: 20 })
@@ -135,7 +131,6 @@ export const useNuxtAgent = createSharedComposable(() => {
     resetChatId,
     faqQuestions,
     open,
-    close,
     toggle,
     expandToFullScreen,
     collapseToSidebar,
@@ -143,7 +138,6 @@ export const useNuxtAgent = createSharedComposable(() => {
     isAgentDocked,
     usage,
     rateLimitReached,
-    refreshUsage,
     onMessageSent,
     currentPage,
     pageContextDismissed,
