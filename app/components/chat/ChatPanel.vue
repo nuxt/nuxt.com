@@ -36,11 +36,11 @@ const chat = new Chat({
   messages: messages.value,
   transport: new DefaultChatTransport({
     api: '/api/agent',
-      headers: () => {
-        const headers: Record<string, string> = { 'x-chat-id': chatId.value }
-        if (currentPage.value) headers['x-page-path'] = currentPage.value
-        return headers
-      }
+    headers: () => {
+      const headers: Record<string, string> = { 'x-chat-id': chatId.value }
+      if (currentPage.value) headers['x-page-path'] = currentPage.value
+      return headers
+    }
   }),
   onError: (error: Error) => {
     let message = error.message

@@ -79,7 +79,7 @@ Do NOT call \`list-*\` first when the page is given — call the get tool direct
 - Use markdown links from tool result URLs
 - Be concise and direct — actionable guidance, not information dumps`
 
-const PAGE_PATH_PATTERN = /^\/[a-zA-Z0-9._\-/]*$/
+const PAGE_PATH_PATTERN = /^\/[\w./-]*$/
 
 function buildSystemPrompt(pagePath: string | null): string {
   if (!pagePath) return baseSystemPrompt
