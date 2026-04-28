@@ -14,10 +14,10 @@ useHead({
 useSeoMeta({
   ogTitle: 'Nuxt Agent · Nuxt',
   ogDescription: 'The Nuxt Agent helps you explore the documentation — ask about Nuxt, modules, deployment, and more.',
-  ogImage: joinURL(site.url, '/nuxt-chat-og.jpg'),
+  ogImage: joinURL(site.url, '/nuxt-agent.jpg'),
   twitterTitle: 'Nuxt Agent · Nuxt',
   twitterDescription: 'The Nuxt Agent helps you explore the documentation — ask about Nuxt, modules, deployment, and more.',
-  twitterImage: joinURL(site.url, '/nuxt-chat-og.jpg')
+  twitterImage: joinURL(site.url, '/nuxt-agent.jpg')
 })
 </script>
 
