@@ -204,7 +204,7 @@ const chatTheme = {
           </div>
           <div class="text-center">
             <h1 class="text-2xl sm:text-3xl font-semibold text-highlighted tracking-tight">
-              Welcome to Nuxt Agent
+              What can I help you with?
             </h1>
             <p class="text-base text-muted mt-2 max-w-lg mx-auto">
               Ask anything or explore docs, modules, deployment, and more.

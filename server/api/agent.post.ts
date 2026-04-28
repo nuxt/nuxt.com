@@ -73,17 +73,22 @@ Do NOT call \`list-*\` first when the page is given — call the get tool direct
 
 **Web search:** Only use when the user **explicitly** asks about recent events or real-time data beyond the Nuxt docs, or if \`search_github_issues\` returned no results. Never search proactively.
 
+**Web search queries:** Match the user's wording. **Do not** tack on calendar years (e.g. "2024", "2025") unless they asked for a specific year or time range — that often **hurts** relevance and looks wrong when the current year has moved on. The search already returns current pages. For stable facts (team pages, about pages), use neutral queries without a year.
+
 **Formatting:**
 - NEVER use markdown headings (#, ##, ###)
 - Use **bold** for emphasis, bullet points for lists
-- Use markdown links from tool result URLs
+- Prefer **root-relative** markdown links for nuxt.com pages (\`/docs/...\`, \`/blog/...\`, \`/modules/...\`) so navigation works on localhost and preview deployments. Full \`https://nuxt.com/...\` URLs from tool results are acceptable if shorter to reuse as-is. Use full URLs for external sites (GitHub, Stack Overflow, etc.).
 - Be concise and direct — actionable guidance, not information dumps`
 
 const PAGE_PATH_PATTERN = /^\/[\w./-]*$/
 
 function buildSystemPrompt(pagePath: string | null): string {
-  if (!pagePath) return baseSystemPrompt
-  return `Current page: ${pagePath}\n\n${baseSystemPrompt}`
+  const today = new Date()
+  const dateLine = `**Today's date:** ${today.toLocaleDateString('en-US', { timeZone: 'UTC' })} (UTC). Use it for recency — do not assume an older year when formulating web searches or answers.`
+  const withDate = `${dateLine}\n\n${baseSystemPrompt}`
+  if (!pagePath) return withDate
+  return `Current page: ${pagePath}\n\n${withDate}`
 }
 
 function computeEstimatedCost(state: AILogger['_state']): number {
