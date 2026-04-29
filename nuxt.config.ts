@@ -148,9 +148,12 @@ export default defineNuxtConfig({
     '/changelog': { isr: 60 * 60, headers: { Vary: 'Accept, User-Agent' } },
     // Markdown content negotiation routes (md-rewrite.ts emits Vercel rewrites
     // based on `Accept` and `User-Agent`, so cached responses must vary on both).
+    // /raw/** is the rewrite destination — it must carry Vary too so CDNs
+    // don't serve cached markdown to a browser that asked for HTML.
     '/docs/**': { headers: { Vary: 'Accept, User-Agent' } },
     '/blog/**': { headers: { Vary: 'Accept, User-Agent' } },
     '/deploy/**': { headers: { Vary: 'Accept, User-Agent' } },
+    '/raw/**': { headers: { Vary: 'Accept, User-Agent' } },
     // API
     '/api/v1/teams': { isr: 60 * 60 },
     // Admin
