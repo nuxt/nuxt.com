@@ -2,7 +2,7 @@
 import { SitemapStream, streamToPromise } from 'sitemap'
 import type { H3Event } from 'h3'
 import type { Collections, CollectionQueryBuilder } from '@nuxt/content'
-import { queryCollection } from '#imports'
+import { queryCollection } from '@nuxt/content/server'
 
 type queryCollectionWithEvent = <T extends keyof Collections>(event: H3Event, collection: T) => CollectionQueryBuilder<Collections[T]>
 
@@ -20,16 +20,19 @@ export default defineEventHandler(async (event: H3Event) => {
   const sitemap = new SitemapStream({
     hostname: 'https://nuxt.com'
   })
+  const today = new Date().toISOString().split('T')[0]
   for (const doc of docs) {
     sitemap.write({
       url: doc.path,
-      changefreq: 'weekly'
+      changefreq: 'weekly',
+      lastmod: today
     })
   }
-  for (const doc of blog) {
+  for (const doc of blog as Array<{ path: string, date?: string }>) {
     sitemap.write({
       url: doc.path,
-      changefreq: 'monthly'
+      changefreq: 'monthly',
+      lastmod: doc.date || today
     })
   }
   sitemap.end()
