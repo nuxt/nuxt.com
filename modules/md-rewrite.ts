@@ -22,8 +22,10 @@ function mdRewrite(nitro) {
     const vcConfig = JSON.parse(await readFile(vcJSON, 'utf8'))
 
     // Static .md aliases — let users hit /docs/foo.md, /blog/foo.md, /deploy/foo.md directly.
+    // The /docs source pattern excludes /docs/5.x/* to align with /robots.txt
+    // (v5 is nightly and disallowed until Nuxt 5 ships).
     const staticAliases = [
-      { src: '^/docs/(.*)\\.md$', dest: '/raw/docs/$1.md' },
+      { src: '^/docs/(?!5\\.x/)(.*)\\.md$', dest: '/raw/docs/$1.md' },
       { src: '^/blog/(.*)\\.md$', dest: '/raw/blog/$1.md' },
       { src: '^/deploy/(.*)\\.md$', dest: '/raw/deploy/$1.md' }
     ]
@@ -31,7 +33,7 @@ function mdRewrite(nitro) {
     // Content-negotiated rewrites — fire on Accept: text/markdown OR known agent UAs.
     const negotiated: Array<{ src: string, dest: string }> = [
       { src: '^/?$', dest: '/raw/index.md' },
-      { src: '^/docs/(.*)$', dest: '/raw/docs/$1.md' },
+      { src: '^/docs/(?!5\\.x/)(.*)$', dest: '/raw/docs/$1.md' },
       { src: '^/blog/(.*)$', dest: '/raw/blog/$1.md' },
       { src: '^/deploy/(.*)$', dest: '/raw/deploy/$1.md' },
       { src: '^/modules/?$', dest: '/modules.md' },

@@ -59,8 +59,7 @@ if (import.meta.server) {
           'url': site.url,
           'operatingSystem': 'Cross-platform',
           'applicationCategory': 'DeveloperApplication',
-          'offers': { '@type': 'Offer', 'price': '0', 'priceCurrency': 'USD' },
-          'softwareVersion': '4'
+          'offers': { '@type': 'Offer', 'price': '0', 'priceCurrency': 'USD' }
         }).replace(/</g, '\\u003c').replace(/>/g, '\\u003e')
       }
     ]

@@ -1,4 +1,4 @@
-import { eventHandler, setHeader } from 'h3'
+import { eventHandler, setResponseHeader } from 'h3'
 
 export default eventHandler((event) => {
   const DOMAIN = getSiteConfig(event).url
@@ -71,8 +71,11 @@ npm run dev
 - Bluesky: <https://bsky.app/profile/nuxt.com>
 `
 
-  setHeader(event, 'Content-Type', 'text/markdown; charset=utf-8')
-  setHeader(event, 'Link', `<${DOMAIN}>; rel="canonical"`)
-  setHeader(event, 'Cache-Control', 'public, max-age=3600')
+  setResponseHeader(event, 'Content-Type', 'text/markdown; charset=utf-8')
+  setResponseHeader(event, 'Link', [
+    `<${DOMAIN}>; rel="canonical"`,
+    `<${DOMAIN}>; rel="alternate"; type="text/html"`
+  ].join(', '))
+  setResponseHeader(event, 'Cache-Control', 'public, max-age=3600')
   return frontmatter + body
 })

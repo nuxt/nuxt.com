@@ -21,12 +21,10 @@ const STATIC_LINKS = [
 
 export default defineEventHandler(async (event: H3Event) => {
   const domain = getSiteConfig(event).url
-  const [docsv4, docsv5, docsv3, blog, deploy] = await Promise.all([
+  // v5 (nightly) is intentionally excluded — it is also disallowed in
+  // /robots.txt and /sitemap.xml until Nuxt 5 ships.
+  const [docsv4, docsv3, blog, deploy] = await Promise.all([
     (queryCollection as queryCollectionWithEvent)(event, 'docsv4')
-      .where('extension', '=', 'md')
-      .select('path', 'title')
-      .all(),
-    (queryCollection as queryCollectionWithEvent)(event, 'docsv5')
       .where('extension', '=', 'md')
       .select('path', 'title')
       .all(),
@@ -57,9 +55,6 @@ export default defineEventHandler(async (event: H3Event) => {
 
   lines.push('', '## Documentation (v4 — current stable)', '')
   for (const doc of docsv4) lines.push(`- [${doc.title}](${domain}${doc.path}.md)`)
-
-  lines.push('', '## Documentation (v5 — nightly)', '')
-  for (const doc of docsv5) lines.push(`- [${doc.title}](${domain}${doc.path}.md)`)
 
   lines.push('', '## Documentation (v3 — legacy)', '')
   for (const doc of docsv3) lines.push(`- [${doc.title}](${domain}${doc.path}.md)`)

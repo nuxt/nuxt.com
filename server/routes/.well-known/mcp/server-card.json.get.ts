@@ -1,4 +1,4 @@
-import { eventHandler, setHeader } from 'h3'
+import { eventHandler, setResponseHeader } from 'h3'
 
 export default eventHandler((event) => {
   const DOMAIN = getSiteConfig(event).url
@@ -9,13 +9,9 @@ export default eventHandler((event) => {
       title: 'Nuxt MCP Server',
       description: 'MCP server providing tools, resources and prompts to help AI agents build with Nuxt — search documentation, retrieve guides, fetch module metadata, and discover deployment providers.',
       homepage: DOMAIN,
-      documentation: `${DOMAIN}/docs/guide/ai/mcp`,
+      documentation: `${DOMAIN}/docs/4.x/guide/ai/mcp`,
       license: 'MIT',
       repository: 'https://github.com/nuxt/nuxt.com'
-    },
-    transport: {
-      type: 'streamable-http',
-      endpoint: `${DOMAIN}/mcp`
     },
     endpoints: [
       {
@@ -56,7 +52,7 @@ export default eventHandler((event) => {
     }
   }
 
-  setHeader(event, 'Content-Type', 'application/json; charset=utf-8')
-  setHeader(event, 'Cache-Control', 'public, max-age=3600')
+  setResponseHeader(event, 'Content-Type', 'application/json; charset=utf-8')
+  setResponseHeader(event, 'Cache-Control', 'public, max-age=3600')
   return serverCard
 })

@@ -1,4 +1,4 @@
-import { eventHandler, setHeader } from 'h3'
+import { eventHandler, setResponseHeader } from 'h3'
 
 export default eventHandler((event) => {
   const DOMAIN = getSiteConfig(event).url
@@ -14,7 +14,7 @@ export default eventHandler((event) => {
         ],
         'service-doc': [
           {
-            href: `${DOMAIN}/docs/guide/ai/mcp`,
+            href: `${DOMAIN}/docs/4.x/guide/ai/mcp`,
             type: 'text/html'
           }
         ]
@@ -50,7 +50,7 @@ export default eventHandler((event) => {
     ]
   }
 
-  setHeader(event, 'Content-Type', 'application/linkset+json; charset=utf-8')
-  setHeader(event, 'Cache-Control', 'public, max-age=3600')
+  setResponseHeader(event, 'Content-Type', 'application/linkset+json; charset=utf-8')
+  setResponseHeader(event, 'Cache-Control', 'public, max-age=3600')
   return JSON.stringify(linkset, null, 2)
 })
