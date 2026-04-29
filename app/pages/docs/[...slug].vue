@@ -132,16 +132,38 @@ useSeoMeta({
   title
 })
 
-// Pre-render the markdown path + add it to alternate links
+// Pre-render the markdown path + add it to alternate links and per-page JSON-LD.
+// `${site.url}${path}.md` is the agent-friendly URL — Vercel rewrites it to
+// /raw/...md at the edge (see modules/md-rewrite.ts).
 prerenderRoutes([joinURL('/raw', `${path.value}.md`)])
 useHead({
   link: [
     {
       rel: 'alternate',
-      href: joinURL(site.url, 'raw', `${path.value}.md`),
+      href: `${site.url}${path.value}.md`,
       type: 'text/markdown'
     }
-  ]
+  ],
+  script: [{
+    type: 'application/ld+json',
+    innerHTML: computed(() => JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'TechArticle',
+      'headline': page.value?.title,
+      'description': page.value?.seo?.description || page.value?.description,
+      'url': joinURL(site.url, path.value),
+      'isPartOf': { '@id': `${site.url}/#website` },
+      'breadcrumb': {
+        '@type': 'BreadcrumbList',
+        'itemListElement': breadcrumb.value?.map((item, index) => ({
+          '@type': 'ListItem',
+          'position': index + 1,
+          'name': item.label,
+          'item': item.to ? joinURL(site.url, String(item.to)) : undefined
+        })) || []
+      }
+    }).replace(/</g, '\\u003c').replace(/>/g, '\\u003e'))
+  }]
 })
 
 if (import.meta.server) {

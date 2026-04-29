@@ -46,6 +46,25 @@ if (import.meta.server) {
     ogImage: joinURL(site.url, '/new-social.jpg'),
     twitterImage: joinURL(site.url, '/new-social.jpg')
   })
+
+  useHead({
+    script: [
+      {
+        type: 'application/ld+json',
+        innerHTML: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'SoftwareApplication',
+          'name': 'Nuxt',
+          'description': description,
+          'url': 'https://nuxt.com',
+          'operatingSystem': 'Cross-platform',
+          'applicationCategory': 'DeveloperApplication',
+          'offers': { '@type': 'Offer', 'price': '0', 'priceCurrency': 'USD' },
+          'softwareVersion': '4'
+        }).replace(/</g, '\\u003c').replace(/>/g, '\\u003e')
+      }
+    ]
+  })
 }
 
 const tabs = computed(() => page.value?.hero.tabs.map(tab => ({
