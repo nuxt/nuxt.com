@@ -1,7 +1,8 @@
 import { eventHandler, setResponseHeader } from 'h3'
 
+const DOMAIN = 'https://nuxt.com'
+
 export default eventHandler((event) => {
-  const DOMAIN = getSiteConfig(event).url
   const linkset = {
     linkset: [
       {
@@ -52,5 +53,5 @@ export default eventHandler((event) => {
 
   setResponseHeader(event, 'Content-Type', 'application/linkset+json; charset=utf-8')
   setResponseHeader(event, 'Cache-Control', 'public, max-age=3600')
-  return JSON.stringify(linkset, null, 2)
+  return linkset
 })

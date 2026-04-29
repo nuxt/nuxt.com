@@ -1,6 +1,7 @@
 import type { H3Event } from 'h3'
 import type { Collections, CollectionQueryBuilder } from '@nuxt/content'
 import { queryCollection } from '@nuxt/content/server'
+import { withoutTrailingSlash } from 'ufo'
 
 type queryCollectionWithEvent = <T extends keyof Collections>(event: H3Event, collection: T) => CollectionQueryBuilder<Collections[T]>
 
@@ -20,7 +21,7 @@ const STATIC_LINKS = [
 ]
 
 export default defineEventHandler(async (event: H3Event) => {
-  const domain = getSiteConfig(event).url
+  const domain = withoutTrailingSlash(getSiteConfig(event).url)
   // Mirrors /sitemap.xml: v3 (legacy) and v5 (nightly) are excluded — v5 is
   // also disallowed in /robots.txt until Nuxt 5 ships.
   const [docsv4, blog, deploy] = await Promise.all([
