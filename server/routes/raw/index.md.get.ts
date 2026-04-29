@@ -1,8 +1,7 @@
 import { eventHandler, setHeader } from 'h3'
 
-const DOMAIN = 'https://nuxt.com'
-
 export default eventHandler((event) => {
+  const DOMAIN = getSiteConfig(event).url
   const title = 'Nuxt'
   const description = 'The Intuitive Vue Framework. Build performant and production-grade full-stack web apps and websites with confidence.'
 

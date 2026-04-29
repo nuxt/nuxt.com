@@ -113,22 +113,24 @@ export default defineNuxtConfig({
     '/': {
       prerender: true,
       headers: {
+        // Relative URIs per RFC 8288 — agents resolve them against the request
+        // origin, so this works on production, preview deploys, and localhost.
         Link: [
-          '<https://nuxt.com/.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"',
-          '<https://nuxt.com/.well-known/mcp/server-card.json>; rel="service-desc"; type="application/json"; title="MCP Server Card"',
-          '<https://nuxt.com/llms.txt>; rel="llms"; type="text/plain"',
-          '<https://nuxt.com/llms-full.txt>; rel="llms-full"; type="text/plain"',
-          '<https://nuxt.com/sitemap.xml>; rel="sitemap"; type="application/xml"',
-          '<https://nuxt.com/sitemap.md>; rel="sitemap"; type="text/markdown"',
-          '<https://nuxt.com/mcp>; rel="mcp"; type="application/json"',
-          '<https://nuxt.com/docs>; rel="service-doc"; type="text/html"'
+          '</.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"',
+          '</.well-known/mcp/server-card.json>; rel="service-desc"; type="application/json"; title="MCP Server Card"',
+          '</llms.txt>; rel="llms"; type="text/plain"',
+          '</llms-full.txt>; rel="llms-full"; type="text/plain"',
+          '</sitemap.xml>; rel="sitemap"; type="application/xml"',
+          '</sitemap.md>; rel="sitemap"; type="text/markdown"',
+          '</mcp>; rel="mcp"; type="application/json"',
+          '</docs>; rel="service-doc"; type="text/html"'
         ].join(', '),
         Vary: 'Accept, User-Agent'
       }
     },
     '/blog/rss.xml': { prerender: true },
     '/sitemap.xml': { prerender: true },
-    '/sitemap.md': { isr: 60 * 60 },
+    '/sitemap.md': { prerender: true },
     '/404.html': { prerender: true },
     '/docs/3.x/getting-started/introduction': { prerender: true },
     '/docs/4.x/getting-started/introduction': { prerender: true },

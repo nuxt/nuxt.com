@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const colorMode = useColorMode()
 const route = useRoute()
+const site = useSiteConfig()
 const { version } = useDocsVersion()
 const { searchGroups, searchLinks, searchTerm } = useNavigation()
 const { fetchList: fetchModules } = useModules()
@@ -13,13 +14,13 @@ const color = computed(() => colorMode.value === 'dark' ? '#020420' : 'white')
 // follow the `${url}.md` convention; Vercel rewrites them at the edge to
 // the underlying /raw/...md handlers (see modules/md-rewrite.ts). The docs
 // page sets its own per-page alternate, so we skip /docs/** here.
-const canonicalUrl = computed(() => `https://nuxt.com${route.path === '/' ? '' : route.path.replace(/\/$/, '')}`)
+const canonicalUrl = computed(() => `${site.url}${route.path === '/' ? '' : route.path.replace(/\/$/, '')}`)
 const markdownAlternateUrl = computed(() => {
   const path = route.path.replace(/\/$/, '')
-  if (path === '' || path === '/') return 'https://nuxt.com/raw/index.md'
-  if (path === '/modules') return 'https://nuxt.com/modules.md'
-  if (path === '/changelog') return 'https://nuxt.com/changelog.md'
-  if (/^\/(?:blog|deploy)\//.test(path)) return `https://nuxt.com${path}.md`
+  if (path === '' || path === '/') return `${site.url}/raw/index.md`
+  if (path === '/modules') return `${site.url}/modules.md`
+  if (path === '/changelog') return `${site.url}/changelog.md`
+  if (/^\/(?:blog|deploy)\//.test(path)) return `${site.url}${path}.md`
   return null
 })
 
@@ -59,26 +60,15 @@ useHead({
 
 if (import.meta.server) {
   useHead({
+    htmlAttrs: { lang: 'en' },
     meta: [
       { name: 'viewport', content: 'width=device-width, initial-scale=1' }
     ],
     link: [
       { rel: 'icon', type: 'image/png', href: '/icon.png' }
     ],
-    htmlAttrs: {
-      lang: 'en'
-    }
-  })
-  useSeoMeta({
-    ogSiteName: 'Nuxt',
-    ogType: 'website',
-    twitterCard: 'summary_large_image',
-    twitterSite: 'nuxt_js'
-  })
-
-  // Site-wide JSON-LD — Organization + WebSite. Per-page schemas (TechArticle,
-  // BreadcrumbList, etc.) are added by individual pages on top of this.
-  useHead({
+    // Site-wide JSON-LD — Organization + WebSite. Per-page schemas
+    // (TechArticle, BreadcrumbList, etc.) are added by individual pages.
     script: [
       {
         type: 'application/ld+json',
@@ -87,10 +77,10 @@ if (import.meta.server) {
           '@graph': [
             {
               '@type': 'Organization',
-              '@id': 'https://nuxt.com/#organization',
+              '@id': `${site.url}/#organization`,
               'name': 'Nuxt',
-              'url': 'https://nuxt.com',
-              'logo': 'https://nuxt.com/icon.png',
+              'url': site.url,
+              'logo': `${site.url}/icon.png`,
               'sameAs': [
                 'https://github.com/nuxt',
                 'https://x.com/nuxt_js',
@@ -99,16 +89,22 @@ if (import.meta.server) {
             },
             {
               '@type': 'WebSite',
-              '@id': 'https://nuxt.com/#website',
-              'url': 'https://nuxt.com',
+              '@id': `${site.url}/#website`,
+              'url': site.url,
               'name': 'Nuxt',
-              'publisher': { '@id': 'https://nuxt.com/#organization' },
+              'publisher': { '@id': `${site.url}/#organization` },
               'inLanguage': 'en'
             }
           ]
         }).replace(/</g, '\\u003c').replace(/>/g, '\\u003e')
       }
     ]
+  })
+  useSeoMeta({
+    ogSiteName: 'Nuxt',
+    ogType: 'website',
+    twitterCard: 'summary_large_image',
+    twitterSite: 'nuxt_js'
   })
 }
 

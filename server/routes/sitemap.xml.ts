@@ -18,7 +18,7 @@ export default defineEventHandler(async (event: H3Event) => {
   ])
 
   const sitemap = new SitemapStream({
-    hostname: 'https://nuxt.com'
+    hostname: getSiteConfig(event).url
   })
   const today = new Date().toISOString().split('T')[0]
   for (const doc of docs) {

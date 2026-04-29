@@ -56,7 +56,7 @@ if (import.meta.server) {
           '@type': 'SoftwareApplication',
           'name': 'Nuxt',
           'description': description,
-          'url': 'https://nuxt.com',
+          'url': site.url,
           'operatingSystem': 'Cross-platform',
           'applicationCategory': 'DeveloperApplication',
           'offers': { '@type': 'Offer', 'price': '0', 'priceCurrency': 'USD' },

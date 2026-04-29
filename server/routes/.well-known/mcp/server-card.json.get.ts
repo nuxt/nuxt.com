@@ -1,8 +1,7 @@
 import { eventHandler, setHeader } from 'h3'
 
-const DOMAIN = 'https://nuxt.com'
-
 export default eventHandler((event) => {
+  const DOMAIN = getSiteConfig(event).url
   const serverCard = {
     $schema: 'https://modelcontextprotocol.io/schema/server-card/v1',
     serverInfo: {
