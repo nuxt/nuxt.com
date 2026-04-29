@@ -1,7 +1,6 @@
-import { eventHandler, setResponseHeader } from 'h3'
 import { withoutTrailingSlash } from 'ufo'
 
-export default eventHandler((event) => {
+export default defineEventHandler((event) => {
   const DOMAIN = withoutTrailingSlash(getSiteConfig(event).url)
   const title = 'Nuxt'
   const description = 'The Intuitive Vue Framework. Build performant and production-grade full-stack web apps and websites with confidence.'

@@ -1,4 +1,5 @@
 import { defineNuxtModule } from 'nuxt/kit'
+import type { Nitro } from 'nitropack'
 
 const AGENT_UA_PATTERN
   = '.*(ClaudeBot|Claude-Web|anthropic-ai|GPTBot|ChatGPT-User|OAI-SearchBot|Google-Extended|Google-CloudVertexBot|Meta-ExternalAgent|Meta-ExternalFetcher|PerplexityBot|YouBot|DeepSeekBot|Amazonbot|cohere-ai|AI2Bot|Applebot-Extended|Bytespider).*'
@@ -6,7 +7,7 @@ const AGENT_UA_PATTERN
 const ACCEPT_MD = { type: 'header', key: 'accept', value: '(.*)text/markdown(.*)' }
 const AGENT_UA = { type: 'header', key: 'user-agent', value: AGENT_UA_PATTERN }
 
-function mdRewrite(nitro) {
+function mdRewrite(nitro: Nitro) {
   if (nitro.options.dev || !nitro.options.preset.includes('vercel')) {
     return
   }
@@ -25,17 +26,17 @@ function mdRewrite(nitro) {
     // The /docs source pattern excludes /docs/5.x/* to align with /robots.txt
     // (v5 is nightly and disallowed until Nuxt 5 ships).
     const staticAliases = [
-      { src: '^/docs/(?!5\\.x/)(.*)\\.md$', dest: '/raw/docs/$1.md' },
-      { src: '^/blog/(.*)\\.md$', dest: '/raw/blog/$1.md' },
-      { src: '^/deploy/(.*)\\.md$', dest: '/raw/deploy/$1.md' }
+      { src: '^/docs/(?!5\\.x/)(.+)\\.md$', dest: '/raw/docs/$1.md' },
+      { src: '^/blog/(.+)\\.md$', dest: '/raw/blog/$1.md' },
+      { src: '^/deploy/(.+)\\.md$', dest: '/raw/deploy/$1.md' }
     ]
 
     // Content-negotiated rewrites — fire on Accept: text/markdown OR known agent UAs.
     const negotiated: Array<{ src: string, dest: string }> = [
       { src: '^/?$', dest: '/raw/index.md' },
-      { src: '^/docs/(?!5\\.x/)(.*)$', dest: '/raw/docs/$1.md' },
-      { src: '^/blog/(.*)$', dest: '/raw/blog/$1.md' },
-      { src: '^/deploy/(.*)$', dest: '/raw/deploy/$1.md' },
+      { src: '^/docs/(?!5\\.x/)(.+)$', dest: '/raw/docs/$1.md' },
+      { src: '^/blog/(.+)$', dest: '/raw/blog/$1.md' },
+      { src: '^/deploy/(.+)$', dest: '/raw/deploy/$1.md' },
       { src: '^/modules/?$', dest: '/modules.md' },
       { src: '^/changelog/?$', dest: '/changelog.md' }
     ]

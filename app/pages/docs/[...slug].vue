@@ -136,7 +136,9 @@ useSeoMeta({
 // Pre-render the markdown path + add it to alternate links and per-page JSON-LD.
 // `${site.url}${path}.md` is the agent-friendly URL — Vercel rewrites it to
 // /raw/...md at the edge (see modules/md-rewrite.ts).
-prerenderRoutes([joinURL('/raw', `${path.value}.md`)])
+if (import.meta.server) {
+  prerenderRoutes([joinURL('/raw', `${path.value}.md`)])
+}
 useHead({
   link: [
     {

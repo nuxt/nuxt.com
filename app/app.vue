@@ -15,7 +15,13 @@ const color = computed(() => colorMode.value === 'dark' ? '#020420' : 'white')
 // follow the `${url}.md` convention; Vercel rewrites them at the edge to
 // the underlying /raw/...md handlers (see modules/md-rewrite.ts). The docs
 // page sets its own per-page alternate, so we skip /docs/** here.
-const canonicalUrl = computed(() => `${site.url}${route.path === '/' ? '' : route.path.replace(/\/$/, '')}`)
+// Suppress canonical on unversioned /docs/* paths — they're meta-refresh
+// stubs that the docs-version middleware redirects to /docs/4.x/*; agents
+// should not treat the stub URL as authoritative.
+const canonicalUrl = computed(() => {
+  if (route.path.startsWith('/docs/') && !/^\/docs\/[345]\.x(?:\/|$)/.test(route.path)) return null
+  return `${site.url}${route.path === '/' ? '' : route.path.replace(/\/$/, '')}`
+})
 const markdownAlternateUrl = computed(() => {
   const path = route.path.replace(/\/$/, '')
   if (path === '' || path === '/') return `${site.url}/raw/index.md`
@@ -42,9 +48,10 @@ onNuxtReady(() => {
 })
 
 const headLinks = computed(() => {
-  const links: Array<{ rel: string, href: string, type?: string }> = [
-    { rel: 'canonical', href: canonicalUrl.value }
-  ]
+  const links: Array<{ rel: string, href: string, type?: string }> = []
+  if (canonicalUrl.value) {
+    links.push({ rel: 'canonical', href: canonicalUrl.value })
+  }
   if (markdownAlternateUrl.value) {
     links.push({ rel: 'alternate', type: 'text/markdown', href: markdownAlternateUrl.value })
   }
