@@ -2,6 +2,7 @@
 const colorMode = useColorMode()
 const route = useRoute()
 const site = useSiteConfig()
+const isChatRoute = computed(() => route.path === '/chat' || route.path.startsWith('/chat/'))
 const { version } = useDocsVersion()
 const { searchGroups, searchLinks, searchTerm } = useNavigation()
 const { fetchList: fetchModules } = useModules()
@@ -114,27 +115,27 @@ const versionFiles = computed(() => files.value?.filter((file) => {
 }) ?? [])
 
 provide('navigation', versionNavigation)
-
-const appear = ref(false)
-const appeared = ref(false)
-
-onMounted(() => {
-  setTimeout(() => {
-    appear.value = true
-    setTimeout(() => {
-      appeared.value = true
-    }, 1000)
-  }, 0)
-})
 </script>
 
 <template>
-  <UApp>
+  <UApp :tooltip="{ delayDuration: 500 }">
     <NuxtLoadingIndicator color="var(--ui-primary)" />
 
-    <NuxtLayout>
-      <NuxtPage />
-    </NuxtLayout>
+    <div class="flex">
+      <div class="flex-1 min-w-0">
+        <NuxtLayout>
+          <NuxtPage />
+        </NuxtLayout>
+
+        <ClientOnly>
+          <LazyAgentFloatingInput v-if="!isChatRoute" />
+        </ClientOnly>
+      </div>
+
+      <ClientOnly>
+        <LazyAgentPanel v-if="!isChatRoute" />
+      </ClientOnly>
+    </div>
 
     <ClientOnly>
       <LazyUContentSearch

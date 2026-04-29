@@ -35,19 +35,25 @@ Common Issues:
   },
   cache: '30m',
   async handler({ path, sections }) {
-    try {
-      const fullContent = await $fetch<string>(`/raw${path}.md`)
+    const event = useEvent()
+    const docsVersion = path.includes('/docs/5.x') ? 'docsv5' : path.includes('/docs/4.x') ? 'docsv4' : 'docsv3'
+    const fullContent = await fetchPageMarkdown(event, docsVersion, path)
 
-      let content = fullContent
-      if (sections?.length) {
-        content = extractSections(fullContent, sections)
-      }
+    if (!fullContent) {
+      return errorResult(`Documentation page not found: ${path}`)
+    }
 
-      return {
-        content: [{ type: 'text' as const, text: content }]
-      }
-    } catch (error) {
-      return errorResult(`Documentation page not found: ${error}`)
+    let content = sections?.length
+      ? extractSections(fullContent, sections)
+      : fullContent
+
+    const MAX_CHARS = 12_000
+    if (content.length > MAX_CHARS) {
+      content = content.slice(0, MAX_CHARS) + '\n\n[Content truncated. Use the sections parameter to request specific h2 sections.]'
+    }
+
+    return {
+      content: [{ type: 'text' as const, text: content }]
     }
   }
 })

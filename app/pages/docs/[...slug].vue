@@ -18,6 +18,7 @@ const route = useRoute()
 const nuxtApp = useNuxtApp()
 const { version } = useDocsVersion()
 const { headerLinks } = useHeaderLinks()
+const { isAgentDocked } = useNuxtAgent()
 const site = useSiteConfig()
 const path = computed(() => route.path.replace(/\/$/, ''))
 
@@ -199,7 +200,12 @@ function refreshHeading(opened: boolean) {
           />
         </UPageAside>
       </template>
-      <UPage>
+      <UPage
+        :ui="isAgentDocked ? {
+          center: 'lg:col-span-10',
+          right: 'lg:hidden'
+        } : undefined"
+      >
         <UPageHeader
           :ui="{
             wrapper: 'flex-row items-center flex-wrap justify-between'
@@ -258,6 +264,7 @@ function refreshHeading(opened: boolean) {
 
         <template #right>
           <ContentToc
+            v-if="!isAgentDocked"
             :links="page.body?.toc?.links"
             :community-links="communityLinks"
             highlight

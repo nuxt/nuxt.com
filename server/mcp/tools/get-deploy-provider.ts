@@ -17,19 +17,19 @@ EXAMPLES: "/deploy/vercel", "/deploy/cloudflare", "/deploy/netlify", "/deploy/aw
   },
   cache: '1h',
   async handler({ path, sections }) {
-    try {
-      const fullContent = await $fetch<string>(`/raw${path}.md`)
+    const event = useEvent()
+    const fullContent = await fetchPageMarkdown(event, 'deploy', path)
 
-      let content = fullContent
-      if (sections?.length) {
-        content = extractSections(fullContent, sections)
-      }
+    if (!fullContent) {
+      return errorResult(`Deploy provider not found: ${path}`)
+    }
 
-      return {
-        content: [{ type: 'text' as const, text: content }]
-      }
-    } catch (error) {
-      return errorResult(`Deploy provider not found: ${error}`)
+    const content = sections?.length
+      ? extractSections(fullContent, sections)
+      : fullContent
+
+    return {
+      content: [{ type: 'text' as const, text: content }]
     }
   }
 })

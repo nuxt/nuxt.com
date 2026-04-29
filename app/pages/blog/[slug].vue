@@ -8,6 +8,7 @@ definePageMeta({
 const route = useRoute()
 const { copy } = useClipboard()
 const { track } = useAnalytics()
+const { isAgentDocked } = useNuxtAgent()
 
 const [{ data: article }, { data: surround }] = await Promise.all([
   useAsyncData(kebabCase(route.path), () => queryCollection('blog').path(route.path).first()),
@@ -124,7 +125,13 @@ const links = [
         </div>
       </UPageHeader>
 
-      <UPage class="lg:gap-24">
+      <UPage
+        class="lg:gap-24"
+        :ui="isAgentDocked ? {
+          center: 'lg:col-span-10',
+          right: 'lg:hidden'
+        } : undefined"
+      >
         <UPageBody>
           <ContentRenderer v-if="article.body" :value="article" />
 
@@ -156,7 +163,7 @@ const links = [
         </UPageBody>
 
         <template #right>
-          <UContentToc v-if="article.body && article.body.toc" :links="article.body.toc.links" title="Table of Contents" highlight>
+          <UContentToc v-if="!isAgentDocked && article.body && article.body.toc" :links="article.body.toc.links" title="Table of Contents" highlight>
             <template #bottom>
               <div class="hidden lg:block space-y-6">
                 <UPageLinks title="Links" :links="links" />

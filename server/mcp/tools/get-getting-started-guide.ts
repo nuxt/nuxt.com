@@ -9,21 +9,21 @@ export default defineMcpTool({
   },
   cache: '30m',
   async handler({ version, sections }) {
+    const event = useEvent()
     const path = `/docs/${version}/getting-started/introduction`
+    const docsVersion = version === '4.x' ? 'docsv4' : 'docsv3'
+    const fullContent = await fetchPageMarkdown(event, docsVersion, path)
 
-    try {
-      const fullContent = await $fetch<string>(`/raw${path}.md`)
+    if (!fullContent) {
+      return errorResult(`Getting started guide not found: ${path}`)
+    }
 
-      let content = fullContent
-      if (sections?.length) {
-        content = extractSections(fullContent, sections)
-      }
+    const content = sections?.length
+      ? extractSections(fullContent, sections)
+      : fullContent
 
-      return {
-        content: [{ type: 'text' as const, text: content }]
-      }
-    } catch (error) {
-      return errorResult(`Getting started guide not found: ${error}`)
+    return {
+      content: [{ type: 'text' as const, text: content }]
     }
   }
 })

@@ -25,7 +25,9 @@ export default defineNuxtConfig({
     '@nuxtjs/mcp-toolkit',
     '@nuxt/hints',
     '@vercel/analytics',
-    '@vercel/speed-insights'
+    '@vercel/speed-insights',
+    '@comark/nuxt',
+    'evlog/nuxt'
   ],
   $development: {
     site: {
@@ -94,8 +96,14 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     contactEmail: '',
+    cronSecret: '',
     github: {
       token: ''
+    },
+    linear: {
+      apiKey: '',
+      teamId: 'f79ad145-d4eb-4bff-88b9-c344f006a777',
+      projectId: '11a6000e-6c95-445e-85f1-a7de5c372bcd'
     },
     newsletter: {
       secret: ''
@@ -424,6 +432,7 @@ export default defineNuxtConfig({
   sourcemap: true,
   experimental: {
     extractAsyncDataHandlers: true,
+    viewTransition: true,
     defaults: {
       nuxtLink: {
         externalRelAttribute: 'noopener'
@@ -484,6 +493,9 @@ export default defineNuxtConfig({
         commaDangle: 'never'
       }
     }
+  },
+  evlog: {
+    env: { service: 'nuxt-com' }
   },
   icon: {
     customCollections: [{

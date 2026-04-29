@@ -2,67 +2,47 @@ import { z } from 'zod'
 import { queryCollection } from '@nuxt/content/server'
 
 export default defineMcpTool({
-  description: `Lists all available Nuxt documentation pages with their categories and basic information.
+  description: `Lists Nuxt documentation pages, optionally filtered by search term.
 
-WHEN TO USE: Use this tool when you need to EXPLORE or SEARCH for documentation about a topic but don't know the exact page path. For example: "Find documentation about hydration errors", "What pages cover rendering modes?", "Search for migration guides".
-
-WHEN NOT TO USE: If you already know the specific page path (e.g., "/docs/4.x/getting-started/introduction"), use get_documentation_page directly instead.
-
-WORKFLOW: This tool returns page titles, descriptions, and paths. After finding relevant pages, use get_documentation_page to retrieve the full content.`,
+WHEN TO USE: When you need to find documentation about a topic but don't know the exact page path.
+WHEN NOT TO USE: If you already know the page path, use get_documentation_page directly.
+TIPS: Always pass a search term to narrow results — avoids dumping the entire catalog.`,
   inputSchema: {
-    version: z.enum(['3.x', '4.x', '5.x', 'all']).optional().default('4.x').describe('Documentation version to fetch')
+    version: z.enum(['3.x', '4.x', '5.x', 'all']).optional().default('4.x').describe('Documentation version to fetch'),
+    search: z.string().optional().describe('Filter pages by keyword (matches title, path, and description). Strongly recommended to avoid large results.')
   },
   cache: '1h',
-  async handler({ version }) {
+  async handler({ version, search }) {
     const event = useEvent()
-    let allDocs = []
+    let allDocs: { title: string, path: string, description: string }[] = []
 
-    if (version === '3.x') {
-      allDocs = await queryCollection(event, 'docsv3')
+    const collections = version === 'all'
+      ? ['docsv3', 'docsv4', 'docsv5'] as const
+      : [version === '3.x' ? 'docsv3' : version === '5.x' ? 'docsv5' : 'docsv4'] as const
+
+    for (const col of collections) {
+      const docs = await queryCollection(event, col)
         .select('title', 'path', 'description')
         .all()
-
-      if (!allDocs) {
+      if (!docs) {
+        if (version === 'all') continue
         return errorResult('Documentation pages collection not found')
       }
-    } else if (version === '4.x') {
-      allDocs = await queryCollection(event, 'docsv4')
-        .select('title', 'path', 'description')
-        .all()
+      allDocs.push(...docs)
+    }
 
-      if (!allDocs) {
-        return errorResult('Documentation pages collection not found')
-      }
-    } else if (version === '5.x') {
-      allDocs = await queryCollection(event, 'docsv5')
-        .select('title', 'path', 'description')
-        .all()
-
-      if (!allDocs) {
-        return errorResult('Documentation pages collection not found')
-      }
-    } else {
-      // TODO: include docsv5 in 'all' when Nuxt 5 is released
-      const docsV3 = await queryCollection(event, 'docsv3')
-        .select('title', 'path', 'description')
-        .all()
-
-      const docsV4 = await queryCollection(event, 'docsv4')
-        .select('title', 'path', 'description')
-        .all()
-
-      if (!docsV3 || !docsV4) {
-        return errorResult('Documentation pages collection not found')
-      }
-
-      allDocs = [...docsV3, ...docsV4]
+    if (search) {
+      const terms = search.toLowerCase().split(/\s+/)
+      allDocs = allDocs.filter((doc) => {
+        const haystack = `${doc.title ?? ''} ${doc.path ?? ''} ${doc.description ?? ''}`.toLowerCase()
+        return terms.every(t => haystack.includes(t))
+      })
     }
 
     return jsonResult(allDocs.map(doc => ({
       title: doc.title,
       path: doc.path,
-      description: doc.description,
-      version: doc.path.includes('/docs/5.x') ? '5.x' : doc.path.includes('/docs/4.x') ? '4.x' : '3.x',
+      ...(search ? { description: doc.description } : {}),
       url: `https://nuxt.com${doc.path}`
     })))
   }

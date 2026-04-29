@@ -27,23 +27,26 @@ EXAMPLES:
     try {
       const module = await $fetch<Module>(`https://api.nuxt.com/modules/${slug}`)
 
+      let readme: string | undefined
+      if (module.readme) {
+        const raw = JSON.stringify(module.readme)
+        readme = raw.length > 8_000
+          ? raw.slice(0, 8_000) + '… [README truncated]'
+          : raw
+      }
+
       return jsonResult({
         name: module.name,
         description: module.description,
         npm: module.npm,
         repo: module.repo,
-        github: module.github,
         website: module.website,
         learn_more: module.learn_more,
         category: module.category,
         type: module.type,
-        sponsor: module.sponsor,
-        icon: module.icon,
         compatibility: module.compatibility,
-        stats: module.stats,
-        maintainers: module.maintainers,
-        contributors: module.contributors,
-        readme: module.readme,
+        stats: module.stats ? { downloads: module.stats.downloads, stars: module.stats.stars } : undefined,
+        readme,
         url: `https://nuxt.com/modules/${module.name}`
       })
     } catch (error: unknown) {

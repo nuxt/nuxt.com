@@ -41,7 +41,7 @@ OUTPUT: Returns list of modules with name, description, category, stats. Use get
       const searchLower = search.toLowerCase()
       modules = modules.filter(module =>
         module.name.toLowerCase().includes(searchLower)
-        || module.description.toLowerCase().includes(searchLower)
+        || module.description?.toLowerCase().includes(searchLower)
         || module.npm.toLowerCase().includes(searchLower)
       )
     }
@@ -87,8 +87,10 @@ OUTPUT: Returns list of modules with name, description, category, stats. Use get
       }
     })
 
+    const totalMatches = modules.length
+
     return jsonResult({
-      modules: modules.map(module => ({
+      modules: modules.slice(0, 20).map(module => ({
         name: module.name,
         description: module.description,
         npm: module.npm,
@@ -97,16 +99,12 @@ OUTPUT: Returns list of modules with name, description, category, stats. Use get
         website: module.website,
         learn_more: module.learn_more,
         category: module.category,
-        type: module.type,
-        sponsor: module.sponsor,
-        icon: module.icon,
-        compatibility: module.compatibility,
-        stats: module.stats,
-        maintainers: module.maintainers,
+        downloads: module.stats?.downloads,
+        stars: module.stats?.stars,
         url: `https://nuxt.com/modules/${module.name}`
       })),
       stats: response.stats,
-      total: modules.length
+      total: totalMatches
     })
   }
 })
