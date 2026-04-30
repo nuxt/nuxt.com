@@ -513,6 +513,7 @@ export default defineNuxtConfig({
     }
   },
   evlog: {
+    exclude: ['/_og/**', '/raw/**', '/__nuxt_content/**', '/__nuxt_island/**'],
     env: { service: 'nuxt-com' }
   },
   icon: {
@@ -523,8 +524,7 @@ export default defineNuxtConfig({
     clientBundle: {
       scan: true,
       includeCustomCollections: true
-    },
-    provider: 'iconify'
+    }
   },
   image: {
     format: ['webp', 'jpeg', 'jpg', 'png', 'svg'],
