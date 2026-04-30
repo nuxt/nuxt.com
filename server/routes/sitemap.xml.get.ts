@@ -1,10 +1,8 @@
 // TODO: Update later
 import { SitemapStream, streamToPromise } from 'sitemap'
-import type { H3Event } from 'h3'
 import { queryCollection } from '@nuxt/content/server'
-import { withoutTrailingSlash } from 'ufo'
 
-export default defineEventHandler(async (event: H3Event) => {
+export default defineEventHandler(async (event) => {
   // TODO: add docsv5 to sitemap when Nuxt 5 is released
   const [docs, blog] = await Promise.all([
     queryCollection(event, 'docsv4')
@@ -16,7 +14,7 @@ export default defineEventHandler(async (event: H3Event) => {
   ])
 
   const sitemap = new SitemapStream({
-    hostname: withoutTrailingSlash(getSiteConfig(event).url)
+    hostname: getSiteUrl(event)
   })
   const today = new Date().toISOString().split('T')[0]
   for (const doc of docs) {

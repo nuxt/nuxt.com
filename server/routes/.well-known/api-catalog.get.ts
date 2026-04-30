@@ -1,5 +1,3 @@
-import { CURRENT_DOCS_VERSION } from '#shared/utils/docs'
-
 export default defineCachedEventHandler((event) => {
   const domain = getSiteUrl(event)
   const linkset = {

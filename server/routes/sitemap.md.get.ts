@@ -1,6 +1,4 @@
-import type { H3Event } from 'h3'
 import { queryCollection } from '@nuxt/content/server'
-import { withoutTrailingSlash } from 'ufo'
 
 const STATIC_LINKS = [
   { title: 'Home', path: '/' },
@@ -17,8 +15,8 @@ const STATIC_LINKS = [
   { title: 'Video Courses', path: '/video-courses' }
 ]
 
-export default defineEventHandler(async (event: H3Event) => {
-  const domain = withoutTrailingSlash(getSiteConfig(event).url)
+export default defineEventHandler(async (event) => {
+  const domain = getSiteUrl(event)
   // Mirrors /sitemap.xml: v3 (legacy) and v5 (nightly) are excluded — v5 is
   // also disallowed in /robots.txt until Nuxt 5 ships.
   const [docsv4, blog, deploy] = await Promise.all([

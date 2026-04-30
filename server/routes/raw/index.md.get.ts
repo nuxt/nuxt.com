@@ -1,7 +1,6 @@
-import type { H3Event } from 'h3'
 import { queryCollection } from '@nuxt/content/server'
 
-export default defineCachedEventHandler(async (event: H3Event) => {
+export default defineCachedEventHandler(async (event) => {
   const domain = getSiteUrl(event)
   const index = await queryCollection(event, 'index').first()
 
