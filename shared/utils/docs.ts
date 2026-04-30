@@ -10,7 +10,7 @@
 // SUPPORTED_DOC_VERSIONS and bump CURRENT_DOCS_VERSION.
 export const SUPPORTED_DOC_VERSIONS = ['3.x', '4.x'] as const
 export const EXCLUDED_DOC_VERSIONS = ['5.x'] as const
-export const CURRENT_DOCS_VERSION = '4.x'
+export const CURRENT_DOCS_VERSION: (typeof SUPPORTED_DOC_VERSIONS)[number] = '4.x'
 
 const escape = (v: string) => v.replace(/\./g, '\\.')
 

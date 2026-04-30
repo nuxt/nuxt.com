@@ -32,5 +32,6 @@ export default defineEventHandler(async (event) => {
     })
   }
   sitemap.end()
+  setResponseHeader(event, 'Content-Type', 'application/xml; charset=utf-8')
   return streamToPromise(sitemap)
 })
