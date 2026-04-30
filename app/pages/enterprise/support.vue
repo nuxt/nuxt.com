@@ -16,12 +16,10 @@ useSeoMeta({
   title,
   description,
   ogDescription: description,
-  ogTitle: `${title} · Enterprise`
+  ogTitle: `${title} · Enterprise`,
+  ogImage: '/assets/enterprise/support/social-card.png'
 })
-
-defineOgImage({
-  url: '/assets/enterprise/support/social-card.png'
-})
+useCanonical()
 </script>
 
 <template>

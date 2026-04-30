@@ -1,7 +1,6 @@
 <script setup lang="ts">
 const colorMode = useColorMode()
 const route = useRoute()
-const site = useSiteConfig()
 const isChatRoute = computed(() => route.path === '/chat' || route.path.startsWith('/chat/'))
 const { version } = useDocsVersion()
 const { searchGroups, searchLinks, searchTerm } = useNavigation()
@@ -10,26 +9,6 @@ const { fetchList: fetchHosting } = useHostingProviders()
 const { track } = useAnalytics()
 
 const color = computed(() => colorMode.value === 'dark' ? '#020420' : 'white')
-
-// Canonical URL + markdown alternate (for AI agents). The markdown URLs
-// follow the `${url}.md` convention; Vercel rewrites them at the edge to
-// the underlying /raw/...md handlers (see modules/md-rewrite.ts). The docs
-// page sets its own per-page alternate, so we skip /docs/** here.
-// Suppress canonical on unversioned /docs/* paths — they're meta-refresh
-// stubs that the docs-version middleware redirects to /docs/4.x/*; agents
-// should not treat the stub URL as authoritative.
-const canonicalUrl = computed(() => {
-  if (route.path.startsWith('/docs/') && !/^\/docs\/[345]\.x(?:\/|$)/.test(route.path)) return null
-  return `${site.url}${route.path === '/' ? '' : route.path.replace(/\/$/, '')}`
-})
-const markdownAlternateUrl = computed(() => {
-  const path = route.path.replace(/\/$/, '')
-  if (path === '' || path === '/') return `${site.url}/raw/index.md`
-  if (path === '/modules') return `${site.url}/modules.md`
-  if (path === '/changelog') return `${site.url}/changelog.md`
-  if (/^\/(?:blog|deploy)\//.test(path)) return `${site.url}${path}.md`
-  return null
-})
 
 watch(() => colorMode.preference, (newMode, oldMode) => {
   if (oldMode && newMode !== oldMode) {
@@ -47,23 +26,11 @@ onNuxtReady(() => {
   fetchHosting()
 })
 
-const headLinks = computed(() => {
-  const links: Array<{ rel: string, href: string, type?: string }> = []
-  if (canonicalUrl.value) {
-    links.push({ rel: 'canonical', href: canonicalUrl.value })
-  }
-  if (markdownAlternateUrl.value) {
-    links.push({ rel: 'alternate', type: 'text/markdown', href: markdownAlternateUrl.value })
-  }
-  return links
-})
-
 useHead({
   titleTemplate: title => title ? `${title} · Nuxt` : 'Nuxt: The Intuitive Web Framework',
   meta: [
     { key: 'theme-color', name: 'theme-color', content: color }
-  ],
-  link: headLinks
+  ]
 })
 
 if (import.meta.server) {
@@ -74,38 +41,6 @@ if (import.meta.server) {
     ],
     link: [
       { rel: 'icon', type: 'image/png', href: '/icon.png' }
-    ],
-    // Site-wide JSON-LD — Organization + WebSite. Per-page schemas
-    // (TechArticle, BreadcrumbList, etc.) are added by individual pages.
-    script: [
-      {
-        type: 'application/ld+json',
-        innerHTML: JSON.stringify({
-          '@context': 'https://schema.org',
-          '@graph': [
-            {
-              '@type': 'Organization',
-              '@id': `${site.url}/#organization`,
-              'name': 'Nuxt',
-              'url': site.url,
-              'logo': `${site.url}/icon.png`,
-              'sameAs': [
-                'https://github.com/nuxt',
-                'https://x.com/nuxt_js',
-                'https://bsky.app/profile/nuxt.com'
-              ]
-            },
-            {
-              '@type': 'WebSite',
-              '@id': `${site.url}/#website`,
-              'url': site.url,
-              'name': 'Nuxt',
-              'publisher': { '@id': `${site.url}/#organization` },
-              'inLanguage': 'en'
-            }
-          ]
-        }).replace(/</g, '\\u003c').replace(/>/g, '\\u003e')
-      }
     ]
   })
   useSeoMeta({
@@ -114,6 +49,14 @@ if (import.meta.server) {
     twitterCard: 'summary_large_image',
     twitterSite: 'nuxt_js'
   })
+  // Organization identity is provided via `schemaOrg.identity` in
+  // nuxt.config.ts so the module can emit a single `#identity` node
+  // (instead of a duplicated `#organization` graph entry).
+  useSchemaOrg([
+    defineWebSite({
+      name: 'Nuxt'
+    })
+  ])
 }
 
 const versionNavigation = computed(() => navigation.value?.filter(item => item.path === version.value.path || item.path === '/blog') ?? [])

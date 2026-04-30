@@ -22,6 +22,7 @@ export default defineNuxtConfig({
     '@nuxthub/core',
     'nuxt-charts',
     'nuxt-auth-utils',
+    'nuxt-schema-org',
     '@nuxtjs/mcp-toolkit',
     '@nuxt/hints',
     '@vercel/analytics',
@@ -65,6 +66,12 @@ export default defineNuxtConfig({
     layoutTransition: false
   },
   css: ['~/assets/css/main.css'],
+  site: {
+    name: 'Nuxt',
+    url: 'https://nuxt.com',
+    description: 'Build fast, production-ready web apps with Vue. File-based routing, auto-imports, and server-side rendering — all configured out of the box.',
+    defaultLocale: 'en'
+  },
   colorMode: {
     preference: 'dark'
   },
@@ -461,6 +468,12 @@ export default defineNuxtConfig({
   },
   vite: {
     optimizeDeps: {
+      include: [
+        '@vue/devtools-core',
+        '@vue/devtools-kit',
+        '@unhead/schema-org/vue',
+        'valibot'
+      ],
       exclude: ['vue-chrts']
     }
   },
@@ -555,6 +568,23 @@ export default defineNuxtConfig({
     name: 'Nuxt',
     route: '/mcp',
     browserRedirect: '/docs/guide/ai/mcp'
+  },
+  ogImage: {
+    zeroRuntime: true
+  },
+  schemaOrg: {
+    identity: {
+      type: 'Organization',
+      name: 'Nuxt',
+      logo: '/icon.png',
+      sameAs: [
+        'https://github.com/nuxt',
+        'https://x.com/nuxt_js',
+        'https://bsky.app/profile/nuxt.com',
+        'https://www.linkedin.com/showcase/nuxt-framework/',
+        'https://m.webtoo.ls/@nuxt'
+      ]
+    }
   },
   turnstile: {
     siteKey: '0x4AAAAAAAP2vNBsTBT3ucZi'

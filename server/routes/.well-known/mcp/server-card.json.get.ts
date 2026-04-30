@@ -1,23 +1,23 @@
-const DOMAIN = 'https://nuxt.com'
-
-export default defineEventHandler((event) => {
+export default defineCachedEventHandler((event) => {
+  const domain = getSiteUrl(event)
   const serverCard = {
     $schema: 'https://modelcontextprotocol.io/schema/server-card/v1',
     serverInfo: {
       name: 'Nuxt',
       title: 'Nuxt MCP Server',
       description: 'MCP server providing tools, resources and prompts to help AI agents build with Nuxt — search documentation, retrieve guides, fetch module metadata, and discover deployment providers.',
-      homepage: DOMAIN,
-      documentation: `${DOMAIN}/docs/4.x/guide/ai/mcp`,
+      homepage: domain,
+      documentation: `${domain}/docs/${DOCS_VERSION}/guide/ai/mcp`,
       license: 'MIT',
       repository: 'https://github.com/nuxt/nuxt.com'
     },
     endpoints: [
       {
         type: 'streamable-http',
-        url: `${DOMAIN}/mcp`
+        url: `${domain}/mcp`
       }
     ],
+    // TODO: import these from `@nuxtjs/mcp-toolkit` so we don't duplicate the tool/resource/prompt definitions.
     capabilities: {
       tools: { listChanged: false },
       resources: { listChanged: false, subscribe: false },
@@ -52,6 +52,9 @@ export default defineEventHandler((event) => {
   }
 
   setResponseHeader(event, 'Content-Type', 'application/json; charset=utf-8')
-  setResponseHeader(event, 'Cache-Control', 'public, max-age=3600')
   return serverCard
+}, {
+  name: 'well-known-mcp-server-card',
+  swr: true,
+  maxAge: 60 * 60
 })

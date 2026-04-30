@@ -19,7 +19,6 @@ const nuxtApp = useNuxtApp()
 const { version } = useDocsVersion()
 const { headerLinks } = useHeaderLinks()
 const { isAgentDocked } = useNuxtAgent()
-const site = useSiteConfig()
 const path = computed(() => route.path.replace(/\/$/, ''))
 
 const ignoredPaths = ['.nuxt', '.output', '.env', 'node_modules']
@@ -132,44 +131,32 @@ useSeoMeta({
   titleTemplate,
   title
 })
+// Only emit canonical/markdown alternate on versioned paths (e.g.
+// `/docs/4.x/*`). Unversioned `/docs/*` URLs are meta-refresh stubs that
+// the docs-version middleware redirects to the active version, so agents
+// should not treat the stub URL as authoritative. Mirrors `md-rewrite.ts`,
+// which excludes v5 from edge rewrites.
+if (/^\/docs\/[34]\.x(?:\/|$)/.test(path.value)) {
+  useCanonical(() => `${path.value}.md`)
+}
 
-// Pre-render the markdown path + add it to alternate links and per-page JSON-LD.
-// `${site.url}${path}.md` is the agent-friendly URL — Vercel rewrites it to
-// /raw/...md at the edge (see modules/md-rewrite.ts).
 if (import.meta.server) {
   prerenderRoutes([joinURL('/raw', `${path.value}.md`)])
-}
-useHead({
-  link: [
-    {
-      rel: 'alternate',
-      href: `${site.url}${path.value}.md`,
-      type: 'text/markdown'
-    }
-  ],
-  script: [{
-    type: 'application/ld+json',
-    innerHTML: computed(() => JSON.stringify({
-      '@context': 'https://schema.org',
+
+  useSchemaOrg([
+    defineArticle({
       '@type': 'TechArticle',
       'headline': page.value?.title,
-      'description': page.value?.seo?.description || page.value?.description,
-      'url': joinURL(site.url, path.value),
-      'isPartOf': { '@id': `${site.url}/#website` },
-      'breadcrumb': {
-        '@type': 'BreadcrumbList',
-        'itemListElement': breadcrumb.value?.map((item, index) => ({
-          '@type': 'ListItem',
-          'position': index + 1,
-          'name': item.label,
-          'item': item.to ? joinURL(site.url, String(item.to)) : undefined
-        })) || []
-      }
-    }).replace(/</g, '\\u003c').replace(/>/g, '\\u003e'))
-  }]
-})
+      'description': page.value?.seo?.description || page.value?.description
+    }),
+    defineBreadcrumb({
+      itemListElement: breadcrumb.value.map(item => ({
+        name: item.label,
+        item: item.to
+      }))
+    })
+  ])
 
-if (import.meta.server) {
   const description = page.value?.seo?.description || page.value?.description
   useSeoMeta({
     description,
@@ -177,7 +164,7 @@ if (import.meta.server) {
     ogTitle: titleTemplate.value?.includes('%s') ? titleTemplate.value.replace('%s', title.value) : title.value
   })
 
-  defineOgImageComponent('Docs', {
+  defineOgImage('Docs.takumi', {
     headline: breadcrumb.value.length ? breadcrumb.value.map(link => link.label).join(' > ') : '',
     title,
     description

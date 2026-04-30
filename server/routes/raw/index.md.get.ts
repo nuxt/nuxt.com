@@ -1,15 +1,26 @@
-import { withoutTrailingSlash } from 'ufo'
+import type { H3Event } from 'h3'
+import type { Collections, CollectionQueryBuilder } from '@nuxt/content'
+import { queryCollection } from '@nuxt/content/server'
 
-export default defineEventHandler((event) => {
-  const DOMAIN = withoutTrailingSlash(getSiteConfig(event).url)
-  const title = 'Nuxt'
-  const description = 'The Intuitive Vue Framework. Build performant and production-grade full-stack web apps and websites with confidence.'
+type queryCollectionWithEvent = <T extends keyof Collections>(event: H3Event, collection: T) => CollectionQueryBuilder<Collections[T]>
+
+export default defineCachedEventHandler(async (event) => {
+  const domain = getSiteUrl(event)
+  const index = await (queryCollection as queryCollectionWithEvent)(event, 'index').first()
+
+  const title = index?.hero?.title?.replace(/\s+/g, ' ').trim() || 'Nuxt'
+  const description = index?.hero?.description?.replace(/\s+/g, ' ').trim()
+    || 'The Intuitive Vue Framework. Build performant and production-grade full-stack web apps and websites with confidence.'
+
+  const featureBullets = (index?.features?.features ?? [])
+    .map(feature => `- **${feature.title}**: ${feature.description}`)
+    .join('\n')
 
   const frontmatter = [
     '---',
     `title: ${JSON.stringify(title)}`,
     `description: ${JSON.stringify(description)}`,
-    `canonical_url: ${JSON.stringify(DOMAIN)}`,
+    `canonical_url: ${JSON.stringify(domain)}`,
     `last_updated: ${JSON.stringify(new Date().toISOString().split('T')[0])}`,
     '---',
     ''
@@ -23,12 +34,7 @@ export default defineEventHandler((event) => {
 
 Nuxt is an open source framework that makes web development intuitive and powerful. Create performant and production-grade full-stack web apps and websites with confidence.
 
-- File-based routing, layouts, middleware and auto-imports
-- Server engine powered by Nitro (universal deployment, edge-ready)
-- Hybrid rendering: SSR, SSG, ISR, SPA on a per-route basis
-- 200+ official and community modules
-- TypeScript-first with full IDE support
-- Built on top of Vue 3 and Vite
+${featureBullets}
 
 ## Getting started
 
@@ -39,29 +45,29 @@ npm install
 npm run dev
 \`\`\`
 
-- Introduction: <${DOMAIN}/docs/getting-started/introduction>
-- Installation: <${DOMAIN}/docs/getting-started/installation>
-- Configuration: <${DOMAIN}/docs/getting-started/configuration>
+- Introduction: <${domain}/docs/getting-started/introduction>
+- Installation: <${domain}/docs/getting-started/installation>
+- Configuration: <${domain}/docs/getting-started/configuration>
 
 ## Explore
 
-- Documentation: <${DOMAIN}/docs>
-- Modules: <${DOMAIN}/modules>
-- Templates: <${DOMAIN}/templates>
-- Showcase: <${DOMAIN}/showcase>
-- Deploy: <${DOMAIN}/deploy>
-- Blog: <${DOMAIN}/blog>
-- Team: <${DOMAIN}/team>
-- Sitemap (XML): <${DOMAIN}/sitemap.xml>
-- Sitemap (Markdown): <${DOMAIN}/sitemap.md>
-- LLMs index: <${DOMAIN}/llms.txt>
-- Full LLMs documentation: <${DOMAIN}/llms-full.txt>
+- Documentation: <${domain}/docs>
+- Modules: <${domain}/modules>
+- Templates: <${domain}/templates>
+- Showcase: <${domain}/showcase>
+- Deploy: <${domain}/deploy>
+- Blog: <${domain}/blog>
+- Team: <${domain}/team>
+- Sitemap (XML): <${domain}/sitemap.xml>
+- Sitemap (Markdown): <${domain}/sitemap.md>
+- LLMs index: <${domain}/llms.txt>
+- Full LLMs documentation: <${domain}/llms-full.txt>
 
 ## Resources for Agents
 
-- MCP Server Card: <${DOMAIN}/.well-known/mcp/server-card.json>
-- MCP endpoint: <${DOMAIN}/mcp>
-- API Catalog: <${DOMAIN}/.well-known/api-catalog>
+- MCP Server Card: <${domain}/.well-known/mcp/server-card.json>
+- MCP endpoint: <${domain}/mcp>
+- API Catalog: <${domain}/.well-known/api-catalog>
 
 ## Community
 
@@ -73,9 +79,12 @@ npm run dev
 
   setResponseHeader(event, 'Content-Type', 'text/markdown; charset=utf-8')
   setResponseHeader(event, 'Link', [
-    `<${DOMAIN}>; rel="canonical"`,
-    `<${DOMAIN}>; rel="alternate"; type="text/html"`
+    `<${domain}>; rel="canonical"`,
+    `<${domain}>; rel="alternate"; type="text/html"`
   ].join(', '))
-  setResponseHeader(event, 'Cache-Control', 'public, max-age=3600')
   return frontmatter + body
+}, {
+  name: 'raw-index-md',
+  swr: true,
+  maxAge: 60 * 60
 })

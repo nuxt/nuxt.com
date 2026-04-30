@@ -19,6 +19,7 @@ useSeoMeta({
   twitterDescription: 'The Nuxt Agent helps you explore the documentation — ask about Nuxt, modules, deployment, and more.',
   twitterImage: joinURL(site.url, '/nuxt-agent.jpg')
 })
+useCanonical()
 </script>
 
 <template>

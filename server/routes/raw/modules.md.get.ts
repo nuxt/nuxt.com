@@ -1,4 +1,5 @@
 export default defineCachedEventHandler(async (event) => {
+  const domain = getSiteUrl(event)
   const modules = await fetchModules(event) || []
 
   const lines: string[] = [
@@ -32,9 +33,13 @@ export default defineCachedEventHandler(async (event) => {
   }
 
   setResponseHeader(event, 'Content-Type', 'text/markdown; charset=utf-8')
+  setResponseHeader(event, 'Link', [
+    `<${domain}/modules>; rel="canonical"`,
+    `<${domain}/modules>; rel="alternate"; type="text/html"`
+  ].join(', '))
   return lines.join('\n')
 }, {
-  name: 'modules-md',
+  name: 'raw-modules-md',
   swr: true,
   maxAge: 60 * 60
 })

@@ -1,47 +1,46 @@
-const DOMAIN = 'https://nuxt.com'
-
-export default defineEventHandler((event) => {
+export default defineCachedEventHandler((event) => {
+  const domain = getSiteUrl(event)
   const linkset = {
     linkset: [
       {
-        'anchor': `${DOMAIN}/mcp`,
+        'anchor': `${domain}/mcp`,
         'service-desc': [
           {
-            href: `${DOMAIN}/.well-known/mcp/server-card.json`,
+            href: `${domain}/.well-known/mcp/server-card.json`,
             type: 'application/json'
           }
         ],
         'service-doc': [
           {
-            href: `${DOMAIN}/docs/4.x/guide/ai/mcp`,
+            href: `${domain}/docs/${DOCS_VERSION}/guide/ai/mcp`,
             type: 'text/html'
           }
         ]
       },
       {
-        'anchor': `${DOMAIN}/docs`,
+        'anchor': `${domain}/docs`,
         'service-desc': [
           {
-            href: `${DOMAIN}/llms.txt`,
+            href: `${domain}/llms.txt`,
             type: 'text/plain'
           },
           {
-            href: `${DOMAIN}/llms-full.txt`,
+            href: `${domain}/llms-full.txt`,
             type: 'text/plain'
           }
         ],
         'service-doc': [
           {
-            href: `${DOMAIN}/docs`,
+            href: `${domain}/docs`,
             type: 'text/html'
           }
         ]
       },
       {
-        'anchor': `${DOMAIN}/api/v1`,
+        'anchor': `${domain}/api/v1`,
         'service-doc': [
           {
-            href: `${DOMAIN}/api/v1`,
+            href: `${domain}/api/v1`,
             type: 'text/html'
           }
         ]
@@ -50,6 +49,9 @@ export default defineEventHandler((event) => {
   }
 
   setResponseHeader(event, 'Content-Type', 'application/linkset+json; charset=utf-8')
-  setResponseHeader(event, 'Cache-Control', 'public, max-age=3600')
   return linkset
+}, {
+  name: 'well-known-api-catalog',
+  swr: true,
+  maxAge: 60 * 60
 })

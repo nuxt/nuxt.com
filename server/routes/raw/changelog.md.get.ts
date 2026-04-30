@@ -1,4 +1,5 @@
 export default defineCachedEventHandler(async (event) => {
+  const domain = getSiteUrl(event)
   const releases = await fetchRawReleases() || []
 
   const lines: string[] = [
@@ -17,9 +18,13 @@ export default defineCachedEventHandler(async (event) => {
   }
 
   setResponseHeader(event, 'Content-Type', 'text/markdown; charset=utf-8')
+  setResponseHeader(event, 'Link', [
+    `<${domain}/changelog>; rel="canonical"`,
+    `<${domain}/changelog>; rel="alternate"; type="text/html"`
+  ].join(', '))
   return lines.join('\n')
 }, {
-  name: 'changelog-md',
+  name: 'raw-changelog-md',
   swr: true,
   maxAge: 60 * 60
 })

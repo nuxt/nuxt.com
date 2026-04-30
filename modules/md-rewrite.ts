@@ -1,6 +1,9 @@
 import { defineNuxtModule } from 'nuxt/kit'
 import type { Nitro } from 'nitropack'
 
+// Re-check this list quarterly against the live ai.robots.txt project
+// (https://github.com/ai-robots-txt/ai.robots.txt) — new agent UAs appear
+// frequently and stale entries cost us nothing to drop.
 const AGENT_UA_PATTERN
   = '.*(ClaudeBot|Claude-Web|anthropic-ai|GPTBot|ChatGPT-User|OAI-SearchBot|Google-Extended|Google-CloudVertexBot|Meta-ExternalAgent|Meta-ExternalFetcher|PerplexityBot|YouBot|DeepSeekBot|Amazonbot|cohere-ai|AI2Bot|Applebot-Extended|Bytespider).*'
 
@@ -37,8 +40,8 @@ function mdRewrite(nitro: Nitro) {
       { src: '^/docs/(?!5\\.x/)(.+)$', dest: '/raw/docs/$1.md' },
       { src: '^/blog/(.+)$', dest: '/raw/blog/$1.md' },
       { src: '^/deploy/(.+)$', dest: '/raw/deploy/$1.md' },
-      { src: '^/modules/?$', dest: '/modules.md' },
-      { src: '^/changelog/?$', dest: '/changelog.md' }
+      { src: '^/modules/?$', dest: '/raw/modules.md' },
+      { src: '^/changelog/?$', dest: '/raw/changelog.md' }
     ]
 
     const rewrites: any[] = []

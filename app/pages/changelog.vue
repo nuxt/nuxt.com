@@ -15,11 +15,16 @@ useSeoMeta({
   ogDescription: description,
   ogTitle: title
 })
-defineOgImageComponent('Docs', {
+useCanonical('/raw/changelog.md')
+defineOgImage('Docs.takumi', {
   headline: 'Changelog',
   title,
   description
 })
+
+if (import.meta.server) {
+  prerenderRoutes(['/raw/changelog.md'])
+}
 
 const { data: releases } = await useFetch('/api/releases')
 const openStates = reactive<Record<string, boolean>>({})
