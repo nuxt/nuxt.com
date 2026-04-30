@@ -98,6 +98,7 @@ export default defineNuxtConfig({
     contactEmail: '',
     cronSecret: '',
     mcpAdminToken: '',
+    adminGithubLogins: '',
     github: {
       token: ''
     },
