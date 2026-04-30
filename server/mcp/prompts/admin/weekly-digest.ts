@@ -13,8 +13,8 @@ Steps to follow (run them in parallel where possible):
 1. \`feedback-stats\` with \`sinceDays=${sinceDays}\`, \`topPages=5\`.
 2. \`list-feedback\` with \`ratings=["not-helpful", "confusing"]\`, \`sinceDays=${sinceDays}\`, \`limit=30\`.
 3. \`agent-usage-stats\` with \`sinceDays=${sinceDays}\`.
-4. \`list-agent-chats\` with \`sinceDays=${sinceDays}\`, \`orderBy="downvotes"\`, \`limit=5\`.
-5. \`list-agent-votes\` with \`isUpvoted=false\`, \`sinceDays=${sinceDays}\`, \`limit=15\`.
+4. \`list-agent-chats\` with \`sinceDays=${sinceDays}\`, \`hasDownvotes=true\`, \`limit=5\` (worst-rated, most recently updated first).
+5. \`list-agent-votes\` with \`onlyDownvotes=true\`, \`sinceDays=${sinceDays}\`, \`limit=15\`.
 
 Then write a digest in Markdown with these sections (be concise — each section ≤ 8 bullets):
 

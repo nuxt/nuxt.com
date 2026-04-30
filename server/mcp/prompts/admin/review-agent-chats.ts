@@ -12,9 +12,9 @@ export default defineMcpPrompt({
 
 Steps to follow:
 1. Call \`agent-usage-stats\` with \`sinceDays=${sinceDays}\` to get the global usage, cost, token breakdown, and provider/model split.
-2. Call \`list-agent-chats\` with \`sinceDays=${sinceDays}\`, \`orderBy="downvotes"\`, \`limit=${worst}\` to find the worst-rated sessions.
+2. Call \`list-agent-chats\` with \`sinceDays=${sinceDays}\`, \`hasDownvotes=true\`, \`limit=${worst}\` to find the worst-rated sessions (most recently updated first).
 3. For each of those ${worst} chats, call \`get-agent-chat\` with the chat \`id\` to read the full transcript and the per-message votes.
-4. Optionally, call \`list-agent-votes\` with \`isUpvoted=false\`, \`sinceDays=${sinceDays}\`, \`limit=20\` to surface recurring downvoted answers across chats.
+4. Optionally, call \`list-agent-votes\` with \`onlyDownvotes=true\`, \`sinceDays=${sinceDays}\`, \`limit=20\` to surface recurring downvoted answers across chats.
 
 Produce a report with:
 - **Usage at a glance**: total chats, total messages, input/output tokens, estimated cost, and the top 3 (provider, model) pairs.

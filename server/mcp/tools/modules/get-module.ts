@@ -34,7 +34,7 @@ EXAMPLES:
   async handler({ slug }) {
     let module: Module
     try {
-      module = await $fetch<Module>(`https://api.nuxt.com/modules/${slug}`)
+      module = await $fetch<Module>(`https://api.nuxt.com/modules/${encodeURIComponent(slug)}`)
     } catch (error: unknown) {
       const err = error as Error & { statusMessage?: string, statusCode?: number }
       throw createError({
@@ -45,7 +45,9 @@ EXAMPLES:
 
     let readme: string | undefined
     if (module.readme) {
-      const raw = JSON.stringify(module.readme)
+      const raw = typeof module.readme === 'string'
+        ? module.readme
+        : JSON.stringify(module.readme)
       readme = raw.length > 8_000
         ? raw.slice(0, 8_000) + '… [README truncated]'
         : raw

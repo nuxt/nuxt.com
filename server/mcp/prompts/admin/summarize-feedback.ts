@@ -15,7 +15,7 @@ export default defineMcpPrompt({
 Steps to follow:
 1. Call \`feedback-stats\` with \`sinceDays=${sinceDays}\` (and \`topPages=10\`) to get the rating distribution and the worst-scoring pages.
 2. Call \`list-feedback\` with \`ratings=["not-helpful", "confusing"]\`, \`sinceDays=${sinceDays}\`${pathContains ? `, and \`pathContains="${pathContains}"\`` : ''}, \`limit=50\` to read the actual negative comments.
-3. If a specific page stands out in step 1, call \`list-feedback\` again with \`pathContains\` set to that page to read what users say about it.
+3. If a specific page stands out in step 1, call \`list-feedback\` again with \`sinceDays=${sinceDays}\` and \`pathContains\` set to that page to read what users say about it.
 
 Then produce a concise report with:
 - **Overall health**: total feedbacks, positive %, average score, week-over-week trend if you have a comparison.

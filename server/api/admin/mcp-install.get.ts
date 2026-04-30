@@ -1,5 +1,9 @@
 export default defineEventHandler(async (event) => {
-  await requireUserSession(event)
+  const { user } = await requireUserSession(event)
+
+  if (!user?.login || !(await isAuthorizedAdmin(user.login))) {
+    throw createError({ statusCode: 403, statusMessage: 'Admin access required' })
+  }
 
   const { mcpAdminToken } = useRuntimeConfig(event)
   if (!mcpAdminToken) {

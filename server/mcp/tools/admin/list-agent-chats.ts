@@ -52,7 +52,7 @@ WHEN TO USE: Use this tool to find expensive sessions, slow sessions, or session
       downvotes: number
     }
 
-    const baseRows: ChatRow[] = await db
+    const rows: ChatRow[] = await db
       .select({
         id: schema.agentChats.id,
         fingerprint: schema.agentChats.fingerprint,
@@ -73,11 +73,10 @@ WHEN TO USE: Use this tool to find expensive sessions, slow sessions, or session
       .leftJoin(schema.agentVotes, eq(schema.agentVotes.chatId, schema.agentChats.id))
       .where(filters.length ? and(...filters) : undefined)
       .groupBy(schema.agentChats.id)
+      .having(hasDownvotes ? sql`${downvotesExpr} > 0` : undefined)
       .orderBy(desc(sortColumn))
       .limit(limit)
       .offset(offset)
-
-    const rows = hasDownvotes ? baseRows.filter((r: ChatRow) => Number(r.downvotes) > 0) : baseRows
 
     return {
       total: rows.length,

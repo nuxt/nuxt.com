@@ -13,7 +13,7 @@ export default defineMcpPrompt({
 
 Steps to follow:
 1. Call \`feedback-stats\` with \`sinceDays=${sinceDays}\`, \`topPages=${top}\`, \`minResponses=${minResponses}\` to get the worst-scoring pages.
-2. For each of the top ${top} pages, call \`list-feedback\` with \`pathContains\` set to that page's path, \`ratings=["not-helpful", "confusing"]\`, \`limit=20\` to read the actual complaints.
+2. For each of the top ${top} pages, call \`list-feedback\` with \`sinceDays=${sinceDays}\`, \`pathContains\` set to that page's path, \`ratings=["not-helpful", "confusing"]\`, \`limit=20\` to read the actual complaints from the same window.
 3. If helpful, call \`get-documentation-page\` (from the public Nuxt MCP) on the same path to read the current content and ground your suggestions.
 
 Produce a triage report with one section per page:
