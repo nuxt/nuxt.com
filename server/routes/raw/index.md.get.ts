@@ -1,12 +1,9 @@
 import type { H3Event } from 'h3'
-import type { Collections, CollectionQueryBuilder } from '@nuxt/content'
 import { queryCollection } from '@nuxt/content/server'
 
-type queryCollectionWithEvent = <T extends keyof Collections>(event: H3Event, collection: T) => CollectionQueryBuilder<Collections[T]>
-
-export default defineCachedEventHandler(async (event) => {
+export default defineCachedEventHandler(async (event: H3Event) => {
   const domain = getSiteUrl(event)
-  const index = await (queryCollection as queryCollectionWithEvent)(event, 'index').first()
+  const index = await queryCollection(event, 'index').first()
 
   const title = index?.hero?.title?.replace(/\s+/g, ' ').trim() || 'Nuxt'
   const description = index?.hero?.description?.replace(/\s+/g, ' ').trim()

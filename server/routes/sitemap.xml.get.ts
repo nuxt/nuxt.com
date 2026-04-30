@@ -1,19 +1,16 @@
 // TODO: Update later
 import { SitemapStream, streamToPromise } from 'sitemap'
 import type { H3Event } from 'h3'
-import type { Collections, CollectionQueryBuilder } from '@nuxt/content'
 import { queryCollection } from '@nuxt/content/server'
 import { withoutTrailingSlash } from 'ufo'
-
-type queryCollectionWithEvent = <T extends keyof Collections>(event: H3Event, collection: T) => CollectionQueryBuilder<Collections[T]>
 
 export default defineEventHandler(async (event: H3Event) => {
   // TODO: add docsv5 to sitemap when Nuxt 5 is released
   const [docs, blog] = await Promise.all([
-    (queryCollection as queryCollectionWithEvent)(event, 'docsv4')
+    queryCollection(event, 'docsv4')
       .where('path', 'NOT LIKE', '%.navigation')
       .all(),
-    (queryCollection as queryCollectionWithEvent)(event, 'blog')
+    queryCollection(event, 'blog')
       .where('draft', '=', 0)
       .all()
   ])

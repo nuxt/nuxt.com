@@ -1,12 +1,9 @@
 import { Feed } from 'feed'
 import { joinURL } from 'ufo'
 import type { H3Event } from 'h3'
-import type { Collections, CollectionQueryBuilder } from '@nuxt/content'
-import { queryCollection } from '#imports'
+import { queryCollection } from '@nuxt/content/server'
 
-type queryCollectionWithEvent = <T extends keyof Collections>(event: H3Event, collection: T) => CollectionQueryBuilder<Collections[T]>
-
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event: H3Event) => {
   const baseUrl = 'https://nuxt.com'
   const siteUrl = joinURL(baseUrl, 'blog')
   const feed = new Feed({
@@ -23,7 +20,7 @@ export default defineEventHandler(async (event) => {
     }
   })
 
-  const articles = await (queryCollection as queryCollectionWithEvent)(event, 'blog')
+  const articles = await queryCollection(event, 'blog')
     .order('date', 'DESC')
     .all()
 
