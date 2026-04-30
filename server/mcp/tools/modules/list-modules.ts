@@ -25,18 +25,25 @@ OUTPUT: Returns list of modules with name, description, category, stats. Use get
     sort: z.enum(['downloads', 'stars', 'publishedAt', 'createdAt']).optional().default('downloads').describe('Sort modules by downloads, stars, published date, or created date'),
     order: z.enum(['asc', 'desc']).optional().default('desc').describe('Sort order (ascending or descending)')
   },
+  annotations: {
+    readOnlyHint: true,
+    openWorldHint: true
+  },
+  inputExamples: [
+    { search: 'auth' },
+    { category: 'ui', sort: 'downloads' },
+    { search: 'image', sort: 'stars', order: 'desc' }
+  ],
   cache: '1h',
   async handler({ search, category, sort = 'downloads', order = 'desc' }) {
     const response = await $fetch<{ modules: Module[], stats: Stats }>('https://api.nuxt.com/modules')
 
     let modules = response.modules || []
 
-    // Filter by category if provided
     if (category) {
       modules = modules.filter(module => module.category === category)
     }
 
-    // Filter by search term if provided
     if (search) {
       const searchLower = search.toLowerCase()
       modules = modules.filter(module =>
@@ -46,7 +53,6 @@ OUTPUT: Returns list of modules with name, description, category, stats. Use get
       )
     }
 
-    // Sort modules (modules without stats go to the end)
     modules.sort((a, b) => {
       const aStats = a.stats
       const bStats = b.stats
@@ -89,7 +95,7 @@ OUTPUT: Returns list of modules with name, description, category, stats. Use get
 
     const totalMatches = modules.length
 
-    return jsonResult({
+    return {
       modules: modules.slice(0, 20).map(module => ({
         name: module.name,
         description: module.description,
@@ -105,6 +111,6 @@ OUTPUT: Returns list of modules with name, description, category, stats. Use get
       })),
       stats: response.stats,
       total: totalMatches
-    })
+    }
   }
 })

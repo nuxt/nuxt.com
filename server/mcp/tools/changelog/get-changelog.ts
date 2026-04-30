@@ -18,8 +18,13 @@ OUTPUT: Returns releases with title, repo, tag, date, and raw markdown body. Opt
     limit: z.number().min(1).max(20).default(5).describe('Number of releases to return (default: 5, max: 20)')
   },
   annotations: {
-    readOnlyHint: true
+    readOnlyHint: true,
+    openWorldHint: true
   },
+  inputExamples: [
+    { limit: 5 },
+    { repo: 'nuxt/ui', limit: 3 }
+  ],
   cache: '1h',
   async handler({ repo, limit }) {
     const releases = await fetchRawReleases() || []
@@ -29,14 +34,14 @@ OUTPUT: Returns releases with title, repo, tag, date, and raw markdown body. Opt
       : releases
 
     if (filtered.length === 0) {
-      return errorResult(repo ? `No releases found for repository "${repo}"` : 'No releases found')
+      throw createError({ statusCode: 404, message: repo ? `No releases found for repository "${repo}"` : 'No releases found' })
     }
 
-    return jsonResult(filtered.slice(0, limit).map((r) => {
+    return filtered.slice(0, limit).map((r) => {
       const md = r.markdown && r.markdown.length > 4_000
         ? r.markdown.slice(0, 4_000) + '\n\n[Release notes truncated. Visit the full release page for details.]'
         : r.markdown
       return { title: r.title, repo: r.repo, tag: r.tag, date: r.date, url: r.url, markdown: md }
-    }))
+    })
   }
 })

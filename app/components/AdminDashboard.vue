@@ -11,6 +11,8 @@ async function logout() {
   navigateTo('/admin/login')
 }
 
+const showMcpInstall = ref(false)
+
 const items = computed<DropdownMenuItem[][]>(() => [
   [
     {
@@ -20,6 +22,15 @@ const items = computed<DropdownMenuItem[][]>(() => [
         alt: user.value?.login
       },
       type: 'label'
+    }
+  ],
+  [
+    {
+      label: 'Install Admin MCP',
+      icon: 'i-lucide-plug',
+      onClick: () => {
+        showMcpInstall.value = true
+      }
     }
   ],
   [
@@ -464,6 +475,8 @@ watch(currentPage, () => {
         </div>
       </UCard>
     </UContainer>
+
+    <AdminMcpInstall v-model:open="showMcpInstall" />
 
     <UModal v-model:open="showFeedbackModal" :ui="{ content: 'max-w-3xl max-sm:max-h-[85vh] overflow-y-auto' }">
       <template #content>

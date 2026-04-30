@@ -15,21 +15,25 @@ EXAMPLES: "/deploy/vercel", "/deploy/cloudflare", "/deploy/netlify", "/deploy/aw
     path: z.string().describe('The path to the deploy provider (e.g., /deploy/vercel)'),
     sections: z.array(z.string()).optional().describe('Specific h2 section titles to return. If omitted, returns full content.')
   },
+  annotations: {
+    readOnlyHint: true,
+    openWorldHint: false
+  },
+  inputExamples: [
+    { path: '/deploy/vercel' },
+    { path: '/deploy/cloudflare', sections: ['Setup'] }
+  ],
   cache: '1h',
   async handler({ path, sections }) {
     const event = useEvent()
     const fullContent = await fetchPageMarkdown(event, 'deploy', path)
 
     if (!fullContent) {
-      return errorResult(`Deploy provider not found: ${path}`)
+      throw createError({ statusCode: 404, message: `Deploy provider not found: ${path}` })
     }
 
-    const content = sections?.length
+    return sections?.length
       ? extractSections(fullContent, sections)
       : fullContent
-
-    return {
-      content: [{ type: 'text' as const, text: content }]
-    }
   }
 })

@@ -33,6 +33,14 @@ Common Issues:
     path: z.string().describe('The path to the documentation page (e.g., /docs/4.x/getting-started/introduction)'),
     sections: z.array(z.string()).optional().describe('Specific h2 section titles to return (e.g., ["Usage", "API"]). If omitted, returns full documentation.')
   },
+  annotations: {
+    readOnlyHint: true,
+    openWorldHint: false
+  },
+  inputExamples: [
+    { path: '/docs/4.x/getting-started/introduction' },
+    { path: '/docs/4.x/guide/directory-structure/components', sections: ['Usage'] }
+  ],
   cache: '30m',
   async handler({ path, sections }) {
     const event = useEvent()
@@ -40,7 +48,7 @@ Common Issues:
     const fullContent = await fetchPageMarkdown(event, docsVersion, path)
 
     if (!fullContent) {
-      return errorResult(`Documentation page not found: ${path}`)
+      throw createError({ statusCode: 404, message: `Documentation page not found: ${path}` })
     }
 
     let content = sections?.length
@@ -52,8 +60,6 @@ Common Issues:
       content = content.slice(0, MAX_CHARS) + '\n\n[Content truncated. Use the sections parameter to request specific h2 sections.]'
     }
 
-    return {
-      content: [{ type: 'text' as const, text: content }]
-    }
+    return content
   }
 })

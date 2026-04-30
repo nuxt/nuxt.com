@@ -104,6 +104,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     contactEmail: '',
     cronSecret: '',
+    mcpAdminToken: '',
+    adminGithubLogins: '',
     github: {
       token: ''
     },
@@ -567,7 +569,10 @@ export default defineNuxtConfig({
   mcp: {
     name: 'Nuxt',
     route: '/mcp',
-    browserRedirect: '/docs/guide/ai/mcp'
+    browserRedirect: '/docs/guide/ai/mcp',
+    icons: [
+      { src: 'https://nuxt.com/icon.png', mimeType: 'image/png', sizes: ['64x64'] }
+    ]
   },
   ogImage: {
     zeroRuntime: true

@@ -15,7 +15,7 @@ export const feedback = sqliteTable('feedback', {
 
 export const agentChats = sqliteTable('agent_chats', {
   id: text('id').primaryKey(),
-  messages: text('messages', { mode: 'json' }).notNull().$type<{ id: string, role: string, parts: unknown[] }[]>(),
+  messages: text('messages', { mode: 'json' }).notNull().$type<AgentChatMessage[]>(),
   fingerprint: text('fingerprint').notNull(),
   model: text('model'),
   provider: text('provider'),
