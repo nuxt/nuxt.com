@@ -579,6 +579,7 @@ export default defineNuxtConfig({
   },
   ogImage: {
     zeroRuntime: true,
+    cacheMaxAgeSeconds: 0,
     security: {
       renderTimeout: 60000
     }
