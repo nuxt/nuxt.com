@@ -1,6 +1,9 @@
 export default defineMcpHandler({
   name: 'admin',
   description: 'Authenticated MCP handler for the Nuxt team to query feedback, agent chats, and votes from the production database.',
+  icons: [
+    { src: 'https://nuxt.com/icon.png', mimeType: 'image/png', sizes: ['64x64'] }
+  ],
   instructions: `You are connected to the Nuxt admin MCP. You can query user feedback (helpfulness ratings on docs pages), AI agent chat sessions (with token usage and cost), and per-message upvotes/downvotes.
 
 Tools:
