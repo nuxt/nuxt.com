@@ -51,10 +51,12 @@ if (import.meta.server) {
   })
   // Organization identity is provided via `schemaOrg.identity` in
   // nuxt.config.ts so the module can emit a single `#identity` node
-  // (instead of a duplicated `#organization` graph entry).
+  // (instead of a duplicated `#organization` graph entry). The WebSite
+  // resolver inherits `url` from siteConfig but not `name`, so we wire
+  // it up here against the same source of truth.
   useSchemaOrg([
     defineWebSite({
-      name: 'Nuxt'
+      name: useSiteConfig().name
     })
   ])
 }
