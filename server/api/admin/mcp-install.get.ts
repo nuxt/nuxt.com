@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
   if (!mcpAdminToken) {
     throw createError({
       statusCode: 503,
-      statusMessage: 'MCP admin token is not configured (set NUXT_MCP_ADMIN_TOKEN).'
+      statusMessage: 'MCP admin token is not configured (NUXT_MCP_ADMIN_TOKEN env variable).'
     })
   }
 
