@@ -97,6 +97,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     contactEmail: '',
     cronSecret: '',
+    mcpAdminToken: '',
     github: {
       token: ''
     },

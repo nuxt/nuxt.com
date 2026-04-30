@@ -14,17 +14,23 @@ EXAMPLES: "/blog/v4", "/blog/nuxt3", "/blog/nuxt-on-the-edge"`,
   inputSchema: {
     path: z.string().describe('The path to the blog post (e.g., /blog/v4)')
   },
+  annotations: {
+    readOnlyHint: true,
+    openWorldHint: false
+  },
+  inputExamples: [
+    { path: '/blog/v4' },
+    { path: '/blog/nuxt-on-the-edge' }
+  ],
   cache: '1h',
   async handler({ path }) {
     const event = useEvent()
     const fullContent = await fetchPageMarkdown(event, 'blog', path)
 
     if (!fullContent) {
-      return errorResult(`Blog post not found: ${path}`)
+      throw createError({ statusCode: 404, message: `Blog post not found: ${path}` })
     }
 
-    return {
-      content: [{ type: 'text' as const, text: fullContent }]
-    }
+    return fullContent
   }
 })

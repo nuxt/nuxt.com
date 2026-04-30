@@ -11,6 +11,15 @@ TIPS: Always pass a search term to narrow results — avoids dumping the entire 
     version: z.enum(['3.x', '4.x', '5.x', 'all']).optional().default('4.x').describe('Documentation version to fetch'),
     search: z.string().optional().describe('Filter pages by keyword (matches title, path, and description). Strongly recommended to avoid large results.')
   },
+  annotations: {
+    readOnlyHint: true,
+    openWorldHint: false
+  },
+  inputExamples: [
+    { search: 'data fetching', version: '4.x' },
+    { search: 'middleware' },
+    { version: '3.x' }
+  ],
   cache: '1h',
   async handler({ version, search }) {
     const event = useEvent()
@@ -26,7 +35,7 @@ TIPS: Always pass a search term to narrow results — avoids dumping the entire 
         .all()
       if (!docs) {
         if (version === 'all') continue
-        return errorResult('Documentation pages collection not found')
+        throw createError({ statusCode: 404, message: 'Documentation pages collection not found' })
       }
       allDocs.push(...docs)
     }
@@ -39,11 +48,11 @@ TIPS: Always pass a search term to narrow results — avoids dumping the entire 
       })
     }
 
-    return jsonResult(allDocs.map(doc => ({
+    return allDocs.map(doc => ({
       title: doc.title,
       path: doc.path,
       ...(search ? { description: doc.description } : {}),
       url: `https://nuxt.com${doc.path}`
-    })))
+    }))
   }
 })

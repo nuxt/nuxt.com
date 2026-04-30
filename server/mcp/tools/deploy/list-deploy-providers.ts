@@ -12,6 +12,10 @@ WHEN TO USE: Use this tool when you need to DISCOVER or COMPARE deployment optio
 WHEN NOT TO USE: If you know the exact provider (e.g., "Vercel", "Cloudflare"), you can use get_deploy_provider directly with the path.
 
 OUTPUT: Returns list of providers with titles, descriptions, and paths. Use get_deploy_provider for detailed deployment instructions.`,
+  annotations: {
+    readOnlyHint: true,
+    openWorldHint: false
+  },
   cache: '1h',
   async handler() {
     const event = useEvent()
@@ -21,10 +25,10 @@ OUTPUT: Returns list of providers with titles, descriptions, and paths. Use get_
       .all()
 
     if (!deployProviders) {
-      return errorResult('Deploy providers collection not found')
+      throw createError({ statusCode: 404, message: 'Deploy providers collection not found' })
     }
 
-    return jsonResult(deployProviders.map(provider => ({
+    return deployProviders.map(provider => ({
       title: provider.title,
       name: provider.title,
       path: provider.path,
@@ -36,6 +40,6 @@ OUTPUT: Returns list of providers with titles, descriptions, and paths. Use get_
       website: provider.website,
       sponsor: provider.sponsor,
       url: `https://nuxt.com${provider.path}`
-    })))
+    }))
   }
 })
