@@ -1,5 +1,6 @@
 import { defineNuxtModule } from 'nuxt/kit'
 import type { Nitro } from 'nitropack'
+import { EXCLUDED_DOCS_PATH_LOOKAHEAD } from '../shared/utils/docs'
 
 // Re-check this list quarterly against the live ai.robots.txt project
 // (https://github.com/ai-robots-txt/ai.robots.txt) — new agent UAs appear
@@ -26,10 +27,10 @@ function mdRewrite(nitro: Nitro) {
     const vcConfig = JSON.parse(await readFile(vcJSON, 'utf8'))
 
     // Static .md aliases — let users hit /docs/foo.md, /blog/foo.md, /deploy/foo.md directly.
-    // The /docs source pattern excludes /docs/5.x/* to align with /robots.txt
-    // (v5 is nightly and disallowed until Nuxt 5 ships).
+    // The /docs source pattern excludes nightly versions (currently 5.x) to align
+    // with /robots.txt — see `shared/utils/docs.ts` for the source of truth.
     const staticAliases = [
-      { src: '^/docs/(?!5\\.x/)(.+)\\.md$', dest: '/raw/docs/$1.md' },
+      { src: `^/docs/${EXCLUDED_DOCS_PATH_LOOKAHEAD}(.+)\\.md$`, dest: '/raw/docs/$1.md' },
       { src: '^/blog/(.+)\\.md$', dest: '/raw/blog/$1.md' },
       { src: '^/deploy/(.+)\\.md$', dest: '/raw/deploy/$1.md' }
     ]
@@ -37,7 +38,7 @@ function mdRewrite(nitro: Nitro) {
     // Content-negotiated rewrites — fire on Accept: text/markdown OR known agent UAs.
     const negotiated: Array<{ src: string, dest: string }> = [
       { src: '^/?$', dest: '/raw/index.md' },
-      { src: '^/docs/(?!5\\.x/)(.+)$', dest: '/raw/docs/$1.md' },
+      { src: `^/docs/${EXCLUDED_DOCS_PATH_LOOKAHEAD}(.+)$`, dest: '/raw/docs/$1.md' },
       { src: '^/blog/(.+)$', dest: '/raw/blog/$1.md' },
       { src: '^/deploy/(.+)$', dest: '/raw/deploy/$1.md' },
       { src: '^/modules/?$', dest: '/raw/modules.md' },

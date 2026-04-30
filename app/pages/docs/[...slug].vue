@@ -4,6 +4,7 @@ import { joinURL } from 'ufo'
 import type { ContentNavigationItem } from '@nuxt/content'
 import { findPageBreadcrumb } from '@nuxt/content/utils'
 import { mapContentNavigation } from '@nuxt/ui/utils/content'
+import { SUPPORTED_DOCS_PATH_REGEX } from '#shared/utils/docs'
 
 definePageMeta({
   heroBackground: 'opacity-30',
@@ -134,9 +135,9 @@ useSeoMeta({
 // Only emit canonical/markdown alternate on versioned paths (e.g.
 // `/docs/4.x/*`). Unversioned `/docs/*` URLs are meta-refresh stubs that
 // the docs-version middleware redirects to the active version, so agents
-// should not treat the stub URL as authoritative. Mirrors `md-rewrite.ts`,
-// which excludes v5 from edge rewrites.
-if (/^\/docs\/[34]\.x(?:\/|$)/.test(path.value)) {
+// should not treat the stub URL as authoritative. The supported version
+// list lives in `shared/utils/docs.ts` (kept in sync with `md-rewrite.ts`).
+if (SUPPORTED_DOCS_PATH_REGEX.test(path.value)) {
   useCanonical(() => `${path.value}.md`)
 }
 

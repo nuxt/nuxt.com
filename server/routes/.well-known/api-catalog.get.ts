@@ -1,3 +1,5 @@
+import { CURRENT_DOCS_VERSION } from '#shared/utils/docs'
+
 export default defineCachedEventHandler((event) => {
   const domain = getSiteUrl(event)
   const linkset = {
@@ -12,7 +14,7 @@ export default defineCachedEventHandler((event) => {
         ],
         'service-doc': [
           {
-            href: `${domain}/docs/${DOCS_VERSION}/guide/ai/mcp`,
+            href: `${domain}/docs/${CURRENT_DOCS_VERSION}/guide/ai/mcp`,
             type: 'text/html'
           }
         ]

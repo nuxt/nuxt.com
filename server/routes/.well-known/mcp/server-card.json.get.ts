@@ -1,3 +1,5 @@
+import { CURRENT_DOCS_VERSION } from '#shared/utils/docs'
+
 export default defineCachedEventHandler((event) => {
   const domain = getSiteUrl(event)
   const serverCard = {
@@ -7,7 +9,7 @@ export default defineCachedEventHandler((event) => {
       title: 'Nuxt MCP Server',
       description: 'MCP server providing tools, resources and prompts to help AI agents build with Nuxt — search documentation, retrieve guides, fetch module metadata, and discover deployment providers.',
       homepage: domain,
-      documentation: `${domain}/docs/${DOCS_VERSION}/guide/ai/mcp`,
+      documentation: `${domain}/docs/${CURRENT_DOCS_VERSION}/guide/ai/mcp`,
       license: 'MIT',
       repository: 'https://github.com/nuxt/nuxt.com'
     },
