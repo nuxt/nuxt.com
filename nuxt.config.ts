@@ -513,12 +513,8 @@ export default defineNuxtConfig({
     }
   },
   evlog: {
-    exclude: ['/_og/**', '/raw/**', '/__nuxt_content/**', '/__nuxt_island/**'],
-    env: { service: 'nuxt-com' },
-    pretty: process.env.CI ? false : undefined,
-    sampling: {
-      rates: { info: 0 }
-    }
+    enabled: !process.env.CI,
+    env: { service: 'nuxt-com' }
   },
   icon: {
     customCollections: [{
