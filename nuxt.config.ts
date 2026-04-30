@@ -517,7 +517,7 @@ export default defineNuxtConfig({
     env: { service: 'nuxt-com' },
     pretty: process.env.CI ? false : undefined,
     sampling: {
-      rates: { info: 30 }
+      rates: { info: 0 }
     }
   },
   icon: {
