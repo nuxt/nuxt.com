@@ -85,7 +85,7 @@ if (import.meta.server) {
   })
 
   defineOgImage('Module.takumi', {
-    module: module.value,
+    icon: module.value?.icon,
     headline: 'Nuxt Modules',
     title,
     description
