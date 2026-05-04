@@ -537,9 +537,7 @@ export default defineNuxtConfig({
     icons: [
       { src: 'https://nuxt.com/icon.png', mimeType: 'image/png', sizes: ['64x64'] }
     ],
-    logging: {
-      env: { service: 'nuxt-com/mcp' }
-    }
+    logging: true
   },
   turnstile: {
     siteKey: '0x4AAAAAAAP2vNBsTBT3ucZi'
