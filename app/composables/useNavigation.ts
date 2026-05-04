@@ -1,6 +1,15 @@
 import type { CommandPaletteGroup } from '@nuxt/ui'
 import { createSharedComposable } from '@vueuse/core'
 
+// Stable reference so the deep watcher inside `useFuse` doesn't rebuild
+// the entire Fuse index on every reactive flush.
+const searchFuse = {
+  resultLimit: 42,
+  fuseOptions: {
+    threshold: 0
+  }
+}
+
 function _useHeaderLinks() {
   const route = useRoute()
   const { version } = useDocsVersion()
@@ -226,9 +235,7 @@ const _useNavigation = () => {
         root: 'rounded-none bg-transparent'
       }
     },
-    to: `/modules/${module.name}`,
-    // Store searchable fields for filtering
-    _searchFields: [module.name, module.npm, module.repo].filter(Boolean)
+    to: `/modules/${module.name}`
   })))
 
   const hostingItems = computed(() => providers.value.map(hosting => ({
@@ -244,9 +251,7 @@ const _useNavigation = () => {
           }
         }
       : undefined,
-    to: hosting.path,
-    // Store searchable fields for filtering
-    _searchFields: [hosting.title].filter(Boolean)
+    to: hosting.path
   })))
 
   const searchGroups = computed<CommandPaletteGroup[]>(() => [{
@@ -289,7 +294,8 @@ const _useNavigation = () => {
     headerLinks,
     footerLinks,
     searchLinks,
-    searchGroups
+    searchGroups,
+    searchFuse
   }
 }
 

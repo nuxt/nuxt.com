@@ -3,7 +3,7 @@ const colorMode = useColorMode()
 const route = useRoute()
 const isChatRoute = computed(() => route.path === '/chat' || route.path.startsWith('/chat/'))
 const { version } = useDocsVersion()
-const { searchGroups, searchLinks, searchTerm } = useNavigation()
+const { searchGroups, searchLinks, searchTerm, searchFuse } = useNavigation()
 const { fetchList: fetchModules } = useModules()
 const { fetchList: fetchHosting } = useHostingProviders()
 const { track } = useAnalytics()
@@ -98,12 +98,7 @@ provide('navigation', versionNavigation)
         :navigation="versionNavigation"
         :groups="searchGroups"
         :links="searchLinks"
-        :fuse="{
-          resultLimit: 42,
-          fuseOptions: {
-            threshold: 0
-          }
-        }"
+        :fuse="searchFuse"
       />
     </ClientOnly>
   </UApp>
