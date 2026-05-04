@@ -512,8 +512,11 @@ export default defineNuxtConfig({
     }
   },
   evlog: {
-    enabled: !process.env.CI,
-    env: { service: 'nuxt-com' }
+    env: { service: 'nuxt-com' },
+    pretty: process.env.CI ? false : undefined,
+    sampling: {
+      rates: { info: 30 }
+    }
   },
   icon: {
     customCollections: [{
