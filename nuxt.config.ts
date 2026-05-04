@@ -436,7 +436,18 @@ export default defineNuxtConfig({
   },
   vite: {
     optimizeDeps: {
-      exclude: ['vue-chrts']
+      include: [
+        '@vue/devtools-core',
+        '@vue/devtools-kit',
+        '@unhead/schema-org/vue',
+        'valibot',
+        '@comark/vue',
+        'zod',
+        'date-fns',
+        'ai',
+        '@ai-sdk/vue'
+      ],
+      exclude: ['vue-chrts', 'shaders']
     }
   },
   typescript: {
