@@ -27,17 +27,25 @@ if (!page.value) {
 
 const title = page.value.title
 const description = page.value.description
-const site = useSiteConfig()
 
 useSeoMeta({
   titleTemplate: '%s',
   title,
-  description,
-  ogDescription: description,
-  ogTitle: title,
-  ogImage: joinURL(site.url, '/modules-social-card.jpg'),
-  twitterImage: joinURL(site.url, '/modules-social-card.jpg')
+  description
 })
+useCanonical('/raw/modules.md')
+
+if (import.meta.server) {
+  prerenderRoutes(['/raw/modules.md'])
+
+  const site = useSiteConfig()
+  useSeoMeta({
+    ogDescription: description,
+    ogTitle: title,
+    ogImage: joinURL(site.url, '/modules-social-card.jpg'),
+    twitterImage: joinURL(site.url, '/modules-social-card.jpg')
+  })
+}
 
 await fetchList()
 

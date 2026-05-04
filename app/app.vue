@@ -51,6 +51,16 @@ if (import.meta.server) {
     twitterCard: 'summary_large_image',
     twitterSite: 'nuxt_js'
   })
+  // Organization identity is provided via `schemaOrg.identity` in
+  // nuxt.config.ts so the module can emit a single `#identity` node
+  // (instead of a duplicated `#organization` graph entry). The WebSite
+  // resolver inherits `url` from siteConfig but not `name`, so we wire
+  // it up here against the same source of truth.
+  useSchemaOrg([
+    defineWebSite({
+      name: useSiteConfig().name
+    })
+  ])
 }
 
 const versionNavigation = computed(() => navigation.value?.filter(item => item.path === version.value.path || item.path === '/blog') ?? [])

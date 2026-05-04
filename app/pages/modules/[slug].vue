@@ -74,17 +74,23 @@ const createdAgo = useTimeAgo(module.value.stats.createdAt)
 useSeoMeta({
   titleTemplate: '%s · Nuxt Modules',
   title,
-  description,
-  ogDescription: description,
-  ogTitle: `${title} · Nuxt Modules`
-})
-
-defineOgImageComponent('Module', {
-  module: module.value,
-  headline: 'Nuxt Modules',
-  title,
   description
 })
+useCanonical()
+
+if (import.meta.server) {
+  useSeoMeta({
+    ogDescription: description,
+    ogTitle: `${title} · Nuxt Modules`
+  })
+
+  defineOgImage('Module.takumi', {
+    module: module.value,
+    headline: 'Nuxt Modules',
+    title,
+    description
+  })
+}
 </script>
 
 <template>

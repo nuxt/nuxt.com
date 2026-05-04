@@ -22,7 +22,8 @@ useSeoMeta({
   ogDescription: description,
   ogTitle: title
 })
-defineOgImageComponent('Docs', {
+useCanonical()
+defineOgImage('Docs.takumi', {
   headline: 'Resources',
   title,
   description

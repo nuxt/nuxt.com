@@ -4,6 +4,7 @@ import { joinURL } from 'ufo'
 import type { ContentNavigationItem } from '@nuxt/content'
 import { findPageBreadcrumb } from '@nuxt/content/utils'
 import { mapContentNavigation } from '@nuxt/ui/utils/content'
+import { SUPPORTED_DOCS_PATH_REGEX } from '#shared/utils/docs'
 
 definePageMeta({
   heroBackground: 'opacity-30',
@@ -19,7 +20,6 @@ const nuxtApp = useNuxtApp()
 const { version } = useDocsVersion()
 const { headerLinks } = useHeaderLinks()
 const { isAgentDocked } = useNuxtAgent()
-const site = useSiteConfig()
 const path = computed(() => route.path.replace(/\/$/, ''))
 
 const ignoredPaths = ['.nuxt', '.output', '.env', 'node_modules']
@@ -132,20 +132,32 @@ useSeoMeta({
   titleTemplate,
   title
 })
-
-// Pre-render the markdown path + add it to alternate links
-prerenderRoutes([joinURL('/raw', `${path.value}.md`)])
-useHead({
-  link: [
-    {
-      rel: 'alternate',
-      href: joinURL(site.url, 'raw', `${path.value}.md`),
-      type: 'text/markdown'
-    }
-  ]
-})
+// Only emit canonical/markdown alternate on versioned paths (e.g.
+// `/docs/4.x/*`). Unversioned `/docs/*` URLs are meta-refresh stubs that
+// the docs-version middleware redirects to the active version, so agents
+// should not treat the stub URL as authoritative. The supported version
+// list lives in `shared/utils/docs.ts` (kept in sync with `md-rewrite.ts`).
+if (SUPPORTED_DOCS_PATH_REGEX.test(path.value)) {
+  useCanonical(() => `${path.value}.md`)
+}
 
 if (import.meta.server) {
+  prerenderRoutes([joinURL('/raw', `${path.value}.md`)])
+
+  useSchemaOrg([
+    defineArticle({
+      '@type': 'TechArticle',
+      'headline': page.value?.title,
+      'description': page.value?.seo?.description || page.value?.description
+    }),
+    defineBreadcrumb({
+      itemListElement: breadcrumb.value.map(item => ({
+        name: item.label,
+        item: item.to
+      }))
+    })
+  ])
+
   const description = page.value?.seo?.description || page.value?.description
   useSeoMeta({
     description,
@@ -153,7 +165,7 @@ if (import.meta.server) {
     ogTitle: titleTemplate.value?.includes('%s') ? titleTemplate.value.replace('%s', title.value) : title.value
   })
 
-  defineOgImageComponent('Docs', {
+  defineOgImage('Docs.takumi', {
     headline: breadcrumb.value.length ? breadcrumb.value.map(link => link.label).join(' > ') : '',
     title,
     description
