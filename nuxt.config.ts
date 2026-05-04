@@ -11,7 +11,6 @@ export default defineNuxtConfig({
     '@nuxt/test-utils',
     '@nuxt/content',
     '@nuxt/image',
-    '@nuxtjs/plausible',
     '@nuxt/eslint',
     '@nuxt/scripts',
     '@nuxtjs/turnstile',

@@ -43,7 +43,6 @@
     "@nuxtjs/html-validator": "^2.1.0",
     "@nuxtjs/mcp-toolkit": "^0.15.0",
     "@nuxtjs/mdc": "^0.21.1",
-    "@nuxtjs/plausible": "^2.0.1",
     "@takumi-rs/core": "^1.1.2",
     "@vercel/analytics": "^2.0.1",
     "@vercel/functions": "^3.4.4",
