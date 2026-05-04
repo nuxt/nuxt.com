@@ -472,7 +472,6 @@ export default defineNuxtConfig({
       include: [
         '@vue/devtools-core',
         '@vue/devtools-kit',
-        '@unhead/schema-org/vue',
         'valibot',
         '@comark/vue',
         'zod',
