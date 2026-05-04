@@ -35,7 +35,7 @@
     "@libsql/client": "^0.17.3",
     "@npm/types": "^2.1.0",
     "@nuxt/content": "^3.13.0",
-    "@nuxt/hints": "1.1.0",
+    "@nuxt/hints": "^1.1.0",
     "@nuxt/image": "^2.0.0",
     "@nuxt/scripts": "^1.0.6",
     "@nuxt/ui": "^4.7.1",

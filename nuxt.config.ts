@@ -473,9 +473,14 @@ export default defineNuxtConfig({
         '@vue/devtools-core',
         '@vue/devtools-kit',
         '@unhead/schema-org/vue',
-        'valibot'
+        'valibot',
+        '@comark/vue',
+        'zod',
+        'date-fns',
+        'ai',
+        '@ai-sdk/vue'
       ],
-      exclude: ['vue-chrts']
+      exclude: ['vue-chrts', 'shaders']
     }
   },
   typescript: {
@@ -516,6 +521,15 @@ export default defineNuxtConfig({
     pretty: process.env.CI ? false : undefined,
     sampling: {
       rates: { info: 30 }
+    }
+  },
+  hints: {
+    features: {
+      hydration: true,
+      lazyLoad: false,
+      webVitals: true,
+      thirdPartyScripts: true,
+      htmlValidate: true
     }
   },
   icon: {
