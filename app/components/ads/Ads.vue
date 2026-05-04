@@ -7,7 +7,7 @@ const route = useRoute()
   <div class="space-y-3">
     <!-- <AdsMN v-if="route.path.length % 2 === 0" /> -->
     <!-- <AdsNuxtCertificate v-else /> -->
-    <AdsFreeWeekend />
+    <!-- <AdsFreeWeekend /> -->
     <AdsFallback v-if="$ads.adBlocked.value" />
     <LazyAdsCarbon v-else :key="route.path" />
   </div>

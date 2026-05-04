@@ -1,8 +1,8 @@
 export default defineOAuthGitHubEventHandler({
   async onSuccess(event, { user }) {
-    const adminMember = await isCoreTeamMember(user.login.toLowerCase())
+    const allowed = await isAuthorizedAdmin(user.login)
 
-    if (!adminMember) {
+    if (!allowed) {
       return sendRedirect(event, '/admin/login?error=access-denied')
     }
 

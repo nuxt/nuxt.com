@@ -27,7 +27,7 @@ function cleanNavigationPaths(navigation: ContentNavigationItem[], isV4: boolean
   }))
 }
 
-export function findTitleTemplate(page: Ref<Docsv3CollectionItem | Docsv4CollectionItem | Docsv5CollectionItem>, navigation: Ref<ContentNavigationItem[]>): string {
+export function findTitleTemplate(page: Ref<Docsv3CollectionItem | Docsv4CollectionItem | Docsv5CollectionItem>, navigation: Ref<ContentNavigationItem[]>, versionPath: string): string {
   if (!page.value?.path) {
     return '%s · Nuxt'
   }
@@ -36,8 +36,7 @@ export function findTitleTemplate(page: Ref<Docsv3CollectionItem | Docsv4Collect
     return page.value.titleTemplate
   }
 
-  const { version } = useDocsVersion()
-  const isV4 = version.value.path === '/docs/4.x'
+  const isV4 = versionPath === '/docs/4.x'
   const searchPath = cleanV4Path(page.value.path)
   const cleanNavigation = cleanNavigationPaths(navigation.value, isV4)
 

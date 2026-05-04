@@ -15,3 +15,20 @@ export async function isCoreTeamMember(login: string): Promise<boolean> {
   }
   return coreMembers.some(member => member.login.toLowerCase() === login)
 }
+
+function getExtraAdminLogins(): string[] {
+  const raw = useRuntimeConfig().adminGithubLogins
+  if (!raw) return []
+  return raw
+    .split(',')
+    .map(login => login.trim().toLowerCase())
+    .filter(Boolean)
+}
+
+export async function isAuthorizedAdmin(login: string): Promise<boolean> {
+  const normalized = login.toLowerCase()
+  if (getExtraAdminLogins().includes(normalized)) {
+    return true
+  }
+  return isCoreTeamMember(normalized)
+}

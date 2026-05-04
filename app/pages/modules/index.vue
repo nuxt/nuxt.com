@@ -27,17 +27,25 @@ if (!page.value) {
 
 const title = page.value.title
 const description = page.value.description
-const site = useSiteConfig()
 
 useSeoMeta({
   titleTemplate: '%s',
   title,
-  description,
-  ogDescription: description,
-  ogTitle: title,
-  ogImage: joinURL(site.url, '/modules-social-card.jpg'),
-  twitterImage: joinURL(site.url, '/modules-social-card.jpg')
+  description
 })
+useCanonical('/raw/modules.md')
+
+if (import.meta.server) {
+  prerenderRoutes(['/raw/modules.md'])
+
+  const site = useSiteConfig()
+  useSeoMeta({
+    ogDescription: description,
+    ogTitle: title,
+    ogImage: joinURL(site.url, '/modules-social-card.jpg'),
+    twitterImage: joinURL(site.url, '/modules-social-card.jpg')
+  })
+}
 
 await fetchList()
 
@@ -46,14 +54,6 @@ defineShortcuts({
     input.value?.inputRef?.focus()
   }
 })
-
-const breakpoints = useBreakpoints({
-  sm: 640,
-  md: 768,
-  lg: 1024
-}, { ssrWidth: 1024 })
-
-const isMobile = breakpoints.smaller('sm')
 
 const ITEMS_PER_PAGE = 9
 const SCROLL_THRESHOLD = 450
@@ -143,7 +143,9 @@ initializeModules()
 
 <template>
   <UContainer ref="el">
-    <LazyModulesMarquee :modules="modules" />
+    <ClientOnly>
+      <LazyModulesMarquee :modules="modules" />
+    </ClientOnly>
 
     <UPageHero
       class="z-20 relative pt-24"
@@ -189,7 +191,7 @@ initializeModules()
               </template>
             </UInput>
 
-            <div v-if="!isMobile" class="flex gap-2 sm:w-auto">
+            <div class="hidden sm:flex gap-2 sm:w-auto">
               <USelectMenu
                 :model-value="selectedSort"
                 :items="sorts"
@@ -212,7 +214,7 @@ initializeModules()
             </div>
           </div>
 
-          <div v-if="isMobile" class="flex gap-2">
+          <div class="flex sm:hidden gap-2">
             <USelectMenu
               :model-value="selectedCategory"
               :items="categories"

@@ -6,23 +6,35 @@ const emit = defineEmits<{
   remove: [module: Module]
 }>()
 
-const { module, showBadge = true, isAdded, showAddButton = true } = defineProps<{
-  module: Module
-  showBadge?: boolean
-  isAdded: boolean
-  showAddButton?: boolean
-}>()
+const props = withDefaults(
+  defineProps<{
+    module: Module
+    showBadge?: boolean
+    isAdded: boolean
+    showAddButton?: boolean
+  }>(),
+  {
+    showBadge: true,
+    showAddButton: true
+  }
+)
 
 const { copy } = useClipboard()
 const { selectedSort } = useModules()
 const { track } = useAnalytics()
-const date = computed(() => {
-  if (selectedSort.value.key === 'publishedAt') {
-    return useTimeAgo(module.stats.publishedAt)
-  }
 
-  return useTimeAgo(module.stats.createdAt)
-})
+const publishedAgo = useTimeAgo(() => props.module.stats.publishedAt)
+const createdAgo = useTimeAgo(() => props.module.stats.createdAt)
+
+const relativeDate = computed(() =>
+  selectedSort.value.key === 'publishedAt' ? publishedAgo.value : createdAgo.value
+)
+
+const staticModuleDate = computed(() =>
+  selectedSort.value.key === 'publishedAt'
+    ? formatDateByLocale('en', props.module.stats.publishedAt)
+    : formatDateByLocale('en', props.module.stats.createdAt)
+)
 
 function copyInstallCommand(moduleName: string) {
   track('Module Install Command Copied', { module: moduleName })
@@ -30,53 +42,53 @@ function copyInstallCommand(moduleName: string) {
   copy(command, { title: 'Command copied to clipboard:', description: command })
 }
 
-function toggleModule(module: Module) {
-  const action = isAdded ? 'remove' : 'add'
-  track('Module Toggled', { module: module.name, action })
-  if (isAdded) {
-    emit('remove', module)
+function toggleModule(m: Module) {
+  const action = props.isAdded ? 'remove' : 'add'
+  track('Module Toggled', { module: m.name, action })
+  if (props.isAdded) {
+    emit('remove', m)
   } else {
-    emit('add', module)
+    emit('add', m)
   }
 }
 
 function handleCardClick(event: MouseEvent) {
   if (event.shiftKey) {
     event.preventDefault()
-    toggleModule(module)
+    toggleModule(props.module)
   }
 }
 
 const items = computed(() => [
   [
     {
-      label: isAdded ? 'Remove module' : 'Add module',
-      icon: isAdded ? 'i-lucide-minus' : 'i-lucide-plus',
-      onSelect: () => toggleModule(module)
+      label: props.isAdded ? 'Remove module' : 'Add module',
+      icon: props.isAdded ? 'i-lucide-minus' : 'i-lucide-plus',
+      onSelect: () => toggleModule(props.module)
     },
     {
       label: 'Copy install command',
       icon: 'i-lucide-terminal',
-      onSelect: () => copyInstallCommand(module.name)
+      onSelect: () => copyInstallCommand(props.module.name)
     }
   ],
   [
     {
       icon: 'i-lucide-book',
       label: 'Documentation',
-      to: `${module.website}?utm_source=nuxt.com&utm_medium=aside-module&utm_campaign=nuxt.com`,
+      to: `${props.module.website}?utm_source=nuxt.com&utm_medium=aside-module&utm_campaign=nuxt.com`,
       target: '_blank'
     },
     {
       label: 'View on GitHub',
       icon: 'i-lucide-github',
-      to: `https://github.com/${module.repo}`,
+      to: `https://github.com/${props.module.repo}`,
       target: '_blank'
     },
     {
       label: 'View on npm',
       icon: 'i-lucide-package',
-      to: `https://npm.chart.dev/${module.npm}`,
+      to: `https://npm.chart.dev/${props.module.npm}`,
       target: '_blank'
     }
   ]
@@ -112,7 +124,7 @@ const items = computed(() => [
       </template>
 
       <UBadge
-        v-if="showBadge && module.type === 'official'"
+        v-show="showBadge && module.type === 'official'"
         class="shine absolute top-4 right-4 sm:top-6 sm:right-6"
         variant="subtle"
         color="primary"
@@ -120,7 +132,7 @@ const items = computed(() => [
       />
 
       <UBadge
-        v-if="showBadge && module.sponsor"
+        v-show="showBadge && module.sponsor"
         class="shine absolute top-4 right-4 sm:top-6 sm:right-6"
         variant="subtle"
         color="important"
@@ -161,7 +173,14 @@ const items = computed(() => [
                 target="_blank"
               >
                 <UIcon name="i-lucide-radio" class="size-4 shrink-0" />
-                <span class="text-sm font-medium whitespace-normal">{{ date }}</span>
+                <span class="text-sm font-medium whitespace-normal">
+                  <ClientOnly>
+                    {{ relativeDate }}
+                    <template #fallback>
+                      {{ staticModuleDate }}
+                    </template>
+                  </ClientOnly>
+                </span>
               </NuxtLink>
             </UTooltip>
 
@@ -172,7 +191,14 @@ const items = computed(() => [
                 target="_blank"
               >
                 <UIcon name="i-lucide-package" class="size-4 shrink-0" />
-                <span class="text-sm font-medium whitespace-normal">{{ date }}</span>
+                <span class="text-sm font-medium whitespace-normal">
+                  <ClientOnly>
+                    {{ relativeDate }}
+                    <template #fallback>
+                      {{ staticModuleDate }}
+                    </template>
+                  </ClientOnly>
+                </span>
               </NuxtLink>
             </UTooltip>
           </div>
