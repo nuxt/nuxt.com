@@ -1,4 +1,4 @@
-import { withoutTrailingSlash } from 'ufo'
+import { joinURL } from 'ufo'
 import { toValue, type MaybeRefOrGetter } from 'vue'
 
 // Adds a canonical URL for the current route plus, optionally, a
@@ -11,17 +11,13 @@ export function useCanonical(markdownAlternate?: MaybeRefOrGetter<string | null 
 
   useHead({
     link: computed(() => {
-      const url = withoutTrailingSlash(site.url)
-      const path = route.path === '/' ? '' : route.path.replace(/\/$/, '')
-
       const links: Array<{ rel: string, href: string, type?: string }> = [
-        { rel: 'canonical', href: `${url}${path}` }
+        { rel: 'canonical', href: joinURL(site.url, route.path) }
       ]
 
       const md = toValue(markdownAlternate)
       if (md) {
-        const href = md.startsWith('http') ? md : `${url}${md.startsWith('/') ? md : `/${md}`}`
-        links.push({ rel: 'alternate', type: 'text/markdown', href })
+        links.push({ rel: 'alternate', type: 'text/markdown', href: joinURL(site.url, md) })
       }
 
       return links

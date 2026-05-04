@@ -34,7 +34,7 @@ useSeoMeta({
   ogTitle: `${title} · Nuxt Blog`,
   ...(article.value.image ? { ogImage: article.value.image } : {})
 })
-useCanonical(`${route.path.replace(/\/$/, '')}.md`)
+useCanonical(`${route.path}.md`)
 
 if (!article.value.image) {
   defineOgImage('Docs.takumi', {
