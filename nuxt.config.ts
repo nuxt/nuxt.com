@@ -490,6 +490,15 @@ export default defineNuxtConfig({
       rates: { info: 30 }
     }
   },
+  hints: {
+    features: {
+      hydration: true,
+      lazyLoad: false,
+      webVitals: true,
+      thirdPartyScripts: true,
+      htmlValidate: true
+    }
+  },
   icon: {
     customCollections: [{
       prefix: 'custom',
