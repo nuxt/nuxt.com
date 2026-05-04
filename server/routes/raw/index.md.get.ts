@@ -1,4 +1,5 @@
 import { queryCollection } from '@nuxt/content/server'
+import { CURRENT_DOCS_VERSION } from '#shared/utils/docs'
 
 export default defineCachedEventHandler(async (event) => {
   const domain = getSiteUrl(event)
@@ -19,16 +20,14 @@ export default defineCachedEventHandler(async (event) => {
     `canonical_url: ${JSON.stringify(domain)}`,
     `last_updated: ${JSON.stringify(new Date().toISOString().split('T')[0])}`,
     '---',
-    ''
+    '\n'
   ].join('\n')
 
   const body = `# ${title}
 
-> ${description}
+${description}
 
-## About
-
-Nuxt is an open source framework that makes web development intuitive and powerful. Create performant and production-grade full-stack web apps and websites with confidence.
+## Features
 
 ${featureBullets}
 
@@ -41,18 +40,19 @@ npm install
 npm run dev
 \`\`\`
 
-- Introduction: <${domain}/docs/getting-started/introduction>
-- Installation: <${domain}/docs/getting-started/installation>
-- Configuration: <${domain}/docs/getting-started/configuration>
+- Introduction: <${domain}/raw/docs/${CURRENT_DOCS_VERSION}/getting-started/introduction.md>
+- Installation: <${domain}/raw/docs/${CURRENT_DOCS_VERSION}/getting-started/installation.md>
+- Configuration: <${domain}/raw/docs/${CURRENT_DOCS_VERSION}/getting-started/configuration.md>
 
 ## Explore
 
 - Documentation: <${domain}/docs>
-- Modules: <${domain}/modules>
+- Modules: <${domain}/raw/modules.md>
 - Templates: <${domain}/templates>
 - Showcase: <${domain}/showcase>
 - Deploy: <${domain}/deploy>
-- Blog: <${domain}/blog>
+- Blog: <${domain}/blog/rss.xml>
+- Changelog: <${domain}/changelog/rss.xml>
 - Team: <${domain}/team>
 - Sitemap (XML): <${domain}/sitemap.xml>
 - Sitemap (Markdown): <${domain}/sitemap.md>
