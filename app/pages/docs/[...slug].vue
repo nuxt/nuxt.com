@@ -4,6 +4,7 @@ import { joinURL } from 'ufo'
 import type { ContentNavigationItem } from '@nuxt/content'
 import { findPageBreadcrumb } from '@nuxt/content/utils'
 import { mapContentNavigation } from '@nuxt/ui/utils/content'
+import { SUPPORTED_DOCS_PATH_REGEX } from '#shared/utils/docs'
 
 definePageMeta({
   heroBackground: 'opacity-30',
@@ -18,7 +19,7 @@ const route = useRoute()
 const nuxtApp = useNuxtApp()
 const { version } = useDocsVersion()
 const { headerLinks } = useHeaderLinks()
-const site = useSiteConfig()
+const { isAgentDocked } = useNuxtAgent()
 const path = computed(() => route.path.replace(/\/$/, ''))
 
 const ignoredPaths = ['.nuxt', '.output', '.env', 'node_modules']
@@ -79,7 +80,10 @@ watch(page, (page) => {
 }, { immediate: true })
 
 // Get the -2 item of the breadcrumb
-const currentSectionTitle = computed(() => headerLinks.value[0].children.find(link => path.value.includes(link.to))?.label || findPageBreadcrumb(navigation.value, path.value).slice(-1)[0].title)
+const currentSectionTitle = computed(() =>
+  headerLinks.value[0]?.children?.find(link => path.value.includes(link.to))?.label
+  || findPageBreadcrumb(navigation.value, path.value).slice(-1)[0]?.title
+  || '')
 
 const breadcrumb = computed(() => {
   const links = mapContentNavigation(findPageBreadcrumb(navigation.value, path.value)).map(link => ({
@@ -122,26 +126,38 @@ const communityLinks = [{
 }]
 
 const title = computed(() => page.value?.seo?.title || page.value?.title)
-const titleTemplate = computed(() => `${findTitleTemplate(page, navigation)} ${version.value.shortTag}`)
+const titleTemplate = computed(() => `${findTitleTemplate(page, navigation, version.value.path)} ${version.value.shortTag}`)
 
 useSeoMeta({
   titleTemplate,
   title
 })
-
-// Pre-render the markdown path + add it to alternate links
-prerenderRoutes([joinURL('/raw', `${path.value}.md`)])
-useHead({
-  link: [
-    {
-      rel: 'alternate',
-      href: joinURL(site.url, 'raw', `${path.value}.md`),
-      type: 'text/markdown'
-    }
-  ]
-})
+// Only emit canonical/markdown alternate on versioned paths (e.g.
+// `/docs/4.x/*`). Unversioned `/docs/*` URLs are meta-refresh stubs that
+// the docs-version middleware redirects to the active version, so agents
+// should not treat the stub URL as authoritative. The supported version
+// list lives in `shared/utils/docs.ts` (kept in sync with `md-rewrite.ts`).
+if (SUPPORTED_DOCS_PATH_REGEX.test(path.value)) {
+  useCanonical(() => `${path.value}.md`)
+}
 
 if (import.meta.server) {
+  prerenderRoutes([joinURL('/raw', `${path.value}.md`)])
+
+  useSchemaOrg([
+    defineArticle({
+      '@type': 'TechArticle',
+      'headline': page.value?.title,
+      'description': page.value?.seo?.description || page.value?.description
+    }),
+    defineBreadcrumb({
+      itemListElement: breadcrumb.value.map(item => ({
+        name: item.label,
+        item: item.to
+      }))
+    })
+  ])
+
   const description = page.value?.seo?.description || page.value?.description
   useSeoMeta({
     description,
@@ -149,7 +165,7 @@ if (import.meta.server) {
     ogTitle: titleTemplate.value?.includes('%s') ? titleTemplate.value.replace('%s', title.value) : title.value
   })
 
-  defineOgImageComponent('Docs', {
+  defineOgImage('Docs.takumi', {
     headline: breadcrumb.value.length ? breadcrumb.value.map(link => link.label).join(' > ') : '',
     title,
     description
@@ -174,7 +190,12 @@ function refreshHeading(opened: boolean) {
           />
         </UPageAside>
       </template>
-      <UPage>
+      <UPage
+        :ui="isAgentDocked ? {
+          center: 'lg:col-span-10',
+          right: 'lg:hidden'
+        } : undefined"
+      >
         <UPageHeader
           :ui="{
             wrapper: 'flex-row items-center flex-wrap justify-between'
@@ -248,6 +269,7 @@ function refreshHeading(opened: boolean) {
 
         <template #right>
           <ContentToc
+            v-if="!isAgentDocked"
             :links="page.body?.toc?.links"
             :community-links="communityLinks"
             highlight

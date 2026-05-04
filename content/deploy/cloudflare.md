@@ -122,6 +122,6 @@ Head over **CloudFlare Pages** documentation to learn more about it.
 
 ## Learn more
 
-::read-more{to="https://nitro.unjs.io/deploy/providers/cloudflare" target="_blank"}
+::read-more{to="https://v2.nitro.build/deploy/providers/cloudflare" target="_blank"}
 Head over **Nitro documentation** to learn more about the cloudflare deployment preset.
 ::

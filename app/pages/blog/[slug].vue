@@ -8,6 +8,7 @@ definePageMeta({
 const route = useRoute()
 const { copy } = useClipboard()
 const { track } = useAnalytics()
+const { isAgentDocked } = useNuxtAgent()
 
 const [{ data: article }, { data: surround }] = await Promise.all([
   useAsyncData(kebabCase(route.path), () => queryCollection('blog').path(route.path).first()),
@@ -30,13 +31,13 @@ useSeoMeta({
   title,
   description,
   ogDescription: description,
-  ogTitle: `${title} · Nuxt Blog`
+  ogTitle: `${title} · Nuxt Blog`,
+  ...(article.value.image ? { ogImage: article.value.image } : {})
 })
+useCanonical(`${route.path}.md`)
 
-if (article.value.image) {
-  defineOgImage({ url: article.value.image })
-} else {
-  defineOgImageComponent('Docs', {
+if (!article.value.image) {
+  defineOgImage('Docs.takumi', {
     headline: 'Blog',
     title,
     description
@@ -124,7 +125,13 @@ const links = [
         </div>
       </UPageHeader>
 
-      <UPage class="lg:gap-24">
+      <UPage
+        class="lg:gap-24"
+        :ui="isAgentDocked ? {
+          center: 'lg:col-span-10',
+          right: 'lg:hidden'
+        } : undefined"
+      >
         <UPageBody>
           <ContentRenderer v-if="article.body" :value="article" />
 
@@ -156,7 +163,7 @@ const links = [
         </UPageBody>
 
         <template #right>
-          <UContentToc v-if="article.body && article.body.toc" :links="article.body.toc.links" title="Table of Contents" highlight>
+          <UContentToc v-if="!isAgentDocked && article.body && article.body.toc" :links="article.body.toc.links" title="Table of Contents" highlight>
             <template #bottom>
               <div class="hidden lg:block space-y-6">
                 <UPageLinks title="Links" :links="links" />

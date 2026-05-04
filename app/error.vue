@@ -10,7 +10,7 @@ defineProps<{ error: NuxtError }>()
 
 const route = useRoute()
 const { version } = useDocsVersion()
-const { searchGroups, searchLinks, searchTerm } = useNavigation()
+const { searchGroups, searchLinks, searchTerm, searchFuse } = useNavigation()
 const { fetchList: fetchModules } = useModules()
 const { fetchList: fetchHosting } = useHostingProviders()
 
@@ -48,12 +48,7 @@ provide('navigation', versionNavigation)
           :navigation="versionNavigation"
           :groups="searchGroups"
           :links="searchLinks"
-          :fuse="{
-            resultLimit: 42,
-            fuseOptions: {
-              threshold: 0
-            }
-          }"
+          :fuse="searchFuse"
         />
       </ClientOnly>
     </div>

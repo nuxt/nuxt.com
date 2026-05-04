@@ -6,6 +6,7 @@ definePageMeta({
   heroBackground: 'opacity-30 -z-10'
 })
 const route = useRoute()
+const { isAgentDocked } = useNuxtAgent()
 
 const { data: module } = await useFetch<Module>(`/api/v1/modules/${route.params.slug}`, { key: `module-${route.params.slug}` })
 if (!module.value) {
@@ -73,17 +74,23 @@ const createdAgo = useTimeAgo(module.value.stats.createdAt)
 useSeoMeta({
   titleTemplate: '%s · Nuxt Modules',
   title,
-  description,
-  ogDescription: description,
-  ogTitle: `${title} · Nuxt Modules`
-})
-
-defineOgImageComponent('Module', {
-  module: module.value,
-  headline: 'Nuxt Modules',
-  title,
   description
 })
+useCanonical()
+
+if (import.meta.server) {
+  useSeoMeta({
+    ogDescription: description,
+    ogTitle: `${title} · Nuxt Modules`
+  })
+
+  defineOgImage('Module.takumi', {
+    module: module.value,
+    headline: 'Nuxt Modules',
+    title,
+    description
+  })
+}
 </script>
 
 <template>
@@ -164,13 +171,18 @@ defineOgImageComponent('Module', {
       </div>
     </UPageHeader>
 
-    <UPage>
+    <UPage
+      :ui="isAgentDocked ? {
+        center: 'lg:col-span-10',
+        right: 'lg:hidden'
+      } : undefined"
+    >
       <UPageBody>
         <ContentRenderer v-if="module.readme?.body" :value="module.readme" :components="{ a: ModuleProseA, img: ModuleProseImg, kbd: ModuleProseKbd }" class="first:[&_picture]:block first:[&_picture]:mb-4" />
       </UPageBody>
 
       <template #right>
-        <UContentToc :links="module.readme?.toc?.links">
+        <UContentToc v-if="!isAgentDocked" :links="module.readme?.toc?.links">
           <template #bottom>
             <div class="hidden lg:block space-y-6">
               <UPageLinks title="Links" :links="links" />

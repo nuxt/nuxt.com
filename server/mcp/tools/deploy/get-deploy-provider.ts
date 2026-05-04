@@ -1,0 +1,39 @@
+import { z } from 'zod'
+
+export default defineMcpTool({
+  description: `Retrieves detailed deployment instructions and setup guide for a specific hosting provider.
+
+WHEN TO USE: Use this tool when you know EXACTLY which provider the user wants. Common scenarios:
+- User asks for a specific provider: "How do I deploy to Vercel?" → /deploy/vercel
+- User mentions a known platform: "Cloudflare deployment" → /deploy/cloudflare
+- You found a relevant provider from list_deploy_providers and want full details
+
+WHEN NOT TO USE: If the user is asking about options or comparing providers, use list_deploy_providers first.
+
+EXAMPLES: "/deploy/vercel", "/deploy/cloudflare", "/deploy/netlify", "/deploy/aws", "/deploy/node-server"`,
+  inputSchema: {
+    path: z.string().describe('The path to the deploy provider (e.g., /deploy/vercel)'),
+    sections: z.array(z.string()).optional().describe('Specific h2 section titles to return. If omitted, returns full content.')
+  },
+  annotations: {
+    readOnlyHint: true,
+    openWorldHint: false
+  },
+  inputExamples: [
+    { path: '/deploy/vercel' },
+    { path: '/deploy/cloudflare', sections: ['Setup'] }
+  ],
+  cache: '1h',
+  async handler({ path, sections }) {
+    const event = useEvent()
+    const fullContent = await fetchPageMarkdown(event, 'deploy', path)
+
+    if (!fullContent) {
+      throw createError({ statusCode: 404, message: `Deploy provider not found: ${path}` })
+    }
+
+    return sections?.length
+      ? extractSections(fullContent, sections)
+      : fullContent
+  }
+})

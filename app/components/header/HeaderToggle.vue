@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { motion } from 'motion-v'
 import type { VariantType } from 'motion-v'
+import { useLocale } from '@nuxt/ui/composables/useLocale'
 
 const props = defineProps<{
   open: boolean

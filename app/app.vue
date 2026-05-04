@@ -1,7 +1,9 @@
 <script setup lang="ts">
 const colorMode = useColorMode()
+const route = useRoute()
+const isChatRoute = computed(() => route.path === '/chat' || route.path.startsWith('/chat/'))
 const { version } = useDocsVersion()
-const { searchGroups, searchLinks, searchTerm } = useNavigation()
+const { searchGroups, searchLinks, searchTerm, searchFuse } = useNavigation()
 const { fetchList: fetchModules } = useModules()
 const { fetchList: fetchHosting } = useHostingProviders()
 const { track } = useAnalytics()
@@ -49,6 +51,16 @@ if (import.meta.server) {
     twitterCard: 'summary_large_image',
     twitterSite: 'nuxt_js'
   })
+  // Organization identity is provided via `schemaOrg.identity` in
+  // nuxt.config.ts so the module can emit a single `#identity` node
+  // (instead of a duplicated `#organization` graph entry). The WebSite
+  // resolver inherits `url` from siteConfig but not `name`, so we wire
+  // it up here against the same source of truth.
+  useSchemaOrg([
+    defineWebSite({
+      name: useSiteConfig().name
+    })
+  ])
 }
 
 const versionNavigation = computed(() => navigation.value?.filter(item => item.path === version.value.path || item.path === '/blog') ?? [])
@@ -57,27 +69,27 @@ const versionFiles = computed(() => files.value?.filter((file) => {
 }) ?? [])
 
 provide('navigation', versionNavigation)
-
-const appear = ref(false)
-const appeared = ref(false)
-
-onMounted(() => {
-  setTimeout(() => {
-    appear.value = true
-    setTimeout(() => {
-      appeared.value = true
-    }, 1000)
-  }, 0)
-})
 </script>
 
 <template>
-  <UApp>
+  <UApp :tooltip="{ delayDuration: 500 }">
     <NuxtLoadingIndicator color="var(--ui-primary)" />
 
-    <NuxtLayout>
-      <NuxtPage />
-    </NuxtLayout>
+    <div class="flex">
+      <div class="flex-1 min-w-0">
+        <NuxtLayout>
+          <NuxtPage />
+        </NuxtLayout>
+
+        <ClientOnly>
+          <LazyAgentFloatingInput v-if="!isChatRoute" />
+        </ClientOnly>
+      </div>
+
+      <ClientOnly>
+        <LazyAgentPanel v-if="!isChatRoute" />
+      </ClientOnly>
+    </div>
 
     <ClientOnly>
       <LazyUContentSearch
@@ -86,12 +98,7 @@ onMounted(() => {
         :navigation="versionNavigation"
         :groups="searchGroups"
         :links="searchLinks"
-        :fuse="{
-          resultLimit: 42,
-          fuseOptions: {
-            threshold: 0
-          }
-        }"
+        :fuse="searchFuse"
       />
     </ClientOnly>
   </UApp>

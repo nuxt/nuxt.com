@@ -39,6 +39,11 @@ export interface OpenCollectiveSponsor {
 }
 
 export async function fetchOpenCollectiveSponsors(event: H3Event): Promise<OpenCollectiveSponsor[]> {
+  if (!useRuntimeConfig(event).openCollective.apiKey) {
+    console.warn('[sponsors] Skipping Open Collective: NUXT_OPEN_COLLECTIVE_API_KEY is not set')
+    return []
+  }
+
   const key = `sponsors:opencollective`
   const cached = await kv.get<OpenCollectiveSponsor[]>(key)
   if (cached) {
@@ -150,6 +155,11 @@ export async function fetchOpenCollectiveSponsors(event: H3Event): Promise<OpenC
 }
 
 export const fetchGithubSponsors = async (event: H3Event): Promise<Sponsor[]> => {
+  if (!useRuntimeConfig(event).github.token) {
+    console.warn('[sponsors] Skipping GitHub sponsors: NUXT_GITHUB_TOKEN is not set')
+    return []
+  }
+
   const response: Sponsor[] = []
   const first = 100
   let cursor: string | null = null

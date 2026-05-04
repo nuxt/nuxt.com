@@ -69,6 +69,8 @@ function trackGitHubClick() {
         <UContentSearchButton @click="trackSearchOpen" />
       </UTooltip>
 
+      <AgentChatButton />
+
       <UColorModeButton />
 
       <UTooltip text="GitHub Stars">
