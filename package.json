@@ -59,7 +59,7 @@
     "feed": "^5.2.1",
     "h3": "^1.15.11",
     "little-date": "^1.2.1",
-    "motion-v": "^1.10.3",
+    "motion-v": "^2.2.1",
     "nuxt": "^4.4.4",
     "nuxt-auth-utils": "^0.5.29",
     "nuxt-charts": "^2.1.4",
