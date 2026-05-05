@@ -3,7 +3,6 @@ import type { ToolSet, UIMessage } from 'ai'
 import { createMCPClient } from '@ai-sdk/mcp'
 import { anthropic } from '@ai-sdk/anthropic'
 import { createAILogger, createEvlogIntegration } from 'evlog/ai'
-import type { AILogger } from 'evlog/ai'
 import { sql } from 'drizzle-orm'
 import { getAgentFingerprint } from '../utils/agent-fingerprint'
 import { showModuleTool } from '../utils/tools/show-module'
@@ -91,15 +90,6 @@ function buildSystemPrompt(pagePath: string | null): string {
   return `Current page: ${pagePath}\n\n${withDate}`
 }
 
-function computeEstimatedCost(state: AILogger['_state']): number {
-  if (!state.costMap) return 0
-  const model = state.models.at(-1)
-  if (!model) return 0
-  const cost = state.costMap[model]
-  if (!cost) return 0
-  return (state.usage.inputTokens * cost.input + state.usage.outputTokens * cost.output) / 1_000_000
-}
-
 export default defineEventHandler(async (event) => {
   const raw = await readBody(event) as { messages?: unknown } | null
   if (!raw || !Array.isArray(raw.messages)) {
@@ -142,12 +132,13 @@ export default defineEventHandler(async (event) => {
     if (!chatId) return
     const fingerprint = await getAgentFingerprint(event)
     const now = new Date()
-    const state = ai._state
-    const model = state.models.at(-1) ?? null
-    const provider = state.lastProvider ?? null
-    const { inputTokens, outputTokens } = state.usage
-    const estimatedCost = computeEstimatedCost(state)
-    const durationMs = state.totalDurationMs ?? 0
+    const metadata = ai.getMetadata()
+    const model = metadata.model ?? null
+    const provider = metadata.provider ?? null
+    const inputTokens = metadata.inputTokens ?? 0
+    const outputTokens = metadata.outputTokens ?? 0
+    const estimatedCost = metadata.estimatedCost ?? 0
+    const durationMs = metadata.totalDurationMs ?? 0
 
     // Insert when chatId is new; on conflict only update when the existing row's
     // fingerprint matches — prevents anyone with a guessable chatId from
