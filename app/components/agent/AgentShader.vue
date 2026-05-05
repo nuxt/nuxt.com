@@ -10,7 +10,9 @@ const props = withDefaults(
   { variant: 'default' }
 )
 
+const colorMode = useColorMode()
 const isHero = computed(() => props.variant === 'hero')
+const isDark = computed(() => colorMode.value === 'dark')
 
 const logoTransform = computed(() =>
   isHero.value
@@ -19,8 +21,13 @@ const logoTransform = computed(() =>
 )
 
 const dotDensity = computed(() => (isHero.value ? 36 : 30))
-const dotSize = computed(() => (isHero.value ? 0.4 : 0.2))
+const dotSize = computed(() =>
+  isDark.value
+    ? (isHero.value ? 0.4 : 0.2)
+    : (isHero.value ? 0.45 : 0.26)
+)
 const twinkle = computed(() => (isHero.value ? 2 : 1))
+const dotColor = computed(() => (isDark.value ? '#4cffa8' : '#00945E'))
 </script>
 
 <template>
@@ -37,7 +44,7 @@ const twinkle = computed(() => (isHero.value ? 2 : 1))
           :transform="logoTransform"
         />
         <DotGrid
-          color="#4cffa8"
+          :color="dotColor"
           :density="dotDensity"
           :dot-size="dotSize"
           :twinkle="twinkle"

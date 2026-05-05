@@ -1,5 +1,11 @@
-export default defineCachedEventHandler((event) => {
+import { listMcpDefinitions } from '@nuxtjs/mcp-toolkit/server'
+
+export default defineCachedEventHandler(async (event) => {
   const domain = getSiteUrl(event)
+  const { tools, resources, prompts } = await listMcpDefinitions()
+
+  const isPublic = <T extends { group?: string }>(d: T) => d.group !== 'admin'
+
   const serverCard = {
     $schema: 'https://modelcontextprotocol.io/schema/server-card/v1',
     serverInfo: {
@@ -17,35 +23,15 @@ export default defineCachedEventHandler((event) => {
         url: `${domain}/mcp`
       }
     ],
-    // TODO: import these from `@nuxtjs/mcp-toolkit` so we don't duplicate the tool/resource/prompt definitions.
     capabilities: {
       tools: { listChanged: false },
       resources: { listChanged: false, subscribe: false },
       prompts: { listChanged: false },
       logging: {}
     },
-    tools: [
-      { name: 'list-documentation-pages', description: 'List all available Nuxt documentation pages with their categories and basic information.' },
-      { name: 'get-documentation-page', description: 'Retrieve the full content and details of a specific Nuxt documentation page.' },
-      { name: 'get-getting-started-guide', description: 'Get the getting started guide for a specific Nuxt version.' },
-      { name: 'list-modules', description: 'List all available Nuxt modules with optional filtering and sorting capabilities.' },
-      { name: 'get-module', description: 'Retrieve complete details about a specific Nuxt module including README, compatibility, maintainers, and stats.' },
-      { name: 'list-blog-posts', description: 'List all Nuxt blog posts with metadata including titles, dates, categories, tags, and descriptions.' },
-      { name: 'get-blog-post', description: 'Retrieve the full content and details of a specific Nuxt blog post.' },
-      { name: 'list-deploy-providers', description: 'List all deployment providers and hosting platforms for Nuxt applications with their features and capabilities.' },
-      { name: 'get-deploy-provider', description: 'Retrieve detailed deployment instructions and setup guide for a specific hosting provider.' },
-      { name: 'get-changelog', description: 'Retrieve the latest releases from Nuxt core and official modules (changelog).' }
-    ],
-    resources: [
-      { name: 'documentation-pages', description: 'Catalog of all Nuxt documentation pages.' },
-      { name: 'blog-posts', description: 'Catalog of all Nuxt blog posts.' },
-      { name: 'deploy-providers', description: 'Catalog of all Nuxt deployment providers.' }
-    ],
-    prompts: [
-      { name: 'find-documentation-for-topic', description: 'Find the best Nuxt documentation for a specific topic or feature.' },
-      { name: 'deployment-guide', description: 'Get deployment instructions for a specific hosting provider.' },
-      { name: 'migration-help', description: 'Get help with migrating between Nuxt versions.' }
-    ],
+    tools: tools.filter(isPublic).map(t => ({ name: t.name, description: t.description })),
+    resources: resources.filter(isPublic).map(r => ({ name: r.name, uri: r.uri, description: r.description })),
+    prompts: prompts.filter(isPublic).map(p => ({ name: p.name, description: p.description })),
     authentication: {
       required: false
     }
