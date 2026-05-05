@@ -135,7 +135,8 @@ export default defineEventHandler(async (event) => {
     const metadata = ai.getMetadata()
     const model = metadata.model ?? null
     const provider = metadata.provider ?? null
-    const { inputTokens, outputTokens } = metadata
+    const inputTokens = metadata.inputTokens ?? 0
+    const outputTokens = metadata.outputTokens ?? 0
     const estimatedCost = metadata.estimatedCost ?? 0
     const durationMs = metadata.totalDurationMs ?? 0
 
