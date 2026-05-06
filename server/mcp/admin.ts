@@ -1,3 +1,5 @@
+import { getMcpPrompts, getMcpTools } from '@nuxtjs/mcp-toolkit/server'
+
 export default defineMcpHandler({
   name: 'admin',
   description: 'Authenticated MCP handler for the Nuxt team to query feedback, agent chats, and votes from the production database.',
@@ -15,5 +17,7 @@ For recurring tasks, prefer the prompts (\`summarize-feedback\`, \`triage-proble
 Default to recent data (last 7-30 days) unless the user asks for a longer window. Always include direct links (path / chat id) so the team can drill down on the website.`,
   middleware: (event) => {
     requireMcpAdminToken(event)
-  }
+  },
+  tools: event => getMcpTools({ event, group: 'admin' }),
+  prompts: event => getMcpPrompts({ event, group: 'admin' })
 })
