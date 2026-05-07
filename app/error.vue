@@ -10,14 +10,10 @@ defineProps<{ error: NuxtError }>()
 
 const route = useRoute()
 const { version } = useDocsVersion()
-const { searchGroups, searchLinks, searchTerm, searchFuse } = useNavigation()
 const { fetchList: fetchModules } = useModules()
 const { fetchList: fetchHosting } = useHostingProviders()
 
-const [{ data: navigation }, { data: files }] = await Promise.all([
-  useFetch('/api/navigation.json'),
-  useFetch('/api/search.json', { server: false })
-])
+const { data: navigation } = await useFetch('/api/navigation.json')
 
 onNuxtReady(() => {
   fetchModules()
@@ -25,9 +21,6 @@ onNuxtReady(() => {
 })
 
 const versionNavigation = computed(() => navigation.value?.filter(item => item.path === version.value.path || item.path === '/blog') ?? [])
-const versionFiles = computed(() => files.value?.filter((file) => {
-  return file.id.startsWith(version.value.path + '/') || file.id.startsWith('/blog/')
-}) ?? [])
 
 provide('navigation', versionNavigation)
 </script>
@@ -42,14 +35,7 @@ provide('navigation', versionNavigation)
       <AppFooter />
 
       <ClientOnly>
-        <LazyUContentSearch
-          v-model:search-term="searchTerm"
-          :files="versionFiles"
-          :navigation="versionNavigation"
-          :groups="searchGroups"
-          :links="searchLinks"
-          :fuse="searchFuse"
-        />
+        <Search :navigation="versionNavigation" />
       </ClientOnly>
     </div>
   </UApp>
