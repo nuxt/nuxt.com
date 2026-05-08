@@ -7,7 +7,7 @@ defineProps<{
 
 const { version } = useDocsVersion()
 
-const collections = computed(() => [version.value.collection, 'blog'].filter(Boolean) as string[])
+const collections = computed(() => [version.value.collection, 'blog' as const].filter(Boolean))
 
 const { status, search, init } = useSearchCollection(collections, {
   immediate: false,
