@@ -4,7 +4,7 @@ import { createSharedComposable } from '@vueuse/core'
 // Stable reference so the deep watcher inside `useFuse` doesn't rebuild
 // the entire Fuse index on every reactive flush.
 const searchFuse = {
-  resultLimit: 42,
+  resultLimit: 25,
   fuseOptions: {
     threshold: 0
   }
