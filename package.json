@@ -34,7 +34,7 @@
     "@iconify-json/simple-icons": "^1.2.80",
     "@libsql/client": "^0.17.3",
     "@npm/types": "^2.1.0",
-    "@nuxt/content": "https://pkg.pr.new/@nuxt/content@dbafed4",
+    "@nuxt/content": "https://pkg.pr.new/@nuxt/content@606bf64",
     "@nuxt/hints": "^1.1.0",
     "@nuxt/image": "^2.0.0",
     "@nuxt/scripts": "^1.0.6",
