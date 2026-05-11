@@ -41,14 +41,12 @@ defineShortcuts({
     handler: () => {
       inputRef.value?.inputRef?.focus()
     }
-  },
-  escape: {
-    usingInput: true,
-    handler: () => {
-      inputRef.value?.inputRef?.blur()
-    }
   }
 })
+
+function onEscape() {
+  inputRef.value?.inputRef?.blur()
+}
 </script>
 
 <template>
@@ -80,6 +78,7 @@ defineShortcuts({
               trailing: 'pe-2'
             }"
             @keydown.enter.exact.prevent="handleSubmit"
+            @keydown.escape="onEscape"
           >
             <template #trailing>
               <div class="flex items-center gap-2">
