@@ -1,7 +1,13 @@
 declare module '#auth-utils' {
   interface User {
-    avatar_url: string
-    login: string
+    id: string
+    name: string
+    email: string
+    avatar: string
+    username: string
+    provider: 'github'
+    providerId: string
+    role: 'user' | 'admin'
   }
 }
 

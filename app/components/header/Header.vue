@@ -73,6 +73,8 @@ function trackGitHubClick() {
 
       <UColorModeButton />
 
+      <HeaderUserMenu />
+
       <UTooltip text="GitHub Stars">
         <UButton
           icon="i-simple-icons-github"

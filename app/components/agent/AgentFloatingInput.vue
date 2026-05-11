@@ -25,7 +25,7 @@ function handleSubmit() {
   if (submitTimer) clearTimeout(submitTimer)
   submitTimer = setTimeout(() => {
     submitTimer = null
-    open(message, true)
+    open(message)
     input.value = ''
     isVisible.value = true
   }, 200)

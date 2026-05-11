@@ -19,8 +19,8 @@
     "test:browser:update": "docker run --rm --network host -v $(pwd):/work/ -v /tmp/playwright-node-modules:/work/node_modules -w /work/ -it mcr.microsoft.com/playwright:v1.57.0-noble bash -c 'corepack enable && pnpm i && pnpm playwright test test/browser --update-snapshots'",
     "eval": "evalite",
     "eval:ui": "evalite serve",
-    "db:generate": "nuxt hub database generate",
-    "db:migrate": "nuxt hub database migrate"
+    "db:generate": "nuxt db generate",
+    "db:migrate": "nuxt db migrate"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.74",
@@ -55,7 +55,7 @@
     "better-sqlite3": "^12.9.0",
     "date-fns": "^4.1.0",
     "drizzle-orm": "^0.45.2",
-    "evlog": "^2.15.0",
+    "evlog": "^2.17.0",
     "feed": "^5.2.1",
     "h3": "^1.15.11",
     "little-date": "^1.2.1",

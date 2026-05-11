@@ -23,16 +23,16 @@ WHEN TO USE: Use this tool to monitor AI agent traffic, spend, and provider mix.
     const [globalRow] = await db
       .select({
         chats: count(),
-        inputTokens: sum(schema.agentChats.inputTokens),
-        outputTokens: sum(schema.agentChats.outputTokens),
-        estimatedCost: sum(schema.agentChats.estimatedCost),
-        durationMs: sum(schema.agentChats.durationMs),
-        requestCount: sum(schema.agentChats.requestCount)
+        inputTokens: sum(schema.chats.inputTokens),
+        outputTokens: sum(schema.chats.outputTokens),
+        estimatedCost: sum(schema.chats.estimatedCost),
+        durationMs: sum(schema.chats.durationMs),
+        requestCount: sum(schema.chats.requestCount)
       })
-      .from(schema.agentChats)
-      .where(gte(schema.agentChats.createdAt, since))
+      .from(schema.chats)
+      .where(gte(schema.chats.createdAt, since))
 
-    type ProviderRow = Pick<AgentChat, 'provider' | 'model'> & {
+    type ProviderRow = Pick<Chat, 'provider' | 'model'> & {
       chats: number
       inputTokens: string | null
       outputTokens: string | null
@@ -41,16 +41,16 @@ WHEN TO USE: Use this tool to monitor AI agent traffic, spend, and provider mix.
 
     const byProvider: ProviderRow[] = await db
       .select({
-        provider: schema.agentChats.provider,
-        model: schema.agentChats.model,
+        provider: schema.chats.provider,
+        model: schema.chats.model,
         chats: count(),
-        inputTokens: sum(schema.agentChats.inputTokens),
-        outputTokens: sum(schema.agentChats.outputTokens),
-        estimatedCost: sum(schema.agentChats.estimatedCost)
+        inputTokens: sum(schema.chats.inputTokens),
+        outputTokens: sum(schema.chats.outputTokens),
+        estimatedCost: sum(schema.chats.estimatedCost)
       })
-      .from(schema.agentChats)
-      .where(gte(schema.agentChats.createdAt, since))
-      .groupBy(schema.agentChats.provider, schema.agentChats.model)
+      .from(schema.chats)
+      .where(gte(schema.chats.createdAt, since))
+      .groupBy(schema.chats.provider, schema.chats.model)
       .orderBy(desc(count()))
 
     const dailyUsage = await db
@@ -64,12 +64,12 @@ WHEN TO USE: Use this tool to monitor AI agent traffic, spend, and provider mix.
 
     const [voteRow] = await db
       .select({
-        upvotes: sql<number>`sum(case when ${schema.agentVotes.isUpvoted} = 1 then 1 else 0 end)`,
-        downvotes: sql<number>`sum(case when ${schema.agentVotes.isUpvoted} = 0 then 1 else 0 end)`
+        upvotes: sql<number>`sum(case when ${schema.votes.isUpvoted} = 1 then 1 else 0 end)`,
+        downvotes: sql<number>`sum(case when ${schema.votes.isUpvoted} = 0 then 1 else 0 end)`
       })
-      .from(schema.agentVotes)
-      .innerJoin(schema.agentChats, eq(schema.agentChats.id, schema.agentVotes.chatId))
-      .where(gte(schema.agentChats.createdAt, since))
+      .from(schema.votes)
+      .innerJoin(schema.chats, eq(schema.chats.id, schema.votes.chatId))
+      .where(gte(schema.chats.createdAt, since))
 
     const totalChats = Number(globalRow?.chats ?? 0)
 

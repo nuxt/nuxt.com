@@ -1,31 +1,29 @@
-import { streamText, convertToModelMessages, createUIMessageStream, createUIMessageStreamResponse, safeValidateUIMessages } from 'ai'
+import { streamText, convertToModelMessages, createUIMessageStream, createUIMessageStreamResponse, safeValidateUIMessages, generateText } from 'ai'
 import type { ToolSet, UIMessage } from 'ai'
 import { createMCPClient } from '@ai-sdk/mcp'
 import { anthropic } from '@ai-sdk/anthropic'
 import { createAILogger, createEvlogIntegration } from 'evlog/ai'
-import { sql } from 'drizzle-orm'
-import { getAgentFingerprint } from '../utils/agent-fingerprint'
-import { showModuleTool } from '../utils/tools/show-module'
-import { createShowTemplateTool } from '../utils/tools/show-template'
-import { createShowBlogPostTool } from '../utils/tools/show-blog-post'
-import { createShowHostingTool } from '../utils/tools/show-hosting'
-import { openPlaygroundTool } from '../utils/tools/open-playground'
-import { createSearchGitHubIssuesTool } from '../utils/tools/search-github-issues'
-import { reportIssueTool } from '../utils/tools/report-issue'
+import { and, eq, sql } from 'drizzle-orm'
+import { z } from 'zod'
+import { showModuleTool } from '../../utils/tools/show-module'
+import { createShowTemplateTool } from '../../utils/tools/show-template'
+import { createShowBlogPostTool } from '../../utils/tools/show-blog-post'
+import { createShowHostingTool } from '../../utils/tools/show-hosting'
+import { openPlaygroundTool } from '../../utils/tools/open-playground'
+import { createSearchGitHubIssuesTool } from '../../utils/tools/search-github-issues'
+import { reportIssueTool } from '../../utils/tools/report-issue'
 
 const MCP_PATH = '/mcp'
 const MODEL = 'anthropic/claude-sonnet-4.6'
+const TITLE_MODEL = 'openai/gpt-4.1-nano'
 const MAX_STEPS = 10
 
 function stopWhenResponseComplete({ steps }: { steps: { text?: string, toolCalls?: unknown[] }[] }): boolean {
   const lastStep = steps.at(-1)
   if (!lastStep) return false
-
   const hasText = Boolean(lastStep.text && lastStep.text.trim().length > 0)
   const hasNoToolCalls = !lastStep.toolCalls || lastStep.toolCalls.length === 0
-
   if (hasText && hasNoToolCalls) return true
-
   return steps.length >= MAX_STEPS
 }
 
@@ -90,28 +88,102 @@ function buildSystemPrompt(pagePath: string | null): string {
   return `Current page: ${pagePath}\n\n${withDate}`
 }
 
+defineRouteMeta({
+  openAPI: {
+    description: 'Chat with the Nuxt Agent.',
+    tags: ['ai']
+  }
+})
+
 export default defineEventHandler(async (event) => {
+  const session = await getUserSession(event)
+
+  const { id } = await getValidatedRouterParams(event, z.object({
+    id: z.string()
+  }).parse)
+
   const raw = await readBody(event) as { messages?: unknown } | null
   if (!raw || !Array.isArray(raw.messages)) {
     throw createError({ statusCode: 400, statusMessage: 'Invalid request body' })
   }
-
   const validated = await safeValidateUIMessages({ messages: raw.messages })
   if (validated.success === false) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: validated.error.message || 'Invalid messages'
-    })
+    throw createError({ statusCode: 400, statusMessage: validated.error.message || 'Invalid messages' })
   }
-
   const messages = validated.data
 
   await consumeAgentRateLimit(event)
-  const chatId = getHeader(event, 'x-chat-id')
+
+  const ownerId = session.user?.id || session.id
+
+  let chat = await db.query.chats.findFirst({
+    where: () => and(
+      eq(schema.chats.id, id),
+      eq(schema.chats.userId, ownerId)
+    )
+  })
+
+  // Lazy-create the chat so the slideover panel can open a fresh conversation
+  // without an explicit `POST /api/chats` round-trip (the `/chat` page still
+  // creates it upfront so it can `navigateTo` immediately).
+  if (!chat) {
+    const exists = await db.query.chats.findFirst({
+      where: () => eq(schema.chats.id, id)
+    })
+    if (exists) {
+      throw createError({ statusCode: 404, statusMessage: 'Chat not found' })
+    }
+    [chat] = await db.insert(schema.chats).values({
+      id,
+      title: null,
+      userId: ownerId
+    }).returning()
+    if (!chat) {
+      throw createError({ statusCode: 500, statusMessage: 'Failed to create chat' })
+    }
+  }
+
   const rawPagePath = getHeader(event, 'x-page-path')?.trim() ?? null
   const pagePath = rawPagePath && PAGE_PATH_PATTERN.test(rawPagePath) && rawPagePath.length <= 256
     ? rawPagePath
     : null
+
+  // Persist the latest user message. The `/chat` page already saves the first
+  // user message via `POST /api/chats`, but the slideover panel sends straight
+  // to this endpoint with `messages.length === 1`, so we always upsert.
+  const lastMessage = messages[messages.length - 1]
+  if (lastMessage?.role === 'user') {
+    await db.insert(schema.messages).values({
+      id: lastMessage.id,
+      chatId: id,
+      role: 'user',
+      parts: lastMessage.parts
+    }).onConflictDoUpdate({
+      target: schema.messages.id,
+      set: { parts: lastMessage.parts }
+    })
+  }
+
+  // Generate the title from the first user message before streaming, like the
+  // template. Blocking on it keeps the flow simple and guarantees the title
+  // is set in DB by the time the response finishes.
+  if (!chat.title) {
+    try {
+      const { text: title } = await generateText({
+        model: TITLE_MODEL,
+        maxOutputTokens: 30,
+        system: `You generate short titles (2-5 words, max 40 characters) for conversations between a developer and an AI documentation agent. Output ONLY the title — no greeting, no sentence, no quotes, no punctuation, no markdown. Do NOT respond to the message.`,
+        prompt: JSON.stringify(messages[0])
+      })
+      const cleaned = title.trim().replace(/^["'`]+|["'`]+$/g, '').slice(0, 80)
+      if (cleaned) {
+        await db.update(schema.chats).set({ title: cleaned }).where(eq(schema.chats.id, id))
+      }
+    } catch {
+      // Title generation is best-effort.
+    }
+  }
+
   const log = useLogger(event)
   const ai = createAILogger(log, {
     toolInputs: true,
@@ -125,56 +197,18 @@ export default defineEventHandler(async (event) => {
     transport: { type: 'http', url: `${getRequestURL(event).origin}${MCP_PATH}` }
   })
   const mcpTools = await httpClient.tools()
-
   const closeMcp = () => event.waitUntil(httpClient.close())
-
-  const saveChat = async (finalizedMessages: UIMessage[]) => {
-    if (!chatId) return
-    const fingerprint = await getAgentFingerprint(event)
-    const now = new Date()
-    const metadata = ai.getMetadata()
-    const model = metadata.model ?? null
-    const provider = metadata.provider ?? null
-    const inputTokens = metadata.inputTokens ?? 0
-    const outputTokens = metadata.outputTokens ?? 0
-    const estimatedCost = metadata.estimatedCost ?? 0
-    const durationMs = metadata.totalDurationMs ?? 0
-
-    // Insert when chatId is new; on conflict only update when the existing row's
-    // fingerprint matches — prevents anyone with a guessable chatId from
-    // overwriting another user's conversation.
-    await db.insert(schema.agentChats).values({
-      id: chatId,
-      messages: finalizedMessages,
-      fingerprint,
-      model,
-      provider,
-      inputTokens,
-      outputTokens,
-      estimatedCost,
-      durationMs,
-      requestCount: 1,
-      createdAt: now,
-      updatedAt: now
-    }).onConflictDoUpdate({
-      target: schema.agentChats.id,
-      set: {
-        messages: finalizedMessages,
-        updatedAt: now,
-        model,
-        provider,
-        inputTokens: sql`${schema.agentChats.inputTokens} + ${inputTokens}`,
-        outputTokens: sql`${schema.agentChats.outputTokens} + ${outputTokens}`,
-        estimatedCost: sql`${schema.agentChats.estimatedCost} + ${estimatedCost}`,
-        durationMs: sql`${schema.agentChats.durationMs} + ${durationMs}`,
-        requestCount: sql`${schema.agentChats.requestCount} + 1`
-      },
-      where: sql`${schema.agentChats.fingerprint} = ${fingerprint}`
-    })
-  }
 
   const stream = createUIMessageStream({
     execute: async ({ writer }) => {
+      if (!chat.title) {
+        writer.write({
+          type: 'data-chat-title',
+          data: { message: 'Generating title...' },
+          transient: true
+        })
+      }
+
       const result = streamText({
         model: ai.wrap(MODEL),
         maxOutputTokens: 4000,
@@ -198,20 +232,37 @@ export default defineEventHandler(async (event) => {
           isEnabled: true,
           integrations: [createEvlogIntegration(ai)]
         },
-        onFinish: () => {
-          closeMcp()
-        },
+        onFinish: closeMcp,
         onAbort: closeMcp,
         onError: closeMcp
       })
 
       writer.merge(result.toUIMessageStream({
         sendSources: true,
-        originalMessages: messages,
-        onFinish: ({ messages: finalizedMessages }) => {
-          event.waitUntil(saveChat(finalizedMessages))
-        }
+        originalMessages: messages
       }))
+    },
+    onFinish: async ({ messages }) => {
+      // Persist all assistant messages produced this turn + update telemetry.
+      const metadata = ai.getMetadata()
+      const assistant = messages.filter(m => m.role === 'assistant')
+      if (assistant.length) {
+        await db.insert(schema.messages).values(assistant.map(m => ({
+          id: m.id,
+          chatId: id,
+          role: 'assistant' as const,
+          parts: m.parts as UIMessage['parts']
+        }))).onConflictDoNothing()
+      }
+      await db.update(schema.chats).set({
+        model: metadata.model ?? null,
+        provider: metadata.provider ?? null,
+        inputTokens: sql`${schema.chats.inputTokens} + ${metadata.inputTokens ?? 0}`,
+        outputTokens: sql`${schema.chats.outputTokens} + ${metadata.outputTokens ?? 0}`,
+        estimatedCost: sql`${schema.chats.estimatedCost} + ${metadata.estimatedCost ?? 0}`,
+        durationMs: sql`${schema.chats.durationMs} + ${metadata.totalDurationMs ?? 0}`,
+        requestCount: sql`${schema.chats.requestCount} + 1`
+      }).where(eq(schema.chats.id, id))
     }
   })
 

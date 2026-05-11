@@ -11,7 +11,7 @@ WHEN TO USE: Use this tool to find expensive sessions, slow sessions, or session
     provider: z.string().optional().describe('Filter by AI provider (e.g., "openai", "anthropic").'),
     model: z.string().optional().describe('Filter by AI model (e.g., "gpt-4o", "claude-sonnet-4-5").'),
     hasDownvotes: z.boolean().optional().describe('If true, only return chats that have at least one downvoted message.'),
-    sortBy: z.enum(['createdAt', 'updatedAt', 'estimatedCost', 'durationMs', 'inputTokens', 'outputTokens']).default('updatedAt').describe('Sort field (default updatedAt, descending).'),
+    sortBy: z.enum(['createdAt', 'estimatedCost', 'durationMs', 'inputTokens', 'outputTokens']).default('createdAt').describe('Sort field (default createdAt, descending).'),
     limit: z.number().int().min(1).max(100).default(25).describe('Maximum number of chats to return.'),
     offset: z.number().int().min(0).default(0).describe('Pagination offset.')
   },
@@ -28,25 +28,25 @@ WHEN TO USE: Use this tool to find expensive sessions, slow sessions, or session
     const filters: SQL[] = []
     if (sinceDays) {
       const since = new Date(Date.now() - sinceDays * 24 * 60 * 60 * 1000)
-      filters.push(gte(schema.agentChats.createdAt, since))
+      filters.push(gte(schema.chats.createdAt, since))
     }
-    if (until) filters.push(lte(schema.agentChats.createdAt, new Date(until)))
-    if (provider) filters.push(eq(schema.agentChats.provider, provider))
-    if (model) filters.push(eq(schema.agentChats.model, model))
+    if (until) filters.push(lte(schema.chats.createdAt, new Date(until)))
+    if (provider) filters.push(eq(schema.chats.provider, provider))
+    if (model) filters.push(eq(schema.chats.model, model))
 
     const sortColumn = {
-      createdAt: schema.agentChats.createdAt,
-      updatedAt: schema.agentChats.updatedAt,
-      estimatedCost: schema.agentChats.estimatedCost,
-      durationMs: schema.agentChats.durationMs,
-      inputTokens: schema.agentChats.inputTokens,
-      outputTokens: schema.agentChats.outputTokens
+      createdAt: schema.chats.createdAt,
+      estimatedCost: schema.chats.estimatedCost,
+      durationMs: schema.chats.durationMs,
+      inputTokens: schema.chats.inputTokens,
+      outputTokens: schema.chats.outputTokens
     }[sortBy]
 
-    const upvotesExpr = sql<number>`coalesce(sum(case when ${schema.agentVotes.isUpvoted} = 1 then 1 else 0 end), 0)`
-    const downvotesExpr = sql<number>`coalesce(sum(case when ${schema.agentVotes.isUpvoted} = 0 then 1 else 0 end), 0)`
+    const upvotesExpr = sql<number>`coalesce(sum(case when ${schema.votes.isUpvoted} = 1 then 1 else 0 end), 0)`
+    const downvotesExpr = sql<number>`coalesce(sum(case when ${schema.votes.isUpvoted} = 0 then 1 else 0 end), 0)`
+    const messageCountExpr = sql<number>`(select count(*) from ${schema.messages} where ${schema.messages.chatId} = ${schema.chats.id})`
 
-    type ChatRow = Omit<AgentChat, 'messages'> & {
+    type ChatRow = Chat & {
       messageCount: number
       upvotes: number
       downvotes: number
@@ -54,25 +54,26 @@ WHEN TO USE: Use this tool to find expensive sessions, slow sessions, or session
 
     const rows: ChatRow[] = await db
       .select({
-        id: schema.agentChats.id,
-        fingerprint: schema.agentChats.fingerprint,
-        model: schema.agentChats.model,
-        provider: schema.agentChats.provider,
-        inputTokens: schema.agentChats.inputTokens,
-        outputTokens: schema.agentChats.outputTokens,
-        estimatedCost: schema.agentChats.estimatedCost,
-        durationMs: schema.agentChats.durationMs,
-        requestCount: schema.agentChats.requestCount,
-        messageCount: sql<number>`json_array_length(${schema.agentChats.messages})`,
+        id: schema.chats.id,
+        userId: schema.chats.userId,
+        title: schema.chats.title,
+        visibility: schema.chats.visibility,
+        model: schema.chats.model,
+        provider: schema.chats.provider,
+        inputTokens: schema.chats.inputTokens,
+        outputTokens: schema.chats.outputTokens,
+        estimatedCost: schema.chats.estimatedCost,
+        durationMs: schema.chats.durationMs,
+        requestCount: schema.chats.requestCount,
+        messageCount: messageCountExpr,
         upvotes: upvotesExpr,
         downvotes: downvotesExpr,
-        createdAt: schema.agentChats.createdAt,
-        updatedAt: schema.agentChats.updatedAt
+        createdAt: schema.chats.createdAt
       })
-      .from(schema.agentChats)
-      .leftJoin(schema.agentVotes, eq(schema.agentVotes.chatId, schema.agentChats.id))
+      .from(schema.chats)
+      .leftJoin(schema.votes, eq(schema.votes.chatId, schema.chats.id))
       .where(filters.length ? and(...filters) : undefined)
-      .groupBy(schema.agentChats.id)
+      .groupBy(schema.chats.id)
       .having(hasDownvotes ? sql`${downvotesExpr} > 0` : undefined)
       .orderBy(desc(sortColumn))
       .limit(limit)

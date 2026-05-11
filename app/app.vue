@@ -2,6 +2,7 @@
 const colorMode = useColorMode()
 const route = useRoute()
 const isChatRoute = computed(() => route.path === '/chat' || route.path.startsWith('/chat/'))
+
 const { version } = useDocsVersion()
 const { searchGroups, searchLinks, searchTerm, searchFuse } = useNavigation()
 const { fetchList: fetchModules } = useModules()

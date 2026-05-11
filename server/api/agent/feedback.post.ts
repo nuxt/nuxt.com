@@ -1,6 +1,5 @@
 import { z } from 'zod'
-import { eq } from 'drizzle-orm'
-import { getAgentFingerprint } from '../../utils/agent-fingerprint'
+import { asc, eq } from 'drizzle-orm'
 
 const LINEAR_API = 'https://api.linear.app/graphql'
 const MAX_TRANSCRIPT_CHARS = 3000
@@ -66,20 +65,19 @@ function buildIssueBody(params: {
 export default defineEventHandler(async (event) => {
   const { chatId, title, summary, userFeedback } = await readValidatedBody(event, bodySchema.parse)
 
-  const fingerprint = await getAgentFingerprint(event)
+  const session = await getUserSession(event)
 
   const [chat] = await db
     .select({
-      id: schema.agentChats.id,
-      fingerprint: schema.agentChats.fingerprint,
-      messages: schema.agentChats.messages,
-      createdAt: schema.agentChats.createdAt
+      id: schema.chats.id,
+      userId: schema.chats.userId,
+      createdAt: schema.chats.createdAt
     })
-    .from(schema.agentChats)
-    .where(eq(schema.agentChats.id, chatId))
+    .from(schema.chats)
+    .where(eq(schema.chats.id, chatId))
     .limit(1)
 
-  if (!chat || chat.fingerprint !== fingerprint) {
+  if (!chat || chat.userId !== (session.user?.id || session.id)) {
     throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
   }
 
@@ -88,7 +86,17 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 503, statusMessage: 'Linear integration not configured' })
   }
 
-  const transcript = buildTranscript(chat.messages as StoredMessage[])
+  const storedMessages = await db
+    .select({
+      id: schema.messages.id,
+      role: schema.messages.role,
+      parts: schema.messages.parts
+    })
+    .from(schema.messages)
+    .where(eq(schema.messages.chatId, chat.id))
+    .orderBy(asc(schema.messages.createdAt))
+
+  const transcript = buildTranscript(storedMessages as StoredMessage[])
   const description = buildIssueBody({ summary, userFeedback, transcript, chatId, createdAt: chat.createdAt })
 
   const mutation = `

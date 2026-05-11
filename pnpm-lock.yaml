@@ -105,8 +105,8 @@ importers:
         specifier: ^0.45.2
         version: 0.45.2(@cloudflare/workers-types@4.20260405.1)(@libsql/client@0.17.3)(@opentelemetry/api@1.9.0)(better-sqlite3@12.9.0)
       evlog:
-        specifier: ^2.15.0
-        version: 2.15.0(@nuxt/kit@4.4.5(magicast@0.5.2))(ai@6.0.175(zod@4.3.6))(express@5.2.1)(h3@1.15.11)(hono@4.12.12)(nitropack@2.13.4(@libsql/client@0.17.3)(@vercel/functions@3.5.0)(better-sqlite3@12.9.0)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260405.1)(@libsql/client@0.17.3)(@opentelemetry/api@1.9.0)(better-sqlite3@12.9.0))(oxc-parser@0.128.0)(rolldown@1.0.0-beta.57(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0))(srvx@0.11.15))(ofetch@1.5.1)(vite@7.3.2(@types/node@25.5.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
+        specifier: ^2.17.0
+        version: 2.17.0(@nuxt/kit@4.4.5(magicast@0.5.2))(ai@6.0.175(zod@4.3.6))(express@5.2.1)(h3@1.15.11)(hono@4.12.12)(nitropack@2.13.4(@libsql/client@0.17.3)(@vercel/functions@3.5.0)(better-sqlite3@12.9.0)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260405.1)(@libsql/client@0.17.3)(@opentelemetry/api@1.9.0)(better-sqlite3@12.9.0))(oxc-parser@0.128.0)(rolldown@1.0.0-beta.57(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0))(srvx@0.11.15))(ofetch@1.5.1)(vite@7.3.2(@types/node@25.5.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
       feed:
         specifier: ^5.2.1
         version: 5.2.1
@@ -5912,8 +5912,8 @@ packages:
     resolution: {integrity: sha512-CRT1WTyuQoD771GW56XEZFQ/ZoSfWid1alKGDYMmkt2yl8UXrVR4pspqWNEcqKvVIzg6PAltWjxcSSPrboA4iA==}
     engines: {node: '>=18.0.0'}
 
-  evlog@2.15.0:
-    resolution: {integrity: sha512-X5blRbDJqr1ZozYfKGzYfpWMyokDvUCo8sqlqxGTLuWjkdWRgwlMigyN3RqJuLAEtuR+6p3AUdwKi63CkVzaaQ==}
+  evlog@2.17.0:
+    resolution: {integrity: sha512-v6PWFV0SAEB04l70vENByG6o4r2v8KXIUNroeqYQ6uXb2xEzRRgRCxiAsAntb+Tqd4xPKenX+X67v/KyM6ar5g==}
     peerDependencies:
       '@nestjs/common': '>=11.1.19'
       '@nuxt/kit': ^4.4.2
@@ -15703,7 +15703,7 @@ snapshots:
     dependencies:
       eventsource-parser: 3.0.8
 
-  evlog@2.15.0(@nuxt/kit@4.4.5(magicast@0.5.2))(ai@6.0.175(zod@4.3.6))(express@5.2.1)(h3@1.15.11)(hono@4.12.12)(nitropack@2.13.4(@libsql/client@0.17.3)(@vercel/functions@3.5.0)(better-sqlite3@12.9.0)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260405.1)(@libsql/client@0.17.3)(@opentelemetry/api@1.9.0)(better-sqlite3@12.9.0))(oxc-parser@0.128.0)(rolldown@1.0.0-beta.57(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0))(srvx@0.11.15))(ofetch@1.5.1)(vite@7.3.2(@types/node@25.5.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3)):
+  evlog@2.17.0(@nuxt/kit@4.4.5(magicast@0.5.2))(ai@6.0.175(zod@4.3.6))(express@5.2.1)(h3@1.15.11)(hono@4.12.12)(nitropack@2.13.4(@libsql/client@0.17.3)(@vercel/functions@3.5.0)(better-sqlite3@12.9.0)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260405.1)(@libsql/client@0.17.3)(@opentelemetry/api@1.9.0)(better-sqlite3@12.9.0))(oxc-parser@0.128.0)(rolldown@1.0.0-beta.57(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0))(srvx@0.11.15))(ofetch@1.5.1)(vite@7.3.2(@types/node@25.5.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3)):
     optionalDependencies:
       '@nuxt/kit': 4.4.5(magicast@0.5.2)
       ai: 6.0.175(zod@4.3.6)

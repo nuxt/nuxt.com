@@ -4,7 +4,7 @@ const props = defineProps<{
   summary: string
 }>()
 
-const { chatId } = useNuxtAgent()
+const chatId = inject<Ref<string>>('chat-id')
 
 const feedback = ref('')
 const state = ref<'idle' | 'submitting' | 'success' | 'error'>('idle')
@@ -18,7 +18,7 @@ async function submit() {
     const result = await $fetch<{ url: string }>('/api/agent/feedback', {
       method: 'POST',
       body: {
-        chatId: chatId.value,
+        chatId: chatId?.value,
         title: props.title,
         summary: props.summary,
         userFeedback: feedback.value.trim() || undefined

@@ -1,6 +1,6 @@
-import { lt, sql } from 'drizzle-orm'
+import { and, lt, notInArray, sql } from 'drizzle-orm'
 
-const CHATS_RETENTION_DAYS = 30
+const ANON_CHATS_RETENTION_DAYS = 30
 const USAGE_RETENTION_DAYS = 7
 
 export default defineEventHandler(async (event) => {
@@ -11,12 +11,19 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
   }
 
+  // Anonymous chats are owned by `session.id` (no row in `users`). Drop them
+  // after the retention period; logged-in users keep their history forever.
   const chatsThreshold = new Date()
-  chatsThreshold.setDate(chatsThreshold.getDate() - CHATS_RETENTION_DAYS)
+  chatsThreshold.setDate(chatsThreshold.getDate() - ANON_CHATS_RETENTION_DAYS)
 
-  const deletedChats = await db.delete(schema.agentChats)
-    .where(lt(schema.agentChats.updatedAt, chatsThreshold))
-    .returning({ id: schema.agentChats.id })
+  const knownUserIds = db.select({ id: schema.users.id }).from(schema.users)
+
+  const deletedChats = await db.delete(schema.chats)
+    .where(and(
+      lt(schema.chats.createdAt, chatsThreshold),
+      notInArray(schema.chats.userId, knownUserIds)
+    ))
+    .returning({ id: schema.chats.id })
 
   // `dayKey` is `rate:agent:<ip>:YYYY-MM-DD` — extract the trailing 10 chars
   // to compare lexicographically (ISO format makes this safe).

@@ -8,7 +8,7 @@ const { user, clear } = useUserSession()
 
 async function logout() {
   await clear()
-  navigateTo('/admin/login')
+  navigateTo('/login')
 }
 
 const showMcpInstall = ref(false)
@@ -16,10 +16,10 @@ const showMcpInstall = ref(false)
 const items = computed<DropdownMenuItem[][]>(() => [
   [
     {
-      label: user.value?.login,
+      label: user.value?.username,
       avatar: {
-        src: user.value?.avatar_url,
-        alt: user.value?.login
+        src: user.value?.avatar,
+        alt: user.value?.username
       },
       type: 'label'
     }
@@ -329,13 +329,13 @@ watch(currentPage, () => {
       <UDropdownMenu :items="items">
         <UButton
           :avatar="{
-            src: user?.avatar_url,
-            alt: user?.login
+            src: user?.avatar,
+            alt: user?.username
           }"
           color="neutral"
           trailing-icon="i-lucide-menu"
           variant="ghost"
-          :label="user?.login"
+          :label="user?.username"
         />
       </UDropdownMenu>
     </div>
