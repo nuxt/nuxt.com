@@ -13,13 +13,11 @@ const {
   currentPage,
   pageContextDismissed,
   pageContextEnabled,
-  refreshChatList,
   consumePendingPrompt
 } = useNuxtAgent()
 const { loggedIn } = useUserSession()
+const { refresh: refreshChats } = useChatsData()
 
-// Surface the active chat id to descendants (e.g. FeedbackCard rendered as a
-// tool result inside the chat).
 provide('chat-id', toRef(props, 'chatId'))
 
 const { chat, input, votes, vote, onSubmit, askQuestion, send } = useAgentChat({
@@ -28,11 +26,10 @@ const { chat, input, votes, vote, onSubmit, askQuestion, send } = useAgentChat({
   source: 'prompt',
   withPageContext: 'when-enabled',
   onFinish: () => {
-    if (loggedIn.value) refreshChatList()
+    if (loggedIn.value) refreshChats()
   }
 })
 
-// Send any prompt the floating input queued via `agent.open(prompt)`.
 onMounted(() => {
   const prompt = consumePendingPrompt()
   if (prompt) send(prompt)

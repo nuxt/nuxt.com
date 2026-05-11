@@ -18,16 +18,6 @@ function normalizeFaqQuestions(questions: FaqQuestions): FaqCategory[] {
 const CONTEXT_PAGE_PREFIXES = ['/docs/', '/blog/', '/changelog/', '/modules/', '/deploy/']
 const CONTEXT_INDEX_PAGES = new Set(['/docs', '/blog', '/changelog', '/modules', '/deploy'])
 
-/**
- * Shared UI state for the floating agent panel (open/close, page-context
- * detection, daily-usage limit, FAQ list, shared chat list).
- *
- * Every chat surface — the slideover panel AND the `/chat/[id]` page — owns
- * its own `chatId` locally and creates its own `Chat` instance scoped to it.
- * Switching between chats in the UI navigates to `/chat/[id]` (just like the
- * `nuxt-ui-templates/chat` template), which mounts a fresh page → fresh
- * `Chat` instance. No session/local storage involved.
- */
 export const useNuxtAgent = createSharedComposable(() => {
   const appConfig = useAppConfig()
   const agentConfig = appConfig.agent as { faqQuestions?: FaqQuestions } | undefined
@@ -65,7 +55,6 @@ export const useNuxtAgent = createSharedComposable(() => {
     return normalizeFaqQuestions(faqConfig)
   })
 
-  /** A prompt the next mounted chat surface should auto-submit. */
   const pendingPrompt = ref<string | null>(null)
   function consumePendingPrompt(): string | null {
     const value = pendingPrompt.value
@@ -82,13 +71,12 @@ export const useNuxtAgent = createSharedComposable(() => {
   }
   function expandToFullScreen() {
     isOpen.value = false
-    navigateTo('/chat')
+    navigateTo('/dashboard/chat')
   }
   function collapseToSidebar() {
     isOpen.value = true
   }
 
-  /** Matches Tailwind `xl` — docked USidebar only at this width and above */
   const isAgentDockedBreakpoint = useMediaQuery('(min-width: 1280px)')
   const isAgentDocked = computed(() => isOpen.value && isAgentDockedBreakpoint.value)
 
@@ -107,24 +95,15 @@ export const useNuxtAgent = createSharedComposable(() => {
     }
   }
 
-  // Shared chat list (logged-in only). Sidebar + switcher dropdown read from
-  // here so we don't double-fetch.
-  const { data: chatList, refresh: refreshChatList } = useFetch<ChatListItem[]>('/api/chats', {
-    key: 'chats',
-    default: () => [],
-    server: false,
-    lazy: true,
-    immediate: false
+  const { chatList, refresh: refreshChats } = useChatsData()
+
+  watch(loggedIn, (next) => {
+    if (next) refreshChats()
+    else if (chatList.value) chatList.value = []
   })
 
-  onMounted(() => {
-    if (loggedIn.value && (!chatList.value || chatList.value.length === 0)) {
-      refreshChatList()
-    }
-  })
-  watch(loggedIn, (next) => {
-    if (next) refreshChatList()
-    else chatList.value = []
+  watch(isOpen, (next) => {
+    if (next && loggedIn.value && !chatList.value?.length) refreshChats()
   })
 
   return {
@@ -144,7 +123,6 @@ export const useNuxtAgent = createSharedComposable(() => {
     pageContextDismissed,
     pageContextEnabled,
     faqQuestions,
-    chatList,
-    refreshChatList
+    chatList
   }
 })

@@ -77,52 +77,50 @@ const isRangeSelected = (preset: 'week' | 'month' | '3months' | '6months' | 'yea
 </script>
 
 <template>
-  <div class="flex items-center justify-center w-full mb-4">
-    <UPopover :content="{ align: 'center' }" :modal="true">
-      <UButton
-        color="neutral"
-        variant="outline"
-        icon="i-lucide-calendar"
-        class="data-[state=open]:bg-elevated group min-w-fit"
-      >
-        <span class="truncate">
-          <template v-if="formattedDateRange">
-            {{ formattedDateRange }}
-          </template>
-          <template v-else>
-            Pick a date range
-          </template>
-        </span>
-
-        <template #trailing>
-          <UIcon name="i-lucide-chevron-down" class="shrink-0 text-dimmed size-5 group-data-[state=open]:rotate-180 transition-transform duration-200" />
+  <UPopover :content="{ align: 'end' }" :modal="true">
+    <UButton
+      color="neutral"
+      variant="ghost"
+      icon="i-lucide-calendar"
+      class="data-[state=open]:bg-elevated group min-w-fit"
+    >
+      <span class="truncate">
+        <template v-if="formattedDateRange">
+          {{ formattedDateRange }}
         </template>
-      </UButton>
+        <template v-else>
+          Pick a date range
+        </template>
+      </span>
 
-      <template #content>
-        <div class="flex items-stretch sm:divide-x divide-default">
-          <div class="hidden sm:flex flex-col justify-center min-w-[140px]">
-            <UButton
-              v-for="(range, index) in ranges"
-              :key="index"
-              :label="range.label"
-              color="neutral"
-              variant="ghost"
-              class="rounded-none px-4 justify-start"
-              :class="[isRangeSelected(range.preset) ? 'bg-elevated' : 'hover:bg-elevated/50']"
-              truncate
-              @click="setPresetRange(range.preset)"
-            />
-          </div>
+      <template #trailing>
+        <UIcon name="i-lucide-chevron-down" class="shrink-0 text-dimmed size-5 group-data-[state=open]:rotate-180 transition-transform duration-200" />
+      </template>
+    </UButton>
 
-          <UCalendar
-            v-model="calendarRange"
-            class="p-2"
-            :number-of-months="2"
-            range
+    <template #content>
+      <div class="flex items-stretch sm:divide-x divide-default">
+        <div class="hidden sm:flex flex-col justify-center min-w-[140px]">
+          <UButton
+            v-for="(range, index) in ranges"
+            :key="index"
+            :label="range.label"
+            color="neutral"
+            variant="ghost"
+            class="rounded-none px-4 justify-start"
+            :class="[isRangeSelected(range.preset) ? 'bg-elevated' : 'hover:bg-elevated/50']"
+            truncate
+            @click="setPresetRange(range.preset)"
           />
         </div>
-      </template>
-    </UPopover>
-  </div>
+
+        <UCalendar
+          v-model="calendarRange"
+          class="p-2"
+          :number-of-months="2"
+          range
+        />
+      </div>
+    </template>
+  </UPopover>
 </template>

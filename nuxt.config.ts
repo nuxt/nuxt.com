@@ -520,7 +520,11 @@ export default defineNuxtConfig({
     env: { service: 'nuxt-com' },
     pretty: process.env.CI ? false : undefined,
     sampling: {
-      rates: { info: 30 }
+      rates: { info: 30 },
+      keep: [
+        { path: '/api/chats/*' },
+        { duration: 2000 }
+      ]
     }
   },
   hints: {

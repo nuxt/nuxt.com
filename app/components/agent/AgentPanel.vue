@@ -3,61 +3,65 @@ import type { UIMessage } from 'ai'
 
 const {
   isOpen,
-  expandToFullScreen,
   isAgentDockedBreakpoint,
   currentPage,
   pageContextDismissed,
-  pendingPrompt,
-  chatList
+  pendingPrompt
 } = useNuxtAgent()
+const { chatList } = useChatsData()
 const { loggedIn } = useUserSession()
 
-const chatId = ref<string>(crypto.randomUUID())
-function startNewChat() {
-  chatId.value = crypto.randomUUID()
-}
-function setActiveChat(id: string) {
-  chatId.value = id
-}
-provide<{
-  chatId: Ref<string>
-  startNewChat: () => void
-  setActiveChat: (id: string) => void
-}>('agent-panel', { chatId, startNewChat, setActiveChat })
-
-// `agent.open(message)` from the floating input or docs TOC always drops the
-// prompt into a fresh conversation.
-watch(pendingPrompt, (prompt) => {
-  if (prompt) startNewChat()
-})
-
-// Load persisted messages when the panel is showing a known chat (one from
-// `chatList`). For brand-new ephemeral ids we leave `chatData` null and the
-// chat surface starts empty.
-const chatData = ref<ChatDetail | null>(null)
+// The active chat id and its messages must always be paired — otherwise
+// `<AgentPanelChat :key="chatId" :initial-messages>` could remount with the
+// new id but the previous chat's messages (or vice-versa) when the two refs
+// update on different micro-ticks. Group them in a single shallowRef so the
+// swap is atomic.
+type ActiveChat = { id: string, messages: UIMessage[] }
+const active = shallowRef<ActiveChat>({ id: crypto.randomUUID(), messages: [] })
+const chatId = computed(() => active.value.id)
+const initialMessages = computed(() => active.value.messages)
 let loadToken = 0
-watch([chatId, chatList, loggedIn], async ([id, list, isLoggedIn]) => {
-  const persisted = isLoggedIn && id && list?.some(c => c.id === id)
-  if (!persisted) {
-    chatData.value = null
-    return
-  }
+
+function startNewChat() {
+  loadToken++
+  active.value = { id: crypto.randomUUID(), messages: [] }
+}
+
+async function setActiveChat(id: string) {
+  if (id === active.value.id) return
   const token = ++loadToken
   try {
     const data = await $fetch<ChatDetail>(`/api/chats/${id}`)
-    if (token === loadToken) chatData.value = data
+    if (token !== loadToken) return
+    const messages = (data.messages ?? []).map(m => ({
+      id: m.id,
+      role: m.role,
+      parts: m.parts as UIMessage['parts']
+    }))
+    active.value = { id, messages }
   } catch {
-    if (token === loadToken) chatData.value = null
+    if (token === loadToken) {
+      active.value = { id: crypto.randomUUID(), messages: [] }
+    }
   }
-}, { immediate: true })
+}
 
-const initialMessages = computed<UIMessage[]>(() =>
-  (chatData.value?.messages ?? []).map(m => ({
-    id: m.id,
-    role: m.role,
-    parts: m.parts as UIMessage['parts']
-  }))
-)
+function openFullScreen() {
+  isOpen.value = false
+  const id = active.value.id
+  const isPersisted = chatList.value?.some(c => c.id === id)
+  navigateTo(isPersisted ? `/dashboard/chat/${id}` : '/dashboard/chat')
+}
+
+provide<{
+  chatId: Ref<string>
+  startNewChat: () => void
+  setActiveChat: (id: string) => Promise<void>
+}>('agent-panel', { chatId, startNewChat, setActiveChat })
+
+watch(pendingPrompt, (prompt) => {
+  if (prompt) startNewChat()
+})
 
 const panelUi = {
   body: 'p-0 gap-0 overflow-hidden',
@@ -121,7 +125,7 @@ defineShortcuts({
         <UButton icon="i-custom-new-chat" color="neutral" variant="ghost" aria-label="New chat" @click="startNewChat" />
       </UTooltip>
       <UTooltip text="Open full screen">
-        <UButton icon="i-lucide-maximize-2" color="neutral" variant="ghost" @click="expandToFullScreen" />
+        <UButton icon="i-lucide-maximize-2" color="neutral" variant="ghost" @click="openFullScreen" />
       </UTooltip>
     </template>
 
@@ -159,7 +163,7 @@ defineShortcuts({
         <UButton icon="i-custom-new-chat" color="neutral" variant="ghost" aria-label="New chat" @click="startNewChat" />
       </UTooltip>
       <UTooltip text="Open full screen">
-        <UButton icon="i-lucide-maximize-2" color="neutral" variant="ghost" @click="expandToFullScreen" />
+        <UButton icon="i-lucide-maximize-2" color="neutral" variant="ghost" @click="openFullScreen" />
       </UTooltip>
     </template>
 

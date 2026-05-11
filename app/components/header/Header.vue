@@ -71,8 +71,6 @@ function trackGitHubClick() {
 
       <AgentChatButton />
 
-      <UColorModeButton />
-
       <HeaderUserMenu />
 
       <UTooltip text="GitHub Stars">

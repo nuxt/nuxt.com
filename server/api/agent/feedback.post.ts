@@ -1,3 +1,4 @@
+import { createError } from 'evlog'
 import { z } from 'zod'
 import { asc, eq } from 'drizzle-orm'
 
@@ -66,6 +67,7 @@ export default defineEventHandler(async (event) => {
   const { chatId, title, summary, userFeedback } = await readValidatedBody(event, bodySchema.parse)
 
   const session = await getUserSession(event)
+  const log = useLogger(event)
 
   const [chat] = await db
     .select({
@@ -78,12 +80,17 @@ export default defineEventHandler(async (event) => {
     .limit(1)
 
   if (!chat || chat.userId !== (session.user?.id || session.id)) {
-    throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
+    throw createError({ message: 'Forbidden', status: 403, why: 'You do not own this chat.' })
   }
+
+  log.set({
+    user: { id: session.user?.id || session.id, authenticated: !!session.user },
+    feedback: { chatId, title, hasUserFeedback: !!userFeedback }
+  })
 
   const { apiKey, teamId, projectId } = useRuntimeConfig(event).linear
   if (!apiKey || !teamId || !projectId) {
-    throw createError({ statusCode: 503, statusMessage: 'Linear integration not configured' })
+    throw createError({ message: 'Linear integration not configured', status: 503, why: 'The NUXT_LINEAR_API_KEY, NUXT_LINEAR_TEAM_ID, or NUXT_LINEAR_PROJECT_ID environment variables are missing.' })
   }
 
   const storedMessages = await db
@@ -131,8 +138,10 @@ export default defineEventHandler(async (event) => {
 
   const issue = response.data?.issueCreate?.issue
   if (!issue?.url) {
-    throw createError({ statusCode: 500, statusMessage: 'Failed to create Linear issue' })
+    throw createError({ message: 'Failed to create Linear issue', status: 500, why: 'The Linear API did not return an issue URL.' })
   }
+
+  log.set({ linear: { issueUrl: issue.url } })
 
   return { url: issue.url }
 })

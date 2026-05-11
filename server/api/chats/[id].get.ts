@@ -23,8 +23,12 @@ export default defineEventHandler(async (event) => {
 
   const userId = session.user?.id || session.id
   const isOwner = chat.userId === userId
+  const isAdmin = session.user?.role === 'admin'
 
-  if (chat.visibility === 'private' && !isOwner) {
+  const canView = isOwner
+    || chat.visibility === 'public'
+    || (chat.visibility === 'admin' && isAdmin)
+  if (!canView) {
     throw createError({ statusCode: 404, statusMessage: 'Chat not found' })
   }
 

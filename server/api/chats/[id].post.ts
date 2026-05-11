@@ -3,6 +3,7 @@ import type { ToolSet, UIMessage } from 'ai'
 import { createMCPClient } from '@ai-sdk/mcp'
 import { anthropic } from '@ai-sdk/anthropic'
 import { createAILogger, createEvlogIntegration } from 'evlog/ai'
+import { createError } from 'evlog'
 import { and, eq, sql } from 'drizzle-orm'
 import { z } from 'zod'
 import { showModuleTool } from '../../utils/tools/show-module'
@@ -104,11 +105,11 @@ export default defineEventHandler(async (event) => {
 
   const raw = await readBody(event) as { messages?: unknown } | null
   if (!raw || !Array.isArray(raw.messages)) {
-    throw createError({ statusCode: 400, statusMessage: 'Invalid request body' })
+    throw createError({ message: 'Invalid request body', status: 400, why: 'Expected a JSON body with a `messages` array.' })
   }
   const validated = await safeValidateUIMessages({ messages: raw.messages })
   if (validated.success === false) {
-    throw createError({ statusCode: 400, statusMessage: validated.error.message || 'Invalid messages' })
+    throw createError({ message: validated.error.message || 'Invalid messages', status: 400 })
   }
   const messages = validated.data
 
@@ -131,7 +132,7 @@ export default defineEventHandler(async (event) => {
       where: () => eq(schema.chats.id, id)
     })
     if (exists) {
-      throw createError({ statusCode: 404, statusMessage: 'Chat not found' })
+      throw createError({ message: 'Chat not found', status: 404, why: 'This chat belongs to another user.' })
     }
     [chat] = await db.insert(schema.chats).values({
       id,
@@ -139,7 +140,7 @@ export default defineEventHandler(async (event) => {
       userId: ownerId
     }).returning()
     if (!chat) {
-      throw createError({ statusCode: 500, statusMessage: 'Failed to create chat' })
+      throw createError({ message: 'Failed to create chat', status: 500 })
     }
   }
 
@@ -148,9 +149,6 @@ export default defineEventHandler(async (event) => {
     ? rawPagePath
     : null
 
-  // Persist the latest user message. The `/chat` page already saves the first
-  // user message via `POST /api/chats`, but the slideover panel sends straight
-  // to this endpoint with `messages.length === 1`, so we always upsert.
   const lastMessage = messages[messages.length - 1]
   if (lastMessage?.role === 'user') {
     await db.insert(schema.messages).values({
@@ -185,6 +183,11 @@ export default defineEventHandler(async (event) => {
   }
 
   const log = useLogger(event)
+  log.set({
+    user: { id: ownerId, authenticated: !!session.user },
+    chat: { id, hasTitle: !!chat.title },
+    ...(pagePath ? { page: { path: pagePath } } : {})
+  })
   const ai = createAILogger(log, {
     toolInputs: true,
     cost: { 'claude-sonnet-4-6': { input: 3, output: 15 } }
@@ -243,7 +246,6 @@ export default defineEventHandler(async (event) => {
       }))
     },
     onFinish: async ({ messages }) => {
-      // Persist all assistant messages produced this turn + update telemetry.
       const metadata = ai.getMetadata()
       const assistant = messages.filter(m => m.role === 'assistant')
       if (assistant.length) {

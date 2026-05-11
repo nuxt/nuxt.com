@@ -25,7 +25,7 @@ export const chats = sqliteTable('chats', {
   id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
   title: text('title'),
   userId: text('user_id').notNull(),
-  visibility: text('visibility', { enum: ['public', 'private'] }).notNull().default('private'),
+  visibility: text('visibility', { enum: ['public', 'private', 'admin'] }).notNull().default('private'),
   model: text('model'),
   provider: text('provider'),
   inputTokens: integer('input_tokens').notNull().default(0),

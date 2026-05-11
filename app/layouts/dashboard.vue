@@ -1,25 +1,28 @@
 <script setup lang="ts">
-import type { DropdownMenuItem } from '@nuxt/ui'
+import type { DropdownMenuItem, NavigationMenuItem } from '@nuxt/ui'
 
 const { loggedIn, user, clear } = useUserSession()
+const colorMode = useColorMode()
 const { renameChat, deleteChat } = useChatActions()
 
 const sidebarOpen = ref(false)
 
-const { data: chats, refresh: refreshChats } = await useFetch<ChatListItem[]>('/api/chats', {
+await useFetch<ChatListItem[]>('/api/chats', {
   key: 'chats',
   default: () => []
 })
+
+const { chatList, refresh: refreshChats } = useChatsData()
 
 watch(loggedIn, () => {
   refreshChats()
   sidebarOpen.value = false
 })
 
-const uiChats = computed(() => chats.value?.map(chat => ({
+const uiChats = computed(() => chatList.value?.map(chat => ({
   id: chat.id,
   label: chat.title || 'Untitled',
-  to: `/chat/${chat.id}`,
+  to: `/dashboard/chat/${chat.id}`,
   icon: 'i-lucide-message-circle',
   createdAt: chat.createdAt
 })))
@@ -53,6 +56,18 @@ function getChatActions(item: { id: string, label: string }): DropdownMenuItem[]
   ]]
 }
 
+const adminNavItems = computed<NavigationMenuItem[][]>(() => {
+  if (user.value?.role !== 'admin') return []
+  return [[{
+    label: 'Admin',
+    type: 'label' as const
+  }, {
+    label: 'Analytics',
+    icon: 'i-lucide-chart-bar',
+    to: '/admin/analytics'
+  }]]
+})
+
 const userMenuItems = computed<DropdownMenuItem[][]>(() => {
   const groups: DropdownMenuItem[][] = [
     [{
@@ -62,9 +77,24 @@ const userMenuItems = computed<DropdownMenuItem[][]>(() => {
     }]
   ]
 
-  if (user.value?.role === 'admin') {
-    groups.push([{ label: 'Admin dashboard', icon: 'i-lucide-shield', to: '/admin' }])
-  }
+  groups.push([{
+    label: 'Appearance',
+    icon: 'i-lucide-sun-moon',
+    children: [[
+      {
+        label: 'Light',
+        icon: 'i-lucide-sun',
+        onSelect: () => { colorMode.preference = 'light' },
+        checked: colorMode.value === 'light'
+      },
+      {
+        label: 'Dark',
+        icon: 'i-lucide-moon',
+        onSelect: () => { colorMode.preference = 'dark' },
+        checked: colorMode.value === 'dark'
+      }
+    ]]
+  }])
 
   groups.push([{
     label: 'Sign out',
@@ -79,12 +109,12 @@ const userMenuItems = computed<DropdownMenuItem[][]>(() => {
 })
 
 defineShortcuts({
-  meta_o: () => navigateTo('/chat')
+  meta_o: () => navigateTo('/dashboard/chat')
 })
 </script>
 
 <template>
-  <UDashboardGroup unit="rem">
+  <UDashboardGroup unit="rem" class="[--ui-header-height:--spacing(11)]">
     <UDashboardSidebar
       v-if="loggedIn"
       id="chat-sidebar"
@@ -93,7 +123,7 @@ defineShortcuts({
       collapsible
       resizable
       :menu="{ inset: true }"
-      class="border-e-0 py-4 dark:[--ui-bg-elevated:var(--ui-color-neutral-900)]"
+      class="border-e-0 pt-2 sm:pt-3 pb-4 dark:[--ui-bg-elevated:var(--ui-color-neutral-900)]"
     >
       <template #header="{ collapsed }">
         <NuxtLink v-if="!collapsed" to="/" class="flex items-center gap-1.5">
@@ -103,29 +133,23 @@ defineShortcuts({
       </template>
 
       <template #default="{ collapsed }">
+        <UButton
+          color="neutral"
+          variant="subtle"
+          size="sm"
+          label="New Chat"
+          block
+          to="/dashboard/chat"
+          aria-label="New chat"
+          class="active:translate-y-px transition-transform mt-4"
+        />
+
         <UNavigationMenu
-          :items="[{
-            label: 'New chat',
-            to: '/chat',
-            kbds: ['meta', 'o'],
-            icon: 'i-custom-new-chat'
-          }]"
-          :collapsed="collapsed"
+          v-if="!collapsed && adminNavItems.length"
+          :items="adminNavItems"
           orientation="vertical"
-        >
-          <template #item-trailing="{ item }">
-            <div v-if="item.kbds?.length" class="flex items-center gap-px opacity-0 group-hover:opacity-100 transition-opacity">
-              <UKbd
-                v-for="kbd in item.kbds"
-                :key="kbd"
-                :value="kbd"
-                size="sm"
-                variant="soft"
-                class="bg-accented/50"
-              />
-            </div>
-          </template>
-        </UNavigationMenu>
+          class="mt-2"
+        />
 
         <UNavigationMenu
           v-if="!collapsed"

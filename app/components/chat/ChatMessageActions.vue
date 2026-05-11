@@ -4,6 +4,7 @@ import type { UIMessage } from 'ai'
 const props = defineProps<{
   message: UIMessage
   vote: boolean | null
+  streaming?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -21,7 +22,7 @@ const textContent = computed(() => {
 </script>
 
 <template>
-  <div class="flex items-center gap-0.5">
+  <div v-if="!streaming" class="flex items-center gap-0.5">
     <UTooltip :text="copied ? 'Copied' : 'Copy'">
       <UButton
         :icon="copied ? 'i-lucide-check' : 'i-lucide-copy'"

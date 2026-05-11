@@ -4,6 +4,7 @@ export function useChatActions() {
   const route = useRoute()
   const toast = useToast()
   const overlay = useOverlay()
+  const chats = useChatsData()
 
   const renameModal = overlay.create(LazyChatModalRename)
   const deleteModal = overlay.create(LazyChatModalConfirm, {
@@ -25,19 +26,7 @@ export function useChatActions() {
         method: 'PATCH',
         body: { title: result }
       })
-
-      const chatsCache = useNuxtData<ChatListItem[]>('chats')
-      if (chatsCache.data.value) {
-        chatsCache.data.value = chatsCache.data.value.map(c =>
-          c.id === id ? { ...c, title: result } : c
-        )
-      }
-
-      const chatCache = useNuxtData<{ title: string | null }>(`chat-${id}`)
-      if (chatCache.data.value) {
-        chatCache.data.value = { ...chatCache.data.value, title: result }
-      }
-
+      chats.patchTitle(id, result)
       return result
     } catch {
       toast.add({
@@ -45,7 +34,6 @@ export function useChatActions() {
         icon: 'i-lucide-alert-circle',
         color: 'error'
       })
-
       return null
     }
   }
@@ -58,22 +46,15 @@ export function useChatActions() {
 
     try {
       await $fetch(`/api/chats/${id}`, { method: 'DELETE' })
-
       toast.add({
         title: 'Chat deleted',
         description: 'Your chat has been deleted',
         icon: 'i-lucide-trash'
       })
-
-      const chatsCache = useNuxtData<ChatListItem[]>('chats')
-      if (chatsCache.data.value) {
-        chatsCache.data.value = chatsCache.data.value.filter(c => c.id !== id)
-      }
-
+      chats.removeChat(id)
       if (route.params.id === id) {
-        navigateTo('/chat')
+        navigateTo('/dashboard/chat')
       }
-
       return true
     } catch {
       toast.add({
@@ -81,13 +62,9 @@ export function useChatActions() {
         icon: 'i-lucide-alert-circle',
         color: 'error'
       })
-
       return false
     }
   }
 
-  return {
-    renameChat,
-    deleteChat
-  }
+  return { renameChat, deleteChat }
 }

@@ -100,6 +100,7 @@ OUTPUT: Returns list of modules with name, description, category, stats. Use get
         name: module.name,
         description: module.description,
         npm: module.npm,
+        icon: module.icon,
         repo: module.repo,
         github: module.github,
         website: module.website,

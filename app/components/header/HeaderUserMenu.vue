@@ -3,6 +3,7 @@ import type { DropdownMenuItem } from '@nuxt/ui'
 
 const { user, clear } = useUserSession()
 const route = useRoute()
+const colorMode = useColorMode()
 
 async function logout() {
   await clear()
@@ -24,18 +25,30 @@ const items = computed<DropdownMenuItem[][]>(() => {
   const accountItems: DropdownMenuItem[] = []
   if (user.value?.role === 'admin') {
     accountItems.push({
-      label: 'Admin dashboard',
-      icon: 'i-lucide-shield',
-      to: '/admin'
+      label: 'Analytics',
+      icon: 'i-lucide-chart-bar',
+      to: '/admin/analytics'
     })
   }
   if (accountItems.length) groups.push(accountItems)
 
   groups.push([{
-    label: 'GitHub profile',
-    icon: 'i-simple-icons-github',
-    to: user.value?.username ? `https://github.com/${user.value.username}` : 'https://github.com',
-    target: '_blank'
+    label: 'Appearance',
+    icon: 'i-lucide-sun-moon',
+    children: [[
+      {
+        label: 'Light',
+        icon: 'i-lucide-sun',
+        onSelect: () => { colorMode.preference = 'light' },
+        checked: colorMode.value === 'light'
+      },
+      {
+        label: 'Dark',
+        icon: 'i-lucide-moon',
+        onSelect: () => { colorMode.preference = 'dark' },
+        checked: colorMode.value === 'dark'
+      }
+    ]]
   }])
 
   groups.push([{
@@ -47,7 +60,7 @@ const items = computed<DropdownMenuItem[][]>(() => {
   return groups
 })
 
-const loginHref = computed(() => `/login?redirect=${encodeURIComponent(route.fullPath)}`)
+const loginHref = computed(() => `/api/auth/github?redirect=${encodeURIComponent(route.fullPath)}`)
 </script>
 
 <template>
@@ -55,11 +68,11 @@ const loginHref = computed(() => `/login?redirect=${encodeURIComponent(route.ful
     v-if="!user"
     :to="loginHref"
     label="Sign in"
-    color="neutral"
-    variant="ghost"
-    size="sm"
+    aria-label="Sign in with GitHub"
+    external
   />
-  <UDropdownMenu v-else :items="items" :ui="{ content: 'w-56' }">
+
+  <UDropdownMenu v-else :items="items" :ui="{ content: 'w-56' }" :content="{ align: 'end' }">
     <UButton
       :avatar="{ src: user.avatar, alt: user.username }"
       color="neutral"

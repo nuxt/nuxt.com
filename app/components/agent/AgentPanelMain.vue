@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { UIMessage } from 'ai'
 import type { Chat } from '@ai-sdk/vue'
+import type { FaqCategory } from '~/types/agent'
 
 defineProps<{
   chat: Chat<UIMessage>
@@ -40,6 +41,7 @@ const votes = defineModel<Map<string, boolean>>('votes', { required: true })
             v-if="message.role === 'assistant'"
             :message="message"
             :vote="votes.get(message.id) ?? null"
+            :streaming="chat.status === 'streaming' && message.id === chat.messages.at(-1)?.id"
             @vote="(msg, isUpvoted) => $emit('vote', msg, isUpvoted)"
           />
         </template>

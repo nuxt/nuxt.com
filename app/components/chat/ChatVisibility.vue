@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { useClipboard } from '@vueuse/core'
 
+type Visibility = 'public' | 'private' | 'admin'
+
 const props = defineProps<{
   chatId: string
-  visibility: 'public' | 'private'
+  visibility: Visibility
 }>()
 
 const emit = defineEmits<{
-  'update:visibility': [visibility: 'public' | 'private']
+  'update:visibility': [visibility: Visibility]
 }>()
 
 const toast = useToast()
@@ -16,12 +18,14 @@ const clipboard = useClipboard()
 const open = ref(false)
 const loading = ref(false)
 const copied = ref(false)
+const advancedOpen = ref(false)
 
 const isShared = computed(() => props.visibility === 'public')
+const isAdminShared = computed(() => props.visibility === 'admin')
 
 const shareUrl = computed(() => {
   if (typeof window === 'undefined') return ''
-  return `${window.location.origin}/chat/${props.chatId}`
+  return `${window.location.origin}/dashboard/chat/${props.chatId}`
 })
 
 const options = [
@@ -39,7 +43,7 @@ const options = [
   }
 ]
 
-async function updateVisibility(value: 'public' | 'private') {
+async function updateVisibility(value: Visibility) {
   if (value === props.visibility) return
 
   loading.value = true
@@ -63,6 +67,10 @@ async function updateVisibility(value: 'public' | 'private') {
   }
 }
 
+function toggleAdminShare() {
+  updateVisibility(isAdminShared.value ? 'private' : 'admin')
+}
+
 async function copyLink() {
   await clipboard.copy(shareUrl.value)
   copied.value = true
@@ -70,13 +78,24 @@ async function copyLink() {
     copied.value = false
   }, 2000)
 }
+
+const buttonIcon = computed(() => {
+  if (isShared.value) return 'i-lucide-globe'
+  if (isAdminShared.value) return 'i-lucide-shield'
+  return 'i-lucide-share'
+})
+const buttonLabel = computed(() => {
+  if (isShared.value) return 'Shared'
+  if (isAdminShared.value) return 'Shared with admins'
+  return 'Share'
+})
 </script>
 
 <template>
   <UPopover v-model:open="open" :ui="{ content: 'w-80' }">
     <UButton
-      :icon="isShared ? 'i-lucide-globe' : 'i-lucide-share'"
-      :label="isShared ? 'Shared' : 'Share'"
+      :icon="buttonIcon"
+      :label="buttonLabel"
       color="neutral"
       variant="ghost"
       size="sm"
@@ -137,6 +156,54 @@ async function copyLink() {
             />
           </div>
         </div>
+
+        <UCollapsible v-model:open="advancedOpen" class="pt-2 border-t border-default">
+          <UButton
+            color="neutral"
+            variant="ghost"
+            size="sm"
+            block
+            :ui="{ base: 'justify-start gap-1.5' }"
+          >
+            <UIcon
+              name="i-lucide-chevron-right"
+              class="size-3.5 transition-transform"
+              :class="{ 'rotate-90': advancedOpen }"
+            />
+            <span class="flex-1 text-left">More options</span>
+            <span
+              v-if="isAdminShared"
+              class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-primary/15 text-primary text-[10px] font-medium leading-none"
+            >
+              <span class="size-1.5 rounded-full bg-primary" />
+              Sharing
+            </span>
+          </UButton>
+
+          <template #content>
+            <label
+              class="flex items-start gap-3 px-2 py-2 mt-1 rounded-md text-left cursor-pointer hover:bg-elevated/60 transition-colors"
+              :class="{ 'opacity-50 pointer-events-none': loading }"
+            >
+              <UIcon name="i-lucide-shield" class="size-4 mt-0.5 shrink-0 text-muted" />
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-highlighted">
+                  Share with Nuxt admins
+                </p>
+                <p class="text-xs text-muted mt-0.5">
+                  For debugging — admins can open this chat from their dashboard
+                </p>
+              </div>
+              <USwitch
+                :model-value="isAdminShared"
+                size="sm"
+                :disabled="loading"
+                class="mt-0.5 shrink-0"
+                @update:model-value="toggleAdminShare"
+              />
+            </label>
+          </template>
+        </UCollapsible>
       </div>
     </template>
   </UPopover>

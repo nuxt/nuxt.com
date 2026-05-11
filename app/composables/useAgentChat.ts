@@ -4,22 +4,16 @@ import type { UIMessage } from 'ai'
 
 interface UseAgentChatOptions {
   /**
-   * Required: the chat id this Chat instance is scoped to. Switching chats is
-   * done by remounting the consumer component with a different `chatId` (via
-   * `:key`), NOT by mutating the same Chat instance — `AbstractChat` carries
-   * a lot of internal state (status, error, jobExecutor queue, activeResponse)
-   * that bleeds across conversations otherwise.
+   * Switching chats requires remounting the consumer with a different `chatId`
+   * (via `:key`), NOT mutating the same Chat instance — `AbstractChat` carries
+   * internal state (status, error, jobExecutor queue, activeResponse) that
+   * bleeds across conversations otherwise.
    */
   chatId: string
-  /** Initial messages, e.g. loaded from `/api/chats/[id]`. */
   initialMessages?: UIMessage[]
-  /** Initial votes (messageId → isUpvoted). */
   initialVotes?: Map<string, boolean>
-  /** Telemetry source for `Nuxt Agent Message Sent` events. */
   source: string
-  /** Whether to forward the current page as context (`x-page-path` header). */
   withPageContext?: 'always' | 'when-enabled'
-  /** Called once the streaming response completes. */
   onFinish?: () => void
 }
 
@@ -42,6 +36,7 @@ export const AGENT_CHAT_THEME = {
 
 export function useAgentChat(options: UseAgentChatOptions) {
   const agent = useNuxtAgent()
+  const chats = useChatsData()
   const { track } = useAnalytics()
   const toast = useToast()
 
@@ -71,7 +66,9 @@ export function useAgentChat(options: UseAgentChatOptions) {
     },
     onData: async (part) => {
       if (part.type === 'data-chat-title') {
-        await refreshNuxtData('chats')
+        await chats.refresh()
+        const updated = chats.chatList.value?.find(c => c.id === options.chatId)
+        if (updated?.title) chats.patchTitle(options.chatId, updated.title)
       }
     }
   })
@@ -112,7 +109,7 @@ export function useAgentChat(options: UseAgentChatOptions) {
       })
       agent.onMessageSent()
     } catch {
-      // Surfaced via chat.error
+      // surfaced via chat.error
     }
   }
 

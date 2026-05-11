@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { DropdownMenuItem } from '@nuxt/ui'
 
-const { chatList, refreshChatList, isOpen } = useNuxtAgent()
-const { renameChat, deleteChat } = useChatActions()
+const { isOpen } = useNuxtAgent()
+const { chatList } = useChatsData()
 
 const panel = inject<{
   chatId: Ref<string>
@@ -10,61 +10,45 @@ const panel = inject<{
   setActiveChat: (id: string) => void
 }>('agent-panel')
 
-const label = computed(() => {
-  const active = chatList.value?.find(c => c.id === panel?.chatId.value)
-  return active?.title || 'New chat'
-})
+const activeChat = computed(() => chatList.value?.find(c => c.id === panel?.chatId.value))
+const hasChatHistory = computed(() => !!chatList.value?.length)
 
-async function handleRename(chat: ChatListItem) {
-  if (await renameChat(chat.id, chat.title || '')) refreshChatList()
-}
-
-async function handleDelete(chat: ChatListItem) {
-  if (!await deleteChat(chat.id)) return
-  // If the deleted chat was the active one, drop into a fresh chat.
-  if (chat.id === panel?.chatId.value) panel?.startNewChat()
-  refreshChatList()
-}
-
-const items = computed<DropdownMenuItem[][]>(() => {
-  const list = chatList.value ?? []
-  const newAction: DropdownMenuItem = {
-    label: 'New chat',
-    icon: 'i-custom-new-chat',
-    kbds: ['meta', 'O'],
-    onSelect: () => panel?.startNewChat()
-  }
-  if (!list.length) return [[newAction]]
-  return [
-    [newAction],
-    list.map<DropdownMenuItem>(chat => ({
-      label: chat.title || 'New chat',
-      icon: chat.id === panel?.chatId.value ? 'i-lucide-check' : 'i-lucide-message-circle',
-      children: [[
-        {
-          label: 'Continue chat',
-          icon: 'i-lucide-arrow-right',
-          onSelect: () => panel?.setActiveChat(chat.id)
-        },
-        {
+const items = computed<DropdownMenuItem[][]>(() => [
+  (chatList.value ?? []).map<DropdownMenuItem>(chat => ({
+    label: chat.title || 'Untitled',
+    icon: chat.id === panel?.chatId.value ? 'i-lucide-check' : undefined,
+    onSelect: () => panel?.setActiveChat(chat.id),
+    suffix: chat.id === panel?.chatId.value
+      ? undefined
+      : {
           label: 'Open in full screen',
           icon: 'i-lucide-maximize-2',
-          to: `/chat/${chat.id}`,
+          to: `/dashboard/chat/${chat.id}`,
           onSelect: () => (isOpen.value = false)
         }
-      ], [
-        { label: 'Rename', icon: 'i-lucide-pencil', onSelect: () => handleRename(chat) },
-        { label: 'Delete', icon: 'i-lucide-trash', color: 'error' as const, onSelect: () => handleDelete(chat) }
-      ]]
-    }))
-  ]
-})
+  }))
+])
 </script>
 
 <template>
-  <UDropdownMenu :items="items" :ui="{ content: 'w-56' }">
+  <span
+    v-if="!hasChatHistory"
+    class="inline-flex items-center gap-2 min-w-0"
+  >
+    <span class="truncate">Agent</span>
+    <UBadge variant="subtle" size="sm" class="shrink-0">
+      Beta
+    </UBadge>
+  </span>
+
+  <UDropdownMenu
+    v-else
+    :items="items"
+    :ui="{ content: 'w-56' }"
+    :content="{ align: 'start' }"
+  >
     <UButton
-      :label="label"
+      :label="activeChat?.title || 'New chat'"
       trailing-icon="i-lucide-chevrons-up-down"
       color="neutral"
       variant="ghost"

@@ -30,8 +30,6 @@ export default defineOAuthGitHubEventHandler({
       await db.update(schema.chats).set({ userId: user!.id })
         .where(eq(schema.chats.userId, session.id))
 
-      // Refresh role on each login so changes to NUXT_ADMIN_GITHUB_LOGINS or
-      // the core team take effect on next sign-in.
       if (user.role !== role) {
         [user] = await db.update(schema.users).set({ role })
           .where(eq(schema.users.id, user.id))

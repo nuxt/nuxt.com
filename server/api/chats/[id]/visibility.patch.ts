@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
   }).parse)
 
   const { visibility } = await readValidatedBody(event, z.object({
-    visibility: z.enum(['public', 'private'])
+    visibility: z.enum(['public', 'private', 'admin'])
   }).parse)
 
   const [updated] = await db.update(schema.chats)

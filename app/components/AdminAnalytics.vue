@@ -4,35 +4,9 @@ import type { TableColumn, DropdownMenuItem } from '@nuxt/ui'
 import { h, resolveComponent } from 'vue'
 
 const UButton = resolveComponent('UButton')
-const { user, clear } = useUserSession()
-
-async function logout() {
-  await clear()
-  navigateTo('/login')
-}
-
 const showMcpInstall = ref(false)
 
-const items = computed<DropdownMenuItem[][]>(() => [
-  [
-    {
-      label: user.value?.username,
-      avatar: {
-        src: user.value?.avatar,
-        alt: user.value?.username
-      },
-      type: 'label'
-    }
-  ],
-  [
-    {
-      label: 'Install Admin MCP',
-      icon: 'i-lucide-plug',
-      onClick: () => {
-        showMcpInstall.value = true
-      }
-    }
-  ],
+const exportItems = computed<DropdownMenuItem[][]>(() => [
   [
     {
       label: 'Export Feedback',
@@ -43,13 +17,6 @@ const items = computed<DropdownMenuItem[][]>(() => [
       label: 'Export Analytics',
       icon: 'i-lucide-bar-chart',
       onClick: handleExportPageAnalytics
-    }
-  ],
-  [
-    {
-      label: 'Logout',
-      icon: 'i-lucide-log-out',
-      onClick: logout
     }
   ]
 ])
@@ -324,35 +291,41 @@ watch(currentPage, () => {
 </script>
 
 <template>
-  <div class="min-h-screen">
-    <div class="absolute top-2 right-2">
-      <UDropdownMenu :items="items">
-        <UButton
-          :avatar="{
-            src: user?.avatar,
-            alt: user?.username
-          }"
-          color="neutral"
-          trailing-icon="i-lucide-menu"
-          variant="ghost"
-          :label="user?.username"
-        />
-      </UDropdownMenu>
-    </div>
-    <UContainer class="py-12">
-      <div class="text-center mb-8 space-y-2">
-        <UIcon name="i-lucide-bar-chart" class="size-8 text-primary mx-auto" />
-        <h1 class="text-3xl font-bold">
-          Feedback Analytics
-        </h1>
-        <p class="text-muted text-lg max-w-2xl mx-auto">
-          Monitor user feedback and documentation satisfaction across all pages
-        </p>
-      </div>
+  <UDashboardPanel id="analytics" class="min-h-0" :ui="{ body: 'p-0 sm:p-0' }">
+    <template #header>
+      <UDashboardNavbar class="bg-default sm:px-4">
+        <template #left>
+          <h1 class="font-semibold text-highlighted truncate">
+            Analytics
+          </h1>
+        </template>
+        <template #right>
+          <FeedbackDatePicker />
+          <UButton
+            color="neutral"
+            variant="ghost"
+            icon="i-lucide-plug"
+            label="Install MCP"
+            size="sm"
+            class="hidden sm:flex"
+            @click="showMcpInstall = true"
+          />
+          <UDropdownMenu :items="exportItems" :content="{ align: 'end' }">
+            <UButton
+              color="neutral"
+              variant="ghost"
+              icon="i-lucide-download"
+              size="sm"
+              aria-label="Export"
+            />
+          </UDropdownMenu>
+        </template>
+      </UDashboardNavbar>
+    </template>
 
-      <UCard class="max-w-5xl mx-auto">
-        <FeedbackDatePicker />
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <template #body>
+      <div class="flex flex-col gap-4 p-4 overflow-y-auto">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <FeedbackStatCard
             icon="i-lucide-message-circle"
             :value="globalStats.total"
@@ -406,7 +379,7 @@ watch(currentPage, () => {
 
         <div class="border-t border-default pt-6">
           <div class="flex sm:items-center justify-between flex-col sm:flex-row mb-4 gap-4">
-            <h2 class="text-xl font-semibold">
+            <h2 class="text-base font-semibold text-highlighted">
               Feedback by Page
             </h2>
             <div class="flex items-center gap-2">
@@ -419,7 +392,7 @@ watch(currentPage, () => {
               <UTooltip text="Reset filters" :content="{ side: 'top' }">
                 <UButton
                   color="neutral"
-                  variant="outline"
+                  variant="ghost"
                   icon="i-lucide-filter-x"
                   aria-label="Reset filters"
                   @click="resetFilters"
@@ -473,133 +446,133 @@ watch(currentPage, () => {
             />
           </div>
         </div>
-      </UCard>
-    </UContainer>
+      </div>
+    </template>
+  </UDashboardPanel>
 
-    <AdminMcpInstall v-model:open="showMcpInstall" />
+  <AdminMcpInstall v-model:open="showMcpInstall" />
 
-    <UModal v-model:open="showFeedbackModal" :ui="{ content: 'max-w-3xl max-sm:max-h-[85vh] overflow-y-auto' }">
-      <template #content>
-        <UCard v-if="selectedPage">
-          <template #header>
-            <UButton
-              size="sm"
-              variant="ghost"
-              color="neutral"
-              icon="i-lucide-x"
-              class="absolute top-2 right-2"
-              @click="showFeedbackModal = false"
-            />
-            <div>
-              <h3 class="font-semibold text-lg sm:text-xl mb-2">
-                {{ selectedPage.lastFeedback.title }}
-              </h3>
-              <div class="flex items-center gap-1">
-                <ULink :to="`https://nuxt.com${selectedPage.path}`" target="_blank">
-                  <code class="text-xs sm:text-sm bg-muted px-2 py-1 rounded">{{ selectedPage.path }}</code>
-                </ULink>
-                <UButton
-                  size="sm"
-                  variant="ghost"
-                  color="neutral"
-                  icon="i-lucide-external-link"
-                  :to="`https://nuxt.com${selectedPage.path}`"
-                  target="_blank"
-                />
-                <UButton
-                  v-if="selectedPage.lastFeedback.stem"
-                  size="sm"
-                  variant="ghost"
-                  color="neutral"
-                  :to="`https://github.com/nuxt/nuxt/edit/4.x/${selectedPage.lastFeedback.stem.replace(/docs\/\d\.x/, 'docs')}.md`"
-                  target="_blank"
-                  icon="i-simple-icons-github"
-                />
-              </div>
+  <UModal v-model:open="showFeedbackModal" :ui="{ content: 'max-w-3xl max-sm:max-h-[85vh] overflow-y-auto' }">
+    <template #content>
+      <UCard v-if="selectedPage">
+        <template #header>
+          <UButton
+            size="sm"
+            variant="ghost"
+            color="neutral"
+            icon="i-lucide-x"
+            class="absolute top-2 right-2"
+            @click="showFeedbackModal = false"
+          />
+          <div>
+            <h3 class="font-semibold text-lg sm:text-xl mb-2">
+              {{ selectedPage.lastFeedback.title }}
+            </h3>
+            <div class="flex items-center gap-1">
+              <ULink :to="`https://nuxt.com${selectedPage.path}`" target="_blank">
+                <code class="text-xs sm:text-sm bg-muted px-2 py-1 rounded">{{ selectedPage.path }}</code>
+              </ULink>
+              <UButton
+                size="sm"
+                variant="ghost"
+                color="neutral"
+                icon="i-lucide-external-link"
+                :to="`https://nuxt.com${selectedPage.path}`"
+                target="_blank"
+              />
+              <UButton
+                v-if="selectedPage.lastFeedback.stem"
+                size="sm"
+                variant="ghost"
+                color="neutral"
+                :to="`https://github.com/nuxt/nuxt/edit/4.x/${selectedPage.lastFeedback.stem.replace(/docs\/\d\.x/, 'docs')}.md`"
+                target="_blank"
+                icon="i-simple-icons-github"
+              />
             </div>
-          </template>
-
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mb-4 sm:mb-6">
-            <FeedbackStatCard
-              icon="i-lucide-target"
-              icon-color="text-primary"
-              :value="`${selectedPage.averageScore}/4`"
-              label="Average Score"
-              :popover-stats="{
-                percentage: `${Math.round(selectedPage.averageScore / 4 * 100)}% satisfaction`,
-                trend: `${selectedPage.averageScore >= 3.5 ? '🎯 Excellent' : selectedPage.averageScore >= 3.0 ? '👍 Good' : '⚠️ Poor'}`,
-                details: `Based on ${selectedPage.total} ${selectedPage.total === 1 ? 'response' : 'responses'}`
-              }"
-            />
-
-            <FeedbackStatCard
-              icon="i-lucide-message-circle"
-              icon-color="text-muted"
-              :value="selectedPage.total"
-              label="Responses"
-              :popover-stats="{
-                trend: `${selectedPage.total === 1 ? 'Single feedback' : 'Multiple feedbacks'}`,
-                details: 'Total number of user feedback submissions for this page'
-              }"
-            />
-
-            <FeedbackStatCard
-              icon="i-lucide-thumbs-up"
-              icon-color="text-success"
-              :value="selectedPage.positive"
-              label="Positive"
-              :popover-stats="{
-                percentage: `${selectedPage.positivePercentage}% of responses`,
-                trend: `${selectedPage.positivePercentage >= 70 ? '📈 Excellent' : selectedPage.positivePercentage >= 50 ? '✅ Good' : '📉 Poor'}`,
-                details: 'Users found this page helpful'
-              }"
-            />
-
-            <FeedbackStatCard
-              icon="i-lucide-thumbs-down"
-              icon-color="text-error"
-              :value="selectedPage.negative"
-              label="Negative"
-              :popover-stats="{
-                percentage: `${100 - selectedPage.positivePercentage}% of responses`,
-                trend: `${selectedPage.negative <= 1 ? '🟢 Low' : selectedPage.negative <= 3 ? '🟡 Moderate' : '🔴 High'}`,
-                details: 'Users found issues with this page'
-              }"
-            />
           </div>
+        </template>
 
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mb-4 sm:mb-6">
+          <FeedbackStatCard
+            icon="i-lucide-target"
+            icon-color="text-primary"
+            :value="`${selectedPage.averageScore}/4`"
+            label="Average Score"
+            :popover-stats="{
+              percentage: `${Math.round(selectedPage.averageScore / 4 * 100)}% satisfaction`,
+              trend: `${selectedPage.averageScore >= 3.5 ? '🎯 Excellent' : selectedPage.averageScore >= 3.0 ? '👍 Good' : '⚠️ Poor'}`,
+              details: `Based on ${selectedPage.total} ${selectedPage.total === 1 ? 'response' : 'responses'}`
+            }"
+          />
+
+          <FeedbackStatCard
+            icon="i-lucide-message-circle"
+            icon-color="text-muted"
+            :value="selectedPage.total"
+            label="Responses"
+            :popover-stats="{
+              trend: `${selectedPage.total === 1 ? 'Single feedback' : 'Multiple feedbacks'}`,
+              details: 'Total number of user feedback submissions for this page'
+            }"
+          />
+
+          <FeedbackStatCard
+            icon="i-lucide-thumbs-up"
+            icon-color="text-success"
+            :value="selectedPage.positive"
+            label="Positive"
+            :popover-stats="{
+              percentage: `${selectedPage.positivePercentage}% of responses`,
+              trend: `${selectedPage.positivePercentage >= 70 ? '📈 Excellent' : selectedPage.positivePercentage >= 50 ? '✅ Good' : '📉 Poor'}`,
+              details: 'Users found this page helpful'
+            }"
+          />
+
+          <FeedbackStatCard
+            icon="i-lucide-thumbs-down"
+            icon-color="text-error"
+            :value="selectedPage.negative"
+            label="Negative"
+            :popover-stats="{
+              percentage: `${100 - selectedPage.positivePercentage}% of responses`,
+              trend: `${selectedPage.negative <= 1 ? '🟢 Low' : selectedPage.negative <= 3 ? '🟡 Moderate' : '🔴 High'}`,
+              details: 'Users found issues with this page'
+            }"
+          />
+        </div>
+
+        <div class="space-y-3 sm:space-y-4">
+          <h4 class="text-base sm:text-lg font-semibold mb-3 sm:mb-4 flex items-center gap-2">
+            <UIcon name="i-lucide-message-square" class="size-4 sm:size-5" />
+            Individual Feedback
+          </h4>
           <div class="space-y-3 sm:space-y-4">
-            <h4 class="text-base sm:text-lg font-semibold mb-3 sm:mb-4 flex items-center gap-2">
-              <UIcon name="i-lucide-message-square" class="size-4 sm:size-5" />
-              Individual Feedback
-            </h4>
-            <div class="space-y-3 sm:space-y-4">
-              <div ref="feedbackContainer" class="space-y-2 sm:space-y-3 max-h-[300px] sm:max-h-[400px] overflow-y-auto">
-                <FeedbackItem
-                  v-for="(feedback, index) in paginatedFeedback"
-                  :key="index"
-                  :feedback="feedback"
-                  show-delete
-                  @delete="handleDeleteFeedback"
-                />
-              </div>
+            <div ref="feedbackContainer" class="space-y-2 sm:space-y-3 max-h-[300px] sm:max-h-[400px] overflow-y-auto">
+              <FeedbackItem
+                v-for="(feedback, index) in paginatedFeedback"
+                :key="index"
+                :feedback="feedback"
+                show-delete
+                @delete="handleDeleteFeedback"
+              />
+            </div>
 
-              <div v-if="totalPages > 1" class="flex items-center justify-between pt-4 border-t border-default">
-                <div class="text-sm text-muted">
-                  Showing {{ (currentPage - 1) * itemsPerPage + 1 }}-{{ Math.min(currentPage * itemsPerPage, selectedPage.total) }} of {{ selectedPage.total }} feedbacks
-                </div>
-                <UPagination
-                  v-model:page="currentPage"
-                  :total="selectedPage.total"
-                  :items-per-page="itemsPerPage"
-                  :sibling-count="1"
-                  size="sm"
-                />
+            <div v-if="totalPages > 1" class="flex items-center justify-between pt-4 border-t border-default">
+              <div class="text-sm text-muted">
+                Showing {{ (currentPage - 1) * itemsPerPage + 1 }}-{{ Math.min(currentPage * itemsPerPage, selectedPage.total) }} of {{ selectedPage.total }} feedbacks
               </div>
+              <UPagination
+                v-model:page="currentPage"
+                :total="selectedPage.total"
+                :items-per-page="itemsPerPage"
+                :sibling-count="1"
+                size="sm"
+              />
             </div>
           </div>
-        </UCard>
-      </template>
-    </UModal>
-  </div>
+        </div>
+      </UCard>
+    </template>
+  </UModal>
 </template>

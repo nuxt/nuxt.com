@@ -1,17 +1,14 @@
 <script setup lang="ts">
 definePageMeta({
-  layout: 'admin',
-  middleware: 'admin'
-})
-
-useSeoMeta({
-  title: 'Feedback Analytics Admin',
-  description: 'Feedback Analytics Admin',
-  ogTitle: 'Feedback Analytics Admin',
-  ogDescription: 'Feedback Analytics Admin'
+  layout: false,
+  middleware: [
+    function () {
+      return navigateTo('/admin/analytics', { redirectCode: 301 })
+    }
+  ]
 })
 </script>
 
 <template>
-  <AdminDashboard />
+  <div />
 </template>

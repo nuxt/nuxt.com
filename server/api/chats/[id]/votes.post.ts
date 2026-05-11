@@ -1,3 +1,4 @@
+import { createError } from 'evlog'
 import { and, eq } from 'drizzle-orm'
 import { z } from 'zod'
 
@@ -21,7 +22,7 @@ export default defineEventHandler(async (event) => {
   })
 
   if (!chat) {
-    throw createError({ statusCode: 404, statusMessage: 'Chat not found' })
+    throw createError({ message: 'Chat not found', status: 404 })
   }
 
   const message = await db.query.messages.findFirst({
@@ -32,11 +33,17 @@ export default defineEventHandler(async (event) => {
   })
 
   if (!message) {
-    throw createError({ statusCode: 404, statusMessage: 'Message not found' })
+    throw createError({ message: 'Message not found', status: 404 })
   }
   if (message.role !== 'assistant') {
-    throw createError({ statusCode: 400, statusMessage: 'Can only vote on assistant messages' })
+    throw createError({ message: 'Cannot vote on this message', status: 400, why: 'Votes are only allowed on assistant messages.' })
   }
+
+  const log = useLogger(event)
+  log.set({
+    user: { id: session.user?.id || session.id },
+    vote: { chatId: id, messageId, isUpvoted: isUpvoted ?? null }
+  })
 
   if (isUpvoted === undefined) {
     await db.delete(schema.votes).where(and(

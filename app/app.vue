@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const colorMode = useColorMode()
 const route = useRoute()
-const isChatRoute = computed(() => route.path === '/chat' || route.path.startsWith('/chat/'))
+const isChatRoute = computed(() => route.path.startsWith('/dashboard/chat') || route.path.startsWith('/admin/analytics'))
 
 const { version } = useDocsVersion()
 const { searchGroups, searchLinks, searchTerm, searchFuse } = useNavigation()

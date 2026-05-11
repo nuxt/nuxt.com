@@ -18,6 +18,9 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: 'Chat not found' })
   }
 
+  const log = useLogger(event)
+  log.set({ user: { id: session.user?.id || session.id }, chat: { id } })
+
   return await db.delete(schema.chats)
     .where(and(
       eq(schema.chats.id, id),

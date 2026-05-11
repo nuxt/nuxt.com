@@ -1,7 +1,7 @@
 export interface ChatListItem {
   id: string
   title: string | null
-  visibility: 'public' | 'private'
+  visibility: 'public' | 'private' | 'admin'
   createdAt: string
 }
 
@@ -21,7 +21,7 @@ export interface ChatMessageRow {
 export interface ChatDetail {
   id: string
   title: string | null
-  visibility: 'public' | 'private'
+  visibility: 'public' | 'private' | 'admin'
   isOwner: boolean
   createdAt: string
   messages: ChatMessageRow[]
