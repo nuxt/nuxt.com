@@ -5,7 +5,7 @@ export default defineNuxtRouteMiddleware((to) => {
     return navigateTo(`/api/auth/github?redirect=${encodeURIComponent(to.fullPath)}`, { external: true })
   }
 
-  if (user.value?.role !== 'admin') {
+  if (!user.value || user.value.role !== 'admin') {
     return navigateTo('/')
   }
 })

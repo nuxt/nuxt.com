@@ -156,10 +156,7 @@ export default defineEventHandler(async (event) => {
       chatId: id,
       role: 'user',
       parts: lastMessage.parts
-    }).onConflictDoUpdate({
-      target: schema.messages.id,
-      set: { parts: lastMessage.parts }
-    })
+    }).onConflictDoNothing()
   }
 
   // Generate the title from the first user message before streaming, like the

@@ -53,8 +53,8 @@ const oauthHandler = defineOAuthGitHubEventHandler({
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
   if (!query.code && query.redirect) {
-    const redirect = query.redirect as string
-    if (redirect.startsWith('/')) {
+    const redirect = Array.isArray(query.redirect) ? query.redirect[0] : query.redirect as string
+    if (typeof redirect === 'string' && redirect.startsWith('/') && !redirect.startsWith('//')) {
       setCookie(event, 'oauth-redirect', redirect, {
         httpOnly: true,
         secure: process.env.NODE_ENV !== 'development',

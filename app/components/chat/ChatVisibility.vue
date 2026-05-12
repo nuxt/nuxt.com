@@ -150,6 +150,7 @@ const buttonLabel = computed(() => {
             <UButton
               :icon="copied ? 'i-lucide-check' : 'i-lucide-copy'"
               :color="copied ? 'success' : 'neutral'"
+              :aria-label="copied ? 'Link copied' : 'Copy link'"
               variant="subtle"
               size="sm"
               @click="copyLink"

@@ -1,11 +1,14 @@
-import type { UIMessage } from 'ai'
 import { z } from 'zod'
 
 export default defineEventHandler(async (event) => {
   const session = await getUserSession(event)
   const { id, message } = await readValidatedBody(event, z.object({
-    id: z.string(),
-    message: z.custom<UIMessage>()
+    id: z.uuid(),
+    message: z.object({
+      id: z.string(),
+      role: z.enum(['user', 'assistant', 'system']),
+      parts: z.array(z.object({ type: z.string() }).loose())
+    })
   }).parse)
 
   const [chat] = await db.insert(schema.chats).values({

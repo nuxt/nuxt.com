@@ -54,7 +54,6 @@ const initialMessages = computed<UIMessage[]>(() =>
 const {
   chat,
   input,
-  vote: castVote,
   onSubmit
 } = useAgentChat({
   chatId: data.value!.id,
@@ -91,7 +90,6 @@ async function vote(message: UIMessage, isUpvoted: boolean) {
     votes.value = snapshot
     toast.add({ description: 'Failed to save vote', icon: 'i-lucide-alert-circle', color: 'error' })
   }
-  castVote(message, next ?? false)
 }
 
 const site = useSiteConfig()

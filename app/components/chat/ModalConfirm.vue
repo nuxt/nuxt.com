@@ -3,6 +3,7 @@ defineProps<{
   title: string
   description: string
   color?: 'error' | 'warning' | 'info' | 'success'
+  confirmLabel?: string
 }>()
 
 const emit = defineEmits<{ close: [boolean] }>()
@@ -17,7 +18,7 @@ const emit = defineEmits<{ close: [boolean] }>()
     :dismissible="false"
   >
     <template #footer>
-      <UButton :color="color" label="Delete" @click="emit('close', true)" />
+      <UButton :color="color" :label="confirmLabel ?? 'Delete'" @click="emit('close', true)" />
       <UButton color="neutral" variant="ghost" label="Cancel" @click="emit('close', false)" />
     </template>
   </UModal>

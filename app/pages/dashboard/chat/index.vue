@@ -58,6 +58,8 @@ async function createChat(prompt: string) {
     })
     refreshChats()
     await navigateTo(`/dashboard/chat/${chat?.id}`)
+  } catch {
+    useToast().add({ description: 'Failed to create chat', icon: 'i-lucide-alert-circle', color: 'error' })
   } finally {
     loading.value = false
   }

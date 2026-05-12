@@ -48,7 +48,7 @@ const items = computed<DropdownMenuItem[][]>(() => [
     :content="{ align: 'start' }"
   >
     <UButton
-      :label="activeChat?.title || 'New chat'"
+      :label="activeChat ? (activeChat.title || 'Untitled') : 'New chat'"
       trailing-icon="i-lucide-chevrons-up-down"
       color="neutral"
       variant="ghost"
