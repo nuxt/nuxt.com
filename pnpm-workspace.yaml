@@ -1,0 +1,13 @@
+shamefullyHoist: true
+strictPeerDependencies: false
+
+allowBuilds:
+  better-sqlite3: true
+  esbuild: true
+  rolldown: true
+  sharp: true
+  "@parcel/watcher": false
+  maplibre-gl: false
+  puppeteer: false
+  unrs-resolver: false
+  vue-demi: false
