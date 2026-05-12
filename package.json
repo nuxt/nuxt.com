@@ -1,7 +1,7 @@
 {
   "name": "nuxt.com",
   "version": "0.3.11",
-  "packageManager": "pnpm@10.33.4",
+  "packageManager": "pnpm@11.1.0",
   "type": "module",
   "scripts": {
     "dev": "nuxt dev --ui-only",
@@ -69,7 +69,7 @@
     "ofetch": "^1.5.1",
     "resend": "^6.12.3",
     "scule": "^1.3.0",
-    "shaders": "^2.5.117",
+    "shaders": "^2.5.120",
     "sitemap": "^9.0.1",
     "std-env": "^4.1.0",
     "ufo": "^1.6.4",
@@ -81,7 +81,7 @@
     "@nuxt/eslint": "^1.15.2",
     "@nuxt/modules": "^0.6.0-fdc88d",
     "@nuxt/test-utils": "^4.0.3",
-    "@nuxtjs/turnstile": "^1.1.2",
+    "@nuxtjs/turnstile": "^1.1.3",
     "@playwright/test": "^1.59.1",
     "@testing-library/vue": "^8.1.0",
     "@types/semver": "^7.7.1",
@@ -97,21 +97,8 @@
     "shiki": "^4.0.2",
     "twoslash": "^0.3.8",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.5",
+    "vitest": "^4.1.6",
     "vue": "^3.5.34",
     "vue-tsc": "^3.2.8"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "better-sqlite3",
-      "esbuild",
-      "rolldown",
-      "sharp"
-    ],
-    "ignoredBuiltDependencies": [
-      "@parcel/watcher",
-      "puppeteer",
-      "vue-demi"
-    ]
   }
 }

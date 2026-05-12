@@ -257,6 +257,7 @@ export default defineEventHandler(async (event) => {
         }))).onConflictDoNothing()
       }
       await db.update(schema.chats).set({
+        updatedAt: new Date(),
         model: metadata.model ?? null,
         provider: metadata.provider ?? null,
         inputTokens: sql`${schema.chats.inputTokens} + ${metadata.inputTokens ?? 0}`,

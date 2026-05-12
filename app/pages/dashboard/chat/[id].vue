@@ -1,6 +1,16 @@
 <script setup lang="ts">
 import type { UIMessage } from 'ai'
 import { joinURL } from 'ufo'
+import { format } from 'date-fns'
+
+function messageTime(message: UIMessage): string | null {
+  const raw = (message.metadata as { createdAt?: string } | undefined)?.createdAt
+  return raw ? format(new Date(raw), 'h:mm a') : null
+}
+function messageFullTime(message: UIMessage): string | null {
+  const raw = (message.metadata as { createdAt?: string } | undefined)?.createdAt
+  return raw ? format(new Date(raw), 'MMM d, yyyy, h:mm a') : null
+}
 
 definePageMeta({
   layout: 'dashboard'
@@ -36,7 +46,8 @@ const initialMessages = computed<UIMessage[]>(() =>
   (data.value?.messages ?? []).map(m => ({
     id: m.id,
     role: m.role,
-    parts: (m.parts ?? []) as UIMessage['parts']
+    parts: (m.parts ?? []) as UIMessage['parts'],
+    metadata: { createdAt: m.createdAt }
   }))
 )
 
@@ -145,7 +156,8 @@ onMounted(() => {
           should-auto-scroll
           :messages="chat.messages"
           :status="chat.status"
-          :user="{ ui: { content: 'px-3 py-1.5 min-h-fit' } }"
+          :user="{ ui: { content: 'px-3 py-1.5 min-h-fit', container: 'gap-3 pb-5', actions: 'right-0' } }"
+          :assistant="{ ui: { actions: 'has-data-[state=open]:opacity-100' } }"
           :spacing-offset="isOwner ? 160 : 0"
           class="pt-4 pb-4 sm:pb-6"
         >
@@ -163,8 +175,18 @@ onMounted(() => {
               :message="message"
               :vote="getVote(message.id)"
               :streaming="chat.status === 'streaming' && message.id === chat.messages.at(-1)?.id"
+              :chat-id="data!.id"
+              :can-regenerate="message.id === chat.messages.at(-1)?.id && chat.status === 'ready'"
               @vote="(_message, isUpvoted) => vote(_message, isUpvoted)"
+              @regenerate="chat.regenerate()"
             />
+            <UTooltip
+              v-else-if="message.role === 'user' && messageTime(message)"
+              :text="messageFullTime(message)!"
+              :content="{ side: 'bottom' }"
+            >
+              <span class="text-xs text-dimmed select-none">{{ messageTime(message) }}</span>
+            </UTooltip>
           </template>
         </UChatMessages>
 

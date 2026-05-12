@@ -22,7 +22,11 @@ const items = computed<DropdownMenuItem[][]>(() => {
     }]
   ]
 
-  const accountItems: DropdownMenuItem[] = []
+  const accountItems: DropdownMenuItem[] = [{
+    label: 'Nuxt Agent',
+    icon: 'i-lucide-message-circle',
+    to: '/dashboard/chat'
+  }]
   if (user.value?.role === 'admin') {
     accountItems.push({
       label: 'Analytics',
@@ -30,7 +34,7 @@ const items = computed<DropdownMenuItem[][]>(() => {
       to: '/admin/analytics'
     })
   }
-  if (accountItems.length) groups.push(accountItems)
+  groups.push(accountItems)
 
   groups.push([{
     label: 'Appearance',

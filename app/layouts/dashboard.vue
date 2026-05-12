@@ -2,6 +2,8 @@
 import type { DropdownMenuItem, NavigationMenuItem } from '@nuxt/ui'
 
 const { loggedIn, user, clear } = useUserSession()
+const route = useRoute()
+const loginHref = computed(() => `/api/auth/github?redirect=${encodeURIComponent(route.fullPath)}`)
 const colorMode = useColorMode()
 const { renameChat, deleteChat } = useChatActions()
 
@@ -24,7 +26,8 @@ const uiChats = computed(() => chatList.value?.map(chat => ({
   label: chat.title || 'Untitled',
   to: `/dashboard/chat/${chat.id}`,
   icon: 'i-lucide-message-circle',
-  createdAt: chat.createdAt
+  createdAt: chat.createdAt,
+  updatedAt: chat.updatedAt
 })))
 
 const { groups } = useChats(uiChats)
@@ -77,6 +80,19 @@ const userMenuItems = computed<DropdownMenuItem[][]>(() => {
     }]
   ]
 
+  groups.push([
+    {
+      label: 'Home',
+      icon: 'i-lucide-house',
+      to: '/'
+    },
+    {
+      label: 'Docs',
+      icon: 'i-lucide-book-open',
+      to: '/docs'
+    }
+  ])
+
   groups.push([{
     label: 'Appearance',
     icon: 'i-lucide-sun-moon',
@@ -116,7 +132,6 @@ defineShortcuts({
 <template>
   <UDashboardGroup unit="rem" class="[--ui-header-height:--spacing(11)]">
     <UDashboardSidebar
-      v-if="loggedIn"
       id="chat-sidebar"
       v-model:open="sidebarOpen"
       :min-size="12"
@@ -137,11 +152,13 @@ defineShortcuts({
           color="neutral"
           variant="subtle"
           size="sm"
-          label="New Chat"
-          block
+          :label="collapsed ? undefined : 'New Chat'"
+          :icon="collapsed ? 'i-lucide-plus' : undefined"
+          :block="!collapsed"
+          :square="collapsed"
           to="/dashboard/chat"
           aria-label="New chat"
-          class="active:translate-y-px transition-transform mt-4"
+          :class="['active:translate-y-px transition-transform mt-4', collapsed ? 'mx-auto' : '']"
         />
 
         <UNavigationMenu
@@ -183,15 +200,28 @@ defineShortcuts({
       </template>
 
       <template #footer="{ collapsed }">
-        <UDropdownMenu :items="userMenuItems" :content="{ align: 'start', side: 'top' }">
+        <UButton
+          v-if="!loggedIn"
+          :to="loginHref"
+          icon="i-simple-icons-github"
+          :label="collapsed ? undefined : 'Sign in with GitHub'"
+          color="neutral"
+          variant="subtle"
+          :block="!collapsed"
+          :square="collapsed"
+          :class="collapsed ? 'mx-auto' : 'justify-start w-full'"
+          external
+        />
+        <UDropdownMenu v-else :items="userMenuItems" :content="{ align: 'start', side: 'top' }">
           <UButton
             color="neutral"
             variant="ghost"
-            block
-            :class="collapsed ? 'justify-center' : 'justify-start'"
+            :block="!collapsed"
+            :square="collapsed"
+            :class="collapsed ? 'mx-auto' : 'justify-start'"
             :ui="{ leadingAvatarSize: 'xs' }"
             :avatar="{ src: user?.avatar, alt: user?.username }"
-            :label="collapsed ? '' : (user?.name || user?.username || '')"
+            :label="collapsed ? undefined : (user?.name || user?.username || '')"
             :trailing-icon="collapsed ? undefined : 'i-lucide-chevrons-up-down'"
           />
         </UDropdownMenu>
@@ -199,8 +229,7 @@ defineShortcuts({
     </UDashboardSidebar>
 
     <div
-      class="flex-1 flex m-2 sm:m-3 rounded-lg ring ring-default bg-default/75 shadow min-w-0 overflow-hidden"
-      :class="loggedIn ? 'lg:ms-0' : ''"
+      class="flex-1 flex m-2 sm:m-3 lg:ms-0 rounded-lg ring ring-default bg-default/75 shadow min-w-0 overflow-hidden"
       :style="{ '--ui-container': 'var(--container-3xl)' }"
     >
       <slot />

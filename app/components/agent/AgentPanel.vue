@@ -36,7 +36,8 @@ async function setActiveChat(id: string) {
     const messages = (data.messages ?? []).map(m => ({
       id: m.id,
       role: m.role,
-      parts: m.parts as UIMessage['parts']
+      parts: m.parts as UIMessage['parts'],
+      metadata: { createdAt: m.createdAt }
     }))
     active.value = { id, messages }
   } catch {

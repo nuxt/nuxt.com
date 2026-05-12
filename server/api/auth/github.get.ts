@@ -1,7 +1,10 @@
 import { and, eq } from 'drizzle-orm'
+import { getQuery, setCookie, getCookie, deleteCookie, defineEventHandler } from 'h3'
 
-export default defineOAuthGitHubEventHandler({
+const oauthHandler = defineOAuthGitHubEventHandler({
   async onSuccess(event, { user: ghUser }) {
+    const redirectTo = getCookie(event, 'oauth-redirect') || '/'
+    deleteCookie(event, 'oauth-redirect')
     const session = await getUserSession(event)
 
     let user = await db.query.users.findFirst({
@@ -39,10 +42,26 @@ export default defineOAuthGitHubEventHandler({
 
     await setUserSession(event, { user })
 
-    return sendRedirect(event, '/')
+    return sendRedirect(event, redirectTo)
   },
   onError(event, error) {
     console.error('GitHub OAuth error:', error)
     return sendRedirect(event, '/')
   }
+})
+
+export default defineEventHandler(async (event) => {
+  const query = getQuery(event)
+  if (!query.code && query.redirect) {
+    const redirect = query.redirect as string
+    if (redirect.startsWith('/')) {
+      setCookie(event, 'oauth-redirect', redirect, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV !== 'development',
+        maxAge: 300,
+        path: '/'
+      })
+    }
+  }
+  return oauthHandler(event)
 })

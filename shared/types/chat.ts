@@ -3,6 +3,7 @@ export interface ChatListItem {
   title: string | null
   visibility: 'public' | 'private' | 'admin'
   createdAt: string
+  updatedAt?: string | null
 }
 
 export interface ChatVoteRow {

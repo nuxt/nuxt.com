@@ -30,5 +30,12 @@
       "tag": "0003_chat_template",
       "breakpoints": true
     }
+    ,{
+      "idx": 4,
+      "version": "6",
+      "when": 1747047600000,
+      "tag": "0004_chat_updated_at",
+      "breakpoints": true
+    }
   ]
 }

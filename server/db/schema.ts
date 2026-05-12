@@ -33,6 +33,7 @@ export const chats = sqliteTable('chats', {
   estimatedCost: real('estimated_cost').notNull().default(0),
   durationMs: integer('duration_ms').notNull().default(0),
   requestCount: integer('request_count').notNull().default(0),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }),
   ...timestamps
 }, table => [index('chats_user_id_idx').on(table.userId)])
 

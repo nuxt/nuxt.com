@@ -53,6 +53,7 @@ function getMessagePagePath(message: UIMessage): string | null {
       <AgentComark
         :markdown="part.text"
         :streaming="isPartStreaming(part)"
+        :caret="isPartStreaming(part) ? { class: 'inline-block w-2 h-[1em] bg-current align-middle ml-px opacity-80 animate-pulse' } : false"
       />
     </UChatReasoning>
 
@@ -170,6 +171,7 @@ function getMessagePagePath(message: UIMessage): string | null {
         v-if="message.role === 'assistant'"
         :markdown="part.text"
         :streaming="isPartStreaming(part)"
+        :caret="isPartStreaming(part) ? { class: 'inline-block w-2 h-[1em] bg-current align-middle ml-px opacity-80 animate-pulse' } : false"
       />
       <div v-else-if="message.role === 'user'">
         <div v-if="getMessagePagePath(message)" class="flex items-center gap-1.5 mb-1.5 rounded-md bg-default/10 px-2 py-1 w-fit">
