@@ -11,6 +11,14 @@ const { track } = useAnalytics()
 
 const color = computed(() => colorMode.value === 'dark' ? '#020420' : 'white')
 
+defineShortcuts({
+  d: {
+    handler: () => {
+      colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'
+    }
+  }
+})
+
 watch(() => colorMode.preference, (newMode, oldMode) => {
   if (oldMode && newMode !== oldMode) {
     track('Color Mode Changed', { mode: newMode })

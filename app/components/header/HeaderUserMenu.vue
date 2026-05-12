@@ -64,16 +64,19 @@ const items = computed<DropdownMenuItem[][]>(() => {
   return groups
 })
 
-const loginHref = computed(() => `/api/auth/github?redirect=${encodeURIComponent(route.fullPath)}`)
+const loginHref = computed(() => `/login?redirect=${encodeURIComponent(route.fullPath)}`)
 </script>
 
 <template>
   <UButton
     v-if="!user"
     :to="loginHref"
+    icon="i-simple-icons-github"
     label="Sign in"
     aria-label="Sign in with GitHub"
-    external
+    color="neutral"
+    variant="subtle"
+    size="sm"
   />
 
   <UDropdownMenu v-else :items="items" :ui="{ content: 'w-56' }" :content="{ align: 'end' }">

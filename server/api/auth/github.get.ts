@@ -20,7 +20,6 @@ const oauthHandler = defineOAuthGitHubEventHandler({
       [user] = await db.insert(schema.users).values({
         id: session.id,
         name: ghUser.name || '',
-        email: ghUser.email || '',
         avatar: ghUser.avatar_url || '',
         username: ghUser.login,
         provider: 'github',

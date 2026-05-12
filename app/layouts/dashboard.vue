@@ -3,7 +3,7 @@ import type { DropdownMenuItem, NavigationMenuItem } from '@nuxt/ui'
 
 const { loggedIn, user, clear } = useUserSession()
 const route = useRoute()
-const loginHref = computed(() => `/api/auth/github?redirect=${encodeURIComponent(route.fullPath)}`)
+const loginHref = computed(() => `/login?redirect=${encodeURIComponent(route.fullPath)}`)
 const colorMode = useColorMode()
 const { renameChat, deleteChat } = useChatActions()
 
@@ -210,7 +210,6 @@ defineShortcuts({
           :block="!collapsed"
           :square="collapsed"
           :class="collapsed ? 'mx-auto' : 'justify-start w-full'"
-          external
         />
         <UDropdownMenu v-else :items="userMenuItems" :content="{ align: 'start', side: 'top' }">
           <UButton

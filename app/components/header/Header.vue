@@ -2,7 +2,6 @@
 const route = useRoute()
 
 const logo = useTemplateRef('logo')
-const stats = useStats()
 const { copy } = useClipboard()
 const { headerLinks } = useHeaderLinks()
 const { track } = useAnalytics()
@@ -33,10 +32,6 @@ const logoContextMenuItems = [
 
 function trackSearchOpen() {
   track('Search Opened')
-}
-
-function trackGitHubClick() {
-  track('Header Action', { action: 'GitHub Stars' })
 }
 </script>
 
@@ -72,23 +67,6 @@ function trackGitHubClick() {
       <AgentChatButton />
 
       <HeaderUserMenu />
-
-      <UTooltip text="GitHub Stars">
-        <UButton
-          icon="i-simple-icons-github"
-          to="https://go.nuxt.com/github"
-          target="_blank"
-          variant="ghost"
-          color="neutral"
-          square
-          :label="stats ? formatNumber(stats.stars) : '...'"
-          aria-label="Nuxt on GitHub"
-          :ui="{
-            label: 'hidden sm:inline-flex'
-          }"
-          @click="trackGitHubClick"
-        />
-      </UTooltip>
     </template>
 
     <template #toggle="{ open, toggle }">

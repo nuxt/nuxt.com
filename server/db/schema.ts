@@ -7,7 +7,7 @@ const timestamps = {
 
 export const users = sqliteTable('users', {
   id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
-  email: text('email').notNull(),
+  email: text('email'),
   name: text('name').notNull(),
   avatar: text('avatar').notNull(),
   username: text('username').notNull(),
