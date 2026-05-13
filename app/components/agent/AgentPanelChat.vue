@@ -13,7 +13,8 @@ const {
   currentPage,
   pageContextDismissed,
   pageContextEnabled,
-  consumePendingPrompt
+  consumePendingPrompt,
+  nuxiMood
 } = useNuxtAgent()
 const { loggedIn } = useUserSession()
 const { refresh: refreshChats } = useChatsData()
@@ -29,6 +30,13 @@ const { chat, input, votes, vote, onSubmit, askQuestion, send } = useAgentChat({
     if (loggedIn.value) refreshChats()
   }
 })
+
+watch(() => chat.status, (status) => {
+  if (status === 'streaming') nuxiMood.value = 'thinking'
+  else if (status === 'submitted') nuxiMood.value = 'thinking'
+  else if (status === 'ready' && chat.messages.length > 0) nuxiMood.value = 'happy'
+  else nuxiMood.value = 'idle'
+}, { immediate: true })
 
 onMounted(() => {
   const prompt = consumePendingPrompt()

@@ -1,0 +1,140 @@
+<script setup lang="ts">
+import type { NuxiMood } from '~/composables/useNuxiIcon'
+
+const props = withDefaults(defineProps<{
+  mood?: NuxiMood
+  interactive?: boolean
+}>(), {
+  interactive: true
+})
+
+const emit = defineEmits<{
+  (e: 'moodChange', mood: NuxiMood): void
+}>()
+
+const {
+  maskId,
+  svgEl,
+  faceTransform,
+  eyeLeftTransform,
+  eyeRightTransform,
+  eyeLeftTransition,
+  eyeRightTransition,
+  mouthTransform,
+  bodyClass,
+  handleMouseEnter,
+  handleMouseLeave,
+  handleSvgClick
+} = useNuxiIcon(props, emit)
+</script>
+
+<template>
+  <svg
+    ref="svgEl"
+    viewBox="0 0 300 200"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    style="overflow: visible;"
+    @mouseenter="handleMouseEnter"
+    @mouseleave="handleMouseLeave"
+    @click="handleSvgClick"
+  >
+    <defs>
+      <mask :id="`nuxi-face-mask-${maskId}`">
+        <rect width="300" height="200" fill="white" />
+        <g :style="{ transform: faceTransform }">
+          <path
+            class="nuxi-eye"
+            :style="{ transform: eyeLeftTransform, transition: eyeLeftTransition }"
+            d="M76.425 109.429C87.5373 92.1556 113.182 93.389 122.585 111.649C131.988 129.91 118.098 151.501 97.5822 150.515C77.0667 149.528 65.3128 126.703 76.425 109.429Z"
+            fill="black"
+          />
+          <path
+            class="nuxi-eye"
+            :style="{ transform: eyeRightTransform, transition: eyeRightTransition }"
+            d="M204.632 156.542C185.601 155.627 174.698 134.454 185.006 118.43C195.314 102.407 219.102 103.551 227.825 120.49C236.547 137.429 223.662 157.458 204.632 156.542Z"
+            fill="black"
+          />
+          <path
+            class="nuxi-mouth"
+            :style="{ transform: mouthTransform, transition: 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' }"
+            d="M129.032 174.492C137.341 190.478 160.159 191.682 170.105 176.66L172.148 173.574C173.856 170.994 172.113 167.535 169.023 167.372L131.086 165.369C127.996 165.206 125.899 168.463 127.326 171.209L129.032 174.492Z"
+            fill="black"
+          />
+        </g>
+      </mask>
+    </defs>
+
+    <path
+      class="nuxi-body"
+      :class="bodyClass"
+      d="M20 200H279C282.542 200 285.932 198.756 289 197C292.068 195.244 295.23 193.041 297 190C298.77 186.959 300.002 183.51 300 179.999C299.998 176.488 298.773 173.04 297 170.001L222 41C220.23 37.96 218.067 35.7552 215 34C211.933 32.2448 207.542 31 204 31C200.458 31 197.067 32.2448 194 34C190.933 35.7552 188.77 37.96 187 41L168 74L130 9.99764C128.228 6.95784 126.068 3.75491 123 2C119.932 0.245087 116.542 0 113 0C109.458 0 106.068 0.245087 103 2C99.9323 3.75491 96.7717 6.95784 95 9.99764L2.00001 170.001C0.226985 173.04 0.00154882 176.488 7.60801e-06 179.999C-0.0015336 183.51 0.229654 186.959 2.00001 190C3.77036 193.04 6.93246 195.244 10 197C13.0676 198.756 16.4578 200 20 200Z"
+      fill="currentColor"
+      :mask="`url(#nuxi-face-mask-${maskId})`"
+    />
+  </svg>
+</template>
+
+<style scoped>
+.nuxi-body {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.nuxi-eye {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.nuxi-mouth {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.nuxi-body--idle { animation: nuxi-float 3.2s ease-in-out infinite; }
+.nuxi-body--happy { animation: nuxi-happy 2.5s ease-in-out infinite; }
+.nuxi-body--excited { animation: nuxi-excited 0.65s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+.nuxi-body--thinking { animation: nuxi-thinking 1.6s ease-in-out infinite; }
+.nuxi-body--sleeping { animation: nuxi-sleeping 4s ease-in-out infinite; }
+.nuxi-body--surprised { animation: nuxi-surprised 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+
+@keyframes nuxi-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes nuxi-happy {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  33% { transform: translateY(-5px) rotate(2deg); }
+  66% { transform: translateY(-3px) rotate(-1.5deg); }
+}
+
+@keyframes nuxi-excited {
+  0%   { transform: scale(1, 1) translateY(0); }
+  18%  { transform: scale(1.05, 0.9) translateY(5px); }
+  45%  { transform: scale(0.93, 1.1) translateY(-14px); }
+  65%  { transform: scale(1.04, 0.95) translateY(-6px); }
+  80%  { transform: scale(0.98, 1.03) translateY(-10px); }
+  100% { transform: scale(1, 1) translateY(-8px); }
+}
+
+@keyframes nuxi-thinking {
+  0%, 100% { transform: rotate(-6deg) translateY(0px) scale(1, 1); }
+  30% { transform: rotate(4deg) translateY(-6px) scale(0.98, 1.02); }
+  60% { transform: rotate(-8deg) translateY(-2px) scale(1.02, 0.98); }
+}
+
+@keyframes nuxi-sleeping {
+  0%, 100% { transform: scale(1, 1) translateY(0); }
+  50% { transform: scale(1.02, 0.98) translateY(3px); }
+}
+
+@keyframes nuxi-surprised {
+  0%   { transform: scale(1, 1) translateY(0); }
+  15%  { transform: scale(1.1, 0.9) translateY(4px); }
+  40%  { transform: scale(0.9, 1.12) translateY(-12px); }
+  65%  { transform: scale(1.05, 0.96) translateY(-5px); }
+  85%  { transform: scale(0.97, 1.02) translateY(-8px); }
+  100% { transform: scale(1, 1) translateY(0); }
+}
+</style>

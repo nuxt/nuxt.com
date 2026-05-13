@@ -1,4 +1,5 @@
 import { createSharedComposable, useLocalStorage, useMediaQuery } from '@vueuse/core'
+import type { NuxiMood } from '~/composables/useNuxiIcon'
 import type { FaqCategory, FaqQuestions } from '~/types/agent'
 
 interface AgentUsage {
@@ -106,6 +107,8 @@ export const useNuxtAgent = createSharedComposable(() => {
     if (next && loggedIn.value && !chatList.value?.length) refreshChats()
   })
 
+  const nuxiMood = ref<NuxiMood>('idle')
+
   return {
     isOpen,
     open,
@@ -123,6 +126,7 @@ export const useNuxtAgent = createSharedComposable(() => {
     pageContextDismissed,
     pageContextEnabled,
     faqQuestions,
-    chatList
+    chatList,
+    nuxiMood
   }
 })

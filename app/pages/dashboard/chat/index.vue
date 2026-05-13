@@ -108,6 +108,7 @@ const suggestions = [
         <div class="flex flex-col items-center gap-4 sm:gap-6">
           <div class="relative h-36 w-full max-w-2xl shrink-0 overflow-hidden sm:h-40">
             <AgentShader variant="hero" />
+            <AgentNuxiIcon class="absolute bottom-0 left-1/2 -translate-x-1/2 size-10 sm:size-12 shrink-0" />
           </div>
           <h1 class="text-2xl sm:text-3xl text-highlighted font-semibold tracking-tight text-center">
             {{ greeting }}

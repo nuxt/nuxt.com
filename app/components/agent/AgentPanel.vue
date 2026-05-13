@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import type { UIMessage } from 'ai'
+import { motion } from 'motion-v'
 
 const {
   isOpen,
   isAgentDockedBreakpoint,
   currentPage,
   pageContextDismissed,
-  pendingPrompt
+  pendingPrompt,
+  nuxiMood
 } = useNuxtAgent()
 const { chatList } = useChatsData()
 const { loggedIn } = useUserSession()
@@ -114,7 +116,15 @@ defineShortcuts({
     <template #title>
       <AgentChatSwitcher v-if="loggedIn" class="min-w-0" />
       <span v-else class="inline-flex items-center gap-2 min-w-0">
-        <span class="truncate">Agent</span>
+        <motion.span
+          :initial="{ opacity: 0, scale: 0.5, filter: 'blur(4px)' }"
+          :animate="{ opacity: 1, scale: 1, filter: 'blur(0px)' }"
+          :transition="{ duration: 0.3, ease: 'easeOut', delay: 0.1 }"
+          class="inline-flex"
+        >
+          <AgentNuxiIcon class="size-5 shrink-0" :mood="nuxiMood" />
+        </motion.span>
+        <span class="truncate">Nuxi</span>
         <UBadge variant="subtle" size="sm" class="shrink-0">
           Beta
         </UBadge>
@@ -152,7 +162,15 @@ defineShortcuts({
     <template #title>
       <AgentChatSwitcher v-if="loggedIn" class="min-w-0" />
       <span v-else class="inline-flex items-center gap-2 min-w-0">
-        <span class="truncate">Agent</span>
+        <motion.span
+          :initial="{ opacity: 0, scale: 0.5, filter: 'blur(4px)' }"
+          :animate="{ opacity: 1, scale: 1, filter: 'blur(0px)' }"
+          :transition="{ duration: 0.3, ease: 'easeOut', delay: 0.1 }"
+          class="inline-flex"
+        >
+          <AgentNuxiIcon class="size-5 shrink-0" :mood="nuxiMood" />
+        </motion.span>
+        <span class="truncate">Nuxi</span>
         <UBadge variant="subtle" size="sm" class="shrink-0">
           Beta
         </UBadge>
