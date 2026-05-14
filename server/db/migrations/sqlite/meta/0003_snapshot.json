@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "9a8f5c2d-1234-5678-90ab-cdef00000003",
+  "id": "9ccf6e78-b79e-405f-8309-4542751f8ac7",
   "prevId": "a8264235-7bd0-49b9-afc8-3b2dbbcac5ec",
   "tables": {
     "agent_daily_usage": {
@@ -114,6 +114,13 @@
           "autoincrement": false,
           "default": 0
         },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "integer",
@@ -125,7 +132,9 @@
       "indexes": {
         "chats_user_id_idx": {
           "name": "chats_user_id_idx",
-          "columns": ["user_id"],
+          "columns": [
+            "user_id"
+          ],
           "isUnique": false
         }
       },
@@ -137,21 +146,84 @@
     "feedback": {
       "name": "feedback",
       "columns": {
-        "id": { "name": "id", "type": "integer", "primaryKey": true, "notNull": true, "autoincrement": true },
-        "rating": { "name": "rating", "type": "text", "primaryKey": false, "notNull": true, "autoincrement": false },
-        "feedback": { "name": "feedback", "type": "text", "primaryKey": false, "notNull": false, "autoincrement": false },
-        "path": { "name": "path", "type": "text", "primaryKey": false, "notNull": true, "autoincrement": false },
-        "title": { "name": "title", "type": "text", "primaryKey": false, "notNull": true, "autoincrement": false },
-        "stem": { "name": "stem", "type": "text", "primaryKey": false, "notNull": true, "autoincrement": false },
-        "country": { "name": "country", "type": "text", "primaryKey": false, "notNull": true, "autoincrement": false },
-        "fingerprint": { "name": "fingerprint", "type": "text", "primaryKey": false, "notNull": true, "autoincrement": false },
-        "createdAt": { "name": "createdAt", "type": "integer", "primaryKey": false, "notNull": true, "autoincrement": false },
-        "updatedAt": { "name": "updatedAt", "type": "integer", "primaryKey": false, "notNull": true, "autoincrement": false }
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "rating": {
+          "name": "rating",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "feedback": {
+          "name": "feedback",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "path": {
+          "name": "path",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "stem": {
+          "name": "stem",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "country": {
+          "name": "country",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "fingerprint": {
+          "name": "fingerprint",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
       },
       "indexes": {
         "path_fingerprint_idx": {
           "name": "path_fingerprint_idx",
-          "columns": ["path", "fingerprint"],
+          "columns": [
+            "path",
+            "fingerprint"
+          ],
           "isUnique": true
         }
       },
@@ -163,22 +235,62 @@
     "messages": {
       "name": "messages",
       "columns": {
-        "id": { "name": "id", "type": "text", "primaryKey": true, "notNull": true, "autoincrement": false },
-        "chat_id": { "name": "chat_id", "type": "text", "primaryKey": false, "notNull": true, "autoincrement": false },
-        "role": { "name": "role", "type": "text", "primaryKey": false, "notNull": true, "autoincrement": false },
-        "parts": { "name": "parts", "type": "text", "primaryKey": false, "notNull": false, "autoincrement": false },
-        "created_at": { "name": "created_at", "type": "integer", "primaryKey": false, "notNull": true, "autoincrement": false }
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "chat_id": {
+          "name": "chat_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "role": {
+          "name": "role",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "parts": {
+          "name": "parts",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
       },
       "indexes": {
-        "messages_chat_id_idx": { "name": "messages_chat_id_idx", "columns": ["chat_id"], "isUnique": false }
+        "messages_chat_id_idx": {
+          "name": "messages_chat_id_idx",
+          "columns": [
+            "chat_id"
+          ],
+          "isUnique": false
+        }
       },
       "foreignKeys": {
         "messages_chat_id_chats_id_fk": {
           "name": "messages_chat_id_chats_id_fk",
           "tableFrom": "messages",
           "tableTo": "chats",
-          "columnsFrom": ["chat_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "chat_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -190,20 +302,78 @@
     "users": {
       "name": "users",
       "columns": {
-        "id": { "name": "id", "type": "text", "primaryKey": true, "notNull": true, "autoincrement": false },
-        "email": { "name": "email", "type": "text", "primaryKey": false, "notNull": true, "autoincrement": false },
-        "name": { "name": "name", "type": "text", "primaryKey": false, "notNull": true, "autoincrement": false },
-        "avatar": { "name": "avatar", "type": "text", "primaryKey": false, "notNull": true, "autoincrement": false },
-        "username": { "name": "username", "type": "text", "primaryKey": false, "notNull": true, "autoincrement": false },
-        "provider": { "name": "provider", "type": "text", "primaryKey": false, "notNull": true, "autoincrement": false },
-        "provider_id": { "name": "provider_id", "type": "text", "primaryKey": false, "notNull": true, "autoincrement": false },
-        "role": { "name": "role", "type": "text", "primaryKey": false, "notNull": true, "autoincrement": false, "default": "'user'" },
-        "created_at": { "name": "created_at", "type": "integer", "primaryKey": false, "notNull": true, "autoincrement": false }
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "avatar": {
+          "name": "avatar",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "username": {
+          "name": "username",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "provider": {
+          "name": "provider",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "provider_id": {
+          "name": "provider_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "role": {
+          "name": "role",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'user'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
       },
       "indexes": {
         "users_provider_id_idx": {
           "name": "users_provider_id_idx",
-          "columns": ["provider", "provider_id"],
+          "columns": [
+            "provider",
+            "provider_id"
+          ],
           "isUnique": true
         }
       },
@@ -215,9 +385,27 @@
     "votes": {
       "name": "votes",
       "columns": {
-        "chat_id": { "name": "chat_id", "type": "text", "primaryKey": false, "notNull": true, "autoincrement": false },
-        "message_id": { "name": "message_id", "type": "text", "primaryKey": false, "notNull": true, "autoincrement": false },
-        "is_upvoted": { "name": "is_upvoted", "type": "integer", "primaryKey": false, "notNull": true, "autoincrement": false }
+        "chat_id": {
+          "name": "chat_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "message_id": {
+          "name": "message_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "is_upvoted": {
+          "name": "is_upvoted",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
       },
       "indexes": {},
       "foreignKeys": {
@@ -225,8 +413,12 @@
           "name": "votes_chat_id_chats_id_fk",
           "tableFrom": "votes",
           "tableTo": "chats",
-          "columnsFrom": ["chat_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "chat_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -234,15 +426,22 @@
           "name": "votes_message_id_messages_id_fk",
           "tableFrom": "votes",
           "tableTo": "messages",
-          "columnsFrom": ["message_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "message_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
         "votes_chat_id_message_id_pk": {
-          "columns": ["chat_id", "message_id"],
+          "columns": [
+            "chat_id",
+            "message_id"
+          ],
           "name": "votes_chat_id_message_id_pk"
         }
       },

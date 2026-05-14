@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS `agent_votes`;--> statement-breakpoint
 DROP TABLE IF EXISTS `agent_chats`;--> statement-breakpoint
 CREATE TABLE `users` (
 	`id` text PRIMARY KEY NOT NULL,
-	`email` text NOT NULL,
+	`email` text,
 	`name` text NOT NULL,
 	`avatar` text NOT NULL,
 	`username` text NOT NULL,
@@ -24,6 +24,7 @@ CREATE TABLE `chats` (
 	`estimated_cost` real DEFAULT 0 NOT NULL,
 	`duration_ms` integer DEFAULT 0 NOT NULL,
 	`request_count` integer DEFAULT 0 NOT NULL,
+	`updated_at` integer,
 	`created_at` integer NOT NULL
 );--> statement-breakpoint
 CREATE INDEX `chats_user_id_idx` ON `chats` (`user_id`);--> statement-breakpoint
