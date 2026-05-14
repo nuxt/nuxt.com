@@ -82,10 +82,10 @@ const features = [
             </NuxtLink>
 
             <div>
-              <h1 class="text-3xl sm:text-4xl font-semibold text-white tracking-tight">
+              <h1 class="text-3xl sm:text-4xl font-semibold text-highlighted tracking-tight">
                 Sign in to unlock<br>the full experience
               </h1>
-              <p class="mt-3 text-neutral-400 text-base/7">
+              <p class="mt-3 text-muted text-base/7">
                 Use your GitHub account to save your chat history and access all features.
               </p>
             </div>
@@ -104,10 +104,10 @@ const features = [
                 <UIcon :name="feature.icon" class="size-4 text-primary" />
               </div>
               <div class="pt-0.5">
-                <p class="font-medium text-white text-sm">
+                <p class="font-medium text-highlighted text-sm">
                   {{ feature.title }}
                 </p>
-                <p class="text-neutral-500 text-sm mt-0.5">
+                <p class="text-muted text-sm mt-0.5">
                   {{ feature.description }}
                 </p>
               </div>
@@ -132,10 +132,10 @@ const features = [
                   <AgentNuxiIcon class="size-14" mood="happy" />
                 </motion.div>
                 <div class="text-center">
-                  <h2 class="text-base font-semibold text-white">
+                  <h2 class="text-base font-semibold text-highlighted">
                     Welcome
                   </h2>
-                  <p class="text-sm text-neutral-500 mt-0.5">
+                  <p class="text-sm text-muted mt-0.5">
                     Sign in with your GitHub account to continue
                   </p>
                 </div>
@@ -154,11 +154,11 @@ const features = [
             </div>
 
             <div class="px-6 py-4 border-t border-white/6 flex flex-col gap-2.5 bg-white/2">
-              <div class="flex items-start gap-2 text-xs text-neutral-600">
+              <div class="flex items-start gap-2 text-xs text-dimmed">
                 <UIcon name="i-lucide-shield-check" class="size-3.5 shrink-0 mt-0.5 text-success" />
                 <span>We never store your GitHub token — only a secure session cookie.</span>
               </div>
-              <div class="flex items-start gap-2 text-xs text-neutral-600">
+              <div class="flex items-start gap-2 text-xs text-dimmed">
                 <UIcon name="i-lucide-database" class="size-3.5 shrink-0 mt-0.5 text-primary" />
                 <span>Your account data (username, avatar) is saved to associate your chat history.</span>
               </div>

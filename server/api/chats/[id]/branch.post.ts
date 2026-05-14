@@ -1,5 +1,6 @@
 import { eq, asc } from 'drizzle-orm'
 import type { InferSelectModel } from 'drizzle-orm'
+import { z } from 'zod'
 
 export default defineEventHandler(async (event) => {
   const session = await getUserSession(event)
@@ -7,12 +8,13 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 401 })
   }
 
-  const id = getRouterParam(event, 'id')!
-  const { messageId } = await readBody<{ messageId: string }>(event)
+  const { id } = await getValidatedRouterParams(event, z.object({
+    id: z.uuid()
+  }).parse)
 
-  if (!messageId || typeof messageId !== 'string' || messageId.trim().length === 0) {
-    throw createError({ statusCode: 400, statusMessage: 'messageId is required' })
-  }
+  const { messageId } = await readValidatedBody(event, z.object({
+    messageId: z.string().min(1)
+  }).parse)
 
   const chat = await db.query.chats.findFirst({
     where: () => eq(schema.chats.id, id),

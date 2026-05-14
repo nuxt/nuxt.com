@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
   const session = await getUserSession(event)
 
   const { id } = await getValidatedRouterParams(event, z.object({
-    id: z.string()
+    id: z.uuid()
   }).parse)
 
   const { messageId, isUpvoted } = await readValidatedBody(event, z.object({

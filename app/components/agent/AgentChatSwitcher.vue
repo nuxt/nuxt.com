@@ -19,19 +19,14 @@ const PAGE_SIZE = 7
 
 const allChats = computed(() => chatList.value ?? [])
 
-const filteredChats = computed(() => {
+const matchingChats = computed(() => {
   const q = search.value.trim().toLowerCase()
-  if (!q) return allChats.value.slice(0, PAGE_SIZE)
-  return allChats.value
-    .filter(c => (c.title || 'Untitled').toLowerCase().includes(q))
-    .slice(0, PAGE_SIZE)
+  if (!q) return allChats.value
+  return allChats.value.filter(c => (c.title || 'Untitled').toLowerCase().includes(q))
 })
 
-const hasMore = computed(() => {
-  const q = search.value.trim().toLowerCase()
-  if (!q) return allChats.value.length > PAGE_SIZE
-  return allChats.value.filter(c => (c.title || 'Untitled').toLowerCase().includes(q)).length > PAGE_SIZE
-})
+const filteredChats = computed(() => matchingChats.value.slice(0, PAGE_SIZE))
+const hasMore = computed(() => matchingChats.value.length > PAGE_SIZE)
 
 function select(id: string) {
   panel?.setActiveChat(id)
@@ -120,7 +115,8 @@ watch(popoverOpen, (open) => {
             <NuxtLink
               :to="`/dashboard/chat/${chat.id}`"
               class="p-0.5 rounded hover:bg-muted"
-              :title="`Open in full screen`"
+              title="Open in full screen"
+              aria-label="Open in full screen"
               @click.stop="isOpen = false"
             >
               <UIcon name="i-lucide-maximize-2" class="size-3.5 text-muted" />
@@ -129,7 +125,7 @@ watch(popoverOpen, (open) => {
         </button>
 
         <p v-if="hasMore" class="px-3.5 py-1.5 text-xs text-muted">
-          +{{ allChats.length - PAGE_SIZE }} more — use search to filter
+          +{{ matchingChats.length - PAGE_SIZE }} more — use search to filter
         </p>
       </div>
 
