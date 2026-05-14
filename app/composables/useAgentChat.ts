@@ -96,7 +96,7 @@ export function useAgentChat(options: UseAgentChatOptions) {
 
   async function send(text: string) {
     if (!text.trim() || agent.rateLimitReached.value) return
-    track('Nuxt Agent Message Sent', {
+    track('Nuxi Message Sent', {
       source: options.source,
       page: agent.currentPage.value,
       withContext: useContext.value,
@@ -120,7 +120,7 @@ export function useAgentChat(options: UseAgentChatOptions) {
   }
 
   function askQuestion(question: string) {
-    track('Nuxt Agent FAQ Clicked', { question, source: options.source })
+    track('Nuxi FAQ Clicked', { question, source: options.source })
     send(question)
   }
 

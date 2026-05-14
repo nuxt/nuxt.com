@@ -19,7 +19,7 @@ const { open } = useNuxtAgent()
 const { track } = useAnalytics()
 
 function explainWithAI() {
-  track('Nuxt Agent Explain Page', { page: route.path })
+  track('Nuxi Explain Page', { page: route.path })
   open('Explain this page')
 }
 </script>

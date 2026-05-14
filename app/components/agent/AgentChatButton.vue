@@ -5,7 +5,7 @@ const { toggle, isOpen } = useNuxtAgent()
 const { track } = useAnalytics()
 
 function handleToggle() {
-  track('Nuxt Agent Toggled', { source: 'header', open: !isOpen.value })
+  track('Nuxi Toggled', { source: 'header', open: !isOpen.value })
   toggle()
 }
 </script>

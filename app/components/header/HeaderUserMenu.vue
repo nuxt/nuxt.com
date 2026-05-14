@@ -23,7 +23,7 @@ const items = computed<DropdownMenuItem[][]>(() => {
   ]
 
   const accountItems: DropdownMenuItem[] = [{
-    label: 'Nuxt Agent',
+    label: 'Chats with Nuxi',
     icon: 'i-lucide-message-circle',
     to: '/dashboard/chat'
   }]

@@ -412,6 +412,7 @@ export function useNuxiIcon(props: NuxiIconProps, emit?: EmitFn) {
   return {
     maskId,
     svgEl,
+    effectiveMood,
     faceTransform,
     eyeLeftTransform,
     eyeRightTransform,

@@ -15,6 +15,7 @@ const emit = defineEmits<{
 const {
   maskId,
   svgEl,
+  effectiveMood,
   faceTransform,
   eyeLeftTransform,
   eyeRightTransform,
@@ -26,6 +27,8 @@ const {
   handleMouseLeave,
   handleSvgClick
 } = useNuxiIcon(props, emit)
+
+const isSleeping = computed(() => effectiveMood.value === 'sleeping')
 </script>
 
 <template>
@@ -72,6 +75,12 @@ const {
       fill="currentColor"
       :mask="`url(#nuxi-face-mask-${maskId})`"
     />
+
+    <g v-if="isSleeping" class="nuxi-zzz" fill="currentColor" font-family="sans-serif" font-weight="800" letter-spacing="2">
+      <text class="nuxi-z nuxi-z-1" x="178" y="158" font-size="38">z</text>
+      <text class="nuxi-z nuxi-z-2" x="202" y="125" font-size="54">z</text>
+      <text class="nuxi-z nuxi-z-3" x="228" y="82" font-size="70">z</text>
+    </g>
   </svg>
 </template>
 
@@ -95,8 +104,16 @@ const {
 .nuxi-body--happy { animation: nuxi-happy 2.5s ease-in-out infinite; }
 .nuxi-body--excited { animation: nuxi-excited 0.65s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
 .nuxi-body--thinking { animation: nuxi-thinking 1.6s ease-in-out infinite; }
-.nuxi-body--sleeping { animation: nuxi-sleeping 4s ease-in-out infinite; }
+.nuxi-body--sleeping { animation: nuxi-sleeping 5s ease-in-out infinite; }
 .nuxi-body--surprised { animation: nuxi-surprised 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+
+.nuxi-z {
+  animation: nuxi-z-float 3.2s ease-in-out infinite;
+  opacity: 0;
+}
+.nuxi-z-1 { animation-delay: 0s; }
+.nuxi-z-2 { animation-delay: 1.05s; }
+.nuxi-z-3 { animation-delay: 2.1s; }
 
 @keyframes nuxi-float {
   0%, 100% { transform: translateY(0); }
@@ -125,8 +142,11 @@ const {
 }
 
 @keyframes nuxi-sleeping {
-  0%, 100% { transform: scale(1, 1) translateY(0); }
-  50% { transform: scale(1.02, 0.98) translateY(3px); }
+  0%   { transform: rotate(0deg) translateY(0px) scale(1, 1); }
+  20%  { transform: rotate(-3deg) translateY(2px) scale(1.01, 0.99); }
+  50%  { transform: rotate(-5deg) translateY(4px) scale(1.02, 0.98); }
+  80%  { transform: rotate(-3deg) translateY(2px) scale(1.01, 0.99); }
+  100% { transform: rotate(0deg) translateY(0px) scale(1, 1); }
 }
 
 @keyframes nuxi-surprised {
@@ -136,5 +156,12 @@ const {
   65%  { transform: scale(1.05, 0.96) translateY(-5px); }
   85%  { transform: scale(0.97, 1.02) translateY(-8px); }
   100% { transform: scale(1, 1) translateY(0); }
+}
+
+@keyframes nuxi-z-float {
+  0%   { opacity: 0; transform: translate(0px, 0px) scale(0.5) rotate(-8deg); }
+  12%  { opacity: 1; }
+  75%  { opacity: 0.7; }
+  100% { opacity: 0; transform: translate(20px, -80px) scale(1.1) rotate(10deg); }
 }
 </style>

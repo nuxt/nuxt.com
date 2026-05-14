@@ -8,6 +8,8 @@ defineProps<{
   faqQuestions: FaqCategory[]
 }>()
 
+const chatId = inject<Ref<string>>('chat-id')
+
 const emit = defineEmits<{
   askQuestion: [question: string]
   vote: [message: UIMessage, isUpvoted: boolean]
@@ -44,6 +46,7 @@ const AGENT_CHAT_THEME = {
         compact
         class="px-0 gap-2"
         :user="{ ui: { container: 'max-w-full' } }"
+        :assistant="{ ui: { actions: 'has-data-[state=open]:opacity-100' } }"
       >
         <template #indicator>
           <AgentIndicator />
@@ -59,7 +62,10 @@ const AGENT_CHAT_THEME = {
             :message="message"
             :vote="votes.get(message.id) ?? null"
             :streaming="chat.status === 'streaming' && message.id === chat.messages.at(-1)?.id"
+            :chat-id="chatId"
+            :can-regenerate="message.id === chat.messages.at(-1)?.id && chat.status === 'ready'"
             @vote="(msg, isUpvoted) => $emit('vote', msg, isUpvoted)"
+            @regenerate="chat.regenerate()"
           />
         </template>
       </UChatMessages>

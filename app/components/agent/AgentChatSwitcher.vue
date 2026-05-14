@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { DropdownMenuItem } from '@nuxt/ui'
 import { motion } from 'motion-v'
 
 const { isOpen, nuxiMood } = useNuxtAgent()
@@ -14,21 +13,35 @@ const panel = inject<{
 const activeChat = computed(() => chatList.value?.find(c => c.id === panel?.chatId.value))
 const hasChatHistory = computed(() => !!chatList.value?.length)
 
-const items = computed<DropdownMenuItem[][]>(() => [
-  (chatList.value ?? []).map<DropdownMenuItem>(chat => ({
-    label: chat.title || 'Untitled',
-    icon: chat.id === panel?.chatId.value ? 'i-lucide-check' : undefined,
-    onSelect: () => panel?.setActiveChat(chat.id),
-    suffix: chat.id === panel?.chatId.value
-      ? undefined
-      : {
-          label: 'Open in full screen',
-          icon: 'i-lucide-maximize-2',
-          to: `/dashboard/chat/${chat.id}`,
-          onSelect: () => (isOpen.value = false)
-        }
-  }))
-])
+const popoverOpen = ref(false)
+const search = ref('')
+const PAGE_SIZE = 7
+
+const allChats = computed(() => chatList.value ?? [])
+
+const filteredChats = computed(() => {
+  const q = search.value.trim().toLowerCase()
+  if (!q) return allChats.value.slice(0, PAGE_SIZE)
+  return allChats.value
+    .filter(c => (c.title || 'Untitled').toLowerCase().includes(q))
+    .slice(0, PAGE_SIZE)
+})
+
+const hasMore = computed(() => {
+  const q = search.value.trim().toLowerCase()
+  if (!q) return allChats.value.length > PAGE_SIZE
+  return allChats.value.filter(c => (c.title || 'Untitled').toLowerCase().includes(q)).length > PAGE_SIZE
+})
+
+function select(id: string) {
+  panel?.setActiveChat(id)
+  popoverOpen.value = false
+  search.value = ''
+}
+
+watch(popoverOpen, (open) => {
+  if (!open) search.value = ''
+})
 </script>
 
 <template>
@@ -50,18 +63,18 @@ const items = computed<DropdownMenuItem[][]>(() => [
     </UBadge>
   </span>
 
-  <UDropdownMenu
+  <UPopover
     v-else
-    :items="items"
-    :ui="{ content: 'w-56' }"
-    :content="{ align: 'start' }"
+    v-model:open="popoverOpen"
+    :content="{ align: 'start', side: 'bottom' }"
+    :ui="{ content: 'w-72 p-0 overflow-hidden' }"
   >
     <UButton
       :label="activeChat ? (activeChat.title || 'Untitled') : 'New chat'"
       trailing-icon="i-lucide-chevrons-up-down"
       color="neutral"
       variant="ghost"
-      class="font-medium max-w-40"
+      class="font-medium max-w-44"
       :ui="{ label: 'truncate min-w-0' }"
     >
       <template #leading>
@@ -75,5 +88,54 @@ const items = computed<DropdownMenuItem[][]>(() => [
         </motion.span>
       </template>
     </UButton>
-  </UDropdownMenu>
+
+    <template #content>
+      <div class="p-1.5 border-b border-default">
+        <UInput
+          v-model="search"
+          icon="i-lucide-search"
+          placeholder="Search chats…"
+          variant="none"
+          autofocus
+          class="w-full"
+        />
+      </div>
+
+      <div v-if="filteredChats.length" class="flex flex-col py-1">
+        <button
+          v-for="chat in filteredChats"
+          :key="chat.id"
+          type="button"
+          class="group flex items-center justify-between gap-2 px-2.5 py-1.5 text-sm text-left rounded-md mx-1 hover:bg-elevated transition-colors"
+          :class="chat.id === panel?.chatId.value ? 'text-primary' : 'text-default'"
+          @click="select(chat.id)"
+        >
+          <span class="truncate min-w-0">{{ chat.title || 'Untitled' }}</span>
+          <div class="flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+            <UIcon
+              v-if="chat.id === panel?.chatId.value"
+              name="i-lucide-check"
+              class="size-3.5 text-primary opacity-100"
+            />
+            <NuxtLink
+              :to="`/dashboard/chat/${chat.id}`"
+              class="p-0.5 rounded hover:bg-muted"
+              :title="`Open in full screen`"
+              @click.stop="isOpen = false"
+            >
+              <UIcon name="i-lucide-maximize-2" class="size-3.5 text-muted" />
+            </NuxtLink>
+          </div>
+        </button>
+
+        <p v-if="hasMore" class="px-3.5 py-1.5 text-xs text-muted">
+          +{{ allChats.length - PAGE_SIZE }} more — use search to filter
+        </p>
+      </div>
+
+      <div v-else class="px-3 py-4 text-center text-sm text-muted">
+        No chats found
+      </div>
+    </template>
+  </UPopover>
 </template>

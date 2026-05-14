@@ -15,7 +15,7 @@ function handleSubmit() {
   if (!input.value.trim()) return
 
   const message = input.value
-  track('Nuxt Agent Message Sent', {
+  track('Nuxi Message Sent', {
     source: 'floating-input',
     page: route.path,
     queryLength: message.length

@@ -93,10 +93,10 @@ async function vote(message: UIMessage, isUpvoted: boolean) {
 }
 
 const site = useSiteConfig()
-useHead({ title: () => title.value || 'Nuxt Agent' })
+useHead({ title: () => title.value || 'Nuxi' })
 useSeoMeta({
-  ogTitle: () => `${title.value || 'Nuxt Agent'} · Nuxt`,
-  ogDescription: 'A conversation with the Nuxt Agent.',
+  ogTitle: () => `${title.value || 'Nuxi'} · Nuxt`,
+  ogDescription: 'A conversation with Nuxi.',
   ogImage: joinURL(site.url, '/nuxt-agent.jpg')
 })
 useCanonical()

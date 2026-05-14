@@ -191,7 +191,7 @@ const _useNavigation = () => {
     icon: 'i-lucide-wand',
     to: 'javascript:void(0);',
     onSelect: () => {
-      track('Nuxt Agent Opened', { source: 'search-links' })
+      track('Nuxi Opened', { source: 'search-links' })
       openAgent()
     }
   }, ...headerLinks.value.flatMap((link) => {
@@ -269,7 +269,7 @@ const _useNavigation = () => {
       icon: 'i-lucide-wand',
       to: 'javascript:void(0);',
       onSelect() {
-        track('Nuxt Agent Opened', { source: 'search-palette', query: searchTerm.value })
+        track('Nuxi Opened', { source: 'search-palette', query: searchTerm.value })
         openAgent(searchTerm.value)
       }
     }]
