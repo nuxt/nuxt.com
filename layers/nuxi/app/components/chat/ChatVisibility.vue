@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useClipboard } from '@vueuse/core'
-
 type Visibility = 'public' | 'private' | 'admin'
 
 const props = defineProps<{

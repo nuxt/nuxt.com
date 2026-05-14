@@ -23,7 +23,7 @@ const githubHref = computed(() => {
 })
 
 useSeoMeta({
-  title: 'Sign in · Nuxt',
+  title: 'Sign in',
   description: 'Sign in to nuxt.com with your GitHub account to access chat history and more.'
 })
 

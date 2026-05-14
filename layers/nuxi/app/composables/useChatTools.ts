@@ -4,18 +4,6 @@ import { getToolName } from 'ai'
 export type ToolPart = ToolUIPart | DynamicToolUIPart
 type ToolState = ToolPart['state']
 
-export interface ModuleCardData {
-  name: string
-  npm?: string
-  description?: string
-  icon?: string
-  category?: string
-  repo?: string
-  website?: string
-  downloads?: number
-  stars?: number
-}
-
 export function isValidModuleCardData(output: unknown): output is ModuleCardData {
   if (!output || typeof output !== 'object') return false
   const o = output as Record<string, unknown>
@@ -28,45 +16,6 @@ export function isValidModuleCardData(output: unknown): output is ModuleCardData
 export function moduleCardProps(data: ModuleCardData): Omit<ModuleCardData, 'name'> & { slug: string } {
   const { name, ...rest } = data
   return { ...rest, slug: name }
-}
-
-export interface TemplateCardData {
-  name: string
-  slug: string
-  description?: string
-  repo?: string
-  demo?: string
-  badge?: string
-  purchase?: string
-}
-
-export interface BlogCardData {
-  title: string
-  description?: string
-  path: string
-  date?: string
-  image?: string
-  category?: string
-  authors?: Array<{ name: string, avatar?: string }>
-}
-
-export interface HostingCardData {
-  title: string
-  description?: string
-  path: string
-  logoSrc?: string
-  logoIcon?: string
-  category?: string
-  nitroPreset?: string
-  website?: string
-}
-
-export interface PlaygroundCardData {
-  url: string
-  repo: string
-  title?: string
-  file?: string
-  dir?: string
 }
 
 function getToolMessage(state: ToolState, toolName: string, toolInput: Record<string, string | undefined>) {

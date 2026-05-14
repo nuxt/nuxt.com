@@ -1,7 +1,4 @@
-import { useEventListener, useRafFn } from '@vueuse/core'
 import { useAnimate } from 'motion-v'
-
-export type NuxiMood = 'idle' | 'happy' | 'excited' | 'thinking' | 'sleeping' | 'surprised'
 
 type LookDir = 'center' | 'left' | 'right' | 'up'
 

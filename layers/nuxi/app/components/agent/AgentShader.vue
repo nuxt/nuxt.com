@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { Shader, DotGrid, ImageTexture } from 'shaders/vue'
 
 const props = withDefaults(

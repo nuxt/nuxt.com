@@ -1,7 +1,3 @@
-import { createSharedComposable, useLocalStorage, useMediaQuery } from '@vueuse/core'
-import type { NuxiMood } from '~/composables/useNuxiIcon'
-import type { FaqCategory, FaqQuestions } from '~/types/agent'
-
 interface AgentUsage {
   used: number
   remaining: number

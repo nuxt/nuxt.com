@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Source } from '~/utils/tool'
+import type { Source } from '#layers/nuxi/app/utils/tool'
 
 defineProps<{
   sources: Source[]

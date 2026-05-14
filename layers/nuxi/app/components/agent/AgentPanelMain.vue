@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { UIMessage } from 'ai'
 import type { Chat } from '@ai-sdk/vue'
-import type { FaqCategory } from '~/types/agent'
 
 defineProps<{
   chat: Chat<UIMessage>

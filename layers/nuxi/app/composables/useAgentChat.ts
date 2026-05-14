@@ -49,7 +49,8 @@ export function useAgentChat(options: UseAgentChatOptions) {
       : agent.pageContextEnabled.value && Boolean(agent.currentPage.value)
   )
 
-  const chat = new Chat<UIMessage>({
+  let chat!: Chat<UIMessage>
+  chat = new Chat<UIMessage>({
     id: options.chatId,
     messages: options.initialMessages,
     transport: new DefaultChatTransport({
@@ -62,6 +63,13 @@ export function useAgentChat(options: UseAgentChatOptions) {
       }
     }),
     onFinish: () => {
+      const now = new Date().toISOString()
+      chat.messages = chat.messages.map((msg) => {
+        if (!(msg.metadata as Record<string, unknown> | undefined)?.createdAt) {
+          return { ...msg, metadata: { ...(msg.metadata as object ?? {}), createdAt: now } }
+        }
+        return msg
+      }) as UIMessage[]
       options.onFinish?.()
     },
     onData: async (part) => {
@@ -105,7 +113,10 @@ export function useAgentChat(options: UseAgentChatOptions) {
     try {
       await chat.sendMessage({
         text,
-        metadata: useContext.value && agent.currentPage.value ? { pagePath: agent.currentPage.value } : undefined
+        metadata: {
+          createdAt: new Date().toISOString(),
+          ...(useContext.value && agent.currentPage.value ? { pagePath: agent.currentPage.value } : {})
+        }
       })
       agent.onMessageSent()
     } catch {

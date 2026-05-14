@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { NuxiMood } from '~/composables/useNuxiIcon'
-
 const props = withDefaults(defineProps<{
   mood?: NuxiMood
   interactive?: boolean
@@ -76,7 +74,14 @@ const isSleeping = computed(() => effectiveMood.value === 'sleeping')
       :mask="`url(#nuxi-face-mask-${maskId})`"
     />
 
-    <g v-if="isSleeping" class="nuxi-zzz" fill="currentColor" font-family="sans-serif" font-weight="800" letter-spacing="2">
+    <g
+      v-if="isSleeping"
+      class="nuxi-zzz"
+      fill="currentColor"
+      font-family="sans-serif"
+      font-weight="800"
+      letter-spacing="2"
+    >
       <text class="nuxi-z nuxi-z-1" x="178" y="158" font-size="38">z</text>
       <text class="nuxi-z nuxi-z-2" x="202" y="125" font-size="54">z</text>
       <text class="nuxi-z nuxi-z-3" x="228" y="82" font-size="70">z</text>
