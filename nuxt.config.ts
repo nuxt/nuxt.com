@@ -5,6 +5,8 @@ const { resolve } = createResolver(import.meta.url)
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  extends: ['./layers/nuxi'],
+
   modules: [
     '@nuxt/ui',
     'nuxt-content-twoslash',
@@ -26,7 +28,6 @@ export default defineNuxtConfig({
     '@nuxt/hints',
     '@vercel/analytics',
     '@vercel/speed-insights',
-    '@comark/nuxt',
     'evlog/nuxt'
   ],
   $development: {
@@ -471,14 +472,12 @@ export default defineNuxtConfig({
   vite: {
     optimizeDeps: {
       include: [
+        '@comark/vue',
         '@vue/devtools-core',
         '@vue/devtools-kit',
         'valibot',
-        '@comark/vue',
         'zod',
-        'date-fns',
-        'ai',
-        '@ai-sdk/vue'
+        'date-fns'
       ],
       exclude: ['vue-chrts', 'shaders']
     }

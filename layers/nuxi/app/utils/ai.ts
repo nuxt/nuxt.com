@@ -1,6 +1,6 @@
 import type { UIMessage } from 'ai'
 import { isTextUIPart } from 'ai'
-import { sourceToInlineMdc } from '~/utils/tool'
+import { sourceToInlineMdc } from './tool'
 
 export function getMergedParts(parts: UIMessage['parts']): UIMessage['parts'] {
   const result: UIMessage['parts'] = []

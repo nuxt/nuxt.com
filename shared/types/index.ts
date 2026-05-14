@@ -1,4 +1,3 @@
-export * from './chat'
 export * from './jobs'
 export * from './modules'
 export * from './releases'
