@@ -54,8 +54,8 @@ importers:
         specifier: ^1.1.0
         version: 1.1.0(@types/youtube@0.2.0)(@unhead/vue@2.1.15(vue@3.5.34(typescript@6.0.3)))(@vercel/functions@3.6.0)(db0@0.3.4(@libsql/client@0.17.3)(better-sqlite3@12.10.0)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260405.1)(@libsql/client@0.17.3)(@opentelemetry/api@1.9.0)(better-sqlite3@12.10.0)))(ioredis@5.10.1)(magicast@0.5.2)(rolldown@1.0.0-beta.57(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0))(typescript@6.0.3)(vite@7.3.2(@types/node@25.5.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.9.0))(vue@3.5.34(typescript@6.0.3))
       '@nuxt/ui':
-        specifier: https://pkg.pr.new/@nuxt/ui@8aa1225
-        version: https://pkg.pr.new/@nuxt/ui@8aa1225(e3b7ef1b1e0bc9a4214dad6f439d079b)
+        specifier: https://pkg.pr.new/@nuxt/ui@7ce74ae
+        version: https://pkg.pr.new/@nuxt/ui@7ce74ae(e3b7ef1b1e0bc9a4214dad6f439d079b)
       '@nuxthub/core':
         specifier: ^0.10.7
         version: 0.10.7(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@vercel/functions@3.6.0)(db0@0.3.4(@libsql/client@0.17.3)(better-sqlite3@12.10.0)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260405.1)(@libsql/client@0.17.3)(@opentelemetry/api@1.9.0)(better-sqlite3@12.10.0)))(ioredis@5.10.1)(magicast@0.5.2)(typescript@6.0.3)(vue-tsc@3.3.0(typescript@6.0.3))
@@ -1905,8 +1905,8 @@ packages:
       zod:
         optional: true
 
-  '@nuxt/ui@https://pkg.pr.new/@nuxt/ui@8aa1225':
-    resolution: {integrity: sha512-HfDtbyw1ZSBmXrob8DcSK6okDBqAgfKVCt8DefVxGRGHKVFhWbajUXGDRd1V3+1SSUh00Yq7zJ1xhwy9aeu4Nw==, tarball: https://pkg.pr.new/@nuxt/ui@8aa1225}
+  '@nuxt/ui@https://pkg.pr.new/@nuxt/ui@7ce74ae':
+    resolution: {integrity: sha512-da3bMaD0GslQk1sOfBHChWA/kPAFBF7rz3p+eVIgpCqObUdL2fMm9/dedDgs4lXd9R8Igq+XCpzlLgyccmbjkA==, tarball: https://pkg.pr.new/@nuxt/ui@7ce74ae}
     version: 4.7.1
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
@@ -11836,7 +11836,7 @@ snapshots:
       - vue
       - yjs
 
-  '@nuxt/ui@https://pkg.pr.new/@nuxt/ui@8aa1225(e3b7ef1b1e0bc9a4214dad6f439d079b)':
+  '@nuxt/ui@https://pkg.pr.new/@nuxt/ui@7ce74ae(e3b7ef1b1e0bc9a4214dad6f439d079b)':
     dependencies:
       '@floating-ui/dom': 1.7.6
       '@iconify/vue': 5.0.1(vue@3.5.34(typescript@6.0.3))
