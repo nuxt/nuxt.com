@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { and, desc, eq, gte, type SQL } from 'drizzle-orm'
 
-function extractText(parts: AgentMessagePart[]): string {
+function extractText(parts: MessagePart[]): string {
   return parts
     .filter(p => p.type === 'text' && p.text)
     .map(p => p.text!.trim())
@@ -49,7 +49,7 @@ WHEN TO USE: Use this tool to read what users actually disliked. Default sort is
       model: string | null
       chatCreatedAt: Date
       messageRole: 'user' | 'assistant' | 'system' | null
-      messageParts: AgentMessagePart[] | null
+      messageParts: MessagePart[] | null
     }
 
     const rows: VoteJoinRow[] = await db

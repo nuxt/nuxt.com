@@ -11,7 +11,7 @@ WHEN TO USE: Use this tool to find expensive sessions, slow sessions, or session
     provider: z.string().optional().describe('Filter by AI provider (e.g., "openai", "anthropic").'),
     model: z.string().optional().describe('Filter by AI model (e.g., "gpt-4o", "claude-sonnet-4-5").'),
     hasDownvotes: z.boolean().optional().describe('If true, only return chats that have at least one downvoted message.'),
-    sortBy: z.enum(['createdAt', 'estimatedCost', 'durationMs', 'inputTokens', 'outputTokens']).default('createdAt').describe('Sort field (default createdAt, descending).'),
+    sortBy: z.enum(['createdAt', 'updatedAt', 'estimatedCost', 'durationMs', 'inputTokens', 'outputTokens']).default('updatedAt').describe('Sort field (default updatedAt, descending).'),
     limit: z.number().int().min(1).max(100).default(25).describe('Maximum number of chats to return.'),
     offset: z.number().int().min(0).default(0).describe('Pagination offset.')
   },
@@ -36,6 +36,7 @@ WHEN TO USE: Use this tool to find expensive sessions, slow sessions, or session
 
     const sortColumn = {
       createdAt: schema.chats.createdAt,
+      updatedAt: schema.chats.updatedAt,
       estimatedCost: schema.chats.estimatedCost,
       durationMs: schema.chats.durationMs,
       inputTokens: schema.chats.inputTokens,
@@ -68,7 +69,8 @@ WHEN TO USE: Use this tool to find expensive sessions, slow sessions, or session
         messageCount: messageCountExpr,
         upvotes: upvotesExpr,
         downvotes: downvotesExpr,
-        createdAt: schema.chats.createdAt
+        createdAt: schema.chats.createdAt,
+        updatedAt: schema.chats.updatedAt
       })
       .from(schema.chats)
       .leftJoin(schema.votes, eq(schema.votes.chatId, schema.chats.id))

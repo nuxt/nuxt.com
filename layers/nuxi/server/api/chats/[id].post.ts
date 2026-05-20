@@ -121,19 +121,21 @@ export default defineEventHandler(async (event) => {
   // without an explicit `POST /api/chats` round-trip (the `/chat` page still
   // creates it upfront so it can `navigateTo` immediately).
   if (!chat) {
-    const exists = await db.query.chats.findFirst({
-      where: () => eq(schema.chats.id, id)
-    })
-    if (exists) {
-      throw createError({ message: 'Chat not found', status: 404, why: 'This chat belongs to another user.' })
-    }
-    [chat] = await db.insert(schema.chats).values({
+    // `onConflictDoNothing` + re-fetch handles two concurrent first messages
+    // racing on the same generated id (insert returns empty on conflict).
+    await db.insert(schema.chats).values({
       id,
       title: null,
       userId: ownerId
-    }).returning()
+    }).onConflictDoNothing()
+    chat = await db.query.chats.findFirst({
+      where: () => eq(schema.chats.id, id)
+    })
     if (!chat) {
       throw createError({ message: 'Failed to create chat', status: 500 })
+    }
+    if (chat.userId !== ownerId) {
+      throw createError({ message: 'Chat not found', status: 404, why: 'This chat belongs to another user.' })
     }
   }
 
@@ -189,51 +191,65 @@ export default defineEventHandler(async (event) => {
   const httpClient = await createMCPClient({
     transport: { type: 'http', url: `${getRequestURL(event).origin}${MCP_PATH}` }
   })
-  const mcpTools = await httpClient.tools()
   const closeMcp = () => event.waitUntil(httpClient.close())
+
+  let mcpTools: ToolSet
+  try {
+    mcpTools = await httpClient.tools() as ToolSet
+  } catch (err) {
+    closeMcp()
+    throw err
+  }
 
   const stream = createUIMessageStream({
     execute: async ({ writer }) => {
-      if (!chat.title) {
-        writer.write({
-          type: 'data-chat-title',
-          data: { message: 'Generating title...' },
-          transient: true
+      // Anything that throws before `streamText` registers its onError/onAbort
+      // hooks would leak the MCP client — guard the synchronous setup path.
+      try {
+        if (!chat.title) {
+          writer.write({
+            type: 'data-chat-title',
+            data: { message: 'Generating title...' },
+            transient: true
+          })
+        }
+
+        const result = streamText({
+          model: ai.wrap(MODEL),
+          maxOutputTokens: 4000,
+          maxRetries: 2,
+          abortSignal: abortController.signal,
+          stopWhen: stopWhenResponseComplete,
+          system: buildSystemPrompt(pagePath),
+          messages: await convertToModelMessages(messages),
+          tools: {
+            ...mcpTools,
+            web_search: anthropic.tools.webSearch_20250305(),
+            search_github_issues: createSearchGitHubIssuesTool(event),
+            show_module: showModuleTool,
+            show_template: createShowTemplateTool(event),
+            show_blog_post: createShowBlogPostTool(event),
+            show_hosting: createShowHostingTool(event),
+            open_playground: openPlaygroundTool,
+            report_issue: reportIssueTool
+          },
+          experimental_telemetry: {
+            isEnabled: true,
+            integrations: [createEvlogIntegration(ai)]
+          },
+          onFinish: closeMcp,
+          onAbort: closeMcp,
+          onError: closeMcp
         })
+
+        writer.merge(result.toUIMessageStream({
+          sendSources: true,
+          originalMessages: messages
+        }))
+      } catch (err) {
+        closeMcp()
+        throw err
       }
-
-      const result = streamText({
-        model: ai.wrap(MODEL),
-        maxOutputTokens: 4000,
-        maxRetries: 2,
-        abortSignal: abortController.signal,
-        stopWhen: stopWhenResponseComplete,
-        system: buildSystemPrompt(pagePath),
-        messages: await convertToModelMessages(messages),
-        tools: {
-          ...mcpTools as ToolSet,
-          web_search: anthropic.tools.webSearch_20250305(),
-          search_github_issues: createSearchGitHubIssuesTool(event),
-          show_module: showModuleTool,
-          show_template: createShowTemplateTool(event),
-          show_blog_post: createShowBlogPostTool(event),
-          show_hosting: createShowHostingTool(event),
-          open_playground: openPlaygroundTool,
-          report_issue: reportIssueTool
-        },
-        experimental_telemetry: {
-          isEnabled: true,
-          integrations: [createEvlogIntegration(ai)]
-        },
-        onFinish: closeMcp,
-        onAbort: closeMcp,
-        onError: closeMcp
-      })
-
-      writer.merge(result.toUIMessageStream({
-        sendSources: true,
-        originalMessages: messages
-      }))
     },
     onFinish: async ({ messages }) => {
       const metadata = ai.getMetadata()

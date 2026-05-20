@@ -1,3 +1,7 @@
+-- DESTRUCTIVE: the previous `agent_chats` / `agent_votes` tables stored
+-- anonymous-only conversations keyed by request fingerprint. Chat history is
+-- being re-introduced from scratch with a real `users` model, so we drop the
+-- legacy tables instead of attempting a migration.
 DROP TABLE IF EXISTS `agent_votes`;--> statement-breakpoint
 DROP TABLE IF EXISTS `agent_chats`;--> statement-breakpoint
 CREATE TABLE `users` (

@@ -18,5 +18,4 @@ export type NewVote = typeof votes.$inferInsert
 export type AgentDailyUsage = typeof agentDailyUsage.$inferSelect
 export type NewAgentDailyUsage = typeof agentDailyUsage.$inferInsert
 
-export type AgentMessagePart = { type: string, text?: string }
-export type AgentChatMessage = { id: string, role: string, parts: AgentMessagePart[] }
+export type MessagePart = { type: string, text?: string }

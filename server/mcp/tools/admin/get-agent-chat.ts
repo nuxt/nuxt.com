@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { asc, eq } from 'drizzle-orm'
 
-function extractText(parts: AgentMessagePart[]): string {
+function extractText(parts: MessagePart[]): string {
   return parts
     .filter(p => p.type === 'text' && p.text)
     .map(p => p.text!.trim())
@@ -61,7 +61,7 @@ WHEN TO USE: After spotting an interesting chat ID via \`admin_list_agent_chats\
 
     const messages = storedMessages.map((msg: StoredMessageRow) => {
       const vote = votesByMessage.get(msg.id)
-      const parts = (msg.parts ?? []) as AgentMessagePart[]
+      const parts = (msg.parts ?? []) as MessagePart[]
       return {
         id: msg.id,
         role: msg.role,

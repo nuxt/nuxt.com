@@ -17,6 +17,9 @@ const oauthHandler = defineOAuthGitHubEventHandler({
     const role: 'user' | 'admin' = (await isAuthorizedAdmin(ghUser.login)) ? 'admin' : 'user'
 
     if (!user) {
+      // New user: reuse `session.id` as the primary key so any anonymous chats
+      // already created with `session.id` as `userId` keep working without an
+      // UPDATE pass — they're already attached to the new row.
       [user] = await db.insert(schema.users).values({
         id: session.id,
         name: ghUser.name || '',
@@ -27,8 +30,9 @@ const oauthHandler = defineOAuthGitHubEventHandler({
         role
       }).returning()
     } else {
-      // Reassign anonymous chats (created with `session.id` as `userId`) to
-      // the now-known user.
+      // Returning user signing in from a previously-anonymous device:
+      // re-attach anonymous chats from this device (keyed by `session.id`) to
+      // the existing user row. No-op when there were none.
       await db.update(schema.chats).set({ userId: user!.id })
         .where(eq(schema.chats.userId, session.id))
 

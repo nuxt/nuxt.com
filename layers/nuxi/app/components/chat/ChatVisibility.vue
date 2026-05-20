@@ -21,10 +21,7 @@ const advancedOpen = ref(false)
 const isShared = computed(() => props.visibility === 'public')
 const isAdminShared = computed(() => props.visibility === 'admin')
 
-const shareUrl = computed(() => {
-  if (typeof window === 'undefined') return ''
-  return `${window.location.origin}/dashboard/chat/${props.chatId}`
-})
+const shareUrl = computed(() => `${window.location.origin}/dashboard/chat/${props.chatId}`)
 
 const options = [
   {

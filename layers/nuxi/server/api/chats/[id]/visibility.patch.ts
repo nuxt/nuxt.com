@@ -8,6 +8,9 @@ export default defineEventHandler(async (event) => {
     id: z.uuid()
   }).parse)
 
+  // `admin` is a user-initiated opt-in for "share with the Nuxt team for
+  // debugging" (see ChatVisibility.vue). Any owner can set it on their own
+  // chat — it does not grant the chat owner admin access anywhere else.
   const { visibility } = await readValidatedBody(event, z.object({
     visibility: z.enum(['public', 'private', 'admin'])
   }).parse)
