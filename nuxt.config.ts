@@ -169,6 +169,9 @@ export default defineNuxtConfig({
     '/admin': { ssr: false },
     '/admin/**': { ssr: false },
     '/admin/login': { redirect: '/login?redirect=/admin', prerender: false },
+    // Auth-protected client-side area — never SSR'd.
+    '/dashboard': { ssr: false },
+    '/dashboard/**': { ssr: false },
     // Main navigation
     '/api/navigation.json': { prerender: true },
     '/api/search.json': { prerender: true },
@@ -459,7 +462,13 @@ export default defineNuxtConfig({
       crawlLinks: true,
       ignore: [
         route => route === '/modules' || route.startsWith('/modules/'),
-        route => route.startsWith('/admin')
+        route => route.startsWith('/admin'),
+        route => route.startsWith('/login'),
+        route => route.startsWith('/dashboard'),
+        '/mcp',
+        route => route.startsWith('/mcp/'),
+        route => route.startsWith('/api/auth/'),
+        route => route.startsWith('/api/chats')
       ],
       autoSubfolderIndex: false
     }
