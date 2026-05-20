@@ -49,8 +49,7 @@ export function useAgentChat(options: UseAgentChatOptions) {
       : agent.pageContextEnabled.value && Boolean(agent.currentPage.value)
   )
 
-  let chat!: Chat<UIMessage>
-  chat = new Chat<UIMessage>({
+  const chat = new Chat<UIMessage>({
     id: options.chatId,
     messages: options.initialMessages,
     transport: new DefaultChatTransport({
