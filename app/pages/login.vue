@@ -31,139 +31,256 @@ const features = [
   {
     icon: 'i-lucide-history',
     title: 'Chat history',
-    description: 'Your conversations with Nuxi are saved and accessible across all your devices.'
+    description: 'Conversations saved across all your devices.'
   },
   {
     icon: 'i-lucide-message-circle',
     title: 'Ask Nuxi',
-    description: 'Ask questions about Nuxt, modules, deployment, and more — powered by the official documentation.'
+    description: 'Powered by the official documentation.'
   },
   {
     icon: 'i-lucide-git-branch',
     title: 'Branch & explore',
-    description: 'Branch any conversation to explore a different direction without losing your original thread.'
+    description: 'Explore different directions without losing your thread.'
   }
+]
+
+const chatPreview = [
+  { from: 'user', text: 'How do I deploy a Nuxt app to Vercel?', sources: undefined },
+  {
+    from: 'nuxi',
+    text: 'Just import your repo on Vercel, Nuxt is auto-detected and `nuxt build` runs with zero config. The Vercel preset is applied automatically.',
+    sources: ['Deploy on Vercel', 'Nitro presets']
+  },
+  { from: 'user', text: 'Can you show me how to enable ISR?', sources: undefined }
+]
+
+function parseMessage(text: string) {
+  return text.split(/(`[^`]+`)/g).filter(Boolean).map(part =>
+    part.startsWith('`') && part.endsWith('`')
+      ? { type: 'code' as const, text: part.slice(1, -1) }
+      : { type: 'text' as const, text: part }
+  )
+}
+
+const recentChats = [
+  { title: 'Deploy a Nuxt app to Vercel', time: '2m ago', branched: false },
+  { title: 'useFetch vs useAsyncData', time: '1h ago', branched: true },
+  { title: 'File-based routing in Nuxt', time: 'Yesterday', branched: false },
+  { title: 'Adding authentication', time: '2 days ago', branched: false }
 ]
 </script>
 
 <template>
-  <div class="min-h-dvh bg-[#020420] relative overflow-hidden flex flex-col">
-    <div class="absolute inset-0 pointer-events-none">
-      <div class="absolute -top-40 -right-40 size-[600px] bg-primary-500/10 rounded-full blur-3xl" />
-      <div class="absolute -bottom-40 -left-40 size-80 bg-primary-500/8 rounded-full blur-3xl" />
-      <div
-        class="absolute inset-0 opacity-[0.025]"
-        style="background-image: linear-gradient(rgba(255,255,255,.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.2) 1px, transparent 1px); background-size: 40px 40px;"
-      />
-    </div>
+  <div class="min-h-dvh bg-default relative overscroll-y-none overflow-hidden grid lg:grid-cols-2 isolate antialiased">
+    <div class="flex flex-col px-6 sm:px-12 lg:px-16 py-6 sm:py-8 min-h-dvh">
+      <div class="flex items-center justify-between">
+        <UButton
+          to="/"
+          color="neutral"
+          variant="ghost"
+          size="sm"
+          icon="i-lucide-arrow-left"
+          label="Back"
+          class="-ml-2"
+        />
+        <NuxtLink to="/" aria-label="Nuxt home" class="inline-flex opacity-80 hover:opacity-100 transition-opacity">
+          <NuxtLogo class="h-6 w-auto" />
+        </NuxtLink>
+      </div>
 
-    <div class="absolute top-4 left-4">
-      <UButton
-        icon="i-lucide-arrow-left"
-        to="/"
-        color="neutral"
-        variant="ghost"
-        size="sm"
-        aria-label="Back to home"
-      />
-    </div>
+      <motion.div
+        :initial="{ opacity: 0, y: 12 }"
+        :animate="{ opacity: 1, y: 0 }"
+        :transition="{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }"
+        class="flex-1 flex flex-col justify-center gap-8 max-w-sm mx-auto w-full py-12"
+      >
+        <div class="flex flex-col gap-4">
+          <h1 class="text-3xl sm:text-4xl font-semibold text-highlighted tracking-[-0.02em] leading-[1.1]">
+            Sign in to unlock the full experience.
+          </h1>
+          <p class="text-sm/6 text-muted">
+            Use your GitHub account to save your progress and access every feature of nuxt.com.
+          </p>
+        </div>
 
-    <div class="flex-1 flex items-center justify-center px-4 py-16">
-      <div class="w-full max-w-4xl flex flex-col lg:flex-row gap-16 items-center">
-        <motion.div
-          :initial="{ opacity: 0, x: -20 }"
-          :animate="{ opacity: 1, x: 0 }"
-          :transition="{ duration: 0.6, ease: 'easeOut' }"
-          class="flex-1 flex flex-col gap-10"
-        >
-          <div class="flex flex-col gap-6">
-            <NuxtLink to="/" aria-label="Back to home" class="inline-flex">
-              <NuxtLogo class="h-7 w-auto" />
-            </NuxtLink>
+        <UButton
+          :to="githubHref"
+          icon="i-simple-icons-github"
+          label="Continue with GitHub"
+          color="neutral"
+          variant="solid"
+          size="lg"
+          block
+          external
+        />
 
-            <div>
-              <h1 class="text-3xl sm:text-4xl font-semibold text-highlighted tracking-tight">
-                Sign in to unlock<br>the full experience
-              </h1>
-              <p class="mt-3 text-muted text-base/7">
-                Use your GitHub account to save your chat history and access all features.
+        <ul role="list" class="flex flex-col gap-2.5 pt-1 border-t border-default">
+          <motion.li
+            v-for="(feature, i) in features"
+            :key="feature.title"
+            :initial="{ opacity: 0, y: 6 }"
+            :animate="{ opacity: 1, y: 0 }"
+            :transition="{ duration: 0.5, delay: 0.3 + i * 0.08, ease: 'easeOut' }"
+            class="flex items-start gap-2.5 pt-2.5"
+          >
+            <div class="size-6 mt-0.5 shrink-0 rounded-md bg-primary/10 border border-primary/15 flex items-center justify-center text-primary">
+              <UIcon :name="feature.icon" class="size-3" />
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-[0.8125rem] font-medium text-highlighted">
+                {{ feature.title }}
+              </p>
+              <p class="text-xs text-muted mt-0.5 leading-relaxed">
+                {{ feature.description }}
               </p>
             </div>
-          </div>
+          </motion.li>
+        </ul>
 
-          <div class="flex flex-col gap-5">
-            <motion.div
-              v-for="(feature, i) in features"
-              :key="feature.title"
-              :initial="{ opacity: 0, y: 10 }"
-              :animate="{ opacity: 1, y: 0 }"
-              :transition="{ duration: 0.4, delay: 0.3 + i * 0.1, ease: 'easeOut' }"
-              class="flex items-start gap-4"
-            >
-              <div class="size-9 rounded-xl bg-primary/10 border border-primary/10 flex items-center justify-center shrink-0">
-                <UIcon :name="feature.icon" class="size-4 text-primary" />
-              </div>
-              <div class="pt-0.5">
-                <p class="font-medium text-highlighted text-sm">
-                  {{ feature.title }}
+        <p class="text-[0.6875rem] text-dimmed leading-relaxed">
+          We never store your GitHub token. Only your username and avatar are saved to your account.
+        </p>
+      </motion.div>
+    </div>
+
+    <div class="hidden lg:block relative overflow-hidden border-l border-default bg-default">
+      <div class="absolute inset-0 pointer-events-none">
+        <div class="absolute -top-40 -right-40 size-[700px] bg-primary/12 rounded-full blur-3xl" />
+        <div class="absolute top-1/3 -left-40 size-[500px] bg-primary/6 rounded-full blur-3xl" />
+        <div class="absolute -bottom-40 right-1/4 size-[500px] bg-sky-500/5 rounded-full blur-3xl" />
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.06)_1px,transparent_0)] bg-size-[28px_28px] mask-[radial-gradient(ellipse_70%_60%_at_50%_50%,black,transparent_85%)]" />
+      </div>
+
+      <div class="relative h-full flex flex-col items-center justify-center px-8 xl:px-16 py-20 gap-8">
+        <motion.div
+          :initial="{ opacity: 0, y: 20, scale: 0.97 }"
+          :animate="{ opacity: 1, y: 0, scale: 1 }"
+          :transition="{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }"
+          class="relative w-full max-w-md"
+        >
+          <div class="relative rounded-2xl border border-default bg-default/80 backdrop-blur-xl overflow-hidden shadow-2xl shadow-black/40">
+            <div class="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-white/15 to-transparent" />
+
+            <div class="px-4 py-3 border-b border-default flex items-center gap-2.5">
+              <p class="text-xs font-medium text-default truncate flex-1 min-w-0">
+                Deploying a Nuxt app to Vercel
+              </p>
+              <UIcon name="i-lucide-more-horizontal" class="size-3.5 text-dimmed" />
+            </div>
+
+            <div class="p-4 flex flex-col gap-4">
+              <motion.div
+                v-for="(msg, i) in chatPreview"
+                :key="i"
+                :initial="{ opacity: 0, y: 8 }"
+                :animate="{ opacity: 1, y: 0 }"
+                :transition="{ duration: 0.5, delay: 0.5 + i * 0.18, ease: 'easeOut' }"
+              >
+                <div v-if="msg.from === 'user'" class="flex justify-end">
+                  <div class="max-w-[85%] rounded-2xl rounded-br-sm bg-primary/15 border border-primary/20 px-3.5 py-2 text-[0.8125rem] leading-relaxed text-highlighted">
+                    {{ msg.text }}
+                  </div>
+                </div>
+
+                <div v-else class="flex items-start gap-2.5">
+                  <div class="size-6 rounded-lg border border-white/10 bg-elevated/80 flex items-center justify-center overflow-hidden shrink-0">
+                    <AgentNuxiIcon class="size-4" mood="happy" :interactive="false" />
+                  </div>
+                  <div class="flex-1 min-w-0 flex flex-col gap-2 pt-0.5">
+                    <p class="text-[0.8125rem] leading-relaxed text-default">
+                      <template v-for="(part, idx) in parseMessage(msg.text)" :key="idx">
+                        <code
+                          v-if="part.type === 'code'"
+                          class="font-mono mx-0.5 px-1.5 py-0.5 rounded-md bg-elevated text-primary border border-default text-[0.75rem]"
+                        >{{ part.text }}</code>
+                        <span v-else>{{ part.text }}</span>
+                      </template>
+                    </p>
+                    <div v-if="msg.sources" class="flex items-center gap-3 text-[0.6875rem] text-dimmed">
+                      <div class="flex items-center gap-1.5">
+                        <UIcon name="i-lucide-book-open" class="size-3" />
+                        <span>
+                          <span
+                            v-for="(src, sIdx) in msg.sources"
+                            :key="src"
+                          >
+                            <span class="text-muted hover:text-primary transition-colors cursor-pointer">{{ src }}</span><span v-if="sIdx < msg.sources.length - 1" class="text-dimmed"> · </span>
+                          </span>
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        class="flex items-center gap-1 hover:text-primary transition-colors"
+                      >
+                        <UIcon name="i-lucide-git-branch" class="size-3" />
+                        Branch
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div
+                :initial="{ opacity: 0 }"
+                :animate="{ opacity: 1 }"
+                :transition="{ duration: 0.4, delay: 1.2 }"
+                class="flex items-start gap-2.5"
+              >
+                <div class="size-6 rounded-lg border border-white/10 bg-elevated/80 flex items-center justify-center overflow-hidden shrink-0">
+                  <AgentNuxiIcon class="size-4" mood="happy" :interactive="false" />
+                </div>
+                <div class="flex items-center gap-1 py-2">
+                  <span class="size-1.5 rounded-full bg-neutral-500 animate-pulse [animation-delay:0ms]" />
+                  <span class="size-1.5 rounded-full bg-neutral-500 animate-pulse [animation-delay:200ms]" />
+                  <span class="size-1.5 rounded-full bg-neutral-500 animate-pulse [animation-delay:400ms]" />
+                </div>
+              </motion.div>
+            </div>
+
+            <div class="px-3 pb-3">
+              <div class="rounded-xl border border-default bg-elevated/30 pl-3.5 pr-1.5 py-1.5 flex items-center gap-2">
+                <p class="flex-1 min-w-0 text-xs text-dimmed truncate">
+                  Ask Nuxi anything...
                 </p>
-                <p class="text-muted text-sm mt-0.5">
-                  {{ feature.description }}
-                </p>
+                <div class="size-6 rounded-md bg-primary/15 border border-primary/25 flex items-center justify-center shrink-0">
+                  <UIcon name="i-lucide-arrow-up" class="size-3.5 text-primary" />
+                </div>
               </div>
-            </motion.div>
+            </div>
           </div>
         </motion.div>
 
         <motion.div
-          :initial="{ opacity: 0, y: 20, scale: 0.97 }"
-          :animate="{ opacity: 1, y: 0, scale: 1 }"
-          :transition="{ duration: 0.6, delay: 0.1, ease: 'easeOut' }"
-          class="w-full max-w-sm shrink-0"
+          :initial="{ opacity: 0, y: 10 }"
+          :animate="{ opacity: 1, y: 0 }"
+          :transition="{ duration: 0.7, delay: 1.4, ease: [0.22, 1, 0.36, 1] }"
+          class="relative w-full max-w-md flex flex-col gap-2"
         >
-          <div class="rounded-2xl border border-white/8 bg-white/4 backdrop-blur-xl overflow-hidden shadow-2xl shadow-black/50">
-            <div class="p-6 flex flex-col gap-6">
-              <div class="flex flex-col items-center gap-4 pt-2">
-                <motion.div
-                  :initial="{ opacity: 0, scale: 0.5 }"
-                  :animate="{ opacity: 1, scale: 1 }"
-                  :transition="{ duration: 0.5, delay: 0.35, ease: [0.34, 1.56, 0.64, 1] }"
-                >
-                  <AgentNuxiIcon class="size-14" mood="happy" />
-                </motion.div>
-                <div class="text-center">
-                  <h2 class="text-base font-semibold text-highlighted">
-                    Welcome
-                  </h2>
-                  <p class="text-sm text-muted mt-0.5">
-                    Sign in with your GitHub account to continue
-                  </p>
-                </div>
-              </div>
-
-              <UButton
-                :to="githubHref"
-                icon="i-simple-icons-github"
-                label="Continue with GitHub"
-                color="neutral"
-                variant="solid"
-                size="lg"
-                class="w-full justify-center"
-                external
+          <p class="text-[0.6875rem] font-medium uppercase tracking-[0.15em] text-dimmed px-1">
+            Recent
+          </p>
+          <ul role="list" class="flex flex-col">
+            <motion.li
+              v-for="(chat, i) in recentChats"
+              :key="chat.title"
+              :initial="{ opacity: 0, x: -6 }"
+              :animate="{ opacity: 1, x: 0 }"
+              :transition="{ duration: 0.4, delay: 1.55 + i * 0.07, ease: 'easeOut' }"
+              class="px-1 py-2 flex items-center gap-3 border-b border-default last:border-b-0"
+            >
+              <UIcon
+                :name="chat.branched ? 'i-lucide-git-branch' : 'i-lucide-message-circle'"
+                :class="['size-3 shrink-0', chat.branched ? 'text-primary' : 'text-dimmed']"
               />
-            </div>
-
-            <div class="px-6 py-4 border-t border-white/6 flex flex-col gap-2.5 bg-white/2">
-              <div class="flex items-start gap-2 text-xs text-dimmed">
-                <UIcon name="i-lucide-shield-check" class="size-3.5 shrink-0 mt-0.5 text-success" />
-                <span>We never store your GitHub token — only a secure session cookie.</span>
-              </div>
-              <div class="flex items-start gap-2 text-xs text-dimmed">
-                <UIcon name="i-lucide-database" class="size-3.5 shrink-0 mt-0.5 text-primary" />
-                <span>Your account data (username, avatar) is saved to associate your chat history.</span>
-              </div>
-            </div>
-          </div>
+              <p class="text-xs text-default truncate flex-1 min-w-0">
+                {{ chat.title }}
+              </p>
+              <span class="text-[0.6875rem] text-dimmed shrink-0 tabular-nums">
+                {{ chat.time }}
+              </span>
+            </motion.li>
+          </ul>
         </motion.div>
       </div>
     </div>
