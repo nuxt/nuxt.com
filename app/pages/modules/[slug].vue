@@ -175,7 +175,7 @@ if (import.meta.server) {
       :ui="isAgentDocked ? {
         center: 'lg:col-span-10',
         right: 'lg:hidden'
-      } : undefined"
+      } : { root: 'lg:grid-cols-12', center: 'lg:col-span-9', right: 'lg:col-span-3' }"
     >
       <UPageBody>
         <ContentRenderer v-if="module.readme?.body" :value="module.readme" :components="{ a: ModuleProseA, img: ModuleProseImg, kbd: ModuleProseKbd }" class="first:[&_picture]:block first:[&_picture]:mb-4" />

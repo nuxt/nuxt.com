@@ -105,7 +105,7 @@ links.push({
         </template>
       </UPageHeader>
 
-      <UPage>
+      <UPage :ui="{ root: 'lg:grid-cols-12', center: 'lg:col-span-9', right: 'lg:col-span-3' }">
         <UPageBody>
           <ContentRenderer v-if="provider && provider.body" :value="provider" />
 
