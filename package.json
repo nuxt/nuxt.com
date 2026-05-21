@@ -38,7 +38,7 @@
     "@nuxt/hints": "^1.1.2",
     "@nuxt/image": "^2.0.0",
     "@nuxt/scripts": "^1.1.0",
-    "@nuxt/ui": "https://pkg.pr.new/@nuxt/ui@7ce74ae",
+    "@nuxt/ui": "^4.8.0",
     "@nuxthub/core": "^0.10.7",
     "@nuxtjs/html-validator": "^2.1.0",
     "@nuxtjs/mcp-toolkit": "^0.17.1",
