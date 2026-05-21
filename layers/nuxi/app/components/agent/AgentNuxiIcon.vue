@@ -15,6 +15,13 @@ const {
   svgEl,
   effectiveMood,
   faceTransform,
+  eyeLeftPath,
+  eyeRightPath,
+  smileLeftPath,
+  smileRightPath,
+  smileOpacity,
+  mouthD,
+  mouthOpacity,
   eyeLeftTransform,
   eyeRightTransform,
   eyeLeftTransition,
@@ -47,19 +54,38 @@ const isSleeping = computed(() => effectiveMood.value === 'sleeping')
           <path
             class="nuxi-eye"
             :style="{ transform: eyeLeftTransform, transition: eyeLeftTransition }"
-            d="M76.425 109.429C87.5373 92.1556 113.182 93.389 122.585 111.649C131.988 129.91 118.098 151.501 97.5822 150.515C77.0667 149.528 65.3128 126.703 76.425 109.429Z"
+            :d="eyeLeftPath"
             fill="black"
           />
           <path
             class="nuxi-eye"
             :style="{ transform: eyeRightTransform, transition: eyeRightTransition }"
-            d="M204.632 156.542C185.601 155.627 174.698 134.454 185.006 118.43C195.314 102.407 219.102 103.551 227.825 120.49C236.547 137.429 223.662 157.458 204.632 156.542Z"
+            :d="eyeRightPath"
             fill="black"
+          />
+          <!-- Smile arcs `^_^` — revealed when default eyes scale down (happy). -->
+          <path
+            class="nuxi-eye"
+            :style="{ opacity: smileOpacity, transition: 'opacity 0.3s ease' }"
+            :d="smileLeftPath"
+            fill="none"
+            stroke="black"
+            stroke-width="12"
+            stroke-linecap="round"
+          />
+          <path
+            class="nuxi-eye"
+            :style="{ opacity: smileOpacity, transition: 'opacity 0.3s ease' }"
+            :d="smileRightPath"
+            fill="none"
+            stroke="black"
+            stroke-width="12"
+            stroke-linecap="round"
           />
           <path
             class="nuxi-mouth"
-            :style="{ transform: mouthTransform, transition: 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' }"
-            d="M129.032 174.492C137.341 190.478 160.159 191.682 170.105 176.66L172.148 173.574C173.856 170.994 172.113 167.535 169.023 167.372L131.086 165.369C127.996 165.206 125.899 168.463 127.326 171.209L129.032 174.492Z"
+            :style="{ transform: mouthTransform, opacity: mouthOpacity, transition: 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), d 0.3s ease, opacity 0.3s ease' }"
+            :d="mouthD"
             fill="black"
           />
         </g>
@@ -86,6 +112,7 @@ const isSleeping = computed(() => effectiveMood.value === 'sleeping')
       <text class="nuxi-z nuxi-z-2" x="202" y="125" font-size="54">z</text>
       <text class="nuxi-z nuxi-z-3" x="228" y="82" font-size="70">z</text>
     </g>
+
   </svg>
 </template>
 
@@ -119,6 +146,7 @@ const isSleeping = computed(() => effectiveMood.value === 'sleeping')
 .nuxi-z-1 { animation-delay: 0s; }
 .nuxi-z-2 { animation-delay: 1.05s; }
 .nuxi-z-3 { animation-delay: 2.1s; }
+
 
 @keyframes nuxi-float {
   0%, 100% { transform: translateY(0); }

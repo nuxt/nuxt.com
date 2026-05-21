@@ -2,11 +2,19 @@ import { useAnimate } from 'motion-v'
 
 type LookDir = 'center' | 'left' | 'right' | 'up'
 
+type MouthShape = 'default' | 'O'
+
 interface MoodVisual {
-  eyeScaleY: number
-  eyeScaleX: number
+  showSmile: boolean
+  mouthShape: MouthShape
+  eyeLeftScaleY: number
+  eyeLeftScaleX: number
+  eyeRightScaleY: number
+  eyeRightScaleX: number
+  eyeTranslateY: number
   mouthScale: number
   mouthTY: number
+  mouthOpacity: number
   blinkEnabled: boolean
 }
 
@@ -21,13 +29,26 @@ const LOOK_OFFSETS: Record<LookDir, { x: number, y: number }> = {
   up: { x: 0, y: -6 }
 }
 
+const EYE_LEFT_PATH = 'M76.425 109.429C87.5373 92.1556 113.182 93.389 122.585 111.649C131.988 129.91 118.098 151.501 97.5822 150.515C77.0667 149.528 65.3128 126.703 76.425 109.429Z'
+const EYE_RIGHT_PATH = 'M204.632 156.542C185.601 155.627 174.698 134.454 185.006 118.43C195.314 102.407 219.102 103.551 227.825 120.49C236.547 137.429 223.662 157.458 204.632 156.542Z'
+
+// Smile arcs `^_^` — rendered as separate stroked layers, opacity-controlled per mood.
+// Drawn as single quadratic curves with stroke-linecap=round → smooth ends, no cusps.
+const SMILE_LEFT_PATH = 'M77 125 Q 99 109 121 125'
+const SMILE_RIGHT_PATH = 'M184 133 Q 206 117 228 133'
+
+const MOUTH_PATHS: Record<MouthShape, string> = {
+  default: 'M129.032 174.492C137.341 190.478 160.159 191.682 170.105 176.66L172.148 173.574C173.856 170.994 172.113 167.535 169.023 167.372L131.086 165.369C127.996 165.206 125.899 168.463 127.326 171.209L129.032 174.492Z',
+  O: 'M132 178 a 17 13 0 1 0 34 0 a 17 13 0 1 0 -34 0 Z'
+}
+
 const MOOD_VISUALS: Record<NuxiMood, MoodVisual> = {
-  idle: { eyeScaleY: 1, eyeScaleX: 1, mouthScale: 1, mouthTY: 0, blinkEnabled: true },
-  happy: { eyeScaleY: 1.08, eyeScaleX: 1.04, mouthScale: 1.2, mouthTY: 4, blinkEnabled: true },
-  excited: { eyeScaleY: 1.15, eyeScaleX: 1.06, mouthScale: 1.35, mouthTY: 6, blinkEnabled: false },
-  thinking: { eyeScaleY: 0.55, eyeScaleX: 0.9, mouthScale: 0.7, mouthTY: 6, blinkEnabled: false },
-  sleeping: { eyeScaleY: 0.15, eyeScaleX: 1.02, mouthScale: 0.85, mouthTY: 4, blinkEnabled: false },
-  surprised: { eyeScaleY: 1.2, eyeScaleX: 1.08, mouthScale: 1.3, mouthTY: 8, blinkEnabled: false }
+  idle:      { showSmile: false, eyeLeftScaleY: 1,    eyeLeftScaleX: 1,    eyeRightScaleY: 1,    eyeRightScaleX: 1,    eyeTranslateY: 0,  mouthShape: 'default', mouthScale: 1,    mouthTY: 0, mouthOpacity: 1, blinkEnabled: true  },
+  happy:     { showSmile: true,  eyeLeftScaleY: 0.02, eyeLeftScaleX: 0.5,  eyeRightScaleY: 0.02, eyeRightScaleX: 0.5,  eyeTranslateY: -5, mouthShape: 'default', mouthScale: 1.25, mouthTY: 3, mouthOpacity: 1, blinkEnabled: false },
+  excited:   { showSmile: false, eyeLeftScaleY: 1.05, eyeLeftScaleX: 1.02, eyeRightScaleY: 1.05, eyeRightScaleX: 1.02, eyeTranslateY: 0,  mouthShape: 'default', mouthScale: 1.55, mouthTY: 6, mouthOpacity: 1, blinkEnabled: false },
+  thinking:  { showSmile: false, eyeLeftScaleY: 0.55, eyeLeftScaleX: 0.9,  eyeRightScaleY: 0.55, eyeRightScaleX: 0.9,  eyeTranslateY: 0,  mouthShape: 'default', mouthScale: 0.7, mouthTY: 6, mouthOpacity: 1, blinkEnabled: false },
+  sleeping:  { showSmile: false, eyeLeftScaleY: 0.15, eyeLeftScaleX: 1,    eyeRightScaleY: 0.15, eyeRightScaleX: 1,    eyeTranslateY: 0,  mouthShape: 'default', mouthScale: 0,    mouthTY: 0, mouthOpacity: 1, blinkEnabled: false },
+  surprised: { showSmile: false, eyeLeftScaleY: 1.08, eyeLeftScaleX: 1.03, eyeRightScaleY: 1.08, eyeRightScaleX: 1.03, eyeTranslateY: 0,  mouthShape: 'O',       mouthScale: 1,    mouthTY: 0, mouthOpacity: 1, blinkEnabled: false }
 }
 
 interface NuxiIconProps {
@@ -95,16 +116,22 @@ export function useNuxiIcon(props: NuxiIconProps, emit?: EmitFn) {
 
   const visual = computed(() => MOOD_VISUALS[effectiveMood.value])
 
-  const eyeScaleY = computed(() => isBlinking.value ? 0.05 : visual.value.eyeScaleY)
+  const smileOpacity = computed(() => visual.value.showSmile ? 1 : 0)
+
+  const mouthD = computed(() => MOUTH_PATHS[visual.value.mouthShape])
+  const mouthOpacity = computed(() => visual.value.mouthOpacity)
+
+  const eyeLeftScaleY = computed(() => isBlinking.value ? 0.05 : visual.value.eyeLeftScaleY)
+  const eyeRightScaleY = computed(() => isBlinking.value ? 0.05 : visual.value.eyeRightScaleY)
 
   const eyeLeftTransform = computed(() =>
     isWinking.value
-      ? `scale(${visual.value.eyeScaleX}, 0.05)`
-      : `scale(${visual.value.eyeScaleX}, ${eyeScaleY.value})`
+      ? `translateY(${visual.value.eyeTranslateY}px) scale(${visual.value.eyeLeftScaleX}, 0.05)`
+      : `translateY(${visual.value.eyeTranslateY}px) scale(${visual.value.eyeLeftScaleX}, ${eyeLeftScaleY.value})`
   )
 
   const eyeRightTransform = computed(() =>
-    `scale(${visual.value.eyeScaleX}, ${eyeScaleY.value})`
+    `translateY(${visual.value.eyeTranslateY}px) scale(${visual.value.eyeRightScaleX}, ${eyeRightScaleY.value})`
   )
 
   const eyeLeftTransition = computed(() =>
@@ -417,6 +444,13 @@ export function useNuxiIcon(props: NuxiIconProps, emit?: EmitFn) {
     svgEl,
     effectiveMood,
     faceTransform,
+    eyeLeftPath: EYE_LEFT_PATH,
+    eyeRightPath: EYE_RIGHT_PATH,
+    smileLeftPath: SMILE_LEFT_PATH,
+    smileRightPath: SMILE_RIGHT_PATH,
+    smileOpacity,
+    mouthD,
+    mouthOpacity,
     eyeLeftTransform,
     eyeRightTransform,
     eyeLeftTransition,
