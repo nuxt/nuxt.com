@@ -1,8 +1,10 @@
+import { createError } from 'evlog'
 import { and, asc, eq, inArray } from 'drizzle-orm'
 import { z } from 'zod'
 
 export default defineEventHandler(async (event) => {
   const session = await getUserSession(event)
+  const ownerId = session.user?.id || session.id
 
   const { id } = await getValidatedRouterParams(event, z.object({
     id: z.uuid()
@@ -13,15 +15,22 @@ export default defineEventHandler(async (event) => {
     type: z.enum(['edit', 'regenerate'])
   }).parse)
 
+  const log = useLogger(event)
+  log.set({
+    user: { id: ownerId, authenticated: !!session.user },
+    chat: { id },
+    truncate: { messageId, type }
+  })
+
   const chat = await db.query.chats.findFirst({
     where: () => and(
       eq(schema.chats.id, id),
-      eq(schema.chats.userId, session.user?.id || session.id)
+      eq(schema.chats.userId, ownerId)
     )
   })
 
   if (!chat) {
-    throw createError({ statusCode: 404, statusMessage: 'Chat not found' })
+    throw createError({ message: 'Chat not found', status: 404 })
   }
 
   const allMessages = await db.select({ id: schema.messages.id, role: schema.messages.role })
@@ -31,19 +40,21 @@ export default defineEventHandler(async (event) => {
 
   const targetIndex = allMessages.findIndex((m: { id: string }) => m.id === messageId)
   if (targetIndex === -1) {
-    throw createError({ statusCode: 404, statusMessage: 'Message not found' })
+    throw createError({ message: 'Message not found', status: 404 })
   }
 
   const targetRole = allMessages[targetIndex]!.role
   if (type === 'edit' && targetRole !== 'user') {
-    throw createError({ statusCode: 400, statusMessage: 'Can only edit user messages' })
+    throw createError({ message: 'Can only edit user messages', status: 400, why: `Target message role is "${targetRole}".` })
   }
   if (type === 'regenerate' && targetRole !== 'assistant') {
-    throw createError({ statusCode: 400, statusMessage: 'Can only regenerate assistant messages' })
+    throw createError({ message: 'Can only regenerate assistant messages', status: 400, why: `Target message role is "${targetRole}".` })
   }
 
   const startIndex = type === 'edit' ? targetIndex + 1 : targetIndex
   const idsToDelete = allMessages.slice(startIndex).map((m: { id: string }) => m.id)
+
+  log.set({ truncate: { messageId, type, deleted: idsToDelete.length } })
 
   if (idsToDelete.length > 0) {
     await db.delete(schema.messages).where(inArray(schema.messages.id, idsToDelete))

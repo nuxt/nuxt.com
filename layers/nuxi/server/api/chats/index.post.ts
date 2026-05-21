@@ -1,7 +1,10 @@
+import { createError } from 'evlog'
 import { z } from 'zod'
 
 export default defineEventHandler(async (event) => {
   const session = await getUserSession(event)
+  const ownerId = session.user?.id || session.id
+
   const { id, message } = await readValidatedBody(event, z.object({
     id: z.uuid(),
     message: z.object({
@@ -11,14 +14,20 @@ export default defineEventHandler(async (event) => {
     })
   }).parse)
 
+  const log = useLogger(event)
+  log.set({
+    user: { id: ownerId, authenticated: !!session.user },
+    chat: { id }
+  })
+
   const [chat] = await db.insert(schema.chats).values({
     id,
     title: null,
-    userId: session.user?.id || session.id
+    userId: ownerId
   }).returning()
 
   if (!chat) {
-    throw createError({ statusCode: 500, statusMessage: 'Failed to create chat' })
+    throw createError({ message: 'Failed to create chat', status: 500, why: 'Insert returned no row.' })
   }
 
   await db.insert(schema.messages).values({

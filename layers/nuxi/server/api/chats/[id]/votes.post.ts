@@ -4,6 +4,7 @@ import { z } from 'zod'
 
 export default defineEventHandler(async (event) => {
   const session = await getUserSession(event)
+  const ownerId = session.user?.id || session.id
 
   const { id } = await getValidatedRouterParams(event, z.object({
     id: z.uuid()
@@ -14,10 +15,16 @@ export default defineEventHandler(async (event) => {
     isUpvoted: z.boolean().optional()
   }).parse)
 
+  const log = useLogger(event)
+  log.set({
+    user: { id: ownerId, authenticated: !!session.user },
+    vote: { chatId: id, messageId, isUpvoted: isUpvoted ?? null }
+  })
+
   const chat = await db.query.chats.findFirst({
     where: () => and(
       eq(schema.chats.id, id),
-      eq(schema.chats.userId, session.user?.id || session.id)
+      eq(schema.chats.userId, ownerId)
     )
   })
 
@@ -38,12 +45,6 @@ export default defineEventHandler(async (event) => {
   if (message.role !== 'assistant') {
     throw createError({ message: 'Cannot vote on this message', status: 400, why: 'Votes are only allowed on assistant messages.' })
   }
-
-  const log = useLogger(event)
-  log.set({
-    user: { id: session.user?.id || session.id },
-    vote: { chatId: id, messageId, isUpvoted: isUpvoted ?? null }
-  })
 
   if (isUpvoted === undefined) {
     await db.delete(schema.votes).where(and(

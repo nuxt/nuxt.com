@@ -1,12 +1,11 @@
+import { createError } from 'evlog'
 import { eq, asc } from 'drizzle-orm'
 import type { InferSelectModel } from 'drizzle-orm'
 import { z } from 'zod'
 
 export default defineEventHandler(async (event) => {
   const session = await getUserSession(event)
-  if (!session.user?.id) {
-    throw createError({ statusCode: 401 })
-  }
+  const ownerId = session.user?.id || session.id
 
   const { id } = await getValidatedRouterParams(event, z.object({
     id: z.uuid()
@@ -15,6 +14,12 @@ export default defineEventHandler(async (event) => {
   const { messageId } = await readValidatedBody(event, z.object({
     messageId: z.string().min(1)
   }).parse)
+
+  const log = useLogger(event)
+  log.set({
+    user: { id: ownerId, authenticated: !!session.user },
+    branch: { sourceChatId: id, messageId }
+  })
 
   const chat = await db.query.chats.findFirst({
     where: () => eq(schema.chats.id, id),
@@ -25,8 +30,11 @@ export default defineEventHandler(async (event) => {
     }
   })
 
-  if (!chat || chat.userId !== session.user!.id) {
-    throw createError({ statusCode: 403 })
+  if (!chat) {
+    throw createError({ message: 'Chat not found', status: 404 })
+  }
+  if (chat.userId !== ownerId) {
+    throw createError({ message: 'Chat not found', status: 404, why: 'Branching is only allowed on chats you own.' })
   }
 
   type MessageRow = InferSelectModel<typeof schema.messages>
@@ -55,6 +63,8 @@ export default defineEventHandler(async (event) => {
       }))
     )
   }
+
+  log.set({ branch: { newChatId, copiedMessages: messagesToCopy.length, cutMatched: cutIndex >= 0 } })
 
   return { id: newChatId }
 })

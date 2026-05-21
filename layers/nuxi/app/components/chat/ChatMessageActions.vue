@@ -18,6 +18,7 @@ const emit = defineEmits<{
 
 const { copy, copied } = useClipboard()
 const { refresh: refreshChats } = useChatsData()
+const toast = useToast()
 
 const textContent = computed(() => {
   return props.message.parts
@@ -42,12 +43,20 @@ const dateLabel = computed(() => {
 
 async function branch() {
   if (!props.chatId) return
-  const { id } = await $fetch<{ id: string }>(`/api/chats/${props.chatId}/branch`, {
-    method: 'POST',
-    body: { messageId: props.message.id }
-  })
-  await refreshChats()
-  await navigateTo(`/dashboard/chat/${id}`)
+  try {
+    const { id } = await $fetch<{ id: string }>(`/api/chats/${props.chatId}/branch`, {
+      method: 'POST',
+      body: { messageId: props.message.id }
+    })
+    await refreshChats()
+    await navigateTo(`/dashboard/chat/${id}`)
+  } catch {
+    toast.add({
+      description: 'Failed to branch chat',
+      icon: 'i-lucide-alert-circle',
+      color: 'error'
+    })
+  }
 }
 
 const moreItems = computed<DropdownMenuItem[][]>(() => {
