@@ -143,6 +143,9 @@ export function useNuxiIcon(props: NuxiIconProps, emit?: EmitFn) {
   let blinkTimer: ReturnType<typeof setTimeout> | undefined
   let sleepTimer: ReturnType<typeof setTimeout> | undefined
   let attentionTimer: ReturnType<typeof setTimeout> | undefined
+  let winkTimer: ReturnType<typeof setTimeout> | undefined
+  let winkOffTimer: ReturnType<typeof setTimeout> | undefined
+  let mounted = true
 
   function scheduleLook() {
     lookTimer = setTimeout(() => {
@@ -174,10 +177,11 @@ export function useNuxiIcon(props: NuxiIconProps, emit?: EmitFn) {
   }
 
   function scheduleWink() {
-    setTimeout(() => {
+    if (!mounted) return
+    winkTimer = setTimeout(() => {
       if (effectiveMood.value === 'idle' || effectiveMood.value === 'happy') {
         isWinking.value = true
-        setTimeout(() => (isWinking.value = false), 250)
+        winkOffTimer = setTimeout(() => (isWinking.value = false), 250)
       }
       scheduleWink()
     }, 15000 + Math.random() * 10000)
@@ -384,12 +388,11 @@ export function useNuxiIcon(props: NuxiIconProps, emit?: EmitFn) {
     if (mouseSpeed > 60 && Math.random() < 0.4) doDizzy()
   }
 
-  if (props.interactive !== false) {
-    useEventListener(window, 'mousemove', handleMouseMove, { passive: true })
-    useEventListener(window, 'keydown', handleKeyDown)
-  }
-
   onMounted(() => {
+    if (props.interactive !== false) {
+      useEventListener(window, 'mousemove', handleMouseMove, { passive: true })
+      useEventListener(window, 'keydown', handleKeyDown)
+    }
     scheduleLook()
     scheduleBlink()
     scheduleWink()
@@ -398,12 +401,15 @@ export function useNuxiIcon(props: NuxiIconProps, emit?: EmitFn) {
   })
 
   onUnmounted(() => {
+    mounted = false
     clearTimeout(lookTimer)
     clearTimeout(blinkTimer)
     clearTimeout(sleepTimer)
     clearTimeout(clickResetTimer)
     clearTimeout(hoverResetTimer)
     clearTimeout(attentionTimer)
+    clearTimeout(winkTimer)
+    clearTimeout(winkOffTimer)
   })
 
   return {

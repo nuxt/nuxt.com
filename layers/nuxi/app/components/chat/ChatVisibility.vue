@@ -21,7 +21,10 @@ const advancedOpen = ref(false)
 const isShared = computed(() => props.visibility === 'public')
 const isAdminShared = computed(() => props.visibility === 'admin')
 
-const shareUrl = computed(() => `${window.location.origin}/dashboard/chat/${props.chatId}`)
+const shareUrl = computed(() => {
+  if (!import.meta.client || !props.chatId) return ''
+  return `${window.location.origin}/dashboard/chat/${props.chatId}`
+})
 
 const options = [
   {
@@ -133,7 +136,7 @@ const buttonLabel = computed(() => {
           </button>
         </div>
 
-        <div v-if="isShared" class="pt-3 border-t border-default space-y-2">
+        <div v-if="isShared && shareUrl" class="pt-3 border-t border-default space-y-2">
           <div class="flex items-center gap-2">
             <UInput
               :model-value="shareUrl"
