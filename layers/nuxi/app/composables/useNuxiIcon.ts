@@ -42,6 +42,7 @@ const MOUTH_PATHS: Record<MouthShape, string> = {
   O: 'M132 178 a 17 13 0 1 0 34 0 a 17 13 0 1 0 -34 0 Z'
 }
 
+/* eslint-disable @stylistic/key-spacing, @stylistic/no-multi-spaces -- table layout for legibility */
 const MOOD_VISUALS: Record<NuxiMood, MoodVisual> = {
   idle:      { showSmile: false, eyeLeftScaleY: 1,    eyeLeftScaleX: 1,    eyeRightScaleY: 1,    eyeRightScaleX: 1,    eyeTranslateY: 0,  mouthShape: 'default', mouthScale: 1,    mouthTY: 0, mouthOpacity: 1, blinkEnabled: true  },
   happy:     { showSmile: true,  eyeLeftScaleY: 0.02, eyeLeftScaleX: 0.5,  eyeRightScaleY: 0.02, eyeRightScaleX: 0.5,  eyeTranslateY: -5, mouthShape: 'default', mouthScale: 1.25, mouthTY: 3, mouthOpacity: 1, blinkEnabled: false },
@@ -50,6 +51,7 @@ const MOOD_VISUALS: Record<NuxiMood, MoodVisual> = {
   sleeping:  { showSmile: false, eyeLeftScaleY: 0.15, eyeLeftScaleX: 1,    eyeRightScaleY: 0.15, eyeRightScaleX: 1,    eyeTranslateY: 0,  mouthShape: 'default', mouthScale: 0,    mouthTY: 0, mouthOpacity: 1, blinkEnabled: false },
   surprised: { showSmile: false, eyeLeftScaleY: 1.08, eyeLeftScaleX: 1.03, eyeRightScaleY: 1.08, eyeRightScaleX: 1.03, eyeTranslateY: 0,  mouthShape: 'O',       mouthScale: 1,    mouthTY: 0, mouthOpacity: 1, blinkEnabled: false }
 }
+/* eslint-enable @stylistic/key-spacing, @stylistic/no-multi-spaces */
 
 interface NuxiIconProps {
   mood?: NuxiMood

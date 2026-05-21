@@ -13,7 +13,9 @@ const moods: { mood: NuxiMood, label: string }[] = [
   <div class="nuxi-mood-gallery not-prose my-8">
     <div v-for="item in moods" :key="item.mood" class="nuxi-mood-card">
       <AgentNuxiIcon class="size-10 text-primary" :mood="item.mood" :interactive="false" />
-      <div class="nuxi-mood-label">{{ item.label }}</div>
+      <div class="nuxi-mood-label">
+        {{ item.label }}
+      </div>
     </div>
   </div>
 </template>

@@ -147,7 +147,6 @@ const isSleeping = computed(() => effectiveMood.value === 'sleeping')
 .nuxi-z-2 { animation-delay: 1.05s; }
 .nuxi-z-3 { animation-delay: 2.1s; }
 
-
 @keyframes nuxi-float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-4px); }

@@ -41,8 +41,11 @@ const dateLabel = computed(() => {
   return format(d, 'MMM d, yyyy, h:mm a')
 })
 
+const isBranching = ref(false)
+
 async function branch() {
-  if (!props.chatId) return
+  if (!props.chatId || isBranching.value) return
+  isBranching.value = true
   try {
     const { id } = await $fetch<{ id: string }>(`/api/chats/${props.chatId}/branch`, {
       method: 'POST',
@@ -56,6 +59,8 @@ async function branch() {
       icon: 'i-lucide-alert-circle',
       color: 'error'
     })
+  } finally {
+    isBranching.value = false
   }
 }
 
@@ -68,6 +73,7 @@ const moreItems = computed<DropdownMenuItem[][]>(() => {
     items.push({
       label: 'Branch in new chat',
       icon: 'i-lucide-git-branch',
+      disabled: isBranching.value,
       onSelect: branch
     })
   }

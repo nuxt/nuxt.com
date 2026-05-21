@@ -40,9 +40,10 @@ export default defineEventHandler(async (event) => {
   type MessageRow = InferSelectModel<typeof schema.messages>
 
   const cutIndex = chat.messages.findIndex((m: MessageRow) => m.id === messageId)
-  const messagesToCopy = cutIndex >= 0
-    ? chat.messages.slice(0, cutIndex + 1)
-    : chat.messages
+  if (cutIndex === -1) {
+    throw createError({ message: 'Message not found in chat', status: 404, why: 'messageId does not exist in this chat.' })
+  }
+  const messagesToCopy = chat.messages.slice(0, cutIndex + 1)
 
   const newChatId = crypto.randomUUID()
 
@@ -64,7 +65,7 @@ export default defineEventHandler(async (event) => {
     )
   }
 
-  log.set({ branch: { newChatId, copiedMessages: messagesToCopy.length, cutMatched: cutIndex >= 0 } })
+  log.set({ branch: { newChatId, copiedMessages: messagesToCopy.length } })
 
   return { id: newChatId }
 })

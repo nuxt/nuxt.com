@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
     where: () => eq(schema.chats.id, id),
     with: {
       messages: {
-        orderBy: () => asc(schema.messages.createdAt)
+        orderBy: () => [asc(schema.messages.createdAt), asc(schema.messages.id)]
       }
     }
   })

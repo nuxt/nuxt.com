@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
   }).parse)
 
   const { messageId, isUpvoted } = await readValidatedBody(event, z.object({
-    messageId: z.string(),
+    messageId: z.string().min(1),
     isUpvoted: z.boolean().optional()
   }).parse)
 

@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
     id: z.uuid(),
     message: z.object({
       id: z.string(),
-      role: z.enum(['user', 'assistant', 'system']),
+      role: z.literal('user'),
       parts: z.array(z.object({ type: z.string() }).loose())
     })
   }).parse)

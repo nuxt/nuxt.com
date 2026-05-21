@@ -16,21 +16,16 @@ export default defineEventHandler(async (event) => {
     chat: { id }
   })
 
-  const chat = await db.query.chats.findFirst({
-    where: () => and(
-      eq(schema.chats.id, id),
-      eq(schema.chats.userId, ownerId)
-    )
-  })
-
-  if (!chat) {
-    throw createError({ message: 'Chat not found', status: 404 })
-  }
-
-  return await db.delete(schema.chats)
+  const deleted = await db.delete(schema.chats)
     .where(and(
       eq(schema.chats.id, id),
       eq(schema.chats.userId, ownerId)
     ))
     .returning()
+
+  if (!deleted.length) {
+    throw createError({ message: 'Chat not found', status: 404 })
+  }
+
+  return deleted
 })
