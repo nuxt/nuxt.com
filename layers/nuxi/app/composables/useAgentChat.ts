@@ -3,12 +3,8 @@ import { DefaultChatTransport } from 'ai'
 import type { UIMessage } from 'ai'
 
 interface UseAgentChatOptions {
-  /**
-   * Switching chats requires remounting the consumer with a different `chatId`
-   * (via `:key`), NOT mutating the same Chat instance — `AbstractChat` carries
-   * internal state (status, error, jobExecutor queue, activeResponse) that
-   * bleeds across conversations otherwise.
-   */
+  // Remount the consumer with `:key` when switching chats — the Chat
+  // instance carries state that bleeds across conversations otherwise.
   chatId: string
   initialMessages?: UIMessage[]
   initialVotes?: Map<string, boolean>
@@ -69,6 +65,20 @@ export function useAgentChat(options: UseAgentChatOptions) {
         }
         return msg
       }) as UIMessage[]
+      // Keep the `useNuxtData` cache in sync so a remount doesn't replay the
+      // auto-regenerate on stale data.
+      const chatCache = useNuxtData<ChatDetail>(`chat-${options.chatId}`)
+      if (chatCache.data.value) {
+        chatCache.data.value = {
+          ...chatCache.data.value,
+          messages: chat.messages.map(m => ({
+            id: m.id,
+            role: m.role,
+            parts: m.parts as unknown[],
+            createdAt: (m.metadata as { createdAt?: string } | undefined)?.createdAt ?? now
+          })) as ChatDetail['messages']
+        }
+      }
       options.onFinish?.()
     },
     onData: async (part) => {
@@ -109,14 +119,29 @@ export function useAgentChat(options: UseAgentChatOptions) {
       withContext: useContext.value,
       queryLength: text.length
     })
+    const metadata = {
+      createdAt: new Date().toISOString(),
+      ...(useContext.value && agent.currentPage.value ? { pagePath: agent.currentPage.value } : {})
+    }
     try {
-      await chat.sendMessage({
-        text,
-        metadata: {
-          createdAt: new Date().toISOString(),
-          ...(useContext.value && agent.currentPage.value ? { pagePath: agent.currentPage.value } : {})
+      // First message: create the chat + user message upfront, same as
+      // `/dashboard/chat/index.vue` does before navigating.
+      if (chat.messages.length === 0) {
+        const userMessage: UIMessage = {
+          id: crypto.randomUUID(),
+          role: 'user',
+          parts: [{ type: 'text', text }],
+          metadata
         }
-      })
+        await $fetch('/api/chats', {
+          method: 'POST',
+          body: { id: options.chatId, message: userMessage }
+        })
+        chat.messages = [userMessage]
+        await chat.regenerate()
+      } else {
+        await chat.sendMessage({ text, metadata })
+      }
       agent.onMessageSent()
     } catch {
       // surfaced via chat.error

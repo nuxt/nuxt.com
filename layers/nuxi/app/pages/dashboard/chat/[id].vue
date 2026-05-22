@@ -102,7 +102,7 @@ useSeoMeta({
 useCanonical()
 
 onMounted(() => {
-  if (isOwner.value && data.value?.messages.length === 1) {
+  if (isOwner.value && data.value?.messages.length === 1 && data.value.messages[0]?.role === 'user') {
     chat.regenerate()
   }
 })

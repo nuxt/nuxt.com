@@ -47,23 +47,27 @@ export default defineEventHandler(async (event) => {
 
   const newChatId = crypto.randomUUID()
 
-  await db.insert(schema.chats).values({
-    id: newChatId,
-    userId: chat.userId,
-    title: chat.title ? `Branch of ${chat.title}` : null,
-    visibility: 'private'
-  })
+  // @ts-expect-error - type for the transaction.
+  await db.transaction(async (tx) => {
+    await tx.insert(schema.chats).values({
+      id: newChatId,
+      userId: chat.userId,
+      title: chat.title ? `Branch of ${chat.title}` : null,
+      visibility: 'private'
+    })
 
-  if (messagesToCopy.length) {
-    await db.insert(schema.messages).values(
-      messagesToCopy.map((m: MessageRow) => ({
-        id: crypto.randomUUID(),
-        chatId: newChatId,
-        role: m.role,
-        parts: m.parts as unknown[]
-      }))
-    )
-  }
+    if (messagesToCopy.length) {
+      await tx.insert(schema.messages).values(
+        messagesToCopy.map((m: MessageRow) => ({
+          id: crypto.randomUUID(),
+          chatId: newChatId,
+          role: m.role,
+          parts: m.parts as unknown[],
+          createdAt: m.createdAt
+        }))
+      )
+    }
+  })
 
   log.set({ branch: { newChatId, copiedMessages: messagesToCopy.length } })
 

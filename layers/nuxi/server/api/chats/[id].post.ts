@@ -110,33 +110,15 @@ export default defineEventHandler(async (event) => {
 
   const ownerId = session.user?.id || session.id
 
-  let chat = await db.query.chats.findFirst({
+  const chat = await db.query.chats.findFirst({
     where: () => and(
       eq(schema.chats.id, id),
       eq(schema.chats.userId, ownerId)
     )
   })
 
-  // Lazy-create the chat so the slideover panel can open a fresh conversation
-  // without an explicit `POST /api/chats` round-trip (the `/chat` page still
-  // creates it upfront so it can `navigateTo` immediately).
   if (!chat) {
-    // `onConflictDoNothing` + re-fetch handles two concurrent first messages
-    // racing on the same generated id (insert returns empty on conflict).
-    await db.insert(schema.chats).values({
-      id,
-      title: null,
-      userId: ownerId
-    }).onConflictDoNothing()
-    chat = await db.query.chats.findFirst({
-      where: () => eq(schema.chats.id, id)
-    })
-    if (!chat) {
-      throw createError({ message: 'Failed to create chat', status: 500 })
-    }
-    if (chat.userId !== ownerId) {
-      throw createError({ message: 'Chat not found', status: 404, why: 'This chat belongs to another user.' })
-    }
+    throw createError({ message: 'Chat not found', status: 404 })
   }
 
   const rawPagePath = getHeader(event, 'x-page-path')?.trim() ?? null
@@ -145,18 +127,15 @@ export default defineEventHandler(async (event) => {
     : null
 
   const lastMessage = messages[messages.length - 1]
-  if (lastMessage?.role === 'user') {
+  if (lastMessage?.role === 'user' && messages.length > 1) {
     await db.insert(schema.messages).values({
       id: lastMessage.id,
       chatId: id,
       role: 'user',
       parts: lastMessage.parts
-    }).onConflictDoNothing()
+    }).onConflictDoUpdate({ target: schema.messages.id, set: { parts: lastMessage.parts } })
   }
 
-  // Generate the title from the first user message before streaming, like the
-  // template. Blocking on it keeps the flow simple and guarantees the title
-  // is set in DB by the time the response finishes.
   if (!chat.title) {
     try {
       const { text: title } = await generateText({
@@ -170,7 +149,7 @@ export default defineEventHandler(async (event) => {
         await db.update(schema.chats).set({ title: cleaned }).where(eq(schema.chats.id, id))
       }
     } catch {
-      // Title generation is best-effort.
+      // best-effort
     }
   }
 
@@ -203,8 +182,7 @@ export default defineEventHandler(async (event) => {
 
   const stream = createUIMessageStream({
     execute: async ({ writer }) => {
-      // Anything that throws before `streamText` registers its onError/onAbort
-      // hooks would leak the MCP client — guard the synchronous setup path.
+      // Guard the sync setup path — otherwise a throw would leak the MCP client.
       try {
         if (!chat.title) {
           writer.write({
@@ -252,16 +230,14 @@ export default defineEventHandler(async (event) => {
       }
     },
     onFinish: async ({ messages }) => {
+      await db.insert(schema.messages).values(messages.map(m => ({
+        id: m.id,
+        chatId: id,
+        role: m.role as 'user' | 'assistant',
+        parts: m.parts as UIMessage['parts']
+      }))).onConflictDoNothing()
+
       const metadata = ai.getMetadata()
-      const assistant = messages.filter(m => m.role === 'assistant')
-      if (assistant.length) {
-        await db.insert(schema.messages).values(assistant.map(m => ({
-          id: m.id,
-          chatId: id,
-          role: 'assistant' as const,
-          parts: m.parts as UIMessage['parts']
-        }))).onConflictDoNothing()
-      }
       await db.update(schema.chats).set({
         updatedAt: new Date(),
         model: metadata.model ?? null,
