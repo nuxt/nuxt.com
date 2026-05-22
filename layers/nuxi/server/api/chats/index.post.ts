@@ -1,5 +1,9 @@
 import { createError } from 'evlog'
+import type { ExtractTablesWithRelations } from 'drizzle-orm'
+import type { LibSQLTransaction } from 'drizzle-orm/libsql'
 import { z } from 'zod'
+
+type Tx = LibSQLTransaction<typeof schema, ExtractTablesWithRelations<typeof schema>>
 
 export default defineEventHandler(async (event) => {
   const session = await getUserSession(event)
@@ -20,8 +24,7 @@ export default defineEventHandler(async (event) => {
     chat: { id }
   })
 
-  // @ts-expect-error - type for the transaction.
-  const chat = await db.transaction(async (tx) => {
+  const chat = await db.transaction(async (tx: Tx) => {
     const [row] = await tx.insert(schema.chats).values({
       id,
       title: null,

@@ -1,7 +1,10 @@
 import { createError } from 'evlog'
 import { eq, asc } from 'drizzle-orm'
-import type { InferSelectModel } from 'drizzle-orm'
+import type { ExtractTablesWithRelations, InferSelectModel } from 'drizzle-orm'
+import type { LibSQLTransaction } from 'drizzle-orm/libsql'
 import { z } from 'zod'
+
+type Tx = LibSQLTransaction<typeof schema, ExtractTablesWithRelations<typeof schema>>
 
 export default defineEventHandler(async (event) => {
   const session = await getUserSession(event)
@@ -47,8 +50,7 @@ export default defineEventHandler(async (event) => {
 
   const newChatId = crypto.randomUUID()
 
-  // @ts-expect-error - type for the transaction.
-  await db.transaction(async (tx) => {
+  await db.transaction(async (tx: Tx) => {
     await tx.insert(schema.chats).values({
       id: newChatId,
       userId: chat.userId,

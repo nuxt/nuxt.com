@@ -133,16 +133,16 @@ defineShortcuts({
 
     <template #actions>
       <UTooltip text="New chat" :kbds="loggedIn ? ['meta', 'O'] : undefined">
-        <UButton icon="i-custom-new-chat" color="neutral" variant="ghost" aria-label="New chat" @click="startNewChat" />
+        <UButton icon="i-lucide-plus" color="neutral" variant="ghost" aria-label="New chat" @click="startNewChat" />
       </UTooltip>
       <UTooltip text="Open full screen">
-        <UButton icon="i-lucide-maximize-2" color="neutral" variant="ghost" @click="openFullScreen" />
+        <UButton icon="i-lucide-maximize" color="neutral" variant="ghost" @click="openFullScreen" />
       </UTooltip>
     </template>
 
     <template #close>
       <UTooltip text="Close" :kbds="['meta', 'i']">
-        <UButton icon="i-lucide-panel-right-close" color="neutral" variant="ghost" aria-label="Close" @click="isOpen = false" />
+        <UButton icon="i-lucide-x" color="neutral" variant="ghost" aria-label="Close" @click="isOpen = false" />
       </UTooltip>
     </template>
 
@@ -179,16 +179,16 @@ defineShortcuts({
 
     <template #actions>
       <UTooltip text="New chat" :kbds="loggedIn ? ['meta', 'O'] : undefined">
-        <UButton icon="i-custom-new-chat" color="neutral" variant="ghost" aria-label="New chat" @click="startNewChat" />
+        <UButton icon="i-lucide-plus" color="neutral" variant="ghost" aria-label="New chat" @click="startNewChat" />
       </UTooltip>
       <UTooltip text="Open full screen">
-        <UButton icon="i-lucide-maximize-2" color="neutral" variant="ghost" @click="openFullScreen" />
+        <UButton icon="i-lucide-maximize" color="neutral" variant="ghost" @click="openFullScreen" />
       </UTooltip>
     </template>
 
     <template #close>
       <UTooltip text="Close" :kbds="['meta', 'i']">
-        <UButton icon="i-lucide-panel-right-close" color="neutral" variant="ghost" aria-label="Close" @click="isOpen = false" />
+        <UButton icon="i-lucide-x" color="neutral" variant="ghost" aria-label="Close" @click="isOpen = false" />
       </UTooltip>
     </template>
 
