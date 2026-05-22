@@ -9,7 +9,7 @@ function handleToggle() {
 </script>
 
 <template>
-  <UTooltip text="Agent">
+  <UTooltip text="Agent" :kbds="['meta', 'I']" ignore-non-keyboard-focus>
     <UButton
       icon="i-custom-ai"
       color="neutral"
