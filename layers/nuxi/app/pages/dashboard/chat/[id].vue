@@ -22,8 +22,7 @@ const { usage, rateLimitReached } = useNuxtAgent()
 const { refresh: refreshChats } = useChatsData()
 
 const { data, error } = await useFetch<ChatDetail>(`/api/chats/${route.params.id}`, {
-  key: `chat-${route.params.id}`,
-  cache: 'force-cache'
+  key: `chat-${route.params.id}`
 })
 
 if (error.value || !data.value) {
