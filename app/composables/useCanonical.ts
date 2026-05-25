@@ -1,5 +1,6 @@
 import { joinURL } from 'ufo'
 import { toValue, type MaybeRefOrGetter } from 'vue'
+import type { Link } from '@unhead/vue/types'
 
 // Adds a canonical URL for the current route plus, optionally, a
 // `rel="alternate"; type="text/markdown"` link pointing at the agent-friendly
@@ -11,7 +12,7 @@ export function useCanonical(markdownAlternate?: MaybeRefOrGetter<string | null 
 
   useHead({
     link: computed(() => {
-      const links: Array<{ rel: string, href: string, type?: string }> = [
+      const links: Link[] = [
         { rel: 'canonical', href: joinURL(site.url, route.path) }
       ]
 
