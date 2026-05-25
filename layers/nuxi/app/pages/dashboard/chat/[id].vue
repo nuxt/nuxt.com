@@ -18,14 +18,17 @@ definePageMeta({
 
 const route = useRoute()
 const toast = useToast()
-const { usage, rateLimitReached } = useNuxtAgent()
+const { loggedIn } = useUserSession()
+const { usage, rateLimitReached, consumePendingPrompt } = useNuxtAgent()
 const { refresh: refreshChats } = useChatsData()
 
-const { data, error } = await useFetch<ChatDetail>(`/api/chats/${route.params.id}`, {
-  key: `chat-${route.params.id}`
+const chatId = route.params.id as string
+
+const { data, error } = await useFetch<ChatDetail>(`/api/chats/${chatId}`, {
+  key: `chat-${chatId}`
 })
 
-if (error.value || !data.value) {
+if (loggedIn.value && (error.value || !data.value)) {
   throw createError({ statusCode: 404, statusMessage: 'Chat not found', fatal: true })
 }
 
@@ -36,7 +39,7 @@ watch(() => data.value?.title, (next) => {
   title.value = next ?? null
 })
 
-const { data: votes } = await useLazyFetch<ChatVoteRow[]>(`/api/chats/${route.params.id}/votes`, {
+const { data: votes } = await useLazyFetch<ChatVoteRow[]>(`/api/chats/${chatId}/votes`, {
   immediate: isOwner.value,
   default: () => []
 })
@@ -53,13 +56,16 @@ const initialMessages = computed<UIMessage[]>(() =>
 const {
   chat,
   input,
-  onSubmit
+  onSubmit,
+  send
 } = useAgentChat({
-  chatId: data.value!.id,
+  chatId,
   initialMessages: initialMessages.value,
   source: 'chat-page',
   withPageContext: 'always',
-  onFinish: () => refreshChats()
+  onFinish: () => {
+    if (loggedIn.value) refreshChats()
+  }
 })
 
 function getVote(messageId: string) {
@@ -103,13 +109,15 @@ useCanonical()
 onMounted(() => {
   if (isOwner.value && data.value?.messages.length === 1 && data.value.messages[0]?.role === 'user') {
     chat.regenerate()
+    return
   }
+  const prompt = consumePendingPrompt()
+  if (prompt) send(prompt)
 })
 </script>
 
 <template>
   <UDashboardPanel
-    v-if="data?.id"
     id="chat"
     class="relative min-h-0"
     :ui="{ body: 'p-0 sm:p-0 overscroll-y-none' }"
@@ -121,7 +129,7 @@ onMounted(() => {
       >
         <template #left>
           <ChatTitle
-            :chat-id="data!.id"
+            :chat-id="chatId"
             :title="title"
             :is-owner="isOwner"
             @update:title="title = $event"
@@ -131,7 +139,7 @@ onMounted(() => {
         <template #right>
           <ChatVisibility
             v-if="isOwner"
-            :chat-id="data!.id"
+            :chat-id="chatId"
             :visibility="visibility"
             @update:visibility="visibility = $event"
           />
@@ -155,7 +163,7 @@ onMounted(() => {
           :status="chat.status"
           :user="{ ui: { content: 'px-3 py-1.5 min-h-fit', container: 'gap-3 pb-5', actions: 'right-0' } }"
           :assistant="{ ui: { actions: 'has-data-[state=open]:opacity-100' } }"
-          :spacing-offset="isOwner ? 160 : 0"
+          :ui="{ root: '[&>article]:last-of-type:min-h-0' }"
           class="pt-4 pb-4 sm:pb-6"
         >
           <template #indicator>
@@ -172,7 +180,7 @@ onMounted(() => {
               :message="message"
               :vote="getVote(message.id)"
               :streaming="chat.status === 'streaming' && message.id === chat.messages.at(-1)?.id"
-              :chat-id="data!.id"
+              :chat-id="chatId"
               :can-regenerate="message.id === chat.messages.at(-1)?.id && chat.status === 'ready'"
               @vote="(_message, isUpvoted) => vote(_message, isUpvoted)"
               @regenerate="chat.regenerate()"
@@ -192,7 +200,7 @@ onMounted(() => {
           <span>Daily limit reached. Try again tomorrow.</span>
         </div>
         <UChatPrompt
-          v-else-if="isOwner"
+          v-else-if="isOwner || !loggedIn"
           v-model="input"
           :error="chat.error"
           variant="subtle"
@@ -220,8 +228,4 @@ onMounted(() => {
       </UContainer>
     </template>
   </UDashboardPanel>
-
-  <UContainer v-else class="flex-1 flex flex-col gap-4 sm:gap-6">
-    <UError :error="{ statusMessage: 'Chat not found', statusCode: 404 }" class="min-h-full" />
-  </UContainer>
 </template>

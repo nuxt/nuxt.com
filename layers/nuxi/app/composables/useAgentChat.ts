@@ -33,6 +33,7 @@ export const AGENT_CHAT_THEME = {
 export function useAgentChat(options: UseAgentChatOptions) {
   const agent = useNuxtAgent()
   const chats = useChatsData()
+  const { loggedIn } = useUserSession()
   const { track } = useAnalytics()
   const toast = useToast()
 
@@ -65,8 +66,6 @@ export function useAgentChat(options: UseAgentChatOptions) {
         }
         return msg
       }) as UIMessage[]
-      // Keep the `useNuxtData` cache in sync so a remount doesn't replay the
-      // auto-regenerate on stale data.
       const chatCache = useNuxtData<ChatDetail>(`chat-${options.chatId}`)
       if (chatCache.data.value) {
         chatCache.data.value = {
@@ -123,29 +122,23 @@ export function useAgentChat(options: UseAgentChatOptions) {
       createdAt: new Date().toISOString(),
       ...(useContext.value && agent.currentPage.value ? { pagePath: agent.currentPage.value } : {})
     }
-    try {
-      // First message: create the chat + user message upfront, same as
-      // `/dashboard/chat/index.vue` does before navigating.
-      if (chat.messages.length === 0) {
-        const userMessage: UIMessage = {
-          id: crypto.randomUUID(),
-          role: 'user',
-          parts: [{ type: 'text', text }],
-          metadata
-        }
-        await $fetch('/api/chats', {
-          method: 'POST',
-          body: { id: options.chatId, message: userMessage }
-        })
-        chat.messages = [userMessage]
-        await chat.regenerate()
-      } else {
-        await chat.sendMessage({ text, metadata })
+    if (chat.messages.length === 0 && loggedIn.value) {
+      const userMessage: UIMessage = {
+        id: crypto.randomUUID(),
+        role: 'user',
+        parts: [{ type: 'text', text }],
+        metadata
       }
-      agent.onMessageSent()
-    } catch {
-      // surfaced via chat.error
+      await $fetch('/api/chats', {
+        method: 'POST',
+        body: { id: options.chatId, message: userMessage }
+      })
+      chat.messages = [userMessage]
+      await chat.regenerate()
+    } else {
+      await chat.sendMessage({ text, metadata })
     }
+    agent.onMessageSent()
   }
 
   async function onSubmit() {

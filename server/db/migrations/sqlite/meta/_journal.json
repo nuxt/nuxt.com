@@ -29,6 +29,13 @@
       "when": 1778488160047,
       "tag": "0003_chat_history",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1779463675450,
+      "tag": "0004_sloppy_carlie_cooper",
+      "breakpoints": true
     }
   ]
 }

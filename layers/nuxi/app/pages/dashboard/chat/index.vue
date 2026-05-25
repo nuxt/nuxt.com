@@ -18,8 +18,9 @@ useSeoMeta({
 })
 useCanonical()
 
-const { user } = useUserSession()
-const { usage, rateLimitReached } = useNuxtAgent()
+const { user, loggedIn } = useUserSession()
+const agent = useNuxtAgent()
+const { usage, rateLimitReached } = agent
 const { refresh: refreshChats } = useChatsData()
 
 const input = ref('')
@@ -45,19 +46,24 @@ async function createChat(prompt: string) {
   loading.value = true
 
   try {
-    const chat = await $fetch<ChatListItem>('/api/chats', {
-      method: 'POST',
-      body: {
-        id: crypto.randomUUID(),
-        message: {
+    if (loggedIn.value) {
+      const chat = await $fetch<ChatListItem>('/api/chats', {
+        method: 'POST',
+        body: {
           id: crypto.randomUUID(),
-          role: 'user',
-          parts: [{ type: 'text', text: prompt }]
+          message: {
+            id: crypto.randomUUID(),
+            role: 'user',
+            parts: [{ type: 'text', text: prompt }]
+          }
         }
-      }
-    })
-    refreshChats()
-    await navigateTo(`/dashboard/chat/${chat?.id}`)
+      })
+      refreshChats()
+      await navigateTo(`/dashboard/chat/${chat?.id}`)
+    } else {
+      agent.pendingPrompt.value = prompt
+      await navigateTo(`/dashboard/chat/${crypto.randomUUID()}`)
+    }
   } catch {
     useToast().add({ description: 'Failed to create chat', icon: 'i-lucide-alert-circle', color: 'error' })
   } finally {

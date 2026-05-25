@@ -6,8 +6,7 @@ import { z } from 'zod'
 type Tx = LibSQLTransaction<typeof schema, ExtractTablesWithRelations<typeof schema>>
 
 export default defineEventHandler(async (event) => {
-  const session = await getUserSession(event)
-  const ownerId = session.user?.id || session.id
+  const { user } = await requireUserSession(event)
 
   const { id, message } = await readValidatedBody(event, z.object({
     id: z.uuid(),
@@ -20,7 +19,7 @@ export default defineEventHandler(async (event) => {
 
   const log = useLogger(event)
   log.set({
-    user: { id: ownerId, authenticated: !!session.user },
+    user: { id: user.id, authenticated: true },
     chat: { id }
   })
 
@@ -28,7 +27,7 @@ export default defineEventHandler(async (event) => {
     const [row] = await tx.insert(schema.chats).values({
       id,
       title: null,
-      userId: ownerId
+      userId: user.id
     }).returning()
 
     if (!row) {

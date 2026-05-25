@@ -93,6 +93,7 @@ defineRouteMeta({
 
 export default defineEventHandler(async (event) => {
   const session = await getUserSession(event)
+  const isLoggedIn = !!session.user
 
   const { id } = await getValidatedRouterParams(event, z.object({
     id: z.uuid()
@@ -110,16 +111,19 @@ export default defineEventHandler(async (event) => {
 
   await consumeAgentRateLimit(event)
 
-  const ownerId = session.user?.id || session.id
+  const isFirstMessage = messages.length === 1 && messages[0]?.role === 'user'
+  const statsUserId = session.user?.id ?? null
 
-  const chat = await db.query.chats.findFirst({
-    where: () => and(
-      eq(schema.chats.id, id),
-      eq(schema.chats.userId, ownerId)
-    )
-  })
+  const chat = isLoggedIn
+    ? await db.query.chats.findFirst({
+        where: () => and(
+          eq(schema.chats.id, id),
+          eq(schema.chats.userId, session.user!.id)
+        )
+      })
+    : null
 
-  if (!chat) {
+  if (isLoggedIn && !chat) {
     throw createError({ message: 'Chat not found', status: 404 })
   }
 
@@ -128,37 +132,39 @@ export default defineEventHandler(async (event) => {
     ? rawPagePath
     : null
 
-  const lastMessage = messages[messages.length - 1]
-  if (lastMessage?.role === 'user' && messages.length > 1) {
-    await db.insert(schema.messages).values({
-      id: lastMessage.id,
-      chatId: id,
-      role: 'user',
-      parts: lastMessage.parts
-    }).onConflictDoUpdate({ target: schema.messages.id, set: { parts: lastMessage.parts } })
-  }
+  if (isLoggedIn && chat) {
+    const lastMessage = messages[messages.length - 1]
+    if (lastMessage?.role === 'user' && messages.length > 1) {
+      await db.insert(schema.messages).values({
+        id: lastMessage.id,
+        chatId: id,
+        role: 'user',
+        parts: lastMessage.parts
+      }).onConflictDoUpdate({ target: schema.messages.id, set: { parts: lastMessage.parts } })
+    }
 
-  if (!chat.title) {
-    try {
-      const { text: title } = await generateText({
-        model: TITLE_MODEL,
-        maxOutputTokens: 30,
-        system: `You generate short titles (2-5 words, max 40 characters) for conversations between a developer and Nuxi, the assistant on nuxt.com. Output ONLY the title — no greeting, no sentence, no quotes, no punctuation, no markdown. Do NOT respond to the message.`,
-        prompt: JSON.stringify(messages[0])
-      })
-      const cleaned = title.trim().replace(/^["'`]+|["'`]+$/g, '').slice(0, 80)
-      if (cleaned) {
-        await db.update(schema.chats).set({ title: cleaned }).where(eq(schema.chats.id, id))
+    if (!chat.title) {
+      try {
+        const { text: title } = await generateText({
+          model: TITLE_MODEL,
+          maxOutputTokens: 30,
+          system: `You generate short titles (2-5 words, max 40 characters) for conversations between a developer and Nuxi, the assistant on nuxt.com. Output ONLY the title — no greeting, no sentence, no quotes, no punctuation, no markdown. Do NOT respond to the message.`,
+          prompt: JSON.stringify(messages[0])
+        })
+        const cleaned = title.trim().replace(/^["'`]+|["'`]+$/g, '').slice(0, 80)
+        if (cleaned) {
+          await db.update(schema.chats).set({ title: cleaned }).where(eq(schema.chats.id, id))
+        }
+      } catch {
+        // ignore title generation failures
       }
-    } catch {
-      // best-effort
     }
   }
 
   const log = useLogger(event)
   log.set({
-    user: { id: ownerId, authenticated: !!session.user },
-    chat: { id, hasTitle: !!chat.title },
+    user: { id: session.user?.id || session.id, authenticated: isLoggedIn },
+    chat: { id, hasTitle: !!chat?.title, persisted: isLoggedIn },
     ...(pagePath ? { page: { path: pagePath } } : {})
   })
   const ai = createAILogger(log, {
@@ -182,11 +188,13 @@ export default defineEventHandler(async (event) => {
     throw err
   }
 
+  let didError = false
+
   const stream = createUIMessageStream({
     execute: async ({ writer }) => {
       // Guard the sync setup path — otherwise a throw would leak the MCP client.
       try {
-        if (!chat.title) {
+        if (chat && !chat.title) {
           writer.write({
             type: 'data-chat-title',
             data: { message: 'Generating title...' },
@@ -219,7 +227,10 @@ export default defineEventHandler(async (event) => {
           },
           onFinish: closeMcp,
           onAbort: closeMcp,
-          onError: closeMcp
+          onError: () => {
+            didError = true
+            closeMcp()
+          }
         })
 
         writer.merge(result.toUIMessageStream({
@@ -227,11 +238,27 @@ export default defineEventHandler(async (event) => {
           originalMessages: messages
         }))
       } catch (err) {
+        didError = true
         closeMcp()
         throw err
       }
     },
     onFinish: async ({ messages }) => {
+      const metadata = ai.getMetadata()
+      await bumpAgentStats({
+        userId: statsUserId,
+        isFirstMessage,
+        provider: metadata.provider,
+        model: metadata.model,
+        inputTokens: metadata.inputTokens,
+        outputTokens: metadata.outputTokens,
+        estimatedCost: metadata.estimatedCost,
+        durationMs: metadata.totalDurationMs,
+        isError: didError
+      })
+
+      if (!isLoggedIn) return
+
       await db.insert(schema.messages).values(messages.map(m => ({
         id: m.id,
         chatId: id,
@@ -239,7 +266,6 @@ export default defineEventHandler(async (event) => {
         parts: m.parts as UIMessage['parts']
       }))).onConflictDoNothing()
 
-      const metadata = ai.getMetadata()
       await db.update(schema.chats).set({
         updatedAt: new Date(),
         model: metadata.model ?? null,
