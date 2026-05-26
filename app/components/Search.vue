@@ -7,9 +7,9 @@ defineProps<{
 
 const { version } = useDocsVersion()
 
-const collections = computed(() => [version.value.collection, 'blog' as const].filter(Boolean))
+const collection = computed(() => version.value.collection)
 
-const { status, search, init } = useSearchCollection(collections, {
+const { status, search, init } = useSearchCollection(collection, {
   immediate: false,
   ignoredTags: ['style']
 })
@@ -47,5 +47,6 @@ watchDebounced(searchTerm, (term) => {
     :search="search"
     :search-status="status"
     :fuse="fuse"
+    :transition="false"
   />
 </template>

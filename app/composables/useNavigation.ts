@@ -175,8 +175,9 @@ const _useNavigation = () => {
 
   const { headerLinks } = useHeaderLinks()
   const { footerLinks } = useFooterLinks()
-  const { modules } = useModules()
-  const { providers } = useHostingProviders()
+  const { modules, fetchList: fetchModules } = useModules()
+  const { providers, fetchList: fetchHosting } = useHostingProviders()
+  const { articles: blogArticles, fetchList: fetchBlog } = useBlog()
 
   const searchLinks = computed(() => [{
     label: 'Ask Agent',
@@ -247,30 +248,41 @@ const _useNavigation = () => {
     to: hosting.path
   })))
 
+  const blogItems = computed(() => blogArticles.value.map(article => ({
+    id: `blog-${article.path}`,
+    label: article.title,
+    suffix: article.description,
+    icon: 'i-lucide-newspaper',
+    to: article.path
+  })))
+
+  const postFilter = (searchTerm: string, items: any[]) => {
+    if (!searchTerm) {
+      return []
+    }
+    return items
+  }
+
   const searchGroups = computed<CommandPaletteGroup[]>(() => [{
     id: 'modules-search',
     label: 'Modules',
     items: modulesItems.value,
-    postFilter: (searchTerm: string, items: any[]) => {
-      if (!searchTerm) {
-        return [...items].sort((a, b) => (b.downloads ?? 0) - (a.downloads ?? 0))
-      }
-      return items
-    }
+    postFilter
   }, {
     id: 'hosting-search',
     label: 'Hosting',
-    items: hostingItems.value
+    items: hostingItems.value,
+    postFilter
+  }, {
+    id: 'blog-search',
+    label: 'Blog',
+    items: blogItems.value,
+    postFilter
   }, {
     id: 'ask-ai-search',
     label: 'AI',
     ignoreFilter: true,
-    postFilter: (searchTerm: string, items: any[]) => {
-      if (!searchTerm) {
-        return []
-      }
-      return items
-    },
+    postFilter,
     items: [{
       label: 'Ask Agent',
       icon: 'i-lucide-wand',
@@ -281,6 +293,15 @@ const _useNavigation = () => {
       }
     }]
   }])
+
+  const { open: searchOpen } = useContentSearch()
+  watch(searchOpen, (value) => {
+    if (value) {
+      fetchModules()
+      fetchHosting()
+      fetchBlog()
+    }
+  })
 
   watchDebounced(searchTerm, (term) => {
     if (term) {
