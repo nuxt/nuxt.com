@@ -14,9 +14,16 @@ const { status, search, init } = useSearchCollection(collections, {
   ignoredTags: ['style']
 })
 
-const { searchGroups, searchLinks, searchTerm, searchFuse } = useNavigation()
+const { searchGroups, searchLinks, searchTerm } = useNavigation()
 const { open } = useContentSearch()
 const { track } = useAnalytics()
+
+const fuse = {
+  resultLimit: 25,
+  fuseOptions: {
+    useTokenSearch: false
+  }
+}
 
 watch(open, (value) => {
   if (value && status.value === 'idle') {
@@ -39,6 +46,6 @@ watchDebounced(searchTerm, (term) => {
     :navigation="navigation"
     :search="search"
     :search-status="status"
-    :fuse="searchFuse"
+    :fuse="fuse"
   />
 </template>

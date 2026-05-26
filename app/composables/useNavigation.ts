@@ -1,15 +1,6 @@
 import type { CommandPaletteGroup } from '@nuxt/ui'
 import { createSharedComposable } from '@vueuse/core'
 
-// Stable reference so the deep watcher inside `useFuse` doesn't rebuild
-// the entire Fuse index on every reactive flush.
-const searchFuse = {
-  resultLimit: 25,
-  fuseOptions: {
-    threshold: 0
-  }
-}
-
 function _useHeaderLinks() {
   const route = useRoute()
   const { version } = useDocsVersion()
@@ -302,8 +293,7 @@ const _useNavigation = () => {
     headerLinks,
     footerLinks,
     searchLinks,
-    searchGroups,
-    searchFuse
+    searchGroups
   }
 }
 
