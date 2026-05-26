@@ -122,6 +122,10 @@ const suggestions = [
         </div>
 
         <div class="w-full max-w-2xl mx-auto flex flex-col gap-6">
+          <div v-if="!loggedIn" class="rounded-lg border border-default overflow-hidden">
+            <AgentLoginHint />
+          </div>
+
           <div v-if="rateLimitReached" class="flex items-center justify-center gap-2 py-4 text-sm text-muted">
             <UIcon name="i-lucide-clock" class="size-4 shrink-0" />
             <span>Daily limit reached. Try again tomorrow.</span>

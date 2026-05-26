@@ -199,12 +199,13 @@ onMounted(() => {
           <UIcon name="i-lucide-clock" class="size-4 shrink-0" />
           <span>Daily limit reached. Try again tomorrow.</span>
         </div>
-        <UChatPrompt
-          v-else-if="isOwner || !loggedIn"
+        <div v-else-if="isOwner || !loggedIn" class="sticky bottom-0 z-10 flex flex-col [view-transition-name:chat-prompt]">
+          <AgentLoginHint />
+          <UChatPrompt
           v-model="input"
           :error="chat.error"
           variant="subtle"
-          class="sticky bottom-0 [view-transition-name:chat-prompt] rounded-b-none z-10"
+          class="rounded-b-none"
           :ui="{ base: 'px-1.5' }"
           @submit="onSubmit"
         >
@@ -225,6 +226,7 @@ onMounted(() => {
             />
           </template>
         </UChatPrompt>
+        </div>
       </UContainer>
     </template>
   </UDashboardPanel>
