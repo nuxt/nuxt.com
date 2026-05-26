@@ -18,9 +18,7 @@ const { chat, input, votes, vote, canClear, onSubmit, askQuestion, clearMessages
 
 const panelUi = {
   footer: 'p-0',
-  actions: 'gap-0.5',
-  gap: 'transition-none',
-  container: 'transition-none'
+  actions: 'gap-0.5'
 } as const
 
 /* Slideover theme defaults add sm:px-6 / sm:p-6; override so layout matches USidebar (full width inside panel) */
