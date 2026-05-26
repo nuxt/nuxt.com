@@ -22,7 +22,10 @@ function handleToggle() {
       color="neutral"
       variant="ghost"
       label="Ask Nuxi"
+      aria-label="Ask Nuxi"
+      square
       class="group"
+      :ui="{ label: 'hidden sm:inline-flex' }"
       @click="handleToggle"
     >
       <template #leading>

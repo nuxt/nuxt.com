@@ -2,7 +2,6 @@
 import type { DropdownMenuItem } from '@nuxt/ui'
 
 const { user, clear } = useUserSession()
-const route = useRoute()
 const colorMode = useColorMode()
 
 async function logout() {
@@ -64,22 +63,10 @@ const items = computed<DropdownMenuItem[][]>(() => {
   return groups
 })
 
-const loginHref = computed(() => `/login?redirect=${encodeURIComponent(route.fullPath)}`)
 </script>
 
 <template>
-  <UButton
-    v-if="!user"
-    :to="loginHref"
-    icon="i-simple-icons-github"
-    label="Sign in"
-    aria-label="Sign in with GitHub"
-    color="neutral"
-    variant="subtle"
-    size="sm"
-  />
-
-  <UDropdownMenu v-else :items="items" :ui="{ content: 'w-56' }" :content="{ align: 'end' }">
+  <UDropdownMenu v-if="user" :items="items" :ui="{ content: 'w-56' }" :content="{ align: 'end' }">
     <UButton
       :avatar="{ src: user.avatar, alt: user.username }"
       color="neutral"

@@ -2,6 +2,8 @@
 const route = useRoute()
 
 const logo = useTemplateRef('logo')
+const stats = useStats()
+const { loggedIn } = useUserSession()
 const { copy } = useClipboard()
 const { headerLinks } = useHeaderLinks()
 const { track } = useAnalytics()
@@ -32,6 +34,10 @@ const logoContextMenuItems = [
 
 function trackSearchOpen() {
   track('Search Opened')
+}
+
+function trackGitHubClick() {
+  track('Header Action', { action: 'GitHub Stars' })
 }
 </script>
 
@@ -66,7 +72,30 @@ function trackSearchOpen() {
 
       <AgentChatButton />
 
-      <HeaderUserMenu />
+      <template v-if="!loggedIn">
+        <UTooltip text="Toggle theme" :kbds="['d']">
+          <UColorModeButton />
+        </UTooltip>
+
+        <UTooltip text="GitHub Stars">
+          <UButton
+            icon="i-simple-icons-github"
+            to="https://go.nuxt.com/github"
+            target="_blank"
+            variant="ghost"
+            color="neutral"
+            square
+            :label="stats ? formatNumber(stats.stars) : '...'"
+            aria-label="Nuxt on GitHub"
+            :ui="{
+              label: 'hidden sm:inline-flex'
+            }"
+            @click="trackGitHubClick"
+          />
+        </UTooltip>
+      </template>
+
+      <HeaderUserMenu v-else />
     </template>
 
     <template #toggle="{ open, toggle }">
