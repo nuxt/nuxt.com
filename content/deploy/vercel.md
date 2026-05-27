@@ -15,6 +15,10 @@ sponsor: true
 Integration with Vercel is possible with zero configuration, [learn more](https://nitro.unjs.io/deploy#zero-config-providers).
 ::
 
+::important
+Use [@nuxthub/core](/modules/hub) to add database, KV, blob storage, and cache to your Nuxt application. NuxtHub works on Vercel, Cloudflare, Netlify, and more — learn more on [hub.nuxt.com](https://hub.nuxt.com).
+::
+
 ## Deploy using Git
 
 1. Push your code to your git repository (GitHub, GitLab, Bitbucket).

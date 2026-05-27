@@ -8,9 +8,21 @@ export function isBot(username: string) {
   return username.includes('[bot]') || username.includes('-bot')
 }
 
+const MODULE_DESCRIPTION_OVERRIDES: Record<string, string> = {
+  hub: 'Add database, KV, blob storage, and cache to your Nuxt application. NuxtHub works on Vercel, Cloudflare, Netlify, and more.'
+}
+
+function applyModuleOverrides(modules: BaseModule[]): Module[] {
+  return modules.map((module) => {
+    const description = MODULE_DESCRIPTION_OVERRIDES[module.name]
+    return description ? { ...module, description } : module
+  })
+}
+
 export const fetchModules = cachedFunction(async (_event: H3Event): Promise<Module[]> => {
   console.info(`Fetching modules from CDN..`)
-  return await $fetch<BaseModule[]>('https://unpkg.com/@nuxt/modules@latest/modules.json')
+  const modules = await $fetch<BaseModule[]>('https://unpkg.com/@nuxt/modules@latest/modules.json')
+  return applyModuleOverrides(modules)
 }, {
   name: 'modules',
   getKey: _event => '_all',
