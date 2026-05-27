@@ -151,7 +151,7 @@ export default defineNuxtConfig({
     '/docs/3.x/getting-started/introduction': { prerender: true },
     '/docs/4.x/getting-started/introduction': { prerender: true },
     '/docs/5.x/getting-started/introduction': { prerender: true },
-    '/modules': { isr: false, prerender: false, headers: { Vary: 'Accept, User-Agent' } },
+    '/modules': { isr: 60 * 60, prerender: false, headers: { Vary: 'Accept, User-Agent' } },
     '/modules/**': { isr: 60 * 60 },
     '/changelog': { isr: 60 * 60, headers: { Vary: 'Accept, User-Agent' } },
     // Markdown content negotiation routes (md-rewrite.ts emits Vercel rewrites
@@ -173,7 +173,6 @@ export default defineNuxtConfig({
     '/dashboard/**': { ssr: false },
     // Main navigation
     '/api/navigation.json': { prerender: true },
-    '/api/search.json': { prerender: true },
     // Redirects
     '/docs': { redirect: '/docs/getting-started/introduction', prerender: false },
     '/docs/3.x': { redirect: '/docs/3.x/getting-started/introduction', prerender: false },

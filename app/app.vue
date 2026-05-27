@@ -6,7 +6,6 @@ const isChatRoute = computed(() => route.path.startsWith('/dashboard/chat') || r
 const showAgent = computed(() => isAgentEnabled.value && !isChatRoute.value)
 
 const { version } = useDocsVersion()
-const { searchGroups, searchLinks, searchTerm, searchFuse } = useNavigation()
 const { fetchList: fetchModules } = useModules()
 const { fetchList: fetchHosting } = useHostingProviders()
 const { track } = useAnalytics()
@@ -27,10 +26,7 @@ watch(() => colorMode.preference, (newMode, oldMode) => {
   }
 })
 
-const [{ data: navigation }, { data: files }] = await Promise.all([
-  useFetch('/api/navigation.json'),
-  useFetch('/api/search.json', { server: false })
-])
+const { data: navigation } = await useFetch('/api/navigation.json')
 
 onNuxtReady(() => {
   fetchModules()
@@ -75,9 +71,6 @@ if (import.meta.server) {
 }
 
 const versionNavigation = computed(() => navigation.value?.filter(item => item.path === version.value.path || item.path === '/blog') ?? [])
-const versionFiles = computed(() => files.value?.filter((file) => {
-  return file.id.startsWith(version.value.path + '/') || file.id.startsWith('/blog/')
-}) ?? [])
 
 provide('navigation', versionNavigation)
 </script>
@@ -92,25 +85,16 @@ provide('navigation', versionNavigation)
           <NuxtPage />
         </NuxtLayout>
 
-        <ClientOnly>
-          <LazyAgentFloatingInput v-if="showAgent" />
-        </ClientOnly>
       </div>
 
-      <ClientOnly>
-        <LazyAgentPanel v-if="showAgent" />
+      <ClientOnly v-if="showAgent">
+        <LazyAgentFloatingInput />
+        <LazyAgentPanel />
       </ClientOnly>
     </div>
 
     <ClientOnly>
-      <LazyUContentSearch
-        v-model:search-term="searchTerm"
-        :files="versionFiles"
-        :navigation="versionNavigation"
-        :groups="searchGroups"
-        :links="searchLinks"
-        :fuse="searchFuse"
-      />
+      <Search :navigation="versionNavigation" />
     </ClientOnly>
   </UApp>
 </template>
