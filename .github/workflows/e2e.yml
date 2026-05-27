@@ -9,21 +9,30 @@ on:
         type: string
   deployment_status:
 
+permissions: {}
+
 jobs:
   e2e:
     environment:
       name: ${{ github.event.deployment.environment || 'Production' }}
       url: ${{ github.event.inputs.url || github.event.deployment_status.environment_url }}
-    if: github.event.deployment_status.state == 'success' || github.event_name == 'workflow_dispatch'
+    # On `deployment_status`, only run for deploys of a branch in this repo. Vercel sets
+    # `deployment.ref` to the branch name for same-repo deploys and to the bare SHA for
+    # fork-PR deploys, so `ref == sha` indicates an untrusted source.
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.deployment_status.state == 'success' &&
+       github.event.deployment.ref != github.event.deployment.sha)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
       - run: corepack enable
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version: lts/-1
-          cache: 'pnpm'
-      - run: pnpm install
+      - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install
       - name: Run Playwright E2E tests
         run: pnpm test:browser
@@ -34,10 +43,15 @@ jobs:
     environment:
       name: ${{ github.event.deployment.environment || 'Production' }}
       url: ${{ github.event.inputs.url || github.event.deployment_status.environment_url }}
-    if: github.event.deployment_status.state == 'success' || github.event_name == 'workflow_dispatch'
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.deployment_status.state == 'success' &&
+       github.event.deployment.ref != github.event.deployment.sha)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
       - name: Audit URLs using Lighthouse
         uses: treosh/lighthouse-ci-action@3e7e23fb74242897f95c0ba9cabad3d0227b9b18 # v12
         with:
@@ -51,14 +65,17 @@ jobs:
     environment:
       name: ${{ github.event.deployment.environment || 'Production' }}
       url: ${{ github.event.inputs.url || github.event.deployment_status.environment_url }}
-    if: github.event.deployment_status.state == 'success' || github.event_name == 'workflow_dispatch'
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.deployment_status.state == 'success' &&
+       github.event.deployment.ref != github.event.deployment.sha)
     runs-on: ubuntu-latest
 
     steps:
       - name: warmup jobs, sponsors and modules
         run: |
-          curl -sS $BASE_URL/api/jobs
-          curl -sS $BASE_URL/api/sponsors
-          curl -sS $BASE_URL/api/v1/modules
+          curl -sS "$BASE_URL/api/jobs"
+          curl -sS "$BASE_URL/api/sponsors"
+          curl -sS "$BASE_URL/api/v1/modules"
         env:
           BASE_URL: ${{ github.event.inputs.url || github.event.deployment_status.environment_url }}
