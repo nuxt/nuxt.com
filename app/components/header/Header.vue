@@ -66,11 +66,10 @@ function trackGitHubClick() {
     />
 
     <template #right>
+      <AgentChatButton />
       <UTooltip text="Search" :kbds="['meta', 'K']">
         <UContentSearchButton @click="trackSearchOpen" />
       </UTooltip>
-
-      <AgentChatButton />
 
       <template v-if="!loggedIn">
         <UTooltip text="Toggle theme" :kbds="['d']">
