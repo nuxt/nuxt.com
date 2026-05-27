@@ -14,6 +14,7 @@ function normalizeFaqQuestions(questions: FaqQuestions): FaqCategory[] {
 
 const CONTEXT_PAGE_PREFIXES = ['/docs/', '/blog/', '/changelog/', '/modules/', '/deploy/']
 const CONTEXT_INDEX_PAGES = new Set(['/docs', '/blog', '/changelog', '/modules', '/deploy'])
+const AGENT_DISABLED_ROUTES = new Set(['/login'])
 
 export const useNuxtAgent = createSharedComposable(() => {
   const appConfig = useAppConfig()
@@ -23,6 +24,8 @@ export const useNuxtAgent = createSharedComposable(() => {
 
   const storageOpen = useLocalStorage('assistant-open', false)
   const isOpen = ref(false)
+
+  const isAgentEnabled = computed(() => !AGENT_DISABLED_ROUTES.has(route.path))
 
   const currentPage = computed(() => {
     const path = route.path
@@ -39,11 +42,21 @@ export const useNuxtAgent = createSharedComposable(() => {
 
   onNuxtReady(() => {
     nextTick(() => {
-      isOpen.value = storageOpen.value
+      if (isAgentEnabled.value) {
+        isOpen.value = storageOpen.value
+      }
     })
   })
   watch(isOpen, (value) => {
-    storageOpen.value = value
+    if (isAgentEnabled.value) {
+      storageOpen.value = value
+    }
+  })
+
+  watch(() => route.path, (path) => {
+    if (AGENT_DISABLED_ROUTES.has(path)) {
+      isOpen.value = false
+    }
   })
 
   const faqQuestions = computed<FaqCategory[]>(() => {
@@ -60,10 +73,12 @@ export const useNuxtAgent = createSharedComposable(() => {
   }
 
   function open(initialMessage?: string) {
+    if (!isAgentEnabled.value) return
     if (initialMessage) pendingPrompt.value = initialMessage
     isOpen.value = true
   }
   function toggle() {
+    if (!isAgentEnabled.value) return
     isOpen.value = !isOpen.value
   }
   function expandToFullScreen() {
@@ -71,6 +86,7 @@ export const useNuxtAgent = createSharedComposable(() => {
     navigateTo('/dashboard/chat')
   }
   function collapseToSidebar() {
+    if (!isAgentEnabled.value) return
     isOpen.value = true
   }
 
@@ -107,6 +123,7 @@ export const useNuxtAgent = createSharedComposable(() => {
 
   return {
     isOpen,
+    isAgentEnabled,
     open,
     toggle,
     expandToFullScreen,

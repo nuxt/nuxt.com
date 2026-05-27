@@ -23,7 +23,7 @@ const contextPathLabel = computed(() => props.currentPage?.replace(/^\//, '') ??
 
 <template>
   <div class="flex flex-col w-full">
-    <AgentLoginHint />
+    <AgentLoginHint attached />
 
     <Transition
       enter-active-class="transition duration-200 ease-out"

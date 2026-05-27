@@ -1,4 +1,11 @@
 <script setup lang="ts">
+withDefaults(defineProps<{
+  /** Tighter padding when stacked directly above the chat prompt */
+  attached?: boolean
+}>(), {
+  attached: false
+})
+
 const route = useRoute()
 const { loggedIn } = useUserSession()
 
@@ -8,10 +15,20 @@ const loginHref = computed(() => `/login?redirect=${encodeURIComponent(route.ful
 <template>
   <div
     v-if="!loggedIn"
-    class="flex items-center gap-3 border-b border-default bg-muted/30 px-4 py-2.5"
+    class="flex items-center min-w-0"
+    :class="attached
+      ? 'gap-3 border-b border-default bg-muted/30 px-4 py-2.5'
+      : 'gap-2 py-1'"
   >
-    <UIcon name="i-lucide-history" class="size-4 shrink-0 text-dimmed" />
-    <p class="min-w-0 flex-1 text-xs leading-relaxed text-muted">
+    <UIcon
+      name="i-lucide-history"
+      class="shrink-0 text-dimmed"
+      :class="attached ? 'size-4' : 'size-3.5'"
+    />
+    <p
+      class="min-w-0 flex-1 text-xs leading-relaxed"
+      :class="attached ? 'text-muted' : 'text-dimmed'"
+    >
       Save your chats and keep your history across devices.
     </p>
     <UButton
@@ -20,7 +37,7 @@ const loginHref = computed(() => `/login?redirect=${encodeURIComponent(route.ful
       label="Sign in"
       size="xs"
       color="neutral"
-      variant="outline"
+      :variant="attached ? 'outline' : 'link'"
       class="shrink-0"
     />
   </div>

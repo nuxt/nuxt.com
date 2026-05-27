@@ -4,6 +4,7 @@ import { motion } from 'motion-v'
 
 const {
   isOpen,
+  isAgentEnabled,
   isAgentDockedBreakpoint,
   currentPage,
   pageContextDismissed,
@@ -83,6 +84,7 @@ const slideoverUi = {
 defineShortcuts({
   meta_i: {
     handler: () => {
+      if (!isAgentEnabled.value) return
       isOpen.value = !isOpen.value
     },
     usingInput: true

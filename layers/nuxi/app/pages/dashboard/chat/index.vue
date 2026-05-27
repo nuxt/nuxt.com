@@ -122,43 +122,43 @@ const suggestions = [
         </div>
 
         <div class="w-full max-w-2xl mx-auto flex flex-col gap-6">
-          <div v-if="!loggedIn" class="rounded-lg border border-default overflow-hidden">
-            <AgentLoginHint />
-          </div>
+          <div class="flex flex-col gap-1.5">
+            <AgentLoginHint v-if="!loggedIn" />
 
-          <div v-if="rateLimitReached" class="flex items-center justify-center gap-2 py-4 text-sm text-muted">
-            <UIcon name="i-lucide-clock" class="size-4 shrink-0" />
-            <span>Daily limit reached. Try again tomorrow.</span>
+            <div v-if="rateLimitReached" class="flex items-center justify-center gap-2 py-4 text-sm text-muted">
+              <UIcon name="i-lucide-clock" class="size-4 shrink-0" />
+              <span>Daily limit reached. Try again tomorrow.</span>
+            </div>
+            <UChatPrompt
+              v-else
+              v-model="input"
+              placeholder="Ask anything…"
+              :status="loading ? 'streaming' : 'ready'"
+              variant="subtle"
+              :rows="2"
+              :maxrows="5"
+              autofocus
+              class="[view-transition-name:chat-prompt]"
+              :ui="{ base: 'px-1.5', footer: 'items-baseline' }"
+              @submit="onSubmit"
+            >
+              <template #footer>
+                <ClientOnly>
+                  <UTooltip v-if="usage" text="Daily messages remaining">
+                    <span class="text-xs text-dimmed" :class="usage.remaining <= 5 ? 'text-warning' : ''">
+                      {{ usage.remaining }}/{{ usage.limit }}
+                    </span>
+                  </UTooltip>
+                </ClientOnly>
+                <UChatPromptSubmit
+                  color="neutral"
+                  size="sm"
+                  :status="loading ? 'streaming' : 'ready'"
+                  :disabled="!input.trim()"
+                />
+              </template>
+            </UChatPrompt>
           </div>
-          <UChatPrompt
-            v-else
-            v-model="input"
-            placeholder="Ask anything…"
-            :status="loading ? 'streaming' : 'ready'"
-            variant="subtle"
-            :rows="2"
-            :maxrows="5"
-            autofocus
-            class="[view-transition-name:chat-prompt]"
-            :ui="{ base: 'px-1.5', footer: 'items-baseline' }"
-            @submit="onSubmit"
-          >
-            <template #footer>
-              <ClientOnly>
-                <UTooltip v-if="usage" text="Daily messages remaining">
-                  <span class="text-xs text-dimmed" :class="usage.remaining <= 5 ? 'text-warning' : ''">
-                    {{ usage.remaining }}/{{ usage.limit }}
-                  </span>
-                </UTooltip>
-              </ClientOnly>
-              <UChatPromptSubmit
-                color="neutral"
-                size="sm"
-                :status="loading ? 'streaming' : 'ready'"
-                :disabled="!input.trim()"
-              />
-            </template>
-          </UChatPrompt>
 
           <div class="flex flex-wrap gap-2 justify-center">
             <UButton

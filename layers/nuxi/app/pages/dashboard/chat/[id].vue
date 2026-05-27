@@ -199,14 +199,14 @@ onMounted(() => {
           <UIcon name="i-lucide-clock" class="size-4 shrink-0" />
           <span>Daily limit reached. Try again tomorrow.</span>
         </div>
-        <div v-else-if="isOwner || !loggedIn" class="sticky bottom-0 z-10 flex flex-col [view-transition-name:chat-prompt]">
-          <AgentLoginHint />
+        <div v-else-if="isOwner || !loggedIn" class="sticky bottom-0 z-10 flex flex-col overflow-hidden rounded-lg ring ring-default bg-elevated/50 [view-transition-name:chat-prompt]">
+          <AgentLoginHint v-if="!loggedIn" attached />
           <UChatPrompt
           v-model="input"
           :error="chat.error"
-          variant="subtle"
-          class="rounded-b-none"
-          :ui="{ base: 'px-1.5' }"
+          variant="naked"
+          class="px-4"
+          :ui="{ base: 'px-0 rounded-none', root: 'rounded-none ring-0 bg-transparent' }"
           @submit="onSubmit"
         >
           <template #footer>

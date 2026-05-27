@@ -1,7 +1,9 @@
 <script setup lang="ts">
 const colorMode = useColorMode()
 const route = useRoute()
+const { isAgentEnabled } = useNuxtAgent()
 const isChatRoute = computed(() => route.path.startsWith('/dashboard/chat') || route.path.startsWith('/admin/analytics'))
+const showAgent = computed(() => isAgentEnabled.value && !isChatRoute.value)
 
 const { version } = useDocsVersion()
 const { searchGroups, searchLinks, searchTerm, searchFuse } = useNavigation()
@@ -91,12 +93,12 @@ provide('navigation', versionNavigation)
         </NuxtLayout>
 
         <ClientOnly>
-          <LazyAgentFloatingInput v-if="!isChatRoute" />
+          <LazyAgentFloatingInput v-if="showAgent" />
         </ClientOnly>
       </div>
 
       <ClientOnly>
-        <LazyAgentPanel v-if="!isChatRoute" />
+        <LazyAgentPanel v-if="showAgent" />
       </ClientOnly>
     </div>
 
