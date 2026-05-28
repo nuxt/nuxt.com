@@ -10,15 +10,8 @@ defineProps<{ error: NuxtError }>()
 
 const route = useRoute()
 const { version } = useDocsVersion()
-const { fetchList: fetchModules } = useModules()
-const { fetchList: fetchHosting } = useHostingProviders()
 
 const { data: navigation } = await useFetch('/api/navigation.json')
-
-onNuxtReady(() => {
-  fetchModules()
-  fetchHosting()
-})
 
 const versionNavigation = computed(() => navigation.value?.filter(item => item.path === version.value.path || item.path === '/blog') ?? [])
 

@@ -3,8 +3,6 @@ const colorMode = useColorMode()
 const route = useRoute()
 const isChatRoute = computed(() => route.path === '/chat' || route.path.startsWith('/chat/'))
 const { version } = useDocsVersion()
-const { fetchList: fetchModules } = useModules()
-const { fetchList: fetchHosting } = useHostingProviders()
 const { track } = useAnalytics()
 
 const color = computed(() => colorMode.value === 'dark' ? '#020420' : 'white')
@@ -16,11 +14,6 @@ watch(() => colorMode.preference, (newMode, oldMode) => {
 })
 
 const { data: navigation } = await useFetch('/api/navigation.json')
-
-onNuxtReady(() => {
-  fetchModules()
-  fetchHosting()
-})
 
 useHead({
   titleTemplate: title => title ? `${title} · Nuxt` : 'Nuxt: The Intuitive Web Framework',
