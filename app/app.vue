@@ -77,7 +77,6 @@ provide('navigation', versionNavigation)
         <NuxtLayout>
           <NuxtPage />
         </NuxtLayout>
-
       </div>
 
       <ClientOnly v-if="showAgent">

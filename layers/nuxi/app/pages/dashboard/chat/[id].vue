@@ -202,30 +202,30 @@ onMounted(() => {
         <div v-else-if="isOwner || !loggedIn" class="sticky bottom-0 z-10 flex flex-col overflow-hidden rounded-lg ring ring-default bg-elevated/50 [view-transition-name:chat-prompt]">
           <AgentLoginHint v-if="!loggedIn" attached />
           <UChatPrompt
-          v-model="input"
-          :error="chat.error"
-          variant="naked"
-          class="px-4"
-          :ui="{ base: 'px-0 rounded-none', root: 'rounded-none ring-0 bg-transparent' }"
-          @submit="onSubmit"
-        >
-          <template #footer>
-            <ClientOnly>
-              <UTooltip v-if="usage" text="Daily messages remaining">
-                <span class="text-xs text-dimmed" :class="usage.remaining <= 5 ? 'text-warning' : ''">
-                  {{ usage.remaining }}/{{ usage.limit }}
-                </span>
-              </UTooltip>
-            </ClientOnly>
-            <UChatPromptSubmit
-              :status="chat.status"
-              color="neutral"
-              size="sm"
-              @stop="chat.stop()"
-              @reload="chat.regenerate()"
-            />
-          </template>
-        </UChatPrompt>
+            v-model="input"
+            :error="chat.error"
+            variant="naked"
+            class="px-4"
+            :ui="{ base: 'px-0 rounded-none', root: 'rounded-none ring-0 bg-transparent' }"
+            @submit="onSubmit"
+          >
+            <template #footer>
+              <ClientOnly>
+                <UTooltip v-if="usage" text="Daily messages remaining">
+                  <span class="text-xs text-dimmed" :class="usage.remaining <= 5 ? 'text-warning' : ''">
+                    {{ usage.remaining }}/{{ usage.limit }}
+                  </span>
+                </UTooltip>
+              </ClientOnly>
+              <UChatPromptSubmit
+                :status="chat.status"
+                color="neutral"
+                size="sm"
+                @stop="chat.stop()"
+                @reload="chat.regenerate()"
+              />
+            </template>
+          </UChatPrompt>
         </div>
       </UContainer>
     </template>

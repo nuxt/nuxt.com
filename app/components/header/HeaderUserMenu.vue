@@ -62,7 +62,6 @@ const items = computed<DropdownMenuItem[][]>(() => {
 
   return groups
 })
-
 </script>
 
 <template>
