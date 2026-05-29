@@ -67,7 +67,7 @@ function trackGitHubClick() {
 
     <template #right>
       <AgentChatButton />
-      <UTooltip text="Search" :kbds="['meta', 'K']">
+      <UTooltip text="Search" :kbds="['meta', 'K']" ignore-non-keyboard-focus>
         <UContentSearchButton @click="trackSearchOpen" />
       </UTooltip>
 
