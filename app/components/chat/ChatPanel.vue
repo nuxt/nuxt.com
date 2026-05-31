@@ -126,6 +126,7 @@ const suggestions = [
             <button
               v-for="suggestion in suggestions"
               :key="suggestion.title"
+              type="button"
               class="flex sm:flex-col gap-3 p-4 rounded-lg border border-default bg-default hover:bg-elevated/50 text-left transition-colors cursor-pointer"
               @click="askQuestion(suggestion.question)"
             >
