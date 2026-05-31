@@ -1,9 +1,9 @@
 import type { GitHubTeamMember } from '../../../types/github'
 
-export default defineCachedEventHandler(async () => {
+export default defineCachedEventHandler(async (event) => {
   const [core, _ecosystem] = await Promise.all([
-    $fetch<GitHubTeamMember[]>('/api/v1/teams/core'),
-    $fetch<GitHubTeamMember[]>('/api/v1/teams/ecosystem')
+    event.$fetch<GitHubTeamMember[]>('/api/v1/teams/core'),
+    event.$fetch<GitHubTeamMember[]>('/api/v1/teams/ecosystem')
   ])
 
   const filteredEcosystem = [] as GitHubTeamMember[]

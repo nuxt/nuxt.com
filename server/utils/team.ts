@@ -1,12 +1,13 @@
 import type { GitHubTeamMember } from '../types/github'
+import type { H3Event } from 'h3'
 
-const getCoreMembers = cachedFunction((): Promise<GitHubTeamMember[]> => $fetch<GitHubTeamMember[]>('/api/v1/teams/core'), {
+const getCoreMembers = cachedFunction((event: H3Event): Promise<GitHubTeamMember[]> => event.$fetch<GitHubTeamMember[]>('/api/v1/teams/core'), {
   maxAge: 60 * 60 * 24 * 7, // 1 week
   getKey: () => 'core-members'
 })
 
-export async function isCoreTeamMember(login: string): Promise<boolean> {
-  const coreMembers = await getCoreMembers()
+export async function isCoreTeamMember(event: H3Event, login: string): Promise<boolean> {
+  const coreMembers = await getCoreMembers(event)
   if (!coreMembers || !Array.isArray(coreMembers)) {
     throw createError({
       statusCode: 500,
@@ -16,8 +17,8 @@ export async function isCoreTeamMember(login: string): Promise<boolean> {
   return coreMembers.some(member => member.login.toLowerCase() === login)
 }
 
-function getExtraAdminLogins(): string[] {
-  const raw = useRuntimeConfig().adminGithubLogins
+function getExtraAdminLogins(event: H3Event): string[] {
+  const raw = useRuntimeConfig(event).adminGithubLogins
   if (!raw) return []
   return raw
     .split(',')
@@ -25,10 +26,10 @@ function getExtraAdminLogins(): string[] {
     .filter(Boolean)
 }
 
-export async function isAuthorizedAdmin(login: string): Promise<boolean> {
+export async function isAuthorizedAdmin(event: H3Event, login: string): Promise<boolean> {
   const normalized = login.toLowerCase()
-  if (getExtraAdminLogins().includes(normalized)) {
+  if (getExtraAdminLogins(event).includes(normalized)) {
     return true
   }
-  return isCoreTeamMember(normalized)
+  return isCoreTeamMember(event, normalized)
 }
