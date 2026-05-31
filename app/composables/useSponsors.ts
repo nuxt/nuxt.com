@@ -1,10 +1,8 @@
 import type { Sponsor } from '#shared/types'
 
-export const useSponsors = async () => {
-  const [{ data: apiSponsors }, { data: manualSponsors }] = await Promise.all([
-    useFetch('/api/sponsors', { key: 'sponsors' }),
-    useAsyncData('manual-sponsors', () => queryCollection('manualSponsors').first())
-  ])
+export const useSponsors = () => {
+  const { data: apiSponsors } = useFetch('/api/sponsors', { key: 'sponsors' })
+  const { data: manualSponsors } = useAsyncData('manual-sponsors', () => queryCollection('manualSponsors').first())
 
   const sponsors = computed(() => {
     const manual = manualSponsors.value?.sponsors || []
