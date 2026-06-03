@@ -23,6 +23,13 @@ const { copy } = useClipboard()
 const { selectedSort } = useModules()
 const { track } = useAnalytics()
 
+const isNuxt4Compatible = computed(() => {
+  const nuxtRange = props.module.compatibility?.nuxt
+  if (!nuxtRange)
+    return false
+  return nuxtRange.includes('>=4') || nuxtRange.includes('^4')
+})
+
 const publishedAgo = useTimeAgo(() => props.module.stats.publishedAt)
 const createdAgo = useTimeAgo(() => props.module.stats.createdAt)
 
@@ -144,6 +151,13 @@ const items = computed(() => [
 
         <div class="flex items-center justify-between gap-3 -my-1 text-muted">
           <div class="flex items-center gap-3 flex-wrap">
+            <UBadge
+              v-if="isNuxt4Compatible"
+              variant="subtle"
+              color="success"
+              label="Nuxt 4"
+            />
+
             <UTooltip text="Monthly NPM Downloads">
               <NuxtLink
                 class="flex items-center gap-1 hover:text-highlighted"
