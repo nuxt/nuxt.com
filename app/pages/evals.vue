@@ -27,13 +27,16 @@ interface Experiment {
   timestamp: string
   modelName: string
   agentHarness: string
+  avgDuration?: number
 }
 
 interface ModelRow {
   model: string
   agent: string
+  timestamp: string
   totalEvals: number
   successRate: number
+  avgDuration: number
   evals: EvalResultItem[]
 }
 
@@ -65,6 +68,12 @@ const experimentMap = computed(() => {
   return map
 })
 
+// Sort by success rate, then most recent run date first
+function sortRows(a: ModelRow, b: ModelRow): number {
+  if (b.successRate !== a.successRate) return b.successRate - a.successRate
+  return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+}
+
 // Process results into table rows
 const allResults = computed<ModelRow[]>(() => {
   if (!rawData?.results) return []
@@ -75,12 +84,14 @@ const allResults = computed<ModelRow[]>(() => {
     rows.push({
       model: experiment?.modelName || experimentName,
       agent: experiment?.agentHarness || 'Unknown',
+      timestamp: experiment?.timestamp || '',
       totalEvals: evals.length,
       successRate: evals.length ? Math.round((successes / evals.length) * 100) : 0,
+      avgDuration: experiment?.avgDuration ?? 0,
       evals
     })
   }
-  return rows.sort((a, b) => b.successRate - a.successRate)
+  return rows.sort(sortRows)
 })
 
 // Agent filter
@@ -119,7 +130,7 @@ const filteredResults = computed(() => {
         totalEvals: evals.length,
         successRate: evals.length ? Math.round((successes / evals.length) * 100) : 0
       }
-    }).sort((a, b) => b.successRate - a.successRate)
+    }).sort(sortRows)
   }
 
   return rows
@@ -152,6 +163,12 @@ function getModelIcon(model: string): string {
 // Format duration from ms to seconds
 function formatDuration(ms: number): string {
   return `${(ms / 1000).toFixed(2)}s`
+}
+
+// Format average duration (already in seconds)
+function formatAvgDuration(seconds: number): string {
+  if (!seconds) return '-'
+  return `${seconds.toFixed(2)}s`
 }
 
 // Expanded rows state
@@ -202,14 +219,15 @@ const columns: TableColumn<ModelRow>[] = [
     header: 'Agent'
   },
   {
-    accessorKey: 'totalEvals',
-    header: 'Total Evals',
+    accessorKey: 'avgDuration',
+    header: 'Avg Duration',
     meta: {
       class: {
         th: 'text-center',
-        td: 'text-center'
+        td: 'text-center text-muted'
       }
-    }
+    },
+    cell: ({ row }) => h('span', {}, formatAvgDuration(row.original.avgDuration))
   },
   {
     accessorKey: 'successRate',
