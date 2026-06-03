@@ -1,6 +1,7 @@
-import { streamText, convertToModelMessages, createUIMessageStream, createUIMessageStreamResponse, safeValidateUIMessages } from 'ai'
+import { streamText, convertToModelMessages, createUIMessageStream, createUIMessageStreamResponse, safeValidateUIMessages, stepCountIs, smoothStream } from 'ai'
 import type { ToolSet, UIMessage } from 'ai'
 import { createMCPClient } from '@ai-sdk/mcp'
+import type { AnthropicLanguageModelOptions } from '@ai-sdk/anthropic'
 import { anthropic } from '@ai-sdk/anthropic'
 import { createAILogger, createEvlogIntegration } from 'evlog/ai'
 import { sql } from 'drizzle-orm'
@@ -16,18 +17,6 @@ import { reportIssueTool } from '../utils/tools/report-issue'
 const MCP_PATH = '/mcp'
 const MODEL = 'anthropic/claude-sonnet-4.6'
 const MAX_STEPS = 10
-
-function stopWhenResponseComplete({ steps }: { steps: { text?: string, toolCalls?: unknown[] }[] }): boolean {
-  const lastStep = steps.at(-1)
-  if (!lastStep) return false
-
-  const hasText = Boolean(lastStep.text && lastStep.text.trim().length > 0)
-  const hasNoToolCalls = !lastStep.toolCalls || lastStep.toolCalls.length === 0
-
-  if (hasText && hasNoToolCalls) return true
-
-  return steps.length >= MAX_STEPS
-}
 
 const baseSystemPrompt = `You are **the Nuxt Agent**, Nuxt's documentation agent on nuxt.com. You help users navigate the official documentation, blog, modules catalog, and guides.
 
@@ -177,10 +166,21 @@ export default defineEventHandler(async (event) => {
     execute: async ({ writer }) => {
       const result = streamText({
         model: ai.wrap(MODEL),
-        maxOutputTokens: 4000,
+        maxOutputTokens: 8000,
         maxRetries: 2,
         abortSignal: abortController.signal,
-        stopWhen: stopWhenResponseComplete,
+        stopWhen: stepCountIs(MAX_STEPS),
+        providerOptions: {
+          anthropic: {
+            thinking: {
+              type: 'adaptive'
+            },
+            effort: 'low'
+          } satisfies AnthropicLanguageModelOptions,
+          gateway: {
+            caching: 'auto'
+          }
+        },
         system: buildSystemPrompt(pagePath),
         messages: await convertToModelMessages(messages),
         tools: {
@@ -198,6 +198,7 @@ export default defineEventHandler(async (event) => {
           isEnabled: true,
           integrations: [createEvlogIntegration(ai)]
         },
+        experimental_transform: smoothStream(),
         onFinish: () => {
           closeMcp()
         },

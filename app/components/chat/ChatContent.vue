@@ -49,6 +49,7 @@ function getMessagePagePath(message: UIMessage): string | null {
       :text="part.text"
       :streaming="isPartStreaming(part)"
       icon="i-lucide-brain"
+      chevron="leading"
     >
       <AgentComark
         :markdown="part.text"
@@ -59,6 +60,7 @@ function getMessagePagePath(message: UIMessage): string | null {
     <template v-else-if="isToolUIPart(part)">
       <UChatTool
         v-if="getToolName(part) === 'web_search'"
+        icon="i-lucide-search"
         :text="isToolStreaming(part) ? 'Searching the web...' : 'Searched the web'"
         :suffix="getSearchQuery(part)"
         :streaming="isToolStreaming(part)"
@@ -85,7 +87,7 @@ function getMessagePagePath(message: UIMessage): string | null {
         />
         <div
           v-if="part.state === 'output-available' && part.output && !(part.output as Record<string, unknown>).error && hasTemplatesOutput(part.output)"
-          class="grid grid-cols-1 sm:grid-cols-2 gap-3"
+          class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full"
         >
           <ToolsTemplateCard
             v-for="tpl in getTemplates(part.output)"
@@ -142,9 +144,9 @@ function getMessagePagePath(message: UIMessage): string | null {
       <template v-else-if="(getToolName(part) === 'get-module' || getToolName(part) === 'list-modules') && getModuleCards(part).length">
         <UChatTool
           :text="getToolText(part)"
+          :suffix="getToolSuffix(part)"
           :icon="getToolIcon(part)"
           :streaming="isToolStreaming(part)"
-          chevron="leading"
         />
         <div class="flex flex-col gap-2">
           <ToolsModuleCard
@@ -157,11 +159,12 @@ function getMessagePagePath(message: UIMessage): string | null {
       <UChatTool
         v-else
         :text="getToolText(part)"
+        :suffix="getToolSuffix(part)"
         :icon="getToolIcon(part)"
         :streaming="isToolStreaming(part)"
         chevron="leading"
       >
-        <pre v-if="getToolOutput(part)" class="text-xs text-dimmed whitespace-pre-wrap break-all" v-text="getToolOutput(part)" />
+        <pre v-if="getToolOutput(part)" class="text-xs text-dimmed whitespace-pre-wrap break-all rounded-md border border-muted bg-muted p-2" v-text="getToolOutput(part)" />
       </UChatTool>
     </template>
 
@@ -172,9 +175,9 @@ function getMessagePagePath(message: UIMessage): string | null {
         :streaming="isPartStreaming(part)"
       />
       <div v-else-if="message.role === 'user'">
-        <div v-if="getMessagePagePath(message)" class="flex items-center gap-1.5 mb-1.5 rounded-md bg-default/10 px-2 py-1 w-fit">
+        <div v-if="getMessagePagePath(message)" class="flex items-center gap-1 w-fit my-1">
           <img src="/icon.png" alt="Nuxt" class="size-3.5 shrink-0">
-          <span class="text-xs text-default/70">{{ getMessagePagePath(message)!.replace(/^\//, '') }}</span>
+          <span class="text-xs text-muted">{{ getMessagePagePath(message)!.replace(/^\//, '') }}</span>
         </div>
         <p class="whitespace-pre-wrap text-sm/6">
           {{ part.text }}

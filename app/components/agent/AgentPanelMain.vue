@@ -26,7 +26,7 @@ const votes = defineModel<Map<string, boolean>>('votes', { required: true })
       :status="chat.status"
       compact
       class="px-0 gap-2"
-      :user="{ ui: { container: 'max-w-full' } }"
+      :user="{ ui: { container: 'max-w-full pb-3' } }"
     >
       <template #indicator>
         <AgentIndicator />
