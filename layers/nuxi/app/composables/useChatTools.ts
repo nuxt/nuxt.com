@@ -24,23 +24,42 @@ function getToolMessage(state: ToolState, toolName: string, toolInput: Record<st
   const foundVerb = state === 'output-available' ? 'Found' : 'Finding'
 
   return {
-    'list-documentation-pages': `${searchVerb} documentation${toolInput.search ? ` · ${toolInput.search}` : ''}`,
-    'get-documentation-page': `${readVerb} ${toolInput.path || '...'}`,
+    'list-documentation-pages': `${searchVerb} documentation`,
+    'get-documentation-page': `${readVerb} documentation`,
     'get-getting-started-guide': `${readVerb} getting started`,
-    'get-blog-post': `${readVerb} ${toolInput.path || 'blog post'}`,
-    'get-deploy-provider': `${readVerb} ${toolInput.path || 'deploy guide'}`,
-    'get-changelog': `${searchVerb} changelog${toolInput.repo ? ` · ${toolInput.repo}` : ''}`,
-    'list-modules': `${searchVerb} modules${toolInput.search ? ` · ${toolInput.search}` : ''}`,
-    'get-module': `${readVerb} module ${toolInput.slug || '...'}`,
+    'list-blog-posts': `${searchVerb} blog posts`,
+    'get-blog-post': `${readVerb} blog post`,
+    'list-deploy-providers': `${searchVerb} deploy providers`,
+    'get-deploy-provider': `${readVerb} deploy guide`,
+    'get-changelog': `${searchVerb} changelog`,
+    'list-modules': `${searchVerb} modules`,
+    'get-module': `${readVerb} module`,
     'show_template': `${foundVerb} templates`,
     'show_blog_post': `${foundVerb} blog post`,
     'show_hosting': `${foundVerb} hosting provider`,
-    'open_playground': `${state === 'output-available' ? 'Generated' : 'Generating'} playground`
+    'open_playground': `${state === 'output-available' ? 'Generated' : 'Generating'} playground`,
+    'search_github_issues': `${searchVerb} issues`
   }[toolName] || `${searchVerb} ${toolName}`
 }
 
 export function getToolText(part: ToolPart) {
-  return getToolMessage(part.state, getToolName(part), (part.input || {}) as Record<string, string | undefined>)
+  return getToolMessage(part.state, getToolName(part))
+}
+
+export function getToolSuffix(part: ToolPart): string | undefined {
+  const toolName = getToolName(part)
+  const toolInput = (part.input || {}) as Record<string, string | undefined>
+
+  return {
+    'list-documentation-pages': toolInput.search,
+    'get-documentation-page': toolInput.path,
+    'get-blog-post': toolInput.path,
+    'get-deploy-provider': toolInput.path,
+    'get-changelog': toolInput.repo,
+    'list-modules': toolInput.search,
+    'get-module': toolInput.slug,
+    'search_github_issues': toolInput.query
+  }[toolName] || undefined
 }
 
 export function getToolIcon(part: ToolPart): string {
@@ -50,7 +69,9 @@ export function getToolIcon(part: ToolPart): string {
     'list-documentation-pages': 'i-lucide-book-open',
     'get-documentation-page': 'i-lucide-file-text',
     'get-getting-started-guide': 'i-lucide-rocket',
+    'list-blog-posts': 'i-lucide-newspaper',
     'get-blog-post': 'i-lucide-newspaper',
+    'list-deploy-providers': 'i-lucide-cloud',
     'get-deploy-provider': 'i-lucide-cloud',
     'get-changelog': 'i-lucide-history',
     'list-modules': 'i-lucide-box',
@@ -58,7 +79,8 @@ export function getToolIcon(part: ToolPart): string {
     'show_template': 'i-lucide-layout-template',
     'show_blog_post': 'i-lucide-newspaper',
     'show_hosting': 'i-lucide-server',
-    'open_playground': 'i-simple-icons-stackblitz'
+    'open_playground': 'i-simple-icons-stackblitz',
+    'search_github_issues': 'i-lucide-github'
   }[toolName] || 'i-lucide-search'
 }
 
