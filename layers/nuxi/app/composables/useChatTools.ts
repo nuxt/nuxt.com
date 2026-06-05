@@ -18,7 +18,7 @@ export function moduleCardProps(data: ModuleCardData): Omit<ModuleCardData, 'nam
   return { ...rest, slug: name }
 }
 
-function getToolMessage(state: ToolState, toolName: string, toolInput: Record<string, string | undefined>) {
+function getToolMessage(state: ToolState, toolName: string) {
   const searchVerb = state === 'output-available' ? 'Searched' : 'Searching'
   const readVerb = state === 'output-available' ? 'Read' : 'Reading'
   const foundVerb = state === 'output-available' ? 'Found' : 'Finding'
