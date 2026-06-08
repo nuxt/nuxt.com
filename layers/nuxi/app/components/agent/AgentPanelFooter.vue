@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { UIMessage } from 'ai'
 import type { Chat } from '@ai-sdk/vue'
+import type { TextPasteAttachment } from '../../../shared/utils/paste-attachment'
 
 const input = defineModel<string>({ required: true })
 
@@ -10,7 +11,7 @@ const props = defineProps<{
   pageContextEnabled: boolean
   rateLimitReached?: boolean
   usage?: { used: number, remaining: number, limit: number }
-  pasteAttachments?: { content: string, name: string }[]
+  pasteAttachments?: TextPasteAttachment[]
   canSubmit?: boolean
 }>()
 
@@ -73,32 +74,23 @@ const contextPathLabel = computed(() => props.currentPage?.replace(/^\//, '') ??
       <span>Daily limit reached. Try again tomorrow.</span>
     </div>
 
-    <UChatPrompt
+    <AgentChatPrompt
       v-else
       v-model="input"
-      :error="chat.error"
-      placeholder="Ask anything…"
+      :chat="chat"
+      :paste-attachments="pasteAttachments"
+      :can-submit="canSubmit"
+      :usage="usage"
       variant="naked"
       size="sm"
-      :rows="2"
-      :maxrows="5"
-      autofocus
-      :ui="{ root: 'px-4', base: 'px-0 rounded-none', header: 'px-0 pt-2 pb-0 gap-1.5 flex flex-wrap items-start', footer: 'px-0' }"
-      class="px-0"
+      :submit-disabled="chat.status === 'ready' && !(canSubmit ?? input.trim())"
+      :ui="{ root: 'pb-2', body: 'px-0', base: 'px-0 rounded-none', header: 'px-0 pt-2 pb-0 gap-1.5 flex flex-wrap items-start', footer: 'px-0 items-baseline' }"
       @submit="$emit('submit')"
       @paste="$emit('paste', $event)"
+      @remove-attachment="$emit('removePasteAttachment', $event)"
+      @restore-attachment="$emit('restorePasteAttachment', $event)"
     >
-      <template v-if="pasteAttachments?.length" #header>
-        <AgentPasteAttachment
-          v-for="(attachment, index) in pasteAttachments"
-          :key="attachment.name"
-          :attachment="attachment"
-          @remove="$emit('removePasteAttachment', index)"
-          @restore="$emit('restorePasteAttachment', index)"
-        />
-      </template>
-
-      <template #footer>
+      <template #footer-left>
         <div class="flex items-center gap-2 text-xs text-dimmed">
           <UTooltip v-if="currentPage && !pageContextEnabled" text="Use page as context" :kbds="['tab']">
             <UButton
@@ -121,15 +113,7 @@ const contextPathLabel = computed(() => props.currentPage?.replace(/^\//, '') ??
             </span>
           </UTooltip>
         </div>
-
-        <UChatPromptSubmit
-          size="sm"
-          :status="chat.status"
-          :disabled="chat.status === 'ready' && !(canSubmit ?? input.trim())"
-          @stop="chat.stop()"
-          @reload="chat.regenerate()"
-        />
       </template>
-    </UChatPrompt>
+    </AgentChatPrompt>
   </div>
 </template>

@@ -8,6 +8,41 @@ export interface TextPasteAttachment {
   name: string
 }
 
+const EXTENSION_META = {
+  '.vue': { label: 'Vue', mediaType: 'text/plain', language: 'vue', icon: 'i-logos-vue' },
+  '.tsx': { label: 'TSX', mediaType: 'text/plain', language: 'tsx', icon: 'i-logos-typescript-icon' },
+  '.jsx': { label: 'JSX', mediaType: 'text/plain', language: 'jsx', icon: 'i-logos-javascript' },
+  '.mts': { label: 'TypeScript', mediaType: 'text/plain', language: 'typescript', icon: 'i-logos-typescript-icon' },
+  '.cts': { label: 'TypeScript', mediaType: 'text/plain', language: 'typescript', icon: 'i-logos-typescript-icon' },
+  '.ts': { label: 'TypeScript', mediaType: 'text/plain', language: 'typescript', icon: 'i-logos-typescript-icon' },
+  '.mjs': { label: 'JavaScript', mediaType: 'text/plain', language: 'javascript', icon: 'i-logos-javascript' },
+  '.cjs': { label: 'JavaScript', mediaType: 'text/plain', language: 'javascript', icon: 'i-logos-javascript' },
+  '.js': { label: 'JavaScript', mediaType: 'text/plain', language: 'javascript', icon: 'i-logos-javascript' },
+  '.json': { label: 'JSON', mediaType: 'application/json', language: 'json', icon: 'i-lucide-braces' },
+  '.yaml': { label: 'YAML', mediaType: 'text/yaml', language: 'yaml', icon: 'i-lucide-file-code' },
+  '.yml': { label: 'YAML', mediaType: 'text/yaml', language: 'yaml', icon: 'i-lucide-file-code' },
+  '.mdc': { label: 'Markdown', mediaType: 'text/markdown', language: 'markdown', icon: 'i-lucide-file-text' },
+  '.md': { label: 'Markdown', mediaType: 'text/markdown', language: 'markdown', icon: 'i-lucide-file-text' },
+  '.scss': { label: 'CSS', mediaType: 'text/plain', language: 'scss', icon: 'i-lucide-palette' },
+  '.css': { label: 'CSS', mediaType: 'text/plain', language: 'css', icon: 'i-lucide-palette' },
+  '.html': { label: 'HTML', mediaType: 'text/html', language: 'html', icon: 'i-lucide-file-code' },
+  '.env': { label: 'Env', mediaType: 'text/plain', language: 'shell', icon: 'i-lucide-file-text' }
+} as const
+
+const DEFAULT_EXTENSION_META = {
+  label: 'Text',
+  mediaType: 'text/plain',
+  language: 'text',
+  icon: 'i-lucide-file-text'
+} as const
+
+const EXTENSIONS_BY_LENGTH = Object.keys(EXTENSION_META).sort((a, b) => b.length - a.length)
+
+export function getExtensionMeta(filename: string) {
+  const ext = EXTENSIONS_BY_LENGTH.find(extension => filename.endsWith(extension))
+  return ext ? EXTENSION_META[ext as keyof typeof EXTENSION_META] : DEFAULT_EXTENSION_META
+}
+
 export function shouldConvertPasteToAttachment(text: string): boolean {
   return text.length >= PASTE_ATTACHMENT_MIN_CHARS
     || text.split('\n').length >= PASTE_ATTACHMENT_MIN_LINES
@@ -22,7 +57,7 @@ function firstNonEmptyLines(content: string, count = 5): string[] {
     .slice(0, count)
 }
 
-function guessExtension(content: string): string {
+export function guessExtension(content: string): string {
   const trimmed = content.trimStart()
   const lines = firstNonEmptyLines(content)
   const first = lines[0] ?? ''
@@ -94,29 +129,6 @@ export function guessAttachmentName(content: string, existingNames: string[] = [
   return `snippet-${index}${ext}`
 }
 
-export function attachmentTypeLabel(filename: string): string {
-  if (filename.endsWith('.vue')) return 'Vue'
-  if (filename.endsWith('.tsx')) return 'TSX'
-  if (filename.endsWith('.ts') || filename.endsWith('.mts')) return 'TypeScript'
-  if (filename.endsWith('.jsx')) return 'JSX'
-  if (filename.endsWith('.js') || filename.endsWith('.mjs')) return 'JavaScript'
-  if (filename.endsWith('.json')) return 'JSON'
-  if (filename.endsWith('.yaml') || filename.endsWith('.yml')) return 'YAML'
-  if (filename.endsWith('.md') || filename.endsWith('.mdc')) return 'Markdown'
-  if (filename.endsWith('.css') || filename.endsWith('.scss')) return 'CSS'
-  if (filename.endsWith('.html')) return 'HTML'
-  if (filename.endsWith('.env')) return 'Env'
-  return 'Text'
-}
-
-export function guessMediaType(filename: string): string {
-  if (filename.endsWith('.json')) return 'application/json'
-  if (filename.endsWith('.md') || filename.endsWith('.mdc')) return 'text/markdown'
-  if (filename.endsWith('.html')) return 'text/html'
-  if (filename.endsWith('.yaml') || filename.endsWith('.yml')) return 'text/yaml'
-  return 'text/plain'
-}
-
 export function encodeTextToDataUrl(content: string, mediaType: string): string {
   const base64 = typeof btoa !== 'undefined'
     ? btoa(unescape(encodeURIComponent(content)))
@@ -148,7 +160,7 @@ export function decodeTextFromDataUrl(url: string): string | null {
 }
 
 export function attachmentToFilePart(attachment: TextPasteAttachment): FileUIPart {
-  const mediaType = guessMediaType(attachment.name)
+  const { mediaType } = getExtensionMeta(attachment.name)
   return {
     type: 'file',
     mediaType,
@@ -181,35 +193,8 @@ export function attachmentToComark(content: string, filename: string): string {
     return content
   }
 
-  return `\`\`\`${guessHighlightLanguage(filename)}\n${content}\n\`\`\``
-}
-
-export function guessHighlightLanguage(filename: string): string {
-  if (filename.endsWith('.vue')) return 'vue'
-  if (filename.endsWith('.tsx')) return 'tsx'
-  if (filename.endsWith('.ts') || filename.endsWith('.mts') || filename.endsWith('.cts')) return 'typescript'
-  if (filename.endsWith('.jsx')) return 'jsx'
-  if (filename.endsWith('.js') || filename.endsWith('.mjs') || filename.endsWith('.cjs')) return 'javascript'
-  if (filename.endsWith('.json')) return 'json'
-  if (filename.endsWith('.yaml') || filename.endsWith('.yml')) return 'yaml'
-  if (filename.endsWith('.md') || filename.endsWith('.mdc')) return 'markdown'
-  if (filename.endsWith('.css')) return 'css'
-  if (filename.endsWith('.scss')) return 'scss'
-  if (filename.endsWith('.html')) return 'html'
-  if (filename.endsWith('.env')) return 'shell'
-  return 'text'
-}
-
-export function guessAttachmentIcon(filename: string): string {
-  if (filename.endsWith('.vue')) return 'i-logos-vue'
-  if (filename.endsWith('.ts') || filename.endsWith('.tsx') || filename.endsWith('.mts')) return 'i-logos-typescript-icon'
-  if (filename.endsWith('.js') || filename.endsWith('.jsx') || filename.endsWith('.mjs')) return 'i-logos-javascript'
-  if (filename.endsWith('.json')) return 'i-lucide-braces'
-  if (filename.endsWith('.md') || filename.endsWith('.mdc')) return 'i-lucide-file-text'
-  if (filename.endsWith('.yaml') || filename.endsWith('.yml')) return 'i-lucide-file-code'
-  if (filename.endsWith('.css') || filename.endsWith('.scss')) return 'i-lucide-palette'
-  if (filename.endsWith('.html')) return 'i-lucide-file-code'
-  return 'i-lucide-file-text'
+  const { language } = getExtensionMeta(filename)
+  return `\`\`\`${language}\n${content}\n\`\`\``
 }
 
 export function filePartToAttachment(part: FileUIPart): TextPasteAttachment {

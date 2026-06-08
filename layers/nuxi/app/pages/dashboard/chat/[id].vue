@@ -18,7 +18,6 @@ definePageMeta({
 })
 
 const route = useRoute()
-const toast = useToast()
 const { loggedIn } = useUserSession()
 const { usage, rateLimitReached, consumePendingPrompt, consumePendingMessageParts } = useNuxtAgent()
 const { refresh: refreshChats } = useChatsData()
@@ -40,11 +39,6 @@ watch(() => data.value?.title, (next) => {
   title.value = next ?? null
 })
 
-const { data: votes } = await useLazyFetch<ChatVoteRow[]>(`/api/chats/${chatId}/votes`, {
-  immediate: isOwner.value,
-  default: () => []
-})
-
 const initialMessages = computed<UIMessage[]>(() =>
   (data.value?.messages ?? []).map(m => ({
     id: m.id,
@@ -63,45 +57,19 @@ const {
   removeAttachment,
   restoreToInput,
   onSubmit,
-  send
+  send,
+  getVote,
+  vote
 } = useAgentChat({
   chatId,
   initialMessages: initialMessages.value,
   source: 'chat-page',
   withPageContext: 'always',
+  fetchVotes: isOwner.value,
   onFinish: () => {
     if (loggedIn.value) refreshChats()
   }
 })
-
-function getVote(messageId: string) {
-  const vote = votes.value?.find(v => v.messageId === messageId)
-  if (!vote) return null
-  return Boolean(vote.isUpvoted)
-}
-
-async function vote(message: UIMessage, isUpvoted: boolean) {
-  const snapshot = (votes.value ?? []).map(v => ({ ...v }))
-  const toggling = getVote(message.id) === isUpvoted
-  const next = toggling ? null : isUpvoted
-
-  votes.value = next === null
-    ? (votes.value ?? []).filter(v => v.messageId !== message.id)
-    : [
-        ...(votes.value ?? []).filter(v => v.messageId !== message.id),
-        { chatId: data.value!.id, messageId: message.id, isUpvoted: next }
-      ]
-
-  try {
-    await $fetch(`/api/chats/${data.value!.id}/votes`, {
-      method: 'POST',
-      body: next === null ? { messageId: message.id } : { messageId: message.id, isUpvoted: next }
-    })
-  } catch {
-    votes.value = snapshot
-    toast.add({ description: 'Failed to save vote', icon: 'i-lucide-alert-circle', color: 'error' })
-  }
-}
 
 const site = useSiteConfig()
 useHead({ title: () => title.value || 'Nuxi' })
@@ -215,14 +183,13 @@ onMounted(() => {
         </div>
         <div v-else-if="isOwner || !loggedIn" class="sticky bottom-0 z-10 bg-default">
           <AgentLoginHint v-if="!loggedIn" attached class="border-x border-t border-default rounded-t-lg bg-default" />
-          <UChatPrompt
+          <AgentChatPrompt
             v-model="input"
-            :error="chat.error"
-            placeholder="Ask anything…"
+            :chat="chat"
+            :paste-attachments="pasteAttachments"
+            :can-submit="canSubmit"
+            :usage="usage"
             variant="subtle"
-            :rows="2"
-            :maxrows="5"
-            autofocus
             class="rounded-b-none border-b-0 bg-default [view-transition-name:chat-prompt]"
             :class="!loggedIn ? 'rounded-t-none border-t-0' : ''"
             :ui="{
@@ -233,35 +200,9 @@ onMounted(() => {
             }"
             @submit="onSubmit"
             @paste="handlePaste"
-          >
-            <template v-if="pasteAttachments.length" #header>
-              <AgentPasteAttachment
-                v-for="(attachment, index) in pasteAttachments"
-                :key="attachment.name"
-                :attachment="attachment"
-                @remove="removeAttachment(index)"
-                @restore="restoreToInput(index)"
-              />
-            </template>
-
-            <template #footer>
-              <ClientOnly>
-                <UTooltip v-if="usage" text="Daily messages remaining">
-                  <span class="text-xs text-dimmed" :class="usage.remaining <= 5 ? 'text-warning' : ''">
-                    {{ usage.remaining }}/{{ usage.limit }}
-                  </span>
-                </UTooltip>
-              </ClientOnly>
-              <UChatPromptSubmit
-                :status="chat.status"
-                color="neutral"
-                size="sm"
-                :disabled="chat.status === 'ready' && !canSubmit"
-                @stop="chat.stop()"
-                @reload="chat.regenerate()"
-              />
-            </template>
-          </UChatPrompt>
+            @remove-attachment="removeAttachment($event)"
+            @restore-attachment="restoreToInput($event)"
+          />
         </div>
       </UContainer>
     </template>

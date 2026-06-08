@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { joinURL } from 'ufo'
 import { buildMessageParts, getMessageTextLength } from '../../../../shared/utils/paste-attachment'
+import { createChatWithMessage } from '../../../utils/create-chat'
 
 definePageMeta({
   layout: 'dashboard'
@@ -56,19 +57,10 @@ async function createChat(parts: ReturnType<typeof buildMessagePartsFromInput>) 
 
   try {
     if (loggedIn.value) {
-      const chat = await $fetch<ChatListItem>('/api/chats', {
-        method: 'POST',
-        body: {
-          id: crypto.randomUUID(),
-          message: {
-            id: crypto.randomUUID(),
-            role: 'user',
-            parts
-          }
-        }
-      })
+      const chatId = crypto.randomUUID()
+      await createChatWithMessage(chatId, parts)
       refreshChats()
-      await navigateTo(`/dashboard/chat/${chat?.id}`)
+      await navigateTo(`/dashboard/chat/${chatId}`)
     } else {
       agent.pendingMessageParts.value = parts
       await navigateTo(`/dashboard/chat/${crypto.randomUUID()}`)
@@ -141,46 +133,22 @@ const suggestions = [
               <UIcon name="i-lucide-clock" class="size-4 shrink-0" />
               <span>Daily limit reached. Try again tomorrow.</span>
             </div>
-            <UChatPrompt
+            <AgentChatPrompt
               v-else
               v-model="input"
-              placeholder="Ask anything…"
+              :paste-attachments="pasteAttachments"
+              :can-submit="canSubmit"
               :status="loading ? 'streaming' : 'ready'"
+              :usage="usage"
               variant="subtle"
-              :rows="2"
-              :maxrows="5"
-              autofocus
+              :submit-disabled="!canSubmit"
               class="[view-transition-name:chat-prompt]"
               :ui="{ base: 'px-1.5', footer: 'items-baseline', header: 'px-1.5 pt-1.5 pb-0 gap-1.5 flex flex-wrap items-start' }"
               @submit="onSubmit"
               @paste="handlePaste"
-            >
-              <template v-if="pasteAttachments.length" #header>
-                <AgentPasteAttachment
-                  v-for="(attachment, index) in pasteAttachments"
-                  :key="attachment.name"
-                  :attachment="attachment"
-                  @remove="removeAttachment(index)"
-                  @restore="restoreToInput(index)"
-                />
-              </template>
-
-              <template #footer>
-                <ClientOnly>
-                  <UTooltip v-if="usage" text="Daily messages remaining">
-                    <span class="text-xs text-dimmed" :class="usage.remaining <= 5 ? 'text-warning' : ''">
-                      {{ usage.remaining }}/{{ usage.limit }}
-                    </span>
-                  </UTooltip>
-                </ClientOnly>
-                <UChatPromptSubmit
-                  color="neutral"
-                  size="sm"
-                  :status="loading ? 'streaming' : 'ready'"
-                  :disabled="!canSubmit"
-                />
-              </template>
-            </UChatPrompt>
+              @remove-attachment="removeAttachment($event)"
+              @restore-attachment="restoreToInput($event)"
+            />
           </div>
 
           <div class="flex flex-wrap gap-2 justify-center">

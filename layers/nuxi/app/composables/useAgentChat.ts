@@ -2,15 +2,16 @@ import { Chat } from '@ai-sdk/vue'
 import { DefaultChatTransport } from 'ai'
 import type { FileUIPart, UIMessage } from 'ai'
 import { getMessageTextLength } from '../../shared/utils/paste-attachment'
+import { createChatWithMessage } from '../utils/create-chat'
 
 interface UseAgentChatOptions {
   // Remount the consumer with `:key` when switching chats — the Chat
   // instance carries state that bleeds across conversations otherwise.
   chatId: string
   initialMessages?: UIMessage[]
-  initialVotes?: Map<string, boolean>
   source: string
   withPageContext?: 'always' | 'when-enabled'
+  fetchVotes?: boolean
   onFinish?: () => void
 }
 
@@ -46,7 +47,6 @@ export function useAgentChat(options: UseAgentChatOptions) {
   const chats = useChatsData()
   const { loggedIn } = useUserSession()
   const { track } = useAnalytics()
-  const toast = useToast()
 
   const input = ref('')
   const {
@@ -58,7 +58,10 @@ export function useAgentChat(options: UseAgentChatOptions) {
     buildMessageParts: buildMessagePartsFromInput,
     clearAttachments
   } = useTextPasteAttachment(input)
-  const votes = ref<Map<string, boolean>>(new Map(options.initialVotes))
+
+  const { votes, getVote, vote } = useChatVotes(() => options.chatId, {
+    immediate: options.fetchVotes ?? false
+  })
 
   const useContext = computed(() =>
     options.withPageContext === 'always'
@@ -109,27 +112,6 @@ export function useAgentChat(options: UseAgentChatOptions) {
     }
   })
 
-  function vote(message: UIMessage, isUpvoted: boolean) {
-    const current = votes.value.get(message.id)
-    const next = current === isUpvoted ? undefined : isUpvoted
-
-    if (next === undefined) votes.value.delete(message.id)
-    else votes.value.set(message.id, next)
-    votes.value = new Map(votes.value)
-
-    $fetch(`/api/chats/${options.chatId}/votes`, {
-      method: 'POST',
-      body: next === undefined
-        ? { messageId: message.id }
-        : { messageId: message.id, isUpvoted: next }
-    }).catch(() => {
-      if (current !== undefined) votes.value.set(message.id, current)
-      else votes.value.delete(message.id)
-      votes.value = new Map(votes.value)
-      toast.add({ description: 'Failed to save vote', icon: 'i-lucide-alert-circle', color: 'error' })
-    })
-  }
-
   type SendInput = string | { parts: UIMessage['parts'] }
 
   async function send(input: SendInput) {
@@ -158,16 +140,7 @@ export function useAgentChat(options: UseAgentChatOptions) {
       .trim()
 
     if (chat.messages.length === 0 && loggedIn.value) {
-      const userMessage: UIMessage = {
-        id: crypto.randomUUID(),
-        role: 'user',
-        parts,
-        metadata
-      }
-      await $fetch('/api/chats', {
-        method: 'POST',
-        body: { id: options.chatId, message: userMessage }
-      })
+      const userMessage = await createChatWithMessage(options.chatId, parts, metadata)
       chat.messages = [userMessage]
       await chat.regenerate()
     } else if (fileParts.length && text) {
@@ -204,6 +177,7 @@ export function useAgentChat(options: UseAgentChatOptions) {
     removeAttachment,
     restoreToInput,
     votes,
+    getVote,
     vote,
     send,
     canClear,
