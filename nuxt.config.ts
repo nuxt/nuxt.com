@@ -62,8 +62,7 @@ export default defineNuxtConfig({
   },
   app: {
     pageTransition: false,
-    layoutTransition: false,
-    viewTransition: false
+    layoutTransition: false
   },
   css: ['~/assets/css/main.css'],
   site: {
