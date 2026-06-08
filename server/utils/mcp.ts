@@ -31,7 +31,7 @@ export function resolveDocumentationPath(path: string): string {
     return path.replace('/guide/going-further/error-handling', '/getting-started/error-handling')
   }
 
-  let resolved = path.replace(
+  const resolved = path.replace(
     /^(\/docs\/(?:3\.x|4\.x|5\.x))\/guide\/directory-structure$/,
     '$1/directory-structure'
   )
@@ -41,7 +41,12 @@ export function resolveDocumentationPath(path: string): string {
     return resolved
   }
 
-  const [, prefix, version, rest] = legacyMatch
+  const prefix = legacyMatch[1]
+  const version = legacyMatch[2]
+  const rest = legacyMatch[3]
+  if (!prefix || !version || !rest) {
+    return resolved
+  }
 
   if (version === '3.x') {
     return rest.startsWith('app/')
@@ -55,6 +60,7 @@ export function resolveDocumentationPath(path: string): string {
 
   const topLevel = rest.split('/')[0]!
   if (APP_SCOPED_DIRECTORIES.has(topLevel)) {
+    // `rest === 'app'` → `.../app/app` (canonical content path for app.vue)
     return `${prefix}/directory-structure/app/${rest}`
   }
 
