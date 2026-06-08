@@ -2,6 +2,7 @@
 import type { UIMessage } from 'ai'
 import { joinURL } from 'ufo'
 import { format } from 'date-fns'
+import { AGENT_CHAT_THEME, AGENT_USER_MESSAGE_UI } from '../../../composables/useAgentChat'
 
 function messageTime(message: UIMessage): string | null {
   const raw = (message.metadata as { createdAt?: string } | undefined)?.createdAt
@@ -166,45 +167,47 @@ onMounted(() => {
     </template>
 
     <template #body>
-      <UContainer class="flex-1 flex flex-col gap-4 sm:gap-6">
-        <UChatMessages
-          should-auto-scroll
-          :messages="chat.messages"
-          :status="chat.status"
-          :spacing-offset="(isOwner || !loggedIn) && !rateLimitReached ? 160 : 0"
-          :user="{ ui: { content: 'px-3 py-1.5 min-h-fit', container: 'gap-3 pb-5', actions: 'right-0' } }"
-          :assistant="{ ui: { actions: 'has-data-[state=open]:opacity-100' } }"
-          :ui="{ root: '[&>article]:last-of-type:min-h-0' }"
-          class="flex-1 pt-4 pb-4 sm:pb-6"
-        >
-          <template #indicator>
-            <AgentIndicator />
-          </template>
+      <UContainer class="flex min-w-0 flex-1 flex-col gap-4 sm:gap-6">
+        <UTheme :ui="AGENT_CHAT_THEME">
+          <UChatMessages
+            should-auto-scroll
+            :messages="chat.messages"
+            :status="chat.status"
+            :spacing-offset="(isOwner || !loggedIn) && !rateLimitReached ? 160 : 0"
+            :user="{ ui: AGENT_USER_MESSAGE_UI }"
+            :assistant="{ ui: { actions: 'has-data-[state=open]:opacity-100' } }"
+            :ui="{ root: '[&>article]:last-of-type:min-h-0' }"
+            class="flex-1 pt-4 pb-4 sm:pb-6"
+          >
+            <template #indicator>
+              <AgentIndicator />
+            </template>
 
-          <template #content="{ message }">
-            <ChatContent :message="message" />
-          </template>
+            <template #content="{ message }">
+              <ChatContent :message="message" />
+            </template>
 
-          <template v-if="isOwner" #actions="{ message }">
-            <ChatMessageActions
-              v-if="message.role === 'assistant'"
-              :message="message"
-              :vote="getVote(message.id)"
-              :streaming="chat.status === 'streaming' && message.id === chat.messages.at(-1)?.id"
-              :chat-id="chatId"
-              :can-regenerate="message.id === chat.messages.at(-1)?.id && chat.status === 'ready'"
-              @vote="(_message, isUpvoted) => vote(_message, isUpvoted)"
-              @regenerate="chat.regenerate()"
-            />
-            <UTooltip
-              v-else-if="message.role === 'user' && messageTime(message)"
-              :text="messageFullTime(message)!"
-              :content="{ side: 'bottom' }"
-            >
-              <span class="text-xs text-dimmed select-none">{{ messageTime(message) }}</span>
-            </UTooltip>
-          </template>
-        </UChatMessages>
+            <template v-if="isOwner" #actions="{ message }">
+              <ChatMessageActions
+                v-if="message.role === 'assistant'"
+                :message="message"
+                :vote="getVote(message.id)"
+                :streaming="chat.status === 'streaming' && message.id === chat.messages.at(-1)?.id"
+                :chat-id="chatId"
+                :can-regenerate="message.id === chat.messages.at(-1)?.id && chat.status === 'ready'"
+                @vote="(_message, isUpvoted) => vote(_message, isUpvoted)"
+                @regenerate="chat.regenerate()"
+              />
+              <UTooltip
+                v-else-if="message.role === 'user' && messageTime(message)"
+                :text="messageFullTime(message)!"
+                :content="{ side: 'bottom' }"
+              >
+                <span class="text-xs text-dimmed select-none">{{ messageTime(message) }}</span>
+              </UTooltip>
+            </template>
+          </UChatMessages>
+        </UTheme>
 
         <div v-if="rateLimitReached" class="sticky bottom-0 flex items-center justify-center gap-2 py-4 text-sm text-muted">
           <UIcon name="i-lucide-clock" class="size-4 shrink-0" />

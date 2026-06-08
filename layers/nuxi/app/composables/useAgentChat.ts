@@ -25,10 +25,20 @@ export const AGENT_CHAT_THEME = {
     h3: { base: 'text-base mt-4 mb-2' },
     h4: { base: 'text-sm mt-3 mb-1.5' },
     code: { base: 'text-xs' },
-    pre: { root: 'my-2', base: 'text-xs/5' },
+    pre: { root: 'my-2 max-w-full overflow-x-auto', base: 'text-xs/5' },
     table: { root: 'my-2' },
     hr: { base: 'my-4' }
   }
+} as const
+
+/** Overrides for UChatMessages `:user` — side/actions/items-start come from Nuxt UI defaults. */
+export const AGENT_USER_MESSAGE_UI = {
+  content: 'px-3 py-1.5 min-h-fit min-w-0 w-fit max-w-full',
+  container: 'pb-5'
+} as const
+
+export const AGENT_USER_MESSAGE_UI_COMPACT = {
+  content: 'min-w-0 w-fit max-w-full'
 } as const
 
 export function useAgentChat(options: UseAgentChatOptions) {
@@ -198,7 +208,6 @@ export function useAgentChat(options: UseAgentChatOptions) {
     send,
     canClear,
     onSubmit,
-    askQuestion,
-    chatTheme: AGENT_CHAT_THEME
+    askQuestion
   }
 }

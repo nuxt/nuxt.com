@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { UIMessage } from 'ai'
 import type { Chat } from '@ai-sdk/vue'
+import { AGENT_CHAT_THEME, AGENT_USER_MESSAGE_UI_COMPACT } from '../../composables/useAgentChat'
 
 defineProps<{
   chat: Chat<UIMessage>
@@ -15,23 +16,6 @@ const emit = defineEmits<{
 }>()
 
 const votes = defineModel<Map<string, boolean>>('votes', { required: true })
-
-const AGENT_CHAT_THEME = {
-  prose: {
-    p: { base: 'my-2 text-sm/6' },
-    li: { base: 'my-0.5 text-sm/6' },
-    ul: { base: 'my-2' },
-    ol: { base: 'my-2' },
-    h1: { base: 'text-xl mb-4' },
-    h2: { base: 'text-lg mt-6 mb-3' },
-    h3: { base: 'text-base mt-4 mb-2' },
-    h4: { base: 'text-sm mt-3 mb-1.5' },
-    code: { base: 'text-xs' },
-    pre: { root: 'my-2', base: 'text-xs/5' },
-    table: { root: 'my-2' },
-    hr: { base: 'my-4' }
-  }
-}
 </script>
 
 <template>
@@ -43,8 +27,8 @@ const AGENT_CHAT_THEME = {
         :messages="chat.messages"
         :status="chat.status"
         compact
-        class="px-0 gap-2"
-        :user="{ ui: { container: 'max-w-full' } }"
+        class="gap-2 px-0"
+        :user="{ ui: AGENT_USER_MESSAGE_UI_COMPACT }"
         :assistant="{ ui: { actions: 'has-data-[state=open]:opacity-100' } }"
       >
         <template #indicator>
