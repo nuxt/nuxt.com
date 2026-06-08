@@ -2,7 +2,8 @@
 import { joinURL } from 'ufo'
 
 definePageMeta({
-  layout: 'chat'
+  layout: 'chat',
+  viewTransition: true
 })
 
 const site = useSiteConfig()
