@@ -45,6 +45,7 @@ defineOgImage('Docs.takumi', {
               :alt="course.name"
               :width="'sponsor' in course && course.sponsor ? 94 : 56"
               :height="'sponsor' in course && course.sponsor ? 47 : 28"
+              :sizes="'sponsor' in course && course.sponsor ? '94px' : '56px'"
               format="webp"
               :modifiers="{ position: 'top' }"
               :loading="index > 3 ? 'lazy' : undefined"

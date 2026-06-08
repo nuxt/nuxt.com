@@ -10,7 +10,7 @@ export function useCanonical(markdownAlternate?: MaybeRefOrGetter<string | null 
   const route = useRoute()
   const site = useSiteConfig()
 
-  useHead({
+  useHeadSafe({
     link: computed(() => {
       const links: Link[] = [
         { rel: 'canonical', href: joinURL(site.url, route.path) }

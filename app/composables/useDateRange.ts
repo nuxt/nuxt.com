@@ -5,16 +5,29 @@ export interface DateRange {
   end: Date
 }
 
+interface SerializedDateRange {
+  start: string
+  end: string
+}
+
 export function useDateRange() {
-  const dateRange = useState<DateRange>('feedback-date-range', () => ({
-    start: subDays(new Date(), 30),
-    end: new Date()
+  const serializedDateRange = useState<SerializedDateRange>('feedback-date-range', () => {
+    const end = endOfDay(new Date())
+    return {
+      start: startOfDay(subDays(end, 30)).toISOString(),
+      end: end.toISOString()
+    }
+  })
+
+  const dateRange = computed<DateRange>(() => ({
+    start: new Date(serializedDateRange.value.start),
+    end: new Date(serializedDateRange.value.end)
   }))
 
   const setDateRange = (range: DateRange) => {
-    dateRange.value = {
-      start: startOfDay(range.start),
-      end: endOfDay(range.end)
+    serializedDateRange.value = {
+      start: startOfDay(range.start).toISOString(),
+      end: endOfDay(range.end).toISOString()
     }
   }
 

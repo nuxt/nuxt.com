@@ -91,7 +91,7 @@ watch(scrollY, (y) => {
   if (window.innerHeight + y >= document.documentElement.scrollHeight - SCROLL_THRESHOLD) {
     debouncedLoadMore()
   }
-})
+}, { flush: 'post' })
 
 watch(filteredModules, () => {
   isLoading.value = false

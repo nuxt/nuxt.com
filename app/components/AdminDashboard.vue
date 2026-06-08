@@ -320,7 +320,7 @@ watch(currentPage, () => {
   if (feedbackContainer.value) {
     feedbackContainer.value.scrollTop = 0
   }
-})
+}, { flush: 'post' })
 </script>
 
 <template>
