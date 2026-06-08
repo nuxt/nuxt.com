@@ -1,41 +1,19 @@
 <script setup lang="ts">
-import { joinURL } from 'ufo'
-import { buildMessageParts, getMessageTextLength } from '../../../../shared/utils/paste-attachment'
-import { createChatWithMessage } from '../../../utils/create-chat'
-
 definePageMeta({
   layout: 'dashboard'
 })
 
-const site = useSiteConfig()
-
-useHead({ title: 'Nuxi' })
-useSeoMeta({
-  ogTitle: 'Nuxi · Nuxt',
-  ogDescription: 'Nuxi helps you explore the documentation — ask about Nuxt, modules, deployment, and more.',
-  ogImage: joinURL(site.url, '/nuxt-agent.jpg'),
-  twitterTitle: 'Nuxi · Nuxt',
-  twitterDescription: 'Nuxi helps you explore the documentation — ask about Nuxt, modules, deployment, and more.',
-  twitterImage: joinURL(site.url, '/nuxt-agent.jpg')
-})
-useCanonical()
+useNuxiChatSeo()
 
 const { user, loggedIn } = useUserSession()
-const agent = useNuxtAgent()
-const { usage, rateLimitReached } = agent
-const { refresh: refreshChats } = useChatsData()
+const { usage, rateLimitReached } = useNuxtAgent()
 
-const input = ref('')
-const loading = ref(false)
 const {
-  attachments: pasteAttachments,
-  canSubmit,
-  handlePaste,
-  removeAttachment,
-  restoreToInput,
-  buildMessageParts: buildMessagePartsFromInput,
-  clearAttachments
-} = useTextPasteAttachment(input)
+  input,
+  loading,
+  prompt,
+  createFromSuggestion
+} = useAgentChat({ mode: 'start', source: 'dashboard-home' })
 
 const baseGreeting = computed(() => {
   const name = user.value?.name?.split(' ')[0] || user.value?.username
@@ -50,35 +28,6 @@ onMounted(() => {
   const name = user.value?.name?.split(' ')[0] || user.value?.username
   greeting.value = name ? `${timeGreeting}, ${name}` : timeGreeting
 })
-
-async function createChat(parts: ReturnType<typeof buildMessagePartsFromInput>) {
-  if (loading.value || rateLimitReached.value || getMessageTextLength(parts) === 0) return
-  loading.value = true
-
-  try {
-    if (loggedIn.value) {
-      const chatId = crypto.randomUUID()
-      await createChatWithMessage(chatId, parts)
-      refreshChats()
-      await navigateTo(`/dashboard/chat/${chatId}`)
-    } else {
-      agent.pendingMessageParts.value = parts
-      await navigateTo(`/dashboard/chat/${crypto.randomUUID()}`)
-    }
-  } catch {
-    useToast().add({ description: 'Failed to create chat', icon: 'i-lucide-alert-circle', color: 'error' })
-  } finally {
-    loading.value = false
-  }
-}
-
-async function onSubmit() {
-  if (!canSubmit.value) return
-  const parts = buildMessagePartsFromInput()
-  clearAttachments()
-  input.value = ''
-  await createChat(parts)
-}
 
 const suggestions = [
   { icon: 'i-lucide-rocket', label: 'Show me available starter templates' },
@@ -129,25 +78,17 @@ const suggestions = [
           <div class="flex flex-col gap-1.5">
             <AgentLoginHint v-if="!loggedIn" />
 
-            <div v-if="rateLimitReached" class="flex items-center justify-center gap-2 py-4 text-sm text-muted">
-              <UIcon name="i-lucide-clock" class="size-4 shrink-0" />
-              <span>Daily limit reached. Try again tomorrow.</span>
-            </div>
+            <AgentRateLimitBanner v-if="rateLimitReached" />
             <AgentChatPrompt
               v-else
               v-model="input"
-              :paste-attachments="pasteAttachments"
-              :can-submit="canSubmit"
+              v-bind="prompt"
               :status="loading ? 'streaming' : 'ready'"
               :usage="usage"
               variant="subtle"
-              :submit-disabled="!canSubmit"
+              :submit-disabled="!prompt.canSubmit"
               class="[view-transition-name:chat-prompt]"
               :ui="{ base: 'px-1.5', footer: 'items-baseline', header: 'px-1.5 pt-1.5 pb-0 gap-1.5 flex flex-wrap items-start' }"
-              @submit="onSubmit"
-              @paste="handlePaste"
-              @remove-attachment="removeAttachment($event)"
-              @restore-attachment="restoreToInput($event)"
             />
           </div>
 
@@ -162,7 +103,7 @@ const suggestions = [
               variant="outline"
               class="rounded-full"
               :disabled="loading"
-              @click="createChat(buildMessageParts(s.label, []))"
+              @click="createFromSuggestion(s.label)"
             />
           </div>
         </div>

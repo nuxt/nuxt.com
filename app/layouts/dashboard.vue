@@ -5,7 +5,7 @@ const { loggedIn, user, clear } = useUserSession()
 const route = useRoute()
 const loginHref = computed(() => `/login?redirect=${encodeURIComponent(route.fullPath)}`)
 const colorMode = useColorMode()
-const { renameChat, deleteChat } = useChatActions()
+const { renameChat, deleteChat, groups, refresh: refreshChats } = useChats()
 
 const sidebarOpen = ref(false)
 
@@ -14,23 +14,10 @@ await useFetch<ChatListItem[]>('/api/chats', {
   default: () => []
 })
 
-const { chatList, refresh: refreshChats } = useChatsData()
-
 watch(loggedIn, () => {
   refreshChats()
   sidebarOpen.value = false
 })
-
-const uiChats = computed(() => chatList.value?.map(chat => ({
-  id: chat.id,
-  label: chat.title || 'Untitled',
-  to: `/dashboard/chat/${chat.id}`,
-  icon: 'i-lucide-message-circle',
-  createdAt: chat.createdAt,
-  updatedAt: chat.updatedAt
-})))
-
-const { groups } = useChats(uiChats)
 
 const items = computed(() => groups.value?.flatMap(group => [
   { label: group.label, type: 'label' as const },

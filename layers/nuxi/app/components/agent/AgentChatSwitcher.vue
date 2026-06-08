@@ -2,7 +2,7 @@
 import { motion } from 'motion-v'
 
 const { isOpen, nuxiMood } = useNuxtAgent()
-const { chatList } = useChatsData()
+const { chatList } = useChats()
 
 const panel = inject<{
   chatId: Ref<string>

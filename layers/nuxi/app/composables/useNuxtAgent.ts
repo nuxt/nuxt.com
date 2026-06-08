@@ -118,7 +118,7 @@ export const useNuxtAgent = createSharedComposable(() => {
     }
   }
 
-  const { chatList, refresh: refreshChats } = useChatsData()
+  const { chatList, refresh: refreshChats } = useChats()
 
   watch(loggedIn, (next) => {
     if (next) refreshChats()

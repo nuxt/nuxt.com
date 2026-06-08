@@ -17,7 +17,7 @@ const emit = defineEmits<{
 }>()
 
 const { copy, copied } = useClipboard()
-const { refresh: refreshChats } = useChatsData()
+const { refresh: refreshChats } = useChats()
 const toast = useToast()
 
 const textContent = computed(() => {

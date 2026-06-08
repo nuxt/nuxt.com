@@ -4,6 +4,10 @@ export default defineNuxtConfig({
     '@comark/nuxt'
   ],
 
+  $meta: {
+    name: 'nuxi'
+  },
+
   vite: {
     optimizeDeps: {
       include: ['ai', '@ai-sdk/vue']

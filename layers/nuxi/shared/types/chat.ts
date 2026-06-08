@@ -1,3 +1,12 @@
+export interface UIChat {
+  id: string
+  label: string
+  icon?: string
+  to?: string
+  createdAt: string | Date
+  updatedAt?: string | Date | null
+}
+
 export interface ChatListItem {
   id: string
   title: string | null

@@ -13,12 +13,13 @@ const loginHref = computed(() => `/login?redirect=${encodeURIComponent(route.ful
 </script>
 
 <template>
-  <div
+  <NuxtLink
     v-if="!loggedIn"
-    class="flex items-center min-w-0"
+    :to="loginHref"
+    class="flex items-center transition-colors hover:bg-muted/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
     :class="attached
-      ? 'gap-3 border-b border-default bg-muted/30 px-4 py-2.5'
-      : 'gap-2 py-1'"
+      ? 'w-[95%] max-w-full gap-2 rounded-t-lg rounded-b-none border border-b-0 border-default bg-muted/30 px-3 py-1.5'
+      : 'min-w-0 gap-2 py-1'"
   >
     <UIcon
       name="i-lucide-history"
@@ -26,19 +27,19 @@ const loginHref = computed(() => `/login?redirect=${encodeURIComponent(route.ful
       :class="attached ? 'size-4' : 'size-3.5'"
     />
     <p
-      class="min-w-0 flex-1 text-xs leading-relaxed"
-      :class="attached ? 'text-muted' : 'text-dimmed'"
+      class="text-xs"
+      :class="attached ? 'min-w-0 flex-1 truncate text-muted' : 'min-w-0 flex-1 truncate text-dimmed'"
     >
       Save your chats and keep your history across devices.
     </p>
     <UButton
-      :to="loginHref"
-      icon="i-simple-icons-github"
-      label="Sign in"
-      size="xs"
       color="neutral"
-      :variant="attached ? 'outline' : 'link'"
+      size="xs"
+      variant="link"
+      icon="i-simple-icons-github"
+      icon-class="size-3.5"
       class="shrink-0"
+      label="Sign in"
     />
-  </div>
+  </NuxtLink>
 </template>

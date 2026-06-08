@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { desc, eq, gte, sql, sum } from 'drizzle-orm'
-import { ANON_AGENT_STATS_USER_ID } from '../../../../layers/nuxi/server/utils/stats'
+import { ANON_AGENT_STATS_USER_ID } from '#layers/nuxi/server/utils/stats'
 
 export default defineMcpTool({
   description: `Aggregated AI agent usage stats over a time window: chats started, requests, errors, tokens, cost, breakdown by provider/model, daily volume, and the share of anonymous vs signed-in traffic. Data lives in the permanent \`agent_stats\` table, so it survives chat deletion and includes anonymous visitors.

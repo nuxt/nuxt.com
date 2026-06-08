@@ -1,12 +1,4 @@
 <script setup lang="ts">
-import {
-  attachmentPreview,
-  attachmentToComark,
-  getExtensionMeta,
-  isRenderableMarkdown,
-  type TextPasteAttachment
-} from '../../../shared/utils/paste-attachment'
-
 const props = withDefaults(defineProps<{
   attachment: TextPasteAttachment
   variant?: 'composer' | 'preview'

@@ -1,5 +1,5 @@
 import highlight from '@comark/nuxt/plugins/highlight'
-import SourceLink from '../tools/SourceLink.vue'
+import SourceLink from '#layers/nuxi/app/components/tools/SourceLink.vue'
 
 export default defineComarkComponent({
   name: 'AgentComark',

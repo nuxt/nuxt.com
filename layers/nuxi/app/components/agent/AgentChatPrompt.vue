@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { Chat } from '@ai-sdk/vue'
 import type { UIMessage } from 'ai'
-import type { TextPasteAttachment } from '../../../shared/utils/paste-attachment'
 
 const input = defineModel<string>({ required: true })
 

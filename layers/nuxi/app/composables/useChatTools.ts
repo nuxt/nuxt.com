@@ -1,8 +1,107 @@
 import type { ToolUIPart, DynamicToolUIPart } from 'ai'
 import { getToolName } from 'ai'
+import { isToolStreaming } from '@nuxt/ui/utils/ai'
 
 export type ToolPart = ToolUIPart | DynamicToolUIPart
 type ToolState = ToolPart['state']
+
+export type FeedbackOutput = { title: string, summary: string }
+
+type RichToolName = 'show_module' | 'show_template' | 'show_blog_post' | 'show_hosting' | 'open_playground' | 'report_issue'
+
+const RICH_TOOL_HEADERS = {
+  show_module: { loading: 'Loading module...', success: 'Found module', error: 'Module not found', icon: 'i-lucide-box' },
+  show_template: { loading: 'Loading templates...', success: 'Found templates', error: 'Templates not found', icon: 'i-lucide-layout-template' },
+  show_blog_post: { loading: 'Finding blog post...', success: 'Found blog post', error: 'Blog post not found', icon: 'i-lucide-newspaper' },
+  show_hosting: { loading: 'Loading provider...', success: 'Found provider', error: 'Provider not found', icon: 'i-lucide-server' },
+  open_playground: { loading: 'Generating playground...', success: 'Playground ready', error: 'Playground ready', icon: 'i-simple-icons-stackblitz' },
+  report_issue: { loading: 'Preparing feedback form...', success: 'Help us improve', error: 'Help us improve', icon: 'i-lucide-message-circle-warning' }
+} as const satisfies Record<RichToolName, { loading: string, success: string, error: string, icon: string }>
+
+export function hasToolError(output: unknown): boolean {
+  if (!output || typeof output !== 'object') return false
+  return !!(output as Record<string, unknown>).error
+}
+
+export function getTemplates(output: unknown): TemplateCardData[] {
+  if (!output || typeof output !== 'object') return []
+  const o = output as Record<string, unknown>
+  if (Array.isArray(o.templates)) return o.templates as TemplateCardData[]
+  return []
+}
+
+export function hasTemplatesOutput(output: unknown): boolean {
+  return getTemplates(output).length > 0
+}
+
+export function getFeedbackOutput(output: unknown): FeedbackOutput | null {
+  if (!output || typeof output !== 'object') return null
+  const o = output as Record<string, unknown>
+  if (typeof o.title === 'string' && typeof o.summary === 'string') {
+    return { title: o.title, summary: o.summary }
+  }
+  return null
+}
+
+function hasRichToolSuccess(part: ToolPart, toolName: RichToolName): boolean {
+  switch (toolName) {
+    case 'show_module':
+      return part.state === 'output-available' && isValidModuleCardData(part.output)
+    case 'show_template':
+      return part.state === 'output-available' && !!part.output && !hasToolError(part.output) && hasTemplatesOutput(part.output)
+    case 'show_blog_post':
+    case 'show_hosting':
+      return part.state === 'output-available' && !!part.output && !hasToolError(part.output)
+    case 'open_playground':
+    case 'report_issue':
+      return true
+  }
+}
+
+export function getRichToolHeader(part: ToolPart, toolName: RichToolName) {
+  const config = RICH_TOOL_HEADERS[toolName]
+  const streaming = isToolStreaming(part)
+
+  return {
+    text: streaming ? config.loading : (hasRichToolSuccess(part, toolName) ? config.success : config.error),
+    icon: config.icon,
+    streaming
+  }
+}
+
+export function showModuleCard(part: ToolPart): boolean {
+  return part.state === 'output-available' && isValidModuleCardData(part.output)
+}
+
+export function showTemplateCards(part: ToolPart): boolean {
+  return part.state === 'output-available' && !!part.output && !hasToolError(part.output) && hasTemplatesOutput(part.output)
+}
+
+export function showCardOutput(part: ToolPart): boolean {
+  return part.state === 'output-available' && !!part.output && !hasToolError(part.output)
+}
+
+export function showPlaygroundCard(part: ToolPart): boolean {
+  return part.state === 'output-available' && !!part.output
+}
+
+export function showFeedbackCard(part: ToolPart): boolean {
+  return part.state === 'output-available' && !!getFeedbackOutput(part.output)
+}
+
+export function isModuleListTool(part: ToolPart): boolean {
+  const toolName = getToolName(part)
+  return (toolName === 'get-module' || toolName === 'list-modules') && getModuleCards(part).length > 0
+}
+
+export function getMcpToolHeader(part: ToolPart) {
+  return {
+    text: getToolText(part),
+    suffix: getToolSuffix(part),
+    icon: getToolIcon(part),
+    streaming: isToolStreaming(part)
+  }
+}
 
 export function isValidModuleCardData(output: unknown): output is ModuleCardData {
   if (!output || typeof output !== 'object') return false

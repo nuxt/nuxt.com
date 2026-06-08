@@ -1,7 +1,7 @@
 import type { AnySQLiteColumn } from 'drizzle-orm/sqlite-core'
 import { sqliteTable, text, integer, real, index, primaryKey } from 'drizzle-orm/sqlite-core'
 import { relations } from 'drizzle-orm'
-import { users } from '../../../../server/db/schema'
+import { users } from '#server/db/schema'
 
 const timestamps = {
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date())

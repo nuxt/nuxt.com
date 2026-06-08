@@ -1,34 +1,13 @@
 <script setup lang="ts">
 import type { UIMessage } from 'ai'
-import { isFileUIPart, isToolUIPart, isReasoningUIPart, isTextUIPart, getToolName } from 'ai'
-import { isPartStreaming, isToolStreaming } from '@nuxt/ui/utils/ai'
-import { filePartToAttachment } from '../../../shared/utils/paste-attachment'
+import { isFileUIPart, isToolUIPart, isReasoningUIPart, isTextUIPart } from 'ai'
+import { isPartStreaming } from '@nuxt/ui/utils/ai'
 
 defineProps<{
   message: UIMessage
 }>()
 
-function getTemplates(output: unknown): TemplateCardData[] {
-  if (!output || typeof output !== 'object') return []
-  const o = output as Record<string, unknown>
-  if (Array.isArray(o.templates)) return o.templates as TemplateCardData[]
-  return []
-}
-
-function hasTemplatesOutput(output: unknown): boolean {
-  return getTemplates(output).length > 0
-}
-
-type FeedbackOutput = { title: string, summary: string }
-
-function getFeedbackOutput(output: unknown): FeedbackOutput | null {
-  if (!output || typeof output !== 'object') return null
-  const o = output as Record<string, unknown>
-  if (typeof o.title === 'string' && typeof o.summary === 'string') {
-    return { title: o.title, summary: o.summary }
-  }
-  return null
-}
+const streamingCaret = { class: 'inline-block w-2 h-[1em] bg-current align-middle ml-px opacity-80 animate-pulse' }
 
 function getMessagePagePath(message: UIMessage): string | null {
   const metaPath = (message.metadata as { pagePath?: string } | undefined)?.pagePath
@@ -69,7 +48,7 @@ function getUserTextParts(message: UIMessage) {
     </p>
   </div>
 
-  <template v-else>
+  <div v-else class="w-full min-w-0 flex flex-col gap-4">
     <template v-for="(part, partIndex) in getMergedParts(message.parts)" :key="`${message.id}-${part.type}-${partIndex}`">
       <UChatReasoning
         v-if="isReasoningUIPart(part)"
@@ -81,128 +60,18 @@ function getUserTextParts(message: UIMessage) {
         <AgentComark
           :markdown="part.text"
           :streaming="isPartStreaming(part)"
-          :caret="isPartStreaming(part) ? { class: 'inline-block w-2 h-[1em] bg-current align-middle ml-px opacity-80 animate-pulse' } : false"
+          :caret="isPartStreaming(part) ? streamingCaret : false"
         />
       </UChatReasoning>
 
-      <template v-else-if="isToolUIPart(part)">
-        <UChatTool
-          v-if="getToolName(part) === 'web_search'"
-          icon="i-lucide-search"
-          :text="isToolStreaming(part) ? 'Searching the web...' : 'Searched the web'"
-          :suffix="getSearchQuery(part)"
-          :streaming="isToolStreaming(part)"
-          chevron="leading"
-        >
-          <ToolsToolSources :sources="getSources(part)" />
-        </UChatTool>
-        <template v-else-if="getToolName(part) === 'show_module'">
-          <UChatTool
-            :text="isToolStreaming(part) ? 'Loading module...' : (part.state === 'output-available' && isValidModuleCardData(part.output) ? 'Found module' : 'Module not found')"
-            icon="i-lucide-box"
-            :streaming="isToolStreaming(part)"
-          />
-          <ToolsModuleCard
-            v-if="part.state === 'output-available' && isValidModuleCardData(part.output)"
-            v-bind="moduleCardProps(part.output as ModuleCardData)"
-          />
-        </template>
-        <template v-else-if="getToolName(part) === 'show_template'">
-          <UChatTool
-            :text="isToolStreaming(part) ? 'Loading templates...' : (part.state === 'output-available' && part.output && !(part.output as Record<string, unknown>).error && hasTemplatesOutput(part.output) ? 'Found templates' : 'Templates not found')"
-            icon="i-lucide-layout-template"
-            :streaming="isToolStreaming(part)"
-          />
-          <div
-            v-if="part.state === 'output-available' && part.output && !(part.output as Record<string, unknown>).error && hasTemplatesOutput(part.output)"
-            class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full"
-          >
-            <ToolsTemplateCard
-              v-for="tpl in getTemplates(part.output)"
-              :key="tpl.slug"
-              v-bind="tpl"
-            />
-          </div>
-        </template>
-        <template v-else-if="getToolName(part) === 'show_blog_post'">
-          <UChatTool
-            :text="isToolStreaming(part) ? 'Finding blog post...' : (part.state === 'output-available' && part.output && !(part.output as Record<string, unknown>).error ? 'Found blog post' : 'Blog post not found')"
-            icon="i-lucide-newspaper"
-            :streaming="isToolStreaming(part)"
-          />
-          <ToolsBlogCard
-            v-if="part.state === 'output-available' && part.output && !(part.output as Record<string, unknown>).error"
-            v-bind="part.output as BlogCardData"
-          />
-        </template>
-        <template v-else-if="getToolName(part) === 'show_hosting'">
-          <UChatTool
-            :text="isToolStreaming(part) ? 'Loading provider...' : (part.state === 'output-available' && part.output && !(part.output as Record<string, unknown>).error ? 'Found provider' : 'Provider not found')"
-            icon="i-lucide-server"
-            :streaming="isToolStreaming(part)"
-          />
-          <ToolsHostingCard
-            v-if="part.state === 'output-available' && part.output && !(part.output as Record<string, unknown>).error"
-            v-bind="part.output as HostingCardData"
-          />
-        </template>
-        <template v-else-if="getToolName(part) === 'open_playground'">
-          <UChatTool
-            :text="isToolStreaming(part) ? 'Generating playground...' : 'Playground ready'"
-            icon="i-simple-icons-stackblitz"
-            :streaming="isToolStreaming(part)"
-          />
-          <ToolsPlaygroundCard
-            v-if="part.state === 'output-available' && part.output"
-            v-bind="part.output as PlaygroundCardData"
-          />
-        </template>
-        <template v-else-if="getToolName(part) === 'report_issue'">
-          <UChatTool
-            :text="isToolStreaming(part) ? 'Preparing feedback form...' : 'Help us improve'"
-            icon="i-lucide-message-circle-warning"
-            :streaming="isToolStreaming(part)"
-          />
-          <ToolsFeedbackCard
-            v-if="part.state === 'output-available' && getFeedbackOutput(part.output)"
-            :title="getFeedbackOutput(part.output)!.title"
-            :summary="getFeedbackOutput(part.output)!.summary"
-          />
-        </template>
-        <template v-else-if="(getToolName(part) === 'get-module' || getToolName(part) === 'list-modules') && getModuleCards(part).length">
-          <UChatTool
-            :text="getToolText(part)"
-            :suffix="getToolSuffix(part)"
-            :icon="getToolIcon(part)"
-            :streaming="isToolStreaming(part)"
-          />
-          <div class="flex flex-col gap-2">
-            <ToolsModuleCard
-              v-for="mod in getModuleCards(part).filter(isValidModuleCardData)"
-              :key="mod.name"
-              v-bind="moduleCardProps(mod)"
-            />
-          </div>
-        </template>
-        <UChatTool
-          v-else
-          :text="getToolText(part)"
-          :suffix="getToolSuffix(part)"
-          :icon="getToolIcon(part)"
-          :streaming="isToolStreaming(part)"
-          chevron="leading"
-        >
-          <pre v-if="getToolOutput(part)" class="text-xs text-dimmed whitespace-pre-wrap break-all rounded-md border border-muted bg-muted p-2" v-text="getToolOutput(part)" />
-        </UChatTool>
-      </template>
+      <ChatToolPart v-else-if="isToolUIPart(part)" :part="part" />
 
-      <template v-else-if="isTextUIPart(part) && part.text.length > 0">
-        <AgentComark
-          :markdown="part.text"
-          :streaming="isPartStreaming(part)"
-          :caret="isPartStreaming(part) ? { class: 'inline-block w-2 h-[1em] bg-current align-middle ml-px opacity-80 animate-pulse' } : false"
-        />
-      </template>
+      <AgentComark
+        v-else-if="isTextUIPart(part) && part.text.length > 0"
+        :markdown="part.text"
+        :streaming="isPartStreaming(part)"
+        :caret="isPartStreaming(part) ? streamingCaret : false"
+      />
     </template>
-  </template>
+  </div>
 </template>

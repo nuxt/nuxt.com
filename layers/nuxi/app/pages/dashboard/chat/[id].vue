@@ -1,17 +1,5 @@
 <script setup lang="ts">
 import type { UIMessage } from 'ai'
-import { joinURL } from 'ufo'
-import { format } from 'date-fns'
-import { AGENT_CHAT_THEME, AGENT_USER_MESSAGE_UI } from '../../../composables/useAgentChat'
-
-function messageTime(message: UIMessage): string | null {
-  const raw = (message.metadata as { createdAt?: string } | undefined)?.createdAt
-  return raw ? format(new Date(raw), 'h:mm a') : null
-}
-function messageFullTime(message: UIMessage): string | null {
-  const raw = (message.metadata as { createdAt?: string } | undefined)?.createdAt
-  return raw ? format(new Date(raw), 'MMM d, yyyy, h:mm a') : null
-}
 
 definePageMeta({
   layout: 'dashboard'
@@ -20,7 +8,7 @@ definePageMeta({
 const route = useRoute()
 const { loggedIn } = useUserSession()
 const { usage, rateLimitReached, consumePendingPrompt, consumePendingMessageParts } = useNuxtAgent()
-const { refresh: refreshChats } = useChatsData()
+const { refresh: refreshChats } = useChats()
 
 const chatId = route.params.id as string
 
@@ -39,24 +27,12 @@ watch(() => data.value?.title, (next) => {
   title.value = next ?? null
 })
 
-const initialMessages = computed<UIMessage[]>(() =>
-  (data.value?.messages ?? []).map(m => ({
-    id: m.id,
-    role: m.role,
-    parts: (m.parts ?? []) as UIMessage['parts'],
-    metadata: { createdAt: m.createdAt }
-  }))
-)
+const initialMessages = computed<UIMessage[]>(() => toUIMessages(data.value?.messages ?? []))
 
 const {
   chat,
   input,
-  pasteAttachments,
-  canSubmit,
-  handlePaste,
-  removeAttachment,
-  restoreToInput,
-  onSubmit,
+  prompt,
   send,
   getVote,
   vote
@@ -71,14 +47,10 @@ const {
   }
 })
 
-const site = useSiteConfig()
-useHead({ title: () => title.value || 'Nuxi' })
-useSeoMeta({
-  ogTitle: () => `${title.value || 'Nuxi'} · Nuxt`,
-  ogDescription: 'A conversation with Nuxi.',
-  ogImage: joinURL(site.url, '/nuxt-agent.jpg')
+useNuxiChatSeo({
+  title,
+  description: 'A conversation with Nuxi.'
 })
-useCanonical()
 
 onMounted(() => {
   if (isOwner.value && data.value?.messages.length === 1 && data.value.messages[0]?.role === 'user') {
@@ -90,8 +62,8 @@ onMounted(() => {
     send({ parts: pendingParts })
     return
   }
-  const prompt = consumePendingPrompt()
-  if (prompt) send(prompt)
+  const pendingPrompt = consumePendingPrompt()
+  if (pendingPrompt) send(pendingPrompt)
 })
 </script>
 
@@ -136,72 +108,34 @@ onMounted(() => {
 
     <template #body>
       <UContainer class="flex min-w-0 flex-1 flex-col gap-4 sm:gap-6">
-        <UTheme :ui="AGENT_CHAT_THEME">
-          <UChatMessages
-            should-auto-scroll
-            :messages="chat.messages"
-            :status="chat.status"
-            :spacing-offset="(isOwner || !loggedIn) && !rateLimitReached ? 160 : 0"
-            :user="{ ui: AGENT_USER_MESSAGE_UI }"
-            :assistant="{ ui: { actions: 'has-data-[state=open]:opacity-100' } }"
-            :ui="{ root: '[&>article]:last-of-type:min-h-0' }"
-            class="flex-1 pt-4 pb-4 sm:pb-6"
-          >
-            <template #indicator>
-              <AgentIndicator />
-            </template>
+        <AgentChatMessages
+          :chat="chat"
+          :chat-id="chatId"
+          :show-actions="isOwner"
+          show-user-timestamps
+          :spacing-offset="(isOwner || !loggedIn) && !rateLimitReached ? 160 : 0"
+          :get-vote="getVote"
+          @vote="vote"
+        />
 
-            <template #content="{ message }">
-              <ChatContent :message="message" />
-            </template>
-
-            <template v-if="isOwner" #actions="{ message }">
-              <ChatMessageActions
-                v-if="message.role === 'assistant'"
-                :message="message"
-                :vote="getVote(message.id)"
-                :streaming="chat.status === 'streaming' && message.id === chat.messages.at(-1)?.id"
-                :chat-id="chatId"
-                :can-regenerate="message.id === chat.messages.at(-1)?.id && chat.status === 'ready'"
-                @vote="(_message, isUpvoted) => vote(_message, isUpvoted)"
-                @regenerate="chat.regenerate()"
-              />
-              <UTooltip
-                v-else-if="message.role === 'user' && messageTime(message)"
-                :text="messageFullTime(message)!"
-                :content="{ side: 'bottom' }"
-              >
-                <span class="text-xs text-dimmed select-none">{{ messageTime(message) }}</span>
-              </UTooltip>
-            </template>
-          </UChatMessages>
-        </UTheme>
-
-        <div v-if="rateLimitReached" class="sticky bottom-0 flex items-center justify-center gap-2 py-4 text-sm text-muted">
-          <UIcon name="i-lucide-clock" class="size-4 shrink-0" />
-          <span>Daily limit reached. Try again tomorrow.</span>
-        </div>
-        <div v-else-if="isOwner || !loggedIn" class="sticky bottom-0 z-10 bg-default">
-          <AgentLoginHint v-if="!loggedIn" attached class="border-x border-t border-default rounded-t-lg bg-default" />
+        <AgentRateLimitBanner v-if="rateLimitReached" variant="sticky" />
+        <div v-else-if="isOwner || !loggedIn" class="sticky bottom-0 z-10 flex flex-col bg-default">
+          <div v-if="!loggedIn" class="flex w-full justify-center">
+            <AgentLoginHint attached />
+          </div>
           <AgentChatPrompt
             v-model="input"
+            v-bind="prompt"
             :chat="chat"
-            :paste-attachments="pasteAttachments"
-            :can-submit="canSubmit"
             :usage="usage"
             variant="subtle"
             class="rounded-b-none border-b-0 bg-default [view-transition-name:chat-prompt]"
-            :class="!loggedIn ? 'rounded-t-none border-t-0' : ''"
             :ui="{
               root: 'rounded-t-lg rounded-b-none border-b-0 bg-default',
               base: 'px-1.5',
               footer: 'items-baseline',
               header: 'px-1.5 pt-1.5 pb-0 gap-1.5 flex flex-wrap items-start'
             }"
-            @submit="onSubmit"
-            @paste="handlePaste"
-            @remove-attachment="removeAttachment($event)"
-            @restore-attachment="restoreToInput($event)"
           />
         </div>
       </UContainer>

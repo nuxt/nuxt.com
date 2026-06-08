@@ -1,12 +1,9 @@
 import { Chat } from '@ai-sdk/vue'
 import { DefaultChatTransport } from 'ai'
 import type { FileUIPart, UIMessage } from 'ai'
-import { getMessageTextLength } from '../../shared/utils/paste-attachment'
-import { createChatWithMessage } from '../utils/create-chat'
 
-interface UseAgentChatOptions {
-  // Remount the consumer with `:key` when switching chats — the Chat
-  // instance carries state that bleeds across conversations otherwise.
+type ChatModeOptions = {
+  mode?: 'chat'
   chatId: string
   initialMessages?: UIMessage[]
   source: string
@@ -15,65 +12,210 @@ interface UseAgentChatOptions {
   onFinish?: () => void
 }
 
-export const AGENT_CHAT_THEME = {
-  prose: {
-    p: { base: 'my-2 text-sm/6' },
-    li: { base: 'my-0.5 text-sm/6' },
-    ul: { base: 'my-2' },
-    ol: { base: 'my-2' },
-    h1: { base: 'text-xl mb-4' },
-    h2: { base: 'text-lg mt-6 mb-3' },
-    h3: { base: 'text-base mt-4 mb-2' },
-    h4: { base: 'text-sm mt-3 mb-1.5' },
-    code: { base: 'text-xs' },
-    pre: { root: 'my-2 max-w-full overflow-x-auto', base: 'text-xs/5' },
-    table: { root: 'my-2' },
-    hr: { base: 'my-4' }
+type StartModeOptions = {
+  mode: 'start'
+  source: string
+}
+
+type UseAgentChatOptions = ChatModeOptions | StartModeOptions
+
+function usePasteAttachment(input: Ref<string>) {
+  const attachments = ref<TextPasteAttachment[]>([])
+
+  const canSubmit = computed(() =>
+    Boolean(input.value.trim() || attachments.value.length)
+  )
+
+  function handlePaste(event: ClipboardEvent) {
+    const text = event.clipboardData?.getData('text/plain')
+    if (!text || !shouldConvertPasteToAttachment(text)) return
+
+    event.preventDefault()
+    attachments.value.push({
+      content: text,
+      name: guessAttachmentName(text, attachments.value.map(attachment => attachment.name))
+    })
   }
-} as const
 
-/** Overrides for UChatMessages `:user` — side/actions/items-start come from Nuxt UI defaults. */
-export const AGENT_USER_MESSAGE_UI = {
-  content: 'px-3 py-1.5 min-h-fit min-w-0 w-fit max-w-full',
-  container: 'pb-5'
-} as const
+  function removeAttachment(index: number) {
+    attachments.value.splice(index, 1)
+  }
 
-export const AGENT_USER_MESSAGE_UI_COMPACT = {
-  content: 'min-w-0 w-fit max-w-full'
-} as const
+  function restoreToInput(index: number) {
+    const attachment = attachments.value[index]
+    if (!attachment) return
 
-export function useAgentChat(options: UseAgentChatOptions) {
-  const agent = useNuxtAgent()
-  const chats = useChatsData()
-  const { loggedIn } = useUserSession()
-  const { track } = useAnalytics()
+    const content = attachment.content
+    input.value = input.value.trim()
+      ? `${content}\n\n${input.value.trim()}`
+      : content
+    attachments.value.splice(index, 1)
+  }
 
-  const input = ref('')
-  const {
-    attachments: pasteAttachments,
+  function clearAttachments() {
+    attachments.value = []
+  }
+
+  return {
+    attachments,
     canSubmit,
     handlePaste,
     removeAttachment,
     restoreToInput,
-    buildMessageParts: buildMessagePartsFromInput,
+    buildMessageParts: () => buildMessageParts(input.value, attachments.value),
     clearAttachments
-  } = useTextPasteAttachment(input)
+  }
+}
 
-  const { votes, getVote, vote } = useChatVotes(() => options.chatId, {
-    immediate: options.fetchVotes ?? false
-  })
+function createPromptBindings(
+  paste: ReturnType<typeof usePasteAttachment>,
+  onSubmit: () => void | Promise<void>
+) {
+  return computed(() => ({
+    pasteAttachments: paste.attachments.value,
+    canSubmit: paste.canSubmit.value,
+    onPaste: paste.handlePaste,
+    onRemoveAttachment: paste.removeAttachment,
+    onRestoreAttachment: paste.restoreToInput,
+    onSubmit
+  }))
+}
+
+function useVotes(chatId: MaybeRefOrGetter<string>, immediate = false) {
+  const toast = useToast()
+  const chatIdValue = computed(() => toValue(chatId))
+
+  const { data: voteRows } = useLazyFetch<ChatVoteRow[]>(
+    () => `/api/chats/${chatIdValue.value}/votes`,
+    {
+      immediate,
+      default: () => [] as ChatVoteRow[]
+    }
+  )
+
+  const votes = ref(new Map<string, boolean>())
+
+  watch(voteRows, (rows) => {
+    const map = new Map<string, boolean>()
+    for (const row of (rows ?? []) as ChatVoteRow[]) {
+      map.set(row.messageId, row.isUpvoted)
+    }
+    votes.value = map
+  }, { immediate: true })
+
+  function getRows(): ChatVoteRow[] {
+    return (voteRows.value ?? []) as ChatVoteRow[]
+  }
+
+  function getVote(messageId: string): boolean | null {
+    const vote = votes.value.get(messageId)
+    return vote === undefined ? null : vote
+  }
+
+  function vote(message: UIMessage, isUpvoted: boolean) {
+    const current = votes.value.get(message.id)
+    const next = current === isUpvoted ? undefined : isUpvoted
+    const snapshot = new Map(votes.value)
+
+    if (next === undefined) votes.value.delete(message.id)
+    else votes.value.set(message.id, next)
+    votes.value = new Map(votes.value)
+
+    voteRows.value = next === undefined
+      ? getRows().filter(row => row.messageId !== message.id)
+      : [
+          ...getRows().filter(row => row.messageId !== message.id),
+          { chatId: chatIdValue.value, messageId: message.id, isUpvoted: next }
+        ]
+
+    $fetch(`/api/chats/${chatIdValue.value}/votes`, {
+      method: 'POST',
+      body: next === undefined
+        ? { messageId: message.id }
+        : { messageId: message.id, isUpvoted: next }
+    }).catch(() => {
+      votes.value = snapshot
+      voteRows.value = [...snapshot.entries()].map(([messageId, isUpvoted]) => ({
+        chatId: chatIdValue.value,
+        messageId,
+        isUpvoted
+      }))
+      toast.add({ description: 'Failed to save vote', icon: 'i-lucide-alert-circle', color: 'error' })
+    })
+  }
+
+  return { votes, getVote, vote }
+}
+
+export function useAgentChat(options: UseAgentChatOptions) {
+  const agent = useNuxtAgent()
+  const chats = useChats()
+  const { loggedIn } = useUserSession()
+  const { track } = useAnalytics()
+  const toast = useToast()
+
+  const input = ref('')
+  const paste = usePasteAttachment(input)
+
+  if (options.mode === 'start') {
+    const loading = ref(false)
+
+    async function createChat(parts: UIMessage['parts']) {
+      if (loading.value || agent.rateLimitReached.value || getMessageTextLength(parts) === 0) return
+      loading.value = true
+
+      try {
+        if (loggedIn.value) {
+          const chatId = crypto.randomUUID()
+          await createChatWithMessage(chatId, parts)
+          await chats.refresh()
+          await navigateTo(`/dashboard/chat/${chatId}`)
+        } else {
+          agent.pendingMessageParts.value = parts
+          await navigateTo(`/dashboard/chat/${crypto.randomUUID()}`)
+        }
+      } catch {
+        toast.add({ description: 'Failed to create chat', icon: 'i-lucide-alert-circle', color: 'error' })
+      } finally {
+        loading.value = false
+      }
+    }
+
+    async function onSubmit() {
+      if (!paste.canSubmit.value) return
+      const parts = paste.buildMessageParts()
+      paste.clearAttachments()
+      input.value = ''
+      await createChat(parts)
+    }
+
+    function createFromSuggestion(label: string) {
+      return createChat(buildMessageParts(label, []))
+    }
+
+    return {
+      input,
+      loading,
+      prompt: createPromptBindings(paste, onSubmit),
+      onSubmit,
+      createFromSuggestion
+    }
+  }
+
+  const chatOptions = options as ChatModeOptions
+  const { getVote, vote } = useVotes(() => chatOptions.chatId, chatOptions.fetchVotes ?? false)
 
   const useContext = computed(() =>
-    options.withPageContext === 'always'
+    chatOptions.withPageContext === 'always'
       ? Boolean(agent.currentPage.value)
       : agent.pageContextEnabled.value && Boolean(agent.currentPage.value)
   )
 
   const chat = new Chat<UIMessage>({
-    id: options.chatId,
-    messages: options.initialMessages,
+    id: chatOptions.chatId,
+    messages: chatOptions.initialMessages,
     transport: new DefaultChatTransport({
-      api: `/api/chats/${options.chatId}`,
+      api: `/api/chats/${chatOptions.chatId}`,
       headers: () => {
         if (useContext.value && agent.currentPage.value) {
           return { 'x-page-path': agent.currentPage.value }
@@ -89,7 +231,7 @@ export function useAgentChat(options: UseAgentChatOptions) {
         }
         return msg
       }) as UIMessage[]
-      const chatCache = useNuxtData<ChatDetail>(`chat-${options.chatId}`)
+      const chatCache = useNuxtData<ChatDetail>(`chat-${chatOptions.chatId}`)
       if (chatCache.data.value) {
         chatCache.data.value = {
           ...chatCache.data.value,
@@ -101,13 +243,13 @@ export function useAgentChat(options: UseAgentChatOptions) {
           })) as ChatDetail['messages']
         }
       }
-      options.onFinish?.()
+      chatOptions.onFinish?.()
     },
     onData: async (part) => {
       if (part.type === 'data-chat-title') {
         await chats.refresh()
-        const updated = chats.chatList.value?.find(c => c.id === options.chatId)
-        if (updated?.title) chats.patchTitle(options.chatId, updated.title)
+        const updated = chats.chatList.value?.find(c => c.id === chatOptions.chatId)
+        if (updated?.title) chats.patchTitle(chatOptions.chatId, updated.title)
       }
     }
   })
@@ -122,7 +264,7 @@ export function useAgentChat(options: UseAgentChatOptions) {
     if (!parts.length || getMessageTextLength(parts) === 0 || agent.rateLimitReached.value) return
 
     track('Nuxi Message Sent', {
-      source: options.source,
+      source: chatOptions.source,
       page: agent.currentPage.value,
       withContext: useContext.value,
       queryLength: getMessageTextLength(parts)
@@ -140,7 +282,7 @@ export function useAgentChat(options: UseAgentChatOptions) {
       .trim()
 
     if (chat.messages.length === 0 && loggedIn.value) {
-      const userMessage = await createChatWithMessage(options.chatId, parts, metadata)
+      const userMessage = await createChatWithMessage(chatOptions.chatId, parts, metadata)
       chat.messages = [userMessage]
       await chat.regenerate()
     } else if (fileParts.length && text) {
@@ -154,33 +296,25 @@ export function useAgentChat(options: UseAgentChatOptions) {
   }
 
   async function onSubmit() {
-    if (!canSubmit.value) return
-    const parts = buildMessagePartsFromInput()
+    if (!paste.canSubmit.value) return
+    const parts = paste.buildMessageParts()
     input.value = ''
-    clearAttachments()
+    paste.clearAttachments()
     await send({ parts })
   }
 
   function askQuestion(question: string) {
-    track('Nuxi FAQ Clicked', { question, source: options.source })
+    track('Nuxi FAQ Clicked', { question, source: chatOptions.source })
     send(question)
   }
-
-  const canClear = computed(() => chat.messages.length > 0)
 
   return {
     chat,
     input,
-    pasteAttachments,
-    canSubmit,
-    handlePaste,
-    removeAttachment,
-    restoreToInput,
-    votes,
+    prompt: createPromptBindings(paste, onSubmit),
     getVote,
     vote,
     send,
-    canClear,
     onSubmit,
     askQuestion
   }

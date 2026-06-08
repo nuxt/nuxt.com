@@ -11,7 +11,7 @@ const emit = defineEmits<{
   'update:title': [title: string]
 }>()
 
-const { renameChat, deleteChat } = useChatActions()
+const { renameChat, deleteChat } = useChats()
 
 const displayTitle = computed(() => props.title || 'Untitled')
 
