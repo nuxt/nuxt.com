@@ -68,10 +68,8 @@ onMounted(() => {
       />
     </div>
 
-    <div class="flex w-full shrink-0 flex-col border-t border-default pt-2">
-      <div v-if="!loggedIn" class="flex w-full justify-center">
-        <AgentLoginHint attached />
-      </div>
+    <div class="flex w-full shrink-0 flex-col border-y border-default">
+      <AgentLoginHint v-if="!loggedIn" bar />
 
       <Transition
         enter-active-class="transition duration-200 ease-out"
@@ -122,7 +120,7 @@ onMounted(() => {
         variant="naked"
         size="sm"
         :submit-disabled="chat.status === 'ready' && !(prompt.canSubmit ?? input.trim())"
-        :ui="{ root: 'pb-2', body: 'px-0', base: 'px-0 rounded-none', header: 'px-0 pt-2 pb-0 gap-1.5 flex flex-wrap items-start', footer: 'px-0 items-baseline' }"
+        :ui="{ root: 'px-4 pb-2', body: 'px-0', base: 'px-0 rounded-none', header: 'px-0 pt-2 pb-0 gap-1.5 flex flex-wrap items-start', footer: 'px-0 items-baseline' }"
       >
         <template #footer-left>
           <div class="flex items-center gap-2 text-xs text-dimmed">

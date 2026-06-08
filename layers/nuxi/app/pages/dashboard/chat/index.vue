@@ -76,9 +76,23 @@ const suggestions = [
 
         <div class="w-full max-w-2xl mx-auto flex flex-col gap-6">
           <div class="flex flex-col gap-1.5">
-            <AgentLoginHint v-if="!loggedIn" />
+            <template v-if="!loggedIn && !rateLimitReached">
+              <div class="flex flex-col gap-1.5">
+                <AgentLoginHint />
+                <AgentChatPrompt
+                  v-model="input"
+                  v-bind="prompt"
+                  :status="loading ? 'streaming' : 'ready'"
+                  :usage="usage"
+                  variant="subtle"
+                  :submit-disabled="!prompt.canSubmit"
+                  class="[view-transition-name:chat-prompt]"
+                  :ui="{ base: 'px-1.5', footer: 'items-baseline', header: 'px-1.5 pt-1.5 pb-0 gap-1.5 flex flex-wrap items-start' }"
+                />
+              </div>
+            </template>
 
-            <AgentRateLimitBanner v-if="rateLimitReached" />
+            <AgentRateLimitBanner v-else-if="rateLimitReached" />
             <AgentChatPrompt
               v-else
               v-model="input"

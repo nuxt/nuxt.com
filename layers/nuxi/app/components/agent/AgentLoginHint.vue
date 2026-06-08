@@ -1,9 +1,9 @@
 <script setup lang="ts">
 withDefaults(defineProps<{
-  /** Tighter padding when stacked directly above the chat prompt */
-  attached?: boolean
+  /** Panel footer row — matches page context bar padding and border */
+  bar?: boolean
 }>(), {
-  attached: false
+  bar: false
 })
 
 const route = useRoute()
@@ -16,30 +16,17 @@ const loginHref = computed(() => `/login?redirect=${encodeURIComponent(route.ful
   <NuxtLink
     v-if="!loggedIn"
     :to="loginHref"
-    class="flex items-center transition-colors hover:bg-muted/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-    :class="attached
-      ? 'w-[95%] max-w-full gap-2 rounded-t-lg rounded-b-none border border-b-0 border-default bg-muted/30 px-3 py-1.5'
-      : 'min-w-0 gap-2 py-1'"
+    class="group flex w-full items-center gap-3 text-xs text-dimmed transition-colors hover:text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+    :class="bar
+      ? 'border-b border-default px-4 py-2.5 hover:bg-muted/40'
+      : 'py-1 hover:text-muted'"
   >
-    <UIcon
-      name="i-lucide-history"
-      class="shrink-0 text-dimmed"
-      :class="attached ? 'size-4' : 'size-3.5'"
-    />
-    <p
-      class="text-xs"
-      :class="attached ? 'min-w-0 flex-1 truncate text-muted' : 'min-w-0 flex-1 truncate text-dimmed'"
-    >
+    <span class="min-w-0 flex-1 truncate">
       Save your chats and keep your history across devices.
-    </p>
-    <UButton
-      color="neutral"
-      size="xs"
-      variant="link"
-      icon="i-simple-icons-github"
-      icon-class="size-3.5"
-      class="shrink-0"
-      label="Sign in"
-    />
+    </span>
+    <span class="inline-flex shrink-0 items-center gap-1 font-medium text-default transition-colors group-hover:text-highlighted">
+      <UIcon name="i-simple-icons-github" class="size-3.5 transition-colors group-hover:text-highlighted" />
+      Sign in
+    </span>
   </NuxtLink>
 </template>

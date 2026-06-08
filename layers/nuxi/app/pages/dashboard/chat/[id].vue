@@ -119,10 +119,8 @@ onMounted(() => {
         />
 
         <AgentRateLimitBanner v-if="rateLimitReached" variant="sticky" />
-        <div v-else-if="isOwner || !loggedIn" class="sticky bottom-0 z-10 flex flex-col bg-default">
-          <div v-if="!loggedIn" class="flex w-full justify-center">
-            <AgentLoginHint attached />
-          </div>
+        <div v-else-if="isOwner || !loggedIn" class="sticky bottom-0 z-10 flex flex-col gap-1.5 bg-default">
+          <AgentLoginHint v-if="!loggedIn" />
           <AgentChatPrompt
             v-model="input"
             v-bind="prompt"
