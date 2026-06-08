@@ -48,7 +48,7 @@ DeployHQ builds and delivers your application; it does not host the running Node
     node .output/server/index.mjs
     ```
 
-6. Optionally use **deploy hooks** (pre/post deployment commands) to restart your process manager after each release, for example `pm2 reload my-nuxt-app` as a post-deploy SSH command.
+6. Optionally use **deploy hooks** (pre-/post-deployment commands) to restart your process manager after each release, for example `pm2 reload my-nuxt-app` as a post-deploy SSH command.
 
 For static deployments, replace step 3 with `npm run generate` and configure your server to serve the contents of `.output/public/` from a web server such as Nginx or Caddy.
 
