@@ -10,12 +10,17 @@ const props = defineProps<{
   pageContextEnabled: boolean
   rateLimitReached?: boolean
   usage?: { used: number, remaining: number, limit: number }
+  pasteAttachments?: { content: string, name: string }[]
+  canSubmit?: boolean
 }>()
 
 defineEmits<{
   submit: []
   dismissPageContext: []
   addPageContext: []
+  paste: [event: ClipboardEvent]
+  removePasteAttachment: [index: number]
+  restorePasteAttachment: [index: number]
 }>()
 
 const contextPathLabel = computed(() => props.currentPage?.replace(/^\//, '') ?? '')
@@ -78,10 +83,21 @@ const contextPathLabel = computed(() => props.currentPage?.replace(/^\//, '') ??
       :rows="2"
       :maxrows="5"
       autofocus
-      :ui="{ base: 'px-0 rounded-none' }"
-      class="px-4"
+      :ui="{ root: 'px-4', base: 'px-0 rounded-none', header: 'px-0 pt-2 pb-0 gap-1.5 flex flex-wrap items-start', footer: 'px-0' }"
+      class="px-0"
       @submit="$emit('submit')"
+      @paste="$emit('paste', $event)"
     >
+      <template v-if="pasteAttachments?.length" #header>
+        <AgentPasteAttachment
+          v-for="(attachment, index) in pasteAttachments"
+          :key="attachment.name"
+          :attachment="attachment"
+          @remove="$emit('removePasteAttachment', index)"
+          @restore="$emit('restorePasteAttachment', index)"
+        />
+      </template>
+
       <template #footer>
         <div class="flex items-center gap-2 text-xs text-dimmed">
           <UTooltip v-if="currentPage && !pageContextEnabled" text="Use page as context" :kbds="['tab']">
@@ -109,7 +125,7 @@ const contextPathLabel = computed(() => props.currentPage?.replace(/^\//, '') ??
         <UChatPromptSubmit
           size="sm"
           :status="chat.status"
-          :disabled="chat.status === 'ready' && !input.trim()"
+          :disabled="chat.status === 'ready' && !(canSubmit ?? input.trim())"
           @stop="chat.stop()"
           @reload="chat.regenerate()"
         />

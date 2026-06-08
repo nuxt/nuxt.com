@@ -19,7 +19,7 @@ definePageMeta({
 const route = useRoute()
 const toast = useToast()
 const { loggedIn } = useUserSession()
-const { usage, rateLimitReached, consumePendingPrompt } = useNuxtAgent()
+const { usage, rateLimitReached, consumePendingPrompt, consumePendingMessageParts } = useNuxtAgent()
 const { refresh: refreshChats } = useChatsData()
 
 const chatId = route.params.id as string
@@ -56,6 +56,11 @@ const initialMessages = computed<UIMessage[]>(() =>
 const {
   chat,
   input,
+  pasteAttachments,
+  canSubmit,
+  handlePaste,
+  removeAttachment,
+  restoreToInput,
   onSubmit,
   send
 } = useAgentChat({
@@ -111,6 +116,11 @@ onMounted(() => {
     chat.regenerate()
     return
   }
+  const pendingParts = consumePendingMessageParts()
+  if (pendingParts) {
+    send({ parts: pendingParts })
+    return
+  }
   const prompt = consumePendingPrompt()
   if (prompt) send(prompt)
 })
@@ -161,10 +171,11 @@ onMounted(() => {
           should-auto-scroll
           :messages="chat.messages"
           :status="chat.status"
+          :spacing-offset="(isOwner || !loggedIn) && !rateLimitReached ? 160 : 0"
           :user="{ ui: { content: 'px-3 py-1.5 min-h-fit', container: 'gap-3 pb-5', actions: 'right-0' } }"
           :assistant="{ ui: { actions: 'has-data-[state=open]:opacity-100' } }"
           :ui="{ root: '[&>article]:last-of-type:min-h-0' }"
-          class="pt-4 pb-4 sm:pb-6"
+          class="flex-1 pt-4 pb-4 sm:pb-6"
         >
           <template #indicator>
             <AgentIndicator />
@@ -199,16 +210,37 @@ onMounted(() => {
           <UIcon name="i-lucide-clock" class="size-4 shrink-0" />
           <span>Daily limit reached. Try again tomorrow.</span>
         </div>
-        <div v-else-if="isOwner || !loggedIn" class="sticky bottom-0 z-10 flex flex-col overflow-hidden rounded-lg ring ring-default bg-elevated/50 [view-transition-name:chat-prompt]">
-          <AgentLoginHint v-if="!loggedIn" attached />
+        <div v-else-if="isOwner || !loggedIn" class="sticky bottom-0 z-10 bg-default">
+          <AgentLoginHint v-if="!loggedIn" attached class="border-x border-t border-default rounded-t-lg bg-default" />
           <UChatPrompt
             v-model="input"
             :error="chat.error"
-            variant="naked"
-            class="px-4"
-            :ui="{ base: 'px-0 rounded-none', root: 'rounded-none ring-0 bg-transparent' }"
+            placeholder="Ask anything…"
+            variant="subtle"
+            :rows="2"
+            :maxrows="5"
+            autofocus
+            class="rounded-b-none border-b-0 bg-default [view-transition-name:chat-prompt]"
+            :class="!loggedIn ? 'rounded-t-none border-t-0' : ''"
+            :ui="{
+              root: 'rounded-t-lg rounded-b-none border-b-0 bg-default',
+              base: 'px-1.5',
+              footer: 'items-baseline',
+              header: 'px-1.5 pt-1.5 pb-0 gap-1.5 flex flex-wrap items-start'
+            }"
             @submit="onSubmit"
+            @paste="handlePaste"
           >
+            <template v-if="pasteAttachments.length" #header>
+              <AgentPasteAttachment
+                v-for="(attachment, index) in pasteAttachments"
+                :key="attachment.name"
+                :attachment="attachment"
+                @remove="removeAttachment(index)"
+                @restore="restoreToInput(index)"
+              />
+            </template>
+
             <template #footer>
               <ClientOnly>
                 <UTooltip v-if="usage" text="Daily messages remaining">
@@ -221,6 +253,7 @@ onMounted(() => {
                 :status="chat.status"
                 color="neutral"
                 size="sm"
+                :disabled="chat.status === 'ready' && !canSubmit"
                 @stop="chat.stop()"
                 @reload="chat.regenerate()"
               />

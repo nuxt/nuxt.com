@@ -21,7 +21,20 @@ const { refresh: refreshChats } = useChatsData()
 
 provide('chat-id', toRef(props, 'chatId'))
 
-const { chat, input, votes, vote, onSubmit, askQuestion, send } = useAgentChat({
+const {
+  chat,
+  input,
+  pasteAttachments,
+  canSubmit,
+  handlePaste,
+  removeAttachment,
+  restoreToInput,
+  votes,
+  vote,
+  onSubmit,
+  askQuestion,
+  send
+} = useAgentChat({
   chatId: props.chatId,
   initialMessages: props.initialMessages,
   source: 'prompt',
@@ -64,8 +77,13 @@ onMounted(() => {
       :page-context-enabled="pageContextEnabled"
       :rate-limit-reached="rateLimitReached"
       :usage="usage"
+      :paste-attachments="pasteAttachments"
+      :can-submit="canSubmit"
       class="shrink-0 border-t border-default"
       @submit="onSubmit"
+      @paste="handlePaste"
+      @remove-paste-attachment="removeAttachment($event)"
+      @restore-paste-attachment="restoreToInput($event)"
       @dismiss-page-context="pageContextDismissed = true"
       @add-page-context="pageContextDismissed = false"
     />

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { UIMessage } from 'ai'
-import { isToolUIPart, isReasoningUIPart, isTextUIPart, getToolName } from 'ai'
+import { isFileUIPart, isToolUIPart, isReasoningUIPart, isTextUIPart, getToolName } from 'ai'
 import { isPartStreaming, isToolStreaming } from '@nuxt/ui/utils/ai'
+import { filePartToAttachment } from '../../../shared/utils/paste-attachment'
 
 defineProps<{
   message: UIMessage
@@ -33,9 +34,42 @@ function getMessagePagePath(message: UIMessage): string | null {
   const metaPath = (message.metadata as { pagePath?: string } | undefined)?.pagePath
   return typeof metaPath === 'string' && metaPath.length > 0 ? metaPath : null
 }
+
+function getUserFileParts(message: UIMessage) {
+  return message.parts.filter(isFileUIPart)
+}
+
+function getUserTextParts(message: UIMessage) {
+  return message.parts.filter((part): part is Extract<UIMessage['parts'][number], { type: 'text' }> =>
+    isTextUIPart(part) && part.text.length > 0
+  )
+}
 </script>
 
 <template>
+  <div v-if="message.role === 'user'" class="flex flex-col gap-1.5">
+    <div v-if="getMessagePagePath(message)" class="flex items-center gap-1 w-fit">
+      <img src="/icon.png" alt="Nuxt" class="size-3.5 shrink-0">
+      <span class="text-xs text-muted">{{ getMessagePagePath(message)!.replace(/^\//, '') }}</span>
+    </div>
+
+    <AgentPasteAttachment
+      v-for="(part, index) in getUserFileParts(message)"
+      :key="`${message.id}-file-${index}`"
+      :attachment="filePartToAttachment(part)"
+      variant="preview"
+    />
+
+    <p
+      v-for="(part, partIndex) in getUserTextParts(message)"
+      :key="`${message.id}-text-${partIndex}`"
+      class="whitespace-pre-wrap text-sm/6"
+    >
+      {{ part.text }}
+    </p>
+  </div>
+
+  <template v-else>
   <template v-for="(part, partIndex) in getMergedParts(message.parts)" :key="`${message.id}-${part.type}-${partIndex}`">
     <UChatReasoning
       v-if="isReasoningUIPart(part)"
@@ -164,20 +198,11 @@ function getMessagePagePath(message: UIMessage): string | null {
 
     <template v-else-if="isTextUIPart(part) && part.text.length > 0">
       <AgentComark
-        v-if="message.role === 'assistant'"
         :markdown="part.text"
         :streaming="isPartStreaming(part)"
         :caret="isPartStreaming(part) ? { class: 'inline-block w-2 h-[1em] bg-current align-middle ml-px opacity-80 animate-pulse' } : false"
       />
-      <div v-else-if="message.role === 'user'">
-        <div v-if="getMessagePagePath(message)" class="flex items-center gap-1 w-fit my-1">
-          <img src="/icon.png" alt="Nuxt" class="size-3.5 shrink-0">
-          <span class="text-xs text-muted">{{ getMessagePagePath(message)!.replace(/^\//, '') }}</span>
-        </div>
-        <p class="whitespace-pre-wrap text-sm/6">
-          {{ part.text }}
-        </p>
-      </div>
     </template>
+  </template>
   </template>
 </template>

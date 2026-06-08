@@ -1,3 +1,5 @@
+import type { UIMessage } from 'ai'
+
 interface AgentUsage {
   used: number
   remaining: number
@@ -66,9 +68,17 @@ export const useNuxtAgent = createSharedComposable(() => {
   })
 
   const pendingPrompt = ref<string | null>(null)
+  const pendingMessageParts = ref<UIMessage['parts'] | null>(null)
+
   function consumePendingPrompt(): string | null {
     const value = pendingPrompt.value
     pendingPrompt.value = null
+    return value
+  }
+
+  function consumePendingMessageParts(): UIMessage['parts'] | null {
+    const value = pendingMessageParts.value
+    pendingMessageParts.value = null
     return value
   }
 
@@ -129,7 +139,9 @@ export const useNuxtAgent = createSharedComposable(() => {
     expandToFullScreen,
     collapseToSidebar,
     consumePendingPrompt,
+    consumePendingMessageParts,
     pendingPrompt,
+    pendingMessageParts,
     isAgentDockedBreakpoint,
     isAgentDocked,
     usage,

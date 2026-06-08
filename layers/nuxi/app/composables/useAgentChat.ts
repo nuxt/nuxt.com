@@ -1,6 +1,7 @@
 import { Chat } from '@ai-sdk/vue'
 import { DefaultChatTransport } from 'ai'
-import type { UIMessage } from 'ai'
+import type { FileUIPart, UIMessage } from 'ai'
+import { getMessageTextLength } from '../../shared/utils/paste-attachment'
 
 interface UseAgentChatOptions {
   // Remount the consumer with `:key` when switching chats — the Chat
@@ -38,6 +39,15 @@ export function useAgentChat(options: UseAgentChatOptions) {
   const toast = useToast()
 
   const input = ref('')
+  const {
+    attachments: pasteAttachments,
+    canSubmit,
+    handlePaste,
+    removeAttachment,
+    restoreToInput,
+    buildMessageParts: buildMessagePartsFromInput,
+    clearAttachments
+  } = useTextPasteAttachment(input)
   const votes = ref<Map<string, boolean>>(new Map(options.initialVotes))
 
   const useContext = computed(() =>
@@ -110,23 +120,38 @@ export function useAgentChat(options: UseAgentChatOptions) {
     })
   }
 
-  async function send(text: string) {
-    if (!text.trim() || agent.rateLimitReached.value) return
+  type SendInput = string | { parts: UIMessage['parts'] }
+
+  async function send(input: SendInput) {
+    const parts = typeof input === 'string'
+      ? [{ type: 'text' as const, text: input }]
+      : input.parts
+
+    if (!parts.length || getMessageTextLength(parts) === 0 || agent.rateLimitReached.value) return
+
     track('Nuxi Message Sent', {
       source: options.source,
       page: agent.currentPage.value,
       withContext: useContext.value,
-      queryLength: text.length
+      queryLength: getMessageTextLength(parts)
     })
     const metadata = {
       createdAt: new Date().toISOString(),
       ...(useContext.value && agent.currentPage.value ? { pagePath: agent.currentPage.value } : {})
     }
+
+    const fileParts = parts.filter((part): part is FileUIPart => part.type === 'file')
+    const text = parts
+      .filter((part): part is { type: 'text', text: string } => part.type === 'text')
+      .map(part => part.text)
+      .join('\n')
+      .trim()
+
     if (chat.messages.length === 0 && loggedIn.value) {
       const userMessage: UIMessage = {
         id: crypto.randomUUID(),
         role: 'user',
-        parts: [{ type: 'text', text }],
+        parts,
         metadata
       }
       await $fetch('/api/chats', {
@@ -135,6 +160,10 @@ export function useAgentChat(options: UseAgentChatOptions) {
       })
       chat.messages = [userMessage]
       await chat.regenerate()
+    } else if (fileParts.length && text) {
+      await chat.sendMessage({ text, files: fileParts, metadata })
+    } else if (fileParts.length) {
+      await chat.sendMessage({ files: fileParts, metadata })
     } else {
       await chat.sendMessage({ text, metadata })
     }
@@ -142,9 +171,11 @@ export function useAgentChat(options: UseAgentChatOptions) {
   }
 
   async function onSubmit() {
-    const raw = input.value
+    if (!canSubmit.value) return
+    const parts = buildMessagePartsFromInput()
     input.value = ''
-    await send(raw)
+    clearAttachments()
+    await send({ parts })
   }
 
   function askQuestion(question: string) {
@@ -157,6 +188,11 @@ export function useAgentChat(options: UseAgentChatOptions) {
   return {
     chat,
     input,
+    pasteAttachments,
+    canSubmit,
+    handlePaste,
+    removeAttachment,
+    restoreToInput,
     votes,
     vote,
     send,

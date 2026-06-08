@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { joinURL } from 'ufo'
+import { buildMessageParts, getMessageTextLength } from '../../../../shared/utils/paste-attachment'
 
 definePageMeta({
   layout: 'dashboard'
@@ -25,6 +26,15 @@ const { refresh: refreshChats } = useChatsData()
 
 const input = ref('')
 const loading = ref(false)
+const {
+  attachments: pasteAttachments,
+  canSubmit,
+  handlePaste,
+  removeAttachment,
+  restoreToInput,
+  buildMessageParts: buildMessagePartsFromInput,
+  clearAttachments
+} = useTextPasteAttachment(input)
 
 const baseGreeting = computed(() => {
   const name = user.value?.name?.split(' ')[0] || user.value?.username
@@ -40,9 +50,8 @@ onMounted(() => {
   greeting.value = name ? `${timeGreeting}, ${name}` : timeGreeting
 })
 
-async function createChat(prompt: string) {
-  if (loading.value || rateLimitReached.value) return
-  input.value = prompt
+async function createChat(parts: ReturnType<typeof buildMessagePartsFromInput>) {
+  if (loading.value || rateLimitReached.value || getMessageTextLength(parts) === 0) return
   loading.value = true
 
   try {
@@ -54,14 +63,14 @@ async function createChat(prompt: string) {
           message: {
             id: crypto.randomUUID(),
             role: 'user',
-            parts: [{ type: 'text', text: prompt }]
+            parts
           }
         }
       })
       refreshChats()
       await navigateTo(`/dashboard/chat/${chat?.id}`)
     } else {
-      agent.pendingPrompt.value = prompt
+      agent.pendingMessageParts.value = parts
       await navigateTo(`/dashboard/chat/${crypto.randomUUID()}`)
     }
   } catch {
@@ -72,8 +81,11 @@ async function createChat(prompt: string) {
 }
 
 async function onSubmit() {
-  if (!input.value.trim()) return
-  await createChat(input.value.trim())
+  if (!canSubmit.value) return
+  const parts = buildMessagePartsFromInput()
+  clearAttachments()
+  input.value = ''
+  await createChat(parts)
 }
 
 const suggestions = [
@@ -139,9 +151,20 @@ const suggestions = [
               :maxrows="5"
               autofocus
               class="[view-transition-name:chat-prompt]"
-              :ui="{ base: 'px-1.5', footer: 'items-baseline' }"
+              :ui="{ base: 'px-1.5', footer: 'items-baseline', header: 'px-1.5 pt-1.5 pb-0 gap-1.5 flex flex-wrap items-start' }"
               @submit="onSubmit"
+              @paste="handlePaste"
             >
+              <template v-if="pasteAttachments.length" #header>
+                <AgentPasteAttachment
+                  v-for="(attachment, index) in pasteAttachments"
+                  :key="attachment.name"
+                  :attachment="attachment"
+                  @remove="removeAttachment(index)"
+                  @restore="restoreToInput(index)"
+                />
+              </template>
+
               <template #footer>
                 <ClientOnly>
                   <UTooltip v-if="usage" text="Daily messages remaining">
@@ -154,7 +177,7 @@ const suggestions = [
                   color="neutral"
                   size="sm"
                   :status="loading ? 'streaming' : 'ready'"
-                  :disabled="!input.trim()"
+                  :disabled="!canSubmit"
                 />
               </template>
             </UChatPrompt>
@@ -171,7 +194,7 @@ const suggestions = [
               variant="outline"
               class="rounded-full"
               :disabled="loading"
-              @click="createChat(s.label)"
+              @click="createChat(buildMessageParts(s.label, []))"
             />
           </div>
         </div>
