@@ -47,7 +47,9 @@ function guessExtension(content: string): string {
     try {
       JSON.parse(trimmed)
       return '.json'
-    } catch {}
+    } catch {
+      // Not valid JSON — fall through to other heuristics
+    }
   }
 
   if (/^<!DOCTYPE\s+html/i.test(first) || /^<html[\s>]/i.test(first)) {
