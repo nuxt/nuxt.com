@@ -1,11 +1,22 @@
 <script setup lang="ts">
 const colorMode = useColorMode()
 const route = useRoute()
-const isChatRoute = computed(() => route.path === '/chat' || route.path.startsWith('/chat/'))
+const { isAgentEnabled } = useNuxtAgent()
+const isChatRoute = computed(() => route.path.startsWith('/dashboard/chat') || route.path.startsWith('/admin/analytics'))
+const showAgent = computed(() => isAgentEnabled.value && !isChatRoute.value)
+
 const { version } = useDocsVersion()
 const { track } = useAnalytics()
 
 const color = computed(() => colorMode.value === 'dark' ? '#020420' : 'white')
+
+defineShortcuts({
+  d: {
+    handler: () => {
+      colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'
+    }
+  }
+})
 
 watch(() => colorMode.preference, (newMode, oldMode) => {
   if (oldMode && newMode !== oldMode) {
@@ -68,7 +79,7 @@ provide('navigation', versionNavigation)
         </NuxtLayout>
       </div>
 
-      <ClientOnly v-if="!isChatRoute">
+      <ClientOnly v-if="showAgent">
         <LazyAgentFloatingInput />
         <LazyAgentPanel />
       </ClientOnly>

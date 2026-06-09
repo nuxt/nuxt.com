@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { and, desc, eq, gte, type SQL } from 'drizzle-orm'
 
-function extractText(parts: AgentMessagePart[]): string {
+function extractText(parts: MessagePart[]): string {
   return parts
     .filter(p => p.type === 'text' && p.text)
     .map(p => p.text!.trim())
@@ -34,32 +34,40 @@ WHEN TO USE: Use this tool to read what users actually disliked. Default sort is
     }
 
     const filters: SQL[] = []
-    if (onlyDownvotes) filters.push(eq(schema.agentVotes.isUpvoted, false))
-    if (onlyUpvotes) filters.push(eq(schema.agentVotes.isUpvoted, true))
+    if (onlyDownvotes) filters.push(eq(schema.votes.isUpvoted, false))
+    if (onlyUpvotes) filters.push(eq(schema.votes.isUpvoted, true))
     if (sinceDays) {
       const since = new Date(Date.now() - sinceDays * 24 * 60 * 60 * 1000)
-      filters.push(gte(schema.agentVotes.createdAt, since))
+      filters.push(gte(schema.chats.createdAt, since))
     }
 
-    type VoteJoinRow = Pick<AgentVote, 'chatId' | 'messageId' | 'isUpvoted'>
-      & Pick<AgentChat, 'messages' | 'provider' | 'model'>
-      & { votedAt: Date, chatCreatedAt: Date }
+    type VoteJoinRow = {
+      chatId: string
+      messageId: string
+      isUpvoted: boolean
+      provider: string | null
+      model: string | null
+      chatCreatedAt: Date
+      messageRole: 'user' | 'assistant' | 'system' | null
+      messageParts: MessagePart[] | null
+    }
 
     const rows: VoteJoinRow[] = await db
       .select({
-        chatId: schema.agentVotes.chatId,
-        messageId: schema.agentVotes.messageId,
-        isUpvoted: schema.agentVotes.isUpvoted,
-        votedAt: schema.agentVotes.createdAt,
-        messages: schema.agentChats.messages,
-        provider: schema.agentChats.provider,
-        model: schema.agentChats.model,
-        chatCreatedAt: schema.agentChats.createdAt
+        chatId: schema.votes.chatId,
+        messageId: schema.votes.messageId,
+        isUpvoted: schema.votes.isUpvoted,
+        provider: schema.chats.provider,
+        model: schema.chats.model,
+        chatCreatedAt: schema.chats.createdAt,
+        messageRole: schema.messages.role,
+        messageParts: schema.messages.parts as never
       })
-      .from(schema.agentVotes)
-      .innerJoin(schema.agentChats, eq(schema.agentChats.id, schema.agentVotes.chatId))
+      .from(schema.votes)
+      .innerJoin(schema.chats, eq(schema.chats.id, schema.votes.chatId))
+      .leftJoin(schema.messages, eq(schema.messages.id, schema.votes.messageId))
       .where(filters.length ? and(...filters) : undefined)
-      .orderBy(desc(schema.agentVotes.createdAt))
+      .orderBy(desc(schema.chats.createdAt))
       .limit(limit)
       .offset(offset)
 
@@ -67,20 +75,16 @@ WHEN TO USE: Use this tool to read what users actually disliked. Default sort is
       total: rows.length,
       offset,
       limit,
-      rows: rows.map((r: VoteJoinRow) => {
-        const message = r.messages.find((m: AgentChatMessage) => m.id === r.messageId)
-        return {
-          chatId: r.chatId,
-          messageId: r.messageId,
-          vote: r.isUpvoted ? 'up' : 'down',
-          votedAt: r.votedAt,
-          provider: r.provider,
-          model: r.model,
-          chatCreatedAt: r.chatCreatedAt,
-          messageRole: message?.role,
-          messageText: message ? extractText(message.parts).slice(0, 1000) : undefined
-        }
-      })
+      rows: rows.map((r: VoteJoinRow) => ({
+        chatId: r.chatId,
+        messageId: r.messageId,
+        vote: r.isUpvoted ? 'up' : 'down',
+        provider: r.provider,
+        model: r.model,
+        chatCreatedAt: r.chatCreatedAt,
+        messageRole: r.messageRole,
+        messageText: r.messageParts ? extractText(r.messageParts).slice(0, 1000) : undefined
+      }))
     }
   }
 })

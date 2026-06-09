@@ -4,8 +4,8 @@
   "packageManager": "pnpm@11.5.0",
   "type": "module",
   "scripts": {
-    "dev": "nuxt dev --ui-only",
-    "dev:full": "nuxt dev",
+    "dev": "TMPDIR=/tmp nuxt dev --ui-only",
+    "dev:full": "TMPDIR=/tmp nuxt dev",
     "build": "NODE_OPTIONS='--max-old-space-size=8192' nuxt build",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
@@ -19,8 +19,8 @@
     "test:browser:update": "docker run --rm --network host -v $(pwd):/work/ -v /tmp/playwright-node-modules:/work/node_modules -w /work/ -it mcr.microsoft.com/playwright:v1.57.0-noble bash -c 'corepack enable && pnpm i && pnpm playwright test test/browser --update-snapshots'",
     "eval": "evalite",
     "eval:ui": "evalite serve",
-    "db:generate": "nuxt hub database generate",
-    "db:migrate": "nuxt hub database migrate"
+    "db:generate": "nuxt db generate",
+    "db:migrate": "nuxt db migrate"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.81",

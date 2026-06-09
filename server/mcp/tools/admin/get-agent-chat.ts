@@ -1,7 +1,7 @@
 import { z } from 'zod'
-import { eq } from 'drizzle-orm'
+import { asc, eq } from 'drizzle-orm'
 
-function extractText(parts: AgentMessagePart[]): string {
+function extractText(parts: MessagePart[]): string {
   return parts
     .filter(p => p.type === 'text' && p.text)
     .map(p => p.text!.trim())
@@ -28,40 +28,54 @@ WHEN TO USE: After spotting an interesting chat ID via \`admin_list_agent_chats\
   async handler({ chatId, includeRawParts }) {
     const [chat] = await db
       .select()
-      .from(schema.agentChats)
-      .where(eq(schema.agentChats.id, chatId))
+      .from(schema.chats)
+      .where(eq(schema.chats.id, chatId))
       .limit(1)
 
     if (!chat) {
       throw createError({ statusCode: 404, message: `Agent chat not found: ${chatId}` })
     }
 
-    type VoteRow = Pick<AgentVote, 'messageId' | 'isUpvoted' | 'createdAt'>
+    type VoteRow = Pick<Vote, 'messageId' | 'isUpvoted'>
     const votes: VoteRow[] = await db
       .select({
-        messageId: schema.agentVotes.messageId,
-        isUpvoted: schema.agentVotes.isUpvoted,
-        createdAt: schema.agentVotes.createdAt
+        messageId: schema.votes.messageId,
+        isUpvoted: schema.votes.isUpvoted
       })
-      .from(schema.agentVotes)
-      .where(eq(schema.agentVotes.chatId, chatId))
+      .from(schema.votes)
+      .where(eq(schema.votes.chatId, chatId))
 
     const votesByMessage = new Map<string, VoteRow>(votes.map(v => [v.messageId, v]))
 
-    const messages = chat.messages.map((msg: AgentChatMessage) => {
+    type StoredMessageRow = Pick<ChatMessage, 'id' | 'role' | 'parts' | 'createdAt'>
+    const storedMessages: StoredMessageRow[] = await db
+      .select({
+        id: schema.messages.id,
+        role: schema.messages.role,
+        parts: schema.messages.parts,
+        createdAt: schema.messages.createdAt
+      })
+      .from(schema.messages)
+      .where(eq(schema.messages.chatId, chatId))
+      .orderBy(asc(schema.messages.createdAt))
+
+    const messages = storedMessages.map((msg: StoredMessageRow) => {
       const vote = votesByMessage.get(msg.id)
+      const parts = (msg.parts ?? []) as MessagePart[]
       return {
         id: msg.id,
         role: msg.role,
-        text: extractText(msg.parts),
-        ...(includeRawParts ? { parts: msg.parts } : {}),
-        ...(vote ? { vote: vote.isUpvoted ? 'up' : 'down', votedAt: vote.createdAt } : {})
+        text: extractText(parts),
+        ...(includeRawParts ? { parts } : {}),
+        ...(vote ? { vote: vote.isUpvoted ? 'up' : 'down' } : {})
       }
     })
 
     return {
       id: chat.id,
-      fingerprint: chat.fingerprint,
+      userId: chat.userId,
+      title: chat.title,
+      visibility: chat.visibility,
       model: chat.model,
       provider: chat.provider,
       stats: {
@@ -77,7 +91,6 @@ WHEN TO USE: After spotting an interesting chat ID via \`admin_list_agent_chats\
         downvotes: votes.filter((v: VoteRow) => !v.isUpvoted).length
       },
       createdAt: chat.createdAt,
-      updatedAt: chat.updatedAt,
       messages
     }
   }

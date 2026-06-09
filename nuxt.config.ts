@@ -5,6 +5,8 @@ const { resolve } = createResolver(import.meta.url)
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  extends: ['./layers/nuxi'],
+
   modules: [
     '@nuxt/ui',
     'nuxt-content-twoslash',
@@ -26,7 +28,6 @@ export default defineNuxtConfig({
     '@nuxt/hints',
     '@vercel/analytics',
     '@vercel/speed-insights',
-    '@comark/nuxt',
     'evlog/nuxt'
   ],
   $development: {
@@ -102,7 +103,6 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     contactEmail: '',
-    cronSecret: '',
     mcpAdminToken: '',
     adminGithubLogins: '',
     github: {
@@ -167,6 +167,10 @@ export default defineNuxtConfig({
     // Admin
     '/admin': { ssr: false },
     '/admin/**': { ssr: false },
+    '/admin/login': { redirect: '/login?redirect=/admin', prerender: false },
+    // Auth-protected client-side area — never SSR'd.
+    '/dashboard': { ssr: false },
+    '/dashboard/**': { ssr: false },
     // Main navigation
     '/api/navigation.json': { prerender: true },
     // Redirects
@@ -457,7 +461,13 @@ export default defineNuxtConfig({
       crawlLinks: true,
       ignore: [
         route => route === '/modules' || route.startsWith('/modules/'),
-        route => route.startsWith('/admin')
+        route => route.startsWith('/admin'),
+        route => route.startsWith('/login'),
+        route => route.startsWith('/dashboard'),
+        '/mcp',
+        route => route.startsWith('/mcp/'),
+        route => route.startsWith('/api/auth/'),
+        route => route.startsWith('/api/chats')
       ],
       autoSubfolderIndex: false
     }
@@ -470,14 +480,12 @@ export default defineNuxtConfig({
   vite: {
     optimizeDeps: {
       include: [
+        '@comark/vue',
         '@vue/devtools-core',
         '@vue/devtools-kit',
         'valibot',
-        '@comark/vue',
         'zod',
-        'date-fns',
-        'ai',
-        '@ai-sdk/vue'
+        'date-fns'
       ],
       exclude: ['vue-chrts', 'shaders']
     }
@@ -521,7 +529,11 @@ export default defineNuxtConfig({
     env: { service: 'nuxt-com' },
     pretty: process.env.CI ? false : undefined,
     sampling: {
-      rates: { info: 30 }
+      rates: { info: 30 },
+      keep: [
+        { path: '/api/chats/*' },
+        { duration: 2000 }
+      ]
     }
   },
   hints: {
