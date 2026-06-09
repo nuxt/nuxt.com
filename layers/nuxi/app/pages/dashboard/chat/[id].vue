@@ -12,9 +12,10 @@ const { refresh: refreshChats } = useChats()
 
 const chatId = route.params.id as string
 
-const { data, error } = await useFetch<ChatDetail>(`/api/chats/${chatId}`, {
-  key: `chat-${chatId}`
-})
+const { data, error } = await useFetch<ChatDetail>(
+  () => loggedIn.value ? `/api/chats/${chatId}` : null,
+  { key: `chat-${chatId}` }
+)
 
 if (loggedIn.value && (error.value || !data.value)) {
   throw createError({ statusCode: 404, statusMessage: 'Chat not found', fatal: true })
@@ -22,12 +23,14 @@ if (loggedIn.value && (error.value || !data.value)) {
 
 const isOwner = computed(() => data.value?.isOwner ?? false)
 const visibility = ref<'public' | 'private' | 'admin'>(data.value?.visibility ?? 'private')
-const title = ref<string | null>(data.value?.title ?? null)
+const title = ref<string | null>(loggedIn.value ? (data.value?.title ?? null) : null)
 watch(() => data.value?.title, (next) => {
-  title.value = next ?? null
+  if (loggedIn.value) title.value = next ?? null
 })
 
-const initialMessages = computed<UIMessage[]>(() => toUIMessages(data.value?.messages ?? []))
+const initialMessages: UIMessage[] = loggedIn.value
+  ? toUIMessages(data.value?.messages ?? [])
+  : []
 
 const {
   chat,
@@ -38,10 +41,13 @@ const {
   vote
 } = useAgentChat({
   chatId,
-  initialMessages: initialMessages.value,
+  initialMessages,
   source: 'chat-page',
   withPageContext: 'always',
   fetchVotes: isOwner.value,
+  onTitle: (generatedTitle) => {
+    title.value = generatedTitle
+  },
   onFinish: () => {
     if (loggedIn.value) refreshChats()
   }
@@ -53,15 +59,36 @@ useNuxiChatSeo({
 })
 
 onMounted(() => {
+  if (!loggedIn.value) {
+    const pendingParts = consumePendingMessageParts()
+    const pendingPrompt = consumePendingPrompt()
+
+    if (!pendingParts && !pendingPrompt) {
+      navigateTo('/dashboard/chat')
+      return
+    }
+
+    if (pendingParts) {
+      if (!title.value) title.value = titleFromParts(pendingParts)
+      send({ parts: pendingParts })
+      return
+    }
+
+    if (pendingPrompt) send(pendingPrompt)
+    return
+  }
+
   if (isOwner.value && data.value?.messages.length === 1 && data.value.messages[0]?.role === 'user') {
     chat.regenerate()
     return
   }
+
   const pendingParts = consumePendingMessageParts()
   if (pendingParts) {
     send({ parts: pendingParts })
     return
   }
+
   const pendingPrompt = consumePendingPrompt()
   if (pendingPrompt) send(pendingPrompt)
 })

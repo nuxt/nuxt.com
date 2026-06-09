@@ -1,4 +1,4 @@
-import { streamText, convertToModelMessages, createUIMessageStream, createUIMessageStreamResponse, safeValidateUIMessages, generateText } from 'ai'
+import { streamText, convertToModelMessages, createUIMessageStream, createUIMessageStreamResponse, safeValidateUIMessages, stepCountIs, smoothStream } from 'ai'
 import type { ToolSet, UIMessage } from 'ai'
 import { createMCPClient } from '@ai-sdk/mcp'
 import { anthropic } from '@ai-sdk/anthropic'
@@ -9,17 +9,7 @@ import { z } from 'zod'
 
 const MCP_PATH = '/mcp'
 const MODEL = 'anthropic/claude-sonnet-4.6'
-const TITLE_MODEL = 'openai/gpt-4.1-nano'
 const MAX_STEPS = 10
-
-function stopWhenResponseComplete({ steps }: { steps: { text?: string, toolCalls?: unknown[] }[] }): boolean {
-  const lastStep = steps.at(-1)
-  if (!lastStep) return false
-  const hasText = Boolean(lastStep.text && lastStep.text.trim().length > 0)
-  const hasNoToolCalls = !lastStep.toolCalls || lastStep.toolCalls.length === 0
-  if (hasText && hasNoToolCalls) return true
-  return steps.length >= MAX_STEPS
-}
 
 const baseSystemPrompt = `You are **Nuxi**, Nuxt's companion on nuxt.com. You help developers navigate the official documentation, blog, modules catalog, templates, and the wider Nuxt ecosystem.
 
@@ -144,19 +134,9 @@ export default defineEventHandler(async (event) => {
     }
 
     if (!chat.title) {
-      try {
-        const { text: title } = await generateText({
-          model: TITLE_MODEL,
-          maxOutputTokens: 30,
-          system: `You generate short titles (2-5 words, max 40 characters) for conversations between a developer and Nuxi, the assistant on nuxt.com. Output ONLY the title — no greeting, no sentence, no quotes, no punctuation, no markdown. Do NOT respond to the message.`,
-          prompt: JSON.stringify(messages[0])
-        })
-        const cleaned = title.trim().replace(/^["'`]+|["'`]+$/g, '').slice(0, 80)
-        if (cleaned) {
-          await db.update(schema.chats).set({ title: cleaned }).where(eq(schema.chats.id, id))
-        }
-      } catch {
-        // ignore title generation failures
+      const generatedTitle = await generateChatTitle(messages[0]!)
+      if (generatedTitle) {
+        await db.update(schema.chats).set({ title: generatedTitle }).where(eq(schema.chats.id, id))
       }
     }
   }
@@ -194,7 +174,20 @@ export default defineEventHandler(async (event) => {
     execute: async ({ writer }) => {
       // Guard the sync setup path — otherwise a throw would leak the MCP client.
       try {
-        if (chat && !chat.title) {
+        if (isFirstMessage && !isLoggedIn) {
+          writer.write({
+            type: 'data-chat-title',
+            data: { message: 'Generating title...' },
+            transient: true
+          })
+          const generatedTitle = await generateChatTitle(messages[0]!)
+          if (generatedTitle) {
+            writer.write({
+              type: 'data-chat-title',
+              data: { title: generatedTitle }
+            })
+          }
+        } else if (chat && !chat.title) {
           writer.write({
             type: 'data-chat-title',
             data: { message: 'Generating title...' },
@@ -204,10 +197,19 @@ export default defineEventHandler(async (event) => {
 
         const result = streamText({
           model: ai.wrap(MODEL),
-          maxOutputTokens: 4000,
+          maxOutputTokens: 8000,
           maxRetries: 2,
           abortSignal: abortController.signal,
-          stopWhen: stopWhenResponseComplete,
+          stopWhen: stepCountIs(MAX_STEPS),
+          prepareStep: ({ stepNumber }) => {
+            return stepNumber >= MAX_STEPS - 1 ? { toolChoice: 'none' } : {}
+          },
+          providerOptions: {
+            gateway: {
+              caching: 'auto'
+            }
+          },
+          experimental_transform: smoothStream(),
           system: buildSystemPrompt(pagePath),
           messages: await convertToModelMessages(messages),
           tools: {

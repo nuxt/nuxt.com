@@ -28,9 +28,14 @@ const items = computed<DropdownMenuItem[][]>(() => [[
 </script>
 
 <template>
-  <span v-if="!isOwner" class="text-sm font-medium text-highlighted truncate min-w-0 max-w-3xs">
-    {{ displayTitle }}
-  </span>
+  <UButton
+    v-if="!isOwner"
+    color="neutral"
+    variant="ghost"
+    :label="displayTitle"
+    class="min-w-0 max-w-3xs pointer-events-none select-text"
+    :class="{ 'text-muted': !title }"
+  />
 
   <UDropdownMenu
     v-else

@@ -1,11 +1,47 @@
 <script setup lang="ts">
-import type { UIMessage } from 'ai'
-import { isFileUIPart, isToolUIPart, isReasoningUIPart, isTextUIPart } from 'ai'
-import { isPartStreaming } from '@nuxt/ui/utils/ai'
+import type { ToolUIPart, DynamicToolUIPart, UIMessage } from 'ai'
+import { isFileUIPart, isToolUIPart, isReasoningUIPart, isTextUIPart, getToolName } from 'ai'
+import { isPartStreaming, isToolStreaming } from '@nuxt/ui/utils/ai'
+import {
+  getFeedbackOutput,
+  getModuleCards,
+  getTemplates,
+  getToolIcon,
+  getToolSuffix,
+  getToolText,
+  isModuleListTool,
+  isValidModuleCardData,
+  moduleCardProps,
+  showCardOutput,
+  showFeedbackCard,
+  showModuleCard,
+  showPlaygroundCard,
+  showTemplateCards,
+  type ToolPart
+} from '../../composables/useChatTools'
 
 defineProps<{
   message: UIMessage
 }>()
+
+type ToolPartUnion = ToolUIPart | DynamicToolUIPart
+
+function getToolOutput(part: ToolPartUnion): string | undefined {
+  if (part.state !== 'output-available' || !part.output) return undefined
+
+  const output = part.output as Record<string, unknown>
+  const content = (output.content ?? output) as Array<{ text?: string }> | string
+
+  if (typeof content === 'string') {
+    return content || undefined
+  }
+
+  if (Array.isArray(content)) {
+    return content.map(c => c.text).filter(Boolean).join('\n') || undefined
+  }
+
+  return JSON.stringify(output, null, 2)
+}
 
 const streamingCaret = { class: 'inline-block w-2 h-[1em] bg-current align-middle ml-px opacity-80 animate-pulse' }
 
@@ -48,7 +84,7 @@ function getUserTextParts(message: UIMessage) {
     </p>
   </div>
 
-  <div v-else class="w-full min-w-0 flex flex-col gap-4">
+  <template v-else>
     <template v-for="(part, partIndex) in getMergedParts(message.parts)" :key="`${message.id}-${part.type}-${partIndex}`">
       <UChatReasoning
         v-if="isReasoningUIPart(part)"
@@ -64,7 +100,97 @@ function getUserTextParts(message: UIMessage) {
         />
       </UChatReasoning>
 
-      <ChatToolPart v-else-if="isToolUIPart(part)" :part="part" />
+      <UChatTool
+        v-else-if="isToolUIPart(part) && getToolName(part) === 'web_search'"
+        icon="i-lucide-search"
+        :text="isToolStreaming(part) ? 'Searching the web...' : 'Searched the web'"
+        :suffix="getSearchQuery(part)"
+        :streaming="isToolStreaming(part)"
+        chevron="leading"
+      >
+        <ToolsToolSources :sources="getSources(part)" />
+      </UChatTool>
+
+      <template v-else-if="isToolUIPart(part) && getToolName(part) === 'show_module'">
+        <ToolsModuleCard
+          v-if="showModuleCard(part as ToolPart)"
+          v-bind="moduleCardProps(part.output as ModuleCardData)"
+        />
+      </template>
+
+      <template v-else-if="isToolUIPart(part) && getToolName(part) === 'show_template'">
+        <div
+          v-if="showTemplateCards(part as ToolPart)"
+          class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full"
+        >
+          <ToolsTemplateCard
+            v-for="tpl in getTemplates(part.output)"
+            :key="tpl.slug"
+            v-bind="tpl"
+          />
+        </div>
+      </template>
+
+      <template v-else-if="isToolUIPart(part) && getToolName(part) === 'show_blog_post'">
+        <ToolsBlogCard
+          v-if="showCardOutput(part as ToolPart)"
+          v-bind="part.output as BlogCardData"
+        />
+      </template>
+
+      <template v-else-if="isToolUIPart(part) && getToolName(part) === 'show_hosting'">
+        <ToolsHostingCard
+          v-if="showCardOutput(part as ToolPart)"
+          v-bind="part.output as HostingCardData"
+        />
+      </template>
+
+      <template v-else-if="isToolUIPart(part) && getToolName(part) === 'open_playground'">
+        <ToolsPlaygroundCard
+          v-if="showPlaygroundCard(part as ToolPart)"
+          v-bind="part.output as PlaygroundCardData"
+        />
+      </template>
+
+      <template v-else-if="isToolUIPart(part) && getToolName(part) === 'report_issue'">
+        <ToolsFeedbackCard
+          v-if="showFeedbackCard(part as ToolPart) && getFeedbackOutput(part.output)"
+          :title="getFeedbackOutput(part.output)!.title"
+          :summary="getFeedbackOutput(part.output)!.summary"
+        />
+      </template>
+
+      <template v-else-if="isToolUIPart(part) && isModuleListTool(part as ToolPart)">
+        <UChatTool
+          :text="getToolText(part as ToolPart)"
+          :suffix="getToolSuffix(part as ToolPart)"
+          :icon="getToolIcon(part as ToolPart)"
+          :streaming="isToolStreaming(part)"
+          chevron="leading"
+        />
+        <div class="flex flex-col gap-2 w-full">
+          <ToolsModuleCard
+            v-for="mod in getModuleCards(part as ToolPart).filter(isValidModuleCardData)"
+            :key="mod.name"
+            v-bind="moduleCardProps(mod)"
+          />
+        </div>
+      </template>
+
+      <UChatTool
+        v-else-if="isToolUIPart(part)"
+        :text="getToolText(part as ToolPart)"
+        :suffix="getToolSuffix(part as ToolPart)"
+        :icon="getToolIcon(part as ToolPart)"
+        :streaming="isToolStreaming(part)"
+        chevron="leading"
+      >
+        <pre
+          v-if="getToolOutput(part)"
+          class="text-xs text-muted whitespace-pre-wrap break-all rounded-md border border-muted bg-muted p-2 max-h-64 overflow-y-auto"
+          v-text="getToolOutput(part)"
+        />
+      </UChatTool>
 
       <AgentComark
         v-else-if="isTextUIPart(part) && part.text.length > 0"
@@ -73,5 +199,5 @@ function getUserTextParts(message: UIMessage) {
         :caret="isPartStreaming(part) ? streamingCaret : false"
       />
     </template>
-  </div>
+  </template>
 </template>

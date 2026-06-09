@@ -17,7 +17,7 @@ export const AGENT_CHAT_THEME = {
 
 export const AGENT_USER_MESSAGE_UI = {
   content: 'px-3 py-1.5 min-h-fit min-w-0 w-fit max-w-full',
-  container: 'pb-5'
+  container: 'pb-3'
 } as const
 
 export const AGENT_USER_MESSAGE_UI_COMPACT = {

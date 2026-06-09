@@ -20,6 +20,17 @@ export function messageFullTime(message: UIMessage): string | null {
   return raw ? format(new Date(raw), 'MMM d, yyyy, h:mm a') : null
 }
 
+export function titleFromParts(parts: UIMessage['parts']): string {
+  const text = parts
+    .filter((part): part is { type: 'text', text: string } => part.type === 'text')
+    .map(part => part.text)
+    .join(' ')
+    .trim()
+
+  if (!text) return 'Untitled'
+  return text.length > 40 ? `${text.slice(0, 37)}…` : text
+}
+
 export async function createChatWithMessage(
   chatId: string,
   parts: UIMessage['parts'],

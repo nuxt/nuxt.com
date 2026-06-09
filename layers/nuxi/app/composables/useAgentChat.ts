@@ -10,6 +10,7 @@ type ChatModeOptions = {
   withPageContext?: 'always' | 'when-enabled'
   fetchVotes?: boolean
   onFinish?: () => void
+  onTitle?: (title: string) => void
 }
 
 type StartModeOptions = {
@@ -231,25 +232,43 @@ export function useAgentChat(options: UseAgentChatOptions) {
         }
         return msg
       }) as UIMessage[]
-      const chatCache = useNuxtData<ChatDetail>(`chat-${chatOptions.chatId}`)
-      if (chatCache.data.value) {
-        chatCache.data.value = {
-          ...chatCache.data.value,
-          messages: chat.messages.map(m => ({
-            id: m.id,
-            role: m.role,
-            parts: m.parts as unknown[],
-            createdAt: (m.metadata as { createdAt?: string } | undefined)?.createdAt ?? now
-          })) as ChatDetail['messages']
+
+      if (loggedIn.value) {
+        const chatCache = useNuxtData<ChatDetail>(`chat-${chatOptions.chatId}`)
+        if (chatCache.data.value) {
+          chatCache.data.value = {
+            ...chatCache.data.value,
+            messages: chat.messages.map(m => ({
+              id: m.id,
+              role: m.role,
+              parts: m.parts as unknown[],
+              createdAt: (m.metadata as { createdAt?: string } | undefined)?.createdAt ?? now
+            })) as ChatDetail['messages']
+          }
         }
       }
+
       chatOptions.onFinish?.()
     },
     onData: async (part) => {
       if (part.type === 'data-chat-title') {
-        await chats.refresh()
-        const updated = chats.chatList.value?.find(c => c.id === chatOptions.chatId)
-        if (updated?.title) chats.patchTitle(chatOptions.chatId, updated.title)
+        const generatedTitle = (part.data as { title?: string } | undefined)?.title
+        if (generatedTitle) {
+          if (loggedIn.value) {
+            await chats.refresh()
+            const updated = chats.chatList.value?.find(c => c.id === chatOptions.chatId)
+            if (updated?.title) chats.patchTitle(chatOptions.chatId, updated.title)
+          } else {
+            chatOptions.onTitle?.(generatedTitle)
+          }
+          return
+        }
+
+        if (loggedIn.value) {
+          await chats.refresh()
+          const updated = chats.chatList.value?.find(c => c.id === chatOptions.chatId)
+          if (updated?.title) chats.patchTitle(chatOptions.chatId, updated.title)
+        }
       }
     }
   })
