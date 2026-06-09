@@ -1,5 +1,6 @@
 import type { ToolUIPart, DynamicToolUIPart } from 'ai'
 import { getToolName } from 'ai'
+import { isToolStreaming } from '@nuxt/ui/utils/ai'
 
 export type ToolPart = ToolUIPart | DynamicToolUIPart
 
@@ -46,6 +47,17 @@ function parseToolName(toolName: string): { verb?: [string, string], label: stri
   return { label: parts.join(' ') || toolName }
 }
 
+type RichToolName = 'show_module' | 'show_template' | 'show_blog_post' | 'show_hosting' | 'open_playground' | 'report_issue'
+
+const RICH_TOOL_HEADERS = {
+  show_module: { loading: 'Loading module...', success: 'Found module', error: 'Module not found', icon: 'i-lucide-box' },
+  show_template: { loading: 'Loading templates...', success: 'Found templates', error: 'Templates not found', icon: 'i-lucide-layout-template' },
+  show_blog_post: { loading: 'Finding blog post...', success: 'Found blog post', error: 'Blog post not found', icon: 'i-lucide-newspaper' },
+  show_hosting: { loading: 'Loading provider...', success: 'Found provider', error: 'Provider not found', icon: 'i-lucide-server' },
+  open_playground: { loading: 'Generating playground...', success: 'Playground ready', error: 'Playground ready', icon: 'i-simple-icons-stackblitz' },
+  report_issue: { loading: 'Preparing feedback form...', success: 'Help us improve', error: 'Help us improve', icon: 'i-lucide-message-circle-warning' }
+} as const satisfies Record<RichToolName, { loading: string, success: string, error: string, icon: string }>
+
 export function hasToolError(output: unknown): boolean {
   if (!output || typeof output !== 'object') return false
   return !!(output as Record<string, unknown>).error
@@ -76,6 +88,35 @@ export function hasToolOutput(part: ToolPart): boolean {
   if (part.state === 'output-error' || part.state === 'output-denied') return false
   if (part.state === 'output-available') return part.output != null
   return part.output != null
+}
+
+function hasRichToolSuccess(part: ToolPart, toolName: RichToolName): boolean {
+  if (!hasToolOutput(part)) return false
+
+  switch (toolName) {
+    case 'show_module':
+      return isValidModuleCardData(part.output)
+    case 'show_template':
+      return !!part.output && !hasToolError(part.output) && hasTemplatesOutput(part.output)
+    case 'show_blog_post':
+    case 'show_hosting':
+      return !!part.output && !hasToolError(part.output)
+    case 'open_playground':
+      return !!part.output
+    case 'report_issue':
+      return !!getFeedbackOutput(part.output)
+  }
+}
+
+export function getRichToolHeader(part: ToolPart, toolName: RichToolName) {
+  const config = RICH_TOOL_HEADERS[toolName]
+  const streaming = isToolStreaming(part)
+
+  return {
+    text: streaming ? config.loading : (hasRichToolSuccess(part, toolName) ? config.success : config.error),
+    icon: config.icon,
+    streaming
+  }
 }
 
 export function showModuleCard(part: ToolPart): boolean {

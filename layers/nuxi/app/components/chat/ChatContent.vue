@@ -5,6 +5,7 @@ import { isPartStreaming, isToolStreaming } from '@nuxt/ui/utils/ai'
 import {
   getFeedbackOutput,
   getModuleCards,
+  getRichToolHeader,
   getTemplates,
   getToolIcon,
   getToolSuffix,
@@ -112,6 +113,7 @@ function getUserTextParts(message: UIMessage) {
       </UChatTool>
 
       <template v-else-if="isToolUIPart(part) && getToolName(part) === 'show_module'">
+        <UChatTool v-bind="getRichToolHeader(part as ToolPart, 'show_module')" />
         <ToolsModuleCard
           v-if="showModuleCard(part as ToolPart)"
           v-bind="moduleCardProps(part.output as ModuleCardData)"
@@ -119,6 +121,7 @@ function getUserTextParts(message: UIMessage) {
       </template>
 
       <template v-else-if="isToolUIPart(part) && getToolName(part) === 'show_template'">
+        <UChatTool v-bind="getRichToolHeader(part as ToolPart, 'show_template')" />
         <div
           v-if="showTemplateCards(part as ToolPart)"
           class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full"
@@ -132,6 +135,7 @@ function getUserTextParts(message: UIMessage) {
       </template>
 
       <template v-else-if="isToolUIPart(part) && getToolName(part) === 'show_blog_post'">
+        <UChatTool v-bind="getRichToolHeader(part as ToolPart, 'show_blog_post')" />
         <ToolsBlogCard
           v-if="showCardOutput(part as ToolPart)"
           v-bind="part.output as BlogCardData"
@@ -139,6 +143,7 @@ function getUserTextParts(message: UIMessage) {
       </template>
 
       <template v-else-if="isToolUIPart(part) && getToolName(part) === 'show_hosting'">
+        <UChatTool v-bind="getRichToolHeader(part as ToolPart, 'show_hosting')" />
         <ToolsHostingCard
           v-if="showCardOutput(part as ToolPart)"
           v-bind="part.output as HostingCardData"
@@ -146,6 +151,7 @@ function getUserTextParts(message: UIMessage) {
       </template>
 
       <template v-else-if="isToolUIPart(part) && getToolName(part) === 'open_playground'">
+        <UChatTool v-bind="getRichToolHeader(part as ToolPart, 'open_playground')" />
         <ToolsPlaygroundCard
           v-if="showPlaygroundCard(part as ToolPart)"
           v-bind="part.output as PlaygroundCardData"
@@ -153,6 +159,7 @@ function getUserTextParts(message: UIMessage) {
       </template>
 
       <template v-else-if="isToolUIPart(part) && getToolName(part) === 'report_issue'">
+        <UChatTool v-bind="getRichToolHeader(part as ToolPart, 'report_issue')" />
         <ToolsFeedbackCard
           v-if="showFeedbackCard(part as ToolPart) && getFeedbackOutput(part.output)"
           :title="getFeedbackOutput(part.output)!.title"
