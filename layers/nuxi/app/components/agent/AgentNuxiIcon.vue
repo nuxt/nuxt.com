@@ -136,7 +136,10 @@ const isSleeping = computed(() => effectiveMood.value === 'sleeping')
 .nuxi-body--happy { animation: nuxi-happy 2.5s ease-in-out infinite; }
 .nuxi-body--excited { animation: nuxi-excited 0.65s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
 .nuxi-body--thinking { animation: nuxi-thinking 1.6s ease-in-out infinite; }
-.nuxi-body--sleeping { animation: nuxi-sleeping 5s ease-in-out infinite; }
+.nuxi-body--sleeping {
+  animation: nuxi-sleeping 5s ease-in-out infinite;
+  transform-origin: center 92%;
+}
 .nuxi-body--surprised { animation: nuxi-surprised 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
 
 .nuxi-z {

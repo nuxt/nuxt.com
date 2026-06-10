@@ -67,7 +67,6 @@ const items = computed<DropdownMenuItem[][]>(() => {
 <template>
   <UDropdownMenu
     v-if="user"
-    size="sm"
     :items="items"
     :content="{ align: 'end' }"
   >
@@ -75,7 +74,6 @@ const items = computed<DropdownMenuItem[][]>(() => {
       :avatar="{ src: user.avatar, alt: user.username }"
       color="neutral"
       variant="ghost"
-      size="sm"
       square
       :aria-label="user.username"
     />
