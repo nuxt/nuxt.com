@@ -628,10 +628,7 @@ export default defineNuxtConfig({
     siteKey: '0x4AAAAAAAP2vNBsTBT3ucZi'
   },
   twoslash: {
-    floatingVueOptions: {
-      classMarkdown: ''
-    },
-    // Skip Twoslash in dev to improve performance ($development overrides enableInDev).
+    // Skip Twoslash in dev to improve performance. Turn this on when you want to explicitly test twoslash in dev.
     enableInDev: false,
     // Do not throw when twoslash fails, the typecheck should be down in github.com/nuxt/nuxt's CI
     throws: false
