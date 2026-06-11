@@ -14,3 +14,6 @@ allowBuilds:
 
 minimumReleaseAgeExclude:
   - '@nuxt/ui@4.8.0'
+
+patchedDependencies:
+  nuxt-content-twoslash@0.4.0: patches/nuxt-content-twoslash@0.4.0.patch
