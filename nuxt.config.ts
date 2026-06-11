@@ -632,7 +632,7 @@ export default defineNuxtConfig({
       classMarkdown: ''
     },
     // Skip Twoslash in dev to improve performance ($development overrides enableInDev).
-    enableInDev: true,
+    enableInDev: false,
     // Do not throw when twoslash fails, the typecheck should be down in github.com/nuxt/nuxt's CI
     throws: false
   }
