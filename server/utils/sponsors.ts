@@ -163,7 +163,7 @@ export const fetchGithubSponsors = async (event: H3Event): Promise<Sponsor[]> =>
   const response: Sponsor[] = []
   const first = 100
   let cursor: string | null = null
-  let hasNext = false
+  let hasNext: boolean
 
   const key = `sponsors:github`
   const cached = await kv.get<Sponsor[]>(key)
