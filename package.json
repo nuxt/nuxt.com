@@ -25,7 +25,7 @@
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.84",
     "@ai-sdk/mcp": "^1.0.50",
-    "@ai-sdk/vue": "^3.0.204",
+    "@ai-sdk/vue": "^3.0.205",
     "@comark/nuxt": "^0.4.0",
     "@iconify-json/heroicons": "^1.2.3",
     "@iconify-json/logos": "^1.2.11",
@@ -51,7 +51,7 @@
     "@vueuse/components": "^14.3.0",
     "@vueuse/core": "^14.3.0",
     "@vueuse/nuxt": "^14.3.0",
-    "ai": "^6.0.204",
+    "ai": "^6.0.205",
     "better-sqlite3": "^12.10.1",
     "date-fns": "^4.4.0",
     "drizzle-orm": "^0.45.2",

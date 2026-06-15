@@ -15,8 +15,8 @@ importers:
         specifier: ^1.0.50
         version: 1.0.50(zod@4.4.3)
       '@ai-sdk/vue':
-        specifier: ^3.0.204
-        version: 3.0.204(vue@3.5.38(typescript@6.0.3))(zod@4.4.3)
+        specifier: ^3.0.205
+        version: 3.0.205(vue@3.5.38(typescript@6.0.3))(zod@4.4.3)
       '@comark/nuxt':
         specifier: ^0.4.0
         version: 0.4.0(magicast@0.5.3)(nuxt@4.4.8(6fc40bc3954d13ccabb66784bc5ac925))(shiki@4.2.0)(vue@3.5.38(typescript@6.0.3))
@@ -93,8 +93,8 @@ importers:
         specifier: ^14.3.0
         version: 14.3.0(magicast@0.5.3)(nuxt@4.4.8(6fc40bc3954d13ccabb66784bc5ac925))(vue@3.5.38(typescript@6.0.3))
       ai:
-        specifier: ^6.0.204
-        version: 6.0.204(zod@4.4.3)
+        specifier: ^6.0.205
+        version: 6.0.205(zod@4.4.3)
       better-sqlite3:
         specifier: ^12.10.1
         version: 12.10.1
@@ -106,7 +106,7 @@ importers:
         version: 0.45.2(@cloudflare/workers-types@4.20260511.1)(@libsql/client@0.17.3)(@opentelemetry/api@1.9.0)(better-sqlite3@12.10.1)
       evlog:
         specifier: ^2.19.1
-        version: 2.19.1(@nuxt/kit@4.4.8(magicast@0.5.3))(ai@6.0.204(zod@4.4.3))(express@5.2.1)(fastify@5.8.5)(h3@1.15.11)(hono@4.12.18)(nitropack@2.13.4(@libsql/client@0.17.3)(@vercel/functions@3.7.1(ws@8.21.0))(better-sqlite3@12.10.1)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260511.1)(@libsql/client@0.17.3)(@opentelemetry/api@1.9.0)(better-sqlite3@12.10.1))(oxc-parser@0.135.0)(rolldown@1.0.0-beta.57(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)))(ofetch@1.5.1)(vite@7.3.3(@types/node@25.6.2)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.47.1)(tsx@4.21.0)(yaml@2.9.0))
+        version: 2.19.1(@nuxt/kit@4.4.8(magicast@0.5.3))(ai@6.0.205(zod@4.4.3))(express@5.2.1)(fastify@5.8.5)(h3@1.15.11)(hono@4.12.18)(nitropack@2.13.4(@libsql/client@0.17.3)(@vercel/functions@3.7.1(ws@8.21.0))(better-sqlite3@12.10.1)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260511.1)(@libsql/client@0.17.3)(@opentelemetry/api@1.9.0)(better-sqlite3@12.10.1))(oxc-parser@0.135.0)(rolldown@1.0.0-beta.57(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)))(ofetch@1.5.1)(vite@7.3.3(@types/node@25.6.2)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.47.1)(tsx@4.21.0)(yaml@2.9.0))
       feed:
         specifier: ^5.2.1
         version: 5.2.1
@@ -206,7 +206,7 @@ importers:
         version: 10.5.0(jiti@2.7.0)
       evalite:
         specifier: 1.0.0-beta.16
-        version: 1.0.0-beta.16(ai@6.0.204(zod@4.4.3))(better-sqlite3@12.10.1)
+        version: 1.0.0-beta.16(ai@6.0.205(zod@4.4.3))(better-sqlite3@12.10.1)
       happy-dom:
         specifier: ^20.10.3
         version: 20.10.3
@@ -255,8 +255,8 @@ packages:
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
-  '@ai-sdk/gateway@3.0.130':
-    resolution: {integrity: sha512-qenRdpoYM+2y8Ibj3Y7XngvfcG4NIpejaM+YqAKWXi3/N1qZYeIelrm19jxhIwQW0W/g7WUz0L2Agl7+FnwrQA==}
+  '@ai-sdk/gateway@3.0.131':
+    resolution: {integrity: sha512-CnjOZdywQaUnCyZ0N5wVNm7Sm63+NeHDVZQJKFX2IDq+t03SLwiiuoi3ILTLPlM+YSOhkQ/pvIDoR4qa98Zp5A==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -277,8 +277,8 @@ packages:
     resolution: {integrity: sha512-Q3BZ27qfpYqnCYGvE3vt+Qi6LGOF9R5Nmzn+9JoM1lCRsD9mYaIhfJLkSunN48nfGXJ6n+XNV0J/XVpqGQl7Dw==}
     engines: {node: '>=18'}
 
-  '@ai-sdk/vue@3.0.204':
-    resolution: {integrity: sha512-E+19scFHPnskbAAjGlYmOxOE63YYvpzGVRhcNcjL6bx/29QMbFOZNQDwvFtbeau/SYnl3pTY4XzCQl5sTST9hQ==}
+  '@ai-sdk/vue@3.0.205':
+    resolution: {integrity: sha512-9osiioHliXdeQp6GHIIHQve3Gf9q+vAADXxE2T095Bjv0zCBKj2PjVJOFj1lFn0u0OoRgXMQwhcxJt3aDrgt/g==}
     engines: {node: '>=18'}
     peerDependencies:
       vue: ^3.3.4
@@ -4836,8 +4836,8 @@ packages:
     resolution: {integrity: sha512-MnA+YT8fwfJPgBx3m60MNqakm30XOkyIoH1y6huTQvC0PwZG7ki8NacLBcrPbNoo8vEZy7Jpuk7+jMO+CUovTQ==}
     engines: {node: '>= 14'}
 
-  ai@6.0.204:
-    resolution: {integrity: sha512-SudB8rUwaVhpWF8+qTJcxUptXPIdN9rWMknzTT3WbKa2QwiGRshyepFKNkDILWm882LgqlEyRZgKhNT14j0jpQ==}
+  ai@6.0.205:
+    resolution: {integrity: sha512-F4akEGF41UdgJO3L4v+D5noVD1/czhJy6x0k9R/i1EXfxqrkBh/PdYSgRSLPiGFvrw76dzI8h4w3NYmLrTb8dw==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -10308,7 +10308,7 @@ snapshots:
       '@ai-sdk/provider-utils': 4.0.29(zod@4.4.3)
       zod: 4.4.3
 
-  '@ai-sdk/gateway@3.0.130(zod@4.4.3)':
+  '@ai-sdk/gateway@3.0.131(zod@4.4.3)':
     dependencies:
       '@ai-sdk/provider': 3.0.10
       '@ai-sdk/provider-utils': 4.0.29(zod@4.4.3)
@@ -10333,10 +10333,10 @@ snapshots:
     dependencies:
       json-schema: 0.4.0
 
-  '@ai-sdk/vue@3.0.204(vue@3.5.38(typescript@6.0.3))(zod@4.4.3)':
+  '@ai-sdk/vue@3.0.205(vue@3.5.38(typescript@6.0.3))(zod@4.4.3)':
     dependencies:
       '@ai-sdk/provider-utils': 4.0.29(zod@4.4.3)
-      ai: 6.0.204(zod@4.4.3)
+      ai: 6.0.205(zod@4.4.3)
       swrv: 1.2.0(vue@3.5.38(typescript@6.0.3))
       vue: 3.5.38(typescript@6.0.3)
     transitivePeerDependencies:
@@ -14847,9 +14847,9 @@ snapshots:
 
   agent-base@7.1.4: {}
 
-  ai@6.0.204(zod@4.4.3):
+  ai@6.0.205(zod@4.4.3):
     dependencies:
-      '@ai-sdk/gateway': 3.0.130(zod@4.4.3)
+      '@ai-sdk/gateway': 3.0.131(zod@4.4.3)
       '@ai-sdk/provider': 3.0.10
       '@ai-sdk/provider-utils': 4.0.29(zod@4.4.3)
       '@opentelemetry/api': 1.9.0
@@ -16302,7 +16302,7 @@ snapshots:
 
   etag@1.8.1: {}
 
-  evalite@1.0.0-beta.16(ai@6.0.204(zod@4.4.3))(better-sqlite3@12.10.1):
+  evalite@1.0.0-beta.16(ai@6.0.205(zod@4.4.3))(better-sqlite3@12.10.1):
     dependencies:
       '@fastify/static': 8.3.0
       '@fastify/websocket': 11.2.0
@@ -16319,7 +16319,7 @@ snapshots:
       table: 6.9.0
       tinyrainbow: 3.1.0
     optionalDependencies:
-      ai: 6.0.204(zod@4.4.3)
+      ai: 6.0.205(zod@4.4.3)
       better-sqlite3: 12.10.1
     transitivePeerDependencies:
       - bufferutil
@@ -16341,10 +16341,10 @@ snapshots:
     dependencies:
       eventsource-parser: 3.0.8
 
-  evlog@2.19.1(@nuxt/kit@4.4.8(magicast@0.5.3))(ai@6.0.204(zod@4.4.3))(express@5.2.1)(fastify@5.8.5)(h3@1.15.11)(hono@4.12.18)(nitropack@2.13.4(@libsql/client@0.17.3)(@vercel/functions@3.7.1(ws@8.21.0))(better-sqlite3@12.10.1)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260511.1)(@libsql/client@0.17.3)(@opentelemetry/api@1.9.0)(better-sqlite3@12.10.1))(oxc-parser@0.135.0)(rolldown@1.0.0-beta.57(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)))(ofetch@1.5.1)(vite@7.3.3(@types/node@25.6.2)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.47.1)(tsx@4.21.0)(yaml@2.9.0)):
+  evlog@2.19.1(@nuxt/kit@4.4.8(magicast@0.5.3))(ai@6.0.205(zod@4.4.3))(express@5.2.1)(fastify@5.8.5)(h3@1.15.11)(hono@4.12.18)(nitropack@2.13.4(@libsql/client@0.17.3)(@vercel/functions@3.7.1(ws@8.21.0))(better-sqlite3@12.10.1)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260511.1)(@libsql/client@0.17.3)(@opentelemetry/api@1.9.0)(better-sqlite3@12.10.1))(oxc-parser@0.135.0)(rolldown@1.0.0-beta.57(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)))(ofetch@1.5.1)(vite@7.3.3(@types/node@25.6.2)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.47.1)(tsx@4.21.0)(yaml@2.9.0)):
     optionalDependencies:
       '@nuxt/kit': 4.4.8(magicast@0.5.3)
-      ai: 6.0.204(zod@4.4.3)
+      ai: 6.0.205(zod@4.4.3)
       express: 5.2.1
       fastify: 5.8.5
       h3: 1.15.11
