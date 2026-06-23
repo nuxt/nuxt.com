@@ -458,7 +458,7 @@ export default defineNuxtConfig({
   compatibilityDate: '2026-01-14',
   nitro: {
     prerender: {
-      crawlLinks: true,
+      crawlLinks: false,
       ignore: [
         route => route === '/modules' || route.startsWith('/modules/'),
         route => route.startsWith('/admin'),
