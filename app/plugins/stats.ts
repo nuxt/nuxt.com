@@ -1,7 +1,7 @@
 export default defineNuxtPlugin(async () => {
   const stats = useStats()
 
-  if (import.meta.server) {
+  if (import.meta.server && !import.meta.prerender) {
     stats.value = await $fetch('/api/stats').catch(() => null)
   }
   onNuxtReady(async () => {
