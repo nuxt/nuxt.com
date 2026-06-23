@@ -47,6 +47,7 @@
     "@nuxtjs/mdc": "^0.22.0",
     "@takumi-rs/core": "^1.8.5",
     "@vercel/analytics": "^2.0.1",
+    "@vercel/connect": "0.2.6",
     "@vercel/functions": "^3.7.1",
     "@vercel/speed-insights": "^2.0.0",
     "@vue/compiler-sfc": "^3.5.38",

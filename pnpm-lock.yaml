@@ -71,6 +71,9 @@ importers:
       '@vercel/analytics':
         specifier: ^2.0.1
         version: 2.0.1(nuxt@4.4.8(6fc40bc3954d13ccabb66784bc5ac925))(vue@3.5.38(typescript@6.0.3))
+      '@vercel/connect':
+        specifier: 0.2.6
+        version: 0.2.6(@ai-sdk/mcp@1.0.50(zod@4.4.3))(ai@7.0.0-canary.165(zod@4.4.3))(eve@0.6.0-beta.20(@libsql/client@0.17.3)(@opentelemetry/api@1.9.0)(@vercel/functions@3.7.1(ws@8.21.0))(ai@7.0.0-canary.165(zod@4.4.3))(better-sqlite3@12.10.1)(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260511.1)(@libsql/client@0.17.3)(@opentelemetry/api@1.9.0)(better-sqlite3@12.10.1))(giget@3.2.0)(ioredis@5.10.1)(jiti@2.7.0)(lru-cache@11.3.6)(nuxt@4.4.8(6fc40bc3954d13ccabb66784bc5ac925))(rollup@4.60.3)(vite@7.3.3(@types/node@25.6.2)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.47.1)(tsx@4.21.0)(yaml@2.9.0))(vue@3.5.38(typescript@6.0.3)))
       '@vercel/functions':
         specifier: ^3.7.1
         version: 3.7.1(ws@8.21.0)
@@ -4653,6 +4656,30 @@ packages:
     resolution: {integrity: sha512-LMRMEai3Z+BODyxGcU9+KiWrS/UElNiOLKiNRfGNt2Vu3NTEmXgFeXG9wBfocAnTe5yJCX/DY6k3k7S/LkPp/g==}
     engines: {node: '>= 18'}
 
+  '@vercel/cli-exec@1.0.0':
+    resolution: {integrity: sha512-kQF8LGie/Hbdq9/psJxLE7owRTcqMQMhgybU04gCeR7cbQAr5t8OrjefDNColJv1QSSucFt4pLwRiARVmlOnug==}
+    engines: {node: '>= 18'}
+
+  '@vercel/connect@0.2.6':
+    resolution: {integrity: sha512-zVzg4rg0I8oXgMhRdfosHm7n2RxG5giRIWXJILBUiH9yIqDL5KG9ZCdsue92PZqhIF9EJ05tQJIud4sGYhx/mQ==}
+    peerDependencies:
+      '@ai-sdk/mcp': ^1 || ^2
+      '@auth/core': '>=0.37.0'
+      ai: ^6 || ^7.0.0-beta.0
+      better-auth: '>=1.5.0'
+      eve: '>=0.6.0-beta.1'
+    peerDependenciesMeta:
+      '@ai-sdk/mcp':
+        optional: true
+      '@auth/core':
+        optional: true
+      ai:
+        optional: true
+      better-auth:
+        optional: true
+      eve:
+        optional: true
+
   '@vercel/functions@3.7.1':
     resolution: {integrity: sha512-7PsCL2Vz4MKz4t+Nxu8u4mu/t66y1xv9I0njb3EYoFoFCsXchOChT7YFgXZYFQiUXFEifBpnoLma4e+ep7cKKA==}
     engines: {node: '>= 20'}
@@ -4676,6 +4703,10 @@ packages:
 
   '@vercel/oidc@3.6.1':
     resolution: {integrity: sha512-8ipTFoiX3WBRrvXLjSrmgAiwtMDQk3EgSxe8N7v2rXBz39NBIIyoGXeVbJRoBcP8WEuVnvjvIQsggbGU7ZKrMw==}
+    engines: {node: '>= 20'}
+
+  '@vercel/oidc@3.6.2':
+    resolution: {integrity: sha512-1X8B+Za3JAh+FJQ6xLqFds4M/SBbLpEDJMNe+QcaQoqNXLEV8zjGl0eJ8ekj4ObDYC2jXK6fvaa3wRadIfkP8w==}
     engines: {node: '>= 20'}
 
   '@vercel/speed-insights@2.0.0':
@@ -14891,6 +14922,18 @@ snapshots:
     dependencies:
       execa: 5.1.1
 
+  '@vercel/cli-exec@1.0.0':
+    dependencies:
+      execa: 5.1.1
+
+  '@vercel/connect@0.2.6(@ai-sdk/mcp@1.0.50(zod@4.4.3))(ai@7.0.0-canary.165(zod@4.4.3))(eve@0.6.0-beta.20(@libsql/client@0.17.3)(@opentelemetry/api@1.9.0)(@vercel/functions@3.7.1(ws@8.21.0))(ai@7.0.0-canary.165(zod@4.4.3))(better-sqlite3@12.10.1)(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260511.1)(@libsql/client@0.17.3)(@opentelemetry/api@1.9.0)(better-sqlite3@12.10.1))(giget@3.2.0)(ioredis@5.10.1)(jiti@2.7.0)(lru-cache@11.3.6)(nuxt@4.4.8(6fc40bc3954d13ccabb66784bc5ac925))(rollup@4.60.3)(vite@7.3.3(@types/node@25.6.2)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.47.1)(tsx@4.21.0)(yaml@2.9.0))(vue@3.5.38(typescript@6.0.3)))':
+    dependencies:
+      '@vercel/oidc': 3.6.2
+    optionalDependencies:
+      '@ai-sdk/mcp': 1.0.50(zod@4.4.3)
+      ai: 7.0.0-canary.165(zod@4.4.3)
+      eve: 0.6.0-beta.20(@libsql/client@0.17.3)(@opentelemetry/api@1.9.0)(@vercel/functions@3.7.1(ws@8.21.0))(ai@7.0.0-canary.165(zod@4.4.3))(better-sqlite3@12.10.1)(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260511.1)(@libsql/client@0.17.3)(@opentelemetry/api@1.9.0)(better-sqlite3@12.10.1))(giget@3.2.0)(ioredis@5.10.1)(jiti@2.7.0)(lru-cache@11.3.6)(nuxt@4.4.8(6fc40bc3954d13ccabb66784bc5ac925))(rollup@4.60.3)(vite@7.3.3(@types/node@25.6.2)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.47.1)(tsx@4.21.0)(yaml@2.9.0))(vue@3.5.38(typescript@6.0.3))
+
   '@vercel/functions@3.7.1(ws@8.21.0)':
     dependencies:
       '@vercel/oidc': 3.6.1
@@ -14922,6 +14965,12 @@ snapshots:
     dependencies:
       '@vercel/cli-config': 0.2.0
       '@vercel/cli-exec': 0.1.1
+      jose: 5.10.0
+
+  '@vercel/oidc@3.6.2':
+    dependencies:
+      '@vercel/cli-config': 0.2.0
+      '@vercel/cli-exec': 1.0.0
       jose: 5.10.0
 
   '@vercel/speed-insights@2.0.0(nuxt@4.4.8(6fc40bc3954d13ccabb66784bc5ac925))(vue@3.5.38(typescript@6.0.3))':
