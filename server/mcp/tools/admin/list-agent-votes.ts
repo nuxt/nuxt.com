@@ -65,7 +65,10 @@ WHEN TO USE: Use this tool to read what users actually disliked. Default sort is
       })
       .from(schema.votes)
       .innerJoin(schema.chats, eq(schema.chats.id, schema.votes.chatId))
-      .leftJoin(schema.messages, eq(schema.messages.id, schema.votes.messageId))
+      .leftJoin(schema.messages, and(
+        eq(schema.messages.chatId, schema.votes.chatId),
+        eq(schema.messages.id, schema.votes.messageId)
+      ))
       .where(filters.length ? and(...filters) : undefined)
       .orderBy(desc(schema.chats.createdAt))
       .limit(limit)

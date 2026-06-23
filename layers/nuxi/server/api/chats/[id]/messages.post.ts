@@ -29,17 +29,12 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: 'Chat not found' })
   }
 
-  await db.insert(schema.messages).values({
+  await insertChatMessages(id, [{
     id: message.id,
-    chatId: id,
     role: 'user',
     parts: message.parts as UIMessage['parts'],
     metadata: message.metadata ?? null
-  }).onConflictDoNothing()
-
-  await db.update(schema.chats).set({
-    updatedAt: new Date()
-  }).where(eq(schema.chats.id, id))
+  }])
 
   return { ok: true }
 })

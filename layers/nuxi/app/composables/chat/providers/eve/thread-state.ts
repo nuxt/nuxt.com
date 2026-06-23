@@ -1,7 +1,7 @@
 import type { UseEveAgentSnapshot } from 'eve/vue'
 import type { EveMessageData } from 'eve/vue'
 import type { UIMessage } from 'ai'
-import type { ChatEveState, ChatDetail } from '../../../../shared/types/chat'
+import type { ChatEveState, ChatDetail } from '../../../../../shared/types/chat'
 import type { ChatSessionOptions } from './types'
 
 export function resumeOptionsFromChat(chat: Pick<ChatDetail, 'state'>): ChatSessionOptions {

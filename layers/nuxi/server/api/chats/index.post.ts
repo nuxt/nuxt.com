@@ -1,4 +1,4 @@
-import { createError } from 'evlog'
+import { createError } from 'h3'
 import type { ExtractTablesWithRelations } from 'drizzle-orm'
 import type { LibSQLTransaction } from 'drizzle-orm/libsql'
 import { z } from 'zod'
@@ -38,7 +38,7 @@ export default defineEventHandler(async (event) => {
         chatId: id,
         role: 'user',
         parts: message.parts
-      }).onConflictDoNothing()
+      }).onConflictDoNothing({ target: [schema.messages.chatId, schema.messages.id] })
 
       await tx.update(schema.chats).set({
         updatedAt: new Date()
@@ -54,7 +54,7 @@ export default defineEventHandler(async (event) => {
     }).returning()
 
     if (!row) {
-      throw createError({ message: 'Failed to create chat', status: 500, why: 'Insert returned no row.' })
+      throw createError({ statusCode: 500, statusMessage: 'Failed to create chat' })
     }
 
     await tx.insert(schema.messages).values({

@@ -57,7 +57,10 @@ export default defineEventHandler(async (event) => {
   log.set({ truncate: { messageId, type, deleted: idsToDelete.length } })
 
   if (idsToDelete.length > 0) {
-    await db.delete(schema.messages).where(inArray(schema.messages.id, idsToDelete))
+    await db.delete(schema.messages).where(and(
+      eq(schema.messages.chatId, id),
+      inArray(schema.messages.id, idsToDelete)
+    ))
   }
 
   return { success: true }

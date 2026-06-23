@@ -1,6 +1,10 @@
 import { and, eq } from 'drizzle-orm'
+import type { ExtractTablesWithRelations } from 'drizzle-orm'
+import type { LibSQLTransaction } from 'drizzle-orm/libsql'
 import { z } from 'zod'
 import type { UIMessage } from 'ai'
+
+type Tx = LibSQLTransaction<typeof schema, ExtractTablesWithRelations<typeof schema>>
 
 const eveSessionCursorSchema = z.object({
   sessionId: z.string().optional(),
@@ -41,21 +45,23 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: 'Chat not found' })
   }
 
-  await db.update(schema.chats).set({
-    state: body.state,
-    updatedAt: new Date()
-  }).where(eq(schema.chats.id, id))
+  await db.transaction(async (tx: Tx) => {
+    await tx.update(schema.chats).set({
+      state: body.state,
+      updatedAt: new Date()
+    }).where(eq(schema.chats.id, id))
 
-  if (body.messages?.length) {
-    await db.delete(schema.messages).where(eq(schema.messages.chatId, id))
-    await db.insert(schema.messages).values(body.messages.map(m => ({
-      id: m.id,
-      chatId: id,
-      role: m.role,
-      parts: m.parts as UIMessage['parts'],
-      metadata: m.metadata ?? null
-    })))
-  }
+    if (body.messages?.length) {
+      await tx.delete(schema.messages).where(eq(schema.messages.chatId, id))
+      await tx.insert(schema.messages).values(body.messages.map(m => ({
+        id: m.id,
+        chatId: id,
+        role: m.role,
+        parts: m.parts as UIMessage['parts'],
+        metadata: m.metadata ?? null
+      })))
+    }
+  })
 
   return { ok: true }
 })

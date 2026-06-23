@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { AgentChatHandle } from '../../composables/providers/eve/types'
+import type { AgentChatHandle } from '../../composables/chat/types'
 
 const input = defineModel<string>({ required: true })
 

@@ -4,7 +4,7 @@
   "packageManager": "pnpm@11.6.0",
   "type": "module",
   "imports": {
-    "#agent/*": "./agent/*"
+    "#agent/*": "./layers/nuxi/agent/*"
   },
   "scripts": {
     "dev": "TMPDIR=/tmp node scripts/ensure-eve-dev.mjs && nuxt dev --ui-only",

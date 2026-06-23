@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { UIMessage } from 'ai'
-import type { AgentChatHandle } from '../../composables/providers/eve/types'
+import type { AgentChatHandle } from '../../composables/chat/types'
 
 withDefaults(defineProps<{
   chat: AgentChatHandle

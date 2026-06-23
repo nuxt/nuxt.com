@@ -1,5 +1,5 @@
 import type { AnySQLiteColumn } from 'drizzle-orm/sqlite-core'
-import { sqliteTable, text, integer, real, index, primaryKey } from 'drizzle-orm/sqlite-core'
+import { sqliteTable, text, integer, real, index, primaryKey, foreignKey } from 'drizzle-orm/sqlite-core'
 import { relations } from 'drizzle-orm'
 import { users } from '#server/db/schema'
 
@@ -37,7 +37,7 @@ export const chatsRelations = relations(chats, ({ many, one }) => ({
 }))
 
 export const messages = sqliteTable('messages', {
-  id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
+  id: text('id').notNull(),
   chatId: text('chat_id').notNull().references(() => chats.id, { onDelete: 'cascade' }),
   role: text('role', { enum: ['user', 'assistant', 'system'] }).notNull(),
   parts: text('parts', { mode: 'json' }),
@@ -45,22 +45,34 @@ export const messages = sqliteTable('messages', {
   provider: text('provider'),
   metadata: text('metadata', { mode: 'json' }).$type<Record<string, unknown>>(),
   ...timestamps
-}, table => [index('messages_chat_id_idx').on(table.chatId)])
+}, table => [
+  primaryKey({ columns: [table.chatId, table.id] })
+])
 
 export const messagesRelations = relations(messages, ({ one }) => ({
   chat: one(chats, { fields: [messages.chatId], references: [chats.id] })
 }))
 
 export const votes = sqliteTable('votes', {
-  chatId: text('chat_id').notNull().references(() => chats.id, { onDelete: 'cascade' }),
-  messageId: text('message_id').notNull().references(() => messages.id, { onDelete: 'cascade' }),
+  chatId: text('chat_id').notNull(),
+  messageId: text('message_id').notNull(),
   isUpvoted: integer('is_upvoted', { mode: 'boolean' }).notNull(),
   createdAt: integer('created_at', { mode: 'timestamp' }).$defaultFn(() => new Date())
-}, table => [primaryKey({ columns: [table.chatId, table.messageId] })])
+}, table => [
+  primaryKey({ columns: [table.chatId, table.messageId] }),
+  foreignKey({
+    columns: [table.chatId],
+    foreignColumns: [chats.id]
+  }).onDelete('cascade'),
+  foreignKey({
+    columns: [table.chatId, table.messageId],
+    foreignColumns: [messages.chatId, messages.id]
+  }).onDelete('cascade')
+])
 
 export const votesRelations = relations(votes, ({ one }) => ({
   chat: one(chats, { fields: [votes.chatId], references: [chats.id] }),
-  message: one(messages, { fields: [votes.messageId], references: [messages.id] })
+  message: one(messages, { fields: [votes.chatId, votes.messageId], references: [messages.chatId, messages.id] })
 }))
 
 export const agentDailyUsage = sqliteTable('agent_daily_usage', {
