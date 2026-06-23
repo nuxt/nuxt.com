@@ -158,7 +158,7 @@ export default defineNuxtConfig({
     // based on `Accept` and `User-Agent`, so cached responses must vary on both).
     // /raw/** is the rewrite destination — it must carry Vary too so CDNs
     // don't serve cached markdown to a browser that asked for HTML.
-    '/docs/**': { headers: { Vary: 'Accept, User-Agent' } },
+    '/docs/**': { isr: 60 * 60, prerender: false, headers: { Vary: 'Accept, User-Agent' } },
     '/blog/**': { headers: { Vary: 'Accept, User-Agent' } },
     '/deploy/**': { headers: { Vary: 'Accept, User-Agent' } },
     '/raw/**': { headers: { Vary: 'Accept, User-Agent' } },
