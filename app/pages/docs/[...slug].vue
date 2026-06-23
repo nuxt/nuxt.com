@@ -142,8 +142,6 @@ if (SUPPORTED_DOCS_PATH_REGEX.test(path.value)) {
 }
 
 if (import.meta.server) {
-  prerenderRoutes([joinURL('/raw', `${path.value}.md`)])
-
   useSchemaOrg([
     defineArticle({
       '@type': 'TechArticle',

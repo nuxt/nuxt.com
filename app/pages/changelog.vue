@@ -22,10 +22,6 @@ defineOgImage('Docs.takumi', {
   description
 })
 
-if (import.meta.server) {
-  prerenderRoutes(['/raw/changelog.md'])
-}
-
 const { data: releases } = await useFetch('/api/releases')
 const openStates = reactive<Record<string, boolean>>({})
 

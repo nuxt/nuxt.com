@@ -36,8 +36,6 @@ useSeoMeta({
 useCanonical('/raw/modules.md')
 
 if (import.meta.server) {
-  prerenderRoutes(['/raw/modules.md'])
-
   const site = useSiteConfig()
   useSeoMeta({
     ogDescription: description,
