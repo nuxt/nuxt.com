@@ -20,7 +20,7 @@ flowchart TB
 
 ### `agent/` — Eve runtime
 
-- Lives at `layers/nuxi/agent/` (symlinked as `./agent` at repo root for Eve CLI).
+- Lives at `layers/nuxi/agent/` (`eve.eveRoot` in root `nuxt.config.ts`).
 - Deployed via the `eve` Vercel service entrypoint.
 - **Never touches the database directly.** All persistence goes through the internal Nuxt API.
 
@@ -46,4 +46,4 @@ pnpm dev:full   # Nuxt + Eve worker
 pnpm typecheck
 ```
 
-The root `agent` symlink must point to `layers/nuxi/agent` so `eve build` resolves `./agent/`.
+The root `nuxt.config.ts` sets `eve.eveRoot: './layers/nuxi/agent'` so Eve builds from the layer without a repo-root symlink.

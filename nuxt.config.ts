@@ -31,6 +31,7 @@ export default defineNuxtConfig({
     'evlog/nuxt',
     'eve/nuxt'
   ],
+
   $development: {
     site: {
       url: 'http://localhost:3000'
@@ -528,6 +529,10 @@ export default defineNuxtConfig({
         commaDangle: 'never'
       }
     }
+  },
+
+  eve: {
+    eveRoot: './layers/nuxi/agent'
   },
   evlog: {
     env: { service: 'nuxt-com' },
