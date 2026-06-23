@@ -461,6 +461,7 @@ export default defineNuxtConfig({
       crawlLinks: true,
       ignore: [
         route => route === '/modules' || route.startsWith('/modules/'),
+        route => route.startsWith('/raw/'),
         route => route.startsWith('/admin'),
         route => route.startsWith('/login'),
         route => route.startsWith('/dashboard'),
