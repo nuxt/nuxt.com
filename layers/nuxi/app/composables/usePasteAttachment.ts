@@ -4,7 +4,7 @@ import {
   guessAttachmentName,
   shouldConvertPasteToAttachment,
   type TextPasteAttachment
-} from '../../../shared/utils/paste-attachment'
+} from '../../shared/utils/paste-attachment'
 
 export function usePasteAttachment(input: Ref<string>) {
   const attachments = ref<TextPasteAttachment[]>([])
@@ -43,6 +43,17 @@ export function usePasteAttachment(input: Ref<string>) {
     attachments.value = []
   }
 
+  function bindings(onSubmit: () => void | Promise<void>) {
+    return computed(() => ({
+      pasteAttachments: attachments.value,
+      canSubmit: canSubmit.value,
+      onPaste: handlePaste,
+      onRemoveAttachment: removeAttachment,
+      onRestoreAttachment: restoreToInput,
+      onSubmit
+    }))
+  }
+
   return {
     attachments,
     canSubmit,
@@ -50,6 +61,7 @@ export function usePasteAttachment(input: Ref<string>) {
     removeAttachment,
     restoreToInput,
     buildMessageParts: (): UIMessage['parts'] => buildMessageParts(input.value, attachments.value),
-    clearAttachments
+    clearAttachments,
+    bindings
   }
 }

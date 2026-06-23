@@ -1,20 +1,11 @@
 import type { UseEveAgentReturn, EveMessageData, UseEveAgentSnapshot } from 'eve/vue'
 import type { ChatSessionOptions } from './types'
-import { createEveFinishHandler, type EveChatRuntimeOptions } from '../../eve-persist'
 
 const agentsByChatId = new Map<string, UseEveAgentReturn<EveMessageData>>()
 
 export interface EveAgentBindingOptions extends ChatSessionOptions {
   headers?: () => Record<string, string>
   onFinish?: (snapshot: UseEveAgentSnapshot<EveMessageData>) => void | Promise<void>
-}
-
-export function configureEveChat(
-  runtime: EveChatRuntimeOptions
-): Pick<EveAgentBindingOptions, 'onFinish'> {
-  return {
-    onFinish: createEveFinishHandler(runtime)
-  }
 }
 
 export function getOrCreateEveAgent(chatId: string, options?: EveAgentBindingOptions) {

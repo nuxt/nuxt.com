@@ -7,7 +7,7 @@ Nuxi is the AI assistant embedded in nuxt.com. It runs as a **dual service** on 
 ```mermaid
 flowchart TB
   subgraph layer [layers/nuxi]
-    UI["app/composables/chat + components"]
+    UI["app/composables + components"]
     API["server/api/chats + internal"]
   end
   subgraph runtime [agent/]
@@ -33,16 +33,16 @@ flowchart TB
 
 - Session-authenticated routes for chat CRUD, messages, votes, and Eve state sync from the browser.
 
-### `app/composables/chat/` — UI client
+### `app/composables/` — UI client
 
-- `useAgentChat` — thin orchestrator (start page vs active chat).
-- `providers/eve/` — Eve agent registry, session facade, thread persistence.
-- `useChatSession`, `useChatVotes`, `navigation` — focused composables aligned with personal-agent-template.
+- `useAgentChat` — orchestrator (start page vs active chat).
+- `eve/` — Eve agent registry, session, thread persistence.
+- `useChatVotes`, `usePasteAttachment` — focused helpers.
 
 ## Local development
 
 ```bash
-pnpm dev   # Nuxt + Eve worker
+pnpm dev:full   # Nuxt + Eve worker
 pnpm typecheck
 ```
 

@@ -22,8 +22,12 @@ const VERBS: Record<string, [string, string]> = {
 
 export function normalizeToolName(toolName: string): string {
   if (toolName === 'connection__search') return toolName
-  const connectionMatch = toolName.match(/^connection__[\w-]+__(.+)$/)
-  return connectionMatch?.[1]?.replace(/_/g, '-') ?? toolName
+  const prefix = 'connection__'
+  if (!toolName.startsWith(prefix)) return toolName
+  const rest = toolName.slice(prefix.length)
+  const sep = rest.indexOf('__')
+  if (sep === -1) return toolName
+  return rest.slice(sep + 2).replace(/_/g, '-')
 }
 
 export function isConnectionSearchTool(part: ToolPart): boolean {

@@ -38,7 +38,7 @@ export async function searchGitHubIssues(
   const url = `https://api.github.com/search/issues?q=${encodeURIComponent(q)}&per_page=8&sort=relevance`
 
   const headers: Record<string, string> = {
-    Accept: 'application/vnd.github.v3+json',
+    'Accept': 'application/vnd.github.v3+json',
     'User-Agent': 'nuxt-agent'
   }
   if (token) {
