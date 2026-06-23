@@ -3,9 +3,12 @@
   "version": "0.3.11",
   "packageManager": "pnpm@11.6.0",
   "type": "module",
+  "imports": {
+    "#agent/*": "./agent/*"
+  },
   "scripts": {
-    "dev": "TMPDIR=/tmp nuxt dev --ui-only",
-    "dev:full": "TMPDIR=/tmp nuxt dev",
+    "dev": "TMPDIR=/tmp node scripts/ensure-eve-dev.mjs && nuxt dev --ui-only",
+    "dev:full": "TMPDIR=/tmp node scripts/ensure-eve-dev.mjs && nuxt dev",
     "build": "NODE_OPTIONS='--max-old-space-size=8192' nuxt build",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
@@ -25,7 +28,6 @@
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.84",
     "@ai-sdk/mcp": "^1.0.50",
-    "@ai-sdk/vue": "^3.0.205",
     "@comark/nuxt": "^0.4.0",
     "@iconify-json/heroicons": "^1.2.3",
     "@iconify-json/logos": "^1.2.11",
@@ -51,10 +53,11 @@
     "@vueuse/components": "^14.3.0",
     "@vueuse/core": "^14.3.0",
     "@vueuse/nuxt": "^14.3.0",
-    "ai": "^6.0.205",
+    "ai": "7.0.0-canary.165",
     "better-sqlite3": "^12.10.1",
     "date-fns": "^4.4.0",
     "drizzle-orm": "^0.45.2",
+    "eve": "0.6.0-beta.20",
     "evlog": "^2.19.1",
     "feed": "^5.2.1",
     "h3": "^1.15.11",
@@ -73,7 +76,8 @@
     "sitemap": "^9.0.1",
     "std-env": "^4.1.0",
     "ufo": "^1.6.4",
-    "valibot": "^1.4.1"
+    "valibot": "^1.4.1",
+    "zod": "4.4.3"
   },
   "devDependencies": {
     "@iconify-json/vscode-icons": "^1.2.57",

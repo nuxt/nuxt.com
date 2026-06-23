@@ -1,13 +1,8 @@
-import { tool } from 'ai'
+import { defineTool } from 'eve/tools'
 import { z } from 'zod'
-import type { UIToolInvocation } from 'ai'
-import { FetchError } from 'ofetch'
-
-export type ShowModuleUIToolInvocation = UIToolInvocation<typeof showModuleTool>
 
 const MODULE_API = 'https://api.nuxt.com/modules'
 
-/** Try alternate slugs (e.g. NuxtHub → `hub`). */
 function slugCandidates(raw: string): string[] {
   const t = raw.trim()
   const lower = t.toLowerCase()
@@ -30,20 +25,23 @@ function slugCandidates(raw: string): string[] {
 async function fetchModule(slug: string): Promise<Record<string, unknown> | null> {
   const url = `${MODULE_API}/${encodeURIComponent(slug)}`
   try {
-    const data = await $fetch<Record<string, unknown>>(url)
+    const response = await fetch(url)
+    if (response.status === 404) return null
+    if (!response.ok) throw new Error(`Module API ${response.status}`)
+    const data = await response.json() as Record<string, unknown>
     return data.error === true ? null : data
-  } catch (e) {
-    if (e instanceof FetchError && e.statusCode === 404) return null
-    throw e
+  } catch (error) {
+    if (error instanceof Error && error.message.includes('404')) return null
+    throw error
   }
 }
 
-export const showModuleTool = tool({
+export default defineTool({
   description: 'Display a Nuxt module card with install command. Use this tool when the user asks about installing, using, or recommending a specific Nuxt module. The card shows the module icon, description, stats, and a copy-able install command. Prefer catalog slugs when known (e.g. "hub" for NuxtHub / @nuxthub/core, "pinia" for Pinia).',
   inputSchema: z.object({
     name: z.string().describe('Module slug (e.g. "pinia", "i18n", "hub" for NuxtHub)')
   }),
-  execute: async ({ name }) => {
+  async execute({ name }) {
     let data: Record<string, unknown> | null = null
 
     for (const slug of slugCandidates(name)) {

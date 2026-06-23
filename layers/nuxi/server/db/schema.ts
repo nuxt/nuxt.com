@@ -22,6 +22,7 @@ export const chats = sqliteTable('chats', {
   durationMs: integer('duration_ms').notNull().default(0),
   requestCount: integer('request_count').notNull().default(0),
   updatedAt: integer('updated_at', { mode: 'timestamp' }),
+  state: text('state', { mode: 'json' }).$type<ChatEveState | null>(),
   ...timestamps
 }, table => [
   index('chats_user_id_idx').on(table.userId),

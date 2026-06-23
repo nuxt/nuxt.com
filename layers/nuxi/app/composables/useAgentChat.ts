@@ -1,11 +1,16 @@
-import { Chat } from '@ai-sdk/vue'
-import { DefaultChatTransport } from 'ai'
-import type { FileUIPart, UIMessage } from 'ai'
+import type { UIMessage } from 'ai'
+import { createEveChatSession } from './providers/eve/session'
+import { getOrCreateEveAgent } from './providers/eve/init'
+import { toUIMessages } from './providers/eve/adapter'
+import { persistAnonymousTitle, persistChatState, readAnonymousTitle, resumeOptionsFromChat } from './providers/eve/thread-state'
 
 type ChatModeOptions = {
   mode?: 'chat'
   chatId: string
   initialMessages?: UIMessage[]
+  initialState?: ChatEveState | null
+  /** Chat row already exists in DB (loaded from API or panel history). */
+  persistedInDb?: boolean
   source: string
   withPageContext?: 'always' | 'when-enabled'
   fetchVotes?: boolean
@@ -148,6 +153,24 @@ function useVotes(chatId: MaybeRefOrGetter<string>, immediate = false) {
   return { votes, getVote, vote }
 }
 
+function buildEveHeaders(
+  chatId: string,
+  agent: ReturnType<typeof useNuxtAgent>,
+  withPageContext: ComputedRef<boolean>
+) {
+  return () => {
+    const headers: Record<string, string> = {
+      'x-nuxi-chat-id': chatId
+    }
+
+    if (withPageContext.value && agent.currentPage.value) {
+      headers['x-page-path'] = agent.currentPage.value
+    }
+
+    return headers
+  }
+}
+
 export function useAgentChat(options: UseAgentChatOptions) {
   const agent = useNuxtAgent()
   const chats = useChats()
@@ -206,79 +229,109 @@ export function useAgentChat(options: UseAgentChatOptions) {
   const chatOptions = options as ChatModeOptions
   const { getVote, vote } = useVotes(() => chatOptions.chatId, chatOptions.fetchVotes ?? false)
 
+  const initialDbPersistDone = ref((chatOptions.initialMessages?.length ?? 0) > 0)
+
+  async function persistFirstUserMessage(parts: UIMessage['parts']) {
+    if (initialDbPersistDone.value) return
+
+    const metadata = {
+      createdAt: new Date().toISOString(),
+      ...(useContext.value && agent.currentPage.value ? { pagePath: agent.currentPage.value } : {})
+    }
+
+    if (chatOptions.persistedInDb) {
+      await appendUserMessageToChat(chatOptions.chatId, parts, metadata)
+    } else {
+      await createChatWithMessage(chatOptions.chatId, parts, metadata)
+    }
+
+    initialDbPersistDone.value = true
+  }
+
   const useContext = computed(() =>
     chatOptions.withPageContext === 'always'
       ? Boolean(agent.currentPage.value)
       : agent.pageContextEnabled.value && Boolean(agent.currentPage.value)
   )
 
-  const chat = new Chat<UIMessage>({
-    id: chatOptions.chatId,
-    messages: chatOptions.initialMessages,
-    transport: new DefaultChatTransport({
-      api: `/api/chats/${chatOptions.chatId}`,
-      headers: () => {
-        if (useContext.value && agent.currentPage.value) {
-          return { 'x-page-path': agent.currentPage.value }
-        }
-        return {}
-      }
-    }),
-    onFinish: () => {
-      const now = new Date().toISOString()
-      chat.messages = chat.messages.map((msg) => {
-        if (!(msg.metadata as Record<string, unknown> | undefined)?.createdAt) {
-          return { ...msg, metadata: { ...(msg.metadata as object ?? {}), createdAt: now } }
-        }
-        return msg
-      }) as UIMessage[]
+  const resumeOptions = computed(() => {
+    if (chatOptions.initialState) {
+      return resumeOptionsFromChat({ state: chatOptions.initialState })
+    }
+    return {}
+  })
+
+  const eveSession = createEveChatSession(() => chatOptions.chatId, () => ({
+    ...resumeOptions.value,
+    headers: buildEveHeaders(chatOptions.chatId, agent, useContext),
+    onFinish: async (snapshot) => {
+      const agentMessages = toUIMessages(getOrCreateEveAgent(chatOptions.chatId).data.value.messages)
 
       if (loggedIn.value) {
-        const chatCache = useNuxtData<ChatDetail>(`chat-${chatOptions.chatId}`)
-        if (chatCache.data.value) {
-          chatCache.data.value = {
-            ...chatCache.data.value,
-            messages: chat.messages.map(m => ({
-              id: m.id,
-              role: m.role,
-              parts: m.parts as unknown[],
-              createdAt: (m.metadata as { createdAt?: string } | undefined)?.createdAt ?? now
-            })) as ChatDetail['messages']
+        try {
+          await persistChatState(chatOptions.chatId, snapshot, {
+            syncMessages: true,
+            messages: [...agentMessages]
+          })
+          await chats.refresh()
+          let generatedTitle = chats.chatList.value?.find(c => c.id === chatOptions.chatId)?.title ?? null
+
+          if (!generatedTitle) {
+            const firstUser = [...agentMessages].find(message => message.role === 'user')
+            const fallback = firstUser
+              ? titleFromParts(firstUser.parts as UIMessage['parts'])
+              : null
+            if (fallback && fallback !== 'Untitled') {
+              await $fetch(`/api/chats/${chatOptions.chatId}/title`, {
+                method: 'PATCH',
+                body: { title: fallback }
+              })
+              generatedTitle = fallback
+            }
           }
+
+          if (generatedTitle) {
+            chats.patchTitle(chatOptions.chatId, generatedTitle)
+            chatOptions.onTitle?.(generatedTitle)
+          }
+        } catch {
+          // Non-fatal sync failure
+        }
+      } else {
+        const firstUser = [...agentMessages].find(message => message.role === 'user')
+        if (firstUser) {
+          const title = titleFromParts(firstUser.parts as UIMessage['parts'])
+          await persistAnonymousTitle(chatOptions.chatId, title)
+          chatOptions.onTitle?.(title)
         }
       }
 
       chatOptions.onFinish?.()
-    },
-    onData: async (part) => {
-      if (part.type === 'data-chat-title') {
-        const generatedTitle = (part.data as { title?: string } | undefined)?.title
-        if (generatedTitle) {
-          if (loggedIn.value) {
-            await chats.refresh()
-            const updated = chats.chatList.value?.find(c => c.id === chatOptions.chatId)
-            if (updated?.title) chats.patchTitle(chatOptions.chatId, updated.title)
-          } else {
-            chatOptions.onTitle?.(generatedTitle)
-          }
-          return
-        }
-
-        if (loggedIn.value) {
-          await chats.refresh()
-          const updated = chats.chatList.value?.find(c => c.id === chatOptions.chatId)
-          if (updated?.title) chats.patchTitle(chatOptions.chatId, updated.title)
-        }
-      }
     }
-  })
+  }))
+
+  const chat = {
+    get messages() {
+      const live = eveSession.messages
+      if (live.length > 0) return live
+      return chatOptions.initialMessages ?? []
+    },
+    get status() {
+      return eveSession.status
+    },
+    get error() {
+      return eveSession.error
+    },
+    stop: eveSession.stop,
+    regenerate: eveSession.regenerate
+  }
 
   type SendInput = string | { parts: UIMessage['parts'] }
 
-  async function send(input: SendInput) {
-    const parts = typeof input === 'string'
-      ? [{ type: 'text' as const, text: input }]
-      : input.parts
+  async function send(inputValue: SendInput) {
+    const parts = typeof inputValue === 'string'
+      ? [{ type: 'text' as const, text: inputValue }]
+      : inputValue.parts
 
     if (!parts.length || getMessageTextLength(parts) === 0 || agent.rateLimitReached.value) return
 
@@ -288,29 +341,12 @@ export function useAgentChat(options: UseAgentChatOptions) {
       withContext: useContext.value,
       queryLength: getMessageTextLength(parts)
     })
-    const metadata = {
-      createdAt: new Date().toISOString(),
-      ...(useContext.value && agent.currentPage.value ? { pagePath: agent.currentPage.value } : {})
+
+    if (loggedIn.value) {
+      await persistFirstUserMessage(parts)
     }
 
-    const fileParts = parts.filter((part): part is FileUIPart => part.type === 'file')
-    const text = parts
-      .filter((part): part is { type: 'text', text: string } => part.type === 'text')
-      .map(part => part.text)
-      .join('\n')
-      .trim()
-
-    if (chat.messages.length === 0 && loggedIn.value) {
-      const userMessage = await createChatWithMessage(chatOptions.chatId, parts, metadata)
-      chat.messages = [userMessage]
-      await chat.regenerate()
-    } else if (fileParts.length && text) {
-      await chat.sendMessage({ text, files: fileParts, metadata })
-    } else if (fileParts.length) {
-      await chat.sendMessage({ files: fileParts, metadata })
-    } else {
-      await chat.sendMessage({ text, metadata })
-    }
+    await eveSession.send(typeof inputValue === 'string' ? inputValue : { parts })
     agent.onMessageSent()
   }
 
@@ -335,6 +371,7 @@ export function useAgentChat(options: UseAgentChatOptions) {
     vote,
     send,
     onSubmit,
-    askQuestion
+    askQuestion,
+    readAnonymousTitle: () => readAnonymousTitle(chatOptions.chatId)
   }
 }

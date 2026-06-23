@@ -42,6 +42,8 @@ const {
 } = useAgentChat({
   chatId,
   initialMessages,
+  initialState: data.value?.state ?? null,
+  persistedInDb: true,
   source: 'chat-page',
   withPageContext: 'always',
   fetchVotes: isOwner.value,
@@ -79,7 +81,8 @@ onMounted(() => {
   }
 
   if (isOwner.value && data.value?.messages.length === 1 && data.value.messages[0]?.role === 'user') {
-    chat.regenerate()
+    const parts = data.value.messages[0].parts as UIMessage['parts']
+    send({ parts })
     return
   }
 

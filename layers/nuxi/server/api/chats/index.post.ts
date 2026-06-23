@@ -24,6 +24,29 @@ export default defineEventHandler(async (event) => {
   })
 
   const chat = await db.transaction(async (tx: Tx) => {
+    const existing = await tx.query.chats.findFirst({
+      where: () => eq(schema.chats.id, id)
+    })
+
+    if (existing) {
+      if (existing.userId !== user.id) {
+        throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
+      }
+
+      await tx.insert(schema.messages).values({
+        id: message.id,
+        chatId: id,
+        role: 'user',
+        parts: message.parts
+      }).onConflictDoNothing()
+
+      await tx.update(schema.chats).set({
+        updatedAt: new Date()
+      }).where(eq(schema.chats.id, id))
+
+      return existing
+    }
+
     const [row] = await tx.insert(schema.chats).values({
       id,
       title: null,

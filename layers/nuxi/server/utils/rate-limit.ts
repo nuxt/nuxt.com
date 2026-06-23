@@ -25,8 +25,7 @@ export async function checkAgentRateLimit(event: H3Event): Promise<{ used: numbe
   return { used, remaining: Math.max(0, limit - used), limit }
 }
 
-export async function consumeAgentRateLimit(event: H3Event): Promise<{ used: number, remaining: number, limit: number }> {
-  const userId = await resolveIdentity(event)
+export async function consumeAgentRateLimitForUser(userId: string): Promise<{ used: number, remaining: number, limit: number }> {
   const dayKey = today()
 
   return await db.transaction(async (tx: DbTransaction) => {
@@ -47,4 +46,9 @@ export async function consumeAgentRateLimit(event: H3Event): Promise<{ used: num
     }
     return { used, remaining: limit - used, limit }
   })
+}
+
+export async function consumeAgentRateLimit(event: H3Event): Promise<{ used: number, remaining: number, limit: number }> {
+  const userId = await resolveIdentity(event)
+  return consumeAgentRateLimitForUser(userId)
 }

@@ -28,7 +28,8 @@ export default defineNuxtConfig({
     '@nuxt/hints',
     '@vercel/analytics',
     '@vercel/speed-insights',
-    'evlog/nuxt'
+    'evlog/nuxt',
+    'eve/nuxt'
   ],
   $development: {
     site: {
@@ -122,7 +123,8 @@ export default defineNuxtConfig({
     resend: {
       apiKey: '',
       audienceId: ''
-    }
+    },
+    internalApiSecret: process.env.INTERNAL_API_SECRET || ''
   },
   routeRules: {
     // Pre-render
@@ -171,6 +173,8 @@ export default defineNuxtConfig({
     // Auth-protected client-side area — never SSR'd.
     '/dashboard': { ssr: false },
     '/dashboard/**': { ssr: false },
+    '/_eve_internal/**': { headers: { 'cache-control': 'no-store' } },
+    '/api/internal/**': { headers: { 'cache-control': 'no-store' } },
     // Main navigation
     '/api/navigation.json': { prerender: true },
     // Redirects

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { UIMessage } from 'ai'
-import type { Chat } from '@ai-sdk/vue'
+import type { AgentChatHandle } from '../../composables/providers/eve/types'
 
 withDefaults(defineProps<{
-  chat: Chat<UIMessage>
+  chat: AgentChatHandle
   chatId: string
   compact?: boolean
   showFaqEmpty?: boolean
