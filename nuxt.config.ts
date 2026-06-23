@@ -138,6 +138,7 @@ export default defineNuxtConfig({
           '</llms-full.txt>; rel="llms-full"; type="text/plain"',
           '</sitemap.xml>; rel="sitemap"; type="application/xml"',
           '</sitemap.md>; rel="sitemap"; type="text/markdown"',
+          '</design.md>; rel="design"; type="text/markdown"',
           '</mcp>; rel="mcp"; type="application/json"',
           '</docs>; rel="service-doc"; type="text/html"'
         ].join(', '),
@@ -147,6 +148,7 @@ export default defineNuxtConfig({
     '/blog/rss.xml': { prerender: true },
     '/sitemap.xml': { prerender: true },
     '/sitemap.md': { prerender: true },
+    '/design.md': { prerender: true, headers: { Vary: 'Accept, User-Agent' } },
     '/404.html': { prerender: true },
     '/docs/3.x/getting-started/introduction': { prerender: true },
     '/docs/4.x/getting-started/introduction': { prerender: true },
