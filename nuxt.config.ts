@@ -531,9 +531,6 @@ export default defineNuxtConfig({
     }
   },
 
-  eve: {
-    eveRoot: './layers/nuxi/agent'
-  },
   evlog: {
     env: { service: 'nuxt-com' },
     pretty: process.env.CI ? false : undefined,

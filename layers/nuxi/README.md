@@ -10,7 +10,7 @@ flowchart TB
     UI["app/composables + components"]
     API["server/api/chats + internal"]
   end
-  subgraph runtime [agent/]
+  subgraph runtime [agent/ at repo root]
     Agent["Eve tools, hooks, channels"]
   end
   UI -->|useEveAgent| Agent
@@ -20,7 +20,7 @@ flowchart TB
 
 ### `agent/` — Eve runtime
 
-- Lives at `layers/nuxi/agent/` (`eve.eveRoot` in root `nuxt.config.ts`).
+- Lives at the repo root in `agent/` (canonical Eve layout).
 - Deployed via the `eve` Vercel service entrypoint.
 - **Never touches the database directly.** All persistence goes through the internal Nuxt API.
 
@@ -46,4 +46,4 @@ pnpm dev:full   # Nuxt + Eve worker
 pnpm typecheck
 ```
 
-The root `nuxt.config.ts` sets `eve.eveRoot: './layers/nuxi/agent'` so Eve builds from the layer without a repo-root symlink.
+The `eve/nuxt` module wires the agent routes into the Nuxt app; Vercel deploys it as a dual-service project (`web` + `eve`).
