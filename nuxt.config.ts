@@ -605,9 +605,14 @@ export default defineNuxtConfig({
     logging: true
   },
   ogImage: {
-    cacheMaxAgeSeconds: 0,
+    cacheMaxAgeSeconds: 60 * 60 * 24,
     security: {
-      renderTimeout: 60000
+      // Strict mode only activates when a secret is present (local/CI builds without one).
+      strict: !!process.env.NUXT_OG_IMAGE_SECRET,
+      secret: process.env.NUXT_OG_IMAGE_SECRET,
+      renderTimeout: 60000,
+      // HMAC signing is sufficient; origin pinning blocks preview deploys.
+      restrictRuntimeImagesToOrigin: false
     }
   },
   schemaOrg: {
