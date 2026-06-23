@@ -60,7 +60,7 @@ onMounted(() => {
               </div>
               <div class="flex flex-col items-center">
                 <h3 class="text-4xl font-bold">
-                  {{ formatNumber(stats.stars) }}
+                  {{ stats ? formatNumber(stats.stars) : '...' }}
                 </h3>
                 <p class="text-sm text-muted">
                   GitHub Stars
@@ -68,7 +68,7 @@ onMounted(() => {
               </div>
               <div class="flex flex-col items-center">
                 <h3 class="text-4xl font-bold">
-                  {{ formatNumber(stats.monthlyDownloads) }}
+                  {{ stats ? formatNumber(stats.monthlyDownloads) : '...' }}
                 </h3>
                 <p class="text-sm text-muted">
                   Monthly Downloads
