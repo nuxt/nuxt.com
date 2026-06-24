@@ -4,7 +4,7 @@ import { count, eq, gte, sql } from 'drizzle-orm'
 export default defineMcpTool({
   description: `Nuxt.com-specific agent quality metrics: persisted web chat counts, message volume, and per-answer votes.
 
-For runs, tokens, cost, duration, and channel breakdown (Slack vs web), use **Vercel Observability → Agent Runs** on the nuxt project — Eve records that data automatically and it is more accurate than anything stored locally.
+For runs, tokens, cost, duration, and breakdown by channel/trigger (slack, http, …), use \`agent-runs-stats\` (Vercel Workflow API) — not this tool.
 
 WHEN TO USE: Quality and product signals (votes, saved web chats). For traffic/spend, point the team to Vercel o11y instead.`,
   inputSchema: {
@@ -52,7 +52,7 @@ WHEN TO USE: Quality and product signals (votes, saved web chats). For traffic/s
     return {
       window: { sinceDays, since: since.toISOString() },
       observability: {
-        note: 'Runs, tokens, cost, duration, and triggers (Slack, web) live in Vercel Observability → Agent Runs for the nuxt project. Do not infer usage or spend from this tool.',
+        note: 'Runs, tokens, cost, duration, and channel/trigger breakdown come from the `agent-runs-stats` tool (Vercel Workflow API).',
         location: 'Vercel dashboard → nuxt project → Observability → Agent Runs'
       },
       web: {

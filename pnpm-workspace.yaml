@@ -11,6 +11,7 @@ allowBuilds:
   puppeteer: false
   unrs-resolver: false
   vue-demi: false
+  cbor-extract: true
 
 minimumReleaseAgeExclude:
   - '@nuxt/ui@4.8.0'

@@ -10,9 +10,10 @@ export default defineMcpHandler({
 
 Tools:
 - Feedback: \`feedback-stats\`, \`list-feedback\`
+- Agent traffic: \`agent-runs-stats\` (live Vercel runs, tokens, breakdown by channel/trigger)
 - Agent quality: \`agent-usage-stats\` (web chats + votes only), \`list-agent-chats\`, \`get-agent-chat\`, \`list-agent-votes\`
 
-**Usage, tokens, cost, duration, and Slack runs** are in Vercel Observability → Agent Runs (nuxt project). Never report token/cost numbers from local DB — they are stale or absent post-Eve.
+For runs/tokens/traffic by channel (slack, http, …), prefer \`agent-runs-stats\`. On Slack, the same data is available via Eve tool \`vercel_observability__agent_runs_stats\`.
 
 For recurring tasks, prefer the prompts (\`summarize-feedback\`, \`triage-problematic-pages\`, \`review-agent-chats\`, \`weekly-digest\`) which already chain the right tool calls.
 

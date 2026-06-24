@@ -23,14 +23,15 @@ export function canAccessAdminMcp(auth: AdminAuth | null | undefined): boolean {
 }
 
 export const ADMIN_MCP_INSTRUCTIONS = `**Admin tools (team only):**
+- \`vercel_observability__agent_runs_stats\` — live runs, tokens, breakdown by channel/trigger (slack, http, …) from Vercel Observability
 - \`admin_mcp__feedback_stats\` — aggregated docs feedback metrics
 - \`admin_mcp__list_feedback\` — individual feedback entries
-- \`admin_mcp__agent_usage_stats\` — web chat counts and vote quality (NOT tokens/cost — use Vercel Observability → Agent Runs)
+- \`admin_mcp__agent_usage_stats\` — saved web chat counts and vote quality (complement with Vercel runs for traffic)
 - \`admin_mcp__list_agent_chats\` / \`admin_mcp__get_agent_chat\` — saved web chat sessions and transcripts
 - \`admin_mcp__list_agent_votes\` — message upvotes/downvotes
-- For runs, tokens, cost, duration, or Slack traffic: direct the team to **Vercel Observability → Agent Runs** (nuxt project). Do not invent numbers from local DB.
+- For runs, tokens, duration, or traffic by channel: use \`vercel_observability__agent_runs_stats\` first (live Vercel data). Use \`admin_mcp__agent_usage_stats\` only for votes / persisted web chats.
 - Default to recent data (last 7–30 days) unless the user asks for a longer window
-- Always include direct links (path / chat id) so the team can drill down on nuxt.com`
+- Always include direct links (path / chat id / run dashboard URL) so the team can drill down`
 
 async function callAdminMcpTool(toolName: string, input: Record<string, unknown>): Promise<unknown> {
   const token = process.env.NUXT_MCP_ADMIN_TOKEN?.trim()
