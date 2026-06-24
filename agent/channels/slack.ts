@@ -44,15 +44,12 @@ export default slackChannel({
   onAppMention: dispatchSlackMessage,
   onDirectMessage: dispatchSlackMessage,
   events: {
-    async 'session.failed'(event, channel) {
-      if (isHookConflictFailure(event)) {
-        await channel.thread.post(
-          'I\'m still working on your previous message in this thread — wait for my reply, or start a new thread if you need a separate conversation.'
-        )
-        return
-      }
+    async 'session.failed'(event, _channel) {
+      // DM + @mention (or any double dispatch on the same thread) races on one
+      // continuation token — the winning run already handles the user message.
+      if (isHookConflictFailure(event)) return
 
-      await channel.thread.post(
+      await _channel.thread.post(
         'Something went wrong and I cannot continue in this thread. Start a new thread to try again.'
       )
     }
