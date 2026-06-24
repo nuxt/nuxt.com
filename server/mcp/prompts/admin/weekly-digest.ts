@@ -12,10 +12,9 @@ export default defineMcpPrompt({
 Steps to follow (run them in parallel where possible):
 1. \`feedback-stats\` with \`sinceDays=${sinceDays}\`, \`topPages=5\`.
 2. \`list-feedback\` with \`ratings=["not-helpful", "confusing"]\`, \`sinceDays=${sinceDays}\`, \`limit=30\`.
-3. \`agent-runs-stats\` with \`sinceDays=${sinceDays}\` (runs, tokens, breakdown by channel/trigger).
-4. \`agent-usage-stats\` with \`sinceDays=${sinceDays}\` (web chats + votes).
-5. \`list-agent-chats\` with \`sinceDays=${sinceDays}\`, \`hasDownvotes=true\`, \`limit=5\` (worst-rated, most recently updated first).
-6. \`list-agent-votes\` with \`onlyDownvotes=true\`, \`sinceDays=${sinceDays}\`, \`limit=15\`.
+3. \`agent-usage-stats\` with \`sinceDays=${sinceDays}\`.
+4. \`list-agent-chats\` with \`sinceDays=${sinceDays}\`, \`hasDownvotes=true\`, \`limit=5\` (worst-rated, most recently updated first).
+5. \`list-agent-votes\` with \`onlyDownvotes=true\`, \`sinceDays=${sinceDays}\`, \`limit=15\`.
 
 Then write a digest in Markdown with these sections (be concise — each section ≤ 8 bullets):
 
@@ -27,7 +26,7 @@ Then write a digest in Markdown with these sections (be concise — each section
 - Top 3 recurring complaints across negative comments.
 
 ## AI agent
-- **Traffic & spend** (from \`agent-runs-stats\`): sessions, tokens in/out, breakdown by channel/trigger (slack, http, …), link to recent runs.
+- **Traffic & spend**: point to Vercel Observability → Agent Runs (runs, tokens, Slack vs web). Do not quote local DB for this.
 - **Quality** (from \`agent-usage-stats\` + votes): upvotes vs downvotes, downvote rate, web chats saved.
 - Top 3 worst web chats (id + short reason).
 

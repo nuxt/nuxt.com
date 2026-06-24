@@ -54,7 +54,6 @@
     "@vueuse/components": "^14.3.0",
     "@vueuse/core": "^14.3.0",
     "@vueuse/nuxt": "^14.3.0",
-    "@workflow/world-vercel": "4.4.1",
     "ai": "7.0.0-canary.165",
     "better-sqlite3": "^12.10.1",
     "date-fns": "^4.4.0",
