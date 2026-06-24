@@ -21,11 +21,17 @@ export default defineConfig({
           environment: 'nuxt',
           include: ['test/nuxt/**.spec.ts'],
           setupFiles: ['./test/nuxt/setup.ts'],
+          hookTimeout: 60_000,
+          env: {
+            // Skip spawning `eve dev` during @nuxt/test-utils setup (30s+ on CI).
+            EVE_BASE_URL: 'http://127.0.0.1:1'
+          },
           environmentOptions: {
             nuxt: {
               overrides: {
                 ogImage: { enabled: false },
-                experimental: { viteEnvironmentApi: false }
+                experimental: { viteEnvironmentApi: false },
+                eve: { configureVercelJson: false }
               }
             }
           }

@@ -37,6 +37,8 @@ jobs:
       - run: pnpm install
       - run: pnpm nuxt prepare
       - run: pnpm vitest run
+        env:
+          EVE_BASE_URL: http://127.0.0.1:1
 
   typecheck:
     runs-on: ubuntu-latest
