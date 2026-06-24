@@ -2,7 +2,7 @@ export default defineEventHandler(async (event) => {
   requireInternalRequest(event)
 
   const session = await getUserSession(event)
-  const user = session.user as { id: string, login?: string, name?: string, avatar?: string } | null
+  const user = session.user
 
   if (user) {
     return {
@@ -10,9 +10,10 @@ export default defineEventHandler(async (event) => {
       principalType: 'user' as const,
       authenticated: true,
       attributes: {
-        login: user.login,
+        login: user.username,
         name: user.name,
-        avatar: user.avatar
+        avatar: user.avatar,
+        role: user.role
       }
     }
   }

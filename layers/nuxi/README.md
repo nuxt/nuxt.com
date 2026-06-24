@@ -23,6 +23,7 @@ flowchart TB
 - Lives at the repo root in `agent/` (canonical Eve layout).
 - Deployed via the `eve` Vercel service entrypoint.
 - **Never touches the database directly.** All persistence goes through the internal Nuxt API.
+- **Admin MCP tools** — dynamic Eve tools calling `/mcp/admin`. Registered only for Slack or GitHub admins (`role: admin`). Anonymous and regular users never see them. Requires `NUXT_MCP_ADMIN_TOKEN` on web + eve.
 
 ### `server/api/internal/` — Agent → Nuxt bridge
 

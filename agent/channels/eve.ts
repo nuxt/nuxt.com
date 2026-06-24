@@ -13,6 +13,7 @@ interface SessionPrincipal {
     login?: string
     name?: string
     avatar?: string
+    role?: string
   }
 }
 
