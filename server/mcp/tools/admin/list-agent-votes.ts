@@ -45,8 +45,6 @@ WHEN TO USE: Use this tool to read what users actually disliked. Default sort is
       chatId: string
       messageId: string
       isUpvoted: boolean
-      provider: string | null
-      model: string | null
       chatCreatedAt: Date
       messageRole: 'user' | 'assistant' | 'system' | null
       messageParts: MessagePart[] | null
@@ -57,8 +55,6 @@ WHEN TO USE: Use this tool to read what users actually disliked. Default sort is
         chatId: schema.votes.chatId,
         messageId: schema.votes.messageId,
         isUpvoted: schema.votes.isUpvoted,
-        provider: schema.chats.provider,
-        model: schema.chats.model,
         chatCreatedAt: schema.chats.createdAt,
         messageRole: schema.messages.role,
         messageParts: schema.messages.parts as never
@@ -82,9 +78,8 @@ WHEN TO USE: Use this tool to read what users actually disliked. Default sort is
         chatId: r.chatId,
         messageId: r.messageId,
         vote: r.isUpvoted ? 'up' : 'down',
-        provider: r.provider,
-        model: r.model,
         chatCreatedAt: r.chatCreatedAt,
+        url: `https://nuxt.com/dashboard/chat/${r.chatId}`,
         messageRole: r.messageRole,
         messageText: r.messageParts ? extractText(r.messageParts).slice(0, 1000) : undefined
       }))

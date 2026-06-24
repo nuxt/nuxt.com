@@ -25,9 +25,10 @@ export function canAccessAdminMcp(auth: AdminAuth | null | undefined): boolean {
 export const ADMIN_MCP_INSTRUCTIONS = `**Admin tools (team only):**
 - \`admin_mcp__feedback_stats\` — aggregated docs feedback metrics
 - \`admin_mcp__list_feedback\` — individual feedback entries
-- \`admin_mcp__agent_usage_stats\` — Nuxi usage and cost
-- \`admin_mcp__list_agent_chats\` / \`admin_mcp__get_agent_chat\` — chat sessions and transcripts
+- \`admin_mcp__agent_usage_stats\` — web chat counts and vote quality (NOT tokens/cost — use Vercel Observability → Agent Runs)
+- \`admin_mcp__list_agent_chats\` / \`admin_mcp__get_agent_chat\` — saved web chat sessions and transcripts
 - \`admin_mcp__list_agent_votes\` — message upvotes/downvotes
+- For runs, tokens, cost, duration, or Slack traffic: direct the team to **Vercel Observability → Agent Runs** (nuxt project). Do not invent numbers from local DB.
 - Default to recent data (last 7–30 days) unless the user asks for a longer window
 - Always include direct links (path / chat id) so the team can drill down on nuxt.com`
 
@@ -83,7 +84,7 @@ function adminTools() {
       }
     }),
     agent_usage_stats: defineTool({
-      description: 'Admin: aggregated Nuxi usage stats (chats, tokens, cost, provider mix).',
+      description: 'Admin: web chat counts and vote quality. For runs/tokens/cost use Vercel Observability Agent Runs.',
       inputSchema: z.object({
         sinceDays: z.number().int().min(1).max(365).default(30)
       }),
@@ -92,14 +93,12 @@ function adminTools() {
       }
     }),
     list_agent_chats: defineTool({
-      description: 'Admin: list Nuxi chat sessions with usage metrics and vote counts.',
+      description: 'Admin: list saved web chat sessions with vote counts (not Slack threads).',
       inputSchema: z.object({
         sinceDays: z.number().int().min(1).max(365).optional(),
         until: z.string().datetime({ offset: true }).optional(),
-        provider: z.string().optional(),
-        model: z.string().optional(),
         hasDownvotes: z.boolean().optional(),
-        sortBy: z.enum(['createdAt', 'updatedAt', 'estimatedCost', 'durationMs', 'inputTokens', 'outputTokens']).default('updatedAt'),
+        sortBy: z.enum(['createdAt', 'updatedAt']).default('updatedAt'),
         limit: z.number().int().min(1).max(100).default(25),
         offset: z.number().int().min(0).default(0)
       }),

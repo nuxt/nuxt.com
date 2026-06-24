@@ -6,11 +6,13 @@ export default defineMcpHandler({
   icons: [
     { src: 'https://nuxt.com/icon.png', mimeType: 'image/png', sizes: ['64x64'] }
   ],
-  instructions: `You are connected to the Nuxt admin MCP. You can query user feedback (helpfulness ratings on docs pages), AI agent chat sessions (with token usage and cost), and per-message upvotes/downvotes.
+  instructions: `You are connected to the Nuxt admin MCP. You can query docs feedback, saved web chat sessions, and per-message votes from the production database.
 
 Tools:
 - Feedback: \`feedback-stats\`, \`list-feedback\`
-- Agent: \`agent-usage-stats\`, \`list-agent-chats\`, \`get-agent-chat\`, \`list-agent-votes\`
+- Agent quality: \`agent-usage-stats\` (web chats + votes only), \`list-agent-chats\`, \`get-agent-chat\`, \`list-agent-votes\`
+
+**Usage, tokens, cost, duration, and Slack runs** are in Vercel Observability → Agent Runs (nuxt project). Never report token/cost numbers from local DB — they are stale or absent post-Eve.
 
 For recurring tasks, prefer the prompts (\`summarize-feedback\`, \`triage-problematic-pages\`, \`review-agent-chats\`, \`weekly-digest\`) which already chain the right tool calls.
 

@@ -7,6 +7,13 @@ import {
   type SlackMessage
 } from 'eve/channels/slack'
 
+function isHookConflictFailure(event: { code?: string, message?: string }) {
+  const message = event.message ?? ''
+  return event.code === 'HookConflictError'
+    || message.includes('HookConflict')
+    || message.includes('already in use by another workflow')
+}
+
 async function dispatchSlackMessage(ctx: SlackContext, message: SlackMessage) {
   await ctx.thread.startTyping('Thinking...')
 
@@ -35,5 +42,19 @@ export default slackChannel({
   ),
   botName: 'Nuxi',
   onAppMention: dispatchSlackMessage,
-  onDirectMessage: dispatchSlackMessage
+  onDirectMessage: dispatchSlackMessage,
+  events: {
+    async 'session.failed'(event, channel) {
+      if (isHookConflictFailure(event)) {
+        await channel.thread.post(
+          'I\'m still working on your previous message in this thread — wait for my reply, or start a new thread if you need a separate conversation.'
+        )
+        return
+      }
+
+      await channel.thread.post(
+        'Something went wrong and I cannot continue in this thread. Start a new thread to try again.'
+      )
+    }
+  }
 })

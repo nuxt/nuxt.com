@@ -1,5 +1,5 @@
 import type { AnySQLiteColumn } from 'drizzle-orm/sqlite-core'
-import { sqliteTable, text, integer, real, index, primaryKey, foreignKey } from 'drizzle-orm/sqlite-core'
+import { sqliteTable, text, integer, index, primaryKey, foreignKey } from 'drizzle-orm/sqlite-core'
 import { relations } from 'drizzle-orm'
 import { users } from '#server/db/schema'
 
@@ -14,13 +14,6 @@ export const chats = sqliteTable('chats', {
   visibility: text('visibility', { enum: ['public', 'private', 'admin'] }).notNull().default('private'),
   parentChatId: text('parent_chat_id').references((): AnySQLiteColumn => chats.id, { onDelete: 'set null' }),
   metadata: text('metadata', { mode: 'json' }).$type<Record<string, unknown>>(),
-  model: text('model'),
-  provider: text('provider'),
-  inputTokens: integer('input_tokens').notNull().default(0),
-  outputTokens: integer('output_tokens').notNull().default(0),
-  estimatedCost: real('estimated_cost').notNull().default(0),
-  durationMs: integer('duration_ms').notNull().default(0),
-  requestCount: integer('request_count').notNull().default(0),
   updatedAt: integer('updated_at', { mode: 'timestamp' }),
   state: text('state', { mode: 'json' }).$type<ChatEveState | null>(),
   ...timestamps
@@ -41,8 +34,6 @@ export const messages = sqliteTable('messages', {
   chatId: text('chat_id').notNull().references(() => chats.id, { onDelete: 'cascade' }),
   role: text('role', { enum: ['user', 'assistant', 'system'] }).notNull(),
   parts: text('parts', { mode: 'json' }),
-  model: text('model'),
-  provider: text('provider'),
   metadata: text('metadata', { mode: 'json' }).$type<Record<string, unknown>>(),
   ...timestamps
 }, table => [
@@ -83,21 +74,4 @@ export const agentDailyUsage = sqliteTable('agent_daily_usage', {
 }, table => [
   primaryKey({ columns: [table.userId, table.dayKey] }),
   index('agent_daily_usage_day_key_idx').on(table.dayKey)
-])
-
-export const agentStats = sqliteTable('agent_stats', {
-  dayKey: text('day_key').notNull(),
-  userId: text('user_id').notNull(),
-  provider: text('provider').notNull(),
-  model: text('model').notNull(),
-  chatsStarted: integer('chats_started').notNull().default(0),
-  requestCount: integer('request_count').notNull().default(0),
-  errorCount: integer('error_count').notNull().default(0),
-  inputTokens: integer('input_tokens').notNull().default(0),
-  outputTokens: integer('output_tokens').notNull().default(0),
-  estimatedCost: real('estimated_cost').notNull().default(0),
-  durationMs: integer('duration_ms').notNull().default(0)
-}, table => [
-  primaryKey({ columns: [table.dayKey, table.userId, table.provider, table.model] }),
-  index('agent_stats_day_key_idx').on(table.dayKey)
 ])
