@@ -160,4 +160,16 @@ websites:
   - name: Shaina Mote
     url: https://www.shainamote.com/
     screenshotOptions:
-      hideElements: ['.cookie-policy', '.announcement-bar']
+      hideElements: ['.cookie-policy', '.announcement-bar']    
+  - name: Codemachia
+    url: https://codemachia.com/
+  - name: Ikki
+    url: https://ikki.io/
+  - name: The Boom
+    url: https://the-boom.org/
+  - name: Maideo
+    url: https://maideo.fr/
+  - name: Opportunix
+    url: https://www.opportunix.org/
+  - name: footfoot
+    url: https://www.footfoot.co/  
