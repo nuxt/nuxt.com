@@ -100,7 +100,7 @@ To run the evals for the MCP server, follow these steps:
 
 ## Nuxi (Eve agent)
 
-Nuxi runs on [Eve](https://eve.dev) via the `agent/` runtime and the `eve/nuxt` module. For local development:
+Nuxi lives in [`layers/nuxi/`](./layers/nuxi/) — Eve runtime (`agent/`), UI, and internal APIs in one layer. For local development:
 
 ```bash
 # Required — shared secret between the Nuxt app and Eve runtime

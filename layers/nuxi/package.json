@@ -1,0 +1,15 @@
+{
+  "name": "nuxi-eve",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "eve build",
+    "dev": "eve dev",
+    "start": "eve start"
+  },
+  "dependencies": {
+    "ai": "7.0.0-canary.165",
+    "eve": "0.6.0-beta.20",
+    "zod": "4.4.3"
+  }
+}

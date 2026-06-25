@@ -3,9 +3,6 @@
   "version": "0.3.11",
   "packageManager": "pnpm@11.6.0",
   "type": "module",
-  "imports": {
-    "#agent/*": "./agent/*"
-  },
   "scripts": {
     "dev": "TMPDIR=/tmp nuxt dev --ui-only",
     "dev:full": "TMPDIR=/tmp nuxt dev",

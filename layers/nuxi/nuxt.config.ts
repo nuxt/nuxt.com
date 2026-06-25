@@ -5,5 +5,10 @@ export default defineNuxtConfig({
 
   $meta: {
     name: 'nuxi'
+  },
+
+  eve: {
+    eveRoot: './layers/nuxi',
+    configureVercelJson: false
   }
 })

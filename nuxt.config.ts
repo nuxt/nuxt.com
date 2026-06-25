@@ -487,11 +487,13 @@ export default defineNuxtConfig({
     optimizeDeps: {
       include: [
         '@comark/vue',
+        '@unhead/schema-org/vue',
         '@vue/devtools-core',
         '@vue/devtools-kit',
         'valibot',
         'zod',
-        'date-fns'
+        'date-fns',
+        'ai'
       ],
       exclude: ['vue-chrts', 'shaders']
     }

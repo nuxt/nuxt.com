@@ -8,7 +8,7 @@
     },
     "eve": {
       "buildCommand": "eve build",
-      "entrypoint": ".",
+      "entrypoint": "layers/nuxi",
       "framework": "eve",
       "routePrefix": "/_eve_internal/eve"
     }
