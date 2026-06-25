@@ -180,8 +180,8 @@ const _useNavigation = () => {
   const { articles: blogArticles, fetchList: fetchBlog } = useBlog()
 
   const searchLinks = computed(() => [{
-    label: 'Ask Agent',
-    icon: 'i-lucide-wand',
+    label: 'Ask Nuxi',
+    icon: 'i-custom-nuxi',
     to: 'javascript:void(0);',
     onSelect: () => {
       track('Nuxi Opened', { source: 'search-links' })
@@ -284,9 +284,8 @@ const _useNavigation = () => {
     ignoreFilter: true,
     postFilter,
     items: [{
-      label: 'Ask Agent',
-      icon: 'i-lucide-wand',
-      to: 'javascript:void(0);',
+      label: 'Ask Nuxi',
+      icon: 'i-custom-nuxi',
       onSelect() {
         track('Nuxi Opened', { source: 'search-palette', query: searchTerm.value })
         openAgent(searchTerm.value)
