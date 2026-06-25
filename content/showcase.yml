@@ -163,5 +163,3 @@ websites:
       hideElements: ['.cookie-policy', '.announcement-bar']
   - name: Trail Appliances
     url: https://www.trailappliances.com/
-    screenshotOptions:
-      cookies: ['trail-region=bc;']
