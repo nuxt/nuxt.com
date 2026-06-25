@@ -14,6 +14,8 @@ links:
     target: '_blank'
 ---
 
+For machine-readable design tokens (colors, typography, spacing, components), see [/design.md](/design.md).
+
 ## Logo History
 
 The Nuxt logo has evolved gradually over time, but the mountain shape and wordmark have been constant elements in its design.
