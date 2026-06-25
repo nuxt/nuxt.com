@@ -35,6 +35,9 @@ importers:
       '@iconify-json/simple-icons':
         specifier: ^1.2.86
         version: 1.2.86
+      '@iconify-json/vscode-icons':
+        specifier: ^1.2.57
+        version: 1.2.57
       '@libsql/client':
         specifier: ^0.17.3
         version: 0.17.3
@@ -162,9 +165,6 @@ importers:
         specifier: ^1.4.1
         version: 1.4.1(typescript@6.0.3)
     devDependencies:
-      '@iconify-json/vscode-icons':
-        specifier: ^1.2.57
-        version: 1.2.57
       '@nuxt/devtools':
         specifier: ^3.2.4
         version: 3.2.4(vite@7.3.3(@types/node@25.6.2)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.47.1)(tsx@4.21.0)(yaml@2.9.0))(vue@3.5.38(typescript@6.0.3))
