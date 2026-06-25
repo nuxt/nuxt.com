@@ -7,6 +7,7 @@ const props = defineProps<{
 }>()
 
 const {
+  isOpen,
   faqQuestions,
   usage,
   rateLimitReached,
@@ -45,6 +46,17 @@ watch(() => chat.status, (status) => {
   else if (status === 'ready' && chat.messages.length > 0) nuxiMood.value = 'happy'
   else nuxiMood.value = 'idle'
 }, { immediate: true })
+
+// The docked sidebar keeps its content mounted when closed, so `autofocus`
+// only fires once. Refocus the prompt each time the panel reopens.
+const promptRef = useTemplateRef('promptRef')
+watch(isOpen, (value) => {
+  if (value) {
+    nextTick(() => {
+      promptRef.value?.focus()
+    })
+  }
+})
 
 onMounted(() => {
   const pendingPrompt = consumePendingPrompt()
@@ -113,6 +125,7 @@ onMounted(() => {
 
       <AgentChatPrompt
         v-else
+        ref="promptRef"
         v-model="input"
         v-bind="prompt"
         :chat="chat"

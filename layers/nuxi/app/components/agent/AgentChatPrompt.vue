@@ -31,6 +31,12 @@ defineEmits<{
   restoreAttachment: [index: number]
 }>()
 
+const chatPromptRef = useTemplateRef('chatPromptRef')
+
+defineExpose({
+  focus: () => chatPromptRef.value?.textareaRef?.focus()
+})
+
 const promptStatus = computed(() => props.status ?? props.chat?.status ?? 'ready')
 const promptError = computed(() => props.error ?? props.chat?.error)
 const isSubmitDisabled = computed(() => {
@@ -41,6 +47,7 @@ const isSubmitDisabled = computed(() => {
 
 <template>
   <UChatPrompt
+    ref="chatPromptRef"
     v-model="input"
     :error="promptError"
     placeholder="Ask anything…"
