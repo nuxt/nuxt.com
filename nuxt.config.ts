@@ -124,8 +124,7 @@ export default defineNuxtConfig({
     resend: {
       apiKey: '',
       audienceId: ''
-    },
-    internalApiSecret: process.env.INTERNAL_API_SECRET || ''
+    }
   },
   routeRules: {
     // Pre-render

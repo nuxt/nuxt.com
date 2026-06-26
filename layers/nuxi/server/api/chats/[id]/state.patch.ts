@@ -2,7 +2,6 @@ import { and, eq } from 'drizzle-orm'
 import type { ExtractTablesWithRelations } from 'drizzle-orm'
 import type { LibSQLTransaction } from 'drizzle-orm/libsql'
 import { z } from 'zod'
-import type { UIMessage } from 'ai'
 
 type Tx = LibSQLTransaction<typeof schema, ExtractTablesWithRelations<typeof schema>>
 
@@ -29,7 +28,7 @@ export default defineEventHandler(async (event) => {
     messages: z.array(z.object({
       id: z.string(),
       role: z.enum(['user', 'assistant', 'system']),
-      parts: z.array(z.object({ type: z.string() }).loose()),
+      parts: uiMessagePartsSchema,
       metadata: z.record(z.string(), z.unknown()).optional()
     })).optional()
   }).parse)
@@ -57,9 +56,9 @@ export default defineEventHandler(async (event) => {
         id: m.id,
         chatId: id,
         role: m.role,
-        parts: m.parts as UIMessage['parts'],
+        parts: m.parts,
         metadata: m.metadata ?? null
-      })))
+      }))).onConflictDoNothing()
     }
   })
 

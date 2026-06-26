@@ -207,7 +207,7 @@ export function moduleCardProps(data: ModuleCardData): Omit<ModuleCardData, 'nam
 
 export function getToolText(part: ToolPart) {
   const done = part.state === 'output-available'
-  const { verb, label } = parseToolName(normalizeToolName(getToolName(part)))
+  const { verb, label } = parseToolName(getToolName(part))
 
   if (verb) return `${done ? verb[1] : verb[0]} ${label}`
 

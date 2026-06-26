@@ -1,4 +1,4 @@
-import { asc, eq } from 'drizzle-orm'
+import { and, asc, eq } from 'drizzle-orm'
 import { z } from 'zod'
 
 function messageText(parts: unknown): string {
@@ -17,8 +17,16 @@ export default defineEventHandler(async (event) => {
     id: z.uuid()
   }).parse)
 
+  const sessionUserId = await resolveInternalPrincipalId(event)
+  if (!sessionUserId) {
+    return { summary: null }
+  }
+
   const chat = await db.query.chats.findFirst({
-    where: () => eq(schema.chats.id, id),
+    where: () => and(
+      eq(schema.chats.id, id),
+      eq(schema.chats.userId, sessionUserId)
+    ),
     with: {
       messages: {
         orderBy: () => [asc(schema.messages.createdAt), asc(schema.messages.id)]

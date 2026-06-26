@@ -1,7 +1,8 @@
 import type { UIMessage } from 'ai'
+import type { ChatEveState } from '../../shared/types/chat'
 import { buildMessageParts, getMessageTextLength } from '../../shared/utils/paste-attachment'
 import { createEveChatSession } from './eve/session'
-import { getOrCreateEveAgent } from './eve/init'
+import { getOrCreateEveAgent, removeEveAgent } from './eve/init'
 import { toUIMessages } from './eve/adapter'
 import {
   createEveFinishHandler,
@@ -196,19 +197,23 @@ export function useAgentChat(options: UseAgentChatOptions) {
 
   async function persistFirstUserMessage(parts: UIMessage['parts']) {
     if (initialDbPersistDone.value) return
+    initialDbPersistDone.value = true
 
     const metadata = {
       createdAt: new Date().toISOString(),
       ...(useContext.value && agent.currentPage.value ? { pagePath: agent.currentPage.value } : {})
     }
 
-    if (chatOptions.persistedInDb) {
-      await appendUserMessageToChat(chatOptions.chatId, parts, metadata)
-    } else {
-      await createChatWithMessage(chatOptions.chatId, parts, metadata)
+    try {
+      if (chatOptions.persistedInDb) {
+        await appendUserMessageToChat(chatOptions.chatId, parts, metadata)
+      } else {
+        await createChatWithMessage(chatOptions.chatId, parts, metadata)
+      }
+    } catch (error) {
+      initialDbPersistDone.value = false
+      throw error
     }
-
-    initialDbPersistDone.value = true
   }
 
   type SendInput = string | { parts: UIMessage['parts'] }
@@ -246,6 +251,12 @@ export function useAgentChat(options: UseAgentChatOptions) {
   function askQuestion(question: string) {
     track('Nuxi FAQ Clicked', { question, source: chatOptions.source })
     send(question)
+  }
+
+  if (import.meta.client) {
+    onUnmounted(() => {
+      removeEveAgent(chatOptions.chatId)
+    })
   }
 
   return {

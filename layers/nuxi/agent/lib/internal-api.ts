@@ -27,9 +27,12 @@ export function internalHeaders(extra?: Record<string, string>) {
   }
 }
 
+const INTERNAL_FETCH_TIMEOUT_MS = 10_000
+
 export async function internalFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`${appOrigin()}${path}`, {
     ...init,
+    signal: init?.signal ?? AbortSignal.timeout(INTERNAL_FETCH_TIMEOUT_MS),
     headers: {
       ...internalHeaders(),
       ...(init?.headers as Record<string, string> | undefined)

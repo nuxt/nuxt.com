@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { UIMessage } from 'ai'
+import { getOrCreateEveAgent } from '../../../composables/eve/init'
 
 definePageMeta({
   layout: 'dashboard'
@@ -81,8 +82,12 @@ onMounted(() => {
   }
 
   if (isOwner.value && data.value?.messages.length === 1 && data.value.messages[0]?.role === 'user') {
-    const parts = data.value.messages[0].parts as UIMessage['parts']
-    send({ parts })
+    const eveHasUser = getOrCreateEveAgent(chatId).data.value.messages.some(message => message.role === 'user')
+    if (eveHasUser) {
+      void chat.regenerate()
+    } else {
+      void send({ parts: data.value.messages[0].parts as UIMessage['parts'] })
+    }
     return
   }
 

@@ -28,7 +28,7 @@ export async function searchGitHubIssues(
   if (repo) {
     q += ` repo:${repo}`
   } else {
-    q += ` ${NUXT_ORGS.map(org => `org:${org}`).join(' ')}`
+    q += ` (${NUXT_ORGS.map(org => `org:${org}`).join(' OR ')})`
   }
   if (state !== 'all') {
     q += ` state:${state}`

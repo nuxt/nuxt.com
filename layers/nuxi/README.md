@@ -2,7 +2,7 @@
 
 Everything for the Nuxi assistant on nuxt.com lives here.
 
-```
+```text
 layers/nuxi/
 ├── agent/          # Eve runtime (channels, tools, hooks) — deployed as the `eve` Vercel service
 ├── app/            # Chat UI (panel, dashboard, composables)

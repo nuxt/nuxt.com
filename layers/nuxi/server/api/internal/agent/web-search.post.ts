@@ -17,8 +17,9 @@ export default defineEventHandler(async (event) => {
 
     return { summary: text }
   } catch (error) {
+    console.error('[web-search] provider error', error)
     return {
-      error: `Web search failed: ${(error as Error).message}`
+      error: 'Web search failed. Please try again later.'
     }
   }
 })

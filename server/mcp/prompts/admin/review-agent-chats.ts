@@ -19,7 +19,7 @@ Steps to follow:
 Produce a report with:
 - **Traffic & spend**: defer to Vercel Observability → Agent Runs (do not invent numbers).
 - **Quality signals**: total upvotes vs downvotes, downvote rate, web chats saved in the window.
-- **Worst sessions** (one bullet per chat): chat id, short summary of the user's intent, why the answer was bad (wrong, hallucinated, off-topic, refused, missing source…), and the link \`https://nuxt.com/admin/agent/<chat-id>\` if applicable.
+- **Worst sessions** (one bullet per chat): chat id, short summary of the user's intent, why the answer was bad (wrong, hallucinated, off-topic, refused, missing source…), and the link \`https://nuxt.com/dashboard/chat/<chat-id>\` if applicable.
 - **Patterns**: are downvotes concentrated on certain topics (e.g. SSR, data fetching, modules) or certain phrasings?
 - **Recommendations**: prompt changes, retrieval improvements, or docs gaps to fill.`
   }

@@ -3,9 +3,16 @@ import { z } from 'zod'
 export default defineEventHandler(async (event) => {
   requireInternalRequest(event)
 
-  const { userId } = await readValidatedBody(event, z.object({
+  const { userId: claimedUserId } = await readValidatedBody(event, z.object({
     userId: z.string().min(1)
   }).parse)
+
+  const sessionUserId = await resolveInternalPrincipalId(event)
+  if (sessionUserId && sessionUserId !== claimedUserId) {
+    throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
+  }
+
+  const userId = sessionUserId ?? claimedUserId
 
   try {
     return await consumeAgentRateLimitForUser(userId)

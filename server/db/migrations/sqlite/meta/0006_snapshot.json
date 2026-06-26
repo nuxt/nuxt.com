@@ -270,7 +270,7 @@
         "id": {
           "name": "id",
           "type": "text",
-          "primaryKey": true,
+          "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
@@ -310,15 +310,7 @@
           "autoincrement": false
         }
       },
-      "indexes": {
-        "messages_chat_id_idx": {
-          "name": "messages_chat_id_idx",
-          "columns": [
-            "chat_id"
-          ],
-          "isUnique": false
-        }
-      },
+      "indexes": {},
       "foreignKeys": {
         "messages_chat_id_chats_id_fk": {
           "name": "messages_chat_id_chats_id_fk",
@@ -334,7 +326,15 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
+      "compositePrimaryKeys": {
+        "messages_chat_id_id_pk": {
+          "columns": [
+            "chat_id",
+            "id"
+          ],
+          "name": "messages_chat_id_id_pk"
+        }
+      },
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
@@ -475,14 +475,16 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "votes_message_id_messages_id_fk": {
-          "name": "votes_message_id_messages_id_fk",
+        "votes_chat_id_message_id_messages_chat_id_id_fk": {
+          "name": "votes_chat_id_message_id_messages_chat_id_id_fk",
           "tableFrom": "votes",
           "tableTo": "messages",
           "columnsFrom": [
+            "chat_id",
             "message_id"
           ],
           "columnsTo": [
+            "chat_id",
             "id"
           ],
           "onDelete": "cascade",

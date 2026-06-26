@@ -25,7 +25,7 @@ function slugCandidates(raw: string): string[] {
 async function fetchModule(slug: string): Promise<Record<string, unknown> | null> {
   const url = `${MODULE_API}/${encodeURIComponent(slug)}`
   try {
-    const response = await fetch(url)
+    const response = await fetch(url, { signal: AbortSignal.timeout(10_000) })
     if (response.status === 404) return null
     if (!response.ok) throw new Error(`Module API ${response.status}`)
     const data = await response.json() as Record<string, unknown>

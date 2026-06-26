@@ -17,8 +17,19 @@ function authAttr(attributes: AuthAttributes | undefined, key: string): string |
 
 export function canAccessAdminMcp(auth: AdminAuth | null | undefined): boolean {
   if (!auth) return false
-  if (auth.issuer?.startsWith('slack:') || auth.issuer === 'slack') return true
-  if (authAttr(auth.attributes, 'team_id')) return true
+
+  const teamId = authAttr(auth.attributes, 'team_id')
+  const allowedSlackTeams = new Set(
+    (process.env.NUXT_ADMIN_SLACK_TEAM_IDS ?? '')
+      .split(',')
+      .map(id => id.trim())
+      .filter(Boolean)
+  )
+
+  if (auth.issuer?.startsWith('slack:') || auth.issuer === 'slack' || teamId) {
+    return Boolean(teamId && allowedSlackTeams.has(teamId))
+  }
+
   return authAttr(auth.attributes, 'role') === 'admin'
 }
 

@@ -14,3 +14,5 @@ allowBuilds:
 
 minimumReleaseAgeExclude:
   - '@nuxt/ui@4.8.0'
+  - '@ai-sdk/gateway@4.0.2'
+  - ai@7.0.2

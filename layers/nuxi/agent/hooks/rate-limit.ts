@@ -1,15 +1,30 @@
 import { defineHook } from 'eve/hooks'
 import { appOrigin, internalHeaders } from '../lib/internal-api.js'
 
+type TurnStartedContext = {
+  session: {
+    auth: {
+      current?: {
+        principalId?: string
+      } | null
+    }
+  }
+  eve?: {
+    request?: Request
+  }
+}
+
 export default defineHook({
   events: {
     async 'turn.started'(_event, ctx) {
-      const principalId = ctx.session.auth.current?.principalId
+      const hookCtx = ctx as TurnStartedContext
+      const principalId = hookCtx.session.auth.current?.principalId
       if (!principalId) return
 
+      const cookie = hookCtx.eve?.request?.headers.get('cookie') ?? ''
       const response = await fetch(`${appOrigin()}/api/internal/agent/rate-limit/consume`, {
         method: 'POST',
-        headers: internalHeaders(),
+        headers: internalHeaders(cookie ? { cookie } : undefined),
         body: JSON.stringify({ userId: principalId })
       })
 

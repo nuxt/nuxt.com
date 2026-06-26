@@ -68,8 +68,9 @@ export default eveChannel({
 
     if (isNewSession && chatId) {
       try {
+        const cookie = ctx.eve.request.headers.get('cookie') ?? ''
         const response = await fetch(`${appOrigin()}/api/internal/chats/${encodeURIComponent(chatId)}/context`, {
-          headers: internalHeaders()
+          headers: internalHeaders(cookie ? { cookie } : undefined)
         })
 
         if (response.ok) {

@@ -14,9 +14,14 @@ export default defineEventHandler(async (event) => {
     messages: z.array(z.object({
       id: z.string().optional(),
       role: z.enum(['user', 'assistant', 'system']),
-      parts: z.array(z.object({ type: z.string() }).loose())
+      parts: uiMessagePartsSchema
     })).min(1)
   }).parse)
+
+  const sessionUserId = await resolveInternalPrincipalId(event)
+  if (sessionUserId && sessionUserId !== userId) {
+    throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
+  }
 
   const chat = await db.query.chats.findFirst({
     where: () => and(

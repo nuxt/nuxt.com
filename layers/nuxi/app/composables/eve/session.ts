@@ -7,18 +7,56 @@ import type { EveAgentBindingOptions } from './init'
 import { toUIMessages } from './adapter'
 import { getOrCreateEveAgent } from './init'
 
-function lastUserMessageText(data: EveMessageData) {
+function lastUserMessage(data: EveMessageData) {
   for (let index = data.messages.length - 1; index >= 0; index -= 1) {
     const message = data.messages[index]
-    if (message?.role !== 'user') continue
+    if (message?.role === 'user' && message.parts.length > 0) {
+      return message
+    }
+  }
+}
 
-    const text = message.parts
-      .filter(part => part.type === 'text')
-      .map(part => part.text)
-      .join('\n')
-      .trim()
+async function sendUserParts(
+  agent: ReturnType<typeof getOrCreateEveAgent>,
+  parts: UIMessage['parts']
+) {
+  const text = parts
+    .filter((part): part is { type: 'text', text: string } => part.type === 'text')
+    .map(part => part.text)
+    .join('\n')
+    .trim()
 
-    if (text) return text
+  const fileParts = parts.filter((part): part is FileUIPart => part.type === 'file')
+
+  if (fileParts.length && text) {
+    await agent.send({
+      message: [
+        { type: 'text', text },
+        ...fileParts.map(part => ({
+          type: 'file' as const,
+          data: part.url,
+          mediaType: part.mediaType,
+          filename: part.filename
+        }))
+      ]
+    })
+    return
+  }
+
+  if (fileParts.length) {
+    await agent.send({
+      message: fileParts.map(part => ({
+        type: 'file' as const,
+        data: part.url,
+        mediaType: part.mediaType,
+        filename: part.filename
+      }))
+    })
+    return
+  }
+
+  if (text) {
+    await agent.send({ message: text })
   }
 }
 
@@ -41,44 +79,7 @@ export function createEveChatSession(
       ? [{ type: 'text' as const, text: input }]
       : input.parts
 
-    const text = parts
-      .filter((part): part is { type: 'text', text: string } => part.type === 'text')
-      .map(part => part.text)
-      .join('\n')
-      .trim()
-
-    const fileParts = parts.filter((part): part is FileUIPart => part.type === 'file')
-
-    if (fileParts.length && text) {
-      await agent.value.send({
-        message: [
-          { type: 'text', text },
-          ...fileParts.map(part => ({
-            type: 'file' as const,
-            data: part.url,
-            mediaType: part.mediaType,
-            filename: part.filename
-          }))
-        ]
-      })
-      return
-    }
-
-    if (fileParts.length) {
-      await agent.value.send({
-        message: fileParts.map(part => ({
-          type: 'file' as const,
-          data: part.url,
-          mediaType: part.mediaType,
-          filename: part.filename
-        }))
-      })
-      return
-    }
-
-    if (text) {
-      await agent.value.send({ message: text })
-    }
+    await sendUserParts(agent.value, parts)
   }
 
   function stop() {
@@ -87,9 +88,9 @@ export function createEveChatSession(
 
   async function regenerate() {
     if (status.value === 'submitted' || status.value === 'streaming') return
-    const text = lastUserMessageText(agent.value.data.value)
-    if (!text) return
-    await agent.value.send({ message: text })
+    const message = lastUserMessage(agent.value.data.value)
+    if (!message) return
+    await sendUserParts(agent.value, message.parts as UIMessage['parts'])
   }
 
   return {
