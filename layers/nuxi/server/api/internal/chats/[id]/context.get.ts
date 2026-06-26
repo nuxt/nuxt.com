@@ -17,15 +17,16 @@ export default defineEventHandler(async (event) => {
     id: z.uuid()
   }).parse)
 
-  const sessionUserId = await resolveInternalPrincipalId(event)
-  if (!sessionUserId) {
+  const session = await getUserSession(event)
+  const userId = session.user?.id
+  if (!userId) {
     return { summary: null }
   }
 
   const chat = await db.query.chats.findFirst({
     where: () => and(
       eq(schema.chats.id, id),
-      eq(schema.chats.userId, sessionUserId)
+      eq(schema.chats.userId, userId)
     ),
     with: {
       messages: {

@@ -66,8 +66,7 @@ function buildIssueBody(params: {
 export default defineEventHandler(async (event) => {
   const { chatId, title, summary, userFeedback } = await readValidatedBody(event, bodySchema.parse)
 
-  const session = await getUserSession(event)
-  const principalId = await resolveSessionPrincipalId(event)
+  const { user } = await requireUserSession(event)
   const log = useLogger(event)
 
   const [chat] = await db
@@ -80,12 +79,12 @@ export default defineEventHandler(async (event) => {
     .where(eq(schema.chats.id, chatId))
     .limit(1)
 
-  if (!chat || chat.userId !== principalId) {
+  if (!chat || chat.userId !== user.id) {
     throw createError({ message: 'Forbidden', status: 403, why: 'You do not own this chat.' })
   }
 
   log.set({
-    user: { id: principalId, authenticated: !!session.user },
+    user: { id: user.id, authenticated: true },
     feedback: { chatId, title, hasUserFeedback: !!userFeedback }
   })
 

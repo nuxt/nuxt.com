@@ -7,8 +7,7 @@ import { z } from 'zod'
 type Tx = LibSQLTransaction<typeof schema, ExtractTablesWithRelations<typeof schema>>
 
 export default defineEventHandler(async (event) => {
-  const session = await getUserSession(event)
-  const ownerId = await resolveSessionPrincipalId(event)
+  const { user } = await requireUserSession(event)
 
   const { id } = await getValidatedRouterParams(event, z.object({
     id: z.uuid()
@@ -20,7 +19,7 @@ export default defineEventHandler(async (event) => {
 
   const log = useLogger(event)
   log.set({
-    user: { id: ownerId, authenticated: !!session.user },
+    user: { id: user.id, authenticated: true },
     branch: { sourceChatId: id, messageId }
   })
 
@@ -36,7 +35,7 @@ export default defineEventHandler(async (event) => {
   if (!chat) {
     throw createError({ message: 'Chat not found', status: 404 })
   }
-  if (chat.userId !== ownerId) {
+  if (chat.userId !== user.id) {
     throw createError({ message: 'Chat not found', status: 404, why: 'Branching is only allowed on chats you own.' })
   }
 

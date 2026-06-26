@@ -26,7 +26,3 @@ export function requireInternalRequest(event: H3Event) {
     })
   }
 }
-
-export async function resolveInternalPrincipalId(event: H3Event): Promise<string> {
-  return resolveSessionPrincipalId(event)
-}

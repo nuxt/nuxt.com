@@ -17,7 +17,6 @@ type ChatModeOptions = {
   chatId: string
   initialMessages?: UIMessage[]
   initialState?: ChatEveState | null
-  persistedInDb?: boolean
   source: string
   withPageContext?: 'always' | 'when-enabled'
   fetchVotes?: boolean
@@ -205,7 +204,7 @@ export function useAgentChat(options: UseAgentChatOptions) {
     }
 
     try {
-      if (chatOptions.persistedInDb) {
+      if (chatOptions.initialMessages?.length) {
         await appendUserMessageToChat(chatOptions.chatId, parts, metadata)
       } else {
         await createChatWithMessage(chatOptions.chatId, parts, metadata)

@@ -33,7 +33,6 @@ const {
 } = useAgentChat({
   chatId: props.chatId,
   initialMessages: props.initialMessages,
-  persistedInDb: Boolean(props.initialMessages?.length),
   source: 'prompt',
   withPageContext: 'when-enabled',
   onFinish: () => {

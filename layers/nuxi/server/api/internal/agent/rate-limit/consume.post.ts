@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
     userId: z.string().min(1)
   }).parse)
 
-  const sessionUserId = await resolveInternalPrincipalId(event)
+  const sessionUserId = await resolveRateLimitPrincipalId(event)
   if (sessionUserId !== claimedUserId) {
     throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
   }

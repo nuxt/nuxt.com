@@ -4,7 +4,7 @@ import { z } from 'zod'
 
 export default defineEventHandler(async (event) => {
   const session = await getUserSession(event)
-  const viewerId = await resolveSessionPrincipalId(event)
+  const viewerId = session.user?.id
 
   const { id } = await getValidatedRouterParams(event, z.object({
     id: z.uuid()
@@ -29,7 +29,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ message: 'Chat not found', status: 404 })
   }
 
-  const isOwner = chat.userId === viewerId
+  const isOwner = viewerId !== undefined && chat.userId === viewerId
   const isAdmin = session.user?.role === 'admin'
 
   const canView = isOwner

@@ -44,7 +44,6 @@ const {
   chatId,
   initialMessages,
   initialState: data.value?.state ?? null,
-  persistedInDb: true,
   source: 'chat-page',
   withPageContext: 'always',
   fetchVotes: isOwner.value,

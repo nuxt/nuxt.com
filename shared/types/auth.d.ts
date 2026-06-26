@@ -11,7 +11,7 @@ declare module '#auth-utils' {
   }
 
   interface UserSession {
-    /** Stable anonymous principal — survives session token rotation. */
+    /** Stable anonymous id for rate limiting only. */
     anonymousUserId?: string
   }
 }

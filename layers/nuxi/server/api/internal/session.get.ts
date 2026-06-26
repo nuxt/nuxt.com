@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
   }
 
   return {
-    principalId: await resolveSessionPrincipalId(event),
+    principalId: await resolveRateLimitPrincipalId(event),
     principalType: 'anonymous' as const,
     authenticated: false
   }

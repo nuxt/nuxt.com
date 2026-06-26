@@ -9,12 +9,20 @@ function today(): string {
   return new Date().toISOString().slice(0, 10)
 }
 
-async function resolveIdentity(event: H3Event): Promise<string> {
-  return await resolveSessionPrincipalId(event)
+/** Stable id for anonymous rate limiting — chats are not persisted for anonymous users. */
+export async function resolveRateLimitPrincipalId(event: H3Event): Promise<string> {
+  const session = await getUserSession(event)
+  if (session.user?.id) return session.user.id
+
+  if (session.anonymousUserId) return session.anonymousUserId
+
+  const anonymousUserId = crypto.randomUUID()
+  await setUserSession(event, { anonymousUserId })
+  return anonymousUserId
 }
 
 export async function checkAgentRateLimit(event: H3Event): Promise<{ used: number, remaining: number, limit: number }> {
-  const userId = await resolveIdentity(event)
+  const userId = await resolveRateLimitPrincipalId(event)
   const dayKey = today()
   const [row] = await db.select().from(schema.agentDailyUsage)
     .where(and(eq(schema.agentDailyUsage.userId, userId), eq(schema.agentDailyUsage.dayKey, dayKey)))
@@ -48,6 +56,6 @@ export async function consumeAgentRateLimitForUser(userId: string): Promise<{ us
 }
 
 export async function consumeAgentRateLimit(event: H3Event): Promise<{ used: number, remaining: number, limit: number }> {
-  const userId = await resolveIdentity(event)
+  const userId = await resolveRateLimitPrincipalId(event)
   return consumeAgentRateLimitForUser(userId)
 }

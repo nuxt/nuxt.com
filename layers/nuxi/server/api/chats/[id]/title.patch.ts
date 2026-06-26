@@ -3,8 +3,7 @@ import { and, eq } from 'drizzle-orm'
 import { z } from 'zod'
 
 export default defineEventHandler(async (event) => {
-  const session = await getUserSession(event)
-  const ownerId = await resolveSessionPrincipalId(event)
+  const { user } = await requireUserSession(event)
 
   const { id } = await getValidatedRouterParams(event, z.object({
     id: z.uuid()
@@ -16,7 +15,7 @@ export default defineEventHandler(async (event) => {
 
   const log = useLogger(event)
   log.set({
-    user: { id: ownerId, authenticated: !!session.user },
+    user: { id: user.id, authenticated: true },
     chat: { id, titleLength: title.length }
   })
 
@@ -24,7 +23,7 @@ export default defineEventHandler(async (event) => {
     .set({ title })
     .where(and(
       eq(schema.chats.id, id),
-      eq(schema.chats.userId, ownerId)
+      eq(schema.chats.userId, user.id)
     ))
     .returning()
 
