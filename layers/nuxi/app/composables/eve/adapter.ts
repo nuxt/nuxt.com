@@ -1,5 +1,6 @@
 import type { UIMessage } from 'ai'
 import type { EveMessage } from 'eve/vue'
+import type { AgentChatStatus } from './types'
 
 export function toUIMessages(messages: readonly EveMessage[]): UIMessage[] {
   return [...messages] as UIMessage[]
@@ -16,4 +17,24 @@ export function hasVisibleParts(parts: UIMessage['parts']): boolean {
     }
     return part.type.startsWith('tool-') || part.type === 'dynamic-tool'
   })
+}
+
+/** Keep the loading indicator until the assistant message has renderable content. */
+export function resolveChatDisplayState(
+  messages: UIMessage[],
+  status: AgentChatStatus
+): { displayStatus: AgentChatStatus, displayMessages: UIMessage[] } {
+  if (status !== 'streaming') {
+    return { displayStatus: status, displayMessages: messages }
+  }
+
+  const last = messages.at(-1)
+  if (last?.role === 'assistant' && !hasVisibleParts(last.parts)) {
+    return {
+      displayStatus: 'submitted',
+      displayMessages: messages.slice(0, -1)
+    }
+  }
+
+  return { displayStatus: status, displayMessages: messages }
 }

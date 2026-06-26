@@ -18,8 +18,16 @@ export default defineEventHandler(async (event) => {
     }
   }
 
+  const principalId = await getRateLimitPrincipalId(event)
+  if (!principalId) {
+    throw createError({
+      statusCode: 401,
+      statusMessage: 'Anonymous session not initialized'
+    })
+  }
+
   return {
-    principalId: await resolveRateLimitPrincipalId(event),
+    principalId,
     principalType: 'anonymous' as const,
     authenticated: false
   }

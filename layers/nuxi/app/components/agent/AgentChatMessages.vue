@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { UIMessage } from 'ai'
 import type { AgentChatHandle } from '../../composables/eve/types'
+import { resolveChatDisplayState } from '../../composables/eve/adapter'
 
-withDefaults(defineProps<{
+const props = withDefaults(defineProps<{
   chat: AgentChatHandle
   chatId: string
   compact?: boolean
@@ -25,15 +26,19 @@ const emit = defineEmits<{
   askQuestion: [question: string]
   vote: [message: UIMessage, isUpvoted: boolean]
 }>()
+
+const display = computed(() =>
+  resolveChatDisplayState(props.chat.messages, props.chat.status)
+)
 </script>
 
 <template>
   <UTheme :ui="AGENT_CHAT_THEME">
     <UChatMessages
-      v-if="chat.messages.length"
+      v-if="display.displayMessages.length"
       should-auto-scroll
-      :messages="chat.messages"
-      :status="chat.status"
+      :messages="display.displayMessages"
+      :status="display.displayStatus"
       :compact="compact"
       :spacing-offset="spacingOffset"
       :class="compact ? 'gap-2 px-0' : 'flex-1 pt-4 pb-4 sm:pb-6'"

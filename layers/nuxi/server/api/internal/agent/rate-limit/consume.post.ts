@@ -7,20 +7,16 @@ export default defineEventHandler(async (event) => {
     userId: z.string().min(1)
   }).parse)
 
-  const sessionUserId = await resolveRateLimitPrincipalId(event)
-  if (sessionUserId !== claimedUserId) {
-    throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
+  const sessionUserId = await getRateLimitPrincipalId(event)
+
+  if (sessionUserId) {
+    if (sessionUserId !== claimedUserId) {
+      throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
+    }
+    return await consumeAgentRateLimitForUser(sessionUserId)
   }
 
-  try {
-    return await consumeAgentRateLimitForUser(sessionUserId)
-  } catch (error) {
-    if (error && typeof error === 'object' && 'statusCode' in error && (error as { statusCode?: number }).statusCode === 429) {
-      throw createError({
-        statusCode: 429,
-        statusMessage: (error as { message?: string }).message ?? 'Daily message limit reached.'
-      })
-    }
-    throw error
-  }
+  // Eve authenticated before the browser cookie had an anonymous id (internal fetch
+  // cannot persist Set-Cookie back to the browser). Internal bearer auth is sufficient.
+  return await consumeAgentRateLimitForUser(claimedUserId)
 })
