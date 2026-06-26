@@ -553,8 +553,29 @@ export default defineNuxtConfig({
       dir: resolve('./app/assets/icons')
     }],
     clientBundle: {
-      scan: true,
-      includeCustomCollections: true
+      // Scan app source + all local content for icons. The `**/.*.{yml,yaml}`
+      // pattern is needed for local `.navigation.yml` dotfiles (e.g. blog,
+      // enterprise), which `*.yml` skips under `dot:false`.
+      scan: {
+        globInclude: ['**/*.{vue,jsx,tsx,md,mdc,mdx,yml,yaml,ts}', '**/.*.{yml,yaml}']
+      },
+      includeCustomCollections: true,
+      // Remote docs nav icons (under `.data/`, unreachable by `scan`) — bundle them
+      // so they don't pop in on client-side navigation. Regenerate when docs change.
+      icons: [
+        'logos:bun', 'lucide:alert-triangle', 'lucide:arrow-left-right', 'lucide:bell-dot',
+        'lucide:bug-off', 'lucide:cable', 'lucide:cog', 'lucide:cooking-pot',
+        'lucide:map', 'lucide:panels-top-left', 'lucide:play', 'lucide:ship',
+        'lucide:square-check', 'lucide:square-terminal', 'lucide:test-tube', 'lucide:toggle-right',
+        'simple-icons:codesandbox', 'simple-icons:git', 'simple-icons:google', 'simple-icons:googlechrome',
+        'simple-icons:mdnwebdocs', 'simple-icons:vite', 'simple-icons:w3c', 'simple-icons:webpack',
+        'vscode-icons:default-folder', 'vscode-icons:file-type-dotenv', 'vscode-icons:file-type-git', 'vscode-icons:file-type-light-config',
+        'vscode-icons:file-type-npm', 'vscode-icons:file-type-nuxt', 'vscode-icons:file-type-tsconfig', 'vscode-icons:file-type-vue',
+        'vscode-icons:folder-type-app', 'vscode-icons:folder-type-asset', 'vscode-icons:folder-type-component', 'vscode-icons:folder-type-log',
+        'vscode-icons:folder-type-middleware', 'vscode-icons:folder-type-node', 'vscode-icons:folder-type-nuxt', 'vscode-icons:folder-type-package',
+        'vscode-icons:folder-type-plugin', 'vscode-icons:folder-type-public', 'vscode-icons:folder-type-server', 'vscode-icons:folder-type-shared',
+        'vscode-icons:folder-type-src', 'vscode-icons:folder-type-temp', 'vscode-icons:folder-type-tools', 'vscode-icons:folder-type-view'
+      ]
     }
   },
   image: {
