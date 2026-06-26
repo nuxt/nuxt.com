@@ -560,15 +560,8 @@ export default defineNuxtConfig({
         globInclude: ['**/*.{vue,jsx,tsx,md,mdc,mdx,yml,yaml,ts}', '**/.*.{yml,yaml}']
       },
       includeCustomCollections: true,
-      // Icons used ONLY by the remote docs navigation (md frontmatter
-      // `navigation.icon` + `.navigation.yml`), collected across all three served
-      // versions (nuxt/nuxt `3.x`, `4.x`, `main`). The scanner can't reach these:
-      // remote docs are cloned under the `.data` dot-dir and restored from
-      // @nuxt/content's cache on CI (0 files parsed), so neither file scanning nor
-      // parse hooks see them at build. Without bundling they're fetched at runtime
-      // and flash in on client-side navigation. Local content (deploy, blog, …) is
-      // already covered by `scan` above, so it's intentionally NOT here.
-      // Regenerate when nuxt/nuxt docs add icons (see PR #2288 for the snippet).
+      // Remote docs nav icons (under `.data/`, unreachable by `scan`) — bundle them
+      // so they don't pop in on client-side navigation. Regenerate when docs change.
       icons: [
         'logos:bun', 'lucide:alert-triangle', 'lucide:arrow-left-right', 'lucide:bell-dot',
         'lucide:bug-off', 'lucide:cable', 'lucide:cog', 'lucide:cooking-pot',
