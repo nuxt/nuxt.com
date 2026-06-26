@@ -96,6 +96,12 @@ const items = computed(() => [
       icon: 'i-simple-icons-npm',
       to: `https://www.npmjs.com/package/${props.module.npm}`,
       target: '_blank'
+    },
+    {
+      label: 'View on npmx',
+      icon: 'i-simple-icons-npm',
+      to: `https://npmx.dev/package/${props.module.npm}`,
+      target: '_blank'
     }
   ]
 ])
