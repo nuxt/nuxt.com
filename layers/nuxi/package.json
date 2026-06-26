@@ -8,8 +8,8 @@
     "start": "eve start"
   },
   "dependencies": {
-    "ai": "7.0.0-canary.165",
-    "eve": "0.6.0-beta.20",
-    "zod": "4.4.3"
+    "ai": "^7.0.2",
+    "eve": "^0.15.1",
+    "zod": "^4.4.3"
   }
 }
