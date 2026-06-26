@@ -85,24 +85,26 @@ const items = computed(() => [
       to: `https://github.com/${props.module.repo}`,
       target: '_blank'
     },
-    {
-      label: 'View downloads',
-      icon: 'i-lucide-package',
-      to: `https://npm.chart.dev/${props.module.npm}`,
-      target: '_blank'
-    },
-    {
-      label: 'View on npm',
-      icon: 'i-simple-icons-npm',
-      to: `https://www.npmjs.com/package/${props.module.npm}`,
-      target: '_blank'
-    },
-    {
-      label: 'View on npmx',
-      icon: 'i-simple-icons-npm',
-      to: `https://npmx.dev/package/${props.module.npm}`,
-      target: '_blank'
-    }
+    ...(props.module.npm ? [
+      {
+        label: 'View downloads',
+        icon: 'i-lucide-package',
+        to: `https://npm.chart.dev/${props.module.npm}`,
+        target: '_blank'
+      },
+      {
+        label: 'View on npm',
+        icon: 'i-simple-icons-npm',
+        to: `https://www.npmjs.com/package/${props.module.npm}`,
+        target: '_blank'
+      },
+      {
+        label: 'View on npmx',
+        icon: 'i-simple-icons-npm',
+        to: `https://npmx.dev/package/${props.module.npm}`,
+        target: '_blank'
+      }
+    ] : [])
   ]
 ])
 </script>
