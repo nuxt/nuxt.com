@@ -8,14 +8,12 @@ export default defineEventHandler(async (event) => {
   }).parse)
 
   const sessionUserId = await resolveInternalPrincipalId(event)
-  if (sessionUserId && sessionUserId !== claimedUserId) {
+  if (sessionUserId !== claimedUserId) {
     throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
   }
 
-  const userId = sessionUserId ?? claimedUserId
-
   try {
-    return await consumeAgentRateLimitForUser(userId)
+    return await consumeAgentRateLimitForUser(sessionUserId)
   } catch (error) {
     if (error && typeof error === 'object' && 'statusCode' in error && (error as { statusCode?: number }).statusCode === 429) {
       throw createError({

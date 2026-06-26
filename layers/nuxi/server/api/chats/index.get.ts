@@ -2,7 +2,7 @@ import { eq, sql } from 'drizzle-orm'
 
 export default defineEventHandler(async (event) => {
   const session = await getUserSession(event)
-  const ownerId = session.user?.id || session.id
+  const ownerId = await resolveSessionPrincipalId(event)
 
   const log = useLogger(event)
   log.set({ user: { id: ownerId, authenticated: !!session.user } })

@@ -10,8 +10,7 @@ function today(): string {
 }
 
 async function resolveIdentity(event: H3Event): Promise<string> {
-  const session = await getUserSession(event)
-  return session.user?.id || session.id || getRequestIP(event, { xForwardedFor: true }) || 'unknown'
+  return await resolveSessionPrincipalId(event)
 }
 
 export async function checkAgentRateLimit(event: H3Event): Promise<{ used: number, remaining: number, limit: number }> {

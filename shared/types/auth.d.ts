@@ -9,6 +9,11 @@ declare module '#auth-utils' {
     providerId: string
     role: 'user' | 'admin'
   }
+
+  interface UserSession {
+    /** Stable anonymous principal — survives session token rotation. */
+    anonymousUserId?: string
+  }
 }
 
 export {}

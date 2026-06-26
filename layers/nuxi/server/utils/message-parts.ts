@@ -23,15 +23,31 @@ const dynamicToolPartSchema = z.object({
   toolName: z.string()
 }).loose()
 
+const toolPartSchema = z.object({
+  type: z.string().regex(/^tool-/)
+}).loose()
+
+const sourceUrlPartSchema = z.object({
+  type: z.literal('source-url'),
+  url: z.string()
+}).loose()
+
+const sourceDocumentPartSchema = z.object({
+  type: z.literal('source-document')
+}).loose()
+
 const stepStartPartSchema = z.object({
   type: z.literal('step-start')
 })
 
-export const uiMessagePartSchema = z.discriminatedUnion('type', [
+export const uiMessagePartSchema = z.union([
   textPartSchema,
   filePartSchema,
   reasoningPartSchema,
   dynamicToolPartSchema,
+  toolPartSchema,
+  sourceUrlPartSchema,
+  sourceDocumentPartSchema,
   stepStartPartSchema
 ])
 

@@ -27,7 +27,6 @@ export function requireInternalRequest(event: H3Event) {
   }
 }
 
-export async function resolveInternalPrincipalId(event: H3Event): Promise<string | undefined> {
-  const session = await getUserSession(event)
-  return session.user?.id || session.id || undefined
+export async function resolveInternalPrincipalId(event: H3Event): Promise<string> {
+  return resolveSessionPrincipalId(event)
 }

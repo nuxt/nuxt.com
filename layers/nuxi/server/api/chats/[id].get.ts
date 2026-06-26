@@ -4,7 +4,7 @@ import { z } from 'zod'
 
 export default defineEventHandler(async (event) => {
   const session = await getUserSession(event)
-  const viewerId = session.user?.id || session.id
+  const viewerId = await resolveSessionPrincipalId(event)
 
   const { id } = await getValidatedRouterParams(event, z.object({
     id: z.uuid()

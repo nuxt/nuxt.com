@@ -8,7 +8,7 @@ type Tx = LibSQLTransaction<typeof schema, ExtractTablesWithRelations<typeof sch
 
 export default defineEventHandler(async (event) => {
   const session = await getUserSession(event)
-  const ownerId = session.user?.id || session.id
+  const ownerId = await resolveSessionPrincipalId(event)
 
   const { id } = await getValidatedRouterParams(event, z.object({
     id: z.uuid()
