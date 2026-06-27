@@ -27,18 +27,9 @@ const toolPartSchema = z.object({
   type: z.string().regex(/^tool-/)
 }).loose()
 
-const httpUrlSchema = z.string().refine((value) => {
-  try {
-    const url = new URL(value)
-    return url.protocol === 'http:' || url.protocol === 'https:'
-  } catch {
-    return false
-  }
-}, { message: 'Expected an http(s) URL' })
-
 const sourceUrlPartSchema = z.object({
   type: z.literal('source-url'),
-  url: httpUrlSchema
+  url: z.httpUrl()
 }).loose()
 
 const sourceDocumentPartSchema = z.object({
