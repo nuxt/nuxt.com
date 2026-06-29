@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  nuxt-content-twoslash@0.4.0: ff6548624c0498609b36b4649a9e2d9fc509d2b29e55b73588af9e1195e7550d
+
 importers:
 
   .:
@@ -212,7 +215,7 @@ importers:
         version: 20.10.6
       nuxt-content-twoslash:
         specifier: ^0.4.0
-        version: 0.4.0(@nuxtjs/mdc@0.22.0(magicast@0.5.3))(magicast@0.5.3)
+        version: 0.4.0(patch_hash=ff6548624c0498609b36b4649a9e2d9fc509d2b29e55b73588af9e1195e7550d)(@nuxtjs/mdc@0.22.0(magicast@0.5.3))(magicast@0.5.3)
       playwright:
         specifier: ^1.61.1
         version: 1.61.1
@@ -18624,7 +18627,7 @@ snapshots:
     transitivePeerDependencies:
       - magicast
 
-  nuxt-content-twoslash@0.4.0(@nuxtjs/mdc@0.22.0(magicast@0.5.3))(magicast@0.5.3):
+  nuxt-content-twoslash@0.4.0(patch_hash=ff6548624c0498609b36b4649a9e2d9fc509d2b29e55b73588af9e1195e7550d)(@nuxtjs/mdc@0.22.0(magicast@0.5.3))(magicast@0.5.3):
     dependencies:
       '@nuxt/kit': 4.4.8(magicast@0.5.3)
       '@nuxtjs/mdc': 0.22.0(magicast@0.5.3)

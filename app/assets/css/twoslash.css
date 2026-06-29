@@ -6,7 +6,7 @@
   --vp-c-brand: var(--color-primary-500);
   --vp-font-family-base: inherit;
   --vp-font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  --vp-code-font-size: 1em;
+  --vp-code-font-size: 0.875rem;
   --vp-z-index-local-nav: 10;
 }
 
@@ -17,8 +17,31 @@ html:not(.dark) {
   --vp-c-border: var(--color-neutral-300);
 }
 
-.twoslash-popup-container .twoslash-popup-code {
-  font-size: 0.9em;
+/* Twoslash popups are rendered through MDC, so the `code`/`pre` nodes they embed
+   get mapped to Nuxt UI's Prose components (ProseCodeInline / ProsePre). That
+   wraps the popup content in a bordered, padded code block with a copy button.
+   Strip those styles so the popup just shows the plain highlighted code. */
+.twoslash-popup-container .twoslash-popup-code,
+.twoslash-popup-container .twoslash-popup-code pre,
+.twoslash-popup-container .twoslash-popup-code code {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  color: inherit;
+  font-weight: inherit;
+  font-size: var(--vp-code-font-size);
+}
+
+/* Wrapper div added by ProsePre around the multi-line type popup */
+.twoslash-popup-container .twoslash-popup-code > div {
+  margin: 0;
+}
+
+/* Copy button injected by ProsePre */
+.twoslash-popup-container .twoslash-popup-code button {
+  display: none;
 }
 
 .twoslash-popup-container .twoslash-popup-code .line {
@@ -28,6 +51,19 @@ html:not(.dark) {
 .twoslash-popup-container .shiki .line {
   --shiki-default-bg: transparent;
   --shiki-dark-bg: transparent;
+}
+
+.twoslash-popup-docs p {
+  margin: 0;
+  line-height: calc(1.25 / 0.875);
+}
+
+/* Inline code inside the docs section also picks up ProseCodeInline styling */
+.twoslash-popup-docs code {
+  padding: 0;
+  border: 0;
+  color: inherit;
+  font-size: inherit;
 }
 
 .twoslash-floating .twoslash-popup-docs-tags .twoslash-popup-docs-tag-name {

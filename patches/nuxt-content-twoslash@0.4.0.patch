@@ -1,0 +1,15 @@
+diff --git a/dist/runtime/transformer.js b/dist/runtime/transformer.js
+index c229c05c309a081b29af9c547f1207018f193a80..b88e831a3c2eb93341eab4dc5bb0f2d6dd88dbda 100644
+--- a/dist/runtime/transformer.js
++++ b/dist/runtime/transformer.js
+@@ -32,6 +32,10 @@ export async function createTransformer(
+   extraOptions,
+ ) {
+   const prepend = [
++    // `nuxt.d.ts` (app context) no longer references the `nuxt` package types since
++    // Nuxt's type-context split, so config-level globals like `defineNuxtConfig` are
++    // not resolvable here. Reference them explicitly so untagged config snippets work.
++    `/// <reference types="nuxt" />`,
+     `/// <reference path="${join(rootDir, '.nuxt/nuxt.d.ts')}" />`,
+     '',
+   ].join('\n')
