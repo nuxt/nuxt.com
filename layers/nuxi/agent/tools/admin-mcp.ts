@@ -1,33 +1,10 @@
 import { createMCPClient } from '@ai-sdk/mcp'
 import { defineDynamic, defineTool } from 'eve/tools'
 import { z } from 'zod'
+import { canAccessAdminMcp } from '../lib/admin-mcp-access.js'
 import { appOrigin } from '../lib/internal-api.js'
 
-type AuthAttributes = Readonly<Record<string, string | readonly string[]>>
-
-interface AdminAuth {
-  issuer?: string
-  attributes?: AuthAttributes
-}
-
-function authAttr(attributes: AuthAttributes | undefined, key: string): string | undefined {
-  const value = attributes?.[key]
-  return typeof value === 'string' ? value : undefined
-}
-
-function isSlackAuth(auth: AdminAuth): boolean {
-  if (auth.issuer?.startsWith('slack:') || auth.issuer === 'slack') return true
-  return Boolean(authAttr(auth.attributes, 'team_id'))
-}
-
-export function canAccessAdminMcp(auth: AdminAuth | null | undefined): boolean {
-  if (!auth) return false
-
-  // Slack access is gated by Vercel Connect — the bot is only installable on our workspace.
-  if (isSlackAuth(auth)) return true
-
-  return authAttr(auth.attributes, 'role') === 'admin'
-}
+export { canAccessAdminMcp } from '../lib/admin-mcp-access.js'
 
 export const ADMIN_MCP_INSTRUCTIONS = `**Admin tools (team only):**
 - \`admin_mcp__feedback_stats\` — aggregated docs feedback metrics
