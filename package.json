@@ -52,7 +52,7 @@
     "@vueuse/components": "^14.3.0",
     "@vueuse/core": "^14.3.0",
     "@vueuse/nuxt": "^14.3.0",
-    "ai": "^6.0.214",
+    "ai": "^7.0.4",
     "better-sqlite3": "^12.11.1",
     "date-fns": "^4.4.0",
     "drizzle-orm": "^0.45.2",
