@@ -20,10 +20,9 @@ export default defineConfig({
           name: 'nuxt',
           environment: 'nuxt',
           // Nuxt environment setup (beforeAll) can exceed the 10s default on CI
-          hookTimeout: 60000,
+          hookTimeout: 60_000,
           include: ['test/nuxt/**.spec.ts'],
           setupFiles: ['./test/nuxt/setup.ts'],
-          hookTimeout: 60_000,
           env: {
             // Skip spawning `eve dev` during @nuxt/test-utils setup (30s+ on CI).
             EVE_BASE_URL: 'http://127.0.0.1:1'
