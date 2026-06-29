@@ -14,13 +14,18 @@ function isHookConflictFailure(event: { code?: string, message?: string }) {
     || message.includes('already in use by another workflow')
 }
 
+const SLACK_EMOJI_GUIDANCE = `**Slack emojis:** When it fits, use our workspace custom emojis (sparingly — 0–2 per message) instead of generic Unicode emoji: :nuxter: (Nuxt logo), :nuxt-intensifies:, :nuxt_lurk:, :nuxt_cool:, :nuxi:. Examples: :nuxter: or :nuxi: for greetings or Nuxt pride; :nuxt_cool: when something works; :nuxt-intensifies: for excitement; :nuxt_lurk: while investigating. Use Slack :colon: syntax exactly as written.`
+
 async function dispatchSlackMessage(ctx: SlackContext, message: SlackMessage) {
   await ctx.thread.startTyping('Thinking...')
 
   const auth = defaultSlackAuth(message, ctx)
   if (!auth) return null
 
-  const context = ['The user is talking to Nuxi on Slack.']
+  const context = [
+    'The user is talking to Nuxi on Slack.',
+    SLACK_EMOJI_GUIDANCE
+  ]
 
   const prior = await loadThreadContextMessages(ctx.thread, message, {
     since: 'last-agent-reply'
