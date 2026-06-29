@@ -15,7 +15,7 @@ function parseDigestMode(req: Request): DigestMode {
 
 export default defineChannel({
   routes: [
-    POST('/digest/trigger', async (req, args) => {
+    POST('/eve/v1/ops/digest/trigger', async (req, args) => {
       if (!isManualDigestTriggerAllowed()) {
         return Response.json({ error: 'Manual digest trigger is disabled' }, { status: 404 })
       }
