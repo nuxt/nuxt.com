@@ -20,8 +20,54 @@ const VERBS: Record<string, [string, string]> = {
   create: ['Creating', 'Created']
 }
 
+export function normalizeToolName(toolName: string): string {
+  if (toolName === 'connection__search') return toolName
+  const prefix = 'connection__'
+  if (!toolName.startsWith(prefix)) return toolName
+  const rest = toolName.slice(prefix.length)
+  const sep = rest.indexOf('__')
+  if (sep === -1) return toolName
+  return rest.slice(sep + 2).replace(/_/g, '-')
+}
+
+export function isConnectionSearchTool(part: ToolPart): boolean {
+  return getToolName(part) === 'connection__search'
+}
+
+function unwrapConnectionSearchResults(output: unknown): Array<Record<string, unknown>> | undefined {
+  if (!output) return undefined
+  if (typeof output === 'object' && output !== null && 'value' in output) {
+    const value = (output as { value: unknown }).value
+    if (Array.isArray(value)) return value as Array<Record<string, unknown>>
+  }
+  if (Array.isArray(output)) return output as Array<Record<string, unknown>>
+  return undefined
+}
+
+export function getConnectionSearchToolText(part: ToolPart): string {
+  return isToolStreaming(part) ? 'Discovering connection tools...' : 'Discovered connection tools'
+}
+
+export function getConnectionSearchSuffix(part: ToolPart): string | undefined {
+  const input = (part.input || {}) as Record<string, unknown>
+  const keywords = typeof input.keywords === 'string' ? input.keywords.trim() : ''
+  if (!hasToolOutput(part)) return keywords || undefined
+
+  const items = unwrapConnectionSearchResults(part.output)
+  const toolNames = items?.map(item => item.tool).filter((name): name is string => typeof name === 'string' && name.length > 0) ?? []
+
+  if (toolNames.length > 0) {
+    const preview = toolNames.slice(0, 3).join(', ')
+    const extra = toolNames.length > 3 ? ` +${toolNames.length - 3}` : ''
+    return keywords ? `${keywords} → ${preview}${extra}` : `${preview}${extra}`
+  }
+
+  return keywords || undefined
+}
+
 const SUFFIX_KEYS = [
   'search',
+  'keywords',
   'query',
   'q',
   'term',
@@ -37,7 +83,8 @@ const SUFFIX_KEYS = [
 ]
 
 function parseToolName(toolName: string): { verb?: [string, string], label: string } {
-  const parts = toolName.split(/[-_\s]+/).filter(Boolean)
+  const normalized = normalizeToolName(toolName)
+  const parts = normalized.split(/[-_\s]+/).filter(Boolean)
   const head = parts[0]?.toLowerCase()
 
   if (head && VERBS[head] && parts.length > 1) {
@@ -140,7 +187,7 @@ export function showFeedbackCard(part: ToolPart): boolean {
 }
 
 export function isModuleListTool(part: ToolPart): boolean {
-  const toolName = getToolName(part)
+  const toolName = normalizeToolName(getToolName(part))
   return (toolName === 'get-module' || toolName === 'list-modules') && getModuleCards(part).length > 0
 }
 
@@ -179,7 +226,7 @@ export function getToolSuffix(part: ToolPart): string | undefined {
 }
 
 export function getToolIcon(part: ToolPart): string {
-  const name = getToolName(part).toLowerCase()
+  const name = normalizeToolName(getToolName(part)).toLowerCase()
 
   if (/icon/.test(name)) return 'i-lucide-smile'
   if (/component/.test(name)) return 'i-lucide-box'
@@ -203,7 +250,7 @@ export function getToolIcon(part: ToolPart): string {
 export function getModuleCards(part: ToolPart): ModuleCardData[] {
   if (!hasToolOutput(part) || !part.output) return []
 
-  const toolName = getToolName(part)
+  const toolName = normalizeToolName(getToolName(part))
   const output = part.output as Record<string, unknown>
 
   if (toolName === 'get-module') {

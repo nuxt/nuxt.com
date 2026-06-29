@@ -9,13 +9,26 @@ function today(): string {
   return new Date().toISOString().slice(0, 10)
 }
 
-async function resolveIdentity(event: H3Event): Promise<string> {
+/** Read the rate-limit principal from the browser session cookie — never mints. */
+export async function getRateLimitPrincipalId(event: H3Event): Promise<string | undefined> {
   const session = await getUserSession(event)
-  return session.user?.id || session.id || getRequestIP(event, { xForwardedFor: true }) || 'unknown'
+  return session.user?.id ?? session.anonymousUserId
+}
+
+/** Mint a stable anonymous id in the browser session — browser-facing routes only. */
+export async function ensureRateLimitPrincipalId(event: H3Event): Promise<string> {
+  const session = await getUserSession(event)
+  if (session.user?.id) return session.user.id
+
+  if (session.anonymousUserId) return session.anonymousUserId
+
+  const anonymousUserId = crypto.randomUUID()
+  await setUserSession(event, { anonymousUserId })
+  return anonymousUserId
 }
 
 export async function checkAgentRateLimit(event: H3Event): Promise<{ used: number, remaining: number, limit: number }> {
-  const userId = await resolveIdentity(event)
+  const userId = await ensureRateLimitPrincipalId(event)
   const dayKey = today()
   const [row] = await db.select().from(schema.agentDailyUsage)
     .where(and(eq(schema.agentDailyUsage.userId, userId), eq(schema.agentDailyUsage.dayKey, dayKey)))
@@ -25,8 +38,7 @@ export async function checkAgentRateLimit(event: H3Event): Promise<{ used: numbe
   return { used, remaining: Math.max(0, limit - used), limit }
 }
 
-export async function consumeAgentRateLimit(event: H3Event): Promise<{ used: number, remaining: number, limit: number }> {
-  const userId = await resolveIdentity(event)
+export async function consumeAgentRateLimitForUser(userId: string): Promise<{ used: number, remaining: number, limit: number }> {
   const dayKey = today()
 
   return await db.transaction(async (tx: DbTransaction) => {
@@ -47,4 +59,9 @@ export async function consumeAgentRateLimit(event: H3Event): Promise<{ used: num
     }
     return { used, remaining: limit - used, limit }
   })
+}
+
+export async function consumeAgentRateLimit(event: H3Event): Promise<{ used: number, remaining: number, limit: number }> {
+  const userId = await ensureRateLimitPrincipalId(event)
+  return consumeAgentRateLimitForUser(userId)
 }

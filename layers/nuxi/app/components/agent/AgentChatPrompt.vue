@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { Chat } from '@ai-sdk/vue'
-import type { UIMessage } from 'ai'
+import type { AgentChatHandle } from '../../composables/eve/types'
 
 const input = defineModel<string>({ required: true })
 
@@ -8,11 +7,11 @@ const props = withDefaults(defineProps<{
   pasteAttachments?: TextPasteAttachment[]
   canSubmit?: boolean
   status?: 'ready' | 'streaming' | 'submitted' | 'error'
-  error?: Chat<UIMessage>['error']
+  error?: Error
   usage?: { used: number, remaining: number, limit: number }
   variant?: 'subtle' | 'naked'
   size?: 'sm' | 'md'
-  chat?: Chat<UIMessage>
+  chat?: AgentChatHandle
   submitDisabled?: boolean
   submitColor?: 'neutral' | 'primary'
   ui?: Record<string, string>

@@ -1,0 +1,15 @@
+{
+  "name": "nuxi-eve",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "eve build",
+    "dev": "eve dev",
+    "start": "eve start"
+  },
+  "dependencies": {
+    "ai": "^7.0.2",
+    "eve": "^0.15.1",
+    "zod": "^4.4.3"
+  }
+}

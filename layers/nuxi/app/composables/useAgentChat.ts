@@ -1,11 +1,22 @@
-import { Chat } from '@ai-sdk/vue'
-import { DefaultChatTransport } from 'ai'
-import type { FileUIPart, UIMessage } from 'ai'
+import type { UIMessage } from 'ai'
+import type { ChatEveState } from '../../shared/types/chat'
+import { buildMessageParts, getMessageTextLength } from '../../shared/utils/paste-attachment'
+import { createEveChatSession } from './eve/session'
+import { getOrCreateEveAgent, removeEveAgent } from './eve/init'
+import { toUIMessages } from './eve/adapter'
+import {
+  createEveFinishHandler,
+  readAnonymousTitle,
+  resumeOptionsFromChat
+} from './eve/thread-state'
+import { useChatVotes } from './useChatVotes'
+import { usePasteAttachment } from './usePasteAttachment'
 
 type ChatModeOptions = {
   mode?: 'chat'
   chatId: string
   initialMessages?: UIMessage[]
+  initialState?: ChatEveState | null
   source: string
   withPageContext?: 'always' | 'when-enabled'
   fetchVotes?: boolean
@@ -18,137 +29,53 @@ type StartModeOptions = {
   source: string
 }
 
-type UseAgentChatOptions = ChatModeOptions | StartModeOptions
+export type UseAgentChatOptions = ChatModeOptions | StartModeOptions
 
-function usePasteAttachment(input: Ref<string>) {
-  const attachments = ref<TextPasteAttachment[]>([])
-
-  const canSubmit = computed(() =>
-    Boolean(input.value.trim() || attachments.value.length)
-  )
-
-  function handlePaste(event: ClipboardEvent) {
-    const text = event.clipboardData?.getData('text/plain')
-    if (!text || !shouldConvertPasteToAttachment(text)) return
-
-    event.preventDefault()
-    attachments.value.push({
-      content: text,
-      name: guessAttachmentName(text, attachments.value.map(attachment => attachment.name))
-    })
-  }
-
-  function removeAttachment(index: number) {
-    attachments.value.splice(index, 1)
-  }
-
-  function restoreToInput(index: number) {
-    const attachment = attachments.value[index]
-    if (!attachment) return
-
-    const content = attachment.content
-    input.value = input.value.trim()
-      ? `${content}\n\n${input.value.trim()}`
-      : content
-    attachments.value.splice(index, 1)
-  }
-
-  function clearAttachments() {
-    attachments.value = []
-  }
-
-  return {
-    attachments,
-    canSubmit,
-    handlePaste,
-    removeAttachment,
-    restoreToInput,
-    buildMessageParts: () => buildMessageParts(input.value, attachments.value),
-    clearAttachments
-  }
-}
-
-function createPromptBindings(
-  paste: ReturnType<typeof usePasteAttachment>,
-  onSubmit: () => void | Promise<void>
+function buildEveHeaders(
+  chatId: string,
+  agent: ReturnType<typeof useNuxtAgent>,
+  withPageContext: ComputedRef<boolean>
 ) {
-  return computed(() => ({
-    pasteAttachments: paste.attachments.value,
-    canSubmit: paste.canSubmit.value,
-    onPaste: paste.handlePaste,
-    onRemoveAttachment: paste.removeAttachment,
-    onRestoreAttachment: paste.restoreToInput,
-    onSubmit
-  }))
+  return () => {
+    const headers: Record<string, string> = {
+      'x-nuxi-chat-id': chatId
+    }
+
+    if (withPageContext.value && agent.currentPage.value) {
+      headers['x-page-path'] = agent.currentPage.value
+    }
+
+    return headers
+  }
 }
 
-function useVotes(chatId: MaybeRefOrGetter<string>, immediate = false) {
-  const toast = useToast()
-  const chatIdValue = computed(() => toValue(chatId))
-
-  const { data: voteRows } = useLazyFetch<ChatVoteRow[]>(
-    () => `/api/chats/${chatIdValue.value}/votes`,
-    {
-      immediate,
-      default: () => [] as ChatVoteRow[]
-    }
-  )
-
-  const votes = ref(new Map<string, boolean>())
-
-  watch(voteRows, (rows) => {
-    const map = new Map<string, boolean>()
-    for (const row of (rows ?? []) as ChatVoteRow[]) {
-      map.set(row.messageId, row.isUpvoted)
-    }
-    votes.value = map
-  }, { immediate: true })
-
-  function getRows(): ChatVoteRow[] {
-    return (voteRows.value ?? []) as ChatVoteRow[]
-  }
-
-  function getVote(messageId: string): boolean | null {
-    const vote = votes.value.get(messageId)
-    return vote === undefined ? null : vote
-  }
-
-  function vote(message: UIMessage, isUpvoted: boolean) {
-    const current = votes.value.get(message.id)
-    const next = current === isUpvoted ? undefined : isUpvoted
-    const snapshot = new Map(votes.value)
-
-    if (next === undefined) votes.value.delete(message.id)
-    else votes.value.set(message.id, next)
-    votes.value = new Map(votes.value)
-
-    voteRows.value = next === undefined
-      ? getRows().filter(row => row.messageId !== message.id)
-      : [
-          ...getRows().filter(row => row.messageId !== message.id),
-          { chatId: chatIdValue.value, messageId: message.id, isUpvoted: next }
-        ]
-
-    $fetch(`/api/chats/${chatIdValue.value}/votes`, {
-      method: 'POST',
-      body: next === undefined
-        ? { messageId: message.id }
-        : { messageId: message.id, isUpvoted: next }
-    }).catch(() => {
-      votes.value = snapshot
-      voteRows.value = [...snapshot.entries()].map(([messageId, isUpvoted]) => ({
-        chatId: chatIdValue.value,
-        messageId,
-        isUpvoted
-      }))
-      toast.add({ description: 'Failed to save vote', icon: 'i-lucide-alert-circle', color: 'error' })
-    })
-  }
-
-  return { votes, getVote, vote }
+type StartChatReturn = {
+  input: Ref<string>
+  loading: Ref<boolean>
+  prompt: ReturnType<ReturnType<typeof usePasteAttachment>['bindings']>
+  onSubmit: () => Promise<void>
+  createFromSuggestion: (label: string) => Promise<void>
 }
 
-export function useAgentChat(options: UseAgentChatOptions) {
+type AgentChatReturn = {
+  chat: {
+    messages: UIMessage[]
+    status: 'ready' | 'submitted' | 'streaming' | 'error'
+    error?: Error
+    stop: () => void
+    regenerate: () => Promise<void>
+  }
+  input: Ref<string>
+  prompt: ReturnType<ReturnType<typeof usePasteAttachment>['bindings']>
+  getVote: (messageId: string) => boolean | null
+  vote: (message: UIMessage, isUpvoted: boolean) => void
+  send: (inputValue: string | { parts: UIMessage['parts'] }) => Promise<void>
+  onSubmit: () => Promise<void>
+  askQuestion: (question: string) => void
+  readAnonymousTitle: () => string | null
+}
+
+function useStartChat(source: string): StartChatReturn {
   const agent = useNuxtAgent()
   const chats = useChats()
   const { loggedIn } = useUserSession()
@@ -157,54 +84,71 @@ export function useAgentChat(options: UseAgentChatOptions) {
 
   const input = ref('')
   const paste = usePasteAttachment(input)
+  const loading = ref(false)
 
-  if (options.mode === 'start') {
-    const loading = ref(false)
+  async function createChat(parts: UIMessage['parts']) {
+    if (loading.value || agent.rateLimitReached.value || getMessageTextLength(parts) === 0) return
+    loading.value = true
 
-    async function createChat(parts: UIMessage['parts']) {
-      if (loading.value || agent.rateLimitReached.value || getMessageTextLength(parts) === 0) return
-      loading.value = true
-
-      try {
-        if (loggedIn.value) {
-          const chatId = crypto.randomUUID()
-          await createChatWithMessage(chatId, parts)
-          await chats.refresh()
-          await navigateTo(`/dashboard/chat/${chatId}`)
-        } else {
-          agent.pendingMessageParts.value = parts
-          await navigateTo(`/dashboard/chat/${crypto.randomUUID()}`)
-        }
-      } catch {
-        toast.add({ description: 'Failed to create chat', icon: 'i-lucide-alert-circle', color: 'error' })
-      } finally {
-        loading.value = false
+    try {
+      if (loggedIn.value) {
+        const chatId = crypto.randomUUID()
+        await createChatWithMessage(chatId, parts)
+        await chats.refresh()
+        await navigateTo(`/dashboard/chat/${chatId}`)
+      } else {
+        agent.pendingMessageParts.value = parts
+        await navigateTo(`/dashboard/chat/${crypto.randomUUID()}`)
       }
-    }
-
-    async function onSubmit() {
-      if (!paste.canSubmit.value) return
-      const parts = paste.buildMessageParts()
-      paste.clearAttachments()
-      input.value = ''
-      await createChat(parts)
-    }
-
-    function createFromSuggestion(label: string) {
-      return createChat(buildMessageParts(label, []))
-    }
-
-    return {
-      input,
-      loading,
-      prompt: createPromptBindings(paste, onSubmit),
-      onSubmit,
-      createFromSuggestion
+    } catch {
+      toast.add({ description: 'Failed to create chat', icon: 'i-lucide-alert-circle', color: 'error' })
+    } finally {
+      loading.value = false
     }
   }
 
-  const chatOptions = options as ChatModeOptions
-  const { getVote, vote } = useVotes(() => chatOptions.chatId, chatOptions.fetchVotes ?? false)
+  async function onSubmit() {
+    if (!paste.canSubmit.value) return
+    const parts = paste.buildMessageParts()
+    paste.clearAttachments()
+    input.value = ''
+    track('Nuxi Message Sent', { source, queryLength: getMessageTextLength(parts) })
+    await createChat(parts)
+  }
+
+  function createFromSuggestion(label: string) {
+    track('Nuxi FAQ Clicked', { question: label, source })
+    return createChat(buildMessageParts(label, []))
+  }
+
+  return {
+    input,
+    loading,
+    prompt: paste.bindings(onSubmit),
+    onSubmit,
+    createFromSuggestion
+  }
+}
+
+export function useAgentChat<T extends UseAgentChatOptions>(
+  options: T
+): T extends StartModeOptions ? StartChatReturn : AgentChatReturn
+export function useAgentChat(options: UseAgentChatOptions) {
+  if (options.mode === 'start') {
+    return useStartChat(options.source)
+  }
+
+  const chatOptions = options
+  const agent = useNuxtAgent()
+  const chats = useChats()
+  const { loggedIn } = useUserSession()
+  const { track } = useAnalytics()
+
+  const input = ref('')
+  const paste = usePasteAttachment(input)
+  const { getVote, vote } = useChatVotes(() => chatOptions.chatId, chatOptions.fetchVotes ?? false)
+
+  const initialDbPersistDone = ref((chatOptions.initialMessages?.length ?? 0) > 0)
 
   const useContext = computed(() =>
     chatOptions.withPageContext === 'always'
@@ -212,73 +156,71 @@ export function useAgentChat(options: UseAgentChatOptions) {
       : agent.pageContextEnabled.value && Boolean(agent.currentPage.value)
   )
 
-  const chat = new Chat<UIMessage>({
-    id: chatOptions.chatId,
-    messages: chatOptions.initialMessages,
-    transport: new DefaultChatTransport({
-      api: `/api/chats/${chatOptions.chatId}`,
-      headers: () => {
-        if (useContext.value && agent.currentPage.value) {
-          return { 'x-page-path': agent.currentPage.value }
-        }
-        return {}
-      }
-    }),
-    onFinish: () => {
-      const now = new Date().toISOString()
-      chat.messages = chat.messages.map((msg) => {
-        if (!(msg.metadata as Record<string, unknown> | undefined)?.createdAt) {
-          return { ...msg, metadata: { ...(msg.metadata as object ?? {}), createdAt: now } }
-        }
-        return msg
-      }) as UIMessage[]
-
-      if (loggedIn.value) {
-        const chatCache = useNuxtData<ChatDetail>(`chat-${chatOptions.chatId}`)
-        if (chatCache.data.value) {
-          chatCache.data.value = {
-            ...chatCache.data.value,
-            messages: chat.messages.map(m => ({
-              id: m.id,
-              role: m.role,
-              parts: m.parts as unknown[],
-              createdAt: (m.metadata as { createdAt?: string } | undefined)?.createdAt ?? now
-            })) as ChatDetail['messages']
-          }
-        }
-      }
-
-      chatOptions.onFinish?.()
-    },
-    onData: async (part) => {
-      if (part.type === 'data-chat-title') {
-        const generatedTitle = (part.data as { title?: string } | undefined)?.title
-        if (generatedTitle) {
-          if (loggedIn.value) {
-            await chats.refresh()
-            const updated = chats.chatList.value?.find(c => c.id === chatOptions.chatId)
-            if (updated?.title) chats.patchTitle(chatOptions.chatId, updated.title)
-          } else {
-            chatOptions.onTitle?.(generatedTitle)
-          }
-          return
-        }
-
-        if (loggedIn.value) {
-          await chats.refresh()
-          const updated = chats.chatList.value?.find(c => c.id === chatOptions.chatId)
-          if (updated?.title) chats.patchTitle(chatOptions.chatId, updated.title)
-        }
-      }
+  const resumeOptions = computed(() => {
+    if (chatOptions.initialState) {
+      return resumeOptionsFromChat({ state: chatOptions.initialState })
     }
+    return {}
   })
+
+  const eveSession = createEveChatSession(() => chatOptions.chatId, () => ({
+    ...resumeOptions.value,
+    headers: buildEveHeaders(chatOptions.chatId, agent, useContext),
+    onFinish: createEveFinishHandler({
+      chatId: chatOptions.chatId,
+      loggedIn: () => loggedIn.value,
+      getMessages: () => toUIMessages(getOrCreateEveAgent(chatOptions.chatId).data.value.messages),
+      refreshChats: () => chats.refresh(),
+      patchTitle: (id, title) => chats.patchTitle(id, title),
+      findChatTitle: id => chats.chatList.value?.find(c => c.id === id)?.title ?? null,
+      onTitle: chatOptions.onTitle,
+      onFinish: chatOptions.onFinish
+    })
+  }))
+
+  const chat = {
+    get messages() {
+      const live = eveSession.messages
+      if (live.length > 0) return live
+      return chatOptions.initialMessages ?? []
+    },
+    get status() {
+      return eveSession.status
+    },
+    get error() {
+      return eveSession.error
+    },
+    stop: eveSession.stop,
+    regenerate: eveSession.regenerate
+  }
+
+  async function persistFirstUserMessage(parts: UIMessage['parts']) {
+    if (initialDbPersistDone.value) return
+    initialDbPersistDone.value = true
+
+    const metadata = {
+      createdAt: new Date().toISOString(),
+      ...(useContext.value && agent.currentPage.value ? { pagePath: agent.currentPage.value } : {})
+    }
+
+    try {
+      if (chatOptions.initialMessages?.length) {
+        await appendUserMessageToChat(chatOptions.chatId, parts, metadata)
+      } else {
+        await createChatWithMessage(chatOptions.chatId, parts, metadata)
+      }
+    } catch (error) {
+      initialDbPersistDone.value = false
+      throw error
+    }
+  }
 
   type SendInput = string | { parts: UIMessage['parts'] }
 
-  async function send(input: SendInput) {
-    const parts = typeof input === 'string'
-      ? [{ type: 'text' as const, text: input }]
-      : input.parts
+  async function send(inputValue: SendInput) {
+    const parts = typeof inputValue === 'string'
+      ? [{ type: 'text' as const, text: inputValue }]
+      : inputValue.parts
 
     if (!parts.length || getMessageTextLength(parts) === 0 || agent.rateLimitReached.value) return
 
@@ -288,29 +230,12 @@ export function useAgentChat(options: UseAgentChatOptions) {
       withContext: useContext.value,
       queryLength: getMessageTextLength(parts)
     })
-    const metadata = {
-      createdAt: new Date().toISOString(),
-      ...(useContext.value && agent.currentPage.value ? { pagePath: agent.currentPage.value } : {})
+
+    if (loggedIn.value) {
+      await persistFirstUserMessage(parts)
     }
 
-    const fileParts = parts.filter((part): part is FileUIPart => part.type === 'file')
-    const text = parts
-      .filter((part): part is { type: 'text', text: string } => part.type === 'text')
-      .map(part => part.text)
-      .join('\n')
-      .trim()
-
-    if (chat.messages.length === 0 && loggedIn.value) {
-      const userMessage = await createChatWithMessage(chatOptions.chatId, parts, metadata)
-      chat.messages = [userMessage]
-      await chat.regenerate()
-    } else if (fileParts.length && text) {
-      await chat.sendMessage({ text, files: fileParts, metadata })
-    } else if (fileParts.length) {
-      await chat.sendMessage({ files: fileParts, metadata })
-    } else {
-      await chat.sendMessage({ text, metadata })
-    }
+    await eveSession.send(typeof inputValue === 'string' ? inputValue : { parts })
     agent.onMessageSent()
   }
 
@@ -327,14 +252,21 @@ export function useAgentChat(options: UseAgentChatOptions) {
     send(question)
   }
 
+  if (import.meta.client) {
+    onUnmounted(() => {
+      removeEveAgent(chatOptions.chatId)
+    })
+  }
+
   return {
     chat,
     input,
-    prompt: createPromptBindings(paste, onSubmit),
+    prompt: paste.bindings(onSubmit),
     getVote,
     vote,
     send,
     onSubmit,
-    askQuestion
+    askQuestion,
+    readAnonymousTitle: () => readAnonymousTitle(chatOptions.chatId)
   }
 }

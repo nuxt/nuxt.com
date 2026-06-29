@@ -28,8 +28,10 @@ export default defineNuxtConfig({
     '@nuxt/hints',
     '@vercel/analytics',
     '@vercel/speed-insights',
-    'evlog/nuxt'
+    'evlog/nuxt',
+    'eve/nuxt'
   ],
+
   $development: {
     site: {
       url: 'http://localhost:3000'
@@ -173,6 +175,8 @@ export default defineNuxtConfig({
     // Auth-protected client-side area — never SSR'd.
     '/dashboard': { ssr: false },
     '/dashboard/**': { ssr: false },
+    '/_eve_internal/**': { headers: { 'cache-control': 'no-store' } },
+    '/api/internal/**': { headers: { 'cache-control': 'no-store' } },
     // Main navigation
     '/api/navigation.json': { prerender: true },
     // Redirects
@@ -460,9 +464,10 @@ export default defineNuxtConfig({
   compatibilityDate: '2026-01-14',
   nitro: {
     prerender: {
-      crawlLinks: true,
+      crawlLinks: false,
       ignore: [
         route => route === '/modules' || route.startsWith('/modules/'),
+        route => route.startsWith('/raw/'),
         route => route.startsWith('/admin'),
         route => route.startsWith('/login'),
         route => route.startsWith('/dashboard'),
@@ -483,11 +488,13 @@ export default defineNuxtConfig({
     optimizeDeps: {
       include: [
         '@comark/vue',
+        '@unhead/schema-org/vue',
         '@vue/devtools-core',
         '@vue/devtools-kit',
         'valibot',
         'zod',
-        'date-fns'
+        'date-fns',
+        'ai'
       ],
       exclude: ['vue-chrts', 'shaders']
     }
@@ -527,6 +534,7 @@ export default defineNuxtConfig({
       }
     }
   },
+
   evlog: {
     env: { service: 'nuxt-com' },
     pretty: process.env.CI ? false : undefined,

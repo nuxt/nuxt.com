@@ -98,6 +98,22 @@ To run the evals for the MCP server, follow these steps:
    pnpm eval:ui
    ```
 
+## Nuxi (Eve agent)
+
+Nuxi lives in [`layers/nuxi/`](./layers/nuxi/) — Eve runtime (`agent/`), UI, and internal APIs in one layer. For local development:
+
+```bash
+# Required — shared secret between the Nuxt app and Eve runtime
+INTERNAL_API_SECRET=$(openssl rand -base64 32)
+
+# Optional — canonical site URL for MCP + internal API callbacks
+NUXT_PUBLIC_SITE_URL=http://localhost:3000
+
+pnpm dev
+```
+
+On Vercel, configure **both** the `web` and `eve` services (`vercel.json`) with the same `INTERNAL_API_SECRET`, `AI_GATEWAY_API_KEY`, and database env vars.
+
 ## License
 
 [MIT License](./LICENSE)

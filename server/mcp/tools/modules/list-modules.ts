@@ -12,7 +12,7 @@ WHEN TO USE: Use this tool when you need to DISCOVER or SEARCH for modules. Comm
 
 PARAMETERS:
 - search: Filter by name, description, or npm package name
-- category: Filter by category (e.g., "ui", "auth", "database", "media", "seo")
+- category: Filter by exact category name (e.g., "Security", "UI", "Database", "CMS", "SEO") — use search for keyword discovery, not category
 - sort: Order by downloads, stars, publishedAt, or createdAt
 - order: asc or desc
 
@@ -21,7 +21,7 @@ WHEN NOT TO USE: If you already know the exact module slug (e.g., "@nuxt/ui"), u
 OUTPUT: Returns list of modules with name, description, category, stats. Use get_module for complete details including README and compatibility.`,
   inputSchema: {
     search: z.string().optional().describe('Search term to filter modules by name, description, or npm package name'),
-    category: z.string().optional().describe('Filter modules by category (e.g., "ui", "database", "auth", "seo")'),
+    category: z.string().optional().describe('Filter by exact category name (e.g., "Security", "UI", "Database", "CMS", "SEO"). Auth modules use category "Security", not "auth". Prefer search for keyword discovery.'),
     sort: z.enum(['downloads', 'stars', 'publishedAt', 'createdAt']).optional().default('downloads').describe('Sort modules by downloads, stars, published date, or created date'),
     order: z.enum(['asc', 'desc']).optional().default('desc').describe('Sort order (ascending or descending)')
   },
@@ -34,7 +34,11 @@ OUTPUT: Returns list of modules with name, description, category, stats. Use get
     { category: 'ui', sort: 'downloads' },
     { search: 'image', sort: 'stars', order: 'desc' }
   ],
-  cache: '1h',
+  cache: {
+    maxAge: '1h',
+    getKey: (args: { search?: string, category?: string, sort?: string, order?: string }) =>
+      `search=${args.search ?? ''}|category=${args.category ?? ''}|sort=${args.sort ?? 'downloads'}|order=${args.order ?? 'desc'}`
+  },
   async handler({ search, category, sort = 'downloads', order = 'desc' }) {
     const response = await $fetch<{ modules: Module[], stats: Stats }>('https://api.nuxt.com/modules')
 

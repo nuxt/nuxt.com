@@ -7,9 +7,13 @@ import {
   getModuleCards,
   getRichToolHeader,
   getTemplates,
+  normalizeToolName,
+  getConnectionSearchSuffix,
+  getConnectionSearchToolText,
   getToolIcon,
   getToolSuffix,
   getToolText,
+  isConnectionSearchTool,
   isModuleListTool,
   isValidModuleCardData,
   moduleCardProps,
@@ -30,21 +34,50 @@ type ToolPartUnion = ToolUIPart | DynamicToolUIPart
 function getToolOutput(part: ToolPartUnion): string | undefined {
   if (part.state !== 'output-available' || !part.output) return undefined
 
-  const output = part.output as Record<string, unknown>
-  const content = (output.content ?? output) as Array<{ text?: string }> | string
+  const output = part.output as Record<string, unknown> | unknown[]
+
+  if (Array.isArray(output)) {
+    const lines = output.map((item) => {
+      if (!item || typeof item !== 'object') return undefined
+      const entry = item as Record<string, unknown>
+      const tool = entry.tool ?? entry.qualifiedName
+      if (typeof tool !== 'string') return undefined
+      const description = typeof entry.description === 'string' ? entry.description : undefined
+      return description ? `• ${tool} — ${description}` : `• ${tool}`
+    }).filter((line): line is string => Boolean(line))
+    if (lines.length > 0) return lines.join('\n')
+  }
+
+  const record = output as Record<string, unknown>
+  const content = (record.content ?? output) as Array<{ text?: string }> | string
 
   if (typeof content === 'string') {
     return content || undefined
   }
 
   if (Array.isArray(content)) {
-    return content.map(c => c.text).filter(Boolean).join('\n') || undefined
+    const textLines = content.map(c => c.text).filter(Boolean)
+    if (textLines.length > 0) return textLines.join('\n')
+
+    const objectLines = content.map((item) => {
+      if (!item || typeof item !== 'object') return undefined
+      const entry = item as Record<string, unknown>
+      const tool = entry.tool ?? entry.qualifiedName
+      if (typeof tool !== 'string') return undefined
+      const description = typeof entry.description === 'string' ? entry.description : undefined
+      return description ? `• ${tool} — ${description}` : `• ${tool}`
+    }).filter((line): line is string => Boolean(line))
+    if (objectLines.length > 0) return objectLines.join('\n')
   }
 
   return JSON.stringify(output, null, 2)
 }
 
 const streamingCaret = { class: 'inline-block w-2 h-[1em] bg-current align-middle ml-px opacity-80 animate-pulse' }
+
+function resolvedToolName(part: ToolPartUnion): string {
+  return normalizeToolName(getToolName(part))
+}
 
 function getMessagePagePath(message: UIMessage): string | null {
   const metaPath = (message.metadata as { pagePath?: string } | undefined)?.pagePath
@@ -102,7 +135,7 @@ function getUserTextParts(message: UIMessage) {
       </UChatReasoning>
 
       <UChatTool
-        v-else-if="isToolUIPart(part) && getToolName(part) === 'web_search'"
+        v-else-if="isToolUIPart(part) && resolvedToolName(part) === 'web_search'"
         icon="i-lucide-search"
         :text="isToolStreaming(part) ? 'Searching the web...' : 'Searched the web'"
         :suffix="getSearchQuery(part)"
@@ -112,7 +145,15 @@ function getUserTextParts(message: UIMessage) {
         <ToolsToolSources :sources="getSources(part)" />
       </UChatTool>
 
-      <template v-else-if="isToolUIPart(part) && getToolName(part) === 'show_module'">
+      <UChatTool
+        v-else-if="isToolUIPart(part) && isConnectionSearchTool(part as ToolPart)"
+        icon="i-lucide-plug"
+        :text="getConnectionSearchToolText(part as ToolPart)"
+        :suffix="getConnectionSearchSuffix(part as ToolPart)"
+        :streaming="isToolStreaming(part)"
+      />
+
+      <template v-else-if="isToolUIPart(part) && resolvedToolName(part) === 'show_module'">
         <UChatTool v-bind="getRichToolHeader(part as ToolPart, 'show_module')" />
         <ToolsModuleCard
           v-if="showModuleCard(part as ToolPart)"
@@ -120,7 +161,7 @@ function getUserTextParts(message: UIMessage) {
         />
       </template>
 
-      <template v-else-if="isToolUIPart(part) && getToolName(part) === 'show_template'">
+      <template v-else-if="isToolUIPart(part) && resolvedToolName(part) === 'show_template'">
         <UChatTool v-bind="getRichToolHeader(part as ToolPart, 'show_template')" />
         <div
           v-if="showTemplateCards(part as ToolPart)"
@@ -134,7 +175,7 @@ function getUserTextParts(message: UIMessage) {
         </div>
       </template>
 
-      <template v-else-if="isToolUIPart(part) && getToolName(part) === 'show_blog_post'">
+      <template v-else-if="isToolUIPart(part) && resolvedToolName(part) === 'show_blog_post'">
         <UChatTool v-bind="getRichToolHeader(part as ToolPart, 'show_blog_post')" />
         <ToolsBlogCard
           v-if="showCardOutput(part as ToolPart)"
@@ -142,7 +183,7 @@ function getUserTextParts(message: UIMessage) {
         />
       </template>
 
-      <template v-else-if="isToolUIPart(part) && getToolName(part) === 'show_hosting'">
+      <template v-else-if="isToolUIPart(part) && resolvedToolName(part) === 'show_hosting'">
         <UChatTool v-bind="getRichToolHeader(part as ToolPart, 'show_hosting')" />
         <ToolsHostingCard
           v-if="showCardOutput(part as ToolPart)"
@@ -150,7 +191,7 @@ function getUserTextParts(message: UIMessage) {
         />
       </template>
 
-      <template v-else-if="isToolUIPart(part) && getToolName(part) === 'open_playground'">
+      <template v-else-if="isToolUIPart(part) && resolvedToolName(part) === 'open_playground'">
         <UChatTool v-bind="getRichToolHeader(part as ToolPart, 'open_playground')" />
         <ToolsPlaygroundCard
           v-if="showPlaygroundCard(part as ToolPart)"
@@ -158,7 +199,7 @@ function getUserTextParts(message: UIMessage) {
         />
       </template>
 
-      <template v-else-if="isToolUIPart(part) && getToolName(part) === 'report_issue'">
+      <template v-else-if="isToolUIPart(part) && resolvedToolName(part) === 'report_issue'">
         <UChatTool v-bind="getRichToolHeader(part as ToolPart, 'report_issue')" />
         <ToolsFeedbackCard
           v-if="showFeedbackCard(part as ToolPart) && getFeedbackOutput(part.output)"

@@ -9,9 +9,9 @@ function extractText(parts: MessagePart[]): string {
 }
 
 export default defineMcpTool({
-  description: `Retrieves the full content of a single AI agent chat session: stored messages (with extracted text per message), associated upvotes/downvotes, and usage stats.
+  description: `Retrieves a saved **web** chat session: messages (with extracted text), and per-message votes.
 
-WHEN TO USE: After spotting an interesting chat ID via \`admin_list_agent_chats\`, use this tool to read the actual conversation transcript and individual message-level votes.`,
+WHEN TO USE: After \`list-agent-chats\`, read the transcript. Token/cost data for any channel is in Vercel Observability → Agent Runs.`,
   inputSchema: {
     chatId: z.string().min(1).describe('The chat session id (UUID-style string returned by list_agent_chats).'),
     includeRawParts: z.boolean().default(false).describe('If true, include the raw `parts` array on every message. Off by default to keep responses small.')
@@ -76,21 +76,14 @@ WHEN TO USE: After spotting an interesting chat ID via \`admin_list_agent_chats\
       userId: chat.userId,
       title: chat.title,
       visibility: chat.visibility,
-      model: chat.model,
-      provider: chat.provider,
-      stats: {
-        inputTokens: chat.inputTokens,
-        outputTokens: chat.outputTokens,
-        estimatedCost: chat.estimatedCost,
-        durationMs: chat.durationMs,
-        requestCount: chat.requestCount,
-        messageCount: messages.length
-      },
+      messageCount: messages.length,
       votes: {
         upvotes: votes.filter((v: VoteRow) => v.isUpvoted).length,
         downvotes: votes.filter((v: VoteRow) => !v.isUpvoted).length
       },
       createdAt: chat.createdAt,
+      updatedAt: chat.updatedAt,
+      url: `https://nuxt.com/dashboard/chat/${chat.id}`,
       messages
     }
   }
