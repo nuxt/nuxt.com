@@ -1,4 +1,5 @@
 import { connectSlackCredentials } from '@vercel/connect/eve'
+import { toolResultFrom } from 'eve/tools'
 import {
   defaultSlackAuth,
   loadThreadContextMessages,
@@ -6,6 +7,8 @@ import {
   type SlackContext,
   type SlackMessage
 } from 'eve/channels/slack'
+import { buildSlackPromptCard } from '../lib/slack-prompt-card.js'
+import showPromptTool from '../tools/show_prompt.js'
 
 function isHookConflictFailure(event: { code?: string, message?: string }) {
   const message = event.message ?? ''
@@ -49,6 +52,15 @@ export default slackChannel({
   onAppMention: dispatchSlackMessage,
   onDirectMessage: dispatchSlackMessage,
   events: {
+    async 'action.result'(eventData, channel) {
+      const matched = toolResultFrom(eventData, showPromptTool)
+      if (!matched) return
+
+      const { description, prompt, deeplinks } = matched.output
+      await channel.thread.post({
+        card: buildSlackPromptCard({ description, prompt, deeplinks })
+      })
+    },
     async 'session.failed'(event, _channel) {
       // DM + @mention (or any double dispatch on the same thread) races on one
       // continuation token — the winning run already handles the user message.

@@ -94,7 +94,7 @@ function parseToolName(toolName: string): { verb?: [string, string], label: stri
   return { label: parts.join(' ') || toolName }
 }
 
-type RichToolName = 'show_module' | 'show_template' | 'show_blog_post' | 'show_hosting' | 'open_playground' | 'report_issue'
+type RichToolName = 'show_module' | 'show_template' | 'show_blog_post' | 'show_hosting' | 'open_playground' | 'report_issue' | 'show_prompt'
 
 const RICH_TOOL_HEADERS = {
   show_module: { loading: 'Loading module...', success: 'Found module', error: 'Module not found', icon: 'i-lucide-box' },
@@ -102,7 +102,8 @@ const RICH_TOOL_HEADERS = {
   show_blog_post: { loading: 'Finding blog post...', success: 'Found blog post', error: 'Blog post not found', icon: 'i-lucide-newspaper' },
   show_hosting: { loading: 'Loading provider...', success: 'Found provider', error: 'Provider not found', icon: 'i-lucide-server' },
   open_playground: { loading: 'Generating playground...', success: 'Playground ready', error: 'Playground ready', icon: 'i-simple-icons-stackblitz' },
-  report_issue: { loading: 'Preparing feedback form...', success: 'Help us improve', error: 'Help us improve', icon: 'i-lucide-message-circle-warning' }
+  report_issue: { loading: 'Preparing feedback form...', success: 'Help us improve', error: 'Help us improve', icon: 'i-lucide-message-circle-warning' },
+  show_prompt: { loading: 'Preparing prompt...', success: 'Ready to apply', error: 'Prompt unavailable', icon: 'i-lucide-sparkles' }
 } as const satisfies Record<RichToolName, { loading: string, success: string, error: string, icon: string }>
 
 export function hasToolError(output: unknown): boolean {
@@ -130,6 +131,24 @@ export function getFeedbackOutput(output: unknown): FeedbackOutput | null {
   return null
 }
 
+export function getPromptOutput(output: unknown): PromptCardData | null {
+  if (!output || typeof output !== 'object') return null
+  const o = output as Record<string, unknown>
+  if ('error' in o && o.error) return null
+  if (typeof o.description !== 'string' || typeof o.prompt !== 'string') return null
+  const deeplinks = o.deeplinks
+  if (!deeplinks || typeof deeplinks !== 'object') return null
+  const links = deeplinks as Record<string, unknown>
+  if (typeof links.cursor !== 'string' || typeof links.claude !== 'string') return null
+  return {
+    description: o.description,
+    prompt: o.prompt,
+    repo: typeof o.repo === 'string' ? o.repo : undefined,
+    icon: typeof o.icon === 'string' ? o.icon : undefined,
+    deeplinks: { cursor: links.cursor, claude: links.claude }
+  }
+}
+
 /** Tool output is ready to render (terminal state or output already present). */
 export function hasToolOutput(part: ToolPart): boolean {
   if (part.state === 'output-error' || part.state === 'output-denied') return false
@@ -152,6 +171,8 @@ function hasRichToolSuccess(part: ToolPart, toolName: RichToolName): boolean {
       return !!part.output
     case 'report_issue':
       return !!getFeedbackOutput(part.output)
+    case 'show_prompt':
+      return !!getPromptOutput(part.output)
   }
 }
 
@@ -184,6 +205,10 @@ export function showPlaygroundCard(part: ToolPart): boolean {
 
 export function showFeedbackCard(part: ToolPart): boolean {
   return hasToolOutput(part) && !!getFeedbackOutput(part.output)
+}
+
+export function showPromptCard(part: ToolPart): boolean {
+  return hasToolOutput(part) && !!getPromptOutput(part.output)
 }
 
 export function isModuleListTool(part: ToolPart): boolean {
