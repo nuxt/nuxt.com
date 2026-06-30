@@ -14,3 +14,11 @@ export function buildSlackPromptCard(data: Pick<PromptCardData, 'description' | 
     ]
   })
 }
+
+export function buildSlackPromptFallbackText(data: Pick<PromptCardData, 'description' | 'prompt' | 'deeplinks'>) {
+  return [
+    `*${data.description}*`,
+    `\`\`\`\n${truncateForSlackPreview(data.prompt)}\n\`\`\``,
+    `<${data.deeplinks.cursor}|Open in Cursor> · <${data.deeplinks.claude}|Open in Claude Code>`
+  ].join('\n')
+}

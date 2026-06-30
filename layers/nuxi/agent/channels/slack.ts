@@ -6,7 +6,7 @@ import {
   type SlackContext,
   type SlackMessage
 } from 'eve/channels/slack'
-import { buildSlackPromptCard } from '../lib/slack-prompt-card.js'
+import { buildSlackPromptCard, buildSlackPromptFallbackText } from '../lib/slack-prompt-card.js'
 import { buildSlackPromptDeeplinks, parsePromptCardOutput } from '../../shared/utils/ide-deeplinks.js'
 
 function isHookConflictFailure(event: { code?: string, message?: string }) {
@@ -52,17 +52,34 @@ export default slackChannel({
   onDirectMessage: dispatchSlackMessage,
   events: {
     async 'action.result'(eventData, channel) {
-      if (eventData.kind !== 'tool-result' || eventData.isError || eventData.toolName !== 'show_prompt') {
+      if (eventData.status !== 'completed') return
+
+      const { result } = eventData
+      if (result.kind !== 'tool-result' || result.isError || result.toolName !== 'show_prompt') {
         return
       }
 
-      const data = parsePromptCardOutput(eventData.output)
+      const data = parsePromptCardOutput(result.output)
       if (!data) return
 
       const deeplinks = buildSlackPromptDeeplinks(data.prompt, data.repo)
-      await channel.thread.post({
-        card: buildSlackPromptCard({ description: data.description, prompt: data.prompt, deeplinks })
-      })
+      const cardPayload = {
+        description: data.description,
+        prompt: data.prompt,
+        deeplinks
+      }
+
+      try {
+        await channel.thread.post({
+          card: buildSlackPromptCard(cardPayload),
+          fallbackText: buildSlackPromptFallbackText(cardPayload)
+        })
+      } catch (error) {
+        console.error('[nuxi/slack] show_prompt card post failed', error)
+        await channel.thread.post({
+          markdown: buildSlackPromptFallbackText(cardPayload)
+        })
+      }
     },
     async 'session.failed'(event, _channel) {
       // DM + @mention (or any double dispatch on the same thread) races on one
