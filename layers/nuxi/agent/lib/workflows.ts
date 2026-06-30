@@ -1,0 +1,88 @@
+import { timingSafeEqual } from 'node:crypto'
+import type { ScheduleHandlerArgs } from 'eve/schedules'
+import slack from '../channels/slack.js'
+
+const DEFAULT_SLACK_CHANNEL_ID = 'C0BDR6WNXC3' // #project-nuxi
+const DEFAULT_SINCE_DAYS = 7
+
+/** Eve schedule app principal — same shape as `appAuth` in schedule handlers. */
+export const scheduleAppAuth = {
+  authenticator: 'app',
+  principalId: 'eve:app',
+  principalType: 'runtime'
+} as const satisfies ScheduleHandlerArgs['appAuth']
+
+export function workflowSlackChannelId(): string {
+  return process.env.NUXT_WORKFLOW_SLACK_CHANNEL_ID?.trim() || DEFAULT_SLACK_CHANNEL_ID
+}
+
+export function defaultSinceDays(): number {
+  const raw = process.env.NUXT_WORKFLOW_SINCE_DAYS?.trim()
+  const parsed = raw ? Number.parseInt(raw, 10) : DEFAULT_SINCE_DAYS
+  if (!Number.isFinite(parsed) || parsed < 1) return DEFAULT_SINCE_DAYS
+  return Math.min(parsed, 365)
+}
+
+export function parseSinceDays(value: string | null | undefined): number | undefined {
+  if (!value?.trim()) return undefined
+  const parsed = Number.parseInt(value, 10)
+  if (!Number.isFinite(parsed) || parsed < 1) return undefined
+  return Math.min(parsed, 365)
+}
+
+export function resolveSinceDays(
+  override: number | undefined,
+  fallback: number = defaultSinceDays()
+): number {
+  return override ?? fallback
+}
+
+export function receiveOnSlack({
+  receive,
+  appAuth,
+  message,
+  channelId = workflowSlackChannelId()
+}: {
+  receive: ScheduleHandlerArgs['receive']
+  appAuth: ScheduleHandlerArgs['appAuth']
+  message: string
+  channelId?: string
+}) {
+  return receive(slack, {
+    auth: appAuth,
+    target: { channelId },
+    message
+  })
+}
+
+export function isManualWorkflowTriggerAllowed(): boolean {
+  if (process.env.NUXT_WORKFLOW_MANUAL_TRIGGER === '1') return true
+  return process.env.VERCEL_ENV === 'preview'
+}
+
+function safeBearerMatch(provided: string, expected: string): boolean {
+  const a = Buffer.from(provided)
+  const b = Buffer.from(expected)
+  if (a.length !== b.length) return false
+  return timingSafeEqual(a, b)
+}
+
+export function verifyWorkflowTriggerAuth(req: Request): boolean {
+  const authorization = req.headers.get('authorization')?.trim()
+  if (!authorization?.toLowerCase().startsWith('bearer ')) return false
+  const token = authorization.slice('Bearer '.length).trim()
+  if (!token) return false
+
+  const internalSecret = process.env.INTERNAL_API_SECRET?.trim()
+  if (internalSecret && safeBearerMatch(token, internalSecret)) return true
+
+  const adminToken = process.env.NUXT_MCP_ADMIN_TOKEN?.trim()
+  if (adminToken && safeBearerMatch(token, adminToken)) return true
+
+  return false
+}
+
+/** Prompt prefix shared by scheduled Slack workflows. */
+export function skillWorkflowMessage(skillId: string, sinceDays: number): string {
+  return `Load the \`${skillId}\` skill and follow it for the last ${sinceDays} days. Post directly to this Slack channel.`
+}

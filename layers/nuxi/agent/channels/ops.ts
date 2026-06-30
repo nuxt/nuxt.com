@@ -1,36 +1,32 @@
 import { defineChannel, POST } from 'eve/channels'
 import {
-  isManualDigestTriggerAllowed,
+  isManualWorkflowTriggerAllowed,
+  parseSinceDays,
   scheduleAppAuth,
-  verifyDigestTriggerAuth,
-  type DigestMode
-} from '../lib/digest-config.js'
-import { runDigest } from '../lib/run-digest.js'
-
-function parseDigestMode(req: Request): DigestMode {
-  const url = new URL(req.url)
-  const mode = url.searchParams.get('mode')?.trim()
-  return mode === 'smoke' ? 'smoke' : 'weekly'
-}
+  verifyWorkflowTriggerAuth
+} from '../lib/workflows.js'
+import { runWeeklyDigest } from '../schedules/weekly-digest.js'
 
 export default defineChannel({
   routes: [
-    POST('/eve/v1/ops/digest/trigger', async (req, args) => {
-      if (!isManualDigestTriggerAllowed()) {
-        return Response.json({ error: 'Manual digest trigger is disabled' }, { status: 404 })
+    POST('/weekly-digest/trigger', async (req, args) => {
+      if (!isManualWorkflowTriggerAllowed()) {
+        return Response.json({ error: 'Manual workflow trigger is disabled' }, { status: 404 })
       }
-      if (!verifyDigestTriggerAuth(req)) {
+      if (!verifyWorkflowTriggerAuth(req)) {
         return Response.json({ error: 'Unauthorized' }, { status: 401 })
       }
 
-      const mode = parseDigestMode(req)
-      args.waitUntil(runDigest({
+      const url = new URL(req.url)
+      const sinceDays = parseSinceDays(url.searchParams.get('sinceDays'))
+
+      args.waitUntil(runWeeklyDigest({
         receive: args.receive,
-        appAuth: scheduleAppAuth(),
-        mode
+        appAuth: scheduleAppAuth,
+        sinceDays
       }))
 
-      return Response.json({ ok: true, mode })
+      return Response.json({ ok: true, sinceDays: sinceDays ?? null })
     })
   ]
 })

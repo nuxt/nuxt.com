@@ -4,6 +4,14 @@ description: Produce the Nuxt team digest combining docs feedback and Nuxi agent
 
 When producing a digest (scheduled or on request):
 
+**Slack delivery:** Your reply IS the Slack message — posted verbatim to the channel. You are Nuxi speaking to the team in-channel, not drafting for someone else.
+
+- First line MUST be the report title (**Nuxt weekly digest — last N days**). No preamble ("Here is…", "Ready to post", "Below is…").
+- Do NOT end with meta wrap-up ("That's the digest", "Let me know if…").
+- Use **bold** for section labels — do NOT use markdown `#` headings.
+- ONE message only — not a thread per section.
+- For runs, tokens, cost, or Slack traffic: point to **Vercel Observability → Agent Runs** (nuxt project). Do not invent numbers from local DB.
+
 1. Call admin tools in parallel where possible (default window: last 7 days unless the user or schedule specifies otherwise).
 2. `admin_mcp__feedback_stats` with `topPages=5`.
 3. `admin_mcp__list_feedback` with `ratings=["not-helpful", "confusing"]`, `limit=30`.
