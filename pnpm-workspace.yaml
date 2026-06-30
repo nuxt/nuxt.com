@@ -13,7 +13,17 @@ allowBuilds:
   vue-demi: false
 
 minimumReleaseAgeExclude:
-  - '@nuxt/ui@4.8.0'
-  - '@ai-sdk/gateway@4.0.2'
+  - "@nuxt/ui@4.8.0"
+  - "@ai-sdk/gateway@4.0.2"
   - ai@7.0.2
   - eve@0.15.1 || 0.17.0
+
+blockExoticSubdeps: false
+
+overrides:
+  nuxt: https://pkg.pr.new/nuxt@26f09f7
+  "@nuxt/kit": https://pkg.pr.new/@nuxt/kit@26f09f7
+  "@nuxt/nitro-server": https://pkg.pr.new/@nuxt/nitro-server@26f09f7
+  "@nuxt/rspack-builder": https://pkg.pr.new/@nuxt/rspack-builder@26f09f7
+  "@nuxt/schema": https://pkg.pr.new/@nuxt/schema@26f09f7
+  "@nuxt/vite-builder": https://pkg.pr.new/@nuxt/vite-builder@26f09f7
