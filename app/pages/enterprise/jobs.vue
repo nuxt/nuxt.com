@@ -12,11 +12,11 @@ if (!page.value) {
 const title = page.value.head?.title || page.value.title
 const description = page.value.head?.description || page.value.description
 useSeoMeta({
-  titleTemplate: '%s · Enterprise',
+  titleTemplate: '%s',
   title,
   description,
   ogDescription: description,
-  ogTitle: `${title} · Enterprise`
+  ogTitle: title
 })
 useCanonical()
 
@@ -32,8 +32,8 @@ await fetchList()
 <template>
   <UContainer v-if="page">
     <UPageHero
-      :title="title"
-      :description="description"
+      :title="page.title"
+      :description="page.description"
       :links="page.links"
       :ui="{
         title: 'text-left',

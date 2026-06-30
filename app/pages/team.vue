@@ -26,8 +26,12 @@ const [{ data: page }, { data: teams }] = await Promise.all([
   })
 ])
 
-const title = page.value!.title
-const description = page.value!.description
+if (!page.value) {
+  throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
+}
+
+const title = page.value.head?.title || page.value.title
+const description = page.value.head?.description || page.value.description
 
 useSeoMeta({
   titleTemplate: '%s',
@@ -58,8 +62,8 @@ const icons = {
 <template>
   <UContainer v-if="page">
     <UPageHero
-      :title="title"
-      :description="description"
+      :title="page.title"
+      :description="page.description"
     />
 
     <UPage>

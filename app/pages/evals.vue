@@ -45,8 +45,8 @@ if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const title = page.value.title
-const description = page.value.description
+const title = page.value.head?.title || page.value.title
+const description = page.value.head?.description || page.value.description
 
 useSeoMeta({
   titleTemplate: '%s',
@@ -56,7 +56,10 @@ useSeoMeta({
   ogTitle: title
 })
 useCanonical()
-defineOgImage('Docs.takumi', { title, description })
+defineOgImage('Docs.takumi', {
+  title,
+  description
+})
 
 // Build experiment map by name
 const experimentMap = computed(() => {
