@@ -5,7 +5,7 @@ import { buildIdeDeeplinks, MAX_PROMPT_LENGTH, normalizeRepo, truncatePrompt } f
 const repoSchema = z.string().regex(/^[a-zA-Z0-9-]+\/[a-zA-Z0-9-_.]+$/, 'Must be owner/name (e.g. nuxt/nuxt)').optional()
 
 export default defineTool({
-  description: 'Display an actionable prompt card with deeplinks to open the prompt in Cursor or Claude Code. Use when the user should apply a fix, migration, config change, or implementation in their own project — after diagnosing an issue (e.g. search_github_issues), or when they ask how to implement something in their codebase. Do NOT use for simple documentation answers. The prompt must be self-contained (error/context, likely files, concrete steps). Pass repo when the target GitHub repository is known (e.g. nuxt/nuxt, or a module repo from show_module).',
+  description: 'Display an actionable prompt card with deeplinks to open the prompt in Cursor or Claude Code. Proactively offer this when a ready IDE prompt would help the user add, modify, remove, or configure something in their codebase — the user does not need to ask for a prompt explicitly. Good after explaining how to do something, diagnosing errors, migrations, refactors, or module setup. Do NOT use for pure doc answers or nuxt.com navigation. The prompt must be self-contained (context, likely files, concrete steps). Pass repo when the target GitHub repository is known (e.g. nuxt/nuxt, or a module repo from show_module).',
   inputSchema: z.object({
     description: z.string().max(120).describe('Short label shown on the card (max 120 chars)'),
     prompt: z.string().min(1).max(MAX_PROMPT_LENGTH).describe('Full self-contained prompt for the IDE agent'),
