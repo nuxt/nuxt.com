@@ -5,18 +5,7 @@ import {
   type SlackContext,
   type SlackMessage
 } from 'eve/channels/slack'
-
-const PROD_SLACK_CONNECTOR = 'slack/nuxi'
-const PREVIEW_SLACK_CONNECTOR = 'slack/nuxi-preview'
-
-function slackConnectorId(): string {
-  const override = process.env.SLACK_CONNECTOR?.trim()
-  if (override) return override
-  if (process.env.NODE_ENV === 'development' || process.env.VERCEL_ENV === 'preview') {
-    return PREVIEW_SLACK_CONNECTOR
-  }
-  return PROD_SLACK_CONNECTOR
-}
+import { slackConnectorId } from '../lib/slack-connect.js'
 
 function isHookConflictFailure(event: { code?: string, message?: string }) {
   const message = event.message ?? ''

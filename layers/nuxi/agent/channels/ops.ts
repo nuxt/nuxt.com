@@ -2,9 +2,11 @@ import { defineChannel, POST } from 'eve/channels'
 import {
   isManualWorkflowTriggerAllowed,
   parseSinceDays,
+  parseSinceHours,
   scheduleAppAuth,
   verifyWorkflowTriggerAuth
 } from '../lib/workflows.js'
+import { runFirehoseSummary } from '../schedules/firehose-summary.js'
 import { runWeeklyDigest } from '../schedules/weekly-digest.js'
 
 export default defineChannel({
@@ -27,6 +29,25 @@ export default defineChannel({
       }))
 
       return Response.json({ ok: true, sinceDays: sinceDays ?? null })
+    }),
+    POST('/firehose-summary/trigger', async (req, args) => {
+      if (!isManualWorkflowTriggerAllowed()) {
+        return Response.json({ error: 'Manual workflow trigger is disabled' }, { status: 404 })
+      }
+      if (!verifyWorkflowTriggerAuth(req)) {
+        return Response.json({ error: 'Unauthorized' }, { status: 401 })
+      }
+
+      const url = new URL(req.url)
+      const sinceHours = parseSinceHours(url.searchParams.get('sinceHours'))
+
+      args.waitUntil(runFirehoseSummary({
+        receive: args.receive,
+        appAuth: scheduleAppAuth,
+        sinceHours
+      }))
+
+      return Response.json({ ok: true, sinceHours: sinceHours ?? null })
     })
   ]
 })

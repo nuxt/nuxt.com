@@ -63,11 +63,22 @@ export default defineSchedule({
 })
 ```
 
-### Weekly digest (current)
+### Weekly digest
 
 - Schedule: `agent/schedules/weekly-digest.ts` — Monday 9:00 UTC
 - Skill: `agent/skills/weekly-digest/SKILL.md`
 - Preview trigger: `POST /eve/v1/ops/weekly-digest/trigger`
+
+### Firehose summary
+
+Summarizes `#firehose-nuxt` (Octolens social mentions) and posts highlights to the workflow channel.
+
+- Schedule: `agent/schedules/firehose-summary.ts` — weekdays 9:00 UTC (last 24h)
+- Skill: `agent/skills/firehose-summary/SKILL.md`
+- Tool: `read_slack_channel_history` (`agent/tools/slack-channel-history.ts`)
+- Preview trigger: `POST /eve/v1/ops/firehose-summary/trigger?sinceHours=24`
+
+The Nuxi Slack bot must be invited to `#firehose-nuxt` (`channels:history` scope).
 
 ### Test locally
 
@@ -75,7 +86,8 @@ With the dev server running (`pnpm dev` from repo root — Eve is bundled via th
 
 ```sh
 curl -X POST "http://localhost:3000/eve/v1/dev/schedules/weekly-digest"
-# -> { "scheduleId": "weekly-digest", "sessionIds": ["..."] }
+curl -X POST "http://localhost:3000/eve/v1/dev/schedules/firehose-summary"
+# -> { "scheduleId": "...", "sessionIds": ["..."] }
 ```
 
 ### Test on preview
@@ -83,6 +95,9 @@ curl -X POST "http://localhost:3000/eve/v1/dev/schedules/weekly-digest"
 ```sh
 curl -X POST "https://<preview-url>/eve/v1/ops/weekly-digest/trigger?sinceDays=7" \
   -H "Authorization: Bearer $INTERNAL_API_SECRET"
+
+curl -X POST "https://<preview-url>/eve/v1/ops/firehose-summary/trigger?sinceHours=24" \
+  -H "Authorization: Bearer $INTERNAL_API_SECRET"
 ```
 
-Requires on the **eve** runtime: `INTERNAL_API_SECRET`, `NUXT_MCP_ADMIN_TOKEN`, `NUXT_WORKFLOW_SLACK_CHANNEL_ID`. Local dev and Vercel preview use Connect client `slack/nuxi-preview` automatically; prod uses `slack/nuxi` (override with `SLACK_CONNECTOR`).
+Requires on the **eve** runtime: `INTERNAL_API_SECRET`, `NUXT_MCP_ADMIN_TOKEN`, `NUXT_WORKFLOW_SLACK_CHANNEL_ID`, `NUXT_FIREHOSE_SLACK_CHANNEL_ID`. Local dev and Vercel preview use Connect client `slack/nuxi-preview` automatically; prod uses `slack/nuxi` (override with `SLACK_CONNECTOR`).

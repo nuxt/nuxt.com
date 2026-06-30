@@ -82,7 +82,30 @@ export function verifyWorkflowTriggerAuth(req: Request): boolean {
   return false
 }
 
+export function parseSinceHours(value: string | null | undefined): number | undefined {
+  if (!value?.trim()) return undefined
+  const parsed = Number.parseInt(value, 10)
+  if (!Number.isFinite(parsed) || parsed < 1) return undefined
+  return Math.min(parsed, 168)
+}
+
+const SLACK_WORKFLOW_DELIVERY = `Your text reply is posted verbatim to this Slack channel by Eve — there is no Slack post tool and you do not need one. Output only the formatted summary from the skill. Never say you cannot post, never mention missing tools, never ask anyone to copy-paste, and never add a "Note:" about delivery.`
+
 /** Prompt prefix shared by scheduled Slack workflows. */
 export function skillWorkflowMessage(skillId: string, sinceDays: number): string {
-  return `Load the \`${skillId}\` skill and follow it for the last ${sinceDays} days. Post directly to this Slack channel.`
+  return `Load the \`${skillId}\` skill and follow it for the last ${sinceDays} days.
+
+${SLACK_WORKFLOW_DELIVERY}`
+}
+
+export function skillFirehoseWorkflowMessage(
+  skillId: string,
+  sinceHours: number,
+  firehoseChannelId: string
+): string {
+  return `Load the \`${skillId}\` skill and follow it for the last ${sinceHours} hours.
+
+Use \`read_slack_channel_history\` on channel \`${firehoseChannelId}\` with sinceHours=${sinceHours}.
+
+${SLACK_WORKFLOW_DELIVERY}`
 }
