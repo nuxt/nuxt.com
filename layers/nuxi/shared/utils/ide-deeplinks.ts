@@ -119,6 +119,65 @@ export function buildIdeDeeplinks(prompt: string, repo?: string) {
   }
 }
 
+/** Site origin for HTTPS redirect wrappers (Slack requires http(s) button URLs). */
+export function getIdeRedirectOrigin(): string {
+  const url = process.env.NUXT_PUBLIC_SITE_URL?.trim()
+  if (url) return url.replace(/\/$/, '')
+  return 'https://nuxt.com'
+}
+
+export function isAllowedIdeDeeplink(url: string): boolean {
+  let parsed: URL
+  try {
+    parsed = new URL(url)
+  } catch {
+    return false
+  }
+  if (parsed.protocol === 'cursor:') {
+    return parsed.hostname === 'anysphere.cursor-deeplink' && parsed.pathname === '/prompt'
+  }
+  if (parsed.protocol === 'claude-cli:') {
+    return parsed.hostname === 'open'
+  }
+  return false
+}
+
+/** Wrap a custom-scheme IDE URL in an https redirect for Slack link buttons. */
+export function buildIdeRedirectUrl(deeplink: string): string {
+  return `${getIdeRedirectOrigin()}/ide/open?to=${encodeURIComponent(deeplink)}`
+}
+
+/** Slack-safe deeplinks — https redirects to cursor:// / claude-cli://. */
+export function buildSlackPromptDeeplinks(prompt: string, repo?: string) {
+  const normalized = truncatePrompt(prompt, PROMPT_CARD_MAX_LENGTH)
+  return {
+    cursor: buildIdeRedirectUrl(buildCursorPromptUrl(normalized)),
+    claude: buildIdeRedirectUrl(buildClaudeCodeUrl(normalized, repo))
+  }
+}
+
+export function parsePromptCardOutput(output: unknown): {
+  description: string
+  prompt: string
+  repo?: string
+  deeplinks: { cursor: string, claude: string }
+} | null {
+  if (!output || typeof output !== 'object') return null
+  const o = output as Record<string, unknown>
+  if ('error' in o && o.error) return null
+  if (typeof o.description !== 'string' || typeof o.prompt !== 'string') return null
+  const deeplinks = o.deeplinks
+  if (!deeplinks || typeof deeplinks !== 'object') return null
+  const links = deeplinks as Record<string, unknown>
+  if (typeof links.cursor !== 'string' || typeof links.claude !== 'string') return null
+  return {
+    description: o.description,
+    prompt: o.prompt,
+    repo: typeof o.repo === 'string' ? o.repo : undefined,
+    deeplinks: { cursor: links.cursor, claude: links.claude }
+  }
+}
+
 export function truncateForSlackPreview(prompt: string, max = 500): string {
   const trimmed = prompt.trim()
   if (trimmed.length <= max) return trimmed

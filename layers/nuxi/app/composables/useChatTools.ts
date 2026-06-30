@@ -1,6 +1,7 @@
 import type { ToolUIPart, DynamicToolUIPart } from 'ai'
 import { getToolName } from 'ai'
 import { isToolStreaming } from '@nuxt/ui/utils/ai'
+import { parsePromptCardOutput } from '../../shared/utils/ide-deeplinks'
 
 export type ToolPart = ToolUIPart | DynamicToolUIPart
 
@@ -132,20 +133,12 @@ export function getFeedbackOutput(output: unknown): FeedbackOutput | null {
 }
 
 export function getPromptOutput(output: unknown): PromptCardData | null {
-  if (!output || typeof output !== 'object') return null
+  const data = parsePromptCardOutput(output)
+  if (!data) return null
   const o = output as Record<string, unknown>
-  if ('error' in o && o.error) return null
-  if (typeof o.description !== 'string' || typeof o.prompt !== 'string') return null
-  const deeplinks = o.deeplinks
-  if (!deeplinks || typeof deeplinks !== 'object') return null
-  const links = deeplinks as Record<string, unknown>
-  if (typeof links.cursor !== 'string' || typeof links.claude !== 'string') return null
   return {
-    description: o.description,
-    prompt: o.prompt,
-    repo: typeof o.repo === 'string' ? o.repo : undefined,
-    icon: typeof o.icon === 'string' ? o.icon : undefined,
-    deeplinks: { cursor: links.cursor, claude: links.claude }
+    ...data,
+    icon: typeof o.icon === 'string' ? o.icon : undefined
   }
 }
 

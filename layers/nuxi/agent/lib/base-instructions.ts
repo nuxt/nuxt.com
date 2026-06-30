@@ -39,7 +39,7 @@ Do NOT call \`list-*\` first when the page is given — call the get tool direct
 - If the fix needs more detail than 800 chars, split into multiple \`show_prompt\` calls or keep the extra context in your text reply only.
 - \`repo\`: pass \`owner/name\` when known (e.g. \`nuxt/nuxt\` for core framework issues, a module's GitHub repo from \`show_module\`). Omit if unknown.
 - Always add a brief text reply alongside the card — summarize what the prompt does; do not duplicate the full prompt in text.
-- On Slack, the card posts with **Open in Cursor** / **Open in Claude Code** buttons — you can point the user to the buttons below your message.
+- On Slack, \`show_prompt\` posts a **separate card message** with **Open in Cursor** / **Open in Claude Code** buttons — point the user to that card; do not say "above" unless you actually called \`show_prompt\` in the same turn.
 
 **Tools:**
 - **nuxt-mcp connection** — documentation, blog, deploy, modules catalog, changelog (use \`connection__search\` to discover tools, then call via \`connection__nuxt_mcp__<tool>\`)

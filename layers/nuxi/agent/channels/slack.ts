@@ -1,5 +1,4 @@
 import { connectSlackCredentials } from '@vercel/connect/eve'
-import { toolResultFrom } from 'eve/tools'
 import {
   defaultSlackAuth,
   loadThreadContextMessages,
@@ -8,7 +7,7 @@ import {
   type SlackMessage
 } from 'eve/channels/slack'
 import { buildSlackPromptCard } from '../lib/slack-prompt-card.js'
-import showPromptTool from '../tools/show_prompt.js'
+import { buildSlackPromptDeeplinks, parsePromptCardOutput } from '../../shared/utils/ide-deeplinks.js'
 
 function isHookConflictFailure(event: { code?: string, message?: string }) {
   const message = event.message ?? ''
@@ -53,12 +52,16 @@ export default slackChannel({
   onDirectMessage: dispatchSlackMessage,
   events: {
     async 'action.result'(eventData, channel) {
-      const matched = toolResultFrom(eventData, showPromptTool)
-      if (!matched) return
+      if (eventData.kind !== 'tool-result' || eventData.isError || eventData.toolName !== 'show_prompt') {
+        return
+      }
 
-      const { description, prompt, deeplinks } = matched.output
+      const data = parsePromptCardOutput(eventData.output)
+      if (!data) return
+
+      const deeplinks = buildSlackPromptDeeplinks(data.prompt, data.repo)
       await channel.thread.post({
-        card: buildSlackPromptCard({ description, prompt, deeplinks })
+        card: buildSlackPromptCard({ description: data.description, prompt: data.prompt, deeplinks })
       })
     },
     async 'session.failed'(event, _channel) {
