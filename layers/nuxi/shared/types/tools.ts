@@ -57,5 +57,6 @@ export interface PromptCardData {
   deeplinks: {
     cursor: string
     claude: string
+    claudeNeedsClipboardFallback?: boolean
   }
 }

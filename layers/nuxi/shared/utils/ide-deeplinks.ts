@@ -11,10 +11,18 @@ export const CLAUDE_BROWSER_MAX_URL = 1800
 
 export const REPO_PATTERN = /^[\w-]+\/[\w.-]+$/
 
+/** Slice on Unicode code-point boundaries so surrogate pairs stay valid for encodeURIComponent. */
+function sliceCodePoints(text: string, maxLength: number): string {
+  if (maxLength <= 0) return ''
+  const units = [...text]
+  if (units.length <= maxLength) return text
+  return units.slice(0, maxLength).join('')
+}
+
 export function truncatePrompt(prompt: string, max = MAX_PROMPT_LENGTH): string {
   const trimmed = prompt.trim()
-  if (trimmed.length <= max) return trimmed
-  return `${trimmed.slice(0, max - 1)}…`
+  if ([...trimmed].length <= max) return trimmed
+  return `${sliceCodePoints(trimmed, max - 1)}…`
 }
 
 export function normalizeRepo(repo?: string): string | undefined {
@@ -36,8 +44,8 @@ function fitEncodedQuery(prompt: string, prefix: string, maxUrlLength: number): 
   }
 
   let q = trimmed
-  while (q.length > 1 && encodeURIComponent(`${q}…`).length > budget) {
-    q = q.slice(0, -20)
+  while ([...q].length > 1 && encodeURIComponent(`${q}…`).length > budget) {
+    q = sliceCodePoints(q, [...q].length - 20)
   }
 
   if (q.length >= trimmed.length) {
@@ -54,10 +62,17 @@ export function buildCursorPromptUrl(prompt: string): string {
 }
 
 /** Browser-safe Cursor deeplink — fits under Chrome custom-scheme URL limit. */
-export function buildCursorBrowserUrl(prompt: string): string {
+export function buildCursorBrowserUrl(prompt: string): {
+  url: string
+  needsClipboardFallback: boolean
+} {
+  const normalized = truncatePrompt(prompt, PROMPT_CARD_MAX_LENGTH)
   const prefix = 'cursor://anysphere.cursor-deeplink/prompt?text='
-  const { q } = fitEncodedQuery(truncatePrompt(prompt, PROMPT_CARD_MAX_LENGTH), prefix, CLAUDE_BROWSER_MAX_URL)
-  return `${prefix}${encodeURIComponent(q)}`
+  const { q, truncated } = fitEncodedQuery(normalized, prefix, CLAUDE_BROWSER_MAX_URL)
+  return {
+    url: `${prefix}${encodeURIComponent(q)}`,
+    needsClipboardFallback: truncated || q !== normalized
+  }
 }
 
 /** Claude Code terminal deeplink — https://code.claude.com/docs/en/deep-links */
@@ -109,9 +124,12 @@ export function buildClaudeCodeBrowserUrl(prompt: string, repo?: string): {
 }
 
 export function buildIdeDeeplinks(prompt: string, repo?: string) {
+  const cursor = buildCursorBrowserUrl(prompt)
+  const claude = buildClaudeCodeBrowserUrl(prompt, repo)
   return {
-    cursor: buildCursorPromptUrl(prompt),
-    claude: buildClaudeCodeUrl(prompt, repo)
+    cursor: cursor.url,
+    claude: claude.url,
+    claudeNeedsClipboardFallback: claude.needsClipboardFallback
   }
 }
 
@@ -133,6 +151,14 @@ export function parsePromptCardOutput(output: unknown): {
     description: o.description,
     prompt: o.prompt,
     repo: typeof o.repo === 'string' ? o.repo : undefined,
-    deeplinks: { cursor: links.cursor, claude: links.claude }
+    deeplinks: {
+      cursor: links.cursor,
+      claude: links.claude,
+      ...(typeof o.claudeNeedsClipboardFallback === 'boolean'
+        ? { claudeNeedsClipboardFallback: o.claudeNeedsClipboardFallback }
+        : typeof links.claudeNeedsClipboardFallback === 'boolean'
+          ? { claudeNeedsClipboardFallback: links.claudeNeedsClipboardFallback }
+          : {})
+    }
   }
 }

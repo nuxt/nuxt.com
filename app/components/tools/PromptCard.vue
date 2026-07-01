@@ -15,7 +15,8 @@ const props = defineProps<{
   }
 }>()
 
-const { copy, copied } = useClipboard()
+const { copied } = useClipboard()
+const toast = useToast()
 const { track } = useAnalytics()
 const expanded = ref(false)
 
@@ -34,9 +35,28 @@ function openIdeDeeplink(url: string) {
   window.location.assign(url)
 }
 
-function openInCursor() {
+async function copyPromptToClipboard(options: { title: string, description: string, icon: string }) {
+  try {
+    await navigator.clipboard.writeText(props.prompt)
+    toast.add(options)
+  } catch {
+    // Clipboard can fail without blocking the deeplink handoff.
+  }
+}
+
+async function openInCursor() {
   track('Nuxi Prompt Opened', { ide: 'cursor', source: 'nuxt-agent' })
-  openIdeDeeplink(buildCursorBrowserUrl(props.prompt))
+
+  const { url, needsClipboardFallback } = buildCursorBrowserUrl(props.prompt)
+  if (needsClipboardFallback) {
+    await copyPromptToClipboard({
+      title: 'Prompt copied',
+      description: `Paste with ${pasteShortcut.value} when your IDE opens`,
+      icon: 'i-lucide-clipboard-check'
+    })
+  }
+
+  openIdeDeeplink(url)
 }
 
 async function openInClaudeCode() {
@@ -45,9 +65,9 @@ async function openInClaudeCode() {
   const { url, needsClipboardFallback } = buildClaudeCodeBrowserUrl(props.prompt, props.repo)
 
   if (needsClipboardFallback) {
-    await copy(props.prompt, {
+    await copyPromptToClipboard({
       title: 'Prompt copied',
-      description: `Paste with ${pasteShortcut.value} when Claude opens`,
+      description: `Paste with ${pasteShortcut.value} when your IDE opens`,
       icon: 'i-lucide-clipboard-check'
     })
   }
@@ -57,7 +77,7 @@ async function openInClaudeCode() {
 
 function copyPrompt() {
   track('Nuxi Prompt Copied', { source: 'nuxt-agent' })
-  copy(props.prompt, {
+  void copyPromptToClipboard({
     title: 'Prompt copied!',
     description: props.description,
     icon: 'i-lucide-clipboard-check'
