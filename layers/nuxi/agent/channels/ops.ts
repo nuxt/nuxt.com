@@ -11,7 +11,7 @@ import { runWeeklyDigest } from '../schedules/weekly-digest.js'
 
 export default defineChannel({
   routes: [
-    POST('/weekly-digest/trigger', async (req, args) => {
+    POST('/eve/v1/ops/weekly-digest/trigger', async (req, args) => {
       if (!isManualWorkflowTriggerAllowed()) {
         return Response.json({ error: 'Manual workflow trigger is disabled' }, { status: 404 })
       }
@@ -30,7 +30,7 @@ export default defineChannel({
 
       return Response.json({ ok: true, sinceDays: sinceDays ?? null })
     }),
-    POST('/firehose-summary/trigger', async (req, args) => {
+    POST('/eve/v1/ops/firehose-summary/trigger', async (req, args) => {
       if (!isManualWorkflowTriggerAllowed()) {
         return Response.json({ error: 'Manual workflow trigger is disabled' }, { status: 404 })
       }

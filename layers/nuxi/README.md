@@ -35,7 +35,7 @@ Shared helpers live in `agent/lib/workflows.ts` (`receiveOnSlack`, auth, config)
 2. **Schedule** — `agent/schedules/<id>.ts`:
    - `defineSchedule({ cron, run })` calling `receiveOnSlack` (or export a `run<Id>` helper reused by ops).
    - Workflow-specific constants (`SKILL_ID`, default window, custom message) stay in this file.
-3. **Preview trigger** (optional) — add `POST('/<id>/trigger', …)` in `agent/channels/ops.ts`, wired to the schedule's `run<Id>` export.
+3. **Preview trigger** (optional) — add `POST('/eve/v1/ops/<id>/trigger', …)` in `agent/channels/ops.ts` (full path required for Vercel routing), wired to the schedule's `run<Id>` export.
 4. **Test locally** — Eve dev dispatch (no auth): `POST /eve/v1/dev/schedules/<id>`.
 
 Example schedule skeleton:
