@@ -25,7 +25,8 @@ When producing a digest (scheduled or on request):
 
 - Docs page: `<https://nuxt.com/docs/…|Page title>`
 - Chat review: `<https://nuxt.com/dashboard/chat/<id>|Open chat>`
-- Agent runs (tokens, cost, Slack vs web): `<https://vercel.com/nuxt/nuxt/observability/ai|Vercel Agent Runs>`
+- Agent runs (runs, Slack vs web): `<https://vercel.com/nuxt-js/nuxt/observability/agent-runs|Vercel Agent Runs>`
+- AI Gateway (tokens, cost): `<https://vercel.com/nuxt-js/nuxt/ai-gateway|Vercel AI Gateway>`
 
 **Output template:**
 
@@ -37,7 +38,7 @@ When producing a digest (scheduled or on request):
 • Recurring complaint: hydration mismatch docs unclear (3 mentions)
 
 :robot_face: **AI agent**
-• *Traffic & spend* — see <https://vercel.com/nuxt/nuxt/observability/ai|Vercel Agent Runs> (do not invent token/cost numbers from DB)
+• *Traffic & spend* — <https://vercel.com/nuxt-js/nuxt/observability/agent-runs|Agent Runs> (runs, Slack vs web); <https://vercel.com/nuxt-js/nuxt/ai-gateway|AI Gateway> (tokens, cost). Do not invent numbers from DB.
 • *Quality* — 4 up / 1 down on web chats; 2 sessions saved
 • Worst chat: <https://nuxt.com/dashboard/chat/abc123|session abc123> — wrong module recommendation
 
