@@ -26,7 +26,7 @@ Then write a digest in Markdown with these sections (be concise — each section
 - Top 3 recurring complaints across negative comments.
 
 ## AI agent
-- **Traffic & spend**: point to Vercel Observability → Agent Runs (runs, tokens, Slack vs web). Do not quote local DB for this.
+- **Traffic & spend**: point to [Vercel Agent Runs](https://vercel.com/nuxt-js/nuxt/observability/agent-runs) (runs, Slack vs web) and [AI Gateway](https://vercel.com/nuxt-js/nuxt/ai-gateway) (tokens, cost). Do not quote local DB for this.
 - **Quality** (from \`agent-usage-stats\` + votes): upvotes vs downvotes, downvote rate, web chats saved.
 - Top 3 worst web chats (id + short reason).
 
