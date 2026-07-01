@@ -34,6 +34,11 @@ const links = computed(() => module.value
       label: module.value.npm,
       to: `https://npmjs.org/package/${module.value.npm}`,
       target: '_blank'
+    }, module.value.npm && {
+      icon: 'i-simple-icons-npm',
+      label: 'npmx',
+      to: `https://npmx.dev/package/${module.value.npm}`,
+      target: '_blank'
     }, module.value.learn_more && {
       icon: 'i-lucide-link',
       label: 'Learn more',

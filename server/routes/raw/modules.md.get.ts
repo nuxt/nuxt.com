@@ -22,7 +22,8 @@ export default defineCachedEventHandler(async (event) => {
       const links = [
         mod.website ? `[Docs](${mod.website})` : '',
         mod.repo ? `[GitHub](https://github.com/${mod.repo})` : '',
-        `[npm](https://www.npmjs.com/package/${mod.npm})`
+        `[npm](https://www.npmjs.com/package/${mod.npm})`,
+        `[npmx](https://npmx.dev/package/${mod.npm})`
       ].filter(Boolean).join(' · ')
 
       lines.push(`### ${mod.npm}`, '')
