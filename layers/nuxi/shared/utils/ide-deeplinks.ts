@@ -3,7 +3,7 @@ export const MAX_PROMPT_LENGTH = 5000
 /** Max prompt length for show_prompt cards — must fit in browser deeplink URLs. */
 export const PROMPT_CARD_MAX_LENGTH = 800
 
-/** Claude `q` in deeplinks for Slack / shell `open`. */
+/** Claude `q` in deeplinks. */
 export const CLAUDE_DEEPLINK_MAX_Q = 1500
 
 /** Chrome truncates custom-scheme URLs around ~2048 chars — stay well under. */
@@ -21,10 +21,6 @@ export function normalizeRepo(repo?: string): string | undefined {
   const trimmed = repo?.trim()
   if (!trimmed || !REPO_PATTERN.test(trimmed)) return undefined
   return trimmed
-}
-
-export function isClaudeDeeplinkTruncated(prompt: string): boolean {
-  return prompt.trim().length > CLAUDE_DEEPLINK_MAX_Q
 }
 
 function fitEncodedQuery(prompt: string, prefix: string, maxUrlLength: number): { q: string, truncated: boolean } {
@@ -119,65 +115,6 @@ export function buildIdeDeeplinks(prompt: string, repo?: string) {
   }
 }
 
-/** Site origin for HTTPS redirect wrappers (Slack requires http(s) button URLs). */
-function vercelDeploymentOrigin(): string | undefined {
-  const url = process.env.VERCEL_URL?.trim()
-  if (!url) return undefined
-  return (url.startsWith('http') ? url : `https://${url}`).replace(/\/$/, '')
-}
-
-/** Resolved public web origin — preview deployments use VERCEL_URL, not production NUXT_PUBLIC_SITE_URL. */
-export function resolveSiteOrigin(): string {
-  const vercelOrigin = vercelDeploymentOrigin()
-  const vercelEnv = process.env.VERCEL_ENV
-
-  if ((vercelEnv === 'preview' || vercelEnv === 'development') && vercelOrigin) {
-    return vercelOrigin
-  }
-
-  const configured = process.env.NUXT_PUBLIC_SITE_URL?.trim().replace(/\/$/, '')
-    || process.env.NUXT_SITE_URL?.trim().replace(/\/$/, '')
-  if (configured) return configured
-
-  if (vercelOrigin) return vercelOrigin
-
-  return 'http://localhost:3000'
-}
-
-export function getIdeRedirectOrigin(): string {
-  return resolveSiteOrigin()
-}
-
-export function isAllowedIdeDeeplink(url: string): boolean {
-  let parsed: URL
-  try {
-    parsed = new URL(url)
-  } catch {
-    return false
-  }
-  if (parsed.protocol === 'cursor:') {
-    return parsed.hostname === 'anysphere.cursor-deeplink' && parsed.pathname === '/prompt'
-  }
-  if (parsed.protocol === 'claude-cli:') {
-    return parsed.hostname === 'open'
-  }
-  return false
-}
-
-/** Wrap a custom-scheme IDE URL in an https redirect for Slack link buttons. */
-export function buildIdeRedirectUrl(deeplink: string): string {
-  return `${getIdeRedirectOrigin()}/ide/open?to=${encodeURIComponent(deeplink)}`
-}
-
-/** Slack-safe deeplinks — https redirects to cursor:// / claude-cli://. */
-export function buildSlackPromptDeeplinks(prompt: string, repo?: string) {
-  const normalized = truncatePrompt(prompt, PROMPT_CARD_MAX_LENGTH)
-  return {
-    cursor: buildIdeRedirectUrl(buildCursorPromptUrl(normalized)),
-    claude: buildIdeRedirectUrl(buildClaudeCodeUrl(normalized, repo))
-  }
-}
-
 export function parsePromptCardOutput(output: unknown): {
   description: string
   prompt: string
@@ -198,17 +135,4 @@ export function parsePromptCardOutput(output: unknown): {
     repo: typeof o.repo === 'string' ? o.repo : undefined,
     deeplinks: { cursor: links.cursor, claude: links.claude }
   }
-}
-
-export function truncateForSlackPreview(prompt: string, max = 500): string {
-  const trimmed = prompt.trim()
-  if (trimmed.length <= max) return trimmed
-  return `${trimmed.slice(0, max - 1)}…`
-}
-
-/** Open a custom-scheme URL without navigating the current page away. */
-export function openIdeDeeplink(url: string): void {
-  if (typeof window === 'undefined') return
-  // location.assign hands off custom schemes more reliably than synthetic <a> clicks in Chrome
-  window.location.assign(url)
 }

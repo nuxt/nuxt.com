@@ -4,37 +4,8 @@ import {
   loadThreadContextMessages,
   slackChannel,
   type SlackContext,
-  type SlackEventContext,
   type SlackMessage
 } from 'eve/channels/slack'
-import { buildSlackPromptCard, buildSlackPromptFallbackText } from '../lib/slack-prompt-card.js'
-import { buildSlackPromptDeeplinks, parsePromptCardOutput } from '../../shared/utils/ide-deeplinks.js'
-
-interface PendingSlackPromptCard {
-  description: string
-  prompt: string
-  repo?: string
-}
-
-/** Post the IDE card after the turn's text reply (turn.completed), not on action.result. */
-const pendingPromptCards = new Map<string, PendingSlackPromptCard>()
-
-async function postSlackPromptCard(channel: SlackEventContext, data: PendingSlackPromptCard) {
-  const deeplinks = buildSlackPromptDeeplinks(data.prompt, data.repo)
-  const cardPayload = { description: data.description, prompt: data.prompt, deeplinks }
-
-  try {
-    await channel.thread.post({
-      card: buildSlackPromptCard(cardPayload),
-      fallbackText: buildSlackPromptFallbackText(cardPayload)
-    })
-  } catch (error) {
-    console.error('[nuxi/slack] show_prompt card post failed', error)
-    await channel.thread.post({
-      markdown: buildSlackPromptFallbackText(cardPayload)
-    })
-  }
-}
 
 function isHookConflictFailure(event: { code?: string, message?: string }) {
   const message = event.message ?? ''
@@ -53,7 +24,8 @@ async function dispatchSlackMessage(ctx: SlackContext, message: SlackMessage) {
 
   const context = [
     'The user is talking to Nuxi on Slack.',
-    SLACK_EMOJI_GUIDANCE
+    SLACK_EMOJI_GUIDANCE,
+    'Do not use show_prompt on Slack — it is web chat only. Answer in plain text with steps, commands, and doc links.'
   ]
 
   const prior = await loadThreadContextMessages(ctx.thread, message, {
@@ -78,29 +50,6 @@ export default slackChannel({
   onAppMention: dispatchSlackMessage,
   onDirectMessage: dispatchSlackMessage,
   events: {
-    async 'action.result'(eventData) {
-      if (eventData.status !== 'completed') return
-
-      const { result } = eventData
-      if (result.kind !== 'tool-result' || result.isError || result.toolName !== 'show_prompt') {
-        return
-      }
-
-      const data = parsePromptCardOutput(result.output)
-      if (!data) return
-
-      pendingPromptCards.set(eventData.turnId, {
-        description: data.description,
-        prompt: data.prompt,
-        repo: data.repo
-      })
-    },
-    async 'turn.completed'(eventData, channel) {
-      const pending = pendingPromptCards.get(eventData.turnId)
-      if (!pending) return
-      pendingPromptCards.delete(eventData.turnId)
-      await postSlackPromptCard(channel, pending)
-    },
     async 'session.failed'(event, _channel) {
       // DM + @mention (or any double dispatch on the same thread) races on one
       // continuation token — the winning run already handles the user message.

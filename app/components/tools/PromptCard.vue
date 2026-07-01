@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import {
   buildClaudeCodeBrowserUrl,
-  buildCursorBrowserUrl,
-  openIdeDeeplink
+  buildCursorBrowserUrl
 } from '../../../layers/nuxi/shared/utils/ide-deeplinks'
 
 const props = defineProps<{
@@ -30,6 +29,10 @@ const previewText = computed(() => {
 const pasteShortcut = computed(() =>
   typeof navigator !== 'undefined' && navigator.platform?.includes('Mac') ? '⌘V' : 'Ctrl+V'
 )
+
+function openIdeDeeplink(url: string) {
+  window.location.assign(url)
+}
 
 function openInCursor() {
   track('Nuxi Prompt Opened', { ide: 'cursor', source: 'nuxt-agent' })
