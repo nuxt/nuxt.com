@@ -1,17 +1,7 @@
+import { resolveSiteOrigin } from '../../shared/utils/ide-deeplinks.js'
+
 export function appOrigin() {
-  const configured = process.env.NUXT_PUBLIC_SITE_URL?.trim().replace(/\/$/, '')
-    || process.env.NUXT_SITE_URL?.trim().replace(/\/$/, '')
-
-  if (configured) {
-    return configured
-  }
-
-  const vercelUrl = process.env.VERCEL_URL?.trim()
-  if (vercelUrl) {
-    return `https://${vercelUrl}`
-  }
-
-  return 'http://localhost:3000'
+  return resolveSiteOrigin()
 }
 
 export function internalHeaders(extra?: Record<string, string>) {

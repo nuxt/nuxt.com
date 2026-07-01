@@ -120,10 +120,32 @@ export function buildIdeDeeplinks(prompt: string, repo?: string) {
 }
 
 /** Site origin for HTTPS redirect wrappers (Slack requires http(s) button URLs). */
+function vercelDeploymentOrigin(): string | undefined {
+  const url = process.env.VERCEL_URL?.trim()
+  if (!url) return undefined
+  return (url.startsWith('http') ? url : `https://${url}`).replace(/\/$/, '')
+}
+
+/** Resolved public web origin — preview deployments use VERCEL_URL, not production NUXT_PUBLIC_SITE_URL. */
+export function resolveSiteOrigin(): string {
+  const vercelOrigin = vercelDeploymentOrigin()
+  const vercelEnv = process.env.VERCEL_ENV
+
+  if ((vercelEnv === 'preview' || vercelEnv === 'development') && vercelOrigin) {
+    return vercelOrigin
+  }
+
+  const configured = process.env.NUXT_PUBLIC_SITE_URL?.trim().replace(/\/$/, '')
+    || process.env.NUXT_SITE_URL?.trim().replace(/\/$/, '')
+  if (configured) return configured
+
+  if (vercelOrigin) return vercelOrigin
+
+  return 'http://localhost:3000'
+}
+
 export function getIdeRedirectOrigin(): string {
-  const url = process.env.NUXT_PUBLIC_SITE_URL?.trim()
-  if (url) return url.replace(/\/$/, '')
-  return 'https://nuxt.com'
+  return resolveSiteOrigin()
 }
 
 export function isAllowedIdeDeeplink(url: string): boolean {

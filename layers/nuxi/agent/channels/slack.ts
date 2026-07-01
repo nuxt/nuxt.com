@@ -4,10 +4,37 @@ import {
   loadThreadContextMessages,
   slackChannel,
   type SlackContext,
+  type SlackEventContext,
   type SlackMessage
 } from 'eve/channels/slack'
 import { buildSlackPromptCard, buildSlackPromptFallbackText } from '../lib/slack-prompt-card.js'
 import { buildSlackPromptDeeplinks, parsePromptCardOutput } from '../../shared/utils/ide-deeplinks.js'
+
+interface PendingSlackPromptCard {
+  description: string
+  prompt: string
+  repo?: string
+}
+
+/** Post the IDE card after the turn's text reply (turn.completed), not on action.result. */
+const pendingPromptCards = new Map<string, PendingSlackPromptCard>()
+
+async function postSlackPromptCard(channel: SlackEventContext, data: PendingSlackPromptCard) {
+  const deeplinks = buildSlackPromptDeeplinks(data.prompt, data.repo)
+  const cardPayload = { description: data.description, prompt: data.prompt, deeplinks }
+
+  try {
+    await channel.thread.post({
+      card: buildSlackPromptCard(cardPayload),
+      fallbackText: buildSlackPromptFallbackText(cardPayload)
+    })
+  } catch (error) {
+    console.error('[nuxi/slack] show_prompt card post failed', error)
+    await channel.thread.post({
+      markdown: buildSlackPromptFallbackText(cardPayload)
+    })
+  }
+}
 
 function isHookConflictFailure(event: { code?: string, message?: string }) {
   const message = event.message ?? ''
@@ -51,7 +78,7 @@ export default slackChannel({
   onAppMention: dispatchSlackMessage,
   onDirectMessage: dispatchSlackMessage,
   events: {
-    async 'action.result'(eventData, channel) {
+    async 'action.result'(eventData) {
       if (eventData.status !== 'completed') return
 
       const { result } = eventData
@@ -62,24 +89,17 @@ export default slackChannel({
       const data = parsePromptCardOutput(result.output)
       if (!data) return
 
-      const deeplinks = buildSlackPromptDeeplinks(data.prompt, data.repo)
-      const cardPayload = {
+      pendingPromptCards.set(eventData.turnId, {
         description: data.description,
         prompt: data.prompt,
-        deeplinks
-      }
-
-      try {
-        await channel.thread.post({
-          card: buildSlackPromptCard(cardPayload),
-          fallbackText: buildSlackPromptFallbackText(cardPayload)
-        })
-      } catch (error) {
-        console.error('[nuxi/slack] show_prompt card post failed', error)
-        await channel.thread.post({
-          markdown: buildSlackPromptFallbackText(cardPayload)
-        })
-      }
+        repo: data.repo
+      })
+    },
+    async 'turn.completed'(eventData, channel) {
+      const pending = pendingPromptCards.get(eventData.turnId)
+      if (!pending) return
+      pendingPromptCards.delete(eventData.turnId)
+      await postSlackPromptCard(channel, pending)
     },
     async 'session.failed'(event, _channel) {
       // DM + @mention (or any double dispatch on the same thread) races on one
