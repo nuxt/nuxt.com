@@ -24,7 +24,8 @@ async function dispatchSlackMessage(ctx: SlackContext, message: SlackMessage) {
 
   const context = [
     'The user is talking to Nuxi on Slack.',
-    SLACK_EMOJI_GUIDANCE
+    SLACK_EMOJI_GUIDANCE,
+    'Do not use show_prompt on Slack — it is web chat only. Answer in plain text with steps, commands, and doc links.'
   ]
 
   const prior = await loadThreadContextMessages(ctx.thread, message, {

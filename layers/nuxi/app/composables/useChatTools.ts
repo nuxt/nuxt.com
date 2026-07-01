@@ -1,6 +1,7 @@
 import type { ToolUIPart, DynamicToolUIPart } from 'ai'
 import { getToolName } from 'ai'
 import { isToolStreaming } from '@nuxt/ui/utils/ai'
+import { parsePromptCardOutput } from '../../shared/utils/ide-deeplinks'
 
 export type ToolPart = ToolUIPart | DynamicToolUIPart
 
@@ -94,7 +95,7 @@ function parseToolName(toolName: string): { verb?: [string, string], label: stri
   return { label: parts.join(' ') || toolName }
 }
 
-type RichToolName = 'show_module' | 'show_template' | 'show_blog_post' | 'show_hosting' | 'open_playground' | 'report_issue'
+type RichToolName = 'show_module' | 'show_template' | 'show_blog_post' | 'show_hosting' | 'open_playground' | 'report_issue' | 'show_prompt'
 
 const RICH_TOOL_HEADERS = {
   show_module: { loading: 'Loading module...', success: 'Found module', error: 'Module not found', icon: 'i-lucide-box' },
@@ -102,7 +103,8 @@ const RICH_TOOL_HEADERS = {
   show_blog_post: { loading: 'Finding blog post...', success: 'Found blog post', error: 'Blog post not found', icon: 'i-lucide-newspaper' },
   show_hosting: { loading: 'Loading provider...', success: 'Found provider', error: 'Provider not found', icon: 'i-lucide-server' },
   open_playground: { loading: 'Generating playground...', success: 'Playground ready', error: 'Playground ready', icon: 'i-simple-icons-stackblitz' },
-  report_issue: { loading: 'Preparing feedback form...', success: 'Help us improve', error: 'Help us improve', icon: 'i-lucide-message-circle-warning' }
+  report_issue: { loading: 'Preparing feedback form...', success: 'Help us improve', error: 'Help us improve', icon: 'i-lucide-message-circle-warning' },
+  show_prompt: { loading: 'Preparing prompt...', success: 'Ready to apply', error: 'Prompt unavailable', icon: 'i-lucide-sparkles' }
 } as const satisfies Record<RichToolName, { loading: string, success: string, error: string, icon: string }>
 
 export function hasToolError(output: unknown): boolean {
@@ -130,6 +132,16 @@ export function getFeedbackOutput(output: unknown): FeedbackOutput | null {
   return null
 }
 
+export function getPromptOutput(output: unknown): PromptCardData | null {
+  const data = parsePromptCardOutput(output)
+  if (!data) return null
+  const o = output as Record<string, unknown>
+  return {
+    ...data,
+    icon: typeof o.icon === 'string' ? o.icon : undefined
+  }
+}
+
 /** Tool output is ready to render (terminal state or output already present). */
 export function hasToolOutput(part: ToolPart): boolean {
   if (part.state === 'output-error' || part.state === 'output-denied') return false
@@ -152,6 +164,8 @@ function hasRichToolSuccess(part: ToolPart, toolName: RichToolName): boolean {
       return !!part.output
     case 'report_issue':
       return !!getFeedbackOutput(part.output)
+    case 'show_prompt':
+      return !!getPromptOutput(part.output)
   }
 }
 
@@ -184,6 +198,10 @@ export function showPlaygroundCard(part: ToolPart): boolean {
 
 export function showFeedbackCard(part: ToolPart): boolean {
   return hasToolOutput(part) && !!getFeedbackOutput(part.output)
+}
+
+export function showPromptCard(part: ToolPart): boolean {
+  return hasToolOutput(part) && !!getPromptOutput(part.output)
 }
 
 export function isModuleListTool(part: ToolPart): boolean {

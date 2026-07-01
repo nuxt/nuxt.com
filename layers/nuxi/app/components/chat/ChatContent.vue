@@ -5,6 +5,7 @@ import { isPartStreaming, isToolStreaming } from '@nuxt/ui/utils/ai'
 import {
   getFeedbackOutput,
   getModuleCards,
+  getPromptOutput,
   getRichToolHeader,
   getTemplates,
   normalizeToolName,
@@ -21,6 +22,7 @@ import {
   showFeedbackCard,
   showModuleCard,
   showPlaygroundCard,
+  showPromptCard,
   showTemplateCards,
   type ToolPart
 } from '../../composables/useChatTools'
@@ -205,6 +207,14 @@ function getUserTextParts(message: UIMessage) {
           v-if="showFeedbackCard(part as ToolPart) && getFeedbackOutput(part.output)"
           :title="getFeedbackOutput(part.output)!.title"
           :summary="getFeedbackOutput(part.output)!.summary"
+        />
+      </template>
+
+      <template v-else-if="isToolUIPart(part) && resolvedToolName(part) === 'show_prompt'">
+        <UChatTool v-bind="getRichToolHeader(part as ToolPart, 'show_prompt')" />
+        <ToolsPromptCard
+          v-if="showPromptCard(part as ToolPart) && getPromptOutput(part.output)"
+          v-bind="getPromptOutput(part.output)!"
         />
       </template>
 
