@@ -54,11 +54,7 @@ export default defineNuxtConfig({
         driver: 'vercel-runtime-cache'
       }
     },
-    image: {
-      ipx: {
-        baseURL: 'https://ipx.nuxt.com'
-      }
-    }
+    ...(process.env.VERCEL_ENV === 'production' && { image: { ipx: { baseURL: 'https://ipx.nuxt.com' } } })
   },
   devtools: {
     enabled: true
