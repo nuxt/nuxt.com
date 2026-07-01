@@ -1,41 +1,20 @@
 import { createMCPClient } from '@ai-sdk/mcp'
 import { defineDynamic, defineTool } from 'eve/tools'
 import { z } from 'zod'
+import { canAccessAdminMcp } from '../lib/admin-mcp-access.js'
 import { appOrigin } from '../lib/internal-api.js'
 
-type AuthAttributes = Readonly<Record<string, string | readonly string[]>>
-
-interface AdminAuth {
-  issuer?: string
-  attributes?: AuthAttributes
-}
-
-function authAttr(attributes: AuthAttributes | undefined, key: string): string | undefined {
-  const value = attributes?.[key]
-  return typeof value === 'string' ? value : undefined
-}
-
-function isSlackAuth(auth: AdminAuth): boolean {
-  if (auth.issuer?.startsWith('slack:') || auth.issuer === 'slack') return true
-  return Boolean(authAttr(auth.attributes, 'team_id'))
-}
-
-export function canAccessAdminMcp(auth: AdminAuth | null | undefined): boolean {
-  if (!auth) return false
-
-  // Slack access is gated by Vercel Connect — the bot is only installable on our workspace.
-  if (isSlackAuth(auth)) return true
-
-  return authAttr(auth.attributes, 'role') === 'admin'
-}
+export { canAccessAdminMcp } from '../lib/admin-mcp-access.js'
 
 export const ADMIN_MCP_INSTRUCTIONS = `**Admin tools (team only):**
 - \`admin_mcp__feedback_stats\` — aggregated docs feedback metrics
 - \`admin_mcp__list_feedback\` — individual feedback entries
-- \`admin_mcp__agent_usage_stats\` — web chat counts and vote quality (NOT tokens/cost — use Vercel Observability → Agent Runs)
+- \`admin_mcp__agent_usage_stats\` — web chat counts and vote quality (NOT tokens/cost — use Vercel Agent Runs + AI Gateway)
 - \`admin_mcp__list_agent_chats\` / \`admin_mcp__get_agent_chat\` — saved web chat sessions and transcripts
 - \`admin_mcp__list_agent_votes\` — message upvotes/downvotes
-- For runs, tokens, cost, duration, or Slack traffic: direct the team to **Vercel Observability → Agent Runs** (nuxt project). Do not invent numbers from local DB.
+- For runs, Slack vs web, duration: **Vercel Agent Runs** — https://vercel.com/nuxt-js/nuxt/observability/agent-runs
+- For tokens, cost, model usage: **Vercel AI Gateway** — https://vercel.com/nuxt-js/nuxt/ai-gateway
+- Do not invent token/cost numbers from local DB.
 - Default to recent data (last 7–30 days) unless the user asks for a longer window
 - Always include direct links (path / chat id) so the team can drill down on nuxt.com`
 
@@ -91,7 +70,7 @@ function adminTools() {
       }
     }),
     agent_usage_stats: defineTool({
-      description: 'Admin: web chat counts and vote quality. For runs/tokens/cost use Vercel Observability Agent Runs.',
+      description: 'Admin: web chat counts and vote quality. For runs use Vercel Agent Runs; for tokens/cost use AI Gateway.',
       inputSchema: z.object({
         sinceDays: z.number().int().min(1).max(365).default(30)
       }),
