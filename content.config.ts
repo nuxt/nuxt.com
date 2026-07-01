@@ -216,7 +216,8 @@ export default defineContentConfig({
       source: [docsV5Source, examplesV5Source],
       schema: z.object({
         titleTemplate: z.string().optional(),
-        links: z.array(Button)
+        links: z.array(Button),
+        minimalVersion: z.union([z.string(), z.number()]).optional().transform(v => v === undefined ? undefined : String(v).trim())
       })
     }),
     docsv4: defineCollection({
@@ -224,7 +225,8 @@ export default defineContentConfig({
       source: [docsV4Source, examplesV4Source],
       schema: z.object({
         titleTemplate: z.string().optional(),
-        links: z.array(Button)
+        links: z.array(Button),
+        minimalVersion: z.union([z.string(), z.number()]).optional().transform(v => v === undefined ? undefined : String(v).trim())
       })
     }),
     docsv3: defineCollection({
@@ -232,7 +234,8 @@ export default defineContentConfig({
       source: [docsV3Source, examplesV3Source],
       schema: z.object({
         titleTemplate: z.string().optional(),
-        links: z.array(Button)
+        links: z.array(Button),
+        minimalVersion: z.union([z.string(), z.number()]).optional().transform(v => v === undefined ? undefined : String(v).trim())
       })
     }),
     blog: defineCollection({
