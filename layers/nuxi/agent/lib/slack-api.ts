@@ -4,6 +4,7 @@ import { slackConnectorId } from './slack-connect.js'
 const DEFAULT_WORKFLOW_SLACK_CHANNEL = 'project-nuxi'
 const DEFAULT_FIREHOSE_SLACK_CHANNEL = 'firehose-nuxt'
 const CHANNEL_LIST_TTL_MS = 60 * 60 * 1000
+const SLACK_FETCH_TIMEOUT_MS = 10_000
 
 export interface SlackChannelInfo {
   id: string
@@ -101,16 +102,14 @@ async function slackBotToken(): Promise<string> {
   return getToken(slackConnectorId(), { subject: { type: 'app' } })
 }
 
-function mergeChannelMaps(
-  target: Map<string, SlackChannelInfo>,
-  source: Map<string, SlackChannelInfo>
-): void {
-  for (const [name, info] of source) {
-    target.set(name, info)
-  }
+async function slackFetch(url: string, init?: RequestInit): Promise<Response> {
+  return fetch(url, {
+    ...init,
+    signal: init?.signal ?? AbortSignal.timeout(SLACK_FETCH_TIMEOUT_MS)
+  })
 }
 
-async function fetchBotChannelPages(targetName?: string): Promise<Map<string, SlackChannelInfo>> {
+async function fetchBotChannelPages(): Promise<Map<string, SlackChannelInfo>> {
   const byName = new Map<string, SlackChannelInfo>()
   let cursor: string | undefined
 
@@ -122,7 +121,7 @@ async function fetchBotChannelPages(targetName?: string): Promise<Map<string, Sl
     })
     if (cursor) params.set('cursor', cursor)
 
-    const response = await fetch(`https://slack.com/api/users.conversations?${params}`, {
+    const response = await slackFetch(`https://slack.com/api/users.conversations?${params}`, {
       headers: { Authorization: `Bearer ${await slackBotToken()}` }
     })
 
@@ -138,9 +137,6 @@ async function fetchBotChannelPages(targetName?: string): Promise<Map<string, Sl
         name: channel.name,
         isPrivate: channel.is_private ?? false
       })
-      if (targetName && channel.name === targetName) {
-        return byName
-      }
     }
 
     cursor = data.response_metadata?.next_cursor || undefined
@@ -149,47 +145,26 @@ async function fetchBotChannelPages(targetName?: string): Promise<Map<string, Sl
   return byName
 }
 
-async function loadBotChannelIndex(targetName?: string): Promise<Map<string, SlackChannelInfo>> {
+async function loadBotChannelIndex(): Promise<Map<string, SlackChannelInfo>> {
   if (channelCache && channelCache.expiresAt > Date.now()) {
-    if (!targetName || channelCache.byName.has(targetName)) {
-      return channelCache.byName
-    }
+    return channelCache.byName
   }
 
-  if (channelIndexInflight) {
-    const map = await channelIndexInflight
-    if (!targetName || map.has(targetName)) {
-      return map
-    }
-  } else {
-    channelIndexInflight = fetchBotChannelPages(targetName)
+  if (!channelIndexInflight) {
+    channelIndexInflight = fetchBotChannelPages()
       .then((map) => {
-        if (channelCache && channelCache.expiresAt > Date.now()) {
-          mergeChannelMaps(channelCache.byName, map)
-        } else {
-          channelCache = {
-            byName: map,
-            expiresAt: Date.now() + CHANNEL_LIST_TTL_MS
-          }
+        channelCache = {
+          byName: map,
+          expiresAt: Date.now() + CHANNEL_LIST_TTL_MS
         }
-        return channelCache.byName
+        return map
       })
       .finally(() => {
         channelIndexInflight = null
       })
-
-    const map = await channelIndexInflight
-    if (!targetName || map.has(targetName)) {
-      return map
-    }
   }
 
-  const fullMap = await fetchBotChannelPages()
-  channelCache = {
-    byName: fullMap,
-    expiresAt: Date.now() + CHANNEL_LIST_TTL_MS
-  }
-  return fullMap
+  return channelIndexInflight
 }
 
 function extractLinks(text: string, attachments: SlackAttachment[] = []): string[] {
@@ -226,7 +201,7 @@ export async function resolveSlackChannelRef(ref: string): Promise<ResolvedSlack
   }
 
   const name = normalizeSlackChannelName(trimmed)
-  const index = await loadBotChannelIndex(name)
+  const index = await loadBotChannelIndex()
   const match = index.get(name)
 
   if (!match) {
@@ -253,7 +228,7 @@ export async function fetchSlackChannelHistory({
     inclusive: 'true'
   })
 
-  const response = await fetch(`https://slack.com/api/conversations.history?${params}`, {
+  const response = await slackFetch(`https://slack.com/api/conversations.history?${params}`, {
     headers: { Authorization: `Bearer ${await slackBotToken()}` }
   })
 

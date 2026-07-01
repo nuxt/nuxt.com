@@ -10,7 +10,7 @@ When producing a digest (scheduled or on request):
 - No preamble, no delivery disclaimers, and no meta wrap-up.
 - Use **bold** section labels — never markdown `#` headings.
 - ONE message only. Blank line between sections.
-- Every bullet that references data must include a clickable link via Slack syntax: `<https://…|label>`.
+- Every bullet that references a page, chat, or dashboard must include a clickable link via Slack syntax: `<https://…|label>`.
 - Sparingly use :nuxter: or :nuxt_cool: (0–2 total) when something is worth celebrating or urgent.
 
 **Data steps** (parallel where possible):

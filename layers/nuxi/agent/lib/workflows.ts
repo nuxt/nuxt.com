@@ -19,11 +19,17 @@ export function defaultSinceDays(): number {
   return Math.min(parsed, 365)
 }
 
-export function parseSinceDays(value: string | null | undefined): number | undefined {
-  if (!value?.trim()) return undefined
+export type ParseWindowResult =
+  | { ok: true, value: number | undefined }
+  | { ok: false, error: string }
+
+export function parseSinceDays(value: string | null | undefined): ParseWindowResult {
+  if (!value?.trim()) return { ok: true, value: undefined }
   const parsed = Number.parseInt(value, 10)
-  if (!Number.isFinite(parsed) || parsed < 1) return undefined
-  return Math.min(parsed, 365)
+  if (!Number.isFinite(parsed) || parsed < 1) {
+    return { ok: false, error: 'sinceDays must be a positive integer' }
+  }
+  return { ok: true, value: Math.min(parsed, 365) }
 }
 
 export function resolveSinceDays(
@@ -80,11 +86,13 @@ export function verifyWorkflowTriggerAuth(req: Request): boolean {
   return false
 }
 
-export function parseSinceHours(value: string | null | undefined): number | undefined {
-  if (!value?.trim()) return undefined
+export function parseSinceHours(value: string | null | undefined): ParseWindowResult {
+  if (!value?.trim()) return { ok: true, value: undefined }
   const parsed = Number.parseInt(value, 10)
-  if (!Number.isFinite(parsed) || parsed < 1) return undefined
-  return Math.min(parsed, 168)
+  if (!Number.isFinite(parsed) || parsed < 1) {
+    return { ok: false, error: 'sinceHours must be a positive integer' }
+  }
+  return { ok: true, value: Math.min(parsed, 168) }
 }
 
 const SLACK_WORKFLOW_DELIVERY = `Your text reply is posted verbatim to this Slack channel by Eve — there is no Slack post tool and you do not need one. Output only the formatted summary from the skill. Never say you cannot post, never mention missing tools, never ask anyone to copy-paste, and never add a "Note:" about delivery.`

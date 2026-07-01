@@ -20,15 +20,18 @@ export default defineChannel({
       }
 
       const url = new URL(req.url)
-      const sinceDays = parseSinceDays(url.searchParams.get('sinceDays'))
+      const parsedSinceDays = parseSinceDays(url.searchParams.get('sinceDays'))
+      if (!parsedSinceDays.ok) {
+        return Response.json({ error: parsedSinceDays.error }, { status: 400 })
+      }
 
       args.waitUntil(runWeeklyDigest({
         receive: args.receive,
         appAuth: scheduleAppAuth,
-        sinceDays
+        sinceDays: parsedSinceDays.value
       }))
 
-      return Response.json({ ok: true, sinceDays: sinceDays ?? null })
+      return Response.json({ ok: true, sinceDays: parsedSinceDays.value ?? null })
     }),
     POST('/eve/v1/ops/firehose-summary/trigger', async (req, args) => {
       if (!isManualWorkflowTriggerAllowed()) {
@@ -39,15 +42,18 @@ export default defineChannel({
       }
 
       const url = new URL(req.url)
-      const sinceHours = parseSinceHours(url.searchParams.get('sinceHours'))
+      const parsedSinceHours = parseSinceHours(url.searchParams.get('sinceHours'))
+      if (!parsedSinceHours.ok) {
+        return Response.json({ error: parsedSinceHours.error }, { status: 400 })
+      }
 
       args.waitUntil(runFirehoseSummary({
         receive: args.receive,
         appAuth: scheduleAppAuth,
-        sinceHours
+        sinceHours: parsedSinceHours.value
       }))
 
-      return Response.json({ ok: true, sinceHours: sinceHours ?? null })
+      return Response.json({ ok: true, sinceHours: parsedSinceHours.value ?? null })
     })
   ]
 })
