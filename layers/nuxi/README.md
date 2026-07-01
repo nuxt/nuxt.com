@@ -52,7 +52,7 @@ export function runMyWorkflow({ receive, appAuth, sinceDays }) {
     receive,
     appAuth,
     message: skillWorkflowMessage(SKILL_ID, days)
-  })
+  }) // receiveOnSlack is async — export runMyWorkflow as async when wiring schedules/ops
 }
 
 export default defineSchedule({
@@ -78,7 +78,7 @@ Summarizes `#firehose-nuxt` (Octolens social mentions) and posts highlights to t
 - Tool: `read_slack_channel_history` (`agent/tools/slack-channel-history.ts`)
 - Preview trigger: `POST /eve/v1/ops/firehose-summary/trigger?sinceHours=24`
 
-The Nuxi Slack bot must be invited to `#firehose-nuxt` (`channels:history` scope).
+The Nuxi Slack bot must be invited to `#firehose-nuxt`. Required Connect scopes: `channels:read`, `channels:history` (plus `groups:read`, `groups:history` for private channels).
 
 ### Test locally
 
@@ -100,4 +100,4 @@ curl -X POST "https://<preview-url>/eve/v1/ops/firehose-summary/trigger?sinceHou
   -H "Authorization: Bearer $INTERNAL_API_SECRET"
 ```
 
-Requires on the **eve** runtime: `INTERNAL_API_SECRET`, `NUXT_MCP_ADMIN_TOKEN`, `NUXT_WORKFLOW_SLACK_CHANNEL_ID`, `NUXT_FIREHOSE_SLACK_CHANNEL_ID`. Local dev and Vercel preview use Connect client `slack/nuxi-preview` automatically; prod uses `slack/nuxi` (override with `SLACK_CONNECTOR`).
+Requires on the **eve** runtime: `INTERNAL_API_SECRET`, `NUXT_MCP_ADMIN_TOKEN`, `NUXT_WORKFLOW_SLACK_CHANNEL`, `NUXT_FIREHOSE_SLACK_CHANNEL` (Slack channel names). Optional `NUXT_*_SLACK_CHANNEL_ID` overrides names and skips `users.conversations`. Local dev and Vercel preview use Connect client `slack/nuxi-preview` automatically; prod uses `slack/nuxi` (override with `SLACK_CONNECTOR`).

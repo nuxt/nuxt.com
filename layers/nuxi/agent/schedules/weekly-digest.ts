@@ -9,7 +9,7 @@ import {
 const SKILL_ID = 'weekly-digest'
 const DEFAULT_WINDOW_DAYS = 7
 
-export function runWeeklyDigest({
+export async function runWeeklyDigest({
   receive,
   appAuth,
   sinceDays

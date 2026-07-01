@@ -1,12 +1,16 @@
 import { defineSchedule } from 'eve/schedules'
 import type { ScheduleHandlerArgs } from 'eve/schedules'
 import { receiveOnSlack, skillFirehoseWorkflowMessage } from '../lib/workflows.js'
-import { firehoseSlackChannelId } from '../lib/slack-api.js'
+import {
+  firehoseSlackChannelRef,
+  isSlackChannelId,
+  normalizeSlackChannelName
+} from '../lib/slack-api.js'
 
 const SKILL_ID = 'firehose-summary'
 const DEFAULT_WINDOW_HOURS = 24
 
-export function runFirehoseSummary({
+export async function runFirehoseSummary({
   receive,
   appAuth,
   sinceHours
@@ -16,12 +20,15 @@ export function runFirehoseSummary({
   sinceHours?: number
 }) {
   const hours = sinceHours ?? DEFAULT_WINDOW_HOURS
-  const channelId = firehoseSlackChannelId()
+  const firehoseRef = firehoseSlackChannelRef()
+  const firehoseName = isSlackChannelId(firehoseRef)
+    ? firehoseRef
+    : normalizeSlackChannelName(firehoseRef)
 
   return receiveOnSlack({
     receive,
     appAuth,
-    message: skillFirehoseWorkflowMessage(SKILL_ID, hours, channelId)
+    message: skillFirehoseWorkflowMessage(SKILL_ID, hours, firehoseName)
   })
 }
 

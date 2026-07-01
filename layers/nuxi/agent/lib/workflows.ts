@@ -1,8 +1,8 @@
 import { timingSafeEqual } from 'node:crypto'
 import type { ScheduleHandlerArgs } from 'eve/schedules'
 import slack from '../channels/slack.js'
+import { resolveSlackChannelRef, workflowSlackChannelRef } from './slack-api.js'
 
-const DEFAULT_SLACK_CHANNEL_ID = 'C0BDR6WNXC3' // #project-nuxi
 const DEFAULT_SINCE_DAYS = 7
 
 /** Eve schedule app principal — same shape as `appAuth` in schedule handlers. */
@@ -11,10 +11,6 @@ export const scheduleAppAuth = {
   principalId: 'eve:app',
   principalType: 'runtime'
 } as const satisfies ScheduleHandlerArgs['appAuth']
-
-export function workflowSlackChannelId(): string {
-  return process.env.NUXT_WORKFLOW_SLACK_CHANNEL_ID?.trim() || DEFAULT_SLACK_CHANNEL_ID
-}
 
 export function defaultSinceDays(): number {
   const raw = process.env.NUXT_WORKFLOW_SINCE_DAYS?.trim()
@@ -37,20 +33,22 @@ export function resolveSinceDays(
   return override ?? fallback
 }
 
-export function receiveOnSlack({
+export async function receiveOnSlack({
   receive,
   appAuth,
   message,
-  channelId = workflowSlackChannelId()
+  channelRef
 }: {
   receive: ScheduleHandlerArgs['receive']
   appAuth: ScheduleHandlerArgs['appAuth']
   message: string
-  channelId?: string
+  channelRef?: string
 }) {
+  const resolved = await resolveSlackChannelRef(channelRef ?? workflowSlackChannelRef())
+
   return receive(slack, {
     auth: appAuth,
-    target: { channelId },
+    target: { channelId: resolved.id },
     message
   })
 }
@@ -101,11 +99,11 @@ ${SLACK_WORKFLOW_DELIVERY}`
 export function skillFirehoseWorkflowMessage(
   skillId: string,
   sinceHours: number,
-  firehoseChannelId: string
+  firehoseChannelName: string
 ): string {
   return `Load the \`${skillId}\` skill and follow it for the last ${sinceHours} hours.
 
-Use \`read_slack_channel_history\` on channel \`${firehoseChannelId}\` with sinceHours=${sinceHours}.
+Use \`read_slack_channel_history\` on channel \`${firehoseChannelName}\` with sinceHours=${sinceHours}.
 
 ${SLACK_WORKFLOW_DELIVERY}`
 }
