@@ -1,4 +1,5 @@
 title: The Nuxt Team
+head.title: Nuxt Team
 description: The development of Nuxt and its ecosystem is led by an international team.
 navigation: false
 links:

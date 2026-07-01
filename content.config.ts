@@ -450,6 +450,10 @@ export default defineContentConfig({
       source: 'evals.yml',
       schema: z.object({
         title: z.string(),
+        head: z.object({
+          title: z.string().optional(),
+          description: z.string().optional()
+        }).optional(),
         description: z.string(),
         githubUrl: z.string().url()
       })
