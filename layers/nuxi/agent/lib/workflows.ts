@@ -19,9 +19,9 @@ export function defaultSinceDays(): number {
   return Math.min(parsed, 365)
 }
 
-export type ParseWindowResult =
-  | { ok: true, value: number | undefined }
-  | { ok: false, error: string }
+export type ParseWindowResult
+  = | { ok: true, value: number | undefined }
+    | { ok: false, error: string }
 
 export function parseSinceDays(value: string | null | undefined): ParseWindowResult {
   if (!value?.trim()) return { ok: true, value: undefined }
