@@ -25,7 +25,7 @@
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.89",
     "@ai-sdk/mcp": "^1.0.55",
-    "@ai-sdk/vue": "^3.0.214",
+    "@ai-sdk/vue": "^4.0.9",
     "@comark/nuxt": "^0.4.0",
     "@iconify-json/heroicons": "^1.2.3",
     "@iconify-json/logos": "^1.2.11",
