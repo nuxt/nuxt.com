@@ -8,8 +8,8 @@
     "start": "eve start"
   },
   "dependencies": {
-    "ai": "^7.0.2",
-    "eve": "^0.17.0",
+    "ai": "^7.0.9",
+    "eve": "^0.17.1",
     "zod": "^4.4.3"
   },
   "devDependencies": {
