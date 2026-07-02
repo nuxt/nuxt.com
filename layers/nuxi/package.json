@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "ai": "^7.0.2",
-    "eve": "^0.15.1",
+    "eve": "^0.17.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
