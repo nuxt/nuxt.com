@@ -23,7 +23,7 @@
     "db:migrate": "nuxt db migrate"
   },
   "dependencies": {
-    "@ai-sdk/anthropic": "^3.0.89",
+    "@ai-sdk/anthropic": "^4.0.4",
     "@ai-sdk/mcp": "^1.0.55",
     "@ai-sdk/vue": "^3.0.214",
     "@comark/nuxt": "^0.4.0",
