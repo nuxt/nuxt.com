@@ -9,8 +9,8 @@ const { renameChat, deleteChat, groups, refresh: refreshChats } = useChats()
 
 const sidebarOpen = ref(false)
 
-watch(loggedIn, (next) => {
-  if (next) refreshChats()
+watch(loggedIn, () => {
+  refreshChats()
   sidebarOpen.value = false
 }, { immediate: true })
 
