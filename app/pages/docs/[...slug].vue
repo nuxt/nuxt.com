@@ -176,6 +176,8 @@ function refreshHeading(opened: boolean) {
   if (!opened) return
   nextTick(() => nuxtApp.callHook('page:loading:end'))
 }
+
+const noRightAside = computed(() => route.path.includes('/examples/'))
 </script>
 
 <template>
@@ -191,7 +193,7 @@ function refreshHeading(opened: boolean) {
         </UPageAside>
       </template>
       <UPage
-        :ui="isAgentDocked ? {
+        :ui="isAgentDocked || noRightAside? {
           center: 'lg:col-span-10',
           right: 'lg:hidden'
         } : { root: 'lg:grid-cols-12', center: 'lg:col-span-9', right: 'lg:col-span-3' }"
@@ -252,7 +254,7 @@ function refreshHeading(opened: boolean) {
           </div>
         </UPageBody>
 
-        <template #right>
+        <template v-if="!noRightAside" #right>
           <ContentToc
             v-if="!isAgentDocked"
             :links="page.body?.toc?.links"
