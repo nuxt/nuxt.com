@@ -9,17 +9,3 @@ export interface AgentChatHandle {
   stop: () => void
   regenerate: () => Promise<void>
 }
-
-export interface ChatSessionOptions {
-  initialSession?: {
-    sessionId?: string
-    continuationToken?: string
-    streamIndex: number
-  }
-  initialEvents?: readonly unknown[]
-}
-
-export interface EveStreamEvent {
-  type: string
-  [key: string]: unknown
-}

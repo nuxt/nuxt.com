@@ -14,15 +14,16 @@ const {
 const { chatList } = useChats()
 const { loggedIn } = useUserSession()
 
-type ActiveChat = { id: string, messages: UIMessage[] }
-const active = shallowRef<ActiveChat>({ id: crypto.randomUUID(), messages: [] })
+type ActiveChat = { id: string, messages: UIMessage[], state: ChatEveState | null }
+const active = shallowRef<ActiveChat>({ id: crypto.randomUUID(), messages: [], state: null })
 const chatId = computed(() => active.value.id)
 const initialMessages = computed(() => active.value.messages)
+const initialState = computed(() => active.value.state)
 let loadToken = 0
 
 function startNewChat() {
   loadToken++
-  active.value = { id: crypto.randomUUID(), messages: [] }
+  active.value = { id: crypto.randomUUID(), messages: [], state: null }
 }
 
 async function setActiveChat(id: string) {
@@ -31,10 +32,10 @@ async function setActiveChat(id: string) {
   try {
     const data = await $fetch<ChatDetail>(`/api/chats/${id}`)
     if (token !== loadToken) return
-    active.value = { id, messages: toUIMessages(data.messages ?? []) }
+    active.value = { id, messages: toUIMessages(data.messages ?? []), state: data.state ?? null }
   } catch {
     if (token === loadToken) {
-      active.value = { id: crypto.randomUUID(), messages: [] }
+      active.value = { id: crypto.randomUUID(), messages: [], state: null }
     }
   }
 }
@@ -116,6 +117,11 @@ defineShortcuts({
       </UTooltip>
     </template>
 
-    <AgentPanelChat :key="chatId" :chat-id="chatId" :initial-messages="initialMessages" />
+    <AgentPanelChat
+      :key="chatId"
+      :chat-id="chatId"
+      :initial-messages="initialMessages"
+      :initial-state="initialState"
+    />
   </AgentPanelShell>
 </template>

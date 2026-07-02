@@ -4,6 +4,7 @@ import type { UIMessage } from 'ai'
 const props = defineProps<{
   chatId: string
   initialMessages?: UIMessage[]
+  initialState?: ChatEveState | null
 }>()
 
 const {
@@ -29,10 +30,12 @@ const {
   getVote,
   vote,
   askQuestion,
-  send
+  send,
+  hasAgentUser
 } = useAgentChat({
   chatId: props.chatId,
   initialMessages: props.initialMessages,
+  initialState: props.initialState,
   source: 'prompt',
   withPageContext: 'when-enabled',
   onFinish: () => {
@@ -58,9 +61,40 @@ watch(isOpen, (value) => {
   }
 })
 
-onMounted(() => {
-  const pendingPrompt = consumePendingPrompt()
-  if (pendingPrompt) send(pendingPrompt)
+const resumeData = computed<ChatDetail | undefined>(() => {
+  if (!loggedIn.value || !props.initialMessages?.length) return undefined
+
+  const rows: ChatMessageRow[] = props.initialMessages.map(message => ({
+    id: message.id,
+    role: message.role,
+    parts: message.parts,
+    createdAt: (message.metadata as { createdAt?: string } | undefined)?.createdAt ?? new Date().toISOString()
+  }))
+
+  if (!rows.some(message => message.role === 'user')) return undefined
+  if (rows.some(message => message.role === 'assistant')) return undefined
+
+  return {
+    id: props.chatId,
+    title: null,
+    visibility: 'private',
+    isOwner: true,
+    createdAt: new Date().toISOString(),
+    state: props.initialState ?? null,
+    messages: rows
+  }
+})
+
+useChatResume({
+  chatId: props.chatId,
+  chat,
+  send,
+  hasAgentUser,
+  data: resumeData,
+  loggedIn,
+  isOwner: computed(() => loggedIn.value),
+  consumePendingPrompt,
+  consumePendingMessageParts: () => null
 })
 </script>
 

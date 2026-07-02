@@ -1,14 +1,8 @@
 import type { UIMessage } from 'ai'
 import type { ChatEveState } from '../../shared/types/chat'
 import { buildMessageParts, getMessageTextLength } from '../../shared/utils/paste-attachment'
-import { createEveChatSession } from './eve/session'
-import { getOrCreateEveAgent, removeEveAgent } from './eve/init'
-import { toUIMessages } from './eve/adapter'
-import {
-  createEveFinishHandler,
-  readAnonymousTitle,
-  resumeOptionsFromChat
-} from './eve/thread-state'
+import { createChatSyncHandler, readAnonymousTitle } from './eve/thread-state'
+import { useEveChat } from './eve/useEveChat'
 import { useChatVotes } from './useChatVotes'
 import { usePasteAttachment } from './usePasteAttachment'
 
@@ -72,6 +66,7 @@ type AgentChatReturn = {
   send: (inputValue: string | { parts: UIMessage['parts'] }) => Promise<void>
   onSubmit: () => Promise<void>
   askQuestion: (question: string) => void
+  hasAgentUser: () => boolean
   readAnonymousTitle: () => string | null
 }
 
@@ -156,42 +151,34 @@ export function useAgentChat(options: UseAgentChatOptions) {
       : agent.pageContextEnabled.value && Boolean(agent.currentPage.value)
   )
 
-  const resumeOptions = computed(() => {
-    if (chatOptions.initialState) {
-      return resumeOptionsFromChat({ state: chatOptions.initialState })
-    }
-    return {}
-  })
-
-  const eveSession = createEveChatSession(() => chatOptions.chatId, () => ({
-    ...resumeOptions.value,
+  const eveChat = useEveChat({
+    chatId: chatOptions.chatId,
+    initialMessages: chatOptions.initialMessages,
+    initialState: chatOptions.initialState,
     headers: buildEveHeaders(chatOptions.chatId, agent, useContext),
-    onFinish: createEveFinishHandler({
+    onFinish: createChatSyncHandler({
       chatId: chatOptions.chatId,
       loggedIn: () => loggedIn.value,
-      getMessages: () => toUIMessages(getOrCreateEveAgent(chatOptions.chatId).data.value.messages),
       refreshChats: () => chats.refresh(),
       patchTitle: (id, title) => chats.patchTitle(id, title),
       findChatTitle: id => chats.chatList.value?.find(c => c.id === id)?.title ?? null,
       onTitle: chatOptions.onTitle,
       onFinish: chatOptions.onFinish
     })
-  }))
+  })
 
   const chat = {
     get messages() {
-      const live = eveSession.messages
-      if (live.length > 0) return live
-      return chatOptions.initialMessages ?? []
+      return eveChat.messages
     },
     get status() {
-      return eveSession.status
+      return eveChat.status
     },
     get error() {
-      return eveSession.error
+      return eveChat.error
     },
-    stop: eveSession.stop,
-    regenerate: eveSession.regenerate
+    stop: eveChat.stop,
+    regenerate: eveChat.regenerate
   }
 
   async function persistFirstUserMessage(parts: UIMessage['parts']) {
@@ -235,7 +222,7 @@ export function useAgentChat(options: UseAgentChatOptions) {
       await persistFirstUserMessage(parts)
     }
 
-    await eveSession.send(typeof inputValue === 'string' ? inputValue : { parts })
+    await eveChat.send(typeof inputValue === 'string' ? inputValue : { parts })
     agent.onMessageSent()
   }
 
@@ -252,12 +239,6 @@ export function useAgentChat(options: UseAgentChatOptions) {
     send(question)
   }
 
-  if (import.meta.client) {
-    onUnmounted(() => {
-      removeEveAgent(chatOptions.chatId)
-    })
-  }
-
   return {
     chat,
     input,
@@ -267,6 +248,7 @@ export function useAgentChat(options: UseAgentChatOptions) {
     send,
     onSubmit,
     askQuestion,
+    hasAgentUser: () => eveChat.hasAgentMessage('user'),
     readAnonymousTitle: () => readAnonymousTitle(chatOptions.chatId)
   }
 }

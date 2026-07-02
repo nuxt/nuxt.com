@@ -1,37 +1,15 @@
 import type { EveMessageData, UseEveAgentSnapshot } from 'eve/vue'
 import type { UIMessage } from 'ai'
-import type { ChatEveState, ChatDetail } from '../../../shared/types/chat'
-import type { ChatSessionOptions } from './types'
+import type { ChatEveState } from '../../../shared/types/chat'
+import { toUIMessages } from './adapter'
 import { titleFromParts } from '../../../shared/utils/chat'
 
-export function resumeOptionsFromChat(chat: Pick<ChatDetail, 'state'>): ChatSessionOptions {
-  const events = chat.state?.events
-  if (!events?.length) {
-    return {}
-  }
-
-  const session = chat.state?.session ?? { streamIndex: 0 }
-
-  return {
-    initialSession: {
-      ...session,
-      streamIndex: Math.max(session.streamIndex ?? 0, events.length)
-    },
-    initialEvents: events
-  }
-}
-
-export async function persistChatState(
+export async function syncChatToDb(
   chatId: string,
   snapshot: UseEveAgentSnapshot<EveMessageData>,
-  options?: {
-    syncMessages?: boolean
-    messages?: UIMessage[]
-  }
+  messages: UIMessage[]
 ) {
-  if (!snapshot.events.length) {
-    return
-  }
+  if (!snapshot.events.length) return
 
   const state: ChatEveState = {
     session: {
@@ -46,21 +24,17 @@ export async function persistChatState(
     method: 'PATCH',
     body: {
       state,
-      ...(options?.syncMessages && options.messages?.length
-        ? {
-            messages: options.messages.map(message => ({
-              id: message.id,
-              role: message.role,
-              parts: message.parts,
-              metadata: message.metadata as Record<string, unknown> | undefined
-            }))
-          }
-        : {})
+      messages: messages.map(message => ({
+        id: message.id,
+        role: message.role,
+        parts: message.parts,
+        metadata: message.metadata as Record<string, unknown> | undefined
+      }))
     }
   })
 }
 
-export async function persistAnonymousTitle(chatId: string, title: string) {
+export function persistAnonymousTitle(chatId: string, title: string) {
   if (!import.meta.client) return
   sessionStorage.setItem(`nuxi-chat-title:${chatId}`, title)
 }
@@ -70,33 +44,30 @@ export function readAnonymousTitle(chatId: string): string | null {
   return sessionStorage.getItem(`nuxi-chat-title:${chatId}`)
 }
 
-export interface EveChatRuntimeOptions {
+export interface SyncChatOptions {
   chatId: string
-  getMessages: () => UIMessage[]
   loggedIn: () => boolean
-  onTitle?: (title: string) => void
-  onFinish?: () => void
   refreshChats?: () => Promise<void>
   patchTitle?: (chatId: string, title: string) => void
   findChatTitle?: (chatId: string) => string | null | undefined
+  onTitle?: (title: string) => void
+  onFinish?: () => void
 }
 
-export function createEveFinishHandler(options: EveChatRuntimeOptions) {
+export function createChatSyncHandler(options: SyncChatOptions) {
   return async (snapshot: UseEveAgentSnapshot<EveMessageData>) => {
-    const agentMessages = options.getMessages()
+    const messages = toUIMessages(snapshot.data.messages)
 
     if (options.loggedIn()) {
       try {
-        await persistChatState(options.chatId, snapshot, {
-          syncMessages: true,
-          messages: [...agentMessages]
-        })
+        await syncChatToDb(options.chatId, snapshot, messages)
+        await refreshNuxtData(`chat-${options.chatId}`)
         await options.refreshChats?.()
 
         let generatedTitle = options.findChatTitle?.(options.chatId) ?? null
 
         if (!generatedTitle) {
-          const firstUser = [...agentMessages].find(message => message.role === 'user')
+          const firstUser = [...messages].find(message => message.role === 'user')
           const fallback = firstUser
             ? titleFromParts(firstUser.parts as UIMessage['parts'])
             : null
@@ -117,10 +88,10 @@ export function createEveFinishHandler(options: EveChatRuntimeOptions) {
         // Non-fatal sync failure
       }
     } else {
-      const firstUser = [...agentMessages].find(message => message.role === 'user')
+      const firstUser = [...messages].find(message => message.role === 'user')
       if (firstUser) {
         const title = titleFromParts(firstUser.parts as UIMessage['parts'])
-        await persistAnonymousTitle(options.chatId, title)
+        persistAnonymousTitle(options.chatId, title)
         options.onTitle?.(title)
       }
     }

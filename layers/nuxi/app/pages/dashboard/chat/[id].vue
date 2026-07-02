@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { UIMessage } from 'ai'
-import { getOrCreateEveAgent } from '../../../composables/eve/init'
 
 definePageMeta({
-  layout: 'dashboard'
+  layout: 'dashboard',
+  key: route => route.params.id as string
 })
 
 const route = useRoute()
@@ -17,6 +17,15 @@ const { data, error } = await useFetch<ChatDetail>(
   () => loggedIn.value ? `/api/chats/${chatId}` : null,
   { key: `chat-${chatId}` }
 )
+
+if (import.meta.client && loggedIn.value) {
+  const cached = data.value
+  const looksIncomplete = cached?.messages.some(message => message.role === 'user')
+    && !cached?.messages.some(message => message.role === 'assistant')
+  if (looksIncomplete) {
+    await refreshNuxtData(`chat-${chatId}`)
+  }
+}
 
 if (loggedIn.value && (error.value || !data.value)) {
   throw createError({ statusCode: 404, statusMessage: 'Chat not found', fatal: true })
@@ -39,7 +48,8 @@ const {
   prompt,
   send,
   getVote,
-  vote
+  vote,
+  hasAgentUser
 } = useAgentChat({
   chatId,
   initialMessages,
@@ -60,44 +70,20 @@ useNuxiChatSeo({
   description: 'A conversation with Nuxi.'
 })
 
-onMounted(() => {
-  if (!loggedIn.value) {
-    const pendingParts = consumePendingMessageParts()
-    const pendingPrompt = consumePendingPrompt()
-
-    if (!pendingParts && !pendingPrompt) {
-      navigateTo('/dashboard/chat')
-      return
-    }
-
-    if (pendingParts) {
-      if (!title.value) title.value = titleFromParts(pendingParts)
-      send({ parts: pendingParts })
-      return
-    }
-
-    if (pendingPrompt) send(pendingPrompt)
-    return
-  }
-
-  if (isOwner.value && data.value?.messages.length === 1 && data.value.messages[0]?.role === 'user') {
-    const eveHasUser = getOrCreateEveAgent(chatId).data.value.messages.some(message => message.role === 'user')
-    if (eveHasUser) {
-      void chat.regenerate()
-    } else {
-      void send({ parts: data.value.messages[0].parts as UIMessage['parts'] })
-    }
-    return
-  }
-
-  const pendingParts = consumePendingMessageParts()
-  if (pendingParts) {
-    send({ parts: pendingParts })
-    return
-  }
-
-  const pendingPrompt = consumePendingPrompt()
-  if (pendingPrompt) send(pendingPrompt)
+useChatResume({
+  chatId,
+  chat,
+  send,
+  hasAgentUser,
+  data,
+  loggedIn,
+  isOwner,
+  consumePendingPrompt,
+  consumePendingMessageParts,
+  onAnonymousTitle: (parts) => {
+    if (!title.value) title.value = titleFromParts(parts)
+  },
+  redirectIfAnonymousEmpty: () => navigateTo('/dashboard/chat')
 })
 </script>
 
