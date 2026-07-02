@@ -1,13 +1,20 @@
+import type { EveMessageData, UseEveAgentSnapshot } from 'eve/vue'
 import type { UIMessage } from 'ai'
 import type { ChatEveState } from '../../shared/types/chat'
-import { buildMessageParts, getMessageTextLength } from '../../shared/utils/paste-attachment'
-import { createChatSyncHandler, readAnonymousTitle } from './eve/thread-state'
+import { getMessageTextLength } from '../../shared/utils/paste-attachment'
+import {
+  appendUserMessageToChat,
+  createChatWithMessage,
+  persistAnonymousTitle,
+  readAnonymousTitle,
+  titleFromParts
+} from '../../shared/utils/chat'
+import { eveMessagesToUIMessages } from './eve/adapter'
 import { useEveChat } from './eve/useEveChat'
 import { useChatVotes } from './useChatVotes'
 import { usePasteAttachment } from './usePasteAttachment'
 
-type ChatModeOptions = {
-  mode?: 'chat'
+export interface UseAgentChatOptions {
   chatId: string
   initialMessages?: UIMessage[]
   initialState?: ChatEveState | null
@@ -18,12 +25,91 @@ type ChatModeOptions = {
   onTitle?: (title: string) => void
 }
 
-type StartModeOptions = {
-  mode: 'start'
-  source: string
+interface SyncChatOptions {
+  chatId: string
+  loggedIn: () => boolean
+  refreshChats?: () => Promise<void>
+  patchTitle?: (chatId: string, title: string) => void
+  findChatTitle?: (chatId: string) => string | null | undefined
+  onTitle?: (title: string) => void
+  onFinish?: () => void
 }
 
-export type UseAgentChatOptions = ChatModeOptions | StartModeOptions
+async function syncChatToDb(
+  chatId: string,
+  snapshot: UseEveAgentSnapshot<EveMessageData>,
+  messages: UIMessage[]
+) {
+  if (!snapshot.events.length) return
+
+  const state: ChatEveState = {
+    session: {
+      sessionId: snapshot.session.sessionId,
+      continuationToken: snapshot.session.continuationToken ?? chatId,
+      streamIndex: snapshot.events.length
+    },
+    events: [...snapshot.events]
+  }
+
+  await $fetch(`/api/chats/${chatId}/state`, {
+    method: 'PATCH',
+    body: {
+      state,
+      messages: messages.map(message => ({
+        id: message.id,
+        role: message.role,
+        parts: message.parts,
+        metadata: message.metadata as Record<string, unknown> | undefined
+      }))
+    }
+  })
+}
+
+function createChatSyncHandler(options: SyncChatOptions) {
+  return async (snapshot: UseEveAgentSnapshot<EveMessageData>) => {
+    const messages = eveMessagesToUIMessages(snapshot.data.messages)
+
+    if (options.loggedIn()) {
+      try {
+        await syncChatToDb(options.chatId, snapshot, messages)
+        await refreshNuxtData(`chat-${options.chatId}`)
+        await options.refreshChats?.()
+
+        let generatedTitle = options.findChatTitle?.(options.chatId) ?? null
+
+        if (!generatedTitle) {
+          const firstUser = [...messages].find(message => message.role === 'user')
+          const fallback = firstUser
+            ? titleFromParts(firstUser.parts as UIMessage['parts'])
+            : null
+          if (fallback && fallback !== 'Untitled') {
+            await $fetch(`/api/chats/${options.chatId}/title`, {
+              method: 'PATCH',
+              body: { title: fallback }
+            })
+            generatedTitle = fallback
+          }
+        }
+
+        if (generatedTitle) {
+          options.patchTitle?.(options.chatId, generatedTitle)
+          options.onTitle?.(generatedTitle)
+        }
+      } catch {
+        // Non-fatal sync failure
+      }
+    } else {
+      const firstUser = [...messages].find(message => message.role === 'user')
+      if (firstUser) {
+        const title = titleFromParts(firstUser.parts as UIMessage['parts'])
+        persistAnonymousTitle(options.chatId, title)
+        options.onTitle?.(title)
+      }
+    }
+
+    options.onFinish?.()
+  }
+}
 
 function buildEveHeaders(
   chatId: string,
@@ -43,97 +129,7 @@ function buildEveHeaders(
   }
 }
 
-type StartChatReturn = {
-  input: Ref<string>
-  loading: Ref<boolean>
-  prompt: ReturnType<ReturnType<typeof usePasteAttachment>['bindings']>
-  onSubmit: () => Promise<void>
-  createFromSuggestion: (label: string) => Promise<void>
-}
-
-type AgentChatReturn = {
-  chat: {
-    messages: UIMessage[]
-    status: 'ready' | 'submitted' | 'streaming' | 'error'
-    error?: Error
-    stop: () => void
-    regenerate: () => Promise<void>
-  }
-  input: Ref<string>
-  prompt: ReturnType<ReturnType<typeof usePasteAttachment>['bindings']>
-  getVote: (messageId: string) => boolean | null
-  vote: (message: UIMessage, isUpvoted: boolean) => void
-  send: (inputValue: string | { parts: UIMessage['parts'] }) => Promise<void>
-  onSubmit: () => Promise<void>
-  askQuestion: (question: string) => void
-  hasAgentUser: () => boolean
-  readAnonymousTitle: () => string | null
-}
-
-function useStartChat(source: string): StartChatReturn {
-  const agent = useNuxtAgent()
-  const chats = useChats()
-  const { loggedIn } = useUserSession()
-  const { track } = useAnalytics()
-  const toast = useToast()
-
-  const input = ref('')
-  const paste = usePasteAttachment(input)
-  const loading = ref(false)
-
-  async function createChat(parts: UIMessage['parts']) {
-    if (loading.value || agent.rateLimitReached.value || getMessageTextLength(parts) === 0) return
-    loading.value = true
-
-    try {
-      if (loggedIn.value) {
-        const chatId = crypto.randomUUID()
-        await createChatWithMessage(chatId, parts)
-        await chats.refresh()
-        await navigateTo(`/dashboard/chat/${chatId}`)
-      } else {
-        agent.pendingMessageParts.value = parts
-        await navigateTo(`/dashboard/chat/${crypto.randomUUID()}`)
-      }
-    } catch {
-      toast.add({ description: 'Failed to create chat', icon: 'i-lucide-alert-circle', color: 'error' })
-    } finally {
-      loading.value = false
-    }
-  }
-
-  async function onSubmit() {
-    if (!paste.canSubmit.value) return
-    const parts = paste.buildMessageParts()
-    paste.clearAttachments()
-    input.value = ''
-    track('Nuxi Message Sent', { source, queryLength: getMessageTextLength(parts) })
-    await createChat(parts)
-  }
-
-  function createFromSuggestion(label: string) {
-    track('Nuxi FAQ Clicked', { question: label, source })
-    return createChat(buildMessageParts(label, []))
-  }
-
-  return {
-    input,
-    loading,
-    prompt: paste.bindings(onSubmit),
-    onSubmit,
-    createFromSuggestion
-  }
-}
-
-export function useAgentChat<T extends UseAgentChatOptions>(
-  options: T
-): T extends StartModeOptions ? StartChatReturn : AgentChatReturn
 export function useAgentChat(options: UseAgentChatOptions) {
-  if (options.mode === 'start') {
-    return useStartChat(options.source)
-  }
-
-  const chatOptions = options
   const agent = useNuxtAgent()
   const chats = useChats()
   const { loggedIn } = useUserSession()
@@ -141,29 +137,29 @@ export function useAgentChat(options: UseAgentChatOptions) {
 
   const input = ref('')
   const paste = usePasteAttachment(input)
-  const { getVote, vote } = useChatVotes(() => chatOptions.chatId, chatOptions.fetchVotes ?? false)
+  const { getVote, vote } = useChatVotes(() => options.chatId, options.fetchVotes ?? false)
 
-  const initialDbPersistDone = ref((chatOptions.initialMessages?.length ?? 0) > 0)
+  const initialDbPersistDone = ref((options.initialMessages?.length ?? 0) > 0)
 
   const useContext = computed(() =>
-    chatOptions.withPageContext === 'always'
+    options.withPageContext === 'always'
       ? Boolean(agent.currentPage.value)
       : agent.pageContextEnabled.value && Boolean(agent.currentPage.value)
   )
 
   const eveChat = useEveChat({
-    chatId: chatOptions.chatId,
-    initialMessages: chatOptions.initialMessages,
-    initialState: chatOptions.initialState,
-    headers: buildEveHeaders(chatOptions.chatId, agent, useContext),
+    chatId: options.chatId,
+    initialMessages: options.initialMessages,
+    initialState: options.initialState,
+    headers: buildEveHeaders(options.chatId, agent, useContext),
     onFinish: createChatSyncHandler({
-      chatId: chatOptions.chatId,
+      chatId: options.chatId,
       loggedIn: () => loggedIn.value,
       refreshChats: () => chats.refresh(),
       patchTitle: (id, title) => chats.patchTitle(id, title),
       findChatTitle: id => chats.chatList.value?.find(c => c.id === id)?.title ?? null,
-      onTitle: chatOptions.onTitle,
-      onFinish: chatOptions.onFinish
+      onTitle: options.onTitle,
+      onFinish: options.onFinish
     })
   })
 
@@ -191,10 +187,10 @@ export function useAgentChat(options: UseAgentChatOptions) {
     }
 
     try {
-      if (chatOptions.initialMessages?.length) {
-        await appendUserMessageToChat(chatOptions.chatId, parts, metadata)
+      if (options.initialMessages?.length) {
+        await appendUserMessageToChat(options.chatId, parts, metadata)
       } else {
-        await createChatWithMessage(chatOptions.chatId, parts, metadata)
+        await createChatWithMessage(options.chatId, parts, metadata)
       }
     } catch (error) {
       initialDbPersistDone.value = false
@@ -212,7 +208,7 @@ export function useAgentChat(options: UseAgentChatOptions) {
     if (!parts.length || getMessageTextLength(parts) === 0 || agent.rateLimitReached.value) return
 
     track('Nuxi Message Sent', {
-      source: chatOptions.source,
+      source: options.source,
       page: agent.currentPage.value,
       withContext: useContext.value,
       queryLength: getMessageTextLength(parts)
@@ -235,20 +231,23 @@ export function useAgentChat(options: UseAgentChatOptions) {
   }
 
   function askQuestion(question: string) {
-    track('Nuxi FAQ Clicked', { question, source: chatOptions.source })
+    track('Nuxi FAQ Clicked', { question, source: options.source })
     send(question)
   }
 
   return {
     chat,
     input,
-    prompt: paste.bindings(onSubmit),
+    prompt: paste.prompt,
     getVote,
     vote,
     send,
     onSubmit,
     askQuestion,
+    handlePaste: paste.handlePaste,
+    removeAttachment: paste.removeAttachment,
+    restoreToInput: paste.restoreToInput,
     hasAgentUser: () => eveChat.hasAgentMessage('user'),
-    readAnonymousTitle: () => readAnonymousTitle(chatOptions.chatId)
+    readAnonymousTitle: () => readAnonymousTitle(options.chatId)
   }
 }

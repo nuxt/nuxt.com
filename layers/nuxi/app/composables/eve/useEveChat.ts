@@ -2,7 +2,7 @@ import type { EveMessageData, UseEveAgentSnapshot } from 'eve/vue'
 import { useEveAgent } from 'eve/vue'
 import type { FileUIPart, UIMessage } from 'ai'
 import type { ChatEveState } from '../../../shared/types/chat'
-import { toUIMessages } from './adapter'
+import { eveMessagesToUIMessages } from './adapter'
 import type { AgentChatHandle } from './types'
 
 export interface UseEveChatOptions {
@@ -104,7 +104,7 @@ export function useEveChat(options: UseEveChatOptions): AgentChatHandle & {
   })
 
   const messages = computed(() => {
-    const live = toUIMessages(agent.data.value.messages)
+    const live = eveMessagesToUIMessages(agent.data.value.messages)
     if (live.length > 0) return live
     return options.initialMessages ?? []
   })

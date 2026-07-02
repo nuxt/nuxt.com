@@ -32,7 +32,7 @@ async function setActiveChat(id: string) {
   try {
     const data = await $fetch<ChatDetail>(`/api/chats/${id}`)
     if (token !== loadToken) return
-    active.value = { id, messages: toUIMessages(data.messages ?? []), state: data.state ?? null }
+    active.value = { id, messages: dbRowsToUIMessages(data.messages ?? []), state: data.state ?? null }
   } catch {
     if (token === loadToken) {
       active.value = { id: crypto.randomUUID(), messages: [], state: null }

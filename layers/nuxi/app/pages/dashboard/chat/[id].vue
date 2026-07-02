@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { UIMessage } from 'ai'
+import { refreshChatIfIncomplete, useAgentChatSession } from '../../../composables/useAgentChatSession'
 
 definePageMeta({
   layout: 'dashboard',
@@ -7,6 +7,7 @@ definePageMeta({
 })
 
 const route = useRoute()
+const nuxtApp = useNuxtApp()
 const { loggedIn } = useUserSession()
 const { usage, rateLimitReached, consumePendingPrompt, consumePendingMessageParts } = useNuxtAgent()
 const { refresh: refreshChats } = useChats()
@@ -15,17 +16,15 @@ const chatId = route.params.id as string
 
 const { data, error } = await useFetch<ChatDetail>(
   () => loggedIn.value ? `/api/chats/${chatId}` : null,
-  { key: `chat-${chatId}` }
+  {
+    key: `chat-${chatId}`,
+    getCachedData: key => nuxtApp.payload.data[key] ?? nuxtApp.static.data[key]
+  }
 )
 
-if (import.meta.client && loggedIn.value) {
-  const cached = data.value
-  const looksIncomplete = cached?.messages.some(message => message.role === 'user')
-    && !cached?.messages.some(message => message.role === 'assistant')
-  if (looksIncomplete) {
-    await refreshNuxtData(`chat-${chatId}`)
-  }
-}
+onMounted(() => {
+  if (loggedIn.value) void refreshChatIfIncomplete(chatId, data)
+})
 
 if (loggedIn.value && (error.value || !data.value)) {
   throw createError({ statusCode: 404, statusMessage: 'Chat not found', fatal: true })
@@ -38,52 +37,42 @@ watch(() => data.value?.title, (next) => {
   if (loggedIn.value) title.value = next ?? null
 })
 
-const initialMessages: UIMessage[] = loggedIn.value
-  ? toUIMessages(data.value?.messages ?? [])
-  : []
-
 const {
   chat,
   input,
   prompt,
-  send,
   getVote,
   vote,
-  hasAgentUser
-} = useAgentChat({
+  onSubmit,
+  handlePaste,
+  removeAttachment,
+  restoreToInput
+} = useAgentChatSession({
   chatId,
-  initialMessages,
+  initialMessages: loggedIn.value ? dbRowsToUIMessages(data.value?.messages ?? []) : [],
   initialState: data.value?.state ?? null,
+  data,
   source: 'chat-page',
   withPageContext: 'always',
   fetchVotes: isOwner.value,
+  isOwner,
+  consumePendingPrompt,
+  consumePendingMessageParts,
   onTitle: (generatedTitle) => {
     title.value = generatedTitle
   },
   onFinish: () => {
     if (loggedIn.value) refreshChats()
-  }
+  },
+  onAnonymousTitle: (parts) => {
+    if (!title.value) title.value = titleFromParts(parts)
+  },
+  redirectIfAnonymousEmpty: () => navigateTo('/dashboard/chat')
 })
 
 useNuxiChatSeo({
   title,
   description: 'A conversation with Nuxi.'
-})
-
-useChatResume({
-  chatId,
-  chat,
-  send,
-  hasAgentUser,
-  data,
-  loggedIn,
-  isOwner,
-  consumePendingPrompt,
-  consumePendingMessageParts,
-  onAnonymousTitle: (parts) => {
-    if (!title.value) title.value = titleFromParts(parts)
-  },
-  redirectIfAnonymousEmpty: () => navigateTo('/dashboard/chat')
 })
 </script>
 
@@ -128,34 +117,41 @@ useChatResume({
 
     <template #body>
       <UContainer class="flex min-w-0 flex-1 flex-col gap-4 sm:gap-6">
-        <AgentChatMessages
+        <AgentChatBody
+          v-if="isOwner || !loggedIn"
+          v-model:input="input"
           :chat="chat"
           :chat-id="chatId"
+          :prompt="prompt"
+          :usage="usage"
+          :rate-limit-reached="rateLimitReached"
           :show-actions="isOwner"
           show-user-timestamps
           :spacing-offset="(isOwner || !loggedIn) && !rateLimitReached ? 160 : 0"
           :get-vote="getVote"
+          variant="subtle"
+          prompt-class="rounded-b-none border-b-0 bg-default [view-transition-name:chat-prompt]"
+          :prompt-ui="{
+            root: 'rounded-t-lg rounded-b-none border-b-0 bg-default',
+            base: 'px-1.5',
+            footer: 'items-baseline',
+            header: 'px-1.5 pt-1.5 pb-0 gap-1.5 flex flex-wrap items-start'
+          }"
+          @submit="onSubmit"
+          @paste="handlePaste"
+          @remove-attachment="removeAttachment"
+          @restore-attachment="restoreToInput"
           @vote="vote"
         />
 
-        <AgentRateLimitBanner v-if="rateLimitReached" variant="sticky" />
-        <div v-else-if="isOwner || !loggedIn" class="sticky bottom-0 z-10 flex flex-col gap-1.5 bg-default">
-          <AgentLoginHint v-if="!loggedIn" />
-          <AgentChatPrompt
-            v-model="input"
-            v-bind="prompt"
-            :chat="chat"
-            :usage="usage"
-            variant="subtle"
-            class="rounded-b-none border-b-0 bg-default [view-transition-name:chat-prompt]"
-            :ui="{
-              root: 'rounded-t-lg rounded-b-none border-b-0 bg-default',
-              base: 'px-1.5',
-              footer: 'items-baseline',
-              header: 'px-1.5 pt-1.5 pb-0 gap-1.5 flex flex-wrap items-start'
-            }"
-          />
-        </div>
+        <AgentChatMessages
+          v-else
+          :chat="chat"
+          :chat-id="chatId"
+          :show-actions="false"
+          :get-vote="getVote"
+          class="flex-1 pt-4 pb-4 sm:pb-6"
+        />
       </UContainer>
     </template>
   </UDashboardPanel>
