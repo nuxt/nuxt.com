@@ -1,6 +1,7 @@
 import type { UIMessage } from 'ai'
 
 export function chatDetailCacheKey(chatId: string) {
+  if (!chatId) return 'chat-pending'
   return `chat-${chatId}`
 }
 

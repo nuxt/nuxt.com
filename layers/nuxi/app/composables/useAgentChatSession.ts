@@ -130,9 +130,10 @@ export function useAgentChatSession(options: UseAgentChatSessionOptions) {
   const resumeDone = ref(false)
 
   watch(
-    [() => options.data?.value, () => options.dataStatus?.value, loggedIn],
+    [() => options.data?.value, () => options.dataStatus?.value, loggedIn, () => options.chatId],
     () => {
       if (resumeDone.value) return
+      if (!options.chatId) return
       if (loggedIn.value && options.dataStatus?.value === 'pending') return
 
       resumeDone.value = true
