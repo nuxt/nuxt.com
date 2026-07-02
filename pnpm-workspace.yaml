@@ -17,3 +17,6 @@ minimumReleaseAgeExclude:
   - '@ai-sdk/gateway@4.0.2'
   - ai@7.0.2
   - eve@0.15.1 || 0.17.0
+  - '@nuxt/content@3.15.0'
+  - '@nuxtjs/mdc@0.22.1'
+  - remark-mdc@3.11.1
