@@ -26,21 +26,21 @@ const docsV5Source = {
 
 const examplesV3Source = {
   cwd: process.env.NUXT_EXAMPLES_PATH ?? undefined,
-  repository: !process.env.NUXT_EXAMPLES_PATH ? 'https://github.com/nuxt/examples/tree/docs/new-examples' : undefined,
+  repository: !process.env.NUXT_EXAMPLES_PATH ? { url: 'https://github.com/nuxt/examples', branch: 'docs/new-examples' } : undefined,
   include: '.docs/**/*',
   prefix: '/docs/3.x/4.examples'
 }
 
 const examplesV4Source = {
   cwd: process.env.NUXT_EXAMPLES_PATH ?? undefined,
-  repository: !process.env.NUXT_EXAMPLES_PATH ? 'https://github.com/nuxt/examples/tree/docs/new-examples' : undefined,
+  repository: !process.env.NUXT_EXAMPLES_PATH ? { url: 'https://github.com/nuxt/examples', branch: 'docs/new-examples' } : undefined,
   include: '.docs/**/*',
   prefix: '/docs/4.x/4.examples'
 }
 
 const examplesV5Source = {
   cwd: process.env.NUXT_EXAMPLES_PATH ?? undefined,
-  repository: !process.env.NUXT_EXAMPLES_PATH ? 'https://github.com/nuxt/examples/tree/docs/new-examples' : undefined,
+  repository: !process.env.NUXT_EXAMPLES_PATH ? { url: 'https://github.com/nuxt/examples', branch: 'docs/new-examples' } : undefined,
   include: '.docs/**/*',
   prefix: '/docs/5.x/4.examples'
 }
