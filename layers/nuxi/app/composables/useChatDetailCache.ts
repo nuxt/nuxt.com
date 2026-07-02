@@ -1,5 +1,22 @@
 import type { UIMessage } from 'ai'
 
+const navigationChatKey = 'nuxi-navigation-chat-id'
+
+export function setNavigationChatId(chatId: string) {
+  if (!import.meta.client) return
+  sessionStorage.setItem(navigationChatKey, chatId)
+}
+
+export function readNavigationChatId() {
+  if (!import.meta.client) return ''
+  return sessionStorage.getItem(navigationChatKey) ?? ''
+}
+
+export function clearNavigationChatId() {
+  if (!import.meta.client) return
+  sessionStorage.removeItem(navigationChatKey)
+}
+
 export function chatDetailCacheKey(chatId: string) {
   if (!chatId) return 'chat-pending'
   return `chat-${chatId}`

@@ -1,7 +1,7 @@
 import type { UIMessage } from 'ai'
 import { buildMessageParts, getMessageTextLength } from '../../shared/utils/paste-attachment'
 import { createChatWithMessage } from '../../shared/utils/chat'
-import { markChatAsFresh, seedChatDetailCache } from './useChatDetailCache'
+import { markChatAsFresh, seedChatDetailCache, setNavigationChatId } from './useChatDetailCache'
 import { usePasteAttachment } from './usePasteAttachment'
 
 export function useStartChat(source: string) {
@@ -25,11 +25,14 @@ export function useStartChat(source: string) {
         const detail = await createChatWithMessage(chatId, parts)
         seedChatDetailCache(chatId, detail)
         markChatAsFresh(chatId)
+        setNavigationChatId(chatId)
         await navigateTo(`/dashboard/chat/${chatId}`)
         void chats.refresh()
       } else {
+        const chatId = crypto.randomUUID()
+        setNavigationChatId(chatId)
         agent.pendingMessageParts.value = parts
-        await navigateTo(`/dashboard/chat/${crypto.randomUUID()}`)
+        await navigateTo(`/dashboard/chat/${chatId}`)
       }
       return true
     } catch {

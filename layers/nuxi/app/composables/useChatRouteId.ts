@@ -1,8 +1,13 @@
+import { readNavigationChatId } from './useChatDetailCache'
+
 export function resolveChatRouteId(path: string, param: string | string[] | undefined) {
   if (typeof param === 'string' && param) return param
   if (Array.isArray(param) && param[0]) return param[0]
+
   const match = path.match(/^\/dashboard\/chat\/([^/]+)\/?$/)
-  return match?.[1] ?? ''
+  if (match?.[1]) return match[1]
+
+  return readNavigationChatId()
 }
 
 export function useChatRouteId() {

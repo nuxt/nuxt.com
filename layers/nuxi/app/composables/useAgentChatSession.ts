@@ -1,6 +1,6 @@
 import type { UIMessage } from 'ai'
 import type { ChatEveState } from '../../shared/types/chat'
-import { consumeFreshChat, uiMessagesToRows } from './useChatDetailCache'
+import { consumeFreshChat, uiMessagesToRows, clearNavigationChatId } from './useChatDetailCache'
 import { useAgentChat, type UseAgentChatOptions } from './useAgentChat'
 
 export interface UseAgentChatSessionOptions extends UseAgentChatOptions {
@@ -152,6 +152,7 @@ export function useAgentChatSession(options: UseAgentChatSessionOptions) {
         onAnonymousTitle: options.onAnonymousTitle,
         redirectIfAnonymousEmpty: options.redirectIfAnonymousEmpty
       })
+      clearNavigationChatId()
     },
     { immediate: true }
   )
