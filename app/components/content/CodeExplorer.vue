@@ -25,9 +25,9 @@ const props = defineProps<{
   defaultValue?: string
 }>()
 
-const apiUrl = `/api/examples/code-explorer/${props.path}.json`
+const apiUrl = computed(() => `/api/examples/code-explorer/${props.path}.json`)
 
-prerenderRoutes([apiUrl])
+prerenderRoutes([apiUrl.value])
 const nuxtApp = useNuxtApp()
 const { data } = await useFetch<CodeExplorerData>(apiUrl, {
   getCachedData: key => nuxtApp.payload.data[key]
