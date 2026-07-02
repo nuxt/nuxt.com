@@ -9,6 +9,7 @@ import {
   readAnonymousTitle,
   titleFromParts
 } from '../../shared/utils/chat'
+import { patchChatDetailCache, seedChatDetailCache, uiMessagesToRows } from './useChatDetailCache'
 import { eveMessagesToUIMessages } from './eve/adapter'
 import { useEveChat } from './eve/useEveChat'
 import { useChatVotes } from './useChatVotes'
@@ -16,8 +17,8 @@ import { usePasteAttachment } from './usePasteAttachment'
 
 export interface UseAgentChatOptions {
   chatId: string
-  initialMessages?: UIMessage[]
-  initialState?: ChatEveState | null
+  initialMessages?: MaybeRefOrGetter<UIMessage[] | undefined>
+  initialState?: MaybeRefOrGetter<ChatEveState | null | undefined>
   source: string
   withPageContext?: 'always' | 'when-enabled'
   fetchVotes?: boolean
@@ -72,7 +73,17 @@ function createChatSyncHandler(options: SyncChatOptions) {
     if (options.loggedIn()) {
       try {
         await syncChatToDb(options.chatId, snapshot, messages)
-        await refreshNuxtData(`chat-${options.chatId}`)
+        patchChatDetailCache(options.chatId, {
+          state: {
+            session: {
+              sessionId: snapshot.session.sessionId,
+              continuationToken: snapshot.session.continuationToken ?? options.chatId,
+              streamIndex: snapshot.events.length
+            },
+            events: [...snapshot.events]
+          },
+          messages: uiMessagesToRows(messages)
+        })
         await options.refreshChats?.()
 
         let generatedTitle = options.findChatTitle?.(options.chatId) ?? null
@@ -139,7 +150,14 @@ export function useAgentChat(options: UseAgentChatOptions) {
   const paste = usePasteAttachment(input)
   const { getVote, vote } = useChatVotes(() => options.chatId, options.fetchVotes ?? false)
 
-  const initialDbPersistDone = ref((options.initialMessages?.length ?? 0) > 0)
+  const initialDbPersistDone = ref((toValue(options.initialMessages)?.length ?? 0) > 0)
+
+  watch(
+    () => toValue(options.initialMessages)?.length ?? 0,
+    (length) => {
+      if (length > 0) initialDbPersistDone.value = true
+    }
+  )
 
   const useContext = computed(() =>
     options.withPageContext === 'always'
@@ -187,10 +205,11 @@ export function useAgentChat(options: UseAgentChatOptions) {
     }
 
     try {
-      if (options.initialMessages?.length) {
+      if ((toValue(options.initialMessages)?.length ?? 0) > 0) {
         await appendUserMessageToChat(options.chatId, parts, metadata)
       } else {
-        await createChatWithMessage(options.chatId, parts, metadata)
+        const detail = await createChatWithMessage(options.chatId, parts, metadata)
+        seedChatDetailCache(options.chatId, detail)
       }
     } catch (error) {
       initialDbPersistDone.value = false

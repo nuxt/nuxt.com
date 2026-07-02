@@ -1,9 +1,11 @@
 import type { UIMessage } from 'ai'
 import type { ChatEveState } from '../../shared/types/chat'
+import { consumeFreshChat } from './useChatDetailCache'
 import { useAgentChat, type UseAgentChatOptions } from './useAgentChat'
 
 export interface UseAgentChatSessionOptions extends UseAgentChatOptions {
-  data?: Ref<ChatDetail | undefined>
+  data?: Ref<ChatDetail | null | undefined>
+  dataStatus?: Ref<string>
   isOwner?: Ref<boolean>
   consumePendingPrompt?: () => string | null
   consumePendingMessageParts?: () => UIMessage['parts'] | null
@@ -21,7 +23,7 @@ export function chatDetailForResume(
   chatId: string,
   initialMessages: UIMessage[] | undefined,
   initialState: ChatEveState | null | undefined,
-  fetched?: ChatDetail
+  fetched?: ChatDetail | null
 ): ChatDetail | undefined {
   if (fetched) return fetched
   if (!initialMessages?.length) return undefined
@@ -46,20 +48,28 @@ export function chatDetailForResume(
   }
 }
 
-export async function refreshChatIfIncomplete(chatId: string, data: Ref<ChatDetail | undefined>) {
-  const cached = data.value
-  const looksIncomplete = cached?.messages.some(message => message.role === 'user')
-    && !cached?.messages.some(message => message.role === 'assistant')
-  if (looksIncomplete) {
-    await refreshNuxtData(`chat-${chatId}`)
-  }
+export function setupStaleChatRefresh(options: {
+  chatId: string
+  data: Ref<ChatDetail | null | undefined>
+  status: Ref<string>
+  refresh: () => Promise<void>
+}) {
+  onMounted(() => {
+    if (consumeFreshChat(options.chatId)) return
+
+    const cached = options.data.value
+    if (!cached || options.status.value !== 'success') return
+
+    const looksIncomplete = needsGeneration(cached.messages)
+    if (looksIncomplete) void options.refresh()
+  })
 }
 
 function resumeChatSession(options: {
   chat: ReturnType<typeof useAgentChat>['chat']
   send: ReturnType<typeof useAgentChat>['send']
   hasAgentUser: ReturnType<typeof useAgentChat>['hasAgentUser']
-  data: Ref<ChatDetail | undefined>
+  data: Ref<ChatDetail | null | undefined>
   loggedIn: Ref<boolean>
   isOwner: Ref<boolean>
   consumePendingPrompt: () => string | null
@@ -115,29 +125,38 @@ export function useAgentChatSession(options: UseAgentChatSessionOptions) {
 
   const resumeData = computed(() => chatDetailForResume(
     options.chatId,
-    options.initialMessages,
-    options.initialState,
+    toValue(options.initialMessages),
+    toValue(options.initialState),
     options.data?.value
   ))
 
   const session = useAgentChat(options)
 
   const isOwner = options.isOwner ?? computed(() => loggedIn.value)
+  const resumeDone = ref(false)
 
-  onMounted(() => {
-    resumeChatSession({
-      chat: session.chat,
-      send: session.send,
-      hasAgentUser: session.hasAgentUser,
-      data: options.data ?? resumeData,
-      loggedIn,
-      isOwner,
-      consumePendingPrompt: options.consumePendingPrompt ?? (() => null),
-      consumePendingMessageParts: options.consumePendingMessageParts ?? (() => null),
-      onAnonymousTitle: options.onAnonymousTitle,
-      redirectIfAnonymousEmpty: options.redirectIfAnonymousEmpty
-    })
-  })
+  watch(
+    [() => options.data?.value, () => options.dataStatus?.value, loggedIn],
+    () => {
+      if (resumeDone.value) return
+      if (loggedIn.value && options.dataStatus?.value === 'pending') return
+
+      resumeDone.value = true
+      resumeChatSession({
+        chat: session.chat,
+        send: session.send,
+        hasAgentUser: session.hasAgentUser,
+        data: options.data ?? resumeData,
+        loggedIn,
+        isOwner,
+        consumePendingPrompt: options.consumePendingPrompt ?? (() => null),
+        consumePendingMessageParts: options.consumePendingMessageParts ?? (() => null),
+        onAnonymousTitle: options.onAnonymousTitle,
+        redirectIfAnonymousEmpty: options.redirectIfAnonymousEmpty
+      })
+    },
+    { immediate: true }
+  )
 
   return session
 }

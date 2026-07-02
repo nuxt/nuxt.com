@@ -35,7 +35,7 @@ export async function createChatWithMessage(
   chatId: string,
   parts: UIMessage['parts'],
   metadata: Record<string, unknown> = {}
-): Promise<UIMessage> {
+): Promise<ChatDetail> {
   const userMessage: UIMessage = {
     id: crypto.randomUUID(),
     role: 'user',
@@ -46,12 +46,12 @@ export async function createChatWithMessage(
     }
   }
 
-  await $fetch('/api/chats', {
+  const detail = await $fetch<ChatDetail>('/api/chats', {
     method: 'POST',
     body: { id: chatId, message: userMessage }
   })
 
-  return userMessage
+  return detail
 }
 
 export async function appendUserMessageToChat(

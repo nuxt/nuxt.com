@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { refreshChatIfIncomplete, useAgentChatSession } from '../../../composables/useAgentChatSession'
+import { setupStaleChatRefresh, useAgentChatSession } from '../../../composables/useAgentChatSession'
+import { useChatDetail } from '../../../composables/useChatDetail'
 
 definePageMeta({
   layout: 'dashboard',
@@ -7,35 +8,39 @@ definePageMeta({
 })
 
 const route = useRoute()
-const nuxtApp = useNuxtApp()
 const { loggedIn } = useUserSession()
 const { usage, rateLimitReached, consumePendingPrompt, consumePendingMessageParts } = useNuxtAgent()
 const { refresh: refreshChats } = useChats()
 
 const chatId = route.params.id as string
 
-const { data, error } = await useFetch<ChatDetail>(
-  () => loggedIn.value ? `/api/chats/${chatId}` : null,
-  {
-    key: `chat-${chatId}`,
-    getCachedData: key => nuxtApp.payload.data[key] ?? nuxtApp.static.data[key]
+const { data, error, status, refresh } = useChatDetail(chatId)
+
+setupStaleChatRefresh({ chatId, data, status, refresh })
+
+watch([error, status, loggedIn], () => {
+  if (!loggedIn.value || status.value === 'pending') return
+  if (error.value || !data.value) {
+    throw createError({ statusCode: 404, statusMessage: 'Chat not found', fatal: true })
   }
-)
-
-onMounted(() => {
-  if (loggedIn.value) void refreshChatIfIncomplete(chatId, data)
-})
-
-if (loggedIn.value && (error.value || !data.value)) {
-  throw createError({ statusCode: 404, statusMessage: 'Chat not found', fatal: true })
-}
+}, { immediate: true })
 
 const isOwner = computed(() => data.value?.isOwner ?? false)
 const visibility = ref<'public' | 'private' | 'admin'>(data.value?.visibility ?? 'private')
 const title = ref<string | null>(loggedIn.value ? (data.value?.title ?? null) : null)
+
 watch(() => data.value?.title, (next) => {
   if (loggedIn.value) title.value = next ?? null
 })
+
+watch(data, (detail) => {
+  if (detail?.visibility) visibility.value = detail.visibility
+}, { immediate: true })
+
+const initialMessages = computed(() =>
+  loggedIn.value ? dbRowsToUIMessages(data.value?.messages ?? []) : []
+)
+const initialState = computed(() => data.value?.state ?? null)
 
 const {
   chat,
@@ -49,9 +54,10 @@ const {
   restoreToInput
 } = useAgentChatSession({
   chatId,
-  initialMessages: loggedIn.value ? dbRowsToUIMessages(data.value?.messages ?? []) : [],
-  initialState: data.value?.state ?? null,
+  initialMessages,
+  initialState,
   data,
+  dataStatus: status,
   source: 'chat-page',
   withPageContext: 'always',
   fetchVotes: isOwner.value,

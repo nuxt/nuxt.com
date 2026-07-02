@@ -7,8 +7,8 @@ import type { AgentChatHandle } from './types'
 
 export interface UseEveChatOptions {
   chatId: string
-  initialMessages?: UIMessage[]
-  initialState?: ChatEveState | null
+  initialMessages?: MaybeRefOrGetter<UIMessage[] | undefined>
+  initialState?: MaybeRefOrGetter<ChatEveState | null | undefined>
   headers?: () => Record<string, string>
   onFinish?: (snapshot: UseEveAgentSnapshot<EveMessageData>) => void | Promise<void>
 }
@@ -93,7 +93,7 @@ export function useEveChat(options: UseEveChatOptions): AgentChatHandle & {
   send: (input: string | { parts: UIMessage['parts'] }) => Promise<void>
   hasAgentMessage: (role: UIMessage['role']) => boolean
 } {
-  const resume = resumeFromState(options.chatId, options.initialState)
+  const resume = resumeFromState(options.chatId, toValue(options.initialState))
 
   const agent = useEveAgent({
     ...resume,
@@ -103,10 +103,12 @@ export function useEveChat(options: UseEveChatOptions): AgentChatHandle & {
     }
   })
 
+  const seedMessages = computed(() => toValue(options.initialMessages) ?? [])
+
   const messages = computed(() => {
     const live = eveMessagesToUIMessages(agent.data.value.messages)
     if (live.length > 0) return live
-    return options.initialMessages ?? []
+    return seedMessages.value
   })
 
   async function send(input: string | { parts: UIMessage['parts'] }) {

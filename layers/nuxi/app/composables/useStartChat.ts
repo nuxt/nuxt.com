@@ -1,6 +1,7 @@
 import type { UIMessage } from 'ai'
 import { buildMessageParts, getMessageTextLength } from '../../shared/utils/paste-attachment'
 import { createChatWithMessage } from '../../shared/utils/chat'
+import { markChatAsFresh, seedChatDetailCache } from './useChatDetailCache'
 import { usePasteAttachment } from './usePasteAttachment'
 
 export function useStartChat(source: string) {
@@ -21,11 +22,9 @@ export function useStartChat(source: string) {
     try {
       if (loggedIn.value) {
         const chatId = crypto.randomUUID()
-        await createChatWithMessage(chatId, parts)
-        await useFetch<ChatDetail>(() => `/api/chats/${chatId}`, {
-          key: `chat-${chatId}`,
-          server: false
-        })
+        const detail = await createChatWithMessage(chatId, parts)
+        seedChatDetailCache(chatId, detail)
+        markChatAsFresh(chatId)
         await navigateTo(`/dashboard/chat/${chatId}`)
         void chats.refresh()
       } else {

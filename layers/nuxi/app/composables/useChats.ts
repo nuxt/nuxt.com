@@ -1,5 +1,6 @@
 import { LazyChatModalConfirm, LazyChatModalRename } from '#components'
 import { isToday, isYesterday, subWeeks, subMonths } from 'date-fns'
+import { chatDetailCacheKey } from './useChatDetailCache'
 
 function groupChats(chats: UIChat[] | undefined | null) {
   const today: UIChat[] = []
@@ -70,7 +71,7 @@ export function useChats() {
     if (chatList.value) {
       chatList.value = chatList.value.map(c => c.id === id ? { ...c, title } : c)
     }
-    const { data: chatCache } = useNuxtData<ChatDetail>(`chat-${id}`)
+    const { data: chatCache } = useNuxtData<ChatDetail>(chatDetailCacheKey(id))
     if (chatCache.value) {
       chatCache.value = { ...chatCache.value, title }
     }
