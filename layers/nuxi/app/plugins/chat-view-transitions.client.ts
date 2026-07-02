@@ -9,7 +9,8 @@ export default defineNuxtPlugin((nuxtApp) => {
   let finishTransition: (() => void) | undefined
   let hasUAVisualTransition = false
 
-  const resetTransitionState = () => {
+  const resetTransitionState = (active?: ViewTransition) => {
+    if (active && transition !== active) return
     transition = undefined
     finishTransition = undefined
     hasUAVisualTransition = false
@@ -33,6 +34,12 @@ export default defineNuxtPlugin((nuxtApp) => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     if (hasUAVisualTransition) return
 
+    if (transition) {
+      transition.skipTransition()
+      finishTransition?.()
+      resetTransitionState(transition)
+    }
+
     const promise = new Promise<void>((resolve) => {
       finishTransition = resolve
     })
@@ -40,36 +47,37 @@ export default defineNuxtPlugin((nuxtApp) => {
     let changeRoute: () => void
     const ready = new Promise<void>(resolve => (changeRoute = resolve))
 
-    transition = document.startViewTransition(() => {
+    const activeTransition = document.startViewTransition(() => {
       changeRoute!()
       return promise
     })
+    transition = activeTransition
 
-    transition.ready.catch(handleViewTransitionRejection)
-    transition.updateCallbackDone.catch(handleViewTransitionRejection)
-    transition.finished.catch(handleViewTransitionRejection).finally(resetTransitionState)
+    activeTransition.ready.catch(handleViewTransitionRejection)
+    activeTransition.updateCallbackDone.catch(handleViewTransitionRejection)
+    activeTransition.finished.catch(handleViewTransitionRejection).finally(() => resetTransitionState(activeTransition))
 
-    await nuxtApp.callHook('page:view-transition:start', transition)
+    await nuxtApp.callHook('page:view-transition:start', activeTransition)
 
     return ready
   })
 
   router.onError(() => {
     finishTransition?.()
-    resetTransitionState()
+    resetTransitionState(transition)
   })
   nuxtApp.hook('app:error', () => {
     finishTransition?.()
-    resetTransitionState()
+    resetTransitionState(transition)
   })
   nuxtApp.hook('vue:error', () => {
     finishTransition?.()
-    resetTransitionState()
+    resetTransitionState(transition)
   })
 
   nuxtApp.hook('page:finish', () => {
     finishTransition?.()
-    resetTransitionState()
+    resetTransitionState(transition)
   })
 })
 

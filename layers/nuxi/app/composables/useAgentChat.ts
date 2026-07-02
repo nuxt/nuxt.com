@@ -15,13 +15,15 @@ import { useEveChat } from './eve/useEveChat'
 import { useChatVotes } from './useChatVotes'
 import { usePasteAttachment } from './usePasteAttachment'
 
+export type AgentChatSendInput = string | { parts: UIMessage['parts'], persist?: boolean }
+
 export interface UseAgentChatOptions {
   chatId: string
   initialMessages?: MaybeRefOrGetter<UIMessage[] | undefined>
   initialState?: MaybeRefOrGetter<ChatEveState | null | undefined>
   source: string
   withPageContext?: 'always' | 'when-enabled'
-  fetchVotes?: boolean
+  fetchVotes?: MaybeRefOrGetter<boolean>
   onFinish?: () => void
   onTitle?: (title: string) => void
 }
@@ -148,14 +150,14 @@ export function useAgentChat(options: UseAgentChatOptions) {
 
   const input = ref('')
   const paste = usePasteAttachment(input)
-  const { getVote, vote } = useChatVotes(() => options.chatId, options.fetchVotes ?? false)
+  const { getVote, vote } = useChatVotes(() => options.chatId, () => toValue(options.fetchVotes) ?? false)
 
-  const initialDbPersistDone = ref((toValue(options.initialMessages)?.length ?? 0) > 0)
+  const chatExistsInDb = ref((toValue(options.initialMessages)?.length ?? 0) > 0)
 
   watch(
     () => toValue(options.initialMessages)?.length ?? 0,
     (length) => {
-      if (length > 0) initialDbPersistDone.value = true
+      if (length > 0) chatExistsInDb.value = true
     }
   )
 
@@ -195,34 +197,29 @@ export function useAgentChat(options: UseAgentChatOptions) {
     regenerate: eveChat.regenerate
   }
 
-  async function persistFirstUserMessage(parts: UIMessage['parts']) {
-    if (initialDbPersistDone.value) return
-    initialDbPersistDone.value = true
-
+  async function persistUserMessage(parts: UIMessage['parts']) {
     const metadata = {
       createdAt: new Date().toISOString(),
       ...(useContext.value && agent.currentPage.value ? { pagePath: agent.currentPage.value } : {})
     }
 
-    try {
-      if ((toValue(options.initialMessages)?.length ?? 0) > 0) {
-        await appendUserMessageToChat(options.chatId, parts, metadata)
-      } else {
-        const detail = await createChatWithMessage(options.chatId, parts, metadata)
-        seedChatDetailCache(options.chatId, detail)
-      }
-    } catch (error) {
-      initialDbPersistDone.value = false
-      throw error
+    if (!chatExistsInDb.value) {
+      const detail = await createChatWithMessage(options.chatId, parts, metadata)
+      seedChatDetailCache(options.chatId, detail)
+      chatExistsInDb.value = true
+      return
     }
+
+    await appendUserMessageToChat(options.chatId, parts, metadata)
   }
 
-  type SendInput = string | { parts: UIMessage['parts'] }
+  type SendInput = AgentChatSendInput
 
   async function send(inputValue: SendInput) {
     const parts = typeof inputValue === 'string'
       ? [{ type: 'text' as const, text: inputValue }]
       : inputValue.parts
+    const persist = typeof inputValue === 'string' || inputValue.persist !== false
 
     if (!parts.length || getMessageTextLength(parts) === 0 || agent.rateLimitReached.value) return
 
@@ -233,8 +230,8 @@ export function useAgentChat(options: UseAgentChatOptions) {
       queryLength: getMessageTextLength(parts)
     })
 
-    if (loggedIn.value) {
-      await persistFirstUserMessage(parts)
+    if (loggedIn.value && persist) {
+      await persistUserMessage(parts)
     }
 
     await eveChat.send(typeof inputValue === 'string' ? inputValue : { parts })

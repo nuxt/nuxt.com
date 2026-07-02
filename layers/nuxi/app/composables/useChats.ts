@@ -47,6 +47,7 @@ export function useChats() {
   const route = useRoute()
   const toast = useToast()
   const overlay = useOverlay()
+  const { loggedIn } = useUserSession()
 
   const { data: chatList } = useFetch<ChatListItem[]>('/api/chats', {
     key: 'chats',
@@ -84,6 +85,10 @@ export function useChats() {
   }
 
   async function refresh() {
+    if (!loggedIn.value) {
+      if (chatList.value?.length) chatList.value = []
+      return
+    }
     await refreshNuxtData('chats')
   }
 

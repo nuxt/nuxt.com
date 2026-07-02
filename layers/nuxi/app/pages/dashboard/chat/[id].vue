@@ -60,7 +60,7 @@ const {
   dataStatus: status,
   source: 'chat-page',
   withPageContext: 'always',
-  fetchVotes: isOwner.value,
+  fetchVotes: isOwner,
   isOwner,
   consumePendingPrompt,
   consumePendingMessageParts,

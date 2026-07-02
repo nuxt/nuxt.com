@@ -30,6 +30,16 @@ const emit = defineEmits<{
 const display = computed(() =>
   resolveChatDisplayState(props.chat.messages, props.chat.status)
 )
+
+function isAssistantPending(message: UIMessage): boolean {
+  if (message.role !== 'assistant') return false
+
+  const { status, messages } = props.chat
+  if (status !== 'submitted' && status !== 'streaming') return false
+
+  const last = messages.at(-1)
+  return last?.role === 'assistant' && message.id === last.id
+}
 </script>
 
 <template>
@@ -59,7 +69,7 @@ const display = computed(() =>
           v-if="message.role === 'assistant'"
           :message="message"
           :vote="getVote(message.id)"
-          :streaming="chat.status === 'streaming' && message.id === chat.messages.at(-1)?.id"
+          :streaming="isAssistantPending(message)"
           :chat-id="chatId"
           :can-regenerate="message.id === chat.messages.at(-1)?.id && chat.status === 'ready'"
           @vote="(msg, isUpvoted) => emit('vote', msg, isUpvoted)"

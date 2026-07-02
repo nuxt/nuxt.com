@@ -15,8 +15,8 @@ export function useStartChat(source: string) {
   const paste = usePasteAttachment(input)
   const loading = ref(false)
 
-  async function createChat(parts: UIMessage['parts']) {
-    if (loading.value || agent.rateLimitReached.value || getMessageTextLength(parts) === 0) return
+  async function createChat(parts: UIMessage['parts']): Promise<boolean> {
+    if (loading.value || agent.rateLimitReached.value || getMessageTextLength(parts) === 0) return false
     loading.value = true
 
     try {
@@ -31,8 +31,10 @@ export function useStartChat(source: string) {
         agent.pendingMessageParts.value = parts
         await navigateTo(`/dashboard/chat/${crypto.randomUUID()}`)
       }
+      return true
     } catch {
       toast.add({ description: 'Failed to create chat', icon: 'i-lucide-alert-circle', color: 'error' })
+      return false
     } finally {
       loading.value = false
     }
@@ -41,10 +43,11 @@ export function useStartChat(source: string) {
   async function onSubmit() {
     if (!paste.canSubmit.value) return
     const parts = paste.buildMessageParts()
-    paste.clearAttachments()
-    input.value = ''
     track('Nuxi Message Sent', { source, queryLength: getMessageTextLength(parts) })
-    await createChat(parts)
+    if (await createChat(parts)) {
+      paste.clearAttachments()
+      input.value = ''
+    }
   }
 
   function createFromSuggestion(label: string) {

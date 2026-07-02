@@ -9,15 +9,10 @@ const { renameChat, deleteChat, groups, refresh: refreshChats } = useChats()
 
 const sidebarOpen = ref(false)
 
-await useFetch<ChatListItem[]>('/api/chats', {
-  key: 'chats',
-  default: () => []
-})
-
-watch(loggedIn, () => {
-  refreshChats()
+watch(loggedIn, (next) => {
+  if (next) refreshChats()
   sidebarOpen.value = false
-})
+}, { immediate: true })
 
 const items = computed(() => groups.value?.flatMap(group => [
   { label: group.label, type: 'label' as const },

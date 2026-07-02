@@ -1,6 +1,6 @@
 import type { UIMessage } from 'ai'
 import type { ChatEveState } from '../../shared/types/chat'
-import { consumeFreshChat } from './useChatDetailCache'
+import { consumeFreshChat, uiMessagesToRows } from './useChatDetailCache'
 import { useAgentChat, type UseAgentChatOptions } from './useAgentChat'
 
 export interface UseAgentChatSessionOptions extends UseAgentChatOptions {
@@ -14,9 +14,8 @@ export interface UseAgentChatSessionOptions extends UseAgentChatOptions {
 }
 
 function needsGeneration(messages: ChatMessageRow[]) {
-  const hasAssistant = messages.some(message => message.role === 'assistant')
-  if (hasAssistant) return false
-  return messages.some(message => message.role === 'user')
+  const last = messages[messages.length - 1]
+  return last?.role === 'user'
 }
 
 export function chatDetailForResume(
@@ -28,12 +27,7 @@ export function chatDetailForResume(
   if (fetched) return fetched
   if (!initialMessages?.length) return undefined
 
-  const rows: ChatMessageRow[] = initialMessages.map(message => ({
-    id: message.id,
-    role: message.role,
-    parts: message.parts,
-    createdAt: (message.metadata as { createdAt?: string } | undefined)?.createdAt ?? new Date().toISOString()
-  }))
+  const rows: ChatMessageRow[] = uiMessagesToRows(initialMessages)
 
   if (!needsGeneration(rows)) return undefined
 
@@ -105,7 +99,7 @@ function resumeChatSession(options: {
     if (options.hasAgentUser()) {
       void options.chat.regenerate()
     } else {
-      void options.send({ parts: lastUserMessage.parts as UIMessage['parts'] })
+      void options.send({ parts: lastUserMessage.parts as UIMessage['parts'], persist: false })
     }
     return
   }

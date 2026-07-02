@@ -1,16 +1,21 @@
 import type { UIMessage } from 'ai'
 
-export function useChatVotes(chatId: MaybeRefOrGetter<string>, immediate = false) {
+export function useChatVotes(chatId: MaybeRefOrGetter<string>, fetchVotes: MaybeRefOrGetter<boolean> = false) {
   const toast = useToast()
   const chatIdValue = computed(() => toValue(chatId))
+  const shouldFetch = computed(() => toValue(fetchVotes))
 
-  const { data: voteRows } = useLazyFetch<ChatVoteRow[]>(
+  const { data: voteRows, execute } = useLazyFetch<ChatVoteRow[]>(
     () => `/api/chats/${chatIdValue.value}/votes`,
     {
-      immediate,
+      immediate: false,
       default: () => [] as ChatVoteRow[]
     }
   )
+
+  watch(shouldFetch, (next) => {
+    if (next) void execute()
+  }, { immediate: true })
 
   const votes = ref(new Map<string, boolean>())
 
