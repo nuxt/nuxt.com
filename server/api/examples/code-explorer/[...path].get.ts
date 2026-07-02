@@ -33,6 +33,7 @@ const EXT_TO_LANG: Record<string, string> = {
   tsx: 'tsx',
   vue: 'vue',
   wasm: 'text',
+  wat: 'text',
   yaml: 'yaml',
   yml: 'yaml',
   zsh: 'bash'

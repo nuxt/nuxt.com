@@ -73,7 +73,7 @@ function onSelect(e: Event, item: CodeExplorerTreeItem) {
   }
 }
 
-const docsMapping = {
+const docsMapping: Record<string, string> = {
   'app.vue': '/docs/directory-structure/app/app',
   'app.config.ts': '/docs/directory-structure/app/app-config',
   'package.json': '/docs/directory-structure/package',
