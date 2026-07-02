@@ -48,7 +48,10 @@ export default defineAppConfig({
           root: 'bg-default m-0',
           content: '[&>div>pre]:rounded-r-none'
         }
-      }
+      },
+      codeIcon: {
+        wat: 'i-lucide-file-braces'
+      },
     }
   }
 })
