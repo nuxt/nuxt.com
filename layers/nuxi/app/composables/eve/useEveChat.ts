@@ -6,7 +6,7 @@ import { eveMessagesToUIMessages } from './adapter'
 import type { AgentChatHandle } from './types'
 
 export interface UseEveChatOptions {
-  chatId: string
+  chatId: MaybeRefOrGetter<string>
   initialMessages?: MaybeRefOrGetter<UIMessage[] | undefined>
   initialState?: MaybeRefOrGetter<ChatEveState | null | undefined>
   headers?: () => Record<string, string>
@@ -93,7 +93,7 @@ export function useEveChat(options: UseEveChatOptions): AgentChatHandle & {
   send: (input: string | { parts: UIMessage['parts'] }) => Promise<void>
   hasAgentMessage: (role: UIMessage['role']) => boolean
 } {
-  const resume = resumeFromState(options.chatId, toValue(options.initialState))
+  const resume = resumeFromState(toValue(options.chatId), toValue(options.initialState))
 
   const agent = useEveAgent({
     ...resume,

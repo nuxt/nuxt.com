@@ -43,13 +43,15 @@ export function chatDetailForResume(
 }
 
 export function setupStaleChatRefresh(options: {
-  chatId: string
+  chatId: MaybeRefOrGetter<string>
   data: Ref<ChatDetail | null | undefined>
   status: Ref<string>
   refresh: () => Promise<void>
 }) {
   onMounted(() => {
-    if (consumeFreshChat(options.chatId)) return
+    const id = toValue(options.chatId)
+    if (!id) return
+    if (consumeFreshChat(id)) return
 
     const cached = options.data.value
     if (!cached || options.status.value !== 'success') return
@@ -116,9 +118,10 @@ function resumeChatSession(options: {
 
 export function useAgentChatSession(options: UseAgentChatSessionOptions) {
   const { loggedIn } = useUserSession()
+  const chatId = computed(() => toValue(options.chatId))
 
   const resumeData = computed(() => chatDetailForResume(
-    options.chatId,
+    chatId.value,
     toValue(options.initialMessages),
     toValue(options.initialState),
     options.data?.value
@@ -130,10 +133,10 @@ export function useAgentChatSession(options: UseAgentChatSessionOptions) {
   const resumeDone = ref(false)
 
   watch(
-    [() => options.data?.value, () => options.dataStatus?.value, loggedIn, () => options.chatId],
+    [() => options.data?.value, () => options.dataStatus?.value, loggedIn, chatId],
     () => {
       if (resumeDone.value) return
-      if (!options.chatId) return
+      if (!chatId.value) return
       if (loggedIn.value && options.dataStatus?.value === 'pending') return
 
       resumeDone.value = true

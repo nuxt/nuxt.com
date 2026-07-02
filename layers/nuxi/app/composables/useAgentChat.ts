@@ -18,7 +18,7 @@ import { usePasteAttachment } from './usePasteAttachment'
 export type AgentChatSendInput = string | { parts: UIMessage['parts'], persist?: boolean }
 
 export interface UseAgentChatOptions {
-  chatId: string
+  chatId: MaybeRefOrGetter<string>
   initialMessages?: MaybeRefOrGetter<UIMessage[] | undefined>
   initialState?: MaybeRefOrGetter<ChatEveState | null | undefined>
   source: string
@@ -29,7 +29,7 @@ export interface UseAgentChatOptions {
 }
 
 interface SyncChatOptions {
-  chatId: string
+  chatId: () => string
   loggedIn: () => boolean
   refreshChats?: () => Promise<void>
   patchTitle?: (chatId: string, title: string) => void
@@ -39,7 +39,7 @@ interface SyncChatOptions {
 }
 
 async function syncChatToDb(
-  chatId: string,
+  id: string,
   snapshot: UseEveAgentSnapshot<EveMessageData>,
   messages: UIMessage[]
 ) {
@@ -48,13 +48,13 @@ async function syncChatToDb(
   const state: ChatEveState = {
     session: {
       sessionId: snapshot.session.sessionId,
-      continuationToken: snapshot.session.continuationToken ?? chatId,
+      continuationToken: snapshot.session.continuationToken ?? id,
       streamIndex: snapshot.events.length
     },
     events: [...snapshot.events]
   }
 
-  await $fetch(`/api/chats/${chatId}/state`, {
+  await $fetch(`/api/chats/${id}/state`, {
     method: 'PATCH',
     body: {
       state,
@@ -74,12 +74,13 @@ function createChatSyncHandler(options: SyncChatOptions) {
 
     if (options.loggedIn()) {
       try {
-        await syncChatToDb(options.chatId, snapshot, messages)
-        patchChatDetailCache(options.chatId, {
+        const id = options.chatId()
+        await syncChatToDb(id, snapshot, messages)
+        patchChatDetailCache(id, {
           state: {
             session: {
               sessionId: snapshot.session.sessionId,
-              continuationToken: snapshot.session.continuationToken ?? options.chatId,
+              continuationToken: snapshot.session.continuationToken ?? id,
               streamIndex: snapshot.events.length
             },
             events: [...snapshot.events]
@@ -88,7 +89,7 @@ function createChatSyncHandler(options: SyncChatOptions) {
         })
         await options.refreshChats?.()
 
-        let generatedTitle = options.findChatTitle?.(options.chatId) ?? null
+        let generatedTitle = options.findChatTitle?.(id) ?? null
 
         if (!generatedTitle) {
           const firstUser = [...messages].find(message => message.role === 'user')
@@ -96,7 +97,7 @@ function createChatSyncHandler(options: SyncChatOptions) {
             ? titleFromParts(firstUser.parts as UIMessage['parts'])
             : null
           if (fallback && fallback !== 'Untitled') {
-            await $fetch(`/api/chats/${options.chatId}/title`, {
+            await $fetch(`/api/chats/${id}/title`, {
               method: 'PATCH',
               body: { title: fallback }
             })
@@ -105,7 +106,7 @@ function createChatSyncHandler(options: SyncChatOptions) {
         }
 
         if (generatedTitle) {
-          options.patchTitle?.(options.chatId, generatedTitle)
+          options.patchTitle?.(id, generatedTitle)
           options.onTitle?.(generatedTitle)
         }
       } catch {
@@ -115,7 +116,7 @@ function createChatSyncHandler(options: SyncChatOptions) {
       const firstUser = [...messages].find(message => message.role === 'user')
       if (firstUser) {
         const title = titleFromParts(firstUser.parts as UIMessage['parts'])
-        persistAnonymousTitle(options.chatId, title)
+        persistAnonymousTitle(options.chatId(), title)
         options.onTitle?.(title)
       }
     }
@@ -125,13 +126,13 @@ function createChatSyncHandler(options: SyncChatOptions) {
 }
 
 function buildEveHeaders(
-  chatId: string,
+  chatId: MaybeRefOrGetter<string>,
   agent: ReturnType<typeof useNuxtAgent>,
   withPageContext: ComputedRef<boolean>
 ) {
   return () => {
     const headers: Record<string, string> = {
-      'x-nuxi-chat-id': chatId
+      'x-nuxi-chat-id': toValue(chatId)
     }
 
     if (withPageContext.value && agent.currentPage.value) {
@@ -147,10 +148,11 @@ export function useAgentChat(options: UseAgentChatOptions) {
   const chats = useChats()
   const { loggedIn } = useUserSession()
   const { track } = useAnalytics()
+  const chatId = computed(() => toValue(options.chatId))
 
   const input = ref('')
   const paste = usePasteAttachment(input)
-  const { getVote, vote } = useChatVotes(() => options.chatId, () => toValue(options.fetchVotes) ?? false)
+  const { getVote, vote } = useChatVotes(chatId, () => toValue(options.fetchVotes) ?? false)
 
   const chatExistsInDb = ref((toValue(options.initialMessages)?.length ?? 0) > 0)
 
@@ -173,7 +175,7 @@ export function useAgentChat(options: UseAgentChatOptions) {
     initialState: options.initialState,
     headers: buildEveHeaders(options.chatId, agent, useContext),
     onFinish: createChatSyncHandler({
-      chatId: options.chatId,
+      chatId: () => chatId.value,
       loggedIn: () => loggedIn.value,
       refreshChats: () => chats.refresh(),
       patchTitle: (id, title) => chats.patchTitle(id, title),
@@ -204,13 +206,13 @@ export function useAgentChat(options: UseAgentChatOptions) {
     }
 
     if (!chatExistsInDb.value) {
-      const detail = await createChatWithMessage(options.chatId, parts, metadata)
-      seedChatDetailCache(options.chatId, detail)
+      const detail = await createChatWithMessage(chatId.value, parts, metadata)
+      seedChatDetailCache(chatId.value, detail)
       chatExistsInDb.value = true
       return
     }
 
-    await appendUserMessageToChat(options.chatId, parts, metadata)
+    await appendUserMessageToChat(chatId.value, parts, metadata)
   }
 
   type SendInput = AgentChatSendInput
@@ -264,6 +266,6 @@ export function useAgentChat(options: UseAgentChatOptions) {
     removeAttachment: paste.removeAttachment,
     restoreToInput: paste.restoreToInput,
     hasAgentUser: () => eveChat.hasAgentMessage('user'),
-    readAnonymousTitle: () => readAnonymousTitle(options.chatId)
+    readAnonymousTitle: () => readAnonymousTitle(chatId.value)
   }
 }
