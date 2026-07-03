@@ -1,11 +1,13 @@
 import { defineAgent } from 'eve'
+import { gatewayZeroDataRetention } from '../shared/utils/ai-gateway.js'
 
 export default defineAgent({
   model: 'anthropic/claude-sonnet-4.6',
   modelOptions: {
     providerOptions: {
       gateway: {
-        caching: 'auto'
+        caching: 'auto',
+        ...gatewayZeroDataRetention
       },
       anthropic: {
         thinking: {

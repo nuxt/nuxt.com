@@ -8,6 +8,7 @@
     "start": "eve start"
   },
   "dependencies": {
+    "@ai-sdk/gateway": "^4.0.4",
     "ai": "^7.0.2",
     "eve": "^0.17.0",
     "zod": "^4.4.3"
