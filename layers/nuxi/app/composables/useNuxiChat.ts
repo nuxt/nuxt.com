@@ -334,6 +334,7 @@ export function useNuxiChat(options: UseNuxiChatOptions) {
   const chats = useChats()
   const { loggedIn } = useUserSession()
   const { track } = useAnalytics()
+  const toast = useToast()
   const chatId = computed(() => toValue(options.chatId))
 
   const input = ref('')
@@ -417,7 +418,15 @@ export function useNuxiChat(options: UseNuxiChatOptions) {
     })
 
     if (loggedIn.value && persist) {
-      await persistUserMessage(parts)
+      try {
+        await persistUserMessage(parts)
+      } catch {
+        toast.add({
+          description: 'Failed to save message',
+          icon: 'i-lucide-alert-circle',
+          color: 'error'
+        })
+      }
     }
 
     await eveChat.send(typeof inputValue === 'string' ? inputValue : { parts })

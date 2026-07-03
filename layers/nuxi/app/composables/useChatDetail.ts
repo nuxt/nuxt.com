@@ -22,12 +22,19 @@ export function chatDetailCacheKey(chatId: string) {
   return `chat-${chatId}`
 }
 
-export function uiMessagesToRows(messages: UIMessage[]): ChatMessageRow[] {
+export function uiMessagesToRows(
+  messages: UIMessage[],
+  existing?: ChatMessageRow[]
+): ChatMessageRow[] {
+  const existingById = new Map(existing?.map(row => [row.id, row.createdAt]))
+
   return messages.map(message => ({
     id: message.id,
     role: message.role,
     parts: message.parts,
-    createdAt: (message.metadata as { createdAt?: string } | undefined)?.createdAt ?? new Date().toISOString()
+    createdAt: (message.metadata as { createdAt?: string } | undefined)?.createdAt
+      ?? existingById.get(message.id)
+      ?? new Date().toISOString()
   }))
 }
 
@@ -52,7 +59,19 @@ export function patchChatDetailCache(
   const { data } = useNuxtData<ChatDetail>(key)
   if (!data.value) return
 
-  data.value = { ...data.value, ...patch }
+  let resolved = patch
+  if (patch.messages?.length && data.value.messages?.length) {
+    const existingById = new Map(data.value.messages.map(row => [row.id, row.createdAt]))
+    resolved = {
+      ...patch,
+      messages: patch.messages.map(row => ({
+        ...row,
+        createdAt: existingById.get(row.id) ?? row.createdAt
+      }))
+    }
+  }
+
+  data.value = { ...data.value, ...resolved }
 
   const nuxtApp = useNuxtApp()
   nuxtApp.payload.data[key] = data.value
@@ -91,7 +110,6 @@ export function useChatRouteId() {
 export function useChatDetail(chatId: MaybeRefOrGetter<string>) {
   const route = useRoute()
   const { loggedIn } = useUserSession()
-  const nuxtApp = useNuxtApp()
 
   const id = computed(() => {
     const value = toValue(chatId)
@@ -103,24 +121,33 @@ export function useChatDetail(chatId: MaybeRefOrGetter<string>) {
   const error = ref<Error | null>(null)
   const status = ref<'idle' | 'pending' | 'success' | 'error'>('idle')
 
-  function readCache(chatIdValue: string) {
-    const key = chatDetailCacheKey(chatIdValue)
-    return (nuxtApp.payload.data[key] ?? nuxtApp.static.data[key]) as ChatDetail | undefined
+  let stopCacheWatch: ReturnType<typeof watch> | undefined
+
+  function bindCache(chatIdValue: string) {
+    stopCacheWatch?.()
+    const { data: shared } = useNuxtData<ChatDetail>(chatDetailCacheKey(chatIdValue))
+    data.value = shared.value ?? null
+    stopCacheWatch = watch(shared, (value) => {
+      data.value = value ?? null
+    }, { deep: true })
   }
+
+  onScopeDispose(() => stopCacheWatch?.())
 
   async function refresh() {
     const chatIdValue = id.value
 
     if (!loggedIn.value || !chatIdValue) {
+      stopCacheWatch?.()
       data.value = null
       error.value = null
       status.value = 'success'
       return
     }
 
-    const cached = readCache(chatIdValue)
-    if (cached) {
-      data.value = cached
+    bindCache(chatIdValue)
+
+    if (data.value) {
       error.value = null
       status.value = 'success'
       return
@@ -130,9 +157,13 @@ export function useChatDetail(chatId: MaybeRefOrGetter<string>) {
     error.value = null
 
     try {
-      data.value = await $fetch<ChatDetail>(`/api/chats/${chatIdValue}`)
+      const detail = await $fetch<ChatDetail>(`/api/chats/${chatIdValue}`)
+      if (id.value !== chatIdValue) return
+      seedChatDetailCache(chatIdValue, detail)
+      error.value = null
       status.value = 'success'
     } catch (err) {
+      if (id.value !== chatIdValue) return
       data.value = null
       error.value = err as Error
       status.value = 'error'
