@@ -1,5 +1,6 @@
 import { generateText } from 'ai'
 import type { UIMessage } from 'ai'
+import { gatewayProviderOptions } from '../../shared/utils/ai-gateway'
 
 const TITLE_MODEL = 'openai/gpt-4.1-nano'
 
@@ -22,7 +23,8 @@ export async function generateChatTitle(firstMessage: UIMessage): Promise<string
       model: TITLE_MODEL,
       maxOutputTokens: 30,
       system: TITLE_SYSTEM,
-      prompt: JSON.stringify(firstMessage)
+      prompt: JSON.stringify(firstMessage),
+      providerOptions: gatewayProviderOptions
     })
     const cleaned = title.trim().replace(/^["'`]+|["'`]+$/g, '').slice(0, 80)
     return cleaned || fallbackTitleFromMessage(firstMessage)
