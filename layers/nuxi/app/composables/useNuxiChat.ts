@@ -9,15 +9,20 @@ import {
   readAnonymousTitle,
   titleFromParts
 } from '../../shared/utils/chat'
-import { patchChatDetailCache, seedChatDetailCache, uiMessagesToRows } from './useChatDetailCache'
+import {
+  clearNavigationChatId,
+  consumeFreshChat,
+  patchChatDetailCache,
+  seedChatDetailCache,
+  uiMessagesToRows
+} from './useChatDetail'
 import { eveMessagesToUIMessages } from './eve/adapter'
 import { useEveChat } from './eve/useEveChat'
-import { useChatVotes } from './useChatVotes'
 import { usePasteAttachment } from './usePasteAttachment'
 
-export type AgentChatSendInput = string | { parts: UIMessage['parts'], persist?: boolean }
+export type NuxiChatSendInput = string | { parts: UIMessage['parts'], persist?: boolean }
 
-export interface UseAgentChatOptions {
+export interface UseNuxiChatOptions {
   chatId: MaybeRefOrGetter<string>
   initialMessages?: MaybeRefOrGetter<UIMessage[] | undefined>
   initialState?: MaybeRefOrGetter<ChatEveState | null | undefined>
@@ -26,6 +31,13 @@ export interface UseAgentChatOptions {
   fetchVotes?: MaybeRefOrGetter<boolean>
   onFinish?: () => void
   onTitle?: (title: string) => void
+  data?: Ref<ChatDetail | null | undefined>
+  dataStatus?: Ref<string>
+  isOwner?: Ref<boolean>
+  consumePendingPrompt?: () => string | null
+  consumePendingMessageParts?: () => UIMessage['parts'] | null
+  onAnonymousTitle?: (parts: UIMessage['parts']) => void
+  redirectIfAnonymousEmpty?: () => void
 }
 
 interface SyncChatOptions {
@@ -143,7 +155,181 @@ function buildEveHeaders(
   }
 }
 
-export function useAgentChat(options: UseAgentChatOptions) {
+function useChatVotes(chatId: MaybeRefOrGetter<string>, fetchVotes: MaybeRefOrGetter<boolean> = false) {
+  const toast = useToast()
+  const chatIdValue = computed(() => toValue(chatId))
+  const shouldFetch = computed(() => toValue(fetchVotes))
+
+  const { data: voteRows, execute } = useLazyFetch<ChatVoteRow[]>(
+    () => `/api/chats/${chatIdValue.value}/votes`,
+    {
+      immediate: false,
+      default: () => [] as ChatVoteRow[]
+    }
+  )
+
+  watch(shouldFetch, (next) => {
+    if (next) void execute()
+  }, { immediate: true })
+
+  const votes = ref(new Map<string, boolean>())
+
+  watch(voteRows, (rows) => {
+    const map = new Map<string, boolean>()
+    for (const row of (rows ?? []) as ChatVoteRow[]) {
+      map.set(row.messageId, row.isUpvoted)
+    }
+    votes.value = map
+  }, { immediate: true })
+
+  function getRows(): ChatVoteRow[] {
+    return (voteRows.value ?? []) as ChatVoteRow[]
+  }
+
+  function getVote(messageId: string): boolean | null {
+    const vote = votes.value.get(messageId)
+    return vote === undefined ? null : vote
+  }
+
+  function vote(message: UIMessage, isUpvoted: boolean) {
+    const current = votes.value.get(message.id)
+    const next = current === isUpvoted ? undefined : isUpvoted
+    const snapshot = new Map(votes.value)
+
+    if (next === undefined) votes.value.delete(message.id)
+    else votes.value.set(message.id, next)
+    votes.value = new Map(votes.value)
+
+    voteRows.value = next === undefined
+      ? getRows().filter(row => row.messageId !== message.id)
+      : [
+          ...getRows().filter(row => row.messageId !== message.id),
+          { chatId: chatIdValue.value, messageId: message.id, isUpvoted: next }
+        ]
+
+    $fetch(`/api/chats/${chatIdValue.value}/votes`, {
+      method: 'POST',
+      body: next === undefined
+        ? { messageId: message.id }
+        : { messageId: message.id, isUpvoted: next }
+    }).catch(() => {
+      votes.value = snapshot
+      voteRows.value = [...snapshot.entries()].map(([messageId, isUpvoted]) => ({
+        chatId: chatIdValue.value,
+        messageId,
+        isUpvoted
+      }))
+      toast.add({ description: 'Failed to save vote', icon: 'i-lucide-alert-circle', color: 'error' })
+    })
+  }
+
+  return { votes, getVote, vote }
+}
+
+function needsGeneration(messages: ChatMessageRow[]) {
+  const last = messages[messages.length - 1]
+  return last?.role === 'user'
+}
+
+export function chatDetailForResume(
+  chatId: string,
+  initialMessages: UIMessage[] | undefined,
+  initialState: ChatEveState | null | undefined,
+  fetched?: ChatDetail | null
+): ChatDetail | undefined {
+  if (fetched) return fetched
+  if (!initialMessages?.length) return undefined
+
+  const rows: ChatMessageRow[] = uiMessagesToRows(initialMessages)
+
+  if (!needsGeneration(rows)) return undefined
+
+  return {
+    id: chatId,
+    title: null,
+    visibility: 'private',
+    isOwner: true,
+    createdAt: new Date().toISOString(),
+    state: initialState ?? null,
+    messages: rows
+  }
+}
+
+export function setupStaleChatRefresh(options: {
+  chatId: MaybeRefOrGetter<string>
+  data: Ref<ChatDetail | null | undefined>
+  status: Ref<string>
+  refresh: () => Promise<void>
+}) {
+  onMounted(() => {
+    const id = toValue(options.chatId)
+    if (!id) return
+    if (consumeFreshChat(id)) return
+
+    const cached = options.data.value
+    if (!cached || options.status.value !== 'success') return
+
+    const looksIncomplete = needsGeneration(cached.messages)
+    if (looksIncomplete) void options.refresh()
+  })
+}
+
+function resumeChatSession(options: {
+  chat: ReturnType<typeof useNuxiChat>['chat']
+  send: ReturnType<typeof useNuxiChat>['send']
+  hasAgentUser: ReturnType<typeof useNuxiChat>['hasAgentUser']
+  data: Ref<ChatDetail | null | undefined>
+  loggedIn: Ref<boolean>
+  isOwner: Ref<boolean>
+  consumePendingPrompt: () => string | null
+  consumePendingMessageParts: () => UIMessage['parts'] | null
+  onAnonymousTitle?: (parts: UIMessage['parts']) => void
+  redirectIfAnonymousEmpty?: () => void
+}) {
+  if (!options.loggedIn.value) {
+    const pendingParts = options.consumePendingMessageParts()
+    const pendingPrompt = options.consumePendingPrompt()
+
+    if (!pendingParts && !pendingPrompt) {
+      options.redirectIfAnonymousEmpty?.()
+      return
+    }
+
+    if (pendingParts) {
+      options.onAnonymousTitle?.(pendingParts)
+      void options.send({ parts: pendingParts })
+      return
+    }
+
+    if (pendingPrompt) void options.send({ parts: [{ type: 'text', text: pendingPrompt }] })
+    return
+  }
+
+  const messages = options.data.value?.messages ?? []
+
+  if (options.isOwner.value && needsGeneration(messages)) {
+    const lastUserMessage = [...messages].reverse().find(message => message.role === 'user')
+    if (!lastUserMessage) return
+
+    if (options.hasAgentUser()) {
+      void options.chat.regenerate()
+    } else {
+      void options.send({ parts: lastUserMessage.parts as UIMessage['parts'], persist: false })
+    }
+    return
+  }
+
+  const pendingParts = options.consumePendingMessageParts()
+  if (pendingParts) {
+    void options.send({ parts: pendingParts })
+    return
+  }
+
+  const pendingPrompt = options.consumePendingPrompt()
+  if (pendingPrompt) void options.send({ parts: [{ type: 'text', text: pendingPrompt }] })
+}
+
+export function useNuxiChat(options: UseNuxiChatOptions) {
   const agent = useNuxtAgent()
   const chats = useChats()
   const { loggedIn } = useUserSession()
@@ -215,9 +401,7 @@ export function useAgentChat(options: UseAgentChatOptions) {
     await appendUserMessageToChat(chatId.value, parts, metadata)
   }
 
-  type SendInput = AgentChatSendInput
-
-  async function send(inputValue: SendInput) {
+  async function send(inputValue: NuxiChatSendInput) {
     const parts = typeof inputValue === 'string'
       ? [{ type: 'text' as const, text: inputValue }]
       : inputValue.parts
@@ -252,6 +436,41 @@ export function useAgentChat(options: UseAgentChatOptions) {
     track('Nuxi FAQ Clicked', { question, source: options.source })
     send(question)
   }
+
+  const isOwner = options.isOwner ?? computed(() => loggedIn.value)
+  const resumeDone = ref(false)
+
+  const resumeData = computed(() => chatDetailForResume(
+    chatId.value,
+    toValue(options.initialMessages),
+    toValue(options.initialState),
+    options.data?.value
+  ))
+
+  watch(
+    [() => options.data?.value, () => options.dataStatus?.value, loggedIn, chatId],
+    () => {
+      if (resumeDone.value) return
+      if (!chatId.value) return
+      if (loggedIn.value && options.dataStatus?.value === 'pending') return
+
+      resumeDone.value = true
+      resumeChatSession({
+        chat,
+        send,
+        hasAgentUser: () => eveChat.hasAgentMessage('user'),
+        data: options.data ?? resumeData,
+        loggedIn,
+        isOwner,
+        consumePendingPrompt: options.consumePendingPrompt ?? (() => null),
+        consumePendingMessageParts: options.consumePendingMessageParts ?? (() => null),
+        onAnonymousTitle: options.onAnonymousTitle,
+        redirectIfAnonymousEmpty: options.redirectIfAnonymousEmpty
+      })
+      clearNavigationChatId()
+    },
+    { immediate: true }
+  )
 
   return {
     chat,

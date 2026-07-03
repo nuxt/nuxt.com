@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { setupStaleChatRefresh, useAgentChatSession } from '../../../composables/useAgentChatSession'
-import { useChatDetail } from '../../../composables/useChatDetail'
-import { resolveChatRouteId, useChatRouteId } from '../../../composables/useChatRouteId'
+import { setupStaleChatRefresh, useNuxiChat } from '../../../composables/useNuxiChat'
+import { resolveChatRouteId, useChatDetail, useChatRouteId } from '../../../composables/useChatDetail'
 
 definePageMeta({
   layout: 'dashboard',
@@ -51,7 +50,7 @@ const {
   handlePaste,
   removeAttachment,
   restoreToInput
-} = useAgentChatSession({
+} = useNuxiChat({
   chatId,
   initialMessages,
   initialState,

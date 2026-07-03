@@ -1,7 +1,7 @@
 import type { UIMessage } from 'ai'
 import { buildMessageParts, getMessageTextLength } from '../../shared/utils/paste-attachment'
 import { createChatWithMessage } from '../../shared/utils/chat'
-import { markChatAsFresh, seedChatDetailCache, setNavigationChatId } from './useChatDetailCache'
+import { markChatAsFresh, seedChatDetailCache, setNavigationChatId } from './useChatDetail'
 import { usePasteAttachment } from './usePasteAttachment'
 
 export function useStartChat(source: string) {

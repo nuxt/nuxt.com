@@ -1,6 +1,6 @@
 import { LazyChatModalConfirm, LazyChatModalRename } from '#components'
 import { isToday, isYesterday, subWeeks, subMonths } from 'date-fns'
-import { chatDetailCacheKey } from './useChatDetailCache'
+import { chatDetailCacheKey } from './useChatDetail'
 
 function groupChats(chats: UIChat[] | undefined | null) {
   const today: UIChat[] = []

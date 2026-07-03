@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { UIMessage } from 'ai'
-import { useAgentChatSession } from '../../composables/useAgentChatSession'
+import { useNuxiChat } from '../../composables/useNuxiChat'
 
 const props = defineProps<{
   chatId: string
@@ -35,7 +35,7 @@ const {
   handlePaste,
   removeAttachment,
   restoreToInput
-} = useAgentChatSession({
+} = useNuxiChat({
   chatId: props.chatId,
   initialMessages: props.initialMessages,
   initialState: props.initialState,
