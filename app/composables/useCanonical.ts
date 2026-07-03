@@ -1,6 +1,6 @@
 import { joinURL } from 'ufo'
 import { toValue, type MaybeRefOrGetter } from 'vue'
-import type { Link } from '@unhead/vue/types'
+import type { Link } from 'unhead/types'
 
 // Adds a canonical URL for the current route plus, optionally, a
 // `rel="alternate"; type="text/markdown"` link pointing at the agent-friendly

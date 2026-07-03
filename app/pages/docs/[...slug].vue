@@ -176,6 +176,8 @@ function refreshHeading(opened: boolean) {
   if (!opened) return
   nextTick(() => nuxtApp.callHook('page:loading:end'))
 }
+
+const noRightAside = computed(() => route.path.includes('/examples/'))
 </script>
 
 <template>
@@ -191,7 +193,7 @@ function refreshHeading(opened: boolean) {
         </UPageAside>
       </template>
       <UPage
-        :ui="isAgentDocked ? {
+        :ui="isAgentDocked || noRightAside? {
           center: 'lg:col-span-10',
           right: 'lg:hidden'
         } : { root: 'lg:grid-cols-12', center: 'lg:col-span-9', right: 'lg:col-span-3' }"
@@ -254,12 +256,13 @@ function refreshHeading(opened: boolean) {
 
         <template #right>
           <ContentToc
-            v-if="!isAgentDocked"
+            v-if="!isAgentDocked && !noRightAside"
             :links="page.body?.toc?.links"
             :community-links="communityLinks"
             highlight
             class="hidden lg:block lg:backdrop-blur-none"
           />
+          <!-- mobile -->
           <div class="order-first lg:order-last sticky top-(--ui-header-height) z-10 bg-default/75 lg:bg-[initial] backdrop-blur -mx-4 p-6 border-b border-dashed border-default flex justify-between">
             <UDrawer
               v-model:open="menuDrawerOpen"
@@ -293,6 +296,7 @@ function refreshHeading(opened: boolean) {
               </template>
             </UDrawer>
             <UDrawer
+              v-if="!noRightAside"
               v-model:open="onThisPageDrawerOpen"
               direction="right"
               :handle="false"
