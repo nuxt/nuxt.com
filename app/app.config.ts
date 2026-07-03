@@ -51,7 +51,7 @@ export default defineAppConfig({
       },
       codeIcon: {
         wat: 'i-lucide-file-braces'
-      },
+      }
     }
   }
 })

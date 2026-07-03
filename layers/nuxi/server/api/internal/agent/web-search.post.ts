@@ -1,6 +1,6 @@
 import { generateText } from 'ai'
 import { z } from 'zod'
-import { gatewayProviderOptions } from '../../../../shared/utils/ai-gateway'
+import { gatewayProviderOptions, isGatewayZdrError } from '../../../../shared/utils/ai-gateway'
 
 export default defineEventHandler(async (event) => {
   requireInternalRequest(event)
@@ -19,7 +19,10 @@ export default defineEventHandler(async (event) => {
 
     return { summary: text }
   } catch (error) {
-    console.error('[web-search] provider error', error)
+    console.error(
+      isGatewayZdrError(error) ? '[web-search] ZDR provider unavailable' : '[web-search] provider error',
+      error
+    )
     return {
       error: 'Web search failed. Please try again later.'
     }

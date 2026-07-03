@@ -8,3 +8,8 @@ export const gatewayZeroDataRetention = {
 export const gatewayProviderOptions = {
   gateway: gatewayZeroDataRetention
 }
+
+export function isGatewayZdrError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error)
+  return /no zdr|no_providers_available/i.test(message)
+}
