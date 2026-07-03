@@ -140,11 +140,15 @@ const filteredResults = computed(() => {
     rows = rows.map((r) => {
       const evals = r.evals.filter(e => selectedCategories.value.includes(getEvalCategory(e.evalPath)))
       const successes = evals.filter(e => e.result.success).length
+      const firstTries = evals.filter(e => e.result.firstRunSuccess).length
       return {
         ...r,
         evals,
         totalEvals: evals.length,
-        successRate: evals.length ? Math.round((successes / evals.length) * 100) : 0
+        successRate: evals.length ? Math.round((successes / evals.length) * 100) : 0,
+        // Recompute first-try rate from the filtered subset so the column and sort tiebreak
+        // match the shown evals; keep undefined for older data that lacks firstRunSuccess.
+        passAt1: r.passAt1 != null && evals.length ? firstTries / evals.length : undefined
       }
     }).sort(sortRows)
   }
