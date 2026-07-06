@@ -4,6 +4,7 @@ import { resolveChatRouteId, useChatDetail, useChatRouteId } from '../../../comp
 
 definePageMeta({
   layout: 'dashboard',
+  viewTransition: true,
   key: route => resolveChatRouteId(route.path, route.params.id) || route.path
 })
 
@@ -17,7 +18,7 @@ const { data, error, status, refresh } = useChatDetail(chatId)
 setupStaleChatRefresh({ chatId, data, status, refresh })
 
 watch([error, status, loggedIn], () => {
-  if (!loggedIn.value || status.value === 'pending') return
+  if (!loggedIn.value || status.value === 'pending' || status.value === 'idle') return
   if (error.value || !data.value) {
     throw createError({ statusCode: 404, statusMessage: 'Chat not found', fatal: true })
   }

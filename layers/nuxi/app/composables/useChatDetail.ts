@@ -110,6 +110,7 @@ export function useChatRouteId() {
 export function useChatDetail(chatId: MaybeRefOrGetter<string>) {
   const route = useRoute()
   const { loggedIn } = useUserSession()
+  const nuxtApp = useNuxtApp()
 
   const id = computed(() => {
     const value = toValue(chatId)
@@ -117,62 +118,15 @@ export function useChatDetail(chatId: MaybeRefOrGetter<string>) {
     return resolveChatRouteId(route.path, route.params.id)
   })
 
-  const data = ref<ChatDetail | null>(null)
-  const error = ref<Error | null>(null)
-  const status = ref<'idle' | 'pending' | 'success' | 'error'>('idle')
-
-  let stopCacheWatch: ReturnType<typeof watch> | undefined
-
-  function bindCache(chatIdValue: string) {
-    stopCacheWatch?.()
-    const { data: shared } = useNuxtData<ChatDetail>(chatDetailCacheKey(chatIdValue))
-    data.value = shared.value ?? null
-    stopCacheWatch = watch(shared, (value) => {
-      data.value = value ?? null
-    }, { deep: true })
-  }
-
-  onScopeDispose(() => stopCacheWatch?.())
-
-  async function refresh() {
-    const chatIdValue = id.value
-
-    if (!loggedIn.value || !chatIdValue) {
-      stopCacheWatch?.()
-      data.value = null
-      error.value = null
-      status.value = 'success'
-      return
+  return useLazyAsyncData(
+    () => chatDetailCacheKey(id.value),
+    () => {
+      if (!id.value || !loggedIn.value) return Promise.resolve(null)
+      return $fetch<ChatDetail>(`/api/chats/${id.value}`)
+    },
+    {
+      watch: [id, loggedIn],
+      getCachedData: key => nuxtApp.payload.data[key] ?? nuxtApp.static.data[key]
     }
-
-    bindCache(chatIdValue)
-
-    if (data.value) {
-      error.value = null
-      status.value = 'success'
-      return
-    }
-
-    status.value = 'pending'
-    error.value = null
-
-    try {
-      const detail = await $fetch<ChatDetail>(`/api/chats/${chatIdValue}`)
-      if (id.value !== chatIdValue) return
-      seedChatDetailCache(chatIdValue, detail)
-      error.value = null
-      status.value = 'success'
-    } catch (err) {
-      if (id.value !== chatIdValue) return
-      data.value = null
-      error.value = err as Error
-      status.value = 'error'
-    }
-  }
-
-  watch([id, loggedIn], () => {
-    void refresh()
-  }, { immediate: true })
-
-  return { data, error, status, refresh }
+  )
 }

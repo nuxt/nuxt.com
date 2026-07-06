@@ -7,6 +7,14 @@ export default defineNuxtConfig({
     name: 'nuxi'
   },
 
+  experimental: {
+    viewTransition: true
+  },
+
+  app: {
+    viewTransition: false
+  },
+
   eve: {
     eveRoot: './layers/nuxi',
     configureVercelJson: false

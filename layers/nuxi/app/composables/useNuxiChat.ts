@@ -308,6 +308,8 @@ function resumeChatSession(options: {
   const messages = options.data.value?.messages ?? []
 
   if (options.isOwner.value && needsGeneration(messages)) {
+    if (options.chat.status === 'submitted' || options.chat.status === 'streaming') return
+
     const lastUserMessage = [...messages].reverse().find(message => message.role === 'user')
     if (!lastUserMessage) return
 
@@ -461,7 +463,7 @@ export function useNuxiChat(options: UseNuxiChatOptions) {
     () => {
       if (resumeDone.value) return
       if (!chatId.value) return
-      if (loggedIn.value && options.dataStatus?.value === 'pending') return
+      if (loggedIn.value && options.dataStatus?.value !== 'success') return
 
       resumeDone.value = true
       resumeChatSession({
