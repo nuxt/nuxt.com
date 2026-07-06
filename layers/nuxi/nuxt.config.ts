@@ -7,12 +7,12 @@ export default defineNuxtConfig({
     name: 'nuxi'
   },
 
-  experimental: {
-    viewTransition: true
-  },
-
   app: {
     viewTransition: false
+  },
+
+  experimental: {
+    viewTransition: true
   },
 
   eve: {
