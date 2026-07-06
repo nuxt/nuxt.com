@@ -14,9 +14,6 @@ export interface UseEveChatOptions {
 }
 
 function mergeMessagesById(seed: UIMessage[], live: UIMessage[]): UIMessage[] {
-  if (!live.length) return seed
-  if (!seed.length) return live
-
   const liveById = new Map(live.map(message => [message.id, message]))
   const seedIds = new Set(seed.map(message => message.id))
   const merged = seed.map(message => liveById.get(message.id) ?? message)
@@ -109,7 +106,8 @@ export function useEveChat(options: UseEveChatOptions): AgentChatHandle & {
   hasAgentMessage: (role: UIMessage['role']) => boolean
 } {
   // initialSession/initialEvents are read once at store creation (eve/vue); late-arriving
-  // initialState cannot re-seed the agent — merged messages below keep history visible.
+  // initialState cannot re-seed the agent. When the agent only holds the current turn
+  // (live.length < seed.length), merge keeps hard-reloaded history visible.
   const resume = resumeFromState(toValue(options.chatId), toValue(options.initialState))
 
   const agent = useEveAgent({
@@ -124,7 +122,11 @@ export function useEveChat(options: UseEveChatOptions): AgentChatHandle & {
 
   const messages = computed(() => {
     const live = eveMessagesToUIMessages(agent.data.value.messages)
-    return mergeMessagesById(seedMessages.value, live)
+    const seed = seedMessages.value
+
+    if (!live.length) return seed
+    if (seed.length > live.length) return mergeMessagesById(seed, live)
+    return live
   })
 
   async function send(input: string | { parts: UIMessage['parts'] }) {
