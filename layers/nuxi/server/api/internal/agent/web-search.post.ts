@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
 
   try {
     const { text } = await generateText({
-      model: 'anthropic/claude-sonnet-5',
+      model: 'anthropic/claude-sonnet-4.6',
       maxOutputTokens: 2000,
       prompt: `The user requested a web search for: "${query}". Summarize the most relevant, up-to-date findings briefly. If you are uncertain about recency, say so.`,
       providerOptions: gatewayProviderOptions
