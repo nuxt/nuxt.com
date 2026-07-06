@@ -40,12 +40,33 @@ function isAssistantPending(message: UIMessage): boolean {
   const last = messages.at(-1)
   return last?.role === 'assistant' && message.id === last.id
 }
+
+const messagesRoot = useTemplateRef<{ $el: HTMLElement }>('messagesRoot')
+
+function scrollMessages(to: 'top' | 'bottom') {
+  if (!display.value.displayMessages.length) return
+
+  let node = messagesRoot.value?.$el
+  while (node && node !== document.documentElement) {
+    if (/auto|scroll/.test(getComputedStyle(node).overflowY)) {
+      node.scrollTo({ top: to === 'top' ? 0 : node.scrollHeight, behavior: 'smooth' })
+      return
+    }
+    node = node.parentElement
+  }
+}
+
+defineShortcuts({
+  home: { usingInput: true, handler: () => scrollMessages('top') },
+  end: { usingInput: true, handler: () => scrollMessages('bottom') }
+})
 </script>
 
 <template>
   <UTheme :ui="AGENT_CHAT_THEME">
     <UChatMessages
       v-if="display.displayMessages.length"
+      ref="messagesRoot"
       should-auto-scroll
       :messages="display.displayMessages"
       :status="display.displayStatus"

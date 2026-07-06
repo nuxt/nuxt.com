@@ -2,7 +2,7 @@ import { defineAgent } from 'eve'
 import { gatewayZeroDataRetention } from '../shared/utils/ai-gateway.js'
 
 export default defineAgent({
-  model: 'anthropic/claude-sonnet-4.6',
+  model: 'anthropic/claude-sonnet-5',
   modelOptions: {
     providerOptions: {
       gateway: {
