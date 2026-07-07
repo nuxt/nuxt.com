@@ -1,4 +1,4 @@
-import { experimental_createMCPClient as createMCPClient } from '@ai-sdk/mcp'
+import { createMCPClient } from '@ai-sdk/mcp'
 import { generateText } from 'ai'
 import { evalite } from 'evalite'
 import { toolCallAccuracy } from 'evalite/scorers'
