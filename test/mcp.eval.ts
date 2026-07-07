@@ -1,5 +1,5 @@
 import { createMCPClient } from '@ai-sdk/mcp'
-import { generateText, stepCountIs } from 'ai'
+import { generateText, isStepCount } from 'ai'
 import { evalite } from 'evalite'
 import { toolCallAccuracy } from 'evalite/scorers'
 
@@ -111,7 +111,7 @@ evalite('Evaluate Nuxt MCP Module Tools', {
   task: async (input) => {
     const mcpClient = await createMCPClient({ transport: { type: 'http', url: MCP_URL } })
     try {
-      const result = await generateText({ model, prompt: input, tools: await mcpClient.tools(), stopWhen: stepCountIs(3) })
+      const result = await generateText({ model, prompt: input, tools: await mcpClient.tools(), stopWhen: isStepCount(3) })
       return result.toolCalls ?? []
     } finally {
       await mcpClient.close()
@@ -128,7 +128,7 @@ evalite('Evaluate Nuxt MCP Cross-Tool Workflows', {
   task: async (input) => {
     const mcpClient = await createMCPClient({ transport: { type: 'http', url: MCP_URL } })
     try {
-      const result = await generateText({ model, prompt: input, tools: await mcpClient.tools(), stopWhen: stepCountIs(5) })
+      const result = await generateText({ model, prompt: input, tools: await mcpClient.tools(), stopWhen: isStepCount(5) })
       return result.toolCalls ?? []
     } finally {
       await mcpClient.close()
