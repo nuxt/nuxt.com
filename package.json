@@ -23,9 +23,7 @@
     "db:migrate": "nuxt db migrate"
   },
   "dependencies": {
-    "@ai-sdk/anthropic": "^3.0.89",
-    "@ai-sdk/mcp": "^1.0.55",
-    "@ai-sdk/vue": "^3.0.214",
+    "@ai-sdk/mcp": "^2.0.7",
     "@comark/nuxt": "^0.4.0",
     "@iconify-json/heroicons": "^1.2.3",
     "@iconify-json/logos": "^1.2.11",
@@ -53,7 +51,7 @@
     "@vueuse/components": "^14.3.0",
     "@vueuse/core": "^14.3.0",
     "@vueuse/nuxt": "^14.3.0",
-    "ai": "^7.0.2",
+    "ai": "^7.0.16",
     "better-sqlite3": "^12.11.1",
     "date-fns": "^4.4.0",
     "drizzle-orm": "^0.45.2",
