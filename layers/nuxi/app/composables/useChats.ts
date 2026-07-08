@@ -1,5 +1,6 @@
 import { LazyChatModalConfirm, LazyChatModalRename } from '#components'
 import { isToday, isYesterday, subWeeks, subMonths } from 'date-fns'
+import { chatDetailCacheKey } from './useChatDetail'
 
 function groupChats(chats: UIChat[] | undefined | null) {
   const today: UIChat[] = []
@@ -46,6 +47,7 @@ export function useChats() {
   const route = useRoute()
   const toast = useToast()
   const overlay = useOverlay()
+  const { loggedIn } = useUserSession()
 
   const { data: chatList } = useFetch<ChatListItem[]>('/api/chats', {
     key: 'chats',
@@ -70,7 +72,7 @@ export function useChats() {
     if (chatList.value) {
       chatList.value = chatList.value.map(c => c.id === id ? { ...c, title } : c)
     }
-    const { data: chatCache } = useNuxtData<ChatDetail>(`chat-${id}`)
+    const { data: chatCache } = useNuxtData<ChatDetail>(chatDetailCacheKey(id))
     if (chatCache.value) {
       chatCache.value = { ...chatCache.value, title }
     }
@@ -83,6 +85,10 @@ export function useChats() {
   }
 
   async function refresh() {
+    if (!loggedIn.value) {
+      if (chatList.value?.length) chatList.value = []
+      return
+    }
     await refreshNuxtData('chats')
   }
 

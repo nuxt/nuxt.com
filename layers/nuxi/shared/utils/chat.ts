@@ -1,7 +1,7 @@
 import type { UIMessage } from 'ai'
 import { format } from 'date-fns'
 
-export function toUIMessages(rows: ChatMessageRow[]): UIMessage[] {
+export function dbRowsToUIMessages(rows: ChatMessageRow[]): UIMessage[] {
   return rows.map(m => ({
     id: m.id,
     role: m.role,
@@ -35,7 +35,7 @@ export async function createChatWithMessage(
   chatId: string,
   parts: UIMessage['parts'],
   metadata: Record<string, unknown> = {}
-): Promise<UIMessage> {
+): Promise<ChatDetail> {
   const userMessage: UIMessage = {
     id: crypto.randomUUID(),
     role: 'user',
@@ -46,12 +46,12 @@ export async function createChatWithMessage(
     }
   }
 
-  await $fetch('/api/chats', {
+  const detail = await $fetch<ChatDetail>('/api/chats', {
     method: 'POST',
     body: { id: chatId, message: userMessage }
   })
 
-  return userMessage
+  return detail
 }
 
 export async function appendUserMessageToChat(
@@ -75,4 +75,14 @@ export async function appendUserMessageToChat(
   })
 
   return userMessage
+}
+
+export function persistAnonymousTitle(chatId: string, title: string) {
+  if (!import.meta.client) return
+  sessionStorage.setItem(`nuxi-chat-title:${chatId}`, title)
+}
+
+export function readAnonymousTitle(chatId: string): string | null {
+  if (!import.meta.client) return null
+  return sessionStorage.getItem(`nuxi-chat-title:${chatId}`)
 }

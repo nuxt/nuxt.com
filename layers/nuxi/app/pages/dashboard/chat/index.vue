@@ -1,6 +1,7 @@
 <script setup lang="ts">
 definePageMeta({
-  layout: 'dashboard'
+  layout: 'dashboard',
+  viewTransition: true
 })
 
 useNuxiChatSeo()
@@ -12,8 +13,12 @@ const {
   input,
   loading,
   prompt,
+  onSubmit,
+  handlePaste,
+  removeAttachment,
+  restoreToInput,
   createFromSuggestion
-} = useAgentChat({ mode: 'start', source: 'dashboard-home' })
+} = useStartChat('dashboard-home')
 
 const baseGreeting = computed(() => {
   const name = user.value?.name?.split(' ')[0] || user.value?.username
@@ -88,6 +93,10 @@ const suggestions = [
                   :submit-disabled="!prompt.canSubmit"
                   class="[view-transition-name:chat-prompt]"
                   :ui="{ base: 'px-1.5', footer: 'items-baseline', header: 'px-1.5 pt-1.5 pb-0 gap-1.5 flex flex-wrap items-start' }"
+                  @submit="onSubmit"
+                  @paste="handlePaste"
+                  @remove-attachment="removeAttachment"
+                  @restore-attachment="restoreToInput"
                 />
               </div>
             </template>
@@ -103,6 +112,10 @@ const suggestions = [
               :submit-disabled="!prompt.canSubmit"
               class="[view-transition-name:chat-prompt]"
               :ui="{ base: 'px-1.5', footer: 'items-baseline', header: 'px-1.5 pt-1.5 pb-0 gap-1.5 flex flex-wrap items-start' }"
+              @submit="onSubmit"
+              @paste="handlePaste"
+              @remove-attachment="removeAttachment"
+              @restore-attachment="restoreToInput"
             />
           </div>
 

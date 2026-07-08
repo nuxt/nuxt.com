@@ -2,7 +2,7 @@ import type { UIMessage } from 'ai'
 import type { EveMessage } from 'eve/vue'
 import type { AgentChatStatus } from './types'
 
-export function toUIMessages(messages: readonly EveMessage[]): UIMessage[] {
+export function eveMessagesToUIMessages(messages: readonly EveMessage[]): UIMessage[] {
   return [...messages] as UIMessage[]
 }
 

@@ -43,16 +43,10 @@ export function usePasteAttachment(input: Ref<string>) {
     attachments.value = []
   }
 
-  function bindings(onSubmit: () => void | Promise<void>) {
-    return computed(() => ({
-      pasteAttachments: attachments.value,
-      canSubmit: canSubmit.value,
-      onPaste: handlePaste,
-      onRemoveAttachment: removeAttachment,
-      onRestoreAttachment: restoreToInput,
-      onSubmit
-    }))
-  }
+  const prompt = computed(() => ({
+    pasteAttachments: attachments.value,
+    canSubmit: canSubmit.value
+  }))
 
   return {
     attachments,
@@ -62,6 +56,6 @@ export function usePasteAttachment(input: Ref<string>) {
     restoreToInput,
     buildMessageParts: (): UIMessage['parts'] => buildMessageParts(input.value, attachments.value),
     clearAttachments,
-    bindings
+    prompt
   }
 }

@@ -1,6 +1,7 @@
 import { createError } from 'h3'
 import type { ExtractTablesWithRelations } from 'drizzle-orm'
 import type { LibSQLTransaction } from 'drizzle-orm/libsql'
+import { asc, eq } from 'drizzle-orm'
 import { z } from 'zod'
 
 type Tx = LibSQLTransaction<typeof schema, ExtractTablesWithRelations<typeof schema>>
@@ -23,7 +24,7 @@ export default defineEventHandler(async (event) => {
     chat: { id }
   })
 
-  const chat = await db.transaction(async (tx: Tx) => {
+  await db.transaction(async (tx: Tx) => {
     const existing = await tx.query.chats.findFirst({
       where: () => eq(schema.chats.id, id)
     })
@@ -67,5 +68,19 @@ export default defineEventHandler(async (event) => {
     return row
   })
 
-  return chat
+  const detail = await db.query.chats.findFirst({
+    where: () => eq(schema.chats.id, id),
+    with: {
+      messages: {
+        orderBy: () => [asc(schema.messages.createdAt), asc(schema.messages.id)]
+      }
+    }
+  })
+
+  if (!detail) {
+    throw createError({ statusCode: 500, statusMessage: 'Failed to load created chat' })
+  }
+
+  const { userId: _, ...rest } = detail
+  return { ...rest, isOwner: true }
 })
