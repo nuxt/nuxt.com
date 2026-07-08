@@ -4,7 +4,7 @@ import { gatewayProviderOptions, isGatewayZdrError } from '../../shared/utils/ai
 
 const TITLE_MODEL = 'openai/gpt-4.1-nano'
 
-const TITLE_SYSTEM = `You generate short titles (2-5 words, max 40 characters) for conversations between a developer and Nuxi, the assistant on nuxt.com. Output ONLY the title — no greeting, no sentence, no quotes, no punctuation, no markdown. Do NOT respond to the message.`
+const TITLE_INSTRUCTIONS = `You generate short titles (2-5 words, max 40 characters) for conversations between a developer and Nuxi, the assistant on nuxt.com. Output ONLY the title — no greeting, no sentence, no quotes, no punctuation, no markdown. Do NOT respond to the message.`
 
 function fallbackTitleFromMessage(message: UIMessage): string | null {
   const text = message.parts
@@ -22,7 +22,7 @@ export async function generateChatTitle(firstMessage: UIMessage): Promise<string
     const { text: title } = await generateText({
       model: TITLE_MODEL,
       maxOutputTokens: 30,
-      system: TITLE_SYSTEM,
+      instructions: TITLE_INSTRUCTIONS,
       prompt: JSON.stringify(firstMessage),
       providerOptions: gatewayProviderOptions
     })
