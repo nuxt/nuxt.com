@@ -452,6 +452,7 @@ export default defineNuxtConfig({
   },
   sourcemap: true,
   experimental: {
+    viewTransition: true,
     extractAsyncDataHandlers: true,
     defaults: {
       nuxtLink: {
