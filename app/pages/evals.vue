@@ -356,7 +356,7 @@ const evalColumns: TableColumn<EvalResultItem>[] = [
 
     <UPageBody class="mt-0">
       <UContainer class="max-w-6xl">
-        <div class="flex items-center justify-between mb-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
           <h2 class="text-2xl font-bold">
             Agent Performance Results
           </h2>
@@ -370,7 +370,7 @@ const evalColumns: TableColumn<EvalResultItem>[] = [
               color="neutral"
               variant="subtle"
               size="lg"
-              class="w-52 bg-elevated/50 hover:bg-elevated data-[state=open]:bg-elevated group"
+              class="flex-1 sm:flex-none sm:w-52 bg-elevated/50 hover:bg-elevated data-[state=open]:bg-elevated group"
               :ui="{
                 placeholder: 'text-highlighted',
                 trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200'
@@ -385,7 +385,7 @@ const evalColumns: TableColumn<EvalResultItem>[] = [
               color="neutral"
               variant="subtle"
               size="lg"
-              class="w-52 bg-elevated/50 hover:bg-elevated data-[state=open]:bg-elevated group"
+              class="flex-1 sm:flex-none sm:w-52 bg-elevated/50 hover:bg-elevated data-[state=open]:bg-elevated group"
               :ui="{
                 placeholder: 'text-highlighted',
                 trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200'
