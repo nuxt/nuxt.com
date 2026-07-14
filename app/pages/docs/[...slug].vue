@@ -20,7 +20,15 @@ const nuxtApp = useNuxtApp()
 const { version } = useDocsVersion()
 const { headerLinks } = useHeaderLinks()
 const { isAgentDocked } = useNuxtAgent()
-const path = computed(() => route.path.replace(/\/$/, ''))
+const path = ref(route.path.replace(/\/$/, ''))
+const pageKey = computed(() => kebabCase(path.value))
+const surroundKey = computed(() => `${pageKey.value}-surround`)
+
+onBeforeRouteUpdate((to) => {
+  if (to.path.startsWith('/docs/')) {
+    path.value = to.path.replace(/\/$/, '')
+  }
+})
 
 const ignoredPaths = ['.nuxt', '.output', '.env', 'node_modules']
 const navClass = (item: ContentNavigationItem) => {
@@ -52,12 +60,10 @@ function paintResponse() {
 }
 
 const [{ data: page, status }, { data: surround }] = await Promise.all([
-  useAsyncData(kebabCase(path.value), () => paintResponse().then(() => nuxtApp.static[kebabCase(path.value)] ?? queryCollection(version.value.collection).path(path.value).first()), {
-    watch: [path]
-  }),
-  useAsyncData(`${kebabCase(path.value)}-surround`, () => paintResponse().then(() => nuxtApp.static[`${kebabCase(path.value)}-surround`] ?? queryCollectionItemSurroundings(version.value.collection, path.value, {
+  useAsyncData(pageKey, () => paintResponse().then(() => nuxtApp.static[pageKey.value] ?? queryCollection(version.value.collection).path(path.value).first())),
+  useAsyncData(surroundKey, () => paintResponse().then(() => nuxtApp.static[surroundKey.value] ?? queryCollectionItemSurroundings(version.value.collection, path.value, {
     fields: ['description']
-  })), { watch: [path] })
+  })))
 ])
 
 watch(status, (status) => {
@@ -68,7 +74,7 @@ watch(status, (status) => {
   }
 })
 
-watch(route, () => {
+watch(path, () => {
   menuDrawerOpen.value = false
   onThisPageDrawerOpen.value = false
 })

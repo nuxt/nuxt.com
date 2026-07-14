@@ -12,6 +12,22 @@ test.describe('Homepage', () => {
 })
 
 test.describe('Content Pages', () => {
+  test('docs sidebar links update the rendered page', async ({ page, goto }) => {
+    await goto('/')
+    await page.getByRole('link', { name: 'Docs', exact: true }).first().click()
+
+    const aside = page.locator('aside').first()
+    await aside.evaluate(element => element.setAttribute('data-navigation-test', 'persistent'))
+
+    const installationLink = page.locator('aside a').filter({ hasText: 'Installation' }).first()
+    const installationPath = await installationLink.getAttribute('href')
+    await installationLink.click()
+
+    await expect(page).toHaveURL(installationPath!)
+    await expect(page.getByRole('heading', { level: 1, name: 'Installation' })).toBeVisible()
+    await expect(aside).toHaveAttribute('data-navigation-test', 'persistent')
+  })
+
   test('key pages load successfully', async ({ page, goto }) => {
     const pages = ['/templates', '/blog', '/showcase', '/team']
 
