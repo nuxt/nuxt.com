@@ -52,12 +52,10 @@ function paintResponse() {
 }
 
 const [{ data: page, status }, { data: surround }] = await Promise.all([
-  useAsyncData(kebabCase(path.value), () => paintResponse().then(() => nuxtApp.static[kebabCase(path.value)] ?? queryCollection(version.value.collection).path(path.value).first()), {
-    watch: [path]
-  }),
-  useAsyncData(`${kebabCase(path.value)}-surround`, () => paintResponse().then(() => nuxtApp.static[`${kebabCase(path.value)}-surround`] ?? queryCollectionItemSurroundings(version.value.collection, path.value, {
+  useAsyncData(() => kebabCase(path.value), () => paintResponse().then(() => queryCollection(version.value.collection).path(path.value).first())),
+  useAsyncData(() => `${kebabCase(path.value)}-surround`, () => paintResponse().then(() => queryCollectionItemSurroundings(version.value.collection, path.value, {
     fields: ['description']
-  })), { watch: [path] })
+  })))
 ])
 
 watch(status, (status) => {
