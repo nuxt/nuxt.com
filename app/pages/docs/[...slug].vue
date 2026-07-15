@@ -51,13 +51,22 @@ function paintResponse() {
   })
 }
 
+const pageKey = computed(() => kebabCase(path.value))
+const surroundKey = computed(() => `${kebabCase(path.value)}-surround`)
+
 const [{ data: page, status }, { data: surround }] = await Promise.all([
-  useAsyncData(kebabCase(path.value), () => paintResponse().then(() => nuxtApp.static[kebabCase(path.value)] ?? queryCollection(version.value.collection).path(path.value).first()), {
-    watch: [path]
+  useAsyncData(pageKey, () => {
+    const pagePath = path.value
+    const collection = version.value.collection
+    return paintResponse().then(() => queryCollection(collection).path(pagePath).first())
   }),
-  useAsyncData(`${kebabCase(path.value)}-surround`, () => paintResponse().then(() => nuxtApp.static[`${kebabCase(path.value)}-surround`] ?? queryCollectionItemSurroundings(version.value.collection, path.value, {
-    fields: ['description']
-  })), { watch: [path] })
+  useAsyncData(surroundKey, () => {
+    const pagePath = path.value
+    const collection = version.value.collection
+    return paintResponse().then(() => queryCollectionItemSurroundings(collection, pagePath, {
+      fields: ['description']
+    }))
+  })
 ])
 
 watch(status, (status) => {
