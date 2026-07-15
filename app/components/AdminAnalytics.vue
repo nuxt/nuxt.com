@@ -21,7 +21,7 @@ const exportItems = computed<DropdownMenuItem[][]>(() => [
   ]
 ])
 
-const { data: rawFeedback, refresh: refreshFeedback } = await useFetch('/api/feedback')
+const { data: rawFeedback, refresh: refreshFeedback } = await useFetch<FeedbackItem[]>('/api/feedback')
 const { deleteFeedback } = useFeedbackDelete()
 const { exportFeedbackData, exportPageAnalytics } = useFeedbackExport()
 
