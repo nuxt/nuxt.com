@@ -8,12 +8,12 @@
     "start": "eve start"
   },
   "dependencies": {
-    "@ai-sdk/gateway": "^4.0.4",
-    "ai": "^7.0.2",
-    "eve": "^0.17.0",
+    "@ai-sdk/gateway": "^4.0.19",
+    "ai": "^7.0.26",
+    "eve": "^0.23.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "microsandbox": "^0.6.1"
+    "microsandbox": "^0.6.6"
   }
 }
