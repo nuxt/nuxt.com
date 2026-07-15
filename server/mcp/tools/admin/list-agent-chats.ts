@@ -39,7 +39,7 @@ WHEN TO USE: Find web chats with downvotes or read metadata before opening a ful
     const downvotesExpr = sql<number>`coalesce(sum(case when ${schema.votes.isUpvoted} = 0 then 1 else 0 end), 0)`
     const messageCountExpr = sql<number>`(select count(*) from ${schema.messages} where ${schema.messages.chatId} = ${schema.chats.id})`
 
-    type ChatRow = Chat & {
+    type ChatRow = Pick<Chat, 'id' | 'userId' | 'title' | 'visibility' | 'createdAt' | 'updatedAt'> & {
       messageCount: number
       upvotes: number
       downvotes: number
