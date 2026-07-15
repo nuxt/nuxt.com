@@ -52,10 +52,18 @@ function paintResponse() {
 }
 
 const [{ data: page, status }, { data: surround }] = await Promise.all([
-  useAsyncData(() => kebabCase(path.value), () => paintResponse().then(() => queryCollection(version.value.collection).path(path.value).first())),
-  useAsyncData(() => `${kebabCase(path.value)}-surround`, () => paintResponse().then(() => queryCollectionItemSurroundings(version.value.collection, path.value, {
-    fields: ['description']
-  })))
+  useAsyncData(() => kebabCase(path.value), () => {
+    const pagePath = path.value
+    const collection = version.value.collection
+    return paintResponse().then(() => queryCollection(collection).path(pagePath).first())
+  }),
+  useAsyncData(() => `${kebabCase(path.value)}-surround`, () => {
+    const pagePath = path.value
+    const collection = version.value.collection
+    return paintResponse().then(() => queryCollectionItemSurroundings(collection, pagePath, {
+      fields: ['description']
+    }))
+  })
 ])
 
 watch(status, (status) => {
