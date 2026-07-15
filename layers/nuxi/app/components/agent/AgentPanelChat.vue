@@ -84,7 +84,7 @@ watch(isOpen, (value) => {
     <div class="flex w-full shrink-0 flex-col border-y border-default">
       <AgentRateLimitBanner v-if="rateLimitReached" variant="footer" />
 
-      <div v-else class="flex flex-col gap-1.5">
+      <div v-else class="flex flex-col">
         <Transition
           enter-active-class="transition duration-200 ease-out"
           leave-active-class="transition duration-150 ease-in"
@@ -110,8 +110,8 @@ watch(isOpen, (value) => {
                 icon="i-lucide-x"
                 color="neutral"
                 variant="ghost"
-                size="sm"
-                class="shrink-0 text-dimmed hover:text-default -me-1"
+                size="xs"
+                class="shrink-0 text-dimmed hover:text-default -m-1"
                 aria-label="Stop using this page as context"
                 @click="pageContextDismissed = true"
               />
