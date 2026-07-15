@@ -51,13 +51,16 @@ function paintResponse() {
   })
 }
 
+const pageKey = computed(() => kebabCase(path.value))
+const surroundKey = computed(() => `${kebabCase(path.value)}-surround`)
+
 const [{ data: page, status }, { data: surround }] = await Promise.all([
-  useAsyncData(() => kebabCase(path.value), () => {
+  useAsyncData(pageKey, () => {
     const pagePath = path.value
     const collection = version.value.collection
     return paintResponse().then(() => queryCollection(collection).path(pagePath).first())
   }),
-  useAsyncData(() => `${kebabCase(path.value)}-surround`, () => {
+  useAsyncData(surroundKey, () => {
     const pagePath = path.value
     const collection = version.value.collection
     return paintResponse().then(() => queryCollectionItemSurroundings(collection, pagePath, {
