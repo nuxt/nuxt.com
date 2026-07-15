@@ -54,8 +54,8 @@ importers:
         specifier: ^4.9.0
         version: 4.9.0(0348743c471ebb8ae0f40e45fd347cf6)
       '@nuxthub/core':
-        specifier: ^0.10.8
-        version: 0.10.8(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(@vercel/functions@3.7.5(ws@8.21.0))(db0@0.3.4(@libsql/client@0.17.4)(better-sqlite3@12.11.1)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260511.1)(@libsql/client@0.17.4)(@opentelemetry/api@1.9.0)(better-sqlite3@12.11.1)))(ioredis@5.10.1)(magicast@0.5.3)(typescript@6.0.3)(vue-tsc@3.3.5(typescript@6.0.3))
+        specifier: ^0.10.7
+        version: 0.10.7(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(@vercel/functions@3.7.5(ws@8.21.0))(db0@0.3.4(@libsql/client@0.17.4)(better-sqlite3@12.11.1)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260511.1)(@libsql/client@0.17.4)(@opentelemetry/api@1.9.0)(better-sqlite3@12.11.1)))(ioredis@5.10.1)(magicast@0.5.3)(typescript@6.0.3)(vue-tsc@3.3.5(typescript@6.0.3))
       '@nuxtjs/html-validator':
         specifier: ^2.1.0
         version: 2.1.0(magicast@0.5.3)(vitest@4.1.10(@opentelemetry/api@1.9.0)(@types/node@26.0.1)(happy-dom@20.10.6)(vite@7.3.6(@types/node@26.0.1)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.0)))
@@ -1981,14 +1981,9 @@ packages:
       rollup-plugin-visualizer:
         optional: true
 
-  '@nuxthub/core@0.10.8':
-    resolution: {integrity: sha512-5FdvRleN8gqd/9wKnuYzcA3KXnyQ/wVwS+4ZJYCBKxI8XmGC/J3R98qgsRF3ATDYoViL625viPpACEhfcaQrDQ==}
+  '@nuxthub/core@0.10.7':
+    resolution: {integrity: sha512-L8GNzGE081udFIPyy3v8xlr8Cv6fijkEkvguB+Cg+0bMQiJSlzyay8FQyPDggXmn2ZcZLLCN3Z+VbTa9Vt93eQ==}
     hasBin: true
-    peerDependencies:
-      '@vercel/blob': '>=0.27.0'
-    peerDependenciesMeta:
-      '@vercel/blob':
-        optional: true
 
   '@nuxtjs/color-mode@4.0.1':
     resolution: {integrity: sha512-eiA7hWXi5zNHaYKyJFCGF6i0wFZtuvR7KDXZ6jiSvwxjCpRFwphrw0MOSmNfArTSSsT1wpW+/2H92cejeVfUlg==}
@@ -12689,7 +12684,7 @@ snapshots:
       - vue-tsc
       - yaml
 
-  '@nuxthub/core@0.10.8(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(@vercel/functions@3.7.5(ws@8.21.0))(db0@0.3.4(@libsql/client@0.17.4)(better-sqlite3@12.11.1)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260511.1)(@libsql/client@0.17.4)(@opentelemetry/api@1.9.0)(better-sqlite3@12.11.1)))(ioredis@5.10.1)(magicast@0.5.3)(typescript@6.0.3)(vue-tsc@3.3.5(typescript@6.0.3))':
+  '@nuxthub/core@0.10.7(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(@vercel/functions@3.7.5(ws@8.21.0))(db0@0.3.4(@libsql/client@0.17.4)(better-sqlite3@12.11.1)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260511.1)(@libsql/client@0.17.4)(@opentelemetry/api@1.9.0)(better-sqlite3@12.11.1)))(ioredis@5.10.1)(magicast@0.5.3)(typescript@6.0.3)(vue-tsc@3.3.5(typescript@6.0.3))':
     dependencies:
       '@cloudflare/workers-types': 4.20260511.1
       '@nuxt/kit': 4.4.8(magicast@0.5.3)
@@ -12733,6 +12728,7 @@ snapshots:
       - '@ts-macro/tsc'
       - '@typescript/native-preview'
       - '@upstash/redis'
+      - '@vercel/blob'
       - '@vercel/functions'
       - '@vercel/kv'
       - '@vitejs/devtools'
