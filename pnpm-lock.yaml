@@ -6323,7 +6323,7 @@ packages:
         optional: true
 
   eve@file:eve-pr860.tgz:
-    resolution: {integrity: sha512-PSBAtXEHeqFdOHt1gYsquSITf7fY6g1bHm9eA4c5+08gNW4/XC2C/5Ls/FO091iTH1wSoMVyDiG509KoDX5iDg==, tarball: file:eve-pr860.tgz}
+    resolution: {integrity: sha512-MNqbj9+AB4QY+z3sHbi0oQOzy6pP23zt+r+edfcG5jbgF1FucFN3rcW3sxs4l8yHRCbmDPzKbF/saUH/z94rSA==, tarball: file:eve-pr860.tgz}
     version: 0.24.4
     engines: {node: '>=24'}
     hasBin: true
