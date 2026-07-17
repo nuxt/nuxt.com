@@ -1,8 +1,16 @@
 {
-  "crons": [
-    {
-      "path": "/api/agent/cleanup",
-      "schedule": "0 3 * * *"
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "experimentalServices": {
+    "web": {
+      "entrypoint": ".",
+      "framework": "nuxtjs",
+      "routePrefix": "/"
+    },
+    "eve": {
+      "buildCommand": "eve build",
+      "entrypoint": "layers/nuxi",
+      "framework": "eve",
+      "routePrefix": "/_eve_internal/eve"
     }
-  ]
+  }
 }

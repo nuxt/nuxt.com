@@ -1,0 +1,19 @@
+{
+  "name": "nuxi-eve",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "eve build",
+    "dev": "eve dev",
+    "start": "eve start"
+  },
+  "dependencies": {
+    "@ai-sdk/gateway": "^4.0.19",
+    "ai": "^7.0.26",
+    "eve": "^0.23.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "microsandbox": "^0.6.6"
+  }
+}

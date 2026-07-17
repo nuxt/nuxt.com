@@ -1,5 +1,7 @@
 import { registerEndpoint } from '@nuxt/test-utils/runtime'
 
+process.env.EVE_BASE_URL ??= 'http://127.0.0.1:1'
+
 registerEndpoint('/api/stats', () => {
   return { id: 71995937, name: 'nuxt', repo: 'nuxt/nuxt', description: 'The Full-Stack Vue Framework.', createdAt: '2016-10-26T11:18:47Z', updatedAt: '2025-12-05T12:35:49Z', pushedAt: '2025-12-04T22:26:25Z', stars: 59003, watchers: 59003, forks: 5451, defaultBranch: 'main', version: '4.2.1', monthlyDownloads: 4350710 }
 })

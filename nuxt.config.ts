@@ -5,9 +5,11 @@ const { resolve } = createResolver(import.meta.url)
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  extends: ['./layers/nuxi'],
+
   modules: [
     '@nuxt/ui',
-    'nuxt-content-twoslash',
+    // 'nuxt-content-twoslash',
     '@nuxt/test-utils',
     '@nuxt/content',
     '@nuxt/image',
@@ -26,9 +28,10 @@ export default defineNuxtConfig({
     '@nuxt/hints',
     '@vercel/analytics',
     '@vercel/speed-insights',
-    '@comark/nuxt',
-    'evlog/nuxt'
+    'evlog/nuxt',
+    'eve/nuxt'
   ],
+
   $development: {
     site: {
       url: 'http://localhost:3000'
@@ -102,7 +105,6 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     contactEmail: '',
-    cronSecret: '',
     mcpAdminToken: '',
     adminGithubLogins: '',
     github: {
@@ -138,6 +140,7 @@ export default defineNuxtConfig({
           '</llms-full.txt>; rel="llms-full"; type="text/plain"',
           '</sitemap.xml>; rel="sitemap"; type="application/xml"',
           '</sitemap.md>; rel="sitemap"; type="text/markdown"',
+          '</design.md>; rel="design"; type="text/markdown"',
           '</mcp>; rel="mcp"; type="application/json"',
           '</docs>; rel="service-doc"; type="text/html"'
         ].join(', '),
@@ -147,11 +150,12 @@ export default defineNuxtConfig({
     '/blog/rss.xml': { prerender: true },
     '/sitemap.xml': { prerender: true },
     '/sitemap.md': { prerender: true },
+    '/design.md': { prerender: true, headers: { Vary: 'Accept, User-Agent' } },
     '/404.html': { prerender: true },
     '/docs/3.x/getting-started/introduction': { prerender: true },
     '/docs/4.x/getting-started/introduction': { prerender: true },
     '/docs/5.x/getting-started/introduction': { prerender: true },
-    '/modules': { isr: false, prerender: false, headers: { Vary: 'Accept, User-Agent' } },
+    '/modules': { isr: 60 * 60, prerender: false, headers: { Vary: 'Accept, User-Agent' } },
     '/modules/**': { isr: 60 * 60 },
     '/changelog': { isr: 60 * 60, headers: { Vary: 'Accept, User-Agent' } },
     // Markdown content negotiation routes (md-rewrite.ts emits Vercel rewrites
@@ -167,9 +171,14 @@ export default defineNuxtConfig({
     // Admin
     '/admin': { ssr: false },
     '/admin/**': { ssr: false },
+    '/admin/login': { redirect: '/login?redirect=/admin', prerender: false },
+    // Auth-protected client-side area — never SSR'd.
+    '/dashboard': { ssr: false },
+    '/dashboard/**': { ssr: false },
+    '/_eve_internal/**': { headers: { 'cache-control': 'no-store' } },
+    '/api/internal/**': { headers: { 'cache-control': 'no-store' } },
     // Main navigation
     '/api/navigation.json': { prerender: true },
-    '/api/search.json': { prerender: true },
     // Redirects
     '/docs': { redirect: '/docs/getting-started/introduction', prerender: false },
     '/docs/3.x': { redirect: '/docs/3.x/getting-started/introduction', prerender: false },
@@ -426,6 +435,7 @@ export default defineNuxtConfig({
     '/docs/5.x/getting-started/directory-structure': { redirect: '/docs/4.x/directory-structure', prerender: false },
     '/docs/4.x/guide/going-further/modules': { redirect: '/docs/4.x/guide/modules', prerender: false },
     '/docs/5.x/guide/going-further/modules': { redirect: '/docs/4.x/guide/modules', prerender: false },
+    '/docs/4.x/guide/modules/module-dependencies': { redirect: '/docs/5.x/guide/modules/module-dependencies', prerender: false },
     '/docs/4.x/guide/concepts/rendering-modes': { redirect: '/docs/4.x/guide/concepts/rendering', prerender: false },
     '/docs/5.x/guide/concepts/rendering-modes': { redirect: '/docs/4.x/guide/concepts/rendering', prerender: false },
     '/docs/4.x/guide/directory-structure/nuxt.config': { redirect: '/docs/4.x/directory-structure/nuxt-config', prerender: false },
@@ -442,8 +452,8 @@ export default defineNuxtConfig({
   },
   sourcemap: true,
   experimental: {
-    extractAsyncDataHandlers: true,
     viewTransition: true,
+    extractAsyncDataHandlers: true,
     defaults: {
       nuxtLink: {
         externalRelAttribute: 'noopener'
@@ -454,10 +464,17 @@ export default defineNuxtConfig({
   compatibilityDate: '2026-01-14',
   nitro: {
     prerender: {
-      crawlLinks: true,
+      crawlLinks: false,
       ignore: [
         route => route === '/modules' || route.startsWith('/modules/'),
-        route => route.startsWith('/admin')
+        route => route.startsWith('/raw/'),
+        route => route.startsWith('/admin'),
+        route => route.startsWith('/login'),
+        route => route.startsWith('/dashboard'),
+        '/mcp',
+        route => route.startsWith('/mcp/'),
+        route => route.startsWith('/api/auth/'),
+        route => route.startsWith('/api/chats')
       ],
       autoSubfolderIndex: false
     }
@@ -470,14 +487,14 @@ export default defineNuxtConfig({
   vite: {
     optimizeDeps: {
       include: [
+        '@comark/vue',
+        '@unhead/schema-org/vue',
         '@vue/devtools-core',
         '@vue/devtools-kit',
         'valibot',
-        '@comark/vue',
         'zod',
         'date-fns',
-        'ai',
-        '@ai-sdk/vue'
+        'ai'
       ],
       exclude: ['vue-chrts', 'shaders']
     }
@@ -492,6 +509,8 @@ export default defineNuxtConfig({
     'content:file:beforeParse': async ({ file }) => {
       if (file.id.startsWith('docsv5/')) {
         file.body = file.body.replaceAll(/\(\/docs\/(?!\d\.x)/g, '(/docs/5.x/')
+        // module-dependencies only exists on main (5.x), not on the 4.x branch yet
+        file.body = file.body.replaceAll('/docs/4.x/guide/modules/module-dependencies', '/docs/5.x/guide/modules/module-dependencies')
       }
       if (file.id.startsWith('docsv4/')) {
         file.body = file.body.replaceAll(/\(\/docs\/(?!\d\.x)/g, '(/docs/4.x/')
@@ -515,11 +534,16 @@ export default defineNuxtConfig({
       }
     }
   },
+
   evlog: {
     env: { service: 'nuxt-com' },
     pretty: process.env.CI ? false : undefined,
     sampling: {
-      rates: { info: 30 }
+      rates: { info: 30 },
+      keep: [
+        { path: '/api/chats/*' },
+        { duration: 2000 }
+      ]
     }
   },
   hints: {
@@ -537,8 +561,31 @@ export default defineNuxtConfig({
       dir: resolve('./app/assets/icons')
     }],
     clientBundle: {
-      scan: true,
-      includeCustomCollections: true
+      // Scan app source + all local content for icons. The `**/.*.{yml,yaml}`
+      // pattern is needed for local `.navigation.yml` dotfiles (e.g. blog,
+      // enterprise), which `*.yml` skips under `dot:false`.
+      scan: {
+        globInclude: ['**/*.{vue,jsx,tsx,md,mdc,mdx,yml,yaml,ts}', '**/.*.{yml,yaml}']
+      },
+      includeCustomCollections: true,
+      // Remote docs nav icons (under `.data/`, unreachable by `scan`) — bundle them
+      // so they don't pop in on client-side navigation. Regenerate when docs change.
+      icons: [
+        'logos:bun', 'lucide:alert-triangle', 'lucide:arrow-left-right', 'lucide:bell-dot',
+        'lucide:bug-off', 'lucide:cable', 'lucide:cog', 'lucide:cooking-pot',
+        'lucide:map', 'lucide:panels-top-left', 'lucide:play', 'lucide:ship',
+        'lucide:square-check', 'lucide:square-terminal', 'lucide:test-tube', 'lucide:toggle-right',
+        'simple-icons:codesandbox', 'simple-icons:git', 'simple-icons:google', 'simple-icons:googlechrome',
+        'simple-icons:mdnwebdocs', 'simple-icons:vite', 'simple-icons:w3c', 'simple-icons:webpack',
+        'vscode-icons:default-folder', 'vscode-icons:file-type-dotenv', 'vscode-icons:file-type-git', 'vscode-icons:file-type-light-config',
+        'vscode-icons:file-type-css', 'vscode-icons:file-type-html', 'vscode-icons:file-type-js', 'vscode-icons:file-type-json',
+        'vscode-icons:file-type-markdown', 'vscode-icons:file-type-npm', 'vscode-icons:file-type-nuxt', 'vscode-icons:file-type-tsconfig',
+        'vscode-icons:file-type-typescript', 'vscode-icons:file-type-vue', 'vscode-icons:default-file',
+        'vscode-icons:folder-type-app', 'vscode-icons:folder-type-asset', 'vscode-icons:folder-type-component', 'vscode-icons:folder-type-log',
+        'vscode-icons:folder-type-middleware', 'vscode-icons:folder-type-node', 'vscode-icons:folder-type-nuxt', 'vscode-icons:folder-type-package',
+        'vscode-icons:folder-type-plugin', 'vscode-icons:folder-type-public', 'vscode-icons:folder-type-server', 'vscode-icons:folder-type-shared',
+        'vscode-icons:folder-type-src', 'vscode-icons:folder-type-temp', 'vscode-icons:folder-type-tools', 'vscode-icons:folder-type-view'
+      ]
     }
   },
   image: {
@@ -591,7 +638,6 @@ export default defineNuxtConfig({
     logging: true
   },
   ogImage: {
-    zeroRuntime: true,
     cacheMaxAgeSeconds: 0,
     security: {
       renderTimeout: 60000
@@ -613,14 +659,14 @@ export default defineNuxtConfig({
   },
   turnstile: {
     siteKey: '0x4AAAAAAAP2vNBsTBT3ucZi'
-  },
-  twoslash: {
-    floatingVueOptions: {
-      classMarkdown: 'prose prose-primary dark:prose-invert'
-    },
-    // Skip Twoslash in dev to improve performance. Turn this on when you want to explicitly test twoslash in dev.
-    enableInDev: false,
-    // Do not throw when twoslash fails, the typecheck should be down in github.com/nuxt/nuxt's CI
-    throws: false
   }
+  // twoslash: {
+  //   floatingVueOptions: {
+  //     classMarkdown: 'prose prose-primary dark:prose-invert'
+  //   },
+  //   // Skip Twoslash in dev to improve performance. Turn this on when you want to explicitly test twoslash in dev.
+  //   enableInDev: false,
+  //   // Do not throw when twoslash fails, the typecheck should be down in github.com/nuxt/nuxt's CI
+  //   throws: false
+  // }
 })

@@ -1,0 +1,124 @@
+<script setup lang="ts">
+import type { UIMessage } from 'ai'
+import type { AgentChatHandle } from '../../composables/eve/types'
+import { resolveChatDisplayState } from '../../composables/eve/adapter'
+
+const props = withDefaults(defineProps<{
+  chat: AgentChatHandle
+  chatId: string
+  compact?: boolean
+  showFaqEmpty?: boolean
+  faqQuestions?: FaqCategory[]
+  showUserTimestamps?: boolean
+  showActions?: boolean
+  spacingOffset?: number
+  getVote: (messageId: string) => boolean | null
+}>(), {
+  compact: false,
+  showFaqEmpty: false,
+  faqQuestions: () => [],
+  showUserTimestamps: false,
+  showActions: true,
+  spacingOffset: 0
+})
+
+const emit = defineEmits<{
+  askQuestion: [question: string]
+  vote: [message: UIMessage, isUpvoted: boolean]
+}>()
+
+const display = computed(() =>
+  resolveChatDisplayState(props.chat.messages, props.chat.status)
+)
+
+function isAssistantPending(message: UIMessage): boolean {
+  if (message.role !== 'assistant') return false
+
+  const { status, messages } = props.chat
+  if (status !== 'submitted' && status !== 'streaming') return false
+
+  const last = messages.at(-1)
+  return last?.role === 'assistant' && message.id === last.id
+}
+
+const messagesRoot = useTemplateRef<{ $el: HTMLElement }>('messagesRoot')
+
+function scrollMessages(to: 'top' | 'bottom') {
+  if (!display.value.displayMessages.length) return
+
+  let node = messagesRoot.value?.$el
+  while (node && node !== document.documentElement) {
+    if (/auto|scroll/.test(getComputedStyle(node).overflowY)) {
+      node.scrollTo({ top: to === 'top' ? 0 : node.scrollHeight, behavior: 'smooth' })
+      return
+    }
+    node = node.parentElement
+  }
+}
+
+defineShortcuts({
+  home: { usingInput: true, handler: () => scrollMessages('top') },
+  end: { usingInput: true, handler: () => scrollMessages('bottom') }
+})
+</script>
+
+<template>
+  <UTheme :ui="AGENT_CHAT_THEME">
+    <UChatMessages
+      v-if="display.displayMessages.length"
+      ref="messagesRoot"
+      should-auto-scroll
+      :messages="display.displayMessages"
+      :status="display.displayStatus"
+      :compact="compact"
+      :spacing-offset="spacingOffset"
+      :class="compact ? 'gap-2 px-0' : 'flex-1 pt-4 pb-4 sm:pb-6'"
+      :user="{ ui: compact ? AGENT_USER_MESSAGE_UI_COMPACT : AGENT_USER_MESSAGE_UI }"
+      :assistant="{ ui: { body: 'flex-1', actions: 'has-data-[state=open]:opacity-100' } }"
+      :ui="compact ? undefined : { root: '[&>article]:last-of-type:min-h-0' }"
+    >
+      <template #indicator>
+        <AgentIndicator />
+      </template>
+
+      <template #content="{ message }">
+        <ChatContent :message="message" />
+      </template>
+
+      <template v-if="showActions" #actions="{ message }">
+        <ChatMessageActions
+          v-if="message.role === 'assistant'"
+          :message="message"
+          :vote="getVote(message.id)"
+          :streaming="isAssistantPending(message)"
+          :chat-id="chatId"
+          :can-regenerate="message.id === chat.messages.at(-1)?.id && chat.status === 'ready'"
+          @vote="(msg, isUpvoted) => emit('vote', msg, isUpvoted)"
+          @regenerate="chat.regenerate()"
+        />
+        <UTooltip
+          v-else-if="showUserTimestamps && message.role === 'user' && messageTime(message)"
+          :text="messageFullTime(message)!"
+          :content="{ side: 'bottom' }"
+        >
+          <span class="text-xs text-dimmed select-none">{{ messageTime(message) }}</span>
+        </UTooltip>
+      </template>
+    </UChatMessages>
+
+    <div v-else-if="showFaqEmpty" class="flex flex-col">
+      <div class="relative h-48 overflow-hidden rounded-lg mx-1">
+        <AgentShader />
+      </div>
+
+      <div class="flex flex-col gap-6 mt-6">
+        <UPageLinks
+          v-for="category in faqQuestions"
+          :key="category.category"
+          :title="category.category"
+          :links="category.items.map(item => ({ label: item, onClick: () => emit('askQuestion', item) }))"
+        />
+      </div>
+    </div>
+  </UTheme>
+</template>

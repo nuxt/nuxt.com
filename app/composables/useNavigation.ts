@@ -1,15 +1,6 @@
 import type { CommandPaletteGroup } from '@nuxt/ui'
 import { createSharedComposable } from '@vueuse/core'
 
-// Stable reference so the deep watcher inside `useFuse` doesn't rebuild
-// the entire Fuse index on every reactive flush.
-const searchFuse = {
-  resultLimit: 42,
-  fuseOptions: {
-    threshold: 0
-  }
-}
-
 function _useHeaderLinks() {
   const route = useRoute()
   const { version } = useDocsVersion()
@@ -118,6 +109,7 @@ function _useHeaderLinks() {
     }, {
       label: 'Updates',
       icon: 'i-lucide-newspaper',
+      search: false,
       to: '/blog',
       children: [{
         label: 'Blog',
@@ -183,15 +175,16 @@ const _useNavigation = () => {
 
   const { headerLinks } = useHeaderLinks()
   const { footerLinks } = useFooterLinks()
-  const { modules } = useModules()
-  const { providers } = useHostingProviders()
+  const { modules, fetchList: fetchModules } = useModules()
+  const { providers, fetchList: fetchHosting } = useHostingProviders()
+  const { articles: blogArticles, fetchList: fetchBlog } = useBlog()
 
   const searchLinks = computed(() => [{
-    label: 'Ask Agent',
-    icon: 'i-lucide-wand',
+    label: 'Ask Nuxi',
+    icon: 'i-custom-nuxi',
     to: 'javascript:void(0);',
     onSelect: () => {
-      track('Nuxt Agent Opened', { source: 'search-links' })
+      track('Nuxi Opened', { source: 'search-links' })
       openAgent()
     }
   }, ...headerLinks.value.flatMap((link) => {
@@ -229,6 +222,7 @@ const _useNavigation = () => {
     id: `module-${module.name}`,
     label: module.npm,
     suffix: module.description,
+    downloads: module.stats?.downloads ?? 0,
     avatar: {
       src: moduleImage(module.icon),
       ui: {
@@ -254,34 +248,59 @@ const _useNavigation = () => {
     to: hosting.path
   })))
 
+  const blogItems = computed(() => blogArticles.value.map(article => ({
+    id: `blog-${article.path}`,
+    label: article.title,
+    suffix: article.description,
+    icon: 'i-lucide-newspaper',
+    to: article.path
+  })))
+
+  const postFilter = (searchTerm: string, items: any[]) => {
+    if (!searchTerm) {
+      return []
+    }
+    return items
+  }
+
   const searchGroups = computed<CommandPaletteGroup[]>(() => [{
-    id: 'ask-ai-search',
-    label: 'AI',
-    ignoreFilter: true,
-    postFilter: (searchTerm: string, items: any[]) => {
-      if (!searchTerm) {
-        return []
-      }
-      return items
-    },
-    items: [{
-      label: 'Ask Agent',
-      icon: 'i-lucide-wand',
-      to: 'javascript:void(0);',
-      onSelect() {
-        track('Nuxt Agent Opened', { source: 'search-palette', query: searchTerm.value })
-        openAgent(searchTerm.value)
-      }
-    }]
-  }, {
     id: 'modules-search',
     label: 'Modules',
-    items: modulesItems.value
+    items: modulesItems.value,
+    postFilter
   }, {
     id: 'hosting-search',
     label: 'Hosting',
-    items: hostingItems.value
+    items: hostingItems.value,
+    postFilter
+  }, {
+    id: 'blog-search',
+    label: 'Blog',
+    items: blogItems.value,
+    postFilter
+  }, {
+    id: 'ask-ai-search',
+    label: 'AI',
+    ignoreFilter: true,
+    postFilter,
+    items: [{
+      label: 'Ask Nuxi',
+      icon: 'i-custom-nuxi',
+      onSelect() {
+        track('Nuxi Opened', { source: 'search-palette', query: searchTerm.value })
+        openAgent(searchTerm.value)
+      }
+    }]
   }])
+
+  const { open: searchOpen } = useContentSearch()
+  watch(searchOpen, (value) => {
+    if (value) {
+      fetchModules()
+      fetchHosting()
+      fetchBlog()
+    }
+  })
 
   watchDebounced(searchTerm, (term) => {
     if (term) {
@@ -294,8 +313,7 @@ const _useNavigation = () => {
     headerLinks,
     footerLinks,
     searchLinks,
-    searchGroups,
-    searchFuse
+    searchGroups
   }
 }
 

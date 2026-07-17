@@ -1,14 +1,22 @@
 <script setup lang="ts">
 const colorMode = useColorMode()
 const route = useRoute()
-const isChatRoute = computed(() => route.path === '/chat' || route.path.startsWith('/chat/'))
+const { isAgentEnabled } = useNuxtAgent()
+const isChatRoute = computed(() => route.path.startsWith('/dashboard/chat') || route.path.startsWith('/admin/analytics'))
+const showAgent = computed(() => isAgentEnabled.value && !isChatRoute.value)
+
 const { version } = useDocsVersion()
-const { searchGroups, searchLinks, searchTerm, searchFuse } = useNavigation()
-const { fetchList: fetchModules } = useModules()
-const { fetchList: fetchHosting } = useHostingProviders()
 const { track } = useAnalytics()
 
 const color = computed(() => colorMode.value === 'dark' ? '#020420' : 'white')
+
+defineShortcuts({
+  d: {
+    handler: () => {
+      colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'
+    }
+  }
+})
 
 watch(() => colorMode.preference, (newMode, oldMode) => {
   if (oldMode && newMode !== oldMode) {
@@ -16,15 +24,7 @@ watch(() => colorMode.preference, (newMode, oldMode) => {
   }
 })
 
-const [{ data: navigation }, { data: files }] = await Promise.all([
-  useFetch('/api/navigation.json'),
-  useFetch('/api/search.json', { server: false })
-])
-
-onNuxtReady(() => {
-  fetchModules()
-  fetchHosting()
-})
+const { data: navigation } = await useFetch('/api/navigation.json')
 
 useHead({
   titleTemplate: title => title ? `${title} · Nuxt` : 'Nuxt: The Intuitive Web Framework',
@@ -64,9 +64,6 @@ if (import.meta.server) {
 }
 
 const versionNavigation = computed(() => navigation.value?.filter(item => item.path === version.value.path || item.path === '/blog') ?? [])
-const versionFiles = computed(() => files.value?.filter((file) => {
-  return file.id.startsWith(version.value.path + '/') || file.id.startsWith('/blog/')
-}) ?? [])
 
 provide('navigation', versionNavigation)
 </script>
@@ -80,26 +77,16 @@ provide('navigation', versionNavigation)
         <NuxtLayout>
           <NuxtPage />
         </NuxtLayout>
-
-        <ClientOnly>
-          <LazyAgentFloatingInput v-if="!isChatRoute" />
-        </ClientOnly>
       </div>
 
-      <ClientOnly>
-        <LazyAgentPanel v-if="!isChatRoute" />
+      <ClientOnly v-if="showAgent">
+        <LazyAgentFloatingInput />
+        <LazyAgentPanel />
       </ClientOnly>
     </div>
 
     <ClientOnly>
-      <LazyUContentSearch
-        v-model:search-term="searchTerm"
-        :files="versionFiles"
-        :navigation="versionNavigation"
-        :groups="searchGroups"
-        :links="searchLinks"
-        :fuse="searchFuse"
-      />
+      <Search :navigation="versionNavigation" />
     </ClientOnly>
   </UApp>
 </template>

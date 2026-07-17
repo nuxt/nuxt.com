@@ -6,6 +6,8 @@ import rawData from '~~/public/agent-results.json'
 const UButton = resolveComponent('UButton')
 const UBadge = resolveComponent('UBadge')
 const UAvatar = resolveComponent('UAvatar')
+const UTooltip = resolveComponent('UTooltip')
+const UIcon = resolveComponent('UIcon')
 
 definePageMeta({
   heroBackground: 'opacity-70 -z-10'
@@ -19,6 +21,10 @@ interface EvalResultItem {
     duration: number
     evalPath: string
     timestamp: string
+    firstRunSuccess?: boolean
+    passedRuns?: number
+    totalRuns?: number
+    passRate?: number
   }
 }
 
@@ -27,13 +33,19 @@ interface Experiment {
   timestamp: string
   modelName: string
   agentHarness: string
+  avgDuration?: number
+  passAt1?: number
+  avgPassRate?: number
 }
 
 interface ModelRow {
   model: string
   agent: string
+  timestamp: string
   totalEvals: number
   successRate: number
+  passAt1?: number
+  avgDuration: number
   evals: EvalResultItem[]
 }
 
@@ -42,8 +54,8 @@ if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const title = page.value.title
-const description = page.value.description
+const title = page.value.head?.title || page.value.title
+const description = page.value.head?.description || page.value.description
 
 useSeoMeta({
   titleTemplate: '%s',
@@ -53,7 +65,10 @@ useSeoMeta({
   ogTitle: title
 })
 useCanonical()
-defineOgImage('Docs.takumi', { title, description })
+defineOgImage('Docs.takumi', {
+  title,
+  description
+})
 
 // Build experiment map by name
 const experimentMap = computed(() => {
@@ -65,6 +80,15 @@ const experimentMap = computed(() => {
   return map
 })
 
+// Sort by success rate, then first-try rate (tiebreak), then most recent run date first
+function sortRows(a: ModelRow, b: ModelRow): number {
+  if (b.successRate !== a.successRate) return b.successRate - a.successRate
+  const aPassAt1 = a.passAt1 ?? -1
+  const bPassAt1 = b.passAt1 ?? -1
+  if (bPassAt1 !== aPassAt1) return bPassAt1 - aPassAt1
+  return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+}
+
 // Process results into table rows
 const allResults = computed<ModelRow[]>(() => {
   if (!rawData?.results) return []
@@ -75,12 +99,15 @@ const allResults = computed<ModelRow[]>(() => {
     rows.push({
       model: experiment?.modelName || experimentName,
       agent: experiment?.agentHarness || 'Unknown',
+      timestamp: experiment?.timestamp || '',
       totalEvals: evals.length,
       successRate: evals.length ? Math.round((successes / evals.length) * 100) : 0,
+      passAt1: experiment?.passAt1,
+      avgDuration: experiment?.avgDuration ?? 0,
       evals
     })
   }
-  return rows.sort((a, b) => b.successRate - a.successRate)
+  return rows.sort(sortRows)
 })
 
 // Agent filter
@@ -113,13 +140,17 @@ const filteredResults = computed(() => {
     rows = rows.map((r) => {
       const evals = r.evals.filter(e => selectedCategories.value.includes(getEvalCategory(e.evalPath)))
       const successes = evals.filter(e => e.result.success).length
+      const firstTries = evals.filter(e => e.result.firstRunSuccess).length
       return {
         ...r,
         evals,
         totalEvals: evals.length,
-        successRate: evals.length ? Math.round((successes / evals.length) * 100) : 0
+        successRate: evals.length ? Math.round((successes / evals.length) * 100) : 0,
+        // Recompute first-try rate from the filtered subset so the column and sort tiebreak
+        // match the shown evals; keep undefined for older data that lacks firstRunSuccess.
+        passAt1: r.passAt1 != null && evals.length ? firstTries / evals.length : undefined
       }
-    }).sort((a, b) => b.successRate - a.successRate)
+    }).sort(sortRows)
   }
 
   return rows
@@ -138,7 +169,8 @@ const modelIconMap: Record<string, string> = {
   gpt: 'i-simple-icons-openai',
   cursor: 'i-simple-icons-cursor',
   gemini: 'i-simple-icons-googlegemini',
-  devstral: 'i-simple-icons-mistralai'
+  devstral: 'i-simple-icons-mistralai',
+  minimax: 'i-simple-icons-minimax'
 }
 
 function getModelIcon(model: string): string {
@@ -152,6 +184,12 @@ function getModelIcon(model: string): string {
 // Format duration from ms to seconds
 function formatDuration(ms: number): string {
   return `${(ms / 1000).toFixed(2)}s`
+}
+
+// Format average duration (already in seconds)
+function formatAvgDuration(seconds: number): string {
+  if (!seconds) return '-'
+  return `${seconds.toFixed(2)}s`
 }
 
 // Expanded rows state
@@ -202,14 +240,15 @@ const columns: TableColumn<ModelRow>[] = [
     header: 'Agent'
   },
   {
-    accessorKey: 'totalEvals',
-    header: 'Total Evals',
+    accessorKey: 'avgDuration',
+    header: 'Avg Duration',
     meta: {
       class: {
         th: 'text-center',
-        td: 'text-center'
+        td: 'text-center text-muted'
       }
-    }
+    },
+    cell: ({ row }) => h('span', {}, formatAvgDuration(row.original.avgDuration))
   },
   {
     accessorKey: 'successRate',
@@ -221,6 +260,22 @@ const columns: TableColumn<ModelRow>[] = [
       }
     },
     cell: ({ row }) => h('span', {}, `${row.original.successRate}%`)
+  },
+  {
+    accessorKey: 'passAt1',
+    header: () => h(UTooltip, {
+      text: 'Passed on the first attempt. Each eval allows up to 4 attempts; Success counts an eval as passed if any attempt succeeds.'
+    }, () => h('span', { class: 'inline-flex items-center gap-1' }, [
+      h('span', {}, 'First-Try Rate'),
+      h(UIcon, { name: 'i-lucide-info', class: 'size-3.5 text-dimmed' })
+    ])),
+    meta: {
+      class: {
+        th: 'text-right',
+        td: 'text-right text-muted'
+      }
+    },
+    cell: ({ row }) => h('span', {}, row.original.passAt1 != null ? `${Math.round(row.original.passAt1 * 100)}%` : '—')
   }
 ]
 
@@ -239,10 +294,24 @@ const evalColumns: TableColumn<EvalResultItem>[] = [
         td: 'text-center'
       }
     },
-    cell: ({ row }) => h(UBadge, {
-      color: row.original.result.success ? 'success' : 'error',
-      variant: 'subtle'
-    }, () => row.original.result.success ? 'Pass' : 'Fail')
+    cell: ({ row }) => {
+      const { success, passedRuns, totalRuns } = row.original.result
+      const children = [
+        h(UBadge, {
+          color: success ? 'success' : 'error',
+          variant: 'subtle'
+        }, () => success ? 'Pass' : 'Fail')
+      ]
+      if (totalRuns && totalRuns > 1) {
+        children.push(h(UTooltip, {
+          text: `${passedRuns} of ${totalRuns} attempts passed`
+        }, () => h(UBadge, {
+          color: 'neutral',
+          variant: 'subtle'
+        }, () => `${passedRuns}/${totalRuns}`)))
+      }
+      return h('div', { class: 'flex items-center justify-center gap-1.5' }, children)
+    }
   },
   {
     id: 'duration',
@@ -287,12 +356,12 @@ const evalColumns: TableColumn<EvalResultItem>[] = [
 
     <UPageBody class="mt-0">
       <UContainer class="max-w-6xl">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-2xl font-bold">
+        <div class="flex flex-col lg:flex-row gap-y-4 items-center justify-between mb-4">
+          <h2 class="text-2xl font-semibold">
             Agent Performance Results
           </h2>
 
-          <div class="flex items-center gap-2">
+          <div class="flex items-center justify-center lg:justify-end gap-2 w-full lg:w-auto">
             <USelectMenu
               v-model="selectedCategories"
               :items="categories"
@@ -300,7 +369,7 @@ const evalColumns: TableColumn<EvalResultItem>[] = [
               placeholder="All Categories"
               color="neutral"
               variant="subtle"
-              size="lg"
+              size="md"
               class="w-52 bg-elevated/50 hover:bg-elevated data-[state=open]:bg-elevated group"
               :ui="{
                 placeholder: 'text-highlighted',
@@ -315,7 +384,7 @@ const evalColumns: TableColumn<EvalResultItem>[] = [
               placeholder="All Agents"
               color="neutral"
               variant="subtle"
-              size="lg"
+              size="md"
               class="w-52 bg-elevated/50 hover:bg-elevated data-[state=open]:bg-elevated group"
               :ui="{
                 placeholder: 'text-highlighted',
@@ -350,6 +419,14 @@ const evalColumns: TableColumn<EvalResultItem>[] = [
             />
           </template>
         </UTable>
+
+        <div class="mt-4 text-sm text-dimmed text-pretty text-justify bg-elevated/50 p-4 rounded-lg">
+          Each evaluation is attempted up to 4 times.
+          <span class="text-default font-medium">Success Rate</span> is the percentage of evals that passed on at least one attempt;
+          <span class="text-default font-medium">First-Try Rate</span> is the percentage that passed on the first attempt, used to break ties between models with the same success rate.
+          <span class="text-default font-medium">Avg Duration</span> is the mean time an agent took per eval. Expand a row to see per-eval results, where a
+          <span class="text-default font-medium">1/3</span> badge means the eval failed twice before passing.
+        </div>
       </UContainer>
     </UPageBody>
   </div>

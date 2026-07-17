@@ -138,6 +138,11 @@ export async function fetchOpenCollectiveSponsors(event: H3Event): Promise<OpenC
       if (sponsor.account.slug === 'favbet') {
         sponsor.account.website = 'https://www.favbet.ua/uk/casino/'
       }
+      if (sponsor.account.slug === 'jonathan-3528cbb1') {
+        sponsor.account.name = 'LOW.MS'
+        sponsor.account.website = 'https://low.ms'
+        sponsor.account.imageUrl = 'https://cdn.swiftping.net/static/img/icon.png'
+      }
       return {
         sponsorId: sponsor.account.slug,
         sponsorName: sponsor.account.name,
@@ -163,7 +168,7 @@ export const fetchGithubSponsors = async (event: H3Event): Promise<Sponsor[]> =>
   const response: Sponsor[] = []
   const first = 100
   let cursor: string | null = null
-  let hasNext = false
+  let hasNext: boolean
 
   const key = `sponsors:github`
   const cached = await kv.get<Sponsor[]>(key)

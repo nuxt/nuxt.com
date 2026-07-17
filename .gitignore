@@ -6,11 +6,14 @@ nuxt.d.ts
 dist
 .output
 .env
+.env.local
 .DS_STORE
 .history
 .cache
 .data
 .eslintcache
+.eve
+.workflow-data
 
 # Local Netlify folder
 .netlify
@@ -22,3 +25,4 @@ dist
 
 .wrangler
 test-results/
+.env*.local

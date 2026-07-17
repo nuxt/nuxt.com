@@ -1,8 +1,20 @@
-import type { Sponsor } from '#shared/types'
+import type { Sponsor, SponsorType } from '#shared/types'
+
+type SponsorsByTier = Partial<Record<SponsorType, Sponsor[]>>
+
+function isEmptySponsorsByTier(data: SponsorsByTier | null | undefined) {
+  return !data || Object.values(data).every(tier => !tier?.length)
+}
 
 export const useSponsors = async () => {
   const [{ data: apiSponsors }, { data: manualSponsors }] = await Promise.all([
-    useFetch('/api/sponsors', { key: 'sponsors' }),
+    useFetch<SponsorsByTier>('/api/sponsors', {
+      key: 'sponsors',
+      getCachedData(key, nuxtApp) {
+        const data = nuxtApp.payload.data[key] ?? nuxtApp.static.data[key]
+        return isEmptySponsorsByTier(data) ? undefined : data
+      }
+    }),
     useAsyncData('manual-sponsors', () => queryCollection('manualSponsors').first())
   ])
 
@@ -29,7 +41,7 @@ export const useSponsors = async () => {
   const getFilteredSponsors = (tiers: string[]) => {
     return computed(() => {
       return Object.entries(sponsors.value)
-        .filter(([tier]) => tiers.includes(tier))
+        .filter(([tier, sponsors]) => tiers.includes(tier) && sponsors.length > 0)
         .map(([tier, sponsors]) => ({
           tier,
           sponsors: sponsors.map(s => ({

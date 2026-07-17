@@ -130,7 +130,7 @@ const links = [
         :ui="isAgentDocked ? {
           center: 'lg:col-span-10',
           right: 'lg:hidden'
-        } : undefined"
+        } : { root: 'lg:grid-cols-12', center: 'lg:col-span-9', right: 'lg:col-span-3' }"
       >
         <UPageBody>
           <ContentRenderer v-if="article.body" :value="article" />

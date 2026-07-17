@@ -186,11 +186,18 @@ const bundledLangs = {
   ini: () => import('shiki/langs/ini.mjs'),
   properties: () => import('shiki/langs/ini.mjs'),
   vue: () => import('shiki/langs/vue.mjs'),
+  css: () => import('shiki/langs/css.mjs'),
+  html: () => import('shiki/langs/html.mjs'),
   js: () => import('shiki/langs/js.mjs'),
   ts: () => import('shiki/langs/ts.mjs'),
   tsx: () => import('shiki/langs/tsx.mjs'),
   jsx: () => import('shiki/langs/jsx.mjs'),
-  json: () => import('shiki/langs/json.mjs')
+  json: () => import('shiki/langs/json.mjs'),
+  markdown: () => import('shiki/langs/markdown.mjs'),
+  md: () => import('shiki/langs/markdown.mjs'),
+  scss: () => import('shiki/langs/scss.mjs'),
+  yaml: () => import('shiki/langs/yaml.mjs'),
+  bash: () => import('shiki/langs/bash.mjs')
 
 }
 const bundledThemes = {

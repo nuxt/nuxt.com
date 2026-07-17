@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 export default defineMcpPrompt({
-  description: 'Generate a weekly digest combining docs feedback, AI agent quality, and cost — ready to share with the Nuxt team.',
+  description: 'Generate a weekly digest combining docs feedback and AI agent quality — ready to share with the Nuxt team.',
   inputSchema: {
     sinceDays: z.number().int().min(1).max(60).default(7).describe('Window in days (default 7).')
   },
@@ -26,9 +26,9 @@ Then write a digest in Markdown with these sections (be concise — each section
 - Top 3 recurring complaints across negative comments.
 
 ## AI agent
-- Usage: chats, messages, tokens, estimated cost.
-- Quality: upvotes vs downvotes, downvote rate.
-- Top 3 worst chats (id + short reason).
+- **Traffic & spend**: point to [Vercel Agent Runs](https://vercel.com/nuxt-js/nuxt/observability/agent-runs) (runs, Slack vs web) and [AI Gateway](https://vercel.com/nuxt-js/nuxt/ai-gateway) (tokens, cost). Do not quote local DB for this.
+- **Quality** (from \`agent-usage-stats\` + votes): upvotes vs downvotes, downvote rate, web chats saved.
+- Top 3 worst web chats (id + short reason).
 
 ## What to fix this week
 - 3 prioritized actions (page edit, prompt change, retrieval fix, etc.) with owner suggestion if obvious.

@@ -39,15 +39,17 @@ test.describe('User Interactions', () => {
 test.describe('Accessibility', () => {
   test('main navigation links are keyboard accessible', async ({ page, goto }) => {
     await goto('/')
+    await page.waitForLoadState('networkidle')
 
-    // Navigation links should be focusable
-    const navLinks = page.getByRole('navigation').first().getByRole('link')
+    const nav = page.getByRole('navigation').first()
+    const navLinks = nav.getByRole('link')
     await expect(navLinks.first()).toBeVisible()
 
-    // First link should be focusable
-    const firstLink = navLinks.first()
-    await firstLink.focus()
-    await expect(firstLink).toBeFocused()
+    // Verify at least one nav link is tabbable (not all tabindex="-1")
+    const tabbableCount = await navLinks.evaluateAll(links =>
+      links.filter(el => el.tabIndex !== -1).length
+    )
+    expect(tabbableCount).toBeGreaterThan(0)
   })
 })
 

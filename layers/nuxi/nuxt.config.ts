@@ -1,0 +1,14 @@
+export default defineNuxtConfig({
+  modules: [
+    '@comark/nuxt'
+  ],
+
+  $meta: {
+    name: 'nuxi'
+  },
+
+  eve: {
+    eveRoot: './layers/nuxi',
+    configureVercelJson: false
+  }
+})
