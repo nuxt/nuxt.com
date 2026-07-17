@@ -218,7 +218,7 @@ export default defineContentConfig({
       schema: z.object({
         titleTemplate: z.string().optional(),
         links: z.array(Button),
-        minimalVersion: z.preprocess((val: string | number | undefined) => v === undefined ? undefined : String(v).trim(), z.string().optional())
+        minimalVersion: z.preprocess((v: string | number | undefined) => v === undefined ? undefined : String(v).trim(), z.string().optional())
       })
     }),
     docsv4: defineCollection({
