@@ -356,12 +356,12 @@ const evalColumns: TableColumn<EvalResultItem>[] = [
 
     <UPageBody class="mt-0">
       <UContainer class="max-w-6xl">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-2xl font-bold">
+        <div class="flex flex-col lg:flex-row gap-y-4 items-center justify-between mb-4">
+          <h2 class="text-2xl font-semibold">
             Agent Performance Results
           </h2>
 
-          <div class="flex items-center gap-2">
+          <div class="flex items-center justify-center lg:justify-end gap-2 w-full lg:w-auto">
             <USelectMenu
               v-model="selectedCategories"
               :items="categories"
@@ -369,7 +369,7 @@ const evalColumns: TableColumn<EvalResultItem>[] = [
               placeholder="All Categories"
               color="neutral"
               variant="subtle"
-              size="lg"
+              size="md"
               class="w-52 bg-elevated/50 hover:bg-elevated data-[state=open]:bg-elevated group"
               :ui="{
                 placeholder: 'text-highlighted',
@@ -384,7 +384,7 @@ const evalColumns: TableColumn<EvalResultItem>[] = [
               placeholder="All Agents"
               color="neutral"
               variant="subtle"
-              size="lg"
+              size="md"
               class="w-52 bg-elevated/50 hover:bg-elevated data-[state=open]:bg-elevated group"
               :ui="{
                 placeholder: 'text-highlighted',

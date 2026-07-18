@@ -41,7 +41,7 @@ export const useSponsors = async () => {
   const getFilteredSponsors = (tiers: string[]) => {
     return computed(() => {
       return Object.entries(sponsors.value)
-        .filter(([tier]) => tiers.includes(tier))
+        .filter(([tier, sponsors]) => tiers.includes(tier) && sponsors.length > 0)
         .map(([tier, sponsors]) => ({
           tier,
           sponsors: sponsors.map(s => ({

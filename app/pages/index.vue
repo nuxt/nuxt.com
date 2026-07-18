@@ -172,9 +172,10 @@ onMounted(() => {
         <UTabs
           :items="tabs"
           :unmount-on-hide="false"
+          color="neutral"
           :ui="{
             list: 'px-0 bg-transparent lg:pr-4 overflow-x-auto',
-            trigger: 'group data-[state=active]:text-highlighted shrink-0',
+            trigger: 'group data-[state=active]:text-highlighted shrink-0 in-[[data-slot=list]:not(:has([data-slot=indicator]))]:data-[state=active]:before:bg-default',
             indicator: 'bg-default',
             leadingIcon: 'group-data-[state=active]:text-primary size-4 hidden sm:inline-flex',
             content: 'lg:h-[450px] bg-default [@media(min-width:2400px)]:border-e [@media(min-width:2400px)]:border-default [@media(min-width:2400px)]:rounded-l-[calc(var(--ui-radius)*1.5)] transition-opacity duration-500 data-[state=inactive]:opacity-0 opacity-100'

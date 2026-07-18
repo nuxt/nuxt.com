@@ -9,7 +9,7 @@ export default defineNuxtConfig({
 
   modules: [
     '@nuxt/ui',
-    'nuxt-content-twoslash',
+    // 'nuxt-content-twoslash',
     '@nuxt/test-utils',
     '@nuxt/content',
     '@nuxt/image',
@@ -155,6 +155,7 @@ export default defineNuxtConfig({
     '/docs/3.x/getting-started/introduction': { prerender: true },
     '/docs/4.x/getting-started/introduction': { prerender: true },
     '/docs/5.x/getting-started/introduction': { prerender: true },
+    '/docs/4.x/errors': { prerender: true },
     '/modules': { isr: 60 * 60, prerender: false, headers: { Vary: 'Accept, User-Agent' } },
     '/modules/**': { isr: 60 * 60 },
     '/changelog': { isr: 60 * 60, headers: { Vary: 'Accept, User-Agent' } },
@@ -655,14 +656,14 @@ export default defineNuxtConfig({
   },
   turnstile: {
     siteKey: '0x4AAAAAAAP2vNBsTBT3ucZi'
-  },
-  twoslash: {
-    floatingVueOptions: {
-      classMarkdown: 'prose prose-primary dark:prose-invert'
-    },
-    // Skip Twoslash in dev to improve performance. Turn this on when you want to explicitly test twoslash in dev.
-    enableInDev: false,
-    // Do not throw when twoslash fails, the typecheck should be down in github.com/nuxt/nuxt's CI
-    throws: false
   }
+  // twoslash: {
+  //   floatingVueOptions: {
+  //     classMarkdown: 'prose prose-primary dark:prose-invert'
+  //   },
+  //   // Skip Twoslash in dev to improve performance. Turn this on when you want to explicitly test twoslash in dev.
+  //   enableInDev: false,
+  //   // Do not throw when twoslash fails, the typecheck should be down in github.com/nuxt/nuxt's CI
+  //   throws: false
+  // }
 })
