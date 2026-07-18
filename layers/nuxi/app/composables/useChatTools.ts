@@ -1,6 +1,7 @@
 import type { ToolUIPart, DynamicToolUIPart } from 'ai'
 import { getToolName } from 'ai'
 import { isToolStreaming } from '@nuxt/ui/utils/ai'
+import { parsePromptCardOutput } from '../../shared/utils/ide-deeplinks'
 
 export type ToolPart = ToolUIPart | DynamicToolUIPart
 
@@ -20,8 +21,54 @@ const VERBS: Record<string, [string, string]> = {
   create: ['Creating', 'Created']
 }
 
+export function normalizeToolName(toolName: string): string {
+  if (toolName === 'connection__search') return toolName
+  const prefix = 'connection__'
+  if (!toolName.startsWith(prefix)) return toolName
+  const rest = toolName.slice(prefix.length)
+  const sep = rest.indexOf('__')
+  if (sep === -1) return toolName
+  return rest.slice(sep + 2).replace(/_/g, '-')
+}
+
+export function isConnectionSearchTool(part: ToolPart): boolean {
+  return getToolName(part) === 'connection__search'
+}
+
+function unwrapConnectionSearchResults(output: unknown): Array<Record<string, unknown>> | undefined {
+  if (!output) return undefined
+  if (typeof output === 'object' && output !== null && 'value' in output) {
+    const value = (output as { value: unknown }).value
+    if (Array.isArray(value)) return value as Array<Record<string, unknown>>
+  }
+  if (Array.isArray(output)) return output as Array<Record<string, unknown>>
+  return undefined
+}
+
+export function getConnectionSearchToolText(part: ToolPart): string {
+  return isToolStreaming(part) ? 'Discovering connection tools...' : 'Discovered connection tools'
+}
+
+export function getConnectionSearchSuffix(part: ToolPart): string | undefined {
+  const input = (part.input || {}) as Record<string, unknown>
+  const keywords = typeof input.keywords === 'string' ? input.keywords.trim() : ''
+  if (!hasToolOutput(part)) return keywords || undefined
+
+  const items = unwrapConnectionSearchResults(part.output)
+  const toolNames = items?.map(item => item.tool).filter((name): name is string => typeof name === 'string' && name.length > 0) ?? []
+
+  if (toolNames.length > 0) {
+    const preview = toolNames.slice(0, 3).join(', ')
+    const extra = toolNames.length > 3 ? ` +${toolNames.length - 3}` : ''
+    return keywords ? `${keywords} → ${preview}${extra}` : `${preview}${extra}`
+  }
+
+  return keywords || undefined
+}
+
 const SUFFIX_KEYS = [
   'search',
+  'keywords',
   'query',
   'q',
   'term',
@@ -37,7 +84,8 @@ const SUFFIX_KEYS = [
 ]
 
 function parseToolName(toolName: string): { verb?: [string, string], label: string } {
-  const parts = toolName.split(/[-_\s]+/).filter(Boolean)
+  const normalized = normalizeToolName(toolName)
+  const parts = normalized.split(/[-_\s]+/).filter(Boolean)
   const head = parts[0]?.toLowerCase()
 
   if (head && VERBS[head] && parts.length > 1) {
@@ -47,7 +95,7 @@ function parseToolName(toolName: string): { verb?: [string, string], label: stri
   return { label: parts.join(' ') || toolName }
 }
 
-type RichToolName = 'show_module' | 'show_template' | 'show_blog_post' | 'show_hosting' | 'open_playground' | 'report_issue'
+type RichToolName = 'show_module' | 'show_template' | 'show_blog_post' | 'show_hosting' | 'open_playground' | 'report_issue' | 'show_prompt'
 
 const RICH_TOOL_HEADERS = {
   show_module: { loading: 'Loading module...', success: 'Found module', error: 'Module not found', icon: 'i-lucide-box' },
@@ -55,7 +103,8 @@ const RICH_TOOL_HEADERS = {
   show_blog_post: { loading: 'Finding blog post...', success: 'Found blog post', error: 'Blog post not found', icon: 'i-lucide-newspaper' },
   show_hosting: { loading: 'Loading provider...', success: 'Found provider', error: 'Provider not found', icon: 'i-lucide-server' },
   open_playground: { loading: 'Generating playground...', success: 'Playground ready', error: 'Playground ready', icon: 'i-simple-icons-stackblitz' },
-  report_issue: { loading: 'Preparing feedback form...', success: 'Help us improve', error: 'Help us improve', icon: 'i-lucide-message-circle-warning' }
+  report_issue: { loading: 'Preparing feedback form...', success: 'Help us improve', error: 'Help us improve', icon: 'i-lucide-message-circle-warning' },
+  show_prompt: { loading: 'Preparing prompt...', success: 'Ready to apply', error: 'Prompt unavailable', icon: 'i-lucide-sparkles' }
 } as const satisfies Record<RichToolName, { loading: string, success: string, error: string, icon: string }>
 
 export function hasToolError(output: unknown): boolean {
@@ -83,6 +132,16 @@ export function getFeedbackOutput(output: unknown): FeedbackOutput | null {
   return null
 }
 
+export function getPromptOutput(output: unknown): PromptCardData | null {
+  const data = parsePromptCardOutput(output)
+  if (!data) return null
+  const o = output as Record<string, unknown>
+  return {
+    ...data,
+    icon: typeof o.icon === 'string' ? o.icon : undefined
+  }
+}
+
 /** Tool output is ready to render (terminal state or output already present). */
 export function hasToolOutput(part: ToolPart): boolean {
   if (part.state === 'output-error' || part.state === 'output-denied') return false
@@ -105,6 +164,8 @@ function hasRichToolSuccess(part: ToolPart, toolName: RichToolName): boolean {
       return !!part.output
     case 'report_issue':
       return !!getFeedbackOutput(part.output)
+    case 'show_prompt':
+      return !!getPromptOutput(part.output)
   }
 }
 
@@ -139,8 +200,12 @@ export function showFeedbackCard(part: ToolPart): boolean {
   return hasToolOutput(part) && !!getFeedbackOutput(part.output)
 }
 
+export function showPromptCard(part: ToolPart): boolean {
+  return hasToolOutput(part) && !!getPromptOutput(part.output)
+}
+
 export function isModuleListTool(part: ToolPart): boolean {
-  const toolName = getToolName(part)
+  const toolName = normalizeToolName(getToolName(part))
   return (toolName === 'get-module' || toolName === 'list-modules') && getModuleCards(part).length > 0
 }
 
@@ -179,7 +244,7 @@ export function getToolSuffix(part: ToolPart): string | undefined {
 }
 
 export function getToolIcon(part: ToolPart): string {
-  const name = getToolName(part).toLowerCase()
+  const name = normalizeToolName(getToolName(part)).toLowerCase()
 
   if (/icon/.test(name)) return 'i-lucide-smile'
   if (/component/.test(name)) return 'i-lucide-box'
@@ -203,7 +268,7 @@ export function getToolIcon(part: ToolPart): string {
 export function getModuleCards(part: ToolPart): ModuleCardData[] {
   if (!hasToolOutput(part) || !part.output) return []
 
-  const toolName = getToolName(part)
+  const toolName = normalizeToolName(getToolName(part))
   const output = part.output as Record<string, unknown>
 
   if (toolName === 'get-module') {

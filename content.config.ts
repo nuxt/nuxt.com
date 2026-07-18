@@ -70,6 +70,7 @@ const Button = z.object({
   label: z.string(),
   icon: z.string().optional(),
   trailingIcon: z.string().optional(),
+  avatar: Image.optional(),
   to: z.string().optional(),
   color: z.enum(['primary', 'neutral', 'success', 'warning', 'error', 'info']).optional(),
   size: z.enum(['xs', 'sm', 'md', 'lg', 'xl']).optional(),
@@ -450,6 +451,10 @@ export default defineContentConfig({
       source: 'evals.yml',
       schema: z.object({
         title: z.string(),
+        head: z.object({
+          title: z.string().optional(),
+          description: z.string().optional()
+        }).optional(),
         description: z.string(),
         githubUrl: z.string().url()
       })

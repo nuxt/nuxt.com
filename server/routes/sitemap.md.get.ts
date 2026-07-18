@@ -12,6 +12,7 @@ const STATIC_LINKS = [
   { title: 'Team', path: '/team' },
   { title: 'Newsletter', path: '/newsletter' },
   { title: 'Design Kit', path: '/design-kit' },
+  { title: 'Design System', path: '/design.md' },
   { title: 'Video Courses', path: '/video-courses' }
 ]
 

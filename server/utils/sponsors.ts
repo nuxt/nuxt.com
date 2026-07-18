@@ -138,6 +138,11 @@ export async function fetchOpenCollectiveSponsors(event: H3Event): Promise<OpenC
       if (sponsor.account.slug === 'favbet') {
         sponsor.account.website = 'https://www.favbet.ua/uk/casino/'
       }
+      if (sponsor.account.slug === 'jonathan-3528cbb1') {
+        sponsor.account.name = 'LOW.MS'
+        sponsor.account.website = 'https://low.ms'
+        sponsor.account.imageUrl = 'https://cdn.swiftping.net/static/img/icon.png'
+      }
       return {
         sponsorId: sponsor.account.slug,
         sponsorName: sponsor.account.name,

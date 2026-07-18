@@ -1,4 +1,3 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   modules: [
     '@comark/nuxt'
@@ -8,9 +7,8 @@ export default defineNuxtConfig({
     name: 'nuxi'
   },
 
-  vite: {
-    optimizeDeps: {
-      include: ['ai', '@ai-sdk/vue']
-    }
+  eve: {
+    eveRoot: './layers/nuxi',
+    configureVercelJson: false
   }
 })

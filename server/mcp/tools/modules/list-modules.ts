@@ -12,18 +12,20 @@ WHEN TO USE: Use this tool when you need to DISCOVER or SEARCH for modules. Comm
 
 PARAMETERS:
 - search: Filter by name, description, or npm package name
-- category: Filter by category (e.g., "ui", "auth", "database", "media", "seo")
+- category: Filter by exact category name (e.g., "Security", "UI", "Database", "CMS", "SEO") — use search for keyword discovery, not category
 - sort: Order by downloads, stars, publishedAt, or createdAt
 - order: asc or desc
+- includeStats: Include full per-module stats (downloads, stars, publishedAt, createdAt, etc.). Defaults to true when sort is publishedAt or createdAt.
 
 WHEN NOT TO USE: If you already know the exact module slug (e.g., "@nuxt/ui"), use get_module directly.
 
-OUTPUT: Returns list of modules with name, description, category, stats. Use get_module for complete details including README and compatibility.`,
+OUTPUT: Returns list of modules with name, description, category, and either downloads/stars or full stats. Use get_module for complete details including README and compatibility.`,
   inputSchema: {
     search: z.string().optional().describe('Search term to filter modules by name, description, or npm package name'),
-    category: z.string().optional().describe('Filter modules by category (e.g., "ui", "database", "auth", "seo")'),
+    category: z.string().optional().describe('Filter by exact category name (e.g., "Security", "UI", "Database", "CMS", "SEO"). Auth modules use category "Security", not "auth". Prefer search for keyword discovery.'),
     sort: z.enum(['downloads', 'stars', 'publishedAt', 'createdAt']).optional().default('downloads').describe('Sort modules by downloads, stars, published date, or created date'),
-    order: z.enum(['asc', 'desc']).optional().default('desc').describe('Sort order (ascending or descending)')
+    order: z.enum(['asc', 'desc']).optional().default('desc').describe('Sort order (ascending or descending)'),
+    includeStats: z.boolean().optional().describe('Include full per-module stats. Defaults to true when sort is publishedAt or createdAt.')
   },
   annotations: {
     readOnlyHint: true,
@@ -34,8 +36,13 @@ OUTPUT: Returns list of modules with name, description, category, stats. Use get
     { category: 'ui', sort: 'downloads' },
     { search: 'image', sort: 'stars', order: 'desc' }
   ],
-  cache: '1h',
-  async handler({ search, category, sort = 'downloads', order = 'desc' }) {
+  cache: {
+    maxAge: '1h',
+    getKey: (args: { search?: string, category?: string, sort?: string, order?: string, includeStats?: boolean }) =>
+      `search=${args.search ?? ''}|category=${args.category ?? ''}|sort=${args.sort ?? 'downloads'}|order=${args.order ?? 'desc'}|stats=${args.includeStats ?? (args.sort === 'publishedAt' || args.sort === 'createdAt')}`
+  },
+  async handler({ search, category, sort = 'downloads', order = 'desc', includeStats }) {
+    const withStats = includeStats ?? (sort === 'publishedAt' || sort === 'createdAt')
     const response = await $fetch<{ modules: Module[], stats: Stats }>('https://api.nuxt.com/modules')
 
     let modules = response.modules || []
@@ -96,20 +103,30 @@ OUTPUT: Returns list of modules with name, description, category, stats. Use get
     const totalMatches = modules.length
 
     return {
-      modules: modules.slice(0, 20).map(module => ({
-        name: module.name,
-        description: module.description,
-        npm: module.npm,
-        icon: module.icon,
-        repo: module.repo,
-        github: module.github,
-        website: module.website,
-        learn_more: module.learn_more,
-        category: module.category,
-        downloads: module.stats?.downloads,
-        stars: module.stats?.stars,
-        url: `https://nuxt.com/modules/${module.name}`
-      })),
+      modules: modules.slice(0, 20).map((module) => {
+        const base = {
+          name: module.name,
+          description: module.description,
+          npm: module.npm,
+          icon: module.icon,
+          repo: module.repo,
+          github: module.github,
+          website: module.website,
+          learn_more: module.learn_more,
+          category: module.category,
+          url: `https://nuxt.com/modules/${module.name}`
+        }
+
+        if (withStats && module.stats) {
+          return { ...base, stats: module.stats }
+        }
+
+        return {
+          ...base,
+          downloads: module.stats?.downloads,
+          stars: module.stats?.stars
+        }
+      }),
       stats: response.stats,
       total: totalMatches
     }

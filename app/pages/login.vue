@@ -149,7 +149,8 @@ const recentChats = [
         <div class="absolute -top-40 -right-40 size-[700px] bg-primary/12 rounded-full blur-3xl" />
         <div class="absolute top-1/3 -left-40 size-[500px] bg-primary/6 rounded-full blur-3xl" />
         <div class="absolute -bottom-40 right-1/4 size-[500px] bg-sky-500/5 rounded-full blur-3xl" />
-        <div class="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.06)_1px,transparent_0)] bg-size-[28px_28px] mask-[radial-gradient(ellipse_70%_60%_at_50%_50%,black,transparent_85%)]" />
+        <!-- mask center is 50.01% (not 50%) on purpose: at exactly 50% lightningcss drops the default `at …`, leaving `radial-gradient(70% 60%, …)` which autoprefixer misreads as legacy positional syntax and warns on. The sub-pixel offset keeps `at …` in the output and is visually identical. -->
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.06)_1px,transparent_0)] bg-size-[28px_28px] mask-[radial-gradient(ellipse_70%_60%_at_50%_50.01%,black,transparent_85%)]" />
       </div>
 
       <div class="relative h-full flex flex-col items-center justify-center px-8 xl:px-16 py-20 gap-8">

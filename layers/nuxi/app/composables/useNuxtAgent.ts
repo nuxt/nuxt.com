@@ -103,9 +103,9 @@ export const useNuxtAgent = createSharedComposable(() => {
   const isAgentDockedBreakpoint = useMediaQuery('(min-width: 1280px)')
   const isAgentDocked = computed(() => isOpen.value && isAgentDockedBreakpoint.value)
 
-  const { data: usage } = useFetch<AgentUsage>('/api/agent/usage', {
+  const { data: usage, execute: refreshUsage } = useFetch<AgentUsage>('/api/agent/usage', {
     server: false,
-    lazy: true,
+    lazy: false,
     default: () => ({ used: 0, remaining: 20, limit: 20 })
   })
   const rateLimitReached = computed(() => (usage.value?.remaining ?? Infinity) <= 0)
@@ -121,12 +121,16 @@ export const useNuxtAgent = createSharedComposable(() => {
   const { chatList, refresh: refreshChats } = useChats()
 
   watch(loggedIn, (next) => {
+    refreshUsage()
     if (next) refreshChats()
     else if (chatList.value) chatList.value = []
   })
 
   watch(isOpen, (next) => {
-    if (next && loggedIn.value && !chatList.value?.length) refreshChats()
+    if (next) {
+      refreshUsage()
+      if (loggedIn.value && !chatList.value?.length) refreshChats()
+    }
   })
 
   const nuxiMood = ref<NuxiMood>('idle')

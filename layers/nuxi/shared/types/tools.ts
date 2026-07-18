@@ -48,3 +48,15 @@ export interface PlaygroundCardData {
   file?: string
   dir?: string
 }
+
+export interface PromptCardData {
+  description: string
+  prompt: string
+  repo?: string
+  icon?: string
+  deeplinks: {
+    cursor: string
+    claude: string
+    claudeNeedsClipboardFallback?: boolean
+  }
+}

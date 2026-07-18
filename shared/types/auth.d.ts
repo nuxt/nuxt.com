@@ -9,6 +9,11 @@ declare module '#auth-utils' {
     providerId: string
     role: 'user' | 'admin'
   }
+
+  interface UserSession {
+    /** Stable anonymous id for rate limiting only. */
+    anonymousUserId?: string
+  }
 }
 
 export {}

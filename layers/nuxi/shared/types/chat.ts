@@ -1,3 +1,14 @@
+export interface EveSessionCursor {
+  sessionId?: string
+  continuationToken?: string
+  streamIndex: number
+}
+
+export interface ChatEveState {
+  session: EveSessionCursor
+  events: unknown[]
+}
+
 export interface UIChat {
   id: string
   label: string
@@ -34,5 +45,6 @@ export interface ChatDetail {
   visibility: 'public' | 'private' | 'admin'
   isOwner: boolean
   createdAt: string
+  state: ChatEveState | null
   messages: ChatMessageRow[]
 }

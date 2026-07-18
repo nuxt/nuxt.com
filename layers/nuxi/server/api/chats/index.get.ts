@@ -1,14 +1,13 @@
 import { eq, sql } from 'drizzle-orm'
 
 export default defineEventHandler(async (event) => {
-  const session = await getUserSession(event)
-  const ownerId = session.user?.id || session.id
+  const { user } = await requireUserSession(event)
 
   const log = useLogger(event)
-  log.set({ user: { id: ownerId, authenticated: !!session.user } })
+  log.set({ user: { id: user.id, authenticated: true } })
 
   const chats = await db.query.chats.findMany({
-    where: () => eq(schema.chats.userId, ownerId),
+    where: () => eq(schema.chats.userId, user.id),
     orderBy: () => [
       sql`coalesce(${schema.chats.updatedAt}, ${schema.chats.createdAt}) desc`
     ]

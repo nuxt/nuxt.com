@@ -1,7 +1,7 @@
 import type { UIMessage } from 'ai'
 import { format } from 'date-fns'
 
-export function toUIMessages(rows: ChatMessageRow[]): UIMessage[] {
+export function dbRowsToUIMessages(rows: ChatMessageRow[]): UIMessage[] {
   return rows.map(m => ({
     id: m.id,
     role: m.role,
@@ -35,6 +35,29 @@ export async function createChatWithMessage(
   chatId: string,
   parts: UIMessage['parts'],
   metadata: Record<string, unknown> = {}
+): Promise<ChatDetail> {
+  const userMessage: UIMessage = {
+    id: crypto.randomUUID(),
+    role: 'user',
+    parts,
+    metadata: {
+      createdAt: new Date().toISOString(),
+      ...metadata
+    }
+  }
+
+  const detail = await $fetch<ChatDetail>('/api/chats', {
+    method: 'POST',
+    body: { id: chatId, message: userMessage }
+  })
+
+  return detail
+}
+
+export async function appendUserMessageToChat(
+  chatId: string,
+  parts: UIMessage['parts'],
+  metadata: Record<string, unknown> = {}
 ): Promise<UIMessage> {
   const userMessage: UIMessage = {
     id: crypto.randomUUID(),
@@ -46,10 +69,20 @@ export async function createChatWithMessage(
     }
   }
 
-  await $fetch('/api/chats', {
+  await $fetch(`/api/chats/${chatId}/messages`, {
     method: 'POST',
-    body: { id: chatId, message: userMessage }
+    body: { message: userMessage }
   })
 
   return userMessage
+}
+
+export function persistAnonymousTitle(chatId: string, title: string) {
+  if (!import.meta.client) return
+  sessionStorage.setItem(`nuxi-chat-title:${chatId}`, title)
+}
+
+export function readAnonymousTitle(chatId: string): string | null {
+  if (!import.meta.client) return null
+  return sessionStorage.getItem(`nuxi-chat-title:${chatId}`)
 }

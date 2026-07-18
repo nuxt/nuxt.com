@@ -54,6 +54,7 @@ npm run dev
 - Blog: <${domain}/blog/rss.xml>
 - Changelog: <${domain}/changelog/rss.xml>
 - Team: <${domain}/team>
+- Design system: <${domain}/design.md>
 - Sitemap (XML): <${domain}/sitemap.xml>
 - Sitemap (Markdown): <${domain}/sitemap.md>
 - LLMs index: <${domain}/llms.txt>
