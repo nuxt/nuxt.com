@@ -51,8 +51,8 @@ const tagMap: Record<Version['shortTag'], string> = {
 }
 
 export const useDocsTags = () => {
-  const { data: tags } = useAsyncData('versions', async () => {
-    const { 'dist-tags': distTags } = await $fetch<{ 'dist-tags': Record<string, string> }>('https://registry.npmjs.org/nuxt')
+  const { data: tags } = useAsyncData('versions', async (_nuxtApp, {signal}) => {
+    const { 'dist-tags': distTags } = await $fetch<{ 'dist-tags': Record<string, string> }>('https://registry.npmjs.org/nuxt', {signal})
     return Object.fromEntries(
       Object.entries(tagMap).map(([shortTag]: [keyof typeof tagMap, string]) => {
         // TODO: remove nightly fallback when Nuxt 5 is released

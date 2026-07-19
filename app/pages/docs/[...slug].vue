@@ -220,15 +220,7 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
           <template #title>
             {{ page.title }}
 
-            <UBadge
-              v-if="page.minimalVersion?.trim()"
-              :label="`v${page.minimalVersion}`"
-              color="info"
-              variant="subtle"
-              size="lg"
-              class="align-middle"
-              :aria-label="`Minimum Nuxt version: v${page.minimalVersion}`"
-            />
+            <VersionBadge :version="page.minimalVersion" size="lg" />
           </template>
 
           <template #links>
