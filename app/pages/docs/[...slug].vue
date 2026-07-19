@@ -220,7 +220,7 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
           <template #title>
             {{ page.title }}
 
-            <VersionBadge :version="page.minimalVersion" size="lg" />
+            <VersionBadge v-if="page.minimalVersion" :version="page.minimalVersion" size="lg" />
           </template>
 
           <template #links>

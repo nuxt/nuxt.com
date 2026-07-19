@@ -2,7 +2,7 @@
 import type { BadgeProps } from '@nuxt/ui'
 
 interface Props extends Omit<BadgeProps, 'label'> {
-  version?: string
+  version: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -18,8 +18,9 @@ const label = computed(() => props.version?.trim())
 const show = computed(() => {
   if (!label.value) return false
 
-  const major = label.value.split('.')[0]
-  return `v${major}` === docsVersion.value?.shortTag
+  const major = Number.parseInt(label.value, 10)
+  const docsMajor = Number.parseInt(docsVersion.value?.shortTag.slice(1) ?? '', 10)
+  return !Number.isNaN(major) && !Number.isNaN(docsMajor) && major >= docsMajor
 })
 
 const badgeProps = computed(() => {
