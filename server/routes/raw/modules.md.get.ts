@@ -1,3 +1,5 @@
+import { getModuleNuxtMajors } from '#shared/utils/modules'
+
 export default defineCachedEventHandler(async (event) => {
   const domain = getSiteUrl(event)
   const modules = await fetchModules(event) || []
@@ -6,6 +8,9 @@ export default defineCachedEventHandler(async (event) => {
     '# Nuxt Modules',
     '',
     `> ${modules.length}+ modules to supercharge your [Nuxt](https://nuxt.com) project.`,
+    '',
+    'On the [modules catalog](https://nuxt.com/modules), filter by Nuxt major with `?version=3`, `?version=4`, or `?version=all` (default is Nuxt 3).',
+    'Each card shows Nuxt 3 / Nuxt 4 badges derived from the module\'s `compatibility.nuxt` semver range in the [nuxt/modules](https://github.com/nuxt/modules) registry.',
     ''
   ]
 
@@ -19,6 +24,7 @@ export default defineCachedEventHandler(async (event) => {
   for (const [category, mods] of categories) {
     lines.push(`## ${category}`, '')
     for (const mod of mods) {
+      const majors = getModuleNuxtMajors(mod.compatibility?.nuxt)
       const links = [
         mod.website ? `[Docs](${mod.website})` : '',
         mod.repo ? `[GitHub](https://github.com/${mod.repo})` : '',
@@ -27,6 +33,9 @@ export default defineCachedEventHandler(async (event) => {
 
       lines.push(`### ${mod.npm}`, '')
       lines.push(mod.description, '')
+      if (majors.length) {
+        lines.push(`Nuxt: ${majors.map(major => String(major)).join(', ')}`, '')
+      }
       lines.push(`Install: \`npx nuxt@latest module add ${mod.name}\``, '')
       lines.push(links, '')
     }

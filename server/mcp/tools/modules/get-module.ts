@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import type { Module } from '#shared/types'
+import { getModuleNuxtMajors } from '#shared/utils/modules'
 
 export default defineMcpTool({
   description: `Retrieves complete details about a specific Nuxt module including README, compatibility, maintainers, and stats.
@@ -8,9 +9,9 @@ WHEN TO USE: Use this tool when you know the EXACT module identifier. Common sce
 - User asks for a specific module: "Get details about @nuxt/ui"
 - User mentions a known module: "Show me nuxt-icon module"
 - You found a relevant module from list_modules and want full details
-- You need to check Nuxt 4 compatibility for a specific module
+- You need to check Nuxt 4 compatibility for a specific module (see compatibility.nuxt and nuxtMajors)
 
-WHEN NOT TO USE: If you don't know the exact module identifier and need to search/discover modules, use list_modules first.
+WHEN NOT TO USE: If you don't know the exact module identifier and need to search/discover modules, use list_modules first (pass version "4" to filter the catalog).
 
 PARAMETER: slug (required) - The unique module identifier
 EXAMPLES:
@@ -63,6 +64,7 @@ EXAMPLES:
       category: module.category,
       type: module.type,
       compatibility: module.compatibility,
+      nuxtMajors: getModuleNuxtMajors(module.compatibility?.nuxt),
       stats: module.stats ? { downloads: module.stats.downloads, stars: module.stats.stars } : undefined,
       readme,
       url: `https://nuxt.com/modules/${module.name}`
