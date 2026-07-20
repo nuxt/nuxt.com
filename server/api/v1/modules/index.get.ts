@@ -2,7 +2,9 @@ import { moduleSupportsNuxt } from '#shared/utils/modules'
 import { modulesCacheKey, normalizeModulesQuery } from '#shared/utils/modules-query'
 
 export default defineCachedEventHandler(async (event) => {
-  const { version, category } = normalizeModulesQuery(getQuery(event) as Record<string, unknown>)
+  const { version, category } = await getValidatedQuery(event, query =>
+    normalizeModulesQuery(query as Record<string, unknown>)
+  )
   console.log(`Fetching v${version} modules...${category ? ` for category: ${category}` : ''}`)
 
   let modules = await fetchModules(event) || []

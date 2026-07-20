@@ -152,7 +152,7 @@ const clearAllModules = () => {
       }"
     >
       <template #title>
-        Build faster with <span class="text-primary">{{ filteredModules.length }}+</span> Nuxt Modules
+        Build faster with <span class="text-primary">{{ filteredModules.length }}</span> Nuxt Modules
       </template>
 
       <template #description>
