@@ -12,7 +12,7 @@ const modulesToAdd = ref<Module[]>([])
 const el = useTemplateRef<HTMLElement>('el')
 
 const { replaceRoute } = useFilters('modules')
-const { fetchList, filteredModules, q, categories, modules, stats, selectedSort, selectedOrder, selectedCategory, sorts } = useModules()
+const { fetchList, filteredModules, q, categories, modules, stats, selectedSort, selectedOrder, selectedCategory, selectedVersion, sorts, versions } = useModules()
 const { track } = useAnalytics()
 
 const cacheControl = useResponseHeader('Cache-Control')
@@ -95,9 +95,8 @@ watch(scrollY, (y) => {
 
 watch(filteredModules, () => {
   isLoading.value = false
-  displayedModules.value = []
   initializeModules()
-})
+}, { immediate: true })
 
 const copyAllInstallCommands = () => {
   const moduleNames = modulesToAdd.value.map(module => module.name).join(' ')
@@ -137,8 +136,6 @@ Steps:
 const clearAllModules = () => {
   modulesToAdd.value = []
 }
-
-initializeModules()
 </script>
 
 <template>
@@ -155,7 +152,7 @@ initializeModules()
       }"
     >
       <template #title>
-        Build faster with <span class="text-primary">{{ modules.length }}+</span> Nuxt Modules
+        Build faster with <span class="text-primary">{{ filteredModules.length }}</span> Nuxt Modules
       </template>
 
       <template #description>
@@ -192,6 +189,16 @@ initializeModules()
             </UInput>
 
             <div class="hidden sm:flex gap-2 sm:w-auto">
+              <USelectMenu
+                :model-value="selectedVersion"
+                :items="versions"
+                size="lg"
+                color="neutral"
+                class="w-auto"
+                variant="outline"
+                @update:model-value="replaceRoute('version', $event)"
+              />
+
               <USelectMenu
                 :model-value="selectedSort"
                 :items="sorts"
@@ -233,6 +240,15 @@ initializeModules()
               variant="outline"
               aria-label="Clear category filter"
               @click="replaceRoute('category', '')"
+            />
+            <USelectMenu
+              :model-value="selectedVersion"
+              :items="versions"
+              size="lg"
+              color="neutral"
+              class="w-auto"
+              variant="outline"
+              @update:model-value="replaceRoute('version', $event)"
             />
             <USelectMenu
               :model-value="selectedSort"

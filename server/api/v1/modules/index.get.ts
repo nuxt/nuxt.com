@@ -1,18 +1,16 @@
-import { z } from 'zod'
-import { satisfies } from 'semver'
+import { moduleSupportsNuxt } from '#shared/utils/modules'
+import { modulesCacheKey, normalizeModulesQuery } from '#shared/utils/modules-query'
 
 export default defineCachedEventHandler(async (event) => {
-  const { version, category } = await getValidatedQuery(event, z.object({
-    version: z.enum(['2', '2-bridge', '3', 'all']).default('3'),
-    category: z.string().optional()
-  }).parse)
+  const { version, category } = await getValidatedQuery(event, query =>
+    normalizeModulesQuery(query as Record<string, unknown>)
+  )
   console.log(`Fetching v${version} modules...${category ? ` for category: ${category}` : ''}`)
 
   let modules = await fetchModules(event) || []
 
   if (version !== 'all') {
-    const major = (version === '2-bridge' ? '2' : version) satisfies '2' | '3'
-    const testableVersion = `${major}.999.999`
+    const major = (version === '2-bridge' ? 2 : Number(version)) as 2 | 3 | 4
 
     // Filter out modules by compatibility
     modules = modules.filter((module) => {
@@ -20,7 +18,7 @@ export default defineCachedEventHandler(async (event) => {
       if (version === '2-bridge' && !module.compatibility.requires?.bridge) {
         return false
       }
-      return satisfies(testableVersion, module.compatibility.nuxt)
+      return moduleSupportsNuxt(module.compatibility.nuxt, major)
     })
   }
 
@@ -101,8 +99,7 @@ export default defineCachedEventHandler(async (event) => {
   name: 'modules',
   swr: true,
   getKey(event) {
-    const query = getQuery(event)
-    return `${query?.version || '3'}-${query?.category || 'all'}`
+    return modulesCacheKey(getQuery(event) as Record<string, unknown>)
   },
   maxAge: 60 * 60 // 1 hour
 })

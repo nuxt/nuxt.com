@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Module } from '#shared/types'
+import { getModuleNuxtMajors } from '#shared/utils/modules'
 
 const emit = defineEmits<{
   add: [module: Module]
@@ -22,6 +23,8 @@ const props = withDefaults(
 const { copy } = useClipboard()
 const { selectedSort } = useModules()
 const { track } = useAnalytics()
+
+const nuxtMajors = computed(() => getModuleNuxtMajors(props.module.compatibility?.nuxt))
 
 const publishedAgo = useTimeAgo(() => props.module.stats.publishedAt)
 const createdAgo = useTimeAgo(() => props.module.stats.createdAt)
@@ -144,6 +147,17 @@ const items = computed(() => [
 
         <div class="flex items-center justify-between gap-3 -my-1 text-muted">
           <div class="flex items-center gap-3 flex-wrap">
+            <div v-if="nuxtMajors.length" class="flex items-center gap-1">
+              <UBadge
+                v-for="major in nuxtMajors"
+                :key="major"
+                :label="`Nuxt ${major}`"
+                color="neutral"
+                variant="subtle"
+                size="sm"
+              />
+            </div>
+
             <UTooltip text="Monthly NPM Downloads">
               <NuxtLink
                 class="flex items-center gap-1 hover:text-highlighted"

@@ -1,5 +1,6 @@
 type ModuleStatsKeys = 'version' | 'downloads' | 'stars' | 'publishedAt' | 'createdAt'
 import type { Module } from '#shared/types'
+import { moduleSupportsNuxt } from '#shared/utils/modules'
 import type { Filter } from '~/types'
 
 const iconsMap = {
@@ -42,8 +43,28 @@ export const moduleIcon = function (category: string) {
 export const useModules = () => {
   const route = useRoute()
   const router = useRouter()
-  const { data, execute } = useFetch('/api/v1/modules', {
+
+  const versions: Filter[] = [
+    { key: '3', label: 'Nuxt 3' },
+    { key: '4', label: 'Nuxt 4' },
+    { key: 'all', label: 'All' }
+  ]
+
+  const selectedVersion = computed(() => {
+    const raw = route.query.version
+    const key = raw == null || raw === ''
+      ? undefined
+      : String(Array.isArray(raw) ? raw[0] : raw)
+    return versions.find(version => version.key === key) || versions[0]
+  })
+
+  // Always fetch the full catalog once, then filter by major on the client.
+  // Production still rejects `version=4`, and switching API version clears the
+  // list during refetch (empty flash / stuck empty after hydration).
+  const { data, execute, status } = useFetch('/api/v1/modules', {
+    key: 'modules-catalog',
     immediate: false,
+    query: { version: 'all' },
     default: () => ({
       modules: [],
       stats: {
@@ -61,7 +82,12 @@ export const useModules = () => {
 
   // Data fetching
   async function fetchList() {
-    if (modules.value.length) {
+    if (status.value === 'pending') {
+      return
+    }
+    // Re-fetch when the result is empty. Large `/api/v1/modules` responses may
+    // not hydrate into the client payload, leaving status=success with [].
+    if (status.value === 'success' && (data.value?.modules?.length ?? 0) > 0) {
       return
     }
 
@@ -89,7 +115,14 @@ export const useModules = () => {
           key: category,
           label: category,
           active: route.query.category === category,
-          to: { name: 'modules', query: category === route.query.category ? undefined : { category }, state: { smooth: '#smooth' } },
+          to: {
+            name: 'modules',
+            query: {
+              ...route.query,
+              category: category === route.query.category ? undefined : category
+            },
+            state: { smooth: '#smooth' }
+          },
           icon: iconsMap[category as keyof typeof iconsMap] || undefined,
           click: (e: Event) => {
             if (route.query.category !== category) {
@@ -135,8 +168,16 @@ export const useModules = () => {
   }
 
   const filteredModules = computed<Module[]>(() => {
+    const versionKey = selectedVersion.value?.key
+    const versionMajor = versionKey === '3' || versionKey === '4'
+      ? Number(versionKey) as 3 | 4
+      : null
+
     let filteredModules = [...modules.value]
       .filter((module: Module) => {
+        if (versionMajor && !moduleSupportsNuxt(module.compatibility?.nuxt, versionMajor)) {
+          return false
+        }
         if (selectedCategory.value) {
           if (selectedCategory.value.key === 'Official') {
             return module.type === 'official'
@@ -175,7 +216,7 @@ export const useModules = () => {
     // Data fetching
     fetchList,
     // Data
-    // versions,
+    versions,
     sorts,
     orders,
     // Computed
@@ -184,12 +225,8 @@ export const useModules = () => {
     filteredModules,
     module,
     categories,
-    // types,
-    // contributors,
-    // stats,
     selectedCategory,
-    // selectedType,
-    // selectedVersion,
+    selectedVersion,
     selectedSort,
     selectedOrder,
     q

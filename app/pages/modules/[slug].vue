@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Module } from '#shared/types'
+import { getModuleNuxtMajors, moduleSupportsNuxt } from '#shared/utils/modules'
 import { ModuleProseA, ModuleProseKbd, ModuleProseImg } from '#components'
 
 definePageMeta({
@@ -12,6 +13,12 @@ const { data: module } = await useFetch<Module>(`/api/v1/modules/${route.params.
 if (!module.value) {
   throw createError({ statusCode: 404, statusMessage: 'Module not found', fatal: true })
 }
+
+const nuxtMajors = computed(() => getModuleNuxtMajors(module.value?.compatibility?.nuxt))
+const isLegacyNuxtModule = computed(() => {
+  const range = module.value?.compatibility?.nuxt
+  return !moduleSupportsNuxt(range, 3) && !moduleSupportsNuxt(range, 4)
+})
 
 const ownerName = computed(() => {
   const [owner, name] = module.value!.repo.split('#')[0].split('/')
@@ -95,11 +102,11 @@ if (import.meta.server) {
 
 <template>
   <UContainer v-if="module">
-    <div v-if="!module.compatibility?.nuxt?.includes('^3') && !module.compatibility?.nuxt?.includes('>=3')" class="pt-8">
+    <div v-if="isLegacyNuxtModule" class="pt-8">
       <UAlert
         icon="i-lucide-triangle-alert"
         variant="subtle"
-        title="This module is not yet compatible with Nuxt 3"
+        title="This module is not compatible with Nuxt 3 or Nuxt 4"
       >
         <template #description>
           Head over to <NuxtLink to="https://v2.nuxt.com" target="_blank" class="underline">
@@ -122,12 +129,21 @@ if (import.meta.server) {
             class="-m-[4px] rounded-none bg-transparent"
           />
 
-          <div>
-            {{ module.npm }}
+          <div class="flex flex-wrap items-center gap-2">
+            <span>{{ module.npm }}</span>
 
             <UTooltip v-if="module.type === 'official'" text="Official module" class="tracking-normal">
               <UIcon name="i-lucide-medal" class="size-6 text-primary" />
             </UTooltip>
+
+            <UBadge
+              v-for="major in nuxtMajors"
+              :key="major"
+              :label="`Nuxt ${major}`"
+              color="neutral"
+              variant="subtle"
+              size="sm"
+            />
           </div>
         </div>
       </template>

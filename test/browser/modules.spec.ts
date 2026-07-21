@@ -55,6 +55,21 @@ test.describe('Modules Page', () => {
     expect(await moduleLinks.count()).toBeLessThanOrEqual(count)
   })
 
+  test('filters modules by Nuxt version', async ({ page, goto }) => {
+    await goto('/modules')
+
+    await page.goto('/modules?version=4')
+    await expect(page).toHaveURL(/version=4/)
+    await expect(page.getByText('Nuxt 4').first()).toBeVisible()
+
+    const moduleLinks = page.locator('a[href^="/modules/"]')
+    await expect.poll(async () => moduleLinks.count()).toBeGreaterThan(0)
+
+    await page.goto('/modules?version=all')
+    await expect(page).toHaveURL(/version=all/)
+    await expect(page.getByText('All').first()).toBeVisible()
+  })
+
   // TODO: needs to be fixed in nuxt/ui
   test.skip('navigates to module detail page', async ({ page, goto }) => {
     await goto('/modules')
