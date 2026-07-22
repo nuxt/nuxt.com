@@ -55,10 +55,9 @@ export default defineCachedEventHandler(async (event) => {
     modules: string[]
   }
 
-  const [bulkNpmStats, bulkHealth] = await Promise.all([
-    npm.fetchBulkPackageStats(modules.map(m => m.npm), 'last-month'),
-    fetchBulkModuleHealth(event, modules)
-  ])
+  // Health is served separately (/api/v1/modules/health) so nuxt.care latency
+  // can't block or poison this list's SWR cache.
+  const bulkNpmStats = await npm.fetchBulkPackageStats(modules.map(m => m.npm), 'last-month')
 
   const maintainers: Record<string, MaintainerWithModules> = {}
   const contributors: Record<string, ContributorWithModules> = {}
@@ -69,7 +68,6 @@ export default defineCachedEventHandler(async (event) => {
     ])
     module.stats = mStats
     module.contributors = mContributors
-    module.health = bulkHealth[module.name] || null
 
     if (module.maintainers) {
       for (const maintainer of module.maintainers) {

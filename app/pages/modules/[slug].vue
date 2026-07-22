@@ -13,6 +13,16 @@ if (!module.value) {
   throw createError({ statusCode: 404, statusMessage: 'Module not found', fatal: true })
 }
 
+// Reassign the ref (not module.value.health = ...): useFetch `data` is a
+// shallowRef, so an in-place nested write would not trigger reactivity.
+const { health } = useModuleHealth()
+watch(health, (map) => {
+  const m = module.value
+  if (m && map[m.name] && m.health !== map[m.name]) {
+    module.value = { ...m, health: map[m.name] }
+  }
+})
+
 const ownerName = computed(() => {
   const [owner, name] = module.value!.repo.split('#')[0].split('/')
   return `${owner}/${name}`
