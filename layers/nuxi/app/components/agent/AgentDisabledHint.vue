@@ -19,7 +19,7 @@ const eveEnabled = useRuntimeConfig().public.eveEnabled !== false
     <UIcon name="i-lucide-power-off" class="size-3.5 shrink-0" />
     <span class="min-w-0 flex-1">
       Nuxi agent is disabled in <code class="font-mono text-default">--ui-only</code> dev mode.
-      Run <code class="font-mono text-default">pnpm dev:full</code> with an <code class="font-mono text-default">AI_GATEWAY_API_KEY</code> to enable it.
+      Run <code class="font-mono text-default">pnpm dev:nuxi</code> with an <code class="font-mono text-default">AI_GATEWAY_API_KEY</code> to enable it.
     </span>
   </div>
 </template>
