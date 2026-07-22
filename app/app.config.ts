@@ -41,7 +41,9 @@ export default defineAppConfig({
     },
     prose: {
       img: {
-        base: 'w-full'
+        slots: {
+          base: 'w-full'
+        }
       },
       codeTree: {
         slots: {
