@@ -52,7 +52,6 @@ export interface PlaygroundCardData {
 export interface PromptCardData {
   description: string
   prompt: string
-  repo?: string
   icon?: string
   deeplinks: {
     cursor: string

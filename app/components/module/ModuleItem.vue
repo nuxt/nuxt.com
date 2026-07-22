@@ -40,7 +40,7 @@ const staticModuleDate = computed(() =>
 
 function copyInstallCommand(moduleName: string) {
   track('Module Install Command Copied', { module: moduleName })
-  const command = `npx nuxt@latest module add ${moduleName}`
+  const command = buildModuleInstallCommand(moduleName)
   copy(command, { title: 'Command copied to clipboard:', description: command })
 }
 

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { motion, AnimatePresence } from 'motion-v'
+import type { DropdownMenuItem } from '@nuxt/ui'
 import type { Module } from '#shared/types'
 import { joinURL } from 'ufo'
 
@@ -14,6 +15,7 @@ const el = useTemplateRef<HTMLElement>('el')
 const { replaceRoute } = useFilters('modules')
 const { fetchList, filteredModules, q, categories, modules, stats, selectedSort, selectedOrder, selectedCategory, sorts } = useModules()
 const { track } = useAnalytics()
+const { openInCursor, openInClaudeCode } = useIdeDeeplink()
 
 const cacheControl = useResponseHeader('Cache-Control')
 const cdnCacheControl = useResponseHeader('CDN-Cache-Control')
@@ -147,9 +149,9 @@ watch(filteredModules, () => {
 })
 
 const copyAllInstallCommands = () => {
-  const moduleNames = modulesToAdd.value.map(module => module.name).join(' ')
-  const command = `npx nuxt@latest module add ${moduleNames}`
-  track('Modules Bulk Install Copied', { count: modulesToAdd.value.length, modules: moduleNames })
+  const moduleNames = modulesToAdd.value.map(module => module.name)
+  const command = buildModuleInstallCommand(moduleNames)
+  track('Modules Bulk Install Copied', { count: modulesToAdd.value.length, modules: moduleNames.join(' ') })
   copy(command, {
     title: 'Install command copied to clipboard:',
     description: `Ready to install ${modulesToAdd.value.length} module${modulesToAdd.value.length > 1 ? 's' : ''} at once`
@@ -157,22 +159,8 @@ const copyAllInstallCommands = () => {
 }
 
 const copyAgentPrompt = () => {
-  const modulesList = modulesToAdd.value.map((m) => {
-    const lines = [`- ${m.npm}: ${m.description}`]
-    if (m.website) lines.push(`  Docs: ${m.website}`)
-    if (m.repo) lines.push(`  GitHub: https://github.com/${m.repo}`)
-    return lines.join('\n')
-  }).join('\n')
+  const prompt = buildBulkModuleAgentPrompt(modulesToAdd.value)
   const moduleNames = modulesToAdd.value.map(m => m.name).join(' ')
-  const prompt = `Install and configure the following Nuxt modules in my project:
-
-${modulesList}
-
-Steps:
-1. Run \`npx nuxt@latest module add ${moduleNames}\` to install all modules at once
-2. For each module, read its documentation and add the recommended configuration in \`nuxt.config.ts\`
-3. List any required environment variables in \`.env.example\` without filling in actual values
-4. Verify the setup is correct by checking that the modules are properly registered`
   track('Modules Agent Prompt Copied', { count: modulesToAdd.value.length, modules: moduleNames })
   copy(prompt, {
     title: 'Agent prompt copied to clipboard!',
@@ -180,6 +168,34 @@ Steps:
     icon: 'i-custom-ai'
   })
 }
+
+async function openBulkPromptInCursor() {
+  track('Modules Agent Prompt Opened', { count: modulesToAdd.value.length, ide: 'cursor' })
+  await openInCursor(buildBulkModuleAgentPrompt(modulesToAdd.value))
+}
+
+async function openBulkPromptInClaudeCode() {
+  track('Modules Agent Prompt Opened', { count: modulesToAdd.value.length, ide: 'claude' })
+  await openInClaudeCode(buildBulkModuleAgentPrompt(modulesToAdd.value))
+}
+
+const agentPromptItems = computed<DropdownMenuItem[]>(() => [
+  {
+    label: 'Copy agent prompt',
+    icon: 'i-custom-ai',
+    onSelect: copyAgentPrompt
+  },
+  {
+    label: 'Open in Cursor',
+    icon: 'i-simple-icons-cursor',
+    onSelect: openBulkPromptInCursor
+  },
+  {
+    label: 'Open in Claude Code',
+    icon: 'i-simple-icons-anthropic',
+    onSelect: openBulkPromptInClaudeCode
+  }
+])
 
 const clearAllModules = () => {
   modulesToAdd.value = []
@@ -421,18 +437,31 @@ initializeModules()
                   </Motion>
                 </UTooltip>
 
-                <UTooltip text="Copy agent prompt to install & configure">
-                  <Motion :press="{ scale: 0.99 }">
-                    <UButton
-                      color="neutral"
-                      variant="soft"
-                      size="lg"
-                      icon="i-custom-ai"
-                      class="rounded-full"
-                      @click="copyAgentPrompt"
-                    />
-                  </Motion>
-                </UTooltip>
+                <Motion :press="{ scale: 0.99 }">
+                  <UFieldGroup>
+                    <UTooltip text="Copy agent prompt to install & configure">
+                      <UButton
+                        color="neutral"
+                        variant="soft"
+                        size="lg"
+                        icon="i-custom-ai"
+                        class="rounded-s-full"
+                        @click="copyAgentPrompt"
+                      />
+                    </UTooltip>
+
+                    <UDropdownMenu :items="agentPromptItems" :content="{ align: 'end' }">
+                      <UButton
+                        color="neutral"
+                        variant="soft"
+                        size="lg"
+                        icon="i-lucide-chevron-down"
+                        class="rounded-e-full"
+                        aria-label="More agent prompt options"
+                      />
+                    </UDropdownMenu>
+                  </UFieldGroup>
+                </Motion>
 
                 <UTooltip text="Clear selection">
                   <Motion :press="{ scale: 0.99 }">

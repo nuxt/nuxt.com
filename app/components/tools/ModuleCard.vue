@@ -24,15 +24,15 @@ const displayTitle = computed(() => {
   return props.slug?.trim() || 'Module'
 })
 
-const installCommand = computed(() => `npx nuxt@latest module add ${props.slug}`)
+const installCommand = computed(() => buildModuleInstallCommand(props.slug))
 
-const agentPrompt = computed(() => {
-  const lines = [`Install and configure the Nuxt module **${props.npm || props.slug}**: ${props.description || ''}`]
-  if (props.website) lines.push(`Docs: ${props.website}`)
-  if (props.repo) lines.push(`GitHub: https://github.com/${props.repo}`)
-  lines.push(`\nSteps:\n1. Run \`${installCommand.value}\`\n2. Read the module documentation and add recommended configuration in \`nuxt.config.ts\`\n3. List any required environment variables in \`.env.example\` without filling in actual values`)
-  return lines.join('\n')
-})
+const agentPrompt = computed(() => buildModuleAgentPrompt({
+  name: props.slug,
+  npm: props.npm || '',
+  description: props.description || '',
+  website: props.website || '',
+  repo: props.repo || ''
+}))
 
 function copyInstall() {
   track('Module Install Command Copied', { module: props.slug, source: 'nuxt-agent' })

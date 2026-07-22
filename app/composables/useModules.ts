@@ -39,6 +39,41 @@ export const moduleIcon = function (category: string) {
   return iconsMap[category as keyof typeof iconsMap] || 'i-lucide-box'
 }
 
+type ModulePromptInfo = Pick<Module, 'name' | 'npm' | 'description' | 'website' | 'repo'>
+
+export function buildModuleInstallCommand(names: string | string[]): string {
+  const moduleNames = Array.isArray(names) ? names.join(' ') : names
+  return `npx nuxt@latest module add ${moduleNames}`
+}
+
+export function buildModuleAgentPrompt(module: ModulePromptInfo): string {
+  const lines = [`Install and configure the Nuxt module **${module.npm || module.name}**: ${module.description || ''}`]
+  if (module.website) lines.push(`Docs: ${module.website}`)
+  if (module.repo) lines.push(`GitHub: https://github.com/${module.repo}`)
+  lines.push(`\nSteps:\n1. Run \`${buildModuleInstallCommand(module.name)}\`\n2. Read the module documentation and add recommended configuration in \`nuxt.config.ts\`\n3. List any required environment variables in \`.env.example\` without filling in actual values`)
+  return lines.join('\n')
+}
+
+export function buildBulkModuleAgentPrompt(modules: ModulePromptInfo[]): string {
+  const modulesList = modules.map((m) => {
+    const lines = [`- ${m.npm}: ${m.description}`]
+    if (m.website) lines.push(`  Docs: ${m.website}`)
+    if (m.repo) lines.push(`  GitHub: https://github.com/${m.repo}`)
+    return lines.join('\n')
+  }).join('\n')
+  const moduleNames = modules.map(m => m.name)
+
+  return `Install and configure the following Nuxt modules in my project:
+
+${modulesList}
+
+Steps:
+1. Run \`${buildModuleInstallCommand(moduleNames)}\` to install all modules at once
+2. For each module, read its documentation and add the recommended configuration in \`nuxt.config.ts\`
+3. List any required environment variables in \`.env.example\` without filling in actual values
+4. Verify the setup is correct by checking that the modules are properly registered`
+}
+
 export const sorts: Filter[] = [
   { key: 'downloads', label: 'Downloads' },
   { key: 'stars', label: 'Stars' },

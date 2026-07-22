@@ -3,13 +3,8 @@ export const MAX_PROMPT_LENGTH = 5000
 /** Max prompt length for show_prompt cards — must fit in browser deeplink URLs. */
 export const PROMPT_CARD_MAX_LENGTH = 800
 
-/** Claude `q` in deeplinks. */
-export const CLAUDE_DEEPLINK_MAX_Q = 1500
-
 /** Chrome truncates custom-scheme URLs around ~2048 chars — stay well under. */
 export const CLAUDE_BROWSER_MAX_URL = 1800
-
-export const REPO_PATTERN = /^[\w-]+\/[\w.-]+$/
 
 /** Slice on Unicode code-point boundaries so surrogate pairs stay valid for encodeURIComponent. */
 function sliceCodePoints(text: string, maxLength: number): string {
@@ -23,12 +18,6 @@ export function truncatePrompt(prompt: string, max = MAX_PROMPT_LENGTH): string 
   const trimmed = prompt.trim()
   if ([...trimmed].length <= max) return trimmed
   return `${sliceCodePoints(trimmed, max - 1)}…`
-}
-
-export function normalizeRepo(repo?: string): string | undefined {
-  const trimmed = repo?.trim()
-  if (!trimmed || !REPO_PATTERN.test(trimmed)) return undefined
-  return trimmed
 }
 
 function fitEncodedQuery(prompt: string, prefix: string, maxUrlLength: number): { q: string, truncated: boolean } {
@@ -75,57 +64,29 @@ export function buildCursorBrowserUrl(prompt: string): {
   }
 }
 
-/** Claude Code terminal deeplink — https://code.claude.com/docs/en/deep-links */
-export function buildClaudeCodeUrl(prompt: string, repo?: string): string {
-  const q = truncatePrompt(prompt, CLAUDE_DEEPLINK_MAX_Q)
-  const parts = [`q=${encodeURIComponent(q)}`]
-  const normalizedRepo = normalizeRepo(repo)
-  if (normalizedRepo) parts.push(`repo=${encodeURIComponent(normalizedRepo)}`)
-  return `claude-cli://open?${parts.join('&')}`
+/** Claude Desktop deeplink — aligned with Nuxt UI ProsePrompt. https://support.claude.com/en/articles/14729294 */
+export function buildClaudeCodeUrl(prompt: string): string {
+  const text = truncatePrompt(prompt)
+  return `claude://code/new?q=${encodeURIComponent(text)}`
 }
 
-/** Browser Claude deeplink — prefills `q` when the URL fits, else signals clipboard fallback. */
-export function buildClaudeCodeBrowserUrl(prompt: string, repo?: string): {
+/** Browser-safe Claude deeplink — fits under Chrome custom-scheme URL limit. */
+export function buildClaudeCodeBrowserUrl(prompt: string): {
   url: string
   needsClipboardFallback: boolean
 } {
-  const normalizedRepo = normalizeRepo(repo)
-  const baseParams: string[] = []
-  if (normalizedRepo) baseParams.push(`repo=${encodeURIComponent(normalizedRepo)}`)
-
-  const prefix = `claude-cli://open?${baseParams.length ? `${baseParams.join('&')}&` : ''}q=`
-  const { q, truncated } = fitEncodedQuery(
-    truncatePrompt(prompt, PROMPT_CARD_MAX_LENGTH),
-    prefix,
-    CLAUDE_BROWSER_MAX_URL
-  )
-
-  if (truncated) {
-    const url = baseParams.length
-      ? `claude-cli://open?${baseParams.join('&')}`
-      : 'claude-cli://open'
-    return { url, needsClipboardFallback: true }
-  }
-
-  baseParams.push(`q=${encodeURIComponent(q)}`)
-  const url = `claude-cli://open?${baseParams.join('&')}`
-
-  if (url.length > CLAUDE_BROWSER_MAX_URL) {
-    const fallbackUrl = normalizedRepo
-      ? `claude-cli://open?repo=${encodeURIComponent(normalizedRepo)}`
-      : 'claude-cli://open'
-    return { url: fallbackUrl, needsClipboardFallback: true }
-  }
-
+  const normalized = truncatePrompt(prompt, PROMPT_CARD_MAX_LENGTH)
+  const prefix = 'claude://code/new?q='
+  const { q, truncated } = fitEncodedQuery(normalized, prefix, CLAUDE_BROWSER_MAX_URL)
   return {
-    url,
-    needsClipboardFallback: false
+    url: `${prefix}${encodeURIComponent(q)}`,
+    needsClipboardFallback: truncated || q !== normalized
   }
 }
 
-export function buildIdeDeeplinks(prompt: string, repo?: string) {
+export function buildIdeDeeplinks(prompt: string) {
   const cursor = buildCursorBrowserUrl(prompt)
-  const claude = buildClaudeCodeBrowserUrl(prompt, repo)
+  const claude = buildClaudeCodeBrowserUrl(prompt)
   return {
     cursor: cursor.url,
     claude: claude.url,
@@ -136,7 +97,6 @@ export function buildIdeDeeplinks(prompt: string, repo?: string) {
 export function parsePromptCardOutput(output: unknown): {
   description: string
   prompt: string
-  repo?: string
   deeplinks: { cursor: string, claude: string }
 } | null {
   if (!output || typeof output !== 'object') return null
@@ -150,7 +110,6 @@ export function parsePromptCardOutput(output: unknown): {
   return {
     description: o.description,
     prompt: o.prompt,
-    repo: typeof o.repo === 'string' ? o.repo : undefined,
     deeplinks: {
       cursor: links.cursor,
       claude: links.claude,
