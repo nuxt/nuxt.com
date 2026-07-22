@@ -10,7 +10,7 @@
   "dependencies": {
     "@ai-sdk/gateway": "^4.0.19",
     "ai": "^7.0.26",
-    "eve": "^0.23.0",
+    "eve": "^0.27.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {

@@ -8,7 +8,6 @@ export default defineNuxtConfig({
   },
 
   eve: {
-    eveRoot: './layers/nuxi',
-    configureVercelJson: false
+    eveRoot: './layers/nuxi'
   }
 })
