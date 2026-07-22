@@ -1,12 +1,5 @@
-import { connect } from '@vercel/connect/eve'
-import type { SessionContext } from 'eve/context'
 import { defineMcpClientConnection } from 'eve/connections'
-import { canAccessAdminMcp } from '../lib/admin-mcp-access.js'
-
-// Not secret (they grant no access without a valid token), but nuxt.com is a
-// public repo — keep these out of source so they're not hardcoded in the open.
-const VERCEL_TEAM_ID = process.env.NUXI_VERCEL_TEAM_ID || '<set NUXI_VERCEL_TEAM_ID>'
-const VERCEL_PROJECT_ID = process.env.NUXI_VERCEL_PROJECT_ID || '<set NUXI_VERCEL_PROJECT_ID>'
+import { adminOnlyVercelAuth, VERCEL_PROJECT_ID, VERCEL_TEAM_ID } from '../lib/vercel-connect.js'
 
 const ALLOWED_TOOLS = [
   'search_vercel_documentation',
@@ -32,20 +25,5 @@ export default defineMcpClientConnection({
   url: 'https://mcp.vercel.com/nuxt-js/nuxt',
   description: 'Vercel platform for nuxt.com: deployments, runtime logs/errors, and Nuxi\'s own Agent Runs observability. Admin/Slack/schedule sessions only.',
   tools: { allow: ALLOWED_TOOLS },
-  auth: (ctx: SessionContext) => {
-    if (!canAccessAdminMcp(ctx.session.auth.current)) {
-      return {
-        principalType: 'app' as const,
-        async getToken(): Promise<never> {
-          throw new Error('Vercel MCP is restricted to Nuxi admins.')
-        }
-      }
-    }
-
-    return connect({
-      connector: 'vercel/mcp',
-      principalType: 'app',
-      autoProvision: false
-    })
-  }
+  auth: adminOnlyVercelAuth('Vercel MCP', { connector: 'vercel/mcp', principalType: 'app', autoProvision: false })
 })
