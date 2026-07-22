@@ -338,6 +338,8 @@ export function useNuxiChat(options: UseNuxiChatOptions) {
   const { track } = useAnalytics()
   const toast = useToast()
   const chatId = computed(() => toValue(options.chatId))
+  // `false` only in local `--ui-only` dev mode, where the Eve runtime is not spawned.
+  const eveEnabled = useRuntimeConfig().public.eveEnabled !== false
 
   const input = ref('')
   const paste = usePasteAttachment(input)
@@ -410,7 +412,7 @@ export function useNuxiChat(options: UseNuxiChatOptions) {
       : inputValue.parts
     const persist = typeof inputValue === 'string' || inputValue.persist !== false
 
-    if (!parts.length || getMessageTextLength(parts) === 0 || agent.rateLimitReached.value) return
+    if (!eveEnabled || !parts.length || getMessageTextLength(parts) === 0 || agent.rateLimitReached.value) return
 
     track('Nuxi Message Sent', {
       source: options.source,

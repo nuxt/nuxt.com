@@ -119,6 +119,8 @@ watch(isOpen, (value) => {
           </div>
         </Transition>
 
+        <AgentDisabledHint bar />
+
         <AgentLoginHint v-if="!loggedIn" bar />
 
         <AgentChatPrompt
