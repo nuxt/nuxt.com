@@ -49,9 +49,55 @@ if (import.meta.server) {
 
 await fetchList()
 
+const lastSelectedIndex = ref<number | null>(null)
+
+// O(1) membership lookup so re-rendering the grid on every add/remove doesn't
+// re-scan the whole selection for each card (was `modulesToAdd.some(...)`).
+const addedModuleNames = computed(() => new Set(modulesToAdd.value.map(m => m.name)))
+
+function toggleModuleSelection(module: Module) {
+  const idx = modulesToAdd.value.findIndex(m => m.name === module.name)
+  if (idx === -1) {
+    modulesToAdd.value.push(module)
+  } else {
+    modulesToAdd.value.splice(idx, 1)
+  }
+}
+
+function selectModuleRange(module: Module) {
+  const currentIndex = displayedModules.value.findIndex(m => m.name === module.name)
+  if (currentIndex === -1) return
+
+  if (lastSelectedIndex.value === null) {
+    lastSelectedIndex.value = currentIndex
+    modulesToAdd.value = [module]
+    return
+  }
+
+  const [start, end] = [lastSelectedIndex.value, currentIndex].sort((a, b) => a - b)
+  modulesToAdd.value = displayedModules.value.slice(start, end + 1)
+}
+
+function handleModuleSelect(module: Module, event: MouseEvent) {
+  if (event.shiftKey) {
+    selectModuleRange(module)
+    return
+  }
+
+  // metaKey = Cmd on macOS, ctrlKey = Ctrl on Windows/Linux
+  toggleModuleSelection(module)
+  lastSelectedIndex.value = displayedModules.value.findIndex(m => m.name === module.name)
+}
+
 defineShortcuts({
   '/': () => {
     input.value?.inputRef?.focus()
+  },
+  'escape': {
+    usingInput: true,
+    handler: () => {
+      if (modulesToAdd.value.length) clearAllModules()
+    }
   }
 })
 
@@ -96,6 +142,7 @@ watch(scrollY, (y) => {
 watch(filteredModules, () => {
   isLoading.value = false
   displayedModules.value = []
+  lastSelectedIndex.value = null
   initializeModules()
 })
 
@@ -136,6 +183,7 @@ Steps:
 
 const clearAllModules = () => {
   modulesToAdd.value = []
+  lastSelectedIndex.value = null
 }
 
 initializeModules()
@@ -272,8 +320,9 @@ initializeModules()
       <UPageBody>
         <div class="flex justify-between mb-4 text-muted text-xs">
           <div class="flex items-center gap-2">
-            <UIcon name="i-lucide-info" class="size-4" />
-            <span>Shift+click to select modules for bulk installation</span>
+            <span class="flex items-center gap-1.5">
+              <UKbd value="meta" size="sm" />+click to select · Shift+click for a range · Esc to clear
+            </span>
           </div>
           <ULink to="/docs/guide/modules/getting-started" class="hidden md:flex items-center gap-1">
             Create your own module
@@ -286,9 +335,11 @@ initializeModules()
             v-for="module in displayedModules"
             :key="module.name"
             :module="module"
-            :is-added="modulesToAdd.some(m => m.name === module.name)"
+            :is-added="addedModuleNames.has(module.name)"
+            selectable
             @add="modulesToAdd.push(module)"
             @remove="modulesToAdd = modulesToAdd.filter(m => m.name !== module.name)"
+            @select="handleModuleSelect"
           />
 
           <template v-if="isLoading">
@@ -329,15 +380,34 @@ initializeModules()
           :exit="{ y: 100, opacity: 0 }"
           :transition="{ type: 'spring', stiffness: 400, damping: 30 }"
         >
-          <div layout class="flex justify-center mb-6">
-            <div class="bg-default/80 backdrop-blur-lg rounded-full p-1 border border-default dark:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.9)] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] flex items-center gap-4">
-              <motion.div class="flex items-center gap-1">
-                <UTooltip text="Copy install command">
-                  <Motion
-                    :press="{
-                      scale: 0.99
+          <div class="flex flex-col items-center mb-6">
+            <div class="relative flex mb-0.5 p-1 rounded-full border border-default bg-default/90 backdrop-blur-lg">
+              <UAvatarGroup size="3xs" :max="6">
+                <TransitionGroup name="avatar-pop">
+                  <UTooltip
+                    v-for="m in modulesToAdd"
+                    :key="m.name"
+                    :text="m.npm"
+                    :content="{
+                      side: 'top'
                     }"
                   >
+                    <UAvatar
+                      :src="moduleImage(m.icon)"
+                      :icon="moduleIcon(m.category)"
+                      :alt="m.name"
+                      :ui="{ root: 'size-3.5 text-[6px]' }"
+                      class="rounded-full bg-default ring-1 ring-default"
+                    />
+                  </UTooltip>
+                </TransitionGroup>
+              </UAvatarGroup>
+            </div>
+
+            <div class="relative z-10 bg-default/80 backdrop-blur-lg rounded-full p-1 border border-default dark:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.9)] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] flex items-center gap-4">
+              <motion.div class="flex items-center gap-1">
+                <UTooltip text="Copy install command">
+                  <Motion :press="{ scale: 0.99 }">
                     <UButton
                       color="primary"
                       variant="soft"
@@ -352,11 +422,7 @@ initializeModules()
                 </UTooltip>
 
                 <UTooltip text="Copy agent prompt to install & configure">
-                  <Motion
-                    :press="{
-                      scale: 0.99
-                    }"
-                  >
+                  <Motion :press="{ scale: 0.99 }">
                     <UButton
                       color="neutral"
                       variant="soft"
@@ -369,17 +435,13 @@ initializeModules()
                 </UTooltip>
 
                 <UTooltip text="Clear selection">
-                  <Motion
-                    :press="{
-                      scale: 0.99
-                    }"
-                  >
+                  <Motion :press="{ scale: 0.99 }">
                     <UButton
                       color="neutral"
                       variant="soft"
                       size="lg"
                       icon="i-lucide-x"
-                      class="hover:bg-error/10 hover:text-error rounded-full"
+                      class="rounded-full"
                       @click="clearAllModules"
                     />
                   </Motion>
@@ -392,3 +454,24 @@ initializeModules()
     </UPage>
   </UContainer>
 </template>
+
+<style scoped>
+.avatar-pop-move {
+  transition: transform 0.15s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.avatar-pop-enter-active {
+  transition: opacity 0.15s cubic-bezier(0.23, 1, 0.32, 1), scale 0.15s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.avatar-pop-leave-active {
+  position: absolute;
+  transition: opacity 0.1s ease-in, scale 0.1s ease-in;
+}
+
+.avatar-pop-enter-from,
+.avatar-pop-leave-to {
+  opacity: 0;
+  scale: 0.9;
+}
+</style>

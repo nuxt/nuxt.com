@@ -4,6 +4,7 @@ import type { Module } from '#shared/types'
 const emit = defineEmits<{
   add: [module: Module]
   remove: [module: Module]
+  select: [module: Module, event: MouseEvent]
 }>()
 
 const props = withDefaults(
@@ -12,22 +13,23 @@ const props = withDefaults(
     showBadge?: boolean
     isAdded: boolean
     showAddButton?: boolean
+    selectable?: boolean
   }>(),
   {
     showBadge: true,
-    showAddButton: true
+    showAddButton: true,
+    selectable: false
   }
 )
 
 const { copy } = useClipboard()
-const { selectedSort } = useModules()
 const { track } = useAnalytics()
 
-const publishedAgo = useTimeAgo(() => props.module.stats.publishedAt)
-const createdAgo = useTimeAgo(() => props.module.stats.createdAt)
+const route = useRoute()
+const selectedSort = computed(() => sorts.find(sort => sort.key === route.query.sortBy) || sorts[0])
 
-const relativeDate = computed(() =>
-  selectedSort.value.key === 'publishedAt' ? publishedAgo.value : createdAgo.value
+const relativeDate = useTimeAgo(() =>
+  selectedSort.value.key === 'publishedAt' ? props.module.stats.publishedAt : props.module.stats.createdAt
 )
 
 const staticModuleDate = computed(() =>
@@ -53,9 +55,10 @@ function toggleModule(m: Module) {
 }
 
 function handleCardClick(event: MouseEvent) {
-  if (event.shiftKey) {
+  if (!props.selectable) return
+  if (event.shiftKey || event.metaKey || event.ctrlKey) {
     event.preventDefault()
-    toggleModule(props.module)
+    emit('select', props.module, event)
   }
 }
 

@@ -39,6 +39,18 @@ export const moduleIcon = function (category: string) {
   return iconsMap[category as keyof typeof iconsMap] || 'i-lucide-box'
 }
 
+export const sorts: Filter[] = [
+  { key: 'downloads', label: 'Downloads' },
+  { key: 'stars', label: 'Stars' },
+  { key: 'publishedAt', label: 'Updated' },
+  { key: 'createdAt', label: 'Created' }
+]
+
+const orders: Filter[] = [
+  { key: 'desc', label: 'Desc', icon: 'i-lucide-arrow-down-wide-narrow' },
+  { key: 'asc', label: 'Asc', icon: 'i-lucide-arrow-up-wide-narrow' }
+]
+
 export const useModules = () => {
   const route = useRoute()
   const router = useRouter()
@@ -69,18 +81,6 @@ export const useModules = () => {
   }
 
   // Data
-
-  const sorts: Filter[] = [
-    { key: 'downloads', label: 'Downloads' },
-    { key: 'stars', label: 'Stars' },
-    { key: 'publishedAt', label: 'Updated' },
-    { key: 'createdAt', label: 'Created' }
-  ]
-
-  const orders: Filter[] = [
-    { key: 'desc', label: 'Desc', icon: 'i-lucide-arrow-down-wide-narrow' },
-    { key: 'asc', label: 'Asc', icon: 'i-lucide-arrow-up-wide-narrow' }
-  ]
 
   const categories = computed<Filter[]>(() => {
     return Object.keys(iconsMap)
