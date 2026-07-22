@@ -150,8 +150,8 @@ importers:
         specifier: ^1.3.0
         version: 1.3.0
       shaders:
-        specifier: ^2.5.135
-        version: 2.5.135(vue@3.5.39(typescript@6.0.3))
+        specifier: ^3.0.442
+        version: 3.0.442(vue@3.5.39(typescript@6.0.3))
       sitemap:
         specifier: ^9.0.1
         version: 9.0.1
@@ -9141,8 +9141,8 @@ packages:
     engines: {node: '>= 0.10'}
     hasBin: true
 
-  shaders@2.5.135:
-    resolution: {integrity: sha512-1Fb68wq9I5yJMkpfeiestXNbb1NT0tgcXIuiQCEUzyTgNR/kVq5mzw25BmK5MTHZGjye6o5O8W9iprjPDHphwg==}
+  shaders@3.0.442:
+    resolution: {integrity: sha512-bDlS4slkZqpRPZP91VPgZASJImOsN2y3YTTNiqSJAxxscHxvZcMczId/EdpwKUwv0PZShv7H/5UCEREHNpRumw==}
     hasBin: true
     peerDependencies:
       pixi.js: ^8.0.0
@@ -9511,9 +9511,6 @@ packages:
   three@0.135.0:
     resolution: {integrity: sha512-kuEpuuxRzLv0MDsXai9huCxOSQPZ4vje6y0gn80SRmQvgz6/+rI0NAvCRAw56zYaWKMGMfqKWsxF9Qa2Z9xymQ==}
 
-  three@0.185.0:
-    resolution: {integrity: sha512-+yRrcRO2iZa8uzvNNl0d7cL4huhgKgBvVJ0njcTe8xFqZ6DMAFZdCKDP91SEAuj25bNAj7k1QQdf+srZywVK6w==}
-
   throttle-debounce@5.0.2:
     resolution: {integrity: sha512-B71/4oyj61iNH0KeCamLuE2rmKuTO5byTOSVwECM5FA7TiAiAW+UqTKZ9ERueC4qvgSttUhdmq1mXC3kJqGX7A==}
     engines: {node: '>=12.22'}
@@ -9530,6 +9527,10 @@ packages:
   tinyclip@0.1.15:
     resolution: {integrity: sha512-uo33abH+Ays0xYaDysoBt494Hb3hsEczMpcC0MwFl773pazORx4fmvKhclhR1wonUbB6vvpRsvVMwnhfqeMc+A==}
     engines: {node: ^16.14.0 || >= 17.3.0}
+
+  tinyest@0.3.2:
+    resolution: {integrity: sha512-1wqSt97RLezWzeogLSVXHr+E3jpYO8jxyaK2AIdJeGoZZTCubwNxQ9IqU5gbQpJVcxlbPugPAsII+m9/gqpPSA==}
+    engines: {node: '>=12.20.0'}
 
   tinyexec@1.2.4:
     resolution: {integrity: sha512-SHf/r48b7vOrjve9PxJo3MN5v5yuyjHvdUcrQffT3WXMUfnGmHDVbC4k3sHJaJTgZCwpUplIaAo5ANtMyp3YHg==}
@@ -9642,6 +9643,9 @@ packages:
   tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
 
+  tsover-runtime@0.0.7:
+    resolution: {integrity: sha512-FHHwMJzZbnP23+fU1PxXljy7j0RRRosL2r1/CRUNTqfW+l7m35JsUkM615x/cAzw4GqRdXPIl3axKMj9qzpZtQ==}
+
   tsx@4.21.0:
     resolution: {integrity: sha512-5C1sg4USs1lfG0GFb2RLXsdpXqBSEhAaA/0kPL01wxzpMqLILNxIxIOKiILz+cdg/pLnOUxFYOR5yhHU666wbw==}
     engines: {node: '>=18.0.0'}
@@ -9690,8 +9694,16 @@ packages:
     resolution: {integrity: sha512-nAYYwfY3qnzX30IkA6AQZjVbtK6duGontcQm1WSG1MD94YLqK0515GNApXkoxKOWMusVssAHWLh9SeaoefYFGw==}
     engines: {node: '>= 0.4'}
 
+  typed-binary@4.3.3:
+    resolution: {integrity: sha512-W2hLsSzt3k/tg38gDE4Fn/QiwcoqGuUHBc2cb3mXuH7KcYxe/GM57vzW14s2/bawB4R5knGgGq8Xb57vsaJ4Sg==}
+
   typed-query-selector@2.12.2:
     resolution: {integrity: sha512-EOPFbyIub4ngnEdqi2yOcNeDLaX/0jcE1JoAXQDDMIthap7FoN795lc/SHfIq2d416VufXpM8z/lD+WRm2gfOQ==}
+
+  typegpu@0.11.9:
+    resolution: {integrity: sha512-AqBV6P9lW2jA7pEVDeiMD7Qoza9doPgueQbwyUyf09u4ndb9jOttHwpZ18c+BEzwLHaPlV50jw0hx5QsmVJGNg==}
+    engines: {node: '>=12.20.0'}
+    hasBin: true
 
   typescript@4.2.4:
     resolution: {integrity: sha512-V+evlYHZnQkaz8TRBuxTA92yZBPotr5H+WhQ7bD3hZUndx5tGOa1fuCgeSjxAzM1RiN5IzvadIXTVefuuwZCRg==}
@@ -20789,9 +20801,9 @@ snapshots:
       safe-buffer: 5.2.1
       to-buffer: 1.2.2
 
-  shaders@2.5.135(vue@3.5.39(typescript@6.0.3)):
+  shaders@3.0.442(vue@3.5.39(typescript@6.0.3)):
     dependencies:
-      three: 0.185.0
+      typegpu: 0.11.9
     optionalDependencies:
       vue: 3.5.39(typescript@6.0.3)
 
@@ -21229,8 +21241,6 @@ snapshots:
 
   three@0.135.0: {}
 
-  three@0.185.0: {}
-
   throttle-debounce@5.0.2: {}
 
   tiny-inflate@1.0.3: {}
@@ -21240,6 +21250,8 @@ snapshots:
   tinybench@2.9.0: {}
 
   tinyclip@0.1.15: {}
+
+  tinyest@0.3.2: {}
 
   tinyexec@1.2.4: {}
 
@@ -21342,6 +21354,8 @@ snapshots:
 
   tslib@2.8.1: {}
 
+  tsover-runtime@0.0.7: {}
+
   tsx@4.21.0:
     dependencies:
       esbuild: 0.27.7
@@ -21412,7 +21426,15 @@ snapshots:
       es-errors: 1.3.0
       is-typed-array: 1.1.15
 
+  typed-binary@4.3.3: {}
+
   typed-query-selector@2.12.2: {}
+
+  typegpu@0.11.9:
+    dependencies:
+      tinyest: 0.3.2
+      tsover-runtime: 0.0.7
+      typed-binary: 4.3.3
 
   typescript@4.2.4: {}
 
