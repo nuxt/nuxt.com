@@ -23,7 +23,7 @@ The agent never imports Nuxt server code directly. Shared logic that both sides 
 
 ## Config
 
-`eve.eveRoot` points Eve at this layer so `agent/` is discovered at `layers/nuxi/agent/`. The layer includes a minimal `package.json` (Eve project marker for nested layout discovery). Root `vercel.json` declares the dual `web` + `eve` services with `entrypoint: "layers/nuxi"` for Eve.
+`eve.eveRoot` points Eve at this layer so `agent/` is discovered at `layers/nuxi/agent/`. The layer includes a minimal `package.json` (Eve project marker for nested layout discovery, with `eve build` for the agent service). On Vercel, the root `eve/nuxt` module emits the dual `web` + `eve` services into `.vercel/output` during `nuxt build` — no hand-maintained root `vercel.json` is required.
 
 ## Scheduled Slack workflows
 

@@ -31,8 +31,7 @@ export default defineConfig({
             nuxt: {
               overrides: {
                 ogImage: { enabled: false },
-                experimental: { viteEnvironmentApi: false },
-                eve: { configureVercelJson: false }
+                experimental: { viteEnvironmentApi: false }
               }
             }
           }

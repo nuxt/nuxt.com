@@ -11,3 +11,6 @@ allowBuilds:
   puppeteer: false
   unrs-resolver: false
   vue-demi: false
+
+minimumReleaseAgeExclude:
+  - eve@0.24.3 || 0.27.0
