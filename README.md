@@ -9,48 +9,39 @@ Welcome to the Nuxt website repository available on [nuxt.com](https://nuxt.com)
 
 [![Nuxt UI](https://img.shields.io/badge/Made%20with-Nuxt%20UI-00DC82?logo=nuxt.js&labelColor=020420)](https://ui.nuxt.com)
 
-## Setup
+## Quickstart
 
-Make sure to enable corepack and install the dependencies:
+No environment variables are required — the site runs out of the box:
 
 ```bash
 corepack enable
 pnpm install
-```
-
-Copy the `.env.example` file to `.env`:
-
-```bash
-cp .env.example .env
-```
-
-Clone/Fork [nuxt/nuxt](https://github.com/nuxt/nuxt) repo where you want (but not in the Nuxt.com project) and inside the root of the repo, run:
-
-```bash
-pwd
-```
-
-If you are on Windows, you can use the following command instead:
-
-```bash
-echo %cd%
-```
-
-Copy the output of the command above and paste it in the `NUXT_PATH` and `NUXT_V4_PATH` variables in the `.env` file.
-
-## Development
-
-Start the development server:
-
-```bash
 pnpm dev
 ```
 
-To start the development server with all fetches to the Nuxt ecosystem (modules, APIs, etc.):
+In this default mode (`--ui-only`):
 
-```bash
-pnpm dev:full
-```
+- The docs are cloned from the public [nuxt/nuxt](https://github.com/nuxt/nuxt) and [nuxt/examples](https://github.com/nuxt/examples) repositories.
+- Ecosystem APIs (`/api/v1/**` — modules, templates, etc.) are proxied to nuxt.com.
+- The Nuxi agent is visible but disabled: the Eve runtime is not spawned, so no AI keys are needed.
+
+## Development modes
+
+| Command | What it does |
+|---------|--------------|
+| `pnpm dev` | UI-only mode — zero config, no Eve agent, ecosystem APIs proxied to nuxt.com |
+| `pnpm dev:nuxi` | UI-only mode + the Nuxi agent — spawns the Eve runtime (needs `AI_GATEWAY_API_KEY`) |
+| `pnpm dev:full` | Full mode — spawns the Eve agent runtime and fetches the Nuxt ecosystem locally |
+
+`pnpm dev:full` requires some environment variables (see [`.env.example`](./.env.example), notably `AI_GATEWAY_API_KEY` for the agent). All variables in `.env.example` are optional and grouped by feature — only set what you need.
+
+### Working on the docs
+
+The docs live in the [nuxt/nuxt](https://github.com/nuxt/nuxt) repository. To edit them locally, clone/fork the repo somewhere outside this project and point the `NUXT_V3_PATH` / `NUXT_V4_PATH` / `NUXT_V5_PATH` variables in your `.env` to your local checkout (use `pwd` — or `echo %cd%` on Windows — inside the clone to get the path). Same goes for `NUXT_EXAMPLES_PATH` with [nuxt/examples](https://github.com/nuxt/examples).
+
+### Signing in locally
+
+Sign-in (dashboard, chat history) needs a GitHub OAuth app: create one at [github.com/settings/applications/new](https://github.com/settings/applications/new) with `http://localhost:3000/api/auth/github` as the callback URL, then set `NUXT_OAUTH_GITHUB_CLIENT_ID` and `NUXT_OAUTH_GITHUB_CLIENT_SECRET` in your `.env`.
 
 ### Add a Nuxt Template
 
@@ -100,16 +91,19 @@ To run the evals for the MCP server, follow these steps:
 
 ## Nuxi (Eve agent)
 
-Nuxi lives in [`layers/nuxi/`](./layers/nuxi/) — Eve runtime (`agent/`), UI, and internal APIs in one layer. For local development:
+Nuxi lives in [`layers/nuxi/`](./layers/nuxi/) — Eve runtime (`agent/`), UI, and internal APIs in one layer. The agent only runs with `pnpm dev:full` (in the default `pnpm dev` ui-only mode, the Eve runtime is not spawned and the chat UI shows a disabled state). For local development:
 
 ```bash
+# Required — Vercel AI Gateway key for the agent model
+AI_GATEWAY_API_KEY=<your-api-key>
+
 # Required — shared secret between the Nuxt app and Eve runtime
 INTERNAL_API_SECRET=$(openssl rand -base64 32)
 
 # Optional — canonical site URL for MCP + internal API callbacks
 NUXT_PUBLIC_SITE_URL=http://localhost:3000
 
-pnpm dev
+pnpm dev:nuxi
 ```
 
 On Vercel, configure **both** the `web` and `eve` services (`vercel.json`) with the same `INTERNAL_API_SECRET`, `AI_GATEWAY_API_KEY`, and database env vars.
