@@ -108,8 +108,8 @@ importers:
         specifier: ^0.27.0
         version: 0.27.0(@libsql/client@0.17.4)(@opentelemetry/api@1.9.0)(@vercel/functions@3.7.5(ws@8.21.0))(ai@7.0.32(zod@4.4.3))(better-sqlite3@12.11.1)(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260511.1)(@libsql/client@0.17.4)(@opentelemetry/api@1.9.0)(better-sqlite3@12.11.1))(giget@3.3.0)(ioredis@5.10.1(supports-color@10.2.2))(jiti@2.7.0)(lru-cache@11.3.6)(rollup@4.62.2)(vite@7.3.6(@types/node@26.0.1)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.0))
       evlog:
-        specifier: ^2.22.1
-        version: 2.22.1(09c191106b79b5fc021e081298a7f5ee)
+        specifier: ^2.22.3
+        version: 2.22.3(09c191106b79b5fc021e081298a7f5ee)
       feed:
         specifier: ^5.2.1
         version: 5.2.1
@@ -6243,8 +6243,8 @@ packages:
     resolution: {integrity: sha512-CRT1WTyuQoD771GW56XEZFQ/ZoSfWid1alKGDYMmkt2yl8UXrVR4pspqWNEcqKvVIzg6PAltWjxcSSPrboA4iA==}
     engines: {node: '>=18.0.0'}
 
-  evlog@2.22.1:
-    resolution: {integrity: sha512-5IfmtCk4Mq/ZsCtykxftgWV8LkqjQu28ssEcwWpqbnqYxkolzo4iyh+my2tM8cZoTCDMnnIFp+X9tyspVE8NsA==}
+  evlog@2.22.3:
+    resolution: {integrity: sha512-xybbUKtV26ezgyagT0aZ6tigIjwQuc4mI0Fm52goospAdGAA4ApC+keC36Bsxt1Gm7vT8W429T3WIsqMc8nwMQ==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       '@nestjs/common': '>=11.1.28'
@@ -16860,7 +16860,7 @@ snapshots:
     dependencies:
       eventsource-parser: 3.1.0
 
-  evlog@2.22.1(09c191106b79b5fc021e081298a7f5ee):
+  evlog@2.22.3(09c191106b79b5fc021e081298a7f5ee):
     optionalDependencies:
       '@nuxt/kit': 4.4.8(magicast@0.5.3)
       ai: 7.0.32(zod@4.4.3)

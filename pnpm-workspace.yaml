@@ -14,5 +14,6 @@ allowBuilds:
 
 minimumReleaseAgeExclude:
   - eve@0.24.3 || 0.27.0
+  - evlog
   - '@nuxt/content'
   - '@nuxt/scripts'
