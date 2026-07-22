@@ -15,34 +15,19 @@ const props = defineProps<{
   stars?: number
 }>()
 
-const { copy } = useClipboard()
-const { track } = useAnalytics()
-
 const displayTitle = computed(() => {
   const fromNpm = props.npm?.trim()
   if (fromNpm) return fromNpm
   return props.slug?.trim() || 'Module'
 })
 
-const installCommand = computed(() => buildModuleInstallCommand(props.slug))
-
-const agentPrompt = computed(() => buildModuleAgentPrompt({
+const { copyInstall, copyPrompt } = useModuleInstallActions(() => ({
   name: props.slug,
   npm: props.npm || '',
   description: props.description || '',
   website: props.website || '',
   repo: props.repo || ''
-}))
-
-function copyInstall() {
-  track('Module Install Command Copied', { module: props.slug, source: 'nuxt-agent' })
-  copy(installCommand.value, { title: 'Command copied to clipboard:', description: installCommand.value })
-}
-
-function copyPrompt() {
-  track('Module Agent Prompt Copied', { module: props.slug, source: 'nuxt-agent' })
-  copy(agentPrompt.value, { title: 'Agent prompt copied!', description: props.npm || props.slug, icon: 'i-custom-ai' })
-}
+}), 'nuxt-agent')
 </script>
 
 <template>

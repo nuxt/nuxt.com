@@ -22,11 +22,14 @@ const props = withDefaults(
   }
 )
 
-const { copy } = useClipboard()
 const { track } = useAnalytics()
-
-const route = useRoute()
-const selectedSort = computed(() => sorts.find(sort => sort.key === route.query.sortBy) || sorts[0])
+const { selectedSort } = useModules()
+const {
+  copyInstall: copyInstallCommand,
+  copyPrompt: copyAgentPrompt,
+  openCursor: openPromptInCursor,
+  openClaude: openPromptInClaudeCode
+} = useModuleInstallActions(() => props.module, 'context-menu')
 
 const relativeDate = useTimeAgo(() =>
   selectedSort.value.key === 'publishedAt' ? props.module.stats.publishedAt : props.module.stats.createdAt
@@ -37,12 +40,6 @@ const staticModuleDate = computed(() =>
     ? formatDateByLocale('en', props.module.stats.publishedAt)
     : formatDateByLocale('en', props.module.stats.createdAt)
 )
-
-function copyInstallCommand(moduleName: string) {
-  track('Module Install Command Copied', { module: moduleName })
-  const command = buildModuleInstallCommand(moduleName)
-  copy(command, { title: 'Command copied to clipboard:', description: command })
-}
 
 function toggleModule(m: Module) {
   const action = props.isAdded ? 'remove' : 'add'
@@ -72,7 +69,24 @@ const items = computed(() => [
     {
       label: 'Copy install command',
       icon: 'i-lucide-terminal',
-      onSelect: () => copyInstallCommand(props.module.name)
+      onSelect: copyInstallCommand
+    },
+    {
+      label: 'Copy agent prompt',
+      icon: 'i-custom-ai',
+      onSelect: copyAgentPrompt
+    }
+  ],
+  [
+    {
+      label: 'Open in Cursor',
+      icon: 'i-simple-icons-cursor',
+      onSelect: openPromptInCursor
+    },
+    {
+      label: 'Open in Claude Code',
+      icon: 'i-simple-icons-anthropic',
+      onSelect: openPromptInClaudeCode
     }
   ],
   [
@@ -224,7 +238,7 @@ const items = computed(() => [
                 color="neutral"
                 size="xs"
                 variant="outline"
-                @click="copyInstallCommand(module.name)"
+                @click="copyInstallCommand"
               >
                 <span class="sr-only">Copy command to install {{ module.name }}</span>
               </UButton>

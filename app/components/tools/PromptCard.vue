@@ -3,10 +3,6 @@ const props = defineProps<{
   description: string
   prompt: string
   icon?: string
-  deeplinks: {
-    cursor: string
-    claude: string
-  }
 }>()
 
 const { copied, copy } = useClipboard()
@@ -21,14 +17,14 @@ const previewText = computed(() => {
   return `${props.prompt.slice(0, previewLimit)}…`
 })
 
-async function openInCursor() {
+function openInCursor() {
   track('Nuxi Prompt Opened', { ide: 'cursor', source: 'nuxt-agent' })
-  await openPromptInCursor(props.prompt)
+  openPromptInCursor(props.prompt)
 }
 
-async function openInClaudeCode() {
+function openInClaudeCode() {
   track('Nuxi Prompt Opened', { ide: 'claude', source: 'nuxt-agent' })
-  await openPromptInClaudeCode(props.prompt)
+  openPromptInClaudeCode(props.prompt)
 }
 
 function copyPrompt() {

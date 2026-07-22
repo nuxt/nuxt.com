@@ -14,36 +14,7 @@ const props = withDefaults(
   }
 )
 
-const { copy } = useClipboard()
-const { track } = useAnalytics()
-const { openInCursor, openInClaudeCode } = useIdeDeeplink()
-
-const installCommand = computed(() => buildModuleInstallCommand(props.module.name))
-const agentPrompt = computed(() => buildModuleAgentPrompt(props.module))
-
-function copyInstall() {
-  track('Module Install Command Copied', { module: props.module.name, source: 'install-group' })
-  copy(installCommand.value, { title: 'Command copied to clipboard:', description: installCommand.value })
-}
-
-function copyPrompt() {
-  track('Module Agent Prompt Copied', { module: props.module.name, source: 'install-group' })
-  copy(agentPrompt.value, {
-    title: 'Agent prompt copied!',
-    description: props.module.npm || props.module.name,
-    icon: 'i-custom-ai'
-  })
-}
-
-async function openCursor() {
-  track('Module Prompt Opened', { module: props.module.name, ide: 'cursor', source: 'install-group' })
-  await openInCursor(agentPrompt.value)
-}
-
-async function openClaude() {
-  track('Module Prompt Opened', { module: props.module.name, ide: 'claude', source: 'install-group' })
-  await openInClaudeCode(agentPrompt.value)
-}
+const { installCommand, copyInstall, copyPrompt, openCursor, openClaude } = useModuleInstallActions(() => props.module, 'install-group')
 
 const items = computed<DropdownMenuItem[][]>(() => [
   [

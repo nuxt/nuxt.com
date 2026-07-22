@@ -72,7 +72,7 @@ function selectModuleRange(module: Module) {
 
   if (lastSelectedIndex.value === null) {
     lastSelectedIndex.value = currentIndex
-    modulesToAdd.value = [module]
+    toggleModuleSelection(module)
     return
   }
 
@@ -169,14 +169,14 @@ const copyAgentPrompt = () => {
   })
 }
 
-async function openBulkPromptInCursor() {
+function openBulkPromptInCursor() {
   track('Modules Agent Prompt Opened', { count: modulesToAdd.value.length, ide: 'cursor' })
-  await openInCursor(buildBulkModuleAgentPrompt(modulesToAdd.value))
+  openInCursor(buildBulkModuleAgentPrompt(modulesToAdd.value))
 }
 
-async function openBulkPromptInClaudeCode() {
+function openBulkPromptInClaudeCode() {
   track('Modules Agent Prompt Opened', { count: modulesToAdd.value.length, ide: 'claude' })
-  await openInClaudeCode(buildBulkModuleAgentPrompt(modulesToAdd.value))
+  openInClaudeCode(buildBulkModuleAgentPrompt(modulesToAdd.value))
 }
 
 const agentPromptItems = computed<DropdownMenuItem[]>(() => [
