@@ -7,7 +7,11 @@ const props = defineProps<{
 
 const { copied, copy } = useClipboard()
 const { track } = useAnalytics()
-const { openInCursor: openPromptInCursor, openInClaudeCode: openPromptInClaudeCode } = useIdeDeeplink()
+const {
+  openInCursor: openPromptInCursor,
+  openInClaudeCode: openPromptInClaudeCode,
+  openInVSCode: openPromptInVSCode
+} = useIdeDeeplink()
 const expanded = ref(false)
 
 const previewLimit = 200
@@ -25,6 +29,11 @@ function openInCursor() {
 function openInClaudeCode() {
   track('Nuxi Prompt Opened', { ide: 'claude', source: 'nuxt-agent' })
   openPromptInClaudeCode(props.prompt)
+}
+
+function openInVSCode() {
+  track('Nuxi Prompt Opened', { ide: 'vscode', source: 'nuxt-agent' })
+  openPromptInVSCode(props.prompt)
 }
 
 function copyPrompt() {
@@ -101,6 +110,24 @@ function copyPrompt() {
               <UIcon name="i-simple-icons-anthropic" class="size-3.5 text-[#D97757]" />
             </template>
           </UButton>
+        </span>
+      </UTooltip>
+
+      <UTooltip
+        arrow
+        :delay-duration="700"
+        :content="{ side: 'top', sideOffset: 6 }"
+        text="Open prompt in VS Code (Copilot Chat)"
+      >
+        <span class="inline-flex">
+          <UButton
+            size="xs"
+            color="neutral"
+            variant="outline"
+            icon="i-simple-icons-visualstudiocode"
+            label="Open in VS Code"
+            @click="openInVSCode"
+          />
         </span>
       </UTooltip>
 

@@ -14,7 +14,7 @@ const props = withDefaults(
   }
 )
 
-const { installCommand, copyInstall, copyPrompt, openCursor, openClaude } = useModuleInstallActions(() => props.module, 'install-group')
+const { installCommand, copyInstall, copyPrompt, openCursor, openClaude, openVSCode } = useModuleInstallActions(() => props.module, 'install-group')
 
 const items = computed<DropdownMenuItem[][]>(() => [
   [
@@ -39,6 +39,11 @@ const items = computed<DropdownMenuItem[][]>(() => [
       label: 'Open in Claude Code',
       icon: 'i-simple-icons-anthropic',
       onSelect: openClaude
+    },
+    {
+      label: 'Open in VS Code',
+      icon: 'i-simple-icons-visualstudiocode',
+      onSelect: openVSCode
     }
   ]
 ])

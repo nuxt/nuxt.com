@@ -44,6 +44,19 @@ function fitEncodedQuery(prompt: string, prefix: string, maxUrlLength: number): 
   return { q: `${q.trimEnd()}…`, truncated: true }
 }
 
+/** Browser-safe custom-scheme deeplink — fits under Chrome's URL length limit. */
+function buildBrowserDeeplink(prompt: string, prefix: string): {
+  url: string
+  needsClipboardFallback: boolean
+} {
+  const normalized = truncatePrompt(prompt, PROMPT_CARD_MAX_LENGTH)
+  const { q, truncated } = fitEncodedQuery(normalized, prefix, CLAUDE_BROWSER_MAX_URL)
+  return {
+    url: `${prefix}${encodeURIComponent(q)}`,
+    needsClipboardFallback: truncated || q !== normalized
+  }
+}
+
 /** Cursor deeplink — aligned with Nuxt UI ProsePrompt. */
 export function buildCursorPromptUrl(prompt: string): string {
   const text = truncatePrompt(prompt)
@@ -51,17 +64,8 @@ export function buildCursorPromptUrl(prompt: string): string {
 }
 
 /** Browser-safe Cursor deeplink — fits under Chrome custom-scheme URL limit. */
-export function buildCursorBrowserUrl(prompt: string): {
-  url: string
-  needsClipboardFallback: boolean
-} {
-  const normalized = truncatePrompt(prompt, PROMPT_CARD_MAX_LENGTH)
-  const prefix = 'cursor://anysphere.cursor-deeplink/prompt?text='
-  const { q, truncated } = fitEncodedQuery(normalized, prefix, CLAUDE_BROWSER_MAX_URL)
-  return {
-    url: `${prefix}${encodeURIComponent(q)}`,
-    needsClipboardFallback: truncated || q !== normalized
-  }
+export function buildCursorBrowserUrl(prompt: string) {
+  return buildBrowserDeeplink(prompt, 'cursor://anysphere.cursor-deeplink/prompt?text=')
 }
 
 /** Claude Desktop deeplink — aligned with Nuxt UI ProsePrompt. https://support.claude.com/en/articles/14729294 */
@@ -71,17 +75,19 @@ export function buildClaudeCodeUrl(prompt: string): string {
 }
 
 /** Browser-safe Claude deeplink — fits under Chrome custom-scheme URL limit. */
-export function buildClaudeCodeBrowserUrl(prompt: string): {
-  url: string
-  needsClipboardFallback: boolean
-} {
-  const normalized = truncatePrompt(prompt, PROMPT_CARD_MAX_LENGTH)
-  const prefix = 'claude://code/new?q='
-  const { q, truncated } = fitEncodedQuery(normalized, prefix, CLAUDE_BROWSER_MAX_URL)
-  return {
-    url: `${prefix}${encodeURIComponent(q)}`,
-    needsClipboardFallback: truncated || q !== normalized
-  }
+export function buildClaudeCodeBrowserUrl(prompt: string) {
+  return buildBrowserDeeplink(prompt, 'claude://code/new?q=')
+}
+
+/** VS Code + GitHub Copilot Chat deeplink. */
+export function buildVSCodeUrl(prompt: string): string {
+  const text = truncatePrompt(prompt)
+  return `vscode://GitHub.Copilot-Chat/chat?agent=agent&prompt=${encodeURIComponent(text)}`
+}
+
+/** Browser-safe VS Code deeplink — fits under Chrome custom-scheme URL limit. */
+export function buildVSCodeBrowserUrl(prompt: string) {
+  return buildBrowserDeeplink(prompt, 'vscode://GitHub.Copilot-Chat/chat?agent=agent&prompt=')
 }
 
 export function buildIdeDeeplinks(prompt: string) {

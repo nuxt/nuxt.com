@@ -28,7 +28,8 @@ const {
   copyInstall: copyInstallCommand,
   copyPrompt: copyAgentPrompt,
   openCursor: openPromptInCursor,
-  openClaude: openPromptInClaudeCode
+  openClaude: openPromptInClaudeCode,
+  openVSCode: openPromptInVSCode
 } = useModuleInstallActions(() => props.module, 'context-menu')
 
 const relativeDate = useTimeAgo(() =>
@@ -87,6 +88,11 @@ const items = computed(() => [
       label: 'Open in Claude Code',
       icon: 'i-simple-icons-anthropic',
       onSelect: openPromptInClaudeCode
+    },
+    {
+      label: 'Open in VS Code',
+      icon: 'i-simple-icons-visualstudiocode',
+      onSelect: openPromptInVSCode
     }
   ],
   [

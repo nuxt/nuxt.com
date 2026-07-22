@@ -1,9 +1,10 @@
 import {
   buildClaudeCodeBrowserUrl,
-  buildCursorBrowserUrl
+  buildCursorBrowserUrl,
+  buildVSCodeBrowserUrl
 } from '~~/layers/nuxi/shared/utils/ide-deeplinks'
 
-/** Opens a prompt in Cursor or Claude Code via browser deeplinks. */
+/** Opens a prompt in Cursor, Claude Code or VS Code (Copilot Chat) via browser deeplinks. */
 export const useIdeDeeplink = () => {
   const toast = useToast()
 
@@ -29,21 +30,28 @@ export const useIdeDeeplink = () => {
     }
   }
 
-  function openInCursor(prompt: string) {
-    const { url, needsClipboardFallback } = buildCursorBrowserUrl(prompt)
+  function openWithFallback(build: (prompt: string) => { url: string, needsClipboardFallback: boolean }, prompt: string) {
+    const { url, needsClipboardFallback } = build(prompt)
     openDeeplink(url)
     if (needsClipboardFallback) void copyShortenedPromptToClipboard(prompt)
   }
 
+  function openInCursor(prompt: string) {
+    openWithFallback(buildCursorBrowserUrl, prompt)
+  }
+
   function openInClaudeCode(prompt: string) {
-    const { url, needsClipboardFallback } = buildClaudeCodeBrowserUrl(prompt)
-    openDeeplink(url)
-    if (needsClipboardFallback) void copyShortenedPromptToClipboard(prompt)
+    openWithFallback(buildClaudeCodeBrowserUrl, prompt)
+  }
+
+  function openInVSCode(prompt: string) {
+    openWithFallback(buildVSCodeBrowserUrl, prompt)
   }
 
   return {
     pasteShortcut,
     openInCursor,
-    openInClaudeCode
+    openInClaudeCode,
+    openInVSCode
   }
 }

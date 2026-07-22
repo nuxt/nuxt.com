@@ -79,7 +79,7 @@ Steps:
 export function useModuleInstallActions(module: () => ModulePromptInfo, source: string) {
   const { copy } = useClipboard()
   const { track } = useAnalytics()
-  const { openInCursor, openInClaudeCode } = useIdeDeeplink()
+  const { openInCursor, openInClaudeCode, openInVSCode } = useIdeDeeplink()
 
   const installCommand = computed(() => buildModuleInstallCommand(module().name))
   const agentPrompt = computed(() => buildModuleAgentPrompt(module()))
@@ -108,7 +108,12 @@ export function useModuleInstallActions(module: () => ModulePromptInfo, source: 
     openInClaudeCode(agentPrompt.value)
   }
 
-  return { installCommand, agentPrompt, copyInstall, copyPrompt, openCursor, openClaude }
+  function openVSCode() {
+    track('Module Prompt Opened', { module: module().name, ide: 'vscode', source })
+    openInVSCode(agentPrompt.value)
+  }
+
+  return { installCommand, agentPrompt, copyInstall, copyPrompt, openCursor, openClaude, openVSCode }
 }
 
 export const sorts: Filter[] = [

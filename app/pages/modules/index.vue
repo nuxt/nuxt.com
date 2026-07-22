@@ -15,7 +15,7 @@ const el = useTemplateRef<HTMLElement>('el')
 const { replaceRoute } = useFilters('modules')
 const { fetchList, filteredModules, q, categories, modules, stats, selectedSort, selectedOrder, selectedCategory, sorts } = useModules()
 const { track } = useAnalytics()
-const { openInCursor, openInClaudeCode } = useIdeDeeplink()
+const { openInCursor, openInClaudeCode, openInVSCode } = useIdeDeeplink()
 
 const cacheControl = useResponseHeader('Cache-Control')
 const cdnCacheControl = useResponseHeader('CDN-Cache-Control')
@@ -179,6 +179,11 @@ function openBulkPromptInClaudeCode() {
   openInClaudeCode(buildBulkModuleAgentPrompt(modulesToAdd.value))
 }
 
+function openBulkPromptInVSCode() {
+  track('Modules Agent Prompt Opened', { count: modulesToAdd.value.length, ide: 'vscode' })
+  openInVSCode(buildBulkModuleAgentPrompt(modulesToAdd.value))
+}
+
 const agentPromptItems = computed<DropdownMenuItem[]>(() => [
   {
     label: 'Copy agent prompt',
@@ -194,6 +199,11 @@ const agentPromptItems = computed<DropdownMenuItem[]>(() => [
     label: 'Open in Claude Code',
     icon: 'i-simple-icons-anthropic',
     onSelect: openBulkPromptInClaudeCode
+  },
+  {
+    label: 'Open in VS Code',
+    icon: 'i-simple-icons-visualstudiocode',
+    onSelect: openBulkPromptInVSCode
   }
 ])
 
