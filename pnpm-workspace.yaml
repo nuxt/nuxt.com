@@ -1,6 +1,9 @@
 shamefullyHoist: true
 strictPeerDependencies: false
 
+overrides:
+  nostics: ^1.2.0
+
 allowBuilds:
   better-sqlite3: true
   esbuild: true
