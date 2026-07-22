@@ -13,4 +13,4 @@ allowBuilds:
   vue-demi: false
 
 minimumReleaseAgeExclude:
-  - eve@0.24.3
+  - eve@0.24.3 || 0.27.0
