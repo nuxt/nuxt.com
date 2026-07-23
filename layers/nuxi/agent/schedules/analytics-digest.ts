@@ -6,10 +6,10 @@ import {
   skillWorkflowMessage
 } from '../lib/workflows.js'
 
-const SKILL_ID = 'weekly-digest'
+const SKILL_ID = 'analytics-digest'
 const DEFAULT_WINDOW_DAYS = 7
 
-export async function runWeeklyDigest({
+export async function runAnalyticsDigest({
   receive,
   appAuth,
   sinceDays
@@ -28,8 +28,9 @@ export async function runWeeklyDigest({
 }
 
 export default defineSchedule({
-  cron: '0 5 * * 1',
+  // 15 min after weekly-digest so both land close together for the Monday morning read.
+  cron: '15 5 * * 1',
   async run({ receive, waitUntil, appAuth }) {
-    waitUntil(runWeeklyDigest({ receive, appAuth }))
+    waitUntil(runAnalyticsDigest({ receive, appAuth }))
   }
 })
