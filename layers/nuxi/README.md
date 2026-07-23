@@ -27,7 +27,7 @@ The agent never imports Nuxt server code directly. Shared logic that both sides 
 
 ## Discord channel
 
-`agent/channels/discord.ts` wires Nuxi into Discord through eve's Chat SDK channel (`eve/channels/chat-sdk` + `@chat-adapter/discord`), so it behaves like Slack: **@mention Nuxi** in an allowed channel, it subscribes to the conversation and answers **in a thread**; follow-up messages in that thread continue the same eve session without re-mentioning.
+`agent/channels/discord.ts` wires Nuxi into Discord through eve's Chat SDK channel (`eve/channels/chat-sdk` + `@chat-adapter/discord`), so it behaves like Slack: **@mention Nuxi** in an allowed channel, it subscribes to the conversation, renames the thread after your message, and answers **in a thread**; follow-up messages in that thread continue the same eve session without re-mentioning.
 
 How messages arrive: Discord does not push messages to HTTP webhooks like Slack. `agent/schedules/discord-gateway.ts` restarts a Gateway WebSocket listener every 4 minutes (270s duration, overlapping windows) that forwards events to the channel webhook at `/eve/v1/discord`. Inbound dedupe across overlapping listeners and thread subscriptions rely on the Chat SDK state adapter — **Redis (`REDIS_URL`) is required in production**; local dev falls back to in-memory state.
 
@@ -43,7 +43,7 @@ How messages arrive: Discord does not push messages to HTTP webhooks like Slack.
    - `DISCORD_ALLOWED_CHANNELS` — comma-separated Discord channel ids where Nuxi may run. **Unset or empty means deny everywhere.** Mentions elsewhere are silently ignored. (Get an id via right-click on the channel → **Copy Channel ID**, with Developer Mode enabled.)
    - `REDIS_URL` — Chat SDK state adapter (subscriptions, dedupe, locks); memory fallback in dev
    - `DISCORD_GATEWAY_WEBHOOK_URL` — optional override for the Gateway forward target; defaults to `https://$VERCEL_PROJECT_PRODUCTION_URL/eve/v1/discord`
-3. **Invite the app to the server**: **OAuth2 → URL Generator**, scopes `bot` + `applications.commands`. Bot permissions: **View Channels**, **Send Messages**, **Create Public Threads**, **Send Messages in Threads**, **Read Message History**, **Add Reactions**.
+3. **Invite the app to the server**: **OAuth2 → URL Generator**, scopes `bot` + `applications.commands`. Bot permissions: **View Channels**, **Send Messages**, **Create Public Threads**, **Send Messages in Threads**, **Manage Threads** (renames threads after the mention text), **Read Message History**, **Add Reactions**.
 4. **Set the Interactions Endpoint URL** (General Information tab) to `https://<eve-service>/eve/v1/discord` — used for HITL button clicks and Discord's verification PING. Deploy the eve service with the env vars set **first**: Discord validates the endpoint when you save.
 5. No slash command to register — the bot is mention-driven.
 

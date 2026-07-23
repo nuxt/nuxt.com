@@ -34,23 +34,42 @@ export const { bot, channel, send } = chatSdkChannel({
   resolveInputAuth: event => discordUserAuth(event.user?.userId, event.user?.userName)
 })
 
+const THREAD_TITLE_MAX_LENGTH = 90
+
 function shouldDispatch(thread: Thread, message: Message): boolean {
   if (message.author.isMe || message.author.isBot === true) return false
   // Allowlist gate: `thread.channelId` is always the parent Discord channel,
   // even for messages inside threads. Discord sessions are admin-enabled
   // (see admin-mcp-access.ts) — this gate is what makes that safe.
   const allowed = isAllowedDiscordChannel(thread.channelId)
-  console.log('[nuxi:discord]', allowed ? 'dispatching' : 'dropped (channel not in DISCORD_ALLOWED_CHANNELS)', {
-    channelId: thread.channelId,
-    threadId: thread.id,
-    author: message.author.userName
-  })
+  if (!allowed) {
+    console.warn('[nuxi:discord] dropped mention: channel not in DISCORD_ALLOWED_CHANNELS', { channelId: thread.channelId })
+  }
   return allowed
+}
+
+// `message.text` is Discord's raw content, so a mention still contains the
+// `<@applicationId>` token — strip it before using the text as a thread title.
+function threadTitleFromMessage(text: string): string | undefined {
+  const cleaned = text.replace(/<@[!&]?\d+>/g, '').replace(/\s+/g, ' ').trim()
+  if (!cleaned) return undefined
+  return cleaned.length > THREAD_TITLE_MAX_LENGTH
+    ? `${cleaned.slice(0, THREAD_TITLE_MAX_LENGTH).trimEnd()}…`
+    : cleaned
 }
 
 bot.onNewMention(async (thread: Thread, message: Message) => {
   if (!shouldDispatch(thread, message)) return
   await thread.subscribe()
+
+  // Fire-and-forget: rename the thread from Discord's default ("Thread 7/23/2026…")
+  // without delaying the reply.
+  const title = threadTitleFromMessage(message.text)
+  if (title) {
+    void bot.getAdapter('discord')?.setThreadTitle(thread.id, title)
+      .catch((error: unknown) => console.warn('[nuxi:discord] setThreadTitle failed', error))
+  }
+
   await send(
     { message: message.text, context: DISCORD_CONTEXT },
     { thread, auth: discordUserAuth(message.author.userId, message.author.userName) }
