@@ -31,19 +31,26 @@ The agent never imports Nuxt server code directly. Shared logic that both sides 
 
 ### One-time setup
 
-1. Create a Discord application + bot in the [Developer Portal](https://discord.com/developers/applications) — ideally one app for preview/dev and one for prod, mirroring `slack/nuxi-preview` / `slack/nuxi`.
-2. Set the env vars on the **eve** service (`vercel env`):
+1. **Create the application** in the [Developer Portal](https://discord.com/developers/applications) — ideally one app for preview/dev and one for prod, mirroring `slack/nuxi-preview` / `slack/nuxi`.
+   - **General Information** tab: copy the **Application ID** and **Public Key**.
+   - **Bot** tab: click **Reset Token** and copy the **bot token** (shown once). No privileged Gateway intents are needed — eve uses HTTP Interactions only, the bot never connects to the Gateway.
+2. **Set the env vars** on the **eve** service (`vercel env`, also listed in `.env.example`):
    - `DISCORD_PUBLIC_KEY` — verifies inbound Ed25519 interaction signatures
    - `DISCORD_APPLICATION_ID` — edits deferred responses and sends followups
    - `DISCORD_BOT_TOKEN` — channel messages, typing indicators, fallback delivery
-   - `DISCORD_ALLOWED_CHANNELS` — comma-separated Discord channel ids where Nuxi may run. **Unset or empty means deny everywhere.** Outside these channels the command is acknowledged with an ephemeral "Command ignored."
-3. Set the app's **Interactions Endpoint URL** to `https://<eve-service>/eve/v1/discord` (Discord validates the endpoint when you save).
-4. Register the slash command (guild command on the Nuxt server for instant propagation during dev; global for prod). The string option **must** be named `message` — it maps to eve's default prompt extraction:
+   - `DISCORD_ALLOWED_CHANNELS` — comma-separated Discord channel ids where Nuxi may run. **Unset or empty means deny everywhere.** Outside these channels the command is acknowledged with an ephemeral "Command ignored." (Get an id via right-click on the channel → **Copy Channel ID**, with Developer Mode enabled in Discord settings.)
+3. **Invite the app to the server**: **OAuth2 → URL Generator**, select scopes `applications.commands` (slash commands) **and** `bot` (channel messages, typing, fallback delivery). Under bot permissions pick **View Channels** and **Send Messages** (add **Send Messages in Threads** if the allowed channels use threads). Open the generated URL and install it on the Nuxt server.
+4. **Set the Interactions Endpoint URL** (General Information tab, "URL du point de terminaison des interactions") to `https://<eve-service>/eve/v1/discord`. Order matters: deploy the eve service with `DISCORD_PUBLIC_KEY` set **first** — Discord sends a signed PING when you save and rejects the URL if the endpoint doesn't answer it. For local dev the endpoint must be publicly reachable: tunnel `localhost:3000` (e.g. `cloudflared tunnel --url http://localhost:3000` or ngrok) and point the dev app's endpoint at `https://<tunnel>/eve/v1/discord`.
+5. **Register the slash command** (guild command on the Nuxt server for instant propagation during dev; global — drop `/guilds/<id>` — for prod, up to ~1h propagation). The string option **must** be named `message` — it maps to eve's default prompt extraction:
 
 ```sh
-curl -X PUT "https://discord.com/api/v10/applications/$DISCORD_APPLICATION_ID/commands" \
+# Guild command (dev, instant):
+curl -X PUT "https://discord.com/api/v10/applications/$DISCORD_APPLICATION_ID/guilds/$GUILD_ID/commands" \
   -H "Authorization: Bot $DISCORD_BOT_TOKEN" -H "Content-Type: application/json" \
   -d '[{"name":"nuxi","description":"Ask Nuxi","type":1,"options":[{"name":"message","description":"Your question","type":3,"required":true}]}]'
+
+# Global command (prod): same payload against
+# https://discord.com/api/v10/applications/$DISCORD_APPLICATION_ID/commands
 ```
 
 Because dispatch is restricted to the `DISCORD_ALLOWED_CHANNELS` allowlist, Discord sessions are **admin-enabled by default** (`canAccessAdminMcp` matches Discord auth, like Slack). Keep the allowlist limited to trusted team channels — widening it to public channels means revisiting the admin gate first (`agent/lib/admin-mcp-access.ts`). The rate-limit hook applies per Discord user id.
