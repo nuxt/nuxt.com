@@ -36,6 +36,7 @@ The agent never imports Nuxt server code directly. Shared logic that both sides 
    - `DISCORD_PUBLIC_KEY` — verifies inbound Ed25519 interaction signatures
    - `DISCORD_APPLICATION_ID` — edits deferred responses and sends followups
    - `DISCORD_BOT_TOKEN` — channel messages, typing indicators, fallback delivery
+   - `DISCORD_ALLOWED_CHANNELS` — comma-separated Discord channel ids where Nuxi may run. **Unset or empty means deny everywhere.** Outside these channels the command is acknowledged with an ephemeral "Command ignored."
 3. Set the app's **Interactions Endpoint URL** to `https://<eve-service>/eve/v1/discord` (Discord validates the endpoint when you save).
 4. Register the slash command (guild command on the Nuxt server for instant propagation during dev; global for prod). The string option **must** be named `message` — it maps to eve's default prompt extraction:
 
@@ -45,7 +46,7 @@ curl -X PUT "https://discord.com/api/v10/applications/$DISCORD_APPLICATION_ID/co
   -d '[{"name":"nuxi","description":"Ask Nuxi","type":1,"options":[{"name":"message","description":"Your question","type":3,"required":true}]}]'
 ```
 
-Discord sessions are not admin-gated: `canAccessAdminMcp` only matches Slack/schedule/admin auth, and the rate-limit hook applies per Discord user id.
+Because dispatch is restricted to the `DISCORD_ALLOWED_CHANNELS` allowlist, Discord sessions are **admin-enabled by default** (`canAccessAdminMcp` matches Discord auth, like Slack). Keep the allowlist limited to trusted team channels — widening it to public channels means revisiting the admin gate first (`agent/lib/admin-mcp-access.ts`). The rate-limit hook applies per Discord user id.
 
 ## Scheduled Slack workflows
 

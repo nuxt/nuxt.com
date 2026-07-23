@@ -18,6 +18,13 @@ function isSlackAuth(auth: AdminMcpAuthContext): boolean {
   return Boolean(authAttr(auth.attributes, 'team_id'))
 }
 
+function isDiscordAuth(auth: AdminMcpAuthContext): boolean {
+  // Discord dispatch is already gated to an allowlist of trusted channels
+  // (DISCORD_ALLOWED_CHANNELS, see channels/discord.ts) — every Discord
+  // session that reaches the agent comes from one of those channels.
+  return auth.issuer === 'discord' || Boolean(auth.issuer?.startsWith('discord:'))
+}
+
 export function isScheduleAppAuth(auth: AdminMcpAuthContext): boolean {
   return auth.principalId === 'eve:app' && auth.principalType === 'runtime'
 }
@@ -27,5 +34,6 @@ export function canAccessAdminMcp(auth: AdminMcpAuthContext | null | undefined):
   if (!auth) return false
   if (isScheduleAppAuth(auth)) return true
   if (isSlackAuth(auth)) return true
+  if (isDiscordAuth(auth)) return true
   return authAttr(auth.attributes, 'role') === 'admin'
 }
