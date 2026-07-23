@@ -15,9 +15,8 @@ const { refresh: refreshChats } = useChats()
 
 const { data, error, status, refresh } = useChatDetail(chatId)
 
-// Block setup on the detail fetch: `useEveChat` reads the session cursor once
-// at store creation, and without it the first send replays the whole Eve
-// event log (duplicated turns). Cached navigations resolve synchronously.
+// `useEveChat` reads the session cursor once at store creation, so the detail
+// must be resolved first. Cached navigations resolve synchronously.
 await refresh()
 
 setupStaleChatRefresh({ chatId, data, status, refresh })
@@ -31,10 +30,8 @@ watch([error, status, loggedIn], () => {
 
 const isOwner = computed(() => data.value?.isOwner ?? false)
 
-// While the detail is loading, ownership is unknown — keep the prompt layout
-// mounted instead of blanking the whole body (the main "flicker" when
-// navigating between chats). Worst case a non-owner sees the prompt for the
-// duration of the fetch before the read-only view takes over.
+// Keep the prompt layout mounted while ownership is unknown (refetch in
+// flight) instead of blanking the whole body.
 const showPromptBody = computed(() => isOwner.value || !loggedIn.value || status.value === 'pending')
 const visibility = ref<'public' | 'private' | 'admin'>(data.value?.visibility ?? 'private')
 const title = ref<string | null>(loggedIn.value ? (data.value?.title ?? null) : null)

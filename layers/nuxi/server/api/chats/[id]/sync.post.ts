@@ -2,10 +2,9 @@ import { and, eq } from 'drizzle-orm'
 import { z } from 'zod'
 
 /**
- * End-of-turn sync: upserts the assistant messages produced by the live Eve
- * projection and stores the session stream cursor. User messages are
- * persisted at send time (`POST /messages`), so history in the DB is
- * append-only — nothing is ever deleted or reordered.
+ * End-of-turn sync: upserts the turn's assistant messages and stores the
+ * session stream cursor. User messages are persisted at send time, so DB
+ * history is append-only — nothing is ever deleted or reordered.
  */
 export default defineEventHandler(async (event) => {
   const { user } = await requireUserSession(event)

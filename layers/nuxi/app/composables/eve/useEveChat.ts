@@ -7,20 +7,16 @@ import type { AgentChatHandle } from './types'
 export interface UseEveChatOptions {
   chatId: MaybeRefOrGetter<string>
   initialMessages?: MaybeRefOrGetter<UIMessage[] | undefined>
-  /**
-   * Cursor persisted at the end of the previous turn. Read once at store
-   * creation — it must be resolved before calling this composable.
-   */
+  /** Read once at store creation — must be resolved before calling this composable. */
   sessionCursor?: ChatSessionCursor | null
   headers?: () => Record<string, string>
   onFinish?: (snapshot: UseEveAgentSnapshot<EveMessageData>) => void | Promise<void>
 }
 
 /**
- * Eve turn ids (`turn_N`) restart at 0 for every session, and message ids
- * derive from them (`turn_0:assistant`). These ids are persisted as DB rows
- * and referenced by votes, so they must be unique across sessions. Prefix
- * turn ids with a random scope regenerated on each `session.started`.
+ * Eve turn ids (`turn_N`) restart at 0 for every session, and derived message
+ * ids are persisted as DB rows — prefix them with a random scope regenerated
+ * on each `session.started` to keep them unique across sessions.
  */
 function scopedTurnIdReducer(): EveAgentReducer<EveMessageData> {
   const base = defaultMessageReducer()
@@ -104,12 +100,9 @@ export function useEveChat(options: UseEveChatOptions): AgentChatHandle & {
   hasAgentMessage: (role: UIMessage['role']) => boolean
 } {
   const agent = useEveAgent({
-    // The chat id doubles as the Eve continuation token: Eve resolves it to
-    // its durable session, or starts a fresh one (re-primed with the chat
-    // summary from `/api/internal/chats/:id/context`) when it expired.
-    // The persisted cursor makes the first send attach at the stream tail —
-    // without it, the client streams the session from index 0 and replays
-    // every past turn into the projection (duplicated messages).
+    // The chat id doubles as the Eve continuation token. The persisted cursor
+    // makes the first send attach at the stream tail — without it, the client
+    // replays the whole session event log (duplicated turns).
     initialSession: {
       continuationToken: toValue(options.chatId),
       streamIndex: 0,
@@ -144,8 +137,7 @@ export function useEveChat(options: UseEveChatOptions): AgentChatHandle & {
 
   async function regenerate() {
     if (agent.status.value === 'submitted' || agent.status.value === 'streaming') return
-    // On a freshly mounted chat the live projection is empty — fall back to
-    // the persisted history to find the prompt to re-send.
+    // On a freshly mounted chat the live projection is empty — fall back to the seed.
     const message = lastUserMessage(agent.data.value)
       ?? [...seedMessages.value].reverse().find(m => m.role === 'user' && m.parts.length > 0)
     if (!message) return
@@ -158,11 +150,8 @@ export function useEveChat(options: UseEveChatOptions): AgentChatHandle & {
 
     agent.stop()
 
-    // `agent.stop()` only aborts the client stream — the server-side turn keeps
-    // running (and burning tokens) to completion. Eve 0.24.6+ exposes a cancel
-    // route that settles the turn as `turn.cancelled` + `session.waiting`, so
-    // best-effort cancel it too. Auth rides on the same session cookie as the
-    // other `/eve/v1` routes.
+    // `agent.stop()` only aborts the client stream — best-effort cancel the
+    // server-side turn too, or it keeps running to completion.
     if (wasActive && sessionId) {
       void $fetch(`/eve/v1/session/${encodeURIComponent(sessionId)}/cancel`, {
         method: 'POST',

@@ -19,12 +19,7 @@ export function hasVisibleParts(parts: UIMessage['parts']): boolean {
   })
 }
 
-/**
- * Drop assistant messages that never got renderable content (e.g. a turn
- * stopped right after `step.started` persisted a `step-start`-only message).
- * `UChatMessages` only skips messages with empty `parts`, so these would
- * otherwise render as an empty frame.
- */
+/** Drop assistant messages without renderable content — they'd render as an empty frame. */
 function withoutEmptyAssistantMessages(messages: UIMessage[]): UIMessage[] {
   const filtered = messages.filter(message =>
     message.role !== 'assistant' || hasVisibleParts(message.parts)

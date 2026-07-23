@@ -139,10 +139,7 @@ export function useChatDetail(chatId: MaybeRefOrGetter<string>) {
   async function fetchDetail(chatIdValue: string) {
     try {
       const detail = await $fetch<ChatDetail>(`/api/chats/${chatIdValue}`)
-      // Seed the shared cache: without this, only created/streamed chats were
-      // cached, so navigating back to a fetched chat refetched it every time —
-      // data went null, the `isOwner` gate unmounted the whole chat body, and
-      // the page flashed blank until the response arrived.
+      // Seed the shared cache so navigating back to this chat resolves synchronously.
       nuxtApp.payload.data[chatDetailCacheKey(chatIdValue)] = detail
       data.value = detail
       status.value = 'success'
@@ -171,8 +168,7 @@ export function useChatDetail(chatId: MaybeRefOrGetter<string>) {
         status.value = 'success'
         return Promise.resolve()
       }
-      // Awaiting `refresh()` while the immediate watcher's fetch is in flight
-      // must join it, not start a second request.
+      // Join an in-flight fetch instead of starting a second request.
       if (inflight?.id === chatIdValue) return inflight.promise
     }
 

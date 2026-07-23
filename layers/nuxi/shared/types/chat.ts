@@ -1,7 +1,6 @@
 /**
- * Where the client left off in the Eve session's event stream. Passing it
- * back on the next mount lets the client attach at the tail — without it,
- * the first send replays the whole session event log into the projection.
+ * Where the client left off in the Eve session's event stream — lets the next
+ * mount attach at the tail instead of replaying the whole event log.
  */
 export interface ChatSessionCursor {
   sessionId: string

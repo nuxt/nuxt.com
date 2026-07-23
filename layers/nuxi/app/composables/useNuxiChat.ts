@@ -219,8 +219,8 @@ function needsGeneration(messages: ChatMessageRow[]) {
   const last = messages[messages.length - 1]
   if (last?.role !== 'user') return false
 
-  // Legacy turn-derived ids: a trailing user row whose turn already has its
-  // assistant reply was answered — regenerating it would replay the prompt.
+  // A trailing user row whose turn already has its assistant reply (legacy
+  // turn-derived ids) was answered — regenerating would replay the prompt.
   if (last.id.endsWith(':user')) {
     const turnPrefix = last.id.slice(0, -':user'.length)
     if (messages.some(message => message.id === `${turnPrefix}:assistant`)) return false
@@ -266,8 +266,7 @@ export function setupStaleChatRefresh(options: {
     const cached = options.data.value
     if (!cached || options.status.value !== 'success') return
 
-    // `force` bypasses the detail cache — a plain refresh would just read the
-    // same stale cached entry back and never hit the network.
+    // `force` bypasses the detail cache, which would just return the stale entry.
     const looksIncomplete = needsGeneration(cached.messages)
     if (looksIncomplete) void options.refresh({ force: true })
   })
@@ -363,8 +362,8 @@ export function useNuxiChat(options: UseNuxiChatOptions) {
       : agent.pageContextEnabled.value && Boolean(agent.currentPage.value)
   )
 
-  // Set when the resume flow re-sends a trailing unanswered user message: the
-  // live projection renders it, so the persisted copy is hidden from the seed.
+  // When the resume flow re-sends a trailing unanswered user message, the live
+  // projection renders it — hide the persisted copy from the seed.
   const trailingUserResent = ref(false)
 
   const seedMessages = computed(() => {
@@ -376,8 +375,6 @@ export function useNuxiChat(options: UseNuxiChatOptions) {
   const eveChat = useEveChat({
     chatId: options.chatId,
     initialMessages: seedMessages,
-    // Read once at store creation — the chat page awaits the detail fetch in
-    // its setup so the cursor is already resolved here.
     sessionCursor: options.data?.value?.sessionCursor ?? options.sessionCursor ?? null,
     headers: buildEveHeaders(options.chatId, agent, useContext),
     onFinish: createChatSyncHandler({
