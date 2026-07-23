@@ -25,6 +25,28 @@ The agent never imports Nuxt server code directly. Shared logic that both sides 
 
 `eve.eveRoot` points Eve at this layer so `agent/` is discovered at `layers/nuxi/agent/`. The layer includes a minimal `package.json` (Eve project marker for nested layout discovery, with `eve build` for the agent service). On Vercel, the root `eve/nuxt` module emits the dual `web` + `eve` services into `.vercel/output` during `nuxt build` — no hand-maintained root `vercel.json` is required.
 
+## Discord channel
+
+`agent/channels/discord.ts` wires Nuxi into Discord through eve's HTTP Interactions channel. Unlike Slack (mentions + DMs), Discord only supports **slash commands** (`/nuxi message:...`) — no auto-replies to @mentions or free messages (that would need a Gateway bot, which eve does not support). HITL follow-ups render as buttons/selects/modals.
+
+### One-time setup
+
+1. Create a Discord application + bot in the [Developer Portal](https://discord.com/developers/applications) — ideally one app for preview/dev and one for prod, mirroring `slack/nuxi-preview` / `slack/nuxi`.
+2. Set the env vars on the **eve** service (`vercel env`):
+   - `DISCORD_PUBLIC_KEY` — verifies inbound Ed25519 interaction signatures
+   - `DISCORD_APPLICATION_ID` — edits deferred responses and sends followups
+   - `DISCORD_BOT_TOKEN` — channel messages, typing indicators, fallback delivery
+3. Set the app's **Interactions Endpoint URL** to `https://<eve-service>/eve/v1/discord` (Discord validates the endpoint when you save).
+4. Register the slash command (guild command on the Nuxt server for instant propagation during dev; global for prod). The string option **must** be named `message` — it maps to eve's default prompt extraction:
+
+```sh
+curl -X PUT "https://discord.com/api/v10/applications/$DISCORD_APPLICATION_ID/commands" \
+  -H "Authorization: Bot $DISCORD_BOT_TOKEN" -H "Content-Type: application/json" \
+  -d '[{"name":"nuxi","description":"Ask Nuxi","type":1,"options":[{"name":"message","description":"Your question","type":3,"required":true}]}]'
+```
+
+Discord sessions are not admin-gated: `canAccessAdminMcp` only matches Slack/schedule/admin auth, and the rate-limit hook applies per Discord user id.
+
 ## Scheduled Slack workflows
 
 Shared helpers live in `agent/lib/workflows.ts` (`receiveOnSlack`, auth, config). Each workflow keeps its own prompt, cron, and runner in `agent/schedules/<id>.ts`, with the procedure in `agent/skills/<id>/SKILL.md`.
