@@ -102,7 +102,7 @@
     "playwright": "^1.61.1",
     "shiki": "^4.3.1",
     "twoslash": "^0.3.9",
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.2",
     "vitest": "^4.1.10",
     "vue": "^3.5.40",
     "vue-tsc": "^3.3.7"
