@@ -39,7 +39,13 @@ function shouldDispatch(thread: Thread, message: Message): boolean {
   // Allowlist gate: `thread.channelId` is always the parent Discord channel,
   // even for messages inside threads. Discord sessions are admin-enabled
   // (see admin-mcp-access.ts) — this gate is what makes that safe.
-  return isAllowedDiscordChannel(thread.channelId)
+  const allowed = isAllowedDiscordChannel(thread.channelId)
+  console.log('[nuxi:discord]', allowed ? 'dispatching' : 'dropped (channel not in DISCORD_ALLOWED_CHANNELS)', {
+    channelId: thread.channelId,
+    threadId: thread.id,
+    author: message.author.userName
+  })
+  return allowed
 }
 
 bot.onNewMention(async (thread: Thread, message: Message) => {
