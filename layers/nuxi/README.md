@@ -52,6 +52,18 @@ How messages arrive: Discord does not push messages to HTTP webhooks like Slack.
 1. `pnpm dev:full`, then start a Gateway listener manually: `curl -X POST http://localhost:3000/eve/v1/dev/schedules/discord-gateway` (re-run every ~4 minutes, or rely on eve's dev scheduler).
 2. @mention the bot in an allowed channel of the dev server — it should answer in a thread. For HITL buttons, the interactions endpoint additionally needs a public tunnel (e.g. `cloudflared tunnel --url http://localhost:3000`).
 
+### Test on preview
+
+Eve cron schedules only run on the **production** deployment, so on a preview the Gateway listener never starts by itself — @mentions will be silently ignored until you start one:
+
+```sh
+curl -X POST "https://<preview-url>/eve/v1/ops/discord-gateway/trigger" \
+  -H "Authorization: Bearer $INTERNAL_API_SECRET"
+# -> { "started": true, "webhookUrl": "https://<preview-url>/eve/v1/discord" }
+```
+
+Each call opens one 270s listener window — re-run it while testing. The preview also needs the `DISCORD_*` env vars (and ideally `REDIS_URL`) available to the preview environment.
+
 Because dispatch is restricted to the `DISCORD_ALLOWED_CHANNELS` allowlist, Discord sessions are **admin-enabled by default** (`canAccessAdminMcp` matches Discord auth, like Slack). Keep the allowlist limited to trusted team channels — widening it to public channels means revisiting the admin gate first (`agent/lib/admin-mcp-access.ts`). The rate-limit hook applies per Discord user id.
 
 ## Scheduled Slack workflows
