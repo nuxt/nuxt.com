@@ -49,6 +49,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ message: 'Chat not found', status: 404, why: 'Viewer is not the owner and the chat is not public.' })
   }
 
-  const { userId: _, ...rest } = chat
-  return { ...rest, isOwner }
+  const { userId: _, state, ...rest } = chat
+  // The stream cursor only matters to whoever can continue the conversation.
+  return { ...rest, sessionCursor: isOwner ? (state ?? null) : null, isOwner }
 })
