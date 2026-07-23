@@ -16,7 +16,12 @@ export function allowedDiscordChannelIds(): Set<string> {
 
 export function isAllowedDiscordChannel(channelId: string | undefined): boolean {
   if (!channelId) return false
-  return allowedDiscordChannelIds().has(channelId)
+  const ids = allowedDiscordChannelIds()
+  if (ids.has(channelId)) return true
+  // Chat SDK channel ids are prefixed (`discord:<guildId>:<channelId>`) while
+  // the allowlist holds raw Discord channel ids — match the trailing segment.
+  const raw = channelId.split(':').pop()
+  return Boolean(raw && ids.has(raw))
 }
 
 /**
