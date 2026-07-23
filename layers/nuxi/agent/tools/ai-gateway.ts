@@ -9,6 +9,7 @@ export const AI_GATEWAY_INSTRUCTIONS = `**AI Gateway tools (\`ai_gateway__*\`, a
 - Dashboard: https://vercel.com/nuxt-js/nuxt/ai-gateway`
 
 const BASE_URL = 'https://ai-gateway.vercel.sh/v1'
+const FETCH_TIMEOUT_MS = 10_000
 
 function apiKey(): string {
   const key = process.env.AI_GATEWAY_API_KEY?.trim()
@@ -23,7 +24,8 @@ async function gatewayFetch(path: string, params: Record<string, string | undefi
   }
 
   const response = await fetch(url, {
-    headers: { Authorization: `Bearer ${apiKey()}` }
+    headers: { Authorization: `Bearer ${apiKey()}` },
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS)
   })
 
   if (!response.ok) {
@@ -57,6 +59,9 @@ function aiGatewayTools() {
         credentialType: z.enum(['byok', 'system']).optional(),
         tags: z.array(z.string()).optional(),
         tagsMatch: z.enum(['any', 'all']).optional()
+      }).refine(({ startDate, endDate }) => startDate <= endDate, {
+        message: 'startDate must not be later than endDate',
+        path: ['startDate']
       }),
       async execute(input) {
         return await gatewayFetch('/report', {

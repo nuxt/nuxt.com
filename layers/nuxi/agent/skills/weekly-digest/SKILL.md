@@ -13,7 +13,7 @@ When producing a digest (scheduled or on request):
 - Every bullet that references a page, chat, or dashboard must include a clickable link via Slack syntax: `<https://…|label>`.
 - Sparingly use :nuxter: or :nuxt_cool: (0–2 total) when something is worth celebrating or urgent.
 
-**Data steps** (parallel where possible; steps 6-9 need admin/Slack-only connections and tools):
+**Data steps** (parallel where possible; steps 6-9 need admin/Slack/schedule-only connections and tools):
 
 1. `admin_mcp__feedback_stats` — `topPages=5`
 2. `admin_mcp__list_feedback` — `ratings=["not-helpful", "confusing"]`, `limit=30`

@@ -9,7 +9,7 @@ export default defineDynamic({
     'session.started': async (_event, ctx) => {
       const auth = ctx.session.auth.current
       const markdown = canAccessAdminMcp(auth)
-        ? [buildInstructionsWithDate(), ADMIN_MCP_INSTRUCTIONS, VERCEL_MCP_INSTRUCTIONS, AI_GATEWAY_INSTRUCTIONS].join('\n\n')
+        ? [buildInstructionsWithDate(), ADMIN_MCP_INSTRUCTIONS, VERCEL_MCP_INSTRUCTIONS, AI_GATEWAY_INSTRUCTIONS].filter(Boolean).join('\n\n')
         : buildInstructionsWithDate()
 
       return defineInstructions({ markdown })

@@ -30,7 +30,7 @@ When producing the analytics digest (scheduled or on request):
 
 **Output template:**
 
-**Nuxt traffic digest — last 7 days** (Jul 14 – Jul 21, 2026)
+**Nuxt traffic digest — last 7 days** (Jul 15 – Jul 21, 2026)
 
 :bar_chart: **Traffic pulse**
 • *12,430 visitors* (+8% WoW), *31,200 pageviews*
