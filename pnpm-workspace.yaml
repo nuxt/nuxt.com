@@ -3,6 +3,8 @@ strictPeerDependencies: false
 
 overrides:
   nostics: ^1.2.0
+  # chat@4.34.0 pins the 4.1.0-beta.2 prerelease, flagged as a downgrade by check-provenance
+  "@workflow/serde": 4.1.0
 
 allowBuilds:
   better-sqlite3: true
