@@ -135,15 +135,24 @@ export function useChatDetail(chatId: MaybeRefOrGetter<string>) {
   }
 
   let inflight: { id: string, promise: Promise<void> } | null = null
+  let fetchSeq = 0
 
   async function fetchDetail(chatIdValue: string) {
+    const token = ++fetchSeq
+    // Only the latest request for the current id may write local state —
+    // stale responses (id switch, forced refresh overlapping a normal one)
+    // still seed the shared cache but are otherwise dropped.
+    const isCurrent = () => token === fetchSeq && id.value === chatIdValue
+
     try {
       const detail = await $fetch<ChatDetail>(`/api/chats/${chatIdValue}`)
       // Seed the shared cache so navigating back to this chat resolves synchronously.
       nuxtApp.payload.data[chatDetailCacheKey(chatIdValue)] = detail
+      if (!isCurrent()) return
       data.value = detail
       status.value = 'success'
     } catch (err) {
+      if (!isCurrent()) return
       data.value = null
       error.value = err as Error
       status.value = 'error'

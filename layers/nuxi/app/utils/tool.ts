@@ -22,7 +22,8 @@ type ToolPart = ToolUIPart<UITools> | DynamicToolUIPart
 
 export function getSearchQuery(part: ToolPart): string | undefined {
   const input = part.input as SearchInput | undefined
-  return input?.query ?? input?.search_queries?.[0] ?? input?.objective
+  return [input?.query, input?.search_queries?.[0], input?.objective]
+    .find(value => typeof value === 'string' && value.trim().length > 0)
 }
 
 export function getSources(part: ToolPart): Source[] {
@@ -34,7 +35,7 @@ export function getSources(part: ToolPart): Source[] {
   }
 
   const typed = output as SearchOutput
-  const entries = typed.sources ?? typed.results
+  const entries = typed.sources?.length ? typed.sources : typed.results
   if (entries) {
     return entries
       .filter((s): s is { url: string, title?: string } => typeof s.url === 'string' && s.url.length > 0)
