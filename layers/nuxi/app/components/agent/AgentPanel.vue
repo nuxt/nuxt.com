@@ -14,16 +14,15 @@ const {
 const { chatList } = useChats()
 const { loggedIn } = useUserSession()
 
-type ActiveChat = { id: string, messages: UIMessage[], state: ChatEveState | null }
-const active = shallowRef<ActiveChat>({ id: crypto.randomUUID(), messages: [], state: null })
+type ActiveChat = { id: string, messages: UIMessage[], sessionCursor?: ChatSessionCursor | null }
+const active = shallowRef<ActiveChat>({ id: crypto.randomUUID(), messages: [] })
 const chatId = computed(() => active.value.id)
 const initialMessages = computed(() => active.value.messages)
-const initialState = computed(() => active.value.state)
 let loadToken = 0
 
 function startNewChat() {
   loadToken++
-  active.value = { id: crypto.randomUUID(), messages: [], state: null }
+  active.value = { id: crypto.randomUUID(), messages: [] }
 }
 
 async function setActiveChat(id: string) {
@@ -32,10 +31,14 @@ async function setActiveChat(id: string) {
   try {
     const data = await $fetch<ChatDetail>(`/api/chats/${id}`)
     if (token !== loadToken) return
-    active.value = { id, messages: dbRowsToUIMessages(data.messages ?? []), state: data.state ?? null }
+    active.value = {
+      id,
+      messages: dbRowsToUIMessages(data.messages ?? []),
+      sessionCursor: data.sessionCursor ?? null
+    }
   } catch {
     if (token === loadToken) {
-      active.value = { id: crypto.randomUUID(), messages: [], state: null }
+      active.value = { id: crypto.randomUUID(), messages: [] }
     }
   }
 }
@@ -121,7 +124,7 @@ defineShortcuts({
       :key="chatId"
       :chat-id="chatId"
       :initial-messages="initialMessages"
-      :initial-state="initialState"
+      :session-cursor="active.sessionCursor"
     />
   </AgentPanelShell>
 </template>

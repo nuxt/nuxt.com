@@ -1,10 +1,10 @@
 import { getToken } from '@vercel/connect'
+import { callSlackApi } from 'eve/channels/slack'
 import { slackConnectorId } from './slack-connect.js'
 
 const DEFAULT_WORKFLOW_SLACK_CHANNEL = 'project-nuxi'
 const DEFAULT_FIREHOSE_SLACK_CHANNEL = 'firehose-nuxt'
 const CHANNEL_LIST_TTL_MS = 60 * 60 * 1000
-const SLACK_FETCH_TIMEOUT_MS = 10_000
 
 export interface SlackChannelInfo {
   id: string
@@ -98,15 +98,13 @@ interface ChannelCacheState {
 let channelCache: ChannelCacheState | null = null
 let channelIndexInflight: Promise<Map<string, SlackChannelInfo>> | null = null
 
-async function slackBotToken(): Promise<string> {
+function slackBotToken(): Promise<string> {
   return getToken(slackConnectorId(), { subject: { type: 'app' } })
 }
 
-async function slackFetch(url: string, init?: RequestInit): Promise<Response> {
-  return fetch(url, {
-    ...init,
-    signal: init?.signal ?? AbortSignal.timeout(SLACK_FETCH_TIMEOUT_MS)
-  })
+/** Eve's `callSlackApi` signs and form-encodes the request; callers check `ok`. */
+async function slackApi<T>(operation: string, body: Record<string, unknown>): Promise<T> {
+  return await callSlackApi({ botToken: slackBotToken, operation, body }) as T
 }
 
 async function fetchBotChannelPages(): Promise<Map<string, SlackChannelInfo>> {
@@ -114,18 +112,13 @@ async function fetchBotChannelPages(): Promise<Map<string, SlackChannelInfo>> {
   let cursor: string | undefined
 
   do {
-    const params = new URLSearchParams({
+    const data = await slackApi<UsersConversationsResponse>('users.conversations', {
       types: 'public_channel,private_channel',
-      exclude_archived: 'true',
-      limit: '200'
-    })
-    if (cursor) params.set('cursor', cursor)
-
-    const response = await slackFetch(`https://slack.com/api/users.conversations?${params}`, {
-      headers: { Authorization: `Bearer ${await slackBotToken()}` }
+      exclude_archived: true,
+      limit: 200,
+      ...(cursor ? { cursor } : {})
     })
 
-    const data = await response.json() as UsersConversationsResponse
     if (!data.ok) {
       throw new Error(data.error ?? 'Slack users.conversations failed')
     }
@@ -221,18 +214,13 @@ export async function fetchSlackChannelHistory({
   limit?: number
 }): Promise<SlackHistoryMessage[]> {
   const oldest = String(Math.floor((Date.now() - sinceHours * 3_600_000) / 1000))
-  const params = new URLSearchParams({
+  const data = await slackApi<SlackHistoryResponse>('conversations.history', {
     channel: channelId,
     oldest,
-    limit: String(Math.min(limit, 200)),
-    inclusive: 'true'
+    limit: Math.min(limit, 200),
+    inclusive: true
   })
 
-  const response = await slackFetch(`https://slack.com/api/conversations.history?${params}`, {
-    headers: { Authorization: `Bearer ${await slackBotToken()}` }
-  })
-
-  const data = await response.json() as SlackHistoryResponse
   if (!data.ok) {
     throw new Error(data.error ?? 'Slack conversations.history failed')
   }
