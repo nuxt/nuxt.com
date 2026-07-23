@@ -9,7 +9,11 @@
   },
   "dependencies": {
     "@ai-sdk/gateway": "^4.0.24",
+    "@chat-adapter/discord": "^4.34.0",
+    "@chat-adapter/state-memory": "^4.34.0",
+    "@chat-adapter/state-redis": "^4.34.0",
     "ai": "^7.0.32",
+    "chat": "^4.34.0",
     "eve": "^0.27.0",
     "zod": "^4.4.3"
   },

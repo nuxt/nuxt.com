@@ -1,6 +1,7 @@
 import { timingSafeEqual } from 'node:crypto'
 import type { ScheduleHandlerArgs } from 'eve/schedules'
 import slack from '../channels/slack.js'
+import { discordWorkflowChannelId, mirrorDigestToDiscord } from './discord-workflow.js'
 import { resolveSlackChannelRef, workflowSlackChannelRef } from './slack-api.js'
 
 const DEFAULT_SINCE_DAYS = 7
@@ -39,6 +40,17 @@ export function resolveSinceDays(
   return override ?? fallback
 }
 
+/**
+ * Starts a Slack digest session and, when `DISCORD_WORKFLOW_CHANNEL_ID` is
+ * configured, mirrors the same generated text to Discord (see
+ * `discord-workflow.ts` — no second agent run). Awaited inline rather than
+ * fired under a nested `waitUntil`: this whole function already runs inside
+ * the caller's top-level `waitUntil(runWeeklyDigest(...))`, and a second,
+ * deeply-nested `waitUntil` call turned out not to reliably survive the
+ * schedule's durable step execution (Discord mirror silently never ran,
+ * no error logged). Awaiting here keeps the mirror inside that same
+ * protected async chain instead of relying on a second background task.
+ */
 export async function receiveOnSlack({
   receive,
   appAuth,
@@ -52,11 +64,18 @@ export async function receiveOnSlack({
 }) {
   const resolved = await resolveSlackChannelRef(channelRef ?? workflowSlackChannelRef())
 
-  return receive(slack, {
+  const session = await receive(slack, {
     auth: appAuth,
     target: { channelId: resolved.id },
     message
   })
+
+  const discordChannelId = discordWorkflowChannelId()
+  if (discordChannelId) {
+    await mirrorDigestToDiscord({ session, channelId: discordChannelId })
+  }
+
+  return session
 }
 
 export function isManualWorkflowTriggerAllowed(): boolean {
