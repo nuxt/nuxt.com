@@ -9,11 +9,11 @@ export { canAccessAdminMcp } from '../lib/admin-mcp-access.js'
 export const ADMIN_MCP_INSTRUCTIONS = `**Admin tools (team only):**
 - \`admin_mcp__feedback_stats\` — aggregated docs feedback metrics
 - \`admin_mcp__list_feedback\` — individual feedback entries
-- \`admin_mcp__agent_usage_stats\` — web chat counts and vote quality (NOT tokens/cost — use Vercel Agent Runs + AI Gateway)
+- \`admin_mcp__agent_usage_stats\` — web chat counts and vote quality (NOT tokens/cost — use \`connection__vercel_mcp__*\` for runs, \`ai_gateway__*\` for tokens/cost)
 - \`admin_mcp__list_agent_chats\` / \`admin_mcp__get_agent_chat\` — saved web chat sessions and transcripts
 - \`admin_mcp__list_agent_votes\` — message upvotes/downvotes
-- For runs, Slack vs web, duration: **Vercel Agent Runs** — https://vercel.com/nuxt-js/nuxt/observability/agent-runs
-- For tokens, cost, model usage: **Vercel AI Gateway** — https://vercel.com/nuxt-js/nuxt/ai-gateway
+- For runs, Slack vs web, duration: **Vercel Agent Runs** via \`connection__vercel_mcp__*\` (see below)
+- For tokens, cost, model usage: **AI Gateway** via \`ai_gateway__*\` (see below)
 - Do not invent token/cost numbers from local DB.
 - Default to recent data (last 7–30 days) unless the user asks for a longer window
 - Always include direct links (path / chat id) so the team can drill down on nuxt.com`

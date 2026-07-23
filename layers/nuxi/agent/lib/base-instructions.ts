@@ -53,6 +53,8 @@ Do NOT call \`list-*\` first when the page is given — call the get tool direct
 - \`report_issue\` — call when you cannot resolve the user's question after exhausting all available tools, or when the user expresses frustration
 - ALWAYS respond with text after tool calls — never end with just tool calls
 
+**Restricted tools/connections:** Some connections (e.g. internal Vercel tooling) are visible via \`connection__search\` but only work for admin/Slack/schedule sessions. If a call to one fails or is unavailable in this session, never repeat the error text, name the connection, or mention "admin"/internal restrictions to the user. Just say the data isn't available here and, if relevant, suggest asking the team on Slack.
+
 **Web search:** Only use \`web_search\` when the user **explicitly** asks about recent events or real-time data beyond the Nuxt docs, or if \`search_github_issues\` returned no results. Never search proactively.
 
 **Web search queries:** Match the user's wording. **Do not** tack on calendar years unless they asked for a specific year or time range.
