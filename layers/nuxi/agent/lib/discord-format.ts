@@ -47,11 +47,21 @@ const SLACK_LABELED_LINK_PATTERN = /<(https?:\/\/[^|>]+)\|([^>]+)>/g
 const SLACK_BARE_LINK_PATTERN = /<(https?:\/\/[^>]+)>/g
 const EMOJI_SHORTCODE_PATTERN = /:([\w-]+):/g
 
-/** `<url|label>` -> `[label](url)`; a bare `<url>` -> `url` (Discord autolinks it). */
+/**
+ * `<url|label>` -> `[label](<url>)`; a bare `<url>` -> `<url>` (unchanged).
+ *
+ * The digest links to several pages per section (Agent Runs, AI Gateway,
+ * Vercel Observability, docs pages, …) — with a plain `[label](url)`
+ * Discord still auto-unfurls every one of those into a big image/title
+ * embed card below the message, which buries the actual digest text.
+ * Wrapping the URL itself in `<>` (inside or outside the masked-link
+ * parens) is Discord's own syntax for keeping a link clickable while
+ * suppressing that embed.
+ */
 function slackLinksToMarkdown(text: string): string {
   return text
-    .replace(SLACK_LABELED_LINK_PATTERN, (_match, url: string, label: string) => `[${label}](${url})`)
-    .replace(SLACK_BARE_LINK_PATTERN, (_match, url: string) => url)
+    .replace(SLACK_LABELED_LINK_PATTERN, (_match, url: string, label: string) => `[${label}](<${url}>)`)
+    .replace(SLACK_BARE_LINK_PATTERN, (_match, url: string) => `<${url}>`)
 }
 
 /**
