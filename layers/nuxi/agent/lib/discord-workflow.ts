@@ -51,8 +51,7 @@ async function resolveDiscordThreadId(discord: DiscordAdapter, channelId: string
  * thread sessions stay open for follow-up replies and may never emit one,
  * which would otherwise hang this forever.
  */
-async function finalMessageText(session: Session): Promise<string | null> {
-  const stream = await session.getEventStream()
+async function finalMessageText(stream: Awaited<ReturnType<Session['getEventStream']>>): Promise<string | null> {
   for await (const event of stream) {
     if (event.type === 'message.completed') {
       if (event.data.finishReason === 'tool-calls') continue
@@ -63,9 +62,18 @@ async function finalMessageText(session: Session): Promise<string | null> {
   return null
 }
 
-function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+/**
+ * Rejects with a timeout error if `promise` doesn't settle within `ms`. On
+ * timeout, also calls `onTimeout` so the caller can cancel whatever the
+ * promise is still doing in the background (here, the event stream's own
+ * `cancel()`) instead of leaving it running past the deadline.
+ */
+function withTimeout<T>(promise: Promise<T>, ms: number, label: string, onTimeout?: () => void): Promise<T> {
   return new Promise<T>((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms)
+    const timer = setTimeout(() => {
+      onTimeout?.()
+      reject(new Error(`${label} timed out after ${ms}ms`))
+    }, ms)
     promise.then(
       (value) => {
         clearTimeout(timer)
@@ -110,7 +118,13 @@ export async function mirrorDigestToDiscord({
 }): Promise<void> {
   try {
     console.log('[nuxi:discord-workflow] mirroring digest, reading Slack session event stream', { channelId })
-    const text = await withTimeout(finalMessageText(session), EVENT_STREAM_TIMEOUT_MS, 'reading Slack session event stream')
+    const stream = await session.getEventStream()
+    const text = await withTimeout(
+      finalMessageText(stream),
+      EVENT_STREAM_TIMEOUT_MS,
+      'reading Slack session event stream',
+      () => { void stream.cancel() }
+    )
     if (!text) {
       console.warn('[nuxi:discord-workflow] no message text found on session event stream, skipping mirror', { channelId })
       return

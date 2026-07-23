@@ -19,10 +19,14 @@ function isSlackAuth(auth: AdminMcpAuthContext): boolean {
 }
 
 function isDiscordAuth(auth: AdminMcpAuthContext): boolean {
-  // Discord dispatch is already gated to an allowlist of trusted channels
-  // (DISCORD_ALLOWED_CHANNELS, see channels/discord.ts) — every Discord
-  // session that reaches the agent comes from one of those channels.
-  return auth.issuer === 'discord' || Boolean(auth.issuer?.startsWith('discord:'))
+  const isDiscordIssuer = auth.issuer === 'discord' || Boolean(auth.issuer?.startsWith('discord:'))
+  if (!isDiscordIssuer) return false
+  // Discord dispatch is gated to an allowlist of trusted channels
+  // (DISCORD_ALLOWED_CHANNELS, see channels/discord.ts). `discordUserAuth`
+  // only sets this claim once it has verified the originating channel, so a
+  // session resumed from an unlisted channel (e.g. a HITL button click)
+  // can't bypass the allowlist and still get admin access.
+  return authAttr(auth.attributes, 'allowedChannel') === 'true'
 }
 
 export function isScheduleAppAuth(auth: AdminMcpAuthContext): boolean {

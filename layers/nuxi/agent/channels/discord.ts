@@ -20,6 +20,16 @@ const DISCORD_CONTEXT = [
  * `schedules/discord-gateway.ts`, which forwards events to this channel's
  * webhook at `/eve/v1/discord`.
  */
+// Durable state (thread subscriptions, dedupe, locks) needs Redis in
+// production — memory state doesn't survive across serverless invocations, so
+// silently falling back to it in prod would drop dedupe/locking and let the
+// Gateway's overlapping listener windows double-dispatch. Memory is fine for
+// local dev and previews.
+const redisUrl = process.env.REDIS_URL?.trim()
+if (!redisUrl && process.env.VERCEL_ENV === 'production') {
+  throw new Error('[nuxi:discord] REDIS_URL is required in production for durable Chat SDK state')
+}
+
 export const { bot, channel, send } = chatSdkChannel({
   userName: 'Nuxi',
   adapters: {
@@ -27,11 +37,12 @@ export const { bot, channel, send } = chatSdkChannel({
     // DISCORD_APPLICATION_ID env vars on the eve service.
     discord: createDiscordAdapter()
   },
-  // Durable state (thread subscriptions, dedupe, locks) needs Redis in
-  // production; memory is fine for local dev.
-  state: process.env.REDIS_URL ? createRedisState() : createMemoryState(),
+  state: redisUrl ? createRedisState() : createMemoryState(),
   // Keep the Discord principal when a HITL button click resumes a session.
-  resolveInputAuth: event => discordUserAuth(event.user?.userId, event.user?.userName)
+  // Pass the action's own thread channel (not the allowlist gate below,
+  // which only runs for onNewMention/onSubscribedMessage) so a resume from
+  // an unlisted channel doesn't inherit admin access.
+  resolveInputAuth: event => discordUserAuth(event.user?.userId, event.user?.userName, event.thread?.channelId)
 })
 
 const THREAD_TITLE_MAX_LENGTH = 90
@@ -72,7 +83,7 @@ bot.onNewMention(async (thread: Thread, message: Message) => {
 
   await send(
     { message: message.text, context: DISCORD_CONTEXT },
-    { thread, auth: discordUserAuth(message.author.userId, message.author.userName) }
+    { thread, auth: discordUserAuth(message.author.userId, message.author.userName, thread.channelId) }
   )
 })
 
@@ -80,7 +91,7 @@ bot.onSubscribedMessage(async (thread: Thread, message: Message) => {
   if (!shouldDispatch(thread, message)) return
   await send(
     { message: message.text },
-    { thread, auth: discordUserAuth(message.author.userId, message.author.userName) }
+    { thread, auth: discordUserAuth(message.author.userId, message.author.userName, thread.channelId) }
   )
 })
 
