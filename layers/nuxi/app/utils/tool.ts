@@ -5,14 +5,24 @@ export interface Source {
   title?: string
 }
 
+interface SearchInput {
+  query?: string
+  // Eve builtin web_search
+  objective?: string
+  search_queries?: string[]
+}
+
 interface SearchOutput {
   sources?: { url: string, type?: string }[]
+  // Eve builtin web_search
+  results?: { url?: string, title?: string }[]
 }
 
 type ToolPart = ToolUIPart<UITools> | DynamicToolUIPart
 
 export function getSearchQuery(part: ToolPart): string | undefined {
-  return (part.input as { query?: string } | undefined)?.query
+  const input = part.input as SearchInput | undefined
+  return input?.query ?? input?.search_queries?.[0] ?? input?.objective
 }
 
 export function getSources(part: ToolPart): Source[] {
@@ -24,8 +34,11 @@ export function getSources(part: ToolPart): Source[] {
   }
 
   const typed = output as SearchOutput
-  if (typed.sources) {
-    return typed.sources.filter(s => s.url).map(s => ({ url: s.url }))
+  const entries = typed.sources ?? typed.results
+  if (entries) {
+    return entries
+      .filter((s): s is { url: string, title?: string } => typeof s.url === 'string' && s.url.length > 0)
+      .map(s => ({ url: s.url, title: 'title' in s ? s.title : undefined }))
   }
 
   return []
