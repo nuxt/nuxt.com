@@ -39,18 +39,47 @@ async function resolveDiscordThreadId(discord: DiscordAdapter, channelId: string
   return threadId
 }
 
-/** Reads the final assistant text off a completed session's event stream. */
+/**
+ * Reads the exact text Slack's default `message.completed` handler posts to
+ * the channel — a `finishReason: "tool-calls"` event is pre-tool narration
+ * (buffered by Slack as a typing-indicator label, never posted verbatim), so
+ * it's skipped here too; only a non-tool-calls `message.completed` carries
+ * the real reply.
+ *
+ * Returns as soon as that event arrives instead of waiting for
+ * `session.completed`/`session.failed` to end the loop naturally — Slack
+ * thread sessions stay open for follow-up replies and may never emit one,
+ * which would otherwise hang this forever.
+ */
 async function finalMessageText(session: Session): Promise<string | null> {
   const stream = await session.getEventStream()
-  let text: string | null = null
   for await (const event of stream) {
-    if (event.type === 'message.completed' && event.data.message) {
-      text = event.data.message
+    if (event.type === 'message.completed') {
+      if (event.data.finishReason === 'tool-calls') continue
+      if (event.data.message) return event.data.message
     }
     if (event.type === 'session.completed' || event.type === 'session.failed') break
   }
-  return text
+  return null
 }
+
+function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms)
+    promise.then(
+      (value) => {
+        clearTimeout(timer)
+        resolve(value)
+      },
+      (error: unknown) => {
+        clearTimeout(timer)
+        reject(error)
+      }
+    )
+  })
+}
+
+const EVENT_STREAM_TIMEOUT_MS = 20_000
 
 /**
  * Mirrors a completed Slack digest session to Discord: reuses the model's
@@ -69,7 +98,7 @@ export async function mirrorDigestToDiscord({
   channelId: string
 }): Promise<void> {
   try {
-    const text = await finalMessageText(session)
+    const text = await withTimeout(finalMessageText(session), EVENT_STREAM_TIMEOUT_MS, 'reading Slack session event stream')
     if (!text) return
 
     await bot.initialize()
