@@ -98,16 +98,24 @@ export async function mirrorDigestToDiscord({
   channelId: string
 }): Promise<void> {
   try {
+    console.log('[nuxi:discord-workflow] mirroring digest, reading Slack session event stream', { channelId })
     const text = await withTimeout(finalMessageText(session), EVENT_STREAM_TIMEOUT_MS, 'reading Slack session event stream')
-    if (!text) return
+    if (!text) {
+      console.warn('[nuxi:discord-workflow] no message text found on session event stream, skipping mirror', { channelId })
+      return
+    }
 
     await bot.initialize()
     const discord = bot.getAdapter('discord')
-    if (!discord) return
+    if (!discord) {
+      console.warn('[nuxi:discord-workflow] discord adapter not available, skipping mirror', { channelId })
+      return
+    }
 
     const threadId = await resolveDiscordThreadId(discord, channelId)
     await discord.postMessage(threadId, slackTextToDiscord(text))
+    console.log('[nuxi:discord-workflow] mirrored digest to Discord', { channelId, threadId })
   } catch (error) {
-    console.warn('[nuxi:discord-workflow] failed to mirror digest to Discord', error)
+    console.warn('[nuxi:discord-workflow] failed to mirror digest to Discord', { channelId }, error)
   }
 }

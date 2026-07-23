@@ -13,13 +13,11 @@ const DEFAULT_WINDOW_HOURS = 24
 export async function runFirehoseSummary({
   receive,
   appAuth,
-  sinceHours,
-  waitUntil
+  sinceHours
 }: {
   receive: ScheduleHandlerArgs['receive']
   appAuth: ScheduleHandlerArgs['appAuth']
   sinceHours?: number
-  waitUntil?: ScheduleHandlerArgs['waitUntil']
 }) {
   const hours = sinceHours ?? DEFAULT_WINDOW_HOURS
   const firehoseRef = firehoseSlackChannelRef()
@@ -30,14 +28,13 @@ export async function runFirehoseSummary({
   return receiveOnSlack({
     receive,
     appAuth,
-    message: skillFirehoseWorkflowMessage(SKILL_ID, hours, firehoseName),
-    waitUntil
+    message: skillFirehoseWorkflowMessage(SKILL_ID, hours, firehoseName)
   })
 }
 
 export default defineSchedule({
   cron: '0 9 * * 1-5',
   async run({ receive, waitUntil, appAuth }) {
-    waitUntil(runFirehoseSummary({ receive, appAuth, waitUntil }))
+    waitUntil(runFirehoseSummary({ receive, appAuth }))
   }
 })
