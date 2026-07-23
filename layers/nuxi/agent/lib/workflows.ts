@@ -1,6 +1,7 @@
 import { timingSafeEqual } from 'node:crypto'
 import type { ScheduleHandlerArgs } from 'eve/schedules'
 import slack from '../channels/slack.js'
+import { discordWorkflowChannelId, mirrorDigestToDiscord } from './discord-workflow.js'
 import { resolveSlackChannelRef, workflowSlackChannelRef } from './slack-api.js'
 
 const DEFAULT_SINCE_DAYS = 7
@@ -39,24 +40,39 @@ export function resolveSinceDays(
   return override ?? fallback
 }
 
+/**
+ * Starts a Slack digest session and, when `DISCORD_WORKFLOW_CHANNEL_ID` is
+ * configured, mirrors the same generated text to Discord under `waitUntil`
+ * (see `discord-workflow.ts` — no second agent run). `waitUntil` is optional
+ * so this stays usable from contexts that don't need the mirror.
+ */
 export async function receiveOnSlack({
   receive,
   appAuth,
   message,
-  channelRef
+  channelRef,
+  waitUntil
 }: {
   receive: ScheduleHandlerArgs['receive']
   appAuth: ScheduleHandlerArgs['appAuth']
   message: string
   channelRef?: string
+  waitUntil?: ScheduleHandlerArgs['waitUntil']
 }) {
   const resolved = await resolveSlackChannelRef(channelRef ?? workflowSlackChannelRef())
 
-  return receive(slack, {
+  const session = await receive(slack, {
     auth: appAuth,
     target: { channelId: resolved.id },
     message
   })
+
+  const discordChannelId = discordWorkflowChannelId()
+  if (waitUntil && discordChannelId) {
+    waitUntil(mirrorDigestToDiscord({ session, channelId: discordChannelId }))
+  }
+
+  return session
 }
 
 export function isManualWorkflowTriggerAllowed(): boolean {

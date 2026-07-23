@@ -49,7 +49,7 @@ How messages arrive: Discord does not push messages to HTTP webhooks like Slack.
 
 ### Test locally
 
-1. `pnpm dev:full`, then start a Gateway listener manually: `curl -X POST http://localhost:3000/eve/v1/dev/schedules/discord-gateway` (re-run every ~4 minutes, or rely on eve's dev scheduler).
+1. `pnpm dev:nuxi`, then start a Gateway listener manually: `curl -X POST http://localhost:3000/eve/v1/dev/schedules/discord-gateway` (re-run every ~4 minutes, or rely on eve's dev scheduler).
 2. @mention the bot in an allowed channel of the dev server — it should answer in a thread. For HITL buttons, the interactions endpoint additionally needs a public tunnel (e.g. `cloudflared tunnel --url http://localhost:3000`).
 
 ### Test on preview
@@ -120,6 +120,10 @@ Summarizes `#firehose-nuxt` (Octolens social mentions) and posts highlights to t
 - Preview trigger: `POST /eve/v1/ops/firehose-summary/trigger?sinceHours=24`
 
 The Nuxi Slack bot must be invited to `#firehose-nuxt`. Required Connect scopes: `channels:read`, `channels:history` (plus `groups:read`, `groups:history` for private channels).
+
+### Discord mirror
+
+Set `DISCORD_WORKFLOW_CHANNEL_ID` (raw Discord channel id, see `.env.example`) to also post both digests to a Discord channel — distinct from `DISCORD_ALLOWED_CHANNELS`, which only gates live @mentions. This reuses the Slack-generated text (no second agent run): `agent/lib/workflows.ts` reads the finished Slack session's final message and `agent/lib/discord-format.ts` converts its Slack-only syntax (`<url|label>` links, `:nuxter:`-style emoji) to Discord Markdown before `agent/lib/discord-workflow.ts` posts it via the Discord adapter. Conversion is best-effort — an emoji shortcode outside the known set (see the file) passes through unchanged rather than being guessed at. Unset disables the mirror; a mirroring failure is logged and never affects the Slack post. The bot needs **View Channel** + **Send Messages** in the target channel.
 
 ### Test locally
 
