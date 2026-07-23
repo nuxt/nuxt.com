@@ -79,7 +79,18 @@ function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise
   })
 }
 
-const EVENT_STREAM_TIMEOUT_MS = 20_000
+/**
+ * `receive()` resolves once the Slack session/run is *started*, not once the
+ * digest is fully generated — the actual turn (several MCP tool calls:
+ * feedback-stats, agent-usage-stats, etc.) keeps running as a separate
+ * durable workflow continuation after `receiveOnSlack()`'s `await receive()`
+ * returns. The first preview test used a 20s timeout here and always hit it
+ * (confirmed via logs: the mirror ran, but `finalMessageText` never saw a
+ * `message.completed` event in time) — 20s is far shorter than a real digest
+ * generation. Budget generously against the schedule/ops function's own
+ * execution ceiling (300s) instead.
+ */
+const EVENT_STREAM_TIMEOUT_MS = 180_000
 
 /**
  * Mirrors a completed Slack digest session to Discord: reuses the model's
