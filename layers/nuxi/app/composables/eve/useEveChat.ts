@@ -1,50 +1,48 @@
-import type { EveMessageData, UseEveAgentSnapshot } from 'eve/vue'
-import { useEveAgent } from 'eve/vue'
+import type { EveAgentReducer, EveMessageData, UseEveAgentSnapshot } from 'eve/vue'
+import { defaultMessageReducer, useEveAgent } from 'eve/vue'
 import type { FileUIPart, UIMessage } from 'ai'
-import type { ChatEveState } from '../../../shared/types/chat'
 import { eveMessagesToUIMessages } from './adapter'
 import type { AgentChatHandle } from './types'
 
 export interface UseEveChatOptions {
   chatId: MaybeRefOrGetter<string>
   initialMessages?: MaybeRefOrGetter<UIMessage[] | undefined>
-  initialState?: MaybeRefOrGetter<ChatEveState | null | undefined>
+  /**
+   * Cursor persisted at the end of the previous turn. Read once at store
+   * creation — it must be resolved before calling this composable.
+   */
+  sessionCursor?: ChatSessionCursor | null
   headers?: () => Record<string, string>
   onFinish?: (snapshot: UseEveAgentSnapshot<EveMessageData>) => void | Promise<void>
 }
 
-function mergeMessagesById(seed: UIMessage[], live: UIMessage[]): UIMessage[] {
-  const liveById = new Map(live.map(message => [message.id, message]))
-  const seedIds = new Set(seed.map(message => message.id))
-  const merged = seed.map(message => liveById.get(message.id) ?? message)
-
-  for (const message of live) {
-    if (!seedIds.has(message.id)) merged.push(message)
-  }
-
-  return merged
-}
-
-function resumeFromState(chatId: string, state: ChatEveState | null | undefined) {
-  const events = state?.events
-  if (!events?.length) {
-    return {
-      initialSession: {
-        continuationToken: chatId,
-        streamIndex: 0
-      }
-    }
-  }
-
-  const session = state?.session ?? { streamIndex: 0 }
+/**
+ * Eve turn ids (`turn_N`) restart at 0 for every session, and message ids
+ * derive from them (`turn_0:assistant`). These ids are persisted as DB rows
+ * and referenced by votes, so they must be unique across sessions. Prefix
+ * turn ids with a random scope regenerated on each `session.started`.
+ */
+function scopedTurnIdReducer(): EveAgentReducer<EveMessageData> {
+  const base = defaultMessageReducer()
+  let scope = crypto.randomUUID().slice(0, 8)
 
   return {
-    initialSession: {
-      ...session,
-      continuationToken: session.continuationToken ?? chatId,
-      streamIndex: Math.max(session.streamIndex ?? 0, events.length)
-    },
-    initialEvents: events as never
+    initial: () => base.initial(),
+    reduce(data, event) {
+      if (event.type === 'session.started') {
+        scope = crypto.randomUUID().slice(0, 8)
+      }
+
+      const eventData = (event as { data?: { turnId?: unknown } }).data
+      if (typeof eventData?.turnId === 'string' && eventData.turnId) {
+        event = {
+          ...event,
+          data: { ...eventData, turnId: `${scope}:${eventData.turnId}` }
+        } as typeof event
+      }
+
+      return base.reduce(data, event)
+    }
   }
 }
 
@@ -105,13 +103,19 @@ export function useEveChat(options: UseEveChatOptions): AgentChatHandle & {
   send: (input: string | { parts: UIMessage['parts'] }) => Promise<void>
   hasAgentMessage: (role: UIMessage['role']) => boolean
 } {
-  // initialSession/initialEvents are read once at store creation (eve/vue); late-arriving
-  // initialState cannot re-seed the agent. When the agent only holds the current turn
-  // (live.length < seed.length), merge keeps hard-reloaded history visible.
-  const resume = resumeFromState(toValue(options.chatId), toValue(options.initialState))
-
   const agent = useEveAgent({
-    ...resume,
+    // The chat id doubles as the Eve continuation token: Eve resolves it to
+    // its durable session, or starts a fresh one (re-primed with the chat
+    // summary from `/api/internal/chats/:id/context`) when it expired.
+    // The persisted cursor makes the first send attach at the stream tail —
+    // without it, the client streams the session from index 0 and replays
+    // every past turn into the projection (duplicated messages).
+    initialSession: {
+      continuationToken: toValue(options.chatId),
+      streamIndex: 0,
+      ...options.sessionCursor
+    },
+    reducer: scopedTurnIdReducer(),
     headers: options.headers,
     onFinish: (snapshot) => {
       void options.onFinish?.(snapshot)
@@ -122,11 +126,12 @@ export function useEveChat(options: UseEveChatOptions): AgentChatHandle & {
 
   const messages = computed(() => {
     const live = eveMessagesToUIMessages(agent.data.value.messages)
-    const seed = seedMessages.value
+    if (!live.length) return seedMessages.value
 
-    if (!live.length) return seed
-    if (seed.length > live.length) return mergeMessagesById(seed, live)
-    return live
+    // Persisted history and the live projection are disjoint by construction;
+    // the id filter only guards against a mid-visit refetch racing a sync.
+    const liveIds = new Set(live.map(message => message.id))
+    return [...seedMessages.value.filter(message => !liveIds.has(message.id)), ...live]
   })
 
   async function send(input: string | { parts: UIMessage['parts'] }) {
@@ -139,13 +144,31 @@ export function useEveChat(options: UseEveChatOptions): AgentChatHandle & {
 
   async function regenerate() {
     if (agent.status.value === 'submitted' || agent.status.value === 'streaming') return
+    // On a freshly mounted chat the live projection is empty — fall back to
+    // the persisted history to find the prompt to re-send.
     const message = lastUserMessage(agent.data.value)
+      ?? [...seedMessages.value].reverse().find(m => m.role === 'user' && m.parts.length > 0)
     if (!message) return
     await sendUserParts(agent, message.parts as UIMessage['parts'])
   }
 
   function stop() {
+    const { sessionId } = agent.session.value
+    const wasActive = agent.status.value === 'submitted' || agent.status.value === 'streaming'
+
     agent.stop()
+
+    // `agent.stop()` only aborts the client stream — the server-side turn keeps
+    // running (and burning tokens) to completion. Eve 0.24.6+ exposes a cancel
+    // route that settles the turn as `turn.cancelled` + `session.waiting`, so
+    // best-effort cancel it too. Auth rides on the same session cookie as the
+    // other `/eve/v1` routes.
+    if (wasActive && sessionId) {
+      void $fetch(`/eve/v1/session/${encodeURIComponent(sessionId)}/cancel`, {
+        method: 'POST',
+        headers: options.headers?.()
+      }).catch(() => {})
+    }
   }
 
   function hasAgentMessage(role: UIMessage['role']) {

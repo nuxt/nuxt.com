@@ -1,6 +1,5 @@
 import type { EveMessageData, UseEveAgentSnapshot } from 'eve/vue'
 import type { UIMessage } from 'ai'
-import type { ChatEveState } from '../../shared/types/chat'
 import { getMessageTextLength } from '../../shared/utils/paste-attachment'
 import {
   appendUserMessageToChat,
@@ -16,7 +15,7 @@ import {
   seedChatDetailCache,
   uiMessagesToRows
 } from './useChatDetail'
-import { eveMessagesToUIMessages } from './eve/adapter'
+import { eveMessagesToUIMessages, hasVisibleParts } from './eve/adapter'
 import { useEveChat } from './eve/useEveChat'
 import { usePasteAttachment } from './usePasteAttachment'
 
@@ -25,7 +24,8 @@ export type NuxiChatSendInput = string | { parts: UIMessage['parts'], persist?: 
 export interface UseNuxiChatOptions {
   chatId: MaybeRefOrGetter<string>
   initialMessages?: MaybeRefOrGetter<UIMessage[] | undefined>
-  initialState?: MaybeRefOrGetter<ChatEveState | null | undefined>
+  /** Fallback when no `data` ref is provided (e.g. the agent panel). */
+  sessionCursor?: ChatSessionCursor | null
   source: string
   withPageContext?: 'always' | 'when-enabled'
   fetchVotes?: MaybeRefOrGetter<boolean>
@@ -50,34 +50,30 @@ interface SyncChatOptions {
   onFinish?: () => void
 }
 
-async function syncChatToDb(
-  id: string,
-  snapshot: UseEveAgentSnapshot<EveMessageData>,
-  messages: UIMessage[]
-) {
-  if (!snapshot.events.length) return
+/** User messages are persisted at send time — only assistant output needs syncing. */
+async function syncChatToDb(id: string, messages: UIMessage[], session?: { sessionId?: string, streamIndex: number }) {
+  const assistantMessages = messages.filter(
+    message => message.role === 'assistant' && hasVisibleParts(message.parts)
+  )
+  const cursor = session?.sessionId
+    ? { sessionId: session.sessionId, streamIndex: session.streamIndex }
+    : undefined
 
-  const state: ChatEveState = {
-    session: {
-      sessionId: snapshot.session.sessionId,
-      continuationToken: snapshot.session.continuationToken ?? id,
-      streamIndex: snapshot.events.length
-    },
-    events: [...snapshot.events]
-  }
+  if (!assistantMessages.length && !cursor) return
 
-  await $fetch(`/api/chats/${id}/state`, {
-    method: 'PATCH',
+  await $fetch(`/api/chats/${id}/sync`, {
+    method: 'POST',
     body: {
-      state,
-      messages: messages.map(message => ({
+      messages: assistantMessages.map(message => ({
         id: message.id,
-        role: message.role,
+        role: 'assistant' as const,
         parts: message.parts,
         metadata: message.metadata as Record<string, unknown> | undefined
-      }))
+      })),
+      session: cursor
     }
   })
+  return cursor
 }
 
 function createChatSyncHandler(options: SyncChatOptions) {
@@ -87,17 +83,10 @@ function createChatSyncHandler(options: SyncChatOptions) {
     if (options.loggedIn()) {
       try {
         const id = options.chatId()
-        await syncChatToDb(id, snapshot, messages)
+        const cursor = await syncChatToDb(id, messages, snapshot.session)
         patchChatDetailCache(id, {
-          state: {
-            session: {
-              sessionId: snapshot.session.sessionId,
-              continuationToken: snapshot.session.continuationToken ?? id,
-              streamIndex: snapshot.events.length
-            },
-            events: [...snapshot.events]
-          },
-          messages: uiMessagesToRows(messages)
+          messages: uiMessagesToRows(messages.filter(message => message.role === 'assistant')),
+          ...(cursor ? { sessionCursor: cursor } : {})
         })
         await options.refreshChats?.()
 
@@ -228,13 +217,21 @@ function useChatVotes(chatId: MaybeRefOrGetter<string>, fetchVotes: MaybeRefOrGe
 
 function needsGeneration(messages: ChatMessageRow[]) {
   const last = messages[messages.length - 1]
-  return last?.role === 'user'
+  if (last?.role !== 'user') return false
+
+  // Legacy turn-derived ids: a trailing user row whose turn already has its
+  // assistant reply was answered — regenerating it would replay the prompt.
+  if (last.id.endsWith(':user')) {
+    const turnPrefix = last.id.slice(0, -':user'.length)
+    if (messages.some(message => message.id === `${turnPrefix}:assistant`)) return false
+  }
+
+  return true
 }
 
 export function chatDetailForResume(
   chatId: string,
   initialMessages: UIMessage[] | undefined,
-  initialState: ChatEveState | null | undefined,
   fetched?: ChatDetail | null
 ): ChatDetail | undefined {
   if (fetched) return fetched
@@ -250,7 +247,7 @@ export function chatDetailForResume(
     visibility: 'private',
     isOwner: true,
     createdAt: new Date().toISOString(),
-    state: initialState ?? null,
+    sessionCursor: null,
     messages: rows
   }
 }
@@ -259,7 +256,7 @@ export function setupStaleChatRefresh(options: {
   chatId: MaybeRefOrGetter<string>
   data: Ref<ChatDetail | null | undefined>
   status: Ref<string>
-  refresh: () => Promise<void>
+  refresh: (opts?: { force?: boolean }) => Promise<void>
 }) {
   onMounted(() => {
     const id = toValue(options.chatId)
@@ -269,8 +266,10 @@ export function setupStaleChatRefresh(options: {
     const cached = options.data.value
     if (!cached || options.status.value !== 'success') return
 
+    // `force` bypasses the detail cache — a plain refresh would just read the
+    // same stale cached entry back and never hit the network.
     const looksIncomplete = needsGeneration(cached.messages)
-    if (looksIncomplete) void options.refresh()
+    if (looksIncomplete) void options.refresh({ force: true })
   })
 }
 
@@ -283,6 +282,7 @@ function resumeChatSession(options: {
   isOwner: Ref<boolean>
   consumePendingPrompt: () => string | null
   consumePendingMessageParts: () => UIMessage['parts'] | null
+  markTrailingUserResent: () => void
   onAnonymousTitle?: (parts: UIMessage['parts']) => void
   redirectIfAnonymousEmpty?: () => void
 }) {
@@ -312,6 +312,9 @@ function resumeChatSession(options: {
 
     const lastUserMessage = [...messages].reverse().find(message => message.role === 'user')
     if (!lastUserMessage) return
+
+    // The live projection will render the re-sent prompt — hide the persisted copy.
+    options.markTrailingUserResent()
 
     if (options.hasAgentUser()) {
       void options.chat.regenerate()
@@ -360,10 +363,22 @@ export function useNuxiChat(options: UseNuxiChatOptions) {
       : agent.pageContextEnabled.value && Boolean(agent.currentPage.value)
   )
 
+  // Set when the resume flow re-sends a trailing unanswered user message: the
+  // live projection renders it, so the persisted copy is hidden from the seed.
+  const trailingUserResent = ref(false)
+
+  const seedMessages = computed(() => {
+    const rows = toValue(options.initialMessages) ?? []
+    if (trailingUserResent.value && rows.at(-1)?.role === 'user') return rows.slice(0, -1)
+    return rows
+  })
+
   const eveChat = useEveChat({
     chatId: options.chatId,
-    initialMessages: options.initialMessages,
-    initialState: options.initialState,
+    initialMessages: seedMessages,
+    // Read once at store creation — the chat page awaits the detail fetch in
+    // its setup so the cursor is already resolved here.
+    sessionCursor: options.data?.value?.sessionCursor ?? options.sessionCursor ?? null,
     headers: buildEveHeaders(options.chatId, agent, useContext),
     onFinish: createChatSyncHandler({
       chatId: () => chatId.value,
@@ -403,7 +418,8 @@ export function useNuxiChat(options: UseNuxiChatOptions) {
       return
     }
 
-    await appendUserMessageToChat(chatId.value, parts, metadata)
+    const message = await appendUserMessageToChat(chatId.value, parts, metadata)
+    patchChatDetailCache(chatId.value, { messages: uiMessagesToRows([message]) })
   }
 
   async function send(inputValue: NuxiChatSendInput) {
@@ -456,7 +472,6 @@ export function useNuxiChat(options: UseNuxiChatOptions) {
   const resumeData = computed(() => chatDetailForResume(
     chatId.value,
     toValue(options.initialMessages),
-    toValue(options.initialState),
     options.data?.value
   ))
 
@@ -477,6 +492,9 @@ export function useNuxiChat(options: UseNuxiChatOptions) {
         isOwner,
         consumePendingPrompt: options.consumePendingPrompt ?? (() => null),
         consumePendingMessageParts: options.consumePendingMessageParts ?? (() => null),
+        markTrailingUserResent: () => {
+          trailingUserResent.value = true
+        },
         onAnonymousTitle: options.onAnonymousTitle,
         redirectIfAnonymousEmpty: options.redirectIfAnonymousEmpty
       })

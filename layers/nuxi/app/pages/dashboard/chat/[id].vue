@@ -15,6 +15,11 @@ const { refresh: refreshChats } = useChats()
 
 const { data, error, status, refresh } = useChatDetail(chatId)
 
+// Block setup on the detail fetch: `useEveChat` reads the session cursor once
+// at store creation, and without it the first send replays the whole Eve
+// event log (duplicated turns). Cached navigations resolve synchronously.
+await refresh()
+
 setupStaleChatRefresh({ chatId, data, status, refresh })
 
 watch([error, status, loggedIn], () => {
@@ -25,6 +30,12 @@ watch([error, status, loggedIn], () => {
 }, { immediate: true })
 
 const isOwner = computed(() => data.value?.isOwner ?? false)
+
+// While the detail is loading, ownership is unknown — keep the prompt layout
+// mounted instead of blanking the whole body (the main "flicker" when
+// navigating between chats). Worst case a non-owner sees the prompt for the
+// duration of the fetch before the read-only view takes over.
+const showPromptBody = computed(() => isOwner.value || !loggedIn.value || status.value === 'pending')
 const visibility = ref<'public' | 'private' | 'admin'>(data.value?.visibility ?? 'private')
 const title = ref<string | null>(loggedIn.value ? (data.value?.title ?? null) : null)
 
@@ -39,7 +50,6 @@ watch(data, (detail) => {
 const initialMessages = computed(() =>
   loggedIn.value ? dbRowsToUIMessages(data.value?.messages ?? []) : []
 )
-const initialState = computed(() => data.value?.state ?? null)
 
 const {
   chat,
@@ -54,7 +64,6 @@ const {
 } = useNuxiChat({
   chatId,
   initialMessages,
-  initialState,
   data,
   dataStatus: status,
   source: 'chat-page',
@@ -123,7 +132,7 @@ useNuxiChatSeo({
     <template #body>
       <UContainer class="flex min-w-0 flex-1 flex-col gap-4 sm:gap-6">
         <AgentChatBody
-          v-if="isOwner || !loggedIn"
+          v-if="showPromptBody"
           v-model:input="input"
           :chat="chat"
           :chat-id="chatId"
@@ -132,7 +141,7 @@ useNuxiChatSeo({
           :rate-limit-reached="rateLimitReached"
           :show-actions="isOwner"
           show-user-timestamps
-          :spacing-offset="(isOwner || !loggedIn) && !rateLimitReached ? 160 : 0"
+          :spacing-offset="showPromptBody && !rateLimitReached ? 200 : 0"
           :get-vote="getVote"
           variant="subtle"
           prompt-class="rounded-b-none border-b-0 bg-default [view-transition-name:chat-prompt]"

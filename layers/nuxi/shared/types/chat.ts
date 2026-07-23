@@ -1,12 +1,11 @@
-export interface EveSessionCursor {
-  sessionId?: string
-  continuationToken?: string
+/**
+ * Where the client left off in the Eve session's event stream. Passing it
+ * back on the next mount lets the client attach at the tail — without it,
+ * the first send replays the whole session event log into the projection.
+ */
+export interface ChatSessionCursor {
+  sessionId: string
   streamIndex: number
-}
-
-export interface ChatEveState {
-  session: EveSessionCursor
-  events: unknown[]
 }
 
 export interface UIChat {
@@ -45,6 +44,6 @@ export interface ChatDetail {
   visibility: 'public' | 'private' | 'admin'
   isOwner: boolean
   createdAt: string
-  state: ChatEveState | null
+  sessionCursor: ChatSessionCursor | null
   messages: ChatMessageRow[]
 }

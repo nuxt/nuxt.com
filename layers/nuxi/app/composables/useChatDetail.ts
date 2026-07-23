@@ -49,9 +49,14 @@ export function seedChatDetailCache(chatId: string, detail: ChatDetail) {
   data.value = detail
 }
 
+/**
+ * Merge a patch into the cached chat detail. Messages are merged by id:
+ * known rows are updated in place (keeping their createdAt), new rows are
+ * appended — history is append-only.
+ */
 export function patchChatDetailCache(
   chatId: string,
-  patch: Partial<Pick<ChatDetail, 'title' | 'state' | 'messages'>>
+  patch: { title?: string | null, messages?: ChatMessageRow[], sessionCursor?: ChatSessionCursor | null }
 ) {
   if (!import.meta.client) return
 
@@ -59,19 +64,21 @@ export function patchChatDetailCache(
   const { data } = useNuxtData<ChatDetail>(key)
   if (!data.value) return
 
-  let resolved = patch
-  if (patch.messages?.length && data.value.messages?.length) {
-    const existingById = new Map(data.value.messages.map(row => [row.id, row.createdAt]))
-    resolved = {
-      ...patch,
-      messages: patch.messages.map(row => ({
-        ...row,
-        createdAt: existingById.get(row.id) ?? row.createdAt
-      }))
+  let messages = data.value.messages ?? []
+  if (patch.messages?.length) {
+    const indexById = new Map(messages.map((row, index) => [row.id, index]))
+    messages = [...messages]
+    for (const row of patch.messages) {
+      const index = indexById.get(row.id)
+      if (index === undefined) {
+        messages.push(row)
+      } else {
+        messages[index] = { ...row, createdAt: messages[index]!.createdAt }
+      }
     }
   }
 
-  data.value = { ...data.value, ...resolved }
+  data.value = { ...data.value, ...patch, messages }
 
   const nuxtApp = useNuxtApp()
   nuxtApp.payload.data[key] = data.value
@@ -127,35 +134,56 @@ export function useChatDetail(chatId: MaybeRefOrGetter<string>) {
     return (nuxtApp.payload.data[key] ?? nuxtApp.static.data[key]) as ChatDetail | undefined
   }
 
-  async function refresh() {
-    const chatIdValue = id.value
+  let inflight: { id: string, promise: Promise<void> } | null = null
 
-    if (!loggedIn.value || !chatIdValue) {
-      data.value = null
-      error.value = null
-      status.value = 'success'
-      return
-    }
-
-    const cached = readCache(chatIdValue)
-    if (cached) {
-      data.value = cached
-      error.value = null
-      status.value = 'success'
-      return
-    }
-
-    status.value = 'pending'
-    error.value = null
-
+  async function fetchDetail(chatIdValue: string) {
     try {
-      data.value = await $fetch<ChatDetail>(`/api/chats/${chatIdValue}`)
+      const detail = await $fetch<ChatDetail>(`/api/chats/${chatIdValue}`)
+      // Seed the shared cache: without this, only created/streamed chats were
+      // cached, so navigating back to a fetched chat refetched it every time —
+      // data went null, the `isOwner` gate unmounted the whole chat body, and
+      // the page flashed blank until the response arrived.
+      nuxtApp.payload.data[chatDetailCacheKey(chatIdValue)] = detail
+      data.value = detail
       status.value = 'success'
     } catch (err) {
       data.value = null
       error.value = err as Error
       status.value = 'error'
     }
+  }
+
+  function refresh(options?: { force?: boolean }): Promise<void> {
+    const chatIdValue = id.value
+
+    if (!loggedIn.value || !chatIdValue) {
+      data.value = null
+      error.value = null
+      status.value = 'success'
+      return Promise.resolve()
+    }
+
+    if (!options?.force) {
+      const cached = readCache(chatIdValue)
+      if (cached) {
+        data.value = cached
+        error.value = null
+        status.value = 'success'
+        return Promise.resolve()
+      }
+      // Awaiting `refresh()` while the immediate watcher's fetch is in flight
+      // must join it, not start a second request.
+      if (inflight?.id === chatIdValue) return inflight.promise
+    }
+
+    status.value = 'pending'
+    error.value = null
+
+    const promise = fetchDetail(chatIdValue).finally(() => {
+      if (inflight?.promise === promise) inflight = null
+    })
+    inflight = { id: chatIdValue, promise }
+    return promise
   }
 
   watch([id, loggedIn], () => {

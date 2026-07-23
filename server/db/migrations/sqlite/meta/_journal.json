@@ -50,6 +50,13 @@
       "when": 1782300000000,
       "tag": "0006_drop_agent_usage_metrics",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1784794713000,
+      "tag": "0007_fix_message_order",
+      "breakpoints": true
     }
   ]
 }
