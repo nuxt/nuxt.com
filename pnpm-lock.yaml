@@ -6,6 +6,7 @@ settings:
 
 overrides:
   nostics: ^1.2.0
+  '@workflow/serde': ^4.1.0
 
 importers:
 
@@ -4445,9 +4446,6 @@ packages:
 
   '@workflow/serde@4.1.0':
     resolution: {integrity: sha512-pav4F2BoirECWR7Nf1TKt+2eETcBj7jj4cBefQ8VXQCA6NPkaKeLfj/zMgi+3zYV5ZIBT4GuUiphsj0/b9hPQQ==}
-
-  '@workflow/serde@4.1.0-beta.2':
-    resolution: {integrity: sha512-8kkeoQKLDaKXefjV5dbhBj2aErfKp1Mc4pb6tj8144cF+Em5SPbyMbyLCHp+BVrFfFVCBluCtMx+jjvaFVZGww==}
 
   abbrev@2.0.0:
     resolution: {integrity: sha512-6/mh1E2u2YgEsCHdY0Yx5oW+61gZU+1vXaoiHHrpKeuRNNgFvS+/jrwHiQhB5apAf5oB7UB7E19ol2R2LKH8hQ==}
@@ -14913,8 +14911,6 @@ snapshots:
 
   '@workflow/serde@4.1.0': {}
 
-  '@workflow/serde@4.1.0-beta.2': {}
-
   abbrev@2.0.0: {}
 
   abbrev@3.0.1: {}
@@ -15299,7 +15295,7 @@ snapshots:
 
   chat@4.34.0(ai@7.0.32(zod@4.4.3))(supports-color@10.2.2)(zod@4.4.3):
     dependencies:
-      '@workflow/serde': 4.1.0-beta.2
+      '@workflow/serde': 4.1.0
       mdast-util-to-string: 4.0.0
       remark-gfm: 4.0.1(supports-color@10.2.2)
       remark-parse: 11.0.0(supports-color@10.2.2)
