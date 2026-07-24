@@ -13,7 +13,17 @@ const el = useTemplateRef<HTMLElement>('el')
 
 const { replaceRoute } = useFilters('modules')
 const { fetchList, filteredModules, q, categories, modules, stats, selectedSort, selectedOrder, selectedCategory, sorts } = useModules()
+const { health } = useModuleHealth()
 const { track } = useAnalytics()
+
+// Merge via computed, not mutation: useFetch `data` is a shallowRef (Nuxt 4
+// default), so writing module.health in place would not trigger a re-render.
+const filteredModulesWithHealth = computed(() =>
+  filteredModules.value.map(m => ({
+    ...m,
+    health: health.value[m.name] ?? m.health ?? null
+  }))
+)
 
 const cacheControl = useResponseHeader('Cache-Control')
 const cdnCacheControl = useResponseHeader('CDN-Cache-Control')
@@ -62,7 +72,7 @@ const visibleCount = ref(INITIAL_VISIBLE)
 const isLoading = ref(false)
 
 const displayedModules = computed(() =>
-  filteredModules.value.slice(0, visibleCount.value)
+  filteredModulesWithHealth.value.slice(0, visibleCount.value)
 )
 
 const { y: scrollY } = useWindowScroll()
