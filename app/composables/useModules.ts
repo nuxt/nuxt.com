@@ -55,7 +55,13 @@ export const useModules = () => {
   })
 
   const stats = computed(() => data.value.stats)
-  const modules = computed(() => data.value.modules || [])
+
+  // Merge via computed, not mutation: useFetch `data` is a shallowRef (Nuxt 4
+  // default), so writing module.health in place would not trigger a re-render.
+  const { health } = useModuleHealth()
+  const modules = computed<Module[]>(() =>
+    (data.value.modules || []).map(m => ({ ...m, health: health.value[m.name] ?? m.health ?? null }))
+  )
 
   const module = useState<Module>('module', () => ({} as Module))
 

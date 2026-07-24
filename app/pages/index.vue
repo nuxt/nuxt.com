@@ -18,6 +18,13 @@ const [{ data: page }, { data: officialModules }, { data: showcase }, { getFilte
   useSponsors()
 ])
 
+// Merge via computed, not mutation: useFetch `data` is a shallowRef (Nuxt 4
+// default), so writing module.health in place would not trigger a re-render.
+const { health } = useModuleHealth()
+const officialModulesWithHealth = computed(() =>
+  (officialModules.value || []).map(m => ({ ...m, health: health.value[m.name] ?? m.health ?? null }))
+)
+
 const sponsorGroups = getFilteredSponsors(['diamond', 'platinum', 'gold'])
 
 const stats = useStats()
@@ -450,7 +457,7 @@ onMounted(() => {
         dots
         wheel-gestures
         arrows
-        :items="officialModules"
+        :items="officialModulesWithHealth"
         class="min-w-0"
         :ui="{
           container: 'ms-0 items-stretch',
