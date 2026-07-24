@@ -40,6 +40,32 @@ export function firehoseSlackChannelRef(): string {
     || DEFAULT_FIREHOSE_SLACK_CHANNEL
 }
 
+/**
+ * Maps the friendly names of our two known channels (workflow, firehose) to
+ * their configured ids, so a caller that types the *name* instead of leaving
+ * `channel` unset (e.g. an ad-hoc `read_slack_channel_history` call) still
+ * resolves without a `users.conversations` lookup. That call needs
+ * `channels:read`/`groups:read`, a scope beyond what `conversations.history`
+ * itself requires — see slack-channel-history.ts.
+ */
+function knownSlackChannelAliases(): Map<string, string> {
+  const aliases = new Map<string, string>()
+
+  const workflowId = process.env.NUXT_WORKFLOW_SLACK_CHANNEL_ID?.trim()
+  if (workflowId) {
+    const workflowName = process.env.NUXT_WORKFLOW_SLACK_CHANNEL?.trim() || DEFAULT_WORKFLOW_SLACK_CHANNEL
+    aliases.set(normalizeSlackChannelName(workflowName), workflowId)
+  }
+
+  const firehoseId = process.env.NUXT_FIREHOSE_SLACK_CHANNEL_ID?.trim()
+  if (firehoseId) {
+    const firehoseName = process.env.NUXT_FIREHOSE_SLACK_CHANNEL?.trim() || DEFAULT_FIREHOSE_SLACK_CHANNEL
+    aliases.set(normalizeSlackChannelName(firehoseName), firehoseId)
+  }
+
+  return aliases
+}
+
 function slackWorkspace(): string {
   return process.env.NUXT_SLACK_WORKSPACE?.trim() || 'vercel'
 }
@@ -194,6 +220,12 @@ export async function resolveSlackChannelRef(ref: string): Promise<ResolvedSlack
   }
 
   const name = normalizeSlackChannelName(trimmed)
+
+  const knownId = knownSlackChannelAliases().get(name)
+  if (knownId) {
+    return { id: knownId, name, ref: trimmed }
+  }
+
   const index = await loadBotChannelIndex()
   const match = index.get(name)
 
