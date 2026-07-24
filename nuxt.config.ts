@@ -101,6 +101,9 @@ export default defineNuxtConfig({
   mdc: {
     highlight: {
       noApiRoute: false
+    },
+    rehypePlugins: {
+      'rehype-external-links': false
     }
   },
   ui: {
