@@ -7,7 +7,11 @@ export const useModuleHealth = () => {
     key: 'modules-health',
     server: false,
     lazy: true,
-    default: () => ({})
+    dedupe: 'defer',
+    default: () => ({}),
+    getCachedData(key, nuxtApp) {
+      return nuxtApp.payload.data[key] ?? nuxtApp.static.data[key]
+    }
   })
 
   return { health }

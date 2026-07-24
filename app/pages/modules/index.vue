@@ -56,33 +56,28 @@ defineShortcuts({
 })
 
 const ITEMS_PER_PAGE = 9
+const INITIAL_VISIBLE = ITEMS_PER_PAGE * 2
 const SCROLL_THRESHOLD = 450
-const displayedModules = ref<Module[]>([])
+const visibleCount = ref(INITIAL_VISIBLE)
 const isLoading = ref(false)
+
+const displayedModules = computed(() =>
+  filteredModules.value.slice(0, visibleCount.value)
+)
 
 const { y: scrollY } = useWindowScroll()
 const { copy } = useClipboard()
 
 const loadMoreModules = () => {
   if (isLoading.value) return
-
-  const currentLength = displayedModules.value.length
-  if (currentLength >= filteredModules.value.length) return
+  if (visibleCount.value >= filteredModules.value.length) return
 
   isLoading.value = true
 
   setTimeout(() => {
-    const nextItems = filteredModules.value.slice(
-      currentLength,
-      currentLength + ITEMS_PER_PAGE
-    )
-    displayedModules.value.push(...nextItems)
+    visibleCount.value += ITEMS_PER_PAGE
     isLoading.value = false
   }, 300)
-}
-
-const initializeModules = () => {
-  displayedModules.value = filteredModules.value.slice(0, ITEMS_PER_PAGE * 2)
 }
 
 const debouncedLoadMore = useDebounceFn(loadMoreModules, 50)
@@ -93,11 +88,18 @@ watch(scrollY, (y) => {
   }
 })
 
-watch(filteredModules, () => {
-  isLoading.value = false
-  displayedModules.value = []
-  initializeModules()
-})
+watch(
+  () => [
+    q.value,
+    selectedCategory.value?.key,
+    selectedSort.value?.key,
+    selectedOrder.value?.key
+  ],
+  () => {
+    isLoading.value = false
+    visibleCount.value = INITIAL_VISIBLE
+  }
+)
 
 const copyAllInstallCommands = () => {
   const moduleNames = modulesToAdd.value.map(module => module.name).join(' ')
@@ -137,8 +139,6 @@ Steps:
 const clearAllModules = () => {
   modulesToAdd.value = []
 }
-
-initializeModules()
 </script>
 
 <template>
@@ -286,6 +286,7 @@ initializeModules()
             v-for="module in displayedModules"
             :key="module.name"
             :module="module"
+            :sort-key="selectedSort.key"
             :is-added="modulesToAdd.some(m => m.name === module.name)"
             @add="modulesToAdd.push(module)"
             @remove="modulesToAdd = modulesToAdd.filter(m => m.name !== module.name)"
