@@ -21,7 +21,7 @@ watch(health, (map) => {
   if (m && map[m.name] && m.health !== map[m.name]) {
     module.value = { ...m, health: map[m.name] }
   }
-})
+}, { immediate: true })
 
 const ownerName = computed(() => {
   const [owner, name] = module.value!.repo.split('#')[0].split('/')

@@ -110,8 +110,13 @@ export async function fetchBulkModuleHealth(_event: H3Event, modules: BaseModule
   const uncached: BaseModule[] = []
 
   // Check KV cache first
-  for (const module of modules) {
-    const cached = await kv.get<ModuleHealth>(`module:health:${module.name}`)
+  const cachedEntries = await Promise.all(
+    modules.map(async module => ({
+      module,
+      cached: await kv.get<ModuleHealth>(`module:health:${module.name}`)
+    }))
+  )
+  for (const { module, cached } of cachedEntries) {
     if (cached) {
       result[module.name] = cached
     } else {
@@ -129,7 +134,16 @@ export async function fetchBulkModuleHealth(_event: H3Event, modules: BaseModule
     critical: '#ef4444',
     unknown: '#6b7280'
   }
-  const npmToModule = new Map(uncached.map(m => [m.npm, m]))
+
+  const npmToModules = new Map<string, BaseModule[]>()
+  for (const m of uncached) {
+    const list = npmToModules.get(m.npm)
+    if (list) {
+      list.push(m)
+    } else {
+      npmToModules.set(m.npm, [m])
+    }
+  }
 
   console.info(`Fetching health for ${uncached.length} modules from nuxt.care (${Math.ceil(uncached.length / CHUNK_SIZE)} chunks)...`)
   for (let i = 0; i < uncached.length; i += CHUNK_SIZE) {
@@ -145,17 +159,21 @@ export async function fetchBulkModuleHealth(_event: H3Event, modules: BaseModule
         retry: 2,
         retryDelay: 1000
       })
+      const kvWrites: Promise<unknown>[] = []
       for (const item of data) {
-        const module = npmToModule.get(item.npm)
-        if (!module) continue
+        const matchedModules = npmToModules.get(item.npm)
+        if (!matchedModules) continue
         const health: ModuleHealth = {
           score: item.score,
           color: statusColorMap[item.status] || '#6b7280',
           status: item.status
         }
-        result[module.name] = health
-        await kv.set(`module:health:${module.name}`, health, { ttl: 60 * 60 * 24 })
+        for (const module of matchedModules) {
+          result[module.name] = health
+          kvWrites.push(kv.set(`module:health:${module.name}`, health, { ttl: 60 * 60 * 24 }))
+        }
       }
+      await Promise.all(kvWrites)
     } catch (err) {
       console.error(`Cannot fetch bulk health from nuxt.care (chunk ${Math.floor(i / CHUNK_SIZE) + 1}): ${err}`)
     }
