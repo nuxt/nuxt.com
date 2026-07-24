@@ -217,6 +217,12 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
             <UBreadcrumb :items="breadcrumb" />
           </template>
 
+          <template #title>
+            {{ page.title }}
+
+            <VersionBadge v-if="page.minimalVersion" :version="page.minimalVersion" size="lg" />
+          </template>
+
           <template #links>
             <UButton
               v-for="link in page.links?.map(link => ({ ...link, size: 'md' }))"
