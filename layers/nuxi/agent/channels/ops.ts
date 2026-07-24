@@ -6,11 +6,23 @@ import {
   scheduleAppAuth,
   verifyWorkflowTriggerAuth
 } from '../lib/workflows.js'
+import { runDiscordGateway } from '../schedules/discord-gateway.js'
 import { runFirehoseSummary } from '../schedules/firehose-summary.js'
 import { runWeeklyDigest } from '../schedules/weekly-digest.js'
 
 export default defineChannel({
   routes: [
+    POST('/eve/v1/ops/discord-gateway/trigger', async (req, args) => {
+      if (!isManualWorkflowTriggerAllowed()) {
+        return Response.json({ error: 'Manual workflow trigger is disabled' }, { status: 404 })
+      }
+      if (!verifyWorkflowTriggerAuth(req)) {
+        return Response.json({ error: 'Unauthorized' }, { status: 401 })
+      }
+
+      const result = await runDiscordGateway({ waitUntil: args.waitUntil })
+      return Response.json(result, { status: result.started ? 200 : 409 })
+    }),
     POST('/eve/v1/ops/weekly-digest/trigger', async (req, args) => {
       if (!isManualWorkflowTriggerAllowed()) {
         return Response.json({ error: 'Manual workflow trigger is disabled' }, { status: 404 })

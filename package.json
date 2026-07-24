@@ -25,6 +25,9 @@
   },
   "dependencies": {
     "@ai-sdk/mcp": "^2.0.15",
+    "@chat-adapter/discord": "^4.34.0",
+    "@chat-adapter/state-memory": "^4.34.0",
+    "@chat-adapter/state-redis": "^4.34.0",
     "@comark/nuxt": "^0.5.1",
     "@iconify-json/heroicons": "^1.2.3",
     "@iconify-json/logos": "^1.2.11",
@@ -54,6 +57,7 @@
     "@vueuse/nuxt": "^14.3.0",
     "ai": "^7.0.32",
     "better-sqlite3": "^12.11.1",
+    "chat": "^4.34.0",
     "date-fns": "^4.4.0",
     "drizzle-orm": "^0.45.2",
     "eve": "^0.27.0",
