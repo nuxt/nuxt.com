@@ -16,6 +16,8 @@ export default defineCachedEventHandler(async (event) => {
     })
   }
 
+  // Health served separately (/api/v1/modules/health), merged client-side —
+  // keeps nuxt.care off this page's SSR path.
   const [stats, contributors, readme] = await Promise.all([
     fetchModuleStats(event, module),
     fetchModuleContributors(event, module),

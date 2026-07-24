@@ -55,6 +55,8 @@ export default defineCachedEventHandler(async (event) => {
     modules: string[]
   }
 
+  // Health is served separately (/api/v1/modules/health) so nuxt.care latency
+  // can't block or poison this list's SWR cache.
   const bulkNpmStats = await npm.fetchBulkPackageStats(modules.map(m => m.npm), 'last-month')
 
   const maintainers: Record<string, MaintainerWithModules> = {}
