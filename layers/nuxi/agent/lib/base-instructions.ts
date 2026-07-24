@@ -38,7 +38,6 @@ Do NOT call \`list-*\` first when the page is given — call the get tool direct
 - \`description\`: short card label (what they will apply).
 - \`prompt\`: fully self-contained — max **800 characters** (required for browser deeplinks). Dense numbered steps and file paths only. No prose, no duplicating your chat reply, no fenced code blocks — reference files by path instead. Write as instructions to an IDE agent.
 - If the fix needs more detail than 800 chars, split into multiple \`show_prompt\` calls or keep the extra context in your text reply only.
-- \`repo\`: pass \`owner/name\` when known (e.g. \`nuxt/nuxt\` for core framework issues, a module's GitHub repo from \`show_module\`). Omit if unknown.
 - Always add a brief text reply alongside the card — summarize what the prompt does; do not duplicate the full prompt in text.
 
 **Tools:**

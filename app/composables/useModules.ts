@@ -39,6 +39,95 @@ export const moduleIcon = function (category: string) {
   return iconsMap[category as keyof typeof iconsMap] || 'i-lucide-box'
 }
 
+export type ModulePromptInfo = Pick<Module, 'name' | 'npm' | 'description' | 'website' | 'repo'>
+
+export function buildModuleInstallCommand(names: string | string[]): string {
+  const moduleNames = Array.isArray(names) ? names.join(' ') : names
+  return `npx nuxt@latest module add ${moduleNames}`
+}
+
+export function buildModuleAgentPrompt(module: ModulePromptInfo): string {
+  const lines = [`Install and configure the Nuxt module ${module.npm || module.name}: ${module.description || ''}`]
+  if (module.website) lines.push(`Docs: ${module.website}`)
+  if (module.repo) lines.push(`GitHub: https://github.com/${module.repo}`)
+  // Avoid the literal `.env` string: Cursor's deeplink handler rejects prompts matching /\.env(\b|\W)/ with "Invalid text for prompt".
+  lines.push(`\nSteps:\n1. Run \`${buildModuleInstallCommand(module.name)}\`\n2. Read the module documentation and add recommended configuration in \`nuxt.config.ts\`\n3. List any required environment variables in the example env file without filling in actual values`)
+  return lines.join('\n')
+}
+
+export function buildBulkModuleAgentPrompt(modules: ModulePromptInfo[]): string {
+  const modulesList = modules.map((m) => {
+    const lines = [`- ${m.npm || m.name}: ${m.description || ''}`]
+    if (m.website) lines.push(`  Docs: ${m.website}`)
+    if (m.repo) lines.push(`  GitHub: https://github.com/${m.repo}`)
+    return lines.join('\n')
+  }).join('\n')
+  const moduleNames = modules.map(m => m.name)
+
+  return `Install and configure the following Nuxt modules in my project:
+
+${modulesList}
+
+Steps:
+1. Run \`${buildModuleInstallCommand(moduleNames)}\` to install all modules at once
+2. For each module, read its documentation and add the recommended configuration in \`nuxt.config.ts\`
+3. List any required environment variables in the example env file without filling in actual values
+4. Verify the setup is correct by checking that the modules are properly registered`
+}
+
+/** Shared copy/open actions for a single module's install command & agent prompt, tagged with an analytics `source`. */
+export function useModuleInstallActions(module: () => ModulePromptInfo, source: string) {
+  const { copy } = useClipboard()
+  const { track } = useAnalytics()
+  const { openInCursor, openInClaudeCode, openInVSCode } = useIdeDeeplink()
+
+  const installCommand = computed(() => buildModuleInstallCommand(module().name))
+  const agentPrompt = computed(() => buildModuleAgentPrompt(module()))
+
+  function copyInstall() {
+    track('Module Install Command Copied', { module: module().name, source })
+    copy(installCommand.value, { title: 'Command copied to clipboard:', description: installCommand.value })
+  }
+
+  function copyPrompt() {
+    track('Module Agent Prompt Copied', { module: module().name, source })
+    copy(agentPrompt.value, {
+      title: 'Agent prompt copied!',
+      description: module().npm || module().name,
+      icon: 'i-custom-ai'
+    })
+  }
+
+  function openCursor() {
+    track('Module Prompt Opened', { module: module().name, ide: 'cursor', source })
+    openInCursor(agentPrompt.value)
+  }
+
+  function openClaude() {
+    track('Module Prompt Opened', { module: module().name, ide: 'claude', source })
+    openInClaudeCode(agentPrompt.value)
+  }
+
+  function openVSCode() {
+    track('Module Prompt Opened', { module: module().name, ide: 'vscode', source })
+    openInVSCode(agentPrompt.value)
+  }
+
+  return { installCommand, agentPrompt, copyInstall, copyPrompt, openCursor, openClaude, openVSCode }
+}
+
+export const sorts: Filter[] = [
+  { key: 'downloads', label: 'Downloads' },
+  { key: 'stars', label: 'Stars' },
+  { key: 'publishedAt', label: 'Updated' },
+  { key: 'createdAt', label: 'Created' }
+]
+
+const orders: Filter[] = [
+  { key: 'desc', label: 'Desc', icon: 'i-lucide-arrow-down-wide-narrow' },
+  { key: 'asc', label: 'Asc', icon: 'i-lucide-arrow-up-wide-narrow' }
+]
+
 export const useModules = () => {
   const route = useRoute()
   const router = useRouter()
@@ -69,18 +158,6 @@ export const useModules = () => {
   }
 
   // Data
-
-  const sorts: Filter[] = [
-    { key: 'downloads', label: 'Downloads' },
-    { key: 'stars', label: 'Stars' },
-    { key: 'publishedAt', label: 'Updated' },
-    { key: 'createdAt', label: 'Created' }
-  ]
-
-  const orders: Filter[] = [
-    { key: 'desc', label: 'Desc', icon: 'i-lucide-arrow-down-wide-narrow' },
-    { key: 'asc', label: 'Asc', icon: 'i-lucide-arrow-up-wide-narrow' }
-  ]
 
   const categories = computed<Filter[]>(() => {
     return Object.keys(iconsMap)

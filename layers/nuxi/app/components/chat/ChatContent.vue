@@ -214,7 +214,9 @@ function getUserTextParts(message: UIMessage) {
         <UChatTool v-bind="getRichToolHeader(part as ToolPart, 'show_prompt')" />
         <ToolsPromptCard
           v-if="showPromptCard(part as ToolPart) && getPromptOutput(part.output)"
-          v-bind="getPromptOutput(part.output)!"
+          :description="getPromptOutput(part.output)!.description"
+          :prompt="getPromptOutput(part.output)!.prompt"
+          :icon="getPromptOutput(part.output)!.icon"
         />
       </template>
 

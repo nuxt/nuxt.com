@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { motion, AnimatePresence } from 'motion-v'
+import type { DropdownMenuItem } from '@nuxt/ui'
 import type { Module } from '#shared/types'
 import { joinURL } from 'ufo'
 
@@ -14,6 +15,7 @@ const el = useTemplateRef<HTMLElement>('el')
 const { replaceRoute } = useFilters('modules')
 const { fetchList, filteredModules, q, categories, modules, stats, selectedSort, selectedOrder, selectedCategory, sorts } = useModules()
 const { track } = useAnalytics()
+const { openInCursor, openInClaudeCode, openInVSCode } = useIdeDeeplink()
 
 const cacheControl = useResponseHeader('Cache-Control')
 const cdnCacheControl = useResponseHeader('CDN-Cache-Control')
@@ -49,9 +51,55 @@ if (import.meta.server) {
 
 await fetchList()
 
+const lastSelectedIndex = ref<number | null>(null)
+
+// O(1) membership lookup so re-rendering the grid on every add/remove doesn't
+// re-scan the whole selection for each card (was `modulesToAdd.some(...)`).
+const addedModuleNames = computed(() => new Set(modulesToAdd.value.map(m => m.name)))
+
+function toggleModuleSelection(module: Module) {
+  const idx = modulesToAdd.value.findIndex(m => m.name === module.name)
+  if (idx === -1) {
+    modulesToAdd.value.push(module)
+  } else {
+    modulesToAdd.value.splice(idx, 1)
+  }
+}
+
+function selectModuleRange(module: Module) {
+  const currentIndex = displayedModules.value.findIndex(m => m.name === module.name)
+  if (currentIndex === -1) return
+
+  if (lastSelectedIndex.value === null) {
+    lastSelectedIndex.value = currentIndex
+    toggleModuleSelection(module)
+    return
+  }
+
+  const [start, end] = [lastSelectedIndex.value, currentIndex].sort((a, b) => a - b)
+  modulesToAdd.value = displayedModules.value.slice(start, end + 1)
+}
+
+function handleModuleSelect(module: Module, event: MouseEvent) {
+  if (event.shiftKey) {
+    selectModuleRange(module)
+    return
+  }
+
+  // metaKey = Cmd on macOS, ctrlKey = Ctrl on Windows/Linux
+  toggleModuleSelection(module)
+  lastSelectedIndex.value = displayedModules.value.findIndex(m => m.name === module.name)
+}
+
 defineShortcuts({
   '/': () => {
     input.value?.inputRef?.focus()
+  },
+  'escape': {
+    usingInput: true,
+    handler: () => {
+      if (modulesToAdd.value.length) clearAllModules()
+    }
   }
 })
 
@@ -96,13 +144,14 @@ watch(scrollY, (y) => {
 watch(filteredModules, () => {
   isLoading.value = false
   displayedModules.value = []
+  lastSelectedIndex.value = null
   initializeModules()
 })
 
 const copyAllInstallCommands = () => {
-  const moduleNames = modulesToAdd.value.map(module => module.name).join(' ')
-  const command = `npx nuxt@latest module add ${moduleNames}`
-  track('Modules Bulk Install Copied', { count: modulesToAdd.value.length, modules: moduleNames })
+  const moduleNames = modulesToAdd.value.map(module => module.name)
+  const command = buildModuleInstallCommand(moduleNames)
+  track('Modules Bulk Install Copied', { count: modulesToAdd.value.length, modules: moduleNames.join(' ') })
   copy(command, {
     title: 'Install command copied to clipboard:',
     description: `Ready to install ${modulesToAdd.value.length} module${modulesToAdd.value.length > 1 ? 's' : ''} at once`
@@ -110,22 +159,8 @@ const copyAllInstallCommands = () => {
 }
 
 const copyAgentPrompt = () => {
-  const modulesList = modulesToAdd.value.map((m) => {
-    const lines = [`- ${m.npm}: ${m.description}`]
-    if (m.website) lines.push(`  Docs: ${m.website}`)
-    if (m.repo) lines.push(`  GitHub: https://github.com/${m.repo}`)
-    return lines.join('\n')
-  }).join('\n')
+  const prompt = buildBulkModuleAgentPrompt(modulesToAdd.value)
   const moduleNames = modulesToAdd.value.map(m => m.name).join(' ')
-  const prompt = `Install and configure the following Nuxt modules in my project:
-
-${modulesList}
-
-Steps:
-1. Run \`npx nuxt@latest module add ${moduleNames}\` to install all modules at once
-2. For each module, read its documentation and add the recommended configuration in \`nuxt.config.ts\`
-3. List any required environment variables in \`.env.example\` without filling in actual values
-4. Verify the setup is correct by checking that the modules are properly registered`
   track('Modules Agent Prompt Copied', { count: modulesToAdd.value.length, modules: moduleNames })
   copy(prompt, {
     title: 'Agent prompt copied to clipboard!',
@@ -134,8 +169,47 @@ Steps:
   })
 }
 
+function openBulkPromptInCursor() {
+  track('Modules Agent Prompt Opened', { count: modulesToAdd.value.length, ide: 'cursor' })
+  openInCursor(buildBulkModuleAgentPrompt(modulesToAdd.value))
+}
+
+function openBulkPromptInClaudeCode() {
+  track('Modules Agent Prompt Opened', { count: modulesToAdd.value.length, ide: 'claude' })
+  openInClaudeCode(buildBulkModuleAgentPrompt(modulesToAdd.value))
+}
+
+function openBulkPromptInVSCode() {
+  track('Modules Agent Prompt Opened', { count: modulesToAdd.value.length, ide: 'vscode' })
+  openInVSCode(buildBulkModuleAgentPrompt(modulesToAdd.value))
+}
+
+const agentPromptItems = computed<DropdownMenuItem[]>(() => [
+  {
+    label: 'Copy agent prompt',
+    icon: 'i-custom-ai',
+    onSelect: copyAgentPrompt
+  },
+  {
+    label: 'Open in Cursor',
+    icon: 'i-simple-icons-cursor',
+    onSelect: openBulkPromptInCursor
+  },
+  {
+    label: 'Open in Claude Code',
+    icon: 'i-simple-icons-anthropic',
+    onSelect: openBulkPromptInClaudeCode
+  },
+  {
+    label: 'Open in VS Code',
+    icon: 'i-simple-icons-visualstudiocode',
+    onSelect: openBulkPromptInVSCode
+  }
+])
+
 const clearAllModules = () => {
   modulesToAdd.value = []
+  lastSelectedIndex.value = null
 }
 
 initializeModules()
@@ -272,8 +346,9 @@ initializeModules()
       <UPageBody>
         <div class="flex justify-between mb-4 text-muted text-xs">
           <div class="flex items-center gap-2">
-            <UIcon name="i-lucide-info" class="size-4" />
-            <span>Shift+click to select modules for bulk installation</span>
+            <span class="flex items-center gap-1.5">
+              <UKbd value="meta" size="sm" />+click to select · Shift+click for a range · Esc to clear
+            </span>
           </div>
           <ULink to="/docs/guide/modules/getting-started" class="hidden md:flex items-center gap-1">
             Create your own module
@@ -286,9 +361,11 @@ initializeModules()
             v-for="module in displayedModules"
             :key="module.name"
             :module="module"
-            :is-added="modulesToAdd.some(m => m.name === module.name)"
+            :is-added="addedModuleNames.has(module.name)"
+            selectable
             @add="modulesToAdd.push(module)"
             @remove="modulesToAdd = modulesToAdd.filter(m => m.name !== module.name)"
+            @select="handleModuleSelect"
           />
 
           <template v-if="isLoading">
@@ -329,15 +406,34 @@ initializeModules()
           :exit="{ y: 100, opacity: 0 }"
           :transition="{ type: 'spring', stiffness: 400, damping: 30 }"
         >
-          <div layout class="flex justify-center mb-6">
-            <div class="bg-default/80 backdrop-blur-lg rounded-full p-1 border border-default dark:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.9)] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] flex items-center gap-4">
-              <motion.div class="flex items-center gap-1">
-                <UTooltip text="Copy install command">
-                  <Motion
-                    :press="{
-                      scale: 0.99
+          <div class="flex flex-col items-center mb-6">
+            <div class="relative flex mb-0.5 p-1 rounded-full border border-default bg-default/90 backdrop-blur-lg">
+              <UAvatarGroup size="3xs" :max="6">
+                <TransitionGroup name="avatar-pop">
+                  <UTooltip
+                    v-for="m in modulesToAdd"
+                    :key="m.name"
+                    :text="m.npm"
+                    :content="{
+                      side: 'top'
                     }"
                   >
+                    <UAvatar
+                      :src="moduleImage(m.icon)"
+                      :icon="moduleIcon(m.category)"
+                      :alt="m.name"
+                      :ui="{ root: 'size-3.5 text-[6px]' }"
+                      class="rounded-full bg-default ring-1 ring-default"
+                    />
+                  </UTooltip>
+                </TransitionGroup>
+              </UAvatarGroup>
+            </div>
+
+            <div class="relative z-10 bg-default/80 backdrop-blur-lg rounded-full p-1 border border-default dark:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.9)] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] flex items-center gap-4">
+              <motion.div class="flex items-center gap-1">
+                <UTooltip text="Copy install command">
+                  <Motion :press="{ scale: 0.99 }">
                     <UButton
                       color="primary"
                       variant="soft"
@@ -351,35 +447,40 @@ initializeModules()
                   </Motion>
                 </UTooltip>
 
-                <UTooltip text="Copy agent prompt to install & configure">
-                  <Motion
-                    :press="{
-                      scale: 0.99
-                    }"
-                  >
-                    <UButton
-                      color="neutral"
-                      variant="soft"
-                      size="lg"
-                      icon="i-custom-ai"
-                      class="rounded-full"
-                      @click="copyAgentPrompt"
-                    />
-                  </Motion>
-                </UTooltip>
+                <Motion :press="{ scale: 0.99 }">
+                  <UFieldGroup>
+                    <UTooltip text="Copy agent prompt to install & configure">
+                      <UButton
+                        color="neutral"
+                        variant="soft"
+                        size="lg"
+                        icon="i-custom-ai"
+                        class="rounded-s-full"
+                        @click="copyAgentPrompt"
+                      />
+                    </UTooltip>
+
+                    <UDropdownMenu :items="agentPromptItems" :content="{ align: 'end' }">
+                      <UButton
+                        color="neutral"
+                        variant="soft"
+                        size="lg"
+                        icon="i-lucide-chevron-down"
+                        class="rounded-e-full"
+                        aria-label="More agent prompt options"
+                      />
+                    </UDropdownMenu>
+                  </UFieldGroup>
+                </Motion>
 
                 <UTooltip text="Clear selection">
-                  <Motion
-                    :press="{
-                      scale: 0.99
-                    }"
-                  >
+                  <Motion :press="{ scale: 0.99 }">
                     <UButton
                       color="neutral"
                       variant="soft"
                       size="lg"
                       icon="i-lucide-x"
-                      class="hover:bg-error/10 hover:text-error rounded-full"
+                      class="rounded-full"
                       @click="clearAllModules"
                     />
                   </Motion>
@@ -392,3 +493,24 @@ initializeModules()
     </UPage>
   </UContainer>
 </template>
+
+<style scoped>
+.avatar-pop-move {
+  transition: transform 0.15s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.avatar-pop-enter-active {
+  transition: opacity 0.15s cubic-bezier(0.23, 1, 0.32, 1), scale 0.15s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.avatar-pop-leave-active {
+  position: absolute;
+  transition: opacity 0.1s ease-in, scale 0.1s ease-in;
+}
+
+.avatar-pop-enter-from,
+.avatar-pop-leave-to {
+  opacity: 0;
+  scale: 0.9;
+}
+</style>
