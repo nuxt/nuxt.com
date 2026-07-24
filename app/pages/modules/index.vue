@@ -70,6 +70,7 @@ const INITIAL_VISIBLE = ITEMS_PER_PAGE * 2
 const SCROLL_THRESHOLD = 450
 const visibleCount = ref(INITIAL_VISIBLE)
 const isLoading = ref(false)
+let loadMoreTimer: ReturnType<typeof setTimeout> | null = null
 
 const displayedModules = computed(() =>
   filteredModulesWithHealth.value.slice(0, visibleCount.value)
@@ -78,13 +79,21 @@ const displayedModules = computed(() =>
 const { y: scrollY } = useWindowScroll()
 const { copy } = useClipboard()
 
+const clearLoadMoreTimer = () => {
+  if (loadMoreTimer === null) return
+  clearTimeout(loadMoreTimer)
+  loadMoreTimer = null
+}
+
 const loadMoreModules = () => {
   if (isLoading.value) return
   if (visibleCount.value >= filteredModules.value.length) return
 
   isLoading.value = true
+  clearLoadMoreTimer()
 
-  setTimeout(() => {
+  loadMoreTimer = setTimeout(() => {
+    loadMoreTimer = null
     visibleCount.value += ITEMS_PER_PAGE
     isLoading.value = false
   }, 300)
@@ -106,6 +115,7 @@ watch(
     selectedOrder.value?.key
   ],
   () => {
+    clearLoadMoreTimer()
     isLoading.value = false
     visibleCount.value = INITIAL_VISIBLE
   }
@@ -296,7 +306,7 @@ const clearAllModules = () => {
             v-for="module in displayedModules"
             :key="module.name"
             :module="module"
-            :sort-key="selectedSort.key"
+            :sort-key="String(selectedSort.key)"
             :is-added="modulesToAdd.some(m => m.name === module.name)"
             @add="modulesToAdd.push(module)"
             @remove="modulesToAdd = modulesToAdd.filter(m => m.name !== module.name)"
