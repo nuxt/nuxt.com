@@ -12,26 +12,27 @@ const props = withDefaults(
     showBadge?: boolean
     isAdded: boolean
     showAddButton?: boolean
+    sortKey?: string
   }>(),
   {
     showBadge: true,
-    showAddButton: true
+    showAddButton: true,
+    sortKey: 'downloads'
   }
 )
 
 const { copy } = useClipboard()
-const { selectedSort } = useModules()
 const { track } = useAnalytics()
 
 const publishedAgo = useTimeAgo(() => props.module.stats.publishedAt)
 const createdAgo = useTimeAgo(() => props.module.stats.createdAt)
 
 const relativeDate = computed(() =>
-  selectedSort.value.key === 'publishedAt' ? publishedAgo.value : createdAgo.value
+  props.sortKey === 'publishedAt' ? publishedAgo.value : createdAgo.value
 )
 
 const staticModuleDate = computed(() =>
-  selectedSort.value.key === 'publishedAt'
+  props.sortKey === 'publishedAt'
     ? formatDateByLocale('en', props.module.stats.publishedAt)
     : formatDateByLocale('en', props.module.stats.createdAt)
 )
@@ -181,7 +182,7 @@ const items = computed(() => [
               </UTooltip>
             </template>
 
-            <UTooltip v-if="selectedSort.key === 'publishedAt'" :text="`Updated ${formatDateByLocale('en', module.stats.publishedAt)}`">
+            <UTooltip v-if="sortKey === 'publishedAt'" :text="`Updated ${formatDateByLocale('en', module.stats.publishedAt)}`">
               <NuxtLink
                 class="flex items-center gap-1 hover:text-highlighted"
                 :to="`https://github.com/${module.repo}`"
@@ -199,7 +200,7 @@ const items = computed(() => [
               </NuxtLink>
             </UTooltip>
 
-            <UTooltip v-if="selectedSort.key === 'createdAt'" :text="`Created ${formatDateByLocale('en', module.stats.createdAt)}`">
+            <UTooltip v-if="sortKey === 'createdAt'" :text="`Created ${formatDateByLocale('en', module.stats.createdAt)}`">
               <NuxtLink
                 class="flex items-center gap-1 hover:text-highlighted"
                 :to="`https://github.com/${module.repo}`"
