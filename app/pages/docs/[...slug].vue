@@ -222,12 +222,12 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
 
             <UBadge
               v-if="page.minimalVersion?.trim()"
-              :label="`v${page.minimalVersion}`"
+              :label="`v${page.minimalVersion?.trim()}`"
               color="info"
               variant="subtle"
               size="lg"
               class="align-middle"
-              :aria-label="`Minimum Nuxt version: v${page.minimalVersion}`"
+              :aria-label="`Minimum Nuxt version: v${page.minimalVersion?.trim()}`"
             />
           </template>
 
