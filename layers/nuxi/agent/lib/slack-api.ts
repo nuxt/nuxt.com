@@ -86,6 +86,8 @@ export interface SlackHistoryMessage {
   text: string
   permalink: string
   links: string[]
+  /** x.com / twitter.com post URLs (`https://x.com/<handle>/status/<id>`). */
+  tweetUrls: string[]
   user?: string
   bot_id?: string
 }
@@ -209,6 +211,46 @@ function extractLinks(text: string, attachments: SlackAttachment[] = []): string
   return [...links]
 }
 
+/**
+ * Filters `links` down to post URLs (`…/status/<id>` on x.com / twitter.com),
+ * normalized to `https://x.com/<handle>/status/<id>` (query/hash stripped,
+ * twitter.com → x.com). Dedupes by status id, preferring a URL that includes
+ * the author handle over `/i/web/status/<id>`.
+ */
+export function extractTweetUrls(links: string[]): string[] {
+  const byStatusId = new Map<string, string>()
+
+  for (const link of links) {
+    let url: URL
+    try {
+      url = new URL(link)
+    } catch {
+      continue
+    }
+
+    const host = url.hostname.replace(/^(?:www|mobile)\./i, '').toLowerCase()
+    if (host !== 'x.com' && host !== 'twitter.com') continue
+
+    // `/handle/status/id` or `/i/web/status/id`
+    const statusMatch = url.pathname.match(/^\/(?:i\/web|([^/?#]+))\/status\/(\d+)/i)
+    if (!statusMatch) continue
+
+    const handle = statusMatch[1]
+    const statusId = statusMatch[2]!
+    const normalized = handle
+      ? `https://x.com/${handle}/status/${statusId}`
+      : `https://x.com/i/web/status/${statusId}`
+
+    const existing = byStatusId.get(statusId)
+    // Prefer the handle form when we already stored an /i/web/ fallback.
+    if (!existing || (handle && existing.includes('/i/web/'))) {
+      byStatusId.set(statusId, normalized)
+    }
+  }
+
+  return [...byStatusId.values()]
+}
+
 export async function resolveSlackChannelRef(ref: string): Promise<ResolvedSlackChannel> {
   const trimmed = ref.trim()
   if (!trimmed) {
@@ -268,11 +310,13 @@ export async function fetchSlackChannelHistory({
       const text = message.text!.trim()
       const attachments = message.attachments ?? []
 
+      const links = extractLinks(text, attachments)
       return {
         ts,
         text,
         permalink: slackMessagePermalink(channelId, ts),
-        links: extractLinks(text, attachments),
+        links,
+        tweetUrls: extractTweetUrls(links),
         user: message.user,
         bot_id: message.bot_id
       }

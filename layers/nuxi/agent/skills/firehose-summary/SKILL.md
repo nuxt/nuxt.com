@@ -12,12 +12,12 @@ When summarizing the firehose (scheduled or on request):
 - ONE message only. Blank line between sections.
 - Use Slack link syntax for every URL: `<https://example.com|short label>` — never paste raw long URLs.
 - Sparingly use workspace emojis (:nuxter: :nuxt_cool: :nuxt-intensifies:) — 0–2 per section max.
-- X/Twitter handles are plain `@handle` text — do NOT use Slack `<@…>` unless it is a real workspace member.
+- X/Twitter handles: link them as `<https://x.com/handle|@handle>` — never plain `@handle`, and do NOT use Slack `<@U…>` user mentions unless it is a real workspace member.
 
 **Steps:**
 
 1. Call `read_slack_channel_history` with the firehose channel and the requested window.
-2. Each message includes `permalink` (link to the firehose post) and `links` (tweet / article URLs). Use both when surfacing an item.
+2. Each message includes `permalink` (link to the firehose post), `links` (all URLs), and `tweetUrls` (post URLs shaped `https://x.com/<handle>/status/<id>` only). Use a `tweetUrls` entry for any "view on X" link — that label must open the **post**, never a profile.
 3. Group by theme — do not enumerate every post.
 
 **Output template** (adapt counts; keep structure):
@@ -28,18 +28,20 @@ When summarizing the firehose (scheduled or on request):
 • *8 posts* on X (#nuxt) — quiet day
 
 :speech_balloon: **Themes**
-• *SSR / Cloudflare DX* — @user asks about Nuxt vs raw Wrangler — <tweet-url|view on X> · <firehose-permalink|firehose>
-• *Ecosystem tooling* — CRM generator pitch — <tweet-url|view on X> · <firehose-permalink|firehose>
+• *SSR / Cloudflare DX* — <https://x.com/user|@user> asks about Nuxt vs raw Wrangler — <https://x.com/user/status/1234567890|view on X> · <firehose-permalink|firehose>
+• *Ecosystem tooling* — CRM generator pitch — <https://x.com/other/status/0987654321|view on X> · <firehose-permalink|firehose>
 
 :rotating_light: **Needs attention**
-• :red_circle: *Misinformation* — @user claims SSR payload hurts SEO (promo spam) — <tweet-url|view on X> · <firehose-permalink|firehose>
+• :red_circle: *Misinformation* — <https://x.com/user|@user> claims SSR payload hurts SEO (promo spam) — <https://x.com/user/status/1234567890|view on X> · <firehose-permalink|firehose>
 • If nothing needs action: one bullet saying "All clear — nothing urgent."
 
 :white_check_mark: **Actions** (numbered, each with owner + link)
-1. :red_circle: *@Alex* — post a factual counter-thread on SSR payload & SEO — <tweet-url|thread to reply>
+1. :red_circle: *@Alex* — post a factual counter-thread on SSR payload & SEO — <https://x.com/user/status/1234567890|thread to reply>
 2. :large_yellow_circle: *docs team* — watch the Cloudflare DX thread — <firehose-permalink|context>
 
 Rules:
 - Every item in **Needs attention** and **Themes** (when non-trivial) must include at least one `<url|label>` link.
-- Prefer tweet/article links from `links[]`; always add `<permalink|firehose>` when the team may need Slack context.
+- **`view on X` must copy a URL from `tweetUrls` verbatim** — always `https://x.com/<handle>/status/<id>`. Never substitute a profile (`https://x.com/handle`) for that label.
+- If a message has no `tweetUrls`, omit "view on X" and keep only `<permalink|firehose>` — do not invent a profile link.
+- Always add `<permalink|firehose>` when the team may need Slack context; use other `links[]` for non-X articles when relevant.
 - Actions must be specific enough to do in 5 minutes (reply, docs PR, ignore with reason).

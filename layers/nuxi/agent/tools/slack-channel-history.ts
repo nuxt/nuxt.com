@@ -14,7 +14,7 @@ export default defineDynamic({
 
       return {
         read_slack_channel_history: defineTool({
-          description: 'Read recent messages from a Slack channel by name (e.g. firehose-nuxt, #help-nuxt) or channel ID. Returns text, permalink (Slack archive link), and extracted tweet/article URLs per message.',
+          description: 'Read recent messages from a Slack channel by name (e.g. firehose-nuxt, #help-nuxt) or channel ID. Returns text, permalink (Slack archive link), links (all extracted URLs), and tweetUrls (post URLs shaped https://x.com/<handle>/status/<id> — use these verbatim for "view on X", never profile URLs) per message.',
           inputSchema: z.object({
             channel: z.string().optional().describe('Slack channel name or ID. Defaults to the firehose channel.'),
             sinceHours: z.number().int().min(1).max(168).default(24),
