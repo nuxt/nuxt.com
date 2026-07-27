@@ -3,17 +3,22 @@ import { createMemoryState } from '@chat-adapter/state-memory'
 import { createRedisState } from '@chat-adapter/state-redis'
 import type { Message, Thread } from 'chat'
 import { defineChannel } from 'eve/channels'
-import { chatSdkChannel } from 'eve/channels/chat-sdk'
+import {
+  chatSdkChannel,
+  isNotImplemented,
+  type ChatSdkChannelState,
+  type ChatSdkEventContext
+} from 'eve/channels/chat-sdk'
 import {
   discordUserAuth,
   isAllowedDiscordChannel,
   isDiscordConfigured
 } from '../lib/discord-access.js'
-import { slackTextToDiscord } from '../lib/discord-format.js'
+import { slackTextToDiscord, splitDiscordMessages } from '../lib/discord-format.js'
 
 const DISCORD_CONTEXT = [
   'The user is talking to Nuxi on Discord, in a thread (like Slack).',
-  '**Discord formatting:** Keep writing Slack mrkdwn (`<url|label>`, `:emoji:`) — outbound messages are converted to Discord markdown automatically. Use absolute nuxt.com links (`https://nuxt.com/docs/...`) — root-relative paths do not render as links. Never use `show_prompt` here. Keep replies compact — Discord plain messages are capped at 2000 characters (`@chat-adapter/discord` truncates longer content with `...`).'
+  '**Discord formatting:** Keep writing Slack mrkdwn (`<url|label>`, `:emoji:`) — outbound messages are converted to Discord markdown automatically. Use absolute nuxt.com links (`https://nuxt.com/docs/...`) — root-relative paths do not render as links. Never use `show_prompt` here. Prefer compact replies — Discord caps a message at 2000 characters, so anything longer is split across follow-up messages.'
 ]
 
 type PostableMessage = string | { raw: string } | { markdown: string } | Record<string, unknown>
@@ -57,6 +62,18 @@ function withSlackMrkdwnConversion(adapter: DiscordAdapter): DiscordAdapter {
   return adapter
 }
 
+/** Mirror of eve's internal `clearStream` so the next step opens a fresh anchor. */
+function clearStream(state: ChatSdkChannelState): void {
+  state.anchorMessageId = null
+  state.streamStepIndex = null
+  state.lastEditAtMs = null
+}
+
+/** eve surfaces this as the typing status while tools run. */
+function firstNonEmptyLine(text: string): string | null {
+  return text.split('\n').map(line => line.trim()).find(Boolean) ?? null
+}
+
 const THREAD_TITLE_MAX_LENGTH = 90
 
 function shouldDispatch(thread: Thread, message: Message): boolean {
@@ -85,8 +102,54 @@ function createDiscordBridge() {
   }
 
   const discordAdapter = createDiscordAdapter()
-  /** Unwrapped post — digest mirror converts + splits once, then posts here. */
+  // Unwrapped posts — the digest mirror and `finalizeDiscordMessage` convert +
+  // split once, so they must not go through the live conversion wrapper again.
   const postChannelMessageRaw = discordAdapter.postChannelMessage.bind(discordAdapter)
+  const postMessageRaw = discordAdapter.postMessage.bind(discordAdapter)
+  const editMessageRaw = discordAdapter.editMessage.bind(discordAdapter)
+
+  /**
+   * Replaces eve's `finalizeStreamedMessage`, which hands the whole assistant
+   * message to `adapter.editMessage` — `@chat-adapter/discord` then truncates
+   * past 2000 chars and digests lost their tail. Reuse the stream anchor for the
+   * first chunk and post the rest as follow-ups.
+   */
+  async function finalizeDiscordMessage(
+    channel: ChatSdkEventContext<{ discord: DiscordAdapter }>,
+    text: string,
+    postWithoutAnchor: boolean
+  ): Promise<void> {
+    const thread = channel.thread
+    const [firstPart, ...overflowParts] = splitDiscordMessages(slackTextToDiscord(text))
+    if (!thread || !firstPart) {
+      clearStream(channel.state)
+      return
+    }
+
+    const anchorId = channel.state.anchorMessageId
+    let delivered = false
+    if (anchorId && channel.state.editSupported !== false) {
+      try {
+        await editMessageRaw(thread.id, anchorId, { raw: firstPart })
+        delivered = true
+      } catch (error) {
+        if (!isNotImplemented(error)) throw error
+        channel.state.editSupported = false
+      }
+    }
+    if (!delivered) {
+      if (!postWithoutAnchor) {
+        clearStream(channel.state)
+        return
+      }
+      await postMessageRaw(thread.id, { raw: firstPart })
+    }
+
+    for (const part of overflowParts) {
+      await postMessageRaw(thread.id, { raw: part })
+    }
+    clearStream(channel.state)
+  }
 
   const bridge = chatSdkChannel({
     userName: 'Nuxi',
@@ -95,7 +158,25 @@ function createDiscordBridge() {
     },
     state: redisUrl ? createRedisState() : createMemoryState(),
     // Keep the Discord principal when a HITL button click resumes a session.
-    resolveInputAuth: event => discordUserAuth(event.user?.userId, event.user?.userName, event.thread?.channelId)
+    resolveInputAuth: event => discordUserAuth(event.user?.userId, event.user?.userName, event.thread?.channelId),
+    events: {
+      // Same shape as eve's default handler, only the delivery is chunked.
+      async 'message.completed'(event, channel) {
+        if (event.finishReason === 'tool-calls') {
+          channel.state.pendingToolCallMessage = event.message ? firstNonEmptyLine(event.message) : null
+          if (event.message) await finalizeDiscordMessage(channel, event.message, false)
+          else clearStream(channel.state)
+          return
+        }
+
+        channel.state.pendingToolCallMessage = null
+        if (!event.message) {
+          clearStream(channel.state)
+          return
+        }
+        await finalizeDiscordMessage(channel, event.message, true)
+      }
+    }
   })
 
   const { bot, send } = bridge
