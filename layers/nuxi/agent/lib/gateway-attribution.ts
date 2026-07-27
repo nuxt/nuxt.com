@@ -1,18 +1,23 @@
 import type { GatewayProviderOptions } from '@ai-sdk/gateway'
 import type { ModelMessage } from 'ai'
 import { isScheduleAppAuth, type AdminMcpAuthContext } from './admin-mcp-access.js'
+import { workflowSkillId } from './workflows.js'
 import { NUXI_GATEWAY_TAG } from '../../shared/utils/ai-gateway.js'
 
 /**
  * Fallback chain for the primary model, only used when the primary fails — the
  * nominal path is unchanged. `claude-sonnet-4.5` accepts the same
- * `thinking.budgetTokens` as 4.6; `gpt-5.4` ignores the `anthropic` provider
- * key and runs with its own default reasoning.
+ * `thinking.budgetTokens` as 4.6; `gemini-3.6-flash` ignores the `anthropic`
+ * provider key and runs with its own default reasoning.
+ *
+ * Both links are probed against the team's Gateway under `zeroDataRetention`,
+ * which every request below sets: a model with no ZDR-attested provider throws
+ * rather than degrading, so an unverified fallback is worse than none. OpenAI
+ * has no ZDR provider on this account at all, which is why `gpt-5.4` sat here
+ * and could never have engaged. Nothing in the model catalog lets you check
+ * this statically — `regions` reads like it should and does not.
  */
-const FALLBACK_MODELS = ['anthropic/claude-sonnet-4.5', 'openai/gpt-5.4']
-
-/** Skill ids a schedule can ask for, so digest spend is attributable per workflow. */
-const WORKFLOW_SKILL_IDS = ['weekly-digest', 'firehose-summary'] as const
+const FALLBACK_MODELS = ['anthropic/claude-sonnet-4.5', 'google/gemini-3.6-flash']
 
 type Surface = 'web' | 'slack' | 'discord' | 'schedule' | 'unknown'
 
@@ -35,14 +40,15 @@ export function resolveSurface(auth: AdminMcpAuthContext | null | undefined): Su
 /**
  * Schedules dispatch through Slack with an app principal, so the workflow is
  * only identifiable from the prompt — `skillWorkflowMessage` names the skill in
- * the first user message.
+ * the first user message. Reading it back rather than matching a list of ids
+ * means a new schedule is attributed without touching this file.
  */
 function resolveWorkflowSkill(messages: readonly ModelMessage[]): string | undefined {
   const first = messages.find(message => message.role === 'user')
   if (!first) return undefined
 
   const text = typeof first.content === 'string' ? first.content : JSON.stringify(first.content)
-  return WORKFLOW_SKILL_IDS.find(id => text.includes(`\`${id}\``))
+  return workflowSkillId(text)
 }
 
 export function nuxiGatewayTags(

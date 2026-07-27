@@ -49,6 +49,28 @@ function convertPostableMessage(message: PostableMessage): PostableMessage {
   return message
 }
 
+/**
+ * Retries at the adapter level rather than per call site, so eve's own streamed
+ * posts and edits are covered too — they never pass through the helpers below.
+ * Mutates in place, like `withSlackMrkdwnConversion`, so it has to run before
+ * any method is bound off the adapter.
+ */
+function withRateLimitRetry(adapter: DiscordAdapter): DiscordAdapter {
+  const postMessage = adapter.postMessage.bind(adapter)
+  const editMessage = adapter.editMessage.bind(adapter)
+  const postChannelMessage = adapter.postChannelMessage?.bind(adapter)
+
+  adapter.postMessage = async (threadId, message) =>
+    withDiscordRetry('postMessage', () => postMessage(threadId, message))
+  adapter.editMessage = async (threadId, messageId, message) =>
+    withDiscordRetry('editMessage', () => editMessage(threadId, messageId, message))
+  if (postChannelMessage) {
+    adapter.postChannelMessage = async (channelId, message) =>
+      withDiscordRetry('postChannelMessage', () => postChannelMessage(channelId, message))
+  }
+  return adapter
+}
+
 function withSlackMrkdwnConversion(adapter: DiscordAdapter): DiscordAdapter {
   const postMessage = adapter.postMessage.bind(adapter)
   const editMessage = adapter.editMessage.bind(adapter)
@@ -134,20 +156,13 @@ function createDiscordBridge() {
     throw new Error('[nuxi:discord] REDIS_URL is required in production for durable Chat SDK state')
   }
 
-  const discordAdapter = createDiscordAdapter()
+  const discordAdapter = withRateLimitRetry(createDiscordAdapter())
   // Unwrapped posts — the digest mirror and `finalizeDiscordMessage` convert +
-  // split once, so they must not go through the live conversion wrapper again.
-  // Each one is a bare HTTP call, so a 429 mid-sequence would drop a chunk.
-  const postChannelMessage = discordAdapter.postChannelMessage.bind(discordAdapter)
-  const postMessage = discordAdapter.postMessage.bind(discordAdapter)
-  const editMessage = discordAdapter.editMessage.bind(discordAdapter)
-
-  const postChannelMessageRaw: typeof postChannelMessage = (channelId, message) =>
-    withDiscordRetry('postChannelMessage', () => postChannelMessage(channelId, message))
-  const postMessageRaw: typeof postMessage = (threadId, message) =>
-    withDiscordRetry('postMessage', () => postMessage(threadId, message))
-  const editMessageRaw: typeof editMessage = (threadId, messageId, message) =>
-    withDiscordRetry('editMessage', () => editMessage(threadId, messageId, message))
+  // split once, so they must not go through the live conversion wrapper added
+  // below. Bound here, they keep the retry and skip only the conversion.
+  const postChannelMessageRaw = discordAdapter.postChannelMessage.bind(discordAdapter)
+  const postMessageRaw = discordAdapter.postMessage.bind(discordAdapter)
+  const editMessageRaw = discordAdapter.editMessage.bind(discordAdapter)
 
   /**
    * Replaces eve's `finalizeStreamedMessage`, which hands the whole assistant

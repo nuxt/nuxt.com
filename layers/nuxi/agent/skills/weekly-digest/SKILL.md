@@ -33,7 +33,7 @@ AI agent:
 9. `admin-mcp__list-agent-chats` — `hasDownvotes=true`, `limit=5`
 10. `admin-mcp__list-agent-votes` — `onlyDownvotes=true`, `limit=15`
 11. `vercel-mcp__list_agent_runs` over the window → Slack / Discord / web run split (discover eve project via `list_agent_run_projects` first).
-12. `ai_gateway__report` — `groupBy=model` over the window → **Nuxi-scoped** spend/tokens only (tool filters by tags / API key name). If `results` is empty or `scope.matchedRows` is 0, say spend is not attributable yet — **never** quote account-wide / other-product totals (no fable, no team-wide $).
+12. `ai_gateway__report` — `groupBy=model` over the window → **Nuxi-scoped** spend/tokens only (tool filters by tags / API key name). Asking for a `groupBy` forces tag scoping, so if `scope.matchedRows` is 0 and `scope.note` names an API key, re-run with no `groupBy` for the historical total. If both come back empty, say spend is not attributable yet — **never** quote account-wide / other-product totals (no fable, no team-wide $).
 13. `ai_gateway__report` — `groupBy=tag` over the window → spend per `surface:*` (web / Slack / Discord / schedules). Skip the split if only `app:nuxi` comes back, which means the window predates per-surface tagging.
 
 **Link cheat sheet** (use real paths/ids from tool output):
