@@ -25,6 +25,10 @@ declare module 'chat' {
  * mirrored to Discord without running the skill (and paying for the model
  * call) a second time. See `agent/lib/discord-workflow.ts`.
  *
+ * Also used as a safety net on live Discord replies: skills are Slack-first
+ * and often emit `<url|label>`, which Discord treats as a bare URL and shows
+ * with a literal `%7C` instead of a masked link.
+ *
  * `chat`'s built-in emoji map already covers some of the shortcodes our
  * skills use (`red_circle`, `white_check_mark`, `page_facing_up`,
  * `speech_balloon`, `large_yellow_circle`, `large_green_circle`) — this
@@ -46,8 +50,20 @@ emoji.extend({
 })
 
 const SLACK_LABELED_LINK_PATTERN = /<(https?:\/\/[^|>]+)\|([^>]+)>/g
+/** Model sometimes drops the `<>` — Discord then auto-links `url|label` as `url%7Clabel`. */
+const SLACK_UNBRACKETED_LABELED_LINK_PATTERN = /(?<![<\w])(https?:\/\/[^\s<>|]+)\|([^<>\s|]+)/g
 const SLACK_BARE_LINK_PATTERN = /<(https?:\/\/[^>]+)>/g
 const EMOJI_SHORTCODE_PATTERN = /:([\w-]+):/g
+/** `@chat-adapter/discord` rewrites bare `@name` → `<@name>`; ZWSP after `@` blocks that inside link labels. */
+const AT_ZWSP = '@\u200B'
+
+function discordLinkLabel(label: string): string {
+  return label.startsWith('@') ? `${AT_ZWSP}${label.slice(1)}` : label
+}
+
+function discordMaskedLink(url: string, label: string): string {
+  return `[${discordLinkLabel(label)}](<${url}>)`
+}
 
 /**
  * `<url|label>` -> `[label](<url>)`; a bare `<url>` -> `<url>` (unchanged).
@@ -62,8 +78,11 @@ const EMOJI_SHORTCODE_PATTERN = /:([\w-]+):/g
  */
 function slackLinksToMarkdown(text: string): string {
   return text
-    .replace(SLACK_LABELED_LINK_PATTERN, (_match, url: string, label: string) => `[${label}](<${url}>)`)
+    .replace(SLACK_LABELED_LINK_PATTERN, (_match, url: string, label: string) => discordMaskedLink(url, label))
+    .replace(SLACK_UNBRACKETED_LABELED_LINK_PATTERN, (_match, url: string, label: string) => discordMaskedLink(url, label))
     .replace(SLACK_BARE_LINK_PATTERN, (_match, url: string) => `<${url}>`)
+    // Model-native Discord links with `@handle` labels (same mention-rewriter issue).
+    .replace(/\[@(?!\u200B)([^\]]+)\]\(/g, `[${AT_ZWSP}$1](`)
 }
 
 /**
