@@ -113,7 +113,7 @@ Single Monday digest: traffic (trend, top sections, referrers/audience), docs fe
 - Schedule: `agent/schedules/weekly-digest.ts` — Monday 5:00 UTC
 - Skill: `agent/skills/weekly-digest/SKILL.md`
 - Preview trigger: `POST /eve/v1/ops/weekly-digest/trigger`
-- Traffic via `connection__vercel_mcp__get_web_analytics`; spend via `ai_gateway__report` (scoped to `app:nuxi` tags and/or `AI_GATEWAY_REPORT_API_KEY_NAME` — never account-wide); runs via `connection__vercel_mcp__list_agent_runs`.
+- Traffic via `vercel-mcp__get_web_analytics`; spend via `ai_gateway__report` (scoped to `app:nuxi` tags and/or `AI_GATEWAY_REPORT_API_KEY_NAME` — never account-wide); runs via `vercel-mcp__list_agent_runs`.
 
 ### Firehose summary
 

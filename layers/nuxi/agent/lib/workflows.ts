@@ -118,9 +118,25 @@ export function parseSinceHours(value: string | null | undefined): ParseWindowRe
 
 const SLACK_WORKFLOW_DELIVERY = `Your text reply is posted verbatim to this Slack channel by Eve — there is no Slack post tool and you do not need one. Output only the formatted summary from the skill. Never say you cannot post, never mention missing tools, never ask anyone to copy-paste, and never add a "Note:" about delivery.`
 
+/** Opening line of every scheduled workflow prompt, and the only trace of which skill ran. */
+function loadSkillDirective(skillId: string): string {
+  return `Load the \`${skillId}\` skill and follow it`
+}
+
+const LOAD_SKILL_RE = /Load the `([a-z0-9-]+)` skill and follow it/
+
+/**
+ * Recovers the skill id from a prompt built above, so `nuxiGatewayTags` can bill
+ * a scheduled run to its workflow. Kept next to the builders on purpose:
+ * rewording one without the other would silently stop tagging spend.
+ */
+export function workflowSkillId(message: string): string | undefined {
+  return LOAD_SKILL_RE.exec(message)?.[1]
+}
+
 /** Prompt prefix shared by scheduled Slack workflows. */
 export function skillWorkflowMessage(skillId: string, sinceDays: number): string {
-  return `Load the \`${skillId}\` skill and follow it for the last ${sinceDays} days.
+  return `${loadSkillDirective(skillId)} for the last ${sinceDays} days.
 
 ${SLACK_WORKFLOW_DELIVERY}`
 }
@@ -130,7 +146,7 @@ export function skillFirehoseWorkflowMessage(
   sinceHours: number,
   firehoseChannelName: string
 ): string {
-  return `Load the \`${skillId}\` skill and follow it for the last ${sinceHours} hours.
+  return `${loadSkillDirective(skillId)} for the last ${sinceHours} hours.
 
 Use \`read_slack_channel_history\` on channel \`${firehoseChannelName}\` with sinceHours=${sinceHours}.
 

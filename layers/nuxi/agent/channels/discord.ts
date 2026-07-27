@@ -1,11 +1,13 @@
 import { createDiscordAdapter, type DiscordAdapter } from '@chat-adapter/discord'
 import { createMemoryState } from '@chat-adapter/state-memory'
 import { createRedisState } from '@chat-adapter/state-redis'
-import type { Message, Thread } from 'chat'
+import type { UserContent } from 'ai'
+import type { Message, MessageContext, Thread } from 'chat'
 import { defineChannel } from 'eve/channels'
 import {
   chatSdkChannel,
   isNotImplemented,
+  messageToUserContent,
   type ChatSdkChannelState,
   type ChatSdkEventContext
 } from 'eve/channels/chat-sdk'
@@ -15,6 +17,7 @@ import {
   isDiscordConfigured
 } from '../lib/discord-access.js'
 import { slackTextToDiscord, splitDiscordMessages } from '../lib/discord-format.js'
+import { withDiscordRetry } from '../lib/discord-retry.js'
 
 const DISCORD_CONTEXT = [
   'The user is talking to Nuxi on Discord, in a thread (like Slack).',
@@ -44,6 +47,28 @@ function convertPostableMessage(message: PostableMessage): PostableMessage {
     return { ...message, raw: slackTextToDiscord(message.raw) }
   }
   return message
+}
+
+/**
+ * Retries at the adapter level rather than per call site, so eve's own streamed
+ * posts and edits are covered too — they never pass through the helpers below.
+ * Mutates in place, like `withSlackMrkdwnConversion`, so it has to run before
+ * any method is bound off the adapter.
+ */
+function withRateLimitRetry(adapter: DiscordAdapter): DiscordAdapter {
+  const postMessage = adapter.postMessage.bind(adapter)
+  const editMessage = adapter.editMessage.bind(adapter)
+  const postChannelMessage = adapter.postChannelMessage?.bind(adapter)
+
+  adapter.postMessage = async (threadId, message) =>
+    withDiscordRetry('postMessage', () => postMessage(threadId, message))
+  adapter.editMessage = async (threadId, messageId, message) =>
+    withDiscordRetry('editMessage', () => editMessage(threadId, messageId, message))
+  if (postChannelMessage) {
+    adapter.postChannelMessage = async (channelId, message) =>
+      withDiscordRetry('postChannelMessage', () => postChannelMessage(channelId, message))
+  }
+  return adapter
 }
 
 function withSlackMrkdwnConversion(adapter: DiscordAdapter): DiscordAdapter {
@@ -76,13 +101,43 @@ function firstNonEmptyLine(text: string): string | null {
 
 const THREAD_TITLE_MAX_LENGTH = 90
 
+function isHuman(message: Message): boolean {
+  return !message.author.isMe && message.author.isBot !== true
+}
+
 function shouldDispatch(thread: Thread, message: Message): boolean {
-  if (message.author.isMe || message.author.isBot === true) return false
+  if (!isHuman(message)) return false
   const allowed = isAllowedDiscordChannel(thread.channelId)
   if (!allowed) {
     console.warn('[nuxi:discord] dropped mention: channel not in DISCORD_ALLOWED_CHANNELS', { channelId: thread.channelId })
   }
   return allowed
+}
+
+/**
+ * The `queue` concurrency strategy dispatches the newest message and hands the
+ * ones that arrived mid-turn over as `context.skipped`, oldest first. Answering
+ * only the newest would silently drop the rest of the user's turn.
+ */
+function burstMessages(message: Message, context: MessageContext | undefined): Message[] {
+  const skipped = context?.skipped.filter(isHuman) ?? []
+  return [...skipped, message]
+}
+
+/**
+ * Folds a burst into one model input. `messageToUserContent` turns each
+ * attachment into a file part, so an error screenshot posted on Discord reaches
+ * the model instead of being reduced to its (often empty) message text.
+ */
+function toUserContent(messages: readonly Message[]): string | UserContent {
+  const text = messages.map(message => message.text.trim()).filter(Boolean).join('\n\n')
+  const files = messages.flatMap((message) => {
+    const content = messageToUserContent(message)
+    return Array.isArray(content) ? content.filter(part => part.type !== 'text') : []
+  })
+
+  if (files.length === 0) return text
+  return text ? [{ type: 'text' as const, text }, ...files] : files
 }
 
 function threadTitleFromMessage(text: string): string | undefined {
@@ -101,9 +156,10 @@ function createDiscordBridge() {
     throw new Error('[nuxi:discord] REDIS_URL is required in production for durable Chat SDK state')
   }
 
-  const discordAdapter = createDiscordAdapter()
+  const discordAdapter = withRateLimitRetry(createDiscordAdapter())
   // Unwrapped posts — the digest mirror and `finalizeDiscordMessage` convert +
-  // split once, so they must not go through the live conversion wrapper again.
+  // split once, so they must not go through the live conversion wrapper added
+  // below. Bound here, they keep the retry and skip only the conversion.
   const postChannelMessageRaw = discordAdapter.postChannelMessage.bind(discordAdapter)
   const postMessageRaw = discordAdapter.postMessage.bind(discordAdapter)
   const editMessageRaw = discordAdapter.editMessage.bind(discordAdapter)
@@ -157,6 +213,11 @@ function createDiscordBridge() {
       discord: withSlackMrkdwnConversion(discordAdapter)
     },
     state: redisUrl ? createRedisState() : createMemoryState(),
+    // Chat SDK defaults to `drop`: a message sent while a turn is still running
+    // is discarded with a LockError and the user never gets an answer. `queue`
+    // holds them instead (see `burstMessages`). Not `burst`, which would delay
+    // even a lone message by its debounce window.
+    concurrency: 'queue',
     // Keep the Discord principal when a HITL button click resumes a session.
     resolveInputAuth: event => discordUserAuth(event.user?.userId, event.user?.userName, event.thread?.channelId),
     events: {
@@ -181,26 +242,28 @@ function createDiscordBridge() {
 
   const { bot, send } = bridge
 
-  bot.onNewMention(async (thread: Thread, message: Message) => {
+  bot.onNewMention(async (thread: Thread, message: Message, context?: MessageContext) => {
     if (!shouldDispatch(thread, message)) return
     await thread.subscribe()
 
-    const title = threadTitleFromMessage(message.text)
+    const turn = burstMessages(message, context)
+    // Title from the mention that opened the thread, not the newest message.
+    const title = threadTitleFromMessage(turn[0]?.text ?? message.text)
     if (title) {
       void bot.getAdapter('discord')?.setThreadTitle(thread.id, title)
         .catch((error: unknown) => console.warn('[nuxi:discord] setThreadTitle failed', error))
     }
 
     await send(
-      { message: message.text, context: DISCORD_CONTEXT },
+      { message: toUserContent(turn), context: DISCORD_CONTEXT },
       { thread, auth: discordUserAuth(message.author.userId, message.author.userName, thread.channelId) }
     )
   })
 
-  bot.onSubscribedMessage(async (thread: Thread, message: Message) => {
+  bot.onSubscribedMessage(async (thread: Thread, message: Message, context?: MessageContext) => {
     if (!shouldDispatch(thread, message)) return
     await send(
-      { message: message.text, context: DISCORD_CONTEXT },
+      { message: toUserContent(burstMessages(message, context)), context: DISCORD_CONTEXT },
       { thread, auth: discordUserAuth(message.author.userId, message.author.userName, thread.channelId) }
     )
   })
