@@ -133,6 +133,19 @@ onMounted(() => {
         wrapper: 'lg:min-h-[540px]'
       }"
     >
+      <template #headline>
+        <NuxtLink :to="page.hero.cta.to">
+          <UBadge variant="subtle" size="lg" class="px-3 relative rounded-full font-semibold dark:hover:bg-primary-400/15 dark:hover:ring-primary-700">
+            {{ page?.hero.cta.label }}
+            <UIcon
+              v-if="page?.hero.cta.icon"
+              :name="page?.hero.cta.icon"
+              class="size-4 pointer-events-none"
+            />
+          </UBadge>
+        </NuxtLink>
+      </template>
+
       <template #title>
         The Full-Stack<br><span class="text-primary">Vue Framework</span>
       </template>
