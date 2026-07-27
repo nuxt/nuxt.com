@@ -13,25 +13,48 @@ const DISCORD_CONTEXT = [
 
 /**
  * Skills are Slack-first (`<url|label>`). Convert that syntax before the
- * Discord adapter posts, including live @mention replies (not only the
+ * Discord adapter posts/edits, including live @mention replies (not only the
  * scheduled digest mirror in `discord-workflow.ts`). Idempotent if the model
  * already emitted Discord markdown.
+ *
+ * Chat SDK live replies call `adapter.postChannelMessage` (preferred over
+ * `postMessage` when present) and finalize streamed text via `editMessage` —
+ * all three must convert, or Slack `<url|label>` lands on Discord as raw
+ * `url%7Clabel` from the first streamed chunk.
  */
+function convertPostableMessage<T>(message: T): T {
+  if (typeof message === 'string') {
+    return slackTextToDiscord(message) as T
+  }
+  if (message && typeof message === 'object') {
+    if ('markdown' in message && typeof (message as { markdown?: unknown }).markdown === 'string') {
+      return {
+        ...message,
+        markdown: slackTextToDiscord((message as { markdown: string }).markdown)
+      }
+    }
+    if ('raw' in message && typeof (message as { raw?: unknown }).raw === 'string') {
+      return {
+        ...message,
+        raw: slackTextToDiscord((message as { raw: string }).raw)
+      }
+    }
+  }
+  return message
+}
+
 function withSlackMrkdwnConversion(adapter: DiscordAdapter): DiscordAdapter {
   const postMessage = adapter.postMessage.bind(adapter)
-  adapter.postMessage = async (threadId, message) => {
-    if (typeof message === 'string') {
-      return postMessage(threadId, slackTextToDiscord(message))
-    }
-    if (message && typeof message === 'object') {
-      if ('markdown' in message && typeof message.markdown === 'string') {
-        return postMessage(threadId, { ...message, markdown: slackTextToDiscord(message.markdown) })
-      }
-      if ('raw' in message && typeof message.raw === 'string') {
-        return postMessage(threadId, { ...message, raw: slackTextToDiscord(message.raw) })
-      }
-    }
-    return postMessage(threadId, message)
+  const editMessage = adapter.editMessage.bind(adapter)
+  const postChannelMessage = adapter.postChannelMessage?.bind(adapter)
+
+  adapter.postMessage = async (threadId, message) =>
+    postMessage(threadId, convertPostableMessage(message))
+  adapter.editMessage = async (threadId, messageId, message) =>
+    editMessage(threadId, messageId, convertPostableMessage(message))
+  if (postChannelMessage) {
+    adapter.postChannelMessage = async (channelId, message) =>
+      postChannelMessage(channelId, convertPostableMessage(message))
   }
   return adapter
 }
