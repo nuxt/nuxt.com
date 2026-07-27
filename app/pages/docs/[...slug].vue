@@ -269,6 +269,7 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
             :links="page.body?.toc?.links"
             :community-links="communityLinks"
             highlight
+            highlight-variant="circuit"
             class="hidden lg:block lg:backdrop-blur-none"
           />
           <!-- mobile -->
