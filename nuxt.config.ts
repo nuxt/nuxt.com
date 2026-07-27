@@ -3,6 +3,14 @@ import { parseMdc } from './helpers/mdc-parser.mjs'
 
 const { resolve } = createResolver(import.meta.url)
 
+// In `--ui-only` mode (default `pnpm dev`), skip the `eve/nuxt` module so the
+// Eve agent runtime is never spawned locally. The UI and server routes from
+// `layers/nuxi` are still loaded — only the agent itself is disabled.
+// `--with-nuxi` (`pnpm dev:nuxi`) re-enables the agent while keeping ui-only proxies.
+const uiOnly = process.argv.includes('--ui-only')
+const withNuxi = process.argv.includes('--with-nuxi')
+const nuxiEnabled = !uiOnly || withNuxi
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   extends: ['./layers/nuxi'],
@@ -29,7 +37,7 @@ export default defineNuxtConfig({
     '@vercel/analytics',
     '@vercel/speed-insights',
     'evlog/nuxt',
-    'eve/nuxt'
+    ...(nuxiEnabled ? ['eve/nuxt'] : [])
   ],
 
   $development: {
@@ -104,6 +112,9 @@ export default defineNuxtConfig({
     }
   },
   runtimeConfig: {
+    public: {
+      eveEnabled: nuxiEnabled
+    },
     contactEmail: '',
     mcpAdminToken: '',
     adminGithubLogins: '',

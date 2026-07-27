@@ -12,26 +12,27 @@ const props = withDefaults(
     showBadge?: boolean
     isAdded: boolean
     showAddButton?: boolean
+    sortKey?: string
   }>(),
   {
     showBadge: true,
-    showAddButton: true
+    showAddButton: true,
+    sortKey: 'downloads'
   }
 )
 
 const { copy } = useClipboard()
-const { selectedSort } = useModules()
 const { track } = useAnalytics()
 
 const publishedAgo = useTimeAgo(() => props.module.stats.publishedAt)
 const createdAgo = useTimeAgo(() => props.module.stats.createdAt)
 
 const relativeDate = computed(() =>
-  selectedSort.value.key === 'publishedAt' ? publishedAgo.value : createdAgo.value
+  props.sortKey === 'publishedAt' ? publishedAgo.value : createdAgo.value
 )
 
 const staticModuleDate = computed(() =>
-  selectedSort.value.key === 'publishedAt'
+  props.sortKey === 'publishedAt'
     ? formatDateByLocale('en', props.module.stats.publishedAt)
     : formatDateByLocale('en', props.module.stats.createdAt)
 )
@@ -109,7 +110,7 @@ const items = computed(() => [
         container: 'flex flex-col',
         wrapper: 'flex flex-col min-h-0 items-start',
         body: 'flex-none',
-        footer: 'w-full mt-auto pointer-events-auto pt-4 z-[1]'
+        footer: 'w-full mt-auto pointer-events-auto pt-4 z-1'
       }"
       @click="handleCardClick"
     >
@@ -166,7 +167,22 @@ const items = computed(() => [
               </NuxtLink>
             </UTooltip>
 
-            <UTooltip v-if="selectedSort.key === 'publishedAt'" :text="`Updated ${formatDateByLocale('en', module.stats.publishedAt)}`">
+            <template v-if="module.health">
+              <UTooltip :text="`Health: ${module.health.status} - ${module.health.score}/100`">
+                <NuxtLink
+                  :to="`https://nuxt.care/?search=npm:${module.npm}`"
+                  class="flex items-center gap-1 hover:text-highlighted"
+                  target="_blank"
+                >
+                  <UIcon name="i-lucide-heart-pulse" class="size-4 shrink-0" :style="{ color: module.health.color }" />
+                  <span class="text-sm font-medium whitespace-normal">
+                    {{ module.health.score }}
+                  </span>
+                </NuxtLink>
+              </UTooltip>
+            </template>
+
+            <UTooltip v-if="sortKey === 'publishedAt'" :text="`Updated ${formatDateByLocale('en', module.stats.publishedAt)}`">
               <NuxtLink
                 class="flex items-center gap-1 hover:text-highlighted"
                 :to="`https://github.com/${module.repo}`"
@@ -184,7 +200,7 @@ const items = computed(() => [
               </NuxtLink>
             </UTooltip>
 
-            <UTooltip v-if="selectedSort.key === 'createdAt'" :text="`Created ${formatDateByLocale('en', module.stats.createdAt)}`">
+            <UTooltip v-if="sortKey === 'createdAt'" :text="`Created ${formatDateByLocale('en', module.stats.createdAt)}`">
               <NuxtLink
                 class="flex items-center gap-1 hover:text-highlighted"
                 :to="`https://github.com/${module.repo}`"

@@ -13,7 +13,17 @@ const el = useTemplateRef<HTMLElement>('el')
 
 const { replaceRoute } = useFilters('modules')
 const { fetchList, filteredModules, q, categories, modules, stats, selectedSort, selectedOrder, selectedCategory, sorts } = useModules()
+const { health } = useModuleHealth()
 const { track } = useAnalytics()
+
+// Merge via computed, not mutation: useFetch `data` is a shallowRef (Nuxt 4
+// default), so writing module.health in place would not trigger a re-render.
+const filteredModulesWithHealth = computed(() =>
+  filteredModules.value.map(m => ({
+    ...m,
+    health: health.value[m.name] ?? m.health ?? null
+  }))
+)
 
 const cacheControl = useResponseHeader('Cache-Control')
 const cdnCacheControl = useResponseHeader('CDN-Cache-Control')
@@ -56,33 +66,37 @@ defineShortcuts({
 })
 
 const ITEMS_PER_PAGE = 9
+const INITIAL_VISIBLE = ITEMS_PER_PAGE * 2
 const SCROLL_THRESHOLD = 450
-const displayedModules = ref<Module[]>([])
+const visibleCount = ref(INITIAL_VISIBLE)
 const isLoading = ref(false)
+let loadMoreTimer: ReturnType<typeof setTimeout> | null = null
+
+const displayedModules = computed(() =>
+  filteredModulesWithHealth.value.slice(0, visibleCount.value)
+)
 
 const { y: scrollY } = useWindowScroll()
 const { copy } = useClipboard()
 
-const loadMoreModules = () => {
-  if (isLoading.value) return
-
-  const currentLength = displayedModules.value.length
-  if (currentLength >= filteredModules.value.length) return
-
-  isLoading.value = true
-
-  setTimeout(() => {
-    const nextItems = filteredModules.value.slice(
-      currentLength,
-      currentLength + ITEMS_PER_PAGE
-    )
-    displayedModules.value.push(...nextItems)
-    isLoading.value = false
-  }, 300)
+const clearLoadMoreTimer = () => {
+  if (loadMoreTimer === null) return
+  clearTimeout(loadMoreTimer)
+  loadMoreTimer = null
 }
 
-const initializeModules = () => {
-  displayedModules.value = filteredModules.value.slice(0, ITEMS_PER_PAGE * 2)
+const loadMoreModules = () => {
+  if (isLoading.value) return
+  if (visibleCount.value >= filteredModules.value.length) return
+
+  isLoading.value = true
+  clearLoadMoreTimer()
+
+  loadMoreTimer = setTimeout(() => {
+    loadMoreTimer = null
+    visibleCount.value += ITEMS_PER_PAGE
+    isLoading.value = false
+  }, 300)
 }
 
 const debouncedLoadMore = useDebounceFn(loadMoreModules, 50)
@@ -93,11 +107,19 @@ watch(scrollY, (y) => {
   }
 })
 
-watch(filteredModules, () => {
-  isLoading.value = false
-  displayedModules.value = []
-  initializeModules()
-})
+watch(
+  () => [
+    q.value,
+    selectedCategory.value?.key,
+    selectedSort.value?.key,
+    selectedOrder.value?.key
+  ],
+  () => {
+    clearLoadMoreTimer()
+    isLoading.value = false
+    visibleCount.value = INITIAL_VISIBLE
+  }
+)
 
 const copyAllInstallCommands = () => {
   const moduleNames = modulesToAdd.value.map(module => module.name).join(' ')
@@ -137,8 +159,6 @@ Steps:
 const clearAllModules = () => {
   modulesToAdd.value = []
 }
-
-initializeModules()
 </script>
 
 <template>
@@ -286,6 +306,7 @@ initializeModules()
             v-for="module in displayedModules"
             :key="module.name"
             :module="module"
+            :sort-key="String(selectedSort.key)"
             :is-added="modulesToAdd.some(m => m.name === module.name)"
             @add="modulesToAdd.push(module)"
             @remove="modulesToAdd = modulesToAdd.filter(m => m.name !== module.name)"

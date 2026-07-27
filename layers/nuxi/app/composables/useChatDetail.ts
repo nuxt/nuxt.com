@@ -49,9 +49,14 @@ export function seedChatDetailCache(chatId: string, detail: ChatDetail) {
   data.value = detail
 }
 
+/**
+ * Merge a patch into the cached chat detail. Messages are merged by id:
+ * known rows are updated in place (keeping their createdAt), new rows are
+ * appended — history is append-only.
+ */
 export function patchChatDetailCache(
   chatId: string,
-  patch: Partial<Pick<ChatDetail, 'title' | 'state' | 'messages'>>
+  patch: { title?: string | null, messages?: ChatMessageRow[], sessionCursor?: ChatSessionCursor | null }
 ) {
   if (!import.meta.client) return
 
@@ -59,19 +64,21 @@ export function patchChatDetailCache(
   const { data } = useNuxtData<ChatDetail>(key)
   if (!data.value) return
 
-  let resolved = patch
-  if (patch.messages?.length && data.value.messages?.length) {
-    const existingById = new Map(data.value.messages.map(row => [row.id, row.createdAt]))
-    resolved = {
-      ...patch,
-      messages: patch.messages.map(row => ({
-        ...row,
-        createdAt: existingById.get(row.id) ?? row.createdAt
-      }))
+  let messages = data.value.messages ?? []
+  if (patch.messages?.length) {
+    const indexById = new Map(messages.map((row, index) => [row.id, index]))
+    messages = [...messages]
+    for (const row of patch.messages) {
+      const index = indexById.get(row.id)
+      if (index === undefined) {
+        messages.push(row)
+      } else {
+        messages[index] = { ...row, createdAt: messages[index]!.createdAt }
+      }
     }
   }
 
-  data.value = { ...data.value, ...resolved }
+  data.value = { ...data.value, ...patch, messages }
 
   const nuxtApp = useNuxtApp()
   nuxtApp.payload.data[key] = data.value
@@ -127,35 +134,61 @@ export function useChatDetail(chatId: MaybeRefOrGetter<string>) {
     return (nuxtApp.payload.data[key] ?? nuxtApp.static.data[key]) as ChatDetail | undefined
   }
 
-  async function refresh() {
+  let inflight: { id: string, promise: Promise<void> } | null = null
+  let fetchSeq = 0
+
+  async function fetchDetail(chatIdValue: string) {
+    const token = ++fetchSeq
+    // Only the latest request for the current id may write local state —
+    // stale responses (id switch, forced refresh overlapping a normal one)
+    // still seed the shared cache but are otherwise dropped.
+    const isCurrent = () => token === fetchSeq && id.value === chatIdValue
+
+    try {
+      const detail = await $fetch<ChatDetail>(`/api/chats/${chatIdValue}`)
+      // Seed the shared cache so navigating back to this chat resolves synchronously.
+      nuxtApp.payload.data[chatDetailCacheKey(chatIdValue)] = detail
+      if (!isCurrent()) return
+      data.value = detail
+      status.value = 'success'
+    } catch (err) {
+      if (!isCurrent()) return
+      data.value = null
+      error.value = err as Error
+      status.value = 'error'
+    }
+  }
+
+  function refresh(options?: { force?: boolean }): Promise<void> {
     const chatIdValue = id.value
 
     if (!loggedIn.value || !chatIdValue) {
       data.value = null
       error.value = null
       status.value = 'success'
-      return
+      return Promise.resolve()
     }
 
-    const cached = readCache(chatIdValue)
-    if (cached) {
-      data.value = cached
-      error.value = null
-      status.value = 'success'
-      return
+    if (!options?.force) {
+      const cached = readCache(chatIdValue)
+      if (cached) {
+        data.value = cached
+        error.value = null
+        status.value = 'success'
+        return Promise.resolve()
+      }
+      // Join an in-flight fetch instead of starting a second request.
+      if (inflight?.id === chatIdValue) return inflight.promise
     }
 
     status.value = 'pending'
     error.value = null
 
-    try {
-      data.value = await $fetch<ChatDetail>(`/api/chats/${chatIdValue}`)
-      status.value = 'success'
-    } catch (err) {
-      data.value = null
-      error.value = err as Error
-      status.value = 'error'
-    }
+    const promise = fetchDetail(chatIdValue).finally(() => {
+      if (inflight?.promise === promise) inflight = null
+    })
+    inflight = { id: chatIdValue, promise }
+    return promise
   }
 
   watch([id, loggedIn], () => {

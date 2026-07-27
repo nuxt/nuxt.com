@@ -14,9 +14,11 @@ export function useStartChat(source: string) {
   const input = ref('')
   const paste = usePasteAttachment(input)
   const loading = ref(false)
+  // `false` only in local `--ui-only` dev mode, where the Eve runtime is not spawned.
+  const eveEnabled = useRuntimeConfig().public.eveEnabled !== false
 
   async function createChat(parts: UIMessage['parts']): Promise<boolean> {
-    if (loading.value || agent.rateLimitReached.value || getMessageTextLength(parts) === 0) return false
+    if (!eveEnabled || loading.value || agent.rateLimitReached.value || getMessageTextLength(parts) === 0) return false
     loading.value = true
 
     try {
