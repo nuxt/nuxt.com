@@ -86,7 +86,7 @@ export interface SlackHistoryMessage {
   text: string
   permalink: string
   links: string[]
-  /** x.com / twitter.com post URLs (`https://x.com/<handle>/status/<id>`). */
+  /** X post URLs for "view on X": `https://x.com/<handle>/status/<id>` and/or `https://t.co/…`. */
   tweetUrls: string[]
   user?: string
   bot_id?: string
@@ -212,13 +212,16 @@ function extractLinks(text: string, attachments: SlackAttachment[] = []): string
 }
 
 /**
- * Filters `links` down to post URLs (`…/status/<id>` on x.com / twitter.com),
- * normalized to `https://x.com/<handle>/status/<id>` (query/hash stripped,
- * twitter.com → x.com). Dedupes by status id, preferring a URL that includes
- * the author handle over `/i/web/status/<id>`.
+ * Filters `links` down to post URLs for "view on X":
+ * - `…/status/<id>` on x.com / twitter.com → `https://x.com/<handle>/status/<id>`
+ * - `t.co/…` short links (Octolens often only surfaces these, not the expanded status URL)
+ *
+ * Dedupes by status id / t.co path. Prefers a handle form over `/i/web/status/<id>`.
  */
 export function extractTweetUrls(links: string[]): string[] {
   const byStatusId = new Map<string, string>()
+  const tcoLinks: string[] = []
+  const seenTco = new Set<string>()
 
   for (const link of links) {
     let url: URL
@@ -229,6 +232,19 @@ export function extractTweetUrls(links: string[]): string[] {
     }
 
     const host = url.hostname.replace(/^(?:www|mobile)\./i, '').toLowerCase()
+
+    if (host === 't.co') {
+      const path = url.pathname.replace(/\/$/, '')
+      if (path.length > 1) {
+        const normalized = `https://t.co${path}`
+        if (!seenTco.has(normalized)) {
+          seenTco.add(normalized)
+          tcoLinks.push(normalized)
+        }
+      }
+      continue
+    }
+
     if (host !== 'x.com' && host !== 'twitter.com') continue
 
     // `/handle/status/id` or `/i/web/status/id`
@@ -248,7 +264,10 @@ export function extractTweetUrls(links: string[]): string[] {
     }
   }
 
-  return [...byStatusId.values()]
+  const statusUrls = [...byStatusId.values()]
+  // Prefer real status URLs; keep t.co only when we have nothing better
+  // (same firehose message often has both).
+  return statusUrls.length > 0 ? statusUrls : tcoLinks
 }
 
 export async function resolveSlackChannelRef(ref: string): Promise<ResolvedSlackChannel> {

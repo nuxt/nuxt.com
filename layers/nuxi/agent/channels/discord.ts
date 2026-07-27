@@ -21,23 +21,28 @@ const DISCORD_CONTEXT = [
  * `postMessage` when present) and finalize streamed text via `editMessage` —
  * all three must convert, or Slack `<url|label>` lands on Discord as raw
  * `url%7Clabel` from the first streamed chunk.
+ *
+ * Converted text is posted as `{ raw }` (not `{ markdown }`): the Discord
+ * format converter's markdown AST round-trip strips `<>` embed suppression
+ * (`[label](<url>)` → `[label](url)`) and rewrites list/title spacing.
+ * Discord still renders markdown in `content`; `raw` just skips that AST.
  */
-function convertPostableMessage<T>(message: T): T {
+function convertPostableMessage(message: unknown): unknown {
   if (typeof message === 'string') {
-    return slackTextToDiscord(message) as T
+    return slackTextToDiscord(message)
   }
-  if (message && typeof message === 'object') {
-    if ('markdown' in message && typeof (message as { markdown?: unknown }).markdown === 'string') {
-      return {
-        ...message,
-        markdown: slackTextToDiscord((message as { markdown: string }).markdown)
-      }
-    }
-    if ('raw' in message && typeof (message as { raw?: unknown }).raw === 'string') {
-      return {
-        ...message,
-        raw: slackTextToDiscord((message as { raw: string }).raw)
-      }
+  if (!message || typeof message !== 'object') {
+    return message
+  }
+
+  if ('markdown' in message && typeof (message as { markdown?: unknown }).markdown === 'string') {
+    const { markdown, ...rest } = message as { markdown: string } & Record<string, unknown>
+    return { ...rest, raw: slackTextToDiscord(markdown) }
+  }
+  if ('raw' in message && typeof (message as { raw?: unknown }).raw === 'string') {
+    return {
+      ...message,
+      raw: slackTextToDiscord((message as { raw: string }).raw)
     }
   }
   return message
@@ -49,12 +54,12 @@ function withSlackMrkdwnConversion(adapter: DiscordAdapter): DiscordAdapter {
   const postChannelMessage = adapter.postChannelMessage?.bind(adapter)
 
   adapter.postMessage = async (threadId, message) =>
-    postMessage(threadId, convertPostableMessage(message))
+    postMessage(threadId, convertPostableMessage(message) as typeof message)
   adapter.editMessage = async (threadId, messageId, message) =>
-    editMessage(threadId, messageId, convertPostableMessage(message))
+    editMessage(threadId, messageId, convertPostableMessage(message) as typeof message)
   if (postChannelMessage) {
     adapter.postChannelMessage = async (channelId, message) =>
-      postChannelMessage(channelId, convertPostableMessage(message))
+      postChannelMessage(channelId, convertPostableMessage(message) as typeof message)
   }
   return adapter
 }

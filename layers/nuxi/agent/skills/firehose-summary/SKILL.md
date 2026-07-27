@@ -19,7 +19,7 @@ Always write Slack mrkdwn (`<url|label>`, `:emoji:`). If this run is mirrored or
 **Steps:**
 
 1. Call `read_slack_channel_history` with the firehose channel and the requested window.
-2. Each message includes `permalink` (link to the firehose post), `links` (all URLs), and `tweetUrls` (post URLs shaped `https://x.com/<handle>/status/<id>` only). Use a `tweetUrls` entry for any "view on X" link — that label must open the **post**, never a profile.
+2. Each message includes `permalink` (link to the firehose post), `links` (all URLs), and `tweetUrls` (X post URLs: `https://x.com/<handle>/status/<id>` and/or `https://t.co/…`). Use a `tweetUrls` entry for any "view on X" link — that label must open the **post**, never a profile.
 3. Group by theme — do not enumerate every post.
 
 **Output template** (adapt counts; keep structure):
@@ -42,8 +42,9 @@ Always write Slack mrkdwn (`<url|label>`, `:emoji:`). If this run is mirrored or
 2. :large_yellow_circle: *docs team* — watch the Cloudflare DX thread — <firehose-permalink|context>
 
 Rules:
-- Every item in **Needs attention** and **Themes** (when non-trivial) must include at least one `<url|label>` link.
-- **`view on X` must copy a URL from `tweetUrls` verbatim** — always `https://x.com/<handle>/status/<id>`. Never substitute a profile (`https://x.com/handle`) for that label.
+- Every non-trivial **Themes** / **Needs attention** item must end with links in this order when available: `<tweetUrl|view on X> · <permalink|firehose>` — label the post link exactly `view on X`, and include **one** firehose permalink (never duplicate `firehose`).
+- **`view on X` must copy a URL from `tweetUrls` verbatim** (`https://x.com/<handle>/status/<id>` or `https://t.co/…`). Never substitute a profile (`https://x.com/handle`) for that label. The `@handle` link is separate and must not replace `view on X`.
 - If a message has no `tweetUrls`, omit "view on X" and keep only `<permalink|firehose>` — do not invent a profile link.
 - Always add `<permalink|firehose>` when the team may need Slack context; use other `links[]` for non-X articles when relevant.
 - Actions must be specific enough to do in 5 minutes (reply, docs PR, ignore with reason).
+- Do not paste the same URL twice in one bullet.
