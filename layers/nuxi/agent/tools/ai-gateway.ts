@@ -1,12 +1,14 @@
 import { defineDynamic, defineTool } from 'eve/tools'
 import { z } from 'zod'
+import { NUXI_GATEWAY_TAG } from '../../shared/utils/ai-gateway.js'
 import { canAccessAdminMcp } from '../lib/admin-mcp-access.js'
 
 export const AI_GATEWAY_INSTRUCTIONS = `**AI Gateway tools (\`ai_gateway__*\`, admin only) — tokens, cost, model usage:**
-- \`ai_gateway__credits\` — current credit balance and lifetime spend for the nuxt-js team
-- \`ai_gateway__report\` — aggregated spend/tokens over a date range, grouped by day/user/model/tag/provider/credential type
+- \`ai_gateway__credits\` — current credit balance and lifetime spend for the **entire** nuxt-js team account (not Nuxi-only)
+- \`ai_gateway__report\` — spend/tokens over a date range. The Custom Reporting API is **account-wide**; this tool always scopes to Nuxi via tags (default \`${NUXI_GATEWAY_TAG}\`) and/or \`AI_GATEWAY_REPORT_API_KEY_NAME\`. Never quote unscoped account totals in digests.
 - \`ai_gateway__generation\` — cost, latency, and token usage for a single generation id (from a chat completion's \`id\` field)
-- Dashboard: https://vercel.com/nuxt-js/nuxt/ai-gateway`
+- Dashboard: https://vercel.com/nuxt-js/nuxt/ai-gateway
+- If a scoped report returns empty results (e.g. before tagging rolled out and no API key name configured), say spend is not attributable yet — do **not** fall back to account-wide totals.`
 
 const BASE_URL = 'https://ai-gateway.vercel.sh/v1'
 const FETCH_TIMEOUT_MS = 10_000
@@ -15,6 +17,17 @@ function apiKey(): string {
   const key = process.env.AI_GATEWAY_API_KEY?.trim()
   if (!key) throw new Error('AI_GATEWAY_API_KEY is not configured')
   return key
+}
+
+/** Comma-separated tags from env, or the default Nuxi attribution tag. */
+function defaultReportTags(): string[] {
+  const raw = process.env.AI_GATEWAY_REPORT_TAGS?.trim()
+  if (!raw) return [NUXI_GATEWAY_TAG]
+  return raw.split(',').map(t => t.trim()).filter(Boolean)
+}
+
+function reportApiKeyName(): string | undefined {
+  return process.env.AI_GATEWAY_REPORT_API_KEY_NAME?.trim() || undefined
 }
 
 async function gatewayFetch(path: string, params: Record<string, string | undefined> = {}): Promise<unknown> {
@@ -37,45 +50,112 @@ async function gatewayFetch(path: string, params: Record<string, string | undefi
 
 const dateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Expected YYYY-MM-DD')
 
+type ReportRow = Record<string, unknown> & {
+  api_key_name?: string
+}
+
+function filterReportByApiKeyName(payload: unknown, apiKeyName: string): {
+  results: ReportRow[]
+  matchedRows: number
+  note: string
+} {
+  const results = payload && typeof payload === 'object' && Array.isArray((payload as { results?: unknown }).results)
+    ? (payload as { results: ReportRow[] }).results
+    : []
+
+  const needle = apiKeyName.toLowerCase()
+  const filtered = results.filter(
+    row => typeof row.api_key_name === 'string' && row.api_key_name.toLowerCase() === needle
+  )
+
+  return {
+    results: filtered,
+    matchedRows: filtered.length,
+    note: filtered.length === 0
+      ? `No rows matched AI_GATEWAY_REPORT_API_KEY_NAME="${apiKeyName}". Do not quote account-wide totals.`
+      : `Filtered to API key "${apiKeyName}" only.`
+  }
+}
+
 function aiGatewayTools() {
   return {
     credits: defineTool({
-      description: 'Admin: AI Gateway credit balance and lifetime spend for the nuxt-js team.',
+      description: 'Admin: AI Gateway credit balance and lifetime spend for the entire nuxt-js team account (not Nuxi-scoped). Prefer ai_gateway__report for Nuxi digests.',
       inputSchema: z.object({}),
       async execute() {
         return await gatewayFetch('/credits')
       }
     }),
     report: defineTool({
-      description: 'Admin: aggregated AI Gateway spend and token usage over a date range. Requires a paid plan.',
+      description: `Admin: Nuxi-scoped AI Gateway spend/tokens over a date range. Scopes via AI_GATEWAY_REPORT_API_KEY_NAME (preferred for historical) and/or tags (default ${NUXI_GATEWAY_TAG}). Never returns unscoped account totals.`,
       inputSchema: z.object({
         startDate: dateSchema.describe('Start date (UTC, inclusive), YYYY-MM-DD'),
         endDate: dateSchema.describe('End date (UTC, inclusive), YYYY-MM-DD'),
-        groupBy: z.enum(['day', 'user', 'model', 'tag', 'provider', 'credential_type', 'zero_data_retention', 'api_key_name']).default('day'),
+        groupBy: z.enum(['day', 'user', 'model', 'tag', 'provider', 'credential_type', 'zero_data_retention', 'api_key_name']).default('model'),
         datePart: z.enum(['day', 'hour']).optional().describe('Time granularity, only applies when groupBy is "day"'),
         userId: z.string().optional(),
         model: z.string().optional().describe('creator/model-name, e.g. anthropic/claude-sonnet-4.6'),
         provider: z.string().optional(),
         credentialType: z.enum(['byok', 'system']).optional(),
-        tags: z.array(z.string()).optional(),
+        tags: z.array(z.string()).optional().describe(`Override default report tags (env AI_GATEWAY_REPORT_TAGS / ${NUXI_GATEWAY_TAG}). Ignored when AI_GATEWAY_REPORT_API_KEY_NAME is set.`),
         tagsMatch: z.enum(['any', 'all']).optional()
       }).refine(({ startDate, endDate }) => startDate <= endDate, {
         message: 'startDate must not be later than endDate',
         path: ['startDate']
       }),
       async execute(input) {
-        return await gatewayFetch('/report', {
+        const configuredKeyName = reportApiKeyName()
+        // Key-name scope covers historical untagged traffic on a dedicated Nuxi key.
+        // Otherwise filter by tags (requests tagged app:nuxi going forward).
+        const tags = configuredKeyName
+          ? undefined
+          : (input.tags?.length ? input.tags : defaultReportTags())
+        const tagsMatch = tags ? (input.tagsMatch ?? 'all') : undefined
+        const groupBy = configuredKeyName ? 'api_key_name' : input.groupBy
+
+        const payload = await gatewayFetch('/report', {
           start_date: input.startDate,
           end_date: input.endDate,
-          group_by: input.groupBy,
+          group_by: groupBy,
           date_part: input.datePart,
           user_id: input.userId,
           model: input.model,
           provider: input.provider,
           credential_type: input.credentialType,
-          tags: input.tags?.join(','),
-          tags_match: input.tagsMatch
+          tags: tags?.join(','),
+          tags_match: tagsMatch
         })
+
+        if (configuredKeyName) {
+          const { results, matchedRows, note } = filterReportByApiKeyName(payload, configuredKeyName)
+          return {
+            results,
+            scope: {
+              mode: 'api_key_name' as const,
+              apiKeyName: configuredKeyName,
+              matchedRows,
+              groupBy,
+              requestedGroupBy: input.groupBy,
+              note: `${note} Custom Reporting is account-wide; empty results mean no attributable Nuxi spend — do not invent or fall back to team totals.`
+            }
+          }
+        }
+
+        const results = payload && typeof payload === 'object' && Array.isArray((payload as { results?: unknown }).results)
+          ? (payload as { results: unknown[] }).results
+          : []
+
+        return {
+          results,
+          scope: {
+            mode: 'tags' as const,
+            tags,
+            tagsMatch,
+            groupBy,
+            matchedRows: results.length,
+            note: 'Scoped by tags only. Empty results usually mean traffic predates app:nuxi tagging (or set AI_GATEWAY_REPORT_API_KEY_NAME). Do not fall back to account-wide totals.'
+          }
+        }
       }
     }),
     generation: defineTool({

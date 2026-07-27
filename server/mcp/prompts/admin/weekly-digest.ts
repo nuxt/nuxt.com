@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 export default defineMcpPrompt({
-  description: 'Generate a weekly digest combining docs feedback and AI agent quality — ready to share with the Nuxt team.',
+  description: 'Generate the Nuxt Monday digest — traffic, docs feedback, AI agent quality, and prioritized follow-ups.',
   inputSchema: {
     sinceDays: z.number().int().min(1).max(60).default(7).describe('Window in days (default 7).')
   },
@@ -10,28 +10,42 @@ export default defineMcpPrompt({
     return `Produce the Nuxt admin digest for the last ${sinceDays} days.
 
 Steps to follow (run them in parallel where possible):
-1. \`feedback-stats\` with \`sinceDays=${sinceDays}\`, \`topPages=5\`.
-2. \`list-feedback\` with \`ratings=["not-helpful", "confusing"]\`, \`sinceDays=${sinceDays}\`, \`limit=30\`.
-3. \`agent-usage-stats\` with \`sinceDays=${sinceDays}\`.
-4. \`list-agent-chats\` with \`sinceDays=${sinceDays}\`, \`hasDownvotes=true\`, \`limit=5\` (worst-rated, most recently updated first).
-5. \`list-agent-votes\` with \`onlyDownvotes=true\`, \`sinceDays=${sinceDays}\`, \`limit=15\`.
+1. Traffic via Vercel Web Analytics for nuxt.com: visitors/pageviews + WoW delta, daily trend, top routes with deltas, referrers/geo/device.
+2. \`feedback-stats\` with \`sinceDays=${sinceDays}\`, \`topPages=5\`.
+3. \`list-feedback\` with \`ratings=["not-helpful", "confusing"]\`, \`sinceDays=${sinceDays}\`, \`limit=30\`.
+4. For worst feedback pages, weigh by real visit counts from step 1.
+5. \`agent-usage-stats\` with \`sinceDays=${sinceDays}\`.
+6. \`list-agent-chats\` with \`sinceDays=${sinceDays}\`, \`hasDownvotes=true\`, \`limit=5\`.
+7. \`list-agent-votes\` with \`onlyDownvotes=true\`, \`sinceDays=${sinceDays}\`, \`limit=15\`.
+8. Agent runs (Slack / Discord / web) and Nuxi-scoped AI Gateway spend if available — never quote account-wide / other-product totals.
 
 Then write a digest in Markdown with these sections (be concise — each section ≤ 8 bullets):
 
 # Nuxt weekly digest — last ${sinceDays} days
 
+## Traffic pulse
+- Visitors / pageviews + WoW %.
+- One-line daily trend (spikes/drops).
+- Link to [Vercel Web Analytics](https://vercel.com/nuxt-js/nuxt/analytics).
+
+## Top sections
+- Top routes with visit counts and WoW deltas (linked).
+
+## Referrers & audience
+- Top referrers, countries, device mix (short).
+
 ## Docs feedback
 - Headline numbers: total, positive %, average score.
-- Top 5 worst pages (title + URL + score + 1-line takeaway).
-- Top 3 recurring complaints across negative comments.
+- Worst pages (title + URL + score + traffic + 1-line takeaway).
+- Recurring complaints across negative comments.
 
 ## AI agent
-- **Traffic & spend**: point to [Vercel Agent Runs](https://vercel.com/nuxt-js/nuxt/observability/agent-runs) (runs, Slack vs web) and [AI Gateway](https://vercel.com/nuxt-js/nuxt/ai-gateway) (tokens, cost). Do not quote local DB for this.
-- **Quality** (from \`agent-usage-stats\` + votes): upvotes vs downvotes, downvote rate, web chats saved.
-- Top 3 worst web chats (id + short reason).
+- Web chat quality (votes, worst chats with links).
+- Runs Slack / Discord / web — [Agent Runs](https://vercel.com/nuxt-js/nuxt/observability/agent-runs).
+- Nuxi-scoped spend/tokens only — [AI Gateway](https://vercel.com/nuxt-js/nuxt/ai-gateway). If not attributable, say so; never invent or use team-wide numbers.
 
-## What to fix this week
-- 3 prioritized actions (page edit, prompt change, retrieval fix, etc.) with owner suggestion if obvious.
+## Fix this week
+- 3 prioritized actions (traffic × feedback × agent), with owner suggestion and links.
 
 Always include direct links so a reader can jump straight to the source. Prefer short paragraphs and bullet points; this is a digest, not a thesis.`
   }

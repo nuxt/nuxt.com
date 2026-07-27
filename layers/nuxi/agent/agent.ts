@@ -7,6 +7,7 @@ export default defineAgent({
     providerOptions: {
       gateway: {
         caching: 'auto',
+        // Spreads ZDR + app:nuxi tag for spend attribution in digests
         ...gatewayZeroDataRetention
       },
       anthropic: {

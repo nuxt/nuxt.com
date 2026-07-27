@@ -89,16 +89,14 @@ function withTimeout<T>(promise: Promise<T>, ms: number, label: string, onTimeou
 
 /**
  * `receive()` resolves once the Slack session/run is *started*, not once the
- * digest is fully generated — the actual turn (several MCP tool calls:
- * feedback-stats, agent-usage-stats, etc.) keeps running as a separate
- * durable workflow continuation after `receiveOnSlack()`'s `await receive()`
- * returns. The first preview test used a 20s timeout here and always hit it
- * (confirmed via logs: the mirror ran, but `finalMessageText` never saw a
- * `message.completed` event in time) — 20s is far shorter than a real digest
- * generation. Budget generously against the schedule/ops function's own
- * execution ceiling (300s) instead.
+ * digest is fully generated — the actual turn (many MCP tool calls: analytics,
+ * feedback-stats, agent-usage-stats, AI Gateway, etc.) keeps running as a
+ * separate durable workflow continuation after `receiveOnSlack()`'s
+ * `await receive()` returns. Budget generously against the schedule/ops
+ * function's own execution ceiling (300s) — the merged weekly digest is
+ * heavier than firehose alone.
  */
-const EVENT_STREAM_TIMEOUT_MS = 180_000
+const EVENT_STREAM_TIMEOUT_MS = 270_000
 
 /**
  * Mirrors a completed Slack digest session to Discord: reuses the model's
@@ -117,7 +115,10 @@ export async function mirrorDigestToDiscord({
   channelId: string
 }): Promise<void> {
   try {
-    console.log('[nuxi:discord-workflow] mirroring digest, reading Slack session event stream', { channelId })
+    console.log('[nuxi:discord-workflow] mirroring digest, reading Slack session event stream', {
+      channelId,
+      timeoutMs: EVENT_STREAM_TIMEOUT_MS
+    })
     const stream = await session.getEventStream()
     const text = await withTimeout(
       finalMessageText(stream),
@@ -126,7 +127,9 @@ export async function mirrorDigestToDiscord({
       () => { void stream.cancel() }
     )
     if (!text) {
-      console.warn('[nuxi:discord-workflow] no message text found on session event stream, skipping mirror', { channelId })
+      console.warn('[nuxi:discord-workflow] no final message.completed text on session stream (empty or session ended early), skipping mirror', {
+        channelId
+      })
       return
     }
 
@@ -139,8 +142,19 @@ export async function mirrorDigestToDiscord({
 
     const threadId = await resolveDiscordThreadId(discord, channelId)
     await discord.postMessage(threadId, slackTextToDiscord(text))
-    console.log('[nuxi:discord-workflow] mirrored digest to Discord', { channelId, threadId })
+    console.log('[nuxi:discord-workflow] mirrored digest to Discord', {
+      channelId,
+      threadId,
+      chars: text.length
+    })
   } catch (error) {
-    console.warn('[nuxi:discord-workflow] failed to mirror digest to Discord', { channelId }, error)
+    const timedOut = error instanceof Error && /timed out after \d+ms/.test(error.message)
+    console.warn(
+      timedOut
+        ? '[nuxi:discord-workflow] mirror timed out waiting for Slack digest (weekly digest may still post to Slack)'
+        : '[nuxi:discord-workflow] failed to mirror digest to Discord',
+      { channelId, timedOut, timeoutMs: EVENT_STREAM_TIMEOUT_MS },
+      error
+    )
   }
 }

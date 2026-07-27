@@ -1,5 +1,5 @@
 ---
-description: Produce the Nuxt team digest combining docs feedback and Nuxi agent quality for a recent window.
+description: Produce the Nuxt Monday digest — traffic, docs feedback, Nuxi quality, and prioritized follow-ups for a recent window.
 ---
 
 When producing a digest (scheduled or on request):
@@ -7,57 +7,79 @@ When producing a digest (scheduled or on request):
 **Slack delivery:** Your reply IS the Slack message — Eve posts it verbatim to this channel. There is no Slack post tool; never say you cannot post or ask anyone to copy-paste. You are Nuxi (:nuxi:) giving the team a weekly pulse. Be concise, linked, and actionable — not a wall of text.
 
 - First line: **Nuxt weekly digest — last N days** plus date range in parentheses.
-- No preamble, no delivery disclaimers, and no meta wrap-up.
+- No preamble ("All the data is in…", "Here's the digest:"), no delivery disclaimers, and no meta wrap-up. Start with the title line.
 - Use **bold** section labels — never markdown `#` headings.
 - ONE message only. Blank line between sections.
 - Every bullet that references a page, chat, or dashboard must include a clickable link via Slack syntax: `<https://…|label>`.
 - Sparingly use :nuxter: or :nuxt_cool: (0–2 total) when something is worth celebrating or urgent.
 
-**Data steps** (parallel where possible; steps 6-9 need admin/Slack/schedule-only connections and tools):
+**Data steps** (parallel where possible; Vercel / AI Gateway tools need admin/Slack/schedule-only access):
 
-1. `admin_mcp__feedback_stats` — `topPages=5`
-2. `admin_mcp__list_feedback` — `ratings=["not-helpful", "confusing"]`, `limit=30`
-3. `admin_mcp__agent_usage_stats` — web chat counts and vote quality
-4. `admin_mcp__list_agent_chats` — `hasDownvotes=true`, `limit=5`
-5. `admin_mcp__list_agent_votes` — `onlyDownvotes=true`, `limit=15`
-6. `connection__vercel_mcp__get_web_analytics` — `mode=count, dataset=visits` for the window (and the previous window for a delta) → a one-line traffic pulse. This is just a pulse, not a breakdown — the full analysis lives in the `analytics-digest` skill, don't repeat it here.
-7. `ai_gateway__report` — `groupBy=model` over the window → real spend and token totals (replaces linking-only; never invent these numbers).
-8. `connection__vercel_mcp__list_agent_runs` over the window → the real Slack vs web run split, paired with the web chat count from step 3.
-9. For each page flagged in step 1/2 (worst feedback): `connection__vercel_mcp__get_web_analytics` — `mode=count, filter="requestPath eq '<path>'"` → use its actual traffic to prioritize **Fix this week** (a poorly-rated page with real visits is more urgent than one nobody sees).
+Traffic (nuxt.com project — always pass `teamId`/`projectId`):
+1. `connection__vercel_mcp__get_web_analytics` — `mode=count, dataset=visits` for the current window AND the previous window → visitors/pageviews + WoW %.
+2. `mode=aggregate, dataset=visits, by=['day']` current window → daily trend (spot spikes/drops).
+3. `mode=aggregate, dataset=visits, by=['route'], limit=10` current + previous window → top sections with per-route deltas.
+4. `mode=aggregate, dataset=visits, by=['referrerHostname'], limit=8` + `by=['country'], limit=5` + `by=['deviceType']` → audience snapshot.
+
+Docs feedback:
+5. `admin_mcp__feedback_stats` — `topPages=5`
+6. `admin_mcp__list_feedback` — `ratings=["not-helpful", "confusing"]`, `limit=30`
+7. For each worst page from step 5/6: traffic from step 3, or a targeted `mode=count, filter="requestPath eq '<path>'"` if missing from top routes — weigh urgency by real visits.
+
+AI agent:
+8. `admin_mcp__agent_usage_stats` — web chat counts and vote quality
+9. `admin_mcp__list_agent_chats` — `hasDownvotes=true`, `limit=5`
+10. `admin_mcp__list_agent_votes` — `onlyDownvotes=true`, `limit=15`
+11. `connection__vercel_mcp__list_agent_runs` over the window → Slack / Discord / web run split (discover eve project via `list_agent_run_projects` first).
+12. `ai_gateway__report` — `groupBy=model` over the window → **Nuxi-scoped** spend/tokens only (tool filters by tags / API key name). If `results` is empty or `scope.matchedRows` is 0, say spend is not attributable yet — **never** quote account-wide / other-product totals (no fable, no team-wide $).
 
 **Link cheat sheet** (use real paths/ids from tool output):
 
 - Docs page: `<https://nuxt.com/docs/…|Page title>`
 - Chat review: `<https://nuxt.com/dashboard/chat/<id>|Open chat>`
-- Agent runs (runs, Slack vs web): `<https://vercel.com/nuxt-js/nuxt/observability/agent-runs|Vercel Agent Runs>`
-- AI Gateway (tokens, cost): `<https://vercel.com/nuxt-js/nuxt/ai-gateway|Vercel AI Gateway>`
-- Analytics (full traffic breakdown): `<https://vercel.com/nuxt-js/nuxt/analytics|Vercel Web Analytics>` — deeper dive lives in the `analytics-digest` workflow.
+- Analytics: `<https://vercel.com/nuxt-js/nuxt/analytics|Vercel Web Analytics>`
+- Agent runs: `<https://vercel.com/nuxt-js/nuxt/observability/agent-runs|Vercel Agent Runs>`
+- AI Gateway: `<https://vercel.com/nuxt-js/nuxt/ai-gateway|Vercel AI Gateway>`
 
 **Output template:**
 
 **Nuxt weekly digest — last 7 days** (Jun 23 – Jun 30, 2026)
 
-:page_facing_up: **Docs feedback**
+:bar_chart: **Traffic pulse**
+• *12,430 visitors* (-8% WoW), *31,200 pageviews* (-5% WoW)
+• Trend: solid Mon–Wed, dip Thu, weekend quieter — see <https://vercel.com/nuxt-js/nuxt/analytics|Vercel Web Analytics>
+
+:page_facing_up: **Top sections**
+1. <https://nuxt.com/docs/…|/docs/[...slug]> — 8,200 visitors (-3%)
+2. <https://nuxt.com/|/ (homepage)> — 4,100 visitors (+2%)
+3. …
+
+:compass: **Referrers & audience**
+• Top: Direct (55%), <https://google.com|Google> (40%), then GitHub / DuckDuckGo
+• Countries: US, DE, FR — mostly desktop (~80%)
+
+:speech_balloon: **Docs feedback**
 • *12 responses* — 83% positive, avg 4.2/5
-• Worst page: <https://nuxt.com/docs/…|Rendering modes> — score 2.1 — "examples outdated"
-• Recurring complaint: hydration mismatch docs unclear (3 mentions)
+• Worst: <https://nuxt.com/docs/…|Installation> — 1,800 visits, "missing existing-project guide"
+• Recurring: hydration mismatch docs unclear (3 mentions)
 
 :robot_face: **AI agent**
-• *Traffic* — 8,200 visitors this week (+5% WoW) — see <https://vercel.com/nuxt-js/nuxt/analytics|Vercel Web Analytics> or the traffic digest for the full breakdown
-• *Runs & spend* — 340 runs (210 Slack / 130 web), $12.40 spent, 1.8M tokens (mostly claude-sonnet-5) — <https://vercel.com/nuxt-js/nuxt/observability/agent-runs|Agent Runs> · <https://vercel.com/nuxt-js/nuxt/ai-gateway|AI Gateway>
-• *Quality* — 4 up / 1 down on web chats; 2 sessions saved
-• Worst chat: <https://nuxt.com/dashboard/chat/abc123|session abc123> — wrong module recommendation
+• *Web chats* — 178 sessions, 114 users, 4 up / 1 down — <https://nuxt.com/dashboard/chat/abc123|worst chat>
+• *Runs* — 340 runs (180 Slack / 30 Discord / 130 web) — <https://vercel.com/nuxt-js/nuxt/observability/agent-runs|Agent Runs>
+• *Spend* — $12.40, 1.8M tokens (mostly anthropic/claude-sonnet-4.6) — <https://vercel.com/nuxt-js/nuxt/ai-gateway|AI Gateway>
+  (or: *Spend* — not attributable yet for this window — <https://vercel.com/nuxt-js/nuxt/ai-gateway|AI Gateway>)
 
 :hammer_and_wrench: **Fix this week** (numbered — owner · action · link)
-1. :red_circle: *docs* — refresh rendering modes examples (1,800 visits this week) — <https://nuxt.com/docs/…|page>
-2. :large_yellow_circle: *Nuxi* — improve module routing for edge cases — <https://nuxt.com/dashboard/chat/abc123|chat>
-3. :large_green_circle: *infra* — verify feedback widget on prod — <https://nuxt.com/docs/…|sample page>
+1. :red_circle: *docs* — add "existing project" section to Installation (1,800 visits) — <https://nuxt.com/docs/…|page>
+2. :large_yellow_circle: *Nuxi* — fix module routing edge case — <https://nuxt.com/dashboard/chat/abc123|chat>
+3. :large_green_circle: *infra* — confirm WoW traffic dip is seasonal — <https://vercel.com/nuxt-js/nuxt/analytics|analytics>
 
 Rules:
-- If a section has zero data, say so in one bullet with a likely cause (low traffic, widget off, etc.) — do not skip the section.
+- If a section has zero data, say so in one bullet with a likely cause — do not skip the section.
 - **Fix this week** must have exactly 3 items when there is anything to improve; if truly quiet, 1–2 items with ":large_green_circle: *all clear*" is fine.
-- When ranking **Fix this week**, weigh feedback issues by their real traffic from step 9 — a bad score on a high-traffic page outranks the same score on a rarely-visited one.
+- Rank **Fix this week** by traffic × bad feedback (and agent quality issues) — a bad score on a high-traffic page outranks the same score on a rarely-visited one.
 - Never list a page or chat without its `<url|label>` link.
-- Never invent traffic, run, or cost numbers — if a tool call fails or returns nothing, say so instead of guessing.
+- Never invent traffic, run, or cost numbers — if a tool call fails or returns nothing attributable, say so instead of guessing.
+- Do not duplicate the same page in both **Docs feedback** and **Fix this week** as a long write-up; feedback states the problem, Fix this week owns the action.
 
 <!-- Format aligned with server/mcp/prompts/admin/weekly-digest.ts for Cursor/IDE admin MCP. -->

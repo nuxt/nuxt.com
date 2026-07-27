@@ -9,6 +9,7 @@ declare module 'chat' {
     'hammer_and_wrench': EmojiFormats
     'bar_chart': EmojiFormats
     'rotating_light': EmojiFormats
+    'compass': EmojiFormats
     'nuxi': EmojiFormats
     'nuxter': EmojiFormats
     'nuxt_cool': EmojiFormats
@@ -36,6 +37,7 @@ emoji.extend({
   'hammer_and_wrench': { slack: 'hammer_and_wrench', gchat: '🛠️' },
   'bar_chart': { slack: 'bar_chart', gchat: '📊' },
   'rotating_light': { slack: 'rotating_light', gchat: '🚨' },
+  'compass': { slack: 'compass', gchat: '🧭' },
   'nuxi': { slack: 'nuxi', gchat: '🟩' },
   'nuxter': { slack: 'nuxter', gchat: '💚' },
   'nuxt_cool': { slack: 'nuxt_cool', gchat: '😎' },

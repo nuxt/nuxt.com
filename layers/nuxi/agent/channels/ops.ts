@@ -7,7 +7,6 @@ import {
   verifyWorkflowTriggerAuth
 } from '../lib/workflows.js'
 import { runDiscordGateway } from '../schedules/discord-gateway.js'
-import { runAnalyticsDigest } from '../schedules/analytics-digest.js'
 import { runFirehoseSummary } from '../schedules/firehose-summary.js'
 import { runWeeklyDigest } from '../schedules/weekly-digest.js'
 
@@ -82,13 +81,17 @@ export default defineChannel({
         return Response.json({ error: parsedSinceDays.error }, { status: 400 })
       }
 
-      args.waitUntil(runAnalyticsDigest({
+      args.waitUntil(runWeeklyDigest({
         receive: args.receive,
         appAuth: scheduleAppAuth,
         sinceDays: parsedSinceDays.value
       }))
 
-      return Response.json({ ok: true, sinceDays: parsedSinceDays.value ?? null })
+      return Response.json({
+        ok: true,
+        sinceDays: parsedSinceDays.value ?? null,
+        aliasedTo: 'weekly-digest'
+      })
     })
   ]
 })

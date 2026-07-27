@@ -12,7 +12,7 @@ export const ADMIN_MCP_INSTRUCTIONS = `**Admin tools (team only):**
 - \`admin_mcp__agent_usage_stats\` — web chat counts and vote quality (NOT tokens/cost — use \`connection__vercel_mcp__*\` for runs, \`ai_gateway__*\` for tokens/cost)
 - \`admin_mcp__list_agent_chats\` / \`admin_mcp__get_agent_chat\` — saved web chat sessions and transcripts
 - \`admin_mcp__list_agent_votes\` — message upvotes/downvotes
-- For runs, Slack vs web, duration: **Vercel Agent Runs** via \`connection__vercel_mcp__*\` (see below)
+- For runs, Slack / Discord / web, duration: **Vercel Agent Runs** via \`connection__vercel_mcp__*\` (see below)
 - For tokens, cost, model usage: **AI Gateway** via \`ai_gateway__*\` (see below)
 - Do not invent token/cost numbers from local DB.
 - Default to recent data (last 7–30 days) unless the user asks for a longer window

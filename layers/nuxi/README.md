@@ -108,19 +108,12 @@ All times below assume UTC+1 local mornings (6:00 local ≈ 5:00 UTC) — adjust
 
 ### Weekly digest
 
+Single Monday digest: traffic (trend, top sections, referrers/audience), docs feedback, Nuxi quality/runs, Nuxi-scoped AI Gateway spend, and **Fix this week** prioritized by traffic × feedback.
+
 - Schedule: `agent/schedules/weekly-digest.ts` — Monday 5:00 UTC
 - Skill: `agent/skills/weekly-digest/SKILL.md`
 - Preview trigger: `POST /eve/v1/ops/weekly-digest/trigger`
-- Real traffic pulse (`connection__vercel_mcp__get_web_analytics`), AI Gateway spend/tokens (`ai_gateway__report`), and Slack-vs-web run split (`connection__vercel_mcp__list_agent_runs`) — no more DB-guessed or link-only numbers. **Fix this week** is prioritized using each worst-feedback page's real traffic.
-
-### Analytics digest
-
-Deep traffic dive: trend, top pages/referrers/geo/device (WoW deltas), and doc pages that combine high traffic with poor feedback ("pages that need love").
-
-- Schedule: `agent/schedules/analytics-digest.ts` — Monday 5:15 UTC (right after weekly-digest)
-- Skill: `agent/skills/analytics-digest/SKILL.md`
-- Connection: `connection__vercel_mcp__get_web_analytics` (`agent/connections/vercel-mcp.ts`)
-- Preview trigger: `POST /eve/v1/ops/analytics-digest/trigger?sinceDays=7`
+- Traffic via `connection__vercel_mcp__get_web_analytics`; spend via `ai_gateway__report` (scoped to `app:nuxi` tags and/or `AI_GATEWAY_REPORT_API_KEY_NAME` — never account-wide); runs via `connection__vercel_mcp__list_agent_runs`.
 
 ### Firehose summary
 
@@ -135,7 +128,7 @@ The Nuxi Slack bot must be invited to `#firehose-nuxt`. Required Connect scopes:
 
 ### Discord mirror
 
-Set `DISCORD_WORKFLOW_CHANNEL_ID` (raw Discord channel id, see `.env.example`) to also post both digests to a Discord channel — distinct from `DISCORD_ALLOWED_CHANNELS`, which only gates live @mentions. This reuses the Slack-generated text (no second agent run): `agent/lib/workflows.ts` reads the finished Slack session's final message and `agent/lib/discord-format.ts` converts its Slack-only syntax (`<url|label>` links, `:nuxter:`-style emoji) to Discord Markdown before `agent/lib/discord-workflow.ts` posts it via the Discord adapter. Conversion is best-effort — an emoji shortcode outside the known set (see the file) passes through unchanged rather than being guessed at. Unset disables the mirror; a mirroring failure is logged and never affects the Slack post. The bot needs **View Channel** + **Send Messages** in the target channel.
+Set `DISCORD_WORKFLOW_CHANNEL_ID` (raw Discord channel id, see `.env.example`) to also post the weekly digest and firehose summary to a Discord channel — distinct from `DISCORD_ALLOWED_CHANNELS`, which only gates live @mentions. This reuses the Slack-generated text (no second agent run): `agent/lib/workflows.ts` reads the finished Slack session's final message and `agent/lib/discord-format.ts` converts its Slack-only syntax (`<url|label>` links, `:nuxter:`-style emoji) to Discord Markdown before `agent/lib/discord-workflow.ts` posts it via the Discord adapter. Conversion is best-effort — an emoji shortcode outside the known set (see the file) passes through unchanged rather than being guessed at. Unset disables the mirror; a mirroring failure is logged and never affects the Slack post. The bot needs **View Channel** + **Send Messages** in the target channel.
 
 ### Test locally
 
@@ -143,7 +136,6 @@ With the dev server running (`pnpm dev` from repo root — Eve is bundled via th
 
 ```sh
 curl -X POST "http://localhost:3000/eve/v1/dev/schedules/weekly-digest"
-curl -X POST "http://localhost:3000/eve/v1/dev/schedules/analytics-digest"
 curl -X POST "http://localhost:3000/eve/v1/dev/schedules/firehose-summary"
 # -> { "scheduleId": "...", "sessionIds": ["..."] }
 ```
@@ -154,11 +146,8 @@ curl -X POST "http://localhost:3000/eve/v1/dev/schedules/firehose-summary"
 curl -X POST "https://<preview-url>/eve/v1/ops/weekly-digest/trigger?sinceDays=7" \
   -H "Authorization: Bearer $INTERNAL_API_SECRET"
 
-curl -X POST "https://<preview-url>/eve/v1/ops/analytics-digest/trigger?sinceDays=7" \
-  -H "Authorization: Bearer $INTERNAL_API_SECRET"
-
 curl -X POST "https://<preview-url>/eve/v1/ops/firehose-summary/trigger?sinceHours=24" \
   -H "Authorization: Bearer $INTERNAL_API_SECRET"
 ```
 
-Requires on the **eve** runtime: `INTERNAL_API_SECRET`, `NUXT_MCP_ADMIN_TOKEN`, `NUXT_WORKFLOW_SLACK_CHANNEL`, `NUXT_FIREHOSE_SLACK_CHANNEL` (Slack channel names). Optional `NUXT_*_SLACK_CHANNEL_ID` overrides names and skips `users.conversations`. Local dev and Vercel preview use Connect client `slack/nuxi-preview` automatically; prod uses `slack/nuxi` (override with `SLACK_CONNECTOR`). `weekly-digest` and `analytics-digest` additionally need `NUXI_VERCEL_TEAM_ID`/`NUXI_VERCEL_PROJECT_ID` (see `agent/lib/vercel-connect.ts`) and, for spend/token numbers, `AI_GATEWAY_API_KEY` — both connections are admin-gated so only the scheduled/Slack/admin path can reach them.
+Requires on the **eve** runtime: `INTERNAL_API_SECRET`, `NUXT_MCP_ADMIN_TOKEN`, `NUXT_WORKFLOW_SLACK_CHANNEL`, `NUXT_FIREHOSE_SLACK_CHANNEL` (Slack channel names). Optional `NUXT_*_SLACK_CHANNEL_ID` overrides names and skips `users.conversations`. Local dev and Vercel preview use Connect client `slack/nuxi-preview` automatically; prod uses `slack/nuxi` (override with `SLACK_CONNECTOR`). `weekly-digest` additionally needs `NUXI_VERCEL_TEAM_ID`/`NUXI_VERCEL_PROJECT_ID` (see `agent/lib/vercel-connect.ts`) and, for spend/token numbers, `AI_GATEWAY_API_KEY` (optionally `AI_GATEWAY_REPORT_API_KEY_NAME` / `AI_GATEWAY_REPORT_TAGS`) — both connections are admin-gated so only the scheduled/Slack/admin path can reach them.
