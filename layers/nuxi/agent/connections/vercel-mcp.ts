@@ -1,7 +1,7 @@
 import { defineMcpClientConnection } from 'eve/connections'
 import { connect, type EveAuthorizationOptions } from '@vercel/connect/eve'
 import type { SessionContext } from 'eve/context'
-import { canAccessAdminMcp } from './admin-mcp-access.js'
+import { canAccessAdminMcp } from '../lib/admin-mcp-access.js'
 
 const VERCEL_TEAM_ID = process.env.NUXI_VERCEL_TEAM_ID
 const VERCEL_PROJECT_ID = process.env.NUXI_VERCEL_PROJECT_ID

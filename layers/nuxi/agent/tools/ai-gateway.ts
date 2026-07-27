@@ -20,11 +20,18 @@ function apiKey(): string {
   return key
 }
 
-/** Comma-separated tags from env, or the default Nuxi attribution tag. */
+/**
+ * Comma-separated tags from env, or the default Nuxi attribution tag. Never
+ * empty: an empty `tags` param on the Custom Reporting call is not "no match",
+ * it's "no filter" — the account-wide, unscoped totals this tool exists to
+ * prevent. A misconfigured env var (e.g. all commas/whitespace) falls back to
+ * the default tag instead of silently widening the scope.
+ */
 function defaultReportTags(): string[] {
   const raw = process.env.AI_GATEWAY_REPORT_TAGS?.trim()
   if (!raw) return [NUXI_GATEWAY_TAG]
-  return raw.split(',').map(t => t.trim()).filter(Boolean)
+  const tags = raw.split(',').map(t => t.trim()).filter(Boolean)
+  return tags.length ? tags : [NUXI_GATEWAY_TAG]
 }
 
 function reportApiKeyName(): string | undefined {
@@ -92,7 +99,7 @@ function aiGatewayTools() {
       inputSchema: z.object({
         startDate: dateSchema.describe('Start date (UTC, inclusive), YYYY-MM-DD'),
         endDate: dateSchema.describe('End date (UTC, inclusive), YYYY-MM-DD'),
-        groupBy: z.enum(['day', 'user', 'model', 'tag', 'provider', 'credential_type', 'zero_data_retention', 'api_key_name']).optional().describe('Defaults to "model". Requesting one explicitly forces tag scoping, since key-name scoping needs the grouping for itself.'),
+        groupBy: z.enum(['day', 'user', 'model', 'tag', 'provider', 'credential_type', 'zero_data_retention', 'api_key_name']).optional().describe('Defaults to "api_key_name" when AI_GATEWAY_REPORT_API_KEY_NAME is configured, otherwise "model". Requesting one explicitly forces tag scoping, since key-name scoping needs the grouping for itself.'),
         datePart: z.enum(['day', 'hour']).optional().describe('Time granularity, only applies when groupBy is "day"'),
         userId: z.string().optional(),
         model: z.string().optional().describe('creator/model-name, e.g. anthropic/claude-sonnet-4.6'),
