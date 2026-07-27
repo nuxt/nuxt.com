@@ -1,7 +1,7 @@
 import type { DiscordAdapter } from '@chat-adapter/discord'
 import type { Session } from 'eve/channels'
 import { bot } from '../channels/discord.js'
-import { slackTextToDiscord } from './discord-format.js'
+import { slackTextToDiscord, splitDiscordMessages } from './discord-format.js'
 
 /**
  * Optional Discord channel where the weekly-digest and firehose-summary
@@ -141,11 +141,17 @@ export async function mirrorDigestToDiscord({
     }
 
     const threadId = await resolveDiscordThreadId(discord, channelId)
-    await discord.postMessage(threadId, slackTextToDiscord(text))
+    // Discord caps each message at 2000 chars — digests routinely exceed that
+    // and get silently truncated mid-link if posted as one blob.
+    const parts = splitDiscordMessages(slackTextToDiscord(text))
+    for (const part of parts) {
+      await discord.postMessage(threadId, part)
+    }
     console.log('[nuxi:discord-workflow] mirrored digest to Discord', {
       channelId,
       threadId,
-      chars: text.length
+      chars: text.length,
+      parts: parts.length
     })
   } catch (error) {
     const timedOut = error instanceof Error && /timed out after \d+ms/.test(error.message)

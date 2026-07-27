@@ -1,14 +1,40 @@
-import { createDiscordAdapter } from '@chat-adapter/discord'
+import { createDiscordAdapter, type DiscordAdapter } from '@chat-adapter/discord'
 import { createMemoryState } from '@chat-adapter/state-memory'
 import { createRedisState } from '@chat-adapter/state-redis'
 import type { Message, Thread } from 'chat'
 import { chatSdkChannel } from 'eve/channels/chat-sdk'
 import { discordUserAuth, isAllowedDiscordChannel } from '../lib/discord-access.js'
+import { slackTextToDiscord } from '../lib/discord-format.js'
 
 const DISCORD_CONTEXT = [
   'The user is talking to Nuxi on Discord, in a thread (like Slack).',
-  '**Discord formatting:** Use absolute nuxt.com links (`https://nuxt.com/docs/...`) — root-relative paths do not render as links on Discord. Standard Unicode emojis only (no Slack custom emojis). Never use `show_prompt` here. Keep replies compact — Discord splits messages over 2000 characters.'
+  '**Discord formatting:** Keep writing Slack mrkdwn (`<url|label>`, `:emoji:`) — outbound messages are converted to Discord markdown automatically. Use absolute nuxt.com links (`https://nuxt.com/docs/...`) — root-relative paths do not render as links. Never use `show_prompt` here. Keep replies compact — Discord plain messages are capped at 2000 characters (`@chat-adapter/discord` truncates longer content with `...`).'
 ]
+
+/**
+ * Skills are Slack-first (`<url|label>`). Convert that syntax before the
+ * Discord adapter posts, including live @mention replies (not only the
+ * scheduled digest mirror in `discord-workflow.ts`). Idempotent if the model
+ * already emitted Discord markdown.
+ */
+function withSlackMrkdwnConversion(adapter: DiscordAdapter): DiscordAdapter {
+  const postMessage = adapter.postMessage.bind(adapter)
+  adapter.postMessage = async (threadId, message) => {
+    if (typeof message === 'string') {
+      return postMessage(threadId, slackTextToDiscord(message))
+    }
+    if (message && typeof message === 'object') {
+      if ('markdown' in message && typeof message.markdown === 'string') {
+        return postMessage(threadId, { ...message, markdown: slackTextToDiscord(message.markdown) })
+      }
+      if ('raw' in message && typeof message.raw === 'string') {
+        return postMessage(threadId, { ...message, raw: slackTextToDiscord(message.raw) })
+      }
+    }
+    return postMessage(threadId, message)
+  }
+  return adapter
+}
 
 /**
  * Discord runs through the Chat SDK channel (mention-driven, replies in
@@ -35,7 +61,7 @@ export const { bot, channel, send } = chatSdkChannel({
   adapters: {
     // Credentials resolve from DISCORD_BOT_TOKEN, DISCORD_PUBLIC_KEY and
     // DISCORD_APPLICATION_ID env vars on the eve service.
-    discord: createDiscordAdapter()
+    discord: withSlackMrkdwnConversion(createDiscordAdapter())
   },
   state: redisUrl ? createRedisState() : createMemoryState(),
   // Keep the Discord principal when a HITL button click resumes a session.
@@ -90,7 +116,7 @@ bot.onNewMention(async (thread: Thread, message: Message) => {
 bot.onSubscribedMessage(async (thread: Thread, message: Message) => {
   if (!shouldDispatch(thread, message)) return
   await send(
-    { message: message.text },
+    { message: message.text, context: DISCORD_CONTEXT },
     { thread, auth: discordUserAuth(message.author.userId, message.author.userName, thread.channelId) }
   )
 })

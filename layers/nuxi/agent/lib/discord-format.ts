@@ -25,6 +25,10 @@ declare module 'chat' {
  * mirrored to Discord without running the skill (and paying for the model
  * call) a second time. See `agent/lib/discord-workflow.ts`.
  *
+ * Also used as a safety net on live Discord replies: skills are Slack-first
+ * and often emit `<url|label>`, which Discord treats as a bare URL and shows
+ * with a literal `%7C` instead of a masked link.
+ *
  * `chat`'s built-in emoji map already covers some of the shortcodes our
  * skills use (`red_circle`, `white_check_mark`, `page_facing_up`,
  * `speech_balloon`, `large_yellow_circle`, `large_green_circle`) — this
@@ -46,8 +50,20 @@ emoji.extend({
 })
 
 const SLACK_LABELED_LINK_PATTERN = /<(https?:\/\/[^|>]+)\|([^>]+)>/g
+/** Model sometimes drops the `<>` — Discord then auto-links `url|label` as `url%7Clabel`. */
+const SLACK_UNBRACKETED_LABELED_LINK_PATTERN = /(?<![<\w])(https?:\/\/[^\s<>|]+)\|([^<>\s|]+)/g
 const SLACK_BARE_LINK_PATTERN = /<(https?:\/\/[^>]+)>/g
 const EMOJI_SHORTCODE_PATTERN = /:([\w-]+):/g
+/** `@chat-adapter/discord` rewrites bare `@name` → `<@name>`; ZWSP after `@` blocks that inside link labels. */
+const AT_ZWSP = '@\u200B'
+
+function discordLinkLabel(label: string): string {
+  return label.startsWith('@') ? `${AT_ZWSP}${label.slice(1)}` : label
+}
+
+function discordMaskedLink(url: string, label: string): string {
+  return `[${discordLinkLabel(label)}](<${url}>)`
+}
 
 /**
  * `<url|label>` -> `[label](<url>)`; a bare `<url>` -> `<url>` (unchanged).
@@ -62,8 +78,11 @@ const EMOJI_SHORTCODE_PATTERN = /:([\w-]+):/g
  */
 function slackLinksToMarkdown(text: string): string {
   return text
-    .replace(SLACK_LABELED_LINK_PATTERN, (_match, url: string, label: string) => `[${label}](<${url}>)`)
+    .replace(SLACK_LABELED_LINK_PATTERN, (_match, url: string, label: string) => discordMaskedLink(url, label))
+    .replace(SLACK_UNBRACKETED_LABELED_LINK_PATTERN, (_match, url: string, label: string) => discordMaskedLink(url, label))
     .replace(SLACK_BARE_LINK_PATTERN, (_match, url: string) => `<${url}>`)
+    // Model-native Discord links with `@handle` labels (same mention-rewriter issue).
+    .replace(/\[@(?!\u200B)([^\]]+)\]\(/g, `[${AT_ZWSP}$1](`)
 }
 
 /**
@@ -81,4 +100,40 @@ function slackEmojiToDiscord(text: string): string {
 
 export function slackTextToDiscord(text: string): string {
   return slackEmojiToDiscord(slackLinksToMarkdown(text))
+}
+
+/** Discord hard limit for a single message body. */
+export const DISCORD_MESSAGE_MAX_CHARS = 2000
+
+/**
+ * Split long digest text into Discord-safe chunks (≤2000 chars).
+ * Prefers blank-line section breaks, then newlines, then a hard cut.
+ */
+export function splitDiscordMessages(
+  text: string,
+  maxChars: number = DISCORD_MESSAGE_MAX_CHARS
+): string[] {
+  const trimmed = text.trim()
+  if (!trimmed) return []
+  if (trimmed.length <= maxChars) return [trimmed]
+
+  const chunks: string[] = []
+  let remaining = trimmed
+
+  while (remaining.length > maxChars) {
+    const window = remaining.slice(0, maxChars)
+    const blankBreak = window.lastIndexOf('\n\n')
+    const lineBreak = window.lastIndexOf('\n')
+    const splitAt = blankBreak >= Math.floor(maxChars * 0.4)
+      ? blankBreak
+      : lineBreak >= Math.floor(maxChars * 0.4)
+        ? lineBreak
+        : maxChars
+
+    chunks.push(remaining.slice(0, splitAt).trimEnd())
+    remaining = remaining.slice(splitAt).replace(/^\n+/, '')
+  }
+
+  if (remaining.trim()) chunks.push(remaining.trim())
+  return chunks
 }
