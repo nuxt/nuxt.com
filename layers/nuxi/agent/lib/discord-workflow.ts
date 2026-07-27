@@ -1,55 +1,12 @@
-import type { DiscordAdapter } from '@chat-adapter/discord'
 import type { Session } from 'eve/channels'
-import { bot } from '../channels/discord.js'
+import { postDiscordWorkflowParts } from '../channels/discord.js'
 import { slackTextToDiscord, splitDiscordMessages } from './discord-format.js'
 
 /**
- * Optional Discord channel where the weekly-digest and firehose-summary
- * scheduled workflows mirror their Slack digest. Separate from
- * `DISCORD_ALLOWED_CHANNELS` (which only gates live @mentions this bot
- * responds to) — this is a proactive post, not a mention-triggered session.
- * Unset disables mirroring for both workflows.
- */
-export function discordWorkflowChannelId(): string | undefined {
-  return process.env.DISCORD_WORKFLOW_CHANNEL_ID?.trim() || undefined
-}
-
-const threadIdCache = new Map<string, string>()
-
-/**
- * Resolves the Chat SDK thread id (`discord:<guildId>:<channelId>`) for a raw
- * Discord channel id, caching the result for the life of the process.
- * `postMessage` only uses the `channelId` segment, but we still resolve the
- * real `guildId` (via the adapter's public `fetchThread`, reading
- * `metadata.raw.guild_id` from Discord's API response) instead of a
- * placeholder, since other adapter methods may depend on it.
- */
-async function resolveDiscordThreadId(discord: DiscordAdapter, channelId: string): Promise<string> {
-  const cached = threadIdCache.get(channelId)
-  if (cached) return cached
-
-  const info = await discord.fetchThread(`discord:_:${channelId}`)
-  const raw = info.metadata.raw
-  const guildId = raw && typeof raw === 'object' && typeof (raw as { guild_id?: unknown }).guild_id === 'string'
-    ? (raw as { guild_id: string }).guild_id
-    : '_'
-
-  const threadId = `discord:${guildId}:${channelId}`
-  threadIdCache.set(channelId, threadId)
-  return threadId
-}
-
-/**
- * Reads the exact text Slack's default `message.completed` handler posts to
- * the channel — a `finishReason: "tool-calls"` event is pre-tool narration
- * (buffered by Slack as a typing-indicator label, never posted verbatim), so
- * it's skipped here too; only a non-tool-calls `message.completed` carries
- * the real reply.
- *
- * Returns as soon as that event arrives instead of waiting for
- * `session.completed`/`session.failed` to end the loop naturally — Slack
- * thread sessions stay open for follow-up replies and may never emit one,
- * which would otherwise hang this forever.
+ * Reads the text Slack's default `message.completed` handler posts — skip
+ * `finishReason: "tool-calls"` (pre-tool narration / typing label only).
+ * Returns as soon as that event arrives; Slack thread sessions may never emit
+ * `session.completed`, which would otherwise hang the mirror forever.
  */
 async function finalMessageText(stream: Awaited<ReturnType<Session['getEventStream']>>): Promise<string | null> {
   for await (const event of stream) {
@@ -62,12 +19,6 @@ async function finalMessageText(stream: Awaited<ReturnType<Session['getEventStre
   return null
 }
 
-/**
- * Rejects with a timeout error if `promise` doesn't settle within `ms`. On
- * timeout, also calls `onTimeout` so the caller can cancel whatever the
- * promise is still doing in the background (here, the event stream's own
- * `cancel()`) instead of leaving it running past the deadline.
- */
 function withTimeout<T>(promise: Promise<T>, ms: number, label: string, onTimeout?: () => void): Promise<T> {
   return new Promise<T>((resolve, reject) => {
     const timer = setTimeout(() => {
@@ -87,25 +38,14 @@ function withTimeout<T>(promise: Promise<T>, ms: number, label: string, onTimeou
   })
 }
 
-/**
- * `receive()` resolves once the Slack session/run is *started*, not once the
- * digest is fully generated — the actual turn (many MCP tool calls: analytics,
- * feedback-stats, agent-usage-stats, AI Gateway, etc.) keeps running as a
- * separate durable workflow continuation after `receiveOnSlack()`'s
- * `await receive()` returns. Budget generously against the schedule/ops
- * function's own execution ceiling (300s) — the merged weekly digest is
- * heavier than firehose alone.
- */
+/** Budget against the schedule/ops 300s ceiling — weekly digest is heavier than firehose. */
 const EVENT_STREAM_TIMEOUT_MS = 270_000
 
 /**
- * Mirrors a completed Slack digest session to Discord: reuses the model's
- * already-generated text (no second agent run — see `discord-format.ts` for
- * why a straight copy would break), converts its Slack syntax to Discord
- * Markdown, and posts it directly through the Discord adapter.
+ * Mirror a Slack digest session to Discord: reuse the model's text (no second
+ * agent run), convert Slack mrkdwn → Discord, chunk to 2000 chars, post.
  *
- * Never throws — a mirroring failure is logged and must not affect the Slack
- * delivery it piggybacks on. Call under `waitUntil` from a schedule.
+ * Never throws — mirroring must not affect Slack delivery.
  */
 export async function mirrorDigestToDiscord({
   session,
@@ -127,29 +67,19 @@ export async function mirrorDigestToDiscord({
       () => { void stream.cancel() }
     )
     if (!text) {
-      console.warn('[nuxi:discord-workflow] no final message.completed text on session stream (empty or session ended early), skipping mirror', {
+      console.warn('[nuxi:discord-workflow] no final message.completed text on session stream, skipping mirror', {
         channelId
       })
       return
     }
 
-    await bot.initialize()
-    const discord = bot.getAdapter('discord')
-    if (!discord) {
-      console.warn('[nuxi:discord-workflow] discord adapter not available, skipping mirror', { channelId })
-      return
-    }
-
-    const threadId = await resolveDiscordThreadId(discord, channelId)
-    // Discord caps each message at 2000 chars — digests routinely exceed that
-    // and get silently truncated mid-link if posted as one blob.
+    // Convert + split once, then post via the unwrapped adapter path so the
+    // live Slack→Discord wrapper does not run a second pass.
     const parts = splitDiscordMessages(slackTextToDiscord(text))
-    for (const part of parts) {
-      await discord.postMessage(threadId, part)
-    }
+    await postDiscordWorkflowParts(channelId, parts)
+
     console.log('[nuxi:discord-workflow] mirrored digest to Discord', {
       channelId,
-      threadId,
       chars: text.length,
       parts: parts.length
     })
@@ -157,7 +87,7 @@ export async function mirrorDigestToDiscord({
     const timedOut = error instanceof Error && /timed out after \d+ms/.test(error.message)
     console.warn(
       timedOut
-        ? '[nuxi:discord-workflow] mirror timed out waiting for Slack digest (weekly digest may still post to Slack)'
+        ? '[nuxi:discord-workflow] mirror timed out waiting for Slack digest (may still post to Slack)'
         : '[nuxi:discord-workflow] failed to mirror digest to Discord',
       { channelId, timedOut, timeoutMs: EVENT_STREAM_TIMEOUT_MS },
       error

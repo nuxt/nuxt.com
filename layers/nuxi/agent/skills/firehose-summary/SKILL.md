@@ -19,7 +19,7 @@ Always write Slack mrkdwn (`<url|label>`, `:emoji:`). If this run is mirrored or
 **Steps:**
 
 1. Call `read_slack_channel_history` with the firehose channel and the requested window.
-2. Each message includes `permalink` (link to the firehose post), `links` (all URLs), and `tweetUrls` (X post URLs: `https://x.com/<handle>/status/<id>` and/or `https://t.co/…`). Use a `tweetUrls` entry for any "view on X" link — that label must open the **post**, never a profile.
+2. Each message includes `permalink` (Slack archive link), `links` (all URLs), and `tweetUrls` (X **post** URLs: `https://x.com/<handle>/status/<id>` and/or `https://t.co/…`). Profile URLs in `links` (`https://twitter.com/handle`) are **not** posts — ignore them for "view on X".
 3. Group by theme — do not enumerate every post.
 
 **Output template** (adapt counts; keep structure):
@@ -30,21 +30,22 @@ Always write Slack mrkdwn (`<url|label>`, `:emoji:`). If this run is mirrored or
 • *8 posts* on X (#nuxt) — quiet day
 
 :speech_balloon: **Themes**
-• *SSR / Cloudflare DX* — <https://x.com/user|@user> asks about Nuxt vs raw Wrangler — <https://x.com/user/status/1234567890|view on X> · <firehose-permalink|firehose>
-• *Ecosystem tooling* — CRM generator pitch — <https://x.com/other/status/0987654321|view on X> · <firehose-permalink|firehose>
+• *SSR / Cloudflare DX* — <https://x.com/user|@user> asks about Nuxt vs raw Wrangler — <https://x.com/user/status/1234567890|view on X>
+• *Ecosystem tooling* — CRM generator pitch — <https://x.com/other/status/0987654321|view on X>
+• *Two related polls* — <https://x.com/a/status/1|view on X> · <https://x.com/b/status/2|view on X>
 
 :rotating_light: **Needs attention**
-• :red_circle: *Misinformation* — <https://x.com/user|@user> claims SSR payload hurts SEO (promo spam) — <https://x.com/user/status/1234567890|view on X> · <firehose-permalink|firehose>
-• If nothing needs action: one bullet saying "All clear — nothing urgent."
+• :red_circle: *Misinformation* — <https://x.com/user|@user> claims SSR payload hurts SEO (promo spam) — <https://x.com/user/status/1234567890|view on X>
+• If nothing needs action: exactly one bullet — `• None — all clear.` (no checkmark emoji, no "firehose" link)
 
 :white_check_mark: **Actions** (numbered, each with owner + link)
 1. :red_circle: *@Alex* — post a factual counter-thread on SSR payload & SEO — <https://x.com/user/status/1234567890|thread to reply>
-2. :large_yellow_circle: *docs team* — watch the Cloudflare DX thread — <firehose-permalink|context>
+2. :large_yellow_circle: *docs team* — watch the Cloudflare DX thread — <https://x.com/other/status/0987654321|view on X>
 
 Rules:
-- Every non-trivial **Themes** / **Needs attention** item must end with links in this order when available: `<tweetUrl|view on X> · <permalink|firehose>` — label the post link exactly `view on X`, and include **one** firehose permalink (never duplicate `firehose`).
-- **`view on X` must copy a URL from `tweetUrls` verbatim** (`https://x.com/<handle>/status/<id>` or `https://t.co/…`). Never substitute a profile (`https://x.com/handle`) for that label. The `@handle` link is separate and must not replace `view on X`.
-- If a message has no `tweetUrls`, omit "view on X" and keep only `<permalink|firehose>` — do not invent a profile link.
-- Always add `<permalink|firehose>` when the team may need Slack context; use other `links[]` for non-X articles when relevant.
-- Actions must be specific enough to do in 5 minutes (reply, docs PR, ignore with reason).
+- **Primary link is the tweet.** Every non-trivial **Themes** / **Needs attention** item must end with `<tweetUrl|view on X>` when `tweetUrls` is non-empty — copy the URL **verbatim** from `tweetUrls` (`…/status/<id>` or `t.co/…`). Never use a profile URL for that label.
+- **Do not label anything `firehose`.** The Slack archive `permalink` is optional context only — if you include it, use label `slack` once (`<permalink|slack>`), never `firehose`, and never more than one per bullet.
+- When a theme covers multiple posts, list multiple `view on X` links (one per post). Do **not** dump several Slack permalinks instead of tweet links.
+- If a message has empty `tweetUrls`, say so briefly and link `<permalink|slack>` once — do not invent a status URL from the profile.
+- Actions must be specific enough to do in 5 minutes (reply, docs PR, ignore with reason) and should link `view on X` (or `thread to reply`) — not `firehose`.
 - Do not paste the same URL twice in one bullet.

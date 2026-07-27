@@ -78,7 +78,15 @@ interface SlackAttachment {
   title_link?: string
   from_url?: string
   original_url?: string
+  image_url?: string
+  thumb_url?: string
   text?: string
+  pretext?: string
+  title?: string
+  footer?: string
+  /** Legacy interactive attachments (link buttons). */
+  actions?: Array<{ url?: string, text?: string }>
+  blocks?: unknown[]
 }
 
 export interface SlackHistoryMessage {
@@ -102,6 +110,8 @@ interface SlackHistoryResponse {
     bot_id?: string
     subtype?: string
     attachments?: SlackAttachment[]
+    /** Block Kit payload — Octolens puts the real "See post" tweet URL on a button here. */
+    blocks?: unknown[]
   }>
 }
 
@@ -188,24 +198,88 @@ async function loadBotChannelIndex(): Promise<Map<string, SlackChannelInfo>> {
   return channelIndexInflight
 }
 
-function extractLinks(text: string, attachments: SlackAttachment[] = []): string[] {
-  const links = new Set<string>()
+const HTTP_URL_KEYS = new Set([
+  'url',
+  'title_link',
+  'from_url',
+  'original_url',
+  'image_url',
+  'thumb_url',
+  'permalink'
+])
 
+/** Pull http(s) URLs out of Slack mrkdwn / bare text. */
+function addUrlsFromText(text: string, into: Set<string>) {
   for (const match of text.matchAll(/<(https?:\/\/[^|>]+)(?:\|[^>]*)?>/g)) {
-    links.add(match[1]!)
+    into.add(match[1]!)
   }
   for (const match of text.matchAll(/(?<![<|])https?:\/\/[^\s<>|]+/g)) {
-    links.add(match[0]!.replace(/[>)]+$/, ''))
+    into.add(match[0]!.replace(/[>)]+$/, ''))
   }
+}
+
+/**
+ * Walk Block Kit / attachment JSON for link buttons and nested mrkdwn.
+ * Octolens only puts the author profile in `text`; the real status URL lives
+ * on an actions button ("See post") inside `blocks`.
+ */
+function addUrlsFromValue(value: unknown, into: Set<string>, depth = 0) {
+  if (value == null || depth > 12) return
+
+  if (typeof value === 'string') {
+    if (value.startsWith('http://') || value.startsWith('https://')) {
+      into.add(value.replace(/[>)]+$/, ''))
+    } else if (value.includes('http')) {
+      addUrlsFromText(value, into)
+    }
+    return
+  }
+
+  if (Array.isArray(value)) {
+    for (const item of value) addUrlsFromValue(item, into, depth + 1)
+    return
+  }
+
+  if (typeof value !== 'object') return
+
+  for (const [key, child] of Object.entries(value as Record<string, unknown>)) {
+    if (HTTP_URL_KEYS.has(key) && typeof child === 'string' && /^https?:\/\//i.test(child)) {
+      into.add(child)
+      continue
+    }
+    // Skip bulky non-URL blobs (ids, styles, emoji maps).
+    if (key === 'id' || key === 'block_id' || key === 'action_id' || key === 'style') continue
+    addUrlsFromValue(child, into, depth + 1)
+  }
+}
+
+export function extractLinks(
+  text: string,
+  attachments: SlackAttachment[] = [],
+  blocks: unknown[] = []
+): string[] {
+  const links = new Set<string>()
+
+  addUrlsFromText(text, links)
+  addUrlsFromValue(blocks, links)
+
   for (const attachment of attachments) {
-    for (const url of [attachment.title_link, attachment.from_url, attachment.original_url]) {
+    for (const url of [
+      attachment.title_link,
+      attachment.from_url,
+      attachment.original_url,
+      attachment.image_url,
+      attachment.thumb_url
+    ]) {
       if (url) links.add(url)
     }
-    if (attachment.text) {
-      for (const match of attachment.text.matchAll(/<(https?:\/\/[^|>]+)(?:\|[^>]*)?>/g)) {
-        links.add(match[1]!)
-      }
+    for (const field of [attachment.text, attachment.pretext, attachment.title, attachment.footer]) {
+      if (field) addUrlsFromText(field, links)
     }
+    for (const action of attachment.actions ?? []) {
+      if (action.url) links.add(action.url)
+    }
+    if (attachment.blocks?.length) addUrlsFromValue(attachment.blocks, links)
   }
 
   return [...links]
@@ -328,8 +402,9 @@ export async function fetchSlackChannelHistory({
       const ts = message.ts!
       const text = message.text!.trim()
       const attachments = message.attachments ?? []
+      const blocks = message.blocks ?? []
 
-      const links = extractLinks(text, attachments)
+      const links = extractLinks(text, attachments, blocks)
       return {
         ts,
         text,

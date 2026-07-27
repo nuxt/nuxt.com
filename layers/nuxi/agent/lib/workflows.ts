@@ -1,7 +1,7 @@
 import { timingSafeEqual } from 'node:crypto'
 import type { ScheduleHandlerArgs } from 'eve/schedules'
 import slack from '../channels/slack.js'
-import { discordWorkflowChannelId, mirrorDigestToDiscord } from './discord-workflow.js'
+import { discordWorkflowChannelId } from './discord-access.js'
 import { resolveSlackChannelRef, workflowSlackChannelRef } from './slack-api.js'
 
 const DEFAULT_SINCE_DAYS = 7
@@ -72,6 +72,8 @@ export async function receiveOnSlack({
 
   const discordChannelId = discordWorkflowChannelId()
   if (discordChannelId) {
+    // Dynamic import: keep Slack digest schedules loadable without Discord env.
+    const { mirrorDigestToDiscord } = await import('./discord-workflow.js')
     await mirrorDigestToDiscord({ session, channelId: discordChannelId })
   }
 
