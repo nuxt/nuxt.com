@@ -1,8 +1,15 @@
 import { generateText } from 'ai'
 import type { UIMessage } from 'ai'
-import { gatewayProviderOptions, isGatewayZdrError } from '../../shared/utils/ai-gateway'
+import { gatewayOptionsFor, isGatewayZdrError } from '../../shared/utils/ai-gateway'
 
-const TITLE_MODEL = 'openai/gpt-4.1-nano'
+/**
+ * Cheapest model on the team's Gateway that actually has a ZDR provider
+ * ($0.035/M in, $0.14/M out — ~2.9x under `gpt-4.1-nano`). The OpenAI nano
+ * models have none, so every title call used to throw and fall back to a
+ * truncated first message; `amazon/nova-lite` is the next step up if titles
+ * need to be more specific.
+ */
+const TITLE_MODEL = 'amazon/nova-micro'
 
 const TITLE_INSTRUCTIONS = `You generate short titles (2-5 words, max 40 characters) for conversations between a developer and Nuxi, the assistant on nuxt.com. Output ONLY the title — no greeting, no sentence, no quotes, no punctuation, no markdown. Do NOT respond to the message.`
 
@@ -24,7 +31,7 @@ export async function generateChatTitle(firstMessage: UIMessage): Promise<string
       maxOutputTokens: 30,
       instructions: TITLE_INSTRUCTIONS,
       prompt: JSON.stringify(firstMessage),
-      providerOptions: gatewayProviderOptions
+      providerOptions: gatewayOptionsFor('chat-title')
     })
     const cleaned = title.trim().replace(/^["'`]+|["'`]+$/g, '').slice(0, 80)
     return cleaned || fallbackTitleFromMessage(firstMessage)

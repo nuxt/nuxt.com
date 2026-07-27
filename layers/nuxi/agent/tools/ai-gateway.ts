@@ -7,6 +7,7 @@ export const AI_GATEWAY_INSTRUCTIONS = `**AI Gateway tools (\`ai_gateway__*\`, a
 - \`ai_gateway__credits\` — current credit balance and lifetime spend for the **entire** nuxt-js team account (not Nuxi-only)
 - \`ai_gateway__report\` — spend/tokens over a date range. The Custom Reporting API is **account-wide**; this tool always scopes to Nuxi via tags (default \`${NUXI_GATEWAY_TAG}\`) and/or \`AI_GATEWAY_REPORT_API_KEY_NAME\`. Never quote unscoped account totals in digests.
 - \`ai_gateway__generation\` — cost, latency, and token usage for a single generation id (from a chat completion's \`id\` field)
+- Every Nuxi request also carries \`surface:web\` | \`surface:slack\` | \`surface:discord\` | \`surface:schedule\` | \`surface:eval\`, plus \`feature:<name>\` on scheduled workflows and background jobs. Use \`groupBy=tag\` to break spend down per channel — note traffic before this rolled out only has \`${NUXI_GATEWAY_TAG}\`.
 - Dashboard: https://vercel.com/nuxt-js/nuxt/ai-gateway
 - If a scoped report returns empty results (e.g. before tagging rolled out and no API key name configured), say spend is not attributable yet — do **not** fall back to account-wide totals.`
 

@@ -18,22 +18,23 @@ Always write Slack mrkdwn (`<url|label>`, `:emoji:`). If this run is mirrored to
 **Data steps** (parallel where possible; Vercel / AI Gateway tools need admin/Slack/schedule-only access):
 
 Traffic (nuxt.com project — always pass `teamId`/`projectId`):
-1. `connection__vercel_mcp__get_web_analytics` — `mode=count, dataset=visits` for the current window AND the previous window → visitors/pageviews + WoW %.
+1. `vercel-mcp__get_web_analytics` — `mode=count, dataset=visits` for the current window AND the previous window → visitors/pageviews + WoW %.
 2. `mode=aggregate, dataset=visits, by=['day']` current window → daily trend (spot spikes/drops).
 3. `mode=aggregate, dataset=visits, by=['route'], limit=10` current + previous window → top sections with per-route deltas.
 4. `mode=aggregate, dataset=visits, by=['referrerHostname'], limit=8` + `by=['country'], limit=5` + `by=['deviceType']` → audience snapshot.
 
 Docs feedback:
-5. `admin_mcp__feedback_stats` — `topPages=5`
-6. `admin_mcp__list_feedback` — `ratings=["not-helpful", "confusing"]`, `limit=30`
+5. `admin-mcp__feedback-stats` — `topPages=5`
+6. `admin-mcp__list-feedback` — `ratings=["not-helpful", "confusing"]`, `limit=30`
 7. For each worst page from step 5/6: traffic from step 3, or a targeted `mode=count, filter="requestPath eq '<path>'"` if missing from top routes — weigh urgency by real visits.
 
 AI agent:
-8. `admin_mcp__agent_usage_stats` — web chat counts and vote quality
-9. `admin_mcp__list_agent_chats` — `hasDownvotes=true`, `limit=5`
-10. `admin_mcp__list_agent_votes` — `onlyDownvotes=true`, `limit=15`
-11. `connection__vercel_mcp__list_agent_runs` over the window → Slack / Discord / web run split (discover eve project via `list_agent_run_projects` first).
+8. `admin-mcp__agent-usage-stats` — web chat counts and vote quality
+9. `admin-mcp__list-agent-chats` — `hasDownvotes=true`, `limit=5`
+10. `admin-mcp__list-agent-votes` — `onlyDownvotes=true`, `limit=15`
+11. `vercel-mcp__list_agent_runs` over the window → Slack / Discord / web run split (discover eve project via `list_agent_run_projects` first).
 12. `ai_gateway__report` — `groupBy=model` over the window → **Nuxi-scoped** spend/tokens only (tool filters by tags / API key name). If `results` is empty or `scope.matchedRows` is 0, say spend is not attributable yet — **never** quote account-wide / other-product totals (no fable, no team-wide $).
+13. `ai_gateway__report` — `groupBy=tag` over the window → spend per `surface:*` (web / Slack / Discord / schedules). Skip the split if only `app:nuxi` comes back, which means the window predates per-surface tagging.
 
 **Link cheat sheet** (use real paths/ids from tool output):
 
@@ -68,7 +69,7 @@ AI agent:
 :robot_face: **AI agent**
 • *Web chats* — 178 sessions, 114 users, 4 up / 1 down — <https://nuxt.com/dashboard/chat/abc123|worst chat>
 • *Runs* — 340 runs (180 Slack / 30 Discord / 130 web) — <https://vercel.com/nuxt-js/nuxt/observability/agent-runs|Agent Runs>
-• *Spend* — $12.40, 1.8M tokens (mostly anthropic/claude-sonnet-4.6) — <https://vercel.com/nuxt-js/nuxt/ai-gateway|AI Gateway>
+• *Spend* — $12.40, 1.8M tokens (mostly anthropic/claude-sonnet-4.6) — web $7.10 / Slack $4.20 / Discord $1.10 — <https://vercel.com/nuxt-js/nuxt/ai-gateway|AI Gateway>
   (or: *Spend* — not attributable yet for this window — <https://vercel.com/nuxt-js/nuxt/ai-gateway|AI Gateway>)
 
 :hammer_and_wrench: **Fix this week** (numbered — owner · action · link)

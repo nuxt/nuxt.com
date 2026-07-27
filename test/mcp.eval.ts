@@ -2,6 +2,7 @@ import { createMCPClient } from '@ai-sdk/mcp'
 import { generateText, isStepCount } from 'ai'
 import { evalite } from 'evalite'
 import { toolCallAccuracy } from 'evalite/scorers'
+import { NUXI_GATEWAY_TAG } from '../layers/nuxi/shared/utils/ai-gateway'
 
 /**
  * MCP Evaluation Tests
@@ -16,6 +17,17 @@ import { toolCallAccuracy } from 'evalite/scorers'
  */
 const model = 'openai/gpt-5.1-codex-mini'
 const MCP_URL = process.env.MCP_URL ?? 'http://localhost:3000/mcp'
+
+/**
+ * Evals share the agent's AI Gateway key, so untagged runs land in team-wide
+ * reports and inflate Nuxi's apparent spend. No `zeroDataRetention` here: the
+ * eval model has no guaranteed ZDR provider and the harness would fail outright.
+ */
+const providerOptions = {
+  gateway: {
+    tags: [NUXI_GATEWAY_TAG, 'surface:eval']
+  }
+}
 
 evalite('Evaluate Nuxt MCP Documentation Tools', {
   data: async () => [
@@ -43,6 +55,7 @@ evalite('Evaluate Nuxt MCP Documentation Tools', {
       const result = await generateText({
         model,
         prompt: input,
+        providerOptions,
         tools: await mcpClient.tools()
       })
       return result.toolCalls ?? []
@@ -66,6 +79,7 @@ evalite('Evaluate Nuxt MCP Blog Tools', {
       const result = await generateText({
         model,
         prompt: input,
+        providerOptions,
         tools: await mcpClient.tools()
       })
       return result.toolCalls ?? []
@@ -90,6 +104,7 @@ evalite('Evaluate Nuxt MCP Deploy Tools', {
       const result = await generateText({
         model,
         prompt: input,
+        providerOptions,
         tools: await mcpClient.tools()
       })
       return result.toolCalls ?? []
@@ -111,7 +126,7 @@ evalite('Evaluate Nuxt MCP Module Tools', {
   task: async (input) => {
     const mcpClient = await createMCPClient({ transport: { type: 'http', url: MCP_URL } })
     try {
-      const result = await generateText({ model, prompt: input, tools: await mcpClient.tools(), stopWhen: isStepCount(3) })
+      const result = await generateText({ model, prompt: input, providerOptions, tools: await mcpClient.tools(), stopWhen: isStepCount(3) })
       return result.toolCalls ?? []
     } finally {
       await mcpClient.close()
@@ -128,7 +143,7 @@ evalite('Evaluate Nuxt MCP Cross-Tool Workflows', {
   task: async (input) => {
     const mcpClient = await createMCPClient({ transport: { type: 'http', url: MCP_URL } })
     try {
-      const result = await generateText({ model, prompt: input, tools: await mcpClient.tools(), stopWhen: isStepCount(5) })
+      const result = await generateText({ model, prompt: input, providerOptions, tools: await mcpClient.tools(), stopWhen: isStepCount(5) })
       return result.toolCalls ?? []
     } finally {
       await mcpClient.close()
