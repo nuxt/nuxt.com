@@ -52,7 +52,7 @@ const EMOJI_SHORTCODE_PATTERN = /:([\w-]+):/g
  * non-word so the rewriter skips it. Skip emails (`a@b`) and real `<@id>` tokens.
  */
 const AT_ZWSP = '@\u200B'
-const BARE_AT_PATTERN = /(?<![<\w])@(?!\u200B)(?=\w)/g
+const BARE_AT_PATTERN = /(?<![<\w])@\b/g
 
 function discordLinkLabel(label: string): string {
   return label.startsWith('@') ? `${AT_ZWSP}${label.slice(1)}` : label
