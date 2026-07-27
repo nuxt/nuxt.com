@@ -82,3 +82,39 @@ function slackEmojiToDiscord(text: string): string {
 export function slackTextToDiscord(text: string): string {
   return slackEmojiToDiscord(slackLinksToMarkdown(text))
 }
+
+/** Discord hard limit for a single message body. */
+export const DISCORD_MESSAGE_MAX_CHARS = 2000
+
+/**
+ * Split long digest text into Discord-safe chunks (≤2000 chars).
+ * Prefers blank-line section breaks, then newlines, then a hard cut.
+ */
+export function splitDiscordMessages(
+  text: string,
+  maxChars: number = DISCORD_MESSAGE_MAX_CHARS
+): string[] {
+  const trimmed = text.trim()
+  if (!trimmed) return []
+  if (trimmed.length <= maxChars) return [trimmed]
+
+  const chunks: string[] = []
+  let remaining = trimmed
+
+  while (remaining.length > maxChars) {
+    const window = remaining.slice(0, maxChars)
+    const blankBreak = window.lastIndexOf('\n\n')
+    const lineBreak = window.lastIndexOf('\n')
+    const splitAt = blankBreak >= Math.floor(maxChars * 0.4)
+      ? blankBreak
+      : lineBreak >= Math.floor(maxChars * 0.4)
+        ? lineBreak
+        : maxChars
+
+    chunks.push(remaining.slice(0, splitAt).trimEnd())
+    remaining = remaining.slice(splitAt).replace(/^\n+/, '')
+  }
+
+  if (remaining.trim()) chunks.push(remaining.trim())
+  return chunks
+}

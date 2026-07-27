@@ -7,7 +7,7 @@ import { discordUserAuth, isAllowedDiscordChannel } from '../lib/discord-access.
 
 const DISCORD_CONTEXT = [
   'The user is talking to Nuxi on Discord, in a thread (like Slack).',
-  '**Discord formatting:** Use absolute nuxt.com links (`https://nuxt.com/docs/...`) — root-relative paths do not render as links on Discord. Standard Unicode emojis only (no Slack custom emojis). Never use `show_prompt` here. Keep replies compact — Discord splits messages over 2000 characters.'
+  '**Discord formatting:** Use absolute nuxt.com links (`https://nuxt.com/docs/...`) — root-relative paths do not render as links on Discord. Standard Unicode emojis only (no Slack custom emojis). Never use `show_prompt` here. Keep replies compact — Discord plain messages are capped at 2000 characters (`@chat-adapter/discord` truncates longer content with `...`).'
 ]
 
 /**
