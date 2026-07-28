@@ -476,7 +476,11 @@ export default defineNuxtConfig({
   compatibilityDate: '2026-01-14',
   nitro: {
     prerender: {
-      crawlLinks: false,
+      // Docs are prerendered by crawling from `/` plus the per-version
+      // `getting-started/introduction` seeds in `routeRules` (the version
+      // switcher lives in a dropdown, so its links aren't in the SSR'd HTML
+      // and each version tree needs its own entry point).
+      crawlLinks: true,
       ignore: [
         route => route === '/modules' || route.startsWith('/modules/'),
         route => route.startsWith('/raw/'),
