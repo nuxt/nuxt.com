@@ -4,20 +4,11 @@ import { isScheduleAppAuth, type AdminMcpAuthContext } from './admin-mcp-access.
 import { workflowSkillId } from './workflows.js'
 import { NUXI_GATEWAY_TAG } from '../../shared/utils/ai-gateway.js'
 
-/**
- * Fallback chain for the primary model, only used when the primary fails — the
- * nominal path is unchanged. `claude-sonnet-4.5` accepts the same
- * `thinking.budgetTokens` as 4.6; `gemini-3.6-flash` ignores the `anthropic`
- * provider key and runs with its own default reasoning.
- *
- * Both links are probed against the team's Gateway under `zeroDataRetention`,
- * which every request below sets: a model with no ZDR-attested provider throws
- * rather than degrading, so an unverified fallback is worse than none. OpenAI
- * has no ZDR provider on this account at all, which is why `gpt-5.4` sat here
- * and could never have engaged. Nothing in the model catalog lets you check
- * this statically — `regions` reads like it should and does not.
- */
-const FALLBACK_MODELS = ['anthropic/claude-sonnet-4.5', 'google/gemini-3.6-flash']
+// Fallback chain for the primary model (moonshotai/kimi-k3), only used if it
+// fails. claude-sonnet-4.6 is the previous, proven primary, so it's first.
+// Every link must be ZDR-attested (verified with a live request, not the
+// catalog — `gpt-5.4` used to sit here and never had a working ZDR provider).
+const FALLBACK_MODELS = ['anthropic/claude-sonnet-4.6', 'google/gemini-3.6-flash']
 
 type Surface = 'web' | 'slack' | 'discord' | 'schedule' | 'unknown'
 

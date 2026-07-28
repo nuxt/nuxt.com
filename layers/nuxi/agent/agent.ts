@@ -3,8 +3,15 @@ import { defineAgent, defineDynamic } from 'eve'
 import type { AdminMcpAuthContext } from './lib/admin-mcp-access.js'
 import { nuxiGatewayOptions } from './lib/gateway-attribution.js'
 
-const MODEL = 'anthropic/claude-sonnet-4.6'
+// Switched from anthropic/claude-sonnet-4.6. ZDR-attested via Fireworks on
+// this Gateway account; same list price as Sonnet 4.6, so not a cost win —
+// picked for capability. Reasoning comes back as a separate part, not
+// inlined into the answer.
+const MODEL = 'moonshotai/kimi-k3'
 
+// Applies only when the Gateway falls back to an Anthropic model (see
+// `FALLBACK_MODELS`); kimi-k3 and other providers ignore an `anthropic`
+// providerOptions key they don't recognize, so it's safe to always send.
 const ANTHROPIC_OPTIONS = {
   thinking: {
     type: 'enabled',
