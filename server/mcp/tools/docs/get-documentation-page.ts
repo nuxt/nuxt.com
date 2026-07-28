@@ -44,7 +44,7 @@ Common Issues:
   cache: '30m',
   async handler({ path, sections }) {
     const event = useEvent()
-    const docsVersion = path.includes('/docs/5.x') ? 'docsv5' : path.includes('/docs/4.x') ? 'docsv4' : 'docsv3'
+    const docsVersion = path.includes('/docs/5.x') ? 'docsv5' : path.includes('/docs/3.x') ? 'docsv3' : 'docsv4'
     const fullContent = await fetchPageMarkdown(event, docsVersion, path)
 
     if (!fullContent) {

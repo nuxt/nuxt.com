@@ -244,7 +244,6 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
 
           <template #title>
             {{ page.title }}
-
             <VersionBadge v-if="page.minimalVersion?.trim()" :version="page.minimalVersion" size="lg" />
           </template>
 

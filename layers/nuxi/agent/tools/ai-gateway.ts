@@ -7,6 +7,7 @@ export const AI_GATEWAY_INSTRUCTIONS = `**AI Gateway tools (\`ai_gateway__*\`, a
 - \`ai_gateway__credits\` — current credit balance and lifetime spend for the **entire** nuxt-js team account (not Nuxi-only)
 - \`ai_gateway__report\` — spend/tokens over a date range. The Custom Reporting API is **account-wide**; this tool always scopes to Nuxi via tags (default \`${NUXI_GATEWAY_TAG}\`) and/or \`AI_GATEWAY_REPORT_API_KEY_NAME\`. Never quote unscoped account totals in digests.
 - \`ai_gateway__generation\` — cost, latency, and token usage for a single generation id (from a chat completion's \`id\` field)
+- Every Nuxi request also carries \`surface:web\` | \`surface:slack\` | \`surface:discord\` | \`surface:schedule\` | \`surface:eval\`, plus \`feature:<name>\` on scheduled workflows and background jobs. Use \`groupBy=tag\` to break spend down per channel — note traffic before this rolled out only has \`${NUXI_GATEWAY_TAG}\`.
 - Dashboard: https://vercel.com/nuxt-js/nuxt/ai-gateway
 - If a scoped report returns empty results (e.g. before tagging rolled out and no API key name configured), say spend is not attributable yet — do **not** fall back to account-wide totals.`
 
@@ -19,11 +20,18 @@ function apiKey(): string {
   return key
 }
 
-/** Comma-separated tags from env, or the default Nuxi attribution tag. */
+/**
+ * Comma-separated tags from env, or the default Nuxi attribution tag. Never
+ * empty: an empty `tags` param on the Custom Reporting call is not "no match",
+ * it's "no filter" — the account-wide, unscoped totals this tool exists to
+ * prevent. A misconfigured env var (e.g. all commas/whitespace) falls back to
+ * the default tag instead of silently widening the scope.
+ */
 function defaultReportTags(): string[] {
   const raw = process.env.AI_GATEWAY_REPORT_TAGS?.trim()
   if (!raw) return [NUXI_GATEWAY_TAG]
-  return raw.split(',').map(t => t.trim()).filter(Boolean)
+  const tags = raw.split(',').map(t => t.trim()).filter(Boolean)
+  return tags.length ? tags : [NUXI_GATEWAY_TAG]
 }
 
 function reportApiKeyName(): string | undefined {
@@ -91,13 +99,13 @@ function aiGatewayTools() {
       inputSchema: z.object({
         startDate: dateSchema.describe('Start date (UTC, inclusive), YYYY-MM-DD'),
         endDate: dateSchema.describe('End date (UTC, inclusive), YYYY-MM-DD'),
-        groupBy: z.enum(['day', 'user', 'model', 'tag', 'provider', 'credential_type', 'zero_data_retention', 'api_key_name']).default('model'),
+        groupBy: z.enum(['day', 'user', 'model', 'tag', 'provider', 'credential_type', 'zero_data_retention', 'api_key_name']).optional().describe('Defaults to "api_key_name" when AI_GATEWAY_REPORT_API_KEY_NAME is configured, otherwise "model". Requesting one explicitly forces tag scoping, since key-name scoping needs the grouping for itself.'),
         datePart: z.enum(['day', 'hour']).optional().describe('Time granularity, only applies when groupBy is "day"'),
         userId: z.string().optional(),
         model: z.string().optional().describe('creator/model-name, e.g. anthropic/claude-sonnet-4.6'),
         provider: z.string().optional(),
         credentialType: z.enum(['byok', 'system']).optional(),
-        tags: z.array(z.string()).optional().describe(`Override default report tags (env AI_GATEWAY_REPORT_TAGS / ${NUXI_GATEWAY_TAG}). Ignored when AI_GATEWAY_REPORT_API_KEY_NAME is set.`),
+        tags: z.array(z.string()).optional().describe(`Override default report tags (env AI_GATEWAY_REPORT_TAGS / ${NUXI_GATEWAY_TAG}). Ignored while key-name scoping applies, i.e. AI_GATEWAY_REPORT_API_KEY_NAME is set and no groupBy was requested.`),
         tagsMatch: z.enum(['any', 'all']).optional()
       }).refine(({ startDate, endDate }) => startDate <= endDate, {
         message: 'startDate must not be later than endDate',
@@ -105,13 +113,19 @@ function aiGatewayTools() {
       }),
       async execute(input) {
         const configuredKeyName = reportApiKeyName()
-        // Key-name scope covers historical untagged traffic on a dedicated Nuxi key.
-        // Otherwise filter by tags (requests tagged app:nuxi going forward).
-        const tags = configuredKeyName
+        // Key-name scope covers historical untagged traffic on a dedicated Nuxi
+        // key, but it spends the single `group_by` slot on `api_key_name` to do
+        // it. So it only applies while the caller leaves the grouping open — an
+        // explicit `groupBy` has to win, otherwise the digest asking for `tag` to
+        // break spend down per surface would quietly get key-name rows instead.
+        const keyNameScope = input.groupBy ? undefined : configuredKeyName
+        const groupBy = keyNameScope ? 'api_key_name' : (input.groupBy ?? 'model')
+
+        // Tags are how requests are attributed going forward (app:nuxi, surface:*).
+        const tags = keyNameScope
           ? undefined
           : (input.tags?.length ? input.tags : defaultReportTags())
         const tagsMatch = tags ? (input.tagsMatch ?? 'all') : undefined
-        const groupBy = configuredKeyName ? 'api_key_name' : input.groupBy
 
         const payload = await gatewayFetch('/report', {
           start_date: input.startDate,
@@ -126,8 +140,8 @@ function aiGatewayTools() {
           tags_match: tagsMatch
         })
 
-        if (configuredKeyName) {
-          const { results, matchedRows, note } = filterReportByApiKeyName(payload, configuredKeyName)
+        if (keyNameScope) {
+          const { results, matchedRows, note } = filterReportByApiKeyName(payload, keyNameScope)
           return {
             results,
             scope: {
@@ -135,7 +149,6 @@ function aiGatewayTools() {
               apiKeyName: configuredKeyName,
               matchedRows,
               groupBy,
-              requestedGroupBy: input.groupBy,
               note: `${note} Custom Reporting is account-wide; empty results mean no attributable Nuxi spend — do not invent or fall back to team totals.`
             }
           }
@@ -153,7 +166,9 @@ function aiGatewayTools() {
             tagsMatch,
             groupBy,
             matchedRows: results.length,
-            note: 'Scoped by tags only. Empty results usually mean traffic predates app:nuxi tagging (or set AI_GATEWAY_REPORT_API_KEY_NAME). Do not fall back to account-wide totals.'
+            note: configuredKeyName
+              ? `Scoped by tags, not by API key "${configuredKeyName}", because groupBy="${groupBy}" was requested and key-name scoping needs the grouping for itself. Spend predating tagging is out of scope here; omit groupBy for the full historical figure. Do not fall back to account-wide totals.`
+              : 'Scoped by tags only. Empty results usually mean traffic predates app:nuxi tagging (or set AI_GATEWAY_REPORT_API_KEY_NAME). Do not fall back to account-wide totals.'
           }
         }
       }

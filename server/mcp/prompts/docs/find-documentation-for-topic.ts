@@ -5,12 +5,11 @@ export default defineMcpPrompt({
   description: 'Find the best Nuxt documentation for a specific topic or feature',
   inputSchema: {
     topic: z.string().describe('Describe what you want to learn about (e.g., "server-side rendering", "data fetching", "routing")'),
-    // TODO: add '5.x' when Nuxt 5 is released
-    version: z.enum(['3.x', '4.x']).optional().describe('Documentation version to search (defaults to 4.x)')
+    version: z.enum(['3.x', '4.x', '5.x']).optional().describe('Documentation version to search (defaults to 4.x)')
   },
   async handler({ topic, version = '4.x' }) {
     const event = useEvent()
-    const docsVersion = version === '4.x' ? 'docsv4' : 'docsv3'
+    const docsVersion = version === '5.x' ? 'docsv5' : version === '3.x' ? 'docsv3' : 'docsv4'
 
     const allDocs = await queryCollection(event, docsVersion)
       .select('title', 'path', 'description')

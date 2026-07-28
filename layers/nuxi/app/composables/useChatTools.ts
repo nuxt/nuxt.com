@@ -21,18 +21,26 @@ const VERBS: Record<string, [string, string]> = {
   create: ['Creating', 'Created']
 }
 
+/**
+ * eve qualifies connection tools as `<connection>__<tool>`, so `get-module` on
+ * the nuxt-mcp connection arrives as `nuxt-mcp__get-module`. Only the tool
+ * segment carries meaning here: the verb heuristics, the icon map and the
+ * module-card gates all key off it.
+ *
+ * Matching the `*-mcp` convention every file in `agent/connections/` follows
+ * keeps this working when a connection is added, and deliberately leaves local
+ * tools whose own name contains `__` alone — `ai_gateway__report` reads better
+ * as "ai gateway report" than as "report".
+ */
+const CONNECTION_TOOL_RE = /^[a-z0-9-]+-mcp__(.+)$/
+
 export function normalizeToolName(toolName: string): string {
-  if (toolName === 'connection__search') return toolName
-  const prefix = 'connection__'
-  if (!toolName.startsWith(prefix)) return toolName
-  const rest = toolName.slice(prefix.length)
-  const sep = rest.indexOf('__')
-  if (sep === -1) return toolName
-  return rest.slice(sep + 2).replace(/_/g, '-')
+  const tool = CONNECTION_TOOL_RE.exec(toolName)?.[1]
+  return tool ? tool.replace(/_/g, '-') : toolName
 }
 
 export function isConnectionSearchTool(part: ToolPart): boolean {
-  return getToolName(part) === 'connection__search'
+  return getToolName(part) === 'connection_search'
 }
 
 function unwrapConnectionSearchResults(output: unknown): Array<Record<string, unknown>> | undefined {
@@ -313,6 +321,9 @@ export function getModuleCards(part: ToolPart): ModuleCardData[] {
           // ignore malformed JSON
         }
       }
+    } else if (content && typeof content === 'object') {
+      // Already-decoded `{ modules: [...] }`, as `get-module` above accepts.
+      payload = content as Record<string, unknown>
     }
     const items = Array.isArray(payload)
       ? payload as Record<string, unknown>[]
