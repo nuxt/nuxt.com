@@ -6,6 +6,10 @@
   "packageRules": [{
     "matchDepTypes": ["resolutions"],
     "enabled": false
+  }, {
+    "description": "Pinned to 0.10.7: 0.10.8 makes @nuxt/content collection queries return empty on Vercel (empty landing page in #2320, site-wide docs 500s after #2330 reverted the pin). Re-enable only once a newer version is verified on a Vercel preview deploy.",
+    "matchPackageNames": ["@nuxthub/core"],
+    "enabled": false
   }],
   "postUpdateOptions": ["pnpmDedupe"]
 }
