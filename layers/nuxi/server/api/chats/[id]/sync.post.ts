@@ -1,5 +1,9 @@
+import type { ExtractTablesWithRelations } from 'drizzle-orm'
+import type { LibSQLTransaction } from 'drizzle-orm/libsql'
 import { and, eq } from 'drizzle-orm'
 import { z } from 'zod'
+
+type Tx = LibSQLTransaction<typeof schema, ExtractTablesWithRelations<typeof schema>>
 
 /**
  * End-of-turn sync: upserts the turn's assistant messages and stores the
@@ -39,7 +43,7 @@ export default defineEventHandler(async (event) => {
 
   const now = Date.now()
 
-  await db.transaction(async (tx) => {
+  await db.transaction(async (tx: Tx) => {
     for (const [index, message] of body.messages.entries()) {
       await tx.insert(schema.messages).values({
         id: message.id,
