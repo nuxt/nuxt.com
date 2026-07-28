@@ -490,7 +490,12 @@ export default defineNuxtConfig({
         '/mcp',
         route => route.startsWith('/mcp/'),
         route => route.startsWith('/api/auth/'),
-        route => route.startsWith('/api/chats')
+        route => route.startsWith('/api/chats'),
+        // Crawled from the examples pages, but it fans out to jsDelivr and
+        // raw.githubusercontent for every file of every example — enough
+        // requests during a full crawl to get rate-limited into a 500.
+        // CodeExplorer fetches it client-side at runtime instead.
+        route => route.startsWith('/api/examples/')
       ],
       autoSubfolderIndex: false
     }
@@ -525,8 +530,19 @@ export default defineNuxtConfig({
     'content:file:beforeParse': async ({ file }) => {
       if (file.id.startsWith('docsv5/')) {
         file.body = file.body.replaceAll(/\(\/docs\/(?!\d\.x)/g, '(/docs/5.x/')
-        // module-dependencies only exists on main (5.x), not on the 4.x branch yet
-        file.body = file.body.replaceAll('/docs/4.x/guide/modules/module-dependencies', '/docs/5.x/guide/modules/module-dependencies')
+        // Pages that only exist on main (5.x) but are linked as /docs/4.x/* from
+        // the 5.x docs. Left unrewritten they 404, which fails the prerender now
+        // that the crawler is on. Only paths whose 5.x counterpart exists belong
+        // here — a blanket 4.x→5.x rewrite would break the ~13 links that point
+        // at pages 5.x dropped (guide/concepts/esm, going-further/internals, …).
+        for (const path of [
+          'guide/modules/module-dependencies',
+          'guide/best-practices/accessibility',
+          'guide/concepts/server-components',
+          'guide/recipes/mostly-static-sites'
+        ]) {
+          file.body = file.body.replaceAll(`/docs/4.x/${path}`, `/docs/5.x/${path}`)
+        }
       }
       if (file.id.startsWith('docsv4/')) {
         file.body = file.body.replaceAll(/\(\/docs\/(?!\d\.x)/g, '(/docs/4.x/')
