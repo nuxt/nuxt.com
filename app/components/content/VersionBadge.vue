@@ -2,7 +2,8 @@
 import type { BadgeProps } from '@nuxt/ui'
 
 interface Props extends Omit<BadgeProps, 'label'> {
-  version: string
+  /** A version number, or one of the {@link VERSION_KEYWORDS} like `nightly` for something unreleased. */
+  version: string | VersionKeyword
   /** How far behind the latest release the requirement may be. Defaults to the whole current major. */
   tolerance?: VersionTolerance
 }
@@ -15,7 +16,7 @@ const props = withDefaults(defineProps<Props>(), {
   tolerance: () => ({ major: 0 })
 })
 
-const { show, label } = useVersionBadge(() => props.version, { tolerance: () => props.tolerance })
+const { show, label, ariaLabel } = useVersionBadge(() => props.version, { tolerance: () => props.tolerance })
 
 const badgeProps = computed(() => {
   const { version, tolerance, ...rest } = props
@@ -29,6 +30,6 @@ const badgeProps = computed(() => {
     v-bind="badgeProps"
     :label="label"
     class="align-middle"
-    :aria-label="`Minimum Nuxt Version: ${label}`"
+    :aria-label="ariaLabel"
   />
 </template>

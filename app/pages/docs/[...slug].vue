@@ -40,12 +40,15 @@ const versionBadge = (item: ContentNavigationItem) => {
   const minimal = item.minimalVersion.trim()
   if (!satisfiesVersionTolerance(minimal, latest.value, navVersionTolerance)) return undefined
 
+  const labels = versionBadgeLabels(minimal, version.value?.shortTag)
+  if (!labels) return undefined
+
   return {
-    'label': `v${minimal}`,
+    'label': labels.label,
     'size': 'sm' as const,
     'color': 'info' as const,
     'variant': 'subtle' as const,
-    'aria-label': `Minimum Nuxt Version: v${minimal}`
+    'aria-label': labels.ariaLabel
   }
 }
 
