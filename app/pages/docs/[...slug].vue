@@ -18,6 +18,7 @@ const onThisPageDrawerOpen = ref(false)
 const route = useRoute()
 const nuxtApp = useNuxtApp()
 const { version } = useDocsVersion()
+const { latest } = useDocsLatestVersion()
 const { headerLinks } = useHeaderLinks()
 const { isAgentDocked } = useNuxtAgent()
 const path = computed(() => route.path.replace(/\/$/, ''))
@@ -30,6 +31,30 @@ const navClass = (item: ContentNavigationItem) => {
   return ''
 }
 
+// The navigation only flags what is genuinely new: the current and previous two minors
+const navVersionTolerance: VersionTolerance = { minor: 2 }
+
+const versionBadge = (item: ContentNavigationItem) => {
+  if (typeof item.minimalVersion !== 'string') return undefined
+
+  const minimal = item.minimalVersion.trim()
+  if (!satisfiesVersionTolerance(minimal, latest.value, navVersionTolerance)) return undefined
+
+  return {
+    'label': `v${minimal}`,
+    'size': 'sm' as const,
+    'color': 'info' as const,
+    'variant': 'subtle' as const,
+    'aria-label': `Minimum Nuxt Version: v${minimal}`
+  }
+}
+
+const withVersionBadge = (item: ContentNavigationItem): ContentNavigationItem => ({
+  ...item,
+  badge: versionBadge(item) ?? item.badge,
+  children: item.children?.map(withVersionBadge)
+})
+
 // Get the aside navigation
 const asideNavigation = computed(() => {
   const path = [version.value.path, route.params.slug?.[version.value.path.split('/').length - 2]].filter(Boolean).join('/')
@@ -37,7 +62,7 @@ const asideNavigation = computed(() => {
   const nav = navPageFromPath(path, navigation.value)?.children || []
 
   return nav.map(item => ({
-    ...item,
+    ...withVersionBadge(item),
     class: navClass(item)
   }))
 })

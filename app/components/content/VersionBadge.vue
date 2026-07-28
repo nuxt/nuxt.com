@@ -3,28 +3,22 @@ import type { BadgeProps } from '@nuxt/ui'
 
 interface Props extends Omit<BadgeProps, 'label'> {
   version: string
+  /** How far behind the latest release the requirement may be. Defaults to the whole current major. */
+  tolerance?: VersionTolerance
 }
 
 const props = withDefaults(defineProps<Props>(), {
   color: 'info',
   variant: 'subtle',
-  size: 'md'
+  size: 'md',
+  // A page badge stays relevant for the whole major it documents
+  tolerance: () => ({ major: 0 })
 })
 
-const { version: docsVersion } = useDocsVersion()
-
-const label = computed(() => props.version?.trim())
-
-const show = computed(() => {
-  if (!label.value) return false
-
-  const major = Number.parseInt(label.value, 10)
-  const docsMajor = Number.parseInt(docsVersion.value?.shortTag.slice(1) ?? '', 10)
-  return !Number.isNaN(major) && !Number.isNaN(docsMajor) && major >= docsMajor
-})
+const { show, label } = useVersionBadge(() => props.version, { tolerance: () => props.tolerance })
 
 const badgeProps = computed(() => {
-  const { version, ...rest } = props
+  const { version, tolerance, ...rest } = props
   return rest
 })
 </script>
@@ -33,8 +27,8 @@ const badgeProps = computed(() => {
   <UBadge
     v-if="show"
     v-bind="badgeProps"
-    :label="`v${label}`"
+    :label="label"
     class="align-middle"
-    :aria-label="`Minimum Nuxt Version: v${label}`"
+    :aria-label="`Minimum Nuxt Version: ${label}`"
   />
 </template>

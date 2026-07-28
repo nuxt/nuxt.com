@@ -75,6 +75,7 @@
     "std-env": "^4.2.0",
     "ufo": "^1.6.4",
     "valibot": "^1.4.2",
+    "verkit": "^0.3.0",
     "zod": "4.4.3"
   },
   "devDependencies": {

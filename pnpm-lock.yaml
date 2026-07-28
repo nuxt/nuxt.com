@@ -164,6 +164,9 @@ importers:
       valibot:
         specifier: ^1.4.2
         version: 1.4.2(typescript@6.0.3)
+      verkit:
+        specifier: ^0.3.0
+        version: 0.3.0
       zod:
         specifier: 4.4.3
         version: 4.4.3
@@ -10062,6 +10065,10 @@ packages:
     peerDependencies:
       reka-ui: ^2.0.0
       vue: ^3.3.0
+
+  verkit@0.3.0:
+    resolution: {integrity: sha512-Njrh4U8UODGajoZ44QS2C/BsoEM9DTI/aCqY5swsizb+/ap0FamvnCMcZAxrR5+aoC0ZqkawEfpC/N2SBc+xeA==}
+    engines: {node: '>=18.12.0'}
 
   vfile-location@5.0.3:
     resolution: {integrity: sha512-5yXvWDEgqeiYiBe1lbxYF7UMAIm/IcopxMHrMQDq3nvKcjPKIhZklUKL+AE7J7uApI4kwe2snsK+eI6UTj9EHg==}
@@ -21789,6 +21796,8 @@ snapshots:
       vue: 3.5.39(typescript@6.0.3)
     transitivePeerDependencies:
       - '@vue/composition-api'
+
+  verkit@0.3.0: {}
 
   vfile-location@5.0.3:
     dependencies:

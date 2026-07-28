@@ -1,3 +1,4 @@
+import { coerce } from 'verkit'
 import type { BadgeProps } from '@nuxt/ui'
 
 interface Version {
@@ -51,8 +52,8 @@ const tagMap: Record<Version['shortTag'], string> = {
 }
 
 export const useDocsTags = () => {
-  const { data: tags } = useAsyncData('versions', async (_nuxtApp, {signal}) => {
-    const { 'dist-tags': distTags } = await $fetch<{ 'dist-tags': Record<string, string> }>('https://registry.npmjs.org/nuxt', {signal})
+  const { data: tags } = useAsyncData('versions', async (_nuxtApp, { signal }) => {
+    const { 'dist-tags': distTags } = await $fetch<{ 'dist-tags': Record<string, string> }>('https://registry.npmjs.org/nuxt', { signal })
     return Object.fromEntries(
       Object.entries(tagMap).map(([shortTag]: [keyof typeof tagMap, string]) => {
         // TODO: remove nightly fallback when Nuxt 5 is released
@@ -63,6 +64,22 @@ export const useDocsTags = () => {
   }, { default: () => ({}) })
 
   return { tags }
+}
+
+/** Latest release of the docs version being read, e.g. `4.5.2` */
+export const useDocsLatestVersion = () => {
+  const { version } = useDocsVersion()
+  const { tags } = useDocsTags()
+
+  const latest = computed(() => {
+    const shortTag = version.value?.shortTag
+    if (!shortTag) return undefined
+
+    // Falls back to the branch major (`v4` -> `4.0.0`) while the dist-tags are loading
+    return coerce(tags.value[shortTag] ?? '') ?? coerce(shortTag.slice(1)) ?? undefined
+  })
+
+  return { latest }
 }
 
 export const useDocsVersion = () => {
