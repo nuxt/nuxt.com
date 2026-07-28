@@ -1,10 +1,10 @@
 import { getToken } from '@vercel/connect'
+import { callSlackApi } from 'eve/channels/slack'
 import { slackConnectorId } from './slack-connect.js'
 
 const DEFAULT_WORKFLOW_SLACK_CHANNEL = 'project-nuxi'
 const DEFAULT_FIREHOSE_SLACK_CHANNEL = 'firehose-nuxt'
 const CHANNEL_LIST_TTL_MS = 60 * 60 * 1000
-const SLACK_FETCH_TIMEOUT_MS = 10_000
 
 export interface SlackChannelInfo {
   id: string
@@ -40,6 +40,32 @@ export function firehoseSlackChannelRef(): string {
     || DEFAULT_FIREHOSE_SLACK_CHANNEL
 }
 
+/**
+ * Maps the friendly names of our two known channels (workflow, firehose) to
+ * their configured ids, so a caller that types the *name* instead of leaving
+ * `channel` unset (e.g. an ad-hoc `read_slack_channel_history` call) still
+ * resolves without a `users.conversations` lookup. That call needs
+ * `channels:read`/`groups:read`, a scope beyond what `conversations.history`
+ * itself requires — see slack-channel-history.ts.
+ */
+function knownSlackChannelAliases(): Map<string, string> {
+  const aliases = new Map<string, string>()
+
+  const workflowId = process.env.NUXT_WORKFLOW_SLACK_CHANNEL_ID?.trim()
+  if (workflowId) {
+    const workflowName = process.env.NUXT_WORKFLOW_SLACK_CHANNEL?.trim() || DEFAULT_WORKFLOW_SLACK_CHANNEL
+    aliases.set(normalizeSlackChannelName(workflowName), workflowId)
+  }
+
+  const firehoseId = process.env.NUXT_FIREHOSE_SLACK_CHANNEL_ID?.trim()
+  if (firehoseId) {
+    const firehoseName = process.env.NUXT_FIREHOSE_SLACK_CHANNEL?.trim() || DEFAULT_FIREHOSE_SLACK_CHANNEL
+    aliases.set(normalizeSlackChannelName(firehoseName), firehoseId)
+  }
+
+  return aliases
+}
+
 function slackWorkspace(): string {
   return process.env.NUXT_SLACK_WORKSPACE?.trim() || 'vercel'
 }
@@ -52,7 +78,15 @@ interface SlackAttachment {
   title_link?: string
   from_url?: string
   original_url?: string
+  image_url?: string
+  thumb_url?: string
   text?: string
+  pretext?: string
+  title?: string
+  footer?: string
+  /** Legacy interactive attachments (link buttons). */
+  actions?: Array<{ url?: string, text?: string }>
+  blocks?: unknown[]
 }
 
 export interface SlackHistoryMessage {
@@ -60,6 +94,8 @@ export interface SlackHistoryMessage {
   text: string
   permalink: string
   links: string[]
+  /** X post URLs for "view on X": `https://x.com/<handle>/status/<id>` and/or `https://t.co/…`. */
+  tweetUrls: string[]
   user?: string
   bot_id?: string
 }
@@ -74,6 +110,8 @@ interface SlackHistoryResponse {
     bot_id?: string
     subtype?: string
     attachments?: SlackAttachment[]
+    /** Block Kit payload — Octolens puts the real "See post" tweet URL on a button here. */
+    blocks?: unknown[]
   }>
 }
 
@@ -98,15 +136,13 @@ interface ChannelCacheState {
 let channelCache: ChannelCacheState | null = null
 let channelIndexInflight: Promise<Map<string, SlackChannelInfo>> | null = null
 
-async function slackBotToken(): Promise<string> {
+function slackBotToken(): Promise<string> {
   return getToken(slackConnectorId(), { subject: { type: 'app' } })
 }
 
-async function slackFetch(url: string, init?: RequestInit): Promise<Response> {
-  return fetch(url, {
-    ...init,
-    signal: init?.signal ?? AbortSignal.timeout(SLACK_FETCH_TIMEOUT_MS)
-  })
+/** Eve's `callSlackApi` signs and form-encodes the request; callers check `ok`. */
+async function slackApi<T>(operation: string, body: Record<string, unknown>): Promise<T> {
+  return await callSlackApi({ botToken: slackBotToken, operation, body }) as T
 }
 
 async function fetchBotChannelPages(): Promise<Map<string, SlackChannelInfo>> {
@@ -114,18 +150,13 @@ async function fetchBotChannelPages(): Promise<Map<string, SlackChannelInfo>> {
   let cursor: string | undefined
 
   do {
-    const params = new URLSearchParams({
+    const data = await slackApi<UsersConversationsResponse>('users.conversations', {
       types: 'public_channel,private_channel',
-      exclude_archived: 'true',
-      limit: '200'
-    })
-    if (cursor) params.set('cursor', cursor)
-
-    const response = await slackFetch(`https://slack.com/api/users.conversations?${params}`, {
-      headers: { Authorization: `Bearer ${await slackBotToken()}` }
+      exclude_archived: true,
+      limit: 200,
+      ...(cursor ? { cursor } : {})
     })
 
-    const data = await response.json() as UsersConversationsResponse
     if (!data.ok) {
       throw new Error(data.error ?? 'Slack users.conversations failed')
     }
@@ -167,27 +198,150 @@ async function loadBotChannelIndex(): Promise<Map<string, SlackChannelInfo>> {
   return channelIndexInflight
 }
 
-function extractLinks(text: string, attachments: SlackAttachment[] = []): string[] {
-  const links = new Set<string>()
+const HTTP_URL_KEYS = new Set([
+  'url',
+  'title_link',
+  'from_url',
+  'original_url',
+  'image_url',
+  'thumb_url',
+  'permalink'
+])
 
+/** Pull http(s) URLs out of Slack mrkdwn / bare text. */
+function addUrlsFromText(text: string, into: Set<string>) {
   for (const match of text.matchAll(/<(https?:\/\/[^|>]+)(?:\|[^>]*)?>/g)) {
-    links.add(match[1]!)
+    into.add(match[1]!)
   }
   for (const match of text.matchAll(/(?<![<|])https?:\/\/[^\s<>|]+/g)) {
-    links.add(match[0]!.replace(/[>)]+$/, ''))
+    into.add(match[0]!.replace(/[>)]+$/, ''))
   }
+}
+
+/**
+ * Walk Block Kit / attachment JSON for link buttons and nested mrkdwn.
+ * Octolens only puts the author profile in `text`; the real status URL lives
+ * on an actions button ("See post") inside `blocks`.
+ */
+function addUrlsFromValue(value: unknown, into: Set<string>, depth = 0) {
+  if (value == null || depth > 12) return
+
+  if (typeof value === 'string') {
+    if (value.startsWith('http://') || value.startsWith('https://')) {
+      into.add(value.replace(/[>)]+$/, ''))
+    } else if (value.includes('http')) {
+      addUrlsFromText(value, into)
+    }
+    return
+  }
+
+  if (Array.isArray(value)) {
+    for (const item of value) addUrlsFromValue(item, into, depth + 1)
+    return
+  }
+
+  if (typeof value !== 'object') return
+
+  for (const [key, child] of Object.entries(value as Record<string, unknown>)) {
+    if (HTTP_URL_KEYS.has(key) && typeof child === 'string' && /^https?:\/\//i.test(child)) {
+      into.add(child)
+      continue
+    }
+    // Skip bulky non-URL blobs (ids, styles, emoji maps).
+    if (key === 'id' || key === 'block_id' || key === 'action_id' || key === 'style') continue
+    addUrlsFromValue(child, into, depth + 1)
+  }
+}
+
+export function extractLinks(
+  text: string,
+  attachments: SlackAttachment[] = [],
+  blocks: unknown[] = []
+): string[] {
+  const links = new Set<string>()
+
+  addUrlsFromText(text, links)
+  addUrlsFromValue(blocks, links)
+
   for (const attachment of attachments) {
-    for (const url of [attachment.title_link, attachment.from_url, attachment.original_url]) {
+    for (const url of [
+      attachment.title_link,
+      attachment.from_url,
+      attachment.original_url,
+      attachment.image_url,
+      attachment.thumb_url
+    ]) {
       if (url) links.add(url)
     }
-    if (attachment.text) {
-      for (const match of attachment.text.matchAll(/<(https?:\/\/[^|>]+)(?:\|[^>]*)?>/g)) {
-        links.add(match[1]!)
-      }
+    for (const field of [attachment.text, attachment.pretext, attachment.title, attachment.footer]) {
+      if (field) addUrlsFromText(field, links)
     }
+    for (const action of attachment.actions ?? []) {
+      if (action.url) links.add(action.url)
+    }
+    if (attachment.blocks?.length) addUrlsFromValue(attachment.blocks, links)
   }
 
   return [...links]
+}
+
+/**
+ * Filters `links` down to post URLs for "view on X":
+ * - `…/status/<id>` on x.com / twitter.com → `https://x.com/<handle>/status/<id>`
+ * - `t.co/…` short links (Octolens often only surfaces these, not the expanded status URL)
+ *
+ * Dedupes by status id / t.co path. Prefers a handle form over `/i/web/status/<id>`.
+ */
+export function extractTweetUrls(links: string[]): string[] {
+  const byStatusId = new Map<string, string>()
+  const tcoLinks: string[] = []
+  const seenTco = new Set<string>()
+
+  for (const link of links) {
+    let url: URL
+    try {
+      url = new URL(link)
+    } catch {
+      continue
+    }
+
+    const host = url.hostname.replace(/^(?:www|mobile)\./i, '').toLowerCase()
+
+    if (host === 't.co') {
+      const path = url.pathname.replace(/\/$/, '')
+      if (path.length > 1) {
+        const normalized = `https://t.co${path}`
+        if (!seenTco.has(normalized)) {
+          seenTco.add(normalized)
+          tcoLinks.push(normalized)
+        }
+      }
+      continue
+    }
+
+    if (host !== 'x.com' && host !== 'twitter.com') continue
+
+    // `/handle/status/id` or `/i/web/status/id`
+    const statusMatch = url.pathname.match(/^\/(?:i\/web|([^/?#]+))\/status\/(\d+)/i)
+    if (!statusMatch) continue
+
+    const handle = statusMatch[1]
+    const statusId = statusMatch[2]!
+    const normalized = handle
+      ? `https://x.com/${handle}/status/${statusId}`
+      : `https://x.com/i/web/status/${statusId}`
+
+    const existing = byStatusId.get(statusId)
+    // Prefer the handle form when we already stored an /i/web/ fallback.
+    if (!existing || (handle && existing.includes('/i/web/'))) {
+      byStatusId.set(statusId, normalized)
+    }
+  }
+
+  const statusUrls = [...byStatusId.values()]
+  // Prefer real status URLs; keep t.co only when we have nothing better
+  // (same firehose message often has both).
+  return statusUrls.length > 0 ? statusUrls : tcoLinks
 }
 
 export async function resolveSlackChannelRef(ref: string): Promise<ResolvedSlackChannel> {
@@ -201,6 +355,12 @@ export async function resolveSlackChannelRef(ref: string): Promise<ResolvedSlack
   }
 
   const name = normalizeSlackChannelName(trimmed)
+
+  const knownId = knownSlackChannelAliases().get(name)
+  if (knownId) {
+    return { id: knownId, name, ref: trimmed }
+  }
+
   const index = await loadBotChannelIndex()
   const match = index.get(name)
 
@@ -221,18 +381,13 @@ export async function fetchSlackChannelHistory({
   limit?: number
 }): Promise<SlackHistoryMessage[]> {
   const oldest = String(Math.floor((Date.now() - sinceHours * 3_600_000) / 1000))
-  const params = new URLSearchParams({
+  const data = await slackApi<SlackHistoryResponse>('conversations.history', {
     channel: channelId,
     oldest,
-    limit: String(Math.min(limit, 200)),
-    inclusive: 'true'
+    limit: Math.min(limit, 200),
+    inclusive: true
   })
 
-  const response = await slackFetch(`https://slack.com/api/conversations.history?${params}`, {
-    headers: { Authorization: `Bearer ${await slackBotToken()}` }
-  })
-
-  const data = await response.json() as SlackHistoryResponse
   if (!data.ok) {
     throw new Error(data.error ?? 'Slack conversations.history failed')
   }
@@ -247,12 +402,15 @@ export async function fetchSlackChannelHistory({
       const ts = message.ts!
       const text = message.text!.trim()
       const attachments = message.attachments ?? []
+      const blocks = message.blocks ?? []
 
+      const links = extractLinks(text, attachments, blocks)
       return {
         ts,
         text,
         permalink: slackMessagePermalink(channelId, ts),
-        links: extractLinks(text, attachments),
+        links,
+        tweetUrls: extractTweetUrls(links),
         user: message.user,
         bot_id: message.bot_id
       }

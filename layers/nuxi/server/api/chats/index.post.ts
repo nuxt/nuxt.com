@@ -81,6 +81,6 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 500, statusMessage: 'Failed to load created chat' })
   }
 
-  const { userId: _, ...rest } = detail
-  return { ...rest, isOwner: true }
+  const { userId: _, state, ...rest } = detail
+  return { ...rest, sessionCursor: state ?? null, isOwner: true }
 })

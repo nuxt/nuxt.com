@@ -15,7 +15,9 @@ export const chats = sqliteTable('chats', {
   parentChatId: text('parent_chat_id').references((): AnySQLiteColumn => chats.id, { onDelete: 'set null' }),
   metadata: text('metadata', { mode: 'json' }).$type<Record<string, unknown>>(),
   updatedAt: integer('updated_at', { mode: 'timestamp' }),
-  state: text('state', { mode: 'json' }).$type<ChatEveState | null>(),
+  // Eve stream cursor (`{ sessionId, streamIndex }`). The column previously
+  // held the full event log; only this cursor is stored now.
+  state: text('state', { mode: 'json' }).$type<ChatSessionCursor | null>(),
   ...timestamps
 }, table => [
   index('chats_user_id_idx').on(table.userId),

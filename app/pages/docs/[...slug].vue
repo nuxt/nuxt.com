@@ -245,7 +245,7 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
           <template #title>
             {{ page.title }}
 
-            <VersionBadge v-if="page.minimalVersion" :version="page.minimalVersion" size="lg" />
+            <VersionBadge v-if="page.minimalVersion?.trim()" :version="page.minimalVersion" size="lg" />
           </template>
 
           <template #links>
@@ -300,6 +300,7 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
             :links="page.body?.toc?.links"
             :community-links="communityLinks"
             highlight
+            highlight-variant="circuit"
             class="hidden lg:block lg:backdrop-blur-none"
           />
           <!-- mobile -->

@@ -163,7 +163,7 @@ const links = [
         </UPageBody>
 
         <template #right>
-          <UContentToc v-if="!isAgentDocked && article.body && article.body.toc" :links="article.body.toc.links" title="Table of Contents" highlight>
+          <UContentToc v-if="!isAgentDocked && article.body && article.body.toc" :links="article.body.toc.links" title="Table of Contents" highlight highlight-variant="circuit">
             <template #bottom>
               <div class="hidden lg:block space-y-6">
                 <UPageLinks title="Links" :links="links" />
