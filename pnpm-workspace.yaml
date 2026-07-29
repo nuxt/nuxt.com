@@ -22,3 +22,6 @@ minimumReleaseAgeExclude:
   - evlog
   - '@nuxt/*'
   - nuxt
+
+patchedDependencies:
+  eve@0.27.0: patches/eve@0.27.0.patch

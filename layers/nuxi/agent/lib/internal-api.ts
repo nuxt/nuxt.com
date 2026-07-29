@@ -14,6 +14,17 @@ export function appOrigin() {
   return 'http://localhost:3000'
 }
 
+/**
+ * Origin for the `nuxt-mcp` docs/blog/changelog connection.
+ *
+ * In local dev, `NUXT_PUBLIC_SITE_URL` is often set to `https://nuxt.com` for
+ * unrelated reasons (canonical URLs, OG images), which would otherwise send
+ * doc lookups to production instead of the app actually being worked on.
+ */
+export function docsMcpOrigin() {
+  return process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : appOrigin()
+}
+
 export function internalHeaders(extra?: Record<string, string>) {
   const secret = process.env.INTERNAL_API_SECRET?.trim()
   if (!secret) {
