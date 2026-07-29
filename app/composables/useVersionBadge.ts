@@ -23,10 +23,26 @@ export const useVersionBadge = (version: MaybeRefOrGetter<string | undefined>, o
 
   const show = computed(() => satisfiesVersionTolerance(toValue(version), latest.value, toValue(options.tolerance) ?? { major: 0 }))
 
+  const { paths: releasePaths } = useReleaseArticlePaths()
+
+  /**
+   * Where the badge points: the nightly channel guide for a keyword, the release announcement
+   * for a version number. `undefined` while a release has no post yet, so the badge stays plain
+   * text instead of linking into a 404.
+   */
+  const to = computed(() => {
+    const value = toValue(version)
+    if (versionKeyword(value)) return nightlyChannelPath(docsVersion.value?.path)
+
+    const path = versionBlogPath(value)
+    return path && releasePaths.value.includes(path) ? path : undefined
+  })
+
   return {
     label,
     shortLabel,
     ariaLabel,
+    to,
     show,
     latest
   }

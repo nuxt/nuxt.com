@@ -35,6 +35,27 @@ export function versionBadgeLabels(version: string | undefined | null, tag?: str
 }
 
 /**
+ * Where the release announcement for a version lives, e.g. `4.5.2` -> `/blog/v4-5`.
+ * A major release drops the minor (`4.0.0` -> `/blog/v4`), matching how the posts are named.
+ * The path is derived, not verified — check it against the blog collection before linking.
+ */
+export function versionBlogPath(version: string | undefined | null): string | undefined {
+  const target = coerce(version?.trim() ?? '')
+  if (!target) return undefined
+
+  const minor = getMinor(target)
+
+  return `/blog/v${getMajor(target)}${minor ? `-${minor}` : ''}`
+}
+
+/** The nightly release channel guide for a docs version, e.g. `/docs/4.x` -> how to install nightly. */
+export function nightlyChannelPath(docsPath: string | undefined): string | undefined {
+  if (!docsPath?.startsWith('/docs')) return undefined
+
+  return `${docsPath}/guide/going-further/nightly-release-channel`
+}
+
+/**
  * How far *behind* the latest release a version may be and still be worth surfacing.
  * Tolerance only ever looks backwards — versions newer than the latest release
  * (unreleased minors, the next major) are always accepted.

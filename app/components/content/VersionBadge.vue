@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { NuxtLink } from '#components'
 import type { BadgeProps } from '@nuxt/ui'
 
 interface Props extends Omit<BadgeProps, 'label'> {
@@ -6,6 +7,8 @@ interface Props extends Omit<BadgeProps, 'label'> {
   version: string | VersionKeyword
   /** How far behind the latest release the requirement may be. Defaults to the whole current major. */
   tolerance?: VersionTolerance
+  /** Overrides the release announcement or nightly guide the badge links to. */
+  to?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -16,10 +19,12 @@ const props = withDefaults(defineProps<Props>(), {
   tolerance: () => ({ major: 0 })
 })
 
-const { show, label, ariaLabel } = useVersionBadge(() => props.version, { tolerance: () => props.tolerance })
+const { show, label, ariaLabel, to } = useVersionBadge(() => props.version, { tolerance: () => props.tolerance })
+
+const link = computed(() => props.to ?? to.value)
 
 const badgeProps = computed(() => {
-  const { version, tolerance, ...rest } = props
+  const { version, tolerance, to, ...rest } = props
   return rest
 })
 </script>
@@ -28,8 +33,11 @@ const badgeProps = computed(() => {
   <UBadge
     v-if="show"
     v-bind="badgeProps"
+    :as="link ? NuxtLink : props.as"
+    :to="link"
     :label="label"
     class="align-middle"
+    :class="link && 'transition-opacity hover:opacity-75'"
     :aria-label="ariaLabel"
   />
 </template>
