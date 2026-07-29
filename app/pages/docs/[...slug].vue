@@ -304,7 +304,11 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
             :community-links="communityLinks"
             highlight
             highlight-variant="circuit"
-            class="hidden lg:block lg:backdrop-blur-none"
+            class="hidden lg:flex lg:backdrop-blur-none lg:overflow-y-auto"
+            :ui="{
+              container: 'lg:max-h-[inherit]',
+              content: 'lg:min-h-[min(var(--list-height,8rem),8rem)]'
+            }"
           />
           <!-- mobile -->
           <div class="order-first lg:order-last sticky top-(--ui-header-height) z-10 bg-default/75 lg:bg-[initial] backdrop-blur -mx-4 p-6 border-b border-dashed border-default flex justify-between">
