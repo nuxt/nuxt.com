@@ -188,7 +188,7 @@ describe('utils/version', () => {
     it('should render keywords as their label qualified with the docs tag', () => {
       expect(versionBadgeLabels('unreleased', 'v4')).toEqual({
         label: 'nightly v4',
-        shortLabel: 'soon',
+        shortLabel: 'Soon',
         ariaLabel: 'Minimum Nuxt Version: nightly v4'
       })
     })
