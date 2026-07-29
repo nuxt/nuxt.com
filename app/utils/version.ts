@@ -1,32 +1,37 @@
 import { coerce, getMajor, getMinor, getPatch, isGreaterOrEqual } from 'verkit'
 
 /**
- * Shortcuts for a requirement that has no version number yet. They stand for something
- * unreleased, so tolerance never filters them out and they render as-is instead of `v<version>`.
+ * Shortcuts for a requirement that has no version number yet, mapped to how they render:
+ * `label` where there is room, `short` in tight spots like the sidebar.
+ * They stand for something unreleased, so tolerance never filters them out.
  */
-export const VERSION_KEYWORDS = ['nightly'] as const
+export const VERSION_KEYWORDS = {
+  unreleased: { label: 'nightly', short: 'soon' }
+} as const
 
-export type VersionKeyword = typeof VERSION_KEYWORDS[number]
+export type VersionKeyword = keyof typeof VERSION_KEYWORDS
 
 /** The keyword `version` stands for, if it is one. */
 export function versionKeyword(version: string | undefined | null): VersionKeyword | undefined {
   const value = version?.trim().toLowerCase()
-  return VERSION_KEYWORDS.find(keyword => keyword === value)
+  return value && value in VERSION_KEYWORDS ? value as VersionKeyword : undefined
 }
 
 /**
  * How a minimum version requirement reads as a badge — a version number as `v<version>`,
- * a keyword as-is, qualified by the major it applies to (`nightly v4`).
+ * a keyword as its label qualified by the major it applies to (`unreleased` -> `nightly v4`,
+ * `soon` where space is tight). The aria label always spells out the long form.
  * Returns `undefined` when there is nothing to show.
  */
-export function versionBadgeLabels(version: string | undefined | null, tag?: string): { label: string, ariaLabel: string } | undefined {
+export function versionBadgeLabels(version: string | undefined | null, tag?: string): { label: string, shortLabel: string, ariaLabel: string } | undefined {
   const value = version?.trim()
   if (!value) return undefined
 
   const keyword = versionKeyword(value)
-  const label = keyword ? [keyword, tag].filter(Boolean).join(' ') : `v${value}`
+  const label = keyword ? [VERSION_KEYWORDS[keyword].label, tag].filter(Boolean).join(' ') : `v${value}`
+  const shortLabel = keyword ? VERSION_KEYWORDS[keyword].short : label
 
-  return { label, ariaLabel: `Minimum Nuxt Version: ${label}` }
+  return { label, shortLabel, ariaLabel: `Minimum Nuxt Version: ${label}` }
 }
 
 /**
@@ -66,7 +71,7 @@ export function versionThreshold(latest: string | undefined | null, tolerance: V
 
 /**
  * Whether `version` is at or above the tolerated threshold, which means:
- * - a keyword like `nightly` -> always `true`, it describes an unreleased version
+ * - a keyword like `unreleased` -> always `true`, it describes a version that has no number yet
  * - newer than `latest` -> always `true`
  * - older than `latest` -> `true` while it is within `tolerance`
  * - unparseable input -> `false`

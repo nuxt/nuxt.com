@@ -2,7 +2,7 @@
 import type { BadgeProps } from '@nuxt/ui'
 
 interface Props extends Omit<BadgeProps, 'label'> {
-  /** A version number, or one of the {@link VERSION_KEYWORDS} like `nightly` for something unreleased. */
+  /** A version number, or one of the {@link VERSION_KEYWORDS} like `unreleased` for something without a version yet. */
   version: string | VersionKeyword
   /** How far behind the latest release the requirement may be. Defaults to the whole current major. */
   tolerance?: VersionTolerance

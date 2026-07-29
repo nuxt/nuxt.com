@@ -44,7 +44,8 @@ const versionBadge = (item: ContentNavigationItem) => {
   if (!labels) return undefined
 
   return {
-    'label': labels.label,
+    // The sidebar has no room for `nightly v4`
+    'label': labels.shortLabel,
     'size': 'sm' as const,
     'color': 'info' as const,
     'variant': 'subtle' as const,

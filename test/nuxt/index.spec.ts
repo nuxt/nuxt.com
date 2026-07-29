@@ -165,13 +165,13 @@ describe('utils/index', () => {
 describe('utils/version', () => {
   describe('versionKeyword', () => {
     it('should recognize keywords regardless of casing and padding', () => {
-      expect(versionKeyword('nightly')).toBe('nightly')
-      expect(versionKeyword(' Nightly ')).toBe('nightly')
+      expect(versionKeyword('unreleased')).toBe('unreleased')
+      expect(versionKeyword(' Unreleased ')).toBe('unreleased')
     })
 
     it('should ignore version numbers and unknown words', () => {
       expect(versionKeyword('4.2.0')).toBeUndefined()
-      expect(versionKeyword('later')).toBeUndefined()
+      expect(versionKeyword('nightly')).toBeUndefined()
       expect(versionKeyword(undefined)).toBeUndefined()
     })
   })
@@ -180,19 +180,21 @@ describe('utils/version', () => {
     it('should prefix version numbers with v', () => {
       expect(versionBadgeLabels('4.2')).toEqual({
         label: 'v4.2',
+        shortLabel: 'v4.2',
         ariaLabel: 'Minimum Nuxt Version: v4.2'
       })
     })
 
-    it('should qualify keywords with the docs tag', () => {
-      expect(versionBadgeLabels('nightly', 'v4')).toEqual({
+    it('should render keywords as their label qualified with the docs tag', () => {
+      expect(versionBadgeLabels('unreleased', 'v4')).toEqual({
         label: 'nightly v4',
+        shortLabel: 'soon',
         ariaLabel: 'Minimum Nuxt Version: nightly v4'
       })
     })
 
-    it('should render keywords as-is without a docs tag', () => {
-      expect(versionBadgeLabels('nightly')?.label).toBe('nightly')
+    it('should render the bare keyword label without a docs tag', () => {
+      expect(versionBadgeLabels('unreleased')?.label).toBe('nightly')
     })
 
     it('should return undefined for empty input', () => {
@@ -203,7 +205,7 @@ describe('utils/version', () => {
 
   describe('satisfiesVersionTolerance', () => {
     it('should always surface keywords', () => {
-      expect(satisfiesVersionTolerance('nightly', '4.5.2', { minor: 2 })).toBe(true)
+      expect(satisfiesVersionTolerance('unreleased', '4.5.2', { minor: 2 })).toBe(true)
     })
 
     it('should keep the tolerated range for version numbers', () => {
