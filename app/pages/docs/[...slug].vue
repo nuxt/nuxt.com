@@ -49,6 +49,7 @@ const versionBadge = (item: ContentNavigationItem) => {
     'size': 'sm' as const,
     'color': 'info' as const,
     'variant': 'subtle' as const,
+    'class': 'capitalize',
     'aria-label': labels.ariaLabel
   }
 }
