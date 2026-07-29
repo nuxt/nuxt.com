@@ -6,7 +6,7 @@ import { coerce, getMajor, getMinor, getPatch, isGreaterOrEqual } from 'verkit'
  * They stand for something unreleased, so tolerance never filters them out.
  */
 export const VERSION_KEYWORDS = {
-  unreleased: { label: 'nightly', short: 'soon' }
+  unreleased: { label: 'nightly', short: 'Soon' }
 } as const
 
 export type VersionKeyword = keyof typeof VERSION_KEYWORDS
