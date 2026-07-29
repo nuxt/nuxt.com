@@ -13,6 +13,8 @@ LOLIPOP! Deploy Now is a hosting service by GMO Pepabo.
 
 ## Deploy using the CLI
 
+Node.js 22.12.0 or later is required.
+
 1. Install the CLI.
 
     ```bash [Terminal]
@@ -29,7 +31,7 @@ LOLIPOP! Deploy Now is a hosting service by GMO Pepabo.
 
 3. Your app is served at `https://<name>.lolipop-now.app`.
 
-Running `lolipop deploy` again from the same directory ships a new version.
+To ship a new version later, link the directory once with `lolipop project link <project-id>` and run `lolipop deploy`, or pass `--project <project-id>` each time.
 
 ## Build settings
 
@@ -52,7 +54,7 @@ lolipop deploy --name my-app --framework nuxt --root apps/web
 ## Notes
 
 - Keep the default Nitro preset. The runtime starts `.output/server/index.mjs`, which the `node-server` preset produces.
-- `@nuxt/image` requires v2 or later.
+- `@nuxt/image` v2 or later is recommended. Earlier versions depend on a `sharp` release that needs an install script, which is not run during the build.
 - `useStorage` with the `fs` driver is not supported. Use an external data store for anything that must persist.
 - `routeRules` `isr` is not supported. Use `swr` instead.
 
