@@ -86,6 +86,13 @@ export default defineNuxtConfig({
     preference: 'dark'
   },
   content: {
+    // @nuxt/content's nuxthub preset only maps `hub.db` into `content.database` when `hub.db` is a string.
+    // With the object form it falls back to better-sqlite3, whose native addon fails to load on Vercel.
+    // See https://github.com/nuxt/content/issues/3821
+    database: {
+      type: 'libsql',
+      url: 'file:/tmp/sqlite.db'
+    },
     build: {
       markdown: {
         highlight: {
