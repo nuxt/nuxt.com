@@ -19,11 +19,6 @@ import {
 import { slackTextToDiscord, splitDiscordMessages } from '../lib/discord-format.js'
 import { withDiscordRetry } from '../lib/discord-retry.js'
 
-const DISCORD_CONTEXT = [
-  'The user is talking to Nuxi on Discord, in a thread (like Slack).',
-  '**Discord formatting:** Keep writing Slack mrkdwn (`<url|label>`, `:emoji:`) — outbound messages are converted to Discord markdown automatically. Use absolute nuxt.com links (`https://nuxt.com/docs/...`) — root-relative paths do not render as links. Never use `show_prompt` here. Prefer compact replies — Discord caps a message at 2000 characters, so anything longer is split across follow-up messages.'
-]
-
 type PostableMessage = string | { raw: string } | { markdown: string } | Record<string, unknown>
 
 /**
@@ -254,8 +249,11 @@ function createDiscordBridge() {
         .catch((error: unknown) => console.warn('[nuxi:discord] setThreadTitle failed', error))
     }
 
+    // Discord-specific behaviour lives in the always-on prompt, keyed on the
+    // principal (`lib/surface-instructions.ts`) — passing it as `context` here
+    // would prepend a fresh copy to history on every message.
     await send(
-      { message: toUserContent(turn), context: DISCORD_CONTEXT },
+      toUserContent(turn),
       { thread, auth: discordUserAuth(message.author.userId, message.author.userName, thread.channelId) }
     )
   })
@@ -263,7 +261,7 @@ function createDiscordBridge() {
   bot.onSubscribedMessage(async (thread: Thread, message: Message, context?: MessageContext) => {
     if (!shouldDispatch(thread, message)) return
     await send(
-      { message: toUserContent(burstMessages(message, context)), context: DISCORD_CONTEXT },
+      toUserContent(burstMessages(message, context)),
       { thread, auth: discordUserAuth(message.author.userId, message.author.userName, thread.channelId) }
     )
   })

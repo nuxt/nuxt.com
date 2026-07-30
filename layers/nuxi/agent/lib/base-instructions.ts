@@ -67,10 +67,9 @@ Do NOT call \`list-*\` first when the page is given — call the get tool direct
 - Prefer **root-relative** markdown links for nuxt.com pages (\`/docs/...\`, \`/blog/...\`, \`/modules/...\`)
 - Stay concise. Actionable over exhaustive.`
 
-export function buildInstructionsWithDate(pagePath?: string | null): string {
+/** The current page arrives per turn as client context, never from here. */
+export function buildInstructionsWithDate(): string {
   const today = new Date()
   const dateLine = `**Today's date:** ${today.toLocaleDateString('en-US', { timeZone: 'UTC' })} (UTC). Use it for recency — do not assume an older year when formulating web searches or answers.`
-  const withDate = `${dateLine}\n\n${BASE_INSTRUCTIONS}`
-  if (!pagePath) return withDate
-  return `Current page: ${pagePath}\n\n${withDate}`
+  return `${dateLine}\n\n${BASE_INSTRUCTIONS}`
 }

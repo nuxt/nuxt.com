@@ -3,8 +3,6 @@ import { localDev, vercelOidc } from 'eve/channels/auth'
 import { defaultEveAuth, eveChannel } from 'eve/channels/eve'
 import { appOrigin, internalHeaders } from '../lib/internal-api.js'
 
-const PAGE_PATH_PATTERN = /^\/[\w./-]*$/
-
 interface SessionPrincipal {
   principalId: string
   principalType: 'user' | 'anonymous'
@@ -44,27 +42,19 @@ function nuxtSessionAuth(): AuthFn<Request> {
   }
 }
 
-function parsePagePath(request: Request): string | null {
-  const raw = request.headers.get('x-page-path')?.trim() ?? null
-  if (!raw || !PAGE_PATH_PATTERN.test(raw) || raw.length > 256) return null
-  return raw
-}
-
 export default eveChannel({
   auth: [
     nuxtSessionAuth(),
     localDev(),
     vercelOidc()
   ],
+  // Anything scoped to a single turn (the page the user has open) rides on
+  // `clientContext` from the client instead — what lands here is prepended to
+  // durable history, so it has to be worth keeping for the whole session.
   async onMessage(ctx, message) {
     const context: string[] = []
-    const pagePath = parsePagePath(ctx.eve.request)
     const chatId = ctx.eve.request.headers.get('x-nuxi-chat-id')?.trim()
     const isNewSession = !ctx.eve.sessionId
-
-    if (pagePath) {
-      context.push(`Current page: ${pagePath}`)
-    }
 
     if (isNewSession && chatId) {
       try {

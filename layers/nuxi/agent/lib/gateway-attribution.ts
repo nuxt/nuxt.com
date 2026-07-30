@@ -1,6 +1,7 @@
 import type { GatewayProviderOptions } from '@ai-sdk/gateway'
 import type { ModelMessage } from 'ai'
-import { isScheduleAppAuth, type AdminMcpAuthContext } from './admin-mcp-access.js'
+import type { AdminMcpAuthContext } from './admin-mcp-access.js'
+import { resolveSurface } from './surface.js'
 import { workflowSkillId } from './workflows.js'
 import { NUXI_GATEWAY_TAG } from '../../shared/utils/ai-gateway.js'
 
@@ -18,24 +19,6 @@ import { NUXI_GATEWAY_TAG } from '../../shared/utils/ai-gateway.js'
  * this statically — `regions` reads like it should and does not.
  */
 const FALLBACK_MODELS = ['anthropic/claude-sonnet-4.5', 'google/gemini-3.6-flash']
-
-type Surface = 'web' | 'slack' | 'discord' | 'schedule' | 'unknown'
-
-/**
- * The Chat SDK bridge reports `chat-sdk` as its channel kind, which does not
- * distinguish adapters, so the surface comes from the authenticated principal
- * instead — the same discriminants `canAccessAdminMcp` relies on.
- */
-export function resolveSurface(auth: AdminMcpAuthContext | null | undefined): Surface {
-  if (!auth) return 'unknown'
-  if (isScheduleAppAuth(auth)) return 'schedule'
-
-  const issuer = auth.issuer ?? ''
-  if (issuer.startsWith('slack')) return 'slack'
-  if (issuer.startsWith('discord')) return 'discord'
-  if (issuer === 'nuxt.com') return 'web'
-  return 'unknown'
-}
 
 /**
  * Schedules dispatch through Slack with an app principal, so the workflow is

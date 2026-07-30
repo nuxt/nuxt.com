@@ -10,6 +10,8 @@ export interface UseEveChatOptions {
   /** Read once at store creation — must be resolved before calling this composable. */
   sessionCursor?: ChatSessionCursor | null
   headers?: () => Record<string, string>
+  /** Resolved before every turn — ephemeral, never persisted to session history. */
+  clientContext?: () => string | undefined
   onFinish?: (snapshot: UseEveAgentSnapshot<EveMessageData>) => void | Promise<void>
 }
 
@@ -110,6 +112,13 @@ export function useEveChat(options: UseEveChatOptions): AgentChatHandle & {
     },
     reducer: scopedTurnIdReducer(),
     headers: options.headers,
+    // Page context belongs to the turn it was sent with, not to the thread —
+    // `clientContext` reaches the model for that call only and never lands in
+    // durable history, so a stale path can't leak into a later answer.
+    prepareSend: (input) => {
+      const clientContext = options.clientContext?.()
+      return clientContext ? { ...input, clientContext } : input
+    },
     onFinish: (snapshot) => {
       void options.onFinish?.(snapshot)
     }
