@@ -16,8 +16,5 @@
     "chat": "^4.34.0",
     "eve": "^0.27.0",
     "zod": "^4.4.3"
-  },
-  "devDependencies": {
-    "microsandbox": "^0.6.6"
   }
 }
