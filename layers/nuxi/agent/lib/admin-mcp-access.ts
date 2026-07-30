@@ -13,9 +13,15 @@ function authAttr(attributes: AuthAttributes | undefined, key: string): string |
 }
 
 function isSlackAuth(auth: AdminMcpAuthContext): boolean {
-  // Vercel Connect only installs slack/nuxi on our workspace — no extra team_id gate needed.
-  if (auth.issuer?.startsWith('slack:') || auth.issuer === 'slack') return true
-  return Boolean(authAttr(auth.attributes, 'team_id'))
+  // Vercel Connect only installs slack/nuxi on our workspace, so the issuer is
+  // gate enough for the tenant. `buildSlackAuthContext` sets it to
+  // `slack:<teamId>` (bare `slack` when Slack omits the team).
+  const isSlackIssuer = auth.issuer === 'slack' || Boolean(auth.issuer?.startsWith('slack:'))
+  if (!isSlackIssuer) return false
+  // Same builder stamps `author_type` and downgrades bots to `service`. A bot
+  // posting in a channel Nuxi watches is not a team member asking a question,
+  // so it never inherits admin.
+  return auth.principalType === 'user' && authAttr(auth.attributes, 'author_type') !== 'bot'
 }
 
 function isDiscordAuth(auth: AdminMcpAuthContext): boolean {
