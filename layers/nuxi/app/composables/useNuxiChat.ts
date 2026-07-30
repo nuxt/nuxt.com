@@ -126,22 +126,9 @@ function createChatSyncHandler(options: SyncChatOptions) {
   }
 }
 
-function buildEveHeaders(
-  chatId: MaybeRefOrGetter<string>,
-  agent: ReturnType<typeof useNuxtAgent>,
-  withPageContext: ComputedRef<boolean>
-) {
-  return () => {
-    const headers: Record<string, string> = {
-      'x-nuxi-chat-id': toValue(chatId)
-    }
-
-    if (withPageContext.value && agent.currentPage.value) {
-      headers['x-page-path'] = agent.currentPage.value
-    }
-
-    return headers
-  }
+/** The chat id is read once per session, to attach prior-conversation context. */
+function buildEveHeaders(chatId: MaybeRefOrGetter<string>) {
+  return () => ({ 'x-nuxi-chat-id': toValue(chatId) })
 }
 
 function useChatVotes(chatId: MaybeRefOrGetter<string>, fetchVotes: MaybeRefOrGetter<boolean> = false) {
@@ -376,7 +363,10 @@ export function useNuxiChat(options: UseNuxiChatOptions) {
     chatId: options.chatId,
     initialMessages: seedMessages,
     sessionCursor: options.data?.value?.sessionCursor ?? options.sessionCursor ?? null,
-    headers: buildEveHeaders(options.chatId, agent, useContext),
+    headers: buildEveHeaders(options.chatId),
+    clientContext: () => useContext.value && agent.currentPage.value
+      ? `Current page: ${agent.currentPage.value}`
+      : undefined,
     onFinish: createChatSyncHandler({
       chatId: () => chatId.value,
       loggedIn: () => loggedIn.value,
