@@ -16,8 +16,9 @@ import { surfaceInstructions } from './lib/surface-instructions.js'
  *
  * `turn.started` alone, never alongside `session.started`: eve keys the two
  * scopes separately and concatenates both, so declaring each would emit this
- * prompt twice. The output is stable within a session, so re-resolving costs a
- * string concat and does not disturb prompt caching.
+ * prompt twice. Re-resolving costs a string concat and is byte-identical turn
+ * to turn, so the cached prefix holds — the one exception is a session open
+ * across UTC midnight, where the date line correctly moves and costs one miss.
  */
 export default defineDynamic({
   events: {
