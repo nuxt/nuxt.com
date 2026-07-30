@@ -1,5 +1,6 @@
 import { defineTool } from 'eve/tools'
 import { webFetch } from 'eve/tools/defaults'
+import { isAllowedWebFetchUrl } from '../lib/web-fetch-access.js'
 
 /**
  * The built-in fetches any URL, which from an unauthenticated chat widget is an
@@ -12,10 +13,6 @@ import { webFetch } from 'eve/tools/defaults'
  * executor's to follow, so this holds because we own where nuxt.com redirects
  * to, not because the check is airtight.
  */
-function isAllowedHost(hostname: string): boolean {
-  return hostname === 'nuxt.com' || hostname.endsWith('.nuxt.com')
-}
-
 export default defineTool({
   ...webFetch,
   description: [
@@ -26,16 +23,9 @@ export default defineTool({
   async execute(input, ctx) {
     const { url } = input as { url: string }
 
-    let parsed: URL
-    try {
-      parsed = new URL(url)
-    } catch {
-      throw new Error(`Not a valid URL: ${url}`)
-    }
-
-    if (parsed.protocol !== 'https:' || !isAllowedHost(parsed.hostname)) {
+    if (!isAllowedWebFetchUrl(url)) {
       throw new Error(
-        `web_fetch is restricted to https://nuxt.com — refused ${parsed.origin}. Use the nuxt-mcp connection for documentation, or tell the user you cannot reach that page.`
+        `web_fetch is restricted to https://nuxt.com — refused ${url}. Use the nuxt-mcp connection for documentation, or tell the user you cannot reach that page.`
       )
     }
 
