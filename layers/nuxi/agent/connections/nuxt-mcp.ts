@@ -1,7 +1,7 @@
 import { defineMcpClientConnection } from 'eve/connections'
-import { appOrigin } from '../lib/internal-api.js'
+import { docsMcpOrigin } from '../lib/internal-api.js'
 
 export default defineMcpClientConnection({
-  url: `${appOrigin()}/mcp`,
+  url: `${docsMcpOrigin()}/mcp`,
   description: 'Nuxt.com documentation, blog, modules catalog, deploy providers, and changelog.'
 })
