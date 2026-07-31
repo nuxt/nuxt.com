@@ -89,7 +89,7 @@ const items = computed(() => [
     {
       label: 'View on npm',
       icon: 'i-lucide-package',
-      to: `https://npm.chart.dev/${props.module.npm}`,
+      to: `https://npmx.dev/package/${props.module.npm}`,
       target: '_blank'
     }
   ]
@@ -148,7 +148,7 @@ const items = computed(() => [
             <UTooltip text="Monthly NPM Downloads">
               <NuxtLink
                 class="flex items-center gap-1 hover:text-highlighted"
-                :to="`https://npm.chart.dev/${module.npm}`"
+                :to="`https://npmx.dev/package-stats/${module.npm}/v/${module.stats.version}?granularity=monthly`"
                 target="_blank"
               >
                 <UIcon name="i-lucide-circle-arrow-down" class="size-4 shrink-0" />
