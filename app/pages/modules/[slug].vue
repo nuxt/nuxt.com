@@ -144,7 +144,7 @@ if (import.meta.server) {
 
       <div class="flex flex-col lg:flex-row lg:items-center gap-3 mt-4">
         <UTooltip text="Monthly NPM Downloads">
-          <NuxtLink class="flex items-center gap-1.5" :to="`https://www.npmjs.com/package/${module.npm}`" target="_blank">
+          <NuxtLink class="flex items-center gap-1.5" :to="`https://npmx.dev/package-stats/${module.npm}/v/{module.stats.version}`" target="_blank">
             <UIcon name="i-lucide-circle-arrow-down" class="size-5 shrink-0" />
             <span class="text-sm font-medium">{{ formatNumber(module.stats.downloads) }} downloads</span>
           </NuxtLink>
