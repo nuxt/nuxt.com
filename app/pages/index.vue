@@ -18,6 +18,13 @@ const [{ data: page }, { data: officialModules }, { data: showcase }, { getFilte
   useSponsors()
 ])
 
+// Merge via computed, not mutation: useFetch `data` is a shallowRef (Nuxt 4
+// default), so writing module.health in place would not trigger a re-render.
+const { health } = useModuleHealth()
+const officialModulesWithHealth = computed(() =>
+  (officialModules.value || []).map(m => ({ ...m, health: health.value[m.name] ?? m.health ?? null }))
+)
+
 const sponsorGroups = getFilteredSponsors(['diamond', 'platinum', 'gold'])
 
 const stats = useStats()
@@ -126,6 +133,19 @@ onMounted(() => {
         wrapper: 'lg:min-h-[540px]'
       }"
     >
+      <template #headline>
+        <NuxtLink :to="page.hero.cta.to">
+          <UBadge variant="subtle" size="lg" class="px-3 relative rounded-full font-semibold dark:hover:bg-primary-400/15 dark:hover:ring-primary-700">
+            {{ page?.hero.cta.label }}
+            <UIcon
+              v-if="page?.hero.cta.icon"
+              :name="page?.hero.cta.icon"
+              class="size-4 pointer-events-none"
+            />
+          </UBadge>
+        </NuxtLink>
+      </template>
+
       <template #title>
         The Full-Stack<br><span class="text-primary">Vue Framework</span>
       </template>
@@ -353,7 +373,7 @@ onMounted(() => {
     >
       <div class="flex flex-col md:flex-row gap-4">
         <div class="md:w-1/4 flex flex-col gap-4">
-          <UPageCard class="flex-1" variant="subtle" to="https://npm.chart.dev/nuxt">
+          <UPageCard class="flex-1" variant="subtle" :to="`https://npmx.dev/package-stats/nuxt/v/${stats.version}?granularity=monthly`">
             <div class="flex items-center gap-3">
               <div class="rounded-lg bg-default p-2 flex items-center justify-center border border-default">
                 <UIcon name="i-simple-icons-npm" class="text-red-500 size-6" />
@@ -450,7 +470,7 @@ onMounted(() => {
         dots
         wheel-gestures
         arrows
-        :items="officialModules"
+        :items="officialModulesWithHealth"
         class="min-w-0"
         :ui="{
           container: 'ms-0 items-stretch',

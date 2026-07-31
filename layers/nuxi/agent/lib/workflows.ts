@@ -1,6 +1,7 @@
 import { timingSafeEqual } from 'node:crypto'
 import type { ScheduleHandlerArgs } from 'eve/schedules'
 import slack from '../channels/slack.js'
+import { discordWorkflowChannelId } from './discord-access.js'
 import { resolveSlackChannelRef, workflowSlackChannelRef } from './slack-api.js'
 
 const DEFAULT_SINCE_DAYS = 7
@@ -39,6 +40,17 @@ export function resolveSinceDays(
   return override ?? fallback
 }
 
+/**
+ * Starts a Slack digest session and, when `DISCORD_WORKFLOW_CHANNEL_ID` is
+ * configured, mirrors the same generated text to Discord (see
+ * `discord-workflow.ts` — no second agent run). Awaited inline rather than
+ * fired under a nested `waitUntil`: this whole function already runs inside
+ * the caller's top-level `waitUntil(runWeeklyDigest(...))`, and a second,
+ * deeply-nested `waitUntil` call turned out not to reliably survive the
+ * schedule's durable step execution (Discord mirror silently never ran,
+ * no error logged). Awaiting here keeps the mirror inside that same
+ * protected async chain instead of relying on a second background task.
+ */
 export async function receiveOnSlack({
   receive,
   appAuth,
@@ -52,11 +64,20 @@ export async function receiveOnSlack({
 }) {
   const resolved = await resolveSlackChannelRef(channelRef ?? workflowSlackChannelRef())
 
-  return receive(slack, {
+  const session = await receive(slack, {
     auth: appAuth,
     target: { channelId: resolved.id },
     message
   })
+
+  const discordChannelId = discordWorkflowChannelId()
+  if (discordChannelId) {
+    // Dynamic import: keep Slack digest schedules loadable without Discord env.
+    const { mirrorDigestToDiscord } = await import('./discord-workflow.js')
+    await mirrorDigestToDiscord({ session, channelId: discordChannelId })
+  }
+
+  return session
 }
 
 export function isManualWorkflowTriggerAllowed(): boolean {
@@ -97,9 +118,25 @@ export function parseSinceHours(value: string | null | undefined): ParseWindowRe
 
 const SLACK_WORKFLOW_DELIVERY = `Your text reply is posted verbatim to this Slack channel by Eve — there is no Slack post tool and you do not need one. Output only the formatted summary from the skill. Never say you cannot post, never mention missing tools, never ask anyone to copy-paste, and never add a "Note:" about delivery.`
 
+/** Opening line of every scheduled workflow prompt, and the only trace of which skill ran. */
+function loadSkillDirective(skillId: string): string {
+  return `Load the \`${skillId}\` skill and follow it`
+}
+
+const LOAD_SKILL_RE = /Load the `([a-z0-9-]+)` skill and follow it/
+
+/**
+ * Recovers the skill id from a prompt built above, so `nuxiGatewayTags` can bill
+ * a scheduled run to its workflow. Kept next to the builders on purpose:
+ * rewording one without the other would silently stop tagging spend.
+ */
+export function workflowSkillId(message: string): string | undefined {
+  return LOAD_SKILL_RE.exec(message)?.[1]
+}
+
 /** Prompt prefix shared by scheduled Slack workflows. */
 export function skillWorkflowMessage(skillId: string, sinceDays: number): string {
-  return `Load the \`${skillId}\` skill and follow it for the last ${sinceDays} days.
+  return `${loadSkillDirective(skillId)} for the last ${sinceDays} days.
 
 ${SLACK_WORKFLOW_DELIVERY}`
 }
@@ -109,7 +146,7 @@ export function skillFirehoseWorkflowMessage(
   sinceHours: number,
   firehoseChannelName: string
 ): string {
-  return `Load the \`${skillId}\` skill and follow it for the last ${sinceHours} hours.
+  return `${loadSkillDirective(skillId)} for the last ${sinceHours} hours.
 
 Use \`read_slack_channel_history\` on channel \`${firehoseChannelName}\` with sinceHours=${sinceHours}.
 

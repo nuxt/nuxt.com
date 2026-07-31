@@ -144,7 +144,7 @@ export const useModules = () => {
   })
 
   const stats = computed(() => data.value.stats)
-  const modules = computed(() => data.value.modules || [])
+  const modules = computed<Module[]>(() => data.value.modules || [])
 
   const module = useState<Module>('module', () => ({} as Module))
 

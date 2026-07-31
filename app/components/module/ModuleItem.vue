@@ -14,16 +14,17 @@ const props = withDefaults(
     isAdded: boolean
     showAddButton?: boolean
     selectable?: boolean
+    sortKey?: string
   }>(),
   {
     showBadge: true,
     showAddButton: true,
-    selectable: false
+    selectable: false,
+    sortKey: 'downloads'
   }
 )
 
 const { track } = useAnalytics()
-const { selectedSort } = useModules()
 const {
   copyInstall: copyInstallCommand,
   copyPrompt: copyAgentPrompt,
@@ -32,12 +33,15 @@ const {
   openVSCode: openPromptInVSCode
 } = useModuleInstallActions(() => props.module, 'context-menu')
 
-const relativeDate = useTimeAgo(() =>
-  selectedSort.value.key === 'publishedAt' ? props.module.stats.publishedAt : props.module.stats.createdAt
+const publishedAgo = useTimeAgo(() => props.module.stats.publishedAt)
+const createdAgo = useTimeAgo(() => props.module.stats.createdAt)
+
+const relativeDate = computed(() =>
+  props.sortKey === 'publishedAt' ? publishedAgo.value : createdAgo.value
 )
 
 const staticModuleDate = computed(() =>
-  selectedSort.value.key === 'publishedAt'
+  props.sortKey === 'publishedAt'
     ? formatDateByLocale('en', props.module.stats.publishedAt)
     : formatDateByLocale('en', props.module.stats.createdAt)
 )
@@ -111,7 +115,7 @@ const items = computed(() => [
     {
       label: 'View on npm',
       icon: 'i-lucide-package',
-      to: `https://npm.chart.dev/${props.module.npm}`,
+      to: `https://npmx.dev/package/${props.module.npm}`,
       target: '_blank'
     }
   ]
@@ -132,7 +136,7 @@ const items = computed(() => [
         container: 'flex flex-col',
         wrapper: 'flex flex-col min-h-0 items-start',
         body: 'flex-none',
-        footer: 'w-full mt-auto pointer-events-auto pt-4 z-[1]'
+        footer: 'w-full mt-auto pointer-events-auto pt-4 z-1'
       }"
       @click="handleCardClick"
     >
@@ -170,7 +174,7 @@ const items = computed(() => [
             <UTooltip text="Monthly NPM Downloads">
               <NuxtLink
                 class="flex items-center gap-1 hover:text-highlighted"
-                :to="`https://npm.chart.dev/${module.npm}`"
+                :to="`https://npmx.dev/package-stats/${module.npm}/v/${module.stats.version}?granularity=monthly`"
                 target="_blank"
               >
                 <UIcon name="i-lucide-circle-arrow-down" class="size-4 shrink-0" />
@@ -189,7 +193,22 @@ const items = computed(() => [
               </NuxtLink>
             </UTooltip>
 
-            <UTooltip v-if="selectedSort.key === 'publishedAt'" :text="`Updated ${formatDateByLocale('en', module.stats.publishedAt)}`">
+            <template v-if="module.health">
+              <UTooltip :text="`Health: ${module.health.status} - ${module.health.score}/100`">
+                <NuxtLink
+                  :to="`https://nuxt.care/?search=npm:${module.npm}`"
+                  class="flex items-center gap-1 hover:text-highlighted"
+                  target="_blank"
+                >
+                  <UIcon name="i-lucide-heart-pulse" class="size-4 shrink-0" :style="{ color: module.health.color }" />
+                  <span class="text-sm font-medium whitespace-normal">
+                    {{ module.health.score }}
+                  </span>
+                </NuxtLink>
+              </UTooltip>
+            </template>
+
+            <UTooltip v-if="sortKey === 'publishedAt'" :text="`Updated ${formatDateByLocale('en', module.stats.publishedAt)}`">
               <NuxtLink
                 class="flex items-center gap-1 hover:text-highlighted"
                 :to="`https://github.com/${module.repo}`"
@@ -207,7 +226,7 @@ const items = computed(() => [
               </NuxtLink>
             </UTooltip>
 
-            <UTooltip v-if="selectedSort.key === 'createdAt'" :text="`Created ${formatDateByLocale('en', module.stats.createdAt)}`">
+            <UTooltip v-if="sortKey === 'createdAt'" :text="`Created ${formatDateByLocale('en', module.stats.createdAt)}`">
               <NuxtLink
                 class="flex items-center gap-1 hover:text-highlighted"
                 :to="`https://github.com/${module.repo}`"

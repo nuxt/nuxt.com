@@ -5,7 +5,7 @@ import { useNuxiChat } from '../../composables/useNuxiChat'
 const props = defineProps<{
   chatId: string
   initialMessages?: UIMessage[]
-  initialState?: ChatEveState | null
+  sessionCursor?: ChatSessionCursor | null
 }>()
 
 const {
@@ -38,7 +38,7 @@ const {
 } = useNuxiChat({
   chatId: props.chatId,
   initialMessages: props.initialMessages,
-  initialState: props.initialState,
+  sessionCursor: props.sessionCursor ?? null,
   source: 'prompt',
   withPageContext: 'when-enabled',
   consumePendingPrompt,

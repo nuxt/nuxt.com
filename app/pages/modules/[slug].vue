@@ -13,6 +13,16 @@ if (!module.value) {
   throw createError({ statusCode: 404, statusMessage: 'Module not found', fatal: true })
 }
 
+// Reassign the ref (not module.value.health = ...): useFetch `data` is a
+// shallowRef, so an in-place nested write would not trigger reactivity.
+const { health } = useModuleHealth()
+watch(health, (map) => {
+  const m = module.value
+  if (m && map[m.name] && m.health !== map[m.name]) {
+    module.value = { ...m, health: map[m.name] }
+  }
+})
+
 const ownerName = computed(() => {
   const [owner, name] = module.value!.repo.split('#')[0].split('/')
   return `${owner}/${name}`
@@ -129,7 +139,7 @@ if (import.meta.server) {
             :icon="moduleIcon(module.category)"
             :alt="module.name"
             size="xl"
-            class="-m-[4px] rounded-none bg-transparent"
+            class="-m-1 rounded-none bg-transparent"
           />
 
           <div>
@@ -148,7 +158,7 @@ if (import.meta.server) {
 
       <div class="flex flex-col lg:flex-row lg:items-center gap-3 mt-4">
         <UTooltip text="Monthly NPM Downloads">
-          <NuxtLink class="flex items-center gap-1.5" :to="`https://npm.chart.dev/${module.npm}`" target="_blank">
+          <NuxtLink class="flex items-center gap-1.5" :to="`https://npmx.dev/package-stats/${module.npm}/v/${module.stats.version}?granularity=monthly`" target="_blank">
             <UIcon name="i-lucide-circle-arrow-down" class="size-5 shrink-0" />
             <span class="text-sm font-medium">{{ formatNumber(module.stats.downloads) }} downloads</span>
           </NuxtLink>
@@ -171,6 +181,20 @@ if (import.meta.server) {
             <span class="text-sm font-medium">v{{ module.stats.version }}</span>
           </NuxtLink>
         </UTooltip>
+
+        <template v-if="module.health">
+          <span class="hidden lg:block text-muted">&bull;</span>
+          <UTooltip :text="`Health: ${module.health.status} - ${module.health.score}/100`">
+            <NuxtLink
+              :to="`https://nuxt.care/?search=npm:${module.npm}`"
+              class="flex items-center gap-1.5"
+              target="_blank"
+            >
+              <UIcon name="i-lucide-heart-pulse" class="size-5 shrink-0" :style="{ color: module.health.color }" />
+              <span class="text-sm font-medium">{{ module.health.score }}</span>
+            </NuxtLink>
+          </UTooltip>
+        </template>
 
         <div class="mx-3 h-6 border-l border-gray-200 dark:border-gray-800 w-px hidden lg:block" />
 

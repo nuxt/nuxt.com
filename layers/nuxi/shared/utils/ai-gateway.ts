@@ -1,12 +1,21 @@
 import type { GatewayProviderOptions } from '@ai-sdk/gateway'
 
-/** Route AI Gateway requests through ZDR-compliant providers only. */
-export const gatewayZeroDataRetention = {
-  zeroDataRetention: true
-} satisfies GatewayProviderOptions
+/** Tag attached to every Nuxi AI Gateway request for spend attribution. */
+export const NUXI_GATEWAY_TAG = 'app:nuxi'
 
-export const gatewayProviderOptions = {
-  gateway: gatewayZeroDataRetention
+/**
+ * Options for the server-side one-shot calls that are not agent sessions (the
+ * agent's own options are built per session in `agent/lib/gateway-attribution`).
+ * Tagged like the rest so `groupBy=tag` reports stay complete — an untagged
+ * `app:nuxi` row now reads as "predates per-surface tagging".
+ */
+export function gatewayOptionsFor(feature: string) {
+  return {
+    gateway: {
+      zeroDataRetention: true,
+      tags: [NUXI_GATEWAY_TAG, 'surface:web', `feature:${feature}`]
+    } satisfies GatewayProviderOptions
+  }
 }
 
 export function isGatewayZdrError(error: unknown): boolean {

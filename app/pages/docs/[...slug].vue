@@ -217,6 +217,20 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
             <UBreadcrumb :items="breadcrumb" />
           </template>
 
+          <template #title>
+            {{ page.title }}
+
+            <UBadge
+              v-if="page.minimalVersion?.trim()"
+              :label="`v${page.minimalVersion?.trim()}`"
+              color="info"
+              variant="subtle"
+              size="lg"
+              class="align-middle"
+              :aria-label="`Minimum Nuxt version: v${page.minimalVersion?.trim()}`"
+            />
+          </template>
+
           <template #links>
             <UButton
               v-for="link in page.links?.map(link => ({ ...link, size: 'md' }))"
@@ -269,7 +283,12 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
             :links="page.body?.toc?.links"
             :community-links="communityLinks"
             highlight
-            class="hidden lg:block lg:backdrop-blur-none"
+            highlight-variant="circuit"
+            class="hidden lg:flex lg:backdrop-blur-none lg:overflow-y-auto"
+            :ui="{
+              container: 'lg:max-h-[inherit]',
+              content: 'lg:min-h-[min(var(--list-height,8rem),8rem)]'
+            }"
           />
           <!-- mobile -->
           <div class="order-first lg:order-last sticky top-(--ui-header-height) z-10 bg-default/75 lg:bg-[initial] backdrop-blur -mx-4 p-6 border-b border-dashed border-default flex justify-between">

@@ -1,6 +1,10 @@
 hero:
   title: 'The Full-Stack Vue Framework'
   description: Build fast, production-ready web apps with Vue. File-based routing, auto-imports, and server-side rendering — all configured out of the box.
+  cta:
+    label: Nuxt 4.5.1 is out
+    to: /blog/v4-5-security
+    icon: i-lucide-arrow-right
   tabs:
     - title: Minimal
       icon: i-lucide-leaf
@@ -374,7 +378,7 @@ testimonial:
   author:
     name: 'Evan You'
     description: 'Creator of Vue.js and Vite'
-    to: 'https://x.com/youyuxi'
+    to: 'https://x.com/evanyou'
     avatar:
       src: 'https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/yyx990803'
       srcset: 'https://ipx.nuxt.com/f_auto,s_80x80/gh_avatar/yyx990803 2x'

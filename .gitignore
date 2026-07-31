@@ -26,3 +26,5 @@ dist
 .wrangler
 test-results/
 .env*.local
+.env*
+!.env.example

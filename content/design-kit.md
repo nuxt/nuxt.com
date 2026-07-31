@@ -15,7 +15,7 @@ links:
     target: '_blank'
 ---
 
-For machine-readable design tokens (colors, typography, spacing, components), see [/design.md](/design.md).
+For machine-readable design tokens (colors, typography, spacing, components), see [/design.md](/design.md){external}.
 
 ## Logo History
 
