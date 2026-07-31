@@ -4,6 +4,7 @@ import type { Module } from '#shared/types'
 const emit = defineEmits<{
   add: [module: Module]
   remove: [module: Module]
+  select: [module: Module, event: MouseEvent]
 }>()
 
 const props = withDefaults(
@@ -12,17 +13,25 @@ const props = withDefaults(
     showBadge?: boolean
     isAdded: boolean
     showAddButton?: boolean
+    selectable?: boolean
     sortKey?: string
   }>(),
   {
     showBadge: true,
     showAddButton: true,
+    selectable: false,
     sortKey: 'downloads'
   }
 )
 
-const { copy } = useClipboard()
 const { track } = useAnalytics()
+const {
+  copyInstall: copyInstallCommand,
+  copyPrompt: copyAgentPrompt,
+  openCursor: openPromptInCursor,
+  openClaude: openPromptInClaudeCode,
+  openVSCode: openPromptInVSCode
+} = useModuleInstallActions(() => props.module, 'context-menu')
 
 const publishedAgo = useTimeAgo(() => props.module.stats.publishedAt)
 const createdAgo = useTimeAgo(() => props.module.stats.createdAt)
@@ -37,12 +46,6 @@ const staticModuleDate = computed(() =>
     : formatDateByLocale('en', props.module.stats.createdAt)
 )
 
-function copyInstallCommand(moduleName: string) {
-  track('Module Install Command Copied', { module: moduleName })
-  const command = `npx nuxt@latest module add ${moduleName}`
-  copy(command, { title: 'Command copied to clipboard:', description: command })
-}
-
 function toggleModule(m: Module) {
   const action = props.isAdded ? 'remove' : 'add'
   track('Module Toggled', { module: m.name, action })
@@ -54,9 +57,10 @@ function toggleModule(m: Module) {
 }
 
 function handleCardClick(event: MouseEvent) {
-  if (event.shiftKey) {
+  if (!props.selectable) return
+  if (event.shiftKey || event.metaKey || event.ctrlKey) {
     event.preventDefault()
-    toggleModule(props.module)
+    emit('select', props.module, event)
   }
 }
 
@@ -70,7 +74,29 @@ const items = computed(() => [
     {
       label: 'Copy install command',
       icon: 'i-lucide-terminal',
-      onSelect: () => copyInstallCommand(props.module.name)
+      onSelect: copyInstallCommand
+    },
+    {
+      label: 'Copy agent prompt',
+      icon: 'i-custom-ai',
+      onSelect: copyAgentPrompt
+    }
+  ],
+  [
+    {
+      label: 'Open in Cursor',
+      icon: 'i-simple-icons-cursor',
+      onSelect: openPromptInCursor
+    },
+    {
+      label: 'Open in Claude Code',
+      icon: 'i-simple-icons-anthropic',
+      onSelect: openPromptInClaudeCode
+    },
+    {
+      label: 'Open in VS Code',
+      icon: 'i-simple-icons-visualstudiocode',
+      onSelect: openPromptInVSCode
     }
   ],
   [
@@ -237,7 +263,7 @@ const items = computed(() => [
                 color="neutral"
                 size="xs"
                 variant="outline"
-                @click="copyInstallCommand(module.name)"
+                @click="copyInstallCommand"
               >
                 <span class="sr-only">Copy command to install {{ module.name }}</span>
               </UButton>

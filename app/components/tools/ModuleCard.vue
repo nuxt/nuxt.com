@@ -15,34 +15,19 @@ const props = defineProps<{
   stars?: number
 }>()
 
-const { copy } = useClipboard()
-const { track } = useAnalytics()
-
 const displayTitle = computed(() => {
   const fromNpm = props.npm?.trim()
   if (fromNpm) return fromNpm
   return props.slug?.trim() || 'Module'
 })
 
-const installCommand = computed(() => `npx nuxt@latest module add ${props.slug}`)
-
-const agentPrompt = computed(() => {
-  const lines = [`Install and configure the Nuxt module **${props.npm || props.slug}**: ${props.description || ''}`]
-  if (props.website) lines.push(`Docs: ${props.website}`)
-  if (props.repo) lines.push(`GitHub: https://github.com/${props.repo}`)
-  lines.push(`\nSteps:\n1. Run \`${installCommand.value}\`\n2. Read the module documentation and add recommended configuration in \`nuxt.config.ts\`\n3. List any required environment variables in \`.env.example\` without filling in actual values`)
-  return lines.join('\n')
-})
-
-function copyInstall() {
-  track('Module Install Command Copied', { module: props.slug, source: 'nuxt-agent' })
-  copy(installCommand.value, { title: 'Command copied to clipboard:', description: installCommand.value })
-}
-
-function copyPrompt() {
-  track('Module Agent Prompt Copied', { module: props.slug, source: 'nuxt-agent' })
-  copy(agentPrompt.value, { title: 'Agent prompt copied!', description: props.npm || props.slug, icon: 'i-custom-ai' })
-}
+const { copyInstall, copyPrompt } = useModuleInstallActions(() => ({
+  name: props.slug,
+  npm: props.npm || '',
+  description: props.description || '',
+  website: props.website || '',
+  repo: props.repo || ''
+}), 'nuxt-agent')
 </script>
 
 <template>

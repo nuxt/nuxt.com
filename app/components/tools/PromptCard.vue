@@ -1,23 +1,17 @@
 <script setup lang="ts">
-import {
-  buildClaudeCodeBrowserUrl,
-  buildCursorBrowserUrl
-} from '../../../layers/nuxi/shared/utils/ide-deeplinks'
-
 const props = defineProps<{
   description: string
   prompt: string
-  repo?: string
   icon?: string
-  deeplinks: {
-    cursor: string
-    claude: string
-  }
 }>()
 
-const { copied } = useClipboard()
-const toast = useToast()
+const { copied, copy } = useClipboard()
 const { track } = useAnalytics()
+const {
+  openInCursor: openPromptInCursor,
+  openInClaudeCode: openPromptInClaudeCode,
+  openInVSCode: openPromptInVSCode
+} = useIdeDeeplink()
 const expanded = ref(false)
 
 const previewLimit = 200
@@ -27,57 +21,24 @@ const previewText = computed(() => {
   return `${props.prompt.slice(0, previewLimit)}…`
 })
 
-const pasteShortcut = computed(() =>
-  typeof navigator !== 'undefined' && navigator.platform?.includes('Mac') ? '⌘V' : 'Ctrl+V'
-)
-
-function openIdeDeeplink(url: string) {
-  window.location.assign(url)
-}
-
-async function copyPromptToClipboard(options: { title: string, description: string, icon: string }) {
-  try {
-    await navigator.clipboard.writeText(props.prompt)
-    toast.add(options)
-  } catch {
-    // Clipboard can fail without blocking the deeplink handoff.
-  }
-}
-
-async function openInCursor() {
+function openInCursor() {
   track('Nuxi Prompt Opened', { ide: 'cursor', source: 'nuxt-agent' })
-
-  const { url, needsClipboardFallback } = buildCursorBrowserUrl(props.prompt)
-  if (needsClipboardFallback) {
-    await copyPromptToClipboard({
-      title: 'Prompt copied',
-      description: `Paste with ${pasteShortcut.value} when your IDE opens`,
-      icon: 'i-lucide-clipboard-check'
-    })
-  }
-
-  openIdeDeeplink(url)
+  openPromptInCursor(props.prompt)
 }
 
-async function openInClaudeCode() {
+function openInClaudeCode() {
   track('Nuxi Prompt Opened', { ide: 'claude', source: 'nuxt-agent' })
+  openPromptInClaudeCode(props.prompt)
+}
 
-  const { url, needsClipboardFallback } = buildClaudeCodeBrowserUrl(props.prompt, props.repo)
-
-  if (needsClipboardFallback) {
-    await copyPromptToClipboard({
-      title: 'Prompt copied',
-      description: `Paste with ${pasteShortcut.value} when your IDE opens`,
-      icon: 'i-lucide-clipboard-check'
-    })
-  }
-
-  openIdeDeeplink(url)
+function openInVSCode() {
+  track('Nuxi Prompt Opened', { ide: 'vscode', source: 'nuxt-agent' })
+  openPromptInVSCode(props.prompt)
 }
 
 function copyPrompt() {
   track('Nuxi Prompt Copied', { source: 'nuxt-agent' })
-  void copyPromptToClipboard({
+  copy(props.prompt, {
     title: 'Prompt copied!',
     description: props.description,
     icon: 'i-lucide-clipboard-check'
@@ -149,6 +110,24 @@ function copyPrompt() {
               <UIcon name="i-simple-icons-anthropic" class="size-3.5 text-[#D97757]" />
             </template>
           </UButton>
+        </span>
+      </UTooltip>
+
+      <UTooltip
+        arrow
+        :delay-duration="700"
+        :content="{ side: 'top', sideOffset: 6 }"
+        text="Open prompt in VS Code (Copilot Chat)"
+      >
+        <span class="inline-flex">
+          <UButton
+            size="xs"
+            color="neutral"
+            variant="outline"
+            icon="i-simple-icons-visualstudiocode"
+            label="Open in VS Code"
+            @click="openInVSCode"
+          />
         </span>
       </UTooltip>
 

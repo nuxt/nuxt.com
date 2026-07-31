@@ -69,7 +69,7 @@ provide('navigation', versionNavigation)
 </script>
 
 <template>
-  <UApp :tooltip="{ delayDuration: 500 }">
+  <UApp :tooltip="{ delayDuration: 300 }">
     <NuxtLoadingIndicator color="var(--ui-primary)" />
 
     <div class="flex">
