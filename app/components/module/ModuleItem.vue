@@ -148,7 +148,7 @@ const items = computed(() => [
             <UTooltip text="Monthly NPM Downloads">
               <NuxtLink
                 class="flex items-center gap-1 hover:text-highlighted"
-                :to="`https://npmx.dev/package-stats/${module.npm}/v/${module.stats.version}`"
+                :to="`https://npmx.dev/package-stats/${module.npm}/v/${module.stats.version}?granularity=monthly`"
                 target="_blank"
               >
                 <UIcon name="i-lucide-circle-arrow-down" class="size-4 shrink-0" />
