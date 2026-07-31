@@ -373,7 +373,7 @@ onMounted(() => {
     >
       <div class="flex flex-col md:flex-row gap-4">
         <div class="md:w-1/4 flex flex-col gap-4">
-          <UPageCard class="flex-1" variant="subtle" to="https://www.npmjs.com/package/nuxt">
+          <UPageCard class="flex-1" variant="subtle" :to="`https://npmx.dev/package-stats/nuxt/v/${stats.version}`">
             <div class="flex items-center gap-3">
               <div class="rounded-lg bg-default p-2 flex items-center justify-center border border-default">
                 <UIcon name="i-simple-icons-npm" class="text-red-500 size-6" />
