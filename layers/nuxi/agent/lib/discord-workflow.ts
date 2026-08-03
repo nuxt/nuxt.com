@@ -2,19 +2,45 @@ import type { Session } from 'eve/channels'
 import { postDiscordWorkflowParts } from '../channels/discord.js'
 import { slackTextToDiscord, splitDiscordMessages } from './discord-format.js'
 
-/**
- * Reads the text Slack's default `message.completed` handler posts — skip
- * `finishReason: "tool-calls"` (pre-tool narration / typing label only).
- * Returns as soon as that event arrives; Slack thread sessions may never emit
- * `session.completed`, which would otherwise hang the mirror forever.
- */
-async function finalMessageText(stream: Awaited<ReturnType<Session['getEventStream']>>): Promise<string | null> {
+/** `done: false` means the stream ended without a terminal event — an inconclusive drop, worth retrying. */
+type StreamReadResult
+  = | { done: true, message: string | null }
+    | { done: false }
+
+async function readFinalMessage(stream: Awaited<ReturnType<Session['getEventStream']>>): Promise<StreamReadResult> {
   for await (const event of stream) {
     if (event.type === 'message.completed') {
       if (event.data.finishReason === 'tool-calls') continue
-      if (event.data.message) return event.data.message
+      if (event.data.message) return { done: true, message: event.data.message }
     }
-    if (event.type === 'session.completed' || event.type === 'session.failed') break
+    if (event.type === 'session.completed' || event.type === 'session.failed') {
+      return { done: true, message: null }
+    }
+  }
+  return { done: false }
+}
+
+const FINAL_MESSAGE_MAX_ATTEMPTS = 3
+const FINAL_MESSAGE_RETRY_DELAY_MS = 2_000
+
+/** Retries on a fresh stream (cheap replay of the durable log) when a read ends inconclusively. */
+async function finalMessageText(
+  session: Session,
+  onStream: (stream: Awaited<ReturnType<Session['getEventStream']>>) => void
+): Promise<string | null> {
+  for (let attempt = 1; attempt <= FINAL_MESSAGE_MAX_ATTEMPTS; attempt++) {
+    const stream = await session.getEventStream({ startIndex: 0 })
+    onStream(stream)
+    const result = await readFinalMessage(stream)
+    if (result.done) return result.message
+
+    console.warn('[nuxi:discord-workflow] event stream ended without a terminal event, retrying', {
+      attempt,
+      maxAttempts: FINAL_MESSAGE_MAX_ATTEMPTS
+    })
+    if (attempt < FINAL_MESSAGE_MAX_ATTEMPTS) {
+      await new Promise(resolve => setTimeout(resolve, FINAL_MESSAGE_RETRY_DELAY_MS))
+    }
   }
   return null
 }
@@ -59,12 +85,12 @@ export async function mirrorDigestToDiscord({
       channelId,
       timeoutMs: EVENT_STREAM_TIMEOUT_MS
     })
-    const stream = await session.getEventStream()
+    let currentStream: Awaited<ReturnType<Session['getEventStream']>> | null = null
     const text = await withTimeout(
-      finalMessageText(stream),
+      finalMessageText(session, (stream) => { currentStream = stream }),
       EVENT_STREAM_TIMEOUT_MS,
       'reading Slack session event stream',
-      () => { void stream.cancel() }
+      () => { void currentStream?.cancel() }
     )
     if (!text) {
       console.warn('[nuxi:discord-workflow] no final message.completed text on session stream, skipping mirror', {
