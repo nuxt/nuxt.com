@@ -207,7 +207,7 @@ importers:
         version: 8.1.0(@vue/compiler-dom@3.5.40)(@vue/compiler-sfc@3.5.40)(@vue/server-renderer@3.5.40)(vue@3.5.40(typescript@6.0.3))
       '@types/semver':
         specifier: ^7.7.1
-        version: 7.7.1
+        version: 7.8.0
       '@types/youtube':
         specifier: ^0.3.0
         version: 0.3.0
@@ -4128,8 +4128,8 @@ packages:
   '@types/sax@1.2.7':
     resolution: {integrity: sha512-rO73L89PJxeYM3s3pPPjiPgVVcymqU490g0YO5n5By0k2Erzj6tay/4lr1CHAAU4JyOWd1rpQ8bCf6cZfHU96A==}
 
-  '@types/semver@7.7.1':
-    resolution: {integrity: sha512-FmgJfu+MOcQ370SD0ev7EI8TlCAfKYU+B4m5T3yXc1CiRN94g/SZPtsCkk506aUDtlMnFZvasDwHHUcZUEaYuA==}
+  '@types/semver@7.8.0':
+    resolution: {integrity: sha512-1mAINjtQCXXeLkJ9ehXkwOcBpqtLxiVtKhpUf83DdRNdQKV0iXZpaHYqRr7nj+wvxuJzoAmAwXI+sCNMv1CzLQ==}
 
   '@types/supercluster@5.0.3':
     resolution: {integrity: sha512-XMSqQEr7YDuNtFwSgaHHOjsbi0ZGL62V9Js4CW45RBuRYlNWSW/KDqN+RFFE7HdHcGhJPtN0klKvw06r9Kg7rg==}
@@ -14858,7 +14858,7 @@ snapshots:
     dependencies:
       '@types/node': 26.0.1
 
-  '@types/semver@7.7.1': {}
+  '@types/semver@7.8.0': {}
 
   '@types/supercluster@5.0.3':
     dependencies:
