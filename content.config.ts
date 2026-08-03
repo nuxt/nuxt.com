@@ -1,8 +1,18 @@
 import { defineContentConfig, defineCollection, z } from '@nuxt/content'
 
+/** Authenticated git clones are far less likely to hit GitHub's anonymous-traffic throttling than unauthenticated ones. */
+function gitRepository(url: string, branch?: string) {
+  const token = process.env.NUXT_GITHUB_TOKEN
+  return {
+    url,
+    branch,
+    auth: token ? { token } : undefined
+  }
+}
+
 const docsV3Source = {
   cwd: process.env.NUXT_V3_PATH ?? undefined,
-  repository: !process.env.NUXT_V3_PATH ? 'https://github.com/nuxt/nuxt/tree/3.x' : undefined,
+  repository: !process.env.NUXT_V3_PATH ? gitRepository('https://github.com/nuxt/nuxt', '3.x') : undefined,
   include: 'docs/**/*',
   exclude: ['docs/**/*.json'],
   prefix: '/docs/3.x'
@@ -10,7 +20,7 @@ const docsV3Source = {
 
 const docsV4Source = {
   cwd: process.env.NUXT_V4_PATH ?? undefined,
-  repository: !process.env.NUXT_V4_PATH ? 'https://github.com/nuxt/nuxt/tree/4.x' : undefined,
+  repository: !process.env.NUXT_V4_PATH ? gitRepository('https://github.com/nuxt/nuxt', '4.x') : undefined,
   include: 'docs/**/*',
   exclude: ['docs/**/*.json'],
   prefix: '/docs/4.x'
@@ -18,7 +28,7 @@ const docsV4Source = {
 
 const docsV5Source = {
   cwd: process.env.NUXT_V5_PATH ?? undefined,
-  repository: !process.env.NUXT_V5_PATH ? 'https://github.com/nuxt/nuxt/tree/main' : undefined,
+  repository: !process.env.NUXT_V5_PATH ? gitRepository('https://github.com/nuxt/nuxt', 'main') : undefined,
   include: 'docs/**/*',
   exclude: ['docs/**/*.json'],
   prefix: '/docs/5.x'
@@ -26,21 +36,21 @@ const docsV5Source = {
 
 const examplesV3Source = {
   cwd: process.env.NUXT_EXAMPLES_PATH ?? undefined,
-  repository: !process.env.NUXT_EXAMPLES_PATH ? 'https://github.com/nuxt/examples' : undefined,
+  repository: !process.env.NUXT_EXAMPLES_PATH ? gitRepository('https://github.com/nuxt/examples') : undefined,
   include: '.docs/**/*',
   prefix: '/docs/3.x/4.examples'
 }
 
 const examplesV4Source = {
   cwd: process.env.NUXT_EXAMPLES_PATH ?? undefined,
-  repository: !process.env.NUXT_EXAMPLES_PATH ? 'https://github.com/nuxt/examples' : undefined,
+  repository: !process.env.NUXT_EXAMPLES_PATH ? gitRepository('https://github.com/nuxt/examples') : undefined,
   include: '.docs/**/*',
   prefix: '/docs/4.x/4.examples'
 }
 
 const examplesV5Source = {
   cwd: process.env.NUXT_EXAMPLES_PATH ?? undefined,
-  repository: !process.env.NUXT_EXAMPLES_PATH ? 'https://github.com/nuxt/examples' : undefined,
+  repository: !process.env.NUXT_EXAMPLES_PATH ? gitRepository('https://github.com/nuxt/examples') : undefined,
   include: '.docs/**/*',
   prefix: '/docs/5.x/4.examples'
 }
