@@ -66,6 +66,10 @@ Each call opens one 270s listener window — re-run it while testing. The previe
 
 Because dispatch is restricted to the `discordAllowedChannels` allowlist, Discord sessions get **admin mode by default** (`isAdminMode` matches Discord auth, like Slack). Keep the allowlist limited to trusted team channels — widening it to public channels means revisiting the admin mode gate first (`agent/lib/admin-mode.ts`). The rate-limit hook applies per Discord user id.
 
+## Caller identity
+
+`agent/lib/context.ts` resolves `Context.person` (id, name, bot flag) for every surface, and `agent/lib/caller-instructions.ts` renders it into the always-on prompt so "who am I?" has an answer. Discord's username comes for free from the inbound message payload. Slack's `app_mention`/`message` events only carry a user id — `channels/slack.ts` resolves the real name via `users.info` (`agent/lib/slack-api.ts`, cached 1h per user), which needs the **`users:read`** bot scope on top of the ones above; without it, Slack callers fall back to their user id.
+
 ## Scheduled Slack workflows
 
 Shared helpers live in `agent/lib/workflows.ts` (`receiveOnSlack`, auth, config). Each workflow keeps its own prompt, cron, and runner in `agent/schedules/<id>.ts`, with the procedure in `agent/skills/<id>/SKILL.md`.

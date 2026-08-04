@@ -4,6 +4,7 @@ import { AI_GATEWAY_INSTRUCTIONS } from './tools/ai-gateway.js'
 import { VERCEL_MCP_INSTRUCTIONS } from './connections/vercel-mcp.js'
 import { isAdminMode } from './lib/admin-mode.js'
 import { buildInstructionsWithDate } from './lib/base-instructions.js'
+import { callerInstructions } from './lib/caller-instructions.js'
 import { resolveContext } from './lib/context.js'
 import { surfaceInstructions } from './lib/surface-instructions.js'
 
@@ -24,7 +25,12 @@ export default defineDynamic({
   events: {
     'turn.started': async (_event, ctx) => {
       const auth = ctx.session.auth.current
-      const blocks = [buildInstructionsWithDate(), surfaceInstructions(resolveContext(auth).surface)]
+      const context = resolveContext(auth)
+      const blocks = [
+        buildInstructionsWithDate(),
+        surfaceInstructions(context.surface),
+        callerInstructions(context.person)
+      ]
 
       if (await isAdminMode(auth)) {
         blocks.push(ADMIN_MCP_INSTRUCTIONS, VERCEL_MCP_INSTRUCTIONS, AI_GATEWAY_INSTRUCTIONS)
