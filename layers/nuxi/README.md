@@ -40,12 +40,12 @@ How messages arrive: Discord does not push messages to HTTP webhooks like Slack.
    - `DISCORD_BOT_TOKEN` — Gateway connection + posting messages
    - `DISCORD_PUBLIC_KEY` — verifies inbound interaction signatures (HITL buttons, PING)
    - `DISCORD_APPLICATION_ID` — interaction responses
-   - `DISCORD_ALLOWED_CHANNELS` — comma-separated Discord channel ids where Nuxi may run. **Unset or empty means deny everywhere.** Mentions elsewhere are silently ignored. (Get an id via right-click on the channel → **Copy Channel ID**, with Developer Mode enabled.)
    - `REDIS_URL` — Chat SDK state adapter (subscriptions, dedupe, locks); memory fallback in dev
    - `DISCORD_GATEWAY_WEBHOOK_URL` — optional override for the Gateway forward target; defaults to `https://$VERCEL_URL/eve/v1/discord` (so previews forward to themselves), falling back to `$VERCEL_PROJECT_PRODUCTION_URL` when `VERCEL_URL` is unset
-3. **Invite the app to the server**: **OAuth2 → URL Generator**, scopes `bot` + `applications.commands`. Bot permissions: **View Channels**, **Send Messages**, **Create Public Threads**, **Send Messages in Threads**, **Manage Threads** (renames threads after the mention text), **Read Message History**, **Add Reactions**.
-4. **Set the Interactions Endpoint URL** (General Information tab) to `https://<eve-service>/eve/v1/discord` — used for HITL button clicks and Discord's verification PING. Deploy the eve service with the env vars set **first**: Discord validates the endpoint when you save.
-5. No slash command to register — the bot is mention-driven.
+3. **Set `discordAllowedChannels`** in Global Config (`GLOBAL_CONFIG`, see `.env.example` and `agent/lib/discord-access.ts`) — a JSON array of Discord channel ids where Nuxi may run, editable from the Vercel dashboard with no redeploy. **Unset or empty means deny everywhere.** Mentions elsewhere are silently ignored. (Get an id via right-click on the channel → **Copy Channel ID**, with Developer Mode enabled.)
+4. **Invite the app to the server**: **OAuth2 → URL Generator**, scopes `bot` + `applications.commands`. Bot permissions: **View Channels**, **Send Messages**, **Create Public Threads**, **Send Messages in Threads**, **Manage Threads** (renames threads after the mention text), **Read Message History**, **Add Reactions**.
+5. **Set the Interactions Endpoint URL** (General Information tab) to `https://<eve-service>/eve/v1/discord` — used for HITL button clicks and Discord's verification PING. Deploy the eve service with the env vars set **first**: Discord validates the endpoint when you save.
+6. No slash command to register — the bot is mention-driven.
 
 ### Test locally
 
@@ -62,9 +62,9 @@ curl -X POST "https://<preview-url>/eve/v1/ops/discord-gateway/trigger" \
 # -> { "started": true, "webhookUrl": "https://<preview-url>/eve/v1/discord" }
 ```
 
-Each call opens one 270s listener window — re-run it while testing. The preview also needs the `DISCORD_*` env vars (and ideally `REDIS_URL`) available to the preview environment.
+Each call opens one 270s listener window — re-run it while testing. The preview also needs the `DISCORD_*` env vars (and ideally `REDIS_URL`) available to the preview environment. Preview and production share the same `GLOBAL_CONFIG` store, so `discordAllowedChannels` applies to both.
 
-Because dispatch is restricted to the `DISCORD_ALLOWED_CHANNELS` allowlist, Discord sessions are **admin-enabled by default** (`canAccessAdminMcp` matches Discord auth, like Slack). Keep the allowlist limited to trusted team channels — widening it to public channels means revisiting the admin gate first (`agent/lib/admin-mcp-access.ts`). The rate-limit hook applies per Discord user id.
+Because dispatch is restricted to the `discordAllowedChannels` allowlist, Discord sessions get **admin mode by default** (`isAdminMode` matches Discord auth, like Slack). Keep the allowlist limited to trusted team channels — widening it to public channels means revisiting the admin mode gate first (`agent/lib/admin-mode.ts`). The rate-limit hook applies per Discord user id.
 
 ## Scheduled Slack workflows
 
@@ -128,7 +128,7 @@ The Nuxi Slack bot must be invited to `#firehose-nuxt`. Required Connect scopes:
 
 ### Discord mirror
 
-Set `DISCORD_WORKFLOW_CHANNEL_ID` (raw Discord channel id, see `.env.example`) to also post the weekly digest and firehose summary to a Discord channel — distinct from `DISCORD_ALLOWED_CHANNELS`, which only gates live @mentions. This reuses the Slack-generated text (no second agent run): `agent/lib/discord-workflow.ts` reads the finished Slack session's final message, `agent/lib/discord-format.ts` converts Slack-only syntax (`<url|label>` links, `:nuxter:`-style emoji, bare `@names`) to Discord Markdown, then posts via the unwrapped Discord adapter (so conversion runs once). Conversion is best-effort — an emoji shortcode outside the known set passes through unchanged. Unset disables the mirror; a mirroring failure is logged and never affects the Slack post. The bot needs **View Channel** + **Send Messages** in the target channel.
+Set `DISCORD_WORKFLOW_CHANNEL_ID` (raw Discord channel id, see `.env.example`) to also post the weekly digest and firehose summary to a Discord channel — distinct from `discordAllowedChannels` (Global Config), which only gates live @mentions. This reuses the Slack-generated text (no second agent run): `agent/lib/discord-workflow.ts` reads the finished Slack session's final message, `agent/lib/discord-format.ts` converts Slack-only syntax (`<url|label>` links, `:nuxter:`-style emoji, bare `@names`) to Discord Markdown, then posts via the unwrapped Discord adapter (so conversion runs once). Conversion is best-effort — an emoji shortcode outside the known set passes through unchanged. Unset disables the mirror; a mirroring failure is logged and never affects the Slack post. The bot needs **View Channel** + **Send Messages** in the target channel.
 
 ### Test locally
 

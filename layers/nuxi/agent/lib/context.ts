@@ -1,7 +1,7 @@
 type AuthAttributes = Readonly<Record<string, string | readonly string[]>>
 
 /** Raw per-request auth principal, as eve channels build it (mirrors eve's `SessionAuthContext`). */
-export interface AdminMcpAuthContext {
+export interface AuthContext {
   issuer?: string
   principalId?: string
   principalType?: string
@@ -26,23 +26,23 @@ export interface Context {
   readonly person: Person | null
   /** null on surfaces with no channel concept (web, schedule). */
   readonly channel: Channel | null
-  readonly raw: AdminMcpAuthContext
+  readonly raw: AuthContext
 }
 
-function attr(auth: AdminMcpAuthContext, key: string): string | undefined {
+function attr(auth: AuthContext, key: string): string | undefined {
   const value = auth.attributes?.[key]
   return typeof value === 'string' ? value : undefined
 }
 
 /**
  * Single source of truth for "who" and "where" a session comes from, derived
- * from the raw `SessionAuthContext` each channel builds. Both the admin gate
- * (`admin-mcp-access.ts`) and the surface-scoped instructions/gateway tags
+ * from the raw `SessionAuthContext` each channel builds. Both the admin mode
+ * gate (`admin-mode.ts`) and the surface-scoped instructions/gateway tags
  * (`instructions.ts`, `gateway-attribution.ts`) key off this — adding a new
  * surface (a future Linear or email bridge) means adding one branch here,
  * nowhere else.
  */
-export function resolveContext(auth: AdminMcpAuthContext | null | undefined): Context {
+export function resolveContext(auth: AuthContext | null | undefined): Context {
   if (!auth) return { surface: 'unknown', person: null, channel: null, raw: {} }
 
   if (auth.principalId === 'eve:app' && auth.principalType === 'runtime') {

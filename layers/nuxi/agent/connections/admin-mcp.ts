@@ -1,6 +1,6 @@
 import { defineMcpClientConnection } from 'eve/connections'
 import type { SessionContext } from 'eve/context'
-import { canAccessAdminMcp } from '../lib/admin-mcp-access.js'
+import { isAdminMode } from '../lib/admin-mode.js'
 import { appOrigin } from '../lib/internal-api.js'
 
 /** The admin MCP server exposes exactly these; keep the surface explicit. */
@@ -30,8 +30,8 @@ export const ADMIN_MCP_INSTRUCTIONS = `**Admin MCP connection (\`admin-mcp__*\`,
  * Mirrors `adminOnlyVercelAuth`: a non-admin session still sees the connection
  * in `connection_search`, but every call fails before reaching the server.
  */
-function adminOnlyToken(ctx: SessionContext) {
-  if (!canAccessAdminMcp(ctx.session.auth.current)) {
+async function adminOnlyToken(ctx: SessionContext) {
+  if (!(await isAdminMode(ctx.session.auth.current))) {
     return {
       principalType: 'app' as const,
       async getToken(): Promise<never> {

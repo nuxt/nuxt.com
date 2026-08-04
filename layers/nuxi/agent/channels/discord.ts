@@ -100,11 +100,11 @@ function isHuman(message: Message): boolean {
   return !message.author.isMe && message.author.isBot !== true
 }
 
-function shouldDispatch(thread: Thread, message: Message): boolean {
+async function shouldDispatch(thread: Thread, message: Message): Promise<boolean> {
   if (!isHuman(message)) return false
-  const allowed = isAllowedDiscordChannel(thread.channelId)
+  const allowed = await isAllowedDiscordChannel(thread.channelId)
   if (!allowed) {
-    console.warn('[nuxi:discord] dropped mention: channel not in DISCORD_ALLOWED_CHANNELS', { channelId: thread.channelId })
+    console.warn('[nuxi:discord] dropped mention: channel not in discordAllowedChannels', { channelId: thread.channelId })
   }
   return allowed
 }
@@ -238,7 +238,7 @@ function createDiscordBridge() {
   const { bot, send } = bridge
 
   bot.onNewMention(async (thread: Thread, message: Message, context?: MessageContext) => {
-    if (!shouldDispatch(thread, message)) return
+    if (!(await shouldDispatch(thread, message))) return
     await thread.subscribe()
 
     const turn = burstMessages(message, context)
@@ -259,7 +259,7 @@ function createDiscordBridge() {
   })
 
   bot.onSubscribedMessage(async (thread: Thread, message: Message, context?: MessageContext) => {
-    if (!shouldDispatch(thread, message)) return
+    if (!(await shouldDispatch(thread, message))) return
     await send(
       toUserContent(burstMessages(message, context)),
       { thread, auth: discordUserAuth(message.author.userId, message.author.userName, thread.channelId) }

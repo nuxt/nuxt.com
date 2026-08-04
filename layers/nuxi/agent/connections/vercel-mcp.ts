@@ -1,14 +1,14 @@
 import { defineMcpClientConnection } from 'eve/connections'
 import { connect, type EveAuthorizationOptions } from '@vercel/connect/eve'
 import type { SessionContext } from 'eve/context'
-import { canAccessAdminMcp } from '../lib/admin-mcp-access.js'
+import { isAdminMode } from '../lib/admin-mode.js'
 
 const VERCEL_TEAM_ID = process.env.NUXI_VERCEL_TEAM_ID
 const VERCEL_PROJECT_ID = process.env.NUXI_VERCEL_PROJECT_ID
 
 function adminOnlyVercelAuth(label: string, connectOptions: EveAuthorizationOptions) {
-  return (ctx: SessionContext) => {
-    if (!canAccessAdminMcp(ctx.session.auth.current)) {
+  return async (ctx: SessionContext) => {
+    if (!(await isAdminMode(ctx.session.auth.current))) {
       return {
         principalType: 'app' as const,
         async getToken(): Promise<never> {
