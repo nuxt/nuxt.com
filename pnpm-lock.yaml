@@ -90,6 +90,9 @@ importers:
       '@vercel/functions':
         specifier: ^3.7.6
         version: 3.7.6(ws@8.21.0)
+      '@vercel/global-config':
+        specifier: ^1.5.0
+        version: 1.5.0(@opentelemetry/api@1.9.0)
       '@vercel/speed-insights':
         specifier: ^2.0.0
         version: 2.0.0(nuxt@4.5.1(8e38c6bb43bde744a615680fb110a39e))(vue@3.5.40(typescript@6.0.3))
@@ -4478,6 +4481,9 @@ packages:
       eve:
         optional: true
 
+  '@vercel/edge-config-fs@0.1.0':
+    resolution: {integrity: sha512-NRIBwfcS0bUoUbRWlNGetqjvLSwgYH/BqKqDN7vK1g32p7dN96k0712COgaz6VFizAm9b0g6IG6hR6+hc0KCPg==}
+
   '@vercel/functions@3.7.6':
     resolution: {integrity: sha512-QKlSfrgvo4pGEnzHw8Dha9GRTb5hhLBbImKi4rL4CmxClaVs+36hxgjW0MOqez57wWShstpKOWZY/mU8KuYoUQ==}
     engines: {node: '>= 20'}
@@ -4488,6 +4494,18 @@ packages:
       '@aws-sdk/credential-provider-web-identity':
         optional: true
       ws:
+        optional: true
+
+  '@vercel/global-config@1.5.0':
+    resolution: {integrity: sha512-YxyyzkIjlD7kHSlPpYOQun81Y1o3JUU19snytzFSex/l6h6t5kEg9UsWoG7F5BIT1aBcCmTGUtP5LpkeSN+b8w==}
+    engines: {node: '>=14.6'}
+    peerDependencies:
+      '@opentelemetry/api': ^1.7.0
+      next: '>=1'
+    peerDependenciesMeta:
+      '@opentelemetry/api':
+        optional: true
+      next:
         optional: true
 
   '@vercel/nft@1.10.2':
@@ -15261,11 +15279,19 @@ snapshots:
       ai: 7.0.48(zod@4.4.3)
       eve: 0.29.4(@libsql/client@0.17.4)(@opentelemetry/api@1.9.0)(@vercel/functions@3.7.6(ws@8.21.0))(ai@7.0.48(zod@4.4.3))(better-sqlite3@12.11.1)(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260511.1)(@libsql/client@0.17.4)(@opentelemetry/api@1.9.0)(better-sqlite3@12.11.1))(giget@3.3.0)(ioredis@5.10.1(supports-color@10.2.2))(jiti@2.7.0)(lru-cache@11.3.6)(rollup@4.62.2)(vite@8.1.5(@types/node@26.0.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.0))
 
+  '@vercel/edge-config-fs@0.1.0': {}
+
   '@vercel/functions@3.7.6(ws@8.21.0)':
     dependencies:
       '@vercel/oidc': 3.8.1
     optionalDependencies:
       ws: 8.21.0
+
+  '@vercel/global-config@1.5.0(@opentelemetry/api@1.9.0)':
+    dependencies:
+      '@vercel/edge-config-fs': 0.1.0
+    optionalDependencies:
+      '@opentelemetry/api': 1.9.0
 
   '@vercel/nft@1.10.2(rollup@4.62.2)(supports-color@10.2.2)':
     dependencies:

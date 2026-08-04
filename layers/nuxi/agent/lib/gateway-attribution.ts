@@ -1,7 +1,7 @@
 import type { GatewayProviderOptions } from '@ai-sdk/gateway'
 import type { ModelMessage } from 'ai'
 import type { AdminMcpAuthContext } from './admin-mcp-access.js'
-import { resolveSurface } from './surface.js'
+import { resolveContext } from './context.js'
 import { workflowSkillId } from './workflows.js'
 import { NUXI_GATEWAY_TAG } from '../../shared/utils/ai-gateway.js'
 
@@ -38,7 +38,7 @@ export function nuxiGatewayTags(
   auth: AdminMcpAuthContext | null | undefined,
   messages: readonly ModelMessage[]
 ): string[] {
-  const surface = resolveSurface(auth)
+  const surface = resolveContext(auth).surface
   const tags = [NUXI_GATEWAY_TAG, `surface:${surface}`]
 
   if (surface === 'schedule') {

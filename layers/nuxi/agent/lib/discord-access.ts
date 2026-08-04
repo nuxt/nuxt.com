@@ -43,19 +43,16 @@ export function isAllowedDiscordChannel(channelId: string | undefined): boolean 
 }
 
 /**
- * Session auth for a Discord user. The `discord` issuer plus the
- * `allowedChannel` claim below are what `canAccessAdminMcp` matches to grant
- * admin access to Discord sessions — always pass the originating thread's
- * `channelId` (including on HITL resumes) so that check can't be bypassed.
+ * Session auth for a Discord user. The `discord` issuer plus `channel_id`
+ * below are what `context.ts` reads to build the Discord `Context` that
+ * `admin-mcp-access.ts` checks against `DISCORD_ALLOWED_CHANNELS` — always
+ * pass the originating thread's `channelId` (including on HITL resumes) so
+ * that check can't be bypassed with a stale or forged channel.
  */
 export function discordUserAuth(userId: string | undefined, userName: string | undefined, channelId: string | undefined) {
   const attributes: Record<string, string> = {}
   if (userName) attributes.username = userName
-  // Only set once the channel is verified against DISCORD_ALLOWED_CHANNELS —
-  // `isDiscordAuth` in admin-mcp-access.ts requires this claim before
-  // granting admin, so a session resumed from an unlisted channel (e.g. a
-  // HITL button click) never gets it.
-  if (isAllowedDiscordChannel(channelId)) attributes.allowedChannel = 'true'
+  if (channelId) attributes.channel_id = channelId
   return {
     attributes,
     authenticator: 'discord',

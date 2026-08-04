@@ -50,6 +50,7 @@
     "@vercel/analytics": "^2.0.1",
     "@vercel/connect": "^0.6.0",
     "@vercel/functions": "^3.7.6",
+    "@vercel/global-config": "^1.5.0",
     "@vercel/speed-insights": "^2.0.0",
     "@vue/compiler-sfc": "^3.5.40",
     "@vueuse/components": "^14.4.0",

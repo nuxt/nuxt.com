@@ -1,56 +1,34 @@
-type AuthAttributes = Readonly<Record<string, string | readonly string[]>>
+import { isAllowedDiscordChannel } from './discord-access.js'
+import { resolveContext, type AdminMcpAuthContext, type Context, type Surface } from './context.js'
 
-export interface AdminMcpAuthContext {
-  issuer?: string
-  principalId?: string
-  principalType?: string
-  attributes?: AuthAttributes
-}
+export type { AdminMcpAuthContext } from './context.js'
 
-function authAttr(attributes: AuthAttributes | undefined, key: string): string | undefined {
-  const value = attributes?.[key]
-  return typeof value === 'string' ? value : undefined
-}
-
-/** `buildSlackAuthContext` sets `slack:<teamId>`, or bare `slack` with no team. */
-function isSlackIssuer(auth: AdminMcpAuthContext): boolean {
-  return auth.issuer === 'slack' || Boolean(auth.issuer?.startsWith('slack:'))
-}
-
-function isSlackAuth(auth: AdminMcpAuthContext): boolean {
-  // Vercel Connect only installs slack/nuxi on our workspace, so the issuer is
-  // gate enough for the tenant.
-  if (!isSlackIssuer(auth)) return false
-  // Same builder stamps `author_type` and downgrades bots to `service`. A bot
-  // posting in a channel Nuxi watches is not a team member asking a question,
-  // so it never inherits admin.
-  return auth.principalType === 'user' && authAttr(auth.attributes, 'author_type') !== 'bot'
-}
-
-function isDiscordAuth(auth: AdminMcpAuthContext): boolean {
-  const isDiscordIssuer = auth.issuer === 'discord' || Boolean(auth.issuer?.startsWith('discord:'))
-  if (!isDiscordIssuer) return false
-  // Discord dispatch is gated to an allowlist of trusted channels
-  // (DISCORD_ALLOWED_CHANNELS, see channels/discord.ts). `discordUserAuth`
-  // only sets this claim once it has verified the originating channel, so a
-  // session resumed from an unlisted channel (e.g. a HITL button click)
-  // can't bypass the allowlist and still get admin access.
-  return authAttr(auth.attributes, 'allowedChannel') === 'true'
-}
-
-export function isScheduleAppAuth(auth: AdminMcpAuthContext): boolean {
-  return auth.principalId === 'eve:app' && auth.principalType === 'runtime'
+/**
+ * "Who is allowed to use admin-mcp tools" — one predicate per surface. Add a
+ * surface by adding a line here, never a new branch in `canAccessAdminMcp`.
+ */
+const ADMIN_RULES: Record<Surface, (ctx: Context) => boolean> = {
+  // The Eve scheduler running workflows (weekly digest, firehose summary) — no
+  // human in the loop, always trusted.
+  schedule: () => true,
+  // Any human Slack user in the connected workspace. `context.ts` flags bots
+  // as `isBot: true` — a bot posting in a channel Nuxi watches is not a team
+  // member asking a question, so it never inherits admin.
+  slack: ctx => ctx.person !== null && !ctx.person.isBot,
+  // A Discord user, but only from a channel in DISCORD_ALLOWED_CHANNELS.
+  // `channel` is only populated from the verified live thread (see
+  // discord-access.ts), so a session resumed from an unlisted channel (e.g. a
+  // HITL button click) can't forge a different one and bypass the allowlist.
+  discord: ctx => Boolean(ctx.channel && isAllowedDiscordChannel(ctx.channel.id)),
+  // Web session whose GitHub-derived role (Nuxt core team + admin logins
+  // list) is 'admin'. `role` is a site permission, not a "who/where" fact, so
+  // it has no dedicated `Context` field — read straight off the raw auth.
+  web: ctx => ctx.raw.attributes?.role === 'admin',
+  unknown: () => false
 }
 
 /** Whether the current session may use the admin-mcp tools. */
 export function canAccessAdminMcp(auth: AdminMcpAuthContext | null | undefined): boolean {
-  if (!auth) return false
-  if (isScheduleAppAuth(auth)) return true
-  // `isSlackAuth` is the whole decision for a Slack principal. Falling through
-  // would let a rejected one (a bot) reach the generic grant below on any
-  // future `role` attribute, which is exactly what the bot check exists to stop.
-  if (isSlackIssuer(auth)) return isSlackAuth(auth)
-  if (isDiscordAuth(auth)) return true
-  // Web sessions only: `role` comes from `/api/internal/session`.
-  return authAttr(auth.attributes, 'role') === 'admin'
+  const ctx = resolveContext(auth)
+  return ADMIN_RULES[ctx.surface](ctx)
 }
