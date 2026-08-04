@@ -18,7 +18,7 @@ export async function runWeeklyDigest({
   appAuth: ScheduleHandlerArgs['appAuth']
   sinceDays?: number
 }) {
-  const windowDays = resolveSinceDays(sinceDays, DEFAULT_WINDOW_DAYS)
+  const windowDays = await resolveSinceDays(sinceDays, DEFAULT_WINDOW_DAYS)
 
   return receiveOnSlack({
     receive,

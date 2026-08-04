@@ -1,12 +1,7 @@
 import { getAll } from '@vercel/global-config'
+import { loadWorkflowConfig } from './workflow-config.js'
 
-/**
- * Discord access is allowlist-based: Nuxi only dispatches for @mentions (and
- * subscribed thread follow-ups) in the `discordAllowedChannels` Global Config
- * key (JSON array of channel ids) — edit it from the Vercel dashboard, no
- * redeploy needed. Unset/empty means deny everywhere. Allowlisted sessions
- * get admin mode (see `admin-mode.ts`).
- */
+/** Discord dispatch is allowlist-based: only @mentions/threads in `discordAllowedChannels` (Global Config) run. Unset/empty denies everywhere; allowlisted sessions get admin mode. */
 
 /** True when the Discord bot credentials needed by `@chat-adapter/discord` are set. */
 export function isDiscordConfigured(): boolean {
@@ -17,12 +12,10 @@ export function isDiscordConfigured(): boolean {
   )
 }
 
-/**
- * Optional Discord channel for scheduled digest mirrors (weekly + firehose).
- * Distinct from `discordAllowedChannels` (live @mentions only). Unset disables mirroring.
- */
-export function discordWorkflowChannelId(): string | undefined {
-  return process.env.DISCORD_WORKFLOW_CHANNEL_ID?.trim() || undefined
+/** Optional digest-mirror channel (`workflow.discord.channel` in Global Config) — distinct from `discordAllowedChannels` (live @mentions only). Unset disables mirroring. */
+export async function discordWorkflowChannelId(): Promise<string | undefined> {
+  const config = await loadWorkflowConfig()
+  return config.discord?.channel?.trim() || undefined
 }
 
 export async function allowedDiscordChannelIds(): Promise<Set<string>> {
@@ -40,13 +33,7 @@ export async function isAllowedDiscordChannel(channelId: string | undefined): Pr
   return Boolean(raw && ids.has(raw))
 }
 
-/**
- * Session auth for a Discord user. The `discord` issuer plus `channel_id`
- * below are what `context.ts` reads to build the Discord `Context` that
- * `admin-mode.ts` checks against `discordAllowedChannels` — always
- * pass the originating thread's `channelId` (including on HITL resumes) so
- * that check can't be bypassed with a stale or forged channel.
- */
+/** Always pass the originating thread's `channelId` (including HITL resumes) — `admin-mode.ts` checks it against `discordAllowedChannels`, so a stale/forged value can't bypass the allowlist. */
 export function discordUserAuth(userId: string | undefined, userName: string | undefined, channelId: string | undefined) {
   const attributes: Record<string, string> = {}
   if (userName) attributes.username = userName

@@ -34,14 +34,7 @@ function attr(auth: AuthContext, key: string): string | undefined {
   return typeof value === 'string' ? value : undefined
 }
 
-/**
- * Single source of truth for "who" and "where" a session comes from, derived
- * from the raw `SessionAuthContext` each channel builds. Both the admin mode
- * gate (`admin-mode.ts`) and the surface-scoped instructions/gateway tags
- * (`instructions.ts`, `gateway-attribution.ts`) key off this — adding a new
- * surface (a future Linear or email bridge) means adding one branch here,
- * nowhere else.
- */
+/** Single source of truth for "who"/"where" a session comes from — admin mode, instructions, and gateway tags all key off this. */
 export function resolveContext(auth: AuthContext | null | undefined): Context {
   if (!auth) return { surface: 'unknown', person: null, channel: null, raw: {} }
 

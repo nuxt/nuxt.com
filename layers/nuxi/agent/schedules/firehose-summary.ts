@@ -20,7 +20,7 @@ export async function runFirehoseSummary({
   sinceHours?: number
 }) {
   const hours = sinceHours ?? DEFAULT_WINDOW_HOURS
-  const firehoseRef = firehoseSlackChannelRef()
+  const firehoseRef = await firehoseSlackChannelRef()
   const firehoseName = isSlackChannelId(firehoseRef)
     ? firehoseRef
     : normalizeSlackChannelName(firehoseRef)

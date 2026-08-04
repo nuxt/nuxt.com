@@ -91,13 +91,13 @@ import { receiveOnSlack, resolveSinceDays, skillWorkflowMessage } from '../lib/w
 
 const SKILL_ID = 'my-workflow'
 
-export function runMyWorkflow({ receive, appAuth, sinceDays }) {
-  const days = resolveSinceDays(sinceDays, 7)
+export async function runMyWorkflow({ receive, appAuth, sinceDays }) {
+  const days = await resolveSinceDays(sinceDays, 7)
   return receiveOnSlack({
     receive,
     appAuth,
     message: skillWorkflowMessage(SKILL_ID, days)
-  }) // receiveOnSlack is async — export runMyWorkflow as async when wiring schedules/ops
+  })
 }
 
 export default defineSchedule({
@@ -132,7 +132,7 @@ The Nuxi Slack bot must be invited to `#firehose-nuxt`. Required Connect scopes:
 
 ### Discord mirror
 
-Set `DISCORD_WORKFLOW_CHANNEL_ID` (raw Discord channel id, see `.env.example`) to also post the weekly digest and firehose summary to a Discord channel — distinct from `discordAllowedChannels` (Global Config), which only gates live @mentions. This reuses the Slack-generated text (no second agent run): `agent/lib/discord-workflow.ts` reads the finished Slack session's final message, `agent/lib/discord-format.ts` converts Slack-only syntax (`<url|label>` links, `:nuxter:`-style emoji, bare `@names`) to Discord Markdown, then posts via the unwrapped Discord adapter (so conversion runs once). Conversion is best-effort — an emoji shortcode outside the known set passes through unchanged. Unset disables the mirror; a mirroring failure is logged and never affects the Slack post. The bot needs **View Channel** + **Send Messages** in the target channel.
+Set `workflow.discord.channel` (raw Discord channel id) in Global Config to also post the weekly digest and firehose summary to a Discord channel — distinct from `discordAllowedChannels`, which only gates live @mentions. This reuses the Slack-generated text (no second agent run): `agent/lib/discord-workflow.ts` reads the finished Slack session's final message, `agent/lib/discord-format.ts` converts Slack-only syntax (`<url|label>` links, `:nuxter:`-style emoji, bare `@names`) to Discord Markdown, then posts via the unwrapped Discord adapter (so conversion runs once). Conversion is best-effort — an emoji shortcode outside the known set passes through unchanged. Unset disables the mirror; a mirroring failure is logged and never affects the Slack post. The bot needs **View Channel** + **Send Messages** in the target channel.
 
 ### Test locally
 
@@ -154,4 +154,25 @@ curl -X POST "https://<preview-url>/eve/v1/ops/firehose-summary/trigger?sinceHou
   -H "Authorization: Bearer $INTERNAL_API_SECRET"
 ```
 
-Requires on the **eve** runtime: `INTERNAL_API_SECRET`, `NUXT_MCP_ADMIN_TOKEN`, `NUXT_WORKFLOW_SLACK_CHANNEL`, `NUXT_FIREHOSE_SLACK_CHANNEL` (Slack channel names). Optional `NUXT_*_SLACK_CHANNEL_ID` overrides names and skips `users.conversations`. Local dev and Vercel preview use Connect client `slack/nuxi-preview` automatically; prod uses `slack/nuxi` (override with `SLACK_CONNECTOR`). `weekly-digest` additionally needs `NUXI_VERCEL_TEAM_ID`/`NUXI_VERCEL_PROJECT_ID` (see `agent/lib/vercel-connect.ts`) and, for spend/token numbers, `AI_GATEWAY_API_KEY` (optionally `AI_GATEWAY_REPORT_API_KEY_NAME` / `AI_GATEWAY_REPORT_TAGS`) — both connections are admin-gated so only the scheduled/Slack/admin path can reach them.
+Requires on the **eve** runtime: `INTERNAL_API_SECRET`, `NUXT_MCP_ADMIN_TOKEN`. Local dev and Vercel preview use Connect client `slack/nuxi-preview` automatically; prod uses `slack/nuxi` (override with `SLACK_CONNECTOR`). `weekly-digest` additionally needs `NUXI_VERCEL_TEAM_ID`/`NUXI_VERCEL_PROJECT_ID` (see `agent/lib/vercel-connect.ts`) and, for spend/token numbers, `AI_GATEWAY_API_KEY` (optionally `AI_GATEWAY_REPORT_API_KEY_NAME` / `AI_GATEWAY_REPORT_TAGS`) — both connections are admin-gated so only the scheduled/Slack/admin path can reach them.
+
+### Workflow config (Global Config)
+
+Everything else — schedule window, Slack/Discord channel refs, workspace subdomain, and the manual-trigger safety switch — lives under one Global Config key, `workflow`, editable from the Vercel dashboard with no redeploy (`agent/lib/workflow-config.ts`, consumed by `slack-api.ts`, `discord-access.ts`, `workflows.ts`):
+
+```json
+"workflow": {
+  "sinceDays": 7,
+  "manualTrigger": false,
+  "slack": {
+    "workspace": "vercel",
+    "channels": {
+      "workflow": { "id": "C0123ABC", "name": "project-nuxi" },
+      "firehose": { "id": "C0456DEF", "name": "firehose-nuxt" }
+    }
+  },
+  "discord": { "channel": "1234567890123456" }
+}
+```
+
+Every field is optional and falls back to a sane default: `sinceDays` → 7, `slack.workspace` → `vercel`, each channel's `id` → `name` → a hardcoded default (`project-nuxi`/`firehose-nuxt`, resolved via `users.conversations` — slower, and needs `channels:read`/`groups:read`), `manualTrigger` → `false` (production `/ops/*/trigger` stays disabled; preview is always allowed), `discord.channel` → mirror disabled. Preview and production share the same `GLOBAL_CONFIG` store.

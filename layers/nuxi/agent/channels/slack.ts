@@ -19,10 +19,8 @@ function isHookConflictFailure(event: { code?: string, message?: string }) {
 // principal (`lib/surface-instructions.ts`). Returning it as channel `context`
 // would prepend a fresh copy to history on every mention.
 //
-// `defaultSlackAuth` never has a real name: `app_mention`/`message` events
-// only carry the user id, so `full_name`/`user_name` end up unset. Resolve it
-// via `users.info` (cached) so `context.ts`'s `person.name` — and "who am
-// I?" — has something beyond the id. Bots have no Slack user to look up.
+// `app_mention`/`message` events only carry a user id, so resolve the real
+// name here (cached) for `context.ts`'s `person.name`. Bots have none to look up.
 async function dispatchSlackMessage(ctx: SlackContext, message: SlackMessage) {
   const auth = defaultSlackAuth(message, ctx)
   if (!auth) return null

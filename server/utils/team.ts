@@ -17,11 +17,7 @@ export async function isCoreTeamMember(login: string): Promise<boolean> {
   return coreMembers.some(member => member.login.toLowerCase() === login)
 }
 
-/**
- * Extra admin logins live in Global Config (`adminGithubLogins`, a JSON
- * array) instead of an env var, so the team can add/remove someone from the
- * Vercel dashboard without a redeploy.
- */
+/** Extra admin logins live in Global Config (`adminGithubLogins`), editable from the Vercel dashboard with no redeploy. */
 async function getExtraAdminLogins(): Promise<string[]> {
   const config = await getAll<{ adminGithubLogins?: string[] }>(['adminGithubLogins'])
   const raw = config.adminGithubLogins

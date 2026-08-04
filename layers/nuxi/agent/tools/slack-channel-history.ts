@@ -21,7 +21,7 @@ export default defineDynamic({
             limit: z.number().int().min(1).max(200).default(200)
           }),
           async execute({ channel, sinceHours, limit }) {
-            const resolved = await resolveSlackChannelRef(channel ?? firehoseSlackChannelRef())
+            const resolved = await resolveSlackChannelRef(channel ?? await firehoseSlackChannelRef())
             const messages = await fetchSlackChannelHistory({
               channelId: resolved.id,
               sinceHours,

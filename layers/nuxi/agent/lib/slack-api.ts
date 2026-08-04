@@ -1,6 +1,7 @@
 import { getToken } from '@vercel/connect'
 import { callSlackApi } from 'eve/channels/slack'
 import { slackConnectorId } from './slack-connect.js'
+import { loadWorkflowConfig } from './workflow-config.js'
 
 const DEFAULT_WORKFLOW_SLACK_CHANNEL = 'project-nuxi'
 const DEFAULT_FIREHOSE_SLACK_CHANNEL = 'firehose-nuxt'
@@ -28,16 +29,16 @@ export function normalizeSlackChannelName(ref: string): string {
   return ref.trim().replace(/^#/, '').toLowerCase()
 }
 
-export function workflowSlackChannelRef(): string {
-  return process.env.NUXT_WORKFLOW_SLACK_CHANNEL_ID?.trim()
-    || process.env.NUXT_WORKFLOW_SLACK_CHANNEL?.trim()
-    || DEFAULT_WORKFLOW_SLACK_CHANNEL
+export async function workflowSlackChannelRef(): Promise<string> {
+  const config = await loadWorkflowConfig()
+  const ref = config.slack?.channels?.workflow
+  return ref?.id?.trim() || ref?.name?.trim() || DEFAULT_WORKFLOW_SLACK_CHANNEL
 }
 
-export function firehoseSlackChannelRef(): string {
-  return process.env.NUXT_FIREHOSE_SLACK_CHANNEL_ID?.trim()
-    || process.env.NUXT_FIREHOSE_SLACK_CHANNEL?.trim()
-    || DEFAULT_FIREHOSE_SLACK_CHANNEL
+export async function firehoseSlackChannelRef(): Promise<string> {
+  const config = await loadWorkflowConfig()
+  const ref = config.slack?.channels?.firehose
+  return ref?.id?.trim() || ref?.name?.trim() || DEFAULT_FIREHOSE_SLACK_CHANNEL
 }
 
 /**
@@ -48,30 +49,30 @@ export function firehoseSlackChannelRef(): string {
  * `channels:read`/`groups:read`, a scope beyond what `conversations.history`
  * itself requires — see slack-channel-history.ts.
  */
-function knownSlackChannelAliases(): Map<string, string> {
+async function knownSlackChannelAliases(): Promise<Map<string, string>> {
   const aliases = new Map<string, string>()
+  const config = await loadWorkflowConfig()
 
-  const workflowId = process.env.NUXT_WORKFLOW_SLACK_CHANNEL_ID?.trim()
-  if (workflowId) {
-    const workflowName = process.env.NUXT_WORKFLOW_SLACK_CHANNEL?.trim() || DEFAULT_WORKFLOW_SLACK_CHANNEL
-    aliases.set(normalizeSlackChannelName(workflowName), workflowId)
+  const workflow = config.slack?.channels?.workflow
+  if (workflow?.id?.trim()) {
+    aliases.set(normalizeSlackChannelName(workflow.name?.trim() || DEFAULT_WORKFLOW_SLACK_CHANNEL), workflow.id.trim())
   }
 
-  const firehoseId = process.env.NUXT_FIREHOSE_SLACK_CHANNEL_ID?.trim()
-  if (firehoseId) {
-    const firehoseName = process.env.NUXT_FIREHOSE_SLACK_CHANNEL?.trim() || DEFAULT_FIREHOSE_SLACK_CHANNEL
-    aliases.set(normalizeSlackChannelName(firehoseName), firehoseId)
+  const firehose = config.slack?.channels?.firehose
+  if (firehose?.id?.trim()) {
+    aliases.set(normalizeSlackChannelName(firehose.name?.trim() || DEFAULT_FIREHOSE_SLACK_CHANNEL), firehose.id.trim())
   }
 
   return aliases
 }
 
-function slackWorkspace(): string {
-  return process.env.NUXT_SLACK_WORKSPACE?.trim() || 'vercel'
+async function slackWorkspace(): Promise<string> {
+  const config = await loadWorkflowConfig()
+  return config.slack?.workspace?.trim() || 'vercel'
 }
 
-export function slackMessagePermalink(channelId: string, ts: string): string {
-  return `https://${slackWorkspace()}.slack.com/archives/${channelId}/p${ts.replace('.', '')}`
+export function slackMessagePermalink(workspace: string, channelId: string, ts: string): string {
+  return `https://${workspace}.slack.com/archives/${channelId}/p${ts.replace('.', '')}`
 }
 
 interface SlackAttachment {
@@ -220,14 +221,7 @@ interface UserNameCacheEntry {
 
 const userNameCache = new Map<string, UserNameCacheEntry>()
 
-/**
- * Real display name for a Slack user id, via `users.info` — the raw
- * `app_mention`/`message` event only carries the id, so without this
- * `context.ts`'s `person.name` (and "who am I?") has nothing to show beyond
- * the id. Cached per user for an hour; a failed lookup (missing `users:read`
- * scope, deleted user, ...) caches `undefined` for the same window rather
- * than retrying every message.
- */
+/** Real display name for a Slack user id, via `users.info`. Cached an hour, including failures (missing `users:read` scope, deleted user, ...) to avoid retrying every message. */
 export async function resolveSlackUserName(userId: string): Promise<string | undefined> {
   const cached = userNameCache.get(userId)
   if (cached && cached.expiresAt > Date.now()) return cached.name
@@ -405,7 +399,7 @@ export async function resolveSlackChannelRef(ref: string): Promise<ResolvedSlack
 
   const name = normalizeSlackChannelName(trimmed)
 
-  const knownId = knownSlackChannelAliases().get(name)
+  const knownId = (await knownSlackChannelAliases()).get(name)
   if (knownId) {
     return { id: knownId, name, ref: trimmed }
   }
@@ -441,6 +435,8 @@ export async function fetchSlackChannelHistory({
     throw new Error(data.error ?? 'Slack conversations.history failed')
   }
 
+  const workspace = await slackWorkspace()
+
   return (data.messages ?? [])
     .filter((message) => {
       if (!message.text?.trim()) return false
@@ -457,7 +453,7 @@ export async function fetchSlackChannelHistory({
       return {
         ts,
         text,
-        permalink: slackMessagePermalink(channelId, ts),
+        permalink: slackMessagePermalink(workspace, channelId, ts),
         links,
         tweetUrls: extractTweetUrls(links),
         user: message.user,
