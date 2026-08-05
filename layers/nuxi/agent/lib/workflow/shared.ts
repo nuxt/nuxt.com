@@ -1,8 +1,8 @@
 import { timingSafeEqual } from 'node:crypto'
 import type { ScheduleHandlerArgs } from 'eve/schedules'
 import slack from '../../channels/slack.js'
-import { discordWorkflowChannelId } from '../discord/access.js'
-import { resolveSlackChannelRef, workflowSlackChannelRef } from '../slack/api.js'
+import { discordDigestChannelId } from '../discord/access.js'
+import { digestSlackChannelRef, resolveSlackChannelRef } from '../slack/api.js'
 import { loadWorkflowConfig } from './config.js'
 
 const DEFAULT_SINCE_DAYS = 7
@@ -35,6 +35,12 @@ export function parseSinceDays(value: string | null | undefined): ParseWindowRes
   return { ok: true, value: Math.min(parsed, 365) }
 }
 
+/**
+ * `override` (e.g. a manual `?sinceDays=` trigger) wins, then `fallback` if a
+ * caller passes one, then `workflow.sinceDays` in Global Config. Only pass
+ * `fallback` when a workflow needs a default unrelated to that shared knob —
+ * a hardcoded fallback here always wins over `??` and Global Config is never read.
+ */
 export async function resolveSinceDays(
   override: number | undefined,
   fallback?: number
@@ -43,7 +49,7 @@ export async function resolveSinceDays(
 }
 
 /**
- * Starts a Slack digest session and, when `workflow.discord.channel` is
+ * Starts a Slack digest session and, when `discord.digestChannel` is
  * configured in Global Config, mirrors the same generated text to Discord
  * (see `discord/digest-mirror.ts` — no second agent run). Awaited inline rather than
  * fired under a nested `waitUntil`: this whole function already runs inside
@@ -64,7 +70,7 @@ export async function receiveOnSlack({
   message: string
   channelRef?: string
 }) {
-  const resolved = await resolveSlackChannelRef(channelRef ?? await workflowSlackChannelRef())
+  const resolved = await resolveSlackChannelRef(channelRef ?? await digestSlackChannelRef())
 
   const session = await receive(slack, {
     auth: appAuth,
@@ -72,7 +78,7 @@ export async function receiveOnSlack({
     message
   })
 
-  const discordChannelId = await discordWorkflowChannelId()
+  const discordChannelId = await discordDigestChannelId()
   if (discordChannelId) {
     // Dynamic import: keep Slack digest schedules loadable without Discord env.
     const { mirrorDigestToDiscord } = await import('../discord/digest-mirror.js')

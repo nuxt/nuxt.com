@@ -17,10 +17,10 @@ export async function isCoreTeamMember(login: string): Promise<boolean> {
   return coreMembers.some(member => member.login.toLowerCase() === login)
 }
 
-/** Extra admin logins live in Global Config (`adminGithubLogins`), editable from the Vercel dashboard with no redeploy. */
+/** Extra admin logins live in Global Config (`admin.githubLogins`), editable from the Vercel dashboard with no redeploy. */
 async function getExtraAdminLogins(): Promise<string[]> {
-  const config = await getAll<{ adminGithubLogins?: string[] }>(['adminGithubLogins'])
-  const raw = config.adminGithubLogins
+  const config = await getAll<{ admin?: { githubLogins?: string[] } }>(['admin'])
+  const raw = config.admin?.githubLogins
   if (!Array.isArray(raw)) return []
   return raw.map(login => String(login).trim().toLowerCase()).filter(Boolean)
 }

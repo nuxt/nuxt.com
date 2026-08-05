@@ -1,9 +1,9 @@
 import { getToken } from '@vercel/connect'
 import { callSlackApi } from 'eve/channels/slack'
 import { slackConnectorId } from './connect.js'
-import { loadWorkflowConfig } from '../workflow/config.js'
+import { loadSlackConfig } from './config.js'
 
-const DEFAULT_WORKFLOW_SLACK_CHANNEL = 'project-nuxi'
+const DEFAULT_DIGEST_SLACK_CHANNEL = 'project-nuxi'
 const DEFAULT_FIREHOSE_SLACK_CHANNEL = 'firehose-nuxt'
 const CHANNEL_LIST_TTL_MS = 60 * 60 * 1000
 
@@ -29,20 +29,20 @@ export function normalizeSlackChannelName(ref: string): string {
   return ref.trim().replace(/^#/, '').toLowerCase()
 }
 
-export async function workflowSlackChannelRef(): Promise<string> {
-  const config = await loadWorkflowConfig()
-  const ref = config.slack?.channels?.workflow
-  return ref?.id?.trim() || ref?.name?.trim() || DEFAULT_WORKFLOW_SLACK_CHANNEL
+export async function digestSlackChannelRef(): Promise<string> {
+  const config = await loadSlackConfig()
+  const ref = config.channels?.digest
+  return ref?.id?.trim() || ref?.name?.trim() || DEFAULT_DIGEST_SLACK_CHANNEL
 }
 
 export async function firehoseSlackChannelRef(): Promise<string> {
-  const config = await loadWorkflowConfig()
-  const ref = config.slack?.channels?.firehose
+  const config = await loadSlackConfig()
+  const ref = config.channels?.firehose
   return ref?.id?.trim() || ref?.name?.trim() || DEFAULT_FIREHOSE_SLACK_CHANNEL
 }
 
 /**
- * Maps the friendly names of our two known channels (workflow, firehose) to
+ * Maps the friendly names of our two known channels (digest, firehose) to
  * their configured ids, so a caller that types the *name* instead of leaving
  * `channel` unset (e.g. an ad-hoc `read_slack_channel_history` call) still
  * resolves without a `users.conversations` lookup. That call needs
@@ -51,14 +51,14 @@ export async function firehoseSlackChannelRef(): Promise<string> {
  */
 async function knownSlackChannelAliases(): Promise<Map<string, string>> {
   const aliases = new Map<string, string>()
-  const config = await loadWorkflowConfig()
+  const config = await loadSlackConfig()
 
-  const workflow = config.slack?.channels?.workflow
-  if (workflow?.id?.trim()) {
-    aliases.set(normalizeSlackChannelName(workflow.name?.trim() || DEFAULT_WORKFLOW_SLACK_CHANNEL), workflow.id.trim())
+  const digest = config.channels?.digest
+  if (digest?.id?.trim()) {
+    aliases.set(normalizeSlackChannelName(digest.name?.trim() || DEFAULT_DIGEST_SLACK_CHANNEL), digest.id.trim())
   }
 
-  const firehose = config.slack?.channels?.firehose
+  const firehose = config.channels?.firehose
   if (firehose?.id?.trim()) {
     aliases.set(normalizeSlackChannelName(firehose.name?.trim() || DEFAULT_FIREHOSE_SLACK_CHANNEL), firehose.id.trim())
   }
@@ -67,8 +67,8 @@ async function knownSlackChannelAliases(): Promise<Map<string, string>> {
 }
 
 async function slackWorkspace(): Promise<string> {
-  const config = await loadWorkflowConfig()
-  return config.slack?.workspace?.trim() || 'vercel'
+  const config = await loadSlackConfig()
+  return config.workspace?.trim() || 'vercel'
 }
 
 export function slackMessagePermalink(workspace: string, channelId: string, ts: string): string {

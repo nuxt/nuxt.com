@@ -1,26 +1,32 @@
 import { z } from 'zod'
 import { readGlobalConfig } from '../global-config.js'
-import { loadWorkflowConfig } from '../workflow/config.js'
 
 /**
- * Discord dispatch is allowlist-based, split into two tiers via `discordChannels`
- * (Global Config, editable from the dashboard with no redeploy):
+ * All Discord config lives under one `discord` Global Config key, editable
+ * from the dashboard with no redeploy:
  *
  * ```json
- * "discordChannels": {
- *   "admin": ["1234567890123456"],
- *   "public": ["6543210987654321"]
+ * "discord": {
+ *   "channels": { "admin": ["1234567890123456"], "public": ["6543210987654321"] },
+ *   "digestChannel": "1234567890123456"
  * }
  * ```
  *
- * `admin` channels dispatch with full admin mode (`admin-mode.ts`), `public`
- * channels dispatch with the public toolset only. A channel absent from both
- * is silently ignored. Unset/empty denies everywhere.
+ * `channels.admin` dispatches with full admin mode (`admin-mode.ts`), `channels.public`
+ * dispatches with the public toolset only. A channel absent from both is silently
+ * ignored, and unset/empty denies everywhere. `digestChannel` is the optional
+ * weekly-digest/firehose mirror target (`digest-mirror.ts`) — distinct from
+ * `channels`, which only gates live @mentions.
  */
-const discordChannelsSchema = z.object({
-  admin: z.array(z.string()).optional(),
-  public: z.array(z.string()).optional()
+const discordConfigSchema = z.object({
+  channels: z.object({
+    admin: z.array(z.string()).optional(),
+    public: z.array(z.string()).optional()
+  }).optional(),
+  digestChannel: z.string().optional()
 })
+
+export type DiscordConfig = z.infer<typeof discordConfigSchema>
 
 interface DiscordChannelTiers {
   admin: string[]
@@ -31,18 +37,23 @@ function normalizeChannelIds(raw: string[] | undefined): string[] {
   return Array.isArray(raw) ? raw.map(id => String(id).trim()).filter(Boolean) : []
 }
 
-async function loadDiscordChannelTiers(): Promise<DiscordChannelTiers> {
-  const config = await readGlobalConfig<{ discordChannels?: unknown }>(['discordChannels'])
-  if (config.discordChannels === undefined) return { admin: [], public: [] }
+async function loadDiscordConfig(): Promise<DiscordConfig> {
+  const config = await readGlobalConfig<{ discord?: unknown }>(['discord'])
+  if (config.discord === undefined) return {}
 
-  const parsed = discordChannelsSchema.safeParse(config.discordChannels)
+  const parsed = discordConfigSchema.safeParse(config.discord)
   if (!parsed.success) {
-    console.warn('[nuxi:discord] invalid `discordChannels` in Global Config, denying all channels', parsed.error.flatten())
-    return { admin: [], public: [] }
+    console.warn('[nuxi:discord] invalid `discord` in Global Config, denying all channels', parsed.error.flatten())
+    return {}
   }
+  return parsed.data
+}
+
+async function loadDiscordChannelTiers(): Promise<DiscordChannelTiers> {
+  const config = await loadDiscordConfig()
   return {
-    admin: normalizeChannelIds(parsed.data.admin),
-    public: normalizeChannelIds(parsed.data.public)
+    admin: normalizeChannelIds(config.channels?.admin),
+    public: normalizeChannelIds(config.channels?.public)
   }
 }
 
@@ -63,19 +74,19 @@ export function isDiscordConfigured(): boolean {
   )
 }
 
-/** Optional digest-mirror channel (`workflow.discord.channel` in Global Config) — distinct from `discordChannels` (live @mentions only). Unset disables mirroring. */
-export async function discordWorkflowChannelId(): Promise<string | undefined> {
-  const config = await loadWorkflowConfig()
-  return config.discord?.channel?.trim() || undefined
+/** Optional digest-mirror channel (`discord.digestChannel` in Global Config). Unset disables mirroring. */
+export async function discordDigestChannelId(): Promise<string | undefined> {
+  const config = await loadDiscordConfig()
+  return config.digestChannel?.trim() || undefined
 }
 
-/** Whether a channel may dispatch at all — the union of `discordChannels.admin` and `.public`. */
+/** Whether a channel may dispatch at all — the union of `discord.channels.admin` and `.public`. */
 export async function isAllowedDiscordChannel(channelId: string | undefined): Promise<boolean> {
   const tiers = await loadDiscordChannelTiers()
   return channelMatches(channelId, tiers.admin) || channelMatches(channelId, tiers.public)
 }
 
-/** Whether a channel grants admin mode — only `discordChannels.admin`, checked by `admin-mode.ts`. */
+/** Whether a channel grants admin mode — only `discord.channels.admin`, checked by `admin-mode.ts`. */
 export async function isAdminDiscordChannel(channelId: string | undefined): Promise<boolean> {
   const tiers = await loadDiscordChannelTiers()
   return channelMatches(channelId, tiers.admin)
@@ -83,7 +94,7 @@ export async function isAdminDiscordChannel(channelId: string | undefined): Prom
 
 /**
  * Always pass the originating thread's `channelId` (including HITL resumes) — `admin-mode.ts` checks it
- * against `discordChannels.admin`, so a stale/forged value can't bypass the tiering.
+ * against `discord.channels.admin`, so a stale/forged value can't bypass the tiering.
  * `userName` (the @-mention handle, e.g. `hugorcd_`) is kept separately from `fullName` (Discord display
  * name) so `context.ts` can show the model a real name while the handle stays available for later use.
  */

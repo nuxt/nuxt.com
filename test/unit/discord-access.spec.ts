@@ -14,37 +14,37 @@ beforeEach(() => {
 
 describe('isAllowedDiscordChannel', () => {
   it('allows both admin and public channels to dispatch', async () => {
-    mockedGetAll.mockResolvedValue({ discordChannels: { admin: ['C_ADMIN'], public: ['C_PUBLIC'] } })
+    mockedGetAll.mockResolvedValue({ discord: { channels: { admin: ['C_ADMIN'], public: ['C_PUBLIC'] } } })
     expect(await isAllowedDiscordChannel('C_ADMIN')).toBe(true)
     expect(await isAllowedDiscordChannel('C_PUBLIC')).toBe(true)
   })
 
   it('denies a channel in neither tier', async () => {
-    mockedGetAll.mockResolvedValue({ discordChannels: { admin: ['C_ADMIN'], public: ['C_PUBLIC'] } })
+    mockedGetAll.mockResolvedValue({ discord: { channels: { admin: ['C_ADMIN'], public: ['C_PUBLIC'] } } })
     expect(await isAllowedDiscordChannel('C_OTHER')).toBe(false)
   })
 
   it('denies an undefined channel id', async () => {
-    mockedGetAll.mockResolvedValue({ discordChannels: { admin: ['C_ADMIN'] } })
+    mockedGetAll.mockResolvedValue({ discord: { channels: { admin: ['C_ADMIN'] } } })
     expect(await isAllowedDiscordChannel(undefined)).toBe(false)
   })
 
   it('matches Chat SDK-prefixed ids (`discord:<guild>:<channel>`) against raw config ids', async () => {
-    mockedGetAll.mockResolvedValue({ discordChannels: { public: ['C_PUBLIC'] } })
+    mockedGetAll.mockResolvedValue({ discord: { channels: { public: ['C_PUBLIC'] } } })
     expect(await isAllowedDiscordChannel('discord:G1:C_PUBLIC')).toBe(true)
   })
 
-  it('denies everywhere when `discordChannels` is unset', async () => {
+  it('denies everywhere when `discord` is unset', async () => {
     mockedGetAll.mockResolvedValue({})
     expect(await isAllowedDiscordChannel('C_ADMIN')).toBe(false)
   })
 
-  it('denies everywhere and warns when `discordChannels` has an invalid shape', async () => {
+  it('denies everywhere and warns when `discord` has an invalid shape', async () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-    mockedGetAll.mockResolvedValue({ discordChannels: { admin: 'not-an-array' } })
+    mockedGetAll.mockResolvedValue({ discord: { channels: { admin: 'not-an-array' } } })
     expect(await isAllowedDiscordChannel('C_ADMIN')).toBe(false)
     expect(warn).toHaveBeenCalledWith(
-      expect.stringContaining('invalid `discordChannels`'),
+      expect.stringContaining('invalid `discord`'),
       expect.anything()
     )
     warn.mockRestore()
@@ -53,7 +53,7 @@ describe('isAllowedDiscordChannel', () => {
 
 describe('isAdminDiscordChannel', () => {
   it('grants only admin-tier channels', async () => {
-    mockedGetAll.mockResolvedValue({ discordChannels: { admin: ['C_ADMIN'], public: ['C_PUBLIC'] } })
+    mockedGetAll.mockResolvedValue({ discord: { channels: { admin: ['C_ADMIN'], public: ['C_PUBLIC'] } } })
     expect(await isAdminDiscordChannel('C_ADMIN')).toBe(true)
     expect(await isAdminDiscordChannel('C_PUBLIC')).toBe(false)
   })

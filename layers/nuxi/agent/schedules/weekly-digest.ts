@@ -7,7 +7,6 @@ import {
 } from '../lib/workflow/shared.js'
 
 const SKILL_ID = 'weekly-digest'
-const DEFAULT_WINDOW_DAYS = 7
 
 export async function runWeeklyDigest({
   receive,
@@ -18,7 +17,9 @@ export async function runWeeklyDigest({
   appAuth: ScheduleHandlerArgs['appAuth']
   sinceDays?: number
 }) {
-  const windowDays = await resolveSinceDays(sinceDays, DEFAULT_WINDOW_DAYS)
+  // No local fallback: leaves `workflow.sinceDays` in Global Config as the
+  // effective default (see `resolveSinceDays`) instead of always winning over it.
+  const windowDays = await resolveSinceDays(sinceDays)
 
   return receiveOnSlack({
     receive,

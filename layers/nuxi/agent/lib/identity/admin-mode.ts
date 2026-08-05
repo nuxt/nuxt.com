@@ -7,8 +7,8 @@ export type { AuthContext } from './context.js'
 const ADMIN_MODE_RULES: Record<Surface, (ctx: Context) => boolean | Promise<boolean>> = {
   schedule: () => true, // Eve scheduler (no human in the loop) — always trusted
   slack: ctx => ctx.person !== null && !ctx.person.isBot, // human team member only
-  // Only from a channel in `discordChannels.admin`; `channel` comes from the verified
-  // live thread, so a HITL resume can't forge one to bypass the tiering. `discordChannels.public`
+  // Only from a channel in `discord.channels.admin`; `channel` comes from the verified
+  // live thread, so a HITL resume can't forge one to bypass the tiering. `discord.channels.public`
   // channels still dispatch (see `discord/access.ts`) but get the public toolset only.
   discord: async ctx => Boolean(ctx.channel && await isAdminDiscordChannel(ctx.channel.id)),
   web: ctx => ctx.raw.attributes?.role === 'admin', // GitHub-derived site role

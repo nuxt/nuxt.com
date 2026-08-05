@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { isAdminMode } from '../../layers/nuxi/agent/lib/identity/admin-mode'
 
 vi.mock('@vercel/global-config', () => ({
-  getAll: vi.fn(async () => ({ discordChannels: { admin: ['C_ADMIN'], public: ['C_PUBLIC'] } }))
+  getAll: vi.fn(async () => ({ discord: { channels: { admin: ['C_ADMIN'], public: ['C_PUBLIC'] } } }))
 }))
 
 describe('isAdminMode', () => {

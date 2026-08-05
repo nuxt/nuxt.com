@@ -42,12 +42,14 @@ How messages arrive: Discord does not push messages to HTTP webhooks like Slack.
    - `DISCORD_APPLICATION_ID` — interaction responses
    - `REDIS_URL` — Chat SDK state adapter (subscriptions, dedupe, locks); memory fallback in dev
    - `DISCORD_GATEWAY_WEBHOOK_URL` — optional override for the Gateway forward target; defaults to `https://$VERCEL_URL/eve/v1/discord` (so previews forward to themselves), falling back to `$VERCEL_PROJECT_PRODUCTION_URL` when `VERCEL_URL` is unset
-3. **Set `discordChannels`** in Global Config (`GLOBAL_CONFIG`, see `.env.example` and `agent/lib/discord/access.ts`) — editable from the Vercel dashboard with no redeploy:
+3. **Set `discord.channels`** in Global Config (`GLOBAL_CONFIG`, see `.env.example` and `agent/lib/discord/access.ts`) — editable from the Vercel dashboard with no redeploy:
 
    ```json
-   "discordChannels": {
-     "admin": ["1234567890123456"],
-     "public": ["6543210987654321"]
+   "discord": {
+     "channels": {
+       "admin": ["1234567890123456"],
+       "public": ["6543210987654321"]
+     }
    }
    ```
 
@@ -71,9 +73,9 @@ curl -X POST "https://<preview-url>/eve/v1/ops/discord-gateway/trigger" \
 # -> { "started": true, "webhookUrl": "https://<preview-url>/eve/v1/discord" }
 ```
 
-Each call opens one 270s listener window — re-run it while testing. The preview also needs the `DISCORD_*` env vars (and ideally `REDIS_URL`) available to the preview environment. Preview and production share the same `GLOBAL_CONFIG` store, so `discordChannels` applies to both.
+Each call opens one 270s listener window — re-run it while testing. The preview also needs the `DISCORD_*` env vars (and ideally `REDIS_URL`) available to the preview environment. Preview and production share the same `GLOBAL_CONFIG` store, so `discord.channels` applies to both.
 
-Dispatch is restricted to channels listed under `discordChannels.admin` or `discordChannels.public`; only `admin` channels get **admin mode** (`isAdminMode` — see `agent/lib/identity/admin-mode.ts`). Keep `admin` limited to trusted team channels; use `public` for channels where Nuxi should answer without the admin toolset. The rate-limit hook applies per Discord user id.
+Dispatch is restricted to channels listed under `discord.channels.admin` or `discord.channels.public`; only `admin` channels get **admin mode** (`isAdminMode` — see `agent/lib/identity/admin-mode.ts`). Keep `admin` limited to trusted team channels; use `public` for channels where Nuxi should answer without the admin toolset. The rate-limit hook applies per Discord user id.
 
 ## Caller identity
 
@@ -101,7 +103,8 @@ import { receiveOnSlack, resolveSinceDays, skillWorkflowMessage } from '../lib/w
 const SKILL_ID = 'my-workflow'
 
 export async function runMyWorkflow({ receive, appAuth, sinceDays }) {
-  const days = await resolveSinceDays(sinceDays, 7)
+  // No second argument: falls back to `workflow.sinceDays` in Global Config (then 7)
+  const days = await resolveSinceDays(sinceDays)
   return receiveOnSlack({
     receive,
     appAuth,
@@ -141,7 +144,7 @@ The Nuxi Slack bot must be invited to `#firehose-nuxt`. Required Connect scopes:
 
 ### Discord mirror
 
-Set `workflow.discord.channel` (raw Discord channel id) in Global Config to also post the weekly digest and firehose summary to a Discord channel — distinct from `discordChannels`, which only gates live @mentions. This reuses the Slack-generated text (no second agent run): `agent/lib/discord/digest-mirror.ts` reads the finished Slack session's final message, `agent/lib/discord/format.ts` converts Slack-only syntax (`<url|label>` links, `:nuxter:`-style emoji, bare `@names`) to Discord Markdown, then posts via the unwrapped Discord adapter (so conversion runs once). Conversion is best-effort — an emoji shortcode outside the known set passes through unchanged. Unset disables the mirror; a mirroring failure is logged and never affects the Slack post. The bot needs **View Channel** + **Send Messages** in the target channel.
+Set `discord.digestChannel` (raw Discord channel id) in Global Config to also post the weekly digest and firehose summary to a Discord channel — distinct from `discord.channels`, which only gates live @mentions. This reuses the Slack-generated text (no second agent run): `agent/lib/discord/digest-mirror.ts` reads the finished Slack session's final message, `agent/lib/discord/format.ts` converts Slack-only syntax (`<url|label>` links, `:nuxter:`-style emoji, bare `@names`) to Discord Markdown, then posts via the unwrapped Discord adapter (so conversion runs once). Conversion is best-effort — an emoji shortcode outside the known set passes through unchanged. Unset disables the mirror; a mirroring failure is logged and never affects the Slack post. The bot needs **View Channel** + **Send Messages** in the target channel.
 
 ### Test locally
 
@@ -165,25 +168,41 @@ curl -X POST "https://<preview-url>/eve/v1/ops/firehose-summary/trigger?sinceHou
 
 Requires on the **eve** runtime: `INTERNAL_API_SECRET`, `NUXT_MCP_ADMIN_TOKEN`. Local dev and Vercel preview use Connect client `slack/nuxi-preview` automatically; prod uses `slack/nuxi` (override with `SLACK_CONNECTOR`). `weekly-digest` additionally needs `NUXI_VERCEL_TEAM_ID`/`NUXI_VERCEL_PROJECT_ID` (see `agent/lib/vercel-connect.ts`) and, for spend/token numbers, `AI_GATEWAY_API_KEY` (optionally `AI_GATEWAY_REPORT_API_KEY_NAME` / `AI_GATEWAY_REPORT_TAGS`) — both connections are admin-gated so only the scheduled/Slack/admin path can reach them.
 
-### Workflow config (Global Config)
+### Global Config
 
-Everything else — schedule window, Slack/Discord channel refs, workspace subdomain, and the manual-trigger safety switch — lives under one Global Config key, `workflow`, editable from the Vercel dashboard with no redeploy (`agent/lib/workflow/config.ts`, consumed by `slack/api.ts`, `discord/access.ts`, `workflow/shared.ts`):
+One root key per surface — each self-contained, so you never have to jump elsewhere to see all of a surface's config:
 
 ```json
-"workflow": {
-  "sinceDays": 7,
-  "manualTrigger": false,
+{
+  "admin": {
+    "githubLogins": ["some-github-login"]
+  },
   "slack": {
     "workspace": "vercel",
     "channels": {
-      "workflow": { "id": "C0123ABC", "name": "project-nuxi" },
+      "digest": { "id": "C0123ABC", "name": "project-nuxi" },
       "firehose": { "id": "C0456DEF", "name": "firehose-nuxt" }
     }
   },
-  "discord": { "channel": "1234567890123456" }
+  "discord": {
+    "channels": {
+      "admin": ["1234567890123456"],
+      "public": ["6543210987654321"]
+    },
+    "digestChannel": "1234567890123456"
+  },
+  "workflow": {
+    "sinceDays": 7,
+    "manualTrigger": false
+  }
 }
 ```
 
-Every field is optional and falls back to a sane default: `sinceDays` → 7, `slack.workspace` → `vercel`, each channel's `id` → `name` → a hardcoded default (`project-nuxi`/`firehose-nuxt`, resolved via `users.conversations` — slower, and needs `channels:read`/`groups:read`), `manualTrigger` → `false` (production `/ops/*/trigger` stays disabled; preview is always allowed), `discord.channel` → mirror disabled. Preview and production share the same `GLOBAL_CONFIG` store.
+- `admin.githubLogins` — extra admin GitHub logins on top of the core team (`server/utils/team.ts`, main Nuxt app).
+- `slack` — workspace subdomain + the two known channel refs, consumed by `agent/lib/slack/config.ts` / `slack/api.ts`.
+- `discord` — the live-@mention allowlist (`channels.admin`/`channels.public`) and the optional digest-mirror target (`digestChannel`), consumed by `agent/lib/discord/access.ts`.
+- `workflow` — the only cross-cutting knobs left: digest window and the manual-trigger safety switch, consumed by `agent/lib/workflow/config.ts` / `workflow/shared.ts`.
 
-Both `workflow` and `discordChannels` are read through `agent/lib/global-config.ts` (`readGlobalConfig`), a thin wrapper around `@vercel/global-config` that caches each key set for 30s (a single scheduled run can otherwise trigger several redundant reads of the same key) and turns a Global Config outage into a logged warning + empty result instead of an unhandled throw. Both are parsed with zod, so a malformed dashboard edit falls back to defaults with a clear warning instead of failing silently.
+Every field is optional and falls back to a sane default: `sinceDays` → 7, `slack.workspace` → `vercel`, each Slack channel's `id` → `name` → a hardcoded default (`project-nuxi`/`firehose-nuxt`, resolved via `users.conversations` — slower, and needs `channels:read`/`groups:read`), `manualTrigger` → `false` (production `/ops/*/trigger` stays disabled; preview is always allowed), `discord.digestChannel` → mirror disabled, `discord.channels` unset/empty → deny everywhere. Preview and production share the same `GLOBAL_CONFIG` store.
+
+`admin`, `slack`, `discord`, and `workflow` are all read through `agent/lib/global-config.ts` (`readGlobalConfig`), a thin wrapper around `@vercel/global-config` that caches each key set for 30s (a single scheduled run can otherwise trigger several redundant reads of the same key) and turns a Global Config outage into a logged warning + empty result instead of an unhandled throw. Each is parsed with zod, so a malformed dashboard edit falls back to defaults with a clear warning instead of failing silently.
