@@ -56,7 +56,7 @@
     "@vueuse/core": "^14.4.0",
     "@vueuse/nuxt": "^14.4.0",
     "ai": "^7.0.48",
-    "better-sqlite3": "^12.11.1",
+    "better-sqlite3": "^13.0.2",
     "chat": "^4.36.0",
     "date-fns": "^4.4.0",
     "drizzle-orm": "^0.45.2",
