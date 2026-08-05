@@ -7,6 +7,10 @@ interface Version {
   tagColor: BadgeProps['color']
   path: string
   collection?: 'docsv3' | 'docsv4' | 'docsv5'
+  /** `unsupported` versions are end of life: no bug fixes, no security patches. */
+  status?: 'prerelease' | 'stable' | 'unsupported'
+  /** Date the version reached end of life, for `unsupported` versions. */
+  endOfLife?: string
 }
 
 const versions: Version[] = [
@@ -16,7 +20,8 @@ const versions: Version[] = [
     branch: 'main',
     tagColor: 'warning',
     path: '/docs/5.x',
-    collection: 'docsv5'
+    collection: 'docsv5',
+    status: 'prerelease'
   },
   {
     label: 'Version 4',
@@ -24,7 +29,8 @@ const versions: Version[] = [
     branch: '4.x',
     tagColor: 'primary',
     path: '/docs/4.x',
-    collection: 'docsv4'
+    collection: 'docsv4',
+    status: 'stable'
   },
   {
     label: 'Version 3',
@@ -32,14 +38,18 @@ const versions: Version[] = [
     branch: '3.x',
     tagColor: 'neutral',
     path: '/docs/3.x',
-    collection: 'docsv3'
+    collection: 'docsv3',
+    status: 'unsupported',
+    endOfLife: '31 July 2026'
   },
   {
     label: 'Version 2',
     shortTag: 'v2',
     branch: '2.x',
     tagColor: 'neutral',
-    path: 'https://v2.nuxt.com'
+    path: 'https://v2.nuxt.com',
+    status: 'unsupported',
+    endOfLife: '30 June 2024'
   }
 ]
 
@@ -84,6 +94,7 @@ export const useDocsVersion = () => {
 
   const items = computed(() => versions.map(v => ({
     ...v,
+    label: v.status === 'unsupported' ? `${v.label} (EOL)` : v.label,
     ...(v.branch === version.value.branch
       ? {
           checked: true,

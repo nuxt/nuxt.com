@@ -54,6 +54,7 @@ if (import.meta.server) {
 
 <template>
   <UContainer>
+    <DocsVersionAlert />
     <UPage>
       <UPageHeader :title="title" :description="description" />
 
