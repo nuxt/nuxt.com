@@ -11,6 +11,8 @@ interface Version {
   status?: 'prerelease' | 'stable' | 'unsupported'
   /** Date the version reached end of life, for `unsupported` versions. */
   endOfLife?: string
+  /** Third-party extended support offering, for `unsupported` versions. */
+  extendedSupport?: string
 }
 
 const versions: Version[] = [
@@ -40,7 +42,8 @@ const versions: Version[] = [
     path: '/docs/3.x',
     collection: 'docsv3',
     status: 'unsupported',
-    endOfLife: '31 July 2026'
+    endOfLife: '31 July 2026',
+    extendedSupport: 'https://www.herodevs.com/support/nuxt-nes?utm_source=nuxtjs&utm_medium=affiliate&utm_campaign=nuxt3eol&utm_content=link'
   },
   {
     label: 'Version 2',

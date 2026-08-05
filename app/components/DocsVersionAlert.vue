@@ -17,6 +17,13 @@ const { version } = useDocsVersion()
         upgrade guide
       </NuxtLink>
       to move to Nuxt 4, the current stable release.
+      <template v-if="version.extendedSupport">
+        If you need to stay on Nuxt {{ version.shortTag.slice(1) }}, our partner HeroDevs offers
+        <NuxtLink :to="version.extendedSupport" target="_blank" class="underline">
+          Never-Ending Support
+        </NuxtLink>
+        with ongoing security and compatibility patches.
+      </template>
     </template>
   </UAlert>
 </template>
