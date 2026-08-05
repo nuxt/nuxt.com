@@ -8,7 +8,7 @@ const { version } = useDocsVersion()
     icon="i-lucide-triangle-alert"
     variant="subtle"
     color="warning"
-    class="mt-8"
+    class="mt-4 sm:mt-8"
     :title="`Nuxt ${version.shortTag.slice(1)} reached end of life${version.endOfLife ? ` on ${version.endOfLife}` : ''}`"
   >
     <template #description>
