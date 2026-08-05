@@ -1,4 +1,4 @@
-import { getAll } from '@vercel/global-config'
+import { readGlobalConfig } from '../../layers/nuxi/agent/lib/global-config'
 import type { GitHubTeamMember } from '../types/github'
 
 const getCoreMembers = cachedFunction((): Promise<GitHubTeamMember[]> => $fetch<GitHubTeamMember[]>('/api/v1/teams/core'), {
@@ -19,7 +19,7 @@ export async function isCoreTeamMember(login: string): Promise<boolean> {
 
 /** Extra admin logins live in Global Config (`admin.githubLogins`), editable from the Vercel dashboard with no redeploy. */
 async function getExtraAdminLogins(): Promise<string[]> {
-  const config = await getAll<{ admin?: { githubLogins?: string[] } }>(['admin'])
+  const config = await readGlobalConfig<{ admin?: { githubLogins?: string[] } }>(['admin'])
   const raw = config.admin?.githubLogins
   if (!Array.isArray(raw)) return []
   return raw.map(login => String(login).trim().toLowerCase()).filter(Boolean)
