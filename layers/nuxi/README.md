@@ -42,7 +42,16 @@ How messages arrive: Discord does not push messages to HTTP webhooks like Slack.
    - `DISCORD_APPLICATION_ID` — interaction responses
    - `REDIS_URL` — Chat SDK state adapter (subscriptions, dedupe, locks); memory fallback in dev
    - `DISCORD_GATEWAY_WEBHOOK_URL` — optional override for the Gateway forward target; defaults to `https://$VERCEL_URL/eve/v1/discord` (so previews forward to themselves), falling back to `$VERCEL_PROJECT_PRODUCTION_URL` when `VERCEL_URL` is unset
-3. **Set `discordAllowedChannels`** in Global Config (`GLOBAL_CONFIG`, see `.env.example` and `agent/lib/discord-access.ts`) — a JSON array of Discord channel ids where Nuxi may run, editable from the Vercel dashboard with no redeploy. **Unset or empty means deny everywhere.** Mentions elsewhere are silently ignored. (Get an id via right-click on the channel → **Copy Channel ID**, with Developer Mode enabled.)
+3. **Set `discordChannels`** in Global Config (`GLOBAL_CONFIG`, see `.env.example` and `agent/lib/discord/access.ts`) — editable from the Vercel dashboard with no redeploy:
+
+   ```json
+   "discordChannels": {
+     "admin": ["1234567890123456"],
+     "public": ["6543210987654321"]
+   }
+   ```
+
+   `admin` channels dispatch with full admin mode (`agent/lib/identity/admin-mode.ts`); `public` channels dispatch with the public toolset only. A channel absent from both is silently ignored. **Unset or empty means deny everywhere.** (Get an id via right-click on the channel → **Copy Channel ID**, with Developer Mode enabled.)
 4. **Invite the app to the server**: **OAuth2 → URL Generator**, scopes `bot` + `applications.commands`. Bot permissions: **View Channels**, **Send Messages**, **Create Public Threads**, **Send Messages in Threads**, **Manage Threads** (renames threads after the mention text), **Read Message History**, **Add Reactions**.
 5. **Set the Interactions Endpoint URL** (General Information tab) to `https://<eve-service>/eve/v1/discord` — used for HITL button clicks and Discord's verification PING. Deploy the eve service with the env vars set **first**: Discord validates the endpoint when you save.
 6. No slash command to register — the bot is mention-driven.
@@ -62,17 +71,17 @@ curl -X POST "https://<preview-url>/eve/v1/ops/discord-gateway/trigger" \
 # -> { "started": true, "webhookUrl": "https://<preview-url>/eve/v1/discord" }
 ```
 
-Each call opens one 270s listener window — re-run it while testing. The preview also needs the `DISCORD_*` env vars (and ideally `REDIS_URL`) available to the preview environment. Preview and production share the same `GLOBAL_CONFIG` store, so `discordAllowedChannels` applies to both.
+Each call opens one 270s listener window — re-run it while testing. The preview also needs the `DISCORD_*` env vars (and ideally `REDIS_URL`) available to the preview environment. Preview and production share the same `GLOBAL_CONFIG` store, so `discordChannels` applies to both.
 
-Because dispatch is restricted to the `discordAllowedChannels` allowlist, Discord sessions get **admin mode by default** (`isAdminMode` matches Discord auth, like Slack). Keep the allowlist limited to trusted team channels — widening it to public channels means revisiting the admin mode gate first (`agent/lib/admin-mode.ts`). The rate-limit hook applies per Discord user id.
+Dispatch is restricted to channels listed under `discordChannels.admin` or `discordChannels.public`; only `admin` channels get **admin mode** (`isAdminMode` — see `agent/lib/identity/admin-mode.ts`). Keep `admin` limited to trusted team channels; use `public` for channels where Nuxi should answer without the admin toolset. The rate-limit hook applies per Discord user id.
 
 ## Caller identity
 
-`agent/lib/context.ts` resolves `Context.person` (id, name, bot flag) for every surface, and `agent/lib/caller-instructions.ts` renders it into the always-on prompt so "who am I?" has an answer. Discord's display name (`global_name`) comes for free from the inbound message payload; the `@`-mention handle (`username`) is still kept on the auth context for future use, it's just not what the model sees. Slack's `app_mention`/`message` events only carry a user id — `channels/slack.ts` resolves the real name via `users.info` (`agent/lib/slack-api.ts`, cached 1h per user), which needs the **`users:read`** bot scope on top of the ones above; without it, Slack callers fall back to their user id.
+`agent/lib/identity/context.ts` resolves `Context.person` (id, name, bot flag) for every surface, and `agent/lib/identity/caller-instructions.ts` renders it into the always-on prompt so "who am I?" has an answer. Discord's display name (`global_name`) comes for free from the inbound message payload; the `@`-mention handle (`username`) is still kept on the auth context for future use, it's just not what the model sees. Slack's `app_mention`/`message` events only carry a user id — `channels/slack.ts` resolves the real name via `users.info` (`agent/lib/slack/api.ts`, cached 1h per user), which needs the **`users:read`** bot scope on top of the ones above; without it, Slack callers fall back to their user id.
 
 ## Scheduled Slack workflows
 
-Shared helpers live in `agent/lib/workflows.ts` (`receiveOnSlack`, auth, config). Each workflow keeps its own prompt, cron, and runner in `agent/schedules/<id>.ts`, with the procedure in `agent/skills/<id>/SKILL.md`.
+Shared helpers live in `agent/lib/workflow/shared.ts` (`receiveOnSlack`, auth, config). Each workflow keeps its own prompt, cron, and runner in `agent/schedules/<id>.ts`, with the procedure in `agent/skills/<id>/SKILL.md`.
 
 ### Adding a workflow
 
@@ -87,7 +96,7 @@ Example schedule skeleton:
 
 ```ts
 import { defineSchedule } from 'eve/schedules'
-import { receiveOnSlack, resolveSinceDays, skillWorkflowMessage } from '../lib/workflows.js'
+import { receiveOnSlack, resolveSinceDays, skillWorkflowMessage } from '../lib/workflow/shared.js'
 
 const SKILL_ID = 'my-workflow'
 
@@ -132,7 +141,7 @@ The Nuxi Slack bot must be invited to `#firehose-nuxt`. Required Connect scopes:
 
 ### Discord mirror
 
-Set `workflow.discord.channel` (raw Discord channel id) in Global Config to also post the weekly digest and firehose summary to a Discord channel — distinct from `discordAllowedChannels`, which only gates live @mentions. This reuses the Slack-generated text (no second agent run): `agent/lib/discord-workflow.ts` reads the finished Slack session's final message, `agent/lib/discord-format.ts` converts Slack-only syntax (`<url|label>` links, `:nuxter:`-style emoji, bare `@names`) to Discord Markdown, then posts via the unwrapped Discord adapter (so conversion runs once). Conversion is best-effort — an emoji shortcode outside the known set passes through unchanged. Unset disables the mirror; a mirroring failure is logged and never affects the Slack post. The bot needs **View Channel** + **Send Messages** in the target channel.
+Set `workflow.discord.channel` (raw Discord channel id) in Global Config to also post the weekly digest and firehose summary to a Discord channel — distinct from `discordChannels`, which only gates live @mentions. This reuses the Slack-generated text (no second agent run): `agent/lib/discord/digest-mirror.ts` reads the finished Slack session's final message, `agent/lib/discord/format.ts` converts Slack-only syntax (`<url|label>` links, `:nuxter:`-style emoji, bare `@names`) to Discord Markdown, then posts via the unwrapped Discord adapter (so conversion runs once). Conversion is best-effort — an emoji shortcode outside the known set passes through unchanged. Unset disables the mirror; a mirroring failure is logged and never affects the Slack post. The bot needs **View Channel** + **Send Messages** in the target channel.
 
 ### Test locally
 
@@ -158,7 +167,7 @@ Requires on the **eve** runtime: `INTERNAL_API_SECRET`, `NUXT_MCP_ADMIN_TOKEN`. 
 
 ### Workflow config (Global Config)
 
-Everything else — schedule window, Slack/Discord channel refs, workspace subdomain, and the manual-trigger safety switch — lives under one Global Config key, `workflow`, editable from the Vercel dashboard with no redeploy (`agent/lib/workflow-config.ts`, consumed by `slack-api.ts`, `discord-access.ts`, `workflows.ts`):
+Everything else — schedule window, Slack/Discord channel refs, workspace subdomain, and the manual-trigger safety switch — lives under one Global Config key, `workflow`, editable from the Vercel dashboard with no redeploy (`agent/lib/workflow/config.ts`, consumed by `slack/api.ts`, `discord/access.ts`, `workflow/shared.ts`):
 
 ```json
 "workflow": {
@@ -176,3 +185,5 @@ Everything else — schedule window, Slack/Discord channel refs, workspace subdo
 ```
 
 Every field is optional and falls back to a sane default: `sinceDays` → 7, `slack.workspace` → `vercel`, each channel's `id` → `name` → a hardcoded default (`project-nuxi`/`firehose-nuxt`, resolved via `users.conversations` — slower, and needs `channels:read`/`groups:read`), `manualTrigger` → `false` (production `/ops/*/trigger` stays disabled; preview is always allowed), `discord.channel` → mirror disabled. Preview and production share the same `GLOBAL_CONFIG` store.
+
+Both `workflow` and `discordChannels` are read through `agent/lib/global-config.ts` (`readGlobalConfig`), a thin wrapper around `@vercel/global-config` that caches each key set for 30s (a single scheduled run can otherwise trigger several redundant reads of the same key) and turns a Global Config outage into a logged warning + empty result instead of an unhandled throw. Both are parsed with zod, so a malformed dashboard edit falls back to defaults with a clear warning instead of failing silently.

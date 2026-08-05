@@ -5,7 +5,7 @@ import {
   skillFirehoseWorkflowMessage,
   skillWorkflowMessage,
   workflowSkillId
-} from '../../layers/nuxi/agent/lib/workflows'
+} from '../../layers/nuxi/agent/lib/workflow/shared'
 
 const SKILLS_DIR = fileURLToPath(new URL('../../layers/nuxi/agent/skills', import.meta.url))
 

@@ -5,8 +5,8 @@ import {
   type SlackContext,
   type SlackMessage
 } from 'eve/channels/slack'
-import { resolveSlackUserName } from '../lib/slack-api.js'
-import { slackConnectorId } from '../lib/slack-connect.js'
+import { resolveSlackUserName } from '../lib/slack/api.js'
+import { slackConnectorId } from '../lib/slack/connect.js'
 
 function isHookConflictFailure(event: { code?: string, message?: string }) {
   const message = event.message ?? ''

@@ -1,7 +1,7 @@
 import { defineDynamic, defineTool } from 'eve/tools'
 import { z } from 'zod'
 import { NUXI_GATEWAY_TAG } from '../../shared/utils/ai-gateway.js'
-import { isAdminMode } from '../lib/admin-mode.js'
+import { isAdminMode } from '../lib/identity/admin-mode.js'
 
 export const AI_GATEWAY_INSTRUCTIONS = `**AI Gateway tools (\`ai_gateway__*\`, admin only) — tokens, cost, model usage:**
 - \`ai_gateway__credits\` — current credit balance and lifetime spend for the **entire** nuxt-js team account (not Nuxi-only)

@@ -1,7 +1,7 @@
 import { getToken } from '@vercel/connect'
 import { callSlackApi } from 'eve/channels/slack'
-import { slackConnectorId } from './slack-connect.js'
-import { loadWorkflowConfig } from './workflow-config.js'
+import { slackConnectorId } from './connect.js'
+import { loadWorkflowConfig } from '../workflow/config.js'
 
 const DEFAULT_WORKFLOW_SLACK_CHANNEL = 'project-nuxi'
 const DEFAULT_FIREHOSE_SLACK_CHANNEL = 'firehose-nuxt'

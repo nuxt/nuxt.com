@@ -1,7 +1,7 @@
 import type { GatewayProviderOptions } from '@ai-sdk/gateway'
 import type { ModelMessage } from 'ai'
-import { resolveContext, type AuthContext } from './context.js'
-import { workflowSkillId } from './workflows.js'
+import { resolveContext, type AuthContext } from './identity/context.js'
+import { workflowSkillId } from './workflow/shared.js'
 import { NUXI_GATEWAY_TAG } from '../../shared/utils/ai-gateway.js'
 
 /**

@@ -1,5 +1,5 @@
 import { defineSchedule } from 'eve/schedules'
-import { isDiscordConfigured } from '../lib/discord-access.js'
+import { isDiscordConfigured } from '../lib/discord/access.js'
 
 /**
  * Discord delivers regular messages (@mentions, thread replies) over a Gateway

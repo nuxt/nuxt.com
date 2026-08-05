@@ -1,11 +1,11 @@
 import { defineSchedule } from 'eve/schedules'
 import type { ScheduleHandlerArgs } from 'eve/schedules'
-import { receiveOnSlack, skillFirehoseWorkflowMessage } from '../lib/workflows.js'
+import { receiveOnSlack, skillFirehoseWorkflowMessage } from '../lib/workflow/shared.js'
 import {
   firehoseSlackChannelRef,
   isSlackChannelId,
   normalizeSlackChannelName
-} from '../lib/slack-api.js'
+} from '../lib/slack/api.js'
 
 const SKILL_ID = 'firehose-summary'
 const DEFAULT_WINDOW_HOURS = 24

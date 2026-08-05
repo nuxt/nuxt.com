@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest'
-import { isAdminMode } from '../../layers/nuxi/agent/lib/admin-mode'
+import { isAdminMode } from '../../layers/nuxi/agent/lib/identity/admin-mode'
 
 vi.mock('@vercel/global-config', () => ({
-  getAll: vi.fn(async () => ({ discordAllowedChannels: ['C_ALLOWED'] }))
+  getAll: vi.fn(async () => ({ discordChannels: { admin: ['C_ADMIN'], public: ['C_PUBLIC'] } }))
 }))
 
 describe('isAdminMode', () => {
@@ -33,16 +33,25 @@ describe('isAdminMode', () => {
     })).toBe(false)
   })
 
-  it('grants a Discord user from an allowed channel', async () => {
+  it('grants a Discord user from an admin channel', async () => {
     expect(await isAdminMode({
       issuer: 'discord',
       principalId: 'discord:U1',
       principalType: 'user',
-      attributes: { channel_id: 'C_ALLOWED' }
+      attributes: { channel_id: 'C_ADMIN' }
     })).toBe(true)
   })
 
-  it('denies a Discord user from a channel outside the allowlist', async () => {
+  it('denies a Discord user from a public (non-admin) channel', async () => {
+    expect(await isAdminMode({
+      issuer: 'discord',
+      principalId: 'discord:U1',
+      principalType: 'user',
+      attributes: { channel_id: 'C_PUBLIC' }
+    })).toBe(false)
+  })
+
+  it('denies a Discord user from a channel outside both tiers', async () => {
     expect(await isAdminMode({
       issuer: 'discord',
       principalId: 'discord:U1',

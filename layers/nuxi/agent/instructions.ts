@@ -2,11 +2,11 @@ import { defineDynamic, defineInstructions } from 'eve/instructions'
 import { ADMIN_MCP_INSTRUCTIONS } from './connections/admin-mcp.js'
 import { AI_GATEWAY_INSTRUCTIONS } from './tools/ai-gateway.js'
 import { VERCEL_MCP_INSTRUCTIONS } from './connections/vercel-mcp.js'
-import { isAdminMode } from './lib/admin-mode.js'
+import { isAdminMode } from './lib/identity/admin-mode.js'
 import { buildInstructionsWithDate } from './lib/base-instructions.js'
-import { callerInstructions } from './lib/caller-instructions.js'
-import { resolveContext } from './lib/context.js'
-import { surfaceInstructions } from './lib/surface-instructions.js'
+import { callerInstructions } from './lib/identity/caller-instructions.js'
+import { resolveContext } from './lib/identity/context.js'
+import { surfaceInstructions } from './lib/identity/surface-instructions.js'
 
 /**
  * Resolved per turn, not per session. A Slack thread opened by a schedule

@@ -1,7 +1,7 @@
 import { defineMcpClientConnection } from 'eve/connections'
 import { connect, type EveAuthorizationOptions } from '@vercel/connect/eve'
 import type { SessionContext } from 'eve/context'
-import { isAdminMode } from '../lib/admin-mode.js'
+import { isAdminMode } from '../lib/identity/admin-mode.js'
 
 const VERCEL_TEAM_ID = process.env.NUXI_VERCEL_TEAM_ID
 const VERCEL_PROJECT_ID = process.env.NUXI_VERCEL_PROJECT_ID

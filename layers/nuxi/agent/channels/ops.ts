@@ -5,7 +5,7 @@ import {
   parseSinceHours,
   scheduleAppAuth,
   verifyWorkflowTriggerAuth
-} from '../lib/workflows.js'
+} from '../lib/workflow/shared.js'
 import { runDiscordGateway } from '../schedules/discord-gateway.js'
 import { runFirehoseSummary } from '../schedules/firehose-summary.js'
 import { runWeeklyDigest } from '../schedules/weekly-digest.js'

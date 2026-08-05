@@ -15,9 +15,9 @@ import {
   discordUserAuth,
   isAllowedDiscordChannel,
   isDiscordConfigured
-} from '../lib/discord-access.js'
-import { slackTextToDiscord, splitDiscordMessages } from '../lib/discord-format.js'
-import { withDiscordRetry } from '../lib/discord-retry.js'
+} from '../lib/discord/access.js'
+import { slackTextToDiscord, splitDiscordMessages } from '../lib/discord/format.js'
+import { withDiscordRetry } from '../lib/discord/retry.js'
 
 type PostableMessage = string | { raw: string } | { markdown: string } | Record<string, unknown>
 

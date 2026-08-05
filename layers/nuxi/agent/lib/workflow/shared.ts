@@ -1,9 +1,9 @@
 import { timingSafeEqual } from 'node:crypto'
 import type { ScheduleHandlerArgs } from 'eve/schedules'
-import slack from '../channels/slack.js'
-import { discordWorkflowChannelId } from './discord-access.js'
-import { resolveSlackChannelRef, workflowSlackChannelRef } from './slack-api.js'
-import { loadWorkflowConfig } from './workflow-config.js'
+import slack from '../../channels/slack.js'
+import { discordWorkflowChannelId } from '../discord/access.js'
+import { resolveSlackChannelRef, workflowSlackChannelRef } from '../slack/api.js'
+import { loadWorkflowConfig } from './config.js'
 
 const DEFAULT_SINCE_DAYS = 7
 
@@ -14,7 +14,7 @@ export const scheduleAppAuth = {
   principalType: 'runtime'
 } as const satisfies ScheduleHandlerArgs['appAuth']
 
-/** `workflow.sinceDays` in Global Config (see `workflow-config.ts`); unset/invalid falls back to a week. */
+/** `workflow.sinceDays` in Global Config (see `config.ts`); unset/invalid falls back to a week. */
 export async function defaultSinceDays(): Promise<number> {
   const config = await loadWorkflowConfig()
   const raw = config.sinceDays
@@ -45,7 +45,7 @@ export async function resolveSinceDays(
 /**
  * Starts a Slack digest session and, when `workflow.discord.channel` is
  * configured in Global Config, mirrors the same generated text to Discord
- * (see `discord-workflow.ts` — no second agent run). Awaited inline rather than
+ * (see `discord/digest-mirror.ts` — no second agent run). Awaited inline rather than
  * fired under a nested `waitUntil`: this whole function already runs inside
  * the caller's top-level `waitUntil(runWeeklyDigest(...))`, and a second,
  * deeply-nested `waitUntil` call turned out not to reliably survive the
@@ -75,7 +75,7 @@ export async function receiveOnSlack({
   const discordChannelId = await discordWorkflowChannelId()
   if (discordChannelId) {
     // Dynamic import: keep Slack digest schedules loadable without Discord env.
-    const { mirrorDigestToDiscord } = await import('./discord-workflow.js')
+    const { mirrorDigestToDiscord } = await import('../discord/digest-mirror.js')
     await mirrorDigestToDiscord({ session, channelId: discordChannelId })
   }
 

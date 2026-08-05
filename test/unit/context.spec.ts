@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { resolveContext } from '../../layers/nuxi/agent/lib/context'
+import { resolveContext } from '../../layers/nuxi/agent/lib/identity/context'
 
 describe('resolveContext', () => {
   it('returns unknown/null for no auth', () => {

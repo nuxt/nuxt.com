@@ -1,11 +1,11 @@
 import { defineDynamic, defineTool } from 'eve/tools'
 import { z } from 'zod'
-import { isAdminMode } from '../lib/admin-mode.js'
+import { isAdminMode } from '../lib/identity/admin-mode.js'
 import {
   fetchSlackChannelHistory,
   firehoseSlackChannelRef,
   resolveSlackChannelRef
-} from '../lib/slack-api.js'
+} from '../lib/slack/api.js'
 
 export default defineDynamic({
   events: {

@@ -4,7 +4,7 @@ import {
   receiveOnSlack,
   resolveSinceDays,
   skillWorkflowMessage
-} from '../lib/workflows.js'
+} from '../lib/workflow/shared.js'
 
 const SKILL_ID = 'weekly-digest'
 const DEFAULT_WINDOW_DAYS = 7

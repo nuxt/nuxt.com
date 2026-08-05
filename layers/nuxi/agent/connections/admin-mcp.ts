@@ -1,6 +1,6 @@
 import { defineMcpClientConnection } from 'eve/connections'
 import type { SessionContext } from 'eve/context'
-import { isAdminMode } from '../lib/admin-mode.js'
+import { isAdminMode } from '../lib/identity/admin-mode.js'
 import { appOrigin } from '../lib/internal-api.js'
 
 /** The admin MCP server exposes exactly these; keep the surface explicit. */
