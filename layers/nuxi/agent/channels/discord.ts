@@ -14,6 +14,7 @@ import {
 import {
   discordUserAuth,
   isAllowedDiscordChannel,
+  isAutoRespondDiscordChannel,
   isDiscordConfigured
 } from '../lib/discord/access.js'
 import { slackTextToDiscord, splitDiscordMessages } from '../lib/discord/format.js'
@@ -104,9 +105,15 @@ async function shouldDispatch(thread: Thread, message: Message): Promise<boolean
   if (!isHuman(message)) return false
   const allowed = await isAllowedDiscordChannel(thread.channelId)
   if (!allowed) {
-    console.warn('[nuxi:discord] dropped mention: channel not in discordAllowedChannels', { channelId: thread.channelId })
+    console.warn('[nuxi:discord] dropped message: channel not in discord.channels', { channelId: thread.channelId })
   }
   return allowed
+}
+
+/** Gates `onNewMessage` below: only `discord.channels.autoRespond` answers without an `@mention`. */
+async function shouldAutoRespond(thread: Thread, message: Message): Promise<boolean> {
+  if (!isHuman(message)) return false
+  return isAutoRespondDiscordChannel(thread.channelId)
 }
 
 /**
@@ -237,16 +244,27 @@ function createDiscordBridge() {
 
   const { bot, send } = bridge
 
-  bot.onNewMention(async (thread: Thread, message: Message, context?: MessageContext) => {
-    if (!(await shouldDispatch(thread, message))) return
+  /**
+   * Subscribes to a freshly opened thread and sends its first turn to the model.
+   * Shared by `onNewMention` (renames the thread from the mention text) and
+   * `onNewMessage` (a Forum post already has its own title — never renamed).
+   */
+  async function dispatchNewThread(
+    thread: Thread,
+    message: Message,
+    context: MessageContext | undefined,
+    { renameThread }: { renameThread: boolean }
+  ): Promise<void> {
     await thread.subscribe()
 
     const turn = burstMessages(message, context)
-    // Title from the mention that opened the thread, not the newest message.
-    const title = threadTitleFromMessage(turn[0]?.text ?? message.text)
-    if (title) {
-      void bot.getAdapter('discord')?.setThreadTitle(thread.id, title)
-        .catch((error: unknown) => console.warn('[nuxi:discord] setThreadTitle failed', error))
+    if (renameThread) {
+      // Title from the mention that opened the thread, not the newest message.
+      const title = threadTitleFromMessage(turn[0]?.text ?? message.text)
+      if (title) {
+        void bot.getAdapter('discord')?.setThreadTitle(thread.id, title)
+          .catch((error: unknown) => console.warn('[nuxi:discord] setThreadTitle failed', error))
+      }
     }
 
     // Discord-specific behaviour lives in the always-on prompt, keyed on the
@@ -256,6 +274,19 @@ function createDiscordBridge() {
       toUserContent(turn),
       { thread, auth: discordUserAuth(message.author.userId, message.author.userName, message.author.fullName, thread.channelId) }
     )
+  }
+
+  bot.onNewMention(async (thread: Thread, message: Message, context?: MessageContext) => {
+    if (!(await shouldDispatch(thread, message))) return
+    await dispatchNewThread(thread, message, context, { renameThread: true })
+  })
+
+  // No `@mention` required — gated to `discord.channels.autoRespond` (e.g. a Forum
+  // channel where every "New Post" is its own thread). Mutually exclusive with
+  // `onNewMention`: the Chat SDK routes a message to exactly one of the two.
+  bot.onNewMessage(/[\s\S]*/, async (thread: Thread, message: Message, context?: MessageContext) => {
+    if (!(await shouldAutoRespond(thread, message))) return
+    await dispatchNewThread(thread, message, context, { renameThread: false })
   })
 
   bot.onSubscribedMessage(async (thread: Thread, message: Message, context?: MessageContext) => {

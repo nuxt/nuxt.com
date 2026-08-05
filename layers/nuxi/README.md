@@ -27,7 +27,7 @@ The agent never imports Nuxt server code directly. Shared logic that both sides 
 
 ## Discord channel
 
-`agent/channels/discord.ts` wires Nuxi into Discord through eve's Chat SDK channel (`eve/channels/chat-sdk` + `@chat-adapter/discord`), so it behaves like Slack: **@mention Nuxi** in an allowed channel, it subscribes to the conversation, renames the thread after your message, and answers **in a thread**; follow-up messages in that thread continue the same eve session without re-mentioning.
+`agent/channels/discord.ts` wires Nuxi into Discord through eve's Chat SDK channel (`eve/channels/chat-sdk` + `@chat-adapter/discord`), so it behaves like Slack: **@mention Nuxi** in an allowed channel, it subscribes to the conversation, renames the thread after your message, and answers **in a thread**; follow-up messages in that thread continue the same eve session without re-mentioning. Channels listed under `discord.channels.autoRespond` skip the `@mention` requirement entirely — see [Auto-respond channels](#auto-respond-channels-no-mention) below.
 
 How messages arrive: Discord does not push messages to HTTP webhooks like Slack. `agent/schedules/discord-gateway.ts` restarts a Gateway WebSocket listener every 4 minutes (270s duration, overlapping windows) that forwards events to the channel webhook at `/eve/v1/discord`. Inbound dedupe across overlapping listeners and thread subscriptions rely on the Chat SDK state adapter — **Redis (`REDIS_URL`) is required in production**; local dev falls back to in-memory state.
 
@@ -48,12 +48,13 @@ How messages arrive: Discord does not push messages to HTTP webhooks like Slack.
    "discord": {
      "channels": {
        "admin": ["1234567890123456"],
-       "public": ["6543210987654321"]
+       "public": ["6543210987654321"],
+       "autoRespond": ["1111111111111111"]
      }
    }
    ```
 
-   `admin` channels dispatch with full admin mode (`agent/lib/identity/admin-mode.ts`); `public` channels dispatch with the public toolset only. A channel absent from both is silently ignored. **Unset or empty means deny everywhere.** (Get an id via right-click on the channel → **Copy Channel ID**, with Developer Mode enabled.)
+   `admin` channels dispatch with full admin mode (`agent/lib/identity/admin-mode.ts`); `public` and `autoRespond` channels dispatch with the public toolset only. A channel absent from all three is silently ignored. **Unset or empty means deny everywhere.** (Get an id via right-click on the channel → **Copy Channel ID**, with Developer Mode enabled.)
 4. **Invite the app to the server**: **OAuth2 → URL Generator**, scopes `bot` + `applications.commands`. Bot permissions: **View Channels**, **Send Messages**, **Create Public Threads**, **Send Messages in Threads**, **Manage Threads** (renames threads after the mention text), **Read Message History**, **Add Reactions**.
 5. **Set the Interactions Endpoint URL** (General Information tab) to `https://<eve-service>/eve/v1/discord` — used for HITL button clicks and Discord's verification PING. Deploy the eve service with the env vars set **first**: Discord validates the endpoint when you save.
 6. No slash command to register — the bot is mention-driven.
@@ -75,7 +76,11 @@ curl -X POST "https://<preview-url>/eve/v1/ops/discord-gateway/trigger" \
 
 Each call opens one 270s listener window — re-run it while testing. The preview also needs the `DISCORD_*` env vars (and ideally `REDIS_URL`) available to the preview environment. Preview and production share the same `GLOBAL_CONFIG` store, so `discord.channels` applies to both.
 
-Dispatch is restricted to channels listed under `discord.channels.admin` or `discord.channels.public`; only `admin` channels get **admin mode** (`isAdminMode` — see `agent/lib/identity/admin-mode.ts`). Keep `admin` limited to trusted team channels; use `public` for channels where Nuxi should answer without the admin toolset. The rate-limit hook applies per Discord user id.
+Dispatch is restricted to channels listed under `discord.channels.admin`, `.public`, or `.autoRespond`; only `admin` channels get **admin mode** (`isAdminMode` — see `agent/lib/identity/admin-mode.ts`). Keep `admin` limited to trusted team channels; use `public` for channels where Nuxi should answer without the admin toolset. The rate-limit hook applies per Discord user id.
+
+### Auto-respond channels (no `@mention`)
+
+`discord.channels.autoRespond` answers every message in a channel with no `@mention` needed — e.g. a Discord **Forum channel** used as a support forum (each "New Post" is its own thread, like Kapa in a help forum). Wired via `bot.onNewMessage(/[\s\S]*/, …)` in `agent/channels/discord.ts`, which the Chat SDK routes to only for messages that are not an `@mention` and not already in a subscribed thread — no double dispatch with `onNewMention`. `@chat-adapter/discord` already resolves a Forum post's thread to its parent channel id before Nuxi ever sees it, so listing the Forum channel's own id here covers every post, present and future — no per-post configuration. The bot never renames the thread here (a Forum post already has its own title, unlike the mention flow's ad-hoc thread).
 
 ## Caller identity
 
