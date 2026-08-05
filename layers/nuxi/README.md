@@ -68,7 +68,7 @@ Because dispatch is restricted to the `discordAllowedChannels` allowlist, Discor
 
 ## Caller identity
 
-`agent/lib/context.ts` resolves `Context.person` (id, name, bot flag) for every surface, and `agent/lib/caller-instructions.ts` renders it into the always-on prompt so "who am I?" has an answer. Discord's username comes for free from the inbound message payload. Slack's `app_mention`/`message` events only carry a user id — `channels/slack.ts` resolves the real name via `users.info` (`agent/lib/slack-api.ts`, cached 1h per user), which needs the **`users:read`** bot scope on top of the ones above; without it, Slack callers fall back to their user id.
+`agent/lib/context.ts` resolves `Context.person` (id, name, bot flag) for every surface, and `agent/lib/caller-instructions.ts` renders it into the always-on prompt so "who am I?" has an answer. Discord's display name (`global_name`) comes for free from the inbound message payload; the `@`-mention handle (`username`) is still kept on the auth context for future use, it's just not what the model sees. Slack's `app_mention`/`message` events only carry a user id — `channels/slack.ts` resolves the real name via `users.info` (`agent/lib/slack-api.ts`, cached 1h per user), which needs the **`users:read`** bot scope on top of the ones above; without it, Slack callers fall back to their user id.
 
 ## Scheduled Slack workflows
 

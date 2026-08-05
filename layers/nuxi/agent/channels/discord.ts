@@ -214,7 +214,7 @@ function createDiscordBridge() {
     // even a lone message by its debounce window.
     concurrency: 'queue',
     // Keep the Discord principal when a HITL button click resumes a session.
-    resolveInputAuth: event => discordUserAuth(event.user?.userId, event.user?.userName, event.thread?.channelId),
+    resolveInputAuth: event => discordUserAuth(event.user?.userId, event.user?.userName, event.user?.fullName, event.thread?.channelId),
     events: {
       // Same shape as eve's default handler, only the delivery is chunked.
       async 'message.completed'(event, channel) {
@@ -254,7 +254,7 @@ function createDiscordBridge() {
     // would prepend a fresh copy to history on every message.
     await send(
       toUserContent(turn),
-      { thread, auth: discordUserAuth(message.author.userId, message.author.userName, thread.channelId) }
+      { thread, auth: discordUserAuth(message.author.userId, message.author.userName, message.author.fullName, thread.channelId) }
     )
   })
 
@@ -262,7 +262,7 @@ function createDiscordBridge() {
     if (!(await shouldDispatch(thread, message))) return
     await send(
       toUserContent(burstMessages(message, context)),
-      { thread, auth: discordUserAuth(message.author.userId, message.author.userName, thread.channelId) }
+      { thread, auth: discordUserAuth(message.author.userId, message.author.userName, message.author.fullName, thread.channelId) }
     )
   })
 

@@ -60,7 +60,7 @@ export function resolveContext(auth: AuthContext | null | undefined): Context {
     const channelId = attr(auth, 'channel_id')
     return {
       surface: 'discord',
-      person: { id: auth.principalId ?? 'unknown', name: attr(auth, 'username'), isBot: false },
+      person: { id: auth.principalId ?? 'unknown', name: attr(auth, 'full_name') ?? attr(auth, 'username'), isBot: false },
       channel: channelId ? { id: channelId } : null,
       raw: auth
     }

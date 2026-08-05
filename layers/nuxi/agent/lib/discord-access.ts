@@ -33,10 +33,21 @@ export async function isAllowedDiscordChannel(channelId: string | undefined): Pr
   return Boolean(raw && ids.has(raw))
 }
 
-/** Always pass the originating thread's `channelId` (including HITL resumes) — `admin-mode.ts` checks it against `discordAllowedChannels`, so a stale/forged value can't bypass the allowlist. */
-export function discordUserAuth(userId: string | undefined, userName: string | undefined, channelId: string | undefined) {
+/**
+ * Always pass the originating thread's `channelId` (including HITL resumes) — `admin-mode.ts` checks it
+ * against `discordAllowedChannels`, so a stale/forged value can't bypass the allowlist.
+ * `userName` (the @-mention handle, e.g. `hugorcd_`) is kept separately from `fullName` (Discord display
+ * name) so `context.ts` can show the model a real name while the handle stays available for later use.
+ */
+export function discordUserAuth(
+  userId: string | undefined,
+  userName: string | undefined,
+  fullName: string | undefined,
+  channelId: string | undefined
+) {
   const attributes: Record<string, string> = {}
   if (userName) attributes.username = userName
+  if (fullName) attributes.full_name = fullName
   if (channelId) attributes.channel_id = channelId
   return {
     attributes,
