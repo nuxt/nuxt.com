@@ -191,6 +191,7 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
 
 <template>
   <UContainer v-if="page">
+    <DocsVersionAlert />
     <UPage>
       <template #left>
         <UPageAside>
