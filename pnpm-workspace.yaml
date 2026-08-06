@@ -22,3 +22,6 @@ minimumReleaseAgeExclude:
   - evlog
   - '@nuxt/*'
   - nuxt
+  - nuxt-nightly
+  - vue
+  - '@vue/*'
