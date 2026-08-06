@@ -180,6 +180,9 @@ importers:
       valibot:
         specifier: ^1.4.2
         version: 1.4.2(typescript@6.0.3)
+      verkit:
+        specifier: ^0.3.0
+        version: 0.3.0
       zod:
         specifier: 4.4.3
         version: 4.4.3
@@ -10031,6 +10034,10 @@ packages:
 
   verkit@0.3.2:
     resolution: {integrity: sha512-zj/ob3UsvJGN0whEAKFp53REA5X66hvffVqoCtVQAakJKnKlH+/PcOfMoFwIG/o4rElqLv/ycAFlx8ZlXUorCg==}
+    engines: {node: '>=18.12.0'}
+
+  verkit@0.3.0:
+    resolution: {integrity: sha512-Njrh4U8UODGajoZ44QS2C/BsoEM9DTI/aCqY5swsizb+/ap0FamvnCMcZAxrR5+aoC0ZqkawEfpC/N2SBc+xeA==}
     engines: {node: '>=18.12.0'}
 
   vfile-location@5.0.3:
@@ -21910,6 +21917,8 @@ snapshots:
       - '@vue/composition-api'
 
   verkit@0.3.2: {}
+
+  verkit@0.3.0: {}
 
   vfile-location@5.0.3:
     dependencies:

@@ -18,6 +18,7 @@ const onThisPageDrawerOpen = ref(false)
 const route = useRoute()
 const nuxtApp = useNuxtApp()
 const { version } = useDocsVersion()
+const { latest } = useDocsLatestVersion()
 const { headerLinks } = useHeaderLinks()
 const { isAgentDocked } = useNuxtAgent()
 const path = computed(() => route.path.replace(/\/$/, ''))
@@ -30,6 +31,34 @@ const navClass = (item: ContentNavigationItem) => {
   return ''
 }
 
+// The navigation only flags what is genuinely new: the current and previous two minors
+const navVersionTolerance: VersionTolerance = { minor: 2 }
+
+const versionBadge = (item: ContentNavigationItem) => {
+  if (typeof item.minimalVersion !== 'string') return undefined
+
+  const minimal = item.minimalVersion.trim()
+  if (!satisfiesVersionTolerance(minimal, latest.value, navVersionTolerance)) return undefined
+
+  const labels = versionBadgeLabels(minimal, version.value?.shortTag)
+  if (!labels) return undefined
+
+  return {
+    // The sidebar has no room for `nightly v4`
+    'label': labels.shortLabel,
+    'size': 'sm' as const,
+    'color': 'info' as const,
+    'variant': 'subtle' as const,
+    'aria-label': labels.ariaLabel
+  }
+}
+
+const withVersionBadge = (item: ContentNavigationItem): ContentNavigationItem => ({
+  ...item,
+  badge: versionBadge(item) ?? item.badge,
+  children: item.children?.map(withVersionBadge)
+})
+
 // Get the aside navigation
 const asideNavigation = computed(() => {
   const path = [version.value.path, route.params.slug?.[version.value.path.split('/').length - 2]].filter(Boolean).join('/')
@@ -37,7 +66,7 @@ const asideNavigation = computed(() => {
   const nav = navPageFromPath(path, navigation.value)?.children || []
 
   return nav.map(item => ({
-    ...item,
+    ...withVersionBadge(item),
     class: navClass(item)
   }))
 })
@@ -220,16 +249,7 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
 
           <template #title>
             {{ page.title }}
-
-            <UBadge
-              v-if="page.minimalVersion?.trim()"
-              :label="`v${page.minimalVersion?.trim()}`"
-              color="info"
-              variant="subtle"
-              size="lg"
-              class="align-middle"
-              :aria-label="`Minimum Nuxt version: v${page.minimalVersion?.trim()}`"
-            />
+            <VersionBadge v-if="page.minimalVersion?.trim()" :version="page.minimalVersion" size="lg" />
           </template>
 
           <template #links>

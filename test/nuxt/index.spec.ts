@@ -161,3 +161,85 @@ describe('utils/index', () => {
     })
   })
 })
+
+describe('utils/version', () => {
+  describe('versionKeyword', () => {
+    it('should recognize keywords regardless of casing and padding', () => {
+      expect(versionKeyword('unreleased')).toBe('unreleased')
+      expect(versionKeyword(' Unreleased ')).toBe('unreleased')
+    })
+
+    it('should ignore version numbers and unknown words', () => {
+      expect(versionKeyword('4.2.0')).toBeUndefined()
+      expect(versionKeyword('nightly')).toBeUndefined()
+      expect(versionKeyword(undefined)).toBeUndefined()
+    })
+  })
+
+  describe('versionBadgeLabels', () => {
+    it('should prefix version numbers with v', () => {
+      expect(versionBadgeLabels('4.2')).toEqual({
+        label: 'v4.2',
+        shortLabel: 'v4.2',
+        ariaLabel: 'Minimum Nuxt Version: v4.2'
+      })
+    })
+
+    it('should render keywords as their label qualified with the docs tag', () => {
+      expect(versionBadgeLabels('unreleased', 'v4')).toEqual({
+        label: 'nightly v4',
+        shortLabel: 'Soon',
+        ariaLabel: 'Minimum Nuxt Version: nightly v4'
+      })
+    })
+
+    it('should render the bare keyword label without a docs tag', () => {
+      expect(versionBadgeLabels('unreleased')?.label).toBe('nightly')
+    })
+
+    it('should return undefined for empty input', () => {
+      expect(versionBadgeLabels('  ')).toBeUndefined()
+      expect(versionBadgeLabels(undefined)).toBeUndefined()
+    })
+  })
+
+  describe('versionBlogPath', () => {
+    it('should point at the minor release announcement', () => {
+      expect(versionBlogPath('4.5.2')).toBe('/blog/v4-5')
+      expect(versionBlogPath('3.18')).toBe('/blog/v3-18')
+    })
+
+    it('should drop the minor for a major release', () => {
+      expect(versionBlogPath('4.0.0')).toBe('/blog/v4')
+      expect(versionBlogPath('4')).toBe('/blog/v4')
+    })
+
+    it('should return undefined for keywords and unparseable input', () => {
+      expect(versionBlogPath('unreleased')).toBeUndefined()
+      expect(versionBlogPath(undefined)).toBeUndefined()
+    })
+  })
+
+  describe('nightlyChannelPath', () => {
+    it('should build the guide path for a docs version', () => {
+      expect(nightlyChannelPath('/docs/4.x')).toBe('/docs/4.x/guide/going-further/nightly-release-channel')
+    })
+
+    it('should ignore paths outside the docs', () => {
+      expect(nightlyChannelPath('https://v2.nuxt.com')).toBeUndefined()
+      expect(nightlyChannelPath(undefined)).toBeUndefined()
+    })
+  })
+
+  describe('satisfiesVersionTolerance', () => {
+    it('should always surface keywords', () => {
+      expect(satisfiesVersionTolerance('unreleased', '4.5.2', { minor: 2 })).toBe(true)
+    })
+
+    it('should keep the tolerated range for version numbers', () => {
+      expect(satisfiesVersionTolerance('4.4.0', '4.5.2', { minor: 2 })).toBe(true)
+      expect(satisfiesVersionTolerance('4.2.0', '4.5.2', { minor: 2 })).toBe(false)
+      expect(satisfiesVersionTolerance('nope', '4.5.2')).toBe(false)
+    })
+  })
+})
