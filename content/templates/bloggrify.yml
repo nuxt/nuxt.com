@@ -1,0 +1,6 @@
+name: 'Bloggrify'
+slug: 'bloggrify'
+description: 'Run a blog from Markdown files, with themes, SEO and analytics preconfigured.'
+repo: 'bloggrify/bloggrify'
+demo: 'https://minimalist.bloggrify.com'
+badge: 'Free'
