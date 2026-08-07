@@ -1,6 +1,6 @@
 import type { Session } from 'eve/channels'
-import { postDiscordWorkflowParts } from '../channels/discord.js'
-import { slackTextToDiscord, splitDiscordMessages } from './discord-format.js'
+import { postDiscordWorkflowParts } from '../../channels/discord.js'
+import { slackTextToDiscord, splitDiscordMessages } from './format.js'
 
 /** `done: false` means the stream ended without a terminal event — an inconclusive drop, worth retrying. */
 type StreamReadResult
@@ -34,7 +34,7 @@ async function finalMessageText(
     const result = await readFinalMessage(stream)
     if (result.done) return result.message
 
-    console.warn('[nuxi:discord-workflow] event stream ended without a terminal event, retrying', {
+    console.warn('[nuxi:digest-mirror] event stream ended without a terminal event, retrying', {
       attempt,
       maxAttempts: FINAL_MESSAGE_MAX_ATTEMPTS
     })
@@ -81,7 +81,7 @@ export async function mirrorDigestToDiscord({
   channelId: string
 }): Promise<void> {
   try {
-    console.log('[nuxi:discord-workflow] mirroring digest, reading Slack session event stream', {
+    console.log('[nuxi:digest-mirror] mirroring digest, reading Slack session event stream', {
       channelId,
       timeoutMs: EVENT_STREAM_TIMEOUT_MS
     })
@@ -93,7 +93,7 @@ export async function mirrorDigestToDiscord({
       () => { void currentStream?.cancel() }
     )
     if (!text) {
-      console.warn('[nuxi:discord-workflow] no final message.completed text on session stream, skipping mirror', {
+      console.warn('[nuxi:digest-mirror] no final message.completed text on session stream, skipping mirror', {
         channelId
       })
       return
@@ -104,7 +104,7 @@ export async function mirrorDigestToDiscord({
     const parts = splitDiscordMessages(slackTextToDiscord(text))
     await postDiscordWorkflowParts(channelId, parts)
 
-    console.log('[nuxi:discord-workflow] mirrored digest to Discord', {
+    console.log('[nuxi:digest-mirror] mirrored digest to Discord', {
       channelId,
       chars: text.length,
       parts: parts.length
@@ -113,8 +113,8 @@ export async function mirrorDigestToDiscord({
     const timedOut = error instanceof Error && /timed out after \d+ms/.test(error.message)
     console.warn(
       timedOut
-        ? '[nuxi:discord-workflow] mirror timed out waiting for Slack digest (may still post to Slack)'
-        : '[nuxi:discord-workflow] failed to mirror digest to Discord',
+        ? '[nuxi:digest-mirror] mirror timed out waiting for Slack digest (may still post to Slack)'
+        : '[nuxi:digest-mirror] failed to mirror digest to Discord',
       { channelId, timedOut, timeoutMs: EVENT_STREAM_TIMEOUT_MS },
       error
     )

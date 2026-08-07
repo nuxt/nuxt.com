@@ -1,8 +1,9 @@
 import { getToken } from '@vercel/connect'
 import { callSlackApi } from 'eve/channels/slack'
-import { slackConnectorId } from './slack-connect.js'
+import { slackConnectorId } from './connect.js'
+import { loadSlackConfig } from './config.js'
 
-const DEFAULT_WORKFLOW_SLACK_CHANNEL = 'project-nuxi'
+const DEFAULT_DIGEST_SLACK_CHANNEL = 'project-nuxi'
 const DEFAULT_FIREHOSE_SLACK_CHANNEL = 'firehose-nuxt'
 const CHANNEL_LIST_TTL_MS = 60 * 60 * 1000
 
@@ -28,50 +29,50 @@ export function normalizeSlackChannelName(ref: string): string {
   return ref.trim().replace(/^#/, '').toLowerCase()
 }
 
-export function workflowSlackChannelRef(): string {
-  return process.env.NUXT_WORKFLOW_SLACK_CHANNEL_ID?.trim()
-    || process.env.NUXT_WORKFLOW_SLACK_CHANNEL?.trim()
-    || DEFAULT_WORKFLOW_SLACK_CHANNEL
+export async function digestSlackChannelRef(): Promise<string> {
+  const config = await loadSlackConfig()
+  const ref = config.channels?.digest
+  return ref?.id?.trim() || ref?.name?.trim() || DEFAULT_DIGEST_SLACK_CHANNEL
 }
 
-export function firehoseSlackChannelRef(): string {
-  return process.env.NUXT_FIREHOSE_SLACK_CHANNEL_ID?.trim()
-    || process.env.NUXT_FIREHOSE_SLACK_CHANNEL?.trim()
-    || DEFAULT_FIREHOSE_SLACK_CHANNEL
+export async function firehoseSlackChannelRef(): Promise<string> {
+  const config = await loadSlackConfig()
+  const ref = config.channels?.firehose
+  return ref?.id?.trim() || ref?.name?.trim() || DEFAULT_FIREHOSE_SLACK_CHANNEL
 }
 
 /**
- * Maps the friendly names of our two known channels (workflow, firehose) to
+ * Maps the friendly names of our two known channels (digest, firehose) to
  * their configured ids, so a caller that types the *name* instead of leaving
  * `channel` unset (e.g. an ad-hoc `read_slack_channel_history` call) still
  * resolves without a `users.conversations` lookup. That call needs
  * `channels:read`/`groups:read`, a scope beyond what `conversations.history`
  * itself requires — see slack-channel-history.ts.
  */
-function knownSlackChannelAliases(): Map<string, string> {
+async function knownSlackChannelAliases(): Promise<Map<string, string>> {
   const aliases = new Map<string, string>()
+  const config = await loadSlackConfig()
 
-  const workflowId = process.env.NUXT_WORKFLOW_SLACK_CHANNEL_ID?.trim()
-  if (workflowId) {
-    const workflowName = process.env.NUXT_WORKFLOW_SLACK_CHANNEL?.trim() || DEFAULT_WORKFLOW_SLACK_CHANNEL
-    aliases.set(normalizeSlackChannelName(workflowName), workflowId)
+  const digest = config.channels?.digest
+  if (digest?.id?.trim()) {
+    aliases.set(normalizeSlackChannelName(digest.name?.trim() || DEFAULT_DIGEST_SLACK_CHANNEL), digest.id.trim())
   }
 
-  const firehoseId = process.env.NUXT_FIREHOSE_SLACK_CHANNEL_ID?.trim()
-  if (firehoseId) {
-    const firehoseName = process.env.NUXT_FIREHOSE_SLACK_CHANNEL?.trim() || DEFAULT_FIREHOSE_SLACK_CHANNEL
-    aliases.set(normalizeSlackChannelName(firehoseName), firehoseId)
+  const firehose = config.channels?.firehose
+  if (firehose?.id?.trim()) {
+    aliases.set(normalizeSlackChannelName(firehose.name?.trim() || DEFAULT_FIREHOSE_SLACK_CHANNEL), firehose.id.trim())
   }
 
   return aliases
 }
 
-function slackWorkspace(): string {
-  return process.env.NUXT_SLACK_WORKSPACE?.trim() || 'vercel'
+async function slackWorkspace(): Promise<string> {
+  const config = await loadSlackConfig()
+  return config.workspace?.trim() || 'vercel'
 }
 
-export function slackMessagePermalink(channelId: string, ts: string): string {
-  return `https://${slackWorkspace()}.slack.com/archives/${channelId}/p${ts.replace('.', '')}`
+export function slackMessagePermalink(workspace: string, channelId: string, ts: string): string {
+  return `https://${workspace}.slack.com/archives/${channelId}/p${ts.replace('.', '')}`
 }
 
 interface SlackAttachment {
@@ -113,6 +114,19 @@ interface SlackHistoryResponse {
     /** Block Kit payload — Octolens puts the real "See post" tweet URL on a button here. */
     blocks?: unknown[]
   }>
+}
+
+interface SlackUserInfoResponse {
+  ok: boolean
+  error?: string
+  user?: {
+    name?: string
+    real_name?: string
+    profile?: {
+      display_name?: string
+      real_name?: string
+    }
+  }
 }
 
 interface UsersConversationsResponse {
@@ -196,6 +210,35 @@ async function loadBotChannelIndex(): Promise<Map<string, SlackChannelInfo>> {
   }
 
   return channelIndexInflight
+}
+
+const USER_NAME_TTL_MS = 60 * 60 * 1000
+
+interface UserNameCacheEntry {
+  name: string | undefined
+  expiresAt: number
+}
+
+const userNameCache = new Map<string, UserNameCacheEntry>()
+
+/** Real display name for a Slack user id, via `users.info`. Cached an hour, including failures (missing `users:read` scope, deleted user, ...) to avoid retrying every message. */
+export async function resolveSlackUserName(userId: string): Promise<string | undefined> {
+  const cached = userNameCache.get(userId)
+  if (cached && cached.expiresAt > Date.now()) return cached.name
+
+  let name: string | undefined
+  try {
+    const data = await slackApi<SlackUserInfoResponse>('users.info', { user: userId })
+    name = data.ok
+      ? (data.user?.profile?.display_name || data.user?.profile?.real_name || data.user?.real_name || data.user?.name || undefined)
+      : undefined
+    if (!data.ok) console.warn('[nuxi:slack] users.info failed', { userId, error: data.error })
+  } catch (error) {
+    console.warn('[nuxi:slack] users.info lookup failed', { userId, error })
+  }
+
+  userNameCache.set(userId, { name, expiresAt: Date.now() + USER_NAME_TTL_MS })
+  return name
 }
 
 const HTTP_URL_KEYS = new Set([
@@ -356,7 +399,7 @@ export async function resolveSlackChannelRef(ref: string): Promise<ResolvedSlack
 
   const name = normalizeSlackChannelName(trimmed)
 
-  const knownId = knownSlackChannelAliases().get(name)
+  const knownId = (await knownSlackChannelAliases()).get(name)
   if (knownId) {
     return { id: knownId, name, ref: trimmed }
   }
@@ -392,6 +435,8 @@ export async function fetchSlackChannelHistory({
     throw new Error(data.error ?? 'Slack conversations.history failed')
   }
 
+  const workspace = await slackWorkspace()
+
   return (data.messages ?? [])
     .filter((message) => {
       if (!message.text?.trim()) return false
@@ -408,7 +453,7 @@ export async function fetchSlackChannelHistory({
       return {
         ts,
         text,
-        permalink: slackMessagePermalink(channelId, ts),
+        permalink: slackMessagePermalink(workspace, channelId, ts),
         links,
         tweetUrls: extractTweetUrls(links),
         user: message.user,

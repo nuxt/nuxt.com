@@ -5,7 +5,8 @@ import {
   type SlackContext,
   type SlackMessage
 } from 'eve/channels/slack'
-import { slackConnectorId } from '../lib/slack-connect.js'
+import { resolveSlackUserName } from '../lib/slack/api.js'
+import { slackConnectorId } from '../lib/slack/connect.js'
 
 function isHookConflictFailure(event: { code?: string, message?: string }) {
   const message = event.message ?? ''
@@ -17,9 +18,21 @@ function isHookConflictFailure(event: { code?: string, message?: string }) {
 // Slack-specific behaviour lives in the always-on prompt, keyed on the
 // principal (`lib/surface-instructions.ts`). Returning it as channel `context`
 // would prepend a fresh copy to history on every mention.
-function dispatchSlackMessage(ctx: SlackContext, message: SlackMessage) {
+//
+// `app_mention`/`message` events only carry a user id, so resolve the real
+// name here (cached) for `context.ts`'s `person.name`. Bots have none to look up.
+async function dispatchSlackMessage(ctx: SlackContext, message: SlackMessage) {
   const auth = defaultSlackAuth(message, ctx)
   if (!auth) return null
+
+  const userId = message.author?.userId
+  if (!auth.attributes.full_name && userId && !message.author?.isBot) {
+    const fullName = await resolveSlackUserName(userId)
+    if (fullName) {
+      return { auth: { ...auth, attributes: { ...auth.attributes, full_name: fullName } } }
+    }
+  }
+
   return { auth }
 }
 
