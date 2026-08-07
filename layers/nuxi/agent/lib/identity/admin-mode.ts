@@ -12,6 +12,7 @@ const ADMIN_MODE_RULES: Record<Surface, (ctx: Context) => boolean | Promise<bool
   // channels still dispatch (see `discord/access.ts`) but get the public toolset only.
   discord: async ctx => Boolean(ctx.channel && await isAdminDiscordChannel(ctx.channel.id)),
   web: ctx => ctx.raw.attributes?.role === 'admin', // GitHub-derived site role
+  cli: () => process.env.NUXI_CLI_ADMIN === '1' && process.env.VERCEL_ENV !== 'production',
   unknown: () => false
 }
 

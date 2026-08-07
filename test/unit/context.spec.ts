@@ -92,4 +92,16 @@ describe('resolveContext', () => {
     expect(ctx.surface).toBe('unknown')
     expect(ctx.person).toBeNull()
   })
+
+  it('resolves eve localDev() as the cli surface', () => {
+    const ctx = resolveContext({
+      authenticator: 'local-dev',
+      principalId: 'local-dev',
+      principalType: 'local-dev',
+      attributes: {}
+    })
+    expect(ctx.surface).toBe('cli')
+    expect(ctx.person).toEqual({ id: 'local-dev', name: 'local CLI', isBot: false })
+    expect(ctx.channel).toBeNull()
+  })
 })

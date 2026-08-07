@@ -1,11 +1,22 @@
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { isAdminMode } from '../../layers/nuxi/agent/lib/identity/admin-mode'
 
 vi.mock('@vercel/global-config', () => ({
   getAll: vi.fn(async () => ({ discord: { channels: { admin: ['C_ADMIN'], public: ['C_PUBLIC'] } } }))
 }))
 
+const localDevAuth = {
+  authenticator: 'local-dev',
+  principalId: 'local-dev',
+  principalType: 'local-dev',
+  attributes: {}
+} as const
+
 describe('isAdminMode', () => {
+  afterEach(() => {
+    vi.unstubAllEnvs()
+  })
+
   it('denies when there is no auth', async () => {
     expect(await isAdminMode(null)).toBe(false)
     expect(await isAdminMode(undefined)).toBe(false)
@@ -80,5 +91,23 @@ describe('isAdminMode', () => {
       principalType: 'user',
       attributes: { role: 'admin' }
     })).toBe(false)
+  })
+
+  it('grants the local CLI when NUXI_CLI_ADMIN=1 outside production', async () => {
+    vi.stubEnv('NUXI_CLI_ADMIN', '1')
+    vi.stubEnv('VERCEL_ENV', '')
+    expect(await isAdminMode(localDevAuth)).toBe(true)
+  })
+
+  it('denies the local CLI without NUXI_CLI_ADMIN', async () => {
+    vi.stubEnv('NUXI_CLI_ADMIN', '')
+    vi.stubEnv('VERCEL_ENV', '')
+    expect(await isAdminMode(localDevAuth)).toBe(false)
+  })
+
+  it('denies the local CLI on Vercel production even with NUXI_CLI_ADMIN=1', async () => {
+    vi.stubEnv('NUXI_CLI_ADMIN', '1')
+    vi.stubEnv('VERCEL_ENV', 'production')
+    expect(await isAdminMode(localDevAuth)).toBe(false)
   })
 })
