@@ -53,5 +53,16 @@ export default defineAgent({
   // No output cap for the same reason — thinking tokens count towards it.
   limits: {
     maxInputTokensPerSession: 4_000_000
+  },
+  // Keep Discord (and its optional native zlib) out of the Rolldown graph —
+  // discord.js uses direct `eval` and `@discordjs/ws` optionally imports
+  // `zlib-sync`, both of which spam `eve dev` compile diagnostics.
+  build: {
+    externalDependencies: [
+      '@chat-adapter/discord',
+      'discord.js',
+      '@discordjs/ws',
+      'zlib-sync'
+    ]
   }
 })

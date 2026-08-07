@@ -16,5 +16,11 @@
     "chat": "^4.36.0",
     "eve": "^0.29.4",
     "zod": "^4.4.3"
+  },
+  "optionalDependencies": {
+    "zlib-sync": "^0.1.10"
+  },
+  "devDependencies": {
+    "microsandbox": "^0.6.8"
   }
 }
