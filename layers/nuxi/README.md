@@ -192,7 +192,8 @@ One root key per surface — each self-contained, so you never have to jump else
   "discord": {
     "channels": {
       "admin": ["1234567890123456"],
-      "public": ["6543210987654321"]
+      "public": ["6543210987654321"],
+      "autoRespond": ["1111111111111111"]
     },
     "digestChannel": "1234567890123456"
   },
@@ -205,7 +206,7 @@ One root key per surface — each self-contained, so you never have to jump else
 
 - `admin.githubLogins` — extra admin GitHub logins on top of the core team (`server/utils/team.ts`, main Nuxt app).
 - `slack` — workspace subdomain + the two known channel refs, consumed by `agent/lib/slack/config.ts` / `slack/api.ts`.
-- `discord` — the live-@mention allowlist (`channels.admin`/`channels.public`) and the optional digest-mirror target (`digestChannel`), consumed by `agent/lib/discord/access.ts`.
+- `discord` — the live-dispatch allowlist (`channels.admin` / `channels.public` / `channels.autoRespond`) and the optional digest-mirror target (`digestChannel`), consumed by `agent/lib/discord/access.ts`. `admin` grants admin mode; `public` and `autoRespond` stay on the public toolset (`autoRespond` answers without an `@mention`).
 - `workflow` — the only cross-cutting knobs left: digest window and the manual-trigger safety switch, consumed by `agent/lib/workflow/config.ts` / `workflow/shared.ts`.
 
 Every field is optional and falls back to a sane default: `sinceDays` → 7, `slack.workspace` → `vercel`, each Slack channel's `id` → `name` → a hardcoded default (`project-nuxi`/`firehose-nuxt`, resolved via `users.conversations` — slower, and needs `channels:read`/`groups:read`), `manualTrigger` → `false` (production `/ops/*/trigger` stays disabled; preview is always allowed), `discord.digestChannel` → mirror disabled, `discord.channels` unset/empty → deny everywhere. Preview and production share the same `GLOBAL_CONFIG` store.

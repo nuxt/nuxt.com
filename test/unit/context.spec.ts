@@ -104,4 +104,19 @@ describe('resolveContext', () => {
     expect(ctx.person).toEqual({ id: 'local-dev', name: 'local CLI', isBot: false })
     expect(ctx.channel).toBeNull()
   })
+
+  it('does not treat a partial local-dev claim as cli', () => {
+    expect(resolveContext({
+      authenticator: 'local-dev',
+      principalId: 'u1',
+      principalType: 'user',
+      issuer: 'nuxt.com',
+      attributes: {}
+    }).surface).toBe('web')
+    expect(resolveContext({
+      principalId: 'local-dev',
+      principalType: 'local-dev',
+      attributes: {}
+    }).surface).toBe('unknown')
+  })
 })

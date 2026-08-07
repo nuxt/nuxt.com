@@ -37,7 +37,7 @@ function attr(auth: AuthContext, key: string): string | undefined {
 
 /** Eve's `localDev()` principal — `pnpm nuxi` / `eve dev` TUI on loopback. */
 function isLocalDevPrincipal(auth: AuthContext): boolean {
-  return auth.authenticator === 'local-dev' || auth.principalType === 'local-dev'
+  return auth.authenticator === 'local-dev' && auth.principalType === 'local-dev'
 }
 
 /** Single source of truth for "who"/"where" a session comes from — admin mode, instructions, and gateway tags all key off this. */

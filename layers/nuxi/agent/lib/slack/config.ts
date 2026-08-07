@@ -18,14 +18,14 @@ import { readGlobalConfig } from '../global-config.js'
  * Validated with zod so a malformed dashboard edit (wrong type, typo'd key)
  * logs a clear warning and falls back to defaults instead of failing silently.
  */
-const slackChannelRefSchema = z.object({
+const slackChannelRefSchema = z.strictObject({
   id: z.string().optional(),
   name: z.string().optional()
 })
 
-const slackConfigSchema = z.object({
+const slackConfigSchema = z.strictObject({
   workspace: z.string().optional(),
-  channels: z.object({
+  channels: z.strictObject({
     digest: slackChannelRefSchema.optional(),
     firehose: slackChannelRefSchema.optional()
   }).optional()

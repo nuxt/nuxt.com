@@ -20,8 +20,8 @@ import { readGlobalConfig } from '../global-config.js'
  * Channels not listed are denied. `autoRespond` replies to all messages (no mention needed).
  * `digestChannel` is the optional weekly digest/firhose mirror, gatekeeping only applies to `channels`.
  */
-const discordConfigSchema = z.object({
-  channels: z.object({
+const discordConfigSchema = z.strictObject({
+  channels: z.strictObject({
     admin: z.array(z.string()).optional(),
     public: z.array(z.string()).optional(),
     autoRespond: z.array(z.string()).optional()

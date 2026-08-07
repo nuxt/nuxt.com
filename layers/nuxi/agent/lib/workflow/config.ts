@@ -14,7 +14,7 @@ import { readGlobalConfig } from '../global-config.js'
  * Validated with zod so a malformed dashboard edit (wrong type, typo'd key)
  * logs a clear warning and falls back to defaults instead of failing silently.
  */
-const workflowConfigSchema = z.object({
+const workflowConfigSchema = z.strictObject({
   sinceDays: z.number().optional(),
   manualTrigger: z.boolean().optional()
 })

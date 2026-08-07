@@ -39,7 +39,7 @@ export async function readGlobalConfig<T extends Record<string, unknown>>(
   const existing = inflight.get(cacheKey)
   if (existing) return existing as Promise<Partial<T>>
 
-  const promise = getAll<T>(keys)
+  const promise = getAll<T>([...keys])
     .then((value) => {
       cache.set(cacheKey, { value, expiresAt: Date.now() + TTL_MS })
       return value
