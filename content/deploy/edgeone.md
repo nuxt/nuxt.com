@@ -22,10 +22,10 @@ Nuxt supports deploying on [EdgeOne Pages](https://pages.edgeone.ai/) with the `
 Install the [EdgeOne CLI](https://pages.edgeone.ai/document/edgeone-cli) (version 1.2.4 or later), then deploy with:
 
 ```bash [Terminal]
-edgeone pages deploy
+edgeone makers deploy
 ```
 
-The CLI builds the project, then uploads and publishes the build output.
+The CLI builds the project, then uploads and publishes the build output. The legacy equivalent is `edgeone pages deploy`.
 
 ## Learn more
 
