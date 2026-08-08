@@ -164,7 +164,44 @@ You can read more about this in **Firebase Docs**.
 
 ## Other Cloud Functions
 
-You may be warned that other cloud functions will be deleted when you deploy your Nuxt project. This is because Nitro will deploy your entire project to firebase functions. If you want to deploy only your Nuxt project, you can use the `--only` flag:
+Firebase may warn that other Cloud Functions will be deleted when you deploy. That happens when `firebase.json` lists a single functions source and the CLI treats the deploy as replacing every function in the project.
+
+Nuxt can share a Firebase project with other functions. Configure multiple function sources with distinct `codebase` values:
+
+```json [firebase.json]
+{
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default"
+    },
+    {
+      "source": ".output/server",
+      "codebase": "nuxt"
+    }
+  ],
+  "hosting": [
+    {
+      "site": "<your_project_id>",
+      "public": ".output/public",
+      "cleanUrls": true,
+      "rewrites": [{ "source": "**", "function": "server" }]
+    }
+  ]
+}
+```
+
+::read-more{to="https://firebase.google.com/docs/functions/organize-functions?gen=2nd#managing_multiple_source_packages_monorepo" target="_blank"}
+See **Managing multiple source packages** in the Firebase docs.
+::
+
+To deploy only the Nuxt codebase and hosting:
+
+```bash
+firebase deploy --only functions:nuxt,hosting
+```
+
+With a single functions source (no separate `codebase`), target the `server` function instead:
 
 ```bash
 firebase deploy --only functions:server,hosting
