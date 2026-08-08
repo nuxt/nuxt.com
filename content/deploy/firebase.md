@@ -164,9 +164,11 @@ You can read more about this in **Firebase Docs**.
 
 ## Other Cloud Functions
 
-Firebase may warn that other Cloud Functions will be deleted when you deploy. That happens when `firebase.json` lists a single functions source and the CLI treats the deploy as replacing every function in the project.
+Firebase may warn that other Cloud Functions will be deleted when you deploy. That warning depends on `codebase` identifiers, not on how many function sources you list. Without a unique `codebase`, the CLI treats functions outside the current deploy as candidates for deletion.
 
-Nuxt can share a Firebase project with other functions. Configure multiple function sources with distinct `codebase` values:
+A single functions source can coexist with other functions if you give it a unique `codebase` (for example in a separate repository that deploys to the same Firebase project). Use a different `codebase` in each repository's `firebase.json`.
+
+In one repository, configure multiple function sources with distinct `codebase` values:
 
 ```json [firebase.json]
 {
