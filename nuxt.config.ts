@@ -1,5 +1,6 @@
 import { createResolver } from 'nuxt/kit'
 import { parseMdc } from './helpers/mdc-parser.mjs'
+import materialThemeLighterContrast from './themes/material-theme-lighter-contrast.mjs'
 
 const { resolve } = createResolver(import.meta.url)
 
@@ -97,7 +98,8 @@ export default defineNuxtConfig({
       markdown: {
         highlight: {
           theme: {
-            default: 'material-theme-lighter',
+            // Patched Material Lighter: stock theme paints variables and comments the same gray (#2217).
+            default: materialThemeLighterContrast,
             dark: 'material-theme-palenight'
           },
           langs: ['js', 'jsx', 'json', 'ts', 'tsx', 'vue', 'css', 'html', 'bash', 'md', 'mdc', 'yaml', 'sql', 'diff', 'ini']

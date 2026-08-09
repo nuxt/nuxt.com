@@ -201,10 +201,10 @@ const bundledLangs = {
 
 }
 const bundledThemes = {
-  'material-theme-lighter': () => import('shiki/themes/material-theme-lighter.mjs').then(r => r.default),
+  'material-theme-lighter-contrast': () => import('../themes/material-theme-lighter-contrast.mjs').then(r => r.default),
   'material-theme-palenight': () => import('shiki/themes/material-theme-palenight.mjs').then(r => r.default)
 }
-const options = { theme: { light: 'material-theme-lighter', default: 'material-theme-lighter', dark: 'material-theme-palenight' } }
+const options = { theme: { light: 'material-theme-lighter-contrast', default: 'material-theme-lighter-contrast', dark: 'material-theme-palenight' } }
 let configs
 export function getMdcConfigs() {
   if (!configs) {
@@ -230,7 +230,7 @@ export async function parseMdc(content) {
       highlighter,
       langs: ['js', 'vue'],
       theme: {
-        default: 'material-theme-lighter',
+        default: 'material-theme-lighter-contrast',
         dark: 'material-theme-palenight'
       }
     }
