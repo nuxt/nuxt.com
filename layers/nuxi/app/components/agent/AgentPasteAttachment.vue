@@ -161,7 +161,7 @@ async function openPreview() {
           </div>
 
           <AgentComark
-            :markdown="comarkContent"
+            :value="comarkContent"
             :class="comarkClass"
           />
         </div>

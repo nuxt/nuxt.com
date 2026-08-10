@@ -25,8 +25,8 @@ importers:
         specifier: ^4.36.0
         version: 4.36.0(@opentelemetry/api@1.9.0)(ai@7.0.48(zod@4.4.3))(supports-color@10.2.2)(zod@4.4.3)
       '@comark/nuxt':
-        specifier: ^0.5.1
-        version: 0.5.1(magic-string@1.1.0)(magicast@0.5.4)(nuxt@4.5.2(59b84cea5a5ba043c9c86b3c656cc653))(oxc-parser@0.142.0)(rolldown@1.2.2)(shiki@4.4.1)(unplugin@3.3.0(esbuild@0.28.1)(rolldown@1.2.2)(rollup@4.62.2)(vite@8.2.0(@types/node@26.0.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.0)))(vue@3.5.40(typescript@6.0.3))
+        specifier: ^0.6.2
+        version: 0.6.2(magic-string@1.1.0)(magicast@0.5.4)(nuxt@4.5.2(59b84cea5a5ba043c9c86b3c656cc653))(oxc-parser@0.142.0)(rolldown@1.2.2)(shiki@4.4.1)(unplugin@3.3.0(esbuild@0.28.1)(rolldown@1.2.2)(rollup@4.62.2)(vite@8.2.0(@types/node@26.0.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.0)))(vue@3.5.40(typescript@6.0.3))
       '@iconify-json/heroicons':
         specifier: ^1.2.3
         version: 1.2.3
@@ -501,13 +501,13 @@ packages:
   '@colordx/core@5.4.3':
     resolution: {integrity: sha512-kIxYSfA5T8HXjav55UaaH/o/cKivF6jCCGIb8eqtcsfI46wsvlSiT8jMDyrl779qLec3c2c2oHBZo4oAhvbjrQ==}
 
-  '@comark/nuxt@0.5.1':
-    resolution: {integrity: sha512-BvXUbzasGRqQ6bWGuRMO0E6KhWXXpv8FpursPHTixTwJxYVa7BFHUVqvq4cfjj5/6VgbXwofvHiawVQV2k33og==}
+  '@comark/nuxt@0.6.2':
+    resolution: {integrity: sha512-kv9BbXssdNY1fJ+t0thZs8Ir0qoY0VIv1MlmIIAiiGXPJoDkY/+S11+q6MYWpM7lxnVmDBXfNPA9yFpGRLV56Q==}
     peerDependencies:
       nuxt: ^4.0.0
 
-  '@comark/vue@0.5.1':
-    resolution: {integrity: sha512-uz5Oirzg7ruuJJItceWRswAftuMoY17Omge9bsUampmAL/XdI77YrBOozA5DlId+OCX0VXnt1tCCe4c1IrcJ7w==}
+  '@comark/vue@0.6.2':
+    resolution: {integrity: sha512-ToRyzz4I96DjXtDgYOC1WnNWt0W6YgOcazuT8rVRMJRR86NXBLATnIWb3hdMM0/8lMaDz+DmlcpX5EN1hqsG0Q==}
     peerDependencies:
       beautiful-mermaid: ^1.1.3
       katex: ^0.17.0
@@ -5130,16 +5130,19 @@ packages:
   colortranslator@5.0.0:
     resolution: {integrity: sha512-Z3UPUKasUVDFCDYAjP2fmlVRf1jFHJv1izAmPjiOa0OCIw1W7iC8PZ2GsoDa8uZv+mKyWopxxStT9q05+27h7w==}
 
-  comark@0.5.1:
-    resolution: {integrity: sha512-RRRmUaEc6tokYJhgIGHrl8+pUt3kY1BxMnbRrxMxkCk2RcPcrilq9OmmPWIO7zuUIF7qLLRCCQz+wPuMg7Vz9w==}
+  comark@0.6.2:
+    resolution: {integrity: sha512-hlWa7KlGPfRxovQavnHZlLlTUKrfwE7/o4ewCY0FzqFtRvVT8VdslrumQwELIiK9utsurpoSWCBFj1yVMtDOtw==}
     peerDependencies:
       beautiful-mermaid: ^1.1.3
       katex: ^0.17.0
+      rangi: ^2.2.0
       shiki: ^4.3.1
     peerDependenciesMeta:
       beautiful-mermaid:
         optional: true
       katex:
+        optional: true
+      rangi:
         optional: true
       shiki:
         optional: true
@@ -10815,11 +10818,11 @@ snapshots:
 
   '@colordx/core@5.4.3': {}
 
-  '@comark/nuxt@0.5.1(magic-string@1.1.0)(magicast@0.5.4)(nuxt@4.5.2(59b84cea5a5ba043c9c86b3c656cc653))(oxc-parser@0.142.0)(rolldown@1.2.2)(shiki@4.4.1)(unplugin@3.3.0(esbuild@0.28.1)(rolldown@1.2.2)(rollup@4.62.2)(vite@8.2.0(@types/node@26.0.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.0)))(vue@3.5.40(typescript@6.0.3))':
+  '@comark/nuxt@0.6.2(magic-string@1.1.0)(magicast@0.5.4)(nuxt@4.5.2(59b84cea5a5ba043c9c86b3c656cc653))(oxc-parser@0.142.0)(rolldown@1.2.2)(shiki@4.4.1)(unplugin@3.3.0(esbuild@0.28.1)(rolldown@1.2.2)(rollup@4.62.2)(vite@8.2.0(@types/node@26.0.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.0)))(vue@3.5.40(typescript@6.0.3))':
     dependencies:
-      '@comark/vue': 0.5.1(shiki@4.4.1)(vue@3.5.40(typescript@6.0.3))
+      '@comark/vue': 0.6.2(shiki@4.4.1)(vue@3.5.40(typescript@6.0.3))
       '@nuxt/kit': 4.5.2(magic-string@1.1.0)(magicast@0.5.4)(oxc-parser@0.142.0)(rolldown@1.2.2)(unplugin@3.3.0(esbuild@0.28.1)(rolldown@1.2.2)(rollup@4.62.2)(vite@8.2.0(@types/node@26.0.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.0)))
-      comark: 0.5.1(shiki@4.4.1)
+      comark: 0.6.2(shiki@4.4.1)
       nuxt: 4.5.2(59b84cea5a5ba043c9c86b3c656cc653)
     transitivePeerDependencies:
       - beautiful-mermaid
@@ -10827,17 +10830,20 @@ snapshots:
       - magic-string
       - magicast
       - oxc-parser
+      - rangi
       - rolldown
       - shiki
       - unplugin
       - vue
 
-  '@comark/vue@0.5.1(shiki@4.4.1)(vue@3.5.40(typescript@6.0.3))':
+  '@comark/vue@0.6.2(shiki@4.4.1)(vue@3.5.40(typescript@6.0.3))':
     dependencies:
-      comark: 0.5.1(shiki@4.4.1)
+      comark: 0.6.2(shiki@4.4.1)
       vue: 3.5.40(typescript@6.0.3)
     optionalDependencies:
       shiki: 4.4.1
+    transitivePeerDependencies:
+      - rangi
 
   '@devframes/hub@0.7.14(devframe@0.7.14(@modelcontextprotocol/sdk@1.29.0(supports-color@10.2.2)(zod@4.4.3))(cac@6.7.14)(srvx@0.11.22)(typescript@6.0.3))':
     dependencies:
@@ -15851,7 +15857,7 @@ snapshots:
 
   colortranslator@5.0.0: {}
 
-  comark@0.5.1(shiki@4.4.1):
+  comark@0.6.2(shiki@4.4.1):
     dependencies:
       entities: 8.0.0
       htmlparser2: 12.0.0
