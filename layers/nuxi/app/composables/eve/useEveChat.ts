@@ -66,34 +66,30 @@ async function sendUserParts(
   const fileParts = parts.filter((part): part is FileUIPart => part.type === 'file')
 
   if (fileParts.length && text) {
-    await agent.send({
-      message: [
-        { type: 'text', text },
-        ...fileParts.map(part => ({
-          type: 'file' as const,
-          data: part.url,
-          mediaType: part.mediaType,
-          filename: part.filename
-        }))
-      ]
-    })
-    return
-  }
-
-  if (fileParts.length) {
-    await agent.send({
-      message: fileParts.map(part => ({
+    await agent.send([
+      { type: 'text', text },
+      ...fileParts.map(part => ({
         type: 'file' as const,
         data: part.url,
         mediaType: part.mediaType,
         filename: part.filename
       }))
-    })
+    ])
+    return
+  }
+
+  if (fileParts.length) {
+    await agent.send(fileParts.map(part => ({
+      type: 'file' as const,
+      data: part.url,
+      mediaType: part.mediaType,
+      filename: part.filename
+    })))
     return
   }
 
   if (text) {
-    await agent.send({ message: text })
+    await agent.send(text)
   }
 }
 
@@ -102,11 +98,11 @@ export function useEveChat(options: UseEveChatOptions): AgentChatHandle & {
   hasAgentMessage: (role: UIMessage['role']) => boolean
 } {
   const agent = useEveAgent({
-    // The chat id doubles as the Eve continuation token. The persisted cursor
+    // The chat id doubles as the Eve session id. The persisted cursor
     // makes the first send attach at the stream tail — without it, the client
     // replays the whole session event log (duplicated turns).
     initialSession: {
-      continuationToken: toValue(options.chatId),
+      sessionId: toValue(options.chatId),
       streamIndex: 0,
       ...options.sessionCursor
     },
