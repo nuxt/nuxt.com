@@ -1,10 +1,10 @@
-import highlight from '@comark/nuxt/plugins/highlight'
+import shiki from '@comark/nuxt/plugins/shiki'
 import SourceLink from '#layers/nuxi/app/components/tools/SourceLink.vue'
 
-export default defineComarkComponent({
+export default defineMarkdownComponent({
   name: 'AgentComark',
   plugins: [
-    highlight()
+    shiki()
   ],
   components: {
     'source-link': SourceLink
