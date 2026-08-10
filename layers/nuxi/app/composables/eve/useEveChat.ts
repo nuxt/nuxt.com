@@ -5,7 +5,6 @@ import { eveMessagesToUIMessages } from './adapter'
 import type { AgentChatHandle } from './types'
 
 export interface UseEveChatOptions {
-  chatId: MaybeRefOrGetter<string>
   initialMessages?: MaybeRefOrGetter<UIMessage[] | undefined>
   /** Read once at store creation — must be resolved before calling this composable. */
   sessionCursor?: ChatSessionCursor | null
@@ -66,34 +65,30 @@ async function sendUserParts(
   const fileParts = parts.filter((part): part is FileUIPart => part.type === 'file')
 
   if (fileParts.length && text) {
-    await agent.send({
-      message: [
-        { type: 'text', text },
-        ...fileParts.map(part => ({
-          type: 'file' as const,
-          data: part.url,
-          mediaType: part.mediaType,
-          filename: part.filename
-        }))
-      ]
-    })
-    return
-  }
-
-  if (fileParts.length) {
-    await agent.send({
-      message: fileParts.map(part => ({
+    await agent.send([
+      { type: 'text', text },
+      ...fileParts.map(part => ({
         type: 'file' as const,
         data: part.url,
         mediaType: part.mediaType,
         filename: part.filename
       }))
-    })
+    ])
+    return
+  }
+
+  if (fileParts.length) {
+    await agent.send(fileParts.map(part => ({
+      type: 'file' as const,
+      data: part.url,
+      mediaType: part.mediaType,
+      filename: part.filename
+    })))
     return
   }
 
   if (text) {
-    await agent.send({ message: text })
+    await agent.send(text)
   }
 }
 
@@ -102,14 +97,12 @@ export function useEveChat(options: UseEveChatOptions): AgentChatHandle & {
   hasAgentMessage: (role: UIMessage['role']) => boolean
 } {
   const agent = useEveAgent({
-    // The chat id doubles as the Eve continuation token. The persisted cursor
-    // makes the first send attach at the stream tail — without it, the client
-    // replays the whole session event log (duplicated turns).
-    initialSession: {
-      continuationToken: toValue(options.chatId),
-      streamIndex: 0,
-      ...options.sessionCursor
-    },
+    // `initialSession` attaches to an existing Eve session, so it is only set
+    // once a cursor has been persisted. The cursor makes the first send attach
+    // at the stream tail — without it, the client replays the whole session
+    // event log (duplicated turns). A fresh chat leaves it undefined so Eve
+    // creates the session and reports its id back through `onFinish`.
+    initialSession: options.sessionCursor ?? undefined,
     reducer: scopedTurnIdReducer(),
     headers: options.headers,
     // Page context belongs to the turn it was sent with, not to the thread —

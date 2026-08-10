@@ -86,7 +86,7 @@ importers:
         version: 2.0.1(nuxt@4.5.2(59b84cea5a5ba043c9c86b3c656cc653))(vue@3.5.40(typescript@6.0.3))
       '@vercel/connect':
         specifier: ^0.6.0
-        version: 0.6.0(@ai-sdk/mcp@2.0.22(zod@4.4.3))(ai@7.0.48(zod@4.4.3))(eve@0.29.4(@libsql/client@0.17.4)(@opentelemetry/api@1.9.0)(@vercel/functions@3.7.6(ws@8.21.2))(ai@7.0.48(zod@4.4.3))(better-sqlite3@13.0.2)(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260511.1)(@libsql/client@0.17.4)(@opentelemetry/api@1.9.0)(better-sqlite3@13.0.2))(giget@3.3.0)(ioredis@5.10.1(supports-color@10.2.2))(jiti@2.7.0)(lru-cache@11.3.6)(rollup@4.62.2)(vite@8.2.0(@types/node@26.0.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.0)))
+        version: 0.6.0(@ai-sdk/mcp@2.0.22(zod@4.4.3))(ai@7.0.48(zod@4.4.3))(eve@0.31.3(@libsql/client@0.17.4)(@opentelemetry/api@1.9.0)(@vercel/functions@3.7.6(ws@8.21.2))(ai@7.0.48(zod@4.4.3))(better-sqlite3@13.0.2)(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260511.1)(@libsql/client@0.17.4)(@opentelemetry/api@1.9.0)(better-sqlite3@13.0.2))(giget@3.3.0)(ioredis@5.10.1(supports-color@10.2.2))(jiti@2.7.0)(lru-cache@11.3.6)(rollup@4.62.2)(vite@8.2.0(@types/node@26.0.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.0)))
       '@vercel/functions':
         specifier: ^3.7.6
         version: 3.7.6(ws@8.21.2)
@@ -121,11 +121,11 @@ importers:
         specifier: ^0.45.2
         version: 0.45.2(@cloudflare/workers-types@4.20260511.1)(@libsql/client@0.17.4)(@opentelemetry/api@1.9.0)(better-sqlite3@13.0.2)
       eve:
-        specifier: ^0.29.4
-        version: 0.29.4(@libsql/client@0.17.4)(@opentelemetry/api@1.9.0)(@vercel/functions@3.7.6(ws@8.21.2))(ai@7.0.48(zod@4.4.3))(better-sqlite3@13.0.2)(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260511.1)(@libsql/client@0.17.4)(@opentelemetry/api@1.9.0)(better-sqlite3@13.0.2))(giget@3.3.0)(ioredis@5.10.1(supports-color@10.2.2))(jiti@2.7.0)(lru-cache@11.3.6)(rollup@4.62.2)(vite@8.2.0(@types/node@26.0.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.0))
+        specifier: ^0.31.3
+        version: 0.31.3(@libsql/client@0.17.4)(@opentelemetry/api@1.9.0)(@vercel/functions@3.7.6(ws@8.21.2))(ai@7.0.48(zod@4.4.3))(better-sqlite3@13.0.2)(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260511.1)(@libsql/client@0.17.4)(@opentelemetry/api@1.9.0)(better-sqlite3@13.0.2))(giget@3.3.0)(ioredis@5.10.1(supports-color@10.2.2))(jiti@2.7.0)(lru-cache@11.3.6)(rollup@4.62.2)(vite@8.2.0(@types/node@26.0.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.0))
       evlog:
         specifier: ^2.23.0
-        version: 2.24.0(007cf0787247c043aab9f6f4dbe8e06e)
+        version: 2.24.0(6d5ef759af4385421b02dea0df236baa)
       feed:
         specifier: ^5.2.1
         version: 5.2.1
@@ -6179,8 +6179,8 @@ packages:
       better-sqlite3:
         optional: true
 
-  eve@0.29.4:
-    resolution: {integrity: sha512-EwOmL37l+Iuu7Umno7at3flFpMs4AtT9cg1J4dt7EZ8ZdxaCvGXwvKGwiulMkG8oXkMQ5CNhxMi2ruHJwrtpwQ==}
+  eve@0.31.3:
+    resolution: {integrity: sha512-/ae8kfsVLGoy68BU+7uNEkXeEQzOHWaXi0Q+Fj5oA2On5POcU0DGR9AnZlOaDQoFLoEtMxRnR1urTw4H0U2O7Q==}
     engines: {node: '>=24'}
     hasBin: true
     peerDependencies:
@@ -15061,13 +15061,13 @@ snapshots:
     dependencies:
       execa: 5.1.1
 
-  '@vercel/connect@0.6.0(@ai-sdk/mcp@2.0.22(zod@4.4.3))(ai@7.0.48(zod@4.4.3))(eve@0.29.4(@libsql/client@0.17.4)(@opentelemetry/api@1.9.0)(@vercel/functions@3.7.6(ws@8.21.2))(ai@7.0.48(zod@4.4.3))(better-sqlite3@13.0.2)(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260511.1)(@libsql/client@0.17.4)(@opentelemetry/api@1.9.0)(better-sqlite3@13.0.2))(giget@3.3.0)(ioredis@5.10.1(supports-color@10.2.2))(jiti@2.7.0)(lru-cache@11.3.6)(rollup@4.62.2)(vite@8.2.0(@types/node@26.0.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.0)))':
+  '@vercel/connect@0.6.0(@ai-sdk/mcp@2.0.22(zod@4.4.3))(ai@7.0.48(zod@4.4.3))(eve@0.31.3(@libsql/client@0.17.4)(@opentelemetry/api@1.9.0)(@vercel/functions@3.7.6(ws@8.21.2))(ai@7.0.48(zod@4.4.3))(better-sqlite3@13.0.2)(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260511.1)(@libsql/client@0.17.4)(@opentelemetry/api@1.9.0)(better-sqlite3@13.0.2))(giget@3.3.0)(ioredis@5.10.1(supports-color@10.2.2))(jiti@2.7.0)(lru-cache@11.3.6)(rollup@4.62.2)(vite@8.2.0(@types/node@26.0.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.0)))':
     dependencies:
       '@vercel/oidc': 3.8.1
     optionalDependencies:
       '@ai-sdk/mcp': 2.0.22(zod@4.4.3)
       ai: 7.0.48(zod@4.4.3)
-      eve: 0.29.4(@libsql/client@0.17.4)(@opentelemetry/api@1.9.0)(@vercel/functions@3.7.6(ws@8.21.2))(ai@7.0.48(zod@4.4.3))(better-sqlite3@13.0.2)(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260511.1)(@libsql/client@0.17.4)(@opentelemetry/api@1.9.0)(better-sqlite3@13.0.2))(giget@3.3.0)(ioredis@5.10.1(supports-color@10.2.2))(jiti@2.7.0)(lru-cache@11.3.6)(rollup@4.62.2)(vite@8.2.0(@types/node@26.0.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.0))
+      eve: 0.31.3(@libsql/client@0.17.4)(@opentelemetry/api@1.9.0)(@vercel/functions@3.7.6(ws@8.21.2))(ai@7.0.48(zod@4.4.3))(better-sqlite3@13.0.2)(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260511.1)(@libsql/client@0.17.4)(@opentelemetry/api@1.9.0)(better-sqlite3@13.0.2))(giget@3.3.0)(ioredis@5.10.1(supports-color@10.2.2))(jiti@2.7.0)(lru-cache@11.3.6)(rollup@4.62.2)(vite@8.2.0(@types/node@26.0.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.0))
 
   '@vercel/functions@3.7.6(ws@8.21.2)':
     dependencies:
@@ -16974,7 +16974,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  eve@0.29.4(@libsql/client@0.17.4)(@opentelemetry/api@1.9.0)(@vercel/functions@3.7.6(ws@8.21.2))(ai@7.0.48(zod@4.4.3))(better-sqlite3@13.0.2)(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260511.1)(@libsql/client@0.17.4)(@opentelemetry/api@1.9.0)(better-sqlite3@13.0.2))(giget@3.3.0)(ioredis@5.10.1(supports-color@10.2.2))(jiti@2.7.0)(lru-cache@11.3.6)(rollup@4.62.2)(vite@8.2.0(@types/node@26.0.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.0)):
+  eve@0.31.3(@libsql/client@0.17.4)(@opentelemetry/api@1.9.0)(@vercel/functions@3.7.6(ws@8.21.2))(ai@7.0.48(zod@4.4.3))(better-sqlite3@13.0.2)(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260511.1)(@libsql/client@0.17.4)(@opentelemetry/api@1.9.0)(better-sqlite3@13.0.2))(giget@3.3.0)(ioredis@5.10.1(supports-color@10.2.2))(jiti@2.7.0)(lru-cache@11.3.6)(rollup@4.62.2)(vite@8.2.0(@types/node@26.0.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.0)):
     dependencies:
       ai: 7.0.48(zod@4.4.3)
       nitro: 3.0.260610-beta(@libsql/client@0.17.4)(@vercel/functions@3.7.6(ws@8.21.2))(better-sqlite3@13.0.2)(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260511.1)(@libsql/client@0.17.4)(@opentelemetry/api@1.9.0)(better-sqlite3@13.0.2))(giget@3.3.0)(ioredis@5.10.1(supports-color@10.2.2))(jiti@2.7.0)(lru-cache@11.3.6)(rollup@4.62.2)(vite@8.2.0(@types/node@26.0.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.0))
@@ -17037,11 +17037,11 @@ snapshots:
     dependencies:
       eventsource-parser: 3.1.0
 
-  evlog@2.24.0(007cf0787247c043aab9f6f4dbe8e06e):
+  evlog@2.24.0(6d5ef759af4385421b02dea0df236baa):
     optionalDependencies:
       '@nuxt/kit': 4.5.2(magic-string@1.1.0)(magicast@0.5.4)(oxc-parser@0.142.0)(rolldown@1.2.2)(unplugin@3.3.0(esbuild@0.28.1)(rolldown@1.2.2)(rollup@4.62.2)(vite@8.2.0(@types/node@26.0.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.0)))
       ai: 7.0.48(zod@4.4.3)
-      eve: 0.29.4(@libsql/client@0.17.4)(@opentelemetry/api@1.9.0)(@vercel/functions@3.7.6(ws@8.21.2))(ai@7.0.48(zod@4.4.3))(better-sqlite3@13.0.2)(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260511.1)(@libsql/client@0.17.4)(@opentelemetry/api@1.9.0)(better-sqlite3@13.0.2))(giget@3.3.0)(ioredis@5.10.1(supports-color@10.2.2))(jiti@2.7.0)(lru-cache@11.3.6)(rollup@4.62.2)(vite@8.2.0(@types/node@26.0.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.0))
+      eve: 0.31.3(@libsql/client@0.17.4)(@opentelemetry/api@1.9.0)(@vercel/functions@3.7.6(ws@8.21.2))(ai@7.0.48(zod@4.4.3))(better-sqlite3@13.0.2)(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260511.1)(@libsql/client@0.17.4)(@opentelemetry/api@1.9.0)(better-sqlite3@13.0.2))(giget@3.3.0)(ioredis@5.10.1(supports-color@10.2.2))(jiti@2.7.0)(lru-cache@11.3.6)(rollup@4.62.2)(vite@8.2.0(@types/node@26.0.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.0))
       express: 5.2.1(supports-color@10.2.2)
       h3: 1.15.11
       hono: 4.12.18

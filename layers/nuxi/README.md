@@ -68,13 +68,13 @@ Because dispatch is restricted to the `DISCORD_ALLOWED_CHANNELS` allowlist, Disc
 
 ## Scheduled Slack workflows
 
-Shared helpers live in `agent/lib/workflows.ts` (`receiveOnSlack`, auth, config). Each workflow keeps its own prompt, cron, and runner in `agent/schedules/<id>.ts`, with the procedure in `agent/skills/<id>/SKILL.md`.
+Shared helpers live in `agent/lib/workflows.ts` (`sendToSlack`, auth, config). Each workflow keeps its own prompt, cron, and runner in `agent/schedules/<id>.ts`, with the procedure in `agent/skills/<id>/SKILL.md`.
 
 ### Adding a workflow
 
 1. **Skill** — `agent/skills/<id>/SKILL.md` with `description` frontmatter and the full procedure (tool calls, output format, Slack delivery rules).
 2. **Schedule** — `agent/schedules/<id>.ts`:
-   - `defineSchedule({ cron, run })` calling `receiveOnSlack` (or export a `run<Id>` helper reused by ops).
+   - `defineSchedule({ cron, run })` calling `sendToSlack` (or export a `run<Id>` helper reused by ops).
    - Workflow-specific constants (`SKILL_ID`, default window, custom message) stay in this file.
 3. **Preview trigger** (optional) — add `POST('/eve/v1/ops/<id>/trigger', …)` in `agent/channels/ops.ts` (full path required for Vercel routing), wired to the schedule's `run<Id>` export.
 4. **Test locally** — Eve dev dispatch (no auth): `POST /eve/v1/dev/schedules/<id>`.
@@ -83,23 +83,23 @@ Example schedule skeleton:
 
 ```ts
 import { defineSchedule } from 'eve/schedules'
-import { receiveOnSlack, resolveSinceDays, skillWorkflowMessage } from '../lib/workflows.js'
+import { sendToSlack, resolveSinceDays, skillWorkflowMessage } from '../lib/workflows.js'
 
 const SKILL_ID = 'my-workflow'
 
-export function runMyWorkflow({ receive, appAuth, sinceDays }) {
+export function runMyWorkflow({ to, appAuth, sinceDays }) {
   const days = resolveSinceDays(sinceDays, 7)
-  return receiveOnSlack({
-    receive,
+  return sendToSlack({
+    to,
     appAuth,
     message: skillWorkflowMessage(SKILL_ID, days)
-  }) // receiveOnSlack is async — export runMyWorkflow as async when wiring schedules/ops
+  }) // sendToSlack is async — export runMyWorkflow as async when wiring schedules/ops
 }
 
 export default defineSchedule({
   cron: '0 9 * * 1',
-  async run({ receive, waitUntil, appAuth }) {
-    waitUntil(runMyWorkflow({ receive, appAuth }))
+  async run({ to, waitUntil, appAuth }) {
+    waitUntil(runMyWorkflow({ to, appAuth }))
   }
 })
 ```
