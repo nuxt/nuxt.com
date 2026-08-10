@@ -360,7 +360,6 @@ export function useNuxiChat(options: UseNuxiChatOptions) {
   })
 
   const eveChat = useEveChat({
-    chatId: options.chatId,
     initialMessages: seedMessages,
     sessionCursor: options.data?.value?.sessionCursor ?? options.sessionCursor ?? null,
     headers: buildEveHeaders(options.chatId),

@@ -5,7 +5,6 @@ import { eveMessagesToUIMessages } from './adapter'
 import type { AgentChatHandle } from './types'
 
 export interface UseEveChatOptions {
-  chatId: MaybeRefOrGetter<string>
   initialMessages?: MaybeRefOrGetter<UIMessage[] | undefined>
   /** Read once at store creation — must be resolved before calling this composable. */
   sessionCursor?: ChatSessionCursor | null
