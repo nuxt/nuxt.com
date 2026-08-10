@@ -98,14 +98,12 @@ export function useEveChat(options: UseEveChatOptions): AgentChatHandle & {
   hasAgentMessage: (role: UIMessage['role']) => boolean
 } {
   const agent = useEveAgent({
-    // The chat id doubles as the Eve session id. The persisted cursor
-    // makes the first send attach at the stream tail — without it, the client
-    // replays the whole session event log (duplicated turns).
-    initialSession: {
-      sessionId: toValue(options.chatId),
-      streamIndex: 0,
-      ...options.sessionCursor
-    },
+    // `initialSession` attaches to an existing Eve session, so it is only set
+    // once a cursor has been persisted. The cursor makes the first send attach
+    // at the stream tail — without it, the client replays the whole session
+    // event log (duplicated turns). A fresh chat leaves it undefined so Eve
+    // creates the session and reports its id back through `onFinish`.
+    initialSession: options.sessionCursor ?? undefined,
     reducer: scopedTurnIdReducer(),
     headers: options.headers,
     // Page context belongs to the turn it was sent with, not to the thread —
