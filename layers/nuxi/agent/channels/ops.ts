@@ -38,7 +38,7 @@ export default defineChannel({
       }
 
       args.waitUntil(runWeeklyDigest({
-        receive: args.receive,
+        to: args.to,
         appAuth: scheduleAppAuth,
         sinceDays: parsedSinceDays.value
       }))
@@ -60,7 +60,7 @@ export default defineChannel({
       }
 
       args.waitUntil(runFirehoseSummary({
-        receive: args.receive,
+        to: args.to,
         appAuth: scheduleAppAuth,
         sinceHours: parsedSinceHours.value
       }))
