@@ -108,7 +108,7 @@ All times below assume UTC+1 local mornings (6:00 local ≈ 5:00 UTC) — adjust
 
 ### Weekly digest
 
-Single Monday digest: traffic (trend, top sections, referrers/audience), docs feedback, Nuxi quality/runs, Nuxi-scoped AI Gateway spend, and **Fix this week** prioritized by traffic × feedback.
+Single Monday digest: traffic (trend, top sections, referrers/audience), docs feedback, MCP agent feedback, Nuxi quality/runs, Nuxi-scoped AI Gateway spend, and **Fix this week** prioritized by traffic × feedback.
 
 - Schedule: `agent/schedules/weekly-digest.ts` — Monday 5:00 UTC
 - Skill: `agent/skills/weekly-digest/SKILL.md`

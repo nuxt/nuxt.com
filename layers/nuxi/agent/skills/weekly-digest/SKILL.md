@@ -1,5 +1,5 @@
 ---
-description: Produce the Nuxt Monday digest — traffic, docs feedback, Nuxi quality, and prioritized follow-ups for a recent window.
+description: Produce the Nuxt Monday digest — traffic, docs feedback, MCP agent feedback, Nuxi quality, and prioritized follow-ups for a recent window.
 ---
 
 When producing a digest (scheduled or on request):
@@ -28,13 +28,17 @@ Docs feedback:
 6. `admin-mcp__list-feedback` — `ratings=["not-helpful", "confusing"]`, `limit=30`
 7. For each worst page from step 5/6: traffic from step 3, or a targeted `mode=count, filter="requestPath eq '<path>'"` if missing from top routes — weigh urgency by real visits.
 
+MCP agent feedback:
+8. `admin-mcp__mcp-feedback-stats` — totals + top tools/paths for the window
+9. `admin-mcp__list-mcp-feedback` — `limit=20` — pick 2–3 concrete agent reports (tool/path + suggested fix when present)
+
 AI agent:
-8. `admin-mcp__agent-usage-stats` — web chat counts and vote quality
-9. `admin-mcp__list-agent-chats` — `hasDownvotes=true`, `limit=5`
-10. `admin-mcp__list-agent-votes` — `onlyDownvotes=true`, `limit=15`
-11. `vercel-mcp__list_agent_runs` over the window → Slack / Discord / web run split (discover eve project via `list_agent_run_projects` first).
-12. `ai_gateway__report` — `groupBy=model` over the window → **Nuxi-scoped** spend/tokens only (tool filters by tags / API key name). Asking for a `groupBy` always forces tag scoping when an API key name is configured — check `scope.mode`, not `scope.matchedRows`: whenever `scope.mode` is `"tags"` and `scope.note` names an API key, that result only covers tagged traffic and can undercount the real historical total, even if `scope.matchedRows` is non-zero. Re-run with no `groupBy` for the full key-name-scoped total. If that ungrouped report is still unavailable or empty, present the tagged numbers but label them explicitly as partial (tagged traffic only) — never as the complete historical spend. If both come back empty, say spend is not attributable yet — **never** quote account-wide / other-product totals (no fable, no team-wide $).
-13. `ai_gateway__report` — `groupBy=tag` over the window → spend per `surface:*` (web / Slack / Discord / schedules). Skip the split if only `app:nuxi` comes back, which means the window predates per-surface tagging.
+10. `admin-mcp__agent-usage-stats` — web chat counts and vote quality
+11. `admin-mcp__list-agent-chats` — `hasDownvotes=true`, `limit=5`
+12. `admin-mcp__list-agent-votes` — `onlyDownvotes=true`, `limit=15`
+13. `vercel-mcp__list_agent_runs` over the window → Slack / Discord / web run split (discover eve project via `list_agent_run_projects` first).
+14. `ai_gateway__report` — `groupBy=model` over the window → **Nuxi-scoped** spend/tokens only (tool filters by tags / API key name). Asking for a `groupBy` always forces tag scoping when an API key name is configured — check `scope.mode`, not `scope.matchedRows`: whenever `scope.mode` is `"tags"` and `scope.note` names an API key, that result only covers tagged traffic and can undercount the real historical total, even if `scope.matchedRows` is non-zero. Re-run with no `groupBy` for the full key-name-scoped total. If that ungrouped report is still unavailable or empty, present the tagged numbers but label them explicitly as partial (tagged traffic only) — never as the complete historical spend. If both come back empty, say spend is not attributable yet — **never** quote account-wide / other-product totals (no fable, no team-wide $).
+15. `ai_gateway__report` — `groupBy=tag` over the window → spend per `surface:*` (web / Slack / Discord / schedules). Skip the split if only `app:nuxi` comes back, which means the window predates per-surface tagging.
 
 **Link cheat sheet** (use real paths/ids from tool output):
 
@@ -66,6 +70,11 @@ AI agent:
 • Worst: <https://nuxt.com/docs/…|Installation> — 1,800 visits, "missing existing-project guide"
 • Recurring: hydration mismatch docs unclear (3 mentions)
 
+:wrench: **MCP feedback**
+• *5 agent reports* — top tool: `get-documentation-page` (3)
+• Example: Installation page omitted existing-project section — suggested: include that h2 in returned markdown
+• (If zero: *No MCP agent feedback this week*)
+
 :robot_face: **AI agent**
 • *Web chats* — 178 sessions, 114 users, 4 up / 1 down — <https://nuxt.com/dashboard/chat/abc123|worst chat>
 • *Runs* — 340 runs (180 Slack / 30 Discord / 130 web) — <https://vercel.com/nuxt-js/nuxt/observability/agent-runs|Agent Runs>
@@ -74,15 +83,15 @@ AI agent:
 
 :hammer_and_wrench: **Fix this week** (numbered — owner · action · link)
 1. :red_circle: *docs* — add "existing project" section to Installation (1,800 visits) — <https://nuxt.com/docs/…|page>
-2. :large_yellow_circle: *Nuxi* — fix module routing edge case — <https://nuxt.com/dashboard/chat/abc123|chat>
+2. :large_yellow_circle: *MCP* — fix get-documentation-page section omission — agent report
 3. :large_green_circle: *infra* — confirm WoW traffic dip is seasonal — <https://vercel.com/nuxt-js/nuxt/analytics|analytics>
 
 Rules:
 - If a section has zero data, say so in one bullet with a likely cause — do not skip the section.
 - **Fix this week** must have exactly 3 items when there is anything to improve; if truly quiet, 1–2 items with ":large_green_circle: *all clear*" is fine.
-- Rank **Fix this week** by traffic × bad feedback (and agent quality issues) — a bad score on a high-traffic page outranks the same score on a rarely-visited one.
+- Rank **Fix this week** by traffic × bad feedback (and agent quality / MCP feedback issues) — a bad score on a high-traffic page outranks the same score on a rarely-visited one.
 - Never list a page or chat without its `<url|label>` link.
 - Never invent traffic, run, or cost numbers — if a tool call fails or returns nothing attributable, say so instead of guessing.
-- Do not duplicate the same page in both **Docs feedback** and **Fix this week** as a long write-up; feedback states the problem, Fix this week owns the action.
+- Do not duplicate the same page in both **Docs feedback** / **MCP feedback** and **Fix this week** as a long write-up; feedback states the problem, Fix this week owns the action.
 
 <!-- Format aligned with server/mcp/prompts/admin/weekly-digest.ts for Cursor/IDE admin MCP. -->

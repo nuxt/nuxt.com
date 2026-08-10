@@ -8,6 +8,14 @@ function safeBearerMatch(provided: string, expected: string): boolean {
   return timingSafeEqual(a, b)
 }
 
+/** Non-throwing variant, for public endpoints that only need to know the caller. */
+export function isInternalRequest(event: H3Event): boolean {
+  const secret = process.env.INTERNAL_API_SECRET?.trim()
+  if (!secret) return false
+
+  return safeBearerMatch(getRequestHeader(event, 'authorization') ?? '', `Bearer ${secret}`)
+}
+
 export function requireInternalRequest(event: H3Event) {
   const secret = process.env.INTERNAL_API_SECRET?.trim()
 

@@ -7,6 +7,8 @@ import { appOrigin } from '../lib/internal-api.js'
 const ALLOWED_TOOLS = [
   'feedback-stats',
   'list-feedback',
+  'mcp-feedback-stats',
+  'list-mcp-feedback',
   'agent-usage-stats',
   'list-agent-chats',
   'get-agent-chat',
@@ -16,7 +18,9 @@ const ALLOWED_TOOLS = [
 export const ADMIN_MCP_INSTRUCTIONS = `**Admin MCP connection (\`admin-mcp__*\`, team only):**
 - Discover exact schemas via \`connection_search\`, then call \`admin-mcp__<tool>\`.
 - \`admin-mcp__feedback-stats\` — aggregated docs feedback metrics
-- \`admin-mcp__list-feedback\` — individual feedback entries
+- \`admin-mcp__list-feedback\` — individual docs feedback entries
+- \`admin-mcp__mcp-feedback-stats\` — aggregated agent MCP / docs feedback
+- \`admin-mcp__list-mcp-feedback\` — individual agent MCP feedback reports
 - \`admin-mcp__agent-usage-stats\` — web chat counts and vote quality (NOT tokens/cost — use \`vercel-mcp__*\` for runs, \`ai_gateway__*\` for tokens/cost)
 - \`admin-mcp__list-agent-chats\` / \`admin-mcp__get-agent-chat\` — saved web chat sessions and transcripts
 - \`admin-mcp__list-agent-votes\` — message upvotes/downvotes
@@ -53,7 +57,7 @@ function adminOnlyToken(ctx: SessionContext) {
 
 export default defineMcpClientConnection({
   url: `${appOrigin()}/mcp/admin`,
-  description: 'Nuxi admin analytics: docs feedback ratings, saved web chat transcripts, and per-message votes. Admin/Slack/Discord/schedule sessions only.',
+  description: 'Nuxi admin analytics: docs feedback ratings, agent MCP feedback, saved web chat transcripts, and per-message votes. Admin/Slack/Discord/schedule sessions only.',
   tools: { allow: ALLOWED_TOOLS },
   auth: adminOnlyToken
 })

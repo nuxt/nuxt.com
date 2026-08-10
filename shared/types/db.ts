@@ -1,7 +1,11 @@
-import type { feedback, users, chats, messages, votes, agentDailyUsage } from '@nuxthub/db/schema'
+import type { feedback, mcpFeedback, users, chats, messages, votes, agentDailyUsage } from '@nuxthub/db/schema'
 
 export type Feedback = typeof feedback.$inferSelect
 export type NewFeedback = typeof feedback.$inferInsert
+
+export type McpFeedback = typeof mcpFeedback.$inferSelect
+export type NewMcpFeedback = typeof mcpFeedback.$inferInsert
+export type McpFeedbackSource = McpFeedback['source']
 
 export type User = typeof users.$inferSelect
 export type NewUser = typeof users.$inferInsert
