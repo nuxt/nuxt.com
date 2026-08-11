@@ -152,6 +152,10 @@ export default defineNuxtConfig({
     '/docs/4.x/errors': { prerender: true },
     '/modules': { isr: 60 * 60, prerender: false, headers: { Vary: 'Accept, User-Agent' } },
     '/modules/**': { isr: 60 * 60 },
+    // Renders fine at runtime but has intermittently 500'd during the build's
+    // prerender crawl (transient, unreproducible locally) — ISR avoids that
+    // flakiness failing the whole build, same as /modules above.
+    '/showcase': { isr: 60 * 60, prerender: false },
     '/changelog': { isr: 60 * 60, headers: { Vary: 'Accept, User-Agent' } },
     // Markdown content negotiation routes (md-rewrite.ts emits Vercel rewrites
     // based on `Accept` and `User-Agent`, so cached responses must vary on both).
