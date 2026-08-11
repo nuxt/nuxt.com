@@ -6,8 +6,10 @@ import highlight from 'comark/plugins/highlight'
 
 export const content = comarkContent({
   sources: {
-    index: fs('./content/index.yml'),
-    showcase: fs('./content/showcase.yml')
+    'index': fs('./content/index.yml'),
+    'showcase': fs('./content/showcase.yml'),
+    'video-courses-landing': fs('./content/video-courses.yml'),
+    'video-courses': fs('./content/video-courses')
   },
   plugins: [
     yaml(),
