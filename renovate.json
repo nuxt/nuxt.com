@@ -6,10 +6,6 @@
   "packageRules": [{
     "matchDepTypes": ["resolutions"],
     "enabled": false
-  }, {
-    "description": "0.23.0 ships dist/runtime/components/*.d.ts without the .vue files, so MDCRenderer cannot resolve and the build fails. Unpin once upstream republishes them.",
-    "matchPackageNames": ["@nuxtjs/mdc"],
-    "allowedVersions": "<0.23.0"
   }],
   "postUpdateOptions": ["pnpmDedupe"]
 }

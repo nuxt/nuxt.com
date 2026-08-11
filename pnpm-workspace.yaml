@@ -5,6 +5,10 @@ overrides:
   nostics: ^1.2.0
   # chat@4.34.0 pins the 4.1.0-beta.2 prerelease, flagged as a downgrade by check-provenance
   "@workflow/serde": 4.1.2
+  # `@nuxt/content` 3.15.2 caps `@nuxtjs/mdc` at ^0.22.2, so bumping the direct
+  # dependency to 0.23.1 installs a second copy and the app renders with different
+  # components than the ones content registers. Drop once content widens to ^0.23.0.
+  "@nuxt/content>@nuxtjs/mdc": ^0.23.1
 
 allowBuilds:
   better-sqlite3: false
@@ -25,3 +29,4 @@ minimumReleaseAgeExclude:
   - nuxt-nightly
   - vue
   - '@vue/*'
+  - '@nuxtjs/mdc@0.23.1'
