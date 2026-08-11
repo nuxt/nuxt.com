@@ -388,14 +388,14 @@ onMounted(() => {
     >
       <div class="flex flex-col md:flex-row gap-4">
         <div class="md:w-1/4 flex flex-col gap-4">
-          <UPageCard class="flex-1" variant="subtle" :to="`https://npmx.dev/package-stats/nuxt/v/${stats.version}?granularity=monthly`">
+          <UPageCard class="flex-1" variant="subtle" :to="`https://npmx.dev/package-stats/nuxt/v/${stats?.version}?granularity=monthly`">
             <div class="flex items-center gap-3">
               <div class="rounded-lg bg-default p-2 flex items-center justify-center border border-default">
                 <UIcon name="i-simple-icons-npm" class="text-red-500 size-6" />
               </div>
               <div class="flex flex-col">
                 <span class="font-semibold text-lg text-highlighted">
-                  {{ formatNumber(stats.monthlyDownloads) }}
+                  {{ formatNumber(stats?.monthlyDownloads ?? 0) }}
                 </span>
                 <p class="text-sm">
                   Monthly downloads
@@ -411,7 +411,7 @@ onMounted(() => {
               </div>
               <div class="flex flex-col">
                 <span class="font-semibold text-lg text-highlighted">
-                  {{ formatNumber(stats.stars) }}
+                  {{ formatNumber(stats?.stars ?? 0) }}
                 </span>
                 <p class="text-sm">
                   GitHub Stars
